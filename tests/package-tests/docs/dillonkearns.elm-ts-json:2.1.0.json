@@ -1,0 +1,795 @@
+[
+    {
+        "name": "TsJson.Codec",
+        "comment": " A `Codec a` contain a JSON `Decoder a` and the corresponding `a -> Value` encoder.\n\nThis module is a port of [`miniBill/elm-codec`](https://package.elm-lang.org/packages/miniBill/elm-codec/latest/). Thank you for the great API design miniBill!\n\n\n# Definition\n\n@docs Codec\n\n\n# Running Encoders/Decoders\n\n@docs decoder, encoder\n\n\n# Primitives\n\n@docs string, bool, int, float\n\n\n# Literals\n\n@docs literal, stringLiteral\n\n\n# Data Structures\n\n@docs maybe, list, array, dict, set, tuple, triple, result\n\n\n# Object Primitives\n\n@docs ObjectCodec, object, field, maybeField, nullableField, buildObject\n\n\n# Custom Types\n\n@docs stringUnion\n\n@docs CustomCodec, custom, buildCustom\n\n@docs variant0\n\n\n## Keyword Variants\n\n@docs namedVariant1, namedVariant2, namedVariant3, namedVariant4, namedVariant5, namedVariant6, namedVariant7, namedVariant8\n\n\n## Positional Variants\n\n@docs positionalVariant1, positionalVariant2, positionalVariant3, positionalVariant4, positionalVariant5, positionalVariant6, positionalVariant7, positionalVariant8\n\n\n# Inconsistent structure\n\n@docs oneOf\n\n\n# Mapping\n\n@docs map\n\n\n# Fancy Codecs\n\n@docs succeed, recursive, fail, lazy, value, build\n\n@docs tsType\n\n",
+        "unions": [
+            {
+                "name": "CustomCodec",
+                "comment": " A partially built `Codec` for a custom type.\n",
+                "args": [
+                    "match",
+                    "v"
+                ],
+                "cases": []
+            },
+            {
+                "name": "ObjectCodec",
+                "comment": " A partially built `Codec` for an object.\n",
+                "args": [
+                    "a",
+                    "b"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Codec",
+                "comment": " A value that knows how to encode and decode JSON values.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "TsJson.Internal.Codec.Codec a"
+            }
+        ],
+        "values": [
+            {
+                "name": "array",
+                "comment": " `Codec` between a JSON array and an Elm `Array`.\n",
+                "type": "TsJson.Codec.Codec a -> TsJson.Codec.Codec (Array.Array a)"
+            },
+            {
+                "name": "bool",
+                "comment": " `Codec` between a JSON boolean and an Elm `Bool`\n",
+                "type": "TsJson.Codec.Codec Basics.Bool"
+            },
+            {
+                "name": "build",
+                "comment": " Build your own custom `Codec`.\nUseful if you have pre-existing `Decoder`s you need to use.\n",
+                "type": "TsJson.Internal.Encode.Encoder a -> TsJson.Decode.Decoder a -> TsJson.Codec.Codec a"
+            },
+            {
+                "name": "buildCustom",
+                "comment": " Build a `Codec` for a fully specified custom type.\n",
+                "type": "TsJson.Codec.CustomCodec (a -> TsJson.Encode.UnionEncodeValue) a -> TsJson.Codec.Codec a"
+            },
+            {
+                "name": "buildObject",
+                "comment": " Create a `Codec` from a fully specified `ObjectCodec`.\n",
+                "type": "TsJson.Codec.ObjectCodec a a -> TsJson.Codec.Codec a"
+            },
+            {
+                "name": "custom",
+                "comment": " Starts building a `Codec` for a custom type.\n\nYou need to pass a pattern matching function, built like this:\n\n    import TsJson.Codec exposing (Codec)\n\n    type Shape\n        = Rectangle Int Int\n        | Square Int\n        | Circle Int\n\n    shapeCodec : Codec Shape\n    shapeCodec =\n        Codec.custom (Just \"shape\")\n            (\\vRectangle vSquare vCircle shape ->\n                case shape of\n                    Rectangle width height ->\n                        vRectangle width height\n\n                    Square width ->\n                        vSquare width\n\n                    Circle radius ->\n                        vCircle radius\n            )\n            |> Codec.namedVariant2 \"rectangle\" Rectangle Codec.int Codec.int\n            |> Codec.positionalVariant1 \"square\" Square Codec.int\n            |> Codec.namedVariant1 \"circle\" Circle Codec.int\n            |> Codec.buildCustomObject\n\n    The `TsType` for `shapeCodec` is the following discriminated union:\n\n    ```typescript\n    | { shape: \"rectangle\"; width: number; height: number }\n    | { shape: \"square\"; args: [ number ] }\n    | { shape: \"circle\"; radius: number }\n    ```\n\n",
+                "type": "Maybe.Maybe String.String -> match -> TsJson.Codec.CustomCodec match value"
+            },
+            {
+                "name": "decoder",
+                "comment": " Extracts the `Decoder` contained inside the `Codec`.\n",
+                "type": "TsJson.Codec.Codec a -> TsJson.Decode.Decoder a"
+            },
+            {
+                "name": "dict",
+                "comment": " `Codec` between a JSON object and an Elm `Dict`.\n",
+                "type": "TsJson.Codec.Codec a -> TsJson.Codec.Codec (Dict.Dict String.String a)"
+            },
+            {
+                "name": "encoder",
+                "comment": " Extracts the encoding function contained inside the `Codec`.\n",
+                "type": "TsJson.Codec.Codec a -> TsJson.Internal.Encode.Encoder a"
+            },
+            {
+                "name": "fail",
+                "comment": " Ignore the JSON and make the decoder fail. This is handy when used with\n`oneOf` where you want to give a custom error message in some\ncase. The encoder will produce `null`.\n",
+                "type": "String.String -> TsJson.Codec.Codec a"
+            },
+            {
+                "name": "field",
+                "comment": " Specify the name, getter and `Codec` for a field.\n\nThe name is only used as the field name in the resulting JSON, and has no impact on the Elm side.\n\n",
+                "type": "String.String -> (a -> f) -> TsJson.Codec.Codec f -> TsJson.Codec.ObjectCodec a (f -> b) -> TsJson.Codec.ObjectCodec a b"
+            },
+            {
+                "name": "float",
+                "comment": " `Codec` between a JSON number and an Elm `Float`\n",
+                "type": "TsJson.Codec.Codec Basics.Float"
+            },
+            {
+                "name": "int",
+                "comment": " `Codec` between a JSON number and an Elm `Int`\n",
+                "type": "TsJson.Codec.Codec Basics.Int"
+            },
+            {
+                "name": "lazy",
+                "comment": " This is useful for recursive structures that are not easily modeled with `recursive`.\nHave a look at the Json.Decode docs for examples.\n",
+                "type": "(() -> TsJson.Codec.Codec a) -> TsJson.Codec.Codec a"
+            },
+            {
+                "name": "list",
+                "comment": " `Codec` between a JSON array and an Elm `List`.\n",
+                "type": "TsJson.Codec.Codec a -> TsJson.Codec.Codec (List.List a)"
+            },
+            {
+                "name": "literal",
+                "comment": " ",
+                "type": "value -> Json.Encode.Value -> TsJson.Codec.Codec value"
+            },
+            {
+                "name": "map",
+                "comment": " Transform a `Codec`.\n",
+                "type": "(a -> b) -> (b -> a) -> TsJson.Codec.Codec a -> TsJson.Codec.Codec b"
+            },
+            {
+                "name": "maybe",
+                "comment": " Represents an optional value.\n",
+                "type": "TsJson.Codec.Codec a -> TsJson.Codec.Codec (Maybe.Maybe a)"
+            },
+            {
+                "name": "maybeField",
+                "comment": " Specify the name getter and `Codec` for an optional field.\n\nThis is particularly useful for evolving your `Codec`s.\n\nIf the field is not present in the input then it gets decoded to `Nothing`.\nIf the optional field's value is `Nothing` then the resulting object will not contain that field.\n\n",
+                "type": "String.String -> (a -> Maybe.Maybe f) -> TsJson.Codec.Codec f -> TsJson.Codec.ObjectCodec a (Maybe.Maybe f -> b) -> TsJson.Codec.ObjectCodec a b"
+            },
+            {
+                "name": "namedVariant1",
+                "comment": " Define a variant with 1 parameter for a custom type.\n",
+                "type": "String.String -> (a -> v) -> ( String.String, TsJson.Codec.Codec a ) -> TsJson.Codec.CustomCodec ((a -> TsJson.Internal.Encode.UnionEncodeValue) -> c) v -> TsJson.Codec.CustomCodec c v"
+            },
+            {
+                "name": "namedVariant2",
+                "comment": " Define a variant with 2 parameters for a custom type.\n",
+                "type": "String.String -> (a -> b -> v) -> ( String.String, TsJson.Codec.Codec a ) -> ( String.String, TsJson.Codec.Codec b ) -> TsJson.Codec.CustomCodec ((a -> b -> TsJson.Encode.UnionEncodeValue) -> c) v -> TsJson.Codec.CustomCodec c v"
+            },
+            {
+                "name": "namedVariant3",
+                "comment": " Define a variant with 3 parameters for a custom type.\n",
+                "type": "String.String -> (a1 -> a2 -> a3 -> v) -> ( String.String, TsJson.Codec.Codec a1 ) -> ( String.String, TsJson.Codec.Codec a2 ) -> ( String.String, TsJson.Codec.Codec a3 ) -> TsJson.Codec.CustomCodec ((a1 -> a2 -> a3 -> TsJson.Encode.UnionEncodeValue) -> c) v -> TsJson.Codec.CustomCodec c v"
+            },
+            {
+                "name": "namedVariant4",
+                "comment": " Define a variant with 4 parameters for a custom type.\n",
+                "type": "String.String -> (a1 -> a2 -> a3 -> a4 -> v) -> ( String.String, TsJson.Codec.Codec a1 ) -> ( String.String, TsJson.Codec.Codec a2 ) -> ( String.String, TsJson.Codec.Codec a3 ) -> ( String.String, TsJson.Codec.Codec a4 ) -> TsJson.Codec.CustomCodec ((a1 -> a2 -> a3 -> a4 -> TsJson.Encode.UnionEncodeValue) -> c) v -> TsJson.Codec.CustomCodec c v"
+            },
+            {
+                "name": "namedVariant5",
+                "comment": " Define a variant with 5 parameters for a custom type.\n",
+                "type": "String.String -> (a1 -> a2 -> a3 -> a4 -> a5 -> v) -> ( String.String, TsJson.Codec.Codec a1 ) -> ( String.String, TsJson.Codec.Codec a2 ) -> ( String.String, TsJson.Codec.Codec a3 ) -> ( String.String, TsJson.Codec.Codec a4 ) -> ( String.String, TsJson.Codec.Codec a5 ) -> TsJson.Codec.CustomCodec ((a1 -> a2 -> a3 -> a4 -> a5 -> TsJson.Encode.UnionEncodeValue) -> c) v -> TsJson.Codec.CustomCodec c v"
+            },
+            {
+                "name": "namedVariant6",
+                "comment": " Define a variant with 6 parameters for a custom type.\n",
+                "type": "String.String -> (a1 -> a2 -> a3 -> a4 -> a5 -> a6 -> v) -> ( String.String, TsJson.Codec.Codec a1 ) -> ( String.String, TsJson.Codec.Codec a2 ) -> ( String.String, TsJson.Codec.Codec a3 ) -> ( String.String, TsJson.Codec.Codec a4 ) -> ( String.String, TsJson.Codec.Codec a5 ) -> ( String.String, TsJson.Codec.Codec a6 ) -> TsJson.Codec.CustomCodec ((a1 -> a2 -> a3 -> a4 -> a5 -> a6 -> TsJson.Encode.UnionEncodeValue) -> c) v -> TsJson.Codec.CustomCodec c v"
+            },
+            {
+                "name": "namedVariant7",
+                "comment": " Define a variant with 7 parameters for a custom type.\n",
+                "type": "String.String -> (a1 -> a2 -> a3 -> a4 -> a5 -> a6 -> a7 -> v) -> ( String.String, TsJson.Codec.Codec a1 ) -> ( String.String, TsJson.Codec.Codec a2 ) -> ( String.String, TsJson.Codec.Codec a3 ) -> ( String.String, TsJson.Codec.Codec a4 ) -> ( String.String, TsJson.Codec.Codec a5 ) -> ( String.String, TsJson.Codec.Codec a6 ) -> ( String.String, TsJson.Codec.Codec a7 ) -> TsJson.Codec.CustomCodec ((a1 -> a2 -> a3 -> a4 -> a5 -> a6 -> a7 -> TsJson.Encode.UnionEncodeValue) -> c) v -> TsJson.Codec.CustomCodec c v"
+            },
+            {
+                "name": "namedVariant8",
+                "comment": " Define a variant with 8 parameters for a custom type.\n",
+                "type": "String.String -> (a1 -> a2 -> a3 -> a4 -> a5 -> a6 -> a7 -> a8 -> v) -> ( String.String, TsJson.Codec.Codec a1 ) -> ( String.String, TsJson.Codec.Codec a2 ) -> ( String.String, TsJson.Codec.Codec a3 ) -> ( String.String, TsJson.Codec.Codec a4 ) -> ( String.String, TsJson.Codec.Codec a5 ) -> ( String.String, TsJson.Codec.Codec a6 ) -> ( String.String, TsJson.Codec.Codec a7 ) -> ( String.String, TsJson.Codec.Codec a8 ) -> TsJson.Codec.CustomCodec ((a1 -> a2 -> a3 -> a4 -> a5 -> a6 -> a7 -> a8 -> TsJson.Encode.UnionEncodeValue) -> c) v -> TsJson.Codec.CustomCodec c v"
+            },
+            {
+                "name": "nullableField",
+                "comment": " Specify the name getter and `Codec` for a required field, whose value can be `null`.\n\nIf the field is not present in the input then _the decoding fails_.\nIf the field's value is `Nothing` then the resulting object will contain the field with a `null` value.\n\nThis is a shorthand for a field having a codec built using `Codec.maybe`.\n\n",
+                "type": "String.String -> (a -> Maybe.Maybe f) -> TsJson.Codec.Codec f -> TsJson.Codec.ObjectCodec a (Maybe.Maybe f -> b) -> TsJson.Codec.ObjectCodec a b"
+            },
+            {
+                "name": "object",
+                "comment": " Start creating a `Codec` for an object. You should pass the main constructor as argument.\nIf you don't have one (for example it's a simple type with no name), you should pass a function that given the field values builds an object.\n\nExample with constructor:\n\n    type alias Point =\n        { x : Float\n        , y : Float\n        }\n\n    pointCodec : Codec Point\n    pointCodec =\n        Codec.object Point\n            |> Codec.field \"x\" .x Codec.float\n            |> Codec.field \"y\" .y Codec.float\n            |> Codec.buildObject\n\nExample without constructor:\n\n    pointCodec : Codec { x : Int, y : Bool }\n    pointCodec =\n        Codec.object (\\x y -> { x = x, y = y })\n            |> Codec.field \"x\" .x Codec.int\n            |> Codec.field \"y\" .y Codec.bool\n            |> Codec.buildObject\n\n",
+                "type": "b -> TsJson.Codec.ObjectCodec a b"
+            },
+            {
+                "name": "oneOf",
+                "comment": " Try a set of decoders (in order).\nThe first argument is used for encoding and decoding, the list of other codecs is used as a fallback while decoding.\n\nThis is particularly useful for backwards compatibility. You would pass the current codec as the first argument,\nand the old ones (eventually `map`ped) as a fallback list to use while decoding.\n\n",
+                "type": "TsJson.Codec.Codec a -> List.List (TsJson.Codec.Codec a) -> TsJson.Codec.Codec a"
+            },
+            {
+                "name": "positionalVariant1",
+                "comment": " Define a variant with 0 parameters for a custom type.\n",
+                "type": "String.String -> (arg1 -> v) -> TsJson.Codec.Codec arg1 -> TsJson.Codec.CustomCodec ((arg1 -> TsJson.Encode.UnionEncodeValue) -> c) v -> TsJson.Codec.CustomCodec c v"
+            },
+            {
+                "name": "positionalVariant2",
+                "comment": " Define a variant with 2 parameters for a custom type.\n",
+                "type": "String.String -> (arg1 -> arg2 -> v) -> TsJson.Codec.Codec arg1 -> TsJson.Codec.Codec arg2 -> TsJson.Codec.CustomCodec ((arg1 -> arg2 -> TsJson.Encode.UnionEncodeValue) -> c) v -> TsJson.Codec.CustomCodec c v"
+            },
+            {
+                "name": "positionalVariant3",
+                "comment": " Define a variant with 3 parameters for a custom type.\n",
+                "type": "String.String -> (arg1 -> arg2 -> arg3 -> v) -> TsJson.Codec.Codec arg1 -> TsJson.Codec.Codec arg2 -> TsJson.Codec.Codec arg3 -> TsJson.Codec.CustomCodec ((arg1 -> arg2 -> arg3 -> TsJson.Encode.UnionEncodeValue) -> partial) v -> TsJson.Codec.CustomCodec partial v"
+            },
+            {
+                "name": "positionalVariant4",
+                "comment": " Define a variant with 3 parameters for a custom type.\n",
+                "type": "String.String -> (arg1 -> arg2 -> arg3 -> arg4 -> v) -> TsJson.Codec.Codec arg1 -> TsJson.Codec.Codec arg2 -> TsJson.Codec.Codec arg3 -> TsJson.Codec.Codec arg4 -> TsJson.Codec.CustomCodec ((arg1 -> arg2 -> arg3 -> arg4 -> TsJson.Encode.UnionEncodeValue) -> partial) v -> TsJson.Codec.CustomCodec partial v"
+            },
+            {
+                "name": "positionalVariant5",
+                "comment": " Define a variant with 3 parameters for a custom type.\n",
+                "type": "String.String -> (arg1 -> arg2 -> arg3 -> arg4 -> arg5 -> v) -> TsJson.Codec.Codec arg1 -> TsJson.Codec.Codec arg2 -> TsJson.Codec.Codec arg3 -> TsJson.Codec.Codec arg4 -> TsJson.Codec.Codec arg5 -> TsJson.Codec.CustomCodec ((arg1 -> arg2 -> arg3 -> arg4 -> arg5 -> TsJson.Encode.UnionEncodeValue) -> partial) v -> TsJson.Codec.CustomCodec partial v"
+            },
+            {
+                "name": "positionalVariant6",
+                "comment": " Define a variant with 3 parameters for a custom type.\n",
+                "type": "String.String -> (arg1 -> arg2 -> arg3 -> arg4 -> arg5 -> arg6 -> v) -> TsJson.Codec.Codec arg1 -> TsJson.Codec.Codec arg2 -> TsJson.Codec.Codec arg3 -> TsJson.Codec.Codec arg4 -> TsJson.Codec.Codec arg5 -> TsJson.Codec.Codec arg6 -> TsJson.Codec.CustomCodec ((arg1 -> arg2 -> arg3 -> arg4 -> arg5 -> arg6 -> TsJson.Encode.UnionEncodeValue) -> partial) v -> TsJson.Codec.CustomCodec partial v"
+            },
+            {
+                "name": "positionalVariant7",
+                "comment": " Define a variant with 3 parameters for a custom type.\n",
+                "type": "String.String -> (arg1 -> arg2 -> arg3 -> arg4 -> arg5 -> arg6 -> arg7 -> v) -> TsJson.Codec.Codec arg1 -> TsJson.Codec.Codec arg2 -> TsJson.Codec.Codec arg3 -> TsJson.Codec.Codec arg4 -> TsJson.Codec.Codec arg5 -> TsJson.Codec.Codec arg6 -> TsJson.Codec.Codec arg7 -> TsJson.Codec.CustomCodec ((arg1 -> arg2 -> arg3 -> arg4 -> arg5 -> arg6 -> arg7 -> TsJson.Encode.UnionEncodeValue) -> partial) v -> TsJson.Codec.CustomCodec partial v"
+            },
+            {
+                "name": "positionalVariant8",
+                "comment": " Define a variant with 3 parameters for a custom type.\n",
+                "type": "String.String -> (arg1 -> arg2 -> arg3 -> arg4 -> arg5 -> arg6 -> arg7 -> arg8 -> v) -> TsJson.Codec.Codec arg1 -> TsJson.Codec.Codec arg2 -> TsJson.Codec.Codec arg3 -> TsJson.Codec.Codec arg4 -> TsJson.Codec.Codec arg5 -> TsJson.Codec.Codec arg6 -> TsJson.Codec.Codec arg7 -> TsJson.Codec.Codec arg8 -> TsJson.Codec.CustomCodec ((arg1 -> arg2 -> arg3 -> arg4 -> arg5 -> arg6 -> arg7 -> arg8 -> TsJson.Encode.UnionEncodeValue) -> partial) v -> TsJson.Codec.CustomCodec partial v"
+            },
+            {
+                "name": "recursive",
+                "comment": " Create a `Codec` for a recursive data structure.\nThe argument to the function you need to pass is the fully formed `Codec`.\n",
+                "type": "(TsJson.Codec.Codec a -> TsJson.Codec.Codec a) -> TsJson.Codec.Codec a"
+            },
+            {
+                "name": "result",
+                "comment": " `Codec` for `Result` values.\n",
+                "type": "TsJson.Codec.Codec error -> TsJson.Codec.Codec value -> TsJson.Codec.Codec (Result.Result error value)"
+            },
+            {
+                "name": "set",
+                "comment": " `Codec` between a JSON array and an Elm `Set`.\n",
+                "type": "TsJson.Codec.Codec comparable -> TsJson.Codec.Codec (Set.Set comparable)"
+            },
+            {
+                "name": "string",
+                "comment": " `Codec` between a JSON string and an Elm `String`\n",
+                "type": "TsJson.Codec.Codec String.String"
+            },
+            {
+                "name": "stringLiteral",
+                "comment": " ",
+                "type": "value -> String.String -> TsJson.Codec.Codec value"
+            },
+            {
+                "name": "stringUnion",
+                "comment": " Simple one-to-one mapping of Elm values to TypeScript strings (no arguments, just like values like an enumeration).\n\n    import TsJson.Codec exposing (Codec)\n\n    type DarkMode\n        = Dark\n        | Light\n\n    darkModeCodec : Codec DarkMode\n    darkModeCodec =\n        Codec.stringUnion [ ( \"dark\", Dark ), ( \"light\", Light ) ]\n\nThe `TsType` for `darkModeCodec` is the following union:\n\n```typescript\n\"dark\" | \"light\"\n```\n\n",
+                "type": "List.List ( String.String, value ) -> TsJson.Codec.Codec value"
+            },
+            {
+                "name": "succeed",
+                "comment": " Create a `Codec` that produces null as JSON and always decodes as the same value.\n",
+                "type": "a -> TsJson.Codec.Codec a"
+            },
+            {
+                "name": "triple",
+                "comment": " `Codec` between a JSON array of length 3 and an Elm triple.\n",
+                "type": "TsJson.Codec.Codec a -> TsJson.Codec.Codec b -> TsJson.Codec.Codec c -> TsJson.Codec.Codec ( a, b, c )"
+            },
+            {
+                "name": "tsType",
+                "comment": " ",
+                "type": "TsJson.Codec.Codec value -> Internal.TsJsonType.TsType"
+            },
+            {
+                "name": "tuple",
+                "comment": " `Codec` between a JSON array of length 2 and an Elm `Tuple`.\n",
+                "type": "TsJson.Codec.Codec a -> TsJson.Codec.Codec b -> TsJson.Codec.Codec ( a, b )"
+            },
+            {
+                "name": "value",
+                "comment": " Create a `Codec` that doesn't transform the JSON value, just brings it to and from Elm as a `Value`.\n",
+                "type": "TsJson.Codec.Codec Json.Decode.Value"
+            },
+            {
+                "name": "variant0",
+                "comment": " Define a variant with 0 parameters for a custom type.\n",
+                "type": "String.String -> v -> TsJson.Codec.CustomCodec (TsJson.Encode.UnionEncodeValue -> c) v -> TsJson.Codec.CustomCodec c v"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "TsJson.Decode",
+        "comment": " The `TsJson.Decode` module is what you use for\n\n  - Flags\n  - ToElm Ports\n\nBy building a Decoder with this API, you're also describing the source of truth for how to take a TypeScript type and\nturn it into an Elm type. Note that there is complete type information here just by using this API (no magic parsing or\nstatic analysis needed).\n\nLet's take this example:\n\n    import Json.Decode\n\n\n    int\n        |> map String.fromInt\n        |> runExample \"1000\"\n    --> { decoded = Ok \"1000\"\n    --> , tsType = \"number\"\n    --> }\n\nIn this example, there are no differences from how we would write this with the `elm/json` API. Let's consider the type\ninformation from two different sides: the Elm types (which would be used in an Elm type annotation), and the TypeScript\ntypes (which show up in the TypeScript Declaration file that `elm-ts-interop` generates to gives you nice autocompletion and type information).\n\n\n### The Elm type information\n\n  - The initial `Decoder`, `TsJson.Decode.int`, has the Elm type `TsJson.Decode.Decoder Int`. So Elm knows\n    this `Decoder` will either fail, or give us an `Int`.\n  - When we call `TsJson.Decode.map String.fromInt`, the Elm type information changes. We're mapping with\n    `String.fromInt : Int -> String`. So that means we'll now decode into an Elm `String` instead of an `Int`. And that's\n    the final Elm type we'll end up with.\n\n\n### The TypeScript type information\n\n  - `TsJson.Decode.int` expects a number from TypeScript.\n  - `TsJson.Decode.map` applies a function to the decoded Elm value, but it doesn't change what we expect from TypeScript.\n    So we still expect a `number` from TypeScript. And we're done, so that's the final type we expect to receive from TypeScript.\n\n\n### Summary\n\nWe can apply more Decoders, like `TsJson.Decode.list`, for example, to expect an array of that type from TypeScript,\nand a `List` of that Elm type. From there, it's just the same concept. **All the type information about the type that Elm will decode into, and the type that Elm expects from TypeScript, is built up as you build a Decoder**.\n\nThat means that the source of truth is the Decoder itself. Note that the Decoder doesn't specify just the Elm format, or just the TypeScript type as the source\nof truth. It specifies **how to turn a TypeScript type into an Elm type as the source of truth**. That means that\n\n  - You can change the decoder to change either type independently\n  - The two sides (Elm and TS) will always be in sync (as long as you are re-running the `elm-ts-interop` CLI at the appropriate time)\n\n\n## Decoders\n\n@docs Decoder\n\n@docs succeed, fail\n\n\n## Built-Ins\n\n@docs bool, float, int, string\n\n\n## Objects\n\n@docs field, at\n\n\n## Composite Types\n\n@docs list, array, nullable, oneOf, dict, keyValuePairs, oneOrMore, optionalField, optionalNullableField\n\n@docs index, tuple, triple\n\n\n## Arbitrary-Length Tuples\n\n[TypeScript allows you to define a tuple](https://www.typescriptlang.org/docs/handbook/basic-types.html#tuple) that can\nhave any length of items with specific types.\n\nTypeScript tuples are much like an Elm tuples, except two key differences:\n\n  - Elm tuples can only have 2 or 3 items, while TypeScript tuples can have any length\n  - Elm tuples are a distinct type, while TypeScript tuples are just arrays with a statically known length\n\n@docs TupleBuilder, startTuple, buildTuple, element\n\n\n## Transformations\n\n@docs map\n\n\n## Combining\n\n@docs map2, andMap\n\n\n## TypeScript Literals\n\n@docs literal, null\n\n@docs stringLiteral, stringUnion\n\n\n## Discriminated Unions\n\n@docs discriminatedUnion\n\n\n## Continuation\n\n@docs andThen, AndThenContinuation, andThenInit, andThenDecoder\n\n\n## elm/json Decoder Escape Hatches\n\nIf you have an existing decoder, you can use it with an [`unknown` type](https://mariusschulz.com/blog/the-unknown-type-in-typescript) in TypeScript.\n\nYou can also decode an arbitrary JSON value as with `elm/json`, and then use `elm/json` to process it further.\n\n@docs value, unknownAndThen, maybe\n\n\n## Using Decoders\n\nUsually you don't need to use these functions directly, but instead the code generated by the `elm-ts-interop` command line\ntool will use these for you under the hood. These can be helpful for debugging, or for building new tools on top of this package.\n\n@docs decoder, tsType\n\n\n## mapN for Combining More Than Two Items\n\n@docs map3, map4, map5, map6, map7, map8\n\n\n## Internals\n\n@docs runExample\n\n",
+        "unions": [
+            {
+                "name": "AndThenContinuation",
+                "comment": " This type allows you to combine all the possible Decoders you could run in an [`andThen`](#andThen) continuation.\n\nThis API allows you to define all possible Decoders you might use up front, so that all possible TypeScript types\nthe continuation could decode are known _after building up the decoder instead of after running the decoder._\n\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            },
+            {
+                "name": "TupleBuilder",
+                "comment": " ",
+                "args": [
+                    "value"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Decoder",
+                "comment": " Just like a `Decoder` in `elm/json`, except these `Decoder`s track the TypeScript types that they can successfully handle.\n",
+                "args": [
+                    "value"
+                ],
+                "type": "TsJson.Internal.Decode.Decoder value"
+            }
+        ],
+        "values": [
+            {
+                "name": "andMap",
+                "comment": " This is useful for building up a decoder with multiple fields in a pipeline style.\nSee <https://github.com/elm-community/json-extra/blob/2.0.0/docs/andMap.md>.\n\n    import Json.Decode\n\n\n    type alias Country = { name : String, populationInMillions : Int }\n\n    succeed Country\n        |> andMap (field \"name\" string)\n        |> andMap (field \"population\" (int |> map (\\totalPopulation -> floor (toFloat totalPopulation / 1000000.0))))\n        |> runExample \"\"\" {\"name\": \"Norway\", \"population\":5328000} \"\"\"\n    --> { decoded = Ok { name = \"Norway\", populationInMillions = 5 }\n    --> , tsType = \"{ name : string; population : number }\"\n    --> }\n\n",
+                "type": "TsJson.Decode.Decoder a -> TsJson.Decode.Decoder (a -> b) -> TsJson.Decode.Decoder b"
+            },
+            {
+                "name": "andThen",
+                "comment": "\n\n    import Json.Decode\n\n\n    example : AndThenContinuation (Int -> Decoder String)\n    example =\n        andThenInit\n            (\\v1Decoder v2PlusDecoder version ->\n                case version of\n                    1 -> v1Decoder\n                    _ -> v2PlusDecoder\n            )\n            |> andThenDecoder (field \"payload\" string)\n            |> andThenDecoder (at [ \"data\", \"payload\" ] string)\n\n\n    field \"version\" int |> andThen example\n        |> runExample \"\"\"{\"version\": 1, \"payload\": \"Hello\"}\"\"\"\n    --> { decoded = Ok \"Hello\"\n    --> , tsType = \"({ version : number } & ({ data : { payload : string } } | { payload : string }))\"\n    --> }\n\n",
+                "type": "TsJson.Decode.AndThenContinuation (value -> TsJson.Decode.Decoder decodesTo) -> TsJson.Decode.Decoder value -> TsJson.Decode.Decoder decodesTo"
+            },
+            {
+                "name": "andThenDecoder",
+                "comment": " ",
+                "type": "TsJson.Decode.Decoder value -> TsJson.Decode.AndThenContinuation (TsJson.Decode.Decoder value -> final) -> TsJson.Decode.AndThenContinuation final"
+            },
+            {
+                "name": "andThenInit",
+                "comment": " ",
+                "type": "a -> TsJson.Decode.AndThenContinuation a"
+            },
+            {
+                "name": "array",
+                "comment": " Exactly the same as the [`list`](#list) `Decoder` except that it wraps the decoded `List` into an Elm `Array`.\n",
+                "type": "TsJson.Decode.Decoder value -> TsJson.Decode.Decoder (Array.Array value)"
+            },
+            {
+                "name": "at",
+                "comment": "\n\n    import Json.Decode\n    import Json.Encode\n\n    type Mode\n        = DarkMode\n        | LightMode\n\n    modeDecoder : Decoder Mode\n    modeDecoder =\n        oneOf [ literal DarkMode <| Json.Encode.string \"dark\", literal LightMode <| Json.Encode.string \"light\" ]\n            |> (at [ \"options\", \"mode\" ])\n\n    modeDecoder\n        |> runExample \"\"\"{\n                           \"options\": { \"mode\": \"dark\" },\n                           \"version\": \"1.2.3\"\n                         }\"\"\"\n    --> { decoded = Ok DarkMode\n    --> , tsType = \"\"\"{ options : { mode : \"dark\" | \"light\" } }\"\"\"\n    --> }\n\n",
+                "type": "List.List String.String -> TsJson.Decode.Decoder value -> TsJson.Decode.Decoder value"
+            },
+            {
+                "name": "bool",
+                "comment": "\n\n    import Json.Decode\n\n\n    bool\n        |> runExample \"true\"\n    --> { decoded = Ok True\n    --> , tsType = \"boolean\"\n    --> }\n\n",
+                "type": "TsJson.Decode.Decoder Basics.Bool"
+            },
+            {
+                "name": "buildTuple",
+                "comment": " ",
+                "type": "TsJson.Decode.TupleBuilder a -> TsJson.Decode.Decoder a"
+            },
+            {
+                "name": "decoder",
+                "comment": " Get a regular JSON Decoder that you can run using the `elm/json` API.\n",
+                "type": "TsJson.Decode.Decoder value -> Json.Decode.Decoder value"
+            },
+            {
+                "name": "dict",
+                "comment": "\n\n    import Json.Decode\n    import Json.Encode\n    import Dict exposing (Dict)\n\n\n    dict int\n        |> runExample \"\"\"{\"alice\":42,\"bob\":99}\"\"\"\n    --> { decoded = Ok (Dict.fromList [ ( \"alice\", 42 ), ( \"bob\", 99 ) ])\n    --> , tsType = \"{ [key: string]: number }\"\n    --> }\n\n",
+                "type": "TsJson.Decode.Decoder value -> TsJson.Decode.Decoder (Dict.Dict String.String value)"
+            },
+            {
+                "name": "discriminatedUnion",
+                "comment": " Decode a TypeScript [Discriminated Union](https://www.typescriptlang.org/docs/handbook/2/narrowing.html#discriminated-unions)\nwith a String discriminant value. For example, if you wanted to decode something with the following TypeScript type:\n\n```typescript\n{ id : number; role : \"admin\" } | { role : \"guest\" }\n```\n\nYou could use this Decoder:\n\n    import TsJson.Decode as TsDecode\n\n    type User\n        = Admin { id : Int }\n        | Guest\n\n\n    TsDecode.discriminatedUnion \"role\"\n        [ ( \"admin\"\n          , TsDecode.succeed (\\id -> Admin { id = id })\n                |> TsDecode.andMap (TsDecode.field \"id\" TsDecode.int)\n          )\n        , ( \"guest\", TsDecode.succeed Guest )\n        ]\n        |> TsDecode.runExample \"\"\"{\"role\": \"admin\", \"id\": 123}\"\"\"\n    --> { decoded = Ok (Admin { id = 123 })\n    --> , tsType = \"\"\"{ id : number; role : \"admin\" } | { role : \"guest\" }\"\"\"\n    --> }\n\n",
+                "type": "String.String -> List.List ( String.String, TsJson.Decode.Decoder decoded ) -> TsJson.Decode.Decoder decoded"
+            },
+            {
+                "name": "element",
+                "comment": "\n\n    import Json.Decode\n\n\n    startTuple (\\a b c d -> { a = a, b = b, c = c, d = d })\n        |> element string\n        |> element int\n        |> element bool\n        |> element string\n        |> buildTuple\n        |> runExample \"\"\"[\"abc\", 123, true, \"xyz\"]\"\"\"\n    --> { decoded = Ok { a = \"abc\", b = 123, c = True, d = \"xyz\" }\n    --> , tsType = \"[ string, number, boolean, string ]\"\n    --> }\n\n",
+                "type": "TsJson.Decode.Decoder a -> TsJson.Decode.TupleBuilder (a -> b) -> TsJson.Decode.TupleBuilder b"
+            },
+            {
+                "name": "fail",
+                "comment": "\n\n    import Json.Decode\n\n\n    fail \"Failure message\"\n        |> runExample \"123.45\"\n    --> { decoded = Err \"Problem with the given value:\\n\\n123.45\\n\\nFailure message\"\n    --> , tsType = \"JsonValue\"\n    --> }\n\n",
+                "type": "String.String -> TsJson.Decode.Decoder value"
+            },
+            {
+                "name": "field",
+                "comment": "\n\n    import Json.Decode\n\n\n    field \"first\" string\n        |> runExample \"\"\"{\"first\":\"James\",\"middle\":\"Tiberius\",\"last\":\"Kirk\"}\"\"\"\n    --> { decoded = Ok \"James\"\n    --> , tsType = \"{ first : string }\"\n    --> }\n\n",
+                "type": "String.String -> TsJson.Decode.Decoder value -> TsJson.Decode.Decoder value"
+            },
+            {
+                "name": "float",
+                "comment": "\n\n    import Json.Decode\n\n\n    float\n        |> runExample \"1.23\"\n    --> { decoded = Ok 1.23\n    --> , tsType = \"number\"\n    --> }\n\n",
+                "type": "TsJson.Decode.Decoder Basics.Float"
+            },
+            {
+                "name": "index",
+                "comment": "\n\n    import Json.Decode\n\n\n    index 1 int\n        |> runExample \"[0,100,200]\"\n    --> { decoded = Ok 100\n    --> , tsType = \"[JsonValue,number,...JsonValue[]]\"\n    --> }\n\n    map2 Tuple.pair\n        ( index 1 int )\n        ( index 3 string )\n        |> runExample \"\"\"[0,100,\"a\",\"b\"]\"\"\"\n    --> { decoded = Ok ( 100, \"b\" )\n    --> , tsType = \"[JsonValue,number,JsonValue,string,...JsonValue[]]\"\n    --> }\n\n",
+                "type": "Basics.Int -> TsJson.Decode.Decoder value -> TsJson.Decode.Decoder value"
+            },
+            {
+                "name": "int",
+                "comment": "\n\n    import Json.Decode\n\n\n    int\n        |> runExample \"1000\"\n    --> { decoded = Ok 1000\n    --> , tsType = \"number\"\n    --> }\n\nFloating point values will cause a decoding error.\n\n    int\n        |> runExample \"1.23\"\n    --> { decoded = Err \"Problem with the given value:\\n\\n1.23\\n\\nExpecting an INT\"\n    --> , tsType = \"number\"\n    --> }\n\n",
+                "type": "TsJson.Decode.Decoder Basics.Int"
+            },
+            {
+                "name": "keyValuePairs",
+                "comment": "\n\n    import Json.Decode\n\n\n    keyValuePairs int\n        |> runExample \"\"\"{ \"alice\": 42, \"bob\": 99 }\"\"\"\n    --> { decoded = Ok [ ( \"alice\", 42 ), ( \"bob\", 99 ) ]\n    --> , tsType = \"{ [key: string]: number }\"\n    --> }\n\n",
+                "type": "TsJson.Decode.Decoder value -> TsJson.Decode.Decoder (List.List ( String.String, value ))"
+            },
+            {
+                "name": "list",
+                "comment": "\n\n    import Json.Decode\n\n\n    list int\n        |> runExample \"[1,2,3]\"\n    --> { decoded = Ok [ 1, 2, 3 ]\n    --> , tsType = \"number[]\"\n    --> }\n\n",
+                "type": "TsJson.Decode.Decoder value -> TsJson.Decode.Decoder (List.List value)"
+            },
+            {
+                "name": "literal",
+                "comment": " TypeScript has support for literals.\n\n    import Json.Decode\n    import Json.Encode as JE\n\n\n    literal () (JE.string \"unit\")\n        |> runExample \"\"\" \"unit\" \"\"\"\n    --> { decoded = Ok ()\n    --> , tsType = \"\\\"unit\\\"\"\n    --> }\n\n",
+                "type": "value -> Json.Encode.Value -> TsJson.Decode.Decoder value"
+            },
+            {
+                "name": "map",
+                "comment": "\n\n    import Json.Decode\n\n\n    int\n        |> map String.fromInt\n        |> runExample \"1000\"\n    --> { decoded = Ok \"1000\"\n    --> , tsType = \"number\"\n    --> }\n\n",
+                "type": "(value -> mapped) -> TsJson.Decode.Decoder value -> TsJson.Decode.Decoder mapped"
+            },
+            {
+                "name": "map2",
+                "comment": " You can use [`map2`](#map2), [`map3`](#map3), etc. to build up decoders that have somewhat clearer error messages if something goes wrong.\nSome people prefer the pipeline style using [`andMap`](#andMap) as it has fewer parentheses and you don't have to change the number when\nyou add a new field. It's a matter of personal preference.\n\n    import Json.Decode\n\n\n    type alias Country = { name : String, populationInMillions : Int }\n\n    map2 Country\n        (field \"name\" string)\n        (field \"population\" (int |> map (\\totalPopulation -> floor (toFloat totalPopulation / 1000000.0))))\n        |> runExample \"\"\" {\"name\": \"Norway\", \"population\":5328000} \"\"\"\n    --> { decoded = Ok { name = \"Norway\", populationInMillions = 5 }\n    --> , tsType = \"{ name : string; population : number }\"\n    --> }\n\n",
+                "type": "(value1 -> value2 -> mapped) -> TsJson.Decode.Decoder value1 -> TsJson.Decode.Decoder value2 -> TsJson.Decode.Decoder mapped"
+            },
+            {
+                "name": "map3",
+                "comment": " ",
+                "type": "(value1 -> value2 -> value3 -> mapped) -> TsJson.Decode.Decoder value1 -> TsJson.Decode.Decoder value2 -> TsJson.Decode.Decoder value3 -> TsJson.Decode.Decoder mapped"
+            },
+            {
+                "name": "map4",
+                "comment": " ",
+                "type": "(value1 -> value2 -> value3 -> value4 -> mapped) -> TsJson.Decode.Decoder value1 -> TsJson.Decode.Decoder value2 -> TsJson.Decode.Decoder value3 -> TsJson.Decode.Decoder value4 -> TsJson.Decode.Decoder mapped"
+            },
+            {
+                "name": "map5",
+                "comment": " ",
+                "type": "(value1 -> value2 -> value3 -> value4 -> value5 -> mapped) -> TsJson.Decode.Decoder value1 -> TsJson.Decode.Decoder value2 -> TsJson.Decode.Decoder value3 -> TsJson.Decode.Decoder value4 -> TsJson.Decode.Decoder value5 -> TsJson.Decode.Decoder mapped"
+            },
+            {
+                "name": "map6",
+                "comment": " ",
+                "type": "(value1 -> value2 -> value3 -> value4 -> value5 -> value6 -> mapped) -> TsJson.Decode.Decoder value1 -> TsJson.Decode.Decoder value2 -> TsJson.Decode.Decoder value3 -> TsJson.Decode.Decoder value4 -> TsJson.Decode.Decoder value5 -> TsJson.Decode.Decoder value6 -> TsJson.Decode.Decoder mapped"
+            },
+            {
+                "name": "map7",
+                "comment": " ",
+                "type": "(value1 -> value2 -> value3 -> value4 -> value5 -> value6 -> value7 -> mapped) -> TsJson.Decode.Decoder value1 -> TsJson.Decode.Decoder value2 -> TsJson.Decode.Decoder value3 -> TsJson.Decode.Decoder value4 -> TsJson.Decode.Decoder value5 -> TsJson.Decode.Decoder value6 -> TsJson.Decode.Decoder value7 -> TsJson.Decode.Decoder mapped"
+            },
+            {
+                "name": "map8",
+                "comment": " ",
+                "type": "(value1 -> value2 -> value3 -> value4 -> value5 -> value6 -> value7 -> value8 -> mapped) -> TsJson.Decode.Decoder value1 -> TsJson.Decode.Decoder value2 -> TsJson.Decode.Decoder value3 -> TsJson.Decode.Decoder value4 -> TsJson.Decode.Decoder value5 -> TsJson.Decode.Decoder value6 -> TsJson.Decode.Decoder value7 -> TsJson.Decode.Decoder value8 -> TsJson.Decode.Decoder mapped"
+            },
+            {
+                "name": "maybe",
+                "comment": " This function is somewhat risky in that it could cover up a failing Decoder by turning it into a `Nothing`. In\nsome cases, this may be what you're looking for, but if you're trying to deal with optional fields, it's safer to use\n[`optionalField`](#optionalField) and it will give you better type information. See the `thisShouldBeABoolean` example below. In that example,\nwe're decoding a JSON value which should have been a `boolean` but instead is a `string`. We'd like the `Decoder` to fail\nto let us know it wasn't able to process the value correctly, but instead it covers up the failure and decodes to `Nothing`.\n\nSo use this `Decoder` with care!\n\n    import Json.Decode\n\n\n    json : String\n    json = \"\"\"{ \"name\": \"tom\", \"age\": 42, \"thisShouldBeABoolean\": \"true\" }\"\"\"\n\n\n    -- WARNING: uh oh, this may not be the desired behavior!\n    maybe (field \"thisShouldBeABoolean\" bool)\n        |> runExample json\n    --> { decoded = Ok Nothing\n    --> , tsType = \"{ thisShouldBeABoolean : boolean } | JsonValue\"\n    --> }\n\n    maybe (field \"height\" float)\n        |> runExample json\n    --> { decoded = Ok Nothing\n    --> , tsType = \"{ height : number } | JsonValue\"\n    --> }\n\n    field \"height\" (maybe float)\n        |> runExample json\n    --> { decoded = Err \"Problem with the given value:\\n\\n{\\n        \\\"name\\\": \\\"tom\\\",\\n        \\\"age\\\": 42,\\n        \\\"thisShouldBeABoolean\\\": \\\"true\\\"\\n    }\\n\\nExpecting an OBJECT with a field named `height`\"\n    --> , tsType = \"{ height : number | JsonValue }\"\n    --> }\n\n",
+                "type": "TsJson.Decode.Decoder value -> TsJson.Decode.Decoder (Maybe.Maybe value)"
+            },
+            {
+                "name": "null",
+                "comment": "\n\n    import Json.Decode\n\n\n    null False\n        |> runExample \"null\"\n    --> { decoded = Ok False\n    --> , tsType = \"null\"\n    --> }\n\n",
+                "type": "value -> TsJson.Decode.Decoder value"
+            },
+            {
+                "name": "nullable",
+                "comment": "\n\n    import Json.Decode\n\n\n    nullable int |> runExample \"13\"\n    --> { decoded = Ok (Just 13)\n    --> , tsType = \"number | null\"\n    --> }\n\n    nullable int |> runExample \"null\"\n    --> { decoded = Ok Nothing\n    --> , tsType = \"number | null\"\n    --> }\n\n    nullable int |> runExample \"true\"\n    --> { decoded = Err \"Json.Decode.oneOf failed in the following 2 ways:\\n\\n\\n\\n(1) Problem with the given value:\\n    \\n    true\\n    \\n    Expecting null\\n\\n\\n\\n(2) Problem with the given value:\\n    \\n    true\\n    \\n    Expecting an INT\"\n    --> , tsType = \"number | null\"\n    --> }\n\n",
+                "type": "TsJson.Decode.Decoder value -> TsJson.Decode.Decoder (Maybe.Maybe value)"
+            },
+            {
+                "name": "oneOf",
+                "comment": " You can express quite a bit with `oneOf`! The resulting TypeScript types will be a Union of all the TypeScript types\nfor each [`Decoder`](#Decoder) in the List.\n\n    import Json.Decode\n    import Json.Encode\n\n    list ( oneOf [ int |> map toFloat, float ] )\n        |> runExample \"[1, 2, 3.14159, 4]\"\n    --> { decoded = Ok [1.0, 2.0, 3.14159, 4.0]\n    --> , tsType = \"\"\"(number | number)[]\"\"\"\n    --> }\n\n",
+                "type": "List.List (TsJson.Decode.Decoder value) -> TsJson.Decode.Decoder value"
+            },
+            {
+                "name": "oneOrMore",
+                "comment": "\n\n    import Json.Decode\n    import Json.Encode\n\n\n    oneOrMore (::) int\n        |> runExample \"[12345]\"\n    --> { decoded = Ok [ 12345 ]\n    --> , tsType = \"\"\"[ number, ...(number)[] ]\"\"\"\n    --> }\n\n    type TestResult\n        = Pass\n        | Fail String\n\n    testCaseDecoder : Decoder TestResult\n    testCaseDecoder =\n        oneOf [\n            field \"tag\" (literal Pass (Json.Encode.string \"pass\"))\n          , map2 (\\() message -> Fail message)\n              ( field \"tag\" (literal () (Json.Encode.string \"fail\")) )\n              ( field \"message\" string )\n        ]\n\n    oneOrMore (::) testCaseDecoder\n        |> runExample \"\"\"[ { \"tag\": \"pass\" } ]\"\"\"\n    --> { decoded = Ok [ Pass ]\n    --> , tsType = \"\"\"[ { tag : \"pass\" } | { message : string; tag : \"fail\" }, ...({ tag : \"pass\" } | { message : string; tag : \"fail\" })[] ]\"\"\"\n    --> }\n\n",
+                "type": "(a -> List.List a -> value) -> TsJson.Decode.Decoder a -> TsJson.Decode.Decoder value"
+            },
+            {
+                "name": "optionalField",
+                "comment": " This is a safer (and more explicit) way to deal with optional fields compared to [`maybe`](#maybe). It may seem that wrapping\na [`field`](#field) `Decoder` in a [`maybe`](#maybe) `Decoder` achieves the same behavior, but the key difference is that the `maybe` version\nwill convert a failing decoder on a value that is present into `Nothing`, as if it wasn't present. Often what you want\nis for the malformed version to fail, which is exactly what this function will do.\n\n    import Json.Decode\n\n\n    json : String\n    json = \"\"\"{ \"name\": \"tom\", \"age\": null }\"\"\"\n\n    optionalField \"height\" float\n        |> runExample json\n    --> { decoded = Ok Nothing\n    --> , tsType = \"{ height? : number }\"\n    --> }\n\n    optionalField \"age\" int\n        |> runExample json\n    --> { decoded = Err \"Problem with the value at json.age:\\n\\n    null\\n\\nExpecting an INT\"\n    --> , tsType = \"{ age? : number }\"\n    --> }\n\n",
+                "type": "String.String -> TsJson.Decode.Decoder value -> TsJson.Decode.Decoder (Maybe.Maybe value)"
+            },
+            {
+                "name": "optionalNullableField",
+                "comment": "\n\n    import Json.Decode\n\n\n    json : String\n    json = \"\"\"{ \"name\": \"tom\", \"age\": null }\"\"\"\n\n    optionalNullableField \"height\" float\n        |> runExample json\n    --> { decoded = Ok Nothing\n    --> , tsType = \"{ height? : number | null }\"\n    --> }\n\n    optionalNullableField \"age\" int\n        |> runExample json\n    --> { decoded = Ok Nothing\n    --> , tsType = \"{ age? : number | null }\"\n    --> }\n\n",
+                "type": "String.String -> TsJson.Decode.Decoder value -> TsJson.Decode.Decoder (Maybe.Maybe value)"
+            },
+            {
+                "name": "runExample",
+                "comment": " ",
+                "type": "String.String -> TsJson.Decode.Decoder value -> { decoded : Result.Result String.String value, tsType : String.String }"
+            },
+            {
+                "name": "startTuple",
+                "comment": " ",
+                "type": "a -> TsJson.Decode.TupleBuilder a"
+            },
+            {
+                "name": "string",
+                "comment": "\n\n    import Json.Decode\n\n\n    string\n        |> runExample \"\"\" \"Hello!\" \"\"\"\n    --> { decoded = Ok \"Hello!\"\n    --> , tsType = \"string\"\n    --> }\n\n",
+                "type": "TsJson.Decode.Decoder String.String"
+            },
+            {
+                "name": "stringLiteral",
+                "comment": " A convenience function for building `literal (Json.Encode.string \"my-literal-string\")`.\n\n    import TsJson.Decode as TsDecode\n\n\n    TsDecode.stringLiteral () \"unit\"\n        |> TsDecode.runExample \"\"\" \"unit\" \"\"\"\n    --> { decoded = Ok ()\n    --> , tsType = \"\\\"unit\\\"\"\n    --> }\n\n",
+                "type": "value -> String.String -> TsJson.Decode.Decoder value"
+            },
+            {
+                "name": "stringUnion",
+                "comment": " A convenience function for building a union out of string literals.\n\n    import TsJson.Decode as TsDecode\n\n    type Severity\n        = Info\n        | Warning\n        | Error\n\n    TsDecode.stringUnion\n        [ ( \"info\", Info )\n        , ( \"warning\", Warning )\n        , ( \"error\", Error )\n        ]\n        |> TsDecode.runExample \"\"\" \"info\" \"\"\"\n    --> { decoded = Ok Info\n    --> , tsType = \"\\\"info\\\" | \\\"warning\\\" | \\\"error\\\"\"\n    --> }\n\n",
+                "type": "List.List ( String.String, value ) -> TsJson.Decode.Decoder value"
+            },
+            {
+                "name": "succeed",
+                "comment": "\n\n    import Json.Decode\n\n\n    succeed \"abcdefg\"\n        |> runExample \"12345\"\n    --> { decoded = Ok \"abcdefg\"\n    --> , tsType = \"JsonValue\"\n    --> }\n\n",
+                "type": "value -> TsJson.Decode.Decoder value"
+            },
+            {
+                "name": "triple",
+                "comment": "\n\n    import Json.Decode\n\n\n    triple string int bool\n        |> runExample \"\"\"[\"abc\", 123, true]\"\"\"\n    --> { decoded = Ok ( \"abc\", 123, True )\n    --> , tsType = \"[ string, number, boolean ]\"\n    --> }\n\n",
+                "type": "TsJson.Decode.Decoder value1 -> TsJson.Decode.Decoder value2 -> TsJson.Decode.Decoder value3 -> TsJson.Decode.Decoder ( value1, value2, value3 )"
+            },
+            {
+                "name": "tsType",
+                "comment": " ",
+                "type": "TsJson.Decode.Decoder value -> Internal.TsJsonType.TsType"
+            },
+            {
+                "name": "tuple",
+                "comment": "\n\n    import Json.Decode\n\n\n    tuple string int\n        |> runExample \"\"\"[\"abc\", 123]\"\"\"\n    --> { decoded = Ok ( \"abc\", 123 )\n    --> , tsType = \"[ string, number ]\"\n    --> }\n\n",
+                "type": "TsJson.Decode.Decoder value1 -> TsJson.Decode.Decoder value2 -> TsJson.Decode.Decoder ( value1, value2 )"
+            },
+            {
+                "name": "unknownAndThen",
+                "comment": " If you need to run a regular JSON Decoder in an `andThen`, you can use this function, but it will yield a Decoder\nwith an unknown TypeScript type.\n\n    import Json.Decode as JD\n\n\n    field \"version\" int |> unknownAndThen (\\versionNumber ->\n        if versionNumber == 1 then\n          JD.field \"payload\" JD.string\n        else\n          JD.at [ \"data\", \"payload\" ] JD.string\n    )\n        |> runExample \"\"\"{\"version\": 1, \"payload\": \"Hello\"}\"\"\"\n    --> { decoded = Ok \"Hello\"\n    --> , tsType = \"JsonValue\"\n    --> }\n\n",
+                "type": "(a -> Json.Decode.Decoder b) -> TsJson.Decode.Decoder a -> TsJson.Decode.Decoder b"
+            },
+            {
+                "name": "value",
+                "comment": " Gives you an escape hatch to decode to a plain `elm/json` `Json.Decode.Value`. This has the TypeScript type `unknown`.\nAvoid using this when possible.\n\n    import Json.Decode\n\n\n    value\n        |> runExample \"Hello\"\n    --> { decoded = (Json.Decode.decodeString Json.Decode.value \"Hello\" |> Result.mapError Json.Decode.errorToString)\n    --> , tsType = \"JsonValue\"\n    --> }\n\n",
+                "type": "TsJson.Decode.Decoder Json.Decode.Value"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "TsJson.Decode.Pipeline",
+        "comment": " Use the `(|>)` operator to build JSON decoders.\n\nThis is a typed fork of [NoRedInk/elm-json-decode-pipeline](https://package.elm-lang.org/packages/NoRedInk/elm-json-decode-pipeline/latest). Thanks to NoRedInk for the original API!\n\n\n## Decoding fields\n\n@docs required, requiredAt, optional, optionalAt, hardcoded, custom\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "custom",
+                "comment": " Run the given decoder and feed its result into the pipeline at this point.\n\nConsider this example.\n\n    import TsJson.Decode Decode exposing (Decoder, at, int, string)\n    import TsJson.Decode.Pipeline exposing (custom, required)\n\n    type alias User =\n        { id : Int\n        , name : String\n        , email : String\n        }\n\n    userDecoder : Decoder User\n    userDecoder =\n        Decode.succeed User\n            |> required \"id\" int\n            |> custom (at [ \"profile\", \"name\" ] string)\n            |> required \"email\" string\n\n    result : Result String User\n    result =\n        Decode.decodeString\n            userDecoder\n            \"\"\"\n          {\n            \"id\": 123,\n            \"email\": \"sam@example.com\",\n            \"profile\": {\"name\": \"Sam\"}\n          }\n        \"\"\"\n\n    -- Ok { id = 123, name = \"Sam\", email = \"sam@example.com\" }\n\n",
+                "type": "TsJson.Decode.Decoder a -> TsJson.Decode.Decoder (a -> b) -> TsJson.Decode.Decoder b"
+            },
+            {
+                "name": "hardcoded",
+                "comment": " Rather than decoding anything, use a fixed value for the next step in the\npipeline. `harcoded` does not look at the JSON at all.\n\n    import TsJson.Decode Decode exposing (Decoder, int, string)\n    import TsJson.Decode.Pipeline exposing (required)\n\n    type alias User =\n        { id : Int\n        , email : String\n        , followers : Int\n        }\n\n    userDecoder : Decoder User\n    userDecoder =\n        Decode.succeed User\n            |> required \"id\" int\n            |> required \"email\" string\n            |> hardcoded 0\n\n    result : Result String User\n    result =\n        Decode.decodeString\n            userDecoder\n            \"\"\"\n          {\"id\": 123, \"email\": \"sam@example.com\"}\n        \"\"\"\n\n    -- Ok { id = 123, email = \"sam@example.com\", followers = 0 }\n\n",
+                "type": "a -> TsJson.Decode.Decoder (a -> b) -> TsJson.Decode.Decoder b"
+            },
+            {
+                "name": "optional",
+                "comment": " Decode a field that may be missing or have a null value. If the field is\nmissing, then it decodes as the `fallback` value. If the field is present,\nthen `valDecoder` is used to decode its value. If `valDecoder` fails on a\n`null` value, then the `fallback` is used as if the field were missing\nentirely.\n\n    import TsJson.Decode Decode exposing (Decoder, int, null, oneOf, string)\n    import TsJson.Decode.Pipeline exposing (optional, required)\n\n    type alias User =\n        { id : Int\n        , name : String\n        , email : String\n        }\n\n    userDecoder : Decoder User\n    userDecoder =\n        Decode.succeed User\n            |> required \"id\" int\n            |> optional \"name\" string \"blah\"\n            |> required \"email\" string\n\n    result : Result String User\n    result =\n        Decode.decodeString\n            userDecoder\n            \"\"\"\n          {\"id\": 123, \"email\": \"sam@example.com\" }\n        \"\"\"\n\n    -- Ok { id = 123, name = \"blah\", email = \"sam@example.com\" }\n\nBecause `valDecoder` is given an opportunity to decode `null` values before\nresorting to the `fallback`, you can distinguish between missing and `null`\nvalues if you need to:\n\n    userDecoder2 =\n        Decode.succeed User\n            |> required \"id\" int\n            |> optional \"name\" (oneOf [ string, null \"NULL\" ]) \"MISSING\"\n            |> required \"email\" string\n\n",
+                "type": "String.String -> TsJson.Decode.Decoder a -> a -> TsJson.Decode.Decoder (a -> b) -> TsJson.Decode.Decoder b"
+            },
+            {
+                "name": "optionalAt",
+                "comment": " Decode an optional nested field.\n",
+                "type": "List.List String.String -> TsJson.Decode.Decoder a -> a -> TsJson.Decode.Decoder (a -> b) -> TsJson.Decode.Decoder b"
+            },
+            {
+                "name": "required",
+                "comment": " Decode a required field.\n\n    import TsJson.Decode Decode exposing (Decoder, int, string)\n    import TsJson.Decode.Pipeline exposing (required)\n\n    type alias User =\n        { id : Int\n        , name : String\n        , email : String\n        }\n\n    userDecoder : Decoder User\n    userDecoder =\n        Decode.succeed User\n            |> required \"id\" int\n            |> required \"name\" string\n            |> required \"email\" string\n\n    result : Result String User\n    result =\n        Decode.decodeString\n            userDecoder\n            \"\"\"\n          {\"id\": 123, \"email\": \"sam@example.com\", \"name\": \"Sam\"}\n        \"\"\"\n\n    -- Ok { id = 123, name = \"Sam\", email = \"sam@example.com\" }\n\n",
+                "type": "String.String -> TsJson.Decode.Decoder a -> TsJson.Decode.Decoder (a -> b) -> TsJson.Decode.Decoder b"
+            },
+            {
+                "name": "requiredAt",
+                "comment": " Decode a required nested field.\n",
+                "type": "List.List String.String -> TsJson.Decode.Decoder a -> TsJson.Decode.Decoder (a -> b) -> TsJson.Decode.Decoder b"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "TsJson.Encode",
+        "comment": " The `TsJson.Encode` module is what you use for\n\n  - FromElm Ports\n\nSee [TsJson.Decode](TsJson-Decode) for the API used for Flags and ToElm Ports.\n\nBy building an `Encoder` with this API, you're also describing the source of truth for taking an Elm type and\nturning it into a JSON value with a TypeScript type. Note that there is no magic involved in this process.\nThe `elm-ts-interop` CLI simply gets the [`typeDef`](#tsType) from your `Encoder` to generate the\nTypeScript Declaration file for your compiled Elm code.\n\n@docs Encoder\n\n\n## Built-Ins\n\n@docs string, int, float, literal, bool, null\n\n\n## Transforming\n\n@docs map\n\n\n## Objects\n\n@docs object, Property, optional, required\n\n\n## Union Types\n\n    import Json.Encode as Encode\n\n    type ToJs\n        = SendPresenceHeartbeat\n        | Alert String\n\n    unionEncoder : Encoder ToJs\n    unionEncoder =\n        union\n            (\\vSendHeartbeat vAlert value ->\n                case value of\n                    SendPresenceHeartbeat ->\n                        vSendHeartbeat\n                    Alert string ->\n                        vAlert string\n            )\n            |> variant0 \"SendPresenceHeartbeat\"\n            |> variantObject \"Alert\" [ required \"message\" identity string ]\n            |> buildUnion\n\n\n    Alert \"Hello TypeScript!\"\n            |> runExample unionEncoder\n    --> { output = \"\"\"{\"tag\":\"Alert\",\"message\":\"Hello TypeScript!\"}\"\"\"\n    --> , tsType = \"\"\"{ tag : \"Alert\"; message : string } | { tag : \"SendPresenceHeartbeat\" }\"\"\"\n    --> }\n\n@docs UnionBuilder, union, variant, variant0, variantObject, variantLiteral, variantTagged, buildUnion\n\n@docs UnionEncodeValue\n\n\n## Collections\n\n@docs list, dict, tuple, triple, maybe, array\n\n\n## In-Depth Example\n\nYou can use `elm-ts-interop` to build up `Encoder`s that have the same TypeScript type as a web platform API expects.\nHere's an example that we could use to call the [`scrollIntoView`](https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollIntoView)\nmethod on a DOM Element.\n\n    import Json.Encode\n\n    type Behavior\n        = Auto\n        | Smooth\n\n    type Alignment\n        = Start\n        | Center\n        | End\n        | Nearest\n\n    scrollIntoViewEncoder : Encoder\n            { behavior : Maybe Behavior\n            , block : Maybe Alignment\n            , inline : Maybe Alignment\n            }\n    scrollIntoViewEncoder =\n        object\n            [ optional \"behavior\" .behavior behaviorEncoder\n            , optional \"block\" .block alignmentEncoder\n            , optional \"inline\" .inline alignmentEncoder\n            ]\n\n    behaviorEncoder : Encoder Behavior\n    behaviorEncoder =\n        union\n            (\\vAuto vSmooth value ->\n                case value of\n                    Auto ->\n                        vAuto\n                    Smooth ->\n                        vSmooth\n            )\n            |> variantLiteral (Json.Encode.string \"auto\")\n            |> variantLiteral (Json.Encode.string \"smooth\")\n            |> buildUnion\n\n\n    alignmentEncoder : Encoder Alignment\n    alignmentEncoder =\n        union\n            (\\vStart vCenter vEnd vNearest value ->\n                case value of\n                    Start ->\n                        vStart\n                    Center ->\n                        vCenter\n                    End ->\n                        vEnd\n                    Nearest ->\n                        vNearest\n            )\n            |> variantLiteral (Json.Encode.string \"start\")\n            |> variantLiteral (Json.Encode.string \"center\")\n            |> variantLiteral (Json.Encode.string \"end\")\n            |> variantLiteral (Json.Encode.string \"nearest\")\n            |> buildUnion\n\n\n    { behavior = Just Auto, block = Just Nearest, inline = Nothing }\n            |> runExample scrollIntoViewEncoder\n    --> { output = \"\"\"{\"behavior\":\"auto\",\"block\":\"nearest\"}\"\"\"\n    --> , tsType = \"\"\"{ behavior? : \"smooth\" | \"auto\"; block? : \"nearest\" | \"end\" | \"center\" | \"start\"; inline? : \"nearest\" | \"end\" | \"center\" | \"start\" }\"\"\"\n    --> }\n\n\n## Escape Hatch\n\n@docs value\n\n\n## Executing Encoders\n\nUsually you don't need to use these functions directly, but instead the code generated by the `elm-ts-interop` command line\ntool will use these for you under the hood. These can be helpful for debugging, or for building new tools on top of this package.\n\n@docs encoder, tsType\n\n\n## Documentation Helper\n\n@docs runExample\n\n",
+        "unions": [
+            {
+                "name": "Property",
+                "comment": " ",
+                "args": [
+                    "input"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Encoder",
+                "comment": " Similar to a `Json.Encode.Value` in `elm/json`. However, a `TsJson.Encode.Encoder` in `elm-ts-json` has this key difference from an `elm/json` `Encode.Value`:\n\n  - `elm/json` `Json.Encode.Value` - a value representing an encoded JSON value\n  - `elm-ts-interop` `TsJson.Encode.Encoder` - a _function_ for turning an Elm value into an encoded JSON value. The `Encoder` itself has a definite TypeScript type, before you even pass in an Elm value to turn into JSON.\n\nSo the `elm-ts-json` `Encoder` expects a specific type of Elm value, and knows how to turn that Elm value into JSON.\n\nLet's compare the two with an example for encoding a first and last name.\n\n    import Json.Encode\n\n    elmJsonNameEncoder : { first : String, last : String }\n        -> Json.Encode.Value\n    elmJsonNameEncoder { first, last } =\n        Json.Encode.object\n            [ ( \"first\", Json.Encode.string first )\n            , ( \"last\", Json.Encode.string last )\n            ]\n\n    { first = \"James\", last = \"Kirk\" }\n            |> elmJsonNameEncoder\n            |> Json.Encode.encode 0\n    --> \"\"\"{\"first\":\"James\",\"last\":\"Kirk\"}\"\"\"\n\n    nameEncoder : Encoder { first : String, last : String }\n    nameEncoder =\n        object\n            [ required \"first\" .first string\n            , required \"last\" .last string\n            ]\n\n    { first = \"James\", last = \"Kirk\" }\n            |> runExample nameEncoder\n    --> { output = \"\"\"{\"first\":\"James\",\"last\":\"Kirk\"}\"\"\"\n    --> , tsType = \"{ first : string; last : string }\"\n    --> }\n\n",
+                "args": [
+                    "input"
+                ],
+                "type": "TsJson.Internal.Encode.Encoder input"
+            },
+            {
+                "name": "UnionBuilder",
+                "comment": " ",
+                "args": [
+                    "match"
+                ],
+                "type": "TsJson.Internal.Encode.UnionBuilder match"
+            },
+            {
+                "name": "UnionEncodeValue",
+                "comment": " We can guarantee that you're only encoding to a given\nset of possible shapes in a union type by ensuring that\nall the encoded values come from the union pipeline,\nusing functions like `variantLiteral`, `variantObject`, etc.\n\nApplying another variant function in your union pipeline will\ngive you more functions/values to give UnionEncodeValue's with\ndifferent shapes, if you need them.\n\n",
+                "args": [],
+                "type": "TsJson.Internal.Encode.UnionEncodeValue"
+            }
+        ],
+        "values": [
+            {
+                "name": "array",
+                "comment": " Like `Encode.list`, but takes an `Array` instead of a `List` as input.\n",
+                "type": "TsJson.Encode.Encoder a -> TsJson.Encode.Encoder (Array.Array a)"
+            },
+            {
+                "name": "bool",
+                "comment": "\n\n    import Json.Encode as Encode\n\n    True\n        |> runExample bool\n    --> { output = \"true\"\n    --> , tsType = \"boolean\"\n    --> }\n\n",
+                "type": "TsJson.Encode.Encoder Basics.Bool"
+            },
+            {
+                "name": "buildUnion",
+                "comment": " ",
+                "type": "TsJson.Encode.UnionBuilder (match -> TsJson.Encode.UnionEncodeValue) -> TsJson.Encode.Encoder match"
+            },
+            {
+                "name": "dict",
+                "comment": "\n\n    import Json.Encode as Encode\n    import Dict\n\n    Dict.fromList [ ( \"a\", \"123\" ), ( \"b\", \"456\" ) ]\n        |> runExample ( dict identity string )\n    --> { output = \"\"\"{\"a\":\"123\",\"b\":\"456\"}\"\"\"\n    --> , tsType = \"{ [key: string]: string }\"\n    --> }\n\n",
+                "type": "(comparableKey -> String.String) -> TsJson.Encode.Encoder input -> TsJson.Encode.Encoder (Dict.Dict comparableKey input)"
+            },
+            {
+                "name": "encoder",
+                "comment": " ",
+                "type": "TsJson.Encode.Encoder input -> input -> Json.Encode.Value"
+            },
+            {
+                "name": "float",
+                "comment": "\n\n    import Json.Encode as Encode\n\n    123.45\n        |> runExample float\n    --> { output = \"123.45\"\n    --> , tsType = \"number\"\n    --> }\n\n",
+                "type": "TsJson.Encode.Encoder Basics.Float"
+            },
+            {
+                "name": "int",
+                "comment": "\n\n    import Json.Encode as Encode\n\n    123\n        |> runExample int\n    --> { output = \"123\"\n    --> , tsType = \"number\"\n    --> }\n\n",
+                "type": "TsJson.Encode.Encoder Basics.Int"
+            },
+            {
+                "name": "list",
+                "comment": "\n\n    import Json.Encode as Encode\n\n    [ \"Hello\", \"World!\" ]\n        |> runExample ( list string )\n    --> { output = \"\"\"[\"Hello\",\"World!\"]\"\"\"\n    --> , tsType = \"string[]\"\n    --> }\n\n",
+                "type": "TsJson.Encode.Encoder a -> TsJson.Encode.Encoder (List.List a)"
+            },
+            {
+                "name": "literal",
+                "comment": " TypeScript has the concept of a [Literal Type](https://www.typescriptlang.org/docs/handbook/literal-types.html).\nA Literal Type is just a JSON value. But unlike other types, it is constrained to a specific literal.\n\nFor example, `200` is a Literal Value (not just any `number`). Elm doesn't have the concept of Literal Values that the\ncompiler checks. But you can map Elm Custom Types nicely into TypeScript Literal Types. For example, you could represent\nHTTP Status Codes in TypeScript with a Union of Literal Types like this:\n\n```typescript\ntype HttpStatus = 200 | 404 // you can include more status codes\n```\n\nThe type `HttpStatus` is limited to that set of numbers. In Elm, you might represent that discrete set of values with\na Custom Type, like so:\n\n    type HttpStatus\n        = Success\n        | NotFound\n\nHowever you name them, you can map those Elm types into equivalent TypeScript values using a union of literals like so:\n\n    import Json.Encode as Encode\n\n    httpStatusEncoder : Encoder HttpStatus\n    httpStatusEncoder =\n        union\n            (\\vSuccess vNotFound value ->\n                case value of\n                    Success ->\n                        vSuccess\n                    NotFound ->\n                        vNotFound\n            )\n            |> variantLiteral (Encode.int 200)\n            |> variantLiteral (Encode.int 404)\n            |> buildUnion\n\n    NotFound\n        |> runExample httpStatusEncoder\n    --> { output = \"404\"\n    --> , tsType = \"404 | 200\"\n    --> }\n\n",
+                "type": "Json.Encode.Value -> TsJson.Encode.Encoder a"
+            },
+            {
+                "name": "map",
+                "comment": " An [`Encoder`](#Encoder) represents turning an Elm input value into a JSON value that has a TypeScript type information.\n\nThis `map` function allows you to transform the **Elm input value**, not the resulting JSON output. So this will feel\ndifferent than using [`TsJson.Decode.map`](TsJson-Decode#map), or other familiar `map` functions\nthat transform an **Elm output value**, such as `Maybe.map` and `Json.Decode.map`.\n\nThink of `TsJson.Encode.map` as changing **how to get the value that you want to turn into JSON**. For example,\nif we're passing in some nested data and need to get a field\n\n    import Json.Encode as Encode\n\n    picardData : { data : { first : String, last : String, rank : String } }\n    picardData = { data = { first = \"Jean Luc\", last = \"Picard\", rank = \"Captain\" } }\n\n    rankEncoder : Encoder { data : { officer | rank : String } }\n    rankEncoder =\n        string\n            |> map .rank\n            |> map .data\n\n    picardData\n        |> runExample rankEncoder\n    --> { output = \"\\\"Captain\\\"\"\n    --> , tsType = \"string\"\n    --> }\n\nLet's consider how the types change as we `map` the `Encoder`.\n\n    encoder1 : Encoder String\n    encoder1 =\n        string\n\n    encoder2 : Encoder { rank : String }\n    encoder2 =\n        string\n            |> map .rank\n\n    encoder3 : Encoder { data : { rank : String } }\n    encoder3 =\n        string\n            |> map .rank\n            |> map .data\n\n    (encoder1, encoder2, encoder3) |> always ()\n    --> ()\n\nSo `map` is applying a function that tells the Encoder how to get the data it needs.\n\nIf we want to send a string through a port, then we start with a [`string`](#string) `Encoder`. Then we `map` it to\nturn our input data into a String (because `string` is `Encoder String`).\n\n    encoderThing : Encoder { data : { officer | first : String, last : String } }\n    encoderThing =\n        string\n            |> map (\\outerRecord -> outerRecord.data.first ++ \" \" ++ outerRecord.data.last)\n\n    picardData\n        |> runExample encoderThing\n    --> { output = \"\\\"Jean Luc Picard\\\"\"\n    --> , tsType = \"string\"\n    --> }\n\n",
+                "type": "(input -> mappedInput) -> TsJson.Encode.Encoder mappedInput -> TsJson.Encode.Encoder input"
+            },
+            {
+                "name": "maybe",
+                "comment": "\n\n    import Json.Encode as Encode\n\n    Just 42\n        |> runExample ( maybe int )\n    --> { output = \"42\"\n    --> , tsType = \"number | null\"\n    --> }\n\n",
+                "type": "TsJson.Encode.Encoder a -> TsJson.Encode.Encoder (Maybe.Maybe a)"
+            },
+            {
+                "name": "null",
+                "comment": " Equivalent to `literal Encode.null`.\n\n    import Json.Encode as Encode\n\n    ()\n        |> runExample null\n    --> { output = \"null\"\n    --> , tsType = \"null\"\n    --> }\n\n",
+                "type": "TsJson.Encode.Encoder input"
+            },
+            {
+                "name": "object",
+                "comment": "\n\n    import Json.Encode as Encode\n\n    nameEncoder : Encoder { first : String, last : String }\n    nameEncoder =\n        object\n            [ required \"first\" .first string\n            , required \"last\" .last string\n            ]\n\n\n    { first = \"James\", last = \"Kirk\" }\n            |> runExample nameEncoder\n    --> { output = \"\"\"{\"first\":\"James\",\"last\":\"Kirk\"}\"\"\"\n    --> , tsType = \"{ first : string; last : string }\"\n    --> }\n\n    fullNameEncoder : Encoder { first : String, middle : Maybe String, last : String }\n    fullNameEncoder =\n        object\n            [ required \"first\" .first string\n            , optional \"middle\" .middle string\n            , required \"last\" .last string\n            ]\n\n    { first = \"James\", middle = Just \"Tiberius\", last = \"Kirk\" }\n            |> runExample fullNameEncoder\n    --> { output = \"\"\"{\"first\":\"James\",\"middle\":\"Tiberius\",\"last\":\"Kirk\"}\"\"\"\n    --> , tsType = \"{ first : string; last : string; middle? : string }\"\n    --> }\n\n",
+                "type": "List.List (TsJson.Encode.Property input) -> TsJson.Encode.Encoder input"
+            },
+            {
+                "name": "optional",
+                "comment": " ",
+                "type": "String.String -> (input -> Maybe.Maybe mappedInput) -> TsJson.Encode.Encoder mappedInput -> TsJson.Encode.Property input"
+            },
+            {
+                "name": "required",
+                "comment": " ",
+                "type": "String.String -> (input -> mappedInput) -> TsJson.Encode.Encoder mappedInput -> TsJson.Encode.Property input"
+            },
+            {
+                "name": "runExample",
+                "comment": " ",
+                "type": "TsJson.Encode.Encoder input -> input -> { output : String.String, tsType : String.String }"
+            },
+            {
+                "name": "string",
+                "comment": " Encode a string.\n\n    import Json.Encode as Encode\n\n    \"Hello!\"\n        |> runExample string\n    --> { output = \"\\\"Hello!\\\"\"\n    --> , tsType = \"string\"\n    --> }\n\nYou can use `map` to apply an accessor function for how to get that String.\n\n    { data = { first = \"James\", last = \"Kirk\" } }\n        |> runExample ( string |> map .first |> map .data )\n    --> { output = \"\\\"James\\\"\"\n    --> , tsType = \"string\"\n    --> }\n\n",
+                "type": "TsJson.Encode.Encoder String.String"
+            },
+            {
+                "name": "triple",
+                "comment": " Same as [`tuple`](#tuple), but with Triples\n\n    import Json.Encode as Encode\n\n    ( \"Jane Doe\", True, 123 )\n        |> runExample ( triple string bool int )\n    --> { output = \"\"\"[\"Jane Doe\",true,123]\"\"\"\n    --> , tsType = \"[ string, boolean, number ]\"\n    --> }\n\n",
+                "type": "TsJson.Encode.Encoder input1 -> TsJson.Encode.Encoder input2 -> TsJson.Encode.Encoder input3 -> TsJson.Encode.Encoder ( input1, input2, input3 )"
+            },
+            {
+                "name": "tsType",
+                "comment": " ",
+                "type": "TsJson.Encode.Encoder input -> Internal.TsJsonType.TsType"
+            },
+            {
+                "name": "tuple",
+                "comment": " TypeScript [has a Tuple type](https://www.typescriptlang.org/docs/handbook/basic-types.html#tuple). It's just an\nArray with 2 items, and the TypeScript compiler will enforce that there are two elements. You can turn an Elm Tuple\ninto a TypeScript Tuple.\n\n    import Json.Encode as Encode\n\n    ( \"John Doe\", True )\n        |> runExample ( tuple string bool )\n    --> { output = \"\"\"[\"John Doe\",true]\"\"\"\n    --> , tsType = \"[ string, boolean ]\"\n    --> }\n\nIf your target Elm value isn't a tuple, you can [`map`](#map) it into one\n\n    { name = \"John Smith\", isAdmin = False }\n        |> runExample\n            (tuple string bool\n                |> map\n                    (\\{ name, isAdmin } ->\n                        ( name, isAdmin )\n                    )\n            )\n    --> { output = \"\"\"[\"John Smith\",false]\"\"\"\n    --> , tsType = \"[ string, boolean ]\"\n    --> }\n\n",
+                "type": "TsJson.Encode.Encoder input1 -> TsJson.Encode.Encoder input2 -> TsJson.Encode.Encoder ( input1, input2 )"
+            },
+            {
+                "name": "union",
+                "comment": " ",
+                "type": "constructor -> TsJson.Encode.UnionBuilder constructor"
+            },
+            {
+                "name": "value",
+                "comment": " This is an escape hatch that allows you to send arbitrary JSON data. The type will\nbe JSON in TypeScript, so you won't have any specific type information. In some cases,\nthis is fine, but in general you'll usually want to use other functions in this module\nto build up a well-typed [`Encoder`](#Encoder).\n",
+                "type": "TsJson.Encode.Encoder Json.Encode.Value"
+            },
+            {
+                "name": "variant",
+                "comment": " ",
+                "type": "TsJson.Encode.Encoder input -> TsJson.Encode.UnionBuilder ((input -> TsJson.Encode.UnionEncodeValue) -> match) -> TsJson.Encode.UnionBuilder match"
+            },
+            {
+                "name": "variant0",
+                "comment": " ",
+                "type": "String.String -> TsJson.Encode.UnionBuilder (TsJson.Encode.UnionEncodeValue -> match) -> TsJson.Encode.UnionBuilder match"
+            },
+            {
+                "name": "variantLiteral",
+                "comment": " ",
+                "type": "Json.Encode.Value -> TsJson.Encode.UnionBuilder (TsJson.Encode.UnionEncodeValue -> match) -> TsJson.Encode.UnionBuilder match"
+            },
+            {
+                "name": "variantObject",
+                "comment": " ",
+                "type": "String.String -> List.List (TsJson.Encode.Property arg1) -> TsJson.Encode.UnionBuilder ((arg1 -> TsJson.Encode.UnionEncodeValue) -> match) -> TsJson.Encode.UnionBuilder match"
+            },
+            {
+                "name": "variantTagged",
+                "comment": " Takes any Encoder and includes that data under an Object property \"data\".\n\nFor example, here's an encoded payload for a log event.\n\n    import TsJson.Encode as TsEncode\n    import Json.Encode\n\n    type alias Event = { level : String, message : String }\n    type FromElm = LogEvent Event\n\n    eventEncoder : Encoder Event\n    eventEncoder =\n        TsEncode.object\n            [ TsEncode.required \"level\" .level TsEncode.string\n            , TsEncode.required \"message\" .message TsEncode.string\n            ]\n\n\n    fromElm : TsEncode.Encoder FromElm\n    fromElm =\n        TsEncode.union\n            (\\vLogEvent value ->\n                case value of\n                    LogEvent event ->\n                        vLogEvent event\n            )\n            |> TsEncode.variantTagged \"LogEvent\" eventEncoder\n            |> TsEncode.buildUnion\n\n    (TsEncode.encoder fromElm) (LogEvent { level = \"info\", message = \"Hello\" }) |> Json.Encode.encode 0\n    --> \"\"\"{\"tag\":\"LogEvent\",\"data\":{\"level\":\"info\",\"message\":\"Hello\"}}\"\"\"\n\n",
+                "type": "String.String -> TsJson.Encode.Encoder input -> TsJson.Encode.UnionBuilder ((input -> TsJson.Encode.UnionEncodeValue) -> match) -> TsJson.Encode.UnionBuilder match"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "TsJson.Type",
+        "comment": " Usually you don't need to use this module directly, but instead use a tool that makes use of this module (like [`elm-ts-interop`](https://github.com/dillonkearns/elm-ts-interop)).\n\n@docs Type\n@docs toTypeScript, toJsonSchema\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Type",
+                "comment": " Represents a JSON value with TypeScript information.\n",
+                "args": [],
+                "type": "Internal.TsJsonType.TsType"
+            }
+        ],
+        "values": [
+            {
+                "name": "toJsonSchema",
+                "comment": " You can express the same type information about a JSON values with [JSON Schema](https://json-schema.org/) format.\nOne example where this can be useful is if tooling wants to perform a runtime check of a JSON value before passing it to a TsJson.Decoder to ensure\nthat it is a valid input.\n",
+                "type": "TsJson.Type.Type -> Json.Encode.Value"
+            },
+            {
+                "name": "toTypeScript",
+                "comment": " Tooling can use this function to convert the JSON type information into a string describing a TypeScript type.\n\nNote that instead of the TypeScript type `unknown`, this will use a type called `JsonValue` to be more precise.\nThis isn't a built-in TypeScript type, but since these values can only be JSON, it represents the constraints more accurately.\n\nYou can find the type definition of `JsonValue` here if you are building your own custom tooling and need to handle this type:\n<https://github.com/sindresorhus/type-fest/blob/4c9835b3c42d7a9f1d10bae19c334ce1d8e8c8a4/source/basic.d.ts#L22-L37>.\n\n",
+                "type": "TsJson.Type.Type -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

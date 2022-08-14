@@ -1,0 +1,113 @@
+[
+    {
+        "name": "PdfElement",
+        "comment": " This Elm module contains the necessary machinery for communicating with javascript,\nwhere the actual pdf wrangling will take place. Use the Cmds to open and close documents,\nlisten for Msgs indicating the Cmd results, and display the document pages with pdfPage.\n\n@docs pdfPage\n@docs PdfDims\n@docs PdfCmd\n@docs PdfMsg\n@docs receive\n@docs send\n@docs decodeMsg\n@docs encodeCmd\n\n",
+        "unions": [
+            {
+                "name": "PdfCmd",
+                "comment": " PdfCmds go from from elm out to javascript to be processed.\nEach pdf document should have a unique name. You can make multiple pdfPage controls that\nreference a single pdf document.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "OpenUrl",
+                        [
+                            "{ name : String.String, url : String.String }"
+                        ]
+                    ],
+                    [
+                        "OpenString",
+                        [
+                            "{ name : String.String, string : String.String }"
+                        ]
+                    ],
+                    [
+                        "Close",
+                        [
+                            "{ name : String.String }"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "PdfDims",
+                "comment": " Specify the size of the pdf document. If you specify height or width, the scale will\nbe computed to fit.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Scale",
+                        [
+                            "Basics.Float"
+                        ]
+                    ],
+                    [
+                        "Width",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "Height",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "WidthHeight",
+                        [
+                            "Basics.Int",
+                            "Basics.Int"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "PdfMsg",
+                "comment": " PdfMsgs are responses from javascript to elm after PdfCmd operations.\nThe name should be the same string you used in OpenUrl or OpenString.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Error",
+                        [
+                            "{ name : String.String, error : String.String }"
+                        ]
+                    ],
+                    [
+                        "Loaded",
+                        [
+                            "{ name : String.String, pageCount : Basics.Int }"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decodeMsg",
+                "comment": " decode incoming messages from the websocket javascript.\n",
+                "type": "Json.Decode.Decoder PdfElement.PdfMsg"
+            },
+            {
+                "name": "encodeCmd",
+                "comment": " encode websocket commands into json.\n",
+                "type": "PdfElement.PdfCmd -> Json.Encode.Value"
+            },
+            {
+                "name": "pdfPage",
+                "comment": " pdfPage makes a 'custom element' that displays the pdf for the document indicated by\n'name'. Before calling this function, you should open the document with a PdfCmd and\nwait for a Loaded msg.\n",
+                "type": "String.String -> Basics.Int -> PdfElement.PdfDims -> Html.Html msg"
+            },
+            {
+                "name": "receive",
+                "comment": " make a subscription function with receive and a port, like so:\n\n      port receivePdfMsg : (JD.Value -> msg) -> Sub msg\n\n      pdfreceive : Sub Msg\n      pdfreceive =\n          receivePdfMsg <| PdfElement.receive PdfMsg\n\nWhere PdfMessage is defined in your app like this:\n\n      type Msg\n          = PdfMsg (Result JD.Error PdfElement.PdfMsg)\n          | <other message types>\n\nthen in your application subscriptions:\n\n      subscriptions =\n          \\_ -> pdfreceive\n\n",
+                "type": "(Result.Result Json.Decode.Error PdfElement.PdfMsg -> msg) -> Json.Decode.Value -> msg"
+            },
+            {
+                "name": "send",
+                "comment": " use send to make a websocket convenience function,\nlike so:\n\n      port sendPdfCommand : JE.Value -> Cmd msg\n\n      pdfsend =\n          PdfElement.send sendPdfCommand\n\nthen you can call (makes a Cmd):\n\n      pdfsend <|\n          PdfElement.OpenString\n              { name = \"mypdf\"\n              , string = dta\n              }\n\n",
+                "type": "(Json.Encode.Value -> Platform.Cmd.Cmd msg) -> PdfElement.PdfCmd -> Platform.Cmd.Cmd msg"
+            }
+        ],
+        "binops": []
+    }
+]

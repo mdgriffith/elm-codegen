@@ -1,0 +1,45 @@
+[
+    {
+        "name": "Stack",
+        "comment": " This library implements a stack data structure in Elm, allowing you to worry more about your business logic and less about implementing common adts.\n\n\n# Definition\n\n@docs Stack\n\n\n# Initialisation\n\n@docs initialise\n\n\n# Common Helpers\n\n@docs pop, push, toList, top\n\n",
+        "unions": [
+            {
+                "name": "Stack",
+                "comment": " ",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "initialise",
+                "comment": " Initialise an empty stack.\n",
+                "type": "Stack.Stack a"
+            },
+            {
+                "name": "pop",
+                "comment": " Removes the item at the top of the stack and returns it as the first item of a tuple.\n",
+                "type": "Stack.Stack a -> ( Maybe.Maybe a, Stack.Stack a )"
+            },
+            {
+                "name": "push",
+                "comment": " Pushes an item onto the stack and returns the new stack. The item must be of the same type as the stack.\n",
+                "type": "a -> Stack.Stack a -> Stack.Stack a"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert a Stack type to a list data type\n",
+                "type": "Stack.Stack a -> List.List a"
+            },
+            {
+                "name": "top",
+                "comment": " Returns the top element of the stack without removing it.\n",
+                "type": "Stack.Stack a -> Maybe.Maybe a"
+            }
+        ],
+        "binops": []
+    }
+]

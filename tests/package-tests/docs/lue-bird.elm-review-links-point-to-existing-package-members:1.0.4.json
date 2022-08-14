@@ -1,0 +1,16 @@
+[
+    {
+        "name": "LinksPointToExistingPackageMembers",
+        "comment": "\n\n@docs rule\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": " Reports links to nonexistent package definitions or modules.\n\n    config =\n        [ LinksPointToExistingPackageMembers.rule\n        ]\n\n\n## Fails\n\n    module A exposing (a)\n\n    b =\n        \"b\"\n\n    {-| Not [`b`](A#b).\n    -}\n    a =\n        \"a\"\n\nFails because `b` must be exposed.\n\n\n## Success\n\n    module A.And.B exposing (a, b)\n\n    b =\n        \"b\"\n\n    {-| Not [`b`](A-And-B#b).\n    -}\n    a =\n        \"a\"\n\n\n## Try it out\n\nYou can try this rule out by running the following command:\n\n```bash\nelm-review --template lue-bird/elm-review-links-point-to-existing-package-members/example --rules LinksPointToExistingPackageMembers\n```\n\n",
+                "type": "Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    }
+]

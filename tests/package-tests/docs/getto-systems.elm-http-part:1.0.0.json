@@ -1,0 +1,53 @@
+[
+    {
+        "name": "Getto.Http.Part",
+        "comment": " build http parts\n\n    roles = [ \"admin\" ] |> Set.fromList\n    comments = [ \"good\", \"great\" ]\n\n    [ ( \"name\", \"John\" |> Part.string )\n    , ( \"age\",  30     |> Part.int )\n    , ( \"file\", file   |> Part.file )\n    , ( \"roles\",    roles    |> Part.set Part.string )\n    , ( \"comments\", comments |> Part.list Part.string )\n    ] |> Part.object\n\n# Definition\n@docs Value\n\n# Encoder\n@docs string, int, file, bytes, list, object\n\n# Encode\n@docs toBody\n ",
+        "unions": [
+            {
+                "name": "Value",
+                "comment": " part value\n ",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "bytes",
+                "comment": " bytes part\n ",
+                "type": "String.String -> Bytes.Bytes -> Getto.Http.Part.Value"
+            },
+            {
+                "name": "file",
+                "comment": " file part\n ",
+                "type": "File.File -> Getto.Http.Part.Value"
+            },
+            {
+                "name": "int",
+                "comment": " int part\n ",
+                "type": "Basics.Int -> Getto.Http.Part.Value"
+            },
+            {
+                "name": "list",
+                "comment": " list part\n ",
+                "type": "(a -> Getto.Http.Part.Value) -> List.List a -> Getto.Http.Part.Value"
+            },
+            {
+                "name": "object",
+                "comment": " object part\n ",
+                "type": "List.List ( String.String, Getto.Http.Part.Value ) -> Getto.Http.Part.Value"
+            },
+            {
+                "name": "string",
+                "comment": " string part\n ",
+                "type": "String.String -> Getto.Http.Part.Value"
+            },
+            {
+                "name": "toBody",
+                "comment": " convert value to http part\n ",
+                "type": "Getto.Http.Part.Value -> Http.Body"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,763 @@
+[
+    {
+        "name": "Toop",
+        "comment": " A set of tuple-like data structures, allowing more than 3 elements.\n\n@docs T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16\n\n",
+        "unions": [
+            {
+                "name": "T1",
+                "comment": " 1 element toop.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "T1",
+                        [
+                            "a"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "T10",
+                "comment": " 10 element toop.\n",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "f",
+                    "g",
+                    "h",
+                    "i",
+                    "j"
+                ],
+                "cases": [
+                    [
+                        "T10",
+                        [
+                            "a",
+                            "b",
+                            "c",
+                            "d",
+                            "e",
+                            "f",
+                            "g",
+                            "h",
+                            "i",
+                            "j"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "T11",
+                "comment": " 11 element toop.\n",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "f",
+                    "g",
+                    "h",
+                    "i",
+                    "j",
+                    "k"
+                ],
+                "cases": [
+                    [
+                        "T11",
+                        [
+                            "a",
+                            "b",
+                            "c",
+                            "d",
+                            "e",
+                            "f",
+                            "g",
+                            "h",
+                            "i",
+                            "j",
+                            "k"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "T12",
+                "comment": " 12 element toop.\n",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "f",
+                    "g",
+                    "h",
+                    "i",
+                    "j",
+                    "k",
+                    "l"
+                ],
+                "cases": [
+                    [
+                        "T12",
+                        [
+                            "a",
+                            "b",
+                            "c",
+                            "d",
+                            "e",
+                            "f",
+                            "g",
+                            "h",
+                            "i",
+                            "j",
+                            "k",
+                            "l"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "T13",
+                "comment": " 13 element toop.\n",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "f",
+                    "g",
+                    "h",
+                    "i",
+                    "j",
+                    "k",
+                    "l",
+                    "m"
+                ],
+                "cases": [
+                    [
+                        "T13",
+                        [
+                            "a",
+                            "b",
+                            "c",
+                            "d",
+                            "e",
+                            "f",
+                            "g",
+                            "h",
+                            "i",
+                            "j",
+                            "k",
+                            "l",
+                            "m"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "T14",
+                "comment": " 14 element toop.\n",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "f",
+                    "g",
+                    "h",
+                    "i",
+                    "j",
+                    "k",
+                    "l",
+                    "m",
+                    "n"
+                ],
+                "cases": [
+                    [
+                        "T14",
+                        [
+                            "a",
+                            "b",
+                            "c",
+                            "d",
+                            "e",
+                            "f",
+                            "g",
+                            "h",
+                            "i",
+                            "j",
+                            "k",
+                            "l",
+                            "m",
+                            "n"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "T15",
+                "comment": " 15 element toop.\n",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "f",
+                    "g",
+                    "h",
+                    "i",
+                    "j",
+                    "k",
+                    "l",
+                    "m",
+                    "n",
+                    "o"
+                ],
+                "cases": [
+                    [
+                        "T15",
+                        [
+                            "a",
+                            "b",
+                            "c",
+                            "d",
+                            "e",
+                            "f",
+                            "g",
+                            "h",
+                            "i",
+                            "j",
+                            "k",
+                            "l",
+                            "m",
+                            "n",
+                            "o"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "T16",
+                "comment": " 16 element toop.\n",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "f",
+                    "g",
+                    "h",
+                    "i",
+                    "j",
+                    "k",
+                    "l",
+                    "m",
+                    "n",
+                    "o",
+                    "p"
+                ],
+                "cases": [
+                    [
+                        "T16",
+                        [
+                            "a",
+                            "b",
+                            "c",
+                            "d",
+                            "e",
+                            "f",
+                            "g",
+                            "h",
+                            "i",
+                            "j",
+                            "k",
+                            "l",
+                            "m",
+                            "n",
+                            "o",
+                            "p"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "T2",
+                "comment": " 2 element toop.\n",
+                "args": [
+                    "a",
+                    "b"
+                ],
+                "cases": [
+                    [
+                        "T2",
+                        [
+                            "a",
+                            "b"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "T3",
+                "comment": " 3 element toop.\n",
+                "args": [
+                    "a",
+                    "b",
+                    "c"
+                ],
+                "cases": [
+                    [
+                        "T3",
+                        [
+                            "a",
+                            "b",
+                            "c"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "T4",
+                "comment": " 4 element toop.\n",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d"
+                ],
+                "cases": [
+                    [
+                        "T4",
+                        [
+                            "a",
+                            "b",
+                            "c",
+                            "d"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "T5",
+                "comment": " 5 element toop.\n",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e"
+                ],
+                "cases": [
+                    [
+                        "T5",
+                        [
+                            "a",
+                            "b",
+                            "c",
+                            "d",
+                            "e"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "T6",
+                "comment": " 6 element toop.\n",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "f"
+                ],
+                "cases": [
+                    [
+                        "T6",
+                        [
+                            "a",
+                            "b",
+                            "c",
+                            "d",
+                            "e",
+                            "f"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "T7",
+                "comment": " 7 element toop.\n",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "f",
+                    "g"
+                ],
+                "cases": [
+                    [
+                        "T7",
+                        [
+                            "a",
+                            "b",
+                            "c",
+                            "d",
+                            "e",
+                            "f",
+                            "g"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "T8",
+                "comment": " 8 element toop.\n",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "f",
+                    "g",
+                    "h"
+                ],
+                "cases": [
+                    [
+                        "T8",
+                        [
+                            "a",
+                            "b",
+                            "c",
+                            "d",
+                            "e",
+                            "f",
+                            "g",
+                            "h"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "T9",
+                "comment": " 9 element toop.\n",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "f",
+                    "g",
+                    "h",
+                    "i"
+                ],
+                "cases": [
+                    [
+                        "T9",
+                        [
+                            "a",
+                            "b",
+                            "c",
+                            "d",
+                            "e",
+                            "f",
+                            "g",
+                            "h",
+                            "i"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "Toop.Apply",
+        "comment": " given a function of N arguments, apply that function to a toop of size N.\n\n@docs applyT1, applyT2, applyT3, applyT4, applyT5, applyT6, applyT7, applyT8, applyT9, applyT10, applyT11, applyT12, applyT13, applyT14, applyT15, applyT16\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "applyT1",
+                "comment": " 1 element apply.\n",
+                "type": "(a -> b) -> Toop.T1 a -> b"
+            },
+            {
+                "name": "applyT10",
+                "comment": " 10 element apply.\n",
+                "type": "(a -> b -> c -> d -> e -> f -> g -> h -> i -> j -> x) -> Toop.T10 a b c d e f g h i j -> x"
+            },
+            {
+                "name": "applyT11",
+                "comment": " 11 element apply.\n",
+                "type": "(a -> b -> c -> d -> e -> f -> g -> h -> i -> j -> k -> x) -> Toop.T11 a b c d e f g h i j k -> x"
+            },
+            {
+                "name": "applyT12",
+                "comment": " 12 element apply.\n",
+                "type": "(a -> b -> c -> d -> e -> f -> g -> h -> i -> j -> k -> l -> x) -> Toop.T12 a b c d e f g h i j k l -> x"
+            },
+            {
+                "name": "applyT13",
+                "comment": " 13 element apply.\n",
+                "type": "(a -> b -> c -> d -> e -> f -> g -> h -> i -> j -> k -> l -> m -> x) -> Toop.T13 a b c d e f g h i j k l m -> x"
+            },
+            {
+                "name": "applyT14",
+                "comment": " 14 element apply.\n",
+                "type": "(a -> b -> c -> d -> e -> f -> g -> h -> i -> j -> k -> l -> m -> n -> x) -> Toop.T14 a b c d e f g h i j k l m n -> x"
+            },
+            {
+                "name": "applyT15",
+                "comment": " 15 element apply.\n",
+                "type": "(a -> b -> c -> d -> e -> f -> g -> h -> i -> j -> k -> l -> m -> n -> o -> x) -> Toop.T15 a b c d e f g h i j k l m n o -> x"
+            },
+            {
+                "name": "applyT16",
+                "comment": " 16 element apply.\n",
+                "type": "(a -> b -> c -> d -> e -> f -> g -> h -> i -> j -> k -> l -> m -> n -> o -> p -> x) -> Toop.T16 a b c d e f g h i j k l m n o p -> x"
+            },
+            {
+                "name": "applyT2",
+                "comment": " 2 element apply.\n",
+                "type": "(a -> b -> x) -> Toop.T2 a b -> x"
+            },
+            {
+                "name": "applyT3",
+                "comment": " 3 element apply.\n",
+                "type": "(a -> b -> c -> x) -> Toop.T3 a b c -> x"
+            },
+            {
+                "name": "applyT4",
+                "comment": " 4 element apply.\n",
+                "type": "(a -> b -> c -> d -> x) -> Toop.T4 a b c d -> x"
+            },
+            {
+                "name": "applyT5",
+                "comment": " 5 element apply.\n",
+                "type": "(a -> b -> c -> d -> e -> x) -> Toop.T5 a b c d e -> x"
+            },
+            {
+                "name": "applyT6",
+                "comment": " 6 element apply.\n",
+                "type": "(a -> b -> c -> d -> e -> f -> x) -> Toop.T6 a b c d e f -> x"
+            },
+            {
+                "name": "applyT7",
+                "comment": " 7 element apply.\n",
+                "type": "(a -> b -> c -> d -> e -> f -> g -> x) -> Toop.T7 a b c d e f g -> x"
+            },
+            {
+                "name": "applyT8",
+                "comment": " 8 element apply.\n",
+                "type": "(a -> b -> c -> d -> e -> f -> g -> h -> x) -> Toop.T8 a b c d e f g h -> x"
+            },
+            {
+                "name": "applyT9",
+                "comment": " 9 element apply.\n",
+                "type": "(a -> b -> c -> d -> e -> f -> g -> h -> i -> x) -> Toop.T9 a b c d e f g h i -> x"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Toop.Result",
+        "comment": " given a Toop of N results, which all share a common Err type, either return a Toop of\nall the 'Ok' values, or the first Err.\n\n@docs andMap, resT1, resT2, resT3, resT4, resT5, resT6, resT7, resT8, resT9, resT10, resT11, resT12, resT13, resT14, resT15, resT16\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "andMap",
+                "comment": " compose a result containing a function with a result containing\na value.\n",
+                "type": "Result.Result e a -> Result.Result e (a -> b) -> Result.Result e b"
+            },
+            {
+                "name": "resT1",
+                "comment": " 1 element results to values.\n",
+                "type": "Toop.T1 (Result.Result err a) -> Result.Result err (Toop.T1 a)"
+            },
+            {
+                "name": "resT10",
+                "comment": " 10 element results to values.\n",
+                "type": "Toop.T10 (Result.Result err a) (Result.Result err b) (Result.Result err c) (Result.Result err d) (Result.Result err e) (Result.Result err f) (Result.Result err g) (Result.Result err h) (Result.Result err i) (Result.Result err j) -> Result.Result err (Toop.T10 a b c d e f g h i j)"
+            },
+            {
+                "name": "resT11",
+                "comment": " 11 element results to values.\n",
+                "type": "Toop.T11 (Result.Result err a) (Result.Result err b) (Result.Result err c) (Result.Result err d) (Result.Result err e) (Result.Result err f) (Result.Result err g) (Result.Result err h) (Result.Result err i) (Result.Result err j) (Result.Result err k) -> Result.Result err (Toop.T11 a b c d e f g h i j k)"
+            },
+            {
+                "name": "resT12",
+                "comment": " 12 element results to values.\n",
+                "type": "Toop.T12 (Result.Result err a) (Result.Result err b) (Result.Result err c) (Result.Result err d) (Result.Result err e) (Result.Result err f) (Result.Result err g) (Result.Result err h) (Result.Result err i) (Result.Result err j) (Result.Result err k) (Result.Result err l) -> Result.Result err (Toop.T12 a b c d e f g h i j k l)"
+            },
+            {
+                "name": "resT13",
+                "comment": " 13 element results to values.\n",
+                "type": "Toop.T13 (Result.Result err a) (Result.Result err b) (Result.Result err c) (Result.Result err d) (Result.Result err e) (Result.Result err f) (Result.Result err g) (Result.Result err h) (Result.Result err i) (Result.Result err j) (Result.Result err k) (Result.Result err l) (Result.Result err m) -> Result.Result err (Toop.T13 a b c d e f g h i j k l m)"
+            },
+            {
+                "name": "resT14",
+                "comment": " 14 element results to values.\n",
+                "type": "Toop.T14 (Result.Result err a) (Result.Result err b) (Result.Result err c) (Result.Result err d) (Result.Result err e) (Result.Result err f) (Result.Result err g) (Result.Result err h) (Result.Result err i) (Result.Result err j) (Result.Result err k) (Result.Result err l) (Result.Result err m) (Result.Result err n) -> Result.Result err (Toop.T14 a b c d e f g h i j k l m n)"
+            },
+            {
+                "name": "resT15",
+                "comment": " 15 element results to values.\n",
+                "type": "Toop.T15 (Result.Result err a) (Result.Result err b) (Result.Result err c) (Result.Result err d) (Result.Result err e) (Result.Result err f) (Result.Result err g) (Result.Result err h) (Result.Result err i) (Result.Result err j) (Result.Result err k) (Result.Result err l) (Result.Result err m) (Result.Result err n) (Result.Result err o) -> Result.Result err (Toop.T15 a b c d e f g h i j k l m n o)"
+            },
+            {
+                "name": "resT16",
+                "comment": " 16 element results to values.\n",
+                "type": "Toop.T16 (Result.Result err a) (Result.Result err b) (Result.Result err c) (Result.Result err d) (Result.Result err e) (Result.Result err f) (Result.Result err g) (Result.Result err h) (Result.Result err i) (Result.Result err j) (Result.Result err k) (Result.Result err l) (Result.Result err m) (Result.Result err n) (Result.Result err o) (Result.Result err p) -> Result.Result err (Toop.T16 a b c d e f g h i j k l m n o p)"
+            },
+            {
+                "name": "resT2",
+                "comment": " 2 element results to values.\n",
+                "type": "Toop.T2 (Result.Result err a) (Result.Result err b) -> Result.Result err (Toop.T2 a b)"
+            },
+            {
+                "name": "resT3",
+                "comment": " 3 element results to values.\n",
+                "type": "Toop.T3 (Result.Result err a) (Result.Result err b) (Result.Result err c) -> Result.Result err (Toop.T3 a b c)"
+            },
+            {
+                "name": "resT4",
+                "comment": " 4 element results to values.\n",
+                "type": "Toop.T4 (Result.Result err a) (Result.Result err b) (Result.Result err c) (Result.Result err d) -> Result.Result err (Toop.T4 a b c d)"
+            },
+            {
+                "name": "resT5",
+                "comment": " 5 element results to values.\n",
+                "type": "Toop.T5 (Result.Result err a) (Result.Result err b) (Result.Result err c) (Result.Result err d) (Result.Result err e) -> Result.Result err (Toop.T5 a b c d e)"
+            },
+            {
+                "name": "resT6",
+                "comment": " 6 element results to values.\n",
+                "type": "Toop.T6 (Result.Result err a) (Result.Result err b) (Result.Result err c) (Result.Result err d) (Result.Result err e) (Result.Result err f) -> Result.Result err (Toop.T6 a b c d e f)"
+            },
+            {
+                "name": "resT7",
+                "comment": " 7 element results to values.\n",
+                "type": "Toop.T7 (Result.Result err a) (Result.Result err b) (Result.Result err c) (Result.Result err d) (Result.Result err e) (Result.Result err f) (Result.Result err g) -> Result.Result err (Toop.T7 a b c d e f g)"
+            },
+            {
+                "name": "resT8",
+                "comment": " 8 element results to values.\n",
+                "type": "Toop.T8 (Result.Result err a) (Result.Result err b) (Result.Result err c) (Result.Result err d) (Result.Result err e) (Result.Result err f) (Result.Result err g) (Result.Result err h) -> Result.Result err (Toop.T8 a b c d e f g h)"
+            },
+            {
+                "name": "resT9",
+                "comment": " 9 element results to values.\n",
+                "type": "Toop.T9 (Result.Result err a) (Result.Result err b) (Result.Result err c) (Result.Result err d) (Result.Result err e) (Result.Result err f) (Result.Result err g) (Result.Result err h) (Result.Result err i) -> Result.Result err (Toop.T9 a b c d e f g h i)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Toop.Take",
+        "comment": " functions to make an N element toop from a List.\n\n@docs takeT1, takeT2, takeT3, takeT4, takeT5, takeT6, takeT7, takeT8, takeT9, takeT10, takeT11, takeT12, takeT13, takeT14, takeT15, takeT16\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "takeT1",
+                "comment": " 1 element toop.\n",
+                "type": "List.List a -> Maybe.Maybe ( Toop.T1 a, List.List a )"
+            },
+            {
+                "name": "takeT10",
+                "comment": " 10 element take.\n",
+                "type": "List.List a -> Maybe.Maybe ( Toop.T10 a a a a a a a a a a, List.List a )"
+            },
+            {
+                "name": "takeT11",
+                "comment": " 11 element take.\n",
+                "type": "List.List a -> Maybe.Maybe ( Toop.T11 a a a a a a a a a a a, List.List a )"
+            },
+            {
+                "name": "takeT12",
+                "comment": " 12 element take.\n",
+                "type": "List.List a -> Maybe.Maybe ( Toop.T12 a a a a a a a a a a a a, List.List a )"
+            },
+            {
+                "name": "takeT13",
+                "comment": " 13 element take.\n",
+                "type": "List.List a -> Maybe.Maybe ( Toop.T13 a a a a a a a a a a a a a, List.List a )"
+            },
+            {
+                "name": "takeT14",
+                "comment": " 14 element take.\n",
+                "type": "List.List a -> Maybe.Maybe ( Toop.T14 a a a a a a a a a a a a a a, List.List a )"
+            },
+            {
+                "name": "takeT15",
+                "comment": " 15 element take.\n",
+                "type": "List.List a -> Maybe.Maybe ( Toop.T15 a a a a a a a a a a a a a a a, List.List a )"
+            },
+            {
+                "name": "takeT16",
+                "comment": " 16 element take.\n",
+                "type": "List.List a -> Maybe.Maybe ( Toop.T16 a a a a a a a a a a a a a a a a, List.List a )"
+            },
+            {
+                "name": "takeT2",
+                "comment": " 2 element toop.\n",
+                "type": "List.List a -> Maybe.Maybe ( Toop.T2 a a, List.List a )"
+            },
+            {
+                "name": "takeT3",
+                "comment": " 3 element take.\n",
+                "type": "List.List a -> Maybe.Maybe ( Toop.T3 a a a, List.List a )"
+            },
+            {
+                "name": "takeT4",
+                "comment": " 4 element take.\n",
+                "type": "List.List a -> Maybe.Maybe ( Toop.T4 a a a a, List.List a )"
+            },
+            {
+                "name": "takeT5",
+                "comment": " 5 element take.\n",
+                "type": "List.List a -> Maybe.Maybe ( Toop.T5 a a a a a, List.List a )"
+            },
+            {
+                "name": "takeT6",
+                "comment": " 6 element take.\n",
+                "type": "List.List a -> Maybe.Maybe ( Toop.T6 a a a a a a, List.List a )"
+            },
+            {
+                "name": "takeT7",
+                "comment": " 7 element take.\n",
+                "type": "List.List a -> Maybe.Maybe ( Toop.T7 a a a a a a a, List.List a )"
+            },
+            {
+                "name": "takeT8",
+                "comment": " 8 element take.\n",
+                "type": "List.List a -> Maybe.Maybe ( Toop.T8 a a a a a a a a, List.List a )"
+            },
+            {
+                "name": "takeT9",
+                "comment": " 9 element take.\n",
+                "type": "List.List a -> Maybe.Maybe ( Toop.T9 a a a a a a a a a, List.List a )"
+            }
+        ],
+        "binops": []
+    }
+]

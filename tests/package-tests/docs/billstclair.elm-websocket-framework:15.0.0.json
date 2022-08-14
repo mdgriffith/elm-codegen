@@ -1,0 +1,513 @@
+[
+    {
+        "name": "WebSocketFramework",
+        "comment": " Expose the most-used functions from `WebSocketFramework.ServerInterface`.\n\n\n# Constructors\n\n@docs makeServer, makeProxyServer\n\n\n# Functions\n\n@docs decodePlist, send, unknownMessage\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decodePlist",
+                "comment": " Decode a list of key/value pairs into a message.\n",
+                "type": "Json.Decode.Decoder message -> WebSocketFramework.Types.Plist -> Result.Result String.String message"
+            },
+            {
+                "name": "makeProxyServer",
+                "comment": " Make a client connection to a proxy server.\n\nNo WebSocket connection will be used to send messages.\n\n",
+                "type": "WebSocketFramework.Types.ServerMessageProcessor gamestate player message -> (WebSocketFramework.Types.ServerInterface gamestate player message msg -> message -> msg) -> WebSocketFramework.Types.ServerInterface gamestate player message msg"
+            },
+            {
+                "name": "makeServer",
+                "comment": " Make a client connection to a real WebSocket server.\n\nThe `msg` will usually be a no-operation message. It is only used to fill a slot in the returned `ServerInterface`. That slot is only used by the proxy server.\n\n",
+                "type": "(Json.Decode.Value -> Platform.Cmd.Cmd msg) -> WebSocketFramework.Types.MessageEncoder message -> WebSocketFramework.Types.ServerUrl -> msg -> WebSocketFramework.Types.ServerInterface gamestate player message msg"
+            },
+            {
+                "name": "send",
+                "comment": " Return a `Cmd` to send a message through a server interface.\n",
+                "type": "WebSocketFramework.Types.ServerInterface gamestate player message msg -> message -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "unknownMessage",
+                "comment": " Return an `Err` reporting on an unknown message name.\n",
+                "type": "WebSocketFramework.Types.ReqRsp -> Result.Result String.String message"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "WebSocketFramework.EncodeDecode",
+        "comment": " The `EncodeDecode` module handles translation of strings sent over the wire to and from your message types.\n\n\n# High-level functions\n\nYour WebSocket subscription message handler will need to use `decodeMessage`, you will often use `genericMessageDecoder`, and, if you track statistics, you'll likely need the statistics encoder & decoder, but you'll rarely directly use the rest of the functions in this module.\n\n@docs decodeMessage, genericMessageDecoder, encodeMessage, messageDecoder, messageEncoder\n@docs encodeStatistics, statisticsDecoder\n\n\n# Low-level functions\n\n@docs decodeRawMessage, rawMessageDecoder, rawMessageEncoder, decodePlist\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decodeMessage",
+                "comment": " Use a `MessageDecoder` that you write to turn a string into a message.\n",
+                "type": "WebSocketFramework.Types.MessageDecoder message -> String.String -> Result.Result String.String message"
+            },
+            {
+                "name": "decodePlist",
+                "comment": " Decode a list of key/value pairs into a message.\n",
+                "type": "Json.Decode.Decoder message -> WebSocketFramework.Types.Plist -> Result.Result String.String message"
+            },
+            {
+                "name": "decodeRawMessage",
+                "comment": " Turn a string into a raw message.\n",
+                "type": "String.String -> Result.Result String.String WebSocketFramework.Types.RawMessage"
+            },
+            {
+                "name": "encodeMessage",
+                "comment": " Use a `MessageEncoder` that you write to turn a message into a string.\n",
+                "type": "WebSocketFramework.Types.MessageEncoder message -> message -> String.String"
+            },
+            {
+                "name": "encodeStatistics",
+                "comment": " Encode a `Statistics` record.\n",
+                "type": "WebSocketFramework.Types.Statistics -> Json.Encode.Value"
+            },
+            {
+                "name": "genericMessageDecoder",
+                "comment": " Simplify the writing of `MessageDecoder` definitions.\n\nTakes two plists mapping request names to decoders and response names to decoders.\n\nReturns a `MessageDecoder` that uses them.\n\n",
+                "type": "WebSocketFramework.Types.DecoderPlist msg -> WebSocketFramework.Types.DecoderPlist msg -> ( WebSocketFramework.Types.ReqRsp, WebSocketFramework.Types.Plist ) -> Result.Result String.String msg"
+            },
+            {
+                "name": "messageDecoder",
+                "comment": " Create a `Decoder` for `decodeMessage`.\n",
+                "type": "WebSocketFramework.Types.MessageDecoder message -> Json.Decode.Decoder message"
+            },
+            {
+                "name": "messageEncoder",
+                "comment": " Use a `MessageEncoder` that you write to turn a message into a `Value`.\n\nRarely used by anything but `encodeMessage`.\n\n",
+                "type": "WebSocketFramework.Types.MessageEncoder message -> message -> Json.Encode.Value"
+            },
+            {
+                "name": "rawMessageDecoder",
+                "comment": " The `Decoder` used by `decodeRawMessage`\n",
+                "type": "Json.Decode.Decoder WebSocketFramework.Types.RawMessage"
+            },
+            {
+                "name": "rawMessageEncoder",
+                "comment": " Turn a raw message into a `Value`.\n",
+                "type": "WebSocketFramework.Types.RawMessage -> Json.Encode.Value"
+            },
+            {
+                "name": "statisticsDecoder",
+                "comment": " Decoder for the `Statistics` record.\n",
+                "type": "Json.Decode.Decoder WebSocketFramework.Types.Statistics"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "WebSocketFramework.ServerInterface",
+        "comment": " Functions that connect the client code to the server.\n\n\n# Server Constructors\n\n@docs makeServer, makeProxyServer, fullMessageProcessor\n\n\n# Sending a Message\n\n@docs send\n\n\n# State Access\n\n@docs getServer\n\n\n# GameId and PlayerId validity checking\n\n@docs checkOnlyGameid, checkGameid, checkPlayerid, dummyGameid\n\n\n# Game and Player addition and removal\n\n@docs addGame, addPlayer, removeGame, removePlayer\n\n\n# Public Games\n\n@docs appendPublicGames, removePublicGame\n\n\n# Create random game and player identifiers.\n\n@docs newGameid, newPlayerid\n\n\n# Statistics\n\n@docs getStatisticsProperty, setStatisticsProperty\n@docs updateStatisticsProperty, maybeUpdateStatisticsProperty\n\n\n# Utilities\n\n@docs getGame, updateGame, gameCount, getPlayer, updatePlayer, getGamePlayers\n@docs isPublicGame, isPrivateGame\n\n\n# Errors\n\n@docs errorRsp\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "addGame",
+                "comment": " Add a game to a `ServerState`.\n\nAdds the game ID to the added games list in `ServerState.changes`, so that the server code will update its tables.\n\n",
+                "type": "WebSocketFramework.Types.GameId -> gamestate -> WebSocketFramework.Types.ServerState gamestate player -> WebSocketFramework.Types.ServerState gamestate player"
+            },
+            {
+                "name": "addPlayer",
+                "comment": " Add a player to a `ServerState`.\n\nAdds the player ID to the added players list in `ServerState.changes`, so that the server code will update its tables.\n\n",
+                "type": "WebSocketFramework.Types.PlayerId -> WebSocketFramework.Types.PlayerInfo player -> WebSocketFramework.Types.ServerState gamestate player -> WebSocketFramework.Types.ServerState gamestate player"
+            },
+            {
+                "name": "appendPublicGames",
+                "comment": " Push a `PublicGame` onto a list of them.\n",
+                "type": "WebSocketFramework.Types.PublicGame -> WebSocketFramework.Types.PublicGames -> WebSocketFramework.Types.PublicGames"
+            },
+            {
+                "name": "checkGameid",
+                "comment": " Check that the passed `GameId` is in the `ServerState`'s game dict and that it satisifed the `ModeChecker`.\n\nIf it does, return the `gamestate`. Otherwise wrap the message in an `ErrorRsp`.\n\n",
+                "type": "WebSocketFramework.Types.ModeChecker gamestate message -> WebSocketFramework.Types.ServerState gamestate player -> message -> WebSocketFramework.Types.GameId -> Result.Result (WebSocketFramework.Types.ErrorRsp message) gamestate"
+            },
+            {
+                "name": "checkOnlyGameid",
+                "comment": " Check that the passed `GameId` is in the `ServerState`'s game dict.\n\nIf it is, return the `gamestate`. Otherwise wrap the message in an `ErrorRsp`.\n\n",
+                "type": "WebSocketFramework.Types.ServerState gamestate player -> message -> WebSocketFramework.Types.GameId -> Result.Result (WebSocketFramework.Types.ErrorRsp message) gamestate"
+            },
+            {
+                "name": "checkPlayerid",
+                "comment": " Check that the passed `PlayerId` is in the `ServerState`'s player dict.\n\nIf it is, return the `PlayerInfo` record for the player.\n\nOtherwise wrap the message in an `ErrorRsp`.\n\n",
+                "type": "WebSocketFramework.Types.ServerState gamestate player -> message -> WebSocketFramework.Types.PlayerId -> Result.Result (WebSocketFramework.Types.ErrorRsp message) (WebSocketFramework.Types.PlayerInfo player)"
+            },
+            {
+                "name": "dummyGameid",
+                "comment": " `\"<gameid>\"`\n",
+                "type": "WebSocketFramework.Types.GameId"
+            },
+            {
+                "name": "errorRsp",
+                "comment": " Create the ErrorRsp record returned in the errors from `CheckOnlyGameid`, `checkGameid`, and `checkPlayerid`.\n",
+                "type": "message -> String.String -> WebSocketFramework.Types.ErrorRsp message"
+            },
+            {
+                "name": "fullMessageProcessor",
+                "comment": " Simulate a round-trip through the message encoder, decoder, and message processor.\n\nReturns a function that takes a request message, encodes it, decodes it, processes it into a response, encodes and decodes that, then returns the result.\n\nUsually passed as the first arg to `makeProxyServer`.\n\n",
+                "type": "WebSocketFramework.Types.EncodeDecode message -> WebSocketFramework.Types.ServerMessageProcessor gamestate player message -> WebSocketFramework.Types.ServerState gamestate player -> message -> ( WebSocketFramework.Types.ServerState gamestate player, Maybe.Maybe message )"
+            },
+            {
+                "name": "gameCount",
+                "comment": " Return the total number of games.\n",
+                "type": "WebSocketFramework.Types.ServerState gamestate player -> Basics.Int"
+            },
+            {
+                "name": "getGame",
+                "comment": " Look up the gamestate for a GameId\n",
+                "type": "WebSocketFramework.Types.GameId -> WebSocketFramework.Types.ServerState gamestate player -> Maybe.Maybe gamestate"
+            },
+            {
+                "name": "getGamePlayers",
+                "comment": " Get the player IDs for a game ID.\n",
+                "type": "WebSocketFramework.Types.GameId -> WebSocketFramework.Types.ServerState gamestate player -> List.List WebSocketFramework.Types.PlayerId"
+            },
+            {
+                "name": "getPlayer",
+                "comment": " Look up the PlayerInfo for a PlayerId\n",
+                "type": "WebSocketFramework.Types.PlayerId -> WebSocketFramework.Types.ServerState gamestate player -> Maybe.Maybe (WebSocketFramework.Types.PlayerInfo player)"
+            },
+            {
+                "name": "getServer",
+                "comment": " Return the server URL from inside a ServerInterface.\n",
+                "type": "WebSocketFramework.Types.ServerInterface gamestate player message msg -> WebSocketFramework.Types.ServerUrl"
+            },
+            {
+                "name": "getStatisticsProperty",
+                "comment": " Return the value of a statistics property,\nor Nothing if statistics are not being tracked or the property is unset.\n",
+                "type": "String.String -> WebSocketFramework.Types.ServerState gamestate player -> Maybe.Maybe Basics.Int"
+            },
+            {
+                "name": "isPrivateGame",
+                "comment": " Return true if the GameId is NOT in the public games list.\n",
+                "type": "WebSocketFramework.Types.GameId -> WebSocketFramework.Types.ServerState gamestate player -> Basics.Bool"
+            },
+            {
+                "name": "isPublicGame",
+                "comment": " Return true if the GameId is in the public games list.\n",
+                "type": "WebSocketFramework.Types.GameId -> WebSocketFramework.Types.ServerState gamestate player -> Basics.Bool"
+            },
+            {
+                "name": "makeProxyServer",
+                "comment": " Make a client connection to a proxy server.\n\nNo WebSocket connection will be used to send messages.\n\n",
+                "type": "WebSocketFramework.Types.ServerMessageProcessor gamestate player message -> (WebSocketFramework.Types.ServerInterface gamestate player message msg -> message -> msg) -> WebSocketFramework.Types.ServerInterface gamestate player message msg"
+            },
+            {
+                "name": "makeServer",
+                "comment": " Make a client connection to a real WebSocket server.\n\nThe `msg` will usually be a no-operation message. It is only used to fill a slot in the returned `ServerInterface`. That slot is only used by the proxy server.\n\n",
+                "type": "(Json.Encode.Value -> Platform.Cmd.Cmd msg) -> WebSocketFramework.Types.MessageEncoder message -> WebSocketFramework.Types.ServerUrl -> msg -> WebSocketFramework.Types.ServerInterface gamestate player message msg"
+            },
+            {
+                "name": "maybeUpdateStatisticsProperty",
+                "comment": " If tracking statistics and the property is set, update it.\n",
+                "type": "String.String -> (Basics.Int -> Basics.Int) -> WebSocketFramework.Types.ServerState gamestate player -> WebSocketFramework.Types.ServerState gamestate player"
+            },
+            {
+                "name": "newGameid",
+                "comment": " Generate a random GameId string, ensuring that it is not already assigned to a game.\n\nWill not be used by servers that have no concept of a game.\n\n",
+                "type": "WebSocketFramework.Types.ServerState gamestate player -> ( WebSocketFramework.Types.GameId, WebSocketFramework.Types.ServerState gamestate player )"
+            },
+            {
+                "name": "newPlayerid",
+                "comment": " Generate a random PlayerId string, ensuring that it is not already assigned to a player.\n\nWill not be used by servers that have no concept of a player.\n\n",
+                "type": "WebSocketFramework.Types.ServerState gamestate player -> ( WebSocketFramework.Types.PlayerId, WebSocketFramework.Types.ServerState gamestate player )"
+            },
+            {
+                "name": "removeGame",
+                "comment": " Remove a game and its players from a `ServerState`.\n\nAdds the game ID to the removed games list in `ServerState.changes`, so that the server code will update its tables.\n\n",
+                "type": "WebSocketFramework.Types.GameId -> WebSocketFramework.Types.ServerState gamestate player -> WebSocketFramework.Types.ServerState gamestate player"
+            },
+            {
+                "name": "removePlayer",
+                "comment": " Remove a player from a `ServerState`.\n\nAdds the player ID to the removed players list in `ServerState.changes`, so that the server code will update its tables.\n\n",
+                "type": "WebSocketFramework.Types.PlayerId -> WebSocketFramework.Types.ServerState gamestate player -> WebSocketFramework.Types.ServerState gamestate player"
+            },
+            {
+                "name": "removePublicGame",
+                "comment": " Remove the `PublicGame` with the given `GameId` from a list of games.\n",
+                "type": "WebSocketFramework.Types.GameId -> WebSocketFramework.Types.PublicGames -> WebSocketFramework.Types.PublicGames"
+            },
+            {
+                "name": "send",
+                "comment": " Return a `Cmd` to send a message through a server interface.\n",
+                "type": "WebSocketFramework.Types.ServerInterface gamestate player message msg -> message -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "setStatisticsProperty",
+                "comment": " Set the value of a statistics property,\nor do nothing if statistics are not being tracked.\n",
+                "type": "String.String -> Maybe.Maybe Basics.Int -> WebSocketFramework.Types.ServerState gamestate player -> WebSocketFramework.Types.ServerState gamestate player"
+            },
+            {
+                "name": "updateGame",
+                "comment": " Update the gamestate for a GameId.\n\nUse `removeGame` to delete a game.\n\n",
+                "type": "WebSocketFramework.Types.GameId -> gamestate -> WebSocketFramework.Types.ServerState gamestate player -> WebSocketFramework.Types.ServerState gamestate player"
+            },
+            {
+                "name": "updatePlayer",
+                "comment": " Update the PlayerInfo for a PlayerId.\n\nUse `removePlayer` to delete a player.\n\n",
+                "type": "WebSocketFramework.Types.PlayerId -> WebSocketFramework.Types.PlayerInfo player -> WebSocketFramework.Types.ServerState gamestate player -> WebSocketFramework.Types.ServerState gamestate player"
+            },
+            {
+                "name": "updateStatisticsProperty",
+                "comment": " Update a statistics property.\n\nIf not tracking statistics, the updater will not be called.\nOtherwise, it will receive Nothing if the property is not already set.\nIf it returns Nothing, the property will be removed.\n\n",
+                "type": "String.String -> (Maybe.Maybe Basics.Int -> Maybe.Maybe Basics.Int) -> WebSocketFramework.Types.ServerState gamestate player -> WebSocketFramework.Types.ServerState gamestate player"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "WebSocketFramework.Types",
+        "comment": " Types used by the rest of the WebSocketFramework modules.\n\n\n# State\n\n@docs ServerState, Dicts, ServerInterface\n@docs PlayerInfo, PublicGame, PublicGames, Changes\n\n\n# Empty states\n\n@docs emptyServerState, emptyPublicGames\n\n\n# Messages\n\n@docs RawMessage, ReqRsp, Plist, ErrorRsp\n\n\n# Function Signatures\n\n@docs ServerMessageProcessor, MessageToGameid, ModeChecker\n\n\n# Message Encoding/Decoding\n\n@docs MessageDecoder, MessageEncoder, EncodeDecode, DecoderPlist\n\n\n# Statistics\n\n@docs Statistics, emptyStatistics\n\n\n# Utility\n\n@docs printifyString\n\n\n# Server Ports\n\n@docs InputPort, OutputPort\n\n\n# Errors\n\n@docs ErrorKind, Error\n\n\n# Aliases\n\n@docs GameId, PlayerId, ServerUrl\n\n",
+        "unions": [
+            {
+                "name": "ErrorKind",
+                "comment": " The kind of error being reported in an `Error` instance.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "JsonParseError",
+                        []
+                    ],
+                    [
+                        "UnspecifiedError",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "ReqRsp",
+                "comment": " A type safe representation of the `reqrsp` and `msg` fields of a `RawMessage`.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Req",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Rsp",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "ServerInterface",
+                "comment": " Everything necessary to communicate with a server, be it real or proxy.\n",
+                "args": [
+                    "gamestate",
+                    "player",
+                    "message",
+                    "msg"
+                ],
+                "cases": [
+                    [
+                        "ServerInterface",
+                        [
+                            "{ server : WebSocketFramework.Types.ServerUrl, serverPort : Json.Encode.Value -> Platform.Cmd.Cmd msg, wrapper : WebSocketFramework.Types.ServerInterface gamestate player message msg -> message -> msg, state : Maybe.Maybe (WebSocketFramework.Types.ServerState gamestate player), sender : WebSocketFramework.Types.ServerInterface gamestate player message msg -> message -> Platform.Cmd.Cmd msg }"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Changes",
+                "comment": " Used to inform the server of added and removed games and players.\n\nInteract with it via `ServerInterface.addGame`, `addPlayer`, `removeGame`, `removePlayer`.\n\n",
+                "args": [],
+                "type": "{ addedGames : List.List WebSocketFramework.Types.GameId, addedPlayers : List.List ( WebSocketFramework.Types.GameId, WebSocketFramework.Types.PlayerId ), removedGames : List.List ( WebSocketFramework.Types.GameId, List.List WebSocketFramework.Types.PlayerId ), removedPlayers : List.List ( WebSocketFramework.Types.GameId, WebSocketFramework.Types.PlayerId ) }"
+            },
+            {
+                "name": "DecoderPlist",
+                "comment": " Map a list of request or response names to decoders for their messages.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "List.List ( String.String, Json.Decode.Decoder msg )"
+            },
+            {
+                "name": "Dicts",
+                "comment": " Opaque type used to store game and player state.\n",
+                "args": [
+                    "gamestate",
+                    "player"
+                ],
+                "type": "WebSocketFramework.InternalTypes.DictsWrapper (WebSocketFramework.InternalTypes.ServerDicts gamestate player)"
+            },
+            {
+                "name": "EncodeDecode",
+                "comment": " Wrapping of encoder, decoder, and error message creator.\n",
+                "args": [
+                    "message"
+                ],
+                "type": "{ encoder : WebSocketFramework.Types.MessageEncoder message, decoder : WebSocketFramework.Types.MessageDecoder message, errorWrapper : Maybe.Maybe (WebSocketFramework.Types.Error message -> message) }"
+            },
+            {
+                "name": "Error",
+                "comment": " Description of an error passed to `EncodeDecode.errorWrapper`.\n\nIf `kind` is `JsonParseError`, then `description` is the message text,\nand `message` is the error returned from parsing it.\n\nIf `kind` is `UnspecifiedError`, then `description` is user-level text,\nand `message` is `Ok` wrapped around the relevant message, if there\nis one, or `Err` wrapped around some likely useless string.\n\n",
+                "args": [
+                    "message"
+                ],
+                "type": "{ kind : WebSocketFramework.Types.ErrorKind, description : String.String, message : Result.Result String.String message }"
+            },
+            {
+                "name": "ErrorRsp",
+                "comment": " An error response that encapsulates a request message and an error string.\n",
+                "args": [
+                    "message"
+                ],
+                "type": "{ request : message, text : String.String }"
+            },
+            {
+                "name": "GameId",
+                "comment": " An alias for `String`.\n",
+                "args": [],
+                "type": "WebSocketFramework.InternalTypes.GameId"
+            },
+            {
+                "name": "InputPort",
+                "comment": " The input port from the Node.js code to the WebSocket server.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "(Json.Encode.Value -> msg) -> Platform.Sub.Sub msg"
+            },
+            {
+                "name": "MessageDecoder",
+                "comment": " Type signature for a function that turns a request or response and a key/value list into a message.\n",
+                "args": [
+                    "message"
+                ],
+                "type": "( WebSocketFramework.Types.ReqRsp, WebSocketFramework.Types.Plist ) -> Result.Result String.String message"
+            },
+            {
+                "name": "MessageEncoder",
+                "comment": " Type signature for a function that turns a message into request or response and a key/value list.\n",
+                "args": [
+                    "message"
+                ],
+                "type": "message -> ( WebSocketFramework.Types.ReqRsp, WebSocketFramework.Types.Plist )"
+            },
+            {
+                "name": "MessageToGameid",
+                "comment": " Type signature of a function that extracts the game id from a message, if it has one.\n",
+                "args": [
+                    "message"
+                ],
+                "type": "message -> Maybe.Maybe WebSocketFramework.Types.GameId"
+            },
+            {
+                "name": "ModeChecker",
+                "comment": " Type signature of a function that checks if a message is a legal request for a gamestate.\n\nAn `Err` result has a message string. An `Ok` result maps an unusable value.\n\n",
+                "args": [
+                    "gamestate",
+                    "message"
+                ],
+                "type": "gamestate -> message -> Result.Result String.String Basics.Never"
+            },
+            {
+                "name": "OutputPort",
+                "comment": " The output port from the WebSocket server to the Node.js code.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "Json.Encode.Value -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "PlayerId",
+                "comment": " An alias for `String`.\n",
+                "args": [],
+                "type": "WebSocketFramework.InternalTypes.PlayerId"
+            },
+            {
+                "name": "PlayerInfo",
+                "comment": " Information about a player in a game.\n",
+                "args": [
+                    "player"
+                ],
+                "type": "{ gameid : WebSocketFramework.Types.GameId, player : player }"
+            },
+            {
+                "name": "Plist",
+                "comment": " A list of key/value pairs.\n",
+                "args": [],
+                "type": "List.List ( String.String, Json.Encode.Value )"
+            },
+            {
+                "name": "PublicGame",
+                "comment": " If your server supports public games, this represents the game id and name of the creator of the game.\n",
+                "args": [],
+                "type": "{ gameid : WebSocketFramework.Types.GameId, playerName : String.String }"
+            },
+            {
+                "name": "PublicGames",
+                "comment": " A list of pubic games.\n",
+                "args": [],
+                "type": "List.List WebSocketFramework.Types.PublicGame"
+            },
+            {
+                "name": "RawMessage",
+                "comment": " A raw request, ready to be encoded to go over the wire.\n\n`reqrsp` is \"req\" or \"rsp\" for request or response.\n\n`msg` is the name of the message.\n\n`plist` is the parameters of the message.\n\n",
+                "args": [],
+                "type": "{ reqrsp : String.String, msg : String.String, plist : WebSocketFramework.Types.Plist }"
+            },
+            {
+                "name": "ServerMessageProcessor",
+                "comment": " Type signature of a function which turns a server state and a request message into a ServerState and maybe a response message.\n",
+                "args": [
+                    "gamestate",
+                    "player",
+                    "message"
+                ],
+                "type": "WebSocketFramework.Types.ServerState gamestate player -> message -> ( WebSocketFramework.Types.ServerState gamestate player, Maybe.Maybe message )"
+            },
+            {
+                "name": "ServerState",
+                "comment": " The part of the server state that is independent from its socket connections.\n\nTo access the opaque `dicts`, use `addGame`, `addPlayer`, `getGame`, `getPlayer`, `getGamePlayers`, `updateGame`, `updatePlayer`, `removeGame`, `removePlayer` from `WebsocketFramework.ServerInterface`.\n\n",
+                "args": [
+                    "gamestate",
+                    "player"
+                ],
+                "type": "{ dicts : WebSocketFramework.Types.Dicts gamestate player, publicGames : WebSocketFramework.Types.PublicGames, state : Maybe.Maybe gamestate, seed : Random.Seed, changes : Maybe.Maybe WebSocketFramework.Types.Changes, statistics : Maybe.Maybe WebSocketFramework.Types.Statistics, time : Time.Posix }"
+            },
+            {
+                "name": "ServerUrl",
+                "comment": " An alias for `String`.\n",
+                "args": [],
+                "type": "String.String"
+            },
+            {
+                "name": "Statistics",
+                "comment": " Track statistics about connections and games.\n",
+                "args": [],
+                "type": "Dict.Dict String.String Basics.Int"
+            }
+        ],
+        "values": [
+            {
+                "name": "emptyPublicGames",
+                "comment": " An empty list of public games.\n",
+                "type": "WebSocketFramework.Types.PublicGames"
+            },
+            {
+                "name": "emptyServerState",
+                "comment": " Create a mostly empty `ServerState`.\n\nYou'll need to initialize the `seed` property in your real server,\nif you use `newGameid` and `newPlayerid` in `WebSocketFramework.ServerInterface`.\n\nYou'll need to initialize the `statistics` property, if you want to\ntrack statistics.\n\n",
+                "type": "Maybe.Maybe gamestate -> WebSocketFramework.Types.ServerState gamestate player"
+            },
+            {
+                "name": "emptyStatistics",
+                "comment": " Return a new `Statistics` record, with your value for the `statistics` field.\n\nUntil you populate the ServerState.statistics field, no connection\nstatistics will be gathered.\n\n",
+                "type": "WebSocketFramework.Types.Statistics"
+            },
+            {
+                "name": "printifyString",
+                "comment": " Convert ASCII double-quote characters to curly end quotes.\n",
+                "type": "String.String -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

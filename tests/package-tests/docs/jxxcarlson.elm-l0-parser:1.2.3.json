@@ -1,0 +1,113 @@
+[
+    {
+        "name": "L0",
+        "comment": " A Parser for the experimental L0 module. See the app folder to see how it is used.\nThe Render folder in app could have been included with the parser. However, this way\nusers are free to design their own renderer.\n\nSince this package is still experimental (but needed in various test projects).\nThe documentation is skimpy.\n\n@docs AST, parse\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "AST",
+                "comment": " ",
+                "args": [],
+                "type": "List.List (Tree.Tree Parser.Block.L0BlockE)"
+            }
+        ],
+        "values": [
+            {
+                "name": "parse",
+                "comment": " ",
+                "type": "String.String -> L0.AST"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Parser.Block",
+        "comment": " Types of blocks.\n\n@docs BlockType, L0BlockE\n\n",
+        "unions": [
+            {
+                "name": "BlockType",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Paragraph",
+                        []
+                    ],
+                    [
+                        "OrdinaryBlock",
+                        [
+                            "List.List String.String"
+                        ]
+                    ],
+                    [
+                        "VerbatimBlock",
+                        [
+                            "List.List String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "L0BlockE",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "L0BlockE",
+                        [
+                            "{ name : Maybe.Maybe String.String, args : List.List String.String, indent : Basics.Int, blockType : Parser.Block.BlockType, content : Either.Either String.String (List.List Parser.Expr.Expr), children : List.List Parser.Block.L0BlockE }"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "Parser.Expr",
+        "comment": " The syntax tree for the parser is of type Expr.\n\n@docs Expr\n\n",
+        "unions": [
+            {
+                "name": "Expr",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Expr",
+                        [
+                            "String.String",
+                            "List.List Parser.Expr.Expr",
+                            "Parser.Token.Meta"
+                        ]
+                    ],
+                    [
+                        "Text",
+                        [
+                            "String.String",
+                            "Parser.Token.Meta"
+                        ]
+                    ],
+                    [
+                        "Verbatim",
+                        [
+                            "String.String",
+                            "String.String",
+                            "Parser.Token.Meta"
+                        ]
+                    ],
+                    [
+                        "Error",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [],
+        "binops": []
+    }
+]

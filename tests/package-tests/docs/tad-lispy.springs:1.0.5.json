@@ -1,0 +1,53 @@
+[
+    {
+        "name": "Spring",
+        "comment": " This module can be used to create and track oscillating values. A value like that will change over time in a way similar to a center of mass attached to an anchored spring. See [the ReadMe](./) for an overview, demos and use cases.\n\n\n# Type\n\n@docs Spring\n\n\n# Constructor\n\n@docs create\n\n\n# Control\n\n@docs setTarget\n\n\n# Update\n\n@docs animate\n@docs jumpTo\n\n\n# Query\n\n@docs value\n@docs target\n@docs atRest\n\n",
+        "unions": [
+            {
+                "name": "Spring",
+                "comment": " Let's say we are creating a program that animates the position of an element towards the last click position.\n\n    type alias Model =\n        { x : Spring\n        , y : Spring\n        }\n\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "animate",
+                "comment": " Gently update the internal state of the spring\n\nTypically you would do it in response to an animation frame message, like this:\n\n    subscriptions : Model -> Sub Msg\n    subscriptions model =\n        Browser.Events.onAnimationFrameDelta Animate\n\n    update : Msg -> Model -> ( Model, Cmd Msg )\n    update msg model =\n        case msg of\n            Animate delta ->\n                ( { model\n                    | x = Spring.animate delta model.x\n                    , y = Spring.animate delta model.y\n                  }\n                , Cmd.none\n                )\n\n> Note: that if the frame rate is low, the time passage experienced by the spring will deviate from the real time. See the comment in source code for more details.\n\n",
+                "type": "Basics.Float -> Spring.Spring -> Spring.Spring"
+            },
+            {
+                "name": "atRest",
+                "comment": " Check if the spring is at rest\n\nIt indicates that the spring has reached its target and no motion is going on. Maybe you want to unsubscribe from animation frames? Or remove an element?\n\n    subscriptions : Model -> Sub Msg\n    subscriptions model =\n        if Spring.atRest model.x && Spring.atRest model.y then\n            Sub.none\n\n        else\n            Browser.Events.onAnimationFrameDelta Animate\n\n",
+                "type": "Spring.Spring -> Basics.Bool"
+            },
+            {
+                "name": "create",
+                "comment": " Create a spring with the value and target set to `0`.\n\nLet's say we are creating a program that animates the position of an element toward last click position.\n\n    type alias Model =\n        { x : Spring\n        , y : Spring\n        }\n\n    init : Flags -> ( Model, Cmd msg )\n    init flags =\n        ( { x = Spring.create { strength = 20, dampness = 4.5 }\n          , y = Spring.create { strength = 20, dampness = 4.5 }\n          }\n        , Cmd.none\n        )\n\nNote that the `dampness` is a logarythmic value: `dampness = 5` results in damping ratio 25 times higher than `dampness = 1`.\n\n",
+                "type": "{ strength : Basics.Float, dampness : Basics.Float } -> Spring.Spring"
+            },
+            {
+                "name": "jumpTo",
+                "comment": " Forcefully set the value and interrupt the motion.\n\nThe target will be preserved, but velocity will be set to 0. It is useful when you set the spring for the first time (e.g. in the `init` function) or you want to reset the animation.\n\n    init : Flags -> ( Model, Cmd msg )\n    init flags =\n        ( { x =\n                Spring.create 20 20\n                    |> Spring.setTarget 200\n                    |> Spring.jumpTo 200\n          , y =\n                Spring.create 20 20\n                    |> Spring.setTarget 200\n                    |> Spring.jumpTo 200\n          }\n        , Cmd.none\n        )\n\n",
+                "type": "Basics.Float -> Spring.Spring -> Spring.Spring"
+            },
+            {
+                "name": "setTarget",
+                "comment": " Set a new target (relaxed value) for the spring.\n\nThe current value and its velocity will be preserved, so the spring will smoothly transition its movement. Typically you would set a target in response to an event, e.g.:\n\n    update : Msg -> Model -> ( Model, Cmd Msg )\n    update msg model =\n        case msg of\n            Click x y ->\n                ( { model\n                    | x = Spring.setTarget x model.x\n                    , y = Spring.setTarget y model.y\n                  }\n                , Cmd.none\n                )\n\n",
+                "type": "Basics.Float -> Spring.Spring -> Spring.Spring"
+            },
+            {
+                "name": "target",
+                "comment": " Get current target of a spring\n\nCan be useful to see where the spring is going. Maybe you want to display something there?\n\n",
+                "type": "Spring.Spring -> Basics.Float"
+            },
+            {
+                "name": "value",
+                "comment": " Measure the current value of the spring.\n\nTypically you want to access it in the view function, like this:\n\n    Element.el\n        [ Element.width (Element.px 20)\n        , Element.height (Element.px 20)\n        , Font.size 30\n        , model.x\n            |> Spring.value\n            |> Element.moveRight\n        , model.y\n            |> Spring.value\n            |> Element.moveDown\n        ]\n        (Element.text \"\\u{1F991}\")\n\n> Above I use [Elm UI](https://package.elm-lang.org/packages/mdgriffith/elm-ui/latest/) Elements and Attributes, but it's not difficult to implement the same behaviour using CSS transformations. The value of a Spring is just a `Float` - you can do with it whatever you need.\n\n",
+                "type": "Spring.Spring -> Basics.Float"
+            }
+        ],
+        "binops": []
+    }
+]

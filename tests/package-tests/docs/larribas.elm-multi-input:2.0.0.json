@@ -1,0 +1,88 @@
+[
+    {
+        "name": "MultiInput",
+        "comment": " A component to input multiple items and display/manage them comfortably.\n\nYou can completely customize the type of items it accepts or the way different items are split up. Examples are an input for multiple item (as in an item client's FROM field), or a tag input (as in Github's repository topics). It allows pasting in bulk, removing existing items and ammending the last typed item.\n\nFor a better feel of what you can do with this component, visit the [demo here](https://larribas.github.io/elm-multi-input/)\n\n\n# Custom Configuration\n\n@docs ViewConfig, UpdateConfig\n\n\n# Main workflow\n\n@docs Msg, State, init, update, subscriptions, view\n\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " Internal messages to manage the component's state.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "FocusElement",
+                        []
+                    ],
+                    [
+                        "TextareaBlurred",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "KeyDown",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "RemoveItem",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "InputChanged",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "State",
+                "comment": " Component's internal state.\n",
+                "args": [],
+                "type": "{ nextItem : String.String, id : String.String, needsRefocus : Basics.Bool }"
+            },
+            {
+                "name": "UpdateConfig",
+                "comment": " Specific settings for the component's update function.\n\nYou can specify a list of strings that act as separators for the different items.\n\n    { separators = [ \"\\n\", \"\\t\", \",\", \" \" ] }\n\n",
+                "args": [],
+                "type": "{ separators : List.List String.String }"
+            },
+            {
+                "name": "ViewConfig",
+                "comment": " Specific settings for the component's view function.\n\n`isValid` determines whether a typed item is correct (and give visual feedback to the user)\n`toOuterMsg` turns the internal messages for the component into messages from the outer page/component\n\n    { placeholder = \"Write your email here\"\n    , isValid = \\x -> String.contains \"@\"\n    , toOuterMsg = MultiInputMsg\n    }\n\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ placeholder : String.String, isValid : String.String -> Basics.Bool, toOuterMsg : MultiInput.Msg -> msg }"
+            }
+        ],
+        "values": [
+            {
+                "name": "init",
+                "comment": " Initialize the component's state.\n\nIt needs a unique ID supplied by the user, in case there are several inputs like this on the same document. By default, we begin with an empty textarea.\n\n",
+                "type": "String.String -> MultiInput.State"
+            },
+            {
+                "name": "subscriptions",
+                "comment": " Subscribes to relevant events for the input\n\nThis allows the component to control the input focus properly, subscribing to the Browser's animation frame sequence.\n\nThe subscription is managed only when strictly needed, so it does not have an impact on performance.\n\n",
+                "type": "MultiInput.State -> Platform.Sub.Sub MultiInput.Msg"
+            },
+            {
+                "name": "update",
+                "comment": " Updates the component's state and a supplied list of items.\n\nGiven a particular change on the input (e.g. a series of items have been pasted, the component has lost focus, a special key has been pressed...) it will update the list of distinct items and the current state of the component.\n\n",
+                "type": "MultiInput.UpdateConfig -> MultiInput.Msg -> MultiInput.State -> List.List String.String -> ( MultiInput.State, List.List String.String, Platform.Cmd.Cmd MultiInput.Msg )"
+            },
+            {
+                "name": "view",
+                "comment": " Renders the component visually.\n\n       MultiInput.view MultiInputMsg [] \"Write a placeholder here\" model.inputItems model.inputItemsState\n\nSee README for actual examples.\n\n",
+                "type": "MultiInput.ViewConfig msg -> List.List (Html.Attribute msg) -> List.List String.String -> MultiInput.State -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

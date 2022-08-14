@@ -1,0 +1,82 @@
+[
+    {
+        "name": "Html5.DragDrop",
+        "comment": " This library handles dragging and dropping using the API\nfrom the HTML 5 recommendation at\n<https://www.w3.org/TR/html/editing.html#drag-and-drop>.\n\nIt provides attributes and a model/update to handle\ndragging and dropping between your elements.\n\nTypes are parametrized with a `dragId` and a `dropId` parameter, which are the\ntypes for the drag identifier passed to the [`draggable`](#draggable) function\nand the drop identifier passed to the [`droppable`](#droppable) function.\nYou can put whatever data you like in these, but don't use function types.\n\nYou can use several instances of this model at the same time and they won't\ninterfere with each other. Drag and drop are connected to an instance by the\nMsg constructor used, and the update function will not send a result if a drop\nwas made from another instance.\n\nTo use on mobile, you can include the following polyfill:\n<https://github.com/Bernardo-Castilho/dragdroptouch>\n\nNote that drag and drop _does not_ work out of the box in Firefox.\nSee the example folder in github for an example that uses ports\nto do `event.dataTransfer.setData('text', '')`. to fix this.\n\n\n# Model and update\n\n@docs Model, init, Msg, Position, update, updateSticky\n\n\n# View attributes\n\n@docs draggable, droppable\n\n\n# Status functions\n\n@docs getDragId, getDropId, getDroppablePosition\n\n\n# Javascript interop\n\n@docs getDragstartEvent\n\n",
+        "unions": [
+            {
+                "name": "Model",
+                "comment": " The drag and drop state.\n\nThis should be placed inside your application's model like this:\n\n    type alias Model =\n        { ...\n        , dragDrop : Html5.DragDrop.Model DragId DropId\n        }\n\n",
+                "args": [
+                    "dragId",
+                    "dropId"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Msg",
+                "comment": " The drag and drop messages.\n\nThis should be placed inside your application's messages like this:\n\n    type Msg\n        = ...\n        | DragDropMsg (Html5.DragDrop.Msg DragId DropId)\n\n",
+                "args": [
+                    "dragId",
+                    "dropId"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Position",
+                "comment": " The position inside a droppable. Contains the droppable's\nwidth and height, as well as the current x and y position,\nusing the `currentTarget.clientWidth`, `currentTarget.clientHeight`, `offsetX`, and `offsetY`\nfrom the `ondragover` event.\n\nNote, that in some cases, x and y may be negative, or larger than the clientWidth and height,\nif a drop event is registered outside the CSS padding edge.\n\n",
+                "args": [],
+                "type": "{ width : Basics.Int, height : Basics.Int, x : Basics.Int, y : Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "draggable",
+                "comment": " Attributes to make a node draggable.\n\nThe node you put these attributes on will be draggable with the `dragId` you provide.\nIt should be used like this:\n\n    view =\n       ...\n       div (... ++ Html5.DragDrop.draggable DragDropMsg dragId) [...]\n\n",
+                "type": "(Html5.DragDrop.Msg dragId dropId -> msg) -> dragId -> List.List (Html.Attribute msg)"
+            },
+            {
+                "name": "droppable",
+                "comment": " Attributes to make a node droppable.\n\nThe node you put these attributes on will be droppable with the `dropId` you provide.\nIt should be used like this:\n\n    view =\n       ...\n       div (... ++ Html5.DragDrop.droppable DragDropMsg dropId) [...]\n\n",
+                "type": "(Html5.DragDrop.Msg dragId dropId -> msg) -> dropId -> List.List (Html.Attribute msg)"
+            },
+            {
+                "name": "getDragId",
+                "comment": " Get the current `dragId` if available.\n\nThis function can be used for instance to hide the draggable when dragging.\n\n",
+                "type": "Html5.DragDrop.Model dragId dropId -> Maybe.Maybe dragId"
+            },
+            {
+                "name": "getDragstartEvent",
+                "comment": " Get the `dragstart` event `Value` so that you can pass it to a port.\nThis is useful to fix Firefox behaviour. See the example directory in github\nfor how you can do that.\n\nYou can also use the event to do other things from Javascript,\nsuch as setting the drag image.\n\n",
+                "type": "Html5.DragDrop.Msg dragId dropId -> Maybe.Maybe { dragId : dragId, event : Json.Decode.Value }"
+            },
+            {
+                "name": "getDropId",
+                "comment": " Get the current `dropId` if available.\n\nThis function can be used for instance to highlight the droppable when dragging over it.\n\nNote that for efficiency reasons, the `dragover` event is being propagated,\nso if you have a droppable inside another droppable you could get the wrong info\nfrom `getDropId`. The package tries to ignore the extra events, but it may fail.\n\n",
+                "type": "Html5.DragDrop.Model dragId dropId -> Maybe.Maybe dropId"
+            },
+            {
+                "name": "getDroppablePosition",
+                "comment": " Get the current `Position` when dragging over the droppable.\n",
+                "type": "Html5.DragDrop.Model dragId dropId -> Maybe.Maybe Html5.DragDrop.Position"
+            },
+            {
+                "name": "init",
+                "comment": " The initial drag and drop state.\n\nYou should use this as the initital value for the drag and drop state in your model.\n\n",
+                "type": "Html5.DragDrop.Model dragId dropId"
+            },
+            {
+                "name": "update",
+                "comment": " The update function.\n\nWhen a successful drag and drop is made, this function will return a result\nconsisting of the `dragId` and `dropId` that was specified in the\n[`draggable`](#draggable) and [`droppable`](#droppable)\ncalls for the corresponding nodes. It will also return a [`Position`](#Position)\nfor the drop event.\n\nThis should be placed inside your application's update function, like this:\n\n    update msg model =\n        case msg of\n            ...\n            DragDropMsg msg_ ->\n                let\n                    ( model_, result ) =\n                        Html5.DragDrop.update msg_ model.dragDrop\n                in\n                    { model\n                        | dragDrop = model_\n                        , ...use result if available...\n                    }\n\n",
+                "type": "Html5.DragDrop.Msg dragId dropId -> Html5.DragDrop.Model dragId dropId -> ( Html5.DragDrop.Model dragId dropId, Maybe.Maybe ( dragId, dropId, Html5.DragDrop.Position ) )"
+            },
+            {
+                "name": "updateSticky",
+                "comment": " A \"sticky\" version of the [`update`](#update) function.\n\nIt's used the same way as the [`update`](#update) function, but when you use this version,\ndroppables are \"sticky\" so when you drag out of them and release the mouse button,\na drop will still be registered at the last droppable. You should preferably\nprovide some sort of indication (using [`getDropId`](#getDropId)) where the drop will take\nplace if you use this function.\n\n",
+                "type": "Html5.DragDrop.Msg dragId dropId -> Html5.DragDrop.Model dragId dropId -> ( Html5.DragDrop.Model dragId dropId, Maybe.Maybe ( dragId, dropId, Html5.DragDrop.Position ) )"
+            }
+        ],
+        "binops": []
+    }
+]

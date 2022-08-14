@@ -1,0 +1,62 @@
+[
+    {
+        "name": "Uuid",
+        "comment": " This module provides an opaque type for Uuids, helpers to serialize\nfrom and to String and helpers to generate new Uuids using Elm's\n[Random](https://package.elm-lang.org/packages/elm/random/latest/) package.\n\nUuids are Universally Unique IDentifiers. They are 128 bit ids that are\ndesigned to be extremely unlikely to collide with other Uuids.\n\nThis library only supports generating Version 4 Uuid (those generated using\nrandom numbers, as opposed to hashing. See\n[Wikipedia on Uuids](https://en.wikipedia.org/wiki/Universally_unique_identifier#Version_4_.28random.29)\nfor more details). Version 4 Uuids are constructed using 122 pseudo random bits.\n\nDisclaimer: If you use this Library to generate Uuids, please be advised\nthat it does not use a cryptographically secure pseudo random number generator.\nDepending on your use case the randomness provided may not be enough. The\nperiod of the underlying random generator is high, so creating lot's of random\nUUIDs on one client is fine, but please be aware that since the initial random\nseed of the current Random implementation is limited to 32 bits, creating\nUUIDs on many independent clients may lead to collisions more quickly than you\nthink (see <https://github.com/danyx23/elm-uuid/issues/10> for details)!\n\nThis library is split into two Modules. Uuid (this module) wraps Uuids in\nan opaque type for improved type safety. If you prefer to simply get strings\nyou can use the Uuid.Barebones module which provides methods to generate\nand verify Uuid as plain Strings.\n\nUuids can be generated either by parsing them from the canonical string representation\n(see fromString) or by generating them. If you are unfamiliar with random number generation\nin pure functional languages, this can be a bit confusing. The gist of it is that:\n\n1.  you need a good random seed and this has to come from outside our wonderfully\n    predictable Elm code (meaning you have to create an incoming port and feed in\n    some initial randomness)\n\n2.  every call to generate a new Uuid will give you a tuple of a Uuid and a new\n    seed. It is very important that whenever you generate a new Uuid you store this\n    seed you get back into your model and use this one for the next Uuid generation.\n    If you reuse a seed, you will create the same Uuid twice!\n\nHave a look at the examples in the package to see how to use it!\n\n@docs Uuid, uuidGenerator, fromString, toString, encode, decoder\n\n",
+        "unions": [
+            {
+                "name": "Uuid",
+                "comment": " Uuid type. Represents a 128 bit Uuid (Version 4)\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decoder",
+                "comment": " Decoder for getting Uuid out of Json\n",
+                "type": "Json.Decode.Decoder Uuid.Uuid"
+            },
+            {
+                "name": "encode",
+                "comment": " Encode Uuid to Json\n",
+                "type": "Uuid.Uuid -> Json.Encode.Value"
+            },
+            {
+                "name": "fromString",
+                "comment": " Create a Uuid from a String in the canonical form (e.g.\n\"63B9AAA2-6AAF-473E-B37E-22EB66E66B76\"). Note that this module only supports\ncanonical Uuids, Versions 1-5 and will refuse to parse other Uuid variants.\n",
+                "type": "String.String -> Maybe.Maybe Uuid.Uuid"
+            },
+            {
+                "name": "toString",
+                "comment": " Create a string representation from a Uuid in the canonical 8-4-4-4-12 form, i.e.\n\"63B9AAA2-6AAF-473E-B37E-22EB66E66B76\"\n",
+                "type": "Uuid.Uuid -> String.String"
+            },
+            {
+                "name": "uuidGenerator",
+                "comment": " Random Generator for Uuids. Using this Generator instead of the generate\nfunction let's you use the full power of the Generator to create lists of Uuids,\nmap them to other types etc.\n",
+                "type": "Random.Generator Uuid.Uuid"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Uuid.Barebones",
+        "comment": " This is the Uuid.Barebones version that generates valid Uuids\nas Strings and provides a method to verify if a given String is a\nvalid Uuid.\n\nSee the main Uuid module docs for more information on how\n\n@docs uuidStringGenerator, isValidUuid\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "isValidUuid",
+                "comment": " Verification function to check if the given string is a valid Uuid in the canonical\nrepresentation xxxxxxxx-xxxx-Axxx-Yxxx-xxxxxxxxxxxx where A is the version number between\n[1-5] and Y is in the range [8-B]\n",
+                "type": "String.String -> Basics.Bool"
+            },
+            {
+                "name": "uuidStringGenerator",
+                "comment": " Random Generator for Uuid Strings. Using this Generator instead of the generate\nfunction lets you use the full power of the Generator library to create lists of Uuids,\nmap them to other types etc.\n",
+                "type": "Random.Generator String.String"
+            }
+        ],
+        "binops": []
+    }
+]

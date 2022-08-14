@@ -1,0 +1,942 @@
+[
+    {
+        "name": "Ren.AST.Expr",
+        "comment": "\n\n@docs Expr, ExprF\n@docs Error, Identifier, Literal, Operator, Pattern\n@docs annotation, references, shadows, bound, binds\n@docs map, mapAnnotation, erase\n@docs wrap, unwrap, cata, para\n@docs coerceToNumber, coerceToBoolean, internalOperatorName\n\n",
+        "unions": [
+            {
+                "name": "Error",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "MissingElement",
+                        []
+                    ],
+                    [
+                        "MissingSymbol",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "UnexpectedSymbol",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Expr",
+                "comment": " Represents an expression node in an AST with some accompanying metadata. We\nmight have `Expr Type` to represent a typed expression, or `Expr Span` to know\nwhere an expression exists in the source code.\n",
+                "args": [
+                    "meta"
+                ],
+                "cases": [
+                    [
+                        "Expr",
+                        [
+                            "meta",
+                            "Ren.AST.Expr.ExprF (Ren.AST.Expr.Expr meta)"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "ExprF",
+                "comment": " ",
+                "args": [
+                    "expr"
+                ],
+                "cases": [
+                    [
+                        "Access",
+                        [
+                            "expr",
+                            "List.List String.String"
+                        ]
+                    ],
+                    [
+                        "Application",
+                        [
+                            "expr",
+                            "List.List expr"
+                        ]
+                    ],
+                    [
+                        "Annotation",
+                        [
+                            "expr",
+                            "Ren.Data.Type.Type"
+                        ]
+                    ],
+                    [
+                        "Block",
+                        [
+                            "List.List ( String.String, expr )",
+                            "expr"
+                        ]
+                    ],
+                    [
+                        "Conditional",
+                        [
+                            "expr",
+                            "expr",
+                            "expr"
+                        ]
+                    ],
+                    [
+                        "Error",
+                        [
+                            "Maybe.Maybe Ren.AST.Expr.Error"
+                        ]
+                    ],
+                    [
+                        "Identifier",
+                        [
+                            "Ren.AST.Expr.Identifier"
+                        ]
+                    ],
+                    [
+                        "Infix",
+                        [
+                            "Ren.AST.Expr.Operator",
+                            "expr",
+                            "expr"
+                        ]
+                    ],
+                    [
+                        "Lambda",
+                        [
+                            "List.List Ren.AST.Expr.Pattern",
+                            "expr"
+                        ]
+                    ],
+                    [
+                        "Literal",
+                        [
+                            "Ren.AST.Expr.Literal expr"
+                        ]
+                    ],
+                    [
+                        "Match",
+                        [
+                            "expr",
+                            "List.List ( Ren.AST.Expr.Pattern, Maybe.Maybe expr, expr )"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Identifier",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Local",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Scoped",
+                        [
+                            "String.String",
+                            "Ren.AST.Expr.Identifier"
+                        ]
+                    ],
+                    [
+                        "Placeholder",
+                        [
+                            "Maybe.Maybe String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Literal",
+                "comment": " ",
+                "args": [
+                    "expr"
+                ],
+                "cases": [
+                    [
+                        "Array",
+                        [
+                            "List.List expr"
+                        ]
+                    ],
+                    [
+                        "Boolean",
+                        [
+                            "Basics.Bool"
+                        ]
+                    ],
+                    [
+                        "Number",
+                        [
+                            "Basics.Float"
+                        ]
+                    ],
+                    [
+                        "Record",
+                        [
+                            "List.List ( String.String, expr )"
+                        ]
+                    ],
+                    [
+                        "String",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Template",
+                        [
+                            "List.List (Data.Either.Either String.String expr)"
+                        ]
+                    ],
+                    [
+                        "Undefined",
+                        []
+                    ],
+                    [
+                        "Variant",
+                        [
+                            "String.String",
+                            "List.List expr"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Operator",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Pipe",
+                        []
+                    ],
+                    [
+                        "Compose",
+                        []
+                    ],
+                    [
+                        "Add",
+                        []
+                    ],
+                    [
+                        "Sub",
+                        []
+                    ],
+                    [
+                        "Mul",
+                        []
+                    ],
+                    [
+                        "Div",
+                        []
+                    ],
+                    [
+                        "Pow",
+                        []
+                    ],
+                    [
+                        "Mod",
+                        []
+                    ],
+                    [
+                        "Eq",
+                        []
+                    ],
+                    [
+                        "NotEq",
+                        []
+                    ],
+                    [
+                        "Lt",
+                        []
+                    ],
+                    [
+                        "Lte",
+                        []
+                    ],
+                    [
+                        "Gt",
+                        []
+                    ],
+                    [
+                        "Gte",
+                        []
+                    ],
+                    [
+                        "And",
+                        []
+                    ],
+                    [
+                        "Or",
+                        []
+                    ],
+                    [
+                        "Cons",
+                        []
+                    ],
+                    [
+                        "Join",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Pattern",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "ArrayDestructure",
+                        [
+                            "List.List Ren.AST.Expr.Pattern"
+                        ]
+                    ],
+                    [
+                        "LiteralPattern",
+                        [
+                            "Ren.AST.Expr.Literal Basics.Never"
+                        ]
+                    ],
+                    [
+                        "Name",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "RecordDestructure",
+                        [
+                            "List.List ( String.String, Maybe.Maybe Ren.AST.Expr.Pattern )"
+                        ]
+                    ],
+                    [
+                        "Spread",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "TemplateDestructure",
+                        [
+                            "List.List (Data.Either.Either String.String Ren.AST.Expr.Pattern)"
+                        ]
+                    ],
+                    [
+                        "Typeof",
+                        [
+                            "String.String",
+                            "Ren.AST.Expr.Pattern"
+                        ]
+                    ],
+                    [
+                        "VariantDestructure",
+                        [
+                            "String.String",
+                            "List.List Ren.AST.Expr.Pattern"
+                        ]
+                    ],
+                    [
+                        "Wildcard",
+                        [
+                            "Maybe.Maybe String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "annotation",
+                "comment": " ",
+                "type": "Ren.AST.Expr.Expr meta -> meta"
+            },
+            {
+                "name": "binds",
+                "comment": " Checks to see if a Pattern introduces a new binding with a name that matches\nthe argument. This is necessary in, for example, the `references` check because\na binding may shadow the name we're checking is referenced and we don't want a\nfalse positive.\n",
+                "type": "String.String -> Ren.AST.Expr.Pattern -> Basics.Bool"
+            },
+            {
+                "name": "bound",
+                "comment": " ",
+                "type": "Ren.AST.Expr.Pattern -> List.List String.String"
+            },
+            {
+                "name": "cata",
+                "comment": " ",
+                "type": "(meta -> Ren.AST.Expr.ExprF a -> a) -> Ren.AST.Expr.Expr meta -> a"
+            },
+            {
+                "name": "coerceToBoolean",
+                "comment": " ",
+                "type": "Ren.AST.Expr.ExprF a -> Maybe.Maybe Basics.Bool"
+            },
+            {
+                "name": "coerceToNumber",
+                "comment": " ",
+                "type": "Ren.AST.Expr.ExprF a -> Maybe.Maybe Basics.Float"
+            },
+            {
+                "name": "erase",
+                "comment": " ",
+                "type": "Ren.AST.Expr.Expr a -> Ren.AST.Expr.Expr ()"
+            },
+            {
+                "name": "internalOperatorName",
+                "comment": " ",
+                "type": "Ren.AST.Expr.Operator -> String.String"
+            },
+            {
+                "name": "map",
+                "comment": " ",
+                "type": "(a -> b) -> Ren.AST.Expr.ExprF a -> Ren.AST.Expr.ExprF b"
+            },
+            {
+                "name": "mapAnnotation",
+                "comment": " ",
+                "type": "(a -> b) -> Ren.AST.Expr.Expr a -> Ren.AST.Expr.Expr b"
+            },
+            {
+                "name": "para",
+                "comment": " ",
+                "type": "(Ren.AST.Expr.ExprF ( Ren.AST.Expr.Expr meta, a ) -> a) -> Ren.AST.Expr.Expr meta -> a"
+            },
+            {
+                "name": "references",
+                "comment": " ",
+                "type": "Ren.AST.Expr.Identifier -> Ren.AST.Expr.Expr meta -> Basics.Bool"
+            },
+            {
+                "name": "shadows",
+                "comment": " ",
+                "type": "Ren.AST.Expr.Identifier -> Ren.AST.Expr.Expr meta -> Basics.Bool"
+            },
+            {
+                "name": "unwrap",
+                "comment": " ",
+                "type": "Ren.AST.Expr.Expr meta -> Ren.AST.Expr.ExprF (Ren.AST.Expr.Expr meta)"
+            },
+            {
+                "name": "wrap",
+                "comment": " ",
+                "type": "meta -> Ren.AST.Expr.ExprF (Ren.AST.Expr.Expr meta) -> Ren.AST.Expr.Expr meta"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Ren.AST.Module",
+        "comment": "\n\n@docs Module, Import, ImportSpecifier, Declaration, TypeDeclaration\n@docs exposes, imports, externs\n@docs map, mapImports\n\n",
+        "unions": [
+            {
+                "name": "Declaration",
+                "comment": " ",
+                "args": [
+                    "meta"
+                ],
+                "cases": [
+                    [
+                        "Ext",
+                        [
+                            "Basics.Bool",
+                            "String.String",
+                            "Ren.Data.Type.Type",
+                            "meta"
+                        ]
+                    ],
+                    [
+                        "Let",
+                        [
+                            "Basics.Bool",
+                            "String.String",
+                            "Ren.Data.Type.Type",
+                            "Ren.AST.Expr.Expr meta",
+                            "meta"
+                        ]
+                    ],
+                    [
+                        "Run",
+                        [
+                            "Ren.AST.Expr.Expr meta",
+                            "meta"
+                        ]
+                    ],
+                    [
+                        "Type",
+                        [
+                            "Basics.Bool",
+                            "String.String",
+                            "List.List String.String",
+                            "Ren.AST.Module.TypeDeclaration",
+                            "meta"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "ImportSpecifier",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "ExternalImport",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "LocalImport",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "PackageImport",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "FfiImport",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "TypeDeclaration",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Enum",
+                        [
+                            "Dict.Dict String.String (List.List Ren.Data.Type.Type)"
+                        ]
+                    ],
+                    [
+                        "Record",
+                        [
+                            "Dict.Dict String.String Ren.Data.Type.Type"
+                        ]
+                    ],
+                    [
+                        "Abstract",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Import",
+                "comment": " ",
+                "args": [],
+                "type": "{ path : Ren.AST.Module.ImportSpecifier, name : List.List String.String, exposed : List.List String.String }"
+            },
+            {
+                "name": "Module",
+                "comment": " ",
+                "args": [
+                    "meta"
+                ],
+                "type": "{ name : String.String, imports : List.List Ren.AST.Module.Import, declarations : List.List (Ren.AST.Module.Declaration meta) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "exposes",
+                "comment": " ",
+                "type": "String.String -> Ren.AST.Module.Module meta -> Basics.Bool"
+            },
+            {
+                "name": "externs",
+                "comment": " ",
+                "type": "Ren.AST.Module.Module meta -> List.List String.String"
+            },
+            {
+                "name": "imports",
+                "comment": " ",
+                "type": "Ren.AST.Module.ImportSpecifier -> Ren.AST.Module.Module meta -> Basics.Bool"
+            },
+            {
+                "name": "map",
+                "comment": " ",
+                "type": "(Ren.AST.Module.Declaration a -> Ren.AST.Module.Declaration b) -> Ren.AST.Module.Module a -> Ren.AST.Module.Module b"
+            },
+            {
+                "name": "mapImports",
+                "comment": " ",
+                "type": "(Ren.AST.Module.Import -> Ren.AST.Module.Import) -> Ren.AST.Module.Module meta -> Ren.AST.Module.Module meta"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Ren.Compiler",
+        "comment": "\n\n@docs Compiler, Toolchain, Error\n@docs run\n@docs untyped, typed, typecheck, custom\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Compiler",
+                "comment": " ",
+                "args": [
+                    "error"
+                ],
+                "type": "String.String -> Result.Result error String.String"
+            },
+            {
+                "name": "Error",
+                "comment": " ",
+                "args": [],
+                "type": "Ren.Compiler.Error.Error"
+            },
+            {
+                "name": "Toolchain",
+                "comment": " ",
+                "args": [
+                    "error",
+                    "meta"
+                ],
+                "type": "{ parse : String.String -> String.String -> Result.Result error (Ren.AST.Module.Module meta), desugar : Ren.AST.Module.Module meta -> Ren.AST.Module.Module meta, validate : Ren.AST.Module.Module meta -> Result.Result error (Ren.AST.Module.Module meta), check : Ren.AST.Module.Module meta -> Result.Result error (Ren.AST.Module.Module meta), optimise : Ren.AST.Module.Module meta -> Ren.AST.Module.Module meta, emit : Ren.AST.Module.Module meta -> String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "custom",
+                "comment": " ",
+                "type": "Basics.Bool -> List.List (Ren.Compiler.Desugar.Transformation Ren.Data.Span.Span) -> List.List (Ren.Compiler.Optimise.Optimisation Ren.Data.Span.Span) -> Ren.Compiler.Emit.Target -> Ren.Compiler.Toolchain Ren.Compiler.Error Ren.Data.Span.Span"
+            },
+            {
+                "name": "run",
+                "comment": " Chains together the various steps of a given toolchain to be run against\nsome Ren code input.\n",
+                "type": "String.String -> Ren.Compiler.Toolchain error meta -> Ren.Compiler.Compiler error"
+            },
+            {
+                "name": "typecheck",
+                "comment": " This toolchain doesn't emit code at the end; it type checks a module and then\nemits a list of declarations and their type. Of course, declarations must be\ntype annotated in order to be type checked at all so running this toolchain\ndoesn't provide you with any information you didn't already know, but it is handy\nto have around to test the type checker is working without flooding the console\nwith emitted pretty-printed code.\n",
+                "type": "Ren.Compiler.Toolchain Ren.Compiler.Error Ren.Data.Span.Span"
+            },
+            {
+                "name": "typed",
+                "comment": " ",
+                "type": "Ren.Compiler.Toolchain Ren.Compiler.Error Ren.Data.Span.Span"
+            },
+            {
+                "name": "untyped",
+                "comment": " ",
+                "type": "Ren.Compiler.Toolchain Ren.Compiler.Error Ren.Data.Span.Span"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Ren.Compiler.Check",
+        "comment": "\n\n@docs run\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "run",
+                "comment": " ",
+                "type": "Ren.AST.Module.Module meta -> Result.Result Ren.Compiler.Error.Error (Ren.AST.Module.Module meta)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Ren.Compiler.Desugar",
+        "comment": "\n\n@docs Transformation, run\n@docs defaults\n@docs placeholders, blocks, patterns\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Transformation",
+                "comment": " A transformation is any function that takes both the metadata and expression\nnode in the AST and returns a new AST node.\n",
+                "args": [
+                    "meta"
+                ],
+                "type": "meta -> Ren.AST.Expr.ExprF (Ren.AST.Expr.Expr meta) -> Ren.AST.Expr.ExprF (Ren.AST.Expr.Expr meta)"
+            }
+        ],
+        "values": [
+            {
+                "name": "blocks",
+                "comment": " ",
+                "type": "meta -> Ren.AST.Expr.ExprF (Ren.AST.Expr.Expr meta) -> Ren.AST.Expr.ExprF (Ren.AST.Expr.Expr meta)"
+            },
+            {
+                "name": "defaults",
+                "comment": " ",
+                "type": "List.List (Ren.Compiler.Desugar.Transformation meta)"
+            },
+            {
+                "name": "patterns",
+                "comment": " ",
+                "type": "meta -> Ren.AST.Expr.ExprF (Ren.AST.Expr.Expr meta) -> Ren.AST.Expr.ExprF (Ren.AST.Expr.Expr meta)"
+            },
+            {
+                "name": "placeholders",
+                "comment": " Ren allows certain expressions to include placeholder bindings: `_`. These\nbindings get transformed into lambdas and allow us a simple way to achieve\npositional piping, partial operator application, and more.\n",
+                "type": "meta -> Ren.AST.Expr.ExprF (Ren.AST.Expr.Expr meta) -> Ren.AST.Expr.ExprF (Ren.AST.Expr.Expr meta)"
+            },
+            {
+                "name": "run",
+                "comment": " ",
+                "type": "List.List (Ren.Compiler.Desugar.Transformation meta) -> Ren.AST.Module.Declaration meta -> Ren.AST.Module.Declaration meta"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Ren.Compiler.Emit",
+        "comment": "\n\n@docs run\n@docs Target\n\n",
+        "unions": [
+            {
+                "name": "Target",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "ESModule",
+                        []
+                    ],
+                    [
+                        "DEBUG_Types",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "run",
+                "comment": " ",
+                "type": "Ren.Compiler.Emit.Target -> Ren.AST.Module.Module meta -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Ren.Compiler.Error",
+        "comment": "\n\n@docs Error\n@docs ParseError, ParseContext, expectingKeyword, expectingSymbol, expectingOperator, expectingChar, expectingNumber, expectingEOF, expectingWhitespace, expectingCamelCase, expectingCapitalCase, expectingExpr, expectingType, unexpectedChar, internalParseError\n@docs TypeError, infiniteType, incompatibleTypes, missingField, typeTooGeneral, arityMismatch, unknownType, internalTypeError\n@docs toString\n\n",
+        "unions": [
+            {
+                "name": "Error",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "ParseError",
+                        [
+                            "List.List (Parser.Advanced.DeadEnd Ren.Compiler.Error.ParseContext Ren.Compiler.Error.ParseError)"
+                        ]
+                    ],
+                    [
+                        "TypeError",
+                        [
+                            "Ren.Compiler.Error.TypeError"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "ParseContext",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "InImport",
+                        []
+                    ],
+                    [
+                        "InDeclaration",
+                        []
+                    ],
+                    [
+                        "InExpr",
+                        []
+                    ],
+                    [
+                        "InIf",
+                        []
+                    ],
+                    [
+                        "InAnnotation",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "ParseError",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "TypeError",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "arityMismatch",
+                "comment": " ",
+                "type": "String.String -> Basics.Int -> Basics.Int -> Ren.Compiler.Error.TypeError"
+            },
+            {
+                "name": "expectingCamelCase",
+                "comment": " ",
+                "type": "Ren.Compiler.Error.ParseError"
+            },
+            {
+                "name": "expectingCapitalCase",
+                "comment": " ",
+                "type": "Ren.Compiler.Error.ParseError"
+            },
+            {
+                "name": "expectingChar",
+                "comment": " ",
+                "type": "Ren.Compiler.Error.ParseError"
+            },
+            {
+                "name": "expectingEOF",
+                "comment": " ",
+                "type": "Ren.Compiler.Error.ParseError"
+            },
+            {
+                "name": "expectingExpr",
+                "comment": " ",
+                "type": "Ren.Compiler.Error.ParseError"
+            },
+            {
+                "name": "expectingKeyword",
+                "comment": " ",
+                "type": "String.String -> Ren.Compiler.Error.ParseError"
+            },
+            {
+                "name": "expectingNumber",
+                "comment": " ",
+                "type": "Ren.Compiler.Error.ParseError"
+            },
+            {
+                "name": "expectingOperator",
+                "comment": " ",
+                "type": "String.String -> Ren.Compiler.Error.ParseError"
+            },
+            {
+                "name": "expectingSymbol",
+                "comment": " ",
+                "type": "String.String -> Ren.Compiler.Error.ParseError"
+            },
+            {
+                "name": "expectingType",
+                "comment": " ",
+                "type": "Ren.Compiler.Error.ParseError"
+            },
+            {
+                "name": "expectingWhitespace",
+                "comment": " ",
+                "type": "Ren.Compiler.Error.ParseError"
+            },
+            {
+                "name": "incompatibleTypes",
+                "comment": " ",
+                "type": "Ren.Data.Type.Type -> Ren.Data.Type.Type -> Ren.Compiler.Error.TypeError"
+            },
+            {
+                "name": "infiniteType",
+                "comment": " ",
+                "type": "Ren.Data.Type.Type -> Ren.Data.Type.Type -> Ren.Compiler.Error.TypeError"
+            },
+            {
+                "name": "internalParseError",
+                "comment": " ",
+                "type": "String.String -> Ren.Compiler.Error.ParseError"
+            },
+            {
+                "name": "internalTypeError",
+                "comment": " ",
+                "type": "String.String -> Ren.Compiler.Error.TypeError"
+            },
+            {
+                "name": "missingField",
+                "comment": " ",
+                "type": "String.String -> Ren.Compiler.Error.TypeError"
+            },
+            {
+                "name": "toString",
+                "comment": " ",
+                "type": "Ren.Compiler.Error.Error -> String.String"
+            },
+            {
+                "name": "typeTooGeneral",
+                "comment": " ",
+                "type": "Ren.Data.Type.Type -> Ren.Data.Type.Type -> Ren.Compiler.Error.TypeError"
+            },
+            {
+                "name": "unexpectedChar",
+                "comment": " ",
+                "type": "Char.Char -> Ren.Compiler.Error.ParseError"
+            },
+            {
+                "name": "unknownType",
+                "comment": " ",
+                "type": "Ren.Data.Type.Type -> Ren.Compiler.Error.TypeError"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Ren.Compiler.Optimise",
+        "comment": "\n\n@docs Optimisation, run\n@docs operators\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Optimisation",
+                "comment": " An optimisation is any function that takes both the metadata and expression\nnode in the AST and returns a new AST node; usually a simplified version.\n\nThis is actually the same type as a `Transformation`, but I find it useful to\ndisambiguate between functions that desugar or modify the AST and ones that\nattempt to simplify or eliminate nodes.\n\n",
+                "args": [
+                    "meta"
+                ],
+                "type": "meta -> Ren.AST.Expr.ExprF (Ren.AST.Expr.Expr meta) -> Ren.AST.Expr.ExprF (Ren.AST.Expr.Expr meta)"
+            }
+        ],
+        "values": [
+            {
+                "name": "operators",
+                "comment": " This optimisation attempts to evaluate operators at compile-time. This mostly\njust optimises away operations on literals, like computing the expression `1 + 1`.\n",
+                "type": "meta -> Ren.AST.Expr.ExprF (Ren.AST.Expr.Expr meta) -> Ren.AST.Expr.ExprF (Ren.AST.Expr.Expr meta)"
+            },
+            {
+                "name": "run",
+                "comment": " ",
+                "type": "List.List (Ren.Compiler.Optimise.Optimisation meta) -> Ren.AST.Module.Declaration meta -> Ren.AST.Module.Declaration meta"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Ren.Compiler.Parse",
+        "comment": "\n\n@docs run\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "run",
+                "comment": " ",
+                "type": "String.String -> String.String -> Result.Result Ren.Compiler.Error.Error (Ren.AST.Module.Module Ren.Data.Span.Span)"
+            }
+        ],
+        "binops": []
+    }
+]

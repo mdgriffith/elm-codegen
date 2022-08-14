@@ -1,0 +1,23 @@
+[
+    {
+        "name": "SpannedString",
+        "comment": " This is a tiny package that allows you to span substrings in a given string.\n\n\n# Definition\n\n@docs SpannedString, span\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "SpannedString",
+                "comment": " A `SpannedString` is just an alias to `List (String, Bool)`.\n",
+                "args": [],
+                "type": "List.List ( String.String, Basics.Bool )"
+            }
+        ],
+        "values": [
+            {
+                "name": "span",
+                "comment": " Create a `SpannedString` from a given string and a list of indices.\n\n    span \"Hello world!\" [ 0, 1, 2, 3, 4 ] == [ ( \"Hello\", True ), ( \" world!\", False ) ]\n\n    span \"47 Rue Falguière, Paris\" [ 8, 9, 10 ] == [ ( \"47 Rue \", False ), ( \"Fal\", True ), ( \"guière, Paris\", False ) ]\n\n",
+                "type": "String.String -> List.List Basics.Int -> SpannedString.SpannedString"
+            }
+        ],
+        "binops": []
+    }
+]

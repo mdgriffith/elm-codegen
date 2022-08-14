@@ -1,0 +1,38 @@
+[
+    {
+        "name": "Iso8601.Duration",
+        "comment": " Convert between ISO-8601 durations strings and `Duration` values.\n\n@docs Duration, fromString, toString, decoder, encode\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Duration",
+                "comment": " ",
+                "args": [],
+                "type": "{ years : Basics.Float, months : Basics.Float, days : Basics.Float, hours : Basics.Float, minutes : Basics.Float, seconds : Basics.Float }"
+            }
+        ],
+        "values": [
+            {
+                "name": "decoder",
+                "comment": " Decode an ISO-8601 duration string to a `Duration` value using [`fromString`](#fromString).\n",
+                "type": "Json.Decode.Decoder Iso8601.Duration.Duration"
+            },
+            {
+                "name": "encode",
+                "comment": " Encode a `Duration` value as an ISO-8601 duration string using [`toString`](#toString).\n",
+                "type": "Iso8601.Duration.Duration -> Json.Encode.Value"
+            },
+            {
+                "name": "fromString",
+                "comment": " Convert from an ISO-8601 duration string to a `Duration` value.\n\nIn case a week duration is given only the `days` property will be populated with the number of weeks \\* 7.\n\n",
+                "type": "String.String -> Maybe.Maybe Iso8601.Duration.Duration"
+            },
+            {
+                "name": "toString",
+                "comment": " Convert a `Duration` value to an ISO-8601 duration string.\n\nWeek durations are not supported, even values with `days` only will still be serialized as `PnD`.\n\n",
+                "type": "Iso8601.Duration.Duration -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

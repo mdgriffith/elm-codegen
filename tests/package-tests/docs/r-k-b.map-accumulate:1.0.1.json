@@ -1,0 +1,16 @@
+[
+    {
+        "name": "MapAccumulate",
+        "comment": "\n\n\n# MapAccumulate\n\n@docs mapAccumL\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "mapAccumL",
+                "comment": " From [Haskell's documentation][haskelldocs]:\n\n> The mapAccumL function behaves like a combination of fmap and foldl; it\n> applies a function to each element of a structure, passing an accumulating\n> parameter from left to right, and returning a final value of this\n> accumulator together with the new structure.\n\nOriginally based on fatho's [labyrinth] project.\n\n[haskelldocs]: https://hackage.haskell.org/package/base-4.10.1.0/docs/Data-List.html#v:mapAccumL\n[labyrinth]: https://github.com/fatho/labyrinth/blob/8a522c0bdfbd5459bc00d9b1ba3334483995dbd7/Util.elm#L28-L35\n\n\n### example 1\n\nGiven a string `a` and a list of integers, test each integer `b`.\nIf `b` is odd, append it to `a`, and multiply it by 10 inside the list.\n\n    a = \"\"\n    b = [ 1, 2, 3, 4 ]\n\n    func : Int -> String -> ( Int, String )\n    func b a =\n        if b % 2 == 0 then\n            -- even\n            ( b, a )\n        else\n            -- odd\n            ( b * 10, a ++ \",\" ++ toString b )\n\n    mapAccumL func \"\" [ 1, 2, 3, 4 ]\n        -- == `( [ 10, 2, 30, 4], \",1,3\" )`.\n\n\n### example 2\n\nGiven a string `a` and a list of integers, test each integer `b`.\nIf `b` is odd, append it to `a`, and remove it from the list.\n\n    a = \"\"\n    b = [ 1, 2, 3, 4 ]\n\n    func : Int -> String -> ( Maybe Int, String )\n    func b a =\n        if b % 2 == 0 then\n            -- even\n            ( Just b, a )\n        else\n            -- odd\n            ( Nothing, a ++ \",\" ++ toString b )\n\n    justSomethings : (List (Maybe a), b) -> (List a, b)\n    justSomethings =\n        (\\( list, b ) -> ( list |> Maybe.Extra.values, b ))\n\n    mapAccumL func \"\" [ 1, 2, 3, 4 ]\n        |> justSomethings\n        -- == `( [ 2, 4], \",1,3\" )`.\n\n\n### example 3\n\nGiven a string `a` and a list of integers, test `a` and each integer `b`.\nIf `b` is odd, append it to `a`, and remove it from the list.\nIf `b` is `42`, the final `a` must equal `towel!`, and no further `b`s\nshould be removed from the list.\n\n    a = \"\"\n    b = [ 1, 2, 3, 4 ]\n\n    func : Int -> String -> ( Maybe Int, String )\n    func b a =\n        if a == \"towel!\" then\n            ( Just b, a )\n        else if b == 42 then\n            ( Just b, \"towel!\" )\n        else if b % 2 == 0 then\n            -- even\n            ( Just b, a )\n        else\n            -- odd\n            ( Nothing, a ++ \",\" ++ toString b )\n\n    justSomethings : (List (Maybe a), b) -> (List a, b)\n    justSomethings =\n        (\\( list, b ) -> ( list |> Maybe.Extra.values, b ))\n\n    mapAccumL func \"\" [ 1, 2, 3, 42, 5, 6, 7 ]\n        |> justSomethings\n        -- == `( [ 2, 42, 5, 6, 7 ], \"towel!\" )`\n\n",
+                "type": "(a -> acc -> ( b, acc )) -> acc -> List.List a -> ( List.List b, acc )"
+            }
+        ],
+        "binops": []
+    }
+]

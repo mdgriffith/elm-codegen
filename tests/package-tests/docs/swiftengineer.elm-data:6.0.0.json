@@ -1,0 +1,239 @@
+[
+    {
+        "name": "ElmData.AuthConfig",
+        "comment": "\n    Configuration for how Authentication will be handled in your app.\n\n    @docs AuthConfig, default\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "AuthConfig",
+                "comment": "\n    Object to hold the configurations.\n",
+                "args": [],
+                "type": "{ authHeader : ElmData.Session.SessionData -> ( String.String, String.String ) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "default",
+                "comment": "\n    Default AuthConfig that will attach a Bearer Token to your requests if a Authenticated Session is used.\n",
+                "type": "ElmData.AuthConfig.AuthConfig"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ElmData.DAO",
+        "comment": "\n    DAOs (Data Access Objects) exist to hold all state relevant to making requests to an API.\n\n    @docs DAO, createDAO\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "DAO",
+                "comment": "\n    the dao\n",
+                "args": [
+                    "recordType"
+                ],
+                "type": "{ apiUrl : String.String, authConfig : ElmData.AuthConfig.AuthConfig, listDeserialize : Json.Decode.Decoder (List.List recordType), deserialize : Json.Decode.Decoder recordType, serialize : recordType -> Json.Encode.Value }"
+            }
+        ],
+        "values": [
+            {
+                "name": "createDAO",
+                "comment": "\n    Function used to create a DAO\n",
+                "type": "String.String -> Json.Decode.Decoder (List.List recordType) -> Json.Decode.Decoder recordType -> (recordType -> Json.Encode.Value) -> ElmData.DAO.DAO recordType"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ElmData.Jwt",
+        "comment": "\n    Jwt module is a collection of helpers used to derive sessions from JWTs.\n\n    @docs JwtClaims, checkToken\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "JwtClaims",
+                "comment": " Basic Jwt Claims. In the future this should be configurable.\n",
+                "args": [],
+                "type": "{ iss : String.String, exp : Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "checkToken",
+                "comment": " Checks a token for Expiry. Returns expiry or any errors that occurred in decoding.\n",
+                "type": "String.String -> (Result.Result ElmData.Session.SessionFailure ElmData.Session.SessionData -> msg) -> Platform.Cmd.Cmd msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ElmData.Messages",
+        "comment": "\n    # Use to pass query params to a request made via a Resource or ListResource.\n\n    @docs RequestError, RequestResult, RequestResults, DAORequestResponse, ListDAORequestResponse\n",
+        "unions": [
+            {
+                "name": "RequestError",
+                "comment": " results from a dao request\n",
+                "args": [],
+                "cases": [
+                    [
+                        "UnableToParseResponseBody",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "HttpError",
+                        [
+                            "Http.Error"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "DAORequestResponse",
+                "comment": " response from a dao request\n",
+                "args": [
+                    "recordType"
+                ],
+                "type": "{ body : recordType }"
+            },
+            {
+                "name": "ListDAORequestResponse",
+                "comment": " response from a dao request for many records\n",
+                "args": [
+                    "recordType"
+                ],
+                "type": "{ body : List.List recordType }"
+            },
+            {
+                "name": "RequestResult",
+                "comment": " results from a dao request\n",
+                "args": [
+                    "recordType"
+                ],
+                "type": "Result.Result ElmData.Messages.RequestError (ElmData.Messages.DAORequestResponse recordType)"
+            },
+            {
+                "name": "RequestResults",
+                "comment": " results from a dao request for multiple records\n",
+                "args": [
+                    "recordType"
+                ],
+                "type": "Result.Result ElmData.Messages.RequestError (ElmData.Messages.ListDAORequestResponse recordType)"
+            }
+        ],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "ElmData.Resource",
+        "comment": "\n    Resource allows you to make requests on behalf of a DAO, without having to think about the state of the DAO\n\n    @docs Resource, ResourceMsg, resource\n",
+        "unions": [
+            {
+                "name": "ResourceMsg",
+                "comment": " A Resource Message\n",
+                "args": [
+                    "recordType"
+                ],
+                "cases": [
+                    [
+                        "Success",
+                        [
+                            "recordType"
+                        ]
+                    ],
+                    [
+                        "Failure",
+                        [
+                            "ElmData.Messages.RequestError"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Resource",
+                "comment": " A Resource\n",
+                "args": [
+                    "recordType",
+                    "externalMsg"
+                ],
+                "type": "{ create : ElmData.Session.Session -> recordType -> Platform.Cmd.Cmd externalMsg, fetch : ElmData.Session.Session -> String.String -> Platform.Cmd.Cmd externalMsg, update : ElmData.Session.Session -> recordType -> Platform.Cmd.Cmd externalMsg }"
+            }
+        ],
+        "values": [
+            {
+                "name": "resource",
+                "comment": " Creator for a Resource\n",
+                "type": "ElmData.DAO.DAO recordType -> (ElmData.Resource.ResourceMsg recordType -> localMsg) -> (localMsg -> externalMsg) -> ElmData.Resource.Resource recordType externalMsg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ElmData.Session",
+        "comment": "\n    Sessions exist to hold all state associated with your requests.\n\n    Right now that's just Auth data, but I think this could also be a great place for cached data to live as well.\n\n    @docs Session, SessionData, checkSessionExpiration, checkError, SessionFailure\n",
+        "unions": [
+            {
+                "name": "Session",
+                "comment": " The Session\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Unauthenticated",
+                        []
+                    ],
+                    [
+                        "Active",
+                        [
+                            "ElmData.Session.SessionData"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "SessionFailure",
+                "comment": " Result of the Creation of a Session\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Failure",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Corrupt",
+                        []
+                    ],
+                    [
+                        "ExpiredSession",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "SessionData",
+                "comment": "\n    Data related to an authenticated session\n",
+                "args": [],
+                "type": "{ authToken : String.String, expiration : Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "checkError",
+                "comment": " Check if a request failure was caused by the session\n",
+                "type": "Http.Error -> Maybe.Maybe ElmData.Session.SessionFailure"
+            },
+            {
+                "name": "checkSessionExpiration",
+                "comment": " Check if session is expired\n",
+                "type": "Time.Posix -> ElmData.Session.SessionData -> Result.Result ElmData.Session.SessionFailure ElmData.Session.SessionData"
+            }
+        ],
+        "binops": []
+    }
+]

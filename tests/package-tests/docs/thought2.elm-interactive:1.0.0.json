@@ -1,0 +1,91 @@
+[
+    {
+        "name": "Interactive",
+        "comment": "\n\n@docs Model, Msg, OutMsg, init, subKeyboard, subMouse, subTick, subWindowResize, subscriptions, update\n\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "OutMsg",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "OutTick",
+                        [
+                            "Basics.Float"
+                        ]
+                    ],
+                    [
+                        "OutMouse",
+                        [
+                            "( Basics.Float, Basics.Float )"
+                        ]
+                    ],
+                    [
+                        "OutKeyChange",
+                        [
+                            "Keyboard.KeyChange"
+                        ]
+                    ],
+                    [
+                        "OutWindowResize",
+                        [
+                            "( Basics.Float, Basics.Float )"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Model",
+                "comment": " ",
+                "args": [],
+                "type": "{ time : Basics.Float, mouse : ( Basics.Float, Basics.Float ), keysDown : List.List Keyboard.Key, windowSize : ( Basics.Float, Basics.Float ) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "init",
+                "comment": " ",
+                "type": "( Interactive.Model, Platform.Cmd.Cmd Interactive.Msg )"
+            },
+            {
+                "name": "subKeyboard",
+                "comment": " ",
+                "type": "Platform.Sub.Sub Interactive.Msg"
+            },
+            {
+                "name": "subMouse",
+                "comment": " ",
+                "type": "Platform.Sub.Sub Interactive.Msg"
+            },
+            {
+                "name": "subTick",
+                "comment": " ",
+                "type": "Platform.Sub.Sub Interactive.Msg"
+            },
+            {
+                "name": "subWindowResize",
+                "comment": " ",
+                "type": "Platform.Sub.Sub Interactive.Msg"
+            },
+            {
+                "name": "subscriptions",
+                "comment": " ",
+                "type": "Platform.Sub.Sub Interactive.Msg"
+            },
+            {
+                "name": "update",
+                "comment": " ",
+                "type": "Interactive.Msg -> Interactive.Model -> ( Interactive.Model, Maybe.Maybe Interactive.OutMsg )"
+            }
+        ],
+        "binops": []
+    }
+]

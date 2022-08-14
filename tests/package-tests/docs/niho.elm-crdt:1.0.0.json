@@ -1,0 +1,560 @@
+[
+    {
+        "name": "CRDT.GCounter",
+        "comment": " A GCounter (or Grow-only Counter) is a replicated counter that is guaranteed to always converge to a single value, despite concurrent updates. A GCounter only supports incrementing the counter. If you need a counter that can also be decremented, you should use a PNCounter instead.\n\n# GCounter\n\n@docs Replica, GCounter, zero, increment, value, merge\n\n# Operations\n\n@docs Operation, apply, patch\n\n# Serialization\n\n@docs encode, decoder\n\n",
+        "unions": [
+            {
+                "name": "GCounter",
+                "comment": " GCounter state ",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Operation",
+                "comment": " Operations that will modify the state of the counter. A GCounter only supports a single operation (Increment).\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Increment",
+                        [
+                            "CRDT.GCounter.Replica"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Replica",
+                "comment": " Each replica that modifies the counter is represented by a unique string ID.\n",
+                "args": [],
+                "type": "String.String"
+            }
+        ],
+        "values": [
+            {
+                "name": "apply",
+                "comment": " Apply an operation on a GCounter.\n",
+                "type": "CRDT.GCounter.Operation -> CRDT.GCounter.GCounter -> CRDT.GCounter.GCounter"
+            },
+            {
+                "name": "decoder",
+                "comment": " Decode a GCounter from JSON.\n",
+                "type": "Json.Decode.Decoder CRDT.GCounter.GCounter"
+            },
+            {
+                "name": "encode",
+                "comment": " Encode a GCounter as JSON.\n",
+                "type": "CRDT.GCounter.GCounter -> Json.Encode.Value"
+            },
+            {
+                "name": "increment",
+                "comment": " Increment the GCounter (+1).\n",
+                "type": "CRDT.GCounter.Replica -> CRDT.GCounter.GCounter -> CRDT.GCounter.GCounter"
+            },
+            {
+                "name": "merge",
+                "comment": " Merge two GCounter states.\n",
+                "type": "CRDT.GCounter.GCounter -> CRDT.GCounter.GCounter -> CRDT.GCounter.GCounter"
+            },
+            {
+                "name": "patch",
+                "comment": " Apply a list of operations (a patch) on a GCounter.\n",
+                "type": "List.List CRDT.GCounter.Operation -> CRDT.GCounter.GCounter -> CRDT.GCounter.GCounter"
+            },
+            {
+                "name": "value",
+                "comment": " Get the current value of the GCounter.\n",
+                "type": "CRDT.GCounter.GCounter -> Basics.Int"
+            },
+            {
+                "name": "zero",
+                "comment": " Constructor that creates a new GCounter with the value zero.\n",
+                "type": "CRDT.GCounter.GCounter"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "CRDT.GSet",
+        "comment": " A GSet (or Grow-only Set) is a replicated set that can only be added to. Removing elements from the set is not supported.\n\n# GSet\n\n@docs GSet, empty, insert, member, merge, fromList, toList, toSet\n\n# Operations\n\n@docs Operation, apply, patch\n\n# Serialization\n\n@docs encode, decoder\n\n",
+        "unions": [
+            {
+                "name": "GSet",
+                "comment": " GSet state.\n",
+                "args": [
+                    "comparable"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Operation",
+                "comment": " Operations that will modify the state of the set.\n",
+                "args": [
+                    "comparable"
+                ],
+                "cases": [
+                    [
+                        "Insert",
+                        [
+                            "comparable"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "apply",
+                "comment": " Apply an operation on a GSet.\n",
+                "type": "CRDT.GSet.Operation comparable -> CRDT.GSet.GSet comparable -> CRDT.GSet.GSet comparable"
+            },
+            {
+                "name": "decoder",
+                "comment": " Decode a GSet from JSON.\n",
+                "type": "Json.Decode.Decoder comparable -> Json.Decode.Decoder (CRDT.GSet.GSet comparable)"
+            },
+            {
+                "name": "empty",
+                "comment": " Constructor that creates a new empty GSet.\n",
+                "type": "CRDT.GSet.GSet comparable"
+            },
+            {
+                "name": "encode",
+                "comment": " Encode a GSet as JSON.\n",
+                "type": "(comparable -> Json.Encode.Value) -> CRDT.GSet.GSet comparable -> Json.Encode.Value"
+            },
+            {
+                "name": "fromList",
+                "comment": " Convert a list of values into a GSet.\n",
+                "type": "List.List comparable -> CRDT.GSet.GSet comparable"
+            },
+            {
+                "name": "insert",
+                "comment": " Insert a value in the set.\n",
+                "type": "comparable -> CRDT.GSet.GSet comparable -> CRDT.GSet.GSet comparable"
+            },
+            {
+                "name": "member",
+                "comment": " Determine if a value is in the set.\n",
+                "type": "comparable -> CRDT.GSet.GSet comparable -> Basics.Bool"
+            },
+            {
+                "name": "merge",
+                "comment": " Merge two GSet states.\n",
+                "type": "CRDT.GSet.GSet comparable -> CRDT.GSet.GSet comparable -> CRDT.GSet.GSet comparable"
+            },
+            {
+                "name": "patch",
+                "comment": "  Apply a list of operations (a patch) on a GSet.\n",
+                "type": "List.List (CRDT.GSet.Operation comparable) -> CRDT.GSet.GSet comparable -> CRDT.GSet.GSet comparable"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert a GSet to a list of values.\n",
+                "type": "CRDT.GSet.GSet comparable -> List.List comparable"
+            },
+            {
+                "name": "toSet",
+                "comment": " Convert a GSet to a Set.\n",
+                "type": "CRDT.GSet.GSet comparable -> Set.Set comparable"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "CRDT.LWWElementSet",
+        "comment": " An LWWElementSet (or Last-Write-Wins Element Set) is a set where each insert and remove operation is tagged with a timestamp and if an insert and remove occurs concurrently on two separate replicas, the operation with the latest timestamp will take precendence.\n\n# LWWElementSet\n\n@docs LWWElementSet, empty, insert, remove, member, merge, fromList, toList, toSet\n\n# Operations\n\n@docs Operation, apply, patch\n\n# Serialization\n\n@docs encode, decoder\n\n",
+        "unions": [
+            {
+                "name": "LWWElementSet",
+                "comment": " LWWElementSet state.\n",
+                "args": [
+                    "comparable"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Operation",
+                "comment": " Operations that will modify the state of the set.\n",
+                "args": [
+                    "comparable"
+                ],
+                "cases": [
+                    [
+                        "Insert",
+                        [
+                            "comparable",
+                            "Time.Posix"
+                        ]
+                    ],
+                    [
+                        "Remove",
+                        [
+                            "comparable",
+                            "Time.Posix"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "apply",
+                "comment": " Apply an operation on a LWWElementSet.\n",
+                "type": "CRDT.LWWElementSet.Operation comparable -> CRDT.LWWElementSet.LWWElementSet comparable -> CRDT.LWWElementSet.LWWElementSet comparable"
+            },
+            {
+                "name": "decoder",
+                "comment": " Decode a LWWElementSet from JSON.\n",
+                "type": "Json.Decode.Decoder (CRDT.LWWElementSet.LWWElementSet String.String)"
+            },
+            {
+                "name": "empty",
+                "comment": " Constructor that creates a new empty GSet.\n",
+                "type": "CRDT.LWWElementSet.LWWElementSet comparable"
+            },
+            {
+                "name": "encode",
+                "comment": " Encode a LWWElementSet as JSON.\n",
+                "type": "CRDT.LWWElementSet.LWWElementSet String.String -> Json.Encode.Value"
+            },
+            {
+                "name": "fromList",
+                "comment": " Convert a list of values into a LWWElementSet.\n",
+                "type": "List.List comparable -> Time.Posix -> CRDT.LWWElementSet.LWWElementSet comparable"
+            },
+            {
+                "name": "insert",
+                "comment": " Insert a value in the set.\n",
+                "type": "comparable -> Time.Posix -> CRDT.LWWElementSet.LWWElementSet comparable -> CRDT.LWWElementSet.LWWElementSet comparable"
+            },
+            {
+                "name": "member",
+                "comment": " Determine if a value is in the set.\n",
+                "type": "comparable -> CRDT.LWWElementSet.LWWElementSet comparable -> Basics.Bool"
+            },
+            {
+                "name": "merge",
+                "comment": " Merge two LWWElementSet states.\n",
+                "type": "CRDT.LWWElementSet.LWWElementSet comparable -> CRDT.LWWElementSet.LWWElementSet comparable -> CRDT.LWWElementSet.LWWElementSet comparable"
+            },
+            {
+                "name": "patch",
+                "comment": "  Apply a list of operations (a patch) on a LWWElementSet.\n",
+                "type": "List.List (CRDT.LWWElementSet.Operation comparable) -> CRDT.LWWElementSet.LWWElementSet comparable -> CRDT.LWWElementSet.LWWElementSet comparable"
+            },
+            {
+                "name": "remove",
+                "comment": " Remove a value from the set.\n",
+                "type": "comparable -> Time.Posix -> CRDT.LWWElementSet.LWWElementSet comparable -> CRDT.LWWElementSet.LWWElementSet comparable"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert a LWWElementSet to a list of values.\n",
+                "type": "CRDT.LWWElementSet.LWWElementSet comparable -> List.List comparable"
+            },
+            {
+                "name": "toSet",
+                "comment": " Convert a LWWElementSet to a Set.\n",
+                "type": "CRDT.LWWElementSet.LWWElementSet comparable -> Set.Set comparable"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "CRDT.ORSet",
+        "comment": " An ORSet (Observed Remove Set) is a replicated set in which additions take precedence over removals. For example, if one replica removes and re-adds an element, while another replica concurrently removes the element, then the merged outcome is that the element is in the set.\n\n# ORSet\n\n@docs Replica, ORSet, empty, insert, remove, member, merge, fromList, toList, toSet\n\n# Operations\n\n@docs Operation, apply, patch\n\n# Serialization\n\n@docs encode, decoder\n\n",
+        "unions": [
+            {
+                "name": "ORSet",
+                "comment": " ORSet state.\n",
+                "args": [
+                    "comparable"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Operation",
+                "comment": " Operations that will modify the state of the set.\n",
+                "args": [
+                    "comparable"
+                ],
+                "cases": [
+                    [
+                        "Insert",
+                        [
+                            "comparable",
+                            "CRDT.ORSet.Replica"
+                        ]
+                    ],
+                    [
+                        "Remove",
+                        [
+                            "comparable"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Replica",
+                "comment": " Each replica that modifies the set is represented by a unique string ID.\n",
+                "args": [],
+                "type": "String.String"
+            }
+        ],
+        "values": [
+            {
+                "name": "apply",
+                "comment": " Apply an operation on an ORSet.\n",
+                "type": "CRDT.ORSet.Operation comparable -> CRDT.ORSet.ORSet comparable -> CRDT.ORSet.ORSet comparable"
+            },
+            {
+                "name": "decoder",
+                "comment": " Decode an ORSet from JSON.\n",
+                "type": "Json.Decode.Decoder (CRDT.ORSet.ORSet String.String)"
+            },
+            {
+                "name": "empty",
+                "comment": " Constructor that creates a new empty ORSet.\n",
+                "type": "CRDT.ORSet.ORSet comparable"
+            },
+            {
+                "name": "encode",
+                "comment": " Encode an ORSet as JSON.\n",
+                "type": "CRDT.ORSet.ORSet String.String -> Json.Encode.Value"
+            },
+            {
+                "name": "fromList",
+                "comment": " Convert a list of values into an ORSet.\n",
+                "type": "List.List comparable -> String.String -> CRDT.ORSet.ORSet comparable"
+            },
+            {
+                "name": "insert",
+                "comment": " Insert a value in the set.\n",
+                "type": "comparable -> CRDT.ORSet.Replica -> CRDT.ORSet.ORSet comparable -> CRDT.ORSet.ORSet comparable"
+            },
+            {
+                "name": "member",
+                "comment": " Determine if a value is in the set.\n",
+                "type": "comparable -> CRDT.ORSet.ORSet comparable -> Basics.Bool"
+            },
+            {
+                "name": "merge",
+                "comment": " Merge two ORSet states.\n",
+                "type": "CRDT.ORSet.ORSet comparable -> CRDT.ORSet.ORSet comparable -> CRDT.ORSet.ORSet comparable"
+            },
+            {
+                "name": "patch",
+                "comment": "  Apply a list of operations (a patch) on an ORSet.\n",
+                "type": "List.List (CRDT.ORSet.Operation comparable) -> CRDT.ORSet.ORSet comparable -> CRDT.ORSet.ORSet comparable"
+            },
+            {
+                "name": "remove",
+                "comment": " Remove a value from the set.\n",
+                "type": "comparable -> CRDT.ORSet.ORSet comparable -> CRDT.ORSet.ORSet comparable"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert an ORSet to a list of values.\n",
+                "type": "CRDT.ORSet.ORSet comparable -> List.List comparable"
+            },
+            {
+                "name": "toSet",
+                "comment": " Convert an ORSet to a Set.\n",
+                "type": "CRDT.ORSet.ORSet comparable -> Set.Set comparable"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "CRDT.PNCounter",
+        "comment": " A PNCounter (or Positive-Negative Counter) is a replicated counter that can be both incremented and decremented.\n\n# PNCounter\n\n@docs Replica, PNCounter, zero, increment, decrement, value, merge\n\n# Operations\n\n@docs Operation, apply, patch\n\n# Serialization\n\n@docs encode, decoder\n\n",
+        "unions": [
+            {
+                "name": "Operation",
+                "comment": " Operations that will modify the state of the counter.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Increment",
+                        [
+                            "CRDT.PNCounter.Replica"
+                        ]
+                    ],
+                    [
+                        "Decrement",
+                        [
+                            "CRDT.PNCounter.Replica"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "PNCounter",
+                "comment": " PNCounter state ",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Replica",
+                "comment": " Each replica that modifies the counter is represented by a unique string ID.\n",
+                "args": [],
+                "type": "CRDT.GCounter.Replica"
+            }
+        ],
+        "values": [
+            {
+                "name": "apply",
+                "comment": " Apply an operation on a PNCounter.\n",
+                "type": "CRDT.PNCounter.Operation -> CRDT.PNCounter.PNCounter -> CRDT.PNCounter.PNCounter"
+            },
+            {
+                "name": "decoder",
+                "comment": " Decode a PNCounter from JSON.\n",
+                "type": "Json.Decode.Decoder CRDT.PNCounter.PNCounter"
+            },
+            {
+                "name": "decrement",
+                "comment": " Decrement the PNCounter.\n",
+                "type": "CRDT.PNCounter.Replica -> CRDT.PNCounter.PNCounter -> CRDT.PNCounter.PNCounter"
+            },
+            {
+                "name": "encode",
+                "comment": " Encode a PNCounter as JSON.\n",
+                "type": "CRDT.PNCounter.PNCounter -> Json.Encode.Value"
+            },
+            {
+                "name": "increment",
+                "comment": " Increment the PNCounter.\n",
+                "type": "CRDT.PNCounter.Replica -> CRDT.PNCounter.PNCounter -> CRDT.PNCounter.PNCounter"
+            },
+            {
+                "name": "merge",
+                "comment": " Merge two PNCounter states.\n",
+                "type": "CRDT.PNCounter.PNCounter -> CRDT.PNCounter.PNCounter -> CRDT.PNCounter.PNCounter"
+            },
+            {
+                "name": "patch",
+                "comment": " Apply a list of operations (a patch) on a PNCounter.\n",
+                "type": "List.List CRDT.PNCounter.Operation -> CRDT.PNCounter.PNCounter -> CRDT.PNCounter.PNCounter"
+            },
+            {
+                "name": "value",
+                "comment": " Get the current value of the PNCounter.\n",
+                "type": "CRDT.PNCounter.PNCounter -> Basics.Int"
+            },
+            {
+                "name": "zero",
+                "comment": " Constructor that creates a new PNCounter with the value zero.\n",
+                "type": "CRDT.PNCounter.PNCounter"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "CRDT.TwoPSet",
+        "comment": " A TwoPSet is a replicated set in which removals take precedence over additions. For example, if one replica removes and re-adds an element, while another replica concurrently removes the element, then the merged outcome is that the element is not in the set.\n\n# TwoPSet\n\n@docs TwoPSet, empty, insert, remove, member, merge, fromList, toList, toSet\n\n# Operations\n\n@docs Operation, apply, patch\n\n# Serialization\n\n@docs encode, decoder\n\n",
+        "unions": [
+            {
+                "name": "Operation",
+                "comment": " Operations that will modify the state of the set.\n",
+                "args": [
+                    "comparable"
+                ],
+                "cases": [
+                    [
+                        "Insert",
+                        [
+                            "comparable"
+                        ]
+                    ],
+                    [
+                        "Remove",
+                        [
+                            "comparable"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "TwoPSet",
+                "comment": " TwoPSet state.\n",
+                "args": [
+                    "comparable"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "apply",
+                "comment": " Apply an operation on a TwoPSet.\n",
+                "type": "CRDT.TwoPSet.Operation comparable -> CRDT.TwoPSet.TwoPSet comparable -> CRDT.TwoPSet.TwoPSet comparable"
+            },
+            {
+                "name": "decoder",
+                "comment": " Decode a TwoPSet from JSON.\n",
+                "type": "Json.Decode.Decoder comparable -> Json.Decode.Decoder (CRDT.TwoPSet.TwoPSet comparable)"
+            },
+            {
+                "name": "empty",
+                "comment": " Constructor that creates a new empty TwoPSet.\n",
+                "type": "CRDT.TwoPSet.TwoPSet comparable"
+            },
+            {
+                "name": "encode",
+                "comment": " Encode a TwoPSet as JSON.\n",
+                "type": "(comparable -> Json.Encode.Value) -> CRDT.TwoPSet.TwoPSet comparable -> Json.Encode.Value"
+            },
+            {
+                "name": "fromList",
+                "comment": " Convert a list of values into a TwoPSet.\n",
+                "type": "List.List comparable -> CRDT.TwoPSet.TwoPSet comparable"
+            },
+            {
+                "name": "insert",
+                "comment": " Insert a value in the set.\n",
+                "type": "comparable -> CRDT.TwoPSet.TwoPSet comparable -> CRDT.TwoPSet.TwoPSet comparable"
+            },
+            {
+                "name": "member",
+                "comment": " Determine if a value is in the set.\n",
+                "type": "comparable -> CRDT.TwoPSet.TwoPSet comparable -> Basics.Bool"
+            },
+            {
+                "name": "merge",
+                "comment": " Merge two TwoPSet states.\n",
+                "type": "CRDT.TwoPSet.TwoPSet comparable -> CRDT.TwoPSet.TwoPSet comparable -> CRDT.TwoPSet.TwoPSet comparable"
+            },
+            {
+                "name": "patch",
+                "comment": "  Apply a list of operations (a patch) on a TwoPSet.\n",
+                "type": "List.List (CRDT.TwoPSet.Operation comparable) -> CRDT.TwoPSet.TwoPSet comparable -> CRDT.TwoPSet.TwoPSet comparable"
+            },
+            {
+                "name": "remove",
+                "comment": " Remove a value from the set.\n",
+                "type": "comparable -> CRDT.TwoPSet.TwoPSet comparable -> CRDT.TwoPSet.TwoPSet comparable"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert a TwoPSet to a list of values.\n",
+                "type": "CRDT.TwoPSet.TwoPSet comparable -> List.List comparable"
+            },
+            {
+                "name": "toSet",
+                "comment": " Convert a TwoPSet to a Set.\n",
+                "type": "CRDT.TwoPSet.TwoPSet comparable -> Set.Set comparable"
+            }
+        ],
+        "binops": []
+    }
+]

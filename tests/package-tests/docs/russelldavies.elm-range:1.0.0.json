@@ -1,0 +1,217 @@
+[
+    {
+        "name": "Range",
+        "comment": " Model and operate on a range of values in Elm.\n\n\n# Definition\n\n@docs Range, TypeConfig, Canonical\n\n\n# Creation\n\n@docs empty, create, createWith, BoundFlag, fromString, types\n\n\n# Serialization\n\n@docs toString, decoder, encode\n\n\n# Operators\n\n@docs eq, neq, lt, gt, le, ge, cr, ce, ov, sl, sr, nxr, nxl, adj, union\n@docs intersect, diff\n\n\n# Functions\n\n@docs lowerElement, upperElement, isEmpty, lowerBoundInclusive\n@docs upperBoundInclusive, lowerBoundInfinite, upperBoundInfinite, merge\n\n",
+        "unions": [
+            {
+                "name": "BoundFlag",
+                "comment": " The kind of bounds, inclusive or exclusive, to be supplied to\n[createWith](#createWith).\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Inc",
+                        []
+                    ],
+                    [
+                        "Exc",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Canonical",
+                "comment": " A discrete range type should have a canonicalization function that is aware of\nthe desired step size for the element type. The canonicalization function is\ncharged with converting equivalent values of the range type to have\nidentical representations, in particular consistently inclusive or exclusive\nbounds. If a canonicalization function is not specified, then ranges with\ndifferent formatting will always be treated as unequal, even though they\nmight represent the same set of values in reality.\n\nHere is the definition for an integer range:\n\n    ( ( Inc, (+) 1 ), ( Exc, (+) 1 ) )\n\nIt specifies that the lower bound should be inclusive and the upper exclusive.\nIf the supplied bound flags are different during creating then step the value by\n\n",
+                "args": [
+                    "subtype"
+                ],
+                "type": "( ( Range.BoundFlag, subtype -> subtype ), ( Range.BoundFlag, subtype -> subtype ) )"
+            },
+            {
+                "name": "Range",
+                "comment": " A range of a certain type that stores information about its bounds.\n\nBe aware that a Range stores functions internally. If you want to use `(==)`\nfor comparing two Ranges use the [eq](#eq) operator.\n\n",
+                "args": [
+                    "subtype"
+                ],
+                "type": "{ config : Range.TypeConfig subtype, range : Range.RangeInternal subtype }"
+            },
+            {
+                "name": "TypeConfig",
+                "comment": " When you need to use a custom type you must create an instance of this.\n\nThis acts as a value level typeclass.\n\n",
+                "args": [
+                    "subtype"
+                ],
+                "type": "{ toString : subtype -> String.String, fromString : String.String -> Result.Result String.String subtype, compare : subtype -> subtype -> Basics.Order, canonical : Maybe.Maybe (Range.Canonical subtype) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "adj",
+                "comment": " Is Adjacent to\n\n    -- Ok True\n    Result.map2 Range.adj\n        (Range.create Range.types.float (Just 1.1) (Just 2.2))\n        (Range.create Range.types.float (Just 2.2) (Just 3.3))\n\n",
+                "type": "Range.Range subtype -> Range.Range subtype -> Basics.Bool"
+            },
+            {
+                "name": "ce",
+                "comment": " Contains Element\n\n    -- Ok True\n    Result.map2 Range.ce\n        (Range.fromString Range.types.timestamp \"[2011-01-01,2011-03-01)\"\n        (Iso8601.toTime \"2011-01-10\")\n\n",
+                "type": "Range.Range subtype -> subtype -> Basics.Bool"
+            },
+            {
+                "name": "cr",
+                "comment": " Contains Range\n\n    -- Ok True\n    Result.map2 Range.cr\n        (Range.create Range.types.int (Just 2) (Just 4))\n        (Range.create Range.types.int (Just 2) (Just 3))\n\n",
+                "type": "Range.Range subtype -> Range.Range subtype -> Basics.Bool"
+            },
+            {
+                "name": "create",
+                "comment": " Create a range in standard form (lower bound inclusive, upper bound\nexclusive).\n\n    Range.create Range.types.float (Just 1.2) Nothing\n\n",
+                "type": "Range.TypeConfig subtype -> Maybe.Maybe subtype -> Maybe.Maybe subtype -> Result.Result String.String (Range.Range subtype)"
+            },
+            {
+                "name": "createWith",
+                "comment": " Create a range with whatever user specified flags.\n\n    Range.create Range.types.float (Just 1.5) (Just 12.2) (Just ( Range.Inc, Range.Inc ))\n\n",
+                "type": "Range.TypeConfig subtype -> Maybe.Maybe subtype -> Maybe.Maybe subtype -> Maybe.Maybe ( Range.BoundFlag, Range.BoundFlag ) -> Result.Result String.String (Range.Range subtype)"
+            },
+            {
+                "name": "decoder",
+                "comment": " JSON decoder\n",
+                "type": "Range.TypeConfig subtype -> Json.Decode.Decoder (Range.Range subtype)"
+            },
+            {
+                "name": "diff",
+                "comment": " Difference\n\n    -- Ok [5,10)\n    Result.map2 Range.intersect\n        (Range.create Range.types.float (Just 5) (Just 15))\n        (Range.create Range.types.float (Just 10) (Just 20))\n        |> Result.toString\n\n",
+                "type": "Range.Range subtype -> Range.Range subtype -> Result.Result String.String (Range.Range subtype)"
+            },
+            {
+                "name": "empty",
+                "comment": " Create an empty range\n\n    Range.empty Range.types.int\n\n",
+                "type": "Range.TypeConfig subtype -> Range.Range subtype"
+            },
+            {
+                "name": "encode",
+                "comment": " Encode a `Range` to JSON\n",
+                "type": "Range.Range subtype -> Json.Encode.Value"
+            },
+            {
+                "name": "eq",
+                "comment": " Equal\n\n    -- > Ok True\n    Result.map2 Range.eq\n        (Range.create Range.types.int (Just 1) (Just 5))\n        (Range.fromString Range.types.int \"[1,4]\")\n\nUse this over `(==)` which may cause a runtime error.\n\n",
+                "type": "Range.Range subtype -> Range.Range subtype -> Basics.Bool"
+            },
+            {
+                "name": "fromString",
+                "comment": " Create a range from a string.\n\n    Range.fromString Range.types.int \"(1,5)\"\n\n",
+                "type": "Range.TypeConfig subtype -> String.String -> Result.Result String.String (Range.Range subtype)"
+            },
+            {
+                "name": "ge",
+                "comment": " Greater Than or Equal\n\n    -- Ok True\n    Result.map2 Range.gte\n        (Range.create Range.types.float (Just 1.1) (Just 2.2))\n        (Range.create Range.types.float (Just 1.1) (Just 2.0))\n\n",
+                "type": "Range.Range subtype -> Range.Range subtype -> Basics.Bool"
+            },
+            {
+                "name": "gt",
+                "comment": " Greater Than\n\n    -- Ok True\n    Result.map2 Range.gt\n        (Range.create Range.types.int (Just 1) (Just 10))\n        (Range.create Range.types.int (Just 1) (Just 5))\n\n",
+                "type": "Range.Range subtype -> Range.Range subtype -> Basics.Bool"
+            },
+            {
+                "name": "intersect",
+                "comment": " Intersection\n\n    -- Ok [10,15)\n    Result.map2 Range.intersect\n        (Range.create Range.types.float (Just 5) (Just 15))\n        (Range.create Range.types.float (Just 10) (Just 20))\n        |> Result.map Range.toString\n\n",
+                "type": "Range.Range subtype -> Range.Range subtype -> Range.Range subtype"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Is the range empty?\n\n    -- Ok False\n    Range.create Range.types.float (Just 1.1) (Just 2.2)\n        |> Result.map Range.isEmpty\n\n",
+                "type": "Range.Range subtype -> Basics.Bool"
+            },
+            {
+                "name": "le",
+                "comment": " Less Than or Equal\n\n    -- Ok True\n    Result.map2 Range.lte\n        (Range.create Range.types.float (Just 1.1) (Just 2.2))\n        (Range.create Range.types.float (Just 1.1) (Just 2.2))\n\n",
+                "type": "Range.Range subtype -> Range.Range subtype -> Basics.Bool"
+            },
+            {
+                "name": "lowerBoundInclusive",
+                "comment": " Is the lower bound inclusive.\n\n    -- Ok True\n    Range.create Range.types.float (Just 1.1) (Just 2.2)\n        |> Result.map Range.lowerBoundInclusive\n\nIf a range is empty or the lower bound is infinite then it is not inclusive.\n\n",
+                "type": "Range.Range subtype -> Basics.Bool"
+            },
+            {
+                "name": "lowerBoundInfinite",
+                "comment": " Is the lower bound infinite.\n\n    -- Ok True\n    Range.create Range.types.float Nothing (Just 2.2)\n        |> Result.map Range.lowerBoundInfinite\n\nIf a range is empty then it is not infinite.\n\n",
+                "type": "Range.Range subtype -> Basics.Bool"
+            },
+            {
+                "name": "lowerElement",
+                "comment": " The element of a range's lower bound.\n\n    -- Ok (Just 1.1)\n    Range.create Range.types.float (Just 1.1) (Just 2.2)\n        |> Result.map Range.lowerElement\n\nIf the range is empty or the bound infinity then the result is `Nothing`.\n\n",
+                "type": "Range.Range subtype -> Maybe.Maybe subtype"
+            },
+            {
+                "name": "lt",
+                "comment": " Less Than\n\n    -- Ok True\n    Result.map2 Range.lt\n        (Range.create Range.types.int (Just 1) (Just 10))\n        (Range.create Range.types.int (Just 2) (Just 3))\n\n",
+                "type": "Range.Range subtype -> Range.Range subtype -> Basics.Bool"
+            },
+            {
+                "name": "merge",
+                "comment": " The smallest range which includes both of the given ranges.\n\nLike set union, except also allow and account for non-adjacent input ranges.\n\n    -- Ok \"[1,4)\"\n    Result.map2 Range.merge\n        (Range.create Range.types.int (Just 1) (Just 2))\n        (Range.create Range.types.int (Just 3) (Just 4))\n        |> Result.map Range.toString\n\n",
+                "type": "Range.Range subtype -> Range.Range subtype -> Range.Range subtype"
+            },
+            {
+                "name": "neq",
+                "comment": " Not Equal\n\n    -- Ok True\n    Result.map2 Range.neq\n        (Range.create Range.types.float (Just 1.1) (Just 2.2))\n        (Range.create Range.types.float (Just 1.1) (Just 2.3))\n\n",
+                "type": "Range.Range subtype -> Range.Range subtype -> Basics.Bool"
+            },
+            {
+                "name": "nxl",
+                "comment": " Does not extend to the left of\n\n    -- Ok True\n    Result.map2 Range.nxl\n        (Range.create Range.types.int (Just 7) (Just 20))\n        (Range.create Range.types.int (Just 5) (Just 10))\n\n",
+                "type": "Range.Range subtype -> Range.Range subtype -> Basics.Bool"
+            },
+            {
+                "name": "nxr",
+                "comment": " Does not extend to the right of\n\n    -- Ok True\n    Result.map2 Range.nxr\n        (Range.create Range.types.int (Just 1) (Just 20))\n        (Range.create Range.types.int (Just 18) (Just 20))\n\n",
+                "type": "Range.Range subtype -> Range.Range subtype -> Basics.Bool"
+            },
+            {
+                "name": "ov",
+                "comment": " Overlap (have points in common)\n\n    -- Ok True\n    Result.map2 Range.ov\n        (Range.create Range.types.int (Just 3) (Just 7))\n        (Range.create Range.types.int (Just 4) (Just 12))\n\n",
+                "type": "Range.Range subtype -> Range.Range subtype -> Basics.Bool"
+            },
+            {
+                "name": "sl",
+                "comment": " Strictly Left of\n\n    -- Ok True\n    Result.map2 Range.sl\n        (Range.create Range.types.int (Just 1) (Just 10))\n        (Range.create Range.types.int (Just 100) (Just 110))\n\n",
+                "type": "Range.Range subtype -> Range.Range subtype -> Basics.Bool"
+            },
+            {
+                "name": "sr",
+                "comment": " Strictly Right of\n\n    -- Ok True\n    Result.map2 Range.sr\n        (Range.create Range.types.int (Just 50) (Just 60))\n        (Range.create Range.types.int (Just 20) (Just 30))\n\n",
+                "type": "Range.Range subtype -> Range.Range subtype -> Basics.Bool"
+            },
+            {
+                "name": "toString",
+                "comment": " Convert a range to its string representation.\n\n    -- Ok [1,2)\n    Range.create Range.types.int (Just 1) (Just 2)\n        |> Result.map Range.toString\n\n",
+                "type": "Range.Range subtype -> String.String"
+            },
+            {
+                "name": "types",
+                "comment": " Built-in [TypeConfigs](#TypeConfig) for common types.\n",
+                "type": "{ int : Range.TypeConfig Basics.Int, float : Range.TypeConfig Basics.Float, string : Range.TypeConfig String.String, timestamp : Range.TypeConfig Time.Posix }"
+            },
+            {
+                "name": "union",
+                "comment": " Union\n\n    -- Ok \"[5,20)\"\n    Result.map2 Range.adj\n        (Range.create Range.types.float (Just 5) (Just 15))\n        (Range.create Range.types.float (Just 10) (Just 20))\n        |> Result.map Range.toString\n\n",
+                "type": "Range.Range subtype -> Range.Range subtype -> Result.Result String.String (Range.Range subtype)"
+            },
+            {
+                "name": "upperBoundInclusive",
+                "comment": " Is the upper bound inclusive.\n\n    -- Ok False\n    Range.create Range.types.float (Just 1.1) (Just 2.2)\n        |> Result.map Range.upperBoundInclusive\n\nIf a range is empty or the upper bound is infinite then it is not inclusive.\n\n",
+                "type": "Range.Range subtype -> Basics.Bool"
+            },
+            {
+                "name": "upperBoundInfinite",
+                "comment": " Is the upper bound infinite.\n\n    -- Ok False\n    Range.create Range.types.float Nothing (Just 2.2)\n        |> Result.map Range.upperBoundInfinite\n\nIf a range is empty then it is not infinite.\n\n",
+                "type": "Range.Range subtype -> Basics.Bool"
+            },
+            {
+                "name": "upperElement",
+                "comment": " The element of a range's upper bound.\n\n    -- Ok (Just 2.2)\n    Range.create Range.types.float (Just 1.1) (Just 2.2)\n        |> Result.map Range.upperElement\n\nIf the range is empty or the bound infinity then the result is `Nothing`.\n\n",
+                "type": "Range.Range subtype -> Maybe.Maybe subtype"
+            }
+        ],
+        "binops": []
+    }
+]

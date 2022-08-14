@@ -1,0 +1,135 @@
+[
+    {
+        "name": "Color.Dracula",
+        "comment": " This module provides the dracula color scheme using elm-ui.\n\n\n# ColorSheme\n\n@docs black, white\n@docs red, blue, yellow, green\n@docs cyan, gray, pink, purple, orange\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "black",
+                "comment": " rgb(40 42 54)\n#282a36\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "blue",
+                "comment": " rgb(98 114 164)\n#6272a4\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "cyan",
+                "comment": " rgb(139 233 253)\n#8be9fd\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "gray",
+                "comment": " rgb(68 71 90)\n#44475a\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "green",
+                "comment": " rgb(80 250 123)\n#50fa7b\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "orange",
+                "comment": " rgb(255 184 108)\n#ffb86c\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "pink",
+                "comment": " rgb(255 121 198)\n#ff79c6\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "purple",
+                "comment": " rgb(189 147 249)\n#bd93f9\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "red",
+                "comment": " rgb(255 85 85)\n#ff5555\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "white",
+                "comment": " rgb(248 248 242)\n#f8f8f2\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "yellow",
+                "comment": " rgb(241 250 140)\n#f1fa8c\n",
+                "type": "Element.Color"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Color.OneDark",
+        "comment": " This module provides the one dark color scheme using elm-ui.\n\n\n# ColorSheme\n\n@docs black, white\n@docs lightRed, darkRed\n@docs lightYellow, darkYellow\n@docs blue, cyan, green, magenta\n@docs gutterGrey, commentGrey\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "black",
+                "comment": " rgb(40, 44, 52)\n#282c34\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "blue",
+                "comment": " rgb(97, 175, 239)\n#61afef\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "commentGrey",
+                "comment": " rgb(92, 99, 112)\n#5c6370\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "cyan",
+                "comment": " rgb(86, 182, 194)\n#56b6c2\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "darkRed",
+                "comment": " rgb(190, 80, 70)\n#be5046\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "darkYellow",
+                "comment": " rgb(209, 154, 102)\n#d19a66\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "green",
+                "comment": " rgb(152, 195, 121)\n#98c379\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "gutterGrey",
+                "comment": " rgb(76, 82, 99)\n#4b5263\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "lightRed",
+                "comment": " rgb(224, 108, 117)\n#e06c75\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "lightYellow",
+                "comment": " rgb(229, 192, 123)\n#e5c07b\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "magenta",
+                "comment": " rgb(198, 120, 221)\n#c678dd\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "white",
+                "comment": " rgb(171, 178, 191)\n#abb2bf\n",
+                "type": "Element.Color"
+            }
+        ],
+        "binops": []
+    }
+]

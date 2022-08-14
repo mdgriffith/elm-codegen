@@ -1,0 +1,591 @@
+[
+    {
+        "name": "Urbit",
+        "comment": "\n\n\n# Data Types\n\n@docs Session, url, ship, uid, lastEventId\n@docs InMsg, InMsgData\n@docs OutMsg\n\n\n# Connection Setup\n\nThese are **required** in order to maintain an active connection to an urbit\nship and to perform poke/subscription requests.\n\n@docs connect, connectUnauth, setupEventSource, messages, ack\n\n\n# Stateful Requests\n\n@docs poke, subscribe, unsubscribe, disconnect\n@docs send, sendBatch, sendTask, sendBatchTask\n\n\n# Stateless Requests\n\nThese do not require an active connection, however they do at least require you\nto be authenticated.\n\n@docs login, scry, spider\n\n\n# Helpers\n\n@docs genChannelId, genUid\n\n",
+        "unions": [
+            {
+                "name": "InMsgData",
+                "comment": " An incoming message may be one of the following:\n\n  - `Poke` represents a response for a previous poke\n  - `Subscribe` represents a response for a subscription requests\n  - `Diff` represents a new incoming diff for a subscription\n  - `Quit` means you have been kicked from a subscription and should likely\n    attempt to resubscribe\n\nIn all cases the first `Int` value represents the Id of the message it is\nrelevant to.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Poke",
+                        [
+                            "Basics.Int",
+                            "Result.Result String.String ()"
+                        ]
+                    ],
+                    [
+                        "Subscribe",
+                        [
+                            "Basics.Int",
+                            "Result.Result String.String ()"
+                        ]
+                    ],
+                    [
+                        "Diff",
+                        [
+                            "Basics.Int",
+                            "Json.Encode.Value"
+                        ]
+                    ],
+                    [
+                        "Quit",
+                        [
+                            "Basics.Int"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "OutMsg",
+                "comment": " Represents an outgoing message.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Session",
+                "comment": " A session represents an active connection to an urbit ship.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "InMsg",
+                "comment": " Represents an incoming message.\n",
+                "args": [],
+                "type": "{ lastEventId : Basics.Int, data : Urbit.InMsgData }"
+            }
+        ],
+        "values": [
+            {
+                "name": "ack",
+                "comment": " Acknowledge an incoming message by its Id. Must be performed for every\nincoming message received.\n",
+                "type": "Basics.Int -> Urbit.OutMsg"
+            },
+            {
+                "name": "connect",
+                "comment": " Connect to an urbit ship and return a `Session` on success. Should be\nfollowed by [setupEventSource](#setupEventSource) (this must be done as a\nseparate step due to the nature of Elm ports).\n\nYou can generate a unique `channelId` any way you wish, however the provided\n[genChannelId](#genChannelId) function is recommended.\n\n",
+                "type": "{ ship : Urbit.Encoding.Atom.Atom, url : String.String, channelId : String.String, code : String.String } -> (Result.Result Http.Error Urbit.Session -> msg) -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "connectUnauth",
+                "comment": " Alternative to [connect](#connect) that does not require a `code`.\n\n**Note:** Ensure the correct cookie is set through some other means beforehand\nor else this will not work. Hosting from within an urbit using the :file-server\napp with public set to false should work, for example.\n\n",
+                "type": "{ ship : Urbit.Encoding.Atom.Atom, url : String.String, channelId : String.String } -> (Result.Result Http.Error Urbit.Session -> msg) -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "disconnect",
+                "comment": " Safely deletes a channel.\n",
+                "type": "Urbit.OutMsg"
+            },
+            {
+                "name": "genChannelId",
+                "comment": " Recommended way to create a unique id for a session's channel. Takes the\ncurrent time and returns a random generator which can then be used to generate\nthe full ID.\n",
+                "type": "Time.Posix -> Random.Generator String.String"
+            },
+            {
+                "name": "genUid",
+                "comment": " Helper for generating random urbit UIDs.\n\nBased off of <https://github.com/urbit/urbit/blob/137e4428f617c13f28ed31e520eff98d251ed3e9/pkg/interface/src/lib/util.js#L3>\n\n",
+                "type": "Random.Generator String.String"
+            },
+            {
+                "name": "lastEventId",
+                "comment": " Get a Session's lastEventId.\n",
+                "type": "Urbit.Session -> Basics.Int"
+            },
+            {
+                "name": "login",
+                "comment": " Login to an urbit without maintaining an active connection. This will allow\nfor stateless scry and spider requests that require authentication, but not\nothers.\n\n**Note:** This is not required if you have already used [connect](#connect) to\nauthenticate.\n\n",
+                "type": "{ url : String.String, code : String.String } -> (Result.Result Http.Error () -> msg) -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "messages",
+                "comment": " Subscribe to incoming messages from urbit. See [setupEventSource](#setupEventSource)\nabove for instructions on how to use this. Every message received _must_ be\nacknowledged by using the related [ack](#ack) function, otherwise urbit will\nstop accepting any further messages.\n",
+                "type": "((Json.Encode.Value -> msg) -> Platform.Sub.Sub msg) -> (Result.Result Json.Decode.Error Urbit.InMsg -> msg) -> Platform.Sub.Sub msg"
+            },
+            {
+                "name": "poke",
+                "comment": " Poke an app on a ship.\n",
+                "type": "{ ship : Urbit.Encoding.Atom.Atom, app : String.String, mark : String.String, json : Json.Encode.Value } -> Urbit.OutMsg"
+            },
+            {
+                "name": "scry",
+                "comment": " Make a scry request.\n",
+                "type": "{ url : String.String, app : String.String, path : String.String, mark : String.String, decoder : Json.Decode.Decoder a } -> (Result.Result Http.Error a -> msg) -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "send",
+                "comment": " Sends an outgoing message to urbit. Returns a tuple of a new session and\nthe command.\n",
+                "type": "Urbit.Session -> (Result.Result Http.Error () -> msg) -> Urbit.OutMsg -> ( Urbit.Session, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "sendBatch",
+                "comment": " Sends multiple outgoing messages to urbit in one request. Returns a tuple of\na new session and the command.\n",
+                "type": "Urbit.Session -> (Result.Result Http.Error () -> msg) -> List.List Urbit.OutMsg -> ( Urbit.Session, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "sendBatchTask",
+                "comment": " Sends multiple outgoing messages to urbit in one request as a task. Returns\na tuple of a new session and the task.\n",
+                "type": "Urbit.Session -> List.List Urbit.OutMsg -> ( Urbit.Session, Task.Task Http.Error () )"
+            },
+            {
+                "name": "sendTask",
+                "comment": " Sends an outgoing message to urbit as a task. Returns a tuple of a new\nsession and the task.\n",
+                "type": "Urbit.Session -> Urbit.OutMsg -> ( Urbit.Session, Task.Task Http.Error () )"
+            },
+            {
+                "name": "setupEventSource",
+                "comment": " This will set up the realtime communication channel with urbit. Because Elm\ndoes not support the [EventSource](https://developer.mozilla.org/en-US/docs/Web/API/EventSource)\nAPI required, this must be done using ports. Elm does not allow ports to be\npublished as part of a package, but luckily the setup for this is fairly\nstraightforward.\n\nFirst, copy/paste the following into your js file and replace any references to\n`app` with the variable name of your running Elm app:\n\n```js\napp.ports.setupUrbitEventSource.subscribe((url) => {\n  const eventSource = new EventSource(url, { withCredentials: true });\n\n  eventSource.onmessage = function (event) {\n    app.ports.onUrbitMessage.send({ message: event });\n  };\n\n  eventSource.onerror = function (event) {\n    app.ports.onUrbitMessage.send({ error: event });\n  };\n});\n```\n\nNext, declare a port module and the following ports to handle the initial setup\nand incoming messages:\n\n    port setupUrbitEventSource : String -> Cmd msg\n\n    port onUrbitMessage : (JE.Value -> msg) -> Sub msg\n\nNow, the newly created `setupUrbitEventSource` can be passed as the first\nargument to our [setupEventSource](#setupEventSource) function and used to\nperform the necessary setup. Similarly, the `onUrbitMessage` function can be\npassed as the first argument to [messages](#messages) below to set up the\nsubscription to incoming events.\n\n    setupCommand =\n        Urbit.setupEventSource setupUrbitEventSource session\n\n    messagesSubscription =\n        Urbit.messages onUrbitMessage GotUrbitMessage\n\nSee the Elm [guide](https://guide.elm-lang.org/interop/ports.html) for further\ninformation regarding ports.\n\n",
+                "type": "(String.String -> Platform.Cmd.Cmd msg) -> Urbit.Session -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "ship",
+                "comment": " Get a Session's ship.\n",
+                "type": "Urbit.Session -> Urbit.Encoding.Atom.Atom"
+            },
+            {
+                "name": "spider",
+                "comment": " Start a thread and get the response.\n",
+                "type": "{ url : String.String, desk : String.String, inputMark : String.String, outputMark : String.String, threadName : String.String, body : Json.Encode.Value, decoder : Json.Decode.Decoder output } -> (Result.Result Http.Error output -> msg) -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "subscribe",
+                "comment": " Subscribe to ship events on some path.\n",
+                "type": "{ ship : Urbit.Encoding.Atom.Atom, app : String.String, path : String.String } -> Urbit.OutMsg"
+            },
+            {
+                "name": "uid",
+                "comment": " Get a Session's uid.\n",
+                "type": "Urbit.Session -> String.String"
+            },
+            {
+                "name": "unsubscribe",
+                "comment": " Unsubscribe from an existing subscription by its Id.\n",
+                "type": "Basics.Int -> Urbit.OutMsg"
+            },
+            {
+                "name": "url",
+                "comment": " Get a Session's url.\n",
+                "type": "Urbit.Session -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Urbit.Encoding.Atom",
+        "comment": "\n\n@docs Atom, fromInt, fromBigInt, toBigInt\n\n",
+        "unions": [
+            {
+                "name": "Atom",
+                "comment": " The most basic Urbit data type. Represents any non-negative integer of any\nsize.\n\nSee [Urbit.Encoding.Phonemic](Urbit-Encoding-Phonemic) for converting\nto/from planet names (i.e. ~sampel-palnet).\n\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fromBigInt",
+                "comment": " Creates an atom from a `BigInt`, failing for negative numbers.\n",
+                "type": "BigInt.BigInt -> Maybe.Maybe Urbit.Encoding.Atom.Atom"
+            },
+            {
+                "name": "fromInt",
+                "comment": " Creates an atom from an `Int`, failing for negative numbers.\n",
+                "type": "Basics.Int -> Maybe.Maybe Urbit.Encoding.Atom.Atom"
+            },
+            {
+                "name": "toBigInt",
+                "comment": " Converts an atom into a `BigInt`.\n",
+                "type": "Urbit.Encoding.Atom.Atom -> BigInt.BigInt"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Urbit.Encoding.DateAbsolute",
+        "comment": " Encoding/Decoding module for urbit @da representations of absolute dates, in\naccordance with <https://urbit.org/docs/hoon/reference/auras>.\n\n**Note:** All dates in this format are in the UTC time zone.\n\n\n# Date Record\n\n@docs DateRecord\n@docs fromDateRecord, toDateRecord\n\n\n# Posix Time\n\n@docs fromPosix, toPosix\n\n\n# Parsing\n\n@docs parseDateRecord, parsePosix\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "DateRecord",
+                "comment": " An absolute date stored as a record.\n",
+                "args": [],
+                "type": "{ year : Basics.Int, month : Basics.Int, day : Basics.Int, hour : Basics.Int, minute : Basics.Int, second : Basics.Int, millis : Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "fromDateRecord",
+                "comment": " Convert a [DateRecord](#DateRecord) to a @da encoded string.\n\n    fromDateRecord\n        { year = 2021\n        , month = 8\n        , day = 3\n        , hour = 6\n        , minute = 39\n        , second = 55\n        , millis = 356\n        }\n    --> \"~2021.8.3..6.39.55..05b2\"\n\n",
+                "type": "Urbit.Encoding.DateAbsolute.DateRecord -> String.String"
+            },
+            {
+                "name": "fromPosix",
+                "comment": " Convert a posix time to a @da encoded string.\n\n    import Time\n\n    Time.millisToPosix 1627948800000 |> fromPosix\n    --> \"~2021.8.3\"\n\n",
+                "type": "Time.Posix -> String.String"
+            },
+            {
+                "name": "parseDateRecord",
+                "comment": " Parses a @da encoded string into a [DateRecord](#DateRecord).\n",
+                "type": "Parser.Parser Urbit.Encoding.DateAbsolute.DateRecord"
+            },
+            {
+                "name": "parsePosix",
+                "comment": " Parses a @da encoded string into a posix time.\n",
+                "type": "Parser.Parser Time.Posix"
+            },
+            {
+                "name": "toDateRecord",
+                "comment": " Convert a @da encoded string to a [DateRecord](#DateRecord), failing on\nimproperly formatted strings.\n\n    toDateRecord \"~2021.8.3..6.39.55..05b2\"\n    --> Ok\n    -->    { year = 2021\n    -->    , month = 8\n    -->    , day = 3\n    -->    , hour = 6\n    -->    , minute = 39\n    -->    , second = 55\n    -->    , millis = 356\n    -->    }\n\n",
+                "type": "String.String -> Result.Result (List.List Parser.DeadEnd) Urbit.Encoding.DateAbsolute.DateRecord"
+            },
+            {
+                "name": "toPosix",
+                "comment": " Try to convert a @da encoded string to a posix time, failing on improperly\nformatted strings.\n\n    import Time\n\n    toPosix \"~2021.8.3..8.25.00\"\n    --> Ok (Time.millisToPosix 1627979100000)\n\n",
+                "type": "String.String -> Result.Result (List.List Parser.DeadEnd) Time.Posix"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Urbit.Encoding.Phonemic",
+        "comment": " Encoding/Decoding module for urbit @p (scrambled) and @q (unscrambled)\nrepresentations of numbers, in accordance with <https://urbit.org/docs/hoon/reference/auras>.\n\n\n# @p\n\nPhonemic Base (Ship Names)\n\n@docs toPatp, fromPatp, patpParser\n\n\n# @q\n\nPhonemic Base, Unscrambled\n\n@docs toPatq, fromPatq, patqParser\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fromPatp",
+                "comment": " Try to convert a @p encoded string into an Atom, failing on improperly\nformatted strings.\n\n    import Urbit.Encoding.Atom as Atom\n    import BigInt\n\n    fromPatp \"~sampel-palnet\"\n        |> Result.map (Atom.toBigInt >> BigInt.toString)\n    --> Ok \"1624961343\"\n\n",
+                "type": "String.String -> Result.Result (List.List Parser.DeadEnd) Urbit.Encoding.Atom.Atom"
+            },
+            {
+                "name": "fromPatq",
+                "comment": " Try to convert a @q encoded string into an Atom, failing on improperly\nformatted strings.\n\n    import Urbit.Encoding.Atom as Atom\n    import BigInt\n\n    fromPatq \"~sampel\"\n        |> Result.map (Atom.toBigInt >> BigInt.toString)\n    --> Ok \"1135\"\n\n",
+                "type": "String.String -> Result.Result (List.List Parser.DeadEnd) Urbit.Encoding.Atom.Atom"
+            },
+            {
+                "name": "patpParser",
+                "comment": " Parser for @p encoded strings.\n",
+                "type": "Parser.Parser Urbit.Encoding.Atom.Atom"
+            },
+            {
+                "name": "patqParser",
+                "comment": " Parser for @q encoded strings.\n",
+                "type": "Parser.Parser Urbit.Encoding.Atom.Atom"
+            },
+            {
+                "name": "toPatp",
+                "comment": " Try to convert an Atom into a @p encoded string, failing on negative\nnumbers.\n\n    import Urbit.Encoding.Atom as Atom\n\n    Atom.fromInt 65536 |> Maybe.map toPatp\n    --> Just \"~dapnep-ronmyl\"\n\n",
+                "type": "Urbit.Encoding.Atom.Atom -> String.String"
+            },
+            {
+                "name": "toPatq",
+                "comment": " Try to convert an Atom into a @q encoded string, failing on negative\nnumbers.\n\n    import Urbit.Encoding.Atom as Atom\n\n    Atom.fromInt 5 |> Maybe.map toPatq\n    --> Just \"~per\"\n\n",
+                "type": "Urbit.Encoding.Atom.Atom -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Urbit.Graph",
+        "comment": "\n\n\n# Store\n\n@docs Store, emptyStore, getFromStore\n\n\n# Resource\n\n@docs Resource\n@docs parseResource, encodeResource, resourceToString, resourceToPath\n\n\n# Graph\n\n@docs Graph, Node, getNodeChildren, getNodePost, Post, Index, newNode\n@docs textContent, urlContent, mentionContent, codeContent\n\n\n# Requests\n\n@docs getGraph, subscribeToGraphUpdates, addNodes, addNodesSpider\n@docs createManagedGraph, createUnmanagedGraph, deleteGraphSpider\n\n\n# Updates\n\n@docs Update, updateDecoder, updateStore\n\n",
+        "unions": [
+            {
+                "name": "Node",
+                "comment": " A node in a graph. Contains a [Post](#Post) and possibly children.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Store",
+                "comment": " A collection of [Graphs](#Graph) identified by [Resources](#Resource).\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Update",
+                "comment": " Represents a change to the graph store.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Graph",
+                "comment": " An ordered dict of nodes.\n",
+                "args": [],
+                "type": "Dict.Dict String.String Urbit.Graph.Node"
+            },
+            {
+                "name": "Index",
+                "comment": " An index uniquely identifying a node within a graph.\n",
+                "args": [],
+                "type": "List.List String.String"
+            },
+            {
+                "name": "Post",
+                "comment": " A post in a graph. The contents are a list of JSON values.\n",
+                "args": [],
+                "type": "{ index : Urbit.Graph.Index, author : Urbit.Encoding.Atom.Atom, timeSent : Time.Posix, contents : List.List Json.Encode.Value, hash : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "Resource",
+                "comment": " A pair of a ship and a name uniquely identifying a graph.\n",
+                "args": [],
+                "type": "{ ship : Urbit.Encoding.Atom.Atom, name : String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "addNodes",
+                "comment": " Add nodes to the graph store.\n",
+                "type": "{ resource : Urbit.Graph.Resource, nodes : List.List Urbit.Graph.Node, session : Urbit.Session } -> Urbit.OutMsg"
+            },
+            {
+                "name": "addNodesSpider",
+                "comment": " Add nodes to the graph store via a spider thread.\n",
+                "type": "{ url : String.String, resource : Urbit.Graph.Resource, nodes : List.List Urbit.Graph.Node } -> (Result.Result Http.Error Json.Decode.Value -> msg) -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "codeContent",
+                "comment": " Create a `code` content type for a post.\n",
+                "type": "{ expression : String.String, output : String.String } -> Json.Encode.Value"
+            },
+            {
+                "name": "createManagedGraph",
+                "comment": " Create a new graph associated with an existing group.\n",
+                "type": "{ url : String.String, group : Urbit.Graph.Resource, resource : Urbit.Graph.Resource, title : String.String, description : String.String, graphModule : String.String, mark : String.String } -> (Result.Result Http.Error () -> msg) -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "createUnmanagedGraph",
+                "comment": " Create a new graph unassociated with any group.\n",
+                "type": "{ url : String.String, resource : Urbit.Graph.Resource, title : String.String, description : String.String, invites : List.List Urbit.Encoding.Atom.Atom, graphModule : String.String, mark : String.String } -> (Result.Result Http.Error () -> msg) -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "deleteGraphSpider",
+                "comment": " Delete a graph from the graph store via a spider thread.\n",
+                "type": "{ url : String.String, resource : Urbit.Graph.Resource } -> (Result.Result Http.Error () -> msg) -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "emptyStore",
+                "comment": " Create an empty [Store](#Store).\n",
+                "type": "Urbit.Graph.Store"
+            },
+            {
+                "name": "encodeResource",
+                "comment": " Encode a [Resource](#Resource) into a JSON value of the form:\n\n```json\n{\n  \"ship\": \"~zod\",\n  \"name\": \"example\"\n}\n```\n\n",
+                "type": "Urbit.Graph.Resource -> Json.Encode.Value"
+            },
+            {
+                "name": "getFromStore",
+                "comment": " Get a graph from a [Store](#Store) using a resource.\n",
+                "type": "Urbit.Graph.Resource -> Urbit.Graph.Store -> Maybe.Maybe Urbit.Graph.Graph"
+            },
+            {
+                "name": "getGraph",
+                "comment": " Get a graph from the graph store.\n",
+                "type": "{ url : String.String, resource : Urbit.Graph.Resource } -> (Result.Result Http.Error Urbit.Graph.Update -> msg) -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "getNodeChildren",
+                "comment": " Get the children of a node.\n",
+                "type": "Urbit.Graph.Node -> Urbit.Graph.Graph"
+            },
+            {
+                "name": "getNodePost",
+                "comment": " Get the post associated with a node.\n",
+                "type": "Urbit.Graph.Node -> Urbit.Graph.Post"
+            },
+            {
+                "name": "mentionContent",
+                "comment": " Create a `mention` content type for a post.\n",
+                "type": "String.String -> Json.Encode.Value"
+            },
+            {
+                "name": "newNode",
+                "comment": " Create a new node from a post.\n",
+                "type": "Urbit.Graph.Post -> Urbit.Graph.Node"
+            },
+            {
+                "name": "parseResource",
+                "comment": " Parses a resource string into a `Resource` type.\n\n    parseResource \"~zod/hello\"\n\n",
+                "type": "String.String -> Result.Result (List.List Parser.DeadEnd) Urbit.Graph.Resource"
+            },
+            {
+                "name": "resourceToPath",
+                "comment": " Encode a [Resource](#Resource) into a path string of the form:\n\n    \"/ship/~zod/example\"\n\n",
+                "type": "Urbit.Graph.Resource -> String.String"
+            },
+            {
+                "name": "resourceToString",
+                "comment": " Encode a [Resource](#Resource) into a string of the form:\n\n    \"~zod/example\"\n\n",
+                "type": "Urbit.Graph.Resource -> String.String"
+            },
+            {
+                "name": "subscribeToGraphUpdates",
+                "comment": " Subscribe to changes to the graph store.\n",
+                "type": "Urbit.Encoding.Atom.Atom -> Urbit.OutMsg"
+            },
+            {
+                "name": "textContent",
+                "comment": " Create a `text` content type for a post.\n",
+                "type": "String.String -> Json.Encode.Value"
+            },
+            {
+                "name": "updateDecoder",
+                "comment": " Decode a graph store update, typically from an incoming diff or scry\nrequest.\n",
+                "type": "Json.Decode.Decoder Urbit.Graph.Update"
+            },
+            {
+                "name": "updateStore",
+                "comment": " Apply a change to the graph store.\n",
+                "type": "Urbit.Graph.Update -> Urbit.Graph.Store -> Urbit.Graph.Store"
+            },
+            {
+                "name": "urlContent",
+                "comment": " Create a `url` content type for a post.\n",
+                "type": "String.String -> Json.Encode.Value"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Urbit.Group",
+        "comment": "\n\n@docs Policy, Ban\n@docs createSpider, deleteSpider, leaveSpider, inviteSpider\n\n",
+        "unions": [
+            {
+                "name": "Ban",
+                "comment": " Banned or allowed.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Banned",
+                        []
+                    ],
+                    [
+                        "Allowed",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Policy",
+                "comment": " Policy for a group.\n\n  - `Invite` will set the group to be invite-only\n      - The `pending` field is the set of ships to send invites to\n  - `Open` will set the group to be generally open to the public\n      - The `banRanks` field allows you to ban entire classes of ships. See\n        <https://urbit.org/docs/glossary/ship> for the meanings of ship ranks.\n      - The `banned` field allows you to ban specific ships\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Invite",
+                        [
+                            "{ pending : List.List Urbit.Encoding.Atom.Atom }"
+                        ]
+                    ],
+                    [
+                        "Open",
+                        [
+                            "{ banRanks : { galaxies : Urbit.Group.Ban, stars : Urbit.Group.Ban, planets : Urbit.Group.Ban, moons : Urbit.Group.Ban, comets : Urbit.Group.Ban }, banned : List.List Urbit.Encoding.Atom.Atom }"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "createSpider",
+                "comment": " Create a group via a spider thread.\n",
+                "type": "{ url : String.String, name : String.String, policy : Urbit.Group.Policy, title : String.String, description : String.String } -> (Result.Result Http.Error () -> msg) -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "deleteSpider",
+                "comment": " Delete a group via a spider thread.\n",
+                "type": "{ url : String.String, resource : Urbit.Graph.Resource } -> (Result.Result Http.Error () -> msg) -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "inviteSpider",
+                "comment": " Send invites to a group via a spider thread.\n",
+                "type": "{ url : String.String, resource : Urbit.Graph.Resource, ships : List.List Urbit.Encoding.Atom.Atom, description : String.String } -> (Result.Result Http.Error () -> msg) -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "leaveSpider",
+                "comment": " Leave a group via a spider thread.\n",
+                "type": "{ url : String.String, resource : Urbit.Graph.Resource } -> (Result.Result Http.Error () -> msg) -> Platform.Cmd.Cmd msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Urbit.Metadata",
+        "comment": "\n\n@docs MetadataResource, Config, Vip\n@docs add, remove\n\n",
+        "unions": [
+            {
+                "name": "Config",
+                "comment": " Metadata config\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Group",
+                        [
+                            "{ feed : Maybe.Maybe Urbit.Metadata.MetadataResource }"
+                        ]
+                    ],
+                    [
+                        "Graph",
+                        [
+                            "{ module_ : String.String }"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Vip",
+                "comment": " Variation in Permissions\n\n  - `ReaderComments`: Allow readers to comment, regardless of whether they can\n    write. (notebook, collections)\n  - `MemberMetadata`: Allow members to add channels (groups)\n  - `HostFeed`: Only host can post to group feed\n  - `AdminFeed`: Only admins and host can post to group feed\n  - `NoVariation`: No variation\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "ReaderComments",
+                        []
+                    ],
+                    [
+                        "MemberMetadata",
+                        []
+                    ],
+                    [
+                        "HostFeed",
+                        []
+                    ],
+                    [
+                        "AdminFeed",
+                        []
+                    ],
+                    [
+                        "NoVariation",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "MetadataResource",
+                "comment": " A metadata resource\n",
+                "args": [],
+                "type": "{ appName : String.String, resource : Urbit.Graph.Resource }"
+            }
+        ],
+        "values": [
+            {
+                "name": "add",
+                "comment": " Add metadata.\n\n  - `appName` is usually set to `\"groups\"` for modifying group metadata, and\n    `\"graph\"` for modifying metadata of an individual graph\n  - `color` is a hex color code without the \"#\" (i.e. `\"4d0a3b\"`)\n\n",
+                "type": "{ session : Urbit.Session, group : Urbit.Graph.Resource, resource : Urbit.Metadata.MetadataResource, metadata : { title : String.String, description : String.String, color : String.String, dateCreated : Time.Posix, creator : Urbit.Encoding.Atom.Atom, config : Urbit.Metadata.Config, picture : String.String, preview : Basics.Bool, hidden : Basics.Bool, vip : Urbit.Metadata.Vip } } -> Urbit.OutMsg"
+            },
+            {
+                "name": "remove",
+                "comment": " Remove metadata.\n",
+                "type": "{ session : Urbit.Session, group : Urbit.Graph.Resource, resource : Urbit.Metadata.MetadataResource } -> Urbit.OutMsg"
+            }
+        ],
+        "binops": []
+    }
+]

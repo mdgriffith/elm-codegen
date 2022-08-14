@@ -1,0 +1,1228 @@
+[
+    {
+        "name": "W.Button",
+        "comment": "\n\n@docs view, viewLink\n\n\n# State\n\n@docs disabled, outlined, invisible\n\n\n# Colors\n\n@docs primary, success, warning, danger, theme\n\n\n# Styles\n\n@docs rounded, small, fill\n\n\n# Elements\n\n@docs left, right\n\n\n# Html\n\n@docs id, class, htmlAttrs, Attribute\n\n",
+        "unions": [
+            {
+                "name": "Attribute",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "class",
+                "comment": " ",
+                "type": "String.String -> W.Button.Attribute msg"
+            },
+            {
+                "name": "danger",
+                "comment": " ",
+                "type": "W.Button.Attribute msg"
+            },
+            {
+                "name": "disabled",
+                "comment": " ",
+                "type": "Basics.Bool -> W.Button.Attribute msg"
+            },
+            {
+                "name": "fill",
+                "comment": " ",
+                "type": "W.Button.Attribute msg"
+            },
+            {
+                "name": "htmlAttrs",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> W.Button.Attribute msg"
+            },
+            {
+                "name": "id",
+                "comment": " ",
+                "type": "String.String -> W.Button.Attribute msg"
+            },
+            {
+                "name": "invisible",
+                "comment": " ",
+                "type": "W.Button.Attribute msg"
+            },
+            {
+                "name": "left",
+                "comment": " ",
+                "type": "Html.Html msg -> W.Button.Attribute msg"
+            },
+            {
+                "name": "outlined",
+                "comment": " ",
+                "type": "W.Button.Attribute msg"
+            },
+            {
+                "name": "primary",
+                "comment": " ",
+                "type": "W.Button.Attribute msg"
+            },
+            {
+                "name": "right",
+                "comment": " ",
+                "type": "Html.Html msg -> W.Button.Attribute msg"
+            },
+            {
+                "name": "rounded",
+                "comment": " ",
+                "type": "W.Button.Attribute msg"
+            },
+            {
+                "name": "small",
+                "comment": " ",
+                "type": "W.Button.Attribute msg"
+            },
+            {
+                "name": "success",
+                "comment": " ",
+                "type": "W.Button.Attribute msg"
+            },
+            {
+                "name": "theme",
+                "comment": " ",
+                "type": "ThemeSpec.ThemeSpecColorVars -> W.Button.Attribute msg"
+            },
+            {
+                "name": "view",
+                "comment": " ",
+                "type": "List.List (W.Button.Attribute msg) -> { label : String.String, onClick : msg } -> Html.Html msg"
+            },
+            {
+                "name": "viewLink",
+                "comment": " ",
+                "type": "List.List (W.Button.Attribute msg) -> { label : String.String, href : String.String } -> Html.Html msg"
+            },
+            {
+                "name": "warning",
+                "comment": " ",
+                "type": "W.Button.Attribute msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "W.ButtonGroup",
+        "comment": "\n\n@docs view\n@docs toId, toDisabled, disabled\n@docs outlined, rounded, small, fill\n@docs Attribute\n\n",
+        "unions": [
+            {
+                "name": "Attribute",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "disabled",
+                "comment": " ",
+                "type": "Basics.Bool -> W.ButtonGroup.Attribute a msg"
+            },
+            {
+                "name": "fill",
+                "comment": " ",
+                "type": "W.ButtonGroup.Attribute a msg"
+            },
+            {
+                "name": "outlined",
+                "comment": " deprecated.\n",
+                "type": "W.ButtonGroup.Attribute a msg"
+            },
+            {
+                "name": "rounded",
+                "comment": " ",
+                "type": "W.ButtonGroup.Attribute a msg"
+            },
+            {
+                "name": "small",
+                "comment": " ",
+                "type": "W.ButtonGroup.Attribute a msg"
+            },
+            {
+                "name": "toDisabled",
+                "comment": " ",
+                "type": "(a -> Basics.Bool) -> W.ButtonGroup.Attribute a msg"
+            },
+            {
+                "name": "toId",
+                "comment": " ",
+                "type": "(a -> String.String) -> W.ButtonGroup.Attribute a msg"
+            },
+            {
+                "name": "view",
+                "comment": " ",
+                "type": "List.List (W.ButtonGroup.Attribute a msg) -> { items : List.List a, isActive : a -> Basics.Bool, toLabel : a -> Html.Html msg, onClick : a -> msg } -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "W.DataRow",
+        "comment": "\n\n@docs view\n@docs header, footer, left, right, href, onClick\n@docs Attribute\n\n",
+        "unions": [
+            {
+                "name": "Attribute",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "footer",
+                "comment": " ",
+                "type": "Html.Html msg -> W.DataRow.Attribute msg"
+            },
+            {
+                "name": "header",
+                "comment": " ",
+                "type": "Html.Html msg -> W.DataRow.Attribute msg"
+            },
+            {
+                "name": "href",
+                "comment": " ",
+                "type": "String.String -> W.DataRow.Attribute msg"
+            },
+            {
+                "name": "left",
+                "comment": " ",
+                "type": "Html.Html msg -> W.DataRow.Attribute msg"
+            },
+            {
+                "name": "onClick",
+                "comment": " ",
+                "type": "msg -> W.DataRow.Attribute msg"
+            },
+            {
+                "name": "right",
+                "comment": " ",
+                "type": "List.List (Html.Html msg) -> W.DataRow.Attribute msg"
+            },
+            {
+                "name": "view",
+                "comment": " ",
+                "type": "List.List (W.DataRow.Attribute msg) -> List.List (Html.Html msg) -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "W.Field",
+        "comment": "\n\n@docs view\n@docs alignRight, footer\n@docs hint, success, warning, danger\n@docs id, class, htmlAttrs\n@docs Attribute\n\n",
+        "unions": [
+            {
+                "name": "Attribute",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "alignRight",
+                "comment": " ",
+                "type": "Basics.Bool -> W.Field.Attribute msg"
+            },
+            {
+                "name": "class",
+                "comment": " ",
+                "type": "String.String -> W.Field.Attribute msg"
+            },
+            {
+                "name": "danger",
+                "comment": " ",
+                "type": "String.String -> W.Field.Attribute msg"
+            },
+            {
+                "name": "footer",
+                "comment": " ",
+                "type": "Html.Html msg -> W.Field.Attribute msg"
+            },
+            {
+                "name": "hint",
+                "comment": " ",
+                "type": "String.String -> W.Field.Attribute msg"
+            },
+            {
+                "name": "htmlAttrs",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> W.Field.Attribute msg"
+            },
+            {
+                "name": "id",
+                "comment": " ",
+                "type": "String.String -> W.Field.Attribute msg"
+            },
+            {
+                "name": "success",
+                "comment": " ",
+                "type": "String.String -> W.Field.Attribute msg"
+            },
+            {
+                "name": "view",
+                "comment": " ",
+                "type": "List.List (W.Field.Attribute msg) -> { label : Html.Html msg, input : Html.Html msg } -> Html.Html msg"
+            },
+            {
+                "name": "warning",
+                "comment": " ",
+                "type": "String.String -> W.Field.Attribute msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "W.InputAutocomplete",
+        "comment": "\n\n@docs view\n@docs class, disabled, readOnly, required, placeholder, onBlur, onEnter, onFocus, htmlAttrs\n@docs Attribute\n\n",
+        "unions": [
+            {
+                "name": "Attribute",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "class",
+                "comment": " ",
+                "type": "String.String -> W.InputAutocomplete.Attribute msg"
+            },
+            {
+                "name": "disabled",
+                "comment": " ",
+                "type": "Basics.Bool -> W.InputAutocomplete.Attribute msg"
+            },
+            {
+                "name": "htmlAttrs",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> W.InputAutocomplete.Attribute msg"
+            },
+            {
+                "name": "onBlur",
+                "comment": " ",
+                "type": "msg -> W.InputAutocomplete.Attribute msg"
+            },
+            {
+                "name": "onEnter",
+                "comment": " ",
+                "type": "msg -> W.InputAutocomplete.Attribute msg"
+            },
+            {
+                "name": "onFocus",
+                "comment": " ",
+                "type": "msg -> W.InputAutocomplete.Attribute msg"
+            },
+            {
+                "name": "placeholder",
+                "comment": " ",
+                "type": "String.String -> W.InputAutocomplete.Attribute msg"
+            },
+            {
+                "name": "readOnly",
+                "comment": " ",
+                "type": "Basics.Bool -> W.InputAutocomplete.Attribute msg"
+            },
+            {
+                "name": "required",
+                "comment": " ",
+                "type": "Basics.Bool -> W.InputAutocomplete.Attribute msg"
+            },
+            {
+                "name": "view",
+                "comment": " ",
+                "type": "List.List (W.InputAutocomplete.Attribute msg) -> { id : String.String, search : String.String, value : Maybe.Maybe a, options : Maybe.Maybe (List.List a), toLabel : a -> String.String, onInput : String.String -> Maybe.Maybe a -> msg } -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "W.InputCheckbox",
+        "comment": "\n\n@docs view\n@docs id, color, disabled, readOnly\n@docs Attribute\n\n",
+        "unions": [
+            {
+                "name": "Attribute",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "color",
+                "comment": " ",
+                "type": "String.String -> W.InputCheckbox.Attribute msg"
+            },
+            {
+                "name": "disabled",
+                "comment": " ",
+                "type": "Basics.Bool -> W.InputCheckbox.Attribute msg"
+            },
+            {
+                "name": "id",
+                "comment": " ",
+                "type": "String.String -> W.InputCheckbox.Attribute msg"
+            },
+            {
+                "name": "readOnly",
+                "comment": " ",
+                "type": "Basics.Bool -> W.InputCheckbox.Attribute msg"
+            },
+            {
+                "name": "view",
+                "comment": " ",
+                "type": "List.List (W.InputCheckbox.Attribute msg) -> { value : Basics.Bool, onInput : Basics.Bool -> msg } -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "W.InputDate",
+        "comment": "\n\n@docs view\n@docs min, max, timeZone\n@docs id, class, disabled, required, readOnly\n@docs onEnter, onFocus, onBlur\n@docs htmlAttrs, Attribute\n\n",
+        "unions": [
+            {
+                "name": "Attribute",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "class",
+                "comment": " ",
+                "type": "String.String -> W.InputDate.Attribute msg"
+            },
+            {
+                "name": "disabled",
+                "comment": " ",
+                "type": "Basics.Bool -> W.InputDate.Attribute msg"
+            },
+            {
+                "name": "htmlAttrs",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> W.InputDate.Attribute msg"
+            },
+            {
+                "name": "id",
+                "comment": " ",
+                "type": "String.String -> W.InputDate.Attribute msg"
+            },
+            {
+                "name": "max",
+                "comment": " ",
+                "type": "Time.Posix -> W.InputDate.Attribute msg"
+            },
+            {
+                "name": "min",
+                "comment": " ",
+                "type": "Time.Posix -> W.InputDate.Attribute msg"
+            },
+            {
+                "name": "onBlur",
+                "comment": " ",
+                "type": "msg -> W.InputDate.Attribute msg"
+            },
+            {
+                "name": "onEnter",
+                "comment": " ",
+                "type": "msg -> W.InputDate.Attribute msg"
+            },
+            {
+                "name": "onFocus",
+                "comment": " ",
+                "type": "msg -> W.InputDate.Attribute msg"
+            },
+            {
+                "name": "readOnly",
+                "comment": " ",
+                "type": "Basics.Bool -> W.InputDate.Attribute msg"
+            },
+            {
+                "name": "required",
+                "comment": " ",
+                "type": "Basics.Bool -> W.InputDate.Attribute msg"
+            },
+            {
+                "name": "timeZone",
+                "comment": " ",
+                "type": "Time.Zone -> W.InputDate.Attribute msg"
+            },
+            {
+                "name": "view",
+                "comment": " ",
+                "type": "List.List (W.InputDate.Attribute msg) -> { onInput : Maybe.Maybe Time.Posix -> msg, value : Maybe.Maybe Time.Posix } -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "W.InputNumber",
+        "comment": "\n\n@docs view\n@docs min, max, step\n@docs id, class, placeholder, disabled, required, readOnly\n@docs onEnter, onFocus, onBlur\n@docs htmlAttrs, Attribute\n\n",
+        "unions": [
+            {
+                "name": "Attribute",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "class",
+                "comment": " ",
+                "type": "String.String -> W.InputNumber.Attribute msg"
+            },
+            {
+                "name": "disabled",
+                "comment": " ",
+                "type": "Basics.Bool -> W.InputNumber.Attribute msg"
+            },
+            {
+                "name": "htmlAttrs",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> W.InputNumber.Attribute msg"
+            },
+            {
+                "name": "id",
+                "comment": " ",
+                "type": "String.String -> W.InputNumber.Attribute msg"
+            },
+            {
+                "name": "max",
+                "comment": " ",
+                "type": "Basics.Float -> W.InputNumber.Attribute msg"
+            },
+            {
+                "name": "min",
+                "comment": " ",
+                "type": "Basics.Float -> W.InputNumber.Attribute msg"
+            },
+            {
+                "name": "onBlur",
+                "comment": " ",
+                "type": "msg -> W.InputNumber.Attribute msg"
+            },
+            {
+                "name": "onEnter",
+                "comment": " ",
+                "type": "msg -> W.InputNumber.Attribute msg"
+            },
+            {
+                "name": "onFocus",
+                "comment": " ",
+                "type": "msg -> W.InputNumber.Attribute msg"
+            },
+            {
+                "name": "placeholder",
+                "comment": " ",
+                "type": "String.String -> W.InputNumber.Attribute msg"
+            },
+            {
+                "name": "readOnly",
+                "comment": " ",
+                "type": "Basics.Bool -> W.InputNumber.Attribute msg"
+            },
+            {
+                "name": "required",
+                "comment": " ",
+                "type": "Basics.Bool -> W.InputNumber.Attribute msg"
+            },
+            {
+                "name": "step",
+                "comment": " ",
+                "type": "Basics.Float -> W.InputNumber.Attribute msg"
+            },
+            {
+                "name": "view",
+                "comment": " ",
+                "type": "List.List (W.InputNumber.Attribute msg) -> { value : String.String, onInput : String.String -> msg } -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "W.InputRadio",
+        "comment": "\n\n@docs view\n@docs color, disabled, readOnly, vertical\n@docs Attribute\n\n",
+        "unions": [
+            {
+                "name": "Attribute",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "color",
+                "comment": " ",
+                "type": "String.String -> W.InputRadio.Attribute msg"
+            },
+            {
+                "name": "disabled",
+                "comment": " ",
+                "type": "Basics.Bool -> W.InputRadio.Attribute msg"
+            },
+            {
+                "name": "readOnly",
+                "comment": " ",
+                "type": "Basics.Bool -> W.InputRadio.Attribute msg"
+            },
+            {
+                "name": "vertical",
+                "comment": " ",
+                "type": "Basics.Bool -> W.InputRadio.Attribute msg"
+            },
+            {
+                "name": "view",
+                "comment": " ",
+                "type": "List.List (W.InputRadio.Attribute msg) -> { id : String.String, value : a, options : List.List a, toValue : a -> String.String, toLabel : a -> String.String, onInput : a -> msg } -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "W.InputSelect",
+        "comment": "\n\n@docs view, viewGroups\n@docs id, disabled, readOnly\n@docs Attribute\n\n",
+        "unions": [
+            {
+                "name": "Attribute",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "disabled",
+                "comment": " ",
+                "type": "Basics.Bool -> W.InputSelect.Attribute msg"
+            },
+            {
+                "name": "id",
+                "comment": " ",
+                "type": "String.String -> W.InputSelect.Attribute msg"
+            },
+            {
+                "name": "readOnly",
+                "comment": " ",
+                "type": "Basics.Bool -> W.InputSelect.Attribute msg"
+            },
+            {
+                "name": "view",
+                "comment": " ",
+                "type": "List.List (W.InputSelect.Attribute msg) -> { value : a, options : List.List a, toValue : a -> String.String, toLabel : a -> String.String, onInput : a -> msg } -> Html.Html msg"
+            },
+            {
+                "name": "viewGroups",
+                "comment": " ",
+                "type": "List.List (W.InputSelect.Attribute msg) -> { value : a, options : List.List a, optionGroups : List.List ( String.String, List.List a ), toValue : a -> String.String, toLabel : a -> String.String, onInput : a -> msg } -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "W.InputSlider",
+        "comment": "\n\n@docs view\n@docs id, theme, disabled, readOnly\n@docs Attribute\n\n",
+        "unions": [
+            {
+                "name": "Attribute",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "disabled",
+                "comment": " ",
+                "type": "Basics.Bool -> W.InputSlider.Attribute msg"
+            },
+            {
+                "name": "id",
+                "comment": " ",
+                "type": "String.String -> W.InputSlider.Attribute msg"
+            },
+            {
+                "name": "readOnly",
+                "comment": " ",
+                "type": "Basics.Bool -> W.InputSlider.Attribute msg"
+            },
+            {
+                "name": "theme",
+                "comment": " ",
+                "type": "{ color : String.String, shadow : String.String } -> W.InputSlider.Attribute msg"
+            },
+            {
+                "name": "view",
+                "comment": " ",
+                "type": "List.List (W.InputSlider.Attribute msg) -> { min : Basics.Float, max : Basics.Float, step : Basics.Float, value : Basics.Float, onInput : Basics.Float -> msg } -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "W.InputText",
+        "comment": "\n\n@docs view\n@docs email, password, search, telephone, url\n@docs id, class, unstyled, placeholder, disabled, required, readOnly, pattern\n@docs onEnter, onFocus, onBlur\n@docs htmlAttrs, Attribute\n\n",
+        "unions": [
+            {
+                "name": "Attribute",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "class",
+                "comment": " ",
+                "type": "String.String -> W.InputText.Attribute msg"
+            },
+            {
+                "name": "disabled",
+                "comment": " ",
+                "type": "Basics.Bool -> W.InputText.Attribute msg"
+            },
+            {
+                "name": "email",
+                "comment": " ",
+                "type": "W.InputText.Attribute msg"
+            },
+            {
+                "name": "htmlAttrs",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> W.InputText.Attribute msg"
+            },
+            {
+                "name": "id",
+                "comment": " ",
+                "type": "String.String -> W.InputText.Attribute msg"
+            },
+            {
+                "name": "onBlur",
+                "comment": " ",
+                "type": "msg -> W.InputText.Attribute msg"
+            },
+            {
+                "name": "onEnter",
+                "comment": " ",
+                "type": "msg -> W.InputText.Attribute msg"
+            },
+            {
+                "name": "onFocus",
+                "comment": " ",
+                "type": "msg -> W.InputText.Attribute msg"
+            },
+            {
+                "name": "password",
+                "comment": " ",
+                "type": "W.InputText.Attribute msg"
+            },
+            {
+                "name": "pattern",
+                "comment": " ",
+                "type": "String.String -> W.InputText.Attribute msg"
+            },
+            {
+                "name": "placeholder",
+                "comment": " ",
+                "type": "String.String -> W.InputText.Attribute msg"
+            },
+            {
+                "name": "readOnly",
+                "comment": " ",
+                "type": "Basics.Bool -> W.InputText.Attribute msg"
+            },
+            {
+                "name": "required",
+                "comment": " ",
+                "type": "Basics.Bool -> W.InputText.Attribute msg"
+            },
+            {
+                "name": "search",
+                "comment": " ",
+                "type": "W.InputText.Attribute msg"
+            },
+            {
+                "name": "telephone",
+                "comment": " ",
+                "type": "W.InputText.Attribute msg"
+            },
+            {
+                "name": "unstyled",
+                "comment": " ",
+                "type": "Basics.Bool -> W.InputText.Attribute msg"
+            },
+            {
+                "name": "url",
+                "comment": " ",
+                "type": "W.InputText.Attribute msg"
+            },
+            {
+                "name": "view",
+                "comment": " ",
+                "type": "List.List (W.InputText.Attribute msg) -> { onInput : String.String -> msg, value : String.String } -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "W.InputTextArea",
+        "comment": "\n\n@docs view\n@docs resizable, rows\n@docs id, class, disabled, readOnly, required, placeholder, htmlAttrs\n@docs onBlur, onEnter, onFocus\n@docs Attribute\n\n",
+        "unions": [
+            {
+                "name": "Attribute",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "class",
+                "comment": " ",
+                "type": "String.String -> W.InputTextArea.Attribute msg"
+            },
+            {
+                "name": "disabled",
+                "comment": " ",
+                "type": "Basics.Bool -> W.InputTextArea.Attribute msg"
+            },
+            {
+                "name": "htmlAttrs",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> W.InputTextArea.Attribute msg"
+            },
+            {
+                "name": "id",
+                "comment": " ",
+                "type": "String.String -> W.InputTextArea.Attribute msg"
+            },
+            {
+                "name": "onBlur",
+                "comment": " ",
+                "type": "msg -> W.InputTextArea.Attribute msg"
+            },
+            {
+                "name": "onEnter",
+                "comment": " ",
+                "type": "msg -> W.InputTextArea.Attribute msg"
+            },
+            {
+                "name": "onFocus",
+                "comment": " ",
+                "type": "msg -> W.InputTextArea.Attribute msg"
+            },
+            {
+                "name": "placeholder",
+                "comment": " ",
+                "type": "String.String -> W.InputTextArea.Attribute msg"
+            },
+            {
+                "name": "readOnly",
+                "comment": " ",
+                "type": "Basics.Bool -> W.InputTextArea.Attribute msg"
+            },
+            {
+                "name": "required",
+                "comment": " ",
+                "type": "Basics.Bool -> W.InputTextArea.Attribute msg"
+            },
+            {
+                "name": "resizable",
+                "comment": " ",
+                "type": "Basics.Bool -> W.InputTextArea.Attribute msg"
+            },
+            {
+                "name": "rows",
+                "comment": " ",
+                "type": "Basics.Int -> W.InputTextArea.Attribute msg"
+            },
+            {
+                "name": "view",
+                "comment": " ",
+                "type": "List.List (W.InputTextArea.Attribute msg) -> { value : String.String, onInput : String.String -> msg } -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "W.InputTime",
+        "comment": "\n\n@docs view\n@docs min, max, timeZone\n@docs id, class, disabled, required, readOnly\n@docs onEnter, onFocus, onBlur\n@docs htmlAttrs, Attribute\n\n",
+        "unions": [
+            {
+                "name": "Attribute",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "class",
+                "comment": " ",
+                "type": "String.String -> W.InputTime.Attribute msg"
+            },
+            {
+                "name": "disabled",
+                "comment": " ",
+                "type": "Basics.Bool -> W.InputTime.Attribute msg"
+            },
+            {
+                "name": "htmlAttrs",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> W.InputTime.Attribute msg"
+            },
+            {
+                "name": "id",
+                "comment": " ",
+                "type": "String.String -> W.InputTime.Attribute msg"
+            },
+            {
+                "name": "max",
+                "comment": " ",
+                "type": "Time.Posix -> W.InputTime.Attribute msg"
+            },
+            {
+                "name": "min",
+                "comment": " ",
+                "type": "Time.Posix -> W.InputTime.Attribute msg"
+            },
+            {
+                "name": "onBlur",
+                "comment": " ",
+                "type": "msg -> W.InputTime.Attribute msg"
+            },
+            {
+                "name": "onEnter",
+                "comment": " ",
+                "type": "msg -> W.InputTime.Attribute msg"
+            },
+            {
+                "name": "onFocus",
+                "comment": " ",
+                "type": "msg -> W.InputTime.Attribute msg"
+            },
+            {
+                "name": "readOnly",
+                "comment": " ",
+                "type": "Basics.Bool -> W.InputTime.Attribute msg"
+            },
+            {
+                "name": "required",
+                "comment": " ",
+                "type": "Basics.Bool -> W.InputTime.Attribute msg"
+            },
+            {
+                "name": "timeZone",
+                "comment": " ",
+                "type": "Time.Zone -> W.InputTime.Attribute msg"
+            },
+            {
+                "name": "view",
+                "comment": " ",
+                "type": "List.List (W.InputTime.Attribute msg) -> { onInput : Maybe.Maybe Time.Posix -> msg, value : Maybe.Maybe Time.Posix } -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "W.Loading",
+        "comment": "\n\n@docs circles, dots, ripples\n\n\n# Style\n\n@docs color, size\n\n\n# Html\n\n@docs id, htmlAttrs\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "circles",
+                "comment": " ",
+                "type": "List.List (W.Loading.Attribute msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "color",
+                "comment": " ",
+                "type": "String.String -> W.Loading.Attribute msg"
+            },
+            {
+                "name": "dots",
+                "comment": " ",
+                "type": "List.List (W.Loading.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "htmlAttrs",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> W.Loading.Attribute msg"
+            },
+            {
+                "name": "id",
+                "comment": " ",
+                "type": "String.String -> W.Loading.Attribute msg"
+            },
+            {
+                "name": "ripples",
+                "comment": " ",
+                "type": "List.List (W.Loading.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "size",
+                "comment": " ",
+                "type": "Basics.Float -> W.Loading.Attribute msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "W.Menu",
+        "comment": "\n\n@docs view, viewButton, viewLink, viewTitle\n@docs id, disabled, selected, left, right, htmlAttrs, Attribute\n\n",
+        "unions": [
+            {
+                "name": "Attribute",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "disabled",
+                "comment": " ",
+                "type": "Basics.Bool -> W.Menu.Attribute msg"
+            },
+            {
+                "name": "htmlAttrs",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> W.Menu.Attribute msg"
+            },
+            {
+                "name": "id",
+                "comment": " ",
+                "type": "String.String -> W.Menu.Attribute msg"
+            },
+            {
+                "name": "left",
+                "comment": " ",
+                "type": "Html.Html msg -> W.Menu.Attribute msg"
+            },
+            {
+                "name": "right",
+                "comment": " ",
+                "type": "Html.Html msg -> W.Menu.Attribute msg"
+            },
+            {
+                "name": "selected",
+                "comment": " ",
+                "type": "Basics.Bool -> W.Menu.Attribute msg"
+            },
+            {
+                "name": "view",
+                "comment": " ",
+                "type": "List.List (Html.Html msg) -> Html.Html msg"
+            },
+            {
+                "name": "viewButton",
+                "comment": " ",
+                "type": "List.List (W.Menu.Attribute msg) -> { label : Html.Html msg, onClick : msg } -> Html.Html msg"
+            },
+            {
+                "name": "viewLink",
+                "comment": " ",
+                "type": "List.List (W.Menu.Attribute msg) -> { label : Html.Html msg, href : String.String } -> Html.Html msg"
+            },
+            {
+                "name": "viewTitle",
+                "comment": " ",
+                "type": "List.List (W.Menu.Attribute msg) -> { label : Html.Html msg } -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "W.Modal",
+        "comment": "\n\n@docs view\n@docs id, absolute\n@docs Attribute\n\n",
+        "unions": [
+            {
+                "name": "Attribute",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "absolute",
+                "comment": " ",
+                "type": "Basics.Bool -> W.Modal.Attribute msg"
+            },
+            {
+                "name": "id",
+                "comment": " ",
+                "type": "String.String -> W.Modal.Attribute msg"
+            },
+            {
+                "name": "view",
+                "comment": " ",
+                "type": "List.List (W.Modal.Attribute msg) -> { onClose : Maybe.Maybe msg, content : Html.Html msg } -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "W.Popover",
+        "comment": "\n\n@docs view\n@docs top, topRight, bottomRight, left, leftBottom, right, rightBottom\n@docs over, offset\n@docs id, class, full, htmlAttrs, Attribute, Position\n\n",
+        "unions": [
+            {
+                "name": "Attribute",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Position",
+                "comment": " TODO: Unexpose this type.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "bottomRight",
+                "comment": " ",
+                "type": "W.Popover.Attribute msg"
+            },
+            {
+                "name": "class",
+                "comment": " ",
+                "type": "String.String -> W.Popover.Attribute msg"
+            },
+            {
+                "name": "full",
+                "comment": " ",
+                "type": "Basics.Bool -> W.Popover.Attribute msg"
+            },
+            {
+                "name": "htmlAttrs",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> W.Popover.Attribute msg"
+            },
+            {
+                "name": "id",
+                "comment": " ",
+                "type": "String.String -> W.Popover.Attribute msg"
+            },
+            {
+                "name": "left",
+                "comment": " ",
+                "type": "W.Popover.Attribute msg"
+            },
+            {
+                "name": "leftBottom",
+                "comment": " ",
+                "type": "W.Popover.Attribute msg"
+            },
+            {
+                "name": "offset",
+                "comment": " ",
+                "type": "Basics.Float -> W.Popover.Attribute msg"
+            },
+            {
+                "name": "over",
+                "comment": " ",
+                "type": "W.Popover.Attribute msg"
+            },
+            {
+                "name": "right",
+                "comment": " ",
+                "type": "W.Popover.Attribute msg"
+            },
+            {
+                "name": "rightBottom",
+                "comment": " ",
+                "type": "W.Popover.Attribute msg"
+            },
+            {
+                "name": "top",
+                "comment": " ",
+                "type": "W.Popover.Attribute msg"
+            },
+            {
+                "name": "topRight",
+                "comment": " ",
+                "type": "W.Popover.Attribute msg"
+            },
+            {
+                "name": "view",
+                "comment": " ",
+                "type": "List.List (W.Popover.Attribute msg) -> { content : List.List (Html.Html msg), children : List.List (Html.Html msg) } -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "W.Styles",
+        "comment": "\n\n@docs globalStyles\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "globalStyles",
+                "comment": " ",
+                "type": "Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

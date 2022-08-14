@@ -1,0 +1,510 @@
+[
+    {
+        "name": "AutoDict",
+        "comment": " A wrapping for the `Dict` from `ManualDict`.\nThe `Dict` in this module stores a hashing-function for later use inside the\nDate structure. So that after creating a `Dict` there is no need to always\nspecify the hash-function.\nThis makes it more reliable and less error prone to use.\n\nLike the `ManualDict.Dict` can this `Dict` hold keys of any type.\n\n# Dictionaries\n@docs Dict\n\n# Build\n@docs empty, singleton, insert, remove, update\n\n# Query\n@docs isEmpty, member, get, size, eq\n\n# Lists\n@docs keys, values, toList, fromList\n\n# Transform\n@docs map, foldl, foldr, filter, partition\n\n# Combine\n@docs union, intersect, diff, merge\n\n# Hashing related\n@docs replaceMapping\n",
+        "unions": [
+            {
+                "name": "Dict",
+                "comment": " A dict of key-value-pairs that also stores a hash-function.\nSo a `Dict String Id User` is a dictionary that lets you map an `Id` to the\ncorresponding `User`.\n\n    import AutoDict as Dict exposing (Dict)\n\n    users : Dict String Id User\n    users \n        = Dict.fromList idToString\n            [ (Name \"Alice\", User \"Alice\" 28)\n            , (Name \"Bob\", User \"Bob\" 19)\n            , (Name \"Chuck\", User \"Chuck\" 33)\n            ]\n    \n    type Id = Name String\n    idToString (Name s) = s\n\n    type alias User = \n        { name : String\n        , age : Int\n        }\n",
+                "args": [
+                    "comparable",
+                    "k",
+                    "v"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "diff",
+                "comment": " Keep a key-value pair when its key does not appear in the second dictionary.\n\nComplexity: *O(n &ast; log n)*\n",
+                "type": "AutoDict.Dict comparable1 k v -> AutoDict.Dict comparable2 k v -> AutoDict.Dict comparable1 k v"
+            },
+            {
+                "name": "empty",
+                "comment": " Creates an empty dictionary that uses the given hash-function for the \nhashing of the keys.\n\nComplexity: *O(1)*\n",
+                "type": "(k -> comparable) -> AutoDict.Dict comparable k v"
+            },
+            {
+                "name": "eq",
+                "comment": " Checks if the two dictionaries contains the same set of keys.\nThis function ignores the values associated with the keys and only checks if\nevery key contained in the one dictionary is also a key in the other.\n\n    dict1 = fromList abs [(1,1)]\n    dict2 = fromList abs [(-1,-1)]\n\n    eq abs abs dict1 dict2 == True\n",
+                "type": "AutoDict.Dict comparable1 k v -> AutoDict.Dict comparable2 k v -> Basics.Bool"
+            },
+            {
+                "name": "filter",
+                "comment": " Keep only the key-value pairs that pass the given test. \n\nComplexity: *O(n)*\n",
+                "type": "(k -> v -> Basics.Bool) -> AutoDict.Dict comparable k v -> AutoDict.Dict comparable k v"
+            },
+            {
+                "name": "foldl",
+                "comment": " Fold over the key-value pairs in a dictionary from lowest key to highest key.\n\nComplexity: *O(n)*\n",
+                "type": "(k -> v -> b -> b) -> b -> AutoDict.Dict comparable k v -> b"
+            },
+            {
+                "name": "foldr",
+                "comment": " Fold over the key-value pairs in a dictionary from highest key to lowest key.\n\nComplexity: *O(n)*\n",
+                "type": "(k -> v -> b -> b) -> b -> AutoDict.Dict comparable k v -> b"
+            },
+            {
+                "name": "fromList",
+                "comment": " Convert an association list into a dictionary. \n\nComplexity: *O(n  &ast;  log n)*\n",
+                "type": "(k -> comparable) -> List.List ( k, v ) -> AutoDict.Dict comparable k v"
+            },
+            {
+                "name": "get",
+                "comment": " Gets the value associated with the key.\nIf the key is not found, `Nothing` is returned.\n\n    get (Name \"Alice\") users == Just { name = \"Alice\", age = 28 }\n    get (Name \"Carl\") users  == Nothing\n\nComplexity: *O(log n)*\n",
+                "type": "k -> AutoDict.Dict comparable k v -> Maybe.Maybe v"
+            },
+            {
+                "name": "insert",
+                "comment": " Inserts a key-value-pair into the dictionary. \nIf there is a collision the old key-value-pair will be replaced with the new\npair.\n\nComplexity: *O(log n)*\n",
+                "type": "k -> v -> AutoDict.Dict comparable k v -> AutoDict.Dict comparable k v"
+            },
+            {
+                "name": "intersect",
+                "comment": " Keep a key-value pair when its key appears in the second dictionary. \nPreference is given to values in the first dictionary.\n\nComplexity: *O(n &ast; log n)*\n",
+                "type": "AutoDict.Dict comparable1 k v -> AutoDict.Dict comparable2 k v -> AutoDict.Dict comparable1 k v"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Determine if a dictionary is empty.\n\n    isEmpty <| empty someFunction == True\n\nComplexity: *O(log n)*\n",
+                "type": "AutoDict.Dict comparable k v -> Basics.Bool"
+            },
+            {
+                "name": "keys",
+                "comment": " Get all of the keys in a dictionary, sorted from lowest to highest\naccording to the order of the hash-type.\n\n    key users == [Name \"Alice\", Name \"Bob\", Name \"Chuck\"]\n\nComplexity: *O(n)*\n",
+                "type": "AutoDict.Dict comparable k v -> List.List k"
+            },
+            {
+                "name": "map",
+                "comment": " Apply a function to all values in a dictionary.\n\nComplexity: *O(n)*\n",
+                "type": "(k -> a -> b) -> AutoDict.Dict comparable k a -> AutoDict.Dict comparable k b"
+            },
+            {
+                "name": "member",
+                "comment": "Determine if a key is in a dictionary. \n\n    member (Name \"Alice\") == True\n    member (Name \"Carl\") == False\n\nComplexity: *O(log n)*\n",
+                "type": "k -> AutoDict.Dict comparable k v -> Basics.Bool"
+            },
+            {
+                "name": "merge",
+                "comment": " The most general way of combining two dictionaries. \nYou provide three accumulators for when a given key appears:\n\n1. Only in the left dictionary.\n2. In both dictionaries.\n3. Only in the right dictionary.\n\nYou then traverse all the keys from lowest to highest, \nbuilding up whatever you want.\n\nThis function is essentially a foldl on two dictionaries at once.\n\nComplexity: *O(n)*\n",
+                "type": "(k -> k -> Basics.Order) -> (k -> a -> r -> r) -> (k -> a -> b -> r -> r) -> (k -> b -> r -> r) -> AutoDict.Dict comparable1 k a -> AutoDict.Dict comparable2 k b -> r -> r"
+            },
+            {
+                "name": "partition",
+                "comment": " Partition a dictionary according to some test. \nThe first dictionary contains all key-value pairs which passed the test, \nand the second contains the pairs that did not.\n\nComplexity: *O(n &ast; log n)*\n",
+                "type": "(k -> v -> Basics.Bool) -> AutoDict.Dict comparable k v -> ( AutoDict.Dict comparable k v, AutoDict.Dict comparable k v )"
+            },
+            {
+                "name": "remove",
+                "comment": " Removes a key-value-pair from a dictionary. \nIf the key is not found, no changes are made.  \n\nComplexity: *O(log n)*\n",
+                "type": "k -> AutoDict.Dict comparable k v -> AutoDict.Dict comparable k v"
+            },
+            {
+                "name": "replaceMapping",
+                "comment": " Creates a new dictionary which uses the new hash-function to \nrehash all keys and also stores the new hash-function.\nIf two keys have a collision under the new hashing the key-value-pair with the \nhigher value under the old hashing is kept.\n\n    fromList identity [(-1,-1),(1,1)] |> replaceMapping abs |> toList == [(1,1)]\n    fromList negate [(-1,-1),(1,1)] |> replaceMapping abs |> toList == [(-1,-1)]\n\nComplexity: *O(n &ast; log n)*\n",
+                "type": "(k -> comparable2) -> AutoDict.Dict comparable1 k v -> AutoDict.Dict comparable2 k v"
+            },
+            {
+                "name": "singleton",
+                "comment": " Creates a dictionary with one key-value pair. \nUsing and storing the given function as hash-function for the key\n\nComplexity: *O(1)*\n",
+                "type": "(k -> comparable) -> k -> v -> AutoDict.Dict comparable k v"
+            },
+            {
+                "name": "size",
+                "comment": " Determine the number of key-value pairs in the dictionary.\n\nComplexity: *O(log n)*\n",
+                "type": "AutoDict.Dict comparable k v -> Basics.Int"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert a dictionary into an association list of key-value pairs, \nsorted by keys.\n\nComplexity: *O(n)*\n",
+                "type": "AutoDict.Dict comparable k v -> List.List ( k, v )"
+            },
+            {
+                "name": "union",
+                "comment": " Combine two dictionaries. \nIf there is a collision, preference is given to the first dictionary.\n\nComplexity: *O(n &ast; log n)*\n",
+                "type": "AutoDict.Dict comparable1 k v -> AutoDict.Dict comparable2 k v -> AutoDict.Dict comparable2 k v"
+            },
+            {
+                "name": "update",
+                "comment": " Updates the value for given key with the given function. \nThe argument for the update function will be `Nothing` if there is no value\ncorresponding to the key and will be `Just v` where `v` is the value\ncorresponding to the key.\n\nIf the function returns `Just v2` the value will be stored for the given key, so\n\n    insert (Name \"Carl\") (User \"Carl\" 5) users\n\nand\n\n    update (Name \"Carl\") (always <| Just <| User \"Carl\" 5) users\n\nare equivalent.\n\nIf the function return `Nothing` the key-value-pair will be removed, so\n    \n    remove (Name \"Alice\") users\n\nand \n\n    update (Name \"Alice\") (always Nothing) users\n\nare equivalent.\n\nComplexity: *O(log n)*\n",
+                "type": "k -> (Maybe.Maybe v -> Maybe.Maybe v) -> AutoDict.Dict comparable k v -> AutoDict.Dict comparable k v"
+            },
+            {
+                "name": "values",
+                "comment": " Get all of the values in a dictionary, in the order of their keys\naccording to the order of the hash-type.\n\n    values users == [{ age = 28, name = \"Alice\" },{ age = 19, name = \"Bob\" },{ age = 33, name = \"Chuck\" }]\n\nComplexity: *O(n)*\n",
+                "type": "AutoDict.Dict comparable k v -> List.List v"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "AutoSet",
+        "comment": " A wrapping for `ManualSet.Set` which stores a hash-function for later use.\nSo after creating a `Set` there is not need to always specify the hash-function.\nThis makes it more reliable and less error prone to use.\n\nLike `ManualSet.Set` can this `Set` hold value of any type.\n\n# Sets\n@docs Set\n\n# Build\n@docs empty, singleton, insert, remove\n\n# Query\n@docs isEmpty, member, size, eq\n\n# Lists\n@docs toList, fromList\n\n# Transform\n@docs map, foldl, foldr, filter, partition\n\n# Combine\n@docs union, intersect, diff\n\n# Hashing related\n@docs replaceMapping\n",
+        "unions": [
+            {
+                "name": "Set",
+                "comment": " A set of values. The values can be of any type.\n\n    import AutoSet as Set exposing (Set)\n\n    pets : Set String Pet\n    pets \n        = Set.fromList petToString\n            [ Dog \"Max\"\n            , Cat \"Jerry\"\n            , Bird \"Ace\"\n            ]\n\n    type Pet \n        = Dog String\n        | Cat String\n        | Bird String\n\n    petToString : Pet -> String\n    petToString pet = case pet of\n        Dog name -> \"Dog: \" ++ name\n        Cat name -> \"Cat: \" ++ name\n        Bird name -> \"Bird: \" ++ name\n",
+                "args": [
+                    "comparable",
+                    "v"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "diff",
+                "comment": " Keeps all values from the first set which don't appear in the second set.\n\nComplexity: *O(n &ast; log n)*\n",
+                "type": "AutoSet.Set comparable1 v -> AutoSet.Set comparable2 v -> AutoSet.Set comparable1 v"
+            },
+            {
+                "name": "empty",
+                "comment": " Creates an empty set that uses the given function for hashing.\n\nComplexity: *O(1)*\n",
+                "type": "(v -> comparable) -> AutoSet.Set comparable v"
+            },
+            {
+                "name": "eq",
+                "comment": " Checks if the two sets contain the same elements.\n\nComplexity: *O(n &ast; log n)*\n",
+                "type": "AutoSet.Set comparable1 v -> AutoSet.Set comparable2 v -> Basics.Bool"
+            },
+            {
+                "name": "filter",
+                "comment": " Keeps all the value for which the function yields True.\n\nComplexity: *O(n)*\n",
+                "type": "(v -> Basics.Bool) -> AutoSet.Set comparable v -> AutoSet.Set comparable v"
+            },
+            {
+                "name": "foldl",
+                "comment": " Folds over the values in a set from lowest to highest (depending on the\nstring representation).\n\nComplexity: *O(n)*\n",
+                "type": "(v -> a -> a) -> a -> AutoSet.Set comparable v -> a"
+            },
+            {
+                "name": "foldr",
+                "comment": " Folds over the values in a set from  highest to lowest (depending on the\nstring representation).\n\nComplexity: *O(n)*\n",
+                "type": "(v -> a -> a) -> a -> AutoSet.Set comparable v -> a"
+            },
+            {
+                "name": "fromList",
+                "comment": " Converts a list of values into a set.\n\nComplexity: *O(n &ast; log n)*\n",
+                "type": "(v -> comparable) -> List.List v -> AutoSet.Set comparable v"
+            },
+            {
+                "name": "insert",
+                "comment": " Inserts a value into the set. \nA value might be replaced if it's hash\ncollides with the hash of some other value.\n\nComplexity: *O(log n)*\n",
+                "type": "v -> AutoSet.Set comparable v -> AutoSet.Set comparable v"
+            },
+            {
+                "name": "intersect",
+                "comment": " Keeps all values which comparable representation is contained in both sets.\nPreference is given to values in the first set.\n\nComplexity: *O(n &ast; log n)*\n",
+                "type": "AutoSet.Set comparable1 v -> AutoSet.Set comparable2 v -> AutoSet.Set comparable1 v"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Determine if a set is empty.\n\n    isEmpty (empty someFunction) == True\n\nComplexity: *O(1)*\n",
+                "type": "AutoSet.Set comparable v -> Basics.Bool"
+            },
+            {
+                "name": "map",
+                "comment": " Applies a function to all values in a set.\n\nComplexity: *O(n)*\n",
+                "type": "(v2 -> comparable) -> (v1 -> v2) -> AutoSet.Set comparable v1 -> AutoSet.Set comparable v2"
+            },
+            {
+                "name": "member",
+                "comment": " Determine if a value is in a set.\n\n    member (Cat \"Jerry\") pets == True\n    member (Bird \"Jerry\") pets == False\n\nComplexity: *O(log n)*\n",
+                "type": "v -> AutoSet.Set comparable v -> Basics.Bool"
+            },
+            {
+                "name": "partition",
+                "comment": " Partitions a set into two subsets, according to some function.\nThe first set will contain the values for which the function yields True\nand the second set will contain the values for which the function yields False.\n\nComplexity: *O(n &ast; log n)*\n",
+                "type": "(v -> Basics.Bool) -> AutoSet.Set comparable v -> ( AutoSet.Set comparable v, AutoSet.Set comparable v )"
+            },
+            {
+                "name": "remove",
+                "comment": " Removes a value from the set. \n\nComplexity: *O(log n)*\n",
+                "type": "v -> AutoSet.Set comparable v -> AutoSet.Set comparable v"
+            },
+            {
+                "name": "replaceMapping",
+                "comment": " Creates a new set where all value are rehashed using the new hash-function.\nIf two keys have a collision under the new hashing the key-value-pair with the \nhigher value under the old hashing is kept.\n\n    (fromList identity [-1,1] |> replaceMapping abs |> toList) == [1]\n    (fromList negate [-1,1] |> replaceMapping abs |> toList) == [-1]\n",
+                "type": "(v -> comparable2) -> AutoSet.Set comparable1 v -> AutoSet.Set comparable2 v"
+            },
+            {
+                "name": "singleton",
+                "comment": " Creates an set containing only one value and the hash-function.\n\nComplexity: *O(1)*\n",
+                "type": "(v -> comparable) -> v -> AutoSet.Set comparable v"
+            },
+            {
+                "name": "size",
+                "comment": " Determine the number of elements in a set.\n\n    size pets == 3\n",
+                "type": "AutoSet.Set comparable v -> Basics.Int"
+            },
+            {
+                "name": "toList",
+                "comment": " Converts the set into a list of its values.\n\nComplexity: *O(n)*\n",
+                "type": "AutoSet.Set comparable v -> List.List v"
+            },
+            {
+                "name": "union",
+                "comment": " Creates the union of two sets.\nIf two values have the same comparable representation then the value from the first\nset is in the resulting set.\n\nComplexity: *O(n &ast; log n)*\n",
+                "type": "AutoSet.Set comparable1 v -> AutoSet.Set comparable2 v -> AutoSet.Set comparable2 v"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ManualDict",
+        "comment": " A wrapping of `Dict` from the package `elm/core`. The keys can be any type\nbut the user has to specify a conversion/hash function for every action on the\ndictionary that needs to compare keys with each other.\nThe hash function can map the keys to any comparable type, that is `Int`,\n`Float`, `Time`, `Char`, `Bool` and tuples or list of comparable types.\n\n# Dictionaries\n@docs Dict\n\n# Build\n@docs empty, singleton, insert, remove, update\n\n# Query\n@docs isEmpty, member, get, size, eq\n\n# Lists\n@docs keys, values, toList, fromList\n\n# Transform\n@docs map, foldl, foldr, filter, partition\n\n# Combine\n@docs union, intersect, diff, merge\n\n# Hashing related\n@docs reHash\n\n",
+        "unions": [
+            {
+                "name": "Dict",
+                "comment": " A dictionary of keys and values that uses a comparable type as hash-key.\nSo a `Dict String Id User` is a dictionary that lets you map an `Id` to the\ncorresponding `User`.\n\n    import ManualDict as Dict exposing (Dict)\n\n    users : Dict String Id User\n    users \n        = Dict.fromList idToString\n            [ (Name \"Alice\", User \"Alice\" 28)\n            , (Name \"Bob\", User \"Bob\" 19)\n            , (Name \"Chuck\", User \"Chuck\" 33)\n            ]\n    \n    type Id = Name String\n    idToString (Name s) = s\n\n    type alias User = \n        { name : String\n        , age : Int\n        }\n",
+                "args": [
+                    "comparable",
+                    "k",
+                    "v"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "diff",
+                "comment": " Keep a key-value pair when its key does not appear in the second dictionary.\n\nComplexity: *O(n &ast; log n)*\n",
+                "type": "(k -> comparable1) -> ManualDict.Dict comparable1 k v -> ManualDict.Dict comparable2 k v -> ManualDict.Dict comparable1 k v"
+            },
+            {
+                "name": "empty",
+                "comment": " Creates an empty dictionary. \n\nComplexity: *O(1)*\n",
+                "type": "ManualDict.Dict comparable k v"
+            },
+            {
+                "name": "eq",
+                "comment": " Checks if the two dictionaries contains the same set of keys.\nThis function ignores the values associated with the keys and only checks if\nevery key contained in the one dictionary is also a key in the other.\n\n    dict1 = fromList abs [(1,1)]\n    dict2 = fromList abs [(-1,-1)]\n\n    eq abs abs dict1 dict2 == True\n\nComplexity: *O(n &ast; log n)*\n",
+                "type": "(k -> comparable1) -> (k -> comparable2) -> ManualDict.Dict comparable1 k v -> ManualDict.Dict comparable2 k v -> Basics.Bool"
+            },
+            {
+                "name": "filter",
+                "comment": " Keep only the key-value pairs that pass the given test. \n\nComplexity: *O(n)*\n",
+                "type": "(k -> v -> Basics.Bool) -> ManualDict.Dict comparable k v -> ManualDict.Dict comparable k v"
+            },
+            {
+                "name": "foldl",
+                "comment": " Fold over the key-value pairs in a dictionary from lowest key to highest key.\n\nComplexity: *O(n)*\n",
+                "type": "(k -> v -> b -> b) -> b -> ManualDict.Dict comparable k v -> b"
+            },
+            {
+                "name": "foldr",
+                "comment": " Fold over the key-value pairs in a dictionary from highest key to lowest key.\n\nComplexity: *O(n)*\n",
+                "type": "(k -> v -> b -> b) -> b -> ManualDict.Dict comparable k v -> b"
+            },
+            {
+                "name": "fromList",
+                "comment": " Convert an association list into a dictionary. \n\nComplexity: *O(n  &ast;  log n)*\n",
+                "type": "(k -> comparable) -> List.List ( k, v ) -> ManualDict.Dict comparable k v"
+            },
+            {
+                "name": "get",
+                "comment": " Gets the value associated with the key.\nIf the key is not found, `Nothing` is returned.\n\n    get idToString (Name \"Alice\") users == Just { name = \"Alice\", age = 28 }\n    get idToString (Name \"Carl\") users  == Nothing\n\nComplexity: *O(log n)*\n",
+                "type": "(k -> comparable) -> k -> ManualDict.Dict comparable k v -> Maybe.Maybe v"
+            },
+            {
+                "name": "insert",
+                "comment": " Inserts a key-value-pair into the a dictionary using the given function\nas hash-function. If there is a collision with the hash the old key-value-pair\nis replaced with the new.\n\nnewUsers = \n    Dict.insert \n    (always \"Alice\") \n    (Name \"Carl\")\n    (User \"Carl\" 5)\n    users\n\nIn newUsers will be no key-value-pair for `(Name \"Alice\", User \"Alice\" 28)`. \n\nBecause of this behavior it is strongly recommended to always use the same\nhash-function.\nFor making this easier you can use the `Dict` from the module `AutoDict`.\n\nComplexity: *O(log n)*\n",
+                "type": "(k -> comparable) -> k -> v -> ManualDict.Dict comparable k v -> ManualDict.Dict comparable k v"
+            },
+            {
+                "name": "intersect",
+                "comment": " Keep a key-value pair when its key appears in the second dictionary. \nPreference is given to values in the first dictionary.\n\nNote: The hash-function needs to return the comparable type that the second\ndictionary uses because the function checks for each key of the first dictionary\nif it is a member of the second.\n\nComplexity: *O(n &ast; log n)*\n",
+                "type": "(k -> comparable2) -> ManualDict.Dict comparable1 k v -> ManualDict.Dict comparable2 k v -> ManualDict.Dict comparable1 k v"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Determine if a dictionary is empty.\n\n    isEmpty empty == True\n\nComplexity: *O(1)*\n",
+                "type": "ManualDict.Dict comparable k v -> Basics.Bool"
+            },
+            {
+                "name": "keys",
+                "comment": " Get all of the keys in a dictionary, sorted from lowest to highest\naccording to the order of the hash-type.\n\n    key users == [Name \"Alice\", Name \"Bob\", Name \"Chuck\"]\n\nComplexity: *O(n)*\n",
+                "type": "ManualDict.Dict comparable k v -> List.List k"
+            },
+            {
+                "name": "map",
+                "comment": " Apply a function to all values in a dictionary.\n\nComplexity: *O(n)*\n",
+                "type": "(k -> a -> b) -> ManualDict.Dict comparable k a -> ManualDict.Dict comparable k b"
+            },
+            {
+                "name": "member",
+                "comment": " Determine if a key is in a dictionary. \n\n    member idToString (Name \"Alice\") == True\n    member idToString (Name \"Carl\") == False\n    member (always \"\") (Name \"Alice\") == False\n\nComplexity: *O(log n)*\n",
+                "type": "(k -> comparable) -> k -> ManualDict.Dict comparable k v -> Basics.Bool"
+            },
+            {
+                "name": "merge",
+                "comment": " The most general way of combining two dictionaries. \nYou provide three accumulators for when a given key appears:\n\n1. Only in the left dictionary.\n2. In both dictionaries.\n3. Only in the right dictionary.\n\nYou then traverse all the keys from lowest to highest, \nbuilding up whatever you want.\n\nThis function is essentially a foldl on two dictionaries at once.\n\nComplexity: *O(n)*\n",
+                "type": "(k -> k -> Basics.Order) -> (k -> a -> r -> r) -> (k -> a -> b -> r -> r) -> (k -> b -> r -> r) -> ManualDict.Dict comparable1 k a -> ManualDict.Dict comparable2 k b -> r -> r"
+            },
+            {
+                "name": "partition",
+                "comment": " Partition a dictionary according to some test. \nThe first dictionary contains all key-value pairs which passed the test, \nand the second contains the pairs that did not.\n\nComplexity: *O(n &ast; log n)*\n",
+                "type": "(k -> v -> Basics.Bool) -> ManualDict.Dict comparable k v -> ( ManualDict.Dict comparable k v, ManualDict.Dict comparable k v )"
+            },
+            {
+                "name": "reHash",
+                "comment": " Creates a new dictionary where all the keys are hashed using the given\nhash-function.\nIf two keys have a collision under the new hashing the key-value-pair with the \nhigher value under the old hashing is kept.\n\n    (fromList identity [(-1,-1),(1,1)] |> reHash abs |> toList) == [(1,1)]\n    (fromList negate [(-1,-1),(1,1)] |> reHash abs |> toList) == [(-1,-1)]\n\nComplexity: *O(n &ast; log n)*\n",
+                "type": "(k -> comparable2) -> ManualDict.Dict comparable1 k v -> ManualDict.Dict comparable2 k v"
+            },
+            {
+                "name": "remove",
+                "comment": " Removes a key-value-pair from a dictionary. \nIf the key is not found, no changes are made.  \n\nComplexity: *O(log n)*\n",
+                "type": "(k -> comparable) -> k -> ManualDict.Dict comparable k v -> ManualDict.Dict comparable k v"
+            },
+            {
+                "name": "singleton",
+                "comment": " Creates a dictionary with one key-value pair. \nUsing the given function as hash-function for the key\n\nComplexity: *O(1)*\n",
+                "type": "(k -> comparable) -> k -> v -> ManualDict.Dict comparable k v"
+            },
+            {
+                "name": "size",
+                "comment": " Determine the number of key-value pairs in the dictionary.\n\nComplexity: *O(log n)*\n",
+                "type": "ManualDict.Dict comparable k v -> Basics.Int"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert a dictionary into an association list of key-value pairs, \nsorted by keys.\n\nComplexity: *O(n)*\n",
+                "type": "ManualDict.Dict comparable k v -> List.List ( k, v )"
+            },
+            {
+                "name": "union",
+                "comment": " Combine two dictionaries. \nIf there is a collision, preference is given to the first dictionary.\n\nComplexity: *O(n &ast; log n)*\n",
+                "type": "(k -> comparable3) -> ManualDict.Dict comparable1 k v -> ManualDict.Dict comparable2 k v -> ManualDict.Dict comparable3 k v"
+            },
+            {
+                "name": "update",
+                "comment": " Updates the value for given key with the given function. \nThe argument for the update function will be `Nothing` if there is no value\ncorresponding to the key and will be `Just v` where `v` is the value\ncorresponding to the key.\n\nIf the function returns `Just v2` the value will be stored for the given key, so\n\n    insert idToString (Name \"Carl\") (User \"Carl\" 5) users\n\nand\n\n    update idToString (Name \"Carl\") (always <| Just <| User \"Carl\" 5) users\n\nare equivalent.\n\nIf the function return `Nothing` the key-value-pair will be removed, so\n    \n    remove idToString (Name \"Alice\") users\n\nand \n\n    update idToString (Name \"Alice\") (always Nothing) users\n\nare equivalent.\n\nComplexity: *O(log n)*\n",
+                "type": "(k -> comparable) -> k -> (Maybe.Maybe v -> Maybe.Maybe v) -> ManualDict.Dict comparable k v -> ManualDict.Dict comparable k v"
+            },
+            {
+                "name": "values",
+                "comment": " Get all of the values in a dictionary, in the order of their keys\naccording to the order of the hash-type.\n\n    values users == [{ age = 28, name = \"Alice\" },{ age = 19, name = \"Bob\" },{ age = 33, name = \"Chuck\" }]\n\nComplexity: *O(n)*\n",
+                "type": "ManualDict.Dict comparable k v -> List.List v"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ManualSet",
+        "comment": " A version of `Set` from `elm/core` that is implemented with a `Dict`\nfrom `elm/core` as storage.\nThe values can be any type but the user needs to specify a \nconversion/hash-function for every action that needs to compare values with\neach other.\nThe hash function can map the values to any comparable type, that is `Int`,\n`Float`, `Time`, `Char`, `Bool` and tuples or list of comparable types.\n\n# Sets\n@docs Set\n\n# Build\n@docs empty, singleton, insert, remove\n\n# Query\n@docs isEmpty, member, size, eq\n\n# Lists\n@docs toList, fromList\n\n# Transform\n@docs map, foldl, foldr, filter, partition\n\n# Combine\n@docs union, intersect, diff\n\n# Hashing related\n@docs reHash\n",
+        "unions": [
+            {
+                "name": "Set",
+                "comment": " A set of values. The values can be of any type.\n\n    import ManualSet as Set exposing (Set)\n\n    pets : Set String Pet\n    pets \n        = Set.fromList petToString\n            [ Dog \"Max\"\n            , Cat \"Jerry\"\n            , Bird \"Ace\"\n            ]\n\n    type Pet \n        = Dog String\n        | Cat String\n        | Bird String\n\n    petToString : Pet -> String\n    petToString pet = case pet of\n        Dog name -> \"Dog: \" ++ name\n        Cat name -> \"Cat: \" ++ name\n        Bird name -> \"Bird: \" ++ name\n",
+                "args": [
+                    "comparable",
+                    "v"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "diff",
+                "comment": " Keeps all values from the first set which don't appear in the second set.\n\nComplexity: *O(n &ast; log n)*\n",
+                "type": "(v -> comparable1) -> ManualSet.Set comparable1 v -> ManualSet.Set comparable2 v -> ManualSet.Set comparable1 v"
+            },
+            {
+                "name": "empty",
+                "comment": " Creates an empty set.\n\nComplexity: *O(1)*\n",
+                "type": "ManualSet.Set comparable v"
+            },
+            {
+                "name": "eq",
+                "comment": " Checks if the two sets contain the same elements.\n\n    set1 = fromList abs [1]\n    set2 = fromList abs [-1]\n\n    eq identity identity set1 set2 == False\n    eq abs abs set1 set2 == True\n\nComplexity: *O(n &ast; log n)*\n",
+                "type": "(v -> comparable1) -> (v -> comparable2) -> ManualSet.Set comparable1 v -> ManualSet.Set comparable2 v -> Basics.Bool"
+            },
+            {
+                "name": "filter",
+                "comment": " Keeps all the value for which the function yields True.\n\nComplexity: *O(n)*\n",
+                "type": "(v -> Basics.Bool) -> ManualSet.Set comparable v -> ManualSet.Set comparable v"
+            },
+            {
+                "name": "foldl",
+                "comment": " Folds over the values in a set from lowest to highest (depending on the\nstring representation).\n\nComplexity: *O(n)*\n",
+                "type": "(v -> a -> a) -> a -> ManualSet.Set comparable v -> a"
+            },
+            {
+                "name": "foldr",
+                "comment": " Folds over the values in a set from  highest to lowest (depending on the\nstring representation).\n\nComplexity: *O(n)*\n",
+                "type": "(v -> a -> a) -> a -> ManualSet.Set comparable v -> a"
+            },
+            {
+                "name": "fromList",
+                "comment": " Converts a list of values into a set.\n\nComplexity: *O(n &ast; log n)*\n",
+                "type": "(v -> comparable) -> List.List v -> ManualSet.Set comparable v"
+            },
+            {
+                "name": "insert",
+                "comment": " Inserts a value into the set. \nA value might be replaced if it's hash\ncollides with the hash of some other value.\n\nComplexity: *O(log n)*\n",
+                "type": "(v -> comparable) -> v -> ManualSet.Set comparable v -> ManualSet.Set comparable v"
+            },
+            {
+                "name": "intersect",
+                "comment": " Keeps all values which comparable representation is contained in both sets.\nPreference is given to values in the first set.\n\nComplexity: *O(n &ast; log n)*\n",
+                "type": "(v -> comparable2) -> ManualSet.Set comparable1 v -> ManualSet.Set comparable2 v -> ManualSet.Set comparable1 v"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Determine if a set is empty.\n\n    isEmpty empty == True\n\nComplexity: *O(1)*\n",
+                "type": "ManualSet.Set comparable v -> Basics.Bool"
+            },
+            {
+                "name": "map",
+                "comment": " Applies a function to all values in a set.\n\nComplexity: *O(n)*\n",
+                "type": "(v2 -> comparable) -> (v1 -> v2) -> ManualSet.Set comparable v1 -> ManualSet.Set comparable v2"
+            },
+            {
+                "name": "member",
+                "comment": " Determine if a value is in a set.\n\n    member petToString (Cat \"Jerry\") pets == True\n    member petToString (Bird \"Jerry\") pets == False\n\nComplexity: *O(log n)*\n",
+                "type": "(v -> comparable) -> v -> ManualSet.Set comparable v -> Basics.Bool"
+            },
+            {
+                "name": "partition",
+                "comment": " Partitions a set into two subsets, according to some function.\nThe first set will contain the values for which the function yields True\nand the second set will contain the values for which the function yields False.\n\nComplexity: *O(n &ast; log n)*\n",
+                "type": "(v -> Basics.Bool) -> ManualSet.Set comparable v -> ( ManualSet.Set comparable v, ManualSet.Set comparable v )"
+            },
+            {
+                "name": "reHash",
+                "comment": " Creates a new set where all values are rehashed with the given function.\nIf two keys have a collision under the new hashing the key-value-pair with the \nhigher value under the old hashing is kept.\n\n    (fromList identity [-1,1] |> reHash abs |> toList) == [1]\n    (fromList negate [-1,1] |> reHash abs |> toList) == [-1]\n",
+                "type": "(v -> comparable2) -> ManualSet.Set comparable1 v -> ManualSet.Set comparable2 v"
+            },
+            {
+                "name": "remove",
+                "comment": " Removes a value from the set. \n\nComplexity: *O(log n)*\n",
+                "type": "(v -> comparable) -> v -> ManualSet.Set comparable v -> ManualSet.Set comparable v"
+            },
+            {
+                "name": "singleton",
+                "comment": " Creates an set, containing only one value.\n\nComplexity: *O(1)*\n",
+                "type": "(v -> comparable) -> v -> ManualSet.Set comparable v"
+            },
+            {
+                "name": "size",
+                "comment": " Determine the number of elements in a set.\n\nComplexity: *O(n)*\n",
+                "type": "ManualSet.Set comparable v -> Basics.Int"
+            },
+            {
+                "name": "toList",
+                "comment": " Converts the set into a list of its values.\n\nComplexity: *O(n)*\n",
+                "type": "ManualSet.Set comparable v -> List.List v"
+            },
+            {
+                "name": "union",
+                "comment": " Creates the union of two sets.\nIf two values have the same comparable representation then the value from the first\nset is in the resulting set.\n\nComplexity: *O(n &ast; log n)*\n",
+                "type": "(v -> comparable3) -> ManualSet.Set comparable1 v -> ManualSet.Set comparable2 v -> ManualSet.Set comparable3 v"
+            }
+        ],
+        "binops": []
+    }
+]

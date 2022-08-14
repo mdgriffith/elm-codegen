@@ -1,0 +1,162 @@
+[
+    {
+        "name": "PluralRules",
+        "comment": " Abstraction for working with pluralization rules.\n\nCheck [Unicode Language Plural\nRules](https://unicode-org.github.io/cldr-staging/charts/37/supplemental/language_plural_rules.html)\nfor more information and examples for various languages.\n\n![Screenshot of English\nrules](https://github.com/GlobalWebIndex/elm-plural-rules/raw/master/docs/en.png)\n\n![Screenshot of Czech\nrules](https://github.com/GlobalWebIndex/elm-plural-rules/raw/master/docs/cz.png)\n\n\n# Rules\n\n@docs Rules, empty, fromList, add\n\n\n# Cardinals\n\n@docs Cardinal\n\n\n# Pluralization\n\n@docs fromInt, fromFloat\n\n\n# Plural Operands\n\nWhen implementing the `toCardinal` function you'll likely reference the table of\n[Plural Rules](https://unicode-org.github.io/cldr-staging/charts/37/supplemental/language_plural_rules.html#rules)\nfor your language.\n\nThe rules have conditions like `i = 2..4 and v = 0`. See the\n[Plural Operand Meanings\ntable](http://unicode.org/reports/tr35/tr35-numbers.html#Operands) or below for\ndescription of these.\n\n@docs Operands, operands\n\n",
+        "unions": [
+            {
+                "name": "Cardinal",
+                "comment": " Each language will have its own rules for when to use which cardinal.\n\nCheck [Unicode Language Plural\nRules](https://unicode-org.github.io/cldr-staging/charts/37/supplemental/language_plural_rules.html)\nfor more information and examples for various languages.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Zero",
+                        []
+                    ],
+                    [
+                        "One",
+                        []
+                    ],
+                    [
+                        "Two",
+                        []
+                    ],
+                    [
+                        "Few",
+                        []
+                    ],
+                    [
+                        "Many",
+                        []
+                    ],
+                    [
+                        "Other",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Rules",
+                "comment": " Rules are a dictionary with various plural forms of words in your given\nlanguage.\n\nElsewhere you can supply a function giving the default pluralization (in English\nthat's adding a `-s` suffix), but here in `Rules` you'll have to supply the\n\"exceptions\" (like words that add an `-es` suffix instead).\n\nFor an example see `fromList`.\n\nNote `Rules` don't do anything about case at all! If they contain `\"query\"` but\nyou then try to `pluralize 5 \"Query\"`, the `query` rule _won't_ get used!\n\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Operands",
+                "comment": " Taken from [Plural Operand\nMeanings](http://unicode.org/reports/tr35/tr35-numbers.html#Operands).\n\n  - n = absolute value of the source number (integer and decimals)\n  - i = integer digits of n\n  - v = number of visible fraction digits in n, with trailing zeros\n  - w = number of visible fraction digits in n, without trailing zeros\n  - f = visible fractional digits in n, with trailing zeros\n  - t = visible fractional digits in n, without trailing zeros\n\nNote that `v,w,f,t` are quite problematic because of `Float` behaviour, at least\nwhen not dealing with simple `!= 0`. As we didn't need to deal with those\nproblematic rules, we're currently keeping only what we can guarantee: notably\n`hasFractionDigits == v != 0`.\n\nIf you, when implementing `toCardinal` for your language, need those `v,w,f,t`\noperands, shoot us a GitHub issue, we can likely create something working on\n`String`s which be able to work with trailing zeros etc.\n\n",
+                "args": [],
+                "type": "{ absoluteValue : Basics.Float, integerDigits : Basics.Int, hasFractionDigits : Basics.Bool }"
+            }
+        ],
+        "values": [
+            {
+                "name": "add",
+                "comment": " Add rules for a new word.\n\nBehaves like `Dict.insert` in case of collisions: replaces the previous value in\n`Rules` with the new value.\n\n",
+                "type": "String.String -> List.List ( PluralRules.Cardinal, String.String ) -> PluralRules.Rules -> PluralRules.Rules"
+            },
+            {
+                "name": "empty",
+                "comment": " Initialize empty Rules.\n",
+                "type": "PluralRules.Rules"
+            },
+            {
+                "name": "fromFloat",
+                "comment": " Pluralize a single word.\n\nThis is the most general case; the goal is to define and use a partially applied\n\"homegrown\" variant that will apply the configuration and rules and end up with\na function of signature `pluralize : Int -> String -> String`:\n\n    pluralize 5 \"word\"\n    --> \"words\"\n\n    pluralize 5 \"query\"\n    --> \"queries\" if you supplied the cases for \"query\" in the Rules dictionary\n    --> \"querys\" otherwise, as the default rule would fire!\n\nThe `defaultPluralize` function is a helper for minimizing the amount of `Rules`\nyou'll have to write -- it is used when a word or its cardinal isn't found in\n`Rules`.\n\n  - This is notably useful for English where most words have the `-s`\n    suffix in their plural form; you then have to supply just the \"irregular\" words\n    like `query -> queries`, `index -> indices`, etc.\n\n  - It's admittedly less useful for some other languages like Czech where there is\n    no simple default case. In these cases you can supply\n    `defaultPluralize = identity` and instead make sure that all the words you're\n    pluralizing are found in your `Rules` dictionary.\n\nThe `toCardinal` function implements the rules from [Unicode Language Plural\nRules](https://unicode-org.github.io/cldr-staging/charts/37/supplemental/language_plural_rules.html)\nfor which quantities result in which cardinal. Your `Rules` dictionary can then\njust supply a word for each relevant cardinal, for cases where\n`defaultPluralize` isn't enough.\n\n",
+                "type": "{ toCardinal : Basics.Float -> PluralRules.Cardinal, defaultPluralize : String.String -> String.String } -> PluralRules.Rules -> Basics.Float -> String.String -> String.String"
+            },
+            {
+                "name": "fromInt",
+                "comment": " Integer-specialized pluralization function. For more info see `fromFloat`.\n",
+                "type": "{ toCardinal : Basics.Float -> PluralRules.Cardinal, defaultPluralize : String.String -> String.String } -> PluralRules.Rules -> Basics.Int -> String.String -> String.String"
+            },
+            {
+                "name": "fromList",
+                "comment": " Create Rules from a list of given exceptions to the general rule.\n\n    fromList\n        [ ( \"Query\"\n          , [ ( One, \"Query\" )\n            , ( Other, \"Queries\" )\n            ]\n          )\n        ]\n\nYou can imagine more complicated rules in other languages:\n\n    -- Czech rules\n    fromList\n        [ ( \"muž\"\n          , [ ( One, \"muž\" ) -- 1, no decimal digits\n            , ( Few, \"muži\" ) -- 2..4, no decimal digits\n            , ( Many, \"muže\" ) -- with decimal digits\n            , ( Other, \"mužů\" ) -- the rest\n            ]\n          )\n        ]\n\n",
+                "type": "List.List ( String.String, List.List ( PluralRules.Cardinal, String.String ) ) -> PluralRules.Rules"
+            },
+            {
+                "name": "operands",
+                "comment": " Compute `Operands` from a `Float` number.\n",
+                "type": "Basics.Float -> PluralRules.Operands"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "PluralRules.Cz",
+        "comment": " Czech is not so simple wrt. pluralization compared to English: it uses\nalmost the whole gamut of Cardinals. So our `defaultPluralize` function is just\n`identity` and instead we rely on all pluralized words being present in the\n`Rules` dictionary.\n\nThe `toCardinal` function in this module is doing much more than in the English\nmodule, as the rules are more complex.\n\n\n# Usage\n\nCreate a `Rules` dictionary and a helper function that provides that dictionary\nto the `fromInt` function.\n\nOver the course of development, as you add more usages of the `pluralize`\nfunction, add those words into your `Rules` dictionary.\n\nYou can look at the `examples/` folder for the intended usage.\n\n@docs pluralize, pluralizeFloat\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "pluralize",
+                "comment": " Pluralization function for Czech rules (doing nothing in the general case).\n\nMake your own helper function that gives `pluralize` your rules, so that you\ndon't need to mention them every time!\n\n(See the `examples/` folder.)\n\n    myPluralize : Int -> String -> String\n    myPluralize n word =\n        PluralRules.Cz.pluralize rules n word\n\n",
+                "type": "PluralRules.Rules -> Basics.Int -> String.String -> String.String"
+            },
+            {
+                "name": "pluralizeFloat",
+                "comment": " A `Float` variant of `pluralize`.\n",
+                "type": "PluralRules.Rules -> Basics.Float -> String.String -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "PluralRules.En",
+        "comment": " English is simple wrt. pluralization: it has just 1 vs \"not 1\".\nThe main gimmick of this module is adding `\"s\"` to the word unless your provided\n`Rules` dictionary says it should behave differently.\n\n\n# Usage\n\nCreate your own dictionary of \"non-s\" pluralizations and a helper function that\nprovides that dictionary to the `pluralize` function. Here's an example (see also\nthe `examples/` folder):\n\n    module Pluralize exposing (pluralize)\n\n    import PluralRules exposing (Cardinal(..), Rules)\n    import PluralRules.En\n\n    rules : Rules\n    rules =\n        PluralRules.fromList\n            [ ( \"Query\"\n              , [ ( One, \"Query\" )\n                , ( Other, \"Queries\" )\n                ]\n              )\n            ]\n\n    pluralize : Int -> String -> String\n    pluralize n word =\n        PluralRules.En.pluralize rules n word\n\n@docs pluralize, pluralizeFloat\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "pluralize",
+                "comment": " Pluralization function for English rules (adding `\"s\"` in the general case).\n\nMake your own helper function that gives `pluralize` your rules, so that you\ndon't need to mention them every time!\n\n(See the `examples/` folder.)\n\n    myPluralize : Int -> String -> String\n    myPluralize n word =\n        PluralRules.En.pluralize rules n word\n\n",
+                "type": "PluralRules.Rules -> Basics.Int -> String.String -> String.String"
+            },
+            {
+                "name": "pluralizeFloat",
+                "comment": " A `Float` variant of `pluralize`.\n",
+                "type": "PluralRules.Rules -> Basics.Float -> String.String -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "PluralRules.Fr",
+        "comment": " French is simple wrt. pluralization: it has just 1 vs \"not 1\".\nThe main gimmick of this module is adding `\"s\"` to the word unless your provided\n`Rules` dictionary says it should behave differently.\n\n\n# Usage\n\nCreate a `Rules` dictionary and a helper function that provides that dictionary\nto the `fromInt` function.\n\nOver the course of development, as you add more usages of the `pluralize`\nfunction, add those words into your `Rules` dictionary.\n\nYou can look at the `examples/` folder for the intended usage.\n\n@docs pluralize, pluralizeFloat\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "pluralize",
+                "comment": " Pluralization function for French rules (adding `\"s\"` in the general case).\n\nMake your own helper function that gives `pluralize` your rules, so that you\ndon't need to mention them every time!\n\n(See the `examples/` folder.)\n\n    myPluralize : Int -> String -> String\n    myPluralize n word =\n        PluralRules.Fr.pluralize rules n word\n\n",
+                "type": "PluralRules.Rules -> Basics.Int -> String.String -> String.String"
+            },
+            {
+                "name": "pluralizeFloat",
+                "comment": " A `Float` variant of `pluralize`.\n",
+                "type": "PluralRules.Rules -> Basics.Float -> String.String -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "PluralRules.Nl",
+        "comment": " Dutch is simple wrt. pluralization: it has just 1 vs \"not 1\".\nThe main gimmick of this module is adding `\"en\"` to the word unless your provided\n`Rules` dictionary says it should behave differently.\n\n\n# Usage\n\nCreate a `Rules` dictionary and a helper function that provides that dictionary\nto the `fromInt` function.\n\nOver the course of development, as you add more usages of the `pluralize`\nfunction, add those words into your `Rules` dictionary.\n\nYou can look at the `examples/` folder for the intended usage.\n\n@docs pluralize, pluralizeFloat\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "pluralize",
+                "comment": " Pluralization function for French rules (adding `\"en\"` in the general case).\n\nMake your own helper function that gives `pluralize` your rules, so that you\ndon't need to mention them every time!\n\n(See the `examples/` folder.)\n\n    myPluralize : Int -> String -> String\n    myPluralize n word =\n        PluralRules.Nl.pluralize rules n word\n\n",
+                "type": "PluralRules.Rules -> Basics.Int -> String.String -> String.String"
+            },
+            {
+                "name": "pluralizeFloat",
+                "comment": " A `Float` variant of `pluralize`.\n",
+                "type": "PluralRules.Rules -> Basics.Float -> String.String -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

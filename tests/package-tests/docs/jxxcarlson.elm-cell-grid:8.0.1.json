@@ -1,0 +1,267 @@
+[
+    {
+        "name": "CellGrid",
+        "comment": " The CellGrid package provides a type for representing\na rectangular grid of cells. CellGrids can be created,\ntransformed, and rendered with either SVG or WebGL.\n\n\n## Type\n\n@docs CellGrid, Dimensions, Position\n\n\n## Constructing and rendering CellGrids\n\n@docs empty, initialize, repeat, fromList\n\n\n## Array-like functions\n\n@docs map, indexedMap\n@docs foldl, foldr, transform\n\n\n## Individual cell manipulation\n\n@docs get, set, update\n@docs adjacent, neighbors\n\n\n## Cell types\n\n@docs CellType, classifyCell\n\n\n## Index helpers\n\n@docs arrayIndex, matrixIndex, matrixIndices\n\n\n## Documentation helpers\n\n@docs toLists, incrementing\n\n",
+        "unions": [
+            {
+                "name": "CellGrid",
+                "comment": " A value of type `CellGrid a` is a rectangular array\nof values of type a.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "CellGrid",
+                        [
+                            "CellGrid.Dimensions",
+                            "Array.Array a"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "CellType",
+                "comment": " A cell can be in the interior of the grid,\non an edge, on in a corner.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Corner",
+                        []
+                    ],
+                    [
+                        "Edge",
+                        []
+                    ],
+                    [
+                        "Interior",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Dimensions",
+                "comment": " The size of a cell grid\n",
+                "args": [],
+                "type": "{ rows : Basics.Int, columns : Basics.Int }"
+            },
+            {
+                "name": "Position",
+                "comment": " A position in a cell grid\n",
+                "args": [],
+                "type": "{ row : Basics.Int, column : Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "adjacent",
+                "comment": " Get the list of cell values of the four adjacent cells.\n\n    grid : CellGrid Int\n    grid = CellGrid.incrementing (Dimensions 3 3)\n\n    toLists grid\n    --> [ [0,1,2]\n    --> , [3,4,5]\n    --> , [6,7,8]\n    --> ]\n\n    CellGrid.adjacent (Position 1 1) grid\n        --> [5,1,3,7]\n\n",
+                "type": "CellGrid.Position -> CellGrid.CellGrid a -> List.List a"
+            },
+            {
+                "name": "arrayIndex",
+                "comment": " Convert a `Position` into an index into the flat array.\n\n    arrayIndex (Dimensions 3 2) (Position 0 1) --> 1\n\n    arrayIndex (Dimensions 3 2) (Position 2 1) --> 5\n\n",
+                "type": "{ a | columns : Basics.Int } -> CellGrid.Position -> Basics.Int"
+            },
+            {
+                "name": "classifyCell",
+                "comment": " return the type of the cell.\n\n    grid : CellGrid (Int, Int)\n    grid = CellGrid.initialize (Dimensions 3 3) Tuple.pair\n\n    toLists grid\n    --> [[(0,0),(0,1),(0,2)]\n    --> ,[(1,0),(1,1),(1,2)]\n    --> ,[(2,0),(2,1),(2,2)]\n    --> ]\n\n    CellGrid.classifyCell (Position 0 0) grid --> Corner\n\n    CellGrid.classifyCell (Position 0 1) grid --> Edge\n\n    CellGrid.classifyCell (Position 1 1) grid --> Interior\n\n",
+                "type": "CellGrid.Position -> CellGrid.CellGrid a -> CellGrid.CellType"
+            },
+            {
+                "name": "empty",
+                "comment": " The empty cell grid. Useful in conjunction with `Maybe.withDefault`\n",
+                "type": "CellGrid.CellGrid a"
+            },
+            {
+                "name": "foldl",
+                "comment": " Fold a function of type `a -> b -> b` over a `CellGrid a`, associating to the left.\n",
+                "type": "(a -> b -> b) -> b -> CellGrid.CellGrid a -> b"
+            },
+            {
+                "name": "foldr",
+                "comment": " Fold a reducer `a -> b -> b` over a `CellGrid a`, associating to the right.\n\n    toList : CellGrid a -> List a\n    toList grid =\n        CellGrid.foldr (::) [] grid\n\n",
+                "type": "(a -> b -> b) -> b -> CellGrid.CellGrid a -> b"
+            },
+            {
+                "name": "fromList",
+                "comment": " Construct cell grid from a list of values.\nGrid construction fails when an amount of values incompatible with the dimensions is given.\n\n    import Array\n\n    fromList (Dimensions 2 2 ) [ 1.0, 2.0, 3.0, 4.0 ]\n        --> Just (CellGrid (Dimensions 2 2) (Array.fromList [1,2,3,4]))\n\n    fromList (Dimensions 2 2 ) [ 1.0, 2.0, 3.0, 4.0, 5.0 ]\n        --> Nothing\n\n",
+                "type": "CellGrid.Dimensions -> List.List a -> Maybe.Maybe (CellGrid.CellGrid a)"
+            },
+            {
+                "name": "get",
+                "comment": " Get a value.\n\n    grid : CellGrid Int\n    grid = CellGrid.incrementing (Dimensions 2 2)\n\n    toLists grid\n    --> [ [0, 1]\n    --> , [2, 3]\n    --> ]\n\n    CellGrid.get (Position 1 1) grid\n        --> Just 3\n\n",
+                "type": "CellGrid.Position -> CellGrid.CellGrid a -> Maybe.Maybe a"
+            },
+            {
+                "name": "incrementing",
+                "comment": " An incrementing integer cell grid\n\n    toLists (incrementing (Dimensions 3 3))\n    --> [[0,1,2]\n    --> ,[3,4,5]\n    --> ,[6,7,8]\n    --> ]\n\nDefined as\n\n    incrementing : Dimensions -> CellGrid Int\n    incrementing dimensions =\n        let\n            initializer : Int -> Int -> Int\n            initializer i j =\n                arrayIndex dimensions (Position i j)\n        in\n        initialize dimensions initializer\n\n",
+                "type": "CellGrid.Dimensions -> CellGrid.CellGrid Basics.Int"
+            },
+            {
+                "name": "indexedMap",
+                "comment": " Transform a cell grid while having access to a cell's position\n\n    indexedMap (\\i j value -> value + i * j) cellGrid\n\n",
+                "type": "(Basics.Int -> Basics.Int -> a -> b) -> CellGrid.CellGrid a -> CellGrid.CellGrid b"
+            },
+            {
+                "name": "initialize",
+                "comment": " Initialize a cell grid. `initialize (Dimensions row column) f` creates a\ncell grid of size `(Dimensions row column)` with the element at `(Position i j)` set to the result of `f i j`.\n\n    import Array\n\n    grid1 : CellGrid Int\n    grid1 = CellGrid.initialize (Dimensions 2 2) (\\i j -> i)\n\n    toLists grid1\n    --> [ [0,0]\n    --> , [1,1]\n    --> ]\n\n    CellGrid.initialize (Dimensions 2 3) (\\i j -> toFloat (i + j))\n        --> CellGrid (Dimensions 2 3) (Array.fromList [ 0, 1, 2, 1, 2, 3 ])\n\n",
+                "type": "CellGrid.Dimensions -> (Basics.Int -> Basics.Int -> a) -> CellGrid.CellGrid a"
+            },
+            {
+                "name": "map",
+                "comment": " Map a function over a cell grid.\n\n    grid : CellGrid Int\n    grid = CellGrid.incrementing (Dimensions 2 2)\n\n    toLists grid\n    --> [ [0,1]\n    --> , [2,3]\n    --> ]\n\n    doubled : CellGrid Int\n    doubled = CellGrid.map (\\v -> v * 2) grid\n\n    toLists doubled\n    --> [ [0,2]\n    --> , [4,6]\n    --> ]\n\n",
+                "type": "(a -> b) -> CellGrid.CellGrid a -> CellGrid.CellGrid b"
+            },
+            {
+                "name": "matrixIndex",
+                "comment": " Convert an index into the flat array into a `Position`.\n\n    matrixIndex (Dimensions 3 2) 1 --> (Position 0 1)\n\n    matrixIndex (Dimensions 3 2) 5 --> (Position 2 1)\n\n",
+                "type": "{ a | columns : Basics.Int } -> Basics.Int -> CellGrid.Position"
+            },
+            {
+                "name": "matrixIndices",
+                "comment": " Return a list of all matrix indices (i,j) of a grid. Useful for mapping.\n\n    grid : CellGrid Bool\n    grid =\n        CellGrid.repeat (Dimensions 2 3) True\n\n    CellGrid.matrixIndices grid\n    --> [ (Position 0 0)\n    --> , (Position 0 1)\n    --> , (Position 0 2)\n    --> , (Position 1 0)\n    --> , (Position 1 1)\n    --> , (Position 1 2)\n    --> ]\n\n",
+                "type": "CellGrid.CellGrid a -> List.List CellGrid.Position"
+            },
+            {
+                "name": "neighbors",
+                "comment": " Get the list of cell values of the eight neighboring cells.\n\n    grid : CellGrid Int\n    grid = CellGrid.incrementing (Dimensions 3 3)\n\n    toLists grid\n    --> [ [0,1,2]\n    --> , [3,4,5]\n    --> , [6,7,8]\n    --> ]\n\n    CellGrid.neighbors ( Position 1 1 )  grid\n        --> [5,2,1,0,3,6,7,8]\n\n",
+                "type": "CellGrid.Position -> CellGrid.CellGrid a -> List.List a"
+            },
+            {
+                "name": "repeat",
+                "comment": " Fill a cell grid with a constant value\n\n    import Array\n\n    CellGrid.repeat (Dimensions 2 2) 42\n        --> CellGrid (Dimensions 2 2) (Array.fromList [ 42, 42, 42, 42 ])\n\n",
+                "type": "CellGrid.Dimensions -> a -> CellGrid.CellGrid a"
+            },
+            {
+                "name": "set",
+                "comment": " Set a value.\n\n    grid : CellGrid Int\n    grid = CellGrid.repeat (Dimensions 2 2) 42\n\n    toLists grid\n    --> [ [42, 42]\n    --> , [42, 42]\n    --> ]\n\n    new : CellGrid Int\n    new = CellGrid.set (Position 1 1) 84 grid\n\n    toLists new\n    --> [ [42, 42]\n    --> , [42, 84]\n    --> ]\n\n",
+                "type": "CellGrid.Position -> a -> CellGrid.CellGrid a -> CellGrid.CellGrid a"
+            },
+            {
+                "name": "toLists",
+                "comment": " Convert a cell grid to a list of rows of values\n",
+                "type": "CellGrid.CellGrid a -> List.List (List.List a)"
+            },
+            {
+                "name": "transform",
+                "comment": " Modify a cell while having access to the full cell grid.\nThe supplied cell grid is always the original input. Useful for simulations that need neighbor information,\nlike [Conway's game of life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life).\n",
+                "type": "(Basics.Int -> Basics.Int -> CellGrid.CellGrid a -> b) -> CellGrid.CellGrid a -> CellGrid.CellGrid b"
+            },
+            {
+                "name": "update",
+                "comment": " Update a value.\n\n    grid : CellGrid Int\n    grid = CellGrid.repeat (Dimensions 2 2) 42\n\n    toLists grid\n    --> [ [42, 42]\n    --> , [42, 42]\n    --> ]\n\n    new : CellGrid Int\n    new = CellGrid.update (Position 1 1) (\\v -> 2 * v) grid\n\n    toLists new\n    --> [ [42, 42]\n    --> , [42, 84]\n    --> ]\n\n",
+                "type": "CellGrid.Position -> (a -> a) -> CellGrid.CellGrid a -> CellGrid.CellGrid a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "CellGrid.Image",
+        "comment": " Render a cellgrid as a bmp or png image\n\n\n## Data URI\n\n[Data URIs](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URIs) using the base64 encoding are a way to create an image from binary data in the browser.\nThis makes it possible to generate an image in pure elm and display it using HTML.\n\n    import CellGrid exposing (CellGrid, Dimensions)\n    import CellGrid.Image\n    import Color exposing (Color)\n    import Html\n    import Html.Attributes exposing (height, src, style, width)\n\n    grid : CellGrid Color\n    grid =\n        CellGrid.repeat (Dimensions 2 2) Color.red\n\n    main : Html msg\n    main =\n        Html.img\n            [ src (CellGrid.Image.asBmpUri grid)\n            , width 300\n            , height 300\n            , style \"image-rendering\" \"pixelated\"\n            ]\n\n@docs asBmpUri, asPngUri\n\n\n## Bytes\n\n@docs asBmpBytes, asPngBytes\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "asBmpBytes",
+                "comment": " Encode a `CellGrid` as a bmp image.\n",
+                "type": "CellGrid.CellGrid Color.Color -> Bytes.Bytes"
+            },
+            {
+                "name": "asBmpUri",
+                "comment": " Encode a `CellGrid` as a bmp URI.\n\n    import CellGrid exposing (CellGrid, Dimensions)\n    import Color exposing (Color)\n\n    grid : CellGrid Color\n    grid =\n        CellGrid.repeat (Dimensions 2 2) (Color.red)\n\n    asBmpUri grid\n        --> \"data:image/bmp;base64,Qk1GAAAAAAAAADYAAAAoAAAAAgAAAAIAAAABABgAAAAAABAAAAATCwAAEwsAAAAAAAAAAAAAAADMAADMAAAAAMwAAMwAAA==\"\n\n",
+                "type": "CellGrid.CellGrid Color.Color -> String.String"
+            },
+            {
+                "name": "asPngBytes",
+                "comment": " Encode a `CellGrid` as a png image.\n",
+                "type": "CellGrid.CellGrid Color.Color -> Bytes.Bytes"
+            },
+            {
+                "name": "asPngUri",
+                "comment": " Encode a `CellGrid` as a png URI.\n\n    import CellGrid exposing (CellGrid, Dimensions)\n    import Color exposing (Color)\n\n    grid : CellGrid Color\n    grid =\n        CellGrid.repeat (Dimensions 2 2) (Color.red)\n\n    asPngUri grid\n        --> \"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAGklEQVR4nD3GsQEAAADBsPr/NT9hkikyhHkKJwYDmXkNWg4AAAAASUVORK5CYII=\"\n\n",
+                "type": "CellGrid.CellGrid Color.Color -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "CellGrid.Render",
+        "comment": " Render a cell grid as html using SVG\n\nSVG is slower for large cell grids, but is more interactive. User clicks on cells in the grid can be captured and used for interaction.\n\n@docs asHtml, asSvg\n@docs Msg, CellStyle\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "CellStyle",
+                "comment": " Customize how a cell is rendered.\n`Color` is as defined in the package `avh4/elm-color`, e.g. `Color.rgb 1 0 0` is bright red.\n\n    cellStyle : CellStyle Bool\n    cellStyle =\n        { toColor =\n            \\b ->\n                if b then\n                    Color.green\n\n                else\n                    Color.red\n        , cellWidth = 10\n        , cellHeight = 10\n        , gridLineWidth = 1\n        , gridLineColor = Color.black\n        }\n\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ cellWidth : Basics.Float, cellHeight : Basics.Float, toColor : a -> Color.Color, gridLineWidth : Basics.Float, gridLineColor : Color.Color }"
+            },
+            {
+                "name": "Msg",
+                "comment": " Capture clicks on the rendered cell grid. Gives the position in the cell grid, and the local `(x, y)` coordinates of the cell\n",
+                "args": [],
+                "type": "{ cell : CellGrid.Position, coordinates : { x : Basics.Float, y : Basics.Float } }"
+            }
+        ],
+        "values": [
+            {
+                "name": "asHtml",
+                "comment": " Render a cell grid into an html element of the given width and height.\n",
+                "type": "{ width : Basics.Int, height : Basics.Int } -> CellGrid.Render.CellStyle a -> CellGrid.CellGrid a -> Html.Html CellGrid.Render.Msg"
+            },
+            {
+                "name": "asSvg",
+                "comment": " Render a cell grid as an svg `<g>` element, useful for integration with other svg.\n",
+                "type": "CellGrid.Render.CellStyle a -> CellGrid.CellGrid a -> Svg.Svg CellGrid.Render.Msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "CellGrid.RenderWebGL",
+        "comment": " Render a `CellGrid` using WebGL.\nSee also the [examples](https://github.com/jxxcarlson/elm-cell-grid/tree/master/examples).\n\n> **Note:** WebGL can only handle grids of about `100x100`.\n> Drawing more cells exceeds the vertex limit, resulting in a partially blank image. `CellGrid.Image` can handle larger grids with ease.\n\n\n## Rendering functions\n\n@docs asHtml\n\n\n## LowLevel\n\n@docs Vertex\n@docs CellStyle\n@docs meshFromCellGrid\n@docs meshToHtml\n\n\n## Internals\n\nInternal functions exposed for testing.\n\n@docs meshFromCellGridHelp\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "CellStyle",
+                "comment": " Style an individual cell\n\n    cellStyle : CellStyle Bool\n    cellStyle =\n        { toColor =\n            \\b ->\n                if b then\n                    Color.green\n\n                else\n                    Color.red\n        , cellWidth = 10\n        , cellHeight = 10\n        }\n\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ toColor : a -> Color.Color, cellWidth : Basics.Float, cellHeight : Basics.Float }"
+            },
+            {
+                "name": "Vertex",
+                "comment": " An individual vertex.\n",
+                "args": [],
+                "type": "{ x : Basics.Float, y : Basics.Float, z : Basics.Float, r : Basics.Float, g : Basics.Float, b : Basics.Float }"
+            }
+        ],
+        "values": [
+            {
+                "name": "asHtml",
+                "comment": " Render a cell grid into an html element of the given width and height.\n\nThe cells are stretched to use up all available space. For customized cell sizes, see `meshToHtml`.\n\n",
+                "type": "{ width : Basics.Int, height : Basics.Int } -> (a -> Color.Color) -> CellGrid.CellGrid a -> Html.Html msg"
+            },
+            {
+                "name": "meshFromCellGrid",
+                "comment": " Create a mesh from a grid and a style for each cell.\n",
+                "type": "CellGrid.RenderWebGL.CellStyle a -> CellGrid.CellGrid a -> WebGL.Mesh CellGrid.RenderWebGL.Vertex"
+            },
+            {
+                "name": "meshFromCellGridHelp",
+                "comment": " ",
+                "type": "CellGrid.RenderWebGL.CellStyle a -> CellGrid.CellGrid a -> List.List ( CellGrid.RenderWebGL.Vertex, CellGrid.RenderWebGL.Vertex, CellGrid.RenderWebGL.Vertex )"
+            },
+            {
+                "name": "meshToHtml",
+                "comment": " Render a `Mesh Vertex` into an html element of the given width and height.\n",
+                "type": "{ width : Basics.Int, height : Basics.Int } -> WebGL.Mesh CellGrid.RenderWebGL.Vertex -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

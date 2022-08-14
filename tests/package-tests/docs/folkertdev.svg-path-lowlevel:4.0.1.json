@@ -1,0 +1,202 @@
+[
+    {
+        "name": "Path.LowLevel",
+        "comment": " A low-level package for working with svg path strings\n\nThis package has two use cases\n\n  - **convert Elm data into svg paths**\n  - **convert svg path syntax into elm data**\n\nIt is meant as a foundation: there is little type safety and convenience.\nIt's just a literal translation of the SVG spec into elm data types.\n\n@docs toString,toStringWith, Option, decimalPlaces\n@docs SubPath, Mode, MoveTo, DrawTo, Coordinate\n\n@docs ArcFlag, Direction\n@docs EllipticalArcArgument, encodeFlags, decodeFlags\n\n",
+        "unions": [
+            {
+                "name": "ArcFlag",
+                "comment": " Determine which arc to draw\n",
+                "args": [],
+                "cases": [
+                    [
+                        "SmallestArc",
+                        []
+                    ],
+                    [
+                        "LargestArc",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Direction",
+                "comment": " Determine which arc to draw\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Clockwise",
+                        []
+                    ],
+                    [
+                        "CounterClockwise",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "DrawTo",
+                "comment": " Constructors for DrawTo instructions\n",
+                "args": [],
+                "cases": [
+                    [
+                        "LineTo",
+                        [
+                            "Path.LowLevel.Mode",
+                            "List.List Path.LowLevel.Coordinate"
+                        ]
+                    ],
+                    [
+                        "Horizontal",
+                        [
+                            "Path.LowLevel.Mode",
+                            "List.List Basics.Float"
+                        ]
+                    ],
+                    [
+                        "Vertical",
+                        [
+                            "Path.LowLevel.Mode",
+                            "List.List Basics.Float"
+                        ]
+                    ],
+                    [
+                        "CurveTo",
+                        [
+                            "Path.LowLevel.Mode",
+                            "List.List ( Path.LowLevel.Coordinate, Path.LowLevel.Coordinate, Path.LowLevel.Coordinate )"
+                        ]
+                    ],
+                    [
+                        "SmoothCurveTo",
+                        [
+                            "Path.LowLevel.Mode",
+                            "List.List ( Path.LowLevel.Coordinate, Path.LowLevel.Coordinate )"
+                        ]
+                    ],
+                    [
+                        "QuadraticBezierCurveTo",
+                        [
+                            "Path.LowLevel.Mode",
+                            "List.List ( Path.LowLevel.Coordinate, Path.LowLevel.Coordinate )"
+                        ]
+                    ],
+                    [
+                        "SmoothQuadraticBezierCurveTo",
+                        [
+                            "Path.LowLevel.Mode",
+                            "List.List Path.LowLevel.Coordinate"
+                        ]
+                    ],
+                    [
+                        "EllipticalArc",
+                        [
+                            "Path.LowLevel.Mode",
+                            "List.List Path.LowLevel.EllipticalArcArgument"
+                        ]
+                    ],
+                    [
+                        "ClosePath",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Mode",
+                "comment": " The mode of an instruction\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Relative",
+                        []
+                    ],
+                    [
+                        "Absolute",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "MoveTo",
+                "comment": " MoveTo instructions move the cursor, but don't draw anything.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "MoveTo",
+                        [
+                            "Path.LowLevel.Mode",
+                            "Path.LowLevel.Coordinate"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Option",
+                "comment": " Formatting options\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Coordinate",
+                "comment": " Represent a point in 2D space with a tuple of floats\n",
+                "args": [],
+                "type": "( Basics.Float, Basics.Float )"
+            },
+            {
+                "name": "EllipticalArcArgument",
+                "comment": " The arguments for an Arc\n",
+                "args": [],
+                "type": "{ radii : ( Basics.Float, Basics.Float ), xAxisRotate : Basics.Float, arcFlag : Path.LowLevel.ArcFlag, direction : Path.LowLevel.Direction, target : Path.LowLevel.Coordinate }"
+            },
+            {
+                "name": "SubPath",
+                "comment": " A subpath is a `MoveTo` followed by a list of `DrawTo`s\n",
+                "args": [],
+                "type": "{ moveto : Path.LowLevel.MoveTo, drawtos : List.List Path.LowLevel.DrawTo }"
+            }
+        ],
+        "values": [
+            {
+                "name": "decimalPlaces",
+                "comment": " Set the maximum number of decimal places in the output string\n\n    myPath : List SubPath\n    myPath =\n        [ { moveto = MoveTo Relative ( 10, 20 )\n          , drawtos =\n              [ LineTo Absolute\n                [ ( 1 / 3, 1 / 3 )\n                , ( 1 / 7, 1 / 7 )\n                ]\n              ]\n          }\n        ]\n\n    toStringWith [] myPath\n        --> \"m10,20 L0.3333333333333333,0.3333333333333333 0.14285714285714285,0.14285714285714285\"\n\n    toStringWith [ decimalPlaces 3 ] myPath\n        --> \"m10,20 L0.333,0.333 0.143,0.143\"\n\n",
+                "type": "Basics.Int -> Path.LowLevel.Option"
+            },
+            {
+                "name": "decodeFlags",
+                "comment": " Try to decode two ints into flag values. Inverse of `encodeFlags`.\n",
+                "type": "( Basics.Int, Basics.Int ) -> Maybe.Maybe ( Path.LowLevel.ArcFlag, Path.LowLevel.Direction )"
+            },
+            {
+                "name": "encodeFlags",
+                "comment": " Turn the flags into numbers\n\n    case arcFlag of\n        LargestArc -> 1\n        SmallestArc -> 0\n\n    case direction of\n        Clockwise -> 0\n        CounterClockwise -> 1\n\n",
+                "type": "( Path.LowLevel.ArcFlag, Path.LowLevel.Direction ) -> ( Basics.Int, Basics.Int )"
+            },
+            {
+                "name": "toString",
+                "comment": " Convert a list of subpaths to svg path syntax\n\n    myPath : List SubPath\n    myPath =\n        [ { moveto = MoveTo Relative ( 10, 20 )\n          , drawtos =\n                [ EllipticalArc Absolute\n                    [ { radii = ( 25, 25 )\n                    , xAxisRotate = -30\n                    , arcFlag = SmallestArc\n                    , direction = CounterClockwise\n                    , target = ( 50, -25 )\n                    }\n                    ]\n                ]\n          }\n        ]\n\n    Path.LowLevel.toString myPath\n        --> \"m10,20 A25,25 -30 0 1 50,-25\"\n\n",
+                "type": "List.List Path.LowLevel.SubPath -> String.String"
+            },
+            {
+                "name": "toStringWith",
+                "comment": " Convert a list of subpaths to a string, with some extra formatting options\n",
+                "type": "List.List Path.LowLevel.Option -> List.List Path.LowLevel.SubPath -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Path.LowLevel.Parser",
+        "comment": " Parse SVG path syntax into an elm value\n\n@docs parse\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "parse",
+                "comment": " Parse svg path syntax into a list of subpaths.\n\n    parse \"m10,20 A25,25 -30 0,1 50,-25\"\n        -->\n        Ok\n        [ { moveto = MoveTo Relative ( 10, 20 )\n          , drawtos =\n                [ EllipticalArc Absolute\n                    { radii = ( 25, 25 )\n                    , xAxisRotate = -30\n                    , arcFlag = SmallestArc\n                    , direction = CounterClockwise\n                    , target = ( 50, -25 )\n                    }\n                ]\n          }\n        ]\n\n",
+                "type": "String.String -> Result.Result (List.List (Parser.Advanced.DeadEnd String.String String.String)) (List.List Path.LowLevel.SubPath)"
+            }
+        ],
+        "binops": []
+    }
+]

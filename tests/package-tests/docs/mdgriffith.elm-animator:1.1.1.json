@@ -1,0 +1,603 @@
+[
+    {
+        "name": "Animator",
+        "comment": "\n\n\n# Getting started\n\n`elm-animator` is about taking pieces of your model, turning them into **Timelines** of values, and animate between their states\n\n@docs Timeline, init\n\n\n# Reading the timeline\n\nYou might be wondering, 'How do we get our value \"out\" of a `Timeline`?'\n\nWell, we can ask the `Timeline` all sorts of questions.\n\n@docs current, previous, upcoming, upcomingWith, arrived, arrivedAt, arrivedAtWith\n\n\n# Wiring up the animation\n\nOnce we have a `Timeline`, we need a way to update it.\n\nThat's the job of the `Animator`!\n\n@docs Animator\n\n@docs animator, watching, watchingWith\n\n@docs toSubscription, update\n\n@docs updateTimeline\n\n\n# Transitioning to a new state\n\nNow that we have a `Timeline` set up, we likely want to set a new **value**.\n\nIn order to do that we need to specify both —\n\n  - the new state we want to be in\n  - a `Duration` for how long this transition should take.\n\n@docs go\n\n@docs Duration, immediately, veryQuickly, quickly, slowly, verySlowly, millis, seconds\n\n\n# Interruptions and Queueing\n\nIn some more **advanced** cases you might want to define a _series_ of states to animate through instead of just going to one directly.\n\n    Animator.interrupt\n        [ Animator.wait (Animator.millis 300)\n\n        -- after waiting 300 milliseconds,\n        -- start transitioning to a new state, Griffyndor\n        -- Take 1 whole second to make the transition\n        , Animator.event (Animator.seconds 1) Griffyndor\n\n        -- Once we've arrived at Griffyndor,\n        -- immediately start transitioning to Slytherin\n        -- and take half a second to make the transition\n        , Animator.event (Animator.seconds 0.5) Slytherin\n        ]\n\n@docs Step, wait, event\n\n@docs interrupt, queue\n\n\n# Animating\n\nFinally, animating!\n\nThis part of the package is for animating color and number **values** directly.\n\n_However!_ You're probably more interested in animating `CSS` or `Inline` styles.\n\nThose things live in the `Animator.Css`and `Animator.Inline` modules.\n\nCheck them out on the side bar 👉\n\nThough you should also check out the 👇 [Transition Personality](#transition-personality) section as well.\n\n@docs color\n\n@docs Movement, at, move, xy, xyz\n\n@docs linear\n\n\n# Transition personality\n\nWhile there are some nice defaults baked in, sometimes you might want to adjust how an animation happens.\n\nThese adjustments talk about _arriving_ or _leaving_. That's referring to the part of the animation that is arriving to or departing from a certain state.\n\nSo, for this code example:\n\n     case state of\n        True ->\n            Animator.at 0\n                |> Animator.leaveLate 0.2\n\n        False ->\n           Animator.at 50\n\nIf we're at a state of `True` and go to any other state, we're going to leave `True` a little later than the normal time.\n\n**Note** — These adjustments all take a `Float` between `0` and `1`. Behind the scenes they will be clamped at those values.\n\n@docs leaveLate, arriveEarly\n\n@docs leaveSmoothly, arriveSmoothly\n\n@docs withWobble\n\n\n# Resting at a state\n\nWe've mostly talked about **transitioning** from one state to another, like moving from `True` to `False`.\n\nBut what if we want an animation when we're just **resting** at a state?\n\nAn obvious example would be an icon that spins when we're `Loading`.\n\nWell, in that case you can use an `Oscillator`.\n\n    case state of\n        Loaded ->\n            Animator.at 0\n\n        Loading ->\n            -- animate from 0deg to 360deg and\n            -- then wrap back around to 0deg\n            -- we're using radians here, so 2 * pi == 360deg\n            Animator.wrap 0 (2 * pi)\n                -- loop every 700ms\n                |> Animator.loop (Animator.millis 700)\n\n@docs Oscillator, wave, wrap, zigzag, interpolate\n\nOnce we've created an oscillator, we need to specify how long it should take and how many times it should repeat.\n\n@docs loop, once, repeat\n\n@docs shift\n\n\n# Sprites\n\nOk! What else could there be?\n\nWhat about the wonderful world of Sprite animation?\n\nSprite animation is where we literally have a list of images and flip through them like a flip-book.\n\nLike Mario! In fact we have a [Mario example](https://github.com/mdgriffith/elm-animator/blob/master/examples/Mario.elm)!\n\nHere's an abreviated example of what the code looks like:\n\n    Animator.step model.mario <|\n        \\(Mario action) ->\n            case action of\n                Walking ->\n                    -- if we're in a `Walking` state,\n                    -- then we're cycling through\n                    -- the following frames at\n                    -- 15 frames per second:\n                    --  step1, step2, stand\n                    Animator.framesWith\n                        { transition =\n                            sprite.tail.stand\n                        , resting =\n                            Animator.cycle\n                                (Animator.fps 15)\n                                [ sprite.tail.step1\n                                , sprite.tail.step2\n                                , sprite.tail.stand\n                                ]\n                        }\n\n                Jumping ->\n                    -- show a single frame\n                    sprite.tail.jump\n\n                Ducking ->\n                    sprite.tail.duck\n\n                Standing ->\n                    sprite.tail.stand\n\n@docs step\n\n@docs Frames, frame, hold, walk, framesWith\n\n@docs Resting, FramesPerSecond, fps, cycle, cycleN\n\n",
+        "unions": [
+            {
+                "name": "FramesPerSecond",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Step",
+                "comment": " ",
+                "args": [
+                    "state"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Animator",
+                "comment": " An `Animator` knows how to read and write all the `Timelines` within your `Model`.\n\nHere's an animator from the [Checkbox.elm example](https://github.com/mdgriffith/elm-animator/blob/master/examples/Checkbox.elm),\n\n    animator : Animator.Animator Model\n    animator =\n        Animator.animator\n            |> Animator.watching\n                -- we tell the animator how\n                -- to get the checked timeline using .checked\n                .checked\n                -- and we tell the animator how\n                -- to update that timeline as well\n                (\\newChecked model ->\n                    { model | checked = newChecked }\n                )\n\nNotice you could add any number of timelines to this animator.\n\n**Note** — You likely only need one animator for a given project.\n\n**Note 2** — Once we have an `Animator Model`, we have two more steps in order to set things up:\n\n  - [create a _subscription_](#toSubscription)\n  - [_update_ our model](#update)\n\n",
+                "args": [
+                    "model"
+                ],
+                "type": "Internal.Timeline.Animator model"
+            },
+            {
+                "name": "Duration",
+                "comment": " Choosing a nice duration can depend on:\n\n  - The size of the thing moving\n  - The type of movement\n  - The distance it's traveling.\n\nSo, start with a nice default and adjust it as you start to understand your specific needs.\n\n**Note** — Here's [a very good overview on animation durations and speeds](https://uxdesign.cc/the-ultimate-guide-to-proper-use-of-animation-in-ux-10bd98614fa9).\n\n",
+                "args": [],
+                "type": "Internal.Time.Duration"
+            },
+            {
+                "name": "Frames",
+                "comment": " ",
+                "args": [
+                    "item"
+                ],
+                "type": "Internal.Timeline.Frames item"
+            },
+            {
+                "name": "Movement",
+                "comment": " ",
+                "args": [],
+                "type": "Internal.Interpolate.DefaultableMovement"
+            },
+            {
+                "name": "Oscillator",
+                "comment": " ",
+                "args": [],
+                "type": "Internal.Timeline.Oscillator"
+            },
+            {
+                "name": "Resting",
+                "comment": " ",
+                "args": [
+                    "item"
+                ],
+                "type": "Internal.Timeline.Resting item"
+            },
+            {
+                "name": "Timeline",
+                "comment": " A timeline of `state` values.\n\nBehind the scenes this is roughly a list of states and the times that they should occur!\n\n",
+                "args": [
+                    "state"
+                ],
+                "type": "Internal.Timeline.Timeline state"
+            }
+        ],
+        "values": [
+            {
+                "name": "animator",
+                "comment": " ",
+                "type": "Animator.Animator model"
+            },
+            {
+                "name": "arriveEarly",
+                "comment": " We can also arrive early to this state.\n\n  - `0` means we arrive at the normal time.\n  - `0.2` means we'll arrive early by 20% of the total duration.\n  - `1` means we arrive at the start of the transition. So basically we instantly transition over.\n\n**Weird math note** — `arriveEarly` and `leaveLate` will collaborate to figure out how the transition happens. If `arriveEarly` and `leaveLate` sum up to more `1` for a transition, then their sum will be the new maximum. Likely you don't need to worry about this :D.\n\nThe intended use for `arriveEarly` and `leaveLate` is for staggering items in a list. In those cases, these values are pretty small `~0.1`.\n\n",
+                "type": "Basics.Float -> Animator.Movement -> Animator.Movement"
+            },
+            {
+                "name": "arriveSmoothly",
+                "comment": " We can also smooth out our arrival.\n\n  - `arriveSmoothly 0` means no smoothing, which means more of a linear animation.\n  - `arriveSmoothly 1` means the animation will \"ease out\" or \"arrive slowly\".\n\n",
+                "type": "Basics.Float -> Animator.Movement -> Animator.Movement"
+            },
+            {
+                "name": "arrived",
+                "comment": " Subtley different than [`current`](#current), this will provide the new state as soon as the transition has _finished_.\n\n```ascii\n          A---------B---------C\n               ^    ^    ^    ^\narrived:       A    B    B    C\n```\n\n",
+                "type": "Animator.Timeline state -> state"
+            },
+            {
+                "name": "arrivedAt",
+                "comment": " Sometimes we want to know when we've arrived at a state so we can trigger some other work.\n\nYou can use `arrivedAt` in the `Tick` branch of your update to see if you will arrive at an event on this tick.\n\n    Tick time ->\n        if Animator.arrivedAt MyState time model.timeline then\n            --...do something special\n\n",
+                "type": "state -> Time.Posix -> Animator.Timeline state -> Basics.Bool"
+            },
+            {
+                "name": "arrivedAtWith",
+                "comment": " Again, sometimes you'll want to supply your own equality function!\n",
+                "type": "(state -> Basics.Bool) -> Time.Posix -> Animator.Timeline state -> Basics.Bool"
+            },
+            {
+                "name": "at",
+                "comment": " ",
+                "type": "Basics.Float -> Animator.Movement"
+            },
+            {
+                "name": "color",
+                "comment": " ",
+                "type": "Animator.Timeline state -> (state -> Color.Color) -> Color.Color"
+            },
+            {
+                "name": "current",
+                "comment": " Get the current `state` of the timeline.\n\nThis value will switch to a new value when a transition begins.\n\nIf you had a timeline that went from A to B to C, here's what `current` would be at various points on the timeline.\n\n```ascii\n          A---------B---------C\n               ^    ^    ^    ^\ncurrent:       B    B    C    C\n```\n\n**Note** — If you want to detect the moment when you arrive at a new state, try using [`arrivedAt`](#arrivedAt)\n\n",
+                "type": "Animator.Timeline state -> state"
+            },
+            {
+                "name": "cycle",
+                "comment": " While we're at this specific state, `cycle` through a list of frames at this `fps`.\n",
+                "type": "Animator.FramesPerSecond -> List.List (Animator.Frames sprite) -> Animator.Resting sprite"
+            },
+            {
+                "name": "cycleN",
+                "comment": " Same as `cycle`, but only for `n` number of times.\n",
+                "type": "Basics.Int -> Animator.FramesPerSecond -> List.List (Animator.Frames sprite) -> Animator.Resting sprite"
+            },
+            {
+                "name": "event",
+                "comment": " ",
+                "type": "Animator.Duration -> state -> Animator.Step state"
+            },
+            {
+                "name": "fps",
+                "comment": " ",
+                "type": "Basics.Float -> Animator.FramesPerSecond"
+            },
+            {
+                "name": "frame",
+                "comment": " Show a single `sprite`.\n",
+                "type": "sprite -> Animator.Frames sprite"
+            },
+            {
+                "name": "framesWith",
+                "comment": " Here we have the same distinction of **transition** and **resting** that the rest of the library has.\n\nWith `framesWith` we can define the frames it takes to transition to this state, as well as what to do when we're in this state (maybe we want to loop through a number of frames when we're in this state).\n\n",
+                "type": "{ transition : Animator.Frames item, resting : Animator.Resting item } -> Animator.Frames item"
+            },
+            {
+                "name": "go",
+                "comment": " Go to a new state!\n\nYou'll need to specify a `Duration` as well. Try starting with `Animator.quickly` and adjust up or down as necessary.\n\n",
+                "type": "Animator.Duration -> state -> Animator.Timeline state -> Animator.Timeline state"
+            },
+            {
+                "name": "hold",
+                "comment": " Show this `sprite` for a number of frames. Only really useful if you're using [`walk`](#walk) or [`cycle`](#cycle).\n",
+                "type": "Basics.Int -> sprite -> Animator.Frames sprite"
+            },
+            {
+                "name": "immediately",
+                "comment": " 0ms\n",
+                "type": "Animator.Duration"
+            },
+            {
+                "name": "init",
+                "comment": " Create a timeline with an initial `state`.\n\nSo, if you previously had a `Bool` in your model:\n\n    type alias Model = { checked : Bool }\n\n    -- created via\n    { checked = False }\n\nYou could replace that with an `Animator.Timeline Bool`\n\n    type alias Model = { checked : Animator.Timeline Bool }\n\n    -- created via\n    { checked = Animator.init False }\n\n",
+                "type": "state -> Animator.Timeline state"
+            },
+            {
+                "name": "interpolate",
+                "comment": " Or make whatever kind of oscillator you need!\n\nThis takes a function which is given the progress of this oscillation as a `Float` between 0 and 1.\n\n",
+                "type": "(Basics.Float -> Basics.Float) -> Animator.Oscillator"
+            },
+            {
+                "name": "interrupt",
+                "comment": " Interrupt what's currently happening with a new list.\n",
+                "type": "List.List (Animator.Step state) -> Animator.Timeline state -> Animator.Timeline state"
+            },
+            {
+                "name": "leaveLate",
+                "comment": " Even though the transition officially starts at a certain time on the timeline, we can leave a little late.\n\n  - `0` means we leave at the normal time.\n  - `0.2` means we'll leave when the transition is at 20%.\n  - `1` means we leave at the end of the transition and instantly flip to the new state at that time.\n\n",
+                "type": "Basics.Float -> Animator.Movement -> Animator.Movement"
+            },
+            {
+                "name": "leaveSmoothly",
+                "comment": " Underneath the hood this library uses [Bézier curves](https://en.wikipedia.org/wiki/B%C3%A9zier_curve) to model motion.\n\nBecause of this you can adjust the \"smoothness\" of the curve that's ultimately used.\n\n  - `leaveSmoothly 0` is essentially linear animation.\n  - `leaveSmoothly 1` means the animation will start slowly and smoothly begin to accelerate.\n\nHere's a general diagram of what's going on:\n\n![](https://mdgriffith.github.io/elm-animator/images/default-personality.png)\n\n**Note** — The values in the above diagram are the built in defaults for most movements in `elm-animator`. They come from [`Material Design`](https://material.io/design/motion/speed.html#easing).\n\n**Note 2** — An [interactive version of the above diagram](https://ellie-app.com/8s2yjQzQmZda1) is also available.\n\n",
+                "type": "Basics.Float -> Animator.Movement -> Animator.Movement"
+            },
+            {
+                "name": "linear",
+                "comment": " Interpolate linearly between destinations. This is a shortcut to help you out.\n\nYou can do this with `move` by doing\n\n    Animator.move timeline <|\n        \\state ->\n            if state then\n                Animator.at 0\n                    |> Animator.leaveSmoothly 0\n                    |> Animator.arriveSmoothly 0\n\n            else\n                Animator.at 1\n                    |> Animator.leaveSmoothly 0\n                    |> Animator.arriveSmoothly 0\n\nWhich is equivalent to\n\n    Animator.linear timeline <|\n        \\state ->\n            if state then\n                Animator.at 0\n\n            else\n                Animator.at 1\n\n",
+                "type": "Animator.Timeline state -> (state -> Animator.Movement) -> Basics.Float"
+            },
+            {
+                "name": "loop",
+                "comment": " ",
+                "type": "Animator.Duration -> Animator.Oscillator -> Animator.Movement"
+            },
+            {
+                "name": "millis",
+                "comment": " ",
+                "type": "Basics.Float -> Animator.Duration"
+            },
+            {
+                "name": "move",
+                "comment": " ",
+                "type": "Animator.Timeline state -> (state -> Animator.Movement) -> Basics.Float"
+            },
+            {
+                "name": "once",
+                "comment": " ",
+                "type": "Animator.Duration -> Animator.Oscillator -> Animator.Movement"
+            },
+            {
+                "name": "previous",
+                "comment": " Get the previous `state` on this timeline.\n\nAs you'll see in the [Loading example](https://github.com/mdgriffith/elm-animator/blob/master/examples/Loading.elm), it means we can use `previous` to refer to data that we've already \"deleted\" or set to `Nothing`.\n\nHow cool!\n\n```ascii\n          A---------B---------C\n               ^    ^    ^\nprevious:      A    A    B\n```\n\n",
+                "type": "Animator.Timeline state -> state"
+            },
+            {
+                "name": "queue",
+                "comment": " Wait until the current timeline is **finished** and then continue with these new steps.\n",
+                "type": "List.List (Animator.Step state) -> Animator.Timeline state -> Animator.Timeline state"
+            },
+            {
+                "name": "quickly",
+                "comment": " _200ms_ - Likely a good place to start!\n",
+                "type": "Animator.Duration"
+            },
+            {
+                "name": "repeat",
+                "comment": " ",
+                "type": "Basics.Int -> Animator.Duration -> Animator.Oscillator -> Animator.Movement"
+            },
+            {
+                "name": "seconds",
+                "comment": " ",
+                "type": "Basics.Float -> Animator.Duration"
+            },
+            {
+                "name": "shift",
+                "comment": " Shift an oscillator over by a certain amount.\n\nIt's expecting a number between 0 and 1.\n\n",
+                "type": "Basics.Float -> Animator.Oscillator -> Animator.Oscillator"
+            },
+            {
+                "name": "slowly",
+                "comment": " _400ms_.\n",
+                "type": "Animator.Duration"
+            },
+            {
+                "name": "step",
+                "comment": " ",
+                "type": "Animator.Timeline state -> (state -> Animator.Frames sprite) -> sprite"
+            },
+            {
+                "name": "toSubscription",
+                "comment": " Convert an `Animator` to a subscription.\n\nThis is where the animator will decide if a running animation needs another frame or not.\n\n    subscriptions model =\n        Animator.toSubscription Tick model animator\n\n",
+                "type": "(Time.Posix -> msg) -> model -> Animator.Animator model -> Platform.Sub.Sub msg"
+            },
+            {
+                "name": "upcoming",
+                "comment": " Check to see if a `state` is upcoming on a timeline.\n\n**Note** — This can be used to ensure a set of states can only be [`queued`](#queue) if they aren't already running.\n\n**Note 2** — This only checks if an event is in the _future_, but does not check the value you're currently at. You might need to use [`arrived`](#arrived) as well if you also care about the current state.\n\n",
+                "type": "state -> Animator.Timeline state -> Basics.Bool"
+            },
+            {
+                "name": "upcomingWith",
+                "comment": " For complicated values it can be computationally expensive to use `==`.\n\n`upcomingWith` allows you to specify your own equality function, so you can be smarter in checking how two value are equal.\n\n",
+                "type": "(state -> Basics.Bool) -> Animator.Timeline state -> Basics.Bool"
+            },
+            {
+                "name": "update",
+                "comment": " When new messages come in, we then need to update our model. This looks something like this:\n\n    type Msg\n        = Tick Time.Posix\n\n    update msg model =\n        case msg of\n            Tick newTime ->\n                ( Animator.update newTime animator model\n                , Cmd.none\n                )\n\nAnd voilà, we can begin animating!\n\n**Note** — To animate more things, all you need to do is add a new `with` to your `Animator`.\n\n",
+                "type": "Time.Posix -> Animator.Animator model -> model -> model"
+            },
+            {
+                "name": "updateTimeline",
+                "comment": " If you're creating something like a game, you might want to update your `Timelines` manually instead of using an `Animator`.\n\nThis will allow you to do whatever calculations you need while updating each `Timeline`.\n\n**Note** — You'll have to take care of subscribing to `Browser.Events.onAnimationFrame`.\n\n",
+                "type": "Time.Posix -> Animator.Timeline state -> Animator.Timeline state"
+            },
+            {
+                "name": "veryQuickly",
+                "comment": " _100ms_.\n",
+                "type": "Animator.Duration"
+            },
+            {
+                "name": "verySlowly",
+                "comment": " _500ms_.\n",
+                "type": "Animator.Duration"
+            },
+            {
+                "name": "wait",
+                "comment": " ",
+                "type": "Animator.Duration -> Animator.Step state"
+            },
+            {
+                "name": "walk",
+                "comment": " Walk through a list of frames as we're transitioning to this state.\n",
+                "type": "sprite -> List.List (Animator.Frames sprite) -> Animator.Frames sprite"
+            },
+            {
+                "name": "watching",
+                "comment": " `watching` will ensure that [`AnimationFrame`](https://package.elm-lang.org/packages/elm/browser/latest/Browser-Events#onAnimationFrame) is running when the animator is transformed into a [`subscription`](#toSubscription).\n\n**Note** — It will actually make the animation frame subscription run all the time! At some point you'll probably want to optimize when the subscription runs, which means either using [`watchingWith`](#watchingWith) or `Animator.Css.watching`.\n\n",
+                "type": "(model -> Animator.Timeline state) -> (Animator.Timeline state -> model -> model) -> Animator.Animator model -> Animator.Animator model"
+            },
+            {
+                "name": "watchingWith",
+                "comment": " `watchingWith` will allow you to have more control over when `AnimationFrame` runs.\n\nThe main thing you need to do here is capture which states are animated when they're **resting**.\n\nLet's say we have a checkbox that, for whatever reason, we want to say is spinning forever when the value is `False`.\n\n    animator : Animator.Animator Model\n    animator =\n        Animator.animator\n            |> Animator.watchingWith .checked\n                (\\newChecked model ->\n                    { model | checked = newChecked }\n                )\n                -- here is where we tell the animator that we still need\n                -- AnimationFrame when the timeline has a current value of `False`\n                (\\checked ->\n                    checked == False\n                )\n\n**Note** — if you're using `Animator.Css` to generate keyframes along with `Animator.Css.watching`, you don't need to worry about this.\n\n",
+                "type": "(model -> Animator.Timeline state) -> (Animator.Timeline state -> model -> model) -> (state -> Basics.Bool) -> Animator.Animator model -> Animator.Animator model"
+            },
+            {
+                "name": "wave",
+                "comment": " This is basically a sine wave! It will \"wave\" between the two numbers you give it.\n",
+                "type": "Basics.Float -> Basics.Float -> Animator.Oscillator"
+            },
+            {
+                "name": "withWobble",
+                "comment": " This will make the transition use a spring instead of bezier curves!\n\n  - `withWobble 0` - absolutely no wobble\n  - `withWobble 1` - all the wobble\n\nUse your wobble responsibly.\n\n",
+                "type": "Basics.Float -> Animator.Movement -> Animator.Movement"
+            },
+            {
+                "name": "wrap",
+                "comment": " Start at one number and move linearly to another, then immediately start again at the first.\n\nThis was originally intended for animating rotation where you'd want 360deg to \"wrap\" to 0deg.\n\n",
+                "type": "Basics.Float -> Basics.Float -> Animator.Oscillator"
+            },
+            {
+                "name": "xy",
+                "comment": " ",
+                "type": "Animator.Timeline state -> (state -> { x : Animator.Movement, y : Animator.Movement }) -> { x : Basics.Float, y : Basics.Float }"
+            },
+            {
+                "name": "xyz",
+                "comment": " ",
+                "type": "Animator.Timeline state -> (state -> { x : Animator.Movement, y : Animator.Movement, z : Animator.Movement }) -> { x : Basics.Float, y : Basics.Float, z : Basics.Float }"
+            },
+            {
+                "name": "zigzag",
+                "comment": " Start at one number, move linearly to another, and then linearly back.\n",
+                "type": "Basics.Float -> Basics.Float -> Animator.Oscillator"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Animator.Css",
+        "comment": " Animate with CSS keyframes.\n\nThis can be a very performant because\n\n1.  CSS animations are executed efficiently by the browser.\n\n2.  We only have to ask for **one** `AnimationFrame` from the browser when an animation starts and we can render the entire animation.\n\nThis means `Elm` only needs to run your view code once instead of 60 times a second.\n\n`Elm` is generally pretty fast and efficient at all this! But it can be even faster to **skip the work altogether**.\n\n@docs watching\n\n@docs div, node\n\n\n# Properties\n\n@docs Attribute, opacity, height, width\n\n\n# Text\n\n@docs fontSize, fontColor, wordSpacing, letterSpacing\n\n\n# Background\n\n@docs backgroundColor\n\n\n# Border\n\n@docs borderColor, borderRadius\n\n\n# Custom\n\n@docs style, color\n\n**Note on Shadows and Filters** - You might be wondering why there is no `box-shadow` or `filter`.\n\nThey're not supported first class because they're expensive by default.\n\nIf you're trying to animate a `box-shadow`, your best bet is to render the box shadow once in a separate element, and then only animate opacity on that element.\n\nBasically you want to recreate what is [described in this overview.](https://tobiasahlin.com/blog/how-to-animate-box-shadow/)\n\n\n# Transform\n\n@docs explain\n\n@docs Transform, transform\n\n@docs rotateTo, lookAt, rotating\n\n@docs scale, xy, xyz\n\n\n# Transform Options\n\n@docs transformWith, TransformOptions, Origin, center, offset\n\n\n# Advanced\n\n**Note** - One of the difficulties in making an animation library for `CSS` is that operations such as `translate` and `rotate` need to be rendered as one property called `transform`.\n\nWhile normally this isn't that big of a deal, one consequence for generating `CSS` keyframes is that all resting states for all transformations need to share the same `period`.\n\nBecause of that, `in2d` and `in3d` are constructed a little differently instead of just using `Movement` like everything else.\n\n@docs resting\n\n@docs in2d, in3d\n\n**Note** - Again, because of the CSS characteristic mentioned above, we have to have `once` and `repeat` defined separetely from `Animator.once` for the special case of transforms.\n\n@docs once, repeat, loop\n\n",
+        "unions": [
+            {
+                "name": "Attribute",
+                "comment": " ",
+                "args": [
+                    "state"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Origin",
+                "comment": " The origin for rotation. Defaults to the center of the element.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Transform",
+                "comment": " This represents moving something around in 3d.\n\nThis includes:\n\n  - scaling\n  - changing position\n  - rotation\n\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "TransformOptions",
+                "comment": " ",
+                "args": [],
+                "type": "{ rotationAxis : { x : Basics.Float, y : Basics.Float, z : Basics.Float }, origin : Animator.Css.Origin }"
+            }
+        ],
+        "values": [
+            {
+                "name": "backgroundColor",
+                "comment": " ",
+                "type": "(state -> Color.Color) -> Animator.Css.Attribute state"
+            },
+            {
+                "name": "borderColor",
+                "comment": " ",
+                "type": "(state -> Color.Color) -> Animator.Css.Attribute state"
+            },
+            {
+                "name": "borderRadius",
+                "comment": " ",
+                "type": "(state -> Animator.Movement) -> Animator.Css.Attribute state"
+            },
+            {
+                "name": "center",
+                "comment": " ",
+                "type": "Animator.Css.Origin"
+            },
+            {
+                "name": "color",
+                "comment": " ",
+                "type": "String.String -> (state -> Color.Color) -> Animator.Css.Attribute state"
+            },
+            {
+                "name": "div",
+                "comment": " This is a single div element.\n\nIt's just like a normal `Html` node, except it also takes a `Timeline` and a list of attributes you want to animate.\n\nHere's a checkbox that changes backgrounds as a brief example:\n\n    Animator.Css.div model.checked\n        [ Animator.Css.backgroundColor <|\n            \\checked ->\n                if checked then\n                    Color.rgb255 255 96 96\n\n                else\n                    Color.white\n        ]\n        [ Attr.style \"height\" \"30px\"\n        , Attr.style \"width\" \"30px\"\n        ]\n        [ Html.text \"\" ]\n\n",
+                "type": "Animator.Timeline state -> List.List (Animator.Css.Attribute state) -> List.List (Html.Attribute msg) -> List.List (Html.Html msg) -> Html.Html msg"
+            },
+            {
+                "name": "explain",
+                "comment": " This is a _debug_ tool for transformations.\n\nIf you turn this on, it will show you:\n\n  - A grey bounding box so you get a sense of the element you're animating.\n\n  - A **red dot** at the center of the element. Any rotation will be around this point.\n\n    _You can adjust the dot's position using [`transformWith`](#transformWith) and setting a new origin._\n\n  - The coordinate axes. Yes, in _CSS_, y points down.\n\n![](https://mdgriffith.github.io/elm-animator/images/explain-example.png)\n\n",
+                "type": "Basics.Bool -> Animator.Css.Attribute state"
+            },
+            {
+                "name": "fontColor",
+                "comment": " ",
+                "type": "(state -> Color.Color) -> Animator.Css.Attribute state"
+            },
+            {
+                "name": "fontSize",
+                "comment": " ",
+                "type": "(state -> Animator.Movement) -> Animator.Css.Attribute state"
+            },
+            {
+                "name": "height",
+                "comment": " ",
+                "type": "(state -> Animator.Movement) -> Animator.Css.Attribute state"
+            },
+            {
+                "name": "in2d",
+                "comment": " ",
+                "type": "Animator.Css.Period -> { x : Animator.Oscillator, y : Animator.Oscillator, rotate : Animator.Oscillator, scaleX : Animator.Oscillator, scaleY : Animator.Oscillator } -> Animator.Css.Transform"
+            },
+            {
+                "name": "in3d",
+                "comment": " ",
+                "type": "Animator.Css.Period -> { x : Animator.Oscillator, y : Animator.Oscillator, z : Animator.Oscillator, rotate : Animator.Oscillator, scaleX : Animator.Oscillator, scaleY : Animator.Oscillator, scaleZ : Animator.Oscillator } -> Animator.Css.Transform"
+            },
+            {
+                "name": "letterSpacing",
+                "comment": " ",
+                "type": "(state -> Animator.Movement) -> Animator.Css.Attribute state"
+            },
+            {
+                "name": "lookAt",
+                "comment": " Have this element \"look at\" a specifc point.\n\nThe coordinates provided are relative to this element.\n\nThe default, which is where the element is looking directly outwards from the screen, is:\n\n    Animator.Css.lookAt\n        { x = 0\n        , y = 0\n        , z = 1\n        }\n\n",
+                "type": "{ x : Basics.Float, y : Basics.Float, z : Basics.Float } -> Animator.Css.Transform -> Animator.Css.Transform"
+            },
+            {
+                "name": "loop",
+                "comment": " ",
+                "type": "Animator.Duration -> Animator.Css.Period"
+            },
+            {
+                "name": "node",
+                "comment": " Specify a node name that's not a div. Here's an `<a>`.\n\n    Animator.Css.node \"a\"\n        model.checked\n        [ Animator.Css.backgroundColor <|\n            \\checked ->\n                if checked then\n                    Color.rgb255 255 96 96\n\n                else\n                    Color.white\n        ]\n        [ Attr.style \"height\" \"30px\"\n        , Attr.style \"width\" \"30px\"\n        ]\n        [ Html.text \"\" ]\n\n",
+                "type": "String.String -> Animator.Timeline state -> List.List (Animator.Css.Attribute state) -> List.List (Html.Attribute msg) -> List.List (Html.Html msg) -> Html.Html msg"
+            },
+            {
+                "name": "offset",
+                "comment": " This is the x and y offset, in pixels from the center of the object.\n\nGenerally I found the most common case for adjusting the origin was when you want it mostly centered, but aligned to the visual center of an icon or image, which is offset by a number of pixels.\n\n",
+                "type": "Basics.Float -> Basics.Float -> Animator.Css.Origin"
+            },
+            {
+                "name": "once",
+                "comment": " ",
+                "type": "Animator.Duration -> Animator.Css.Period"
+            },
+            {
+                "name": "opacity",
+                "comment": " ",
+                "type": "(state -> Animator.Movement) -> Animator.Css.Attribute state"
+            },
+            {
+                "name": "repeat",
+                "comment": " ",
+                "type": "Basics.Int -> Animator.Duration -> Animator.Css.Period"
+            },
+            {
+                "name": "resting",
+                "comment": " ",
+                "type": "Basics.Float -> Animator.Oscillator"
+            },
+            {
+                "name": "rotateTo",
+                "comment": " Rotate to a specific angle, where increasing numbers move clockwise.\n\nThe actual number provided should be in Elm standard angles (radians).\n\nAlternatively you could use [turns or degrees](https://package.elm-lang.org/packages/elm/core/latest/Basics#degrees) instead.\n\n",
+                "type": "Basics.Float -> Animator.Css.Transform"
+            },
+            {
+                "name": "rotating",
+                "comment": " Provide the duration it should take for one full rotation.\n",
+                "type": "Animator.Duration -> Animator.Css.Transform"
+            },
+            {
+                "name": "scale",
+                "comment": " ",
+                "type": "Basics.Float -> Animator.Css.Transform"
+            },
+            {
+                "name": "style",
+                "comment": " ",
+                "type": "String.String -> (Basics.Float -> String.String) -> (state -> Animator.Movement) -> Animator.Css.Attribute state"
+            },
+            {
+                "name": "transform",
+                "comment": "\n\n    Animator.Css.transform <|\n        \\state ->\n            case state of\n                Stationary ->\n                    Animator.Css.xy\n                        { x = 0\n                        , y = 0\n                        }\n\n                Rotating ->\n                    -- do a full rotation every 5 seconds\n                    Animator.Css.rotating\n                        (Animator.seconds 5)\n\n**Note** - If you're doing 3d transformations, you should set a CSS `perspective` property either on this element or on a parent. If it's on a parent, then all elements will share a common `perspective` origin.\n\nSo, add something like this to the parent element:\n\n    perspective: 500px;\n    perspective-origin: center;\n\n",
+                "type": "(state -> Animator.Css.Transform) -> Animator.Css.Attribute state"
+            },
+            {
+                "name": "transformWith",
+                "comment": " ",
+                "type": "Animator.Css.TransformOptions -> (state -> Animator.Css.Transform) -> Animator.Css.Attribute state"
+            },
+            {
+                "name": "watching",
+                "comment": " `Animator.Css.watching` is different from `Animator.watching` in that it will only ask for one frame when an animation is updated.\n\nIn that one frame, we render the **entire CSS animation**, which can run without `Elm` needing to do a full rerender.\n\n",
+                "type": "(model -> Animator.Timeline state) -> (Animator.Timeline state -> model -> model) -> Animator.Animator model -> Animator.Animator model"
+            },
+            {
+                "name": "width",
+                "comment": " ",
+                "type": "(state -> Animator.Movement) -> Animator.Css.Attribute state"
+            },
+            {
+                "name": "wordSpacing",
+                "comment": " ",
+                "type": "(state -> Animator.Movement) -> Animator.Css.Attribute state"
+            },
+            {
+                "name": "xy",
+                "comment": " ",
+                "type": "{ x : Basics.Float, y : Basics.Float } -> Animator.Css.Transform"
+            },
+            {
+                "name": "xyz",
+                "comment": " ",
+                "type": "{ x : Basics.Float, y : Basics.Float, z : Basics.Float } -> Animator.Css.Transform"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Animator.Inline",
+        "comment": " Render inline styles.\n\nThe best way is to play with the [**Checkbox**](https://github.com/mdgriffith/elm-animator/blob/master/examples/Checkbox.elm) example.\n\n**Note** - At some point you should check out `Animator.Css`. It has a few benefits over inline styles.\n\n\n# Inline Styles\n\n@docs opacity\n\n@docs backgroundColor, textColor, borderColor\n\n\n## Transformations\n\n@docs xy, rotate, scale, transform\n\n\n## Custom\n\nIf you can't find an attribute here, you might need to use [`Animator.Inline.style`](#style) or [`Animator.Inline.color`](#color) to create it!\n\n@docs style, linear, color\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "backgroundColor",
+                "comment": " ",
+                "type": "Animator.Timeline state -> (state -> Color.Color) -> Html.Attribute msg"
+            },
+            {
+                "name": "borderColor",
+                "comment": " ",
+                "type": "Animator.Timeline state -> (state -> Color.Color) -> Html.Attribute msg"
+            },
+            {
+                "name": "color",
+                "comment": " ",
+                "type": "Animator.Timeline state -> String.String -> (state -> Color.Color) -> Html.Attribute msg"
+            },
+            {
+                "name": "linear",
+                "comment": " Sets the default to `linear`. See the note on [`Animator.linear`](https://package.elm-lang.org/packages/mdgriffith/elm-animator/latest/Animator#linear) for more details!\n",
+                "type": "Animator.Timeline state -> String.String -> (Basics.Float -> String.String) -> (state -> Animator.Movement) -> Html.Attribute msg"
+            },
+            {
+                "name": "opacity",
+                "comment": " Change the opacity for an element.\n\nHere's what this looks like in practice.\n\n    div\n        [ Animator.Inline.opacity model.checked <|\n            \\state ->\n                if state then\n                    Animator.at 1\n\n                else\n                    Animator.at 0\n        ]\n        [ Html.text \"Hello!\" ]\n\n",
+                "type": "Animator.Timeline state -> (state -> Animator.Movement) -> Html.Attribute msg"
+            },
+            {
+                "name": "rotate",
+                "comment": " Rotate to a specific angle, where increasing numbers move clockwise.\n\nThe actual number provided should be in radians.\n\nAlternatively you could use [turns or degrees](https://package.elm-lang.org/packages/elm/core/latest/Basics#degrees) instead.\n\n",
+                "type": "Animator.Timeline state -> (state -> Animator.Movement) -> Html.Attribute msg"
+            },
+            {
+                "name": "scale",
+                "comment": " ",
+                "type": "Animator.Timeline state -> (state -> Animator.Movement) -> Html.Attribute msg"
+            },
+            {
+                "name": "style",
+                "comment": " ",
+                "type": "Animator.Timeline state -> String.String -> (Basics.Float -> String.String) -> (state -> Animator.Movement) -> Html.Attribute msg"
+            },
+            {
+                "name": "textColor",
+                "comment": " ",
+                "type": "Animator.Timeline state -> (state -> Color.Color) -> Html.Attribute msg"
+            },
+            {
+                "name": "transform",
+                "comment": " ",
+                "type": "{ scale : Basics.Float, rotate : Basics.Float, position : { x : Basics.Float, y : Basics.Float } } -> Html.Attribute msg"
+            },
+            {
+                "name": "xy",
+                "comment": " ",
+                "type": "Animator.Timeline state -> (state -> { x : Animator.Movement, y : Animator.Movement }) -> Html.Attribute msg"
+            }
+        ],
+        "binops": []
+    }
+]

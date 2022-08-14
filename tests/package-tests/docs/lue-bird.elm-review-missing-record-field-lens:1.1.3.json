@@ -1,0 +1,173 @@
+[
+    {
+        "name": "NoMissingRecordFieldLens",
+        "comment": "\n\n@docs rule, Config\n\n\n# lens generators\n\n\n## working out of the box\n\n@docs accessors, monocle, fields, zipper, accessorsBChiquet\n\n\n## custom\n\n@docs FieldLensGenerator, FieldLensDeclaration, functionsForField, getSetRecordForField, withDocumentation, withName\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " The [rule](#rule)'s configuration.\n\n  - `generate`: What kind of lens to generate:\n      - [`elm-accessors`](#accessors),\n      - [`elm-fields`](#fields),\n      - [`elm-monocle`](#monocle),\n      - [`zipper`](#zipper) or\n      - [`updateField`](#update), [`setField`](#set)\n      - [a custom one](#FieldLensGenerator).\n\n  - `generateIn`: The module where all field lenses will be generated in\n\n    read `( \"Module\", [ \"Name\" ] )` as `Module.Name`\n\n",
+                "args": [],
+                "type": "{ generator : NoMissingRecordFieldLens.FieldLensGenerator, generateIn : ( String.String, List.List String.String ) }"
+            },
+            {
+                "name": "FieldLensDeclaration",
+                "comment": " All the components to build a field lens declaration:\n\n    {-| [documentation]\n    -}\n    [name] : [annotation]\n    [name] =\n        [implementation]\n\nYou can customize existing `FieldLensDeclaration`s with [`withDocumentation`](#withDocumentation) and [`withName`](#withName)\nor create custom lens ([`functionsForField`](#functionsForField) and [`getSetRecordForField`](#getSetRecordForField) can be helpful).\n\n    customLensDeclaration { fieldName } =\n        { documentation =\n            emptyDocComment\n                |> markdown\n                    (\"`CustomLens` for the field `.\" ++ fieldName ++ \"`.\")\n                |> Just\n        , name = fieldName\n        , annotation =\n            typed \"CustomLens\"\n                [ extRecordAnn \"record\"\n                    [ ( fieldName, typeVar fieldName ) ]\n                , typeVar fieldName\n                ]\n                |> Just\n        , implementation =\n            let\n                { access, set } =\n                    functionsForField fieldName\n            in\n            fqConstruct [ \"CustomLens\" ] \"create\" [ access, at ]\n        }\n\n",
+                "args": [],
+                "type": "{ documentation : Maybe.Maybe (Elm.CodeGen.Comment Elm.CodeGen.DocComment), name : String.String, annotation : Maybe.Maybe Elm.CodeGen.TypeAnnotation, implementation : Elm.CodeGen.Expression }"
+            },
+            {
+                "name": "FieldLensGenerator",
+                "comment": " How to generate a [`FieldLensDeclaration`](#FieldLensDeclaration) plus the necessary imports.\n\nOut of the box there are lenses for\n\n  - [`erlandsona/elm-accessors`](#accessors)\n  - [`elm-fields`](#fields)\n  - [`elm-monocle`](#monocle)\n  - [`zipper`](#zipper)\n  - [`bChiquet/elm-accessors`](#accessorsBChiquet)\n\nYou can also create a custom one with the help of [the-sett's elm-syntax-dsl](https://package.elm-lang.org/packages/the-sett/elm-syntax-dsl/latest):\n\n    customLens : FieldLensGenerator\n    customLens =\n        { imports =\n            [ importStmt [ \"CustomLens\" ]\n                Nothing\n                (exposeExplicit\n                    [ typeOrAliasExpose \"CustomLens\" ]\n                    |> Just\n                )\n            ]\n        , declaration =\n            \\{ fieldName } ->\n                { documentation =\n                    emptyDocComment\n                        |> markdown\n                            (\"`CustomLens` for the field `.\" ++ fieldName ++ \"`.\")\n                        |> Just\n                , name = fieldName\n                , annotation =\n                    typed \"CustomLens\"\n                        [ extRecordAnn \"record\"\n                            [ ( fieldName, typeVar fieldName ) ]\n                        , typeVar fieldName\n                        ]\n                        |> Just\n                , implementation =\n                    let\n                        { access, set } =\n                            functionsForField fieldName\n                    in\n                    fqConstruct [ \"CustomLens\" ] \"create\" [ access, at ]\n                }\n        }\n\n",
+                "args": [],
+                "type": "{ imports : List.List Elm.CodeGen.Import, declaration : { fieldName : String.String } -> NoMissingRecordFieldLens.FieldLensDeclaration }"
+            }
+        ],
+        "values": [
+            {
+                "name": "accessors",
+                "comment": " [`FieldLensGenerator`](#FieldLensGenerator)\nfor named [`erlandsona/elm-accessors`](https://dark.elm.dmy.fr/packages/erlandsona/elm-accessors/latest/)\nin the form\n\n    import Accessors exposing (Lens, makeOneToOne_)\n\n    score : Lens { record | score : score } transformed score wrap\n    score =\n        makeOneToOne_ \".score\" .score (\\alter record -> { record | score = record.score |> alter })\n\n",
+                "type": "NoMissingRecordFieldLens.FieldLensGenerator"
+            },
+            {
+                "name": "accessorsBChiquet",
+                "comment": " [`FieldLensGenerator`](#FieldLensGenerator) for [`bChiquet/elm-accessors`](https://package.elm-lang.org/packages/bChiquet/elm-accessors/latest) in the form\n\n    import Accessors exposing (Relation, makeOneToOne)\n\n    score : Relation score transformed wrap -> Relation { record | score : score } transformed wrap\n    score =\n        makeOneToOne .score (\\alter record -> { record | score = record.score |> alter })\n\n[`accessors`](#accessors) generates for [`erlandsona/elm-accessors`](https://dark.elm.dmy.fr/packages/erlandsona/elm-accessors/latest/) which adds names.\n\n",
+                "type": "NoMissingRecordFieldLens.FieldLensGenerator"
+            },
+            {
+                "name": "fields",
+                "comment": " [`FieldLensGenerator`](#FieldLensGenerator) for [sjorn3's elm-fields](https://package.elm-lang.org/packages/sjorn3/elm-fields/latest/) in the form\n\n    score :\n        { get : { record0 | score : score } -> score\n        , set : score -> { record1 | score : score } -> { record1 | score : score }\n        }\n    score =\n        { get = .score, set = \\replacement record -> { record | score = replacement } }\n\n",
+                "type": "NoMissingRecordFieldLens.FieldLensGenerator"
+            },
+            {
+                "name": "functionsForField",
+                "comment": " access, set and update functions for a given record field.\n\n    functionsForField \"score\"\n\n    -->\n    { access = accessFun (\".\" ++ fieldName)\n    , set =\n        lambda\n            [ varPattern \"replacement\"\n            , varPattern \"record\"\n            ]\n            (update \"record\"\n                [ ( fieldName\n                  , val \"replacement\"\n                  )\n                ]\n            )\n    , update =\n        lambda\n            [ varPattern \"alter\"\n            , varPattern \"record\"\n            ]\n            (update \"record\"\n                [ ( fieldName\n                  , applyBinOp\n                        (access (val \"record\") fieldName)\n                        piper\n                        (fun \"alter\")\n                  )\n                ]\n            )\n    }\n\n",
+                "type": "String.String -> { access : Elm.CodeGen.Expression, set : Elm.CodeGen.Expression, update : Elm.CodeGen.Expression }"
+            },
+            {
+                "name": "getSetRecordForField",
+                "comment": " Generate a field lens implementation in the form\n\n    { get = .score, set = \\replacement record -> { record | score = replacement } }\n\nThis is equivalent to\n\n    let\n        { access, set } =\n            functionsForField fieldName\n    in\n    record [ ( \"get\", access ), ( \"set\", set ) ]\n\n",
+                "type": "String.String -> Elm.CodeGen.Expression"
+            },
+            {
+                "name": "monocle",
+                "comment": " [`FieldLensGenerator`](#FieldLensGenerator) for [arturopala's elm-monocle](https://package.elm-lang.org/packages/arturopala/elm-monocle/latest) in the form\n\n    import Monocle.Lens exposing (Lens)\n\n    score : Lens { record | score : score } score\n    score =\n        { get = .score, set = \\replacement record -> { record | score = replacement } }\n\n",
+                "type": "NoMissingRecordFieldLens.FieldLensGenerator"
+            },
+            {
+                "name": "rule",
+                "comment": " Automatically generates used record field helpers that don't exist yet.\n\nExamples are\n\n  - [`erlandsona/elm-accessors`](https://package.elm-lang.org/packages/erlandsona/elm-accessors/latest/)\n  - [`sjorn3/elm-fields`](https://package.elm-lang.org/packages/sjorn3/elm-fields/latest/)\n  - [`arturopala/elm-monocle`](https://package.elm-lang.org/packages/arturopala/elm-monocle/latest)\n  - [`zh5/zipper`](https://package.elm-lang.org/packages/z5h/zipper/latest/)\n  - [`bChiquet/elm-accessors`](https://package.elm-lang.org/packages/bChiquet/elm-accessors/latest)\n\n```\nconfig =\n    [ NoMissingRecordFieldLens.rule\n        { generator = NoMissingRecordFieldLens.accessors\n        , generateIn = ( \"Accessors\", [ \"Library\", \"Fields\" ] )\n        }\n    ]\n```\n\n  - `generator`: What kind of lens to generate:\n      - [`elm-accessors`](#accessors),\n      - [`elm-fields`](#fields),\n      - [`elm-monocle`](#monocle),\n      - [`zipper`](#zipper) or\n      - [a custom one](#FieldLensGenerator).\n\n  - `generateIn`: The module where all field lenses will be generated in\n\n    understand `( \"Accessors\", [ \"Library\", \"Fields\" ] )` as `Accessors.Library.Fields`\n\n\n## Example\n\n    module SomeModule exposing (scoreAPoint)\n\n    import Accessors.Library.Fields as Field\n\n    scoreAPoint =\n        Accessors.over Field.score (\\score -> score + 1)\n\n\n### Fail\n\n    module Accessors.Library.Fields exposing (name)\n\n    ...\n\n\n### Success\n\n    module Accessors.Library.Fields exposing (score)\n\n    ...\n\n",
+                "type": "NoMissingRecordFieldLens.Config -> Review.Rule.Rule"
+            },
+            {
+                "name": "withDocumentation",
+                "comment": " The provided [`FieldLensGenerator`](#FieldLensGenerator)s in this package have no documentation comment.\n\nYou can generate your own documentation, though:\n\n    accessorsWithDocumentation { fieldName } =\n        accessors { fieldName = fieldName }\n            |> withDocumentation\n                (emptyDocComment\n                    |> markdown\n                        (\"Accessor for the field `.\" ++ fieldName ++ \"`.\")\n                )\n\n",
+                "type": "Elm.CodeGen.Comment Elm.CodeGen.DocComment -> NoMissingRecordFieldLens.FieldLensDeclaration -> NoMissingRecordFieldLens.FieldLensDeclaration"
+            },
+            {
+                "name": "withName",
+                "comment": " Use a different name for the generated lens.\n\n    accessorsWithFieldSuffix { fieldName } =\n        accessors { fieldName = fieldName }\n            |> withName (fieldName ++ \"Field\")\n\n",
+                "type": "String.String -> NoMissingRecordFieldLens.FieldLensDeclaration -> NoMissingRecordFieldLens.FieldLensDeclaration"
+            },
+            {
+                "name": "zipper",
+                "comment": " [`FieldLensGenerator`](#FieldLensGenerator) for [z5h's zipper](https://package.elm-lang.org/packages/z5h/zipper/latest/) in the form\n\n    import Zipper exposing (Zipper, into)\n\n    intoScore : Zipper { record | score : score } root -> Zipper score root\n    intoScore =\n        into .score (\\replacement record -> { record | score = replacement })\n\n",
+                "type": "NoMissingRecordFieldLens.FieldLensGenerator"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "VariantLens.GenerateUsed",
+        "comment": " Generate lenses for variant values\n\n@docs rule\n\n\n## build\n\n@docs VariantLensBuild\n@docs accessors, accessorsBChiquet\n@docs documented, annotated, importsAdd\n@docs variantAmongMultiple, variantOnly\n@docs ValuesRepresent, tupleNest, valuesRecord\n@docs variantPattern\n\n\n## name\n\n@docs VariantLensNameConfig, prismNameVariant, prismNameOnVariant\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "ValuesRepresent",
+                "comment": " Representation of values as one whole, for example\n\n  - [`valuesRecord`](#valuesRecord): `{ value0 = ..., value1 = ..., value2 = ... }`\n  - [`tupleNest`](#tupleNest): `( ..., ( ..., ... ) )`\n  - [`Toop.T3 ... ... ...`](https://dark.elm.dmy.fr/packages/bburdette/toop/latest/)\n  - ...\n\n",
+                "args": [],
+                "type": "{ name : String.String, values : List.List Elm.CodeGen.TypeAnnotation } -> { typeInOne : Elm.CodeGen.TypeAnnotation, inOne : String.String -> Elm.CodeGen.Expression, patternInOne : String.String -> Elm.CodeGen.Pattern, alter : Elm.CodeGen.Expression }"
+            },
+            {
+                "name": "VariantLensBuild",
+                "comment": " [Configure](#Config)\nhow to generate a variant lens declaration\nplus the necessary `import`s.\n\nOut of the box, there are\n\n  - [`accessors`](#accessors)\n  - [`accessorsBChiquet`](#accessorsBChiquet)\n\nCustomize with\n\n  - [`documented`](#documented)\n  - [`annotated`](#annotated)\n  - [`importsAdd`](#importsAdd)\n\nCreate a custom lens generator (parts) with\n\n  - [`the-sett/elm-syntax-dsl`](https://package.elm-lang.org/packages/the-sett/elm-syntax-dsl/latest)\n  - [`variantAmongMultiple`](#variantAmongMultiple), [`variantOnly`](#variantOnly)\n  - [`tupleNest`](#tupleNest) , [`valuesRecord`](#valuesRecord)\n  - [`variantPattern`](#variantPattern)\n\nYou can use the source code of [`accessors`](#accessors) & co. as a starting point.\n\n",
+                "args": [],
+                "type": "{ variantModule : String.String, typeName : String.String, typeParameters : List.List String.String, variantName : String.String, variantValues : List.List Elm.CodeGen.TypeAnnotation, otherVariants : Dict.Dict String.String { valueCount : Basics.Int } } -> { imports : List.List Elm.CodeGen.Import, documentation : Maybe.Maybe (Elm.CodeGen.Comment Elm.CodeGen.DocComment), annotation : Maybe.Maybe Elm.CodeGen.TypeAnnotation, implementation : Elm.CodeGen.Expression }"
+            },
+            {
+                "name": "VariantLensNameConfig",
+                "comment": " How to derive lens name <=> variant name.\n\nOut of the box, there are\n\n  - [`prismNameOnVariant`](prismNameOnVariant)\n  - [`prismNameVariant`](#prismNameVariant)\n\nYou can also create a custom [`VariantLensNameConfig`](#VariantLensNameConfig):\n\n    import Parser\n\n    { build = \\{ variantName } -> variantName ++ \"Variant\"\n    , parser =\n        Parser.map (\\variantName -> { variantName = variantName })\n            (Parser.loop \"\"\n                (\\beforeSuffixFoFar ->\n                    Parser.oneOf\n                        [ Parser.token \"Variant\"\n                            |. Parser.end\n                            |> Parser.map (\\() -> Parser.Done beforeSuffixFoFar)\n                        , Parser.chompIf (\\_ -> True)\n                            |> Parser.getChompedString\n                            |> Parser.map\n                                (\\stillNotSuffix ->\n                                    Parser.Loop (beforeSuffixFoFar ++ stillNotSuffix)\n                                )\n                        ]\n                )\n            )\n    }\n\nIt's not half as daunting as it looks. If you feel motivated 👀 ↓\n\n  - a [video guide \"Demystifying Parsers\" by Tereza Sokol](https://m.youtube.com/watch?v=M9ulswr1z0E)\n  - an [\"Introduction to the elm/parser package\" by Alex Korban](https://korban.net/posts/elm/2018-09-07-introduction-elm-parser/)\n  - [the `elm/parser` package](https://dark.elm.dmy.fr/packages/elm/parser/latest/)\n\nMini tip: testing is always a good idea for `Parser`s\n\nDon't worry about the case of the results.\nThey will be automatically be corrected when passed to [`rule`](#rule).\n\n",
+                "args": [],
+                "type": "RecordWithoutConstructorFunction.RecordWithoutConstructorFunction { parser : Parser.Parser { variantName : String.String }, build : { variantName : String.String } -> String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "accessors",
+                "comment": " [`VariantLensBuild`](#VariantLensBuild)\nof named [`erlandsona/elm-accessors`](https://dark.elm.dmy.fr/packages/erlandsona/elm-accessors/latest/)\nwhich with\n\n    { build =\n        VariantLens.GenerateUsed.accessors\n            { valuesRepresent = VariantLens.GenerateUsed.tupleNest }\n    , name = VariantLens.GenerateUsed.prismNameVariant\n    , generationModuleIsVariantModuleDotSuffix = \"On\"\n    }\n\nand\n\n    module Data exposing (Data(..))\n\n    type Data a b c d\n        = Some a b c d\n        | None\n\ngenerates\n\n    module Data.On exposing (some)\n\n    import Accessors exposing (makeOneToN_)\n    import Data exposing (Data(..))\n\n    {-| Accessor lens for the variant `Data.Some` of the `type Data`.\n    -}\n    some :\n        Relation ( a, ( b, ( c, d ) ) ) reachable wrap\n        -> Relation (Data a b c d) reachable (Maybe wrap)\n    some =\n        makeOneToN_\n            \"Data.Some\"\n            (\\valuesAlter variantType ->\n                case variantType of\n                    Some value0 value1 value2 value3 ->\n                        ( value0, ( value1, ( value2, value3 ) ) ) |> valuesAlter |> Just\n\n                    _ ->\n                        Nothing\n            )\n            (\\valuesAlter variantType ->\n                case variantType of\n                    Some value0 value1 value2 value3 ->\n                        let\n                            ( alteredValue0, ( alteredValue1, ( alteredValue2, alteredValue3 ) ) ) =\n                                ( value0, ( value1, ( value2, value3 ) ) ) |> valuesAlter\n                        in\n                        Some alteredValue0 alteredValue1 alteredValue2 alteredValue3\n\n                    other ->\n                        other\n            )\n\n",
+                "type": "{ valuesRepresent : VariantLens.GenerateUsed.ValuesRepresent } -> VariantLens.GenerateUsed.VariantLensBuild"
+            },
+            {
+                "name": "accessorsBChiquet",
+                "comment": " [`VariantLensBuild`](#VariantLensBuild)\nof unnamed [bChiquet/elm-accessors](https://dark.elm.dmy.fr/packages/bChiquet/elm-accessors/latest/)\nwhich with\n\n    { build =\n        VariantLens.GenerateUsed.accessorsBChiquet\n            { valuesRepresent = VariantLens.GenerateUsed.tupleNest }\n    , name = VariantLens.GenerateUsed.prismNameVariant\n    , generationModuleIsVariantModuleDotSuffix = \"On\"\n    }\n\nand\n\n    module Data exposing (Data(..))\n\n    type Data a b c d\n        = Some a b c d\n        | None\n\ngenerates\n\n    module Data.On exposing (some)\n\n    import Accessors exposing (Lens, Relation, makeOneToN_)\n    import Data exposing (Data(..))\n\n    {-| Accessor lens for the variant `Data.Some` of the `type Data`.\n    -}\n    some :\n        Relation ( a, ( b, ( c, d ) ) ) reachable wrap\n        -> Relation (Data a b c d) reachable (Maybe wrap)\n    some =\n        makeOneToN\n            (\\valuesAlter variantType ->\n                case variantType of\n                    Some value0 value1 value2 value3 ->\n                        ( value0, ( value1, ( value2, value3 ) ) ) |> valuesAlter |> Just\n\n                    _ ->\n                        Nothing\n            )\n            (\\valuesAlter variantType ->\n                case variantType of\n                    Some value0 value1 value2 value3 ->\n                        let\n                            ( alteredValue0, ( alteredValue1, ( alteredValue2, alteredValue3 ) ) ) =\n                                ( value0, ( value1, ( value2, value3 ) ) ) |> valuesAlter\n                        in\n                        Some alteredValue0 alteredValue1 alteredValue2 alteredValue3\n\n                    other ->\n                        other\n            )\n\n",
+                "type": "{ valuesRepresent : VariantLens.GenerateUsed.ValuesRepresent } -> VariantLens.GenerateUsed.VariantLensBuild"
+            },
+            {
+                "name": "annotated",
+                "comment": " [Build](#VariantLensBuild) a different type annotation:\n\n    import Hand exposing (Hand(..))\n    import Stack\n\n    accessorsAnnotatedLens : VariantLensBuild\n    accessorsAnnotatedLens info =\n        accessors\n            { valuesRepresent = valuesRecord }\n            info\n            |> annotated\n                (typed \"Option\"\n                    [ CodeGen.typed info.typeName\n                        (info.typeParameters |> List.map CodeGen.typeVar)\n                    , case variantValues |> Stack.fromList of\n                        Empty _ ->\n                            CodeGen.unitAnn\n\n                        Filled stacked ->\n                            Filled stacked\n                                |> Stack.reverse\n                                |> Stack.fold (\\value soFar -> CodeGen.tupleAnn [ value, soFar ])\n                    , CodeGen.typeVar \"reachable\"\n                    , CodeGen.typeVar \"wrap\"\n                    ]\n                )\n            |> importsAdd\n                [ impostStmt [ \"Accessors\" ]\n                    Nothing\n                    ([ \"Option\" |> typeOrAliasExpose ] |> exposingExplicit |> Just)\n                ]\n\nMake sure to [`importsAdd`](#importsAdd).\n\n",
+                "type": "Elm.CodeGen.TypeAnnotation -> { declaration | annotation : Maybe.Maybe Elm.CodeGen.TypeAnnotation } -> { declaration | annotation : Maybe.Maybe Elm.CodeGen.TypeAnnotation }"
+            },
+            {
+                "name": "documented",
+                "comment": " [Build](#VariantLensBuild) a different documentation:\n\n    accessorsDocumentedCustom info =\n        accessors\n            { valuesRepresent = valuesRecord }\n            info\n            |> documented\n                (emptyDocComment\n                    |> markdown\n                        (\"variant `\" ++ info.variantName ++ \"`: Accessor lens for the values.\")\n                )\n\n",
+                "type": "Elm.CodeGen.Comment Elm.CodeGen.DocComment -> { declaration | documentation : Maybe.Maybe (Elm.CodeGen.Comment Elm.CodeGen.DocComment) } -> { declaration | documentation : Maybe.Maybe (Elm.CodeGen.Comment Elm.CodeGen.DocComment) }"
+            },
+            {
+                "name": "importsAdd",
+                "comment": " Supply additional `import`s required for generating the declaration.\n\n    accessorsAnnotatedLens : VariantLensBuild\n    accessorsAnnotatedLens info =\n        accessors info\n            |> annotated (typed \"Option\" [ ... ])\n            |> importsAdd\n                [ impostStmt [ \"Accessors\" ]\n                    Nothing\n                    ([ \"Option\" |> typeOrAliasExpose ] |> exposingExplicit |> Just)\n                ]\n\n",
+                "type": "List.List Elm.CodeGen.Import -> { declaration | imports : List.List Elm.CodeGen.Import } -> { declaration | imports : List.List Elm.CodeGen.Import }"
+            },
+            {
+                "name": "prismNameOnVariant",
+                "comment": " Handle lens names in the format `on<Variant>`.\nCheck out [`VariantLensNameConfig`](#VariantLensNameConfig) for all naming options.\n\n    import Parser\n    import VariantLens.GenerateUsed\n\n    \"onSuccess\"\n        |> Parser.run VariantLens.GenerateUsed.prismNameOnVariant.parser\n    --> { variantName = \"Success\" }\n\n    { variantName = \"Success\" }\n        |> VariantLens.GenerateUsed.prismOnVariant.build\n    --> \"onSuccess\"\n\n",
+                "type": "VariantLens.GenerateUsed.VariantLensNameConfig"
+            },
+            {
+                "name": "prismNameVariant",
+                "comment": " Handle lens names in the format `on<Variant>`.\nCheck out [`VariantLensNameConfig`](#VariantLensNameConfig) for all naming options.\n\n    import Parser\n    import VariantLens.GenerateUsed\n\n    \"success\"\n        |> Parser.run VariantLens.GenerateUsed.prismNameOnVariant.parser\n    --> { variantName = \"Success\" }\n\n    { variantName = \"Success\" }\n        |> VariantLens.GenerateUsed.prismOnVariant.build\n    --> \"success\"\n\n",
+                "type": "VariantLens.GenerateUsed.VariantLensNameConfig"
+            },
+            {
+                "name": "rule",
+                "comment": " Generate prisms for variant `type`s\nthat are called from your code but aren't already defined in a dedicated `module`.\n\n    import Review.Rule as Rule exposing (Rule)\n    import VariantLens.GenerateUsed\n\n    config : List Rule\n    config =\n        [ VariantLens.GenerateUsed.rule ..config..\n        ]\n\n..config.. How to generate, where to generate:\n\n  - `build :`\n    a [`VariantLensBuild` function](#VariantLensBuild) like\n      - [`accessors`](#accessors)\n      - [`accessorsBChiquet`](#accessorsBChiquet)\n  - `name :`\n    a way to handle variant lens names like\n      - [`prismNameOnVariant`](#prismNameOnVariant)\n      - [`prismNameVariant`](#prismNameVariant)\n  - `generationModuleIsVariantModuleDotSuffix :`\n    a `.Suffix` to derive generation `module` names from variant `module` names\n\nThere's no configuration to automatically `import Variant.Module.Generation as Variant.Module`\nbecause [`import` aliases can't contain `.`](https://github.com/elm/compiler/issues/2260)\n\n\n### example `module Variant.Module.On exposing (some)`\n\n    { build =\n        VariantLens.GenerateUsed.accessors\n            { valuesRepresent = VariantLens.GenerateUsed.valuesRecord }\n    , name = VariantLens.GenerateUsed.prismNameVariant\n    , generationModuleIsVariantModuleDotSuffix = \"On\"\n    }\n\n\n### example: `module Variant.Module.X exposing (onSome)`\n\n    { build =\n        VariantLens.GenerateUsed.accessors\n            { valuesRepresent = VariantLens.GenerateUsed.valuesRecord }\n    , name = VariantLens.GenerateUsed.prismNameOnVariant\n    , generationModuleIsVariantModuleDotSuffix = \"X\"\n    }\n\n\n## use it\n\n... when you're using `elm-accessors` to mitigate\nboilerplate related to updating potentially deeply nested data.\n\n\n## don't use it\n\n... when you consider lenses the less readable/intuitive/simple/explicit alternative.\n\n",
+                "type": "{ name : VariantLens.GenerateUsed.VariantLensNameConfig, build : VariantLens.GenerateUsed.VariantLensBuild, generationModuleIsVariantModuleDotSuffix : String.String } -> Review.Rule.Rule"
+            },
+            {
+                "name": "tupleNest",
+                "comment": " Helpers for a given variant to use with a custom implementation or [`variantOnly`](#variantOnly)/[`variantAmongMultiple`](#variantAmongMultiple).\n\nfor\n\n    type Data a b c d\n        = Some a b c d\n        | None\n\n\n#### `typeInOne`\n\n    ( a, ( b, ( c, d ) ) )\n\n\n#### `inOne \"value\"`\n\n    ( value0, ( value1, ( value2, value3 ) ) )\n\n\n#### `patternInOne \"value\"`\n\n    ( value0, ( value1, ( value2, value3 ) ) )\n\n\n#### `alter`\n\n    let\n        ( alteredValue0, ( alteredValue1, ( alteredValue2, alteredValue3 ) ) ) =\n            ( value0, ( value1, ( value2, value3 ) ) ) |> valuesAlter\n    in\n    Some alteredValue0 alteredValue1 alteredValue2 alteredValue3\n\n",
+                "type": "{ name : String.String, values : List.List Elm.CodeGen.TypeAnnotation } -> { typeInOne : Elm.CodeGen.TypeAnnotation, inOne : String.String -> Elm.CodeGen.Expression, patternInOne : String.String -> Elm.CodeGen.Pattern, alter : Elm.CodeGen.Expression }"
+            },
+            {
+                "name": "valuesRecord",
+                "comment": " Helpers for a given variant to use with a custom implementation or [`variantOnly`](#variantOnly)/[`variantAmongMultiple`](#variantAmongMultiple).\n\nfor\n\n    type Data a b c d\n        = Some a b c d\n        | None\n\n\n#### `access`\n\n    { value0 = value0, value1 = value1, value2 = value2, value3 = value3 }\n\n\n#### `alter`\n\n    let\n        altered =\n            { value0 = value0, value1 = value1, value2 = value2, value3 = value3 }\n                |> valuesAlter\n    in\n    Some altered.value0 altered.value1 altered.value2 altered.value3\n\n\n#### `typeValues`\n\n    { value0 = a, value1 = b, value2 = c, value3 = d }\n\n",
+                "type": "{ name : String.String, values : List.List Elm.CodeGen.TypeAnnotation } -> { typeInOne : Elm.CodeGen.TypeAnnotation, inOne : String.String -> Elm.CodeGen.Expression, patternInOne : String.String -> Elm.CodeGen.Pattern, alter : Elm.CodeGen.Expression }"
+            },
+            {
+                "name": "variantAmongMultiple",
+                "comment": " Helpers for values of a given variant among >= 2.\n\nfor\n\n    type Data a b c d\n        = Some a b c d\n        | None\n\nwith\n\n    variantAmongMultiple tupleNest\n\n\n#### `access`\n\n    \\valuesAlter variantType ->\n        case variantType of\n            Some value0 value1 value2 value3 ->\n                ( value0, ( value1, ( value2, value3 ) ) ) |> valuesAlter |> Just\n\n            _ ->\n                Nothing\n\n\n#### `alter`\n\n    \\valuesAlter variantType ->\n        case variantType of\n            Some value0 value1 value2 value3 ->\n                let\n                    ( alteredValue0, ( alteredValue1, ( alteredValue2, alteredValue3 ) ) ) =\n                        ( value0, ( value1, ( value2, value3 ) ) ) |> valuesAlter\n                in\n                Some alteredValue0 alteredValue1 alteredValue2 alteredValue3\n\n            other ->\n                other\n\n",
+                "type": "{ name : String.String, values : List.List Elm.CodeGen.TypeAnnotation, valuesRepresent : VariantLens.GenerateUsed.ValuesRepresent } -> { access : Elm.CodeGen.Expression, alter : Elm.CodeGen.Expression, typeValues : Elm.CodeGen.TypeAnnotation }"
+            },
+            {
+                "name": "variantOnly",
+                "comment": " Helpers for values of a given only variant.\n\nfor\n\n    type Id attachment\n        = Id (List Int) attachment\n\n\n#### `access`\n\n    \\(Id value0 value1) -> ( value0, value1 )\n\n\n#### `alter`\n\n    \\valuesAlter (Id value0 value1) ->\n        let\n            ( alteredValue0, alteredValue1 ) =\n                ( value0, value1 ) |> valuesAlter\n        in\n        Id alteredValue0 alteredValue1\n\n",
+                "type": "{ name : String.String, values : List.List Elm.CodeGen.TypeAnnotation, valuesRepresent : VariantLens.GenerateUsed.ValuesRepresent } -> { access : Elm.CodeGen.Expression, alter : Elm.CodeGen.Expression, typeValues : Elm.CodeGen.TypeAnnotation }"
+            },
+            {
+                "name": "variantPattern",
+                "comment": " Pattern on a given variant to use with a custom implementation.\n\nfor\n\n    type Data a b c d\n        = Some a b c d\n        | None\n\ngenerates\n\n    Some value0 value1 value2 value3\n\n",
+                "type": "{ name : String.String, values : List.List Elm.CodeGen.TypeAnnotation } -> Elm.CodeGen.Pattern"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,33 @@
+[
+    {
+        "name": "ImageDirectory",
+        "comment": " Elm project showing an image directory structure.\n\n@docs Entry, encode, decoder, view\n\n",
+        "unions": [
+            {
+                "name": "Entry",
+                "comment": " Represents the directory structure for an image directory.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decoder",
+                "comment": " Decodes an Json representation of an `Entry`\n",
+                "type": "Json.Decode.Decoder ImageDirectory.Entry"
+            },
+            {
+                "name": "encode",
+                "comment": " Encodes an Entry into a `Json.Encode.Value`\n",
+                "type": "ImageDirectory.Entry -> Json.Encode.Value"
+            },
+            {
+                "name": "view",
+                "comment": " Accepts a `onFileClick` function and returns a view for an Entry\n",
+                "type": "(String.String -> msg) -> ImageDirectory.Entry -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

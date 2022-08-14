@@ -1,0 +1,224 @@
+[
+    {
+        "name": "MicroKanren",
+        "comment": " Visualization of μKanren goals\n\n\n## Types\n\n@docs Message, StreamModel\n\n\n## Constructor\n\n@docs streamModelFromGoal\n\n\n## Elm Architecture\n\n@docs update, view\n\n",
+        "unions": [
+            {
+                "name": "Message",
+                "comment": " Message a StreamModel can react to ",
+                "args": [],
+                "cases": [
+                    [
+                        "TakeFromStream",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "StreamModel",
+                "comment": " Keep track of a Stream.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ name : String.String, seenStates : List.List (MicroKanren.Kernel.State a), stream : MicroKanren.Kernel.Stream a }"
+            }
+        ],
+        "values": [
+            {
+                "name": "streamModelFromGoal",
+                "comment": " Create a StreamModel from a Goal.\n",
+                "type": "String.String -> MicroKanren.Kernel.Goal a -> MicroKanren.StreamModel a"
+            },
+            {
+                "name": "update",
+                "comment": " Update the StreamModel according to the received Message ",
+                "type": "MicroKanren.Message -> MicroKanren.StreamModel a -> MicroKanren.StreamModel a"
+            },
+            {
+                "name": "view",
+                "comment": " Represent a StreamModel.\n\nThis needs a way to visualize the generic parameter. It is provided as funtion with signature (a -> String). ",
+                "type": "(a -> String.String) -> MicroKanren.StreamModel a -> Html.Html MicroKanren.Message"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "MicroKanren.Kernel",
+        "comment": " μKanren provides an implementation of the\n\n> minimalist language in the [miniKanren](http://minikanren.org/) family of\n> relational (logic) programming languages.\n\n\n## Types\n\n@docs Goal, State, Stream, Term, Var, Substitution\n\n\n## Goal Constuctors\n\n@docs callFresh, conjoin, disjoin, identical\n\n\n## Constructors\n\n@docs emptyState, unit\n\n## Accessors\n\n@docs walk\n\n",
+        "unions": [
+            {
+                "name": "Stream",
+                "comment": " A sequences of states is a _stream_.\n\nA goal's success may result in a sequence of (enlarged) states, which we term a\nstream. The result of a μKanren program is a stream of satisfying states. The\nstream may be finite or infinite, as there may be finite or infinitely many\nsatisfying states\n\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Empty",
+                        []
+                    ],
+                    [
+                        "Immature",
+                        [
+                            "() -> MicroKanren.Kernel.Stream a"
+                        ]
+                    ],
+                    [
+                        "Mature",
+                        [
+                            "MicroKanren.Kernel.State a",
+                            "MicroKanren.Kernel.Stream a"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Term",
+                "comment": " Terms of the language consist of variables, objects deemed identical under\neqv? , and pairs of the foregoing.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Variable",
+                        [
+                            "MicroKanren.Kernel.Var"
+                        ]
+                    ],
+                    [
+                        "Value",
+                        [
+                            "a"
+                        ]
+                    ],
+                    [
+                        "Pair",
+                        [
+                            "( MicroKanren.Kernel.Term a, MicroKanren.Kernel.Term a )"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Goal",
+                "comment": " a μKanren program proceeds through the application of a _goal_ to a state.\n\nGoals are often understood by analogy to predicates. Whereas the application of\na predicate to an element of its domain can be either true or false, a goal\npursued in a given state can either succeed or fail . When it succeeds it\nreturns a non-empty stream, otherwise it fails and returns an empty stream.\n\n",
+                "args": [
+                    "a"
+                ],
+                "type": "MicroKanren.Kernel.State a -> MicroKanren.Kernel.Stream a"
+            },
+            {
+                "name": "State",
+                "comment": " A state is a pair of a substitution (represented as an association list) and\na non-negative integer representing a fresh-variable counter.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ substitution : MicroKanren.Kernel.Substitution a, fresh : MicroKanren.Kernel.Var }"
+            },
+            {
+                "name": "Substitution",
+                "comment": " A _substitution_ binds variables to terms.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "Dict.Dict MicroKanren.Kernel.Var (MicroKanren.Kernel.Term a)"
+            },
+            {
+                "name": "Var",
+                "comment": " Variable indices are identified by integers.\n",
+                "args": [],
+                "type": "Basics.Int"
+            }
+        ],
+        "values": [
+            {
+                "name": "callFresh",
+                "comment": " The call/fresh goal constructor takes a unary function f whose body is a\ngoal, and itself returns a goal.\n\nThis returned goal, when provided a state s/c , binds the formal parameter of f\nto a new logic variable (built with the variable constructor operator var ), and\npasses a state, with the substitution it originally received and a newly\nincremented fresh-variable counter, c , to the goal that is the body of f.\n\n",
+                "type": "(MicroKanren.Kernel.Term a -> MicroKanren.Kernel.Goal a) -> MicroKanren.Kernel.Goal a"
+            },
+            {
+                "name": "conjoin",
+                "comment": " The conj goal constructor similarly takes two goals as arguments and returns\na goal that succeeds if both goals succeed for that state.\n",
+                "type": "MicroKanren.Kernel.Goal a -> MicroKanren.Kernel.Goal a -> MicroKanren.Kernel.Goal a"
+            },
+            {
+                "name": "disjoin",
+                "comment": " The disj goal constructor takes two goals as arguments and returns a goal\nthat succeeds if either of the two subgoals succeed.\n",
+                "type": "MicroKanren.Kernel.Goal a -> MicroKanren.Kernel.Goal a -> MicroKanren.Kernel.Goal a"
+            },
+            {
+                "name": "emptyState",
+                "comment": " The empty state is a common starting point for many μKanren programs.\n\nWhile in principle the user of the system may begin with any state, in practice\nthe user almost always begins with empty-state . empty-state is a user-level\nalias for a state virtually devoid of information: the substitution is empty,\nand the first variable will be indexed at 0.\n\n",
+                "type": "MicroKanren.Kernel.State a"
+            },
+            {
+                "name": "identical",
+                "comment": " ≡ takes two terms as arguments and returns a goal that succeeds\nif those two terms unify in the received state.\n",
+                "type": "MicroKanren.Kernel.Term a -> MicroKanren.Kernel.Term a -> MicroKanren.Kernel.Goal a"
+            },
+            {
+                "name": "unit",
+                "comment": " _unit_ lifts the state into a stream whose only element is that state.\n",
+                "type": "MicroKanren.Kernel.State a -> MicroKanren.Kernel.Stream a"
+            },
+            {
+                "name": "walk",
+                "comment": " The _walk_ operator searches for a variable's value in the\nsubstitution.\n",
+                "type": "MicroKanren.Kernel.Term a -> MicroKanren.Kernel.Substitution a -> MicroKanren.Kernel.Term a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "MicroKanren.UserLevel",
+        "comment": " Although, as demonstrated above, one can program in the core μKanren\nlanguage, a user may rightly desire a more sophisticated set of tools with which\nto program and through which to view the results. A sample set of such tools is\nprovided.\n\n\n## Helpers\n\n@docs conj, disj, pull, take, zzz\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "conj",
+                "comment": " Too, manually nesting calls to conj and disj can quickly grow tiresome. The\nmacros conj and disj introduced below provide the conjoin and disjoin of one or more\ngoals.\n",
+                "type": "List.List (() -> MicroKanren.Kernel.Goal a) -> MicroKanren.Kernel.Goal a"
+            },
+            {
+                "name": "disj",
+                "comment": " Too, manually nesting calls to conj and disj can quickly grow tiresome. The\nmacros conj and disj introduced below provide the conjoin and disjoin of one or more\ngoals.\n",
+                "type": "List.List (() -> MicroKanren.Kernel.Goal a) -> MicroKanren.Kernel.Goal a"
+            },
+            {
+                "name": "pull",
+                "comment": " Invoking an immature stream to return results needn't be performed manually.\n\nWith an operator like pull below, this could instead be done automatically.\n\n",
+                "type": "MicroKanren.Kernel.Stream a -> MicroKanren.Kernel.Stream a"
+            },
+            {
+                "name": "take",
+                "comment": " take pulls the first n or as many results as the stream contains, whichever is least.\n",
+                "type": "Basics.Int -> MicroKanren.Kernel.Stream a -> List.List (MicroKanren.Kernel.State a)"
+            },
+            {
+                "name": "zzz",
+                "comment": " Perform the inverse-η-delay.\n\nManually performing the inverse-η-delay can quickly become tedious. The user\ncan instead employ the below macro Zzz (pronounced \"snooze\") to relieve\nsome of the tedium.\n\nIn the paper this is a macro, which Elm does not have. So we delay the\nevaluation of the goal by hiding it behind an abstraction.\n\n",
+                "type": "(() -> MicroKanren.Kernel.Goal a) -> MicroKanren.Kernel.Goal a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "MicroKanren.Util",
+        "comment": " Various utilities such\n\n@docs nat\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "nat",
+                "comment": " A goal that binds a variable to the natural numbers.\n",
+                "type": "MicroKanren.Kernel.Term Basics.Int -> MicroKanren.Kernel.Goal Basics.Int"
+            }
+        ],
+        "binops": []
+    }
+]

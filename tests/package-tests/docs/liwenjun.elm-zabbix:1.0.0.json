@@ -1,0 +1,114 @@
+[
+    {
+        "name": "Zabbix",
+        "comment": " 一个通用的Zabbix-API调用接口，帮助实现扩展Zabbix客户端应用。\n\n\n# 数据结构\n\n@docs RpcData, RpcTaskData, Data\n@docs Param\n\n\n# 调用方法\n\n@docs call, callTask\n\n\n# 辅助函数\n\n@docs decoder, encode\n@docs flat, flatResponse, toResult, httpErrToString\n\n\n# Zabbix API\n\n@docs User, defaultUser\n@docs login, loginTask, version, versionTask\n\n",
+        "unions": [
+            {
+                "name": "Data",
+                "comment": " 便于处理的返回结果\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Param",
+                "comment": " 调用参数\n",
+                "args": [],
+                "type": "{ url : String.String, token : Maybe.Maybe String.String, method : String.String, params : List.List ( String.String, Json.Encode.Value ) }"
+            },
+            {
+                "name": "RpcData",
+                "comment": " 基于 http 的 JsonRpc 响应结果\n",
+                "args": [
+                    "a"
+                ],
+                "type": "Zabbix.WebData (Zabbix.Response a)"
+            },
+            {
+                "name": "RpcTaskData",
+                "comment": " Http Task 调用 JsonRpc 响应结果\n",
+                "args": [
+                    "a"
+                ],
+                "type": "Zabbix.TaskData (Zabbix.Response a)"
+            },
+            {
+                "name": "User",
+                "comment": " 用户定义\n",
+                "args": [],
+                "type": "{ username : String.String, password : String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "call",
+                "comment": " zabbix 调用方法\n",
+                "type": "Zabbix.Param -> Json.Decode.Decoder a -> (Zabbix.RpcData a -> msg) -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "callTask",
+                "comment": " zabbix Task 调用方法\n",
+                "type": "Zabbix.Param -> Json.Decode.Decoder a -> Zabbix.TaskData (Zabbix.Response a)"
+            },
+            {
+                "name": "decoder",
+                "comment": " 用户数据解码器，用于flag加载数据\n",
+                "type": "Json.Decode.Decoder Zabbix.User"
+            },
+            {
+                "name": "defaultUser",
+                "comment": " 用户的缺省值\n",
+                "type": "Zabbix.User"
+            },
+            {
+                "name": "encode",
+                "comment": " 用户数据编码器，用于port保存数据\n",
+                "type": "Zabbix.User -> Json.Encode.Value"
+            },
+            {
+                "name": "flat",
+                "comment": " 将rpc调用的返回结果平面化处理\n",
+                "type": "Zabbix.RpcData a -> Zabbix.Data a"
+            },
+            {
+                "name": "flatResponse",
+                "comment": " 返回结果平面化处理\n",
+                "type": "Zabbix.Response a -> Zabbix.Data a"
+            },
+            {
+                "name": "httpErrToString",
+                "comment": " Http.Error转换为String\n",
+                "type": "Http.Error -> String.String"
+            },
+            {
+                "name": "login",
+                "comment": " 登录\n",
+                "type": "{ conf : { conf | url : String.String }, user : { user | username : String.String, password : String.String }, toMsg : Zabbix.RpcData String.String -> msg } -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "loginTask",
+                "comment": " 登录 Task调用方法\n",
+                "type": "{ conf : { conf | url : String.String }, user : { user | username : String.String, password : String.String } } -> Zabbix.RpcTaskData String.String"
+            },
+            {
+                "name": "toResult",
+                "comment": " 将平面化处理结果转换为Result\n",
+                "type": "Zabbix.Data a -> Result.Result String.String a"
+            },
+            {
+                "name": "version",
+                "comment": " ZabbixApi 版本\n",
+                "type": "{ conf : { conf | url : String.String }, toMsg : Zabbix.RpcData String.String -> msg } -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "versionTask",
+                "comment": " ZabbixApi 版本 Task调用方法\n",
+                "type": "{ conf : { conf | url : String.String } } -> Zabbix.RpcTaskData String.String"
+            }
+        ],
+        "binops": []
+    }
+]

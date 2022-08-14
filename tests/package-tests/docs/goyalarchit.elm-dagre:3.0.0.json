@@ -1,0 +1,395 @@
+[
+    {
+        "name": "Dagre",
+        "comment": " This module is the core module that implements the sugiyama style graph\ndrawing based on popular js library [dagrejs](https://github.com/dagrejs/dagre).\n\nThis module assumes graphs are defined using elm-community/graph module.\n\n\n# Return Types\n\n@docs GraphLayout\n\n\n# API\n\n@docs runLayout\n\n\n# default configurations\n\n@docs defaultConfig\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "GraphLayout",
+                "comment": " This type represents the record returned by the runLayout function.\n\n1.  The width and height fields represent the width and height of graph.\n2.  The coordDict contains the dictionary that maps node-ids to the coordinates\n    on cartesian plane.\n3.  The controlPtsDict contains a dictionary that maps edges to its control/bend points\n    (list of node-ids)\n\n",
+                "args": [],
+                "type": "{ width : Basics.Float, height : Basics.Float, coordDict : Dict.Dict Graph.NodeId Dagre.Utils.Coordinates, controlPtsDict : Dict.Dict Dagre.Utils.Edge (List.List Graph.NodeId) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultConfig",
+                "comment": " This represents the default configuration of runLayout function.\nFor more details about configuring a layout please see Dagre.Attributes\n",
+                "type": "Dagre.Attributes.Config"
+            },
+            {
+                "name": "runLayout",
+                "comment": " This is the main function that computes the layout for a graph using sugiyama\nstyle graph drawing.\n\nThis function takes a list of Dagre Attributes and a graph and outputs the layout.\n\n    -- simpleGraph = Graph from Readme (or any graph)\n    runLayout [] simpleGraph\n\nAll the computed coordinates lie between (0,0) and (width,height).\nIn simple terms, you can set `viewBox 0 0 width height` in the svg.\n\n",
+                "type": "List.List Dagre.Attributes.Attribute -> Graph.Graph n e -> Dagre.GraphLayout"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Dagre.Attributes",
+        "comment": " Dagre Configuration Attributes\n\n\n# Types\n\n@docs RankDir, Config, Attribute\n\n\n# Attributes\n\nThese function set the respective attributes for the algorithm\n\n**Note** :\n\n1.  All numeric attributes can not have values < 0. If a value `v` < 0\n    then absolute value of `v` is used.\n2.  All numeric values are defined in pixels.\n\n@docs rankDir, widthDict, heightDict, width, height, nodeSep, edgeSep, rankSep, marginX, marginY\n\n",
+        "unions": [
+            {
+                "name": "RankDir",
+                "comment": " This type represents the rank directions.\nT,L,B,R represent Top, Left, Bottom, Right respectively.\nTB represent Top to Bottom direction. Similar notation is\nused for other directions.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "TB",
+                        []
+                    ],
+                    [
+                        "BT",
+                        []
+                    ],
+                    [
+                        "LR",
+                        []
+                    ],
+                    [
+                        "RL",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Attribute",
+                "comment": " Attribute type for Dagre\n",
+                "args": [],
+                "type": "Dagre.Attributes.Config -> Dagre.Attributes.Config"
+            },
+            {
+                "name": "Config",
+                "comment": " This type represents the config for the dagre layout algorithm\n\n**Note** : For complete info on default values and description of each field, please\nsee associated attributes.\n\n",
+                "args": [],
+                "type": "{ rankDir : Dagre.Attributes.RankDir, widthDict : Dict.Dict Graph.NodeId Basics.Float, heightDict : Dict.Dict Graph.NodeId Basics.Float, width : Basics.Float, height : Basics.Float, nodeSep : Basics.Float, edgeSep : Basics.Float, rankSep : Basics.Float, marginX : Basics.Float, marginY : Basics.Float }"
+            }
+        ],
+        "values": [
+            {
+                "name": "edgeSep",
+                "comment": " Defines the number of pixels that separate edges horizontally in the layout.\n\nThe default value is 10 pixel.\n\n",
+                "type": "Basics.Float -> Dagre.Attributes.Attribute"
+            },
+            {
+                "name": "height",
+                "comment": " Defines the default height that will be used during the layout.\nThis value will be used when no value is available in heightDict for some node.\n\nThe default value of height is 32 pixels.\n\n",
+                "type": "Basics.Float -> Dagre.Attributes.Attribute"
+            },
+            {
+                "name": "heightDict",
+                "comment": " The heightDict associates nodes with a height that will be used during the layout.\n\n    -- For example you want nodes 1,2,3 with heights 30,50,40 respectively then\n    -- you can pass the following\n    let\n        heights =\n            Dict.fromList [ ( 1, 30 ), ( 2, 50 ), ( 3, 40 ) ]\n    in\n    runLayout [ heightDict heights ] simplegraph\n\nThe dafualt value is Dict.empty\n\n",
+                "type": "Dict.Dict Graph.NodeId Basics.Float -> Dagre.Attributes.Attribute"
+            },
+            {
+                "name": "marginX",
+                "comment": " Defines the number of pixels to use as a margin around the left and right\nof the graph.\n\nThe default value is 20 pixels.\n\n",
+                "type": "Basics.Float -> Dagre.Attributes.Attribute"
+            },
+            {
+                "name": "marginY",
+                "comment": " Defines the number of pixels to use as a margin around the top and bottom\nof the graph.\n\nThe default value is 20 pixel.\n\n",
+                "type": "Basics.Float -> Dagre.Attributes.Attribute"
+            },
+            {
+                "name": "nodeSep",
+                "comment": " Defines the number of pixels that separate nodes in same rank in the layout.\n\nThe default value is 50 pixel.\n\n",
+                "type": "Basics.Float -> Dagre.Attributes.Attribute"
+            },
+            {
+                "name": "rankDir",
+                "comment": " The rankDir defines the direction for rank nodes.\n\nThe possible values can be TB, BT, LR, or RL.\n\nThe default value is TB\n\n",
+                "type": "Dagre.Attributes.RankDir -> Dagre.Attributes.Attribute"
+            },
+            {
+                "name": "rankSep",
+                "comment": " Defines number of pixels between each rank in the layout.\n\nThe default value is 75 pixel.\n\n",
+                "type": "Basics.Float -> Dagre.Attributes.Attribute"
+            },
+            {
+                "name": "width",
+                "comment": " Defines the default width that will be used during the layout.\nThis value will be used when no value is available in widthDict for some node.\n\nThe default value of width is 32 pixels.\n\n",
+                "type": "Basics.Float -> Dagre.Attributes.Attribute"
+            },
+            {
+                "name": "widthDict",
+                "comment": " The widthDict associates nodes with a width that will be used during the layout.\n\n    -- For example you want nodes 1,2,3 with widths 50,60,70 respectively then\n    -- you can pass the following\n    let\n        widths =\n            Dict.fromList [ ( 1, 50 ), ( 2, 60 ), ( 3, 70 ) ]\n    in\n    runLayout [ widthDict widths ] simplegraph\n\nThe dafualt value is Dict.empty\n\n",
+                "type": "Dict.Dict Graph.NodeId Basics.Float -> Dagre.Attributes.Attribute"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Render",
+        "comment": " This module provides a minimalistic general graph renderer for some use cases.\nThere are many possible ways of using the this package\n\n1.  You can directly use existing drawers as a plug and play solution.\n2.  You can modify the existing drawers using Dagre.Rander.Attributes for\n    changing some aesthetics.\n3.  If you want more control you can write your own drawers and use it with\n    draw function. For more details please view the source code for Render and Render.StandardDrawers\n\n**Note** : This module uses elm-community/typed-svg, so don't confuse Svg as elm/svg.\n\n\n# API\n\n@docs draw\n\n\n# Drawers\n\nThis type represents a function that translates NodeAttributes / EdgeAttributes\nto Svg.\nIf the standard drawers are not fulfilling your usecase,\nyou can use these types to define custom drawers. For more details you can look\nat Render.Types .\n\n\n# Configuration Attributes\n\n@docs edgeDrawer, nodeDrawer, id, style\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "draw",
+                "comment": " This function is draws a graph as a SVG using the Elm-Dagre module.\nThe first argument takes a list of Dagre attributes, and the second\nargument sets the drawers and styles. The StandardDrawers are used as the\ndefault drawers.\n\n    -- The simplest usage is\n    draw [] [] sampleGraph\n\nYou can configure the standard drawers. Please see Render.StandardDrawers for\nmore information.\n\nYou can also use a custom drawer by setting draw function attributes. See the\nnext subsection for more information.\n\n-- Example of custom Drawer\n\n",
+                "type": "List.List Dagre.Attributes.Attribute -> List.List (Render.StandardDrawers.Attributes.Attribute (Render.DrawConfig n e msg)) -> Graph.Graph n e -> Html.Html msg"
+            },
+            {
+                "name": "edgeDrawer",
+                "comment": " This attribute sets the edge drawer for draw function\nUpdate the standard drawer configs using this attribute\n",
+                "type": "Render.Types.EdgeDrawer e msg -> Render.StandardDrawers.Attributes.Attribute (Render.DrawConfig n e msg)"
+            },
+            {
+                "name": "id",
+                "comment": " Set id attribute for the svg graph\n",
+                "type": "String.String -> Render.StandardDrawers.Attributes.Attribute (Render.DrawConfig n e msg)"
+            },
+            {
+                "name": "nodeDrawer",
+                "comment": " This attribute sets the node drawer for draw function\nUpdate the drawer config using this attribute\n",
+                "type": "Render.Types.NodeDrawer n msg -> Render.StandardDrawers.Attributes.Attribute (Render.DrawConfig n e msg)"
+            },
+            {
+                "name": "style",
+                "comment": " To set inline css style for the generated graph SVG\n",
+                "type": "String.String -> Render.StandardDrawers.Attributes.Attribute (Render.DrawConfig n e msg)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Render.StandardDrawers",
+        "comment": " This module provides the standard Drawers for drawing a graph. These are\ndefault drawers for the draw function.\n\n\n# Standard Drawers\n\n@docs svgDrawEdge, svgDrawNode, svgDrawXLabel\n\n\n## Standard Configurations\n\n_Note_: All Values are in [px](https://package.elm-lang.org/packages/elm-community/typed-svg/latest/TypedSvg-Types#px)\n\n\n### Edge Drawer\n\n1.  arrowHead = None\n2.  fontSize = 16\n3.  strokeColor = Color.darkGrey\n4.  strokeWidth = 3px\n5.  title = Edge.from → Edge.to\n6.  linkStyle = Spline\n7.  alpha = 0.5\n8.  orientLabelAlongEdge = False\n\n_Note: All missing attributes don't have any preset values_\n\n\n### NodeDrawer\n\n1.  label = Node.id\n2.  shape = Ellipse\n3.  fontSize = 16\n4.  strokeColor = Color.blue\n5.  strokeWidth = 1px\n6.  fill = #b2ebf2\n7.  title = Node.id\n8.  xLabels = []\n\n_Note: All missing attributes don't have any preset values_\n\n\n### xLabelDrawer\n\n1.  pos = \\_ w h -> ( (w / 2) + 1, (-h / 2) - 1 )\n2.  shape = NoShape\n3.  fontSize = 8\n4.  strokeColor = \\_ -> Color.blue\n5.  strokeWidth = \\_ -> 1\n6.  fill = \\_ -> Color.white\n\n_Note:_\n\n1.  _All missing attributes don't have any preset values._\n2.  _No shape is drawn for xLabel by default, hence no other attributes like stroke, fill are rendered._\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "svgDrawEdge",
+                "comment": " Standard Edge Drawer. It can be configured using Rander.StandardDrawers.Attributes\n",
+                "type": "List.List (Render.StandardDrawers.Attributes.Attribute (Render.StandardDrawers.ConfigTypes.EdgeDrawerConfig e msg)) -> Render.Types.EdgeAttributes e -> TypedSvg.Core.Svg msg"
+            },
+            {
+                "name": "svgDrawNode",
+                "comment": " Standard Node Drawer. It can be configured using Rander.StandardDrawers.Attributes\n",
+                "type": "List.List (Render.StandardDrawers.Attributes.Attribute (Render.StandardDrawers.ConfigTypes.NodeDrawerConfig n msg)) -> Render.Types.NodeAttributes n -> TypedSvg.Core.Svg msg"
+            },
+            {
+                "name": "svgDrawXLabel",
+                "comment": " Standard xLabel Drawer for NodeDrawer's xLabel attribute.\nIt can be configured using Rander.StandardDrawers.Attributes\n",
+                "type": "List.List (Render.StandardDrawers.Attributes.Attribute (Render.StandardDrawers.ConfigTypes.XLabelDrawerConfig n)) -> Render.Types.NodeAttributes n -> TypedSvg.Core.Svg msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Render.StandardDrawers.Attributes",
+        "comment": " This module provides attributes for configuring draw, svgNodeDrawer\nand svgEdgeDrawer given in Dagre.Render.\n\n**Note** : This module uses elm-community/typed-svg, so don't confuse Svg\nas elm/svg.\n\n\n# Type\n\n@docs Attribute\n\n\n# Attributes Table\n\nPlease see the following table that maps which attributes are allowed for which drawers.\n\n    | S.No. | Attribute Name       | Node's XLabel  | Node  | Edge  |\n    |-------|----------------------|----------------|-------|-------|\n    | 1     | label                | ✅             | ✅    | ✅    |\n    | 2     | fontSize             | ✅             | ✅    | ✅    |\n    | 3     | strokeColor          | ✅             | ✅    | ✅    |\n    | 4     | strokeWidth          | ✅             | ✅    | ✅    |\n    | 5     | strokeDashArray      | ✅             | ✅    | ✅    |\n    | 6     | title                | ✅             | ✅    | ✅    |\n    | 7     | onClick              | ❌             | ✅    | ✅    |\n    | 8     | style                | ❌             | ✅    | ✅    |\n    | 9     | fill                 | ✅             | ✅    | ❌    |\n    | 10    | shape                | ✅             | ✅    | ❌    |\n    | 11    | xLabels              | ✅             | ✅    | ❌    |\n    | 12    | arrowHead            | ❌             | ❌    | ✅    |\n    | 13    | linkStyle            | ❌             | ❌    | ✅    |\n    | 14    | alpha                | ❌             | ❌    | ✅    |\n    | 15    | orientLabelAlongEdge | ❌             | ❌    | ✅    |\n    | 16    | pos                  | ✅             | ❌    | ❌    |\n\n\n# Common Attributes\n\nThe following attributes can be used on Node, Node's xLabels and Edge Drawers.\n\n@docs label, onClick, fontSize, strokeColor, strokeWidth, strokeDashArray, style, title\n\n\n# EdgeDrawer Attributes\n\n@docs arrowHead, linkStyle, alpha, orientLabelAlongEdge\n\n\n# NodeDrawer Attributes\n\n@docs fill, shape, xLabels\n\n\n## xLabelDrawer Attributes\n\n@docs pos\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Attribute",
+                "comment": " Attribute type for Standard Drawers\n",
+                "args": [
+                    "c"
+                ],
+                "type": "c -> c"
+            }
+        ],
+        "values": [
+            {
+                "name": "alpha",
+                "comment": " Set alpha used for drawing the spline using\n[Catmull-Rom](https://package.elm-lang.org/packages/folkertdev/one-true-path-experiment/latest/Curve#catmullRom)\n\n_Note_: alpha>=0.5 produces centripetal splines ,\nwhich are useful to avoid self-intersections and overshoots.\n[ref](https://w10schools.com/posts/225467_catmullRom%252Ealpha%28%29)\n\n",
+                "type": "Basics.Float -> Render.StandardDrawers.Attributes.Attribute (Render.StandardDrawers.ConfigTypes.EdgeDrawerConfig e msg)"
+            },
+            {
+                "name": "arrowHead",
+                "comment": " This attributes sets the type of arrow head used for drawing the edge.\nThe possible values are None, Triangle, Vee.\n",
+                "type": "Render.StandardDrawers.Types.ArrowHeadShape -> Render.StandardDrawers.Attributes.Attribute (Render.StandardDrawers.ConfigTypes.EdgeDrawerConfig e msg)"
+            },
+            {
+                "name": "fill",
+                "comment": " To add fill colour to Node and xLabel of node\n",
+                "type": "(a -> Color.Color) -> Render.StandardDrawers.Attributes.Attribute { c | fill : a -> Color.Color }"
+            },
+            {
+                "name": "fontSize",
+                "comment": " To set the font Size for label of a node/edge/xlabel\n",
+                "type": "Basics.Float -> Render.StandardDrawers.Attributes.Attribute { c | fontSize : Basics.Float }"
+            },
+            {
+                "name": "label",
+                "comment": " The following attribute can be used to set label on node/edge/xlabel.\n",
+                "type": "(a -> String.String) -> Render.StandardDrawers.Attributes.Attribute { c | label : a -> String.String }"
+            },
+            {
+                "name": "linkStyle",
+                "comment": " Set the style used for drawing links. The possible values are\npolyline and splines\n",
+                "type": "Render.StandardDrawers.Types.LinkStyle -> Render.StandardDrawers.Attributes.Attribute (Render.StandardDrawers.ConfigTypes.EdgeDrawerConfig e msg)"
+            },
+            {
+                "name": "onClick",
+                "comment": " To add event handlers to Nodes and Edges\n",
+                "type": "(a -> msg) -> Render.StandardDrawers.Attributes.Attribute { c | onClick : Maybe.Maybe (a -> msg) }"
+            },
+            {
+                "name": "orientLabelAlongEdge",
+                "comment": " To set the label orientation along the curvature of edge\n",
+                "type": "Basics.Bool -> Render.StandardDrawers.Attributes.Attribute (Render.StandardDrawers.ConfigTypes.EdgeDrawerConfig e msg)"
+            },
+            {
+                "name": "pos",
+                "comment": " Used to set the position of Extra Label relative to the node.\n",
+                "type": "(Graph.Node n -> Basics.Float -> Basics.Float -> ( Basics.Float, Basics.Float )) -> Render.StandardDrawers.Attributes.Attribute (Render.StandardDrawers.ConfigTypes.XLabelDrawerConfig n)"
+            },
+            {
+                "name": "shape",
+                "comment": " This attributes sets the shape of Node used for drawing the node.\nThe possible values are Circle, Ellipse, Box, RoundedBox.\n",
+                "type": "(Graph.Node n -> Render.StandardDrawers.Types.Shape) -> Render.StandardDrawers.Attributes.Attribute { c | shape : Graph.Node n -> Render.StandardDrawers.Types.Shape }"
+            },
+            {
+                "name": "strokeColor",
+                "comment": " To set the stroke color of a node/edge/xlabel\n",
+                "type": "(a -> Color.Color) -> Render.StandardDrawers.Attributes.Attribute { c | strokeColor : a -> Color.Color }"
+            },
+            {
+                "name": "strokeDashArray",
+                "comment": " To set the stroke dash array of a node/edge/xlabel\n",
+                "type": "(a -> String.String) -> Render.StandardDrawers.Attributes.Attribute { c | strokeDashArray : a -> String.String }"
+            },
+            {
+                "name": "strokeWidth",
+                "comment": " To set the stroke width of a node/edge/xlabel\n",
+                "type": "(a -> Basics.Float) -> Render.StandardDrawers.Attributes.Attribute { c | strokeWidth : a -> Basics.Float }"
+            },
+            {
+                "name": "style",
+                "comment": " To add any inline css to path element of the edge, or polygon of node.\n",
+                "type": "(a -> String.String) -> Render.StandardDrawers.Attributes.Attribute { c | style : a -> String.String }"
+            },
+            {
+                "name": "title",
+                "comment": " To set the title (appears as a tooltip) of a node/edge/xlabel\n",
+                "type": "(a -> String.String) -> Render.StandardDrawers.Attributes.Attribute { c | title : a -> String.String }"
+            },
+            {
+                "name": "xLabels",
+                "comment": " Set the Extra Labels for a node.\n",
+                "type": "List.List (Render.Types.NodeAttributes n -> TypedSvg.Core.Svg msg) -> Render.StandardDrawers.Attributes.Attribute (Render.StandardDrawers.ConfigTypes.NodeDrawerConfig n msg)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Render.StandardDrawers.Types",
+        "comment": " This module provides the type used in Standard Drawers\n\n\n# Standard Edge Drawer Specific Types\n\n@docs ArrowHeadShape, LinkStyle\n\n\n# Standard Node Drawer Specific Types\n\n@docs Shape\n\n",
+        "unions": [
+            {
+                "name": "ArrowHeadShape",
+                "comment": " This type represents the shape of arrow head to be used for the edge.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "None",
+                        []
+                    ],
+                    [
+                        "Triangle",
+                        []
+                    ],
+                    [
+                        "Vee",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "LinkStyle",
+                "comment": " This type represents the style of line to be used for the edge.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Polyline",
+                        []
+                    ],
+                    [
+                        "Spline",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Shape",
+                "comment": " This type represents the shape of node.\n_Note_ : RoundedBox takes radius of curvature in px as parameter\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NoShape",
+                        []
+                    ],
+                    [
+                        "Circle",
+                        []
+                    ],
+                    [
+                        "Ellipse",
+                        []
+                    ],
+                    [
+                        "Box",
+                        []
+                    ],
+                    [
+                        "RoundedBox",
+                        [
+                            "Basics.Float"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "Render.Types",
+        "comment": " This module provides the type definitions used in the Render module.\n\n\n# Data\n\nThe nodes and edge data available for writing a drawer.\n\n@docs NodeAttributes, EdgeAttributes\n\n\n# Drawers\n\nThese types are used by the draw function to build the actual svg.\nYou can use these types to write custom drawers. For inspiration you can\nview the source file for Render.StandardDrawers\n\n@docs NodeDrawer, EdgeDrawer\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "EdgeAttributes",
+                "comment": " This type represents all data available for rendering an edge\n",
+                "args": [
+                    "e"
+                ],
+                "type": "{ edge : Graph.Edge e, source : ( Basics.Float, Basics.Float ), target : ( Basics.Float, Basics.Float ), controlPts : List.List ( Basics.Float, Basics.Float ), sourceDimensions : ( Basics.Float, Basics.Float ), targetDimensions : ( Basics.Float, Basics.Float ) }"
+            },
+            {
+                "name": "EdgeDrawer",
+                "comment": " This type represents a function that translates EdgeAttributes to Svg\nYou can use this type definition to write custom edge drawers.\n",
+                "args": [
+                    "e",
+                    "msg"
+                ],
+                "type": "Render.Types.EdgeAttributes e -> TypedSvg.Core.Svg msg"
+            },
+            {
+                "name": "NodeAttributes",
+                "comment": " This type represents all data available for rendering a node\n",
+                "args": [
+                    "n"
+                ],
+                "type": "{ node : Graph.Node n, coord : ( Basics.Float, Basics.Float ), width : Basics.Float, height : Basics.Float }"
+            },
+            {
+                "name": "NodeDrawer",
+                "comment": " This type represents a function that translates NodeAttributes to Svg\nYou can use this type definition to write custom node drawers.\n",
+                "args": [
+                    "n",
+                    "msg"
+                ],
+                "type": "Render.Types.NodeAttributes n -> TypedSvg.Core.Svg msg"
+            }
+        ],
+        "values": [],
+        "binops": []
+    }
+]

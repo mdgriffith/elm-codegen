@@ -1,0 +1,115 @@
+[
+    {
+        "name": "Monoid",
+        "comment": " A module to define generic functions for monoid.\r\nFor instance, we defined generic `concat` in this module using `Monoid` type as follows.\r\n\r\n    concat : Monoid a -> List a -> a\r\n    concat m =\r\n        List.foldr (append m) (empty m)\r\n\r\n    concat string [\"foo\", \"bar\", \"baz\"]\r\n    --> \"foobarbaz\"\r\n\r\n    concat list [[1, 2, 3], [4, 5], [6]]\r\n    --> [1, 2, 3, 4, 5, 6]\r\n\r\n    concat sum [Sum 1, Sum 2, Sum 3, Sum 4] -- 1 + 2 + 3 + 4\r\n    --> Sum 10\r\n\r\n    concat sum <| List.map Sum [1, 2, 3, 4] -- 1 + 2 + 3 + 4\r\n    --> Sum 10\r\n\r\n    concat product <| List.map Product [1, 2, 3, 4] -- 1 * 2 * 3 * 4\r\n    --> Product 24\r\n\r\n\r\n# Types\r\n\r\n@docs Monoid\r\n@docs Sum\r\n@docs Product\r\n\r\n\r\n# Constructors\r\n\r\n@docs monoid\r\n\r\n\r\n# Functions for unwraping Monoid\r\n\r\n@docs empty\r\n@docs append\r\n\r\n\r\n# Convenient functions for monoid\r\n\r\n@docs concat\r\n\r\n\r\n# Monoid types for popular types\r\n\r\n@docs string\r\n@docs sum\r\n@docs product\r\n@docs list\r\n@docs array\r\n@docs dict\r\n@docs set\r\n@docs cmd\r\n@docs sub\r\n\r\n",
+        "unions": [
+            {
+                "name": "Monoid",
+                "comment": " Main type.\r\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Product",
+                "comment": " `Monoid` under multiplication.\r\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Product",
+                        [
+                            "a"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Sum",
+                "comment": " `Monoid` under addition\r\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Sum",
+                        [
+                            "a"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "append",
+                "comment": " Take the way to append a monoids.\r\n",
+                "type": "Monoid.Monoid a -> a -> a -> a"
+            },
+            {
+                "name": "array",
+                "comment": " `Monoid` type for `Array`.\r\n",
+                "type": "Monoid.Monoid (Array.Array a)"
+            },
+            {
+                "name": "cmd",
+                "comment": " `Monoid` type for `Cmd`.\r\n",
+                "type": "Monoid.Monoid (Platform.Cmd.Cmd comparable)"
+            },
+            {
+                "name": "concat",
+                "comment": " Concatenate list of monoid.\r\n",
+                "type": "Monoid.Monoid a -> List.List a -> a"
+            },
+            {
+                "name": "dict",
+                "comment": " `Monoid` type for `Dict`.\r\n",
+                "type": "Monoid.Monoid (Dict.Dict comparable a)"
+            },
+            {
+                "name": "empty",
+                "comment": " Take the identity element of a monoid.\r\n",
+                "type": "Monoid.Monoid a -> a"
+            },
+            {
+                "name": "list",
+                "comment": " `Monoid` type for `List`.\r\n",
+                "type": "Monoid.Monoid (List.List a)"
+            },
+            {
+                "name": "monoid",
+                "comment": " Constructor for `Monoid`.\r\n",
+                "type": "a -> (a -> a -> a) -> Monoid.Monoid a"
+            },
+            {
+                "name": "product",
+                "comment": " `Monoid` type for `Product`.\r\n",
+                "type": "Monoid.Monoid (Monoid.Product number)"
+            },
+            {
+                "name": "set",
+                "comment": " `Monoid` type for `Set`.\r\n",
+                "type": "Monoid.Monoid (Set.Set comparable)"
+            },
+            {
+                "name": "string",
+                "comment": " `Monoid` type for `String`.\r\n",
+                "type": "Monoid.Monoid String.String"
+            },
+            {
+                "name": "sub",
+                "comment": " `Monoid` type for `Sub`.\r\n",
+                "type": "Monoid.Monoid (Platform.Sub.Sub comparable)"
+            },
+            {
+                "name": "sum",
+                "comment": " `Monoid` type for `Sum`.\r\n",
+                "type": "Monoid.Monoid (Monoid.Sum number)"
+            }
+        ],
+        "binops": []
+    }
+]

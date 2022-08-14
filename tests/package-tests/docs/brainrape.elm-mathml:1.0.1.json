@@ -1,0 +1,670 @@
+[
+    {
+        "name": "MathML",
+        "comment": " MathML elements\n\n\n## Top-level elements\n\n@docs math\n\n\n## Token elements\n\n@docs mglyph, mi, mn, mo, ms, mspace, mtext\n\n\n### General layout\n\n@docs menclose, merror, mfenced, mfrac, mpadded, mphantom, mroot, mrow, msqrt, mstyle\n\n\n### Script and limit elements\n\n@docs mmultiscripts, mover, mprescripts, msub, msubsup, msup, munder, munderover, none\n\n\n### Tabular math\n\n@docs maligngroup, malignmark, mlabeledtr, mtable, mtd, mtr\n\n\n### Elementary math\n\n@docs mlongdiv, mscarries, mscarry, msgroup, msline, msrow, mstack\n\n\n### Other elements\n\n@docs maction, multiscripts, semantics, annotation, annotationXml\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "annotation",
+                "comment": " ",
+                "type": "List.List (VirtualDom.Attribute msg) -> List.List (VirtualDom.Node msg) -> VirtualDom.Node msg"
+            },
+            {
+                "name": "annotationXml",
+                "comment": " ",
+                "type": "List.List (VirtualDom.Attribute msg) -> List.List (VirtualDom.Node msg) -> VirtualDom.Node msg"
+            },
+            {
+                "name": "maction",
+                "comment": " ",
+                "type": "List.List (VirtualDom.Attribute msg) -> List.List (VirtualDom.Node msg) -> VirtualDom.Node msg"
+            },
+            {
+                "name": "maligngroup",
+                "comment": " ",
+                "type": "List.List (VirtualDom.Attribute msg) -> List.List (VirtualDom.Node msg) -> VirtualDom.Node msg"
+            },
+            {
+                "name": "malignmark",
+                "comment": " ",
+                "type": "List.List (VirtualDom.Attribute msg) -> List.List (VirtualDom.Node msg) -> VirtualDom.Node msg"
+            },
+            {
+                "name": "math",
+                "comment": " ",
+                "type": "List.List (VirtualDom.Attribute msg) -> List.List (VirtualDom.Node msg) -> VirtualDom.Node msg"
+            },
+            {
+                "name": "menclose",
+                "comment": " ",
+                "type": "List.List (VirtualDom.Attribute msg) -> List.List (VirtualDom.Node msg) -> VirtualDom.Node msg"
+            },
+            {
+                "name": "merror",
+                "comment": " ",
+                "type": "List.List (VirtualDom.Attribute msg) -> List.List (VirtualDom.Node msg) -> VirtualDom.Node msg"
+            },
+            {
+                "name": "mfenced",
+                "comment": " ",
+                "type": "List.List (VirtualDom.Attribute msg) -> List.List (VirtualDom.Node msg) -> VirtualDom.Node msg"
+            },
+            {
+                "name": "mfrac",
+                "comment": " ",
+                "type": "List.List (VirtualDom.Attribute msg) -> List.List (VirtualDom.Node msg) -> VirtualDom.Node msg"
+            },
+            {
+                "name": "mglyph",
+                "comment": " ",
+                "type": "List.List (VirtualDom.Attribute msg) -> List.List (VirtualDom.Node msg) -> VirtualDom.Node msg"
+            },
+            {
+                "name": "mi",
+                "comment": " ",
+                "type": "List.List (VirtualDom.Attribute msg) -> List.List (VirtualDom.Node msg) -> VirtualDom.Node msg"
+            },
+            {
+                "name": "mlabeledtr",
+                "comment": " ",
+                "type": "List.List (VirtualDom.Attribute msg) -> List.List (VirtualDom.Node msg) -> VirtualDom.Node msg"
+            },
+            {
+                "name": "mlongdiv",
+                "comment": " ",
+                "type": "List.List (VirtualDom.Attribute msg) -> List.List (VirtualDom.Node msg) -> VirtualDom.Node msg"
+            },
+            {
+                "name": "mmultiscripts",
+                "comment": " ",
+                "type": "List.List (VirtualDom.Attribute msg) -> List.List (VirtualDom.Node msg) -> VirtualDom.Node msg"
+            },
+            {
+                "name": "mn",
+                "comment": " ",
+                "type": "List.List (VirtualDom.Attribute msg) -> List.List (VirtualDom.Node msg) -> VirtualDom.Node msg"
+            },
+            {
+                "name": "mo",
+                "comment": " ",
+                "type": "List.List (VirtualDom.Attribute msg) -> List.List (VirtualDom.Node msg) -> VirtualDom.Node msg"
+            },
+            {
+                "name": "mover",
+                "comment": " ",
+                "type": "List.List (VirtualDom.Attribute msg) -> List.List (VirtualDom.Node msg) -> VirtualDom.Node msg"
+            },
+            {
+                "name": "mpadded",
+                "comment": " ",
+                "type": "List.List (VirtualDom.Attribute msg) -> List.List (VirtualDom.Node msg) -> VirtualDom.Node msg"
+            },
+            {
+                "name": "mphantom",
+                "comment": " ",
+                "type": "List.List (VirtualDom.Attribute msg) -> List.List (VirtualDom.Node msg) -> VirtualDom.Node msg"
+            },
+            {
+                "name": "mprescripts",
+                "comment": " ",
+                "type": "List.List (VirtualDom.Attribute msg) -> List.List (VirtualDom.Node msg) -> VirtualDom.Node msg"
+            },
+            {
+                "name": "mroot",
+                "comment": " ",
+                "type": "List.List (VirtualDom.Attribute msg) -> List.List (VirtualDom.Node msg) -> VirtualDom.Node msg"
+            },
+            {
+                "name": "mrow",
+                "comment": " ",
+                "type": "List.List (VirtualDom.Attribute msg) -> List.List (VirtualDom.Node msg) -> VirtualDom.Node msg"
+            },
+            {
+                "name": "ms",
+                "comment": " ",
+                "type": "List.List (VirtualDom.Attribute msg) -> List.List (VirtualDom.Node msg) -> VirtualDom.Node msg"
+            },
+            {
+                "name": "mscarries",
+                "comment": " ",
+                "type": "List.List (VirtualDom.Attribute msg) -> List.List (VirtualDom.Node msg) -> VirtualDom.Node msg"
+            },
+            {
+                "name": "mscarry",
+                "comment": " ",
+                "type": "List.List (VirtualDom.Attribute msg) -> List.List (VirtualDom.Node msg) -> VirtualDom.Node msg"
+            },
+            {
+                "name": "msgroup",
+                "comment": " ",
+                "type": "List.List (VirtualDom.Attribute msg) -> List.List (VirtualDom.Node msg) -> VirtualDom.Node msg"
+            },
+            {
+                "name": "msline",
+                "comment": " ",
+                "type": "List.List (VirtualDom.Attribute msg) -> List.List (VirtualDom.Node msg) -> VirtualDom.Node msg"
+            },
+            {
+                "name": "mspace",
+                "comment": " ",
+                "type": "List.List (VirtualDom.Attribute msg) -> List.List (VirtualDom.Node msg) -> VirtualDom.Node msg"
+            },
+            {
+                "name": "msqrt",
+                "comment": " ",
+                "type": "List.List (VirtualDom.Attribute msg) -> List.List (VirtualDom.Node msg) -> VirtualDom.Node msg"
+            },
+            {
+                "name": "msrow",
+                "comment": " ",
+                "type": "List.List (VirtualDom.Attribute msg) -> List.List (VirtualDom.Node msg) -> VirtualDom.Node msg"
+            },
+            {
+                "name": "mstack",
+                "comment": " ",
+                "type": "List.List (VirtualDom.Attribute msg) -> List.List (VirtualDom.Node msg) -> VirtualDom.Node msg"
+            },
+            {
+                "name": "mstyle",
+                "comment": " ",
+                "type": "List.List (VirtualDom.Attribute msg) -> List.List (VirtualDom.Node msg) -> VirtualDom.Node msg"
+            },
+            {
+                "name": "msub",
+                "comment": " ",
+                "type": "List.List (VirtualDom.Attribute msg) -> List.List (VirtualDom.Node msg) -> VirtualDom.Node msg"
+            },
+            {
+                "name": "msubsup",
+                "comment": " ",
+                "type": "List.List (VirtualDom.Attribute msg) -> List.List (VirtualDom.Node msg) -> VirtualDom.Node msg"
+            },
+            {
+                "name": "msup",
+                "comment": " ",
+                "type": "List.List (VirtualDom.Attribute msg) -> List.List (VirtualDom.Node msg) -> VirtualDom.Node msg"
+            },
+            {
+                "name": "mtable",
+                "comment": " ",
+                "type": "List.List (VirtualDom.Attribute msg) -> List.List (VirtualDom.Node msg) -> VirtualDom.Node msg"
+            },
+            {
+                "name": "mtd",
+                "comment": " ",
+                "type": "List.List (VirtualDom.Attribute msg) -> List.List (VirtualDom.Node msg) -> VirtualDom.Node msg"
+            },
+            {
+                "name": "mtext",
+                "comment": " ",
+                "type": "List.List (VirtualDom.Attribute msg) -> List.List (VirtualDom.Node msg) -> VirtualDom.Node msg"
+            },
+            {
+                "name": "mtr",
+                "comment": " ",
+                "type": "List.List (VirtualDom.Attribute msg) -> List.List (VirtualDom.Node msg) -> VirtualDom.Node msg"
+            },
+            {
+                "name": "multiscripts",
+                "comment": " ",
+                "type": "List.List (VirtualDom.Attribute msg) -> List.List (VirtualDom.Node msg) -> VirtualDom.Node msg"
+            },
+            {
+                "name": "munder",
+                "comment": " ",
+                "type": "List.List (VirtualDom.Attribute msg) -> List.List (VirtualDom.Node msg) -> VirtualDom.Node msg"
+            },
+            {
+                "name": "munderover",
+                "comment": " ",
+                "type": "List.List (VirtualDom.Attribute msg) -> List.List (VirtualDom.Node msg) -> VirtualDom.Node msg"
+            },
+            {
+                "name": "none",
+                "comment": " ",
+                "type": "List.List (VirtualDom.Attribute msg) -> List.List (VirtualDom.Node msg) -> VirtualDom.Node msg"
+            },
+            {
+                "name": "semantics",
+                "comment": " ",
+                "type": "List.List (VirtualDom.Attribute msg) -> List.List (VirtualDom.Node msg) -> VirtualDom.Node msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "MathML.Attributes",
+        "comment": "\n\n@docs accent, accentunder, actiontype, alignmentscope, altimg, altimgWidth, altimgHeight, altimgValign, alttext, charalign, close, columnalign, columnlines, columnspacing, columnspan, columnwidth, crossout, decimalpoint, depth, dir, display, displaystyle, edge, equalcolumns, equalrows, fence, form, frame, framespacing, groupalign, height, href, id, indentalign, indentalignfirst, indentalignlast, indentshift, indentshiftfirst, indentshiftlast, indenttarget, infixlinebreakstyle, largeop, length, linebreak, linebreakmultchar, linebreakstyle, lineleading, linethickness, location, longdivstyle, lspace, lquote, mathbackground, mathcolor, mathsize, mathvariant, maxsize, minlabelspacing, minsize, movablelimits, notation, open, overflow, position, rowalign, rowlines, rowspacing, rowspan, rspace, rquote, scriptlevel, scriptminsize, scriptsizemultiplier, selection, separator, separators, shift, side, src, stackalign, stretchy, symmetric, voffset, width, xmlns\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "accent",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "accentunder",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "actiontype",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "alignmentscope",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "altimg",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "altimgHeight",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "altimgValign",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "altimgWidth",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "alttext",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "charalign",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "close",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "columnalign",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "columnlines",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "columnspacing",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "columnspan",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "columnwidth",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "crossout",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "decimalpoint",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "depth",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "dir",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "display",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "displaystyle",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "edge",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "equalcolumns",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "equalrows",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "fence",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "form",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "frame",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "framespacing",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "groupalign",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "height",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "href",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "id",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "indentalign",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "indentalignfirst",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "indentalignlast",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "indentshift",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "indentshiftfirst",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "indentshiftlast",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "indenttarget",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "infixlinebreakstyle",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "largeop",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "length",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "linebreak",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "linebreakmultchar",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "linebreakstyle",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "lineleading",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "linethickness",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "location",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "longdivstyle",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "lquote",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "lspace",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "mathbackground",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "mathcolor",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "mathsize",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "mathvariant",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "maxsize",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "minlabelspacing",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "minsize",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "movablelimits",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "notation",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "open",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "overflow",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "position",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "rowalign",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "rowlines",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "rowspacing",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "rowspan",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "rquote",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "rspace",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "scriptlevel",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "scriptminsize",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "scriptsizemultiplier",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "selection",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "separator",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "separators",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "shift",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "side",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "src",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "stackalign",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "stretchy",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "symmetric",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "voffset",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "width",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            },
+            {
+                "name": "xmlns",
+                "comment": " ",
+                "type": "String.String -> VirtualDom.Attribute msg"
+            }
+        ],
+        "binops": []
+    }
+]

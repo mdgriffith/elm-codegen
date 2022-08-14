@@ -1,0 +1,116 @@
+[
+    {
+        "name": "RadarChart",
+        "comment": "\n\n\n# Simple chart data\n\n@docs DatumSeries\n\n\n# Show a radar chart\n\n@docs view, defaultOptions, simpleLabels\n\n\n# Customize chart a bit\n\n@docs Options, AxisStyle, LineStyle, Maximum, customLabels\n\n\n# Customize chart labels completely\n\n@docs LabelMaker, Point, TextAlign\n\n",
+        "unions": [
+            {
+                "name": "AxisStyle",
+                "comment": " Axis style:\n\n  - `Minimal` is just a line\n  - `Web count` is a web with `count` \"divisions\"\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Minimal",
+                        []
+                    ],
+                    [
+                        "Web",
+                        [
+                            "Basics.Int"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "LineStyle",
+                "comment": " The line style can be `Empty` (just lines) or `Filled opacity` (more like an area chart).\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Empty",
+                        []
+                    ],
+                    [
+                        "Filled",
+                        [
+                            "Basics.Float"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Maximum",
+                "comment": " Fixed axis maximum or use highest data point of series\n",
+                "args": [],
+                "cases": [
+                    [
+                        "FixedMax",
+                        [
+                            "Basics.Float"
+                        ]
+                    ],
+                    [
+                        "Infer",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "DatumSeries",
+                "comment": " You can have multiple \"series\", or polygons, on one chart.\nThe `data` list should be of same size as axis labels.\n",
+                "args": [],
+                "type": "{ color : String.String, data : List.List Basics.Float }"
+            },
+            {
+                "name": "LabelMaker",
+                "comment": " You can even completely make your own attributes and everything\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "RadarChart.Point -> RadarChart.TextAlign -> Svg.Svg msg"
+            },
+            {
+                "name": "Options",
+                "comment": " Chart options:\n\n  - `margin` Between 0 and 1, to leave some space for labels\n  - `strokeWidth` For all lines, see <https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-width>\n  - `axisColor` axis stroke color, any valid HTML color string (hex, color-name, rgba(...), etc.)\n  - `axisStyle` see `AxisStyle`\n  - `lineStyle` see `LineStyle`\n\n",
+                "args": [],
+                "type": "{ maximum : RadarChart.Maximum, margin : Basics.Float, strokeWidth : Basics.Float, axisColor : String.String, axisStyle : RadarChart.AxisStyle, lineStyle : RadarChart.LineStyle }"
+            },
+            {
+                "name": "Point",
+                "comment": " Point in SVG, suitable for `x` and `y` attributes of text\n",
+                "args": [],
+                "type": "( Basics.Float, Basics.Float )"
+            },
+            {
+                "name": "TextAlign",
+                "comment": " Text align is simply suitable values for `dominant-baseline` and `text-anchor`, respectively.\n",
+                "args": [],
+                "type": "( String.String, String.String )"
+            }
+        ],
+        "values": [
+            {
+                "name": "customLabels",
+                "comment": " Custom labels: use a list of anything, and a function that maps the elements\ntogether with position/alignment SVG attributes to `Svg msg`.\n",
+                "type": "List.List a -> (a -> List.List (Svg.Attribute msg) -> Svg.Svg msg) -> List.List (RadarChart.LabelMaker msg)"
+            },
+            {
+                "name": "defaultOptions",
+                "comment": " Get a default options object.\n",
+                "type": "RadarChart.Options"
+            },
+            {
+                "name": "simpleLabels",
+                "comment": " Default text labels, positioned conveniently\n",
+                "type": "List.List String.String -> List.List (RadarChart.LabelMaker msg)"
+            },
+            {
+                "name": "view",
+                "comment": " Render a radar chart with options, labels, and some values\n",
+                "type": "RadarChart.Options -> List.List (RadarChart.LabelMaker msg) -> List.List RadarChart.DatumSeries -> Svg.Svg msg"
+            }
+        ],
+        "binops": []
+    }
+]

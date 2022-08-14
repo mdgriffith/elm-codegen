@@ -1,0 +1,639 @@
+[
+    {
+        "name": "ContextHtml",
+        "comment": "\n\n\n# ContextHtml\n\n@docs ContextHtml, applyContext, withContext, wrapHtml\n\n\n# useContext\n\n@docs useContext, useContext2, useContext3, useContext4, useContext5, useContext6, useContext7, useContext8\n\n\n# Primitives\n\n@docs text, node, map\n\n\n# Tags\n\n\n## Headers\n\n@docs h1, h2, h3, h4, h5, h6\n\n\n## Grouping Content\n\n@docs div, p, hr, pre, blockquote\n\n\n## Text\n\n@docs span, a, code, em, strong, i, b, u, sub, sup, br\n\n\n## Lists\n\n@docs ol, ul, li, dl, dt, dd\n\n\n## Embedded Content\n\n@docs img, iframe, canvas, math\n\n\n## Inputs\n\n@docs form, input, textarea, button, select, option\n\n\n## Sections\n\n@docs section, nav, article, aside, header, footer, address, main_\n\n\n## Figures\n\n@docs figure, figcaption\n\n\n## Tables\n\n@docs table, caption, colgroup, col, tbody, thead, tfoot, tr, td, th\n\n\n## Less Common Elements\n\n\n### Less Common Inputs\n\n@docs fieldset, legend, label, datalist, optgroup, output, progress, meter\n\n\n### Audio and Video\n\n@docs audio, video, source, track\n\n\n### Embedded Objects\n\n@docs embed, object, param\n\n\n### Text Edits\n\n@docs ins, del\n\n\n### Semantic Text\n\n@docs small, cite, dfn, abbr, time, var, samp, kbd, s, q\n\n\n### Less Common Text Tags\n\n@docs mark, ruby, rt, rp, bdi, bdo, wbr\n\n\n## Interactive Elements\n\n@docs details, summary, menuitem, menu\n\n",
+        "unions": [
+            {
+                "name": "ContextHtml",
+                "comment": " Html with context\n",
+                "args": [
+                    "ctx",
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "a",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "abbr",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "address",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "applyContext",
+                "comment": " Apply context to `ContextHtml`\n\n    view : Html msg\n    view =\n        let\n            context = ... -- make Context\n        in\n        applyContext context viewChild\n\n    viewChild : ContextHtml Context msg\n    viewChild = ...\n\n",
+                "type": "ctx -> ContextHtml.ContextHtml ctx msg -> Html.Html msg"
+            },
+            {
+                "name": "article",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "aside",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "audio",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "b",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "bdi",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "bdo",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "blockquote",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "br",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "button",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "canvas",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "caption",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "cite",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "code",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "col",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "colgroup",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "datalist",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "dd",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "del",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "details",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "dfn",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "div",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "dl",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "dt",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "em",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "embed",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "fieldset",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "figcaption",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "figure",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "footer",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "form",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "h1",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "h2",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "h3",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "h4",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "h5",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "h6",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "header",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "hr",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "i",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "iframe",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "img",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "input",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "ins",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "kbd",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "label",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "legend",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "li",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "main_",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "map",
+                "comment": " ",
+                "type": "(a -> msg) -> ContextHtml.ContextHtml ctx a -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "mark",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "math",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "menu",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "menuitem",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "meter",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "nav",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "node",
+                "comment": " ",
+                "type": "String.String -> List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "object",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "ol",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "optgroup",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "option",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "output",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "p",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "param",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "pre",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "progress",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "q",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "rp",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "rt",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "ruby",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "s",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "samp",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "section",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "select",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "small",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "source",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "span",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "strong",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "sub",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "summary",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "sup",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "table",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "tbody",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "td",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "text",
+                "comment": " ",
+                "type": "String.String -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "textarea",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "tfoot",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "th",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "thead",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "time",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "tr",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "track",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "u",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "ul",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "useContext",
+                "comment": " Use a context value\n\n    type alias Context =\n        { text : String }\n\n    view =\n        useContext .text <| \\text_ -> div [] [ text text_ ]\n\nWhen Context is Opaque type\n\n    -- Context.elm\n    type Context\n        = Context { text : String }\n\n    -- Expose Selector accessing context value\n    textSelector (Context { text }) =\n        text\n\n    textWithPrefixSelector (Context { text }) =\n        \"prefix_\" ++ text\n\n    -- Main.elm\n    view1 =\n        useContext textSelector <| \\text_ -> div [] [ text text_ ]\n\n    view2 =\n        useContext textWithPrefixSelector <| \\text_ -> div [] [ text text_ ]\n\n",
+                "type": "(ctx -> a) -> (a -> ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "useContext2",
+                "comment": " Use context values\n\n    type alias Context =\n        { text : String\n        , color : String\n        }\n\n    view =\n        useContext2 .text .color <| \\text_ color -> div [ style \"color\" color ] [ text text_ ]\n\n",
+                "type": "(ctx -> a) -> (ctx -> b) -> (a -> b -> ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "useContext3",
+                "comment": " ",
+                "type": "(ctx -> a) -> (ctx -> b) -> (ctx -> c) -> (a -> b -> c -> ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "useContext4",
+                "comment": " ",
+                "type": "(ctx -> a) -> (ctx -> b) -> (ctx -> c) -> (ctx -> d) -> (a -> b -> c -> d -> ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "useContext5",
+                "comment": " ",
+                "type": "(ctx -> a) -> (ctx -> b) -> (ctx -> c) -> (ctx -> d) -> (ctx -> e) -> (a -> b -> c -> d -> e -> ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "useContext6",
+                "comment": " ",
+                "type": "(ctx -> a) -> (ctx -> b) -> (ctx -> c) -> (ctx -> d) -> (ctx -> e) -> (ctx -> f) -> (a -> b -> c -> d -> e -> f -> ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "useContext7",
+                "comment": " ",
+                "type": "(ctx -> a) -> (ctx -> b) -> (ctx -> c) -> (ctx -> d) -> (ctx -> e) -> (ctx -> f) -> (ctx -> g) -> (a -> b -> c -> d -> e -> f -> g -> ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "useContext8",
+                "comment": " ",
+                "type": "(ctx -> a) -> (ctx -> b) -> (ctx -> c) -> (ctx -> d) -> (ctx -> e) -> (ctx -> f) -> (ctx -> g) -> (ctx -> h) -> (a -> b -> c -> d -> e -> f -> g -> h -> ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "var",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "video",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "wbr",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (ContextHtml.ContextHtml ctx msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "withContext",
+                "comment": " Create `ContextHtml`\n\n    view : ContextHtml ctx msg\n    view =\n        withContext <| \\ctx -> Html.div [] []\n\n",
+                "type": "(ctx -> Html.Html msg) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "wrapHtml",
+                "comment": " Wrap `Html` to `ContextHtml`\n\n    view : ContextHtml ctx msg\n    view =\n        div [] [ wrapHtml <| viewCommon \"Text\" ]\n\n    viewCommon : String -> Html msg\n    viewCommon = ...\n\n",
+                "type": "Html.Html msg -> ContextHtml.ContextHtml ctx msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ContextHtml.Keyed",
+        "comment": " Wrapped [Html.Keyed](https://package.elm-lang.org/packages/elm/html/1.0.0/Html-Keyed) module for ContextHtml.\n\n\n# Keyed Nodes\n\n@docs node\n\n\n# Commonly Keyed Nodes\n\n@docs ol, ul\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "node",
+                "comment": " ",
+                "type": "String.String -> List.List (Html.Attribute msg) -> List.List ( String.String, ContextHtml.ContextHtml ctx msg ) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "ol",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List ( String.String, ContextHtml.ContextHtml ctx msg ) -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "ul",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List ( String.String, ContextHtml.ContextHtml ctx msg ) -> ContextHtml.ContextHtml ctx msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ContextHtml.Lazy",
+        "comment": " Wrapped [Html.Lazy](https://package.elm-lang.org/packages/elm/html/1.0.0/Html-Lazy) module for ContextHtml.\n\n@docs lazy, lazy2, lazy3, lazy4, lazy5, lazy6, lazy0\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "lazy",
+                "comment": " Checks one argument and context.\n",
+                "type": "(a -> ContextHtml.ContextHtml ctx msg) -> a -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "lazy0",
+                "comment": " Checks only context.\n",
+                "type": "ContextHtml.ContextHtml ctx msg -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "lazy2",
+                "comment": " Checks two arguments and context.\n",
+                "type": "(a -> b -> ContextHtml.ContextHtml ctx msg) -> a -> b -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "lazy3",
+                "comment": " ",
+                "type": "(a -> b -> c -> ContextHtml.ContextHtml ctx msg) -> a -> b -> c -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "lazy4",
+                "comment": " ",
+                "type": "(a -> b -> c -> d -> ContextHtml.ContextHtml ctx msg) -> a -> b -> c -> d -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "lazy5",
+                "comment": " ",
+                "type": "(a -> b -> c -> d -> e -> ContextHtml.ContextHtml ctx msg) -> a -> b -> c -> d -> e -> ContextHtml.ContextHtml ctx msg"
+            },
+            {
+                "name": "lazy6",
+                "comment": " ",
+                "type": "(a -> b -> c -> d -> e -> f -> ContextHtml.ContextHtml ctx msg) -> a -> b -> c -> d -> e -> f -> ContextHtml.ContextHtml ctx msg"
+            }
+        ],
+        "binops": []
+    }
+]

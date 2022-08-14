@@ -1,0 +1,21 @@
+[
+    {
+        "name": "Math.Tau",
+        "comment": " Provide the famous mathematical constant, tau, τ = 6.2831...\n\nYou may be familiar with the derived constant, pi, π = τ/2 = 3.1415...\n\nSee [The Tau Manifesto](http://tauday.com/) for why pi is a historical mistake.\n\n\n# Constants\n\n@docs τ, tau\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "tau",
+                "comment": " Same as `τ`, but in ASCII.\n",
+                "type": "Basics.Float"
+            },
+            {
+                "name": "τ",
+                "comment": " Provide the famous mathematical constant, τ = 6.2831...\n",
+                "type": "Basics.Float"
+            }
+        ],
+        "binops": []
+    }
+]

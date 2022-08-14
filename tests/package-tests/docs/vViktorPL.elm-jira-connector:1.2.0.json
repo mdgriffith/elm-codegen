@@ -1,0 +1,289 @@
+[
+    {
+        "name": "Jira.Api",
+        "comment": " This library helps in communication with Jira REST API by exposing API requests as\nstraightforward tasks and Jira resources data into some opaque types.\n\n\n# Credentials\n\n@docs Cred, createAnonymousCred, createBasicAuthCred\n\n\n# Jira entities\n\n@docs Project, Issue, Worklog, WorklogRequest, WorklogData, Content\n\n\n# API call tasks\n\n@docs ApiTask, getProjects, getAllProjects, getIssues, getFullIssues, addWorklog, addWorklogToIssueByKeyOrId\n\n\n# API call helpers\n\n@docs allFields, allFieldsExcept\n\n\n# Data getters\n\n@docs getProjectData, getIssueId, getIssueKey, getIssueFields, getWorklogData\n\n\n# Data creators\n\n@docs contentFromString\n\n\n# Errors\n\n@docs ApiCallError, apiErrorToString\n\n",
+        "unions": [
+            {
+                "name": "ApiCallError",
+                "comment": " Error from api call request task\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Content",
+                "comment": " Content which is used across comments, descriptions etc\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Cred",
+                "comment": " Authentication credentials\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Issue",
+                "comment": " Jira Issue\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Project",
+                "comment": " Jira Project\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Worklog",
+                "comment": " Issue worklog entry\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "ApiTask",
+                "comment": " Jira API call task\n",
+                "args": [
+                    "response"
+                ],
+                "type": "Task.Task Jira.Api.ApiCallError response"
+            },
+            {
+                "name": "WorklogData",
+                "comment": " Persisted worklog details\n",
+                "args": [],
+                "type": "{ id : String.String, issueId : String.String, created : Time.Posix, started : Time.Posix, updated : Time.Posix, timeSpent : String.String, timeSpentSeconds : Basics.Int, author : Json.Decode.Value, updateAuthor : Json.Decode.Value }"
+            },
+            {
+                "name": "WorklogRequest",
+                "comment": " Structure used to add new worklog to an issue\n",
+                "args": [],
+                "type": "{ started : Time.Posix, timeSpentSeconds : Basics.Int, comment : Maybe.Maybe Jira.Api.Content }"
+            }
+        ],
+        "values": [
+            {
+                "name": "addWorklog",
+                "comment": " Add worklog to an issue\n\n    addWorklog cred\n        issue\n        { started = Posix.millisToPosix 1543173302785\n        , timeSpentSeconds = 3600\n        , comment = Just (contentFromString \"Some comment\")\n        }\n\n",
+                "type": "Jira.Api.Cred -> Jira.Api.Issue -> Jira.Api.WorklogRequest -> Jira.Api.ApiTask Jira.Api.Worklog"
+            },
+            {
+                "name": "addWorklogToIssueByKeyOrId",
+                "comment": " Add worklog to an issue by it's key or id:\n\n    addWorklog cred\n        \"EXA-1\"\n        { started = Time.millisToPosix 1543173302785\n        , timeSpentSeconds = 3600\n        , comment = Just (contentFromString \"Some comment\")\n        }\n\n",
+                "type": "Jira.Api.Cred -> String.String -> Jira.Api.WorklogRequest -> Jira.Api.ApiTask Jira.Api.Worklog"
+            },
+            {
+                "name": "allFields",
+                "comment": " Fields scope where all fields are requested\n",
+                "type": "List.List String.String"
+            },
+            {
+                "name": "allFieldsExcept",
+                "comment": " Fields scope where all fields except provided ones are requested\n",
+                "type": "List.List String.String -> List.List String.String"
+            },
+            {
+                "name": "apiErrorToString",
+                "comment": " Convert API call error to a simple string\n",
+                "type": "Jira.Api.ApiCallError -> String.String"
+            },
+            {
+                "name": "contentFromString",
+                "comment": " Create text content\n",
+                "type": "String.String -> Jira.Api.Content"
+            },
+            {
+                "name": "createAnonymousCred",
+                "comment": " Create credentials for publicly open Jira (as an anonymous user)\n",
+                "type": "String.String -> Result.Result String.String Jira.Api.Cred"
+            },
+            {
+                "name": "createBasicAuthCred",
+                "comment": " Create credentials using basic auth method\n",
+                "type": "String.String -> ( String.String, String.String ) -> Result.Result String.String Jira.Api.Cred"
+            },
+            {
+                "name": "getAllProjects",
+                "comment": " Get all projects\n",
+                "type": "Jira.Api.Cred -> Jira.Api.ApiTask (List.List Jira.Api.Project)"
+            },
+            {
+                "name": "getFullIssues",
+                "comment": " Search for issues using Jql with all fields per issue\n",
+                "type": "Jira.Api.Cred -> Jira.Pagination.PageRequest -> Jira.JqlInternal.Jql -> Jira.Api.ApiTask (Jira.Pagination.Page Jira.Api.Issue)"
+            },
+            {
+                "name": "getIssueFields",
+                "comment": " Get issue fields.\nNote: as structure of available fields vary depending on requested fields configuration, you have to decode the fields\nthat you are interested in.\n",
+                "type": "Jira.Api.Issue -> Json.Decode.Value"
+            },
+            {
+                "name": "getIssueId",
+                "comment": " Get issue id\n",
+                "type": "Jira.Api.Issue -> String.String"
+            },
+            {
+                "name": "getIssueKey",
+                "comment": " Get issue key\n",
+                "type": "Jira.Api.Issue -> String.String"
+            },
+            {
+                "name": "getIssues",
+                "comment": " Search for issues using Jql with and scoping available fields per issue\n",
+                "type": "Jira.Api.Cred -> Jira.Pagination.PageRequest -> Jira.JqlInternal.Jql -> List.List String.String -> Jira.Api.ApiTask (Jira.Pagination.Page Jira.Api.Issue)"
+            },
+            {
+                "name": "getProjectData",
+                "comment": " Extract raw data from Project\n",
+                "type": "Jira.Api.Project -> Jira.Api.ProjectData"
+            },
+            {
+                "name": "getProjects",
+                "comment": " Get page of projects\n",
+                "type": "Jira.Api.Cred -> Jira.Pagination.PageRequest -> Jira.Api.ApiTask (Jira.Pagination.Page Jira.Api.Project)"
+            },
+            {
+                "name": "getWorklogData",
+                "comment": " Get data from worklog\n",
+                "type": "Jira.Api.Worklog -> Jira.Api.WorklogData"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Jira.Api.Extra",
+        "comment": " This module provides some extra helpers for Jira Api calls\n\n# Api calls\n\n@docs getIssueNames\n\n# Data decoding\n\nSome data cannot be extracted directly as it may be missing depending on fields that have been listed in the request.\nFor such case, you have to use Issue decoding functions.\n\n@docs decodeIssueSummary\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decodeIssueSummary",
+                "comment": " Decode issue summary\n",
+                "type": "Jira.Api.Issue -> Result.Result Json.Decode.Error String.String"
+            },
+            {
+                "name": "getIssueNames",
+                "comment": " Search for issues using Jql but fetch human readable names together with their ids like:\n\n    (\"[EXA-1] Some issue\", \"10000\")\n    (\"[EXA-2] Another one\", \"10001\")\n\nIt may be useful in case you want represent a list of issues as a drop down list.\n",
+                "type": "Jira.Api.Cred -> Jira.Pagination.PageRequest -> Jira.JqlInternal.Jql -> Jira.Api.ApiTask (Jira.Pagination.Page ( String.String, String.String ))"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Jira.Jql",
+        "comment": " JQL (Jira Query Language) expression building helpers\n\n\n# Generic\n\n@docs Jql, fieldEqualsString, fieldEqualsExpression, literalStringToExpression\n\n\n# Helpful expressions\n\n@docs forProject\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Jql",
+                "comment": " JQL query expression\n",
+                "args": [],
+                "type": "Jira.JqlInternal.Jql"
+            }
+        ],
+        "values": [
+            {
+                "name": "fieldEqualsExpression",
+                "comment": " Build an expression which compares issue field to an another expression\n",
+                "type": "String.String -> String.String -> Jira.Jql.Jql"
+            },
+            {
+                "name": "fieldEqualsString",
+                "comment": " Build an expression which compares issue field to a string\n",
+                "type": "String.String -> String.String -> Jira.Jql.Jql"
+            },
+            {
+                "name": "forProject",
+                "comment": " An expression which filters issues from the given Project\n",
+                "type": "Jira.Api.Project -> Jira.Jql.Jql"
+            },
+            {
+                "name": "literalStringToExpression",
+                "comment": " Turn string to a escaped Jql string expression\n\n    literalStringToExpression \"abc\" == \"\\\"abc\\\"\"\n\n    literalStringToExpression \"\\\"Foo\\\" Bar\" == \"\\\"\\\\\\\"Foo\\\\\\\" Bar\\\"\"\n\n",
+                "type": "String.String -> Jira.Jql.Jql"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Jira.Pagination",
+        "comment": " This module wraps paginated responses from Jira API\n\n\n# Page requests\n\n@docs PaginationConfig, PageRequest, paginationConfig, pageRequest, pageRequestToQueryParams\n\n\n# Pages\n\n@docs Page, getItems, isLast, nextPage, pageNumber, totalPages, pageDecoder, map\n\n",
+        "unions": [
+            {
+                "name": "Page",
+                "comment": " Wraps up data from a decoded response of specific page request\n",
+                "args": [
+                    "item"
+                ],
+                "cases": []
+            },
+            {
+                "name": "PageRequest",
+                "comment": " Represents data that is required to build a request for a specific page\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "PaginationConfig",
+                "comment": " Pagination configuration which is just the limit of items per page.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "getItems",
+                "comment": " Extract a list of items from a page\n",
+                "type": "Jira.Pagination.Page a -> List.List a"
+            },
+            {
+                "name": "isLast",
+                "comment": " Is the page the last one?\n",
+                "type": "Jira.Pagination.Page a -> Basics.Bool"
+            },
+            {
+                "name": "map",
+                "comment": " Map page items\n",
+                "type": "(a -> b) -> Jira.Pagination.Page a -> Jira.Pagination.Page b"
+            },
+            {
+                "name": "nextPage",
+                "comment": " Get PageRequest for the page which is next to the provided one.\nThere could be no next page hence Maybe return type.\n",
+                "type": "Jira.Pagination.Page a -> Maybe.Maybe Jira.Pagination.PageRequest"
+            },
+            {
+                "name": "pageDecoder",
+                "comment": " Page decoder. Requires decoder for paginated entity.\n",
+                "type": "Json.Decode.Decoder item -> Json.Decode.Decoder (Jira.Pagination.Page item)"
+            },
+            {
+                "name": "pageNumber",
+                "comment": " Get page number\n",
+                "type": "Jira.Pagination.Page a -> Basics.Int"
+            },
+            {
+                "name": "pageRequest",
+                "comment": " Create a PageRequest for specific page number\n",
+                "type": "Jira.Pagination.PaginationConfig -> Basics.Int -> Jira.Pagination.PageRequest"
+            },
+            {
+                "name": "pageRequestToQueryParams",
+                "comment": " Convert page request to query parameters that can be used to build a request URL\n",
+                "type": "Jira.Pagination.PageRequest -> List.List Url.Builder.QueryParameter"
+            },
+            {
+                "name": "paginationConfig",
+                "comment": " Create a pagination configuration\n",
+                "type": "Basics.Int -> Jira.Pagination.PaginationConfig"
+            },
+            {
+                "name": "totalPages",
+                "comment": " Extract total number of pages\n",
+                "type": "Jira.Pagination.Page a -> Basics.Int"
+            }
+        ],
+        "binops": []
+    }
+]

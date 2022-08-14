@@ -1,0 +1,26 @@
+[
+    {
+        "name": "Progress.Ring",
+        "comment": " Progress Ring with elm/svg\n\n@docs circumference, normalizedRadius, view\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "circumference",
+                "comment": "\n\n    Return the circumference of the ring at 100% progress\n\n",
+                "type": "Progress.Ring.Config -> Basics.Float"
+            },
+            {
+                "name": "normalizedRadius",
+                "comment": "\n\n    Return the radius of the ring, minus the ring stroke\n\n",
+                "type": "Progress.Ring.Config -> Basics.Float"
+            },
+            {
+                "name": "view",
+                "comment": "\n\n    Return an SVG of the ring.\n\n",
+                "type": "Progress.Ring.Config -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

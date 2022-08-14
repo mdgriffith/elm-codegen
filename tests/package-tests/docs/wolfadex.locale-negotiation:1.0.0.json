@@ -1,0 +1,26 @@
+[
+    {
+        "name": "Localization.Negotiation",
+        "comment": " Each function akes a List of Strings in the BCP47 locale ID format. If in an invalid format, they will be ignored. The list `requestedLocales` List should be in preference order The `availableLocales` is a List of Strings also in BCP47 locale ID format, unsorted. The `defaultLocale` should be a String in BCP47 locale ID format and isused as a last resort locale.\n\n\nIt returns an Array of strings with BCP47 locale IDs sorted according to the user preferences.\n\n## Strategies\n\n@docs filter\n@docs lookup\n@docs match\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "filter",
+                "comment": " Looks for the best matching available locale for each requested locale.\n\n    Localization.Negotiation.filter\n        { requestedLocales =  [ \"de-DE\", \"fr-FR\" ]\n        , availableLocales = [ \"it\", \"de\", \"en-US\", \"fr-CA\", \"de-DE\", \"fr\", \"de-AU\" ]\n        , defaultLocale = Nothing\n        }\n\n    -- supported: [ \"de-DE\", \"fr\" ]\n",
+                "type": "{ requestedLocales : List.List String.String, availableLocales : List.List String.String, defaultLocale : Maybe.Maybe String.String } -> List.List String.String"
+            },
+            {
+                "name": "lookup",
+                "comment": " Will try to find the single best locale for the requested locale list among the available locales. If none is found it will fallback to the `defaultLocale`.\n\n    Localization.Negotiation.lookup\n        { requestedLocales =  [ \"de-DE\", \"fr-FR\" ]\n        , availableLocales = [ \"it\", \"de\", \"en-US\", \"fr-CA\", \"de-DE\", \"fr\", \"de-AU\" ]\n        , defaultLocale = \"en-US\"\n        }\n\n    -- supported: [ \"de-DE\" ]\n",
+                "type": "{ requestedLocales : List.List String.String, availableLocales : List.List String.String, defaultLocale : String.String } -> List.List String.String"
+            },
+            {
+                "name": "match",
+                "comment": " Will try to match as many available locales as possible for each of the requested locale.\n\n\n    Localization.Negotiation.match\n        { requestedLocales =  [ \"de-DE\", \"fr-FR\" ]\n        , availableLocales = [ \"it\", \"de\", \"en-US\", \"fr-CA\", \"de-DE\", \"fr\", \"de-AU\" ]\n        , defaultLocale = Nothing\n        }\n\n    -- supported: [ \"de-DE\", \"de\", \"fr\", \"fr-CA\" ]\n",
+                "type": "{ requestedLocales : List.List String.String, availableLocales : List.List String.String, defaultLocale : Maybe.Maybe String.String } -> List.List String.String"
+            }
+        ],
+        "binops": []
+    }
+]

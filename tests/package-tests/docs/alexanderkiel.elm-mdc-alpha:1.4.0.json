@@ -1,0 +1,663 @@
+[
+    {
+        "name": "Material.Button",
+        "comment": " Buttons allow users to take actions, and make choices, with a single tap.\n\n\n# Install\n\nIn your application install:\n\n    npm install \"@material/button\"\n\nIn your Sass file import:\n\n    @import \"@material/button/mdc-button\";\n\n\n# Example\n\n    import Material.Button as Button\n    import Material.Options as Options\n\n    Button.view\n        [ Options.onClick Inc\n        , Button.disabled False\n        , Button.raised\n        ]\n        [ Html.text \"+\" ]\n\n\n# View\n\n@docs view\n\n\n# Properties\n\n@docs Property\n@docs disabled\n@docs icon\n@docs outlined\n@docs raised\n@docs unelevated\n@docs dense\n\n\n# Reference\n\n  - [Design](https://material.io/design/components/buttons.html)\n  - [Develop](https://material.io/develop/web/components/buttons/)\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Property",
+                "comment": " Buttons property type.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "Material.Internal.Options.Property Material.Button.Config msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "dense",
+                "comment": " Makes the button text and container slightly smaller.\n",
+                "type": "Material.Button.Property msg"
+            },
+            {
+                "name": "disabled",
+                "comment": " Indicates whether the user can interact with a button.\n",
+                "type": "Basics.Bool -> Material.Button.Property msg"
+            },
+            {
+                "name": "icon",
+                "comment": " Adds an icon with `name` to a button.\n",
+                "type": "String.String -> Material.Button.Property msg"
+            },
+            {
+                "name": "outlined",
+                "comment": " Styles an outlined button that is flush with the surface.\n",
+                "type": "Material.Button.Property msg"
+            },
+            {
+                "name": "raised",
+                "comment": " Styles a contained button that is elevated above the surface.\n",
+                "type": "Material.Button.Property msg"
+            },
+            {
+                "name": "unelevated",
+                "comment": " Styles a contained button that is flush with the surface.\n",
+                "type": "Material.Button.Property msg"
+            },
+            {
+                "name": "view",
+                "comment": " Renders a button.\n",
+                "type": "List.List (Material.Button.Property msg) -> List.List (Html.Html msg) -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Material.Card",
+        "comment": " Cards contain content and actions about a single subject.\n\n\n# Install\n\nIn your application install:\n\n    npm install \"@material/card\"\n\nIn your Sass file import:\n\n    @import \"@material/card/mdc-card\";\n\n\n# View\n\n@docs view\n@docs actions\n@docs actionButton\n@docs actionButtons\n\n\n# Properties\n\n@docs outlined\n\n\n# Reference\n\n  - [Design](https://material.io/design/components/cards.html)\n  - [Develop](https://material.io/develop/web/components/cards/)\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "actionButton",
+                "comment": " ",
+                "type": "Material.Button.Property msg"
+            },
+            {
+                "name": "actionButtons",
+                "comment": " ",
+                "type": "List.List (Material.Card.Property msg) -> List.List (Html.Html msg) -> Html.Html msg"
+            },
+            {
+                "name": "actions",
+                "comment": " ",
+                "type": "List.List (Material.Card.Property msg) -> List.List (Html.Html msg) -> Html.Html msg"
+            },
+            {
+                "name": "outlined",
+                "comment": " ",
+                "type": "Material.Card.Property msg"
+            },
+            {
+                "name": "view",
+                "comment": " ",
+                "type": "List.List (Material.Card.Property msg) -> List.List (Html.Html msg) -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Material.Checkbox",
+        "comment": " Checkboxes allow the user to select one or more items from a set.\n\nThis module implements CSS-only checkboxes without state.\n\n\n# Install\n\nIn your application install:\n\n    npm install \"@material/checkbox\"\n\nIn your Sass file import:\n\n    @import \"@material/checkbox/mdc-checkbox\";\n\n\n# Example\n\n    import Html\n    import Html.Attributes as Attr\n    import Material.Checkbox as Checkbox\n    import Material.FormField as FormField\n    import Material.Options as Options\n\n\n    FormField.view [ Options.onClick Toggle ]\n        [ Checkbox.view\n              [ Options.id \"my-checkbox\"\n              , Checkbox.checked <| Just True\n              ]\n              []\n        , Html.label\n              [ Attr.for \"my-checkbox\" ]\n              [ Html.text \"My checkbox\" ]\n        ]\n\n\n# View\n\n@docs view\n\n\n# Properties\n\n@docs checked\n@docs disabled\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "checked",
+                "comment": " Indicates whether a checkbox is checked.\n\n    `Nothing` puts a checkbox in an indeterminate state which is not checked\n    but visualized with a flat bar. The indeterminate state should be used on\n    parent checkboxes where not all child checkboxes are checked.\n\n",
+                "type": "Maybe.Maybe Basics.Bool -> Material.Checkbox.Property msg"
+            },
+            {
+                "name": "disabled",
+                "comment": " Indicates whether the user can interact with a checkbox.\n",
+                "type": "Basics.Bool -> Material.Checkbox.Property msg"
+            },
+            {
+                "name": "view",
+                "comment": " Renders a checkbox without label. Childs are ignored.\n",
+                "type": "List.List (Material.Checkbox.Property msg) -> List.List (Html.Html msg) -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Material.CircularProgress",
+        "comment": " Progress indicators express an unspecified wait time or display the length\nof a process.\n\n\n# View\n\n@docs view\n\n\n# Properties\n\n@docs determinate\n@docs indeterminate\n@docs reversed\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "determinate",
+                "comment": " ",
+                "type": "Basics.Float -> Material.CircularProgress.Property msg"
+            },
+            {
+                "name": "indeterminate",
+                "comment": " ",
+                "type": "Material.CircularProgress.Property msg"
+            },
+            {
+                "name": "reversed",
+                "comment": " ",
+                "type": "Material.CircularProgress.Property msg"
+            },
+            {
+                "name": "view",
+                "comment": " ",
+                "type": "List.List (Material.CircularProgress.Property msg) -> List.List (Html.Html msg) -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Material.Dialog",
+        "comment": " Dialogs inform users about a task and can contain critical information,\nrequire decisions, or involve multiple tasks.\n\n\n# View\n\n@docs view\n@docs container\n@docs scrim\n@docs surface\n@docs content\n@docs actions\n\n\n# Properties\n\n@docs title\n@docs open\n@docs button\n@docs scrollable\n@docs onClose\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "actions",
+                "comment": " ",
+                "type": "List.List (Html.Html msg) -> Html.Html msg"
+            },
+            {
+                "name": "button",
+                "comment": " ",
+                "type": "Material.Button.Property msg"
+            },
+            {
+                "name": "container",
+                "comment": " ",
+                "type": "List.List (Material.Dialog.Property msg) -> List.List (Html.Html msg) -> Html.Html msg"
+            },
+            {
+                "name": "content",
+                "comment": " ",
+                "type": "List.List (Material.Dialog.Property msg) -> List.List (Html.Html msg) -> Html.Html msg"
+            },
+            {
+                "name": "onClose",
+                "comment": " ",
+                "type": "msg -> Material.Dialog.Property msg"
+            },
+            {
+                "name": "open",
+                "comment": " ",
+                "type": "Material.Dialog.Property msg"
+            },
+            {
+                "name": "scrim",
+                "comment": " ",
+                "type": "List.List (Material.Dialog.Property msg) -> List.List (Html.Html msg) -> Html.Html msg"
+            },
+            {
+                "name": "scrollable",
+                "comment": " ",
+                "type": "Material.Dialog.Property msg"
+            },
+            {
+                "name": "surface",
+                "comment": " ",
+                "type": "List.List (Material.Dialog.Property msg) -> List.List (Html.Html msg) -> Html.Html msg"
+            },
+            {
+                "name": "title",
+                "comment": " ",
+                "type": "Material.Dialog.Property msg"
+            },
+            {
+                "name": "view",
+                "comment": " ",
+                "type": "List.List (Material.Dialog.Property msg) -> List.List (Html.Html msg) -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Material.Fab",
+        "comment": " A floating action button (FAB) represents the primary action of a screen.\n\n\n# View\n\n@docs view\n\n\n# Properties\n\n@docs icon\n@docs mini\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "icon",
+                "comment": " ",
+                "type": "Material.Icon.Property msg"
+            },
+            {
+                "name": "mini",
+                "comment": " ",
+                "type": "Material.Fab.Property msg"
+            },
+            {
+                "name": "view",
+                "comment": " ",
+                "type": "List.List (Material.Fab.Property msg) -> String.String -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Material.FormField",
+        "comment": " MDC Form Field aligns an MDC Web form field (for example, a checkbox) with\nits label and makes it RTL-aware.\n\n\n# Install\n\nIn your application install:\n\n    npm install \"@material/form-field\"\n\nIn your Sass file import:\n\n    @import \"@material/form-field/mdc-form-field\";\n\n\n# View\n\n@docs view\n\n\n# Properties\n\n@docs alignEnd\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "alignEnd",
+                "comment": " Position the input after the label.\n",
+                "type": "Material.FormField.Property msg"
+            },
+            {
+                "name": "view",
+                "comment": " ",
+                "type": "List.List (Material.FormField.Property msg) -> List.List (Html.Html msg) -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Material.Icon",
+        "comment": " Convenience functions for producing Material Design Icons.\n\n\n# Example\n\n    import Material.Icon as Icon\n\n\n    Icon.view [] \"settings\"\n\n\n# View\n\n@docs view\n\n\n# Properties\n\n@docs Property\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Property",
+                "comment": " Icons property type.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "Material.Internal.Options.Property () msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "view",
+                "comment": " Renders an icon with the given name.\n",
+                "type": "List.List (Material.Icon.Property msg) -> String.String -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Material.LayoutGrid",
+        "comment": " Material design’s responsive UI is based on a column-variate grid layout.\nIt has 12 columns on desktop, 8 columns on tablet and 4 columns on phone.\n\n\n# View\n\n@docs view\n@docs cell\n\n\n# Properties\n\n@docs span\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "cell",
+                "comment": " A grid cell. Use as childs of view.\n",
+                "type": "List.List (Material.LayoutGrid.Property msg) -> List.List (Html.Html msg) -> Html.Html msg"
+            },
+            {
+                "name": "span",
+                "comment": " Span a cell from 1 to 12 columns.\n",
+                "type": "Basics.Int -> Material.LayoutGrid.Property msg"
+            },
+            {
+                "name": "view",
+                "comment": " Renders a grid. Use `cell` as childs.\n",
+                "type": "List.List (Material.LayoutGrid.Property msg) -> List.List (Html.Html msg) -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Material.LinearProgress",
+        "comment": " Progress indicators express an unspecified wait time or display the length of a process.\n\n\n# View\n\n@docs view\n\n\n# Properties\n\n@docs buffered\n@docs determinate\n@docs indeterminate\n@docs reversed\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "buffered",
+                "comment": " ",
+                "type": "Basics.Float -> Basics.Float -> Material.LinearProgress.Property msg"
+            },
+            {
+                "name": "determinate",
+                "comment": " ",
+                "type": "Basics.Float -> Material.LinearProgress.Property msg"
+            },
+            {
+                "name": "indeterminate",
+                "comment": " ",
+                "type": "Material.LinearProgress.Property msg"
+            },
+            {
+                "name": "reversed",
+                "comment": " ",
+                "type": "Material.LinearProgress.Property msg"
+            },
+            {
+                "name": "view",
+                "comment": " ",
+                "type": "List.List (Material.LinearProgress.Property msg) -> List.List (Html.Html msg) -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Material.List",
+        "comment": " Lists are continuous, vertical indexes of text or images.\n\n\n# Install\n\nIn your application install:\n\n    npm install \"@material/list\"\n\nIn your Sass file import:\n\n    @import \"@material/list/mdc-list\";\n\n\n# View\n\n@docs view\n@docs item\n@docs text\n@docs primaryText\n@docs secondaryText\n\n\n## List Groups\n\n@docs group\n@docs subheader\n\n\n# Properties\n\n@docs twoLine\n@docs graphic\n@docs meta\n\n\n# Reference\n\n  - [Design](https://material.io/design/components/lists.html)\n  - [Develop](https://material.io/develop/web/components/lists/)\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "graphic",
+                "comment": " Optional, the first tile in the row (in LTR languages, the first column of\nthe list item). Typically an icon or image.\n",
+                "type": "Material.List.Property msg"
+            },
+            {
+                "name": "group",
+                "comment": " List groups.\n\n    Example:\n\n        group []\n            [ subheader [] [ Html.text \"foo\" ]\n            , view []\n                [ item [] []\n                , item [] []\n                ]\n            ]\n\n",
+                "type": "List.List (Material.List.Property msg) -> List.List (Html.Html msg) -> Html.Html msg"
+            },
+            {
+                "name": "item",
+                "comment": " Renders a list item.\n",
+                "type": "List.List (Material.List.Property msg) -> List.List (Html.Html msg) -> Html.Html msg"
+            },
+            {
+                "name": "meta",
+                "comment": " Optional, the last tile in the row (in LTR languages, the last column of\nthe list item). Typically small text, icon. or image.\n",
+                "type": "Material.List.Property msg"
+            },
+            {
+                "name": "primaryText",
+                "comment": " Use for two-line text inside items additionally to `text`.\n\n    Example:\n\n        text []\n            [ primaryText [] [ Html.text \"foo\" ]\n            , secondaryText [] [ Html.text \"bar\" ]\n            ]\n\n",
+                "type": "List.List (Material.List.Property msg) -> List.List (Html.Html msg) -> Html.Html msg"
+            },
+            {
+                "name": "secondaryText",
+                "comment": " Use for two-line text inside items additionally to `text`.\n\n    Example:\n\n        text []\n            [ primaryText [] [ Html.text \"foo\" ]\n            , secondaryText [] [ Html.text \"bar\" ]\n            ]\n\n",
+                "type": "List.List (Material.List.Property msg) -> List.List (Html.Html msg) -> Html.Html msg"
+            },
+            {
+                "name": "subheader",
+                "comment": " Header inside list groups.\n",
+                "type": "String.String -> Html.Html msg"
+            },
+            {
+                "name": "text",
+                "comment": " Use for text inside items.\n",
+                "type": "List.List (Material.List.Property msg) -> List.List (Html.Html msg) -> Html.Html msg"
+            },
+            {
+                "name": "twoLine",
+                "comment": " Add to lists with two lines.\n",
+                "type": "Material.List.Property msg"
+            },
+            {
+                "name": "view",
+                "comment": " Renders a list. Childs have to be keyed.\n",
+                "type": "List.List (Material.List.Property msg) -> List.List ( String.String, Html.Html msg ) -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Material.Options",
+        "comment": " Common properties for Material components.\n\n\n# Properties\n\n@docs class\n@docs id\n@docs onClick\n@docs style\n@docs noOp\n\n\n# Modifier\n\n@docs when\n\n\n# Working with HTML\n\n@docs styled\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "class",
+                "comment": " A single CSS class property.\n",
+                "type": "String.String -> Material.Internal.Options.Property config msg"
+            },
+            {
+                "name": "id",
+                "comment": " Sets the HTML id attribute of a component. In components like `Checkbox` or\n`TextField` the id is set on the native control HTML element.\n",
+                "type": "String.String -> Material.Internal.Options.Property { config | id : Maybe.Maybe String.String } msg"
+            },
+            {
+                "name": "noOp",
+                "comment": " A property which just does nothing.\n\n    This is useful in `Maybe.withDefault`.\n\n    Example:\n\n        Maybe.map (onClick << Tell) maybeValue\n            |> Maybe.withDefault Options.noOp\n\n",
+                "type": "Material.Internal.Options.Property config msg"
+            },
+            {
+                "name": "onClick",
+                "comment": " Like HTML onClick but as property.\n",
+                "type": "msg -> Material.Internal.Options.Property config msg"
+            },
+            {
+                "name": "style",
+                "comment": " A CSS style as property.\n",
+                "type": "String.String -> String.String -> Material.Internal.Options.Property config msg"
+            },
+            {
+                "name": "styled",
+                "comment": " Style HTML elements using properties instead of HTML attributes.\n\n    Takes an HTML element constructor and a list of properties and returns that\n    element constructor with the corresponding HTML attributes applied.\n\n    Example:\n\n        styled Html.h2 [ class \"title\" ]\n\n",
+                "type": "(List.List (Html.Attribute msg) -> a) -> List.List (Material.Internal.Options.Property config msg) -> a"
+            },
+            {
+                "name": "when",
+                "comment": " Conditionally apply a property.\n\n    Example:\n\n        onClick Msg |> when enabled\n\n",
+                "type": "Basics.Bool -> Material.Internal.Options.Property config msg -> Material.Internal.Options.Property config msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Material.RadioButton",
+        "comment": " Radio buttons allow the user to select one option from a set.\n\n\n# View\n\n@docs view\n\n\n# Properties\n\n@docs checked\n@docs disabled\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "checked",
+                "comment": " Indicates whether a radio button is checked.\n",
+                "type": "Basics.Bool -> Material.RadioButton.Property msg"
+            },
+            {
+                "name": "disabled",
+                "comment": " Indicates whether the user can interact with a radio button.\n",
+                "type": "Basics.Bool -> Material.RadioButton.Property msg"
+            },
+            {
+                "name": "view",
+                "comment": " Renders a radio button without label. Childs are ignored.\n",
+                "type": "List.List (Material.RadioButton.Property msg) -> List.List (Html.Html msg) -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Material.Select",
+        "comment": " MDC Select provides Material Design single-option select menus.\n\n\n# Install\n\nIn your application install:\n\n    npm install \"@material/select\"\n\nIn your Sass file import:\n\n    @import \"@material/select/mdc-select\";\n\n\n# Model\n\n@docs Model\n@docs init\n\n\n# Update\n\n@docs Msg\n@docs update\n\n\n# View\n\n@docs view\n\n\n# Properties\n\n@docs label\n\n\n# Reference\n\n  - [Design](https://material.io/design/components/text-fields.html)\n  - [Develop](https://material.io/develop/web/components/input-controls/select-menus/)\n\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " Internal message type. Create a message which transports messages of that\ntype.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Model",
+                "comment": " For each select, place a model value in your model.\n",
+                "args": [],
+                "type": "{ focused : Basics.Bool, value : Maybe.Maybe String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "init",
+                "comment": " Initializes the select menu with the following value.\n",
+                "type": "Maybe.Maybe String.String -> Material.Select.Model"
+            },
+            {
+                "name": "label",
+                "comment": " Sets the label text. The selects label will be empty without setting this.\n",
+                "type": "String.String -> Material.Select.Property msg"
+            },
+            {
+                "name": "update",
+                "comment": " Internal update function. Has to be called by your module on messages from\nevery select menu you use.\n",
+                "type": "Material.Select.Msg -> Material.Select.Model -> Material.Select.Model"
+            },
+            {
+                "name": "view",
+                "comment": " Renders a select menu.\n\n    Takes a message lifter and the model.\n\n",
+                "type": "(Material.Select.Msg -> msg) -> Material.Select.Model -> List.List (Material.Select.Property msg) -> List.List (Html.Html msg) -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Material.TextField",
+        "comment": " Text fields let users enter and edit text.\n\n\n# Install\n\nIn your application install:\n\n    npm install \"@material/textfield\"\n\nIn your Sass file import:\n\n    @import \"@material/textfield/mdc-text-field\";\n\n\n# Model\n\n@docs Model\n@docs SimpleModel\n@docs init\n\n\n# Update\n\n@docs Msg\n@docs update\n\n\n# View\n\n@docs view\n\n\n# Properties\n\n@docs fullWidth\n@docs outlined\n@docs label\n@docs leadingIcon\n@docs trailingIcon\n\n\n# Reference\n\n  - [Design](https://material.io/design/components/text-fields.html)\n  - [Develop](https://material.io/develop/web/components/input-controls/text-field/)\n\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Model",
+                "comment": " The full model requires the type params `context` and `problem` as defined\nin `Parser.Advanced`. Use `SimpleModel` if you plan to use a normal parser.\n",
+                "args": [
+                    "context",
+                    "problem",
+                    "value"
+                ],
+                "type": "{ focused : Basics.Bool, parser : Parser.Advanced.Parser context problem value, value : Maybe.Maybe value, parseError : List.List (Parser.Advanced.DeadEnd context problem), input : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "SimpleModel",
+                "comment": " The simple model should be used if a normal parser is sufficient.\n",
+                "args": [
+                    "value"
+                ],
+                "type": "Material.TextField.Model Basics.Never Parser.Problem value"
+            }
+        ],
+        "values": [
+            {
+                "name": "fullWidth",
+                "comment": " ",
+                "type": "Material.TextField.Property msg value"
+            },
+            {
+                "name": "init",
+                "comment": " ",
+                "type": "Parser.Advanced.Parser context problem value -> (value -> String.String) -> Maybe.Maybe value -> Material.TextField.Model context problem value"
+            },
+            {
+                "name": "label",
+                "comment": " ",
+                "type": "String.String -> Material.TextField.Property msg value"
+            },
+            {
+                "name": "leadingIcon",
+                "comment": " ",
+                "type": "String.String -> Material.TextField.Property msg value"
+            },
+            {
+                "name": "outlined",
+                "comment": " ",
+                "type": "Material.TextField.Property msg value"
+            },
+            {
+                "name": "trailingIcon",
+                "comment": " ",
+                "type": "String.String -> Material.TextField.Property msg value"
+            },
+            {
+                "name": "update",
+                "comment": " ",
+                "type": "Material.TextField.Msg -> Material.TextField.Model context problem value -> Material.TextField.Model context problem value"
+            },
+            {
+                "name": "view",
+                "comment": " ",
+                "type": "Material.TextField.RequiredConfig msg value -> Material.TextField.Model context problem value -> List.List (Material.TextField.Property msg value) -> List.List (Html.Html msg) -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Material.TextField.HelperText",
+        "comment": " Helper text conveys additional guidance about the input field, such as how\nit will be used. It should only take up a single line, being persistently\nvisible or visible only on focus.\n\n\n# Install\n\nIn your application install:\n\n    npm install \"@material/textfield\"\n\nIn your Sass file import:\n\n    @import \"@material/textfield/helper-text/mdc-text-field-helper-text\";\n\n\n# View\n\n@docs view\n\n\n# Properties\n\n@docs persistent\n@docs validationMsg\n\n\n# Reference\n\n  - [Design](https://material.io/design/components/text-fields.html)\n  - [Develop](https://material.io/develop/web/components/input-controls/text-field/helper-text/)\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "persistent",
+                "comment": " Makes the helper text permanently visible.\n",
+                "type": "Material.TextField.HelperText.Property msg"
+            },
+            {
+                "name": "validationMsg",
+                "comment": " Indicates the helper text is a validation message.\n",
+                "type": "Material.TextField.HelperText.Property msg"
+            },
+            {
+                "name": "view",
+                "comment": " Renders a helper text paragraph node. Place this right below your `TextField`.\n",
+                "type": "List.List (Material.TextField.HelperText.Property msg) -> List.List (Html.Html msg) -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Material.TopAppBar",
+        "comment": " The top app bar displays information and actions relating to the current screen.\n\n\n# Install\n\nIn your application install:\n\n    npm install \"@material/top-app-bar\"\n\nIn your Sass file import:\n\n    @import \"@material/top-app-bar/mdc-top-app-bar\";\n\n\n# View\n\n@docs view\n@docs section\n@docs navigationIcon\n@docs title\n@docs actionIcon\n\n\n# Properties\n\n@docs alignEnd\n@docs alignStart\n@docs dense\n@docs fixed\n@docs short\n@docs prominent\n\n\n# Reference\n\n  - [Design](https://material.io/design/components/app-bars-top.html)\n  - [Develop](https://material.io/develop/web/components/top-app-bar/)\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "actionIcon",
+                "comment": " ",
+                "type": "String.String -> Html.Html msg"
+            },
+            {
+                "name": "alignEnd",
+                "comment": " Make section align to the end.\n",
+                "type": "Material.TopAppBar.Property msg"
+            },
+            {
+                "name": "alignStart",
+                "comment": " Make section align to the start.\n",
+                "type": "Material.TopAppBar.Property msg"
+            },
+            {
+                "name": "dense",
+                "comment": " The dense top app bar is shorter.\n",
+                "type": "Material.TopAppBar.Property msg"
+            },
+            {
+                "name": "fixed",
+                "comment": " Fixed top app bars stay at the top of the page and elevate above the content\nwhen scrolled.\n",
+                "type": "Material.TopAppBar.Property msg"
+            },
+            {
+                "name": "navigationIcon",
+                "comment": " Represent the navigation element in the top left corner.\n",
+                "type": "String.String -> Html.Html msg"
+            },
+            {
+                "name": "prominent",
+                "comment": " The prominent top app bar is taller.\n",
+                "type": "Material.TopAppBar.Property msg"
+            },
+            {
+                "name": "section",
+                "comment": " ",
+                "type": "List.List (Material.TopAppBar.Property msg) -> List.List (Html.Html msg) -> Html.Html msg"
+            },
+            {
+                "name": "short",
+                "comment": " Short top app bars are top app bars that can collapse to the navigation icon\nside when scrolled.\n",
+                "type": "Material.TopAppBar.Property msg"
+            },
+            {
+                "name": "title",
+                "comment": " ",
+                "type": "String.String -> Html.Html msg"
+            },
+            {
+                "name": "view",
+                "comment": " ",
+                "type": "List.List (Material.TopAppBar.Property msg) -> List.List (Html.Html msg) -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

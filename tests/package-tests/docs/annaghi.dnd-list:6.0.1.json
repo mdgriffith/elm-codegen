@@ -1,0 +1,207 @@
+[
+    {
+        "name": "DnDList",
+        "comment": " While dragging and dropping a list item, the mouse events, the ghost element's positioning\nand the list sorting are handled internally by this module.\nHere is a [basic demo](https://annaghi.github.io/dnd-list/introduction/basic),\nwe will use it as an illustration throughout this page.\n\nThe first step is to create a `System` object which holds all the information related to the drag and drop features.\nUsing this object you can wire up the module's internal model, subscriptions, commands, and update\ninto your model, subscriptions, commands, and update respectively.\n\nNext, when you write your `view` functions, you will need to bind the drag and drop events to the list items,\nand also style them according to their current state.\nThe `System` object gives you access to events and to detailed information about the drag source and drop target items.\n\nFinally, you will need to render a ghost element to be used for dragging display.\nYou can add position styling attributes to this element using the`System` object.\n\n&nbsp;\n\n\n## Meaningful type aliases\n\n    type alias DragIndex =\n        Int\n\n    type alias DropIndex =\n        Int\n\n    type alias DragElementId =\n        String\n\n    type alias DropElementId =\n        String\n\n    type alias Position =\n        { x : Float\n        , y : Float\n        }\n\n\n# System\n\n@docs System, create, Msg\n\n\n# Config\n\n@docs Config\n@docs Movement, Listen, Operation\n\n\n# Info\n\n@docs Info\n\n\n# System fields\n\n\n## model\n\n@docs Model\n\n\n## subscriptions\n\n`subscriptions` is a function to access the browser events during the dragging.\n\n    subscriptions : Model -> Sub Msg\n    subscriptions model =\n        system.subscriptions model.dnd\n\n\n## commands\n\n`commands` is a function to access the DOM for the drag source and the drop target as HTML elements.\n\n    update : Msg -> Model -> ( Model, Cmd Msg )\n    update message model =\n        case message of\n            MyMsg msg ->\n                let\n                    updatedModel = ...\n                in\n                ( updatedModel\n                , system.commands updatedModel\n                )\n\n\n## update\n\n`update` is a function which returns an updated internal `Model` and the sorted list for your model.\n\n    update : Msg -> Model -> ( Model, Cmd Msg )\n    update message model =\n        case message of\n            MyMsg msg ->\n                let\n                    ( dnd, items ) =\n                        system.update msg model.dnd model.items\n                in\n                ( { model | dnd = dnd, items = items }\n                , system.commands dnd\n                )\n\n\n## dragEvents\n\n`dragEvents` is a function which wraps all the events up for the drag source items.\n\nThis and the following example will show us how to use auxiliary items and think about them in two different ways:\n\n  - as ordinary list items from the list operation point of view, and\n  - as specially styled elements from the HTML design point of view.\n\n```\n  itemView : DnDList.Model -> Int -> Fruit -> Html.Html Msg\n  itemView dnd index item =\n      let\n          itemId : String\n          itemId =\n              \"id-\" ++ item\n      in\n      case system.info dnd of\n          Just _ ->\n              -- Render when there is an ongoing dragging.\n\n          Nothing ->\n              Html.p\n                  (Html.Attributes.id itemId\n                      :: system.dragEvents index itemId\n                  )\n                  [ Html.text item ]\n```\n\n\n## dropEvents\n\n`dropEvents` is a function which wraps all the events up for the drop target items.\n\n    itemView : DnDList.Model -> Int -> Fruit -> Html.Html Msg\n    itemView dnd index item =\n        let\n            itemId : String\n            itemId =\n                \"id-\" ++ item\n        in\n        case system.info dnd of\n            Just { dragIndex } ->\n                if dragIndex /= index then\n                    Html.p\n                        (Html.Attributes.id itemId\n                            :: system.dropEvents index itemId\n                        )\n                        [ Html.text item ]\n\n                else\n                    Html.p\n                        [ Html.Attributes.id itemId ]\n                        [ Html.text \"[---------]\" ]\n\n            Nothing ->\n                -- Render when there is no dragging.\n\n\n## ghostStyles\n\n`ghostStyles` is a function which wraps up the positioning styles of the ghost element.\nThe ghost element has absolute position relative to the viewport.\n\n    ghostView : DnDList.Model -> List Fruit -> Html.Html Msg\n    ghostView dnd items =\n        let\n            maybeDragItem : Maybe Fruit\n            maybeDragItem =\n                system.info dnd\n                    |> Maybe.andThen\n                        (\\{ dragIndex } ->\n                            items\n                                |> List.drop dragIndex\n                                |> List.head\n                        )\n        in\n        case maybeDragItem of\n            Just item ->\n                Html.div\n                    (system.ghostStyles dnd)\n                    [ Html.text item ]\n\n            Nothing ->\n                Html.text \"\"\n\nThe following CSS will be added:\n\n    {\n        position: fixed;\n        left: 0;\n        top: 0;\n        transform: translate3d(the vector is calculated from the dragElement and the mouse position in pixels);\n        height: the dragElement's height in pixels;\n        width: the dragElement's width in pixels;\n        pointer-events: none;\n    }\n\n\n## info\n\nSee [Info](#info).\n\n",
+        "unions": [
+            {
+                "name": "Listen",
+                "comment": " Represents the event for which the list sorting is available.\n\n  - `OnDrag`: The list will be sorted when the ghost element is being dragged over a drop target item.\n\n  - `OnDrop`: The list will be sorted when the ghost element is dropped on a drop target item.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "OnDrag",
+                        []
+                    ],
+                    [
+                        "OnDrop",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Model",
+                "comment": " Represents the internal model of the current drag and drop features.\nIt will be `Nothing` if there is no ongoing dragging.\nYou should set it in your model and initialize through the `System`'s `model` field.\n\n    type alias Model =\n        { dnd : DnDList.Model\n        , items : List Fruit\n        }\n\n    initialModel : Model\n    initialModel =\n        { dnd = system.model\n        , items = data\n        }\n\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Movement",
+                "comment": " Represents the mouse dragging movement.\nThis [demo config](https://annaghi.github.io/dnd-list/config/movement) shows the different movements in action.\n\n  - `Free` : The ghost element follows the mouse pointer.\n\n  - `Horizontal` : The ghost element can only move horizontally.\n\n  - `Vertical` : The ghost element can only move vertically.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Free",
+                        []
+                    ],
+                    [
+                        "Horizontal",
+                        []
+                    ],
+                    [
+                        "Vertical",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Msg",
+                "comment": " Internal message type.\nIt should be wrapped within our message constructor:\n\n    type Msg\n        = MyMsg DnDList.Msg\n\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Operation",
+                "comment": " Represents the list sort operation.\nDetailed comparisons can be found here:\n[sorting on drag](https://annaghi.github.io/dnd-list/config/operations-drag)\nand [sorting on drop](https://annaghi.github.io/dnd-list/config/operations-drop).\n\n  - `InsertAfter`: The drag source item will be inserted after the drop target item.\n\n  - `InsertBefore`: The drag source item will be inserted before the drop target item.\n\n  - `Rotate`: The items between the drag source and the drop target items will be circularly shifted.\n\n  - `Swap`: The drag source and the drop target items will be swapped.\n\n  - `Unaltered`: The list items will keep their initial order.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "InsertAfter",
+                        []
+                    ],
+                    [
+                        "InsertBefore",
+                        []
+                    ],
+                    [
+                        "Rotate",
+                        []
+                    ],
+                    [
+                        "Swap",
+                        []
+                    ],
+                    [
+                        "Unaltered",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " Represents the `System`'s configuration.\n\n  - `beforeUpdate`: This is a hook and gives you access to your list before it will be sorted.\n    The first number is the drag index, the second number is the drop index.\n    The [Towers of Hanoi](https://annaghi.github.io/dnd-list/gallery/hanoi) uses this hook to update the disks' `tower` attribute.\n\n  - `movement`: The dragging can be constrained to horizontal or vertical axis only, or it can be set to free.\n    This [demo config](https://annaghi.github.io/dnd-list/config/movement) shows the different movements in action.\n\n  - `listen`: The items can listen for drag events or for drop events.\n    In the first case the list will be sorted again and again while the mouse moves over the different drop target items.\n    In the second case the list will be sorted only once on that drop target where the mouse was finally released.\n\n  - `operation`: Different kinds of sort operations can be performed on the list.\n    You can start to analyze them with\n    [sorting on drag](https://annaghi.github.io/dnd-list/config/operations-drag)\n    and [sorting on drop](https://annaghi.github.io/dnd-list/config/operations-drop).\n\nThis is our configuration with a void `beforeUpdate`:\n\n    config : DnDList.Config Fruit\n    config =\n        { beforeUpdate = \\_ _ list -> list\n        , movement = DnDList.Free\n        , listen = DnDList.OnDrag\n        , operation = DnDList.Rotate\n        }\n\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ beforeUpdate : DnDList.DragIndex -> DnDList.DropIndex -> List.List a -> List.List a, movement : DnDList.Movement, listen : DnDList.Listen, operation : DnDList.Operation }"
+            },
+            {
+                "name": "Info",
+                "comment": " Represents the information about the drag source and the drop target items.\nIt is accessible through the `System`'s `info` field.\n\n  - `dragIndex`: The index of the drag source.\n\n  - `dropIndex`: The index of the drop target.\n\n  - `dragElementId`: HTML id of the drag source.\n\n  - `dropElementId`: HTML id of the drop target.\n\n  - `dragElement`: Information about the drag source as an HTML element, see `Browser.Dom.Element`.\n\n  - `dropElement`: Information about the drop target as an HTML element, see `Browser.Dom.Element`.\n\n  - `startPosition`: The x, y position of the ghost element when dragging started.\n\n  - `currentPosition`: The x, y position of the ghost element now.\n\nYou can check the `Info` object to decide what to render when there is an ongoing dragging,\nand what to render when there is no dragging:\n\n    itemView : DnDList.Model -> Int -> Fruit -> Html.Html Msg\n    itemView dnd index item =\n        ...\n        case system.info dnd of\n            Just _ ->\n                -- Render when there is an ongoing dragging.\n\n            Nothing ->\n                -- Render when there is no dragging.\n\nOr you can determine the current drag source item using the `Info` object:\n\n    maybeDragItem : DnDList.Model -> List Fruit -> Maybe Fruit\n    maybeDragItem dnd items =\n        system.info dnd\n            |> Maybe.andThen\n                (\\{ dragIndex } ->\n                    items\n                        |> List.drop dragIndex\n                        |> List.head\n                )\n\nOr you can control over generating styles for the dragged ghost element.\nFor example adding an offset to the position:\n\n    type alias Offset =\n        { x : Int\n        , y : Int\n        }\n\n    customGhostStyle : DnDList.Model -> DnDList.Info -> Offset -> List (Html.Attribute msg)\n    customGhostStyle dnd { element } offset =\n        let\n            px : Int -> String\n            px x =\n                String.fromInt x ++ \"px\"\n\n            translate : Int -> Int -> String\n            translate x y =\n                \"translate3d(\" ++ px x ++ \", \" ++ px y ++ \", 0)\"\n        in\n        case system.info dnd of\n            Just { currentPosition, startPosition } ->\n                [ Html.Attribute.style \"transform\" <|\n                    translate\n                        (round element.x + offset.x)\n                        (round (currentPosition.y - startPosition.y + element.y) + offset.y)\n                ]\n\n            Nothing ->\n                []\n\n",
+                "args": [],
+                "type": "{ dragIndex : DnDList.DragIndex, dropIndex : DnDList.DropIndex, dragElementId : DnDList.DragElementId, dropElementId : DnDList.DropElementId, dragElement : Browser.Dom.Element, dropElement : Browser.Dom.Element, startPosition : DnDList.Position, currentPosition : DnDList.Position }"
+            },
+            {
+                "name": "System",
+                "comment": " A `System` encapsulates:\n\n  - the internal model, subscriptions, commands, and update,\n\n  - the bindable events and styles, and\n\n  - the `Info` object.\n\nLater we will learn more about the [Info object](#info) and the [System fields](#system-fields).\n\n",
+                "args": [
+                    "a",
+                    "msg"
+                ],
+                "type": "{ model : DnDList.Model, subscriptions : DnDList.Model -> Platform.Sub.Sub msg, commands : DnDList.Model -> Platform.Cmd.Cmd msg, update : DnDList.Msg -> DnDList.Model -> List.List a -> ( DnDList.Model, List.List a ), dragEvents : DnDList.DragIndex -> DnDList.DragElementId -> List.List (Html.Attribute msg), dropEvents : DnDList.DropIndex -> DnDList.DropElementId -> List.List (Html.Attribute msg), ghostStyles : DnDList.Model -> List.List (Html.Attribute msg), info : DnDList.Model -> Maybe.Maybe DnDList.Info }"
+            }
+        ],
+        "values": [
+            {
+                "name": "create",
+                "comment": " Creates a `System` object according to the configuration.\n\nSuppose we have a list of fruits:\n\n    type alias Fruit =\n        String\n\n    data : List Fruit\n    data =\n        [ \"Apples\", \"Bananas\", \"Cherries\", \"Dates\" ]\n\nNow the `System` is a wrapper type around the list item and our message types:\n\n    system : DnDList.System Fruit Msg\n    system =\n        DnDList.create config MyMsg\n\n",
+                "type": "DnDList.Config a -> (DnDList.Msg -> msg) -> DnDList.System a msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "DnDList.Groups",
+        "comment": " If the list is groupable by a certain property, the items can be transferred between those groups.\nInstead of using drop zones, this module requires the list to be gathered by the grouping property\nand possibly prepared with auxiliary items.\nHere is a [demo with groups](https://annaghi.github.io/dnd-list/introduction/groups),\nwe will use it as an illustration throughout this page.\n\nThis module is a modified version of the `DnDList` module.\nThe `Config` was extended with a new field called `groups`, and the `movement` field was withdrawn.\n\nWith groupable items the drag source and the drop target items can belong to the _same group_ or to _different groups_.\nSo now the internal sorting distinguishes between these two cases and we need to configure:\n\n  - what operation to run when moving items within the same group, and\n  - what operation to run when transferring items between different groups.\n\n&nbsp;\n\n\n## Meaningful type aliases\n\n    type alias DragIndex =\n        Int\n\n    type alias DropIndex =\n        Int\n\n    type alias DragElementId =\n        String\n\n    type alias DropElementId =\n        String\n\n    type alias Position =\n        { x : Float\n        , y : Float\n        }\n\n\n# System\n\n@docs System, create, Msg\n\n\n# Config\n\n@docs Config\n@docs Listen, Operation\n\n\n# Info\n\n@docs Info\n\n\n# System fields\n\n\n## model\n\n@docs Model\n\n\n## subscriptions\n\n`subscriptions` is a function to access the browser events during the dragging.\n\n    subscriptions : Model -> Sub Msg\n    subscriptions model =\n        system.subscriptions model.dnd\n\n\n## commands\n\n`commands` is a function to access the DOM for the drag source and the drop target as HTML elements.\n\n    update : Msg -> Model -> ( Model, Cmd Msg )\n    update message model =\n        case message of\n            MyMsg msg ->\n                let\n                    updatedModel = ...\n                in\n                ( updatedModel\n                , system.commands updatedModel\n                )\n\n\n## update\n\n`update` is a function which returns an updated internal `Model` and the sorted list for your model.\n\n    update : Msg -> Model -> ( Model, Cmd Msg )\n    update message model =\n        case message of\n            MyMsg msg ->\n                let\n                    ( dnd, items ) =\n                        system.update msg model.dnd model.items\n                in\n                ( { model | dnd = dnd, items = items }\n                , system.commands dnd\n                )\n\n\n## dragEvents\n\n`dragEvents` is a function which wraps all the events up for the drag source items.\n\nThis and the following example will show us how to use auxiliary items and think about them in two different ways:\n\n  - as ordinary list items from the list operation point of view, and\n  - as specially styled elements from the HTML design point of view.\n\n```\nitemView : Model -> Int -> Int -> Item -> Html.Html Msg\nitemView model offset localIndex { group, value, color } =\n    let\n        globalIndex : Int\n        globalIndex =\n            offset + localIndex\n\n        itemId : String\n        itemId =\n            \"id-\" ++ String.fromInt globalIndex\n    in\n    case ( system.info model.dnd, maybeDragItem model.dnd model.items ) of\n        ( Just _, Just _ ) ->\n            -- Render when there is an ongoing dragging.\n\n        _ ->\n            if color == transparent && value == \"footer\" then\n                Html.div\n                    (Html.Attributes.id itemId\n                        :: auxiliaryStyles\n                    )\n                    []\n\n            else\n                Html.div\n                    (Html.Attributes.id itemId\n                        :: itemStyles color\n                        ++ system.dragEvents globalIndex itemId\n                    )\n                    [ Html.text value ]\n```\n\n\n## dropEvents\n\n`dropEvents` is a function which wraps all the events up for the drop target items.\n\n    itemView : Model -> Int -> Int -> Item -> Html.Html Msg\n    itemView model offset localIndex { group, value, color } =\n        let\n            globalIndex : Int\n            globalIndex =\n                offset + localIndex\n\n            itemId : String\n            itemId =\n                \"id-\" ++ String.fromInt globalIndex\n        in\n        case ( system.info model.dnd, maybeDragItem model.dnd model.items ) of\n            ( Just { dragIndex }, Just dragItem ) ->\n                if color == transparent && value == \"footer\" && dragItem.group /= group then\n                    Html.div\n                        (Html.Attributes.id itemId\n                            :: auxiliaryStyles\n                            ++ system.dropEvents globalIndex itemId\n                        )\n                        []\n\n                else if color == transparent && value == \"footer\" && dragItem.group == group then\n                    Html.div\n                        (Html.Attributes.id itemId\n                            :: auxiliaryStyles\n                        )\n                        []\n\n                else if dragIndex /= globalIndex then\n                    Html.div\n                        (Html.Attributes.id itemId\n                            :: itemStyles color\n                            ++ system.dropEvents globalIndex itemId\n                        )\n                        [ Html.text value ]\n\n                else\n                    Html.div\n                        (Html.Attributes.id itemId\n                            :: itemStyles gray\n                        )\n                        []\n\n            _ ->\n                -- Render when there is no dragging.\n\n\n## ghostStyles\n\n`ghostStyles` is a function which wraps up the positioning styles of the ghost element.\nThe ghost element has absolute position relative to the viewport.\n\n    ghostView : DnDList.Groups.Model -> List Item -> Html.Html Msg\n    ghostView dnd items =\n        case maybeDragItem dnd items of\n            Just { value, color } ->\n                Html.div\n                    (itemStyles color ++ system.ghostStyles dnd)\n                    [ Html.text value ]\n\n            Nothing ->\n                Html.text \"\"\n\nThe following CSS will be added:\n\n    {\n        position: fixed;\n        left: 0;\n        top: 0;\n        transform: translate3d(the vector is calculated from the dragElement and the mouse position in pixels);\n        height: the dragElement's height in pixels;\n        width: the dragElement's width in pixels;\n        pointer-events: none;\n    }\n\n\n## info\n\nSee [Info](#info).\n\n",
+        "unions": [
+            {
+                "name": "Listen",
+                "comment": " Represents the event for which the list sorting is available.\n\n  - `OnDrag`: The list will be sorted when the ghost element is being dragged over a drop target item.\n\n  - `OnDrop`: The list will be sorted when the ghost element is dropped on a drop target item.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "OnDrag",
+                        []
+                    ],
+                    [
+                        "OnDrop",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Model",
+                "comment": " Represents the internal model of the current drag and drop features.\nIt will be `Nothing` if there is no ongoing dragging.\nYou should set it in your model and initialize through the `System`'s `model` field.\n\n    type alias Model =\n        { dnd : DnDList.Groups.Model\n        , items : List Item\n        }\n\n    initialModel : Model\n    initialModel =\n        { dnd = system.model\n        , items = preparedData\n        }\n\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Msg",
+                "comment": " Internal message type.\nIt should be wrapped within our message constructor:\n\n    type Msg\n        = MyMsg DnDList.Groups.Msg\n\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Operation",
+                "comment": " Represents the list sort operation.\nDetailed comparisons can be found here:\n[sorting on drag](https://annaghi.github.io/dnd-list/config/operations-drag)\nand [sorting on drop](https://annaghi.github.io/dnd-list/config/operations-drop).\n\n  - `InsertAfter`: The drag source item will be inserted after the drop target item.\n\n  - `InsertBefore`: The drag source item will be inserted before the drop target item.\n\n  - `Rotate`: The items between the drag source and the drop target items will be circularly shifted.\n\n  - `Swap`: The drag source and the drop target items will be swapped.\n\n  - `Unaltered`: The list items will keep their initial order.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "InsertAfter",
+                        []
+                    ],
+                    [
+                        "InsertBefore",
+                        []
+                    ],
+                    [
+                        "Rotate",
+                        []
+                    ],
+                    [
+                        "Swap",
+                        []
+                    ],
+                    [
+                        "Unaltered",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " Represents the `System`'s configuration.\n\n  - `beforeUpdate`: This is a hook and gives you access to your list before it will be sorted.\n    The first number is the drag index, the second number is the drop index.\n    The [Towers of Hanoi](https://annaghi.github.io/dnd-list/gallery/hanoi) uses this hook to update the disks' `tower` property.\n\n  - `listen`: This setting is for the operation performing on the _same group_.\n    The items can listen for drag events or for drop events.\n    In the first case the list will be sorted again and again while the mouse moves over the different drop target items.\n    In the second case the list will be sorted only once on that drop target where the mouse was finally released.\n\n  - `operation`: This setting is for the operation performing on the _same group_.\n    Different kinds of sort operations can be performed on the list.\n    You can start to analyze them with\n    [sorting on drag](https://annaghi.github.io/dnd-list/config/operations-drag)\n    and [sorting on drop](https://annaghi.github.io/dnd-list/config/operations-drop).\n\n  - `groups`: This setting is for the operation performing on _different groups_,\n    when the drag source and the drop target belong to different groups.\n    To have a better understanding of how this works\n    see [sorting between groups on drag](https://annaghi.github.io/dnd-list/config-groups/operations-drag)\n    and [sorting between groups on drop](https://annaghi.github.io/dnd-list/config-groups/operations-drop).\n      - `listen`: Same as the plain `listen` but applied when transferring items between groups.\n      - `operation`: Same as the plain `operation` but applied when transferring items between groups.\n      - `comparator`: You should provide this function, which determines if two items are from different groups.\n      - `setter`: You should provide this function, which updates the second item's group by the first item's group.\n\nThis is our configuration with a void `beforeUpdate`:\n\n    config : DnDList.Groups.Config Item\n    config =\n        { beforeUpdate = \\_ _ list -> list\n        , listen = DnDList.Groups.OnDrag\n        , operation = DnDList.Groups.Rotate\n        , groups =\n            { listen = DnDList.Groups.OnDrag\n            , operation = DnDList.Groups.InsertBefore\n            , comparator = comparator\n            , setter = setter\n            }\n        }\n\n    comparator : Item -> Item -> Bool\n    comparator item1 item2 =\n        item1.group == item2.group\n\n    setter : Item -> Item -> Item\n    setter item1 item2 =\n        { item2 | group = item1.group }\n\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ beforeUpdate : DnDList.Groups.DragIndex -> DnDList.Groups.DropIndex -> List.List a -> List.List a, listen : DnDList.Groups.Listen, operation : DnDList.Groups.Operation, groups : { listen : DnDList.Groups.Listen, operation : DnDList.Groups.Operation, comparator : a -> a -> Basics.Bool, setter : a -> a -> a } }"
+            },
+            {
+                "name": "Info",
+                "comment": " Represents the information about the drag source and the drop target items.\nIt is accessible through the `System`'s `info` field.\n\n  - `dragIndex`: The index of the drag source.\n\n  - `dropIndex`: The index of the drop target.\n\n  - `dragElementId`: HTML id of the drag source.\n\n  - `dropElementId`: HTML id of the drop target.\n\n  - `dragElement`: Information about the drag source as an HTML element, see `Browser.Dom.Element`.\n\n  - `dropElement`: Information about the drop target as an HTML element, see `Browser.Dom.Element`.\n\n  - `startPosition`: The x, y position of the ghost element when dragging started.\n\n  - `currentPosition`: The x, y position of the ghost element now.\n\nYou can check the `Info` object to decide what to render when there is an ongoing dragging,\nand what to render when there is no dragging:\n\n    itemView : Model -> ... -> Html.Html Msg\n    itemView model ... =\n        ...\n        case system.info model.dnd of\n            Just _ ->\n                -- Render when there is an ongoing dragging.\n\n            Nothing ->\n                -- Render when there is no dragging.\n\nOr you can determine the current drag source item using the `Info` object:\n\n    maybeDragItem : DnDList.Groups.Model -> List Item -> Maybe Item\n    maybeDragItem dnd items =\n        system.info dnd\n            |> Maybe.andThen\n                (\\{ dragIndex } ->\n                    items\n                        |> List.drop dragIndex\n                        |> List.head\n                )\n\nOr you can control over generating styles for the dragged ghost element.\nFor example adding an offset to the position:\n\n    type alias Offset =\n        { x : Int\n        , y : Int\n        }\n\n    customGhostStyle : DnDList.Model -> DnDList.Info -> Offset -> List (Html.Attribute msg)\n    customGhostStyle dnd { element } offset =\n        let\n            px : Int -> String\n            px x =\n                String.fromInt x ++ \"px\"\n\n            translate : Int -> Int -> String\n            translate x y =\n                \"translate3d(\" ++ px x ++ \", \" ++ px y ++ \", 0)\"\n        in\n        case system.info dnd of\n            Just { currentPosition, startPosition } ->\n                [ Html.Attribute.style \"transform\" <|\n                    translate\n                        (round element.x + offset.x)\n                        (round (currentPosition.y - startPosition.y + element.y) + offset.y)\n                ]\n\n            Nothing ->\n                []\n\n",
+                "args": [],
+                "type": "{ dragIndex : DnDList.Groups.DragIndex, dropIndex : DnDList.Groups.DropIndex, dragElementId : DnDList.Groups.DragElementId, dropElementId : DnDList.Groups.DropElementId, dragElement : Browser.Dom.Element, dropElement : Browser.Dom.Element, startPosition : DnDList.Groups.Position, currentPosition : DnDList.Groups.Position }"
+            },
+            {
+                "name": "System",
+                "comment": " A `System` encapsulates:\n\n  - the internal model, subscriptions, commands, and update,\n\n  - the bindable events and styles, and\n\n  - the `Info` object.\n\nLater we will learn more about the [Info object](#info) and the [System fields](#system-fields).\n\n",
+                "args": [
+                    "a",
+                    "msg"
+                ],
+                "type": "{ model : DnDList.Groups.Model, subscriptions : DnDList.Groups.Model -> Platform.Sub.Sub msg, commands : DnDList.Groups.Model -> Platform.Cmd.Cmd msg, update : DnDList.Groups.Msg -> DnDList.Groups.Model -> List.List a -> ( DnDList.Groups.Model, List.List a ), dragEvents : DnDList.Groups.DragIndex -> DnDList.Groups.DragElementId -> List.List (Html.Attribute msg), dropEvents : DnDList.Groups.DropIndex -> DnDList.Groups.DropElementId -> List.List (Html.Attribute msg), ghostStyles : DnDList.Groups.Model -> List.List (Html.Attribute msg), info : DnDList.Groups.Model -> Maybe.Maybe DnDList.Groups.Info }"
+            }
+        ],
+        "values": [
+            {
+                "name": "create",
+                "comment": " Creates a `System` object according to the configuration.\n\nSuppose we have two groups:\n\n    type Group\n        = Left\n        | Right\n\nand a list which is gathered by these groups and prepared with auxiliary items:\n\n    type alias Item =\n        { group : Group\n        , value : String\n        , color : String\n        }\n\n    preparedData : List Item\n    preparedData =\n        [ Item Left \"C\" blue\n        , Item Left \"2\" red\n        , Item Left \"A\" blue\n        , Item Left \"footer\" transparent\n        , Item Right \"3\" red\n        , Item Right \"1\" red\n        , Item Right \"B\" blue\n        , Item Right \"footer\" transparent\n        ]\n\nThe auxiliary items separate the groups and they can be considered as header or footer of a particular group.\nIn this case they are footers.\n\nThe sort operations were designed with the following list state invariant in mind:\n\n  - the items are gathered by the grouping property, and\n  - the auxiliary items keep their places (headers, footers).\n\nAnd now the `System` is a wrapper type around the list item and our message types:\n\n    system : DnDList.Groups.System Item Msg\n    system =\n        DnDList.Groups.create config MyMsg\n\n",
+                "type": "DnDList.Groups.Config a -> (DnDList.Groups.Msg -> msg) -> DnDList.Groups.System a msg"
+            }
+        ],
+        "binops": []
+    }
+]

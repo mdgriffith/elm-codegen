@@ -1,0 +1,16 @@
+[
+    {
+        "name": "HtmlToElm",
+        "comment": "\n\n@docs rule\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": " Generates Elm code from HTML Strings\n\n    config =\n        [ HtmlToElm.rule\n        ]\n\n\n## Before fix\n\nThe fix runs on top-level values with an Html type annotation. It turns the HTML within the String\nin a `Debug.todo` call into compiling Elm code!\n\n    import Html\n    import Html.Attributes as Attr\n\n    navbarView : Html msg\n    navbarView =\n        Debug.todo \"\"\"<ul class=\"flex\"><li><a href=\"/\">Home</a></li></ul>\"\"\"\n\n\n## After fix\n\n    import Html\n    import Html.Attributes as Attr\n\n    navbarView : Html msg\n    navbarView =\n        Html.ul\n            [ Attr.class \"flex\"\n            ]\n            [ Html.li []\n                [ Html.a\n                    [ Attr.href \"/\"\n                    ]\n                    [ Html.text \"Home\" ]\n                ]\n            ]\n\nNote that the imports in our module are used for the auto-generated Elm code.\nSo be sure to set up your imports the way you like them before scaffolding a HTML code!\n\n\n## With `elm-tailwind-modules`\n\nIf your imports include modules from [`elm-tailwind-modules`](https://github.com/matheus23/elm-tailwind-modules),\nthen this fix will turn your `class` attributes into `elm-tailwind-modules` attributes.\n\n    import Html.Styled exposing (..)\n    import Html.Styled.Attributes as Attr\n    import Tailwind.Breakpoints as Bp\n    import Tailwind.Utilities as Tw\n\n    navbarView : Html msg\n    navbarView =\n        Debug.todo \"\"\"<ul><li><a href=\"/\">Home</a></li></ul>\"\"\"\n\n\n## After fix\n\n    import Html.Styled exposing (..)\n    import Html.Styled.Attributes as Attr\n    import Tailwind.Breakpoints\n    import Tailwind.Utilities\n\n    navbarView : Html msg\n    navbarView =\n        Html.ul\n            [ Attr.css\n                [ Tailwind.Utilities.flex\n                ]\n            ]\n            [ Html.li []\n                [ Html.a\n                    [ Attr.href \"/\"\n                    ]\n                    [ text \"Home\" ]\n                ]\n            ]\n\nNote that the example that first example didn't have `import Tailwind.Utilities`, and therefore `class=\"flex\"` was\ninterpreted as a plain CSS class, not a Tailwind class.\n\n\n## Try it out\n\nYou can try this rule out by running the following command:\n\n```bash\nelm-review --template dillonkearns/elm-review-html-to-elm/example --rules HtmlToElm\n```\n\n",
+                "type": "Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    }
+]

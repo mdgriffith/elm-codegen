@@ -1,0 +1,57 @@
+[
+    {
+        "name": "Animation.Flip",
+        "comment": " Provides a simple way of achieving FLIP style animations.\n\n\n# Configuration\n\n@docs Configuration, RenderConfig\n\n\n# State\n\n@docs State, init\n\n\n# Animate\n\n@docs render, animate\n\n\n# Subscriptions\n\n@docs subscriptions\n\n",
+        "unions": [
+            {
+                "name": "State",
+                "comment": " Opaque type for the state of the animation\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Configuration",
+                "comment": " Configuration for the flip animation\n",
+                "args": [
+                    "child",
+                    "msg"
+                ],
+                "type": "{ id : child -> String.String, updateMsg : Animation.Flip.State -> Platform.Cmd.Cmd msg -> msg, animateMsg : String.String -> Animation.Msg -> msg, getBoundingClientRects : Json.Encode.Value -> Platform.Cmd.Cmd msg, gotBoundingClientRects : (Json.Decode.Value -> msg) -> Platform.Sub.Sub msg, spring : Animation.Spring.Presets.Spring }"
+            },
+            {
+                "name": "RenderConfig",
+                "comment": " Render configuration for the flip animation, including the overall config\n\n    Flip.render\n        { config = flipConfig\n        , children = model.children\n        , state = model.flip\n        , childElement = always div\n        , childAttrs = always []\n        , childContents = .label >> text\n        }\n\n",
+                "args": [
+                    "child",
+                    "msg"
+                ],
+                "type": "{ config : Animation.Flip.Configuration child msg, state : Animation.Flip.State, children : List.List child, childAttrs : child -> List.List (Html.Attribute msg), childElement : child -> List.List (Html.Attribute msg) -> List.List (Html.Html msg) -> Html.Html msg, childContents : child -> List.List (Html.Html msg) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "animate",
+                "comment": " Update the position of an element in the flip animation\n",
+                "type": "Animation.Msg -> String.String -> Animation.Flip.State -> Animation.Flip.State"
+            },
+            {
+                "name": "init",
+                "comment": " Init a fresh flip animation\n",
+                "type": "Animation.Flip.Configuration child msg -> List.List child -> ( Animation.Flip.State, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "render",
+                "comment": " Render a flip animation.\n\nMore info on method and reasoning soon!\n\n",
+                "type": "Animation.Flip.RenderConfig child msg -> List.List (Html.Html msg)"
+            },
+            {
+                "name": "subscriptions",
+                "comment": " Flip subscriptions\n",
+                "type": "Animation.Flip.Configuration child msg -> Animation.Flip.State -> List.List child -> Platform.Sub.Sub msg"
+            }
+        ],
+        "binops": []
+    }
+]

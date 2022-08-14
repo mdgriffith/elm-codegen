@@ -1,0 +1,149 @@
+[
+    {
+        "name": "AnimateHeight",
+        "comment": " Animate a containers height.\n\n\n# Set up\n\n@docs Overflow, State, subscription, container, animationFrame, transition, initialState, instant, immediate, rapid, fast, custom, content, overflow, default, setAtContentHeight, snapToContent, state, uniqueContainerId\n\n\n# Trigger an animation\n\nWe avoid using terms such as 'open' and 'closed' when animating height.\n\nInstead we say that we are animating to a content height or minimum height which is more inline to what you are seeing.\n\n@docs toContentHeight, toMinHeight, Msg, recalculate, isContentHeight, update\n\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Overflow",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "VisibleWhenAtContentHeight",
+                        []
+                    ],
+                    [
+                        "Hidden",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "State",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "animationFrame",
+                "comment": " `AnimationFrame` calculates the height of the container per animation frame. By doing\nthis we are ensuring that all calculations are resolved before the browser refresh\noperations. The animation if fully managed by us, no magic!\n\n        init =\n            initialState (containerUniqueId \"123\") default\n                |> animationFrame\n\n",
+                "type": "AnimateHeight.State -> AnimateHeight.State"
+            },
+            {
+                "name": "container",
+                "comment": " The container view that wraps your view.\n\n        someCoolView =\n            text \"This is pretty cool!\"\n\n        view =\n            container (default\n                |> content someCoolView\n            )\n\n",
+                "type": "AnimateHeight.Config msg -> Html.Html msg"
+            },
+            {
+                "name": "content",
+                "comment": " Render your view.\n\n        coolView =\n            text \"A cool view!\"\n\n        view =\n           container (default\n                |> content coolView\n           )\n\n",
+                "type": "Html.Html msg -> AnimateHeight.Config msg -> AnimateHeight.Config msg"
+            },
+            {
+                "name": "custom",
+                "comment": " Set a custom duration.\n\nNegative values will be converted to their positive equivalent.\n\n        custom -200 => 200\n\n        init =\n            initialState (containerUniqueId \"123\")\n                |> custom 1000\n\n",
+                "type": "Basics.Float -> AnimateHeight.State -> AnimateHeight.State"
+            },
+            {
+                "name": "default",
+                "comment": " A starting configuration.\n\n        view =\n            container default\n\n",
+                "type": "AnimateHeight.Config msg"
+            },
+            {
+                "name": "fast",
+                "comment": " Animation duration of 300ms\n\n        init =\n            initialState (containerUniqueId \"123\")\n                |> fast\n\n",
+                "type": "AnimateHeight.State -> AnimateHeight.State"
+            },
+            {
+                "name": "immediate",
+                "comment": " Animation duration of 200ms\n\n        init =\n            initialState (containerUniqueId \"123\")\n                |> immediate\n\n",
+                "type": "AnimateHeight.State -> AnimateHeight.State"
+            },
+            {
+                "name": "initialState",
+                "comment": " Use as an initial state for your `AnimateHeight` `container`.\n\nIt's important to ensure the unique id argument is in fact unique\nto avoid weird behaviour. Internally we add some extra characters to your id to help you out.\n\n        init =\n            initialState (containerUniqueId \"123\")\n\n",
+                "type": "AnimateHeight.Internal.UniqueContainerId -> AnimateHeight.State"
+            },
+            {
+                "name": "instant",
+                "comment": " This is like not having an animation at all. Duration maps to 0\n\n        init =\n            initialState (containerUniqueId \"123\")\n                |> instant\n\n",
+                "type": "AnimateHeight.State -> AnimateHeight.State"
+            },
+            {
+                "name": "isContentHeight",
+                "comment": " Determine if a container is at its content height.\n\nUseful for when you need to toggle a `container` to its content height or its min height.\n\n        update msg =\n            case msg of\n                ToggleContainer ->\n                    if (isContentHight animState) then\n                        toMinHeight animState\n                    else\n                        toContentHeight animState\n\n",
+                "type": "AnimateHeight.State -> Basics.Bool"
+            },
+            {
+                "name": "overflow",
+                "comment": " Defines the behaviour of the overflow property.\n\nYou may have an element, such as a dropdown menu, that dynamically\nprotrudes the container bondaries and needs to be visible.\n\n        coolView =\n            text \"A cool view!\"\n\n        view =\n           container (default\n                |> content coolView\n                |> overflow VisibleWhenAtContentHeight\n\nBy default the overflow is set to Hidden.\n\n",
+                "type": "AnimateHeight.Overflow -> AnimateHeight.Config msg -> AnimateHeight.Config msg"
+            },
+            {
+                "name": "rapid",
+                "comment": " Animation duration of 250ms\n\n        init =\n            initialState (containerUniqueId \"123\")\n                |> rapid\n\n",
+                "type": "AnimateHeight.State -> AnimateHeight.State"
+            },
+            {
+                "name": "recalculate",
+                "comment": " By default the `container` height will be given a fixed value when it is at content hight. In this scenario, content that is\nadded/removed will not adjust the containers height. See `snapToContent` for another option.\n\nWhen your view content changes you can recalculate the container height.\n\nThis function makes the most sense to use when the container is already at content hight.\n\n    update : msg -> model -> ( model, Cmd msg )\n    update msg model =\n        case msg of\n            ContentAdded ->\n                newState =\n                    if isContentHeight model.animateHeightState then\n                        recalculate model.animateHeightState\n                    else\n                        model.animateHeightState\n\n",
+                "type": "AnimateHeight.State -> AnimateHeight.State"
+            },
+            {
+                "name": "setAtContentHeight",
+                "comment": " For when you want to start the `container` off at a its content height by default and not\ntrigger an animation.\n\nOne use case could be when a page loads and you want all your `AnimateHeight` `containers`\nto show their content by default.\n\nYou can use `setAtContentHeight` in init.\n\n    init =\n        initialState (uniqueContainerId \"id\")\n            |> setAtContentHeight\n\n",
+                "type": "AnimateHeight.State -> AnimateHeight.State"
+            },
+            {
+                "name": "snapToContent",
+                "comment": " The `container` will snap to a height subsequent to its changing content.\n\nAll that is happening internally is that the height value of the container is being set\nto auto when the `container` is at its content height.\n\n        init =\n            initialState (uniqueContainerId \"id\")\n                |> snapToContent True\n\n",
+                "type": "Basics.Bool -> AnimateHeight.State -> AnimateHeight.State"
+            },
+            {
+                "name": "state",
+                "comment": " The working state for your container.\n\n        view model =\n            container (default\n                |> state model.containerState\n            )\n\n",
+                "type": "AnimateHeight.State -> AnimateHeight.Config msg -> AnimateHeight.Config msg"
+            },
+            {
+                "name": "subscription",
+                "comment": " The subscriptions `AnimateHeight` uses to function.\n\n        type Msg =\n            AnimateHeightMsg AnimateHeight.Msg\n\n        subscriptions =\n            Sub.map AnimateHeightMsg <| AnimateHeight.subscription animState\n\n",
+                "type": "AnimateHeight.State -> Platform.Sub.Sub AnimateHeight.Msg"
+            },
+            {
+                "name": "toContentHeight",
+                "comment": " Animate a container to its content height.\n\n        update msg =\n            case msg of\n                ToggleContainer ->\n                    toContentHeight animState\n\nYou might want to use `isContentHeight` to toggle between animating toContentHeight and toMinHeight.\n\n        update msg =\n            case msg of\n                ToggleContainer ->\n                    if (isContentHeight animState) then\n                        toMinHeight animState\n                    else\n                        toContentHeight animState\n\n",
+                "type": "AnimateHeight.State -> AnimateHeight.State"
+            },
+            {
+                "name": "toMinHeight",
+                "comment": " Animate a container to its minimum height.\n\n        update msg =\n            case msg of\n                ToggleContainer ->\n                    toMinHeight animState\n\nYou might want to use `isContentHeight` to toggle between animating toMinHeight and toContentHeight.\n\n        update msg =\n            case msg of\n                ToggleContainer ->\n                    if (isContentHeight animState) then\n                        toMinHeight animState\n                    else\n                        toContentHeight animState\n\n",
+                "type": "AnimateHeight.State -> AnimateHeight.State"
+            },
+            {
+                "name": "transition",
+                "comment": " `Transition` avoids view updates and leverages css transitions to manage the animation.\n\n        init =\n            initialState (containerUniqueId \"123\") default\n                |> transition\n\n",
+                "type": "AnimateHeight.State -> AnimateHeight.State"
+            },
+            {
+                "name": "uniqueContainerId",
+                "comment": " AnimateHeight queries this id to find out height information.\n\nIf there are multiple containers then it is important that this ID be unique.\n\n        init =\n           { container1 = initialState <| uniqueContainerId \"111\"\n           , container2 = initialState <| uniqueContainerId \"222\"\n           }\n\n",
+                "type": "String.String -> AnimateHeight.Internal.UniqueContainerId"
+            },
+            {
+                "name": "update",
+                "comment": " Update `AnimateHeight` `container`.\n\n        type Msg =\n            AnimateHeightMsg AnimateHeight.Msg\n\n        update =\n            case msg of\n                AnimateHeightMsg animMsg ->\n                    AnimateHeight.update animMsg animState\n\n",
+                "type": "AnimateHeight.Msg -> AnimateHeight.State -> ( AnimateHeight.State, Platform.Cmd.Cmd AnimateHeight.Msg )"
+            }
+        ],
+        "binops": []
+    }
+]

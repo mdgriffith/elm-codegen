@@ -1,0 +1,28 @@
+[
+    {
+        "name": "Json.Print",
+        "comment": " Pretty print JSON stored as a `String` or `Json.Encode.Value`\n\n@docs Config, prettyString, prettyValue\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " Formating configuration.\n\n`indent` is the number of spaces in an indent.\n\n`columns` is the desired column width of the formatted string. The formatter\nwill try to fit it as best as possible to the column width, but can still\nexceed this limit. The maximum column width of the formatted string is\nunbounded.\n\n",
+                "args": [],
+                "type": "{ indent : Basics.Int, columns : Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "prettyString",
+                "comment": " Formats a JSON string.\npasses the string through `Json.Decode.decodeString` and bubbles up any JSON\nparsing errors.\n",
+                "type": "Json.Print.Config -> String.String -> Result.Result String.String String.String"
+            },
+            {
+                "name": "prettyValue",
+                "comment": " Formats a `Json.Encode.Value`. Internally passes the string through\n`Json.Decode.decodeValue` and bubbles up any JSON parsing errors.\n",
+                "type": "Json.Print.Config -> Json.Encode.Value -> Result.Result String.String String.String"
+            }
+        ],
+        "binops": []
+    }
+]

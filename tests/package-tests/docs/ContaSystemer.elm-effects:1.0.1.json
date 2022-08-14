@@ -1,0 +1,50 @@
+[
+    {
+        "name": "Effects",
+        "comment": " In Elm all effects are managed (no side effects) and described with commands and subscriptions (Cmd msg, Sub msg).\nOnly private organisations/people have access to add/describe new effects.\n\nEffects module helps to manage additional program effects.\nFor instance effects can be used for communication between programs.\nIt make sense especially for programs described as a composition of sub-programs.\nA program effect should be supplied by a consumer.\n\n\n# Create\n\n@docs Effects, none, from, batch\n\n\n# Transform\n\n@docs map, apply, applyWithPriority\n\n",
+        "unions": [
+            {
+                "name": "Effects",
+                "comment": " Describes a collection of program effects.\n",
+                "args": [
+                    "effect"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "apply",
+                "comment": " Applies all effects to given initial value.\nUseful to apply effects produced by a program.\n",
+                "type": "(effect -> value -> value) -> value -> Effects.Effects effect -> value"
+            },
+            {
+                "name": "applyWithPriority",
+                "comment": " Applies all effects to given initial value by given priority.\nUseful to apply effects produced by a program.\nEffects with lover priority are applied first.\n",
+                "type": "(effect -> value -> value) -> (effect -> Basics.Int) -> value -> Effects.Effects effect -> value"
+            },
+            {
+                "name": "batch",
+                "comment": " Batches multiple effects. Useful when a program produces multiple effects.\n",
+                "type": "List.List (Effects.Effects effect) -> Effects.Effects effect"
+            },
+            {
+                "name": "from",
+                "comment": " Creates an effect. Useful to create an instance of a program effect.\n",
+                "type": "effect -> Effects.Effects effect"
+            },
+            {
+                "name": "map",
+                "comment": " Transforms an effect. Useful when combining multiple programs together.\n",
+                "type": "(effectA -> effectB) -> Effects.Effects effectA -> Effects.Effects effectB"
+            },
+            {
+                "name": "none",
+                "comment": " Creates no effect. Useful when a program does not produce any effects.\n",
+                "type": "Effects.Effects effect"
+            }
+        ],
+        "binops": []
+    }
+]

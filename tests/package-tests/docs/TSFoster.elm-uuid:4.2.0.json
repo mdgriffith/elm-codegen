@@ -1,0 +1,210 @@
+[
+    {
+        "name": "UUID",
+        "comment": " A UUID looks something like `e1631449-6321-4a58-920c-5440029b092e`, and can\nbe used as an identifier for anything. Each 128-bit number, usually represented\nas 32 hexadecimal digits, is generally used under the assumption that it is\nUniversally Unique (hence the name).\n\nThis package supports variant 1 UUIDs (those outlined in [RFC 4122][rfc]), which\ncovers the vast majority of those in use (versions 1-5).\n\n[rfc]: https://tools.ietf.org/html/rfc4122\n\n@docs UUID\n\n\n## Reading UUIDs\n\n@docs fromString, Error\n\n\n## Creating UUIDs\n\n\n### Random UUIDs (Version 4)\n\n@docs generator, Seeds, step\n\n\n### Hierarchical, namespaced UUIDs (Version 3, Version 5)\n\nUUIDs can be created using a namespace UUID and a name, which is then hashed\nto create a new UUID. The hash function used depends on the version of UUID:\nverison 3 UUIDs use MD5, and version 5 UUIDs use SHA-1. **Version 5 is the\n[officially recommended] version to use.**\n\nAlthough the [RFC defining UUIDs][rfc] defines some [base\nnamespaces][appendix-c], any UUID can be used as a namespace, making a\nhierarchy. I think this is pretty cool! You can use this method for consistently\nmaking the same UUID from the same data, which can be very useful in some\nsituations.\n\n[officially recommended]: https://tools.ietf.org/html/rfc4122#section-4.3\n[rfc]: https://tools.ietf.org/html/rfc4122\n[appendix-c]: https://tools.ietf.org/html/rfc4122#appendix-C\n\n@docs forName, forBytes, forNameV3, forBytesV3\n\n\n#### Officially-recognized namespaces\n\n@docs dnsNamespace, urlNamespace, oidNamespace, x500Namespace\n\n\n## Binary representation\n\n@docs fromBytes, decoder, toBytes, encoder\n\n\n## Formatting UUIDs\n\nUUIDs are generally represented by 32 hexadecimal digits in the form\n`00112233-4455-M677-N899-aabbccddeeff`, where the four bits at position `M`\ndenote the UUID version, and the first two or three bits at position `N` denote\nthe variant. This is the \"canonical\" representation, but there is also a URN\nrepresentation and a format used mostly by Microsoft, where they are more\ncommonly named GUIDs. Additionally, some APIs do not use the dashes.\n\n@docs toString, toRepresentation, Representation\n\n\n## JSON\n\n@docs jsonDecoder, toValue, toValueWithRepresentation\n\n\n## Inspecting UUIDs\n\n@docs version, compare\n\n\n## The Nil UUID\n\nOne more, special UUID is the nil UUID. This is just\n`\"00000000-0000-0000-0000-000000000000\"`. I suppose it can work as a placeholder\nin some cases, but elm has `Maybe` for that! Nevertheless, you might need to\ncheck for nil UUIDs, or print the nil UUID.\n\n@docs nilBytes, isNilBytes, nilString, isNilString, nilRepresentation\n\n",
+        "unions": [
+            {
+                "name": "Error",
+                "comment": " This enumerates all the possible errors that can happen when reading\nexisting UUIDs.\n\n    import Bytes.Extra exposing (fromByteValues)\n\n    -- Note the non-hexadecimal characters in this string!\n    fromString \"12345678-9abc-4567-89ab-cdefghijklmn\"\n    --> Err WrongFormat\n\n    fromBytes (fromByteValues [ 223 ])\n    --> Err WrongLength\n\n    -- This package only supports variant 1 UUIDs\n    fromString \"urn:uuid:12345678-9abc-4567-c234-abcd12345678\"\n    --> Err UnsupportedVariant\n\n    fromBytes (fromByteValues [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])\n    --> Err IsNil\n\n    fromString \"{00000000-0000-0000-0000-000000000000}\"\n    --> Err IsNil\n\n    fromString \"6ba7b814-9dad-71d1-80b4-00c04fd430c8\"\n    --> Err NoVersion\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "WrongFormat",
+                        []
+                    ],
+                    [
+                        "WrongLength",
+                        []
+                    ],
+                    [
+                        "UnsupportedVariant",
+                        []
+                    ],
+                    [
+                        "IsNil",
+                        []
+                    ],
+                    [
+                        "NoVersion",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Representation",
+                "comment": " There are three typical human-readable representations of UUID: canonical, a\nUniform Resource Name and Microsoft's formatting for its GUIDs (which are just\nversion 4 UUIDs nowadays). Additionally, some APIs do not use the dashes, which\nhas been named `Compact` here.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Canonical",
+                        []
+                    ],
+                    [
+                        "Urn",
+                        []
+                    ],
+                    [
+                        "Guid",
+                        []
+                    ],
+                    [
+                        "Compact",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "UUID",
+                "comment": " This modules provides a UUID type, and functions to work with them. It is an\n[opaque type], which basically means you have to use the provided functions if\nyou want to do anything with it!\n\n[opaque type]: https://medium.com/@ckoster22/advanced-types-in-elm-opaque-types-ec5ec3b84ed2\n\nHere is an example of a `Book` model, which uses UUIDs to identify both the book\nand its authors:\n\n    type alias Book =\n        { title : String\n        , uuid : UUID\n        , published : Maybe Date\n        , authors : List UUID\n        }\n\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Seeds",
+                "comment": " ",
+                "args": [],
+                "type": "{ seed1 : Random.Seed, seed2 : Random.Seed, seed3 : Random.Seed, seed4 : Random.Seed }"
+            }
+        ],
+        "values": [
+            {
+                "name": "compare",
+                "comment": " Returns the relative ordering of two `UUID`s. The main use case of this\nfunction is helping in binary-searching algorithms. Mimics [`elm/core`'s\n`compare`](https://package.elm-lang.org/packages/elm/core/1.0.5/Basics#compare).\n",
+                "type": "UUID.UUID -> UUID.UUID -> Basics.Order"
+            },
+            {
+                "name": "decoder",
+                "comment": " A `Bytes.Decode.Decoder`, for integrating with a broader decode.\n\n    import Bytes\n    import Bytes.Decode exposing (Decoder)\n    import Bytes.Extra exposing (fromByteValues)\n\n    type alias Record =\n        { name : String\n        , value : Int\n        , id : UUID\n        }\n\n    recordDecoder : Decoder Record\n    recordDecoder =\n        Bytes.Decode.map3 Record\n            (Bytes.Decode.unsignedInt16 Bytes.BE |> Bytes.Decode.andThen Bytes.Decode.string)\n            (Bytes.Decode.unsignedInt32 Bytes.BE)\n            UUID.decoder\n\n    Bytes.Decode.decode recordDecoder <| fromByteValues\n        [ 0x00, 0x0b -- 11\n        , 0x68, 0x65, 0x6c, 0x6c, 0x6f, 0x20, 0x77, 0x6f, 0x72, 0x6c, 0x64 -- \"hello world\"\n        , 0x00, 0x00, 0x00, 0xFF -- 255\n        , 0x6b, 0xa7, 0xb8, 0x11, 0x9d, 0xad, 0x11, 0xd1, 0x80, 0xb4, 0x00, 0xc0, 0x4f, 0xd4, 0x30, 0xc8 -- UUID\n        ]\n    --> Just\n    -->     { name = \"hello world\"\n    -->     , value = 255\n    -->     , id = urlNamespace\n    -->     }\n\n",
+                "type": "Bytes.Decode.Decoder UUID.UUID"
+            },
+            {
+                "name": "dnsNamespace",
+                "comment": " A UUID for the DNS namespace, \"6ba7b810-9dad-11d1-80b4-00c04fd430c8\".\n\n    forName \"elm-lang.org\" dnsNamespace\n        |> toString\n    --> \"c6d62c23-3406-5fc7-836e-9d6bef13e18c\"\n\n",
+                "type": "UUID.UUID"
+            },
+            {
+                "name": "encoder",
+                "comment": " An encoder for encoding data that includes a UUID.\n\n    import Bytes.Extra exposing (toByteValues)\n    import Bytes.Encode\n    import Bytes.Encode.Extra\n\n    defaultNamespaces : List UUID\n    defaultNamespaces =\n        [ dnsNamespace, urlNamespace, oidNamespace, x500Namespace ]\n\n    Bytes.Encode.Extra.list UUID.encoder defaultNamespaces\n        |> Bytes.Encode.encode\n        |> toByteValues\n    --> [ 0x6b, 0xa7, 0xb8, 0x10, 0x9d, 0xad, 0x11, 0xd1, 0x80, 0xb4, 0x00, 0xc0, 0x4f, 0xd4, 0x30, 0xc8\n    --> , 0x6b, 0xa7, 0xb8, 0x11, 0x9d, 0xad, 0x11, 0xd1, 0x80, 0xb4, 0x00, 0xc0, 0x4f, 0xd4, 0x30, 0xc8\n    --> , 0x6b, 0xa7, 0xb8, 0x12, 0x9d, 0xad, 0x11, 0xd1, 0x80, 0xb4, 0x00, 0xc0, 0x4f, 0xd4, 0x30, 0xc8\n    --> , 0x6b, 0xa7, 0xb8, 0x14, 0x9d, 0xad, 0x11, 0xd1, 0x80, 0xb4, 0x00, 0xc0, 0x4f, 0xd4, 0x30, 0xc8\n    --> ]\n\n",
+                "type": "UUID.UUID -> Bytes.Encode.Encoder"
+            },
+            {
+                "name": "forBytes",
+                "comment": " Create a version 5 UUID from `Bytes` and a namespace, which should be a\n`UUID`. The same name and namespace will always produce the same UUID, which can\nbe used to your advantage. Furthermore, the UUID created from this can be used\nas a namespace for another UUID, creating a hierarchy of sorts.\n\n    import Bytes\n    import Bytes.Encode\n\n    type alias Widget = { name: String, value: Float }\n\n    apiNamespace : UUID\n    apiNamespace =\n        forName \"https://api.example.com/v2/\" dnsNamespace\n\n    widgetNamespace : UUID\n    widgetNamespace =\n        forName \"Widget\" apiNamespace\n\n    uuidForWidget : Widget -> UUID\n    uuidForWidget { name, value } =\n        let\n           bytes =\n             Bytes.Encode.encode <| Bytes.Encode.sequence\n                [ Bytes.Encode.unsignedInt32 Bytes.BE (String.length name)\n                , Bytes.Encode.string name\n                , Bytes.Encode.float64 Bytes.BE value\n                ]\n        in\n        forBytes bytes widgetNamespace\n\n\n    Widget \"Exponent\" 0.233\n        |> uuidForWidget\n        |> toString\n    --> \"46dab34b-5447-5c5c-8e24-fe4e3daab014\"\n\n",
+                "type": "Bytes.Bytes -> UUID.UUID -> UUID.UUID"
+            },
+            {
+                "name": "forBytesV3",
+                "comment": " Similar to [`forBytes`](#forBytes), creates a UUID based on the given Bytes\nand namespace UUID, but creates a version 3 UUID. If you can choose between the\ntwo, it is recommended that you choose version 5 UUIDs.\n\n    import Bytes\n    import Bytes.Encode\n\n    apiNamespace : UUID\n    apiNamespace =\n        forName \"https://api.example.com/v2/\" dnsNamespace\n\n    forBytesV3 (Bytes.Encode.encode (Bytes.Encode.unsignedInt8 245)) apiNamespace\n        |> toString\n    --> \"4ad1f4bf-cf83-3c1d-b4f5-975f7d0fc9ba\"\n\n",
+                "type": "Bytes.Bytes -> UUID.UUID -> UUID.UUID"
+            },
+            {
+                "name": "forName",
+                "comment": " Create a version 5 UUID from a `String` and a namespace, which should be a\n`UUID`. The same name and namespace will always produce the same UUID, which can\nbe used to your advantage. Furthermore, the UUID created from this can be used\nas a namespace for another UUID, creating a hierarchy of sorts.\n\n    apiNamespace : UUID\n    apiNamespace =\n        forName \"https://api.example.com/v2/\" dnsNamespace\n\n    widgetNamespace : UUID\n    widgetNamespace =\n        forName \"Widget\" apiNamespace\n\n\n    toString apiNamespace\n    --> \"bad122ad-b5b6-527c-b544-4406328d8b13\"\n\n    toString widgetNamespace\n    --> \"7b0db628-d793-550b-a883-937a276f4908\"\n\n",
+                "type": "String.String -> UUID.UUID -> UUID.UUID"
+            },
+            {
+                "name": "forNameV3",
+                "comment": " Similar to [`forName`](#forName), creates a UUID based on the given String\nand namespace UUID, but creates a version 3 UUID. If you can choose between the\ntwo, it is recommended that you choose version 5 UUIDs.\n\n    apiNamespace : UUID\n    apiNamespace =\n        forNameV3 \"https://api.example.com/v1/\" dnsNamespace\n\n    toString apiNamespace\n    --> \"f72dd2ff-b8e7-3c58-afe1-352d5e273de4\"\n\n",
+                "type": "String.String -> UUID.UUID -> UUID.UUID"
+            },
+            {
+                "name": "fromBytes",
+                "comment": " You can attempt to create a UUID from some `Bytes`, the only contents of which much be the UUID.\n\n    import Bytes.Extra exposing (fromByteValues)\n\n    fromBytes (fromByteValues [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])\n    --> Err IsNil\n\n    fromBytes (fromByteValues [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])\n    --> Err WrongLength\n\n    fromBytes (fromByteValues [0x6b, 0xa7, 0xb8, 0x14, 0x9d, 0xad, 0x11, 0xd1, 0x80, 0xb4, 0x00, 0xc0, 0x4f, 0xd4, 0x30, 0xc8])\n    --> Ok x500Namespace\n\n",
+                "type": "Bytes.Bytes -> Result.Result UUID.Error UUID.UUID"
+            },
+            {
+                "name": "fromString",
+                "comment": " You can attempt to create a UUID from a string. This function can interpret\na fairly broad range of formatted (and mis-formatted) UUIDs, including ones with\ntoo much whitespace, too many (or not enough) hyphens, or uppercase characters.\n\n    fromString \"c72c207b-0847-386d-bdbc-2e5def81cf811\"\n    --> Err WrongLength\n\n    fromString \"c72c207b-0847-386d-bdbc-2e5def81cg81\"\n    --> Err WrongFormat\n\n    fromString \"c72c207b-0847-386d-bdbc-2e5def81cf81\"\n        |> Result.map version\n    --> Ok 3\n\n    fromString \"6ba7b810-9dad-11d1-80b4-00c04fd430c8\"\n    --> Ok dnsNamespace\n\n",
+                "type": "String.String -> Result.Result UUID.Error UUID.UUID"
+            },
+            {
+                "name": "generator",
+                "comment": " Generating a random UUID (version 4) is, I think, the most straightforward\nway of making a UUID, and I see them used all the time. There are a couple of\nways of using a generator to create a value, which are described nicely in the\n[elm/random docs][elm-random].\n\n**NOTE:** `Random.Seed`s have either 32 or 54 bits of randomness. That means\nthat `UUID`s generated with this `Generator` will only ever be one of either\n4.3 billion or 18 quadrillion UUIDs. If that is not enough for your use\ncase, check out [`step`](#step). It is also recommended that you [do not use\n`Random.generate`](https://github.com/elm/random/issues/2).\n\n[elm-random]: https://package.elm-lang.org/packages/elm/random/latest/\n\n    import Random\n\n    Random.step UUID.generator (Random.initialSeed 12345)\n        |> Tuple.first\n        |> UUID.toRepresentation Urn\n    --> \"urn:uuid:5b58931d-bb69-406d-81a9-7746c300838c\"\n\n",
+                "type": "Random.Generator UUID.UUID"
+            },
+            {
+                "name": "isNilBytes",
+                "comment": " `True` if the given bytes are the nil UUID (00000000-0000-0000-0000-000000000000).\n\n    isNilBytes nilBytes\n    --> True\n\n",
+                "type": "Bytes.Bytes -> Basics.Bool"
+            },
+            {
+                "name": "isNilString",
+                "comment": " `True` if the given string represents the nil UUID (00000000-0000-0000-0000-000000000000).\n",
+                "type": "String.String -> Basics.Bool"
+            },
+            {
+                "name": "jsonDecoder",
+                "comment": " Decode a UUID from a JSON string.\n",
+                "type": "Json.Decode.Decoder UUID.UUID"
+            },
+            {
+                "name": "nilBytes",
+                "comment": " 128 bits of nothing.\n",
+                "type": "Bytes.Bytes"
+            },
+            {
+                "name": "nilRepresentation",
+                "comment": "\n\n    nilRepresentation Canonical\n    --> \"00000000-0000-0000-0000-000000000000\"\n\n    nilRepresentation Urn\n    --> \"urn:uuid:00000000-0000-0000-0000-000000000000\"\n\n    nilRepresentation Guid\n    --> \"{00000000-0000-0000-0000-000000000000}\"\n\n",
+                "type": "UUID.Representation -> String.String"
+            },
+            {
+                "name": "nilString",
+                "comment": "\n\n    nilString\n    --> \"00000000-0000-0000-0000-000000000000\"\n\n",
+                "type": "String.String"
+            },
+            {
+                "name": "oidNamespace",
+                "comment": " A UUID for the [ISO object ID (OID)][oid] namespace,\n\"6ba7b812-9dad-11d1-80b4-00c04fd430c8\".\n\n[oid]: https://en.wikipedia.org/wiki/Object_identifier\n\n    forName \"1.2.250.1\" oidNamespace\n        |> toString\n    --> \"87a2ac60-306f-5131-b748-3787f9f55685\"\n\n",
+                "type": "UUID.UUID"
+            },
+            {
+                "name": "step",
+                "comment": " Properly using all of a randomly-generated UUID’s bits requires up to four\n`Random.Seed`s. How you generate them is up to you. You might want to check out\n[`Crypto.getRandomValues()`](https://developer.mozilla.org/en-US/docs/Web/API/Crypto/getRandomValues)\nthough.\n\nUse four seeds to create a version 4 UUID and four new seeds.\n\n        import Random\n\n        s1 = Random.initialSeed 3684687\n        s2 = Random.initialSeed 3487532\n        s3 = Random.initialSeed 63374\n        s4 = Random.initialSeed 65483\n\n        step (Seeds s1 s2 s3 s4)\n          |> Tuple.first\n          |> toString\n\n        ---> \"3d938336-567b-43b9-88d5-3703c2e63a0b\"\n\n",
+                "type": "UUID.Seeds -> ( UUID.UUID, UUID.Seeds )"
+            },
+            {
+                "name": "toBytes",
+                "comment": " Convert a UUID to `Bytes`.\n\n    import Bytes.Extra exposing (toByteValues)\n\n    toBytes dnsNamespace\n        |> toByteValues\n    --> [0x6b, 0xa7, 0xb8, 0x10, 0x9d, 0xad, 0x11, 0xd1, 0x80, 0xb4, 0x00, 0xc0, 0x4f, 0xd4, 0x30, 0xc8]\n\n",
+                "type": "UUID.UUID -> Bytes.Bytes"
+            },
+            {
+                "name": "toRepresentation",
+                "comment": " Convert UUID to [a given format](https://en.wikipedia.org/wiki/Universally_unique_identifier#Format)\n\n    toRepresentation Canonical dnsNamespace\n    --> \"6ba7b810-9dad-11d1-80b4-00c04fd430c8\"\n\n    toRepresentation Urn dnsNamespace\n    --> \"urn:uuid:6ba7b810-9dad-11d1-80b4-00c04fd430c8\"\n\n    toRepresentation Guid dnsNamespace\n    --> \"{6ba7b810-9dad-11d1-80b4-00c04fd430c8}\"\n\n    toRepresentation Compact dnsNamespace\n    --> \"6ba7b8109dad11d180b400c04fd430c8\"\n\n",
+                "type": "UUID.Representation -> UUID.UUID -> String.String"
+            },
+            {
+                "name": "toString",
+                "comment": " The canonical representation of the UUID. This is the same as\n`toRepresentation Canonical`.\n\n    toString dnsNamespace\n    --> \"6ba7b810-9dad-11d1-80b4-00c04fd430c8\"\n\n",
+                "type": "UUID.UUID -> String.String"
+            },
+            {
+                "name": "toValue",
+                "comment": " Encode a UUID to a JSON Value (as a canonical string).\n",
+                "type": "UUID.UUID -> Json.Encode.Value"
+            },
+            {
+                "name": "toValueWithRepresentation",
+                "comment": " Encode a UUID to a JSON Value (as a string with a given (Representation)[#Representation]).\n",
+                "type": "UUID.Representation -> UUID.UUID -> Json.Encode.Value"
+            },
+            {
+                "name": "urlNamespace",
+                "comment": " A UUID for the URL namespace, \"6ba7b811-9dad-11d1-80b4-00c04fd430c8\".\n\n    forName \"https://package.elm-lang.org\" urlNamespace\n        |> toString\n    --> \"e1dba7a5-c338-53f3-bc90-353f045447be\"\n\n",
+                "type": "UUID.UUID"
+            },
+            {
+                "name": "version",
+                "comment": " Get the version number of a `UUID`. Only versions 3, 4 and 5 are supported\nin this package, so you should only expect the returned `Int` to be `3`, `4` or\n`5`.\n\n    import Random\n\n    Random.step generator (Random.initialSeed 1)\n        |> Tuple.first\n        |> version\n    --> 4\n\n    fromString \"{12345678-1234-5678-8888-0123456789ab}\"\n        |> Result.map version\n    --> Ok 5\n\n",
+                "type": "UUID.UUID -> Basics.Int"
+            },
+            {
+                "name": "x500Namespace",
+                "comment": " A UUID for the [X.500 Distinguished Name (DN)][x500] namespace,\n\"6ba7b814-9dad-11d1-80b4-00c04fd430c8\".\n\nIf you don't know what this is for, I can't help you, because I don't know\neither.\n\n[x500]: https://en.wikipedia.org/wiki/X.500\n\n",
+                "type": "UUID.UUID"
+            }
+        ],
+        "binops": []
+    }
+]

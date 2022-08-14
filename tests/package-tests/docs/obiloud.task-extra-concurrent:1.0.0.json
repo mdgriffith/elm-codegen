@@ -1,0 +1,59 @@
+[
+    {
+        "name": "Task.Extra",
+        "comment": "\n\n\n# Applicative\n\n@docs andMap\n\n\n# Utils\n\n@docs toCmd\n\n\n# Concurrent\n\n\n# definitions\n\n@docs Concurrent, Join\n\n\n# Concurrent utilities\n\n@docs concurrent, join\n\n",
+        "unions": [
+            {
+                "name": "Concurrent",
+                "comment": " Opaque type to hold state of running tasks\n",
+                "args": [
+                    "e",
+                    "a",
+                    "msg"
+                ],
+                "cases": [
+                    [
+                        "Concurrent",
+                        [
+                            "Result.Result (List.List e) (List.List a) -> msg",
+                            "List.List (Maybe.Maybe (Result.Result e a))"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Join",
+                "comment": " Opaque type to hold idividual result for joining\n",
+                "args": [
+                    "e",
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "andMap",
+                "comment": " Applicative task\n",
+                "type": "Task.Task x a -> Task.Task x (a -> b) -> Task.Task x b"
+            },
+            {
+                "name": "concurrent",
+                "comment": " Start execution of concurrent tasks and return inital state\n",
+                "type": "(Task.Extra.Join e a -> msg) -> (Result.Result (List.List e) (List.List a) -> msg) -> List.List (Task.Task e a) -> ( Task.Extra.Concurrent e a msg, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "join",
+                "comment": " Accumulate returned results and produce Cmd\n",
+                "type": "Task.Extra.Join e a -> Task.Extra.Concurrent e a msg -> ( Task.Extra.Concurrent e a msg, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "toCmd",
+                "comment": " Convert message to Cmd\n",
+                "type": "msg -> Platform.Cmd.Cmd msg"
+            }
+        ],
+        "binops": []
+    }
+]

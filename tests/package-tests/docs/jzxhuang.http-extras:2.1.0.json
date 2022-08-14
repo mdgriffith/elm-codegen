@@ -1,0 +1,282 @@
+[
+    {
+        "name": "Http.Detailed",
+        "comment": " **Create HTTP requests that return more detailed responses.**\n\n_I wrote a [guide explaining how to extract detailed information from HTTP responses in Elm,][Going Beyond 200 OK]\nboth with and without this package. Giving it a read might help you better understand\nthe motivation and use cases behind this module!_\n\n---\n\nThe metadata and original body of an HTTP response are often very useful.\nMaybe your server returns a useful error message you'd like to try and decode,\nor you're receiving an auth token in the header of a response.\n\nUnfortunately, this information is discarded in the responses from [`elm/http`][http].\nThis module lets you create HTTP requests that keep that useful information around.\n\nThe API is designed so that usage of this module is exactly the same as using [`elm/http`][http],\nwith the only difference being that a more detailed `Result` is returned.\n\n[http]: https://package.elm-lang.org/packages/elm/http/2.0.0\n[Going Beyond 200 OK]: https://medium.com/@jzxhuang/going-beyond-200-ok-a-guide-to-detailed-http-responses-in-elm-6ddd02322e\n\n\n# Example\n\nCreate an HTTP request like you normally would -\njust use this module's [`expect`](#expect) functions instead of the ones from the default package.\n\n    import Http\n    import Http.Detailed\n\n    type Msg\n        = GotText (Result (Http.Detailed.Error String) ( Http.Metadata, String ))\n        | ...\n\n    Http.get\n        { url = \"https://elm-lang.org/assets/public-opinion.txt\"\n        , expect = Http.Detailed.expectString GotText\n        }\n\nIf a successful response is received, a `Tuple` containing the metadata and expected body is returned.\nYou can access a header from the metadata if needed.\n\nIn case of an error, a custom [`Error`](#Error) type is returned which keeps the metadata and body around if applicable,\nrather than discarding them. Maybe you want to try and decode the error message!\n\nYour update function might look a bit like this:\n\n    update msg model =\n        case msg of\n            GotText detailedResponse ->\n                case detailedResponse of\n                    Ok ( metadata, text ) ->\n                        -- Do something with the metadata if you need!\n\n                    Err error ->\n                        case error of\n                            Http.Detailed.BadStatus metadata body ->\n                                -- Try to decode the body - it might be a useful error message!\n\n                            Http.Detailed.Timeout ->\n                                -- No metadata is given here - the request timed out\n\n                            ...\n\n            ...\n\n\n# Expect (Tuple)\n\nExactly like the `expect` functions from [`elm/http`][http] - usage of the API is the same.\nThe difference is that the `Result` is more detailed.\n\n  - On a successful response, returns a `Tuple` containing the expected body and the metadata.\n  - On an error, returns our custom [`Error`](#Error) type which keeps the metadata and body around if applicable.\n\nA modified version of the examples from [`elm/http`][http] are included for each function to help guide you in using this module.\n\n[http]: https://package.elm-lang.org/packages/elm/http/2.0.0\n\n@docs Error, expectString, expectJson, expectBytes, expectWhatever\n\n\n# Expect (Record)\n\nPrefer a record rather than a Tuple? Use these functions instead. Same as the `expect` functions above,\nbut on a successful response returns a record of our custom type [`Success`](#Success) instead of a Tuple.\n\n@docs Success, expectStringRecord, expectJsonRecord, expectBytesRecord\n\n\n# Transform\n\nThese functions transform an [`Http.Response`][httpResponse] value into the detailed `Result` that is returned in each [`expect`](#Expect) function in this module.\nYou can use these to build your own `expect` functions.\n\nFor example, to create [`Http.Detailed.expectJson`](#expectJson):\n\n    import Http\n    import Http.Detailed\n    import json.Decode\n\n\n    expectJson : (Result (Http.Detailed.Error String) ( Http.Metadata, a ) -> msg) -> Json.Decode.Decoder a -> Http.Expect msg\n    expectJson toMsg decoder =\n        Http.expectStringResponse toMsg (responseToJson decoder)\n\nUse this with [`Mock`](../Http-Mock) to mock a request with a detailed response!\n\n    import Http\n    import Http.Detailed\n    import Http.Mock\n\n\n    type Msg\n        = GotText (Result (Http.Detailed.Error String) ( Http.Metadata, String ))\n        | ...\n\n\n    -- Mock a request, with a Detailed Result!\n\n    Http.get\n        { url = \"https://fakeurl.com\"\n        , expect = Http.Mock.expectStringResponse Http.Timeout_ GotText Http.Detailed.responseToString\n        }\n\n[http]: https://package.elm-lang.org/packages/elm/http/2.0.0\n[httpResponse]: https://package.elm-lang.org/packages/elm/http/2.0.0/Http#Response\n\n@docs responseToString, responseToJson, responseToBytes, responseToWhatever, responseToStringRecord, responseToJsonRecord, responseToBytesRecord\n\n",
+        "unions": [
+            {
+                "name": "Error",
+                "comment": " Our custom error type. Similar to [`Http.Error`][httpError], but keeps the metadata and body around\nin `BadStatus` and `BadBody` rather than discarding them. Maybe your API gives a useful error message you want to decode!\n\n`body` can be either `String` or `Bytes`, depending on which `expect` function you use.\n\n  - [`expectJson`](#expectJson) and [`expectString`](#expectJson) will return a `String` body\n  - [`expectWhatever`](#expectWhatever) and [`expectBytes`](#expectBytes) will return a `Bytes` body.\n\nThe `BadBody` state will only be entered when using [`expectJson`](#expectJson) or [`expectBytes`](#expectBytes).\n\n[httpError]: https://package.elm-lang.org/packages/elm/http/2.0.0/Http#Error\n\n",
+                "args": [
+                    "body"
+                ],
+                "cases": [
+                    [
+                        "BadUrl",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Timeout",
+                        []
+                    ],
+                    [
+                        "NetworkError",
+                        []
+                    ],
+                    [
+                        "BadStatus",
+                        [
+                            "Http.Metadata",
+                            "body"
+                        ]
+                    ],
+                    [
+                        "BadBody",
+                        [
+                            "Http.Metadata",
+                            "body",
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Success",
+                "comment": " A custom type containing the full details for a successful response as a record.\n\nbody can be either String or Bytes, depending on which expect function you use.\n\n",
+                "args": [
+                    "body"
+                ],
+                "type": "{ metadata : Http.Metadata, body : body }"
+            }
+        ],
+        "values": [
+            {
+                "name": "expectBytes",
+                "comment": " Expect the response body to be binary data, and try to decode it.\n\n    import Bytes exposing (Bytes)\n    import Bytes.Decode\n    import Http\n    import Http.Detailed\n\n    type Msg\n        = GotData (Result (Http.Detailed.Error Bytes) ( Http.Metadata, Data ))\n\n    getData : Cmd Msg\n    getData =\n        Http.get\n            { url = \"/data\"\n            , expect = Http.Detailed.expectBytes GotData dataDecoder\n            }\n\n    dataDecoder : Bytes.Decode.Decoder Data\n\n    -- This is a Bytes decoder (not implemented)...\n\nOn success, return the a tuple containing the metadata and the decoded body. On error, return our custom [`Error`](#Error) type.\n\nIf the Bytes decoder fails, you get a `BadBody` error that just indicates that\n_something_ went wrong. You can try to debug by taking a look at the\nbytes you are getting in the browser DevTools or something.\n\n",
+                "type": "(Result.Result (Http.Detailed.Error Bytes.Bytes) ( Http.Metadata, a ) -> msg) -> Bytes.Decode.Decoder a -> Http.Expect msg"
+            },
+            {
+                "name": "expectBytesRecord",
+                "comment": " ",
+                "type": "(Result.Result (Http.Detailed.Error Bytes.Bytes) (Http.Detailed.Success a) -> msg) -> Bytes.Decode.Decoder a -> Http.Expect msg"
+            },
+            {
+                "name": "expectJson",
+                "comment": " Expect the response body to be JSON, and try to decode it.\n\n    import Http\n    import Http.Detailed\n    import Json.Decode exposing (Decoder, field, string)\n\n    type Msg\n        = GotGif (Result (Http.Detailed.Error String) ( Http.Metadata, String ))\n\n    getRandomCatGif : Cmd Msg\n    getRandomCatGif =\n        Http.get\n            { url = \"https://api.giphy.com/v1/gifs/random?api_key=dc6zaTOxFJmzC&tag=cat\"\n            , expect = Http.Detailed.expectJson GotGif gifDecoder\n            }\n\n    gifDecoder : Decoder String\n    gifDecoder =\n        field \"data\" (field \"image_url\" string)\n\nOn success, return a `Tuple` containing the metadata and the decoded body. On error, return our custom [`Error`](#Error) type.\n\nIf the JSON decoder fails, you get a `BadBody` error that tries to explain what went wrong.\n\n",
+                "type": "(Result.Result (Http.Detailed.Error String.String) ( Http.Metadata, a ) -> msg) -> Json.Decode.Decoder a -> Http.Expect msg"
+            },
+            {
+                "name": "expectJsonRecord",
+                "comment": " ",
+                "type": "(Result.Result (Http.Detailed.Error String.String) (Http.Detailed.Success a) -> msg) -> Json.Decode.Decoder a -> Http.Expect msg"
+            },
+            {
+                "name": "expectString",
+                "comment": " Expect the response body to be a `String`.\n\n    import Http\n    import Http.Detailed\n\n    type Msg\n        = GotText (Result (Http.Detailed.Error String) ( Http.Metadata, String ))\n\n    getPublicOpinion : Cmd Msg\n    getPublicOpinion =\n        Http.get\n            { url = \"https://elm-lang.org/assets/public-opinion.txt\"\n            , expect = Http.Detailed.expectString GotText\n            }\n\nOn success, return a `Tuple` containing the metadata and the body as a `String`. On error, return our custom [`Error`](#Error) type.\n\nWhen using this, the error will never be of type `BadBody`.\n\n",
+                "type": "(Result.Result (Http.Detailed.Error String.String) ( Http.Metadata, String.String ) -> msg) -> Http.Expect msg"
+            },
+            {
+                "name": "expectStringRecord",
+                "comment": " ",
+                "type": "(Result.Result (Http.Detailed.Error String.String) (Http.Detailed.Success String.String) -> msg) -> Http.Expect msg"
+            },
+            {
+                "name": "expectWhatever",
+                "comment": " Expect the response body to be whatever. It does not matter. Ignore it!\n\n    import Http\n    import Http.Detailed\n\n    type Msg\n        = Uploaded (Result (Http.Detailed.Error Bytes) ())\n\n    upload : File -> Cmd Msg\n    upload file =\n        Http.post\n            { url = \"/upload\"\n            , body = Http.fileBody file\n            , expect = Http.Detailed.expectWhatever Uploaded\n            }\n\nThe server may be giving back a response body, but we do not care about it.\n\nOn error, return our custom [`Error`](#Error) type. It will never be `BadBody`.\n\n",
+                "type": "(Result.Result (Http.Detailed.Error Bytes.Bytes) () -> msg) -> Http.Expect msg"
+            },
+            {
+                "name": "responseToBytes",
+                "comment": " ",
+                "type": "Bytes.Decode.Decoder a -> Http.Response Bytes.Bytes -> Result.Result (Http.Detailed.Error Bytes.Bytes) ( Http.Metadata, a )"
+            },
+            {
+                "name": "responseToBytesRecord",
+                "comment": " ",
+                "type": "Bytes.Decode.Decoder a -> Http.Response Bytes.Bytes -> Result.Result (Http.Detailed.Error Bytes.Bytes) (Http.Detailed.Success a)"
+            },
+            {
+                "name": "responseToJson",
+                "comment": " ",
+                "type": "Json.Decode.Decoder a -> Http.Response String.String -> Result.Result (Http.Detailed.Error String.String) ( Http.Metadata, a )"
+            },
+            {
+                "name": "responseToJsonRecord",
+                "comment": " ",
+                "type": "Json.Decode.Decoder a -> Http.Response String.String -> Result.Result (Http.Detailed.Error String.String) (Http.Detailed.Success a)"
+            },
+            {
+                "name": "responseToString",
+                "comment": " ",
+                "type": "Http.Response String.String -> Result.Result (Http.Detailed.Error String.String) ( Http.Metadata, String.String )"
+            },
+            {
+                "name": "responseToStringRecord",
+                "comment": " ",
+                "type": "Http.Response String.String -> Result.Result (Http.Detailed.Error String.String) (Http.Detailed.Success String.String)"
+            },
+            {
+                "name": "responseToWhatever",
+                "comment": " ",
+                "type": "Http.Response Bytes.Bytes -> Result.Result (Http.Detailed.Error Bytes.Bytes) ()"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Http.Extras",
+        "comment": " **Convenience functions for creating HTTP requests and interpreting an HTTP response.**\n\n\n# Requests\n\nHelpers for creating HTTP requests.\n\n@docs Request, listToHeaders, listToQuery\n\n\n# Responses\n\nHelpers for interpreting an [`Http.Response`][httpResponse] value.\n\n[httpResponse]: https://package.elm-lang.org/packages/elm/http/2.0.0/Http#Response\n\n\n## Transform\n\nTransform an [`Http.Response`][httpResponse] value into the respective `Result` that is returned\nin each `expect` function from [`elm/http`][http]. Used for building custom `expect` functions.\n\nFor example, you could replicate [`Http.expectString`](https://package.elm-lang.org/packages/elm/http/2.0.0/Http#expectString) like so:\n\n    import Http\n    import Http.Extras\n\n    expectString : (Result Http.Error String -> msg) -> Http.Expect msg\n    expectString toMsg =\n        Http.expectStringResponse toMsg Http.Extras.responseToString\n\n[http]: https://package.elm-lang.org/packages/elm/http/2.0.0\n[httpResponse]: https://package.elm-lang.org/packages/elm/http/2.0.0/Http#Response\n\n@docs responseToString, responseToJson, responseToBytes, responseToWhatever\n\n\n## Getters\n\nConvenience functions for extracting information like the header, status code, url, etc. from a [`Http.Response`][httpResponse] value.\nOn an error, a short string will be returned describing why the error occurred. For example:\n\n    getStatusCode Http.Timeout_\n        == Err \"Timeout\"\n\nThese functions are primarily concerned with accessing the metadata of a response.\nSo, these functions will return a successful `Result` if the response is `GoodStatus_` or `BadStatus_`.\nOtherwise, the `Result` will be an error.\n\n[httpResponse]: https://package.elm-lang.org/packages/elm/http/2.0.0/Http#Response\n\n@docs getUrl, getStatusCode, getStatusText, getHeaders, getMetadata, getBody, isSuccess\n\n\n# Miscellaneous\n\n@docs State\n\n",
+        "unions": [
+            {
+                "name": "State",
+                "comment": " A custom type for keeping track of the state of a HTTP requests in your program's Model. This is just a suggested pattern\nto use in your development. It's included primarily for my own convenience - here's an example of how it would be used.\n\n    type alias Model =\n        { apiCats : State ( CatsResponseType, Http.Metadata ) (Http.Detailed.Error String)\n        }\n\n    type Msg =\n        APICatsResponse\n        | ...\n\n    init =\n        ( { apiCats = NotRequested }, Cmd.none )\n\n    update msg model =\n        case msg of\n            APICatsResponse httpResponse ->\n                case httpResponse of\n                    Ok (response, metadata) ->\n                        ( { model | apiCats = Success (response, metadata) }\n                        , Cmd.none )\n\n                    Err httpError ->\n                        ( { model | apiCats = Error httpError }\n                        , Cmd.none )\n\n        ...\n\n**Note:** It's been brought to my attention that this is the almost the exact same thing as the popular [RemoteData](https://package.elm-lang.org/packages/krisajenkins/remotedata/latest/) -\nwhen I created this package, I had never heard about RemoteData, yet I had been using the same design pattern.\n\nI will leave this type here to avoid breaking API changes, but I would recommend checking out RemoteData -\nit integrates fairly easily with this package. It offers a lot of handy helper functions too!\n\nTo replicate their `WebData` type, you would use something like so:\n\n    type alias WebDataDetailed err success =\n        RemoteData (Http.Detailed.Error err) success\n\n",
+                "args": [
+                    "success",
+                    "error"
+                ],
+                "cases": [
+                    [
+                        "NotRequested",
+                        []
+                    ],
+                    [
+                        "Fetching",
+                        []
+                    ],
+                    [
+                        "Success",
+                        [
+                            "success"
+                        ]
+                    ],
+                    [
+                        "Error",
+                        [
+                            "error"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Request",
+                "comment": " The type that needs to be passed into [`Http.request`](https://package.elm-lang.org/packages/elm/http/2.0.0/Http#request).\nIt's never actually defined as a type in [`elm/http`][http], so this is just the type definition for it.\n\n[http]: https://package.elm-lang.org/packages/elm/http/2.0.0\n\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ method : String.String, headers : List.List Http.Header, url : String.String, body : Http.Body, expect : Http.Expect msg, timeout : Maybe.Maybe Basics.Float, tracker : Maybe.Maybe String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "getBody",
+                "comment": " ",
+                "type": "Http.Response body -> Result.Result String.String body"
+            },
+            {
+                "name": "getHeaders",
+                "comment": " ",
+                "type": "Http.Response body -> Result.Result String.String (Dict.Dict String.String String.String)"
+            },
+            {
+                "name": "getMetadata",
+                "comment": " ",
+                "type": "Http.Response body -> Result.Result String.String Http.Metadata"
+            },
+            {
+                "name": "getStatusCode",
+                "comment": " ",
+                "type": "Http.Response body -> Result.Result String.String Basics.Int"
+            },
+            {
+                "name": "getStatusText",
+                "comment": " ",
+                "type": "Http.Response body -> Result.Result String.String String.String"
+            },
+            {
+                "name": "getUrl",
+                "comment": " Note that this only tries to return the url from the metadata - it does not return the url if\nthe response is `BadUrl_`\n",
+                "type": "Http.Response body -> Result.Result String.String String.String"
+            },
+            {
+                "name": "isSuccess",
+                "comment": " Returns the status code if 200 <= status code < 300\n",
+                "type": "Http.Response body -> Result.Result String.String Basics.Int"
+            },
+            {
+                "name": "listToHeaders",
+                "comment": " Convenience function to generate a list of [`Http.Headers`](https://package.elm-lang.org/packages/elm/http/2.0.0/Http#Header)\nfrom a `List ( String, String )`.\n\n    listToHeaders [ ( \"Max-Forwards\", \"10\" ), ( \"Authorization\", \"Basic pw123\" ) ]\n        == [ Http.Header \"Max-Forwards\" \"10\", Http.Header \"Authorization\" \"Basic pw123\" ]\n\n",
+                "type": "List.List ( String.String, String.String ) -> List.List Http.Header"
+            },
+            {
+                "name": "listToQuery",
+                "comment": " Convenience function to generate a [percent-encoded](https://tools.ietf.org/html/rfc3986#section-2.1)\nquery string from a `List ( String, String )`. The string includes the `?` at the beginning.\n\n    listToQuery [ ( \"foo\", \"abc 123\" ), ( \"bar\", \"xyz\" ) ]\n        == \"?foo=abc%20123&bar=xyz\"\n\n**Note:** A more appropriate place for this function would probably be a package like `Url.Extras`.\nHowever, such a package doesn't exist, and I use this function quite frequently, so I've included it here.\n\n",
+                "type": "List.List ( String.String, String.String ) -> String.String"
+            },
+            {
+                "name": "responseToBytes",
+                "comment": " ",
+                "type": "Bytes.Decode.Decoder a -> Http.Response Bytes.Bytes -> Result.Result Http.Error a"
+            },
+            {
+                "name": "responseToJson",
+                "comment": " ",
+                "type": "Json.Decode.Decoder a -> Http.Response String.String -> Result.Result Http.Error a"
+            },
+            {
+                "name": "responseToString",
+                "comment": " ",
+                "type": "Http.Response String.String -> Result.Result Http.Error String.String"
+            },
+            {
+                "name": "responseToWhatever",
+                "comment": " ",
+                "type": "Http.Response Bytes.Bytes -> Result.Result Http.Error ()"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Http.Mock",
+        "comment": " **Mock an HTTP response from within Elm.**\n\n_I wrote a [guide on HTTP mocking in Elm,][Oh the Mockery]\nboth with and without this package. Giving it a read might help you better understand\nthe motivation and use cases behind this module!_\n\n---\n\nSpecify exactly what you'd like the response of an HTTP request to be.\nThe actual response of the HTTP request is ignored - the response will be exactly what you want to be mocked!\n\nHere's some ways this can be useful.\n\n[Oh the Mockery]: https://medium.com/@jzxhuang/oh-the-mockery-a-guide-to-http-mocking-in-elm-f625c2a56c9f\n\n\n# Testing your code\n\nNot sure how your code handles an HTTP request that results in a `Timeout`? Test it by mocking a Timeout response!\n\n    import Http\n    import Http.Mock\n\n    type Msg\n        = MyResponseHandler (Result Http.Error String)\n\n    testTimeout =\n        Http.get\n            { url = \"https://fakeurl.com\"\n            , expect = Http.Mock.expectString Http.Timeout_ MyResponseHandler\n            }\n\nYour update logic doesn't change - mock a `Timeout` response and make sure your application handles it correctly!\nNotice that we put in a dummy URL here - It doesn't matter request you make, as the response of the request will be exactly what you specify.\n\n\n# Mocking an API\n\nNeed to quickly mock an API locally? Don't waste time setting up a fake HTTP server for testing - just mock the response directly from within Elm!\n\n    import Http\n    import Http.Mock\n\n    type Msg\n        = MyResponseHandler (Result Http.Error String)\n\n    -- This is our mocked response.\n    -- You would actually put metadata and a body!\n\n    mockResponse =\n        Http.GoodStatus_ <metadata> <body>\n\n    sendRequestWithMockedResponse =\n        Http.get\n            { url = \"https://fakeurl.com\"\n            , expect = Http.Mock.expectString mockResponse MyResponseHandler\n            }\n\nAgain, your update logic should not change, and it doesn't matter what type of request you make -\nthe response is discarded and replaced with the mocked response.\n\nWhen using this module, it would be a good idea to store all your mock responses in a separate file!\n\n\n# Mock\n\nThe API is designed so that usage of this module is almost identical to using [elm/http][http].\nSimply specify exactly what you want the response to be - everything else looks the same.\n\nThe `Result` is identical to the ones in [elm/http][http]. You can use the `Transform` functions in [`Detailed`](../Http-Detailed)\nif you'd like the detailed responses.\n\n[http]: https://package.elm-lang.org/packages/elm/http/2.0.0\n\n@docs expectString, expectJson, expectBytes, expectWhatever, expectStringResponse, expectBytesResponse\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "expectBytes",
+                "comment": " ",
+                "type": "Http.Response Bytes.Bytes -> (Result.Result Http.Error a -> msg) -> Bytes.Decode.Decoder a -> Http.Expect msg"
+            },
+            {
+                "name": "expectBytesResponse",
+                "comment": " ",
+                "type": "Http.Response Bytes.Bytes -> (Result.Result x a -> msg) -> (Http.Response Bytes.Bytes -> Result.Result x a) -> Http.Expect msg"
+            },
+            {
+                "name": "expectJson",
+                "comment": " ",
+                "type": "Http.Response String.String -> (Result.Result Http.Error a -> msg) -> Json.Decode.Decoder a -> Http.Expect msg"
+            },
+            {
+                "name": "expectString",
+                "comment": " ",
+                "type": "Http.Response String.String -> (Result.Result Http.Error String.String -> msg) -> Http.Expect msg"
+            },
+            {
+                "name": "expectStringResponse",
+                "comment": " ",
+                "type": "Http.Response String.String -> (Result.Result x a -> msg) -> (Http.Response String.String -> Result.Result x a) -> Http.Expect msg"
+            },
+            {
+                "name": "expectWhatever",
+                "comment": " ",
+                "type": "Http.Response Bytes.Bytes -> (Result.Result Http.Error () -> msg) -> Http.Expect msg"
+            }
+        ],
+        "binops": []
+    }
+]

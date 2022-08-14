@@ -1,0 +1,59 @@
+[
+    {
+        "name": "Rating",
+        "comment": " A simple five star rating component. Uses unicode star characters ★ & ☆ (U+2605 & U+2606) by default. Allows for custom Html elements to be used.\n\n\n# Init\n\n@docs initialState\n@docs initialCustomState\n\n\n# View\n\n@docs classView, styleView\n\n\n# Update\n\n@docs update\n\n\n# Helpers\n\n@docs get\n@docs set\n\n\n# Types\n\n@docs State, Msg\n\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " Opaque type obscuring rating messages.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "State",
+                "comment": " Opaque type obscuring rating model.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "classView",
+                "comment": " Render the component. Accepts a name for the rating component, a list of css class names and a Rating.State.\nThe radioGroupName is used to populate the name parameter on the radio buttons, so use a unique name for each star rating on the same page.\nIf using initialState to initialize this component, it uses text characters to display the stars, so use css accordingly.\n\n    Rating.classView \"starRating\" [ \"cssClass1\", \"cssClass2\" ] ratingState\n\n",
+                "type": "String.String -> List.List String.String -> Rating.State -> Html.Html Rating.Msg"
+            },
+            {
+                "name": "get",
+                "comment": " Get the current rating.\n\n    Rating.get ratingState\n\n",
+                "type": "Rating.State -> Basics.Int"
+            },
+            {
+                "name": "initialCustomState",
+                "comment": " Initial rating state. Sets rating to zero. Uses html passed in by user.\n",
+                "type": "Html.Html Rating.Msg -> Html.Html Rating.Msg -> Rating.State"
+            },
+            {
+                "name": "initialState",
+                "comment": " Initial rating state. Sets rating to zero. Uses \"★\" and \"☆\".\n",
+                "type": "Rating.State"
+            },
+            {
+                "name": "set",
+                "comment": " Set the rating. Keeps values between 0 and 5.\n\n    Rating.set 4 ratingState\n\n",
+                "type": "Basics.Int -> Rating.State -> Rating.State"
+            },
+            {
+                "name": "styleView",
+                "comment": " Render the component. Accepts a name for the rating component, a list of style tuples and a Rating.State.\nThe radioGroupName is used to populate the name parameter on the radio buttons, so use a unique name for each star rating on the same page.\nIf using initialState to initialize this component, it uses text characters to display the stars, so use css accordingly.\n\n    Rating.styleView \"starRating\" [ ( \"color\", \"red\" ) ] ratingState\n\n",
+                "type": "String.String -> List.List ( String.String, String.String ) -> Rating.State -> Html.Html Rating.Msg"
+            },
+            {
+                "name": "update",
+                "comment": " Update the state of the rating component.\n\n    RatingMsg msg ->\n        ( { model | ratingState = (Rating.update msg model.ratingState) }, Cmd.none )\n\n",
+                "type": "Rating.Msg -> Rating.State -> Rating.State"
+            }
+        ],
+        "binops": []
+    }
+]

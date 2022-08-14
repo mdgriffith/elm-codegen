@@ -1,0 +1,135 @@
+[
+    {
+        "name": "Validation",
+        "comment": " This library aims to provide basic `Validation` in Elm\n\n\n# ValidationError\n\n@docs ValidationError\n\n\n### Common Helpers\n\n@docs append, errorToList\n\n\n### Map\n\n@docs errorMap\n\n\n# Validation\n\n@docs Validation\n\n\n### Common Helpers\n\n@docs success, failure, failureWithList, validation, toResult, toList\n\n\n### Map\n\n@docs map, mapError, mapValidationError\n\n\n### Chaining\n\n@docs andMap, andMapAcc, andSkip, andSkipAcc\n\n",
+        "unions": [
+            {
+                "name": "Validation",
+                "comment": " A `Validation` can be a `Success` or a `Failure`\n\n    Success \"output value\"\n\n    Failure (Error \"not valid\")\n\n    Failure (ErrorList [ \"too short\", \"forbidden character\" ])\n\n",
+                "args": [
+                    "err",
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Failure",
+                        [
+                            "Validation.ValidationError err"
+                        ]
+                    ],
+                    [
+                        "Success",
+                        [
+                            "a"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "ValidationError",
+                "comment": " A `ValidationError` can be a simple `Error` or an `ErrorList`\n\n    type YourError\n        = ErrorX\n        | ErrorY String Int\n\n    Error ErrorX\n\n    Error (ErrorY \"some message\" 15)\n\n    ErrorList [ ErrorX, ErrorY \"some message\" 15 ]\n\n",
+                "args": [
+                    "err"
+                ],
+                "cases": [
+                    [
+                        "Error",
+                        [
+                            "err"
+                        ]
+                    ],
+                    [
+                        "ErrorList",
+                        [
+                            "List.List err"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "andMap",
+                "comment": " Chain together many `Validation` by binding them. This means we only\ncontinue if the validations are successful and we stop at the first `Failure`\n\n    type alias Example =\n        { a : String\n        , b : String\n        }\n\n    success Example\n        |> andMap (success \"valid1\")\n        |> andMap (success \"valid2\")\n        |> Expect.equal (Success (Example \"valid1\" \"valid2\"))\n\n    success Example\n        |> andMap (failure \"error1\")\n        |> andMap (success \"valid2\")\n        |> Expect.equal (failure \"error1\")\n\n    success Example\n        |> andMap (success \"valid1\")\n        |> andMap (failure \"error2\")\n        |> Expect.equal (failure \"error2\")\n\n    success Example\n        |> andMap (failure \"error1\")\n        |> andMap (failure \"error2\")\n        |> Expect.equal (failure \"error1\")\n\n",
+                "type": "Validation.Validation err a -> Validation.Validation err (a -> b) -> Validation.Validation err b"
+            },
+            {
+                "name": "andMapAcc",
+                "comment": " Chain together many `Validation` by accumulating them. This means we always\ncontinue and accumulate all the `Failure`s\n\n    type alias Example =\n        { a : String\n        , b : String\n        }\n\n    success Example\n        |> andMapAcc (success \"valid1\")\n        |> andMapAcc (success \"valid2\")\n        |> Expect.equal (Success (Example \"valid1\" \"valid2\"))\n\n    success Example\n        |> andMapAcc (failure \"error1\")\n        |> andMapAcc (success \"valid2\")\n        |> Expect.equal (failure \"error1\")\n\n    success Example\n        |> andMapAcc (success \"valid1\")\n        |> andMapAcc (failure \"error2\")\n        |> Expect.equal (failure \"error2\")\n\n    success Example\n        |> andMapAcc (failure \"error1\")\n        |> andMapAcc (failure \"error2\")\n        |> Expect.equal (failureWithList [ \"error2\", \"error1\" ])\n\n",
+                "type": "Validation.Validation err a -> Validation.Validation err (a -> b) -> Validation.Validation err b"
+            },
+            {
+                "name": "andSkip",
+                "comment": " Chain together many `Validation` by binding them and skipping the current\nresult. Same behavior than `andMap` but skip the current result\n\n    type alias Example =\n        { a : String\n        , b : String\n        }\n\n    success Example\n        |> andMap (success \"valid1\")\n        |> andSkip (success \"whatever\")\n        |> andMap (success \"valid2\")\n        |> Expect.equal (success (Example \"valid1\" \"valid2\"))\n\n    success Example\n        |> andMap (failure \"error1\")\n        |> andSkip (success \"\")\n        |> andMap (success \"\")\n        |> Expect.equal (failure \"error1\")\n\n    success Example\n        |> andMap (success \"\")\n        |> andSkip (failure \"error2\")\n        |> andMap (success \"\")\n        |> Expect.equal (failure \"error2\")\n\n    success Example\n        |> andMap (failure \"error1\")\n        |> andSkip (failure \"error2\")\n        |> andMap (success \"\")\n        |> Expect.equal (failure \"error1\")\n\n",
+                "type": "Validation.Validation err a -> Validation.Validation err b -> Validation.Validation err b"
+            },
+            {
+                "name": "andSkipAcc",
+                "comment": " Chain together many `Validation` by accumulating them and skipping the\ncurrent result. Same behavior than `andMapAcc` but skip the current result\n\n    success Example\n        |> andMapAcc (success \"valid1\")\n        |> andSkipAcc (success \"whatever\")\n        |> andMapAcc (success \"valid2\")\n        |> Expect.equal (success (Example \"valid1\" \"valid2\"))\n\n    success Example\n        |> andMapAcc (failure \"error1\")\n        |> andSkipAcc (success \"\")\n        |> andMapAcc (success \"\")\n        |> Expect.equal (failure \"error1\")\n\n    success Example\n        |> andMapAcc (success \"\")\n        |> andSkipAcc (failure \"error2\")\n        |> andMapAcc (success \"\")\n        |> Expect.equal (failure \"error2\")\n\n    success Example\n        |> andMapAcc (failure \"error1\")\n        |> andSkipAcc (failure \"error2\")\n        |> andMapAcc (success \"\")\n        |> Expect.equal (failureWithList [ \"error2\", \"error1\" ])\n\n",
+                "type": "Validation.Validation err a -> Validation.Validation err b -> Validation.Validation err b"
+            },
+            {
+                "name": "append",
+                "comment": " Combines two `ValidationError`\n\n    append (Error 1) (Error 2)\n        |> Expect.equal (ErrorList [ 1, 2 ])\n\n    append (Error 1) (ErrorList [ 2, 3 ])\n        |> Expect.equal (ErrorList [ 1, 2, 3 ])\n\n    append (ErrorList [ 2, 3 ]) (Error 1)\n        |> Expect.equal (ErrorList [ 1, 2, 3 ])\n\n    append (ErrorList [ 1, 2 ]) (ErrorList [ 3, 4 ])\n        |> Expect.equal (ErrorList [ 1, 2, 3, 4 ])\n\n",
+                "type": "Validation.ValidationError err -> Validation.ValidationError err -> Validation.ValidationError err"
+            },
+            {
+                "name": "errorMap",
+                "comment": " Map a function over a `ValidationError`\n\n    errorMap ((+) 1) (Error 1)\n        |> Expect.equal (Error 2)\n\n    errorMap ((+) 1) (ErrorList [ 1, 2, 3 ])\n        |> Expect.equal (ErrorList [ 2, 3, 4 ])\n\n",
+                "type": "(err1 -> err2) -> Validation.ValidationError err1 -> Validation.ValidationError err2"
+            },
+            {
+                "name": "errorToList",
+                "comment": " Converts a `ValidationError` into a `List err`\n\n    errorToList (Error 1)\n        |> Expect.equal [ 1 ]\n\n    errorToList (ErrorList [ 1, 2, 3 ])\n        |> Expect.equal [ 1, 2, 3 ]\n\n",
+                "type": "Validation.ValidationError err -> List.List err"
+            },
+            {
+                "name": "failure",
+                "comment": " Returns a failed `Validation`\n\n    failure \"not valid\"\n        |> Expect.equal (Failure (Error \"not valid\"))\n\n",
+                "type": "err -> Validation.Validation err a"
+            },
+            {
+                "name": "failureWithList",
+                "comment": " Returns a failed `Validation` with an `ErrorList`\n\n    failureWithList [ \"error1\", \"error2\" ]\n        |> Expect.equal (Failure (ErrorList [ \"error1\", \"error2\" ]))\n\n",
+                "type": "List.List err -> Validation.Validation err a"
+            },
+            {
+                "name": "map",
+                "comment": " Map a function over a successful `Validation`\n\n    map ((+) 1) (Success 1)\n        |> Expect.equal (Success 2)\n\n    map ((+) 1) (Error 1)\n        |> Expect.equal (Error 1)\n\n",
+                "type": "(a -> b) -> Validation.Validation err a -> Validation.Validation err b"
+            },
+            {
+                "name": "mapError",
+                "comment": " Map a function over a failed `Validation`\n\n    mapError ((+) 1) (Success 1)\n        |> Expect.equal (Success 1)\n\n    mapError ((+) 1) (Failure (Error 1))\n        |> Expect.equal (Failure (Error 2))\n\n    mapError ((+) 1) (Failure (ErrorList [ 1, 2 ]))\n        |> Expect.equal (Failure (ErrorList [ 2, 3 ]))\n\n",
+                "type": "(err1 -> err2) -> Validation.Validation err1 a -> Validation.Validation err2 a"
+            },
+            {
+                "name": "mapValidationError",
+                "comment": " Map a function over a failed `Validation` on the `ValidationError`\n\n    tranform : ValidationError Int -> ValidationError Int\n    tranform v =\n        case v of\n            Error n ->\n                ErrorList (List.repeat 5 n)\n\n            ErrorList l ->\n                ErrorList l\n\n    mapValidationError tranform (Success 1)\n        |> Expect.equal (Success 1)\n\n    mapValidationError tranform (Failure (Error 1))\n        |> Expect.equal (Failure (ErrorList [ 1, 1, 1, 1, 1 ]))\n\n",
+                "type": "(Validation.ValidationError err1 -> Validation.ValidationError err2) -> Validation.Validation err1 a -> Validation.Validation err2 a"
+            },
+            {
+                "name": "success",
+                "comment": " Returns a successful `Validation`\n\n    success \"output value\"\n        |> Expect.equal (Success \"output value\")\n\n",
+                "type": "a -> Validation.Validation err a"
+            },
+            {
+                "name": "toList",
+                "comment": " Converts a `Validation` to a `List`. The `List` is empty if it's a\nsuccessful validation or contains the errors if it's failed validation.\n\n    toList (Success \"valid\")\n        |> Expect.equal []\n\n    toList (Failure (Error \"error\"))\n        |> Expect.equal [ \"error\" ]\n\n",
+                "type": "Validation.Validation err a -> List.List err"
+            },
+            {
+                "name": "toResult",
+                "comment": " Converts a `Validation` to a `Result`\n\n    toResult (Success \"valid\")\n        |> Expect.equal (Ok \"valid\")\n\n    toResult (Failure (Error \"error\"))\n        |> Expect.equal (Err [ \"error\" ])\n\n",
+                "type": "Validation.Validation err a -> Result.Result (List.List err) a"
+            },
+            {
+                "name": "validation",
+                "comment": " Helps creating a basic `Validation` function\n\n    type YourError\n        = ErrorX\n\n    emptyValidation : String -> Validation YourError String\n    emptyValidation =\n        validation ErrorX String.isEmpty\n\n    emptyValidation \"\"\n        |> Expect.equal (Success \"\")\n\n    emptyValidation \"notempty\"\n        |> Expect.equal (Failure (Error ErrorX ))\n\n",
+                "type": "err -> (a -> Basics.Bool) -> a -> Validation.Validation err a"
+            }
+        ],
+        "binops": []
+    }
+]

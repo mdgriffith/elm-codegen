@@ -1,0 +1,230 @@
+[
+    {
+        "name": "Xml.Decode",
+        "comment": " XML decoder module sharing the spirit of [`Json.Decode`][jd].\n\nUsing [`XmlParser`][xp] as its parser component.\n\n[jd]: http://package.elm-lang.org/packages/elm-lang/core/latest/Json-Decode\n[xp]: http://package.elm-lang.org/packages/jinjor/elm-xml-parser/latest/XmlParser\n\n\n# Basic Example\n\nExamples in this package are doc-tested.\n\n    exampleDecoder : Decoder ( String, List Int )\n    exampleDecoder =\n        map2 Tuple.pair\n            (path [ \"string\", \"value\" ] (single string))\n            (path [ \"int\", \"values\" ] (list int))\n\n    run exampleDecoder\n        \"\"\"\n        <root>\n            <string>\n                <value>SomeString</value>\n            </string>\n            <int>\n                <values>1</values>\n                <values>2</values>\n            </int>\n        </root>\n        \"\"\"\n    --> Ok ( \"SomeString\", [ 1, 2 ] )\n\n\n# Types\n\n@docs Decoder, ListDecoder, Error\n\n\n# Decode Executor\n\n@docs run, decodeString, decodeXml\n\n\n# Decoders\n\n@docs string, int, float, bool, node\n\n\n# Attribute Decoders\n\n@docs stringAttr, intAttr, floatAttr, boolAttr\n\n\n# List Decoders\n\n@docs single, list, leakyList, index\n\n\n# Decoder Utilities\n\n`mapN` series are backed by `Result.mapN` series, thus it only supports up to `map5`.\n\n@docs succeed, fail, oneOf, andThen, with, map, map2, map3, map4, map5, andMap, withDefault, maybe, lazy\n\n\n# Node Locater\n\n@docs path\n\n\n# Pipeline APIs\n\nAllow writing Decoders in Pipeline-style, just like [`Json.Decode.Pipeline`][jdp].\n\n[jdp]: http://package.elm-lang.org/packages/NoRedInk/elm-decode-pipeline/latest/Json-Decode-Pipeline\n\n@docs requiredPath, optionalPath, possiblePath\n\n\n# Error Utility\n\n@docs errorToString\n\n",
+        "unions": [
+            {
+                "name": "Decoder",
+                "comment": " A function that knows how to decode an XML node into Elm value.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Error",
+                "comment": " Represents error on decode execution.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Path",
+                        [
+                            "List.List String.String",
+                            "Xml.Decode.Error"
+                        ]
+                    ],
+                    [
+                        "OneOf",
+                        [
+                            "List.List Xml.Decode.Error"
+                        ]
+                    ],
+                    [
+                        "Failure",
+                        [
+                            "String.String",
+                            "XmlParser.Node"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "ListDecoder",
+                "comment": " A function that knows how to decode list of XML nodes into Elm value.\n\nThey are constructed by functions such as [`single`](#single) or [`list`](#list),\nthen used in conjunction with [`path`](#path).\n\nSee [`path`](#path) for examples.\n\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "andMap",
+                "comment": " Equivalent to [`Json.Decode.Extra.andMap`][jdeam], allows writing XML decoders in sequential style.\n\n[jdeam]: http://package.elm-lang.org/packages/elm-community/json-extra/latest/Json-Decode-Extra#andMap\n\n    run\n        (succeed Tuple.pair\n            |> andMap (path [\"string\"] (single string))\n            |> andMap (path [\"int\"] (single int))\n        )\n        \"<root><string>string</string><int>1</int></root>\"\n    --> Ok (\"string\", 1)\n\n",
+                "type": "Xml.Decode.Decoder a -> Xml.Decode.Decoder (a -> b) -> Xml.Decode.Decoder b"
+            },
+            {
+                "name": "andThen",
+                "comment": " Generates a decoder that depends on previous value.\n",
+                "type": "(a -> Xml.Decode.Decoder b) -> Xml.Decode.Decoder a -> Xml.Decode.Decoder b"
+            },
+            {
+                "name": "bool",
+                "comment": " Decodes to `Bool`.\n\nIn [Xml Schema Definition (XSD)][xsd], valid lexical representation of boolean values are,\n\n  - 'true'\n  - 'false'\n  - '1'\n  - '0'\n\nWe follow this specification, case-sensitively.\n\n[xsd]: https://www.w3.org/TR/xmlschema-2/#boolean\n\n    run bool \"<root>true</root>\"\n    --> Ok True\n\n    run bool \"<root>value</root>\"\n    --> Err \"Node: <root>value</root>\\nNot a valid boolean value.\"\n\n",
+                "type": "Xml.Decode.Decoder Basics.Bool"
+            },
+            {
+                "name": "boolAttr",
+                "comment": " Decodes an attribute value into `Bool`.\n\n    run (boolAttr \"attr\") \"<root attr='true'></root>\"\n    --> Ok True\n\n    run (boolAttr \"attr\") \"<root attr='value'></root>\"\n    --> Err \"Node: <root attr=\\\"value\\\"></root>\\nNot a valid boolean value.\"\n\n",
+                "type": "String.String -> Xml.Decode.Decoder Basics.Bool"
+            },
+            {
+                "name": "decodeString",
+                "comment": " Parses an XML string and decodes into Elm value.\n\nParsing will be done by [`XmlParser.parse`][xpp]\n\nThis function returns error in `String`.\nShould you need to separately handle [`Parser.Error`][pe] and [`Xml.Decode.Error`](#Error),\nexplicitly use [`XmlParser.parse`][xpp] and [`decodeXml`](#decodeXml).\n\n[xpp]: http://package.elm-lang.org/packages/jinjor/elm-xml-parser/latest/XmlParser#parse\n[pe]: http://package.elm-lang.org/packages/elm-tools/parser/latest/Parser#Error\n\n",
+                "type": "Xml.Decode.Decoder a -> String.String -> Result.Result String.String a"
+            },
+            {
+                "name": "decodeXml",
+                "comment": " Decodes an [`XmlParser.Xml`][xpx] value into other type of Elm value.\n\n[xpx]: http://package.elm-lang.org/packages/jinjor/elm-xml-parser/latest/XmlParser#Xml\n\nIt discards Document Type Definitoin (DTD) and Processing Instruction in XML,\nonly cares about root XML node.\n\n    import XmlParser exposing (Xml, Node(..))\n\n    exampleDecoder : Decoder ( String, List Int )\n    exampleDecoder =\n        map2 Tuple.pair\n            (path [ \"string\", \"value\" ] (single string))\n            (path [ \"int\", \"values\" ] (list int))\n\n    decodeXml exampleDecoder <|\n        Xml [] Nothing <|\n            Element \"root\" []\n                [ Element \"string\" []\n                    [ Element \"value\" [] [ Text \"SomeString\" ]\n                    ]\n                , Element \"int\" []\n                    [ Element \"values\" [] [ Text \"1\" ]\n                    , Element \"values\" [] [ Text \"2\" ]\n                    ]\n                ]\n    --> Ok ( \"SomeString\", [ 1, 2 ] )\n\n",
+                "type": "Xml.Decode.Decoder a -> XmlParser.Xml -> Result.Result Xml.Decode.Error a"
+            },
+            {
+                "name": "errorToString",
+                "comment": " Convert [`Error`](#Error) to a formatted string.\n",
+                "type": "Xml.Decode.Error -> String.String"
+            },
+            {
+                "name": "fail",
+                "comment": " Decoder that always fail with the given message.\n",
+                "type": "String.String -> Xml.Decode.Decoder a"
+            },
+            {
+                "name": "float",
+                "comment": " Decodes to `Float`.\n\n    run float \"<root>1.0</root>\"\n    --> Ok 1.0\n\n    run float \"<root>value</root>\"\n    --> Err \"Node: <root>value</root>\\ncould not convert string 'value' to a Float\"\n\n",
+                "type": "Xml.Decode.Decoder Basics.Float"
+            },
+            {
+                "name": "floatAttr",
+                "comment": " Decodes an attribute value into `Float`.\n\n    run (floatAttr \"attr\") \"<root attr='1.5'></root>\"\n    --> Ok 1.5\n\n    run (floatAttr \"attr\") \"<root attr='value'></root>\"\n    --> Err \"Node: <root attr=\\\"value\\\"></root>\\ncould not convert string 'value' to a Float\"\n\n",
+                "type": "String.String -> Xml.Decode.Decoder Basics.Float"
+            },
+            {
+                "name": "index",
+                "comment": " Similar to `Json.Decode.index`, decode from list of nodes at some index.\n\nUseful for \"narrowing down\" your search paths.\n\nFails if there are not enough nodes.\n\n    run (path [ \"tag\" ] (index 1 int)) \"<root><tag>0</tag><tag>1</tag></root>\"\n    --> Ok 1\n\n",
+                "type": "Basics.Int -> Xml.Decode.Decoder a -> Xml.Decode.ListDecoder a"
+            },
+            {
+                "name": "int",
+                "comment": " Similar to [`string`](#string), but also tries to convert `String` to `Int`.\n\n    run int \"<root>1</root>\"\n    --> Ok 1\n\n    run int \"<root>value</root>\"\n    --> Err \"Node: <root>value</root>\\ncould not convert string 'value' to an Int\"\n\n",
+                "type": "Xml.Decode.Decoder Basics.Int"
+            },
+            {
+                "name": "intAttr",
+                "comment": " Decodes an attribute value into `Int`.\n\n    run (intAttr \"attr\") \"<root attr='1'></root>\"\n    --> Ok 1\n\n    run (intAttr \"attr\") \"<root attr='value'></root>\"\n    --> Err \"Node: <root attr=\\\"value\\\"></root>\\ncould not convert string 'value' to an Int\"\n\n",
+                "type": "String.String -> Xml.Decode.Decoder Basics.Int"
+            },
+            {
+                "name": "lazy",
+                "comment": " Generates a lazy decoder.\n\nSimilar to [`Json.Decode.lazy`][jdl].\n\n    someRecordDecoder : Decoder SomeRecord\n    someRecordDecoder =\n        map2 SomeRecord\n            (path [ \"path\", \"to\", \"string\", \"value\" ] (single string))\n            (path [ \"path\", \"to\", \"list\", \"of\", \"someRecord\" ] (list (lazy (\\_ -> someRecordDecoder))))\n\nWith this, you can avoid \"bad-recursion\" error on compilation\nwhich happens when you define nested part of the above decoder as `(list someRecordDecoder)`\n\n[jdl]: http://package.elm-lang.org/packages/elm-lang/core/latest/Json-Decode#lazy\n\n",
+                "type": "(() -> Xml.Decode.Decoder a) -> Xml.Decode.Decoder a"
+            },
+            {
+                "name": "leakyList",
+                "comment": " Variation of [`list`](#list), which ignores items that cannot be decoded.\n\n    run (path [ \"tag\" ] (leakyList int)) \"<root><tag>1</tag><tag>nonInt</tag></root>\"\n    --> Ok [ 1 ]\n\n",
+                "type": "Xml.Decode.Decoder a -> Xml.Decode.ListDecoder (List.List a)"
+            },
+            {
+                "name": "list",
+                "comment": " Composes [`ListDecoder`](#ListDecoder) that results in a list of values.\n\nThis [`ListDecoder`](#ListDecoder) fails if any incoming items cannot be decoded.\n\n    run (path [ \"tag\" ] (list string)) \"<root><tag>string1</tag><tag>string2</tag></root>\"\n    --> Ok [ \"string1\", \"string2\" ]\n\n    run (path [ \"tag\" ] (list int)) \"<root><tag>1</tag><tag>nonInt</tag></root>\"\n    --> Err \"Path: /tag\\nNode: <tag>nonInt</tag>\\ncould not convert string 'nonInt' to an Int\"\n\n",
+                "type": "Xml.Decode.Decoder a -> Xml.Decode.ListDecoder (List.List a)"
+            },
+            {
+                "name": "map",
+                "comment": " Transform a decoder.\n\n    run (map String.length string) \"<root>string</root>\"\n    --> Ok 6\n\n",
+                "type": "(a -> value) -> Xml.Decode.Decoder a -> Xml.Decode.Decoder value"
+            },
+            {
+                "name": "map2",
+                "comment": " Generates a decoder that combines results from two decoders.\n\nIt can be used for generating a decoder for a data type that takes two inputs.\nAlso this is used as a building block of decoder composition helpers.\n\n    run (map2 Tuple.pair string string) \"<root>string</root>\"\n    --> Ok ( \"string\", \"string\" )\n\n",
+                "type": "(a -> b -> value) -> Xml.Decode.Decoder a -> Xml.Decode.Decoder b -> Xml.Decode.Decoder value"
+            },
+            {
+                "name": "map3",
+                "comment": " ",
+                "type": "(a -> b -> c -> value) -> Xml.Decode.Decoder a -> Xml.Decode.Decoder b -> Xml.Decode.Decoder c -> Xml.Decode.Decoder value"
+            },
+            {
+                "name": "map4",
+                "comment": " ",
+                "type": "(a -> b -> c -> d -> value) -> Xml.Decode.Decoder a -> Xml.Decode.Decoder b -> Xml.Decode.Decoder c -> Xml.Decode.Decoder d -> Xml.Decode.Decoder value"
+            },
+            {
+                "name": "map5",
+                "comment": " ",
+                "type": "(a -> b -> c -> d -> e -> value) -> Xml.Decode.Decoder a -> Xml.Decode.Decoder b -> Xml.Decode.Decoder c -> Xml.Decode.Decoder d -> Xml.Decode.Decoder e -> Xml.Decode.Decoder value"
+            },
+            {
+                "name": "maybe",
+                "comment": " Generates a decoder that results in a `Maybe` value.\n\nIf the given decoder resulted in `Err`, it succeeds with `Nothing`.\nOtherwise (in cases of `Ok`,) it succeeds with `Just` value.\n\n    run (maybe int) \"<root>1</root>\"\n    --> Ok (Just 1)\n\n    run (maybe int) \"<root>Non Int value</root>\"\n    --> Ok Nothing\n\n",
+                "type": "Xml.Decode.Decoder a -> Xml.Decode.Decoder (Maybe.Maybe a)"
+            },
+            {
+                "name": "node",
+                "comment": " Decodes an [`XmlParser.Node`][xpn] into itself.\n\nSee [`XmlParser`][xp] to further decompose the node.\n\n[xpn]: http://package.elm-lang.org/packages/jinjor/elm-xml-parser/latest/XmlParser#Node\n[xp]: http://package.elm-lang.org/packages/jinjor/elm-xml-parser/latest/XmlParser\n\n    import XmlParser exposing (Node(..))\n\n    run (path [\"path\", \"to\", \"target\"] (list node)) \"\"\"<root><path><to><target><child></child><child></child></target><target></target></to></path></root>\"\"\"\n    --> Ok [Element \"target\" [] [Element \"child\" [] [],Element \"child\" [] []],Element \"target\" [] []]\n\n    run (path [\"path\", \"to\", \"target\"] (single node)) \"\"\"<root><path><to><target><child></child><child></child></target><target></target></to></path></root>\"\"\"\n    --> Err (\"Path: /path/to/target\\nNode: <to><target><child></child><child></child></target><target></target></to>\\nMultiple nodes found.\")\n\n",
+                "type": "Xml.Decode.Decoder XmlParser.Node"
+            },
+            {
+                "name": "oneOf",
+                "comment": " Try a list of decoders.\n\nFails if all given decoders failed, or no decoders are given.\n\n    run (oneOf [ int, succeed 0 ]) \"<root>nonInt</root>\"\n    --> Ok 0\n\n    run (oneOf [ int ]) \"<root>nonInt</root>\"\n    --> Err \"All decoders failed:\\n 1) Node: <root>nonInt</root>\\n    could not convert string 'nonInt' to an Int\"\n\n",
+                "type": "List.List (Xml.Decode.Decoder a) -> Xml.Decode.Decoder a"
+            },
+            {
+                "name": "optionalPath",
+                "comment": " Tries to decode value at optional XML path. Uses default value if the node is missing.\n\n    decoderWithDefault : Decoder String\n    decoderWithDefault =\n        succeed identity\n            |> optionalPath [ \"optional\", \"path\" ] (single string) \"default\"\n\n    run decoderWithDefault \"<root><optional><path>string</path></optional></root>\"\n    --> Ok \"string\"\n\n    run decoderWithDefault \"<root></root>\"\n    --> Ok \"default\"\n\n",
+                "type": "List.List String.String -> Xml.Decode.ListDecoder a -> a -> Xml.Decode.Decoder (a -> b) -> Xml.Decode.Decoder b"
+            },
+            {
+                "name": "path",
+                "comment": " Generates a [`Decoder`](#Decoder) that applies a [`ListDecoder`](#ListDecoder) at specified XML path.\n\nTypical usage:\n\n    someRecordDecoder : Decoder SomeRecord\n    someRecordDecoder =\n        map2 SomeRecord\n            (path [ \"string\", \"value\" ] (single string))\n            (path [ \"int\", \"values\" ] (list int))\n\nDue to the nature of XML, you cannot distinguish a particular tag or tags hold\nwhether \"singular value\" or \"list of values\", from the structure of XML document itself.\nThis is opposite to JSON, where there can be only one field of a paticular key in a level,\nand its quantization is obvious from the shape of the value.\n\nFor this reason, this function always produce list of [`XmlParser.Node`][xpn]s.\nThen they must be decoded using special decoder parts: [`ListDecoder`](#ListDecoder).\nIn the above example, [`single`](#single) and [`list`](#list) are [`ListDecoder`](#ListDecoder) generators.\n\n[xpn]: http://package.elm-lang.org/packages/jinjor/elm-xml-parser/latest/XmlParser#Node\n\nIt collects ALL nodes matching the path in breadth-first manner.\nIf you need to collect nodes only from a specific intermediate node that fulfills some conditions,\n(e.g. `path [ \"a\", \"b\" ]`, but only in 3rd `\"<a>...</a>\"`)\nyou need to split the path and explicitly define a Decoder that narrows down the path.\nBe careful not to accidentally include nodes from not-targeted ancestors.\n\nNote that in the path, you must \"start\" at the root scope.\nFor instance, to work with an XML document like:\n\n    <Root>\n        <Path>\n            <Target>\n                Value\n            </Target>\n        </Path>\n    </Root>\n\nYou should specify:\n\n    path [ \"Path\", \"Target\" ] (single string)\n\nBasic usages:\n\n    run (path [ \"tag\", \"nested\" ] (single string)) \"<root><tag><nested>string1</nested></tag></root>\"\n    --> Ok \"string1\"\n\n    run (path [ \"tag\", \"nested\" ] (list string)) \"<root><tag><nested>string1</nested><nested>string2</nested></tag></root>\"\n    --> Ok [ \"string1\", \"string2\" ]\n\n    run (path [ \"tag\", \"nested\" ] (single (stringAttr \"value\"))) \"<root><tag><nested value='attr1'></nested></tag></root>\"\n    --> Ok \"attr1\"\n\nDecoders will report errors with path at which error happened as well as nearest node:\n\n    run (path [ \"tag\", \"nested\" ] (single int)) \"<root><tag><nested>string1</nested></tag></root>\"\n    --> Err \"Path: /tag/nested\\nNode: <nested>string1</nested>\\ncould not convert string 'string1' to an Int\"\n\n",
+                "type": "List.List String.String -> Xml.Decode.ListDecoder a -> Xml.Decode.Decoder a"
+            },
+            {
+                "name": "possiblePath",
+                "comment": " Decodes value at possible XML path into `Maybe` value.\n\n    maybeDecoder : Decoder (Maybe String)\n    maybeDecoder =\n        succeed identity\n            |> possiblePath [ \"possible\", \"path\" ] (single string)\n\n    run maybeDecoder \"<root><possible><path>string</path></possible></root>\"\n    --> Ok (Just \"string\")\n\n    run maybeDecoder \"<root></root>\"\n    --> Ok Nothing\n\nIf you want to apply default value when the node is missing, use [`optionalPath`](#optionalPath).\n\n",
+                "type": "List.List String.String -> Xml.Decode.ListDecoder a -> Xml.Decode.Decoder (Maybe.Maybe a -> b) -> Xml.Decode.Decoder b"
+            },
+            {
+                "name": "requiredPath",
+                "comment": " Decodes value at required XML path.\n\n    pipelineDecoder : Decoder ( String, List Int )\n    pipelineDecoder =\n        succeed Tuple.pair\n            |> requiredPath [ \"path\", \"to\", \"string\", \"value\" ] (single string)\n            |> requiredPath [ \"path\", \"to\", \"int\", \"values\" ] (list int)\n\n    run pipelineDecoder\n        \"\"\"\n        <root>\n            <path>\n                <to>\n                    <string>\n                        <value>SomeString</value>\n                    </string>\n                    <int>\n                        <values>1</values>\n                        <values>2</values>\n                    </int>\n                </to>\n            </path>\n        </root>\n        \"\"\"\n    --> Ok ( \"SomeString\", [ 1, 2 ] )\n\n",
+                "type": "List.List String.String -> Xml.Decode.ListDecoder a -> Xml.Decode.Decoder (a -> b) -> Xml.Decode.Decoder b"
+            },
+            {
+                "name": "run",
+                "comment": " Synonym of [`decodeString`](#decodeString).\n",
+                "type": "Xml.Decode.Decoder a -> String.String -> Result.Result String.String a"
+            },
+            {
+                "name": "single",
+                "comment": " Composes [`ListDecoder`](#ListDecoder) that results in a singular value.\n\nIt fails if:\n\n  - there are multiple nodes, or,\n  - there are no nodes.\n\nExamples:\n\n    run (path [ \"tag\" ] (single string)) \"<root><tag>string</tag></root>\"\n    --> Ok \"string\"\n\n    run (path [ \"tag\" ] (single string)) \"<root></root>\"\n    --> Err \"Path: /tag\\nNode: <root></root>\\nNode not found.\"\n\n    run (path [ \"tag\" ] (single string)) \"<root><tag>string1</tag><tag>string2</tag></root>\"\n    --> Err \"Path: /tag\\nNode: <root><tag>string1</tag><tag>string2</tag></root>\\nMultiple nodes found.\"\n\n",
+                "type": "Xml.Decode.Decoder a -> Xml.Decode.ListDecoder a"
+            },
+            {
+                "name": "string",
+                "comment": " Decodes an [`XmlParser.Node`][xpn] into `String`.\n\n  - If the node is `XmlParser.Text`, extracts its value.\n  - If the node is `XmlParser.Element` AND contains nothing, treat it as \"empty text\".\n  - If the node is `XmlParser.Element` AND contains a single `XmlParser.Text` child,\n    extracts its value.\n  - Otherwise fails.\n\nIf you want to extract values from node attribute, use [`stringAttr`](#stringAttr) and variants.\n\n[xpn]: http://package.elm-lang.org/packages/jinjor/elm-xml-parser/latest/XmlParser#Node\n\n    run string \"<root>string</root>\"\n    --> Ok \"string\"\n\n    run string \"<root></root>\"\n    --> Ok \"\"\n\n    run string \"<root><nested>string</nested></root>\"\n    --> Err \"Node: <root><nested>string</nested></root>\\nThe node is not a simple text node.\"\n\n",
+                "type": "Xml.Decode.Decoder String.String"
+            },
+            {
+                "name": "stringAttr",
+                "comment": " Decodes an attribute value of [`XmlParser.Node`][xpn] into `String`.\n\nFails if the node does not have specified attribute.\n\n    run (stringAttr \"attr\") \"<root attr='value'></root>\"\n    --> Ok \"value\"\n\n    run (stringAttr \"attr\") \"<root></root>\"\n    --> Err \"Node: <root></root>\\nAttribute 'attr' not found.\"\n\n[xpn]: http://package.elm-lang.org/packages/jinjor/elm-xml-parser/latest/XmlParser#Node\n\n",
+                "type": "String.String -> Xml.Decode.Decoder String.String"
+            },
+            {
+                "name": "succeed",
+                "comment": " Decoder that always succeed with the given value.\n",
+                "type": "a -> Xml.Decode.Decoder a"
+            },
+            {
+                "name": "with",
+                "comment": " Flipped `andThen`.\n\nWhy do we want this? It allows us to write decoders in Cotinuation-Passing Style (CPS)!\n\n    run\n        (\n            with (path [\"string\"] (single string)) <| \\s ->\n            with (path [\"int\"] (single int)) <| \\i ->\n            succeed ( s, i )\n        )\n        \"<root><string>string</string><int>1</int></root>\"\n    --> Ok (\"string\", 1)\n\nThis style is being discussed in Elm community, and sometimes it makes sense to adopt one,\nespecially when you are trying to decode complex data.\n\n<https://discourse.elm-lang.org/t/experimental-json-decoding-api/2121>\n\n  - Although more verbose, it is explicit so you won't lost track of which decoder generates which value\n  - It does not depends on `mapN` family, so you can easily add/remove fields (similar pros to pipeline style)\n  - You can always use previously decoded values, so it is easy to construct value-dependent decoders.\n    E.g. Data such that part of its decoder changes depends on values of `<type>` tag\n\nThis style is not yet formatted nicely by `elm-format` as of writing this,\nbut the proposal is already filed!\n\n<https://github.com/avh4/elm-format/issues/568>\n\n",
+                "type": "Xml.Decode.Decoder a -> (a -> Xml.Decode.Decoder b) -> Xml.Decode.Decoder b"
+            },
+            {
+                "name": "withDefault",
+                "comment": " Generates a decoder that results in the default value on failure.\n\n    run (withDefault 0 int) \"<root>1</root>\"\n    --> Ok 1\n\n    run (withDefault 0 int) \"<root>Non Int value</root>\"\n    --> Ok 0\n\n",
+                "type": "a -> Xml.Decode.Decoder a -> Xml.Decode.Decoder a"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,145 @@
+[
+    {
+        "name": "Game",
+        "comment": " The following is a basic game with 2 rooms and connections to move between them.\n\n    import Game\n\n    {-| The most basic game possible\n    -}\n    main =\n        let\n            initialGame =\n                Game.makeGame \"Simple Game\"\n\n            ( bedroom, initialGame ) =\n                Game.addRoom\n                    \"Bedroom\"\n                    \"A simple bedroom. Just a bed and 3 drawer dresser.\"\n\n            ( bathroom, initialGame ) =\n                Game.addRoom\n                    \"Bathroom\"\n                    \"A simple bathroom. Just a toilet and sink.\"\n        in\n        Game.makeGame \"Sample Game\"\n            |> Game.addConnection\n                { from = bedroom\n                , to = bathroom\n                , name = \"Bathroom Door\"\n                , description = \"Door to the bathroom.\"\n                , message = \"You walk to the bathroom.\"\n                }\n            |> Game.addConnection\n                { from = bathroom\n                , to = bedroom\n                , name = \"Bedroom Door\"\n                , description = \"Door to the bedroom.\"\n                , message = \"You walk to the bedroom.\"\n                }\n            |> Game.finalize\n                bedroom\n                \"You wake up in your bedroom.\"\n            |> Game.program\n\n\n# Types for makeing your `main` function typed\n\n@docs Game\n@docs Msg\n\n\n# Game building functions\n\n\n## General\n\n@docs update\n@docs view\n@docs makeGame\n@docs finalize\n@docs endGame\n@docs Size\n@docs encode\n@docs decode\n\n\n## Rooms\n\n@docs addRoom\n@docs changeRoomName\n@docs changeRoomDescription\n@docs getCurrentRoom\n@docs setRoom\n@docs deleteRoom\n@docs addConnection\n@docs deleteConnection\n\n\n## Items\n\n@docs createTool\n@docs changeItemName\n@docs changeItemDescription\n@docs changeItemUse\n@docs addItemToRoom\n@docs deleteItem\n\n",
+        "unions": [
+            {
+                "name": "Game",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Size",
+                "comment": " Used for determining the way the game is displayed.\n\nWhen Large, the log is displayed on the right and interactions on the left.\n\nWhen Small, the log is displayed on the bottom and interactions on the top. Interactions are also collapsible so they take up less space.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Large",
+                        []
+                    ],
+                    [
+                        "Small",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Msg",
+                "comment": " ",
+                "args": [],
+                "type": "Game.Internal.Msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "addConnection",
+                "comment": " Creates a one-way connection between 2 rooms.\n\nIn order for to get from room A to room B and back, you need to create 2 connections.\n\n    existingGameWithRooms\n        |> Game.addConnection\n            { from = roomA\n            , to = roomB\n            , name = \"Door\"\n            , description = \"Door to Room B.\"\n            , message = \"You walk to Room B.\"\n            }\n        |> Game.addConnection\n            { from = roomB\n            , to = roomA\n            , name = \"Door\"\n            , description = \"Door to Room A.\"\n            , message = \"You walk to Room A.\"\n            }\n\n",
+                "type": "{ from : Game.Internal.RoomId, to : Game.Internal.RoomId, name : String.String, description : String.String, locked : Basics.Bool, message : String.String } -> Game.Game -> Game.Game"
+            },
+            {
+                "name": "addItemToRoom",
+                "comment": " Adds the specified item to the game.\n\n    addItemToRoom item room game\n\n",
+                "type": "Game.Internal.ItemId -> Game.Internal.RoomId -> Game.Game -> Game.Game"
+            },
+            {
+                "name": "addRoom",
+                "comment": " Adds a new room to your game. This only creates the room and not any connections between rooms.\n\n    addRoom \"Name\" \"Description\" yourGame\n\n",
+                "type": "Game.Internal.Name -> Game.Internal.Description -> Game.Game -> ( Game.Internal.RoomId, Game.Game )"
+            },
+            {
+                "name": "changeItemDescription",
+                "comment": " Change the description of an item.\n\n    changeItemDescription \"New description.\" item game\n\n",
+                "type": "Game.Internal.Description -> Game.Internal.ItemId -> Game.Game -> Game.Game"
+            },
+            {
+                "name": "changeItemName",
+                "comment": " Change the name of an item.\n\n    changeItemName \"New Name\" item game\n\n",
+                "type": "Game.Internal.Name -> Game.Internal.ItemId -> Game.Game -> Game.Game"
+            },
+            {
+                "name": "changeItemUse",
+                "comment": " Change what happens when you use an item.\n\n    changeItemUse (\\itemId game -> ...) item game\n\n",
+                "type": "Game.Internal.ItemUse -> Game.Internal.ItemId -> Game.Game -> Game.Game"
+            },
+            {
+                "name": "changeRoomDescription",
+                "comment": " Change the namedescription of a room.\n\n    changeRoomDescription \"New Description\" someRoom yourGame\n\n",
+                "type": "Game.Internal.Description -> Game.Internal.RoomId -> Game.Game -> Game.Game"
+            },
+            {
+                "name": "changeRoomName",
+                "comment": " Change the name of a room.\n\n    changeRoomName \"New Name\" someRoom yourGame\n\n",
+                "type": "Game.Internal.Name -> Game.Internal.RoomId -> Game.Game -> Game.Game"
+            },
+            {
+                "name": "createTool",
+                "comment": " Creates a tool item. A tool is any item that can be used such as a fork, sword, key, or potato.\n\n    createTool\n        \"Name\"\n        \"Description\"\n        (\\itemId gameState ->\n            ( updatedGameState, \"Message describing what happened\" )\n        )\n        yourGame\n\nItemUse is how your item affects the game world, anything from opening a door to teleporting the player.\n\n",
+                "type": "{ name : Game.Internal.Name, description : Game.Internal.Description, use : Game.Internal.ItemId -> Game.Game -> ( Game.Game, Game.Internal.Message ), decoderKey : String.String } -> Game.Game -> ( Game.Internal.ItemId, Game.Game )"
+            },
+            {
+                "name": "decode",
+                "comment": " Decode a game that was saved.\n\nAlso requires a Dict String ItemUse of the form\n\n    Dict.fromList\n        [ ( \"uniqueNameForItem\", (\\itemId, game -> ... ( modifiedGame, \"Message about what happened.\" )) ) ]\n\nThis is used to rebuild the `use` function of the tools you've created.\n",
+                "type": "Dict.Dict String.String (Game.Internal.ItemId -> Game.Game -> ( Game.Game, Game.Internal.Message )) -> Json.Decode.Value -> Result.Result Json.Decode.Error Game.Game"
+            },
+            {
+                "name": "deleteConnection",
+                "comment": " Remove the specified connection from the game. A connection is identified by the room it's coming from, going to, and its name.\n\n    deleteConnection { from = roomId1, to = roomId2, name = \"Name\" } yourGame\n\n",
+                "type": "{ from : Game.Internal.RoomId, to : Game.Internal.RoomId, name : Game.Internal.Name } -> Game.Game -> Game.Game"
+            },
+            {
+                "name": "deleteItem",
+                "comment": " Removes the specified item from the game.\n\n    deleteItem itemToDelete yourGame\n\n",
+                "type": "Game.Internal.ItemId -> Game.Game -> Game.Game"
+            },
+            {
+                "name": "deleteRoom",
+                "comment": " Removes a room from the game, as well as all of its contents and any connections going to the room.\n\n    deleteRoom someRoom yourGame\n\n**NOTE:** If you delete the room your character is currently in, don't forget to send them to a new room with `setRoom`!\n\n",
+                "type": "Game.Internal.RoomId -> Game.Game -> Game.Game"
+            },
+            {
+                "name": "encode",
+                "comment": " Encode the game so that it can be saved to localStorage or elsewhere.\n",
+                "type": "Game.Game -> Json.Decode.Value"
+            },
+            {
+                "name": "endGame",
+                "comment": " Use this to end the game. Pass it your final message.\n\n    endGame \"Final message\" yourGame\n\n",
+                "type": "String.String -> Game.Game -> Game.Game"
+            },
+            {
+                "name": "finalize",
+                "comment": " Finalizes your game by setting the initial room and the first message the player sees.\n\n    finalize startingRoom \"Welcome message to set the scene\" yourGame\n\n",
+                "type": "Game.Internal.RoomId -> Game.Internal.Message -> Game.Game -> Game.Game"
+            },
+            {
+                "name": "getCurrentRoom",
+                "comment": " Gets the current room the player is in. Useful for knowing where the player is when they use an item.\n\n    getCurrentRoom yourGame == someRoom\n\n",
+                "type": "Game.Game -> Game.Internal.RoomId"
+            },
+            {
+                "name": "makeGame",
+                "comment": " Takes a name and creates your new game.\n\n    makeGame \"Your Cool Adventure\"\n\n",
+                "type": "Game.Internal.Name -> Game.Game"
+            },
+            {
+                "name": "setRoom",
+                "comment": " \"Teleports\" the player to the specified room.\n\n    setRoom someRoom yourGame\n\n",
+                "type": "Game.Internal.RoomId -> Game.Game -> Game.Game"
+            },
+            {
+                "name": "update",
+                "comment": " Updates the game state.\n",
+                "type": "Game.Msg -> Game.Game -> ( Game.Game, Platform.Cmd.Cmd Game.Msg )"
+            },
+            {
+                "name": "view",
+                "comment": " Displays the game, taking a parent Msg.\n",
+                "type": "Game.View.ParentMsg msg -> Game.Size -> Game.Game -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

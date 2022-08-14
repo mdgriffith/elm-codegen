@@ -1,0 +1,189 @@
+[
+    {
+        "name": "PortFunnel.Geolocation",
+        "comment": " Find out about where a user’s device is located. [Geolocation API][geo].\n\n[geo]: https://developer.mozilla.org/en-US/docs/Web/API/Geolocation\n\n\n# Location\n\n@docs Location, Altitude, Movement, JSVersion\n\n\n# Subscribe to Changes\n\n@docs watchChanges, stopWatching\n\n\n# Get Current Location\n\n@docs now, Error\n\n\n# Options\n\n@docs nowWith, Options, defaultOptions\n\n\n# The Standard PortFunnel interface\n\n\n## Types\n\n@docs Message, State, Response\n\n\n## Components of a `PortFunnel.FunnelSpec`\n\n@docs moduleName, moduleDesc, commander\n\n\n## Initial `State`\n\n@docs initialState\n\n\n## Sending a `Message` out the `Cmd` Port\n\n@docs send\n\n\n## Conversion to Strings\n\n@docs toString, toJsonString\n\n\n## Simulator\n\n@docs makeSimulatedCmdPort\n\n\n## Non-standard Functions\n\n@docs isLoaded, errorToString\n\n",
+        "unions": [
+            {
+                "name": "Error",
+                "comment": " The `now` functions may fail for a variety of reasons.\n\n    * The user may reject the request to use their location.\n    * It may be impossible to get a location.\n    * If you set a timeout in the `Options` the request may just take too long.\n\nIn each case, the browser will provide a string with additional information.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "PermissionDenied",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "LocationUnavailable",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Timeout",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Message",
+                "comment": " Messages sent between Elm and the port JavaScript.\n\nOpaque type, returned by `now`, `nowWith`, `changes`, `stopChanges`.\n\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Movement",
+                "comment": " Describes the motion of the device. If the device is not moving, this will\njust be `Static`. If the device is moving, you will see the `speed` in meters\nper second and the `degreesFromNorth` in degrees.\n\n**Note:** The `degreesFromNorth` value goes clockwise: 0° represents true\nnorth, 90° is east, 180° is south, 270° is west, etc.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Static",
+                        []
+                    ],
+                    [
+                        "Moving",
+                        [
+                            "{ speed : Basics.Float, degreesFromNorth : Basics.Float }"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Response",
+                "comment": " Responses.\n\n`LocationResponse` is returned from a `now` or `nowWith` message, and for changes if you've subscriped with a `changes` message.\n\n`ErrorResponse` is returned if there is an error.\n\n`NoResponse` is sent if the processing code receives a message that is not a valid response message. Shouldn't happen.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "LocationResponse",
+                        [
+                            "PortFunnel.Geolocation.Location"
+                        ]
+                    ],
+                    [
+                        "ErrorResponse",
+                        [
+                            "PortFunnel.Geolocation.Error"
+                        ]
+                    ],
+                    [
+                        "NoResponse",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "State",
+                "comment": " Internal module state.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Altitude",
+                "comment": " The altitude in meters relative to sea level is held in `value`. The `accuracy` field\ndescribes how accurate `value` is, also in meters.\n",
+                "args": [],
+                "type": "{ value : Basics.Float, accuracy : Basics.Float }"
+            },
+            {
+                "name": "JSVersion",
+                "comment": " This is used to force a major version bump when the JS changes.\n\nYou'll usually not use it for anything.\n\n",
+                "args": [],
+                "type": "{ v4_1 : () }"
+            },
+            {
+                "name": "Location",
+                "comment": " All available details of the device's current location in the world.\n\n  - `latitude` &mdash; the latitude in decimal degrees.\n  - `longitude` &mdash; the longitude in decimal degrees.\n  - `accuracy` &mdash; the accuracy of the latitude and longitude, expressed in meters.\n  - `altitude` &mdash; altitude information, if available.\n  - `movement` &mdash; information about how the device is moving, if available.\n  - `timestamp` &mdash; the time that this location reading was taken in milliseconds.\n\n",
+                "args": [],
+                "type": "{ latitude : Basics.Float, longitude : Basics.Float, accuracy : Basics.Float, altitude : Maybe.Maybe PortFunnel.Geolocation.Altitude, movement : Maybe.Maybe PortFunnel.Geolocation.Movement, timestamp : Time.Posix }"
+            },
+            {
+                "name": "Options",
+                "comment": " There are a couple options you can mess with when requesting location data.\n\n  - `enableHighAccuracy` &mdash; When enabled, the device will attempt to provide\n    a more accurate location. This can result in slower response times or\n    increased power consumption (with a GPS chip on a mobile device for example).\n    When disabled, the device can take the liberty to save resources by responding\n    more quickly and/or using less power.\n  - `timeout` &mdash; Requesting a location can take time, so you have the option\n    to provide an upper bound in milliseconds on that wait.\n  - `maximumAge` &mdash; This API can return cached locations. If this is set\n    to `Just 400` you may get cached locations as long as they were read in the\n    last 400 milliseconds. If this is `Nothing` then the device must attempt\n    to retrieve the current location every time.\n\n",
+                "args": [],
+                "type": "{ enableHighAccuracy : Basics.Bool, timeout : Maybe.Maybe Basics.Int, maximumAge : Maybe.Maybe Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "commander",
+                "comment": " Responsible for sending a `CmdResponse` back througt the port.\n\nCalled by `PortFunnel.appProcess` for each response returned by `process`.\n\nAlways returns `Cmd.none`.\n\n",
+                "type": "(PortFunnel.GenericMessage -> Platform.Cmd.Cmd msg) -> PortFunnel.Geolocation.Response -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "defaultOptions",
+                "comment": " The options you will want in 99% of cases. This will get you faster\nresults, less battery drain, no surprise failures due to timeouts, and no\nsurprising cached results.\n\n    { enableHighAccuracy = False\n    , timeout = Nothing\n    , maximumAge = Nothing\n    }\n\n",
+                "type": "PortFunnel.Geolocation.Options"
+            },
+            {
+                "name": "errorToString",
+                "comment": " Convert an `Error` to a string for simple printing.\n",
+                "type": "PortFunnel.Geolocation.Error -> String.String"
+            },
+            {
+                "name": "initialState",
+                "comment": " The initial, empty state, so the application can initialize its state.\n",
+                "type": "PortFunnel.Geolocation.State"
+            },
+            {
+                "name": "isLoaded",
+                "comment": " Returns true if a `Startup` message has been processed.\n\nThis is sent by the port code after it has initialized.\n\n",
+                "type": "PortFunnel.Geolocation.State -> Basics.Bool"
+            },
+            {
+                "name": "makeSimulatedCmdPort",
+                "comment": " Make a simulated `Cmd` port.\n",
+                "type": "(Json.Encode.Value -> msg) -> Json.Encode.Value -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "moduleDesc",
+                "comment": " Our module descriptor.\n",
+                "type": "PortFunnel.ModuleDesc PortFunnel.Geolocation.Message PortFunnel.Geolocation.State PortFunnel.Geolocation.Response"
+            },
+            {
+                "name": "moduleName",
+                "comment": " The name of this module: \"Geolocation\".\n",
+                "type": "String.String"
+            },
+            {
+                "name": "now",
+                "comment": " Return a message to `send` to receive a location now.\n",
+                "type": "PortFunnel.Geolocation.Message"
+            },
+            {
+                "name": "nowWith",
+                "comment": " Return a message to `send` to receive a location now with options.\n",
+                "type": "PortFunnel.Geolocation.Options -> PortFunnel.Geolocation.Message"
+            },
+            {
+                "name": "send",
+                "comment": " Send a `Message` through a `Cmd` port.\n",
+                "type": "(Json.Encode.Value -> Platform.Cmd.Cmd msg) -> PortFunnel.Geolocation.Message -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "stopWatching",
+                "comment": " Stop receiving changes as the browser device moves.\n",
+                "type": "PortFunnel.Geolocation.Message"
+            },
+            {
+                "name": "toJsonString",
+                "comment": " Convert a `Message` to the same JSON string that gets sent\n\nover the wire to the JS code.\n\n",
+                "type": "PortFunnel.Geolocation.Message -> String.String"
+            },
+            {
+                "name": "toString",
+                "comment": " Convert a `Message` to a nice-looking human-readable string.\n",
+                "type": "PortFunnel.Geolocation.Message -> String.String"
+            },
+            {
+                "name": "watchChanges",
+                "comment": " Enable receipt of changes as the browser device moves.\n",
+                "type": "PortFunnel.Geolocation.Message"
+            }
+        ],
+        "binops": []
+    }
+]

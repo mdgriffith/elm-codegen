@@ -1,0 +1,1959 @@
+[
+    {
+        "name": "Elm.AST.Canonical",
+        "comment": " Canonical AST is stripped of useless information,\nand generally tries to make life a bit more easier for compiler developers.\n\n@docs ProjectFields\n@docs LocatedExpr, Expr, unwrap, fromUnwrapped\n\n",
+        "unions": [
+            {
+                "name": "Expr",
+                "comment": " Differs from [Frontend.Expr](Elm.AST.Frontend#Expr) by:\n\n  - having fully qualified variables\n  - having only single argument lambdas\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Int",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "Float",
+                        [
+                            "Basics.Float"
+                        ]
+                    ],
+                    [
+                        "Char",
+                        [
+                            "Char.Char"
+                        ]
+                    ],
+                    [
+                        "String",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Bool",
+                        [
+                            "Basics.Bool"
+                        ]
+                    ],
+                    [
+                        "Var",
+                        [
+                            "{ module_ : Elm.Data.ModuleName.ModuleName, name : Elm.Data.VarName.VarName }"
+                        ]
+                    ],
+                    [
+                        "Argument",
+                        [
+                            "Elm.Data.VarName.VarName"
+                        ]
+                    ],
+                    [
+                        "Plus",
+                        [
+                            "Elm.AST.Canonical.LocatedExpr",
+                            "Elm.AST.Canonical.LocatedExpr"
+                        ]
+                    ],
+                    [
+                        "Cons",
+                        [
+                            "Elm.AST.Canonical.LocatedExpr",
+                            "Elm.AST.Canonical.LocatedExpr"
+                        ]
+                    ],
+                    [
+                        "Lambda",
+                        [
+                            "{ argument : Elm.Data.VarName.VarName, body : Elm.AST.Canonical.LocatedExpr }"
+                        ]
+                    ],
+                    [
+                        "Call",
+                        [
+                            "{ fn : Elm.AST.Canonical.LocatedExpr, argument : Elm.AST.Canonical.LocatedExpr }"
+                        ]
+                    ],
+                    [
+                        "If",
+                        [
+                            "{ test : Elm.AST.Canonical.LocatedExpr, then_ : Elm.AST.Canonical.LocatedExpr, else_ : Elm.AST.Canonical.LocatedExpr }"
+                        ]
+                    ],
+                    [
+                        "Let",
+                        [
+                            "{ bindings : Dict.Dict Elm.Data.VarName.VarName (Elm.Data.Binding.Binding Elm.AST.Canonical.LocatedExpr), body : Elm.AST.Canonical.LocatedExpr }"
+                        ]
+                    ],
+                    [
+                        "List",
+                        [
+                            "List.List Elm.AST.Canonical.LocatedExpr"
+                        ]
+                    ],
+                    [
+                        "Unit",
+                        []
+                    ],
+                    [
+                        "Tuple",
+                        [
+                            "Elm.AST.Canonical.LocatedExpr",
+                            "Elm.AST.Canonical.LocatedExpr"
+                        ]
+                    ],
+                    [
+                        "Tuple3",
+                        [
+                            "Elm.AST.Canonical.LocatedExpr",
+                            "Elm.AST.Canonical.LocatedExpr",
+                            "Elm.AST.Canonical.LocatedExpr"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "LocatedExpr",
+                "comment": " The main type of this module. Expression with [location metadata](Elm.Data.Located).\n\nNote the underlying [`Expr`](#Expr) custom type recurses on this [`LocatedExpr`](#LocatedExpr) type,\nso that the children also each have their location metadata.\n\nIf you want expressions without location metadata, look at [`unwrap`](#unwrap).\n\n",
+                "args": [],
+                "type": "Elm.Data.Located.Located Elm.AST.Canonical.Expr"
+            },
+            {
+                "name": "ProjectFields",
+                "comment": " \"What does this compiler stage need to store abotut the whole project?\n\n(See [`Elm.Data.Project`](Elm.Data.Project).)\n\nIn this case, a dict of all the compiled Elm [modules](Elm.Data.Module#Module)\nthat hold [canonical AST expressions](#LocatedExpr).\n\n",
+                "args": [],
+                "type": "{ modules : Dict.Dict Elm.Data.ModuleName.ModuleName (Elm.Data.Module.Module Elm.AST.Canonical.LocatedExpr) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "fromUnwrapped",
+                "comment": " Adds [**dummy** locations](Elm.Data.Located#dummyRegion) to the [Unwrapped.Expr](Elm.AST.Canonical.Unwrapped#Expr).\n",
+                "type": "Elm.AST.Canonical.Unwrapped.Expr -> Elm.AST.Canonical.LocatedExpr"
+            },
+            {
+                "name": "unwrap",
+                "comment": " Discard the [location metadata](Elm.Data.Located#Located).\n",
+                "type": "Elm.AST.Canonical.LocatedExpr -> Elm.AST.Canonical.Unwrapped.Expr"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Elm.AST.Canonical.Unwrapped",
+        "comment": " Version of [Canonical AST](Elm.AST.Canonical) without the location info.\n\nHandy for type inference fuzzers, or when you don't need the location info.\n\nConvert to it using the [`Elm.AST.Canonical.unwrap`](Elm.AST.Canonical#unwrap)\nand from it using [`Elm.AST.Canonical.fromUnwrapped`](Elm.AST.Canonical#fromUnwrapped)\n(beware, uses [dummy location data!](Elm.Data.Located#dummyRegion)).\n\n@docs Expr\n\n",
+        "unions": [
+            {
+                "name": "Expr",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Int",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "Float",
+                        [
+                            "Basics.Float"
+                        ]
+                    ],
+                    [
+                        "Char",
+                        [
+                            "Char.Char"
+                        ]
+                    ],
+                    [
+                        "String",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Bool",
+                        [
+                            "Basics.Bool"
+                        ]
+                    ],
+                    [
+                        "Var",
+                        [
+                            "{ module_ : Elm.Data.ModuleName.ModuleName, name : Elm.Data.VarName.VarName }"
+                        ]
+                    ],
+                    [
+                        "Argument",
+                        [
+                            "Elm.Data.VarName.VarName"
+                        ]
+                    ],
+                    [
+                        "Plus",
+                        [
+                            "Elm.AST.Canonical.Unwrapped.Expr",
+                            "Elm.AST.Canonical.Unwrapped.Expr"
+                        ]
+                    ],
+                    [
+                        "Cons",
+                        [
+                            "Elm.AST.Canonical.Unwrapped.Expr",
+                            "Elm.AST.Canonical.Unwrapped.Expr"
+                        ]
+                    ],
+                    [
+                        "Lambda",
+                        [
+                            "{ argument : Elm.Data.VarName.VarName, body : Elm.AST.Canonical.Unwrapped.Expr }"
+                        ]
+                    ],
+                    [
+                        "Call",
+                        [
+                            "{ fn : Elm.AST.Canonical.Unwrapped.Expr, argument : Elm.AST.Canonical.Unwrapped.Expr }"
+                        ]
+                    ],
+                    [
+                        "If",
+                        [
+                            "{ test : Elm.AST.Canonical.Unwrapped.Expr, then_ : Elm.AST.Canonical.Unwrapped.Expr, else_ : Elm.AST.Canonical.Unwrapped.Expr }"
+                        ]
+                    ],
+                    [
+                        "Let",
+                        [
+                            "{ bindings : Dict.Dict Elm.Data.VarName.VarName (Elm.Data.Binding.Binding Elm.AST.Canonical.Unwrapped.Expr), body : Elm.AST.Canonical.Unwrapped.Expr }"
+                        ]
+                    ],
+                    [
+                        "List",
+                        [
+                            "List.List Elm.AST.Canonical.Unwrapped.Expr"
+                        ]
+                    ],
+                    [
+                        "Unit",
+                        []
+                    ],
+                    [
+                        "Tuple",
+                        [
+                            "Elm.AST.Canonical.Unwrapped.Expr",
+                            "Elm.AST.Canonical.Unwrapped.Expr"
+                        ]
+                    ],
+                    [
+                        "Tuple3",
+                        [
+                            "Elm.AST.Canonical.Unwrapped.Expr",
+                            "Elm.AST.Canonical.Unwrapped.Expr",
+                            "Elm.AST.Canonical.Unwrapped.Expr"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "Elm.AST.Frontend",
+        "comment": " Frontend AST is the first stage after parsing from source code, and has\nthe closest resemblance to the Elm source code. Eg. all the comments etc. are\nstill there.\n\n@docs ProjectFields\n@docs LocatedExpr, Expr, unwrap, transform, recurse\n\n",
+        "unions": [
+            {
+                "name": "Expr",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Int",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "Float",
+                        [
+                            "Basics.Float"
+                        ]
+                    ],
+                    [
+                        "Char",
+                        [
+                            "Char.Char"
+                        ]
+                    ],
+                    [
+                        "String",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Bool",
+                        [
+                            "Basics.Bool"
+                        ]
+                    ],
+                    [
+                        "Var",
+                        [
+                            "{ module_ : Maybe.Maybe Elm.Data.ModuleName.ModuleName, name : Elm.Data.VarName.VarName }"
+                        ]
+                    ],
+                    [
+                        "Argument",
+                        [
+                            "Elm.Data.VarName.VarName"
+                        ]
+                    ],
+                    [
+                        "Plus",
+                        [
+                            "Elm.AST.Frontend.LocatedExpr",
+                            "Elm.AST.Frontend.LocatedExpr"
+                        ]
+                    ],
+                    [
+                        "Cons",
+                        [
+                            "Elm.AST.Frontend.LocatedExpr",
+                            "Elm.AST.Frontend.LocatedExpr"
+                        ]
+                    ],
+                    [
+                        "ListConcat",
+                        [
+                            "Elm.AST.Frontend.LocatedExpr",
+                            "Elm.AST.Frontend.LocatedExpr"
+                        ]
+                    ],
+                    [
+                        "Lambda",
+                        [
+                            "{ arguments : List.List Elm.Data.VarName.VarName, body : Elm.AST.Frontend.LocatedExpr }"
+                        ]
+                    ],
+                    [
+                        "Call",
+                        [
+                            "{ fn : Elm.AST.Frontend.LocatedExpr, argument : Elm.AST.Frontend.LocatedExpr }"
+                        ]
+                    ],
+                    [
+                        "If",
+                        [
+                            "{ test : Elm.AST.Frontend.LocatedExpr, then_ : Elm.AST.Frontend.LocatedExpr, else_ : Elm.AST.Frontend.LocatedExpr }"
+                        ]
+                    ],
+                    [
+                        "Let",
+                        [
+                            "{ bindings : List.List (Elm.Data.Binding.Binding Elm.AST.Frontend.LocatedExpr), body : Elm.AST.Frontend.LocatedExpr }"
+                        ]
+                    ],
+                    [
+                        "List",
+                        [
+                            "List.List Elm.AST.Frontend.LocatedExpr"
+                        ]
+                    ],
+                    [
+                        "Unit",
+                        []
+                    ],
+                    [
+                        "Tuple",
+                        [
+                            "Elm.AST.Frontend.LocatedExpr",
+                            "Elm.AST.Frontend.LocatedExpr"
+                        ]
+                    ],
+                    [
+                        "Tuple3",
+                        [
+                            "Elm.AST.Frontend.LocatedExpr",
+                            "Elm.AST.Frontend.LocatedExpr",
+                            "Elm.AST.Frontend.LocatedExpr"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "LocatedExpr",
+                "comment": " The main type of this module. Expression with [location metadata](Elm.Data.Located).\n\nNote the underlying [`Expr`](#Expr) custom type recurses on this [`LocatedExpr`](#LocatedExpr) type,\nso that the children also each have their location metadata.\n\nIf you want expressions without location metadata, look at [`unwrap`](#unwrap).\n\n",
+                "args": [],
+                "type": "Elm.Data.Located.Located Elm.AST.Frontend.Expr"
+            },
+            {
+                "name": "ProjectFields",
+                "comment": " \"What does this compiler stage need to store abotut the whole project?\n\n(See [`Elm.Data.Project`](Elm.Data.Project).)\n\nIn this case, a dict of all the compiled Elm [modules](Elm.Data.Module#Module)\nthat hold [frontend AST expressions](#LocatedExpr).\n\n",
+                "args": [],
+                "type": "{ modules : Dict.Dict Elm.Data.ModuleName.ModuleName (Elm.Data.Module.Module Elm.AST.Frontend.LocatedExpr) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "recurse",
+                "comment": " A helper for the [Transform](/packages/Janiczek/transform/latest/) library.\nRuns the given function recursively on all children.\n",
+                "type": "(Elm.AST.Frontend.Expr -> Elm.AST.Frontend.Expr) -> Elm.AST.Frontend.Expr -> Elm.AST.Frontend.Expr"
+            },
+            {
+                "name": "transform",
+                "comment": " [Transform](/packages/Janiczek/transform/latest/Transform#transformAll)\nthe expression using the provided function.\n\nStart at the children, repeatedly apply on them until they stop changing,\nthen go up.\n\n",
+                "type": "(Elm.AST.Frontend.Expr -> Elm.AST.Frontend.Expr) -> Elm.AST.Frontend.Expr -> Elm.AST.Frontend.Expr"
+            },
+            {
+                "name": "unwrap",
+                "comment": " Discard the [location metadata](Elm.Data.Located#Located).\n",
+                "type": "Elm.AST.Frontend.LocatedExpr -> Elm.AST.Frontend.Unwrapped.Expr"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Elm.AST.Frontend.Unwrapped",
+        "comment": " Version of [Frontend AST](Elm.AST.Frontend) without the location info.\n\nHandy for parser tests, or when you don't need the location info.\n\nConvert to it using the [`Elm.AST.Frontend.unwrap`](Elm.AST.Frontend#unwrap).\n\n@docs Expr\n\n",
+        "unions": [
+            {
+                "name": "Expr",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Int",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "Float",
+                        [
+                            "Basics.Float"
+                        ]
+                    ],
+                    [
+                        "Char",
+                        [
+                            "Char.Char"
+                        ]
+                    ],
+                    [
+                        "String",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Bool",
+                        [
+                            "Basics.Bool"
+                        ]
+                    ],
+                    [
+                        "Var",
+                        [
+                            "{ module_ : Maybe.Maybe Elm.Data.ModuleName.ModuleName, name : Elm.Data.VarName.VarName }"
+                        ]
+                    ],
+                    [
+                        "Argument",
+                        [
+                            "Elm.Data.VarName.VarName"
+                        ]
+                    ],
+                    [
+                        "Plus",
+                        [
+                            "Elm.AST.Frontend.Unwrapped.Expr",
+                            "Elm.AST.Frontend.Unwrapped.Expr"
+                        ]
+                    ],
+                    [
+                        "Cons",
+                        [
+                            "Elm.AST.Frontend.Unwrapped.Expr",
+                            "Elm.AST.Frontend.Unwrapped.Expr"
+                        ]
+                    ],
+                    [
+                        "ListConcat",
+                        [
+                            "Elm.AST.Frontend.Unwrapped.Expr",
+                            "Elm.AST.Frontend.Unwrapped.Expr"
+                        ]
+                    ],
+                    [
+                        "Lambda",
+                        [
+                            "{ arguments : List.List Elm.Data.VarName.VarName, body : Elm.AST.Frontend.Unwrapped.Expr }"
+                        ]
+                    ],
+                    [
+                        "Call",
+                        [
+                            "{ fn : Elm.AST.Frontend.Unwrapped.Expr, argument : Elm.AST.Frontend.Unwrapped.Expr }"
+                        ]
+                    ],
+                    [
+                        "If",
+                        [
+                            "{ test : Elm.AST.Frontend.Unwrapped.Expr, then_ : Elm.AST.Frontend.Unwrapped.Expr, else_ : Elm.AST.Frontend.Unwrapped.Expr }"
+                        ]
+                    ],
+                    [
+                        "Let",
+                        [
+                            "{ bindings : List.List (Elm.Data.Binding.Binding Elm.AST.Frontend.Unwrapped.Expr), body : Elm.AST.Frontend.Unwrapped.Expr }"
+                        ]
+                    ],
+                    [
+                        "List",
+                        [
+                            "List.List Elm.AST.Frontend.Unwrapped.Expr"
+                        ]
+                    ],
+                    [
+                        "Unit",
+                        []
+                    ],
+                    [
+                        "Tuple",
+                        [
+                            "Elm.AST.Frontend.Unwrapped.Expr",
+                            "Elm.AST.Frontend.Unwrapped.Expr"
+                        ]
+                    ],
+                    [
+                        "Tuple3",
+                        [
+                            "Elm.AST.Frontend.Unwrapped.Expr",
+                            "Elm.AST.Frontend.Unwrapped.Expr",
+                            "Elm.AST.Frontend.Unwrapped.Expr"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "Elm.AST.Typed",
+        "comment": " Typed AST holds the inferred [types](Elm.Data.Type) for every expression.\n\n@docs ProjectFields\n@docs LocatedExpr, Expr, Expr_, getExpr, getType, unwrap, dropTypes, transformAll, transformOnce, recursiveChildren, setExpr\n\n",
+        "unions": [
+            {
+                "name": "Expr_",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Int",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "Float",
+                        [
+                            "Basics.Float"
+                        ]
+                    ],
+                    [
+                        "Char",
+                        [
+                            "Char.Char"
+                        ]
+                    ],
+                    [
+                        "String",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Bool",
+                        [
+                            "Basics.Bool"
+                        ]
+                    ],
+                    [
+                        "Var",
+                        [
+                            "{ module_ : Elm.Data.ModuleName.ModuleName, name : Elm.Data.VarName.VarName }"
+                        ]
+                    ],
+                    [
+                        "Argument",
+                        [
+                            "Elm.Data.VarName.VarName"
+                        ]
+                    ],
+                    [
+                        "Plus",
+                        [
+                            "Elm.AST.Typed.LocatedExpr",
+                            "Elm.AST.Typed.LocatedExpr"
+                        ]
+                    ],
+                    [
+                        "Cons",
+                        [
+                            "Elm.AST.Typed.LocatedExpr",
+                            "Elm.AST.Typed.LocatedExpr"
+                        ]
+                    ],
+                    [
+                        "Lambda",
+                        [
+                            "{ argument : Elm.Data.VarName.VarName, body : Elm.AST.Typed.LocatedExpr }"
+                        ]
+                    ],
+                    [
+                        "Call",
+                        [
+                            "{ fn : Elm.AST.Typed.LocatedExpr, argument : Elm.AST.Typed.LocatedExpr }"
+                        ]
+                    ],
+                    [
+                        "If",
+                        [
+                            "{ test : Elm.AST.Typed.LocatedExpr, then_ : Elm.AST.Typed.LocatedExpr, else_ : Elm.AST.Typed.LocatedExpr }"
+                        ]
+                    ],
+                    [
+                        "Let",
+                        [
+                            "{ bindings : Dict.Dict Elm.Data.VarName.VarName (Elm.Data.Binding.Binding Elm.AST.Typed.LocatedExpr), body : Elm.AST.Typed.LocatedExpr }"
+                        ]
+                    ],
+                    [
+                        "List",
+                        [
+                            "List.List Elm.AST.Typed.LocatedExpr"
+                        ]
+                    ],
+                    [
+                        "Unit",
+                        []
+                    ],
+                    [
+                        "Tuple",
+                        [
+                            "Elm.AST.Typed.LocatedExpr",
+                            "Elm.AST.Typed.LocatedExpr"
+                        ]
+                    ],
+                    [
+                        "Tuple3",
+                        [
+                            "Elm.AST.Typed.LocatedExpr",
+                            "Elm.AST.Typed.LocatedExpr",
+                            "Elm.AST.Typed.LocatedExpr"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Expr",
+                "comment": " Differs from [Canonical.Expr](Elm.AST.Canonical#Expr) by:\n\n  - being a tuple of the underlying Expr\\_ and its inferred type\n\n",
+                "args": [],
+                "type": "( Elm.AST.Typed.Expr_, Elm.Data.Type.Type )"
+            },
+            {
+                "name": "LocatedExpr",
+                "comment": " The main type of this module. Expression with [location metadata](Elm.Data.Located).\n\nNote the underlying [`Expr`](#Expr) custom type recurses on this [`LocatedExpr`](#LocatedExpr) type,\nso that the children also each have their location metadata.\n\nIf you want expressions without location metadata, look at [`unwrap`](#unwrap).\n\n",
+                "args": [],
+                "type": "Elm.Data.Located.Located Elm.AST.Typed.Expr"
+            },
+            {
+                "name": "ProjectFields",
+                "comment": " \"What does this compiler stage need to store abotut the whole project?\n\n(See [`Elm.Data.Project`](Elm.Data.Project).)\n\nIn this case, a dict of all the compiled Elm [modules](Elm.Data.Module#Module)\nthat hold [typed AST expressions](#LocatedExpr).\n\n",
+                "args": [],
+                "type": "{ modules : Dict.Dict Elm.Data.ModuleName.ModuleName (Elm.Data.Module.Module Elm.AST.Typed.LocatedExpr) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "dropTypes",
+                "comment": " Go from `AST.Typed` to [`AST.Canonical`](Elm.AST.Canonical).\n",
+                "type": "Elm.AST.Typed.LocatedExpr -> Elm.AST.Canonical.LocatedExpr"
+            },
+            {
+                "name": "getExpr",
+                "comment": " Extract the expression (remove the location and type information).\n",
+                "type": "Elm.AST.Typed.LocatedExpr -> Elm.AST.Typed.Expr_"
+            },
+            {
+                "name": "getType",
+                "comment": " Extract the type (remove the location information and the expression).\n",
+                "type": "Elm.AST.Typed.LocatedExpr -> Elm.Data.Type.Type"
+            },
+            {
+                "name": "recursiveChildren",
+                "comment": " Find all the children of this expression (and their children, etc...)\n",
+                "type": "(Elm.AST.Typed.LocatedExpr -> List.List Elm.AST.Typed.LocatedExpr) -> Elm.AST.Typed.LocatedExpr -> List.List Elm.AST.Typed.LocatedExpr"
+            },
+            {
+                "name": "setExpr",
+                "comment": " Replace the existing expression with the provided one.\n",
+                "type": "Elm.AST.Typed.Expr_ -> Elm.AST.Typed.LocatedExpr -> Elm.AST.Typed.LocatedExpr"
+            },
+            {
+                "name": "transformAll",
+                "comment": " Transform the expression using the provided function.\nStart at the children, repeatedly apply on them until they stop changing,\nthen go up.\n",
+                "type": "List.List (Elm.AST.Typed.LocatedExpr -> Maybe.Maybe Elm.AST.Typed.LocatedExpr) -> Elm.AST.Typed.LocatedExpr -> Elm.AST.Typed.LocatedExpr"
+            },
+            {
+                "name": "transformOnce",
+                "comment": " Transform the expression once using the provided function.\nStart at the children, apply once then go up.\n",
+                "type": "(Elm.AST.Typed.LocatedExpr -> Elm.AST.Typed.LocatedExpr) -> Elm.AST.Typed.LocatedExpr -> Elm.AST.Typed.LocatedExpr"
+            },
+            {
+                "name": "unwrap",
+                "comment": " Discard the [location metadata](Elm.Data.Located#Located).\n",
+                "type": "Elm.AST.Typed.LocatedExpr -> Elm.AST.Typed.Unwrapped.Expr"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Elm.AST.Typed.Unwrapped",
+        "comment": " Version of [Typed AST](Elm.AST.Typed) without the location info.\n\nHandy for type inference tests, or when you don't need the location info.\n\nConvert to it using the [`Elm.AST.Typed.unwrap`](Elm.AST.Typed#unwrap).\n\n@docs Expr, Expr_\n\n",
+        "unions": [
+            {
+                "name": "Expr_",
+                "comment": " Note this type recurses not on itself but on Expr (so that children also hold\ntype information).\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Int",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "Float",
+                        [
+                            "Basics.Float"
+                        ]
+                    ],
+                    [
+                        "Char",
+                        [
+                            "Char.Char"
+                        ]
+                    ],
+                    [
+                        "String",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Bool",
+                        [
+                            "Basics.Bool"
+                        ]
+                    ],
+                    [
+                        "Var",
+                        [
+                            "{ module_ : Elm.Data.ModuleName.ModuleName, name : Elm.Data.VarName.VarName }"
+                        ]
+                    ],
+                    [
+                        "Argument",
+                        [
+                            "Elm.Data.VarName.VarName"
+                        ]
+                    ],
+                    [
+                        "Plus",
+                        [
+                            "Elm.AST.Typed.Unwrapped.Expr",
+                            "Elm.AST.Typed.Unwrapped.Expr"
+                        ]
+                    ],
+                    [
+                        "Cons",
+                        [
+                            "Elm.AST.Typed.Unwrapped.Expr",
+                            "Elm.AST.Typed.Unwrapped.Expr"
+                        ]
+                    ],
+                    [
+                        "Lambda",
+                        [
+                            "{ argument : Elm.Data.VarName.VarName, body : Elm.AST.Typed.Unwrapped.Expr }"
+                        ]
+                    ],
+                    [
+                        "Call",
+                        [
+                            "{ fn : Elm.AST.Typed.Unwrapped.Expr, argument : Elm.AST.Typed.Unwrapped.Expr }"
+                        ]
+                    ],
+                    [
+                        "If",
+                        [
+                            "{ test : Elm.AST.Typed.Unwrapped.Expr, then_ : Elm.AST.Typed.Unwrapped.Expr, else_ : Elm.AST.Typed.Unwrapped.Expr }"
+                        ]
+                    ],
+                    [
+                        "Let",
+                        [
+                            "{ bindings : Dict.Dict Elm.Data.VarName.VarName (Elm.Data.Binding.Binding Elm.AST.Typed.Unwrapped.Expr), body : Elm.AST.Typed.Unwrapped.Expr }"
+                        ]
+                    ],
+                    [
+                        "List",
+                        [
+                            "List.List Elm.AST.Typed.Unwrapped.Expr"
+                        ]
+                    ],
+                    [
+                        "Unit",
+                        []
+                    ],
+                    [
+                        "Tuple",
+                        [
+                            "Elm.AST.Typed.Unwrapped.Expr",
+                            "Elm.AST.Typed.Unwrapped.Expr"
+                        ]
+                    ],
+                    [
+                        "Tuple3",
+                        [
+                            "Elm.AST.Typed.Unwrapped.Expr",
+                            "Elm.AST.Typed.Unwrapped.Expr",
+                            "Elm.AST.Typed.Unwrapped.Expr"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Expr",
+                "comment": " ",
+                "args": [],
+                "type": "( Elm.AST.Typed.Unwrapped.Expr_, Elm.Data.Type.Type )"
+            }
+        ],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "Elm.Compiler",
+        "comment": " Functions for working with Elm source code.\n\nThe compiler phases in general look like this:\n\n![Stages of the compiler](https://github.com/elm-in-elm/compiler/raw/master/assets/stages.png)\n\n\n# Parsing\n\n**Useful eg. for tools like `elm-format`** that convert back to the Elm\nrepresentation, trying to do as few changes as possible. Ie. it would be bad\nif `elm-format` changed\n\n    \\a b c -> a + b + c\n\nto\n\n    \\a -> \\b -> \\c -> a + b + c\n\nThat transformation is one of the things the Desugar phase does. So tools like\n`elm-format` probably don't want to touch that phase, and will only want to parse!\n\n@docs parseExpr, parseModule, parseModules, parseImport, parseDeclaration\n\n\n# Desugaring\n\nAfter we parse the source code from a `String` to the AST, we desugar it -\nsimplify the AST type as much as possible to make later phases simpler and easier.\n\nThe best example to illustrate this (it doesn't actually happen though!) is\n`let` vs `where`. Imagine if Elm allowed for `where` constructs in its syntax,\nlike Haskell does:\n\n    foo = x + y\n        where\n            x = 123\n            y = x + 2\n\nThen we'd like to convert these to `let` constructs (or the other way round)\nas soon as possible, so that the other phases don't need to handle two\nalmost identical scenarios all over the place.\n\nExamples of real desugarings include:\n\n  - making functions only take one argument,\n  - fully qualify all variables\n  - etc.\n\n@docs desugarExpr, desugarModule, desugarModules, desugarOnlyModule\n\n\n# Inferring types\n\nThese functions compute the [types](Elm.Data.Type) of the given expressions, as well as check them\nagainst the user-defined type annotations.\n\nNote that the more of your code you'll give these functions at once, the better\nthe type inference will be. So it's advisable to eg. run [`inferModules`](#inferModules)\nonce instead of running [`inferModule`](#inferModule) on each of your modules.\n\n@docs inferExpr, inferModule, inferModules\n\n\n# Optimizing\n\nAfter typechecking the expressions are ready to be optimized. (The inferred types\nare available to you inside the optimizations! (Unfortunately, the [location\ninformation](Elm.Data.Located) is also available to you inside the optimization. Sorry.))\n\n@docs defaultOptimizations\n\nThe optimizations are of the shape `Expr -> Maybe Expr`, and you **shouldn't\nrecurse** inside them. That's done for you automatically. You should only\nconsider one \"layer\", whatever that means for your optimization.\n\nEg. the `plus` optimization is (conceptually):\n\n    optimizePlus : Expr -> Maybe Expr\n    optimizePlus expr =\n        case expr of\n            Plus (Int a) (Int b) ->\n                Just (Int (a + b))\n\n            _ ->\n                Nothing\n\nWhere it only is concerned with the addition of two integers. Any other\nexpression will just get ignored.\n\nYour optimizations are then run from the bottom up, repeated as many times as\nneeded on the same expression until the optimization produces `Nothing`\n(\"Nothing else I can do here!\"). At that point, the engine moves \"up\" to the\nparent expression, and so on until it reaches and optimizes the topmost\nexpression.\n\nNote the optimizations in the list of optimizations are combined in such a way\nthat they take turns on the expression.\n\n@docs optimizeExpr, optimizeExprWith, optimizeModule, optimizeModuleWith, optimizeModules, optimizeModulesWith\n\n\n# Dropping types\n\nIf you want to typecheck the code but then don't do anything with the types\nafterwards, you can drop them from the expressions you have. This is essentially\na move backwards in the compiler phases:\n\n![Stages of the compiler](https://github.com/elm-in-elm/compiler/raw/master/assets/stages.png)\n\n@docs dropTypesExpr, dropTypesModule, dropTypesModules\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "defaultOptimizations",
+                "comment": " The default optimizations the elm-in-elm compiler uses.\n\n    Try evaluating it in the REPL: you should see that each optimization function\n    has a name String next to it.\n\n        > import Elm.Compiler\n        > Elm.Compiler.optimizations\n        [ (\"plus\", ...)\n        , (\"cons\", ...)\n        , (\"if-literal-bool\", ...)\n        ]\n\n        >\n\n    You can use this to filter optimizations you don't want!\n\n       wantedOptimizations = Set.fromList [ \"plus\", \"if-literal-bool ]\n\n       optimizations\n           |> List.filter (\\(name, _) -> Set.member name wantedOptimizations)\n\n",
+                "type": "List.List ( String.String, Elm.AST.Typed.LocatedExpr -> Maybe.Maybe Elm.AST.Typed.LocatedExpr )"
+            },
+            {
+                "name": "desugarExpr",
+                "comment": " Desugar a single expression like\n\n    Lambda\n        { arguments = [ \"x\", \"y\" ]\n        , body = AST.Frontend.Int 42\n        }\n\ninto AST like\n\n    Lambda\n        { argument = \"x\"\n        , body =\n            Lambda\n                { argument = \"y\"\n                , body = AST.Frontend.Int 42\n                }\n        }\n\n",
+                "type": "Dict.Dict Elm.Data.ModuleName.ModuleName (Elm.Data.Module.Module Elm.AST.Frontend.LocatedExpr) -> Elm.Data.Module.Module Elm.AST.Frontend.LocatedExpr -> Elm.AST.Frontend.LocatedExpr -> Result.Result Elm.Compiler.Error.Error Elm.AST.Canonical.LocatedExpr"
+            },
+            {
+                "name": "desugarModule",
+                "comment": " Desugar a module (one `*.elm` file).\n",
+                "type": "Dict.Dict Elm.Data.ModuleName.ModuleName (Elm.Data.Module.Module Elm.AST.Frontend.LocatedExpr) -> Elm.Data.Module.Module Elm.AST.Frontend.LocatedExpr -> Result.Result Elm.Compiler.Error.Error (Elm.Data.Module.Module Elm.AST.Canonical.LocatedExpr)"
+            },
+            {
+                "name": "desugarModules",
+                "comment": " Desugar multiple modules (`*.elm` files) - see [`desugarModule`](#desugarModule) for details.\n",
+                "type": "Dict.Dict Elm.Data.ModuleName.ModuleName (Elm.Data.Module.Module Elm.AST.Frontend.LocatedExpr) -> Result.Result Elm.Compiler.Error.Error (Dict.Dict Elm.Data.ModuleName.ModuleName (Elm.Data.Module.Module Elm.AST.Canonical.LocatedExpr))"
+            },
+            {
+                "name": "desugarOnlyModule",
+                "comment": " Desugar a module (one `*.elm` file), without the intention of desugaring\nanother one.\n",
+                "type": "Elm.Data.Module.Module Elm.AST.Frontend.LocatedExpr -> Result.Result Elm.Compiler.Error.Error (Elm.Data.Module.Module Elm.AST.Canonical.LocatedExpr)"
+            },
+            {
+                "name": "dropTypesExpr",
+                "comment": " Drop types from a single expression.\n\nWe're hitting limitations of the Elm Packages website, and the type shown isn't\nvery descriptive. **The real type of this function is:**\n\n    Typed.LocatedExpr -> Canonical.LocatedExpr\n\nExample usage:\n\n    Located\n        { start = ..., end = ... }\n        ( Tuple\n            (Located ... ( Int 12, Type.Int ))\n            (Located ... ( String \"Hello\", Type.String ))\n        , Type.Tuple Type.Int Type.String\n        )\n\nbecomes\n\n    Located\n        { start = ..., end = ... }\n        (Tuple\n            (Located ... (Int 12)\n            (Located ... (String \"Hello\")\n        )\n\nIf location info is not useful to you either, look for the `unwrap` functions\nin the various `Elm.AST.*` modules.\n\n",
+                "type": "Elm.AST.Typed.LocatedExpr -> Elm.AST.Canonical.LocatedExpr"
+            },
+            {
+                "name": "dropTypesModule",
+                "comment": " Drop types from all expressions in the module.\n\nWe're hitting limitations of the Elm Packages website, and the type shown isn't\nvery descriptive. **The real type of this function is:**\n\n    Module Typed.LocatedExpr\n    -> Module Canonical.LocatedExpr\n\n",
+                "type": "Elm.Data.Module.Module Elm.AST.Typed.LocatedExpr -> Elm.Data.Module.Module Elm.AST.Canonical.LocatedExpr"
+            },
+            {
+                "name": "dropTypesModules",
+                "comment": " Drop types from all expressions in all the modules.\n\nWe're hitting limitations of the Elm Packages website, and the type shown isn't\nvery descriptive. **The real type of this function is:**\n\n    Dict ModuleName (Module Typed.LocatedExpr)\n    -> Dict ModuleName (Module Canonical.LocatedExpr)\n\n",
+                "type": "Dict.Dict Elm.Data.ModuleName.ModuleName (Elm.Data.Module.Module Elm.AST.Typed.LocatedExpr) -> Dict.Dict Elm.Data.ModuleName.ModuleName (Elm.Data.Module.Module Elm.AST.Canonical.LocatedExpr)"
+            },
+            {
+                "name": "inferExpr",
+                "comment": " Infer the types of a single expression.\n",
+                "type": "Elm.AST.Canonical.LocatedExpr -> Result.Result Elm.Compiler.Error.Error Elm.AST.Typed.LocatedExpr"
+            },
+            {
+                "name": "inferModule",
+                "comment": " Infer the types of expressions in a module (a single `*.elm` file).\n",
+                "type": "Elm.Data.Module.Module Elm.AST.Canonical.LocatedExpr -> Result.Result Elm.Compiler.Error.Error (Elm.Data.Module.Module Elm.AST.Typed.LocatedExpr)"
+            },
+            {
+                "name": "inferModules",
+                "comment": " Infer the types of expressions in multiple modules (`*.elm` files).\n",
+                "type": "Dict.Dict Elm.Data.ModuleName.ModuleName (Elm.Data.Module.Module Elm.AST.Canonical.LocatedExpr) -> Result.Result Elm.Compiler.Error.Error (Dict.Dict Elm.Data.ModuleName.ModuleName (Elm.Data.Module.Module Elm.AST.Typed.LocatedExpr))"
+            },
+            {
+                "name": "optimizeExpr",
+                "comment": " Optimize a given (typed) expression using the default set of optimizations.\n\nFor using your own optimizations instead of or in addition to the default ones,\nlook at the [`optimizeExprWith`](#optimizeExprWith) function.\n\n",
+                "type": "Elm.AST.Typed.LocatedExpr -> Elm.AST.Typed.LocatedExpr"
+            },
+            {
+                "name": "optimizeExprWith",
+                "comment": " Optimize a given (typed) expression using a custom set of optimizations.\n",
+                "type": "List.List ( String.String, Elm.AST.Typed.LocatedExpr -> Maybe.Maybe Elm.AST.Typed.LocatedExpr ) -> Elm.AST.Typed.LocatedExpr -> Elm.AST.Typed.LocatedExpr"
+            },
+            {
+                "name": "optimizeModule",
+                "comment": " Optimize all expressions in a given module using the default set of\noptimizations.\n\nNote there is currently no inter-definition optimizations (inlining etc.) -\nonly the optimizations on each separate expression.\n\nFor using your own optimizations instead of or in addition to the default ones,\nlook at the [`optimizeModuleWith`](#optimizeModuleWith) function.\n\n",
+                "type": "Elm.Data.Module.Module Elm.AST.Typed.LocatedExpr -> Elm.Data.Module.Module Elm.AST.Typed.LocatedExpr"
+            },
+            {
+                "name": "optimizeModuleWith",
+                "comment": " Optimize all expressions in a given module using a custom set of\noptimizations.\n\nNote there is currently no inter-definition optimizations (inlining etc.) -\nonly the optimizations on each separate expression.\n\n",
+                "type": "List.List ( String.String, Elm.AST.Typed.LocatedExpr -> Maybe.Maybe Elm.AST.Typed.LocatedExpr ) -> Elm.Data.Module.Module Elm.AST.Typed.LocatedExpr -> Elm.Data.Module.Module Elm.AST.Typed.LocatedExpr"
+            },
+            {
+                "name": "optimizeModules",
+                "comment": " Optimize all expressions in multiple modules using the default set of\noptimizations.\n\nFor using your own optimizations instead of or in addition to the default ones,\nlook at the [`optimizeModulesWith`](#optimizeModulesWith) function.\n\n",
+                "type": "Dict.Dict Elm.Data.ModuleName.ModuleName (Elm.Data.Module.Module Elm.AST.Typed.LocatedExpr) -> Dict.Dict Elm.Data.ModuleName.ModuleName (Elm.Data.Module.Module Elm.AST.Typed.LocatedExpr)"
+            },
+            {
+                "name": "optimizeModulesWith",
+                "comment": " Optimize all expressions in multiple modules using a custom set of\noptimizations.\n",
+                "type": "List.List ( String.String, Elm.AST.Typed.LocatedExpr -> Maybe.Maybe Elm.AST.Typed.LocatedExpr ) -> Dict.Dict Elm.Data.ModuleName.ModuleName (Elm.Data.Module.Module Elm.AST.Typed.LocatedExpr) -> Dict.Dict Elm.Data.ModuleName.ModuleName (Elm.Data.Module.Module Elm.AST.Typed.LocatedExpr)"
+            },
+            {
+                "name": "parseDeclaration",
+                "comment": " Parse a single declaration, like\n\n    foo =\n        123\n\ninto\n\n    { module_ = \"Foo\" -- what you pass into the function\n    , name = \"foo\"\n    , body = Value (AST.Frontend.Int 123)\n    }\n\n",
+                "type": "{ moduleName : Elm.Data.ModuleName.ModuleName, declaration : Elm.Data.FileContents.FileContents } -> Result.Result Elm.Compiler.Error.Error (Elm.Data.Declaration.Declaration Elm.AST.Frontend.LocatedExpr)"
+            },
+            {
+                "name": "parseExpr",
+                "comment": " Parse a single expression like\n\n    ( 12, \"Hello\" )\n\ninto AST like\n\n    Located\n        {start = ..., end = ...}\n        (Tuple\n            (Located ... (Int 12))\n            (Located ... (String \"Hello\"))\n        )\n\nIf you don't need the location information and want to only keep the expressions,\nuse [`Elm.AST.Frontend.unwrap`](Elm.AST.Frontend#unwrap) to get something like\n\n    Tuple\n        (Int 12)\n        (String \"Hello\")\n\n",
+                "type": "Elm.Data.FileContents.FileContents -> Result.Result Elm.Compiler.Error.Error Elm.AST.Frontend.LocatedExpr"
+            },
+            {
+                "name": "parseImport",
+                "comment": " Parse a single import statement, like\n\n    import Foo as F exposing\n        ( foo\n        , Bar(..)\n        , Baz\n        )\n\ninto\n\n    { moduleName = \"Foo\"\n    , as_ = Just \"F\"\n    , exposing_ =\n        Just\n            (ExposingSome\n                [ ExposedValue \"foo\"\n                , ExposedTypeAndAllConstructors \"Bar\"\n                , ExposedType \"Baz\"\n                ]\n            )\n    }\n\n",
+                "type": "Elm.Data.FileContents.FileContents -> Result.Result Elm.Compiler.Error.Error Elm.Data.Import.Import"
+            },
+            {
+                "name": "parseModule",
+                "comment": " Parse a module (one `*.elm` file). Get a [`Module`](Elm.Data.Module#Module) datastructure back, holding\nthe information about its exposed values, imports, declarations and more.\n\nA file like\n\n    module Main exposing (foo)\n\n    import Bar as B exposing (bar)\n\n    foo =\n        123\n\nwill get parsed into\n\n    { imports =\n        Dict.fromList\n            [ ( \"Bar\"\n              , { moduleName = \"Bar\"\n                , as_ = Just \"B\"\n                , exposing_ = Just (ExposingSome [ ExposedValue \"bar\" ])\n                }\n              )\n            ]\n    , name = \"Foo\"\n    , filePath = \"src/Foo.elm\" -- what you pass into the function\n    , declarations =\n        Dict.fromList\n            [ ( \"foo\"\n              , { module_ = \"Foo\"\n                , name = \"foo\"\n                , body = Value (AST.Frontend.Int 123)\n                }\n              )\n            ]\n    , type_ = PlainModule\n    , exposing_ = ExposingSome [ ExposedValue \"foo\" ]\n    }\n\n",
+                "type": "{ filePath : Elm.Data.FilePath.FilePath, sourceCode : Elm.Data.FileContents.FileContents } -> Result.Result Elm.Compiler.Error.Error (Elm.Data.Module.Module Elm.AST.Frontend.LocatedExpr)"
+            },
+            {
+                "name": "parseModules",
+                "comment": " Parse multiple modules (`*.elm` files) - see [`parseModule`](#parseModule) for details.\n",
+                "type": "List.List { filePath : Elm.Data.FilePath.FilePath, sourceCode : Elm.Data.FileContents.FileContents } -> Result.Result Elm.Compiler.Error.Error (Dict.Dict Elm.Data.ModuleName.ModuleName (Elm.Data.Module.Module Elm.AST.Frontend.LocatedExpr))"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Elm.Compiler.Error",
+        "comment": " All the errors the compiler can encounter.\n\n@docs Error, toString\n@docs ParseError, ParseProblem, ParseContext\n@docs DesugarError\n@docs TypeError\n@docs EmitError\n\n",
+        "unions": [
+            {
+                "name": "DesugarError",
+                "comment": " Errors encountered during [desugaring](Elm.Compiler#desugarExpr) from the [Frontend AST](Elm.AST.Frontend) to [Canonical AST](Elm.AST.Canonical).\n",
+                "args": [],
+                "cases": [
+                    [
+                        "VarNotInEnvOfModule",
+                        [
+                            "{ var : { module_ : Maybe.Maybe Elm.Data.ModuleName.ModuleName, name : Elm.Data.VarName.VarName }, module_ : Elm.Data.ModuleName.ModuleName }"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "EmitError",
+                "comment": " Errors encountered during emitting. As you're free to do the emit phase however\nyou want, this is only returned from the helpers in Stage.Emit in the compiler CLI.\n\n  - **TODO:** maybe expose Stage.Emit in this library (probably under the name\n    `Elm.Compiler.Emit` or something similar)\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "MainDeclarationNotFound",
+                        []
+                    ],
+                    [
+                        "ModuleNotFoundForVar",
+                        [
+                            "{ module_ : Elm.Data.ModuleName.ModuleName, var : Elm.Data.VarName.VarName }"
+                        ]
+                    ],
+                    [
+                        "ModuleNotFoundForType",
+                        [
+                            "{ module_ : Elm.Data.ModuleName.ModuleName, type_ : Elm.Data.VarName.VarName }"
+                        ]
+                    ],
+                    [
+                        "DeclarationNotFound",
+                        [
+                            "{ module_ : Elm.Data.ModuleName.ModuleName, name : Elm.Data.VarName.VarName }"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Error",
+                "comment": " The top-level error type that breaks down into specific error types.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "ParseError",
+                        [
+                            "Elm.Compiler.Error.ParseError"
+                        ]
+                    ],
+                    [
+                        "DesugarError",
+                        [
+                            "Elm.Compiler.Error.DesugarError"
+                        ]
+                    ],
+                    [
+                        "TypeError",
+                        [
+                            "Elm.Compiler.Error.TypeError"
+                        ]
+                    ],
+                    [
+                        "EmitError",
+                        [
+                            "Elm.Compiler.Error.EmitError"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "ParseContext",
+                "comment": " Context information about what was the parser trying to do at the time of\nthe error. Was it trying to parse an `if` expression? A list? etc.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "InNumber",
+                        []
+                    ],
+                    [
+                        "InChar",
+                        []
+                    ],
+                    [
+                        "InCharEscapeMode",
+                        []
+                    ],
+                    [
+                        "InUnicodeCharacter",
+                        []
+                    ],
+                    [
+                        "InString",
+                        []
+                    ],
+                    [
+                        "InDoubleQuoteString",
+                        []
+                    ],
+                    [
+                        "InTripleQuoteString",
+                        []
+                    ],
+                    [
+                        "InExpr",
+                        []
+                    ],
+                    [
+                        "InIf",
+                        []
+                    ],
+                    [
+                        "InLet",
+                        []
+                    ],
+                    [
+                        "InLetBinding",
+                        []
+                    ],
+                    [
+                        "InLambda",
+                        []
+                    ],
+                    [
+                        "InList",
+                        []
+                    ],
+                    [
+                        "InUnit",
+                        []
+                    ],
+                    [
+                        "InTuple",
+                        []
+                    ],
+                    [
+                        "InTuple3",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "ParseError",
+                "comment": " Errors encountered during [parsing](Elm.Compiler#parseExpr) from String to [AST](Elm.AST.Frontend).\n\nThe `DeadEnd` type in this definition is [the one from `elm/parser`](/packages/elm/parser/latest/Parser-Advanced#DeadEnd).\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "ModuleNameDoesntMatchFilePath",
+                        [
+                            "{ moduleName : Elm.Data.ModuleName.ModuleName, filePath : Elm.Data.FilePath.FilePath }"
+                        ]
+                    ],
+                    [
+                        "EmptySourceDirectories",
+                        []
+                    ],
+                    [
+                        "InvalidElmJson",
+                        [
+                            "Json.Decode.Error"
+                        ]
+                    ],
+                    [
+                        "ParseProblem",
+                        [
+                            "List.List (Parser.Advanced.DeadEnd Elm.Compiler.Error.ParseContext Elm.Compiler.Error.ParseProblem)"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "ParseProblem",
+                "comment": " The specific problem the parser encountered. Together with [`ParseContext`](#ParseContext)\nand the [location info](Elm.Data.Located) this should give you enough info about what's wrong.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "ExpectingPortKeyword",
+                        []
+                    ],
+                    [
+                        "ExpectingEffectKeyword",
+                        []
+                    ],
+                    [
+                        "ExpectingModuleKeyword",
+                        []
+                    ],
+                    [
+                        "ExpectingModuleName",
+                        []
+                    ],
+                    [
+                        "ExpectingExposingKeyword",
+                        []
+                    ],
+                    [
+                        "ExpectingExposingAllSymbol",
+                        []
+                    ],
+                    [
+                        "ExpectingExposingListLeftParen",
+                        []
+                    ],
+                    [
+                        "ExpectingExposingListRightParen",
+                        []
+                    ],
+                    [
+                        "ExpectingExposingListSeparatorComma",
+                        []
+                    ],
+                    [
+                        "ExpectingExposedTypeDoublePeriod",
+                        []
+                    ],
+                    [
+                        "ExpectingVarName",
+                        []
+                    ],
+                    [
+                        "ExpectingTypeOrConstructorName",
+                        []
+                    ],
+                    [
+                        "ExposingListCantBeEmpty",
+                        []
+                    ],
+                    [
+                        "ExpectingImportKeyword",
+                        []
+                    ],
+                    [
+                        "ExpectingAsKeyword",
+                        []
+                    ],
+                    [
+                        "ExpectingModuleNameWithoutDots",
+                        []
+                    ],
+                    [
+                        "ExpectingModuleNamePart",
+                        []
+                    ],
+                    [
+                        "ExpectingQualifiedVarNameDot",
+                        []
+                    ],
+                    [
+                        "ExpectingEqualsSign",
+                        []
+                    ],
+                    [
+                        "ExpectingMinusSign",
+                        []
+                    ],
+                    [
+                        "ExpectingNumber",
+                        []
+                    ],
+                    [
+                        "ExpectingSingleQuote",
+                        []
+                    ],
+                    [
+                        "ExpectingChar",
+                        []
+                    ],
+                    [
+                        "ExpectingEscapeBackslash",
+                        []
+                    ],
+                    [
+                        "ExpectingEscapeCharacter",
+                        [
+                            "Char.Char"
+                        ]
+                    ],
+                    [
+                        "ExpectingUnicodeEscapeLeftBrace",
+                        []
+                    ],
+                    [
+                        "ExpectingUnicodeEscapeRightBrace",
+                        []
+                    ],
+                    [
+                        "InvalidUnicodeCodePoint",
+                        []
+                    ],
+                    [
+                        "ExpectingDoubleQuote",
+                        []
+                    ],
+                    [
+                        "ExpectingTripleQuote",
+                        []
+                    ],
+                    [
+                        "ExpectingPlusOperator",
+                        []
+                    ],
+                    [
+                        "ExpectingConsOperator",
+                        []
+                    ],
+                    [
+                        "ExpectingConcatOperator",
+                        []
+                    ],
+                    [
+                        "ExpectingModuleDot",
+                        []
+                    ],
+                    [
+                        "ExpectingBackslash",
+                        []
+                    ],
+                    [
+                        "ExpectingRightArrow",
+                        []
+                    ],
+                    [
+                        "ExpectingLeftParen",
+                        []
+                    ],
+                    [
+                        "ExpectingRightParen",
+                        []
+                    ],
+                    [
+                        "ExpectingLeftBracket",
+                        []
+                    ],
+                    [
+                        "ExpectingRightBracket",
+                        []
+                    ],
+                    [
+                        "ExpectingListSeparator",
+                        []
+                    ],
+                    [
+                        "ExpectingTupleSeparator",
+                        []
+                    ],
+                    [
+                        "ExpectingNotBeginningOfLine",
+                        []
+                    ],
+                    [
+                        "ExpectingIf",
+                        []
+                    ],
+                    [
+                        "ExpectingThen",
+                        []
+                    ],
+                    [
+                        "ExpectingElse",
+                        []
+                    ],
+                    [
+                        "ExpectingTrue",
+                        []
+                    ],
+                    [
+                        "ExpectingFalse",
+                        []
+                    ],
+                    [
+                        "ExpectingLet",
+                        []
+                    ],
+                    [
+                        "ExpectingIn",
+                        []
+                    ],
+                    [
+                        "ExpectingUnit",
+                        []
+                    ],
+                    [
+                        "InvalidNumber",
+                        []
+                    ],
+                    [
+                        "TriedToParseCharacterStoppingDelimiter",
+                        []
+                    ],
+                    [
+                        "CompilerBug",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "TypeError",
+                "comment": " Errors encountered during [typechecking](Elm.Compiler#inferExpr).\n",
+                "args": [],
+                "cases": [
+                    [
+                        "TypeMismatch",
+                        [
+                            "Elm.Data.Type.Type",
+                            "Elm.Data.Type.Type"
+                        ]
+                    ],
+                    [
+                        "OccursCheckFailed",
+                        [
+                            "Basics.Int",
+                            "Elm.Data.Type.Type"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toString",
+                "comment": " An English description of the error. Feel free to write your own though!\n",
+                "type": "Elm.Compiler.Error.Error -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Elm.Data.Binding",
+        "comment": " Binding in the `let...in` expression.\n\n    let\n        myNumber =\n            123\n\n        answer =\n            42\n    in\n    myNumber + answer\n\ncontains two bindings: `myNumber` and `answer`.\n\n@docs Binding, combine, map\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Binding",
+                "comment": " ",
+                "args": [
+                    "expr"
+                ],
+                "type": "{ name : String.String, body : expr }"
+            }
+        ],
+        "values": [
+            {
+                "name": "combine",
+                "comment": " Switch the Result and the expression inside the binding.\nSimilar to [`Result.Extra.combine`](/packages/elm-community/result-extra/latest/Result-Extra#combine).\n\n    combine { name = \"foo\", body = Ok (Int 5) }\n    --> Ok { name = \"foo\", body = Int 5 }\n\n",
+                "type": "Elm.Data.Binding.Binding (Result.Result x a) -> Result.Result x (Elm.Data.Binding.Binding a)"
+            },
+            {
+                "name": "map",
+                "comment": " Apply a function to the expression inside the binding.\n",
+                "type": "(e1 -> e2) -> Elm.Data.Binding.Binding e1 -> Elm.Data.Binding.Binding e2"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Elm.Data.Declaration",
+        "comment": " Top-level declaration, be it a function, constant or a type definition.\n\n@docs Declaration, DeclarationBody, Constructor\n@docs map, mapBody, combine\n\n",
+        "unions": [
+            {
+                "name": "DeclarationBody",
+                "comment": "\n\n     x = 1\n     --> Value (Int 1)\n\n     type alias X = Int\n     --> TypeAlias [] Int\n\n     type alias X a = Maybe a\n     --> TypeAlias [\"a\"] (Maybe (Var 0))\n\n",
+                "args": [
+                    "expr"
+                ],
+                "cases": [
+                    [
+                        "Value",
+                        [
+                            "expr"
+                        ]
+                    ],
+                    [
+                        "TypeAlias",
+                        [
+                            "{ parameters : List.List Elm.Data.VarName.VarName, definition : Elm.Data.Type.Type }"
+                        ]
+                    ],
+                    [
+                        "CustomType",
+                        [
+                            "{ parameters : List.List Elm.Data.VarName.VarName, constructors : List.List Elm.Data.Declaration.Constructor }"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Constructor",
+                "comment": " Constructor of a custom type.\n\n     type Foo = Bar\n     --> CustomType [] [Constructor \"Bar\" []]\n\n     type Foo a = Bar\n     --> CustomType [] [Constructor \"Bar\" []]\n\n     type Foo a = Bar a\n     --> CustomType [\"a\"] [Constructor \"Bar\" [\"a\"]]\n\n     type Foo = Bar | Baz\n     --> CustomType []\n            [ Constructor \"Bar\" []\n            , Constructor \"Baz\" []\n            ]\n\n",
+                "args": [],
+                "type": "{ name : String.String, arguments : List.List Elm.Data.Type.TypeArgument }"
+            },
+            {
+                "name": "Declaration",
+                "comment": " ",
+                "args": [
+                    "expr"
+                ],
+                "type": "{ module_ : String.String, name : String.String, body : Elm.Data.Declaration.DeclarationBody expr }"
+            }
+        ],
+        "values": [
+            {
+                "name": "combine",
+                "comment": " Switch the Result and the expression inside the declaration body.\nSimilar to [`Result.Extra.combine`](/packages/elm-community/result-extra/latest/Result-Extra#combine).\n\n    combine (Value (Ok (Int 5)))\n    --> Ok (Value (Int 5))\n\n",
+                "type": "Elm.Data.Declaration.DeclarationBody (Result.Result err a) -> Result.Result err (Elm.Data.Declaration.DeclarationBody a)"
+            },
+            {
+                "name": "map",
+                "comment": " Apply a function to the expression inside the declaration.\n",
+                "type": "(a -> b) -> Elm.Data.Declaration.Declaration a -> Elm.Data.Declaration.Declaration b"
+            },
+            {
+                "name": "mapBody",
+                "comment": " Apply a function to the expression inside the declaration body.\n",
+                "type": "(a -> b) -> Elm.Data.Declaration.DeclarationBody a -> Elm.Data.Declaration.DeclarationBody b"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Elm.Data.Exposing",
+        "comment": " The `exposing (...)` line of module header and import statements.\n\n    module Foo exposing (..)\n    --> ExposingAll\n\n    module Foo exposing (bar)\n    --> ExposingSome [ExposedValue \"bar\"]\n\n    module Foo exposing (Bar)\n    --> ExposingSome [ExposedType \"Bar\"]\n\n    module Foo exposing (Bar(..))\n    --> ExposingSome [ExposedTypeAndAllConstructors \"Bar\"]\n\n@docs Exposing, ExposedItem, name\n\n",
+        "unions": [
+            {
+                "name": "ExposedItem",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "ExposedValue",
+                        [
+                            "Elm.Data.VarName.VarName"
+                        ]
+                    ],
+                    [
+                        "ExposedType",
+                        [
+                            "Elm.Data.VarName.VarName"
+                        ]
+                    ],
+                    [
+                        "ExposedTypeAndAllConstructors",
+                        [
+                            "Elm.Data.VarName.VarName"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Exposing",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "ExposingAll",
+                        []
+                    ],
+                    [
+                        "ExposingSome",
+                        [
+                            "List.List Elm.Data.Exposing.ExposedItem"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "name",
+                "comment": " Unwraps the variable or type name from the [`ExposedItem`](#ExposedItem).\n\n    name (ExposedValue \"foo\")\n    --> \"foo\"\n\n    name (ExposedType \"Foo\")\n    --> \"Foo\"\n\n    name (ExposedTypeAndAllConstructors \"Foo\")\n    --> \"Foo\"\n\n",
+                "type": "Elm.Data.Exposing.ExposedItem -> Elm.Data.VarName.VarName"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Elm.Data.FileContents",
+        "comment": " File contents, most often source code.\n\n@docs FileContents\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "FileContents",
+                "comment": " Just a `String` alias, instead of a `type` wrapper. We generally use records\nwith explanatory field names where two Strings would be next to each other,\nto protect against swapping them accidentally.\n",
+                "args": [],
+                "type": "String.String"
+            }
+        ],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "Elm.Data.FilePath",
+        "comment": " File path of an Elm (or other) file.\n\n@docs FilePath, expectedFilePath, removeTrailingSlash\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "FilePath",
+                "comment": " Just a `String` alias, instead of a `type` wrapper. We generally use records\nwith explanatory field names where two Strings would be next to each other,\nto protect against swapping them accidentally.\n",
+                "args": [],
+                "type": "String.String"
+            }
+        ],
+        "values": [
+            {
+                "name": "expectedFilePath",
+                "comment": " Converts from module name to its expected file path.\nAdditionally needs the source directory from `elm.json`.\n\nThe source directory can be passed both with and without the trailing slash.\n\n    expectedFilePath { sourceDirectory = \"src\", moduleName = \"Foo\" }\n    --> \"src/Foo.elm\"\n\n    expectedFilePath { sourceDirectory = \"src/\", filePath = \"Foo\" }\n    --> \"src/Foo.elm\"\n\n",
+                "type": "{ sourceDirectory : Elm.Data.FilePath.FilePath, moduleName : Elm.Data.ModuleName.ModuleName } -> Elm.Data.FilePath.FilePath"
+            },
+            {
+                "name": "removeTrailingSlash",
+                "comment": " Normalize the file path.\n\n    removeTrailingSlash \"src/foo/\"\n    --> \"src/foo\"\n\n    removeTrailingSlash \"src/foo\"\n    --> \"src/foo\"\n\n    removeTrailingSlash \"src/foo/Main.elm\"\n    --> \"src/foo/Main.elm\"\n\n",
+                "type": "Elm.Data.FilePath.FilePath -> Elm.Data.FilePath.FilePath"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Elm.Data.Import",
+        "comment": " The import statement.\n\n      import Foo\n      --> Import \"Foo Nothing Nothing\n\n      import Foo.Bar\n      --> Import \"Foo.Bar\" Nothing Nothing\n\n      import Foo as F\n      --> Import \"Foo\" (Just \"F\") Nothing\n\n      import Foo exposing (..)\n      --> Import \"Foo\" Nothing (Just ExposingAll)\n\n      import Foo as F exposing (..)\n      --> Import \"Foo\" (Just \"F\") (Just ExposingAll)\n\n@docs Import\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Import",
+                "comment": " ",
+                "args": [],
+                "type": "{ moduleName : Elm.Data.ModuleName.ModuleName, as_ : Maybe.Maybe Elm.Data.ModuleName.ModuleName, exposing_ : Maybe.Maybe Elm.Data.Exposing.Exposing }"
+            }
+        ],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "Elm.Data.Located",
+        "comment": " Wrapper for location metadata. The location is essentially a pair of\n`(row,col)` coordinates for some span of source code.\n\nUseful for error messages, but hopefully for stuff like source maps etc. too.\n\n\n# Types\n\n@docs Located, Region, Position\n\n\n# Located\n\n@docs located, unwrap, getRegion, map, merge, replaceWith\n\n\n# Region\n\n@docs dummyRegion, mergeRegions, regionToComparable\n\n\n# Position\n\n@docs positionToComparable, comparePosition\n\n",
+        "unions": [
+            {
+                "name": "Located",
+                "comment": " Holds location metadata and some value.\n",
+                "args": [
+                    "expr"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Position",
+                "comment": " ",
+                "args": [],
+                "type": "{ row : Basics.Int, col : Basics.Int }"
+            },
+            {
+                "name": "Region",
+                "comment": " ",
+                "args": [],
+                "type": "{ start : Elm.Data.Located.Position, end : Elm.Data.Located.Position }"
+            }
+        ],
+        "values": [
+            {
+                "name": "comparePosition",
+                "comment": " Compare using [`positionToComparable`](#positionToComparable)\n",
+                "type": "Elm.Data.Located.Position -> Elm.Data.Located.Position -> Basics.Order"
+            },
+            {
+                "name": "dummyRegion",
+                "comment": " Empty, meaningless region. Used in tests or where you don't need the location\ninfo but need to appease the typesystem.\n",
+                "type": "Elm.Data.Located.Region"
+            },
+            {
+                "name": "getRegion",
+                "comment": " Return the location info inside the wrapper.\n",
+                "type": "Elm.Data.Located.Located a -> Elm.Data.Located.Region"
+            },
+            {
+                "name": "located",
+                "comment": " A constructor for the Located type.\n",
+                "type": "Elm.Data.Located.Region -> expr -> Elm.Data.Located.Located expr"
+            },
+            {
+                "name": "map",
+                "comment": " Apply a function to the value inside the wrapper.\n",
+                "type": "(a -> b) -> Elm.Data.Located.Located a -> Elm.Data.Located.Located b"
+            },
+            {
+                "name": "merge",
+                "comment": " Merge the regions of the two wrappers.\n",
+                "type": "(Elm.Data.Located.Located a -> Elm.Data.Located.Located a -> b) -> Elm.Data.Located.Located a -> Elm.Data.Located.Located a -> Elm.Data.Located.Located b"
+            },
+            {
+                "name": "mergeRegions",
+                "comment": " Merge the regions: the resulting region is always bigger or equal than the\ninput regions.\n\n    mergeRegions <1:1 - 4:4> <2:2 - 3:3>\n        --> <1:1 - 4:4>\n\nThe order doesn't matter:\n\n    mergeRegions <2:2 - 3:3> <1:1 - 4:4>\n        --> <1:1 - 4:4>\n\nOne doesn't have to be a subset of the other:\n\n    mergeRegions <1:1 - 3:3> <2:2 - 4:4>\n        --> <1:1 - 4:4>\n\nThere can be gaps in between\n\n    mergeRegions <1:1 - 2:2> <4:4 - 5:5>\n        --> <1:1 - 5:5>\n\n",
+                "type": "Elm.Data.Located.Region -> Elm.Data.Located.Region -> Elm.Data.Located.Region"
+            },
+            {
+                "name": "positionToComparable",
+                "comment": " Transforms the record into something `comparable`.\n",
+                "type": "Elm.Data.Located.Position -> ( Basics.Int, Basics.Int )"
+            },
+            {
+                "name": "regionToComparable",
+                "comment": " Transforms the record into something `comparable`.\n",
+                "type": "Elm.Data.Located.Region -> ( ( Basics.Int, Basics.Int ), ( Basics.Int, Basics.Int ) )"
+            },
+            {
+                "name": "replaceWith",
+                "comment": " Replace the value inside the wrapper with another.\n",
+                "type": "b -> Elm.Data.Located.Located a -> Elm.Data.Located.Located b"
+            },
+            {
+                "name": "unwrap",
+                "comment": " Return the value inside the wrapper.\n",
+                "type": "Elm.Data.Located.Located a -> a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Elm.Data.Module",
+        "comment": " Module information (corresponds to a single .elm file).\nName, imports, contents, etc.\n\n@docs Module, ModuleType\n@docs map\n@docs unalias, exposes\n\n",
+        "unions": [
+            {
+                "name": "ModuleType",
+                "comment": "\n\n    module Main exposing ...\n    --> PlainModule\n\n    port module Main exposing ...\n    --> PortModule\n\n    effect module Main where ... exposing ...\n    --> EffectModule\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "PlainModule",
+                        []
+                    ],
+                    [
+                        "PortModule",
+                        []
+                    ],
+                    [
+                        "EffectModule",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Module",
+                "comment": " ",
+                "args": [
+                    "expr"
+                ],
+                "type": "{ imports : Dict.Dict Elm.Data.ModuleName.ModuleName Elm.Data.Import.Import, name : Elm.Data.ModuleName.ModuleName, filePath : Elm.Data.FilePath.FilePath, declarations : Dict.Dict Elm.Data.VarName.VarName (Elm.Data.Declaration.Declaration expr), type_ : Elm.Data.Module.ModuleType, exposing_ : Elm.Data.Exposing.Exposing }"
+            }
+        ],
+        "values": [
+            {
+                "name": "exposes",
+                "comment": " Does this module expose this variable name?\n",
+                "type": "Elm.Data.VarName.VarName -> Elm.Data.Module.Module a -> Basics.Bool"
+            },
+            {
+                "name": "map",
+                "comment": " Apply a function to all the expressions inside the module.\n",
+                "type": "(a -> b) -> Elm.Data.Module.Module a -> Elm.Data.Module.Module b"
+            },
+            {
+                "name": "unalias",
+                "comment": " Reverses the aliasing in import statements for a single module name.\n\nGiven `import Foo as F`:\n\n    unalias module_ \"F\"\n    --> Just \"Foo\"\n\n    unalias module_ \"Foo\"\n    --> Nothing\n\n    unalias module_ \"Foox\"\n    --> Nothing\n\n",
+                "type": "Elm.Data.Module.Module a -> Elm.Data.ModuleName.ModuleName -> Maybe.Maybe Elm.Data.ModuleName.ModuleName"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Elm.Data.ModuleName",
+        "comment": " Module name, eg. the `Foo.Bar` in\n\n    something =\n        Foo.Bar.x + 1\n\n@docs ModuleName, expectedModuleName\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "ModuleName",
+                "comment": " Just a `String` alias, instead of a `type` wrapper. We generally use records\nwith explanatory field names where two Strings would be next to each other,\nto protect against swapping them accidentally.\n",
+                "args": [],
+                "type": "String.String"
+            }
+        ],
+        "values": [
+            {
+                "name": "expectedModuleName",
+                "comment": " Converts from file path to its expected module name.\nAdditionally needs the source directory from `elm.json`.\n\nReturns `Nothing` if the source directory doesn't agree with the file path.\n\n    expectedModuleName { sourceDirectory = \"src\", filePath = \"src/Foo.elm\" }\n    --> Just \"Foo\"\n\n    expectedModuleName { sourceDirectory = \"src\", filePath = \"lib/Foo.elm\" }\n    --> Nothing\n\n",
+                "type": "{ sourceDirectory : String.String, filePath : String.String } -> Maybe.Maybe Elm.Data.ModuleName.ModuleName"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Elm.Data.Project",
+        "comment": " The project information (corresponds to a single elm.json file).\nHolds more information though - the data in the type parameter holds all the\nparsed modules etc. - what every stage needs. See `ProjectFields` of the various\nAST stages.\n\n@docs Project\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Project",
+                "comment": " Each AST stage has its own project fields - that's what the `r` parameter is.\nEg. on the frontend we have `program : Modules Frontend.Expr`\nand on the backend we have `graph : Backend.Graph`.\n",
+                "args": [
+                    "projectFields"
+                ],
+                "type": "{ projectFields | elmJson : Elm.Project.Project, mainFilePath : Elm.Data.FilePath.FilePath, mainModuleName : Elm.Data.ModuleName.ModuleName, sourceDirectory : Elm.Data.FilePath.FilePath }"
+            }
+        ],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "Elm.Data.Type",
+        "comment": " A data structure representing the Elm types.\n\n@docs Type, TypeArgument, isParametric, varId\n\n",
+        "unions": [
+            {
+                "name": "Type",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Var",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "Function",
+                        [
+                            "Elm.Data.Type.Type",
+                            "Elm.Data.Type.Type"
+                        ]
+                    ],
+                    [
+                        "Int",
+                        []
+                    ],
+                    [
+                        "Float",
+                        []
+                    ],
+                    [
+                        "Char",
+                        []
+                    ],
+                    [
+                        "String",
+                        []
+                    ],
+                    [
+                        "Bool",
+                        []
+                    ],
+                    [
+                        "List",
+                        [
+                            "Elm.Data.Type.Type"
+                        ]
+                    ],
+                    [
+                        "Unit",
+                        []
+                    ],
+                    [
+                        "Tuple",
+                        [
+                            "Elm.Data.Type.Type",
+                            "Elm.Data.Type.Type"
+                        ]
+                    ],
+                    [
+                        "Tuple3",
+                        [
+                            "Elm.Data.Type.Type",
+                            "Elm.Data.Type.Type",
+                            "Elm.Data.Type.Type"
+                        ]
+                    ],
+                    [
+                        "UserDefinedType",
+                        [
+                            "{ module_ : String.String, name : String.String }",
+                            "List.List Elm.Data.Type.Type"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "TypeArgument",
+                "comment": " Type argument of a polymorphic type.\n\n    Maybe Int\n    --> ConcreteType Int\n\n    Maybe a\n    --> TypeVariable \"a\"\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "ConcreteType",
+                        [
+                            "Elm.Data.Type.Type"
+                        ]
+                    ],
+                    [
+                        "TypeVariable",
+                        [
+                            "Elm.Data.VarName.VarName"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "isParametric",
+                "comment": " Does it contain lower-case type parameters?\n",
+                "type": "Elm.Data.Type.Type -> Basics.Bool"
+            },
+            {
+                "name": "varId",
+                "comment": " Unwrap the ID of the type variable\n",
+                "type": "Elm.Data.Type.Type -> Maybe.Maybe Basics.Int"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Elm.Data.Type.ToString",
+        "comment": " Functions for printing types.\n\nThe reason this isn't just a simple `toString` function is that type variables\nneed to have consistent names across multiple `toString` calls (eg. in error\nmessages).\n\nTo accomplish this, we pass a state around as an argument.\n\nThis is how the simple case would look:\n\n    toString emptyState (List Int)\n    --> (\"List Int\", <state>)\n\nAnd for cases where you're printing multiple types and they have to make sense\ntogether, you pass the state returned from first call to the second call:\n\n    let\n        (typeString1, state1) =\n            toString emptyState (Function (Var 0) (Var 1))\n\n        (typeString2, _) =\n            toString state1 (Function Int (Var 1))\n    in\n    typeString1 ++ \" is not the same as \" ++ typeString2\n    --> \"(a -> b) is not the same as (Int -> b)\n\nThe important thing here is that the `Var 1` was rendered the same in both cases.\nIf you didn't do that and passed `emptyState` to both cases, you'd get:\n\n    \"(a -> b) is not the same as (Int -> a)\"\n\nWhich would be wrong and misleading!\n\n@docs toString\n@docs State, emptyState\n@docs niceVarName\n\n",
+        "unions": [
+            {
+                "name": "State",
+                "comment": " State for keeping track of the type variables' chosen names.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "emptyState",
+                "comment": " Initial state to start with.\n",
+                "type": "Elm.Data.Type.ToString.State"
+            },
+            {
+                "name": "niceVarName",
+                "comment": " Function to get from a number to a nice type variable name.\nIt follows this sequence:\n\n    a, b, ..., z, | a1, b1, ..., z1, | a2, b2, ..., z2, | ...\n    0  1       25 | 26  27       51  | 52  53       77  |\n\nNote the number passed into this function isn't the number inside `Var`\nbut the counter inside [`State`](#State).\n\n",
+                "type": "Basics.Int -> String.String"
+            },
+            {
+                "name": "toString",
+                "comment": " The main function of this module. Use the state returned here\nin the subsequent calls (if they're going to end up as part of the same string!)\n",
+                "type": "Elm.Data.Type.ToString.State -> Elm.Data.Type.Type -> ( String.String, Elm.Data.Type.ToString.State )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Elm.Data.VarName",
+        "comment": " Variable name, eg. the `x` in\n\n    foo =\n        x + 1\n\n@docs VarName\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "VarName",
+                "comment": " Just a `String` alias, instead of a `type` wrapper. We generally use records\nwith explanatory field names where two Strings would be next to each other,\nto protect against swapping them accidentally.\n",
+                "args": [],
+                "type": "String.String"
+            }
+        ],
+        "values": [],
+        "binops": []
+    }
+]

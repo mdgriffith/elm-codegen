@@ -1,0 +1,685 @@
+[
+    {
+        "name": "ProgramTest",
+        "comment": " A `ProgramTest` simulates the execution of an Elm program\nenabling you write high-level tests for your program.\n(Testing your programs at this level\nprovides test coverage that is resilient even to drastic refactorings of your application architecture,\nand encourages tests that make it clear how end-users and external services will interact with your program.)\n\nThis module allows you to interact with your program by simulating\nuser interactions and external events (like HTTP responses and ports),\nand making assertions about the HTML it renders and the external requests it makes.\n\n  - [Guide for upgrading from elm-program-test 2.x to 3.x](https://elm-program-test.netlify.com/upgrade-3.0.0.html)\n\n\n## Documentation index\n\nThe list below is an index into the API documentation for the\nassertion and simulation functions relevant to each topic:\n\n  - creating tests: [creating](#creating-program-definitions) &mdash; [starting](#start) &mdash; [options](#options)\n  - **HTML**: [assertions](#inspecting-html) &mdash; [simulating user input](#simulating-user-input)\n  - **HTTP**: [assertions](#inspecting-http-requests) &mdash; [simulating responses](#simulating-http-responses)\n  - **time**: [simulating the passing of time](#simulating-time)\n  - **ports**: [assertions](#inspecting-outgoing-ports) &mdash; [simulating incoming ports](#simulating-incoming-ports)\n  - **browser**: [assertions](#browser-assertions) &mdash; [simulating](#simulating-browser-interactions)\n\n\n## Getting started\n\nFor a more detailed explanation of how to get started,\nsee the elm-program-test guidebooks\n(the best one to start with is “Testing programs with interactive views”):\n\n  - [Testing programs with interactive views](https://elm-program-test.netlify.com//html.html) &mdash;\n    shows an example of test-driving adding form validation to an Elm program\n  - [Testing programs with Cmds](https://elm-program-test.netlify.com/cmds.html) &mdash; shows testing a program\n    that uses `Http.get` and `Http.post`\n  - [Testing programs with ports](https://elm-program-test.netlify.com/ports.html) &mdash; shows testing a program\n    that uses ports to interface with JavaScript\n\n\n# Creating\n\n@docs ProgramTest, start\n\n\n## Creating program definitions\n\nA `ProgramDefinition` (required to create a `ProgramTest` with [`start`](#start))\ncan be created with one of the following functions that parallel\nthe functions in [`elm/browser`](https://package.elm-lang.org/packages/elm/browser/latest/Browser) for creating programs.\n\n@docs createSandbox, createElement, createDocument, createApplication, createWorker\n@docs ProgramDefinition\n\n\n## Options\n\nThe following functions allow you to configure your\n`ProgramDefinition` before starting it with [`start`](#start).\n\n@docs withBaseUrl, withJsonStringFlags\n\n@docs withSimulatedEffects, SimulatedEffect, SimulatedTask\n@docs withSimulatedSubscriptions, SimulatedSub\n\n\n## Ending a test\n\n@docs done\n\n\n# Inspecting and interacting with HTML\n\n\n## Inspecting HTML\n\n@docs expectViewHas, expectViewHasNot, expectView\n@docs ensureViewHas, ensureViewHasNot, ensureView\n\n\n## Simulating user input\n\n@docs clickButton, clickLink\n@docs fillIn, fillInTextarea\n@docs check, selectOption\n\n\n## Simulating user input (advanced)\n\n@docs simulateDomEvent\n@docs within\n\n\n# Inspecting and simulating HTTP requests and responses\n\n\n# Inspecting HTTP requests\n\n@docs expectHttpRequestWasMade, expectHttpRequest, expectHttpRequests\n@docs ensureHttpRequestWasMade, ensureHttpRequest, ensureHttpRequests\n\n\n## Simulating HTTP responses\n\n@docs simulateHttpOk, simulateHttpResponse, simulateHttpResponseAdvanced\n\n\n# Simulating time\n\n@docs advanceTime\n\n\n# Inspecting and simulating ports\n\n\n## Inspecting outgoing ports\n\n@docs expectOutgoingPortValues, ensureOutgoingPortValues\n\n\n## Simulating incoming ports\n\n@docs simulateIncomingPort\n\n\n# Browser navigation\n\n\n## Browser assertions\n\n@docs expectPageChange, expectBrowserUrl, expectBrowserHistory\n@docs ensureBrowserUrl, ensureBrowserHistory\n\n\n## Simulating browser interactions\n\n@docs routeChange\n\n\n# Low-level functions\n\nYou should avoid the functions below when possible,\nbut you may find them useful to test things that are not yet directly supported by elm-program-test.\n\n\n## Low-level functions for Msgs and Models\n\n@docs update\n@docs expectModel\n\n\n## Low-level functions for effects\n\n@docs expectLastEffect, ensureLastEffect\n@docs simulateLastEffect\n\n\n## Custom assertions\n\nThese functions may be useful if you are writing your own custom assertion functions.\n\n@docs fail, createFailed\n@docs getOutgoingPortValues\n\n",
+        "unions": [
+            {
+                "name": "ProgramDefinition",
+                "comment": " Represents an unstarted program test.\nUse [`start`](#start) to start the program being tested.\n",
+                "args": [
+                    "flags",
+                    "model",
+                    "msg",
+                    "effect"
+                ],
+                "cases": []
+            },
+            {
+                "name": "ProgramTest",
+                "comment": " A `ProgramTest` represents an Elm program,\na current state for that program,\ninformation about external effects that have been produced by the program (such as pending HTTP requests, values sent to outgoing ports, etc),\nand a log of any errors that have occurred while simulating interaction with the program.\n\n  - To create a `ProgramTest`, see the `create*` functions below.\n  - To advance the state of a `ProgramTest`, see [Simulating user input](#simulating-user-input), or the many simulate functions in this module.\n  - To assert on the resulting state of a `ProgramTest`, see the many `expect*` functions in this module.\n\n",
+                "args": [
+                    "model",
+                    "msg",
+                    "effect"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "SimulatedEffect",
+                "comment": " This represents an effect that elm-program-test is able to simulate.\nWhen using [`withSimulatedEffects`](#withSimulatedEffects) you will provide a function that can translate\nyour program's effects into `SimulatedEffect`s.\n(If you do not use `withSimulatedEffects`,\nthen `ProgramTest` will not simulate any effects for you.)\n\nYou can create `SimulatedEffect`s using the following modules,\nwhich parallel the modules your real program would use to create `Cmd`s and `Task`s:\n\n  - [`SimulatedEffect.Http`](SimulatedEffect-Http) (parallels `Http` from `elm/http`)\n  - [`SimulatedEffect.Cmd`](SimulatedEffect-Cmd) (parallels `Platform.Cmd` from `elm/core`)\n  - [`SimulatedEffect.Navigation`](SimulatedEffect-Navigation) (parallels `Browser.Navigation` from `elm/browser`)\n  - [`SimulatedEffect.Ports`](SimulatedEffect-Ports) (parallels the `port` keyword)\n  - [`SimulatedEffect.Task`](SimulatedEffect-Task) (parallels `Task` from `elm/core`)\n  - [`SimulatedEffect.Process`](SimulatedEffect-Process) (parallels `Process` from `elm/core`)\n  - [`SimulatedEffect.Time`](SimulatedEffect-Time) (parallels `Time` from `elm/time`)\n\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "SimulatedEffect.SimulatedEffect msg"
+            },
+            {
+                "name": "SimulatedSub",
+                "comment": " This represents a subscription that elm-program-test is able to simulate.\nWhen using [`withSimulatedSubscriptions`](#withSimulatedSubscriptions) you will provide\na function that is similar to your program's `subscriptions` function but that\nreturns `SimulatedSub`s instead `Sub`s.\n(If you do not use `withSimulatedSubscriptions`,\nthen `ProgramTest` will not simulate any subscriptions for you.)\n\nYou can create `SimulatedSub`s using the following modules:\n\n  - [`SimulatedEffect.Ports`](SimulatedEffect-Ports) (parallels the `port` keyword)\n\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "SimulatedEffect.SimulatedSub msg"
+            },
+            {
+                "name": "SimulatedTask",
+                "comment": " Similar to `SimulatedEffect`, but represents a `Task` instead of a `Cmd`.\n",
+                "args": [
+                    "x",
+                    "a"
+                ],
+                "type": "SimulatedEffect.SimulatedTask x a"
+            }
+        ],
+        "values": [
+            {
+                "name": "advanceTime",
+                "comment": " Simulates the passing of time.\nThe `Int` parameter is the number of milliseconds to simulate.\nThis will cause any pending `Task.sleep`s to trigger if their delay has elapsed.\n\nNOTE: You must use [`withSimulatedEffects`](#withSimulatedEffects) before you call [`start`](#start) to be able to use this function.\n\n",
+                "type": "Basics.Int -> ProgramTest.ProgramTest model msg effect -> ProgramTest.ProgramTest model msg effect"
+            },
+            {
+                "name": "check",
+                "comment": " Simulates setting the value of a checkbox labeled with the given label.\n\nThe parameters are:\n\n1.  The id of the input field\n    (which must match both the `id` attribute of the target `input` element,\n    and the `for` attribute of the `label` element),\n    or `\"\"` if the `<input>` is a descendant of the `<label>`.\n\n    NOTE: After [eeue56/elm-html-test#52](https://github.com/eeue56/elm-html-test/issues/52) is resolved,\n    a future release of this package will remove this parameter.\n\n2.  The label text of the input field\n\n3.  A `Bool` indicating whether to check (`True`) or uncheck (`False`) the checkbox.\n\nNOTE: In the future, this will be generalized to work with\naria accessibility attributes in addition to working with standard HTML label elements.\n\nIf you need more control over finding the target element or creating the simulated event,\nsee [`simulateDomEvent`](#simulateDomEvent).\n\n",
+                "type": "String.String -> String.String -> Basics.Bool -> ProgramTest.ProgramTest model msg effect -> ProgramTest.ProgramTest model msg effect"
+            },
+            {
+                "name": "clickButton",
+                "comment": " Simulates clicking a button.\n\nThis function will find and click a `<button>` HTML node containing the given `buttonText`.\n\nIt will also try to find and click elements with the accessibility label `role=\"button\"`.\n\nIf the button is disabled the test will fail.\n\n",
+                "type": "String.String -> ProgramTest.ProgramTest model msg effect -> ProgramTest.ProgramTest model msg effect"
+            },
+            {
+                "name": "clickLink",
+                "comment": " Simulates clicking a `<a href=\"...\">` link.\n\nThe parameters are:\n\n1.  The text of the `<a>` tag (which is the link text visible to the user).\n\n2.  The `href` of the `<a>` tag.\n\n    NOTE: After [eeue56/elm-html-test#52](https://github.com/eeue56/elm-html-test/issues/52) is resolved,\n    a future release of this package will remove the `href` parameter.\n\nNote for testing single-page apps:\nif the target `<a>` tag has an `onClick` handler,\nthen the message produced by the handler will be processed\nand the `href` will not be followed.\nNOTE: Currently this function cannot verify that the onClick handler\nsets `preventDefault`, but this will be done in the future after\n<https://github.com/eeue56/elm-html-test/issues/63> is resolved.\n\n",
+                "type": "String.String -> String.String -> ProgramTest.ProgramTest model msg effect -> ProgramTest.ProgramTest model msg effect"
+            },
+            {
+                "name": "createApplication",
+                "comment": " Creates a `ProgramTest` from the parts of a [`Browser.application`](https://package.elm-lang.org/packages/elm/browser/latest/Browser#application) program.\n\nSee other `create*` functions if the program you want to test does not use `Browser.application`.\n\nIf your program has subscriptions that you want to simulate, see [`withSimulatedSubscriptions`](#withSimulatedSubscriptions).\n\nNote that Elm currently does not provide any way to create a [`Browser.Navigation.Key`](https://package.elm-lang.org/packages/elm/browser/latest/Browser-Navigation#Key) in tests, so this function uses `()` as the key type instead.\nFor an example of how to test such a program, see\n[NavigationKeyExample.elm](https://github.com/avh4/elm-program-test/blob/main/examples/src/NavigationKeyExample.elm)\nand [NavigationKeyExampleTest.elm](https://github.com/avh4/elm-program-test/blob/main/examples/tests/NavigationKeyExampleTest.elm).\n\n",
+                "type": "{ init : flags -> Url.Url -> () -> ( model, effect ), view : model -> Browser.Document msg, update : msg -> model -> ( model, effect ), onUrlRequest : Browser.UrlRequest -> msg, onUrlChange : Url.Url -> msg } -> ProgramTest.ProgramDefinition flags model msg effect"
+            },
+            {
+                "name": "createDocument",
+                "comment": " Creates a `ProgramTest` from the parts of a [`Browser.document`](https://package.elm-lang.org/packages/elm/browser/latest/Browser#document) program.\n\nSee other `create*` functions if the program you want to test does not use `Browser.document`.\n\nIf your program has subscriptions that you want to simulate, see [`withSimulatedSubscriptions`](#withSimulatedSubscriptions).\n\n",
+                "type": "{ init : flags -> ( model, effect ), view : model -> Browser.Document msg, update : msg -> model -> ( model, effect ) } -> ProgramTest.ProgramDefinition flags model msg effect"
+            },
+            {
+                "name": "createElement",
+                "comment": " Creates a `ProgramTest` from the parts of a [`Browser.element`](https://package.elm-lang.org/packages/elm/browser/latest/Browser#element) program.\n\nSee other `create*` functions below if the program you want to test does not use `Browser.element`.\n\nIf your program has subscriptions that you want to simulate, see [`withSimulatedSubscriptions`](#withSimulatedSubscriptions).\n\n",
+                "type": "{ init : flags -> ( model, effect ), view : model -> Html.Html msg, update : msg -> model -> ( model, effect ) } -> ProgramTest.ProgramDefinition flags model msg effect"
+            },
+            {
+                "name": "createFailed",
+                "comment": " `createFailed` can be used to report custom errors if you are writing your own convenience functions to _create_ program tests.\n\nNOTE: if you are writing a convenience function that takes a `ProgramTest` as input, you should use [`fail`](#fail) instead,\nas it provides more context in the test failure message.\n\nThe parameters are:\n\n1.  The name of your helper function (displayed in failure messages)\n2.  The failure message (also included in the failure message)\n\nFor example:\n\n    -- JsonSchema and MyProgram are imaginary modules for this example\n\n\n    import JsonSchema exposing (Schema, validateJsonSchema)\n    import MyProgram exposing (Model, Msg)\n    import ProgramTest exposing (ProgramTest)\n\n    createWithValidatedJson : Schema -> String -> ProgramTest Model Msg (Cmd Msg)\n    createWithValidatedJson schema json =\n        case validateJsonSchema schema json of\n            Err message ->\n                ProgramTest.createFailed\n                    \"createWithValidatedJson\"\n                    (\"JSON schema validation failed:\\n\" ++ message)\n\n            Ok () ->\n                ProgramTest.createElement\n                    { init = MyProgram.init\n                    , update = MyProgram.update\n                    , view = MyProgram.view\n                    }\n                    |> ProgramTest.start json\n\n",
+                "type": "String.String -> String.String -> ProgramTest.ProgramTest model msg effect"
+            },
+            {
+                "name": "createSandbox",
+                "comment": " Creates a `ProgramDefinition` from the parts of a [`Browser.sandbox`](https://package.elm-lang.org/packages/elm/browser/latest/Browser#sandbox) program.\n\nSee other `create*` functions below if the program you want to test does not use `Browser.sandbox`.\n\n",
+                "type": "{ init : model, view : model -> Html.Html msg, update : msg -> model -> model } -> ProgramTest.ProgramDefinition () model msg ()"
+            },
+            {
+                "name": "createWorker",
+                "comment": " Creates a `ProgramTest` from the parts of a [`Platform.worker`](https://package.elm-lang.org/packages/elm/core/latest/Platform#worker) program.\n\nSee other `create*` functions if the program you want to test does not use `Platform.worker`.\n\nIf your program has subscriptions that you want to simulate, see [`withSimulatedSubscriptions`](#withSimulatedSubscriptions).\n\n",
+                "type": "{ init : flags -> ( model, effect ), update : msg -> model -> ( model, effect ) } -> ProgramTest.ProgramDefinition flags model msg effect"
+            },
+            {
+                "name": "done",
+                "comment": " Ends a `ProgramTest`, reporting any errors that occurred.\n\nYou can also end a `ProgramTest` using any of the functions starting with `expect*`.\nIn fact, you should prefer using one of the `expect*` functions when possible,\nas doing so will [make the intent of your test more clear](https://www.artima.com/weblogs/viewpost.jsp?thread=35578).\n\n",
+                "type": "ProgramTest.ProgramTest model msg effect -> Expect.Expectation"
+            },
+            {
+                "name": "ensureBrowserHistory",
+                "comment": " See the documentation for [`expectBrowserHistory`](#expectBrowserHistory).\nThis is the same except that it returns a `ProgramTest` instead of an `Expectation`\nso that you can interact with the program further after this assertion.\n\nYou should prefer `expectBrowserHistory` when possible,\nas having a single assertion per test can make the intent of your tests more clear.\n\n",
+                "type": "(List.List String.String -> Expect.Expectation) -> ProgramTest.ProgramTest model msg effect -> ProgramTest.ProgramTest model msg effect"
+            },
+            {
+                "name": "ensureBrowserUrl",
+                "comment": " See the documentation for [`expectBrowserUrl`](#expectBrowserUrl).\nThis is the same except that it returns a `ProgramTest` instead of an `Expectation`\nso that you can interact with the program further after this assertion.\n\nYou should prefer `expectBrowserUrl` when possible,\nas having a single assertion per test can make the intent of your tests more clear.\n\n",
+                "type": "(String.String -> Expect.Expectation) -> ProgramTest.ProgramTest model msg effect -> ProgramTest.ProgramTest model msg effect"
+            },
+            {
+                "name": "ensureHttpRequest",
+                "comment": " See the documentation for [`expectHttpRequest`](#expectHttpRequest).\nThis is the same except that it returns a `ProgramTest` instead of an `Expectation`\nso that you can interact with the program further after this assertion.\n\nYou should prefer `expectHttpRequest` when possible,\nas having a single assertion per test can make the intent of your tests more clear.\n\n",
+                "type": "String.String -> String.String -> (Test.Http.HttpRequest msg msg -> Expect.Expectation) -> ProgramTest.ProgramTest model msg effect -> ProgramTest.ProgramTest model msg effect"
+            },
+            {
+                "name": "ensureHttpRequestWasMade",
+                "comment": " See the documentation for [`expectHttpRequestWasMade`](#expectHttpRequestWasMade).\nThis is the same except that it returns a `ProgramTest` instead of an `Expectation`\nso that you can interact with the program further after this assertion.\n\nYou should prefer `expectHttpRequestWasMade` when possible,\nas having a single assertion per test can make the intent of your tests more clear.\n\n",
+                "type": "String.String -> String.String -> ProgramTest.ProgramTest model msg effect -> ProgramTest.ProgramTest model msg effect"
+            },
+            {
+                "name": "ensureHttpRequests",
+                "comment": " See the documentation for [`expectHttpRequests`](#expectHttpRequests).\nThis is the same except that it returns a `ProgramTest` instead of an `Expectation`\nso that you can interact with the program further after this assertion.\n\nYou should prefer `expectHttpRequests` when possible,\nas having a single assertion per test can make the intent of your tests more clear.\n\n",
+                "type": "String.String -> String.String -> (List.List (Test.Http.HttpRequest msg msg) -> Expect.Expectation) -> ProgramTest.ProgramTest model msg effect -> ProgramTest.ProgramTest model msg effect"
+            },
+            {
+                "name": "ensureLastEffect",
+                "comment": " See the documentation for [`expectLastEffect`](#expectLastEffect).\nThis is the same except that it returns a `ProgramTest` instead of an `Expectation`\nso that you can interact with the program further after this assertion.\n\nYou should prefer `expectLastEffect` when possible,\nas having a single assertion per test can make the intent of your tests more clear.\n\n",
+                "type": "(effect -> Expect.Expectation) -> ProgramTest.ProgramTest model msg effect -> ProgramTest.ProgramTest model msg effect"
+            },
+            {
+                "name": "ensureOutgoingPortValues",
+                "comment": " See the documentation for [`expectOutgoingPortValues`](#expectOutgoingPortValues).\nThis is the same except that it returns a `ProgramTest` instead of an `Expectation`\nso that you can interact with the program further after this assertion.\n\nYou should prefer `expectOutgoingPortValues` when possible,\nas having a single assertion per test can make the intent of your tests more clear.\n\n",
+                "type": "String.String -> Json.Decode.Decoder a -> (List.List a -> Expect.Expectation) -> ProgramTest.ProgramTest model msg effect -> ProgramTest.ProgramTest model msg effect"
+            },
+            {
+                "name": "ensureView",
+                "comment": " See the documentation for [`expectView`](#expectView).\nThis is the same except that it returns a `ProgramTest` instead of an `Expectation`\nso that you can interact with the program further after this assertion.\n\nYou should prefer `expectView` when possible,\nas having a single assertion per test can make the intent of your tests more clear.\n\n",
+                "type": "(Test.Html.Query.Single msg -> Expect.Expectation) -> ProgramTest.ProgramTest model msg effect -> ProgramTest.ProgramTest model msg effect"
+            },
+            {
+                "name": "ensureViewHas",
+                "comment": " See the documentation for [`expectViewHas`](#expectViewHas).\nThis is the same except that it returns a `ProgramTest` instead of an `Expectation`\nso that you can interact with the program further after this assertion.\n\nYou should prefer `expectViewHas` when possible,\nas having a single assertion per test can make the intent of your tests more clear.\n\n",
+                "type": "List.List Test.Html.Selector.Selector -> ProgramTest.ProgramTest model msg effect -> ProgramTest.ProgramTest model msg effect"
+            },
+            {
+                "name": "ensureViewHasNot",
+                "comment": " See the documentation for [`expectViewHasNot`](#expectViewHasNot).\nThis is the same except that it returns a `ProgramTest` instead of an `Expectation`\nso that you can interact with the program further after this assertion.\n\nYou should prefer `expectViewHasNot` when possible,\nas having a single assertion per test can make the intent of your tests more clear.\n\n",
+                "type": "List.List Test.Html.Selector.Selector -> ProgramTest.ProgramTest model msg effect -> ProgramTest.ProgramTest model msg effect"
+            },
+            {
+                "name": "expectBrowserHistory",
+                "comment": " Asserts on the current browser history in the simulated test environment.\nThis only makes sense if you are using [`withSimulatedEffects`](#withSimulatedEffects)\nand the function you provide to it produces\n[`SimulatedEffect.Navigation.replaceUrl`](SimulatedEffect-Navigation#replaceUrl) or\n[`SimulatedEffect.Navigation.pushUrl`](SimulatedEffect-Navigation#pushUrl)\nfor one or more of your effects.\nThe previous URL is added to the simulated browser history whenever a `pushUrl` effect is simulated.\n\nThe parameter is:\n\n1.  A function that asserts on the current browser history (most recent at the head) to an expectation.\n\nExample: If there's only one expected item in the history or if you want check the complete history since the start of the test, use this with `Expect.equal`\n\n    createApplication { ... }\n        |> withBaseUrl \"https://example.com/resource/123\"\n        |> start ()\n        |> clickButton \"Details\"\n        |> expectBrowserHistory (Expect.equal [ \"https://example.com/resource/123/details\" ])\n\nExample: If there might be multiple items in the history and you only want to check the most recent item:\n\n    createApplication { ... }\n        |> withBaseUrl \"https://example.com/resource/123\"\n        |> start ()\n        |> clickButton \"Details\"\n        |> clickButton \"Calendar\"\n        |> expectBrowserHistory (List.head >> Expect.equal (Just \"https://example.com/resource/123/calendar\"))\n\nIf you need to assert on the current URL, see [`expectBrowserUrl`](#expectBrowserUrl).\n\n",
+                "type": "(List.List String.String -> Expect.Expectation) -> ProgramTest.ProgramTest model msg effect -> Expect.Expectation"
+            },
+            {
+                "name": "expectBrowserUrl",
+                "comment": " Asserts on the current value of the browser URL bar in the simulated test environment.\n\nThe parameter is:\n\n1.  A function that asserts on the current URL. Typically you will use `Expect.equal` with the exact URL you expect.\n\nIf your program is _not_ an application that manages URL changes\nand you want to assert that the user clicked a link that goes to an external web page,\nthen you probably want [`expectPageChange`](#expectPageChange) instead.\n\n",
+                "type": "(String.String -> Expect.Expectation) -> ProgramTest.ProgramTest model msg effect -> Expect.Expectation"
+            },
+            {
+                "name": "expectHttpRequest",
+                "comment": " Allows you to check the details of a pending HTTP request.\n\nSee the [“Expectations” section of `Test.Http`](Test-Http#expectations) for functions that might be helpful\nin create an expectation on the request.\n\nIf you only care about whether the a request was made to the correct URL, see [`expectHttpRequestWasMade`](#expectHttpRequestWasMade).\n\n    ...\n        |> expectHttpRequest \"POST\"\n            \"https://example.com/save\"\n            (.body >> Expect.equal \"\"\"{\"content\":\"updated!\"}\"\"\")\n\nIf you expect multiple requests to have been made to the same endpoint, see [`expectHttpRequests`](#expectHttpRequests).\n\nNOTE: You must use [`withSimulatedEffects`](#withSimulatedEffects) before you call [`start`](#start) to be able to use this function.\n\nIf you want to interact with the program more after this assertion, see [`ensureHttpRequest`](#ensureHttpRequest).\n\n",
+                "type": "String.String -> String.String -> (Test.Http.HttpRequest msg msg -> Expect.Expectation) -> ProgramTest.ProgramTest model msg effect -> Expect.Expectation"
+            },
+            {
+                "name": "expectHttpRequestWasMade",
+                "comment": " Asserts that an HTTP request to the specific url and method has been made.\n\nThe parameters are:\n\n1.  The HTTP method of the expected request (typically `\"GET\"` or `\"POST\"`)\n2.  The absolute URL of the expected request\n\nFor example:\n\n    ...\n        |> expectHttpRequestWasMade \"GET\" \"https://example.com/api/data\"\n\nIf you want to check the headers or request body, see [`expectHttpRequest`](#expectHttpRequest).\nIf you expect multiple requests to have been made to the same endpoint, see [`expectHttpRequests`](#expectHttpRequests).\n\nNOTE: You must use [`withSimulatedEffects`](#withSimulatedEffects) before you call [`start`](#start) to be able to use this function.\n\nIf you want to interact with the program more after this assertion, see [`ensureHttpRequestWasMade`](#ensureHttpRequestWasMade).\n\n",
+                "type": "String.String -> String.String -> ProgramTest.ProgramTest model msg effect -> Expect.Expectation"
+            },
+            {
+                "name": "expectHttpRequests",
+                "comment": " Allows you to check the details of pending HTTP requests.\n\nSee the [“Expectations” section of `Test.Http`](Test-Http#expectations) for functions that might be helpful\nin create an expectation on the request.\n\nIf your program will only have a single pending request to any particular URL, you can use the simpler [`expectHttpRequest`](#expectHttpRequest) (singular) or [`expectHttpRequestWasMade`](#expectHttpRequestWasMade) instead.\n\n    ...\n        |> expectHttpRequests \"POST\"\n            \"https://example.com/save\"\n            (List.map .body >> Expect.equal [\"\"\"body1\"\"\", \"\"\"body2\"\"\"])\n\nNOTE: You must use [`withSimulatedEffects`](#withSimulatedEffects) before you call [`start`](#start) to be able to use this function.\n\nIf you want to interact with the program more after this assertion, see [`ensureHttpRequests`](#ensureHttpRequests).\n\n",
+                "type": "String.String -> String.String -> (List.List (Test.Http.HttpRequest msg msg) -> Expect.Expectation) -> ProgramTest.ProgramTest model msg effect -> Expect.Expectation"
+            },
+            {
+                "name": "expectLastEffect",
+                "comment": " Makes an assertion about the last effect produced by a `ProgramTest`'s program.\n\nNOTE: If you are asserting about HTTP requests or outgoing ports,\nyou should prefer more specific functions designed for that purpose.\nYou can find links to the relevant documentation in the [documentation index](#documentation-index).\n\nIf you want to interact with the program more after this assertion, see [`ensureLastEffect`](#ensureLastEffect).\n\n",
+                "type": "(effect -> Expect.Expectation) -> ProgramTest.ProgramTest model msg effect -> Expect.Expectation"
+            },
+            {
+                "name": "expectModel",
+                "comment": " Make an assertion about the current state of a `ProgramTest`'s model.\n\nWhen possible, you should prefer making assertions about the rendered view (see [`expectView`](#expectView))\nor external requests made by your program (see [`expectHttpRequest`](#expectHttpRequest), [`expectOutgoingPortValues`](#expectOutgoingPortValues)),\nas testing at the level that users and external services interact with your program\nwill make your tests more resilient to changes in the private implementation of your program.\n\n",
+                "type": "(model -> Expect.Expectation) -> ProgramTest.ProgramTest model msg effect -> Expect.Expectation"
+            },
+            {
+                "name": "expectOutgoingPortValues",
+                "comment": " Lets you assert on the values that the program being tested has sent to an outgoing port.\n\nThe parameters are:\n\n1.  The name of the port\n2.  A JSON decoder corresponding to the type of the port\n3.  A function that will receive the list of values sent to the port\n    since the start of the test (or since the last use of `ensureOutgoingPortValues`)\n    and return an `Expectation`\n\nFor example:\n\n    ...\n        |> expectOutgoingPortValues\n            \"saveApiTokenToLocalStorage\"\n            Json.Decode.string\n            (Expect.equal [ \"975774a26612\", \"920facb1bac0\" ])\n\nFor a more detailed explanation and example, see the [“Testing programs with ports” guidebook](https://elm-program-test.netlify.com/ports.html).\n\nNOTE: You must use [`withSimulatedEffects`](#withSimulatedEffects) before you call [`start`](#start) to be able to use this function.\n\nIf you want to interact with the program more after this assertion, see [`ensureOutgoingPortValues`](#ensureOutgoingPortValues).\n\n",
+                "type": "String.String -> Json.Decode.Decoder a -> (List.List a -> Expect.Expectation) -> ProgramTest.ProgramTest model msg effect -> Expect.Expectation"
+            },
+            {
+                "name": "expectPageChange",
+                "comment": " Asserts that the program ended by navigating away to another URL.\n\nThe parameter is:\n\n1.  The expected URL that the program should have navigated away to.\n\nIf your program is an application that manages URL changes\n(created with [`createApplication`](#createApplication)),\nthen you probably want [`expectBrowserUrl`](#expectBrowserUrl) instead.\n\n",
+                "type": "String.String -> ProgramTest.ProgramTest model msg effect -> Expect.Expectation"
+            },
+            {
+                "name": "expectView",
+                "comment": " Makes an assertion about the current state of a `ProgramTest`'s view.\n\nIf you want to interact with the program more after this assertion, see [`ensureView`](#ensureView).\n\n",
+                "type": "(Test.Html.Query.Single msg -> Expect.Expectation) -> ProgramTest.ProgramTest model msg effect -> Expect.Expectation"
+            },
+            {
+                "name": "expectViewHas",
+                "comment": " A simpler way to assert that a `ProgramTest`'s view matches a given selector.\n\n`expectViewHas [...selector...]` is the same as `expectView (Test.Html.Query.has [...selector...])`.\n\nIf you want to interact with the program more after this assertion, see [`ensureViewHas`](#ensureViewHas).\n\n",
+                "type": "List.List Test.Html.Selector.Selector -> ProgramTest.ProgramTest model msg effect -> Expect.Expectation"
+            },
+            {
+                "name": "expectViewHasNot",
+                "comment": " A simpler way to assert that a `ProgramTest`'s view does not match a given selector.\n\n`expectViewHasNot [...selector...]` is the same as `expectView (Test.Html.Query.hasNot [...selector...])`.\n\nIf you want to interact with the program more after this assertion, see [`ensureViewHasNot`](#ensureViewHasNot).\n\n",
+                "type": "List.List Test.Html.Selector.Selector -> ProgramTest.ProgramTest model msg effect -> Expect.Expectation"
+            },
+            {
+                "name": "fail",
+                "comment": " `fail` can be used to report custom errors if you are writing your own convenience functions to deal with program tests.\n\nFor example, this function checks for a particular structure in the program's view,\nbut will also fail the ProgramTest if the `expectedCount` parameter is invalid:\n\n    expectNotificationCount : Int -> ProgramTest model msg effect -> Expectation\n    expectNotificationCount expectedCount programTest =\n        if expectedCount <= 0 then\n            programTest\n                |> ProgramTest.fail \"expectNotificationCount\"\n                    (\"expectedCount must be positive, but was: \" ++ String.fromInt expectedCount)\n\n        else\n            programTest\n                |> expectViewHas\n                    [ Test.Html.Selector.class \"notifications\"\n                    , Test.Html.Selector.text (toString expectedCount)\n                    ]\n\nIf you are writing a convenience function that is creating a program test, see [`createFailed`](#createFailed).\n\n",
+                "type": "String.String -> String.String -> ProgramTest.ProgramTest model msg effect -> ProgramTest.ProgramTest model msg effect"
+            },
+            {
+                "name": "fillIn",
+                "comment": " Simulates replacing the text in an input field labeled with the given label.\n\n1.  The id of the input field\n    (which must match both the `id` attribute of the target `input` element,\n    and the `for` attribute of the `label` element),\n    or `\"\"` if the `<input>` is a descendant of the `<label>`.\n\n    NOTE: After [eeue56/elm-html-test#52](https://github.com/eeue56/elm-html-test/issues/52) is resolved,\n    a future release of this package will remove this parameter.\n\n2.  The label text of the input field.\n\n3.  The text that will be entered into the input field.\n\nThere are a few different ways to accessibly label your input fields so that `fillIn` will find them:\n\n  - You can place the `<input>` element inside a `<label>` element that also contains the label text.\n\n    ```html\n    <label>\n        Favorite fruit\n        <input>\n    </label>\n    ```\n\n  - You can place the `<input>` and a `<label>` element anywhere on the page and link them with a unique id.\n\n    ```html\n    <label for=\"fruit\">Favorite fruit</label>\n    <input id=\"fruit\"></input>\n    ```\n\n  - You can use the `aria-label` attribute.\n\n    ```html\n    <input aria-label=\"Favorite fruit\"></input>\n    ```\n\nIf you need to target a `<textarea>` that does not have a label,\nsee [`fillInTextarea`](#fillInTextArea).\n\nIf you need more control over finding the target element or creating the simulated event,\nsee [`simulateDomEvent`](#simulateDomEvent).\n\n",
+                "type": "String.String -> String.String -> String.String -> ProgramTest.ProgramTest model msg effect -> ProgramTest.ProgramTest model msg effect"
+            },
+            {
+                "name": "fillInTextarea",
+                "comment": " Simulates replacing the text in a `<textarea>`.\n\nThis function expects that there is only one `<textarea>` in the view.\nIf your view has more than one `<textarea>`,\nprefer adding associated `<label>` elements and use [`fillIn`](#fillIn).\nIf you cannot add `<label>` elements see [`within`](#within).\n\nIf you need more control over finding the target element or creating the simulated event,\nsee [`simulateDomEvent`](#simulateDomEvent).\n\n",
+                "type": "String.String -> ProgramTest.ProgramTest model msg effect -> ProgramTest.ProgramTest model msg effect"
+            },
+            {
+                "name": "getOutgoingPortValues",
+                "comment": " This can be used for advanced helper functions where you want to continue a test but need the data\nsent out through ports later in your test.\n\nNOTE: If you do not need this advanced functionality,\nprefer [`expectOutgoingPortValues`](#expectOutgoingPortValues) instead.\n\n",
+                "type": "String.String -> ProgramTest.ProgramTest model msg effect -> Result.Result (ProgramTest.ProgramTest model msg effect) (List.List Json.Encode.Value)"
+            },
+            {
+                "name": "routeChange",
+                "comment": " Simulates a route change event (which would happen when your program is\na `Browser.application` and the user manually changes the URL in the browser's URL bar).\n\nThe parameter may be an absolute URL or relative URL.\n\n",
+                "type": "String.String -> ProgramTest.ProgramTest model msg effect -> ProgramTest.ProgramTest model msg effect"
+            },
+            {
+                "name": "selectOption",
+                "comment": " Simulates choosing an option with the given text in a select with a given label\n\nThe parameters are:\n\n1.  The id of the `<select>`\n    (which must match both the `id` attribute of the target `select` element,\n    and the `for` attribute of the `label` element),\n    or `\"\"` if the `<select>` is a descendant of the `<label>`.\n\n    NOTE: After [eeue56/elm-html-test#52](https://github.com/eeue56/elm-html-test/issues/52) is resolved,\n    a future release of this package will remove this parameter.\n\n2.  The label text of the select.\n\n3.  The `value` of the `<option>` that will be chosen.\n\n    NOTE: After [eeue56/elm-html-test#51](https://github.com/eeue56/elm-html-test/issues/51) is resolved,\n    a future release of this package will remove this parameter.\n\n4.  The user-visible text of the `<option>` that will be chosen.\n\nExample: If you have a view like the following,\n\n    import Html\n    import Html.Attributes exposing (for, id, value)\n    import Html.Events exposing (on, targetValue)\n\n    Html.div []\n        [ Html.label [ for \"pet-select\" ] [ Html.text \"Choose a pet\" ]\n        , Html.select\n            [ id \"pet-select\", on \"change\" targetValue ]\n            [ Html.option [ value \"dog\" ] [ Html.text \"Dog\" ]\n            , Html.option [ value \"hamster\" ] [ Html.text \"Hamster\" ]\n            ]\n        ]\n\nyou can simulate selecting an option like this:\n\n    ProgramTest.selectOption \"pet-select\" \"Choose a pet\" \"dog\" \"Dog\"\n\nIf you need more control over finding the target element or creating the simulated event,\nsee [`simulateDomEvent`](#simulateDomEvent).\n\n",
+                "type": "String.String -> String.String -> String.String -> String.String -> ProgramTest.ProgramTest model msg effect -> ProgramTest.ProgramTest model msg effect"
+            },
+            {
+                "name": "simulateDomEvent",
+                "comment": " Simulates a custom DOM event.\n\nNOTE: If there is another, more specific function (see [“Simulating user input”](#simulating-user-input))\nthat does what you want, prefer that instead, as you will get the benefit of better error messages.\n\nThe parameters are:\n\n1.  A function to find the HTML element that responds to the event\n    (typically this will be a call to `Test.Html.Query.find [ ...some selector... ]`)\n2.  The event to simulate\n    (see [Test.Html.Event \"Event Builders\"](https://package.elm-lang.org/packages/elm-explorations/test/latest/Test-Html-Event#event-builders))\n\n",
+                "type": "(Test.Html.Query.Single msg -> Test.Html.Query.Single msg) -> ( String.String, Json.Encode.Value ) -> ProgramTest.ProgramTest model msg effect -> ProgramTest.ProgramTest model msg effect"
+            },
+            {
+                "name": "simulateHttpOk",
+                "comment": " Simulates an HTTP 200 response to a pending request with the given method and url.\n\nThe parameters are:\n\n1.  The HTTP method of the request to simulate a response for (typically `\"GET\"` or `\"POST\"`)\n2.  The URL of the request to simulate a response for\n3.  The response body for the simulated response\n\nFor example:\n\n    ...\n        |> simulateHttpOk \"GET\"\n            \"https://example.com/time.json\"\n            \"\"\"{\"currentTime\":1559013158}\"\"\"\n        |> ...\n\nIf you need to simulate an error, a response with a different status code,\nor a response with response headers,\nsee [`simulateHttpResponse`](#simulateHttpResponse).\n\nIf you want to check the request headers or request body, use [`ensureHttpRequest`](#ensureHttpRequest)\nimmediately before using `simulateHttpOk`.\n\nNOTE: You must use [`withSimulatedEffects`](#withSimulatedEffects) before you call [`start`](#start) to be able to use this function.\n\n",
+                "type": "String.String -> String.String -> String.String -> ProgramTest.ProgramTest model msg effect -> ProgramTest.ProgramTest model msg effect"
+            },
+            {
+                "name": "simulateHttpResponse",
+                "comment": " Simulates a response to a pending HTTP request.\nThe test will fail if there is no pending request matching the given method and url.\n\nThe parameters are:\n\n1.  The HTTP method of the request to simulate a response for (typically `\"GET\"` or `\"POST\"`)\n2.  The URL of the request to simulate a response for\n3.  The [`Http.Response`](https://package.elm-lang.org/packages/elm/http/latest/Http#Response) value for the simulated response. You may find it helpful to see the [“Responses” section in `Test.Http`](Test-Http#responses)\n    for convenient ways to create `Http.Response` values.\n\nFor example:\n\n    ...\n        |> simulateHttpResponse \"GET\"\n            \"https://example.com/time.json\"\n            Test.Http.networkError\n        |> ...\n        |> simulateHttpResponse \"POST\"\n            \"https://example.com/api/v1/process_data\"\n            (Test.Http.httpResponse\n                { statusCode : 204\n                , headers : [ ( \"X-Procesing-Time\", \"1506ms\") ]\n                , body : \"\"\n                }\n            )\n\nIf you are simulating a 200 OK response and don't need to provide response headers,\nyou can use the simpler [`simulateHttpOk`](#simulateHttpOk).\n\nIf you want to check the request headers or request body, use [`ensureHttpRequest`](#ensureHttpRequest)\nimmediately before using `simulateHttpResponse`.\n\nIf your program will make multiple pending requests to the same URL, see [`simulateHttpResponseAdvanced`](#simulateHttpResponseAdvanced).\n\nNOTE: You must use [`withSimulatedEffects`](#withSimulatedEffects) before you call [`start`](#start) to be able to use this function.\n\n",
+                "type": "String.String -> String.String -> Http.Response String.String -> ProgramTest.ProgramTest model msg effect -> ProgramTest.ProgramTest model msg effect"
+            },
+            {
+                "name": "simulateHttpResponseAdvanced",
+                "comment": " Simulates a response to one of several pending HTTP requests made to a given endpoint.\n\nThis is the same as [`simulateHttpResponse`](#simulateHttpResponse),\nexcept that the additional `Int` parameter specificies which request to resolve if multiple requests to the same method/URL are pending.\n\n",
+                "type": "String.String -> String.String -> Basics.Int -> Http.Response String.String -> ProgramTest.ProgramTest model msg effect -> ProgramTest.ProgramTest model msg effect"
+            },
+            {
+                "name": "simulateIncomingPort",
+                "comment": " Lets you simulate a value being sent to the program being tested via an incoming port.\n\nThe parameters are:\n\n1.  The name of the port\n2.  The JSON representation of the incoming value\n\nFor example, here we are simulating the program receiving a list of strings on the incoming port\n`port resultsFromJavascript : (List String -> msg) -> Sub msg`:\n\n    ...\n        |> ProgramTest.simulateIncomingPort\n            \"resultsFromJavascript\"\n            (Json.Encode.list Json.Encode.string\n                [ \"Garden-path sentences can confuse the reader.\" ]\n            )\n\nFor a more detailed explanation and example, see the [“Testing programs with ports” guidebook](https://elm-program-test.netlify.com/ports.html).\n\nNOTE: You must use [`withSimulatedSubscriptions`](#withSimulatedSubscriptions) before you call [`start`](#start) to be able to use this function.\n\n",
+                "type": "String.String -> Json.Encode.Value -> ProgramTest.ProgramTest model msg effect -> ProgramTest.ProgramTest model msg effect"
+            },
+            {
+                "name": "simulateLastEffect",
+                "comment": " Simulate the outcome of the last effect produced by the program being tested\nby providing a function that can convert the last effect into `msg`s.\n\nThe function you provide will be called with the effect that was returned by the most recent call to `update` or `init` in the `ProgramTest`.\n\n  - If it returns `Err`, then the `ProgramTest` will enter a failure state with the provided error message.\n  - If it returns `Ok`, then the list of `msg`s will be applied in order via `ProgramTest.update`.\n\nNOTE: If you are simulating HTTP responses,\nyou should prefer more specific functions designed for that purpose.\nYou can find links to the relevant documentation in the [documentation index](#documentation-index).\n\n",
+                "type": "(effect -> Result.Result String.String (List.List msg)) -> ProgramTest.ProgramTest model msg effect -> ProgramTest.ProgramTest model msg effect"
+            },
+            {
+                "name": "start",
+                "comment": " Starts the given test program by initializing it with the given flags.\n\nIf your program uses `Json.Encode.Value` as its flags type,\nyou may find [`withJsonStringFlags`](#withJsonStringFlags) useful.\n\n",
+                "type": "flags -> ProgramTest.ProgramDefinition flags model msg effect -> ProgramTest.ProgramTest model msg effect"
+            },
+            {
+                "name": "update",
+                "comment": " Advances the state of the `ProgramTest` by applying the given `msg` to your program's update function\n(provided when you created the `ProgramTest`).\n\nThis can be used to simulate events that can only be triggered by [commands (`Cmd`) and subscriptions (`Sub`)](https://guide.elm-lang.org/architecture/effects/)\n(i.e., that cannot be triggered by user interaction with the view).\n\nNOTE: When possible, you should prefer [Simulating user input](#simulating-user-input),\n[Simulating HTTP responses](#simulating-http-responses),\nor (if neither of those support what you need) [`simulateLastEffect`](#simulateLastEffect),\nas doing so will make your tests more resilient to changes in your program's implementation details.\n\n",
+                "type": "msg -> ProgramTest.ProgramTest model msg effect -> ProgramTest.ProgramTest model msg effect"
+            },
+            {
+                "name": "withBaseUrl",
+                "comment": " Sets the initial browser URL\n\nYou must set this when using `createApplication`,\nor when using [`clickLink`](#clickLink) and [`expectPageChange`](#expectPageChange)\nto simulate a user clicking a link with relative URL.\n\n",
+                "type": "String.String -> ProgramTest.ProgramDefinition flags model msg effect -> ProgramTest.ProgramDefinition flags model msg effect"
+            },
+            {
+                "name": "withJsonStringFlags",
+                "comment": " Provides a convenient way to provide flags for a program that decodes flags from JSON.\nBy providing the JSON decoder, you can then provide the flags as a JSON string when calling\n[`start`](#start).\n",
+                "type": "Json.Decode.Decoder flags -> ProgramTest.ProgramDefinition flags model msg effect -> ProgramTest.ProgramDefinition String.String model msg effect"
+            },
+            {
+                "name": "withSimulatedEffects",
+                "comment": " This allows you to provide a function that lets `ProgramTest` simulate effects that would become `Cmd`s and `Task`s\nwhen your app runs in production\n(this enables you to use [`simulateHttpResponse`](#simulateHttpResponse), [`advanceTime`](#advanceTime), etc.).\nFor a detailed explanation and example of how to set up tests that use simulated effects,\nsee the [“Testing programs with Cmds” guidebook](https://elm-program-test.netlify.com/cmds.html).\n\nYou only need to use this if you need to simulate [HTTP requests](#simulating-http-responses),\n[outgoing ports](#expectOutgoingPortValues),\nor the [passing of time](#simulating-time).\n\nSee the `SimulatedEffect.*` modules in this package for functions that you can use to implement\nthe required `effect -> SimulatedEffect msg` function for your `effect` type.\n\n",
+                "type": "(effect -> ProgramTest.SimulatedEffect msg) -> ProgramTest.ProgramDefinition flags model msg effect -> ProgramTest.ProgramDefinition flags model msg effect"
+            },
+            {
+                "name": "withSimulatedSubscriptions",
+                "comment": " This allows you to provide a function that lets `ProgramTest` simulate subscriptions that would be `Sub`s\nwhen your app runs in production\n(this enables you to use [`simulateIncomingPort`](#simulateIncomingPort), etc.).\nYou only need to use this if you need to simulate subscriptions in your test.\nFor a detailed explanation and example of how to set up tests that use simulated subscriptions,\nsee the [“Testing programs with ports” guidebook](https://elm-program-test.netlify.com/ports.html).\n\nThe function you provide should be similar to your program's `subscriptions` function\nbut return `SimulatedSub`s instead of `Sub`s.\nSee the `SimulatedEffect.*` modules in this package for functions that you can use to implement\nthe required `model -> SimulatedSub msg` function.\n\n",
+                "type": "(model -> ProgramTest.SimulatedSub msg) -> ProgramTest.ProgramDefinition flags model msg effect -> ProgramTest.ProgramDefinition flags model msg effect"
+            },
+            {
+                "name": "within",
+                "comment": " Focus on a part of the view for a particular operation.\n\nFor example, if your view produces the following HTML:\n\n```html\n<div>\n  <div id=\"sidebar\">\n    <button>Submit</button>\n  </div>\n  <div id=\"content\">\n    <button>Submit</button>\n  </div>\n</div>\n```\n\nthen the following will allow you to simulate clicking the \"Submit\" button in the sidebar\n(simply using `clickButton \"Submit\"` would fail because there are two buttons matching that text):\n\n    import Test.Html.Query as Query\n    import Test.Html.Selector exposing (id)\n\n    programTest\n        |> ProgramTest.within\n            (Query.find [ id \"sidebar\" ])\n            (ProgramTest.clickButton \"Submit\")\n        |> ...\n\n",
+                "type": "(Test.Html.Query.Single msg -> Test.Html.Query.Single msg) -> (ProgramTest.ProgramTest model msg effect -> ProgramTest.ProgramTest model msg effect) -> ProgramTest.ProgramTest model msg effect -> ProgramTest.ProgramTest model msg effect"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "SimulatedEffect.Cmd",
+        "comment": " This module parallels [elm/core's `Platform.Cmd` module](https://package.elm-lang.org/packages/elm/core/1.0.2/Platform-Cmd).\n\nThe functions here produce `SimulatedEffect`s instead of `Cmd`s, which are meant to be used\nto help you implement the function to provide when using [`ProgramTest.withSimulatedEffects`](ProgramTest#withSimulatedEffects).\n\n@docs none, batch\n\n@docs map\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "batch",
+                "comment": " When you need the runtime system to perform a couple commands, you can batch them together.\n",
+                "type": "List.List (ProgramTest.SimulatedEffect msg) -> ProgramTest.SimulatedEffect msg"
+            },
+            {
+                "name": "map",
+                "comment": " Transform the messages produced by a command.\n",
+                "type": "(a -> msg) -> ProgramTest.SimulatedEffect a -> ProgramTest.SimulatedEffect msg"
+            },
+            {
+                "name": "none",
+                "comment": " Tell the runtime that there are no commands.\n",
+                "type": "ProgramTest.SimulatedEffect msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "SimulatedEffect.Http",
+        "comment": " This module parallels [elm/http's `Http` module](https://package.elm-lang.org/packages/elm/http/2.0.0/Http).\n_Pull requests are welcome to add any functions that are missing._\n\nThe functions here produce `SimulatedEffect`s instead of `Cmd`s, which are meant to be used\nto help you implement the function to provide when using [`ProgramTest.withSimulatedEffects`](ProgramTest#withSimulatedEffects).\n\n\n# Requests\n\n@docs get, post, request\n\n\n# Header\n\n@docs Header, header\n\n\n# Body\n\n@docs Body, emptyBody, stringBody, jsonBody\n\n\n# Expect\n\n@docs Expect, expectString, expectJson, expectWhatever, Error\n\n\n# Elaborate Expectations\n\n@docs expectStringResponse, Response\n\n\n# Tasks\n\n@docs task, Resolver, stringResolver\n\n",
+        "unions": [
+            {
+                "name": "Body",
+                "comment": " Represents the body of a `Request`.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Expect",
+                "comment": " Logic for interpreting a response body.\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Resolver",
+                "comment": " Describes how to resolve an HTTP task.\n",
+                "args": [
+                    "x",
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Error",
+                "comment": " ",
+                "args": [],
+                "type": "Http.Error"
+            },
+            {
+                "name": "Header",
+                "comment": " An HTTP header for configuring requests.\n",
+                "args": [],
+                "type": "( String.String, String.String )"
+            },
+            {
+                "name": "Response",
+                "comment": " ",
+                "args": [
+                    "body"
+                ],
+                "type": "Http.Response body"
+            }
+        ],
+        "values": [
+            {
+                "name": "emptyBody",
+                "comment": " Create an empty body for your `Request`.\n",
+                "type": "SimulatedEffect.Http.Body"
+            },
+            {
+                "name": "expectJson",
+                "comment": " Expect the response body to be JSON.\n",
+                "type": "(Result.Result Http.Error a -> msg) -> Json.Decode.Decoder a -> SimulatedEffect.Http.Expect msg"
+            },
+            {
+                "name": "expectString",
+                "comment": " Expect the response body to be a `String`.\n",
+                "type": "(Result.Result Http.Error String.String -> msg) -> SimulatedEffect.Http.Expect msg"
+            },
+            {
+                "name": "expectStringResponse",
+                "comment": " Expect a Response with a String body.\n",
+                "type": "(Result.Result x a -> msg) -> (SimulatedEffect.Http.Response String.String -> Result.Result x a) -> SimulatedEffect.Http.Expect msg"
+            },
+            {
+                "name": "expectWhatever",
+                "comment": " Expect the response body to be whatever.\n",
+                "type": "(Result.Result SimulatedEffect.Http.Error () -> msg) -> SimulatedEffect.Http.Expect msg"
+            },
+            {
+                "name": "get",
+                "comment": " Create a `GET` request.\n",
+                "type": "{ url : String.String, expect : SimulatedEffect.Http.Expect msg } -> ProgramTest.SimulatedEffect msg"
+            },
+            {
+                "name": "header",
+                "comment": " Create a `Header`.\n",
+                "type": "String.String -> String.String -> SimulatedEffect.Http.Header"
+            },
+            {
+                "name": "jsonBody",
+                "comment": " Put some JSON value in the body of your `Request`. This will automatically\nadd the `Content-Type: application/json` header.\n",
+                "type": "Json.Encode.Value -> SimulatedEffect.Http.Body"
+            },
+            {
+                "name": "post",
+                "comment": " Create a `POST` request.\n",
+                "type": "{ url : String.String, body : SimulatedEffect.Http.Body, expect : SimulatedEffect.Http.Expect msg } -> ProgramTest.SimulatedEffect msg"
+            },
+            {
+                "name": "request",
+                "comment": " Create a custom request.\n",
+                "type": "{ method : String.String, headers : List.List SimulatedEffect.Http.Header, url : String.String, body : SimulatedEffect.Http.Body, expect : SimulatedEffect.Http.Expect msg, timeout : Maybe.Maybe Basics.Float, tracker : Maybe.Maybe String.String } -> ProgramTest.SimulatedEffect msg"
+            },
+            {
+                "name": "stringBody",
+                "comment": " Put some string in the body of your `Request`.\n",
+                "type": "String.String -> String.String -> SimulatedEffect.Http.Body"
+            },
+            {
+                "name": "stringResolver",
+                "comment": " Turn a response with a `String` body into a result.\n",
+                "type": "(SimulatedEffect.Http.Response String.String -> Result.Result x a) -> SimulatedEffect.Http.Resolver x a"
+            },
+            {
+                "name": "task",
+                "comment": " Just like [`request`](#request), but it creates a `Task`.\n",
+                "type": "{ method : String.String, headers : List.List SimulatedEffect.Http.Header, url : String.String, body : SimulatedEffect.Http.Body, resolver : SimulatedEffect.Http.Resolver x a, timeout : Maybe.Maybe Basics.Float } -> ProgramTest.SimulatedTask x a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "SimulatedEffect.Navigation",
+        "comment": " This module parallels [elm/browsers's `Browser.Navigation` module](https://package.elm-lang.org/packages/elm/browser/1.0.1/Browser-Navigation).\n_Pull requests are welcome to add any functions that are missing._\n\nThe functions here produce `SimulatedEffect`s instead of `Cmd`s, which are meant to be used\nto help you implement the function to provide when using [`ProgramTest.withSimulatedEffects`](ProgramTest#withSimulatedEffects).\n\n\n# Navigate within Page\n\n@docs pushUrl, replaceUrl, back\n\n\n# Navigate to other Pages\n\n@docs load, reload, reloadAndSkipCache\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "back",
+                "comment": " Go back some number of pages.\n",
+                "type": "Basics.Int -> ProgramTest.SimulatedEffect msg"
+            },
+            {
+                "name": "load",
+                "comment": " Leave the current page and load the given URL.\n",
+                "type": "String.String -> ProgramTest.SimulatedEffect msg"
+            },
+            {
+                "name": "pushUrl",
+                "comment": " Change the URL, but do not trigger a page load.\nThis will add a new entry to the browser history.\n",
+                "type": "String.String -> ProgramTest.SimulatedEffect msg"
+            },
+            {
+                "name": "reload",
+                "comment": " Reload the current page.\n",
+                "type": "ProgramTest.SimulatedEffect msg"
+            },
+            {
+                "name": "reloadAndSkipCache",
+                "comment": " Reload the current page without using the browser cache.\n",
+                "type": "ProgramTest.SimulatedEffect msg"
+            },
+            {
+                "name": "replaceUrl",
+                "comment": " Change the URL, but do not trigger a page load.\nThis _will not_ add a new entry to the browser history.\n",
+                "type": "String.String -> ProgramTest.SimulatedEffect msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "SimulatedEffect.Ports",
+        "comment": " This module provides functions that allow you to create `SimulatedEffect`s\nthat parallel [Elm ports](https://guide.elm-lang.org/interop/ports.html) used in your real program.\nThis is meant to be used\nto help you implement the function to provide when using\n[`ProgramTest.withSimulatedEffects`](ProgramTest#withSimulatedEffects)\nand [`ProgramTest.withSimulatedSubscriptions`](ProgramTest#withSimulatedSubscriptions).\n\nFor a detailed example, see the [“Testing programs with ports” guidebook](https://elm-program-test.netlify.com/ports.html).\n\n@docs send, subscribe\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "send",
+                "comment": " Creates a `SimulatedEffect` that parallels using an outgoing Elm port.\n\nFor example, if your production code uses a port like this:\n\n    port logMessage : String -> Cmd msg\n\n    logMessage \"hello\"\n\nThen the corresponding `SimulatedEffect` would be:\n\n    SimulatedEffect.Ports.send \"logMessage\" (Json.Encode.string \"hello\")\n\n",
+                "type": "String.String -> Json.Encode.Value -> ProgramTest.SimulatedEffect msg"
+            },
+            {
+                "name": "subscribe",
+                "comment": " Creates a `SimulatedSub` that parallels using an incoming Elm port.\n\nFor example, if your production code uses a port like this:\n\n    port activeUsers : (List String -> msg) -> Sub msg\n\n    subscriptions : Model -> Sub Msg\n    subscriptions model =\n        activeUsers OnActiveUsersLoaded\n\nThen the corresponding `SimulatedSub` would be:\n\n    simulatedSubscriptions : Model -> SimulatedSub Msg\n    simulatedSubscriptions model =\n        SimulatedEffect.Ports.subscribe\n            \"activeUsers\"\n            (Json.Decode.list Json.Decode.string)\n            OnActiveUsersLoaded\n\n",
+                "type": "String.String -> Json.Decode.Decoder a -> (a -> msg) -> ProgramTest.SimulatedSub msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "SimulatedEffect.Process",
+        "comment": " This module parallels [elm/core's `Process` module](https://package.elm-lang.org/packages/elm/core/1.0.2/Process).\n_Pull requests are welcome to add any functions that are missing._\n\nThe functions here produce `SimulatedEffect`s instead of `Cmd`s, which are meant to be used\nto help you implement the function to provide when using [`ProgramTest.withSimulatedEffects`](ProgramTest#withSimulatedEffects).\n\n\n# Processes\n\n@docs sleep\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "sleep",
+                "comment": " Block progress on the current process for the given number of milliseconds.\n",
+                "type": "Basics.Float -> ProgramTest.SimulatedTask x ()"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "SimulatedEffect.Sub",
+        "comment": " This module parallels [elm/core's `Platform.Sub` module](https://package.elm-lang.org/packages/elm/core/1.0.2/Platform-Sub).\n\nThe functions here produce `SimulatedSub`s instead of `Sub`s, which are meant to be used\nto help you implement the function to provide when using [`ProgramTest.withSimulatedSubscriptions`](ProgramTest#withSimulatedSubscriptions).\n\n@docs none, batch\n\n@docs map\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "batch",
+                "comment": " When you need to subscribe to multiple things, you can create a `batch` of subscriptions.\n",
+                "type": "List.List (ProgramTest.SimulatedSub msg) -> ProgramTest.SimulatedSub msg"
+            },
+            {
+                "name": "map",
+                "comment": " Transform the messages produced by a subscription.\n",
+                "type": "(a -> msg) -> ProgramTest.SimulatedSub a -> ProgramTest.SimulatedSub msg"
+            },
+            {
+                "name": "none",
+                "comment": " Tell the runtime that there are no subscriptions.\n",
+                "type": "ProgramTest.SimulatedSub msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "SimulatedEffect.Task",
+        "comment": " This module parallels [elm/core's `Task` module](https://package.elm-lang.org/packages/elm/core/1.0.2/Task).\n_Pull requests are welcome to add any functions that are missing._\n\nThe functions here produce `SimulatedTasks`s instead of `Tasks`s\nand `SimulatedEffect`s instead of `Cmd`s, which are meant to be used\nto help you implement the function to provide when using [`ProgramTest.withSimulatedEffects`](ProgramTest#withSimulatedEffects).\n\n\n# Tasks\n\n@docs perform, attempt\n\n\n# Chains\n\n@docs andThen, succeed, fail\n\n\n# Maps\n\n@docs map, map2, map3, map4, map5\n\n\n# Errors\n\n@docs mapError, onError\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "andThen",
+                "comment": " Chain together a task and a callback.\n",
+                "type": "(a -> ProgramTest.SimulatedTask x b) -> ProgramTest.SimulatedTask x a -> ProgramTest.SimulatedTask x b"
+            },
+            {
+                "name": "attempt",
+                "comment": " This is very similar to [`perform`](#perform) except it can handle failures!\n",
+                "type": "(Result.Result x a -> msg) -> ProgramTest.SimulatedTask x a -> ProgramTest.SimulatedEffect msg"
+            },
+            {
+                "name": "fail",
+                "comment": " A task that fails immediately when run.\n",
+                "type": "x -> ProgramTest.SimulatedTask x a"
+            },
+            {
+                "name": "map",
+                "comment": " Transform a task.\n",
+                "type": "(a -> b) -> ProgramTest.SimulatedTask x a -> ProgramTest.SimulatedTask x b"
+            },
+            {
+                "name": "map2",
+                "comment": " Put the results of two tasks together.\n",
+                "type": "(a -> b -> result) -> ProgramTest.SimulatedTask x a -> ProgramTest.SimulatedTask x b -> ProgramTest.SimulatedTask x result"
+            },
+            {
+                "name": "map3",
+                "comment": " Put the results of three tasks together.\n",
+                "type": "(a -> b -> c -> result) -> ProgramTest.SimulatedTask x a -> ProgramTest.SimulatedTask x b -> ProgramTest.SimulatedTask x c -> ProgramTest.SimulatedTask x result"
+            },
+            {
+                "name": "map4",
+                "comment": " Put the results of four tasks together.\n",
+                "type": "(a -> b -> c -> d -> result) -> ProgramTest.SimulatedTask x a -> ProgramTest.SimulatedTask x b -> ProgramTest.SimulatedTask x c -> ProgramTest.SimulatedTask x d -> ProgramTest.SimulatedTask x result"
+            },
+            {
+                "name": "map5",
+                "comment": " Put the results of five tasks together.\n",
+                "type": "(a -> b -> c -> d -> e -> result) -> ProgramTest.SimulatedTask x a -> ProgramTest.SimulatedTask x b -> ProgramTest.SimulatedTask x c -> ProgramTest.SimulatedTask x d -> ProgramTest.SimulatedTask x e -> ProgramTest.SimulatedTask x result"
+            },
+            {
+                "name": "mapError",
+                "comment": " Transform the error value.\n",
+                "type": "(x -> y) -> ProgramTest.SimulatedTask x a -> ProgramTest.SimulatedTask y a"
+            },
+            {
+                "name": "onError",
+                "comment": " Recover from a failure in a task.\n",
+                "type": "(x -> ProgramTest.SimulatedTask y a) -> ProgramTest.SimulatedTask x a -> ProgramTest.SimulatedTask y a"
+            },
+            {
+                "name": "perform",
+                "comment": " ",
+                "type": "(a -> msg) -> ProgramTest.SimulatedTask Basics.Never a -> ProgramTest.SimulatedEffect msg"
+            },
+            {
+                "name": "succeed",
+                "comment": " A task that succeeds immediately when run.\n",
+                "type": "a -> ProgramTest.SimulatedTask x a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "SimulatedEffect.Time",
+        "comment": " This module parallels [elm/time's `Time` module](https://package.elm-lang.org/packages/elm/time/1.0.0/Time).\n_Pull requests are welcome to add any functions that are missing._\n\nThe functions here produce `SimulatedEffect`s instead of `Cmd`s, which are meant to be used\nto help you implement the function to provide when using [`ProgramTest.withSimulatedEffects`](ProgramTest#withSimulatedEffects).\n\n\n# Time\n\n@docs now\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "now",
+                "comment": " Get the POSIX time at the moment when this task is run.\n",
+                "type": "ProgramTest.SimulatedTask x Time.Posix"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Test.Http",
+        "comment": " Convenience functions for testing HTTP requests.\n_Pull requests are welcome to add more useful functions._\n\n\n## Expectations\n\nThese functions provide some convenient checks that can be used with [`ProgramTest.expectHttpRequest`](ProgramTest#expectHttpRequest).\n\n@docs expectJsonBody, HttpRequest, hasHeader\n\n\n## Responses\n\nThese are ways to easily make `Http.Response` values for use with [`ProgramTest.simulateHttpResponse`](ProgramTest#simulateHttpResponse).\n\n@docs timeout, networkError, httpResponse\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "HttpRequest",
+                "comment": " ",
+                "args": [
+                    "x",
+                    "a"
+                ],
+                "type": "{ method : String.String, url : String.String, body : String.String, headers : List.List ( String.String, String.String ), onRequestComplete : Http.Response String.String -> SimulatedEffect.SimulatedTask x a }"
+            }
+        ],
+        "values": [
+            {
+                "name": "expectJsonBody",
+                "comment": " A convenient way to check something about the request body of a pending HTTP request.\n\n    ...\n        |> ProgramTest.expectHttpRequest \"POST\"\n            \"https://example.com/ok\"\n            (Test.Http.expectJsonBody\n                (Json.Decode.field \"version\" Json.Decode.string)\n                (Expect.equal \"3.1.5\")\n            )\n\n",
+                "type": "Json.Decode.Decoder requestBody -> (requestBody -> Expect.Expectation) -> Test.Http.HttpRequest x a -> Expect.Expectation"
+            },
+            {
+                "name": "hasHeader",
+                "comment": " Assert that the given HTTP request has the specified header.\n\n    ...\n        |> ProgramTest.expectHttpRequest \"POST\"\n            \"https://example.com/ok\"\n            (Test.Http.hasHeader \"Content-Type\" \"application/json\")\n\n",
+                "type": "String.String -> String.String -> Test.Http.HttpRequest x a -> Expect.Expectation"
+            },
+            {
+                "name": "httpResponse",
+                "comment": " This is a more convenient way to create `Http.BadStatus_` and `Http.GoodStatus_` values.\n\nFollowing the [logic in elm/http](https://github.com/elm/http/blob/2.0.0/src/Elm/Kernel/Http.js#L65),\nthis will produce `Http.GoodStatus_` if the given status code is in the 200 series, otherwise\nit will produce `Http.BadStatus_`.\n\n",
+                "type": "{ statusCode : Basics.Int, headers : List.List ( String.String, String.String ), body : body } -> Http.Response body"
+            },
+            {
+                "name": "networkError",
+                "comment": " This is the same as `Http.NetworkError_`,\nbut is exposed here so that your test doesn't need to import both `Http` and `Test.Http`.\n",
+                "type": "Http.Response body"
+            },
+            {
+                "name": "timeout",
+                "comment": " This is the same as `Http.Timeout_`,\nbut is exposed here so that your test doesn't need to import both `Http` and `Test.Http`.\n",
+                "type": "Http.Response body"
+            }
+        ],
+        "binops": []
+    }
+]

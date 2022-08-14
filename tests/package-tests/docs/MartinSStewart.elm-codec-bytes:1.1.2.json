@@ -1,0 +1,290 @@
+[
+    {
+        "name": "Codec.Bytes",
+        "comment": " A `Codec a` contains a `Bytes.Decoder a` and the corresponding `a -> Bytes.Encoder`.\n\n\n# Definition\n\n@docs Codec, Endianness, Encoder, Bytes\n\n\n# Decode\n\n@docs Decoder, decoder, decodeValue\n\n\n# Encode\n\n@docs encoder, encodeToValue\n\n\n# Primitives\n\n@docs string, bool, char, signedInt, unsignedInt, float64, float32, signedInt32, unsignedInt32, signedInt16, unsignedInt16, signedInt8, unsignedInt8, bytes\n\n\n# Data Structures\n\n@docs maybe, list, array, dict, set, tuple, triple, result\n\n\n# Object Primitives\n\n@docs ObjectCodec, object, field, buildObject\n\n\n# Custom Types\n\n@docs CustomCodec, custom, variant0, variant1, variant2, variant3, variant4, variant5, variant6, variant7, variant8, buildCustom\n\n\n# Mapping\n\n@docs map\n\n\n# Fancy Codecs\n\n@docs constant, lazy, recursive, customWithIdCodec\n\n",
+        "unions": [
+            {
+                "name": "Codec",
+                "comment": " A value that knows how to encode and decode a sequence of bytes.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            },
+            {
+                "name": "CustomCodec",
+                "comment": " A partially built `Codec` for a custom type.\n",
+                "args": [
+                    "match",
+                    "v"
+                ],
+                "cases": []
+            },
+            {
+                "name": "ObjectCodec",
+                "comment": " A partially built `Codec` for an object.\n",
+                "args": [
+                    "a",
+                    "b"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Bytes",
+                "comment": " A sequence of bytes. Refer to the [elm/bytes docs][bytes] for more information.\n\n[bytes]: https://package.elm-lang.org/packages/elm/bytes/latest/Bytes#Bytes\n\n",
+                "args": [],
+                "type": "Bytes.Bytes"
+            },
+            {
+                "name": "Decoder",
+                "comment": " Describes how to turn a sequence of bytes into a nice Elm value.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "Bytes.Decode.Decoder a"
+            },
+            {
+                "name": "Encoder",
+                "comment": " Describes how to generate a sequence of bytes.\n",
+                "args": [],
+                "type": "Bytes.Encode.Encoder"
+            },
+            {
+                "name": "Endianness",
+                "comment": " The direction bytes are ordered in memory. Refer to the [elm/bytes docs][endianness] for more information.\n\n[endianness]: https://package.elm-lang.org/packages/elm/bytes/latest/Bytes#Endianness\n\n",
+                "args": [],
+                "type": "Bytes.Endianness"
+            }
+        ],
+        "values": [
+            {
+                "name": "array",
+                "comment": " `Codec` between a sequence of bytes and an Elm `Array`.\n",
+                "type": "Codec.Bytes.Codec a -> Codec.Bytes.Codec (Array.Array a)"
+            },
+            {
+                "name": "bool",
+                "comment": " `Codec` between a sequence of bytes and an Elm `Bool`\n",
+                "type": "Codec.Bytes.Codec Basics.Bool"
+            },
+            {
+                "name": "buildCustom",
+                "comment": " Build a `Codec` for a fully specified custom type.\n",
+                "type": "Codec.Bytes.CustomCodec (a -> Codec.Bytes.Encoder) a -> Codec.Bytes.Codec a"
+            },
+            {
+                "name": "buildObject",
+                "comment": " Create a `Codec` from a fully specified `ObjectCodec`.\n",
+                "type": "Codec.Bytes.ObjectCodec a a -> Codec.Bytes.Codec a"
+            },
+            {
+                "name": "bytes",
+                "comment": " `Codec` for `Bytes`. This is useful if you wanted to include binary data that you're going to decode elsewhere such as a PNG file.\n",
+                "type": "Codec.Bytes.Codec Codec.Bytes.Bytes"
+            },
+            {
+                "name": "char",
+                "comment": " `Codec` between a sequence of bytes and an Elm `Char`\n",
+                "type": "Codec.Bytes.Codec Char.Char"
+            },
+            {
+                "name": "constant",
+                "comment": " Create a `Codec` that encodes nothing and always decodes as the same value.\n",
+                "type": "a -> Codec.Bytes.Codec a"
+            },
+            {
+                "name": "custom",
+                "comment": " Starts building a `Codec` for a custom type.\nYou need to pass a pattern matching function, see the FAQ for details.\n\n    type Semaphore\n        = Red Int String Bool\n        | Yellow Float\n        | Green\n\n    semaphoreCodec : Codec Semaphore\n    semaphoreCodec =\n        Codec.custom\n            (\\redEncoder yellowEncoder greenEncoder value ->\n                case value of\n                    Red i s b ->\n                        redEncoder i s b\n\n                    Yellow f ->\n                        yellowEncoder f\n\n                    Green ->\n                        greenEncoder\n            )\n            |> Codec.variant3 0 Red Codec.signedInt Codec.string Codec.bool\n            |> Codec.variant1 1 Yellow Codec.float64\n            |> Codec.variant0 2 Green\n            |> Codec.buildCustom\n\n",
+                "type": "match -> Codec.Bytes.CustomCodec match value"
+            },
+            {
+                "name": "customWithIdCodec",
+                "comment": " Same as `custom` but here we can choose what codec to use for the integer id we tell apart variants with.\nThis is useful if, for example, you know you won't have ids outside of the range 0 - 255 and can use unsignedInt8 instead of the default signedInt32 to save some space.\n",
+                "type": "Codec.Bytes.Codec Basics.Int -> match -> Codec.Bytes.CustomCodec match value"
+            },
+            {
+                "name": "decodeValue",
+                "comment": " Run a `Codec` to turn a sequence of bytes into an Elm value.\n",
+                "type": "Codec.Bytes.Codec a -> Codec.Bytes.Bytes -> Maybe.Maybe a"
+            },
+            {
+                "name": "decoder",
+                "comment": " Extracts the `Decoder` contained inside the `Codec`.\n",
+                "type": "Codec.Bytes.Codec a -> Codec.Bytes.Decoder a"
+            },
+            {
+                "name": "dict",
+                "comment": " `Codec` between a sequence of bytes and an Elm `Dict`.\n",
+                "type": "Codec.Bytes.Codec comparable -> Codec.Bytes.Codec a -> Codec.Bytes.Codec (Dict.Dict comparable a)"
+            },
+            {
+                "name": "encodeToValue",
+                "comment": " Convert an Elm value into a sequence of bytes.\n",
+                "type": "Codec.Bytes.Codec a -> a -> Codec.Bytes.Bytes"
+            },
+            {
+                "name": "encoder",
+                "comment": " Extracts the encoding function contained inside the `Codec`.\n",
+                "type": "Codec.Bytes.Codec a -> a -> Codec.Bytes.Encoder"
+            },
+            {
+                "name": "field",
+                "comment": " Specify how to get a value from the object we want to encode and then give a `Codec` for that value.\n",
+                "type": "(a -> f) -> Codec.Bytes.Codec f -> Codec.Bytes.ObjectCodec a (f -> b) -> Codec.Bytes.ObjectCodec a b"
+            },
+            {
+                "name": "float32",
+                "comment": " `Codec` between a 32-bit float and an Elm `Float`.\nDue to Elm `Float`s being 64-bit, encoding and decoding it as a 32-bit float won't exactly equal the original value.\n",
+                "type": "Codec.Bytes.Codec Basics.Float"
+            },
+            {
+                "name": "float64",
+                "comment": " `Codec` between a 64-bit float and an Elm `Float`\n",
+                "type": "Codec.Bytes.Codec Basics.Float"
+            },
+            {
+                "name": "lazy",
+                "comment": " This is useful for recursive structures that are not easily modeled with `recursive`.\n\n    type Peano\n        = Peano (Maybe Peano)\n\n    {-| This is the same example used in Codec.recursive but adapted for lazy.\n    -}\n    peanoCodec : Codec Peano\n    peanoCodec =\n        Codec.maybe (Codec.lazy (\\() -> peanoCodec)) |> Codec.map Peano (\\(Peano a) -> a)\n\n**Warning:** `lazy` is _not_ stack safe!\nIf you have something like `Peano (Just (Peano Just (...)))` nested within itself sufficiently many times and you try to use `peanoCodec` on it, you'll get a stack overflow!\n\n",
+                "type": "(() -> Codec.Bytes.Codec a) -> Codec.Bytes.Codec a"
+            },
+            {
+                "name": "list",
+                "comment": " `Codec` between a sequence of bytes and an Elm `List`.\n",
+                "type": "Codec.Bytes.Codec a -> Codec.Bytes.Codec (List.List a)"
+            },
+            {
+                "name": "map",
+                "comment": " Transform a `Codec`.\n",
+                "type": "(a -> b) -> (b -> a) -> Codec.Bytes.Codec a -> Codec.Bytes.Codec b"
+            },
+            {
+                "name": "maybe",
+                "comment": " Represents an optional value.\n",
+                "type": "Codec.Bytes.Codec a -> Codec.Bytes.Codec (Maybe.Maybe a)"
+            },
+            {
+                "name": "object",
+                "comment": " Start creating a `Codec` for an object. You should pass the main constructor as argument.\nIf you don't have one (for example it's a simple type with no name), you should pass a function that given the field values builds an object.\n\n    type alias Point =\n        { x : Int\n        , y : Int\n        }\n\n    pointCodec : Codec Point\n    pointCodec =\n        Codec.object Point\n            |> Codec.field .x Codec.signedInt\n            |> Codec.field .y Codec.signedInt\n            |> Codec.buildObject\n\n",
+                "type": "b -> Codec.Bytes.ObjectCodec a b"
+            },
+            {
+                "name": "recursive",
+                "comment": " Create a `Codec` for a recursive data structure.\nThe argument to the function you need to pass is the fully formed `Codec`, see the FAQ for details.\n\n    type Peano\n        = Peano (Maybe Peano)\n\n    peanoCodec : Codec Peano\n    peanoCodec =\n        Codec.recursive\n            (\\finishedCodec ->\n                Codec.maybe finishedCodec\n                    |> Codec.map Peano (\\(Peano p) -> p)\n            )\n\n**Warning:** `recursive` is _not_ stack safe!\nIf you have something like `Peano (Just (Peano Just (...)))` nested within itself sufficiently many times and you try to use `peanoCodec` on it, you'll get a stack overflow!\n\n",
+                "type": "(Codec.Bytes.Codec a -> Codec.Bytes.Codec a) -> Codec.Bytes.Codec a"
+            },
+            {
+                "name": "result",
+                "comment": " `Codec` for `Result` values.\n",
+                "type": "Codec.Bytes.Codec error -> Codec.Bytes.Codec value -> Codec.Bytes.Codec (Result.Result error value)"
+            },
+            {
+                "name": "set",
+                "comment": " `Codec` between a sequence of bytes and an Elm `Set`.\n",
+                "type": "Codec.Bytes.Codec comparable -> Codec.Bytes.Codec (Set.Set comparable)"
+            },
+            {
+                "name": "signedInt",
+                "comment": " `Codec` between a signed 32-bit integer and an Elm `Int`.\nUse this if the byte ordering and number of bytes used isn't a concern.\n",
+                "type": "Codec.Bytes.Codec Basics.Int"
+            },
+            {
+                "name": "signedInt16",
+                "comment": " `Codec` between a signed 16-bit integer and an Elm `Int`\n",
+                "type": "Codec.Bytes.Endianness -> Codec.Bytes.Codec Basics.Int"
+            },
+            {
+                "name": "signedInt32",
+                "comment": " `Codec` between a signed 32-bit integer and an Elm `Int`\n",
+                "type": "Codec.Bytes.Endianness -> Codec.Bytes.Codec Basics.Int"
+            },
+            {
+                "name": "signedInt8",
+                "comment": " `Codec` between a signed 8-bit integer and an Elm `Int`\n",
+                "type": "Codec.Bytes.Codec Basics.Int"
+            },
+            {
+                "name": "string",
+                "comment": " `Codec` between a sequence of bytes and an Elm `String`\n",
+                "type": "Codec.Bytes.Codec String.String"
+            },
+            {
+                "name": "triple",
+                "comment": " `Codec` between a sequence of bytes and an Elm triple.\n",
+                "type": "Codec.Bytes.Codec a -> Codec.Bytes.Codec b -> Codec.Bytes.Codec c -> Codec.Bytes.Codec ( a, b, c )"
+            },
+            {
+                "name": "tuple",
+                "comment": " `Codec` between a sequence of bytes and an Elm `Tuple`.\n",
+                "type": "Codec.Bytes.Codec a -> Codec.Bytes.Codec b -> Codec.Bytes.Codec ( a, b )"
+            },
+            {
+                "name": "unsignedInt",
+                "comment": " `Codec` between an unsigned 32-bit integer and an Elm `Int`.\nUse this if the byte ordering and number of bytes used isn't a concern.\n",
+                "type": "Codec.Bytes.Codec Basics.Int"
+            },
+            {
+                "name": "unsignedInt16",
+                "comment": " `Codec` between an unsigned 16-bit integer and an Elm `Int`\n",
+                "type": "Codec.Bytes.Endianness -> Codec.Bytes.Codec Basics.Int"
+            },
+            {
+                "name": "unsignedInt32",
+                "comment": " `Codec` between an unsigned 32-bit integer and an Elm `Int`\n",
+                "type": "Codec.Bytes.Endianness -> Codec.Bytes.Codec Basics.Int"
+            },
+            {
+                "name": "unsignedInt8",
+                "comment": " `Codec` between an unsigned 8-bit integer and an Elm `Int`\n",
+                "type": "Codec.Bytes.Codec Basics.Int"
+            },
+            {
+                "name": "variant0",
+                "comment": " Define a variant with 0 parameters for a custom type.\n",
+                "type": "Basics.Int -> v -> Codec.Bytes.CustomCodec (Codec.Bytes.Encoder -> a) v -> Codec.Bytes.CustomCodec a v"
+            },
+            {
+                "name": "variant1",
+                "comment": " Define a variant with 1 parameters for a custom type.\n",
+                "type": "Basics.Int -> (a -> v) -> Codec.Bytes.Codec a -> Codec.Bytes.CustomCodec ((a -> Codec.Bytes.Encoder) -> b) v -> Codec.Bytes.CustomCodec b v"
+            },
+            {
+                "name": "variant2",
+                "comment": " Define a variant with 2 parameters for a custom type.\n",
+                "type": "Basics.Int -> (a -> b -> v) -> Codec.Bytes.Codec a -> Codec.Bytes.Codec b -> Codec.Bytes.CustomCodec ((a -> b -> Codec.Bytes.Encoder) -> c) v -> Codec.Bytes.CustomCodec c v"
+            },
+            {
+                "name": "variant3",
+                "comment": " Define a variant with 3 parameters for a custom type.\n",
+                "type": "Basics.Int -> (a -> b -> c -> v) -> Codec.Bytes.Codec a -> Codec.Bytes.Codec b -> Codec.Bytes.Codec c -> Codec.Bytes.CustomCodec ((a -> b -> c -> Codec.Bytes.Encoder) -> partial) v -> Codec.Bytes.CustomCodec partial v"
+            },
+            {
+                "name": "variant4",
+                "comment": " Define a variant with 4 parameters for a custom type.\n",
+                "type": "Basics.Int -> (a -> b -> c -> d -> v) -> Codec.Bytes.Codec a -> Codec.Bytes.Codec b -> Codec.Bytes.Codec c -> Codec.Bytes.Codec d -> Codec.Bytes.CustomCodec ((a -> b -> c -> d -> Codec.Bytes.Encoder) -> partial) v -> Codec.Bytes.CustomCodec partial v"
+            },
+            {
+                "name": "variant5",
+                "comment": " Define a variant with 5 parameters for a custom type.\n",
+                "type": "Basics.Int -> (a -> b -> c -> d -> e -> v) -> Codec.Bytes.Codec a -> Codec.Bytes.Codec b -> Codec.Bytes.Codec c -> Codec.Bytes.Codec d -> Codec.Bytes.Codec e -> Codec.Bytes.CustomCodec ((a -> b -> c -> d -> e -> Codec.Bytes.Encoder) -> partial) v -> Codec.Bytes.CustomCodec partial v"
+            },
+            {
+                "name": "variant6",
+                "comment": " Define a variant with 6 parameters for a custom type.\n",
+                "type": "Basics.Int -> (a -> b -> c -> d -> e -> f -> v) -> Codec.Bytes.Codec a -> Codec.Bytes.Codec b -> Codec.Bytes.Codec c -> Codec.Bytes.Codec d -> Codec.Bytes.Codec e -> Codec.Bytes.Codec f -> Codec.Bytes.CustomCodec ((a -> b -> c -> d -> e -> f -> Codec.Bytes.Encoder) -> partial) v -> Codec.Bytes.CustomCodec partial v"
+            },
+            {
+                "name": "variant7",
+                "comment": " Define a variant with 7 parameters for a custom type.\n",
+                "type": "Basics.Int -> (a -> b -> c -> d -> e -> f -> g -> v) -> Codec.Bytes.Codec a -> Codec.Bytes.Codec b -> Codec.Bytes.Codec c -> Codec.Bytes.Codec d -> Codec.Bytes.Codec e -> Codec.Bytes.Codec f -> Codec.Bytes.Codec g -> Codec.Bytes.CustomCodec ((a -> b -> c -> d -> e -> f -> g -> Codec.Bytes.Encoder) -> partial) v -> Codec.Bytes.CustomCodec partial v"
+            },
+            {
+                "name": "variant8",
+                "comment": " Define a variant with 8 parameters for a custom type.\n",
+                "type": "Basics.Int -> (a -> b -> c -> d -> e -> f -> g -> h -> v) -> Codec.Bytes.Codec a -> Codec.Bytes.Codec b -> Codec.Bytes.Codec c -> Codec.Bytes.Codec d -> Codec.Bytes.Codec e -> Codec.Bytes.Codec f -> Codec.Bytes.Codec g -> Codec.Bytes.Codec h -> Codec.Bytes.CustomCodec ((a -> b -> c -> d -> e -> f -> g -> h -> Codec.Bytes.Encoder) -> partial) v -> Codec.Bytes.CustomCodec partial v"
+            }
+        ],
+        "binops": []
+    }
+]

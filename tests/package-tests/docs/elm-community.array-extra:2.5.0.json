@@ -1,0 +1,151 @@
+[
+    {
+        "name": "Array.Extra",
+        "comment": " Convenience functions for working with `Array`\n\n\n# scan\n\n@docs all, any\n\n\n# alter\n\n@docs reverse, update\n@docs pop, removeAt, removeWhen\n@docs insertAt, intersperse\n\n\n## part\n\n@docs sliceFrom, sliceUntil, splitAt\n\n\n## combine\n\n@docs interweave, apply, map2, map3, map4, map5, zip, zip3, unzip\n\n\n## resize\n\n@docs resizelRepeat, resizerRepeat, resizelIndexed, resizerIndexed\n\n\n# transform\n\n@docs filterMap, mapToList, indexedMapToList\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "all",
+                "comment": " Whether all elements satisfy a given test.\n\n    import Array exposing (fromList, empty)\n\n    all (\\x -> x < 5) (fromList [ 2, 4 ])\n    --> True\n\n    all (\\x -> x < 5) (fromList [ 4, 16 ])\n    --> False\n\n    all (\\x -> x < 5) empty\n    --> True\n\n",
+                "type": "(a -> Basics.Bool) -> Array.Array a -> Basics.Bool"
+            },
+            {
+                "name": "any",
+                "comment": " Whether at least some elements satisfy a given test.\n\n    import Array exposing (fromList, empty)\n\n    any (\\x -> x < 5) (fromList [ 6, 3 ])\n    --> True\n\n    any (\\x -> x < 5) (fromList [ 12, 33 ])\n    --> False\n\n    any (\\x -> x < 5) empty\n    --> False\n\n",
+                "type": "(a -> Basics.Bool) -> Array.Array a -> Basics.Bool"
+            },
+            {
+                "name": "apply",
+                "comment": " Apply a given `Array` of changes to all elements.\nIf one `Array` is longer, its extra elements are not used.\n\n    import Array exposing (fromList, repeat)\n\n    apply\n        (fromList\n            [ \\x -> -x, identity, (+) 10 ]\n        )\n        (repeat 5 100)\n    --> fromList [ -100, 100, 110 ]\n\n",
+                "type": "Array.Array (a -> b) -> Array.Array a -> Array.Array b"
+            },
+            {
+                "name": "filterMap",
+                "comment": " Try transforming all elements but only keep the successes.\n\n    import Array exposing (fromList)\n\n    filterMap String.toInt\n        (fromList [ \"3\", \"4.0\", \"5\", \"hats\" ])\n    --> fromList [ 3, 5 ]\n\n",
+                "type": "(a -> Maybe.Maybe b) -> Array.Array a -> Array.Array b"
+            },
+            {
+                "name": "indexedMapToList",
+                "comment": " Transform all elements with their indexes as the first argument\nand collect the result in a `List`.\n\n    import Array exposing (Array, fromList)\n    import Html exposing (Html)\n\n    type alias Exercise =\n        { name : String }\n\n    exerciseRender : Int -> Exercise -> Html msg\n    exerciseRender index exercise =\n        String.concat\n            [ \"Exercise #\"\n            , String.fromInt (index + 1)\n            , \" - \"\n            , exercise.name\n            ]\n            |> Html.text\n\n    exercisesRender : Array Exercise -> Html msg\n    exercisesRender exercises =\n        indexedMapToList renderExercise exercises\n            |> Html.div []\n\n",
+                "type": "(Basics.Int -> a -> b) -> Array.Array a -> List.List b"
+            },
+            {
+                "name": "insertAt",
+                "comment": " Insert an element at a given index.\nIf the index is out of bounds, nothing is changed.\n\n    import Array exposing (fromList)\n\n    insertAt 1 'b' (fromList [ 'a', 'c' ])\n    --> fromList [ 'a', 'b', 'c' ]\n\n    insertAt -1 'b' (fromList [ 'a', 'c' ])\n    --> fromList [ 'a', 'c' ]\n\n    insertAt 100 'b' (fromList [ 'a', 'c' ])\n    --> fromList [ 'a', 'c' ]\n\n",
+                "type": "Basics.Int -> a -> Array.Array a -> Array.Array a"
+            },
+            {
+                "name": "intersperse",
+                "comment": " Place a value between all members.\n\n    import Array exposing (fromList)\n\n    intersperse \"on\"\n        (fromList [ \"turtles\", \"turtles\", \"turtles\" ])\n    --> fromList\n    -->     [ \"turtles\", \"on\", \"turtles\", \"on\", \"turtles\" ]\n\nTo interlace an `Array`, [`interweave`](#interweave).\n\n",
+                "type": "a -> Array.Array a -> Array.Array a"
+            },
+            {
+                "name": "interweave",
+                "comment": " Place all elements of a given `Array` between all current elements.\nExtra elements of either `Array` are glued to the end without anything in between.\n\n    import Array exposing (fromList, repeat)\n\n    fromList [ \"turtles\", \"turtles\", \"turtles\" ]\n        |> interweave (repeat 2 \"on\")\n    --> fromList [ \"turtles\", \"on\", \"turtles\", \"on\", \"turtles\" ]\n\n    fromList [ \"turtles\", \"turtles\", \"turtles\" ]\n        |> interweave (repeat 5 \"on\")\n    --> fromList [ \"turtles\", \"on\", \"turtles\", \"on\", \"turtles\", \"on\", \"on\", \"on\" ]\n\n    fromList [ \"turtles\", \"turtles\", \"turtles\" ]\n        |> interweave (repeat 1 \"on\")\n    --> fromList [ \"turtles\", \"on\", \"turtles\", \"turtles\" ]\n\n",
+                "type": "Array.Array element -> Array.Array element -> Array.Array element"
+            },
+            {
+                "name": "map2",
+                "comment": " Combine the elements of two `Array`s with a given function.\nIf one `Array` is longer, its extra elements are not used.\n\n    import Array exposing (fromList)\n\n    map2 (+)\n        (fromList [ 1, 2, 3 ])\n        (fromList [ 1, 2, 3, 4 ])\n    --> fromList [ 2, 4, 6 ]\n\n    map2 Tuple.pair\n        (fromList [ 1, 2, 3 ])\n        (fromList [ 'a', 'b' ])\n    --> fromList [ ( 1, 'a' ), ( 2, 'b' ) ]\n\nNote: [`zip`](Array-Extra#zip) can be used instead of `map2 Tuple.pair`.\n\n",
+                "type": "(a -> b -> combined) -> Array.Array a -> Array.Array b -> Array.Array combined"
+            },
+            {
+                "name": "map3",
+                "comment": " Combine the elements of three `Array`s with the given function. See [`map2`](Array-Extra#map2).\n\nNote: [`zip3`](Array-Extra#zip3) can be used instead of `map3 (\\a b c -> ( a, b, c ))`.\n\n",
+                "type": "(a -> b -> c -> combined) -> Array.Array a -> Array.Array b -> Array.Array c -> Array.Array combined"
+            },
+            {
+                "name": "map4",
+                "comment": " Combine the elements of four `Array`s with the given function. See [`map2`](Array-Extra#map2).\n",
+                "type": "(a -> b -> c -> d -> combined) -> Array.Array a -> Array.Array b -> Array.Array c -> Array.Array d -> Array.Array combined"
+            },
+            {
+                "name": "map5",
+                "comment": " Combine the elements of five `Array`s with the given function. See [`map2`](Array-Extra#map2).\n",
+                "type": "(a -> b -> c -> d -> e -> combined) -> Array.Array a -> Array.Array b -> Array.Array c -> Array.Array d -> Array.Array e -> Array.Array combined"
+            },
+            {
+                "name": "mapToList",
+                "comment": " Apply a function to the elements in the array and collect the result in a List.\n\n    import Array exposing (fromList)\n    import Html\n\n    mapToList Html.text\n        (fromList [ \"a\", \"b\", \"c\" ])\n    --> [ Html.text \"a\", Html.text \"b\", Html.text \"c\" ]\n\n",
+                "type": "(a -> b) -> Array.Array a -> List.List b"
+            },
+            {
+                "name": "pop",
+                "comment": " Remove the last element.\n\n    import Array exposing (fromList, empty)\n\n    pop (fromList [ 1, 2, 3 ])\n    --> fromList [ 1, 2 ]\n\n    pop empty\n    --> empty\n\n",
+                "type": "Array.Array a -> Array.Array a"
+            },
+            {
+                "name": "removeAt",
+                "comment": " Remove the element at a given index.\nIf the index is out of bounds, nothing is changed.\n\n    import Array exposing (fromList)\n\n    removeAt 2 (fromList [ 1, 2, 3, 4 ])\n    --> fromList [ 1, 2, 4 ]\n\n    removeAt -1 (fromList [ 1, 2, 3, 4 ])\n    --> fromList [ 1, 2, 3, 4 ]\n\n    removeAt 100 (fromList [ 1, 2, 3, 4 ])\n    --> fromList [ 1, 2, 3, 4 ]\n\n",
+                "type": "Basics.Int -> Array.Array a -> Array.Array a"
+            },
+            {
+                "name": "removeWhen",
+                "comment": " Only keep elements which fail to satisfy a given predicate.\nThis is equivalent to `Array.filter (not << predicate)`.\n\n    import Array exposing (fromList)\n\n    removeWhen (\\x -> x < 0)\n        (fromList [ -1, 92, 0, 14, -3 ])\n    --> fromList [ 92, 0, 14 ]\n\n",
+                "type": "(a -> Basics.Bool) -> Array.Array a -> Array.Array a"
+            },
+            {
+                "name": "resizelIndexed",
+                "comment": " Resize from the left, padding the right-hand side with a given value based on index.\n\n    import Array exposing (fromList, empty)\n\n    resizelIndexed 5\n        toLetterInAlphabet\n        (fromList [ 'a', 'b', 'c' ])\n    --> fromList [ 'a', 'b', 'c', 'd', 'e' ]\n\n    resizelIndexed 2\n        toLetterInAlphabet\n        (fromList [ 'a', 'b', 'c' ])\n    --> fromList [ 'a', 'b' ]\n\n    resizelIndexed -1\n        toLetterInAlphabet\n        (fromList [ 'a', 'b', 'c' ])\n    --> empty\n\n    toLetterInAlphabet : Int -> Char\n    toLetterInAlphabet inAlphabet =\n        (Char.toCode 'a') + inAlphabet\n            |> Char.fromCode\n\n",
+                "type": "Basics.Int -> (Basics.Int -> a) -> Array.Array a -> Array.Array a"
+            },
+            {
+                "name": "resizelRepeat",
+                "comment": " Resize from the left, padding the right-hand side with a given value.\n\n    import Array exposing (fromList, empty)\n\n    resizelRepeat 4 0 (fromList [ 1, 2 ])\n    --> fromList [ 1, 2, 0, 0 ]\n\n    resizelRepeat 2 0 (fromList [ 1, 2, 3 ])\n    --> fromList [ 1, 2 ]\n\n    resizelRepeat -1 0 (fromList [ 1, 2 ])\n    --> empty\n\n",
+                "type": "Basics.Int -> a -> Array.Array a -> Array.Array a"
+            },
+            {
+                "name": "resizerIndexed",
+                "comment": " Resize from the right, padding the left-hand side with a given value based on index.\n\n    import Array exposing (fromList, empty)\n\n    resizerIndexed 5\n        ((*) 5)\n        (fromList [ 10, 25, 36 ])\n    --> fromList [ 0, 5, 10, 25, 36 ]\n\n    resizerIndexed 2\n        ((*) 5)\n        (fromList [ 10, 25, 36 ])\n    --> fromList [ 25, 36 ]\n\n    resizerIndexed -1\n        ((*) 5)\n        (fromList [ 10, 25, 36 ])\n    --> empty\n\n",
+                "type": "Basics.Int -> (Basics.Int -> a) -> Array.Array a -> Array.Array a"
+            },
+            {
+                "name": "resizerRepeat",
+                "comment": " Resize from the right, padding the left-hand side with a given value.\n\n    import Array exposing (fromList, empty)\n\n    resizerRepeat 4 0 (fromList [ 1, 2 ])\n    --> fromList [ 0, 0, 1, 2 ]\n\n    resizerRepeat 2 0 (fromList [ 1, 2, 3 ])\n    --> fromList [ 2, 3 ]\n\n    resizerRepeat -1 0 (fromList [ 1, 2 ])\n    --> empty\n\n",
+                "type": "Basics.Int -> a -> Array.Array a -> Array.Array a"
+            },
+            {
+                "name": "reverse",
+                "comment": " Flip the element order.\n\n    import Array exposing (fromList)\n\n    reverse (fromList [ 1, 2, 3, 4 ])\n    --> fromList [ 4, 3, 2, 1 ]\n\n",
+                "type": "Array.Array a -> Array.Array a"
+            },
+            {
+                "name": "sliceFrom",
+                "comment": " Drop a given number of elements from the start.\nIn other words, slice the `Array` from an index until the very end.\nGiven a negative argument, count the end of the slice from the end.\n\n    import Array exposing (fromList)\n\n    sliceFrom 3 (fromList (List.range 0 6))\n    --> fromList [ 3, 4, 5, 6 ]\n\n    sliceFrom -3 (fromList (List.range 0 6))\n    --> fromList [ 4, 5, 6 ]\n\n",
+                "type": "Basics.Int -> Array.Array a -> Array.Array a"
+            },
+            {
+                "name": "sliceUntil",
+                "comment": " Take a number of elements from the start.\nIn other words, slice the `Array` from the very beginning until not including the index.\nGiven a negative argument, count the beginning of the slice from the end.\n\n    import Array exposing (fromList)\n\n    sliceUntil 3 (fromList (List.range 0 6))\n    --> fromList [ 0, 1, 2 ]\n\n    sliceUntil -3 (fromList (List.range 0 6))\n    --> fromList [ 0, 1, 2, 3 ]\n\n",
+                "type": "Basics.Int -> Array.Array a -> Array.Array a"
+            },
+            {
+                "name": "splitAt",
+                "comment": " Split into two `Array`s, the first ending before and the second starting with a given index.\n\n    import Array exposing (fromList, empty)\n\n    splitAt 2 (fromList [ 1, 2, 3, 4 ])\n    --> ( fromList [ 1, 2 ], fromList [ 3, 4 ] )\n\n    splitAt 100 (fromList [ 1, 2, 3, 4 ])\n    --> ( fromList [ 1, 2, 3, 4 ], empty )\n\n    splitAt -1 (fromList [ 1, 2, 3, 4 ])\n    --> ( empty, fromList [ 1, 2, 3, 4 ] )\n\n",
+                "type": "Basics.Int -> Array.Array a -> ( Array.Array a, Array.Array a )"
+            },
+            {
+                "name": "unzip",
+                "comment": " Split all tuple elements into a tuple of one `Array` with the first and one with the second values.\n\n    import Array exposing (fromList)\n\n    unzip\n        (fromList\n            [ ( 1, 'a' ), ( 2, 'b' ), ( 3, 'c' ) ]\n        )\n    --> ( fromList [ 1, 2, 3 ]\n    --> , fromList [ 'a', 'b', 'c' ]\n    --> )\n\n",
+                "type": "Array.Array ( a, b ) -> ( Array.Array a, Array.Array b )"
+            },
+            {
+                "name": "update",
+                "comment": " Update the element at a given index based on its current value.\nIf the index is out of bounds, nothing is changed.\n\n    import Array exposing (fromList)\n\n    update 1 ((+) 10) (fromList [ 1, 2, 3 ])\n    --> fromList [ 1, 12, 3 ]\n\n    update 4 ((+) 10) (fromList [ 1, 2, 3 ])\n    --> fromList [ 1, 2, 3 ]\n\n    update -1 ((+) 10) (fromList [ 1, 2, 3 ])\n    --> fromList [ 1, 2, 3 ]\n\n",
+                "type": "Basics.Int -> (a -> a) -> Array.Array a -> Array.Array a"
+            },
+            {
+                "name": "zip",
+                "comment": " Combine the elements of two `Array`s into tuples.\nIf one is longer, its extra elements are not used.\n\n    import Array exposing (fromList)\n\n    zip\n        (fromList [ 1, 2, 3 ])\n        (fromList [ 'a', 'b' ])\n    --> fromList [ ( 1, 'a' ), ( 2, 'b' ) ]\n\n",
+                "type": "Array.Array a -> Array.Array b -> Array.Array ( a, b )"
+            },
+            {
+                "name": "zip3",
+                "comment": " Zip the elements of three `Array`s into 3-tuples.\nOnly the indexes of the shortest `Array` are used.\n\n    import Array exposing (fromList)\n\n    zip3\n        (fromList [ 1, 2, 3 ])\n        (fromList [ 'a', 'b' ])\n        (fromList [ \"a\", \"b\", \"c\", \"d\" ])\n    --> fromList\n    -->     [ ( 1, 'a', \"a\" )\n    -->     , ( 2, 'b', \"b\" )\n    -->     ]\n\n",
+                "type": "Array.Array a -> Array.Array b -> Array.Array c -> Array.Array ( a, b, c )"
+            }
+        ],
+        "binops": []
+    }
+]

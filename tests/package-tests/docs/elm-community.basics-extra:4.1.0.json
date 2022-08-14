@@ -1,0 +1,96 @@
+[
+    {
+        "name": "Basics.Extra",
+        "comment": " Additional basic functions.\n\n\n# Tuples\n\n@docs swap\n\n\n# Numbers\n\n@docs maxSafeInteger, minSafeInteger, isSafeInteger\n\n\n# Math\n\n@docs atMost, atLeast\n@docs safeDivide, safeIntegerDivide\n@docs safeModBy, safeRemainderBy, fractionalModBy\n\n\n# Angles\n\n@docs inDegrees, inRadians, inTurns\n\n\n# Higher-Order Helpers\n\n@docs flip, curry, uncurry\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "atLeast",
+                "comment": " Defines a lower bound for a variable.\n\n    -42 |> atLeast 0 --> 0\n\n    42 |> atLeast 0 --> 42\n\n",
+                "type": "comparable -> comparable -> comparable"
+            },
+            {
+                "name": "atMost",
+                "comment": " Defines an upper bound for a variable.\n\n    42 |> atMost 0 --> 0\n\n    -42 |> atMost 0 --> -42\n\n",
+                "type": "comparable -> comparable -> comparable"
+            },
+            {
+                "name": "curry",
+                "comment": " Change how arguments are passed to a function.\nThis splits paired arguments into two separate arguments.\n",
+                "type": "(( a, b ) -> c) -> a -> b -> c"
+            },
+            {
+                "name": "flip",
+                "comment": " Flip the order of the first two arguments to a function.\n",
+                "type": "(a -> b -> c) -> b -> a -> c"
+            },
+            {
+                "name": "fractionalModBy",
+                "comment": " Perform [modular arithmetic](https://en.wikipedia.org/wiki/Modular_arithmetic)\ninvolving floating point numbers.\n\nThe sign of the result is the same as the sign of the `modulus`\nin `fractionalModBy modulus x`.\n\n    fractionalModBy 2.5 5 --> 0\n\n    fractionalModBy 2 4.5 == 0.5\n\n    fractionalModBy 2 -4.5 == 1.5\n\n    fractionalModBy -2 4.5 == -1.5\n\n",
+                "type": "Basics.Float -> Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "inDegrees",
+                "comment": " Convert standard Elm angles (radians) to degrees.\n\n    inDegrees (turns 2) --> 720\n\n    inDegrees pi --> 180\n\n",
+                "type": "Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "inRadians",
+                "comment": " Convert standard Elm angles (radians) to radians.\n\n    inRadians (degrees 90) == pi / 2\n\n    inRadians (turns 1) == 2 * pi\n\n",
+                "type": "Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "inTurns",
+                "comment": " Convert standard Elm angles (radians) to turns. One turn is equal to 360°.\n\n    inTurns (degrees 180) == 0.5\n\n    inTurns (3 * pi) == 1.5\n\n",
+                "type": "Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "isSafeInteger",
+                "comment": " Checks if a given integer is within the safe range, meaning it is between\n`-(2^53 - 1)` and `2^53 - 1`.\n\n    isSafeInteger 5 --> True\n\n    isSafeInteger maxSafeInteger --> True\n\n    isSafeInteger (maxSafeInteger + 1) --> False\n\n",
+                "type": "Basics.Int -> Basics.Bool"
+            },
+            {
+                "name": "maxSafeInteger",
+                "comment": " The maximum _safe_ value for an integer, defined as `2^53 - 1`. Anything\nlarger than that and behaviour becomes mathematically unsound.\n\n    maxSafeInteger + 1 --> maxSafeInteger + 2\n\n",
+                "type": "number"
+            },
+            {
+                "name": "minSafeInteger",
+                "comment": " The minimum _safe_ value for an integer, defined as `-(2^53 - 1)`. Anything\nsmaller than that, and behaviour becomes mathematically unsound.\n\n    minSafeInteger - 1 --> minSafeInteger - 2\n\n",
+                "type": "number"
+            },
+            {
+                "name": "safeDivide",
+                "comment": " Perform floating-point division (like Elm's `/` operator) that will never\ncrash the app. If the `y` argument in `safeDivide x y` is zero, we return `Nothing`.\n\n    safeDivide 5 2 --> Just 2.5\n\n    -- the interesting part\n    safeDivide 5 0 --> Nothing\n\n",
+                "type": "Basics.Float -> Basics.Float -> Maybe.Maybe Basics.Float"
+            },
+            {
+                "name": "safeIntegerDivide",
+                "comment": " Perform integer division (like Elm's `//` operator) that will never crash\nthe app. If the `y` argument in `safeIntegerDivide x y` is zero, we return `Nothing`.\n\n    safeIntegerDivide 5 2 --> Just 2\n\n    -- the interesting part\n    safeIntegerDivide 5 0 --> Nothing\n\n",
+                "type": "Basics.Int -> Basics.Int -> Maybe.Maybe Basics.Int"
+            },
+            {
+                "name": "safeModBy",
+                "comment": " Perform [modular arithmetic][ma] that will never crash the app. If the `modulus`\nargument in `safeModBy modulus x` is zero, we return `Nothing`.\n\n    safeModBy 2 4 --> Just 0\n\n    safeModBy 2 5 --> Just 1\n\n    -- the interesting part\n    safeModBy 0 4 --> Nothing\n\nUse [`safeRemainderBy`](#safeRemainderBy) for a different treatment of negative\nnumbers, or read Daan Leijen’s [Division and Modulus for Computer Scientists][dm]\nfor more information.\n\n[ma]: https://en.wikipedia.org/wiki/Modular_arithmetic\n[dm]: https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/divmodnote-letter.pdf\n\n",
+                "type": "Basics.Int -> Basics.Int -> Maybe.Maybe Basics.Int"
+            },
+            {
+                "name": "safeRemainderBy",
+                "comment": " Get the remainder after division in a way that will never crash the app. If\nthe `divisor` argument in `safeRemainderBy divisor x` is zero, we return `Nothing`.\n\n    safeRemainderBy 2 4 --> Just 0\n\n    safeRemainderBy 2 5 --> Just 1\n\n    -- the interesting part\n    safeRemainderBy 0 4 --> Nothing\n\nUse [`safeModBy`](#safeModBy) for a different treatment of negative\nnumbers, or read Daan Leijen’s [Division and Modulus for Computer Scientists][dm]\nfor more information.\n\n[dm]: https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/divmodnote-letter.pdf\n\n",
+                "type": "Basics.Int -> Basics.Int -> Maybe.Maybe Basics.Int"
+            },
+            {
+                "name": "swap",
+                "comment": " Swaps the elements in a pair.\n\n    swap ( 1, 2 ) --> ( 2, 1 )\n\n",
+                "type": "( a, b ) -> ( b, a )"
+            },
+            {
+                "name": "uncurry",
+                "comment": " Change how arguments are passed to a function.\nThis combines two arguments into a single pair.\n",
+                "type": "(a -> b -> c) -> ( a, b ) -> c"
+            }
+        ],
+        "binops": []
+    }
+]

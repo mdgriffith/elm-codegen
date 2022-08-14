@@ -1,0 +1,340 @@
+[
+    {
+        "name": "Ansi",
+        "comment": " This library primarily exposes the `parse` function and the types that it\nwill yield.\n\n@docs parse, parseInto\n\n@docs Action, Color, EraseMode\n\n",
+        "unions": [
+            {
+                "name": "Action",
+                "comment": " The events relevant to interpreting the stream.\n\n  - `Print` is a chunk of text which should be interpreted with the style implied\n    by the preceding actions (i.e. `[SetBold True, Print \"foo\"]`) should yield a\n    bold `foo`\n  - `Remainder` is a partial ANSI escape sequence, returned at the end of the\n    actions if it was cut off. The next string passed to `parse` should have this\n    prepended to it.\n  - The rest are derived from their respective ANSI escape sequences.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Print",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Remainder",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "SetForeground",
+                        [
+                            "Maybe.Maybe Ansi.Color"
+                        ]
+                    ],
+                    [
+                        "SetBackground",
+                        [
+                            "Maybe.Maybe Ansi.Color"
+                        ]
+                    ],
+                    [
+                        "SetBold",
+                        [
+                            "Basics.Bool"
+                        ]
+                    ],
+                    [
+                        "SetFaint",
+                        [
+                            "Basics.Bool"
+                        ]
+                    ],
+                    [
+                        "SetItalic",
+                        [
+                            "Basics.Bool"
+                        ]
+                    ],
+                    [
+                        "SetUnderline",
+                        [
+                            "Basics.Bool"
+                        ]
+                    ],
+                    [
+                        "SetBlink",
+                        [
+                            "Basics.Bool"
+                        ]
+                    ],
+                    [
+                        "SetInverted",
+                        [
+                            "Basics.Bool"
+                        ]
+                    ],
+                    [
+                        "SetFraktur",
+                        [
+                            "Basics.Bool"
+                        ]
+                    ],
+                    [
+                        "SetFramed",
+                        [
+                            "Basics.Bool"
+                        ]
+                    ],
+                    [
+                        "Linebreak",
+                        []
+                    ],
+                    [
+                        "CarriageReturn",
+                        []
+                    ],
+                    [
+                        "CursorUp",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "CursorDown",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "CursorForward",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "CursorBack",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "CursorPosition",
+                        [
+                            "Basics.Int",
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "CursorColumn",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "EraseDisplay",
+                        [
+                            "Ansi.EraseMode"
+                        ]
+                    ],
+                    [
+                        "EraseLine",
+                        [
+                            "Ansi.EraseMode"
+                        ]
+                    ],
+                    [
+                        "SaveCursorPosition",
+                        []
+                    ],
+                    [
+                        "RestoreCursorPosition",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Color",
+                "comment": " The colors applied to the foreground/background.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Black",
+                        []
+                    ],
+                    [
+                        "Red",
+                        []
+                    ],
+                    [
+                        "Green",
+                        []
+                    ],
+                    [
+                        "Yellow",
+                        []
+                    ],
+                    [
+                        "Blue",
+                        []
+                    ],
+                    [
+                        "Magenta",
+                        []
+                    ],
+                    [
+                        "Cyan",
+                        []
+                    ],
+                    [
+                        "White",
+                        []
+                    ],
+                    [
+                        "BrightBlack",
+                        []
+                    ],
+                    [
+                        "BrightRed",
+                        []
+                    ],
+                    [
+                        "BrightGreen",
+                        []
+                    ],
+                    [
+                        "BrightYellow",
+                        []
+                    ],
+                    [
+                        "BrightBlue",
+                        []
+                    ],
+                    [
+                        "BrightMagenta",
+                        []
+                    ],
+                    [
+                        "BrightCyan",
+                        []
+                    ],
+                    [
+                        "BrightWhite",
+                        []
+                    ],
+                    [
+                        "Custom",
+                        [
+                            "Basics.Int",
+                            "Basics.Int",
+                            "Basics.Int"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "EraseMode",
+                "comment": " Method to erase the display or line.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "EraseToBeginning",
+                        []
+                    ],
+                    [
+                        "EraseToEnd",
+                        []
+                    ],
+                    [
+                        "EraseAll",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "parse",
+                "comment": " Convert an arbitrary String of text into a sequence of actions.\n\nIf the input string ends with a partial ANSI escape sequence, it will be\nyielded as a `Remainder` action, which should then be prepended to the next\ncall to `parse`.\n\n",
+                "type": "String.String -> List.List Ansi.Action"
+            },
+            {
+                "name": "parseInto",
+                "comment": " Update a structure with actions parsed out of the given string.\n",
+                "type": "a -> (Ansi.Action -> a -> a) -> String.String -> a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Ansi.Log",
+        "comment": " Log interprets a stream of text and ANSI escape codes.\n\n@docs init, update, view, viewLine\n\n@docs Model, LineDiscipline, Line, Chunk, CursorPosition, Style\n\n",
+        "unions": [
+            {
+                "name": "LineDiscipline",
+                "comment": " How to interpret linebreaks.\n\n  - `Raw`: interpret `\\n` as just `\\n`, i.e. move down a line, retaining the\n    cursor column\n  - `Cooked`: interpret `\\n` as `\\r\\n`, i.e. move down a line and go to the first\n    column\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Raw",
+                        []
+                    ],
+                    [
+                        "Cooked",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Chunk",
+                "comment": " A blob of text paired with the style that was configured at the time.\n",
+                "args": [],
+                "type": "{ text : String.String, style : Ansi.Log.Style }"
+            },
+            {
+                "name": "CursorPosition",
+                "comment": " The coordinate in the window where text will be printed.\n",
+                "args": [],
+                "type": "{ row : Basics.Int, column : Basics.Int }"
+            },
+            {
+                "name": "Line",
+                "comment": " A list of arbitrarily-sized chunks of output.\n",
+                "args": [],
+                "type": "( List.List Ansi.Log.Chunk, Basics.Int )"
+            },
+            {
+                "name": "Model",
+                "comment": " Model is populated by parsing ANSI character sequences and escape codes\nvia `update`.\n\n  - `lines` contains all of the output that's been parsed\n  - `position` is the current position of the cursor\n  - `style` is the style to be applied to any text that's printed\n  - `remainder` is a partial ANSI escape sequence left around from an incomplete\n    segment from the stream\n\n",
+                "args": [],
+                "type": "{ lineDiscipline : Ansi.Log.LineDiscipline, lines : Array.Array Ansi.Log.Line, position : Ansi.Log.CursorPosition, savedPosition : Maybe.Maybe Ansi.Log.CursorPosition, style : Ansi.Log.Style, remainder : String.String }"
+            },
+            {
+                "name": "Style",
+                "comment": " The current presentation state for any text that's printed.\n",
+                "args": [],
+                "type": "{ foreground : Maybe.Maybe Ansi.Color, background : Maybe.Maybe Ansi.Color, bold : Basics.Bool, faint : Basics.Bool, italic : Basics.Bool, underline : Basics.Bool, blink : Basics.Bool, inverted : Basics.Bool, fraktur : Basics.Bool, framed : Basics.Bool }"
+            }
+        ],
+        "values": [
+            {
+                "name": "init",
+                "comment": " Construct an empty model.\n",
+                "type": "Ansi.Log.LineDiscipline -> Ansi.Log.Model"
+            },
+            {
+                "name": "update",
+                "comment": " Parse and interpret a chunk of ANSI output.\n\nTrailing partial ANSI escape codes will be prepended to the chunk in the next\ncall to `update`.\n\n",
+                "type": "String.String -> Ansi.Log.Model -> Ansi.Log.Model"
+            },
+            {
+                "name": "view",
+                "comment": " Render the model's logs as HTML.\n\nWraps a <pre> around the the result of calling `viewLine` for each line.\n\nAs a cheap optimization, each line is rendered lazily.\n\n",
+                "type": "Ansi.Log.Model -> Html.Html x"
+            },
+            {
+                "name": "viewLine",
+                "comment": " Render an individual line as HTML.\n\nThe line is rendered as a <div> containing <span> elements with styling and\nclasses for each Chunk.\n\nThe `span` elements will have the following attributes:\n\n  - `style=\"font-weight: bold|normal\"`\n  - `class=\"ansi-COLOR-fg ansi-COLOR-bg ansi-bold\"`\n\n...where each class is optional, and `COLOR` is one of:\n\n  - `black`\n  - `red`\n  - `green`\n  - `yellow`\n  - `blue`\n  - `magenta`\n  - `cyan`\n  - `white`\n  - `bright-black`\n  - `bright-red`\n  - `bright-green`\n  - `bright-yellow`\n  - `bright-blue`\n  - `bright-magenta`\n  - `bright-cyan`\n  - `bright-white`\n\nIf the chunk is inverted, the `-fg` and `-bg` classes will have their colors\nswapped. If the chunk is bold, the `ansi-bold` class will be present.\n\n",
+                "type": "Ansi.Log.Line -> Html.Html x"
+            }
+        ],
+        "binops": []
+    }
+]

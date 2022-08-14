@@ -1,0 +1,165 @@
+[
+    {
+        "name": "AWS.Amplify",
+        "comment": " Amplify component that handles refresh of expired cognito credentials.\n\n\n# Setup\n\n@docs Config, Model, init\n\n\n# Update\n\n@docs update, Msg\n\n\n# Record Events\n\n@docs record, recordWithHooks, Event, EventHooks\n\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " Opaque Msg datatype\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " Static configuration settings\n",
+                "args": [],
+                "type": "{ pinpointProjectId : String.String, awsRegion : String.String, clientInfo : AWS.Amplify.ClientInfo.ClientInfo, cmds : { authConfigureFailed : AWS.Http.Error AWS.Http.AWSAppError -> Platform.Cmd.Cmd AWS.Amplify.Msg, analyticsConfigureFailed : AWS.Http.Error AWS.Http.AWSAppError -> Platform.Cmd.Cmd AWS.Amplify.Msg, recordFailed : AWS.Http.Error AWS.Http.AWSAppError -> Platform.Cmd.Cmd AWS.Amplify.Msg, fetchNewCredentialsFailed : AWS.Http.Error AWS.Http.AWSAppError -> Platform.Cmd.Cmd AWS.Amplify.Msg } }"
+            },
+            {
+                "name": "Event",
+                "comment": " Event datatype\n",
+                "args": [],
+                "type": "{ name : String.String, attributes : Dict.Dict String.String String.String }"
+            },
+            {
+                "name": "EventHooks",
+                "comment": " EventHooks datatype\n",
+                "args": [],
+                "type": "{ recorded : Platform.Cmd.Cmd AWS.Amplify.Msg, recordFailed : AWS.Http.Error AWS.Http.AWSAppError -> Platform.Cmd.Cmd AWS.Amplify.Msg }"
+            },
+            {
+                "name": "Model",
+                "comment": " Model datatype\n",
+                "args": [],
+                "type": "{ seed : Random.Pcg.Extended.Seed, sessionId : String.String, sessionStartTime : Time.Posix, authIdentity : RemoteData.RemoteData (AWS.Http.Error AWS.Http.AWSAppError) AWS.Amplify.Auth.Identity, analytics : RemoteData.RemoteData (AWS.Http.Error AWS.Http.AWSAppError) (), queue : Dict.Dict String.String AWS.Amplify.AmplifyEvent }"
+            }
+        ],
+        "values": [
+            {
+                "name": "init",
+                "comment": " Initialise Model and fetch identity and credentials\n",
+                "type": "{ awsRegion : String.String, identityPoolId : String.String, time : Time.Posix, seed : Random.Pcg.Extended.Seed } -> ( AWS.Amplify.Model, Platform.Cmd.Cmd AWS.Amplify.Msg )"
+            },
+            {
+                "name": "record",
+                "comment": " Record event.\n\nEvents are stored in a queue if the identity, credentials, or analytics are loading.\n\n",
+                "type": "AWS.Amplify.Event -> Platform.Cmd.Cmd AWS.Amplify.Msg"
+            },
+            {
+                "name": "recordWithHooks",
+                "comment": " Record event with hooks.\n\nUsed for running a command when a record request has finished successfully or failed.\n\n",
+                "type": "AWS.Amplify.Event -> AWS.Amplify.EventHooks -> Platform.Cmd.Cmd AWS.Amplify.Msg"
+            },
+            {
+                "name": "update",
+                "comment": " Update\n",
+                "type": "AWS.Amplify.Config -> AWS.Amplify.Msg -> AWS.Amplify.Model -> ( AWS.Amplify.Model, Platform.Cmd.Cmd AWS.Amplify.Msg )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "AWS.Amplify.Analytics",
+        "comment": " Collect Analytics data for your application using Amazon Pinpoint.\n\n\n# Configure\n\n@docs Config, Endpoint, configure\n\n\n# Record\n\n@docs Event, record\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " Analytics config\n",
+                "args": [],
+                "type": "{ credentials : AWS.Amplify.Auth.Credentials, clientInfo : AWS.Amplify.ClientInfo.ClientInfo, applicationId : String.String, sessionId : String.String, sessionStartTime : Time.Posix, identityId : String.String, region : AWS.Config.Region }"
+            },
+            {
+                "name": "Endpoint",
+                "comment": " Endpoint request\n",
+                "args": [],
+                "type": "{ endpointId : String.String, requestId : String.String }"
+            },
+            {
+                "name": "Event",
+                "comment": " Event record\n",
+                "args": [],
+                "type": "{ eventId : String.String, eventTime : Time.Posix, name : String.String, attributes : Dict.Dict String.String String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "configure",
+                "comment": " Configure analytics\n",
+                "type": "AWS.Amplify.Analytics.Config -> AWS.Amplify.Analytics.Endpoint -> Task.Task (AWS.Http.Error AWS.Http.AWSAppError) AWS.Pinpoint.UpdateEndpointResponse"
+            },
+            {
+                "name": "record",
+                "comment": " Record an event\n",
+                "type": "AWS.Amplify.Analytics.Config -> AWS.Amplify.Analytics.Event -> Task.Task (AWS.Http.Error AWS.Http.AWSAppError) AWS.Pinpoint.PutEventsResponse"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "AWS.Amplify.Auth",
+        "comment": " Configure authentication using Amazon Cognito.\n\n\n# Identity\n\n@docs Identity, Credentials\n\n\n# Configure\n\n@docs Config, configure, getCredentials\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " Auth config\n",
+                "args": [],
+                "type": "{ region : AWS.Config.Region, identityPoolId : String.String }"
+            },
+            {
+                "name": "Credentials",
+                "comment": " Credentials\n",
+                "args": [],
+                "type": "{ accessKeyId : String.String, secretAccessKey : String.String, expiration : Time.Posix, sessionToken : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "Identity",
+                "comment": " IdentityId\n",
+                "args": [],
+                "type": "{ identityId : String.String, credentials : AWS.Amplify.Auth.Credentials }"
+            }
+        ],
+        "values": [
+            {
+                "name": "configure",
+                "comment": " Configure authentication.\n\nFetches identity id from identity pool and then fetches credentials for identity id.\n\n    AWS.Amplify.Auth.configure\n        { region = \"ap-southeast-2\"\n        , identityPoolId = \"ap-southeast-2:123e4567-e89b-12d3-a456-426614174000\"\n        }\n\n",
+                "type": "AWS.Amplify.Auth.Config -> Task.Task (AWS.Http.Error AWS.Http.AWSAppError) AWS.Amplify.Auth.Identity"
+            },
+            {
+                "name": "getCredentials",
+                "comment": " Get credentials for identityId\n",
+                "type": "AWS.Config.Region -> String.String -> Task.Task (AWS.Http.Error AWS.Http.AWSAppError) AWS.Amplify.Auth.Identity"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "AWS.Amplify.ClientInfo",
+        "comment": " ClientInfo data type.\n\n\n# ClientInfo\n\n@docs ClientInfo, decoder, toEndpointDemographic\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "ClientInfo",
+                "comment": " Data type for storing client information.\n\nSee [ClientDevice/browser.ts][browser] for how to populate this record\n\n[browser]: https://github.com/aws-amplify/amplify-js/blob/5b4641b8568e3106db81958f1cb2ce0b6d684ab6/packages/core/src/ClientDevice/browser.ts\n\n",
+                "args": [],
+                "type": "{ platform : String.String, make : String.String, model : String.String, version : String.String, appVersion : String.String, language : String.String, timezone : String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "decoder",
+                "comment": " Json Decoder for ClientInfo\n",
+                "type": "Json.Decode.Decoder AWS.Amplify.ClientInfo.ClientInfo"
+            },
+            {
+                "name": "toEndpointDemographic",
+                "comment": " Convert to EndpointDemographic\n",
+                "type": "AWS.Amplify.ClientInfo.ClientInfo -> AWS.Pinpoint.EndpointDemographic"
+            }
+        ],
+        "binops": []
+    }
+]

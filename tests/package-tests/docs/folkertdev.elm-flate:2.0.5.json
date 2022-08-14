@@ -1,0 +1,157 @@
+[
+    {
+        "name": "Flate",
+        "comment": " An implementation of [DEFLATE](https://www.ietf.org/rfc/rfc1951.txt) compression.\n\nThe deflate format is used in common file formats like gzip, png, and woff.\n\n    import Bytes exposing (Bytes)\n    import Bytes.Encode as Encode\n    import Bytes.Decode as Decode\n\n    text : String\n    text =\n        \"Dyn flam dôve nea\"\n\n    decodeAsString : Bytes -> Maybe String\n    decodeAsString buffer =\n        let\n            decoder = Decode.string (Bytes.width buffer)\n        in\n            Decode.decode decoder buffer\n\n    inflate (deflate (Encode.encode (Encode.string text)))\n        |> Maybe.andThen decodeAsString\n        --> Just \"Dyn flam dôve nea\"\n\n@docs deflate, inflate\n\n\n## GZip\n\n@docs deflateGZip, inflateGZip\n\n\n## Zlib\n\n@docs deflateZlib, inflateZlib\n\n\n## Lowlevel Primitives\n\n@docs deflateWithOptions, deflateGZipWithOptions, deflateZlibWithOptions\n@docs Encoding, Compression\n\n\n## Checksums\n\nChecksums are simple hashes that are used to make check that the decoded data is the same as the encoded data.\nThe gzip and zlib formats calculate the checksum over the data they encode, and put the value into the output.\nWhen decoding, the checksum is also calculated for the decoded data. The two values must be the same.\n\n@docs adler32, crc32\n\n",
+        "unions": [
+            {
+                "name": "Compression",
+                "comment": " The type of compression used\n\n  - **NoCompression**: the data will not be compressed. The encoder still can give a smaller file. Use this option if superquick encoding and/or decoding is needed, and output size is less of a concern.\n  - **WithWindowSize**: use [LZ77 compression](https://en.wikipedia.org/wiki/LZ77_and_LZ78#LZ77) with the given window size.\n\n**default**: `WithWindowSize LZ77.maxWindowSize`\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NoCompression",
+                        []
+                    ],
+                    [
+                        "WithWindowSize",
+                        [
+                            "Basics.Int"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Encoding",
+                "comment": " The type of encoding used\n\n  - **Raw**: puts the raw bytes into the output. The output is a bit larger, but it is now a valid zip/gzip/zlib compressed byte stream.\n  - **Static**: uses a default huffman table to shorten the input. Good for very short messages, or messages with a lot of simple repetition, because the table is not included.\n  - **Dynamic**: calculates an optimal huffman table for the specific input it is given. This table must be included in the output, but the result can be much smaller than with the static table.\n\n**default**: `Dynamic`\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Raw",
+                        []
+                    ],
+                    [
+                        "Dynamic",
+                        [
+                            "Flate.Compression"
+                        ]
+                    ],
+                    [
+                        "Static",
+                        [
+                            "Flate.Compression"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "adler32",
+                "comment": " The adler32 checksum.\nUsed in zlib. Faster than crc32, but also less reliable (larger chance of collisions).\n",
+                "type": "Bytes.Bytes -> Basics.Int"
+            },
+            {
+                "name": "crc32",
+                "comment": " The crc32 checksum.\nUsed in gzip. Slower than adler32, but also more reliable (smaller chance of collisions).\n",
+                "type": "Bytes.Bytes -> Basics.Int"
+            },
+            {
+                "name": "deflate",
+                "comment": " Deflate a sequence of bytes. This is an alias for:\n\n    deflateWithOptions\n        (Dynamic (WithWindowSize LZ77.maxWindowSize))\n\nThat means good compression, but can be slow for large data.\nThe README elaborates on deflate performance. `deflateWithOptions` allows you to pick different deflate options.\n\n",
+                "type": "Bytes.Bytes -> Bytes.Bytes"
+            },
+            {
+                "name": "deflateGZip",
+                "comment": " Deflate with the [gzip](https://tools.ietf.org/html/rfc1952) format\n\n**Note**: the gzip header and trailer are not customizable in the current version.\n\n",
+                "type": "Bytes.Bytes -> Bytes.Bytes"
+            },
+            {
+                "name": "deflateGZipWithOptions",
+                "comment": " ",
+                "type": "Flate.Encoding -> Bytes.Bytes -> Bytes.Bytes"
+            },
+            {
+                "name": "deflateWithOptions",
+                "comment": " Deflate a sequence of bytes\n\n    import LZ77\n    import Bytes\n\n    data : Bytes.Bytes\n    data =\n        Encode.encode (Encode.string \"foo\")\n\n    deflateWithOptions Raw data\n        --> [1,3,0,252,-1,102,111,111]\n\n\n    deflateWithOptions (Static NoCompression) data\n        --> [75,203,207,7,0]\n\n\n    deflateWithOptions (Dynamic (WithWindowSize LZ77.maxWindowSize)) data\n        --> [5,192,33,1,0,0,0,128,-96,183,86,254,55,137,1]\n\n",
+                "type": "Flate.Encoding -> Bytes.Bytes -> Bytes.Bytes"
+            },
+            {
+                "name": "deflateZlib",
+                "comment": " Deflate with the [zlib](https://www.ietf.org/rfc/rfc1950.txt) format\n\n**Note**: the zlib header and trailer are not customizable in the current version.\n\n",
+                "type": "Bytes.Bytes -> Bytes.Bytes"
+            },
+            {
+                "name": "deflateZlibWithOptions",
+                "comment": " ",
+                "type": "Flate.Encoding -> Bytes.Bytes -> Bytes.Bytes"
+            },
+            {
+                "name": "inflate",
+                "comment": " Inflate (decode) data encoded with DEFLATE\n",
+                "type": "Bytes.Bytes -> Maybe.Maybe Bytes.Bytes"
+            },
+            {
+                "name": "inflateGZip",
+                "comment": " Inflate data compressed with gzip.\ngzip adds some extra data at the front and the back. This decoder will take care of that and also check the checksum if specified.\n\n**Note**: this only gives back the inflated data block. The header and trailer parts are discarded, but checksums (if specified) will be checked.\n\n",
+                "type": "Bytes.Bytes -> Maybe.Maybe Bytes.Bytes"
+            },
+            {
+                "name": "inflateZlib",
+                "comment": " Inflate data compressed with [zlib](http://www.zlib.net/).\nzlib adds some extra data at the front and the back. This decoder will take care of that and also check the checksum if specified.\n\n**Note**: this only gives back the inflated data block. The header and trailer parts are discarded, but checksums (if specified) are checked.\n\n",
+                "type": "Bytes.Bytes -> Maybe.Maybe Bytes.Bytes"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "LZ77",
+        "comment": " LZ77 finds sequences of bytes that occur multiple times, and stores them only once:\n\n    LZ77.encode (Encode.encode (Encode.string \"aaaaa\"))\n        --> [ Literal 97, Pointer 4 1 ]\n\nThe character `a` occurs 5 times, which is encoded as:\n\n  - the byte 97 (the ascii code for `a`)\n  - go back 1 position and read 4 bytes there, putting them onto the end of the stream\n\nNote that the pointer tries to read 4 bytes, even though the output stream at that point only has length 1. This is fine: the elements are copied over one by one.\nThe general concept behind this kind of compression is [run-length encoding](https://en.wikipedia.org/wiki/Run-length_encoding).\n\n@docs encode, decode\n@docs Code\n@docs encodeWithOptions, maxWindowSize\n\n",
+        "unions": [
+            {
+                "name": "Code",
+                "comment": " The codes\n\n  - **Literal**: A byte value\n  - **Pointer length distance**: Go `distance` positions back and read `length` bytes. put the read bytes at the end of the output stream.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Literal",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "Pointer",
+                        [
+                            "Basics.Int",
+                            "Basics.Int"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decode",
+                "comment": " Decode using the LZ77 encoding\n",
+                "type": "Array.Array LZ77.Code -> Bytes.Bytes"
+            },
+            {
+                "name": "encode",
+                "comment": " Encode using the LZ77 encoding\n",
+                "type": "Bytes.Bytes -> Array.Array LZ77.Code"
+            },
+            {
+                "name": "encodeWithOptions",
+                "comment": " Encode using the LZ77 encoding, with additional options.\n\n  - **window size**: The window size is an how far back a `Pointer` can jump. A bigger window size gives better compression, but requires more data in memory.\n    That is almost never a problem nowadays though, so `encode` uses the maximum window size that LZ77 supports.\n\n> **Note**: decreasing the window size doesn't change the performance that much in elm. The bottleneck is in keeping track of matches in a large array, and the size of that array is constant.\n\n",
+                "type": "{ windowSize : Basics.Int } -> Bytes.Bytes -> Array.Array LZ77.Code"
+            },
+            {
+                "name": "maxWindowSize",
+                "comment": " Maximum size of a sliding window.\n",
+                "type": "Basics.Int"
+            }
+        ],
+        "binops": []
+    }
+]

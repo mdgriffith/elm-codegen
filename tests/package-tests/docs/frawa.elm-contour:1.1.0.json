@@ -1,0 +1,92 @@
+[
+    {
+        "name": "Contour",
+        "comment": " This library calculate contour level lines for a two-dimensional scalar field,\nbased on the Marching Squares algorithm <https://en.wikipedia.org/wiki/Marching_squares>.\n\n\n# Definition of a two-dimensional scalar field\n\n@docs GridFunction, gridFunction, Point, Grid, pointAt, fromList\n\n\n# Calculate contour lines\n\n@docs contourLines, Line, points\n\n\n# Draw contour lines\n\n@docs viewGridFunction, drawGridFunction, traceLine, drawContour, Style, defaultStyle\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Grid",
+                "comment": " Represent the discretization grid\n",
+                "args": [],
+                "type": "Internal.Contour.Grid"
+            },
+            {
+                "name": "GridFunction",
+                "comment": " Represent a two-dimensioal scalar field\n",
+                "args": [],
+                "type": "Internal.Contour.GridFunction"
+            },
+            {
+                "name": "Line",
+                "comment": " A line within a contour\n",
+                "args": [],
+                "type": "Internal.Contour.Line"
+            },
+            {
+                "name": "Point",
+                "comment": " Represent a point\nas (Float,Float)\n",
+                "args": [],
+                "type": "Internal.Contour.Point"
+            },
+            {
+                "name": "Style",
+                "comment": " Rendering style properties.\n",
+                "args": [],
+                "type": "{ width : Basics.Int, height : Basics.Int, lineStyle : Collage.LineStyle }"
+            }
+        ],
+        "values": [
+            {
+                "name": "contourLines",
+                "comment": " Calculate contour lines for a given level\n",
+                "type": "Basics.Float -> Contour.GridFunction -> List.List Contour.Line"
+            },
+            {
+                "name": "defaultStyle",
+                "comment": " Default style.\n",
+                "type": "Contour.Style"
+            },
+            {
+                "name": "drawContour",
+                "comment": " Draw contour for one level of a grid function.\n",
+                "type": "Contour.Style -> Contour.GridFunction -> Basics.Float -> Collage.Collage msg"
+            },
+            {
+                "name": "drawGridFunction",
+                "comment": " Draw contours for several levels of a grid function.\n",
+                "type": "Contour.Style -> Contour.GridFunction -> List.List Basics.Float -> Collage.Collage msg"
+            },
+            {
+                "name": "fromList",
+                "comment": " Construct a two-dimensial scalar field from a data in a list of values\n\n    Values are expected in the order of indices in the given grid,\n    running from min to max, incrementing the first component first.\n\n    Use pointAt to get (x,y) coordinates for an data index.\n\n",
+                "type": "Contour.Grid -> List.List Basics.Float -> Contour.GridFunction"
+            },
+            {
+                "name": "gridFunction",
+                "comment": " Construct a two-dimensial scalar field from a function\n\n        f : (Float,Float) -> Float\n\n    taking values in [0,1]x[0,1]\n\n",
+                "type": "Contour.Grid -> (Contour.Point -> Basics.Float) -> Contour.GridFunction"
+            },
+            {
+                "name": "pointAt",
+                "comment": " Get the point, ithat is (x,y) coordinates, in the grid for a data index.\n",
+                "type": "Contour.Grid -> Basics.Int -> Contour.Point"
+            },
+            {
+                "name": "points",
+                "comment": " Get a line's end points\n",
+                "type": "Contour.Line -> ( Contour.Point, Contour.Point )"
+            },
+            {
+                "name": "traceLine",
+                "comment": " Draw a line as a traced path.\n",
+                "type": "Contour.Style -> Contour.Line -> Collage.Collage msg"
+            },
+            {
+                "name": "viewGridFunction",
+                "comment": " Render SVG with contours for several levels of a grid function.\n",
+                "type": "Contour.Style -> Contour.GridFunction -> List.List Basics.Float -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

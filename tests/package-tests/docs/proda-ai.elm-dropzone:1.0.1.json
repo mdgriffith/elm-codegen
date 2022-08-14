@@ -1,0 +1,62 @@
+[
+    {
+        "name": "DropZone",
+        "comment": " This library makes it easier to use Html5 Drag/Drop events when you want\nto support dropping of files into a webpage.\n\n\n# Main DnD support\n\n@docs dropZoneEventHandlers\n\n\n# Drop action\n\n@docs DropZoneMessage\n\n\n# Model\n\n@docs Model\n\n\n# Helper functions\n\n@docs init, update, isHovering\n\n",
+        "unions": [
+            {
+                "name": "DropZoneMessage",
+                "comment": " The Drop actions is usually tagged with a (List NativeFile) that represent the files\nthe user dropped onto the element. Handle this action in your code and do something\nwith the files.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "DragEnter",
+                        []
+                    ],
+                    [
+                        "DragLeave",
+                        []
+                    ],
+                    [
+                        "Drop",
+                        [
+                            "a"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Model",
+                "comment": " Opaque model of the DropZone.\n",
+                "args": [],
+                "type": "{ hoverState : DropZone.HoverState }"
+            }
+        ],
+        "values": [
+            {
+                "name": "dropZoneEventHandlers",
+                "comment": " Returns a list of Attributes to add to an element to turn it into a\n\"Dropzone\" by registering the required event handlers.\n\nThe Json.Decoder you pass in is used to extract the data from the drop operation.\nIf the drop operation is a user dropping files in a browser, you will want to\nextract the .dataTransfer.files content. The FileReader project\n( <https://github.com/simonh1000/file-reader> ) provides a convinience function\n`parseDroppedFiles` to do this for you.\n\n    view : Message -> Model -> Html\n    view address model =\n        div\n            (dropZoneStyle model.dropZoneModel\n                :: dragDropEventHandlers Json.value\n            )\n            [ renderImageOrPrompt model\n            ]\n\n",
+                "type": "Json.Decode.Decoder msg -> List.List (Html.Attribute (DropZone.DropZoneMessage msg))"
+            },
+            {
+                "name": "init",
+                "comment": " Initializes the Model\n",
+                "type": "DropZone.Model"
+            },
+            {
+                "name": "isHovering",
+                "comment": " Function that tells you if the user is currently hovering over the dropzone\nwith a Drag operation.\n\nThis information is stored inside the model and thus\nisHovering can only give you a correct information if you attached the event\nhandlers to the dropzone you render and make sure that Dropzone DropZoneMessages are \"routed\"\nto the update function of the DropZone\n\n    getDropZoneAttributes : DropZone.Model -> List Html.Attribute msg\n    getDropZoneAttributes dropZoneModel =\n        ( if (DropZone.isHovering dropZoneModel) then\n            style [( \"border\", \"3px dashed red\")]\n          else\n            style [( \"border\", \"3px dashed steelblue\")]\n        )\n        ::\n        dragDropEventHandlers payloadDecoder)\n\n",
+                "type": "DropZone.Model -> Basics.Bool"
+            },
+            {
+                "name": "update",
+                "comment": " Updates the Model from a DropZoneMessage.\n",
+                "type": "DropZone.DropZoneMessage msg -> DropZone.Model -> DropZone.Model"
+            }
+        ],
+        "binops": []
+    }
+]

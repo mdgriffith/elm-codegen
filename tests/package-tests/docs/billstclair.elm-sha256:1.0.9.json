@@ -1,0 +1,21 @@
+[
+    {
+        "name": "Sha256",
+        "comment": " This module is a Pure Elm implementation of the sha256 and sha224\ncrytographic hash functions.\n\nThank you to Yi-Cyuan Chen for the JavaScript I converted.\n\n\n# Functions\n\n@docs sha256, sha224\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "sha224",
+                "comment": " Returns the sha224 hash of its argument.\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "sha256",
+                "comment": " Returns the sha256 hash of its argument.\n",
+                "type": "String.String -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

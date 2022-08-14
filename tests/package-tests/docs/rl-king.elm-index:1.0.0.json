@@ -1,0 +1,80 @@
+[
+    {
+        "name": "Index",
+        "comment": "\n\n\n# Definition\n\n@docs Index\n\n\n# Use\n\n@docs withIndex\n@docs withIndex2\n@docs indexedMap\n@docs range\n\n\n# Basics\n\n@docs toInt\n@docs fromInt\n@docs toString\n@docs map\n@docs compare\n@docs zero\n\n\n# Json\n\n@docs decode\n@docs encode\n\n",
+        "unions": [
+            {
+                "name": "Index",
+                "comment": " A taggable wrapper around `Int`.\n\n    type alias ExampleIndex =\n        Index { example : () }\n\n    example : List String -> List ( ExampleIndex, String )\n    example xs =\n        Index.indexedMap List.indexedMap Tuple.pair xs\n\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "compare",
+                "comment": " Compare two `Index a`.\n",
+                "type": "Index.Index a -> Index.Index a -> Basics.Order"
+            },
+            {
+                "name": "decode",
+                "comment": " Decode an `Int` to an `Index a`\n",
+                "type": "Json.Decode.Decoder (Index.Index a)"
+            },
+            {
+                "name": "encode",
+                "comment": " Encode an `Index a` to an `elm/json` `Value` (`number`).\n",
+                "type": "Index.Index a -> Json.Encode.Value"
+            },
+            {
+                "name": "fromInt",
+                "comment": " Create an `Index a` from an `Int`.\n",
+                "type": "Basics.Int -> Index.Index a"
+            },
+            {
+                "name": "indexedMap",
+                "comment": " Turn an `indexedMap` function provided by another package to one that uses `Index a` instead of `Int`.\n\n    list : (Index a -> b -> c) -> List b -> List c\n    list =\n        Index.indexedMap List.indexedMap\n\n    array : (Index a -> b -> c) -> Array b -> Array c\n    array =\n        Index.indexedMap Array.indexedMap\n\n    reorderable : (Index a -> b -> c) -> Reorderable b -> Reorderable c\n    reorderable =\n        Index.indexedMap Reorderable.indexedMap\n\n",
+                "type": "((Basics.Int -> b -> c) -> d) -> (Index.Index a -> b -> c) -> d"
+            },
+            {
+                "name": "map",
+                "comment": " Change the value of an `Index a`.\n",
+                "type": "(Basics.Int -> Basics.Int) -> Index.Index a -> Index.Index a"
+            },
+            {
+                "name": "range",
+                "comment": " Generate a `List` of `Index a`.\n",
+                "type": "Basics.Int -> Basics.Int -> List.List (Index.Index a)"
+            },
+            {
+                "name": "toInt",
+                "comment": " Turn an `Index a` into an `Int`.\n",
+                "type": "Index.Index a -> Basics.Int"
+            },
+            {
+                "name": "toString",
+                "comment": " Turn an `Index a` into an `String`.\n",
+                "type": "Index.Index a -> String.String"
+            },
+            {
+                "name": "withIndex",
+                "comment": " Turn any function that takes an `Int` as its first argument into a function that takes `Index a`.\n\n    arrayGet : Index a -> Array b -> Maybe b\n    arrayGet =\n        Index.withIndex Array.get\n\n    arraySet : Index a -> b -> Array b -> Array b\n    arraySet =\n        Index.withIndex Array.set\n\n    reorderable : Index a -> (b -> b) -> Reorderable b -> Reorderable b\n    reorderable =\n        Index.withIndex Reorderable.update\n\n",
+                "type": "(Basics.Int -> b) -> Index.Index a -> b"
+            },
+            {
+                "name": "withIndex2",
+                "comment": " Like `withIndex` but with two `Int`s\n\n    reorderable : Index a -> Index a -> Reorderable b -> Reorderable b\n    reorderable =\n        Index.withIndex2 Reorderable.swap\n\n",
+                "type": "(Basics.Int -> Basics.Int -> b) -> Index.Index a -> Index.Index a -> b"
+            },
+            {
+                "name": "zero",
+                "comment": " Index zero\n",
+                "type": "Index.Index a"
+            }
+        ],
+        "binops": []
+    }
+]

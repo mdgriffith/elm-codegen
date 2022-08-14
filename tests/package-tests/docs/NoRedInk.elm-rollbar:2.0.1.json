@@ -1,0 +1,100 @@
+[
+    {
+        "name": "Rollbar",
+        "comment": " Send reports to Rollbar.\n\n\n## Types\n\n@docs Rollbar, Level, Token, token, Environment, environment, Scope, scope, CodeVersion, codeVersion\n\n\n## Types\n\n@docs scoped, send\n\n",
+        "unions": [
+            {
+                "name": "CodeVersion",
+                "comment": " A code version, for example - a git commit hash.\n\nCreate one using [`codeVersion`](#codeVersion).\n\n    Rollbar.codeVersion \"24dcf3a9a9cf1a5e2ea319018644a68f4743a731\"\n\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Environment",
+                "comment": " For example, \"production\", \"development\", or \"staging\".\n\nCreate one using [`environment`](#environment).\n\n    Rollbar.environment \"production\"\n\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Level",
+                "comment": " Severity levels.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Critical",
+                        []
+                    ],
+                    [
+                        "Error",
+                        []
+                    ],
+                    [
+                        "Warning",
+                        []
+                    ],
+                    [
+                        "Info",
+                        []
+                    ],
+                    [
+                        "Debug",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Scope",
+                "comment": " A scope, for example `\"login\"`.\n\nCreate one using [`scope`](#scope).\n\n    Rollbar.scope \"login\"\n\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Token",
+                "comment": " A Rollbar API access token.\n\nCreate one using [`token`](#token).\n\n    Rollbar.token \"12c99de67a444c229fca100e0967486f\"\n\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Rollbar",
+                "comment": " Functions preapplied with access tokens, scopes, and environments,\nseparated by [`Level`](#Level).\n\nCreate one using [`scoped`](#scoped).\n\n",
+                "args": [],
+                "type": "{ critical : String.String -> Dict.Dict String.String Json.Encode.Value -> Task.Task Http.Error Uuid.Uuid, error : String.String -> Dict.Dict String.String Json.Encode.Value -> Task.Task Http.Error Uuid.Uuid, warning : String.String -> Dict.Dict String.String Json.Encode.Value -> Task.Task Http.Error Uuid.Uuid, info : String.String -> Dict.Dict String.String Json.Encode.Value -> Task.Task Http.Error Uuid.Uuid, debug : String.String -> Dict.Dict String.String Json.Encode.Value -> Task.Task Http.Error Uuid.Uuid }"
+            }
+        ],
+        "values": [
+            {
+                "name": "codeVersion",
+                "comment": " Create a [`CodeVersion`](#CodeVersion).\n\n    Rollbar.codeVersion \"24dcf3a9a9cf1a5e2ea319018644a68f4743a731\"\n\n",
+                "type": "String.String -> Rollbar.CodeVersion"
+            },
+            {
+                "name": "environment",
+                "comment": " Create an [`Environment`](#Environment)\n\n    Rollbar.environment \"production\"\n\n",
+                "type": "String.String -> Rollbar.Environment"
+            },
+            {
+                "name": "scope",
+                "comment": " Create a [`Scope`](#Scope).\n\n    Rollbar.scope \"login\"\n\n",
+                "type": "String.String -> Rollbar.Scope"
+            },
+            {
+                "name": "scoped",
+                "comment": " Return a [`Rollbar`](#Rollbar) record configured with the given\n[`Environment`](#Environment) and [`Scope`](#Scope) string.\n\nIf the HTTP request to Rollbar fails because of an exceeded rate limit (status\ncode 429), this will retry the HTTP request once per second, up to 60 times.\n\n    rollbar = Rollbar.scoped \"Page/Home.elm\"\n\n    rollbar.debug \"Hitting the hats API.\" Dict.empty\n\n    [ ( \"Payload\", toString payload ) ]\n        |> Dict.fromList\n        |> rollbar.error \"Unexpected payload from the hats API.\"\n\n",
+                "type": "Rollbar.Token -> Rollbar.CodeVersion -> Rollbar.Environment -> String.String -> Rollbar.Rollbar"
+            },
+            {
+                "name": "send",
+                "comment": " Send a message to Rollbar. [`scoped`](#scoped)\nprovides a nice wrapper around this.\n\nArguments:\n\n  - `Token` - The [Rollbar API token](https://rollbar.com/docs/api/#authentication) required to authenticate the request.\n  - `Scope` - Scoping messages essentially namespaces them. For example, this might be the name of the page the user was on when the message was sent.\n  - `Environment` - e.g. `\"production\"`, `\"development\"`, `\"staging\"`, etc.\n  - `Int` - maximum retry attempts - if the response is that the message was rate limited, try resending again (once per second) up to this many times. (0 means \"do not retry.\")\n  - `Level` - severity, e.g. `Error`, `Warning`, `Debug`\n  - `String` - message, e.g. \"Auth server was down when user tried to sign in.\"\n  - `Dict String Value` - arbitrary metadata, e.g. `{\"username\": \"rtfeldman\"}`\n\nIf the message was successfully sent to Rollbar, the [`Task`](http://package.elm-lang.org/packages/elm-lang/core/latest/Task#Task)\nsucceeds with the [`Uuid`](http://package.elm-lang.org/packages/danyx23/elm-uuid/latest/Uuid#Uuid)\nit generated and sent to Rollbar to identify the message. Otherwise it fails\nwith the [`Http.Error`](http://package.elm-lang.org/packages/elm-lang/http/latest/Http#Error)\nresponsible.\n\n",
+                "type": "Rollbar.Token -> Rollbar.CodeVersion -> Rollbar.Scope -> Rollbar.Environment -> Basics.Int -> Rollbar.Level -> String.String -> Dict.Dict String.String Json.Encode.Value -> Task.Task Http.Error Uuid.Uuid"
+            },
+            {
+                "name": "token",
+                "comment": " Create a [`Token`](#token)\n\n    Rollbar.token \"12c99de67a444c229fca100e0967486f\"\n\n",
+                "type": "String.String -> Rollbar.Token"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,68 @@
+[
+    {
+        "name": "LocalStorage",
+        "comment": " Exposes browser's `window.localStorage` and `window.sessionStorage` API as Elm Tasks.\nThanks to the latter, interactions with the local and session storage could be chained\nor mixed with other Task-based APIs, such as [elm/http](https://package.elm-lang.org/packages/elm/http/latest/).\n\nSee package documentation for examples of using the module.\n\n# General\n@docs Key\n\n# Local storage\n@docs localGet, localPut, localRemove, localListKeys, localClear\n\n# Session storage\n@docs sessionGet, sessionPut, sessionRemove, sessionListKeys, sessionClear\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Key",
+                "comment": " Convenience alias for string keys used to store and retrive values\nin `window.localStorage` and `window.sessionStorage` objects.\n",
+                "args": [],
+                "type": "String.String"
+            }
+        ],
+        "values": [
+            {
+                "name": "localClear",
+                "comment": " Returns a Task deleting all items from the browser's `window.localStorage` object.\nA good place to do this is when user clicks 'log off' button.\n\n    type Msg = Cleared (TaskPort.Result ())\n    LocalStorage.localClear |> Task.attempt Cleared\n",
+                "type": "TaskPort.Task ()"
+            },
+            {
+                "name": "localGet",
+                "comment": " Returns a Task retrieving a value from the browser's `window.localStorage` object.\nThe result will have `Nothing` if there is no value associated with a given key\nin the local storage.\n\n    type Msg = GotValue (TaskPort.Result (Maybe String))\n    LocalStorage.localGet \"key\" |> Task.attempt GotValue\n",
+                "type": "LocalStorage.Key -> TaskPort.Task (Maybe.Maybe String.String)"
+            },
+            {
+                "name": "localListKeys",
+                "comment": " Returns a Task enumerating all keys in the browser's `window.localStorage` object.\n\n    type Msg = GotKeys (TaskPort.Result (List String))\n    LocalStorage.localListKeys \"key\" |> Task.attempt GotKeys\n",
+                "type": "TaskPort.Task (List.List LocalStorage.Key)"
+            },
+            {
+                "name": "localPut",
+                "comment": " Returns a Task storing a value with a given key in the browser's `window.localStorage` object.\nMost likely this is going to be used to synchronise browser's local storage with the application\nmodel after it changes.\n\n    type Msg = Saved (TaskPort.Result ())\n    LocalStorage.localPut \"key\" \"value\" |> Task.attempt Saved\n\nIt is likely you will need to store objects which are more complex than strings.\nIt is easy to chain the use of `Json.Encode.encode` as follow.\n\n    Json.Encode.list Json.Encode.string [ 'v1', 'v2' ]\n        |> Json.Encode.encode 0\n        |> LocalStorage.localPut \"key\"\n",
+                "type": "LocalStorage.Key -> String.String -> TaskPort.Task ()"
+            },
+            {
+                "name": "localRemove",
+                "comment": " Returns a Task removing a value stored in the browser's `window.localStorage` object under a given key.\n\n    type Msg = Saved (TaskPort.Result ())\n    LocalStorage.localRemove \"key\" |> Task.attempt Removed\n",
+                "type": "LocalStorage.Key -> TaskPort.Task ()"
+            },
+            {
+                "name": "sessionClear",
+                "comment": " Returns a Task deleting all items from the browser's `window.sessionStorage` object.\nA good place to do this is when user clicks 'log off' button.\n\n    type Msg = Cleared (TaskPort.Result ())\n    LocalStorage.sessionClear |> Task.attempt Cleared\n",
+                "type": "TaskPort.Task ()"
+            },
+            {
+                "name": "sessionGet",
+                "comment": " Returns a Task retrieving a value from the browser's `window.sessionStorage` object.\nThe result will have `Nothing` if there is no value associated with a given key\nin the local storage.\n\n    type Msg = GotValue (TaskPort.Result (Maybe String))\n    LocalStorage.sessionGet \"key\" |> Task.attempt GotValue\n",
+                "type": "LocalStorage.Key -> TaskPort.Task (Maybe.Maybe String.String)"
+            },
+            {
+                "name": "sessionListKeys",
+                "comment": " Returns a Task enumerating all keys in the browser's `window.sessionStorage` object.\n\n    type Msg = GotKeys (TaskPort.Result (List Key))\n    LocalStorage.sessionListKeys \"key\" |> Task.attempt GotKeys\n",
+                "type": "TaskPort.Task (List.List LocalStorage.Key)"
+            },
+            {
+                "name": "sessionPut",
+                "comment": " Returns a Task storing a value with a given key in the browser's `window.sessionStorage` object.\nMost likely this is going to be used to synchronise browser's window session state with the application\nmodel after it changes.\n\n    type Msg = Saved (TaskPort.Result ())\n    LocalStorage.sessionPut \"key\" \"value\" |> Task.attempt Saved\n\nIt is likely you will need to store objects which are more complex than strings.\nIt is easy to chain the use of `Json.Encode.encode` as follow.\n\n    Json.Encode.list Json.Encode.string [ 'v1', 'v2' ]\n        |> Json.Encode.encode 0\n        |> LocalStorage.sessionPut \"key\"\n",
+                "type": "LocalStorage.Key -> String.String -> TaskPort.Task ()"
+            },
+            {
+                "name": "sessionRemove",
+                "comment": " Returns a Task removing a value stored in the browser's `window.localStorage` object under a given key.\n\n    type Msg = Saved (TaskPort.Result ())\n    LocalStorage.sessionRemove \"key\" |> Task.attempt Removed\n",
+                "type": "LocalStorage.Key -> TaskPort.Task ()"
+            }
+        ],
+        "binops": []
+    }
+]

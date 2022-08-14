@@ -1,0 +1,140 @@
+[
+    {
+        "name": "PortFunnel.DevRandom",
+        "comment": " The `PortFunnel.DevRandom` module provides a `billstclair/elm-port-funnel` funnel to generate cryptographically-secure random numbers. It does this with JavaScript code that calls `window.crypto.getRandomValues()`.\n\nThere is a simulator that uses the standard Elm `Random` module, which is NOT cryptographically secure. See [example/Diceware.elm](https://github.com/billstclair/elm-dev-random/blob/master/example/Diceware.elm) for how to use it.\n\nSee the [example readme](https://github.com/billstclair/elm-dev-random/tree/master/example) for instructions on creating the ports and using the included JavaScript code.\n\n\n# Types\n\n@docs Message, Response, State, JSVersion\n\n\n# Components of a `PortFunnel.FunnelSpec`\n\n@docs moduleName, moduleDesc, commander\n\n\n# Initial `State`\n\n@docs initialState\n\n\n# Sending a `Message` out the `Cmd` Port\n\n@docs send\n\n\n# Conversion to Strings\n\n@docs toString, toJsonString\n\n\n# Simulator\n\n@docs makeSimulatedCmdPort\n\n\n# Non-standard Functions\n\n@docs isLoaded\n\n",
+        "unions": [
+            {
+                "name": "Message",
+                "comment": " The `GenerateBytes` message requests a list of random bytes of the given size.\n\nThe `RandomBytes` message returns those random bytes.\n\nThe `GenerateInt` message requests a random integer >= 0 and < its arg.\n\nThe `RandomInt` message returns that integer.\n\nThe `SimulateBytes` and `SimulateInt` messages are used internally by the simulator.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "GenerateBytes",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "GenerateInt",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "RandomBytes",
+                        [
+                            "PortFunnel.DevRandom.RandomBytesRecord"
+                        ]
+                    ],
+                    [
+                        "RandomInt",
+                        [
+                            "PortFunnel.DevRandom.RandomIntRecord"
+                        ]
+                    ],
+                    [
+                        "SimulateBytes",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "SimulateInt",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "Startup",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Response",
+                "comment": " A `MessageResponse` encapsulates a message.\n\n`RandomBytesResponse` wraps a list of integers and whether their generation was cryptographically secure.\n\n`RandomIntResponse` wraps an integer and whether its generation was cryptographically secure.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NoResponse",
+                        []
+                    ],
+                    [
+                        "RandomBytesResponse",
+                        [
+                            "{ isSecure : Basics.Bool, bytes : List.List Basics.Int }"
+                        ]
+                    ],
+                    [
+                        "RandomIntResponse",
+                        [
+                            "{ isSecure : Basics.Bool, int : Basics.Int }"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "State",
+                "comment": " Our internal state.\n\nThis module's state is only used by the simulator. If you don't save it,\nthe simulator will always use the same random seed.\n\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "JSVersion",
+                "comment": " This is used to force a major version bump when the JS changes.\n\nYou'll usually not use it for anything.\n\n",
+                "args": [],
+                "type": "{ v4_1 : () }"
+            }
+        ],
+        "values": [
+            {
+                "name": "commander",
+                "comment": " Responsible for sending a `CmdResponse` back through the port.\n\nThis funnel doesn't initiate any sends, so this function always returns `Cmd.none`.\n\n",
+                "type": "(PortFunnel.GenericMessage -> Platform.Cmd.Cmd msg) -> PortFunnel.DevRandom.Response -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "initialState",
+                "comment": " The initial state. Encapsulates a `Random.Seed`.\n\nThe arg is passed to `Random.initialSeed`. This is used only by the simulator,\nso if you're using the JS code for real random numbers, passing 0 here is fine.\n\n",
+                "type": "Basics.Int -> PortFunnel.DevRandom.State"
+            },
+            {
+                "name": "isLoaded",
+                "comment": " Returns true if a `Startup` message has been processed.\n\nThis is sent by the port code after it has initialized.\n\n",
+                "type": "PortFunnel.DevRandom.State -> Basics.Bool"
+            },
+            {
+                "name": "makeSimulatedCmdPort",
+                "comment": " Make a simulated `Cmd` port.\n",
+                "type": "(Json.Encode.Value -> msg) -> Json.Encode.Value -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "moduleDesc",
+                "comment": " Our module descriptor.\n",
+                "type": "PortFunnel.ModuleDesc PortFunnel.DevRandom.Message PortFunnel.DevRandom.State PortFunnel.DevRandom.Response"
+            },
+            {
+                "name": "moduleName",
+                "comment": " The name of this funnel: \"DevRandom\".\n",
+                "type": "String.String"
+            },
+            {
+                "name": "send",
+                "comment": " Send a `Message` through a `Cmd` port.\n",
+                "type": "(Json.Encode.Value -> Platform.Cmd.Cmd msg) -> PortFunnel.DevRandom.Message -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "toJsonString",
+                "comment": " Convert a `Message` to the same JSON string that gets sent\n\nover the wire to the JS code.\n\n",
+                "type": "PortFunnel.DevRandom.Message -> String.String"
+            },
+            {
+                "name": "toString",
+                "comment": " Convert a `Message` to a nice-looking human-readable string.\n",
+                "type": "PortFunnel.DevRandom.Message -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

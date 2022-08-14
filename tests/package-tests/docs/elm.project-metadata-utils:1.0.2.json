@@ -1,0 +1,625 @@
+[
+    {
+        "name": "Elm.Constraint",
+        "comment": " Helpers for working with version constraint strings in `elm.json` files.\n\n# Constraint\n@docs Constraint, check\n\n# String Conversions\n@docs toString, fromString\n\n# JSON Conversions\n@docs encode, decoder\n\n",
+        "unions": [
+            {
+                "name": "Constraint",
+                "comment": " A guaranteed valid Elm constraint. That means the lower bound `v1` and\nthe upper bound `v2` are both valid `Elm.Version` versions, and `v1 <= v2` is\nguaranteed.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "check",
+                "comment": " Check if a version is within the given constraint:\n\n    import Elm.Version as V\n\n    oneToTwo = fromString \"1.0.0 <= v < 2.0.0\"\n    sixToTen = fromString \"6.0.0 <= v < 10.0.0\"\n\n    -- Maybe.map (check V.one) oneToTwo == Just True\n    -- Maybe.map (check V.one) sixToTen == Just False\n",
+                "type": "Elm.Version.Version -> Elm.Constraint.Constraint -> Basics.Bool"
+            },
+            {
+                "name": "decoder",
+                "comment": " Decode the constraint strings that appear in `elm.json`\n",
+                "type": "Json.Decode.Decoder Elm.Constraint.Constraint"
+            },
+            {
+                "name": "encode",
+                "comment": " Turn a `Constraint` into a string for use in `elm.json`\n",
+                "type": "Elm.Constraint.Constraint -> Json.Encode.Value"
+            },
+            {
+                "name": "fromString",
+                "comment": " Try to convert a `String` into a `Constraint`:\n\n    fromString \"1.0.0 <= v < 2.0.0\"   == Just ...\n    fromString \"1.0.0 <= v < 10.0.0\"  == Just ...\n    fromString \"1.0.0 <= v <= 1.0.0\"  == Just ...\n\n    fromString \"1.0.0\"                == Nothing\n    fromString \"1.0.0 <= 2.0.0\"       == Nothing\n    fromString \"1.0.0 <=  v  < 2.0.0\" == Nothing -- extra spaces\n    fromString \"1.0.0 <= vsn < 2.0.0\" == Nothing -- not \"v\" only\n    fromString \"2.0.0 <= v < 1.0.0\"   == Nothing -- unsatisfiable\n",
+                "type": "String.String -> Maybe.Maybe Elm.Constraint.Constraint"
+            },
+            {
+                "name": "toString",
+                "comment": " Convert a `Constraint` to a `String` that works in `elm.json`\n",
+                "type": "Elm.Constraint.Constraint -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Elm.Docs",
+        "comment": " When packages are published to `package.elm-lang.org`, documentation\nis generated for all of the exposed modules (and all of the exposed values).\nThese docs are formatted as JSON for easy consumption by anyone.\n\nThis module helps you decode the JSON docs into nice Elm values! It is\ncurrently used by `package.elm-lang.org` to help turn JSON into nice\nweb pages!\n\n# Decode Docs\n@docs decoder\n\n# Work with Docs\n@docs Module, Alias, Union, Value, Binop, Associativity\n\n# Split Docs into Blocks\n@docs toBlocks, Block\n\n",
+        "unions": [
+            {
+                "name": "Associativity",
+                "comment": " The [associativity][] of an infix operator. This determines how we add\nparentheses around everything. Here are some examples:\n\n    1 + 2 + 3 + 4\n\nWe have to do the operations in *some* order, so which of these interpretations\nshould we choose?\n\n    ((1 + 2) + 3) + 4   -- left-associative\n    1 + (2 + (3 + 4))   -- right-associative\n\nThis is really important for operators like `(|>)`!\n\nSome operators are non-associative though, meaning we do not try to add\nmissing parentheses. `(==)` is a nice example. `1 == 2 == 3` just is not\nallowed!\n\n[associativity]: https://en.wikipedia.org/wiki/Operator_associativity\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Left",
+                        []
+                    ],
+                    [
+                        "None",
+                        []
+                    ],
+                    [
+                        "Right",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Block",
+                "comment": " This type represents a `Block` of documentation to show to the user.\nAfter getting a `List Block` from `toBlocks`, everything is in the right order\nand you can focus on turning the blocks into HTML exactly how you want.\n\n**Note:** This should never produce an `UnknownBlock` but I figured it\nwould be better to let the block visualizer decide what to do in that case.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "MarkdownBlock",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "UnionBlock",
+                        [
+                            "Elm.Docs.Union"
+                        ]
+                    ],
+                    [
+                        "AliasBlock",
+                        [
+                            "Elm.Docs.Alias"
+                        ]
+                    ],
+                    [
+                        "ValueBlock",
+                        [
+                            "Elm.Docs.Value"
+                        ]
+                    ],
+                    [
+                        "BinopBlock",
+                        [
+                            "Elm.Docs.Binop"
+                        ]
+                    ],
+                    [
+                        "UnknownBlock",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Alias",
+                "comment": " Documentation for a type alias. For example, if you had the source code:\n\n    {-| pair of values -}\n    type alias Pair a = ( a, a )\n\nWhen it became an `Alias` it would be like this:\n\n    { name = \"Pair\"\n    , comment = \" pair of values \"\n    , args = [\"a\"]\n    , tipe = Tuple [ Var \"a\", Var \"a\" ]\n    }\n",
+                "args": [],
+                "type": "{ name : String.String, comment : String.String, args : List.List String.String, tipe : Elm.Type.Type }"
+            },
+            {
+                "name": "Binop",
+                "comment": " Documentation for binary operators. The content for `(+)` might look\nsomething like this:\n\n    { name = \"+\"\n    , comment = \"Add numbers\"\n    , tipe = Lambda (Var \"number\") (Lambda (Var \"number\") (Var \"number\"))\n    , associativity = Left\n    , precedence = 6\n    }\n",
+                "args": [],
+                "type": "{ name : String.String, comment : String.String, tipe : Elm.Type.Type, associativity : Elm.Docs.Associativity, precedence : Basics.Int }"
+            },
+            {
+                "name": "Module",
+                "comment": " All the documentation for a particular module.\n\n  * `name` is the module name\n  * `comment` is the module comment\n\nThe actual exposed stuff is broken into categories.\n",
+                "args": [],
+                "type": "{ name : String.String, comment : String.String, unions : List.List Elm.Docs.Union, aliases : List.List Elm.Docs.Alias, values : List.List Elm.Docs.Value, binops : List.List Elm.Docs.Binop }"
+            },
+            {
+                "name": "Union",
+                "comment": " Documentation for a union type. For example, if you had the source code:\n\n    {-| maybe -}\n    type Maybe a = Nothing | Just a\n\nWhen it became a `Union` it would be like this:\n\n    { name = \"Maybe\"\n    , comment = \" maybe \"\n    , args = [\"a\"]\n    , tags =\n        [ (\"Nothing\", [])\n        , (\"Just\", [Var \"a\"])\n        ]\n    }\n",
+                "args": [],
+                "type": "{ name : String.String, comment : String.String, args : List.List String.String, tags : List.List ( String.String, List.List Elm.Type.Type ) }"
+            },
+            {
+                "name": "Value",
+                "comment": " Documentation for values and functions. For example, if you had the source\ncode:\n\n    {-| do not do anything -}\n    identity : a -> a\n    identity value =\n      value\n\nThe `Value` would look like this:\n\n    { name = \"identity\"\n    , comment = \" do not do anything \"\n    , tipe = Lambda (Var \"a\") (Var \"a\")\n    }\n",
+                "args": [],
+                "type": "{ name : String.String, comment : String.String, tipe : Elm.Type.Type }"
+            }
+        ],
+        "values": [
+            {
+                "name": "decoder",
+                "comment": " Decode the JSON documentation produced by `elm-make` for an individual\nmodule. The documentation for a whole package is an array of module docs,\nso you may need to say `(Decode.list Docs.decoder)` depending on what you\nwant to do.\n",
+                "type": "Json.Decode.Decoder Elm.Docs.Module"
+            },
+            {
+                "name": "toBlocks",
+                "comment": " The module comment describes exactly how the generated docs should look.\nIt is a mix of markdown and `@docs` declarations that specify when other\ndocumentation should appear. Matching all this information up is somewhat\ntricky though.\n\nSo calling `toBlocks` on a `Module` gives you a `List Block` with all the\ninformation necessary to visualize the docs as intended.\n",
+                "type": "Elm.Docs.Module -> List.List Elm.Docs.Block"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Elm.Error",
+        "comment": " When `elm make --report=json` fails, this module helps you turn the\nresulting JSON into HTML.\n\n# Compile Errors\n@docs decoder, Error, BadModule, Problem\n\n# Styled Text\n@docs Chunk, Style, Color\n\n# Code Regions\n@docs Region, Position\n\n",
+        "unions": [
+            {
+                "name": "Chunk",
+                "comment": " A chunk of text to show. Chunks will contain newlines here and there, so\nI recommend using `white-space: pre` to make sure everything looks alright.\n\nThe error messages are designed to look nice in 80 columns, and the only way\nany line will be longer than that is if a code snippet from the user is longer.\nAnyway, please try to get a presentation that matches the terminal pretty well.\nIt will look alright, and the consistency will be more valuable than any small\nchanges.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Unstyled",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Styled",
+                        [
+                            "Elm.Error.Style",
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Color",
+                "comment": " Error messages use colors to emphasize the most useful information. This\nhelps people resolve their problems quicker! Because the errors need to work\non the terminal as well, the colors are limited to ANSI colors that are\nwidely supported by different terminal softwark.\n\nSo there are eight colors, each with a `Dull` and `VIVID` version.\n\n**Note:** I have tried to make the _meaning_ of each color consistent across\nall error messages (red is problem, yellow is decent advice, green is great\nadvice, cyan is helpful information, etc.) so please use colors that actually\nmatch the color names! I think consistency is worth a lot within the ecosystem.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Red",
+                        []
+                    ],
+                    [
+                        "RED",
+                        []
+                    ],
+                    [
+                        "Magenta",
+                        []
+                    ],
+                    [
+                        "MAGENTA",
+                        []
+                    ],
+                    [
+                        "Yellow",
+                        []
+                    ],
+                    [
+                        "YELLOW",
+                        []
+                    ],
+                    [
+                        "Green",
+                        []
+                    ],
+                    [
+                        "GREEN",
+                        []
+                    ],
+                    [
+                        "Cyan",
+                        []
+                    ],
+                    [
+                        "CYAN",
+                        []
+                    ],
+                    [
+                        "Blue",
+                        []
+                    ],
+                    [
+                        "BLUE",
+                        []
+                    ],
+                    [
+                        "White",
+                        []
+                    ],
+                    [
+                        "WHITE",
+                        []
+                    ],
+                    [
+                        "Black",
+                        []
+                    ],
+                    [
+                        "BLACK",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Error",
+                "comment": " When `elm make --report=json` fails, there are two major categories of\nerror. Usually you have `ModuleProblems` like an unknown variable name or type\nmismatch, but you can also get a `GeneralProblem` like cyclic modules or an\ninvalid `elm.json` file. The latter are much less common, but because they\nnever have a `Region` they need to be handled separately.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "GeneralProblem",
+                        [
+                            "{ path : Maybe.Maybe String.String, title : String.String, message : List.List Elm.Error.Chunk }"
+                        ]
+                    ],
+                    [
+                        "ModuleProblems",
+                        [
+                            "List.List Elm.Error.BadModule"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "BadModule",
+                "comment": " When I cannot compile a module, I am able to report a bunch of problems at\nonce. So you may see a bunch of naming errors or type errors.\n",
+                "args": [],
+                "type": "{ path : String.String, name : String.String, problems : List.List Elm.Error.Problem }"
+            },
+            {
+                "name": "Position",
+                "comment": " A line and column in the source file. Both are one-indexed, so every file\nstarts at `{ line = 1, column = 1 }` and increases from there.\n",
+                "args": [],
+                "type": "{ line : Basics.Int, column : Basics.Int }"
+            },
+            {
+                "name": "Problem",
+                "comment": " A problem in an Elm module.\n",
+                "args": [],
+                "type": "{ title : String.String, region : Elm.Error.Region, message : List.List Elm.Error.Chunk }"
+            },
+            {
+                "name": "Region",
+                "comment": " Every `Problem` is caused by code in a specific `Region`.\n",
+                "args": [],
+                "type": "{ start : Elm.Error.Position, end : Elm.Error.Position }"
+            },
+            {
+                "name": "Style",
+                "comment": " Widely supported styles for ANSI text. Bold and underline are used very\nrarely in Elm output. Mainly for a `Note` or a `Hint` about something. Colors\nare used relatively infrequently, primarily to draw attention to the most\nimportant information. Red is the problem, yellow is distilled advice, etc.\n",
+                "args": [],
+                "type": "{ bold : Basics.Bool, underline : Basics.Bool, color : Maybe.Maybe Elm.Error.Color }"
+            }
+        ],
+        "values": [
+            {
+                "name": "decoder",
+                "comment": " Decode the JSON produced when `elm make --report=json` fails. The goal is\nto get the data in a format that can be presented in HTML.\n\n**Note:** Please follow the design advice in the rest of the docs, like for\n[`Chunk`](#Chunk) and [`Color`](#Color). Consistent presentation of errors\nmeans that once you learn how to read errors, you have that ability with any\ntool you use in Elm.\n",
+                "type": "Json.Decode.Decoder Elm.Error.Error"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Elm.License",
+        "comment": " The `elm.json` for packages always has a `\"license\"` field. That field\nmust contain an OSI approved license in the [SPDX](https://spdx.org/licenses/) format.\n\nThis module helps verify that licenses are acceptable.\n\n\n# Licenses\n@docs License, bsd3, toDetails, osiApprovedSpdxLicenses\n\n# String Conversions\n@docs toString, fromString\n\n# JSON Conversions\n@docs encode, decoder\n",
+        "unions": [
+            {
+                "name": "License",
+                "comment": " An OSI approved license in the [SPDX](https://spdx.org/licenses/) format.\nIt is impossible to construct an invalid `License` value.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "bsd3",
+                "comment": " Easy access to a license commonly used in the Elm ecosystem.\n\n  - `name` = `BSD 3-clause \"New\" or \"Revised\" License`\n  - `spdx` = `BSD-3-Clause`\n\n",
+                "type": "Elm.License.License"
+            },
+            {
+                "name": "decoder",
+                "comment": " Decode a SPDX string from `elm.json` into a `License`\n",
+                "type": "Json.Decode.Decoder Elm.License.License"
+            },
+            {
+                "name": "encode",
+                "comment": " Encode a `License` into a SPDX string for use in `elm.json`\n",
+                "type": "Elm.License.License -> Json.Encode.Value"
+            },
+            {
+                "name": "fromString",
+                "comment": " Convert an arbitrary `String` into a `License`:\n\n    fromString \"BSD-3-Clause\" == Just bsd3\n    fromString \"BSD3\"         == Nothing\n\nNotice that this function only succeeds when given an OSI approved license\nin its SPDX abbreviation. Go [here](https://spdx.org/licenses/) for a full\nlist of such licenses.\n",
+                "type": "String.String -> Maybe.Maybe Elm.License.License"
+            },
+            {
+                "name": "osiApprovedSpdxLicenses",
+                "comment": " OSI approved licenses in [SPDX format](https://spdx.org/licenses/).\n",
+                "type": "List.List Elm.License.License"
+            },
+            {
+                "name": "toDetails",
+                "comment": " Extract the common `name` of a `License`, along with its standardized\n`spdx` abbreviation.\n\n    toDetails bsd3\n    -- { name = \"BSD 3-clause \\\"New\\\" or \\\"Revised\\\" License\"\n    -- , spdx = \"BSD-3-Clause\"\n    -- }\n",
+                "type": "Elm.License.License -> { name : String.String, spdx : String.String }"
+            },
+            {
+                "name": "toString",
+                "comment": " Convert a `License` to its SPDX abbreviation:\n\n    toString bsd3 == \"BSD-3-Clause\"\n",
+                "type": "Elm.License.License -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Elm.Module",
+        "comment": " Helpers for working with module name strings in `elm.json` files.\n\n# Modules\n@docs Name\n\n# String Conversions\n@docs toString, fromString\n\n# JSON Conversions\n@docs encode, decoder\n\n",
+        "unions": [
+            {
+                "name": "Name",
+                "comment": " A guaranteed valid Elm module name.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decoder",
+                "comment": " Decode the module name strings that appear in `elm.json`\n",
+                "type": "Json.Decode.Decoder Elm.Module.Name"
+            },
+            {
+                "name": "encode",
+                "comment": " Turn a `Name` into a string for use in `elm.json`\n",
+                "type": "Elm.Module.Name -> Json.Encode.Value"
+            },
+            {
+                "name": "fromString",
+                "comment": " Try to convert a `String` into a `Name`:\n\n    fromString \"Maybe\"       == Just ...\n    fromString \"Elm.Name\"    == Just ...\n    fromString \"Json.Decode\" == Just ...\n    fromString \"json.decode\" == Nothing\n",
+                "type": "String.String -> Maybe.Maybe Elm.Module.Name"
+            },
+            {
+                "name": "toString",
+                "comment": " Convert a `Name` to a `String` that works in `elm.json`\n",
+                "type": "Elm.Module.Name -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Elm.Package",
+        "comment": " Helpers for working with package name strings in `elm.json` files.\n\n# Packages\n@docs Name\n\n# String Conversions\n@docs toString, fromString\n\n# JSON Conversions\n@docs encode, decoder\n\n",
+        "unions": [
+            {
+                "name": "Name",
+                "comment": " A guaranteed valid Elm package name.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decoder",
+                "comment": " Decode the module name strings that appear in `elm.json`\n",
+                "type": "Json.Decode.Decoder Elm.Package.Name"
+            },
+            {
+                "name": "encode",
+                "comment": " Turn a `Name` into a string for use in `elm.json`\n",
+                "type": "Elm.Package.Name -> Json.Encode.Value"
+            },
+            {
+                "name": "fromString",
+                "comment": " Try to convert a `String` into a `Name`:\n\n    fromString \"elm/core\"    == Just ...\n    fromString \"elm/html\"    == Just ...\n    fromString \"tom/elm-css\" == Just ...\n    fromString \"tom/elm_css\" == Nothing\n    fromString \"tom/x.js\"    == Nothing\n    fromString \"elm\"         == Nothing\n    fromString \"html\"        == Nothing\n",
+                "type": "String.String -> Maybe.Maybe Elm.Package.Name"
+            },
+            {
+                "name": "toString",
+                "comment": " Convert a `Name` to a `String` that works in `elm.json`\n",
+                "type": "Elm.Package.Name -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Elm.Project",
+        "comment": " Turn `elm.json` files into data that is nice to use in Elm.\n\n# Projects\n@docs Project, ApplicationInfo, Deps, PackageInfo, Exposed\n\n# JSON Conversions\n@docs encode, decoder\n\n",
+        "unions": [
+            {
+                "name": "Exposed",
+                "comment": " There are two ways to specify `\"exposed-modules\"` field in an `elm.json`\nfor packages. In one you just list the exposed modules. In the other, you\nprovide headers for chunks of module names. In either case, the package website\npreserves this information to make the presentation nicer.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "ExposedList",
+                        [
+                            "List.List Elm.Module.Name"
+                        ]
+                    ],
+                    [
+                        "ExposedDict",
+                        [
+                            "List.List ( String.String, List.List Elm.Module.Name )"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Project",
+                "comment": " There are two types of Elm projects, one for applications and another one\nfor packages. The `elm.json` is different in each case, so they are modeled\nas [`ApplicationInfo`](#ApplicationInfo) and [`PackageInfo`](#PackageInfo) types.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Application",
+                        [
+                            "Elm.Project.ApplicationInfo"
+                        ]
+                    ],
+                    [
+                        "Package",
+                        [
+                            "Elm.Project.PackageInfo"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "ApplicationInfo",
+                "comment": " The contents of an `elm.json` with `\"type\": \"application\"`.\n",
+                "args": [],
+                "type": "{ elm : Elm.Version.Version, dirs : List.List String.String, depsDirect : Elm.Project.Deps Elm.Version.Version, depsIndirect : Elm.Project.Deps Elm.Version.Version, testDepsDirect : Elm.Project.Deps Elm.Version.Version, testDepsIndirect : Elm.Project.Deps Elm.Version.Version }"
+            },
+            {
+                "name": "Deps",
+                "comment": " The dependencies for a project. The order is preserved from JSON.\n",
+                "args": [
+                    "constraint"
+                ],
+                "type": "List.List ( Elm.Package.Name, constraint )"
+            },
+            {
+                "name": "PackageInfo",
+                "comment": " The contents of an `elm.json` with `\"type\": \"package\"`.\n",
+                "args": [],
+                "type": "{ name : Elm.Package.Name, summary : String.String, license : Elm.License.License, version : Elm.Version.Version, exposed : Elm.Project.Exposed, deps : Elm.Project.Deps Elm.Constraint.Constraint, testDeps : Elm.Project.Deps Elm.Constraint.Constraint, elm : Elm.Constraint.Constraint }"
+            }
+        ],
+        "values": [
+            {
+                "name": "decoder",
+                "comment": " Decode the contents of `elm.json` into a `Project`.\n",
+                "type": "Json.Decode.Decoder Elm.Project.Project"
+            },
+            {
+                "name": "encode",
+                "comment": " Turn a `Project` into the JSON that goes in `elm.json`\n",
+                "type": "Elm.Project.Project -> Json.Encode.Value"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Elm.Type",
+        "comment": " This is specifically for handling the types that appear in\ndocumentation generated by `elm-make`. If you are looking to parse\narbitrary type signatures with creative indentation (e.g. newlines\nand comments) this library will not do what you want. Instead,\ncheck out the source code and go from there. It's not too tough!\n\n@docs Type, decoder\n\n",
+        "unions": [
+            {
+                "name": "Type",
+                "comment": " Represent Elm types as values! Here are some examples:\n\n    Int            ==> Type \"Int\" []\n    a -> b         ==> Lambda (Var \"a\") (Var \"b\")\n    ( a, b )       ==> Tuple [ Var \"a\", Var \"b\" ]\n    Maybe a        ==> Type \"Maybe\" [ Var \"a\" ]\n    { x : Int }    ==> Record [(\"x\", Type \"Int\" [])] Nothing\n    { r | x : a }  ==> Record [(\"x\", Var \"a\")] (Just \"r\")\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Var",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Lambda",
+                        [
+                            "Elm.Type.Type",
+                            "Elm.Type.Type"
+                        ]
+                    ],
+                    [
+                        "Tuple",
+                        [
+                            "List.List Elm.Type.Type"
+                        ]
+                    ],
+                    [
+                        "Type",
+                        [
+                            "String.String",
+                            "List.List Elm.Type.Type"
+                        ]
+                    ],
+                    [
+                        "Record",
+                        [
+                            "List.List ( String.String, Elm.Type.Type )",
+                            "Maybe.Maybe String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decoder",
+                "comment": " Decode the JSON representation of `Type` values.\n",
+                "type": "Json.Decode.Decoder Elm.Type.Type"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Elm.Version",
+        "comment": " Helpers for working with version strings in `elm.json` files.\n\n# Versions\n@docs Version, one, compare\n\n# String Conversions\n@docs toString, fromString\n\n# JSON Conversions\n@docs encode, decoder\n\n# Tuple Conversions\n@docs toTuple, fromTuple\n\n",
+        "unions": [
+            {
+                "name": "Version",
+                "comment": " A guaranteed valid Elm version. All versions are `1.0.0` or greater.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "compare",
+                "comment": " Compare two versions:\n\n    v1 = fromString \"1.0.0\"\n    v2 = fromString \"2.0.0\"\n    v3 = fromString \"3.0.0\"\n\n    -- Maybe.map2 compare v1 v2 == Just LT\n    -- Maybe.map2 compare v2 v2 == Just EQ\n    -- Maybe.map2 compare v2 v1 == Just GT\n\n",
+                "type": "Elm.Version.Version -> Elm.Version.Version -> Basics.Order"
+            },
+            {
+                "name": "decoder",
+                "comment": " Decode the version strings that appear in `elm.json`\n",
+                "type": "Json.Decode.Decoder Elm.Version.Version"
+            },
+            {
+                "name": "encode",
+                "comment": " Turn a `Version` into a string for use in `elm.json`\n",
+                "type": "Elm.Version.Version -> Json.Encode.Value"
+            },
+            {
+                "name": "fromString",
+                "comment": " Try to convert a `String` into a `Version`. The major, minor, and patch\nnumbers must all appear separated by dots:\n\n    fromString \"1.0.0\" == Just one\n    fromString \"2.0.0\" == Just ...\n    fromString \"3-0-0\" == Nothing\n    fromString \"3.0\"   == Nothing\n",
+                "type": "String.String -> Maybe.Maybe Elm.Version.Version"
+            },
+            {
+                "name": "fromTuple",
+                "comment": " Try to make a `Version` from given numbers. This way you do not need\nto turn things into strings for no reason. It can still fail if you give\nnegative numbers or versions below `1.0.0`:\n\n    fromTuple (1, 0, 0) == Just one\n    fromTuple (2, 0, 1) == Just ...\n    fromTuple (0, 0, 1) == Nothing\n",
+                "type": "( Basics.Int, Basics.Int, Basics.Int ) -> Maybe.Maybe Elm.Version.Version"
+            },
+            {
+                "name": "one",
+                "comment": " Version `1.0.0` for easy access.\n",
+                "type": "Elm.Version.Version"
+            },
+            {
+                "name": "toString",
+                "comment": " Convert a `Version` to a `String` that works in `elm.json`\n\n    toString one == \"1.0.0\"\n",
+                "type": "Elm.Version.Version -> String.String"
+            },
+            {
+                "name": "toTuple",
+                "comment": " Turn a `Version` into a tuple to extract the numbers as integers.\n\n    toTuple one == (1, 0, 0)\n\n    Maybe.map toTuple (fromString \"2.0.4\" ) == Just (2, 0, 4)\n    Maybe.map toTuple (fromString \"7.3.10\") == Just (7, 3, 10)\n",
+                "type": "Elm.Version.Version -> ( Basics.Int, Basics.Int, Basics.Int )"
+            }
+        ],
+        "binops": []
+    }
+]

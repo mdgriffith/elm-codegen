@@ -1,0 +1,21 @@
+[
+    {
+        "name": "Css.Reset",
+        "comment": " Some CSS resets using elm-css.\n\n@docs meyerV2, borderBoxV201408\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "borderBoxV201408",
+                "comment": " Set `box-sizing: border-box` everywhere.\n\nSee <https://www.paulirish.com/2012/box-sizing-border-box-ftw/> for more.\n\n",
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "meyerV2",
+                "comment": " The Eric Meyer CSS reset (2.0, public domain), converted to elm-css\n\nOriginal at <https://meyerweb.com/eric/tools/css/reset/>.\n\n",
+                "type": "Html.Styled.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

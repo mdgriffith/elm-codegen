@@ -1,0 +1,165 @@
+[
+    {
+        "name": "Mesh",
+        "comment": " This module provides functions for working with indexed meshes.\nYou can:\n\n  - Construct meshes from vertices and face indices\n  - Extract vertices, faces and edges in various ways\n  - Combine multiple meshes into a single mesh\n\n@docs Mesh\n\n\n# Constants\n\n@docs empty\n\n\n# Constructors\n\n@docs fromOrientedFaces, grid\n\n\n## Special grids\n\nThese functions work similarly to `grid` but let you construct shapes like\ncylindrical tubes, spheres or toruses, where some edges of the grid 'wrap\naround' and join up with other edges. For example, a cylindrical tube (a\ncylinder without ends) can be thought of as a piece of paper curled around so\nthat one edge touches the other.\n\nThese functions ensure that in cases like a cylindrical tube, there's actually\nonly _one_ set of vertices along the shared edge that is then referenced by the\nfaces on either side. Roughly speaking, this is the difference between a\npolyline where the last vertex happens to be the same as the first (and so looks\nlike a closed polygon, but isn't actually connected) and a proper polygon where\nthe last vertex is actually connected back to the first.\n\nNote that these functions _can_ be used to create meshes that represent actual\ncylinders, spheres, and toruses, but they can also be used to make any mesh that\nis [topologically](https://en.wikipedia.org/wiki/Topology) equivalent to one of\nthose. For example, the `ball` function can be used to create meshes for both\nspheres and [ellipsoids](https://en.wikipedia.org/wiki/Ellipsoid).\n\n@docs tube, ring, ball\n\n\n## Indexed grids\n\nThese functions work like their non-`indexed` versions, but the function gets\npassed the _indices_ of individual vertices instead of their parameter values.\n\n@docs indexedGrid, indexedTube, indexedRing, indexedBall\n\n\n# Interop\n\n@docs fromTriangularMesh, toTriangularMesh\n\n\n# Combining and splitting meshes\n\n@docs combine, filterFaces\n\n\n# Properties\n\n@docs vertices, vertex, faceIndices, faceVertices\n@docs boundaryIndices, boundaryVertices\n@docs edgeIndices, edgeVertices, neighborIndices, neighborVertices\n\n\n# Transformations\n\n@docs mapVertices, withNormals, subdivide, subdivideSmoothly, extrude\n\n",
+        "unions": [
+            {
+                "name": "Mesh",
+                "comment": " A `Mesh` is an instance of a\n[polygon mesh](https://en.wikipedia.org/wiki/Polygon_mesh)\nwhich is implemented as a so-called\n[half-edge data structure](https://www.flipcode.com/archives/The_Half-Edge_Data_Structure.shtml).\nEach mesh consists of an array of vertices and some connectivity information\nthat describes how faces, edges and vertices are related to each other. A face\nmust have at least three vertices, but can also have four, five or more.\n\nThe half-edge data structure guarantees that the mesh describes a surface with\na consistent \"orientation\", which intuitively means that if one were to walk\nalong on the surface of the mesh one could never find oneself back at the\nstarting point but standing upside-down on the other side of the mesh.\n\nThe vertices themselves can be any type you want. For a 2D mesh, you might have\neach vertex be simply a point:\n\n    type alias Mesh2d =\n        Mesh Point2d\n\nFor a 3D mesh, each vertex might be a (point, normal) tuple:\n\n    type alias Mesh3d =\n        Mesh ( Point3d, Vector3d )\n\nIn more complex cases, each vertex might be a record:\n\n    type alias VertexData =\n        { position : Point3d\n        , normal : Vector3d\n        , color : Color\n        }\n\n    type alias RenderMesh =\n        Mesh VertexData\n\n",
+                "args": [
+                    "vertex"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "ball",
+                "comment": " Construct a mesh that is topologically equivalent to a sphere; the\nresulting mesh will have the basic sphere structure as shown [here](http://www.songho.ca/opengl/gl_sphere.html)\nwith U corresponding to Θ and V corresponding to Φ (with V=0 meaning the bottom\npoint on the sphere or 'south pole' and V=1 meaning the top point on the\nsphere or 'north pole').\n",
+                "type": "Basics.Int -> Basics.Int -> (Basics.Float -> Basics.Float -> vertex) -> Mesh.Mesh vertex"
+            },
+            {
+                "name": "boundaryIndices",
+                "comment": " Get the boundary components of a mesh as lists of vertex indices. Each\ncomponent is normalized so that its smallest vertex index comes first.\n\n    pyramidTop =\n        Mesh.fromOrientedFaces\n            (Array.fromList [ a, b, c, d, e ])\n            [ [ 0, 4, 1 ]\n            , [ 1, 4, 2 ]\n            , [ 2, 4, 3 ]\n            , [ 3, 4, 0 ] ]\n            |> Result.withDefault Mesh.empty\n\n    Mesh.faceIndices pyramidTop\n    --> [ [ 0, 4, 1 ]\n    --> , [ 1, 4, 2 ]\n    --> , [ 2, 4, 3 ]\n    --> , [ 0, 3, 4 ]\n    --> ]\n\n    Mesh.boundaryIndices pyramidTop\n    --> [ [ 0, 1, 2, 3 ] ]\n\n",
+                "type": "Mesh.Mesh vertex -> List.List (List.List Basics.Int)"
+            },
+            {
+                "name": "boundaryVertices",
+                "comment": " Get the boundary components of a mesh as lists of vertices. The ordering of\nvertices for each component is the same as in `faceIndices`.\n\n    Mesh.boundaryVertices pyramidTop\n    --> [ [ a, b, c, d ] ]\n\n",
+                "type": "Mesh.Mesh vertex -> List.List (List.List vertex)"
+            },
+            {
+                "name": "combine",
+                "comment": " Combine a list of meshes into a single mesh. This concatenates the vertex\narrays of each mesh and adjusts face indices to refer to the combined vertex\narray.\n\n    pyramid =\n        Mesh.fromOrientedFaces\n            (Array.fromList [ a, b, c, d, e ])\n            [ [ 0, 1, 2, 3 ]\n            , [ 0, 4, 1 ]\n            , [ 1, 4, 2 ]\n            , [ 2, 4, 3 ]\n            , [ 3, 4, 0 ]\n            ]\n\n    tetrahedron =\n        Mesh.fromOrientedFaces\n            (Array.fromList [ A, B, C, D ])\n            [ [ 0, 1, 2 ]\n            , [ 0, 3, 1 ]\n            , [ 1, 3, 2 ]\n            , [ 2, 3, 0 ]\n            ]\n\n    combined =\n        Mesh.combine [ pyramid, tetrahedron ]\n\n    Mesh.vertices combined\n    --> Array.fromList [ a, b, c, d, e, A, B, C, D ]\n\n    Mesh.faceIndices combined\n    --> [ [ 0, 1, 2, 3 ]\n    --> , [ 0, 4, 1 ]\n    --> , [ 1, 4, 2 ]\n    --> , [ 2, 4, 3 ]\n    --> , [ 0, 3, 4 ]\n    --> , [ 5, 6, 7 ]\n    --> , [ 5, 8, 6 ]\n    --> , [ 6, 8, 7 ]\n    --> , [ 5, 7, 8 ]\n    --> ]\n\n",
+                "type": "List.List (Mesh.Mesh a) -> Mesh.Mesh a"
+            },
+            {
+                "name": "edgeIndices",
+                "comment": " Get all of the edges of a mesh as pairs of vertex indices. Each edge will\nonly be returned once, with the lower-index vertex listed first, and will be\nreturned in sorted order.\n\n    Mesh.edgeIndices pyramid\n    --> [ ( 0, 1 )\n    --> , ( 0, 3 )\n    --> , ( 0, 4 )\n    --> , ( 1, 2 )\n    --> , ( 1, 4 )\n    --> , ( 2, 3 )\n    --> , ( 2, 4 )\n    --> , ( 3, 4 )\n    --> ]\n\n",
+                "type": "Mesh.Mesh vertex -> List.List ( Basics.Int, Basics.Int )"
+            },
+            {
+                "name": "edgeVertices",
+                "comment": " Get all of the edges of a mesh as pairs of vertices. Each edge will\nonly be returned once, with the lower-index vertex listed first, and will be\nreturned in sorted order (by index).\n\n    Mesh.edgeVertices pyramid\n    --> [ ( a, b )\n    --> , ( a, d )\n    --> , ( a, e )\n    --> , ( b, c )\n    --> , ( b, e )\n    --> , ( c, d )\n    --> , ( c, e )\n    --> , ( d, e )\n    --> ]\n\n",
+                "type": "Mesh.Mesh vertex -> List.List ( vertex, vertex )"
+            },
+            {
+                "name": "empty",
+                "comment": " A mesh with no vertices or faces.\n",
+                "type": "Mesh.Mesh vertex"
+            },
+            {
+                "name": "extrude",
+                "comment": " Extrude a mesh. This adds a duplicate of the original mesh with the face\norientations reversed and the provided function applied to the vertices. The\nduplicate is then connected to the original along any boundary components.\nFor example, if the original mesh is a hexagon in the xy plane, and the vertex\nmapping moves each vertex up along the z-direction, the result is a hexagonal\nprism.\n",
+                "type": "(vertex -> vertex) -> Mesh.Mesh vertex -> Mesh.Mesh vertex"
+            },
+            {
+                "name": "faceIndices",
+                "comment": " Get the faces of a mesh as lists of vertex indices. Each face is\nnormalized so that its smallest vertex index comes first.\n\n    Mesh.faceIndices pyramid\n    --> [ [ 0, 1, 2, 3 ]\n    --> , [ 0, 4, 1 ]\n    --> , [ 1, 4, 2 ]\n    --> , [ 2, 4, 3 ]\n    --> , [ 0, 3, 4 ]\n    --> ]\n\n",
+                "type": "Mesh.Mesh vertex -> List.List (List.List Basics.Int)"
+            },
+            {
+                "name": "faceVertices",
+                "comment": " Get the faces of a mesh as lists of vertices. The ordering of vertices\nfor each face is the same as in `faceIndices`.\n\n    Mesh.faceVertices pyramid\n    --> [ [ a, b, c, d ]\n    --> , [ a, e, b ]\n    --> , [ b, e, c ]\n    --> , [ c, e, d ]\n    --> , [ a, d, e ]\n    --> ]\n\n",
+                "type": "Mesh.Mesh vertex -> List.List (List.List vertex)"
+            },
+            {
+                "name": "filterFaces",
+                "comment": " Keep faces that satisfy the test and vertices in those faces.\n",
+                "type": "(List.List vertex -> Basics.Bool) -> Mesh.Mesh vertex -> Mesh.Mesh vertex"
+            },
+            {
+                "name": "fromOrientedFaces",
+                "comment": " Create a mesh from an array of vertices and a list of face indices. For\nexample, to construct a square pyramid where `a` is the front right corner,\n`b` is the front left corner, `c` is the back left corner, `d` is the back\nright corner and `e` is the apex:\n\n    vertices =\n        Array.fromList [ a, b, c, d, e ]\n\n    faceIndices =\n        [ [ 0, 1, 2, 3 ]\n        , [ 0, 4, 1 ]\n        , [ 1, 4, 2 ]\n        , [ 2, 4, 3 ]\n        , [ 3, 4, 0 ]\n        ]\n\n    pyramid =\n        Mesh.fromOrientedFaces vertices faceIndices\n            |> Result.withDefault Mesh.empty\n\nThe return type here is a `Result String (Mesh vertex)` rather than just\na `Mesh vertex` so that a specific error message can be produced if there is\na problem with the input.\n\n",
+                "type": "Array.Array vertex -> List.List (List.List Basics.Int) -> Result.Result String.String (Mesh.Mesh vertex)"
+            },
+            {
+                "name": "fromTriangularMesh",
+                "comment": " Try to convert a `TriangularMesh` instance into a `Mesh`. This could\npotentially fail because a `Mesh` is more restrictive.\n",
+                "type": "TriangularMesh.TriangularMesh vertex -> Result.Result String.String (Mesh.Mesh vertex)"
+            },
+            {
+                "name": "grid",
+                "comment": " Construct a mesh in the form of a rectangular grid. This is useful for\nconstructing things like terrain meshes given a height function, or a\n[parametric surface](https://services.math.duke.edu/education/ccp/materials/mvcalc/parasurfs/para1.html)\ngiven a function that computes a 3D point (and perhaps a normal vector) from\nU and V parameter values.\n\nThe arguments are the number of steps to take in the U and V directions, and a\nfunction that takes U and V values (which each range between 0 and 1) and\nreturns some sort of vertex value. A mesh will then be constructed will all\nvertices correctly connected to each other.\n\n",
+                "type": "Basics.Int -> Basics.Int -> (Basics.Float -> Basics.Float -> vertex) -> Mesh.Mesh vertex"
+            },
+            {
+                "name": "indexedBall",
+                "comment": " ",
+                "type": "Basics.Int -> Basics.Int -> (Basics.Int -> Basics.Int -> vertex) -> Mesh.Mesh vertex"
+            },
+            {
+                "name": "indexedGrid",
+                "comment": " ",
+                "type": "Basics.Int -> Basics.Int -> (Basics.Int -> Basics.Int -> vertex) -> Mesh.Mesh vertex"
+            },
+            {
+                "name": "indexedRing",
+                "comment": " ",
+                "type": "Basics.Int -> Basics.Int -> (Basics.Int -> Basics.Int -> vertex) -> Mesh.Mesh vertex"
+            },
+            {
+                "name": "indexedTube",
+                "comment": " ",
+                "type": "Basics.Int -> Basics.Int -> (Basics.Int -> Basics.Int -> vertex) -> Mesh.Mesh vertex"
+            },
+            {
+                "name": "mapVertices",
+                "comment": " Transform a mesh by applying the given function to each of its vertices. For\nexample, if you had a 2D mesh where each vertex was an `( x, y )` tuple and you\nwanted to convert it to a 3D mesh on the XY plane, you might use\n\n    mesh2d : Mesh ( Float, Float )\n    mesh2d =\n        ...\n\n    to3d : ( Float, Float ) -> ( Float, Float, Float )\n    to3d ( x, y ) =\n        ( x, y, 0 )\n\n    mesh3d : Mesh ( Float, Float, Float )\n    mesh3d =\n        Mesh.mapVertices to3d mesh2d\n\n",
+                "type": "(a -> b) -> Mesh.Mesh a -> Mesh.Mesh b"
+            },
+            {
+                "name": "neighborIndices",
+                "comment": " Get the neighbors of all vertices as lists of vertex indices. The i-th\nentry in the output array corresponds to the i-th vertex of the\nmesh. The neighbors are ordered as one would encounter them while walking\naround the vertex in the same direction (clockwise or counterclockwise) as\nthe vertices for each face are listed, starting from the one with\nthe lowest vertex index.\n\n    Mesh.neighborIndices pyramid\n    --> [ [ 1, 3, 4 ]\n    --> , [ 0, 4, 2 ]\n    --> , [ 1, 4, 3 ]\n    --> , [ 0, 2, 4 ]\n    --> , [ 0, 3, 2, 1 ]\n    --> ]\n\n",
+                "type": "Mesh.Mesh vertex -> Array.Array (List.List Basics.Int)"
+            },
+            {
+                "name": "neighborVertices",
+                "comment": " Get the neighbors of all vertices as lists of vertices. Further details\nare as in `neighborIndices`.\n",
+                "type": "Mesh.Mesh vertex -> Array.Array (List.List vertex)"
+            },
+            {
+                "name": "ring",
+                "comment": " Construct a mesh that is topologically equivalent to a [torus](https://en.wikipedia.org/wiki/Torus).\nThis is similar to `tube` except that the mesh wraps in both the U _and_ V\ndirections.\n",
+                "type": "Basics.Int -> Basics.Int -> (Basics.Float -> Basics.Float -> vertex) -> Mesh.Mesh vertex"
+            },
+            {
+                "name": "subdivide",
+                "comment": " Subdivide a mesh by first adding a new vertex in the center of each edge,\nsubdividing each edge into two in the process, then adding a new vertex in the\ncenter of each face and splitting the face into quadrangles by connecting the\nnew face center to the new edge centers.\n\nThe first argument is a function that takes a list of input vertices, namely\nthe vertices of an edge or face to be subdivided, and returns the new \"center\"\nvertex.\n\n",
+                "type": "(List.List vertex -> vertex) -> Mesh.Mesh vertex -> Mesh.Mesh vertex"
+            },
+            {
+                "name": "subdivideSmoothly",
+                "comment": " Subdivide a mesh into quadrangles using the\n[Catmull-Clark](https://en.wikipedia.org/wiki/Catmull%E2%80%93Clark_subdivision_surface)\nmethod. The connectivity of the result will be the same as in `subdivide`, but\nthe vertices will be repositioned to make it appear smoother.\n\nThe first argument is a function that returns `True` if the input vertex should\nnot be moved. The second argument is a function that returns the position of\nan input vertex. The third argument is a function that takes a list of input\nvertices and a computed output position and returns an output vertex.\n\n",
+                "type": "(vertex -> Basics.Bool) -> (vertex -> Point3d.Point3d units coordinates) -> (List.List vertex -> Point3d.Point3d units coordinates -> vertex) -> Mesh.Mesh vertex -> Mesh.Mesh vertex"
+            },
+            {
+                "name": "toTriangularMesh",
+                "comment": " Triangulate each face of the mesh and return the result as a\n`TriangularMesh` instance.\n",
+                "type": "Mesh.Mesh vertex -> TriangularMesh.TriangularMesh vertex"
+            },
+            {
+                "name": "tube",
+                "comment": " Construct a mesh that is topologically equivalent to a cylinder, where the\nU parameter value is along the axis of the sphere and the V parameter value is\naround the circumference. The mesh will wrap in the V direction, so the provided\nfunction will never be called with V=1; instead, the last vertices in the V\ndirection will connect back to the first ones.\n\nIf you wanted to construct a 5 meter long, 2 meter radius cylindrical mesh along\nthe X axis, you might do something like\n\n    import Mesh\n\n    Mesh.tube 1 72 <|\n        \\u v ->\n            let\n                theta =\n                    2 * pi * v\n            in\n            { x = 5 * u\n            , y = 2 * sin theta\n            , z = 2 * cos theta\n            }\n\n",
+                "type": "Basics.Int -> Basics.Int -> (Basics.Float -> Basics.Float -> vertex) -> Mesh.Mesh vertex"
+            },
+            {
+                "name": "vertex",
+                "comment": " Get a particular vertex of a mesh by index. If the index is out of range,\nreturns `Nothing`.\n\n    Mesh.vertex 1 pyramid\n    --> Just b\n\n    Mesh.vertex 5 pyramid\n    --> Nothing\n\n",
+                "type": "Basics.Int -> Mesh.Mesh vertex -> Maybe.Maybe vertex"
+            },
+            {
+                "name": "vertices",
+                "comment": " Get the vertices of a mesh.\n\n    Mesh.vertices pyramid\n    --> Array.fromList [ a, b, c, d, e ]\n\n",
+                "type": "Mesh.Mesh vertex -> Array.Array vertex"
+            },
+            {
+                "name": "withNormals",
+                "comment": " Calculate normals for a mesh. The first argument is a function that takes\na vertex of the input mesh and returns its position as a\n[Point3d](http://package.elm-lang.org/packages/ianmackenzie/elm-geometry/3.9.0/Point3d).\nThe second argument is a function that takes a vertex of the input mesh and\nits computed normal as a\n[Vector3d](http://package.elm-lang.org/packages/ianmackenzie/elm-geometry/3.9.0/Vector3d),\nand returns the corresponding vertex for the output mesh.\n",
+                "type": "(a -> Point3d.Point3d units coordinates) -> (a -> Vector3d.Vector3d Quantity.Unitless coordinates -> b) -> Mesh.Mesh a -> Mesh.Mesh b"
+            }
+        ],
+        "binops": []
+    }
+]

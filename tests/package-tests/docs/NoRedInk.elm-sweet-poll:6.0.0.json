@@ -1,0 +1,60 @@
+[
+    {
+        "name": "SweetPoll",
+        "comment": "\n\n\n# Configuration & Set up\n\n@docs init, defaultConfig, Config, PollingState\n\n\n# Working with responses\n\n@docs Msg, update, UpdateResult\n\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " ",
+                "args": [
+                    "data"
+                ],
+                "cases": []
+            },
+            {
+                "name": "PollingState",
+                "comment": " Private state of the SweetPoll component.\n\n    import SweetPoll\n\n    type alias PollingState =\n        { sweetPoll : SweetPoll.PollingState ServerData\n        , data : ServerData\n        , error : Maybe Http.Error\n        }\n\n    type alias ServerData =\n        {}\n\n",
+                "args": [
+                    "data"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": "\n\n    - url: Route to poll against\n    - decoder: How to handle the data you expect back\n    - delay: How long to wait between poll attempts\n    - samesBeforeDelay: How many identical responses before increasing the delay\n    - delayMultiplier: How much to multiply the delay by when getting identical responses\n    - maxDelay: How long the delay should be before we give up on polling\n\n",
+                "args": [
+                    "data"
+                ],
+                "type": "{ url : String.String, decoder : Json.Decode.Decoder data, delay : Basics.Float, samesBeforeDelay : Basics.Int, delayMultiplier : Basics.Float, maxDelay : Basics.Float }"
+            },
+            {
+                "name": "UpdateResult",
+                "comment": "\n\n  - newState: the new state of the SweetPoll\n  - newData: any new data received by the SweetPoll\n  - error: any new Http error occurring in the current update cycle\n  - cmd: a Cmd to keep the SweetPoll running\n\n",
+                "args": [
+                    "data"
+                ],
+                "type": "{ newState : SweetPoll.PollingState data, newData : Maybe.Maybe data, error : Maybe.Maybe Http.Error, cmd : Platform.Cmd.Cmd (SweetPoll.Msg data) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultConfig",
+                "comment": " Default configuration for SweetPoll.\n",
+                "type": "Json.Decode.Decoder data -> String.String -> SweetPoll.Config data"
+            },
+            {
+                "name": "init",
+                "comment": " Initialize the SweetPoll behavior.\n\n    import SweetPoll\n    import Json.Decode as Decode\n\n    init : (Model, Cmd Msg)\n    init =\n        let\n            (sweetPollModel, sweetPollCommands) =\n                \"www.example-url.com/get-some-data\"\n                    |> SweetPoll.defaultConfig (Decode.succeed {})\n                    |> SweetPoll.init\n                    |> Tuple.mapSecond SweetPollMsg\n        in\n            ...\n\n",
+                "type": "SweetPoll.Config data -> ( SweetPoll.PollingState data, Platform.Cmd.Cmd (SweetPoll.Msg data) )"
+            },
+            {
+                "name": "update",
+                "comment": " Takes the SweetPoll Msg and Model and produces a non-opaque result that you\ncan work with.\n\n    import SweetPoll\n\n    type Msg\n        = SweetPollMsg (SweetPoll.Msg ServerData)\n\n    update : Msg -> Model -> ( Model, Cmd Msg )\n    update msg model =\n        case msg of\n            SweetPollMsg sweetPollMsg ->\n                case SweetPoll.update action model.sweetPollModel of\n                    { sweetPollModel, newData, error, cmd } ->\n                        ( { sweetPollModel = sweetPollModel\n                          , data = newData\n                          , error = error\n                          }\n                        , cmd\n                        )\n\n",
+                "type": "SweetPoll.Config data -> SweetPoll.Msg data -> SweetPoll.PollingState data -> SweetPoll.UpdateResult data"
+            }
+        ],
+        "binops": []
+    }
+]

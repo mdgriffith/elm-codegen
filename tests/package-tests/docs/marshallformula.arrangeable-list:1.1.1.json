@@ -1,0 +1,90 @@
+[
+    {
+        "name": "ArrangeableList",
+        "comment": " This is sort of like a Zip-List data structure - but instead of focusing on a speicific list item - it retains the focuson the same item and moves\nthat item around in the list.\n\n@docs ArrangeableList\n\n\n# Constructing\n\n@docs initialize, fromArray, fromList, fromListAtHead, fromListAtTail\n\n\n# Extracting Values\n\n@docs getSelected, getPreList, getPostList, isSelectedItem\n\n\n# Manipulating the List\n\n@docs progress, retrogress\n\n\n# Transformation\n\n@docs toList, toArray, map\n\n",
+        "unions": [
+            {
+                "name": "ArrangeableList",
+                "comment": " ",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fromArray",
+                "comment": " Create an ArrangeableList from an Array and an integer that specifies an index in the array which should be the selected item.\nThis returns a Maybe Arrageablelist. A Nothing is returned if the index is invalid/out of bounds.\n\n    myArray =\n        Array.fromList [\"Superman\", \"Batman\", \"Green Lantern\"]\n\n    fromArray myArray 1\n\n",
+                "type": "Array.Array a -> Basics.Int -> Maybe.Maybe (ArrangeableList.ArrangeableList a)"
+            },
+            {
+                "name": "fromList",
+                "comment": " Create an ArrangeableList from a List and an integer that specifies an index in the list which should be the selected item.\nThis returns a Maybe Arrageablelist. A Nothing is returned if the index is invalid/out of bounds.\n\n    fromArray [ \"Superman\", \"Batman\", \"Green Lantern\" ] 0\n\n",
+                "type": "List.List a -> Basics.Int -> Maybe.Maybe (ArrangeableList.ArrangeableList a)"
+            },
+            {
+                "name": "fromListAtHead",
+                "comment": " Creates an ArrangeableList from a supplied List and a value - placing value at the head of the list.\n\n    fromListAtHead [ \"Superman\", \"Batman\", \"Green Lantern\" ] \"WonderWoman\"\n\n",
+                "type": "List.List a -> a -> ArrangeableList.ArrangeableList a"
+            },
+            {
+                "name": "fromListAtTail",
+                "comment": " Creates and ArrangeableList from a supplied list and a value - placing the value at the tail of the list.\n\n    fromListAtHead [ \"Superman\", \"Batman\", \"Green Lantern\" ] \"WonderWoman\"\n\n",
+                "type": "List.List a -> a -> ArrangeableList.ArrangeableList a"
+            },
+            {
+                "name": "getPostList",
+                "comment": " Returns the items in the list after the selected value.\n",
+                "type": "ArrangeableList.ArrangeableList a -> List.List a"
+            },
+            {
+                "name": "getPreList",
+                "comment": " Returns the items in the list before the selected value.\n",
+                "type": "ArrangeableList.ArrangeableList a -> List.List a"
+            },
+            {
+                "name": "getSelected",
+                "comment": " Returns the currently selected value\n",
+                "type": "ArrangeableList.ArrangeableList a -> a"
+            },
+            {
+                "name": "initialize",
+                "comment": " Initializes an ArrageableList given a list before (pre), list after (post), and the selected (focused) item.\n\n    initialize [] [ \"Batman\", \"Superman\", \"Green Lantern\" ] \"Wonder Woman\"\n\n",
+                "type": "List.List a -> List.List a -> a -> ArrangeableList.ArrangeableList a"
+            },
+            {
+                "name": "isSelectedItem",
+                "comment": " Uses equality check (==) to check if the given value is the currently selected item in the list\n",
+                "type": "a -> ArrangeableList.ArrangeableList a -> Basics.Bool"
+            },
+            {
+                "name": "map",
+                "comment": " Apply a function to each item of the arrangeable list\n",
+                "type": "(a -> b) -> ArrangeableList.ArrangeableList a -> ArrangeableList.ArrangeableList b"
+            },
+            {
+                "name": "progress",
+                "comment": " Moves the selected item forward in the list.\n\n    myList =\n        fromListAtHead [\"Superman\", \"Batman\", \"Green Lantern\"] \"WonderWoman\"\n\n    progress myList\n        |> toList -- [\"Superman\", \"WonderWoman\", \"Batman\", \"Green Lantern\"]\n\n",
+                "type": "ArrangeableList.ArrangeableList a -> ArrangeableList.ArrangeableList a"
+            },
+            {
+                "name": "retrogress",
+                "comment": " Moves the selected item backward in the list.\n\n    myList =\n        fromListAtTail [\"Superman\", \"Batman\", \"Green Lantern\"] \"WonderWoman\"\n\n    retrogress myList\n        |> toList -- [\"Superman\", \"Batman\", \"WonderWoman\", \"Green Lantern\"]\n\n",
+                "type": "ArrangeableList.ArrangeableList a -> ArrangeableList.ArrangeableList a"
+            },
+            {
+                "name": "toArray",
+                "comment": " Returns an Array of the items that compose the ArrangeableList.\n",
+                "type": "ArrangeableList.ArrangeableList a -> Array.Array a"
+            },
+            {
+                "name": "toList",
+                "comment": " Returns a regular List of the items that compose the ArrangeableList.\n",
+                "type": "ArrangeableList.ArrangeableList a -> List.List a"
+            }
+        ],
+        "binops": []
+    }
+]

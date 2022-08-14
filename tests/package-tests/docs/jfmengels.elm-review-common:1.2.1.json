@@ -1,0 +1,122 @@
+[
+    {
+        "name": "NoDeprecated",
+        "comment": "\n\n@docs rule\n\nThis rule is useful to stop the spread of the usage of deprecated values and types.\n\nThis rule is recommended to be used with `elm-review`'s suppression system (see `elm-review suppress --help`).\nThat way, current uses of deprecated elements won't be reported, but the rule will report new usages, in practice\nallowing you to stop the bleed.\n\nAn additional benefit is that the suppressed errors will make it easy to have an overview of the number of times\ndeprecated elements are used and where they are located. Looking at the error reports (using `elm-review --unsuppress`\nfor instance) will give you the more precise problems and locations.\n\n\n## Recommendations\n\nI recommend making it extra explicit when deprecating elements in your application code, for instance by renaming\ndeprecated elements to include \"deprecated\" in their name, or in their module name for modules.\n\nThat way, it will be very explicit for you and your teammates when you're using something that is deprecated, even in\nGit diffs.\n\nFor packages, renaming something is a breaking chance so that is not a viable option (if it is, remove the function and\nrelease a new major version). Instead, what you can do is to start a line in your module/value/type's documentation\nwith `@deprecated`. There is no official nor conventional approach around deprecation in the Elm community, but this may\nbe a good start. But definitely pitch in the discussion around making a standard!\n(I'll put a link here soon. If I haven't, please remind me!)\n\nFor both application and packages, when you deprecate something, I highly recommend documenting (in the most appropriate\nlocation) why it is deprecate but especially what alternatives should be used or explored. It can be frustrating to\nlearn that something is deprecated without an explanation or any guidance what to use instead.\n\n@docs Configuration, defaults, dependencies, withExceptionsForElements\n\n\n## Fail\n\n    import DeprecatedModule\n\n    a =\n        DeprecatedModule.view \"...\"\n\n    b =\n        Button.view_DEPRECATED \"Click me!\" OnClick\n\n\n## When (not) to enable this rule\n\nIf you do not have deprecated elements in your project, this rule won't be useful.\n\n\n## Try it out\n\nYou can try this rule out by running the following command:\n\n```bash\nelm-review --template jfmengels/elm-review-common/example --rules NoDeprecated\n```\n\n",
+        "unions": [
+            {
+                "name": "Configuration",
+                "comment": " Configuration for the rule.\n\nCreate one using [`defaults`](#defaults), then change it using functions like [`dependencies`](#dependencies) and\n[`withExceptionsForElements`](#withExceptionsForElements).\n\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "defaults",
+                "comment": " Default configuration.\n\nBy default are considered as deprecated:\n\n  - Values / types / modules that contain \"deprecated\" (case insensitive) in their name.\n  - Values / types / modules whose documentation comment has a line starting with \"@deprecated\" or (for better visibility) \"\\*\\*@deprecated\"\n  - Values / types from modules that are considered as deprecated\n\nConfigure this further using functions like [`dependencies`](#dependencies) and\n[`withExceptionsForElements`](#withExceptionsForElements).\n\n",
+                "type": "NoDeprecated.Configuration"
+            },
+            {
+                "name": "dependencies",
+                "comment": " Mark one or more dependencies as deprecated.\n\n    config =\n        [ NoDeprecated.defaults\n            |> NoDeprecated.dependencies [ \"jfmengels/some-deprecated-dependency\" ]\n            |> NoDeprecated.rule\n        ]\n\nEvery usage of something defined in that dependency in the project's code wil be reported.\n\n",
+                "type": "List.List String.String -> NoDeprecated.Configuration -> NoDeprecated.Configuration"
+            },
+            {
+                "name": "rule",
+                "comment": " Reports usages of deprecated values and types.\n\n    config =\n        [ NoDeprecated.rule NoDeprecated.defaults\n        ]\n\n",
+                "type": "NoDeprecated.Configuration -> Review.Rule.Rule"
+            },
+            {
+                "name": "withExceptionsForElements",
+                "comment": " Add exceptions for the reporting elements. This can for instance be used for values and that\ncontain \"deprecated\" in their name without actually being deprecated.\n\n    config =\n        [ NoDeprecated.defaults\n            |> NoDeprecated.withExceptionsForElements [ \"SomeModule.listOfDeprecatedFunctions\" ]\n            |> NoDeprecated.rule\n        ]\n\n",
+                "type": "List.List String.String -> NoDeprecated.Configuration -> NoDeprecated.Configuration"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "NoExposingEverything",
+        "comment": "\n\n@docs rule\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": " Forbids exporting everything from a module.\n\n🔧 Running with `--fix` will automatically fix all the reported errors.\n\nModules should have hidden implementation details with an explicit API so that the module is used in a proper and controlled way.\nThe users of this module should not have to know about what is inside a module it is using, and they shouldn't need to access its internal details.\nTherefore, the API should be explicitly defined and ideally as small as possible.\n\n    config =\n        [ NoExposingEverything.rule\n        ]\n\nIf you would like to expose everything in your tests, you can configure the rule\nin the following manner:\n\n    config =\n        [ NoExposingEverything.rule\n            |> Rule.ignoreErrorsForDirectories [ \"tests/\" ]\n        ]\n\n\n## Fail\n\n    module A exposing (..)\n\n\n## Success\n\n    module A exposing (B(..), C, d)\n\n\n## Try it out\n\nYou can try this rule out by running the following command:\n\n```bash\nelm-review --template jfmengels/elm-review-common/example --rules NoExposingEverything\n```\n\n",
+                "type": "Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "NoImportingEverything",
+        "comment": "\n\n@docs rule\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": " Forbids importing everything from a module.\n\nWhen you import everything from a module, it becomes harder to know where a function\nor a type comes from. The official guide even\n[recommends against importing everything](https://guide.elm-lang.org/webapps/modules.html#using-modules).\n\n    config =\n        [ NoImportingEverything.rule []\n        ]\n\nTeams often have an agreement on the list of imports from which it is okay to expose everything, so\nyou can configure a list of exceptions.\n\n    config =\n        [ NoImportingEverything.rule [ \"Html\", \"Some.Module\" ]\n        ]\n\n\n## Fail\n\n    import A exposing (..)\n    import A as B exposing (..)\n\n\n## Success\n\n    import A as B exposing (B(..), C, d)\n\n    -- If configured with `[ \"Html\" ]`\n    import Html exposing (..)\n\n\n## Try it out\n\nYou can try this rule out by running the following command:\n\n```bash\nelm-review --template jfmengels/elm-review-common/example --rules NoImportingEverything\n```\n\n",
+                "type": "List.List String.String -> Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "NoMissingTypeAnnotation",
+        "comment": "\n\n@docs rule\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": " Reports top-level declarations that do not have a type annotation.\n\nType annotations help you understand what happens in the code, and it will help the compiler give better error messages.\n\n    config =\n        [ NoMissingTypeAnnotation.rule\n        ]\n\nThis rule does not report declarations without a type annotation inside a `let in`.\nFor that, enable [`NoMissingTypeAnnotationInLetIn`](./NoMissingTypeAnnotationInLetIn).\n\n\n## Fail\n\n    a =\n        1\n\n\n## Success\n\n    a : number\n    a =\n        1\n\n    b : number\n    b =\n        let\n            c =\n                2\n        in\n        c\n\n\n## Try it out\n\nYou can try this rule out by running the following command:\n\n```bash\nelm-review --template jfmengels/elm-review-common/example --rules NoMissingTypeAnnotation\n```\n\n",
+                "type": "Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "NoMissingTypeAnnotationInLetIn",
+        "comment": "\n\n@docs rule\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": " Reports `let in` declarations that do not have a type annotation.\n\nType annotations help you understand what happens in the code, and it will help the compiler give better error messages.\n\n    config =\n        [ NoMissingTypeAnnotationInLetIn.rule\n        ]\n\nThis rule does not report top-level declarations without a type annotation inside a `let in`.\nFor that, enable [`NoMissingTypeAnnotation`](./NoMissingTypeAnnotation).\n\n\n## Fail\n\n    a : number\n    a =\n        let\n            -- Missing annotation\n            b =\n                2\n        in\n        b\n\n\n## Success\n\n    -- Top-level annotation is not necessary, but good to have!\n    a : number\n    a =\n        let\n            b : number\n            b =\n                2\n        in\n        b\n\n\n## Try it out\n\nYou can try this rule out by running the following command:\n\n```bash\nelm-review --template jfmengels/elm-review-common/example --rules NoMissingTypeAnnotationInLetIn\n```\n\n",
+                "type": "Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "NoMissingTypeExpose",
+        "comment": "\n\n@docs rule\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": " Reports types that should be exposed but are not.\n\n🔧 Running with `--fix` will automatically fix all the reported errors.\n\nIf a type is not exposed then it can be impossible to annotate functions or values that use them outside of the module. Affected types may be used in exposed function signatures, type aliases or other custom types.\n\n    import NoMissingTypeExpose\n\n    config : List Rule\n    config =\n        [ NoMissingTypeExpose.rule\n        ]\n\n\n## Fail\n\n    module Happiness exposing (happy, toString)\n\n    -- Type `Happiness` is private because it's not been exposed\n\n    type Happiness\n        = Happy\n\n    -- Private type `Happiness` used by exposed function `toString`\n    toString : Happiness -> String\n    toString happiness =\n        \"Happy\"\n\n    -- Private type `Happiness` used by exposed value `happy`\n    happy : Happiness\n    happy =\n        Happy\n\n## Success\n\n    module Happiness exposing (Happiness, happy, toString)\n\n    type Happiness\n        = Happy\n\n    toString : Happiness -> String\n    toString happiness =\n        \"Happy\"\n\n    happy : Happiness\n    happy =\n        Happy\n\n\n## Try it out\n\nYou can try this rule out by running the following command:\n\n```bash\nelm-review --template jfmengels/elm-review-common/example --rules NoMissingTypeExpose\n```\n\n",
+                "type": "Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "NoPrematureLetComputation",
+        "comment": "\n\n@docs rule\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": " Reports let declarations that are computed earlier than needed.\n\nThis rule is useful to prevent unnecessary computations and to group related code together.\n\n    config =\n        [ NoPrematureLetComputation.rule\n        ]\n\n🔧 Running with `--fix` will automatically fix almost all of the reported errors.\n\n\n## Fail\n\nIn this example, we compute `value` earlier than needed, and we end up not using it in of the branches.\n\n    someFunction n =\n        let\n            value =\n                expensiveComputation n\n        in\n        if needToCompute then\n            value + 1\n\n        else\n            0\n\n\n## Success\n\nIf we take the example from above, this would be the suggested (and automatic) fix:\n\n    someFunction n =\n        if needToCompute then\n            let\n                value =\n                    expensiveComputation n\n            in\n            value + 1\n\n        else\n            0\n\nA declaration will not be reported if it's used in multiple branches at the same level.\nThe rule will try to move the declaration as close as possible to the usages.\n\n    someFunction n =\n        let\n            value =\n                expensiveComputation n\n        in\n        if condition then\n            value + 1\n\n        else\n            value - 1\n\nSometimes, when a computation is somewhat expensive, it is done once in a let declaration and then\nreferenced in a let or anonymous function. This rule does not want to worsen the performance, and therefore\ndeclarations will not be moved to inside a function.\n\n    someFunction items n =\n        let\n            -- Will stay here\n            value =\n                expensiveComputation n\n        in\n        List.map\n            (\\item ->\n                if condition item then\n                    value + item.value\n\n                else\n                    0\n            )\n            items\n\nThere are some exceptions when we know for sure that an anonymous function will only be computed once,\nfor instance when it is the argument to `Maybe.map`:\n\n    someFunction maybeItem n =\n        let\n            -- Will be moved from here...\n            value =\n                expensiveComputation n\n        in\n        Maybe.map\n            (\\item ->\n                if condition item then\n                    -- ... to here\n                    value + item.value\n\n                else\n                    0\n            )\n            maybeItem\n\nThe rule will also merge adjacent let declarations together:\n\n    someFunction n =\n        let\n            y =\n                1\n        in\n        let\n            z =\n                1\n        in\n        y + z\n\n    -->\n    someFunction n =\n        let\n            y =\n                1\n\n            z =\n                1\n        in\n        y + z\n\n\n## Try it out\n\nYou can try this rule out by running the following command:\n\n```bash\nelm-review --template jfmengels/elm-review-common/example --rules NoPrematureLetComputation\n```\n\n",
+                "type": "Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    }
+]

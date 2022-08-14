@@ -1,0 +1,156 @@
+[
+    {
+        "name": "Animation",
+        "comment": " Animate between two `Float` values. For examples and general usage, see the README.\n\n\n# Types\n\nAnimators have to keep track of different sorts of numbers. All of these are `Float`s under the hood, so they exist to\nclarify documentation. Be warned that the compiler won't help you keep them straight.\n\n  - `Clock` refers to a point in time, identified by duration since an epoch. For our purposes, the epoch is typically page load. (Why not use the UNIX epoch? Sometimes we have to take the sine of the clock and that's expensive for large numbers.) You are responsible for maintaining the clock and passing it in as necessary, most notably to run and create animations.\n\n  - `TimeDelta` refers to the difference between two `Clock` times, such as a duration or a delay.\n\n  - `Value` refers to the value being animated. It's used to indicate the output of the animation, as well as the initial\n    `from` and final `to` values.\n\n  - A plain `Float` refers to the speed at which the `Value` changes.\n\n@docs TimeDelta, Clock, Animation\n\n\n# Create\n\n@docs animation, static\n\n\n# Run\n\n@docs animate\n\n\n# Modify\n\n\n## Settings\n\nYou may set an animation's duration or speed but not both, since one determines the other.\n\n@docs duration, speed, delay, ease, from, to\n\n\n## Interruptions\n\n@docs undo, retarget\n\n\n# Inspect\n\n\n## Equality\n\n@docs equals\n\n\n## Lifecycle\n\n@docs isScheduled, isRunning, isDone\n\n\n## Physics\n\n@docs timeElapsed, timeRemaining, getVelocity\n\n\n## Settings\n\n@docs getStart, getDuration, getSpeed, getDelay, getEase, getFrom, getTo\n\n",
+        "unions": [
+            {
+                "name": "Animation",
+                "comment": " An Animation is an opaque type that represents a time-varying number (floating point value).\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Clock",
+                "comment": " A type alias for amount of time (milliseconds) passed since page load.\n",
+                "args": [],
+                "type": "Basics.Float"
+            },
+            {
+                "name": "TimeDelta",
+                "comment": " A type alias for the difference between two `Clock` times.\n",
+                "args": [],
+                "type": "Basics.Float"
+            }
+        ],
+        "values": [
+            {
+                "name": "animate",
+                "comment": " Produce the value of an animation at a given time.\n",
+                "type": "Animation.Clock -> Animation.Animation -> Animation.Value"
+            },
+            {
+                "name": "animation",
+                "comment": " Create an animation that begins at the given time. By default, animations have no delay, last 750ms, and interpolate\nbetween 0 and 1 with a sinusoidal easing function. All of these can be changed.\n",
+                "type": "Animation.Clock -> Animation.Animation"
+            },
+            {
+                "name": "delay",
+                "comment": " Set the delay of an animation to the time specified. An animation will not start until after the delay. The default\ndelay is 0.\n",
+                "type": "Animation.TimeDelta -> Animation.Animation -> Animation.Animation"
+            },
+            {
+                "name": "duration",
+                "comment": " Set the duration of an animation to the time specified.\n",
+                "type": "Animation.TimeDelta -> Animation.Animation -> Animation.Animation"
+            },
+            {
+                "name": "ease",
+                "comment": " Set the easing function of an animation. It is expected that `f 0 == 0` and `f 1 == 1`. The default is a sinusoidal\nin-out.\n",
+                "type": "(Basics.Float -> Basics.Float) -> Animation.Animation -> Animation.Animation"
+            },
+            {
+                "name": "equals",
+                "comment": " Equality on animations. Compared to `(==)` (which should not be used), this\nfunction handles the conversion of speed and duration, and start and delay. It\nalso samples the easing functions, which may produce false positives (but\nusually not in practice).\n\n    equals (animation 0) (animation 0) --> True\n    equals (animation 0 |> delay 10) (animation 10) --> True\n    equals (animation 0 |> duration 1000) (animation 0 |> speed 0.001) --> True\n\n    equals (static 0) (animation 0) --> False\n    equals (animation 0 |> from -1) (animation 0) --> False\n    equals (animation 0 |> ease identity) (animation 0) --> False\n\n",
+                "type": "Animation.Animation -> Animation.Animation -> Basics.Bool"
+            },
+            {
+                "name": "from",
+                "comment": " Set the initial value of an animation. The default is 0.\n",
+                "type": "Animation.Value -> Animation.Animation -> Animation.Animation"
+            },
+            {
+                "name": "getDelay",
+                "comment": " Get the delay of the animation.\n",
+                "type": "Animation.Animation -> Animation.TimeDelta"
+            },
+            {
+                "name": "getDuration",
+                "comment": " Get the duration of the animation, not counting delay.\n",
+                "type": "Animation.Animation -> Animation.TimeDelta"
+            },
+            {
+                "name": "getEase",
+                "comment": " Get the easing function of the animation.\n",
+                "type": "Animation.Animation -> Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "getFrom",
+                "comment": " Get the initial value of the animation.\n",
+                "type": "Animation.Animation -> Animation.Value"
+            },
+            {
+                "name": "getSpeed",
+                "comment": " Get the average speed of the animation.\n",
+                "type": "Animation.Animation -> Basics.Float"
+            },
+            {
+                "name": "getStart",
+                "comment": " Get the start time of the animation, not accounting for delay. For animations created with `animate`, this is the\nargument that was passed. For interrupted animations, this is when the interruption occured.\n",
+                "type": "Animation.Animation -> Animation.Clock"
+            },
+            {
+                "name": "getTo",
+                "comment": " Get the final value of the animation.\n",
+                "type": "Animation.Animation -> Animation.Value"
+            },
+            {
+                "name": "getVelocity",
+                "comment": " Get the _current_ velocity of the animation, aproximated by looking 10ms forwards and backwards (the central\ndifference). The velocity may be negative.\n",
+                "type": "Animation.Clock -> Animation.Animation -> Basics.Float"
+            },
+            {
+                "name": "isDone",
+                "comment": " Determine if an animation is done, meaning that it has arrived at its final value.\n\nStatic animations are always done.\n\n",
+                "type": "Animation.Clock -> Animation.Animation -> Basics.Bool"
+            },
+            {
+                "name": "isRunning",
+                "comment": " Determine if an animation is running, meaning that it is currently changing value.\n\nStatic animations are never running.\n\n",
+                "type": "Animation.Clock -> Animation.Animation -> Basics.Bool"
+            },
+            {
+                "name": "isScheduled",
+                "comment": " Determine if an animation is scheduled, meaning that it has not yet changed value.\n",
+                "type": "Animation.Clock -> Animation.Animation -> Basics.Bool"
+            },
+            {
+                "name": "retarget",
+                "comment": " Change the `to` value of a running animation, without an abrupt change in velocity. The easing function will be\nretained (but you can change it with `ease`). The animation will retain its average speed (but not necessarily\nduration). If you retarget multiple animations at once (e.g. x and y), you will need to sync their durations (perhaps to\nthe `timeRemaining` in the old animations).\n\nIf the retargeted animation is still scheduled, the `to` value is replaced. If it's already done, `from` becomes the\nold `to`, `to` and `start` are set to the values provided, and the delay is set to zero. If the old and new `to` values\nare the same, the animation is unchanged.\n\n",
+                "type": "Animation.Clock -> Animation.Value -> Animation.Animation -> Animation.Animation"
+            },
+            {
+                "name": "speed",
+                "comment": " Set the _average_ speed of an animation. Speed is the rate at which the animation progresses between the `from` and\n`to` values per milisecond. Most easing functions will deviate from the average speed. You do not need to worry about\nthe sign. It is safe to alter the `from` and `to` values after setting speed.\n",
+                "type": "Basics.Float -> Animation.Animation -> Animation.Animation"
+            },
+            {
+                "name": "static",
+                "comment": " Create a static animation that is always the given value.\n",
+                "type": "Animation.Value -> Animation.Animation"
+            },
+            {
+                "name": "timeElapsed",
+                "comment": " Get the time elapsed since the animation started playing (after the end of delay). Will be zero for animations that\nare still scheduled, and is not bounded for animations that are already done.\n",
+                "type": "Animation.Clock -> Animation.Animation -> Animation.TimeDelta"
+            },
+            {
+                "name": "timeRemaining",
+                "comment": " Get the time until the animation is done. This time may be spent animating or be part of the delay. Will be zero for animations\nthat are already done.\n",
+                "type": "Animation.Clock -> Animation.Animation -> Animation.TimeDelta"
+            },
+            {
+                "name": "to",
+                "comment": " Set the final value of an animation. The default is 1.\n\nFor animations that are already running, use `retarget`.\n\n",
+                "type": "Animation.Value -> Animation.Animation -> Animation.Animation"
+            },
+            {
+                "name": "undo",
+                "comment": " Run an animation in reverse from its current state, beginning immediately (even if the animation was delayed or has\nbeen done for a while).\n\nUsually you don't want to undo an animation that has been retargeted; just retarget it again. Similarly, undoing an\nundone animation is frequently not what you want.\n\n",
+                "type": "Animation.Clock -> Animation.Animation -> Animation.Animation"
+            }
+        ],
+        "binops": []
+    }
+]

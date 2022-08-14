@@ -1,0 +1,186 @@
+[
+    {
+        "name": "Audio",
+        "comment": "\n\n\n# Applications\n\nCreate an Elm app that supports playing audio.\n\n@docs elementWithAudio, documentWithAudio, applicationWithAudio, Model, Msg, AudioData\n\n\n# Load audio\n\nLoad audio so you can later play it.\n\n@docs AudioCmd, loadAudio, LoadError, Source, cmdMap, cmdBatch, cmdNone\n\n\n# Play audio\n\nDefine what audio should be playing.\n\n@docs Audio, audio, group, silence, length, audioWithConfig, audioDefaultConfig, PlayAudioConfig, LoopConfig\n\n\n# Audio effects\n\nEffects you can apply to `Audio`.\n\n@docs scaleVolume, scaleVolumeAt, offsetBy\n\n\n# Lamdera stuff\n\nWIP support for Lamdera. Ignore this for now.\n\n@docs lamderaFrontendWithAudio, migrateModel, migrateMsg\n\n",
+        "unions": [
+            {
+                "name": "Audio",
+                "comment": " Some kind of sound we want to play. To create `Audio` start with `audio`.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "AudioCmd",
+                "comment": " An audio command.\n",
+                "args": [
+                    "userMsg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "AudioData",
+                "comment": " Information about audio files you have loaded.\nThis is passed as a parameter to your update, view, subscriptions, and audio functions.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "LoadError",
+                "comment": " These are possible errors we can get when loading an audio source file.\n\n  - FailedToDecode: This means we got the data but we couldn't decode it. One likely reason for this is that your url points to the wrong place and you're trying to decode a 404 page instead.\n  - NetworkError: We couldn't reach the url. Either it's some kind of CORS issue, the server is down, or you're disconnected from the internet.\n  - UnknownError: We don't know what happened but your audio didn't load!\n  - ErrorThatHappensWhen...: Yes, there's a good reason for this. If you need to load more than 1000 sounds make an issue about it on github and I'll see what I can do.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "FailedToDecode",
+                        []
+                    ],
+                    [
+                        "NetworkError",
+                        []
+                    ],
+                    [
+                        "UnknownError",
+                        []
+                    ],
+                    [
+                        "ErrorThatHappensWhenYouLoadMoreThan1000SoundsDueToHackyWorkAroundToMakeThisPackageBehaveMoreLikeAnEffectPackage",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Model",
+                "comment": " The top level model for our program.\nThis contains the model for your app as well as extra data needed to keep track of what audio is playing.\n",
+                "args": [
+                    "userMsg",
+                    "userModel"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Msg",
+                "comment": " The top level msg for our program.\nThis contains the msg type your app uses in addition to msgs that are needed to handle when audio gets loaded.\n",
+                "args": [
+                    "userMsg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Source",
+                "comment": " Audio data we can use to play sounds\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "LoopConfig",
+                "comment": " Control how audio loops. `loopEnd` defines where (relative to the start of the audio) the audio should loop and `loopStart` defines where it should loop to.\n\n    -- Here we have a song that plays an intro once and then loops between the 10 second point and the end of the song.\n    let\n        default =\n            Audio.audioDefaultConfig\n\n        -- We can use Audio.length to get the duration of coolBackgroundMusic but for simplicity it's hardcoded in this example\n        songLength =\n            Duration.seconds 120\n    in\n    audioWithConfig\n        { default | loop = Just { loopStart = Duration.seconds 10, loopEnd = songLength } }\n        coolBackgroundMusic\n        startTime\n\n",
+                "args": [],
+                "type": "{ loopStart : Duration.Duration, loopEnd : Duration.Duration }"
+            },
+            {
+                "name": "PlayAudioConfig",
+                "comment": " Extra settings when playing audio from a file.\n\n    -- Here we play a song at half speed and it skips the first 15 seconds of the song.\n    audioWithConfig\n        { loop = Nothing\n        , playbackRate = 0.5\n        , startAt = Duration.seconds 15\n        }\n        myCoolSong\n        songStartTime\n\n",
+                "args": [],
+                "type": "{ loop : Maybe.Maybe Audio.LoopConfig, playbackRate : Basics.Float, startAt : Duration.Duration }"
+            }
+        ],
+        "values": [
+            {
+                "name": "applicationWithAudio",
+                "comment": " Browser.application but with the ability to play sounds.\n",
+                "type": "{ init : flags -> Url.Url -> Browser.Navigation.Key -> ( model, Platform.Cmd.Cmd msg, Audio.AudioCmd msg ), view : Audio.AudioData -> model -> Browser.Document msg, update : Audio.AudioData -> msg -> model -> ( model, Platform.Cmd.Cmd msg, Audio.AudioCmd msg ), subscriptions : Audio.AudioData -> model -> Platform.Sub.Sub msg, onUrlRequest : Browser.UrlRequest -> msg, onUrlChange : Url.Url -> msg, audio : Audio.AudioData -> model -> Audio.Audio, audioPort : Audio.Ports msg } -> Platform.Program flags (Audio.Model msg model) (Audio.Msg msg)"
+            },
+            {
+                "name": "audio",
+                "comment": " Play audio from an audio source at a given time. This is the same as using `audioWithConfig audioDefaultConfig`.\n\nNote that in some browsers audio will be muted until the user interacts with the webpage.\n\n",
+                "type": "Audio.Source -> Time.Posix -> Audio.Audio"
+            },
+            {
+                "name": "audioDefaultConfig",
+                "comment": " Default config used for `audioWithConfig`.\n",
+                "type": "Audio.PlayAudioConfig"
+            },
+            {
+                "name": "audioWithConfig",
+                "comment": " Play audio from an audio source at a given time with config.\n\nNote that in some browsers audio will be muted until the user interacts with the webpage.\n\n",
+                "type": "Audio.PlayAudioConfig -> Audio.Source -> Time.Posix -> Audio.Audio"
+            },
+            {
+                "name": "cmdBatch",
+                "comment": " Combine multiple commands into a single command. Conceptually the same as Cmd.batch.\n",
+                "type": "List.List (Audio.AudioCmd userMsg) -> Audio.AudioCmd userMsg"
+            },
+            {
+                "name": "cmdMap",
+                "comment": " Map a command from one type to another. Conceptually the same as Cmd.map.\n",
+                "type": "(a -> b) -> Audio.AudioCmd a -> Audio.AudioCmd b"
+            },
+            {
+                "name": "cmdNone",
+                "comment": " A command that does nothing. Conceptually the same as Cmd.none.\n",
+                "type": "Audio.AudioCmd msg"
+            },
+            {
+                "name": "documentWithAudio",
+                "comment": " Browser.document but with the ability to play sounds.\n",
+                "type": "{ init : flags -> ( model, Platform.Cmd.Cmd msg, Audio.AudioCmd msg ), view : Audio.AudioData -> model -> Browser.Document msg, update : Audio.AudioData -> msg -> model -> ( model, Platform.Cmd.Cmd msg, Audio.AudioCmd msg ), subscriptions : Audio.AudioData -> model -> Platform.Sub.Sub msg, audio : Audio.AudioData -> model -> Audio.Audio, audioPort : Audio.Ports msg } -> Platform.Program flags (Audio.Model msg model) (Audio.Msg msg)"
+            },
+            {
+                "name": "elementWithAudio",
+                "comment": " Browser.element but with the ability to play sounds.\n",
+                "type": "{ init : flags -> ( model, Platform.Cmd.Cmd msg, Audio.AudioCmd msg ), view : Audio.AudioData -> model -> Html.Html msg, update : Audio.AudioData -> msg -> model -> ( model, Platform.Cmd.Cmd msg, Audio.AudioCmd msg ), subscriptions : Audio.AudioData -> model -> Platform.Sub.Sub msg, audio : Audio.AudioData -> model -> Audio.Audio, audioPort : Audio.Ports msg } -> Platform.Program flags (Audio.Model msg model) (Audio.Msg msg)"
+            },
+            {
+                "name": "group",
+                "comment": " Combine multiple `Audio`s into a single `Audio`.\n",
+                "type": "List.List Audio.Audio -> Audio.Audio"
+            },
+            {
+                "name": "lamderaFrontendWithAudio",
+                "comment": " Lamdera.frontend but with the ability to play sounds (highly experimental, just ignore this for now).\n",
+                "type": "{ init : Url.Url -> Browser.Navigation.Key -> ( model, Platform.Cmd.Cmd frontendMsg, Audio.AudioCmd frontendMsg ), view : Audio.AudioData -> model -> Browser.Document frontendMsg, update : Audio.AudioData -> frontendMsg -> model -> ( model, Platform.Cmd.Cmd frontendMsg, Audio.AudioCmd frontendMsg ), updateFromBackend : Audio.AudioData -> toFrontend -> model -> ( model, Platform.Cmd.Cmd frontendMsg, Audio.AudioCmd frontendMsg ), subscriptions : Audio.AudioData -> model -> Platform.Sub.Sub frontendMsg, onUrlRequest : Browser.UrlRequest -> frontendMsg, onUrlChange : Url.Url -> frontendMsg, audio : Audio.AudioData -> model -> Audio.Audio, audioPort : Audio.Ports frontendMsg } -> { init : Url.Url -> Browser.Navigation.Key -> ( Audio.Model frontendMsg model, Platform.Cmd.Cmd (Audio.Msg frontendMsg) ), view : Audio.Model frontendMsg model -> Browser.Document (Audio.Msg frontendMsg), update : Audio.Msg frontendMsg -> Audio.Model frontendMsg model -> ( Audio.Model frontendMsg model, Platform.Cmd.Cmd (Audio.Msg frontendMsg) ), updateFromBackend : toFrontend -> Audio.Model frontendMsg model -> ( Audio.Model frontendMsg model, Platform.Cmd.Cmd (Audio.Msg frontendMsg) ), subscriptions : Audio.Model frontendMsg model -> Platform.Sub.Sub (Audio.Msg frontendMsg), onUrlRequest : Browser.UrlRequest -> Audio.Msg frontendMsg, onUrlChange : Url.Url -> Audio.Msg frontendMsg }"
+            },
+            {
+                "name": "length",
+                "comment": " Get how long an audio source plays for.\n",
+                "type": "Audio.AudioData -> Audio.Source -> Duration.Duration"
+            },
+            {
+                "name": "loadAudio",
+                "comment": " Load audio from a url.\n",
+                "type": "(Result.Result Audio.LoadError Audio.Source -> msg) -> String.String -> Audio.AudioCmd msg"
+            },
+            {
+                "name": "migrateModel",
+                "comment": " Use this function when migrating your model in Lamdera.\n",
+                "type": "(msgOld -> msgNew) -> (modelOld -> ( modelNew, Platform.Cmd.Cmd msgNew )) -> Audio.Model msgOld modelOld -> ( Audio.Model msgNew modelNew, Platform.Cmd.Cmd msgNew )"
+            },
+            {
+                "name": "migrateMsg",
+                "comment": " Use this function when migrating messages in Lamdera.\n",
+                "type": "(msgOld -> ( msgNew, Platform.Cmd.Cmd msgNew )) -> Audio.Msg msgOld -> ( Audio.Msg msgNew, Platform.Cmd.Cmd msgNew )"
+            },
+            {
+                "name": "offsetBy",
+                "comment": " Add an offset to the audio.\n\n    import Audio\n    import Duration\n\n    delayByOneSecond audio =\n        Audio.offsetBy Duration.second audio\n\n",
+                "type": "Duration.Duration -> Audio.Audio -> Audio.Audio"
+            },
+            {
+                "name": "scaleVolume",
+                "comment": " Scale how loud a given `Audio` is.\n1 preserves the current volume, 0.5 halves it, and 0 mutes it.\nIf the the volume is less than 0, 0 will be used instead.\n",
+                "type": "Basics.Float -> Audio.Audio -> Audio.Audio"
+            },
+            {
+                "name": "scaleVolumeAt",
+                "comment": " Scale how loud some `Audio` is at different points in time.\nThe volume will transition linearly between those points.\nThe points in time don't need to be sorted but they need to be unique.\n\n    import Audio\n    import Duration\n    import Time\n\n\n    -- Here we define an audio function that fades in to full volume and then fades out until it's muted again.\n    --\n    --  1                ________\n    --                 /         \\\n    --  0 ____________/           \\_______\n    --     t ->    fade in     fade out\n    fadeInOut fadeInTime fadeOutTime audio =\n        Audio.scaleVolumeAt\n            [ ( Duration.subtractFrom fadeInTime Duration.second, 0 )\n            , ( fadeInTime, 1 )\n            , ( fadeOutTime, 1 )\n            , ( Duration.addTo fadeOutTime Duration.second, 0 )\n            ]\n            audio\n\n",
+                "type": "List.List ( Time.Posix, Basics.Float ) -> Audio.Audio -> Audio.Audio"
+            },
+            {
+                "name": "silence",
+                "comment": " The sound of no sound at all.\n",
+                "type": "Audio.Audio"
+            }
+        ],
+        "binops": []
+    }
+]

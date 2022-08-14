@@ -1,0 +1,118 @@
+[
+    {
+        "name": "Grid",
+        "comment": "\n# Description\n\n`elm-grid` is intended to ease the creation of css-grid containers in Elm.\n\n# Making a container\n\n@docs make\n\n# Templates and Autos\n\n@docs templateCols, templateRows, templateAreas\n\n@docs autoRows, autoCols\n\n# Alignment\n\n@docs Alignment, placeItems, alignItems, justifyItems, justifySelf\n\n# Practical\n\n@docs id, class, height, width, htmlAttr\n\n# Internal\n\n@docs Attribute\n\n",
+        "unions": [
+            {
+                "name": "Alignment",
+                "comment": " Determine alignment.\n```\ntype Alignment\n  = Start | End | Center | Stretch\n```\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Start",
+                        []
+                    ],
+                    [
+                        "End",
+                        []
+                    ],
+                    [
+                        "Center",
+                        []
+                    ],
+                    [
+                        "Stretch",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Attribute",
+                "comment": " Internal Attribute msg.\nCan be circumvented by using `htmlAttr`, for flexibility.\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "alignItems",
+                "comment": " ",
+                "type": "Grid.Alignment -> Grid.Attribute msg"
+            },
+            {
+                "name": "autoCols",
+                "comment": " ",
+                "type": "String.String -> Grid.Attribute msg"
+            },
+            {
+                "name": "autoRows",
+                "comment": " ",
+                "type": "String.String -> Grid.Attribute msg"
+            },
+            {
+                "name": "class",
+                "comment": " ",
+                "type": "String.String -> Grid.Attribute msg"
+            },
+            {
+                "name": "height",
+                "comment": " ",
+                "type": "String.String -> Grid.Attribute msg"
+            },
+            {
+                "name": "htmlAttr",
+                "comment": " Convert an Html.Attribute msg to a Grid.Attribute msg ",
+                "type": "Html.Attribute msg -> Grid.Attribute msg"
+            },
+            {
+                "name": "id",
+                "comment": " ",
+                "type": "String.String -> Grid.Attribute msg"
+            },
+            {
+                "name": "justifyItems",
+                "comment": " ",
+                "type": "Grid.Alignment -> Grid.Attribute msg"
+            },
+            {
+                "name": "justifySelf",
+                "comment": " ",
+                "type": "Grid.Alignment -> Grid.Attribute msg"
+            },
+            {
+                "name": "make",
+                "comment": " Make a new grid container. ",
+                "type": "List.List (Grid.Attribute msg) -> List.List (Html.Html msg) -> Html.Html msg"
+            },
+            {
+                "name": "placeItems",
+                "comment": " ",
+                "type": "Grid.Alignment -> Grid.Attribute msg"
+            },
+            {
+                "name": "templateAreas",
+                "comment": " ",
+                "type": "String.String -> Grid.Attribute msg"
+            },
+            {
+                "name": "templateCols",
+                "comment": " ",
+                "type": "String.String -> Grid.Attribute msg"
+            },
+            {
+                "name": "templateRows",
+                "comment": " ",
+                "type": "String.String -> Grid.Attribute msg"
+            },
+            {
+                "name": "width",
+                "comment": " ",
+                "type": "String.String -> Grid.Attribute msg"
+            }
+        ],
+        "binops": []
+    }
+]

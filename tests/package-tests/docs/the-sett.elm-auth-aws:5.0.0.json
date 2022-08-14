@@ -1,0 +1,149 @@
+[
+    {
+        "name": "AWS.Auth",
+        "comment": " Manages the state of the authentication process, and provides an API\nto request authentication operations.\n\n@docs Config, Model, Msg\n@docs api, AuthExtensions, Challenge, CognitoAPI, FailReason\n@docs UserIdentityMappingConfig, UserIdentityMapping\n\n",
+        "unions": [
+            {
+                "name": "Challenge",
+                "comment": " The types of challenges that Cognito can issue.\n\nChallenge types not yet covered:\n\n  - SmsMfa\n  - SoftwareTokenMfa\n  - SelectMfaType\n  - MfaSetup\n  - PasswordVerifier\n  - CustomChallenge\n  - DeviceSrpAuth\n  - DevicePasswordVerifier\n  - AdminNoSrpAuth\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NewPasswordRequired",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "FailReason",
+                "comment": " Gives a reason why the `Failed` state has been reached.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "ResourceNotFound",
+                        []
+                    ],
+                    [
+                        "NotAuthorized",
+                        []
+                    ],
+                    [
+                        "TooManyRequests",
+                        []
+                    ],
+                    [
+                        "UnexpectedLambda",
+                        []
+                    ],
+                    [
+                        "InvalidUserPoolConfiguration",
+                        []
+                    ],
+                    [
+                        "UserLambdaValidation",
+                        []
+                    ],
+                    [
+                        "InvalidLambdaResponse",
+                        []
+                    ],
+                    [
+                        "PasswordResetRequired",
+                        []
+                    ],
+                    [
+                        "UserNotFound",
+                        []
+                    ],
+                    [
+                        "UserNotConfirmed",
+                        []
+                    ],
+                    [
+                        "AWSServerError",
+                        []
+                    ],
+                    [
+                        "UnexpectedError",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Msg",
+                "comment": " The internal authentication events.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "AuthExtensions",
+                "comment": " Defines the extensions to the `AuthAPI.AuthInfo` fields that this\nauthenticator supports.\n\n`saveState` provides a JSON serialized snapshot of the authenticated state. This\ncan be used with the `CognitoAPI.restore` function to attempt to re-create the\nauthenticated state without logging in again. Be aware that the save state will\ncontain sensitive information such as access tokens - so think carefully about\nthe security implications of where you put it. For example, local storage can be\ncompromised by XSS attacks, are you really sure your site is invulnerable to this?\n\n",
+                "args": [],
+                "type": "{ accessToken : String.String, decodedAccessToken : AWS.Tokens.AccessToken, idToken : String.String, decodedIdToken : AWS.Tokens.IdToken, saveState : Json.Encode.Value }"
+            },
+            {
+                "name": "CognitoAPI",
+                "comment": " AWS Cognito specific API for:\n\n  - Responding to challenges.\n  - Obtaining temporary AWS access credentials (for signing requests).\n  - Obtaining the raw or decoded id and access tokens.\n\n",
+                "args": [],
+                "type": "{ requiredNewPassword : String.String -> Platform.Cmd.Cmd AWS.Auth.Msg, getAWSCredentials : AWS.Auth.Model -> Maybe.Maybe AWS.Credentials.Credentials, restore : Json.Encode.Value -> Platform.Cmd.Cmd AWS.Auth.Msg }"
+            },
+            {
+                "name": "Config",
+                "comment": " The configuration needed to interact with Cognito.\n\nThe `userIdentityMapping` field is optional. Fill it in and a request to obtain\nAWS credentials will be automatically made once logged in. That is to say that\nthe user will be mapped to an AWS IAM identity, which can be used to access\nAWS services directly through request signing.\n\nThe `authHeaderName` field provides the name of the field into which the\n`AuthAPI.addAuthHeaders` function will set the authentication token. Almost\nalways the `Authorization` header field is used.\n\nThe 'authHeaderPrefix' may provide a string with which the access token value is\nprefixed in the header field. Patterns like 'Bearer XXX' or 'Token XXX' are common.\nNote that the space will be automatically inserted between then prefix and the\ntoken, if a prefix is provided - so `authHeaderPrefix = \"Bearer\"` will yield\n`Bearer XXX`. If no prefix is provided just the token on its own will be set in\nthe header field.\n\n",
+                "args": [],
+                "type": "{ clientId : String.String, region : AWS.Config.Region, userIdentityMapping : Maybe.Maybe AWS.Auth.UserIdentityMappingConfig, authHeaderName : String.String, authHeaderPrefix : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "Model",
+                "comment": " The authentication model consisting of the evaluated config and the private state.\n",
+                "args": [],
+                "type": "{ clientId : AWS.CognitoIdentityProvider.ClientIdType, region : AWS.Config.Region, userIdentityMapping : Maybe.Maybe AWS.Auth.UserIdentityMapping, authHeaderName : String.String, authHeaderPrefix : Maybe.Maybe String.String, innerModel : AWS.Auth.Private }"
+            },
+            {
+                "name": "UserIdentityMapping",
+                "comment": " Holds the `UserIdentityMappingConfig` parameters if they pass parsing into\nthe valid format accepeted by Cognito.\n",
+                "args": [],
+                "type": "{ identityPoolId : AWS.CognitoIdentity.IdentityPoolId, identityProviderName : AWS.CognitoIdentity.IdentityProviderName, accountId : AWS.CognitoIdentity.AccountId }"
+            },
+            {
+                "name": "UserIdentityMappingConfig",
+                "comment": " Optional configuration needed to request temporary AWS credentials.\n",
+                "args": [],
+                "type": "{ userPoolId : String.String, identityPoolId : String.String, accountId : String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "api",
+                "comment": " An extended API for working with Cognito.\n\nThis provides the functions needed to response to Cognito challenges.\n\nNote that this API, extends the base API defined in the `the-sett/elm-auth` package.\n\nThe `addAuthHeaders` function, adds an `Authorization : Bearer XXXX` header into\nany set of HTTP headers given to it. Alternatively the extended `CognitoAPI` can\nbe used to obtain the raw access directly, if it needs to be used in a different\nway.\n\n",
+                "type": "AuthAPI.AuthAPI AWS.Auth.Config AWS.Auth.Model AWS.Auth.Msg AWS.Auth.AuthExtensions AWS.Auth.Challenge AWS.Auth.CognitoAPI AWS.Auth.FailReason"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "AWS.Tokens",
+        "comment": " Defines the decoded form that the AWS access and id tokens take.\n\n@docs AccessToken, IdToken\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "AccessToken",
+                "comment": " Cognito access token.\n",
+                "args": [],
+                "type": "{ sub : String.String, event_id : String.String, token_use : String.String, scope : String.String, auth_time : Time.Posix, iss : String.String, exp : Time.Posix, iat : Time.Posix, jti : String.String, client_id : String.String, username : String.String }"
+            },
+            {
+                "name": "IdToken",
+                "comment": " Cognito id token.\n",
+                "args": [],
+                "type": "{ sub : String.String, aud : String.String, event_id : String.String, token_use : String.String, auth_time : Time.Posix, iss : String.String, cognito_username : String.String, exp : Time.Posix, iat : Time.Posix, email : String.String }"
+            }
+        ],
+        "values": [],
+        "binops": []
+    }
+]

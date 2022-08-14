@@ -1,0 +1,69 @@
+[
+    {
+        "name": "RadarChart",
+        "comment": " A small library to display just one type of charts: radar charts, also known as web chart, spider chart, spider web chart, star chart, star plot, cobweb chart, irregular polygon, polar chart, or Kiviat diagram.\n\n# Definition\n@docs AxisStyle, DatumSeries, LineStyle, Options, defaultOptions, view\n",
+        "unions": [
+            {
+                "name": "AxisStyle",
+                "comment": " Axis style ",
+                "args": [],
+                "cases": [
+                    [
+                        "Minimal",
+                        []
+                    ],
+                    [
+                        "Web",
+                        [
+                            "Basics.Int"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "LineStyle",
+                "comment": " Line style ",
+                "args": [],
+                "cases": [
+                    [
+                        "Empty",
+                        []
+                    ],
+                    [
+                        "Filled",
+                        [
+                            "Basics.Float"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "DatumSeries",
+                "comment": " Datum series ",
+                "args": [],
+                "type": "{ color : String.String, data : List.List Basics.Float }"
+            },
+            {
+                "name": "Options",
+                "comment": " Chart styling\n",
+                "args": [],
+                "type": "{ fontSize : Basics.Float, margin : Basics.Float, strokeWidth : Basics.Float, axisColor : String.String, axisStyle : RadarChart.AxisStyle, lineStyle : RadarChart.LineStyle }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultOptions",
+                "comment": " Get a default options object\n",
+                "type": "RadarChart.Options"
+            },
+            {
+                "name": "view",
+                "comment": " Render a radar chart with options, labels, and some values\n",
+                "type": "RadarChart.Options -> List.List String.String -> List.List RadarChart.DatumSeries -> Svg.Svg msg"
+            }
+        ],
+        "binops": []
+    }
+]

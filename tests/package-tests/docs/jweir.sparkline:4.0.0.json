@@ -1,0 +1,137 @@
+[
+    {
+        "name": "Sparkline",
+        "comment": " This library is for generating inline graphs, called sparklines.\n\n\n# Definition\n\n@docs sparkline, Param\n\n\n# Data types\n\n@docs Point, DataSet, LabelSet, Size\n\n",
+        "unions": [
+            {
+                "name": "Param",
+                "comment": " Drawing a sparkline occurs by passing params\n\n          -- data is tuples with (x,y) values as floats\n          data = [(0,0),(5,10),(10,12)]\n          data2 = [(0,-5),(7,2),(12,14)]\n\n          sparkline\n              (100,10,5,5)    -- the width, height, top/bottom margin, left/right margin\n              [ Line data ]   -- type of graph to draw with the data\n\nMultiple params can be included to have muliple graphs. Each will have its data\nscaled relatively to one another. The graphs are drawn in the order they are\ngiven. So last graph will be drawn on top.\n\n          sparkline\n              (100,10,5,5)    -- the width, height, top/bottom margin, left/right margin\n              [ Line data\n              , Line data2\n              ]\n\nThe three types of graphs are\n\n  - **Line** creates a line graph\n  - **Area** creates a graph meant to be filled\n  - **Dot** draws a dot at each point. Set the radius of the dot by styling it `|> Style [Svg.r \"3\"]`\n  - **Bar** <BarWidth> Draws a bar graph. This requires defining what the width of the bar.\n  - **Label** plots text on the graph\n\nThere are also some options which can be applied to each graph:\n\n  - **Domain** includes the given data into the graph's domain.\n    This is useful when creating multiple graphs that need to have the same scale.\n  - **Independent** will scale this graph's dataset separately from the rest of the graphs.\n  - **Style** allows applying `Svg.Attribute` styles to the rendered svg.\n\nFinally there is the **ZeroLine** param which will draw a line at the 0 y axis\nfor the data. _This does not apply to any graphs rendered with\n**Independent.**_\n\n\\*\\*Examples\\*\n\nSee Example.elm for more examples.\n\n        -- style a ZeroLine to be very light\n        sparkline\n            ( 200, 5, 5, 5 )\n            [ ZeroLine |> Style [ Svg.strokeWidth \"0.5\", Svg.stroke \"rgba(0,0,0,0.3)\" ]\n            , Bar 20 [ ( 0, 2 ) , ( 10, 30 ) , ( 20, 10 ) ]\n            ]\n\n        -- graph the datasets to not be relative to one another.  The params can be piped.\n        sparkline\n            ( 200, 10, 5, 5 )\n            [ Line data |> Independent\n            , Line data2 |> Independent\n            ]\n\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Bar",
+                        [
+                            "Basics.Float",
+                            "Sparkline.DataSet"
+                        ]
+                    ],
+                    [
+                        "Dot",
+                        [
+                            "Sparkline.DataSet"
+                        ]
+                    ],
+                    [
+                        "Line",
+                        [
+                            "Sparkline.DataSet"
+                        ]
+                    ],
+                    [
+                        "Area",
+                        [
+                            "Sparkline.DataSet"
+                        ]
+                    ],
+                    [
+                        "Domain",
+                        [
+                            "Sparkline.DataSet"
+                        ]
+                    ],
+                    [
+                        "Label",
+                        [
+                            "Sparkline.LabelSet a"
+                        ]
+                    ],
+                    [
+                        "ZeroLine",
+                        []
+                    ],
+                    [
+                        "Independent",
+                        [
+                            "Sparkline.Param a"
+                        ]
+                    ],
+                    [
+                        "Style",
+                        [
+                            "List.List (Svg.Attribute a)",
+                            "Sparkline.Param a"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "DataSet",
+                "comment": " The data to be rendered.\n",
+                "args": [],
+                "type": "List.List Sparkline.Point"
+            },
+            {
+                "name": "LabelSet",
+                "comment": " The data and text to use for labeling\n",
+                "args": [
+                    "a"
+                ],
+                "type": "List.List ( Sparkline.Point, List.List (Svg.Attribute a), Sparkline.Text )"
+            },
+            {
+                "name": "Point",
+                "comment": " Tuple of (x,y) value\n",
+                "args": [],
+                "type": "( Basics.Float, Basics.Float )"
+            },
+            {
+                "name": "Size",
+                "comment": " Defines the size of the graph (width, height, leftRightMargin, topBottomMargin)\n",
+                "args": [],
+                "type": "{ width : Basics.Float, height : Basics.Float, marginLR : Basics.Float, marginTB : Basics.Float }"
+            }
+        ],
+        "values": [
+            {
+                "name": "sparkline",
+                "comment": " The entry point to create a graph. See Param.\n",
+                "type": "Sparkline.Size -> List.List (Sparkline.Param a) -> Svg.Svg a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Sparkline.Extras",
+        "comment": " Additional functions to help in generating the graphs.\n\n\n# Definition\n\n@docs Axes\n\n\n# Data types\n\n@docs extent\n\n",
+        "unions": [
+            {
+                "name": "Axes",
+                "comment": " Descibes which axes on the graph or from the data to use.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "X",
+                        []
+                    ],
+                    [
+                        "Y",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "extent",
+                "comment": " returns the min and max Point on either the X or Y axes\n",
+                "type": "Sparkline.Extras.Axes -> List.List ( Basics.Float, Basics.Float ) -> List.List ( Basics.Float, Basics.Float )"
+            }
+        ],
+        "binops": []
+    }
+]

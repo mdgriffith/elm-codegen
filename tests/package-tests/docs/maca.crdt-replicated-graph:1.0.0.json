@@ -1,0 +1,158 @@
+[
+    {
+        "name": "RG",
+        "comment": " `RG` is a Replicated Graph, it keeps the local replica\nstate.\nThe timestamp for adding nodes is calculated by adding\n`maxReplicas` count to the last timestamp, and the initial\ntimestamp corresponds to the `ReplicaId`.\nThis sets two constraints: the `ReplicaId` has to be unique for\neach replica, and the maximum number of replicas has to be\ndeclared.\n\n@docs RG\n@docs Error\n@docs init\n@docs add\n@docs addBranch\n@docs delete\n@docs batch\n@docs apply\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Error",
+                "comment": " Extra information about a failure when applying an\noperation\n\n`replicaId` is the id of the replica where the operation was\ngenerated\n\n`timestamp` is the timestamp of the attempted operation\n\n`path` is the path of the existing node, either a node intended\nto be `deleted` or the previous node for an `add` operation\n\nIf an operation fails it is usefull knowing the replica where\nthe operation was generated, to request the operations since the\nlast know operation.\n\n",
+                "args": [],
+                "type": "{ replicaId : RG.Operation.ReplicaId, timestamp : Basics.Int, path : RG.Node.Path }"
+            },
+            {
+                "name": "RG",
+                "comment": " Represent a Replicated Graph\n\n`replicaId` is the local replica id\n\n`maxReplicas` maximum number of replicas\n\n`root` root node\n\n`timestamp` timestamp of the last operation\n\n`pointer` path of the last added node\n\n`operations` cache of all applied operations\n\n`replicas` known replicas and their last known timestamp\n\n`lastOperation` last succesfully applied operation or batch\n\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ replicaId : RG.Operation.ReplicaId, maxReplicas : Basics.Int, root : RG.Node.Node a, timestamp : Basics.Int, pointer : RG.Node.Path, operations : List.List (RG.Operation.Operation a), replicas : Dict.Dict Basics.Int Basics.Int, lastOperation : RG.Operation.Operation a }"
+            }
+        ],
+        "values": [
+            {
+                "name": "add",
+                "comment": " Build and add a node after pointer position\n",
+                "type": "Maybe.Maybe a -> RG.RG a -> Result.Result RG.Error (RG.RG a)"
+            },
+            {
+                "name": "addBranch",
+                "comment": " Build and add a branch after pointer position\n",
+                "type": "Maybe.Maybe a -> RG.RG a -> Result.Result RG.Error (RG.RG a)"
+            },
+            {
+                "name": "apply",
+                "comment": " Apply a remote operation\n",
+                "type": "RG.Operation.Operation a -> RG.RG a -> Result.Result RG.Error (RG.RG a)"
+            },
+            {
+                "name": "batch",
+                "comment": " Apply a list of functions that edit a RG to a RG\n",
+                "type": "List.List (RG.RG a -> Result.Result RG.Error (RG.RG a)) -> RG.RG a -> Result.Result RG.Error (RG.RG a)"
+            },
+            {
+                "name": "delete",
+                "comment": " Mark a RG node as a `Tombstone`\n",
+                "type": "RG.Node.Path -> RG.RG a -> Result.Result RG.Error (RG.RG a)"
+            },
+            {
+                "name": "init",
+                "comment": " Build a RG\n",
+                "type": "{ replicaId : Basics.Int, maxReplicas : Basics.Int } -> RG.RG a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "RG.Json",
+        "comment": " Replicated Graph JSON serialization\n\n@docs operationEncoder\n@docs operationDecoder\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "operationDecoder",
+                "comment": " Decoder for an operation\n",
+                "type": "Json.Decode.Decoder a -> Json.Decode.Decoder (RG.Operation.Operation a)"
+            },
+            {
+                "name": "operationEncoder",
+                "comment": " Encoder for an operation, expects a function that takes\nanything and returns a value\n",
+                "type": "(a -> Json.Encode.Value) -> RG.Operation.Operation a -> Json.Encode.Value"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "RG.Node",
+        "comment": " This module implements types and functions to build, find, get\nvalues from, and compare nodes\n\n@docs Node\n@docs Path\n@docs init\n@docs root\n@docs tombstone\n@docs children\n@docs data\n@docs timestamp\n@docs path\n@docs descendant\n@docs hasTimestamp\n\n",
+        "unions": [
+            {
+                "name": "Node",
+                "comment": " Node can be either a branch or leaf `Node` with optional\ndata or a `Tombstone` representing a removed Node\n ",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Node",
+                        [
+                            "{ path : RG.Node.Path, children : List.List (RG.Node.Node a), data : Maybe.Maybe a }"
+                        ]
+                    ],
+                    [
+                        "Tombstone",
+                        [
+                            "{ path : RG.Node.Path }"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Path",
+                "comment": " The path of the node is represented as a list of integers\n",
+                "args": [],
+                "type": "List.List Basics.Int"
+            }
+        ],
+        "values": [
+            {
+                "name": "children",
+                "comment": " Return a list of a nodes' children\n",
+                "type": "RG.Node.Node a -> List.List (RG.Node.Node a)"
+            },
+            {
+                "name": "data",
+                "comment": " Return the data of a node\n\n    data (node (Just 'a') [0, 1]) == Just 'a'\n    data (tombstone [0, 1]) == Nothing\n",
+                "type": "RG.Node.Node a -> Maybe.Maybe a"
+            },
+            {
+                "name": "descendant",
+                "comment": " Return `Just` a nodes' descendant if found by path or `Nothing`\n",
+                "type": "RG.Node.Path -> RG.Node.Node a -> Maybe.Maybe (RG.Node.Node a)"
+            },
+            {
+                "name": "hasTimestamp",
+                "comment": " Determine wether a node has a timestamp\n\n    hasTimestamp 1 (node (Just 'a') [0, 1]) == True\n    hasTimestamp 1 (node (Just 'a') [0, 2]) == False\n",
+                "type": "Basics.Int -> RG.Node.Node a -> Basics.Bool"
+            },
+            {
+                "name": "init",
+                "comment": " Build a node\n\n    timestamp (node (Just 'a') [0, 1]) == 1\n    path (node (Just 'a') [0, 1]) == [0, 1]\n    data (node (Just 'a') [0, 1]) == Just 'a'\n ",
+                "type": "Maybe.Maybe a -> RG.Node.Path -> RG.Node.Node a"
+            },
+            {
+                "name": "path",
+                "comment": " Return the path of a node\n\n    path (node (Just 'a') [0, 1]) == [0, 1]\n",
+                "type": "RG.Node.Node a -> RG.Node.Path"
+            },
+            {
+                "name": "root",
+                "comment": " Build a root node\n\n    timestamp root == 0\n    path root == []\n    data root == Nothing\n ",
+                "type": "RG.Node.Node a"
+            },
+            {
+                "name": "timestamp",
+                "comment": " Return the timestamp of a node\n\n    timestamp (node (Just 'a') [0, 1]) == 1\n",
+                "type": "RG.Node.Node a -> Basics.Int"
+            },
+            {
+                "name": "tombstone",
+                "comment": " Build a tombstone providing timestamp and path\n\n    timestamp (tombstone [0, 1]) == 1\n    path (tombstone [0, 1]) == [0, 1]\n    data (tombstone [0, 1]) == Nothing\n",
+                "type": "RG.Node.Path -> RG.Node.Node a"
+            }
+        ],
+        "binops": []
+    }
+]

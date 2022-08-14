@@ -1,0 +1,475 @@
+[
+    {
+        "name": "Fullstack.Client",
+        "comment": "\n\n\n# Definition\n\n@docs Ports, Protocol\n\n\n# Common Helpers\n\n@docs element, document, application\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Ports",
+                "comment": " Hook up ports to use websockets for passing serverMsg and clientMsg\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ websocketConnected : (Basics.Int -> Fullstack.Client.FrameworkMsg msg) -> Platform.Sub.Sub (Fullstack.Client.FrameworkMsg msg), websocketIn : (String.String -> Fullstack.Client.FrameworkMsg msg) -> Platform.Sub.Sub (Fullstack.Client.FrameworkMsg msg) }"
+            },
+            {
+                "name": "Protocol",
+                "comment": " A set of required protocols.\n\n    - `updateFromServer` is called when `serverMsg` is received via websocket\n    - `clientMsgEncoder` encodes outgoing `clientMsg`, e.g. via `sendToServer`\n    - `serverMsgDecoder` decodes replies from Server\n    - `errorDecoder` decodes error replies from Server\n\n",
+                "args": [
+                    "serverMsg",
+                    "clientMsg",
+                    "model",
+                    "msg",
+                    "x"
+                ],
+                "type": "{ updateFromServer : serverMsg -> model -> ( model, Platform.Cmd.Cmd msg ), clientMsgEncoder : clientMsg -> Json.Encode.Value, serverMsgDecoder : Json.Decode.Decoder serverMsg, errorDecoder : Json.Decode.Decoder x }"
+            }
+        ],
+        "values": [
+            {
+                "name": "application",
+                "comment": " Returns a `Browser.application` to use as `main` in your client app\nand a `sendToServer` function to send `clientMsg` with\n",
+                "type": "{ application : { init : flags -> Url.Url -> Browser.Navigation.Key -> ( model, Platform.Cmd.Cmd msg ), view : model -> Browser.Document msg, update : msg -> model -> ( model, Platform.Cmd.Cmd msg ), subscriptions : model -> Platform.Sub.Sub msg, onUrlRequest : Browser.UrlRequest -> msg, onUrlChange : Url.Url -> msg }, ports : Fullstack.Client.Ports msg, protocol : Fullstack.Client.Protocol serverMsg clientMsg model msg x } -> { application : Platform.Program flags model (Fullstack.Client.FrameworkMsg msg), sendToServer : clientMsg -> Platform.Task Http.Error (Result.Result x serverMsg) }"
+            },
+            {
+                "name": "document",
+                "comment": " Returns a `Browser.document` to use as `main` in your client app\nand a `sendToServer` function to send `clientMsg` with\n",
+                "type": "{ document : { init : flags -> ( model, Platform.Cmd.Cmd msg ), view : model -> Browser.Document msg, update : msg -> model -> ( model, Platform.Cmd.Cmd msg ), subscriptions : model -> Platform.Sub.Sub msg }, ports : Fullstack.Client.Ports msg, protocol : Fullstack.Client.Protocol serverMsg clientMsg model msg x } -> { document : Platform.Program flags model (Fullstack.Client.FrameworkMsg msg), sendToServer : clientMsg -> Platform.Task Http.Error (Result.Result x serverMsg) }"
+            },
+            {
+                "name": "element",
+                "comment": " Returns a `Browser.element` to use as `main` in your client app\nand a `sendToServer` function to send `clientMsg` with\n",
+                "type": "{ element : { init : flags -> ( model, Platform.Cmd.Cmd msg ), view : model -> Html.Html msg, update : msg -> model -> ( model, Platform.Cmd.Cmd msg ), subscriptions : model -> Platform.Sub.Sub msg }, ports : Fullstack.Client.Ports msg, protocol : Fullstack.Client.Protocol serverMsg clientMsg model msg x } -> { element : Platform.Program flags model (Fullstack.Client.FrameworkMsg msg), sendToServer : clientMsg -> Platform.Task Http.Error (Result.Result x serverMsg) }"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Fullstack.Server",
+        "comment": "\n\n\n# Definition\n\n@docs PlatformWorker, Ports, Protocol\n\n\n# Common Helpers\n\n@docs worker, writeResponse, writeWebsocketMessage\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "PlatformWorker",
+                "comment": " This is the input to create a Platform.worker\n",
+                "args": [
+                    "flags",
+                    "model",
+                    "msg"
+                ],
+                "type": "{ init : flags -> ( model, Platform.Cmd.Cmd msg ), update : msg -> model -> ( model, Platform.Cmd.Cmd msg ), subscriptions : model -> Platform.Sub.Sub msg }"
+            },
+            {
+                "name": "Ports",
+                "comment": " A set of required ports\n\n    - `writeResponse` is your function created with your port `onHttpResponse`\n\n        port onHttpResponse : Json.Encode.Value -> Cmd msg\n\n        writeResponse =\n            Fullstack.Server.writeResponse onHttpResponse\n\n\n\n    - `onHttpRequest` is a port defined in your `Server.elm`\n\n        port onHttpRequest : (Json.Encode.Value -> msg) -> Sub msg\n\n",
+                "args": [
+                    "msg",
+                    "x",
+                    "serverMsg"
+                ],
+                "type": "{ writeResponse : Fullstack.Server.HTTP.Request -> { statusCode : Fullstack.Server.HTTP.StatusCode, headers : List.List ( String.String, Json.Encode.Value ), body : String.String } -> Platform.Cmd.Cmd (Fullstack.Server.FrameworkMsg msg x serverMsg), onHttpRequest : (Json.Encode.Value -> Fullstack.Server.FrameworkMsg msg x serverMsg) -> Platform.Sub.Sub (Fullstack.Server.FrameworkMsg msg x serverMsg), onWebsocketEvent : (Json.Encode.Value -> Fullstack.Server.FrameworkMsg msg x serverMsg) -> Platform.Sub.Sub (Fullstack.Server.FrameworkMsg msg x serverMsg), writeWebsocketMessage : Fullstack.Server.Websocket.Connection -> Fullstack.Server.Websocket.Key -> String.String -> Platform.Cmd.Cmd (Fullstack.Server.FrameworkMsg msg x serverMsg) }"
+            },
+            {
+                "name": "Protocol",
+                "comment": " A set of required protocols.\n\n  - `headerDecoder` decoded value will be made available to `updateFromRoute` and `updateFromClient`\n  - `clientMsgDecoder` decodes the request body IF request was sent from Client `sendToServer`\n      - `updateFromClient` is called if `clientMsgDecoder` succeeds\n      - `serverMsgEncoder` encodes the response body for a successful `clientMsgDecoder`\n      - `errorEncoder` encodes the response body for a failed `clientMsgDecoder`\n  - `routeDecoder` decodes a `Url.Url`; if successful, `updateFromRoute` will be called\n      - `updateFromRoute` is called as long as `headerDecoder` succeeds\n      - otherwise Fullstack.Server will respond with error 500\n\n",
+                "args": [
+                    "msg",
+                    "x",
+                    "serverMsg",
+                    "clientMsg",
+                    "route",
+                    "header",
+                    "model"
+                ],
+                "type": "{ headerDecoder : Json.Decode.Decoder header, clientMsgDecoder : Json.Decode.Decoder clientMsg, updateFromClient : header -> Time.Posix -> clientMsg -> model -> ( model, Platform.Task x serverMsg ), serverMsgEncoder : serverMsg -> Json.Encode.Value, errorEncoder : x -> Json.Encode.Value, routeDecoder : Url.Url -> Maybe.Maybe route, updateFromRoute : ( Fullstack.Server.HTTP.Method, header, Maybe.Maybe route ) -> Time.Posix -> Fullstack.Server.HTTP.Request -> model -> ( model, Platform.Cmd.Cmd msg ) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "worker",
+                "comment": " Returns a Fullstack.Server program, capable of communicating with Fullstack.Client program\n",
+                "type": "{ worker : Fullstack.Server.PlatformWorker flags model msg, ports : Fullstack.Server.Ports msg x serverMsg, protocol : Fullstack.Server.Protocol msg x serverMsg clientMsg endpoint header model } -> Platform.Program flags (Fullstack.Server.FrameworkModel model header) (Fullstack.Server.FrameworkMsg msg x serverMsg)"
+            },
+            {
+                "name": "writeResponse",
+                "comment": " Use this to wire up your port in your own `Server.elm`\n\n    port onHttpResponse : Json.Encode.Value -> Cmd msg\n\n    writeResponse =\n        Fullstack.Server.writeResponse onHttpResponse\n\n",
+                "type": "(Json.Encode.Value -> Platform.Cmd.Cmd msg) -> Fullstack.Server.HTTP.Request -> { statusCode : Fullstack.Server.HTTP.StatusCode, headers : List.List ( String.String, Json.Encode.Value ), body : String.String } -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "writeWebsocketMessage",
+                "comment": " Use this to wire up your port in your own `Server.elm` via websocket\n\n    port writeWs : Json.Encode.Value -> Cmd msg\n\n    writeWebsocketMessage =\n        Fullstack.Server.writeWebsocketMessage writeWs\n\n",
+                "type": "(Json.Encode.Value -> Platform.Cmd.Cmd msg) -> Fullstack.Server.Websocket.Connection -> Fullstack.Server.Websocket.Key -> String.String -> Platform.Cmd.Cmd msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Fullstack.Server.HTTP",
+        "comment": " Data types and their helper functions to work with HTTP handlers\n\n\n# Definition\n\n@docs Body, Headers, Method, Request, StatusCode, Url\n\n\n# Common Helpers\n\n@docs bodyOf, headersOf, methodFromString, methodOf, methodString, pathOf, statusInt, urlOf\n\n",
+        "unions": [
+            {
+                "name": "Method",
+                "comment": " Custom type representing all http methods\n",
+                "args": [],
+                "cases": [
+                    [
+                        "GET",
+                        []
+                    ],
+                    [
+                        "HEAD",
+                        []
+                    ],
+                    [
+                        "POST",
+                        []
+                    ],
+                    [
+                        "PUT",
+                        []
+                    ],
+                    [
+                        "DELETE",
+                        []
+                    ],
+                    [
+                        "CONNECT",
+                        []
+                    ],
+                    [
+                        "OPTIONS",
+                        []
+                    ],
+                    [
+                        "TRACE",
+                        []
+                    ],
+                    [
+                        "PATCH",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "StatusCode",
+                "comment": " Custom type representing all http `StatusCode`\n",
+                "args": [],
+                "cases": [
+                    [
+                        "StatusContinue",
+                        []
+                    ],
+                    [
+                        "StatusSwitchingProtocols",
+                        []
+                    ],
+                    [
+                        "StatusProcessing",
+                        []
+                    ],
+                    [
+                        "StatusEarlyHints",
+                        []
+                    ],
+                    [
+                        "StatusOK",
+                        []
+                    ],
+                    [
+                        "StatusCreated",
+                        []
+                    ],
+                    [
+                        "StatusAccepted",
+                        []
+                    ],
+                    [
+                        "StatusNonAuthoritativeInformation",
+                        []
+                    ],
+                    [
+                        "StatusNoContent",
+                        []
+                    ],
+                    [
+                        "StatusResetContent",
+                        []
+                    ],
+                    [
+                        "StatusPartialContent",
+                        []
+                    ],
+                    [
+                        "StatusMultiStatus",
+                        []
+                    ],
+                    [
+                        "StatusAlreadyReported",
+                        []
+                    ],
+                    [
+                        "StatusIMUsed",
+                        []
+                    ],
+                    [
+                        "StatusMultipleChoices",
+                        []
+                    ],
+                    [
+                        "StatusMovedPermanently",
+                        []
+                    ],
+                    [
+                        "StatusFound",
+                        []
+                    ],
+                    [
+                        "StatusSeeOther",
+                        []
+                    ],
+                    [
+                        "StatusNotModified",
+                        []
+                    ],
+                    [
+                        "StatusUseProxy",
+                        []
+                    ],
+                    [
+                        "StatusTemporaryRedirect",
+                        []
+                    ],
+                    [
+                        "StatusPermanentRedirect",
+                        []
+                    ],
+                    [
+                        "StatusBadRequest",
+                        []
+                    ],
+                    [
+                        "StatusUnauthorized",
+                        []
+                    ],
+                    [
+                        "StatusPaymentRequired",
+                        []
+                    ],
+                    [
+                        "StatusForbidden",
+                        []
+                    ],
+                    [
+                        "StatusNotFound",
+                        []
+                    ],
+                    [
+                        "StatusMethodNotAllowed",
+                        []
+                    ],
+                    [
+                        "StatusNotAcceptable",
+                        []
+                    ],
+                    [
+                        "StatusProxyAuthenticationRequired",
+                        []
+                    ],
+                    [
+                        "StatusRequestTimeout",
+                        []
+                    ],
+                    [
+                        "StatusConflict",
+                        []
+                    ],
+                    [
+                        "StatusGone",
+                        []
+                    ],
+                    [
+                        "StatusLengthRequired",
+                        []
+                    ],
+                    [
+                        "StatusPreconditionFailed",
+                        []
+                    ],
+                    [
+                        "StatusPayloadTooLarge",
+                        []
+                    ],
+                    [
+                        "StatusURITooLong",
+                        []
+                    ],
+                    [
+                        "StatusUnsupportedMediaType",
+                        []
+                    ],
+                    [
+                        "StatusRangeNotSatisfiable",
+                        []
+                    ],
+                    [
+                        "StatusExpectationFailed",
+                        []
+                    ],
+                    [
+                        "StatusMisdirectedRequest",
+                        []
+                    ],
+                    [
+                        "StatusUnprocessableEntity",
+                        []
+                    ],
+                    [
+                        "StatusLocked",
+                        []
+                    ],
+                    [
+                        "StatusFailedDependency",
+                        []
+                    ],
+                    [
+                        "StatusTooEarly",
+                        []
+                    ],
+                    [
+                        "StatusUpgradeRequired",
+                        []
+                    ],
+                    [
+                        "StatusPreconditionRequired",
+                        []
+                    ],
+                    [
+                        "StatusTooManyRequests",
+                        []
+                    ],
+                    [
+                        "StatusRequestHeaderFieldsTooLarge",
+                        []
+                    ],
+                    [
+                        "StatusUnavailableForLegalReasons",
+                        []
+                    ],
+                    [
+                        "StatusInternalServerError",
+                        []
+                    ],
+                    [
+                        "StatusNotImplemented",
+                        []
+                    ],
+                    [
+                        "StatusBadGateway",
+                        []
+                    ],
+                    [
+                        "StatusServiceUnavailable",
+                        []
+                    ],
+                    [
+                        "StatusGatewayTimeout",
+                        []
+                    ],
+                    [
+                        "StatusHTTPVersionNotSupported",
+                        []
+                    ],
+                    [
+                        "StatusVariantAlsoNegotiates",
+                        []
+                    ],
+                    [
+                        "StatusInsufficientStorage",
+                        []
+                    ],
+                    [
+                        "StatusLoopDetected",
+                        []
+                    ],
+                    [
+                        "StatusNotExtended",
+                        []
+                    ],
+                    [
+                        "StatusNetworkAuthenticationRequired",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Body",
+                "comment": " Alias for String\n",
+                "args": [],
+                "type": "String.String"
+            },
+            {
+                "name": "Headers",
+                "comment": " Alias for opaque Json.Encode.Value\n",
+                "args": [],
+                "type": "Json.Decode.Value"
+            },
+            {
+                "name": "Request",
+                "comment": " Alias for opaque Json.Encode.Value\n",
+                "args": [],
+                "type": "Json.Decode.Value"
+            },
+            {
+                "name": "Url",
+                "comment": " Alias for String\n",
+                "args": [],
+                "type": "String.String"
+            }
+        ],
+        "values": [
+            {
+                "name": "bodyOf",
+                "comment": " Returns request body from `Request`\n",
+                "type": "Fullstack.Server.HTTP.Request -> String.String"
+            },
+            {
+                "name": "headersOf",
+                "comment": " Returns request headers from `Request`\n",
+                "type": "Fullstack.Server.HTTP.Request -> Fullstack.Server.HTTP.Headers"
+            },
+            {
+                "name": "methodFromString",
+                "comment": " Parse a String and return as http `Method`\n",
+                "type": "String.String -> Fullstack.Server.HTTP.Method"
+            },
+            {
+                "name": "methodOf",
+                "comment": " Returns http `method` from `Request`\n",
+                "type": "Fullstack.Server.HTTP.Request -> Fullstack.Server.HTTP.Method"
+            },
+            {
+                "name": "methodString",
+                "comment": " Returns http `Method` as String\n",
+                "type": "Fullstack.Server.HTTP.Method -> String.String"
+            },
+            {
+                "name": "pathOf",
+                "comment": " Returns request path from `Request`\n",
+                "type": "Fullstack.Server.HTTP.Request -> String.String"
+            },
+            {
+                "name": "statusInt",
+                "comment": " Returns http StatusCode as integer\n",
+                "type": "Fullstack.Server.HTTP.StatusCode -> Basics.Int"
+            },
+            {
+                "name": "urlOf",
+                "comment": " Returns `url` from `Request`\n",
+                "type": "Fullstack.Server.HTTP.Request -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

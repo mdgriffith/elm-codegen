@@ -1,0 +1,31 @@
+[
+    {
+        "name": "ErrorMessage",
+        "comment": " The module contains helper functions for specific error messages.\n\n@docs typeMismatch, internal, canNotInit, unexpectedMessageFromJs\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "canNotInit",
+                "comment": " Return error message that given module could not be initialized with given item for given reason\n",
+                "type": "String.String -> String.String -> String.String -> String.String"
+            },
+            {
+                "name": "internal",
+                "comment": " Returns error message for internal error\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "typeMismatch",
+                "comment": " Returns error message for type mismatch\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "unexpectedMessageFromJs",
+                "comment": " Return internal error message about receiving unexpected message from JS\n",
+                "type": "JsData.JsData -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

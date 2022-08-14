@@ -1,0 +1,21 @@
+[
+    {
+        "name": "RemoveDiacritics",
+        "comment": " Remove diacritics from a string. This is handy for normalizing\nstrings before sorting, to give a more natural sort.\n\n@docs removeDiacritics, lookupTable\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "lookupTable",
+                "comment": " The table of characters with diacritics, and the strings that\nthey are replaced by.\n",
+                "type": "Dict.Dict Char.Char String.String"
+            },
+            {
+                "name": "removeDiacritics",
+                "comment": " `removeDiacritics` removes diactritics, it will expand\nknown ligatures, thus changing the string glyph length.\nAll non latin characters are untouched.\n\n    removeDiacritics \"La liberté commence où l'ignorance finit.\"\n\n    --> \"La liberte commence ou l'ignorance finit.\"\n    removeDiacritics \"é()/& abc\" --> \"e()/& abc\"\n\n    removeDiacritics \"こんにちは\" --> \"こんにちは\"\n\n",
+                "type": "String.String -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

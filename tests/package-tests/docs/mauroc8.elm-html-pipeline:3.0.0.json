@@ -1,0 +1,45 @@
+[
+    {
+        "name": "Html.Pipeline",
+        "comment": "\n\n@docs Element, node\n\n@docs addAttributes, addChildren\n\n@docs toHtml, fold\n\n",
+        "unions": [
+            {
+                "name": "Element",
+                "comment": " Represents an HTML element node.\n\nIn particular, an element node is a node that has a tag name, a list of attributes and a list of children.\n\nOther types of [HTML nodes](https://developer.mozilla.org/en-US/docs/Web/API/Node/nodeType) (for example\ntext nodes) don't have any of those.\n\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "addAttributes",
+                "comment": " Appends attributes to an existing [Element](Html.Pipeline#Element).\n\n    node \"div\"\n        |> addAttributes\n            [ Html.Attributes.class \"container\"\n            ]\n\n",
+                "type": "List.List (Html.Attribute msg) -> Html.Pipeline.Element msg -> Html.Pipeline.Element msg"
+            },
+            {
+                "name": "addChildren",
+                "comment": " Appends children to an existing [Element](Html.Pipeline#Element).\n\n    node \"div\"\n        |> addChildren\n            [ Html.text \"Hello,\"\n            , Html.text \" world\"\n            ]\n\n",
+                "type": "List.List (Html.Html msg) -> Html.Pipeline.Element msg -> Html.Pipeline.Element msg"
+            },
+            {
+                "name": "fold",
+                "comment": " This function allows you to do whatever you want with the accumulated\nattributes and children.\n\n_It is exported for testing purposes, you shouldn't need it._\n\n",
+                "type": "(String.String -> List.List (Html.Attribute msg) -> List.List (Html.Html msg) -> b) -> Html.Pipeline.Element msg -> b"
+            },
+            {
+                "name": "node",
+                "comment": " Creates an empty [Element](Html.Pipeline#Element) from a [HTML tag name](https://developer.mozilla.org/en-US/docs/Web/HTML/Element).\n",
+                "type": "String.String -> Html.Pipeline.Element msg"
+            },
+            {
+                "name": "toHtml",
+                "comment": " Converts an [Element](Html.Pipeline#Element) into an elm\n[Html](https://package.elm-lang.org/packages/elm/html/latest/Html#Html) value,\nclosing the pipeline.\n",
+                "type": "Html.Pipeline.Element msg -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

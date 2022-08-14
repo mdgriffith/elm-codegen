@@ -1,0 +1,30 @@
+[
+    {
+        "name": "Transitions",
+        "comment": " transitions allows for optional msgs to be fired after the enter/leave transition has completed\n\n@docs Transitions\n\n@docs make, view\n\n",
+        "unions": [
+            {
+                "name": "Transitions",
+                "comment": "\nThe representation of all the css class transitions needed\noptional msg's can supplied to be sent after the enter/leave has completeed\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "make",
+                "comment": " ",
+                "type": "Transitions.Internals msg -> Html.Html msg -> Transitions.Transitions msg"
+            },
+            {
+                "name": "view",
+                "comment": " ",
+                "type": "Transitions.Transitions msg -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,199 @@
+[
+    {
+        "name": "Framework.Template",
+        "comment": " A Template is a list of `Node`s\n\nYou can directly use this module to create a Template or you can use one of the\npackages that build on top of this package to parse a template based on another,\nfriendlier, format.\n\n@docs Node, ActorElement\n\n@docs ElementNodeName, ActorElementId, Attributes, Attribute, Children\n\n@docs getActorElementDescendants, getActorsToSpawn\n\n@docs toString\n\n",
+        "unions": [
+            {
+                "name": "ActorElement",
+                "comment": " An ActorElement\n",
+                "args": [
+                    "appActors"
+                ],
+                "cases": [
+                    [
+                        "ActorElement",
+                        [
+                            "appActors",
+                            "Framework.Template.ElementNodeName",
+                            "Framework.Template.ActorElementId",
+                            "Framework.Template.Attributes",
+                            "Framework.Template.Children appActors"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Node",
+                "comment": " A Node represents Text, any Element or an Actor.\n\n    Text \"some test\"\n\n    Element \"strong\" [] [ Text \"Hello World\" ]\n\n    Actor <| ActorElement Counter \"comp-counter\" \"counter-1\" [] []\n\n",
+                "args": [
+                    "appActors"
+                ],
+                "cases": [
+                    [
+                        "Text",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Element",
+                        [
+                            "Framework.Template.ElementNodeName",
+                            "Framework.Template.Attributes",
+                            "Framework.Template.Children appActors"
+                        ]
+                    ],
+                    [
+                        "Actor",
+                        [
+                            "Framework.Template.ActorElement appActors"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "ActorElementId",
+                "comment": " The Actor Element Id, this should be unique on your template.\n",
+                "args": [],
+                "type": "String.String"
+            },
+            {
+                "name": "Attribute",
+                "comment": " A (key, value) representation of a Node attribute\n\n    ( \"class\", \"Foo\" )\n\n    ( \"href\", \"https://www.example.com\" )\n\n",
+                "args": [],
+                "type": "( String.String, String.String )"
+            },
+            {
+                "name": "Attributes",
+                "comment": " A List of Attribute\n",
+                "args": [],
+                "type": "List.List Framework.Template.Attribute"
+            },
+            {
+                "name": "Children",
+                "comment": " A List of Nodes\n",
+                "args": [
+                    "appActors"
+                ],
+                "type": "List.List (Framework.Template.Node appActors)"
+            },
+            {
+                "name": "ElementNodeName",
+                "comment": " The NodeName of an Element or ActorElement\n",
+                "args": [],
+                "type": "String.String"
+            }
+        ],
+        "values": [
+            {
+                "name": "getActorElementDescendants",
+                "comment": " Returns the descending ActorElement for a given List of Nodes\n",
+                "type": "List.List (Framework.Template.Node appActors) -> List.List (Framework.Template.ActorElement appActors)"
+            },
+            {
+                "name": "getActorsToSpawn",
+                "comment": " Convenience function that returns a list containing records supplying the\ninformation usually required to spawn the target Actor\n",
+                "type": "List.List (Framework.Template.Node appActors) -> List.List { actor : appActors, reference : String.String, actorElement : Framework.Template.ActorElement appActors }"
+            },
+            {
+                "name": "toString",
+                "comment": " Turn a Template into a single String\n\nThis can be handy for search results or meta descriptions\n\n    [ Element \"strong\" [] [ Text \"a\" ]\n    , Text \"b\"]\n    --> \"a b\"\n\n",
+                "type": "List.List (Framework.Template.Node appActors) -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Framework.Template.Component",
+        "comment": "\n\n@docs Component, make, setDefaultAttributes, toActor, toDefaultAttributes, toNodeName\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Component",
+                "comment": " A TemplateComponent describes the link between your Actors and Template Elements.\n",
+                "args": [
+                    "appActors"
+                ],
+                "type": "Framework.Template.Internal.Component.Component appActors"
+            }
+        ],
+        "values": [
+            {
+                "name": "make",
+                "comment": " Create a new Template Component configuration\n",
+                "type": "{ nodeName : String.String, actor : appActors } -> Framework.Template.Component.Component appActors"
+            },
+            {
+                "name": "setDefaultAttributes",
+                "comment": " Set the default attributes on your Template Component\n",
+                "type": "List.List ( String.String, String.String ) -> Framework.Template.Component.Component appActors -> Framework.Template.Component.Component appActors"
+            },
+            {
+                "name": "toActor",
+                "comment": " Get the Actor defined on a given Component\n",
+                "type": "Framework.Template.Component.Component appActors -> appActors"
+            },
+            {
+                "name": "toDefaultAttributes",
+                "comment": " Get the default attributes defined on a given Component\n",
+                "type": "Framework.Template.Component.Component appActors -> List.List ( String.String, String.String )"
+            },
+            {
+                "name": "toNodeName",
+                "comment": " Get the nodeName defined on a given Component\n",
+                "type": "Framework.Template.Component.Component appActors -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Framework.Template.Components",
+        "comment": "\n\n@docs Components, empty, fromList, insert, remove, getByNodeName, union\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Components",
+                "comment": " Represents a collection of Template.Component's\n",
+                "args": [
+                    "appActors"
+                ],
+                "type": "Framework.Template.Internal.Components.Components appActors"
+            }
+        ],
+        "values": [
+            {
+                "name": "empty",
+                "comment": " Returns an empty Components collection\n",
+                "type": "Framework.Template.Components.Components appActors"
+            },
+            {
+                "name": "fromList",
+                "comment": " Create a Components collection from a list of Component's\n",
+                "type": "List.List (Framework.Template.Component.Component appActors) -> Framework.Template.Components.Components appActors"
+            },
+            {
+                "name": "getByNodeName",
+                "comment": " Get a Component based on its configured nodeName\n",
+                "type": "String.String -> Framework.Template.Components.Components appActors -> Maybe.Maybe (Framework.Template.Component.Component appActors)"
+            },
+            {
+                "name": "insert",
+                "comment": " Add a Component to your Components collection\n",
+                "type": "Framework.Template.Component.Component appActors -> Framework.Template.Components.Components appActors -> Framework.Template.Components.Components appActors"
+            },
+            {
+                "name": "remove",
+                "comment": " Remove a Component from your Components collection\n",
+                "type": "Framework.Template.Component.Component appActors -> Framework.Template.Components.Components appActors -> Framework.Template.Components.Components appActors"
+            },
+            {
+                "name": "union",
+                "comment": " Combine two Components collections\n",
+                "type": "Framework.Template.Components.Components appActors -> Framework.Template.Components.Components appActors -> Framework.Template.Components.Components appActors"
+            }
+        ],
+        "binops": []
+    }
+]

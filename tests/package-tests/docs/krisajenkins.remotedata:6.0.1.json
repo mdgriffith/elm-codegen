@@ -1,0 +1,171 @@
+[
+    {
+        "name": "RemoteData",
+        "comment": " A datatype representing fetched data.\n\nIf you find yourself continually using `Maybe (Result Error a)` to\nrepresent loaded data, or you have a habit of shuffling errors away to\nwhere they can be quietly ignored, consider using this. It makes it\neasier to represent the real state of a remote data fetch and handle\nit properly.\n\nFor more on the motivation, take a look at the blog post [How Elm Slays A UI Antipattern](http://blog.jenkster.com/2016/06/how-elm-slays-a-ui-antipattern.html).\n\nTo use the datatype, let's look at an example that loads `News` from a feed.\n\nFirst you add to your model, wrapping the data you want in `WebData`:\n\n    type alias Model =\n        { news : WebData News }\n\nThen add in a message that will deliver the response:\n\n    type Msg\n        = NewsResponse (WebData News)\n\nNow we can create an HTTP get:\n\n    getNews : Cmd Msg\n    getNews =\n        Http.get\n            { url = \"/news\"\n            , expect = expectJson (RemoteData.fromResult >> NewsResponse) decodeNews\n            }\n\nWe trigger it in our `init` function:\n\n    init : ( Model, Cmd Msg )\n    init =\n        ( { news = Loading }\n        , getNews\n        )\n\nWe handle it in our `update` function:\n\n    update msg model =\n        case msg of\n            NewsResponse response ->\n                ( { model | news = response }\n                , Cmd.none\n                )\n\nMost of this you'd already have in your app, and the changes are just\nwrapping the datatype in `Webdata`, and converting the Result from\n`Http.get`/`Http.post`/`Http.request` to RemoteData with `RemoteData.fromResult`.\n\nNow we get to where we really want to be, rendering the data and\nhandling the different states in the UI gracefully:\n\n    view : Model -> Html msg\n    view model =\n      case model.news of\n        NotAsked -> text \"Initialising.\"\n\n        Loading -> text \"Loading.\"\n\n        Failure err -> text (\"Error: \" ++ toString err)\n\n        Success news -> viewNews news\n\n\n    viewNews : News -> Html msg\n    viewNews news =\n        div []\n            [h1 [] [text \"Here is the news.\"]\n            , ...]\n\nAnd that's it. A more accurate model of what's happening leads to a better UI.\n\n@docs RemoteData\n@docs WebData\n@docs map\n@docs map2\n@docs map3\n@docs andMap\n@docs succeed\n@docs mapError\n@docs mapBoth\n@docs fromTask\n@docs andThen\n@docs withDefault\n@docs unwrap\n@docs unpack\n@docs fromMaybe\n@docs fromResult\n@docs toMaybe\n@docs asCmd\n@docs append\n@docs fromList\n@docs isSuccess\n@docs isFailure\n@docs isLoading\n@docs isNotAsked\n@docs update\n@docs prism\n\n",
+        "unions": [
+            {
+                "name": "RemoteData",
+                "comment": " Frequently when you're fetching data from an API, you want to represent four different states:\n\n  - `NotAsked` - We haven't asked for the data yet.\n  - `Loading` - We've asked, but haven't got an answer yet.\n  - `Failure` - We asked, but something went wrong. Here's the error.\n  - `Success` - Everything worked, and here's the data.\n\n",
+                "args": [
+                    "e",
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "NotAsked",
+                        []
+                    ],
+                    [
+                        "Loading",
+                        []
+                    ],
+                    [
+                        "Failure",
+                        [
+                            "e"
+                        ]
+                    ],
+                    [
+                        "Success",
+                        [
+                            "a"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "WebData",
+                "comment": " While `RemoteData` can model any type of error, the most common\none you'll actually encounter is when you fetch data from a REST\ninterface, and get back `RemoteData Http.Error a`. Because that case\nis so common, `WebData` is provided as a useful alias.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "RemoteData.RemoteData Http.Error a"
+            }
+        ],
+        "values": [
+            {
+                "name": "andMap",
+                "comment": " Put the results of two RemoteData calls together.\n\nFor example, if you were fetching three datasets, `a`, `b` and `c`,\nand wanted to end up with a tuple of all three, you could say:\n\n    merge3 :\n        RemoteData e a\n        -> RemoteData e b\n        -> RemoteData e c\n        -> RemoteData e ( a, b, c )\n    merge3 a b c =\n        map (\\a b c -> ( a, b, c )) a\n            |> andMap b\n            |> andMap c\n\nThe final tuple succeeds only if all its children succeeded. It is\nstill `Loading` if _any_ of its children are still `Loading`. And if\nany child fails, the error is the leftmost `Failure` value.\n\nNote that this provides a general pattern for `map2`, `map3`, ..,\n`mapN`. If you find yourself wanting `map4` or `map5`, just use:\n\n    foo f a b c d e =\n        map f a\n            |> andMap b\n            |> andMap c\n            |> andMap d\n            |> andMap e\n\nIt's a general recipe that doesn't require us to ever have the\ndiscussion, \"Could you just add `map7`? Could you just add `map8`?\nCould you just...\".\n\nCategory theory points: This is `apply` with the arguments flipped.\n\n",
+                "type": "RemoteData.RemoteData e a -> RemoteData.RemoteData e (a -> b) -> RemoteData.RemoteData e b"
+            },
+            {
+                "name": "andThen",
+                "comment": " Chain together RemoteData function calls.\n",
+                "type": "(a -> RemoteData.RemoteData e b) -> RemoteData.RemoteData e a -> RemoteData.RemoteData e b"
+            },
+            {
+                "name": "append",
+                "comment": " Append - join two `RemoteData` values together as though\nthey were one.\n\nIf either value is `NotAsked`, the result is `NotAsked`.\nIf either value is `Loading`, the result is `Loading`.\nIf both values are `Failure`, the left one wins.\n\n",
+                "type": "RemoteData.RemoteData e a -> RemoteData.RemoteData e b -> RemoteData.RemoteData e ( a, b )"
+            },
+            {
+                "name": "asCmd",
+                "comment": " Convert a web `Task`, probably produced from elm-http, to a `Cmd (RemoteData e a)`.\n",
+                "type": "Task.Task e a -> Platform.Cmd.Cmd (RemoteData.RemoteData e a)"
+            },
+            {
+                "name": "fromList",
+                "comment": " Convert a list of RemoteData to a RemoteData of a list.\n",
+                "type": "List.List (RemoteData.RemoteData e a) -> RemoteData.RemoteData e (List.List a)"
+            },
+            {
+                "name": "fromMaybe",
+                "comment": " Convert a `Maybe a` to a RemoteData value.\n",
+                "type": "e -> Maybe.Maybe a -> RemoteData.RemoteData e a"
+            },
+            {
+                "name": "fromResult",
+                "comment": " Convert a `Result`, probably produced from elm-http, to a RemoteData value.\n",
+                "type": "Result.Result e a -> RemoteData.RemoteData e a"
+            },
+            {
+                "name": "fromTask",
+                "comment": " Convert a task to RemoteData.\n",
+                "type": "Task.Task e a -> Task.Task x (RemoteData.RemoteData e a)"
+            },
+            {
+                "name": "isFailure",
+                "comment": " State-checking predicate. Returns true if we've failed to load some data.\n",
+                "type": "RemoteData.RemoteData e a -> Basics.Bool"
+            },
+            {
+                "name": "isLoading",
+                "comment": " State-checking predicate. Returns true if we're loading.\n",
+                "type": "RemoteData.RemoteData e a -> Basics.Bool"
+            },
+            {
+                "name": "isNotAsked",
+                "comment": " State-checking predicate. Returns true if we haven't asked for data yet.\n",
+                "type": "RemoteData.RemoteData e a -> Basics.Bool"
+            },
+            {
+                "name": "isSuccess",
+                "comment": " State-checking predicate. Returns true if we've successfully loaded some data.\n",
+                "type": "RemoteData.RemoteData e a -> Basics.Bool"
+            },
+            {
+                "name": "map",
+                "comment": " Map a function into the `Success` value.\n",
+                "type": "(a -> b) -> RemoteData.RemoteData e a -> RemoteData.RemoteData e b"
+            },
+            {
+                "name": "map2",
+                "comment": " Combine two remote data sources with the given function. The\nresult will succeed when (and if) both sources succeed.\n",
+                "type": "(a -> b -> c) -> RemoteData.RemoteData e a -> RemoteData.RemoteData e b -> RemoteData.RemoteData e c"
+            },
+            {
+                "name": "map3",
+                "comment": " Combine three remote data sources with the given function. The\nresult will succeed when (and if) all three sources succeed.\n\nIf you need `map4`, `map5`, etc, see the documentation for `andMap`.\n\n",
+                "type": "(a -> b -> c -> d) -> RemoteData.RemoteData e a -> RemoteData.RemoteData e b -> RemoteData.RemoteData e c -> RemoteData.RemoteData e d"
+            },
+            {
+                "name": "mapBoth",
+                "comment": " Map function into both the `Success` and `Failure` value.\n",
+                "type": "(a -> b) -> (e -> f) -> RemoteData.RemoteData e a -> RemoteData.RemoteData f b"
+            },
+            {
+                "name": "mapError",
+                "comment": " Map a function into the `Failure` value.\n",
+                "type": "(e -> f) -> RemoteData.RemoteData e a -> RemoteData.RemoteData f a"
+            },
+            {
+                "name": "prism",
+                "comment": " A monocle-compatible Prism.\n\nIf you use Monocle, you'll want this, otherwise you can ignore it.\n\nThe type signature is actually:\n\n    prism : Prism (RemoteData e a) a\n\n...but we use the more verbose type here to avoid introducing a dependency on Monocle.\n\n",
+                "type": "{ getOption : RemoteData.RemoteData e a -> Maybe.Maybe a, reverseGet : a -> RemoteData.RemoteData e a }"
+            },
+            {
+                "name": "succeed",
+                "comment": " Lift an ordinary value into the realm of RemoteData.\n\nCategory theory points: This is `pure`.\n\n",
+                "type": "a -> RemoteData.RemoteData e a"
+            },
+            {
+                "name": "toMaybe",
+                "comment": " Convert a `RemoteData e a` to a `Maybe a`\n",
+                "type": "RemoteData.RemoteData e a -> Maybe.Maybe a"
+            },
+            {
+                "name": "unpack",
+                "comment": " A version of `unwrap` that is non-strict in the default value (by\nhaving it passed in a thunk).\n",
+                "type": "(() -> b) -> (a -> b) -> RemoteData.RemoteData e a -> b"
+            },
+            {
+                "name": "unwrap",
+                "comment": " Take a default value, a function and a `RemoteData`.\nReturn the default value if the `RemoteData` is something other than `Success a`.\nIf the `RemoteData` is `Success a`, apply the function on `a` and return the `b`.\n\nThat is, `unwrap d f` is equivalent to `RemoteData.map f >> RemoteData.withDefault d`.\n\n",
+                "type": "b -> (a -> b) -> RemoteData.RemoteData e a -> b"
+            },
+            {
+                "name": "update",
+                "comment": " Apply an Elm update function - `Model -> (Model, Cmd Msg)` - to any `Successful`-ly loaded data.\n\nIt's quite common in Elm to want to run a model-update function, over\nsome remote data, but only once it's actually been loaded.\n\nFor example, we might want to handle UI messages changing the users\nsettings, but that only makes sense once those settings have been\nreturned from the server.\n\nThis function makes it more convenient to reach inside a\n`RemoteData.Success` value and apply an update. If the data is not\n`Success a`, it is returned unchanged with a `Cmd.none`.\n\n    update : Msg -> Model -> ( Model, Cmd Msg )\n    update msg model =\n        case msg of\n            EnabledChanged isEnabled ->\n                let\n                    ( settings, cmd ) =\n                        RemoteData.update (updateEnabledSetting isEnabled) model.settings\n                in\n                ( { model | settings = settings }, cmd )\n\n    updateEnabledSetting : Bool -> Settings -> ( Settings, Cmd msg )\n    updateEnabledSetting isEnabled settings =\n        ( { settings | isEnabled = isEnabled }, Cmd.none )\n\n",
+                "type": "(a -> ( b, Platform.Cmd.Cmd c )) -> RemoteData.RemoteData e a -> ( RemoteData.RemoteData e b, Platform.Cmd.Cmd c )"
+            },
+            {
+                "name": "withDefault",
+                "comment": " Return the `Success` value, or the default.\n",
+                "type": "a -> RemoteData.RemoteData e a -> a"
+            }
+        ],
+        "binops": []
+    }
+]

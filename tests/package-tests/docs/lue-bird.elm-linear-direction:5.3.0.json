@@ -1,0 +1,285 @@
+[
+    {
+        "name": "Array.Linear",
+        "comment": " `Array` operations that can be applied in either direction.\n\n\n## scan\n\n@docs element\n\n\n## transform\n\n@docs foldFrom\n\n\n### alter\n\n@docs elementRemove, elementReplace, elementAlter, insert\n@docs padTo\n\n\n### part\n\n@docs take, drop, toChunks\n\n\n### glueing\n\n@docs glue, squeezeIn\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "drop",
+                "comment": " Remove a given number of elements from one side.\n\n    import Linear exposing (DirectionLinear(..))\n    import Array\n\n    Array.fromList [ 1, 2, 3, 4, 5, 6 ]\n        |> Array.Linear.drop ( Down, 2 )\n    --> Array.fromList [ 1, 2, 3, 4 ]\n\n    Array.fromList [ 1, 2, 3 ]\n        |> Array.Linear.drop ( Up, 100 )\n    --> Array.empty\n\nNothing is dropped if the amount of elements to drop is negative.\n\n    import Linear exposing (DirectionLinear(..))\n    import Array\n\n    Array.fromList [ 1, 2, 3 ]\n        |> Array.Linear.drop ( Up, -1 )\n    --> Array.fromList [ 1, 2, 3 ]\n\n",
+                "type": "( Linear.DirectionLinear, Basics.Int ) -> Array.Array element -> Array.Array element"
+            },
+            {
+                "name": "element",
+                "comment": " The element at an index in a direction.\n\n    import Linear exposing (DirectionLinear(..))\n    import Array\n\n    Array.fromList [ \"lose\", \"win\", \"lose\" ]\n        |> Array.Linear.element ( Down, 0 )\n    --> \"lose\" |> Ok\n\n\n    Array.fromList [ \"lose\", \"win\", \"lose\" ]\n        |> Array.Linear.element ( Up, 0 )\n    --> \"lose\" |> Ok\n\n`Err` if the index is out of range.\n\n    import Linear exposing (DirectionLinear(..), ExpectedIndexInRange(..))\n    import Array\n\n    Array.fromList [ 1, 2, 3 ]\n        |> Array.Linear.element ( Up, -1 )\n    --> Err (ExpectedIndexForLength 3)\n\n    Array.fromList [ 1, 2, 3 ]\n        |> Array.Linear.element ( Up, 100 )\n    --> Err (ExpectedIndexForLength 3)\n\n",
+                "type": "( Linear.DirectionLinear, Basics.Int ) -> Array.Array element -> Result.Result Linear.ExpectedIndexInRange element"
+            },
+            {
+                "name": "elementAlter",
+                "comment": " Set the element at an index in a direction.\n\n    import Linear exposing (DirectionLinear(..))\n    import Array\n\n    Array.fromList [ \"I\", \"am\", \"ok\" ]\n        |> Array.Linear.elementAlter\n            ( ( Up, 2 ), String.toUpper )\n    --> Array.fromList [ \"I\", \"am\", \"OK\" ]\n\n    Array.fromList [ \"I\", \"am\", \"ok\" ]\n        |> Array.Linear.elementAlter\n            ( ( Down, 0 ), String.toUpper )\n    --> Array.fromList [ \"I\", \"am\", \"OK\" ]\n\nIf the index is out of range, the `Array` is unaltered.\n\n    import Linear exposing (DirectionLinear(..))\n    import Array\n\n    Array.fromList [ \"I\", \"am\", \"ok\" ]\n        |> Array.Linear.elementAlter\n            ( ( Up, -1 ), String.toUpper )\n    --> Array.fromList [ \"I\", \"am\", \"ok\" ]\n\n",
+                "type": "( ( Linear.DirectionLinear, Basics.Int ), element -> element ) -> Array.Array element -> Array.Array element"
+            },
+            {
+                "name": "elementRemove",
+                "comment": " Kick an element out of an `Array` at a given index in a direction.\n\n    import Linear exposing (DirectionLinear(..))\n    import Array\n\n    Array.fromList [ 'a', 'a', 'b' ]\n        |> Array.Linear.elementRemove ( Up, 1 )\n    --> Array.fromList [ 'a', 'b' ]\n\n    Array.fromList [ 'a', 'b', 'c', 'd' ]\n        |> Array.Linear.elementRemove ( Down, 0 )\n    --> Array.fromList [ 'a', 'b', 'c' ]\n\nIf the index is out of bounds, nothing is changed.\n\n    import Linear exposing (DirectionLinear(..))\n    import Array\n\n    Array.fromList [ 'a', 'a', 'b' ]\n        |> Array.Linear.elementRemove ( Up, -1 )\n    --> Array.fromList [ 'a', 'a', 'b' ]\n\n    Array.fromList [ 'a', 'a', 'b' ]\n        |> Array.Linear.elementRemove ( Up, 100 )\n    --> Array.fromList [ 'a', 'a', 'b' ]\n\n",
+                "type": "( Linear.DirectionLinear, Basics.Int ) -> Array.Array element -> Array.Array element"
+            },
+            {
+                "name": "elementReplace",
+                "comment": " Set the element at an index in a direction.\n\n    import Linear exposing (DirectionLinear(..))\n    import Array\n\n    Array.fromList [ \"I\", \"am\", \"ok\" ]\n        |> Array.Linear.elementReplace\n            ( ( Up, 2 ), \\() -> \"confusion\" )\n    --> Array.fromList [ \"I\", \"am\", \"confusion\" ]\n\n    Array.fromList [ \"I\", \"am\", \"ok\" ]\n        |> Array.Linear.elementReplace\n            ( ( Down, 1 ), \\() -> \"feel\" )\n    --> Array.fromList [ \"I\", \"feel\", \"ok\" ]\n\nIf the index is out of range, the `Array` is unaltered.\n\n    import Linear exposing (DirectionLinear(..))\n    import Array\n\n    Array.fromList [ \"I\", \"am\", \"ok\" ]\n        |> Array.Linear.elementReplace\n            ( ( Up, -1 ), \\() -> \"is\" )\n    --> Array.fromList [ \"I\", \"am\", \"ok\" ]\n\n",
+                "type": "( ( Linear.DirectionLinear, Basics.Int ), () -> element ) -> Array.Array element -> Array.Array element"
+            },
+            {
+                "name": "foldFrom",
+                "comment": " Reduce an `Array` in a direction.\n\n    import Linear exposing (DirectionLinear(..))\n    import Array\n\n    Array.fromList [ 'l', 'i', 'v', 'e' ]\n        |> Array.Linear.foldFrom ( \"\", Up, String.cons )\n    --> \"evil\"\n\n    Array.fromList [ 'l', 'i', 'v', 'e' ]\n        |> Array.Linear.foldFrom ( \"\", Down, String.cons )\n    --> \"live\"\n\n",
+                "type": "( accumulationValue, Linear.DirectionLinear, element -> accumulationValue -> accumulationValue ) -> Array.Array element -> accumulationValue"
+            },
+            {
+                "name": "glue",
+                "comment": " Attach elements of an `Array` to the end in a given [direction](https://package.elm-lang.org/packages/lue-bird/elm-linear-direction/latest/).\n\n    import Linear exposing (DirectionLinear(..))\n    import Array\n\n    Array.fromList [ 1, 2, 3 ]\n        |> Array.Linear.glue Up (Array.fromList [ 4, 5, 6 ])\n    --> Array.fromList [ 1, 2, 3, 4, 5, 6 ]\n\n    Array.fromList [ 1, 2, 3 ]\n        |> Array.Linear.glue Down (Array.fromList [ 4, 5, 6 ])\n    --> Array.fromList [ 4, 5, 6, 1, 2, 3 ]\n\n",
+                "type": "Linear.DirectionLinear -> Array.Array a -> Array.Array a -> Array.Array a"
+            },
+            {
+                "name": "insert",
+                "comment": " Put an element in an `Array` at a given index in a direction.\n\n    import Linear exposing (DirectionLinear(..))\n    import Array\n\n    Array.fromList [ 'a', 'c', 'd' ]\n        |> Array.Linear.insert\n            ( ( Up, 1 ), \\() -> 'b' )\n    --> Array.fromList [ 'a', 'b', 'c', 'd' ]\n\n    Array.fromList [ 'a', 'c', 'd' ]\n        |> Array.Linear.insert\n            ( ( Down, 2 ), \\() -> 'b' )\n    --> Array.fromList [ 'a', 'b', 'c', 'd' ]\n\nIf the index is out of bounds, **nothing is inserted**.\n\n    import Linear exposing (DirectionLinear(..))\n    import Array\n\n    Array.fromList [ 'a', 'c', 'd' ]\n        |> Array.Linear.insert\n            ( ( Up, -1 ), \\() -> 'b' )\n    --> Array.fromList [ 'a', 'c', 'd' ]\n\n    Array.fromList [ 'a', 'c', 'd' ]\n        |> Array.Linear.insert\n            ( ( Up, 4 ), \\() -> 'b' )\n    --> Array.fromList [ 'a', 'c', 'd' ]\n\n[`squeezeIn`](#squeezeIn) allows inserting a whole `Array` of elements.\n\n",
+                "type": "( ( Linear.DirectionLinear, Basics.Int ), () -> element ) -> Array.Array element -> Array.Array element"
+            },
+            {
+                "name": "padTo",
+                "comment": " **Pad** an `Array` in a direction.\n\n    import Linear exposing (DirectionLinear(..))\n    import Array\n\n    Array.fromList [ 1, 2 ]\n        |> Array.Linear.padTo\n            { lengthMinimum = 4\n            , pad = ( Up, \\n -> Array.repeat n 0 )\n            }\n    --> Array.fromList [ 1, 2, 0, 0 ]\n\n    Array.fromList [ 1, 2 ]\n        |> Array.Linear.padTo\n            { lengthMinimum = 4\n            , pad = ( Down, \\n -> Array.repeat n 0 )\n            }\n    --> Array.fromList [ 0, 0, 1, 2 ]\n\n`padTo { .. length .. direction .. } |> take ( direction, length )`\n→ **\"resize\"** behavior\n\n    Array.fromList [ 1, 2, 3 ]\n        |> Array.Linear.padTo\n            { lengthMinimum = 2\n            , pad = ( Up, \\n -> Array.repeat n 0 )\n            }\n        |> Array.Linear.take ( Up, 2 )\n    --> Array.fromList [ 1, 2 ]\n\n    Array.fromList [ 1, 2, 3 ]\n        |> Array.Linear.padTo\n            { lengthMinimum = 2\n            , pad = ( Down, \\n -> Array.repeat n 0 )\n            }\n        |> Array.Linear.take ( Down, 2 )\n    --> Array.fromList [ 2, 3 ]\n\n",
+                "type": "{ lengthMinimum : Basics.Int, pad : ( Linear.DirectionLinear, Basics.Int -> Array.Array element ) } -> Array.Array element -> Array.Array element"
+            },
+            {
+                "name": "squeezeIn",
+                "comment": " Put elements of a given `Array` between the elements left and right to the given index in a direction.\n\n    import Linear exposing (DirectionLinear(..))\n    import Array\n\n    Array.fromList [ 'a', 'd', 'e' ]\n        |> Array.Linear.squeezeIn\n            ( ( Up, 1 ), \\() -> Array.fromList [ 'b', 'c' ] )\n    --> Array.fromList [ 'a', 'b', 'c', 'd', 'e' ]\n\n    Array.fromList [ 'a', 'd', 'e' ]\n        |> Array.Linear.squeezeIn\n            ( ( Down, 2 ), \\() -> Array.fromList [ 'b', 'c' ] )\n    --> Array.fromList [ 'a', 'b', 'c', 'd', 'e' ]\n\nIf the index is outside of the `Array`'s range, **nothing is inserted**.\n\n    import Linear exposing (DirectionLinear(..))\n    import Array\n\n    Array.fromList [ 'a', 'd', 'e' ]\n        |> Array.Linear.squeezeIn\n            ( ( Up, -1 ), \\() -> Array.fromList [ 'b', 'c' ] )\n    --> Array.fromList [ 'a', 'd', 'e' ]\n\n    Array.fromList [ 'a', 'd', 'e' ]\n        |> Array.Linear.squeezeIn\n            ( ( Up, 4 ), \\() -> Array.fromList [ 'b', 'c' ] )\n    --> Array.fromList [ 'a', 'd', 'e' ]\n\n[`insert`](#insert) allows inserting a single element.\n\n",
+                "type": "( ( Linear.DirectionLinear, Basics.Int ), () -> Array.Array element ) -> Array.Array element -> Array.Array element"
+            },
+            {
+                "name": "take",
+                "comment": " A given number of elements from one side.\n\n    import Linear exposing (DirectionLinear(..))\n    import Array\n\n    Array.fromList [ 1, 2, 3, 4, 5, 6 ]\n        |> Array.Linear.take ( Up, 4 )\n        |> Array.Linear.take ( Down, 2 )\n    --> Array.fromList [ 3, 4 ]\n\n    Array.fromList [ 1, 2, 3 ]\n        |> Array.Linear.take ( Up, 100 )\n    --> Array.fromList [ 1, 2, 3 ]\n\n`Array.empty` if the amount of elements to take is negative.\n\n    import Linear exposing (DirectionLinear(..))\n    import Array\n\n    Array.fromList [ 1, 2, 3 ]\n        |> Array.Linear.take ( Up, -100 )\n    --> Array.empty\n\n",
+                "type": "( Linear.DirectionLinear, Basics.Int ) -> Array.Array element -> Array.Array element"
+            },
+            {
+                "name": "toChunks",
+                "comment": " Split the `Array` into equal-`length` `chunks`.\nThe left over elements to one side are in `remainder`.\n\n    import Linear exposing (DirectionLinear(..))\n    import Array\n\n    Array.fromList [ 1, 2, 3, 4, 5, 6, 7 ]\n        |> Array.Linear.toChunks\n            { length = 3, remainder = Up }\n    --> { chunks =\n    -->     Array.fromList\n    -->         [ Array.fromList [ 1, 2, 3 ]\n    -->         , Array.fromList [ 4, 5, 6 ]\n    -->         ]\n    --> , remainder = Array.fromList [ 7 ]\n    --> }\n\n    Array.fromList [ 1, 2, 3, 4, 5, 6, 7 ]\n        |> Array.Linear.toChunks\n            { length = 3, remainder = Down }\n    --> { remainder = Array.fromList [ 1 ]\n    --> , chunks =\n    -->     Array.fromList\n    -->         [ Array.fromList [ 2, 3, 4 ]\n    -->         , Array.fromList [ 5, 6, 7 ]\n    -->         ]\n    --> }\n\n",
+                "type": "{ length : Basics.Int, remainder : Linear.DirectionLinear } -> Array.Array element -> { chunks : Array.Array (Array.Array element), remainder : Array.Array element }"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Dict.Linear",
+        "comment": "\n\n\n## transform\n\n@docs foldFrom\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "foldFrom",
+                "comment": " Reduce `key`-`value`-entries in a `Dict` in a direction.\n\n    import Linear exposing (DirectionLinear(..))\n    import Dict\n\n    Dict.fromList\n        [ ( \"Dies\", 39 ), ( \"Wonu\", 22 ), ( \"Eorfe\", 18 ) ]\n        |> Dict.Linear.foldFrom\n            ( [], Up, \\user -> (::) user.key )\n    --> [ \"Wonu\", \"Eorfe\", \"Dies\" ]\n\n    Dict.fromList\n        [ ( \"Dies\", 39 ), ( \"Wonu\", 22 ), ( \"Eorfe\", 18 ) ]\n        |> Dict.Linear.foldFrom\n            ( [], Down, \\user -> (::) user.key )\n    --> [ \"Dies\", \"Eorfe\", \"Wonu\" ]\n\n",
+                "type": "( accumulationValue, Linear.DirectionLinear, { key : key, value : value } -> accumulationValue -> accumulationValue ) -> Dict.Dict key value -> accumulationValue"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Linear",
+        "comment": " `Up` or `Down` a structure.\n\n@docs DirectionLinear\n\n\n## alter\n\n@docs opposite\n\n\n## transform\n\n@docs directionToString\n\n\n## index\n\n@docs ExpectedIndexInRange\n\n",
+        "unions": [
+            {
+                "name": "DirectionLinear",
+                "comment": " Either `Up` or `Down`.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Up",
+                        []
+                    ],
+                    [
+                        "Down",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "ExpectedIndexInRange",
+                "comment": " Locating an index can fail for\n\n  - negative numbers\n  - numbers >= the structure's length\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "ExpectedIndexForLength",
+                        [
+                            "Basics.Int"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "directionToString",
+                "comment": " The [direction](#DirectionLinear)'s lowercase name.\n",
+                "type": "Linear.DirectionLinear -> String.String"
+            },
+            {
+                "name": "opposite",
+                "comment": " The other [direction](#DirectionLinear). `Down` ⇆ `Up`\n",
+                "type": "Linear.DirectionLinear -> Linear.DirectionLinear"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "List.Linear",
+        "comment": " `List` operations that can be applied in either direction.\n\n\n## scan\n\n@docs element\n\n\n## transform\n\n@docs foldFrom\n\n@docs elementAlter\n\n\n### part\n\n@docs take, drop\n@docs toChunks\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "drop",
+                "comment": " Remove a given number of elements from one side.\n\n    import Linear exposing (DirectionLinear(..))\n\n    removeFirst =\n        List.Linear.drop ( Up, 1 )\n\n    removeLast =\n        List.Linear.drop ( Down, 1 )\n\nNothing is dropped if the amount of elements to drop is negative.\n\n    import Linear exposing (DirectionLinear(..))\n\n    [ 1, 2, 3 ]\n        |> List.Linear.drop ( Up, -1 )\n    --> [ 1, 2, 3 ]\n\n",
+                "type": "( Linear.DirectionLinear, Basics.Int ) -> List.List element -> List.List element"
+            },
+            {
+                "name": "element",
+                "comment": " `Just` the element at the given index in the list in a [direction](Linear#DirectionLinear):\n\n    import Linear exposing (DirectionLinear(..))\n\n    [ 0, 1, 2, 3 ]\n        |> List.Linear.element ( Down, 0 )\n    --> Ok 3\n\n    [ 0, 1, 2, 3 ]\n        |> List.Linear.element ( Up, 2 )\n    --> Ok 2\n\n`Err` if the index is out of range:\n\n    import Linear exposing (DirectionLinear(..), ExpectedIndexInRange(..))\n\n    [ 0, 1, 2, 3 ]\n        |> List.Linear.element ( Up, 5 )\n    --> Err (ExpectedIndexForLength 4)\n\n    [ 0, 1, 2, 3 ]\n        |> List.Linear.element ( Up, -1 )\n    --> Err (ExpectedIndexForLength 4)\n\nIf you're using at-operations often, consider using an `Array` instead of a `List`\nto get `O(log n)` vs. `O(n)` random access performance.\n\n",
+                "type": "( Linear.DirectionLinear, Basics.Int ) -> List.List element -> Result.Result Linear.ExpectedIndexInRange element"
+            },
+            {
+                "name": "elementAlter",
+                "comment": " Alter the element at the given index in a [direction](Linear#DirectionLinear):\n\n    import Linear exposing (DirectionLinear(..))\n\n    [ 1, 2, 2 ]\n        |> List.Linear.elementAlter\n            ( ( Down, 0 ), \\n -> n + 1 )\n    --> [ 1, 2, 3 ]\n\nDo nothing if the index is out of range:\n\n    import Linear exposing (DirectionLinear(..))\n\n    [ 0, 1, 2, 3 ]\n        |> List.Linear.elementAlter\n            ( ( Up, 4 ), \\_ -> 123)\n    --> [ 0, 1, 2, 3 ]\n\n    [ 0, 1, 2, 3 ]\n        |> List.Linear.elementAlter\n            ( ( Up, -1 ), \\_ -> 123 )\n    --> [ 0, 1, 2, 3 ]\n\nIf you're using at-operations often, consider using an `Array` instead of a `List`\nto get `O(log n)` vs. `O(n)` random access performance.\n\n",
+                "type": "( ( Linear.DirectionLinear, Basics.Int ), element -> element ) -> List.List element -> List.List element"
+            },
+            {
+                "name": "foldFrom",
+                "comment": " Reduce a `List` in a direction.\n\n    import Linear exposing (DirectionLinear(..))\n\n    [ 'l', 'i', 'v', 'e' ]\n        |> List.Linear.foldFrom ( \"\", Up, String.cons )\n    --> \"evil\"\n\n    [ 'l', 'i', 'v', 'e' ]\n        |> List.Linear.foldFrom ( \"\", Down, String.cons )\n    --> \"live\"\n\n",
+                "type": "( accumulationValue, Linear.DirectionLinear, element -> accumulationValue -> accumulationValue ) -> List.List element -> accumulationValue"
+            },
+            {
+                "name": "take",
+                "comment": " A given number of elements from one side.\n\n    import Linear exposing (DirectionLinear(..))\n\n    [ 1, 2, 3, 4 ]\n        |> List.Linear.take ( Up,2 )\n    --> [ 1, 2 ]\n\n    [ 1, 2, 3, 4 ]\n        |> List.Linear.take ( Down, 2 )\n    --> [ 3, 4 ]\n\n`[]` if the amount of elements to take is negative.\n\n    import Linear exposing (DirectionLinear(..))\n\n    [ 1, 2, 3 ]\n        |> List.Linear.take ( Up, -100 )\n    --> []\n\n",
+                "type": "( Linear.DirectionLinear, Basics.Int ) -> List.List element -> List.List element"
+            },
+            {
+                "name": "toChunks",
+                "comment": " Split the `List` into equal-`length` `chunks`.\nThe left over elements to one side are in `remainder`.\n\n    import Linear exposing (DirectionLinear(..))\n\n    [ 1, 2, 3, 4, 5, 6, 7 ]\n        |> List.Linear.toChunks\n            { length = 3, remainder = Up }\n    --> { chunks = [ [ 1, 2, 3 ], [ 4, 5, 6 ] ]\n    --> , remainder = [ 7 ]\n    --> }\n\n    [ 1, 2, 3, 4, 5, 6, 7 ]\n        |> List.Linear.toChunks\n            { length = 3, remainder = Down }\n    --> { remainder = [ 1 ]\n    --> , chunks = [ [ 2, 3, 4 ], [ 5, 6, 7 ] ]\n    --> }\n\n",
+                "type": "{ length : Basics.Int, remainder : Linear.DirectionLinear } -> List.List element -> { chunks : List.List (List.List element), remainder : List.List element }"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Order",
+        "comment": " Comparing 2 things.\n\n@docs Ordering\n\n\n## defaults\n\n@docs tie\n@docs int, float\n@docs tuple, maybe, list\n@docs char, string\n\n\n### casing\n\n@docs Case, upperLower, lowerUpper\n\n\n## \"transform\"\n\n@docs by, downOnTie\n\n\n### alter\n\n@docs reverse\n\n\n## prior art\n\n  - [`matthewsj/elm-ordering`](https://dark.elm.dmy.fr/packages/matthewsj/elm-ordering/latest/Ordering)\n      - most complete\n      - bad naming `byField`: `byField Tuple.first`, ... are also possible\n      - clutter `isOrdered`, both `byField` & `byFieldWith`, ...\n      - verbose `... |> breakTiesWith ...` chain instead of `downOnTie [ ... ]`\n      - missing `list`, `maybe`, ... orderings\n  - [`TSFoster/elm-compare`](https://dark.elm.dmy.fr/packages/TSFoster/elm-compare/latest/Compare)\n      - API is a bit scuffed: multiple andThens will be nested instead of flat, ...\n      - missing `list`, `maybe`, ... compare operations\n  - [`rtfeldman/elm-sorter-experiment`](https://dark.elm.dmy.fr/packages/rtfeldman/elm-sorter-experiment/latest/Sort)\n      - wrapped in an opaque `type` → more verbose\n      - missing `list`, `maybe`, ... sorters\n      - `Sort.Set` & `Sort.Dict` are very nice! You can even use `Sort.Set.empty (Sorter.custom Order.x)` if you wanted\n  - [`nikita-volkov/`: `Typeclasses-Classes-Comparison`](https://package.elm-lang.org/packages/nikita-volkov/typeclasses/latest/Typeclasses-Classes-Comparison)\n      - almost no API, _only_ `int`,`float`,`comparable` & `map`)\n      - [`HashingContainers.HashSet`](https://package.elm-lang.org/packages/nikita-volkov/hashing-containers/2.1.0/HashingContainers-HashSet),\n        [`HashingContainers.HashDict`](https://package.elm-lang.org/packages/nikita-volkov/hashing-containers/2.1.0/HashingContainers-HashDict)\n        are nice!\n  - ... know others? → PR\n\n",
+        "unions": [
+            {
+                "name": "Case",
+                "comment": " `Case` of a `Char`. [`Ordering`](#Ordering)s:\n\n  - [`lowerUpper`](#lowerUpper)\n  - [`upperLower`](#upperLower)\n  - [`tie`](#tie)\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Lower",
+                        []
+                    ],
+                    [
+                        "Upper",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Ordering",
+                "comment": " An `Ordering` to `sortWith`, make comparisons, and so on:\n\n    cardsSort : List Card -> List Card\n    cardsSort =\n        List.sortWith cardOrder\n\n    cardOrder : Ordering Card\n\n",
+                "args": [
+                    "orderable"
+                ],
+                "type": "orderable -> orderable -> Basics.Order"
+            }
+        ],
+        "values": [
+            {
+                "name": "by",
+                "comment": " `Order` by a transformed value. Examples:\n\n\n#### access fields in a record\n\n    [ { name = \"Bo\" }, { name = \"Amy\" }, { name = \"Cam\" } ]\n        |> List.sortWith\n            (Order.by ( .name, Order.string { case_ = Order.tie } ))\n    --> [ { name = \"Amy\" }, { name = \"Bo\" }, { name = \"Cam\" } ]\n\n\n#### unwrap a type union constructor\n\n    import Order exposing (Ordering)\n\n    type User\n        = User { name : String }\n\n    userNameOrder : Ordering Username\n    userNameOrder =\n        Order.by\n            ( \\(User user) -> user\n            , Order.by ( .name, Order.string { case = Order.lowerUpper } )\n            )\n\n\n#### rank an enum\n\n    type Case\n        = Lower\n        | Upper\n\n    {-| `'A' < 'a'`\n    -}\n    upperLower : Ordering Case\n    upperLower =\n        Order.by\n            ( \\case_ ->\n                case case_ of\n                    Upper ->\n                        0\n\n                    Lower ->\n                        1\n            , Order.int\n            )\n\n\n#### rank a union\n\n    module Card exposing (Card(..), CardNormal, order)\n\n    import Order exposing (Ordering)\n    import RecordWithoutConstructorFunction exposing (RecordWithoutConstructorFunction)\n\n    type Card\n        = Normal CardNormal\n        | Joker\n\n    type alias CardNormal =\n        RecordWithoutConstructorFunction\n            { value : Value, suite : Suite }\n\n    normalOrder : Ordering CardNormal\n    normalOrder =\n        Order.downOnTie\n            [ Order.by ( .suite, suiteOrder )\n            , Order.by ( .value, valueOrder )\n            ]\n\n    order : Ordering Card\n    order =\n        \\card0 card1 ->\n            case ( card0, card1 ) of\n                -- match all variants with _values_\n                ( Normal normal0, Normal normal1 ) ->\n                    normalOrder normal0 normal1\n\n                _ ->\n                    -- sort others according to tag \"rank\"\n                    Order.by\n                        ( \\card ->\n                            case card of\n                                Normal _ ->\n                                    0\n\n                                Joker ->\n                                    1\n                        , Order.int\n                        )\n                        card0\n                        card1\n\nUse ↑ once your type union grows to have lots of variants\nwhere exhaustive matching has n^2 branches\n\nFor simple type unions with only 2 variants:\n\n    order : Ordering Card\n    order =\n        \\card0 card1 ->\n            case ( card0, card1 ) of\n                -- match all variants with _values_\n                ( Normal normal0, Normal normal1 ) ->\n                    normalOrder normal0 normal1\n\n                ( Normal _, Joker ) ->\n                    GT\n\n                ( Joker, Normal _ ) ->\n                    LT\n\n                ( Joker, Joker ) ->\n                    EQ\n\nPretty neat stuff!\n\n",
+                "type": "( orderable -> orderableMapped, Order.Ordering orderableMapped ) -> Order.Ordering orderable"
+            },
+            {
+                "name": "char",
+                "comment": " `Order` `Char`s.\n\n    Order.char { case_ = Order.upperLower } 'b' 'D'\n    --> LT\n\n    Order.char { case_ = Order.upperLower } 'l' 'L'\n    --> GT\n\n",
+                "type": "{ case_ : Order.Ordering Order.Case } -> Order.Ordering Char.Char"
+            },
+            {
+                "name": "downOnTie",
+                "comment": " Prioritize the [`Ordering`](#Ordering) by one aspect\nand break ties with the next.\n\n    import List.Extra as List\n    import Order exposing (Ordering)\n    import RecordWithoutConstructorFunction exposing (RecordWithoutConstructorFunction)\n\n    type alias Card =\n        RecordWithoutConstructorFunction\n            { suite : Suite, value : Value }\n\n([`RecordWithoutConstructorFunction`](https://dark.elm.dmy.fr/packages/lue-bird/elm-no-record-type-alias-constructor-function/latest/)\ntricks elm into not creating a `Card` function)\n\n    type Suite\n        = Clubs\n        | Hearts\n        | Diamonds\n        | Spades\n\n    type Value\n        = Two\n        | Three\n        | Four\n        | Five\n        | Six\n        | Seven\n        | Eight\n        | Nine\n        | Ten\n        | Jack\n        | Queen\n        | King\n        | Ace\n\n    cardOrder : Ordering Card\n    cardOrder =\n        Order.downOnTie\n            [ Order.by ( .suite, suiteOrder )\n            , Order.by ( .value, valueOrder )\n            ]\n\n    suiteOrder : Ordering Suite\n    suiteOrder =\n        Order.by\n            ( \\suite ->\n                case suite of\n                    Clubs ->\n                        0\n\n                    Hearts ->\n                        1\n\n                    Diamonds ->\n                        2\n\n                    Spades ->\n                        3\n            , Order.int\n            )\n\n",
+                "type": "List.List (Order.Ordering orderable) -> Order.Ordering orderable"
+            },
+            {
+                "name": "float",
+                "comment": " `Order` `Float`s.\n\n    Order.float 0.1 -0.2\n    --> GT\n\n",
+                "type": "Order.Ordering Basics.Float"
+            },
+            {
+                "name": "int",
+                "comment": " `Order` `Int`s.\n\n    Order.int 40 2\n    --> GT\n\n",
+                "type": "Order.Ordering Basics.Int"
+            },
+            {
+                "name": "list",
+                "comment": " Order `List`s by elements first to last.\n\n    Order.list Order.int\n        [ 11, 22, 33, 188 ]\n        [ 11, 22, 34 ]\n    --> LT\n\n",
+                "type": "Order.Ordering element -> Order.Ordering (List.List element)"
+            },
+            {
+                "name": "lowerUpper",
+                "comment": " `'a' < 'A'`\n",
+                "type": "Order.Ordering Order.Case"
+            },
+            {
+                "name": "maybe",
+                "comment": " `Order` `Nothing` < `Just`\n\n    Order.maybe Order.int (Just -99999) Nothing\n    --> GT\n\n",
+                "type": "Order.Ordering content -> Order.Ordering (Maybe.Maybe content)"
+            },
+            {
+                "name": "reverse",
+                "comment": " `a < b  ⇆  a > b`\n\n    [ \"b\", \"c\", \"a\" ]\n        |> List.sortWith\n            (Order.string { case_ = Order.tie })\n    --> [ \"a\", \"b\", \"c\" ]\n\n    [ \"b\", \"c\", \"a\" ]\n        |> List.sortWith\n            (Order.string { case_ = Order.tie }\n                |> Order.reverse\n            )\n    --> [ \"c\", \"b\", \"a\" ]\n\n",
+                "type": "Order.Ordering orderable -> Order.Ordering orderable"
+            },
+            {
+                "name": "string",
+                "comment": " `Order` `String`s by `Char`s first to last, specifying the [`Case`](#Case)-[`Ordering`](#Ordering):\n\n    Order.string { case_ = Order.lowerUpper }\n        \"hello, human!\"\n        \"hello, Human\"\n    --> LT\n\nFor string-number chunked text,\nyou can use [`mcordova47/`: `NaturalOrdering.compare`](https://dark.elm.dmy.fr/packages/mcordova47/elm-natural-ordering/latest/NaturalOrdering#compare)\n\n    NaturalOrdering.compare \"abc2.tff\" \"abc10.tff\"\n    --→ LT\n\nPersonally, I'd just store the `String` as something like\n\n    type TextChunked\n        = TextChunked ( String, Maybe (List ( Int, String )) )\n\nand order that\nto avoid converting too often.\n\n",
+                "type": "{ case_ : Order.Ordering Order.Case } -> Order.Ordering String.String"
+            },
+            {
+                "name": "tie",
+                "comment": " Always `EQ` independent of the arguments.\n",
+                "type": "Order.Ordering orderable_"
+            },
+            {
+                "name": "tuple",
+                "comment": " `Order` `Tuple.first`, then on tie `Tuple.second`.\n\n    Order.tuple ( Order.int, Order.int ) ( 0, 2 ) ( 0, -2 )\n    --> GT\n\nTry implementing `tuple`\nwith [`downOnTie`](#downOnTie) and [`by`](#by)\nif you want :)\n\n",
+                "type": "( Order.Ordering part0, Order.Ordering part1 ) -> Order.Ordering ( part0, part1 )"
+            },
+            {
+                "name": "upperLower",
+                "comment": " `'A' < 'a'`\n",
+                "type": "Order.Ordering Order.Case"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Set.Linear",
+        "comment": "\n\n\n## transform\n\n@docs foldFrom\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "foldFrom",
+                "comment": " Reduce a `Set` in a direction.\n\n    import Linear exposing (DirectionLinear(..))\n    import Set\n\n    Set.fromList [ 'i', 'l', 'a', 'g' ]\n        |> Set.Linear.foldFrom ( \"\", Up, String.cons )\n    --> \"liga\"\n\n    Set.fromList [ 'i', 'l', 'a', 'g' ]\n        |> Set.Linear.foldFrom ( \"\", Down, String.cons )\n    --> \"agil\"\n\n",
+                "type": "( accumulationValue, Linear.DirectionLinear, element -> accumulationValue -> accumulationValue ) -> Set.Set element -> accumulationValue"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,487 @@
+[
+    {
+        "name": "FormValidator",
+        "comment": "\n\nA customizable form validation component.\n\nThis is a wrapper module which exposes public functions, within a single module, found in the sub-\nmodules of this package:\n  - `Models`\n  - `Patterns`\n  - `Validator`\n  - `Validators`\n  - `Views`\n\nThis wrapper module is provided for convenience in case you don't wish to import the above modules\nindividually. It also serves as a fast way to get up and running quickly via a single import. If\nthis is not desired, you can ignore this module altogether and import the individual sub-modules as\nneeded for your implementation. See the README for details.\n\n# Models\n\n@docs Form\n\n# Init\n\n@docs init\n\n# Accessors\n\n@docs fieldValues, fieldValue, fieldErrors\n\n# Updaters\n\n@docs updateValues, updateValuesAndValidate, updateValue, updateValueAndValidate\n@docs resetForm, resetField, updateAndValidateValues, updateAndValidateValue\n\n# Validators\n\n@docs validateForm, validateField, isFormInvalid, isFieldInvalid, isBlank, isEmpty, isInteger\n@docs isFloat, isIncluded, isExcluded, isGreaterThan, isGreaterThanEqualTo, isLessThan\n@docs isLessThanEqualTo, isBetween, isLengthGreaterThan, isLengthGreaterThanEqualTo\n@docs isLengthLessThan, isLengthLessThanEqualTo, isLengthBetween, isEmail\n\n# Views\n\n@docs viewField, viewErrors, viewError\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Form",
+                "comment": " `Models` module wrapper function. See `Models` module for details. ",
+                "args": [
+                    "key"
+                ],
+                "type": "FormValidator.Models.Form key"
+            }
+        ],
+        "values": [
+            {
+                "name": "fieldErrors",
+                "comment": " `Validator` module wrapper function. See `Validator` module for details. ",
+                "type": "key -> FormValidator.Models.Form key -> FormValidator.Models.Errors"
+            },
+            {
+                "name": "fieldValue",
+                "comment": " `Validator` module wrapper function. See `Validator` module for details. ",
+                "type": "key -> FormValidator.Models.Form key -> String.String"
+            },
+            {
+                "name": "fieldValues",
+                "comment": " `Validator` module wrapper function. See `Validator` module for details. ",
+                "type": "key -> FormValidator.Form key -> List.List String.String"
+            },
+            {
+                "name": "init",
+                "comment": " `Validator` module wrapper function. See `Validator` module for details. ",
+                "type": "key -> FormValidator.Models.Validators -> FormValidator.Models.Field key"
+            },
+            {
+                "name": "isBetween",
+                "comment": " `Validators` module wrapper function. See `Validators` module for details. ",
+                "type": "Basics.Int -> Basics.Int -> FormValidator.Models.Value -> FormValidator.Models.Error"
+            },
+            {
+                "name": "isBlank",
+                "comment": " `Validators` module wrapper function. See `Validators` module for details. ",
+                "type": "FormValidator.Models.Value -> FormValidator.Models.Error"
+            },
+            {
+                "name": "isEmail",
+                "comment": " `Validators` module wrapper function. See `Validators` module for details. ",
+                "type": "FormValidator.Models.Value -> FormValidator.Models.Error"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " `Validators` module wrapper function. See `Validators` module for details. ",
+                "type": "FormValidator.Models.Value -> FormValidator.Models.Error"
+            },
+            {
+                "name": "isExcluded",
+                "comment": " `Validators` module wrapper function. See `Validators` module for details. ",
+                "type": "List.List String.String -> FormValidator.Models.Value -> FormValidator.Models.Error"
+            },
+            {
+                "name": "isFieldInvalid",
+                "comment": " `Validator` module wrapper function. See `Validator` module for details. ",
+                "type": "key -> FormValidator.Models.Form key -> Basics.Bool"
+            },
+            {
+                "name": "isFloat",
+                "comment": " `Validators` module wrapper function. See `Validators` module for details. ",
+                "type": "FormValidator.Models.Value -> FormValidator.Models.Error"
+            },
+            {
+                "name": "isFormInvalid",
+                "comment": " `Validator` module wrapper function. See `Validator` module for details. ",
+                "type": "FormValidator.Models.Form key -> Basics.Bool"
+            },
+            {
+                "name": "isGreaterThan",
+                "comment": " `Validators` module wrapper function. See `Validators` module for details. ",
+                "type": "Basics.Int -> FormValidator.Models.Value -> FormValidator.Models.Error"
+            },
+            {
+                "name": "isGreaterThanEqualTo",
+                "comment": " `Validators` module wrapper function. See `Validators` module for details. ",
+                "type": "Basics.Int -> FormValidator.Models.Value -> FormValidator.Models.Error"
+            },
+            {
+                "name": "isIncluded",
+                "comment": " `Validators` module wrapper function. See `Validators` module for details. ",
+                "type": "List.List String.String -> FormValidator.Models.Value -> FormValidator.Models.Error"
+            },
+            {
+                "name": "isInteger",
+                "comment": " `Validators` module wrapper function. See `Validators` module for details. ",
+                "type": "FormValidator.Models.Value -> FormValidator.Models.Error"
+            },
+            {
+                "name": "isLengthBetween",
+                "comment": " `Validators` module wrapper function. See `Validators` module for details. ",
+                "type": "Basics.Int -> Basics.Int -> FormValidator.Models.Value -> FormValidator.Models.Error"
+            },
+            {
+                "name": "isLengthGreaterThan",
+                "comment": " `Validators` module wrapper function. See `Validators` module for details. ",
+                "type": "Basics.Int -> FormValidator.Models.Value -> FormValidator.Models.Error"
+            },
+            {
+                "name": "isLengthGreaterThanEqualTo",
+                "comment": " `Validators` module wrapper function. See `Validators` module for details. ",
+                "type": "Basics.Int -> FormValidator.Models.Value -> FormValidator.Models.Error"
+            },
+            {
+                "name": "isLengthLessThan",
+                "comment": " `Validators` module wrapper function. See `Validators` module for details. ",
+                "type": "Basics.Int -> FormValidator.Models.Value -> FormValidator.Models.Error"
+            },
+            {
+                "name": "isLengthLessThanEqualTo",
+                "comment": " `Validators` module wrapper function. See `Validators` module for details. ",
+                "type": "Basics.Int -> FormValidator.Models.Value -> FormValidator.Models.Error"
+            },
+            {
+                "name": "isLessThan",
+                "comment": " `Validators` module wrapper function. See `Validators` module for details. ",
+                "type": "Basics.Int -> FormValidator.Models.Value -> FormValidator.Models.Error"
+            },
+            {
+                "name": "isLessThanEqualTo",
+                "comment": " `Validators` module wrapper function. See `Validators` module for details. ",
+                "type": "Basics.Int -> FormValidator.Models.Value -> FormValidator.Models.Error"
+            },
+            {
+                "name": "resetField",
+                "comment": " `Validator` module wrapper function. See `Validator` module for details. ",
+                "type": "key -> FormValidator.Models.Form key -> FormValidator.Models.Form key"
+            },
+            {
+                "name": "resetForm",
+                "comment": " `Validator` module wrapper function. See `Validator` module for details. ",
+                "type": "FormValidator.Models.Form key -> FormValidator.Models.Form key"
+            },
+            {
+                "name": "updateAndValidateValue",
+                "comment": "\n**DEPRECATED: Will be removed in 2.0.0. Use `updateValueAndValidate` instead.**\n\nUpdate field value and validate it.\n",
+                "type": "key -> FormValidator.Models.Value -> FormValidator.Models.Form key -> FormValidator.Models.Form key"
+            },
+            {
+                "name": "updateAndValidateValues",
+                "comment": "\n**DEPRECATED: Will be removed in 2.0.0. Use `updateValuesAndValidate` instead.**\n\nUpdate field values and validate them.\n",
+                "type": "key -> FormValidator.Models.Values -> FormValidator.Models.Form key -> FormValidator.Models.Form key"
+            },
+            {
+                "name": "updateValue",
+                "comment": " `Validator` module wrapper function. See `Validator` module for details. ",
+                "type": "key -> FormValidator.Models.Value -> FormValidator.Models.Form key -> FormValidator.Models.Form key"
+            },
+            {
+                "name": "updateValueAndValidate",
+                "comment": " Update field value and validate it. ",
+                "type": "key -> FormValidator.Models.Value -> FormValidator.Models.Form key -> FormValidator.Models.Form key"
+            },
+            {
+                "name": "updateValues",
+                "comment": " `Validator` module wrapper function. See `Validator` module for details. ",
+                "type": "key -> FormValidator.Models.Values -> FormValidator.Models.Form key -> FormValidator.Models.Form key"
+            },
+            {
+                "name": "updateValuesAndValidate",
+                "comment": " `Validator` module wrapper function. See `Validator` module for details. ",
+                "type": "key -> FormValidator.Models.Values -> FormValidator.Models.Form key -> FormValidator.Models.Form key"
+            },
+            {
+                "name": "validateField",
+                "comment": " `Validator` module wrapper function. See `Validator` module for details. ",
+                "type": "key -> FormValidator.Models.Form key -> FormValidator.Models.Form key"
+            },
+            {
+                "name": "validateForm",
+                "comment": " `Validator` module wrapper function. See `Validator` module for details. ",
+                "type": "FormValidator.Models.Form key -> FormValidator.Models.Form key"
+            },
+            {
+                "name": "viewError",
+                "comment": " `Views` module wrapper function. See `Views` module for details. ",
+                "type": "FormValidator.Models.Error -> Html.Html message"
+            },
+            {
+                "name": "viewErrors",
+                "comment": " `Views` module wrapper function. See `Views` module for details. ",
+                "type": "FormValidator.Models.Errors -> Html.Html message"
+            },
+            {
+                "name": "viewField",
+                "comment": " `Views` module wrapper function. See `Views` module for details. ",
+                "type": "key -> FormValidator.Models.Form key -> List.List String.String -> List.List (Html.Html message) -> Html.Html message"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "FormValidator.Models",
+        "comment": "\n\nThe Form Validator component models.\n\n@docs Form, Field, Validators, Validator, Values, Value, Errors, Error\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Error",
+                "comment": " The corresponding error message of an invalid field value. ",
+                "args": [],
+                "type": "Maybe.Maybe String.String"
+            },
+            {
+                "name": "Errors",
+                "comment": " The corresponding error messages of an invalid field value(s). ",
+                "args": [],
+                "type": "List.List FormValidator.Models.Error"
+            },
+            {
+                "name": "Field",
+                "comment": "\nThe form field, identified by unique key, which stores a value, validators of that value,\nand validation errors (if any).\n",
+                "args": [
+                    "key"
+                ],
+                "type": "{ key : key, value : String.String, validators : FormValidator.Models.Validators, errors : FormValidator.Models.Errors }"
+            },
+            {
+                "name": "Form",
+                "comment": " The form model which stores a list of fields for input and validation. ",
+                "args": [
+                    "key"
+                ],
+                "type": "List.List (FormValidator.Models.Field key)"
+            },
+            {
+                "name": "Validator",
+                "comment": " A field validator which evaluates to an error string (invalid) or nothing at all (valid). ",
+                "args": [],
+                "type": "String.String -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "Validators",
+                "comment": " A list of validators for a field. ",
+                "args": [],
+                "type": "List.List FormValidator.Models.Validator"
+            },
+            {
+                "name": "Value",
+                "comment": " A field value to be validated. ",
+                "args": [],
+                "type": "String.String"
+            },
+            {
+                "name": "Values",
+                "comment": " A list of field values to be validated. ",
+                "args": [],
+                "type": "List.List FormValidator.Models.Value"
+            }
+        ],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "FormValidator.Patterns",
+        "comment": "\n\nThe Form Validator regular expression patterns.\n\n@docs blank, email\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "blank",
+                "comment": " Answer regular expression for blank string. ",
+                "type": "Regex.Regex"
+            },
+            {
+                "name": "email",
+                "comment": " Answer regular expression for email address. ",
+                "type": "Regex.Regex"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "FormValidator.Validator",
+        "comment": "\n\nThe Form Validator validator which is the main module used to update/validate forms and fields.\n\n@docs init, fieldValues, fieldValue, fieldErrors, updateValues, updateValuesAndValidate\n@docs updateValue, updateValueAndValidate, resetForm, resetField, updateAndValidateValues\n@docs updateAndValidateValue, validateForm, validateField, isFormInvalid, isFieldInvalid\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fieldErrors",
+                "comment": " Answer all errors for a field. ",
+                "type": "key -> FormValidator.Models.Form key -> FormValidator.Models.Errors"
+            },
+            {
+                "name": "fieldValue",
+                "comment": " Answer single field value. ",
+                "type": "key -> FormValidator.Models.Form key -> String.String"
+            },
+            {
+                "name": "fieldValues",
+                "comment": " Answer multiple field values. ",
+                "type": "key -> FormValidator.Models.Form key -> List.List String.String"
+            },
+            {
+                "name": "init",
+                "comment": " Initialize a new form field. ",
+                "type": "key -> FormValidator.Models.Validators -> FormValidator.Models.Field key"
+            },
+            {
+                "name": "isFieldInvalid",
+                "comment": " Answer if field is invalid. ",
+                "type": "key -> FormValidator.Models.Form key -> Basics.Bool"
+            },
+            {
+                "name": "isFormInvalid",
+                "comment": " Answer if form is invalid. ",
+                "type": "FormValidator.Models.Form key -> Basics.Bool"
+            },
+            {
+                "name": "resetField",
+                "comment": " Reset field value(s) and errors to initial state. ",
+                "type": "key -> FormValidator.Models.Form key -> FormValidator.Models.Form key"
+            },
+            {
+                "name": "resetForm",
+                "comment": " Reset field values and errors for entire form to initial state. ",
+                "type": "FormValidator.Models.Form key -> FormValidator.Models.Form key"
+            },
+            {
+                "name": "updateAndValidateValue",
+                "comment": "\n**DEPRECATED: Will be removed in 2.0.0. Use `updateValueAndValidate` instead.**\n\nUpdate field value and validate it.\n",
+                "type": "key -> FormValidator.Models.Value -> FormValidator.Models.Form key -> FormValidator.Models.Form key"
+            },
+            {
+                "name": "updateAndValidateValues",
+                "comment": "\n**DEPRECATED: Will be removed in 2.0.0. Use `updateValuesAndValidate` instead.**\n\nUpdate field values and validate them.\n",
+                "type": "key -> FormValidator.Models.Values -> FormValidator.Models.Form key -> FormValidator.Models.Form key"
+            },
+            {
+                "name": "updateValue",
+                "comment": " Update single field value without validation. ",
+                "type": "key -> FormValidator.Models.Value -> FormValidator.Models.Form key -> FormValidator.Models.Form key"
+            },
+            {
+                "name": "updateValueAndValidate",
+                "comment": " Update field value and validate it. ",
+                "type": "key -> FormValidator.Models.Value -> FormValidator.Models.Form key -> FormValidator.Models.Form key"
+            },
+            {
+                "name": "updateValues",
+                "comment": " Update multiple field values without validation. ",
+                "type": "key -> FormValidator.Models.Values -> FormValidator.Models.Form key -> FormValidator.Models.Form key"
+            },
+            {
+                "name": "updateValuesAndValidate",
+                "comment": " Update field values and validate them. ",
+                "type": "key -> FormValidator.Models.Values -> FormValidator.Models.Form key -> FormValidator.Models.Form key"
+            },
+            {
+                "name": "validateField",
+                "comment": " Validate field. ",
+                "type": "key -> FormValidator.Models.Form key -> FormValidator.Models.Form key"
+            },
+            {
+                "name": "validateForm",
+                "comment": " Validate form (including all fields). ",
+                "type": "FormValidator.Models.Form key -> FormValidator.Models.Form key"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "FormValidator.Validators",
+        "comment": "\n\nThe Form Validator validators provide functionality needed for validating a form field. These can be\nmixed and matched as desired.\n\n@docs isBlank, isEmpty, isInteger, isFloat, isIncluded, isExcluded, isGreaterThan\n@docs isGreaterThanEqualTo, isLessThan, isLessThanEqualTo, isBetween, isLengthGreaterThan\n@docs isLengthGreaterThanEqualTo, isLengthLessThan, isLengthLessThanEqualTo, isLengthBetween\n@docs isEmail\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "isBetween",
+                "comment": " Validates if value is within minimum and maximum *inclusive* range. ",
+                "type": "Basics.Int -> Basics.Int -> FormValidator.Models.Value -> FormValidator.Models.Error"
+            },
+            {
+                "name": "isBlank",
+                "comment": " Validates if value is blank. ",
+                "type": "FormValidator.Models.Value -> FormValidator.Models.Error"
+            },
+            {
+                "name": "isEmail",
+                "comment": " Validates if value is an email address. ",
+                "type": "FormValidator.Models.Value -> FormValidator.Models.Error"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Validates if value is empty. ",
+                "type": "FormValidator.Models.Value -> FormValidator.Models.Error"
+            },
+            {
+                "name": "isExcluded",
+                "comment": " Validates if value is excluded from list. ",
+                "type": "List.List String.String -> FormValidator.Models.Value -> FormValidator.Models.Error"
+            },
+            {
+                "name": "isFloat",
+                "comment": " Validates if value is a float. ",
+                "type": "FormValidator.Models.Value -> FormValidator.Models.Error"
+            },
+            {
+                "name": "isGreaterThan",
+                "comment": " Validates if value is greater than minimum. ",
+                "type": "Basics.Int -> FormValidator.Models.Value -> FormValidator.Models.Error"
+            },
+            {
+                "name": "isGreaterThanEqualTo",
+                "comment": " Validates if value is greater than or equal to minimum. ",
+                "type": "Basics.Int -> FormValidator.Models.Value -> FormValidator.Models.Error"
+            },
+            {
+                "name": "isIncluded",
+                "comment": " Validates if value is included in list. ",
+                "type": "List.List String.String -> FormValidator.Models.Value -> FormValidator.Models.Error"
+            },
+            {
+                "name": "isInteger",
+                "comment": " Validates if value is an integer. ",
+                "type": "FormValidator.Models.Value -> FormValidator.Models.Error"
+            },
+            {
+                "name": "isLengthBetween",
+                "comment": " Validates if value length is between minimum and maximum *inclusive* range. ",
+                "type": "Basics.Int -> Basics.Int -> FormValidator.Models.Value -> FormValidator.Models.Error"
+            },
+            {
+                "name": "isLengthGreaterThan",
+                "comment": " Validates if value length is greater than minimum. ",
+                "type": "Basics.Int -> FormValidator.Models.Value -> FormValidator.Models.Error"
+            },
+            {
+                "name": "isLengthGreaterThanEqualTo",
+                "comment": " Validates if value length is greater than or equal to minimum. ",
+                "type": "Basics.Int -> FormValidator.Models.Value -> FormValidator.Models.Error"
+            },
+            {
+                "name": "isLengthLessThan",
+                "comment": " Validates if value length is less than maximum. ",
+                "type": "Basics.Int -> FormValidator.Models.Value -> FormValidator.Models.Error"
+            },
+            {
+                "name": "isLengthLessThanEqualTo",
+                "comment": " Validates if value length is less than or equal to maximum. ",
+                "type": "Basics.Int -> FormValidator.Models.Value -> FormValidator.Models.Error"
+            },
+            {
+                "name": "isLessThan",
+                "comment": " Validates if value is less than maximum. ",
+                "type": "Basics.Int -> FormValidator.Models.Value -> FormValidator.Models.Error"
+            },
+            {
+                "name": "isLessThanEqualTo",
+                "comment": " Validates if value is less than or equal to maximum. ",
+                "type": "Basics.Int -> FormValidator.Models.Value -> FormValidator.Models.Error"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "FormValidator.Views",
+        "comment": "\n\nThe Form Validator views which are convenience methods for rendering forms and fields within your\nviews.\n\n@docs field, errors, error\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "error",
+                "comment": " View field error (if any) as a list item. ",
+                "type": "FormValidator.Models.Error -> Html.Html message"
+            },
+            {
+                "name": "errors",
+                "comment": " View field errors (if any) as an unordered list. ",
+                "type": "FormValidator.Models.Errors -> Html.Html message"
+            },
+            {
+                "name": "field",
+                "comment": " View field with errors (if any). To be used as a wrapper around field DOM elements. ",
+                "type": "key -> FormValidator.Models.Form key -> List.List String.String -> List.List (Html.Html message) -> Html.Html message"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,339 @@
+[
+    {
+        "name": "Markdown.Data",
+        "comment": " Markdown.Data exposes types and functions which are used by\nUMUI, a universal markup interface. With UMUI, one can\neasily switch between markup languages, e.g. the Math+Markdown\nin jxxcarlson/elm-markdown and MiniLaTeX, the subset of\nLaTeX defined in jxxcarlson/meenylatex.\n\nFor an example of how UMUI is used, see the [Github repo](https://github.com/jxxcarlson/umui).\nHere is a [demo app](https://jxxcarlson.github.io/app/umui/)\n\nTo use UMUI, one must expose one data type, here given\nby `MarkdownData`, and three functions which operate on it:\n`init`, `update`, and `render`.\n\n@docs MarkdownData, init, render, update\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "MarkdownData",
+                "comment": " ",
+                "args": [],
+                "type": "{ source : String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "init",
+                "comment": " ",
+                "type": "Basics.Int -> String.String -> Markdown.Data.MarkdownData"
+            },
+            {
+                "name": "render",
+                "comment": " ",
+                "type": "String.String -> Markdown.Data.MarkdownData -> List.List (Html.Html Markdown.Render.MarkdownMsg)"
+            },
+            {
+                "name": "update",
+                "comment": " ",
+                "type": "Basics.Int -> String.String -> Markdown.Data.MarkdownData -> Markdown.Data.MarkdownData"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Markdown.LaTeX",
+        "comment": " Use `Markdown.LaTeX.export someText` to convert Markdown text to [MiniLaTeX](https://demo.minilatex.app/). Imperfect but serviceable.\nThe app in `./Demos/simple` illustrates the use of this function.\n\n[Live demo](https://jxxcarlson.github.io/app/mathMarkdownSimple/).\n\n@docs export\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "export",
+                "comment": " ",
+                "type": "String.String -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Markdown.Option",
+        "comment": " The Option module defines the flavors of Markdown that can be\nparsed and rendered\n\n@docs MarkdownOption, OutputOption\n\n",
+        "unions": [
+            {
+                "name": "MarkdownOption",
+                "comment": " **Description:**\n\n  - Standard: vanilla Markdown\n  - Extended: strike-through text, poetry and verbatim blocks\n  - ExtendMath: like Extended, but TeX formulas are rendered\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Standard",
+                        []
+                    ],
+                    [
+                        "Extended",
+                        []
+                    ],
+                    [
+                        "ExtendedMath",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "OutputOption",
+                "comment": " The type of Markdown output; second features a table of contents at\nthe top of the document, the third features a bedside alarm.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Basic",
+                        []
+                    ],
+                    [
+                        "InternalTOC",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "ExternalTOC",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "Markdown.Parse",
+        "comment": " The purpose of this module is to parse a Document,\nthat is, a string, into an abstract syntax tree (AST)\nwhich can then be further transformed or passed on\nto a rendering function. The AST is a rose tree\nof `MDBlockWithId` — short for \"Markdown Blocks.\"\n\nSee the documentation at the head of module `Markdown.ElmWithId` for\nthe rationale for this module.\n\n\n## Create or use AST\n\n@docs toMDBlockTree, searchAST, sourceMap, getLeadingTextFromAST, toTextTree\n\n\n## Types\n\n@docs MDBlock, MDBlockWithId, BlockContent, Id\n\n\n## Ids\n\n@docs getId, idFromString, stringFromId, idOfBlock, incrementVersion\n\n\n## Comparison\n\n@docs equalContent, equalIds\n\n\n## Tools\n\n@docs project, projectedStringOfBlockContent, stringOfMDBlockTree, getArgPair\n\n",
+        "unions": [
+            {
+                "name": "BlockContent",
+                "comment": " The type of a parsed Block\n",
+                "args": [],
+                "cases": [
+                    [
+                        "M",
+                        [
+                            "MDInline.MDInline"
+                        ]
+                    ],
+                    [
+                        "T",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "MDBlock",
+                "comment": " An MDBlock (Markdown block) carries\n\n    - the type of the block\n    - its level\n    - its unparsed content\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "MDBlock",
+                        [
+                            "BlockType.BlockType",
+                            "Markdown.Parse.Level",
+                            "Markdown.Parse.BlockContent"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "MDBlockWithId",
+                "comment": " An MBlockWithId is like na MDBlock,\nexcept that it has an\n\n    Id : (Int, Int)\n\nwhich should be thought of as\n\n    ( elementId, version )\n\nwhere the id is unique to each block.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "MDBlockWithId",
+                        [
+                            "Markdown.Parse.Id",
+                            "BlockType.BlockType",
+                            "Markdown.Parse.Level",
+                            "Markdown.Parse.BlockContent"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Id",
+                "comment": " Used to generate Ids of Html elements and to\nimplement differential rendering. An Id has the form\n\n(elementId, version) : (Int, Int\n\nThe elementId is a an integer representing\nposition in a traversal of the tree of blocks\nobtained by parsing the text. The version\nnumber is incremented after each edit.\n\n",
+                "args": [],
+                "type": "( Basics.Int, Basics.Int )"
+            }
+        ],
+        "values": [
+            {
+                "name": "equalContent",
+                "comment": " Check for equality of\n\n    - blockType\n    - level\n    - content\n\nignoring the id.\n\n",
+                "type": "Markdown.Parse.MDBlockWithId -> Markdown.Parse.MDBlockWithId -> Basics.Bool"
+            },
+            {
+                "name": "equalIds",
+                "comment": " Return true if the blocks have the same id\n",
+                "type": "Markdown.Parse.MDBlockWithId -> Markdown.Parse.MDBlockWithId -> Basics.Bool"
+            },
+            {
+                "name": "getArgPair",
+                "comment": " Get arguments that are used constructs like @xlink[ arg1 > arg2 ]\n\n",
+                "type": "String.String -> String.String -> Maybe.Maybe ( String.String, String.String )"
+            },
+            {
+                "name": "getId",
+                "comment": " Given a string s, return (ss, id), where ss is a string containing s\nand id a Maybe value representing the id of the corresponding element\nin the rendered text.\n",
+                "type": "String.String -> BiDict.BiDict String.String String.String -> ( String.String, Maybe.Maybe String.String )"
+            },
+            {
+                "name": "getLeadingTextFromAST",
+                "comment": " Get lead ing text element from AST\n",
+                "type": "Tree.Tree Markdown.Parse.MDBlockWithId -> String.String"
+            },
+            {
+                "name": "idFromString",
+                "comment": " Compute id from a string representation of that id, e.g..\n\n    idFromString \"i5v3\"\n    --> (5,3)\n\n",
+                "type": "String.String -> ( Basics.Int, Basics.Int )"
+            },
+            {
+                "name": "idOfBlock",
+                "comment": " Return the id of a block\n",
+                "type": "Markdown.Parse.MDBlockWithId -> Markdown.Parse.Id"
+            },
+            {
+                "name": "incrementVersion",
+                "comment": " Scan the tree, incrementing the version of the target Id if found.\nThis function is used to update the AST int order to highlight\nthe rendered text which belongs to the target Id. Use\n\n    Markdown.Render.fromASTWithOptions\n        outputOption\n        targetId\n        ast\n\n",
+                "type": "Markdown.Parse.Id -> Tree.Tree Markdown.Parse.MDBlockWithId -> Tree.Tree Markdown.Parse.MDBlockWithId"
+            },
+            {
+                "name": "project",
+                "comment": " Project an MDBlockWithId to an MDBlock\nby omitting its id\n",
+                "type": "Markdown.Parse.MDBlockWithId -> Markdown.Parse.MDBlock"
+            },
+            {
+                "name": "projectedStringOfBlockContent",
+                "comment": " Return a string representing the content of a block\nif it is of type `T`. Otherwise, return the empty string.\n",
+                "type": "Markdown.Parse.BlockContent -> String.String"
+            },
+            {
+                "name": "searchAST",
+                "comment": " Search the AST for nodes whose label contains the\ngiven string, returning the Id of the first node found,\nif any.\n",
+                "type": "String.String -> Tree.Tree Markdown.Parse.MDBlockWithId -> Maybe.Maybe Markdown.Parse.Id"
+            },
+            {
+                "name": "sourceMap",
+                "comment": " Create a sourceMap from the AST: a dictionary whose keys\nare text strings and whose values\nids of the corresponding elements in the DOM\n",
+                "type": "Tree.Tree Markdown.Parse.MDBlockWithId -> BiDict.BiDict String.String String.String"
+            },
+            {
+                "name": "stringFromId",
+                "comment": " Compute a string representation of an id. Thus\n\n    stringFromId (5,3)\n    -> \"i5v3\"\n\n",
+                "type": "( Basics.Int, Basics.Int ) -> String.String"
+            },
+            {
+                "name": "stringOfMDBlockTree",
+                "comment": " A string representation of an MDBlockTree. Useful\nfor verifying the validity of the AST.\n",
+                "type": "Tree.Tree Markdown.Parse.MDBlockWithId -> String.String"
+            },
+            {
+                "name": "toMDBlockTree",
+                "comment": " Parse a string using a Markdown flavor option, returning the AST.\nExample:\n\n    Parse.toMDBlockTree 1 Extended \"This **is** a test.\"\n    --> Tree (MDBlockWithId (0,1)\n    -->    (MarkdownBlock Root) 0 (M (Paragraph [\n    -->       Line [OrdinaryText \"DOCUMENT\"]]))) [\n    -->          Tree (MDBlockWithId (1,1)\n    -->            (MarkdownBlock Plain) 1 (M (Paragraph [\n    -->                Line [  OrdinaryText (\"This \")\n    -->              , BoldText (\"is \")\n    -->              , OrdinaryText (\"a test.\")]\n    -->              , Line []\n    -->            ])))\n    -->      []]\n    --> : Tree.Tree Parse.MDBlockWithId\n\n",
+                "type": "Basics.Int -> Markdown.Option.MarkdownOption -> Markdown.Parse.Document -> Tree.Tree Markdown.Parse.MDBlockWithId"
+            },
+            {
+                "name": "toTextTree",
+                "comment": " Map a (Tree MDBlock) to a (Tree String)\n",
+                "type": "Tree.Tree Markdown.Parse.MDBlock -> Tree.Tree String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Markdown.Render",
+        "comment": " For simple applications, the function `toHtml` will be enough.\nThe other functions are mostly for building apps, e.g., editors,\nin which the source text changes a lot. The best guide to\nusing the code are the examples. See the folder `examples`\nand `editors`.\n\n\n## Types\n\n@docs MarkdownOutput, MarkdownMsg, DocumentParts\n\n\n## Rendering\n\n@docs toHtml, toHtml_, withOptions\n\n\n## Rendering from AST\n\n@docs fromAST, fromASTWithOptions\n\n\n## Getters\n\nGet parts of a document from a MarkdownOutput value.\n\n@docs document, title, toc\n\n\n## Utility\n\n@docs numberOfMathElements\n\n",
+        "unions": [
+            {
+                "name": "MarkdownMsg",
+                "comment": " Use `Html MarkdownMsg` so that user clicks on elements in the rendered text can be detected.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "IDClicked",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "MarkdownOutput",
+                "comment": " the type of output\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Simple",
+                        [
+                            "Html.Html Markdown.Render.MarkdownMsg"
+                        ]
+                    ],
+                    [
+                        "Composite",
+                        [
+                            "Markdown.Render.DocumentParts"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "DocumentParts",
+                "comment": " The parts of a composite document\n",
+                "args": [],
+                "type": "{ title : Html.Html Markdown.Render.MarkdownMsg, toc : Html.Html Markdown.Render.MarkdownMsg, document : Html.Html Markdown.Render.MarkdownMsg }"
+            }
+        ],
+        "values": [
+            {
+                "name": "document",
+                "comment": " document content\n",
+                "type": "Markdown.Render.MarkdownOutput -> Html.Html Markdown.Render.MarkdownMsg"
+            },
+            {
+                "name": "fromAST",
+                "comment": " Render to Html from a parse tree\n",
+                "type": "Markdown.Parse.Id -> Tree.Tree Markdown.Parse.MDBlockWithId -> Html.Html Markdown.Render.MarkdownMsg"
+            },
+            {
+                "name": "fromASTWithOptions",
+                "comment": " Render from an AST\n",
+                "type": "Markdown.Option.OutputOption -> Markdown.Parse.Id -> Tree.Tree Markdown.Parse.MDBlockWithId -> Markdown.Render.MarkdownOutput"
+            },
+            {
+                "name": "numberOfMathElements",
+                "comment": " Count the number of display math element blocks in the parse tree\n",
+                "type": "Tree.Tree Markdown.Parse.MDBlockWithId -> Basics.Int"
+            },
+            {
+                "name": "title",
+                "comment": " ",
+                "type": "Markdown.Render.MarkdownOutput -> Html.Html Markdown.Render.MarkdownMsg"
+            },
+            {
+                "name": "toHtml",
+                "comment": " Render source test given an a Markdown flavor\n",
+                "type": "Markdown.Option.MarkdownOption -> String.String -> Html.Html Markdown.Render.MarkdownMsg"
+            },
+            {
+                "name": "toHtml_",
+                "comment": " Like `toHtml`, but produces a `List (Html MarkdownMsg)` value.\n",
+                "type": "Markdown.Option.MarkdownOption -> String.String -> List.List (Html.Html Markdown.Render.MarkdownMsg)"
+            },
+            {
+                "name": "toc",
+                "comment": " Table of contents\n",
+                "type": "Markdown.Render.MarkdownOutput -> Html.Html Markdown.Render.MarkdownMsg"
+            },
+            {
+                "name": "withOptions",
+                "comment": " Render content with Markdown and output options, given a selected Id and a version\n",
+                "type": "Markdown.Option.MarkdownOption -> Markdown.Option.OutputOption -> Markdown.Parse.Id -> Basics.Int -> String.String -> Markdown.Render.MarkdownOutput"
+            }
+        ],
+        "binops": []
+    }
+]

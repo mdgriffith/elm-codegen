@@ -1,0 +1,28 @@
+[
+    {
+        "name": "Oembed",
+        "comment": "\n\n\n## Oembed Discovery\n\nIf you use `Oembed.view`, you get back a `Maybe` value because it is looking up\na list of provider schemes (like `https://youtube.com/watch/abc123` would\nfind a youtube scheme) and returning `Nothing` if it doesn't find one. This is nice because you can fail your build if there are\nany issues.\n\nBut some services may not be registered in [the official list of providers](https://oembed.com/#section7).\nThese sites may instead use `<link rel=\"alternate\">` tags in their HTML `<head>` tags to [become discoverable](https://oembed.com/#section4).\nThat is to say, it will contain the information needed to get an API call to get the oembed content given a particular HTML page.\nThis is handy, but it means that this information is not conveniently accessible in Elm. So it's preferrable to\nuse `Oembed.view`, but `Oembed.discover` is provided to explicitly.\n\nAlso note that it requires an additional HTTP request to fetch the HTML page and process before it makes\nthe Oembed API request based on that page's `<head>` tags.\n\n@docs view, viewOrDiscover\n\n\n## Custom Providers\n\nExplicitly looking up providers is preferrable to using Oembed Discovery because it:\n\n1.  Gives you a `Maybe` type which you can check for to see if anything went wrong, and\n2.  Doesn't require the extra HTTP request to do the Discovery.\n\nHere's an example of supplying a custom provider.\n\n    import Html\n    import Oembed exposing (Provider)\n    import Regex\n\n    customProviders : List Provider\n    customProviders =\n        [ { url = \"https://ellie-app.com/oembed/\"\n          , schemes =\n                [ Regex.fromString \"https://ellie-app\\\\.com/.*\" |> Maybe.withDefault Regex.never ]\n          }\n        ]\n\n    ellieView =\n        Oembed.view customProviders Nothing \"https://ellie-app.com/4Xt4jdgtnZ2a1\"\n            |> Maybe.withDefault (Html.text \"Couldn't find oembed provider\")\n\n@docs Provider\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Provider",
+                "comment": " `elm-oembed` has a default list of providers from [the official list](https://github.com/iamcal/oembed/tree/master/providers).\nYou can add custom ones (see the above section in this docs page).\n",
+                "args": [],
+                "type": "{ schemes : List.List Regex.Regex, url : String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "view",
+                "comment": " Lookup a way to handle the passed in url using [the hardcoded list](https://oembed.com/#section7)\nof oembed provider schemes. If none is found, it will return `Nothing`. Otherwise,\nyou will have correctly rendered Oembed content (assuming no unexpected errors occur).\n",
+                "type": "List.List Oembed.Provider -> Maybe.Maybe { maxWidth : Basics.Int, maxHeight : Basics.Int } -> String.String -> Maybe.Maybe (Html.Html msg)"
+            },
+            {
+                "name": "viewOrDiscover",
+                "comment": " Look for an oembed provider in [the hardcoded list](https://oembed.com/#section7). If none is found,\nfallback to trying to [discover the oembed url](https://oembed.com/#section4). Note\nthat discovery will fail if the url passed in doesn't not link to a page\nthat contains the `<link>` tag in the format used for discovery. So even\nthough those doesn't return `Maybe (Html msg)`, it may fail to render oembed content.\n",
+                "type": "List.List Oembed.Provider -> Maybe.Maybe { maxWidth : Basics.Int, maxHeight : Basics.Int } -> String.String -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

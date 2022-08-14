@@ -1,0 +1,26 @@
+[
+    {
+        "name": "ElmLogo",
+        "comment": " This library provides SVG Elm logos to use with various libraries,\nsuch as [Svg][svg], [Html][html] or [Elm UI][elm-ui].\n\nAll functions accept integer as first argument to set width of logo.\n\n[svg]: https://package.elm-lang.org/packages/elm/svg/latest/\n[html]: https://package.elm-lang.org/packages/elm/html/latest/\n[elm-ui]: https://package.elm-lang.org/packages/mdgriffith/elm-ui/latest/\n\n\n# Functions\n\n@docs svg, html, element\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "element",
+                "comment": " Elm logo which can be embedded into [Elm UI][elm-ui] view\n\n[elm-ui]: https://package.elm-lang.org/packages/mdgriffith/elm-ui/latest/\n\n",
+                "type": "Basics.Int -> Element.Element msg"
+            },
+            {
+                "name": "html",
+                "comment": " Elm logo which can be embedded into [HTML][html]\n\n[html]: https://package.elm-lang.org/packages/elm/html/latest/\n\n",
+                "type": "Basics.Int -> Html.Html msg"
+            },
+            {
+                "name": "svg",
+                "comment": " Elm logo which can be embedded into [SVG][svg]\n\n[svg]: https://package.elm-lang.org/packages/elm/svg/latest/\n\n",
+                "type": "Basics.Int -> Svg.Svg msg"
+            }
+        ],
+        "binops": []
+    }
+]

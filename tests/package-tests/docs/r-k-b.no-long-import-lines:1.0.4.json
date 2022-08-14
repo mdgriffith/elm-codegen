@@ -1,0 +1,16 @@
+[
+    {
+        "name": "NoLongImportLines",
+        "comment": " Some Elm tooling will always change `import` lines from multi-line to\nsingle-line when updating an `import` statement, even when the single line\nwould be extremely long and prone to merge conflicts.\n\nThis rule enforces that no single-line `import` statements longer then 120\ncharacters should exist.\n\n\n# Usage\n\nAfter adding [`elm-review`][elm-review] to your project, import this rule from\nyour `ReviewConfig.elm` file and add it to the config. E.g.:\n\n    import NoLongImportLines\n    import Review.Rule exposing (Rule)\n\n    config : List Rule\n    config =\n        [ NoLongImportLines.rule ]\n\n[elm-review]: https://package.elm-lang.org/packages/jfmengels/elm-review/latest/\n\n@docs rule\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": " A rule for elm-review that discourages the use of very long `import`\nstatements, which are prone to merge conflicts.\n\n    import NoLongImportLines\n    import Review.Rule exposing (Rule)\n\n    config : List Rule\n    config =\n        [ NoLongImportLines.rule\n        ]\n\n",
+                "type": "Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    }
+]

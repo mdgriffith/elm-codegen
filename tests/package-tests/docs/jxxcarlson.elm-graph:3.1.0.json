@@ -1,0 +1,109 @@
+[
+    {
+        "name": "SimpleGraph",
+        "comment": " **SimpleGraph** is a bare-bones package for rendering data as\nline and bar charts, both as HTML and as SVG.\n\nFor examples, see the REAdME.\nFor a demo, see <https://jxxcarlson.github.io/app/gamblers_ruin.html>\n\n\n## Making a chart\n\n@docs lineChart, lineChartWithDataWindow, barChart, scatterPlot\n\n\n## Types and Options\n\n@docs Point, DataWindow, GraphAttributes, Option\n\n\n## SVG\n\n@docs lineChartAsSVG, lineChartAsSVGWithDataWindow, barChartAsSVG, scatterPlotAsSVG\n\n",
+        "unions": [
+            {
+                "name": "Option",
+                "comment": " Use the options field to customize the line chart.\nExamples: (1) [Color \"blue\"] makes the charted line\nblue (2) [Color \"blue\", XTickmarks 10, YTickmarks 5]\nplaces 10 tick marks along the x-axis and 5\ntick marks along the y-axis, (3) options = [ ]\nproduces a bare-bones graph.\n\nThe DeltaX option is used to specify the distnce\nfrom the leading edge of one bar to the next\nin bar graph.\n\nThe Scale option rescales the graph along both the\nx and y axes. Negative parameters flip the graph.\nThus `Scale 1.0 -1.0` flips the graph in the y direction.\n\nAn important use of the Scale option is to correct\nthe misbehavor of Safari, which presents the graphs upside down (!!)\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Color",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "XTickmarks",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "YTickmarks",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "DeltaX",
+                        [
+                            "Basics.Float"
+                        ]
+                    ],
+                    [
+                        "Scale",
+                        [
+                            "Basics.Float",
+                            "Basics.Float"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "DataWindow",
+                "comment": " A DataWindow is a rectangle which determines\nthe x and y ranges of the data to be displayed..\n",
+                "args": [],
+                "type": "{ xMax : Basics.Float, xMin : Basics.Float, yMax : Basics.Float, yMin : Basics.Float }"
+            },
+            {
+                "name": "GraphAttributes",
+                "comment": " A GraphAttributes value defines the size on\nthe screen occupied by the graph and the color of the\nline.\n",
+                "args": [],
+                "type": "{ graphHeight : Basics.Float, graphWidth : Basics.Float, options : List.List SimpleGraph.Option }"
+            },
+            {
+                "name": "Point",
+                "comment": " The data to be graphed by SimpleGraph.asHtml is\na List Point.\n",
+                "args": [],
+                "type": "( Basics.Float, Basics.Float )"
+            }
+        ],
+        "values": [
+            {
+                "name": "barChart",
+                "comment": " Render a list of numbers to Html as a bar chart using the parameters\nof GraphAttributes.\n",
+                "type": "SimpleGraph.GraphAttributes -> List.List Basics.Float -> Html.Html msg"
+            },
+            {
+                "name": "barChartAsSVG",
+                "comment": " Render a list of numbers to Svg as a bar chart using the parameters\nof GraphAttributes.\n",
+                "type": "SimpleGraph.GraphAttributes -> List.List Basics.Float -> Svg.Svg msg"
+            },
+            {
+                "name": "lineChart",
+                "comment": " Render a list of points (pairs of floats)\nto Html as a line chart. using the parameters\nof GraphAttributes. GraphAttributes controls\nthe appearance of the graph -- width, height, color,\ntick marks on the axes. The x-coordinates of the\ndata are assumed to be in increasing order.\n",
+                "type": "SimpleGraph.GraphAttributes -> List.List SimpleGraph.Point -> Html.Html msg"
+            },
+            {
+                "name": "lineChartAsSVG",
+                "comment": " Render a list of points to SVG as a line chart using the parameters\nof GraphAttributes.\n",
+                "type": "SimpleGraph.GraphAttributes -> List.List SimpleGraph.Point -> Svg.Svg msg"
+            },
+            {
+                "name": "lineChartAsSVGWithDataWindow",
+                "comment": " Render a list of points to Svg as a line chart using the parameters\nof GraphAttributes and DataWindow.\n",
+                "type": "SimpleGraph.DataWindow -> SimpleGraph.GraphAttributes -> List.List SimpleGraph.Point -> Svg.Svg msg"
+            },
+            {
+                "name": "lineChartWithDataWindow",
+                "comment": " This function is like lineChart, but with the additional\nDataWindow parameter. A DataWindow defines the range of\nx and y coordinates that are displayed. In lineChart, the\nDataWindow is deduced from the data presented.\n",
+                "type": "SimpleGraph.DataWindow -> SimpleGraph.GraphAttributes -> List.List SimpleGraph.Point -> Html.Html msg"
+            },
+            {
+                "name": "scatterPlot",
+                "comment": " Make a scatter plot of a list points, render as Html\n",
+                "type": "SimpleGraph.GraphAttributes -> List.List SimpleGraph.Point -> Html.Html msg"
+            },
+            {
+                "name": "scatterPlotAsSVG",
+                "comment": " Make a scatter plot of a list points, render as SVG\n",
+                "type": "SimpleGraph.GraphAttributes -> List.List SimpleGraph.Point -> Svg.Svg msg"
+            }
+        ],
+        "binops": []
+    }
+]

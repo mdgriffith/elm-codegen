@@ -1,0 +1,946 @@
+[
+    {
+        "name": "BiDict",
+        "comment": " A dictionary that **maintains a mapping from the values back to keys,**\nallowing for modelling **many-to-one relationships.**\n\nExample usage:\n\n    manyToOne : BiDict String Int\n    manyToOne =\n        BiDict.empty\n            |> BiDict.insert \"A\" 1\n            |> BiDict.insert \"B\" 2\n            |> BiDict.insert \"C\" 1\n            |> BiDict.insert \"D\" 4\n\n    BiDict.getReverse 1 manyToOne\n    --> Set.fromList [\"A\", \"C\"]\n\n\n# Dictionaries\n\n@docs BiDict\n\n\n# Differences from Dict\n\n@docs toDict, fromDict, getReverse, uniqueValues, uniqueValuesCount, toReverseList\n\n\n# Build\n\n@docs empty, singleton, insert, update, remove\n\n\n# Query\n\n@docs isEmpty, member, get, size\n\n\n# Lists\n\n@docs keys, values, toList, fromList\n\n\n# Transform\n\n@docs map, foldl, foldr, filter, partition\n\n\n# Combine\n\n@docs union, intersect, diff, merge\n\n",
+        "unions": [
+            {
+                "name": "BiDict",
+                "comment": " The underlying data structure. Think about it as\n\n    type alias BiDict a b =\n        { forward : Dict a b -- just a normal Dict!\n        , reverse : Dict b (Set a) -- the reverse mappings!\n        }\n\n",
+                "args": [
+                    "comparable1",
+                    "comparable2"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "diff",
+                "comment": " Keep a key-value pair when its key does not appear in the second dictionary.\n",
+                "type": "BiDict.BiDict comparable1 comparable2 -> BiDict.BiDict comparable1 comparable2 -> BiDict.BiDict comparable1 comparable2"
+            },
+            {
+                "name": "empty",
+                "comment": " Create an empty dictionary.\n",
+                "type": "BiDict.BiDict comparable1 comparable2"
+            },
+            {
+                "name": "filter",
+                "comment": " Keep only the key-value pairs that pass the given test.\n",
+                "type": "(comparable1 -> comparable2 -> Basics.Bool) -> BiDict.BiDict comparable1 comparable2 -> BiDict.BiDict comparable1 comparable2"
+            },
+            {
+                "name": "foldl",
+                "comment": " Fold over the key-value pairs in a dictionary from lowest key to highest key.\n\n\n    getAges users =\n        Dict.foldl addAge [] users\n\n    addAge _ user ages =\n        user.age :: ages\n\n    -- getAges users == [33,19,28]\n\n",
+                "type": "(comparable1 -> comparable2 -> acc -> acc) -> acc -> BiDict.BiDict comparable1 comparable2 -> acc"
+            },
+            {
+                "name": "foldr",
+                "comment": " Fold over the key-value pairs in a dictionary from highest key to lowest key.\n\n\n    getAges users =\n        Dict.foldr addAge [] users\n\n    addAge _ user ages =\n        user.age :: ages\n\n    -- getAges users == [28,19,33]\n\n",
+                "type": "(comparable1 -> comparable2 -> acc -> acc) -> acc -> BiDict.BiDict comparable1 comparable2 -> acc"
+            },
+            {
+                "name": "fromDict",
+                "comment": " Convert Dict into a BiDict. (Compute the reverse mapping.)\n",
+                "type": "Dict.Dict comparable1 comparable2 -> BiDict.BiDict comparable1 comparable2"
+            },
+            {
+                "name": "fromList",
+                "comment": " Convert an association list into a dictionary.\n",
+                "type": "List.List ( comparable1, comparable2 ) -> BiDict.BiDict comparable1 comparable2"
+            },
+            {
+                "name": "get",
+                "comment": " Get the value associated with a key. If the key is not found, return\n`Nothing`. This is useful when you are not sure if a key will be in the\ndictionary.\n\n    animals = fromList [ (\"Tom\", Cat), (\"Jerry\", Mouse) ]\n\n    get \"Tom\"   animals == Just Cat\n    get \"Jerry\" animals == Just Mouse\n    get \"Spike\" animals == Nothing\n\n",
+                "type": "comparable1 -> BiDict.BiDict comparable1 comparable2 -> Maybe.Maybe comparable2"
+            },
+            {
+                "name": "getReverse",
+                "comment": " Get the keys associated with a value. If the value is not found,\nreturn an empty set.\n",
+                "type": "comparable2 -> BiDict.BiDict comparable1 comparable2 -> Set.Set comparable1"
+            },
+            {
+                "name": "insert",
+                "comment": " Insert a key-value pair into a dictionary. Replaces value when there is\na collision.\n",
+                "type": "comparable1 -> comparable2 -> BiDict.BiDict comparable1 comparable2 -> BiDict.BiDict comparable1 comparable2"
+            },
+            {
+                "name": "intersect",
+                "comment": " Keep a key-value pair when its key appears in the second dictionary.\nPreference is given to values in the first dictionary.\n",
+                "type": "BiDict.BiDict comparable1 comparable2 -> BiDict.BiDict comparable1 comparable2 -> BiDict.BiDict comparable1 comparable2"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Determine if a dictionary is empty.\n\n    isEmpty empty == True\n\n",
+                "type": "BiDict.BiDict comparable1 comparable2 -> Basics.Bool"
+            },
+            {
+                "name": "keys",
+                "comment": " Get all of the keys in a dictionary, sorted from lowest to highest.\n\n    keys (fromList [ ( 0, \"Alice\" ), ( 1, \"Bob\" ) ]) == [ 0, 1 ]\n\n",
+                "type": "BiDict.BiDict comparable1 comparable2 -> List.List comparable1"
+            },
+            {
+                "name": "map",
+                "comment": " Apply a function to all values in a dictionary.\n",
+                "type": "(comparable1 -> comparable21 -> comparable22) -> BiDict.BiDict comparable1 comparable21 -> BiDict.BiDict comparable1 comparable22"
+            },
+            {
+                "name": "member",
+                "comment": " Determine if a key is in a dictionary.\n",
+                "type": "comparable1 -> BiDict.BiDict comparable1 comparable2 -> Basics.Bool"
+            },
+            {
+                "name": "merge",
+                "comment": " The most general way of combining two dictionaries. You provide three\naccumulators for when a given key appears:\n\n1.  Only in the left dictionary.\n2.  In both dictionaries.\n3.  Only in the right dictionary.\n\nYou then traverse all the keys from lowest to highest, building up whatever\nyou want.\n\n",
+                "type": "(comparable1 -> comparable21 -> acc -> acc) -> (comparable1 -> comparable21 -> comparable22 -> acc -> acc) -> (comparable1 -> comparable22 -> acc -> acc) -> BiDict.BiDict comparable1 comparable21 -> BiDict.BiDict comparable1 comparable22 -> acc -> acc"
+            },
+            {
+                "name": "partition",
+                "comment": " Partition a dictionary according to some test. The first dictionary\ncontains all key-value pairs which passed the test, and the second contains\nthe pairs that did not.\n",
+                "type": "(comparable1 -> comparable2 -> Basics.Bool) -> BiDict.BiDict comparable1 comparable2 -> ( BiDict.BiDict comparable1 comparable2, BiDict.BiDict comparable1 comparable2 )"
+            },
+            {
+                "name": "remove",
+                "comment": " Remove a key-value pair from a dictionary. If the key is not found,\nno changes are made.\n",
+                "type": "comparable1 -> BiDict.BiDict comparable1 comparable2 -> BiDict.BiDict comparable1 comparable2"
+            },
+            {
+                "name": "singleton",
+                "comment": " Create a dictionary with one key-value pair.\n",
+                "type": "comparable1 -> comparable2 -> BiDict.BiDict comparable1 comparable2"
+            },
+            {
+                "name": "size",
+                "comment": " Determine the number of key-value pairs in the dictionary.\n",
+                "type": "BiDict.BiDict comparable1 comparable2 -> Basics.Int"
+            },
+            {
+                "name": "toDict",
+                "comment": " Convert BiDict into a Dict. (Throw away the reverse mapping.)\n",
+                "type": "BiDict.BiDict comparable1 comparable2 -> Dict.Dict comparable1 comparable2"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert a dictionary into an association list of key-value pairs, sorted by keys.\n",
+                "type": "BiDict.BiDict comparable1 comparable2 -> List.List ( comparable1, comparable2 )"
+            },
+            {
+                "name": "toReverseList",
+                "comment": " Convert a dictionary into a reverse association list of value-keys pairs.\n",
+                "type": "BiDict.BiDict comparable1 comparable2 -> List.List ( comparable2, Set.Set comparable1 )"
+            },
+            {
+                "name": "union",
+                "comment": " Combine two dictionaries. If there is a collision, preference is given\nto the first dictionary.\n",
+                "type": "BiDict.BiDict comparable1 comparable2 -> BiDict.BiDict comparable1 comparable2 -> BiDict.BiDict comparable1 comparable2"
+            },
+            {
+                "name": "uniqueValues",
+                "comment": " Get a list of unique values in the dictionary.\n",
+                "type": "BiDict.BiDict comparable1 comparable2 -> List.List comparable2"
+            },
+            {
+                "name": "uniqueValuesCount",
+                "comment": " Get a count of unique values in the dictionary.\n",
+                "type": "BiDict.BiDict comparable1 comparable2 -> Basics.Int"
+            },
+            {
+                "name": "update",
+                "comment": " Update the value of a dictionary for a specific key with a given function.\n",
+                "type": "comparable1 -> (Maybe.Maybe comparable2 -> Maybe.Maybe comparable2) -> BiDict.BiDict comparable1 comparable2 -> BiDict.BiDict comparable1 comparable2"
+            },
+            {
+                "name": "values",
+                "comment": " Get all of the values in a dictionary, in the order of their keys.\n\n    values (fromList [ ( 0, \"Alice\" ), ( 1, \"Bob\" ) ]) == [ \"Alice\", \"Bob\" ]\n\n",
+                "type": "BiDict.BiDict comparable1 comparable2 -> List.List comparable2"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "BiDict.Assoc",
+        "comment": " A dictionary that **maintains a mapping from the values back to keys,**\nallowing for modelling **many-to-one relationships.**\n\nExample usage:\n\n    manyToOne : BiDict String Int\n    manyToOne =\n        BiDict.empty\n            |> BiDict.insert \"A\" 1\n            |> BiDict.insert \"B\" 2\n            |> BiDict.insert \"C\" 1\n            |> BiDict.insert \"D\" 4\n\n    BiDict.getReverse 1 manyToOne\n    --> Set.fromList [\"A\", \"C\"]\n\nThis module in particular uses [`assoc-list`](https://package.elm-lang.org/packages/pzp1997/assoc-list/latest/) and [`assoc-set`](https://package.elm-lang.org/packages/erlandsona/assoc-set/latest/)\nunder the hood to get rid of the `comparable` constraint on keys that's usually\nassociated with Dicts and Sets.\n\n\n# Dictionaries\n\n@docs BiDict\n\n\n# Differences from Dict\n\n@docs toDict, fromDict, getReverse, uniqueValues, uniqueValuesCount, toReverseList\n\n\n# Build\n\n@docs empty, singleton, insert, update, remove\n\n\n# Query\n\n@docs isEmpty, member, get, size\n\n\n# Lists\n\n@docs keys, values, toList, fromList\n\n\n# Transform\n\n@docs map, foldl, foldr, filter, partition\n\n\n# Combine\n\n@docs union, intersect, diff, merge\n\n",
+        "unions": [
+            {
+                "name": "BiDict",
+                "comment": " The underlying data structure. Think about it as\n\n    type alias BiDict a b =\n        { forward : Dict a b -- just a normal Dict!\n        , reverse : Dict b (Set a) -- the reverse mappings!\n        }\n\n",
+                "args": [
+                    "a",
+                    "b"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "diff",
+                "comment": " Keep a key-value pair when its key does not appear in the second dictionary.\n",
+                "type": "BiDict.Assoc.BiDict a b -> BiDict.Assoc.BiDict a b -> BiDict.Assoc.BiDict a b"
+            },
+            {
+                "name": "empty",
+                "comment": " Create an empty dictionary.\n",
+                "type": "BiDict.Assoc.BiDict a b"
+            },
+            {
+                "name": "filter",
+                "comment": " Keep only the key-value pairs that pass the given test.\n",
+                "type": "(a -> b -> Basics.Bool) -> BiDict.Assoc.BiDict a b -> BiDict.Assoc.BiDict a b"
+            },
+            {
+                "name": "foldl",
+                "comment": " Fold over the key-value pairs in a dictionary from lowest key to highest key.\n\n\n    getAges users =\n        Dict.foldl addAge [] users\n\n    addAge _ user ages =\n        user.age :: ages\n\n    -- getAges users == [33,19,28]\n\n",
+                "type": "(a -> b -> acc -> acc) -> acc -> BiDict.Assoc.BiDict a b -> acc"
+            },
+            {
+                "name": "foldr",
+                "comment": " Fold over the key-value pairs in a dictionary from highest key to lowest key.\n\n\n    getAges users =\n        Dict.foldr addAge [] users\n\n    addAge _ user ages =\n        user.age :: ages\n\n    -- getAges users == [28,19,33]\n\n",
+                "type": "(a -> b -> acc -> acc) -> acc -> BiDict.Assoc.BiDict a b -> acc"
+            },
+            {
+                "name": "fromDict",
+                "comment": " Convert Dict into a BiDict. (Compute the reverse mapping.)\n",
+                "type": "AssocList.Dict a b -> BiDict.Assoc.BiDict a b"
+            },
+            {
+                "name": "fromList",
+                "comment": " Convert an association list into a dictionary.\n",
+                "type": "List.List ( a, b ) -> BiDict.Assoc.BiDict a b"
+            },
+            {
+                "name": "get",
+                "comment": " Get the value associated with a key. If the key is not found, return\n`Nothing`. This is useful when you are not sure if a key will be in the\ndictionary.\n\n    animals = fromList [ (\"Tom\", Cat), (\"Jerry\", Mouse) ]\n\n    get \"Tom\"   animals == Just Cat\n    get \"Jerry\" animals == Just Mouse\n    get \"Spike\" animals == Nothing\n\n",
+                "type": "a -> BiDict.Assoc.BiDict a b -> Maybe.Maybe b"
+            },
+            {
+                "name": "getReverse",
+                "comment": " Get the keys associated with a value. If the value is not found,\nreturn an empty set.\n",
+                "type": "b -> BiDict.Assoc.BiDict a b -> AssocSet.Set a"
+            },
+            {
+                "name": "insert",
+                "comment": " Insert a key-value pair into a dictionary. Replaces value when there is\na collision.\n",
+                "type": "a -> b -> BiDict.Assoc.BiDict a b -> BiDict.Assoc.BiDict a b"
+            },
+            {
+                "name": "intersect",
+                "comment": " Keep a key-value pair when its key appears in the second dictionary.\nPreference is given to values in the first dictionary.\n",
+                "type": "BiDict.Assoc.BiDict a b -> BiDict.Assoc.BiDict a b -> BiDict.Assoc.BiDict a b"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Determine if a dictionary is empty.\n\n    isEmpty empty == True\n\n",
+                "type": "BiDict.Assoc.BiDict a b -> Basics.Bool"
+            },
+            {
+                "name": "keys",
+                "comment": " Get all of the keys in a dictionary, sorted from lowest to highest.\n\n    keys (fromList [ ( 0, \"Alice\" ), ( 1, \"Bob\" ) ]) == [ 0, 1 ]\n\n",
+                "type": "BiDict.Assoc.BiDict a b -> List.List a"
+            },
+            {
+                "name": "map",
+                "comment": " Apply a function to all values in a dictionary.\n",
+                "type": "(a -> b1 -> b2) -> BiDict.Assoc.BiDict a b1 -> BiDict.Assoc.BiDict a b2"
+            },
+            {
+                "name": "member",
+                "comment": " Determine if a key is in a dictionary.\n",
+                "type": "a -> BiDict.Assoc.BiDict a b -> Basics.Bool"
+            },
+            {
+                "name": "merge",
+                "comment": " The most general way of combining two dictionaries. You provide three\naccumulators for when a given key appears:\n\n1.  Only in the left dictionary.\n2.  In both dictionaries.\n3.  Only in the right dictionary.\n\nYou then traverse all the keys from lowest to highest, building up whatever\nyou want.\n\n",
+                "type": "(a -> b1 -> acc -> acc) -> (a -> b1 -> b2 -> acc -> acc) -> (a -> b2 -> acc -> acc) -> BiDict.Assoc.BiDict a b1 -> BiDict.Assoc.BiDict a b2 -> acc -> acc"
+            },
+            {
+                "name": "partition",
+                "comment": " Partition a dictionary according to some test. The first dictionary\ncontains all key-value pairs which passed the test, and the second contains\nthe pairs that did not.\n",
+                "type": "(a -> b -> Basics.Bool) -> BiDict.Assoc.BiDict a b -> ( BiDict.Assoc.BiDict a b, BiDict.Assoc.BiDict a b )"
+            },
+            {
+                "name": "remove",
+                "comment": " Remove a key-value pair from a dictionary. If the key is not found,\nno changes are made.\n",
+                "type": "a -> BiDict.Assoc.BiDict a b -> BiDict.Assoc.BiDict a b"
+            },
+            {
+                "name": "singleton",
+                "comment": " Create a dictionary with one key-value pair.\n",
+                "type": "a -> b -> BiDict.Assoc.BiDict a b"
+            },
+            {
+                "name": "size",
+                "comment": " Determine the number of key-value pairs in the dictionary.\n",
+                "type": "BiDict.Assoc.BiDict a b -> Basics.Int"
+            },
+            {
+                "name": "toDict",
+                "comment": " Convert BiDict into a Dict. (Throw away the reverse mapping.)\n",
+                "type": "BiDict.Assoc.BiDict a b -> AssocList.Dict a b"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert a dictionary into an association list of key-value pairs, sorted by keys.\n",
+                "type": "BiDict.Assoc.BiDict a b -> List.List ( a, b )"
+            },
+            {
+                "name": "toReverseList",
+                "comment": " Convert a dictionary into a reverse association list of value-keys pairs.\n",
+                "type": "BiDict.Assoc.BiDict a b -> List.List ( b, AssocSet.Set a )"
+            },
+            {
+                "name": "union",
+                "comment": " Combine two dictionaries. If there is a collision, preference is given\nto the first dictionary.\n",
+                "type": "BiDict.Assoc.BiDict a b -> BiDict.Assoc.BiDict a b -> BiDict.Assoc.BiDict a b"
+            },
+            {
+                "name": "uniqueValues",
+                "comment": " Get a list of unique values in the dictionary.\n",
+                "type": "BiDict.Assoc.BiDict a b -> List.List b"
+            },
+            {
+                "name": "uniqueValuesCount",
+                "comment": " Get a count of unique values in the dictionary.\n",
+                "type": "BiDict.Assoc.BiDict a b -> Basics.Int"
+            },
+            {
+                "name": "update",
+                "comment": " Update the value of a dictionary for a specific key with a given function.\n",
+                "type": "a -> (Maybe.Maybe b -> Maybe.Maybe b) -> BiDict.Assoc.BiDict a b -> BiDict.Assoc.BiDict a b"
+            },
+            {
+                "name": "values",
+                "comment": " Get all of the values in a dictionary, in the order of their keys.\n\n    values (fromList [ ( 0, \"Alice\" ), ( 1, \"Bob\" ) ]) == [ \"Alice\", \"Bob\" ]\n\n",
+                "type": "BiDict.Assoc.BiDict a b -> List.List b"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "MultiBiDict",
+        "comment": " A dictionary mapping unique keys to **multiple** values, which\n**maintains a mapping from the values back to keys,** allowing for\nmodelling **many-to-many relationships.**\n\nExample usage:\n\n    manyToMany : MultiBiDict String Int\n    manyToMany =\n        MultiBiDict.empty\n            |> MultiBiDict.insert \"A\" 1\n            |> MultiBiDict.insert \"B\" 2\n            |> MultiBiDict.insert \"C\" 3\n            |> MultiBiDict.insert \"A\" 2\n\n    MultiBiDict.get \"A\" manyToMany\n    --> Set.fromList [1, 2]\n\n    MultiBiDict.getReverse 2 manyToMany\n    --> Set.fromList [\"A\", \"B\"]\n\n\n# Dictionaries\n\n@docs MultiBiDict\n\n\n# Differences from Dict\n\n@docs toDict, fromDict, getReverse, uniqueValues, uniqueValuesCount, toReverseList\n\n\n# Build\n\n@docs empty, singleton, insert, update, remove, removeAll\n\n\n# Query\n\n@docs isEmpty, member, get, size\n\n\n# Lists\n\n@docs keys, values, toList, fromList\n\n\n# Transform\n\n@docs map, foldl, foldr, filter, partition\n\n\n# Combine\n\n@docs union, intersect, diff, merge\n\n",
+        "unions": [
+            {
+                "name": "MultiBiDict",
+                "comment": " The underlying data structure. Think about it as\n\n    type alias MultiBiDict comparable1 comparable2 =\n        { forward : Dict comparable1 (Set comparable2) -- just a normal Dict!\n        , reverse : Dict comparable2 (Set comparable1) -- the reverse mappings!\n        }\n\n",
+                "args": [
+                    "comparable1",
+                    "comparable2"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "diff",
+                "comment": " Keep a key-value pair when its key does not appear in the second dictionary.\n",
+                "type": "MultiBiDict.MultiBiDict comparable1 comparable2 -> MultiBiDict.MultiBiDict comparable1 comparable2 -> MultiBiDict.MultiBiDict comparable1 comparable2"
+            },
+            {
+                "name": "empty",
+                "comment": " Create an empty dictionary.\n",
+                "type": "MultiBiDict.MultiBiDict comparable1 comparable2"
+            },
+            {
+                "name": "filter",
+                "comment": " Keep only the mappings that pass the given test.\n",
+                "type": "(comparable1 -> comparable2 -> Basics.Bool) -> MultiBiDict.MultiBiDict comparable1 comparable2 -> MultiBiDict.MultiBiDict comparable1 comparable2"
+            },
+            {
+                "name": "foldl",
+                "comment": " Fold over the key-value pairs in a dictionary from lowest key to highest key.\n\n\n    getAges users =\n        Dict.foldl addAge [] users\n\n    addAge _ user ages =\n        user.age :: ages\n\n    -- getAges users == [33,19,28]\n\n",
+                "type": "(comparable1 -> Set.Set comparable2 -> acc -> acc) -> acc -> MultiBiDict.MultiBiDict comparable1 comparable2 -> acc"
+            },
+            {
+                "name": "foldr",
+                "comment": " Fold over the key-value pairs in a dictionary from highest key to lowest key.\n\n\n    getAges users =\n        Dict.foldr addAge [] users\n\n    addAge _ user ages =\n        user.age :: ages\n\n    -- getAges users == [28,19,33]\n\n",
+                "type": "(comparable1 -> Set.Set comparable2 -> acc -> acc) -> acc -> MultiBiDict.MultiBiDict comparable1 comparable2 -> acc"
+            },
+            {
+                "name": "fromDict",
+                "comment": " Convert Dict into a MultiBiDict. (Compute the reverse mapping.)\n",
+                "type": "Dict.Dict comparable1 (Set.Set comparable2) -> MultiBiDict.MultiBiDict comparable1 comparable2"
+            },
+            {
+                "name": "fromList",
+                "comment": " Convert an association list into a dictionary.\n",
+                "type": "List.List ( comparable1, Set.Set comparable2 ) -> MultiBiDict.MultiBiDict comparable1 comparable2"
+            },
+            {
+                "name": "get",
+                "comment": " Get the value associated with a key. If the key is not found, return\n`Nothing`. This is useful when you are not sure if a key will be in the\ndictionary.\n\n    animals = fromList [ (\"Tom\", Cat), (\"Jerry\", Mouse) ]\n\n    get \"Tom\"   animals == Just Cat\n    get \"Jerry\" animals == Just Mouse\n    get \"Spike\" animals == Nothing\n\n",
+                "type": "comparable1 -> MultiBiDict.MultiBiDict comparable1 comparable2 -> Set.Set comparable2"
+            },
+            {
+                "name": "getReverse",
+                "comment": " Get the keys associated with a value. If the value is not found,\nreturn an empty set.\n",
+                "type": "comparable2 -> MultiBiDict.MultiBiDict comparable1 comparable2 -> Set.Set comparable1"
+            },
+            {
+                "name": "insert",
+                "comment": " Insert a key-value pair into a dictionary. Replaces value when there is\na collision.\n",
+                "type": "comparable1 -> comparable2 -> MultiBiDict.MultiBiDict comparable1 comparable2 -> MultiBiDict.MultiBiDict comparable1 comparable2"
+            },
+            {
+                "name": "intersect",
+                "comment": " Keep a key-value pair when its key appears in the second dictionary.\nPreference is given to values in the first dictionary.\n",
+                "type": "MultiBiDict.MultiBiDict comparable1 comparable2 -> MultiBiDict.MultiBiDict comparable1 comparable2 -> MultiBiDict.MultiBiDict comparable1 comparable2"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Determine if a dictionary is empty.\n\n    isEmpty empty == True\n\n",
+                "type": "MultiBiDict.MultiBiDict comparable1 comparable2 -> Basics.Bool"
+            },
+            {
+                "name": "keys",
+                "comment": " Get all of the keys in a dictionary, sorted from lowest to highest.\n\n    keys (fromList [ ( 0, \"Alice\" ), ( 1, \"Bob\" ) ]) == [ 0, 1 ]\n\n",
+                "type": "MultiBiDict.MultiBiDict comparable1 comparable2 -> List.List comparable1"
+            },
+            {
+                "name": "map",
+                "comment": " Apply a function to all values in a dictionary.\n",
+                "type": "(comparable1 -> comparable21 -> comparable22) -> MultiBiDict.MultiBiDict comparable1 comparable21 -> MultiBiDict.MultiBiDict comparable1 comparable22"
+            },
+            {
+                "name": "member",
+                "comment": " Determine if a key is in a dictionary.\n",
+                "type": "comparable1 -> MultiBiDict.MultiBiDict comparable1 comparable2 -> Basics.Bool"
+            },
+            {
+                "name": "merge",
+                "comment": " The most general way of combining two dictionaries. You provide three\naccumulators for when a given key appears:\n\n1.  Only in the left dictionary.\n2.  In both dictionaries.\n3.  Only in the right dictionary.\n\nYou then traverse all the keys from lowest to highest, building up whatever\nyou want.\n\n",
+                "type": "(comparable1 -> Set.Set comparable21 -> acc -> acc) -> (comparable1 -> Set.Set comparable21 -> Set.Set comparable22 -> acc -> acc) -> (comparable1 -> Set.Set comparable22 -> acc -> acc) -> MultiBiDict.MultiBiDict comparable1 comparable21 -> MultiBiDict.MultiBiDict comparable1 comparable22 -> acc -> acc"
+            },
+            {
+                "name": "partition",
+                "comment": " Partition a dictionary according to some test. The first dictionary\ncontains all key-value pairs which passed the test, and the second contains\nthe pairs that did not.\n",
+                "type": "(comparable1 -> Set.Set comparable2 -> Basics.Bool) -> MultiBiDict.MultiBiDict comparable1 comparable2 -> ( MultiBiDict.MultiBiDict comparable1 comparable2, MultiBiDict.MultiBiDict comparable1 comparable2 )"
+            },
+            {
+                "name": "remove",
+                "comment": " Remove a single key-value pair from a dictionary. If the key is not found,\nno changes are made.\n",
+                "type": "comparable1 -> comparable2 -> MultiBiDict.MultiBiDict comparable1 comparable2 -> MultiBiDict.MultiBiDict comparable1 comparable2"
+            },
+            {
+                "name": "removeAll",
+                "comment": " Remove all key-value pairs for the given key from a dictionary. If the key is\nnot found, no changes are made.\n",
+                "type": "comparable1 -> MultiBiDict.MultiBiDict comparable1 comparable2 -> MultiBiDict.MultiBiDict comparable1 comparable2"
+            },
+            {
+                "name": "singleton",
+                "comment": " Create a dictionary with one key-value pair.\n",
+                "type": "comparable1 -> comparable2 -> MultiBiDict.MultiBiDict comparable1 comparable2"
+            },
+            {
+                "name": "size",
+                "comment": " Determine the number of key-value pairs in the dictionary.\n",
+                "type": "MultiBiDict.MultiBiDict comparable1 comparable2 -> Basics.Int"
+            },
+            {
+                "name": "toDict",
+                "comment": " Convert MultiBiDict into a Dict. (Throw away the reverse mapping.)\n",
+                "type": "MultiBiDict.MultiBiDict comparable1 comparable2 -> Dict.Dict comparable1 (Set.Set comparable2)"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert a dictionary into an association list of key-value pairs, sorted by keys.\n",
+                "type": "MultiBiDict.MultiBiDict comparable1 comparable2 -> List.List ( comparable1, Set.Set comparable2 )"
+            },
+            {
+                "name": "toReverseList",
+                "comment": " Convert a dictionary into a reverse association list of value-keys pairs.\n",
+                "type": "MultiBiDict.MultiBiDict comparable1 comparable2 -> List.List ( comparable2, Set.Set comparable1 )"
+            },
+            {
+                "name": "union",
+                "comment": " Combine two dictionaries. If there is a collision, preference is given\nto the first dictionary.\n",
+                "type": "MultiBiDict.MultiBiDict comparable1 comparable2 -> MultiBiDict.MultiBiDict comparable1 comparable2 -> MultiBiDict.MultiBiDict comparable1 comparable2"
+            },
+            {
+                "name": "uniqueValues",
+                "comment": " Get a list of unique values in the dictionary.\n",
+                "type": "MultiBiDict.MultiBiDict comparable1 comparable2 -> List.List comparable2"
+            },
+            {
+                "name": "uniqueValuesCount",
+                "comment": " Get a count of unique values in the dictionary.\n",
+                "type": "MultiBiDict.MultiBiDict comparable1 comparable2 -> Basics.Int"
+            },
+            {
+                "name": "update",
+                "comment": " Update the value of a dictionary for a specific key with a given function.\n",
+                "type": "comparable1 -> (Set.Set comparable2 -> Set.Set comparable2) -> MultiBiDict.MultiBiDict comparable1 comparable2 -> MultiBiDict.MultiBiDict comparable1 comparable2"
+            },
+            {
+                "name": "values",
+                "comment": " Get all of the values in a dictionary, in the order of their keys.\n\n    values (fromList [ ( 0, \"Alice\" ), ( 1, \"Bob\" ) ]) == [ \"Alice\", \"Bob\" ]\n\n",
+                "type": "MultiBiDict.MultiBiDict comparable1 comparable2 -> List.List comparable2"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "MultiBiDict.Assoc",
+        "comment": " A dictionary mapping unique keys to **multiple** values, which\n**maintains a mapping from the values back to keys,** allowing for\nmodelling **many-to-many relationships.**\n\nExample usage:\n\n    manyToMany : MultiBiDict String Int\n    manyToMany =\n        MultiBiDict.empty\n            |> MultiBiDict.insert \"A\" 1\n            |> MultiBiDict.insert \"B\" 2\n            |> MultiBiDict.insert \"C\" 3\n            |> MultiBiDict.insert \"A\" 2\n\n    MultiBiDict.get \"A\" manyToMany\n    --> Set.fromList [1, 2]\n\n    MultiBiDict.getReverse 2 manyToMany\n    --> Set.fromList [\"A\", \"B\"]\n\nThis module in particular uses [`assoc-list`](https://package.elm-lang.org/packages/pzp1997/assoc-list/latest/) and [`assoc-set`](https://package.elm-lang.org/packages/erlandsona/assoc-set/latest/)\nunder the hood to get rid of the `comparable` constraint on keys that's usually\nassociated with Dicts and Sets.\n\n\n# Dictionaries\n\n@docs MultiBiDict\n\n\n# Differences from Dict\n\n@docs toDict, fromDict, getReverse, uniqueValues, uniqueValuesCount, toReverseList\n\n\n# Build\n\n@docs empty, singleton, insert, update, remove, removeAll\n\n\n# Query\n\n@docs isEmpty, member, get, size\n\n\n# Lists\n\n@docs keys, values, toList, fromList\n\n\n# Transform\n\n@docs map, foldl, foldr, filter, partition\n\n\n# Combine\n\n@docs union, intersect, diff, merge\n\n",
+        "unions": [
+            {
+                "name": "MultiBiDict",
+                "comment": " The underlying data structure. Think about it as\n\n    type alias MultiBiDict a b =\n        { forward : Dict a (Set b) -- just a normal Dict!\n        , reverse : Dict b (Set a) -- the reverse mappings!\n        }\n\n",
+                "args": [
+                    "a",
+                    "b"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "diff",
+                "comment": " Keep a key-value pair when its key does not appear in the second dictionary.\n",
+                "type": "MultiBiDict.Assoc.MultiBiDict a b -> MultiBiDict.Assoc.MultiBiDict a b -> MultiBiDict.Assoc.MultiBiDict a b"
+            },
+            {
+                "name": "empty",
+                "comment": " Create an empty dictionary.\n",
+                "type": "MultiBiDict.Assoc.MultiBiDict a b"
+            },
+            {
+                "name": "filter",
+                "comment": " Keep only the mappings that pass the given test.\n",
+                "type": "(a -> b -> Basics.Bool) -> MultiBiDict.Assoc.MultiBiDict a b -> MultiBiDict.Assoc.MultiBiDict a b"
+            },
+            {
+                "name": "foldl",
+                "comment": " Fold over the key-value pairs in a dictionary from lowest key to highest key.\n\n\n    getAges users =\n        Dict.foldl addAge [] users\n\n    addAge _ user ages =\n        user.age :: ages\n\n    -- getAges users == [33,19,28]\n\n",
+                "type": "(a -> AssocSet.Set b -> acc -> acc) -> acc -> MultiBiDict.Assoc.MultiBiDict a b -> acc"
+            },
+            {
+                "name": "foldr",
+                "comment": " Fold over the key-value pairs in a dictionary from highest key to lowest key.\n\n\n    getAges users =\n        Dict.foldr addAge [] users\n\n    addAge _ user ages =\n        user.age :: ages\n\n    -- getAges users == [28,19,33]\n\n",
+                "type": "(a -> AssocSet.Set b -> acc -> acc) -> acc -> MultiBiDict.Assoc.MultiBiDict a b -> acc"
+            },
+            {
+                "name": "fromDict",
+                "comment": " Convert Dict into a MultiBiDict. (Compute the reverse mapping.)\n",
+                "type": "AssocList.Dict a (AssocSet.Set b) -> MultiBiDict.Assoc.MultiBiDict a b"
+            },
+            {
+                "name": "fromList",
+                "comment": " Convert an association list into a dictionary.\n",
+                "type": "List.List ( a, AssocSet.Set b ) -> MultiBiDict.Assoc.MultiBiDict a b"
+            },
+            {
+                "name": "get",
+                "comment": " Get the value associated with a key. If the key is not found, return\n`Nothing`. This is useful when you are not sure if a key will be in the\ndictionary.\n\n    animals = fromList [ (\"Tom\", Cat), (\"Jerry\", Mouse) ]\n\n    get \"Tom\"   animals == Just Cat\n    get \"Jerry\" animals == Just Mouse\n    get \"Spike\" animals == Nothing\n\n",
+                "type": "a -> MultiBiDict.Assoc.MultiBiDict a b -> AssocSet.Set b"
+            },
+            {
+                "name": "getReverse",
+                "comment": " Get the keys associated with a value. If the value is not found,\nreturn an empty set.\n",
+                "type": "b -> MultiBiDict.Assoc.MultiBiDict a b -> AssocSet.Set a"
+            },
+            {
+                "name": "insert",
+                "comment": " Insert a key-value pair into a dictionary. Replaces value when there is\na collision.\n",
+                "type": "a -> b -> MultiBiDict.Assoc.MultiBiDict a b -> MultiBiDict.Assoc.MultiBiDict a b"
+            },
+            {
+                "name": "intersect",
+                "comment": " Keep a key-value pair when its key appears in the second dictionary.\nPreference is given to values in the first dictionary.\n",
+                "type": "MultiBiDict.Assoc.MultiBiDict a b -> MultiBiDict.Assoc.MultiBiDict a b -> MultiBiDict.Assoc.MultiBiDict a b"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Determine if a dictionary is empty.\n\n    isEmpty empty == True\n\n",
+                "type": "MultiBiDict.Assoc.MultiBiDict a b -> Basics.Bool"
+            },
+            {
+                "name": "keys",
+                "comment": " Get all of the keys in a dictionary, sorted from lowest to highest.\n\n    keys (fromList [ ( 0, \"Alice\" ), ( 1, \"Bob\" ) ]) == [ 0, 1 ]\n\n",
+                "type": "MultiBiDict.Assoc.MultiBiDict a b -> List.List a"
+            },
+            {
+                "name": "map",
+                "comment": " Apply a function to all values in a dictionary.\n",
+                "type": "(a -> b1 -> b2) -> MultiBiDict.Assoc.MultiBiDict a b1 -> MultiBiDict.Assoc.MultiBiDict a b2"
+            },
+            {
+                "name": "member",
+                "comment": " Determine if a key is in a dictionary.\n",
+                "type": "a -> MultiBiDict.Assoc.MultiBiDict a b -> Basics.Bool"
+            },
+            {
+                "name": "merge",
+                "comment": " The most general way of combining two dictionaries. You provide three\naccumulators for when a given key appears:\n\n1.  Only in the left dictionary.\n2.  In both dictionaries.\n3.  Only in the right dictionary.\n\nYou then traverse all the keys from lowest to highest, building up whatever\nyou want.\n\n",
+                "type": "(a -> AssocSet.Set b1 -> acc -> acc) -> (a -> AssocSet.Set b1 -> AssocSet.Set b2 -> acc -> acc) -> (a -> AssocSet.Set b2 -> acc -> acc) -> MultiBiDict.Assoc.MultiBiDict a b1 -> MultiBiDict.Assoc.MultiBiDict a b2 -> acc -> acc"
+            },
+            {
+                "name": "partition",
+                "comment": " Partition a dictionary according to some test. The first dictionary\ncontains all key-value pairs which passed the test, and the second contains\nthe pairs that did not.\n",
+                "type": "(a -> AssocSet.Set b -> Basics.Bool) -> MultiBiDict.Assoc.MultiBiDict a b -> ( MultiBiDict.Assoc.MultiBiDict a b, MultiBiDict.Assoc.MultiBiDict a b )"
+            },
+            {
+                "name": "remove",
+                "comment": " Remove a single key-value pair from a dictionary. If the key is not found,\nno changes are made.\n",
+                "type": "a -> b -> MultiBiDict.Assoc.MultiBiDict a b -> MultiBiDict.Assoc.MultiBiDict a b"
+            },
+            {
+                "name": "removeAll",
+                "comment": " Remove all key-value pairs for the given key from a dictionary. If the key is\nnot found, no changes are made.\n",
+                "type": "a -> MultiBiDict.Assoc.MultiBiDict a b -> MultiBiDict.Assoc.MultiBiDict a b"
+            },
+            {
+                "name": "singleton",
+                "comment": " Create a dictionary with one key-value pair.\n",
+                "type": "a -> b -> MultiBiDict.Assoc.MultiBiDict a b"
+            },
+            {
+                "name": "size",
+                "comment": " Determine the number of key-value pairs in the dictionary.\n",
+                "type": "MultiBiDict.Assoc.MultiBiDict a b -> Basics.Int"
+            },
+            {
+                "name": "toDict",
+                "comment": " Convert MultiBiDict into a Dict. (Throw away the reverse mapping.)\n",
+                "type": "MultiBiDict.Assoc.MultiBiDict a b -> AssocList.Dict a (AssocSet.Set b)"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert a dictionary into an association list of key-value pairs, sorted by keys.\n",
+                "type": "MultiBiDict.Assoc.MultiBiDict a b -> List.List ( a, AssocSet.Set b )"
+            },
+            {
+                "name": "toReverseList",
+                "comment": " Convert a dictionary into a reverse association list of value-keys pairs.\n",
+                "type": "MultiBiDict.Assoc.MultiBiDict a b -> List.List ( b, AssocSet.Set a )"
+            },
+            {
+                "name": "union",
+                "comment": " Combine two dictionaries. If there is a collision, preference is given\nto the first dictionary.\n",
+                "type": "MultiBiDict.Assoc.MultiBiDict a b -> MultiBiDict.Assoc.MultiBiDict a b -> MultiBiDict.Assoc.MultiBiDict a b"
+            },
+            {
+                "name": "uniqueValues",
+                "comment": " Get a list of unique values in the dictionary.\n",
+                "type": "MultiBiDict.Assoc.MultiBiDict a b -> List.List b"
+            },
+            {
+                "name": "uniqueValuesCount",
+                "comment": " Get a count of unique values in the dictionary.\n",
+                "type": "MultiBiDict.Assoc.MultiBiDict a b -> Basics.Int"
+            },
+            {
+                "name": "update",
+                "comment": " Update the value of a dictionary for a specific key with a given function.\n",
+                "type": "a -> (AssocSet.Set b -> AssocSet.Set b) -> MultiBiDict.Assoc.MultiBiDict a b -> MultiBiDict.Assoc.MultiBiDict a b"
+            },
+            {
+                "name": "values",
+                "comment": " Get all of the values in a dictionary, in the order of their keys.\n\n    values (fromList [ ( 0, \"Alice\" ), ( 1, \"Bob\" ) ]) == [ \"Alice\", \"Bob\" ]\n\n",
+                "type": "MultiBiDict.Assoc.MultiBiDict a b -> List.List b"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "MultiDict",
+        "comment": " A dictionary mapping unique keys to **multiple** values, allowing for\nmodelling **one-to-many relationships.**\n\nExample usage:\n\n    oneToMany : MultiDict String Int\n    oneToMany =\n        MultiDict.empty\n            |> MultiDict.insert \"A\" 1\n            |> MultiDict.insert \"B\" 2\n            |> MultiDict.insert \"C\" 3\n            |> MultiDict.insert \"A\" 2\n\n    MultiDict.get \"A\" oneToMany\n    --> Set.fromList [1, 2]\n\n\n# Dictionaries\n\n@docs MultiDict\n\n\n# Differences from Dict\n\n@docs toDict, fromDict\n\n\n# Build\n\n@docs empty, singleton, insert, update, remove, removeAll\n\n\n# Query\n\n@docs isEmpty, member, get, size\n\n\n# Lists\n\n@docs keys, values, toList, fromList, fromFlatList\n\n\n# Transform\n\n@docs map, foldl, foldr, filter, partition\n\n\n# Combine\n\n@docs union, intersect, diff, merge\n\n",
+        "unions": [
+            {
+                "name": "MultiDict",
+                "comment": " The underlying data structure. Think about it as\n\n     type alias MultiDict comparable1 comparable2 =\n         Dict comparable1 (Set comparable2) -- just a normal Dict!\n\n",
+                "args": [
+                    "comparable1",
+                    "comparable2"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "diff",
+                "comment": " Keep a key-value pair when its key does not appear in the second dictionary.\n",
+                "type": "MultiDict.MultiDict comparable1 comparable2 -> MultiDict.MultiDict comparable1 comparable2 -> MultiDict.MultiDict comparable1 comparable2"
+            },
+            {
+                "name": "empty",
+                "comment": " Create an empty dictionary.\n",
+                "type": "MultiDict.MultiDict comparable1 comparable2"
+            },
+            {
+                "name": "filter",
+                "comment": " Keep only the mappings that pass the given test.\n",
+                "type": "(comparable1 -> comparable2 -> Basics.Bool) -> MultiDict.MultiDict comparable1 comparable2 -> MultiDict.MultiDict comparable1 comparable2"
+            },
+            {
+                "name": "foldl",
+                "comment": " Fold over the key-value pairs in a dictionary from lowest key to highest key.\n\n\n    getAges users =\n        Dict.foldl addAge [] users\n\n    addAge _ user ages =\n        user.age :: ages\n\n    -- getAges users == [33,19,28]\n\n",
+                "type": "(comparable1 -> Set.Set comparable2 -> acc -> acc) -> acc -> MultiDict.MultiDict comparable1 comparable2 -> acc"
+            },
+            {
+                "name": "foldr",
+                "comment": " Fold over the key-value pairs in a dictionary from highest key to lowest key.\n\n\n    getAges users =\n        Dict.foldr addAge [] users\n\n    addAge _ user ages =\n        user.age :: ages\n\n    -- getAges users == [28,19,33]\n\n",
+                "type": "(comparable1 -> Set.Set comparable2 -> acc -> acc) -> acc -> MultiDict.MultiDict comparable1 comparable2 -> acc"
+            },
+            {
+                "name": "fromDict",
+                "comment": " Convert Dict into a MultiDict. (Compute the reverse mapping.)\n",
+                "type": "Dict.Dict comparable1 (Set.Set comparable2) -> MultiDict.MultiDict comparable1 comparable2"
+            },
+            {
+                "name": "fromFlatList",
+                "comment": " Convert an association list into a dictionary.\n\n    fromFlatList\n        [ ( \"foo\", 1 )\n        , ( \"bar\", 2 )\n        , ( \"foo\", 3 )\n        ]\n\nresults in the same dict as\n\n    fromList\n        [ ( \"foo\", Set.fromList [ 1, 3 ] )\n        , ( \"bar\", Set.fromList [ 2 ] )\n        ]\n\n",
+                "type": "List.List ( comparable1, comparable2 ) -> MultiDict.MultiDict comparable1 comparable2"
+            },
+            {
+                "name": "fromList",
+                "comment": " Convert an association list into a dictionary.\n",
+                "type": "List.List ( comparable1, Set.Set comparable2 ) -> MultiDict.MultiDict comparable1 comparable2"
+            },
+            {
+                "name": "get",
+                "comment": " Get the value associated with a key. If the key is not found, return\n`Nothing`. This is useful when you are not sure if a key will be in the\ndictionary.\n\n    animals = fromList [ (\"Tom\", Cat), (\"Jerry\", Mouse) ]\n\n    get \"Tom\"   animals == Just Cat\n    get \"Jerry\" animals == Just Mouse\n    get \"Spike\" animals == Nothing\n\n",
+                "type": "comparable1 -> MultiDict.MultiDict comparable1 comparable2 -> Set.Set comparable2"
+            },
+            {
+                "name": "insert",
+                "comment": " Insert a key-value pair into a dictionary. Replaces value when there is\na collision.\n",
+                "type": "comparable1 -> comparable2 -> MultiDict.MultiDict comparable1 comparable2 -> MultiDict.MultiDict comparable1 comparable2"
+            },
+            {
+                "name": "intersect",
+                "comment": " Keep a key-value pair when its key appears in the second dictionary.\nPreference is given to values in the first dictionary.\n",
+                "type": "MultiDict.MultiDict comparable1 comparable2 -> MultiDict.MultiDict comparable1 comparable2 -> MultiDict.MultiDict comparable1 comparable2"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Determine if a dictionary is empty.\n\n    isEmpty empty == True\n\n",
+                "type": "MultiDict.MultiDict comparable1 comparable2 -> Basics.Bool"
+            },
+            {
+                "name": "keys",
+                "comment": " Get all of the keys in a dictionary, sorted from lowest to highest.\n\n    keys (fromList [ ( 0, \"Alice\" ), ( 1, \"Bob\" ) ]) == [ 0, 1 ]\n\n",
+                "type": "MultiDict.MultiDict comparable1 comparable2 -> List.List comparable1"
+            },
+            {
+                "name": "map",
+                "comment": " Apply a function to all values in a dictionary.\n",
+                "type": "(comparable1 -> comparable21 -> comparable22) -> MultiDict.MultiDict comparable1 comparable21 -> MultiDict.MultiDict comparable1 comparable22"
+            },
+            {
+                "name": "member",
+                "comment": " Determine if a key is in a dictionary.\n",
+                "type": "comparable1 -> MultiDict.MultiDict comparable1 comparable2 -> Basics.Bool"
+            },
+            {
+                "name": "merge",
+                "comment": " The most general way of combining two dictionaries. You provide three\naccumulators for when a given key appears:\n\n1.  Only in the left dictionary.\n2.  In both dictionaries.\n3.  Only in the right dictionary.\n\nYou then traverse all the keys from lowest to highest, building up whatever\nyou want.\n\n",
+                "type": "(comparable1 -> Set.Set comparable21 -> acc -> acc) -> (comparable1 -> Set.Set comparable21 -> Set.Set comparable22 -> acc -> acc) -> (comparable1 -> Set.Set comparable22 -> acc -> acc) -> MultiDict.MultiDict comparable1 comparable21 -> MultiDict.MultiDict comparable1 comparable22 -> acc -> acc"
+            },
+            {
+                "name": "partition",
+                "comment": " Partition a dictionary according to some test. The first dictionary\ncontains all key-value pairs which passed the test, and the second contains\nthe pairs that did not.\n",
+                "type": "(comparable1 -> Set.Set comparable2 -> Basics.Bool) -> MultiDict.MultiDict comparable1 comparable2 -> ( MultiDict.MultiDict comparable1 comparable2, MultiDict.MultiDict comparable1 comparable2 )"
+            },
+            {
+                "name": "remove",
+                "comment": " Remove a single key-value pair from a dictionary. If the key is not found,\nno changes are made.\n",
+                "type": "comparable1 -> comparable2 -> MultiDict.MultiDict comparable1 comparable2 -> MultiDict.MultiDict comparable1 comparable2"
+            },
+            {
+                "name": "removeAll",
+                "comment": " Remove all key-value pairs for the given key from a dictionary. If the key is\nnot found, no changes are made.\n",
+                "type": "comparable1 -> MultiDict.MultiDict comparable1 comparable2 -> MultiDict.MultiDict comparable1 comparable2"
+            },
+            {
+                "name": "singleton",
+                "comment": " Create a dictionary with one key-value pair.\n",
+                "type": "comparable1 -> comparable2 -> MultiDict.MultiDict comparable1 comparable2"
+            },
+            {
+                "name": "size",
+                "comment": " Determine the number of key-value pairs in the dictionary.\n",
+                "type": "MultiDict.MultiDict comparable1 comparable2 -> Basics.Int"
+            },
+            {
+                "name": "toDict",
+                "comment": " Convert MultiDict into a Dict. (Throw away the reverse mapping.)\n",
+                "type": "MultiDict.MultiDict comparable1 comparable2 -> Dict.Dict comparable1 (Set.Set comparable2)"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert a dictionary into an association list of key-value pairs, sorted by keys.\n",
+                "type": "MultiDict.MultiDict comparable1 comparable2 -> List.List ( comparable1, Set.Set comparable2 )"
+            },
+            {
+                "name": "union",
+                "comment": " Combine two dictionaries. If there is a collision, preference is given\nto the first dictionary.\n",
+                "type": "MultiDict.MultiDict comparable1 comparable2 -> MultiDict.MultiDict comparable1 comparable2 -> MultiDict.MultiDict comparable1 comparable2"
+            },
+            {
+                "name": "update",
+                "comment": " Update the value of a dictionary for a specific key with a given function.\n",
+                "type": "comparable1 -> (Set.Set comparable2 -> Set.Set comparable2) -> MultiDict.MultiDict comparable1 comparable2 -> MultiDict.MultiDict comparable1 comparable2"
+            },
+            {
+                "name": "values",
+                "comment": " Get all of the values in a dictionary, in the order of their keys.\n\n    values (fromList [ ( 0, \"Alice\" ), ( 1, \"Bob\" ) ]) == [ \"Alice\", \"Bob\" ]\n\n",
+                "type": "MultiDict.MultiDict comparable1 comparable2 -> List.List comparable2"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "MultiDict.Assoc",
+        "comment": " A dictionary mapping unique keys to **multiple** values, allowing for\nmodelling **one-to-many relationships.**\n\nExample usage:\n\n    oneToMany : MultiDict String Int\n    oneToMany =\n        MultiDict.empty\n            |> MultiDict.insert \"A\" 1\n            |> MultiDict.insert \"B\" 2\n            |> MultiDict.insert \"C\" 3\n            |> MultiDict.insert \"A\" 2\n\n    MultiDict.get \"A\" oneToMany\n    --> Set.fromList [1, 2]\n\nThis module in particular uses [`assoc-list`](https://package.elm-lang.org/packages/pzp1997/assoc-list/latest/) and [`assoc-set`](https://package.elm-lang.org/packages/erlandsona/assoc-set/latest/)\nunder the hood to get rid of the `comparable` constraint on keys that's usually\nassociated with Dicts and Sets.\n\n\n# Dictionaries\n\n@docs MultiDict\n\n\n# Differences from Dict\n\n@docs toDict, fromDict\n\n\n# Build\n\n@docs empty, singleton, insert, update, remove, removeAll\n\n\n# Query\n\n@docs isEmpty, member, get, size\n\n\n# Lists\n\n@docs keys, values, toList, fromList, fromFlatList\n\n\n# Transform\n\n@docs map, foldl, foldr, filter, partition\n\n\n# Combine\n\n@docs union, intersect, diff, merge\n\n",
+        "unions": [
+            {
+                "name": "MultiDict",
+                "comment": " The underlying data structure. Think about it as\n\n     type alias MultiDict a b =\n         Dict a (Set b) -- just a normal Dict!\n\n",
+                "args": [
+                    "a",
+                    "b"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "diff",
+                "comment": " Keep a key-value pair when its key does not appear in the second dictionary.\n",
+                "type": "MultiDict.Assoc.MultiDict a b -> MultiDict.Assoc.MultiDict a b -> MultiDict.Assoc.MultiDict a b"
+            },
+            {
+                "name": "empty",
+                "comment": " Create an empty dictionary.\n",
+                "type": "MultiDict.Assoc.MultiDict a b"
+            },
+            {
+                "name": "filter",
+                "comment": " Keep only the mappings that pass the given test.\n",
+                "type": "(a -> b -> Basics.Bool) -> MultiDict.Assoc.MultiDict a b -> MultiDict.Assoc.MultiDict a b"
+            },
+            {
+                "name": "foldl",
+                "comment": " Fold over the key-value pairs in a dictionary from lowest key to highest key.\n\n\n    getAges users =\n        Dict.foldl addAge [] users\n\n    addAge _ user ages =\n        user.age :: ages\n\n    -- getAges users == [33,19,28]\n\n",
+                "type": "(a -> AssocSet.Set b -> acc -> acc) -> acc -> MultiDict.Assoc.MultiDict a b -> acc"
+            },
+            {
+                "name": "foldr",
+                "comment": " Fold over the key-value pairs in a dictionary from highest key to lowest key.\n\n\n    getAges users =\n        Dict.foldr addAge [] users\n\n    addAge _ user ages =\n        user.age :: ages\n\n    -- getAges users == [28,19,33]\n\n",
+                "type": "(a -> AssocSet.Set b -> acc -> acc) -> acc -> MultiDict.Assoc.MultiDict a b -> acc"
+            },
+            {
+                "name": "fromDict",
+                "comment": " Convert Dict into a MultiDict. (Compute the reverse mapping.)\n",
+                "type": "AssocList.Dict a (AssocSet.Set b) -> MultiDict.Assoc.MultiDict a b"
+            },
+            {
+                "name": "fromFlatList",
+                "comment": " Convert an association list into a dictionary.\n\n    fromFlatList\n        [ ( \"foo\", 1 )\n        , ( \"bar\", 2 )\n        , ( \"foo\", 3 )\n        ]\n\nresults in the same dict as\n\n    fromList\n        [ ( \"foo\", Set.fromList [ 1, 3 ] )\n        , ( \"bar\", Set.fromList [ 2 ] )\n        ]\n\n",
+                "type": "List.List ( a, b ) -> MultiDict.Assoc.MultiDict a b"
+            },
+            {
+                "name": "fromList",
+                "comment": " Convert an association list into a dictionary.\n",
+                "type": "List.List ( a, AssocSet.Set b ) -> MultiDict.Assoc.MultiDict a b"
+            },
+            {
+                "name": "get",
+                "comment": " Get the value associated with a key. If the key is not found, return\n`Nothing`. This is useful when you are not sure if a key will be in the\ndictionary.\n\n    animals = fromList [ (\"Tom\", Cat), (\"Jerry\", Mouse) ]\n\n    get \"Tom\"   animals == Just Cat\n    get \"Jerry\" animals == Just Mouse\n    get \"Spike\" animals == Nothing\n\n",
+                "type": "a -> MultiDict.Assoc.MultiDict a b -> AssocSet.Set b"
+            },
+            {
+                "name": "insert",
+                "comment": " Insert a key-value pair into a dictionary. Replaces value when there is\na collision.\n",
+                "type": "a -> b -> MultiDict.Assoc.MultiDict a b -> MultiDict.Assoc.MultiDict a b"
+            },
+            {
+                "name": "intersect",
+                "comment": " Keep a key-value pair when its key appears in the second dictionary.\nPreference is given to values in the first dictionary.\n",
+                "type": "MultiDict.Assoc.MultiDict a b -> MultiDict.Assoc.MultiDict a b -> MultiDict.Assoc.MultiDict a b"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Determine if a dictionary is empty.\n\n    isEmpty empty == True\n\n",
+                "type": "MultiDict.Assoc.MultiDict a b -> Basics.Bool"
+            },
+            {
+                "name": "keys",
+                "comment": " Get all of the keys in a dictionary, sorted from lowest to highest.\n\n    keys (fromList [ ( 0, \"Alice\" ), ( 1, \"Bob\" ) ]) == [ 0, 1 ]\n\n",
+                "type": "MultiDict.Assoc.MultiDict a b -> List.List a"
+            },
+            {
+                "name": "map",
+                "comment": " Apply a function to all values in a dictionary.\n",
+                "type": "(a -> b1 -> b2) -> MultiDict.Assoc.MultiDict a b1 -> MultiDict.Assoc.MultiDict a b2"
+            },
+            {
+                "name": "member",
+                "comment": " Determine if a key is in a dictionary.\n",
+                "type": "a -> MultiDict.Assoc.MultiDict a b -> Basics.Bool"
+            },
+            {
+                "name": "merge",
+                "comment": " The most general way of combining two dictionaries. You provide three\naccumulators for when a given key appears:\n\n1.  Only in the left dictionary.\n2.  In both dictionaries.\n3.  Only in the right dictionary.\n\nYou then traverse all the keys from lowest to highest, building up whatever\nyou want.\n\n",
+                "type": "(a -> AssocSet.Set b1 -> acc -> acc) -> (a -> AssocSet.Set b1 -> AssocSet.Set b2 -> acc -> acc) -> (a -> AssocSet.Set b2 -> acc -> acc) -> MultiDict.Assoc.MultiDict a b1 -> MultiDict.Assoc.MultiDict a b2 -> acc -> acc"
+            },
+            {
+                "name": "partition",
+                "comment": " Partition a dictionary according to some test. The first dictionary\ncontains all key-value pairs which passed the test, and the second contains\nthe pairs that did not.\n",
+                "type": "(a -> AssocSet.Set b -> Basics.Bool) -> MultiDict.Assoc.MultiDict a b -> ( MultiDict.Assoc.MultiDict a b, MultiDict.Assoc.MultiDict a b )"
+            },
+            {
+                "name": "remove",
+                "comment": " Remove a single key-value pair from a dictionary. If the key is not found,\nno changes are made.\n",
+                "type": "a -> b -> MultiDict.Assoc.MultiDict a b -> MultiDict.Assoc.MultiDict a b"
+            },
+            {
+                "name": "removeAll",
+                "comment": " Remove all key-value pairs for the given key from a dictionary. If the key is\nnot found, no changes are made.\n",
+                "type": "a -> MultiDict.Assoc.MultiDict a b -> MultiDict.Assoc.MultiDict a b"
+            },
+            {
+                "name": "singleton",
+                "comment": " Create a dictionary with one key-value pair.\n",
+                "type": "a -> b -> MultiDict.Assoc.MultiDict a b"
+            },
+            {
+                "name": "size",
+                "comment": " Determine the number of key-value pairs in the dictionary.\n",
+                "type": "MultiDict.Assoc.MultiDict a b -> Basics.Int"
+            },
+            {
+                "name": "toDict",
+                "comment": " Convert MultiDict into a Dict. (Throw away the reverse mapping.)\n",
+                "type": "MultiDict.Assoc.MultiDict a b -> AssocList.Dict a (AssocSet.Set b)"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert a dictionary into an association list of key-value pairs, sorted by keys.\n",
+                "type": "MultiDict.Assoc.MultiDict a b -> List.List ( a, AssocSet.Set b )"
+            },
+            {
+                "name": "union",
+                "comment": " Combine two dictionaries. If there is a collision, preference is given\nto the first dictionary.\n",
+                "type": "MultiDict.Assoc.MultiDict a b -> MultiDict.Assoc.MultiDict a b -> MultiDict.Assoc.MultiDict a b"
+            },
+            {
+                "name": "update",
+                "comment": " Update the value of a dictionary for a specific key with a given function.\n",
+                "type": "a -> (AssocSet.Set b -> AssocSet.Set b) -> MultiDict.Assoc.MultiDict a b -> MultiDict.Assoc.MultiDict a b"
+            },
+            {
+                "name": "values",
+                "comment": " Get all of the values in a dictionary, in the order of their keys.\n\n    values (fromList [ ( 0, \"Alice\" ), ( 1, \"Bob\" ) ]) == [ \"Alice\", \"Bob\" ]\n\n",
+                "type": "MultiDict.Assoc.MultiDict a b -> List.List b"
+            }
+        ],
+        "binops": []
+    }
+]

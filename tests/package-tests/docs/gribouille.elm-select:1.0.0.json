@@ -1,0 +1,96 @@
+[
+    {
+        "name": "Select",
+        "comment": " Select component (in progress).\n\n\n# Data\n\n@docs Config, Item, ItemId, Show, State, default, fromId, init, values\n\n\n# View\n\n@docs view\n\n",
+        "unions": [
+            {
+                "name": "ItemId",
+                "comment": " TODO\n",
+                "args": [],
+                "cases": [
+                    [
+                        "ItemIdI",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "ItemIdS",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Show",
+                "comment": " TODO\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Id",
+                        []
+                    ],
+                    [
+                        "Value",
+                        []
+                    ],
+                    [
+                        "Title",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " TODO\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ pipe : Select.State -> msg, showSelected : List.List Select.Show, showItem : List.List Select.Show, items : List.List Select.Item }"
+            },
+            {
+                "name": "Item",
+                "comment": " TODO\n",
+                "args": [],
+                "type": "{ id : Select.ItemId, value : String.String, title : String.String }"
+            },
+            {
+                "name": "State",
+                "comment": " TODO\n",
+                "args": [],
+                "type": "{ show : Basics.Bool, selected : List.List Select.ItemId, search : String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "default",
+                "comment": " TODO\n",
+                "type": "(Select.State -> msg) -> List.List Select.Item -> Select.Config msg"
+            },
+            {
+                "name": "fromId",
+                "comment": " TODO\n",
+                "type": "Select.ItemId -> Select.Item"
+            },
+            {
+                "name": "init",
+                "comment": " TODO\n",
+                "type": "List.List Select.ItemId -> Select.State"
+            },
+            {
+                "name": "values",
+                "comment": " TODO\n",
+                "type": "List.List Select.Item -> Select.State -> List.List String.String"
+            },
+            {
+                "name": "view",
+                "comment": " TODO\n",
+                "type": "Select.Config msg -> Select.State -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

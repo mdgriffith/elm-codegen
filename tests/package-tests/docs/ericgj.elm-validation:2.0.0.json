@@ -1,0 +1,144 @@
+[
+    {
+        "name": "Validation",
+        "comment": " A data type representing the validity and error state of data, for example\nuser-supplied input, with functions for combining results.\n\nThere are various ways of using the tools this library provides. The recommended\nway is to _store ValidationResult state in your model_, in much the same way\nas you store [RemoteData] in your model.\n\nThis means your _form_ model is separate from the _validated data_ model,\nand you typically need to map the form into the validated model (see example\nbelow).\n\n\n## A simple example\n\nHere's a simple example: a 'required' (String) input field, showing an\nerror message below the input field as the user types.\n\nFirst, define a form model with the field to be validated wrapped in a\n`ValidationResult`:\n\n    type alias Model =\n        { input : ValidationResult String }\n\nIn your view,\n\n1.  pipe input through a validation function and into your update;\n\n2.  set the value to either the validated or the last-entered input; and\n\n3.  display any error message below the input element.\n\n    view : Model -> Html Msg\n    view form =\n        div []\n            [ input\n                [ type_ \"text\"\n                , value      -- (2.)\n                    (form.input\n                        |> Validation.toString identity\n                    )\n                , onInput    -- (1.)\n                    (Validation.validate isRequired\n                        >> SetInput\n                    )\n                ]\n                []\n            , div            -- (3.)\n                [ class \"error\" ]\n                [ text\n                    (Validation.message form.input\n                        |> Maybe.withDefault \"\"\n                    )\n                ]\n            ]\n\nYour validation functions are defined as `a -> Result String a`:\n\n    isRequired : String -> Result String String\n    isRequired raw =\n        if String.length raw < 1 then\n            Err \"Required\"\n\n        else\n            Ok raw\n\nOften you will want to validate input when the input loses focus (`onBlur`),\ninstead of immediately (`onInput`). `ValidationResult` supports this with the\n`Unvalidated` state, which allows you to store input before validation (see\nbelow, and [full example here][on-blur-example]).\n\nAlso note if you do validate `onInput` as above, in most cases you should _also_\nvalidate `onBlur` if the field is required.\n\n\n## Combining validation results\n\nTypically, you want to combine validation results of several fields, such that\nif _all_ of the fields are valid, then their values are extracted and the\nunderlying model is updated, perhaps via a remote http call.\n\nThis library provides `andMap`, which allows you to do this (assuming your\nform model is `Form`, and your underlying validated model is `Model`):\n\n    validateForm : Form -> ValidationResult Model\n    validateForm form =\n        Validation.valid Model\n            |> Validation.andMap form.field1\n            |> Validation.andMap form.field2\n\nUsing such a function, you can `Validation.map` the result into encoded form\nand package it into an http call, etc.\n\nNote that this library does not currently support accumulating validation errors\n(e.g. multiple validations). The error message type is fixed as `String`. So\nthe `andMap` example above is not intended to give you a list of errors in the\n`Invalid` case. Instead, it simply returns the first `Initial` or `Invalid` of\nthe applied `ValidationResult`s.\n\nFor an approach that does accumulate validation errors, see [elm-verify].\n\n[RemoteData]: http://package.elm-lang.org/packages/krisajenkins/remotedata/latest\n\n[elm-verify]: http://package.elm-lang.org/packages/stoeffel/elm-verify/latest\n\n[on-blur-example]: https://github.com/ericgj/elm-validation/blob/master/example/OnBlur.elm\n\n\n## Basics\n\n@docs ValidationResult\n@docs validate\n@docs valid\n@docs initial\n@docs unvalidated\n@docs map\n@docs andThen\n@docs andMap\n@docs mapMessage\n\n\n## Extracting\n\n@docs withDefault\n@docs message\n@docs isValid\n@docs isInvalid\n\n\n## Converting\n\n@docs fromMaybe\n@docs fromMaybeInitial\n@docs fromMaybeUnvalidated\n@docs toMaybe\n@docs fromResult\n@docs fromResultInitial\n@docs fromResultUnvalidated\n@docs toString\n\n",
+        "unions": [
+            {
+                "name": "ValidationResult",
+                "comment": " A wrapped value has four states:\n\n  - `Initial` - No input yet.\n  - `Unvalidated` - Input received but not yet validated, and here it is.\n  - `Valid` - Input is valid, and here is the valid (parsed) data.\n  - `Invalid` - Input is invalid, and here is the error message and your last input.\n\n",
+                "args": [
+                    "value"
+                ],
+                "cases": [
+                    [
+                        "Initial",
+                        []
+                    ],
+                    [
+                        "Unvalidated",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Valid",
+                        [
+                            "value"
+                        ]
+                    ],
+                    [
+                        "Invalid",
+                        [
+                            "String.String",
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "andMap",
+                "comment": " Put the results of two ValidationResults together.\n\nUseful for merging field ValidationResults into a single 'form'\nValidationResult. See the example above.\n\n",
+                "type": "Validation.ValidationResult a -> Validation.ValidationResult (a -> b) -> Validation.ValidationResult b"
+            },
+            {
+                "name": "andThen",
+                "comment": " Chain a function returning ValidationResult onto a ValidationResult\n",
+                "type": "(a -> Validation.ValidationResult b) -> Validation.ValidationResult a -> Validation.ValidationResult b"
+            },
+            {
+                "name": "fromMaybe",
+                "comment": " Convert a `Maybe` into either `Invalid`, with given message and input, or `Valid`.\n",
+                "type": "String.String -> String.String -> Maybe.Maybe val -> Validation.ValidationResult val"
+            },
+            {
+                "name": "fromMaybeInitial",
+                "comment": " Convert a `Maybe` into either `Initial` (if `Nothing`) or `Valid` (if `Just`)\n",
+                "type": "Maybe.Maybe val -> Validation.ValidationResult val"
+            },
+            {
+                "name": "fromMaybeUnvalidated",
+                "comment": " Convert a `Maybe` into either `Unvalidated`, with given input, or `Valid`.\n",
+                "type": "String.String -> Maybe.Maybe val -> Validation.ValidationResult val"
+            },
+            {
+                "name": "fromResult",
+                "comment": " Convert a `Result` into either `Invalid`, using given function mapping the `Err`\nvalue to the error message (`String`), and the given input string; or `Valid`.\n\nNote: this function may be useful for unusual scenarios where you have a\nResult already and you need to convert it. More typically you would pass\na Result-returning function to `validate` &mdash; which calls `fromResult`\ninternally.\n\n",
+                "type": "(msg -> String.String) -> String.String -> Result.Result msg val -> Validation.ValidationResult val"
+            },
+            {
+                "name": "fromResultInitial",
+                "comment": " Convert a `Result` into either `Initial` (if `Err`) or `Valid` (if `Ok`).\nNote `Err` state is dropped.\n",
+                "type": "Result.Result msg val -> Validation.ValidationResult val"
+            },
+            {
+                "name": "fromResultUnvalidated",
+                "comment": " Convert a `Result` into either `Unvalidated` (if `Err`) or `Valid` (if `Ok`).\n",
+                "type": "(msg -> String.String) -> Result.Result msg val -> Validation.ValidationResult val"
+            },
+            {
+                "name": "initial",
+                "comment": " Initialize a ValidationResult to the empty case (no input).\n",
+                "type": "Validation.ValidationResult val"
+            },
+            {
+                "name": "isInvalid",
+                "comment": " Return True if and only if `Invalid`. Note `Initial` and `Unvalidated`\nresults are False.\n",
+                "type": "Validation.ValidationResult val -> Basics.Bool"
+            },
+            {
+                "name": "isValid",
+                "comment": " Return True if and only if `Valid`. Note `Initial` and `Unvalidated`\nresults are False.\n",
+                "type": "Validation.ValidationResult val -> Basics.Bool"
+            },
+            {
+                "name": "map",
+                "comment": " Map a function into the `Valid` value.\n",
+                "type": "(a -> b) -> Validation.ValidationResult a -> Validation.ValidationResult b"
+            },
+            {
+                "name": "mapMessage",
+                "comment": " Map over the error message value, producing a new ValidationResult\n",
+                "type": "(String.String -> String.String) -> Validation.ValidationResult val -> Validation.ValidationResult val"
+            },
+            {
+                "name": "message",
+                "comment": " Extract the error message of an `Invalid`, or Nothing\n",
+                "type": "Validation.ValidationResult val -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "toMaybe",
+                "comment": " Convert a `ValidationResult` to a `Maybe`. Note `Invalid` and `Unvalidated` state is dropped.\n",
+                "type": "Validation.ValidationResult val -> Maybe.Maybe val"
+            },
+            {
+                "name": "toString",
+                "comment": " Convert the ValidationResult to a String representation:\n\n  - if Valid, convert the value to a string with the given function;\n  - if Unvalidated, return the input (unvalidated) string;\n  - if Invalid, return the input (unvalidated) string;\n  - if Initial, return the empty string (\"\").\n\nNote: this is mainly useful as a convenience function for setting the `value`\nattribute of an `Html.input` element.\n\n",
+                "type": "(val -> String.String) -> Validation.ValidationResult val -> String.String"
+            },
+            {
+                "name": "unvalidated",
+                "comment": " Initialize a ValidationResult to unvalidated input.\n",
+                "type": "String.String -> Validation.ValidationResult val"
+            },
+            {
+                "name": "valid",
+                "comment": " Put a valid value into a ValidationResult.\n",
+                "type": "val -> Validation.ValidationResult val"
+            },
+            {
+                "name": "validate",
+                "comment": " Run a validation function on an input string, to create a ValidationResult.\n\nNote the validation function you provide is `String -> Result String a`, where\n`a` is the type of the valid value.\n\nSo a validation function for \"integer less than 10\" looks like:\n\n    lessThanTen : String -> Result String Int\n    lessThanTen input =\n        String.toInt input\n            |> Result.andThen\n                (\\i ->\n                    if i < 10 then\n                        Ok i\n\n                    else\n                        Err \"Must be less than 10\"\n                )\n\n",
+                "type": "(String.String -> Result.Result String.String val) -> String.String -> Validation.ValidationResult val"
+            },
+            {
+                "name": "withDefault",
+                "comment": " Extract the `Valid` value, or the given default\n",
+                "type": "val -> Validation.ValidationResult val -> val"
+            }
+        ],
+        "binops": []
+    }
+]

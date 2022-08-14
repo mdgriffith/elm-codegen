@@ -1,0 +1,39 @@
+[
+    {
+        "name": "S3DirectFileUpload",
+        "comment": " Module for working with Shrine.rb and S3-compatible APIs for direct file uploads\n\n# Definition\n@docs FileUpload, Metadata\n\n# Upload a file\n@docs upload\n\n# Optional public decoders if you need them\n@docs fileUploadDecoder, metadataDecoder\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "FileUpload",
+                "comment": " Represents an uploaded file. This is what will be returned by `upload` on success.\n",
+                "args": [],
+                "type": "{ id : String.String, storage : String.String, metadata : S3DirectFileUpload.Metadata }"
+            },
+            {
+                "name": "Metadata",
+                "comment": " A substructure returned as part of the `FileUpload` data.\n",
+                "args": [],
+                "type": "{ size : Basics.Int, filename : String.String, mime_type : String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "fileUploadDecoder",
+                "comment": " A decoder for building a `FileUpload` value from JSON.\n    This isn't actually used in this module but it's provided for convenience.\n",
+                "type": "Json.Decode.Decoder S3DirectFileUpload.FileUpload"
+            },
+            {
+                "name": "metadataDecoder",
+                "comment": " A decoder for building a `Metadata` value from JSON.\n    This isn't actually used in this module but it's provided for convenience.\n",
+                "type": "Json.Decode.Decoder S3DirectFileUpload.Metadata"
+            },
+            {
+                "name": "upload",
+                "comment": " Upload a file, using a signing endpoint provided by Shrine.\n\nThe signingEndpoint is \"/s3/params\" by default when Shrine is set up on a Ruby on Rails application,\nbut should be used without the preceding slash here, e.g. \"s3/params\"\n",
+                "type": "File.File -> String.String -> Task.Task Http.Error S3DirectFileUpload.FileUpload"
+            }
+        ],
+        "binops": []
+    }
+]

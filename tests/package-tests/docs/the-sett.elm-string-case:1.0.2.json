@@ -1,0 +1,46 @@
+[
+    {
+        "name": "String.Case",
+        "comment": " String functions that are useful when working with source code.\n\n@docs convertCase, toCamelCaseUpper, toCamelCaseLower, toSnakeCaseUpper\n@docs toSnakeCaseLower, toKebabCaseUpper, toKebabCaseLower\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "convertCase",
+                "comment": " Converts string between various case forms such as camel case, snake case or kebab case.\nStrings are split into words on capital letters or whitespace.\nFor example, to convert to space case with the first letter of the first word capitalized and\nthe first letters of subsequent words in lower case:\n\n    convertCase \" \" True False \"convertToSpaceCase\" == \"Convert to space case\"\n\n",
+                "type": "String.String -> Basics.Bool -> Basics.Bool -> String.String -> String.String"
+            },
+            {
+                "name": "toCamelCaseLower",
+                "comment": " Converts a string to camel case with the first letter in lowercase.\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "toCamelCaseUpper",
+                "comment": " Converts a string to camel case with the first letter in uppercase.\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "toKebabCaseLower",
+                "comment": " Converts a string to kebab case with the first letter in lowercase.\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "toKebabCaseUpper",
+                "comment": " Converts a string to kebab case with the first letter in uppercase.\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "toSnakeCaseLower",
+                "comment": " Converts a string to snake case with the first letter in lowercase.\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "toSnakeCaseUpper",
+                "comment": " Converts a string to snake case with the first letter in uppercase.\n",
+                "type": "String.String -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

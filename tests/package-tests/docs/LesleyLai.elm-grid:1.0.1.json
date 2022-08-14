@@ -1,0 +1,80 @@
+[
+    {
+        "name": "Grid",
+        "comment": " Grids are 2-dimensional arrays. The elements in a grid must have the same type.\r\n\r\n# Definition\r\n@docs Grid\r\n\r\n# Initializeation\r\n@docs initialize, repeat, fromList\r\n\r\n# Queries\r\n@docs get, width, height, rows\r\n\r\n# Manipulate\r\n@docs set\r\n\r\n# Transform\r\n@docs map, indexedMap, foldl, foldr\r\n\r\n",
+        "unions": [
+            {
+                "name": "Grid",
+                "comment": "\r\n Grid represents immutable 2 dimensional arrays.\r\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "foldl",
+                "comment": "\r\n Reduces the grid from the left.\r\n",
+                "type": "(a -> b -> b) -> b -> Grid.Grid a -> b"
+            },
+            {
+                "name": "foldr",
+                "comment": "\r\n Reduces the grid from the right.\r\n",
+                "type": "(a -> b -> b) -> b -> Grid.Grid a -> b"
+            },
+            {
+                "name": "fromList",
+                "comment": "\r\n Creates a grid from a List of List. If the input list is not well\r\n formed, this function will returns Nothing.\r\n    fromList [['e','l','m'],\r\n              ['e','l','m'],\r\n              ['e','l','m']] -- A 3x3 (Maybe grid)\r\n\r\n    fromList [['e','l','m'],\r\n              ['e','l','m'],\r\n              ['e','l']] == Nothing\r\n",
+                "type": "List.List (List.List a) -> Maybe.Maybe (Grid.Grid a)"
+            },
+            {
+                "name": "get",
+                "comment": "\r\n Returns Just the element at the index or Nothing if the index is out\r\n of range.\r\n\r\n    let grid = fromList [['a','b','c'],\r\n                         ['d','e','f'],\r\n                         ['g','h','i']]\r\n    in\r\n    Maybe.andThen (get 1 2) grid == Just 'h'\r\n    Maybe.andThen (get -1 2) grid == Nothing\r\n",
+                "type": "( Basics.Int, Basics.Int ) -> Grid.Grid a -> Maybe.Maybe a"
+            },
+            {
+                "name": "height",
+                "comment": "\r\n Gets the height of the Grid\r\n",
+                "type": "Grid.Grid a -> Basics.Int"
+            },
+            {
+                "name": "indexedMap",
+                "comment": "\r\nApplies a function on every element with its index as first and second arguments.\r\n\r\n    indexedMap (\\x y e -> (x, y, e)) (repeat 2 2 1)\r\n    -- [[(0,0,1),(1,0,1)],\r\n    --  [(0,1,1),(1,1,1)]]\r\n",
+                "type": "(Basics.Int -> Basics.Int -> a -> b) -> Grid.Grid a -> Grid.Grid b"
+            },
+            {
+                "name": "initialize",
+                "comment": "\r\n Initializes a Grid. `initialize w h f` creates a grid of width `w`,\r\n height 'h', with the elements at (i j) initialized to the result\r\n of `(f i j)`.\r\n",
+                "type": "Basics.Int -> Basics.Int -> (Basics.Int -> Basics.Int -> a) -> Grid.Grid a"
+            },
+            {
+                "name": "map",
+                "comment": "\r\nApplies a function on every element in an array.\r\n\r\n    Maybe.map (map sqrt) (fromList [[1,4], [9,16]]) == fromList [[1,2], [3,4]]\r\n",
+                "type": "(a -> b) -> Grid.Grid a -> Grid.Grid b"
+            },
+            {
+                "name": "repeat",
+                "comment": "\r\n Creates an grid with a given width and height, filled with a default\r\n element.\r\n\r\n    Just (repeat 2 2 'a') == fromList[['a', 'a'], ['a', 'a']]\r\n",
+                "type": "Basics.Int -> Basics.Int -> a -> Grid.Grid a"
+            },
+            {
+                "name": "rows",
+                "comment": "\r\n Gets the an array of rows of the grid\r\n",
+                "type": "Grid.Grid a -> Array.Array (Array.Array a)"
+            },
+            {
+                "name": "set",
+                "comment": "\r\n Set the element at a particular index. Returns an updated grid.\r\n If the index is out of range, the grid is unaltered.\r\n\r\n    let grid = fromList [['a','b','c'],\r\n                         ['d','e','f'],\r\n                         ['g','h','i']]\r\n        grid2 = fromList [['a','b','c'],\r\n                          ['d','e','f'],\r\n                          ['g','a','i']]\r\n    in\r\n    Maybe.andThen (set 1 2 'a') grid == grid2\r\n",
+                "type": "( Basics.Int, Basics.Int ) -> a -> Grid.Grid a -> Grid.Grid a"
+            },
+            {
+                "name": "width",
+                "comment": "\r\n Gets the width of the Grid\r\n",
+                "type": "Grid.Grid a -> Basics.Int"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,16 @@
+[
+    {
+        "name": "EmptyPlaceholderModule",
+        "comment": " A placeholder module that contains a definition because it needs to.\n\n@docs why\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "why",
+                "comment": " Why not?\n",
+                "type": "Basics.Int"
+            }
+        ],
+        "binops": []
+    }
+]

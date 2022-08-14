@@ -1,0 +1,342 @@
+[
+    {
+        "name": "Grid",
+        "comment": " This library displays a grid of data.\nIt offers filtering, sorting, multiple selection, click event listener and\ncustomizable rendering of the lines, cells and columns.\n\nA grid is defined using a `Config`\n\nThe list of data can be very long, thanks to the use of [FabienHenon/elm-infinite-list-view](https://package.elm-lang.org/packages/FabienHenon/elm-infinite-list-view/latest/) under the hood.\n\n\n# Configure the grid\n\n@docs Config\n\n\n# Configure a column\n\n@docs ColumnConfig\n\n\n# Configure the column sorting\n\n@docs compareBoolField, compareFloatField, compareIntField, compareStringField\n\n\n# Configure the column rendering\n\n@docs viewBool, viewFloat, viewInt, viewProgressBar, viewString\n\n\n# Boilerplate\n\n@docs Model, init, update, view\n\n\n# Docs for Msg\n\n@docs Msg(..)\n\n\n#Docs for Sorting\n\n@docs Sorting(..)\n\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " The messages the grid view can emit.\n\nThe messages constructed with LineClicked (Item a)\nare emitted when an item is clicked, so you can update the model of your app.\n\nThe messages using the SelectionToggled constructor let you know a line selection status changed,\nso you can update the list of selected items if you use it.\n\nYou probably should not use the other constructors.\n\n    case msg of\n        GridMsg (LineClicked item) ->\n            let\n                ( newGridModel, cmd ) =\n                    Grid.update (LineClicked item) model.gridModel\n            in\n            ( { model\n                | gridModel = newGridModel\n                , clickedItem = Just item\n              }\n            , Cmd.map GridMsg cmd\n            )\n\n        GridMsg (SelectionToggled item status) ->\n            let\n                ( newGridModel, cmd ) =\n                    Grid.update (SelectionToggled item status) model.gridModel\n\n                selectedItems =\n                    List.filter .selected newGridModel.content\n            in\n            ( { model\n                | gridModel = newGridModel\n                , selectedItems = selectedItems\n              }\n            , Cmd.map GridMsg cmd\n            )\n\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "InfListMsg",
+                        [
+                            "InfiniteList.Model"
+                        ]
+                    ],
+                    [
+                        "HeaderClicked",
+                        [
+                            "Grid.ColumnConfig a"
+                        ]
+                    ],
+                    [
+                        "FilterModified",
+                        [
+                            "Grid.ColumnConfig a",
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "LineClicked",
+                        [
+                            "Grid.Filters.Item a"
+                        ]
+                    ],
+                    [
+                        "SelectionToggled",
+                        [
+                            "Grid.Filters.Item a",
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Sorting",
+                "comment": " The sorting options for a column, to be used in the properties of a ColumnConfig.\nBy default should use \"Unsorted\" as the value for the order field.\nIf you give any other value (Ascending or Descending), it must match the order\nof the data provided to initialize the grid model.\n\n        { properties =\n            { id = \"Id\"\n            , order = Unsorted\n            , title = \"Id\"\n            , visible = True\n            , width = 50\n            }\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Unsorted",
+                        []
+                    ],
+                    [
+                        "Ascending",
+                        []
+                    ],
+                    [
+                        "Descending",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "ColumnConfig",
+                "comment": " The configuration for a column. The grid content is described\nusing a list of ColumnConfigs.\n\n    idColumn =\n        { properties =\n            { id = \"Id\"\n            , order = Unsorted\n            , title = \"Id\"\n            , visible = True\n            , width = 50\n            }\n        , filters = IntFilter <| intFilter (\\item -> item.id)\n        , filteringValue = Nothing\n        , renderer = viewInt (\\item -> item.id)\n        , comparator = compareIntField (\\item -> item.id)\n        }\n\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ properties : Grid.ColumnProperties, comparator : Grid.Filters.Item a -> Grid.Filters.Item a -> Basics.Order, filteringValue : Maybe.Maybe String.String, filters : Grid.Filters.Filter a, renderer : Grid.ColumnProperties -> Grid.Filters.Item a -> Html.Styled.Html (Grid.Msg a) }"
+            },
+            {
+                "name": "Config",
+                "comment": " The configuration for the grid\n\n    gridConfig =\n        { canSelectRows = True\n        , columns = columnList\n        , containerHeight = 500\n        , containerWidth = 700\n        , hasFilters = True\n        , lineHeight = 20\n        , rowStyle = rowColor\n        }\n\n    rowColor : Item -> Style\n    rowColor item =\n        if item.selected then\n            backgroundColor (hex \"FFE3AA\")\n\n        else\n            backgroundColor transparent\n\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ canSelectRows : Basics.Bool, columns : List.List (Grid.ColumnConfig a), containerHeight : Basics.Int, containerWidth : Basics.Int, hasFilters : Basics.Bool, lineHeight : Basics.Int, rowStyle : Grid.Filters.Item a -> Css.Style }"
+            },
+            {
+                "name": "Model",
+                "comment": " The grid model. You'll use it but should not have to access its fields,\nand definitely should not modify them directly\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ clickedItem : Maybe.Maybe (Grid.Filters.Item a), config : Grid.Config a, content : List.List (Grid.Filters.Item a), infList : InfiniteList.Model, order : Grid.Sorting, sortedBy : Maybe.Maybe (Grid.ColumnConfig a) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "compareBoolField",
+                "comment": " Compares two boolean. Use this function in a ColumnConfig\nto define how the values in a given column should be compared.\nThe unique parameter to be provided is a lambda which\nreturns the field to be displayed in this column.\n\n    comparator =\n        compareBoolField (\\item -> item.even)\n\n",
+                "type": "(Grid.Filters.Item a -> Basics.Bool) -> Grid.Filters.Item a -> Grid.Filters.Item a -> Basics.Order"
+            },
+            {
+                "name": "compareFloatField",
+                "comment": " Compares two floating point numbers. Use this function in a ColumnConfig\nto define how the values in a given column should be compared.\nThe unique parameter to be provided is a lambda which\nreturns the field to be displayed in this column.\n\n    comparator =\n        compareFloatField (\\item -> item.value)\n\n",
+                "type": "(Grid.Filters.Item a -> Basics.Float) -> Grid.Filters.Item a -> Grid.Filters.Item a -> Basics.Order"
+            },
+            {
+                "name": "compareIntField",
+                "comment": " Compares two integers. Use this function in a ColumnConfig\nto define how the values in a given column should be compared.\nThe unique parameter to be provided is a lambda which\nreturns the field to be displayed in this column.\n\n    comparator =\n        compareIntField (\\item -> item.id)\n\n",
+                "type": "(Grid.Filters.Item a -> Basics.Int) -> Grid.Filters.Item a -> Grid.Filters.Item a -> Basics.Order"
+            },
+            {
+                "name": "compareStringField",
+                "comment": " Compares two strings. Use this function in a ColumnConfig\nto define how the values in a given column should be compared.\nThe unique parameter to be provided is a lambda which\nreturns the field to be displayed in this column.\n\n    comparator =\n        compareStringField (\\item -> item.name)\n\n",
+                "type": "(Grid.Filters.Item a -> String.String) -> Grid.Filters.Item a -> Grid.Filters.Item a -> Basics.Order"
+            },
+            {
+                "name": "init",
+                "comment": " Initializes the grid model, according to the given grid configuration\nand content.\n\n      init : () -> ( Model, Cmd Msg )\n      init _ =\n         ( { gridModel = Grid.init gridConfig items\n           }\n         , Cmd.none\n         )\n\n",
+                "type": "Grid.Config a -> List.List (Grid.Filters.Item a) -> Grid.Model a"
+            },
+            {
+                "name": "update",
+                "comment": " Updates the grid model\n",
+                "type": "Grid.Msg a -> Grid.Model a -> ( Grid.Model a, Platform.Cmd.Cmd (Grid.Msg a) )"
+            },
+            {
+                "name": "view",
+                "comment": " Renders the grid\n",
+                "type": "Grid.Model a -> Html.Html (Grid.Msg a)"
+            },
+            {
+                "name": "viewBool",
+                "comment": " Renders a cell containing a boolean value. Use this function in a ColumnConfig\nto define how the values in a given column should be rendered.\nThe unique parameter to be provided is a lambda which\nreturns the field to be displayed in this column.\n\n    renderer =\n        viewBool (\\item -> item.even)\n\n",
+                "type": "(Grid.Filters.Item a -> Basics.Bool) -> Grid.ColumnProperties -> Grid.Filters.Item a -> Html.Styled.Html (Grid.Msg a)"
+            },
+            {
+                "name": "viewFloat",
+                "comment": " Renders a cell containing a floating number. Use this function in a ColumnConfig\nto define how the values in a given column should be rendered.\nThe unique parameter to be provided is a lambda which\nreturns the field to be displayed in this column.\n\n    renderer =\n        viewFloat (\\item -> item.value)\n\n",
+                "type": "(Grid.Filters.Item a -> Basics.Float) -> Grid.ColumnProperties -> Grid.Filters.Item a -> Html.Styled.Html (Grid.Msg a)"
+            },
+            {
+                "name": "viewInt",
+                "comment": " Renders a cell containing an int value. Use this function in a ColumnConfig\nto define how the values in a given column should be rendered.\nThe unique parameter to be provided is a lambda which\nreturns the field to be displayed in this column.\n\n    renderer =\n        viewInt (\\item -> item.id)\n\n",
+                "type": "(Grid.Filters.Item a -> Basics.Int) -> Grid.ColumnProperties -> Grid.Filters.Item a -> Html.Styled.Html (Grid.Msg a)"
+            },
+            {
+                "name": "viewProgressBar",
+                "comment": " Renders a progress bar in a a cell containing a integer.\nUse this function in a ColumnConfig to define how the values\nin a given column should be rendered.\nThe unique parameter to be provided is a lambda which\nreturns the field to be displayed in this column.\n\n    renderer =\n        viewProgressBar 8 (\\item -> item.value)\n\n",
+                "type": "Basics.Int -> (Grid.Filters.Item a -> Basics.Float) -> Grid.ColumnProperties -> Grid.Filters.Item a -> Html.Styled.Html (Grid.Msg a)"
+            },
+            {
+                "name": "viewString",
+                "comment": " Renders a cell containing a string. Use this function in a ColumnConfig\nto define how the values in a given column should be rendered.\nThe unique parameter to be provided is a lambda which\nreturns the field to be displayed in this column.\n\n    renderer =\n        viewString (\\item -> item.name)\n\n",
+                "type": "(Grid.Filters.Item a -> String.String) -> Grid.ColumnProperties -> Grid.Filters.Item a -> Html.Styled.Html (Grid.Msg a)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Grid.Colors",
+        "comment": " Helper functions for color\n\n# Documentation\n\n@docs black, darkGrey, lightGreen, lightGrey, white\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "black",
+                "comment": " TODO some docs\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "darkGrey",
+                "comment": " TODO some docs\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "lightGreen",
+                "comment": " TODO some docs\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "lightGrey",
+                "comment": " TODO some docs\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "white",
+                "comment": " TODO some docs\n\n",
+                "type": "Css.Color"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Grid.Filters",
+        "comment": " Helper functions for filtering the grid content\n\n\n# Data type\n\n@docs Item\n\n\n# Helpers\n\n@docs boolFilter, floatFilter, intFilter, stringFilter\n\n\n# Others\n\n@docs Filter(..)\n@docs parseFilteringString\n\n",
+        "unions": [
+            {
+                "name": "Filter",
+                "comment": " Filter for a given column\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "StringFilter",
+                        [
+                            "Grid.Filters.TypedFilter a String.String"
+                        ]
+                    ],
+                    [
+                        "IntFilter",
+                        [
+                            "Grid.Filters.TypedFilter a Basics.Int"
+                        ]
+                    ],
+                    [
+                        "FloatFilter",
+                        [
+                            "Grid.Filters.TypedFilter a Basics.Float"
+                        ]
+                    ],
+                    [
+                        "BoolFilter",
+                        [
+                            "Grid.Filters.TypedFilter a Basics.Bool"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Item",
+                "comment": " The data to be displayed in the grid\nIt must be records with at least two fields: selected et index\n\n    items =\n        [ { index = 0\n          , name = \"item0\"\n          , selected = False\n          }\n        , { index = 1\n          , name = \"item1\"\n          , selected = False\n          }\n        ]\n\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ a | selected : Basics.Bool, index : Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "boolFilter",
+                "comment": " Filters booleans.\nThe lambda function to be provided as a parameter returns\nthe value of the field to be filtered.\n\n    filters =\n        BoolFilter <| boolFilter (\\item -> item.even)\n\n",
+                "type": "(Grid.Filters.Item a -> Basics.Bool) -> Grid.Filters.TypedFilter a Basics.Bool"
+            },
+            {
+                "name": "floatFilter",
+                "comment": " Filters floating point numbers.\nThe lambda function to be provided as a parameter returns\nthe value of the field to be filtered.\n\n    filters =\n        FloatFilter <| floatFilter (\\item -> item.value)\n\n",
+                "type": "(Grid.Filters.Item a -> Basics.Float) -> Grid.Filters.TypedFilter a Basics.Float"
+            },
+            {
+                "name": "intFilter",
+                "comment": " Filters integers.\nThe lambda function to be provided as a parameter returns\nthe value of the field to be filtered.\n\n    filters =\n        IntFilter <| intFilter (\\\\item -> item.id)\n\n",
+                "type": "(Grid.Filters.Item a -> Basics.Int) -> Grid.Filters.TypedFilter a Basics.Int"
+            },
+            {
+                "name": "parseFilteringString",
+                "comment": " TODO some docs\n\n",
+                "type": "Maybe.Maybe String.String -> Grid.Filters.Filter a -> Maybe.Maybe (Grid.Filters.Item a -> Basics.Bool)"
+            },
+            {
+                "name": "stringFilter",
+                "comment": " Filters strings.\nThe lambda function to be provided as a parameter returns\nthe value of the field to be filtered.\n\n    filters =\n        StringFilter <| stringFilter (\\item -> item.name)\n\n",
+                "type": "(Grid.Filters.Item a -> String.String) -> Grid.Filters.TypedFilter a String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Grid.Parsers",
+        "comment": " Helper functions for parsing the grid content\n\n\n# Docs for boolEqualityParser\n\n@docs boolEqualityParser\n\n\n# Docs for boolParser\n\n@docs boolParser\n\n\n# Docs for floatEqualityParser\n\n@docs floatEqualityParser\n\n\n# Docs for greaterThanBoolParser\n\n@docs greaterThanBoolParser\n\n\n# Docs for greaterThanFloatParser\n\n@docs greaterThanFloatParser\n\n\n# Docs for greaterThanIntParser\n\n@docs greaterThanIntParser\n\n\n# Docs for greaterThanStringParser\n\n@docs greaterThanStringParser\n\n\n# Docs for intEqualityParser\n\n@docs intEqualityParser\n\n\n# Docs for lessThanBoolParser\n\n@docs lessThanBoolParser\n\n\n# Docs for lessThanFloatParser\n\n@docs lessThanFloatParser\n\n\n# Docs for lessThanIntParser\n\n@docs lessThanIntParser\n\n\n# Docs for lessThanStringParser\n\n@docs lessThanStringParser\n\n\n# Docs for stringEqualityParser\n\n@docs stringEqualityParser\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "boolEqualityParser",
+                "comment": " TODO some docs\n\n",
+                "type": "Parser.Parser Basics.Bool"
+            },
+            {
+                "name": "boolParser",
+                "comment": " TODO some docs\n\n",
+                "type": "Parser.Parser Basics.Bool"
+            },
+            {
+                "name": "floatEqualityParser",
+                "comment": " TODO some docs\n\n",
+                "type": "Parser.Parser Basics.Float"
+            },
+            {
+                "name": "greaterThanBoolParser",
+                "comment": " TODO some docs\n\n",
+                "type": "Parser.Parser Basics.Bool"
+            },
+            {
+                "name": "greaterThanFloatParser",
+                "comment": " TODO some docs\n\n",
+                "type": "Parser.Parser Basics.Float"
+            },
+            {
+                "name": "greaterThanIntParser",
+                "comment": " TODO some docs\n\n",
+                "type": "Parser.Parser Basics.Int"
+            },
+            {
+                "name": "greaterThanStringParser",
+                "comment": " TODO some docs\n\n",
+                "type": "Parser.Parser String.String"
+            },
+            {
+                "name": "intEqualityParser",
+                "comment": " TODO some docs\n\n",
+                "type": "Parser.Parser Basics.Int"
+            },
+            {
+                "name": "lessThanBoolParser",
+                "comment": " TODO some docs\n\n",
+                "type": "Parser.Parser Basics.Bool"
+            },
+            {
+                "name": "lessThanFloatParser",
+                "comment": " TODO some docs\n\n",
+                "type": "Parser.Parser Basics.Float"
+            },
+            {
+                "name": "lessThanIntParser",
+                "comment": " TODO some docs\n\n",
+                "type": "Parser.Parser Basics.Int"
+            },
+            {
+                "name": "lessThanStringParser",
+                "comment": " TODO some docs\n\n",
+                "type": "Parser.Parser String.String"
+            },
+            {
+                "name": "stringEqualityParser",
+                "comment": " TODO some docs\n\n",
+                "type": "Parser.Parser String.String"
+            }
+        ],
+        "binops": []
+    }
+]

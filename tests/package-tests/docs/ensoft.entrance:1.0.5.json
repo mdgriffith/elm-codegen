@@ -1,0 +1,712 @@
+[
+    {
+        "name": "EnTrance.Channel",
+        "comment": " EnTrance clients talk to a server over a single websocket. A \"channel\" is\nlike a tunnel inside that websocket, dedicated to one part of your Elm\napplication.\n\nSimple apps need only a single channel. The value comes when your app becomes\nmore complex, and gains more modular structure. Often you end up with several\ndifferent \"sub-apps\", each of which has responsibility for some part of the\noverall user experience. In such cases, it's easiest to create one channel per\nsub-app, so that each sub-app has its own two-way communciation mechanism\nwith the features it invokes on the server, without coupling it to the other\nsub-apps.\n\nYou should never need more than one channel in a given module. If you're\nthinking about that, you probably want multiple\n[RpcData](EnTrance-Types#RpcData) values in your model instead.\n\n\n# How to use\n\nLooking at some of the sample apps, eg the [notes\napp](https://github.com/ensoft/entrance/blob/master/samples/1_notes/elm/src/State.elm)\nmay be a helpful supplement to the description here.\n\n\n## Channels and ports\n\nA channel is created via either two or three ports in an Elm module. The\ntwo-port case looks like this:\n\n    import EnTrance.Channel as Channel\n\n    port myAppSend : Channel.SendPort msg\n\n    port myAppRecv : Channel.RecvPort msg\n\nThis creates a send/receive port pair, implementing one channel, called\n\"myApp\". You can choose almost anything you like for the \"myApp\" bit.\n\nThis is a bit weird and magical, based on the names of the ports:\n\n  - the \"Send\" suffix tells EnTrance that `myAppSend` is used for sending messages\n\n  - the \"myApp\" prefix is used to add a `\"channel\": \"my_app\"` field to any\n    messages send to the server via that port\n\n  - the server reflects this `\"channel\": \"my_app\"` back in any replies\n\n  - these get routed back to the `myAppRecv` port based on the \"myApp\" prefix\n    and \"Recv\" suffix\n\nSo you can choose any channel name you like (\"myApp\" in this case), but:\n\n  - you have to apply that name consistently across all the ports making up the\n    channel (\"myAppSend\" and \"myAppRecv\" in this case)\n\n  - if you have more than one channel in your app, they must have unique names\n\n  - you can't use \"error\" or \"inject\" for the channel name, since these are\n    taken (see below)\n\nThe three-port case is where you also specify a third port:\n\n    port myAppIsUp : Channel.IsUpPort msg\n\nThis gives you up/down notifications for the channel state, ie whether there is\na server on the end of it. If you have a `Msg` constructor like this:\n\n    type Msg = ...\n             | AppIsUp Bool\n\nand instantiate an `IsUpPort`:\n\n    port myAppIsUp : Channel.IsUpPort msg\n\nthen you can just subscribe to `myAppIsUp AppIsUp` and you'll receive an\n`AppIsUp` message whenever the connection state changes.\n\n@docs SendPort\n@docs RecvPort\n@docs IsUpPort\n\n\n## Sending messages to the server\n\nYou typically send an RPC message to the server using\n[sendSimpleRpc](#sendSimpleRpc), [sendRpc](#sendRpc) or [send](#send). The key\ndistinction between these three options is:\n\n  - `sendSimpleRpc` is the easiest way to send an RPC\n\n  - `sendRpc` allows multiple simultanous independent RPCs, but it's up to you to\n    set the right [RpcData](EnTrance-Types#RpcData) to `Loading`.\n\n  - `send` is for async (fire-and-forget) outbound messages.\n\n@docs sendSimpleRpc\n@docs sendRpc\n@docs send\n\nIf you want more low-level control, you can create just a raw `Cmd` for either\nRPC or async requests using the following functions.\n\n@docs sendRpcCmd\n@docs sendRpcCmds\n@docs sendCmd\n@docs sendCmds\n\n\n## Receiving notifications from the server\n\nIn order to receive notifications from the server (such as RPC replies), use\n[sub](#sub) to subscribe to notifications you receive on this channel. The\nnotification arrives in JSON format, so you need to supply a set of candidate\nJSON decoders, that turn any expected JSON notification into a `Msg` for your\n`update` function.\n\nFor example, suppose you are using the built-in Syslog and Netconf features, so\nexpect to receive one of those two notifications on the \"myApp\" channel. Just\ncreate `Msg` constructors for those two options:\n\n    type Msg\n        = ...\n        | GotSyslog Syslog\n        | GotNetconfResult String\n        | Error String\n\nThen the 'sub' function turns the type-safe decoder for each feature\n([Syslog.decode](EnTrance-Feature-Target-Syslog#decode) and\n[Netconf.decodeRequest](EnTrance-Feature-Target-Netconf#decodeRequest)) into a\nsubscription like this:\n\n    Channel.sub myAppRecv\n        Error\n        [ Syslog.decode GotSyslog\n        , Netconf.decodeResult GotNetconfResult\n        ]\n\nSuch a subscription means that whenever you receive an incoming notification on\nthe channel, either:\n\n  - one of your decoders will succeed, and you'll receive a `GotSyslog` or\n    `GotNetconfResult` message\n\n  - you'll receive an `Error` message with a string explaining what went wrong in\n    the decoding process\n\n@docs sub\n\n\n## Error and inject pseudo-channels\n\nThere are two \"magic\" channels, that can be instantiated only once in your\napplication. These consume the channel names \"error\" and \"inject\".\n\n\n### The error pseudo-channel\n\nYou should instantiate exactly one \"error\" receive port in your application,\nand handle the (rare) errors signalled there:\n\n    port errorRecv : Channel.ErrorRecvPort\n\nThis is used to signal unexpected errors that can't be associated with a\nparticular operation, such as the server complaining it can't decode valid JSON\nout of a request it received.\n\n@docs ErrorRecvPort\n\n\n### The inject pseudo-channel\n\nFinally, you can optionally create a pair of send/receive channels with the\nmagic name `inject`, and special types:\n\n    port injectSend : Channel.InjectSendPort\n\n    port injectRecv : Channel.InjectRecvPort\n\nThese \"loop round\", so a JSON message send out on `injectSend` is received on\n`injectRecv`. This can provide a handy way for complex apps to feed messages\nfrom sub-apps back to the top level in a clean way. (You can do it lots of\nother ways if you prefer.) For an example of how to use it, see the [example\ncode](https://github.com/ensoft/entrance/blob/master/samples/4_router_simple/elm/src/Utils/Inject.elm).\n\n@docs InjectSendPort\n@docs InjectRecvPort\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "ErrorRecvPort",
+                "comment": " A port from which to be notified of global errors of type `String`. You\nshould have exactly one of these in your application, named `errorPort`.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "(String.String -> msg) -> Platform.Sub.Sub msg"
+            },
+            {
+                "name": "InjectRecvPort",
+                "comment": " A port to subcribe to, for injected JSON values. You can have one of these\nin your application if you want to, named `injectRecv`.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "(Json.Encode.Value -> msg) -> Platform.Sub.Sub msg"
+            },
+            {
+                "name": "InjectSendPort",
+                "comment": " A port to inject a JSON value out of. You can have one of these in your\napplication if you want, called `injectSend`.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "Json.Encode.Value -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "IsUpPort",
+                "comment": " A port from which to be notified of channel up/down status.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "(Basics.Bool -> msg) -> Platform.Sub.Sub msg"
+            },
+            {
+                "name": "RecvPort",
+                "comment": " A port to receive notifications over a channel from the server.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "(Json.Encode.Value -> msg) -> Platform.Sub.Sub msg"
+            },
+            {
+                "name": "SendPort",
+                "comment": " A port to send messages over a channel to the server.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "Json.Encode.Value -> Platform.Cmd.Cmd msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "send",
+                "comment": " Simple way to send an async message. If you need more control, use\n[sendCmd](#sendCmd).\n\nThis assumes your model includes a field called `sendPort` of type [SendPort\nmsg](#SendPort).\n\n",
+                "type": "{ model | sendPort : EnTrance.Channel.SendPort msg } -> EnTrance.Request.Request -> ( { model | sendPort : EnTrance.Channel.SendPort msg }, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "sendCmd",
+                "comment": " Create a command to send a `Request` over a channel with async\n(fire-and-forget) semantics.\n\n    port appSend : SendPort msg\n\n    Request.new \"some_message\"\n        |> Channel.sendCmd myAppSend\n\n",
+                "type": "EnTrance.Channel.SendPort msg -> EnTrance.Request.Request -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "sendCmds",
+                "comment": " Helper to send a list of async commands in one shot.\n",
+                "type": "EnTrance.Channel.SendPort msg -> List.List EnTrance.Request.Request -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "sendRpc",
+                "comment": " Send an RPC request. If you're just starting out,\n[sendSimpleRpc](#sendSimpleRpc) may be easier. If you need more control, use\n[sendRpcCmd](#sendRpcCmd).\n\nUpdating the relevant [RpcData](#RpcData) to state `Loading` is your\nresponsibility.\n\nThis assumes your model includes a field called `sendPort` of type [SendPort\nmsg](#SendPort).\n\n",
+                "type": "{ model | sendPort : EnTrance.Channel.SendPort msg } -> EnTrance.Request.Request -> ( { model | sendPort : EnTrance.Channel.SendPort msg }, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "sendRpcCmd",
+                "comment": " Create a command to send a `Request` over a channel with RPC semantics (the\nmainline case). In many cases, using [sendRpc](#sendRpc) is nicer than calling\nthis directly.\n\nRPC semantics mean that exactly one reply notification is expected (either\nsuccess or error), and that a unique message identifier is used to ensure that\nout-of-order replies don't get mistaken for the reply we're waiting for here.\n\n    port appSend : SendPort cmd\n\n    Request.new \"some_message\"\n        |> Channel.sendRpcCmd appSend\n\n",
+                "type": "EnTrance.Channel.SendPort msg -> EnTrance.Request.Request -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "sendRpcCmds",
+                "comment": " Handy way to send a list of requests in one shot.\n",
+                "type": "EnTrance.Channel.SendPort msg -> List.List EnTrance.Request.Request -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "sendSimpleRpc",
+                "comment": " Simplified variant of [sendRpc](#sendRpc) that assumes the relevant\n[RpcData](#RpcData) in your model is called `result`, and sets the state to\n`Loading` for you.\n\nThis assumes your model includes a field called `sendPort` of type [SendPort\nmsg](#SendPort).\n\n",
+                "type": "{ model | result : EnTrance.Types.RpcData result, sendPort : EnTrance.Channel.SendPort msg } -> EnTrance.Request.Request -> ( { model | result : EnTrance.Types.RpcData result, sendPort : EnTrance.Channel.SendPort msg }, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "sub",
+                "comment": " Subscribe to a receive port, and use the specified list of decoders to turn\nJSON notifications for that channel into `Msg`s of your choice. Takes a receive\nport, an error message constructor, and a list of individual notification\ndecoders.\n",
+                "type": "EnTrance.Channel.RecvPort msg -> (String.String -> msg) -> List.List (Json.Decode.Decoder msg) -> Platform.Sub.Sub msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "EnTrance.Feature.Gen",
+        "comment": " This module provides common functionality used for writing \"client\nlibraries\" (typesafe Elm wrappers for the JSON message formats that interact\nwith a particular server-side feature).\n\nThe functions here aren't for direct use by application code. Rather they're\nuseful if you're implementing a new feature, and are writing a typesafe wrapper\n(akin to the `EnTrance.Feature.*` built-in examples).\n\n\n## Feature lifecycle\n\nConfigured features are started unconditionally on the server. Any other\nfeatures must be requested by the client. These should be wrapped by your own\nfunction specifying the feature name and any other required parameters.\n\n@docs start\n@docs stop\n\n\n## Decoding common fields\n\nThe following functions decode common fields that aren't specific to your\nfeature. These should be wrapped by your own functions that also decode any\nfeature-specific fields.\n\n@docs decodeRpc\n@docs decodeIsUp\n@docs decodeNfn\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decodeIsUp",
+                "comment": " Decode a notification requested using\n[MaybeSubscribe](EnTrance-Types#MaybeSubscribe) for a given feature. See eg\n[CLI.decodeIsUp](EnTrance-Feature-Target-CLI#decodeIsUp) for an example usage.\n",
+                "type": "String.String -> Json.Decode.Decoder Basics.Bool"
+            },
+            {
+                "name": "decodeNfn",
+                "comment": " Decode an arbitrary notification, given an expected `nfn_type` value and a\ndecoder for the payload. See eg\n[Syslog.decode](EnTrance-Feature-Target-Syslog#decode) for an example usage.\n",
+                "type": "String.String -> Json.Decode.Decoder a -> Json.Decode.Decoder a"
+            },
+            {
+                "name": "decodeRpc",
+                "comment": " Decode an RPC response of specified type, given a decoder for a success\nvalue. See eg [CLI.decodeExec](EnTrance-Feature-Target-CLI#decodeExec) for an\nexample usage.\n",
+                "type": "String.String -> Json.Decode.Decoder a -> Json.Decode.Decoder (EnTrance.Types.RpcData a)"
+            },
+            {
+                "name": "start",
+                "comment": " Create a `start_feature` request. See eg\n[CLI.start](EnTrance-Feature-Target-CLI#start) for an example usage.\n\nThis is an async request - it should unconditionally succeed unless there is an\nobvious programming error (eg a mis-spelled feature name) that will show up in\nthe server logs.\n\n",
+                "type": "String.String -> EnTrance.Types.MaybeSubscribe -> EnTrance.Request.Request"
+            },
+            {
+                "name": "stop",
+                "comment": " Create a `stop_feature` request. See eg\n[CLI.stop](EnTrance-Feature-Target-CLI#stop) for an example usage.\n\nThis is an async request - it should unconditionally succeed unless there is an\nobvious programming error (eg a mis-spelled feature name) that will show up in\nthe server logs.\n\n",
+                "type": "String.String -> EnTrance.Request.Request"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "EnTrance.Feature.Misc",
+        "comment": " This module contains a grab-bag of type-safe wrappers around bits of\nEnTrance functionality that don't obviously fit somewhere better.\n\n\n# Raising errors\n\nIt's possible to raise a global error (as caught by the `errorSub`\nsubscription) from anywhere. This can be a convenient way to correctly handle\nrare failure cases without lots of manual plumbing. If you want to do this,\nthen declare a port once in your application like this:\n\n    port raiseError : String -> Cmd msg\n\n\n# Server-level interactions\n\n@docs forceRestart\n@docs ping\n@docs decodePong\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decodePong",
+                "comment": " Decode a `pong` notification\n",
+                "type": "msg -> Json.Decode.Decoder msg"
+            },
+            {
+                "name": "forceRestart",
+                "comment": " It's possible to request the server to restart itself, in some\ncircumstances:\n\n  - it's running in a harness where exiting with the right code\n    causes a re-spawn by a supervisor function\n\n  - it's configured to permit this (via the `allow_restart_requests`\n    configuration option - see `cfg_core.py`).\n\nObviously this affects all clients, not just the one making the request, so use\nwith caution.\n\n",
+                "type": "EnTrance.Request.Request"
+            },
+            {
+                "name": "ping",
+                "comment": " Send a request to the server, that elicits a response with notification\ntype \"pong\". This can be used with either RPC or simple async semantics.\n\nIn practice this is of limited usefulness, since the server can be alive and\nconnected. In most cases it's best to use the `channelIsUp` notifications\n(indicating basic websocket connectivity state) for major UI liveness\nindications (eg disabling all buttons) and then use\n[RpcData](EnTrance-Channel#RpcData) state to indicate if a particular feature\nis being slow.\n\n",
+                "type": "EnTrance.Request.Request"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "EnTrance.Feature.Persist",
+        "comment": " The `persist` feature provides the ability for any channel to save some\ndata (in JSON format) on the server, and read it back later. This is a basic\nservice intended for slowly-changing small data, not a database.\n\nIf multiple browser instances of the same app are open, then saving from one\nwill trigger a notification (decoded with [decodeLoad](#decodeLoad)) to all the\nothers, to keep them somewhat in step. If two different changes are saved in\nclose succession, one of them will win, and one will be lost.\n\n\n# Saving data on the server\n\n@docs save\n@docs decodeSave\n@docs saveAsync\n\n\n# Loading data from the server\n\n@docs load\n@docs decodeLoad\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decodeLoad",
+                "comment": " Decode the response to a `persistLoad` request - either right after a\n[load](#load) request, or later in the lifetime of the app, if another browser\ninstance later changes the data we've requested.\n\nTakes a decoder for the actual data payload and a message constructor.\n\n",
+                "type": "Json.Decode.Decoder data -> (data -> msg) -> Json.Decode.Decoder msg"
+            },
+            {
+                "name": "decodeSave",
+                "comment": " Decode the reply to a `save` request. The `Success` payload is just `()`.\nFailures should be very uncommon. Takes a message contstructor.\n",
+                "type": "(EnTrance.Types.RpcData () -> msg) -> Json.Decode.Decoder msg"
+            },
+            {
+                "name": "load",
+                "comment": " Construct a `persist_load` request: load the data for this channel from the\nserver, or return the default value provided if there isn't any yet.\n\nThis also subscribes this channel to future updates, so that if another browser\ninstance for this channel changes the data we just asked for, we'll get another\nnotification (decodable with [decodeLoad](#decodeLoad)]) with the updated data.\n\n",
+                "type": "Json.Decode.Value -> EnTrance.Request.Request"
+            },
+            {
+                "name": "save",
+                "comment": " Save the provided JSON data on the server, and get an RPC response when\ncomplete.\n",
+                "type": "Json.Decode.Value -> EnTrance.Request.Request"
+            },
+            {
+                "name": "saveAsync",
+                "comment": " Save the provided JSON data on the server, as an async unacknowledged\noperation. This may be suitable for some non-critical things (eg preferences)\nwhere failures don't need UI.\n",
+                "type": "Json.Decode.Value -> EnTrance.Request.Request"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "EnTrance.Feature.Target",
+        "comment": " EnTrance provides a rich set of functionality for interacting with multiple\nsimultaneous protocol peers (such as high-end routers). Understanding how to\nuse this requires the notion of a \"target\".\n\nIf you don't need to initiate simultaneous protocol sessions to multiple\npeers, you can skip this module!\n\n\n## Targets\n\nThe EnTrance abstraction for something like a router, to which protocol\nsessions can be opened, is a _target_. A target is a string identifier, chosen\nby your app, which disambiguates between multiple protocol endpoints. The name\nitself doesn't matter - using `router1` and `router2` will have identical\nsemantics to `bill` and `ted`.\n\nIf your app talks only to one device at a time, you can just omit anything to\ndo with target names. For example, if you want to execute the CLI command `show\nversion` on a single router, you can just do this, without ever mentioning\ntarget names at all:\n\n    import EnTrance.Channel as Channel\n    import EnTrance.Feature.Target as Target\n    import EnTrance.Feature.Target.CLI as CLI\n    import EnTrance.Types exposing (MaybeSubscribe(..))\n\n    -- Start the CLI exec feature\n    CLI.start SubscribeToConState\n        |> Channel.send model\n\n    -- Connect from the server to the target (the single router)\n    Target.connect params\n        |> Channel.send model\n\n    -- Back in your update function, after you get a notification saying\n    -- the connection state is `Connected`:\n    CLI.exec \"show version\"\n        |> Channel.sendSimpleRpc model\n\nIf you might talk to two or more devices, then you must assign your own\ntarget names, and specify the appropriate one for every request. For example:\n\n    -- Start the CLI exec feature for the target\n    CLI.start SubscribeToConState\n        |> Target.set \"router1\"\n        |> Channel.send model\n\n    -- Connect from the server to the target\n    Target.connect params\n        |> Target.set \"router1\"\n        |> Channel.send model\n\n    -- Back in your update function, after you get a notification saying\n    -- the connection state is `Connected`:\n    CLI.exec \"show version\"\n        |> Target.set \"router1\"\n        |> Channel.sendSimpleRpc model\n\nThe way the first option works, is that EnTrance silently assigns a default\ntarget name for you (imaginatively called `defaultTarget`) unless you override\nit, as in the second example.\n\nNote that connections are initiated on a per-target basis, not a per-feature\nbasis. So `Target.connect` initiates outbound connections for all features for\nthe given target (default or specified).\n\n@docs connect\n@docs disconnect\n\n\n## Connection state\n\nA single protocol session has a unified abstraction of a [connection\nstate](EnTrance-Feature-Target-Connection#State) - eg `Connected`,\n`Disconnecting`, or `FailedToConnect`. So whether you are talking Netconf over\nSSH or gNMI over gPRC, you can have a unified user interface to show what's\nworking and what isn't.\n\n\n## Target groups\n\nIf you have multiple protocol sessions to the same target (eg you might have\nboth [Netconf](EnTrance-Feature-Target-Netconf) and a\n[Syslog](EnTrance-Feature-Target-Syslog) connections), then creating a [target\ngroup](EnTrance-Feature-Target#Group) with the same target name as the Netconf\nand Syslog feature provides an aggregate entity with two handy properties:\n\n  - You can call `connect` and `disconnect` on the target group, and it will\n    automatically invoke the connect/disconnect operation on everything in the\n    group.\n\n  - An aggregate connection state is maintained for the group, that enables you\n    to easily present a more easily understood user interface. The aggregate state\n    is essentially the \"worst\" state of anything in the group. So if any one\n    session is in `FailedtoConnect` state, that's the state of the group. But if\n    everything is `Connected`, then that's the state of the group. So this makes it\n    easy to present a simplified state to the user.\n\nThis is so useful in practice that currently `connect` and `disconnect` are\nexposed _only_ for groups. So if you have only a single Netconf session, for\nexample, you still have to create a group with the same target name, in order\nto connect. File an issue if this actually causes problems. (This is a\nside-effect of the server-side demux logic.)\n\nFor example, if you do this set of requests:\n\n    import EnTrance.Feature.Target.CLI as CLI\n    import EnTrance.Feature.Target.Syslog as Syslog\n    import EnTrance.Feature.Target.Group as Group\n\n    Group.start\n        |> Channel.send model\n\n    Syslog.start\n        |> Channel.send model\n\n    Netconf.start\n        |> Channel.send model\n\nthen these will self-assemble into a hierarchy where the CLI and Netconf\nfeatures are children of the Group (because they all have the same target name,\nnamely `defaultTarget`):\n\n```text\n Target-group    [ defaultTarget ]\n     ├── Syslog  [ defaultTarget ]\n     └── Netconf [ defaultTarget ]\n```\n\nThat then means you can call `connect` or `disconnect` on\njust the group, and the individual CLI/Netconf `connect`/`disconnect` calls are\nhandled for you, and you can also subscribe to the group connection state.\n\n\n## Target group hierarchies\n\nYou can go further, and create arbitrary hierarchies of target groups. So if\nyou had Netconf and Syslog connections to a bunch of routers, themselves\ngrouped into \"core\" and \"edge\" groups, then EnTrance might tell you that all\nthe \"core\" routers are `Connected`, but the \"edge\" group is `Connecting` (if eg\none netconf connection to one edge router is `Connecting` but everything else\nis `Connected`).\n\nYou invoke this hierarchy functionality simply by providing a \"parent group\"\nwhen creating a new group - this slides the new group under the specified\nparent. A target group without a parent is the root of its own sub-hierarchy.\n\nFor example, if you do this set of requests:\n\n    Group.start\n        |> Target.set \"router1\"\n        |> Channel.send model\n\n    Syslog.start\n        |> Target.set \"router1\"\n        |> Channel.send model\n\n    Netconf.start\n        |> Target.set \"router1\"\n        |> Channel.send model\n\n    Group.start\n        |> Target.set \"router2\"\n        |> Channel.send model\n\n    Syslog.start\n        |> Target.set \"router2\"\n        |> Channel.send model\n\n    Netconf.start\n        |> Target.set \"router2\"\n        |> Channel.send model\n\nthen these self-assemble into two isolated hierarchies, based on target name:\n\n```text\n Target-group   [ router1 ]\n    ├── Syslog  [ router1 ]\n    └── Netconf [ router1 ]\n\n Target-group   [ router2 ]\n    ├── Syslog  [ router2 ]\n    └── Netconf [ router2 ]\n```\n\nIf you create groups like this instead:\n\n    Group.start\n        |> Target.set \"all-routers\"\n        |> Channel.send model\n\n    Group.startWithParent \"all-routers\"\n        |> Target.set \"router1\"\n        |> Channel.send model\n\n    Group.startWithParent \"all-routers\"\n        |> Target.set \"router2\"\n        |> Channel.send model\n\nthen you create an additional level of connection state summarisation:\n\n```text\n Target-group            [ all-routers ]\n     |\n     ├── Target-group    [ router1 ]\n     |       ├── Syslog  [ router1 ]\n     |       └── Netconf [ router2 ]\n     |\n     └── Target-group    [ router2 ]\n             ├── Syslog  [ router2 ]\n             └── Netconf [ router2 ]\n```\n\n\n# Requests and Notifications\n\nBy default, all [Request](EnTrance-Request#Request)s have a default `target`\nvalue, in order to keep a simple API for the vast majority of apps that are not\ntarget aware.\n\nIf your app is target aware, then you can specify the intended target for each\nrequest using `add`.\n\n@docs set\n\nSimilarly, the standard notification decoders (eg\n[Netconf.decodeRequest](EnTrance-Feature-Target-Netconf#decodeRequest)) decode\ndo not force the target into the API. If you app is target aware, you can\nupgrade any of these decoders to one that also provides the relevant target\nusing `decode`.\n\n@docs decode\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "connect",
+                "comment": " Initiate connection requests for all features for a single target. If\nyou're just using the default target, to talk to a single peer device, then\njust start one or more features, and then call this. eg for a single Netconf\nsession:\n\n    Netconf.start\n        |> Channel.send model\n\n    Target.connect params\n        |> Channel.send model\n\nIf you're handling multiple targets, then use\n[addTarget](EnTrance-Request#addTarget). For example:\n\n    Netconf.start\n        |> Target.set \"router1\"\n        |> Channel.send model\n\n    Syslog.start\n        |> Target.set \"router1\"\n        |> Channel.send model\n\n    Target.connect params\n        |> Target.set \"router1\"\n        |> Channel.send model\n\nThis is an async request - use the connection state notifications to track\nprogress.\n\n",
+                "type": "EnTrance.Feature.Target.Connection.Params -> EnTrance.Request.Request"
+            },
+            {
+                "name": "decode",
+                "comment": " Extract the target from any notification. This turns the result of any\nother decoder into a pair, where the first item is the target name.\n",
+                "type": "Json.Decode.Decoder a -> Json.Decode.Decoder ( String.String, a )"
+            },
+            {
+                "name": "disconnect",
+                "comment": " Initiate disconnect requests for all features with this target.\n\nThis is an async request - use the connection state notifications to track\nprogress.\n\n",
+                "type": "EnTrance.Request.Request"
+            },
+            {
+                "name": "set",
+                "comment": " Add a `target` parameter to a request.\n",
+                "type": "String.String -> EnTrance.Request.Request -> EnTrance.Request.Request"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "EnTrance.Feature.Target.CLI",
+        "comment": " Good ol' CLI prompt interactions. Minimal example:\n\n    import EnTrance.Channel as Channel\n    import EnTrance.Feature.Dynamic exposing (MaybeSubscribe(..))\n    import EnTrance.Feature.Target as Target\n    import EnTrance.Feature.Target.CLI as CLI\n\n    CLI.start SubscribeToConState\n        |> Channel.send model\n\n    Target.connect params\n        |> Channel.send model\n\n    --\n    -- Back in your update function, after you get a notification saying\n    -- the connection state is `Connected`:\n    --\n    CLI.exec \"show version\"\n        |> Channel.sendSimpleRpc model\n\nOnce the CLI command is executed, your update function will get a notification\nyou decode using [decode](#decode).\n\n@docs exec\n@docs decodeExec\n\n\n# Starting and stopping\n\n@docs start\n@docs stop\n@docs decodeIsUp\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decodeExec",
+                "comment": " Decode the reply notification to an `exec` request. Takes a message\nconstructor.\n",
+                "type": "(EnTrance.Types.RpcData String.String -> msg) -> Json.Decode.Decoder msg"
+            },
+            {
+                "name": "decodeIsUp",
+                "comment": " Decode an up/down notification requested by passing\n[SubscribeToConState](EnTrance-Types#MaybeSubscribe) to\n[start](#start). Takes a message constructor.\n",
+                "type": "(Basics.Bool -> msg) -> Json.Decode.Decoder msg"
+            },
+            {
+                "name": "exec",
+                "comment": " Send a CLI command, and get back the result.\n",
+                "type": "String.String -> EnTrance.Request.Request"
+            },
+            {
+                "name": "start",
+                "comment": " Start a CLI feature instance. This represents the option to connect to one\nrouter. This is an async request - use the connection state notifications to\ntrack progress.\n",
+                "type": "EnTrance.Types.MaybeSubscribe -> EnTrance.Request.Request"
+            },
+            {
+                "name": "stop",
+                "comment": " Stop a CLI feature instance. This is an async request.\n",
+                "type": "EnTrance.Request.Request"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "EnTrance.Feature.Target.Config",
+        "comment": " Validating and commiting configuration changes via the CLI.\n\nIt takes a sequence of round-trip RPCs to actually get some configuration\ncommitted.\n\n\n## Load configuration into the target buffer\n\n@docs load\n@docs decodeLoad\n\n\n## Commit or validate the target buffer config\n\n@docs commit\n@docs CommitType\n@docs decodeCommit\n\n\n## Get failures from a failed commit\n\n@docs getFailures\n@docs decodeGetFailures\n\n\n## Get the config that could not be validated\n\n@docs getUnvalidated\n@docs decodeGetUnvalidated\n\n\n# Starting and stopping\n\n@docs start\n@docs stop\n@docs decodeIsUp\n\n\n# Parsing failures\n\nThe result of a [getFailures](#getFailures) request is just a blob of text (as\nprovided by the router). You can parse this into a more structured form using\nthe following function.\n\n@docs parseFailures\n@docs Failed\n\n",
+        "unions": [
+            {
+                "name": "CommitType",
+                "comment": " Whether a [commit](#commit) should actually change the configuration, or\nmerely validate.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "OnlyCheck",
+                        []
+                    ],
+                    [
+                        "Commit",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Failed",
+                "comment": " A line of configuration that has failed, and the error string that\nprevented the configuration commit from succeeding.\n",
+                "args": [],
+                "type": "{ config : String.String, error : String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "commit",
+                "comment": " Commit the configuration that was loaded via [load](#load).\n\n    Config.commit Commit\n        |> Channel.sendRpc { model | commitResult = Loading }\n\n",
+                "type": "EnTrance.Feature.Target.Config.CommitType -> EnTrance.Request.Request"
+            },
+            {
+                "name": "decodeCommit",
+                "comment": " Decode the reply from a `commit` request. Takes a message constructor.\n",
+                "type": "(EnTrance.Types.RpcData String.String -> msg) -> Json.Decode.Decoder msg"
+            },
+            {
+                "name": "decodeGetFailures",
+                "comment": " Decode the reply from a `getFailures` request. Takes a message constructor.\n",
+                "type": "(EnTrance.Types.RpcData String.String -> msg) -> Json.Decode.Decoder msg"
+            },
+            {
+                "name": "decodeGetUnvalidated",
+                "comment": " Decode the reply from a `getUnvalidated` request. Takes a message constructor.\n",
+                "type": "(EnTrance.Types.RpcData String.String -> msg) -> Json.Decode.Decoder msg"
+            },
+            {
+                "name": "decodeIsUp",
+                "comment": " Decode an up/down notification requested by passing\n[SubscribeToConState](EnTrance-Types#MaybeSubscribe) to\n[start](#start). Takes a message constructor.\n",
+                "type": "(Basics.Bool -> msg) -> Json.Decode.Decoder msg"
+            },
+            {
+                "name": "decodeLoad",
+                "comment": " Decode the reply from a `load` request. Takes a message constructor.\n",
+                "type": "(EnTrance.Types.RpcData String.String -> msg) -> Json.Decode.Decoder msg"
+            },
+            {
+                "name": "getFailures",
+                "comment": " Retrieve any failures from a [commit](#commit) (whether actually committed\nor merely validated).\n\n    Config.getFailures\n        |> Channel.sendRpc { model | getFailuresResult = Loading }\n\n",
+                "type": "EnTrance.Request.Request"
+            },
+            {
+                "name": "getUnvalidated",
+                "comment": " Retrieve any configuration items which could not be validated.\n\n    Config.getUnvalidated\n        |> Channel.sendRpc { model | getUnvalidatedResult = Loading }\n\n",
+                "type": "EnTrance.Request.Request"
+            },
+            {
+                "name": "load",
+                "comment": " Enter some CLI-expressed configuration into the router's target buffer.\n\n    Config.load \"router bgp 10 \\n neighbor 1.2.3.4 \\n remote-as 20\"\n        |> Channel.sendRpc { model | loadResult = Loading }\n\n",
+                "type": "String.String -> EnTrance.Request.Request"
+            },
+            {
+                "name": "parseFailures",
+                "comment": " Parse the result of a [getFailures](#getFailures) request. If there is\nanything awkward about the inputs, just return the empty list.\n",
+                "type": "EnTrance.Types.RpcData String.String -> List.List EnTrance.Feature.Target.Config.Failed"
+            },
+            {
+                "name": "start",
+                "comment": " Start a config feature instance. This represents the option to configure\none router. This is an async request - use the connection state notifications\nto track progress.\n",
+                "type": "EnTrance.Types.MaybeSubscribe -> EnTrance.Request.Request"
+            },
+            {
+                "name": "stop",
+                "comment": " Stop a config feature instance. This is an async request.\n",
+                "type": "EnTrance.Request.Request"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "EnTrance.Feature.Target.Connection",
+        "comment": " Connection management.\n\n\n# Connection details\n\n@docs Params\n@docs AuthType\n\n\n# Connection state\n\n@docs State\n@docs GroupState\n\n\n# Encoders and decoders\n\n@docs decodeState\n@docs decodeGroupState\n@docs decodeParams\n@docs encodeParams\n\n",
+        "unions": [
+            {
+                "name": "AuthType",
+                "comment": " Whether the `secret` part of `Params` should be interpreted as a password,\nor a pathname for a file on the EnTrance server containing an ssh key.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Password",
+                        []
+                    ],
+                    [
+                        "SshKey",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "State",
+                "comment": " Abstracted description of the state of protocol connection. Later\nconstructors are considered \"worse\" than earlier (eg `FailedToConnect` is worse\nthan `Connected`) when multiple connection states are aggregated via [target\ngroups](EnTrance-Feature-Target).\n\nThe states involving failure include a `String` giving more details.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Disconnected",
+                        []
+                    ],
+                    [
+                        "Connected",
+                        []
+                    ],
+                    [
+                        "FailureWhileDisconnecting",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Finalizing",
+                        []
+                    ],
+                    [
+                        "Connecting",
+                        []
+                    ],
+                    [
+                        "Disconnecting",
+                        []
+                    ],
+                    [
+                        "ReconnectingAfterFailure",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "FailedToConnect",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "GroupState",
+                "comment": " An aggregate state notification received for a target, or target group. You\nreceive one of these when you used\n[SubscribeToConState](EnTrance-Types#MaybeSubscribe) when starting a\ntarget or target group, and one of the underlying connections just changed\nstate.\n\n  - `groupState`: the new overall connection state\n  - `childName`: the name of the child whose state just changed\n  - `childState`: the new state of the changed child\n  - `timestamp`: a \"HH:MM:SS\" string giving a timestamp\n\n",
+                "args": [],
+                "type": "{ groupState : EnTrance.Feature.Target.Connection.State, childName : String.String, childState : EnTrance.Feature.Target.Connection.State, timestamp : String.String }"
+            },
+            {
+                "name": "Params",
+                "comment": " Everything needed to connect to a protocol peer.\n\n  - `host`: IP address or hostname of the peer\n  - `username`: username for authentication\n  - `secret`: either a plaintext password, or the pathame of a file on the\n    EnTrance server containing an ssh key\n  - `authType`: which of the password/ssh key options should be used\n  - `sshPort`: which port to connect to on the peer for ssh operations\n  - `netconfPort`: which port to connect to on the peer for Netconf operations\n\nIf you aren't going to use eg Netconf, then it doesn't matter what value is\nprovided for `netconfPort`.\n\n",
+                "args": [],
+                "type": "{ host : String.String, username : String.String, secret : String.String, authType : EnTrance.Feature.Target.Connection.AuthType, sshPort : String.String, netconfPort : String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "decodeGroupState",
+                "comment": " JSON decoder for [GroupState](#GroupState). Takes a message constructor.\n",
+                "type": "(EnTrance.Feature.Target.Connection.GroupState -> msg) -> Json.Decode.Decoder msg"
+            },
+            {
+                "name": "decodeParams",
+                "comment": " JSON decoder for [connection params](#Params).\n",
+                "type": "Json.Decode.Decoder EnTrance.Feature.Target.Connection.Params"
+            },
+            {
+                "name": "decodeState",
+                "comment": " JSON decoder for [connection state](#State).\n",
+                "type": "Json.Decode.Decoder EnTrance.Feature.Target.Connection.State"
+            },
+            {
+                "name": "encodeParams",
+                "comment": " JSON encoder for [Params](#Params). This can be handy for, eg, persisting\nconnection settings.\n",
+                "type": "EnTrance.Feature.Target.Connection.Params -> Json.Encode.Value"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "EnTrance.Feature.Target.Group",
+        "comment": " Target groups - see [here](EnTrance-Feature-Target) for an extended explanation.\n\n@docs start\n@docs startWithParent\n@docs stop\n@docs decodeIsUp\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decodeIsUp",
+                "comment": " Decode an up/down notification requested by passing\n[SubscribeToConState](EnTrance-Types#MaybeSubscribe) to\n[start](#start). Takes a message constructor.\n",
+                "type": "(Basics.Bool -> msg) -> Json.Decode.Decoder msg"
+            },
+            {
+                "name": "start",
+                "comment": " Create a target group.\n\nThis is an async request - use the connection state notifications to track\nprogress.\n\n",
+                "type": "EnTrance.Types.MaybeSubscribe -> EnTrance.Request.Request"
+            },
+            {
+                "name": "startWithParent",
+                "comment": " Create a target group with specified parent group. This is an async\nrequest - use the connection state notifications to track progress.\n",
+                "type": "String.String -> EnTrance.Types.MaybeSubscribe -> EnTrance.Request.Request"
+            },
+            {
+                "name": "stop",
+                "comment": " Tear down a target group. This is an async request.\n",
+                "type": "EnTrance.Request.Request"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "EnTrance.Feature.Target.Netconf",
+        "comment": " Invoke Netconf operations.\n\nThis module presents two APIs, and you can pick whichever suits your app the best:\n\n  - Standalone functions for each operation ([get](#get), [commit](#commit) etc)\n\n  - A [data type](#Op) for all possible operations, and a [single\n    function](#request) to invoke the specified operation.\n\nFunctionality is identical across these two API options. Also, the decoder for\nreply notifications is [decodeRequest](#decodeRequest) either way.\n\nNotifications are of type `netconf` and have a `String` success type.\n\n\n## Standalone API\n\n@docs get\n@docs getConfig\n@docs editConfig\n@docs validate\n@docs commit\n\n\n## Data type API\n\n@docs Op\n@docs request\n@docs decodeRequest\n\n\n## Feature start/stop\n\n@docs start\n@docs stop\n@docs decodeIsUp\n\n",
+        "unions": [
+            {
+                "name": "Op",
+                "comment": " All possible Netconf operations.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Get",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "GetConfig",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "EditConfig",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Validate",
+                        []
+                    ],
+                    [
+                        "Commit",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "commit",
+                "comment": " Standalone Netconf `commit`\n",
+                "type": "EnTrance.Request.Request"
+            },
+            {
+                "name": "decodeIsUp",
+                "comment": " Decode an up/down notification requested by passing\n[SubscribeToConState](EnTrance-Types#MaybeSubscribe) to\n[start](#start). Takes a message constructor.\n",
+                "type": "(Basics.Bool -> msg) -> Json.Decode.Decoder msg"
+            },
+            {
+                "name": "decodeRequest",
+                "comment": " Decode the reply from any Netconf operation. This always has `String` type,\nbut for some operations, the success/failure bit is really all that's being\ncommunicated and the string will be empty. Takes a message constructor.\n",
+                "type": "(EnTrance.Types.RpcData String.String -> msg) -> Json.Decode.Decoder msg"
+            },
+            {
+                "name": "editConfig",
+                "comment": " Standalone Netconf `edit config`\n",
+                "type": "String.String -> EnTrance.Request.Request"
+            },
+            {
+                "name": "get",
+                "comment": " Standalone Netconf `get`\n",
+                "type": "String.String -> EnTrance.Request.Request"
+            },
+            {
+                "name": "getConfig",
+                "comment": " Standalone Netconf `get config`\n",
+                "type": "String.String -> EnTrance.Request.Request"
+            },
+            {
+                "name": "request",
+                "comment": " Encode a Netconf Request\n",
+                "type": "EnTrance.Feature.Target.Netconf.Op -> EnTrance.Request.Request"
+            },
+            {
+                "name": "start",
+                "comment": " Start a Netconf feature instance. This represents the option to connect to\none router. This is an async request - use the connection state notifications\nto track progress.\n",
+                "type": "EnTrance.Types.MaybeSubscribe -> EnTrance.Request.Request"
+            },
+            {
+                "name": "stop",
+                "comment": " Stop a Netconf feature instance. This is an async request.\n",
+                "type": "EnTrance.Request.Request"
+            },
+            {
+                "name": "validate",
+                "comment": " Standalone Netconf `validate`\n",
+                "type": "EnTrance.Request.Request"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "EnTrance.Feature.Target.Syslog",
+        "comment": " Listen for syslogs. Minimal example:\n\n    import EnTrance.Channel as Channel\n    import EnTrance.Feature.Router.Syslog as Syslog\n    import EnTrance.Types exposing (MaybeSubscribe(..))\n\n    Syslog.start IgnoreConState [] []\n        |> Channel.send model\n\n    Target.connect params\n        |> Channel.send model\n\nOnce the connection is up, you will received a notification of type \"syslog\",\nthat can be decoded using [decode](#decode) into a [Syslog](#Syslog) type.\n\n\n## Adding debug and/or filters\n\nIf you want to turn on one or more debugs, you can do that:\n\n    debugs = [\"debug sysdb access\", \"debug sysdb verification\"]\n\n    Syslog.start IgnoreConState debugs []\n        |> Channel.send model\n\nIf you want to filter syslogs, you can provide a list of matching strings (in\nfact Python regular expressions). If this is non-empty, then only syslogs\nmatching at least one filter will be sent.\n\n    -- Just tell me about commits\n    filters = [\"%MGBL-CONFIG-6-DB_COMMIT\"]\n\n    Syslog.start IgnoreConState [] filters\n        |> Channel.send model\n\nAnd you can combine both debugs and filters:\n\n    debugs = [\"debug sysdb access\", \"debug sysdb verification\"]\n    filters = [\"sysdb\"]\n\n    Syslog.start IgnoreConState debug filters\n        |> Channel.send model\n\n@docs start\n@docs stop\n@docs Syslog\n@docs decode\n@docs decodeIsUp\n\n",
+        "unions": [
+            {
+                "name": "Syslog",
+                "comment": " A received syslog: a message and a timestamp.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Syslog",
+                        [
+                            "String.String",
+                            "Basics.Float"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decode",
+                "comment": " Decode a syslog notification into a [Syslog](#Syslog). Takes a message\nconstructor.\n",
+                "type": "(EnTrance.Feature.Target.Syslog.Syslog -> msg) -> Json.Decode.Decoder msg"
+            },
+            {
+                "name": "decodeIsUp",
+                "comment": " Decode an up/down notification requested by passing\n[SubscribeToConState](EnTrance-Types#MaybeSubscribe) to\n[start](#start). Takes a message constructor.\n",
+                "type": "(Basics.Bool -> msg) -> Json.Decode.Decoder msg"
+            },
+            {
+                "name": "start",
+                "comment": " Start listening for syslogs on a single target. This is an async request -\nuse the connection state notifications to track progress.\n",
+                "type": "EnTrance.Types.MaybeSubscribe -> List.List String.String -> List.List String.String -> EnTrance.Request.Request"
+            },
+            {
+                "name": "stop",
+                "comment": " Stop listening for syslogs.\n",
+                "type": "EnTrance.Request.Request"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "EnTrance.Request",
+        "comment": " A [Request](#Request) is a client-side representation of a request, that\ncan be manipulated client-side before actually serialising into a JSON message\nand sending to the server. For example, this:\n\n    import EnTrance.Request as Request\n\n    Request.new \"order_ice_cream\"\n    |> Request.addString \"flavour\" \"chocolate\"\n    |> Request.addBool \"with_flake\" True\n\nwould end up as a JSON request to the server containing\n\n    {\n        \"msg_type\": \"order_ice_cream\",\n        \"flavour\": \"chocolate\",\n        \"with_flake\": true\n    }\n\n(Actually, it also adds a `\"target\": \"defaultTarget\"`, but you don't have to\ncare about this unless you're writing a particular type of complex app, in\nwhich case you want to use [Target.set](EnTrance-Feature-Target#set) on most\nrequests yourself.)\n\nIn the typical case, you would finish with\n[Channel.sendSimpleRpc](EnTrance-Channel#sendSimpleRpc) or\n[Channel.sendRpc](EnTrance-Channel#sendRpc), eg:\n\n    Request.new \"order_ice_cream\"\n        |> Request.addString \"flavour\" \"chocolate\"\n        |> Request.addBool \"with_flake\" True\n        |> Channel.sendSimpleRpc model\n\nSending invokes some extra magic, whereby the actual JSON going to the server\nwould be something like:\n\n    {\n        \"msg_type\": \"order_ice_cream\",\n        \"flavour\": \"chocolate\",\n        \"with_flake\": true,\n        \"channel\": \"my_app\",\n        \"id\": <some auto-generated unique identifier>\n    }\n\nso that the reply gets routed back to the sending channel, and any out-of-order\nor outdated replies get automatically dropped.\n\nIf you add multiple values for the same key, then the most recent value wins. For example:\n\n    Request.new \"order_ice_cream\"\n        |> Request.addString \"flavour\" \"chocolate\"\n        |> Request.addString \"flavour\" \"strawberry\"\n        |> Request.encode\n\nyields:\n\n    {\n        \"msg_type\": \"order_ice_cream\",\n        \"flavour\": \"strawberry\"\n    }\n\n\n# Request type\n\n@docs Request\n\n\n# Constructing a Request\n\n@docs new\n@docs addBool\n@docs addInt\n@docs addInts\n@docs addString\n@docs addStrings\n@docs addValue\n\n\n# Using a Request\n\nThe most common use of a Request is calling something like\n[Channel.sendRpc](EnTrance-Channel#sendRpc) with it. But you can also just\nencode it as JSON if you like.\n\n@docs encode\n\n",
+        "unions": [
+            {
+                "name": "Request",
+                "comment": " A request value, that can be built up client-side, before eventually being\nsent over a channel to the server (typically using\n[Channel.sendSimpleRpc](EnTrance-Channel#sendSimpleRpc) or\n[Channel.sendRpc](EnTrance-Channel#sendRpc)).\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Request",
+                        [
+                            "Dict.Dict String.String Json.Encode.Value"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "addBool",
+                "comment": " Add a 'Bool'-valued parameter to a request.\n",
+                "type": "String.String -> Basics.Bool -> EnTrance.Request.Request -> EnTrance.Request.Request"
+            },
+            {
+                "name": "addInt",
+                "comment": " Add an 'Int'-valued parameter to a request.\n",
+                "type": "String.String -> Basics.Int -> EnTrance.Request.Request -> EnTrance.Request.Request"
+            },
+            {
+                "name": "addInts",
+                "comment": " Add a 'List Int'-valued parameter to a request.\n",
+                "type": "String.String -> List.List Basics.Int -> EnTrance.Request.Request -> EnTrance.Request.Request"
+            },
+            {
+                "name": "addString",
+                "comment": " Add a 'String'-valued parameter to a request.\n",
+                "type": "String.String -> String.String -> EnTrance.Request.Request -> EnTrance.Request.Request"
+            },
+            {
+                "name": "addStrings",
+                "comment": " Add a 'List String'-valued parameter to a request.\n",
+                "type": "String.String -> List.List String.String -> EnTrance.Request.Request -> EnTrance.Request.Request"
+            },
+            {
+                "name": "addValue",
+                "comment": " Add an arbitrary 'Encode.Value' parameter to a request\n",
+                "type": "String.String -> Json.Encode.Value -> EnTrance.Request.Request -> EnTrance.Request.Request"
+            },
+            {
+                "name": "encode",
+                "comment": " Encode a 'Request' into a JSON value.\n",
+                "type": "EnTrance.Request.Request -> Json.Encode.Value"
+            },
+            {
+                "name": "new",
+                "comment": " Create a request Param value containing just a `req_type` parameter.\n\n(Actually it also creates a default `target` value, but you don't have to care.\nSee [Target](EnTrance-Feature-Target) if interested.)\n\n",
+                "type": "String.String -> EnTrance.Request.Request"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "EnTrance.Types",
+        "comment": " This module contains a few common types, that can be safely imported\nunqualified anywhere.\n\n\n## Handling replies to RPC requests\n\nThe EnTrance RPC semantics specify that an RPC request gets a single reply\nnotification: either a success reply (of whatever type is specified for that\ninteraction) or a failure message (of type String). `RpcData` is a handy\nspecialisation of\n[RemoteData](https://package.elm-lang.org/packages/krisajenkins/remotedata/latest/RemoteData#RemoteData)\nfor this case, where the error is always `String`.\n\nOne mental model is to think of how many conceptual progress bars your UI\nshould have - ie how many independent operations can go on, where the user\nmight care about how long they take, or whether they succeeded or failed. You\nprobably want an `RpcData` for each of those in your model.\n\n@docs RpcData\n\n\n## Getting up/down notifications\n\n@docs MaybeSubscribe\n\n",
+        "unions": [
+            {
+                "name": "MaybeSubscribe",
+                "comment": " So-called \"target features\" typically include a connection to some remote\nentity, that can be up or down. This type enables the client to indicate whether\nor not it is subscribing to notifications of these up/down transitions, as well\nas starting the feature itself.\n\nNote that the state subscriptions here are simplified to \"up\" or \"down\", and\nare suitable for basic things such as disabling buttons when down. A vastly\nmore nuanced notion of state is available for\n[connections](EnTrance-Feature-Target-Connection#State).\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "SubscribeToConState",
+                        []
+                    ],
+                    [
+                        "IgnoreConState",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "RpcData",
+                "comment": " Specialisation of `RemoteData` to a `String` error type.\n",
+                "args": [
+                    "reply"
+                ],
+                "type": "RemoteData.RemoteData String.String reply"
+            }
+        ],
+        "values": [],
+        "binops": []
+    }
+]

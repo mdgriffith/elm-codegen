@@ -1,0 +1,16 @@
+[
+    {
+        "name": "Stemmer",
+        "comment": " Stemmer is an english language stemmer, this is an Elm\nimplementation of the PorterStemmer taken from <http://tartarus.org/~martin>.\n\nCopyright (c) 2016 Robin Luiten\n\nInspired by Erlang implementation on <http://tartarus.org/~martin/PorterStemmer/index.html>.\n\n\n## Usage\n\n@docs stem\n\n\n## Implementation Details\n\nStep numbers follow general implementation in porter stemmer implementations.\n\nIdentifier names were adopted from elrang implementation.\n\n  - **drow** stands for reverse of word\n  - **mets** stands for reverse of stem\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "stem",
+                "comment": " Get the porter stem of a word.\n\nSome examples and what running them produces\n\n      Stemmer.stem \"fullness\" -- produces \"full\"\n      Stemmer.stem \"consign\" -- produces \"consign\"\n      Stemmer.stem \"consigned\" -- produces \"consign\"\n      Stemmer.stem \"consigning\" -- produces \"consign\"\n      Stemmer.stem \"consignment\" -- produces \"consign\"\n      Stemmer.stem \"knot\" -- produces \"knot\"\n      Stemmer.stem \"knots\" -- produces \"knot\"\n\n",
+                "type": "String.String -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,21 @@
+[
+    {
+        "name": "Punycode",
+        "comment": " [Punycode](https://en.wikipedia.org/wiki/Punycode) is a Unicode encoding used for [internationalized domain names](https://en.wikipedia.org/wiki/Internationalized_domain_name).\n\n\n# Decoding\n\n@docs decode, decodeIdn\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decode",
+                "comment": " Decodes a Punycode-encoded string into Unicode.\n\n    import Punycode\n\n    Punycode.decode \"bcher-kva\" == \"bücher\"\n\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "decodeIdn",
+                "comment": " Decodes an internationalized domain name into Unicode.\n\n    import Punycode\n\n    Punycode.decodeIdn \"www.xn--bcher-kva.example\" == \"www.bücher.example\"\n\n",
+                "type": "String.String -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

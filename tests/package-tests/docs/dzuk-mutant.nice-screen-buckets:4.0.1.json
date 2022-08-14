@@ -1,0 +1,191 @@
+[
+    {
+        "name": "Screen",
+        "comment": " A module that contains functions for comparing Screen Metrics against\nScreen Buckets so you can change your app's functionality or presentation\nbased on how big the user's screen is.\n\n# Checking Metrics against Buckets\n\nDepending on the situation you need, you can either check via:\n\n- Checking the Metrics values in the model.\n- CSS media queries in elm-css.\n\nAll methods use the same Bucket data type, but doing anything with\ndata in Elm is slower because it relies on JavaScript. So when doing\npresentation-related things with elm-css, always use the media queries\nwherever possible.\n\n## Checking with Elm data\n@docs isIn\n\n## Checking with CSS media queries\n@docs withMedia\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "isIn",
+                "comment": " Checks to see if the screen size (represented by `Metrics`) matches\nany buckets that you provide.\n\nUseful when you want to swap out functionality, layouts or\ninterface elements based on screen size.\n\n    Html.div\n        []\n        -- show mobile menu if screen width is small enough\n        [   ( if Screen.isIn [ handset, portable1 ] model.screen then\n                Html.div [] [ Html.text \"menu\" ]\n            else\n                []\n            )   \n        ]\n",
+                "type": "List.List Screen.Bucket.Bucket -> Screen.Metrics.Metrics -> Basics.Bool"
+            },
+            {
+                "name": "withMedia",
+                "comment": " Wraps styles within a CSS media query that matches the given Screen Buckets.\n\nIt performs the equivalent of `Css.Media.withMedia`.\n\n    css [ Screen.withMedia [ handset, portable1, portable2 ]\n            [ height (px 32)\n            , overflow hidden\n            ]\n\n        \n        , Screen.withMedia [ portable3, wide ]\n            [ width (px 192)\n            , padding4 (px 64) (px 32) (px 32) (px 48)\n            ]\n        ]\n\nSee `Screen.Bucket.toMediaQuery` to see how the media queries for each bucket get made.\n\nThis doesn't use your model's `Metrics` because CSS media\nqueries don't get checked against the screen size within Elm,\nbut by the browsers directly.\n",
+                "type": "List.List Screen.Bucket.Bucket -> List.List Css.Style -> Css.Style"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Screen.Bucket",
+        "comment": " A module for creating sets of screen boundaries (here, called 'buckets').\n\nThese buckets can then be used to compare against the user's screen size\ndirectly or converted to CSS Media queries.\n\nThis module also contains optional premade Buckets.\n\n# Types\n@docs Bucket, Boundary, Axis\n\n# Creating buckets\n@docs create, encompass, stepBelow\n\n# Conversions\n@docs toMediaQuery\n\n---\n\n# Premade Buckets\n\n## Width Buckets\nBecause width tends to be more important than height in creating\nresponsive interfaces, width buckets have more detail, with two\nparallel levels of detail for convenience - broad buckets, which\nare not numbered, and fine buckets, which are numbered.\n\n### Handset\n@docs handset, handset1, handset2, handset3\n\n### Portable\n@docs portable, portable1, portable2, portable3\n\n### Wide\n@docs wide, wide1, wide2\n\n## Height Buckets\n@docs limited, medium, tall\n\n\n",
+        "unions": [
+            {
+                "name": "Axis",
+                "comment": " Defines what axis a bucket is for.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Width",
+                        []
+                    ],
+                    [
+                        "Height",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Boundary",
+                "comment": " The value that the minimum or a maximum of a Bucket can be at.\n\n- `NoLimit`: Represents either zero (if min) or infinity (if max).\n- `Defined`: A definite value (in px, represented as Ints).\n\nWhen creating a minimum boundary of zero, use `NoLimit` instead of `Defined 0`.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NoLimit",
+                        []
+                    ],
+                    [
+                        "Defined",
+                        [
+                            "Basics.Int"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Bucket",
+                "comment": " A bucket. Can only be used for one specific dimension as defined by it's `axis` value.\n",
+                "args": [],
+                "type": "{ min : Screen.Bucket.Boundary, max : Screen.Bucket.Boundary, axis : Screen.Bucket.Axis }"
+            }
+        ],
+        "values": [
+            {
+                "name": "create",
+                "comment": " A function that creates a Bucket.\n\nConsider using `stepBelow` in conjunction with this function to create\nbuckets that neatly slot next to each other.\n\n    mobile : Bucket\n    mobile = Bucket.create Width NoLimit (stepBelow tablet) \n\n    tablet : Bucket\n    tablet = Bucket.create Width (Defined 412) (stepBelow desktop) \n\n    desktop : Bucket\n    desktop = Bucket.create Width (Defined 1052) NoLimit\n\n",
+                "type": "Screen.Bucket.Axis -> Screen.Bucket.Boundary -> Screen.Bucket.Boundary -> Screen.Bucket.Bucket"
+            },
+            {
+                "name": "encompass",
+                "comment": " Creates a bucket that encompasses the minimum of the\nfirst bucket and the maximum of the second bucket.\n\nUseful when you want to create buckets that are larger groupings of smaller buckets.\n\n    wide1 : Bucket\n    wide1 = Bucket.create Width (Defined 1056) (stepBelow wide2)\n\n    wide2 : Bucket\n    wide2 = Bucket.create Width (Defined 1440) NoLimit\n\n    wide : Bucket\n    wide = Bucket.encompass Width wide1 wide2\n    -- creates a bucket between 1056 and NoLimit\n\n",
+                "type": "Screen.Bucket.Axis -> Screen.Bucket.Bucket -> Screen.Bucket.Bucket -> Screen.Bucket.Bucket"
+            },
+            {
+                "name": "handset",
+                "comment": " A width bucket that covers all 'handset' buckets (`handset1`,\n`handset2` and `handset3`).\n\nA 'handset' here refers to a device that can be held in one hand. \nThis usually means phones.\n\nThis bucket can also encompass particularly narrow browser windows\nin desktop and tablets.\n",
+                "type": "Screen.Bucket.Bucket"
+            },
+            {
+                "name": "handset1",
+                "comment": " A width bucket that's 351px and under.\n\nThis represents the smallest handsets available in recent memory.\nThis typically means devices below 4.7\" in screen size.\n\nMany of the devices in this bucket may be becoming archaic\n(by 2020 standards), but it's still a useful bucket,\nespecially if you want to be inclusive to particularly small\nscreen sizes, which require particular attention to make\nwork in responsive design.\n\nDevice examples (in portrait):\n- Apple iPhone 1-3G - 320 x 480 (@1x)\n- Apple iPhone 4, 4S - 320 x 480 (@2x)\n- Apple iPhone 5, 5c, 5s, SE (1st gen) - 320 x 568 (@2x)\n",
+                "type": "Screen.Bucket.Bucket"
+            },
+            {
+                "name": "handset2",
+                "comment": " A width bucket that's between 352 and 383px.\n\nThis typically represents devices that can be held in one\nhand but are not entirely operable with one hand.\nNowadays, this typically means devices between\n5\" - 6\" in screen size.\n\nDevice examples (in portrait):\n- Apple iPhone 12 Mini - 360 x 780 (@3x)\n- Apple iPhone 6-8, SE (2nd gen) - 375 x 687 (@2x)\n- Apple iPhone X, XS, 11 Pro - 375 x 812 (@3x)\n- Sony Xperia XZ2 Compact - 360 x 720\n",
+                "type": "Screen.Bucket.Bucket"
+            },
+            {
+                "name": "handset3",
+                "comment": " A width bucket that's between 384 and 511px.\n\nThis represents devices that can be held in one hand, but are not\noperable with one hand. Nowadays this typically means devices\nbetween 6\" - 7\" in screen size.\n\nDevice examples (in portrait): \n- Apple iPhone 6-8 Plus - 414 x 736 (@2x)\n- Apple iPhone XR, XS Max, 11, 11 Pro Max - 414 x 896\n- Google Pixel XL - 412 x 732\n- Google Pixel 3 - 411 x 823 (@2.625x)\n- Google Pixel 3 XL - 411 x 846 (@3x)\n- Samsung Galaxy S9+ - 411 x 846 \n- Sony Xperia 1 - 411 x 960 (@4x)\n",
+                "type": "Screen.Bucket.Bucket"
+            },
+            {
+                "name": "limited",
+                "comment": " A height bucket representing handset devices (ie. phones)\nin landscape. The amount of vertical space is very limited.\n\nThe maximum of this bucket is the same as `handset`, but in height.\n",
+                "type": "Screen.Bucket.Bucket"
+            },
+            {
+                "name": "medium",
+                "comment": " A height bucket representing small and regular tablets in\nlandscape. The amount of vertical space is restricted.\n\nThis buckets bounds are the same as `portable1` - `portable2` but in height.\n",
+                "type": "Screen.Bucket.Bucket"
+            },
+            {
+                "name": "portable",
+                "comment": " A width bucket that covers all 'portable' buckets (`portable1`,\n`portable2` and `portable3`).\n\n'portable' buckets encompass these things:\n- tablets (of varying sizes, use the smaller buckets to be more precise)\n- medium-sized windows in tablet splitscreen modes and desktops.\n",
+                "type": "Screen.Bucket.Bucket"
+            },
+            {
+                "name": "portable1",
+                "comment": " A width bucket that's between 512 and 639px.\n\nThis encompasses the relatively archaic 7\"/'flyer'\ntablet format in portrait, as well as particularly\nnarrow windows in desktop and certain splitscreen tablet views.\n\nDevice examples (in portrait):\n- Google Nexus 7 (2013) - 600 x 960 (@3x)\n\n",
+                "type": "Screen.Bucket.Bucket"
+            },
+            {
+                "name": "portable2",
+                "comment": " A width bucket that's between 640 and 863px.\n\nThis encompasses the most common tablet sizes in\nportrait. Typically between 8\" and 11\".\n\nDevice examples (in portrait):\n- Apple iPad 9.7\", mini - 768 x 1024 (they are different sizes but a web browser doesn't see them any differently)\n- Apple iPad 10.2\" - 810 x 1080\n- Apple iPad Pro (2015-2017) 10.5\" - 834 x 1112\n- Apple iPad Pro (2018-2020) 11\" - 834 x 1194\n- Google Pixel C - 900 x 1280\n",
+                "type": "Screen.Bucket.Bucket"
+            },
+            {
+                "name": "portable3",
+                "comment": " A width bucket that's between 864 and 1055px.\n\nThis encompasses the largest tablets in portrait. Typically around 13\".\n\nDevice examples (in portrait):\n- Apple iPad Pro (2015-2017, 2018-2020) 12.9\" - 1024 x 1366\n- Microsoft Surface Pro 2017 - 912 x 1368\n\n",
+                "type": "Screen.Bucket.Bucket"
+            },
+            {
+                "name": "stepBelow",
+                "comment": " Will produce a Boundary that is -1 of the minimum\nboundary of the given Bucket, if that Boundary is `Definite`.\n\nIf the minimum is `NoLimit` instead, then it will just return `NoLimit`.\n\nUseful when you want to create buckets that neatly\nslot next to each other.\n\n\n    tablet : Bucket\n    tablet = Bucket.create Width (Defined 512) (stepBelow desktop) \n\n    desktop : Bucket\n    desktop = Bucket.create Width (Defined 1052) NoLimit\n\n",
+                "type": "Screen.Bucket.Bucket -> Screen.Bucket.Boundary"
+            },
+            {
+                "name": "tall",
+                "comment": " A height bucket representing large landscape tablet,\nlaptop or desktop contexts. The amount of vertical space is\ngenerally ample.\n\nThe minimum of this bucket is the same as `portable3`, but in height.\n",
+                "type": "Screen.Bucket.Bucket"
+            },
+            {
+                "name": "toMediaQuery",
+                "comment": " A function that converts a Bucket into an elm-css MediaQuery\nthat covers the boundaries given by the bucket at the correct axis.\n\nThese media queries can be stacked in a list wth functions such\nas withMedia, so you can cover larger areas with multiple\ncontiguous buckets.\n\nThis function exists for possible edge cases that you might have. \nIf you want to use buckets as media queries in a typical way,\nyou'll probably want to look at `Screen.withMedia` instead.\n\n\n    tablet : Bucket\n    tablet = Bucket.create Width (Defined 512) (stepBelow desktop) \n\n    tabletMq : MediaQuery\n    tabletMq = Bucket.toMediaQuery tablet\n    -- produces: only screen [ minWidth (px 512), maxWidth (px 1051) ]\n\n    desktop : Bucket\n    desktop = Bucket.create Width (Defined 1052) NoLimit\n\n    desktopMq : MediaQuery\n    desktopMq = Bucket.toMediaQuery desktop\n    -- produces: only screen [ minWidth (px 1052) ]\n\n",
+                "type": "Screen.Bucket.Bucket -> Css.Media.MediaQuery"
+            },
+            {
+                "name": "wide",
+                "comment": " A width bucket that encompasses all 'wide' buckets\n(`wide1` and `wide2`).\n\nWide buckets encompass these things:\n- Desktop displays in fullscreen (or close to it).\n- Large laptops in fullscreen (or close to it).\n\n'wide' buckets are handy when you want to handle particularly\nwide interfaces for maximum productivity.\n\n",
+                "type": "Screen.Bucket.Bucket"
+            },
+            {
+                "name": "wide1",
+                "comment": " A width bucket that represents large tablets in landscape \nand small and budget laptops. (All in fullscreen.)\n\nExample resolutions:\n- 720p\n- 1366 x 768\n- 1280 x 800. \n",
+                "type": "Screen.Bucket.Bucket"
+            },
+            {
+                "name": "wide2",
+                "comment": " The widest width bucket this module offers.\nThis represents typical desktop displays in fullscreen.\n\nDesktop and other large displays.\nExample resolutions:\n- 1680 x 1050\n- 1080p, 4K\n- 1440p, 5K\n",
+                "type": "Screen.Bucket.Bucket"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Screen.Metrics",
+        "comment": "\n\nA module for creating and storing screen metrics in your model.\n\nUse this array of tools when you need to store and update the screen size\nin your model, so you can change your app's functionality based on screen\nsize by comparing them to Buckets.\n\n# General screen data\n@docs Metrics, zero, fromInts, fromFloats\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Metrics",
+                "comment": " The type for storing all screen information.\n",
+                "args": [],
+                "type": "{ width : Basics.Int, height : Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "fromFloats",
+                "comment": " When you want to initialise your Metrics, you'll probably end up using\n`Browser.Dom.getViewport`. Functions like this return pixels represented as Floats\ninstead of Ints, so use this function in these cases, which will correctly round\nthe Floats up into Ints to create Metrics.\n",
+                "type": "Basics.Float -> Basics.Float -> Screen.Metrics.Metrics"
+            },
+            {
+                "name": "fromInts",
+                "comment": " Takes the width and height values that you'd get from functions like\n`Browser.Events.onResize` and creates Metrics based on those values.\n\n    update : Msg -> Model -> ( Model, Cmd Msg )\n    update msg model =\n        case msg of\n            ScreenResize w h ->\n                ( { model | screen = Screen.Metrics.fromInts w h }, Cmd.none )\n\n",
+                "type": "Basics.Int -> Basics.Int -> Screen.Metrics.Metrics"
+            },
+            {
+                "name": "zero",
+                "comment": " Makes a starting metrics structure where all the values are 0.\n\nUse this as an initial value for your model that you can then initialise from.\n",
+                "type": "Screen.Metrics.Metrics"
+            }
+        ],
+        "binops": []
+    }
+]

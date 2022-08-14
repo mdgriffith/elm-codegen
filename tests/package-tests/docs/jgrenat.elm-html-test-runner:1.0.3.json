@@ -1,0 +1,43 @@
+[
+    {
+        "name": "Test.Runner.Html",
+        "comment": " This library aims to run and display tests as HTML on a web page, for example in order to create code kata.\n\nOne limitation to that is that you need to add your test dependencies as project dependencies.\n\n\n# Definition\n\n@docs Config\n\n\n# Display tests results\n\n@docs viewResults\n\n\n# Configuration\n\n@docs defaultConfig, withFuzzCount, showPassedTests, hidePassedTests\n\n",
+        "unions": [
+            {
+                "name": "Config",
+                "comment": " Config object used to define options like the fuzz count, the initial seed, whether or not the passed tests should be displayed...\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "defaultConfig",
+                "comment": " Create a default config, initializing it with an initial seed used for fuzz testing.\n\n    Random.initialSeed 10000 |> defaultConfig\n\n",
+                "type": "Random.Seed -> Test.Runner.Html.Config"
+            },
+            {
+                "name": "hidePassedTests",
+                "comment": " Indicates that the resulting HTML should _NOT_ show passed tests.\n\n    Random.initialSeed 10000 |> defaultConfig |> hidePassedTests\n\n",
+                "type": "Test.Runner.Html.Config -> Test.Runner.Html.Config"
+            },
+            {
+                "name": "showPassedTests",
+                "comment": " Indicates that the resulting HTML should show passed tests. This is the default behavior.\n\n    Random.initialSeed 10000 |> defaultConfig |> showPassedTests\n\n",
+                "type": "Test.Runner.Html.Config -> Test.Runner.Html.Config"
+            },
+            {
+                "name": "viewResults",
+                "comment": " Run and display test results\n\n    viewResults myConfig myTests\n\n",
+                "type": "Test.Runner.Html.Config -> Test.Test -> Html.Html a"
+            },
+            {
+                "name": "withFuzzCount",
+                "comment": " Set the fuzz count in the Config. Should not be useful if you don't use fuzz testing.\n\n    Random.initialSeed 10000 |> defaultConfig |> withFuzzCount 50\n\n",
+                "type": "Basics.Int -> Test.Runner.Html.Config -> Test.Runner.Html.Config"
+            }
+        ],
+        "binops": []
+    }
+]

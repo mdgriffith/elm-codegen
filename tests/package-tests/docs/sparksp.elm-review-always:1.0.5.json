@@ -1,0 +1,16 @@
+[
+    {
+        "name": "NoAlways",
+        "comment": "\n\n@docs rule\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": " Forbid the use of [`always`](https://package.elm-lang.org/packages/elm/core/latest/Basics#always).\n\n    config : List Rule\n    config =\n        [ NoAlways.rule\n        ]\n\nUse an [anonymous function] `\\_ ->` instead of `always`.\n\nIt's more concise, more recognizable as a function, and makes it easier to change your mind later and name the argument.\n\n    -- Don't do this --\n    List.map (always 0) [ 1, 2, 3, 4 ]\n\n    -- Instead do this --\n    List.map (\\_ -> 0) [ 1, 2, 3, 4 ]\n\n[anonymous function]: https://elm-lang.org/docs/syntax#functions\n\n\n## When (not) to use this rule\n\nIf you are in a team then other members may have strong opinions about `always` - make sure that everyone is on board before you decide to adopt this rule.\n\n\n## Caution: Heavy Computation\n\nIf the value you always want is the result of some heavy computation then you will not want that within an anonymous function as the work will be done every time. Instead, do the calculation in a nearby [`let..in`][let-expression] block first.\n\n    -- Don't do this --\n    List.map (always (heavyComputation arg1 arg2)) [ 1, 2, 3, 4 ]\n\n    -- Don't do this either --\n    List.map (\\_ -> heavyComputation arg1 arg2) [ 1, 2, 3, 4 ]\n\n    -- Instead do this --\n    let\n        heavyComputationResult =\n            heavyComputation arg1 arg2\n    in\n    List.map (\\_ -> heavyComputationResult) [ 1, 2, 3, 4 ]\n\n    -- This works too (but is less readable) --\n    List.map ((\\value _ -> value) (heavyComputation arg1 arg2)) [ 1, 2, 3, 4 ]\n\n[let-expression]: https://elm-lang.org/docs/syntax#let-expressions\n\n",
+                "type": "Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    }
+]

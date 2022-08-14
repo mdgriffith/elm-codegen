@@ -1,0 +1,23 @@
+[
+    {
+        "name": "MsgSscce",
+        "comment": " Test nested Union Types\n\n\n# Msgs\n\n@docs Msg, InternalMsg\n\n",
+        "unions": [
+            {
+                "name": "InternalMsg",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Msg",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [],
+        "binops": []
+    }
+]

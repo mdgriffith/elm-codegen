@@ -1,0 +1,413 @@
+[
+    {
+        "name": "Crypto.Strings",
+        "comment": " Block chaining and string encryption for use with any block cipher.\n\n\n# Functions\n\n@docs encrypt, justEncrypt, decrypt\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decrypt",
+                "comment": " Decrypt a string created with `encrypt`.\n\nSee `Crypto.Strings.Crypt.decrypt` for more options.\n\nThis can get errors if the ciphertext you pass in decrypts to something that isn't a UTF-8 string.\n\n",
+                "type": "Crypto.Strings.Types.Passphrase -> Crypto.Strings.Types.Ciphertext -> Result.Result String.String Crypto.Strings.Types.Plaintext"
+            },
+            {
+                "name": "encrypt",
+                "comment": " Encrypt a string. Encode the output as Base64 with 80-character lines.\n\nThe `Seed` parameter is a `Random.Seed`, as created by `Random.initialSeed`\n\nSee `Crypto.Strings.Crypt.encrypt` for more options.\n\nThis shouldn't ever return an error, but since the key generation can possibly do so, it returns a `Result` instead of just `(Ciphertext, randomState)`.\n\n",
+                "type": "Random.Seed -> Crypto.Strings.Types.Passphrase -> Crypto.Strings.Types.Plaintext -> Result.Result String.String ( Crypto.Strings.Types.Ciphertext, Random.Seed )"
+            },
+            {
+                "name": "justEncrypt",
+                "comment": " Testing function. Just returns the result with no random generator update.\n",
+                "type": "Random.Seed -> Crypto.Strings.Types.Passphrase -> Crypto.Strings.Types.Plaintext -> Crypto.Strings.Types.Ciphertext"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Crypto.Strings.BlockAes",
+        "comment": " Connect Crypto.AES to Crypto.Strings.Crypt\n\n\n# Types\n\n@docs Key, KeySize\n\n\n# Functions\n\n@docs encryption, setKeySize\n\n",
+        "unions": [
+            {
+                "name": "KeySize",
+                "comment": " An AES key size. 16, 24, or 32 bytes.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "KeySize16",
+                        []
+                    ],
+                    [
+                        "KeySize24",
+                        []
+                    ],
+                    [
+                        "KeySize32",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Key",
+                "comment": " AES key type\n",
+                "args": [],
+                "type": "Crypto.AES.Keys"
+            }
+        ],
+        "values": [
+            {
+                "name": "encryption",
+                "comment": " AES encryption. 32-byte key size. Use `setKeySize` to change it.\n",
+                "type": "Crypto.Strings.Types.Encryption Crypto.Strings.BlockAes.Key"
+            },
+            {
+                "name": "setKeySize",
+                "comment": " Change the key size of the keyExpander inside an AES Encryption spec.\n",
+                "type": "Crypto.Strings.BlockAes.KeySize -> Crypto.Strings.Types.Encryption Crypto.Strings.BlockAes.Key -> Crypto.Strings.Types.Encryption Crypto.Strings.BlockAes.Key"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Crypto.Strings.Chaining",
+        "comment": " Block chaining for block ciphers.\n\nAlgorithm descriptions: <https://en.wikipedia.org/wiki/Block_cipher_mode_of_operation>\n\n\n# Classes\n\n@docs EcbState, CtrState\n\n\n# Functions\n\n@docs ecbChaining, ctrChaining\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "CtrState",
+                "comment": " The state for Counter chaining\n",
+                "args": [],
+                "type": "{ nonce : Crypto.Strings.Types.Block, counter : Crypto.Strings.Types.Block }"
+            },
+            {
+                "name": "EcbState",
+                "comment": " The state for ECB chaining\n",
+                "args": [],
+                "type": "()"
+            }
+        ],
+        "values": [
+            {
+                "name": "ctrChaining",
+                "comment": " Counter Chaining\n\nUses the encryptor for both encryption and decryption.\n\n",
+                "type": "Crypto.Strings.Types.Chaining key Crypto.Strings.Chaining.CtrState randomState"
+            },
+            {
+                "name": "ecbChaining",
+                "comment": " Electronic Codebook chaining\n",
+                "type": "Crypto.Strings.Types.Chaining key Crypto.Strings.Chaining.EcbState randomState"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Crypto.Strings.Crypt",
+        "comment": " Block chaining and string encryption for use with any block cipher.\n\n\n# Types\n\n@docs DefaultKey\n\n\n# Functions\n\n@docs expandKeyString, defaultConfig, encrypt, decrypt, seedGenerator\n\n\n# Low-level functions\n\n@docs listToBlocks, blocksToList\n@docs padLastBlock, unpadLastBlock, stripTrailingZeroes\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "DefaultKey",
+                "comment": " Default key type.\n",
+                "args": [],
+                "type": "Crypto.Strings.Types.Key Crypto.Strings.BlockAes.Key"
+            }
+        ],
+        "values": [
+            {
+                "name": "blocksToList",
+                "comment": " Convert a list of blocks into a list of integers.\n",
+                "type": "List.List Crypto.Strings.Types.Block -> List.List Basics.Int"
+            },
+            {
+                "name": "decrypt",
+                "comment": " Decrypt a string created with `encrypt`.\n",
+                "type": "Crypto.Strings.Types.Config key state randomState -> Crypto.Strings.Types.Key key -> Crypto.Strings.Types.Ciphertext -> Result.Result Crypto.Strings.Types.Plaintext String.String"
+            },
+            {
+                "name": "defaultConfig",
+                "comment": " Default configuration.\n",
+                "type": "Crypto.Strings.Types.Config Crypto.Strings.BlockAes.Key Crypto.Strings.Chaining.CtrState randomState"
+            },
+            {
+                "name": "encrypt",
+                "comment": " Encrypt a string.\n",
+                "type": "Crypto.Strings.Types.Config key state randomState -> Crypto.Strings.Types.RandomGenerator randomState -> Crypto.Strings.Types.Key key -> Crypto.Strings.Types.Plaintext -> ( Crypto.Strings.Types.Ciphertext, randomState )"
+            },
+            {
+                "name": "expandKeyString",
+                "comment": " Expand a key preparing it for use with `encrypt` or `decrypt`.\n",
+                "type": "Crypto.Strings.Types.Config key state randomState -> Crypto.Strings.Types.Passphrase -> Result.Result String.String (Crypto.Strings.Types.Key key)"
+            },
+            {
+                "name": "listToBlocks",
+                "comment": " Convert a list of integers into a list of blocks.\n\nThe end of the last block will always be #x80 plus zeroes. If all the\nblocks are full, and the last byte is NOT zero or #x80, then no\npadding is added.\n\n",
+                "type": "Basics.Int -> List.List Basics.Int -> List.List Crypto.Strings.Types.Block"
+            },
+            {
+                "name": "padLastBlock",
+                "comment": " Put a 0x80 at the end of the last block, and pad with zeroes.\n\nNo padding is done if the last block is of the blockSize, and does NOT already end with 0 or 0x80.\n\n",
+                "type": "Basics.Int -> List.List Crypto.Strings.Types.Block -> List.List Crypto.Strings.Types.Block"
+            },
+            {
+                "name": "seedGenerator",
+                "comment": " A random generator that takes and returns a standard Elm Seed.\n",
+                "type": "Random.Seed -> Crypto.Strings.Types.BlockSize -> ( Crypto.Strings.Types.Block, Random.Seed )"
+            },
+            {
+                "name": "stripTrailingZeroes",
+                "comment": " Strip the trailing zeroes from a block.\n",
+                "type": "Crypto.Strings.Types.Block -> Crypto.Strings.Types.Block"
+            },
+            {
+                "name": "unpadLastBlock",
+                "comment": " Remove the padding added by `padLastBlock` from the last block in a list.\n",
+                "type": "List.List Crypto.Strings.Types.Block -> List.List Crypto.Strings.Types.Block"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Crypto.Strings.Encoding",
+        "comment": " Encoders and decoders from and to strings and blocks.\n\n\n# `Config` elements\n\n\n## Key Encodings\n\n@docs foldedSha256KeyEncoding\n\n\n## Encodings\n\n@docs base64Encoding, hexEncoding\n\n\n# Translate between strings and byte lists.\n\n@docs plainTextDecoder, plainTextEncoder\n\n\n# Implementations of the `Config` elements\n\n@docs foldedSha256KeyEncoder, fold\n@docs base64Encoder, base64Decoder\n@docs hexEncoder, hexDecoder\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "base64Decoder",
+                "comment": " Convert a Base64 string to bytes. Sometimes the string is malformed.\n",
+                "type": "String.String -> Result.Result String.String (List.List Basics.Int)"
+            },
+            {
+                "name": "base64Encoder",
+                "comment": " Convert bytes to Base64.\n",
+                "type": "Basics.Int -> List.List Basics.Int -> String.String"
+            },
+            {
+                "name": "base64Encoding",
+                "comment": " How to encode/decode strings to/from Base64\n\nThe Int parameter is the line length for encoding to a string.\n\n",
+                "type": "Basics.Int -> Crypto.Strings.Types.Encoding"
+            },
+            {
+                "name": "fold",
+                "comment": " Fold a list of integers to a specified size.\n\nActually XORs too-long pieces together to not lose any entropy.\n\nWorth the effort? I don't know. Hashing probably does enough.\n\n",
+                "type": "Basics.Int -> List.List Basics.Int -> List.List Basics.Int"
+            },
+            {
+                "name": "foldedSha256KeyEncoder",
+                "comment": " Hash and fold a passphrase to turn it into a raw key array.\n",
+                "type": "Crypto.Strings.Types.BlockSize -> String.String -> Crypto.Strings.Types.Block"
+            },
+            {
+                "name": "foldedSha256KeyEncoding",
+                "comment": " A KeyEncoding for foldedSha256KeyEncoder\n",
+                "type": "Crypto.Strings.Types.KeyEncoding"
+            },
+            {
+                "name": "hexDecoder",
+                "comment": " Convert a hex string to bytes. Sometimes the string is malformed.\n",
+                "type": "Basics.Int -> String.String -> Result.Result String.String (List.List Basics.Int)"
+            },
+            {
+                "name": "hexEncoder",
+                "comment": " Convert bytes to hex.\n",
+                "type": "List.List Basics.Int -> String.String"
+            },
+            {
+                "name": "hexEncoding",
+                "comment": " How to encode/decode strings to/from hex.\n",
+                "type": "Crypto.Strings.Types.Encoding"
+            },
+            {
+                "name": "plainTextDecoder",
+                "comment": " Decode UTF-8 bytes into a string.\n",
+                "type": "List.List Basics.Int -> String.String"
+            },
+            {
+                "name": "plainTextEncoder",
+                "comment": " Encode a string as UTF-8 bytes\n",
+                "type": "String.String -> List.List Basics.Int"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Crypto.Strings.Types",
+        "comment": " Shared types used by all the Crypto.Strings modules.\n\n\n# Types\n\n@docs Passphrase, Plaintext, Ciphertext\n@docs KeyExpander, Key, Config, BlockSize, Block\n@docs Encryption, Encryptor, Decryptor, RandomGenerator\n@docs KeyEncoding, KeyEncoder\n@docs Encoding, Encoder, Decoder\n@docs Chaining, ChainingInitializer, Chainer\n@docs ChainingStateAdjoiner, ChainingStateSeparator\n\n",
+        "unions": [
+            {
+                "name": "Key",
+                "comment": " A portable name for block encryption algorithm specific keys.\n",
+                "args": [
+                    "key"
+                ],
+                "cases": [
+                    [
+                        "Key",
+                        [
+                            "key"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Block",
+                "comment": " One block for a block encryption algorithm.\n",
+                "args": [],
+                "type": "Array.Array Basics.Int"
+            },
+            {
+                "name": "BlockSize",
+                "comment": " An alternative name for Int to make docs clearer.\n",
+                "args": [],
+                "type": "Basics.Int"
+            },
+            {
+                "name": "Chainer",
+                "comment": " A block chaining algorithm.\n",
+                "args": [
+                    "key",
+                    "state"
+                ],
+                "type": "state -> ( Crypto.Strings.Types.Encryptor key, Crypto.Strings.Types.Decryptor key ) -> key -> Crypto.Strings.Types.Block -> ( Crypto.Strings.Types.Block, state )"
+            },
+            {
+                "name": "Chaining",
+                "comment": " Package up all the information needed to do block chaining.\n",
+                "args": [
+                    "key",
+                    "state",
+                    "randomState"
+                ],
+                "type": "{ name : String.String, initializer : Crypto.Strings.Types.ChainingInitializer state randomState, encryptor : Crypto.Strings.Types.Chainer key state, decryptor : Crypto.Strings.Types.Chainer key state, adjoiner : Crypto.Strings.Types.ChainingStateAdjoiner state, separator : Crypto.Strings.Types.ChainingStateSeparator state }"
+            },
+            {
+                "name": "ChainingInitializer",
+                "comment": " Create an initial chaining state for encryption.\n",
+                "args": [
+                    "state",
+                    "randomState"
+                ],
+                "type": "Crypto.Strings.Types.RandomGenerator randomState -> Crypto.Strings.Types.BlockSize -> ( state, randomState )"
+            },
+            {
+                "name": "ChainingStateAdjoiner",
+                "comment": " Adjoin chaining state to a list of ciphertext blocks.\n",
+                "args": [
+                    "state"
+                ],
+                "type": "state -> List.List Basics.Int -> List.List Basics.Int"
+            },
+            {
+                "name": "ChainingStateSeparator",
+                "comment": " Remove the adjoined state from a list of cipher blocks and turn it into a state.\n",
+                "args": [
+                    "state"
+                ],
+                "type": "Crypto.Strings.Types.BlockSize -> List.List Basics.Int -> ( List.List Basics.Int, state )"
+            },
+            {
+                "name": "Ciphertext",
+                "comment": " Another name for `String`, to aid in documentation.\n",
+                "args": [],
+                "type": "String.String"
+            },
+            {
+                "name": "Config",
+                "comment": " Configuration for the block chaining and string encoding\n",
+                "args": [
+                    "key",
+                    "state",
+                    "randomState"
+                ],
+                "type": "{ encryption : Crypto.Strings.Types.Encryption key, keyEncoding : Crypto.Strings.Types.KeyEncoding, chaining : Crypto.Strings.Types.Chaining key state randomState, encoding : Crypto.Strings.Types.Encoding }"
+            },
+            {
+                "name": "Decoder",
+                "comment": " A string decoding algorithm.\n",
+                "args": [],
+                "type": "String.String -> Result.Result String.String (List.List Basics.Int)"
+            },
+            {
+                "name": "Decryptor",
+                "comment": " A decryption function for a particular low-level block algorithm.\n",
+                "args": [
+                    "key"
+                ],
+                "type": "key -> Crypto.Strings.Types.Block -> Crypto.Strings.Types.Block"
+            },
+            {
+                "name": "Encoder",
+                "comment": " A string encoding algorithm.\n",
+                "args": [],
+                "type": "List.List Basics.Int -> String.String"
+            },
+            {
+                "name": "Encoding",
+                "comment": " Encoder and decoder for translating between strings and blocks.\n",
+                "args": [],
+                "type": "{ name : String.String, encoder : Crypto.Strings.Types.Encoder, decoder : Crypto.Strings.Types.Decoder }"
+            },
+            {
+                "name": "Encryption",
+                "comment": " Package up information about a block encryption algorithm.\n",
+                "args": [
+                    "key"
+                ],
+                "type": "{ name : String.String, blockSize : Crypto.Strings.Types.BlockSize, keyExpander : Crypto.Strings.Types.KeyExpander key, encryptor : Crypto.Strings.Types.Encryptor key, decryptor : Crypto.Strings.Types.Decryptor key }"
+            },
+            {
+                "name": "Encryptor",
+                "comment": " An encryption function for a particular low-level block algorithm.\n",
+                "args": [
+                    "key"
+                ],
+                "type": "key -> Crypto.Strings.Types.Block -> Crypto.Strings.Types.Block"
+            },
+            {
+                "name": "KeyEncoder",
+                "comment": " Turn a passphrase into an IV.\n",
+                "args": [],
+                "type": "Crypto.Strings.Types.BlockSize -> Crypto.Strings.Types.Passphrase -> Crypto.Strings.Types.Block"
+            },
+            {
+                "name": "KeyEncoding",
+                "comment": " Describe a `KeyEncoder` for a `Config`.\n\nNot all `KeyEncodings` will be compatible with all block `Encryption` types.\n\n",
+                "args": [],
+                "type": "{ name : String.String, encoder : Crypto.Strings.Types.KeyEncoder }"
+            },
+            {
+                "name": "KeyExpander",
+                "comment": " Describe key expansion for a particular block encryption algorithm.\n\n`keySize` is the number of bytes in a raw key.\n\n`expander` is a function to turn an array of that size into a key.\n\n",
+                "args": [
+                    "key"
+                ],
+                "type": "{ keySize : Basics.Int, expander : Array.Array Basics.Int -> Result.Result String.String key }"
+            },
+            {
+                "name": "Passphrase",
+                "comment": " Another name for `String`, to aid in documentation.\n",
+                "args": [],
+                "type": "String.String"
+            },
+            {
+                "name": "Plaintext",
+                "comment": " Another name for `String`, to aid in documentation.\n",
+                "args": [],
+                "type": "String.String"
+            },
+            {
+                "name": "RandomGenerator",
+                "comment": " Create a random byte array of a given length\n",
+                "args": [
+                    "randomState"
+                ],
+                "type": "Crypto.Strings.Types.BlockSize -> ( Crypto.Strings.Types.Block, randomState )"
+            }
+        ],
+        "values": [],
+        "binops": []
+    }
+]

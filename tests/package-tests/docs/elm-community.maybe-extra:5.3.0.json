@@ -1,0 +1,151 @@
+[
+    {
+        "name": "Maybe.Extra",
+        "comment": " Convenience functions for [`Maybe`](https://package.elm-lang.org/packages/elm/core/latest/Maybe).\n\n\n# Basics\n\nWork with 1 `Maybe`\n\n@docs isJust, isNothing, join, filter\n\n\n# Get a value out of a `Maybe`\n\n@docs withDefaultLazy, unwrap, unpack\n\n\n# Or\n\nTake the first value that's present\n\n@docs or, orElse, orList, orLazy, orElseLazy, orListLazy, oneOf\n\n\n# Lists of `Maybe`s\n\n@docs values\n@docs combine, traverse, combineArray, traverseArray\n\n\n# toList\n\n@docs toList, toArray\n@docs cons\n\n\n# andThenN\n\nThese functions are just like [`andThen`](https://package.elm-lang.org/packages/elm/core/latest/Maybe#andThen), except they take multiple arguments.\n\nAll arguments must be `Just` and the function must return a `Just` for the result to be `Just`.\n\nIf you need a version of `andThenN` that takes more than 4 arguments, you can chain together [`andMap`](#andMap) calls in a pipeline.\n\n@docs andThen2, andThen3, andThen4\n\n\n# Applicative Functions\n\n@docs andMap, next, prev\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "andMap",
+                "comment": " If both a function and a value are present, apply the function to the value.\nIf either argument is `Nothing`, return `Nothing`.\n\n    Just ((+) 2)\n        |> andMap (Just 3)\n    --> Just 5\n\n    Nothing\n        |> andMap (Just 3)\n    --> Nothing\n\n    Just ((+) 2)\n        |> andMap Nothing\n    --> Nothing\n\nThis can be used to do [`Maybe.mapN`](https://package.elm-lang.org/packages/elm/core/latest/Maybe#map2) or [`andThenN`](#andThenN) for any number of arguments.\n\n    -- map4\n    Just (\\a b c d -> a + b + c + d )\n        |> andMap (Just 1)\n        |> andMap (Just 2)\n        |> andMap (Just 4)\n        |> andMap (Just 8)\n    --> Just 15\n\n    -- andThen4\n    Just (\\a b c d -> Just (a + b + c + d ))\n        |> andMap (Just 1)\n        |> andMap (Just 2)\n        |> andMap (Just 4)\n        |> andMap (Just 8)\n        |> join\n    --> Just 15\n\nAdvanced functional programmers will recognize this as the implementation of `<*>` for `Maybe`s from the `Applicative` typeclass.\n\n",
+                "type": "Maybe.Maybe a -> Maybe.Maybe (a -> b) -> Maybe.Maybe b"
+            },
+            {
+                "name": "andThen2",
+                "comment": "\n\n    import Array exposing (Array)\n\n    array : Array Int\n    array = Array.fromList [1,2,3]\n\n    andThen2 Array.get (Just 1) (Just array)\n    --> Just 2\n\n    andThen2 Array.get Nothing (Just array)\n    --> Nothing\n\n    andThen2 Array.get (Just 1) Nothing\n    --> Nothing\n\n    andThen2 Array.get (Just 4) (Just array)\n    --> Nothing\n\n",
+                "type": "(a -> b -> Maybe.Maybe value) -> Maybe.Maybe a -> Maybe.Maybe b -> Maybe.Maybe value"
+            },
+            {
+                "name": "andThen3",
+                "comment": " ",
+                "type": "(a -> b -> c -> Maybe.Maybe value) -> Maybe.Maybe a -> Maybe.Maybe b -> Maybe.Maybe c -> Maybe.Maybe value"
+            },
+            {
+                "name": "andThen4",
+                "comment": " ",
+                "type": "(a -> b -> c -> d -> Maybe.Maybe value) -> Maybe.Maybe a -> Maybe.Maybe b -> Maybe.Maybe c -> Maybe.Maybe d -> Maybe.Maybe value"
+            },
+            {
+                "name": "combine",
+                "comment": " If every `Maybe` in the list is present, return all of the values unwrapped.\nIf there are any `Nothing`s, the whole function fails and returns `Nothing`.\n\n    combine []\n    --> Just []\n\n    combine [ Just 1, Just 2, Just 3 ]\n    --> Just [ 1, 2, 3 ]\n\n    combine [ Just 1, Nothing, Just 3 ]\n    --> Nothing\n\n",
+                "type": "List.List (Maybe.Maybe a) -> Maybe.Maybe (List.List a)"
+            },
+            {
+                "name": "combineArray",
+                "comment": " Like [`combine`](#combine),\nbut works on [`Array`](https://package.elm-lang.org/packages/elm/core/latest/Array) instead of `List`.\n",
+                "type": "Array.Array (Maybe.Maybe a) -> Maybe.Maybe (Array.Array a)"
+            },
+            {
+                "name": "cons",
+                "comment": " Add an item to a list only if it's a `Just`.\n\n    cons (Just 1) [ 2, 3 ]\n    --> [ 1, 2, 3 ]\n\n    cons Nothing [2, 3 ]\n    --> [ 2, 3 ]\n\n",
+                "type": "Maybe.Maybe a -> List.List a -> List.List a"
+            },
+            {
+                "name": "filter",
+                "comment": " Keep the `Maybe` only if the predicate function passes\n\n    filter (\\v -> v == 1) (Just 1)\n    --> Just 1\n\n    filter (\\v -> v == 2) (Just 1)\n    --> Nothing\n\n    filter (\\v -> v == 1) Nothing\n    --> Nothing\n\n",
+                "type": "(a -> Basics.Bool) -> Maybe.Maybe a -> Maybe.Maybe a"
+            },
+            {
+                "name": "isJust",
+                "comment": "\n\n    isJust (Just 42)\n    --> True\n\n    isJust (Just [])\n    --> True\n\n    isJust Nothing\n    --> False\n\n",
+                "type": "Maybe.Maybe a -> Basics.Bool"
+            },
+            {
+                "name": "isNothing",
+                "comment": "\n\n    isNothing (Just 42)\n    --> False\n\n    isNothing (Just [])\n    --> False\n\n    isNothing Nothing\n    --> True\n\n",
+                "type": "Maybe.Maybe a -> Basics.Bool"
+            },
+            {
+                "name": "join",
+                "comment": " Flattens nested `Maybe`s\n\n    join (Just (Just 1))\n    --> Just 1\n\n    join (Just Nothing)\n    --> Nothing\n\n    join Nothing\n    --> Nothing\n\n",
+                "type": "Maybe.Maybe (Maybe.Maybe a) -> Maybe.Maybe a"
+            },
+            {
+                "name": "next",
+                "comment": " Take two `Maybe` values. If the first one equals `Nothing`, return `Nothing`. Otherwise return the second value.\n\n    next (Just 1) (Just 2)\n    --> Just 2\n\n    next Nothing (Just 2)\n    --> Nothing\n\n    next (Just 1) Nothing\n    --> Nothing\n\nAdvanced functional programmers will recognize this as the implementation of `*>` for `Maybe`s from the `Applicative` typeclass.\n\n",
+                "type": "Maybe.Maybe a -> Maybe.Maybe b -> Maybe.Maybe b"
+            },
+            {
+                "name": "oneOf",
+                "comment": " Try a list of functions against a value. Return the value of the first call that succeeds (returns `Just`).\n\n    type UserInput\n        = FloatInput Float\n        | IntInput Int\n        | UnknownInput\n\n    \"5.6\"\n        |> oneOf\n            [ String.toInt >> Maybe.map IntInput\n            , String.toFloat >> Maybe.map FloatInput\n            ]\n        |> Maybe.withDefault UnknownInput\n    --> FloatInput 5.6\n\n",
+                "type": "List.List (a -> Maybe.Maybe b) -> a -> Maybe.Maybe b"
+            },
+            {
+                "name": "or",
+                "comment": " Returns the first value that is present, like the boolean `||`.\n\nBoth values will be computed. There is no short-circuiting.\nIf your second argument is expensive to calculate and you need short circuiting, use [`orLazy`](#orLazy) instead.\n\n    or (Just 4) (Just 5)\n    --> Just 4\n\n    or (Just 4) Nothing\n    --> Just 4\n\n    or Nothing (Just 5)\n    --> Just 5\n\n    or Nothing Nothing\n    --> Nothing\n\nAdvanced functional programmers will recognize this as the\nimplementation of `mplus` for `Maybe`s from the `MonadPlus` type\nclass.\n\n",
+                "type": "Maybe.Maybe a -> Maybe.Maybe a -> Maybe.Maybe a"
+            },
+            {
+                "name": "orElse",
+                "comment": " Piping-friendly version of [`or`](#or).\n\n    Just 5\n        |> orElse (Just 4)\n    --> Just 5\n\n    orElse (Just 4) (Just 5)\n    --> Just 5\n\n    List.head []\n        |> orElse (List.head [ 4 ])\n    --> Just 4\n\n",
+                "type": "Maybe.Maybe a -> Maybe.Maybe a -> Maybe.Maybe a"
+            },
+            {
+                "name": "orElseLazy",
+                "comment": " Lazy version of [`orElse`](#orElse).\nPiping-friendly version of [`orLazy`](#orLazy).\n\nThe first argument will only be evaluated if the second argument is `Nothing`.\n\n    Just 4\n        |> orElseLazy (\\() -> Debug.todo \"Expensive calculation\")\n    --> Just 4\n\n",
+                "type": "(() -> Maybe.Maybe a) -> Maybe.Maybe a -> Maybe.Maybe a"
+            },
+            {
+                "name": "orLazy",
+                "comment": " Lazy version of [`or`](#or).\n\nThe second argument will only be evaluated if the first argument is `Nothing`.\n\n    orLazy (Just 4) (\\() -> Debug.todo \"Expensive calculation\")\n    --> Just 4\n\n",
+                "type": "Maybe.Maybe a -> (() -> Maybe.Maybe a) -> Maybe.Maybe a"
+            },
+            {
+                "name": "orList",
+                "comment": " Returns the first value that is present.\n\nAll values will be computed.\nIf your arguments are expensive to calculate, use [`orListLazy`](#orListLazy) instead.\n\n    orList\n        [ Nothing\n        , Just 1\n        , Just 2\n        ]\n    --> Just 1\n\n    orList\n        [ List.head []\n        , String.toInt \"\"\n        ]\n    --> Nothing\n\n    orList []\n    --> Nothing\n\n",
+                "type": "List.List (Maybe.Maybe a) -> Maybe.Maybe a"
+            },
+            {
+                "name": "orListLazy",
+                "comment": " Lazy version of [`orList`](#orList)\n\nStops calculating new values after the first match\n\n    orListLazy\n        [ \\() -> Nothing\n        , \\() -> Just 1\n        , \\() -> Debug.todo \"Expensive calculation\"\n        ]\n    --> Just 1\n\n",
+                "type": "List.List (() -> Maybe.Maybe a) -> Maybe.Maybe a"
+            },
+            {
+                "name": "prev",
+                "comment": " Take two `Maybe` values. If the second one equals `Nothing`, return `Nothing`. Otherwise return the first value.\n\n    prev (Just 1) (Just 2)\n    --> Just 1\n\n    prev Nothing (Just 2)\n    --> Nothing\n\n    prev (Just 1) Nothing\n    --> Nothing\n\nAdvanced functional programmers will recognize this as the implementation of `<*` for `Maybe`s from the `Applicative` typeclass.\n\n",
+                "type": "Maybe.Maybe a -> Maybe.Maybe b -> Maybe.Maybe a"
+            },
+            {
+                "name": "toArray",
+                "comment": " Like `toList`, but returns a singleton or empty [`Array`](https://package.elm-lang.org/packages/elm/core/latest/Array).\n\n    import Array\n\n    toArray Nothing\n    --> Array.fromList []\n\n    toArray (Just 1)\n    --> Array.fromList [ 1 ]\n\n",
+                "type": "Maybe.Maybe a -> Array.Array a"
+            },
+            {
+                "name": "toList",
+                "comment": " A `Maybe` is a lot like a list that can only be length 0 or 1.\n\nReturns a singleton list if the value is present, and an empty list it's missing.\n\n    toList Nothing\n    --> []\n\n    toList (Just 1)\n    --> [ 1 ]\n\n",
+                "type": "Maybe.Maybe a -> List.List a"
+            },
+            {
+                "name": "traverse",
+                "comment": " Like [`combine`](#combine), but map a function over each element of the list first.\n\nIf every function call succeeds (returns `Just`), `traverse` will return a list.\nIf any function call fails (returns `Nothing`), `traverse` will return `Nothing`.\n\n`combine` is equivalent to `traverse identity`.\n\n    traverse (\\x -> Just (x * 10)) [ 1, 2, 3, 4, 5 ]\n    --> Just [ 10, 20, 30, 40, 50 ]\n\n    traverse List.head [ [1], [2, 3], [] ]\n    --> Nothing\n\n",
+                "type": "(a -> Maybe.Maybe b) -> List.List a -> Maybe.Maybe (List.List b)"
+            },
+            {
+                "name": "traverseArray",
+                "comment": " Like [`traverse`](#traverse),\nbut works on [`Array`](https://package.elm-lang.org/packages/elm/core/latest/Array) instead of `List`.\n",
+                "type": "(a -> Maybe.Maybe b) -> Array.Array a -> Maybe.Maybe (Array.Array b)"
+            },
+            {
+                "name": "unpack",
+                "comment": " Like [`unwrap`](#unwrap), but the default value is lazy,\nand will only be computed if the `Maybe` is `Nothing`.\n\n    unpack (\\() -> 0) String.length Nothing\n    --> 0\n\n    unpack (\\() -> 0) String.length (Just \"abc\")\n    --> 3\n\n`unpack (\\() -> default) f maybeX` is equivalent to\n\n    case maybeX of\n        Just x ->\n            f x\n\n        Nothing ->\n            default\n\n",
+                "type": "(() -> b) -> (a -> b) -> Maybe.Maybe a -> b"
+            },
+            {
+                "name": "unwrap",
+                "comment": " Like using a `case`.\nGive a function that says what to do if the input is `Just`,\nand a value to use if the input is `Nothing`.\n\nThese are all equivalent:\n\n    unwrap default f maybeX\n\n    maybeX\n        |> Maybe.map f\n        |> Maybe.withDefault default\n\n    case maybeX of\n        Just x ->\n            f x\n\n        Nothing ->\n            default\n\nExcept that unlike a `case`, the default value for `unwrap` is always computed.\nIf your default value is expensive to compute, use the lazy [`unpack`](#unpack) instead.\n\nExamples:\n\n    unwrap 0 String.length Nothing\n    --> 0\n\n    unwrap 0 String.length (Just \"abc\")\n    --> 3\n\n",
+                "type": "b -> (a -> b) -> Maybe.Maybe a -> b"
+            },
+            {
+                "name": "values",
+                "comment": " Take all the values that are present, throwing away any `Nothing`s.\n\nEquivalent to [`List.filterMap identity`](https://package.elm-lang.org/packages/elm/core/latest/List#filterMap).\n\n    values [ Just 1, Nothing, Just 2 ]\n    --> [ 1, 2 ]\n\n",
+                "type": "List.List (Maybe.Maybe a) -> List.List a"
+            },
+            {
+                "name": "withDefaultLazy",
+                "comment": " Lazy version of [Maybe.withDefault](https://package.elm-lang.org/packages/elm/core/latest/Maybe#withDefault).\n\nIt will only calculate the default if needed.\n\nExamples:\n\n    withDefaultLazy (\\() -> 2 + 2) Nothing\n    --> 4\n\n    withDefaultLazy (\\() -> Debug.todo \"Expensive calculation\") (Just 4)\n    --> 4\n\n",
+                "type": "(() -> a) -> Maybe.Maybe a -> a"
+            }
+        ],
+        "binops": []
+    }
+]

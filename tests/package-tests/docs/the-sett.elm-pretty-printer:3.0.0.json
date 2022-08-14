@@ -1,0 +1,175 @@
+[
+    {
+        "name": "Pretty",
+        "comment": " Wadler's Pretty printer. Use the constructor functions to build up a `Doc` and\nlay it out to fit a page width using the `pretty` function.\n\n@docs Doc\n\n\n# Pretty printing documents\n\n@docs pretty\n\n\n# Building documents from string data\n\n@docs empty, space, string, taggedString, char\n\n\n# Joining documents together\n\n@docs append, a, join, lines, separators, softlines, words, fold\n\n\n# Fitting documents onto lines\n\n@docs group, line, tightline, softline\n\n\n# Indenting and alinging documents\n\n@docs align, nest, hang, indent\n\n\n# Putting things around documents\n\n@docs surround, parens, braces, brackets\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Doc",
+                "comment": " The type of documents that can be pretty printed.\n",
+                "args": [
+                    "t"
+                ],
+                "type": "Internals.Doc t"
+            }
+        ],
+        "values": [
+            {
+                "name": "a",
+                "comment": " Short hand notation for append.\nUsefull when appending multiple parts together:\n\n    string \"Hello\"\n        |> a space\n        |> a \"World\"\n        |> a (char '!')\n        |> a line\n\n",
+                "type": "Pretty.Doc t -> Pretty.Doc t -> Pretty.Doc t"
+            },
+            {
+                "name": "align",
+                "comment": " Adds an indent of the current column position to all line breaks in the document.\nThe first line will not be indented, only subsequent nested lines will be.\n",
+                "type": "Pretty.Doc t -> Pretty.Doc t"
+            },
+            {
+                "name": "append",
+                "comment": " Appends two documents together.\n",
+                "type": "Pretty.Doc t -> Pretty.Doc t -> Pretty.Doc t"
+            },
+            {
+                "name": "braces",
+                "comment": " Wraps a document in braces.\n",
+                "type": "Pretty.Doc t -> Pretty.Doc t"
+            },
+            {
+                "name": "brackets",
+                "comment": " Wraps a document in brackets.\n",
+                "type": "Pretty.Doc t -> Pretty.Doc t"
+            },
+            {
+                "name": "char",
+                "comment": " Creates a document from a character.\n",
+                "type": "Char.Char -> Pretty.Doc t"
+            },
+            {
+                "name": "empty",
+                "comment": " Creates an empty document. Empties are discarded during pretty printing.\n\nNote that the `join`, `lines`, `softlines` and `words` functions also filter\nout empties. So if a list of `Docs` are joined by spaces any that are empty will\nbe dircarded and not result in a double space in the result. For this reason\nempty is not the same as `string \"\"`.\n\n    pretty 10 empty == \"\"\n\n",
+                "type": "Pretty.Doc t"
+            },
+            {
+                "name": "fold",
+                "comment": " Fold a list of documents from left to right using a given function.\n\n    fold f == List.foldl f empty\n\n",
+                "type": "(a -> Pretty.Doc t -> Pretty.Doc t) -> List.List a -> Pretty.Doc t"
+            },
+            {
+                "name": "group",
+                "comment": " Tries to fit a document on a single line, replacing line breaks with single spaces\nwhere possible to achieve this.\n",
+                "type": "Pretty.Doc t -> Pretty.Doc t"
+            },
+            {
+                "name": "hang",
+                "comment": " Adds an indent of the current column position to all line breaks in the document and\na further indent of the specified number of columns.\nThe first line will not be indented, only subsequent nested lines will be.\n",
+                "type": "Basics.Int -> Pretty.Doc t -> Pretty.Doc t"
+            },
+            {
+                "name": "indent",
+                "comment": " Indents a whole document by a given number of spaces.\n",
+                "type": "Basics.Int -> Pretty.Doc t -> Pretty.Doc t"
+            },
+            {
+                "name": "join",
+                "comment": " Concatenates a list of documents together interspersed with a separator document.\n\nAny `empty` docs in the list are dropped, so that multiple separators will not be\nplaced together with nothing in between them. If this behaviour is intended use\n`string \"\"` instead of `empty`.\n\n",
+                "type": "Pretty.Doc t -> List.List (Pretty.Doc t) -> Pretty.Doc t"
+            },
+            {
+                "name": "line",
+                "comment": " Creates a hard line break. This creates a new line, with subsequent text\nat the current indentation level.\n\nNote that a line break can be undone, when it sits beneath a `group` operation.\nIf this happens and the text after the line break is printed on the same line\nthen the line break will be replaced by a space character.\n\n",
+                "type": "Pretty.Doc t"
+            },
+            {
+                "name": "lines",
+                "comment": " Concatenate a list of documents together interspersed with lines.\nVery convenient when laying out lines after another:\n\n    lines\n      [ string \"Heading\"\n      , words [string \"First\", string \"paragraph\"]\n      ...\n      ]\n\n    ==\n\n    string \"Heading\"\n      |> a line\n      |> a (string \"First\")\n      |> a space\n      |> a (string \"paragraph\")\n      ...\n\nAny empty docs in the list are dropped, so multiple lines will not be inserted\naround any empties.\n\nSee also `words`.\n\n",
+                "type": "List.List (Pretty.Doc t) -> Pretty.Doc t"
+            },
+            {
+                "name": "nest",
+                "comment": " Adds an indent of the given number of spaces to all line breakss in the document.\nThe first line will not be indented, only subsequent nested lines will be.\n",
+                "type": "Basics.Int -> Pretty.Doc t -> Pretty.Doc t"
+            },
+            {
+                "name": "parens",
+                "comment": " Wraps a document in parnethesese\n",
+                "type": "Pretty.Doc t -> Pretty.Doc t"
+            },
+            {
+                "name": "pretty",
+                "comment": " Pretty prints a document trying to fit it as best as possible to the specified\ncolumn width of the page.\n",
+                "type": "Basics.Int -> Pretty.Doc t -> String.String"
+            },
+            {
+                "name": "separators",
+                "comment": " Concatenates a list of documents together interspersed with lines and\nseparator strings. This is convenient when laying out lines where each line\nbegins with a separator, for example if commas are to go on the start rather\nthan the ends of lines:\n\n    separators \", \"\n      [ string \"Heading\"\n      , words [string \"First\", string \"paragraph\"]\n      ...\n      ]\n\n    ==\n\n    string \"Heading\"\n      |> a line\n      |> a (string \", \")\n      |> a (string \"First\")\n      |> a space\n      |> a (string \"paragraph\")\n      ...\n\nThe separator string is kept with the line break. If lines built in this way\nare placed into a `group`, then the inline version of the group will include\nthe separators. The broken version of the group will have the separators after\nany indentation but otherwise at the start of each line.\n\n    separators \", \"\n      [ string \"One\"\n      , string \"Two\"\n      ...\n      ]\n      |> group\n\nCan render as:\n\n      One, Two, ...\n\nOr\n\n      One\n      , Two\n      , ...\n\nAny empty docs in the list are dropped, so multiple lines will not be inserted\naround any empties.\n\nSee also `words`.\n\n",
+                "type": "String.String -> List.List (Pretty.Doc t) -> Pretty.Doc t"
+            },
+            {
+                "name": "softline",
+                "comment": " Creates a line break that will render to a single space if the documents it\nseparates can be fitted onto one line, or a line break otherwise.\n",
+                "type": "Pretty.Doc t"
+            },
+            {
+                "name": "softlines",
+                "comment": " Like `lines` but uses `softline` instead.\n\nAny empty docs in the list are dropped, so multiple lines will not be inserted\naround any empties.\n\n",
+                "type": "List.List (Pretty.Doc t) -> Pretty.Doc t"
+            },
+            {
+                "name": "space",
+                "comment": " Creates a document consisting of a single space.\n",
+                "type": "Pretty.Doc t"
+            },
+            {
+                "name": "string",
+                "comment": " Creates a document from a string.\n",
+                "type": "String.String -> Pretty.Doc t"
+            },
+            {
+                "name": "surround",
+                "comment": " Places a document inside left and right book ends.\n\n    pretty 100 (surround (char '\\') (char '/') string \"hello\")\n      == \"\\hello/\"\n\n",
+                "type": "Pretty.Doc t -> Pretty.Doc t -> Pretty.Doc t -> Pretty.Doc t"
+            },
+            {
+                "name": "taggedString",
+                "comment": " Creates a document from a string and tags it.\n\nLater on the tag can be used to change how the string is displayed. For example\nyou might tag something as a `Keyword` then use a layout handler to show keywords\nin bold, and so on.\n\nThis is intended as a way of tagging strings in a Doc for the purpose of syntax\nhighlighting.\n\n",
+                "type": "String.String -> t -> Pretty.Doc t"
+            },
+            {
+                "name": "tightline",
+                "comment": " Creates a hard line break. This creates a new line, with subsequent text\nat the current indentation level.\n\nNote that a line break can be undone, when it sits beneath a `group` operation.\nIf this happens and the text after the line break is printed on the same line\nthen this kind of line break will be replaced by an empty string; text before\nthe break will flow directly into text after with no space added between.\n\nThis is sometimes useful where you wan an end delimiter such as '}', ']' or ')'\nto appear on a new line when the document is broken over multiple lines, but with\nno space before it when the document is rendered on a single line. For example:\n\n    long (function and args) -- Note the bracket has no space before it.\n\n    versus\n\n    long\n        (function\n            and\n            args\n        )\n\n",
+                "type": "Pretty.Doc t"
+            },
+            {
+                "name": "words",
+                "comment": " Concatenate a list of documents together interspersed with spaces.\nVery convenient when laying out words after another.\n\nSee also `lines`.\n\nAny empty docs in the list are dropped, so multiple spaces will not be inserted\naround any empties.\n\n",
+                "type": "List.List (Pretty.Doc t) -> Pretty.Doc t"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Pretty.Renderer",
+        "comment": " Pretty.Renderer lets you specify custom rendering functions to modify the\noutput of the pretty printer as it is layed out. You do not need to use this\nmodule for the default monochrome text only rendering which can be achieved\nwith `Pretty.pretty`.\n\nIf you have a tagged `Doc` model, you can use the tags to do syntax highlighting\nwith a custom `Renderer`. You can also turn the output into other structured\nforms such as HTML.\n\n@docs pretty, Renderer\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Renderer",
+                "comment": " A custom `Renderer`.\n\nThis works a bit like a `foldl` operation. Note that the text being rendered\nis folded left to right, which means if you accumulate intermediate results into\n`List`s, you will need to reverse them.\n\n  - The `init` value defines the initial state of an accumulator that is passed\n    over the entire rendering.\n\n  - Tagged and untagged string from the `Doc` are passed through the `tagged`\n    and `untagged` functions.\n\n  - When the end of a line is reached, `untagged` is invoked to update the\n    accumulator. Note that you must manually add `\\n` newline character here if\n    you need one. You may not be using newlines for an HTML rendering.\n\n  - The `outer` function is invoked on the complete accumulator, and provides an\n    opportunity to complete the layout, for example by adding outer HTML tags\n    around in, and so on.\n\n",
+                "args": [
+                    "t",
+                    "a",
+                    "b"
+                ],
+                "type": "{ init : a, tagged : t -> String.String -> a -> a, untagged : String.String -> a -> a, newline : a -> a, outer : a -> b }"
+            }
+        ],
+        "values": [
+            {
+                "name": "pretty",
+                "comment": " Pretty prints a document trying to fit it as best as possible to the specified\ncolumn width of the page.\n\nA custom `Renderer` must be specified to handle the different parts of the output.\n\n",
+                "type": "Basics.Int -> Pretty.Renderer.Renderer t a b -> Internals.Doc t -> b"
+            }
+        ],
+        "binops": []
+    }
+]

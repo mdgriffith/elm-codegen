@@ -1,0 +1,450 @@
+[
+    {
+        "name": "Monocle.Common",
+        "comment": " Common lenses/prisms/optionals that most projects will use.\n\n@docs maybe\n@docs array\n@docs list\n@docs listToArray\n@docs dict\n@docs result\n@docs id\n@docs first\n@docs second\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "array",
+                "comment": " Step into an `Array` at the given index.\n\n    .getOption (array 2) (Array.fromList [ 10, 11, 12, 13 ])\n        > Just 12\n\n    .getOption (array 8) (Array.fromList [ 10, 11, 12, 13 ])\n        > Nothing\n\n",
+                "type": "Basics.Int -> Monocle.Optional.Optional (Array.Array a) a"
+            },
+            {
+                "name": "dict",
+                "comment": " Step into a `Dict` with the given key.\n\n    .getOption (dict \"Tom\") (Dict.fromList [ ( \"Tom\", \"Cat\" ) ])\n        > Just \"Cat\"\n\n    .getOption (dict \"Jerry\") (Dict.fromList [ ( \"Tom\", \"Cat\" ) ])\n        > Nothing\n\n",
+                "type": "comparable -> Monocle.Optional.Optional (Dict.Dict comparable v) v"
+            },
+            {
+                "name": "first",
+                "comment": " Step into the first element of a pair.\n\n    first.get ( 'a', 'b' )\n        > Just 'a'\n\n",
+                "type": "Monocle.Lens.Lens ( a, b ) a"
+            },
+            {
+                "name": "id",
+                "comment": " Step into a record with an `id` key.\n\n    id.get { id = 1000, name = ... }\n    > Just 1000\n\nSince records with an `id` field are incredible common, this is\nincluded for convenience. It also serves as a simple recipe for\ncreating record lenses.\n\n",
+                "type": "Monocle.Lens.Lens { a | id : b } b"
+            },
+            {
+                "name": "list",
+                "comment": " Step into an `List` at the given index.\n(shortcut to avoid converting a `List` to an `Array` ; if it is too slow,\nconsider using `array` and an `Array` instead of a `List` in your data)\n\n    .getOption (list 2) [ 10, 11, 12, 13 ]\n        > Just 12\n\n    .getOption (list 8) [ 10, 11, 12, 13 ]\n        > Nothing\n\n",
+                "type": "Basics.Int -> Monocle.Optional.Optional (List.List a) a"
+            },
+            {
+                "name": "listToArray",
+                "comment": " Iso that converts a list to an array.\n\n    .get listToArray [ 1, 2, 3, 4 ]\n        == Array.fromList [ 1, 2, 3, 4 ]\n        > True\n\n    .reverseGet listToArray (Array.fromList [ 9, 8, 7, 6 ])\n        == [ 9, 8, 7, 6 ]\n        > True\n\n",
+                "type": "Monocle.Iso.Iso (List.List a) (Array.Array a)"
+            },
+            {
+                "name": "maybe",
+                "comment": " Step into a `Maybe` value.\n\n    maybe.set 5 Nothing\n        > Just 5\n\n",
+                "type": "Monocle.Optional.Optional (Maybe.Maybe a) a"
+            },
+            {
+                "name": "result",
+                "comment": " Step into the success value of a `Result`.\n\n    result.getOption (Ok 5)\n        > Just 5\n\n    result.getOption (Err \"500\")\n        > Nothing\n\n",
+                "type": "Monocle.Optional.Optional (Result.Result e a) a"
+            },
+            {
+                "name": "second",
+                "comment": " Step into the second element of a pair.\n\n    second.get ( 'a', 'b' )\n        > Just 'b'\n\n",
+                "type": "Monocle.Lens.Lens ( a, b ) b"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Monocle.Compose",
+        "comment": " Pipeline-friendly composition helpers\n\nUsing these allow to compose an \"outer\" optic with an \"inner\" other optic.\n\nOptics in functional programming languages that support typeclasses can be\nexpressed as functions that compose through the composition operator (just like\nany other functions) ; in Elm (plus typclasses), it would look like this:\n\n    lensAtoB >> lensBtoC >> lensCtoD == lensAtoD\n\n    lensAtoB >> optionalBtoC >> prismCtoD == optionalAtoC\n\nBut Elm doesn't support typeclasses, so we're stuck with defining composition\nfunctions that look similar like this:\n\n    import Monocle.Compose as Compose\n    lensAtoB\n      |> Compose.lensWithLens lensBtoC\n      |> Compose.lensWithLens lensCtoD\n      == lensAtoD\n    lensAtoB\n      |> Compose.lensWithOptional optionalBtoC\n      |> Compose.optionalWithPrism prismCtoD\n      == optionalAtoC\n\nThis is arguably more \"discoverable\" and maybe more readable, if more verbose.\n\n\n# From an Iso\n\n@docs isoWithIso, isoWithPrism, isoWithLens, isoWithOptional, isoWithTraversal\n\n\n# From a Prism\n\n@docs prismWithIso, prismWithPrism, prismWithLens, prismWithOptional, prismWithTraversal\n\n\n# From a Lens\n\n@docs lensWithIso, lensWithPrism, lensWithLens, lensWithOptional, lensWithTraversal\n\n\n# From an Optional\n\n@docs optionalWithIso, optionalWithPrism, optionalWithLens, optionalWithOptional, optionalWithTraversal\n\n\n# From a Traversal\n\n@docs traversalWithIso, traversalWithPrism, traversalWithLens, traversalWithOptional, traversalWithTraversal\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "isoWithIso",
+                "comment": " pipeline-friendly composition between two Iso\n\n    ab : Iso A B\n    ab = ..\n\n    bc : Iso B C\n    bc = ..\n\n    ac : Iso A C\n    ac =\n      ab\n        |> ComposeIso.isoWithIso bc\n\n",
+                "type": "Monocle.Iso.Iso b c -> Monocle.Iso.Iso a b -> Monocle.Iso.Iso a c"
+            },
+            {
+                "name": "isoWithLens",
+                "comment": " pipeline-friendly composition between an outer Iso and an inner Lens\n(the result is a Lens)\n\n    ab : Iso A B\n    ab = ..\n\n    bc : Lens B C\n    bc = ..\n\n    ac : Lens A C\n    ac =\n      ab\n        |> ComposeIso.isoWithLens bc\n\n",
+                "type": "Monocle.Lens.Lens b c -> Monocle.Iso.Iso a b -> Monocle.Lens.Lens a c"
+            },
+            {
+                "name": "isoWithOptional",
+                "comment": " pipeline-friendly composition between an outer Iso and an inner Optional\n(the result is an Optional)\n\n    ab : Iso A B\n    ab = ..\n\n    bc : Optional B C\n    bc = ..\n\n    ac : Optional A C\n    ac =\n      ab\n        |> ComposeIso.isoWithOptional bc\n\n",
+                "type": "Monocle.Optional.Optional b c -> Monocle.Iso.Iso a b -> Monocle.Optional.Optional a c"
+            },
+            {
+                "name": "isoWithPrism",
+                "comment": " pipeline-friendly composition between an outer Iso and an inner Prism\n(the result is a Prism)\n\n    ab : Iso A B\n    ab = ..\n\n    bc : Prism B C\n    bc = ..\n\n    ac : Prism A C\n    ac =\n      ab\n        |> ComposeIso.isoWithPrism bc\n\n",
+                "type": "Monocle.Prism.Prism b c -> Monocle.Iso.Iso a b -> Monocle.Prism.Prism a c"
+            },
+            {
+                "name": "isoWithTraversal",
+                "comment": " pipeline-friendly composition between an outer Iso and an inner Traversal\n(the result is a Traversal)\n\n    ab : Iso A B\n    ab = ..\n\n    bc : Traversal B C\n    bc = ..\n\n    ac : Traversal A C\n    ac =\n      ab\n        |> ComposeIso.isoWithTraversal bc\n\n",
+                "type": "Monocle.Traversal.Traversal b c -> Monocle.Iso.Iso a b -> (c -> c) -> a -> a"
+            },
+            {
+                "name": "lensWithIso",
+                "comment": " pipeline-friendly composition between an outer Lens and an inner Iso\n(the result is a Lens)\n\n    ab : Lens A B\n    ab = ..\n\n    bc : Iso B C\n    bc = ..\n\n    ac : Lens A C\n    ac =\n      ab\n        |> Compose.lensWithIso bc\n\n",
+                "type": "Monocle.Iso.Iso b c -> Monocle.Lens.Lens a b -> Monocle.Lens.Lens a c"
+            },
+            {
+                "name": "lensWithLens",
+                "comment": " pipeline-friendly composition between two Lenses\n\n    ab : Lens A B\n    ab = ..\n\n    bc : Lens B C\n    bc = ..\n\n    ac : Lens A C\n    ac =\n      ab\n        |> Compose.lensWithLens bc\n\n",
+                "type": "Monocle.Lens.Lens b c -> Monocle.Lens.Lens a b -> Monocle.Lens.Lens a c"
+            },
+            {
+                "name": "lensWithOptional",
+                "comment": " pipeline-friendly composition between an outer Lens and an inner Optional\n(the result is an Optional)\n\n    ab : Lens A B\n    ab = ..\n\n    bc : Optional B C\n    bc = ..\n\n    ac : Optional A C\n    ac =\n      ab\n        |> Compose.lensWithOptional bc\n\n",
+                "type": "Monocle.Optional.Optional b c -> Monocle.Lens.Lens a b -> Monocle.Optional.Optional a c"
+            },
+            {
+                "name": "lensWithPrism",
+                "comment": " pipeline-friendly composition between an outer Lens and an inner Prism\n(the result is an Optional)\n\n    ab : Lens A B\n    ab = ..\n\n    bc : Prism B C\n    bc = ..\n\n    ac : Optional A C\n    ac =\n      ab\n        |> Compose.lensWithPrism bc\n\n",
+                "type": "Monocle.Prism.Prism b c -> Monocle.Lens.Lens a b -> Monocle.Optional.Optional a c"
+            },
+            {
+                "name": "lensWithTraversal",
+                "comment": " pipeline-friendly composition between an outer Lens and an inner Traversal\n(the result is an Traversal)\n\n    ab : Lens A B\n    ab = ..\n\n    bc : Traversal B C\n    bc = ..\n\n    ac : Traversal A C\n    ac =\n      ab\n        |> Compose.lensWithTraversal bc\n\n",
+                "type": "Monocle.Traversal.Traversal b c -> Monocle.Lens.Lens a b -> (c -> c) -> a -> a"
+            },
+            {
+                "name": "optionalWithIso",
+                "comment": " pipeline-friendly composition between an outer Optional and an inner Iso\n(the result is an Optional)\n\n    ab : Optional A B\n    ab = ..\n\n    bc : Iso B C\n    bc = ..\n\n    ac : Optional A C\n    ac =\n      ab\n        |> ComposeOptional.optionalWithIso bc\n\n",
+                "type": "Monocle.Iso.Iso b c -> Monocle.Optional.Optional a b -> Monocle.Optional.Optional a c"
+            },
+            {
+                "name": "optionalWithLens",
+                "comment": " pipeline-friendly composition between an outer Optional and an inner Lens\n(the result is an Optional)\n\n    ab : Optional A B\n    ab = ..\n\n    bc : Lens B C\n    bc = ..\n\n    ac : Optional A C\n    ac =\n      ab\n        |> ComposeOptional.optionalWithLens bc\n\n",
+                "type": "Monocle.Lens.Lens b c -> Monocle.Optional.Optional a b -> Monocle.Optional.Optional a c"
+            },
+            {
+                "name": "optionalWithOptional",
+                "comment": " pipeline-friendly composition between two Optionals\n\n    ab : Optional A B\n    ab = ..\n\n    bc : Optional B C\n    bc = ..\n\n    ac : Optional A C\n    ac =\n      ab\n        |> ComposeOptional.optionalWithOptional bc\n\n",
+                "type": "Monocle.Optional.Optional b c -> Monocle.Optional.Optional a b -> Monocle.Optional.Optional a c"
+            },
+            {
+                "name": "optionalWithPrism",
+                "comment": " pipeline-friendly composition between an outer Optional and an inner Prism\n(the result is an Optional)\n\n    ab : Optional A B\n    ab = ..\n\n    bc : Prism B C\n    bc = ..\n\n    ac : Optional A C\n    ac =\n      ab\n        |> ComposeOptional.withPrism bc\n\n",
+                "type": "Monocle.Prism.Prism b c -> Monocle.Optional.Optional a b -> Monocle.Optional.Optional a c"
+            },
+            {
+                "name": "optionalWithTraversal",
+                "comment": " pipeline-friendly composition between an outer Optional and an inner Traversal\n(the result is a Optional)\n\n    ab : Optional A B\n    ab = ..\n\n    bc : Traversal B C\n    bc = ..\n\n    ac : Optional A C\n    ac =\n      ab\n        |> ComposeOptional.optionalWithTraversal bc\n\n",
+                "type": "Monocle.Traversal.Traversal b c -> Monocle.Optional.Optional a b -> (c -> c) -> a -> a"
+            },
+            {
+                "name": "prismWithIso",
+                "comment": " pipeline-friendly composition between an outer Prism and an inner Iso\n(the result is a Prism)\n\n    ab : Prism A B\n    ab = ..\n\n    bc : Iso B C\n    bc = ..\n\n    ac : Prism A C\n    ac =\n      ab\n        |> ComposePrism.prismWithIso bc\n\n",
+                "type": "Monocle.Iso.Iso b c -> Monocle.Prism.Prism a b -> Monocle.Prism.Prism a c"
+            },
+            {
+                "name": "prismWithLens",
+                "comment": " pipeline-friendly composition between an outer Prism and an inner Lens\n(the result is an Optional)\n\n    ab : Prism A B\n    ab = ..\n\n    bc : Lens B C\n    bc = ..\n\n    ac : Optional A C\n    ac =\n      ab\n        |> ComposePrism.prismWithLens bc\n\n",
+                "type": "Monocle.Lens.Lens b c -> Monocle.Prism.Prism a b -> Monocle.Optional.Optional a c"
+            },
+            {
+                "name": "prismWithOptional",
+                "comment": " pipeline-friendly composition between an outer Prism and an inner Optional\n(the result is an Optional)\n\n    ab : Prism A B\n    ab = ..\n\n    bc : Optional B C\n    bc = ..\n\n    ac : Optional A C\n    ac =\n      ab\n        |> ComposePrism.prismWithOptional bc\n\n",
+                "type": "Monocle.Optional.Optional b c -> Monocle.Prism.Prism a b -> Monocle.Optional.Optional a c"
+            },
+            {
+                "name": "prismWithPrism",
+                "comment": " pipeline-friendly composition between two Prisms\n\n    ab : Prism A B\n    ab = ..\n\n    bc : Prism B C\n    bc = ..\n\n    ac : Prism A C\n    ac =\n      ab\n        |> ComposePrism.prismWithPrism bc\n\n",
+                "type": "Monocle.Prism.Prism b c -> Monocle.Prism.Prism a b -> Monocle.Prism.Prism a c"
+            },
+            {
+                "name": "prismWithTraversal",
+                "comment": " pipeline-friendly composition between an outer Prism and an inner Traversal\n(the result is a Traversal)\n\n    ab : Prism A B\n    ab = ..\n\n    bc : Traversal B C\n    bc = ..\n\n    ac : Traversal A C\n    ac =\n      ab\n        |> ComposePrism.prismWithTraversal bc\n\n",
+                "type": "Monocle.Traversal.Traversal b c -> Monocle.Prism.Prism a b -> (c -> c) -> a -> a"
+            },
+            {
+                "name": "traversalWithIso",
+                "comment": " pipeline-friendly composition between an outer Traversal and an inner Iso\n(the result is a Traversal)\n\n    ab : Traversal A B\n    ab = ..\n\n    bc : Iso B C\n    bc = ..\n\n    ac : Traversal A C\n    ac =\n      ab\n        |> ComposeTraversal.traversalWithIso bc\n\n",
+                "type": "Monocle.Iso.Iso b c -> Monocle.Traversal.Traversal a b -> (c -> c) -> a -> a"
+            },
+            {
+                "name": "traversalWithLens",
+                "comment": " pipeline-friendly composition between an outer Traversal and an inner Lens\n(the result is a Traversal)\n\n    ab : Traversal A B\n    ab = ..\n\n    bc : Lens B C\n    bc = ..\n\n    ac : Traversal A C\n    ac =\n      ab\n        |> ComposeTraversal.traversalWithLens bc\n\n",
+                "type": "Monocle.Lens.Lens b c -> Monocle.Traversal.Traversal a b -> (c -> c) -> a -> a"
+            },
+            {
+                "name": "traversalWithOptional",
+                "comment": " pipeline-friendly composition between an outer Traversal and an inner Optional\n(the result is a Traversal)\n\n    ab : Traversal A B\n    ab = ..\n\n    bc : Optional B C\n    bc = ..\n\n    ac : Traversal A C\n    ac =\n      ab\n        |> ComposeTraversal.traversalWithOptional bc\n\n",
+                "type": "Monocle.Optional.Optional b c -> Monocle.Traversal.Traversal a b -> (c -> c) -> a -> a"
+            },
+            {
+                "name": "traversalWithPrism",
+                "comment": " pipeline-friendly composition between an outer Traversal and an inner Prism\n(the result is a Traversal)\n\n    ab : Traversal A B\n    ab = ..\n\n    bc : Prism B C\n    bc = ..\n\n    ac : Traversal A C\n    ac =\n      ab\n        |> ComposeTraversal.traversalWithPrism bc\n\n",
+                "type": "Monocle.Prism.Prism b c -> Monocle.Traversal.Traversal a b -> (c -> c) -> a -> a"
+            },
+            {
+                "name": "traversalWithTraversal",
+                "comment": " pipeline-friendly composition between two Traversals\n(the result is a Traversal)\n\n    ab : Traversal A B\n    ab = ..\n\n    bc : Traversal B C\n    bc = ..\n\n    ac : Traversal A C\n    ac =\n      ab\n        |> ComposeTraversal.traversalWithTraversal bc\n\n",
+                "type": "Monocle.Traversal.Traversal b c -> Monocle.Traversal.Traversal a b -> (c -> c) -> a -> a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Monocle.Iso",
+        "comment": " An Iso is a tool which converts elements of type A into elements of type B and back without loss.\n\n\n# Definition\n\n@docs Iso\n\n\n# Laws\n\n    Identity:  \\x -> iso.get(iso.reverseGet x) == x\n    Reversed:  \\x -> iso.reverseGet(iso.get x) == x\n\n\n# Example\n\n    string2CharListIso : Iso String (List Char)\n    string2CharListIso =\n        Iso String.toList String.fromList\n\n    (string2CharListIso.get \"ABcdE\") == ['A','B','c','d','E']\n    (string2CharListIso.reverseGet ['A','B','c','d','E']) == \"ABcdE\"\n\n\n# Derived methods\n\n@docs reverse, modify, compose\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Iso",
+                "comment": " In order to create an `Iso` we need to supply two total functions: `get` and `reverseGet`\n",
+                "args": [
+                    "a",
+                    "b"
+                ],
+                "type": "{ get : a -> b, reverseGet : b -> a }"
+            }
+        ],
+        "values": [
+            {
+                "name": "compose",
+                "comment": " Composes `Iso a b` with `Iso b c` and returns `Iso a c`\n",
+                "type": "Monocle.Iso.Iso a b -> Monocle.Iso.Iso b c -> Monocle.Iso.Iso a c"
+            },
+            {
+                "name": "modify",
+                "comment": " Modifies given function `(b -> b)` to be `(a -> a)` using `Iso a b`\n\n        someiso = Iso String.toList String.fromList\n        somefx xs =  '@' :: xs\n        modified = Iso.modify someiso somefx\n        (modified \"artur\") == \"@artur\"\n\n",
+                "type": "Monocle.Iso.Iso a b -> (b -> b) -> a -> a"
+            },
+            {
+                "name": "reverse",
+                "comment": " Creates reversed `Iso b a`, exchanges functions `get` and `reverseGet`\n\n        .get (Iso.reversed someiso) == someiso.reverseGet\n        .reverseGet (Iso.reversed someiso) == someiso.get\n        Iso.compose someiso (Iso.reversed someiso) == Iso identity identity\n\n",
+                "type": "Monocle.Iso.Iso a b -> Monocle.Iso.Iso b a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Monocle.Lens",
+        "comment": " A Lens is a functional concept which solves a very common problem:\nhow to easily update a complex immutable structure,\nfor this purpose Lens acts as a zoom into a record.\n\n\n# Definition\n\n@docs Lens\n\n\n# Example\n\n    addressStreetNameLens : Lens Address String\n    addressStreetNameLens =\n        let\n            get a =\n                a.streetName\n\n            set sn a =\n                { a | streetName = sn }\n        in\n        Lens get set\n\n    placeAddressLens : Lens Place Address\n    placeAddressLens =\n        let\n            get p =\n                p.address\n\n            set a p =\n                { p | address = a }\n        in\n        Lens get set\n\n    placeStreetName : Lens Place String\n    placeStreetName =\n        compose placeAddressLens addressStreetNameLens\n\n\n# Derived methods\n\n@docs compose, modify, modify2, modify3, modifyAndMerge, zip, tuple, tuple3\n\n\n# Conversion\n\n@docs fromIso\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Lens",
+                "comment": " In order to create Lens we need to supply 2 functions: set and get\n",
+                "args": [
+                    "a",
+                    "b"
+                ],
+                "type": "{ get : a -> b, set : b -> a -> a }"
+            }
+        ],
+        "values": [
+            {
+                "name": "compose",
+                "comment": " Composes `Lens a b` with `Lens b c` and returns `Lens a c`\n",
+                "type": "Monocle.Lens.Lens a b -> Monocle.Lens.Lens b c -> Monocle.Lens.Lens a c"
+            },
+            {
+                "name": "fromIso",
+                "comment": " Casts `Iso a b` to `Lens a b`\n",
+                "type": "Monocle.Iso.Iso a b -> Monocle.Lens.Lens a b"
+            },
+            {
+                "name": "modify",
+                "comment": " Modifies given function `(b -> b)` to be `(a -> a)` using `Lens a b`\n\n    addressStreetNameLens = Lens Address String\n    fx streetName = String.reverse streeName\n    fx2 = Lens.modify addressStreetNameLens fx\n    fx2 {streetName=\"abcdef\"} == {streetName=\"fedcba\"}\n\n",
+                "type": "Monocle.Lens.Lens a b -> (b -> b) -> a -> a"
+            },
+            {
+                "name": "modify2",
+                "comment": " Modifies given function `(b,d) -> (b,d)` to be `(a,c) -> (a,c)` using `Lens a b` and `Lens c d`\n",
+                "type": "Monocle.Lens.Lens a b -> Monocle.Lens.Lens c d -> (( b, d ) -> ( b, d )) -> ( a, c ) -> ( a, c )"
+            },
+            {
+                "name": "modify3",
+                "comment": " Modifies given function `(b,d,f) -> (b,d,f)` to be `(a,c,e) -> (a,c,e)` using `Lens a b` and `Lens c d` and `Lens e f`\n",
+                "type": "Monocle.Lens.Lens a b -> Monocle.Lens.Lens c d -> Monocle.Lens.Lens e f -> (( b, d, f ) -> ( b, d, f )) -> ( a, c, e ) -> ( a, c, e )"
+            },
+            {
+                "name": "modifyAndMerge",
+                "comment": " Modifies given function `(b -> (b,c))` to be `(a,c) -> (a,c)` using `Lens a b` and `merge` function\n",
+                "type": "Monocle.Lens.Lens a b -> (b -> ( b, c )) -> (c -> c -> c) -> ( a, c ) -> ( a, c )"
+            },
+            {
+                "name": "tuple",
+                "comment": " Tuple `Lens a b` with `Lens a c` and returns `Lens a (b,c)`\n",
+                "type": "Monocle.Lens.Lens a b -> Monocle.Lens.Lens a c -> Monocle.Lens.Lens a ( b, c )"
+            },
+            {
+                "name": "tuple3",
+                "comment": " Tuple `Lens a b` with `Lens a c` with `Lens a d` and returns `Lens a (b,c,d)`\n",
+                "type": "Monocle.Lens.Lens a b -> Monocle.Lens.Lens a c -> Monocle.Lens.Lens a d -> Monocle.Lens.Lens a ( b, c, d )"
+            },
+            {
+                "name": "zip",
+                "comment": " Zips `Lens a c` with `Lens b d` to form Lens ( a, b ) ( c, d )\n",
+                "type": "Monocle.Lens.Lens a c -> Monocle.Lens.Lens b d -> Monocle.Lens.Lens ( a, b ) ( c, d )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Monocle.Optional",
+        "comment": " A Optional is a weaker Lens and a weaker Prism\n\n\n# Definition\n\n@docs Optional\n\n\n# Derived methods\n\n@docs compose, composeLens, modifyOption, modify, modify2, modify3, zip, tuple, tuple3\n\n\n# Conversion\n\n@docs fromPrism, fromLens\n\n\n# Example\n\n    addressRegionOptional : Optional Address String\n    addressRegionOptional =\n        let\n            getOption a =\n                a.region\n\n            set r a =\n                { a | region = Just r }\n        in\n        Optional getOption set\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Optional",
+                "comment": " In order to create Optional we need to supply 2 functions: set and getOption\n",
+                "args": [
+                    "a",
+                    "b"
+                ],
+                "type": "{ getOption : a -> Maybe.Maybe b, set : b -> a -> a }"
+            }
+        ],
+        "values": [
+            {
+                "name": "compose",
+                "comment": " Composes `Optional a b` with `Optional b c` and returns `Optional a c`\n\n    string2IntPrism : Prism String Int\n    string2IntPrism =\n        Prism (String.toInt >> Result.toMaybe) toString\n\n    addressRegionIntOptional : Optional Address Int\n    addressRegionIntOptional =\n        compose addressRegionOptional (fromPrism string2IntPrism)\n\n",
+                "type": "Monocle.Optional.Optional a b -> Monocle.Optional.Optional b c -> Monocle.Optional.Optional a c"
+            },
+            {
+                "name": "composeLens",
+                "comment": " Composes `Optional a b` with `Lens b c` and returns `Optional a c`\n\n    string2CharListIso : Iso String (List Char)\n    string2CharListIso =\n        Iso String.toList String.fromList\n\n    addressRegionListCharOptional : Optional Address (List Char)\n    addressRegionListCharOptional =\n        composeLens addressRegionOptional (fromIso string2CharListIso)\n\n",
+                "type": "Monocle.Optional.Optional a b -> Monocle.Lens.Lens b c -> Monocle.Optional.Optional a c"
+            },
+            {
+                "name": "fromLens",
+                "comment": " Casts `Lens a b` to `Optional a b` where `getOption` will return always `Just`\n",
+                "type": "Monocle.Lens.Lens a b -> Monocle.Optional.Optional a b"
+            },
+            {
+                "name": "fromPrism",
+                "comment": " Casts `Prism a b` to `Optional a b`\n\n    string2IntPrism : Prism String Int\n    string2IntPrism =\n        Prism (String.toInt >> Result.toMaybe) toString\n\n    stringIntOptional : Optional String Int\n    stringIntOptional =\n        fromPrism string2IntPrism\n\n",
+                "type": "Monocle.Prism.Prism a b -> Monocle.Optional.Optional a b"
+            },
+            {
+                "name": "modify",
+                "comment": " Modifies given function `(b -> b)` to be `(a -> a)` using `Optional a b`\n\n        modifyRegion: String -> String\n        modifyRegion region = String.reverse region\n\n        modifyAddressRegion: Address -> Address\n        modifyAddressRegion address = Optional.modify addressRegionOptional modifyRegion address\n\n",
+                "type": "Monocle.Optional.Optional a b -> (b -> b) -> a -> a"
+            },
+            {
+                "name": "modify2",
+                "comment": " Modifies given function `(b,d) -> (b,d)` to be `(a,c) -> (a,c)` using `Optional a b` and `Optional c d`\n\n    Function will be invoked ONLY when for ALL arguments `a` and `c` method `Optional.getOption` returns some value.\n\n",
+                "type": "Monocle.Optional.Optional a b -> Monocle.Optional.Optional c d -> (( b, d ) -> ( b, d )) -> ( a, c ) -> ( a, c )"
+            },
+            {
+                "name": "modify3",
+                "comment": " Modifies given function `( b, d, f ) -> ( b, d, f )` to be `( a, c, e ) -> ( a, c, e )` using `Optional a b` and `Optional c d` and `Optional e f`\n\n    Function will be invoked ONLY when for ALL arguments `a`,`c`,`f` method `Optional.getOption` returns some value.\n\n",
+                "type": "Monocle.Optional.Optional a b -> Monocle.Optional.Optional c d -> Monocle.Optional.Optional e f -> (( b, d, f ) -> ( b, d, f )) -> ( a, c, e ) -> ( a, c, e )"
+            },
+            {
+                "name": "modifyOption",
+                "comment": " Modifies given function `(b -> b)` to be `(a -> Maybe a)` using `Optional a b`\n\n        modifyRegion: String -> String\n        modifyRegion region = String.reverse region\n\n        modifyAddressRegion: Address -> Maybe Address\n        modifyAddressRegion address = Optional.modifyOption addressRegionOptional modifyRegion address\n\n",
+                "type": "Monocle.Optional.Optional a b -> (b -> b) -> a -> Maybe.Maybe a"
+            },
+            {
+                "name": "tuple",
+                "comment": " Tuple `Optional a b` with `Optional a c` and returns `Optional a (b,c)`\n\n    Method `Optional.getOption` returns pair of values only when both given optionals return some value.\n\n",
+                "type": "Monocle.Optional.Optional a b -> Monocle.Optional.Optional a c -> Monocle.Optional.Optional a ( b, c )"
+            },
+            {
+                "name": "tuple3",
+                "comment": " Tuple `Optional a b` with `Optional a c` with `Optional a d` and returns `Optional a (b,c,d)`\n\n    Method `Optional.getOption` returns triple of values only when all given optionals return some value.\n\n",
+                "type": "Monocle.Optional.Optional a b -> Monocle.Optional.Optional a c -> Monocle.Optional.Optional a d -> Monocle.Optional.Optional a ( b, c, d )"
+            },
+            {
+                "name": "zip",
+                "comment": " Zip `Optional a c` with `Optional b d` to form Optional for the pairs ( a, b ) ( c, d )\n",
+                "type": "Monocle.Optional.Optional a c -> Monocle.Optional.Optional b d -> Monocle.Optional.Optional ( a, b ) ( c, d )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Monocle.Prism",
+        "comment": " A Prism is a tool which optionally converts elements of type A into elements of type B and back.\n\n\n# Definition\n\n@docs Prism\n\n\n# Example\n\n    string2IntPrism : Prism String Int\n    string2IntPrism =\n        Prism (String.toInt >> Result.toMaybe) toString\n\n    string2IntPrism.getOption \"17896\" == Just 17896\n    string2IntPrism.getOption \"1a896\" == Nothing\n    string2IntPrism.reverseGet 1626767 = \"1626767\"\n\n\n# Derived methods\n\n@docs isMatching, modify, modifyOption, compose, composeIso\n\n\n# Conversion\n\n@docs fromIso\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Prism",
+                "comment": " In order to create a `Prism` we need to supply two functions: `getOption` and `reverseGet`\n",
+                "args": [
+                    "a",
+                    "b"
+                ],
+                "type": "{ getOption : a -> Maybe.Maybe b, reverseGet : b -> a }"
+            }
+        ],
+        "values": [
+            {
+                "name": "compose",
+                "comment": " Composes `Prism a b` with `Prism b c` and returns `Prism a c`\n\n        prism = Monocle.Prism.compose string2FloatPrism float2IntPrism\n        prism.getOption \"22\" == Just 22\n        prism.getOption \"22.2\" == Nothing\n        prism.getOption \"22a\" == Nothing\n        prism.getOption \"abc\" == Nothing\n\n",
+                "type": "Monocle.Prism.Prism a b -> Monocle.Prism.Prism b c -> Monocle.Prism.Prism a c"
+            },
+            {
+                "name": "composeIso",
+                "comment": " Composes `Prism a b` with `Iso b c` and returns `Prism a c`\n\n        iso = Iso ((*) 10) ((//) 10)\n        prism = Monocle.Prism.composeIso string2IntPrism iso\n        prism.getOption \"22\" == Just 220\n        prism.getOption \"22.2\" == Nothing\n        prism.getOption \"22a\" == Nothing\n        prism.getOption \"abc\" == Nothing\n\n",
+                "type": "Monocle.Prism.Prism a b -> Monocle.Iso.Iso b c -> Monocle.Prism.Prism a c"
+            },
+            {
+                "name": "fromIso",
+                "comment": " Casts `Iso a b` to `Prism a b`\n",
+                "type": "Monocle.Iso.Iso a b -> Monocle.Prism.Prism a b"
+            },
+            {
+                "name": "isMatching",
+                "comment": " Checks if value of type `A` has matching element of type 'B'\n\n        Monocle.Prism.isMatching string2IntPrism \"abc\" == False\n        Monocle.Prism.isMatching string2IntPrism \"123\" == True\n\n",
+                "type": "Monocle.Prism.Prism a b -> a -> Basics.Bool"
+            },
+            {
+                "name": "modify",
+                "comment": " Modifies given function `(b -> b)` to be `(a -> a)` using `Prism a b`\n\n        fx i = i * 2\n        modified = Monocle.Prism.modify string2IntPrism fx\n        modified \"22\" == \"44\"\n        modified \"abc\" == \"abc\"\n\n",
+                "type": "Monocle.Prism.Prism a b -> (b -> b) -> a -> a"
+            },
+            {
+                "name": "modifyOption",
+                "comment": " Modifies given function `(b -> b)` to be `(a -> Maybe a)` using `Prism a b`\n\n        fx i = i * 2\n        modified = Monocle.Prism.modify string2IntPrism fx\n        modified \"22\" == Just \"44\"\n        modified \"abc\" == Nothing\n\n",
+                "type": "Monocle.Prism.Prism a b -> (b -> b) -> a -> Maybe.Maybe a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Monocle.Traversal",
+        "comment": " A Traversal is like an Optional that may modify multiple sub-elements, keeping the overlaying structure as is.\n\n\n# Definition\n\n@docs Traversal\n\n\n# Example\n\n    personsAge : Lens Person Int\n    personsAge =\n        let\n            get a =\n                a.age\n\n            set b a =\n                { a | age = b }\n        in\n        Lens get set\n\n    jeffs : Traversal (List Person) Person\n    jeffs =\n        Traversal.some Traversal.list (\\p -> p.name == \"Jeff\")\n\n    jeffsAges : Traversal (List Person) Int\n    jeffsAges =\n        jeffs\n            |> Compose.traversalWithLens personsAge\n\n\n# Derived methods\n\n@docs list, array, some, modify\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Traversal",
+                "comment": " To create a Traversal, you just need to provide a function\nthat applies a transformation function to some or all elements\nin the parent structure.\n",
+                "args": [
+                    "a",
+                    "b"
+                ],
+                "type": "(b -> b) -> a -> a"
+            }
+        ],
+        "values": [
+            {
+                "name": "array",
+                "comment": " A basic traversal that affects all elements in an array\n",
+                "type": "Monocle.Traversal.Traversal (Array.Array a) a"
+            },
+            {
+                "name": "list",
+                "comment": " A basic traversal that affects all elements in a list\n",
+                "type": "Monocle.Traversal.Traversal (List.List a) a"
+            },
+            {
+                "name": "modify",
+                "comment": " Modifies all elements traversed by `Traversal a b` using function\n`(b -> b)` in structure `a`\n\n    personsHairColor : Lens Person String\n    personsHairColor =\n        Lens .hairColor (\\b a-> { a | hairColor = b })\n\n    pauls : Traversal (List Person) Person\n    pauls =\n        Traversal.some Traversal.list (\\person -> person.firstName == 'Paul' )\n\n    paulsHairColor : Traversal (List Person) String\n    paulsHairColor =\n        pauls\n            |> Compose.traversalWithLens personsHairColor\n\n    lighten : String -> String\n    lighten hairColor =\n        \"light \" ++ hairColor\n\n    lightenPauls : List Person -> List Person\n    lightenPauls =\n        Traversal.modify pauls\n\n    lightenPauls [\n        { firstName = \"Paul\"\n        , hairColor = \"brown\"\n        },\n        { firstName = \"Jake\"\n        , hairColor = \"blond\"\n        }\n    ] == [\n        { firstName = \"Paul\"\n        , hairColor = \"light brown\"\n        },\n        { firstName = \"Jake\"\n        , hairColor = \"blond\"\n        }\n    ]\n\n",
+                "type": "Monocle.Traversal.Traversal a b -> (b -> b) -> a -> a"
+            },
+            {
+                "name": "some",
+                "comment": " A traversal that, given another traversal as base, only affects\nthose traversed elements that satisfy a condition.\n\n    numbers : Traversal (List number) number\n    numbers =\n        Traversal.list\n\n    oddNumbers : Traversal (List number) number\n    oddNumbers =\n        Traversal.some numbers (\\number -> remainderBy 2 number == 1)\n\n    evenNumbers : Traversal (List number) number\n    evenNumbers =\n        Traversal.some numbers (\\number -> remainderBy 2 number == 0)\n\n",
+                "type": "Monocle.Traversal.Traversal a b -> (b -> Basics.Bool) -> (b -> b) -> a -> a"
+            }
+        ],
+        "binops": []
+    }
+]

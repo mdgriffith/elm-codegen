@@ -1,0 +1,125 @@
+[
+    {
+        "name": "I18Next",
+        "comment": " This library provides a solution to load and display translations in your\napp. It allows you to load json translation files, display the text and\ninterpolate placeholders. There is also support for fallback languages if\nneeded.\n\n\n## Types and Data\n\n@docs Translations, Delims, Replacements, CustomReplacements, initialTranslations\n\n\n## Decoding\n\nTurn your JSON into translations.\n\n@docs translationsDecoder\n\n\n## Using Translations\n\nGet translated values by key straight away, with replacements, fallback languages\nor both.\n\n@docs t, tr, tf, trf, customTr, customTrf\n\n\n## Inspecting\n\nYou probably won't need these functions for regular applications if you just\nwant to translate some strings. But if you are looking to build a translations\neditor you might want to query some information about the contents of the\ntranslations.\n\n@docs keys, hasKey\n\n\n## Creating Translations Programmatically\n\nMost of the time you'll load your translations as JSON from a server, but there\nmay be times, when you want to build translations in your code. The following\nfunctions let you build a `Translations` value programmatically.\n\n@docs Tree, fromTree, string, object\n\n",
+        "unions": [
+            {
+                "name": "Delims",
+                "comment": " A union type for representing delimiters for placeholders. Most commonly\nthose will be `{{...}}`, or `__...__`. You can also provide a set of\ncustom delimiters(start and end) to account for different types of placeholders.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Curly",
+                        []
+                    ],
+                    [
+                        "Underscore",
+                        []
+                    ],
+                    [
+                        "Custom",
+                        [
+                            "( String.String, String.String )"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Translations",
+                "comment": " A type that represents your loaded translations\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Tree",
+                "comment": " A type representing a hierarchy of nested translations. You'll only ever\ndeal with this type directly, if you're using\n[`string`](I18Next#string) and [`object`](I18Next#object).\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "CustomReplacements",
+                "comment": " CustomReplacements if you want to replace placeholders with other things\nthan strings. The tuples should\ncontain the name of the placeholder as the first value and the value for\nthe placeholder as the second entry. It can be anything, for example `Html`. See [`customTf`](I18Next#customTr) and\n[`customTrf`](I18Next#customTrf) for usage examples.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "List.List ( String.String, a )"
+            },
+            {
+                "name": "Replacements",
+                "comment": " An alias for replacements for use with placeholders. Each tuple should\ncontain the name of the placeholder as the first value and the value for\nthe placeholder as the second entry. See [`tr`](I18Next#tr) and\n[`trf`](I18Next#trf) for usage examples.\n",
+                "args": [],
+                "type": "List.List ( String.String, String.String )"
+            }
+        ],
+        "values": [
+            {
+                "name": "customTr",
+                "comment": " Sometimes it can be useful to replace placeholders with other things than just `String`s.\nImagine you have translations containing a sentence with a link and you want to\nprovide the proper markup.\n_Hint:_ The third argument is a function which will be called for any string pieces that\nAREN'T placeholders, so that the types of replacements and the other other string parts match.\nIn most cases you'll just pass `Html.text` here.\n\n    {- If your translations are { \"call-to-action\": \"Go to {{elm-website}} for more information.\" }\n    ...\n    -}\n    import Html exposing (text, a)\n\n    customTr translationsEn Curly text \"call-to-action\" [ ( \"elm-website\", a [href \"https://elm-lang.org\"] [text \"https://elm-lang.org\"] ) ]\n    -- Go to <a href=\"https://elm-lang.org\">https://elm-lang.org</a> for more information.\n\nIf you only want `String`s though, use [`tr`](I18Next#tr) instead.\n\n",
+                "type": "I18Next.Translations -> I18Next.Delims -> (String.String -> a) -> String.String -> I18Next.CustomReplacements a -> List.List a"
+            },
+            {
+                "name": "customTrf",
+                "comment": " Like [`customTr`](I18Next#customTr) but with support for fallback languages.\n",
+                "type": "List.List I18Next.Translations -> I18Next.Delims -> (String.String -> a) -> String.String -> I18Next.CustomReplacements a -> List.List a"
+            },
+            {
+                "name": "fromTree",
+                "comment": " Create a [`Translations`](I18Next#Translations) value from a list of pairs.\n\n    import I18Next exposing (string, object, fromTree, t)\n\n    translations =\n        fromTree\n          [ (\"custom\"\n            , object\n                [ ( \"morning\", string \"Morning\" )\n                , ( \"evening\", string \"Evening\" )\n                , ( \"afternoon\", string \"Afternoon\" )\n                ]\n            )\n          , (\"hello\", string \"hello\")\n          ]\n\n    -- use it like this\n    t translations \"custom.morning\" -- \"Morning\"\n\n",
+                "type": "List.List ( String.String, I18Next.Tree ) -> I18Next.Translations"
+            },
+            {
+                "name": "hasKey",
+                "comment": " This function lets you check whether a certain key is exists in your\ntranslations.\n",
+                "type": "I18Next.Translations -> String.String -> Basics.Bool"
+            },
+            {
+                "name": "initialTranslations",
+                "comment": " Use this to initialize Translations in your model. This may be needed\nwhen loading translations but you need to initialize your model before\nyour translations are fetched.\n",
+                "type": "I18Next.Translations"
+            },
+            {
+                "name": "keys",
+                "comment": " Use this to obtain a list of keys that are contained in the translations.\nFrom this it is simple to, for example, compare two translations for keys defined in one\nbut not the other. The order of the keys is arbitrary and should not be relied\non.\n",
+                "type": "I18Next.Translations -> List.List String.String"
+            },
+            {
+                "name": "object",
+                "comment": " Let's you arange your translations in a hierarchy of objects.\n",
+                "type": "List.List ( String.String, I18Next.Tree ) -> I18Next.Tree"
+            },
+            {
+                "name": "string",
+                "comment": " Represents the leaf of a translations tree. It holds the actual translation\nstring.\n",
+                "type": "String.String -> I18Next.Tree"
+            },
+            {
+                "name": "t",
+                "comment": " Translate a value at a given string.\n\n    {- If your translations are { \"greet\": { \"hello\": \"Hello\" } }\n    use dots to access nested keys.\n    -}\n    import I18Next exposing (t)\n    t translations \"greet.hello\" -- \"Hello\"\n\n",
+                "type": "I18Next.Translations -> String.String -> String.String"
+            },
+            {
+                "name": "tf",
+                "comment": " Translate a value and try different fallback languages by providing a list\nof Translations. If the key you provide does not exist in the first of the list\nof languages, the function will try each language in the list.\n\n    {- Will use german if the key exists there, or fall back to english\n    if not. If the key is not in any of the provided languages the function\n    will return the key. -}\n    import I18Next exposing (tf)\n    tf [germanTranslations, englishTranslations] \"labels.greetings.hello\"\n\n",
+                "type": "List.List I18Next.Translations -> String.String -> String.String"
+            },
+            {
+                "name": "tr",
+                "comment": " Translate a value at a key, while replacing placeholders.\nCheck the [`Delims`](I18Next#Delims) type for\nreference how to specify placeholder delimiters.\nUse this when you need to replace placeholders.\n\n    -- If your translations are { \"greet\": \"Hello {{name}}\" }\n    import I18Next exposing (tr, Delims(..))\n    tr translations Curly \"greet\" [(\"name\", \"Peter\")]\n\n",
+                "type": "I18Next.Translations -> I18Next.Delims -> String.String -> I18Next.Replacements -> String.String"
+            },
+            {
+                "name": "translationsDecoder",
+                "comment": " Decode a JSON translations file. The JSON can be arbitrarly nested, but the\nleaf values can only be strings. Use this decoder directly, if you are passing\nthe translations JSON into your elm app via flags or ports.\nAfter decoding nested values will be available with any of the translate\nfunctions separated with dots.\n\n    {- The JSON could look like this:\n    {\n      \"buttons\": {\n        \"save\": \"Save\",\n        \"cancel\": \"Cancel\"\n      },\n      \"greetings\": {\n        \"hello\": \"Hello\",\n        \"goodDay\": \"Good Day {{firstName}} {{lastName}}\"\n      }\n    }\n    -}\n\n    --Use the decoder like this on a string\n    import I18Next exposing (translationsDecoder)\n    Json.Decode.decodeString translationsDecoder \"{ \\\"greet\\\": \\\"Hello\\\" }\"\n\n    -- or on a Json.Encode.Value\n    Json.Decode.decodeValue translationsDecoder encodedJson\n\n",
+                "type": "Json.Decode.Decoder I18Next.Translations"
+            },
+            {
+                "name": "trf",
+                "comment": " Combines the [`tr`](I18Next#tr) and the [`tf`](I18Next#tf) function.\nOnly use this if you want to replace placeholders and apply fallback languages\nat the same time.\n\n    -- If your translations are { \"greet\": \"Hello {{name}}\" }\n    import I18Next exposing (trf, Delims(..))\n    let\n      langList = [germanTranslations, englishTranslations]\n    in\n      trf langList Curly \"greet\" [(\"name\", \"Peter\")] -- \"Hello Peter\"\n\n",
+                "type": "List.List I18Next.Translations -> I18Next.Delims -> String.String -> I18Next.Replacements -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

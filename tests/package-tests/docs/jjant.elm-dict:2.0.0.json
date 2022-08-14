@@ -1,0 +1,56 @@
+[
+    {
+        "name": "AllDict",
+        "comment": " A dictionary mapping keys to values. This dictionary can use any (non-function) type as a key.\nThe Dict in the core libraries can only use comparable keys.\nAllDict uses regular equality, `(==)` for comparing keys, and thus, works for anything but functions.\n\nUnlike other dictionaries, this implementation allows one to set predicates on the retrieval of values, which allows one to do things like these:\n\n    import AllDict exposing (Dict, withPredicate)\n\n    withDefaultValue10 =\n        AllDict.empty\n            |> AllDict.withPredicate (always True) 10\n            |> AllDict.insert \"Another value\" 42\n\n\n    AllDict.get \"Hey\" withDefaultValue10 == Just 10\n\n    AllDict.get \"Nice!\" withDefaultValue10 == Just 10\n\n    AllDict.get \"Another value\" withDefaultValue10 == Just 42\n\nThis dictionary is based in this [article](http://fho.f12n.de/posts/2014-05-07-dont-fear-the-cat.html).\n\n\n## Creating\n\n@docs Dict\n\n@docs empty, fromList\n\n\n## Reading\n\n@docs get\n\n\n## Modifying\n\n@docs insert, remove, withPredicate\n\n\n## Transforming values\n\n@docs map\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Dict",
+                "comment": " A mapping from keys of type `k`, to values of type `v`.\n",
+                "args": [
+                    "k",
+                    "v"
+                ],
+                "type": "k -> Maybe.Maybe v"
+            }
+        ],
+        "values": [
+            {
+                "name": "empty",
+                "comment": " Create an empty dictionary.\n\n    import AllDict\n\n    AllDict.get \"Some key\" AllDict.empty == Nothing\n\n",
+                "type": "k -> Maybe.Maybe v"
+            },
+            {
+                "name": "fromList",
+                "comment": " Creates a value from a list of key-value pairs.\n\n    import AllDict\n\n    myDict =\n        AllDict.fromList\n            [ ( \"some key\", \"some value\" )\n            , ( \"another key\", \"another value\" )\n            ]\n\n    AllDict.get \"some key\" myDict == Just \"some value\"\n\n    AllDict.get \"another key\" myDict == Just \"another value\"\n\n",
+                "type": "List.List ( k, v ) -> AllDict.Dict k v"
+            },
+            {
+                "name": "get",
+                "comment": " Retrieves a value from a Dict. Returns `Nothing` if the key is not present.\n\n    import AllDict\n\n    myDict = AllDict.insert \"my key\" 42 AllDict.empty\n\n    AllDict.get \"my key\" myDict == Just 42\n\nThis applies the key to the dictionary \"function,\" though, so remember that this lookup time is O(n) for n the number of operations on the table, including initial inserts.\n\n",
+                "type": "k -> AllDict.Dict k v -> Maybe.Maybe v"
+            },
+            {
+                "name": "insert",
+                "comment": " Inserts a value for a key in a Dict. Overwrites any already set key.\n\n    import AllDict\n\n    myDict =\n      AllDict.empty\n        |> AllDict.insert \"my key\" 42\n        |> AllDict.insert \"my key\" 88\n\n    AllDict.get \"my key\" myDict == Just 88\n\n",
+                "type": "k -> v -> AllDict.Dict k v -> AllDict.Dict k v"
+            },
+            {
+                "name": "map",
+                "comment": " Transforms all values in a Dict.\n\n    import AllDict exposing (Dict)\n\n    myDict : Dict String String\n    myDict =\n        AllDict.fromList\n            [ ( \"some key\", \"some value\" )\n            , ( \"another key\", \"another value\" )\n            ]\n\n    myIntDict : Dict String Int\n    myIntDict = AllDict.map String.length myDict\n\n    AllDict.get \"some key\" myIntDict == Just 10\n\n",
+                "type": "(a -> b) -> AllDict.Dict k a -> AllDict.Dict k b"
+            },
+            {
+                "name": "remove",
+                "comment": " Removes the value set for a key.\n\n    import AllDict\n\n    myDict =\n      AllDict.empty\n        |> AllDict.insert \"my key\" 42\n        |> AllDict.remove \"my key\"\n\n    AllDict.get \"my key\" myDict == Nothing\n\n",
+                "type": "k -> AllDict.Dict k v -> AllDict.Dict k v"
+            },
+            {
+                "name": "withPredicate",
+                "comment": " Adds a predicate with a value to a Dict. If the key satisfies the predicate, that value will be returned.\nThe predicate can be overwritten for specific keys with subsequent inserts or predicates.\n\n    import AllDict\n\n    isShort : String -> Bool\n    isShort k = String.length k <= 5\n\n    welcomeMessageDict : Dict String String\n    welcomeMessageDict =\n      AllDict.empty\n        |> AllDict.withPredicate isShort \"This key is pretty short!\"\n        |> AllDict.insert \"cats\" \"I love them!\"\n\n    AllDict.get \"key1\" myDict == Just \"This key is pretty short!\"\n\n    AllDict.get \"key2\" myDict == Just \"This key is pretty short!\"\n\n    AllDict.get \"cats\" myDict == Just \"I love them!\"\n\n",
+                "type": "(k -> Basics.Bool) -> v -> AllDict.Dict k v -> AllDict.Dict k v"
+            }
+        ],
+        "binops": []
+    }
+]

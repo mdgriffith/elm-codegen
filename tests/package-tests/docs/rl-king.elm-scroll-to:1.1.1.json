@@ -1,0 +1,81 @@
+[
+    {
+        "name": "ScrollTo",
+        "comment": " Smoothly scroll to an element or position\non the page with a [spring](https://en.wikipedia.org/wiki/Hooke's_law) animation.\n\n\n# Init\n\n@docs State\n@docs Settings\n\n@docs init\n@docs initWithSettings\n\n\n# Update\n\n@docs Msg\n@docs update\n@docs subscriptions\n\n\n# Scroll to\n\n@docs scrollTo\n@docs scrollToTop\n@docs cancel\n@docs isScrolling\n\n\n# Scroll to custom\n\n@docs scrollToCustom\n@docs scrollToCustomNoElement\n\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " A message type for the `State` to update.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "State",
+                "comment": " A type containing all information to get us to our destination during an animation.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Settings",
+                "comment": " Settings that control how we animate to the element.\n",
+                "args": [],
+                "type": "{ strength : Basics.Float, dampness : Basics.Float }"
+            }
+        ],
+        "values": [
+            {
+                "name": "cancel",
+                "comment": " Interrupt the current animation.\n\nYou can call this if the user scrolls during the animation, interrupting\nthe movement of the page.\n\n",
+                "type": "ScrollTo.State -> ScrollTo.State"
+            },
+            {
+                "name": "init",
+                "comment": " Initial `State` to store in your `Model`.\n\nSettings used are:\n\n    { strength = 100\n    , dampness = 4.5\n    }\n\n",
+                "type": "ScrollTo.State"
+            },
+            {
+                "name": "initWithSettings",
+                "comment": " Same as `init` but bring your own `Settings`.\n\nThese settings are handled by [tad-lispy/springs](https://package.elm-lang.org/packages/tad-lispy/springs/1.0.5/)\nso take a look over there on how they interact and play around with\nthe `Oscillometer` demo to get a visual preview of specific settings.\n\n",
+                "type": "ScrollTo.Settings -> ScrollTo.State"
+            },
+            {
+                "name": "isScrolling",
+                "comment": " Check if the scrolling animation is running.\n",
+                "type": "ScrollTo.State -> Basics.Bool"
+            },
+            {
+                "name": "scrollTo",
+                "comment": " Scroll to element with given `String` id on the current page.\n\n_note: this will only scroll the viewport y-axis to the element y position.\nUse `scrollToCustom` if you want more control over this behavior._\n\n",
+                "type": "String.String -> Platform.Cmd.Cmd ScrollTo.Msg"
+            },
+            {
+                "name": "scrollToCustom",
+                "comment": " Scroll to element with given `String` id on the current page\nwith your own calculations on where to start and where to end.\n\nBoth `Viewport` and `Element` can be found in [elm/browser](http://localhost:8009/packages/elm/browser/1.0.2/Browser-Dom)\n\nFor example you could define scroll to with offset like:\n\n    scrollToWithOffset : Float -> String -> Cmd Msg\n    scrollToWithOffset offset id =\n        let\n            f { viewport } { element } =\n                { from =\n                    { x = viewport.x\n                    , y = viewport.y\n                    }\n                , to =\n                    { x = viewport.x\n                    , y = Basics.max 0 (element.y - 100)\n                    }\n                }\n        in\n        scrollToCustom f id\n\nOr scroll the viewport x-axis to the element x position as well.\n\n    scrollToAlt : String -> Cmd Msg\n    scrollToAlt id =\n        let\n            f { viewport } { element } =\n                { from = { x = viewport.x, y = viewport.y }\n                , to = { x = element.x, y = element.y }\n                }\n        in\n        scrollToCustom f id\n\n",
+                "type": "(Browser.Dom.Viewport -> Browser.Dom.Element -> { from : { x : Basics.Float, y : Basics.Float }, to : { x : Basics.Float, y : Basics.Float } }) -> String.String -> Platform.Cmd.Cmd ScrollTo.Msg"
+            },
+            {
+                "name": "scrollToCustomNoElement",
+                "comment": " Scroll wherever you like but without an element.\n\nFor example `scrollToTop` is defined like:\n\n    scrollToTop : Cmd Msg\n    scrollToTop =\n        let\n            f { viewport } =\n                { from = { x = viewport.x, y = viewport.y }\n                , to = { x = viewport.x, y = 0 }\n                }\n        in\n        scrollToCustomNoElement f\n\n",
+                "type": "(Browser.Dom.Viewport -> { from : { x : Basics.Float, y : Basics.Float }, to : { x : Basics.Float, y : Basics.Float } }) -> Platform.Cmd.Cmd ScrollTo.Msg"
+            },
+            {
+                "name": "scrollToTop",
+                "comment": " Scroll to the top of the page.\n\n_note: this will only scroll the viewport y-axis to 0, the x-axis position\nwill remain the same._\n\n",
+                "type": "Platform.Cmd.Cmd ScrollTo.Msg"
+            },
+            {
+                "name": "subscriptions",
+                "comment": " Sync to the browser refresh rate and make sure\nour animation runs as smooth as possible.\n",
+                "type": "ScrollTo.State -> Platform.Sub.Sub ScrollTo.Msg"
+            },
+            {
+                "name": "update",
+                "comment": " Update the `State` with messages sent by `subscriptions` or `Browser.Dom`\nviewport information requests.\n",
+                "type": "ScrollTo.Msg -> ScrollTo.State -> ( ScrollTo.State, Platform.Cmd.Cmd ScrollTo.Msg )"
+            }
+        ],
+        "binops": []
+    }
+]

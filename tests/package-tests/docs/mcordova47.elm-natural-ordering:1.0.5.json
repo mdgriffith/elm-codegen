@@ -1,0 +1,21 @@
+[
+    {
+        "name": "NaturalOrdering",
+        "comment": " Compare strings with numbers and diacritics \"naturally\"\n\n@docs compare, compareOn\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "compare",
+                "comment": " Compare two strings naturally.\n\n    List.sortWith NaturalOrdering.compare [\"a10\", \"a2\"]\n    --> [\"a2\", \"a10\"]\n\n",
+                "type": "String.String -> String.String -> Basics.Order"
+            },
+            {
+                "name": "compareOn",
+                "comment": " Compare two `a`s naturally, based on some function, `a -> String`. Use\nthis where you would ordinarily use `sortBy`.\n\n    List.sortWith (compareOn .name) [{ name = \"a10\" }, { name = \"a2\" }]\n    --> [{ name = \"a2\" }, { name = \"a10\" }]\n\n",
+                "type": "(a -> String.String) -> a -> a -> Basics.Order"
+            }
+        ],
+        "binops": []
+    }
+]

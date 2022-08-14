@@ -1,0 +1,296 @@
+[
+    {
+        "name": "Color.Accessibility",
+        "comment": "\n\n\n# Accessibility\n\nFunctions to measure and maximize accessibility.\n\n@docs contrastRatio, luminance, maximumContrast\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "contrastRatio",
+                "comment": " Get the contrast ratio of two colors represented as a Float.\n\nFormula based on:\n<https://www.w3.org/TR/WCAG20/#contrast-ratiodef>\n\n    contrastRatio Color.black Color.white -- 21.0\n\n    contrastRatio Color.blue Color.blue -- 1.0\n\n",
+                "type": "Color.Color -> Color.Color -> Basics.Float"
+            },
+            {
+                "name": "luminance",
+                "comment": " Get the relative luminance of a color represented as a Float.\n\nFormula based on:\n<https://www.w3.org/TR/WCAG20/#relativeluminancedef>\n\n    luminance Color.black -- 0.0\n\n    luminance Color.white -- 1.0\n\n",
+                "type": "Color.Color -> Basics.Float"
+            },
+            {
+                "name": "maximumContrast",
+                "comment": " Returns the color with the highest contrast to the base color.\n\n    bgColor = Color.darkBlue\n    textOptions = [ Color.white, Color.purple, Color.black ]\n\n    maximumContrast bgColor textOptions -- Just Color.white\n\n",
+                "type": "Color.Color -> List.List Color.Color -> Maybe.Maybe Color.Color"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Color.Blending",
+        "comment": "\n\n\n# Blending\n\nBased on the [Compositing and Blending Level 1](https://www.w3.org/TR/compositing-1/#blending)\n\n@docs multiply, screen, overlay, difference, exclusion, hardlight, softlight, colorBurn, colorDodge, lighten, darken\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "colorBurn",
+                "comment": " Darkens the backdrop color to reflect the source color.\nPainting with white produces no change.\n",
+                "type": "Color.Color -> Color.Color -> Color.Color"
+            },
+            {
+                "name": "colorDodge",
+                "comment": " Brightens the backdrop color to reflect the source color.\nPainting with black produces no changes.\n",
+                "type": "Color.Color -> Color.Color -> Color.Color"
+            },
+            {
+                "name": "darken",
+                "comment": " Selects the darker of the backdrop and source colors.\n",
+                "type": "Color.Color -> Color.Color -> Color.Color"
+            },
+            {
+                "name": "difference",
+                "comment": " Subtracts the darker of the two constituent colors from the lighter color.\n",
+                "type": "Color.Color -> Color.Color -> Color.Color"
+            },
+            {
+                "name": "exclusion",
+                "comment": " Produces an effect similar to that of the Difference mode but lower in contrast.\nPainting with white inverts the backdrop color; painting with black produces no change\n",
+                "type": "Color.Color -> Color.Color -> Color.Color"
+            },
+            {
+                "name": "hardlight",
+                "comment": " Multiplies or screens the colors, depending on the source color value.\nThe effect is similar to shining a harsh spotlight on the backdrop.\n",
+                "type": "Color.Color -> Color.Color -> Color.Color"
+            },
+            {
+                "name": "lighten",
+                "comment": " Selects the lighter of the backdrop and source colors.\n",
+                "type": "Color.Color -> Color.Color -> Color.Color"
+            },
+            {
+                "name": "multiply",
+                "comment": " The source color is multiplied by the destination color and replaces the destination.\n\nThe resultant color is always at least as dark as either the source or destination color.\nMultiplying any color with black results in black.\nMultiplying any color with white preserves the original color.\n\n",
+                "type": "Color.Color -> Color.Color -> Color.Color"
+            },
+            {
+                "name": "overlay",
+                "comment": " Multiplies or screens the colors, depending on the backdrop color value.\n",
+                "type": "Color.Color -> Color.Color -> Color.Color"
+            },
+            {
+                "name": "screen",
+                "comment": " Multiplies the complements of the backdrop and source color values,\nthen complements the result.\n",
+                "type": "Color.Color -> Color.Color -> Color.Color"
+            },
+            {
+                "name": "softlight",
+                "comment": " Darkens or lightens the colors, depending on the source color value.\nThe effect is similar to shining a diffused spotlight on the backdrop.\n",
+                "type": "Color.Color -> Color.Color -> Color.Color"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Color.Convert",
+        "comment": " #Convert\nConvert colors to differnt string formats and hexadecimal strings to colors.\n\n@docs colorToCssRgb, colorToCssRgba, colorToCssHsl, colorToCssHsla, colorToHex, colorToHexWithAlpha\n@docs hexToColor, colorToLab, labToColor\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "colorToCssHsl",
+                "comment": " Converts a color to an css hsl string.\n\n    colorToCssHsl (hsl 1 1 0.5) -- \"hsl(1, 1, 0.5)\"\n\n",
+                "type": "Color.Color -> String.String"
+            },
+            {
+                "name": "colorToCssHsla",
+                "comment": " Converts a color to an css hsla string.\n\n    colorToCssHsla (hsla 1 1 0.5 1) -- \"hsla(56, 100%, 50%, 1)\"\n\n",
+                "type": "Color.Color -> String.String"
+            },
+            {
+                "name": "colorToCssRgb",
+                "comment": " Converts a color to an css rgb string.\n\n    colorToCssRgb (rgb 255 0 0) -- \"rgb(255, 0, 0)\"\n\n",
+                "type": "Color.Color -> String.String"
+            },
+            {
+                "name": "colorToCssRgba",
+                "comment": " Converts a color to an css rgba string.\n\n    colorToCssRgba (rgba 255 0 0 0.5) -- \"rgba(255, 0, 0, 0.5)\"\n\n",
+                "type": "Color.Color -> String.String"
+            },
+            {
+                "name": "colorToHex",
+                "comment": " Converts a color to a hexadecimal string.\n\n    colorToHex (rgb 255 0 0) -- \"#ff0000\"\n\n    colorToHex (rgba 255 0 0 1.0) -- \"#ff0000\"\n\n    colorToHex (rgba 255 0 0 0.5) -- \"#ff0000\"\n\n    colorToHex (rgba 255 0 0 0.0) -- \"#ff0000\"\n\nIf you want support for colors with alpha transparency, either use `colorToCssRgba` or `colorToHexWithAlpha`.\n\n",
+                "type": "Color.Color -> String.String"
+            },
+            {
+                "name": "colorToHexWithAlpha",
+                "comment": " Converts a color to a hexadecimal string.\n\nIf the color has alpha transparency different from 1, it will use the `#RRGGBBAA` format.\nNote that the support for that is (as of March 2018) [missing](https://caniuse.com/#feat=css-rrggbbaa) on IE, Edge and some mobile browsers.\nIt may be better to use `colorToCssRgba`, which has excellent support.\n\n    colorToHexWithAlpha (rgb 255 0 0) -- \"#ff0000\"\n\n    colorToHexWithAlpha (rgba 255 0 0 1.0) -- \"#ff0000\"\n\n    colorToHexWithAlpha (rgba 255 0 0 0.5) -- \"#ff000080\"\n\n    colorToHexWithAlpha (rgba 255 0 0 0.0) -- \"#ff000000\"\n\n",
+                "type": "Color.Color -> String.String"
+            },
+            {
+                "name": "colorToLab",
+                "comment": " Convert color to CIELAB- color space\n",
+                "type": "Color.Color -> { l : Basics.Float, a : Basics.Float, b : Basics.Float }"
+            },
+            {
+                "name": "hexToColor",
+                "comment": " Converts a string to `Maybe` of color.\n\n    hexToColor \"#ff0000\" -- \"Ok (RGB 255 0 0)\"\n\n    hexToColor \"#f00\" -- \"Ok (RGB 255 0 0)\"\n\n    hexToColor \"#ff000080\" -- \"Ok (RGBA 255 0 0 0.5)\"\n\n    hexToColor \"ff0000\" -- \"Ok (RGB 255 0 0)\"\n\n    hexToColor \"f00\" -- \"Ok (RGB 255 0 0)\"\n\n    hexToColor \"ff000080\" -- \"Ok (RGBA 255 0 0 0.5)\"\n\n    hexToColor \"1234\" -- \"Err \\\"Parsing hex regex failed\\\"\"\n\n",
+                "type": "String.String -> Result.Result String.String Color.Color"
+            },
+            {
+                "name": "labToColor",
+                "comment": " Convert a color in CIELAB- color space to Elm `Color`\n",
+                "type": "{ l : Basics.Float, a : Basics.Float, b : Basics.Float } -> Color.Color"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Color.Gradient",
+        "comment": "\n\n\n# Gradient\n\n@docs GradientStop, Gradient, Palette, linearGradient, linearGradientFromStops, CosineGradientSetting, cosineGradient\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "CosineGradientSetting",
+                "comment": " parameters for calculate RGB values for cosine gradients\n",
+                "args": [],
+                "type": "( Basics.Float, Basics.Float, Basics.Float )"
+            },
+            {
+                "name": "Gradient",
+                "comment": " ",
+                "args": [],
+                "type": "List.List Color.Gradient.GradientStop"
+            },
+            {
+                "name": "GradientStop",
+                "comment": " A color and a stop value that indicates where the color appears in a gradient.\nThe stop value must be between `0` and `1`.\n",
+                "args": [],
+                "type": "( Basics.Float, Color.Color )"
+            },
+            {
+                "name": "Palette",
+                "comment": " Create a new gradient `Palette` from a given `Palette`, with a given size.\n",
+                "args": [],
+                "type": "List.List Color.Color"
+            }
+        ],
+        "values": [
+            {
+                "name": "cosineGradient",
+                "comment": " Create a gradient based on the on an [idea by Iñigo Quílez](http://www.iquilezles.org/www/articles/palettes/palettes.htm)\nFor an interactive example have a look at Karsten Schmidt's example from his [thi.ng library](http://dev.thi.ng/gradients/)\n",
+                "type": "Color.Gradient.CosineGradientSetting -> Color.Gradient.CosineGradientSetting -> Color.Gradient.CosineGradientSetting -> Color.Gradient.CosineGradientSetting -> Basics.Int -> Color.Gradient.Palette"
+            },
+            {
+                "name": "linearGradient",
+                "comment": " Create a new `Palette` with gradient colors from a given `Palette`,\nwith a given size.\n\n    p1 : Palette\n    p1 =\n      [ rgb 200 0 200\n      , rgb 0 100 100\n      , rgb 100 0 0\n      ]\n    gradient RGB p1 5 -- [RGBA 200 0 200 1,RGBA 100 50 150 1,RGBA 0 100 100 1,RGBA 50 50 50 1,RGBA 100 0 0 1]\n\n",
+                "type": "Color.Interpolate.Space -> Color.Gradient.Palette -> Basics.Int -> Color.Gradient.Palette"
+            },
+            {
+                "name": "linearGradientFromStops",
+                "comment": " Create a new `Palette` with gradient colors from a given `Gradient`,\nwith a given size.\n\n    g : Gradient\n    g =\n      [ (0, rgb 200 0 200)\n      , (0.25, rgb 0 100 100)\n      , (1, rgb 150 175 160)\n      ]\n    gradientFromStops RGB g 5 -- [RGBA 200 0 200 1,RGBA 0 100 100 1,RGBA 50 125 120 1,RGBA 100 150 140 1,RGBA 150 175 160 1]\n\n",
+                "type": "Color.Interpolate.Space -> Color.Gradient.Gradient -> Basics.Int -> Color.Gradient.Palette"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Color.Interpolate",
+        "comment": "\n\n\n# Interpolate\n\nInterpolate between two colors\n\n@docs Space, interpolate\n\n",
+        "unions": [
+            {
+                "name": "Space",
+                "comment": " The color space that is used for the interpolation\n",
+                "args": [],
+                "cases": [
+                    [
+                        "RGB",
+                        []
+                    ],
+                    [
+                        "HSL",
+                        []
+                    ],
+                    [
+                        "LAB",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "interpolate",
+                "comment": " Linear interpolation of two colors by a factor between `0` and `1`.\n",
+                "type": "Color.Interpolate.Space -> Color.Color -> Color.Color -> Basics.Float -> Color.Color"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Color.Manipulate",
+        "comment": " A library for creating and manipulating colors.\n\n\n# Color adjustment\n\n@docs darken, lighten, saturate, desaturate, rotateHue, fadeIn, fadeOut, grayscale, scaleHsl, scaleRgb, mix, weightedMix\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "darken",
+                "comment": " Decrease the lightning of a color\n",
+                "type": "Basics.Float -> Color.Color -> Color.Color"
+            },
+            {
+                "name": "desaturate",
+                "comment": " Decrease the saturation of a color\n",
+                "type": "Basics.Float -> Color.Color -> Color.Color"
+            },
+            {
+                "name": "fadeIn",
+                "comment": " Increase the opacity of a color\n",
+                "type": "Basics.Float -> Color.Color -> Color.Color"
+            },
+            {
+                "name": "fadeOut",
+                "comment": " Decrease the opacity of a color\n",
+                "type": "Basics.Float -> Color.Color -> Color.Color"
+            },
+            {
+                "name": "grayscale",
+                "comment": " Convert the color to a greyscale version, aka set saturation to 0\n",
+                "type": "Color.Color -> Color.Color"
+            },
+            {
+                "name": "lighten",
+                "comment": " Increase the lightning of a color\n",
+                "type": "Basics.Float -> Color.Color -> Color.Color"
+            },
+            {
+                "name": "mix",
+                "comment": " Mixes two colors together. This is the same as calling `weightedMix` with a weight of 0.5.\n",
+                "type": "Color.Color -> Color.Color -> Color.Color"
+            },
+            {
+                "name": "rotateHue",
+                "comment": " Change the hue of a color. The angle value must be in degrees\n",
+                "type": "Basics.Float -> Color.Color -> Color.Color"
+            },
+            {
+                "name": "saturate",
+                "comment": " Increase the saturation of a color\n",
+                "type": "Basics.Float -> Color.Color -> Color.Color"
+            },
+            {
+                "name": "scaleHsl",
+                "comment": " Fluidly scale saturation, lightness and alpha channel.\n\nThat means that lightening an already-light color with `scaleHsl` won’t change the lightness much, but lightening\na dark color by the same amount will change it more dramatically.\n\nFor example, the lightness of a color can be anywhere between 0 and 1.0. If `scaleHsl { saturationScale = 0, lightnessScale = 0.4, alphaScale = 0 } color` is called,\nthe resulting color’s lightness will be 40% of the way between its original lightness and 1.0. If\n`scaleHsl { saturationScale = 0, lightnessScale = -0.4, alphaScale = 0 } color` is called instead, the lightness will be 40% of the way between the original\nand 0.\n\nThe values of the supplied tuple scale saturation, lightness, and opacity, respectively, and have a valid range of\n-1.0 to 1.0.\n\nThis function is inspired by the Sass function [scale-color](http://sass-lang.com/documentation/Sass/Script/Functions.html#scale_color-instance_method).\n\n",
+                "type": "{ saturationScale : Basics.Float, lightnessScale : Basics.Float, alphaScale : Basics.Float } -> Color.Color -> Color.Color"
+            },
+            {
+                "name": "scaleRgb",
+                "comment": " Fluidly scale red, green, blue, and alpha channels.\n\nThat means that reddening a already-red color with `scaleRgb` won’t change the redness much, but reddening a color\nwith little or no red by the same amount will change it more dramatically.\n\nFor example, the redness of a color can be anywhere between 0 and 255. If `scaleRgb { redScale = 0.4, greenScale = 0,  blueScale = 0, alphaScale = 0 } color` is called,\nthe resulting color’s redness will be 40% of the way between its original redness and 255. If\n`scaleRgb { redScale = -0.4, greenScale = 0, blueScale = 0, alphaScale = 0 } color` is called instead, the redness will be 40% of the way between the original\nand 0.\n\nThe values of the supplied tuple scale red, green, blue, and alpha channels, respectively, and have a valid range of\n-1.0 to 1.0.\n\nThis function is inspired by the Sass function [scale-color](http://sass-lang.com/documentation/Sass/Script/Functions.html#scale_color-instance_method).\n\n",
+                "type": "{ redScale : Basics.Float, greenScale : Basics.Float, blueScale : Basics.Float, alphaScale : Basics.Float } -> Color.Color -> Color.Color"
+            },
+            {
+                "name": "weightedMix",
+                "comment": " Mixes two colors together.\n\nThis function takes the average of each of the RGB components, weighted by a provided value between 0 and 1.0. The\nopacity of the colors is also considered when weighting the components.\n\nThe weight specifies the amount of the first color that should be included in the returned color. For example, a weight\nof 0.5 means that half the first color and half the second color should be used. A weight of 0.25 means that a quarter\nof the first color and three quarters of the second color should be used.\n\nThis function uses the same algorithm as the [mix](http://sass-lang.com/documentation/Sass/Script/Functions.html#mix-instance_method) function in Sass.\n\n",
+                "type": "Color.Color -> Color.Color -> Basics.Float -> Color.Color"
+            }
+        ],
+        "binops": []
+    }
+]

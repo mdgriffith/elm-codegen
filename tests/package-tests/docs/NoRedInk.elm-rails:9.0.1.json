@@ -1,0 +1,122 @@
+[
+    {
+        "name": "Rails",
+        "comment": "\n\n\n## Requests\n\n@docs get, post, put, patch, delete, request\n\n\n## Expectations\n\n@docs Expect, Response, expectString, expectEmptyBody, expectJson, expectJsonErrors\n\n",
+        "unions": [
+            {
+                "name": "Expect",
+                "comment": " Expect that the response body will look a certain way. Similar to\n[`Http.Expect`](https://package.elm-lang.org/packages/elm/http/2.0.0/Http#Expect),\nbut wrapped here so we know what headers to set in requests.\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Response",
+                "comment": " The kinds of responses a Rails server may return.\n",
+                "args": [
+                    "error",
+                    "success"
+                ],
+                "cases": [
+                    [
+                        "Success",
+                        [
+                            "success"
+                        ]
+                    ],
+                    [
+                        "HttpError",
+                        [
+                            "Http.Error"
+                        ]
+                    ],
+                    [
+                        "AppError",
+                        [
+                            "Http.Metadata",
+                            "error"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "delete",
+                "comment": " Send a DELETE request to the given URL. Specify how to decode the response.\n\n    import Http\n    import Rails\n\n    destroyHat : Hat -> Cmd msg\n    destroyHat =\n        Rails.delete\n            { url = \"https://example.com/hats/\" ++ String.fromInt hat.id\n            , body = Http.emptyBody\n            , expect = Rails.expectEmptyBody HandleDeletedHatResponse\n            }\n\n**NOTE:** Rails typically expects an `X-CSRF-Token` header for `DELETE`\nrequests, which this does not include. To have this header included\nautomatically, add [`csrf-xhr`](https://www.npmjs.com/package/csrf-xhr) to the\npage, before your `Elm` program gets initialized.\n\n",
+                "type": "{ url : String.String, body : Http.Body, expect : Rails.Expect msg } -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "expectEmptyBody",
+                "comment": " Expect Rails to return an empty body. Note that we don't actually enforce\nthe body is empty; we just discard it. Pairs well with [`delete`](#delete).\n",
+                "type": "(Result.Result Http.Error () -> msg) -> Rails.Expect msg"
+            },
+            {
+                "name": "expectJson",
+                "comment": " Expect Rails to return JSON.\n",
+                "type": "(Result.Result Http.Error success -> msg) -> Json.Decode.Decoder success -> Rails.Expect msg"
+            },
+            {
+                "name": "expectJsonErrors",
+                "comment": " Decode Rails-specific error information from a\n[`BadStatus_`](https://package.elm-lang.org/packages/elm/http/2.0.0/Http#Response)\nresponse (that is, a response whose status code is outside the 200 range.)\n\n    import Dict\n    import Http\n    import Json.Decode exposing (at, string)\n    import Json.Encode as Encode\n    import Rails\n    import Rails.Decode\n\n    createHat : Hat -> Cmd Msg\n    createHat hat =\n        let\n            errorsDecoder =\n                Rails.Decode.decodeErrors (at [ \"errors\", \"style\" ] string)\n        in\n        Rails.post\n            { url = \"https://example.com/hats\"\n            , body = Http.jsonBody (encodeHat hat)\n            , expect = Rails.expectJsonErrors HandleNewHatResponse errorsDecoder hatDecoder\n            }\n\n",
+                "type": "(Rails.Response error success -> msg) -> Json.Decode.Decoder error -> Json.Decode.Decoder success -> Rails.Expect msg"
+            },
+            {
+                "name": "expectString",
+                "comment": " Expect Rails to return some string data. If this will be JSON, use\n[`expectJson`](#expectJson) instead!\n",
+                "type": "(Result.Result Http.Error String.String -> msg) -> Rails.Expect msg"
+            },
+            {
+                "name": "get",
+                "comment": " Send a GET request to the given URL. Specify how to decode the response.\n\n    import Rails\n\n    getHats : Cmd msg\n    getHats =\n        Rails.get\n            { url = \"https://example.com/hats\"\n            , expect = Rails.expectJson HandleGetHatsResponse hatsDecoder\n            }\n\n",
+                "type": "{ url : String.String, expect : Rails.Expect msg } -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "patch",
+                "comment": " Send a PATCH request to the given URL. Specify how to decode the response.\n\n    import Http\n    import Json.Encode exposing (object, string)\n    import Rails\n\n    updateHatDescription : Int -> String -> Cmd msg\n    updateHatDescription id description =\n        Rails.patch\n            { url = \"https://example.com/hats/\" ++ String.fromInt hat.id\n            , body = Http.jsonBody (object [ ( \"description\", string description ) ])\n            , expect = Rails.expectJson HandleUpdatedHatResponse hatDecoder\n            }\n\n**NOTE:** Rails typically expects an `X-CSRF-Token` header for `PATCH` requests,\nwhich this does not include. To have this header included automatically, add\n[`csrf-xhr`](https://www.npmjs.com/package/csrf-xhr) to the page, before your\n`Elm` program gets initialized.\n\n",
+                "type": "{ url : String.String, body : Http.Body, expect : Rails.Expect msg } -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "post",
+                "comment": " Send a POST request to the given URL. Specify how to decode the response.\n\n    import Http\n    import Rails\n\n    createHat : Hat -> Cmd msg\n    createHat =\n        Rails.post\n            { url = \"https://example.com/hats\"\n            , body = Http.jsonBody (encodeHat hat)\n            , expect = Rails.expectJson HandleNewHatResponse hatDecoder\n            }\n\n**NOTE:** Rails typically expects an `X-CSRF-Token` header for `POST` requests,\nwhich this does not include. To have this header included automatically, add\n[`csrf-xhr`](https://www.npmjs.com/package/csrf-xhr) to the page, before your\n`Elm` program gets initialized.\n\n",
+                "type": "{ url : String.String, body : Http.Body, expect : Rails.Expect msg } -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "put",
+                "comment": " Send a PUT request to the given URL. Specify how to decode the response.\n\n    import Http\n    import Rails\n\n    updateHat : Hat -> Cmd msg\n    updateHat hat =\n        Rails.put\n            { url = \"https://example.com/hats/\" ++ String.fromInt hat.id\n            , body = Http.jsonBody (encodeHat hat)\n            , expect = Rails.expectJson HandleUpdatedHatResponse hatDecoder\n            }\n\n**NOTE:** Rails typically expects an `X-CSRF-Token` header for `PUT` requests,\nwhich this does not include. To have this header included automatically, add\n[`csrf-xhr`](https://www.npmjs.com/package/csrf-xhr) to the page, before your\n`Elm` program gets initialized.\n\n",
+                "type": "{ url : String.String, body : Http.Body, expect : Rails.Expect msg } -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "request",
+                "comment": " Wraps `Http.request` while adding the following default headers:\n\n  - `Accept`\n      - for JSON: `\"application/json, text/javascript, */*; q=0.01\"`\n      - for string: `\"*/*\"`\n  - `X-Requested-With` - `\"XMLHttpRequest\"`\n\nYou can specify additional headers in the `headers` field of the configuration record.\nThe `delete` example above would look lik this:\n\n    import Http\n    import Rails\n\n    destroyHat : Hat -> Cmd msg\n    destroyHat =\n        Rails.request\n            { method = \"DELETE\"\n            , headers = []\n            , url = \"https://example.com/hats/\" ++ String.fromInt hat.id\n            , body = Http.emptyBody\n            , expect = Rails.expectEmptyBody HandleDeletedHatResponse\n            , timeout = Nothing\n            , tracker = Nothing\n            }\n\n**NOTE:** Rails typically expects an `X-CSRF-Token` header for requests other\nthan `GET`, which this does not include. One way to have this header included\nautomatically is to add [`csrf-xhr`](https://www.npmjs.com/package/csrf-xhr) to\nthe page, before your `Elm` program gets initialized.\n\n",
+                "type": "{ method : String.String, headers : List.List Http.Header, url : String.String, body : Http.Body, expect : Rails.Expect msg, timeout : Maybe.Maybe Basics.Float, tracker : Maybe.Maybe String.String } -> Platform.Cmd.Cmd msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Rails.Decode",
+        "comment": " Types\n\n@docs ErrorList\n\n\n# Decoding\n\n@docs errors\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "ErrorList",
+                "comment": " ErrorList is a type alias for a list of `( fields, String )` pairs,\nwhere `field` is a type we can use to reference which fields had errors.\n\n    type Field\n        = Name\n        | Password\n\n    decode : ErrorList Field\n\n",
+                "args": [
+                    "field"
+                ],
+                "type": "List.List ( field, String.String )"
+            }
+        ],
+        "values": [
+            {
+                "name": "errors",
+                "comment": " Decodes errors passed from rails formatted like this:\n\n`{ errors: {errorName: [\"Error String\"] } }`.\n\nThis function takes a Dict that is a map of all the fields you need decoded.\nIt should look like this:\n\n    Dict.fromList\n        [ ( \"school\", School )\n        , ( \"school.name\", SchoolName )\n        , ( \"school.address\", SchoolAddress )\n        , ( \"school.city\", City )\n        , ( \"school.state\", State )\n        , ( \"school.zip\", Zip )\n        , ( \"school.country\", Country )\n        ]\n\n",
+                "type": "Dict.Dict String.String field -> Json.Decode.Decoder (Rails.Decode.ErrorList field)"
+            }
+        ],
+        "binops": []
+    }
+]

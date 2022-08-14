@@ -1,0 +1,64 @@
+[
+    {
+        "name": "Simplex",
+        "comment": "\n\n\n# Permutation tables\n\n@docs PermutationTable, permutationTableGenerator, permutationTableFromInt\n\n\n# Simplex noise\n\n@docs noise2d, noise3d, noise4d\n\n\n# Fractal noise\n\n@docs FractalConfig, fractal2d, fractal3d, fractal4d\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "FractalConfig",
+                "comment": " Options for fractal noise generation\n\n  - steps: The number of noise layers to combine. The more layers, the larger the features will be. Increases processing time.\n  - stepSize: A value of 2 means that each noise layer is twice as large as the previous one.\n  - persistence: A persistence greater than 1 means that the larger noise layers are weighed more more heavily.\n  - scale: This scales all the noise, making it smoother/blurrier\n\nUse this previewer to experiment with different options: <https://herteby.github.io/simplex-noise/preview/>\n",
+                "args": [],
+                "type": "{ steps : Basics.Int, stepSize : Basics.Float, persistence : Basics.Float, scale : Basics.Float }"
+            },
+            {
+                "name": "PermutationTable",
+                "comment": " A Permutation table is a big list of random values needed for noise generation.\n",
+                "args": [],
+                "type": "{ perm : Array.Array Basics.Int, permMod12 : Array.Array Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "fractal2d",
+                "comment": " 2-Dimensional fractal noise\n",
+                "type": "Simplex.FractalConfig -> Simplex.PermutationTable -> Basics.Float -> Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "fractal3d",
+                "comment": " 3-Dimensional fractal noise\n",
+                "type": "Simplex.FractalConfig -> Simplex.PermutationTable -> Basics.Float -> Basics.Float -> Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "fractal4d",
+                "comment": " 4-Dimensional fractal noise\n",
+                "type": "Simplex.FractalConfig -> Simplex.PermutationTable -> Basics.Float -> Basics.Float -> Basics.Float -> Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "noise2d",
+                "comment": " Generates a noise value between `-1` and `1` based on the given x and y value and a seeded permutation table.\n",
+                "type": "Simplex.PermutationTable -> Basics.Float -> Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "noise3d",
+                "comment": " Generates a noise value between `-1` and `1` based on the given x, y and z value and a seeded permutation table.\n",
+                "type": "Simplex.PermutationTable -> Basics.Float -> Basics.Float -> Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "noise4d",
+                "comment": " Generates a noise value between `-1` and `1` based on the given x, y, z and w value and a seeded permutation table.\n",
+                "type": "Simplex.PermutationTable -> Basics.Float -> Basics.Float -> Basics.Float -> Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "permutationTableFromInt",
+                "comment": " Generate a PermutationTable using an Int as a seed\n",
+                "type": "Basics.Int -> Simplex.PermutationTable"
+            },
+            {
+                "name": "permutationTableGenerator",
+                "comment": " Generator of random permutation tables.\n",
+                "type": "Random.Generator Simplex.PermutationTable"
+            }
+        ],
+        "binops": []
+    }
+]

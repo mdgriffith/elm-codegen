@@ -1,0 +1,43 @@
+[
+    {
+        "name": "InsertableKey",
+        "comment": " InsertableKey\n\nGenerates a new key between two keys.\n\n    import InsertableKey exposing (Key, after, before, between, init)\n\n    generateThreeKeys : Maybe ( Key, Key, Key )\n    generateThreeKeys =\n        let\n            left =\n                init\n        in\n        after left\n            |> Maybe.andThen\n                (\\right ->\n                    between left right\n                        |> Maybe.map\n                            (\\center ->\n                                ( left, center, right )\n                            )\n                )\n\n\n# Type\n\n@docs Key\n\n\n# Generate\n\n@docs init, before, after, between\n\n\n# Validate\n\n@docs isValid\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Key",
+                "comment": " The key.\nThis type is an alias of `String` so you can use this as Dict keys.\nIt is highly recommended to always generate key using this module.\n",
+                "args": [],
+                "type": "String.String"
+            }
+        ],
+        "values": [
+            {
+                "name": "after",
+                "comment": " Generates a key after given key.\n",
+                "type": "InsertableKey.Key -> Maybe.Maybe InsertableKey.Key"
+            },
+            {
+                "name": "before",
+                "comment": " Generates a key before given key.\n",
+                "type": "InsertableKey.Key -> Maybe.Maybe InsertableKey.Key"
+            },
+            {
+                "name": "between",
+                "comment": " Generates a key between given keys.\n",
+                "type": "InsertableKey.Key -> InsertableKey.Key -> Maybe.Maybe InsertableKey.Key"
+            },
+            {
+                "name": "init",
+                "comment": " The initial key.\n",
+                "type": "InsertableKey.Key"
+            },
+            {
+                "name": "isValid",
+                "comment": " Check if a key is valid or not.\nBasically you don't need this function if you always generate keys using this modele.\n",
+                "type": "InsertableKey.Key -> Basics.Bool"
+            }
+        ],
+        "binops": []
+    }
+]

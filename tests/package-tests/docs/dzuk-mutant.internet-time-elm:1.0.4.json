@@ -1,0 +1,46 @@
+[
+    {
+        "name": "InternetTime",
+        "comment": " A module for using Internet Time.\n\n\n# Daily time\n\nThese functions convert a Posix Time to\na displayable Internet Time) for that particular day.\n\n(This also includes moving from the Posix timezone (UTC) to\nInternet Time's timezone (UTC+1).)\n\nTraditionally, Internet Time is displayed with a @ beforehand (ie. @333)\nbut for the sake of simplicity, that kind of decoration is left up to\nyou to put into your interfaces in whatever way you prefer.\n\n@docs fromPosix, displayFromPosix\n\n\n\n# Lenghts of time\nUse the cadence of Internet Time in your application.\n\n@docs beat, centibeat, millisToBeats\n\n\n# Custom daily time\n\nJust in case you need something with extra detail like\ncounting time with centibeats as well.\n\nIn regular cases, `fromPosix` and `displayFromPosix` should\nprobably cover all of your needs.\n\n@docs fromPosixCustom, displayFromPosixCustom\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "beat",
+                "comment": " One Internet Time beat in milliseconds.\n\nThis is the largest possible measurement of time in Internet Time.\n\n- 1 beat = 86400 milliseconds. (86.4 seconds)\n\n",
+                "type": "Basics.Int"
+            },
+            {
+                "name": "centibeat",
+                "comment": " One Internet Time centibeat in milliseconds.\n\n- 1 centibeat = 864 milliseconds.\n- 1 centibeat = 1/100 beats.\n\nCentibeats are quite rarely used in Internet Time,\nbut it would be quite useful if you want to update your\ntime subscription in something that matches the\ntiming of beats exactly, but with something much\nmore precise.\n\n\n    subscriptions : Model -> Sub Msg\n    subscriptions model =\n        Time.every (25 * centibeat) Tick\n\n",
+                "type": "Basics.Int"
+            },
+            {
+                "name": "displayFromPosix",
+                "comment": " Converts a `Time.Posix` to Internet Time for\nthat particular day. The output is a `String`\nwith padded 0s if necessary so it displays\nas a traditionally correct 3 digit number.\n\n    oneTime = Time.millisToPosix 1525244393059\n    anotherTime = Time.millisToPosix 1525221281000\n    \n    InternetTime.displayFromPosix oneTime -- \"333\"\n    InternetTime.displayFromPosix anotherTime -- \"065\"\n",
+                "type": "Time.Posix -> String.String"
+            },
+            {
+                "name": "displayFromPosixCustom",
+                "comment": " Converts a `Time.Posix` to a Internet Time for that particular day\nin the form of a display-ready `String`.\n\nThe first argument is for how much detail (extra digits) you want -\nbeats are the largest form of measurement possible.\n\n    oneTime = Time.millisToPosix 1525244393059\n    anotherTime = Time.millisToPosix 1525294572000\n\n    displayFromPosixCustom 0 oneTime -- \"333\"\n    displayFromPosixCustom 2 oneTime -- \"333.25\" (extra detail w/ centibeats)\n    displayFromPosixCustom 0 anotherTime -- \"914\"\n    displayFromPosixCustom 2 anotherTime -- \"914.37\" (extra detail w/ centibeats)\n\nThis time is padded with zeroes so you get the traditionally\ncorrect 3-digit display for beats.\n\n    thirdTime = Time.millisToPosix 1525221281000\n\n    displayFromPosixCustom 0 thirdTime -- \"065\"\n    displayFromPosixCustom 2 thirdTime -- \"065.75\" (extra detail w/ centibeats)\n\n",
+                "type": "Basics.Int -> Time.Posix -> String.String"
+            },
+            {
+                "name": "fromPosix",
+                "comment": " Converts a `Time.Posix` to Internet Time for that\nparticular day as a raw Float.\n\n    oneTime = Time.millisToPosix 1525244393059\n    anotherTime = Time.millisToPosix 1525221281000\n\n    InternetTime.fromPosix oneTime -- 333\n    InternetTime.fromPosix anotherTime -- 65\n",
+                "type": "Time.Posix -> Basics.Float"
+            },
+            {
+                "name": "fromPosixCustom",
+                "comment": " Converts a `Time.Posix` to the Internet Time for that particular day as a `Float`.\n\nThe first argument is for how much detail (extra decimal points)\nyou want - beats (0) are the largest form of measurement possible.\n\n    oneTime = Time.millisToPosix 1525244393059\n    anotherTime = Time.millisToPosix 1525221281000\n\n    fromPosixCustom 0 oneTime -- 333\n    fromPosixCustom 2 oneTime -- 333.25 (extra detail w/ centibeats)\n    fromPosixCustom 0 anotherTime -- 65\n    fromPosixCustom 2 anotherTime -- 65.75 (extra detail w/ centibeats)\n",
+                "type": "Basics.Int -> Time.Posix -> Basics.Float"
+            },
+            {
+                "name": "millisToBeats",
+                "comment": " Convert an Int representing milliseconds to raw beats\n (1/1,000th of a day).\n    \n    millisToBeats 1380000 -- 23min = 15.972222 beats\n",
+                "type": "Basics.Int -> Basics.Float"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,35 @@
+[
+    {
+        "name": "Convex",
+        "comment": " This library provides you with the ability to create convex hulls from a list of vertices.\n# Commonly used\n@docs convexHull\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "convexHull",
+                "comment": " Constructs a convex hull of vectors in the passed list.\nThe returned list will be an ordered list of the points on the hull boundary, starting with the point of the lowest x Value.\nThe last point will be identical to the first.\nUses Andrew's algorithm with a complexity of O (n log n)\n",
+                "type": "List.List Math.Vector2.Vec2 -> List.List Math.Vector2.Vec2"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Triangulation",
+        "comment": "\nThis module exposes functions for triangulating polygons.\n\n*Polygons* in this module are implemented as a List Vec2 that stores an ordered list of corner vertices.\n\n*Vertices* are implemented as Vec2\n\n*Line segments* are implemented as (Vec2, Vec2), where the Vec2 represent start and end point of the line segment.\n\n# Commonly used\n\n@docs triangulate\n\n@docs isYMonotone\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "isYMonotone",
+                "comment": "\nDetermines if the passed List Vec2 is y-monotone.\n",
+                "type": "List.List Math.Vector2.Vec2 -> Basics.Bool"
+            },
+            {
+                "name": "triangulate",
+                "comment": "\nTriangulates a polygon and returns a list of the edges of the corresponding triangles.\n\nOnly works with y-monotone polygons so far, will return `Nothing` for non-monotone polygons.\n",
+                "type": "List.List Math.Vector2.Vec2 -> Maybe.Maybe (List.List ( Math.Vector2.Vec2, Math.Vector2.Vec2 ))"
+            }
+        ],
+        "binops": []
+    }
+]

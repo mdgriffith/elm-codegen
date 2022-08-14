@@ -1,0 +1,74 @@
+[
+    {
+        "name": "Base16",
+        "comment": " Library for base16 encoding and decoding according to RFC 4648.\n\n@docs encode, decode, scheme\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decode",
+                "comment": " Decode a base16 string into a list of bytes.\n",
+                "type": "String.String -> Result.Result String.String (List.List Basics.Int)"
+            },
+            {
+                "name": "encode",
+                "comment": " Encode a list of bytes into a base32 string.\n",
+                "type": "List.List Basics.Int -> Result.Result String.String String.String"
+            },
+            {
+                "name": "scheme",
+                "comment": " The decoding / encoding scheme for base 16.\n",
+                "type": "Coder.Scheme"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Base32",
+        "comment": " Library for base32 encoding and decoding according to RFC 4648.\n\n@docs encode, decode, scheme\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decode",
+                "comment": " Decode a base32 string into a list of bytes.\n",
+                "type": "String.String -> Result.Result String.String (List.List Basics.Int)"
+            },
+            {
+                "name": "encode",
+                "comment": " Encode a list of bytes into a base32 string.\n",
+                "type": "List.List Basics.Int -> Result.Result String.String String.String"
+            },
+            {
+                "name": "scheme",
+                "comment": " The decoding / encoding scheme for base 32.\n",
+                "type": "Coder.Scheme"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Base64",
+        "comment": " Library for base64 encoding and decoding according to RFC 4648.\n\n@docs encode, decode, scheme\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decode",
+                "comment": " Decode a base64 string into a list of bytes.\n",
+                "type": "String.String -> Result.Result String.String (List.List Basics.Int)"
+            },
+            {
+                "name": "encode",
+                "comment": " Encode a list of bytes into a base64 string.\n",
+                "type": "List.List Basics.Int -> Result.Result String.String String.String"
+            },
+            {
+                "name": "scheme",
+                "comment": " The decoding / encoding scheme for base 64.\n",
+                "type": "Coder.Scheme"
+            }
+        ],
+        "binops": []
+    }
+]

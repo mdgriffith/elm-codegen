@@ -1,0 +1,168 @@
+[
+    {
+        "name": "AgGrid",
+        "comment": " AgGrid integration for elm.\n\n\n# Data Types\n\n@docs ColumnDef, FilterType, PinningType, Renderer, SidebarType\n\n\n# Grid\n\n@docs grid\n\n\n# Defaults\n\n@docs defaultGridConfig, defaultSettings\n\n\n# Events\n\n@docs onCellChanged, onCellDoubleClicked\n\n",
+        "unions": [
+            {
+                "name": "FilterType",
+                "comment": " Possible filter options for columns.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NumberFilter",
+                        []
+                    ],
+                    [
+                        "StringFilter",
+                        []
+                    ],
+                    [
+                        "SetFilter",
+                        []
+                    ],
+                    [
+                        "NoFilter",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "PinningType",
+                "comment": " Possible options to pin a column.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "PinnedToLeft",
+                        []
+                    ],
+                    [
+                        "PinnedToRight",
+                        []
+                    ],
+                    [
+                        "Unpinned",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Renderer",
+                "comment": " The `Renderer` expresses how the data is retrieved from the list of data\nand rendered to the view.\n\nThe editor and renderer views in the table depend on the type.\nFor example, a `BoolRenderer` is displayed and can be edited with a checkbox\nin the table.\n\nThe `Renderer` may need a function to read the value for the cell from the\nrecords.\n\n\n### Example\n\nIf the data is list of `Product`, the `Renderer` to display the column for\nthe `title` might be defined as:\n\n    type alias Product =\n        { title : String }\n\n    -- Column definitions:\n    [{ renderer = StringRenderer .title, ... }]\n\n",
+                "args": [
+                    "dataType"
+                ],
+                "cases": [
+                    [
+                        "AppRenderer",
+                        [
+                            "{ componentName : String.String, componentParams : Maybe.Maybe Json.Encode.Value }",
+                            "dataType -> String.String"
+                        ]
+                    ],
+                    [
+                        "BoolRenderer",
+                        [
+                            "dataType -> Basics.Bool"
+                        ]
+                    ],
+                    [
+                        "IntRenderer",
+                        [
+                            "dataType -> Basics.Int"
+                        ]
+                    ],
+                    [
+                        "MaybeIntRenderer",
+                        [
+                            "dataType -> Maybe.Maybe Basics.Int"
+                        ]
+                    ],
+                    [
+                        "MaybeStringRenderer",
+                        [
+                            "dataType -> Maybe.Maybe String.String"
+                        ]
+                    ],
+                    [
+                        "NoRenderer",
+                        []
+                    ],
+                    [
+                        "SelectionRenderer",
+                        [
+                            "dataType -> String.String",
+                            "List.List String.String"
+                        ]
+                    ],
+                    [
+                        "StringRenderer",
+                        [
+                            "dataType -> String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "SidebarType",
+                "comment": " Possible options for displayed sidebars.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "BothSidebars",
+                        []
+                    ],
+                    [
+                        "ColumnSidebar",
+                        []
+                    ],
+                    [
+                        "FilterSidebar",
+                        []
+                    ],
+                    [
+                        "NoSidebar",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "ColumnDef",
+                "comment": " Column definition.\n\nRequires `field`, `renderer`, `headerName`, and `settings` to be defined\nfor each column.\n\n  - `field`: name of the column and specifically used to decode data\n    properly (e.g. from events)\n\n  - `renderer`: used to render data to a cell (for more information see\n    the documentation for `Renderer`)\n\n  - `headerName`: displayed text in the column header\n\n  - `settings`: allows to customize each column - a `defaultSettings`\n    record is offered, which can be adjusted to your own needs to reduce\n    the implemenation overhead.\n\n\n### Example\n\n    let\n        defaultSettings =\n            AgGrid.defaultSettings\n    in\n    [ { field = \"id\"\n      , renderer = IntRenderer .id\n      , headerName = \"Id\"\n      , settings = defaultSettings\n      }\n    , { field = \"title\"\n      , renderer = StringRenderer .title\n      , headerName = \"Product\"\n      , settings =\n            { defaultSettings\n                | editable = False\n                , pinned = AgGrid.PinnedToLeft\n            }\n      }\n    ]\n\n",
+                "args": [
+                    "dataType"
+                ],
+                "type": "{ field : String.String, renderer : AgGrid.Renderer dataType, headerName : String.String, settings : AgGrid.ColumnSettings }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultGridConfig",
+                "comment": " Retrieve a `GridConfig` record with default configuration.\n\nCan be used when implementing the grid.\n\n        { allowColResize = True\n        , autoSizeColumns = False\n        , cacheQuickFilter = False\n        , disableResizeOnScroll = False\n        , pagination = False\n        , rowHeight = Nothing\n        , quickFilterText = \"\"\n        , sideBar = NoSidebar\n        , size = \"65vh\"\n        , suppressMenuHide = False\n        , themeClasses = Nothing\n        }\n\n",
+                "type": "AgGrid.GridConfig"
+            },
+            {
+                "name": "defaultSettings",
+                "comment": " Retrieve a `ColumnSettings` record with default configuration.\n\nCan be used when implementing column configurations for the table.\n\nDefault column settings:\n\n    { editable = False\n    , enablePivot = True\n    , enableRowGroup = True\n    , enableValue = True\n    , filter = SetFilter\n    , hide = False\n    , pinned = Unpinned\n    , sortable = True\n    , suppressColumnsToolPanel = False\n    , suppressFiltersToolPanel = False\n    , suppressMenu = False\n    , suppressSizeToFit = True\n    , width = Nothing\n    }\n\n",
+                "type": "AgGrid.ColumnSettings"
+            },
+            {
+                "name": "grid",
+                "comment": " Defines the data grid.\n\n\n## Example\n\n    let\n        gridConfig =\n            AgGrid.defaultGridConfig\n                |> (\\config -> { config | themeClasses = Just \"ag-theme-balham ag-basic\" })\n\n        events =\n            [ onCellChanged rowDecoder UpdateProduct ]\n\n        defaultSettings =\n            AgGrid.defaultSettings\n                |> (\\settings -> { settings | editable = True })\n\n        columns =\n            [ { field = \"id\"\n              , renderer = IntRenderer .id\n              , headerName = \"Id\"\n              , settings = { defaultSettings | enablePivot = False }\n              }\n            , { field = \"title\"\n              , renderer = StringRenderer .title\n              , headerName = \"Product\"\n              , settings = { defaultSettings | filter = StringFilter }\n              }\n            ]\n\n        data =\n            model.products\n    in\n    grid gridConfig events columns data\n\n",
+                "type": "AgGrid.GridConfig -> List.List (Html.Attribute msg) -> List.List (AgGrid.ColumnDef dataType) -> List.List dataType -> Html.Html msg"
+            },
+            {
+                "name": "onCellChanged",
+                "comment": " Detect change events on cells.\n\nDecodes the changed row according to the provided `dataDecoder` and passes the result to\nthe message `toMsg`.\n\nHandles the `cellValueChanged` event from Ag Grid.\n\n",
+                "type": "Json.Decode.Decoder dataType -> (Result.Result Json.Decode.Error dataType -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "onCellDoubleClicked",
+                "comment": " Detect doubleclick events on cells.\n\nDecodes the row of the clicked cell according to the provided `dataDecoder` and the field\nname of the clicked cells as tuple and passes the result to the message `toMsg`.\n\nHandles the `cellDoubleClicked` event from Ag Grid.\n\n",
+                "type": "Json.Decode.Decoder dataType -> (( Result.Result Json.Decode.Error dataType, String.String ) -> msg) -> Html.Attribute msg"
+            }
+        ],
+        "binops": []
+    }
+]

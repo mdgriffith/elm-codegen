@@ -1,0 +1,245 @@
+[
+    {
+        "name": "Cards",
+        "comment": " Card datatypes and views\n\nUse these for defining card-specifc game logic or for displaying specific cards.\n\n\n# Types\n\n@docs Suit, Face, Card\n\n\n# Construction\n\n@docs new, defaultNew\n\n\n# Views\n\n@docs viewCard, defaultFace\n\n",
+        "unions": [
+            {
+                "name": "Card",
+                "comment": " A playing card type.\n\nCan either hold a card of suit and face, or a blank card.\n\nFace numbers are designated from 1 to 13 for A-K. Games which treat the ace differently can specify their behavior through the game logic.\n\nThe blank variant is useful for displaying cards that have not been flipped over, for instance.\n\n    aceOfSpades =\n        Card Spades Ace\n\n    blankCard =\n        Back\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Card",
+                        [
+                            "Cards.Suit",
+                            "Cards.Face"
+                        ]
+                    ],
+                    [
+                        "Back",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Face",
+                "comment": " A playing card face type.\n\nLike the suit type above, this is useful for matching on different card faces, and does not induce an implicit order.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Ace",
+                        []
+                    ],
+                    [
+                        "Two",
+                        []
+                    ],
+                    [
+                        "Three",
+                        []
+                    ],
+                    [
+                        "Four",
+                        []
+                    ],
+                    [
+                        "Five",
+                        []
+                    ],
+                    [
+                        "Six",
+                        []
+                    ],
+                    [
+                        "Seven",
+                        []
+                    ],
+                    [
+                        "Eight",
+                        []
+                    ],
+                    [
+                        "Nine",
+                        []
+                    ],
+                    [
+                        "Ten",
+                        []
+                    ],
+                    [
+                        "Jack",
+                        []
+                    ],
+                    [
+                        "Queen",
+                        []
+                    ],
+                    [
+                        "King",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Suit",
+                "comment": " A playing card suit type.\n\nUseful for pattern matching behavior of different games that are based on the suit of the card.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Spades",
+                        []
+                    ],
+                    [
+                        "Diamonds",
+                        []
+                    ],
+                    [
+                        "Clubs",
+                        []
+                    ],
+                    [
+                        "Hearts",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "defaultFace",
+                "comment": " Default resoltuion of Faces to integers, in A-K order.\n\n    defaultFace Ace == 1\n\n    defaultFace King == 13\n\n",
+                "type": "Cards.Face -> Basics.Int"
+            },
+            {
+                "name": "defaultNew",
+                "comment": " Construct a new card with a default argument.\n\nThe first input is the default card to use if construction fails.\n\nThe remaining two inputs correspond to the two inputs for [Cards.new](Cards#new).\n\n    defaultNew Back \"spades\" 1 == Card Spades Ace\n\n    defaultNew Back \"SPADES\" 1 == Card Spades Ace\n\n    defaultNew Back \"horses\" 1 == Back\n\n    defaultNew Back \"spades\" 0 == Back\n\n",
+                "type": "Cards.Card -> String.String -> Basics.Int -> Cards.Card"
+            },
+            {
+                "name": "new",
+                "comment": " Construct a new card.\n\nThe first argument must be one of \"spades\", \"diamonds\", \"clubs\", or \"hearts\" (any case) for the card suit.\n\nThe second argument must be an integer from 1 to 13 for A-K.\n\nUse [Cards.defaultNew](Cards#defaultNew) if you want a `Card` instead of a `Maybe Card`.\n\n    new \"spades\" 1 == Just (Card Spades Ace)\n\n    new \"SPADES\" 1 == Just (Card Spades Ace)\n\n    new \"horses\" 1 == Nothing\n\n    new \"spades\" 0 == Nothing\n\n",
+                "type": "String.String -> Basics.Int -> Maybe.Maybe Cards.Card"
+            },
+            {
+                "name": "viewCard",
+                "comment": " Return the color and unicode string for a `Card`.\n\nUse this function to write Html views for cards or decks.\n\n    viewCard (defaultNew Back \"spades\" 1) == ( \"black\", \"🂡\" )\n\n    viewCard (defaultNew Back \"hearts\" 7) == ( \"red\", \"🃗\" )\n\n",
+                "type": "Cards.Card -> ( String.String, String.String )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Deck",
+        "comment": " Deck types, generators, and manipulating functions\n\n\n# Types\n\n@docs Deck, ShuffledDeck\n\n\n# Construction\n\n@docs fullSuit, fullFace, fullDeck, newDeck, randomDeck\n\n\n# Manipulation\n\n@docs draw, appendCard, length, getCards, map, filter, foldr, foldl, take\n\n",
+        "unions": [
+            {
+                "name": "Deck",
+                "comment": " A representation of an arbitrary deck or hand of cards.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "ShuffledDeck",
+                "comment": " An exposed type for decks which are already shuffled.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "ShuffledDeck",
+                        [
+                            "Deck.Deck"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "appendCard",
+                "comment": " Add a card to the end of the deck.\n\n    appendCard (Card Spades Ace) [ Card Spades Three, Card Spades Two ] == [ Card Spades Three, Card Spades Two, Card Spades Ace ]\n\n",
+                "type": "Cards.Card -> Deck.ShuffledDeck -> Deck.ShuffledDeck"
+            },
+            {
+                "name": "draw",
+                "comment": " Draw a card from a ShuffledDeck.\n\nIf the deck is empty, the card returned is `Back`.\n\n    topCard =\n        case draw (ShuffledDeck fullDeck) of\n            ( top, _ ) ->\n                top\n    topCard == Card.new \"spades\" 1\n\n",
+                "type": "Deck.ShuffledDeck -> ( Cards.Card, Deck.ShuffledDeck )"
+            },
+            {
+                "name": "filter",
+                "comment": " Filter a ShuffledDeck by a conditional over cards.\n",
+                "type": "(Cards.Card -> Basics.Bool) -> Deck.ShuffledDeck -> Deck.ShuffledDeck"
+            },
+            {
+                "name": "foldl",
+                "comment": " Fold a function over a ShuffledDeck from the left.\n",
+                "type": "(Cards.Card -> a -> a) -> a -> Deck.ShuffledDeck -> a"
+            },
+            {
+                "name": "foldr",
+                "comment": " Fold a function over a ShuffledDeck from the right.\n",
+                "type": "(Cards.Card -> a -> a) -> a -> Deck.ShuffledDeck -> a"
+            },
+            {
+                "name": "fullDeck",
+                "comment": " A full 52-card deck in standard order.\n\n    fullDeck == Deck [ Card Spades Ace, Card Spades Two, ... ]\n\n",
+                "type": "Deck.ShuffledDeck"
+            },
+            {
+                "name": "fullFace",
+                "comment": " Make a deck of all the cards for a single face.\n\nMakes the deck in standard order.\n\n    fullFace Ace == [ Card Spades Ace, Card Diamonds Ace, Card Clubs Ace, Card Hearts Ace ]\n\n",
+                "type": "Cards.Face -> List.List Cards.Card"
+            },
+            {
+                "name": "fullSuit",
+                "comment": " Make a deck of all the cards in a single suit.\n\nMakes the deck in A-K order\n\n    fullSuit Spades == [ Card Spades Ace, Card Spades Two, Card Spades Three, Card Spades Four, Card Spades Five, Card Spades Six, Card Spades Seven, Card Spades Eight, Card Spades Nine, Card Spades Ten, Card Spades Jack, Card Spades Queen, Card Spades King ]\n\n",
+                "type": "Cards.Suit -> List.List Cards.Card"
+            },
+            {
+                "name": "getCards",
+                "comment": " Get the internal list of cards from a ShuffledDeck\n\nNot reccomended for direct use.\n\n",
+                "type": "Deck.ShuffledDeck -> List.List Cards.Card"
+            },
+            {
+                "name": "length",
+                "comment": " Get the length of the ShuffledDeck\n",
+                "type": "Deck.ShuffledDeck -> Basics.Int"
+            },
+            {
+                "name": "map",
+                "comment": " Map a function from cards over a ShuffledDeck.\n\nSee <Games.Blackjack> for an example use of `Deck.map`\n\n    map (\\card -> 1) <| newDeck [ Card Spades Ace, Card Heart King ] == [ 1, 1 ]\n\n    map defaultFace <| newDeck [ Card Spades Ace, Card Heart King ] == [ 1, 13 ]\n\n",
+                "type": "(Cards.Card -> a) -> Deck.ShuffledDeck -> List.List a"
+            },
+            {
+                "name": "newDeck",
+                "comment": " Create a ShuffledDeck out of a list of cards.\n",
+                "type": "List.List Cards.Card -> Deck.ShuffledDeck"
+            },
+            {
+                "name": "randomDeck",
+                "comment": " A 52-card deck in randomly shuffled order.\n\n    type Msg = ShuffleDeck Deck\n    Random.generate ShuffleDeck randomDeck\n\n",
+                "type": "Random.Generator Deck.ShuffledDeck"
+            },
+            {
+                "name": "take",
+                "comment": " Take some number of cards from the top of a ShuffledDeck\n",
+                "type": "Basics.Int -> Deck.ShuffledDeck -> Deck.ShuffledDeck"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Games.Blackjack",
+        "comment": " Scoring for Blackjack\n\n\n# Scoring\n\n@docs score\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "score",
+                "comment": " Score the input hand.\n\nScore calculated according to standard blackjack rules. If a hand has an ace that is, when scored as an eleven, causes the hand to exceed 21, the ace is acounted as a one.\n\n    score <| newDeck [ Card Spades Ten, Card Hearts Ace ] == 21\n\n    score <| newDeck [ Card Clubs Seven, Card Diamonds Queen ] == 17\n\n    score <| newDeck [ Card Spades Five, Card Diamonds Four, Card Clubs Ten, Card Hearts Ace ] == 20\n\n",
+                "type": "Deck.ShuffledDeck -> Basics.Int"
+            }
+        ],
+        "binops": []
+    }
+]

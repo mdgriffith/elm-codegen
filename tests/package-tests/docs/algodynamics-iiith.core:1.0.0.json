@@ -1,0 +1,244 @@
+[
+    {
+        "name": "Core",
+        "comment": " This library tries to address the following issues in building\n1. Gives default styles for all elements in an interactive virtual CS experiment.\n2. Gives readymade history support with as less code rewriting as possible using elm-community/undo-redo\n3. Extends the functionality of undo-redo package by adding support for commands and subscriptions\n4. A ready to use logger via ports which logs all states\n\n# Wrapper Functions\n@docs init, view, update, subscriptions\n\n\n# Example\n\nA very basic example which should suit most basic cases\n\n    -- import the package into your app and update the main function with the following\n    Browser.element\n    { init = Core.init identity analyticsPort init\n    , view = Core.view view\n    , update = Core.update identity analyticsPort update setFresh Nothing Nothing\n    , subscriptions = Core.subscriptions subscriptions\n    }    \n\nFor using advanced features visit the Readme.md file.\n\n# Limitations\n1. The library does not support Browser.Document and Browser.Application since it was not required in the present usecase.\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "init",
+                "comment": " Init is a wrapper function that maps the original application's init function to new types\nIt also logs the init action\n",
+                "type": "(state -> loggableState) -> (Json.Encode.Value -> Platform.Cmd.Cmd (UndoList.Msg msg)) -> (flags -> ( state, Platform.Cmd.Cmd msg )) -> flags -> ( UndoList.UndoList state, Platform.Cmd.Cmd (UndoList.Msg msg) )"
+            },
+            {
+                "name": "subscriptions",
+                "comment": " Subscriptions is a wrapper function that maps the original application's subscriptions to the new types.\n",
+                "type": "(state -> Platform.Sub.Sub msg) -> UndoList.UndoList state -> Platform.Sub.Sub (UndoList.Msg msg)"
+            },
+            {
+                "name": "update",
+                "comment": " Update is a wrapper function which adds undo,redo,reset to an updater.\nThis function also logs the action and the newState via sharing it over the port.\nThe function takes logger, port for analytics, original update function, freshStateSetter, undoCount, undoListCommands.\nThe function returns a new partial function which replaces the original update in your application's main function\n\nThe details about the arguements\n1. **logger** : maps the program state to a loggable output. For no mapping *identity* function can be used\n2. **analyticsPort** : the port through which the telemetry data needs to be shared\n3. **orginal update function** : Handlles the updates specific to your application\n4. **freshStateSetter** : A function that sets a fresh state (see undo-redo package) if the result is true.\n5. **undoCount** : Handles cases where a number of steps need to be undoed (useful when the messages are chained)\n6. **undoListCommands** : Tuple of commands which will be executed when undo/redo/reset is encountered\n\n**NOTE** : Last three parameters are of Maybe type so you can pass Nothing if you don't wish to use them.\n",
+                "type": "(state -> loggableState) -> (Json.Encode.Value -> Platform.Cmd.Cmd (UndoList.Msg msg)) -> (msg -> state -> ( state, Platform.Cmd.Cmd msg )) -> (msg -> Basics.Bool) -> Maybe.Maybe Basics.Int -> Maybe.Maybe (Core.UndoListCmds msg) -> UndoList.Msg msg -> UndoList.UndoList state -> ( UndoList.UndoList state, Platform.Cmd.Cmd (UndoList.Msg msg) )"
+            },
+            {
+                "name": "view",
+                "comment": " View is the wrapper function that maps the original application's view function to new type.\nIt also adds the default undo/redo/reset control buttons to the UI.\n",
+                "type": "(state -> Html.Html msg) -> UndoList.UndoList state -> Html.Html (UndoList.Msg msg)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Core.Analytics",
+        "comment": " This module exposes the function which sends the messages and the new models.\n\n@docs generateJson, sendOutLog\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "generateJson",
+                "comment": " The function which takes model and action and encodes it into JSON\n\n**NOTE** : This function uses Debug.toString and may prevent you from compiling using --optimize flag\n",
+                "type": "Maybe.Maybe model -> action -> model -> Json.Encode.Value"
+            },
+            {
+                "name": "sendOutLog",
+                "comment": " The command that takes the model, action and send it over the port \"analytics\"\n",
+                "type": "Maybe.Maybe model -> action -> model -> (Json.Encode.Value -> Platform.Cmd.Cmd msg) -> Platform.Cmd.Cmd msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Core.Analytics.Encoder",
+        "comment": " This module exposes the default JSON encoder for analytics telemetry\n\n# Encoders\n@docs encodeAction, encodeModel\n\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "encodeAction",
+                "comment": " encodeAction takes a string and encodes it to JSON of the following format\n\n    -- for example the user gives a custom type DefInit as input\n    encodeAction <| Debug.toString DefInit \n    -- { \"type\": \"DefInit\", \"payload\":\"null\" }\n\n**NOTE** : only custom types can be encoded, others will result in an error JSON\n    -- for example if I try to encode Int 5 \n    encodeAction <| Debug.toString 5\n    -- it will result in\n    -- { \"type\": \"ActionTypeError\", \"payload\": \"Please change Msg type to Custom Data type in Elm app\" }\n\n",
+                "type": "String.String -> ( ( String.String, Json.Encode.Value ), ( String.String, Json.Encode.Value ) )"
+            },
+            {
+                "name": "encodeModel",
+                "comment": " encodeModel uses Analytics.Parser's encodeFlat function\n\n**NOTE** : If an error is encountered during parsing following JSON is returned\n    --  { \"type\": \"ModelParseError\", \"value\": \"ModelParseError\" <RawString> }\n",
+                "type": "String.String -> Json.Encode.Value"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Core.Analytics.Parser",
+        "comment": " This library is inspired from [f0i/DebugToJson](https://package.elm-lang.org/packages/f0i/debug-to-json/1.0.6)\nConvert Debug.toString output to JSON\n\n# Definition\n@docs Thing\n\n# Parser\n@docs parse\n\n# Convert to JSON\n@docs toJson\n\n# Ecoders\n@docs encode, encodeFlat\n\n\n",
+        "unions": [
+            {
+                "name": "Thing",
+                "comment": " The thing is an internal data structure to which the elm data types are parsed from the string\nThis is exposed so that user can write custom JSON encoder specific to his usecase\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Obj",
+                        [
+                            "List.List ( String.String, Core.Analytics.Parser.Thing )"
+                        ]
+                    ],
+                    [
+                        "Dct",
+                        [
+                            "List.List ( Core.Analytics.Parser.Thing, Core.Analytics.Parser.Thing )"
+                        ]
+                    ],
+                    [
+                        "Arr",
+                        [
+                            "List.List Core.Analytics.Parser.Thing"
+                        ]
+                    ],
+                    [
+                        "Set",
+                        [
+                            "List.List Core.Analytics.Parser.Thing"
+                        ]
+                    ],
+                    [
+                        "Str",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "MayBe",
+                        [
+                            "Maybe.Maybe Core.Analytics.Parser.Thing"
+                        ]
+                    ],
+                    [
+                        "Reslt",
+                        [
+                            "Result.Result Core.Analytics.Parser.Thing Core.Analytics.Parser.Thing"
+                        ]
+                    ],
+                    [
+                        "Custom",
+                        [
+                            "String.String",
+                            "List.List Core.Analytics.Parser.Thing"
+                        ]
+                    ],
+                    [
+                        "Lst",
+                        [
+                            "List.List Core.Analytics.Parser.Thing"
+                        ]
+                    ],
+                    [
+                        "Tpl",
+                        [
+                            "List.List Core.Analytics.Parser.Thing"
+                        ]
+                    ],
+                    [
+                        "NumInt",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "NumFloat",
+                        [
+                            "Basics.Float"
+                        ]
+                    ],
+                    [
+                        "Boolean",
+                        [
+                            "Basics.Bool"
+                        ]
+                    ],
+                    [
+                        "Chr",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Fun",
+                        []
+                    ],
+                    [
+                        "Intern",
+                        []
+                    ],
+                    [
+                        "UnitType",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "encode",
+                "comment": " Typed JSON encoder for Thing (parsed Debug.toString) output\n",
+                "type": "Core.Analytics.Parser.Thing -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeFlat",
+                "comment": " Converts Elm Debug string to Flat JSON \n(does not include type information in the encoded data)\n",
+                "type": "Core.Analytics.Parser.Thing -> Json.Encode.Value"
+            },
+            {
+                "name": "parse",
+                "comment": " this parser only parses core data types, \nPackage specific data types built using Custom types (like IntDict) may not be easily human readable\n\n",
+                "type": "Parser.Parser Core.Analytics.Parser.Thing"
+            },
+            {
+                "name": "toJson",
+                "comment": " Convert output from Debug.toString to JSON\n",
+                "type": "String.String -> Result.Result (List.List Parser.DeadEnd) Json.Encode.Value"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Core.Prompt",
+        "comment": " This module gives the default styled prompts for feedback.\n\n# Definitions\n@docs Prompt, PromptType\n\n# View\n@docs show\n\n",
+        "unions": [
+            {
+                "name": "PromptType",
+                "comment": " A prompt can be of one of the following types\n1. *Success Prompt* : green in color \n1. *Danger Prompt* : red in color \n1. *Information Prompt* : blue in color \n",
+                "args": [],
+                "cases": [
+                    [
+                        "PromptSuccess",
+                        []
+                    ],
+                    [
+                        "PromptDanger",
+                        []
+                    ],
+                    [
+                        "PromptInfo",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Prompt",
+                "comment": " A prompt is a message string with prompt type \n    \n    -- A basic example of prompt\n    Prompt (\"You have successfully added the prompt module\", PromptSuccess)\n",
+                "args": [],
+                "type": "( String.String, Core.Prompt.PromptType )"
+            }
+        ],
+        "values": [
+            {
+                "name": "show",
+                "comment": " Show function shows the prompt on the UI using default styles.\n    -- add the following line to your view function's child elements to see a basic prompt\n    show <| Prompt (\"You have successfully added the prompt module\", PromptSuccess)\n",
+                "type": "Core.Prompt.Prompt -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

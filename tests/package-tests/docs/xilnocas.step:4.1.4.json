@@ -1,0 +1,112 @@
+[
+    {
+        "name": "Step",
+        "comment": "\n\n\n# Steps and how to make them\n\n@docs Step, to, stay, exit, fromUpdate, fromMaybe\n\n\n# Issuing commands\n\n@docs withCmd, withAttempt, command, attempt\n\n\n# Transforming and Composing Steps\n\nAll of these functions help you build functions that return steps out of other functions that return steps\n\n@docs map, mapMsg, within, mapExit, orElse, onExit\n\n\n# Getting back to TEA land\n\n@docs run, asUpdateFunction\n\n\n# Testing update functions\n\n@docs foldSteps\n\n",
+        "unions": [
+            {
+                "name": "Step",
+                "comment": " A `Step model msg a` describes one state transition of an application, and is intended to be what gets returned from an update function.\n\nIt's helpful to look at how a `Step` is (roughly) represented under the hood\n\n    type Step model msg a\n        = To model (Cmd msg)\n        | Exit a\n        | Stay\n\nWe provide a smart constructor for each of these variants, but we hide the internal representation to make sure you're not pattern matching on `Step`s willy-nilly.\n\nThat being said, if you find something that makes you want the data structure fully exposed, please make an issue on GitHub!\n\n",
+                "args": [
+                    "model",
+                    "msg",
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "asUpdateFunction",
+                "comment": " Turn an update function that returns a `Step` to a normal Elm Architecture update function\n\nuses `run` internally to default with the provided model in case of a `stay`\n\n",
+                "type": "(msg -> model -> Step.Step model msg Basics.Never) -> msg -> model -> ( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "attempt",
+                "comment": " Experimental alias for `withAttempt`\n",
+                "type": "(Result.Result x a -> msg) -> Task.Task x a -> Step.Step model msg b -> Step.Step model msg b"
+            },
+            {
+                "name": "command",
+                "comment": " Experimental alias for withCmd\n",
+                "type": "Platform.Cmd.Cmd msg -> Step.Step model msg a -> Step.Step model msg a"
+            },
+            {
+                "name": "exit",
+                "comment": " End the interaction by returning a value of type `a`\n",
+                "type": "a -> Step.Step model msg a"
+            },
+            {
+                "name": "foldSteps",
+                "comment": " Starting from an initial state, fold an update function over a list of messages\n\nOnly use this to test that the application of certain messages produces the result you expect. In application code, building up a bunch of `Msg`s just to feed them to an update function is ususally not worth the effort.\n\n",
+                "type": "(msg -> model -> Step.Step model msg a) -> ( model, Platform.Cmd.Cmd msg ) -> List.List msg -> Step.Step model msg a"
+            },
+            {
+                "name": "fromMaybe",
+                "comment": " Step to the state denoted by the `model` in the `Just` case, stay otherwise\n",
+                "type": "Maybe.Maybe model -> Step.Step model msg a"
+            },
+            {
+                "name": "fromUpdate",
+                "comment": " Build a `Step` from a normal elm update tuple\n",
+                "type": "( model, Platform.Cmd.Cmd msg ) -> Step.Step model msg o"
+            },
+            {
+                "name": "map",
+                "comment": " Apply a function to the state inside a `Step`, if it's there\n\nMost useful for building a `Step` out of another `Step` returned from some other update function you're calling\n\n",
+                "type": "(model1 -> model2) -> Step.Step model1 msg a -> Step.Step model2 msg a"
+            },
+            {
+                "name": "mapExit",
+                "comment": " Map over the output of an interaction, if we've reached the end\n",
+                "type": "(a -> b) -> Step.Step model msg a -> Step.Step model msg b"
+            },
+            {
+                "name": "mapMsg",
+                "comment": " Apply a function to any `msg`s in the `Step`'s commands\n\nOften used alongside `map` for building \"bigger\" `Step`s out of \"smaller\" ones\n\n",
+                "type": "(msg1 -> msg2) -> Step.Step model msg1 a -> Step.Step model msg2 a"
+            },
+            {
+                "name": "onExit",
+                "comment": " Choose a `Step` based on the result of another interaction\n\nYou can use this in combination with `map` and `mapMsg` to glue the end of one interaction to the beginning of another.\n\nNotice that it looks a lot like `Maybe.andThen` and `Result.andThen`, but operating on the last type variable.\n\n",
+                "type": "(a -> Step.Step model msg b) -> Step.Step model msg a -> Step.Step model msg b"
+            },
+            {
+                "name": "orElse",
+                "comment": " Run the first suceeding `Step`, with priority given to the second argument\n\nIntended to be used pipeline style\n\n    Step.to { loading = True } |> Step.orElse (Step.to { loading = False }) == Step.to { loading = True }\n\n    Step.noop |> Step.orElse Step.to { loading = True } == Step.to { loading = True }\n\n",
+                "type": "Step.Step model msg a -> Step.Step model msg a -> Step.Step model msg a"
+            },
+            {
+                "name": "run",
+                "comment": " Turn a `Step` into the usual TEA update tuple\n\nIt must be a `Step` that doesn't `exit`. We know it is if the type variable `a` is still lowercase, i.e. not a specifc type, and can thus be chosen to be `Never` when calling this function.\n\n",
+                "type": "Step.Step model msg Basics.Never -> Maybe.Maybe ( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "stay",
+                "comment": " Keep the interaction in the state it was in.\n\n**Note**: This will prevent any commands from being returned\n\n    Step.stay == (Step.stay |> Step.withCmd myHttpCall)\n\nIf you want to stay in the same state, but run some commands, use `Step.to` explicitly\n\n    Step.to MySameState |> Step.withCmd myHttpCall\n\n",
+                "type": "Step.Step model msg a"
+            },
+            {
+                "name": "to",
+                "comment": " Transition to a new state, without executing any commands\n",
+                "type": "model -> Step.Step model msg a"
+            },
+            {
+                "name": "withAttempt",
+                "comment": " A helper for building `Step`s out of tasks\n",
+                "type": "(Result.Result x a -> msg) -> Task.Task x a -> Step.Step model msg b -> Step.Step model msg b"
+            },
+            {
+                "name": "withCmd",
+                "comment": " If we're stepping `to` a new state, add an cmd to fire off\n\nThis can be called on a `Step` multiple times, and all the commands will fire.\n\nNo commands are fired if the Step turns out to be a `stay` or an `exit`\n\nAlternate name ideas:\n\n  - effectfully\n  - cmd\n  - command (provided below)\n  - yelling\n  - with\n\n",
+                "type": "Platform.Cmd.Cmd msg -> Step.Step model msg a -> Step.Step model msg a"
+            },
+            {
+                "name": "within",
+                "comment": " Use a step \"within\" a larger interaction\n\n    Step.within f g = Step.map f >> Step.mapMsg g\n\n",
+                "type": "(model1 -> model2) -> (msg1 -> msg2) -> Step.Step model1 msg1 a -> Step.Step model2 msg2 a"
+            }
+        ],
+        "binops": []
+    }
+]

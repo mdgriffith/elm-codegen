@@ -1,0 +1,2608 @@
+[
+    {
+        "name": "Form.Field",
+        "comment": " Field type and helper functions\n\n\n# Field\n\n@docs Field, StringField, MultiStringField, BoolField, NumericField, text, email, dateOfBirth, datePast, phone, url, textarea, checkbox, radioBool, radioEnum, select, httpSelect, multiSelect, searchableMultiSelect, multiHttpSelect, radio, age\n\n\n# Properties\n\n@docs AgeFieldProperties, CommonFieldProperties, SimpleFieldProperties, SelectFieldProperties, HttpSelectFieldProperties, MultiSelectFieldProperties, SearchableMultiSelectFieldProperties, MultiHttpSelectFieldProperties, RadioFieldProperties, BoolFieldProperties, CheckboxFieldProperties, RadioBoolFieldProperties, RadioEnumFieldProperties, StringFieldProperties\n\n\n# Getters\n\n@docs getBoolProperties, getEnabledBy, getLabel, getNumericValue, getOrder, getProperties, getStringType, getStringValue, getStringValue_, getMultiStringValue_, getType, getUrl, getWidth\n\n\n# Setters\n\n@docs resetValueToDefault, setRequired, updateBoolValue, updateCheckboxValue_, updateNumericValue, updateNumericValue_, updateRadioBoolValue, updateRadioBoolValue_, updateRadioEnumValue, updateRadioEnumValue_, updateRemoteOptions, updateStringValue, updateStringDisabled, updateMultiStringOption, updateStringValue_, updateStringDisabled_, updateMultiStringValue_, updateShowDropdown, maybeUpdateStringValue, updateSearchableMultiselectInput\n\n\n# Predicates\n\n@docs isCheckbox, isColumn, isNumericField, isRequired\n\n\n# Encode\n\n@docs encode\n\n\n# Metadata\n\n@docs metadataKey\n\n",
+        "unions": [
+            {
+                "name": "BoolField",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "CheckboxField",
+                        [
+                            "Form.Field.CheckboxFieldProperties"
+                        ]
+                    ],
+                    [
+                        "RadioBoolField",
+                        [
+                            "Form.Field.RadioBoolFieldProperties"
+                        ]
+                    ],
+                    [
+                        "RadioEnumField",
+                        [
+                            "Form.Field.RadioEnumFieldProperties"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Field",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "StringField_",
+                        [
+                            "Form.Field.StringField"
+                        ]
+                    ],
+                    [
+                        "MultiStringField_",
+                        [
+                            "Form.Field.MultiStringField"
+                        ]
+                    ],
+                    [
+                        "BoolField_",
+                        [
+                            "Form.Field.BoolField"
+                        ]
+                    ],
+                    [
+                        "NumericField_",
+                        [
+                            "Form.Field.NumericField"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "MultiStringField",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "MultiSelectField",
+                        [
+                            "Form.Field.MultiSelectFieldProperties {}"
+                        ]
+                    ],
+                    [
+                        "SearchableMultiSelectField",
+                        [
+                            "Form.Field.SearchableMultiSelectFieldProperties"
+                        ]
+                    ],
+                    [
+                        "MultiHttpSelectField",
+                        [
+                            "Form.Field.MultiHttpSelectFieldProperties"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "NumericField",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "AgeField",
+                        [
+                            "Form.Field.AgeFieldProperties"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "StringField",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "SimpleField",
+                        [
+                            "Form.Field.SimpleFieldProperties"
+                        ]
+                    ],
+                    [
+                        "SelectField",
+                        [
+                            "Form.Field.SelectFieldProperties"
+                        ]
+                    ],
+                    [
+                        "HttpSelectField",
+                        [
+                            "Form.Field.HttpSelectFieldProperties"
+                        ]
+                    ],
+                    [
+                        "RadioField",
+                        [
+                            "Form.Field.RadioFieldProperties"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "AgeFieldProperties",
+                "comment": " ",
+                "args": [],
+                "type": "Form.Field.FieldProperties { value : Maybe.Maybe Basics.Int }"
+            },
+            {
+                "name": "BoolFieldProperties",
+                "comment": " ",
+                "args": [
+                    "a"
+                ],
+                "type": "Form.Field.FieldProperties { a | value : Basics.Bool }"
+            },
+            {
+                "name": "CheckboxFieldProperties",
+                "comment": " ",
+                "args": [],
+                "type": "Form.Field.BoolFieldProperties { tipe : Form.Field.FieldType.CheckboxFieldType }"
+            },
+            {
+                "name": "CommonFieldProperties",
+                "comment": " ",
+                "args": [],
+                "type": "Form.Field.FieldProperties {}"
+            },
+            {
+                "name": "HttpSelectFieldProperties",
+                "comment": " ",
+                "args": [],
+                "type": "Form.Field.StringFieldProperties { url : String.String, default : Maybe.Maybe String.String, options : RemoteData.RemoteData (Http.Detailed.Error String.String) (List.List Form.Field.Option.Option) }"
+            },
+            {
+                "name": "MultiHttpSelectFieldProperties",
+                "comment": " ",
+                "args": [],
+                "type": "Form.Field.MultiStringFieldProperties { placeholder : String.String, showDropdown : Basics.Bool, url : String.String, options : RemoteData.RemoteData (Http.Detailed.Error String.String) (List.List Form.Field.Option.Option) }"
+            },
+            {
+                "name": "MultiSelectFieldProperties",
+                "comment": " ",
+                "args": [
+                    "a"
+                ],
+                "type": "Form.Field.MultiStringFieldProperties { a | placeholder : String.String, showDropdown : Basics.Bool, options : List.List Form.Field.Option.Option }"
+            },
+            {
+                "name": "RadioBoolFieldProperties",
+                "comment": " ",
+                "args": [],
+                "type": "Form.Field.FieldProperties { value : Maybe.Maybe Basics.Bool }"
+            },
+            {
+                "name": "RadioEnumFieldProperties",
+                "comment": " ",
+                "args": [],
+                "type": "Form.Field.FieldProperties { value : Maybe.Maybe Form.Field.RadioEnum.Value, default : Maybe.Maybe Form.Field.RadioEnum.Value, options : List.List Form.Field.RadioEnum.Value }"
+            },
+            {
+                "name": "RadioFieldProperties",
+                "comment": " ",
+                "args": [],
+                "type": "Form.Field.StringFieldProperties { default : Maybe.Maybe String.String, options : List.List Form.Field.Option.Option, direction : Form.Field.Direction.Direction }"
+            },
+            {
+                "name": "SearchableMultiSelectFieldProperties",
+                "comment": " ",
+                "args": [],
+                "type": "Form.Field.MultiSelectFieldProperties { searchableOptions : List.List Form.Field.Option.Option, searchInput : String.String }"
+            },
+            {
+                "name": "SelectFieldProperties",
+                "comment": " ",
+                "args": [],
+                "type": "Form.Field.StringFieldProperties { default : Maybe.Maybe String.String, options : List.List Form.Field.Option.Option }"
+            },
+            {
+                "name": "SimpleFieldProperties",
+                "comment": " ",
+                "args": [],
+                "type": "Form.Field.StringFieldProperties { tipe : Form.Field.FieldType.SimpleFieldType }"
+            },
+            {
+                "name": "StringFieldProperties",
+                "comment": " ",
+                "args": [
+                    "a"
+                ],
+                "type": "Form.Field.FieldProperties { a | value : String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "age",
+                "comment": " ",
+                "type": "Form.Field.AgeFieldProperties -> Form.Field.Field"
+            },
+            {
+                "name": "checkbox",
+                "comment": " ",
+                "type": "Form.Field.BoolFieldProperties {} -> Form.Field.Field"
+            },
+            {
+                "name": "dateOfBirth",
+                "comment": " ",
+                "type": "Form.Field.StringFieldProperties {} -> Form.Field.Field"
+            },
+            {
+                "name": "datePast",
+                "comment": " ",
+                "type": "Form.Field.StringFieldProperties {} -> Form.Field.Field"
+            },
+            {
+                "name": "email",
+                "comment": " ",
+                "type": "Form.Field.StringFieldProperties {} -> Form.Field.Field"
+            },
+            {
+                "name": "encode",
+                "comment": " ",
+                "type": "Form.Field.Field -> Json.Encode.Value"
+            },
+            {
+                "name": "getBoolProperties",
+                "comment": " ",
+                "type": "Form.Field.Field -> Maybe.Maybe Basics.Bool"
+            },
+            {
+                "name": "getEnabledBy",
+                "comment": " ",
+                "type": "Form.Field.Field -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "getLabel",
+                "comment": " ",
+                "type": "Form.Field.Field -> String.String"
+            },
+            {
+                "name": "getMultiStringValue_",
+                "comment": " ",
+                "type": "Form.Field.MultiStringField -> Set.Set String.String"
+            },
+            {
+                "name": "getNumericValue",
+                "comment": " ",
+                "type": "Form.Field.Field -> Maybe.Maybe Basics.Int"
+            },
+            {
+                "name": "getOrder",
+                "comment": " ",
+                "type": "Form.Field.Field -> Basics.Int"
+            },
+            {
+                "name": "getProperties",
+                "comment": " ",
+                "type": "Form.Field.Field -> Form.Field.CommonFieldProperties"
+            },
+            {
+                "name": "getStringType",
+                "comment": " ",
+                "type": "Form.Field.StringField -> Form.Field.FieldType.StringFieldType"
+            },
+            {
+                "name": "getStringValue",
+                "comment": " ",
+                "type": "Form.Field.Field -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "getStringValue_",
+                "comment": " ",
+                "type": "Form.Field.StringField -> String.String"
+            },
+            {
+                "name": "getType",
+                "comment": " ",
+                "type": "Form.Field.Field -> Form.Field.FieldType.FieldType"
+            },
+            {
+                "name": "getUrl",
+                "comment": " ",
+                "type": "Form.Field.Field -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "getWidth",
+                "comment": " ",
+                "type": "Form.Field.Field -> Form.Field.Width.Width"
+            },
+            {
+                "name": "httpSelect",
+                "comment": " ",
+                "type": "Form.Field.HttpSelectFieldProperties -> Form.Field.Field"
+            },
+            {
+                "name": "isCheckbox",
+                "comment": " ",
+                "type": "Form.Field.Field -> Basics.Bool"
+            },
+            {
+                "name": "isColumn",
+                "comment": " ",
+                "type": "Form.Field.Field -> Basics.Bool"
+            },
+            {
+                "name": "isNumericField",
+                "comment": " ",
+                "type": "Form.Field.Field -> Basics.Bool"
+            },
+            {
+                "name": "isRequired",
+                "comment": " ",
+                "type": "Form.Field.Field -> Form.Field.Required.IsRequired"
+            },
+            {
+                "name": "maybeUpdateStringValue",
+                "comment": " Keep existing field if the value is Nothing\n",
+                "type": "Maybe.Maybe String.String -> Form.Field.Field -> Form.Field.Field"
+            },
+            {
+                "name": "metadataKey",
+                "comment": " ",
+                "type": "String.String -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "multiHttpSelect",
+                "comment": " ",
+                "type": "Form.Field.MultiHttpSelectFieldProperties -> Form.Field.Field"
+            },
+            {
+                "name": "multiSelect",
+                "comment": " ",
+                "type": "Form.Field.MultiSelectFieldProperties {} -> Form.Field.Field"
+            },
+            {
+                "name": "phone",
+                "comment": " ",
+                "type": "Form.Field.StringFieldProperties {} -> Form.Field.Field"
+            },
+            {
+                "name": "radio",
+                "comment": " ",
+                "type": "Form.Field.RadioFieldProperties -> Form.Field.Field"
+            },
+            {
+                "name": "radioBool",
+                "comment": " ",
+                "type": "Form.Field.RadioBoolFieldProperties -> Form.Field.Field"
+            },
+            {
+                "name": "radioEnum",
+                "comment": " ",
+                "type": "Form.Field.RadioEnumFieldProperties -> Form.Field.Field"
+            },
+            {
+                "name": "resetValueToDefault",
+                "comment": " ",
+                "type": "Form.Field.Field -> Form.Field.Field"
+            },
+            {
+                "name": "searchableMultiSelect",
+                "comment": " ",
+                "type": "Form.Field.SearchableMultiSelectFieldProperties -> Form.Field.Field"
+            },
+            {
+                "name": "select",
+                "comment": " ",
+                "type": "Form.Field.SelectFieldProperties -> Form.Field.Field"
+            },
+            {
+                "name": "setRequired",
+                "comment": " ",
+                "type": "Form.Field.Required.IsRequired -> Form.Field.Field -> Form.Field.Field"
+            },
+            {
+                "name": "text",
+                "comment": " ",
+                "type": "Form.Field.StringFieldProperties {} -> Form.Field.Field"
+            },
+            {
+                "name": "textarea",
+                "comment": " ",
+                "type": "Form.Field.StringFieldProperties {} -> Form.Field.Field"
+            },
+            {
+                "name": "updateBoolValue",
+                "comment": " ",
+                "type": "Basics.Bool -> Form.Field.Field -> Form.Field.Field"
+            },
+            {
+                "name": "updateCheckboxValue_",
+                "comment": " ",
+                "type": "Basics.Bool -> Form.Field.BoolField -> Form.Field.BoolField"
+            },
+            {
+                "name": "updateMultiStringOption",
+                "comment": " ",
+                "type": "Form.Field.Option.Option -> Basics.Bool -> Form.Field.Field -> Form.Field.Field"
+            },
+            {
+                "name": "updateMultiStringValue_",
+                "comment": " ",
+                "type": "Set.Set String.String -> Form.Field.MultiStringField -> Form.Field.MultiStringField"
+            },
+            {
+                "name": "updateNumericValue",
+                "comment": " ",
+                "type": "String.String -> Form.Field.Field -> Form.Field.Field"
+            },
+            {
+                "name": "updateNumericValue_",
+                "comment": " ",
+                "type": "Maybe.Maybe Basics.Int -> Form.Field.NumericField -> Form.Field.NumericField"
+            },
+            {
+                "name": "updateRadioBoolValue",
+                "comment": " ",
+                "type": "Maybe.Maybe Basics.Bool -> Form.Field.Field -> Form.Field.Field"
+            },
+            {
+                "name": "updateRadioBoolValue_",
+                "comment": " ",
+                "type": "Maybe.Maybe Basics.Bool -> Form.Field.BoolField -> Form.Field.BoolField"
+            },
+            {
+                "name": "updateRadioEnumValue",
+                "comment": " ",
+                "type": "Maybe.Maybe Form.Field.RadioEnum.Value -> Form.Field.Field -> Form.Field.Field"
+            },
+            {
+                "name": "updateRadioEnumValue_",
+                "comment": " ",
+                "type": "Maybe.Maybe Form.Field.RadioEnum.Value -> Form.Field.BoolField -> Form.Field.BoolField"
+            },
+            {
+                "name": "updateRemoteOptions",
+                "comment": " ",
+                "type": "RemoteData.RemoteData (Http.Detailed.Error String.String) (List.List Form.Field.Option.Option) -> Form.Field.Field -> Form.Field.Field"
+            },
+            {
+                "name": "updateSearchableMultiselectInput",
+                "comment": " ",
+                "type": "String.String -> Form.Field.Field -> Form.Field.Field"
+            },
+            {
+                "name": "updateShowDropdown",
+                "comment": " ",
+                "type": "Basics.Bool -> Form.Field.Field -> Form.Field.Field"
+            },
+            {
+                "name": "updateStringDisabled",
+                "comment": " ",
+                "type": "Basics.Bool -> Form.Field.Field -> Form.Field.Field"
+            },
+            {
+                "name": "updateStringDisabled_",
+                "comment": " ",
+                "type": "Basics.Bool -> Form.Field.StringField -> Form.Field.StringField"
+            },
+            {
+                "name": "updateStringValue",
+                "comment": " ",
+                "type": "String.String -> Form.Field.Field -> Form.Field.Field"
+            },
+            {
+                "name": "updateStringValue_",
+                "comment": " ",
+                "type": "String.String -> Form.Field.StringField -> Form.Field.StringField"
+            },
+            {
+                "name": "url",
+                "comment": " ",
+                "type": "Form.Field.StringFieldProperties {} -> Form.Field.Field"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Form.Field.Direction",
+        "comment": " Form grid layout direction.\n\n\n# Direction\n\n@docs Direction, decoder, fromString, toString\n\n",
+        "unions": [
+            {
+                "name": "Direction",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Row",
+                        []
+                    ],
+                    [
+                        "Column",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decoder",
+                "comment": " ",
+                "type": "Json.Decode.Decoder Form.Field.Direction.Direction"
+            },
+            {
+                "name": "fromString",
+                "comment": " ",
+                "type": "String.String -> Maybe.Maybe Form.Field.Direction.Direction"
+            },
+            {
+                "name": "toString",
+                "comment": " ",
+                "type": "Form.Field.Direction.Direction -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Form.Field.FieldType",
+        "comment": " Field Type\n\n\n# FieldType\n\n@docs FieldType, StringFieldType, SimpleFieldType, BoolFieldType, CheckboxFieldType, NumericFieldType, MultiStringFieldType, DateFieldType\n\n\n# Decoder\n\n@docs decoder\n\n\n# Helpers\n\n@docs defaultValue, toClass, toMax, toMaxLength, toMin, toPlaceholder, toType\n\n",
+        "unions": [
+            {
+                "name": "BoolFieldType",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "CheckboxType",
+                        [
+                            "Form.Field.FieldType.CheckboxFieldType"
+                        ]
+                    ],
+                    [
+                        "RadioBool",
+                        []
+                    ],
+                    [
+                        "RadioEnum",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "CheckboxFieldType",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Checkbox",
+                        []
+                    ],
+                    [
+                        "CheckboxConsent",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "DateFieldType",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "DatePast",
+                        []
+                    ],
+                    [
+                        "DateOfBirth",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "FieldType",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "StringType",
+                        [
+                            "Form.Field.FieldType.StringFieldType"
+                        ]
+                    ],
+                    [
+                        "MultiStringType",
+                        [
+                            "Form.Field.FieldType.MultiStringFieldType"
+                        ]
+                    ],
+                    [
+                        "BoolType",
+                        [
+                            "Form.Field.FieldType.BoolFieldType"
+                        ]
+                    ],
+                    [
+                        "NumericType",
+                        [
+                            "Form.Field.FieldType.NumericFieldType"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "MultiStringFieldType",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "MultiSelect",
+                        []
+                    ],
+                    [
+                        "SearchableMultiSelect",
+                        []
+                    ],
+                    [
+                        "MultiHttpSelect",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "NumericFieldType",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Age",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "SimpleFieldType",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Text",
+                        []
+                    ],
+                    [
+                        "Email",
+                        []
+                    ],
+                    [
+                        "Date",
+                        [
+                            "Form.Field.FieldType.DateFieldType"
+                        ]
+                    ],
+                    [
+                        "Phone",
+                        []
+                    ],
+                    [
+                        "Url",
+                        []
+                    ],
+                    [
+                        "TextArea",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "StringFieldType",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "SimpleType",
+                        [
+                            "Form.Field.FieldType.SimpleFieldType"
+                        ]
+                    ],
+                    [
+                        "Select",
+                        []
+                    ],
+                    [
+                        "HttpSelect",
+                        []
+                    ],
+                    [
+                        "Radio",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decoder",
+                "comment": " ",
+                "type": "Json.Decode.Decoder Form.Field.FieldType.FieldType"
+            },
+            {
+                "name": "defaultValue",
+                "comment": " ",
+                "type": "Time.Posix -> Form.Field.FieldType.SimpleFieldType -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "toClass",
+                "comment": " ",
+                "type": "Form.Field.FieldType.SimpleFieldType -> String.String"
+            },
+            {
+                "name": "toMax",
+                "comment": " ",
+                "type": "Time.Posix -> Form.Field.FieldType.FieldType -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "toMaxLength",
+                "comment": " ",
+                "type": "Form.Field.FieldType.SimpleFieldType -> Maybe.Maybe Basics.Int"
+            },
+            {
+                "name": "toMin",
+                "comment": " ",
+                "type": "Time.Posix -> Form.Field.FieldType.FieldType -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "toPlaceholder",
+                "comment": " ",
+                "type": "Form.Field.FieldType.SimpleFieldType -> String.String"
+            },
+            {
+                "name": "toType",
+                "comment": " ",
+                "type": "Form.Field.FieldType.SimpleFieldType -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Form.Field.Json",
+        "comment": " Decode Field from Json\n\n\n# Json\n\n@docs decoder\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decoder",
+                "comment": " ",
+                "type": "Time.Posix -> Basics.Int -> Json.Decode.Decoder ( String.String, Form.Field.Field )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Form.Field.Option",
+        "comment": " Field option tyope\n\n\n# Option\n\n@docs Option, decoder, remoteOptionDecoder\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Option",
+                "comment": " ",
+                "args": [],
+                "type": "{ value : String.String, label : Maybe.Maybe String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "decoder",
+                "comment": " ",
+                "type": "Json.Decode.Decoder Form.Field.Option.Option"
+            },
+            {
+                "name": "remoteOptionDecoder",
+                "comment": " ",
+                "type": "Json.Decode.Decoder Form.Field.Option.Option"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Form.Field.RadioBool",
+        "comment": " RadioBool helpers.\n\n\n# RadioBool\n\n@docs fromString, toString\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fromString",
+                "comment": " ",
+                "type": "String.String -> Maybe.Maybe Basics.Bool"
+            },
+            {
+                "name": "toString",
+                "comment": " ",
+                "type": "Basics.Bool -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Form.Field.RadioEnum",
+        "comment": " RadioEnum data type.\n\n\n# RadioEnum\n\n@docs Value, toBool, toString, fromString, decoder\n\n",
+        "unions": [
+            {
+                "name": "Value",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Yes",
+                        []
+                    ],
+                    [
+                        "No",
+                        []
+                    ],
+                    [
+                        "NA",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decoder",
+                "comment": " ",
+                "type": "Json.Decode.Decoder Form.Field.RadioEnum.Value"
+            },
+            {
+                "name": "fromString",
+                "comment": " ",
+                "type": "String.String -> Maybe.Maybe Form.Field.RadioEnum.Value"
+            },
+            {
+                "name": "toBool",
+                "comment": " ",
+                "type": "Maybe.Maybe Form.Field.RadioEnum.Value -> Maybe.Maybe Basics.Bool"
+            },
+            {
+                "name": "toString",
+                "comment": " ",
+                "type": "Form.Field.RadioEnum.Value -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Form.Field.Required",
+        "comment": " Required type\n\n\n# Type\n\n@docs IsRequired\n\n\n# Decoders\n\n@docs decoder\n\n\n# Helpers\n\n@docs fromString, toString\n\n",
+        "unions": [
+            {
+                "name": "IsRequired",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Yes",
+                        []
+                    ],
+                    [
+                        "Nullable",
+                        []
+                    ],
+                    [
+                        "No",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decoder",
+                "comment": " ",
+                "type": "Json.Decode.Decoder Form.Field.Required.IsRequired"
+            },
+            {
+                "name": "fromString",
+                "comment": " ",
+                "type": "String.String -> Maybe.Maybe Form.Field.Required.IsRequired"
+            },
+            {
+                "name": "toString",
+                "comment": " ",
+                "type": "Form.Field.Required.IsRequired -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Form.Field.Width",
+        "comment": " Form element width\n\n\n# Width\n\n@docs Width, decoder, toStyle\n\n",
+        "unions": [
+            {
+                "name": "Width",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "HalfSize",
+                        []
+                    ],
+                    [
+                        "FullSize",
+                        []
+                    ],
+                    [
+                        "Adaptive",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decoder",
+                "comment": " ",
+                "type": "Json.Decode.Decoder Form.Field.Width.Width"
+            },
+            {
+                "name": "toStyle",
+                "comment": " ",
+                "type": "Form.Field.Width.Width -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Form.Fields",
+        "comment": " Fields.\n\n\n# Fields\n\n@docs Fields\n\n\n# Json\n\n@docs decoder, encode\n\n\n# Update helpers\n\n@docs updateBoolField, updateFieldRemoteOptions, updateNumericField, updateOptionField, updateRadioBoolField, updateRadioEnumField, updateStringField, updateMultiStringOptionField, updateShowDropdown, resetValueToDefault, updateSearchbar\n\n\n# Predicates\n\n@docs hasCheckboxConsentField, isEnabled\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Fields",
+                "comment": " ",
+                "args": [],
+                "type": "Dict.Dict String.String Form.Field.Field"
+            }
+        ],
+        "values": [
+            {
+                "name": "decoder",
+                "comment": " ",
+                "type": "Time.Posix -> Json.Decode.Decoder (Dict.Dict String.String Form.Field.Field)"
+            },
+            {
+                "name": "encode",
+                "comment": " ",
+                "type": "Form.Fields.Fields -> Dict.Dict String.String Json.Encode.Value"
+            },
+            {
+                "name": "hasCheckboxConsentField",
+                "comment": " ",
+                "type": "Form.Fields.Fields -> Basics.Bool"
+            },
+            {
+                "name": "isEnabled",
+                "comment": " ",
+                "type": "Form.Fields.Fields -> Form.Field.Field -> Basics.Bool"
+            },
+            {
+                "name": "resetValueToDefault",
+                "comment": " ",
+                "type": "String.String -> Form.Fields.Fields -> Form.Fields.Fields"
+            },
+            {
+                "name": "updateBoolField",
+                "comment": " ",
+                "type": "String.String -> Basics.Bool -> Form.Fields.Fields -> Form.Fields.Fields"
+            },
+            {
+                "name": "updateFieldRemoteOptions",
+                "comment": " ",
+                "type": "String.String -> RemoteData.RemoteData (Http.Detailed.Error String.String) (List.List Form.Field.Option.Option) -> Form.Fields.Fields -> Form.Fields.Fields"
+            },
+            {
+                "name": "updateMultiStringOptionField",
+                "comment": " ",
+                "type": "String.String -> Form.Field.Option.Option -> Basics.Bool -> Form.Fields.Fields -> Form.Fields.Fields"
+            },
+            {
+                "name": "updateNumericField",
+                "comment": " ",
+                "type": "String.String -> String.String -> Form.Fields.Fields -> Form.Fields.Fields"
+            },
+            {
+                "name": "updateOptionField",
+                "comment": " ",
+                "type": "String.String -> Form.Field.Option.Option -> Form.Fields.Fields -> Form.Fields.Fields"
+            },
+            {
+                "name": "updateRadioBoolField",
+                "comment": " ",
+                "type": "String.String -> Basics.Bool -> Form.Fields.Fields -> Form.Fields.Fields"
+            },
+            {
+                "name": "updateRadioEnumField",
+                "comment": " ",
+                "type": "String.String -> Form.Field.RadioEnum.Value -> Form.Fields.Fields -> Form.Fields.Fields"
+            },
+            {
+                "name": "updateSearchbar",
+                "comment": " ",
+                "type": "String.String -> String.String -> Form.Fields.Fields -> Form.Fields.Fields"
+            },
+            {
+                "name": "updateShowDropdown",
+                "comment": " ",
+                "type": "String.String -> Basics.Bool -> Form.Fields.Fields -> Form.Fields.Fields"
+            },
+            {
+                "name": "updateStringField",
+                "comment": " ",
+                "type": "String.String -> String.String -> Form.Fields.Fields -> Form.Fields.Fields"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Form.Lib.Time",
+        "comment": " Helper functions for working with elm/time\n\n\n# Time\n\n@docs toDateString\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toDateString",
+                "comment": " Uses Iso8601.fromTime produces a date with timestamp and takes first 10 characters to return \"YYYY-MM-DD\"\n",
+                "type": "Time.Posix -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Form.Locale",
+        "comment": " Locale data type\n\n\n# Locale\n\n@docs Locale\n\n\n# Helpers\n\n@docs fromString, toString, urlParser\n\n\n# Locales\n\n@docs enAU\n\n",
+        "unions": [
+            {
+                "name": "Locale",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Locale",
+                        [
+                            "Form.Locale.LanguageCode.LanguageCode",
+                            "Form.Locale.CountryCode.CountryCode"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "enAU",
+                "comment": " ",
+                "type": "Form.Locale.Locale"
+            },
+            {
+                "name": "fromString",
+                "comment": " ",
+                "type": "String.String -> Maybe.Maybe Form.Locale.Locale"
+            },
+            {
+                "name": "toString",
+                "comment": " ",
+                "type": "Form.Locale.Locale -> String.String"
+            },
+            {
+                "name": "urlParser",
+                "comment": " ",
+                "type": "Url.Parser.Parser (Form.Locale.Locale -> a) a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Form.Locale.CountryCode",
+        "comment": " Best effort at supporting [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166).\n\n\n# CountryCode\n\n@docs CountryCode, fromString, toString\n\n",
+        "unions": [
+            {
+                "name": "CountryCode",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "AD",
+                        []
+                    ],
+                    [
+                        "AE",
+                        []
+                    ],
+                    [
+                        "AF",
+                        []
+                    ],
+                    [
+                        "AG",
+                        []
+                    ],
+                    [
+                        "AI",
+                        []
+                    ],
+                    [
+                        "AL",
+                        []
+                    ],
+                    [
+                        "AM",
+                        []
+                    ],
+                    [
+                        "AO",
+                        []
+                    ],
+                    [
+                        "AQ",
+                        []
+                    ],
+                    [
+                        "AR",
+                        []
+                    ],
+                    [
+                        "AS",
+                        []
+                    ],
+                    [
+                        "AT",
+                        []
+                    ],
+                    [
+                        "AU",
+                        []
+                    ],
+                    [
+                        "AW",
+                        []
+                    ],
+                    [
+                        "AX",
+                        []
+                    ],
+                    [
+                        "AZ",
+                        []
+                    ],
+                    [
+                        "BA",
+                        []
+                    ],
+                    [
+                        "BB",
+                        []
+                    ],
+                    [
+                        "BD",
+                        []
+                    ],
+                    [
+                        "BE",
+                        []
+                    ],
+                    [
+                        "BF",
+                        []
+                    ],
+                    [
+                        "BG",
+                        []
+                    ],
+                    [
+                        "BH",
+                        []
+                    ],
+                    [
+                        "BI",
+                        []
+                    ],
+                    [
+                        "BJ",
+                        []
+                    ],
+                    [
+                        "BL",
+                        []
+                    ],
+                    [
+                        "BM",
+                        []
+                    ],
+                    [
+                        "BN",
+                        []
+                    ],
+                    [
+                        "BO",
+                        []
+                    ],
+                    [
+                        "BQ",
+                        []
+                    ],
+                    [
+                        "BR",
+                        []
+                    ],
+                    [
+                        "BS",
+                        []
+                    ],
+                    [
+                        "BT",
+                        []
+                    ],
+                    [
+                        "BW",
+                        []
+                    ],
+                    [
+                        "BY",
+                        []
+                    ],
+                    [
+                        "BZ",
+                        []
+                    ],
+                    [
+                        "CA",
+                        []
+                    ],
+                    [
+                        "CC",
+                        []
+                    ],
+                    [
+                        "CD",
+                        []
+                    ],
+                    [
+                        "CF",
+                        []
+                    ],
+                    [
+                        "CG",
+                        []
+                    ],
+                    [
+                        "CH",
+                        []
+                    ],
+                    [
+                        "CI",
+                        []
+                    ],
+                    [
+                        "CK",
+                        []
+                    ],
+                    [
+                        "CL",
+                        []
+                    ],
+                    [
+                        "CM",
+                        []
+                    ],
+                    [
+                        "CN",
+                        []
+                    ],
+                    [
+                        "CO",
+                        []
+                    ],
+                    [
+                        "CR",
+                        []
+                    ],
+                    [
+                        "CU",
+                        []
+                    ],
+                    [
+                        "CV",
+                        []
+                    ],
+                    [
+                        "CW",
+                        []
+                    ],
+                    [
+                        "CX",
+                        []
+                    ],
+                    [
+                        "CY",
+                        []
+                    ],
+                    [
+                        "CZ",
+                        []
+                    ],
+                    [
+                        "DE",
+                        []
+                    ],
+                    [
+                        "DJ",
+                        []
+                    ],
+                    [
+                        "DK",
+                        []
+                    ],
+                    [
+                        "DM",
+                        []
+                    ],
+                    [
+                        "DO",
+                        []
+                    ],
+                    [
+                        "DZ",
+                        []
+                    ],
+                    [
+                        "EC",
+                        []
+                    ],
+                    [
+                        "EE",
+                        []
+                    ],
+                    [
+                        "EG",
+                        []
+                    ],
+                    [
+                        "EH",
+                        []
+                    ],
+                    [
+                        "ER",
+                        []
+                    ],
+                    [
+                        "ES",
+                        []
+                    ],
+                    [
+                        "ET",
+                        []
+                    ],
+                    [
+                        "FI",
+                        []
+                    ],
+                    [
+                        "FJ",
+                        []
+                    ],
+                    [
+                        "FK",
+                        []
+                    ],
+                    [
+                        "FM",
+                        []
+                    ],
+                    [
+                        "FO",
+                        []
+                    ],
+                    [
+                        "FR",
+                        []
+                    ],
+                    [
+                        "GA",
+                        []
+                    ],
+                    [
+                        "GB",
+                        []
+                    ],
+                    [
+                        "GD",
+                        []
+                    ],
+                    [
+                        "GE",
+                        []
+                    ],
+                    [
+                        "GF",
+                        []
+                    ],
+                    [
+                        "GG",
+                        []
+                    ],
+                    [
+                        "GH",
+                        []
+                    ],
+                    [
+                        "GI",
+                        []
+                    ],
+                    [
+                        "GL",
+                        []
+                    ],
+                    [
+                        "GM",
+                        []
+                    ],
+                    [
+                        "GN",
+                        []
+                    ],
+                    [
+                        "GP",
+                        []
+                    ],
+                    [
+                        "GQ",
+                        []
+                    ],
+                    [
+                        "GR",
+                        []
+                    ],
+                    [
+                        "GT",
+                        []
+                    ],
+                    [
+                        "GU",
+                        []
+                    ],
+                    [
+                        "GW",
+                        []
+                    ],
+                    [
+                        "GY",
+                        []
+                    ],
+                    [
+                        "HK",
+                        []
+                    ],
+                    [
+                        "HM",
+                        []
+                    ],
+                    [
+                        "HN",
+                        []
+                    ],
+                    [
+                        "HT",
+                        []
+                    ],
+                    [
+                        "HU",
+                        []
+                    ],
+                    [
+                        "ID",
+                        []
+                    ],
+                    [
+                        "IE",
+                        []
+                    ],
+                    [
+                        "IL",
+                        []
+                    ],
+                    [
+                        "IM",
+                        []
+                    ],
+                    [
+                        "IN",
+                        []
+                    ],
+                    [
+                        "IO",
+                        []
+                    ],
+                    [
+                        "IQ",
+                        []
+                    ],
+                    [
+                        "IR",
+                        []
+                    ],
+                    [
+                        "IS",
+                        []
+                    ],
+                    [
+                        "IT",
+                        []
+                    ],
+                    [
+                        "JE",
+                        []
+                    ],
+                    [
+                        "JM",
+                        []
+                    ],
+                    [
+                        "JO",
+                        []
+                    ],
+                    [
+                        "JP",
+                        []
+                    ],
+                    [
+                        "KE",
+                        []
+                    ],
+                    [
+                        "KG",
+                        []
+                    ],
+                    [
+                        "KH",
+                        []
+                    ],
+                    [
+                        "KI",
+                        []
+                    ],
+                    [
+                        "KM",
+                        []
+                    ],
+                    [
+                        "KN",
+                        []
+                    ],
+                    [
+                        "KP",
+                        []
+                    ],
+                    [
+                        "KR",
+                        []
+                    ],
+                    [
+                        "KW",
+                        []
+                    ],
+                    [
+                        "KY",
+                        []
+                    ],
+                    [
+                        "KZ",
+                        []
+                    ],
+                    [
+                        "LA",
+                        []
+                    ],
+                    [
+                        "LB",
+                        []
+                    ],
+                    [
+                        "LC",
+                        []
+                    ],
+                    [
+                        "LI",
+                        []
+                    ],
+                    [
+                        "LK",
+                        []
+                    ],
+                    [
+                        "LR",
+                        []
+                    ],
+                    [
+                        "LS",
+                        []
+                    ],
+                    [
+                        "LT",
+                        []
+                    ],
+                    [
+                        "LU",
+                        []
+                    ],
+                    [
+                        "LV",
+                        []
+                    ],
+                    [
+                        "LY",
+                        []
+                    ],
+                    [
+                        "MA",
+                        []
+                    ],
+                    [
+                        "MC",
+                        []
+                    ],
+                    [
+                        "MD",
+                        []
+                    ],
+                    [
+                        "ME",
+                        []
+                    ],
+                    [
+                        "MF",
+                        []
+                    ],
+                    [
+                        "MG",
+                        []
+                    ],
+                    [
+                        "MH",
+                        []
+                    ],
+                    [
+                        "MK",
+                        []
+                    ],
+                    [
+                        "ML",
+                        []
+                    ],
+                    [
+                        "MM",
+                        []
+                    ],
+                    [
+                        "MN",
+                        []
+                    ],
+                    [
+                        "MO",
+                        []
+                    ],
+                    [
+                        "MP",
+                        []
+                    ],
+                    [
+                        "MQ",
+                        []
+                    ],
+                    [
+                        "MR",
+                        []
+                    ],
+                    [
+                        "MS",
+                        []
+                    ],
+                    [
+                        "MT",
+                        []
+                    ],
+                    [
+                        "MU",
+                        []
+                    ],
+                    [
+                        "MV",
+                        []
+                    ],
+                    [
+                        "MW",
+                        []
+                    ],
+                    [
+                        "MX",
+                        []
+                    ],
+                    [
+                        "MY",
+                        []
+                    ],
+                    [
+                        "MZ",
+                        []
+                    ],
+                    [
+                        "NA",
+                        []
+                    ],
+                    [
+                        "NC",
+                        []
+                    ],
+                    [
+                        "NE",
+                        []
+                    ],
+                    [
+                        "NF",
+                        []
+                    ],
+                    [
+                        "NG",
+                        []
+                    ],
+                    [
+                        "NI",
+                        []
+                    ],
+                    [
+                        "NL",
+                        []
+                    ],
+                    [
+                        "NO",
+                        []
+                    ],
+                    [
+                        "NP",
+                        []
+                    ],
+                    [
+                        "NR",
+                        []
+                    ],
+                    [
+                        "NU",
+                        []
+                    ],
+                    [
+                        "NZ",
+                        []
+                    ],
+                    [
+                        "OM",
+                        []
+                    ],
+                    [
+                        "PA",
+                        []
+                    ],
+                    [
+                        "PE",
+                        []
+                    ],
+                    [
+                        "PF",
+                        []
+                    ],
+                    [
+                        "PG",
+                        []
+                    ],
+                    [
+                        "PH",
+                        []
+                    ],
+                    [
+                        "PK",
+                        []
+                    ],
+                    [
+                        "PL",
+                        []
+                    ],
+                    [
+                        "PM",
+                        []
+                    ],
+                    [
+                        "PR",
+                        []
+                    ],
+                    [
+                        "PS",
+                        []
+                    ],
+                    [
+                        "PT",
+                        []
+                    ],
+                    [
+                        "PW",
+                        []
+                    ],
+                    [
+                        "PY",
+                        []
+                    ],
+                    [
+                        "QA",
+                        []
+                    ],
+                    [
+                        "RE",
+                        []
+                    ],
+                    [
+                        "RO",
+                        []
+                    ],
+                    [
+                        "RS",
+                        []
+                    ],
+                    [
+                        "RU",
+                        []
+                    ],
+                    [
+                        "RW",
+                        []
+                    ],
+                    [
+                        "SA",
+                        []
+                    ],
+                    [
+                        "SB",
+                        []
+                    ],
+                    [
+                        "SC",
+                        []
+                    ],
+                    [
+                        "SD",
+                        []
+                    ],
+                    [
+                        "SE",
+                        []
+                    ],
+                    [
+                        "SG",
+                        []
+                    ],
+                    [
+                        "SH",
+                        []
+                    ],
+                    [
+                        "SI",
+                        []
+                    ],
+                    [
+                        "SJ",
+                        []
+                    ],
+                    [
+                        "SK",
+                        []
+                    ],
+                    [
+                        "SL",
+                        []
+                    ],
+                    [
+                        "SM",
+                        []
+                    ],
+                    [
+                        "SN",
+                        []
+                    ],
+                    [
+                        "SO",
+                        []
+                    ],
+                    [
+                        "SR",
+                        []
+                    ],
+                    [
+                        "SS",
+                        []
+                    ],
+                    [
+                        "ST",
+                        []
+                    ],
+                    [
+                        "SV",
+                        []
+                    ],
+                    [
+                        "SX",
+                        []
+                    ],
+                    [
+                        "SY",
+                        []
+                    ],
+                    [
+                        "SZ",
+                        []
+                    ],
+                    [
+                        "TC",
+                        []
+                    ],
+                    [
+                        "TD",
+                        []
+                    ],
+                    [
+                        "TG",
+                        []
+                    ],
+                    [
+                        "TH",
+                        []
+                    ],
+                    [
+                        "TJ",
+                        []
+                    ],
+                    [
+                        "TK",
+                        []
+                    ],
+                    [
+                        "TL",
+                        []
+                    ],
+                    [
+                        "TM",
+                        []
+                    ],
+                    [
+                        "TN",
+                        []
+                    ],
+                    [
+                        "TO",
+                        []
+                    ],
+                    [
+                        "TR",
+                        []
+                    ],
+                    [
+                        "TT",
+                        []
+                    ],
+                    [
+                        "TV",
+                        []
+                    ],
+                    [
+                        "TW",
+                        []
+                    ],
+                    [
+                        "TZ",
+                        []
+                    ],
+                    [
+                        "UA",
+                        []
+                    ],
+                    [
+                        "UG",
+                        []
+                    ],
+                    [
+                        "US",
+                        []
+                    ],
+                    [
+                        "UY",
+                        []
+                    ],
+                    [
+                        "UZ",
+                        []
+                    ],
+                    [
+                        "VA",
+                        []
+                    ],
+                    [
+                        "VC",
+                        []
+                    ],
+                    [
+                        "VE",
+                        []
+                    ],
+                    [
+                        "VG",
+                        []
+                    ],
+                    [
+                        "VI",
+                        []
+                    ],
+                    [
+                        "VN",
+                        []
+                    ],
+                    [
+                        "VU",
+                        []
+                    ],
+                    [
+                        "WF",
+                        []
+                    ],
+                    [
+                        "WS",
+                        []
+                    ],
+                    [
+                        "YE",
+                        []
+                    ],
+                    [
+                        "YT",
+                        []
+                    ],
+                    [
+                        "ZA",
+                        []
+                    ],
+                    [
+                        "ZM",
+                        []
+                    ],
+                    [
+                        "ZW",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fromString",
+                "comment": " ",
+                "type": "String.String -> Maybe.Maybe Form.Locale.CountryCode.CountryCode"
+            },
+            {
+                "name": "toString",
+                "comment": " ",
+                "type": "Form.Locale.CountryCode.CountryCode -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Form.Locale.LanguageCode",
+        "comment": " Limited [ISO 639-1](https://en.wikipedia.org/wiki/ISO_639-1) support.\n\n\n# LanguageCode\n\n@docs LanguageCode, fromString, toString\n\n",
+        "unions": [
+            {
+                "name": "LanguageCode",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "AA",
+                        []
+                    ],
+                    [
+                        "AB",
+                        []
+                    ],
+                    [
+                        "AF",
+                        []
+                    ],
+                    [
+                        "AK",
+                        []
+                    ],
+                    [
+                        "AM",
+                        []
+                    ],
+                    [
+                        "AN",
+                        []
+                    ],
+                    [
+                        "AR",
+                        []
+                    ],
+                    [
+                        "BA",
+                        []
+                    ],
+                    [
+                        "BE",
+                        []
+                    ],
+                    [
+                        "BG",
+                        []
+                    ],
+                    [
+                        "BN",
+                        []
+                    ],
+                    [
+                        "CA",
+                        []
+                    ],
+                    [
+                        "CS",
+                        []
+                    ],
+                    [
+                        "DE",
+                        []
+                    ],
+                    [
+                        "EL",
+                        []
+                    ],
+                    [
+                        "EN",
+                        []
+                    ],
+                    [
+                        "ES",
+                        []
+                    ],
+                    [
+                        "FR",
+                        []
+                    ],
+                    [
+                        "GD",
+                        []
+                    ],
+                    [
+                        "GL",
+                        []
+                    ],
+                    [
+                        "HI",
+                        []
+                    ],
+                    [
+                        "HY",
+                        []
+                    ],
+                    [
+                        "JV",
+                        []
+                    ],
+                    [
+                        "KO",
+                        []
+                    ],
+                    [
+                        "MR",
+                        []
+                    ],
+                    [
+                        "MS",
+                        []
+                    ],
+                    [
+                        "NO",
+                        []
+                    ],
+                    [
+                        "PA",
+                        []
+                    ],
+                    [
+                        "PL",
+                        []
+                    ],
+                    [
+                        "PS",
+                        []
+                    ],
+                    [
+                        "PT",
+                        []
+                    ],
+                    [
+                        "QU",
+                        []
+                    ],
+                    [
+                        "RM",
+                        []
+                    ],
+                    [
+                        "RN",
+                        []
+                    ],
+                    [
+                        "RO",
+                        []
+                    ],
+                    [
+                        "RU",
+                        []
+                    ],
+                    [
+                        "SQ",
+                        []
+                    ],
+                    [
+                        "SR",
+                        []
+                    ],
+                    [
+                        "SV",
+                        []
+                    ],
+                    [
+                        "TA",
+                        []
+                    ],
+                    [
+                        "TH",
+                        []
+                    ],
+                    [
+                        "TR",
+                        []
+                    ],
+                    [
+                        "UG",
+                        []
+                    ],
+                    [
+                        "UK",
+                        []
+                    ],
+                    [
+                        "UR",
+                        []
+                    ],
+                    [
+                        "UZ",
+                        []
+                    ],
+                    [
+                        "VE",
+                        []
+                    ],
+                    [
+                        "VI",
+                        []
+                    ],
+                    [
+                        "VO",
+                        []
+                    ],
+                    [
+                        "WA",
+                        []
+                    ],
+                    [
+                        "WO",
+                        []
+                    ],
+                    [
+                        "XH",
+                        []
+                    ],
+                    [
+                        "YI",
+                        []
+                    ],
+                    [
+                        "YO",
+                        []
+                    ],
+                    [
+                        "ZA",
+                        []
+                    ],
+                    [
+                        "ZH",
+                        []
+                    ],
+                    [
+                        "ZU",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fromString",
+                "comment": " ",
+                "type": "String.String -> Maybe.Maybe Form.Locale.LanguageCode.LanguageCode"
+            },
+            {
+                "name": "toString",
+                "comment": " ",
+                "type": "Form.Locale.LanguageCode.LanguageCode -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Form.Locale.Phone",
+        "comment": " Phone number helpers\n\n\n# Phone\n\n@docs regex, mobileRegex, phonePrefix, formatForSubmission, formatForDisplay\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "formatForDisplay",
+                "comment": " ",
+                "type": "Form.Locale.CountryCode.CountryCode -> String.String -> String.String"
+            },
+            {
+                "name": "formatForSubmission",
+                "comment": " ",
+                "type": "Form.Locale.CountryCode.CountryCode -> String.String -> String.String"
+            },
+            {
+                "name": "mobileRegex",
+                "comment": " ",
+                "type": "Form.Locale.CountryCode.CountryCode -> Regex.Regex"
+            },
+            {
+                "name": "phonePrefix",
+                "comment": " ",
+                "type": "Form.Locale.CountryCode.CountryCode -> String.String"
+            },
+            {
+                "name": "regex",
+                "comment": " ",
+                "type": "Form.Locale.CountryCode.CountryCode -> Regex.Regex"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Form.Msg",
+        "comment": " Form.Msg\n\n\n# Msg\n\n@docs Msg\n\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "UpdateStringField",
+                        [
+                            "String.String",
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "UpdateMultiStringField",
+                        [
+                            "String.String",
+                            "Form.Field.Option.Option",
+                            "Basics.Bool"
+                        ]
+                    ],
+                    [
+                        "UpdateRadioStringField",
+                        [
+                            "String.String",
+                            "Form.Field.Option.Option"
+                        ]
+                    ],
+                    [
+                        "UpdateBoolField",
+                        [
+                            "String.String",
+                            "Basics.Bool"
+                        ]
+                    ],
+                    [
+                        "UpdateRadioBoolField",
+                        [
+                            "String.String",
+                            "Basics.Bool"
+                        ]
+                    ],
+                    [
+                        "UpdateRadioEnumField",
+                        [
+                            "String.String",
+                            "Form.Field.RadioEnum.Value"
+                        ]
+                    ],
+                    [
+                        "UpdateNumericField",
+                        [
+                            "String.String",
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "ResetField",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "UpdateShowDropdown",
+                        [
+                            "String.String",
+                            "Basics.Bool"
+                        ]
+                    ],
+                    [
+                        "UpdateSearchbar",
+                        [
+                            "String.String",
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "Form.Update",
+        "comment": " Form.Update\n\n\n# Update\n\n@docs update\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "update",
+                "comment": " ",
+                "type": "Form.Msg.Msg -> Form.Fields.Fields -> ( Form.Fields.Fields, Platform.Cmd.Cmd Form.Msg.Msg )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Form.Validate",
+        "comment": " Form.Validate\n\n\n# Validate\n\n@docs validate, validateField, Error\n\n\n# Predicates\n\n@docs isValid, isValidAgeInput\n\n\n# Errors\n\n@docs errorToMessage\n\n",
+        "unions": [
+            {
+                "name": "Error",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "errorToMessage",
+                "comment": " ",
+                "type": "Form.Validate.Error -> String.String"
+            },
+            {
+                "name": "isValid",
+                "comment": " ",
+                "type": "Form.Locale.Locale -> Form.Fields.Fields -> Basics.Bool"
+            },
+            {
+                "name": "isValidAgeInput",
+                "comment": " ",
+                "type": "Maybe.Maybe Basics.Int -> Basics.Bool"
+            },
+            {
+                "name": "validate",
+                "comment": " ",
+                "type": "Form.Locale.Locale -> Form.Fields.Fields -> Maybe.Maybe Form.Fields.Fields"
+            },
+            {
+                "name": "validateField",
+                "comment": " ",
+                "type": "Form.Locale.Locale -> Form.Fields.Fields -> Form.Field.Field -> Result.Result Form.Validate.Error Form.Field.Field"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Form.View",
+        "comment": " Form.View\n\n\n# View\n\n@docs view\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "view",
+                "comment": " ",
+                "type": "Time.Posix -> Basics.Bool -> Form.Locale.Locale -> Form.Fields.Fields -> Html.Html Form.Msg.Msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Form.View.Input",
+        "comment": " View Input.\n\n\n# Input\n\n@docs view\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "view",
+                "comment": " ",
+                "type": "Time.Posix -> Basics.Bool -> Form.Locale.Locale -> Form.Fields.Fields -> String.String -> Form.Field.Field -> Html.Html Form.Msg.Msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Form.View.Radio",
+        "comment": " View Radio Fields\n\n\n# Radio\n\n@docs radio, radioBool, radioEnum\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "radio",
+                "comment": " ",
+                "type": "String.String -> Form.Field.RadioFieldProperties -> Html.Html Form.Msg.Msg"
+            },
+            {
+                "name": "radioBool",
+                "comment": " ",
+                "type": "String.String -> Form.Field.RadioBoolFieldProperties -> Html.Html Form.Msg.Msg"
+            },
+            {
+                "name": "radioEnum",
+                "comment": " ",
+                "type": "String.String -> Form.Field.RadioEnumFieldProperties -> Html.Html Form.Msg.Msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Form.View.Select",
+        "comment": " View Select Fields\n\n\n# Select\n\n@docs select, httpSelect\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "httpSelect",
+                "comment": " ",
+                "type": "String.String -> Form.Field.HttpSelectFieldProperties -> Html.Html Form.Msg.Msg"
+            },
+            {
+                "name": "select",
+                "comment": " ",
+                "type": "String.String -> Form.Field.SelectFieldProperties -> Html.Html Form.Msg.Msg"
+            }
+        ],
+        "binops": []
+    }
+]

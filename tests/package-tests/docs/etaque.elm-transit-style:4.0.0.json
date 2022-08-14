@@ -1,0 +1,71 @@
+[
+    {
+        "name": "TransitStyle",
+        "comment": " Animations for elm-transit, to be used on elm-html attributes.\n\n    div\n        (fadeSlide 100 model.transition)\n        [ text \"Some content\" ]\n\n    div\n        (onClick (Click Page1) :: fadeZoom 0.05 model.transition)\n        [ text \"Some content\" ]\n\n\n# Combinations\n\n@docs fadeSlide, fadeZoom\n\n\n# Slide left\n\n@docs slide, slideOut, slideIn\n\n\n# Fade\n\n@docs fade, fadeOut, fadeIn\n\n\n# Zoom\n\n@docs zoom, zoomIn, zoomOut\n\n\n# Tooling to create animations\n\n@docs compose\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "compose",
+                "comment": " Compose an animation with `exit` and `enter` phases.\n",
+                "type": "(Basics.Float -> List.List (Html.Attribute msg)) -> (Basics.Float -> List.List (Html.Attribute msg)) -> Transit.Transition -> List.List (Html.Attribute msg)"
+            },
+            {
+                "name": "fade",
+                "comment": " Fade animation\n",
+                "type": "Transit.Transition -> List.List (Html.Attribute msg)"
+            },
+            {
+                "name": "fadeIn",
+                "comment": " Fade in (enter).\n",
+                "type": "Basics.Float -> List.List (Html.Attribute msg)"
+            },
+            {
+                "name": "fadeOut",
+                "comment": " Fade out (exit).\n",
+                "type": "Basics.Float -> List.List (Html.Attribute msg)"
+            },
+            {
+                "name": "fadeSlide",
+                "comment": " Combine fade and slideLeft with the specified offset\n",
+                "type": "Basics.Float -> Transit.Transition -> List.List (Html.Attribute msg)"
+            },
+            {
+                "name": "fadeZoom",
+                "comment": " Combine fade and zoom with specified offset\n",
+                "type": "Basics.Float -> Transit.Transition -> List.List (Html.Attribute msg)"
+            },
+            {
+                "name": "slide",
+                "comment": " Slide animation, with the specified offset.\nGreater than 0 to right, lesser to left.\n",
+                "type": "Basics.Float -> Transit.Transition -> List.List (Html.Attribute msg)"
+            },
+            {
+                "name": "slideIn",
+                "comment": " Slide in (enter) by translating on X for desired offset\n",
+                "type": "Basics.Float -> Basics.Float -> List.List (Html.Attribute msg)"
+            },
+            {
+                "name": "slideOut",
+                "comment": " Slide out (exit) by translating on X for desired offset\n",
+                "type": "Basics.Float -> Basics.Float -> List.List (Html.Attribute msg)"
+            },
+            {
+                "name": "zoom",
+                "comment": " Zoom animation\n",
+                "type": "Basics.Float -> Transit.Transition -> List.List (Html.Attribute msg)"
+            },
+            {
+                "name": "zoomIn",
+                "comment": " Zoom in (enter)\n",
+                "type": "Basics.Float -> Basics.Float -> List.List (Html.Attribute msg)"
+            },
+            {
+                "name": "zoomOut",
+                "comment": " Zoom out (exit)\n",
+                "type": "Basics.Float -> Basics.Float -> List.List (Html.Attribute msg)"
+            }
+        ],
+        "binops": []
+    }
+]

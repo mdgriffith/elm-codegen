@@ -1,0 +1,76 @@
+[
+    {
+        "name": "Dict.Nonempty",
+        "comment": " A dict that is guaranteed to have an entry in it.\n\n\n# Type\n\n@docs NonemptyDict\n\n\n# Construction\n\n@docs singleton, fromNonemptyList, fromList\n\n\n# Member control\n\n@docs insert, remove\n\n\n# Transformation\n\n@docs toDict, toList, toNonemptyList\n\n\n# Destruction\n\n@docs get, head, equal\n\n",
+        "unions": [
+            {
+                "name": "NonemptyDict",
+                "comment": " A dict with at least one entry.\nThe inner dict always contains all of the information. The inner tuple is a redundancy\nto ensure the nonemptiness and doesn't affect equality of NonemptyDicts\n",
+                "args": [
+                    "comparable",
+                    "v"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "equal",
+                "comment": " Equality on nonempty Dicts.\nWe cannot use build in `==` as the guaranteed key-value pair\ndoesn't matter for equality.\n",
+                "type": "Dict.Nonempty.NonemptyDict comparable v -> Dict.Nonempty.NonemptyDict comparable v -> Basics.Bool"
+            },
+            {
+                "name": "fromList",
+                "comment": " Create a NonemptyDict out of k v pair and a List of k v pairs.\nPrefers value provided in the first argument if keys clash\n",
+                "type": "( comparable, v ) -> List.List ( comparable, v ) -> Dict.Nonempty.NonemptyDict comparable v"
+            },
+            {
+                "name": "fromNonemptyList",
+                "comment": " Create a NonemptyDict out of a NonemptyList.\nPrefers last value if keys clash.\n",
+                "type": "List.Nonempty.Nonempty ( comparable, v ) -> Dict.Nonempty.NonemptyDict comparable v"
+            },
+            {
+                "name": "get",
+                "comment": " Same as Dict.get\n",
+                "type": "comparable -> Dict.Nonempty.NonemptyDict comparable v -> Maybe.Maybe v"
+            },
+            {
+                "name": "head",
+                "comment": " Get the key value pair corresponding to the lowest key\n",
+                "type": "Dict.Nonempty.NonemptyDict comparable v -> ( comparable, v )"
+            },
+            {
+                "name": "insert",
+                "comment": " Same as Dict.insert\n",
+                "type": "comparable -> v -> Dict.Nonempty.NonemptyDict comparable v -> Dict.Nonempty.NonemptyDict comparable v"
+            },
+            {
+                "name": "remove",
+                "comment": " Same as Dict.remove but fails with Nothing if you remove the only entry that was left\n",
+                "type": "comparable -> Dict.Nonempty.NonemptyDict comparable v -> Maybe.Maybe (Dict.Nonempty.NonemptyDict comparable v)"
+            },
+            {
+                "name": "singleton",
+                "comment": " Initiate a NonemptyDict out of k v pair\n",
+                "type": "comparable -> v -> Dict.Nonempty.NonemptyDict comparable v"
+            },
+            {
+                "name": "toDict",
+                "comment": " Transform NonemptyDict into regular Dict\n",
+                "type": "Dict.Nonempty.NonemptyDict comparable v -> Dict.Dict comparable v"
+            },
+            {
+                "name": "toList",
+                "comment": " Same as Dict.toList\n",
+                "type": "Dict.Nonempty.NonemptyDict comparable v -> List.List ( comparable, v )"
+            },
+            {
+                "name": "toNonemptyList",
+                "comment": " Transform NonemptyDict into List.Nonempty.Nonempty\n",
+                "type": "Dict.Nonempty.NonemptyDict comparable v -> List.Nonempty.Nonempty ( comparable, v )"
+            }
+        ],
+        "binops": []
+    }
+]

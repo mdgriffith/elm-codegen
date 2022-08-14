@@ -1,0 +1,834 @@
+[
+    {
+        "name": "Mwc.Button",
+        "comment": " Material Button. It is elm wrapper for Material Web components button\r\nUsed Elm-css for Styling\r\n\r\n@docs normal, raised, unelevated, outlined, dense, disabled, extraAttributes, icon, label, onClick, view\r\n\r\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "dense",
+                "comment": " Makes button dense\r\n",
+                "type": "Mwc.Button.Property msg"
+            },
+            {
+                "name": "disabled",
+                "comment": " Makes Button disabled\r\n",
+                "type": "Basics.Bool -> Mwc.Button.Property msg"
+            },
+            {
+                "name": "extraAttributes",
+                "comment": " Additional properties like css\r\n",
+                "type": "List.List (Html.Styled.Attribute msg) -> Mwc.Button.Property msg"
+            },
+            {
+                "name": "icon",
+                "comment": " Set icon to Button\r\n",
+                "type": "String.String -> Mwc.Button.Property msg"
+            },
+            {
+                "name": "label",
+                "comment": " Sets Label to button\r\n",
+                "type": "String.String -> Mwc.Button.Property msg"
+            },
+            {
+                "name": "normal",
+                "comment": " Normal Button Type\r\n",
+                "type": "Mwc.Button.Property msg"
+            },
+            {
+                "name": "onClick",
+                "comment": " Onclick Handler\r\n",
+                "type": "msg -> Mwc.Button.Property msg"
+            },
+            {
+                "name": "outlined",
+                "comment": " outlined Button Type\r\n",
+                "type": "Mwc.Button.Property msg"
+            },
+            {
+                "name": "raised",
+                "comment": " Raised Button Type\r\n",
+                "type": "Mwc.Button.Property msg"
+            },
+            {
+                "name": "unelevated",
+                "comment": " unelevated Button Type\r\n",
+                "type": "Mwc.Button.Property msg"
+            },
+            {
+                "name": "view",
+                "comment": " Renders a button\r\n",
+                "type": "List.List (Mwc.Button.Property msg) -> Html.Styled.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Mwc.CheckBox",
+        "comment": " Material Checkbox. It is elm wrapper for Material Web components Checkbox\nUsed Elm-css for Styling\n\n@docs checked, disabled, extraAttributes, indeterminate, onToggle, value, view\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "checked",
+                "comment": " Checks the checkbox\n",
+                "type": "Basics.Bool -> Mwc.CheckBox.Property msg"
+            },
+            {
+                "name": "disabled",
+                "comment": " Disables checkbox\n",
+                "type": "Basics.Bool -> Mwc.CheckBox.Property msg"
+            },
+            {
+                "name": "extraAttributes",
+                "comment": " Additional properties like css\n",
+                "type": "List.List (Html.Styled.Attribute msg) -> Mwc.CheckBox.Property msg"
+            },
+            {
+                "name": "indeterminate",
+                "comment": " makes checkbox in indeterminate state\n",
+                "type": "Basics.Bool -> Mwc.CheckBox.Property msg"
+            },
+            {
+                "name": "onToggle",
+                "comment": " OnToggle event\n",
+                "type": "msg -> Mwc.CheckBox.Property msg"
+            },
+            {
+                "name": "value",
+                "comment": " sets value to checkbox\n",
+                "type": "String.String -> Mwc.CheckBox.Property msg"
+            },
+            {
+                "name": "view",
+                "comment": " renders checkbox\n",
+                "type": "List.List (Mwc.CheckBox.Property msg) -> Html.Styled.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Mwc.Chips",
+        "comment": " Material design Chips\r\n\r\n@docs extraAttributes, label, removeClick, view\r\n\r\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "extraAttributes",
+                "comment": " additional attributes for chips\r\n",
+                "type": "List.List (Html.Styled.Attribute msg) -> Mwc.Chips.Property msg"
+            },
+            {
+                "name": "label",
+                "comment": " Label for chips\r\n",
+                "type": "String.String -> Mwc.Chips.Property msg"
+            },
+            {
+                "name": "removeClick",
+                "comment": " Remove msg for input chip\r\n",
+                "type": "msg -> Mwc.Chips.Property msg"
+            },
+            {
+                "name": "view",
+                "comment": " view function for chips\r\n",
+                "type": "List.List (Mwc.Chips.Property msg) -> Html.Styled.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Mwc.Dialog",
+        "comment": " Material Dialog. It is elm wrapper for Ploymer Paper--Dialog Component\r\nUsed Elm-css for Styling\r\n\r\n@docs actionBar, body, extraAttributes, title, view, Visibility, visible, hidden, visibility, fullScreen\r\n\r\n",
+        "unions": [
+            {
+                "name": "Visibility",
+                "comment": " Visibility option\r\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "actionBar",
+                "comment": " Elements to be displayed in actionbar\r\n",
+                "type": "List.List (Html.Styled.Html msg) -> Mwc.Dialog.Property msg"
+            },
+            {
+                "name": "body",
+                "comment": " List of elements to in bosy section\r\n",
+                "type": "List.List (Html.Styled.Html msg) -> Mwc.Dialog.Property msg"
+            },
+            {
+                "name": "extraAttributes",
+                "comment": " Additional properties like css\r\n",
+                "type": "List.List (Html.Styled.Attribute msg) -> Mwc.Dialog.Property msg"
+            },
+            {
+                "name": "fullScreen",
+                "comment": " Make dialog FullScreen\r\n",
+                "type": "Mwc.Dialog.Property msg"
+            },
+            {
+                "name": "hidden",
+                "comment": " Makes dialog hidden\r\n",
+                "type": "Mwc.Dialog.Visibility"
+            },
+            {
+                "name": "title",
+                "comment": " The title of the dialog\r\n",
+                "type": "String.String -> Mwc.Dialog.Property msg"
+            },
+            {
+                "name": "view",
+                "comment": " renders the dialog\r\n",
+                "type": "List.List (Mwc.Dialog.Property msg) -> Html.Styled.Html msg"
+            },
+            {
+                "name": "visibility",
+                "comment": " Used to open the dialog\r\n",
+                "type": "Mwc.Dialog.Visibility -> Mwc.Dialog.Property msg"
+            },
+            {
+                "name": "visible",
+                "comment": " Makes dialog visible\r\n",
+                "type": "Mwc.Dialog.Visibility"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Mwc.Fab",
+        "comment": " Material FAB. It is elm wrapper for Polymer Web components Paper Floating action button\r\nUsed Elm-css for Styling\r\n\r\n@docs disabled, extraAttributes, icon, mini, onClick, tooltip, view, src\r\n\r\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "disabled",
+                "comment": " Disables FAB\r\n",
+                "type": "Basics.Bool -> Mwc.Fab.Property msg"
+            },
+            {
+                "name": "extraAttributes",
+                "comment": " Additional properties like css\r\n",
+                "type": "List.List (Html.Styled.Attribute msg) -> Mwc.Fab.Property msg"
+            },
+            {
+                "name": "icon",
+                "comment": " Icon name\r\n",
+                "type": "String.String -> Mwc.Fab.Property msg"
+            },
+            {
+                "name": "mini",
+                "comment": " Reduces size of FAB\r\n",
+                "type": "Mwc.Fab.Property msg"
+            },
+            {
+                "name": "onClick",
+                "comment": " onClick Event\r\n",
+                "type": "msg -> Mwc.Fab.Property msg"
+            },
+            {
+                "name": "src",
+                "comment": " Svg icon src\r\n",
+                "type": "String.String -> Mwc.Fab.Property msg"
+            },
+            {
+                "name": "tooltip",
+                "comment": " Tooltip\r\n",
+                "type": "String.String -> Mwc.Fab.Property msg"
+            },
+            {
+                "name": "view",
+                "comment": " Renders FAB\r\n",
+                "type": "List.List (Mwc.Fab.Property msg) -> Html.Styled.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Mwc.Icon",
+        "comment": " Material Icon. It is elm wrapper for Material Web components icon\nUsed Elm-css for Styling\n\n@docs extraAttributes, iconName, view\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "extraAttributes",
+                "comment": " Additional properties like css\n",
+                "type": "List.List (Html.Styled.Attribute msg) -> Mwc.Icon.Property msg"
+            },
+            {
+                "name": "iconName",
+                "comment": " IconName\n",
+                "type": "String.String -> Mwc.Icon.Property msg"
+            },
+            {
+                "name": "view",
+                "comment": " Renders icon\n",
+                "type": "List.List (Mwc.Icon.Property msg) -> Html.Styled.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Mwc.IconButton",
+        "comment": " Material IconButtom. It is elm wrapper for Polymer Web components paper icon button\r\nUsed Elm-css for Styling\r\n\r\n@docs disable, extraAttributes, icon, onClick, tooltip, view, src\r\n\r\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "disable",
+                "comment": " makes icon button disabled\r\n",
+                "type": "Basics.Bool -> Mwc.IconButton.Property msg"
+            },
+            {
+                "name": "extraAttributes",
+                "comment": " Additional properties like css\r\n",
+                "type": "List.List (Html.Styled.Attribute msg) -> Mwc.IconButton.Property msg"
+            },
+            {
+                "name": "icon",
+                "comment": " Icon Name\r\n",
+                "type": "String.String -> Mwc.IconButton.Property msg"
+            },
+            {
+                "name": "onClick",
+                "comment": " onClick Event\r\n",
+                "type": "msg -> Mwc.IconButton.Property msg"
+            },
+            {
+                "name": "src",
+                "comment": " Svg icon src\r\n",
+                "type": "String.String -> Mwc.IconButton.Property msg"
+            },
+            {
+                "name": "tooltip",
+                "comment": " Tooltip\r\n",
+                "type": "String.String -> Mwc.IconButton.Property msg"
+            },
+            {
+                "name": "view",
+                "comment": " Renders Icon button\r\n",
+                "type": "List.List (Mwc.IconButton.Property msg) -> Html.Styled.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Mwc.Menu",
+        "comment": " Material design menu\r\n\r\n@docs Model, Msg, disabled, extraAttributes, icon, model, update, view, zIndex, item, onSelect, divider, menuStyle\r\n\r\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " Menu Msg\r\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Model",
+                "comment": " Menu Model\r\n",
+                "args": [],
+                "type": "{ menuOpen : Dict.Dict String.String Basics.Bool }"
+            }
+        ],
+        "values": [
+            {
+                "name": "disabled",
+                "comment": " disabled property of menu\r\n",
+                "type": "Basics.Bool -> Mwc.Menu.Property msg"
+            },
+            {
+                "name": "divider",
+                "comment": " divider for menu item\r\n",
+                "type": "Mwc.Menu.Property msg"
+            },
+            {
+                "name": "extraAttributes",
+                "comment": " extraAttributes property of menu\r\n",
+                "type": "List.List (Html.Styled.Attribute msg) -> Mwc.Menu.Property msg"
+            },
+            {
+                "name": "icon",
+                "comment": " icon property of menu\r\n",
+                "type": "String.String -> Mwc.Menu.Property msg"
+            },
+            {
+                "name": "item",
+                "comment": " item in menu\r\n",
+                "type": "List.List (Mwc.Menu.Property msg) -> List.List (Html.Styled.Html msg) -> Mwc.Menu.ItemConfig msg"
+            },
+            {
+                "name": "menuStyle",
+                "comment": " Style for menu items container\r\n",
+                "type": "Css.Style -> Mwc.Menu.Property msg"
+            },
+            {
+                "name": "model",
+                "comment": " Initial model of menu\r\n",
+                "type": "Mwc.Menu.Model"
+            },
+            {
+                "name": "onSelect",
+                "comment": " onSelect property of menuItem\r\n",
+                "type": "msg -> Mwc.Menu.Property msg"
+            },
+            {
+                "name": "update",
+                "comment": " update function of menu\r\n",
+                "type": "Mwc.Menu.Msg msg -> Mwc.Menu.Model -> ( Mwc.Menu.Model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "view",
+                "comment": " view function of menu\r\n",
+                "type": "List.List (Mwc.Menu.Property msg) -> List.List (Mwc.Menu.ItemConfig msg) -> String.String -> Mwc.Menu.Model -> (Mwc.Menu.Msg msg -> msg) -> Html.Styled.Html msg"
+            },
+            {
+                "name": "zIndex",
+                "comment": " zIndex property of menu\r\n",
+                "type": "Basics.Int -> Mwc.Menu.Property msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Mwc.Progress",
+        "comment": " Material Progress. It is elm wrapper for Polymer Web components paper progress bar and paper progress spinner\nUsed Elm-css for Styling\n\n@docs extraAttributes, progressBar, progressSpinner, view\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "extraAttributes",
+                "comment": " Additional properties like css\n",
+                "type": "List.List (Html.Styled.Attribute msg) -> Mwc.Progress.Property msg"
+            },
+            {
+                "name": "progressBar",
+                "comment": " display progressBar\n",
+                "type": "Mwc.Progress.Property msg"
+            },
+            {
+                "name": "progressSpinner",
+                "comment": " displays progressSpinner\n",
+                "type": "Mwc.Progress.Property msg"
+            },
+            {
+                "name": "view",
+                "comment": " Renders progress bar/spiner\n",
+                "type": "List.List (Mwc.Progress.Property msg) -> Html.Styled.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Mwc.Snackbar",
+        "comment": " Material Snackbar. It was designed following material design principles\r\n\r\n@docs Model, Msg, actionClick, add, buttonText, message, model, payload, timeout, update, view\r\n\r\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " SnackBar Messages\r\n",
+                "args": [
+                    "msg",
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Model",
+                "comment": " SnackBar model\r\n",
+                "args": [
+                    "msg",
+                    "a"
+                ],
+                "type": "{ queue : List.List (Mwc.Snackbar.Config msg a), state : Mwc.Snackbar.State msg a, index : Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "actionClick",
+                "comment": " Sets click functionality to action button\r\n",
+                "type": "(Maybe.Maybe a -> msg) -> Mwc.Snackbar.Property msg a"
+            },
+            {
+                "name": "add",
+                "comment": " used to add snackbar or toast\r\n",
+                "type": "List.List (Mwc.Snackbar.Property msg a) -> Mwc.Snackbar.Model msg a -> (Mwc.Snackbar.Msg msg a -> msg) -> ( Mwc.Snackbar.Model msg a, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "buttonText",
+                "comment": " Sets Action button text\r\n",
+                "type": "String.String -> Mwc.Snackbar.Property msg a"
+            },
+            {
+                "name": "message",
+                "comment": " Sets message to be displayed\r\n",
+                "type": "String.String -> Mwc.Snackbar.Property msg a"
+            },
+            {
+                "name": "model",
+                "comment": " default model for snackbar\r\n",
+                "type": "Mwc.Snackbar.Model msg a"
+            },
+            {
+                "name": "payload",
+                "comment": " payload which is returned when action button is clicked\r\n",
+                "type": "a -> Mwc.Snackbar.Property msg a"
+            },
+            {
+                "name": "timeout",
+                "comment": " Amount of time (in ms) the snackbar should be displayed default is 3000ms\r\n",
+                "type": "Basics.Float -> Mwc.Snackbar.Property msg a"
+            },
+            {
+                "name": "update",
+                "comment": " Snackbar update functions\r\n",
+                "type": "Mwc.Snackbar.Msg msg a -> Mwc.Snackbar.Model msg a -> ( Mwc.Snackbar.Model msg a, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "view",
+                "comment": " Snackbar view\r\n",
+                "type": "Mwc.Snackbar.Model msg a -> (Mwc.Snackbar.Msg msg a -> msg) -> Html.Styled.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Mwc.Switch",
+        "comment": " Material Switch. It is elm wrapper for Material Web components switch\nUsed Elm-css for Styling\n\n@docs check, disable, extraAttributes, onClick, view\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "check",
+                "comment": " Sets Swotch to true\n",
+                "type": "Basics.Bool -> Mwc.Switch.Property msg"
+            },
+            {
+                "name": "disable",
+                "comment": " Disables switch\n",
+                "type": "Basics.Bool -> Mwc.Switch.Property msg"
+            },
+            {
+                "name": "extraAttributes",
+                "comment": " Additional properties like css\n",
+                "type": "List.List (Html.Styled.Attribute msg) -> Mwc.Switch.Property msg"
+            },
+            {
+                "name": "onClick",
+                "comment": " OnClick Event\n",
+                "type": "msg -> Mwc.Switch.Property msg"
+            },
+            {
+                "name": "view",
+                "comment": " Renders switch\n",
+                "type": "List.List (Mwc.Switch.Property msg) -> Html.Styled.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Mwc.Table",
+        "comment": " Matrial design Table\r\n\r\n@docs tbody, td, tfoot, th, thead, tr, view, Tr, Trow, Property\r\n\r\n",
+        "unions": [
+            {
+                "name": "Property",
+                "comment": " Properties of the table\r\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Tr",
+                "comment": " Tr type\r\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Trow",
+                "comment": " Table Row type\r\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "tbody",
+                "comment": " Material design table body\r\n",
+                "type": "List.List Css.Style -> List.List (Mwc.Table.Trow msg) -> Mwc.Table.Property msg"
+            },
+            {
+                "name": "td",
+                "comment": " Material design table data\r\n",
+                "type": "List.List Css.Style -> List.List (Html.Styled.Html msg) -> Mwc.Table.Tr msg"
+            },
+            {
+                "name": "tfoot",
+                "comment": " Material design table foot\r\n",
+                "type": "List.List Css.Style -> List.List (Mwc.Table.Trow msg) -> Mwc.Table.Property msg"
+            },
+            {
+                "name": "th",
+                "comment": " Material design table head\r\n",
+                "type": "List.List Css.Style -> List.List (Html.Styled.Html msg) -> Mwc.Table.Tr msg"
+            },
+            {
+                "name": "thead",
+                "comment": " Material design table head\r\n",
+                "type": "List.List Css.Style -> List.List (Mwc.Table.Trow msg) -> Mwc.Table.Property msg"
+            },
+            {
+                "name": "tr",
+                "comment": " Material design table row\r\n",
+                "type": "List.List Css.Style -> List.List (Mwc.Table.Tr msg) -> Mwc.Table.Trow msg"
+            },
+            {
+                "name": "view",
+                "comment": " Material design table\r\n",
+                "type": "List.List Css.Style -> List.List (Mwc.Table.Property msg) -> Html.Styled.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Mwc.Tabs",
+        "comment": " Material Tabs. It is elm wrapper for Polymer Web components paper tabs\r\nUsed Elm-css for Styling\r\n\r\n@docs extraAttributes, onClick, scrollable, selected, tabText, view\r\n\r\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "extraAttributes",
+                "comment": " Additional properties like css\r\n",
+                "type": "List.List (Html.Styled.Attribute msg) -> Mwc.Tabs.Property msg"
+            },
+            {
+                "name": "onClick",
+                "comment": " OnClick Event\r\n",
+                "type": "(Basics.Int -> msg) -> Mwc.Tabs.Property msg"
+            },
+            {
+                "name": "scrollable",
+                "comment": " Make tabs Scrollable\r\n",
+                "type": "Mwc.Tabs.Property msg"
+            },
+            {
+                "name": "selected",
+                "comment": " Initialies selects given tab\r\n",
+                "type": "Basics.Int -> Mwc.Tabs.Property msg"
+            },
+            {
+                "name": "tabText",
+                "comment": " List of tab texts\r\n",
+                "type": "List.List (Html.Styled.Html msg) -> Mwc.Tabs.Property msg"
+            },
+            {
+                "name": "view",
+                "comment": " Renders Tabs\r\n",
+                "type": "List.List (Mwc.Tabs.Property msg) -> Html.Styled.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Mwc.TextField",
+        "comment": " Material TextField. It is elm wrapper for polymer Web components paper text field\r\nUsed Elm-css for Styling\r\n\r\n@docs autoValidate, disabled, errorText, extraAttributes, icon, iconButton, iconClick, textArea\r\n@docs iconTrailing, inputType, invalid, label, onInput, pattern, placeHolder, readonly, required, value, view, noOp, Property\r\n\r\n",
+        "unions": [
+            {
+                "name": "Property",
+                "comment": " TextField Properties\r\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "autoValidate",
+                "comment": " Set text field to auto validate\r\n",
+                "type": "Mwc.TextField.Property msg"
+            },
+            {
+                "name": "disabled",
+                "comment": " Disables text field\r\n",
+                "type": "Basics.Bool -> Mwc.TextField.Property msg"
+            },
+            {
+                "name": "errorText",
+                "comment": " Error Text\r\n",
+                "type": "String.String -> Mwc.TextField.Property msg"
+            },
+            {
+                "name": "extraAttributes",
+                "comment": " Additional properties like css\r\n",
+                "type": "List.List (Html.Styled.Attribute msg) -> Mwc.TextField.Property msg"
+            },
+            {
+                "name": "icon",
+                "comment": " Textfield icon name\r\n",
+                "type": "String.String -> Mwc.TextField.Property msg"
+            },
+            {
+                "name": "iconButton",
+                "comment": " Textfield IconButton\r\n",
+                "type": "String.String -> Mwc.TextField.Property msg"
+            },
+            {
+                "name": "iconClick",
+                "comment": " TextField IconButton click event\r\n",
+                "type": "msg -> Mwc.TextField.Property msg"
+            },
+            {
+                "name": "iconTrailing",
+                "comment": " Makes icon as trailing icon\r\n",
+                "type": "Mwc.TextField.Property msg"
+            },
+            {
+                "name": "inputType",
+                "comment": " Input Type\r\n",
+                "type": "String.String -> Mwc.TextField.Property msg"
+            },
+            {
+                "name": "invalid",
+                "comment": " Displays error message\r\n",
+                "type": "Mwc.TextField.Property msg"
+            },
+            {
+                "name": "label",
+                "comment": " Label\r\n",
+                "type": "String.String -> Mwc.TextField.Property msg"
+            },
+            {
+                "name": "noOp",
+                "comment": " No operation for TextField\r\n",
+                "type": "Mwc.TextField.Property msg"
+            },
+            {
+                "name": "onInput",
+                "comment": " OnInput Event\r\n",
+                "type": "(String.String -> msg) -> Mwc.TextField.Property msg"
+            },
+            {
+                "name": "pattern",
+                "comment": " Input pattern\r\n",
+                "type": "String.String -> Mwc.TextField.Property msg"
+            },
+            {
+                "name": "placeHolder",
+                "comment": " Placeholder\r\n",
+                "type": "String.String -> Mwc.TextField.Property msg"
+            },
+            {
+                "name": "readonly",
+                "comment": " Makes textfield as readonly\r\n",
+                "type": "Basics.Bool -> Mwc.TextField.Property msg"
+            },
+            {
+                "name": "required",
+                "comment": " Sets textfield as required\r\n",
+                "type": "Mwc.TextField.Property msg"
+            },
+            {
+                "name": "textArea",
+                "comment": " TextArea\r\n",
+                "type": "Mwc.TextField.Property msg"
+            },
+            {
+                "name": "value",
+                "comment": " Initial value\r\n",
+                "type": "String.String -> Mwc.TextField.Property msg"
+            },
+            {
+                "name": "view",
+                "comment": " renders TextField\r\n",
+                "type": "List.List (Mwc.TextField.Property msg) -> Html.Styled.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Mwc.Typography",
+        "comment": " Material Typography\r\n\r\n@docs body1, body2, button, caption, headline1, headline2, headline3, headline4, headline5, headline6, overline, subtitle1, subtitle2\r\n\r\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "body1",
+                "comment": " body1\r\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "body2",
+                "comment": " body2\r\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "button",
+                "comment": " button\r\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "caption",
+                "comment": " caption\r\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "headline1",
+                "comment": " h1 heading1\r\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "headline2",
+                "comment": " h2 heading2\r\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "headline3",
+                "comment": " h3 heading3\r\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "headline4",
+                "comment": " h4 heading4\r\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "headline5",
+                "comment": " h5 heading5\r\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "headline6",
+                "comment": " h6 heading6\r\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "overline",
+                "comment": " overline\r\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "subtitle1",
+                "comment": " subtitle1\r\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "subtitle2",
+                "comment": " subtitle2\r\n",
+                "type": "Css.Style"
+            }
+        ],
+        "binops": []
+    }
+]

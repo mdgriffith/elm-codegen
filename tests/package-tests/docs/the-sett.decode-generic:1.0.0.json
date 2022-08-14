@@ -1,0 +1,64 @@
+[
+    {
+        "name": "Json.Decode.Generic",
+        "comment": " Decodes JSON into a data model that is generic enough to describe any JSON.\n\n\n# For working with any JSON.\n\n@docs Json, json\n\n",
+        "unions": [
+            {
+                "name": "Json",
+                "comment": " A data structure describing the contents of any JSON.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "JString",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "JBool",
+                        [
+                            "Basics.Bool"
+                        ]
+                    ],
+                    [
+                        "JInt",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "JFloat",
+                        [
+                            "Basics.Float"
+                        ]
+                    ],
+                    [
+                        "JNull",
+                        []
+                    ],
+                    [
+                        "JObj",
+                        [
+                            "Dict.Dict String.String Json.Decode.Generic.Json"
+                        ]
+                    ],
+                    [
+                        "JArr",
+                        [
+                            "List.List Json.Decode.Generic.Json"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "json",
+                "comment": " A JSON decoder that works with any JSON, decoding into the generic data model.\n",
+                "type": "Json.Decode.Decoder Json.Decode.Generic.Json"
+            }
+        ],
+        "binops": []
+    }
+]

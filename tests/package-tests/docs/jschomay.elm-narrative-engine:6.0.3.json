@@ -1,0 +1,603 @@
+[
+    {
+        "name": "NarrativeEngine.Core.Rules",
+        "comment": " Rules are a declarative way of describing meaningful events in your story.\n\nThey are made up of 3 parts: a \"trigger\", a set of \"conditions\", and a set of \"changes\" to apply if the rule matches. Each time you call `findMatchingRule`, the engine will test all of your rules against the provided trigger and the current state of your story world, and will find the best matching rule (if one exists).\n\nRules are weighted based on how specific they are, so you can \"override\" a more generic rule by making a more specific rule that will also match.\n\nIt is possible to create generic rules (using `MatchAny`) to control basic story logic, and more specific rules to flesh out the story.\n\nSee how the rules are defined in the [full working example](https://github.com/jschomay/elm-narrative-engine/blob/master/src/Example.elm). Note that you can use the syntax and corresponding parsers defined in `NarrativeEngine.Syntax.RuleParser` to define rules more easily.\n\n@docs Rule, RuleID, Trigger, Rules, findMatchingRule, weight\n\n",
+        "unions": [
+            {
+                "name": "Trigger",
+                "comment": " Describes what will trigger the rule. This can either be a specific string to match, or more frequently, an entity matcher.\n\nA `SpecificTrigger` is useful for programmatic events (like \"new-day\" or \"wait\") or to build ad-hoc interaction systems (like \"ITEM1+ITEM2\" or \"drop-ITEM1\"). An `EntityTrigger` can describe which entity interactions the rule should apply to, with all of the power of an `EntityMatcher`.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "SpecificTrigger",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "EntityTrigger",
+                        [
+                            "NarrativeEngine.Core.WorldModel.EntityMatcher"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Rule",
+                "comment": " A declarative rule describing the conditions in which it should apply. Specifically, it defines a trigger and a list of other conditions that must be present based on the current world model. All rules are tested on each player interaction, and the highest weighted matching rule will be returned. You can then apply the specified changes.\n\nNote that `Rule`s are extensible records, meaning that you can add other fields to them in your game. For example, you could add a `narrative` field to add a story text to use when the rule matches, or a `sound` to play, etc. All of these \"side effects\" would be handled in your game code. Alternatively, you could use the returned `RuleID` to lookup side effects in a separate data structure. This design follows the Entity Component System (ECS) design pattern.\n\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ a | trigger : NarrativeEngine.Core.Rules.Trigger, conditions : List.List NarrativeEngine.Core.WorldModel.EntityMatcher, changes : List.List NarrativeEngine.Core.WorldModel.ChangeWorld }"
+            },
+            {
+                "name": "RuleID",
+                "comment": " Unique ID for a rule. These ids will be returned when a matching rule is found.\n",
+                "args": [],
+                "type": "String.String"
+            },
+            {
+                "name": "Rules",
+                "comment": " All of the rules in your \"rule book\" that define your game logic.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "Dict.Dict NarrativeEngine.Core.Rules.RuleID (NarrativeEngine.Core.Rules.Rule a)"
+            }
+        ],
+        "values": [
+            {
+                "name": "findMatchingRule",
+                "comment": " Finds the rule that best matches against the provided trigger and current world model. The trigger is usually an entity ID, but can be a generic string to attempt to match against a `SpecificTrigger`. If multiple rules match, this chooses the \"best\" match based on the most _specific_ rule. In general, the more conditions, the more specific.\n\nCall this any time the player \"interacts\" with an entity in your game, supplying the ID of the entity that was interacted with.\n\n",
+                "type": "String.String -> NarrativeEngine.Core.Rules.Rules a -> NarrativeEngine.Core.WorldModel.WorldModel b -> Maybe.Maybe ( NarrativeEngine.Core.Rules.RuleID, NarrativeEngine.Core.Rules.Rule a )"
+            },
+            {
+                "name": "weight",
+                "comment": " Assigns a \"weighting\" to a rule. Used internally.\n",
+                "type": "NarrativeEngine.Core.Rules.Rule a -> Basics.Int"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "NarrativeEngine.Core.WorldModel",
+        "comment": " See how the world model is defined in the [full working\nexample](https://github.com/jschomay/elm-narrative-engine/blob/master/src/Example.elm). Note that you can use the syntax and corresponding parsers defined in `NarrativeEngine.Syntax.EntityParser` for defining entities, updates, and queries.\n\n\n## Types\n\n@docs ID, WorldModel, NarrativeComponent, Tags, Stats, Links\n\n\n## Creating entities\n\n@docs emptyTags, emptyStats, emptyLinks\n\nThese let you add tags directly to an entity.\n\n@docs addTag, setStat, setLink\n\nThese are useful for an \"entity buider pattern\".\n\n@docs tag, stat, link\n\n\n## Updating entities\n\n@docs ChangeWorld, ChangeEntity, LinkTarget, applyChanges\n\n\n## Querying the world model\n\nQueries are run against the world model to search for matching entities, or to assert that an entity has specific properties. This is useful to render a list of characters in a given location for example. The engine uses this when checking rules.\n\n@docs EntityMatcher, LinkMatcher, StatMatcher, Query, query, replaceTrigger\n\nYou can get specific stats or links from an entity too.\n\n@docs getStat, getLink\n\n",
+        "unions": [
+            {
+                "name": "ChangeEntity",
+                "comment": " Declarative statements for changing a property on an entity.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "AddTag",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "RemoveTag",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "SetStat",
+                        [
+                            "String.String",
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "IncStat",
+                        [
+                            "String.String",
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "DecStat",
+                        [
+                            "String.String",
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "SetLink",
+                        [
+                            "String.String",
+                            "NarrativeEngine.Core.WorldModel.LinkTarget"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "ChangeWorld",
+                "comment": " Declarative statements of how an entity should change, designed to be used with rules.\n\nNote that you can use `$` as the `ID` to reference the entity ID that triggered the rule (useful for generic rules).\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Update",
+                        [
+                            "NarrativeEngine.Core.WorldModel.ID",
+                            "List.List NarrativeEngine.Core.WorldModel.ChangeEntity"
+                        ]
+                    ],
+                    [
+                        "UpdateAll",
+                        [
+                            "List.List NarrativeEngine.Core.WorldModel.Query",
+                            "List.List NarrativeEngine.Core.WorldModel.ChangeEntity"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "EntityMatcher",
+                "comment": " Semantic means for matching entities. Specifies an optional entity ID and a list of queries to match against.\n\nNote that you can use `$` as the `ID` to reference the entity ID that triggered the rule (useful for generic rules).\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Match",
+                        [
+                            "NarrativeEngine.Core.WorldModel.ID",
+                            "List.List NarrativeEngine.Core.WorldModel.Query"
+                        ]
+                    ],
+                    [
+                        "MatchAny",
+                        [
+                            "List.List NarrativeEngine.Core.WorldModel.Query"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "LinkMatcher",
+                "comment": " Links can either be a specific entity matcher, or you can supply an entity ID and a link key to do a comparison.\n\nNote that you can use `$` as the `ID` to reference the entity ID that triggered the rule (useful in conditional narrative content).\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "SpecificLink",
+                        [
+                            "NarrativeEngine.Core.WorldModel.EntityMatcher"
+                        ]
+                    ],
+                    [
+                        "CompareLink",
+                        [
+                            "NarrativeEngine.Core.WorldModel.ID",
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "LinkTarget",
+                "comment": " Links can set to a specific entity or you can supply an entity and key to lookup a link.\n\nYou can use `$` as the `ID` in both cases to reference the entity ID that triggered the rule (useful for generic rules).\n\nCaution, if the look up entity or link isn't found this will keep the original link.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "SpecificLinkTarget",
+                        [
+                            "NarrativeEngine.Core.WorldModel.ID"
+                        ]
+                    ],
+                    [
+                        "LookUpLinkTarget",
+                        [
+                            "NarrativeEngine.Core.WorldModel.ID",
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Query",
+                "comment": " Semantic queries for checking properties of an entity.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "HasTag",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "HasStat",
+                        [
+                            "String.String",
+                            "Basics.Order",
+                            "NarrativeEngine.Core.WorldModel.StatMatcher"
+                        ]
+                    ],
+                    [
+                        "HasLink",
+                        [
+                            "String.String",
+                            "NarrativeEngine.Core.WorldModel.LinkMatcher"
+                        ]
+                    ],
+                    [
+                        "Not",
+                        [
+                            "NarrativeEngine.Core.WorldModel.Query"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "StatMatcher",
+                "comment": " Stats can either be a specific integer, or you can supply an entity ID and a stat key to do a comparison.\n\nNote that you can use `$` as the `ID` to reference the entity ID that triggered the rule (useful in conditional narrative content).\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "SpecificStat",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "CompareStat",
+                        [
+                            "NarrativeEngine.Core.WorldModel.ID",
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "ID",
+                "comment": " A unique identifier for each entity.\n",
+                "args": [],
+                "type": "String.String"
+            },
+            {
+                "name": "Links",
+                "comment": " \"Links\" on an entity.\n\nExamples: \"locatedIn\", \"knows\", \"suspects\", etc.\n\n",
+                "args": [],
+                "type": "Dict.Dict String.String NarrativeEngine.Core.WorldModel.ID"
+            },
+            {
+                "name": "NarrativeComponent",
+                "comment": " Entities are just IDs coupled with various fields of information. The engine requires that your entities have `tags`, `stats`, and `links` fields.\n\nIt uses these fields to track \"salience-based\" and \"quality/stats-based\" narratives (described very well in [Emily Shot's blog post](https://emshort.blog/2016/04/12/beyond-branching-quality-based-and-salience-based-narrative-structures/)), which can provide a more flexible and robust story.\n\nBecause this is an extensible record, you can have other properties on your entities as well (like \"name\" and \"description\" or \"sprite\" for example), which works well with the \"Entity Component System\" design pattern.\n\nNote that you are not restricted to the traditional \"items/characters/locations\" world model. You can define your entities with what ever properties you want, to fit any story world.\n\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ a | tags : NarrativeEngine.Core.WorldModel.Tags, stats : NarrativeEngine.Core.WorldModel.Stats, links : NarrativeEngine.Core.WorldModel.Links }"
+            },
+            {
+                "name": "Stats",
+                "comment": " \"Stats\" on an entity.\n\nExamples: \"health\", \"honor\", \"plotProgression\", \"bars of gold\", etc.\n\n",
+                "args": [],
+                "type": "Dict.Dict String.String Basics.Int"
+            },
+            {
+                "name": "Tags",
+                "comment": " \"Tags\" on an entity.\n\nExamples: \"item\", \"edible\", \"poisonous\", \"SmithFamily\", etc.\n\n",
+                "args": [],
+                "type": "Set.Set String.String"
+            },
+            {
+                "name": "WorldModel",
+                "comment": " Your story/game will have a store, or \"world model\", of all of the entities that live in your world, and the various properties that describe them. The narrative engine expects your world model to have this shape.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "Dict.Dict NarrativeEngine.Core.WorldModel.ID (NarrativeEngine.Core.WorldModel.NarrativeComponent a)"
+            }
+        ],
+        "values": [
+            {
+                "name": "addTag",
+                "comment": " Add a tag to a narrative component.\n",
+                "type": "String.String -> NarrativeEngine.Core.WorldModel.NarrativeComponent a -> NarrativeEngine.Core.WorldModel.NarrativeComponent a"
+            },
+            {
+                "name": "applyChanges",
+                "comment": " Update the world model based on a list of changes. Also takes the id of the entity that triggered the rule to allow changes to use trigger matching (with `$`).\n",
+                "type": "List.List NarrativeEngine.Core.WorldModel.ChangeWorld -> NarrativeEngine.Core.WorldModel.ID -> NarrativeEngine.Core.WorldModel.WorldModel a -> NarrativeEngine.Core.WorldModel.WorldModel a"
+            },
+            {
+                "name": "emptyLinks",
+                "comment": " A empty starting state for the \"links\" property\n",
+                "type": "NarrativeEngine.Core.WorldModel.Links"
+            },
+            {
+                "name": "emptyStats",
+                "comment": " A empty starting state for the \"stats\" property\n",
+                "type": "NarrativeEngine.Core.WorldModel.Stats"
+            },
+            {
+                "name": "emptyTags",
+                "comment": " A empty starting state for the \"tags\" property\n",
+                "type": "NarrativeEngine.Core.WorldModel.Tags"
+            },
+            {
+                "name": "getLink",
+                "comment": " Get a specific link from a specific entity.\n\nNote, if the linked-to value doesn't exist in the world model, this will return `Nothing`.\n\n",
+                "type": "NarrativeEngine.Core.WorldModel.ID -> String.String -> NarrativeEngine.Core.WorldModel.WorldModel a -> Maybe.Maybe NarrativeEngine.Core.WorldModel.ID"
+            },
+            {
+                "name": "getStat",
+                "comment": " Get a specific stat from a specific entity.\n",
+                "type": "NarrativeEngine.Core.WorldModel.ID -> String.String -> NarrativeEngine.Core.WorldModel.WorldModel a -> Maybe.Maybe Basics.Int"
+            },
+            {
+                "name": "link",
+                "comment": " A helper function to add a link to an entity when setting up your world model. The key is the type of relationship, and the value is intended to be the id of another entity.\n",
+                "type": "String.String -> NarrativeEngine.Core.WorldModel.ID -> ( NarrativeEngine.Core.WorldModel.ID, NarrativeEngine.Core.WorldModel.NarrativeComponent a ) -> ( NarrativeEngine.Core.WorldModel.ID, NarrativeEngine.Core.WorldModel.NarrativeComponent a )"
+            },
+            {
+                "name": "query",
+                "comment": " A way to retrieve information from the store.\n\nProvide an entity matcher to get back a list of matching entities. This is most useful for \"match any\" style queries, but works with specifc queries as well, just keep in mind the result is always a list.\n\n    query (MatchAny [ HasTag \"item\" ]) worldModel\n    -- [items...]\n\n    query (Match \"PLAYER\" [ HasStat \"brave\" GT <| SpecificStat 5 ]) worldModel |> List.isEmpty\n    -- True/False\n\nNote that you should run `replaceTrigger` first if you have \"$\"'s in your matcher.\n\n",
+                "type": "NarrativeEngine.Core.WorldModel.EntityMatcher -> NarrativeEngine.Core.WorldModel.WorldModel a -> List.List ( NarrativeEngine.Core.WorldModel.ID, NarrativeEngine.Core.WorldModel.NarrativeComponent a )"
+            },
+            {
+                "name": "replaceTrigger",
+                "comment": " Replaces \"$\" in a matcher with the supplied ID. Useful when you have a generic query and don't know the ID ahead of time.\n",
+                "type": "NarrativeEngine.Core.WorldModel.ID -> NarrativeEngine.Core.WorldModel.EntityMatcher -> NarrativeEngine.Core.WorldModel.EntityMatcher"
+            },
+            {
+                "name": "setLink",
+                "comment": " Add a link to a narrative component. The key is the type of relationship, and the value is intended to be the id of another entity.\n",
+                "type": "String.String -> NarrativeEngine.Core.WorldModel.ID -> NarrativeEngine.Core.WorldModel.NarrativeComponent a -> NarrativeEngine.Core.WorldModel.NarrativeComponent a"
+            },
+            {
+                "name": "setStat",
+                "comment": " Add a stat to a narrative component. A stat is a key and a numeric value on any scale you like.\n",
+                "type": "String.String -> Basics.Int -> NarrativeEngine.Core.WorldModel.NarrativeComponent a -> NarrativeEngine.Core.WorldModel.NarrativeComponent a"
+            },
+            {
+                "name": "stat",
+                "comment": " A helper function to add a stat to an entity when setting up your world model. A stat is a key and a numeric value on any scale you like.\n",
+                "type": "String.String -> Basics.Int -> ( NarrativeEngine.Core.WorldModel.ID, NarrativeEngine.Core.WorldModel.NarrativeComponent a ) -> ( NarrativeEngine.Core.WorldModel.ID, NarrativeEngine.Core.WorldModel.NarrativeComponent a )"
+            },
+            {
+                "name": "tag",
+                "comment": " A helper function to add a tag to an entity when setting up your world model.\n",
+                "type": "String.String -> ( NarrativeEngine.Core.WorldModel.ID, NarrativeEngine.Core.WorldModel.NarrativeComponent a ) -> ( NarrativeEngine.Core.WorldModel.ID, NarrativeEngine.Core.WorldModel.NarrativeComponent a )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "NarrativeEngine.Debug",
+        "comment": " A helper module to display a useful debugging tool during development.\n\n@docs State, debugBar, init, setLastInteractionId, setLastMatchedRuleId, updateSearch\n\n",
+        "unions": [
+            {
+                "name": "State",
+                "comment": " The state needed to render the debug bar. Track this in your Model.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "debugBar",
+                "comment": " A minimal \"debug bar\" that you can place at the top or bottom of your screen. Shows the last matched rule id and last interaction id. Includes a search field to search/filter the current world model's state. Entities are displayed in the \"entity syntax\" described in `Syntax.EntityParser`. This makes it easy to search for an entity by ID. You can also search for a tag to show all entities with that tag. You can also find all linked entities in a similar fashion. \".\" will show all entities. Clear the search field to hide matching entities.\n\nYou must include the message that you use to call `updateSearch`, which will get triggered on each changed input. Also include the current world model, and current debug state.\n\nNote, if your client responds to key events, you may need to stop propagation on those events from the debug bar. You can do something like this:\n\n    div [ stopPropagationOn \"keydown\" <| Json.succeed ( NoOp, True ) ]\n        [ Debug.debugBar DebugSeachWorldModelMsg model.worldModel model.debugState ]\n\n",
+                "type": "(String.String -> msg) -> NarrativeEngine.Core.WorldModel.WorldModel a -> NarrativeEngine.Debug.State -> Html.Html msg"
+            },
+            {
+                "name": "init",
+                "comment": " An empty debug state to start off with.\n",
+                "type": "NarrativeEngine.Debug.State"
+            },
+            {
+                "name": "setLastInteractionId",
+                "comment": " Set the last interaction id (call this upon each interaction).\n",
+                "type": "String.String -> NarrativeEngine.Debug.State -> NarrativeEngine.Debug.State"
+            },
+            {
+                "name": "setLastMatchedRuleId",
+                "comment": " Set the last matched rule id (call this upon each interaction, use the interaction id if no rules matched).\n",
+                "type": "String.String -> NarrativeEngine.Debug.State -> NarrativeEngine.Debug.State"
+            },
+            {
+                "name": "updateSearch",
+                "comment": " Call this any time the debug bar's search field changes (ie. the update code for the `msg` supplied to `debugBar`.\n",
+                "type": "String.String -> NarrativeEngine.Debug.State -> NarrativeEngine.Debug.State"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "NarrativeEngine.Syntax.EntityParser",
+        "comment": " A helper module for easily creating entities.\n\nExample syntax:\n\n```text\nPLAYER.fear=1\nTORCH.item.illumination=7.current_location=PLAYER\nCAVE.location.dark\n```\n\nSyntax is `<entity id>.<props>`, given:\n\n  - Entity ids must start with a letter, then optionally have more letters, digits, or any of `'_', '-', ':', '#' or '+'`.\n  - Props are separated by periods. Prop keys are alphanumeric and can include `'_', ':' and '#'`. Tags are specified just as a key. Stats and links have a key then a `'='` then an int or entity id respectively.\n\n(By convention, entity ids are capitalized and prop keys are snake case.)\n\nNote that `RuleParser` relies on some of the parsers in this module.\n\n\n## Parse result types\n\n@docs ParsedWorldModel, ParsedEntity\n\n\n## Parsers\n\nIn general you should use `parseMany` at the top level of you application, and either use the result as your initial world model in your Model, or display the errors with `NarrativeEngine.Syntax.Helpers.parseErrorsView`.\n\n@docs ExtendFn, parseMany, parseEntity\n\n\n## Intermediate parsers (used in RuleParser)\n\n@docs idParser, numberParser, propertyNameParser\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "ExtendFn",
+                "comment": " A function for \"merging\" extra fields into a `NarrativeComponent {}`.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "a -> NarrativeEngine.Core.WorldModel.NarrativeComponent {} -> NarrativeEngine.Core.WorldModel.NarrativeComponent a"
+            },
+            {
+                "name": "ParsedEntity",
+                "comment": " The result of parsing an entity syntax string, which includes both the entity id and a narrative component.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "Result.Result String.String ( NarrativeEngine.Core.WorldModel.ID, NarrativeEngine.Core.WorldModel.NarrativeComponent a )"
+            },
+            {
+                "name": "ParsedWorldModel",
+                "comment": " The result of parsing a collection of entity syntax strings.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "Result.Result NarrativeEngine.Syntax.Helpers.ParseErrors (NarrativeEngine.Core.WorldModel.WorldModel a)"
+            }
+        ],
+        "values": [
+            {
+                "name": "idParser",
+                "comment": " IDs must start with a letter, then optionally have more letters, digits, or special characters.\n",
+                "type": "Parser.Parser NarrativeEngine.Core.WorldModel.ID"
+            },
+            {
+                "name": "numberParser",
+                "comment": " Parses Ints.\n\nCan't use `Parser.int` directly because a \".\" can follow a number in entity strings (\"ID.a\\_stat=1.a\\_tag\"), and `int` doesn't allow a digit followed by a \".\". This also handles negatives.\n\n",
+                "type": "Parser.Parser Basics.Int"
+            },
+            {
+                "name": "parseEntity",
+                "comment": " Parses a single \"entity definition\" syntax string along with a record of additional fields. The extend function is used to \"merge\" the additional fields into the standard entity record. (You can use `always identity` if you don't have any extra fields).\n",
+                "type": "NarrativeEngine.Syntax.EntityParser.ExtendFn a -> ( String.String, a ) -> NarrativeEngine.Syntax.EntityParser.ParsedEntity a"
+            },
+            {
+                "name": "parseMany",
+                "comment": " Parses a list of \"entity definition\" syntax strings into a world model. The list of entities are tuples of the \"entity definition\" syntax for parsing, and the extra fields for that entity. You also need to provide an \"extend function\" to \"merge\" extra fields with the standard entity fields.\n",
+                "type": "NarrativeEngine.Syntax.EntityParser.ExtendFn a -> List.List ( String.String, a ) -> NarrativeEngine.Syntax.EntityParser.ParsedWorldModel a"
+            },
+            {
+                "name": "propertyNameParser",
+                "comment": " A parser for valid property names\n",
+                "type": "Parser.Parser String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "NarrativeEngine.Syntax.Helpers",
+        "comment": " A utility module supporting the parsers.\n\n@docs ParseErrors, parseErrorsView\n\n\n### Misc\n\n@docs deadEndsToString, notEmpty, parseMultiple\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "ParseErrors",
+                "comment": " Parse errors are a list of an identifier (which usually includes the raw source string) and a string representation of the raw parse errors.\n",
+                "args": [],
+                "type": "List.List ( String.String, String.String )"
+            }
+        ],
+        "values": [
+            {
+                "name": "deadEndsToString",
+                "comment": " A simple way to show errors. Borrowed from <https://github.com/elm/parser/pull/16>\n",
+                "type": "List.List Parser.DeadEnd -> String.String"
+            },
+            {
+                "name": "notEmpty",
+                "comment": " A string parser that fails if the string is empty and succeeds otherwise.\n",
+                "type": "String.String -> Parser.Parser String.String"
+            },
+            {
+                "name": "parseErrorsView",
+                "comment": " A helper to show all parse errors. You should identify all possible parse errors as soon as possible, ideally at the top elm `Program` level, and show this view if you have errors.\n\nThe tuple is a string identifying the source of the error, and the atual error string iteself.\n\n",
+                "type": "NarrativeEngine.Syntax.Helpers.ParseErrors -> Html.Html msg"
+            },
+            {
+                "name": "parseMultiple",
+                "comment": " Generic helper to parse a list against a supplied parse function. Will be `Err` if any items fail to parse, or an `Ok` of the list of parsed results. Useful for parsing a rule's conditions and changes for example.\n",
+                "type": "(String.String -> Result.Result String.String a) -> List.List String.String -> Result.Result String.String (List.List a)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "NarrativeEngine.Syntax.NarrativeParser",
+        "comment": " This module is technically outside of the scope of the Narrative Engine, as it deals with content that is handled within your application code, but narrative content is so common that a useful syntax and parser is included here.\n\nExample syntax:\n\n```text\nYou shout at {$.name}{| again}.\n\"{What do you want?|Why do you keep bothering me?|Leave me alone!}\"\n{$.suspicious>3 & WARRANT.location=PLAYER?\"Stop!---You're under arrest!\"|\"Never mind.\"}\n```\n\nThe syntax is inspired by Ink (<https://github.com/inkle/ink/blob/master/Documentation/WritingWithInk.md#6-variable-text>).\n\n\n## Syntax\n\n\n### Continuation marks\n\n`The door creaks open, and you see... --- Nothing at all!`\n\nBreaks up your narrative into multiple parts (at `---`) for you to render as desired.\n\n\n### Cycling text\n\n`You have tried this {one|two|three|too many} times.`\n\nChooses the option separated by `|` corresponding to the `cycleIndex` (zero-indexed) in the `Config`. It repeats the final option after exhausting segments by default, or loops repeatedly with `{~a|b|c}` syntax or chooses a random index each time with `{?a|b|c}` syntax.\n\nThe random index is based on the `cycleIndex` and the length of the trigger word and is only quasi random.\n\nEmpty segments are allowed - `{|a||b|}` has three empty segments, beginning, middle and end.\n\n\n### Conditional text\n\n`You feel{PLAYER.happy_level>5? happy| sad}.`\n\nYou can use any query syntax from `NarrativeEngine.Syntax.RuleParser.parseMatcher`. If it succeeds, it will show the text to the left of `|`, if it fails, it will show the text to the right of the `|`.\n\n`$` will be replaced with the `trigger` in the `Config`.\n\nYou can have multiple queries separated by `&` before the `?`. Any white space after the `?` and around the `|` will be considered part of the text to display.\n\nYou can leave out the `|` and right side text if you don't want to show any alternative text if the query doesn't pass.\n\n\n### Custom functions\n\n`The stranger's name is {STRANGER.get_name}.`\n\nUses `propKeywords` in the `Config` to attempt to run a function (in this case the function keyed with `get_name`) with the entity ID. You can define any kind of function you want, from a simple property lookup (especially useful when using the Entity Component System pattern) to generating a list of items in the supplied location.\n\nYou can also use `$.get_name` which will replace `$` with the `trigger` in `Config`.\n\n\n## Parsing\n\n@docs Narrative, Config, parse, parseMany\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " Provides a context for the parser to process narrative correctly. By managing this in the client, this module can stay stateless and generic.\n\nIncludes the following keys:\n\n`cycleIndex` - an integer starting at 0 indicating which index of cycle text should be used (used for all cycles in the narrative string).\n\n`propKeywords` - a dictionary of valid keywords to match against, and the corresponding functions that will take an entity ID and return a string as a Result. If it returns an `Err`, the match will fail.\n\n`worldModel` - the full world model. Used to query against for conditional text.\n\n`trigger` - an entity ID used to replace \"$\" in conditional text.\n\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ cycleIndex : Basics.Int, propKeywords : Dict.Dict String.String (String.String -> Result.Result String.String String.String), worldModel : NarrativeEngine.Core.WorldModel.WorldModel a, trigger : NarrativeEngine.Core.WorldModel.ID }"
+            },
+            {
+                "name": "Narrative",
+                "comment": " A fully parsed string, split at the \"continue\" marks (`---`).\n",
+                "args": [],
+                "type": "List.List String.String"
+            }
+        ],
+        "values": [
+            {
+                "name": "parse",
+                "comment": " Parses a single string of narrative content, then splits for continues. Trims and filters out empty strings.\n\nUnlike when parsing all rules or entities ahead of time, you should call this per each individual content each time you have a new narrative. This is because the parsing depends on the `Config`'s state at the time it is parsed and cannot be done ahead of time.\n\n`parseMany` is provided so that you can still check for any parsing errors upon your app initialization.\n\nNote that this will always return a string. In the case of a parsing error, it will say \"Error\". If you have run `parseMany` initially, then you will not run into this case.\n\n",
+                "type": "NarrativeEngine.Syntax.NarrativeParser.Config a -> String.String -> NarrativeEngine.Syntax.NarrativeParser.Narrative"
+            },
+            {
+                "name": "parseMany",
+                "comment": " Call this as soon as possible and deal with errors appropriately to ensure you will have no parsing errors later. You can display the errors with `NarrativeEngine.Syntax.Helpers.parseErrorsView`.\n\nThe provided dictionary should have keys to identify the correlating narrative content values.\n\nIf everything parses correctly, you can disregard the resulting empty value, and run `parse` on individual content when needed.\n\n",
+                "type": "Dict.Dict String.String String.String -> Result.Result NarrativeEngine.Syntax.Helpers.ParseErrors ()"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "NarrativeEngine.Syntax.RuleParser",
+        "comment": " A helper module for easily authoring rules and queries.\n\nSee <https://github.com/jschomay/elm-narrative-engine/blob/master/src/Example.elm> for a full example.\n\n\n## Entity matchers / queries\n\nExample syntax:\n\n```text\nPLAYER.current_location=(*.dark).fear<5\nCAVE.dark.!explored\n*.enemy.current_location=CAVE\n```\n\nThese all will get parsed into `NarrativeEngine.WorldModel.EntityMatcher`s.\n\nThe format is `<entity ID or * or $><one or more queries as defined below>`\n\n`*` will become a `MatchAny`, otherwise it will be a `Match` with the supplied ID. `$` is passed through directly (to be replaced with the trigger ID eventually).\n\nBy convention IDs are capitalized and query keywords are snake case, but they don't have to be.\n\nEach query starts with a `.`. Query details follow.\n\n\n### Tags\n\n```text\nID.tag1.tag2\n```\n\nbecomes\n\n    Match \"ID\" [ HasTag \"tag1\", HasTag \"tag2\" ]\n\n\n### Stats\n\n```text\nID.stat1=1.stat2>0.stat3<-2.stat_4>(stat ID1.other_stat).stat_5<(stat ID2.other_stat).stat_6=(stat ID3.other_stat)\n```\n\nbecomes\n\n    Match \"ID\"\n        [ HasStat \"stat1\" EQ (SpecificStat 1)\n        , HasStat \"stat2\" GT (SpecificStat 0)\n        , HasStat \"stat3\" LT (SpecificStat -2)\n        , HasStat \"stat_4\" GT (CompareStat \"ID1\" \"other_stat\")\n        , HasStat \"stat_5\" LT (CompareStat \"ID2\" \"other_stat\")\n        , HasStat \"stat_6\" EQ (CompareStat \"ID3\" \"other_stat\")\n        ]\n\n\n### Links\n\n```text\nID.link1=ID1.link2=(ID2.tag1).link3=(*.tag2).link4=(link ID3.other_link)\n```\n\nbecomes\n\n    Match \"ID\"\n        [ HasLink \"link1\" (SpecificLink (Match \"ID1\" []))\n        , HasLink \"link2\" (SpecificLink (Match \"ID2\" [ HasTag \"tag1\" ]))\n        , HasLink \"link3\" (SpecificLink (MatchAny [ HasTag \"tag2\" ]))\n        , HasLink \"link4\" (CompareLink \"ID3\" \"other_link\")\n        ]\n\n\n### Not\n\nAny query segment can be prefixed with a `!` for not\n\n```text\n*.!tag1.!stat>9.!link=ID2\n```\n\nbecomes\n\n    MatchAny\n        [ Not (HasTag \"tag1\")\n        , Not (HasStat \"stat\" GT (SpecificStat 9))\n        , Not (HasLink \"link\" (SpecificLink (Match \"ID2\" [])))\n        ]\n\n@docs ParsedMatcher, parseMatcher\n\n\n## Changes syntax\n\nExample syntax:\n\n```text\nChange world:\nPLAYER.current_location=$.fear+1\nCAVE.explored\n(*.enemy).blinded\n```\n\nThese all will get parsed into `NarrativeEngine.WorldModel.ChangeWorld`s.\n\nThe format is `<entity ID or * or $><one or more changes as defined below>`\n\nTo `UpdateAll`, use a generic matcher in parens. Otherwise use an ID for a specific `Update`. `$` is passed through directly (to be replaced with the trigger ID eventually).\n\nEach change starts with a `.`.\n\n\n### Tags\n\n```text\nID.tag1.-tag2\n```\n\nbecomes\n\n    Update \"ID\" [ AddTag \"tag1\", RemoveTag \"tag2\" ]\n\n\n### Stats\n\n```text\nID.stat1=1.stat2+1.stat3-2\n```\n\nbecomes\n\n    Update \"ID\"\n        [ SetStat \"stat1\" 1\n        , IncStat \"stat2\" 1\n        , DecStat \"stat3\" 2\n        ]\n\n\n### Links\n\n```text\nID.link1=ID2.link2=(link ID2.link1)\n```\n\nbecomes\n\n    Update \"ID\"\n        [ SetLink \"link1\" (SpecificLinkTarget \"ID2\")\n        , SetLink \"link2\" (LookUpLinkTarget \"ID2\" \"link1\")\n        ]\n\n\n### Update all\n\n```tex\n(*.tag1).tag2\n```\n\nbecomes\n\n    UpdateAll [ HasTag \"tag1\" ] [ AddTag \"tag2\" ]\n\n@docs ParsedChanges, parseChanges\n\n\n## Rules syntax\n\n```text\nON: *.line\n\nIF: PLAYER.chapter=1\n    BROADWAY_STREET.leaving_broadway_street_station_plot=1\n\nDO: BRIEFCASE.location=THIEF\n    BROADWAY_STREET.leaving_broadway_street_station_plot=2\n```\n\nYou can include spaces and newlines as desired. The `:` after each rule part is optional. You can also leave out the \"IF\" and/or \"DO\" parts.\n\nTo create a `SpecificTrigger` rule instead of using an entity matcher as a trigger, use quotes arround the trigger string, like this:\n\n```text\nON: \"next-day\"\n```\n\nObviously, this only applies to the \"ON:\" line (which becomes the trigger).\n\n@docs ExtendFn, ParsedRules, ParsedRule, parseRules, parseRule\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "ExtendFn",
+                "comment": " A function for \"merging\" extra fields into a `Rule {}`.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "a -> NarrativeEngine.Core.Rules.Rule {} -> NarrativeEngine.Core.Rules.Rule a"
+            },
+            {
+                "name": "ParsedChanges",
+                "comment": " The result of parsing a \"change world\" syntax string.\n",
+                "args": [],
+                "type": "Result.Result String.String NarrativeEngine.Core.WorldModel.ChangeWorld"
+            },
+            {
+                "name": "ParsedMatcher",
+                "comment": " The result of parsing an \"entity matcher\" syntax string.\n",
+                "args": [],
+                "type": "Result.Result String.String NarrativeEngine.Core.WorldModel.EntityMatcher"
+            },
+            {
+                "name": "ParsedRule",
+                "comment": " The result of parsing a \"rule\" syntax string.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "Result.Result String.String (NarrativeEngine.Core.Rules.Rule a)"
+            },
+            {
+                "name": "ParsedRules",
+                "comment": " The result of parsing many rules.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "Result.Result NarrativeEngine.Syntax.Helpers.ParseErrors (NarrativeEngine.Core.Rules.Rules a)"
+            }
+        ],
+        "values": [
+            {
+                "name": "parseChanges",
+                "comment": " Parse a \"change world\" syntax string.\n",
+                "type": "String.String -> NarrativeEngine.Syntax.RuleParser.ParsedChanges"
+            },
+            {
+                "name": "parseMatcher",
+                "comment": " Parse an \"entity matcher\" syntax string.\n",
+                "type": "String.String -> NarrativeEngine.Syntax.RuleParser.ParsedMatcher"
+            },
+            {
+                "name": "parseRule",
+                "comment": " Parses a single \"rule\" syntax string along with a record of additional fields. The extend function is used to \"merge\" the additional fields into the standard rule record. (You can use `always identity` if you don't have any extra fields).\n",
+                "type": "NarrativeEngine.Syntax.RuleParser.ExtendFn a -> ( String.String, a ) -> NarrativeEngine.Syntax.RuleParser.ParsedRule a"
+            },
+            {
+                "name": "parseRules",
+                "comment": " Parses multiple \"rule\" syntax strings. The rules are tuples of the \"rule\" syntax for parsing, and the extra fields for that rule. You also need to provide an \"extend function\" to \"merge\" extra fields into the standard rule fields.\n\nIn general you should use `parseRules` at the top level of you application, and display any errors with `NarrativeEngine.Syntax.Helpers.parseErrorsView`.\n\n",
+                "type": "NarrativeEngine.Syntax.RuleParser.ExtendFn a -> Dict.Dict NarrativeEngine.Core.Rules.RuleID ( String.String, a ) -> NarrativeEngine.Syntax.RuleParser.ParsedRules a"
+            }
+        ],
+        "binops": []
+    }
+]

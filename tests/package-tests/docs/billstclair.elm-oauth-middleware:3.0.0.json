@@ -1,0 +1,241 @@
+[
+    {
+        "name": "OAuthMiddleware",
+        "comment": " Client side of OAuth Authorization Code Grant Flow.\n\nYour top-level Elm program must be created with `Navigation.program` or `Navigation.programWithFlags`. You can ignore incoming `Location` changes, but your `init` function needs to pass the initial `Location` to `receiveTokenAndState`, in case you're here because of a redirect back from your OAuth callback server (at `redirectUri`).\n\n\n# Types\n\n@docs Authorization, TokenAuthorization, ResponseToken, TokenState\n\n\n# Client-side functions\n\n@docs getAuthorization, getAuthorizations\n@docs locationToRedirectBackUri, authorize, receiveTokenAndState, use\n\n",
+        "unions": [
+            {
+                "name": "TokenState",
+                "comment": " The result of parsing a Url.Url that may have come from\na redirect from a callback server, as implemented in the `server` directory\nof this project.\n\nFor a `TokenAndState` or `TokenErrorAndState`, the state you passed is the `(Maybe String)`.\n\nYou will rarely need to look inside a `ResponseToken`. Just pass it to `use` to add it to the headers for a request to the protected resource.\n\n`TokenDecodeError` means that there was a properly-named query string, but an error occurred while decoding it.\n\n`NoToken` means that there was no query parameter that looked like a token or an error message about getting a token. In other words, this invocation of your webapp was not due to a redirection from the callback server.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "TokenAndState",
+                        [
+                            "OAuthMiddleware.ResponseToken",
+                            "Maybe.Maybe String.String"
+                        ]
+                    ],
+                    [
+                        "TokenErrorAndState",
+                        [
+                            "String.String",
+                            "Maybe.Maybe String.String"
+                        ]
+                    ],
+                    [
+                        "TokenDecodeError",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "NoToken",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Authorization",
+                "comment": " You'll usually get this from a JSON file, often via `getAuthorizations`.\n",
+                "args": [],
+                "type": "OAuthMiddleware.EncodeDecode.Authorization"
+            },
+            {
+                "name": "ResponseToken",
+                "comment": " An alias for `OAuth.ResponseToken`.\n",
+                "args": [],
+                "type": "OAuthMiddleware.ResponseToken.ResponseToken"
+            },
+            {
+                "name": "TokenAuthorization",
+                "comment": " Configuration for sending a request to the authorization server.\n\n`authorizationUri` and `tokenUri` are provided by the OAuth authentication service.\n\n`authorize` sends a request to `authorizationUri`, encoding the other parameters into the `state` sent there. The `redirectUri` server, implemented by the `server` directory of this package, uses the `tokenUri` as a key into its table containing valid values for `redirectBackUri` and the client secret that will be sent to the `tokenUri`.\n\n`clientId`, `redirectUri`, `scope`, and `state` are all standard parts of the OAuth protocol, except `state` is optional here, and encoded so it comes back just as it went out.\n\n`clientId` is assigned by the OAuth resource. It also provides a list of possible `scope` values. You can use any subset of those.\n\n`redirectUri` is sent to the OAuth authorization web server. If the user successfullly logs in, an authorization code will be sent there as a Uri query parameter.\n\n`state` is any string you'd like. It is passed to the authorization web server, which passes it to the `redirectUri`, and it is passed back to your application via the `redirectBackUri`.\n\n`redirectBackUri` is a Uri to redirect to AFTER the `redirectUri` exchanges the received code for an access token. It will resume your Elm application, this time with an access token in its hand.\n\n",
+                "args": [],
+                "type": "{ authorization : OAuthMiddleware.Authorization, scope : List.List String.String, state : Maybe.Maybe String.String, redirectBackUri : String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "authorize",
+                "comment": " Compute an authorization request Url.\n\nThis will cause the authorization server to ask the user to login. If successful, it will send the received code and `TokenAuthorization.state` to the `TokenAuthorization.authorization.redirectUri` for generation of a token to send back to the `TokenAuthorization.redirectBackUri`. Your code at that Uri will receive an encoded `ResponseToken` on the `responseTokenQuery` parameter, or an error string on the `responseTokenQueryError` parameter. Use `decodeResponseToken` to turn the `responseTokenQuery` string into an `ResponseToken`, which you can use to do authenticated requests, just as if you had called `OAuth.TokenAuthorizationCode.authenticate` yourself, but hiding the client secret on the redirect server.\n\nA return value of `Nothing` means that either the authorization uri or the redirect uri could not be parsed as valid uris.\n\nOtherwise, navigating to the the returned `Url` will go to the the OAuth provider's authentication page, followed by token fetching by the redirect server at `redirectUri`. The redirect server will navigate back with query args that you can process with `receiveTokenAndState`.\n\n",
+                "type": "OAuthMiddleware.TokenAuthorization -> Maybe.Maybe Url.Url"
+            },
+            {
+                "name": "getAuthorization",
+                "comment": " Get a JSON file encoding an `Authorization`.\n\n    getAuthorization useCache url\n\nIf `useCache` is true, will use the browser's cache, meaning that it may not immediately notice changes to the file on the server.\n\nThe JSON format is as follows. You'll change it with information from your OAuth provider, and for your redirect server, and store it in a convenient place on the same server serving your compiled Elm code.\n\nThe `scopes` field is an object, mapping your internal name for each scope to the actual OAuth provider name. For most OAuth providers, the two will be identical, but Google, for example, uses long URL-looking strings for scope names, so it's convenient to have a shorter name your application can use. This field isn't used by any of the `OAuthMiddleware` code, except the example, so you can safely set it to `{}`, if you prefer to just encode the scope strings as constants in your Elm code.\n\nYour client secret is stored with the redirect server, and never leaves that server machine.\n\n    { \"name\": \"Gmail\",\n      \"authorizationUri\": \"https://accounts.google.com/o/oauth2/auth\",\n      \"tokenUri\": \"https://accounts.google.com/o/oauth2/token\",\n      \"apiUri\": \"https://www.googleapis.com/gmail/v1/users/\",\n      \"clientId\": \"<Your OAuth clientid>\",\n      \"redirectUri\": \"<Your redirect server Uri>\",\n      \"scopes\": {\"<Your scope name>\": \"<OAuth provider's scope name>\"}\n    }\n\nThe example contains more information about this, and a sample authorizations file.\n\n",
+                "type": "(Result.Result Http.Error OAuthMiddleware.Authorization -> msg) -> Basics.Bool -> String.String -> OAuth.AuthorizationCode.RequestParts msg"
+            },
+            {
+                "name": "getAuthorizations",
+                "comment": " Get a JSON file encoding an `Authorization` list.\n\n    getAuthorizations useCache url\n\nIf `useCache` is true, will use the browser's cache, meaning that it may not immediately notice changes to the file on the server.\n\n",
+                "type": "(Result.Result Http.Error (List.List OAuthMiddleware.Authorization) -> msg) -> Basics.Bool -> String.String -> OAuth.AuthorizationCode.RequestParts msg"
+            },
+            {
+                "name": "locationToRedirectBackUri",
+                "comment": " Convert a `Url.Url` into a string suitable for the `redirectBackUri` in a `TokenAuthorization`.\n",
+                "type": "Url.Url -> String.String"
+            },
+            {
+                "name": "receiveTokenAndState",
+                "comment": " Parse a returned `ResponseToken` from a `Url.Url`.\n\nNote that the `scope` in the returned `TokenAndState` `ResponseToken` is not guaranteed to match what you requested. The RFC 6749 [Authorization Code Grant](https://tools.ietf.org/html/rfc6749#section-4.1) flow does not specify a returned scope from the OAuth token server, so if your redirectUri server receives no scope, or an empty scope, it will send back the list of scopes you requested. The spec does not guarantee that you'll get all the scopes you requested in your call to `authorize`, so this may be incorrect. It appears that GitHub returns proper scopes, so they will be as granted in that case.\n\n",
+                "type": "Url.Url -> OAuthMiddleware.TokenState"
+            },
+            {
+                "name": "use",
+                "comment": " Use a token to add authenticatication to a request header.\n\nA thin wrapper around `OAuth.useToken`.\n\n",
+                "type": "OAuthMiddleware.ResponseToken -> List.List Http.Header -> List.List Http.Header"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "OAuthMiddleware.EncodeDecode",
+        "comment": " JSON Encoders and Decoders for the `OAuthMiddleware` module.\n\n\n# Types\n\n@docs Authorization, RedirectState, ResponseTokenError\n\n\n# Encode/Decode state for passing over the wire.\n\n@docs encodeRedirectState, decodeRedirectState\n@docs encodeResponseToken, decodeResponseToken\n@docs encodeResponseTokenError, decodeResponseTokenError\n\n\n# Encoders and Decoders\n\n@docs authorizationsDecoder, authorizationsEncoder\n@docs authorizationDecoder, authorizationEncoder\n@docs redirectStateDecoder, redirectStateEncoder\n@docs responseTokenDecoder, responseTokenEncoder\n@docs responseTokenErrorDecoder, responseTokenErrorEncoder\n@docs nullableStringEncoder\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Authorization",
+                "comment": " Authorization information to send to the redirect (callback) server.\n\nUsually stored in a JSON file, and read and decoded by `OAuthMiddleware.getAuthorizations` or `OAuthMiddleware.getAuthorization`.\n\n",
+                "args": [],
+                "type": "{ name : String.String, authorizationUri : String.String, tokenUri : String.String, apiUri : String.String, clientId : String.String, redirectUri : String.String, scopes : Dict.Dict String.String String.String }"
+            },
+            {
+                "name": "RedirectState",
+                "comment": " The state sent to the `redirectUri`.\n\nThis is created by `OAuthMiddleware.authorize` from the passed `TokenAuthorization`.\n\n",
+                "args": [],
+                "type": "{ clientId : String.String, tokenUri : String.String, redirectUri : String.String, scope : List.List String.String, redirectBackUri : String.String, state : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "ResponseTokenError",
+                "comment": " If an error occurs getting a token from the token server,\nit is encoded in a `ResponseTokenError`.\n",
+                "args": [],
+                "type": "{ err : String.String, state : Maybe.Maybe String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "authorizationDecoder",
+                "comment": " Decode an `Authorization`.\n\nUsually used via `OAuthMiddleware.getAuthorization`.\n\n",
+                "type": "Json.Decode.Decoder OAuthMiddleware.EncodeDecode.Authorization"
+            },
+            {
+                "name": "authorizationEncoder",
+                "comment": " Encode an `Authorization`.\n",
+                "type": "OAuthMiddleware.EncodeDecode.Authorization -> Json.Encode.Value"
+            },
+            {
+                "name": "authorizationsDecoder",
+                "comment": " Decode an `Authorization` list.\n\nUsually used via `OAuthMiddleware.getAuthorizations`.\n\n",
+                "type": "Json.Decode.Decoder (List.List OAuthMiddleware.EncodeDecode.Authorization)"
+            },
+            {
+                "name": "authorizationsEncoder",
+                "comment": " Encode an `Authorization` list.\n",
+                "type": "List.List OAuthMiddleware.EncodeDecode.Authorization -> Json.Encode.Value"
+            },
+            {
+                "name": "decodeRedirectState",
+                "comment": " Decode the state encoded by `encodeRedirectState`.\n",
+                "type": "String.String -> Result.Result String.String OAuthMiddleware.EncodeDecode.RedirectState"
+            },
+            {
+                "name": "decodeResponseToken",
+                "comment": " Decode the `ResponseToken` that is sent back to the `redirectUri`\nfrom the redirect server.\n",
+                "type": "String.String -> Result.Result String.String OAuthMiddleware.ResponseToken.ResponseToken"
+            },
+            {
+                "name": "decodeResponseTokenError",
+                "comment": " Decode the `ResponseTokenError` that may be sent back to the\n`redirectUri` from the redirect server.\n",
+                "type": "String.String -> Result.Result String.String OAuthMiddleware.EncodeDecode.ResponseTokenError"
+            },
+            {
+                "name": "encodeRedirectState",
+                "comment": " Encode the redirectBackUri and user state for the authorization server.\n",
+                "type": "OAuthMiddleware.EncodeDecode.RedirectState -> String.String"
+            },
+            {
+                "name": "encodeResponseToken",
+                "comment": " Encode the `ResponseToken` that is received by the redirect server\nfrom its call to `OAuth.AuthorizationCode.authenticate`.\n",
+                "type": "OAuthMiddleware.ResponseToken.ResponseToken -> String.String"
+            },
+            {
+                "name": "encodeResponseTokenError",
+                "comment": " Encode the `ResponseTokenError` that may be sent back to the\n`redirectUri` from the redirect server.\n",
+                "type": "OAuthMiddleware.EncodeDecode.ResponseTokenError -> String.String"
+            },
+            {
+                "name": "nullableStringEncoder",
+                "comment": " Simple encoder for a nullable string.\n",
+                "type": "Maybe.Maybe String.String -> Json.Encode.Value"
+            },
+            {
+                "name": "redirectStateDecoder",
+                "comment": " Decode the state sent to the authenticate server\nvia `OAuth.AuthorizationCode.authenticate` and received\nby the redirect server.\n",
+                "type": "Json.Decode.Decoder OAuthMiddleware.EncodeDecode.RedirectState"
+            },
+            {
+                "name": "redirectStateEncoder",
+                "comment": " Encode the state sent to the authenticate server\nvia `OAuth.AuthorizationCode.authenticate` and received\nby the redirect server.\n",
+                "type": "OAuthMiddleware.EncodeDecode.RedirectState -> Json.Encode.Value"
+            },
+            {
+                "name": "responseTokenDecoder",
+                "comment": " Decode the \"response-token\" query arg for the redirectBackUri.\n\nChanges the default by swapping `lenientScopeDecoder` for `scopeDecoder`.\n\nThis isn't necessary on the client side, but is needed by the server for GitHub.\n\n",
+                "type": "Json.Decode.Decoder OAuthMiddleware.ResponseToken.ResponseToken"
+            },
+            {
+                "name": "responseTokenEncoder",
+                "comment": " Encode the \"response-token\" query arg for the redirectBackUri\n",
+                "type": "OAuthMiddleware.ResponseToken.ResponseToken -> Json.Encode.Value"
+            },
+            {
+                "name": "responseTokenErrorDecoder",
+                "comment": " Decode a `ResponseTokenError`.\n",
+                "type": "Json.Decode.Decoder OAuthMiddleware.EncodeDecode.ResponseTokenError"
+            },
+            {
+                "name": "responseTokenErrorEncoder",
+                "comment": " Turn a `ResponseTokenError` into a `Value`.\n",
+                "type": "OAuthMiddleware.EncodeDecode.ResponseTokenError -> Json.Encode.Value"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "OAuthMiddleware.ResponseToken",
+        "comment": " This module revives the `ResponseToken` type.\n\n`ResponseToken` and its decoders were removed from truqu/elm-oauth2 version 4.0.0. This module is a copy of the version 3.0.0 code.\n\nMost user code will never use this module, except indirectly, via `OAuthMiddleware`.\n\n\n## Types\n\n@docs ResponseToken\n\n\n## Json Decoders\n\n@docs responseTokenDecoder, stateDecoder\n\n\n## Constructors\n\n@docs makeToken, makeResponseToken\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "ResponseToken",
+                "comment": " The response obtained as a result of an authentication (implicit or not)\n\n  - expiresIn (_RECOMMENDED_):\n    The lifetime in seconds of the access token. For example, the value \"3600\" denotes that the\n    access token will expire in one hour from the time the response was generated. If omitted, the\n    authorization server SHOULD provide the expiration time via other means or document the default\n    value.\n  - refreshToken (_OPTIONAL_):\n    The refresh token, which can be used to obtain new access tokens using the same authorization\n    grant as described in [Section 6](https://tools.ietf.org/html/rfc6749#section-6).\n  - scope (_OPTIONAL, if identical to the scope requested; otherwise, REQUIRED_):\n    The scope of the access token as described by [Section 3.3](https://tools.ietf.org/html/rfc6749#section-3.3).\n  - state (_REQUIRED if `state` was present in the authentication request_):\n    The exact value received from the client\n  - token (_REQUIRED_):\n    The access token issued by the authorization server.\n\n",
+                "args": [],
+                "type": "{ expiresIn : Maybe.Maybe Basics.Int, refreshToken : Maybe.Maybe OAuth.Token, scope : List.List String.String, state : Maybe.Maybe String.String, token : OAuth.Token }"
+            }
+        ],
+        "values": [
+            {
+                "name": "makeResponseToken",
+                "comment": " Create a ResponseToken record from various parameters\n",
+                "type": "OAuth.Token -> Maybe.Maybe Basics.Int -> Maybe.Maybe OAuth.Token -> List.List String.String -> Maybe.Maybe String.String -> OAuthMiddleware.ResponseToken.ResponseToken"
+            },
+            {
+                "name": "makeToken",
+                "comment": " Create a token from two string representing a token type and\nan actual token value. This is intended to be used in Json decoders\nor Query parsers. Returns 'Nothing' when the token type is Nothing\n, different from Just \"Bearer\" or when there's no token at all.\n\nSame as OAuth.makeToken, but allows \"bearer\" as well as \"Bearer\" for\nthe `TokenType`.\n\n",
+                "type": "Maybe.Maybe OAuth.TokenType -> Maybe.Maybe OAuth.TokenString -> Maybe.Maybe OAuth.Token"
+            },
+            {
+                "name": "responseTokenDecoder",
+                "comment": " Json decoder for a response.\n",
+                "type": "Json.Decode.Decoder OAuthMiddleware.ResponseToken.ResponseToken"
+            },
+            {
+                "name": "stateDecoder",
+                "comment": " Json decoder for a state\n",
+                "type": "Json.Decode.Decoder (Maybe.Maybe String.String)"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,131 @@
+[
+    {
+        "name": "Parse.Dont.Validate.Parser",
+        "comment": " This library provides a bunch of parser combinators\nand could be used for Web form validation.\n\nIt follows ideas described here:\n<https://lexi-lambda.github.io/blog/2019/11/05/parse-don-t-validateBy/>\n\n@docs Parser, all, andThen, by, contramap, fail, fromReader, map, mapError\n@docs merge, ok, run, succeed, validateBy, fromPredicate, zip, note\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Parser",
+                "comment": " Parser type\n\ninp Input type (what is parsed/validated)\nerr Error type (Could be your custom error type)\nout Output type (Could be your domain type)\n\n",
+                "args": [
+                    "inp",
+                    "err",
+                    "out"
+                ],
+                "type": "inp -> Result.Result (Cons.Cons err) out"
+            }
+        ],
+        "values": [
+            {
+                "name": "all",
+                "comment": " Given a non-empty list of uniform parsers returns a parser\nthat produces a non empty list of their results.\nIf any of the provided parsers fails - resulting parser also fails.\n",
+                "type": "Cons.Cons (Parse.Dont.Validate.Parser.Parser inp err a) -> inp -> Result.Result (Cons.Cons err) (Cons.Cons a)"
+            },
+            {
+                "name": "andThen",
+                "comment": " Parser composition: result produced by second parser is fed to the first\n",
+                "type": "Parse.Dont.Validate.Parser.Parser a err b -> Parse.Dont.Validate.Parser.Parser inp err a -> inp -> Result.Result (Cons.Cons err) b"
+            },
+            {
+                "name": "by",
+                "comment": " Useful for a \"pipeline\" style:\n\n    example : Parser { bar : String, baz : String } Error Foo\n    example =\n        succeed (\\a b -> Foo a b)\n            |> by .bar parseBar\n            |> by .baz parseBaz\n\n",
+                "type": "(inp1 -> inp0) -> Parse.Dont.Validate.Parser.Parser inp0 err out -> Parse.Dont.Validate.Parser.Parser inp1 err (out -> b) -> Parse.Dont.Validate.Parser.Parser inp1 err b"
+            },
+            {
+                "name": "contramap",
+                "comment": " Maps over Parser input\n",
+                "type": "(inp1 -> inp0) -> Parse.Dont.Validate.Parser.Parser inp0 err out -> Parse.Dont.Validate.Parser.Parser inp1 err out"
+            },
+            {
+                "name": "fail",
+                "comment": " Returns error\n",
+                "type": "err -> Result.Result (Cons.Cons err) out"
+            },
+            {
+                "name": "fromPredicate",
+                "comment": " Create Parser from predicate function that returns a wrapped input value.\nParser fails with provided error in case if predicate evaluates to False.\n",
+                "type": "(inp -> Basics.Bool) -> err -> (inp -> out) -> inp -> Result.Result (Cons.Cons err) out"
+            },
+            {
+                "name": "fromReader",
+                "comment": " Create Parser from function of type `inp -> Maybe out`\n",
+                "type": "(inp -> Maybe.Maybe out) -> err -> Parse.Dont.Validate.Parser.Parser inp err out"
+            },
+            {
+                "name": "map",
+                "comment": " Maps over parser result\n",
+                "type": "(out0 -> out1) -> Parse.Dont.Validate.Parser.Parser inp err out0 -> Parse.Dont.Validate.Parser.Parser inp err out1"
+            },
+            {
+                "name": "mapError",
+                "comment": " Maps over parser error\n",
+                "type": "(err0 -> err1) -> Parse.Dont.Validate.Parser.Parser inp err0 out -> Parse.Dont.Validate.Parser.Parser inp err1 out"
+            },
+            {
+                "name": "merge",
+                "comment": " When given a function that merges parsing results\nand two parsers producing such results - returns a parser\nthat produces a result of that function.\n",
+                "type": "(a -> b -> c) -> Parse.Dont.Validate.Parser.Parser inp err a -> Parse.Dont.Validate.Parser.Parser inp err b -> inp -> Result.Result (Cons.Cons err) c"
+            },
+            {
+                "name": "note",
+                "comment": " Given a parser without error decorates it with an error provided\n",
+                "type": "err -> Parse.Dont.Validate.Parser.Parser inp () out -> Parse.Dont.Validate.Parser.Parser inp err out"
+            },
+            {
+                "name": "ok",
+                "comment": " Returns successfully parsed value\n",
+                "type": "out -> Result.Result (Cons.Cons err) out"
+            },
+            {
+                "name": "run",
+                "comment": " Syntactic abstraction: applies parser to its input\n",
+                "type": "Parse.Dont.Validate.Parser.Parser input err out -> input -> Result.Result (Cons.Cons err) out"
+            },
+            {
+                "name": "succeed",
+                "comment": " Useful for a \"pipeline\" style:\n\n    example : Parser { bar : String, baz : String } Error Foo\n    example =\n        succeed (\\a b -> Foo a b)\n            |> by .bar parseBar\n            |> by .baz parseBaz\n            |> validateBy identity barBazParser\n\n",
+                "type": "out -> Parse.Dont.Validate.Parser.Parser input err out"
+            },
+            {
+                "name": "validateBy",
+                "comment": " Useful for a \"pipeline\" style when validator emits an error message but\nreurns () in order not to consume constructor argument:\n\n    example : Parser { bar: String, baz: String } Error Foo\n    example =\n        succeed (\\bar baz -> Foo bar baz)\n            |> by .bar parseBar\n            |> by .baz parseBaz\n            |> validateBy identity barBazParser\n\n    barBazParser : { bar: String, baz: String } Error Unit\n    barBazParser { bar, baz } =\n        if bar /= baz\n            then Parser.fail \"Bar != Baz\"\n            else Parser.ok ()\n\n",
+                "type": "(inp1 -> inp0) -> Parse.Dont.Validate.Parser.Parser inp0 err () -> Parse.Dont.Validate.Parser.Parser inp1 err b -> Parse.Dont.Validate.Parser.Parser inp1 err b"
+            },
+            {
+                "name": "zip",
+                "comment": " Given 2 parsers, feeds same input into both of them\nand returns results as tuple\n",
+                "type": "Parse.Dont.Validate.Parser.Parser inp err a -> Parse.Dont.Validate.Parser.Parser inp err b -> Parse.Dont.Validate.Parser.Parser inp err ( a, b )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Parse.Dont.Validate.String",
+        "comment": " Set of primitive string parsers\n\n@docs nonEmpty\n@docs uncons\n@docs int\n@docs float\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "float",
+                "comment": " Parse a string returning unit as an error or Float as a result.\n",
+                "type": "Parse.Dont.Validate.Parser.Parser String.String () Basics.Float"
+            },
+            {
+                "name": "int",
+                "comment": " Parse a string returning unit as an error or Int as a result.\n",
+                "type": "Parse.Dont.Validate.Parser.Parser String.String () Basics.Int"
+            },
+            {
+                "name": "nonEmpty",
+                "comment": " Parse a string returning unit as an error if input is empty\n",
+                "type": "Parse.Dont.Validate.Parser.Parser String.String () String.String"
+            },
+            {
+                "name": "uncons",
+                "comment": " Parse a string returning unit as an error if input is empty\nor tuple of first character and the rest of the string otherwise.\n",
+                "type": "Parse.Dont.Validate.Parser.Parser String.String () ( Char.Char, String.String )"
+            }
+        ],
+        "binops": []
+    }
+]

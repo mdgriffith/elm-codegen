@@ -1,0 +1,16 @@
+[
+    {
+        "name": "MD5",
+        "comment": " This library allows you to compute MD5 message digests of arbitrary messages\nin Elm. All input and output is given in lists of integers (`List Int`), where\neach `Int` is assumed to be a byte. The hard work of this package was\ndone by Mark Orr and TruQu, for a more practical MD5, please see [their\npackage](https://package.elm-lang.org/packages/truqu/elm-md5/latest/).\n\n\n# Digest Function\n\n@docs fromBytes\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fromBytes",
+                "comment": " Given a list of integers of arbitrary length, returns a list of integers representing\nthe hash as a series of individual bytes.\n\n    import String.UTF8\n\n    fromBytes (String.UTF8.toBytes \"hello world\")\n    --> [ 0x5e , 0xb6 , 0x3b , 0xbb\n    --> , 0xe0 , 0x1e , 0xee , 0xd0\n    --> , 0x93 , 0xcb , 0x22 , 0xbb\n    --> , 0x8f , 0x5a , 0xcd , 0xc3\n    --> ]\n\n",
+                "type": "List.List Basics.Int -> List.List Basics.Int"
+            }
+        ],
+        "binops": []
+    }
+]

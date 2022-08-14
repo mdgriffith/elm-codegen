@@ -1,0 +1,56 @@
+[
+    {
+        "name": "EventStream",
+        "comment": " Keep track of a stream of events and set triggers that send out outgoing events.\n\nCurrently in use by us to supply the Google Tag Managers Data Layer with safely encoded events.\n\n\n# The EventStream\n\n@docs EventStream, init\n\n\n# Events\n\n@docs addEvent, getEvents\n\n\n# triggers\n\n@docs addTrigger\n\n\n# Errors\n\n@docs Error, errorToString\n\n\n# Primitives\n\n@docs Matcher\n\n",
+        "unions": [
+            {
+                "name": "Error",
+                "comment": " A structured error describing why your mutation to the EventStream failed.\nYou can use this to give feedback to the developer who might be adding an unknown or misformed event.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "EventStream",
+                "comment": " The EventStream holds the possible eventNames and matchers, triggers for outgoing events and ofcourse every past events\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Matcher",
+                "comment": " The Matcher is currently an alias for the Core String type.\nThe Matcher allows for more advanced, event specific triggers to be set.\nYou might have an event A that contains a field `name` on which you want to place a specific trigger.\nThis could then look like `A.someValue`.\n\nPlease refer to the tests included for more examples\n\n",
+                "args": [],
+                "type": "String.String"
+            }
+        ],
+        "values": [
+            {
+                "name": "addEvent",
+                "comment": " Attempt to add a new event to the EventStream\n\nThe minimal expected structure of an event needs to look like;\n\n```json\n{ \"eventName\": \"YourEventName\",\n  \"eventData\": \"Data for which you supply a decoder that confirms it's validity and match\"\n}\n```\n\n",
+                "type": "EventStream.RawIncomingEvent -> EventStream.EventStream -> Result.Result EventStream.Error ( EventStream.EventStream, List.List EventStream.RawOutgoingEvent )"
+            },
+            {
+                "name": "addTrigger",
+                "comment": " Add a trigger to the EventStream\n",
+                "type": "EventStream.Matcher -> EventStream.OutgoingEventDecoder -> EventStream.EventStream -> EventStream.EventStream"
+            },
+            {
+                "name": "errorToString",
+                "comment": " Convert an EventStream error into a String that is nice for debugging.\n",
+                "type": "EventStream.Error -> String.String"
+            },
+            {
+                "name": "getEvents",
+                "comment": " Get RawIncomingEvents that match query from the eventStream\n",
+                "type": "EventStream.Matcher -> EventStream.EventStream -> List.List EventStream.RawIncomingEvent"
+            },
+            {
+                "name": "init",
+                "comment": " Create an EventStream\n",
+                "type": "List.List ( String.String, EventStream.IncomingEventMatcher ) -> List.List ( EventStream.Matcher, EventStream.OutgoingEventDecoder ) -> EventStream.EventStream"
+            }
+        ],
+        "binops": []
+    }
+]

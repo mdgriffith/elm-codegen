@@ -1,0 +1,41 @@
+[
+    {
+        "name": "Id",
+        "comment": " An `Id` type that leverages the type system (thanks to [phantom types](https://wiki.haskell.org/Phantom_type))\nto ensure that it refers to the right resource.\n\nFor example, if your application handles users with integer-based IDs, and articles with string-based IDs,\nyou could define them as such:\n\n    type User\n        = User\n            { id : UserID\n            , name : String\n            }\n\n    type Article\n        = Article\n            { id : ArticleID\n            , title : String\n            }\n\n    type alias UserID =\n        Id String User\n\n    type alias ArticleID =\n        Id Int Article\n\n\n# The Id type\n\n@docs Id\n\n\n# Conversions\n\n@docs from, to\n\n\n# Serialization\n\n@docs encode, decoder\n\n",
+        "unions": [
+            {
+                "name": "Id",
+                "comment": " The `Id a resource` type handles IDs whose representation are of type `a`\nthat refers to resources of type `resource`.\n",
+                "args": [
+                    "a",
+                    "resource"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decoder",
+                "comment": " Decode an `Id`.\n\n    userIDDecoder : Decoder (Id String User)\n    userIDDecoder =\n        Id.decoder Json.Decode.string\n\n    articleIDDecoder : Decoder (Id Int Article)\n    articleIDDecoder =\n        Id.decoder Json.Decode.int\n\n",
+                "type": "Json.Decode.Decoder a -> Json.Decode.Decoder (Id.Id a resource)"
+            },
+            {
+                "name": "encode",
+                "comment": " Encode an `Id`.\n\n    encodeUserID : Id String User -> Value\n    encodeUserID =\n        Id.encode Json.Encode.string\n\n    encodeArticleID : Id Int Article -> Value\n    encodeArticleID =\n        Id.encode Json.Encode.int\n\n",
+                "type": "(a -> Json.Encode.Value) -> Id.Id a resource -> Json.Encode.Value"
+            },
+            {
+                "name": "from",
+                "comment": " Make an `Id` from its representation.\n\n    userID : Id String User\n    userID =\n        Id.from \"e4edf8a\"\n\n    articleID : Id Int Article\n    articleID =\n        Id.from 5\n\n",
+                "type": "a -> Id.Id a resource"
+            },
+            {
+                "name": "to",
+                "comment": " Extract the raw representation from an `Id`.\n\n    Id.to userID == \"e4edf8a\"\n\n    Id.to articleID == 5\n\n",
+                "type": "Id.Id a resource -> a"
+            }
+        ],
+        "binops": []
+    }
+]

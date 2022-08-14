@@ -1,0 +1,91 @@
+[
+    {
+        "name": "Css.Primer.Tooltips.Selectors",
+        "comment": " This elm module provides strongly typed selectors for the elm port of\nGitHub's primer-css framework\n\n@docs class, classList\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "class",
+                "comment": " Helper lets you keep type checking of selectors all the way to call site.\n",
+                "type": "Css.Primer.Tooltips.Selectors.Classes.CssClasses -> Html.Attribute msg"
+            },
+            {
+                "name": "classList",
+                "comment": " Helper lets you keep type checking of selectors all the way to call site.\n",
+                "type": "List.List ( Css.Primer.Tooltips.Selectors.Classes.CssClasses, Basics.Bool ) -> Html.Attribute msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Css.Primer.Tooltips.Selectors.Classes",
+        "comment": " @docs CssClasses, toString\n",
+        "unions": [
+            {
+                "name": "CssClasses",
+                "comment": " The 12 CSS classes exposed by the SASS implementation.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "ToolTipped",
+                        []
+                    ],
+                    [
+                        "ToolTippedMultiline",
+                        []
+                    ],
+                    [
+                        "ToolTippedNoDelay",
+                        []
+                    ],
+                    [
+                        "ToolTippedSticky",
+                        []
+                    ],
+                    [
+                        "ToolTippedN",
+                        []
+                    ],
+                    [
+                        "ToolTippedS",
+                        []
+                    ],
+                    [
+                        "ToolTippedE",
+                        []
+                    ],
+                    [
+                        "ToolTippedW",
+                        []
+                    ],
+                    [
+                        "ToolTippedNE",
+                        []
+                    ],
+                    [
+                        "ToolTippedNW",
+                        []
+                    ],
+                    [
+                        "ToolTippedSE",
+                        []
+                    ],
+                    [
+                        "ToolTippedSW",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toString",
+                "comment": " Default implementation of toString. ",
+                "type": "Css.Primer.Tooltips.Selectors.Classes.CssClasses -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,213 @@
+[
+    {
+        "name": "Svg.PathD",
+        "comment": " PathD - Minimal, complete SVG Path constructor of the <svg> data (`d`) attribute.\n\nThis library helps you specify SVG paths with a clean Elm interface. For the\ncomplete instruction on what each segment does, consult the MDN docs on SVG:\n<https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorial/Paths>\n\nExample of drawing a custom shape:\n\n    import Svg\n    import Svg.PathD exposing (Segment(..), pathD, m, l)\n\n    ...\n\n    Svg.path\n        [ d <| pathD\n            [ M (-0.5, 0.5)\n            , Q (0.5, 0.5) (0.5, -0.5)\n            , L (-0.5, -0.5)\n            , m (0.1, 0.1)\n            , l (0.2, 0.1)\n            , l (0.2, 0.25)\n            , Z\n            ]\n        ]\n        []\n\nUppercase commands work in absolute coordinates, and lowercase commands work in relative\ncoordinates. For how relative paths work, see <https://oreillymedia.github.io/Using_SVG/guide/path-data.html>\n\n\n# Specifying a SVG Path\n\n@docs pathD, Segment\n\n\n# Helper methods\n\n@docs a, c, h, l, m, q, s, t, v, z\n\n\n# Data Type\n\n@docs Point\n\n",
+        "unions": [
+            {
+                "name": "Segment",
+                "comment": " Complete implementation of the SVG path `d` attribute.\n\nFor relative commands in corresponding lowercase, such as `m` or `l`, they are\nexposed from the top-level module.\n\nConstrutors ending with `-d` are implementation details, and will be removed\nin a future iteration. Use the corresponding lowercase function instead.\n\nQualifying imports may be used to resolve namespace clashing, like\n\n    import Svg.PathD as PathD exposing (Segment(..), m, l)\n\nThe commands will then be accessible as `PathD.M`, `PathD.Q`, `PathD.m` etc.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "M",
+                        [
+                            "Svg.PathD.Point"
+                        ]
+                    ],
+                    [
+                        "L",
+                        [
+                            "Svg.PathD.Point"
+                        ]
+                    ],
+                    [
+                        "H",
+                        [
+                            "Basics.Float"
+                        ]
+                    ],
+                    [
+                        "V",
+                        [
+                            "Basics.Float"
+                        ]
+                    ],
+                    [
+                        "Z",
+                        []
+                    ],
+                    [
+                        "C",
+                        [
+                            "Svg.PathD.Point",
+                            "Svg.PathD.Point",
+                            "Svg.PathD.Point"
+                        ]
+                    ],
+                    [
+                        "S",
+                        [
+                            "Svg.PathD.Point",
+                            "Svg.PathD.Point"
+                        ]
+                    ],
+                    [
+                        "Q",
+                        [
+                            "Svg.PathD.Point",
+                            "Svg.PathD.Point"
+                        ]
+                    ],
+                    [
+                        "T",
+                        [
+                            "Svg.PathD.Point"
+                        ]
+                    ],
+                    [
+                        "A",
+                        [
+                            "Svg.PathD.Point",
+                            "Basics.Float",
+                            "Basics.Bool",
+                            "Basics.Bool",
+                            "Svg.PathD.Point"
+                        ]
+                    ],
+                    [
+                        "Md",
+                        [
+                            "Svg.PathD.Point"
+                        ]
+                    ],
+                    [
+                        "Ld",
+                        [
+                            "Svg.PathD.Point"
+                        ]
+                    ],
+                    [
+                        "Hd",
+                        [
+                            "Basics.Float"
+                        ]
+                    ],
+                    [
+                        "Vd",
+                        [
+                            "Basics.Float"
+                        ]
+                    ],
+                    [
+                        "Zd",
+                        []
+                    ],
+                    [
+                        "Cd",
+                        [
+                            "Svg.PathD.Point",
+                            "Svg.PathD.Point",
+                            "Svg.PathD.Point"
+                        ]
+                    ],
+                    [
+                        "Sd",
+                        [
+                            "Svg.PathD.Point",
+                            "Svg.PathD.Point"
+                        ]
+                    ],
+                    [
+                        "Qd",
+                        [
+                            "Svg.PathD.Point",
+                            "Svg.PathD.Point"
+                        ]
+                    ],
+                    [
+                        "Td",
+                        [
+                            "Svg.PathD.Point"
+                        ]
+                    ],
+                    [
+                        "Ad",
+                        [
+                            "Svg.PathD.Point",
+                            "Basics.Float",
+                            "Basics.Bool",
+                            "Basics.Bool",
+                            "Svg.PathD.Point"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Point",
+                "comment": " Type shorthand for 2 floats that make up a coordinate.\n",
+                "args": [],
+                "type": "( Basics.Float, Basics.Float )"
+            }
+        ],
+        "values": [
+            {
+                "name": "a",
+                "comment": " Declare a relative arc SVG path command\n",
+                "type": "Svg.PathD.Point -> Basics.Float -> Basics.Bool -> Basics.Bool -> Svg.PathD.Point -> Svg.PathD.Segment"
+            },
+            {
+                "name": "c",
+                "comment": " Declare a relative cubic curve-to SVG path command\n",
+                "type": "Svg.PathD.Point -> Svg.PathD.Point -> Svg.PathD.Point -> Svg.PathD.Segment"
+            },
+            {
+                "name": "h",
+                "comment": " Declare a relative horizontal line SVG path command\n",
+                "type": "Basics.Float -> Svg.PathD.Segment"
+            },
+            {
+                "name": "l",
+                "comment": " Declare a relative line-to SVG path command\n",
+                "type": "Svg.PathD.Point -> Svg.PathD.Segment"
+            },
+            {
+                "name": "m",
+                "comment": " Declare a relative move-to SVG path command\n",
+                "type": "Svg.PathD.Point -> Svg.PathD.Segment"
+            },
+            {
+                "name": "pathD",
+                "comment": " This function takes a list of Segments and produces a SVG d attribute with exact specifications.\n",
+                "type": "List.List Svg.PathD.Segment -> String.String"
+            },
+            {
+                "name": "q",
+                "comment": " Declare a relative quadratic curve-to SVG path command\n",
+                "type": "Svg.PathD.Point -> Svg.PathD.Point -> Svg.PathD.Segment"
+            },
+            {
+                "name": "s",
+                "comment": " Declare a relative smooth cubic curve-to SVG path command\n",
+                "type": "Svg.PathD.Point -> Svg.PathD.Point -> Svg.PathD.Segment"
+            },
+            {
+                "name": "t",
+                "comment": " Declare a relative smooth quadratic curve-to SVG path command\n",
+                "type": "Svg.PathD.Point -> Svg.PathD.Segment"
+            },
+            {
+                "name": "v",
+                "comment": " Declare a relative vertical line SVG path command\n",
+                "type": "Basics.Float -> Svg.PathD.Segment"
+            },
+            {
+                "name": "z",
+                "comment": " Declare a relative close-path SVG path command\n",
+                "type": "Svg.PathD.Segment"
+            }
+        ],
+        "binops": []
+    }
+]

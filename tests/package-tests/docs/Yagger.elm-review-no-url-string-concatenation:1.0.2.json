@@ -1,0 +1,16 @@
+[
+    {
+        "name": "NoUrlStringConcatenation",
+        "comment": "\n\n@docs rule\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": " Reports expressions concatenating strings with forward slash\n\n    config =\n        [ NoUrlStringConcatenation.rule\n        ]\n\n\n## Fail\n\n    a =\n        baseUrl ++ \"/items/\" ++ itemId\n\n\n## Success\n\n    a =\n        Url.Builder.crossOrigin baseUrl [ \"items\", \"itemId\" ]\n\n\n## When (not) to enable this rule\n\nThis rule is useful when there are many expressions that build URL using string concatenation.\nThis rule is not useful when there are plenty of expressions concatenating non-url strings that contain forward slash.\n\n\n## Try it out\n\nYou can try this rule out by running the following command:\n\n```bash\nelm-review --template Yagger/elm-review-no-url-string-concatenation/example --rules NoUrlStringConcatenation\n```\n\n",
+                "type": "Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    }
+]

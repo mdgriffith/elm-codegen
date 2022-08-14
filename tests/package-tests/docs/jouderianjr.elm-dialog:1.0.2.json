@@ -1,0 +1,35 @@
+[
+    {
+        "name": "Dialog",
+        "comment": " Elm Modal Dialogs.\n\n@docs Config, view, map, mapMaybe\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " The configuration for the dialog you display. The `header`, `body`\nand `footer` are all `Maybe (Html msg)` blocks. Those `(Html msg)` blocks can\nbe as simple or as complex as any other view function.\n\nUse only the ones you want and set the others to `Nothing`.\n\nThe `closeMessage` is an optional `Signal.Message` we will send when the user\nclicks the 'X' in the top right. If you don't want that X displayed, use `Nothing`.\n\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ closeMessage : Maybe.Maybe msg, containerClass : Maybe.Maybe String.String, header : Maybe.Maybe (Html.Html msg), body : Maybe.Maybe (Html.Html msg), footer : List.List (Html.Html msg) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "map",
+                "comment": " This function is useful when nesting components with the Elm\nArchitecture. It lets you transform the messages produced by a\nsubtree.\n",
+                "type": "(a -> b) -> Dialog.Config a -> Dialog.Config b"
+            },
+            {
+                "name": "mapMaybe",
+                "comment": " For convenience, a varient of `map` which assumes you're dealing with a `Maybe (Config a)`, which is often the case.\n",
+                "type": "(a -> b) -> Maybe.Maybe (Dialog.Config a) -> Maybe.Maybe (Dialog.Config b)"
+            },
+            {
+                "name": "view",
+                "comment": " Renders a modal dialog whenever you supply a `Config msg`.\n\nTo use this, include this view in your _top-level_ view function,\nright at the top of the DOM tree, like so:\n\n    type Message\n      = ...\n      | ...\n      | AcknowledgeDialog\n\n\n    view : -> Model -> Html Message\n    view model =\n      div\n        []\n        [ ...\n        , ...your regular view code....\n        , ...\n        , Dialog.view\n            (if model.shouldShowDialog then\n              Just { closeMessage = Just AcknowledgeDialog\n                   , containerClass = Just \"your-container-class\"\n                   , header = Just (text \"Alert!\")\n                   , body = Just (p [] [text \"Let me tell you something important...\"])\n                   , footer = []\n                   }\n             else\n              Nothing\n            )\n        ]\n\nIt's then up to you to replace `model.shouldShowDialog` with whatever\nlogic should cause the dialog to be displayed, and to handle an\n`AcknowledgeDialog` message with whatever logic should occur when the user\ncloses the dialog.\n\nSee the `examples/` directory for examples of how this works for apps\nlarge and small.\n\n",
+                "type": "Maybe.Maybe (Dialog.Config msg) -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

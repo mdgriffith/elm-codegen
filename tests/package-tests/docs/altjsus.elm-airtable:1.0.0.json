@@ -1,0 +1,54 @@
+[
+    {
+        "name": "Airtable",
+        "comment": " Package for Airtable integration. Just Http wrapper around calls. Watch https://airtable.com/api\n\n  # Database type\n  @docs DB\n  \n  # API wrappers\n  @docs getRecord, getRecords, createRecord, changeRecord, deleteRecord\n\n  # Deletion reponse type and wrapper\n  @docs DeletionResponse, decodeDeletionResponce\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "DB",
+                "comment": " Airtable database representation \n",
+                "args": [],
+                "type": "{ apiKey : String.String, database : String.String, table : String.String }"
+            },
+            {
+                "name": "DeletionResponse",
+                "comment": " Responce from deletion request handler\n    \n    Example response:\n    {\n      \"id\": \"recuK4bC2bEf6d3xQ\",\n      \"deleted\": true\n    }\n",
+                "args": [],
+                "type": "{ id : String.String, deleted : Basics.Bool }"
+            }
+        ],
+        "values": [
+            {
+                "name": "changeRecord",
+                "comment": " Changes record.\n   Uses \"PATCH\" for changing the record only by changing certain fields (fields that are not included won't be updated). From https://airtable.com/api\n",
+                "type": "Airtable.DB -> Json.Decode.Value -> Http.Expect msg -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "createRecord",
+                "comment": " Creates a new record\n",
+                "type": "Airtable.DB -> Json.Decode.Value -> Http.Expect msg -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "decodeDeletionResponce",
+                "comment": " Deletion responce Json decoder\n",
+                "type": "Json.Decode.Decoder Airtable.DeletionResponse"
+            },
+            {
+                "name": "deleteRecord",
+                "comment": " Deletes record and expects DeletionResponse or and error. Example deletion response:\n    {\n      \"id\": \"recuK4bC2bEf6d3xQ\",\n      \"deleted\": true\n    }\n",
+                "type": "Airtable.DB -> String.String -> (Result.Result Http.Error Airtable.DeletionResponse -> msg) -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "getRecord",
+                "comment": " Get record by ID\n",
+                "type": "Airtable.DB -> String.String -> Http.Expect msg -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "getRecords",
+                "comment": " Get records with db, view, maxRecords, pageSize, offset, expect provided. maxRecords = max (pageSize) = 100 (from https://airtable.com/api)\n",
+                "type": "Airtable.DB -> String.String -> Basics.Int -> Basics.Int -> Basics.Int -> Http.Expect msg -> Platform.Cmd.Cmd msg"
+            }
+        ],
+        "binops": []
+    }
+]

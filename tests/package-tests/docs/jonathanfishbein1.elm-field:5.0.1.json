@@ -1,0 +1,25 @@
+[
+    {
+        "name": "Field",
+        "comment": " A module for Fields\n\n\n# Types\n\n@docs Field\n\n@docs realField\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Field",
+                "comment": " Field type\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ zero : a, one : a, add : a -> a -> a, subtract : a -> a -> a, multiply : a -> a -> a, divide : a -> a -> a, power : Basics.Float -> a -> a, negate : a -> a }"
+            }
+        ],
+        "values": [
+            {
+                "name": "realField",
+                "comment": " Field for Real numbers\n",
+                "type": "Field.Field Basics.Float"
+            }
+        ],
+        "binops": []
+    }
+]

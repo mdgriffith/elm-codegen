@@ -1,0 +1,16 @@
+[
+    {
+        "name": "NoUnmatchedUnit",
+        "comment": "\n\n@docs rule\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": " Reports when a Unit (`()`) is not matched in a pattern.\n\n    config =\n        [ NoUnmatchedUnit.rule\n        ]\n\n\n## Fail\n\n    foo : () -> Int\n    foo _ =\n        3\n\n\n## Success\n\n    foo : () -> Int\n    foo () =\n        3\n\n\n## When (not) to enable this rule\n\n  - Nobody on your team thinks explicitly matching against the Unit makes the code\n    more readable (as far as showing that there wasn't a \"real\" value being ignored).\n  - When you feel that Unit is often used as a placeholder for a value that will\n    soon be filled in later.\n\n\n## Try it out\n\nYou can try this rule out by running the following command:\n\n```bash\nelm-review --template mthadley/elm-review-unit/example --rules NoUnmatchedUnit\n```\n\n",
+                "type": "Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    }
+]

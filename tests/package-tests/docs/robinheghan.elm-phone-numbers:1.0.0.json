@@ -1,0 +1,1356 @@
+[
+    {
+        "name": "PhoneNumber",
+        "comment": " Functions for validating phone numbers\n\n\n# Metadata\n\nYou don't need to define any of these records yourself, please see the `PhoneNumber.Countries` module.\n\n@docs Country, NumberType, NumberTypeData\n\n\n# Validation\n\n@docs ValidationConfig, anyType, valid\n\n\n# Query\n\n@docs matches\n\n",
+        "unions": [
+            {
+                "name": "NumberType",
+                "comment": " What kind of a number are we talking about? Fixed line? Mobile number? Pager number? etc.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "FixedLine",
+                        []
+                    ],
+                    [
+                        "Mobile",
+                        []
+                    ],
+                    [
+                        "TollFree",
+                        []
+                    ],
+                    [
+                        "PremiumRate",
+                        []
+                    ],
+                    [
+                        "SharedCost",
+                        []
+                    ],
+                    [
+                        "PersonalNumber",
+                        []
+                    ],
+                    [
+                        "Voip",
+                        []
+                    ],
+                    [
+                        "Pager",
+                        []
+                    ],
+                    [
+                        "Uan",
+                        []
+                    ],
+                    [
+                        "Emergency",
+                        []
+                    ],
+                    [
+                        "Voicemail",
+                        []
+                    ],
+                    [
+                        "ShortCode",
+                        []
+                    ],
+                    [
+                        "StandardRate",
+                        []
+                    ],
+                    [
+                        "CarrierSpecific",
+                        []
+                    ],
+                    [
+                        "SmsServices",
+                        []
+                    ],
+                    [
+                        "NoInternationalDialling",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Country",
+                "comment": " Contains phone related metadata for a country\n",
+                "args": [],
+                "type": "{ id : String.String, countryCode : String.String, internationalPrefix : Maybe.Maybe String.String, nationalPrefix : Maybe.Maybe String.String, generalNumberPattern : Regex.Regex, numberTypes : List.List PhoneNumber.NumberTypeData }"
+            },
+            {
+                "name": "NumberTypeData",
+                "comment": " Describes a NumberType with an example number, as well as a regex to validate if a given number is of\nthe set numberType\n",
+                "args": [],
+                "type": "{ numberType : PhoneNumber.NumberType, exampleNumber : String.String, pattern : Regex.Regex }"
+            },
+            {
+                "name": "ValidationConfig",
+                "comment": " Pass this record to `valid` or `matches` to define how validation should occur.\n\nValidation will occur against the default country as well as the list of other countries,\nand validation will only occur against the list of number types. Providing a empty list of\nnumber types might still succeed, as every country has a general number pattern that will be checked.\n\nAny number that doesn't have an international prefix will be treated as if it belongs to the\ndefault country.\n\n",
+                "args": [],
+                "type": "{ defaultCountry : PhoneNumber.Country, otherCountries : List.List PhoneNumber.Country, types : List.List PhoneNumber.NumberType }"
+            }
+        ],
+        "values": [
+            {
+                "name": "anyType",
+                "comment": " A list of all number types. Use this if you don't care what kind of number something is,\nbut want to know if the number can belong to a certain country.\n",
+                "type": "List.List PhoneNumber.NumberType"
+            },
+            {
+                "name": "matches",
+                "comment": " Returns a list of tuples where the first element is a country that the number can belong to,\nand the second list contains the different types the number can be. It's possible the the second\nelement is an empty list, as every country has a general number pattern that will be checked if the\nnumber type cannot be determined.\n",
+                "type": "PhoneNumber.ValidationConfig -> String.String -> List.List ( PhoneNumber.Country, List.List PhoneNumber.NumberType )"
+            },
+            {
+                "name": "valid",
+                "comment": " A simple test to see if the provided number matches anything provided by the validation config.\n",
+                "type": "PhoneNumber.ValidationConfig -> String.String -> Basics.Bool"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "PhoneNumber.Countries",
+        "comment": " Metadata for most (all?) countries in the world.\n\n@docs all, countryAC, countryAD, countryAE, countryAF, countryAG, countryAI, countryAL, countryAM, countryAO, countryAR, countryAS, countryAT, countryAU, countryAW, countryAX, countryAZ, countryBA, countryBB, countryBD, countryBE, countryBF, countryBG, countryBH, countryBI, countryBJ, countryBL, countryBM, countryBN, countryBO, countryBQ, countryBR, countryBS, countryBT, countryBW, countryBY, countryBZ, countryCA, countryCC, countryCD, countryCF, countryCG, countryCH, countryCI, countryCK, countryCL, countryCM, countryCN, countryCO, countryCR, countryCU, countryCV, countryCW, countryCX, countryCY, countryCZ, countryDE, countryDJ, countryDK, countryDM, countryDO, countryDZ, countryEC, countryEE, countryEG, countryEH, countryER, countryES, countryET, countryFI, countryFJ, countryFK, countryFM, countryFO, countryFR, countryGA, countryGB, countryGD, countryGE, countryGF, countryGG, countryGH, countryGI, countryGL, countryGM, countryGN, countryGP, countryGQ, countryGR, countryGT, countryGU, countryGW, countryGY, countryHK, countryHN, countryHR, countryHT, countryHU, countryID, countryIE, countryIL, countryIM, countryIN, countryIO, countryIQ, countryIR, countryIS, countryIT, countryJE, countryJM, countryJO, countryJP, countryKE, countryKG, countryKH, countryKI, countryKM, countryKN, countryKP, countryKR, countryKW, countryKY, countryKZ, countryLA, countryLB, countryLC, countryLI, countryLK, countryLR, countryLS, countryLT, countryLU, countryLV, countryLY, countryMA, countryMC, countryMD, countryME, countryMF, countryMG, countryMH, countryMK, countryML, countryMM, countryMN, countryMO, countryMP, countryMQ, countryMR, countryMS, countryMT, countryMU, countryMV, countryMW, countryMX, countryMY, countryMZ, countryNA, countryNC, countryNE, countryNF, countryNG, countryNI, countryNL, countryNO, countryNP, countryNR, countryNU, countryNZ, countryOM, countryPA, countryPE, countryPF, countryPG, countryPH, countryPK, countryPL, countryPM, countryPR, countryPS, countryPT, countryPW, countryPY, countryQA, countryRE, countryRO, countryRS, countryRU, countryRW, countrySA, countrySB, countrySC, countrySD, countrySE, countrySG, countrySH, countrySI, countrySJ, countrySK, countrySL, countrySM, countrySN, countrySO, countrySR, countrySS, countryST, countrySV, countrySX, countrySY, countrySZ, countryTA, countryTC, countryTD, countryTG, countryTH, countryTJ, countryTK, countryTL, countryTM, countryTN, countryTO, countryTR, countryTT, countryTV, countryTW, countryTZ, countryUA, countryUG, countryUS, countryUY, countryUZ, countryVA, countryVC, countryVE, countryVG, countryVI, countryVN, countryVU, countryWF, countryWS, countryXK, countryYE, countryYT, countryZA, countryZM, countryZW\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "all",
+                "comment": " A list containing the metadata of all countries. You can use this as an easy way to create\na validation config. Keep in mind, though, that by using this list all metadata will be included in\nyour compiled asset file. A phone number can also, in the worst case, need to be compared against every\ncountry when validating. For best results, create a list containing only the countries you're interested\nin validating against.\n",
+                "type": "List.List PhoneNumber.Country"
+            },
+            {
+                "name": "countryAC",
+                "comment": " Metadata for country with id 'AC'\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryAD",
+                "comment": " Metadata for Andorra\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryAE",
+                "comment": " Metadata for United Arab Emirates\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryAF",
+                "comment": " Metadata for Afghanistan\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryAG",
+                "comment": " Metadata for Antigua and Barbuda\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryAI",
+                "comment": " Metadata for Anguilla\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryAL",
+                "comment": " Metadata for Albania\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryAM",
+                "comment": " Metadata for Armenia\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryAO",
+                "comment": " Metadata for Angola\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryAR",
+                "comment": " Metadata for Argentina\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryAS",
+                "comment": " Metadata for American Samoa\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryAT",
+                "comment": " Metadata for Austria\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryAU",
+                "comment": " Metadata for Australia\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryAW",
+                "comment": " Metadata for Aruba\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryAX",
+                "comment": " Metadata for Åland Islands\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryAZ",
+                "comment": " Metadata for Azerbaijan\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryBA",
+                "comment": " Metadata for Bosnia and Herzegovina\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryBB",
+                "comment": " Metadata for Barbados\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryBD",
+                "comment": " Metadata for Bangladesh\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryBE",
+                "comment": " Metadata for Belgium\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryBF",
+                "comment": " Metadata for Burkina Faso\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryBG",
+                "comment": " Metadata for Bulgaria\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryBH",
+                "comment": " Metadata for Bahrain\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryBI",
+                "comment": " Metadata for Burundi\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryBJ",
+                "comment": " Metadata for Benin\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryBL",
+                "comment": " Metadata for Saint Barthélemy\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryBM",
+                "comment": " Metadata for Bermuda\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryBN",
+                "comment": " Metadata for Brunei\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryBO",
+                "comment": " Metadata for Bolivia\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryBQ",
+                "comment": " Metadata for Caribbean Netherlands\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryBR",
+                "comment": " Metadata for Brazil\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryBS",
+                "comment": " Metadata for Bahamas\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryBT",
+                "comment": " Metadata for Bhutan\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryBW",
+                "comment": " Metadata for Botswana\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryBY",
+                "comment": " Metadata for Belarus\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryBZ",
+                "comment": " Metadata for Belize\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryCA",
+                "comment": " Metadata for Canada\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryCC",
+                "comment": " Metadata for Cocos (Keeling) Islands\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryCD",
+                "comment": " Metadata for DR Congo\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryCF",
+                "comment": " Metadata for Central African Republic\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryCG",
+                "comment": " Metadata for Republic of the Congo\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryCH",
+                "comment": " Metadata for Switzerland\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryCI",
+                "comment": " Metadata for Ivory Coast\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryCK",
+                "comment": " Metadata for Cook Islands\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryCL",
+                "comment": " Metadata for Chile\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryCM",
+                "comment": " Metadata for Cameroon\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryCN",
+                "comment": " Metadata for China\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryCO",
+                "comment": " Metadata for Colombia\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryCR",
+                "comment": " Metadata for Costa Rica\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryCU",
+                "comment": " Metadata for Cuba\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryCV",
+                "comment": " Metadata for Cape Verde\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryCW",
+                "comment": " Metadata for Curaçao\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryCX",
+                "comment": " Metadata for Christmas Island\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryCY",
+                "comment": " Metadata for Cyprus\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryCZ",
+                "comment": " Metadata for Czechia\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryDE",
+                "comment": " Metadata for Germany\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryDJ",
+                "comment": " Metadata for Djibouti\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryDK",
+                "comment": " Metadata for Denmark\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryDM",
+                "comment": " Metadata for Dominica\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryDO",
+                "comment": " Metadata for Dominican Republic\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryDZ",
+                "comment": " Metadata for Algeria\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryEC",
+                "comment": " Metadata for Ecuador\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryEE",
+                "comment": " Metadata for Estonia\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryEG",
+                "comment": " Metadata for Egypt\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryEH",
+                "comment": " Metadata for Western Sahara\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryER",
+                "comment": " Metadata for Eritrea\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryES",
+                "comment": " Metadata for Spain\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryET",
+                "comment": " Metadata for Ethiopia\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryFI",
+                "comment": " Metadata for Finland\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryFJ",
+                "comment": " Metadata for Fiji\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryFK",
+                "comment": " Metadata for Falkland Islands\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryFM",
+                "comment": " Metadata for Micronesia\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryFO",
+                "comment": " Metadata for Faroe Islands\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryFR",
+                "comment": " Metadata for France\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryGA",
+                "comment": " Metadata for Gabon\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryGB",
+                "comment": " Metadata for United Kingdom\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryGD",
+                "comment": " Metadata for Grenada\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryGE",
+                "comment": " Metadata for Georgia\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryGF",
+                "comment": " Metadata for French Guiana\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryGG",
+                "comment": " Metadata for Guernsey\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryGH",
+                "comment": " Metadata for Ghana\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryGI",
+                "comment": " Metadata for Gibraltar\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryGL",
+                "comment": " Metadata for Greenland\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryGM",
+                "comment": " Metadata for Gambia\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryGN",
+                "comment": " Metadata for Guinea\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryGP",
+                "comment": " Metadata for Guadeloupe\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryGQ",
+                "comment": " Metadata for Equatorial Guinea\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryGR",
+                "comment": " Metadata for Greece\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryGT",
+                "comment": " Metadata for Guatemala\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryGU",
+                "comment": " Metadata for Guam\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryGW",
+                "comment": " Metadata for Guinea-Bissau\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryGY",
+                "comment": " Metadata for Guyana\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryHK",
+                "comment": " Metadata for Hong Kong\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryHN",
+                "comment": " Metadata for Honduras\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryHR",
+                "comment": " Metadata for Croatia\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryHT",
+                "comment": " Metadata for Haiti\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryHU",
+                "comment": " Metadata for Hungary\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryID",
+                "comment": " Metadata for Indonesia\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryIE",
+                "comment": " Metadata for Ireland\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryIL",
+                "comment": " Metadata for Israel\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryIM",
+                "comment": " Metadata for Isle of Man\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryIN",
+                "comment": " Metadata for India\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryIO",
+                "comment": " Metadata for British Indian Ocean Territory\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryIQ",
+                "comment": " Metadata for Iraq\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryIR",
+                "comment": " Metadata for Iran\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryIS",
+                "comment": " Metadata for Iceland\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryIT",
+                "comment": " Metadata for Italy\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryJE",
+                "comment": " Metadata for Jersey\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryJM",
+                "comment": " Metadata for Jamaica\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryJO",
+                "comment": " Metadata for Jordan\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryJP",
+                "comment": " Metadata for Japan\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryKE",
+                "comment": " Metadata for Kenya\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryKG",
+                "comment": " Metadata for Kyrgyzstan\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryKH",
+                "comment": " Metadata for Cambodia\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryKI",
+                "comment": " Metadata for Kiribati\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryKM",
+                "comment": " Metadata for Comoros\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryKN",
+                "comment": " Metadata for Saint Kitts and Nevis\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryKP",
+                "comment": " Metadata for North Korea\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryKR",
+                "comment": " Metadata for South Korea\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryKW",
+                "comment": " Metadata for Kuwait\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryKY",
+                "comment": " Metadata for Cayman Islands\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryKZ",
+                "comment": " Metadata for Kazakhstan\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryLA",
+                "comment": " Metadata for Laos\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryLB",
+                "comment": " Metadata for Lebanon\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryLC",
+                "comment": " Metadata for Saint Lucia\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryLI",
+                "comment": " Metadata for Liechtenstein\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryLK",
+                "comment": " Metadata for Sri Lanka\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryLR",
+                "comment": " Metadata for Liberia\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryLS",
+                "comment": " Metadata for Lesotho\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryLT",
+                "comment": " Metadata for Lithuania\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryLU",
+                "comment": " Metadata for Luxembourg\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryLV",
+                "comment": " Metadata for Latvia\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryLY",
+                "comment": " Metadata for Libya\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryMA",
+                "comment": " Metadata for Morocco\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryMC",
+                "comment": " Metadata for Monaco\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryMD",
+                "comment": " Metadata for Moldova\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryME",
+                "comment": " Metadata for Montenegro\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryMF",
+                "comment": " Metadata for Saint Martin\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryMG",
+                "comment": " Metadata for Madagascar\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryMH",
+                "comment": " Metadata for Marshall Islands\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryMK",
+                "comment": " Metadata for Macedonia\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryML",
+                "comment": " Metadata for Mali\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryMM",
+                "comment": " Metadata for Myanmar\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryMN",
+                "comment": " Metadata for Mongolia\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryMO",
+                "comment": " Metadata for Macau\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryMP",
+                "comment": " Metadata for Northern Mariana Islands\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryMQ",
+                "comment": " Metadata for Martinique\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryMR",
+                "comment": " Metadata for Mauritania\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryMS",
+                "comment": " Metadata for Montserrat\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryMT",
+                "comment": " Metadata for Malta\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryMU",
+                "comment": " Metadata for Mauritius\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryMV",
+                "comment": " Metadata for Maldives\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryMW",
+                "comment": " Metadata for Malawi\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryMX",
+                "comment": " Metadata for Mexico\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryMY",
+                "comment": " Metadata for Malaysia\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryMZ",
+                "comment": " Metadata for Mozambique\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryNA",
+                "comment": " Metadata for Namibia\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryNC",
+                "comment": " Metadata for New Caledonia\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryNE",
+                "comment": " Metadata for Niger\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryNF",
+                "comment": " Metadata for Norfolk Island\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryNG",
+                "comment": " Metadata for Nigeria\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryNI",
+                "comment": " Metadata for Nicaragua\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryNL",
+                "comment": " Metadata for Netherlands\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryNO",
+                "comment": " Metadata for Norway\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryNP",
+                "comment": " Metadata for Nepal\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryNR",
+                "comment": " Metadata for Nauru\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryNU",
+                "comment": " Metadata for Niue\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryNZ",
+                "comment": " Metadata for New Zealand\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryOM",
+                "comment": " Metadata for Oman\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryPA",
+                "comment": " Metadata for Panama\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryPE",
+                "comment": " Metadata for Peru\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryPF",
+                "comment": " Metadata for French Polynesia\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryPG",
+                "comment": " Metadata for Papua New Guinea\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryPH",
+                "comment": " Metadata for Philippines\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryPK",
+                "comment": " Metadata for Pakistan\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryPL",
+                "comment": " Metadata for Poland\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryPM",
+                "comment": " Metadata for Saint Pierre and Miquelon\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryPR",
+                "comment": " Metadata for Puerto Rico\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryPS",
+                "comment": " Metadata for Palestine\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryPT",
+                "comment": " Metadata for Portugal\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryPW",
+                "comment": " Metadata for Palau\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryPY",
+                "comment": " Metadata for Paraguay\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryQA",
+                "comment": " Metadata for Qatar\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryRE",
+                "comment": " Metadata for Réunion\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryRO",
+                "comment": " Metadata for Romania\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryRS",
+                "comment": " Metadata for Serbia\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryRU",
+                "comment": " Metadata for Russia\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryRW",
+                "comment": " Metadata for Rwanda\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countrySA",
+                "comment": " Metadata for Saudi Arabia\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countrySB",
+                "comment": " Metadata for Solomon Islands\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countrySC",
+                "comment": " Metadata for Seychelles\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countrySD",
+                "comment": " Metadata for Sudan\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countrySE",
+                "comment": " Metadata for Sweden\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countrySG",
+                "comment": " Metadata for Singapore\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countrySH",
+                "comment": " Metadata for Saint Helena, Ascension and Tristan da Cunha\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countrySI",
+                "comment": " Metadata for Slovenia\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countrySJ",
+                "comment": " Metadata for Svalbard and Jan Mayen\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countrySK",
+                "comment": " Metadata for Slovakia\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countrySL",
+                "comment": " Metadata for Sierra Leone\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countrySM",
+                "comment": " Metadata for San Marino\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countrySN",
+                "comment": " Metadata for Senegal\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countrySO",
+                "comment": " Metadata for Somalia\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countrySR",
+                "comment": " Metadata for Suriname\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countrySS",
+                "comment": " Metadata for South Sudan\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryST",
+                "comment": " Metadata for São Tomé and Príncipe\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countrySV",
+                "comment": " Metadata for El Salvador\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countrySX",
+                "comment": " Metadata for Sint Maarten\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countrySY",
+                "comment": " Metadata for Syria\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countrySZ",
+                "comment": " Metadata for Eswatini\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryTA",
+                "comment": " Metadata for country with id 'TA'\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryTC",
+                "comment": " Metadata for Turks and Caicos Islands\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryTD",
+                "comment": " Metadata for Chad\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryTG",
+                "comment": " Metadata for Togo\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryTH",
+                "comment": " Metadata for Thailand\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryTJ",
+                "comment": " Metadata for Tajikistan\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryTK",
+                "comment": " Metadata for Tokelau\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryTL",
+                "comment": " Metadata for Timor-Leste\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryTM",
+                "comment": " Metadata for Turkmenistan\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryTN",
+                "comment": " Metadata for Tunisia\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryTO",
+                "comment": " Metadata for Tonga\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryTR",
+                "comment": " Metadata for Turkey\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryTT",
+                "comment": " Metadata for Trinidad and Tobago\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryTV",
+                "comment": " Metadata for Tuvalu\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryTW",
+                "comment": " Metadata for Taiwan\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryTZ",
+                "comment": " Metadata for Tanzania\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryUA",
+                "comment": " Metadata for Ukraine\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryUG",
+                "comment": " Metadata for Uganda\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryUS",
+                "comment": " Metadata for United States\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryUY",
+                "comment": " Metadata for Uruguay\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryUZ",
+                "comment": " Metadata for Uzbekistan\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryVA",
+                "comment": " Metadata for Vatican City\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryVC",
+                "comment": " Metadata for Saint Vincent and the Grenadines\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryVE",
+                "comment": " Metadata for Venezuela\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryVG",
+                "comment": " Metadata for British Virgin Islands\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryVI",
+                "comment": " Metadata for United States Virgin Islands\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryVN",
+                "comment": " Metadata for Vietnam\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryVU",
+                "comment": " Metadata for Vanuatu\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryWF",
+                "comment": " Metadata for Wallis and Futuna\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryWS",
+                "comment": " Metadata for Samoa\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryXK",
+                "comment": " Metadata for Kosovo\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryYE",
+                "comment": " Metadata for Yemen\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryYT",
+                "comment": " Metadata for Mayotte\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryZA",
+                "comment": " Metadata for South Africa\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryZM",
+                "comment": " Metadata for Zambia\n",
+                "type": "PhoneNumber.Country"
+            },
+            {
+                "name": "countryZW",
+                "comment": " Metadata for Zimbabwe\n",
+                "type": "PhoneNumber.Country"
+            }
+        ],
+        "binops": []
+    }
+]

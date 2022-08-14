@@ -1,0 +1,38 @@
+[
+    {
+        "name": "Mustache",
+        "comment": " Rendering mustache templates\n\n@docs Node, render\n\n",
+        "unions": [
+            {
+                "name": "Node",
+                "comment": " Represent mustache variables\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Variable",
+                        [
+                            "String.String",
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Section",
+                        [
+                            "String.String",
+                            "Basics.Bool"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "render",
+                "comment": " Render a template using a list of variables\n",
+                "type": "List.List Mustache.Node -> String.String -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

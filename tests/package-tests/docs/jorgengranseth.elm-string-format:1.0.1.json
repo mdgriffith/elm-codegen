@@ -1,0 +1,21 @@
+[
+    {
+        "name": "String.Format",
+        "comment": " Simple, pipable helpers to avoid difficult-to-read String concatenation\nby interpolating `String` values.\n\nYou can either specify placeholder names or push values into\nthe next empty placeholder.\n\n    \"\"\"\n    {{ named }} is replaced everywhere {{ named }},\n    whereas empty placeholders: {{ }} and {{ }},\n    act as unique slots for the value function\n    \"\"\"\n        |> String.Format.value \"first\"\n        |> String.Format.namedValue \"named\" \"yay!\"\n        |> String.Format.value \"second\"\n\n    -- \"\"\"\n    -- yay! is replaced everywhere yay!,\n    -- whereas empty placeholders: first and second,\n    -- act as unique slots for the value function\n    -- \"\"\"\n\n\n# Formatters\n\n@docs namedValue\n@docs value\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "namedValue",
+                "comment": " Interpolate a named placeholder\n\n    \"What happened to the {{ food }}? Maybe {{ person }} ate it?\"\n        |> String.Format.namedValue \"food\" \"cake\"\n        |> String.Format.namedValue \"person\" \"Joe\"\n\n    -- \"What happened to the cake? Maybe Joe ate it?\"\n\n",
+                "type": "String.String -> String.String -> String.String -> String.String"
+            },
+            {
+                "name": "value",
+                "comment": " Interpolate the next unnamed placeholder\n\n    \"{{ }} comes before {{ }}\"\n        |> String.Format.value \"dinner\"\n        |> String.Format.value \"dessert\"\n\n    -- \"dinner comes before dessert\"\n\n",
+                "type": "String.String -> String.String -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

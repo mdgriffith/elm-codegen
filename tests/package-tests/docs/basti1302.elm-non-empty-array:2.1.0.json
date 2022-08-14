@@ -1,0 +1,185 @@
+[
+    {
+        "name": "Array.NonEmpty",
+        "comment": " An array that always contains at least one element.\n\nAdditionaly, it can track a currently selected index, which is guaranteed to point to an existing element in the array.\n\nMost functions (like `map`) keep the currently selected index untouched, other functions (like `filter` or `slice`) discard the currently selected and reset it to zero. If not otherwise mentioned, the selected index is kept; if it is discarded, the function documentation states so explicitly.\n\n\n# Non Empty Array\n\n@docs NonEmptyArray\n\n\n# Creation\n\n@docs fromElement, initialize, repeat, fromList, fromArray\n\n\n# Query\n\n@docs length, get, getFirst\n\n\n# Manipulate\n\n@docs set, update, push, append, slice, removeAt, removeAtSafe\n\n\n# Selected Index\n\n@docs selectedIndex, setSelectedIndex, setSelectedIndexAndReport, getSelected, updateSelected, mapSelected, indexedMapSelected\n\n\n# Conversions\n\n@docs toArray, toList, toIndexedList\n\n\n# Transform\n\n@docs foldl, foldr, filter, map, indexedMap\n\n\n# JSON Decoding/Encoding\n\n@docs decoder, decoderWithDefault, encode\n\n",
+        "unions": [
+            {
+                "name": "NonEmptyArray",
+                "comment": " An array that is known, at compile-time, to be non empty. It always has at\nleast one element.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "append",
+                "comment": " Append two arrays to a new one.\n\n    Just (append (repeat 2 42) (repeat 3 81)) --> fromList [42, 42, 81, 81, 81]\n\nThe selected index of the resulting array will be the selected index of the\nfirst argument.\n\n",
+                "type": "Array.NonEmpty.NonEmptyArray a -> Array.NonEmpty.NonEmptyArray a -> Array.NonEmpty.NonEmptyArray a"
+            },
+            {
+                "name": "decoder",
+                "comment": " Decodes a JSON array into a `NonEmptyArray`. Produces a `Decode.fail` for an empty JSON array.\n",
+                "type": "Json.Decode.Decoder a -> Json.Decode.Decoder (Array.NonEmpty.NonEmptyArray a)"
+            },
+            {
+                "name": "decoderWithDefault",
+                "comment": " Decodes a JSON array into a `NonEmptyArray`. Returns a `NonEmptyArray` with the given default value as its only element when decoding an empty JSON array.\n",
+                "type": "Json.Decode.Decoder a -> a -> Json.Decode.Decoder (Array.NonEmpty.NonEmptyArray a)"
+            },
+            {
+                "name": "encode",
+                "comment": " Turns a `NonEmptyArray` into a JSON array. Each element will be encoded with the provided encoding function.\n",
+                "type": "(a -> Json.Encode.Value) -> Array.NonEmpty.NonEmptyArray a -> Json.Encode.Value"
+            },
+            {
+                "name": "filter",
+                "comment": " Keep only elements that satisfy the predicate. If no elements remain,\nNothing is returned, otherwise Just the array of remaining elements.\n\n    isEven : Int -> Bool\n    isEven n =\n        Basics.modBy 2 n == 0\n\n    filter isEven (initialize 5 identity) --> fromList [0, 2, 4]\n\nThe selected index will be set to 0 for the resulting array.\n\n",
+                "type": "(a -> Basics.Bool) -> Array.NonEmpty.NonEmptyArray a -> Maybe.Maybe (Array.NonEmpty.NonEmptyArray a)"
+            },
+            {
+                "name": "foldl",
+                "comment": " Reduce an array from the left. Read `foldl` as fold from the left.\n\n    foldl (::) [] (initialize 3 identity) --> [2, 1, 0]\n\n",
+                "type": "(a -> b -> b) -> b -> Array.NonEmpty.NonEmptyArray a -> b"
+            },
+            {
+                "name": "foldr",
+                "comment": " Reduce an array from the right. Read `foldr` as fold from the right.\n\n    foldr (+) 0 (repeat 3 5) --> 15\n\n",
+                "type": "(a -> b -> b) -> b -> Array.NonEmpty.NonEmptyArray a -> b"
+            },
+            {
+                "name": "fromArray",
+                "comment": " Create a `NonEmptyArray` from an `Array`.\n\nGiven an empty array, this function will return `Nothing`.\nGiven an array with at least one element, this function will return `Just` that\narray, converted to a `NonEmptyArray`.\n\nThe selected index of the resulting array will be 0.\n\n",
+                "type": "Array.Array a -> Maybe.Maybe (Array.NonEmpty.NonEmptyArray a)"
+            },
+            {
+                "name": "fromElement",
+                "comment": " Creates a new, non empty array with a single element. The selected index of\nthe resulting array will be 0.\n",
+                "type": "a -> Array.NonEmpty.NonEmptyArray a"
+            },
+            {
+                "name": "fromList",
+                "comment": " Create a `NonEmptyArray` from a `List`.\n\nGiven an empty list, this function will return `Nothing`.\nGiven a list with at least one element, this function will return `Just` that\nlist, converted to a `NonEmptyArray`.\n\nThe selected index of the resulting array will be 0.\n\n",
+                "type": "List.List a -> Maybe.Maybe (Array.NonEmpty.NonEmptyArray a)"
+            },
+            {
+                "name": "get",
+                "comment": " Return `Just` the element at the index or `Nothing` if the index is out of\nrange.\n\n    get 0 (initialize 3 identity) --> Just 0\n\n    get 2 (initialize 3 identity) --> Just 2\n\n    get 5 (initialize 3 identity) --> Nothing\n\n    get -1 (initialize 3 identity) -->  Nothing\n\nNotice that in contrast to mgold/elm-nonempty-list, where `head` and `tail` do\nnot return Maybes, this function still necessarily returns a Maybe, because the\ngiven index can still be out of range. But see `getFirst` for a function that is\nknown at compile time to return a value.\n\n",
+                "type": "Basics.Int -> Array.NonEmpty.NonEmptyArray a -> Maybe.Maybe a"
+            },
+            {
+                "name": "getFirst",
+                "comment": " Return the first element of a NonEmptyArray.\n\n    getFirst (initialize 3 identity) --> 0\n\n",
+                "type": "Array.NonEmpty.NonEmptyArray a -> a"
+            },
+            {
+                "name": "getSelected",
+                "comment": " Return the element at the selected index.\n\n    initialize 3 identity\n        |> setSelectedIndex 1\n        |> getSelected\n    --> 1\n\n",
+                "type": "Array.NonEmpty.NonEmptyArray a -> a"
+            },
+            {
+                "name": "indexedMap",
+                "comment": " Apply a function to every element with its index as first argument.\n\n    Just (indexedMap (*) (repeat 5 2)) --> fromList [0, 2, 4, 6, 8]\n\n",
+                "type": "(Basics.Int -> a -> b) -> Array.NonEmpty.NonEmptyArray a -> Array.NonEmpty.NonEmptyArray b"
+            },
+            {
+                "name": "indexedMapSelected",
+                "comment": " Apply a function to every element in an array. The first argument to that\nfunction is a Boolean that is True for the selected element. This makes it\neasier to treat the select element different from other elements. The second\nargument is the element's index.\n\n    Just <|\n      (repeat 5 1\n        |> indexedMapSelected (\\isSelected ->\n          if isSelected then\n            (*)\n          else\n            (+)\n        ))\n      --> fromList [0, 2, 3, 4, 5]\n\n",
+                "type": "(Basics.Bool -> Basics.Int -> a -> b) -> Array.NonEmpty.NonEmptyArray a -> Array.NonEmpty.NonEmptyArray b"
+            },
+            {
+                "name": "initialize",
+                "comment": " Initialize an array. `initialize n f` creates an array of length `n` with\nthe element at index `i` initialized to the result of `(f i)`.\n\nWhen the requested number of elements is smaller than one (0 or negative), the\nreturned array will still contain one element, `f 0`.\n\n    Just (initialize 4 identity) --> fromList [0, 1, 2, 3]\n\n    Just (initialize 4 (\\n -> n * n)) --> fromList [0, 1, 4, 9]\n\n    Just (initialize 4 (always 0)) --> fromList [0, 0, 0, 0]\n\n    Just (initialize 0 identity) --> fromList [0]\n\nThe selected index of the resulting array will be 0.\n\n",
+                "type": "Basics.Int -> (Basics.Int -> a) -> Array.NonEmpty.NonEmptyArray a"
+            },
+            {
+                "name": "length",
+                "comment": " Return the length of the array.\n",
+                "type": "Array.NonEmpty.NonEmptyArray a -> Basics.Int"
+            },
+            {
+                "name": "map",
+                "comment": " Apply a function to every element in an array.\n\n    map Debug.toString (repeat 5 1) --> repeat 5 \"1\"\n\n",
+                "type": "(a -> b) -> Array.NonEmpty.NonEmptyArray a -> Array.NonEmpty.NonEmptyArray b"
+            },
+            {
+                "name": "mapSelected",
+                "comment": " Apply a function to every element in an array. The first argument to that\nfunction is a Boolean that is True for the selected element. This makes it\neasier to treat the select element different from other elements.\n\n    Just <|\n      (repeat 5 1\n        |> mapSelected (\\isSelected ->\n          if isSelected then\n            (*) 2\n          else\n            Basics.identity\n        ))\n      --> fromList [2, 1, 1, 1, 1]\n\n",
+                "type": "(Basics.Bool -> a -> b) -> Array.NonEmpty.NonEmptyArray a -> Array.NonEmpty.NonEmptyArray b"
+            },
+            {
+                "name": "push",
+                "comment": " Push an element onto the end of an array.\n\n    Just (push 2 (fromElement 1)) --> fromList [1, 2]\n\n",
+                "type": "a -> Array.NonEmpty.NonEmptyArray a -> Array.NonEmpty.NonEmptyArray a"
+            },
+            {
+                "name": "removeAt",
+                "comment": " Removes the element at the given index.\n\n    removeAt 1 (initialize 4 identity) --> fromList [0, 2, 3]\n\nIf the index is out of range, the array is returned unchanged. If there is only\none element in the array and index 0 is passed, Nothing will be returned.\nOtherwise, the element at the given index is removed.\n\nIf the removed element was the selected index, the selected index will be set\nto the previous element, or 0 if there is no previous element. Otherwise it will\nbe updated so that the same element as before is selected.\n\n",
+                "type": "Basics.Int -> Array.NonEmpty.NonEmptyArray a -> Maybe.Maybe (Array.NonEmpty.NonEmptyArray a)"
+            },
+            {
+                "name": "removeAtSafe",
+                "comment": " Removes the element at the given index.\n\n    Just (removeAtSafe 1 (initialize 4 identity)) --> fromList [0, 2, 3]\n\n    Just (removeAtSafe 0 (initialize 1 identity)) --> fromList [0]\n\nIf the index is out of range, the array is returned unchanged. If there is only\none element left in the array, the array is also returned unchanged.\nOtherwise, the element at the given index is removed.\n\nIf the removed element was the selected index, the selected index will be set\nto the previous element, or 0 if there is no previous element. Otherwise it will\nbe updated so that the same element as before is selected.\n\n",
+                "type": "Basics.Int -> Array.NonEmpty.NonEmptyArray a -> Array.NonEmpty.NonEmptyArray a"
+            },
+            {
+                "name": "repeat",
+                "comment": " Creates an array with a given length, filled with a default element.\n\nWhen the requested number of elements is smaller than one (0 or negative),\nthis function will still return a non empty array with one element.\n\n    Just (repeat 5 0) --> fromList [0, 0, 0, 0, 0]\n\n    Just (repeat 3 \"cat\") --> fromList [\"cat\", \"cat\", \"cat\"]\n\n    Just (repeat 0 \"frog\") --> fromList [\"frog\"]\n\nNotice that `repeat 3 x` is the same as `initialize 3 (always x)`.\n\nThe selected index of the resulting array will be 0.\n\n",
+                "type": "Basics.Int -> a -> Array.NonEmpty.NonEmptyArray a"
+            },
+            {
+                "name": "selectedIndex",
+                "comment": " Return the selected index.\n\n    repeat 5 \"x\"\n        |> setSelectedIndex 3\n        |> selectedIndex\n    --> 3\n\n",
+                "type": "Array.NonEmpty.NonEmptyArray a -> Basics.Int"
+            },
+            {
+                "name": "set",
+                "comment": " Set the element at a particular index. Returns an updated array.\nIf the index is out of range, the array is unaltered.\n\n    set 0 1302 (fromElement 42) --> fromElement 1302\n\n",
+                "type": "Basics.Int -> a -> Array.NonEmpty.NonEmptyArray a -> Array.NonEmpty.NonEmptyArray a"
+            },
+            {
+                "name": "setSelectedIndex",
+                "comment": " Set the selected index for the given array.\nIf the index is out of range, the array is unaltered (that is, the old selected\nindex is kept).\n\n    initialize 5 identity\n        |> setSelectedIndex 2\n        |> getSelected\n    --> 2\n\n    initialize 5 identity\n        |> setSelectedIndex 7\n        |> getSelected\n    --> 0\n\n",
+                "type": "Basics.Int -> Array.NonEmpty.NonEmptyArray a -> Array.NonEmpty.NonEmptyArray a"
+            },
+            {
+                "name": "setSelectedIndexAndReport",
+                "comment": " Set the selected index for the given array and reports if an index change\nactually happened. If the index is out of range, the array is unaltered (that\nis, the old selected index is kept).\n\nThe second value of the returned tuple is `True` if and only if the index\nactually changed due to the operation. `False` is returned if you pass in an\nindex that is out of range, or when you pass in the index that is currently\nselected anyway.\n\n    initialize 5 identity\n    |> setSelectedIndexAndReport 2\n    |> Tuple.second\n    --> True\n\n    initialize 5 identity\n    |> setSelectedIndexAndReport 7\n    |> Tuple.second\n    --> False\n\n    initialize 5 identity\n    |> setSelectedIndexAndReport 0\n    |> Tuple.second\n    --> False\n\n",
+                "type": "Basics.Int -> Array.NonEmpty.NonEmptyArray a -> ( Array.NonEmpty.NonEmptyArray a, Basics.Bool )"
+            },
+            {
+                "name": "slice",
+                "comment": " Get a sub-section of an array: `(slice start end array)`. The `start` is a\nzero-based index where we will start our slice. The `end` is a zero-based index\nthat indicates the end of the slice. The slice extracts up to but not including\n`end`. If the resulting slice would be empty, Nothing is returned.\n\n    slice 0 3 (initialize 5 identity) --> fromList [0, 1, 2]\n\n    slice 1 4 (initialize 5 identity) --> fromList [1, 2, 3]\n\n    slice 2 2 (initialize 5 identity) --> Nothing\n\nBoth the `start` and `end` indexes can be negative, indicating an offset from\nthe end of the array.\n\n    slice 1 -1 (initialize 5 identity) --> fromList [1, 2, 3]\n\n    slice -2 5 (initialize 5 identity) --> fromList [3, 4]\n\nThis makes it pretty easy to `pop` the last element off of an array:\n`slice 0 -1 array`\n\nThe selected index will be set to 0 for the resulting array.\n\n",
+                "type": "Basics.Int -> Basics.Int -> Array.NonEmpty.NonEmptyArray a -> Maybe.Maybe (Array.NonEmpty.NonEmptyArray a)"
+            },
+            {
+                "name": "toArray",
+                "comment": " Converts the NonEmptyArray into a standard array.\n\n    import Array\n\n    fromArray (Array.fromList [1, 2])\n        |> Maybe.map toArray\n    --> Just (Array.fromList [1, 2])\n\n",
+                "type": "Array.NonEmpty.NonEmptyArray a -> Array.Array a"
+            },
+            {
+                "name": "toIndexedList",
+                "comment": " Create an indexed list from an array. Each element of the array will be\npaired with its index.\n\n    fromList [\"cat\", \"dog\"]\n        |> Maybe.map toIndexedList\n    --> Just [(0, \"cat\"), (1, \"dog\")]\n\n",
+                "type": "Array.NonEmpty.NonEmptyArray a -> List.List ( Basics.Int, a )"
+            },
+            {
+                "name": "toList",
+                "comment": " Create a list of elements from an array.\n\n    fromList [3, 5, 8]\n        |> Maybe.map toList\n    --> Just [3, 5, 8]\n\n",
+                "type": "Array.NonEmpty.NonEmptyArray a -> List.List a"
+            },
+            {
+                "name": "update",
+                "comment": " Update the element at the given index using a function. Returns the array\nunchanged if the index is out of bounds.\n\n    Just <| update 1 ((+) 10) (initialize 3 identity)\n    --> fromList [0, 11, 2]\n\n    Just <| update 4 ((+) 10) (initialize 3 identity)\n    --> fromList [0, 1, 2]\n\n    Just <| update -1 ((+) 10) (initialize 3 identity)\n    --> fromList [0, 1, 2]\n\nThis is basically Array.Extra.update from elm-community/array-extra, for\nNonEmptyArray.\n\n",
+                "type": "Basics.Int -> (a -> a) -> Array.NonEmpty.NonEmptyArray a -> Array.NonEmpty.NonEmptyArray a"
+            },
+            {
+                "name": "updateSelected",
+                "comment": " Update the element at the current selected index using a function.\n\n    Just <| updateSelected ((+) 10) (initialize 3 identity)\n    --> fromList [10, 1, 2]\n\n",
+                "type": "(a -> a) -> Array.NonEmpty.NonEmptyArray a -> Array.NonEmpty.NonEmptyArray a"
+            }
+        ],
+        "binops": []
+    }
+]

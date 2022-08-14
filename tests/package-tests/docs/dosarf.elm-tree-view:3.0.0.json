@@ -1,0 +1,303 @@
+[
+    {
+        "name": "Tree",
+        "comment": " A module containing a tree (model) facility + handy functions. This tree\nis _not_ a search tree (e.g. binary tree), it's for representing hierarchical\ninformation to users (e.g. folder-file structure, document structure, etc).\n\n## Traversal\nUtility functions (currently) traverse the tree in depth-first, and children of a node\nin left to right order.\n\n## Node data structure\n\n@docs Node\n\n## Utility functions\n@docs treeHeight, forestHeight, joinTree, joinForest, AnnotatedNode, listAnnotatedTreeNodes, listAnnotatedForestNodes\n\n## Getting stuff out of nodes\n\n@docs childrenOf, dataOf\n\n## Updating node data\n@docs updateTreeData, updateForestData\n\n## More utility functions\n\n@docs listTreeNodes, listForestNodes\n\n## Folding tree structures\n\n@docs FoldOptions, defaultFoldOptions, foldTree, foldForest\n",
+        "unions": [
+            {
+                "name": "Node",
+                "comment": " A tree node carrying some data. Can have children nodes.\n\nCreate a node like:\n\n    type alias MyData = { .. }\n\n    Node { data = MyData .., children = [ .. ] }\n",
+                "args": [
+                    "d"
+                ],
+                "cases": [
+                    [
+                        "Node",
+                        [
+                            "{ data : d, children : List.List (Tree.Node d) }"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "AnnotatedNode",
+                "comment": " A node annotated with\n* zero-based index of the node, in the traversal order\n* zero-based level of the node (level is less then the height of the tree\n  the node is in)\n* the node itself.\n",
+                "args": [
+                    "d"
+                ],
+                "type": "{ index : Basics.Int, level : Basics.Int, node : Tree.Node d }"
+            },
+            {
+                "name": "FoldOptions",
+                "comment": " Fold options to use with [`foldTree`](#foldTree) or [`foldForest`](#foldForest).\n\nThink of the first argument to a `List.foldl` invocation (`(a -> b -> b)`), which is a function\nto fold the value of a list item with some previously obtained value.\n\nIn the case of folding an entire tree, more aggregator fold functions are needed.\n\nImplement these aggregator functions as if they had the following declarations:\n\n### preFoldingThunk\n\n    preFoldingThunk : foldState -> Node d -> foldState\n    preFoldingThunk foldStateFromParent node =\n        ...\n\nFunction `FoldOptions.preFoldingThunk` is used just before visiting the children\nof a node, and its first argument will be either\n* the fold state handed down from the parent node\n* or the initial fold fold state given to a root [`foldTree`](#foldTree) invocation.\n\n### postFoldingThunk\n\n    postFoldingThunk : foldState -> Node d -> foldState -> foldState\n    postFoldingThunk foldStateFromParent node previousFoldState =\n        ...\n\nFunction `FoldOptions.postFoldingThunk` is used after visiting all children of a node, just before\nleaving the node.\n\nIts first argument will be the same value given to `FoldOptions.preFoldingThunk` earlier\n(as a convenience).\n\nThe second argument will be the node we are about to leave.\n\nThe third argument will be either\n* the fold state calculated by `FoldOptions.preFoldingThunk` if there are no child nodes of this node,\n* or the fold state obtained by processing the last child node.\n\n### childrenFoldingThunk\n\n    childrenFoldingThunk : foldState -> Node d -> foldState -> foldState\n    childrenFoldingThunk previousFoldState node nodeFoldState =\n        ...\n\nFunction `FoldOptions.childrenFoldingThunk` is used during visiting the children nodes of a node, or when\nfolding a list of nodes by invoking [`foldForest`](#foldForest).\n\nIts first argument will be\n* the fold state calculated by `FoldOptions.preFoldingThunk` if this is the first child node of a parent node,\n* or the initial fold state given to the root `foldForest` invocation if the first node in the list of nodes,\n* or the fold state obtained by processing the previous sibling node (= the result of `FoldOptions.postFoldingThunk`\n  produced by the `foldTree` invocation on the previous sibling node).\n\nThe second argument will be the node that just has been visited.\n\nThe third argument will be the fold value obtained from visiting that node.\n\n### Fold states example\n\nFor a simple tree with root node `a`,\n\n    a\n    |\n    +- b\n    +- c\n\nthe following fold states will be calculated for an invocation of `foldTree myFoldOptions initialFoldState a`:\n\n* `fS1  = preFoldingThunk initialFoldState a`\n* `fS2  = preFoldingThunk fS1 b`\n* `fS3  = postFoldingThunk fS1 b fS2`\n* `fS4  = childrenFoldingThunk fS1 b fS3`\n* `fS5  = preFoldingThunk fS4 c`\n* `fS6  = postFoldingThunk fS4 c fS5`\n* `fS7  = childrenFoldingThunk fS4 c fS6`\n* `fS8  = postFoldingThunk initialFoldState a fS7`\n\nand return eventually with fold state value `fS8`.\n",
+                "args": [
+                    "d",
+                    "foldState"
+                ],
+                "type": "{ preFoldingThunk : foldState -> Tree.Node d -> foldState, postFoldingThunk : foldState -> Tree.Node d -> foldState -> foldState, childrenFoldingThunk : foldState -> Tree.Node d -> foldState -> foldState }"
+            }
+        ],
+        "values": [
+            {
+                "name": "childrenOf",
+                "comment": " Retrieves the list of children of a node.\n",
+                "type": "Tree.Node d -> List.List (Tree.Node d)"
+            },
+            {
+                "name": "dataOf",
+                "comment": " Retrieves the data stored within a node.\n",
+                "type": "Tree.Node d -> d"
+            },
+            {
+                "name": "defaultFoldOptions",
+                "comment": " Default fold options. On the off chance the default implementation of some\nfold state functions suits you, you may re-use them specifying only what you\nneed:\n\n    myFoldOptions =\n      { defaultFoldOptions\n      | preFoldingThunk = \\foldStateFromParent node -> ..\n      }\n\nThe default fold state function implementations are:\n\n* `preFoldingThunk = \\foldStateFromParent node -> foldStateFromParent`\n* `postFoldingThunk = \\foldStateFromParent node previousFoldState -> previousFoldState`\n* `childrenFoldingThunk = \\previousFoldState node nodeFoldState -> nodeFoldState`\n\nessentially, the initial fold state value will be handed over, from calculation to calculation,\nand returned as the final fold state, without change.\n",
+                "type": "Tree.FoldOptions d foldState"
+            },
+            {
+                "name": "foldForest",
+                "comment": " Folds a forest (list of trees), visiting trees from left to right of the list.\n",
+                "type": "Tree.FoldOptions d foldState -> foldState -> List.List (Tree.Node d) -> foldState"
+            },
+            {
+                "name": "foldTree",
+                "comment": " Folds a tree, similar to `List.foldl`. Children of a node are visited from\nleft to right. Specifics of folding / aggregating are controlled by fold options,\nsee [`FoldOptions`](#FoldOptions) and [`defaultFoldOptions`](#defaultFoldOptions).\n",
+                "type": "Tree.FoldOptions d foldState -> foldState -> Tree.Node d -> foldState"
+            },
+            {
+                "name": "forestHeight",
+                "comment": " Calculates the height of a forest (list of trees), which is the height of the\ntallest tree in the forest. The calculated height value is 0 if the forest is\nempty of trees, otherwise always at least 1.\n",
+                "type": "List.List (Tree.Node d) -> Basics.Int"
+            },
+            {
+                "name": "joinForest",
+                "comment": " Joins the text representation of all nodes of a forest into a single string,\nseparated by given separator, in left->right order. Can be an empty string in case\nthe forest is empty of trees.\n",
+                "type": "(Tree.Node d -> String.String) -> String.String -> List.List (Tree.Node d) -> String.String"
+            },
+            {
+                "name": "joinTree",
+                "comment": " Joins the text representation of all nodes of a tree into a single string,\nseparated by given separator, in the traversal order.\nWill never be an empty string.\n",
+                "type": "(Tree.Node d -> String.String) -> String.String -> Tree.Node d -> String.String"
+            },
+            {
+                "name": "listAnnotatedForestNodes",
+                "comment": " Lists the nodes of a forest, annotated, in left-right order. Can be an empty list in case\nthe forest is empty of trees. See [`AnnotatedNode`](#AnnotatedNode) for what a node\nis annotated with.\n",
+                "type": "List.List (Tree.Node d) -> List.List (Tree.AnnotatedNode d)"
+            },
+            {
+                "name": "listAnnotatedTreeNodes",
+                "comment": " Lists the nodes of a tree, annotated, in the traversal order.\nWill never be an empty list. See [`AnnotatedNode`](#AnnotatedNode) for what a node\nis annotated with.\n",
+                "type": "Tree.Node d -> List.List (Tree.AnnotatedNode d)"
+            },
+            {
+                "name": "listForestNodes",
+                "comment": " Lists the nodes of a forest, in left-right order. Can be an empty list in case\nthe forest is empty of trees.\n",
+                "type": "List.List (Tree.Node d) -> List.List (Tree.Node d)"
+            },
+            {
+                "name": "listTreeNodes",
+                "comment": " Lists the nodes of a tree, in the traversal order.\nWill never be an empty list.\n",
+                "type": "Tree.Node d -> List.List (Tree.Node d)"
+            },
+            {
+                "name": "treeHeight",
+                "comment": " Calculates the height of a tree, which is the number of steps of the longest path to a\nleaf node. Since a tree consists of at least one node, the height of a tree is always at least 1.\n",
+                "type": "Tree.Node d -> Basics.Int"
+            },
+            {
+                "name": "updateForestData",
+                "comment": " Updates data stored in the nodes of the trees in a list, recursively.\nVery similar to [`updateTreeData`](#updateTreeData). Leaves the structure of\nthe trees intact.\n",
+                "type": "(d -> Basics.Bool) -> (d -> d) -> List.List (Tree.Node d) -> List.List (Tree.Node d)"
+            },
+            {
+                "name": "updateTreeData",
+                "comment": " Updates data stored in the nodes of the tree, recursively.\nLeaves the structure of the tree intact.\n\n    tree : T.Node String\n    tree =\n        ... -- construct tree with single string as data on nodes\n\n    -- turn uppercase the strings starting with 's' in all nodes\n    updateTreeData\n        (\\s -> String.startsWith \"s\" s)\n        (String.toUpper)\n        tree\n\n",
+                "type": "(d -> Basics.Bool) -> (d -> d) -> Tree.Node d -> Tree.Node d"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "TreeView",
+        "comment": " Tree view facility.\n\n* Construct a tree of [Node](Tree#Node) instances, embedding your data into them.\n* Initialize a model.\n* Interact with it (conventional TEA)\n  * Arrow-key interactions require the call-site to use the subscriptions of the\n    facility, otherwise only mouse-click driven interactions work, see\n    [`subscriptions`](#subscriptions).\n* Provide manually the required CSS definitions to make your tree view look usable & nice,\n  * for a basic working CSS see\n  [Demo CSS](https://github.com/dosarf/elm-tree-view/tree/master/demo/src/assets/tree-view.css).\n\nAlso, non-leaf nodes can also be collapsed / expanded programmatically, as well\nas selected node and visible nodes can be retrieved.\n\n## Node uid\n\n@docs NodeUid, uidOf\n\n## Configuration\n\n@docs Configuration, defaultCssClasses, CssClasses\n\n## Good old [TEA](https://guide.elm-lang.org/architecture/) types and functions\n@docs Model, initializeModel, Msg, update, view, subscriptions\n\n## Working with tree views\n\n@docs getSelected, setSelectionTo, getVisibleAnnotatedNodes, expandAll, collapseAll, expandOnly, updateExpandedStateOf, updateNodeData\n\n## Custom rendering nodes\n\n@docs Configuration2, initializeModel2, Msg2, update2, view2, subscriptions2\n",
+        "unions": [
+            {
+                "name": "Model",
+                "comment": " Model for a tree/forest, with the ability to get the uid for a node,\nrender a node into a string, as well as storing expanded/collapsed presentation\nstates.\n\nType variables\n* `d` is the custom data,\n* `comparable` is the type of the node uid (in practice Int or String)\n* `customMsg` is the message coming (potentially) out of rendered nodes\n* `cookie` the type of data given to the [`view2`](#view2)\n  function, enabling custom node rendering to use data other than the one\n  stored in a node.\n\nSee [`initializeModel`](#initializeModel), [`initializeModel2`](#initializeModel2).\n",
+                "args": [
+                    "d",
+                    "comparable",
+                    "customMsg",
+                    "cookie"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Msg",
+                "comment": " Message, carrying the uid of the node something happened to.\n",
+                "args": [
+                    "comparable"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Msg2",
+                "comment": " The type of messages emitted by tree views with custom rendered nodes.\n\n* Enum `Internal` carries the type of internal [`Msg`](#Msg) messages that\nmake the tree view work itself. These you feed back to [`update2`](#update2)\njust like with any old message,\n\n* Enum `CustomMsg` carries the custom messages emitted by the HTML fragments\nthat nodes got rendered into. These are the messages that you want to process\nyourself. E.g. every node may have a button that can be clicked.\n",
+                "args": [
+                    "comparable",
+                    "customMsg"
+                ],
+                "cases": [
+                    [
+                        "Internal",
+                        [
+                            "TreeView.Msg comparable"
+                        ]
+                    ],
+                    [
+                        "CustomMsg",
+                        [
+                            "customMsg"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "NodeUid",
+                "comment": " Tree view tracks internal state (collapsed/expanded, etc) of the nodes\nand identifies them by their node uid, thus a node uids must be comparable.\n* Node uids are to be unique in the scope of the forest being displayed by\na tree view.\n* Call-site will define how to calculate the node uid for a given node, see\n  `uidThunk` in [`Configuration`](#Configuration) and\n  [`Configuration2`](#Configuration2).\n\nTo make clear when a function signature is referring to a node uid and not\njust any other old comparable value, this product type is used.\n",
+                "args": [
+                    "comparable"
+                ],
+                "cases": [
+                    [
+                        "NodeUid",
+                        [
+                            "comparable"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Configuration",
+                "comment": " Configuration for initializing a tree view [`Model`](#Model), to be given to\n[`initializeModel`](#initializeModel). Its fields are:\n* `uidThunk : Tree.Node d -> NodeUid comparable` gets the uid for a node,\n   wrapped in a [NodeUid](#NodeUid) value,\n* `labelThunk : Tree.Node d -> String` gets the text representation of a node\nfor rendering,\n* `cssClasses` : the record with the CSS class names to generate the tree view\nHTML element with, see [`CssClasses`](#CssClasses) as well as\n[`defaultCssClasses`](#defaultCssClasses).\n",
+                "args": [
+                    "d",
+                    "comparable"
+                ],
+                "type": "{ uidThunk : Tree.Node d -> TreeView.NodeUid comparable, labelThunk : Tree.Node d -> String.String, cssClasses : TreeView.CssClasses }"
+            },
+            {
+                "name": "Configuration2",
+                "comment": " Similar to [`Configuration`](#Configuration) but this allows customer rendering of\nnodes instead of simple text representation. So instead of `labelThunk` you have\n\n    itemThunk : cookie -> T.Node d -> Html customMsg\n\nthat will turn a node (and a cookie of your choice) into a bit of HTML, possibly\nwith its own events. See [`Msg2`](#Msg2).`CustomMsg`, which will carry the custom\nmessages coming out of the little HTML rendering of a node.\n\nCookie is for handing down some state that you wish to maintain outside nodes,\nto node rendering. E.g. you want some check box for each node to mark whether it's\nselected or not. That selection state may be modeled and stored within a node,\nbut it might be easier to store the set of selected node (uids) outside the tree\nas well.\n",
+                "args": [
+                    "d",
+                    "comparable",
+                    "customMsg",
+                    "cookie"
+                ],
+                "type": "{ uidThunk : Tree.Node d -> TreeView.NodeUid comparable, itemThunk : cookie -> Tree.Node d -> Html.Html customMsg, cssClasses : TreeView.CssClasses }"
+            },
+            {
+                "name": "CssClasses",
+                "comment": " Defines CSS classes to be used for a tree view. Different tree views can\nbe made to look different by initializing them with a different\nset of CSS class names, see also [`defaultCssClasses`](#defaultCssClasses).\n\nThe actual CSS definitions must _always_ be provided manually, even when the\ndefault CSS class names are used. For a working default CSS declarations,\nsee [Demo CSS](https://github.com/dosarf/elm-tree-view/tree/master/demo/src/assets/tree-view.css).\n",
+                "args": [],
+                "type": "{ treeViewCssClass : String.String, selectedTreeNodeCssClass : String.String, indentationCssClass : String.String, bulletExpandedCssClass : String.String, bulletCollapsedCssClass : String.String, bulletLeafCssClass : String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "collapseAll",
+                "comment": " Collapses all nodes.\n",
+                "type": "TreeView.Model d comparable customMsg cookie -> TreeView.Model d comparable customMsg cookie"
+            },
+            {
+                "name": "defaultCssClasses",
+                "comment": " Some CSS class names you can use by default.\n\nA tree view is constructed out of HTML elements `table`, `tr` and `td`, and one\nor more of the CSS classes will be assigned to them:\n\n* `treeViewCssClass`: The CSS class set on all parts of the tree view,\n`table`, `tr` and `td`, always. Default is `tree-view`.\n* `selectedTreeNodeCssClass`: The CSS class for the TD of a selected node.\nDefault is `tree-view-selected-node`.\n* `indentationCssClass`: The CSS class for an empty TD that used for indentation\npurposes. Default is `tree-view-indentation`.\n* `bulletExpandedCssClass`: The CSS class for the TD with a bullet in expanded\nnode state. Default is `tree-view-bullet-expanded`.\n* `bulletCollapsedCssClass`: The CSS class for the TD with a bullet in collapsed\nnode state. Default is `tree-view-bullet-collapsed`.\n* `bulletLeafCssClass`: The CSS class for the TD with a bullet in collapsed\nnode state. Default is `tree-view-bullet-leaf`.\n",
+                "type": "TreeView.CssClasses"
+            },
+            {
+                "name": "expandAll",
+                "comment": " Expands all nodes.\n",
+                "type": "TreeView.Model d comparable customMsg cookie -> TreeView.Model d comparable customMsg cookie"
+            },
+            {
+                "name": "expandOnly",
+                "comment": " Expands only the parts of the tree view that are necessary to\nhave nodes with their data matching a given predicate visible.\n\n\nIn addition to the updated model, it returns the list of highlit node uids\n(nodes matching the predicate).\n\nCoupled with the support to custom-render nodes, this can be used to implement\na basic tree search functionality:\n* custom node rendering could highlight an entire node or only parts of it matching a search criteria\n* while hiding any part of the tree that's not harboring a matching node,\n* as well as [`setSelectionTo`](#setSelectionTo) can be used to step selection from\n  one matching node to the next.\n",
+                "type": "(d -> Basics.Bool) -> TreeView.Model d comparable customMsg cookie -> ( TreeView.Model d comparable customMsg cookie, List.List comparable )"
+            },
+            {
+                "name": "getSelected",
+                "comment": " Gets the selected (annotated) node, if any. See [`AnnotatedNode`](Tree#AnnotatedNode).\n",
+                "type": "TreeView.Model d comparable customMsg cookie -> Maybe.Maybe (Tree.AnnotatedNode d)"
+            },
+            {
+                "name": "getVisibleAnnotatedNodes",
+                "comment": " Gets the currently visible nodes (annotated). See [`AnnotatedNode`](Tree#AnnotatedNode).\n\nCollapsing a non-leaf node will make its children hidden, transitively. The\nremaining visible nodes are the ones navigated with the up/down arrow keys.\n",
+                "type": "TreeView.Model d comparable customMsg cookie -> List.List (Tree.AnnotatedNode d)"
+            },
+            {
+                "name": "initializeModel",
+                "comment": " Initializes a model for a tree view.\n",
+                "type": "TreeView.Configuration d comparable -> List.List (Tree.Node d) -> TreeView.Model d comparable Basics.Never ()"
+            },
+            {
+                "name": "initializeModel2",
+                "comment": " Just like [`initializeModel`](#initializeModel) only for tree views with\ncustom rendered nodes.\n",
+                "type": "TreeView.Configuration2 d comparable customMsg cookie -> List.List (Tree.Node d) -> TreeView.Model d comparable customMsg cookie"
+            },
+            {
+                "name": "setSelectionTo",
+                "comment": " Selects a visible node by its uid. If a node with given uid does not exist or\nis not visible, nothing happens.\n",
+                "type": "TreeView.NodeUid comparable -> TreeView.Model d comparable customMsg cookie -> TreeView.Model d comparable customMsg cookie"
+            },
+            {
+                "name": "subscriptions",
+                "comment": " Subscriptions, for enabling arrow-key based user interactions, such as:\n* selection navigation (up / down arrows),\n* collapse & expand action ( left / right arrows).\n",
+                "type": "TreeView.Model d comparable customMsg cookie -> Platform.Sub.Sub (TreeView.Msg comparable)"
+            },
+            {
+                "name": "subscriptions2",
+                "comment": " Just like [`subscriptions`](#subscription) only for tree views with\ncustom rendered nodes.\n",
+                "type": "TreeView.Model d comparable customMsg cookie -> Platform.Sub.Sub (TreeView.Msg2 comparable customMsg)"
+            },
+            {
+                "name": "uidOf",
+                "comment": " Obtains the actual node uid (comparable) value out of the product type\nvalue.\n",
+                "type": "TreeView.NodeUid comparable -> comparable"
+            },
+            {
+                "name": "update",
+                "comment": " Updates the tree view model according to the message.\n",
+                "type": "TreeView.Msg comparable -> TreeView.Model d comparable customMsg cookie -> TreeView.Model d comparable customMsg cookie"
+            },
+            {
+                "name": "update2",
+                "comment": " Just like [`update`](#update) only for tree views with\ncustom rendered nodes.\n",
+                "type": "TreeView.Msg2 comparable customMsg -> TreeView.Model d comparable customMsg cookie -> TreeView.Model d comparable customMsg cookie"
+            },
+            {
+                "name": "updateExpandedStateOf",
+                "comment": " Updates the model by setting the epxansion state of a node, identified by its\nnode uid. `True` will expand the node, `False` will collapse it.\n",
+                "type": "TreeView.NodeUid comparable -> Basics.Bool -> TreeView.Model d comparable customMsg cookie -> TreeView.Model d comparable customMsg cookie"
+            },
+            {
+                "name": "updateNodeData",
+                "comment": " Updates the data of selected nodes, similar to\n[`Tree.updateTreeData`](Tree#updateTreeData). Also updates other bookkeeping\nrelated to the tree view.\n",
+                "type": "(d -> Basics.Bool) -> (d -> d) -> TreeView.Model d comparable customMsg cookie -> TreeView.Model d comparable customMsg cookie"
+            },
+            {
+                "name": "view",
+                "comment": " Render the tree view model into HTML.\n",
+                "type": "TreeView.Model d comparable customMsg cookie -> Html.Html (TreeView.Msg comparable)"
+            },
+            {
+                "name": "view2",
+                "comment": " Just like [`view`](#view) only for tree views with\ncustom rendered nodes.\n",
+                "type": "cookie -> TreeView.Model d comparable customMsg cookie -> Html.Html (TreeView.Msg2 comparable customMsg)"
+            }
+        ],
+        "binops": []
+    }
+]

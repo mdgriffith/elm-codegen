@@ -1,0 +1,149 @@
+[
+    {
+        "name": "Placeholder.DoubleCurly",
+        "comment": "\n\n\n# DoubleCurly\n\nParse Strings into functions using the {{double curly brackets}} placeholder syntax.\nFor more detail, view the documentation in `Placeholder.Internal`.\n\n@docs parsePlaceholder1, parsePlaceholder2, parsePlaceholder3, parsePlaceholder4\n@docs parsePlaceholderAlph1, parsePlaceholderAlph2, parsePlaceholderAlph3, parsePlaceholderAlph4\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "parsePlaceholder1",
+                "comment": " Parse a `String` into a function substituting the argument at the position marked by double curly braces.\n\n    parsePlaceholder1 \"This is {{name}}s example\" |> Result.map ((|>) \"Andy\")\n    --> Ok \"This is Andys example\"\n\n",
+                "type": "String.String -> Result.Result String.String (String.String -> String.String)"
+            },
+            {
+                "name": "parsePlaceholder2",
+                "comment": " Parse a `String` into a function substituting the arguments at the two positions marked by double curly braces.\n",
+                "type": "String.String -> Result.Result String.String (String.String -> String.String -> String.String)"
+            },
+            {
+                "name": "parsePlaceholder3",
+                "comment": " Parse a `String` into a function substituting the arguments at the three positions marked by double curly braces.\n",
+                "type": "String.String -> Result.Result String.String (String.String -> String.String -> String.String -> String.String)"
+            },
+            {
+                "name": "parsePlaceholder4",
+                "comment": " Parse a `String` into a function substituting the arguments at the four positions marked by double curly braces.\n",
+                "type": "String.String -> Result.Result String.String (String.String -> String.String -> String.String -> String.String -> String.String)"
+            },
+            {
+                "name": "parsePlaceholderAlph1",
+                "comment": " Parse a `String` into a function substituting the argument at all positions marked by a key inside of double curly braces.\n\n    parsePlaceholderAlph1 \"This is {{name}}s example (made by {{name}})\" |> Result.map ((|>) \"Andy\")\n    --> Ok \"This is Andys example (made by Andy)\"\n\n",
+                "type": "String.String -> Result.Result String.String (String.String -> String.String)"
+            },
+            {
+                "name": "parsePlaceholderAlph2",
+                "comment": " Parse a `String` into a function substituting the argument at all positions marked by two keys inside of double curly braces.\nThe arguments are substituted in alphabetical order of the keys.\n\n    parsePlaceholderAlph2 \"{{b}} wrote a letter to {{a}}, then {{a}} wrote one back to {{b}}\" |> Result.map (\\f -> f \"Joe\" \"Mary\")\n    --> Ok \"Mary wrote a letter to Joe, then Joe wrote one back to Mary\"\n\n",
+                "type": "String.String -> Result.Result String.String (String.String -> String.String -> String.String)"
+            },
+            {
+                "name": "parsePlaceholderAlph3",
+                "comment": " Parse a `String` into a function substituting the argument at all positions marked by three keys inside of double curly braces.\nThe arguments are substituted in alphabetical order of the keys.\n",
+                "type": "String.String -> Result.Result String.String (String.String -> String.String -> String.String -> String.String)"
+            },
+            {
+                "name": "parsePlaceholderAlph4",
+                "comment": " Parse a `String` into a function substituting the argument at all positions marked by four keys inside of double curly braces.\nThe arguments are substituted in alphabetical order of the keys.\n",
+                "type": "String.String -> Result.Result String.String (String.String -> String.String -> String.String -> String.String -> String.String)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Placeholder.Internal",
+        "comment": " This module allows defining placeholder parsers based on a non-supported `Syntax` as well as\nusing the internal `Template` type for different purposes.\n\n\n# Template\n\n@docs Template, parseTemplate, getPlaceholderNames, getAlphabeticalPlaceholderNames\n@docs getPlaceholderPositions, getSegments, templateToString, mapPlaceholders\n\n\n# Syntax\n\n@docs Syntax, parsePlaceholder1, parsePlaceholder2, parsePlaceholder3, parsePlaceholder4\n@docs parsePlaceholderAlph1, parsePlaceholderAlph2, parsePlaceholderAlph3, parsePlaceholderAlph4\n\n",
+        "unions": [
+            {
+                "name": "Template",
+                "comment": " A `Template` includes an ordered list of placeholders and text segments.\n`Template`s guarantee that\n\n    List.length segments == List.length placeholders + 1\n\nand they can be converted back to the same `String` representation they were parsed from.\n\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Syntax",
+                "comment": " A `Syntax` tells the `templateParser` how to distinguish placeholders from regular text.\nAt the moment, this can only be configured by setting start and end symbol.\n",
+                "args": [],
+                "type": "{ startSymbol : String.String, endSymbol : String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "getAlphabeticalPlaceholderNames",
+                "comment": " Get the names of the placeholders in a `Template` sorted in alphabetical order and without duplicates.\n\n    parseTemplate { startSymbol = \"${\", endSymbol = \"}\" } \"${blub} ${bla} ${blub}\"\n        |> Result.map getAlphabeticalPlaceholderNames\n    --> Ok [\"bla\", \"blub\"]\n\n",
+                "type": "Placeholder.Internal.Template -> List.List String.String"
+            },
+            {
+                "name": "getPlaceholderNames",
+                "comment": " Get the names of the placeholders in a `Template`.\nThe names are ordered just like they are in the given template string.\n\n    parseTemplate { startSymbol = \"${\", endSymbol = \"}\" } \"${first} ${snd}\"\n        |> Result.map getPlaceholderNames\n    --> Ok [\"first\", \"snd\"]\n\n    parseTemplate { startSymbol = \"${\", endSymbol = \"}\" } \"${blub} ${bla} ${blub}\"\n        |> Result.map getPlaceholderNames\n    --> Ok [\"blub\", \"bla\", \"blub\"]\n\n",
+                "type": "Placeholder.Internal.Template -> List.List String.String"
+            },
+            {
+                "name": "getPlaceholderPositions",
+                "comment": " Get the names of the placeholders in a `Template` sorted in alphabetical order together with the positions they appear in.\n\n    parseTemplate { startSymbol = \"${\", endSymbol = \"}\" } \"${blub} ${bla} ${blub}\"\n        |> Result.map getPlaceholderPositions\n    --> Ok [((1, []),\"bla\"), ((0, [2]),\"blub\")]\n\n",
+                "type": "Placeholder.Internal.Template -> List.List ( List.NonEmpty.NonEmpty Basics.Int, String.String )"
+            },
+            {
+                "name": "getSegments",
+                "comment": " Get the static parts of the `Template` as an ordered list.\n\n     parseTemplate { startSymbol = \"${\", endSymbol = \"}\" } \"An ${ex}ample\"\n        |> Result.map getSegments\n    --> Ok ( \"An \", [ \"ample\" ] )\n\n",
+                "type": "Placeholder.Internal.Template -> List.NonEmpty.NonEmpty String.String"
+            },
+            {
+                "name": "mapPlaceholders",
+                "comment": " Change placeholder keys based on index and current key.\n\n    parseTemplate { startSymbol = \"{\", endSymbol = \"}\" } \"{UPPER} case\"\n        |> Result.map (mapPlaceholders (\\_ -> String.toLower) >> templateToString)\n    --> Ok \"{upper} case\"\n\n",
+                "type": "(Basics.Int -> String.String -> String.String) -> Placeholder.Internal.Template -> Placeholder.Internal.Template"
+            },
+            {
+                "name": "parsePlaceholder1",
+                "comment": " Parse a `String` into a function substituting the argument at the position marked by the `Syntax`.\n\n    exampleOf : Result String (String -> String)\n    exampleOf = parsePlaceholder1 { startSymbol = \"${\", endSymbol = \"}\" } \"This is ${name}s example\"\n\n    Result.map ((|>) \"Andy\") exampleOf\n    --> Ok \"This is Andys example\"\n\n    parsePlaceholder1 { startSymbol = \"${\", endSymbol = \"}\" } \"No placeholder\"\n    --> Err \"Expected 1 placeholders, but parsed a total of 0.\"\n\n    parsePlaceholder1 { startSymbol = \"${\", endSymbol = \"}\" } \"${multiple}${placeholders}\"\n    --> Err \"Expected 1 placeholders, but parsed a total of 2.\"\n\n",
+                "type": "Placeholder.Internal.Syntax -> String.String -> Result.Result String.String (Placeholder.Internal.F1 String.String)"
+            },
+            {
+                "name": "parsePlaceholder2",
+                "comment": " Parse a `String` into a function substituting the arguments at the two positions marked by the `Syntax`.\nNote that this function and the other `parsePlaceholderN` functions _always_ substitute elements in the order\nthey appear in the template string. This also means that for duplicate placeholder keys, you need to use\nthe `parsePlaceholderAlphN` family of functions instead.\n\n    parsePlaceholder2 { startSymbol = \"{\", endSymbol = \"}\" } \"{greeting} {target}\"\n        |> Result.map (\\f -> f \"Hello\" \"World\")\n    --> Ok \"Hello World\"\n\n",
+                "type": "Placeholder.Internal.Syntax -> String.String -> Result.Result String.String (Placeholder.Internal.F2 String.String)"
+            },
+            {
+                "name": "parsePlaceholder3",
+                "comment": " Parse a `String` into a function substituting the arguments at the three positions marked by the `Syntax`.\n",
+                "type": "Placeholder.Internal.Syntax -> String.String -> Result.Result String.String (Placeholder.Internal.F3 String.String)"
+            },
+            {
+                "name": "parsePlaceholder4",
+                "comment": " Parse a `String` into a function substituting the arguments at the four positions marked by the `Syntax`.\n",
+                "type": "Placeholder.Internal.Syntax -> String.String -> Result.Result String.String (Placeholder.Internal.F4 String.String)"
+            },
+            {
+                "name": "parsePlaceholderAlph1",
+                "comment": " Parse a `String` into a function substituting the argument at all positions marked with the same, only key\nThis differs from `parsePlaceholder1` as you can see in the following example:\n\n    syntax : Syntax\n    syntax = { startSymbol = \"{\", endSymbol = \"}\" }\n\n    parsePlaceholder1 syntax \"{greeting} {greeting}\"\n    --> Err \"Expected 1 placeholders, but parsed a total of 2.\"\n\n    parsePlaceholderAlph1 syntax \"{greeting} {greeting}\" |> Result.map ((|>) \"Hello\")\n    --> Ok \"Hello Hello\"\n\n",
+                "type": "Placeholder.Internal.Syntax -> String.String -> Result.Result String.String (Placeholder.Internal.F1 String.String)"
+            },
+            {
+                "name": "parsePlaceholderAlph2",
+                "comment": " Parse a `String` into a function substituting the arguments at all positions marked with the two placeholder keys.\nThe arguments for the keys are expected in alphabetical order.\nThis differs from `parsePlaceholder2` as you can see in the following example:\n\n    syntax : Syntax\n    syntax = { startSymbol = \"{\", endSymbol = \"}\" }\n\n    parsePlaceholder2 syntax \"{greeting} {friend}\" |> Result.map (\\f -> f \"Hello\" \"World\")\n    --> Ok \"Hello World\"\n\n    parsePlaceholderAlph2 syntax \"{greeting} {friend}\" |> Result.map (\\f -> f \"Hello\" \"World\")\n    --> Ok \"World Hello\"\n\n",
+                "type": "Placeholder.Internal.Syntax -> String.String -> Result.Result String.String (Placeholder.Internal.F2 String.String)"
+            },
+            {
+                "name": "parsePlaceholderAlph3",
+                "comment": " Parse a `String` into a function substituting the arguments at all positions marked with the three placeholder keys.\nThe arguments for the keys are expected in alphabetical order.\n",
+                "type": "Placeholder.Internal.Syntax -> String.String -> Result.Result String.String (Placeholder.Internal.F3 String.String)"
+            },
+            {
+                "name": "parsePlaceholderAlph4",
+                "comment": " Parse a `String` into a function substituting the arguments at all positions marked with the four placeholder keys.\nThe arguments for the keys are expected in alphabetical order.\n",
+                "type": "Placeholder.Internal.Syntax -> String.String -> Result.Result String.String (Placeholder.Internal.F4 String.String)"
+            },
+            {
+                "name": "parseTemplate",
+                "comment": " Parse a `String` into a `Template` based on a `Syntax`.\n\n    syntax : Syntax\n    syntax = { startSymbol = \"${\", endSymbol = \"}\" }\n\n    parseTemplate syntax \"This is ${name}s example\" |> Result.map (always ())\n\n    --> Ok ()\n    parseTemplate syntax \"This does not ${makeSense\"\n\n    --> Err \"TODO deadEndsToString\" -- (Waiting for upstream fix in elm/parser)\n\n",
+                "type": "Placeholder.Internal.Syntax -> String.String -> Result.Result String.String Placeholder.Internal.Template"
+            },
+            {
+                "name": "templateToString",
+                "comment": " Convert a parsed `Template` back to its `String` representation.\nFor any template built with `Syntax` s,\n\n    templateToString >> parseTemplate s == identity\n\n    parseTemplate { startSymbol = \"${\", endSymbol = \"}\" } \"This is ${name}s example\"\n        |> Result.map templateToString\n    --> Ok \"This is ${name}s example\"\n\n",
+                "type": "Placeholder.Internal.Template -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

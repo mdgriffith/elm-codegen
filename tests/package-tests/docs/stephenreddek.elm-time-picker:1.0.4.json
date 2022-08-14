@@ -1,0 +1,94 @@
+[
+    {
+        "name": "TimePicker",
+        "comment": " A time picker in pure elm.\n\n\n# Models\n\n@docs Time, TimePicker, Settings, Period, defaultSettings, selectedTime\n\n\n# Update\n\n@docs init, Msg, TimeEvent, update\n\n\n# View\n\n@docs view\n\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " The internal messages that the picker uses to operate\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Period",
+                "comment": " Period denotes whether its AM or PM when using 12-hour format\n",
+                "args": [],
+                "cases": [
+                    [
+                        "AM",
+                        []
+                    ],
+                    [
+                        "PM",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "TimeEvent",
+                "comment": " Used to communicate to the caller that the value has been set, changed, or cleared.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NoChange",
+                        []
+                    ],
+                    [
+                        "Changed",
+                        [
+                            "Maybe.Maybe TimePicker.Time"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "TimePicker",
+                "comment": " The base model for the time picker\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Settings",
+                "comment": " Contains the configuration that doesn't need to be maintained by the library.\n\n  - isHourDisabled - Will be run on the 24-hour version of the hour.\n\n",
+                "args": [],
+                "type": "{ showHours : Basics.Bool, showMinutes : Basics.Bool, showSeconds : Basics.Bool, use24Hours : Basics.Bool, placeholder : String.String, hourStep : Basics.Int, minuteStep : Basics.Int, secondStep : Basics.Int, disabled : Basics.Bool, hideDisabledOptions : Basics.Bool, isHourDisabled : Basics.Int -> Basics.Bool, isMinuteDisabled : Basics.Int -> Basics.Bool, isSecondDisabled : Basics.Int -> Basics.Bool, isPeriodDisabled : TimePicker.Period -> Basics.Bool }"
+            },
+            {
+                "name": "Time",
+                "comment": " The base way to represent time. Hours are always counted in 24-hour format with midnight at 0\n",
+                "args": [],
+                "type": "{ hours : Basics.Int, minutes : Basics.Int, seconds : Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultSettings",
+                "comment": " The basic configuration for a TimePicker\n",
+                "type": "TimePicker.Settings"
+            },
+            {
+                "name": "init",
+                "comment": " Function for initializing a closed and empty TimePicker\n",
+                "type": "Maybe.Maybe TimePicker.Time -> TimePicker.TimePicker"
+            },
+            {
+                "name": "selectedTime",
+                "comment": " Returns the current value of the time picker\n",
+                "type": "TimePicker.TimePicker -> Maybe.Maybe TimePicker.Time"
+            },
+            {
+                "name": "update",
+                "comment": " Function to update the model when messages come\n",
+                "type": "TimePicker.Settings -> TimePicker.Msg -> TimePicker.TimePicker -> ( TimePicker.TimePicker, TimePicker.TimeEvent )"
+            },
+            {
+                "name": "view",
+                "comment": " Function for viewing the time picker\n",
+                "type": "TimePicker.Settings -> TimePicker.TimePicker -> Html.Html TimePicker.Msg"
+            }
+        ],
+        "binops": []
+    }
+]

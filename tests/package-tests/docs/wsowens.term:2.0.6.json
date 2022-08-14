@@ -1,0 +1,184 @@
+[
+    {
+        "name": "Term",
+        "comment": " This module contains the basic term type.\n# Definition\n@docs Term\n@docs Connection\n\n# Creating Terms\n@docs withFormat\n@docs offline\n@docs new\n\n# Using Terms\n@docs receive\n@docs render\n",
+        "unions": [
+            {
+                "name": "Connection",
+                "comment": " A `Connection` can be used to information about what a `Term` is connected\nto.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Open",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Connecting",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Closed",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Term",
+                "comment": " A `Term` is the main data structure exposed by this package. A `Term` can\nreceive ANSI-encoded messages, convert user input into new Msgs, and quickly\nrender a chat log. The fields of a `Term` are as follows:\n- `status` any current information about the connection\n- `log` stores all of the previously received messages (already encoded into\nHTML)\n- `format` stores the current format that the `Term` will apply to incoming\nmessages\n- `events` stores functions to trigger if the user attempts to submit input\nor connect to a new address\nRather than create a `Term` directly, I recommend using the functions in the\nsection below.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ status : Maybe.Maybe Term.Connection, log : Array.Array (Html.Html msg), format : Maybe.Maybe Term.ANSI.Format, events : Term.Handlers msg }"
+            }
+        ],
+        "values": [
+            {
+                "name": "new",
+                "comment": " Create a `Term` with complete configuration.\nFor details on `fmt` and `onInput`, see `withFormat` above. This function also\naccepts another Msg type, `onConnect`. Similar to `onInput`, whatever Msg you\nprovide for `onConnect` will fire when the user presses enter after typing in\nthe URL bar.\n\nIf `status` is `Nothing`, the URL bar will be hidden entirely. Otherwise, you can\nuse status to store information about the current connection.\n",
+                "type": "Maybe.Maybe Term.Connection -> Maybe.Maybe Term.ANSI.Format -> (String.String -> msg) -> (String.String -> msg) -> Term.Term msg"
+            },
+            {
+                "name": "offline",
+                "comment": " Create a Term that has full formatting and user input, but doesn't display\nthe URL bar. This may be useful if you want to create an interactive terminal\nfor your user, but you don't need the users to connect to any websites.\n\n`fmt` is an optional ANSI.format (see `withFormat` above). (Note, you can pass\n`Nothing` as the format to disable formatting entirely.) `onInput` should be a\n`Msg` that accepts some type of String. Once the user types something in the\nterminal and presses enter, a Msg of type `onInput` will fire.\n",
+                "type": "Maybe.Maybe Term.ANSI.Format -> (String.String -> msg) -> Term.Term msg"
+            },
+            {
+                "name": "receive",
+                "comment": " Send an ANSI-escaped message to the Term. Produces a term with an updated\nlist of messages and updated format state.\n",
+                "type": "String.String -> Term.Term msg -> Term.Term msg"
+            },
+            {
+                "name": "render",
+                "comment": " Emits HTML code for a `Term`. This can be used in a typical `view` function\nfor your application, for example:\n\n    view : Model -> Html.Html msg\n    view model =\n      Html.div [ ]\n        [ Html.h1 [ ] [ Html.text \"check out my cool terminal:\"]\n        , Term.render model.term\n        ]\n",
+                "type": "Term.Term msg -> Html.Html msg"
+            },
+            {
+                "name": "withFormat",
+                "comment": " Create a formatted Term that does not accept any user input or display a\nURL bar. This may be useful if you just want to decorate your website or have a\ncool way to display incoming messages.\n\nWhen selecting a format you can either use the default or build off of it.\n\n    Term.withFormat ANSI.defaultFormat -- creates a default-formatted term\n\n    greenBold = {defaultFormat | foreground = ANSI.Green, bold = True }\n    Term.withFormat greenBold -- creates a Term with green, bold text\n",
+                "type": "Term.ANSI.Format -> Term.Term msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Term.ANSI",
+        "comment": "\n## Parsing Strings with ANSI-escape codes.\nThis module contains functions to parse strings with\n[ANSI-encoded data](https://en.wikipedia.org/wiki/ANSI_escape_code).\nThe main function for this purpose is `parseEscaped`:\n@docs parseEscaped\n@docs Buffer\nThis module does not expose the core parsers as part of its API, but feel free\nto look at the source code.\n\n## Formatting\nThis package supports most of the basic SGR function parameters. All of these\npossible configurations are represented by the `Format` record:\n@docs Format\n@docs Color\n@docs defaultFormat\n\nYou can use Term.receive to handle most ANSI-escaped data.\nHowever, if you want to get the HTML node directly, you can use `format`.\n@docs format\n",
+        "unions": [
+            {
+                "name": "Color",
+                "comment": " Type representing the color of text.\nCurrently, the basic 8 colors are supported (for SGR codes 30-37 and 40-47) as\nwell as the 8 nonstandard bright colors (for SGR codes 90-97 and 100-107).\n\nNote that, since these colors are rendered as simple CSS classes, you can write\nyour own CSS files if you want to produce your own color scheme.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Black",
+                        []
+                    ],
+                    [
+                        "Red",
+                        []
+                    ],
+                    [
+                        "Green",
+                        []
+                    ],
+                    [
+                        "Yellow",
+                        []
+                    ],
+                    [
+                        "Blue",
+                        []
+                    ],
+                    [
+                        "Magenta",
+                        []
+                    ],
+                    [
+                        "Cyan",
+                        []
+                    ],
+                    [
+                        "White",
+                        []
+                    ],
+                    [
+                        "Default",
+                        []
+                    ],
+                    [
+                        "BrightBlack",
+                        []
+                    ],
+                    [
+                        "BrightRed",
+                        []
+                    ],
+                    [
+                        "BrightGreen",
+                        []
+                    ],
+                    [
+                        "BrightYellow",
+                        []
+                    ],
+                    [
+                        "BrightBlue",
+                        []
+                    ],
+                    [
+                        "BrightMagenta",
+                        []
+                    ],
+                    [
+                        "BrightCyan",
+                        []
+                    ],
+                    [
+                        "BrightWhite",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Buffer",
+                "comment": " An ANSI.Buffer contains a stack of processed HTML nodes and possibly a\nFormat state. If `Nothing` is provided for the format state, then no formats\n will be stored in the Buffer and all SGR commands will be ignored.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ nodes : List.List (Html.Html msg), format : Maybe.Maybe Term.ANSI.Format }"
+            },
+            {
+                "name": "Format",
+                "comment": " At any time, the terminal emulator can be represented by record above.\nThe basic text decoration attributes (bold, italics, underline, etc.), are\nall represented by basic booleans. You can update these using the record update\nsyntax:\n    blinkingItalicFormat = {defaultFormat | italic = True, blink = True}\nThe `foreground` and `background` fields are represented by the `Color` type,\nwhich we discuss in detail below.\n",
+                "args": [],
+                "type": "{ foreground : Term.ANSI.Color, background : Term.ANSI.Color, bold : Basics.Bool, italic : Basics.Bool, underline : Basics.Bool, strike : Basics.Bool, blink : Basics.Bool, reverse : Basics.Bool }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultFormat",
+                "comment": " The default Format for text. The `Default` foreground and background colors\nrefer to [SGR codes](https://en.wikipedia.org/wiki/ANSI_escape_code#SGR_parameters) 39 and 49, respectively.\nIn practice, these codes usually mean white for the foreground, and black for\nthe background.\n",
+                "type": "Term.ANSI.Format"
+            },
+            {
+                "name": "format",
+                "comment": " Apply a Format to a string of content, producing an HTML node.\n",
+                "type": "Term.ANSI.Format -> String.String -> Html.Html msg"
+            },
+            {
+                "name": "parseEscaped",
+                "comment": " Parse and process a stream of ANSI-escaped data.\nOptionally, a starting Format state may be provided.  If `Nothing` is provided,\nall SGR commands will be ignored. (Provide `Just defaultFormat` to enable\nformatting but start with the default Format state.)\n",
+                "type": "Maybe.Maybe Term.ANSI.Format -> String.String -> Term.ANSI.Buffer msg"
+            }
+        ],
+        "binops": []
+    }
+]

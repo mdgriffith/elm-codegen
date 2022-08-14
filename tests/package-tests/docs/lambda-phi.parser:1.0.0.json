@@ -1,0 +1,478 @@
+[
+    {
+        "name": "Parser",
+        "comment": " Intuitive and easy to use parser library.\n\n\n# Basic usage\n\n@docs Parser, Error, parse, into, take, drop, textOf, lazy\n\n\n# Chaining\n\n@docs succeed, expected, oneOf, andThenKeep, andThenIgnore, andThen, andThen2, orElse, expecting\n\n\n# Mapping\n\n@docs map, map2, map3, map4, map5\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Error",
+                "comment": " Contains the description of an error.\nThis includes an error message, the position, and the context stack.\n",
+                "args": [],
+                "type": "{ expected : String.String, lastChar : Maybe.Maybe Char.Char, input : String.String, row : Basics.Int, col : Basics.Int, context : List.List Parser.Context }"
+            },
+            {
+                "name": "Parser",
+                "comment": " A `Parser` is defined as a function that takes an input state,\nincluding an input text, and returns either an [`Error`](#Error),\nor a value with the next state.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "Parser.State -> Result.Result Parser.Error ( a, Parser.State )"
+            }
+        ],
+        "values": [
+            {
+                "name": "andThen",
+                "comment": " Parse one value `andThen` do something with that value,\nwhich results in another parser.\n\nThis can be used to validate the last thing we parsed,\nor transform the last value,\nor to use the last value for the next parser like a backreference.\n\n    import Parser.Char exposing (anyChar)\n    import Parser.Error\n    import Parser.Sequence exposing (oneOrMore)\n\n    -- Get some characters `andThen` interpret them as an `Int`.\n    textOf (oneOrMore anyChar)\n        |> andThen\n            (\\chars ->\n                case String.toInt chars of\n                    Just n -> succeed n\n                    Nothing -> expected \"an integer, better use Parser.Common.int\"\n            )\n        |> parse \"123\"\n    --> Ok 123\n\n",
+                "type": "(a -> Parser.Parser b) -> Parser.Parser a -> Parser.Parser b"
+            },
+            {
+                "name": "andThen2",
+                "comment": " Parse two values `andThen2` do something with those values,\nwhich results in another parser.\n\nThis can be used to validate the last things we parsed,\nor transform the last values,\nor to ignore eiher of the values,\nor to use the last values for the next parser like a backreference.\n\n    import Parser.Char exposing (char)\n    import Parser.Common exposing (digits)\n\n    -- Get something like \"=123\" `andThen` interpret it as an `Int`.\n    andThen2\n        (\\_ chars ->\n            case String.toInt chars of\n                Just n -> succeed n\n                Nothing -> expected \"an integer, better use Parser.Common.int\"\n        )\n        (char '=')\n        digits\n        |> parse \"=123\"\n    --> Ok 123\n\n",
+                "type": "(a -> b -> Parser.Parser c) -> Parser.Parser a -> Parser.Parser b -> Parser.Parser c"
+            },
+            {
+                "name": "andThenIgnore",
+                "comment": " Parse and consume the next parser, and keep _only_ the previous value.\n\nThis is useful when you want to match and advance the parser,\nbut keep the previous value and ignore the new value.\n\n    import Parser.Common exposing (letters, text)\n    import Parser.Char exposing (char)\n\n    -- Let's parse a simple email, but we're only interested in the username.\n    letters\n        |> andThenIgnore (char '@')\n        |> andThenIgnore letters\n        |> andThenIgnore (text \".com\")\n        |> parse \"user@example.com\"\n    --> Ok \"user\"\n\n",
+                "type": "Parser.Parser ignore -> Parser.Parser a -> Parser.Parser a"
+            },
+            {
+                "name": "andThenKeep",
+                "comment": " Parse and consume the next parser, and keep _only_ the new value.\n\nThis is useful when you want to match and advance the parser,\nbut ignore the previous value and keep the new one.\n\n    import Parser.Common exposing (letters, text)\n    import Parser.Char exposing (char)\n\n    -- Let's parse a simple email, but we're only interested in the domain.\n    letters\n        |> andThenIgnore (char '@')\n        |> andThenKeep letters\n        |> andThenIgnore (text \".com\")\n        |> parse \"user@example.com\"\n    --> Ok \"example\"\n\n",
+                "type": "Parser.Parser keep -> Parser.Parser a -> Parser.Parser keep"
+            },
+            {
+                "name": "drop",
+                "comment": " Ignores a parsed value, but it still must match to continue.\n",
+                "type": "Parser.Parser a -> Parser.Parser b -> Parser.Parser b"
+            },
+            {
+                "name": "expected",
+                "comment": " A parser that always fails with the given error message.\n\n    -- Always fails with an error message.\n    import Parser.Error\n\n    expected \"nothing, this always fails\"\n        |> parse \"\"\n        |> Result.mapError Parser.Error.message\n    --> Err \"1:0: I was expecting nothing, this always fails. I reached the end of the input text.\"\n\n",
+                "type": "String.String -> Parser.Parser a"
+            },
+            {
+                "name": "expecting",
+                "comment": " If there is an error, this replaces the error message.\nThis helps create more descriptive error messages instead of the more generic\nones.\n\nIf you want to use the value that failed some validation in the error message,\nconsider using a more relaxed parser and using [`andThen`](#andThen) to do the\nvalidation.\nIt's a little longer, but that way you get access to the potentially invalid\nparsed value.\n\n    import Parser.Common exposing (letters)\n    import Parser.Error\n\n    -- We can redefine an error message if something goes wrong.\n    letters\n        |> expecting \"a name consisting of letters\"\n        |> parse \"123\"\n        |> Result.mapError Parser.Error.message\n    --> Err \"1:1: I was expecting a name consisting of letters. I got stuck when I got the character '1'.\"\n\n",
+                "type": "String.String -> Parser.Parser a -> Parser.Parser a"
+            },
+            {
+                "name": "into",
+                "comment": " Starts a parsing pipeline to parse into a data type.\n\nYou should also specify a name for the context,\nthis helps to give better error messages.\n\n    import Parser.Char exposing (char)\n    import Parser.Common exposing (number)\n\n    type alias Point =\n        { x : Float\n        , y : Float\n        }\n\n    -- We can use `into` to have more context when an error happens.\n    point : Parser Point\n    point =\n        into \"Point\"\n            (succeed Point\n                |> drop (char '(')\n                |> take number\n                |> drop (char ',')\n                |> take number\n                |> drop (char ')')\n            )\n\n    parse \"(12,34)\" point --> Ok {x = 12, y = 34}\n\n    -- We can get the error context stack as well as where they started matching.\n    parse \"(a,b)\" point\n        |> Result.mapError .context\n    --> Err [{ name = \"Point\", row = 1, col = 1 }]\n\n",
+                "type": "String.String -> Parser.Parser a -> Parser.Parser a"
+            },
+            {
+                "name": "lazy",
+                "comment": " Matches a parser _lazily_.\nThis allows to create self-referential parsers for recursive definitions.\n\n    import Parser.Char exposing (anyChar)\n    import Parser.Common exposing (text, token)\n\n    type LazyList\n        = End\n        | Next Char LazyList\n\n    lazyList : Parser LazyList\n    lazyList =\n        oneOf [ lazyListEnd, lazyListNext ]\n\n    lazyListEnd : Parser LazyList\n    lazyListEnd =\n        succeed End\n            |> drop (text \"[]\")\n\n    lazyListNext : Parser LazyList\n    lazyListNext =\n        succeed Next\n            |> take anyChar\n            |> drop (token (text \"::\"))\n            |> take (lazy (\\_ -> lazyList))\n\n    parse \"[]\" lazyList --> Ok End\n    parse \"a :: []\" lazyList --> Ok (Next 'a' End)\n    parse \"a :: b :: []\" lazyList --> Ok (Next 'a' (Next 'b' End))\n\n> ℹ️ Without `lazy`, you would get an error like:\n>\n>     The `lazyList` definition is causing a very tricky infinite loop.\n>\n>     The `lazyList` value depends on itself through the following chain of\n>     definitions:\n>\n>           ┌─────┐\n>           │    lazyList\n>           │     ↓\n>           │    lazyListNext\n>           └─────┘\n\n",
+                "type": "(() -> Parser.Parser a) -> Parser.Parser a"
+            },
+            {
+                "name": "map",
+                "comment": " Transform the result of a parser.\n\n    import Parser.Common exposing (letters)\n\n    -- Get some letters, and make them lowercase.\n    letters\n        |> map String.toLower\n        |> parse \"ABC\"\n    --> Ok \"abc\"\n\n",
+                "type": "(a -> b) -> Parser.Parser a -> Parser.Parser b"
+            },
+            {
+                "name": "map2",
+                "comment": " Transform the result of two parsers.\n\n    import Parser.Common exposing (int)\n    import Parser.Char exposing (char)\n\n    -- Get an `Int` and apply an unary operator.\n    map2\n        (\\op x ->\n            if op == '-' then\n                -x\n            else\n                x\n        )\n        (oneOf [char '+', char '-'])\n        int\n        |> parse \"-123\"\n    --> Ok -123\n\n",
+                "type": "(a -> b -> c) -> Parser.Parser a -> Parser.Parser b -> Parser.Parser c"
+            },
+            {
+                "name": "map3",
+                "comment": " Transform the result of three parsers.\n\n    import Parser.Char exposing (char)\n    import Parser.Common exposing (int)\n\n    -- Get an `Int` and apply a binary operator.\n    map3\n        (\\x op y ->\n            if op == '+' then\n                x + y\n            else\n                x - y\n        )\n        int\n        (oneOf [char '+', char '-'])\n        int\n        |> parse \"5+2\"\n    --> Ok 7\n\n",
+                "type": "(a -> b -> c -> d) -> Parser.Parser a -> Parser.Parser b -> Parser.Parser c -> Parser.Parser d"
+            },
+            {
+                "name": "map4",
+                "comment": " Transform the result of four parsers.\n",
+                "type": "(a -> b -> c -> d -> e) -> Parser.Parser a -> Parser.Parser b -> Parser.Parser c -> Parser.Parser d -> Parser.Parser e"
+            },
+            {
+                "name": "map5",
+                "comment": " Transform the result of five parsers.\n",
+                "type": "(a -> b -> c -> d -> e -> f) -> Parser.Parser a -> Parser.Parser b -> Parser.Parser c -> Parser.Parser d -> Parser.Parser e -> Parser.Parser f"
+            },
+            {
+                "name": "oneOf",
+                "comment": " Returns the value of the first parser that matches.\nIt tries to match the parsers in order.\n\nIf none of the parsers match, it keeps the error message from the last parser.\n\n> ℹ️ It's a good idea to use [`expecting`](#expecting) alongside this function\n> to improve the error messages.\n\n> ℹ️ Equivalent regular expression: `|`\n\n    import Parser.Char exposing (char, letter)\n    import Parser.Error\n\n    -- Try the first parser.\n    oneOf [ char '_', letter ]\n        |> parse \"_abc\"\n    --> Ok '_'\n\n    -- If it doesn't work, try the next.\n    oneOf [ char '_', letter ]\n        |> parse \"abc\"\n    --> Ok 'a'\n\n    -- If none of them work, we get the error from the last parser.\n    oneOf [ char '_', letter ]\n        |> parse \"123\"\n        |> Result.mapError Parser.Error.message\n    --> Err \"1:1: I was expecting a letter [a-zA-Z]. I got stuck when I got the character '1'.\"\n\n",
+                "type": "List.List (Parser.Parser a) -> Parser.Parser a"
+            },
+            {
+                "name": "orElse",
+                "comment": " If the previous parser failed, try a fallback parser.\n\n    import Parser.Common exposing (digits, letters)\n    import Parser.Error\n\n    -- Try letters, `orElse` give me some digits.\n    letters\n        |> orElse digits\n        |> parse \"abc\"\n    --> Ok \"abc\"\n\n    -- We didn't get letters, but we still got digits.\n    letters\n        |> orElse digits\n        |> parse \"123\"\n    --> Ok \"123\"\n\n    -- But if we still fail, give the error message of the fallback parser.\n    letters\n        |> orElse digits\n        |> parse \"_\"\n        |> Result.mapError Parser.Error.message\n    --> Err \"1:1: I was expecting one or more digits [0-9]+. I got stuck when I got the character '_'.\"\n\n",
+                "type": "Parser.Parser a -> Parser.Parser a -> Parser.Parser a"
+            },
+            {
+                "name": "parse",
+                "comment": " Parse an input text, and get either an [`Error`](#Error)\nor the parsed value as a result.\n\n    import Parser.Char exposing (letter)\n    import Parser.Common exposing (number)\n    import Parser.Error\n\n    -- Consumes a single letter, then \"bc\" are still remaining.\n    parse \"abc\" letter --> Ok 'a'\n\n    -- We can also parse text into other data types like numbers.\n    parse \"3.14\" number --> Ok 3.14\n\n    -- We get an error message if the parser doesn't match.\n    letter\n        |> parse \"123\"\n        |> Result.mapError Parser.Error.message\n    --> Err \"1:1: I was expecting a letter [a-zA-Z]. I got stuck when I got the character '1'.\"\n\n",
+                "type": "String.String -> Parser.Parser a -> Result.Result Parser.Error a"
+            },
+            {
+                "name": "succeed",
+                "comment": " A parser that always succeeds with the given value.\n\n    import Parser.Char exposing (char)\n    import Parser.Common exposing (int)\n\n    -- Always succeed with \"abc\" no matter the input text.\n    parse \"\" (succeed \"abc\") --> Ok \"abc\"\n\n    -- This is usually used to start parser pipelines.\n    type alias Pair =\n        { x : Int\n        , y : Int\n        }\n\n    pair : Parser Pair\n    pair =\n        succeed Pair\n            |> take int\n            |> drop (char ',')\n            |> take int\n\n    parse \"12,34\" pair --> Ok { x = 12, y = 34 }\n\n",
+                "type": "a -> Parser.Parser a"
+            },
+            {
+                "name": "take",
+                "comment": " Takes a parsed value and feeds it to the return value of the parser.\n",
+                "type": "Parser.Parser a -> Parser.Parser (a -> b) -> Parser.Parser b"
+            },
+            {
+                "name": "textOf",
+                "comment": " Matches a string from a list of characters.\n\n    import Parser.Char exposing (letter)\n    import Parser.Sequence exposing (oneOrMore)\n\n    -- Get a `String` out of a `List Char`, we could have also used `letters` :)\n    textOf (oneOrMore letter)\n        |> parse \"abc123\" --> Ok \"abc\"\n\n",
+                "type": "Parser.Parser (List.List Char.Char) -> Parser.Parser String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Parser.Char",
+        "comment": " Parsers for characters.\n\n@docs anyChar, char, charNoCase, digit, letter, lowercase, uppercase, alphaNum, space, punctuation, except\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "alphaNum",
+                "comment": " Matches exactly one letter or digit character.\nThis is case insensitive.\n\n> ℹ️ Equivalent regular expression: `[a-zA-Z0-9]`\n\n    import Parser exposing (parse)\n\n    -- Match a letter or number.\n    parse \"abc\" alphaNum --> Ok 'a'\n    parse \"ABC\" alphaNum --> Ok 'A'\n    parse \"123\" alphaNum --> Ok '1'\n\n    -- But anything else makes it fail.\n    import Parser.Error\n\n    alphaNum\n        |> parse \"_abc\"\n        |> Result.mapError Parser.Error.message\n    --> Err \"1:1: I was expecting a letter or a digit [a-zA-Z0-9]. I got stuck when I got the character '_'.\"\n\n",
+                "type": "Parser.Parser Char.Char"
+            },
+            {
+                "name": "anyChar",
+                "comment": " Matches any single character.\n\n> ℹ️ Equivalent regular expression: `.`\n\n    import Parser exposing (parse)\n\n    -- We can match any character.\n    parse \"abc\" anyChar --> Ok 'a'\n    parse \"#hashtag\" anyChar --> Ok '#'\n\n    -- This can only fail if we run out of inputs.\n    import Parser.Error\n\n    anyChar\n        |> parse \"\"\n        |> Result.mapError Parser.Error.message\n    --> Err \"1:0: I was expecting a character. I reached the end of the input text.\"\n\n",
+                "type": "Parser.Parser Char.Char"
+            },
+            {
+                "name": "char",
+                "comment": " Matches a specific single character.\nThis is case sensitive.\n\n    import Parser exposing (parse)\n\n    -- Match a specific character, case sensitive.\n    parse \"abc\" (char 'a') --> Ok 'a'\n\n    -- It fails if it's not _exactly_ the same.\n    import Parser.Error\n\n    char 'a'\n        |> parse \"ABC\"\n        |> Result.mapError Parser.Error.message\n    --> Err \"1:1: I was expecting the character 'a'. I got stuck when I got the character 'A'.\"\n\n",
+                "type": "Char.Char -> Parser.Parser Char.Char"
+            },
+            {
+                "name": "charNoCase",
+                "comment": " Matches a specific single character.\nThis is case insensitive.\n\n    import Parser exposing (parse)\n\n    -- Match a specific character, case insensitive.\n    parse \"abc\" (charNoCase 'a') --> Ok 'a'\n    parse \"ABC\" (charNoCase 'a') --> Ok 'A'\n\n    -- But anything else makes it fail.\n    import Parser.Error\n\n    charNoCase 'a'\n        |> parse \"123\"\n        |> Result.mapError Parser.Error.message\n    --> Err \"1:1: I was expecting the character 'a' (case insensitive). I got stuck when I got the character '1'.\"\n\n",
+                "type": "Char.Char -> Parser.Parser Char.Char"
+            },
+            {
+                "name": "digit",
+                "comment": " Matches exactly one digit character.\n\n> ℹ️ Equivalent regular expression: `[0-9]` or `\\d`\n\n    import Parser exposing (parse)\n\n    -- Match a digit.\n    parse \"123\" digit --> Ok '1'\n    parse \"3.14\" digit --> Ok '3'\n\n    -- But anything else makes it fail.\n    import Parser.Error\n\n    digit\n        |> parse \"abc\"\n        |> Result.mapError Parser.Error.message\n    --> Err \"1:1: I was expecting a digit [0-9]. I got stuck when I got the character 'a'.\"\n\n",
+                "type": "Parser.Parser Char.Char"
+            },
+            {
+                "name": "except",
+                "comment": " Matches any character `except` the parser provided.\n\n> ℹ️ It's a good idea to use [`expecting`](#expecting) alongside this function\n> to improve the error messages.\n\n    import Parser exposing (parse)\n    import Parser.Error\n\n    -- Anything except a letter is okay.\n    parse \"123\" (except letter) --> Ok '1'\n    parse \"-123\" (except letter) --> Ok '-'\n\n    -- But a letter is not.\n    except letter\n        |> parse \"abc\"\n        |> Result.mapError Parser.Error.message\n    --> Err \"1:1: I was expecting a different character. I got stuck when I got the character 'a'.\"\n\n",
+                "type": "Parser.Parser Char.Char -> Parser.Parser Char.Char"
+            },
+            {
+                "name": "letter",
+                "comment": " Matches exactly one letter character.\nThis is case insensitive.\n\n> ℹ️ Equivalent regular expression: `[a-zA-Z]`\n\n    import Parser exposing (parse)\n\n    -- Match any letter, case insensitive.\n    parse \"abc\" letter --> Ok 'a'\n    parse \"ABC\" letter --> Ok 'A'\n\n    -- But anything else makes it fail.\n    import Parser.Error\n\n    letter\n        |> parse \"123\"\n        |> Result.mapError Parser.Error.message\n    --> Err \"1:1: I was expecting a letter [a-zA-Z]. I got stuck when I got the character '1'.\"\n\n",
+                "type": "Parser.Parser Char.Char"
+            },
+            {
+                "name": "lowercase",
+                "comment": " Matches exactly one lowercase letter character.\nThis is case sensitive.\n\n> ℹ️ Equivalent regular expression: `[a-z]`\n\n    import Parser exposing (parse)\n\n    -- Match a lowercase letter.\n    parse \"abc\" lowercase --> Ok 'a'\n\n    -- But anything else makes it fail.\n    import Parser.Error\n\n    lowercase\n        |> parse \"ABC\"\n        |> Result.mapError Parser.Error.message\n    --> Err \"1:1: I was expecting a lowercase letter [a-z]. I got stuck when I got the character 'A'.\"\n\n",
+                "type": "Parser.Parser Char.Char"
+            },
+            {
+                "name": "punctuation",
+                "comment": " Matches an ASCII punctuation character.\nA punctuation character can be any of\n`!`, `\"`, `#`, `$`, `%`, `&`, `'`, `(`, `)`, `*`, `+`, `,`, `-`, `.`,\n`/`, `:`, `;`, `<`, `=`, `>`, `?`, `@`, `[`, `]`, `^`, `_`, `\\``,`{`,`}`, or`~\\`.\n\n> ℹ️ Equivalent regular expression: `[!\"#$%&'()*+,-./:;<=>?@[\\]^_\\\\{}~]`\n\n    import Parser exposing (parse)\n\n    -- Match a punctuation character.\n    parse \"#hashtag\" punctuation --> Ok '#'\n    parse \"=123\" punctuation --> Ok '='\n\n    -- But anything else makes it fail.\n    import Parser.Error\n\n    punctuation\n        |> parse \"abc\"\n        |> Result.mapError Parser.Error.message\n    --> Err \"1:1: I was expecting a punctuation character. I got stuck when I got the character 'a'.\"\n\n",
+                "type": "Parser.Parser Char.Char"
+            },
+            {
+                "name": "space",
+                "comment": " Matches a Unicode blank space character, including new lines.\nA blank space can be a\nregular space `' '`,\ntab `'\\t'`,\nnew line `'\\n'`,\ncarriage return `'\\r'`,\nor form feed `'\\f'`.\n\n> ℹ️ Equivalent regular expression: `[ \\t\\n\\r\\f]` or `\\s`\n\n    import Parser exposing (parse)\n\n    -- Match a space space.\n    parse \"    abc\" space --> Ok ' '\n    parse \"\\n\\t abc\" space --> Ok '\\n'\n\n    -- But anything else makes it fail.\n    import Parser.Error\n\n    parse \"abc\" space\n        |> Result.mapError Parser.Error.message\n    --> Err \"1:1: I was expecting a blank space or new line. I got stuck when I got the character 'a'.\"\n\n",
+                "type": "Parser.Parser Char.Char"
+            },
+            {
+                "name": "uppercase",
+                "comment": " Matches exactly one uppercase letter character.\nThis is case sensitive.\n\n> ℹ️ Equivalent regular expression: `[A-Z]`\n\n    import Parser exposing (parse)\n\n    -- Match an uppercase letter.\n    parse \"ABC\" uppercase --> Ok 'A'\n\n    -- But anything else makes it fail.\n    import Parser.Error\n\n    uppercase\n        |> parse \"abc\"\n        |> Result.mapError Parser.Error.message\n    --> Err \"1:1: I was expecting an uppercase letter [A-Z]. I got stuck when I got the character 'a'.\"\n\n",
+                "type": "Parser.Parser Char.Char"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Parser.Check",
+        "comment": " Parsers to check for conditions, but not consume any inputs.\n\n\n# Lookahead\n\n@docs followedBy, notFollowedBy\n\n\n# Lookbehind\n\n@docs precededBy, notPrecededBy\n\n\n# Locations\n\n@docs wordBoundary, beginningOfLine, endOfLine, beginning, end\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "beginning",
+                "comment": " Succeeds only if it's the beginning of the input text.\nThis does not consume any inputs.\n\n    import Parser exposing (andThenKeep, parse)\n    import Parser.Common exposing (letters)\n    import Parser.Error\n\n    -- Succeed if we are at the beginning of file.\n    beginning\n        |> andThenKeep letters\n        |> parse \"abc\"\n    --> Ok \"abc\"\n\n    -- Or fail otherwise.\n    letters\n        |> followedBy beginning\n        |> parse \"abc123\"\n        |> Result.mapError Parser.Error.message\n    --> Err \"1:3: I was expecting the beginning of the input text. I got stuck when I got the character 'c'.\"\n\n",
+                "type": "Parser.Parser ()"
+            },
+            {
+                "name": "beginningOfLine",
+                "comment": " Succeeds only the parser is at the beginning of a new line or\nat the beginning of the input text.\nThis does not consume any inputs.\n\n> ℹ️ Equivalent regular expression: `^`\n\n    import Parser exposing (andThenKeep, parse)\n    import Parser.Char exposing (anyChar)\n    import Parser.Common exposing (line)\n    import Parser.Error\n\n    -- Succeed at the beginning of the file.\n    beginningOfLine\n        |> andThenKeep line\n        |> parse \"abc\\n123\"\n    --> Ok \"abc\"\n\n    -- The end of file also counts.\n    line\n        |> followedBy beginningOfLine\n        |> andThenKeep line\n        |> parse \"abc\\n123\"\n    --> Ok \"123\"\n\n    -- But fail otherwise.\n    anyChar\n        |> followedBy beginningOfLine\n        |> parse \"abc\"\n        |> Result.mapError Parser.Error.message\n    --> Err \"1:2: I was expecting the beginning of a line. I got stuck when I got the character 'b'.\"\n\n",
+                "type": "Parser.Parser ()"
+            },
+            {
+                "name": "end",
+                "comment": " Succeeds only if there are no more remaining characters in the input text.\nThis does not consume any inputs.\n\n    import Parser exposing (parse)\n    import Parser.Common exposing (letters)\n    import Parser.Error\n\n    -- Succeed if we've reached the end of file.\n    letters\n        |> followedBy end\n        |> parse \"abc\"\n    --> Ok \"abc\"\n\n    -- Or fail otherwise.\n    letters\n        |> followedBy end\n        |> parse \"abc123\"\n        |> Result.mapError Parser.Error.message\n    --> Err \"1:4: I was expecting the end of the input text, but 3 characters are still remaining. I got stuck when I got the character '1'.\"\n\n",
+                "type": "Parser.Parser ()"
+            },
+            {
+                "name": "endOfLine",
+                "comment": " Succeeds only the parser is at the end of the current line or there are\nno more remaining characters in the input text.\nThis does not consume any inputs.\n\n> ℹ️ Equivalent regular expression: `$`\n\n    import Parser exposing (parse)\n    import Parser.Common exposing (letters, line)\n    import Parser.Error\n\n    -- Succeed if we've reached the end of line.\n    letters\n        |> followedBy endOfLine\n        |> parse \"abc\\n123\"\n    --> Ok \"abc\"\n\n    -- A carriage return also counts.\n    letters\n        |> followedBy endOfLine\n        |> parse \"abc\\r123\"\n    --> Ok \"abc\"\n\n    -- The end of file also counts.\n    letters\n        |> followedBy endOfLine\n        |> parse \"abc\"\n    --> Ok \"abc\"\n\n    -- But fail otherwise.\n    letters\n        |> followedBy endOfLine\n        |> parse \"abc123\"\n        |> Result.mapError Parser.Error.message\n    --> Err \"1:4: I was expecting the end of the current line. I got stuck when I got the character '1'.\"\n\n",
+                "type": "Parser.Parser ()"
+            },
+            {
+                "name": "followedBy",
+                "comment": " Succeeds only if the input text is followed by a _lookahead_ parser.\nThis does not consume any inputs.\n\nIf you want to consume the inputs or use the matched value in any way,\nconsider using [`andThen`](#andThen).\n\n> ℹ️ Equivalent regular expression: `(?=...)` _(positive lookahead)_\n\n    import Parser exposing (parse, succeed)\n    import Parser.Char exposing (digit)\n    import Parser.Common exposing (letters)\n    import Parser.Error\n\n    -- Succeed only if it's `followedBy` a digit.\n    succeed \":)\"\n        |> followedBy digit\n        |> parse \"123\"\n    --> Ok \":)\"\n\n    -- Match letters only if it's `followedBy` a digit.\n    letters\n        |> followedBy digit\n        |> parse \"abc123\"\n    --> Ok \"abc\"\n\n    -- Even if we match the letters, fail if the next character is not a digit.\n    letters\n        |> followedBy digit\n        |> parse \"abc@def\"\n        |> Result.mapError Parser.Error.message\n    --> Err \"1:4: I was expecting a digit [0-9]. I got stuck when I got the character '@'.\"\n\n",
+                "type": "Parser.Parser lookahead -> Parser.Parser a -> Parser.Parser a"
+            },
+            {
+                "name": "notFollowedBy",
+                "comment": " Succeeds only if the input text is _not_ followed by a _lookahead_ parser.\nThis does not consume any inputs.\n\n> ℹ️ It's a good idea to use [`expecting`](#expecting) alongside this function\n> to improve the error messages.\n\n> ℹ️ Equivalent regular expression: `(?!...)` _(negative lookahead)_\n\n    import Parser exposing (expecting, parse, succeed)\n    import Parser.Char exposing (char, digit)\n    import Parser.Common exposing (letters)\n    import Parser.Error\n\n    -- Succeed only if it's `notFollowedBy` a digit.\n    succeed \":)\"\n        |> notFollowedBy digit\n        |> parse \"abc\"\n    --> Ok \":)\"\n\n    -- Match letters only if it's `notFollowedBy` a digit.\n    letters\n        |> notFollowedBy digit\n        |> expecting \"letters not followed by a number\"\n        |> parse \"abc@def\"\n    --> Ok \"abc\"\n\n    -- Even if we match the letters, fail if the next character is a digit.\n    -- This is the default error message, but you can use `expecting` to improve it.\n    letters\n        |> notFollowedBy digit\n        |> parse \"abc123\"\n        |> Result.mapError Parser.Error.message\n    --> Err \"1:4: I was expecting to not match a pattern, but I did. I got stuck when I got the character '1'.\"\n\n",
+                "type": "Parser.Parser lookahead -> Parser.Parser a -> Parser.Parser a"
+            },
+            {
+                "name": "notPrecededBy",
+                "comment": " Succeeds only if the last character does _not_ match the parser provided.\nThis does not consume any inputs.\n\n    import Parser exposing (andThenKeep, parse)\n    import Parser.Char exposing (anyChar, char)\n    import Parser.Common exposing (letters)\n    import Parser.Error\n\n    -- Make sure some letters were not preceded by a '_'.\n    anyChar\n        |> andThenKeep (letters |> notPrecededBy (char '_'))\n        |> parse \"@abc\"\n    --> Ok \"abc\"\n\n    -- If it was preceded by '_', it fails.\n    anyChar\n        |> andThenKeep (letters |> notPrecededBy (char '_'))\n        |> parse \"_abc\"\n        |> Result.mapError Parser.Error.message\n    --> Err \"1:1: I was expecting a different character. I got stuck when I got the character '_'.\"\n\n",
+                "type": "Parser.Parser Char.Char -> Parser.Parser a -> Parser.Parser a"
+            },
+            {
+                "name": "precededBy",
+                "comment": " Succeeds only if the last character matches the parser provided.\nThis does not consume any inputs.\n\n    import Parser exposing (andThenKeep, parse)\n    import Parser.Char exposing (anyChar, char)\n    import Parser.Common exposing (letters)\n    import Parser.Error\n\n    -- Make sure some letters were preceded by a '_'.\n    anyChar\n        |> andThenKeep (letters |> precededBy (char '_'))\n        |> parse \"_abc\"\n    --> Ok \"abc\"\n\n    -- If it was something different, it fails.\n    anyChar\n        |> andThenKeep (letters |> precededBy (char '_'))\n        |> parse \"@abc\"\n        |> Result.mapError Parser.Error.message\n    --> Err \"1:1: I was expecting the character '_'. I got stuck when I got the character '@'.\"\n\n",
+                "type": "Parser.Parser Char.Char -> Parser.Parser a -> Parser.Parser a"
+            },
+            {
+                "name": "wordBoundary",
+                "comment": " Succeeds only if the current position is the beginning or end of a word.\nThis does not consume any inputs.\n\n    import Parser exposing (andThenKeep, parse, textOf)\n    import Parser.Char exposing (anyChar)\n    import Parser.Error\n    import Parser.Sequence exposing (zeroOrMore)\n\n    --- Beginning of a word ---\n\n    -- It can start at the beginning of the input text, followed by an alphanumeric.\n    wordBoundary\n        |> andThenKeep (textOf (zeroOrMore anyChar))\n        |> parse \"abc\"\n    --> Ok \"abc\"\n\n    -- But not followed by anything else.\n    wordBoundary\n        |> andThenKeep (textOf (zeroOrMore anyChar))\n        |> parse \"@abc\"\n        |> Result.mapError Parser.Error.message\n    --> Err \"1:1: I was expecting a word boundary. I got stuck when I got the character '@'.\"\n\n    -- It can also start with an alphanumeric, preceded by a non-alphanumeric.\n    anyChar\n        |> followedBy wordBoundary\n        |> andThenKeep (textOf (zeroOrMore anyChar))\n        |> parse \"@abc\"\n    --> Ok \"abc\"\n\n    -- But not if preceded by anything else\n    anyChar\n        |> followedBy wordBoundary\n        |> andThenKeep (textOf (zeroOrMore anyChar))\n        |> parse \"abc\"\n        |> Result.mapError Parser.Error.message\n    --> Err \"1:2: I was expecting a word boundary. I got stuck when I got the character 'b'.\"\n\n\n    --- End of a word ---\n\n    -- It can end at the end of the input text, preceded by an alphanumeric.\n    textOf (zeroOrMore anyChar)\n        |> followedBy wordBoundary\n        |> parse \"abc\"\n    --> Ok \"abc\"\n\n    -- But not preceded by anything else.\n    textOf (zeroOrMore anyChar)\n        |> followedBy wordBoundary\n        |> parse \"abc@\"\n        |> Result.mapError Parser.Error.message\n    --> Err \"1:4: I was expecting a word boundary. I got stuck when I got the character '@'.\"\n\n    -- It can also end with a non-alphanumeric, preceded by an alphanumeric.\n    anyChar\n        |> followedBy wordBoundary\n        |> parse \"a@\"\n    --> Ok 'a'\n\n    -- But not if preceded by anything else\n    anyChar\n        |> followedBy wordBoundary\n        |> parse \"ab\"\n        |> Result.mapError Parser.Error.message\n    --> Err \"1:2: I was expecting a word boundary. I got stuck when I got the character 'b'.\"\n\n",
+                "type": "Parser.Parser ()"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Parser.Common",
+        "comment": " Common and other useful parsers.\n\n@docs int, number, text, textNoCase, digits, letters, spaces, line, token\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "digits",
+                "comment": " Matches one or more digit.\n\n> ℹ️ Equivalent regular expression: `[0-9]+` or `\\d+`\n\n    import Parser exposing (parse)\n\n    -- Match many digits.\n    parse \"123abc\" digits --> Ok \"123\"\n\n    -- But anything else makes it fail.\n    import Parser.Error\n\n    digits\n        |> parse \"abc123\"\n        |> Result.mapError Parser.Error.message\n    --> Err \"1:1: I was expecting one or more digits [0-9]+. I got stuck when I got the character 'a'.\"\n\n",
+                "type": "Parser.Parser String.String"
+            },
+            {
+                "name": "int",
+                "comment": " Matches an integer value as an `Int`.\n\n    import Parser exposing (parse)\n    import Parser.Error\n\n    -- You can parse integers as `Int` instead of `String`.\n    parse \"123\" int --> Ok 123\n\n    -- It also works with negative numbers.\n    parse \"-123\" int --> Ok -123\n\n    -- A decimal number is _not_ an integer :)\n    parse \"3.14\" int\n        |> Result.mapError Parser.Error.message\n    --> Err \"1:2: I was expecting an integer value. I got stuck when I got the character '.'.\"\n\n    -- But not with invalid numbers.\n    parse \"abc\" int\n        |> Result.mapError Parser.Error.message\n    --> Err \"1:1: I was expecting an integer value. I got stuck when I got the character 'a'.\"\n\n",
+                "type": "Parser.Parser Basics.Int"
+            },
+            {
+                "name": "letters",
+                "comment": " Matches one or more letter.\nThis is case insensitive.\n\n> ℹ️ Equivalent regular expression: `[a-zA-Z]+`\n\n    import Parser exposing (parse)\n\n    -- Match many letters, case insensitive.\n    parse \"abc123\" letters --> Ok \"abc\"\n    parse \"ABC123\" letters --> Ok \"ABC\"\n\n    -- But anything else makes it fail.\n    import Parser.Error\n\n    letters\n        |> parse \"123abc\"\n        |> Result.mapError Parser.Error.message\n    --> Err \"1:1: I was expecting one or more letters [a-zA-Z]+. I got stuck when I got the character '1'.\"\n\n",
+                "type": "Parser.Parser String.String"
+            },
+            {
+                "name": "line",
+                "comment": " Matches a line from the input text, delimited by '\\\\n'.\n\n    import Parser exposing (parse)\n    import Parser.Error\n    import Parser.Sequence exposing (zeroOrMore)\n\n    -- A line could be delimited by the newline character '\\n'.\n    parse \"abc\\ndef\" line --> Ok \"abc\"\n\n    -- Or this could also be the last line.\n    parse \"abc\" line --> Ok \"abc\"\n\n    -- An empty line still counts.\n    parse \"\\n\" line --> Ok \"\"\n\n    -- But not an empty file.\n    line\n        |> parse \"\"\n        |> Result.mapError Parser.Error.message\n    --> Err \"1:0: I was expecting a line. I reached the end of the input text.\"\n\n    -- So we can parse multiple lines.\n    zeroOrMore line\n        |> parse \"abc\\ndef\\nghi\"\n    --> Ok [ \"abc\", \"def\", \"ghi\"]\n\n",
+                "type": "Parser.Parser String.String"
+            },
+            {
+                "name": "number",
+                "comment": " Matches a decimal value as a `Float`.\n\n    import Parser exposing (parse)\n    import Parser.Error\n\n    -- You can parse numbers as `Float` instead of `String`.\n    parse \"12\" number --> Ok 12.0\n    parse \"12.\" number --> Ok 12.0\n    parse \"12.34\" number --> Ok 12.34\n    parse \".12\" number --> Ok 0.12\n\n    -- It also works with negative numbers.\n    parse \"-12.34\" number --> Ok -12.34\n    parse \"-.12\" number --> Ok -0.12\n\n    -- But not with invalid numbers.\n    parse \".\" number\n        |> Result.mapError Parser.Error.message\n    --> Err \"1:1: I was expecting a digit [0-9]. I got stuck when I got the character '.'.\"\n\n    parse \"abc\" number\n        |> Result.mapError Parser.Error.message\n    --> Err \"1:1: I was expecting a digit [0-9]. I got stuck when I got the character 'a'.\"\n\n",
+                "type": "Parser.Parser Basics.Float"
+            },
+            {
+                "name": "spaces",
+                "comment": " Matches zero or more Unicode blank spaces, including new lines.\n\n> ℹ️ Equivalent regular expression: `[ \\t\\n\\r\\f]*` or `\\s*`\n\n    import Parser exposing (parse)\n\n    -- Match many spaces.\n    parse \"    abc\" spaces --> Ok \"    \"\n\n    parse \"\\n\\t abc\" spaces --> Ok \"\\n\\t \"\n\n    -- Including zero spaces :)\n    parse \"abc\" spaces --> Ok \"\"\n\n",
+                "type": "Parser.Parser String.String"
+            },
+            {
+                "name": "text",
+                "comment": " Matches a specific text string.\nThis is case sensitive.\n\n    import Parser exposing (parse)\n\n    -- Match an exact text, case sensitive.\n    parse \"abcdef\" (text \"abc\") --> Ok \"abc\"\n\n    -- But anything else makes it fail.\n    import Parser.Error\n\n    text \"abc\"\n        |> parse \"abCDEF\"\n        |> Result.mapError Parser.Error.message\n    --> Err \"1:3: I was expecting the text 'abc'. I got stuck when I got the character 'C'.\"\n\n",
+                "type": "String.String -> Parser.Parser String.String"
+            },
+            {
+                "name": "textNoCase",
+                "comment": " Matches a specific text string.\nThis is case insensitive.\n\n    import Parser exposing (parse)\n\n    -- Match an exact text, case insensitive.\n    parse \"abcdef\" (textNoCase \"abc\") --> Ok \"abc\"\n    parse \"ABCDEF\" (textNoCase \"abc\") --> Ok \"ABC\"\n\n    -- But anything else makes it fail.\n    import Parser.Error\n\n    textNoCase \"abc\"\n        |> parse \"ab@\"\n        |> Result.mapError Parser.Error.message\n    --> Err \"1:3: I was expecting the text 'abc' (case insensitive). I got stuck when I got the character '@'.\"\n\n",
+                "type": "String.String -> Parser.Parser String.String"
+            },
+            {
+                "name": "token",
+                "comment": " Matches a parser as a `token` that can be preceded and followed by\nzero or more spaces.\n\n    import Parser exposing (map3, parse)\n    import Parser.Char exposing (char)\n\n    parse \"1+2\" (map3 (\\x _ y -> x + y) int (token (char '+')) int) --> Ok 3\n    parse \"1 + 2\" (map3 (\\x _ y -> x + y) int (token (char '+')) int) --> Ok 3\n    parse \"1  +  2\" (map3 (\\x _ y -> x + y) int (token (char '+')) int) --> Ok 3\n\n",
+                "type": "Parser.Parser a -> Parser.Parser a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Parser.Error",
+        "comment": " Error reporting utilities.\n\n\n# Error reporting\n\n@docs message, dump, dumpCodeSnippet\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "dump",
+                "comment": " Dumps the error into a human-readable format.\n\n    import Parser exposing (Parser, andThenKeep, drop, into, parse, succeed, take)\n    import Parser.Char exposing (char)\n    import Parser.Common exposing (number, spaces)\n\n    spaces\n        |> andThenKeep number\n        |> parse \"  abc  \"\n        |> Result.mapError (dump \"filename.txt\")\n    --> Err\n    -->     [ \"[ERROR] filename.txt:1:3: I was expecting a digit [0-9]. I got stuck when I got the character 'a'.\"\n    -->     , \"\"\n    -->     , \"1|  abc  \"\n    -->     , \"    ^\"\n    -->     ]\n\n\n    type alias Point =\n        { x : Float\n        , y : Float\n        }\n\n    point : Parser Point\n    point =\n        into \"Point\"\n            (succeed Point\n                |> drop (char '(')\n                |> take number\n                |> drop (char ',')\n                |> take number\n                |> drop (char ')')\n            )\n\n    spaces\n        |> andThenKeep point\n        |> parse \"  (12,)  \"\n        |> Result.mapError (dump \"filename.txt\")\n    --> Err\n    -->     [ \"[ERROR] filename.txt:1:7: I was expecting a digit [0-9]. I got stuck when I got the character ')'.\"\n    -->     , \"  in Point at line 1:3\"\n    -->     , \"\"\n    -->     , \"1|  (12,)  \"\n    -->     , \"    ~~~~^\"\n    -->     ]\n\n    type alias Line =\n        { p1 : Point\n        , p2 : Point\n        }\n\n    line : Parser Line\n    line =\n        into \"Line\"\n            (succeed Line\n                |> drop (char '[')\n                |> take point\n                |> drop (char ',')\n                |> take point\n                |> drop (char ']')\n            )\n\n    spaces\n        |> andThenKeep line\n        |> parse \"  [(12,34),(56,)]  \"\n        |> Result.mapError (dump \"filename.txt\")\n    --> Err\n    -->     [ \"[ERROR] filename.txt:1:16: I was expecting a digit [0-9]. I got stuck when I got the character ')'.\"\n    -->     , \"  in Point at line 1:12\"\n    -->     , \"  in Line at line 1:3\"\n    -->     , \"\"\n    -->     , \"1|  [(12,34),(56,)]  \"\n    -->     , \"             ~~~~^\"\n    -->     ]\n\n",
+                "type": "String.String -> Parser.Error -> List.List String.String"
+            },
+            {
+                "name": "dumpCodeSnippet",
+                "comment": " Dumps a snippet of the input text that caused the parser to fail.\n\n    import Parser exposing (Parser, andThenKeep, drop, into, parse, succeed, take)\n    import Parser.Char exposing (char)\n    import Parser.Common exposing (number, spaces)\n\n    type alias Point =\n        { x : Float\n        , y : Float\n        }\n\n    point : Parser Point\n    point =\n        into \"Point\"\n            (succeed Point\n                |> drop (char '(')\n                |> drop spaces\n                |> take number\n                |> drop spaces\n                |> drop (char ',')\n                |> drop spaces\n                |> take number\n                |> drop spaces\n                |> drop (char ')')\n            )\n\n    spaces\n        |> andThenKeep point\n        |> parse \"  (12,)  \"\n        |> Result.mapError dumpCodeSnippet\n    --> Err\n    -->     [ \"1|  (12,)  \"\n    -->     , \"    ~~~~^\"\n    -->     ]\n\n    spaces\n        |> andThenKeep point\n        |> parse\n            (String.join \"\\n\"\n                [ \"  \"\n                , \"  (  \"\n                , \"  12  \"\n                , \"  ,  \"\n                , \"  )  \"\n                , \"  \"\n                ]\n            )\n        |> Result.mapError dumpCodeSnippet\n    --> Err\n    -->     [ \"2|  (  \"\n    -->     , \"3|  12  \"\n    -->     , \"4|  ,  \"\n    -->     , \"5|  )  \"\n    -->     , \" +~~^\"\n    -->     ]\n\n",
+                "type": "Parser.Error -> List.List String.String"
+            },
+            {
+                "name": "message",
+                "comment": " Creates an error message from an `Error` data.\n\n    import Parser exposing (parse)\n    import Parser.Char exposing (letter)\n\n    -- Getting a digit instead of a letter.\n    parse \"123\" letter\n        |> Result.mapError message\n    --> Err \"1:1: I was expecting a letter [a-zA-Z]. I got stuck when I got the character '1'.\"\n\n    -- Running out of input characters.\n    parse \"\" letter\n        |> Result.mapError message\n    --> Err \"1:0: I was expecting a letter [a-zA-Z]. I reached the end of the input text.\"\n\n",
+                "type": "Parser.Error -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Parser.Expression",
+        "comment": " Parsers for expressions with operator precedence.\n\n\n# Basic usage\n\n@docs expression\n\n\n# Operators\n\n@docs term, prefix, suffix, inbetween, fromLeft, fromRight\n\n\n# Custom operators\n\n@docs Operator\n\n",
+        "unions": [
+            {
+                "name": "Operator",
+                "comment": " Describes an operator as a parser.\nThey take a `Parser a` as an input, which is used to parse subexpressions\nrecursively.\n\n> ℹ️ Both `Prefix` and `Infix*` operators _must_ start by parsing something\n> other than a subexpression, otherwise there will be a stack overflow.\n\n    import Parser exposing (Parser, drop, parse, succeed, take)\n    import Parser.Char exposing (char)\n    import Parser.Common exposing (number)\n\n    -- Prefix operators simply parse and apply the operation.\n    neg : Operator Float\n    neg =\n        Prefix\n            (\\expr ->\n                succeed (\\x -> -x)\n                    |> drop (char '-')\n                    |> take expr\n            )\n\n    -- Infix operators parse only the right side of the subexpression.\n    -- The Parser returns a function that takes the left side of the\n    -- subexpression as an input, and applies the operation.\n    -- This is for a left-associative infix operator.\n    add : Operator Float\n    add =\n        InfixFromLeft\n            (\\expr ->\n                succeed (\\right left -> left + right)\n                    |> drop (char '+')\n                    |> take expr\n            )\n\n    -- You can also define a right-associative infix operator.\n    pow : Operator Float\n    pow =\n        InfixFromLeft\n            (\\expr ->\n                succeed (\\right left -> left ^ right)\n                    |> drop (char '^')\n                    |> take expr\n            )\n\n    -- A term can be achieved by simply parsing a token but not recursing.\n    num : Operator Float\n    num =\n        Prefix (\\_ -> number)\n\n    calculate : Parser Float\n    calculate =\n        expression\n            [ [ neg ] -- -1\n            , [ pow ] -- 1 ^ 2\n            , [ add ] -- 1 + 2\n            , [ num ] -- 1\n            ]\n\n    parse \"1+-2^3\" calculate --> Ok -7 -- 1 + ((-2) ^ 3)\n\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Prefix",
+                        [
+                            "Parser.Parser a -> Parser.Parser a"
+                        ]
+                    ],
+                    [
+                        "InfixFromLeft",
+                        [
+                            "Parser.Parser a -> Parser.Parser (a -> a)"
+                        ]
+                    ],
+                    [
+                        "InfixFromRight",
+                        [
+                            "Parser.Parser a -> Parser.Parser (a -> a)"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "expression",
+                "comment": " Parses an expression using the provided operators with operator precedence.\nThere can be multiple operators sharing the same precedence like `+` and `-`,\nor `*` and `/`.\n\n    import Parser exposing (Parser, andThen, drop, parse, succeed, take)\n    import Parser.Char exposing (char)\n    import Parser.Common exposing (number)\n\n    factorial : Float -> Float\n    factorial n =\n        List.product (List.range 1 (floor n) |> List.map toFloat)\n\n    calculate : Parser Float\n    calculate =\n        expression\n            [ [ prefix identity (char '+')\n              , prefix (\\x -> -x) (char '-')\n              , suffix factorial (char '!')\n              ]\n            , [ fromRight (^) (char '^')\n              ]\n            , [ fromLeft (*) (char '*')\n              , fromLeft (/) (char '/')\n              ]\n            , [ fromLeft (+) (char '+')\n              , fromLeft (-) (char '-')\n              ]\n            , [ inbetween identity (char '(') (char ')')\n              , term identity number\n              ]\n            ]\n\n    -- Terms and parentheses.\n    parse \"1\" calculate   --> Ok 1\n    parse \"(1)\" calculate --> Ok 1\n\n    -- Prefix operators.\n    parse \"-1\" calculate  --> Ok -1  --   -1\n    parse \"+-1\" calculate --> Ok -1  -- +(-1)\n    parse \"-+1\" calculate --> Ok -1  -- -(+1)\n    parse \"--1\" calculate --> Ok 1   -- -(-1)\n\n    -- Suffix operators.\n    parse \"5!\" calculate  --> Ok 120  -- 5!\n    parse \"3!!\" calculate --> Ok 720  -- (3!)!\n\n    -- Left-associative binary operators.\n    parse \"1+2+3\" calculate   --> Ok 6    -- (1 + 2) + 3\n    parse \"1-2-3\" calculate   --> Ok -4   -- (1 - 2) - 3\n    parse \"1-(2-3)\" calculate --> Ok 2    -- 1 - (2 - 3)\n    parse \"2*3*4\" calculate   --> Ok 24   -- (2 * 3) * 4\n    parse \"2/4/5\" calculate   --> Ok 0.1  -- (2 / 4) / 5\n    parse \"2/(4/5)\" calculate --> Ok 2.5  -- 2 / (4 / 5)\n\n    -- Right-associative binary operators.\n    parse \"2^3^2\" calculate   --> Ok 512  -- 2 ^ (3 ^ 2)\n    parse \"(2^3)^2\" calculate --> Ok 64   -- (2 ^ 3) ^ 2)\n\n    -- Operator precedence.\n    parse \"1+-2\" calculate  --> Ok -1  -- 1 + (-2)\n    parse \"1+2*3\" calculate --> Ok 7   -- 1 + (2 * 3)\n    parse \"1*2+3\" calculate --> Ok 5   -- (1 * 2) + 3\n    parse \"1*2^3\" calculate --> Ok 8   -- 1 * (2 ^ 3)\n    parse \"1^2*3\" calculate --> Ok 3   -- (1 ^ 2) * 3\n\n",
+                "type": "List.List (List.List (Parser.Expression.Operator a)) -> Parser.Parser a"
+            },
+            {
+                "name": "fromLeft",
+                "comment": " Defines a binary left-associative operator.\n\n    import Parser exposing (Parser, parse)\n    import Parser.Char exposing (char)\n    import Parser.Common exposing (number)\n\n    expr : Parser Float\n    expr =\n        expression\n            [ [ fromLeft (+) (char '+')\n              , fromLeft (-) (char '-')\n              ]\n            , [ term identity number ]\n            ]\n\n    parse \"1+2\" expr   --> Ok 3\n    parse \"1+2+3\" expr --> Ok 6\n    parse \"1-2-3\" expr --> Ok -4\n\n    -- It does not trim spaces beforehand.\n    parse \" 1+2\" expr |> Result.toMaybe --> Nothing\n\n    -- But it does inbetween.\n    parse \"1 + 2\" expr --> Ok 3\n\n",
+                "type": "(a -> a -> a) -> Parser.Parser op -> Parser.Expression.Operator a"
+            },
+            {
+                "name": "fromRight",
+                "comment": " Defines a binary right-associative operator.\n\n    import Parser exposing (Parser, parse)\n    import Parser.Char exposing (char)\n    import Parser.Common exposing (number)\n\n    expr : Parser Float\n    expr =\n        expression\n            [ [ fromRight (^) (char '^') ]\n            , [ term identity number ]\n            ]\n\n    parse \"2^3\" expr   --> Ok 8\n    parse \"2^3^2\" expr --> Ok 512 -- 2 ^ (3 ^ 2)\n\n    -- It does not trim spaces beforehand.\n    parse \" 2^3\" expr |> Result.toMaybe --> Nothing\n\n    -- But it does inbetween.\n    parse \"2 ^ 3\" expr --> Ok 8\n\n",
+                "type": "(a -> a -> a) -> Parser.Parser op -> Parser.Expression.Operator a"
+            },
+            {
+                "name": "inbetween",
+                "comment": " Defines an expression surrounded by an `open` and `close` operator.\n\n    import Parser exposing (Parser, parse)\n    import Parser.Char exposing (char)\n    import Parser.Common exposing (number)\n\n    expr : Parser Float\n    expr =\n        expression\n            [ [ inbetween identity (char '(') (char ')') ]\n            , [ term identity number ]\n            ]\n\n    parse \"(5)\" expr --> Ok 5\n    parse \"(5\" expr |> Result.toMaybe --> Nothing\n    parse \"()\" expr |> Result.toMaybe --> Nothing\n\n    -- It does not trim spaces beforehand.\n    parse \" (5)\" expr |> Result.toMaybe --> Nothing\n\n    -- But it does inbetween.\n    parse \"( 5 )\" expr --> Ok 5\n\n",
+                "type": "(a -> a) -> Parser.Parser open -> Parser.Parser close -> Parser.Expression.Operator a"
+            },
+            {
+                "name": "prefix",
+                "comment": " Defines a unary prefix operator.\n\n    import Parser exposing (Parser, parse)\n    import Parser.Char exposing (char)\n    import Parser.Common exposing (number)\n\n    expr : Parser Float\n    expr =\n        expression\n            [ [ prefix (\\x -> -x) (char '-') ]\n            , [ term identity number ]\n            ]\n\n    parse \"-5\" expr --> Ok -5\n\n    -- It does not trim spaces beforehand.\n    parse \" -5\" expr |> Result.toMaybe --> Nothing\n\n    -- But it does afterwards.\n    parse \"- 5\" expr --> Ok -5\n\n",
+                "type": "(a -> a) -> Parser.Parser op -> Parser.Expression.Operator a"
+            },
+            {
+                "name": "suffix",
+                "comment": " Defines a unary suffix operator.\n\n    import Parser exposing (Parser, parse)\n    import Parser.Char exposing (char)\n    import Parser.Common exposing (number)\n\n    factorial : Float -> Float\n    factorial n =\n        List.product (List.range 1 (floor n) |> List.map toFloat)\n\n    expr : Parser Float\n    expr =\n        expression\n            [ [ suffix factorial (char '!') ]\n            , [ term identity number ]\n            ]\n\n    parse \"5!\" expr --> Ok 120\n\n    -- It trims spaces beforehand.\n    parse \"5 !\" expr --> Ok 120\n\n",
+                "type": "(a -> a) -> Parser.Parser op -> Parser.Expression.Operator a"
+            },
+            {
+                "name": "term",
+                "comment": " Defines an individual term.\nThis is usually a number, or a variable name,\nor anything not containing an operator.\n\n    import Parser exposing (Parser, parse)\n    import Parser.Common exposing (number)\n\n    expr : Parser Float\n    expr =\n        expression [ [ term identity number ] ]\n\n    parse \"5\" expr --> Ok 5\n\n    -- It does not trim spaces beforehand.\n    parse \" 5\" expr |> Result.toMaybe --> Nothing\n\n",
+                "type": "(a -> b) -> Parser.Parser a -> Parser.Expression.Operator b"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Parser.Sequence",
+        "comment": " Parsers involving sequences of matches.\n\n\n# Sequences\n\n@docs sequence, concat, maybe, zeroOrOne, zeroOrMore, oneOrMore, exactly, atLeast, atMost, between, until, fold, foldWhile, split, splitIncluding\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "atLeast",
+                "comment": " Matches a value at least a number of times and returns them as a `List`.\n\n> ℹ️ Equivalent regular expression: `{min,}`\n\n    import Parser exposing (parse)\n    import Parser.Char exposing (letter)\n    import Parser.Error\n\n    -- We want at least three letters, we are okay with more than three.\n    parse \"abcdef\" (atLeast 3 letter) --> Ok [ 'a', 'b', 'c', 'd', 'e', 'f' ]\n\n    -- But not two, that's sacrilegious.\n    atLeast 3 letter\n        |> parse \"ab_def\"\n        |> Result.mapError Parser.Error.message\n    --> Err \"1:3: I was expecting a letter [a-zA-Z]. I got stuck when I got the character '_'.\"\n\n",
+                "type": "Basics.Int -> Parser.Parser a -> Parser.Parser (List.List a)"
+            },
+            {
+                "name": "atMost",
+                "comment": " Matches a value at most a number of times and returns them as a `List`.\n\n> ℹ️ Equivalent regular expression: `{0,max}`\n\n    import Parser exposing (parse, andThenIgnore)\n    import Parser.Char exposing (char, letter)\n\n    -- We want a maximum of three letters.\n    parse \"abcdef\" (atMost 3 letter) --> Ok [ 'a', 'b', 'c' ]\n\n    -- Less than that is also okay.\n    parse \"ab_def\" (atMost 3 letter) --> Ok [ 'a', 'b' ]\n\n    -- Even zero letters are fine.\n    parse \"_bcdef\" (atMost 3 letter) --> Ok []\n\n    -- Make sure we don't consume more than three letters.\n    atMost 3 letter\n        |> andThenIgnore (char 'd')\n        |> parse \"abcdef\"\n    --> Ok [ 'a', 'b', 'c' ]\n\n",
+                "type": "Basics.Int -> Parser.Parser a -> Parser.Parser (List.List a)"
+            },
+            {
+                "name": "between",
+                "comment": " Matches a value between a range of times and returns them as a `List`.\n\n> ℹ️ Equivalent regular expression: `{min,max}`\n\n    import Parser exposing (parse)\n    import Parser.Char exposing (letter)\n    import Parser.Error\n\n    -- We want between two and four letters.\n    parse \"abcdef\" (between 2 4 letter) --> Ok [ 'a', 'b', 'c', 'd' ]\n    parse \"abc_ef\" (between 2 4 letter) --> Ok [ 'a', 'b', 'c' ]\n    parse \"ab_def\" (between 2 4 letter) --> Ok [ 'a', 'b' ]\n\n    -- But less than that is not cool.\n    between 2 3 letter\n        |> parse \"a_cdef\"\n        |> Result.mapError Parser.Error.message\n    --> Err \"1:2: I was expecting a letter [a-zA-Z]. I got stuck when I got the character '_'.\"\n\n",
+                "type": "Basics.Int -> Basics.Int -> Parser.Parser a -> Parser.Parser (List.List a)"
+            },
+            {
+                "name": "concat",
+                "comment": " Concatenates the parsed values from all the parsers into a single list with\nall the values.\n\n    import Parser exposing (parse)\n    import Parser.Char exposing (char, digit)\n\n    -- We get all these parsers as a single sequence of values.\n    concat\n        [ oneOrMore digit       -- [ '3' ]\n        , zeroOrOne (char '.')  -- [ '.' ]\n        , zeroOrMore digit      -- [ '1', '4' ]\n        ]\n        |> parse \"3.14\"\n    --> Ok [ '3', '.', '1', '4' ]\n\n",
+                "type": "List.List (Parser.Parser (List.List a)) -> Parser.Parser (List.List a)"
+            },
+            {
+                "name": "exactly",
+                "comment": " Matches a value `exactly` a number of times and returns them as a `List`.\n\n> ℹ️ Equivalent regular expression: `{n}`\n\n    import Parser exposing (parse)\n    import Parser.Char exposing (letter)\n    import Parser.Error\n\n    -- We want `exactly` three letters.\n    parse \"abcdef\" (exactly 3 letter) --> Ok [ 'a', 'b', 'c' ]\n\n    -- Not two or four, we want three.\n    exactly 3 letter\n        |> parse \"ab_def\"\n        |> Result.mapError Parser.Error.message\n    --> Err \"1:3: I was expecting a letter [a-zA-Z]. I got stuck when I got the character '_'.\"\n\n",
+                "type": "Basics.Int -> Parser.Parser a -> Parser.Parser (List.List a)"
+            },
+            {
+                "name": "fold",
+                "comment": " Reduces matches of a parser.\n\n    import Parser exposing (parse)\n    import Parser.Common exposing (letters, number, token)\n\n    parse \"2 3 4\" (fold (+) 1 (token number)) --> Ok 10\n    parse \"b c d\" (fold (++) \"a\" (token letters)) --> Ok \"abcd\"\n\n",
+                "type": "(b -> a -> b) -> b -> Parser.Parser a -> Parser.Parser b"
+            },
+            {
+                "name": "foldWhile",
+                "comment": " Reduces matches of a parser until a condition is met.\n\n    import Parser exposing (Parser, andThenIgnore, parse)\n    import Parser.Char exposing (char)\n    import Parser.Common exposing (number, token)\n\n    sumWhileLessThan : Float -> Parser Float\n    sumWhileLessThan max =\n        foldWhile\n            (\\total x ->\n                if total + x <= max then\n                    Just (total + x)\n                else\n                    Nothing\n            )\n            0\n            (token number)\n\n    -- The fold stops before we reach a maximum of 6 in the sum.\n    parse \"2 3 4\" (sumWhileLessThan 6) --> Ok 5\n\n    -- Make sure we didn't consume too many numbers.\n    sumWhileLessThan 6\n        |> andThenIgnore (char '4')\n        |> parse \"2 3 4\"\n    --> Ok 5\n\n",
+                "type": "(b -> a -> Maybe.Maybe b) -> b -> Parser.Parser a -> Parser.Parser b"
+            },
+            {
+                "name": "maybe",
+                "comment": " Matches an optional value and returns it as a `Maybe`.\n\n> ℹ️ Equivalent regular expression: `?`\n\n    import Parser exposing (parse)\n    import Parser.Char exposing (letter)\n\n    -- Maybe we get `Just` a letter.\n    parse \"abc\" (maybe letter) --> Ok (Just 'a')\n\n    -- Or maybe we get `Nothing`.\n    parse \"123abc\" (maybe letter) --> Ok Nothing\n\n",
+                "type": "Parser.Parser a -> Parser.Parser (Maybe.Maybe a)"
+            },
+            {
+                "name": "oneOrMore",
+                "comment": " Matches one or more values and returns them as a `List`.\n\n> ℹ️ Equivalent regular expression: `+`\n\n    import Parser exposing (parse)\n    import Parser.Char exposing (letter)\n    import Parser.Error\n\n    -- We want as many letters as there are.\n    parse \"abc\" (oneOrMore letter) --> Ok [ 'a', 'b', 'c' ]\n    parse \"abc123\" (oneOrMore letter) --> Ok [ 'a', 'b', 'c' ]\n\n    -- But we want at least one.\n    oneOrMore letter\n        |> parse \"123abc\"\n        |> Result.mapError Parser.Error.message\n    --> Err \"1:1: I was expecting a letter [a-zA-Z]. I got stuck when I got the character '1'.\"\n\n",
+                "type": "Parser.Parser a -> Parser.Parser (List.List a)"
+            },
+            {
+                "name": "sequence",
+                "comment": " Matches a sequence of parsers in order, and gets the result as a `List`.\n\n    import Parser exposing (parse)\n    import Parser.Char exposing (char, digit, letter)\n\n    -- Note that all the parsers must be of the same type, like `Parser Char`.\n    sequence [ char '_', letter, digit ]\n        |> parse \"_A5\" --> Ok [ '_', 'A', '5' ]\n\n",
+                "type": "List.List (Parser.Parser a) -> Parser.Parser (List.List a)"
+            },
+            {
+                "name": "split",
+                "comment": " Splits the input text by a _separator_ parser into a `List` of `String`s.\nThe separators cannot overlap, and are discarded after being matched.\n\n    import Parser exposing (parse)\n    import Parser.Char exposing (char)\n\n    -- Split Comma-Separated-Values (CSV) into a `List` of `String`s.\n    split (char ',')\n        |> parse \"a,bc,def\"\n    --> Ok [ \"a\", \"bc\", \"def\" ]\n\n    -- Leading/trailing separators are valid and give empty values.\n    split (char ',')\n        |> parse \",a,,\"\n    --> Ok [ \"\", \"a\", \"\", \"\" ]\n\n    -- An empty input text gives a single empty string element.\n    split (char ',')\n        |> parse \"\"\n    --> Ok [ \"\" ]\n\n",
+                "type": "Parser.Parser separator -> Parser.Parser (List.List String.String)"
+            },
+            {
+                "name": "splitIncluding",
+                "comment": " Splits the input text by a _separator_ parser into a `List` of `String`s.\nThe separators cannot overlap,\nand are interleaved alongside the values in the order found.\n\n    import Parser exposing (map, parse)\n    import Parser.Common exposing (text)\n\n    type Token\n        = Separator\n        | Value String\n\n    -- Note that both values and separators must be of the same type.\n    splitIncluding (text \",\" |> map (\\_ -> Separator)) Value\n        |> parse \"a,bc,def\"\n    --> Ok [ Value \"a\", Separator, Value \"bc\", Separator, Value \"def\" ]\n\n    -- Leading/trailing separators are valid and give empty values.\n    splitIncluding (text \",\" |> map (\\_ -> Separator)) Value\n        |> parse \",a,,\"\n    --> Ok [ Value \"\", Separator, Value \"a\", Separator, Value \"\", Separator, Value \"\" ]\n\n    -- An empty input text gives a single element from an empty string.\n    splitIncluding (text \",\" |> map (\\_ -> Separator)) Value\n        |> parse \"\"\n    --> Ok [ Value \"\" ]\n\n",
+                "type": "Parser.Parser a -> (String.String -> a) -> Parser.Parser (List.List a)"
+            },
+            {
+                "name": "until",
+                "comment": " Matches a values repeatedly until a delimiter parser matches.\nThe delimiter marks the end of the sequence, and it is _not_ consumed.\n\n    import Parser exposing (drop, map, parse, succeed, take, textOf)\n    import Parser.Char exposing (char, letter)\n    import Parser.Check exposing (end)\n    import Parser.Error\n\n    -- Get all the letters until we find 'd'.\n    letter\n        |> until (char 'd')\n        |> parse \"abcdef\"\n    --> Ok ( [ 'a', 'b', 'c' ], 'd' )\n\n    -- But the delimiter _must_ be present.\n    letter\n        |> until (char 'd')\n        |> parse \"abc123\"\n        |> Result.toMaybe\n    --> Nothing\n\n    -- The delimiter is consumed.\n    succeed identity\n        |> drop (char '<')\n        |> take (textOf (letter |> until (char '>') |> map Tuple.first))\n        |> drop end\n        |> parse \"<abc>\"\n    --> Ok \"abc\"\n\n",
+                "type": "Parser.Parser delimiter -> Parser.Parser a -> Parser.Parser ( List.List a, delimiter )"
+            },
+            {
+                "name": "zeroOrMore",
+                "comment": " Matches zero or more values and returns them as a `List`.\n\n> ℹ️ Equivalent regular expression: `*`\n\n    import Parser exposing (parse)\n    import Parser.Char exposing (letter)\n\n    -- We want as many letters as there are.\n    parse \"abc\" (zeroOrMore letter) --> Ok [ 'a', 'b', 'c' ]\n    parse \"abc123\" (zeroOrMore letter) --> Ok [ 'a', 'b', 'c' ]\n\n    -- Even zero letters is okay.\n    parse \"123abc\" (zeroOrMore letter) --> Ok []\n\n",
+                "type": "Parser.Parser a -> Parser.Parser (List.List a)"
+            },
+            {
+                "name": "zeroOrOne",
+                "comment": " Matches an optional value and returns it as a `List`.\n\n> ℹ️ Equivalent regular expression: `?`\n\n    import Parser exposing (parse)\n    import Parser.Char exposing (letter)\n\n    -- We want one letter, optionally.\n    parse \"abc\" (zeroOrOne letter) --> Ok [ 'a' ]\n\n    -- If we don't get any, that's still okay.\n    parse \"123abc\" (zeroOrOne letter) --> Ok []\n\n",
+                "type": "Parser.Parser a -> Parser.Parser (List.List a)"
+            }
+        ],
+        "binops": []
+    }
+]

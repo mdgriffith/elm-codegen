@@ -1,0 +1,1664 @@
+[
+    {
+        "name": "Chart",
+        "comment": " Alpha version!\n\n**Make sure to check out the many examples at [elm-charts.org](https://www.elm-charts.org/documentation).**\n\nThe configuration of this charting library mirrors the pattern of HTML elements\nand attributes. It looks something like this:\n\n    import Html exposing (Html)\n    import Chart as C\n    import Chart.Attributes as CA\n\n    view : Html msg\n    view =\n      C.chart\n        [ CA.width 300\n        , CA.height 300\n        ]\n        [ C.xTicks []\n        , C.yTicks []\n        , C.xLabels []\n        , C.yLabels []\n        , C.bars []\n            [ C.bar .income [ CA.color \"red\" ]\n            , C.bar .spending [ CA.opacity 0.8 ]\n            ]\n            data\n        ]\n\nAll the elements, like `chart`, `xTicks`, `yTicks`, `xLabels`, `yLabels`, `bars` and `bar` in the example\nabove, and many others, are defined in this module. All the attributes, like `width`, `height`, `color`, and `opacity`,\nare defined in `Chart.Attributes`. Attributes related to events are located in\nthe `Chart.Events` module. Functions for working with rendered chart items are located in `Chart.Item`.\nLastly, `Chart.Svg` holds charting primitives in case you have very special needs.\n\nIn the examples throughout the documentation, I will assume the imports:\n\n    import Html as H exposing (Html)\n    import Html.Attributes as HA\n    import Html.Events as HE\n\n    import Svg as S\n    import Svg.Attributes as SA\n    import Svg.Events as SE\n\n    import Chart as C\n    import Chart.Attributes as CA\n    import Chart.Events as CE\n    import Chart.Item as CI\n\n\n# The frame\n@docs chart\n@docs Element\n\n# Chart elements\n\n## Bar charts\n@docs bars, barsMap, bar, barMaybe\n\n## Scatter and line charts\n@docs series, seriesMap, scatter, scatterMaybe, interpolated, interpolatedMaybe\n\n## Stacking, naming, and variation\n@docs Property, stacked, variation, amongst, named, format, formatMaybe\n\n# Navigation elements\n\n## Axis lines\n@docs xAxis, yAxis\n\n## Axis ticks\n@docs xTicks, yTicks\n\n## Axis labels\n@docs xLabels, yLabels\n\n## Grid\n@docs grid\n\n## Custom Axis labels and ticks\n@docs xLabel, yLabel, xTick, yTick\n@docs generate, floats, ints, times\n\n## Data labels\n@docs binLabels, barLabels, dotLabels, productLabel\n\n## General labels\n@docs label, labelAt\n\n## Legends\n@docs legendsAt\n\n## Other navigation helpers\n@docs tooltip, line, rect\n\n# Arbitrary elements\n@docs list, svgAt, htmlAt, svg, html, none\n\n# Advanced elements\n\n## For each item, do..\n@docs eachBin, eachStack, eachBar, eachDot, eachItem, each, eachCustom\n\n## With all item, do..\n@docs withBins, withStacks, withBars, withDots, withItems\n\n## Using the plane, do..\n@docs withPlane\n\n## Make a custom element\n@docs custom\n\n# Data helper\n@docs binned\n\n",
+        "unions": [
+            {
+                "name": "Element",
+                "comment": " The representation of a chart element.\n\n",
+                "args": [
+                    "data",
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Property",
+                "comment": " A property of a bar, line, or scatter series.\n\n",
+                "args": [
+                    "data",
+                    "inter",
+                    "deco"
+                ],
+                "type": "Internal.Property.Property data String.String inter deco"
+            }
+        ],
+        "values": [
+            {
+                "name": "amongst",
+                "comment": " Change the style of your bars or dots based on whether it is a member\nof the group of products which you list. A such group of products can be\nattrained through events like `Chart.Events.onMouseMove` or similar.\n\n    C.chart\n      [ CE.onMouseMove OnHover (CE.getNearest CI.dots) ]\n      [ C.series .year\n          [ C.scatter .income [ CA.opacity 0.6 ]\n              |> C.amongst model.hovering (\\datum -> [ CA.highlight 0.5 ])\n          ]\n          [ { year = 2000, income = 40000, people = 150 }\n          , { year = 2010, income = 48000, people = 98 }\n          , { year = 2020, income = 62000, people = 180 }\n          ]\n      ]\n\nSee [live example](https://www.elm-charts.org/documentation/interactivity/change-style-based-on-events).\n\n",
+                "type": "List.List (Chart.Item.One data x) -> (data -> List.List (Chart.Attributes.Attribute deco)) -> Chart.Property data inter deco -> Chart.Property data inter deco"
+            },
+            {
+                "name": "bar",
+                "comment": " Specify the configuration of a bar. The first argument will determine the height of\nyour bar. The second is a list of styling attributes. The example below illustrates what\nstyling options are available.\n\n    C.chart []\n      [ C.bars []\n          [ C.bar .income\n              [ CA.color \"blue\"      -- Change the color\n              , CA.border \"darkblue\" -- Change the border color\n              , CA.borderWidth 2     -- Change the border width\n              , CA.opacity 0.7       -- Change the border opacity\n\n              -- A bar can either be solid (default), striped, dotted, or gradient.\n              , CA.striped\n                  [ CA.width 2      -- Width of each stripe\n                  , CA.spacing 3    -- Spacing bewteen each stripe\n                  , CA.color \"blue\" -- Color of stripe\n                  , CA.rotate 90    -- Angle of stripe\n                  ]\n\n              , CA.dotted []\n                  -- Same configurations as `striped`\n\n              , CA.gradient\n                  [ \"blue\", \"darkblue\" ] -- List of colors in gradient\n\n              , CA.roundTop 0.2    -- Round the top corners\n              , CA.roundBottom 0.2 -- Round the bottom corners\n\n              -- You can highlight a bar or a set of bars by adding a kind of \"aura\" to it.\n              , CA.highlight 0.5          -- Determine the opacity of the aura\n              , CA.highlightWidth 5       -- Determine the width of the aura\n              , CA.highlightColor \"blue\"  -- Determine the color of the aura\n\n              -- Add arbitrary SVG attributes to your bar\n              , CA.attrs [ SA.strokeOpacity \"0.5\" ]\n              ]\n          ]\n          [ { income = 10 }\n          , { income = 12 }\n          , { income = 18 }\n          ]\n      ]\n\n\nExplore live examples for the following attributes:\n- [color](https://www.elm-charts.org/documentation/bar-charts/color)\n- [borderWidth](https://www.elm-charts.org/documentation/bar-charts/borders)\n- [opacity](https://www.elm-charts.org/documentation/bar-charts/borders)\n- [striped](https://www.elm-charts.org/documentation/bar-charts/pattern)\n- [dotted](https://www.elm-charts.org/documentation/bar-charts/pattern)\n- [gradient](https://www.elm-charts.org/documentation/bar-charts/gradient)\n- [roundTop](https://www.elm-charts.org/documentation/bar-charts/corners)\n- [roundBottom](https://www.elm-charts.org/documentation/bar-charts/corners)\n- [highlight](https://www.elm-charts.org/documentation/bar-charts/highlight)\n\n",
+                "type": "(data -> Basics.Float) -> List.List (Chart.Attributes.Attribute Chart.Svg.Bar) -> Chart.Property data inter Chart.Svg.Bar"
+            },
+            {
+                "name": "barLabels",
+                "comment": " Add labels by every bar.\n\n    C.chart []\n      [ C.bars []\n          [ C.bar .income [] ]\n          [ { name = \"Anna\", income = 60 }\n          , { name = \"Karenina\", income = 70 }\n          , { name = \"Jane\", income = 80 }\n          ]\n\n      , C.barLabels [ CA.moveUp 6 ]\n      ]\n\nAttributes you can use:\n\n    C.barLabels\n      [ CA.moveUp 5     -- Move 5 SVG units up\n      , CA.moveDown 5   -- Move 5 SVG units down\n      , CA.moveLeft 5   -- Move 5 SVG units left\n      , CA.moveRight 5  -- Move 5 SVG units right\n\n      , CA.color \"#333\"\n      , CA.border \"white\"\n      , CA.borderWidth 1\n      , CA.fontSize 12\n\n      , CA.alignRight   -- Anchor labels to the right\n      , CA.alignLeft    -- Anchor labels to the left\n\n      , CA.rotate 90    -- Rotate label 90 degrees\n      , CA.uppercase    -- Make uppercase\n\n       -- Add arbitrary SVG attributes to your labels.\n      , CA.attrs [ SA.class \"my-bar-labels\" ]\n\n       -- Edit the position of the label\n      , CA.position CI.getTop\n\n       -- Change the text of the label\n      , CA.format (\\bar -> String.fromFloat (CI.getY bar))\n      ]\n\nSee [live example](https://www.elm-charts.org/documentation/bar-charts/labels-for-bars).\n\n",
+                "type": "List.List (Chart.Attributes.Attribute (Chart.ItemLabel (Chart.Item.One data Chart.Item.Bar))) -> Chart.Element data msg"
+            },
+            {
+                "name": "barMaybe",
+                "comment": " Same as `bar`, but allows for missing data.\n\n    C.chart []\n      [ C.bars []\n          [ C.barMaybe .income [] ]\n          [ { income = Just 10 }\n          , { income = Nothing }\n          , { income = Just 18 }\n          ]\n      ]\n\n",
+                "type": "(data -> Maybe.Maybe Basics.Float) -> List.List (Chart.Attributes.Attribute Chart.Svg.Bar) -> Chart.Property data inter Chart.Svg.Bar"
+            },
+            {
+                "name": "bars",
+                "comment": " Add a bar series to your chart. Here's some handy terminology:\n\n![bar chart terminology](https://github.com/terezka/charts/blob/master/docs/images/bar-chart-terminology.png?raw=true)\n\nEach `data` in your `List data` is a \"bin\". For\neach \"bin\", whatever number of bars your have specified in the second argument will\nshow up, side-by-side.\n\n    C.bars []\n      [ C.bar .income []\n      , C.bar .spending []\n      ]\n      [ { income = 10, spending = 2 }\n      , { income = 12, spending = 6 }\n      , { income = 18, spending = 16 }\n      ]\n\nThe example above will thus produce three bins, each containing two bars. You can make\nyour bars show up overlapping instead of side-by-side by using the `CA.ungroup`\nattribute:\n\n    C.bars\n      [ CA.ungroup ]\n      [ C.bar .total []\n      , C.bar .gross []\n      , C.bar .net []\n      ]\n      [ { net = 10, gross = 20, total = 50 }\n      , { net = 13, gross = 28, total = 63 }\n      , { net = 16, gross = 21, total = 82 }\n      ]\n\nBy default, the x value of each bin is set by a simple count. The first bin is set at\nx = 1, the second at x = 2, and so on. If you'd like to control what the x values of\nyour bins are, e.g. you are making a histogram, you may use the `CA.x1` and `CA.x2`\nattributes, as illustrated below.\n\n    C.bars\n      [ CA.x1 .score\n      , CA.x2 (\\datum -> datum.score + 20)\n      ]\n      [ C.bar .students [] ]\n      [ { score = 0, students = 1 }\n      , { score = 20, students = 10 }\n      , { score = 40, students = 30 }\n      , { score = 60, students = 20 }\n      , { score = 80, students = 1 }\n      ]\n\nIn this case, you actually only need to specify either `x1` or `x2` because the library\nestimates the unknown x value based on the size of the previous or next bin. However, it comes in\nhandy to specify both when you have bins of irregular sizes.\n\nThe rest of the configuration options concern styling:\n\n    C.bars\n      [ CA.spacing 0.1      -- The spacing _between_ the bars in each bin relative to the full length (1).\n      , CA.margin 0.2       -- The spacing _around_ the bars in each bin relative to the full length (1).\n      , CA.roundTop 0.2     -- The rounding of your bars' top corners. It gets weird after around 0.5.\n      , CA.roundBottom 0.2  -- The rounding of your bars' bottom corners. It gets weird after around 0.5.\n      , CA.withGrid         -- Add grid lines at the bin limits.\n      ]\n      [ C.bar .income []\n      , C.bar .spending []\n      ]\n      [ { income = 10, spending = 2 }\n      , { income = 12, spending = 6 }\n      , { income = 18, spending = 16 }\n      ]\n\nExplore live examples for the following attributes:\n- [spacing](https://www.elm-charts.org/documentation/bar-charts/spacing)\n- [margin](https://www.elm-charts.org/documentation/bar-charts/margin)\n- [roundTop](https://www.elm-charts.org/documentation/bar-charts/corners)\n- [roundBottom](https://www.elm-charts.org/documentation/bar-charts/corners)\n\n",
+                "type": "List.List (Chart.Attributes.Attribute (Chart.Bars data)) -> List.List (Chart.Property data () Chart.Svg.Bar) -> List.List data -> Chart.Element data msg"
+            },
+            {
+                "name": "barsMap",
+                "comment": " This is just like `bars`, but it maps your `data`. This is useful if you have\nseveral kinds of data types present in your chart.\n\n    type Datum\n      = Money  { year : Float, income : Float }\n      | People { year : Float, people : Float }\n\n    view : Html msg\n    view =\n      C.chart []\n        [ C.barsMap Money\n            [ CA.x1 .year ]\n            [ C.bar .income [] ]\n            [ { year = 2000, income = 200 }\n            , { year = 2010, income = 300 }\n            , { year = 2020, income = 500 }\n            ]\n\n        , C.barsMap People\n            [ CA.x1 .year ]\n            [ C.bar .people [] ]\n            [ { year = 2000, people = 21 }\n            , { year = 2010, people = 65 }\n            , { year = 2020, people = 93 }\n            ]\n        ]\n\n",
+                "type": "(data -> a) -> List.List (Chart.Attributes.Attribute (Chart.Bars data)) -> List.List (Chart.Property data () Chart.Svg.Bar) -> List.List data -> Chart.Element a msg"
+            },
+            {
+                "name": "binLabels",
+                "comment": " Add labels by every bin.\n\n    C.chart []\n      [ C.bars [] [ C.bar .income [] ]\n          [ { name = \"Anna\", income = 60 }\n          , { name = \"Karenina\", income = 70 }\n          , { name = \"Jane\", income = 80 }\n          ]\n\n      , C.binLabels .name [ CA.moveDown 15 ]\n      ]\n\nAttributes you can use:\n\n    C.binLabels .name\n      [ CA.moveUp 5     -- Move 5 SVG units up\n      , CA.moveDown 5   -- Move 5 SVG units down\n      , CA.moveLeft 5   -- Move 5 SVG units left\n      , CA.moveRight 5  -- Move 5 SVG units right\n\n      , CA.color \"#333\"\n      , CA.border \"white\"\n      , CA.borderWidth 1\n      , CA.fontSize 12\n\n      , CA.alignRight   -- Anchor labels to the right\n      , CA.alignLeft    -- Anchor labels to the left\n\n      , CA.rotate 90    -- Rotate label 90 degrees\n      , CA.uppercase    -- Make uppercase\n\n       -- Add arbitrary SVG attributes to your labels.\n      , CA.attrs [ SA.class \"my-bin-labels\" ]\n\n       -- Edit the position of the label\n      , CA.position CI.getTop\n\n       -- Given the entire bin item (not just the data)\n       -- produce a string.\n      , CA.format (\\bin -> String.fromFloat (CI.getShared bin).start)\n      ]\n\nSee [live example](https://www.elm-charts.org/documentation/bar-charts/labels-for-bins).\n\n",
+                "type": "(data -> String.String) -> List.List (Chart.Attributes.Attribute (Chart.ItemLabel (Chart.Item.Many data Chart.Item.Bar))) -> Chart.Element data msg"
+            },
+            {
+                "name": "binned",
+                "comment": " Gather data points into bins. Arguments:\n\n1. The desired bin width.\n2. The function to access the binned quality on the data\n3. The list of data.\n\n\n    C.binned 10 .score\n      [ Result \"Anna\" 43\n      , Result \"Maya\" 65\n      , Result \"Joan\" 69\n      , Result \"Tina\" 98\n      ]\n      == [ { bin = 40, data = [ Result \"Anna\" 43 ] }\n         , { bin = 60, data = [ Result \"Maya\" 65, Result \"Joan\" 69 ] }\n         , { bin = 90, data = [ Result \"Tina\" 98 ] }\n         ]\n\n    type alias Result = { name : String, score : Float }\n\n",
+                "type": "Basics.Float -> (data -> Basics.Float) -> List.List data -> List.List { bin : Basics.Float, data : List.List data }"
+            },
+            {
+                "name": "chart",
+                "comment": " This is the root container of your chart. All your chart elements must be placed in\nhere. The below example illustrates what configurations are available for\nthe `chart` element.\n\n    view : Html msg\n    view =\n      C.chart\n        [ CA.width 300    -- Sets width dimension of chart\n        , CA.height 500   -- Sets height dimension of chart\n          -- Note that the chart scales with it's container\n\n        , CA.margin { top = 10, bottom = 20, left = 20, right = 20 }\n                          -- Add space around your chart.\n                          -- Useful if you have labels which extend\n                          -- outside the main chart area.\n\n        , CA.padding { top = 10, bottom = 10, left = 10, right = 10 }\n                          -- Expand your domain / range by a set\n                          -- amount of SVG units.\n                          -- Useful if you have e.g. scatter dots\n                          -- which extend beyond your main chart area,\n                          -- and you'd like them to be within.\n\n        -- Control the range and domain of your chart.\n        -- Your range and domain is by default set to the limits of\n        -- your data, but you can change them like this:\n        , CA.range\n            [ CA.lowest -5 CA.orLower\n                -- Makes sure that your x-axis begins at -5 or lower, no matter\n                -- what your data is like.\n            , CA.highest 10 CA.orHigher\n                -- Makes sure that your x-axis ends at 10 or higher, no matter\n                -- what your data is like.\n            ]\n        , CA.domain\n            [ CA.lowest 0 CA.exactly ]\n                -- Makes sure that your y-axis begins at exactly 0, no matter\n                -- what your data is like.\n\n        -- Add event triggers to your chart. Learn more about these in\n        -- the `Chart.Events` module.\n        , CE.onMouseMove OnHovering (CE.getNearest CI.bars)\n        , CE.onMouseLeave (OnHovering [])\n\n        -- Add arbitrary HTML and SVG attributes to your chart.\n        , CA.htmlAttrs [ HA.style \"background\" \"beige\" ]\n        , CA.attrs [ SA.id \"my-chart\" ]\n        ]\n        [ C.grid []\n        , C.xLabels []\n        , C.yLabels []\n        , ..\n        ]\n\nExplore live examples for the following attributes:\n- [margin](https://www.elm-charts.org/documentation/navigation/margin)\n- [padding](https://www.elm-charts.org/documentation/navigation/padding)\n- [range](https://www.elm-charts.org/documentation/navigation/control-dimensions)\n- [domain](https://www.elm-charts.org/documentation/navigation/control-dimensions)\n- [onMouseMove](https://www.elm-charts.org/documentation/interactivity/basic-bar-tooltip)\n- [onMouseLeave](https://www.elm-charts.org/documentation/interactivity/basic-bar-tooltip)\n- [htmlAttrs](https://www.elm-charts.org/documentation/navigation/background)\n\n",
+                "type": "List.List (Chart.Attributes.Attribute (Chart.Container data msg)) -> List.List (Chart.Element data msg) -> Html.Html msg"
+            },
+            {
+                "name": "custom",
+                "comment": " Add a custom element.\n\n- _name_ is the name of the element. Will show up in tooltip if using.\n- _color_ is the color of the element. Will show up in tooltip if using.\n- _position_ is the position of the element. Will be used to locate item for events.\n- _format_ is the formating of the element. Will be applied in tooltip if using.\n- _data_ is the data associated with element. Useful for advanced interactivity.\n- _render_ is how to render this element.\n\nSee [live example](https://www.elm-charts.org/documentation/navigation/custom-chart-elements).\n\n",
+                "type": "{ name : String.String, color : String.String, position : Chart.Svg.Position, format : data -> String.String, data : data, render : Chart.Svg.Plane -> Svg.Svg Basics.Never } -> Chart.Element data msg"
+            },
+            {
+                "name": "dotLabels",
+                "comment": " Add labels by every bar.\n\n    C.chart []\n      [ C.series .age\n          [ C.scatter .income [] ]\n          [ { age = 34, income = 60 }\n          , { age = 42, income = 70 }\n          , { age = 48, income = 80 }\n          ]\n\n      , C.dotLabels CI.getCenter [ CA.moveUp 6 ]\n      ]\n\nAttributes you can use:\n\n    C.dotLabels\n      [ CA.moveUp 5     -- Move 5 SVG units up\n      , CA.moveDown 5   -- Move 5 SVG units down\n      , CA.moveLeft 5   -- Move 5 SVG units left\n      , CA.moveRight 5  -- Move 5 SVG units right\n\n      , CA.color \"#333\"\n      , CA.border \"white\"\n      , CA.borderWidth 1\n      , CA.fontSize 12\n\n      , CA.alignRight   -- Anchor labels to the right\n      , CA.alignLeft    -- Anchor labels to the left\n\n      , CA.rotate 90    -- Rotate label 90 degrees\n      , CA.uppercase    -- Make uppercase\n\n       -- Add arbitrary SVG attributes to your labels.\n      , CA.attrs [ SA.class \"my-dot-labels\" ]\n\n       -- Edit the position of the label\n      , CA.position CI.getTop\n\n       -- Change the text of the label\n      , CA.format (\\dot -> String.fromFloat (CI.getY dot))\n      ]\n\nSee [live example](https://www.elm-charts.org/documentation/line-charts/labels-for-each-point).\n\n",
+                "type": "List.List (Chart.Attributes.Attribute (Chart.ItemLabel (Chart.Item.One data Chart.Item.Dot))) -> Chart.Element data msg"
+            },
+            {
+                "name": "each",
+                "comment": " Add elements for each item of whatever list in the first argument.\n\n    C.chart\n      [ CE.onMouseMove OnHover (CE.getNearest CI.any) ]\n      [ C.series .year\n          [ C.scatter .income [] ]\n          [ { year = 2000, income = 40000 }\n          , { year = 2010, income = 56000 }\n          , { year = 2020, income = 62000 }\n          ]\n\n      , C.each model.hovering <| \\plane product ->\n          [ C.tooltip product [] [] [] ]\n      ]\n\nSee [live example](https://www.elm-charts.org/documentation/interactivity/basic-bar-tooltip).\n\n",
+                "type": "List.List a -> (Internal.Coordinates.Plane -> a -> List.List (Chart.Element data msg)) -> Chart.Element data msg"
+            },
+            {
+                "name": "eachBar",
+                "comment": " Add elements for each bar.\n\n    C.chart []\n      [ C.bars []\n          [ C.bar .income []\n          , C.bar .spending []\n          ]\n          [ { income = 40000, spending = 10000 }\n          , { income = 56000, spending = 12000 }\n          , { income = 62000, spending = 18000 }\n          ]\n\n      , C.eachBar <| \\plane bar ->\n          let yValue = CI.getY bar in\n          [ C.label [] [ S.text (String.fromFloat yValue) ] (CI.getTop plane bar) ]\n      ]\n\nUse the functions in `Chart.Item` to access information about your bars.\n\n",
+                "type": "(Internal.Coordinates.Plane -> Chart.Item.One data Chart.Item.Bar -> List.List (Chart.Element data msg)) -> Chart.Element data msg"
+            },
+            {
+                "name": "eachBin",
+                "comment": " Add elements for each bin.\n\n    C.chart []\n      [ C.bars []\n          [ C.bar .income []\n          , C.bar .spending []\n          ]\n          [ { country = \"Denmark\", income = 40000, spending = 10000 }\n          , { country = \"Sweden\", income = 56000, spending = 12000 }\n          , { country = \"Norway\", income = 62000, spending = 18000 }\n          ]\n\n      , C.eachBin <| \\plane bin ->\n          let common = CI.getShared bin in\n          [ C.label [] [ S.text common.datum.country ] (CI.getBottom plane bin) ]\n      ]\n\nUse the functions in `Chart.Item` to access information about your bins.\n\n",
+                "type": "(Internal.Coordinates.Plane -> Chart.Item.Many data Chart.Item.Any -> List.List (Chart.Element data msg)) -> Chart.Element data msg"
+            },
+            {
+                "name": "eachCustom",
+                "comment": " Filter and group products in any way you'd like and add elements for each of them.\n\n    C.chart []\n      [ C.eachCustom (CI.named \"cats\") <| \\plane product ->\n          [ C.label [] [ S.text \"hello\" ] (CI.getTop plane product) ]\n      ]\n\nThe above example adds a label for each product of the series named \"cats\".\n\nUse the functions in `Chart.Item` to access information about your items.\n\n",
+                "type": "Chart.Item.Remodel (Chart.Item.One data Chart.Item.Any) a -> (Internal.Coordinates.Plane -> a -> List.List (Chart.Element data msg)) -> Chart.Element data msg"
+            },
+            {
+                "name": "eachDot",
+                "comment": " Add elements for each dot.\n\n    C.chart []\n      [ C.series []\n          [ C.scatter .income []\n          , C.scatter .spending []\n          ]\n          [ { income = 40000, spending = 10000 }\n          , { income = 56000, spending = 12000 }\n          , { income = 62000, spending = 18000 }\n          ]\n\n      , C.eachBar <| \\plane bar ->\n          let yValue = CI.getY bar in\n          [ C.label [] [ S.text (String.fromFloat yValue) ] (CI.getTop plane bar) ]\n      ]\n\nUse the functions in `Chart.Item` to access information about your dots.\n\n",
+                "type": "(Internal.Coordinates.Plane -> Chart.Item.One data Chart.Item.Dot -> List.List (Chart.Element data msg)) -> Chart.Element data msg"
+            },
+            {
+                "name": "eachItem",
+                "comment": " Add elements for each dot or bar. Works like `eachBar` and `eachDot`, but includes both\nbars and dots.\n\nUse the functions in `Chart.Item` to access information about your items.\n\n",
+                "type": "(Internal.Coordinates.Plane -> Chart.Item.One data Chart.Item.Any -> List.List (Chart.Element data msg)) -> Chart.Element data msg"
+            },
+            {
+                "name": "eachStack",
+                "comment": " Add elements for each stack.\n\n    C.chart []\n      [ C.bars []\n          [ C.stacked\n              [ C.bar .income []\n              , C.bar .savings []\n              ]\n          ]\n          [ { income = 40000, savings = 10000 }\n          , { income = 56000, savings = 12000 }\n          , { income = 62000, savings = 18000 }\n          ]\n\n      , C.eachStack <| \\plane stack ->\n          let total = List.sum (List.map CI.getY (CI.getMembers stack)) in\n          [ C.label [] [ S.text (String.fromFloat total) ] (CI.getTop plane stack) ]\n      ]\n\nUse the functions in `Chart.Item` to access information about your stacks.\n\n",
+                "type": "(Internal.Coordinates.Plane -> Chart.Item.Many data Chart.Item.Any -> List.List (Chart.Element data msg)) -> Chart.Element data msg"
+            },
+            {
+                "name": "floats",
+                "comment": " Generate \"nice\" floats.\n",
+                "type": "Chart.Svg.Generator Basics.Float"
+            },
+            {
+                "name": "format",
+                "comment": " Easily format the value which shows up by default in your tooltip if you add one. You\ncan also access it using `Chart.Item.getTooltipValue`.\n\nSee [live example](https://www.elm-charts.org/documentation/interactivity/change-value-formatting).\n\n",
+                "type": "(Basics.Float -> String.String) -> Chart.Property data inter deco -> Chart.Property data inter deco"
+            },
+            {
+                "name": "formatMaybe",
+                "comment": " Like `format`, except it allows you customize the formatting of missing values too!\n\n",
+                "type": "(Maybe.Maybe Basics.Float -> String.String) -> Chart.Property data inter deco -> Chart.Property data inter deco"
+            },
+            {
+                "name": "generate",
+                "comment": " Generate \"nice\" numbers. Useful in combination with `xLabel`, `yLabel`, `xTick`, and `yTick`.\n\n    C.chart []\n      [ C.generate 10 C.ints .x [ CA.lowest -5 CA.exactly, CA.highest 15 CA.exactly ] <| \\plane int ->\n          [ C.xTick [ CA.x (toFloat int) ]\n          , C.xLabel [ CA.x (toFloat int) ] [ S.text (String.fromInt int) ]\n          ]\n      ]\n\nThe example above generates 10 ints on the x axis between x = -5 and x = 15. For each of those\nints, it adds a tick and a label.\n\nSee [live example](https://www.elm-charts.org/documentation/navigation/custom-labels).\n\n",
+                "type": "Basics.Int -> Chart.Svg.Generator a -> (Internal.Coordinates.Plane -> Internal.Coordinates.Axis) -> List.List (Chart.Attributes.Attribute Internal.Coordinates.Axis) -> (Internal.Coordinates.Plane -> a -> List.List (Chart.Element data msg)) -> Chart.Element data msg"
+            },
+            {
+                "name": "grid",
+                "comment": " Add a custom grid to your chart.\n\n    C.chart []\n      [ C.grid [ CA.width 2 ]\n      , C.xTicks []\n      , C.yTicks []\n      ]\n\nGrid lines are added by default where ticks are added. You can add\ngrid lines to where your labels are using the `CA.withGrid` attribute:\n\n    C.yLabels [ CA.withGrid ]\n\nCustomizations:\n\n    C.grid\n      [ CA.color \"blue\"     -- Change color\n      , CA.width 3          -- Change width\n      , CA.dashed [ 5, 5 ]  -- Add dashing (only for line grids)\n      , CA.dotGrid          -- Use dot grid instead of line grid\n      ]\n",
+                "type": "List.List (Chart.Attributes.Attribute Chart.Grid) -> Chart.Element item msg"
+            },
+            {
+                "name": "html",
+                "comment": " Add arbitrary HTML.\n\n",
+                "type": "(Internal.Coordinates.Plane -> Html.Html msg) -> Chart.Element data msg"
+            },
+            {
+                "name": "htmlAt",
+                "comment": " Add arbitrary HTML at a specific location.\n\nSee [live example](https://www.elm-charts.org/documentation/navigation/arbitrary-svg-and-html).\n\n",
+                "type": "(Internal.Coordinates.Axis -> Basics.Float) -> (Internal.Coordinates.Axis -> Basics.Float) -> Basics.Float -> Basics.Float -> List.List (Html.Attribute msg) -> List.List (Html.Html msg) -> Chart.Element data msg"
+            },
+            {
+                "name": "interpolated",
+                "comment": " Specify the configuration of a interpolated series (a line). The first argument will determine\nthe y value of your dots. The second is a list of attributes pertaining to your interpolation. The\nthird argument is a list of attributes pertaining to the dots of your series.\n\nThe example below illustrates what styling options are available.\n\n    C.series .age\n      [ C.interpolated .height\n          [ -- The following attributes allow alternatives to the default\n            -- linear interpolation.\n            CA.monotone  -- Use a monotone interpolation (looks smooth)\n          , CA.stepped   -- Use a stepped interpolation (looks like stairs)\n\n          , CA.color \"blue\"\n          , CA.width 2\n          , CA.dashed [ 4, 4 ]\n\n          -- The area beneath the curve is by default transparent, but you\n          -- can change the opacity of it, or make it striped, dotted, or gradient.\n          , CA.opacity 0.5\n\n          , CA.striped\n              [ CA.width 2      -- Width of each stripe\n              , CA.spacing 3    -- Spacing bewteen each stripe\n              , CA.color \"blue\" -- Color of stripe\n              , CA.rotate 90    -- Angle of stripe\n              ]\n\n          , CA.dotted [] -- Same configurations as `striped`\n\n          , CA.gradient [ \"blue\", \"darkblue\" ] -- List of colors in gradient\n\n          -- Add arbitrary SVG attributes to your line\n          , CA.attrs [ SA.id \"my-chart\" ]\n          ]\n          []\n      ]\n      [ { age = 0, height = 40 }\n      , { age = 5, height = 80 }\n      , { age = 10, height = 120 }\n      , { age = 15, height = 180 }\n      , { age = 20, height = 184 }\n      ]\n\nExplore live examples for the following attributes:\n- [monotone](https://www.elm-charts.org/documentation/line-charts/linear)\n- [stepped](https://www.elm-charts.org/documentation/line-charts/stepped)\n- [color](https://www.elm-charts.org/documentation/line-charts/color)\n- [width](https://www.elm-charts.org/documentation/line-charts/width)\n- [opacity](https://www.elm-charts.org/documentation/line-charts/area-under-curve)\n- [striped](https://www.elm-charts.org/documentation/line-charts/pattern)\n- [dotted](https://www.elm-charts.org/documentation/line-charts/pattern)\n- [gradient](https://www.elm-charts.org/documentation/line-charts/gradient)\n\n",
+                "type": "(data -> Basics.Float) -> List.List (Chart.Attributes.Attribute Chart.Svg.Interpolation) -> List.List (Chart.Attributes.Attribute Chart.Svg.Dot) -> Chart.Property data Chart.Svg.Interpolation Chart.Svg.Dot"
+            },
+            {
+                "name": "interpolatedMaybe",
+                "comment": " Same as `interpolated`, but allows for missing data.\n\n    C.chart []\n      [ C.series .age\n          [ C.interpolatedMaybe .height [] ]\n          [ { age = 0, height = Just 40 }\n          , { age = 5, height = Nothing }\n          , { age = 10, height = Just 120 }\n          , { age = 15, height = Just 180 }\n          , { age = 20, height = Just 184 }\n          ]\n      ]\n\nSee live example of [missing data in line chart](https://www.elm-charts.org/documentation/line-charts/missing-data).\n",
+                "type": "(data -> Maybe.Maybe Basics.Float) -> List.List (Chart.Attributes.Attribute Chart.Svg.Interpolation) -> List.List (Chart.Attributes.Attribute Chart.Svg.Dot) -> Chart.Property data Chart.Svg.Interpolation Chart.Svg.Dot"
+            },
+            {
+                "name": "ints",
+                "comment": " Generate \"nice\" ints.\n",
+                "type": "Chart.Svg.Generator Basics.Int"
+            },
+            {
+                "name": "label",
+                "comment": " Add a label, such as a chart title or other note, at a specific coordinate.\n\n    C.chart []\n      [ C.label [] [ S.text \"Data from Fruits.com\" ] { x = 5, y = 10 } ]\n\nThe example above adds your label at coordinates x = y and y = 10.\n\nOther attributes you can use:\n\n    C.labelAt\n      [ CA.moveUp 5     -- Move 5 SVG units up\n      , CA.moveDown 5   -- Move 5 SVG units down\n      , CA.moveLeft 5   -- Move 5 SVG units left\n      , CA.moveRight 5  -- Move 5 SVG units right\n\n      , CA.color \"#333\"\n      , CA.border \"white\"\n      , CA.borderWidth 1\n      , CA.fontSize 12\n\n      , CA.alignRight   -- Anchor labels to the right\n      , CA.alignLeft    -- Anchor labels to the left\n\n      , CA.rotate 90    -- Rotate label 90 degrees\n      , CA.uppercase    -- Make uppercase\n\n      , CA.ellipsis 40 10\n          -- Add ellipsis. Arguments are width and height of label.\n          -- Note: There is no SVG feature for ellipsis, so this\n          -- turns labels into HTML.\n\n       -- Add arbitrary SVG attributes to your labels.\n      , CA.attrs [ SA.class \"my-label\" ]\n      ]\n      [ S.text \"Data from Fruits.com\" ]\n      { x = 5, y = 10 }\n\n",
+                "type": "List.List (Chart.Attributes.Attribute Chart.Svg.Label) -> List.List (Svg.Svg msg) -> Internal.Coordinates.Point -> Chart.Element data msg"
+            },
+            {
+                "name": "labelAt",
+                "comment": " Add a label, such as a chart title or other note, at a position relative to your axes.\n\n    C.chart []\n      [ C.labelAt (CA.percent 20) (CA.percent 90) [] [ S.text \"Data from Fruits.com\" ] ]\n\nThe example above adds your label at 20% the length of your range and 90% of your domain.\n\nOther attributes you can use:\n\n    C.labelAt (CA.percent 20) (CA.percent 90)\n      [ CA.moveUp 5     -- Move 5 SVG units up\n      , CA.moveDown 5   -- Move 5 SVG units down\n      , CA.moveLeft 5   -- Move 5 SVG units left\n      , CA.moveRight 5  -- Move 5 SVG units right\n\n      , CA.color \"#333\"\n      , CA.border \"white\"\n      , CA.borderWidth 1\n      , CA.fontSize 12\n\n      , CA.alignRight   -- Anchor labels to the right\n      , CA.alignLeft    -- Anchor labels to the left\n\n      , CA.rotate 90    -- Rotate label 90 degrees\n      , CA.uppercase    -- Make uppercase\n\n       -- Add arbitrary SVG attributes to your labels.\n      , CA.attrs [ SA.class \"my-label\" ]\n      ]\n      [ S.text \"Data from Fruits.com\" ]\n\nSee [live example](https://www.elm-charts.org/documentation/navigation/titles).\n\n",
+                "type": "(Internal.Coordinates.Axis -> Basics.Float) -> (Internal.Coordinates.Axis -> Basics.Float) -> List.List (Chart.Attributes.Attribute Chart.Svg.Label) -> List.List (Svg.Svg msg) -> Chart.Element data msg"
+            },
+            {
+                "name": "legendsAt",
+                "comment": " Add legends to your chart.\n\n    C.chart []\n      [ C.series .x\n          [ C.line .y [] []\n              |> C.named \"cats\"\n          , C.line .y [] []\n              |> C.named \"dogs\"\n          ]\n\n      , C.legendsAt .min .max\n          [ CA.column       -- Appear as column instead of row\n          , CA.alignRight   -- Anchor legends to the right\n          , CA.alignLeft    -- Anchor legends to the left\n\n          , CA.moveUp 5     -- Move 5px up\n          , CA.moveDown 5   -- Move 5px down\n          , CA.moveLeft 5   -- Move 5px left\n          , CA.moveRight 5  -- Move 5px right\n\n          , CA.spacing 20         -- Spacing between legends\n          , CA.background \"beige\" -- Color background\n          , CA.border \"gray\"      -- Add border\n          , CA.borderWidth 1      -- Set border width\n\n            -- Add arbitrary HTML attributes. Convinient for extra styling.\n          , CA.htmlAttrs [ HA.class \"my-legend\" ]\n          ]\n          [ CA.width 30    -- Change width of legend window\n          , CA.height 30   -- Change height of legend window\n          , CA.fontSize 12 -- Change font size\n          , CA.color \"red\" -- Change font color\n          , CA.spacing 12  -- Change spacing between window and title\n\n          , CA.htmlAttrs [ HA.class \"my-legends\" ] -- Add arbitrary HTML attributes.\n          ]\n      ]\n\nSee live example:\n- [Basic bar legends](https://www.elm-charts.org/documentation/bar-charts/legends).\n- [Basic dot legends](https://www.elm-charts.org/documentation/scatter-charts/legends).\n- [Basic line legends](https://www.elm-charts.org/documentation/line-charts/legends).\n- [Mutiple chart types](https://www.elm-charts.org/documentation/navigation/legends).\n",
+                "type": "(Internal.Coordinates.Axis -> Basics.Float) -> (Internal.Coordinates.Axis -> Basics.Float) -> List.List (Chart.Attributes.Attribute (Chart.Svg.Legends msg)) -> List.List (Chart.Attributes.Attribute (Chart.Svg.Legend msg)) -> Chart.Element data msg"
+            },
+            {
+                "name": "line",
+                "comment": " Add a line.\n\n    C.chart []\n      [ C.line\n          [ CA.x1 2 -- Set x1\n          , CA.x2 8 -- Set x2\n          , CA.y1 3 -- Set y1\n          , CA.y2 7 -- Set y2\n\n            -- Instead of specifying x2 and y2\n            -- you can use `x2Svg` and `y2Svg`\n            -- to specify the end coordinate in\n            -- terms of SVG units.\n            --\n            -- Useful if making little label pointers.\n            -- This makes a from ( x1, y1 ) to the point\n            -- ( x1 + 15 SVG units, y1 + 30 SVG units )\n          , CA.x2Svg 15\n          , CA.y2Svg 30\n\n          , CA.break            -- \"break\" line, so it it has a 90° angle\n          , CA.flip             -- flip break to opposite direction\n          , CA.tickLength       -- Add \"ticks\" at the ends of the line\n          , CA.tickDirection    -- The angle of the ticks\n\n          , CA.color \"red\"      -- Change color\n          , CA.width 2          -- Change width\n          , CA.opacity 0.8      -- Change opacity\n          , CA.dashed [ 5, 5 ]  -- Add dashing\n\n            -- Add arbitrary SVG attributes.\n          , CA.attrs [ SA.id \"my-line\" ]\n          ]\n      ]\n\nSee [live example](https://www.elm-charts.org/documentation/navigation/lines).\n\n",
+                "type": "List.List (Chart.Attributes.Attribute Chart.Svg.Line) -> Chart.Element data msg"
+            },
+            {
+                "name": "list",
+                "comment": " Add a list of elements. ",
+                "type": "List.List (Chart.Element data msg) -> Chart.Element data msg"
+            },
+            {
+                "name": "named",
+                "comment": " Name a bar, scatter, or interpolated series. This name will show up\nin the default tooltip, and you can use it to identify items from this series.\n\n    C.chart []\n      [ C.series .year\n          [ C.scatter .income []\n              |> C.named \"Income\"\n          ]\n          [ { year = 2000, income = 40000 }\n          , { year = 2010, income = 48000 }\n          , { year = 2020, income = 62000 }\n          ]\n      ]\n\nSee [live example](https://www.elm-charts.org/documentation/interactivity/change-name).\n\n",
+                "type": "String.String -> Chart.Property data inter deco -> Chart.Property data inter deco"
+            },
+            {
+                "name": "none",
+                "comment": " No element.\n",
+                "type": "Chart.Element data msg"
+            },
+            {
+                "name": "productLabel",
+                "comment": " Helper to add a label by a particular product.\n\n    C.chart\n      [ CE.onMouseMove OnHover (CE.getNearest CI.bars) ]\n      [ C.bars []\n          [ C.bar .income [] ]\n          [ { name = \"Anna\", income = 60 }\n          , { name = \"Karenina\", income = 70 }\n          , { name = \"Jane\", income = 80 }\n          ]\n\n      , C.each model.hovering <| \\_ bar ->\n          [ C.productLabel [ CA.moveUp 6 ] bar ]\n      ]\n\nAttributes you can use:\n\n    C.productLabel\n      [ CA.moveUp 5     -- Move 5 SVG units up\n      , CA.moveDown 5   -- Move 5 SVG units down\n      , CA.moveLeft 5   -- Move 5 SVG units left\n      , CA.moveRight 5  -- Move 5 SVG units right\n\n      , CA.color \"#333\"\n      , CA.border \"white\"\n      , CA.borderWidth 1\n      , CA.fontSize 12\n\n      , CA.alignRight   -- Anchor labels to the right\n      , CA.alignLeft    -- Anchor labels to the left\n\n      , CA.rotate 90    -- Rotate label 90 degrees\n      , CA.uppercase    -- Make uppercase\n\n       -- Add arbitrary SVG attributes to your labels.\n      , CA.attrs [ SA.class \"my-bar-labels\" ]\n\n       -- Edit the position of the label\n      , CA.position CI.getTop\n\n       -- Change the text of the label\n      , CA.format (\\bar -> String.fromFloat (CI.getY bar))\n      ]\n      product\n\n",
+                "type": "List.List (Chart.Attributes.Attribute (Chart.ItemLabel (Chart.Item.One data x))) -> Chart.Item.One data x -> Chart.Element data msg"
+            },
+            {
+                "name": "rect",
+                "comment": " Add a rectangle.\n\n    C.chart []\n      [ C.rect\n          [ CA.x1 2 -- Set x1\n          , CA.x2 8 -- Set x2\n          , CA.y1 3 -- Set y1\n          , CA.y2 7 -- Set y2\n\n          , CA.color \"#aaa\"     -- Change fill color\n          , CA.opacity 0.8      -- Change fill opacity\n          , CA.border \"#333\"    -- Change border color\n          , CA.borderWidth 2    -- Change border width\n\n            -- Add arbitrary SVG attributes.\n          , CA.attrs [ SA.id \"my-rect\" ]\n          ]\n      ]\n\nSee [live example](https://www.elm-charts.org/documentation/navigation/rectangle).\n\n",
+                "type": "List.List (Chart.Attributes.Attribute Chart.Svg.Rect) -> Chart.Element data msg"
+            },
+            {
+                "name": "scatter",
+                "comment": " Specify the configuration of a set of dots. The first argument will determine the y value of\nyour dots. The second is a list of styling attributes. The example below illustrates what styling\noptions are available.\n\n    C.series .year\n      [ C.scatter .income\n          [ CA.size 10            -- Change size of dot\n          , CA.color \"blue\"       -- Change color\n          , CA.opacity 0.8        -- Change opacity\n          , CA.border \"lightblue\" -- Change border color\n          , CA.borderWidth 2      -- Change border width\n\n          -- You can highlight a dot or a set of dots by adding a kind of \"aura\" to it.\n          , CA.highlight 0.3          -- Determine the opacity of the aura\n          , CA.highlightWidth 6       -- Determine the width of the aura\n          , CA.highlightColor \"blue\"  -- Determine the color of the aura\n\n          -- A dot is by default a circle, but you can change it to any\n          -- of the shapes below.\n          , CA.triangle\n          , CA.square\n          , CA.diamond\n          , CA.plus\n          , CA.cross\n          ]\n      ]\n      [ { year = 2000, income = 40000 }\n      , { year = 2010, income = 57000 }\n      , { year = 2020, income = 62000 }\n      ]\n\nExplore live examples for the following attributes:\n- [size](https://www.elm-charts.org/documentation/scatter-charts/sizes)\n- [opacity](https://www.elm-charts.org/documentation/scatter-charts/opacity)\n- [border](https://www.elm-charts.org/documentation/scatter-charts/borders)\n- [borderWidth](https://www.elm-charts.org/documentation/scatter-charts/borders)\n- [highlight](https://www.elm-charts.org/documentation/scatter-charts/highlight)\n- [triangle](https://www.elm-charts.org/documentation/scatter-charts/shapes)\n- [square](https://www.elm-charts.org/documentation/scatter-charts/shapes)\n- [cross](https://www.elm-charts.org/documentation/scatter-charts/shapes)\n",
+                "type": "(data -> Basics.Float) -> List.List (Chart.Attributes.Attribute Chart.Svg.Dot) -> Chart.Property data inter Chart.Svg.Dot"
+            },
+            {
+                "name": "scatterMaybe",
+                "comment": " Same as `scatter`, but allows for missing data.\n\n    C.chart []\n      [ C.series .year\n          [ C.scatterMaybe .income [] ]\n          [ { year = 2000, income = Just 40000 }\n          , { year = 2010, income = Nothing }\n          , { year = 2020, income = Just 62000 }\n          ]\n      ]\n\n",
+                "type": "(data -> Maybe.Maybe Basics.Float) -> List.List (Chart.Attributes.Attribute Chart.Svg.Dot) -> Chart.Property data inter Chart.Svg.Dot"
+            },
+            {
+                "name": "series",
+                "comment": " Add a scatter or line series to your chart. Each `data` in your `List data` will result in one \"dot\".\nThe first argument of `series` determines the x value of each dot. The y value and all styling configuration\nis determined by the list of `interpolated` or `scatter` properties defined in the second argument.\n\n    C.series .age\n      [ C.interpolated .height [] []\n      , C.interpolated .weight [] []\n      ]\n      [ { age = 0, height = 40, weight = 4 }\n      , { age = 5, height = 80, weight = 24 }\n      , { age = 10, height = 120, weight = 36 }\n      , { age = 15, height = 180, weight = 54 }\n      , { age = 20, height = 184, weight = 60 }\n      ]\n\nSee `interpolated` and `scatter` for styling options.\n\n",
+                "type": "(data -> Basics.Float) -> List.List (Chart.Property data Chart.Svg.Interpolation Chart.Svg.Dot) -> List.List data -> Chart.Element data msg"
+            },
+            {
+                "name": "seriesMap",
+                "comment": " This is just like `series`, but it maps your `data`. This is useful if you have\nseveral kinds of data types present in your chart.\n\n    type Datum\n      = Height { age : Float, height : Float }\n      | Weight { age : Float, weight : Float }\n\n    view : Html msg\n    view =\n      C.chart []\n        [ C.seriesMap Height .age\n            [ C.interpolated .height [] ]\n            [ { age = 0, height = 40 }\n            , { age = 5, height = 80 }\n            , { age = 10, height = 120 }\n            , { age = 15, height = 180 }\n            ]\n\n        , C.seriesMap Weight .age\n            [ C.interpolated .weight [] ]\n            [ { age = 0, weight = 4 }\n            , { age = 5, weight = 24 }\n            , { age = 10, weight = 36 }\n            , { age = 15, weight = 54 }\n            ]\n        ]\n\n",
+                "type": "(data -> a) -> (data -> Basics.Float) -> List.List (Chart.Property data Chart.Svg.Interpolation Chart.Svg.Dot) -> List.List data -> Chart.Element a msg"
+            },
+            {
+                "name": "stacked",
+                "comment": " Stack a set of bar or line series.\n\n    C.chart []\n      [ C.bars []\n          [ C.stacked\n              [ C.bar .cats []\n              , C.bar .dogs []\n              ]\n          ]\n          [ { cats = 2, dogs = 4 }\n          , { cats = 3, dogs = 2 }\n          , { cats = 6, dogs = 1 }\n          ]\n      ]\n\nSee [live example](https://www.elm-charts.org/documentation/bar-charts/stacked).\n\n",
+                "type": "List.List (Chart.Property data inter deco) -> Chart.Property data inter deco"
+            },
+            {
+                "name": "svg",
+                "comment": " Add arbitrary SVG. See `Chart.Svg` for handy SVG helpers.\n\nSee [live example](https://www.elm-charts.org/documentation/navigation/arbitrary-svg-and-html).\n\n",
+                "type": "(Internal.Coordinates.Plane -> Svg.Svg msg) -> Chart.Element data msg"
+            },
+            {
+                "name": "svgAt",
+                "comment": " Add arbitrary SVG at a specific location. See `Chart.Svg` for handy SVG helpers.\n\n    C.chart []\n      [ C.svgAt .min .max 10 20 [ .. ]\n          -- Add .. at x = the minumum value of your range (x-axis) + 12 SVG units\n          -- and y = the maximum value of your domain (y-axis) + 20 SVG units\n      ]\n\n",
+                "type": "(Internal.Coordinates.Axis -> Basics.Float) -> (Internal.Coordinates.Axis -> Basics.Float) -> Basics.Float -> Basics.Float -> List.List (Svg.Svg msg) -> Chart.Element data msg"
+            },
+            {
+                "name": "times",
+                "comment": " Generate \"nice\" times.\n\nSee the docs in [terezka/intervals](https://package.elm-lang.org/packages/terezka/intervals/2.0.0/Intervals#Time)\nfor more info about the properties of `Time`!\n\n",
+                "type": "Time.Zone -> Chart.Svg.Generator Intervals.Time"
+            },
+            {
+                "name": "tooltip",
+                "comment": " Add a tooltip for a specific item.\n\n    C.chart\n      [ CE.onMouseMove OnHover (CE.getNearest CI.any) ]\n      [ C.series .year\n          [ C.scatter .income [] ]\n          [ { year = 2000, income = 40000 }\n          , { year = 2010, income = 56000 }\n          , { year = 2020, income = 62000 }\n          ]\n\n      , C.each model.hovering <| \\plane product ->\n          [ C.tooltip product [] [] [] ]\n      ]\n\nCustomizations:\n\n    C.tooltip item\n      [ -- Change direction\n        CA.onTop          -- Always place tooltip on top of the item\n      , CA.onBottom       -- Always place tooltip below of the item\n      , CA.onRight        -- Always place tooltip on the right of the item\n      , CA.onLeft         -- Always place tooltip on the left of the item\n      , CA.onLeftOrRight  -- Place tooltip on the left or right of the item,\n                          -- depending on which side has more space available\n      , CA.onTopOrBottom  -- Place tooltip on the top or bottom of the item,\n                          -- depending on which side has more space available\n\n        -- Change focal point (where on the item the tooltip is achored)\n      , CA.top\n      , CA.bottom\n      , CA.left\n      , CA.right\n      , CA.center\n      , CA.topLeft\n      , CA.topRight\n      , CA.topCenter\n      , CA.bottomLeft\n      , CA.bottomRight\n      , CA.bottomCenter\n      , CA.leftCenter\n      , CA.rightCenter\n\n      , CA.offset 20  -- Change offset between focal point and tooltip\n      , CA.noArrow    -- Remove little box arrow\n      , CA.border \"blue\"  -- Change border color\n      , CA.background     -- Change background color\n      ]\n      [] -- Add any HTML attributes\n      [] -- Add any HTML children (Will be filled with default tooltip if left empty)\n\n\nExplore live examples for the following attributes:\n- [onTopOrBottom](https://www.elm-charts.org/documentation/interactivity/direction)\n- [top](https://www.elm-charts.org/documentation/interactivity/set-focal-point)\n- [offset](https://www.elm-charts.org/documentation/interactivity/edit-offset)\n- [noArrow](https://www.elm-charts.org/documentation/interactivity/remove-pointer)\n- [border](https://www.elm-charts.org/documentation/interactivity/edit-border)\n- [background](https://www.elm-charts.org/documentation/interactivity/edit-background)\n\nSee also [example of custom formatting](https://www.elm-charts.org/documentation/interactivity/change-value-formatting)\nand [example of custom content](https://www.elm-charts.org/documentation/interactivity/change-content) and the other\nexamples pertaining to [interactivity](https://www.elm-charts.org/documentation/interactivity).\n\n",
+                "type": "Chart.Item.Item a -> List.List (Chart.Attributes.Attribute Chart.Tooltip) -> List.List (Html.Attribute Basics.Never) -> List.List (Html.Html Basics.Never) -> Chart.Element data msg"
+            },
+            {
+                "name": "variation",
+                "comment": " Change the style of your bars or dots based on the index of its data point\nand the data point itself.\n\n    C.chart []\n      [ C.series .year\n          [ C.scatter .income [ CA.opacity 0.6 ]\n              |> C.variation (\\index datum -> [ CA.size datum.people ])\n          ]\n          [ { year = 2000, income = 40000, people = 150 }\n          , { year = 2010, income = 48000, people = 98 }\n          , { year = 2020, income = 62000, people = 180 }\n          ]\n      ]\n\nSee [live example](https://www.elm-charts.org/documentation/scatter-charts/data-dependent-styling).\n\n",
+                "type": "(Basics.Int -> data -> List.List (Chart.Attributes.Attribute deco)) -> Chart.Property data inter deco -> Chart.Property data inter deco"
+            },
+            {
+                "name": "withBars",
+                "comment": " Given all your bars, add a list of elements.\nUse helpers in `Chart.Item` to interact with bars.\n\n",
+                "type": "(Internal.Coordinates.Plane -> List.List (Chart.Item.One data Chart.Item.Bar) -> List.List (Chart.Element data msg)) -> Chart.Element data msg"
+            },
+            {
+                "name": "withBins",
+                "comment": " Given all your bins, add a list of elements.\nUse helpers in `Chart.Item` to interact with bins.\n\n",
+                "type": "(Internal.Coordinates.Plane -> List.List (Chart.Item.Many data Chart.Item.Any) -> List.List (Chart.Element data msg)) -> Chart.Element data msg"
+            },
+            {
+                "name": "withDots",
+                "comment": " Given all your dots, add a list of elements.\nUse helpers in `Chart.Item` to interact with dots.\n\n",
+                "type": "(Internal.Coordinates.Plane -> List.List (Chart.Item.One data Chart.Item.Dot) -> List.List (Chart.Element data msg)) -> Chart.Element data msg"
+            },
+            {
+                "name": "withItems",
+                "comment": " Given all your products, add a list of elements.\nUse helpers in `Chart.Item` to interact with products.\n\n",
+                "type": "(Internal.Coordinates.Plane -> List.List (Chart.Item.One data Chart.Item.Any) -> List.List (Chart.Element data msg)) -> Chart.Element data msg"
+            },
+            {
+                "name": "withPlane",
+                "comment": " Using the information about your coordinate system, add a list\nof elements.\n\n",
+                "type": "(Internal.Coordinates.Plane -> List.List (Chart.Element data msg)) -> Chart.Element data msg"
+            },
+            {
+                "name": "withStacks",
+                "comment": " Given all your stacks, add a list of elements.\nUse helpers in `Chart.Item` to interact with stacks.\n\n",
+                "type": "(Internal.Coordinates.Plane -> List.List (Chart.Item.Many data Chart.Item.Any) -> List.List (Chart.Element data msg)) -> Chart.Element data msg"
+            },
+            {
+                "name": "xAxis",
+                "comment": " Add an x-axis line to your chart. The example below illustrates\nthe styling options:\n\n    C.chart []\n      [ C.xAxis\n          [ CA.color \"red\"  -- Change color of line\n          , CA.width 2      -- Change width of line\n          , CA.noArrow      -- Remove arrow from line\n          , CA.pinned .max  -- Change what y position the axis is set at\n                            -- .max is at the very top\n                            -- .min is at the very bottom\n                            -- CA.zero is the closest you can go to zero\n                            -- (always 3) is at y = 3.\n\n          , CA.limits\n              [ CA.lowest 2 CA.exactly\n              , CA.highest 8 CA.exactly\n              ]\n              -- Change from where to where you line goes.\n              -- The example will make a line where x1 = 2 to x2 = 8\n          ]\n      ]\n\nExplore live examples for the following attributes:\n- [color](https://www.elm-charts.org/documentation/navigation/color)\n- [noArrow](https://www.elm-charts.org/documentation/navigation/remove-arrow)\n- [pinned](https://www.elm-charts.org/documentation/navigation/position)\n- [limits](https://www.elm-charts.org/documentation/navigation/adjust-axis-line)\n\n",
+                "type": "List.List (Chart.Attributes.Attribute Chart.Axis) -> Chart.Element item msg"
+            },
+            {
+                "name": "xLabel",
+                "comment": " Produce a single x label. This is typically for cases where you need\nvery custom labels and `xLabels` does not cut it. It is especially useful\nin combination with the `generate` helper. An example use case:\n\n    C.chart []\n      [ -- Create labels for 10 \"nice\" integers on the x-axis\n        -- and highlight the label at x = 0.\n        C.generate 10 C.ints .x [] <| \\plane int ->\n          let color = if int == 0 then \"red\" else \"gray\" in\n          [ C.xLabel\n              [ CA.x (toFloat int), CA.color color ]\n              [ S.text (String.fromInt int) ]\n          ]\n      ]\n\nA full list of possible attributes:\n\n    C.chart []\n      [ C.xLabel\n          [ CA.x 5  -- Set x coordinate\n          , CA.y 8  -- Set y coordinate\n\n          , CA.moveUp 5     -- Move 5 SVG units up\n          , CA.moveDown 5   -- Move 5 SVG units down\n          , CA.moveLeft 5   -- Move 5 SVG units left\n          , CA.moveRight 5  -- Move 5 SVG units right\n\n          , CA.border \"white\"   -- Set stroke color\n          , CA.borderWidth 0.5  -- Set stroke width\n\n          , CA.fontSize 12      -- Set font size\n          , CA.color \"red\"      -- Set color\n\n          , CA.alignRight   -- Anchor labels to the right\n          , CA.alignLeft    -- Anchor labels to the left\n\n          , CA.rotate 90    -- Rotate label 90 degrees\n          , CA.uppercase    -- Make uppercase\n          , CA.flip         -- Flip to opposite direction\n          , CA.hideOverflow -- Cut off labels if exeeding chart bounds\n          , CA.ellipsis 40 10\n              -- Add ellipsis. Arguments are width and height of label.\n              -- Note: There is no SVG feature for ellipsis, so this\n              -- turns labels into HTML.\n\n          , CA.withGrid     -- Add grid line by each label.\n          ]\n          [ S.text \"hello!\" ]\n      ]\n\nSee also the [custom labels example](https://www.elm-charts.org/documentation/navigation/custom-labels).\n\n\n",
+                "type": "List.List (Chart.Attributes.Attribute Chart.Label) -> List.List (Svg.Svg msg) -> Chart.Element data msg"
+            },
+            {
+                "name": "xLabels",
+                "comment": " Produce a set of labels at \"nice\" numbers on the x-axis of your chart.\nThe example below illustrates the configuration:\n\n    C.chart []\n      [ C.xLabels\n          [ CA.color \"red\"  -- Change color\n          , CA.fontSize 12  -- Change font size\n          , CA.uppercase    -- Make labels uppercase\n          , CA.rotate 90    -- Rotate labels\n\n          , CA.alignRight   -- Anchor labels to the right\n          , CA.alignLeft    -- Anchor labels to the left\n\n          , CA.moveUp 5     -- Move 5 SVG units up\n          , CA.moveDown 5   -- Move 5 SVG units down\n          , CA.moveLeft 5   -- Move 5 SVG units left\n          , CA.moveRight 5  -- Move 5 SVG units right\n\n          , CA.amount 15   -- Change amount of ticks\n          , CA.flip        -- Flip to opposite direction\n          , CA.withGrid    -- Add grid line by each label.\n\n          , CA.ints            -- Add ticks at \"nice\" ints\n          , CA.times Time.utc  -- Add ticks at \"nice\" times\n\n          , CA.format (\\num -> String.fromFloat num ++ \"°\")\n              -- Format the \"nice\" number\n\n          , CA.ellipsis 40 10\n              -- Add ellipsis. Arguments are width and height of label.\n              -- Note: There is no SVG feature for ellipsis, so this\n              -- turns labels into HTML.\n\n          , CA.hideOverflow -- Cut off labels if exeeding chart bounds\n\n          , CA.pinned .max  -- Change what y position the labels are set at\n                            -- .max is at the very top\n                            -- .min is at the very bottom\n                            -- CA.zero is the closest you can go to zero\n                            -- (always 3) is at y = 3.\n          , CA.limits\n              [ CA.lowest 2 CA.exactly\n              , CA.highest 8 CA.exactly\n              ]\n              -- Change the upper and lower limit of your labels range.\n              -- The example will add labels between x = 2 and 8.\n          ]\n      ]\n\nExplore live examples for the following attributes:\n- [alignLeft](https://www.elm-charts.org/documentation/navigation/move-labels)\n- [moveUp](https://www.elm-charts.org/documentation/navigation/move-labels)\n- [amount](https://www.elm-charts.org/documentation/navigation/amount-of-labels-ticks)\n- [ints](https://www.elm-charts.org/documentation/navigation/only-integers)\n- [times](https://www.elm-charts.org/documentation/navigation/timeline)\n\nFor more in depth and irregular customization, see `xLabel` or check out\nthe [custom labels example](https://www.elm-charts.org/documentation/navigation/custom-labels).\n\n",
+                "type": "List.List (Chart.Attributes.Attribute Chart.Labels) -> Chart.Element item msg"
+            },
+            {
+                "name": "xTick",
+                "comment": " Produce a single x tick. This is typically for cases where you need\nvery custom ticks and `xTicks` does not cut it. It is especially useful\nin combination with the `generate` helper. An example use case:\n\n    C.chart []\n      [ -- Create ticks for 10 \"nice\" integers on the x-axis\n        -- and highlight the tick at x = 0.\n        C.generate 10 C.ints .x [] <| \\plane int ->\n          let color = if int == 0 then \"red\" else \"gray\" in\n          [ C.xTick [ CA.x (toFloat int), CA.color color ] ]\n      ]\n\n\nA full list of possible attributes:\n\n    C.xTick\n      [ CA.x 5  -- Set x coordinate\n      , CA.y 8  -- Set y coordinate\n\n      , CA.color \"red\" -- Change color\n      , CA.height 8    -- Change height\n      , CA.width 2     -- Change width\n      , CA.amount 15   -- Change amount of ticks\n      , CA.flip        -- Flip to opposite direction\n      , CA.noGrid      -- By default a grid line is added\n                       -- for each tick. This removes them.\n      ]\n\n",
+                "type": "List.List (Chart.Attributes.Attribute Chart.Tick) -> Chart.Element data msg"
+            },
+            {
+                "name": "xTicks",
+                "comment": " Produce a set of ticks at \"nice\" numbers on the x-axis of your chart.\nThe example below illustrates the configuration:\n\n    C.chart []\n      [ C.xTicks\n          [ CA.color \"red\" -- Change color\n          , CA.height 8    -- Change height\n          , CA.width 2     -- Change width\n          , CA.amount 15   -- Change amount of ticks\n          , CA.flip        -- Flip to opposite direction\n          , CA.noGrid      -- By default a grid line is added\n                           -- for each tick. This removes them.\n\n          , CA.ints            -- Add ticks at \"nice\" ints\n          , CA.times Time.utc  -- Add ticks at \"nice\" times\n\n          , CA.pinned .max  -- Change what y position the ticks are set at\n                            -- .max is at the very top\n                            -- .min is at the very bottom\n                            -- CA.zero is the closest you can go to zero\n                            -- (always 3) is at y = 3.\n          , CA.limits\n              [ CA.lowest 2 CA.exactly\n              , CA.highest 8 CA.exactly\n              ]\n              -- Change the upper and lower limit of your tick range.\n              -- The example will add ticks between x = 2 and 8.\n          ]\n      ]\n\nExplore live examples for the following attributes:\n- [pinned](https://www.elm-charts.org/documentation/navigation/position)\n- [ints](https://www.elm-charts.org/documentation/navigation/only-integers)\n- [times](https://www.elm-charts.org/documentation/navigation/timeline)\n- [noGrid](https://www.elm-charts.org/documentation/navigation/remove-grid-lines)\n- [amount](https://www.elm-charts.org/documentation/navigation/amount-of-labels-ticks)\n\n",
+                "type": "List.List (Chart.Attributes.Attribute Chart.Ticks) -> Chart.Element item msg"
+            },
+            {
+                "name": "yAxis",
+                "comment": " Add an y-axis line to your chart. The styling options are the same\nas for `xAxis`.\n",
+                "type": "List.List (Chart.Attributes.Attribute Chart.Axis) -> Chart.Element item msg"
+            },
+            {
+                "name": "yLabel",
+                "comment": " Produce a single y label. This is typically for cases where you need\nvery custom labels and `yLabels` does not cut it. See `xLabel` for\nusage and customization.\n\n",
+                "type": "List.List (Chart.Attributes.Attribute Chart.Label) -> List.List (Svg.Svg msg) -> Chart.Element data msg"
+            },
+            {
+                "name": "yLabels",
+                "comment": " Produce a set of labels at \"nice\" numbers on the y-axis of your chart.\nThe styling options are the same as for `xLabels`.\n",
+                "type": "List.List (Chart.Attributes.Attribute Chart.Labels) -> Chart.Element item msg"
+            },
+            {
+                "name": "yTick",
+                "comment": " Produce a single y tick. This is typically for cases where you need\nvery custom ticks and `yTicks` does not cut it. See `xTick` for\nusage and customization.\n\n",
+                "type": "List.List (Chart.Attributes.Attribute Chart.Tick) -> Chart.Element data msg"
+            },
+            {
+                "name": "yTicks",
+                "comment": " Produce a set of ticks at \"nice\" numbers on the y-axis of your chart.\nThe styling options are the same as for `xTicks`.\n",
+                "type": "List.List (Chart.Attributes.Attribute Chart.Ticks) -> Chart.Element item msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chart.Attributes",
+        "comment": " This module contains attributes for editing elements in `Chart` and `Chart.Svg`. See\n`Chart` for usage examples.\n\nOften a single attribute can change several different configurations, so the categories\nbelow are only guiding.\n\n@docs Attribute\n\n## Container\n@docs width, height, attrs, htmlAttrs, events, margin, padding\n\n## Limits\n@docs range, domain, limits\n@docs lowest, highest, orLower, orHigher, exactly, more, less, window, likeData\n@docs zoom, move, centerAt, pad\n@docs zero, middle, percent\n\n## Labels\n@docs fontSize, uppercase, format, position\n@docs alignLeft, alignRight, alignMiddle, ellipsis\n\n## Axis\n@docs amount, flip, pinned\n@docs ints, times\n\n## Coordinates\n@docs x, y, x1, y1, x2, y2, x2Svg, y2Svg, length\n@docs moveLeft, moveRight, moveUp, moveDown\n@docs hideOverflow\n\n## Decoration\n@docs border, borderWidth, color, opacity, highlight, highlightWidth, highlightColor, background, noArrow, rotate\n@docs striped, dotted, gradient\n\n## Bar\n@docs ungroup, roundTop, roundBottom, spacing\n\n## Lines\n@docs area, size, dashed, break, tickLength, tickDirection\n@docs linear, monotone, stepped\n@docs circle, triangle, square, diamond, plus, cross\n\n## Tooltip\n@docs onTop, onBottom, onRight, onLeft, onLeftOrRight, onTopOrBottom\n@docs offset\n@docs focal\n@docs topLeft, topRight, topCenter\n@docs bottomLeft, bottomRight, bottomCenter\n@docs leftCenter, rightCenter\n@docs top, bottom, left, right, center\n\n## Legends\n@docs title, row, column\n\n## Grid\n@docs noGrid, withGrid, dotGrid\n\n## Colors\n@docs pink, purple, blue, green, orange, turquoise, red\n@docs magenta, brown, mint, yellow, gray\n@docs darkYellow, darkBlue, darkGray, labelGray\n\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Attribute",
+                "comment": " ",
+                "args": [
+                    "c"
+                ],
+                "type": "c -> c"
+            }
+        ],
+        "values": [
+            {
+                "name": "alignLeft",
+                "comment": " ",
+                "type": "{ a | anchor : Maybe.Maybe Internal.Svg.Anchor } -> { a | anchor : Maybe.Maybe Internal.Svg.Anchor }"
+            },
+            {
+                "name": "alignMiddle",
+                "comment": " ",
+                "type": "{ a | anchor : Maybe.Maybe Internal.Svg.Anchor } -> { a | anchor : Maybe.Maybe Internal.Svg.Anchor }"
+            },
+            {
+                "name": "alignRight",
+                "comment": " ",
+                "type": "{ a | anchor : Maybe.Maybe Internal.Svg.Anchor } -> { a | anchor : Maybe.Maybe Internal.Svg.Anchor }"
+            },
+            {
+                "name": "amount",
+                "comment": " ",
+                "type": "Basics.Int -> { a | amount : Basics.Int } -> { a | amount : Basics.Int }"
+            },
+            {
+                "name": "area",
+                "comment": " ",
+                "type": "Basics.Float -> { a | area : Basics.Float, method : Maybe.Maybe Internal.Svg.Method } -> { a | area : Basics.Float, method : Maybe.Maybe Internal.Svg.Method }"
+            },
+            {
+                "name": "attrs",
+                "comment": " ",
+                "type": "a -> { x | attrs : a } -> { x | attrs : a }"
+            },
+            {
+                "name": "background",
+                "comment": " ",
+                "type": "String.String -> { a | background : String.String } -> { a | background : String.String }"
+            },
+            {
+                "name": "blue",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "border",
+                "comment": " ",
+                "type": "String.String -> { a | border : String.String } -> { a | border : String.String }"
+            },
+            {
+                "name": "borderWidth",
+                "comment": " ",
+                "type": "Basics.Float -> { a | borderWidth : Basics.Float } -> { a | borderWidth : Basics.Float }"
+            },
+            {
+                "name": "bottom",
+                "comment": " ",
+                "type": "{ a | focal : Maybe.Maybe (Internal.Coordinates.Position -> Internal.Coordinates.Position) } -> { a | focal : Maybe.Maybe (Internal.Coordinates.Position -> Internal.Coordinates.Position) }"
+            },
+            {
+                "name": "bottomCenter",
+                "comment": " ",
+                "type": "{ a | focal : Maybe.Maybe (Internal.Coordinates.Position -> Internal.Coordinates.Position) } -> { a | focal : Maybe.Maybe (Internal.Coordinates.Position -> Internal.Coordinates.Position) }"
+            },
+            {
+                "name": "bottomLeft",
+                "comment": " ",
+                "type": "{ a | focal : Maybe.Maybe (Internal.Coordinates.Position -> Internal.Coordinates.Position) } -> { a | focal : Maybe.Maybe (Internal.Coordinates.Position -> Internal.Coordinates.Position) }"
+            },
+            {
+                "name": "bottomRight",
+                "comment": " ",
+                "type": "{ a | focal : Maybe.Maybe (Internal.Coordinates.Position -> Internal.Coordinates.Position) } -> { a | focal : Maybe.Maybe (Internal.Coordinates.Position -> Internal.Coordinates.Position) }"
+            },
+            {
+                "name": "break",
+                "comment": " ",
+                "type": "{ a | break : Basics.Bool } -> { a | break : Basics.Bool }"
+            },
+            {
+                "name": "brown",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "center",
+                "comment": " ",
+                "type": "{ a | focal : Maybe.Maybe (Internal.Coordinates.Position -> Internal.Coordinates.Position) } -> { a | focal : Maybe.Maybe (Internal.Coordinates.Position -> Internal.Coordinates.Position) }"
+            },
+            {
+                "name": "centerAt",
+                "comment": " Center range/domain at certain point.\n\n    CA.centerAt 20 initial -- { initial | min = -30, max = 70 }\n\nwhere\n\n    initial : Axis\n    initial =\n      { .. | min = 0, max = 100 }\n\n",
+                "type": "Basics.Float -> Internal.Coordinates.Axis -> Internal.Coordinates.Axis"
+            },
+            {
+                "name": "circle",
+                "comment": " ",
+                "type": "{ a | shape : Maybe.Maybe Internal.Svg.Shape } -> { a | shape : Maybe.Maybe Internal.Svg.Shape }"
+            },
+            {
+                "name": "color",
+                "comment": " ",
+                "type": "String.String -> { a | color : String.String } -> { a | color : String.String }"
+            },
+            {
+                "name": "column",
+                "comment": " ",
+                "type": "{ a | alignment : Internal.Svg.Alignment } -> { a | alignment : Internal.Svg.Alignment }"
+            },
+            {
+                "name": "cross",
+                "comment": " ",
+                "type": "{ a | shape : Maybe.Maybe Internal.Svg.Shape } -> { a | shape : Maybe.Maybe Internal.Svg.Shape }"
+            },
+            {
+                "name": "darkBlue",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "darkGray",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "darkYellow",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "dashed",
+                "comment": " ",
+                "type": "x -> { a | dashed : x } -> { a | dashed : x }"
+            },
+            {
+                "name": "diamond",
+                "comment": " ",
+                "type": "{ a | shape : Maybe.Maybe Internal.Svg.Shape } -> { a | shape : Maybe.Maybe Internal.Svg.Shape }"
+            },
+            {
+                "name": "domain",
+                "comment": " ",
+                "type": "x -> { a | domain : x } -> { a | domain : x }"
+            },
+            {
+                "name": "dotGrid",
+                "comment": " ",
+                "type": "{ a | dotGrid : Basics.Bool } -> { a | dotGrid : Basics.Bool }"
+            },
+            {
+                "name": "dotted",
+                "comment": " ",
+                "type": "List.List (Chart.Attributes.Attribute Internal.Svg.Pattern) -> { a | design : Maybe.Maybe Internal.Svg.Design, opacity : Basics.Float } -> { a | design : Maybe.Maybe Internal.Svg.Design, opacity : Basics.Float }"
+            },
+            {
+                "name": "ellipsis",
+                "comment": " Note: There is no SVG feature for ellipsis, so this turns labels into HTML. ",
+                "type": "Basics.Float -> Basics.Float -> { a | ellipsis : Maybe.Maybe { height : Basics.Float, width : Basics.Float } } -> { a | ellipsis : Maybe.Maybe { height : Basics.Float, width : Basics.Float } }"
+            },
+            {
+                "name": "events",
+                "comment": " ",
+                "type": "x -> { a | events : x } -> { a | events : x }"
+            },
+            {
+                "name": "exactly",
+                "comment": " See `lowest` for usage examples.\n\n",
+                "type": "Basics.Float -> Basics.Float -> Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "flip",
+                "comment": " ",
+                "type": "{ a | flip : Basics.Bool } -> { a | flip : Basics.Bool }"
+            },
+            {
+                "name": "focal",
+                "comment": " ",
+                "type": "(Internal.Coordinates.Position -> Internal.Coordinates.Position) -> { a | focal : Maybe.Maybe (Internal.Coordinates.Position -> Internal.Coordinates.Position) } -> { a | focal : Maybe.Maybe (Internal.Coordinates.Position -> Internal.Coordinates.Position) }"
+            },
+            {
+                "name": "fontSize",
+                "comment": " ",
+                "type": "Basics.Int -> { a | fontSize : Maybe.Maybe Basics.Int } -> { a | fontSize : Maybe.Maybe Basics.Int }"
+            },
+            {
+                "name": "format",
+                "comment": " ",
+                "type": "x -> { a | format : Maybe.Maybe x } -> { a | format : Maybe.Maybe x }"
+            },
+            {
+                "name": "gradient",
+                "comment": " ",
+                "type": "List.List String.String -> { a | design : Maybe.Maybe Internal.Svg.Design, opacity : Basics.Float } -> { a | design : Maybe.Maybe Internal.Svg.Design, opacity : Basics.Float }"
+            },
+            {
+                "name": "gray",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "green",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "height",
+                "comment": " ",
+                "type": "Basics.Float -> { a | height : Basics.Float } -> { a | height : Basics.Float }"
+            },
+            {
+                "name": "hideOverflow",
+                "comment": " ",
+                "type": "{ a | hideOverflow : Basics.Bool } -> { a | hideOverflow : Basics.Bool }"
+            },
+            {
+                "name": "highest",
+                "comment": " Same as `lowest`, but changes upper bound.\n\n",
+                "type": "Basics.Float -> (Basics.Float -> Basics.Float -> Basics.Float -> Basics.Float) -> Internal.Coordinates.Axis -> Internal.Coordinates.Axis"
+            },
+            {
+                "name": "highlight",
+                "comment": " ",
+                "type": "Basics.Float -> { a | highlight : Basics.Float } -> { a | highlight : Basics.Float }"
+            },
+            {
+                "name": "highlightColor",
+                "comment": " ",
+                "type": "String.String -> { a | highlightColor : String.String } -> { a | highlightColor : String.String }"
+            },
+            {
+                "name": "highlightWidth",
+                "comment": " ",
+                "type": "Basics.Float -> { a | highlightWidth : Basics.Float } -> { a | highlightWidth : Basics.Float }"
+            },
+            {
+                "name": "htmlAttrs",
+                "comment": " ",
+                "type": "a -> { x | htmlAttrs : a } -> { x | htmlAttrs : a }"
+            },
+            {
+                "name": "ints",
+                "comment": " ",
+                "type": "{ a | generate : Internal.Svg.TickType } -> { a | generate : Internal.Svg.TickType }"
+            },
+            {
+                "name": "labelGray",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "left",
+                "comment": " ",
+                "type": "{ a | focal : Maybe.Maybe (Internal.Coordinates.Position -> Internal.Coordinates.Position) } -> { a | focal : Maybe.Maybe (Internal.Coordinates.Position -> Internal.Coordinates.Position) }"
+            },
+            {
+                "name": "leftCenter",
+                "comment": " ",
+                "type": "{ a | focal : Maybe.Maybe (Internal.Coordinates.Position -> Internal.Coordinates.Position) } -> { a | focal : Maybe.Maybe (Internal.Coordinates.Position -> Internal.Coordinates.Position) }"
+            },
+            {
+                "name": "length",
+                "comment": " ",
+                "type": "Basics.Float -> { a | length : Basics.Float } -> { a | length : Basics.Float }"
+            },
+            {
+                "name": "less",
+                "comment": " See `lowest` for usage examples.\n\n",
+                "type": "Basics.Float -> Basics.Float -> Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "likeData",
+                "comment": " Resets axis to fit data bounds.\n\n",
+                "type": "Internal.Coordinates.Axis -> Internal.Coordinates.Axis"
+            },
+            {
+                "name": "limits",
+                "comment": " ",
+                "type": "x -> { a | limits : x } -> { a | limits : x }"
+            },
+            {
+                "name": "linear",
+                "comment": " ",
+                "type": "{ a | method : Maybe.Maybe Internal.Svg.Method } -> { a | method : Maybe.Maybe Internal.Svg.Method }"
+            },
+            {
+                "name": "lowest",
+                "comment": " Change the lower bound of an axis.\n\n    CA.lowest -5 CA.orLower initial  -- { initial | min = -5, max = 10 }\n    CA.lowest -5 CA.orHigher initial -- { initial | min = 0, max = 10 }\n    CA.lowest 2 CA.exactly initial   -- { initial | min = 2, max = 10 }\n    CA.lowest 2 CA.less initial   -- { initial | min = -2, max = 10 }\n    CA.lowest 3 CA.more initial   -- { initial | min = 3, max = 10 }\n\nwhere\n\n    initial : Chart.Svg.Axis\n    initial =\n      { .. | min = 0, max = 10 }\n\n",
+                "type": "Basics.Float -> (Basics.Float -> Basics.Float -> Basics.Float -> Basics.Float) -> Internal.Coordinates.Axis -> Internal.Coordinates.Axis"
+            },
+            {
+                "name": "magenta",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "margin",
+                "comment": " ",
+                "type": "x -> { a | margin : x } -> { a | margin : x }"
+            },
+            {
+                "name": "middle",
+                "comment": " Get the middle value of your axis.\n\n",
+                "type": "Internal.Coordinates.Axis -> Basics.Float"
+            },
+            {
+                "name": "mint",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "monotone",
+                "comment": " ",
+                "type": "{ a | method : Maybe.Maybe Internal.Svg.Method } -> { a | method : Maybe.Maybe Internal.Svg.Method }"
+            },
+            {
+                "name": "more",
+                "comment": " See `lowest` for usage examples.\n\n",
+                "type": "Basics.Float -> Basics.Float -> Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "move",
+                "comment": " Offset entire range.\n\n    CA.move 5 initial   -- { initial | min = 5, max = 15 }\n\nwhere\n\n    initial : Axis\n    initial =\n      { .. | min = 0, max = 10 }\n\n",
+                "type": "Basics.Float -> Internal.Coordinates.Axis -> Internal.Coordinates.Axis"
+            },
+            {
+                "name": "moveDown",
+                "comment": " ",
+                "type": "Basics.Float -> { a | yOff : Basics.Float } -> { a | yOff : Basics.Float }"
+            },
+            {
+                "name": "moveLeft",
+                "comment": " ",
+                "type": "Basics.Float -> { a | xOff : Basics.Float } -> { a | xOff : Basics.Float }"
+            },
+            {
+                "name": "moveRight",
+                "comment": " ",
+                "type": "Basics.Float -> { a | xOff : Basics.Float } -> { a | xOff : Basics.Float }"
+            },
+            {
+                "name": "moveUp",
+                "comment": " ",
+                "type": "Basics.Float -> { a | yOff : Basics.Float } -> { a | yOff : Basics.Float }"
+            },
+            {
+                "name": "noArrow",
+                "comment": " ",
+                "type": "{ a | arrow : Basics.Bool } -> { a | arrow : Basics.Bool }"
+            },
+            {
+                "name": "noGrid",
+                "comment": " ",
+                "type": "{ a | grid : Basics.Bool } -> { a | grid : Basics.Bool }"
+            },
+            {
+                "name": "offset",
+                "comment": " ",
+                "type": "Basics.Float -> { a | offset : Basics.Float } -> { a | offset : Basics.Float }"
+            },
+            {
+                "name": "onBottom",
+                "comment": " ",
+                "type": "{ a | direction : Maybe.Maybe Internal.Svg.Direction } -> { a | direction : Maybe.Maybe Internal.Svg.Direction }"
+            },
+            {
+                "name": "onLeft",
+                "comment": " ",
+                "type": "{ a | direction : Maybe.Maybe Internal.Svg.Direction } -> { a | direction : Maybe.Maybe Internal.Svg.Direction }"
+            },
+            {
+                "name": "onLeftOrRight",
+                "comment": " ",
+                "type": "{ a | direction : Maybe.Maybe Internal.Svg.Direction } -> { a | direction : Maybe.Maybe Internal.Svg.Direction }"
+            },
+            {
+                "name": "onRight",
+                "comment": " ",
+                "type": "{ a | direction : Maybe.Maybe Internal.Svg.Direction } -> { a | direction : Maybe.Maybe Internal.Svg.Direction }"
+            },
+            {
+                "name": "onTop",
+                "comment": " ",
+                "type": "{ a | direction : Maybe.Maybe Internal.Svg.Direction } -> { a | direction : Maybe.Maybe Internal.Svg.Direction }"
+            },
+            {
+                "name": "onTopOrBottom",
+                "comment": " ",
+                "type": "{ a | direction : Maybe.Maybe Internal.Svg.Direction } -> { a | direction : Maybe.Maybe Internal.Svg.Direction }"
+            },
+            {
+                "name": "opacity",
+                "comment": " ",
+                "type": "Basics.Float -> { a | opacity : Basics.Float } -> { a | opacity : Basics.Float }"
+            },
+            {
+                "name": "orHigher",
+                "comment": " See `lowest` for usage examples.\n\n",
+                "type": "Basics.Float -> Basics.Float -> Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "orLower",
+                "comment": " See `lowest` for usage examples.\n\n",
+                "type": "Basics.Float -> Basics.Float -> Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "orange",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "pad",
+                "comment": " Add padding (in px) to range/domain.\n\n    CA.range [ CA.pad 5 10 ]\n\n",
+                "type": "Basics.Float -> Basics.Float -> Internal.Coordinates.Axis -> Internal.Coordinates.Axis"
+            },
+            {
+                "name": "padding",
+                "comment": " ",
+                "type": "x -> { a | padding : x } -> { a | padding : x }"
+            },
+            {
+                "name": "percent",
+                "comment": " Get the value at a certain percentage of the length of your axis.\n\n",
+                "type": "Basics.Float -> Internal.Coordinates.Axis -> Basics.Float"
+            },
+            {
+                "name": "pink",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "pinned",
+                "comment": " ",
+                "type": "x -> { a | pinned : x } -> { a | pinned : x }"
+            },
+            {
+                "name": "plus",
+                "comment": " ",
+                "type": "{ a | shape : Maybe.Maybe Internal.Svg.Shape } -> { a | shape : Maybe.Maybe Internal.Svg.Shape }"
+            },
+            {
+                "name": "position",
+                "comment": " ",
+                "type": "x -> { a | position : x } -> { a | position : x }"
+            },
+            {
+                "name": "purple",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "range",
+                "comment": " ",
+                "type": "x -> { a | range : x } -> { a | range : x }"
+            },
+            {
+                "name": "red",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "right",
+                "comment": " ",
+                "type": "{ a | focal : Maybe.Maybe (Internal.Coordinates.Position -> Internal.Coordinates.Position) } -> { a | focal : Maybe.Maybe (Internal.Coordinates.Position -> Internal.Coordinates.Position) }"
+            },
+            {
+                "name": "rightCenter",
+                "comment": " ",
+                "type": "{ a | focal : Maybe.Maybe (Internal.Coordinates.Position -> Internal.Coordinates.Position) } -> { a | focal : Maybe.Maybe (Internal.Coordinates.Position -> Internal.Coordinates.Position) }"
+            },
+            {
+                "name": "rotate",
+                "comment": " ",
+                "type": "Basics.Float -> { a | rotate : Basics.Float } -> { a | rotate : Basics.Float }"
+            },
+            {
+                "name": "roundBottom",
+                "comment": " ",
+                "type": "Basics.Float -> { a | roundBottom : Basics.Float } -> { a | roundBottom : Basics.Float }"
+            },
+            {
+                "name": "roundTop",
+                "comment": " ",
+                "type": "Basics.Float -> { a | roundTop : Basics.Float } -> { a | roundTop : Basics.Float }"
+            },
+            {
+                "name": "row",
+                "comment": " ",
+                "type": "{ a | alignment : Internal.Svg.Alignment } -> { a | alignment : Internal.Svg.Alignment }"
+            },
+            {
+                "name": "size",
+                "comment": " ",
+                "type": "Basics.Float -> { a | size : Basics.Float } -> { a | size : Basics.Float }"
+            },
+            {
+                "name": "spacing",
+                "comment": " ",
+                "type": "Basics.Float -> { a | spacing : Basics.Float } -> { a | spacing : Basics.Float }"
+            },
+            {
+                "name": "square",
+                "comment": " ",
+                "type": "{ a | shape : Maybe.Maybe Internal.Svg.Shape } -> { a | shape : Maybe.Maybe Internal.Svg.Shape }"
+            },
+            {
+                "name": "stepped",
+                "comment": " ",
+                "type": "{ a | method : Maybe.Maybe Internal.Svg.Method } -> { a | method : Maybe.Maybe Internal.Svg.Method }"
+            },
+            {
+                "name": "striped",
+                "comment": " ",
+                "type": "List.List (Chart.Attributes.Attribute Internal.Svg.Pattern) -> { a | design : Maybe.Maybe Internal.Svg.Design, opacity : Basics.Float } -> { a | design : Maybe.Maybe Internal.Svg.Design, opacity : Basics.Float }"
+            },
+            {
+                "name": "tickDirection",
+                "comment": " ",
+                "type": "Basics.Float -> { a | tickDirection : Basics.Float } -> { a | tickDirection : Basics.Float }"
+            },
+            {
+                "name": "tickLength",
+                "comment": " ",
+                "type": "Basics.Float -> { a | tickLength : Basics.Float } -> { a | tickLength : Basics.Float }"
+            },
+            {
+                "name": "times",
+                "comment": " ",
+                "type": "Time.Zone -> { a | generate : Internal.Svg.TickType } -> { a | generate : Internal.Svg.TickType }"
+            },
+            {
+                "name": "title",
+                "comment": " ",
+                "type": "x -> { a | title : x } -> { a | title : x }"
+            },
+            {
+                "name": "top",
+                "comment": " ",
+                "type": "{ a | focal : Maybe.Maybe (Internal.Coordinates.Position -> Internal.Coordinates.Position) } -> { a | focal : Maybe.Maybe (Internal.Coordinates.Position -> Internal.Coordinates.Position) }"
+            },
+            {
+                "name": "topCenter",
+                "comment": " ",
+                "type": "{ a | focal : Maybe.Maybe (Internal.Coordinates.Position -> Internal.Coordinates.Position) } -> { a | focal : Maybe.Maybe (Internal.Coordinates.Position -> Internal.Coordinates.Position) }"
+            },
+            {
+                "name": "topLeft",
+                "comment": " ",
+                "type": "{ a | focal : Maybe.Maybe (Internal.Coordinates.Position -> Internal.Coordinates.Position) } -> { a | focal : Maybe.Maybe (Internal.Coordinates.Position -> Internal.Coordinates.Position) }"
+            },
+            {
+                "name": "topRight",
+                "comment": " ",
+                "type": "{ a | focal : Maybe.Maybe (Internal.Coordinates.Position -> Internal.Coordinates.Position) } -> { a | focal : Maybe.Maybe (Internal.Coordinates.Position -> Internal.Coordinates.Position) }"
+            },
+            {
+                "name": "triangle",
+                "comment": " ",
+                "type": "{ a | shape : Maybe.Maybe Internal.Svg.Shape } -> { a | shape : Maybe.Maybe Internal.Svg.Shape }"
+            },
+            {
+                "name": "turquoise",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "ungroup",
+                "comment": " ",
+                "type": "{ a | grouped : Basics.Bool } -> { a | grouped : Basics.Bool }"
+            },
+            {
+                "name": "uppercase",
+                "comment": " ",
+                "type": "{ a | uppercase : Basics.Bool } -> { a | uppercase : Basics.Bool }"
+            },
+            {
+                "name": "width",
+                "comment": " ",
+                "type": "Basics.Float -> { a | width : Basics.Float } -> { a | width : Basics.Float }"
+            },
+            {
+                "name": "window",
+                "comment": " Set an axis to an exact window.\n\n    CA.window 2 5 initial   -- { initial | min = 2, max = 5 }\n\nwhere\n\n    initial : Axis\n    initial =\n      { .. | min = 0, max = 10 }\n\n",
+                "type": "Basics.Float -> Basics.Float -> Internal.Coordinates.Axis -> Internal.Coordinates.Axis"
+            },
+            {
+                "name": "withGrid",
+                "comment": " ",
+                "type": "{ a | grid : Basics.Bool } -> { a | grid : Basics.Bool }"
+            },
+            {
+                "name": "x",
+                "comment": " ",
+                "type": "Basics.Float -> { a | x : Basics.Float } -> { a | x : Basics.Float }"
+            },
+            {
+                "name": "x1",
+                "comment": " ",
+                "type": "x -> { a | x1 : Maybe.Maybe x } -> { a | x1 : Maybe.Maybe x }"
+            },
+            {
+                "name": "x2",
+                "comment": " ",
+                "type": "x -> { a | x2 : Maybe.Maybe x } -> { a | x2 : Maybe.Maybe x }"
+            },
+            {
+                "name": "x2Svg",
+                "comment": " ",
+                "type": "x -> { a | x2Svg : Maybe.Maybe x } -> { a | x2Svg : Maybe.Maybe x }"
+            },
+            {
+                "name": "y",
+                "comment": " ",
+                "type": "Basics.Float -> { a | y : Basics.Float } -> { a | y : Basics.Float }"
+            },
+            {
+                "name": "y1",
+                "comment": " ",
+                "type": "Basics.Float -> { a | y1 : Maybe.Maybe Basics.Float } -> { a | y1 : Maybe.Maybe Basics.Float }"
+            },
+            {
+                "name": "y2",
+                "comment": " ",
+                "type": "Basics.Float -> { a | y2 : Maybe.Maybe Basics.Float } -> { a | y2 : Maybe.Maybe Basics.Float }"
+            },
+            {
+                "name": "y2Svg",
+                "comment": " ",
+                "type": "x -> { a | y2Svg : Maybe.Maybe x } -> { a | y2Svg : Maybe.Maybe x }"
+            },
+            {
+                "name": "yellow",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "zero",
+                "comment": " Given an axis, find the value within it closest to zero.\n\n    CA.zero { dataMin = 0, dataMax = 10, min = 2, max = 5 } -- 2\n    CA.zero { dataMin = 0, dataMax = 10, min = -5, max = 5 } -- 0\n    CA.zero { dataMin = 0, dataMax = 10, min = -5, max = -2 } -- -2\n\n",
+                "type": "Internal.Coordinates.Axis -> Basics.Float"
+            },
+            {
+                "name": "zoom",
+                "comment": " Zoom with a certain percentage.\n\n    CA.range [ CA.zoom 150 ]\n\n",
+                "type": "Basics.Float -> Internal.Coordinates.Axis -> Internal.Coordinates.Axis"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chart.Events",
+        "comment": " Add events.\n\n# Event handlers\n@docs Attribute, Event\n@docs onMouseMove, onMouseLeave, onMouseUp, onMouseDown, onClick, onDoubleClick, on\n\n## Decoders\n@docs Decoder, Point\n@docs getNearest, getNearestX, getWithin, getWithinX\n@docs getCoords, getSvgCoords, getOffset\n@docs map, map2, map3, map4\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Attribute",
+                "comment": " An attribute for adding events.\n",
+                "args": [
+                    "x",
+                    "data",
+                    "msg"
+                ],
+                "type": "{ x | events : List.List (Chart.Events.Event data msg) } -> { x | events : List.List (Chart.Events.Event data msg) }"
+            },
+            {
+                "name": "Decoder",
+                "comment": " ",
+                "args": [
+                    "data",
+                    "msg"
+                ],
+                "type": "Internal.Events.Decoder data msg"
+            },
+            {
+                "name": "Event",
+                "comment": " ",
+                "args": [
+                    "data",
+                    "msg"
+                ],
+                "type": "Internal.Events.Event data msg"
+            },
+            {
+                "name": "Point",
+                "comment": " ",
+                "args": [],
+                "type": "{ x : Basics.Float, y : Basics.Float }"
+            }
+        ],
+        "values": [
+            {
+                "name": "getCoords",
+                "comment": " Decode to get the cartesian coordinates of the event.\n\n",
+                "type": "Chart.Events.Decoder data Chart.Events.Point"
+            },
+            {
+                "name": "getNearest",
+                "comment": " Decode to get the nearest item to the event. Use the `Remodel` functions in `Chart.Item`\nto filter down what items or groups of items you will be searching for.\n\n    import Chart as C\n    import Chart.Attributes as CA\n    import Chart.Events as CE\n    import Chart.Item as CI\n\n    type alias Model =\n      { hovering : List (CI.One Datum CI.Bar) }\n\n    init : Model\n    init =\n      { hovering = [] }\n\n    type Msg\n      = OnHover (List (CI.One Datum CI.Bar))\n\n    update : Msg -> Model -> Model\n    update msg model =\n      case msg of\n        OnHover hovering ->\n          { model | hovering = hovering }\n\n    view : Model -> H.Html Msg\n    view model =\n      C.chart\n        [ CA.height 300\n        , CA.width 300\n        , CE.onMouseMove OnHover (CE.getNearest CI.bars)\n        , CE.onMouseLeave (OnHover [])\n        ]\n        [ C.xLabels []\n        , C.yLabels []\n        , C.bars []\n            [ C.bar .z []\n            , C.bar .y []\n            ]\n            data\n\n        , C.each model.hovering <| \\p bar ->\n            [ C.tooltip bar [] [] [] ]\n        ]\n\nSee example at [elm-charts.org](https://www.elm-charts.org/documentation/interactivity/basic-bar-tooltip).\n",
+                "type": "Chart.Item.Remodel (Chart.Item.One data Chart.Item.Any) (Chart.Item.Item result) -> Chart.Events.Decoder data (List.List (Chart.Item.Item result))"
+            },
+            {
+                "name": "getNearestX",
+                "comment": " Like `getNearest`, but only takes x coordiante into account. Use the `Remodel` functions in `Chart.Item`\nto filter down what items or groups of items you will be searching for.\n",
+                "type": "Chart.Item.Remodel (Chart.Item.One data Chart.Item.Any) (Chart.Item.Item result) -> Chart.Events.Decoder data (List.List (Chart.Item.Item result))"
+            },
+            {
+                "name": "getOffset",
+                "comment": " Decode to get the event offset from center in cartesian coordinates.\n\n",
+                "type": "Chart.Events.Decoder data Chart.Events.Point"
+            },
+            {
+                "name": "getSvgCoords",
+                "comment": " Decode to get the SVG coordinates of the event.\n\n",
+                "type": "Chart.Events.Decoder data Chart.Events.Point"
+            },
+            {
+                "name": "getWithin",
+                "comment": " Decode to get the nearest item within certain radius to the event. Use the `Remodel` functions in `Chart.Item`\nto filter down what items or groups of items you will be searching for.\n\n",
+                "type": "Basics.Float -> Chart.Item.Remodel (Chart.Item.One data Chart.Item.Any) (Chart.Item.Item result) -> Chart.Events.Decoder data (List.List (Chart.Item.Item result))"
+            },
+            {
+                "name": "getWithinX",
+                "comment": " Like `getWithin`, but only takes x coordiante into account. Use the `Remodel` functions in `Chart.Item`\nto filter down what items or groups of items you will be searching for.\n",
+                "type": "Basics.Float -> Chart.Item.Remodel (Chart.Item.One data Chart.Item.Any) (Chart.Item.Item result) -> Chart.Events.Decoder data (List.List (Chart.Item.Item result))"
+            },
+            {
+                "name": "map",
+                "comment": " ",
+                "type": "(a -> msg) -> Chart.Events.Decoder data a -> Chart.Events.Decoder data msg"
+            },
+            {
+                "name": "map2",
+                "comment": " ",
+                "type": "(a -> b -> msg) -> Chart.Events.Decoder data a -> Chart.Events.Decoder data b -> Chart.Events.Decoder data msg"
+            },
+            {
+                "name": "map3",
+                "comment": " ",
+                "type": "(a -> b -> c -> msg) -> Chart.Events.Decoder data a -> Chart.Events.Decoder data b -> Chart.Events.Decoder data c -> Chart.Events.Decoder data msg"
+            },
+            {
+                "name": "map4",
+                "comment": " ",
+                "type": "(a -> b -> c -> d -> msg) -> Chart.Events.Decoder data a -> Chart.Events.Decoder data b -> Chart.Events.Decoder data c -> Chart.Events.Decoder data d -> Chart.Events.Decoder data msg"
+            },
+            {
+                "name": "on",
+                "comment": " Add any event handler.\n\n    C.chart\n      [ CE.on \"mousemove\" <|\n          CE.map2 OnMouseMove\n            (CE.getNearest CI.bars)\n            (CE.getNearest CI.dots)\n\n      ]\n      [ .. ]\n\nSee example at [elm-charts.org](https://www.elm-charts.org/documentation/interactivity/multiple-tooltips).\n\n",
+                "type": "String.String -> Chart.Events.Decoder data msg -> Chart.Events.Attribute x data msg"
+            },
+            {
+                "name": "onClick",
+                "comment": " Add a click event handler.\n\n    C.chart\n      [ CE.onClick Clicked C.getCoords ]\n      [ .. ]\n\n",
+                "type": "(a -> msg) -> Chart.Events.Decoder data a -> Chart.Events.Attribute x data msg"
+            },
+            {
+                "name": "onDoubleClick",
+                "comment": " Add a double click event handler.\n",
+                "type": "(a -> msg) -> Chart.Events.Decoder data a -> Chart.Events.Attribute x data msg"
+            },
+            {
+                "name": "onMouseDown",
+                "comment": " Add a mouse down event handler. See example at [elm-charts.org](https://www.elm-charts.org/documentation/interactivity/zoom).\n",
+                "type": "(a -> msg) -> Chart.Events.Decoder data a -> Chart.Events.Attribute x data msg"
+            },
+            {
+                "name": "onMouseLeave",
+                "comment": " Add a mouse leave event handler. See example at [elm-charts.org](https://www.elm-charts.org/documentation/interactivity/basic-bar-tooltip).\n",
+                "type": "msg -> Chart.Events.Attribute x data msg"
+            },
+            {
+                "name": "onMouseMove",
+                "comment": " Add a mouse move event handler.\n\n    C.chart\n      [ CE.onMouseMove (CE.getNearest CI.bars) ]\n      [ .. ]\n\nSee example at [elm-charts.org](https://www.elm-charts.org/documentation/interactivity/basic-bar-tooltip).\n",
+                "type": "(a -> msg) -> Chart.Events.Decoder data a -> Chart.Events.Attribute x data msg"
+            },
+            {
+                "name": "onMouseUp",
+                "comment": " Add a mouse up event handler. See example at [elm-charts.org](https://www.elm-charts.org/documentation/interactivity/zoom).\n",
+                "type": "(a -> msg) -> Chart.Events.Decoder data a -> Chart.Events.Attribute x data msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chart.Item",
+        "comment": " This is an interface for dealing with different chart items, such\nas bars, dots, or groups of such, like bins or stacks. It comes in handy\nwhen dealing with events:\n\n    import Chart as C\n    import Chart.Events as CE\n    import Chart.Item as CI\n\n    C.chart\n      [ CE.onMouseMove OnHover (CE.getNearest CI.bars) ]\n      [ C.bars [ C.bar .x [] ] data ]\n\nOr when using functions like `C.eachBar` or `C.eachBin`:\n\n    import Chart as C\n    import Chart.Events as CE\n    import Chart.Item as CI\n    import Svg as S\n\n    C.chart\n      [ CE.onMouseMove OnHover (CE.getNearest CI.bars) ]\n      [ C.bars [ C.bar .x [] ] data\n      , C.eachBar <| \\plane bar ->\n          [ C.label [] [ S.text (String.fromFloat (CI.getY bar)) ] (CI.getTop plane bar) ]\n      ]\n\n# Single items\n@docs One, Any, Bar, Dot\n@docs getData, getX, getX1, getX2, getY\n@docs getName, getColor, getSize, getTooltipValue\n@docs isReal, isSame, filter\n\n# Groups of items\n@docs Many, getMembers, getMember, getDatas, getOneData\n\n# Filtering and collecting\n@docs Remodel, apply, andThen\n## Filters\n@docs any, dots, bars, real, named\n## Collecters\n@docs bins, stacks, sameX\n\n# General\n@docs Item\n@docs getCenter, getTop, getBottom, getLeft, getRight\n@docs getTopLeft, getTopRight, getBottomLeft, getBottomRight\n@docs getPosition, getLimits, getTooltip\n\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Any",
+                "comment": " Information about a dot or a bar. ",
+                "args": [],
+                "type": "Internal.Item.Any"
+            },
+            {
+                "name": "Bar",
+                "comment": " Information about the configuration of a bar. ",
+                "args": [],
+                "type": "Internal.Svg.Bar"
+            },
+            {
+                "name": "Dot",
+                "comment": " Information about the configuration of a dot. ",
+                "args": [],
+                "type": "Internal.Svg.Dot"
+            },
+            {
+                "name": "Item",
+                "comment": " An \"item\" on the chart. A `One Data Bar` and `Many Data Bar` are both\ninstances on this type, so you can use all the fuctions below on those too.\n\n",
+                "args": [
+                    "x"
+                ],
+                "type": "Internal.Item.Rendered x"
+            },
+            {
+                "name": "Many",
+                "comment": " A collection of many items.\n\n    Many data Bar -- representation of several bars\n    Many data Dot -- representation of several dots\n    Many data Any -- representation of several dos or bars\n\nSometimes it's neccessary to work with a group of items, rather\nthan a single. For example, if you'd like a tooltip to show up\non top of a stacked bar, it's helpful to be able to treat all\nthe pieces of that stack at the same time.\n\n",
+                "args": [
+                    "data",
+                    "x"
+                ],
+                "type": "Internal.Many.Many (Chart.Item.One data x)"
+            },
+            {
+                "name": "One",
+                "comment": " A representation containing information about a certain item on the\nchart, such as a bar or a dot.\n\n    One data Bar -- representation of a single bar\n    One data Dot -- representation of a single dot\n    One data Any -- representation of either a dot or a bar\n\nIt allows us to know e.g. the exact position of the item, the color, what\ndata it was produced from, and whether it is a representation of missing data\nor not.\n\n",
+                "args": [
+                    "data",
+                    "x"
+                ],
+                "type": "Internal.Item.One data x"
+            },
+            {
+                "name": "Remodel",
+                "comment": " Remodeling offers a way to filter and group chart items. For example,\nif you have a variable `items` of type `List (One Data Any)`, you can\nfilter it such that it only contains bars:\n\n    CI.apply CI.bars items -- List (One Data Bar)\n\nThis is the interface used in the events api too. If you'd like to get\nthe nearest bar on mouse move, you'd say:\n\n    CE.onMouseMove OnHovering (CE.getNearest CI.bars)\n\n",
+                "args": [
+                    "a",
+                    "b"
+                ],
+                "type": "Internal.Many.Remodel a b"
+            }
+        ],
+        "values": [
+            {
+                "name": "andThen",
+                "comment": " Chain a remodelling. ",
+                "type": "Chart.Item.Remodel b c -> Chart.Item.Remodel a b -> Chart.Item.Remodel a c"
+            },
+            {
+                "name": "any",
+                "comment": " Keep anything. ",
+                "type": "Chart.Item.Remodel (Chart.Item.One data Chart.Item.Any) (Chart.Item.One data Chart.Item.Any)"
+            },
+            {
+                "name": "apply",
+                "comment": " Apply a remodelling. ",
+                "type": "Chart.Item.Remodel a b -> List.List a -> List.List b"
+            },
+            {
+                "name": "bars",
+                "comment": " Keep only bars. ",
+                "type": "Chart.Item.Remodel (Chart.Item.One data Chart.Item.Any) (Chart.Item.One data Chart.Item.Bar)"
+            },
+            {
+                "name": "bins",
+                "comment": " Group into bins. Items are in the same bin\nif they are produced from the same element and the\nsame data point.\n\n",
+                "type": "Chart.Item.Remodel (Chart.Item.One data x) (Chart.Item.Many data x)"
+            },
+            {
+                "name": "dots",
+                "comment": " Keep only dots. ",
+                "type": "Chart.Item.Remodel (Chart.Item.One data Chart.Item.Any) (Chart.Item.One data Chart.Item.Dot)"
+            },
+            {
+                "name": "filter",
+                "comment": " Filter for a certain data type. ",
+                "type": "(a -> Maybe.Maybe b) -> List.List (Chart.Item.One a x) -> List.List (Chart.Item.One b x)"
+            },
+            {
+                "name": "getBottom",
+                "comment": " ",
+                "type": "Internal.Coordinates.Plane -> Chart.Item.Item x -> Internal.Coordinates.Point"
+            },
+            {
+                "name": "getBottomLeft",
+                "comment": " ",
+                "type": "Internal.Coordinates.Plane -> Chart.Item.Item x -> Internal.Coordinates.Point"
+            },
+            {
+                "name": "getBottomRight",
+                "comment": " ",
+                "type": "Internal.Coordinates.Plane -> Chart.Item.Item x -> Internal.Coordinates.Point"
+            },
+            {
+                "name": "getCenter",
+                "comment": " ",
+                "type": "Internal.Coordinates.Plane -> Chart.Item.Item x -> Internal.Coordinates.Point"
+            },
+            {
+                "name": "getColor",
+                "comment": " Get the color of the item. ",
+                "type": "Chart.Item.One data x -> String.String"
+            },
+            {
+                "name": "getData",
+                "comment": " Get the data the item was produced from. ",
+                "type": "Chart.Item.One data x -> data"
+            },
+            {
+                "name": "getDatas",
+                "comment": " Get the data from each member in the group. ",
+                "type": "Chart.Item.Many data x -> List.List data"
+            },
+            {
+                "name": "getLeft",
+                "comment": " ",
+                "type": "Internal.Coordinates.Plane -> Chart.Item.Item x -> Internal.Coordinates.Point"
+            },
+            {
+                "name": "getLimits",
+                "comment": " In a few cases, a rendered item's \"position\" and \"limits\" aren't the same.\n\nIn the case of a bin, the \"position\" is the area which the bins bars take up, not\ninclusing any margin which may be around them. Its \"limits\" include the margin.\n\n",
+                "type": "Chart.Item.Item x -> Internal.Coordinates.Position"
+            },
+            {
+                "name": "getMember",
+                "comment": " Get the first members of the group.\n\nThis is useful when you know all members of the group\nshare some of the same characteristics. For example, if\nyou have a vertical stack of bars, they will all have the\nsame x values. If you'd like to access those x values, it\ndoesn't matter which one you pick as they are all the\nsame, so the first one is thus fine.\n\n",
+                "type": "Chart.Item.Many data x -> Chart.Item.One data x"
+            },
+            {
+                "name": "getMembers",
+                "comment": " Get all members of the group. ",
+                "type": "Chart.Item.Many data x -> List.List (Chart.Item.One data x)"
+            },
+            {
+                "name": "getName",
+                "comment": " Get the name of the series which produced the item. ",
+                "type": "Chart.Item.One data x -> String.String"
+            },
+            {
+                "name": "getOneData",
+                "comment": " Get the data from the first member in the group. ",
+                "type": "Chart.Item.Many data x -> data"
+            },
+            {
+                "name": "getPosition",
+                "comment": " ",
+                "type": "Internal.Coordinates.Plane -> Chart.Item.Item x -> Internal.Coordinates.Position"
+            },
+            {
+                "name": "getRight",
+                "comment": " ",
+                "type": "Internal.Coordinates.Plane -> Chart.Item.Item x -> Internal.Coordinates.Point"
+            },
+            {
+                "name": "getSize",
+                "comment": " Get the size of a dot. ",
+                "type": "Chart.Item.One data Chart.Item.Dot -> Basics.Float"
+            },
+            {
+                "name": "getTooltip",
+                "comment": " Get the default tooltip. ",
+                "type": "Chart.Item.Item x -> List.List (Html.Html Basics.Never)"
+            },
+            {
+                "name": "getTooltipValue",
+                "comment": " Get the formatted y value. ",
+                "type": "Chart.Item.One data x -> String.String"
+            },
+            {
+                "name": "getTop",
+                "comment": " ",
+                "type": "Internal.Coordinates.Plane -> Chart.Item.Item x -> Internal.Coordinates.Point"
+            },
+            {
+                "name": "getTopLeft",
+                "comment": " ",
+                "type": "Internal.Coordinates.Plane -> Chart.Item.Item x -> Internal.Coordinates.Point"
+            },
+            {
+                "name": "getTopRight",
+                "comment": " ",
+                "type": "Internal.Coordinates.Plane -> Chart.Item.Item x -> Internal.Coordinates.Point"
+            },
+            {
+                "name": "getX",
+                "comment": " Get the x value of the item. ",
+                "type": "Chart.Item.One data x -> Basics.Float"
+            },
+            {
+                "name": "getX1",
+                "comment": " Get the x1 value of the item. ",
+                "type": "Chart.Item.One data x -> Basics.Float"
+            },
+            {
+                "name": "getX2",
+                "comment": " Get the x2 value of the item. ",
+                "type": "Chart.Item.One data x -> Basics.Float"
+            },
+            {
+                "name": "getY",
+                "comment": " Get the y value of the item. ",
+                "type": "Chart.Item.One data x -> Basics.Float"
+            },
+            {
+                "name": "isReal",
+                "comment": " Is the item a representation of missing data? This may be\nthe case if you used e.g. `C.scatterMaybe` or `C.barMaybe`.\n",
+                "type": "Chart.Item.One data x -> Basics.Bool"
+            },
+            {
+                "name": "isSame",
+                "comment": " Is this item the exact same as the other? ",
+                "type": "Chart.Item.One data x -> Chart.Item.One data x -> Basics.Bool"
+            },
+            {
+                "name": "named",
+                "comment": " Keep only items coming from series with the names listed. ",
+                "type": "List.List String.String -> Chart.Item.Remodel (Chart.Item.One data x) (Chart.Item.One data x)"
+            },
+            {
+                "name": "real",
+                "comment": " Remove representations of missing data. ",
+                "type": "Chart.Item.Remodel (Chart.Item.One data x) (Chart.Item.One data x)"
+            },
+            {
+                "name": "sameX",
+                "comment": " Group into items with the same x value.\n\n",
+                "type": "Chart.Item.Remodel (Chart.Item.One data x) (Chart.Item.Many data x)"
+            },
+            {
+                "name": "stacks",
+                "comment": " Group into bins. Items are in the same stack\nif they are produced from the same `C.stacked` property.\n\n",
+                "type": "Chart.Item.Remodel (Chart.Item.One data x) (Chart.Item.Many data x)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chart.Svg",
+        "comment": " Render plain SVG chart elements!\n\nIf the options in the `Chart` module does not fit your needs, perhaps\nyou need to render some custom SVG. This is the low level SVG helpers I\nuse in the library, and you can use them however you'd like too. You can\nembed your own SVG into your chart by using the `Chart.svg` and `Chart.svgAt`\nfunctions.\n\n    import Chart as C\n    import Chart.Svg as CS\n    import Svg as S\n\n    view : Html msg\n    view =\n      C.chart []\n        [ C.svg <| \\plane ->\n            CS.label plane [] [ S.text \"my custom label\" ] { x = 5, y = 5 }\n        ]\n\nMost of the configuration of these functions are directly parallel to those\nof `Chart`, except you need to pass a `Plane` type in the first argument.\n\nYou can see what attributes are applicable given their configuration record.\n\n# Line\n@docs Line, line\n\n# Rectangels\n@docs Rect, rect\n\n# Arrows\n@docs Arrow, arrow\n\n# Labels\n@docs Label, label\n\n# Ticks\n@docs Tick, xTick, yTick\n\n## Generation\n@docs Generator, generate, floats, ints, times\n\n## Formatting\n@docs formatTime\n\n# Series\n\n## Bars\n@docs Bar, bar\n\n## Dots\n@docs Dot, dot\n\n## Interpolations\n@docs Interpolation, interpolation, area\n\n## Legends\n@docs Legends, legendsAt\n@docs Legend, lineLegend, barLegend\n\n# Tooltips\n@docs Tooltip, tooltip\n\n# Positioning\n@docs position, positionHtml\n\n# Working with the coordinate system\n@docs Plane, Axis, Position, Point\n@docs fromSvg, fromCartesian\n@docs lengthInSvgX, lengthInSvgY\n@docs lengthInCartesianX, lengthInCartesianY\n@docs hideOverflow\n\n# Seaching\n@docs getNearest, getNearestX, getWithin, getWithinX\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Arrow",
+                "comment": " ",
+                "args": [],
+                "type": "{ xOff : Basics.Float, yOff : Basics.Float, color : String.String, width : Basics.Float, length : Basics.Float, rotate : Basics.Float, attrs : List.List (Svg.Attribute Basics.Never) }"
+            },
+            {
+                "name": "Axis",
+                "comment": " Information about your range or domain.\n\n - *dataMin* is the lowest value of your data\n - *dataMax* is the highest value of your data\n - *min* is the lowest value of your axis\n - *max* is the highest value of your axis\n\n",
+                "args": [],
+                "type": "{ length : Basics.Float, marginMin : Basics.Float, marginMax : Basics.Float, dataMin : Basics.Float, dataMax : Basics.Float, min : Basics.Float, max : Basics.Float }"
+            },
+            {
+                "name": "Bar",
+                "comment": " ",
+                "args": [],
+                "type": "{ roundTop : Basics.Float, roundBottom : Basics.Float, color : String.String, border : String.String, borderWidth : Basics.Float, opacity : Basics.Float, design : Maybe.Maybe Internal.Svg.Design, attrs : List.List (Svg.Attribute Basics.Never), highlight : Basics.Float, highlightWidth : Basics.Float, highlightColor : String.String }"
+            },
+            {
+                "name": "Dot",
+                "comment": " ",
+                "args": [],
+                "type": "{ color : String.String, opacity : Basics.Float, size : Basics.Float, border : String.String, borderWidth : Basics.Float, highlight : Basics.Float, highlightWidth : Basics.Float, highlightColor : String.String, shape : Maybe.Maybe Internal.Svg.Shape, hideOverflow : Basics.Bool }"
+            },
+            {
+                "name": "Generator",
+                "comment": " ",
+                "args": [
+                    "a"
+                ],
+                "type": "Internal.Svg.Generator a"
+            },
+            {
+                "name": "Interpolation",
+                "comment": " ",
+                "args": [],
+                "type": "{ method : Maybe.Maybe Internal.Svg.Method, color : String.String, width : Basics.Float, opacity : Basics.Float, design : Maybe.Maybe Internal.Svg.Design, dashed : List.List Basics.Float, attrs : List.List (Svg.Attribute Basics.Never) }"
+            },
+            {
+                "name": "Label",
+                "comment": " ",
+                "args": [],
+                "type": "{ xOff : Basics.Float, yOff : Basics.Float, border : String.String, borderWidth : Basics.Float, fontSize : Maybe.Maybe Basics.Int, color : String.String, anchor : Maybe.Maybe Internal.Svg.Anchor, rotate : Basics.Float, uppercase : Basics.Bool, hideOverflow : Basics.Bool, attrs : List.List (Svg.Attribute Basics.Never), ellipsis : Maybe.Maybe { width : Basics.Float, height : Basics.Float } }"
+            },
+            {
+                "name": "Legend",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ xOff : Basics.Float, yOff : Basics.Float, width : Basics.Float, height : Basics.Float, fontSize : Maybe.Maybe Basics.Int, color : String.String, spacing : Basics.Float, title : String.String, htmlAttrs : List.List (Html.Attribute msg) }"
+            },
+            {
+                "name": "Legends",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ alignment : Internal.Svg.Alignment, anchor : Maybe.Maybe Internal.Svg.Anchor, xOff : Basics.Float, yOff : Basics.Float, spacing : Basics.Float, background : String.String, border : String.String, borderWidth : Basics.Float, htmlAttrs : List.List (Html.Attribute msg) }"
+            },
+            {
+                "name": "Line",
+                "comment": " ",
+                "args": [],
+                "type": "{ x1 : Maybe.Maybe Basics.Float, x2 : Maybe.Maybe Basics.Float, y1 : Maybe.Maybe Basics.Float, y2 : Maybe.Maybe Basics.Float, x2Svg : Maybe.Maybe Basics.Float, y2Svg : Maybe.Maybe Basics.Float, xOff : Basics.Float, yOff : Basics.Float, tickLength : Basics.Float, tickDirection : Basics.Float, color : String.String, width : Basics.Float, dashed : List.List Basics.Float, opacity : Basics.Float, break : Basics.Bool, flip : Basics.Bool, hideOverflow : Basics.Bool, attrs : List.List (Svg.Attribute Basics.Never) }"
+            },
+            {
+                "name": "Plane",
+                "comment": " This is the key information about the coordinate system of your chart.\nUsing this you'll be able to translate cartesian coordinates into SVG ones and back.\n\n",
+                "args": [],
+                "type": "{ x : Chart.Svg.Axis, y : Chart.Svg.Axis }"
+            },
+            {
+                "name": "Point",
+                "comment": " ",
+                "args": [],
+                "type": "{ x : Basics.Float, y : Basics.Float }"
+            },
+            {
+                "name": "Position",
+                "comment": " ",
+                "args": [],
+                "type": "{ x1 : Basics.Float, x2 : Basics.Float, y1 : Basics.Float, y2 : Basics.Float }"
+            },
+            {
+                "name": "Rect",
+                "comment": " ",
+                "args": [],
+                "type": "{ x1 : Maybe.Maybe Basics.Float, x2 : Maybe.Maybe Basics.Float, y1 : Maybe.Maybe Basics.Float, y2 : Maybe.Maybe Basics.Float, color : String.String, border : String.String, borderWidth : Basics.Float, opacity : Basics.Float, hideOverflow : Basics.Bool, attrs : List.List (Svg.Attribute Basics.Never) }"
+            },
+            {
+                "name": "Tick",
+                "comment": " ",
+                "args": [],
+                "type": "{ color : String.String, width : Basics.Float, length : Basics.Float, attrs : List.List (Svg.Attribute Basics.Never) }"
+            },
+            {
+                "name": "Tooltip",
+                "comment": " ",
+                "args": [],
+                "type": "{ direction : Maybe.Maybe Internal.Svg.Direction, focal : Maybe.Maybe (Chart.Svg.Position -> Chart.Svg.Position), height : Basics.Float, width : Basics.Float, offset : Basics.Float, arrow : Basics.Bool, border : String.String, background : String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "area",
+                "comment": " ",
+                "type": "Chart.Svg.Plane -> (data -> Basics.Float) -> Maybe.Maybe (data -> Maybe.Maybe Basics.Float) -> (data -> Maybe.Maybe Basics.Float) -> List.List (Chart.Attributes.Attribute Chart.Svg.Interpolation) -> List.List data -> Svg.Svg msg"
+            },
+            {
+                "name": "arrow",
+                "comment": " ",
+                "type": "Chart.Svg.Plane -> List.List (Chart.Attributes.Attribute Chart.Svg.Arrow) -> Chart.Svg.Point -> Svg.Svg msg"
+            },
+            {
+                "name": "bar",
+                "comment": " ",
+                "type": "Chart.Svg.Plane -> List.List (Chart.Attributes.Attribute Chart.Svg.Bar) -> Chart.Svg.Position -> Svg.Svg msg"
+            },
+            {
+                "name": "barLegend",
+                "comment": " ",
+                "type": "List.List (Chart.Attributes.Attribute (Chart.Svg.Legend msg)) -> List.List (Chart.Attributes.Attribute Chart.Svg.Bar) -> Html.Html msg"
+            },
+            {
+                "name": "dot",
+                "comment": " ",
+                "type": "Chart.Svg.Plane -> (data -> Basics.Float) -> (data -> Basics.Float) -> List.List (Chart.Attributes.Attribute Chart.Svg.Dot) -> data -> Svg.Svg msg"
+            },
+            {
+                "name": "floats",
+                "comment": " ",
+                "type": "Chart.Svg.Generator Basics.Float"
+            },
+            {
+                "name": "formatTime",
+                "comment": " ",
+                "type": "Time.Zone -> Intervals.Time -> String.String"
+            },
+            {
+                "name": "fromCartesian",
+                "comment": " Translate a cartesian coordinate to SVG.\n\n",
+                "type": "Chart.Svg.Plane -> Chart.Svg.Point -> Chart.Svg.Point"
+            },
+            {
+                "name": "fromSvg",
+                "comment": " Translate a SVG coordinate to cartesian.\n\n",
+                "type": "Chart.Svg.Plane -> Chart.Svg.Point -> Chart.Svg.Point"
+            },
+            {
+                "name": "generate",
+                "comment": " Generate a \"nice\" set of type `a`.\n\n",
+                "type": "Basics.Int -> Chart.Svg.Generator a -> Chart.Svg.Axis -> List.List a"
+            },
+            {
+                "name": "getNearest",
+                "comment": " Search a list for the nearest item. Example use:\n\n    C.withBars <| \\plane bars ->\n      let closest = CS.getNearest (CE.getPosition plane) bars plane { x = 2, y = 4 } in\n      [ C.each closest <| \\_ bar -> [ C.label [] [ S.text \"nearest\" ] (CE.getBottom plane bar) ]\n      ]\n\n",
+                "type": "(a -> Chart.Svg.Position) -> List.List a -> Chart.Svg.Plane -> Chart.Svg.Point -> List.List a"
+            },
+            {
+                "name": "getNearestX",
+                "comment": " Like `getNearest`, but only searches x coordinates.\n\n",
+                "type": "(a -> Chart.Svg.Position) -> List.List a -> Chart.Svg.Plane -> Chart.Svg.Point -> List.List a"
+            },
+            {
+                "name": "getWithin",
+                "comment": " Like `getNearest`, but include searched radius in first argument.\n\n",
+                "type": "Basics.Float -> (a -> Chart.Svg.Position) -> List.List a -> Chart.Svg.Plane -> Chart.Svg.Point -> List.List a"
+            },
+            {
+                "name": "getWithinX",
+                "comment": " Like `getWithin`, but only searches x coordinates.\n\n",
+                "type": "Basics.Float -> (a -> Chart.Svg.Position) -> List.List a -> Chart.Svg.Plane -> Chart.Svg.Point -> List.List a"
+            },
+            {
+                "name": "hideOverflow",
+                "comment": " Hide overflow. Sometimes your element might reach outside the chart area.\nThis will cut the excess.\n",
+                "type": "Chart.Svg.Plane -> Svg.Attribute Basics.Never"
+            },
+            {
+                "name": "interpolation",
+                "comment": " ",
+                "type": "Chart.Svg.Plane -> (data -> Basics.Float) -> (data -> Maybe.Maybe Basics.Float) -> List.List (Chart.Attributes.Attribute Chart.Svg.Interpolation) -> List.List data -> Svg.Svg msg"
+            },
+            {
+                "name": "ints",
+                "comment": " ",
+                "type": "Chart.Svg.Generator Basics.Int"
+            },
+            {
+                "name": "label",
+                "comment": " ",
+                "type": "Chart.Svg.Plane -> List.List (Chart.Attributes.Attribute Chart.Svg.Label) -> List.List (Svg.Svg msg) -> Chart.Svg.Point -> Svg.Svg msg"
+            },
+            {
+                "name": "legendsAt",
+                "comment": " ",
+                "type": "Chart.Svg.Plane -> Basics.Float -> Basics.Float -> List.List (Chart.Attributes.Attribute (Chart.Svg.Legends msg)) -> List.List (Html.Html msg) -> Html.Html msg"
+            },
+            {
+                "name": "lengthInCartesianX",
+                "comment": " How long is a SVG x length in cartesian units?\n\n",
+                "type": "Chart.Svg.Plane -> Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "lengthInCartesianY",
+                "comment": " How long is a SVG y length in cartesian units?\n\n",
+                "type": "Chart.Svg.Plane -> Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "lengthInSvgX",
+                "comment": " How long is a cartesian x length in SVG units?\n\n",
+                "type": "Chart.Svg.Plane -> Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "lengthInSvgY",
+                "comment": " How long is a cartesian y length in SVG units?\n\n",
+                "type": "Chart.Svg.Plane -> Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "line",
+                "comment": " ",
+                "type": "Chart.Svg.Plane -> List.List (Chart.Attributes.Attribute Chart.Svg.Line) -> Svg.Svg msg"
+            },
+            {
+                "name": "lineLegend",
+                "comment": " ",
+                "type": "List.List (Chart.Attributes.Attribute (Chart.Svg.Legend msg)) -> List.List (Chart.Attributes.Attribute Chart.Svg.Interpolation) -> List.List (Chart.Attributes.Attribute Chart.Svg.Dot) -> Html.Html msg"
+            },
+            {
+                "name": "position",
+                "comment": " Postion arbritary SVG.\n\n    S.g [ position plane x y xOff yOff ] [ ... ]\n\n",
+                "type": "Chart.Svg.Plane -> Basics.Float -> Basics.Float -> Basics.Float -> Basics.Float -> Basics.Float -> Svg.Attribute msg"
+            },
+            {
+                "name": "positionHtml",
+                "comment": " Postion arbritary HTML.\n\n    positionHtml plane x y xOff yOff [] [ .. ]\n\n",
+                "type": "Chart.Svg.Plane -> Basics.Float -> Basics.Float -> Basics.Float -> Basics.Float -> List.List (Html.Attribute msg) -> List.List (Html.Html msg) -> Html.Html msg"
+            },
+            {
+                "name": "rect",
+                "comment": " ",
+                "type": "Chart.Svg.Plane -> List.List (Chart.Attributes.Attribute Chart.Svg.Rect) -> Svg.Svg msg"
+            },
+            {
+                "name": "times",
+                "comment": " ",
+                "type": "Time.Zone -> Chart.Svg.Generator Intervals.Time"
+            },
+            {
+                "name": "tooltip",
+                "comment": " Like `Chart.tooltip`, except in the second argument you give position directly instead of item.\n\n",
+                "type": "Chart.Svg.Plane -> Chart.Svg.Position -> List.List (Chart.Attributes.Attribute Chart.Svg.Tooltip) -> List.List (Html.Attribute Basics.Never) -> List.List (Html.Html Basics.Never) -> Html.Html msg"
+            },
+            {
+                "name": "xTick",
+                "comment": " ",
+                "type": "Chart.Svg.Plane -> List.List (Chart.Attributes.Attribute Chart.Svg.Tick) -> Chart.Svg.Point -> Svg.Svg msg"
+            },
+            {
+                "name": "yTick",
+                "comment": " ",
+                "type": "Chart.Svg.Plane -> List.List (Chart.Attributes.Attribute Chart.Svg.Tick) -> Chart.Svg.Point -> Svg.Svg msg"
+            }
+        ],
+        "binops": []
+    }
+]

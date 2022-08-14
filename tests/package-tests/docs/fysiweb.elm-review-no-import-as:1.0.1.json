@@ -1,0 +1,16 @@
+[
+    {
+        "name": "NoImportAs",
+        "comment": "\n\n@docs rule\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": " Reports...\n\n    config =\n        [ NoImportAs.rule\n        ]\n\n\n## Fail\n\n    import Json.Decode as JD\n\n\n## Success\n\n    import Json.Decode\n\n\n## When (not) to enable this rule\n\nThis rule is useful when you want to forbid the use of import aliases.\nTHis rule is not useful when you don't.\n\n",
+                "type": "Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    }
+]

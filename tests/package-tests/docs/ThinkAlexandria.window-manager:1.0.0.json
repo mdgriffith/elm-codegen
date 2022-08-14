@@ -1,0 +1,198 @@
+[
+    {
+        "name": "Css.ThinkAlexandria.WindowManager.Common",
+        "comment": "\n\n@docs WindowStyleConfig, WindowSelectorConfig, styleWindow\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "WindowSelectorConfig",
+                "comment": " Provide custom css selectors for elements that make up the Window chrome.\n",
+                "args": [],
+                "type": "{ windowContainerClass : String.String, leftResizeHorizontallyHandleClass : String.String, rightResizeHorizontallyHandleClass : String.String, upperLeftCornerResizeHandleClass : String.String, upperRightCornerResizeHandleClass : String.String, lowerLeftCornerResizeHandleClass : String.String, lowerRightCornerResizeHandleClass : String.String, topResizeVerticallyHandleClass : String.String, bottomResizeVerticallyHandleClass : String.String }"
+            },
+            {
+                "name": "WindowStyleConfig",
+                "comment": " Configuration for the Window view function\n",
+                "args": [],
+                "type": "{ borderRightWidth : Basics.Float, borderLeftWidth : Basics.Float, borderTopWidth : Basics.Float, borderBottomWidth : Basics.Float, borderRightColor : String.String, borderLeftColor : String.String, borderTopColor : String.String, borderBottomColor : String.String, borderTopLeftRadius : Basics.Float, borderTopRightRadius : Basics.Float, borderBottomRightRadius : Basics.Float, borderBottomLeftRadius : Basics.Float, paddingRight : Basics.Float, paddingLeft : Basics.Float, paddingTop : Basics.Float, paddingBottom : Basics.Float, cornerHandleHeight : Basics.Float, windowBackgroundColor : String.String, selectors : Css.ThinkAlexandria.WindowManager.Common.WindowSelectorConfig }"
+            }
+        ],
+        "values": [
+            {
+                "name": "styleWindow",
+                "comment": " Default styling for Window chrome.\n",
+                "type": "Css.ThinkAlexandria.WindowManager.Common.WindowStyleConfig -> List.List Css.Snippet"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Css.ThinkAlexandria.WindowManager.Default",
+        "comment": "\n\n@docs defaultSelectorConfig, defaultStyleConfig\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "defaultSelectorConfig",
+                "comment": " Default css selectors.\n",
+                "type": "Css.ThinkAlexandria.WindowManager.Common.WindowSelectorConfig"
+            },
+            {
+                "name": "defaultStyleConfig",
+                "comment": " Garishly colored Window configuration best used for debugging.\n",
+                "type": "Css.ThinkAlexandria.WindowManager.Common.WindowStyleConfig"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Css.ThinkAlexandria.WindowManager.Selectors",
+        "comment": " This elm module provides strongly typed selectors for\n\n@docs CssClasses, class, classList\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "CssClasses",
+                "comment": " The CSS classes for styling the window chrome\n",
+                "args": [],
+                "type": "Css.ThinkAlexandria.WindowManager.Selectors.Classes.CssClasses"
+            }
+        ],
+        "values": [
+            {
+                "name": "class",
+                "comment": " Helper lets you keep type checking of selectors all the way to call site.\n",
+                "type": "Css.ThinkAlexandria.WindowManager.Selectors.CssClasses -> Html.Attribute msg"
+            },
+            {
+                "name": "classList",
+                "comment": " Helper lets you keep type checking of selectors all the way to call site.\n",
+                "type": "List.List ( Css.ThinkAlexandria.WindowManager.Selectors.CssClasses, Basics.Bool ) -> Html.Attribute msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Css.ThinkAlexandria.WindowManager.Selectors.Classes",
+        "comment": "\n\n@docs toString, CssClasses\n\n",
+        "unions": [
+            {
+                "name": "CssClasses",
+                "comment": " The CSS classes for styling the window\n",
+                "args": [],
+                "cases": [
+                    [
+                        "WindowContainer",
+                        []
+                    ],
+                    [
+                        "LeftResizeHandle",
+                        []
+                    ],
+                    [
+                        "RightResizeHandle",
+                        []
+                    ],
+                    [
+                        "UpperLeftResizeHandle",
+                        []
+                    ],
+                    [
+                        "UpperRightResizeHandle",
+                        []
+                    ],
+                    [
+                        "LowerLeftResizeHandle",
+                        []
+                    ],
+                    [
+                        "LowerRightResizeHandle",
+                        []
+                    ],
+                    [
+                        "TopResizeHandle",
+                        []
+                    ],
+                    [
+                        "BottomResizeHandle",
+                        []
+                    ],
+                    [
+                        "TranslateHandle",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toString",
+                "comment": " Debug implementation of toString for CssClasses. Converts the type name into a string\n",
+                "type": "Css.ThinkAlexandria.WindowManager.Selectors.Classes.CssClasses -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "WindowManager",
+        "comment": "\n\n@docs WindowLayout, initWindowLayout\n\n@docs updateWindowDeltaX, updateWindowDeltaY, resetWindowResizeFences\n\n@docs Config, viewWindow, onMouseDownTranslateWindow\n\n@docs WindowLocation\n\n",
+        "unions": [
+            {
+                "name": "WindowLocation",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " ",
+                "args": [
+                    "msg",
+                    "interactionLocation"
+                ],
+                "type": "{ toMsg : Drag.Msg interactionLocation -> msg, toInteractionLocation : WindowManager.WindowLocation -> interactionLocation, windowContainerClass : String.String, leftResizeHorizontallyHandleClass : String.String, rightResizeHorizontallyHandleClass : String.String, upperLeftCornerResizeHandleClass : String.String, upperRightCornerResizeHandleClass : String.String, lowerLeftCornerResizeHandleClass : String.String, lowerRightCornerResizeHandleClass : String.String, topResizeVerticallyHandleClass : String.String, bottomResizeVerticallyHandleClass : String.String }"
+            },
+            {
+                "name": "WindowLayout",
+                "comment": " ",
+                "args": [],
+                "type": "{ width : Basics.Int, height : Basics.Int, top : Basics.Int, left : Basics.Int, minWidth : Basics.Int, minHeight : Basics.Int, resizeXFence : WindowManager.FenceRule, resizeYFence : WindowManager.FenceRule }"
+            }
+        ],
+        "values": [
+            {
+                "name": "initWindowLayout",
+                "comment": " ",
+                "type": "{ width : Basics.Int, height : Basics.Int, top : Basics.Int, left : Basics.Int, minWidth : Basics.Int, minHeight : Basics.Int } -> WindowManager.WindowLayout"
+            },
+            {
+                "name": "onMouseDownTranslateWindow",
+                "comment": " ",
+                "type": "WindowManager.Config msg interactionLocation -> Html.Attribute msg"
+            },
+            {
+                "name": "resetWindowResizeFences",
+                "comment": " ",
+                "type": "WindowManager.WindowLayout -> WindowManager.WindowLayout"
+            },
+            {
+                "name": "updateWindowDeltaX",
+                "comment": " ",
+                "type": "WindowManager.WindowLocation -> WindowManager.Position -> Basics.Int -> WindowManager.WindowLayout -> WindowManager.WindowLayout"
+            },
+            {
+                "name": "updateWindowDeltaY",
+                "comment": " ",
+                "type": "WindowManager.WindowLocation -> WindowManager.Position -> Basics.Int -> WindowManager.WindowLayout -> WindowManager.WindowLayout"
+            },
+            {
+                "name": "viewWindow",
+                "comment": " ",
+                "type": "WindowManager.Config msg interactionLocation -> WindowManager.WindowLayout -> List.List (Html.Html msg) -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

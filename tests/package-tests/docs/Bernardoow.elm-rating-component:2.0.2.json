@@ -1,0 +1,57 @@
+[
+    {
+        "name": "Rating",
+        "comment": " A Rating for Elm\n\n\n# The exposes\n\n@docs defaultModel, Msg, update, view, Model\n\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " The type representing messages that are passed inside the Rating.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Click",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "MouseOver",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "MouseOut",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Model",
+                "comment": " The type of The Rating.\n",
+                "args": [],
+                "type": "{ rating : Maybe.Maybe Basics.Int, quantity : Basics.Int, svgDefault : Svg.Svg Rating.Msg, svgSelected : Svg.Svg Rating.Msg, svgOver : Svg.Svg Rating.Msg, svgParentAtributes : List.List ( String.String, String.String ), svgParentClass : List.List ( String.String, Basics.Bool ), ratingPercent : Basics.Float, isOver : Basics.Bool, ratingOver : Maybe.Maybe Basics.Int, readOnly : Basics.Bool }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultModel",
+                "comment": " ",
+                "type": "Rating.Model"
+            },
+            {
+                "name": "update",
+                "comment": " Simple Update for the do work.\n",
+                "type": "Rating.Msg -> Rating.Model -> ( Rating.Model, Platform.Cmd.Cmd Rating.Msg )"
+            },
+            {
+                "name": "view",
+                "comment": " Simple View\n",
+                "type": "Rating.Model -> Html.Html Rating.Msg"
+            }
+        ],
+        "binops": []
+    }
+]

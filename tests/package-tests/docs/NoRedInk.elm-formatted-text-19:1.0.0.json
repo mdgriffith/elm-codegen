@@ -1,0 +1,435 @@
+[
+    {
+        "name": "FormattedText",
+        "comment": " A type representing text with formatting.\n\n\n## Type\n\n@docs FormattedText\n\n\n## Creation\n\n@docs fromString\n@docs unchunk\n@docs formatAll\n\n\n## Extraction\n\n@docs text\n@docs chunks\n@docs trees\n\n\n## String-like operations for FormattedText\n\n@docs all\n@docs any\n@docs equal\n@docs append\n@docs concat\n@docs cons\n@docs contains\n@docs dropLeft\n@docs dropRight\n@docs empty\n@docs endsWith\n@docs filter\n@docs foldl\n@docs foldr\n@docs fromChar\n@docs fromList\n@docs indexes\n@docs indices\n@docs isEmpty\n@docs join\n@docs left\n@docs length\n@docs lines\n@docs map\n@docs pad\n@docs padLeft\n@docs padRight\n@docs repeat\n@docs reverse\n@docs right\n@docs slice\n@docs split\n@docs startsWith\n@docs toFloat\n@docs toInt\n@docs toList\n@docs toLower\n@docs toUpper\n@docs trim\n@docs trimLeft\n@docs trimRight\n@docs uncons\n@docs words\n\n\n## Low-level\n\nThese functions provide a look behind the curtains at the ranges that are used to implement the FormattedText type.\nYou might need these functions to write encoders / decoders of the FormattedText type.\nThe FormattedText type is upholding some internal constraints, which mean that if you try to micromanage the exact ranges on it you're probably going to have a bad time.\nIf you feel the need to do this, please create an issue on our Github repo with your use case, we might be missing a function!\n\n@docs Range\n@docs formattedText\n@docs addRange\n@docs ranges\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "FormattedText",
+                "comment": " Text with formatting.\n",
+                "args": [
+                    "markup"
+                ],
+                "type": "FormattedText.Internal.FormattedText markup"
+            },
+            {
+                "name": "Range",
+                "comment": " A format applied to a range.\nFormatting applies from the start index up to but excluding the end index.\n",
+                "args": [
+                    "markup"
+                ],
+                "type": "{ tag : markup, start : Basics.Int, end : Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "addRange",
+                "comment": " Format a range in the FormattedText with a certain type of markup.\n\nNote that the FormattedText type obeys certain constraints (see documentation for the FormattedText type).\nThis means the `addRange` function makes no promises with regards to what you get back when you call `ranges`,\nonly that the characters in the range you indicated will have the formatting you specified attached to them.\n\n",
+                "type": "FormattedText.Range markup -> FormattedText.FormattedText markup -> FormattedText.FormattedText markup"
+            },
+            {
+                "name": "all",
+                "comment": " Check if all characters in a FormattedText meets a condition.\nThis is the equivalent of `String.all`.\n",
+                "type": "(Char.Char -> Basics.Bool) -> FormattedText.FormattedText markup -> Basics.Bool"
+            },
+            {
+                "name": "any",
+                "comment": " Check if any character in a FormattedText meets a condition.\nThis is the equivalent of `String.any`.\n",
+                "type": "(Char.Char -> Basics.Bool) -> FormattedText.FormattedText markup -> Basics.Bool"
+            },
+            {
+                "name": "append",
+                "comment": " Append two FormattedTexts together. The equivalent of String.append or (++).\n",
+                "type": "FormattedText.FormattedText markup -> FormattedText.FormattedText markup -> FormattedText.FormattedText markup"
+            },
+            {
+                "name": "chunks",
+                "comment": " Certain operations, like rendering to Html, can be hard to perform with FormattedText directly.\n`chunks` splits a FormattedText up into chunks with equal markup.\nIt's up to you to define what you want your chunks to look like.\nYou can get tuples of Strings and markup by passing `(,)`, or you can render directly into Html!\n",
+                "type": "(String.String -> List.List markup -> chunk) -> FormattedText.FormattedText markup -> List.List chunk"
+            },
+            {
+                "name": "concat",
+                "comment": " Concatenate a list of FormattedTexts together. The equivalent of String.concat.\n",
+                "type": "List.List (FormattedText.FormattedText markup) -> FormattedText.FormattedText markup"
+            },
+            {
+                "name": "cons",
+                "comment": " Prepend a character onto a FormattedText.\nThe added character will not be formatted.\nThe equivalent of `String.cons`.\n",
+                "type": "Char.Char -> FormattedText.FormattedText markup -> FormattedText.FormattedText markup"
+            },
+            {
+                "name": "contains",
+                "comment": " Checks if a FormattedText contains a sub-FormattedText.\nBoth text and markup of the contained occurrence need to match the sub-FormattedText.\nEquivalent of `String.contains`.\n",
+                "type": "FormattedText.FormattedText markup -> FormattedText.FormattedText markup -> Basics.Bool"
+            },
+            {
+                "name": "dropLeft",
+                "comment": " Remove the first n characters of a FormattedText.\nEquivalent of `String.dropLeft`.\n",
+                "type": "Basics.Int -> FormattedText.FormattedText markup -> FormattedText.FormattedText markup"
+            },
+            {
+                "name": "dropRight",
+                "comment": " Remove the last n characters of a FormattedText.\nEquivalent of `String.dropRight`.\n",
+                "type": "Basics.Int -> FormattedText.FormattedText markup -> FormattedText.FormattedText markup"
+            },
+            {
+                "name": "empty",
+                "comment": " Get an empty FormattedText, the equivalent of an empty string.\n",
+                "type": "FormattedText.FormattedText markup"
+            },
+            {
+                "name": "endsWith",
+                "comment": " Check if a FormattedText end with a sub-FormattedText.\nBoth text and markup of the contained occurence need to match the sub-FormattedText.\nEquivalent of `String.endsWith`.\n",
+                "type": "FormattedText.FormattedText markup -> FormattedText.FormattedText markup -> Basics.Bool"
+            },
+            {
+                "name": "equal",
+                "comment": " Are two FormattedText the exact same?\n",
+                "type": "FormattedText.FormattedText markup -> FormattedText.FormattedText markup -> Basics.Bool"
+            },
+            {
+                "name": "filter",
+                "comment": " Filter out characters from a FormattedText.\nThis is the equivalent of `String.filter`.\n",
+                "type": "(Char.Char -> Basics.Bool) -> FormattedText.FormattedText markup -> FormattedText.FormattedText markup"
+            },
+            {
+                "name": "foldl",
+                "comment": " Fold from the left over a Formattedtext.\nThis is the equivalent of `String.foldl`.\n",
+                "type": "(Char.Char -> b -> b) -> b -> FormattedText.FormattedText markup -> b"
+            },
+            {
+                "name": "foldr",
+                "comment": " Fold from the right over a Formattedtext.\nThis is the equivalent of `String.foldr`.\n",
+                "type": "(Char.Char -> b -> b) -> b -> FormattedText.FormattedText markup -> b"
+            },
+            {
+                "name": "formatAll",
+                "comment": " Apply some formatting to the entirety of a piece of formatted text.\n",
+                "type": "markup -> FormattedText.FormattedText markup -> FormattedText.FormattedText markup"
+            },
+            {
+                "name": "formattedText",
+                "comment": " Create a FormattedText from a string and a list of markup ranges.\n\nNote that the FormattedText type obeys certain constraints (see documentation for the FormattedText type).\nThis means the `addRange` function makes no promises with regards to what you get back when you call `ranges`,\nonly that the characters in the range you indicated will have the formatting you specified attached to them.\n\n",
+                "type": "String.String -> List.List (FormattedText.Range markup) -> FormattedText.FormattedText markup"
+            },
+            {
+                "name": "fromChar",
+                "comment": " Turn a single character into a FormattedText with no markup applied.\nThe equivalent of `String.fromChar`.\n",
+                "type": "Char.Char -> FormattedText.FormattedText markup"
+            },
+            {
+                "name": "fromList",
+                "comment": " Generate a FormattedText from a list of Chars.\nThe resulting FormattedText will not contain any markup.\nThis is the equivalent of `String.fromList`.\n",
+                "type": "List.List Char.Char -> FormattedText.FormattedText markup"
+            },
+            {
+                "name": "fromString",
+                "comment": " Turn a plain string into formatted text.\n",
+                "type": "String.String -> FormattedText.FormattedText markup"
+            },
+            {
+                "name": "indexes",
+                "comment": " Get indexes of occurences of a sub-FormattdText inside a larger one.\nBoth text and markup of the contained occurrence need to match the sub-FormattedText.\nThe equivalent of `String.indexes`.\n",
+                "type": "FormattedText.FormattedText markup -> FormattedText.FormattedText markup -> List.List Basics.Int"
+            },
+            {
+                "name": "indices",
+                "comment": " Alias of `indexes`.\n",
+                "type": "FormattedText.FormattedText markup -> FormattedText.FormattedText markup -> List.List Basics.Int"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Check if a FormattedText is empty. Same as `text >> String.isEmpty`.\n",
+                "type": "FormattedText.FormattedText markup -> Basics.Bool"
+            },
+            {
+                "name": "join",
+                "comment": " Join a list FormattedTexts on a joining FormattedText.\nThis is the equivalent of `String.join`.\nMarkup on all the characters of the component FormattedTexts will be preserved.\n",
+                "type": "FormattedText.FormattedText markup -> List.List (FormattedText.FormattedText markup) -> FormattedText.FormattedText markup"
+            },
+            {
+                "name": "left",
+                "comment": " Take the first n characters of a FormattedText, with their markup.\nEquivalent of `String.left`.\n",
+                "type": "Basics.Int -> FormattedText.FormattedText markup -> FormattedText.FormattedText markup"
+            },
+            {
+                "name": "length",
+                "comment": " Length of the string in a FormattedText.\n",
+                "type": "FormattedText.FormattedText markup -> Basics.Int"
+            },
+            {
+                "name": "lines",
+                "comment": " Split a FormattedText on newline characters. The equivalent of `String.lines`.\n",
+                "type": "FormattedText.FormattedText markup -> List.List (FormattedText.FormattedText markup)"
+            },
+            {
+                "name": "map",
+                "comment": " Modify each character of a FormattedText by passing it through a mapping function.\nThis will not affect markup, which is to say: the character returned by the mapping function will have the same markup applied to it that the character passed into the mapping function had applied to it.\nThis is the equivalent of `String.map`.\n",
+                "type": "(Char.Char -> Char.Char) -> FormattedText.FormattedText markup -> FormattedText.FormattedText markup"
+            },
+            {
+                "name": "pad",
+                "comment": " Pad a FormattedText on both sides with a character, until the length of the FormattedText matches or exceeds a certain length.\nYou can provide markup to be applied to the padding.\nThis is the equivalent of `String.pad`.\n",
+                "type": "Basics.Int -> Char.Char -> List.List markup -> FormattedText.FormattedText markup -> FormattedText.FormattedText markup"
+            },
+            {
+                "name": "padLeft",
+                "comment": " Pad a FormattedText on the left with a character, until the length of the FormattedText matches or exceeds a certain length.\nYou can provide markup to be applied to the padding.\nThis is the equivalent of `String.padLeft`.\n",
+                "type": "Basics.Int -> Char.Char -> List.List markup -> FormattedText.FormattedText markup -> FormattedText.FormattedText markup"
+            },
+            {
+                "name": "padRight",
+                "comment": " Pad a FormattedText on the right with a character, until the length of the FormattedText matches or exceeds a certain length.\nYou can provide markup to be applied to the padding.\nThis is the equivalent of `String.padRight`.\n",
+                "type": "Basics.Int -> Char.Char -> List.List markup -> FormattedText.FormattedText markup -> FormattedText.FormattedText markup"
+            },
+            {
+                "name": "ranges",
+                "comment": " Extract all the markup ranges from the FormattedText.\n\nThis function is provided to enable encoding of the FormattedText type.\nIf you feel you need it to achieve something else, please share your use case in an issue on the FormattedText Github repo.\nYour use case might be inspiration for an additional method.\n\n",
+                "type": "FormattedText.FormattedText markup -> List.List (FormattedText.Range markup)"
+            },
+            {
+                "name": "repeat",
+                "comment": " Repeat a FormattedText a number of times. The equivalent of `String.repeat`.\n",
+                "type": "Basics.Int -> FormattedText.FormattedText markup -> FormattedText.FormattedText markup"
+            },
+            {
+                "name": "reverse",
+                "comment": " Reverse the string in a FormattedText along with its formatting.\nIn other words: every single character will have the same markup after reversal as it had before.\n",
+                "type": "FormattedText.FormattedText markup -> FormattedText.FormattedText markup"
+            },
+            {
+                "name": "right",
+                "comment": " Take the last n characters of a FormattedText, with their markup.\nEquivalent of `String.right`.\n",
+                "type": "Basics.Int -> FormattedText.FormattedText markup -> FormattedText.FormattedText markup"
+            },
+            {
+                "name": "slice",
+                "comment": " Get a slice of a FormattedText as defined by a starting and ending index.\nEquivalent of `String.slice`.\nEach character in the slice will have the same markup it had in the original FormattedText.\n",
+                "type": "Basics.Int -> Basics.Int -> FormattedText.FormattedText markup -> FormattedText.FormattedText markup"
+            },
+            {
+                "name": "split",
+                "comment": " Split a FormattedText on a string. The equivalent of `String.split`.\nMarkup of all characters on the FormattedText will be preserved.\n",
+                "type": "String.String -> FormattedText.FormattedText markup -> List.List (FormattedText.FormattedText markup)"
+            },
+            {
+                "name": "startsWith",
+                "comment": " Check if a FormattedText starts with a sub-FormattedText.\nBoth text and markup of the contained occurence need to match the sub-FormattedText.\nEquivalent of `String.startsWith`.\n",
+                "type": "FormattedText.FormattedText markup -> FormattedText.FormattedText markup -> Basics.Bool"
+            },
+            {
+                "name": "text",
+                "comment": " Extract the plain string from formatted text.\n",
+                "type": "FormattedText.FormattedText markup -> String.String"
+            },
+            {
+                "name": "toFloat",
+                "comment": " Parse the FormattedText as a Float.\nMarkup has no effect on the result.\nThe equivalent of `String.toInt`.\n",
+                "type": "FormattedText.FormattedText markup -> Maybe.Maybe Basics.Float"
+            },
+            {
+                "name": "toInt",
+                "comment": " Parse the FormattedText as an Int.\nMarkup has no effect on the result.\nThe equivalent of `String.toInt`.\n",
+                "type": "FormattedText.FormattedText markup -> Maybe.Maybe Basics.Int"
+            },
+            {
+                "name": "toList",
+                "comment": " Turn a FormattedText into a list of Chars.\nMarkup is discarded.\nThe equivalent of `String.toList`.\n",
+                "type": "FormattedText.FormattedText markup -> List.List Char.Char"
+            },
+            {
+                "name": "toLower",
+                "comment": " Lowercase the text in a FormattedText.\nMarkup will not be affected.\nThis is the equivalent of `String.toLowr`.\n",
+                "type": "FormattedText.FormattedText markup -> FormattedText.FormattedText markup"
+            },
+            {
+                "name": "toUpper",
+                "comment": " Uppercase the text in a FormattedText.\nMarkup will not be affected.\nThis is the equivalent of `String.toUpper`.\n",
+                "type": "FormattedText.FormattedText markup -> FormattedText.FormattedText markup"
+            },
+            {
+                "name": "trees",
+                "comment": " Certain operations, like rendering to Html, can be hard to perform with FormattedText directly.\n`trees` creates a markup tree from a FormattedText.\nYou can pass it a function for generating a text leaf of the tree, and a function to generate a markup node of the tree.\n",
+                "type": "(String.String -> tree) -> (markup -> List.List tree -> tree) -> FormattedText.FormattedText markup -> List.List tree"
+            },
+            {
+                "name": "trim",
+                "comment": " Trim whitespace from both ends of a FormattedText. The equivalent of `String.trim`.\n",
+                "type": "FormattedText.FormattedText markup -> FormattedText.FormattedText markup"
+            },
+            {
+                "name": "trimLeft",
+                "comment": " Trim whitespace from the left end of a FormattedText. The equivalent of `String.trimLeft`.\n",
+                "type": "FormattedText.FormattedText markup -> FormattedText.FormattedText markup"
+            },
+            {
+                "name": "trimRight",
+                "comment": " Trim whitespace from the right end of a FormattedText. The equivalent of `String.trimRight`.\n",
+                "type": "FormattedText.FormattedText markup -> FormattedText.FormattedText markup"
+            },
+            {
+                "name": "unchunk",
+                "comment": " Take a list of text chunks with formatting and turn them into formatted text.\n",
+                "type": "List.List ( String.String, List.List markup ) -> FormattedText.FormattedText markup"
+            },
+            {
+                "name": "uncons",
+                "comment": " Remove the first character from a FormattedText.\nThe equivalent of `String.uncons`.\n",
+                "type": "FormattedText.FormattedText markup -> Maybe.Maybe ( Char.Char, FormattedText.FormattedText markup )"
+            },
+            {
+                "name": "words",
+                "comment": " Split a FormattedText on whitespace. The equivalent of `String.words`.\n",
+                "type": "FormattedText.FormattedText markup -> List.List (FormattedText.FormattedText markup)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "FormattedText.Markdown",
+        "comment": " A specific FormattedText type for inline markdown.\n\nThis intentionally does not support block-level markdown elements,\nas FormattedText is not suitable for that.\nIf you have formatted inline strings embeded in a semantic structure\nyou might want to create a custom type for that structure.\n\n@docs Markdown\n@docs Block\n@docs parse\n@docs parseInline\n@docs view\n@docs viewInline\n\n",
+        "unions": [
+            {
+                "name": "Block",
+                "comment": " The types of block formatting Markdown supports.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "ThematicBreak",
+                        []
+                    ],
+                    [
+                        "Heading",
+                        [
+                            "Basics.Int",
+                            "FormattedText.FormattedText FormattedText.Markdown.Markdown"
+                        ]
+                    ],
+                    [
+                        "CodeBlock",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Paragraph",
+                        [
+                            "FormattedText.FormattedText FormattedText.Markdown.Markdown"
+                        ]
+                    ],
+                    [
+                        "BlockQuote",
+                        [
+                            "List.List FormattedText.Markdown.Block"
+                        ]
+                    ],
+                    [
+                        "UnOrderedList",
+                        [
+                            "List.List (List.List FormattedText.Markdown.Block)"
+                        ]
+                    ],
+                    [
+                        "OrderedList",
+                        [
+                            "List.List (List.List FormattedText.Markdown.Block)"
+                        ]
+                    ],
+                    [
+                        "PlainInline",
+                        [
+                            "FormattedText.FormattedText FormattedText.Markdown.Markdown"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Markdown",
+                "comment": " The different types of inline formatting that Markdown supports.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Code",
+                        []
+                    ],
+                    [
+                        "Link",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Bold",
+                        []
+                    ],
+                    [
+                        "Italic",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "parse",
+                "comment": " Turn a markdown-formatted string into Blocks.\n\nThe inline portions of the Block structure will be instances of FormattedText.\n\n",
+                "type": "String.String -> List.List FormattedText.Markdown.Block"
+            },
+            {
+                "name": "parseInline",
+                "comment": " Turn a markdown-formatted string into a FormattedText.\nParsing will fail if the markdown contains block-level styling, which is not supported.\n",
+                "type": "String.String -> Result.Result String.String (FormattedText.FormattedText FormattedText.Markdown.Markdown)"
+            },
+            {
+                "name": "view",
+                "comment": " Render the markdown-formatted text as Html.\n",
+                "type": "List.List FormattedText.Markdown.Block -> List.List (Html.Html msg)"
+            },
+            {
+                "name": "viewInline",
+                "comment": " If you have your own logic for rendering the markdown block elements, you\ncan call this function to render the inline portions of the Markdown.\n\nIf you want to render your markdown in a different way take a look at the implementation of this function\nto see how you can use `FormattedText.chunks` to do so in a simple way.\n\n",
+                "type": "FormattedText.FormattedText FormattedText.Markdown.Markdown -> List.List (Html.Html msg)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "FormattedText.Regex",
+        "comment": " Regex operations for FormattedText\n\n@docs Match\n@docs contains\n@docs find\n@docs replace\n@docs split\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Match",
+                "comment": " A match in a piece of FormattedText\n\nThis is the equivalent for FormattedTexts of `Regex.Match` for Strings.\nUnfortunately submatches cannot currently be supported when matching formatted texts.\n\n",
+                "args": [
+                    "markup"
+                ],
+                "type": "{ match : FormattedText.Internal.FormattedText markup, index : Basics.Int, number : Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "contains",
+                "comment": " Check if a FormattedText contains matches with a regex.\nThis is the equivalent of `Regex.contains`.\n",
+                "type": "Regex.Regex -> FormattedText.Internal.FormattedText markup -> Basics.Bool"
+            },
+            {
+                "name": "find",
+                "comment": " Find regex matches in a FormattedText.\nThis is the equivalent of `Regex.find`.\n",
+                "type": "Regex.Regex -> FormattedText.Internal.FormattedText markup -> List.List (FormattedText.Regex.Match markup)"
+            },
+            {
+                "name": "replace",
+                "comment": " Replace regex matches in a FormattedText.\nThis is the equivalent of `Regex.replace`.\n",
+                "type": "Regex.Regex -> (FormattedText.Regex.Match markup -> FormattedText.Internal.FormattedText markup) -> FormattedText.Internal.FormattedText markup -> FormattedText.Internal.FormattedText markup"
+            },
+            {
+                "name": "split",
+                "comment": " Split a FormattedText on matches with a regex.\nThis is the equivalent of `Regex.split`.\n",
+                "type": "Regex.Regex -> FormattedText.Internal.FormattedText markup -> List.List (FormattedText.Internal.FormattedText markup)"
+            }
+        ],
+        "binops": []
+    }
+]

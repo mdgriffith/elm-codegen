@@ -1,0 +1,1140 @@
+[
+    {
+        "name": "HtmlData",
+        "comment": " See documentation of [Html](https://package.elm-lang.org/packages/elm/html/latest/Html)\n\nExcept, the types here are intentionally fully exposed.\nThe helper functions exists merely to make writing them feel like elm/html et al\n\n@docs Html, text, node, map, div, h1, h2, h3, h4, h5, h6, p, hr, pre, blockquote, span, a, code, em, strong, i, b, u, sub, sup, br, ol, ul, li, dl, dt, dd, img, iframe, canvas, math, form, input, textarea, button, select, option, section, nav, article, aside, header, footer, address, main_, figure, figcaption, table, caption, colgroup, col, tbody, thead, tfoot, tr, td, th, fieldset, legend, label, datalist, optgroup, output, progress, meter, audio, video, source, track, embed, object, param, ins, del, small, cite, dfn, abbr, time, var, samp, kbd, s, q, mark, ruby, rt, rp, bdi, bdo, wbr, details, summary, menuitem, menu\n\n",
+        "unions": [
+            {
+                "name": "Html",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "cases": [
+                    [
+                        "Text",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Element",
+                        [
+                            "String.String",
+                            "List.List (HtmlData.Attributes.Attribute msg)",
+                            "List.List (HtmlData.Html msg)"
+                        ]
+                    ],
+                    [
+                        "KeyedElement",
+                        [
+                            "String.String",
+                            "List.List (HtmlData.Attributes.Attribute msg)",
+                            "List.List ( String.String, HtmlData.Html msg )"
+                        ]
+                    ],
+                    [
+                        "LazyElement",
+                        [
+                            "() -> HtmlData.Html msg",
+                            "() -> Html.Html msg"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "a",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "abbr",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "address",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "article",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "aside",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "audio",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "b",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "bdi",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "bdo",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "blockquote",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "br",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "button",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "canvas",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "caption",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "cite",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "code",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "col",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "colgroup",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "datalist",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "dd",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "del",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "details",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "dfn",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "div",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "dl",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "dt",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "em",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "embed",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "fieldset",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "figcaption",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "figure",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "footer",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "form",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "h1",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "h2",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "h3",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "h4",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "h5",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "h6",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "header",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "hr",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "i",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "iframe",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "img",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "input",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "ins",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "kbd",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "label",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "legend",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "li",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "main_",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "map",
+                "comment": " ",
+                "type": "(a -> msg) -> HtmlData.Html a -> HtmlData.Html msg"
+            },
+            {
+                "name": "mark",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "math",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "menu",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "menuitem",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "meter",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "nav",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "node",
+                "comment": " ",
+                "type": "String.String -> List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "object",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "ol",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "optgroup",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "option",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "output",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "p",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "param",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "pre",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "progress",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "q",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "rp",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "rt",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "ruby",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "s",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "samp",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "section",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "select",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "small",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "source",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "span",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "strong",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "sub",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "summary",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "sup",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "table",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "tbody",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "td",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "text",
+                "comment": " ",
+                "type": "String.String -> HtmlData.Html msg"
+            },
+            {
+                "name": "textarea",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "tfoot",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "th",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "thead",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "time",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "tr",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "track",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "u",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "ul",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "var",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "video",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            },
+            {
+                "name": "wbr",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List (HtmlData.Html msg) -> HtmlData.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "HtmlData.Attributes",
+        "comment": " See documentation of [Html.Attributes](https://package.elm-lang.org/packages/elm/html/latest/Html-Attributes)\n\nExcept, the types here are intentionally fully exposed.\nThe helper functions exists merely to make writing them feel like elm/html et al\n\n@docs Attribute, EventListener, accept, acceptCharset, accesskey, action, align, alt, property, attribute, autocomplete, autofocus, autoplay, checked, cite, class, classList, cols, colspan, contenteditable, contextmenu, controls, coords, datetime, default, dir, disabled, download, draggable, dropzone, enctype, for, form, headers, height, hidden, href, hreflang, id, ismap, itemprop, kind, lang, list, loop, manifest, map, max, maxlength, media, method, min, minlength, multiple, name, novalidate, pattern, ping, placeholder, poster, preload, pubdate, readonly, rel, required, reversed, rows, rowspan, sandbox, scope, selected, shape, size, spellcheck, src, srcdoc, srclang, start, step, style, tabindex, target, title, type_, usemap, value, width, wrap\n\n",
+        "unions": [
+            {
+                "name": "Attribute",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "cases": [
+                    [
+                        "Attribute",
+                        [
+                            "String.String",
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "NoAttribute",
+                        []
+                    ],
+                    [
+                        "EventListener",
+                        [
+                            "HtmlData.Attributes.EventListener msg"
+                        ]
+                    ],
+                    [
+                        "Property",
+                        [
+                            "String.String",
+                            "Json.Decode.Value"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "EventListener",
+                "comment": " Stores declarations for [Html.Events](https://package.elm-lang.org/packages/elm/html/latest/Html-Events)\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": [
+                    [
+                        "On",
+                        [
+                            "String.String",
+                            "Json.Decode.Decoder msg"
+                        ]
+                    ],
+                    [
+                        "OnInput",
+                        [
+                            "String.String -> msg"
+                        ]
+                    ],
+                    [
+                        "OnCheck",
+                        [
+                            "Basics.Bool -> msg"
+                        ]
+                    ],
+                    [
+                        "StopPropagationOn",
+                        [
+                            "String.String",
+                            "Json.Decode.Decoder ( msg, Basics.Bool )"
+                        ]
+                    ],
+                    [
+                        "PreventDefaultOn",
+                        [
+                            "String.String",
+                            "Json.Decode.Decoder ( msg, Basics.Bool )"
+                        ]
+                    ],
+                    [
+                        "Custom",
+                        [
+                            "String.String",
+                            "Json.Decode.Decoder { message : msg, stopPropagation : Basics.Bool, preventDefault : Basics.Bool }"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "accept",
+                "comment": " ",
+                "type": "String.String -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "acceptCharset",
+                "comment": " ",
+                "type": "String.String -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "accesskey",
+                "comment": " ",
+                "type": "Char.Char -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "action",
+                "comment": " ",
+                "type": "String.String -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "align",
+                "comment": " ",
+                "type": "String.String -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "alt",
+                "comment": " ",
+                "type": "String.String -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "attribute",
+                "comment": " ",
+                "type": "String.String -> String.String -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "autocomplete",
+                "comment": " ",
+                "type": "Basics.Bool -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "autofocus",
+                "comment": " ",
+                "type": "Basics.Bool -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "autoplay",
+                "comment": " ",
+                "type": "Basics.Bool -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "checked",
+                "comment": " ",
+                "type": "Basics.Bool -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "cite",
+                "comment": " ",
+                "type": "String.String -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "class",
+                "comment": " ",
+                "type": "String.String -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "classList",
+                "comment": " ",
+                "type": "List.List ( String.String, Basics.Bool ) -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "cols",
+                "comment": " ",
+                "type": "Basics.Int -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "colspan",
+                "comment": " ",
+                "type": "Basics.Int -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "contenteditable",
+                "comment": " ",
+                "type": "Basics.Bool -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "contextmenu",
+                "comment": " ",
+                "type": "String.String -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "controls",
+                "comment": " ",
+                "type": "Basics.Bool -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "coords",
+                "comment": " ",
+                "type": "String.String -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "datetime",
+                "comment": " ",
+                "type": "String.String -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "default",
+                "comment": " ",
+                "type": "Basics.Bool -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "dir",
+                "comment": " ",
+                "type": "String.String -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "disabled",
+                "comment": " ",
+                "type": "Basics.Bool -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "download",
+                "comment": " ",
+                "type": "String.String -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "draggable",
+                "comment": " ",
+                "type": "String.String -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "dropzone",
+                "comment": " ",
+                "type": "String.String -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "enctype",
+                "comment": " ",
+                "type": "String.String -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "for",
+                "comment": " ",
+                "type": "String.String -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "form",
+                "comment": " ",
+                "type": "String.String -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "headers",
+                "comment": " ",
+                "type": "String.String -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "height",
+                "comment": " ",
+                "type": "Basics.Int -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "hidden",
+                "comment": " ",
+                "type": "Basics.Bool -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "href",
+                "comment": " ",
+                "type": "String.String -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "hreflang",
+                "comment": " ",
+                "type": "String.String -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "id",
+                "comment": " ",
+                "type": "String.String -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "ismap",
+                "comment": " ",
+                "type": "Basics.Bool -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "itemprop",
+                "comment": " ",
+                "type": "String.String -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "kind",
+                "comment": " ",
+                "type": "String.String -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "lang",
+                "comment": " ",
+                "type": "String.String -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "list",
+                "comment": " ",
+                "type": "String.String -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "loop",
+                "comment": " ",
+                "type": "Basics.Bool -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "manifest",
+                "comment": " ",
+                "type": "String.String -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "map",
+                "comment": " ",
+                "type": "(a -> msg) -> HtmlData.Attributes.Attribute a -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "max",
+                "comment": " ",
+                "type": "String.String -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "maxlength",
+                "comment": " ",
+                "type": "Basics.Int -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "media",
+                "comment": " ",
+                "type": "String.String -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "method",
+                "comment": " ",
+                "type": "String.String -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "min",
+                "comment": " ",
+                "type": "String.String -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "minlength",
+                "comment": " ",
+                "type": "Basics.Int -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "multiple",
+                "comment": " ",
+                "type": "Basics.Bool -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "name",
+                "comment": " ",
+                "type": "String.String -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "novalidate",
+                "comment": " ",
+                "type": "Basics.Bool -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "pattern",
+                "comment": " ",
+                "type": "String.String -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "ping",
+                "comment": " ",
+                "type": "String.String -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "placeholder",
+                "comment": " ",
+                "type": "String.String -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "poster",
+                "comment": " ",
+                "type": "String.String -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "preload",
+                "comment": " ",
+                "type": "String.String -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "property",
+                "comment": " ",
+                "type": "String.String -> Json.Decode.Value -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "pubdate",
+                "comment": " ",
+                "type": "String.String -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "readonly",
+                "comment": " ",
+                "type": "Basics.Bool -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "rel",
+                "comment": " ",
+                "type": "String.String -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "required",
+                "comment": " ",
+                "type": "Basics.Bool -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "reversed",
+                "comment": " ",
+                "type": "Basics.Bool -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "rows",
+                "comment": " ",
+                "type": "Basics.Int -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "rowspan",
+                "comment": " ",
+                "type": "Basics.Int -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "sandbox",
+                "comment": " ",
+                "type": "String.String -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "scope",
+                "comment": " ",
+                "type": "String.String -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "selected",
+                "comment": " ",
+                "type": "Basics.Bool -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "shape",
+                "comment": " ",
+                "type": "String.String -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "size",
+                "comment": " ",
+                "type": "Basics.Int -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "spellcheck",
+                "comment": " ",
+                "type": "Basics.Bool -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "src",
+                "comment": " ",
+                "type": "String.String -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "srcdoc",
+                "comment": " ",
+                "type": "String.String -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "srclang",
+                "comment": " ",
+                "type": "String.String -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "start",
+                "comment": " ",
+                "type": "Basics.Int -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "step",
+                "comment": " ",
+                "type": "String.String -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "style",
+                "comment": " ",
+                "type": "String.String -> String.String -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "tabindex",
+                "comment": " ",
+                "type": "Basics.Int -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "target",
+                "comment": " ",
+                "type": "String.String -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "title",
+                "comment": " ",
+                "type": "String.String -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "type_",
+                "comment": " ",
+                "type": "String.String -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "usemap",
+                "comment": " ",
+                "type": "String.String -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "value",
+                "comment": " ",
+                "type": "String.String -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "width",
+                "comment": " ",
+                "type": "Basics.Int -> HtmlData.Attributes.Attribute msg"
+            },
+            {
+                "name": "wrap",
+                "comment": " ",
+                "type": "String.String -> HtmlData.Attributes.Attribute msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "HtmlData.Keyed",
+        "comment": " See documentation of [Html.Keyed](https://package.elm-lang.org/packages/elm/html/latest/Html-Keyed)\n\n@docs node, ol, ul\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "node",
+                "comment": " ",
+                "type": "String.String -> List.List (HtmlData.Attributes.Attribute msg) -> List.List ( String.String, HtmlData.Html msg ) -> HtmlData.Html msg"
+            },
+            {
+                "name": "ol",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List ( String.String, HtmlData.Html msg ) -> HtmlData.Html msg"
+            },
+            {
+                "name": "ul",
+                "comment": " ",
+                "type": "List.List (HtmlData.Attributes.Attribute msg) -> List.List ( String.String, HtmlData.Html msg ) -> HtmlData.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "HtmlData.Lazy",
+        "comment": " _Almost_ compatible with [Html.Lazy](https://package.elm-lang.org/packages/elm/html/latest/Html-Lazy)\n\nIdeally we can do\n\n    HtmlData.Lazy.lazy viewPrime 200000\n\nBut <https://juliu.is/performant-elm-html-lazy/>\n\n> _Html.Lazy needs to associate the cached value with a precise function, but specifying an anonymous function forces the runtime to recreate that function every time the view is invoked._\n\n**So to use `HtmlData.Lazy`, we have to declare a composed version of the function that returns \\`Html.Html msg\\`, outside of the view function**\n\n    viewPrime_elmhtml =\n        viewPrime >> HtmlData.Extra.toElmHtml\n\nThen pass it in as 2nd argument\n\n    HtmlData.Lazy.lazy viewPrime viewPrime_elmhtml 200000\n\nThe result is that our function signature here isn't 100% identical to `Html.Lazy`, but it does work in the correctly.\n\n  - when generating `String`, e.g. through `toTextHtml`, there is no lazy effect; the first argument function is run each time\n  - when generating `Html.Html msg`, i.e. through `toElmHtml`, we hand off the 2nd argument to `Html.Lazy`\n\nSee the prime numbers section on <https://html-data.netlify.app>\n\n@docs lazy, lazy2, lazy3, lazy4, lazy5, lazy6, lazy7, lazy8\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "lazy",
+                "comment": " ",
+                "type": "(a -> HtmlData.Html msg) -> (a -> Html.Html msg) -> a -> HtmlData.Html msg"
+            },
+            {
+                "name": "lazy2",
+                "comment": " ",
+                "type": "(a -> b -> HtmlData.Html msg) -> (a -> b -> Html.Html msg) -> a -> b -> HtmlData.Html msg"
+            },
+            {
+                "name": "lazy3",
+                "comment": " ",
+                "type": "(a -> b -> c -> HtmlData.Html msg) -> (a -> b -> c -> Html.Html msg) -> a -> b -> c -> HtmlData.Html msg"
+            },
+            {
+                "name": "lazy4",
+                "comment": " ",
+                "type": "(a -> b -> c -> d -> HtmlData.Html msg) -> (a -> b -> c -> d -> Html.Html msg) -> a -> b -> c -> d -> HtmlData.Html msg"
+            },
+            {
+                "name": "lazy5",
+                "comment": " ",
+                "type": "(a -> b -> c -> d -> e -> HtmlData.Html msg) -> (a -> b -> c -> d -> e -> Html.Html msg) -> a -> b -> c -> d -> e -> HtmlData.Html msg"
+            },
+            {
+                "name": "lazy6",
+                "comment": " ",
+                "type": "(a -> b -> c -> d -> e -> f -> HtmlData.Html msg) -> (a -> b -> c -> d -> e -> f -> Html.Html msg) -> a -> b -> c -> d -> e -> f -> HtmlData.Html msg"
+            },
+            {
+                "name": "lazy7",
+                "comment": " ",
+                "type": "(a -> b -> c -> d -> e -> f -> g -> HtmlData.Html msg) -> (a -> b -> c -> d -> e -> f -> g -> Html.Html msg) -> a -> b -> c -> d -> e -> f -> g -> HtmlData.Html msg"
+            },
+            {
+                "name": "lazy8",
+                "comment": " ",
+                "type": "(a -> b -> c -> d -> e -> f -> g -> h -> HtmlData.Html msg) -> (a -> b -> c -> d -> e -> f -> g -> h -> Html.Html msg) -> a -> b -> c -> d -> e -> f -> g -> h -> HtmlData.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

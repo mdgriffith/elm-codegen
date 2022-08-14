@@ -1,0 +1,21 @@
+[
+    {
+        "name": "Html.SelectPrism",
+        "comment": " `selectp` and `selectpm` allow a user to push ADTs in and\nget ADTs out of a `<select>`\n\n\n# Selects\n\n@docs selectp, selectpm\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "selectp",
+                "comment": " `selectp` is wrapping up the idea of select box from a generic\ncomparable. However, Elm does everything through strings -- which is\nwhy we’re using the `Prism`. That `Prism` onus is on you. The args are:\n\n1.  [Prism](http://package.elm-lang.org/packages/arturopala/elm-monocle/latest/Monocle-Prism)\n    from a `String` to our thing `a`\n2.  A function from the attempt to get--`Result String a`, where `a` is\n    our thing--to a msg for the onChange\n3.  The selected value\n4.  List of `Html.Attributes` for the `<select>` so you can have\n    custom classes, etc.\n5.  List tuples of `( String, a )` where the `String` is the label\n    for the option and the `a` is our thing.\n\n",
+                "type": "Monocle.Prism.Prism String.String a -> (Result.Result String.String a -> msg) -> a -> List.List (Html.Attribute msg) -> List.List ( String.String, a ) -> Html.Html msg"
+            },
+            {
+                "name": "selectpm",
+                "comment": " Like `selectp`, but a `<select multiple>` which takes a list of\nselected values and the Msg needs to be a list of results. Note:\n[`selectOptions`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLSelectElement#Browser_compatibility)\nisn’t support in Internet Explorer and I don’t care enough to support\nit (and maybe you shouldn’t either).\n",
+                "type": "Monocle.Prism.Prism String.String a -> (List.List (Result.Result String.String a) -> msg) -> List.List a -> List.List (Html.Attribute msg) -> List.List ( String.String, a ) -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

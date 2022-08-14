@@ -1,0 +1,21 @@
+[
+    {
+        "name": "SupPort",
+        "comment": " See the README for instructions on how to use these two functions.\n\n@docs out, in_\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "in_",
+                "comment": " ",
+                "type": "((Json.Decode.Value -> msg) -> Platform.Sub.Sub msg) -> (Json.Decode.Error -> portMsg) -> List.List ( String.String, Json.Decode.Decoder portMsg ) -> (portMsg -> msg) -> Platform.Sub.Sub msg"
+            },
+            {
+                "name": "out",
+                "comment": " ",
+                "type": "(Json.Decode.Value -> Platform.Cmd.Cmd msg) -> String.String -> List.List Json.Decode.Value -> Platform.Cmd.Cmd msg"
+            }
+        ],
+        "binops": []
+    }
+]

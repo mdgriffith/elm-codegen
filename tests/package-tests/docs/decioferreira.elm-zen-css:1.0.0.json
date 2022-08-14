@@ -1,0 +1,2299 @@
+[
+    {
+        "name": "CSS",
+        "comment": "\n\n\n# Definitions\n\n@docs Variable, Class, ClassName, ExternalClass, Property, AtRule, Keyframe\n\n\n# Methods\n\n@docs class, className, externalClass\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "AtRule",
+                "comment": " ",
+                "args": [],
+                "type": "CSS.Internal.AtRule"
+            },
+            {
+                "name": "Class",
+                "comment": " ",
+                "args": [],
+                "type": "CSS.Internal.Class"
+            },
+            {
+                "name": "ClassName",
+                "comment": " ",
+                "args": [],
+                "type": "CSS.Internal.ClassName"
+            },
+            {
+                "name": "ExternalClass",
+                "comment": " ",
+                "args": [],
+                "type": "CSS.Internal.ExternalClass"
+            },
+            {
+                "name": "Keyframe",
+                "comment": " ",
+                "args": [],
+                "type": "CSS.Internal.Keyframe"
+            },
+            {
+                "name": "Property",
+                "comment": " ",
+                "args": [],
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "Variable",
+                "comment": " ",
+                "args": [],
+                "type": "CSS.Internal.Variable"
+            }
+        ],
+        "values": [
+            {
+                "name": "class",
+                "comment": " Start a new class definition.\n",
+                "type": "String.String -> List.List CSS.Property -> CSS.Class"
+            },
+            {
+                "name": "className",
+                "comment": " ",
+                "type": "String.String -> CSS.ClassName"
+            },
+            {
+                "name": "externalClass",
+                "comment": " Placeholder for a external class definition.\n",
+                "type": "String.String -> CSS.ExternalClass"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "CSS.AtRules",
+        "comment": " At-rules are CSS statements that instruct CSS how to behave.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/At-rule>\n\n\n# At-rules\n\n@docs media\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "media",
+                "comment": " The @media CSS at-rule can be used to apply part of a style sheet based on\nthe result of one or more media queries.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/@media>\n\n",
+                "type": "String.String -> List.List CSS.Internal.Property -> CSS.Internal.Class -> CSS.Internal.Class"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "CSS.AtRules.Keyframes",
+        "comment": " The @keyframes CSS at-rule controls the intermediate steps in a CSS\nanimation sequence by defining styles for keyframes (or waypoints) along the\nanimation sequence.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/@keyframes>\n\n\n# @keyframes\n\n@docs Name, Selector\n@docs custom, fromTo, percentages\n\n",
+        "unions": [
+            {
+                "name": "Name",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "NameCustomIdent",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "NameString",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Selector",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "From",
+                        []
+                    ],
+                    [
+                        "To",
+                        []
+                    ],
+                    [
+                        "Percentage",
+                        [
+                            "CSS.Types.Percentage.Percentage"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "custom",
+                "comment": " ",
+                "type": "CSS.AtRules.Keyframes.Name -> List.Nonempty.Nonempty { selectors : List.Nonempty.Nonempty CSS.AtRules.Keyframes.Selector, properties : List.List CSS.Internal.Property } -> CSS.Internal.Keyframe"
+            },
+            {
+                "name": "fromTo",
+                "comment": " ",
+                "type": "CSS.AtRules.Keyframes.Name -> List.List CSS.Internal.Property -> List.List CSS.Internal.Property -> CSS.Internal.Keyframe"
+            },
+            {
+                "name": "percentages",
+                "comment": " ",
+                "type": "CSS.AtRules.Keyframes.Name -> List.Nonempty.Nonempty { percentages : List.Nonempty.Nonempty CSS.Types.Percentage.Percentage, properties : List.List CSS.Internal.Property } -> CSS.Internal.Keyframe"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "CSS.Attributes",
+        "comment": "\n\n\n# Attributes\n\n@docs class, classList, svgClass\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "class",
+                "comment": " HTML class attribute.\n",
+                "type": "CSS.Internal.ClassName -> Html.Attribute msg"
+            },
+            {
+                "name": "classList",
+                "comment": " This function makes it easier to build a space-separated class attribute.\nEach class can easily be added and removed depending on the boolean value it is\npaired with.\n",
+                "type": "List.List ( CSS.Internal.ClassName, Basics.Bool ) -> Html.Attribute msg"
+            },
+            {
+                "name": "svgClass",
+                "comment": " SVG class attribute.\n",
+                "type": "CSS.Internal.ClassName -> Svg.Attribute msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "CSS.Properties",
+        "comment": "\n\n\n# Properties\n\n@docs custom\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "custom",
+                "comment": " ",
+                "type": "String.String -> String.String -> CSS.Internal.Property"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "CSS.Properties.AccentColor",
+        "comment": " The accent-color CSS property sets the accent color for user-interface\ncontrols generated by some elements.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/accent-color>\n\n\n# Keyword values\n\n@docs auto\n\n\n# <color> values\n\n@docs color\n\n\n# Global values\n\n@docs inherit, initial, revert, revertLayer, unset\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "auto",
+                "comment": " Represents a UA-chosen color, which should match the accent color of the\nplatform, if any.\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "color",
+                "comment": " Specifies the color to be used as the accent color.\n",
+                "type": "CSS.Types.Color.Color -> CSS.Internal.Property"
+            },
+            {
+                "name": "inherit",
+                "comment": " The inherit CSS keyword causes the element to take the computed value of the\nproperty from its parent element.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/inherit>\n\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "initial",
+                "comment": " The initial CSS keyword applies the initial (or default) value of a property\nto an element.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/initial>\n\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "revert",
+                "comment": " The revert CSS keyword reverts the cascaded value of the property from its\ncurrent value to the value the property would have had if no changes had been\nmade by the current style origin to the current element.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/revert>\n\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "revertLayer",
+                "comment": " The revert-layer CSS keyword rolls back the value of a property in a cascade\nlayer to the value of the property in a CSS rule matching the element in a\nprevious cascade layer.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/revert-layer>\n\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "unset",
+                "comment": " The unset CSS keyword resets a property to its inherited value if the\nproperty naturally inherits from its parent, and to its initial value if not.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/unset>\n\n",
+                "type": "CSS.Internal.Property"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "CSS.Properties.AlignContent",
+        "comment": " The CSS align-content property sets the distribution of space between and\naround content items along a flexbox's cross-axis or a grid's block axis.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/align-content>\n\n\n# Basic positional alignment\n\n@docs center, start, end, flexStart, flexEnd\n\n\n# Normal alignment\n\n@docs normal\n\n\n# Baseline alignment\n\n@docs baseline, firstBaseline, lastBaseline\n\n\n# Distributed alignment\n\n@docs spaceBetween, spaceAround, spaceEvenly, stretch\n\n\n# Overflow alignment\n\n@docs OverflowPosition\n\n\n# Global values\n\n@docs inherit, initial, revert, revertLayer, unset\n\n",
+        "unions": [
+            {
+                "name": "OverflowPosition",
+                "comment": " Used alongside an alignment keyword.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Safe",
+                        []
+                    ],
+                    [
+                        "Unsafe",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "baseline",
+                "comment": " Specifies participation in first- or last-baseline alignment: aligns the\nalignment baseline of the box's first or last baseline set with the\ncorresponding baseline in the shared first or last baseline set of all the boxes\nin its baseline-sharing group.\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "center",
+                "comment": " The items are packed flush to each other in the center of the alignment\ncontainer along the cross axis.\n",
+                "type": "Maybe.Maybe CSS.Properties.AlignContent.OverflowPosition -> CSS.Internal.Property"
+            },
+            {
+                "name": "end",
+                "comment": " The items are packed flush to each other against the end edge of the\nalignment container in the cross axis.\n",
+                "type": "Maybe.Maybe CSS.Properties.AlignContent.OverflowPosition -> CSS.Internal.Property"
+            },
+            {
+                "name": "firstBaseline",
+                "comment": " Specifies participation in first- or last-baseline alignment: aligns the\nalignment baseline of the box's first or last baseline set with the\ncorresponding baseline in the shared first or last baseline set of all the boxes\nin its baseline-sharing group.\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "flexEnd",
+                "comment": " The items are packed flush to each other against the edge of the alignment\ncontainer depending on the flex container's cross-end side. This only applies to\nflex layout items. For items that are not children of a flex container, this\nvalue is treated like end.\n",
+                "type": "Maybe.Maybe CSS.Properties.AlignContent.OverflowPosition -> CSS.Internal.Property"
+            },
+            {
+                "name": "flexStart",
+                "comment": " The items are packed flush to each other against the edge of the alignment\ncontainer depending on the flex container's cross-start side. This only applies\nto flex layout items. For items that are not children of a flex container, this\nvalue is treated like start.\n",
+                "type": "Maybe.Maybe CSS.Properties.AlignContent.OverflowPosition -> CSS.Internal.Property"
+            },
+            {
+                "name": "inherit",
+                "comment": " The inherit CSS keyword causes the element to take the computed value of the\nproperty from its parent element.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/inherit>\n\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "initial",
+                "comment": " The initial CSS keyword applies the initial (or default) value of a property\nto an element.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/initial>\n\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "lastBaseline",
+                "comment": " Specifies participation in first- or last-baseline alignment: aligns the\nalignment baseline of the box's first or last baseline set with the\ncorresponding baseline in the shared first or last baseline set of all the boxes\nin its baseline-sharing group.\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "normal",
+                "comment": " The items are packed in their default position as if no align-content value\nwas set.\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "revert",
+                "comment": " The revert CSS keyword reverts the cascaded value of the property from its\ncurrent value to the value the property would have had if no changes had been\nmade by the current style origin to the current element.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/revert>\n\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "revertLayer",
+                "comment": " The revert-layer CSS keyword rolls back the value of a property in a cascade\nlayer to the value of the property in a CSS rule matching the element in a\nprevious cascade layer.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/revert-layer>\n\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "spaceAround",
+                "comment": " The items are evenly distributed within the alignment container along the\ncross axis. The spacing between each pair of adjacent items is the same. The\nempty space before the first and after the last item equals half of the space\nbetween each pair of adjacent items.\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "spaceBetween",
+                "comment": " The items are evenly distributed within the alignment container along the\ncross axis. The spacing between each pair of adjacent items is the same. The\nfirst item is flush with the start edge of the alignment container in the cross\naxis, and the last item is flush with the end edge of the alignment container in\nthe cross axis.\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "spaceEvenly",
+                "comment": " The items are evenly distributed within the alignment container along the\ncross axis. The spacing between each pair of adjacent items, the start edge and\nthe first item, and the end edge and the last item, are all exactly the same.\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "start",
+                "comment": " The items are packed flush to each other against the start edge of the\nalignment container in the cross axis.\n",
+                "type": "Maybe.Maybe CSS.Properties.AlignContent.OverflowPosition -> CSS.Internal.Property"
+            },
+            {
+                "name": "stretch",
+                "comment": " If the combined size of the items along the cross axis is less than the size\nof the alignment container, any auto-sized items have their size increased\nequally (not proportionally), while still respecting the constraints imposed by\nmax-height/max-width (or equivalent functionality), so that the combined size\nexactly fills the alignment container along the cross axis.\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "unset",
+                "comment": " The unset CSS keyword resets a property to its inherited value if the\nproperty naturally inherits from its parent, and to its initial value if not.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/unset>\n\n",
+                "type": "CSS.Internal.Property"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "CSS.Properties.AlignItems",
+        "comment": " The CSS align-items property sets the align-self value on all direct\nchildren as a group. In Flexbox, it controls the alignment of items on the Cross\nAxis. In Grid Layout, it controls the alignment of items on the Block Axis\nwithin their grid area.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/align-items>\n\n\n# Basic keywords\n\n@docs normal, stretch\n\n\n# Positional alignment\n\n@docs center, start, end, selfStart, selfEnd, flexStart, flexEnd\n\n\n# Baseline alignment\n\n@docs baseline, firstBaseline, lastBaseline\n\n\n# Overflow alignment\n\n@docs OverflowPosition\n\n\n# Global values\n\n@docs inherit, initial, revert, revertLayer, unset\n\n",
+        "unions": [
+            {
+                "name": "OverflowPosition",
+                "comment": " Used alongside an alignment keyword.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Safe",
+                        []
+                    ],
+                    [
+                        "Unsafe",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "baseline",
+                "comment": " All flex items are aligned such that their flex container baselines align.\nThe item with the largest distance between its cross-start margin edge and its\nbaseline is flushed with the cross-start edge of the line.\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "center",
+                "comment": " The flex items' margin boxes are centered within the line on the cross-axis.\nIf the cross-size of an item is larger than the flex container, it will overflow\nequally in both directions.\n",
+                "type": "Maybe.Maybe CSS.Properties.AlignItems.OverflowPosition -> CSS.Internal.Property"
+            },
+            {
+                "name": "end",
+                "comment": " The items are packed flush to each other toward the end edge of the\nalignment container in the appropriate axis.\n",
+                "type": "Maybe.Maybe CSS.Properties.AlignItems.OverflowPosition -> CSS.Internal.Property"
+            },
+            {
+                "name": "firstBaseline",
+                "comment": " All flex items are aligned such that their flex container baselines align.\nThe item with the largest distance between its cross-start margin edge and its\nbaseline is flushed with the cross-start edge of the line.\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "flexEnd",
+                "comment": " The cross-end margin edges of the flex items are flushed with the cross-end\nedge of the line.\n",
+                "type": "Maybe.Maybe CSS.Properties.AlignItems.OverflowPosition -> CSS.Internal.Property"
+            },
+            {
+                "name": "flexStart",
+                "comment": " The cross-start margin edges of the flex items are flushed with the\ncross-start edge of the line.\n",
+                "type": "Maybe.Maybe CSS.Properties.AlignItems.OverflowPosition -> CSS.Internal.Property"
+            },
+            {
+                "name": "inherit",
+                "comment": " The inherit CSS keyword causes the element to take the computed value of the\nproperty from its parent element.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/inherit>\n\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "initial",
+                "comment": " The initial CSS keyword applies the initial (or default) value of a property\nto an element.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/initial>\n\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "lastBaseline",
+                "comment": " All flex items are aligned such that their flex container baselines align.\nThe item with the largest distance between its cross-start margin edge and its\nbaseline is flushed with the cross-start edge of the line.\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "normal",
+                "comment": " The effect of this keyword is dependent of the layout mode we are in:\n\n  - In absolutely-positioned layouts, the keyword behaves like start on replaced\n    absolutely-positioned boxes, and as stretch on all other\n    absolutely-positioned boxes.\n  - In static position of absolutely-positioned layouts, the keyword behaves as\n    stretch.\n  - For flex items, the keyword behaves as stretch.\n  - For grid items, this keyword leads to a behavior similar to the one of\n    stretch, except for boxes with an aspect ratio or an intrinsic sizes where\n    it behaves like start.\n  - The property doesn't apply to block-level boxes, and to table cells.\n\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "revert",
+                "comment": " The revert CSS keyword reverts the cascaded value of the property from its\ncurrent value to the value the property would have had if no changes had been\nmade by the current style origin to the current element.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/revert>\n\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "revertLayer",
+                "comment": " The revert-layer CSS keyword rolls back the value of a property in a cascade\nlayer to the value of the property in a CSS rule matching the element in a\nprevious cascade layer.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/revert-layer>\n\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "selfEnd",
+                "comment": " The items are packed flush to the edge of the alignment container of the end\nside of the item, in the appropriate axis.\n",
+                "type": "Maybe.Maybe CSS.Properties.AlignItems.OverflowPosition -> CSS.Internal.Property"
+            },
+            {
+                "name": "selfStart",
+                "comment": " The items are packed flush to the edge of the alignment container of the\nstart side of the item, in the appropriate axis.\n",
+                "type": "Maybe.Maybe CSS.Properties.AlignItems.OverflowPosition -> CSS.Internal.Property"
+            },
+            {
+                "name": "start",
+                "comment": " The items are packed flush to each other toward the start edge of the\nalignment container in the appropriate axis.\n",
+                "type": "Maybe.Maybe CSS.Properties.AlignItems.OverflowPosition -> CSS.Internal.Property"
+            },
+            {
+                "name": "stretch",
+                "comment": " Flex items are stretched such that the cross-size of the item's margin box\nis the same as the line while respecting width and height constraints.\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "unset",
+                "comment": " The unset CSS keyword resets a property to its inherited value if the\nproperty naturally inherits from its parent, and to its initial value if not.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/unset>\n\n",
+                "type": "CSS.Internal.Property"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "CSS.Properties.AlignSelf",
+        "comment": " The align-self CSS property overrides a grid or flex item's align-items\nvalue. In Grid, it aligns the item inside the grid area. In Flexbox, it aligns\nthe item on the cross axis.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/align-self>\n\n\n# Keyword values\n\n@docs auto, normal\n\n\n# Positional alignment\n\n@docs center, start, end, selfStart, selfEnd, flexStart, flexEnd\n\n\n# Baseline alignment\n\n@docs baseline, firstBaseline, lastBaseline, stretch\n\n\n# Overflow alignment\n\n@docs OverflowPosition\n\n\n# Global values\n\n@docs inherit, initial, revert, revertLayer, unset\n\n",
+        "unions": [
+            {
+                "name": "OverflowPosition",
+                "comment": " Used alongside an alignment keyword.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Safe",
+                        []
+                    ],
+                    [
+                        "Unsafe",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "auto",
+                "comment": " Computes to the parent's align-items value.\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "baseline",
+                "comment": " Specifies participation in first- or last-baseline alignment: aligns the\nalignment baseline of the box's first or last baseline set with the\ncorresponding baseline in the shared first or last baseline set of all the boxes\nin its baseline-sharing group. The fallback alignment for first baseline is\nstart, the one for last baseline is end.\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "center",
+                "comment": " The flex item's margin box is centered within the line on the cross-axis.\nIf the cross-size of the item is larger than the flex container, it will overflow\nequally in both directions.\n",
+                "type": "Maybe.Maybe CSS.Properties.AlignSelf.OverflowPosition -> CSS.Internal.Property"
+            },
+            {
+                "name": "end",
+                "comment": " Put the item at the end.\n",
+                "type": "Maybe.Maybe CSS.Properties.AlignSelf.OverflowPosition -> CSS.Internal.Property"
+            },
+            {
+                "name": "firstBaseline",
+                "comment": " Specifies participation in first- or last-baseline alignment: aligns the\nalignment baseline of the box's first or last baseline set with the\ncorresponding baseline in the shared first or last baseline set of all the boxes\nin its baseline-sharing group. The fallback alignment for first baseline is\nstart, the one for last baseline is end.\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "flexEnd",
+                "comment": " The cross-end margin edge of the flex item is flushed with the cross-end\nedge of the line.\n",
+                "type": "Maybe.Maybe CSS.Properties.AlignSelf.OverflowPosition -> CSS.Internal.Property"
+            },
+            {
+                "name": "flexStart",
+                "comment": " The cross-start margin edge of the flex item is flushed with the cross-start\nedge of the line.\n",
+                "type": "Maybe.Maybe CSS.Properties.AlignSelf.OverflowPosition -> CSS.Internal.Property"
+            },
+            {
+                "name": "inherit",
+                "comment": " The inherit CSS keyword causes the element to take the computed value of the\nproperty from its parent element.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/inherit>\n\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "initial",
+                "comment": " The initial CSS keyword applies the initial (or default) value of a property\nto an element.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/initial>\n\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "lastBaseline",
+                "comment": " Specifies participation in first- or last-baseline alignment: aligns the\nalignment baseline of the box's first or last baseline set with the\ncorresponding baseline in the shared first or last baseline set of all the boxes\nin its baseline-sharing group. The fallback alignment for first baseline is\nstart, the one for last baseline is end.\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "normal",
+                "comment": " The effect of this keyword is dependent of the layout mode we are in:\n\n  - In absolutely-positioned layouts, the keyword behaves like start on replaced\n    absolutely-positioned boxes, and as stretch on all other\n    absolutely-positioned boxes.\n  - In static position of absolutely-positioned layouts, the keyword behaves as\n    stretch.\n  - For flex items, the keyword behaves as stretch.\n  - For grid items, this keyword leads to a behavior similar to the one of\n    stretch, except for boxes with an aspect ratio or an intrinsic sizes where\n    it behaves like start.\n  - The property doesn't apply to block-level boxes, and to table cells.\n\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "revert",
+                "comment": " The revert CSS keyword reverts the cascaded value of the property from its\ncurrent value to the value the property would have had if no changes had been\nmade by the current style origin to the current element.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/revert>\n\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "revertLayer",
+                "comment": " The revert-layer CSS keyword rolls back the value of a property in a cascade\nlayer to the value of the property in a CSS rule matching the element in a\nprevious cascade layer.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/revert-layer>\n\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "selfEnd",
+                "comment": " Aligns the items to be flush with the edge of the alignment container\ncorresponding to the item's end side in the cross axis.\n",
+                "type": "Maybe.Maybe CSS.Properties.AlignSelf.OverflowPosition -> CSS.Internal.Property"
+            },
+            {
+                "name": "selfStart",
+                "comment": " Aligns the items to be flush with the edge of the alignment container\ncorresponding to the item's start side in the cross axis.\n",
+                "type": "Maybe.Maybe CSS.Properties.AlignSelf.OverflowPosition -> CSS.Internal.Property"
+            },
+            {
+                "name": "start",
+                "comment": " Put the item at the start.\n",
+                "type": "Maybe.Maybe CSS.Properties.AlignSelf.OverflowPosition -> CSS.Internal.Property"
+            },
+            {
+                "name": "stretch",
+                "comment": " If the combined size of the items along the cross axis is less than the size\nof the alignment container and the item is auto-sized, its size is increased\nequally (not proportionally), while still respecting the constraints imposed by\nmax-height/max-width (or equivalent functionality), so that the combined size of\nall auto-sized items exactly fills the alignment container along the cross axis.\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "unset",
+                "comment": " The unset CSS keyword resets a property to its inherited value if the\nproperty naturally inherits from its parent, and to its initial value if not.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/unset>\n\n",
+                "type": "CSS.Internal.Property"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "CSS.Properties.All",
+        "comment": " The all shorthand CSS property resets all of an element's properties except\nunicode-bidi, direction, and CSS Custom Properties. It can set properties to\ntheir initial or inherited values, or to the values specified in another cascade\nlayer or stylesheet origin.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/all>\n\n\n# Global values\n\n@docs inherit, initial, revert, revertLayer, unset\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "inherit",
+                "comment": " Specifies that all the element's properties should be changed to their\ninherited values.\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "initial",
+                "comment": " Specifies that all the element's properties should be changed to their\ninitial values.\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "revert",
+                "comment": " Specifies behavior that depends on the stylesheet origin to which the\ndeclaration belongs:\n\n  - If the rule belongs to the author origin, the revert value rolls back the\n    cascade to the user level, so that the specified values are calculated as if\n    no author-level rules were specified for the element. For purposes of\n    revert, the author origin includes the Override and Animation origins.\n  - If the rule belongs to the user origin, the revert value rolls back the\n    cascade to the user-agent level, so that the specified values are calculated\n    as if no author-level or user-level rules were specified for the element.\n  - If the rule belongs to the user-agent origin, the revert value acts like\n    unset.\n\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "revertLayer",
+                "comment": " Specifies that all the element's properties should roll back the cascade to\na previous cascade layer, if one exists. If no other cascade layer exists, the\nelement's properties will roll back to the matching rule, if one exists, in the\ncurrent layer or to a previous style origin.\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "unset",
+                "comment": " Specifies that all the element's properties should be changed to their\ninherited values if they inherit by default, or to their initial values if not.\n",
+                "type": "CSS.Internal.Property"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "CSS.Properties.Animation",
+        "comment": " The animation shorthand CSS property applies an animation between styles. It\nis a shorthand for animation-name, animation-duration, animation-timing-function,\nanimation-delay, animation-iteration-count, animation-direction,\nanimation-fill-mode, and animation-play-state.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/animation>\n\n@docs animation\n\n\n# Single Animation\n\n@docs SingleAnimation, defaultSingleAnimation\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "SingleAnimation",
+                "comment": " ",
+                "args": [],
+                "type": "{ delay : Maybe.Maybe CSS.Types.Time.Time, easingFunction : Maybe.Maybe CSS.Properties.Animation.TimingFunction.EasingFunction, duration : Maybe.Maybe CSS.Types.Time.Time, iterationCount : Maybe.Maybe CSS.Properties.Animation.IterationCount.IterationCount, direction : Maybe.Maybe CSS.Properties.Animation.Direction.Direction, fillMode : Maybe.Maybe CSS.Properties.Animation.FillMode.FillMode, playState : Maybe.Maybe CSS.Properties.Animation.PlayState.PlayState, name : Maybe.Maybe CSS.Properties.Animation.Name.Name }"
+            }
+        ],
+        "values": [
+            {
+                "name": "animation",
+                "comment": " ",
+                "type": "List.Nonempty.Nonempty CSS.Properties.Animation.SingleAnimation -> CSS.Internal.Property"
+            },
+            {
+                "name": "defaultSingleAnimation",
+                "comment": " ",
+                "type": "CSS.Properties.Animation.SingleAnimation"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "CSS.Properties.Animation.Delay",
+        "comment": " The animation-delay CSS property specifies the amount of time to wait from applying the\nanimation to an element before beginning to perform the animation. The animation can start later,\nimmediately from its beginning, or immediately and partway through the animation.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/animation-delay>\n\n\n# <time> values\n\n@docs time\n\n\n# Global values\n\n@docs inherit, initial, revert, revertLayer, unset\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "inherit",
+                "comment": " The inherit CSS keyword causes the element to take the computed value of the\nproperty from its parent element.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/inherit>\n\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "initial",
+                "comment": " The initial CSS keyword applies the initial (or default) value of a property\nto an element.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/initial>\n\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "revert",
+                "comment": " The revert CSS keyword reverts the cascaded value of the property from its\ncurrent value to the value the property would have had if no changes had been\nmade by the current style origin to the current element.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/revert>\n\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "revertLayer",
+                "comment": " The revert-layer CSS keyword rolls back the value of a property in a cascade\nlayer to the value of the property in a CSS rule matching the element in a\nprevious cascade layer.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/revert-layer>\n\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "time",
+                "comment": " The time offset, from the moment at which the animation is applied to the element, at which the\nanimation should begin. This may be specified in either seconds (s) or milliseconds (ms). The unit\nis required.\n",
+                "type": "List.Nonempty.Nonempty CSS.Types.Time.Time -> CSS.Internal.Property"
+            },
+            {
+                "name": "unset",
+                "comment": " The unset CSS keyword resets a property to its inherited value if the\nproperty naturally inherits from its parent, and to its initial value if not.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/unset>\n\n",
+                "type": "CSS.Internal.Property"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "CSS.Properties.Animation.Direction",
+        "comment": " The animation-delay CSS property specifies the amount of time to wait from applying the\nanimation to an element before beginning to perform the animation. The animation can start later,\nimmediately from its beginning, or immediately and partway through the animation.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/animation-delay>\n\n\n# Single animation\n\n@docs normal, reverse, alternate, alternateReverse\n\n\n# Multiple animations\n\n@docs multiple\n\n\n# Global values\n\n@docs inherit, initial, revert, revertLayer, unset\n\n\n# Types\n\n@docs Direction, directionToString\n\n",
+        "unions": [
+            {
+                "name": "Direction",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Normal",
+                        []
+                    ],
+                    [
+                        "Reverse",
+                        []
+                    ],
+                    [
+                        "Alternate",
+                        []
+                    ],
+                    [
+                        "AlternateReverse",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "alternate",
+                "comment": " The animation plays backwards each cycle. In other words, each time the animation cycles, the\nanimation will reset to the end state and start over again. Animation steps are performed backwards,\nand timing functions are also reversed. For example, an ease-in timing function becomes ease-out.\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "alternateReverse",
+                "comment": " The animation plays backwards each cycle. In other words, each time the animation cycles, the\nanimation will reset to the end state and start over again. Animation steps are performed backwards,\nand timing functions are also reversed. For example, an ease-in timing function becomes ease-out.\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "directionToString",
+                "comment": " ",
+                "type": "CSS.Properties.Animation.Direction.Direction -> String.String"
+            },
+            {
+                "name": "inherit",
+                "comment": " The inherit CSS keyword causes the element to take the computed value of the\nproperty from its parent element.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/inherit>\n\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "initial",
+                "comment": " The initial CSS keyword applies the initial (or default) value of a property\nto an element.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/initial>\n\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "multiple",
+                "comment": " ",
+                "type": "List.Nonempty.Nonempty CSS.Properties.Animation.Direction.Direction -> CSS.Internal.Property"
+            },
+            {
+                "name": "normal",
+                "comment": " The animation plays forwards each cycle. In other words, each time the animation cycles, the\nanimation will reset to the beginning state and start over again. This is the default value.\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "reverse",
+                "comment": " The animation plays backwards each cycle. In other words, each time the animation cycles, the\nanimation will reset to the end state and start over again. Animation steps are performed backwards,\nand timing functions are also reversed. For example, an ease-in timing function becomes ease-out.\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "revert",
+                "comment": " The revert CSS keyword reverts the cascaded value of the property from its\ncurrent value to the value the property would have had if no changes had been\nmade by the current style origin to the current element.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/revert>\n\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "revertLayer",
+                "comment": " The revert-layer CSS keyword rolls back the value of a property in a cascade\nlayer to the value of the property in a CSS rule matching the element in a\nprevious cascade layer.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/revert-layer>\n\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "unset",
+                "comment": " The unset CSS keyword resets a property to its inherited value if the\nproperty naturally inherits from its parent, and to its initial value if not.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/unset>\n\n",
+                "type": "CSS.Internal.Property"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "CSS.Properties.Animation.Duration",
+        "comment": " The animation-duration CSS property sets the length of time that an animation takes to complete\none cycle.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/animation-duration>\n\n\n# <time> values\n\n@docs time\n\n\n# Global values\n\n@docs inherit, initial, revert, revertLayer, unset\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "inherit",
+                "comment": " The inherit CSS keyword causes the element to take the computed value of the\nproperty from its parent element.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/inherit>\n\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "initial",
+                "comment": " The initial CSS keyword applies the initial (or default) value of a property\nto an element.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/initial>\n\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "revert",
+                "comment": " The revert CSS keyword reverts the cascaded value of the property from its\ncurrent value to the value the property would have had if no changes had been\nmade by the current style origin to the current element.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/revert>\n\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "revertLayer",
+                "comment": " The revert-layer CSS keyword rolls back the value of a property in a cascade\nlayer to the value of the property in a CSS rule matching the element in a\nprevious cascade layer.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/revert-layer>\n\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "time",
+                "comment": " The time that an animation takes to complete one cycle. This may be specified in either\nseconds (s) or milliseconds (ms). The value must be positive or zero and the unit is required.\nA value of 0s, which is the default value, indicates that no animation should occur.\n",
+                "type": "List.Nonempty.Nonempty CSS.Types.Time.Time -> CSS.Internal.Property"
+            },
+            {
+                "name": "unset",
+                "comment": " The unset CSS keyword resets a property to its inherited value if the\nproperty naturally inherits from its parent, and to its initial value if not.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/unset>\n\n",
+                "type": "CSS.Internal.Property"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "CSS.Properties.Animation.FillMode",
+        "comment": " The animation-fill-mode CSS property sets how a CSS animation applies styles to its target\nbefore and after its execution.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/animation-fill-mode>\n\n\n# Single animation\n\n@docs none, forwards, backwards, both\n\n\n# Multiple animations\n\n@docs multiple\n\n\n# Global values\n\n@docs inherit, initial, revert, revertLayer, unset\n\n\n# Types\n\n@docs FillMode, fillModeToString\n\n",
+        "unions": [
+            {
+                "name": "FillMode",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "None",
+                        []
+                    ],
+                    [
+                        "Forwards",
+                        []
+                    ],
+                    [
+                        "Backwards",
+                        []
+                    ],
+                    [
+                        "Both",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "backwards",
+                "comment": " The animation will apply the values defined in the first relevant keyframe as soon as it is\napplied to the target, and retain this during the animation-delay period.\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "both",
+                "comment": " The animation will follow the rules for both forwards and backwards, thus extending the\nanimation properties in both directions.\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "fillModeToString",
+                "comment": " ",
+                "type": "CSS.Properties.Animation.FillMode.FillMode -> String.String"
+            },
+            {
+                "name": "forwards",
+                "comment": " The target will retain the computed values set by the last keyframe encountered during\nexecution.\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "inherit",
+                "comment": " The inherit CSS keyword causes the element to take the computed value of the\nproperty from its parent element.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/inherit>\n\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "initial",
+                "comment": " The initial CSS keyword applies the initial (or default) value of a property\nto an element.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/initial>\n\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "multiple",
+                "comment": " ",
+                "type": "List.Nonempty.Nonempty CSS.Properties.Animation.FillMode.FillMode -> CSS.Internal.Property"
+            },
+            {
+                "name": "none",
+                "comment": " The animation will not apply any styles to the target when it's not executing. The element will\ninstead be displayed using any other CSS rules applied to it. This is the default value.\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "revert",
+                "comment": " The revert CSS keyword reverts the cascaded value of the property from its\ncurrent value to the value the property would have had if no changes had been\nmade by the current style origin to the current element.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/revert>\n\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "revertLayer",
+                "comment": " The revert-layer CSS keyword rolls back the value of a property in a cascade\nlayer to the value of the property in a CSS rule matching the element in a\nprevious cascade layer.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/revert-layer>\n\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "unset",
+                "comment": " The unset CSS keyword resets a property to its inherited value if the\nproperty naturally inherits from its parent, and to its initial value if not.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/unset>\n\n",
+                "type": "CSS.Internal.Property"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "CSS.Properties.Animation.IterationCount",
+        "comment": " The animation-iteration-count CSS property sets the number of times an animation sequence should\nbe played before stopping.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/animation-iteration-count>\n\n\n# Single animation\n\n@docs infinite, count\n\n\n# Multiple animations\n\n@docs multiple\n\n\n# Global values\n\n@docs inherit, initial, revert, revertLayer, unset\n\n\n# Types\n\n@docs IterationCount, iterationCountToString\n\n",
+        "unions": [
+            {
+                "name": "IterationCount",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Infinite",
+                        []
+                    ],
+                    [
+                        "Count",
+                        [
+                            "Basics.Float"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "count",
+                "comment": " The number of times the animation will repeat; this is 1 by default. You may specify non-integer\nvalues to play part of an animation cycle: for example, 0.5 will play half of the animation cycle.\nNegative values are invalid.\n",
+                "type": "Basics.Float -> CSS.Internal.Property"
+            },
+            {
+                "name": "infinite",
+                "comment": " The animation will repeat forever.\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "inherit",
+                "comment": " The inherit CSS keyword causes the element to take the computed value of the\nproperty from its parent element.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/inherit>\n\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "initial",
+                "comment": " The initial CSS keyword applies the initial (or default) value of a property\nto an element.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/initial>\n\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "iterationCountToString",
+                "comment": " ",
+                "type": "CSS.Properties.Animation.IterationCount.IterationCount -> String.String"
+            },
+            {
+                "name": "multiple",
+                "comment": " ",
+                "type": "List.Nonempty.Nonempty CSS.Properties.Animation.IterationCount.IterationCount -> CSS.Internal.Property"
+            },
+            {
+                "name": "revert",
+                "comment": " The revert CSS keyword reverts the cascaded value of the property from its\ncurrent value to the value the property would have had if no changes had been\nmade by the current style origin to the current element.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/revert>\n\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "revertLayer",
+                "comment": " The revert-layer CSS keyword rolls back the value of a property in a cascade\nlayer to the value of the property in a CSS rule matching the element in a\nprevious cascade layer.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/revert-layer>\n\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "unset",
+                "comment": " The unset CSS keyword resets a property to its inherited value if the\nproperty naturally inherits from its parent, and to its initial value if not.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/unset>\n\n",
+                "type": "CSS.Internal.Property"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "CSS.Properties.Animation.Name",
+        "comment": " The animation-name CSS property specifies the names of one or more @keyframes at-rules\ndescribing the animation or animations to apply to the element.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/animation-name>\n\n\n# Single animation\n\n@docs none, keyframe\n\n\n# Multiple animations\n\n@docs multiple\n\n\n# Global values\n\n@docs inherit, initial, revert, revertLayer, unset\n\n\n# Types\n\n@docs Name, nameToString\n\n",
+        "unions": [
+            {
+                "name": "Name",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "None",
+                        []
+                    ],
+                    [
+                        "Keyframe",
+                        [
+                            "CSS.Internal.Keyframe"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "inherit",
+                "comment": " The inherit CSS keyword causes the element to take the computed value of the\nproperty from its parent element.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/inherit>\n\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "initial",
+                "comment": " The initial CSS keyword applies the initial (or default) value of a property\nto an element.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/initial>\n\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "keyframe",
+                "comment": " The number of times the animation will repeat; this is 1 by default. You may specify non-integer\nvalues to play part of an animation cycle: for example, 0.5 will play half of the animation cycle.\nNegative values are invalid.\n",
+                "type": "CSS.Internal.Keyframe -> CSS.Internal.Property"
+            },
+            {
+                "name": "multiple",
+                "comment": " ",
+                "type": "List.Nonempty.Nonempty CSS.Properties.Animation.Name.Name -> CSS.Internal.Property"
+            },
+            {
+                "name": "nameToString",
+                "comment": " ",
+                "type": "CSS.Properties.Animation.Name.Name -> String.String"
+            },
+            {
+                "name": "none",
+                "comment": " The animation will repeat forever.\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "revert",
+                "comment": " The revert CSS keyword reverts the cascaded value of the property from its\ncurrent value to the value the property would have had if no changes had been\nmade by the current style origin to the current element.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/revert>\n\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "revertLayer",
+                "comment": " The revert-layer CSS keyword rolls back the value of a property in a cascade\nlayer to the value of the property in a CSS rule matching the element in a\nprevious cascade layer.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/revert-layer>\n\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "unset",
+                "comment": " The unset CSS keyword resets a property to its inherited value if the\nproperty naturally inherits from its parent, and to its initial value if not.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/unset>\n\n",
+                "type": "CSS.Internal.Property"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "CSS.Properties.Animation.PlayState",
+        "comment": " The animation-play-state CSS property sets whether an animation is running or paused.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/animation-play-state>\n\n\n# Single animation\n\n@docs running, paused\n\n\n# Multiple animations\n\n@docs multiple\n\n\n# Global values\n\n@docs inherit, initial, revert, revertLayer, unset\n\n\n# Types\n\n@docs PlayState, playStateToString\n\n",
+        "unions": [
+            {
+                "name": "PlayState",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Running",
+                        []
+                    ],
+                    [
+                        "Paused",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "inherit",
+                "comment": " The inherit CSS keyword causes the element to take the computed value of the\nproperty from its parent element.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/inherit>\n\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "initial",
+                "comment": " The initial CSS keyword applies the initial (or default) value of a property\nto an element.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/initial>\n\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "multiple",
+                "comment": " ",
+                "type": "List.Nonempty.Nonempty CSS.Properties.Animation.PlayState.PlayState -> CSS.Internal.Property"
+            },
+            {
+                "name": "paused",
+                "comment": " The animation is currently paused.\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "playStateToString",
+                "comment": " ",
+                "type": "CSS.Properties.Animation.PlayState.PlayState -> String.String"
+            },
+            {
+                "name": "revert",
+                "comment": " The revert CSS keyword reverts the cascaded value of the property from its\ncurrent value to the value the property would have had if no changes had been\nmade by the current style origin to the current element.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/revert>\n\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "revertLayer",
+                "comment": " The revert-layer CSS keyword rolls back the value of a property in a cascade\nlayer to the value of the property in a CSS rule matching the element in a\nprevious cascade layer.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/revert-layer>\n\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "running",
+                "comment": " The animation is currently playing.\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "unset",
+                "comment": " The unset CSS keyword resets a property to its inherited value if the\nproperty naturally inherits from its parent, and to its initial value if not.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/unset>\n\n",
+                "type": "CSS.Internal.Property"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "CSS.Properties.Animation.TimingFunction",
+        "comment": " The animation-timing-function CSS property sets how an animation progresses through the duration\nof each cycle.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/animation-timing-function>\n\n\n# Single animation\n\n@docs linear, ease, easeIn, easeOut, easeInOut, cubicBezier, stepStart, stepEnd, steps\n\n\n# Multiple animations\n\n@docs multiple\n\n\n# Global values\n\n@docs inherit, initial, revert, revertLayer, unset\n\n\n# Types\n\n@docs EasingFunction, StepPosition, easingFunctionToString\n\n",
+        "unions": [
+            {
+                "name": "EasingFunction",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Linear",
+                        []
+                    ],
+                    [
+                        "Ease",
+                        []
+                    ],
+                    [
+                        "EaseIn",
+                        []
+                    ],
+                    [
+                        "EaseOut",
+                        []
+                    ],
+                    [
+                        "EaseInOut",
+                        []
+                    ],
+                    [
+                        "CubicBezier",
+                        [
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float"
+                        ]
+                    ],
+                    [
+                        "StepStart",
+                        []
+                    ],
+                    [
+                        "StepEnd",
+                        []
+                    ],
+                    [
+                        "Steps",
+                        [
+                            "Basics.Int",
+                            "Maybe.Maybe CSS.Properties.Animation.TimingFunction.StepPosition"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "StepPosition",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "JumpStart",
+                        []
+                    ],
+                    [
+                        "JumpEnd",
+                        []
+                    ],
+                    [
+                        "JumpNone",
+                        []
+                    ],
+                    [
+                        "JumpBoth",
+                        []
+                    ],
+                    [
+                        "Start",
+                        []
+                    ],
+                    [
+                        "End",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "cubicBezier",
+                "comment": " Equal to cubic-bezier(0, 0, 0.58, 1.0), starts quickly, slowing down the animation continues.\n",
+                "type": "Basics.Float -> Basics.Float -> Basics.Float -> Basics.Float -> CSS.Internal.Property"
+            },
+            {
+                "name": "ease",
+                "comment": " Equal to cubic-bezier(0.25, 0.1, 0.25, 1.0), the default value, increases in velocity towards\nthe middle of the animation, slowing back down at the end.\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "easeIn",
+                "comment": " Equal to cubic-bezier(0.42, 0, 1.0, 1.0), starts off slowly, with the speed of the transition of\nthe animating property increasing until complete.\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "easeInOut",
+                "comment": " Equal to cubic-bezier(0, 0, 0.58, 1.0), starts quickly, slowing down the animation continues.\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "easeOut",
+                "comment": " Equal to cubic-bezier(0, 0, 0.58, 1.0), starts quickly, slowing down the animation continues.\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "easingFunctionToString",
+                "comment": " ",
+                "type": "CSS.Properties.Animation.TimingFunction.EasingFunction -> String.String"
+            },
+            {
+                "name": "inherit",
+                "comment": " The inherit CSS keyword causes the element to take the computed value of the\nproperty from its parent element.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/inherit>\n\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "initial",
+                "comment": " The initial CSS keyword applies the initial (or default) value of a property\nto an element.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/initial>\n\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "linear",
+                "comment": " Equal to cubic-bezier(0.0, 0.0, 1.0, 1.0), animates at an even speed.\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "multiple",
+                "comment": " ",
+                "type": "List.Nonempty.Nonempty CSS.Properties.Animation.TimingFunction.EasingFunction -> CSS.Internal.Property"
+            },
+            {
+                "name": "revert",
+                "comment": " The revert CSS keyword reverts the cascaded value of the property from its\ncurrent value to the value the property would have had if no changes had been\nmade by the current style origin to the current element.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/revert>\n\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "revertLayer",
+                "comment": " The revert-layer CSS keyword rolls back the value of a property in a cascade\nlayer to the value of the property in a CSS rule matching the element in a\nprevious cascade layer.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/revert-layer>\n\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "stepEnd",
+                "comment": " Equal to steps(1, jump-end).\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "stepStart",
+                "comment": " Equal to steps(1, jump-start).\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "steps",
+                "comment": " Equal to steps(1, jump-end).\n",
+                "type": "Basics.Int -> Maybe.Maybe CSS.Properties.Animation.TimingFunction.StepPosition -> CSS.Internal.Property"
+            },
+            {
+                "name": "unset",
+                "comment": " The unset CSS keyword resets a property to its inherited value if the\nproperty naturally inherits from its parent, and to its initial value if not.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/unset>\n\n",
+                "type": "CSS.Internal.Property"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "CSS.Properties.AspectRatio",
+        "comment": " The aspect-ratio CSS property sets a preferred aspect ratio for the box,\nwhich will be used in the calculation of auto sizes and some other layout\nfunctions.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/aspect-ratio>\n\n\n# Values\n\n@docs auto, ratio\n\n\n# Global values\n\n@docs inherit, initial, revert, revertLayer, unset\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "auto",
+                "comment": " Replaced elements with an intrinsic aspect ratio use that aspect ratio,\notherwise the box has no preferred aspect ratio. Size calculations involving\nintrinsic aspect ratio always work with the content box dimensions.\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "inherit",
+                "comment": " Specifies that all the element's properties should be changed to their\ninherited values.\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "initial",
+                "comment": " Specifies that all the element's properties should be changed to their\ninitial values.\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "ratio",
+                "comment": " The box's preferred aspect ratio is the specified ratio of width / height.\nIf height and the preceding slash character are omitted, height defaults to 1.\nSize calculations involving preferred aspect ratio work with the dimensions of\nthe box specified by box-sizing.\n",
+                "type": "Basics.Float -> CSS.Internal.Property"
+            },
+            {
+                "name": "revert",
+                "comment": " Specifies behavior that depends on the stylesheet origin to which the\ndeclaration belongs:\n\n  - If the rule belongs to the author origin, the revert value rolls back the\n    cascade to the user level, so that the specified values are calculated as if\n    no author-level rules were specified for the element. For purposes of\n    revert, the author origin includes the Override and Animation origins.\n  - If the rule belongs to the user origin, the revert value rolls back the\n    cascade to the user-agent level, so that the specified values are calculated\n    as if no author-level or user-level rules were specified for the element.\n  - If the rule belongs to the user-agent origin, the revert value acts like\n    unset.\n\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "revertLayer",
+                "comment": " Specifies that all the element's properties should roll back the cascade to\na previous cascade layer, if one exists. If no other cascade layer exists, the\nelement's properties will roll back to the matching rule, if one exists, in the\ncurrent layer or to a previous style origin.\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "unset",
+                "comment": " Specifies that all the element's properties should be changed to their\ninherited values if they inherit by default, or to their initial values if not.\n",
+                "type": "CSS.Internal.Property"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "CSS.Properties.BackfaceVisibility",
+        "comment": " The backface-visibility CSS property sets whether the back face of an\nelement is visible when turned towards the user.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/backface-visibility>\n\n\n# Keyword values\n\n@docs visible, hidden\n\n\n# Global values\n\n@docs inherit, initial, revert, revertLayer, unset\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "hidden",
+                "comment": " The back face is hidden, effectively making the element invisible when\nturned away from the user.\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "inherit",
+                "comment": " Specifies that all the element's properties should be changed to their\ninherited values.\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "initial",
+                "comment": " Specifies that all the element's properties should be changed to their\ninitial values.\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "revert",
+                "comment": " Specifies behavior that depends on the stylesheet origin to which the\ndeclaration belongs:\n\n  - If the rule belongs to the author origin, the revert value rolls back the\n    cascade to the user level, so that the specified values are calculated as if\n    no author-level rules were specified for the element. For purposes of\n    revert, the author origin includes the Override and Animation origins.\n  - If the rule belongs to the user origin, the revert value rolls back the\n    cascade to the user-agent level, so that the specified values are calculated\n    as if no author-level or user-level rules were specified for the element.\n  - If the rule belongs to the user-agent origin, the revert value acts like\n    unset.\n\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "revertLayer",
+                "comment": " Specifies that all the element's properties should roll back the cascade to\na previous cascade layer, if one exists. If no other cascade layer exists, the\nelement's properties will roll back to the matching rule, if one exists, in the\ncurrent layer or to a previous style origin.\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "unset",
+                "comment": " Specifies that all the element's properties should be changed to their\ninherited values if they inherit by default, or to their initial values if not.\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "visible",
+                "comment": " The back face is visible when turned towards the user.\n",
+                "type": "CSS.Internal.Property"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "CSS.Properties.BoxDecorationBreak",
+        "comment": " The box-decoration-break CSS property specifies how an element's fragments\nshould be rendered when broken across multiple lines, columns, or pages.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/box-decoration-break>\n\n\n# Keyword values\n\n@docs slice, clone\n\n\n# Global values\n\n@docs inherit, initial, revert, revertLayer, unset\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "clone",
+                "comment": " Each box fragment is rendered independently with the specified border,\npadding, and margin wrapping each fragment. The border-radius, border-image, and\nbox-shadow are applied to each fragment independently. The background is also\ndrawn independently for each fragment, which means that a background image with\nbackground-repeat: no-repeat may nevertheless repeat multiple times.\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "inherit",
+                "comment": " Specifies that all the element's properties should be changed to their\ninherited values.\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "initial",
+                "comment": " Specifies that all the element's properties should be changed to their\ninitial values.\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "revert",
+                "comment": " Specifies behavior that depends on the stylesheet origin to which the\ndeclaration belongs:\n\n  - If the rule belongs to the author origin, the revert value rolls back the\n    cascade to the user level, so that the specified values are calculated as if\n    no author-level rules were specified for the element. For purposes of\n    revert, the author origin includes the Override and Animation origins.\n  - If the rule belongs to the user origin, the revert value rolls back the\n    cascade to the user-agent level, so that the specified values are calculated\n    as if no author-level or user-level rules were specified for the element.\n  - If the rule belongs to the user-agent origin, the revert value acts like\n    unset.\n\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "revertLayer",
+                "comment": " Specifies that all the element's properties should roll back the cascade to\na previous cascade layer, if one exists. If no other cascade layer exists, the\nelement's properties will roll back to the matching rule, if one exists, in the\ncurrent layer or to a previous style origin.\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "slice",
+                "comment": " The element is initially rendered as if its box were not fragmented, after\nwhich the rendering for this hypothetical box is sliced into pieces for each\nline/column/page. Note that the hypothetical box can be different for each\nfragment since it uses its own height if the break occurs in the inline\ndirection, and its own width if the break occurs in the block direction. See the\nCSS specification for details.\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "unset",
+                "comment": " Specifies that all the element's properties should be changed to their\ninherited values if they inherit by default, or to their initial values if not.\n",
+                "type": "CSS.Internal.Property"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "CSS.Properties.ZIndex",
+        "comment": " The z-index CSS property sets the z-order of a positioned element and its\ndescendants or flex items. Overlapping elements with a larger z-index cover\nthose with a smaller one.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/z-index>\n\n\n# Keyword values\n\n@docs auto\n\n\n# <integer> values\n\n@docs number\n\n\n# Global values\n\n@docs inherit, initial, revert, revertLayer, unset\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "auto",
+                "comment": " ",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "inherit",
+                "comment": " The inherit CSS keyword causes the element to take the computed value of the\nproperty from its parent element.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/inherit>\n\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "initial",
+                "comment": " The initial CSS keyword applies the initial (or default) value of a property\nto an element.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/initial>\n\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "number",
+                "comment": " ",
+                "type": "Basics.Int -> CSS.Internal.Property"
+            },
+            {
+                "name": "revert",
+                "comment": " The revert CSS keyword reverts the cascaded value of the property from its\ncurrent value to the value the property would have had if no changes had been\nmade by the current style origin to the current element.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/revert>\n\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "revertLayer",
+                "comment": " The revert-layer CSS keyword rolls back the value of a property in a cascade\nlayer to the value of the property in a CSS rule matching the element in a\nprevious cascade layer.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/revert-layer>\n\n",
+                "type": "CSS.Internal.Property"
+            },
+            {
+                "name": "unset",
+                "comment": " The unset CSS keyword resets a property to its inherited value if the\nproperty naturally inherits from its parent, and to its initial value if not.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/unset>\n\n",
+                "type": "CSS.Internal.Property"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "CSS.PseudoClasses",
+        "comment": " A CSS pseudo-class is a keyword added to a selector that specifies a special\nstate of the selected element(s).\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/Pseudo-classes>\n\n\n# Pseudo-classes\n\n@docs custom, hover\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "custom",
+                "comment": " ",
+                "type": "String.String -> List.List CSS.Internal.Property -> CSS.Internal.Class -> CSS.Internal.Class"
+            },
+            {
+                "name": "hover",
+                "comment": " The :hover CSS pseudo-class matches when the user interacts with an element\nwith a pointing device, but does not necessarily activate it.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/:hover>\n\n",
+                "type": "List.List CSS.Internal.Property -> CSS.Internal.Class -> CSS.Internal.Class"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "CSS.PseudoElements",
+        "comment": " A CSS pseudo-element is a keyword added to a selector that lets you style a\nspecific part of the selected element(s).\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/Pseudo-elements>\n\n\n# Pseudo-elements\n\n@docs custom, before, after\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "after",
+                "comment": " In CSS, ::after creates a pseudo-element that is the last child of the\nselected element.\n",
+                "type": "List.List CSS.Internal.Property -> CSS.Internal.Class -> CSS.Internal.Class"
+            },
+            {
+                "name": "before",
+                "comment": " In CSS, ::before creates a pseudo-element that is the first child of the\nselected element.\n",
+                "type": "List.List CSS.Internal.Property -> CSS.Internal.Class -> CSS.Internal.Class"
+            },
+            {
+                "name": "custom",
+                "comment": " ",
+                "type": "String.String -> List.List CSS.Internal.Property -> CSS.Internal.Class -> CSS.Internal.Class"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "CSS.Types.Color",
+        "comment": " The <color> CSS data type represents a color. A <color> may also include an\nalpha-channel transparency value, indicating how the color should composite with\nits background.\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/color_value>\n\n@docs Color, toString\n\n\n# Color keywords\n\nRef.: <https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/color_keywords>\n\n@docs aliceblue, antiquewhite, aqua, aquamarine, azure, beige, bisque, black, blanchedalmond, blue, blueviolet, brown\n@docs burlywood, cadetblue, chartreuse, chocolate, coral, cornflowerblue, cornsilk, crimson, cyan, darkblue, darkcyan\n@docs darkgoldenrod, darkgray, darkgreen, darkgrey, darkkhaki, darkmagenta, darkolivegreen, darkorange, darkorchid, darkred\n@docs darksalmon, darkseagreen, darkslateblue, darkslategray, darkslategrey, darkturquoise, darkviolet, deeppink, deepskyblue\n@docs dimgray, dimgrey, dodgerblue, firebrick, floralwhite, forestgreen, fuchsia, gainsboro, ghostwhite, gold, goldenrod\n@docs gray, green, greenyellow, grey, honeydew, hotpink, indianred, indigo, ivory, khaki, lavender, lavenderblush\n@docs lawngreen, lemonchiffon, lightblue, lightcoral, lightcyan, lightgoldenrodyellow, lightgray, lightgreen, lightgrey\n@docs lightpink, lightsalmon, lightseagreen, lightskyblue, lightslategray, lightslategrey, lightsteelblue, lightyellow, lime\n@docs limegreen, linen, magenta, maroon, mediumaquamarine, mediumblue, mediumorchid, mediumpurple, mediumseagreen, mediumslateblue\n@docs mediumspringgreen, mediumturquoise, mediumvioletred, midnightblue, mintcream, mistyrose, moccasin, navajowhite, navy, oldlace\n@docs olive, olivedrab, orange, orangered, orchid, palegoldenrod, palegreen, paleturquoise, palevioletred, papayawhip, peachpuff\n@docs peru, pink, plum, powderblue, purple, rebeccapurple, red, rosybrown, royalblue, saddlebrown, salmon, sandybrown, seagreen\n@docs seashell, sienna, silver, skyblue, slateblue, slategray, slategrey, snow, springgreen, steelblue, tan, teal, thistle, tomato\n@docs turquoise, violet, wheat, white, whitesmoke, yellow, yellowgreen\n\n\n# Transparent keyword\n\n@docs transparent\n\n\n# CurrentColor keyword\n\n@docs currentColor\n\n\n# RGB colors\n\n@docs rgb, rgba\n\n\n# HSL colors\n\n@docs hsl, hsla\n\n",
+        "unions": [
+            {
+                "name": "Color",
+                "comment": " <color> data type.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "aliceblue",
+                "comment": " `aliceblue` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "antiquewhite",
+                "comment": " `antiquewhite` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "aqua",
+                "comment": " `aqua` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "aquamarine",
+                "comment": " `aquamarine` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "azure",
+                "comment": " `azure` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "beige",
+                "comment": " `beige` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "bisque",
+                "comment": " `bisque` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "black",
+                "comment": " `black` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "blanchedalmond",
+                "comment": " `blanchedalmond` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "blue",
+                "comment": " `blue` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "blueviolet",
+                "comment": " `blueviolet` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "brown",
+                "comment": " `brown` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "burlywood",
+                "comment": " `burlywood` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "cadetblue",
+                "comment": " `cadetblue` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "chartreuse",
+                "comment": " `chartreuse` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "chocolate",
+                "comment": " `chocolate` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "coral",
+                "comment": " `coral` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "cornflowerblue",
+                "comment": " `cornflowerblue` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "cornsilk",
+                "comment": " `cornsilk` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "crimson",
+                "comment": " `crimson` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "currentColor",
+                "comment": " The currentColor keyword represents the value of an element's color property.\nThis lets you use the color value on properties that do not receive it by default.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "cyan",
+                "comment": " `cyan` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "darkblue",
+                "comment": " `darkblue` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "darkcyan",
+                "comment": " `darkcyan` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "darkgoldenrod",
+                "comment": " `darkgoldenrod` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "darkgray",
+                "comment": " `darkgray` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "darkgreen",
+                "comment": " `darkgreen` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "darkgrey",
+                "comment": " `darkgrey` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "darkkhaki",
+                "comment": " `darkkhaki` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "darkmagenta",
+                "comment": " `darkmagenta` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "darkolivegreen",
+                "comment": " `darkolivegreen` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "darkorange",
+                "comment": " `darkorange` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "darkorchid",
+                "comment": " `darkorchid` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "darkred",
+                "comment": " `darkred` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "darksalmon",
+                "comment": " `darksalmon` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "darkseagreen",
+                "comment": " `darkseagreen` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "darkslateblue",
+                "comment": " `darkslateblue` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "darkslategray",
+                "comment": " `darkslategray` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "darkslategrey",
+                "comment": " `darkslategrey` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "darkturquoise",
+                "comment": " `darkturquoise` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "darkviolet",
+                "comment": " `darkviolet` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "deeppink",
+                "comment": " `deeppink` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "deepskyblue",
+                "comment": " `deepskyblue` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "dimgray",
+                "comment": " `dimgray` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "dimgrey",
+                "comment": " `dimgrey` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "dodgerblue",
+                "comment": " `dodgerblue` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "firebrick",
+                "comment": " `firebrick` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "floralwhite",
+                "comment": " `floralwhite` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "forestgreen",
+                "comment": " `forestgreen` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "fuchsia",
+                "comment": " `fuchsia` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "gainsboro",
+                "comment": " `gainsboro` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "ghostwhite",
+                "comment": " `ghostwhite` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "gold",
+                "comment": " `gold` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "goldenrod",
+                "comment": " `goldenrod` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "gray",
+                "comment": " `gray` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "green",
+                "comment": " `green` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "greenyellow",
+                "comment": " `greenyellow` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "grey",
+                "comment": " `grey` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "honeydew",
+                "comment": " `honeydew` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "hotpink",
+                "comment": " `hotpink` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "hsl",
+                "comment": " HSL colors are expressed through the functional hsl() and hsla() notations.\n",
+                "type": "{ hue : Basics.Float, saturation : Basics.Float, lightness : Basics.Float } -> CSS.Types.Color.Color"
+            },
+            {
+                "name": "hsla",
+                "comment": " HSL colors are expressed through the functional hsl() and hsla() notations.\n",
+                "type": "{ hue : Basics.Float, saturation : Basics.Float, lightness : Basics.Float, alpha : Basics.Float } -> CSS.Types.Color.Color"
+            },
+            {
+                "name": "indianred",
+                "comment": " `indianred` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "indigo",
+                "comment": " `indigo` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "ivory",
+                "comment": " `ivory` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "khaki",
+                "comment": " `khaki` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "lavender",
+                "comment": " `lavender` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "lavenderblush",
+                "comment": " `lavenderblush` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "lawngreen",
+                "comment": " `lawngreen` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "lemonchiffon",
+                "comment": " `lemonchiffon` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "lightblue",
+                "comment": " `lightblue` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "lightcoral",
+                "comment": " `lightcoral` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "lightcyan",
+                "comment": " `lightcyan` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "lightgoldenrodyellow",
+                "comment": " `lightgoldenrodyellow` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "lightgray",
+                "comment": " `lightgray` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "lightgreen",
+                "comment": " `lightgreen` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "lightgrey",
+                "comment": " `lightgrey` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "lightpink",
+                "comment": " `lightpink` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "lightsalmon",
+                "comment": " `lightsalmon` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "lightseagreen",
+                "comment": " `lightseagreen` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "lightskyblue",
+                "comment": " `lightskyblue` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "lightslategray",
+                "comment": " `lightslategray` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "lightslategrey",
+                "comment": " `lightslategrey` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "lightsteelblue",
+                "comment": " `lightsteelblue` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "lightyellow",
+                "comment": " `lightyellow` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "lime",
+                "comment": " `lime` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "limegreen",
+                "comment": " `limegreen` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "linen",
+                "comment": " `linen` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "magenta",
+                "comment": " `magenta` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "maroon",
+                "comment": " `maroon` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "mediumaquamarine",
+                "comment": " `mediumaquamarine` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "mediumblue",
+                "comment": " `mediumblue` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "mediumorchid",
+                "comment": " `mediumorchid` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "mediumpurple",
+                "comment": " `mediumpurple` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "mediumseagreen",
+                "comment": " `mediumseagreen` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "mediumslateblue",
+                "comment": " `mediumslateblue` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "mediumspringgreen",
+                "comment": " `mediumspringgreen` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "mediumturquoise",
+                "comment": " `mediumturquoise` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "mediumvioletred",
+                "comment": " `mediumvioletred` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "midnightblue",
+                "comment": " `midnightblue` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "mintcream",
+                "comment": " `mintcream` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "mistyrose",
+                "comment": " `mistyrose` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "moccasin",
+                "comment": " `moccasin` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "navajowhite",
+                "comment": " `navajowhite` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "navy",
+                "comment": " `navy` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "oldlace",
+                "comment": " `oldlace` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "olive",
+                "comment": " `olive` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "olivedrab",
+                "comment": " `olivedrab` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "orange",
+                "comment": " `orange` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "orangered",
+                "comment": " `orangered` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "orchid",
+                "comment": " `orchid` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "palegoldenrod",
+                "comment": " `palegoldenrod` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "palegreen",
+                "comment": " `palegreen` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "paleturquoise",
+                "comment": " `paleturquoise` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "palevioletred",
+                "comment": " `palevioletred` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "papayawhip",
+                "comment": " `papayawhip` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "peachpuff",
+                "comment": " `peachpuff` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "peru",
+                "comment": " `peru` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "pink",
+                "comment": " `pink` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "plum",
+                "comment": " `plum` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "powderblue",
+                "comment": " `powderblue` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "purple",
+                "comment": " `purple` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "rebeccapurple",
+                "comment": " `rebeccapurple` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "red",
+                "comment": " `red` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "rgb",
+                "comment": " RGB colors can be expressed through the functional (rgb(), rgba()) notations.\n",
+                "type": "{ red : Basics.Int, green : Basics.Int, blue : Basics.Int } -> CSS.Types.Color.Color"
+            },
+            {
+                "name": "rgba",
+                "comment": " RGB colors can be expressed through the functional (rgb(), rgba()) notations.\n",
+                "type": "{ red : Basics.Int, green : Basics.Int, blue : Basics.Int, alpha : Basics.Float } -> CSS.Types.Color.Color"
+            },
+            {
+                "name": "rosybrown",
+                "comment": " `rosybrown` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "royalblue",
+                "comment": " `royalblue` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "saddlebrown",
+                "comment": " `saddlebrown` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "salmon",
+                "comment": " `salmon` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "sandybrown",
+                "comment": " `sandybrown` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "seagreen",
+                "comment": " `seagreen` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "seashell",
+                "comment": " `seashell` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "sienna",
+                "comment": " `sienna` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "silver",
+                "comment": " `silver` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "skyblue",
+                "comment": " `skyblue` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "slateblue",
+                "comment": " `slateblue` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "slategray",
+                "comment": " `slategray` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "slategrey",
+                "comment": " `slategrey` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "snow",
+                "comment": " `snow` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "springgreen",
+                "comment": " `springgreen` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "steelblue",
+                "comment": " `steelblue` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "tan",
+                "comment": " `tan` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "teal",
+                "comment": " `teal` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "thistle",
+                "comment": " `thistle` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "toString",
+                "comment": " ",
+                "type": "CSS.Types.Color.Color -> String.String"
+            },
+            {
+                "name": "tomato",
+                "comment": " `tomato` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "transparent",
+                "comment": " The transparent keyword represents a fully transparent color. This makes the\nbackground behind the colored item completely visible. Technically, transparent\nis a shortcut for rgba(0,0,0,0).\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "turquoise",
+                "comment": " `turquoise` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "violet",
+                "comment": " `violet` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "wheat",
+                "comment": " `wheat` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "white",
+                "comment": " `white` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "whitesmoke",
+                "comment": " `whitesmoke` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "yellow",
+                "comment": " `yellow` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            },
+            {
+                "name": "yellowgreen",
+                "comment": " `yellowgreen` color keyword.\n",
+                "type": "CSS.Types.Color.Color"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "CSS.Variables",
+        "comment": "\n\n\n# Variables\n\n@docs variable, var\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "var",
+                "comment": " ",
+                "type": "CSS.Internal.Variable -> String.String"
+            },
+            {
+                "name": "variable",
+                "comment": " ",
+                "type": "String.String -> String.String -> CSS.Internal.Variable"
+            }
+        ],
+        "binops": []
+    }
+]

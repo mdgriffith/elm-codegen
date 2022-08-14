@@ -1,0 +1,653 @@
+[
+    {
+        "name": "Mat2",
+        "comment": "\n\n@docs Mat2\n\n\n# Create\n\n@docs identity, fromRows\n\n\n# Operations\n\n@docs add, mul, invert, transpose, det\n\n\n# Transformations\n\n@docs rotate, scale\n\n\n# Apply matrices\n\n@docs transform\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Mat2",
+                "comment": " ",
+                "args": [],
+                "type": "{ m11 : Basics.Float, m12 : Basics.Float, m21 : Basics.Float, m22 : Basics.Float }"
+            }
+        ],
+        "values": [
+            {
+                "name": "add",
+                "comment": " ",
+                "type": "Mat2.Mat2 -> Mat2.Mat2 -> Mat2.Mat2"
+            },
+            {
+                "name": "det",
+                "comment": " ",
+                "type": "Mat2.Mat2 -> Basics.Float"
+            },
+            {
+                "name": "fromRows",
+                "comment": " Create a matrix out of vectors representing its rows.\n",
+                "type": "Vec2.Vec2 -> Vec2.Vec2 -> Mat2.Mat2"
+            },
+            {
+                "name": "identity",
+                "comment": " ",
+                "type": "Mat2.Mat2"
+            },
+            {
+                "name": "invert",
+                "comment": " ",
+                "type": "Mat2.Mat2 -> Maybe.Maybe Mat2.Mat2"
+            },
+            {
+                "name": "mul",
+                "comment": " ",
+                "type": "Mat2.Mat2 -> Mat2.Mat2 -> Mat2.Mat2"
+            },
+            {
+                "name": "rotate",
+                "comment": " ",
+                "type": "Basics.Float -> Mat2.Mat2"
+            },
+            {
+                "name": "scale",
+                "comment": " ",
+                "type": "Vec2.Vec2 -> Mat2.Mat2"
+            },
+            {
+                "name": "transform",
+                "comment": " ",
+                "type": "Mat2.Mat2 -> Vec2.Vec2 -> Vec2.Vec2"
+            },
+            {
+                "name": "transpose",
+                "comment": " ",
+                "type": "Mat2.Mat2 -> Mat2.Mat2"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Mat3",
+        "comment": "\n\n@docs Mat3\n\n\n# Create\n\n@docs identity, fromRows\n\n\n# Operations\n\n@docs add, mul, invert, transpose\n\n\n# 2D Transformations\n\n@docs rotate, scale, translate\n\n\n# Projections\n\n@docs lookAt, orthographic, viewport\n\n\n# Apply matrices\n\n@docs transformPoint, transformVector, transform\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Mat3",
+                "comment": " ",
+                "args": [],
+                "type": "{ m11 : Basics.Float, m12 : Basics.Float, m13 : Basics.Float, m21 : Basics.Float, m22 : Basics.Float, m23 : Basics.Float, m31 : Basics.Float, m32 : Basics.Float, m33 : Basics.Float }"
+            }
+        ],
+        "values": [
+            {
+                "name": "add",
+                "comment": " ",
+                "type": "Mat3.Mat3 -> Mat3.Mat3 -> Mat3.Mat3"
+            },
+            {
+                "name": "fromRows",
+                "comment": " Create a matrix out of vectors representing its rows.\n",
+                "type": "Vec3.Vec3 -> Vec3.Vec3 -> Vec3.Vec3 -> Mat3.Mat3"
+            },
+            {
+                "name": "identity",
+                "comment": " ",
+                "type": "Mat3.Mat3"
+            },
+            {
+                "name": "invert",
+                "comment": " ",
+                "type": "Mat3.Mat3 -> Maybe.Maybe Mat3.Mat3"
+            },
+            {
+                "name": "lookAt",
+                "comment": " ",
+                "type": "{ centerOfAttention : Vec2.Vec2, upDirection : Vec2.Vec2 } -> Mat3.Mat3"
+            },
+            {
+                "name": "mul",
+                "comment": " ",
+                "type": "Mat3.Mat3 -> Mat3.Mat3 -> Mat3.Mat3"
+            },
+            {
+                "name": "orthographic",
+                "comment": " ",
+                "type": "{ width : Basics.Float, height : Basics.Float } -> Mat3.Mat3"
+            },
+            {
+                "name": "rotate",
+                "comment": " ",
+                "type": "Basics.Float -> Mat3.Mat3"
+            },
+            {
+                "name": "scale",
+                "comment": " Creates a 2D scaling matrix:\n\n    m =  Mat3.scale (vec2 2 3)\n\n    Mat3.transformPoint m (vec2 5 8) == vec2 10 24\n    Mat3.transformVector m (vec2 5 8) == vec2 10 24\n\n",
+                "type": "Vec2.Vec2 -> Mat3.Mat3"
+            },
+            {
+                "name": "transform",
+                "comment": " Transforms a general 3D vector.\n",
+                "type": "Mat3.Mat3 -> Vec3.Vec3 -> Vec3.Vec3"
+            },
+            {
+                "name": "transformPoint",
+                "comment": " Transforms a point, applying scaling, rotation, and translation.\n",
+                "type": "Mat3.Mat3 -> Vec2.Vec2 -> Vec2.Vec2"
+            },
+            {
+                "name": "transformVector",
+                "comment": " Transforms a vector, applying scaling and rotation, but not translation.\n",
+                "type": "Mat3.Mat3 -> Vec2.Vec2 -> Vec2.Vec2"
+            },
+            {
+                "name": "translate",
+                "comment": " ",
+                "type": "Vec2.Vec2 -> Mat3.Mat3"
+            },
+            {
+                "name": "transpose",
+                "comment": " ",
+                "type": "Mat3.Mat3 -> Mat3.Mat3"
+            },
+            {
+                "name": "viewport",
+                "comment": " Transforms clip space into viewport space.\n\n    --      Clip space\n    --\n    --                ^ +1\n    --                |\n    --                |\n    --                |\n    --   -1         y |           +1\n    --   <--------- (0,0) --------->\n    --                |  x\n    --                |\n    --                |\n    --                |\n    --                v -1\n    --\n    --\n    --\n    --\n    --\n    --      Viewport space\n    --                       width\n    --        (0,0)------------>\n    --          |\n    --          |\n    --          |\n    --          |\n    --          v\n    --        height\n    --\n    --\n\n\n\n",
+                "type": "{ width : Basics.Float, height : Basics.Float } -> Mat3.Mat3"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Mat4",
+        "comment": "\n\n@docs Mat4\n\n\n# Create\n\n@docs identity, fromRows\n\n\n# Operations\n\n@docs add, mul, invert, transpose\n\n\n# 3D Transformations\n\n@docs rotate, scale, translate\n\n\n# Projections\n\n@docs lookAt, orthographic, perspective\n\n\n# Apply matrices\n\n@docs transformPoint, transformVector, transform\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Mat4",
+                "comment": " ",
+                "args": [],
+                "type": "{ m11 : Basics.Float, m12 : Basics.Float, m13 : Basics.Float, m14 : Basics.Float, m21 : Basics.Float, m22 : Basics.Float, m23 : Basics.Float, m24 : Basics.Float, m31 : Basics.Float, m32 : Basics.Float, m33 : Basics.Float, m34 : Basics.Float, m41 : Basics.Float, m42 : Basics.Float, m43 : Basics.Float, m44 : Basics.Float }"
+            }
+        ],
+        "values": [
+            {
+                "name": "add",
+                "comment": " ",
+                "type": "Mat4.Mat4 -> Mat4.Mat4 -> Mat4.Mat4"
+            },
+            {
+                "name": "fromRows",
+                "comment": " Create a matrix out of vectors representing its rows.\n",
+                "type": "Vec4.Vec4 -> Vec4.Vec4 -> Vec4.Vec4 -> Vec4.Vec4 -> Mat4.Mat4"
+            },
+            {
+                "name": "identity",
+                "comment": " ",
+                "type": "Mat4.Mat4"
+            },
+            {
+                "name": "invert",
+                "comment": " ",
+                "type": "Mat4.Mat4 -> Maybe.Maybe Mat4.Mat4"
+            },
+            {
+                "name": "lookAt",
+                "comment": " ",
+                "type": "{ eye : Vec3.Vec3, centerOfAttention : Vec3.Vec3, up : Vec3.Vec3 } -> Maybe.Maybe Mat4.Mat4"
+            },
+            {
+                "name": "mul",
+                "comment": " ",
+                "type": "Mat4.Mat4 -> Mat4.Mat4 -> Mat4.Mat4"
+            },
+            {
+                "name": "orthographic",
+                "comment": " ",
+                "type": "{ left : Basics.Float, right : Basics.Float, bottom : Basics.Float, top : Basics.Float, zNear : Basics.Float, zFar : Basics.Float } -> Mat4.Mat4"
+            },
+            {
+                "name": "perspective",
+                "comment": " ",
+                "type": "{ fovy : Basics.Float, aspect : Basics.Float, zNear : Basics.Float, zFar : Basics.Float } -> Mat4.Mat4"
+            },
+            {
+                "name": "rotate",
+                "comment": " Creates a transformation matrix for rotation in radians about the\n3-element vector axis.\n",
+                "type": "Basics.Float -> Vec3.Vec3 -> Mat4.Mat4"
+            },
+            {
+                "name": "scale",
+                "comment": " ",
+                "type": "Vec3.Vec3 -> Mat4.Mat4"
+            },
+            {
+                "name": "transform",
+                "comment": " Transforms a general 4D vector.\n",
+                "type": "Mat4.Mat4 -> Vec4.Vec4 -> Vec4.Vec4"
+            },
+            {
+                "name": "transformPoint",
+                "comment": " Transforms a point, applying scaling, rotation, and translation.\n",
+                "type": "Mat4.Mat4 -> Vec3.Vec3 -> Vec3.Vec3"
+            },
+            {
+                "name": "transformVector",
+                "comment": " Transforms a vector, applying scaling and rotation, but not translation.\n",
+                "type": "Mat4.Mat4 -> Vec3.Vec3 -> Vec3.Vec3"
+            },
+            {
+                "name": "translate",
+                "comment": " ",
+                "type": "Vec3.Vec3 -> Mat4.Mat4"
+            },
+            {
+                "name": "transpose",
+                "comment": " ",
+                "type": "Mat4.Mat4 -> Mat4.Mat4"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Vec2",
+        "comment": "\n\n@docs Vec2\n\n\n# Create\n\n@docs vec2\n\n\n# Setters\n\nThe set functions create a new copy of the vector, updating a single field.\n\n@docs setX, setY\n\n\n# Constants\n\n@docs zero, up, down, left, right\n\n\n# Operations\n\n@docs add, sub, negate, scale, dot, normalize, direction, midpoint\n@docs lerp, angle\n@docs scaleX, scaleY, rotate\n@docs length, lengthSquared, distance, distanceSquared\n@docs cross\n@docs toString\n\n\n# Homogeneous coordinates\n\n@docs point, vector, fromHomogeneous\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Vec2",
+                "comment": " ",
+                "args": [],
+                "type": "{ x : Basics.Float, y : Basics.Float }"
+            }
+        ],
+        "values": [
+            {
+                "name": "add",
+                "comment": " ",
+                "type": "Vec2.Vec2 -> Vec2.Vec2 -> Vec2.Vec2"
+            },
+            {
+                "name": "angle",
+                "comment": " ",
+                "type": "Vec2.Vec2 -> Basics.Float"
+            },
+            {
+                "name": "cross",
+                "comment": " Returns the z-coordinate of the cross product when interpreting the 2D vectors as\n3D vectors of the form `vec3 v.x v.y 0`:\n\n    cross v1 v2\n        == (Vec3.cross\n                (vec3 v1.x v1.y 0)\n                (vec3 v2.x v2.y 0)\n           ).z\n\nThis operation is useful for calculating the torque created by a force in 2D, for example.\n\n",
+                "type": "Vec2.Vec2 -> Vec2.Vec2 -> Basics.Float"
+            },
+            {
+                "name": "direction",
+                "comment": " Returns a normalized vector pointing from `from` to `to`.\n",
+                "type": "{ from : Vec2.Vec2, to : Vec2.Vec2 } -> Vec2.Vec2"
+            },
+            {
+                "name": "distance",
+                "comment": " ",
+                "type": "Vec2.Vec2 -> Vec2.Vec2 -> Basics.Float"
+            },
+            {
+                "name": "distanceSquared",
+                "comment": " ",
+                "type": "Vec2.Vec2 -> Vec2.Vec2 -> Basics.Float"
+            },
+            {
+                "name": "dot",
+                "comment": " ",
+                "type": "Vec2.Vec2 -> Vec2.Vec2 -> Basics.Float"
+            },
+            {
+                "name": "down",
+                "comment": " ",
+                "type": "Vec2.Vec2"
+            },
+            {
+                "name": "fromHomogeneous",
+                "comment": " ",
+                "type": "Vec3.Vec3 -> Vec2.Vec2"
+            },
+            {
+                "name": "left",
+                "comment": " ",
+                "type": "Vec2.Vec2"
+            },
+            {
+                "name": "length",
+                "comment": " Computes `|v|` for a vector `v`.\n\nIf you need the square of this value, use Vec2.lengthSquared for efficiency.\n\n",
+                "type": "Vec2.Vec2 -> Basics.Float"
+            },
+            {
+                "name": "lengthSquared",
+                "comment": " Computes `|v|^2` for a vector `v`.\n\nFaster than `length` because it saves a square root operation.\n\n",
+                "type": "Vec2.Vec2 -> Basics.Float"
+            },
+            {
+                "name": "lerp",
+                "comment": " Linearly interpolate `from` to `to` with a [0, 1] parameter.\n\n    lerp { from = vec2 0 1, to = vec2 1 1 } 0.75 == vec2 0.75 1\n\n",
+                "type": "{ from : Vec2.Vec2, to : Vec2.Vec2 } -> Basics.Float -> Vec2.Vec2"
+            },
+            {
+                "name": "midpoint",
+                "comment": " Returns the midpoint between two points. This operation is commutative.\n",
+                "type": "Vec2.Vec2 -> Vec2.Vec2 -> Vec2.Vec2"
+            },
+            {
+                "name": "negate",
+                "comment": " Given `v`, computes `-v`.\n",
+                "type": "Vec2.Vec2 -> Vec2.Vec2"
+            },
+            {
+                "name": "normalize",
+                "comment": " Normalizes a vector v, returning v/|v|.\nIf the vector is 0, it returns 0.\n",
+                "type": "Vec2.Vec2 -> Vec2.Vec2"
+            },
+            {
+                "name": "point",
+                "comment": " ",
+                "type": "Vec2.Vec2 -> Vec3.Vec3"
+            },
+            {
+                "name": "right",
+                "comment": " ",
+                "type": "Vec2.Vec2"
+            },
+            {
+                "name": "rotate",
+                "comment": " Rotates a given vector by an angle in radians, in counterclockwise fashion.\n",
+                "type": "Basics.Float -> Vec2.Vec2 -> Vec2.Vec2"
+            },
+            {
+                "name": "scale",
+                "comment": " ",
+                "type": "Basics.Float -> Vec2.Vec2 -> Vec2.Vec2"
+            },
+            {
+                "name": "scaleX",
+                "comment": " ",
+                "type": "Basics.Float -> Vec2.Vec2 -> Vec2.Vec2"
+            },
+            {
+                "name": "scaleY",
+                "comment": " ",
+                "type": "Basics.Float -> Vec2.Vec2 -> Vec2.Vec2"
+            },
+            {
+                "name": "setX",
+                "comment": " ",
+                "type": "Basics.Float -> Vec2.Vec2 -> Vec2.Vec2"
+            },
+            {
+                "name": "setY",
+                "comment": " ",
+                "type": "Basics.Float -> Vec2.Vec2 -> Vec2.Vec2"
+            },
+            {
+                "name": "sub",
+                "comment": " `sub v1 v2` computes v1 - v2.\n\nCan be easily confused in pipelines like\n\n    v2\n        |> sub v1 -- this is actually v1 - v2\n\nI think both alternatives are confusing, so I chose this one rather arbitrarily.\n\n",
+                "type": "Vec2.Vec2 -> Vec2.Vec2 -> Vec2.Vec2"
+            },
+            {
+                "name": "toString",
+                "comment": " Convenient for debugging purposes.\n",
+                "type": "Vec2.Vec2 -> String.String"
+            },
+            {
+                "name": "up",
+                "comment": " ",
+                "type": "Vec2.Vec2"
+            },
+            {
+                "name": "vec2",
+                "comment": " Create a vector out of its x and y components.\n",
+                "type": "Basics.Float -> Basics.Float -> Vec2.Vec2"
+            },
+            {
+                "name": "vector",
+                "comment": " ",
+                "type": "Vec2.Vec2 -> Vec3.Vec3"
+            },
+            {
+                "name": "zero",
+                "comment": " ",
+                "type": "Vec2.Vec2"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Vec3",
+        "comment": "\n\n@docs Vec3\n\n\n# Create\n\n@docs vec3\n\n\n# Setters\n\nThe set functions create a new copy of the vector, updating a single field.\n\n@docs setX, setY, setZ\n\n\n# Constants\n\n@docs zero, i, j, k\n\n\n# Operations\n\n@docs add, sub, negate, scale, dot, cross, normalize, direction\n@docs length, lengthSquared, distance, distanceSquared\n\n\n# Homogeneous coordinates\n\n@docs point, vector, fromHomogeneous\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Vec3",
+                "comment": " ",
+                "args": [],
+                "type": "{ x : Basics.Float, y : Basics.Float, z : Basics.Float }"
+            }
+        ],
+        "values": [
+            {
+                "name": "add",
+                "comment": " ",
+                "type": "Vec3.Vec3 -> Vec3.Vec3 -> Vec3.Vec3"
+            },
+            {
+                "name": "cross",
+                "comment": " ",
+                "type": "Vec3.Vec3 -> Vec3.Vec3 -> Vec3.Vec3"
+            },
+            {
+                "name": "direction",
+                "comment": " ",
+                "type": "{ from : Vec3.Vec3, to : Vec3.Vec3 } -> Vec3.Vec3"
+            },
+            {
+                "name": "distance",
+                "comment": " ",
+                "type": "Vec3.Vec3 -> Vec3.Vec3 -> Basics.Float"
+            },
+            {
+                "name": "distanceSquared",
+                "comment": " ",
+                "type": "Vec3.Vec3 -> Vec3.Vec3 -> Basics.Float"
+            },
+            {
+                "name": "dot",
+                "comment": " ",
+                "type": "Vec3.Vec3 -> Vec3.Vec3 -> Basics.Float"
+            },
+            {
+                "name": "fromHomogeneous",
+                "comment": " ",
+                "type": "Vec4.Vec4 -> Vec3.Vec3"
+            },
+            {
+                "name": "i",
+                "comment": " ",
+                "type": "Vec3.Vec3"
+            },
+            {
+                "name": "j",
+                "comment": " ",
+                "type": "Vec3.Vec3"
+            },
+            {
+                "name": "k",
+                "comment": " ",
+                "type": "Vec3.Vec3"
+            },
+            {
+                "name": "length",
+                "comment": " ",
+                "type": "Vec3.Vec3 -> Basics.Float"
+            },
+            {
+                "name": "lengthSquared",
+                "comment": " ",
+                "type": "Vec3.Vec3 -> Basics.Float"
+            },
+            {
+                "name": "negate",
+                "comment": " ",
+                "type": "Vec3.Vec3 -> Vec3.Vec3"
+            },
+            {
+                "name": "normalize",
+                "comment": " Normalizes a vector.\n\n        normalize (vec3 0 3 4) = vec3 0 0.6 0.8\n        normalize (vec3 0 0 0) = vec3 0 0 0\n\n",
+                "type": "Vec3.Vec3 -> Vec3.Vec3"
+            },
+            {
+                "name": "point",
+                "comment": " ",
+                "type": "Vec3.Vec3 -> Vec4.Vec4"
+            },
+            {
+                "name": "scale",
+                "comment": " ",
+                "type": "Basics.Float -> Vec3.Vec3 -> Vec3.Vec3"
+            },
+            {
+                "name": "setX",
+                "comment": " ",
+                "type": "Basics.Float -> Vec3.Vec3 -> Vec3.Vec3"
+            },
+            {
+                "name": "setY",
+                "comment": " ",
+                "type": "Basics.Float -> Vec3.Vec3 -> Vec3.Vec3"
+            },
+            {
+                "name": "setZ",
+                "comment": " ",
+                "type": "Basics.Float -> Vec3.Vec3 -> Vec3.Vec3"
+            },
+            {
+                "name": "sub",
+                "comment": " ",
+                "type": "Vec3.Vec3 -> Vec3.Vec3 -> Vec3.Vec3"
+            },
+            {
+                "name": "vec3",
+                "comment": " Create a vector out of its x, y, and z components.\n",
+                "type": "Basics.Float -> Basics.Float -> Basics.Float -> Vec3.Vec3"
+            },
+            {
+                "name": "vector",
+                "comment": " ",
+                "type": "Vec3.Vec3 -> Vec4.Vec4"
+            },
+            {
+                "name": "zero",
+                "comment": " ",
+                "type": "Vec3.Vec3"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Vec4",
+        "comment": "\n\n@docs Vec4\n\n\n# Create\n\n@docs vec4\n\n\n# Setters\n\nThe set functions create a new copy of the vector, updating a single field.\n\n@docs setX, setY, setZ, setW\n\n\n# Constants\n\n@docs zero\n\n\n# Operations\n\n@docs add, sub, negate, scale, dot, normalize, direction\n@docs length, lengthSquared, distance, distanceSquared\n@docs toString\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Vec4",
+                "comment": " ",
+                "args": [],
+                "type": "{ x : Basics.Float, y : Basics.Float, z : Basics.Float, w : Basics.Float }"
+            }
+        ],
+        "values": [
+            {
+                "name": "add",
+                "comment": " ",
+                "type": "Vec4.Vec4 -> Vec4.Vec4 -> Vec4.Vec4"
+            },
+            {
+                "name": "direction",
+                "comment": " ",
+                "type": "{ from : Vec4.Vec4, to : Vec4.Vec4 } -> Vec4.Vec4"
+            },
+            {
+                "name": "distance",
+                "comment": " ",
+                "type": "Vec4.Vec4 -> Vec4.Vec4 -> Basics.Float"
+            },
+            {
+                "name": "distanceSquared",
+                "comment": " ",
+                "type": "Vec4.Vec4 -> Vec4.Vec4 -> Basics.Float"
+            },
+            {
+                "name": "dot",
+                "comment": " ",
+                "type": "Vec4.Vec4 -> Vec4.Vec4 -> Basics.Float"
+            },
+            {
+                "name": "length",
+                "comment": " ",
+                "type": "Vec4.Vec4 -> Basics.Float"
+            },
+            {
+                "name": "lengthSquared",
+                "comment": " ",
+                "type": "Vec4.Vec4 -> Basics.Float"
+            },
+            {
+                "name": "negate",
+                "comment": " ",
+                "type": "Vec4.Vec4 -> Vec4.Vec4"
+            },
+            {
+                "name": "normalize",
+                "comment": " ",
+                "type": "Vec4.Vec4 -> Vec4.Vec4"
+            },
+            {
+                "name": "scale",
+                "comment": " ",
+                "type": "Basics.Float -> Vec4.Vec4 -> Vec4.Vec4"
+            },
+            {
+                "name": "setW",
+                "comment": " ",
+                "type": "Basics.Float -> Vec4.Vec4 -> Vec4.Vec4"
+            },
+            {
+                "name": "setX",
+                "comment": " ",
+                "type": "Basics.Float -> Vec4.Vec4 -> Vec4.Vec4"
+            },
+            {
+                "name": "setY",
+                "comment": " ",
+                "type": "Basics.Float -> Vec4.Vec4 -> Vec4.Vec4"
+            },
+            {
+                "name": "setZ",
+                "comment": " ",
+                "type": "Basics.Float -> Vec4.Vec4 -> Vec4.Vec4"
+            },
+            {
+                "name": "sub",
+                "comment": " ",
+                "type": "Vec4.Vec4 -> Vec4.Vec4 -> Vec4.Vec4"
+            },
+            {
+                "name": "toString",
+                "comment": " ",
+                "type": "Vec4.Vec4 -> String.String"
+            },
+            {
+                "name": "vec4",
+                "comment": " Create a vector out of its x, y, z, and w components.\n",
+                "type": "Basics.Float -> Basics.Float -> Basics.Float -> Basics.Float -> Vec4.Vec4"
+            },
+            {
+                "name": "zero",
+                "comment": " ",
+                "type": "Vec4.Vec4"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,125 @@
+[
+    {
+        "name": "Getto.Command",
+        "comment": " utility of Cmd\n\n# Construction\n@docs none\n\n# Helper\n@docs map\n\n# Chaining\n@docs andThen\n ",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "andThen",
+                "comment": " merge 'Cmd msg' in command tuple\n\n    type Msg\n      = HelloWorld\n\n    init : ( Model, Cmd Msg )\n    init =\n      ( (), Cmd.none )\n      |> Command.andThen updateA\n      |> Command.andThen updateB\n\n    updateA : ( Model, Cmd Msg )\n    updateA model = ( model, Cmd.none )\n\n    updateB : ( Model, Cmd Msg )\n    updateB model = ( model, Cmd.none )\n ",
+                "type": "(model -> ( model, Platform.Cmd.Cmd msg )) -> ( model, Platform.Cmd.Cmd msg ) -> ( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "map",
+                "comment": " map `Cmd msg` in command tuple\n\n    type Msg\n      = Sub SubMsg\n\n    type SubMsg\n      = HelloWorld\n\n    update : Msg -> Model -> ( Model, Cmd Msg )\n    update message model =\n      case message of\n        Sub msg ->\n          model |> updateSub msg |> Command.map Sub\n\n\n    updateSub : SubMsg -> Model -> ( Model, Cmd SubMsg )\n    updateSub message model =\n      case message of\n        HelloWorld -> ( model, Cmd.none )\n ",
+                "type": "(msg -> super) -> ( model, Platform.Cmd.Cmd msg ) -> ( model, Platform.Cmd.Cmd super )"
+            },
+            {
+                "name": "none",
+                "comment": " create 'Do nothing' command\n\n    model |> Command.none\n    -- ( model, Cmd.none )\n ",
+                "type": "model -> ( model, Platform.Cmd.Cmd msg )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Getto.Command.Transition",
+        "comment": " utility fo `model -> Cmd msg`\n\n# Definition\n@docs Transition, Prop\n\n# Construction\n@docs none, prop\n\n# Apply\n@docs exec, update\n\n# Helpers\n@docs batch, map, compose, compose2, compose3, compose4, compose5, compose6, compose7, compose8\n ",
+        "unions": [
+            {
+                "name": "Prop",
+                "comment": " set of getter (big -> small) and setter (small -> big -> big)\n ",
+                "args": [
+                    "big",
+                    "small"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Transition",
+                "comment": " function of generate `Cmd msg` from model\n ",
+                "args": [
+                    "model",
+                    "msg"
+                ],
+                "type": "model -> Platform.Cmd.Cmd msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "batch",
+                "comment": " batch Transition\n\n    [ Transition.none\n    , Transition.none\n    ] |> Transition.batch\n ",
+                "type": "List.List (Getto.Command.Transition.Transition model msg) -> model -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "compose",
+                "comment": " compose ( model, Transition ) tuples\n\n    type alias Model =\n      { sub : SubModel\n      }\n\n    Transition.compose\n      Model\n        ( subModel, Transition.none )\n ",
+                "type": "(a -> model) -> ( a, Getto.Command.Transition.Transition m msg ) -> ( model, Getto.Command.Transition.Transition m msg )"
+            },
+            {
+                "name": "compose2",
+                "comment": " compose ( model, Transition ) tuples\n\n    type alias Model =\n      { sub   : SubModel\n      , other : OtherModel\n      }\n\n    Transition.compose\n      Model\n        ( subModel,   Transition.none )\n        ( otherModel, Transition.none )\n ",
+                "type": "(a -> b -> model) -> ( a, Getto.Command.Transition.Transition m msg ) -> ( b, Getto.Command.Transition.Transition m msg ) -> ( model, Getto.Command.Transition.Transition m msg )"
+            },
+            {
+                "name": "compose3",
+                "comment": " compose with 3 args ",
+                "type": "(a -> b -> c -> model) -> ( a, Getto.Command.Transition.Transition m msg ) -> ( b, Getto.Command.Transition.Transition m msg ) -> ( c, Getto.Command.Transition.Transition m msg ) -> ( model, Getto.Command.Transition.Transition m msg )"
+            },
+            {
+                "name": "compose4",
+                "comment": " compose with 4 args ",
+                "type": "(a -> b -> c -> d -> model) -> ( a, Getto.Command.Transition.Transition m msg ) -> ( b, Getto.Command.Transition.Transition m msg ) -> ( c, Getto.Command.Transition.Transition m msg ) -> ( d, Getto.Command.Transition.Transition m msg ) -> ( model, Getto.Command.Transition.Transition m msg )"
+            },
+            {
+                "name": "compose5",
+                "comment": " compose with 5 args ",
+                "type": "(a -> b -> c -> d -> e -> model) -> ( a, Getto.Command.Transition.Transition m msg ) -> ( b, Getto.Command.Transition.Transition m msg ) -> ( c, Getto.Command.Transition.Transition m msg ) -> ( d, Getto.Command.Transition.Transition m msg ) -> ( e, Getto.Command.Transition.Transition m msg ) -> ( model, Getto.Command.Transition.Transition m msg )"
+            },
+            {
+                "name": "compose6",
+                "comment": " compose with 6 args ",
+                "type": "(a -> b -> c -> d -> e -> f -> model) -> ( a, Getto.Command.Transition.Transition m msg ) -> ( b, Getto.Command.Transition.Transition m msg ) -> ( c, Getto.Command.Transition.Transition m msg ) -> ( d, Getto.Command.Transition.Transition m msg ) -> ( e, Getto.Command.Transition.Transition m msg ) -> ( f, Getto.Command.Transition.Transition m msg ) -> ( model, Getto.Command.Transition.Transition m msg )"
+            },
+            {
+                "name": "compose7",
+                "comment": " compose with 7 args ",
+                "type": "(a -> b -> c -> d -> e -> f -> g -> model) -> ( a, Getto.Command.Transition.Transition m msg ) -> ( b, Getto.Command.Transition.Transition m msg ) -> ( c, Getto.Command.Transition.Transition m msg ) -> ( d, Getto.Command.Transition.Transition m msg ) -> ( e, Getto.Command.Transition.Transition m msg ) -> ( f, Getto.Command.Transition.Transition m msg ) -> ( g, Getto.Command.Transition.Transition m msg ) -> ( model, Getto.Command.Transition.Transition m msg )"
+            },
+            {
+                "name": "compose8",
+                "comment": " compose with 8 args ",
+                "type": "(a -> b -> c -> d -> e -> f -> g -> h -> model) -> ( a, Getto.Command.Transition.Transition m msg ) -> ( b, Getto.Command.Transition.Transition m msg ) -> ( c, Getto.Command.Transition.Transition m msg ) -> ( d, Getto.Command.Transition.Transition m msg ) -> ( e, Getto.Command.Transition.Transition m msg ) -> ( f, Getto.Command.Transition.Transition m msg ) -> ( g, Getto.Command.Transition.Transition m msg ) -> ( h, Getto.Command.Transition.Transition m msg ) -> ( model, Getto.Command.Transition.Transition m msg )"
+            },
+            {
+                "name": "exec",
+                "comment": " execute Transition\n\n    model |> Transition.exec Transition.none\n    -- ( model, Cmd.none )\n ",
+                "type": "Getto.Command.Transition.Transition model msg -> model -> ( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "map",
+                "comment": " map ( model, Transition ) tuple\n\n    type Msg\n      = Sub SubMsg\n\n    updateSub : model -> ( model, Transition model SubMsg )\n\n    model |> updateSub |> Transition.map Sub\n    -- ( model, Transition model Msg )\n ",
+                "type": "(msg -> super) -> ( model, Getto.Command.Transition.Transition m msg ) -> ( model, Getto.Command.Transition.Transition m super )"
+            },
+            {
+                "name": "none",
+                "comment": " create 'Do nothing' Transition\n ",
+                "type": "Getto.Command.Transition.Transition model msg"
+            },
+            {
+                "name": "prop",
+                "comment": " construct Prop from getter and setter\n\n    type alias Model =\n      { name : String\n      }\n\n    name_ = Transition.prop .name (\\v m -> { m | name = v })\n ",
+                "type": "Getto.Command.Transition.Get big small -> Getto.Command.Transition.Set big small -> Getto.Command.Transition.Prop big small"
+            },
+            {
+                "name": "update",
+                "comment": " update small that described by Prop\n\n    type alias Model =\n      { sub : String\n      }\n\n    sub_ = Transition.prop .sub (\\v m -> { m | sub = v })\n\n    updateSub model = ( model ++ \", world\", Transition.none )\n\n    { sub = \"hello\" } |> Transition.update sub_ updateSub\n    -- ( { sub = \"hello, world\" }, Transition msg )\n ",
+                "type": "Getto.Command.Transition.Prop big small -> (small -> ( small, msg )) -> big -> ( big, msg )"
+            }
+        ],
+        "binops": []
+    }
+]

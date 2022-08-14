@@ -1,0 +1,227 @@
+[
+    {
+        "name": "Tree.Blocks",
+        "comment": " This module provides tools for converting text into a list of blocks, where\n\n        type alias Block =\n            { indent : Int\n            , content : String\n            , lineNumber : Int\n            }\n\nLists of blocks are used by the functions in Tree.Build to construct trees\nform text. Here are some examples:\n\n        > fromStringAsLines \"one\\n  two\\n    three\"\n         [ { content = \"one\\nho ho ho!\"\n            , indent = 0, lineNumber = 0 }\n          ,{ content = \"two\\nha ha ha!\"\n            , indent = 2, lineNumber = 1 }\n         ]\n\n        > fromStringAsParagraphs \"one\\n\\two\\nthree\\n\\n  ha ha ha!\"\n          [{ content = \"one\\n\\two\\nthree\"\n            , indent = 0, lineNumber = 0 }\n          ,{ content = \"ha ha ha!\"\n           , indent = 2, lineNumber = 3 }\n          ]\n\nThe line number is the position of the first line of\nthe text of the block in the source text.\n\n@docs Block, fromStringAsLines, fromStringAsParagraphs\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Block",
+                "comment": " Aliased from Tree.BlocksV\n",
+                "args": [],
+                "type": "Tree.BlocksV.Block"
+            }
+        ],
+        "values": [
+            {
+                "name": "fromStringAsLines",
+                "comment": " ",
+                "type": "String.String -> List.List Tree.Blocks.Block"
+            },
+            {
+                "name": "fromStringAsParagraphs",
+                "comment": " ",
+                "type": "String.String -> List.List Tree.Blocks.Block"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Tree.BlocksV",
+        "comment": " This module is like Tree.Blocks, except that if the first line of a block\nis deemed to signal the beginning of a \"verbatim block,\" all succeeding lines will be\nincorporated in it, so long as their indentation level is greater than or equal to the\nindentation level of the first line. To make this work, function fromStringAsParagraphs requires an additional argument:\n\n    fromStringAsParagraphs :\n        (String -> Bool)\n        -> String\n        -> List Block\n\nThe additional argument is a predicate which determines whether a line to be\nconsidered the first line of a verbatim blck.\n\n@docs Block, fromStringAsLines, fromStringAsParagraphs, quantumOfBlocks\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Block",
+                "comment": " ",
+                "args": [],
+                "type": "{ indent : Basics.Int, lineNumber : Basics.Int, numberOfLines : Basics.Int, content : String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "fromStringAsLines",
+                "comment": " ",
+                "type": "String.String -> List.List Tree.BlocksV.Block"
+            },
+            {
+                "name": "fromStringAsParagraphs",
+                "comment": " ",
+                "type": "(String.String -> Basics.Bool) -> String.String -> List.List Tree.BlocksV.Block"
+            },
+            {
+                "name": "quantumOfBlocks",
+                "comment": " Used by Tree.Build\n",
+                "type": "List.List Tree.BlocksV.Block -> Basics.Int"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Tree.Build",
+        "comment": " This module provides tools for building\na tree from a string or a list of blocks. As noted\nin the README, a tree\nis represented in text as an outline:\n\n     > data = \"1\\n 2\\n 3\\n 4\\n5\\n 6\\n 7\"\n\nTo build a tree from it, we apply the function fromString:\n\n    fromString :\n        node\n        -> (Block -> a)\n        -> String\n        -> Result Error (Tree a)\n\n\n    > fromString \"?\" .content data\n      Tree \"0\" [\n            Tree \"1\" [Tree \"2\" [],Tree \"3\" [], Tree \"4\" []]\n          , Tree \"5\" [Tree \"6\" [],Tree \"7\" []]\n      ]\n\nThe first argument of fromString is a label for a default node.\nThe second argument tells how to build a node from a Block.\nIn the example, we are building a tree with string labels,\nso we need a function of type (Block -> String). Recall that\n\n        type alias Block = { indent : Int, content: String }\n\nTherefore\n\n        .content : Block -> String\n\nhas the correct type. Here we use the representation of rose trees found in\n[elm/rose-tree](https://package.elm-lang.org/packages/zwilias/elm-rosetree/latest/).\n\n@docs fromString, fromBlocks, forestFromString, forestFromBlocks, Error\n\n",
+        "unions": [
+            {
+                "name": "Error",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "EmptyBlocks",
+                        []
+                    ],
+                    [
+                        "BlocksNotWellFormed",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "forestFromBlocks",
+                "comment": " ",
+                "type": "a -> (Tree.Blocks.Block -> a) -> (a -> Tree.Blocks.Block) -> List.List Tree.Blocks.Block -> Result.Result Tree.Build.Error (List.List (Tree.Tree a))"
+            },
+            {
+                "name": "forestFromString",
+                "comment": " Example:\n\n    > Build.forestFromString\n          \"?\"\n          .content\n          (\\str -> {indent = 0, content = str})\n          \"1\\n 2\\n 3\\na\\n b\\n c\"\n      Ok [  Tree \"1\" [Tree \"2\" [],Tree \"3\" []]\n           ,Tree \"a\" [Tree \"b\" [],Tree \"c\" []]\n         ]\n\n",
+                "type": "a -> (Tree.Blocks.Block -> a) -> (a -> Tree.Blocks.Block) -> String.String -> Result.Result Tree.Build.Error (List.List (Tree.Tree a))"
+            },
+            {
+                "name": "fromBlocks",
+                "comment": " ",
+                "type": "a -> (Tree.Blocks.Block -> a) -> List.List Tree.Blocks.Block -> Result.Result Tree.Build.Error (Tree.Tree a)"
+            },
+            {
+                "name": "fromString",
+                "comment": "\n\n    > Build.fromString \"?\" .content \"1\\n 2\\n 3\"\n      Ok (Tree \"1\" [Tree \"2\" [],Tree \"3\" []])\n\n",
+                "type": "a -> (Tree.Blocks.Block -> a) -> String.String -> Result.Result Tree.Build.Error (Tree.Tree a)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Tree.Lib",
+        "comment": " Utility functions. preOrder and levelOrder transform\nTree a to List a, where the nodes are listed in the\ngiven order. Given Tree a, the edges function returns\nList (a,a), where a pair (p,q) is in the returned list\nif and only if q is a child of p.\n\n@docs preOrder, levelOrder, edges\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "edges",
+                "comment": "\n\n    Return a list of pairs (x,y) where\n\n        - x and y are of type a\n        - (x,y) is in the list if and only if y is a chiild of x.\n\n",
+                "type": "Tree.Tree a -> List.List ( a, a )"
+            },
+            {
+                "name": "levelOrder",
+                "comment": " ",
+                "type": "Tree.Tree a -> List.List a"
+            },
+            {
+                "name": "preOrder",
+                "comment": " ",
+                "type": "Tree.Tree a -> List.List a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Tree.Random",
+        "comment": " Utilities for generating and collecting statistics on random trees.\n\n@docs generate, generateOutline, depths\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "depths",
+                "comment": " depths k n seed: generate n random trees of k nodes\nusing the given seed and collect statistics\non their depths\n\n    > depths 10 10 0\n    [(2,1),(3,2),(4,3),(5,2),(8,2)] -- one tree of depth two, two trees of depth three, etc.\n\n    > depths 10 10 1\n    [(2,1),(3,1),(4,3),(5,2),(7,1),(8,2)]\n\n    > depths 10 10 2\n    [(2,1),(3,2),(4,3),(5,2),(7,1),(8,1)]\n\n",
+                "type": "Basics.Int -> Basics.Int -> Basics.Int -> List.List ( Basics.Int, Basics.Int )"
+            },
+            {
+                "name": "generate",
+                "comment": " Generate a random rose tree with the given number nodes\nand with given seed.\n",
+                "type": "Basics.Int -> Basics.Int -> Result.Result Tree.Build.Error (Tree.Tree String.String)"
+            },
+            {
+                "name": "generateOutline",
+                "comment": " Generate a random outline.\n",
+                "type": "Basics.Int -> Basics.Int -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Tree.Render",
+        "comment": " Functions for transforming a tree or a forest to a string.\n\n@docs toString, forestToString, Preferences, defaults, toGraph\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Preferences",
+                "comment": " Preferences for function toGraph.\n",
+                "args": [],
+                "type": "{ halfAngle : Basics.Float, initialEdgeLength : Basics.Float, scaleFactor : Basics.Float, ballRadius : Basics.Float, ballColor : String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaults",
+                "comment": " Default Preferences\n",
+                "type": "Tree.Render.Preferences"
+            },
+            {
+                "name": "forestToString",
+                "comment": " The first argument is the quantum of indentation. The second\nis a function for transforming a node of a forest to a string.\n",
+                "type": "Basics.Int -> (a -> String.String) -> List.List (Tree.Tree a) -> String.String"
+            },
+            {
+                "name": "toGraph",
+                "comment": " Transform a Tree to a Graph: a data structure that can be rendered to SVG.\n",
+                "type": "Tree.Render.Preferences -> (a -> String.String) -> Tree.Tree a -> Tree.Graph.Graph"
+            },
+            {
+                "name": "toString",
+                "comment": " The first argument is the quantum of indentation. The second\nis a function for transforming a node of a tree to a string.\n",
+                "type": "Basics.Int -> (a -> String.String) -> Tree.Tree a -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Tree.Svg",
+        "comment": " Helper functions for rendering trees:\n\n    import Tree.Build\n    import Tree.Render\n\n    -- Build the tree from text\n    tree =\n        Tree.Build.fromString \"?\" .content \"1\\n 2\\n 3\\n 4\\n\"\n\n    -- Build the graph\n    graph =\n        Result.map (Tree.Render.toGraph preferences identity)\n          tree |> Result.withDefault []\n\n\n    -- Render the graph.  The first argument is the label style.\n    Tree.Svg.render NoLabel (Tree.Svg.transform 280 100 60 60 0.5 graph)\n\n@docs LabelStyle, render, transform\n\n",
+        "unions": [
+            {
+                "name": "LabelStyle",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "NoLabel",
+                        []
+                    ],
+                    [
+                        "FullLabel",
+                        []
+                    ],
+                    [
+                        "FirstWord",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "render",
+                "comment": " Render a graph to SVG\n",
+                "type": "Tree.Svg.LabelStyle -> Tree.Graph.Graph -> List.List (Svg.Svg msg)"
+            },
+            {
+                "name": "transform",
+                "comment": " Transform: shift by dx, dy and rescale by sx,sy,sr where the\narguments are dx, dy, sx, sy, sr, graph\n",
+                "type": "Basics.Float -> Basics.Float -> Basics.Float -> Basics.Float -> Basics.Float -> Tree.Graph.Graph -> Tree.Graph.Graph"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,141 @@
+[
+    {
+        "name": "Reader",
+        "comment": " Basically, a `Reader` is just a wrapper for a function type.\nIt is quite handy in that it solves the problem to manually having to\nthread a single configuration parameter to many functions.\nIt is often viewed as a way to do dependency injection in FP.\n\n\n# The Reader type\n\n@docs Reader\n\n\n# Construction\n\n@docs run, reader, ask, asks, local\n\n\n# Transformations and chaining\n\n@docs map, map2, map3, map4, map5, andMap, andThen, join\n\n",
+        "unions": [
+            {
+                "name": "Reader",
+                "comment": " `Reader env value` represents a computation waiting for an environment\nvalue to produce its result.\n",
+                "args": [
+                    "env",
+                    "value"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "andMap",
+                "comment": " Apply a function wrapped in a Reader to a value wrapped in a Reader.\nThis is particularly useful for transforming a succession of resulting values\nwith a single function.\n\n    map (\\x y z -> ( x, y, z )) (reader 'x')\n        |> andMap (reader 42)\n        |> andMap (reader \"fourty two\")\n        == reader ( 'x', 42, \"fourty two\" )\n\n",
+                "type": "Reader.Reader env a -> Reader.Reader env (a -> b) -> Reader.Reader env b"
+            },
+            {
+                "name": "andThen",
+                "comment": " Chain a Reader with a computation producing a Reader\n",
+                "type": "(a -> Reader.Reader env b) -> Reader.Reader env a -> Reader.Reader env b"
+            },
+            {
+                "name": "ask",
+                "comment": " Fetch the value of the environment.\n",
+                "type": "Reader.Reader env env"
+            },
+            {
+                "name": "asks",
+                "comment": " Embed a function in a Reader\n",
+                "type": "(env -> value) -> Reader.Reader env value"
+            },
+            {
+                "name": "join",
+                "comment": " Discard one level of Reader\n",
+                "type": "Reader.Reader env (Reader.Reader env a) -> Reader.Reader env a"
+            },
+            {
+                "name": "local",
+                "comment": " Locally modify the environment for the next Reader action.\n",
+                "type": "(env -> env) -> Reader.Reader env a -> Reader.Reader env a"
+            },
+            {
+                "name": "map",
+                "comment": " Apply a function to the resulting value of the Reader.\n",
+                "type": "(a -> b) -> Reader.Reader env a -> Reader.Reader env b"
+            },
+            {
+                "name": "map2",
+                "comment": " ",
+                "type": "(a -> b -> c) -> Reader.Reader env a -> Reader.Reader env b -> Reader.Reader env c"
+            },
+            {
+                "name": "map3",
+                "comment": " ",
+                "type": "(a -> b -> c -> d) -> Reader.Reader env a -> Reader.Reader env b -> Reader.Reader env c -> Reader.Reader env d"
+            },
+            {
+                "name": "map4",
+                "comment": " ",
+                "type": "(a -> b -> c -> d -> e) -> Reader.Reader env a -> Reader.Reader env b -> Reader.Reader env c -> Reader.Reader env d -> Reader.Reader env e"
+            },
+            {
+                "name": "map5",
+                "comment": " ",
+                "type": "(a -> b -> c -> d -> e -> f) -> Reader.Reader env a -> Reader.Reader env b -> Reader.Reader env c -> Reader.Reader env d -> Reader.Reader env e -> Reader.Reader env f"
+            },
+            {
+                "name": "reader",
+                "comment": " Construct a Reader that will produce the value provided, no matter the environment.\n",
+                "type": "value -> Reader.Reader env value"
+            },
+            {
+                "name": "run",
+                "comment": " Run the reader, providing it, at last, its environment.\n",
+                "type": "Reader.Reader env value -> env -> value"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Reader.Except",
+        "comment": " Sometimes, you may want to build up a computation using `Reader env value` where\nthe value is a result that may or may not fail. Elm already provides us with the\n`Result err value` that provides this functionality.\nHowever, working with nested ADT can be cumbersome. This module exposes the type\n`Except env err val` which is just a type alias for a `Reader env (Result err val)`\nand provides some useful functions for mapping over or chaining such nested computations.\n\n\n# The Except type\n\n@docs Except\n\n\n# Construction\n\n@docs succeed, fail\n\n\n# Transformations and chaining\n\n@docs map, andMap, andThen, andResult, join\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Except",
+                "comment": " The Except type wraps the result from a Reader into a Result.\n",
+                "args": [
+                    "env",
+                    "err",
+                    "val"
+                ],
+                "type": "Reader.Reader env (Result.Result err val)"
+            }
+        ],
+        "values": [
+            {
+                "name": "andMap",
+                "comment": " Apply a function embeded in an Except to a successful value in an Except.\n",
+                "type": "Reader.Except.Except env err a -> Reader.Except.Except env err (a -> b) -> Reader.Except.Except env err b"
+            },
+            {
+                "name": "andResult",
+                "comment": " Chain Except with a Result.\n",
+                "type": "(a -> Result.Result err b) -> Reader.Except.Except env err a -> Reader.Except.Except env err b"
+            },
+            {
+                "name": "andThen",
+                "comment": " Chain Excepts together.\n",
+                "type": "(a -> Reader.Except.Except env err b) -> Reader.Except.Except env err a -> Reader.Except.Except env err b"
+            },
+            {
+                "name": "fail",
+                "comment": " Embeds a failure inside a Reader.\n",
+                "type": "err -> Reader.Except.Except env err a"
+            },
+            {
+                "name": "join",
+                "comment": " Discards one level of Except\n",
+                "type": "Reader.Except.Except env err (Reader.Except.Except env err a) -> Reader.Except.Except env err a"
+            },
+            {
+                "name": "map",
+                "comment": " Apply a function to the resulting value of the Reader if successful.\n",
+                "type": "(a -> b) -> Reader.Except.Except env err a -> Reader.Except.Except env err b"
+            },
+            {
+                "name": "succeed",
+                "comment": " Embed a successful value inside a Reader.\n",
+                "type": "a -> Reader.Except.Except env err a"
+            }
+        ],
+        "binops": []
+    }
+]

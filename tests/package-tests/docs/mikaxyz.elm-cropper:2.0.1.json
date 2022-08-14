@@ -1,0 +1,91 @@
+[
+    {
+        "name": "Cropper",
+        "comment": " Fluid width/responsive image cropper UI\n\n\n# TEA\n\n@docs init, view, update, subscriptions\n\n\n## Types\n\n@docs Model, Msg, ImageData, CropData\n\n\n# Helpers\n\n\n## Getters\n\n@docs cropData, imageSize, cropOrigin\n\n\n## Setters\n\n@docs zoom, pivotX, pivotY, crop\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "CropData",
+                "comment": " Helper type intended for wrapping data sent to javascript via port\nExample:\nport cropperData : CropData -> Cmd msg\n",
+                "args": [],
+                "type": "Cropper.Types.CropData"
+            },
+            {
+                "name": "ImageData",
+                "comment": " Helper type intended for wrapping data from javascript via port\nExample:\nport cropperWithImage : (ImageData -> msg) -> Sub msg\n",
+                "args": [],
+                "type": "Cropper.Types.ImageData"
+            },
+            {
+                "name": "Model",
+                "comment": " State of the cropper\n",
+                "args": [],
+                "type": "Cropper.Types.Model"
+            },
+            {
+                "name": "Msg",
+                "comment": " Messages\n",
+                "args": [],
+                "type": "Cropper.Types.Msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "crop",
+                "comment": " Set crop size. Will be limited to image size.\n",
+                "type": "Cropper.Model -> { width : Basics.Int, height : Basics.Int } -> Cropper.Model"
+            },
+            {
+                "name": "cropData",
+                "comment": " Get all data required (by CanvasRenderingContext2D.drawImage) to crop the image\n",
+                "type": "Cropper.Model -> Cropper.CropData"
+            },
+            {
+                "name": "cropOrigin",
+                "comment": " Get starting point of crop area over imageSize\n",
+                "type": "Cropper.Model -> Cropper.Types.Vector"
+            },
+            {
+                "name": "imageSize",
+                "comment": " Get image size\n",
+                "type": "Cropper.Model -> Cropper.Types.Vector"
+            },
+            {
+                "name": "init",
+                "comment": " Use this function to initialize the module with url to image and a crop size.\n",
+                "type": "{ url : String.String, crop : { width : Basics.Int, height : Basics.Int } } -> Cropper.Model"
+            },
+            {
+                "name": "pivotX",
+                "comment": " Set horizontal pivot (clamped to 0.0...1.0)\n",
+                "type": "Cropper.Model -> Basics.Float -> Cropper.Model"
+            },
+            {
+                "name": "pivotY",
+                "comment": " Set vertical pivot (clamped to 0.0...1.0)\n",
+                "type": "Cropper.Model -> Basics.Float -> Cropper.Model"
+            },
+            {
+                "name": "subscriptions",
+                "comment": " TEA subscriptions needs to be hooked up for mouse dragging\n",
+                "type": "Cropper.Model -> Platform.Sub.Sub Cropper.Msg"
+            },
+            {
+                "name": "update",
+                "comment": " TEA update function\n",
+                "type": "Cropper.Msg -> Cropper.Model -> ( Cropper.Model, Platform.Cmd.Cmd Cropper.Msg )"
+            },
+            {
+                "name": "view",
+                "comment": " TEA View\n",
+                "type": "Cropper.Model -> Html.Html Cropper.Msg"
+            },
+            {
+                "name": "zoom",
+                "comment": " Set zoom (clamped to 0.0...1.0)\n",
+                "type": "Cropper.Model -> Basics.Float -> Cropper.Model"
+            }
+        ],
+        "binops": []
+    }
+]

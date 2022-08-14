@@ -1,0 +1,142 @@
+[
+    {
+        "name": "Markov",
+        "comment": " A markov model is a representation internally of transition\nprobabilities. This can be used for many different applications. The easiest to explain are creating random word\ngenerators (see the `Markov.String` module) and random sentence generators. These are created by training the model\nwith a particular corpus of material of a particular genre. You can then create new\n\n\n# Types\n\n@docs Markov, Element\n\n\n# Builders\n\n@docs empty\n\n\n# Accessors\n\n@docs alphabet, probability, transitionProbabilities\n\n\n# Modifiers\n\n@docs add, train, trainList\n\n\n# Generation\n\n@docs SequenceSettings, generateSequence\n\n\n# Json\n\n@docs encode, decode\n\n",
+        "unions": [
+            {
+                "name": "Element",
+                "comment": " Elements are needed to define the beginning and end of a chain. We don't only need to know the transition\nprobabilities from one element to another. We need to know the chance that a chain starts with an element, or the chance\nthat the chain will end with an element.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Start",
+                        []
+                    ],
+                    [
+                        "Element",
+                        [
+                            "a"
+                        ]
+                    ],
+                    [
+                        "End",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Markov",
+                "comment": " This is the main data structure for the markov models. This data structure internally uses a sparse representation\nfor transition probabilities. This will be performant when you have many different possible states and they don't all\nconnect to each other. If you have a lot of transition states and each state can transition to almost every other state,\nthis implementation will not be as performant as it could be.\n",
+                "args": [
+                    "comparable",
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "SequenceSettings",
+                "comment": " The parameters used for `generateSequence`. This are setup in record format so that this function can be extended\nlater.\n",
+                "args": [],
+                "type": "{ maxLength : Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "add",
+                "comment": " Add a transition into the markov graph. If the character is not an uppercase or lowercase character or a digit then\nthe transition is not added.\n",
+                "type": "Markov.Element a -> Markov.Element a -> Markov.Markov comparable a -> Markov.Markov comparable a"
+            },
+            {
+                "name": "alphabet",
+                "comment": " Get the alphabet of the current markov model.\n",
+                "type": "Markov.Markov comparable a -> List.List a"
+            },
+            {
+                "name": "decode",
+                "comment": " Decode a json object into a markov graph. In order to decode the model, you need to have the inverse of the encoding\nfunction. This function needs to be able to convert the string object you created into your object. It also needs to\ntake the same function that you used to create the markov graph in the `Markov.empty` function. This is what was used\nto store that element into a transition graph.\n",
+                "type": "(String.String -> a) -> (Markov.Element a -> comparable) -> Json.Decode.Decoder (Markov.Markov comparable a)"
+            },
+            {
+                "name": "empty",
+                "comment": " Create an empty markov chain with no elements in it. This is needed to add further elements into it to start to\ntrain the model. In order to store the transition properties, we need a way of serializing your data.\n\n    charComparable : Element Char -> Int\n    charComparable element =\n        case element of\n            Start ->\n                -2\n\n            Element c ->\n                Char.toCode c\n\n            End ->\n                -1\n\n",
+                "type": "(Markov.Element a -> comparable) -> Markov.Markov comparable a"
+            },
+            {
+                "name": "encode",
+                "comment": " Encode a markov graph into a json object. In order to encode a markov graph we need to know how to encode your\nobject into json data. Unfortunately because of the current implementation, the object needs to be converted into a\nstring so that it can be used as the json \"key\" object for storing transition probabilities.\n",
+                "type": "(a -> String.String) -> Markov.Markov comparable a -> Json.Encode.Value"
+            },
+            {
+                "name": "generateSequence",
+                "comment": " Generate a sequence of elements using the probabilities within the markov transition graph. This sequence should\ncome out to be a random length and takes into account the `Start -> a` and the `a -> End` transition probabilities.\nThis ensures that the starting and ending weights are taken into account as well.\n",
+                "type": "Markov.SequenceSettings -> Markov.Markov comparable a -> Random.Generator (List.List a)"
+            },
+            {
+                "name": "probability",
+                "comment": " Get the probability of a particular transition state.\n",
+                "type": "Markov.Element a -> Markov.Element a -> Markov.Markov comparable a -> Basics.Float"
+            },
+            {
+                "name": "train",
+                "comment": " Add a sequence of transitions. This function adds the Start and End to the list so that you are able to train\nthe data with starting and ending probabilities as well.\n",
+                "type": "List.List a -> Markov.Markov comparable a -> Markov.Markov comparable a"
+            },
+            {
+                "name": "trainList",
+                "comment": " Train the markov model on multiple sequences at once.\n",
+                "type": "List.List (List.List a) -> Markov.Markov comparable a -> Markov.Markov comparable a"
+            },
+            {
+                "name": "transitionProbabilities",
+                "comment": " For a particular element, get the probabilities for transitioning from the input element to all the other elements\nwhich are accessible from the input elements. This only returns elements with non-zero probabilities. All probabilities\nare normalized to be within the (0 -> 1] range.\n",
+                "type": "Markov.Element a -> Markov.Markov comparable a -> List.List ( Markov.Element a, Basics.Float )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Markov.String",
+        "comment": " Train a markov model for string generation. This module provides some wrapper functionality around the markov\nmodule so that you can do word generation. Sentence generation using markov models is fairly straight forward by using\nlists of `String`s as training data. Just like how the core `String` module makes some character operations easier this\nsection helps to wrap `List Char` operations into a more simpler `String` interface. This module contains only the\noperations that benefit from simplification not covered by the core library. This sections also serves as a good\ntemplate on how to extend the markov package for use in your own data.\n\n\n# Types\n\n@docs MarkovString\n\n\n# Builders\n\n@docs empty\n\n\n# Modifiers\n\n@docs train, trainList\n\n\n# Json\n\n@docs encode, decode\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "MarkovString",
+                "comment": " A type alias for a markov graph which is used on determining probabilities of character transitions in words.\n",
+                "args": [],
+                "type": "Markov.Markov Basics.Int Char.Char"
+            }
+        ],
+        "values": [
+            {
+                "name": "decode",
+                "comment": " Decode a json object into a markov string model.\n",
+                "type": "Json.Decode.Decoder Markov.String.MarkovString"
+            },
+            {
+                "name": "empty",
+                "comment": " Create an empty markov string object.\n",
+                "type": "Markov.String.MarkovString"
+            },
+            {
+                "name": "encode",
+                "comment": " Encode the markov string model into a json object.\n",
+                "type": "Markov.String.MarkovString -> Json.Encode.Value"
+            },
+            {
+                "name": "train",
+                "comment": " Train the markov model on a single string. This trains the model to store the transition probabilities of all the\nletters within the string as well as the probabilities to start with the first character and end with the last\ncharacter.\n",
+                "type": "String.String -> Markov.String.MarkovString -> Markov.String.MarkovString"
+            },
+            {
+                "name": "trainList",
+                "comment": " Train the model on a sample of data or an entire corpus.\n",
+                "type": "List.List String.String -> Markov.String.MarkovString -> Markov.String.MarkovString"
+            }
+        ],
+        "binops": []
+    }
+]

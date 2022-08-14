@@ -1,0 +1,125 @@
+[
+    {
+        "name": "DatePicker",
+        "comment": "\n\n\n# Basic Usage\n\n@docs input, Model, init, setToday, ChangeEvent, update, Settings, defaultSettings, initWithToday\n\n\n# Helpers\n\nFor when you want to be more in control\n\n@docs close, open, setVisibleMonth, SelectorLevel, setSelectorLevel, Language\n\n",
+        "unions": [
+            {
+                "name": "ChangeEvent",
+                "comment": " Use in your update function:\n\n    update msg model =\n        case msg of\n            ChangePicker changeEvent ->\n                case changeEvent of\n                    DateChanged date ->\n                        -- update both date and text\n                        ( { model\n                            | date = Just date\n                            , dateText = Date.toIsoString date\n                          }\n                        , Cmd.none\n                        )\n\n                    TextChanged text ->\n                        ( { model\n                            | date =\n                                -- parse the text in any way you like\n                                Date.fromIsoString text\n                                    |> Result.toMaybe\n                                    |> Maybe.Extra.orElse model.date\n                            , dateText = text\n                          }\n                        , Cmd.none\n                        )\n\n                    DateCleared ->\n                        ( { model\n                            | date =\n                                Nothing\n                            , dateText = \"\"\n                          }\n                        , Cmd.none\n                        )\n\n                    PickerChanged subMsg ->\n                        -- internal stuff changed\n                        -- call DatePicker.update\n                        ( { model\n                            | pickerModel =\n                                model.pickerModel\n                                    |> DatePicker.update subMsg\n                          }\n                        , Cmd.none\n                        )\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "DateChanged",
+                        [
+                            "Date.Date"
+                        ]
+                    ],
+                    [
+                        "TextChanged",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "PickerChanged",
+                        [
+                            "DatePicker.Msg"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Model",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "SelectorLevel",
+                "comment": " The different selector levels the date picker can show.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "DaysLevel",
+                        []
+                    ],
+                    [
+                        "MonthsLevel",
+                        []
+                    ],
+                    [
+                        "YearsLevel",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Language",
+                "comment": " Alias of [`Language`][dateLanguage] from `justinmimbs/date`.\n[dateLanguage]: <https://package.elm-lang.org/packages/justinmimbs/date/latest/Date#Language>\n",
+                "args": [],
+                "type": "Date.Language"
+            },
+            {
+                "name": "Settings",
+                "comment": " All the possible configuration settings.\nYou probably want to start at the [defaultSettings](DatePicker#defaultSettings) and only change what you need.\nIt's probably easiest to look at the [`code`][githubCode] to see where each attribute list is used for.\n[githubCode]: <https://github.com/FabHof/elm-ui-datepicker/blob/main/src/DatePicker.elm#L308>\n",
+                "args": [],
+                "type": "{ firstDayOfWeek : Time.Weekday, language : Maybe.Maybe DatePicker.Language, disabled : Date.Date -> Basics.Bool, pickerAttributes : List.List (Element.Attribute Basics.Never), headerAttributes : List.List (Element.Attribute Basics.Never), tableAttributes : List.List (Element.Attribute Basics.Never), weekdayAttributes : List.List (Element.Attribute Basics.Never), dayAttributes : List.List (Element.Attribute Basics.Never), monthYearAttribute : List.List (Element.Attribute Basics.Never), wrongMonthDayAttributes : List.List (Element.Attribute Basics.Never), todayDayAttributes : List.List (Element.Attribute Basics.Never), selectedDayAttributes : List.List (Element.Attribute Basics.Never), disabledDayAttributes : List.List (Element.Attribute Basics.Never), monthsTableAttributes : List.List (Element.Attribute Basics.Never), yearsTableAttributes : List.List (Element.Attribute Basics.Never), headerButtonsAttributes : List.List (Element.Attribute Basics.Never), previousMonthElement : Element.Element Basics.Never, nextMonthElement : Element.Element Basics.Never }"
+            }
+        ],
+        "values": [
+            {
+                "name": "close",
+                "comment": " Closes the date picker.\n\nExample: close date picker on date input:\n\n    DateChanged date ->\n        ( { model\n            | date = Just date\n            , dateText = Date.toIsoString date\n            , pickerModel =\n                model.pickerModel\n                    |> DatePicker.close\n        }\n        , Cmd.none\n        )\n\n**Note**: the date picker will reopen on _focus_ and _click_.\nTo prevent this, close the date picker on every update:\n\n    PickerChanged subMsg ->\n        ( { model\n            | pickerModel =\n                model.pickerModel\n                    |> DatePicker.update subMsg\n                    --picker will never open\n                    |> DatePicker.close\n            }\n        , Cmd.none\n        )\n\n",
+                "type": "DatePicker.Model -> DatePicker.Model"
+            },
+            {
+                "name": "defaultSettings",
+                "comment": " Reasonable default settings.\n",
+                "type": "DatePicker.Settings"
+            },
+            {
+                "name": "init",
+                "comment": " The initial model of the date picker.\nEasy to us in your own init function:\n\n(You probably want to get todays date to give it to the date picker using [DatePicker.setToday](DatePicker#setToday))\n\n    init =\n        ( { date = Nothing\n          , dateText = \"\"\n          , pickerModel = DatePicker.init\n          }\n        , Task.perform SetToday Date.today\n        )\n\n",
+                "type": "DatePicker.Model"
+            },
+            {
+                "name": "initWithToday",
+                "comment": " The initial model of the date picker and sets the given date as today.\n",
+                "type": "Date.Date -> DatePicker.Model"
+            },
+            {
+                "name": "input",
+                "comment": " Use it like you would `Input.text`, the attributes, `text`, `placeholder` and `label` will behave\nexactly like for `Input.text`. It has however a more complex `onChange`, a `selected` date, the internal `model` and some `settings`.\n\n**Note**: `Events.onClick`, `Events.onFocus` and `Events.onLoseFocus` are used internally by the date picker.\nThis means, that **your own `Events.onClick`, `Events.onFocus` and `Events.onLoseFocus` attributes have no effect and will not fire**.\n\n",
+                "type": "List.List (Element.Attribute msg) -> { onChange : DatePicker.ChangeEvent -> msg, selected : Maybe.Maybe Date.Date, text : String.String, label : Element.Input.Label msg, placeholder : Maybe.Maybe (Element.Input.Placeholder msg), model : DatePicker.Model, settings : DatePicker.Settings } -> Element.Element msg"
+            },
+            {
+                "name": "open",
+                "comment": " Opens the date picker.\n\nExample: start with open picker:\n\n    init : ( Model, Cmd Msg )\n    init =\n        ( { date = Nothing\n          , dateText = \"\"\n          , pickerModel =\n                DatePicker.init\n                    |> DatePicker.open\n          }\n        , Task.perform SetToday Date.today\n        )\n\n",
+                "type": "DatePicker.Model -> DatePicker.Model"
+            },
+            {
+                "name": "setSelectorLevel",
+                "comment": " Sets the selector level that is visible when date picker is open.\n\nExample: start on the year level:\n\n    init : ( Model, Cmd Msg )\n    init =\n        ( { date = Nothing\n          , dateText = \"\"\n          , pickerModel =\n                DatePicker.init\n                    |> DatePicker.setSelectorLevel DatePicker.YearsLevel\n          }\n        , Task.perform SetToday Date.today\n        )\n\n",
+                "type": "DatePicker.SelectorLevel -> DatePicker.Model -> DatePicker.Model"
+            },
+            {
+                "name": "setToday",
+                "comment": " Sets the day that should be marked as today.\n",
+                "type": "Date.Date -> DatePicker.Model -> DatePicker.Model"
+            },
+            {
+                "name": "setVisibleMonth",
+                "comment": " Sets the current visible month of the date picker.\n",
+                "type": "Date.Date -> DatePicker.Model -> DatePicker.Model"
+            },
+            {
+                "name": "update",
+                "comment": " ",
+                "type": "DatePicker.Msg -> DatePicker.Model -> DatePicker.Model"
+            }
+        ],
+        "binops": []
+    }
+]

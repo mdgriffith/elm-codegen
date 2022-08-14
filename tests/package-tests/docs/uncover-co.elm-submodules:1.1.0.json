@@ -1,0 +1,85 @@
+[
+    {
+        "name": "SubCmd",
+        "comment": " When setting up a submodule, you should use `SubCmd.cmd` when you want the submodule itself to handle the messages. However, if you want the message to be \"sent\" to the host, just use `SubCmd.effect`.\n\n    type alias Model =\n        { value : String }\n\n    type Msg\n        = FetchFromServer\n        | GotFromServer String\n        | Submit\n\n    type Effect\n        = SendValue String\n\n    update : Msg -> Model -> ( Model, SubCmd Msg Effect )\n    update msg model =\n        case msg of\n            FetchFromServer ->\n                ( model\n                , SubCmd.cmd (fetchFromServer GotFromServer)\n                )\n\n            GotFromServer value ->\n                ( { value = value }, SubCmd.none )\n\n            Submit ->\n                ( model, SubCmd.effect (SendValue model.value) )\n\n\n## Functions\n\n@docs SubCmd, none, cmd, effect, batch\n\n\n## Transformations\n\n@docs mapCmd, mapEffect, mapBoth\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "SubCmd",
+                "comment": " ",
+                "args": [
+                    "msg",
+                    "effect"
+                ],
+                "type": "SubModule.SubCmd.SubCmd msg effect"
+            }
+        ],
+        "values": [
+            {
+                "name": "batch",
+                "comment": " With batch you can actually send `cmd`'s and `effect`'s at the same time!\n\n    Submit ->\n        ( model, SubCmd.batch\n            [ SubCmd.effect (SendValue model.value)\n            , SubCmd.cmd (fetchFromServer GotFromServer)\n            ]\n        )\n\n",
+                "type": "List.List (SubCmd.SubCmd msg effect) -> SubCmd.SubCmd msg effect"
+            },
+            {
+                "name": "cmd",
+                "comment": " ",
+                "type": "Platform.Cmd.Cmd msg -> SubCmd.SubCmd msg effect"
+            },
+            {
+                "name": "effect",
+                "comment": " ",
+                "type": "effect -> SubCmd.SubCmd msg effect"
+            },
+            {
+                "name": "mapBoth",
+                "comment": " Maps both `cmd`'s and `effect`'s at the same time.\n",
+                "type": "(msgA -> msgB) -> (effectA -> effectB) -> SubCmd.SubCmd msgA effectA -> SubCmd.SubCmd msgB effectB"
+            },
+            {
+                "name": "mapCmd",
+                "comment": " Maps a `cmd` just like you would with `Cmd.map`.\n",
+                "type": "(msgA -> msgB) -> SubCmd.SubCmd msgA effect -> SubCmd.SubCmd msgB effect"
+            },
+            {
+                "name": "mapEffect",
+                "comment": " Maps an `effect` just like you would with `Cmd.map`.\n",
+                "type": "(effectA -> effectB) -> SubCmd.SubCmd msg effectA -> SubCmd.SubCmd msg effectB"
+            },
+            {
+                "name": "none",
+                "comment": " ",
+                "type": "SubCmd.SubCmd msg effect"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "SubModule",
+        "comment": " This module is used for plugging submodules into a host module. If you're working on the submodule itself, check out `SubCmd`.\n\n@docs initWithEffect, updateWithEffect\n\n\n## Modules without effect\n\nWe also provide a few functions to help you deal with modules that can't send effects so you have a similar API across your host module. Note that the same could be achieved without this package at all.\n\n@docs init, update\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "init",
+                "comment": " Enables you to initialize multiple submodules that **cannot send effects**.\n\n    let\n        ( widget, initWidget ) =\n            Widget.init\n                |> SubModule.init\n                    { toMsg = GotWidgetMsg\n                    }\n\n        ( otherWidget, initOtherWidget ) =\n            OtherWidget.init\n                |> SubModule.init\n                    { toMsg = GotOtherWidgetMsg\n                    }\n    in\n    ( { widget = widget, otherWidget = otherWidget }, Cmd.none )\n        |> initWidget\n        |> initOtherWidget\n\n",
+                "type": "{ toMsg : subMsg -> msg } -> ( subModel, Platform.Cmd.Cmd subMsg ) -> ( subModel, ( model, Platform.Cmd.Cmd msg ) -> ( model, Platform.Cmd.Cmd msg ) )"
+            },
+            {
+                "name": "initWithEffect",
+                "comment": " Enables you to initialize submodules that **can send effects**.\n\n    let\n        -- This submodule can't send effects\n        ( widget, initWidget ) =\n            Widget.init\n                |> SubModule.init\n                    { toMsg = GotWidgetMsg\n                    }\n\n        -- But this one can!\n        ( superWidget, initSuperWidget ) =\n            SuperWidget.init\n                |> SubModule.initWithEffect\n                    { toMsg = GotSuperWidgetMsg\n                    , effectToMsg = GotSuperWidgetEffect\n                    }\n    in\n    ( { widget = widget\n      , superWidget = superWidget\n      }\n    , Cmd.none\n    )\n        |> initWidget\n        |> initSuperWidget\n\n",
+                "type": "{ toMsg : subMsg -> msg, effectToMsg : subEffect -> msg } -> ( subModel, SubModule.SubCmd.SubCmd subMsg subEffect ) -> ( subModel, ( model, Platform.Cmd.Cmd msg ) -> ( model, Platform.Cmd.Cmd msg ) )"
+            },
+            {
+                "name": "update",
+                "comment": " Enables you to handle the updates of submodules that **cannot send effects**.\n\n    type Msg\n        = GotWidgetMsg Widget.Msg\n        | ...\n\n    update : Msg -> Model -> ( Model, Cmd Msg )\n    update msg model =\n        case msg of\n            GotWidgetMsg widgetMsg ->\n                Widget.update widgetMsg model.widget\n                    |> SubModule.update\n                        { toMsg = GotWidgetMsg\n                        , toModel = \\widget -> { model | widget = widget }\n                        }\n            ...\n\n",
+                "type": "{ toModel : subModel -> model, toMsg : subMsg -> msg } -> ( subModel, Platform.Cmd.Cmd subMsg ) -> ( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "updateWithEffect",
+                "comment": " Enables you to handle the updates of submodules that **can send effects**.\n\n    type Model =\n        { widget : Widget.Model\n        , valueFromWidget : Maybe String\n        }\n\n    type Msg\n        = GotWidgetMsg Widget.Msg\n        | GotWidgetEffect Widget.Effect\n\n    update : Msg -> Model -> ( Model, Cmd Msg )\n    update msg model =\n        case msg of\n            GotWidgetMsg widgetMsg ->\n                Widget.update widgetMsg model.widget\n                    |> SubModule.updateWithEffect\n                        { toMsg = GotWidgetMsg\n                        , effectToMsg = GotWidgetEffect\n                        , toModel =\n                            \\widget -> { model | widget = widget }\n                        }\n\n            GotWidgetEffect widgetEffect ->\n                case widgetEffect of\n                    Widget.SendValue value ->\n                        ( { model | valueFromWidget = Just value }\n                        , Cmd.none\n                        )\n\n",
+                "type": "{ toModel : subModel -> model, toMsg : subMsg -> msg, effectToMsg : subEffect -> msg } -> ( subModel, SubModule.SubCmd.SubCmd subMsg subEffect ) -> ( model, Platform.Cmd.Cmd msg )"
+            }
+        ],
+        "binops": []
+    }
+]

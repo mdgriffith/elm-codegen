@@ -1,0 +1,32 @@
+[
+    {
+        "name": "NoLeftPizza",
+        "comment": "\n\n@docs rule, Strictness\n\n",
+        "unions": [
+            {
+                "name": "Strictness",
+                "comment": " Specify how strict the rule should be.\n\nSpecifying `Any` means that _any_ use of `<|` will be flagged, whereas\n`Redundant` limits it to cases where `<|` can be removed - without adding any\nparenthesis - without changing the semantics.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Any",
+                        []
+                    ],
+                    [
+                        "Redundant",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": " Forbids using the left pizza operator (<|) in infix position.\n\nExpressions like `foo <| \"hello\" ++ world` will be flagged, and a fix will be\nproposed to write the expression to `foo (\"hello\" ++ world)`.\n\nTo use this rule, add it to your `elm-review` config like so:\n\n    module ReviewConfig exposing (config)\n\n    import NoLeftPizza\n    import Review.Rule exposing (Rule)\n\n    config : List Rule\n    config =\n        [ NoLeftPizza.rule NoLeftPizza.Any\n        ]\n\nThe above configuration results in absolutely any use of `<|` being flagged. If\nyou'd prefer only flagging redundant usage (such as `foo <| bar`), pass\n`NoLeftPizza.Redundant` as the configuration option.\n\nIf you would prefer to keep writing tests in the more \"traditional\" style which\nuses `<|`, you can disable the rule for `tests/` like so:\n\n    module ReviewConfig exposing (config)\n\n    import NoLeftPizza\n    import Review.Rule exposing (Rule)\n\n    config : List Rule\n    config =\n        [ NoLeftPizza.rule NoLeftPizza.Any\n            |> Rule.ignoreErrorsForDirectories\n                [ -- Test functions are traditionally built up using a left pizza.\n                  -- While we don't want them in our regular code, let's allow them\n                  -- just for tests.\n                  \"tests/\"\n                ]\n        ]\n\nOr pass `NoLeftPizza.Redundant` which will only apply to redundant usage:\n\n    module ReviewConfig exposing (config)\n\n    import NoLeftPizza\n    import Review.Rule exposing (Rule)\n\n    config : List Rule\n    config =\n        [ NoLeftPizza.rule NoLeftPizza.Redundant\n        ]\n\n",
+                "type": "NoLeftPizza.Strictness -> Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    }
+]

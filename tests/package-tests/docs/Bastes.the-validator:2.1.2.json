@@ -1,0 +1,100 @@
+[
+    {
+        "name": "TheValidator",
+        "comment": " This library provides a way to express validations through Validator objects\nholding the validation logic and allowing for composition.\n\n\n# Types\n\n@docs Validator\n\n@docs Validation\n\n\n# Validation\n\n@docs validate, isValid\n\n\n# Validator Constructors\n\n@docs simple, parameterized, invalid, valid\n\n\n# Validator Composition\n\n@docs all, mapError, mapErrorWithModel, focus, focusError, focusInside, maybe, list\n\n",
+        "unions": [
+            {
+                "name": "Validator",
+                "comment": " A `Validator` holds validations and corresponding errors for a model.\nThe internals of this data type are not exposed, instead see the constructors\nfor more details.\n",
+                "args": [
+                    "model",
+                    "error"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Validation",
+                "comment": " A `Validation` is a function that validates a model.\n",
+                "args": [
+                    "model"
+                ],
+                "type": "model -> Basics.Bool"
+            }
+        ],
+        "values": [
+            {
+                "name": "all",
+                "comment": " Converts a list of validator into one new validator of the same type.\nThis is useful to aggregate multiple validations on the same model (fields in\nan record, more than one check on a value, etc.).\n\n    moreThan2 = simple (flip (>) 2) \"must be greater than 2\"\n    notFactorOf3 = simple (\\n -> n % 3 /= 0) \"must not be a factor of 3\"\n    lessThan1000 = simple (flip (<) 1000) \"must be lower than 1000\"\n\n    allThose =\n      all\n      [ moreThan2\n      , notFactorOf3\n      , lessThan1000\n      ]\n\n    validate allThose 1 == [\"must be greater than 2\"]\n    validate allThose 333 == [\"must not be a factor of 3\"]\n    validate allThose 1000 == [\"must be lower than 1000\"]\n    validate allThose 12345 == [\"must not be a factor of 3\", \"must be lower than 1000\"]\n    validate allThose 124 == []\n\n    isValid allThose 778 == True\n    isValid allTHose 12 == False\n\n",
+                "type": "List.List (TheValidator.Validator model error) -> TheValidator.Validator model error"
+            },
+            {
+                "name": "focus",
+                "comment": " Creates a new validator to check another model. The transformation function\ntakes the model provided to the new validator, extracts the model expected by\nthe original validator and feeds it instead. Useful to focus on a field of a\nrecord, part of a list, etc.\n\n(fans of functional programming will recognize profunctor's lmap)\n\n    type alias Fighter = { name: String, strength : Int }\n\n    under9000 = simple (flip (<=) 9000) \"It's over 9000!!!\"\n    onlyHuman = focus .strength under9000\n\n    validate onlyHuman { name = \"Satan\", strength = 9 } == []\n    validate onlyHuman { name = \"Goku\", strength = 999999 } == [ \"It's over 9000!!!\" ]\n\n",
+                "type": "(modelB -> modelA) -> TheValidator.Validator modelA error -> TheValidator.Validator modelB error"
+            },
+            {
+                "name": "focusError",
+                "comment": " Takes a validator and transform it to work on another model and change the\nerrors. Shortcut for `focus` then `mapError`.\n\n(fans of functional programming will recognize profunctor's dimap)\n\n    type alias User =\n        { login : String, password : String }\n\n    passwordValidator =\n        simple ((/=) \"password\") \"'password' is not a very good password\"\n\n    userValidator =\n        focusError .password (\\{login} error -> \"for realz, \" ++ login ++ \" \" ++ error) passwordValidator\n\n    user = { name = \"Carl Streator\", password = \"password\" }\n\n    validate userValidator user == [\"for realz Carl Streator 'password' is not a very good password\"]\n\n",
+                "type": "(modelB -> modelA) -> (errorA -> errorB) -> TheValidator.Validator modelA errorA -> TheValidator.Validator modelB errorB"
+            },
+            {
+                "name": "focusInside",
+                "comment": " Focuses inside a model to make validations that depend on more than one\nfield (typically, validations that require to check the value of another\nfield to be validated).\n\n    under value = simple (\\n -> n < value) \"is not under (\" ++ toString value ++ \")\"\n    minUnderMax = focusInside (\\{ max } -> focusError .min ((++) \"min \") (under max))\n\n    isValid minUnderMax { min = 1, max = 5 } == True\n    validate minUnderMax { min = 1, max = 5 } == []\n    isValid minUnderMax { min = 5, max = 5 } == False\n    validate minUnderMax { min = 5, max = 5 } == [\"min is not under (5)\"]\n\n",
+                "type": "(model -> TheValidator.Validator model error) -> TheValidator.Validator model error"
+            },
+            {
+                "name": "invalid",
+                "comment": " A validator that is always invalid. It will always provide the same error.\n\n    validate (invalid \"Bad, bad number!\") 111 == [ \"Bad, bad number!\" ]\n\n    isValid (invalid \"Some error message\") \"blah\" == True\n\n",
+                "type": "error -> TheValidator.Validator model error"
+            },
+            {
+                "name": "isValid",
+                "comment": " Checks wether a model is valid according to a validator. If you care about\nthe reasons why the model is invalid, consider using `validate` instead.\n\n    bigNumber = simple (flip (>) 1000) \"Not such a big number\"\n\n    isValid bigNumber 1001 == True\n    isValid bigNumber 1000 == False\n\n",
+                "type": "TheValidator.Validator model error -> model -> Basics.Bool"
+            },
+            {
+                "name": "list",
+                "comment": " Makes a validator that applies another validator to a list of elements.\nThe transformation function receives the index of the element under scrutiny as\nwell as the error obtained by the internal validator.\n\n    model Cup = {owner: String, temperature: Int}\n    cups =\n      [ {owner = \"Mama Bear\", temperature = 100}\n      , {owner = \"Papa Bear\", temperature = 20}\n      , {owner = \"Little Bear\", temperature = 30}\n      ]\n\n    tooHot = simple (\\cup -> cup.temperature > 30) \"it's too hot!\"\n    tooCold = simple (\\cup -> cup.temperature < 30) \"it's too cold!\"\n\n    justRight = all [tooHot, tooCold]\n\n    goldilocks = list\n      (\\index model error -> (index, error))\n      justRight\n\n    validate goldilocks cups ==\n      [ (1, \"it's too hot!\")\n      , (2, \"it's too cold!\")\n      ]\n\n",
+                "type": "(Basics.Int -> errorA -> errorB) -> TheValidator.Validator model errorA -> TheValidator.Validator (List.List model) errorB"
+            },
+            {
+                "name": "mapError",
+                "comment": " Decorates a validator by modifying the errors it returns. The transformation\nfunction handles the transformation from one error type to the other.\n\n(fans of functional programming will recognize profunctor's rmap)\n\n    onlyTrue = simple ((==) True) \"This is simply not True!\"\n    onlyMoreTrue = onlyTrue |> mapError (\\error -> (error, \"It is simply False!\"))\n\n    validate onlyTrue False == [\"This is simply not True!\"]\n    validate onlyMoreTrue False == (\"This is simply not True!\", \"It is simply False!\")\n\n",
+                "type": "(errorA -> errorB) -> TheValidator.Validator model errorA -> TheValidator.Validator model errorB"
+            },
+            {
+                "name": "mapErrorWithModel",
+                "comment": " Same as mapError but with the model as an additional firt parameter to the\niterator function.\n\n    onlyTrue = simple ((==) True) \"This is simply not True!\"\n    onlyMoreTrue = onlyTrue |> mapErrorWithModel (\\model error -> (error, \"It is simply \" ++ toString model ++ !\"))\n\n    validate onlyTrue False == [\"This is simply not True!\"]\n    validate onlyMoreTrue False == (\"This is simply not True!\", \"It is simply False!\")\n\n",
+                "type": "(model -> errorA -> errorB) -> TheValidator.Validator model errorA -> TheValidator.Validator model errorB"
+            },
+            {
+                "name": "maybe",
+                "comment": " Focuses on a value that may or may not be available for validation.\nWhen there is nothing, the validation succeeds by default.\n\n    notBlank = simple ((/=) \"\") \"filled or nothing\"\n    nameNotBlank = maybe .name notBlank\n\n    isValid notBlank { name = Nothing } == True\n    validate notBlank { name = Nothing } == []\n    isValid notBlank { name = Just \"Someone\" } == True\n    validate notBlank { name = Just \"Me\" } == []\n    isValid notBlank { name = Just \"\" } == False\n    validate notBlank { name = Just \"\" } == [\"filled or nothing\"]\n\n",
+                "type": "(modelB -> Maybe.Maybe modelA) -> TheValidator.Validator modelA error -> TheValidator.Validator modelB error"
+            },
+            {
+                "name": "parameterized",
+                "comment": " A parameterized validator that composes a single error from the model.\n\n    justMonika = parameterized ((==) \"Monika\") (\\name -> \"Not \" ++ name ++ \"! Just Monika.\")\n    validate justMonika \"Yuri\" == [\"Not Yuri! Just Monika.\"]\n\n",
+                "type": "TheValidator.Validation model -> (model -> error) -> TheValidator.Validator model error"
+            },
+            {
+                "name": "simple",
+                "comment": " A simple validator that returns an error constant.\n\n    stayPositive = (simple (flip (>) 0) \"only positive numbers are allowed here stranger\")\n    validate stayPositive 0 == [\"only positive numbers are allowed here stranger\"]\n\n",
+                "type": "TheValidator.Validation model -> error -> TheValidator.Validator model error"
+            },
+            {
+                "name": "valid",
+                "comment": " A validator that is always valid. It will always pass, never provide error.\n\n    validate valid 123 == []\n\n    isValid valid \"something\" == True\n\n",
+                "type": "TheValidator.Validator model error"
+            },
+            {
+                "name": "validate",
+                "comment": " Validate a model using a validator, returning a list of errors. The list\nwill be empty when the model is valid. If you only care about the validity of\nthe model, consider using the more efficient `isValid` instead.\n\n    atLeast8Chars = simple (\\s -> String.length s >= 8) \"should be at least 8 chars long\"\n\n    validate atLeast8Chars \"2short\" == [\"should be at least 8 chars long\"]\n    validate atLeast8Chars \"long enough\" == []\n\n",
+                "type": "TheValidator.Validator model error -> model -> List.List error"
+            }
+        ],
+        "binops": []
+    }
+]

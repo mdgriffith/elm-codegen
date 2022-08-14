@@ -1,0 +1,97 @@
+[
+    {
+        "name": "Biomolecules",
+        "comment": " This module provides tools to working with biomolecular structure.\n\n\n# Loading Structural Data\n\n@docs fetchStructuralData, parsePdbString, Error\n\n\n# Structure\n\nTo avoid a myriad of problems that often arise when working this structural data,\nstructure is represented by a flat list of `Atoms`. These lists of `Atoms` can then be\nprocessed into groups relating to connectivity. Functions to do this are described in\nthe next section.\n\n@docs Atom, Residue, Chain, State, StructuralData\n\n\n# Selections\n\n@docs chains, residues\n\n\n# Analysis\n\n@docs sequence, isProtein\n\n\n# Codecs\n\nSee [miniBill/elm-codec](https://package.elm-lang.org/packages/miniBill/elm-codec/latest/)\nfor more information about using codecs\n\n@docs structuralDataCodec\n\n",
+        "unions": [
+            {
+                "name": "Error",
+                "comment": " Describes how a fetching `StructuralData` failed. The main errors arise\neither when requesting the data or when parsing the response.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "PdbParseError",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "HttpError",
+                        [
+                            "Http.Error"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Atom",
+                "comment": " ",
+                "args": [],
+                "type": "{ serialNumber : Basics.Int, name : String.String, altLocation : Maybe.Maybe String.String, residueName : String.String, chainId : Maybe.Maybe String.String, residueNumber : Basics.Int, insertionCode : Maybe.Maybe String.String, position : { x : Basics.Float, y : Basics.Float, z : Basics.Float }, occupancy : Maybe.Maybe Basics.Float, temperatureFactor : Maybe.Maybe Basics.Float, element : String.String, charge : Maybe.Maybe String.String, stateNumber : Basics.Int }"
+            },
+            {
+                "name": "Chain",
+                "comment": " ",
+                "args": [],
+                "type": "{ atoms : List.List Biomolecules.Atom, stateNumber : Basics.Int, chainId : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "Residue",
+                "comment": " ",
+                "args": [],
+                "type": "{ atoms : List.List Biomolecules.Atom, stateNumber : Basics.Int, chainId : Maybe.Maybe String.String, residueName : String.String, residueNumber : Basics.Int }"
+            },
+            {
+                "name": "State",
+                "comment": " ",
+                "args": [],
+                "type": "{ atoms : List.List Biomolecules.Atom, stateNumber : Basics.Int }"
+            },
+            {
+                "name": "StructuralData",
+                "comment": " List of Atoms representing the whole structure file.\n",
+                "args": [],
+                "type": "{ atoms : List.List Biomolecules.Atom, name : String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "chains",
+                "comment": " Converts a list of atoms ordered by chain number into a list of chains.\n",
+                "type": "List.List Biomolecules.Atom -> List.List Biomolecules.Chain"
+            },
+            {
+                "name": "fetchStructuralData",
+                "comment": " Fetches structural data from the PDBe.\n\nUses the [PDBe REST API][rest] to request the PDB format string for the protein of\ninterest, using the 4 character PDB code to identify the structure.\n\n    Msg = RequestedStructuralData (Result Error StructuralData)\n\n    fetchStructuralData RequestedStructuralData \"4pn9\"\n\n[rest]: http://www.ebi.ac.uk/pdbe/pdbe-rest-api\n\n",
+                "type": "(Result.Result Biomolecules.Error Biomolecules.StructuralData -> msg) -> String.String -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "isProtein",
+                "comment": " ",
+                "type": "Biomolecules.Residue -> Basics.Bool"
+            },
+            {
+                "name": "parsePdbString",
+                "comment": " Attempts to convert a string containing [PDB format data][format] into\n`StructuralData`.\n\n[format]: http://www.wwpdb.org/documentation/file-format-content/format33/v3.3.html\n\n",
+                "type": "String.String -> String.String -> Result.Result Biomolecules.Error Biomolecules.StructuralData"
+            },
+            {
+                "name": "residues",
+                "comment": " Converts a list of atoms ordered by residue number into a list of residues.\n",
+                "type": "List.List Biomolecules.Atom -> List.List Biomolecules.Residue"
+            },
+            {
+                "name": "sequence",
+                "comment": " Creates a sequence string from a list of residues.\n\nUses single letter codes for amino acids if possible, otherwise it will use the\nthree-letter code separated by dashes.\n\n",
+                "type": "List.List Biomolecules.Residue -> String.String"
+            },
+            {
+                "name": "structuralDataCodec",
+                "comment": " ",
+                "type": "Codec.Codec Biomolecules.StructuralData"
+            }
+        ],
+        "binops": []
+    }
+]

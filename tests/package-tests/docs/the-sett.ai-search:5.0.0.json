@@ -1,0 +1,143 @@
+[
+    {
+        "name": "Search",
+        "comment": "\n\n\n# Input types for searches:\n\n@docs Step, Uninformed, Informed, WithUninformed\n\n\n# The search output type:\n\n@docs SearchResult\n\n\n# Helper functions for iterating searches to produce results:\n\n@docs next, nextN, nextGoal\n\n\n# Uninformed search strategies:\n\n@docs breadthFirst, depthFirst, depthBounded, costBounded, uniformCost\n@docs iterativeDeepening, iterativeCostIncreasing\n\n\n# Informed search strategies:\n\n@docs aStar, greedy, fBounded, iterativeDeepeningAStar\n\n",
+        "unions": [
+            {
+                "name": "SearchResult",
+                "comment": " Defines the possible outcomes of a search. A search may produce the following\nresults:\n\n  - Complete. The search space has been exhausted without finding a goal state.\n  - Goal. A goal state has been found. A function to find further results is also\n    returned, in order that the search may be continued to find more goals.\n  - Ongoing. A goal state has not been found yet. The state most recently examined\n    is returned along with a function to continue to the search.\n\n",
+                "args": [
+                    "state"
+                ],
+                "cases": [
+                    [
+                        "Complete",
+                        []
+                    ],
+                    [
+                        "Goal",
+                        [
+                            "state",
+                            "() -> Search.SearchResult state"
+                        ]
+                    ],
+                    [
+                        "Ongoing",
+                        [
+                            "state",
+                            "() -> Search.SearchResult state"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Informed",
+                "comment": " Defines the type of a bundle of operators that need to be supplied to conduct\nan informed (heuristic) search.\n",
+                "args": [
+                    "state"
+                ],
+                "type": "{ step : Search.Step state, cost : state -> Basics.Float, heuristic : state -> Basics.Float }"
+            },
+            {
+                "name": "Step",
+                "comment": " Defines the type of the step function that produces new states from existing\nones. This is how the graph over the search space is defined. The step function\ntakes a state and provides a list of other states that can be reached from it.\nEach of the listed states is paired with a Bool that when true indiciates that\na state is considered to be a goal of the search.\n",
+                "args": [
+                    "state"
+                ],
+                "type": "state -> List.List ( state, Basics.Bool )"
+            },
+            {
+                "name": "Uninformed",
+                "comment": " Defines the type of a bundle of operators that need to be supplied to conduct\nan uninformed (non-heuristic) search.\n",
+                "args": [
+                    "state"
+                ],
+                "type": "{ step : Search.Step state, cost : state -> Basics.Float }"
+            },
+            {
+                "name": "WithUninformed",
+                "comment": " Defines the type of a bundle of operators that need to be supplied to conduct\nan uninformed (non-heuristic) search. This is an extensible record so that\nheuristic searches can also have this type since they use the same cost and step\nfunctions. This makes it easy to switch from a heuristic to anon-heuristic search.\n",
+                "args": [
+                    "a",
+                    "state"
+                ],
+                "type": "{ a | step : Search.Step state, cost : state -> Basics.Float }"
+            }
+        ],
+        "values": [
+            {
+                "name": "aStar",
+                "comment": " Performs an A\\* search. This is one that always follows the search node that\nhas the highest f value (f = heuristic + cost).\nThe seach will only be optimal if the heuristic function is monotonic.\n",
+                "type": "Search.Informed state -> List.List ( state, Basics.Bool ) -> Search.SearchResult state"
+            },
+            {
+                "name": "breadthFirst",
+                "comment": " Performs an unbounded breadth first search. Breadth first searches store\na lot of pending nodes in the buffer, so quickly run out of space.\n",
+                "type": "Search.WithUninformed a state -> List.List ( state, Basics.Bool ) -> Search.SearchResult state"
+            },
+            {
+                "name": "costBounded",
+                "comment": " Implements a cost bounded search. This search will proceed depth first.\n",
+                "type": "Search.WithUninformed a state -> Basics.Float -> List.List ( state, Basics.Bool ) -> Search.SearchResult state"
+            },
+            {
+                "name": "depthBounded",
+                "comment": " Implements an uninformed search that is bounded to a specified maximum depth.\n",
+                "type": "Search.WithUninformed a state -> Basics.Int -> List.List ( state, Basics.Bool ) -> Search.SearchResult state"
+            },
+            {
+                "name": "depthFirst",
+                "comment": " Performs an unbounded depth first search. Depth first searches can easily\nfall into infinite loops.\n",
+                "type": "Search.WithUninformed a state -> List.List ( state, Basics.Bool ) -> Search.SearchResult state"
+            },
+            {
+                "name": "fBounded",
+                "comment": " Implements an f value (f = heuristic + cost) bounded search. This search will\nproceed depth first.\n",
+                "type": "Search.Informed state -> Basics.Float -> List.List ( state, Basics.Bool ) -> Search.SearchResult state"
+            },
+            {
+                "name": "greedy",
+                "comment": " Performs a greedy heuristic search. This is one that always follows the\nsearch node that has the highest h value (h = heuristic).\n",
+                "type": "Search.Informed state -> List.List ( state, Basics.Bool ) -> Search.SearchResult state"
+            },
+            {
+                "name": "iterativeCostIncreasing",
+                "comment": " Implements an iterative cost increasing search. This search proceed depth first\nbut repeats at progressively larger cost limits. The iteration number is\nmultiplied by a specified multiple to calculate the maximum cost allowed\nat a given iteration.\n",
+                "type": "Basics.Float -> Search.WithUninformed a state -> List.List ( state, Basics.Bool ) -> Search.SearchResult state"
+            },
+            {
+                "name": "iterativeDeepening",
+                "comment": " Implements an iterative deepening search. This search proceed depth first\nbut repeats at progressively larger depth limits. The iteration number is\nmultiplied by a specified multiple to calculate the maximum depth allowed\nat a given iteration.\n",
+                "type": "Basics.Int -> Search.WithUninformed a state -> List.List ( state, Basics.Bool ) -> Search.SearchResult state"
+            },
+            {
+                "name": "iterativeDeepeningAStar",
+                "comment": " Implements an iterative deepding A-star search. This search proceed depth\nfirst but repeats at progressively larger f-limits (f = cost + heuristic). The\niteration number is multiplied by a specified multiple to calculate the maximum\ncost allowed at a given iteration.\n\nLike the A-star search, this search will find the optimal soluation given an\nadmissable heuristic. As this search progresses depth first rather than sleecting\nthe most promising nodes to follow, its memory requirements are lower than A-star.\n\nNote that to find the optimal solution, the search will need to be run until it\ncompletes an entire iteration, as when progressing depth first a less than optimal\nsolution may be found first within the current iteration. There is currently no way\nto signal the completion of an iteration.\n\n",
+                "type": "Basics.Float -> Search.Informed state -> List.List ( state, Basics.Bool ) -> Search.SearchResult state"
+            },
+            {
+                "name": "next",
+                "comment": " Steps a search result, to produce the next result.\n\n  - The result of this function may be an Ongoing search. This will provide the\n    current head search node and a continuation to run the remainder of the search.\n\n",
+                "type": "Search.SearchResult state -> Search.SearchResult state"
+            },
+            {
+                "name": "nextGoal",
+                "comment": " Continues a search result, to produce the next search goal.\n\n  - The result of this function will never be an Ongoing search. This\n    function will recursively apply the search until either a Goal state is\n    found or the walk over the search space is Complete.\n  - If the search is insufficiently constrained and no goal can ever be found,\n    this function may infnite loop.\n\n",
+                "type": "Search.SearchResult state -> Search.SearchResult state"
+            },
+            {
+                "name": "nextN",
+                "comment": " Continues a search result, to produce the next search goal up to a limited\nnumber of iterations.\n\n  - This function will recursively apply the search until either a Goal state\n    is found or the walk over the search space is Complete, or the iteration\n    count is exhausted in which case an Ongoing search may be returned.\n\n",
+                "type": "Basics.Int -> Search.SearchResult state -> Search.SearchResult state"
+            },
+            {
+                "name": "uniformCost",
+                "comment": " Performs a uniform-cost search. This always follows the search node that\nhas the lowest path cost. It is called a uniform cost search because the\nboundary of the search will have a roughly uniform cost as the search\nspace is searched by increasing cost.\n",
+                "type": "Search.WithUninformed a state -> List.List ( state, Basics.Bool ) -> Search.SearchResult state"
+            }
+        ],
+        "binops": []
+    }
+]

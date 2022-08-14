@@ -1,0 +1,52 @@
+[
+    {
+        "name": "Sentiment",
+        "comment": " elm-sentiment is an Elm module that uses the [AFINN-111](http://www2.imm.dtu.dk/pubdb/views/publication_details.php?id=6010) wordlist to perform [sentiment analysis](http://en.wikipedia.org/wiki/Sentiment_analysis) on arbitrary blocks of input text. Other wordlists are easy to integrate.\n\nIt is inspired by the the [Sentiment](https://github.com/thisandagain/sentiment)-module for Node.js.\n\n**Please note** that a wordlist-based approach for sentiment analysis might not be the best available approach for every (your) application. It is a simple and easy to use solution that does not need training like a Bayes classifier, that might perform better in classifying sentiments.  \n\n@docs Result\n\n# Helper\n\n@docs trim, tokenize\n\n# Analysis\n\n@docs analyse, analyseWith\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Result",
+                "comment": " The Result-type describes the information returned by a call to analyse or analyseWith. The struct contains all tokens, the sum of positive and negative scores etc. The value comparative is the overall score divided by the number of words in the input string. \n",
+                "args": [],
+                "type": "{ tokens : List.List String.String, score : Basics.Int, words : List.List String.String, positive : List.List Basics.Int, negative : List.List Basics.Int, comparative : Basics.Float }"
+            }
+        ],
+        "values": [
+            {
+                "name": "analyse",
+                "comment": " Analyse a string and return a struct of type Result. The function basically calls analyseWith, but with (good) defaults.\n\n    import Sentiment\n\n    result = Sentiment.analyse \"Best movie ever!\"\n\n    -- result.score == 3\n",
+                "type": "String.String -> Sentiment.Result"
+            },
+            {
+                "name": "analyseWith",
+                "comment": " Analyse a given string and return a struct of type Result. This function expects a dictionary containing a word list, a dictionary with additional sentiment information and a tokenizer function.\n\n    import Sentiment\n    import WordList.Afinn as Afinn\n    import String\n    import Dict\n\n    result = \n      Sentiment.analyseWith \n        Afinn.get\n        (Dict.fromList [(\":-)\",3),(\":-|\", 0),(\":-(\", -3)])\n        (String.toLower >> String.words)\n        \"Best movie ever! :-)\"\n\n    -- result.score == 6\n",
+                "type": "Dict.Dict String.String Basics.Int -> Dict.Dict String.String Basics.Int -> (String.String -> List.List String.String) -> String.String -> Sentiment.Result"
+            },
+            {
+                "name": "tokenize",
+                "comment": " Split a string into words, turn all words into lowercase and remove everything that is not necessary (e. g. whitespace or special characters).\n\n    import Sentiment\n\n    Sentiment.tokenize \" --- Hello, World! :) \"\n\n    -- [\"hello\",\"world\"]\n",
+                "type": "String.String -> List.List String.String"
+            },
+            {
+                "name": "trim",
+                "comment": " Trim a given input string.\n\n    import Sentiment\n\n    Sentiment.trim \"  --- Hello!, \"\n\n    -- Hello\n",
+                "type": "String.String -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "WordList.Afinn",
+        "comment": " This module contains a single function with the whole [AFINN-111](http://www2.imm.dtu.dk/pubdb/views/publication_details.php?id=6010) wordlist.\n\n@docs get\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "get",
+                "comment": " AFINN-111 wordlist as dictionary. The key is a word, the value the related sentiment score.\n",
+                "type": "Dict.Dict String.String Basics.Int"
+            }
+        ],
+        "binops": []
+    }
+]

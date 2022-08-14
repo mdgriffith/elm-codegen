@@ -1,0 +1,151 @@
+[
+    {
+        "name": "Toasty",
+        "comment": " This package lets you easily show customizable toast notifications in your\nElm apps following The Elm Architecture. You will be able to trigger toasts as\na side-effect of model updates by piping your update function return value\nthrough this library `addToast` function.\n\nWhile this package lets you configure each part of the rendering and behaviour\nof the notification stack, you can use the default Bootstrap Alert theme configuration provided\nin `Toasty.Defaults`. See a [demo using default styling](http://toasty-bootstrap.surge.sh/).\n\n\n## Example\n\n\n### Setting things up\n\nTo use the package, let's look at an example that shows a simple text notification.\n\nFirst you add the toast stack to your model, wrapping the toast model you want in `Stack`.\nYou must do it in a field called `toasties`:\n\n    type alias Model =\n        { toasties : Toasty.Stack String }\n\nAdd the stack initial state in your `init` function:\n\n    init : ( Model, Cmd Msg )\n    init =\n        ( { toasties = Toasty.initialState }, Cmd.none )\n\nThen add in a message that will handle toasts messages:\n\n    type alias Msg =\n        ToastyMsg (Toasty.Msg String)\n\nYou can use the default configuration as-is or tweak it to your needs by piping configuration helpers:\n\n    myConfig : Toasty.Config msg\n    myConfig =\n        Toasty.config\n            |> Toasty.transitionOutDuration 100\n            |> Toasty.delay 8000\n\nHandle the toasts message in your app update function using the library `update`\nfunction:\n\n    update msg model =\n        case msg of\n            ToastyMsg subMsg ->\n                Toasty.update myConfig ToastyMsg subMsg model\n\nAs a last step, render the toast stack in you `view` function. You will need to\nprovide an special view function that knows how to render your toast model:\n\n    view : Model -> Html Msg\n    view model =\n        div []\n            [ h1 [] [ text \"Toasty example\" ]\n            , Toasty.view myConfig renderToast ToastyMsg model.toasties\n            ]\n\n    renderToast : String -> Html Msg\n    renderToast toast =\n        div [] [ text toast ]\n\n\n### Triggering toasts\n\nMost of the times you will want to trigger toasts as side-effect of some other app event,\ne.g. show a message when an asynchronous response was received. In order to do that, just\npipe your update function returned value through the `addToast` function passing your\nconfiguration, tag and toast.\n\n        update msg model =\n            case msg of\n                SomeAppMsg ->\n                    ( newModel, Cmd.none )\n                        |> Toasty.addToast myConfig ToastyMsg \"Entity successfully created!\"\n\nThat's all!\n\n\n# Definition\n\n@docs Stack, Msg\n\n\n# Configuration\n\nThe notifications appearance and behaviour can be fully customized. To do this,\nyou need to import the default configuration and tweak it by piping the provided\nhelper functions.\n\nNote that as you can set container and items HTML attributes the library remains\nagnostic about how to style your toasts, enabling you to use inline styles or\nclasses.\n\n    myConfig : Toasty.Config msg\n    myConfig =\n        Toasty.config\n            |> Toasty.transitionOutDuration 700\n            |> Toasty.delay 8000\n            |> Toasty.containerAttrs containerAttrs\n\n    containerAttrs =\n        [ style\n            [ ( \"max-width\", \"300px\" )\n            , ( \"position\", \"fixed\" )\n            , ( \"right\", \"0\" )\n            , ( \"top\", \"0\" )\n            ]\n        ]\n\n@docs config, delay, transitionOutDuration, containerAttrs, itemAttrs, transitionInAttrs, transitionOutAttrs, Config\n\n\n# Other functions\n\n@docs view, update, addToast, addPersistentToast, initialState\n\n",
+        "unions": [
+            {
+                "name": "Config",
+                "comment": " The base configuration type.\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Msg",
+                "comment": " The internal message type used by the library. You need to tag and add it to your app messages.\n\n    type Msg\n        = ToastyMsg (Toasty.Msg MyToast)\n\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Stack",
+                "comment": " Represents the stack of current toasts notifications. You can model a toast\nto be as complex or simple as you want.\n\n    type alias Model =\n        { toasties : Toasty.Stack MyToast\n        }\n\n\n    -- Defines a toast model that has four different variants\n\n    type MyToast\n        =\n        | Info (Maybe String) String\n        | Success (Maybe String) String\n        | Warning (Maybe String) String\n        | Error (Maybe String) String\n\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "addPersistentToast",
+                "comment": " Adds a toast that won't be removed after a timeout to the stack. It receives and returns\na tuple of type '(model, Cmd msg)' so that you can easily pipe it to your app\nupdate function branches.\n\n    update msg model =\n        case msg of\n            SomeAppMsg ->\n                ( newModel, Cmd.none )\n                    |> Toasty.addPersistentToast myConfig ToastyMsg (MyToast \"Entity successfully created!\")\n\n            ToastyMsg subMsg ->\n                Toasty.update myConfig ToastyMsg subMsg model\n\n",
+                "type": "Toasty.Config msg -> (Toasty.Msg a -> msg) -> a -> ( { m | toasties : Toasty.Stack a }, Platform.Cmd.Cmd msg ) -> ( { m | toasties : Toasty.Stack a }, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "addToast",
+                "comment": " Adds a toast to the stack and schedules its removal. It receives and returns\na tuple of type '(model, Cmd msg)' so that you can easily pipe it to your app\nupdate function branches.\n\n    update msg model =\n        case msg of\n            SomeAppMsg ->\n                ( newModel, Cmd.none )\n                    |> Toasty.addToast myConfig ToastyMsg (MyToast \"Entity successfully created!\")\n\n            ToastyMsg subMsg ->\n                Toasty.update myConfig ToastyMsg subMsg model\n\n",
+                "type": "Toasty.Config msg -> (Toasty.Msg a -> msg) -> a -> ( { m | toasties : Toasty.Stack a }, Platform.Cmd.Cmd msg ) -> ( { m | toasties : Toasty.Stack a }, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "config",
+                "comment": " Some basic configuration defaults: Toasts are visible for 5 seconds with\nno animations or special styling.\n",
+                "type": "Toasty.Config msg"
+            },
+            {
+                "name": "containerAttrs",
+                "comment": " Lets you set the HTML attributes to add to the toasts stack container. This will help\nyou style and position the toast stack however you like by adding classes or inline styles.\n",
+                "type": "List.List (Html.Attribute msg) -> Toasty.Config msg -> Toasty.Config msg"
+            },
+            {
+                "name": "delay",
+                "comment": " Changes the amount of time (in milliseconds) the toast will be visible.\nAfter this time, the transition out begins.\n",
+                "type": "Basics.Float -> Toasty.Config msg -> Toasty.Config msg"
+            },
+            {
+                "name": "initialState",
+                "comment": " An empty stack of toasts to initialize your model with.\n",
+                "type": "Toasty.Stack a"
+            },
+            {
+                "name": "itemAttrs",
+                "comment": " Lets you set the HTML attributes to add to each toast container. This will help\nyou style and arrange the toasts however you like by adding classes or inline styles.\n",
+                "type": "List.List (Html.Attribute msg) -> Toasty.Config msg -> Toasty.Config msg"
+            },
+            {
+                "name": "transitionInAttrs",
+                "comment": " Lets you set the HTML attributes to add to the toast container when transitioning in.\n",
+                "type": "List.List (Html.Attribute msg) -> Toasty.Config msg -> Toasty.Config msg"
+            },
+            {
+                "name": "transitionOutAttrs",
+                "comment": " Lets you set the HTML attributes to add to the toast container when transitioning out.\n",
+                "type": "List.List (Html.Attribute msg) -> Toasty.Config msg -> Toasty.Config msg"
+            },
+            {
+                "name": "transitionOutDuration",
+                "comment": " Changes the amount of time (in milliseconds) to wait after transition out\nbegins and before actually removing the toast node from the DOM. This lets you\nauthor fancy animations when a toast is removed.\n",
+                "type": "Basics.Float -> Toasty.Config msg -> Toasty.Config msg"
+            },
+            {
+                "name": "update",
+                "comment": " Handles the internal messages. You need to wire it to your app update function\n\n    update msg model =\n        case msg of\n            ToastyMsg subMsg ->\n                Toasty.update Toasty.config ToastyMsg subMsg model\n\n",
+                "type": "Toasty.Config msg -> (Toasty.Msg a -> msg) -> Toasty.Msg a -> { m | toasties : Toasty.Stack a } -> ( { m | toasties : Toasty.Stack a }, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "view",
+                "comment": " Renders the stack of toasts. You need to add it to your app view function and\ngive it a function that knows how to render your toasts model.\n\n    view model =\n        div []\n            [ h1 [] [ text \"Toasty example\" ]\n            , Toasty.view myConfig (\\txt -> div [] [ text txt ]) ToastyMsg model.toasties\n            ]\n\n",
+                "type": "Toasty.Config msg -> (a -> Html.Html msg) -> (Toasty.Msg a -> msg) -> Toasty.Stack a -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Toasty.Defaults",
+        "comment": " This module provides a generic toast type with four variants (info, success, error and warning)\neach one supports a title and optional secondary message.\n\n**You need to load the provided `Defaults.css` file in your project**. `bounceInRight`\nand `fadeOutRightBig` animations borrowed from [Animate.css](https://daneden.github.io/animate.css/)\nproject by Daniel Eden.\n\nSee a [demo](http://toasty-bootstrap.surge.sh/).\n\n\n# Definition\n\n@docs Toast, config, view\n\n",
+        "unions": [
+            {
+                "name": "Toast",
+                "comment": " This theme defines toasts of four variants: \"Info\", \"Success\", \"Warning\" and \"Error\".\nEach of them accepts an optional title and a message.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Info",
+                        [
+                            "Maybe.Maybe String.String",
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Success",
+                        [
+                            "Maybe.Maybe String.String",
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Warning",
+                        [
+                            "Maybe.Maybe String.String",
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Error",
+                        [
+                            "Maybe.Maybe String.String",
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "config",
+                "comment": " Default theme configuration.\n",
+                "type": "Toasty.Config msg"
+            },
+            {
+                "name": "view",
+                "comment": " Default theme view handling the three toast variants.\n",
+                "type": "Toasty.Defaults.Toast -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

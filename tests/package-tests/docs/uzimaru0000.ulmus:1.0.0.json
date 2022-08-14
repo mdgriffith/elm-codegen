@@ -1,0 +1,187 @@
+[
+    {
+        "name": "Ulmus",
+        "comment": " Evaluation\n\n@docs Ctx\n@docs eval\n@docs evalAll\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Ctx",
+                "comment": " Runtime Context\n",
+                "args": [],
+                "type": "Dict.Dict String.String Ulmus.AST.AST"
+            }
+        ],
+        "values": [
+            {
+                "name": "eval",
+                "comment": " Evaluation Function\n",
+                "type": "Ulmus.Ctx -> Ulmus.AST.AST -> Result.Result String.String Ulmus.AST.AST"
+            },
+            {
+                "name": "evalAll",
+                "comment": " Evaluation Function with many S-expression\n",
+                "type": "Ulmus.Ctx -> List.List Ulmus.AST.AST -> Result.Result String.String ( Ulmus.AST.AST, Ulmus.Ctx )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Ulmus.AST",
+        "comment": " The AST definition of the program\n\n@docs AST\n@docs Atom\n@docs equal\n@docs show\n\n",
+        "unions": [
+            {
+                "name": "AST",
+                "comment": " AST\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Sybl",
+                        [
+                            "Ulmus.AST.Atom"
+                        ]
+                    ],
+                    [
+                        "Quote",
+                        [
+                            "Ulmus.AST.AST"
+                        ]
+                    ],
+                    [
+                        "Pair",
+                        [
+                            "Ulmus.AST.AST",
+                            "Ulmus.AST.AST"
+                        ]
+                    ],
+                    [
+                        "Lambda",
+                        [
+                            "Ulmus.AST.AST",
+                            "Ulmus.AST.AST"
+                        ]
+                    ],
+                    [
+                        "Let",
+                        [
+                            "Ulmus.AST.AST",
+                            "List.List Ulmus.AST.AST"
+                        ]
+                    ],
+                    [
+                        "If",
+                        [
+                            "Ulmus.AST.AST",
+                            "Ulmus.AST.AST",
+                            "Ulmus.AST.AST"
+                        ]
+                    ],
+                    [
+                        "Define",
+                        [
+                            "Ulmus.AST.AST",
+                            "Ulmus.AST.AST",
+                            "Ulmus.AST.AST"
+                        ]
+                    ],
+                    [
+                        "Cond",
+                        [
+                            "List.List Ulmus.AST.AST",
+                            "Ulmus.AST.AST"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Atom",
+                "comment": " Atom\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NIL",
+                        []
+                    ],
+                    [
+                        "T",
+                        []
+                    ],
+                    [
+                        "Num",
+                        [
+                            "Basics.Float"
+                        ]
+                    ],
+                    [
+                        "Str",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Label",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "equal",
+                "comment": " equal (Sybl NIL) (Sybl NIL) == True\n",
+                "type": "Ulmus.AST.AST -> Ulmus.AST.AST -> Basics.Bool"
+            },
+            {
+                "name": "show",
+                "comment": " show\n",
+                "type": "Ulmus.AST.AST -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Ulmus.BuildIn",
+        "comment": " BuildIn function\n\n@docs buildIn\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "buildIn",
+                "comment": " buildIn function\n",
+                "type": "List.List Ulmus.AST.AST"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Ulmus.Parser",
+        "comment": " The parser definition of the program\n\n@docs atom\n@docs list\n@docs parser\n@docs sExp\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "atom",
+                "comment": " atom\n",
+                "type": "Parser.Parser Ulmus.AST.Atom"
+            },
+            {
+                "name": "list",
+                "comment": " list\n",
+                "type": "Parser.Parser Ulmus.AST.AST"
+            },
+            {
+                "name": "parser",
+                "comment": " parser\n",
+                "type": "Parser.Parser (List.List Ulmus.AST.AST)"
+            },
+            {
+                "name": "sExp",
+                "comment": " sExp\n",
+                "type": "Parser.Parser Ulmus.AST.AST"
+            }
+        ],
+        "binops": []
+    }
+]

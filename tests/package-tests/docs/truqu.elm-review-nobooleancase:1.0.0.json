@@ -1,0 +1,16 @@
+[
+    {
+        "name": "NoBooleanCase",
+        "comment": "\n\n@docs rule\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": " Prohibits using `case <expr> of` when `<expr>` returns a boolean\n\nExpressions like\n\n    case some fun here of\n        True ->\n            doSomething\n\n        False ->\n            doSomethingElse\n\ncan be rewritten to a slightly more natural `if .. then .. else ..` expression\nlike so:\n\n    if some fun here then\n        doSomething\n\n    else\n        doSomethingElse\n\nThis rule flags such expressions and proposes a fix to rewrite them accordingly.\n\nTo use this rule, add it to your `elm-review` config like so:\n\n    module ReviewConfig exposing (config)\n\n    import NoBooleanCase\n    import Review.Rule exposing (Rule)\n\n    config : List Rule\n    config =\n        [ NoBooleanCase.rule\n        ]\n\n",
+                "type": "Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    }
+]

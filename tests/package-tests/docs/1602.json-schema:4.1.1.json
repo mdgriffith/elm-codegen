@@ -1,0 +1,728 @@
+[
+    {
+        "name": "Json.Schema",
+        "comment": " This library provides bunch of utility methods to work with JSON values using\nschemas defined in [JSON Schema](http://json-schema.org/) format.\n\nCurrently it allows to construct schemata ([draft-6](https://github.com/json-schema-org/json-schema-spec/blob/draft-06/schema.json)), validate values and generate random\nvalues based on schema (very experimental feature).\nIt supports local references, but doesn't support remote references.\n\n\n# Decode schema\n\nUse `fromValue` or `fromString` methods if you receive schema from external source. If you want to construct schema from elm code you might want to use `Json.Schema.Builder`, or low-level API using definitions from `Json.Schema.Definitions`\n\n@docs fromValue, fromString\n\n\n# Validation\n\n@docs validateValue, validateAt\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fromString",
+                "comment": " Construct JSON Schema from string\n",
+                "type": "String.String -> Result.Result String.String Json.Schema.Definitions.Schema"
+            },
+            {
+                "name": "fromValue",
+                "comment": " Construct JSON Schema from JSON value\n",
+                "type": "Json.Decode.Value -> Result.Result String.String Json.Schema.Definitions.Schema"
+            },
+            {
+                "name": "validateAt",
+                "comment": " Validate value using subschema identified by URI.\n",
+                "type": "Json.Schema.Validation.ValidationOptions -> Json.Decode.Value -> Json.Schema.Definitions.Schema -> String.String -> Result.Result (List.List Json.Schema.Validation.Error) Json.Decode.Value"
+            },
+            {
+                "name": "validateValue",
+                "comment": " Validate value against JSON Schema. Returns Result with updated value in case if validationOptions require so.\n\n    schema\n        |> Json.Schema.validateValue { applyDefaults = True } value\n\n",
+                "type": "Json.Schema.Validation.ValidationOptions -> Json.Decode.Value -> Json.Schema.Definitions.Schema -> Result.Result (List.List Json.Schema.Validation.Error) Json.Decode.Value"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Json.Schema.Builder",
+        "comment": " Convenience API to build a valid JSON schema\n\n\n# Definition\n\n@docs SchemaBuilder\n\n\n# Schema builder creation\n\n@docs buildSchema, boolSchema, toSchema, encode\n\n\n# Building up schema\n\n\n## Type\n\nJSON Schema spec allows type to be string or array of strings. There are three\ngroups of types produced: single types (e.g. `\"string\"`), nullable types (e.g. `[\"string\", \"null\"]`)\nand union types (e.g. `[\"string\", \"object\"]`)\n\n@docs withType, withNullableType, withUnionType\n\n\n## Meta\n\n@docs withTitle, withDescription, withDefault, withExamples, withDefinitions\n\n\n## JSON-Schema\n\n@docs withId, withRef, withCustomKeyword\n\n\n## Numeric validations\n\nThe following validations are only applicable to numeric values and\nwill always succeed for any type other than `number` and `integer`\n\n@docs withMultipleOf, withMaximum, withMinimum, withExclusiveMaximum, withExclusiveMinimum\n\n\n## String validations\n\n@docs withMaxLength, withMinLength, withPattern, withFormat\n\n\n## Array validations\n\n@docs withItems, withItem, withAdditionalItems, withMaxItems, withMinItems, withUniqueItems, withContains\n\n\n## Object validations\n\n@docs withMaxProperties, withMinProperties, withRequired, withProperties, withPatternProperties, withAdditionalProperties, withSchemaDependency, withPropNamesDependency, withPropertyNames\n\n\n## Generic validations\n\n@docs withEnum, withConst, withAllOf, withAnyOf, withOneOf, withNot\n\n\n# Validation\n\n@docs validate\n\n",
+        "unions": [
+            {
+                "name": "SchemaBuilder",
+                "comment": " Builder for JSON schema providing an API like this:\n\n    buildSchema\n        |> withTitle \"My object\"\n        |> withProperties\n            [ ( \"foo\"\n              , buildSchema\n                    |> withType \"string\"\n              )\n            , ( \"bar\"\n              , buildSchema\n                    |> withType \"integer\"\n                    |> withMaximum 10\n              )\n            ]\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "SchemaBuilder",
+                        [
+                            "{ errors : List.List String.String, schema : Maybe.Maybe Json.Schema.Definitions.SubSchema, bool : Maybe.Maybe Basics.Bool }"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "boolSchema",
+                "comment": " Create boolean schema\n",
+                "type": "Basics.Bool -> Json.Schema.Builder.SchemaBuilder"
+            },
+            {
+                "name": "buildSchema",
+                "comment": " Create schema builder with blank schema\n",
+                "type": "Json.Schema.Builder.SchemaBuilder"
+            },
+            {
+                "name": "encode",
+                "comment": " Encode schema into a builder code (elm)\n",
+                "type": "Basics.Int -> Json.Schema.Definitions.Schema -> String.String"
+            },
+            {
+                "name": "toSchema",
+                "comment": " Extract JSON Schema from the builder\n",
+                "type": "Json.Schema.Builder.SchemaBuilder -> Result.Result String.String Json.Schema.Definitions.Schema"
+            },
+            {
+                "name": "validate",
+                "comment": " Validate value using schema controlled by builder.\n",
+                "type": "Json.Schema.Validation.ValidationOptions -> Json.Decode.Value -> Json.Schema.Builder.SchemaBuilder -> Result.Result (List.List Json.Schema.Validation.Error) Json.Decode.Value"
+            },
+            {
+                "name": "withAdditionalItems",
+                "comment": " ",
+                "type": "Json.Schema.Builder.SchemaBuilder -> Json.Schema.Builder.SchemaBuilder -> Json.Schema.Builder.SchemaBuilder"
+            },
+            {
+                "name": "withAdditionalProperties",
+                "comment": " ",
+                "type": "Json.Schema.Builder.SchemaBuilder -> Json.Schema.Builder.SchemaBuilder -> Json.Schema.Builder.SchemaBuilder"
+            },
+            {
+                "name": "withAllOf",
+                "comment": " ",
+                "type": "List.List Json.Schema.Builder.SchemaBuilder -> Json.Schema.Builder.SchemaBuilder -> Json.Schema.Builder.SchemaBuilder"
+            },
+            {
+                "name": "withAnyOf",
+                "comment": " ",
+                "type": "List.List Json.Schema.Builder.SchemaBuilder -> Json.Schema.Builder.SchemaBuilder -> Json.Schema.Builder.SchemaBuilder"
+            },
+            {
+                "name": "withConst",
+                "comment": " ",
+                "type": "Json.Decode.Value -> Json.Schema.Builder.SchemaBuilder -> Json.Schema.Builder.SchemaBuilder"
+            },
+            {
+                "name": "withContains",
+                "comment": " Set the `contains` property of JSON schema to a sub-schema.\n\n    buildSchema\n        |> withContains\n            (buildSchema\n                |> withType \"string\"\n            )\n\n",
+                "type": "Json.Schema.Builder.SchemaBuilder -> Json.Schema.Builder.SchemaBuilder -> Json.Schema.Builder.SchemaBuilder"
+            },
+            {
+                "name": "withCustomKeyword",
+                "comment": " ",
+                "type": "String.String -> Json.Decode.Value -> Json.Schema.Builder.SchemaBuilder -> Json.Schema.Builder.SchemaBuilder"
+            },
+            {
+                "name": "withDefault",
+                "comment": " ",
+                "type": "Json.Decode.Value -> Json.Schema.Builder.SchemaBuilder -> Json.Schema.Builder.SchemaBuilder"
+            },
+            {
+                "name": "withDefinitions",
+                "comment": " ",
+                "type": "List.List ( String.String, Json.Schema.Builder.SchemaBuilder ) -> Json.Schema.Builder.SchemaBuilder -> Json.Schema.Builder.SchemaBuilder"
+            },
+            {
+                "name": "withDescription",
+                "comment": " ",
+                "type": "String.String -> Json.Schema.Builder.SchemaBuilder -> Json.Schema.Builder.SchemaBuilder"
+            },
+            {
+                "name": "withEnum",
+                "comment": " ",
+                "type": "List.List Json.Decode.Value -> Json.Schema.Builder.SchemaBuilder -> Json.Schema.Builder.SchemaBuilder"
+            },
+            {
+                "name": "withExamples",
+                "comment": " ",
+                "type": "List.List Json.Decode.Value -> Json.Schema.Builder.SchemaBuilder -> Json.Schema.Builder.SchemaBuilder"
+            },
+            {
+                "name": "withExclusiveMaximum",
+                "comment": " ",
+                "type": "Basics.Float -> Json.Schema.Builder.SchemaBuilder -> Json.Schema.Builder.SchemaBuilder"
+            },
+            {
+                "name": "withExclusiveMinimum",
+                "comment": " ",
+                "type": "Basics.Float -> Json.Schema.Builder.SchemaBuilder -> Json.Schema.Builder.SchemaBuilder"
+            },
+            {
+                "name": "withFormat",
+                "comment": " ",
+                "type": "String.String -> Json.Schema.Builder.SchemaBuilder -> Json.Schema.Builder.SchemaBuilder"
+            },
+            {
+                "name": "withId",
+                "comment": " ",
+                "type": "String.String -> Json.Schema.Builder.SchemaBuilder -> Json.Schema.Builder.SchemaBuilder"
+            },
+            {
+                "name": "withItem",
+                "comment": " ",
+                "type": "Json.Schema.Builder.SchemaBuilder -> Json.Schema.Builder.SchemaBuilder -> Json.Schema.Builder.SchemaBuilder"
+            },
+            {
+                "name": "withItems",
+                "comment": " ",
+                "type": "List.List Json.Schema.Builder.SchemaBuilder -> Json.Schema.Builder.SchemaBuilder -> Json.Schema.Builder.SchemaBuilder"
+            },
+            {
+                "name": "withMaxItems",
+                "comment": " ",
+                "type": "Basics.Int -> Json.Schema.Builder.SchemaBuilder -> Json.Schema.Builder.SchemaBuilder"
+            },
+            {
+                "name": "withMaxLength",
+                "comment": " ",
+                "type": "Basics.Int -> Json.Schema.Builder.SchemaBuilder -> Json.Schema.Builder.SchemaBuilder"
+            },
+            {
+                "name": "withMaxProperties",
+                "comment": " ",
+                "type": "Basics.Int -> Json.Schema.Builder.SchemaBuilder -> Json.Schema.Builder.SchemaBuilder"
+            },
+            {
+                "name": "withMaximum",
+                "comment": " ",
+                "type": "Basics.Float -> Json.Schema.Builder.SchemaBuilder -> Json.Schema.Builder.SchemaBuilder"
+            },
+            {
+                "name": "withMinItems",
+                "comment": " ",
+                "type": "Basics.Int -> Json.Schema.Builder.SchemaBuilder -> Json.Schema.Builder.SchemaBuilder"
+            },
+            {
+                "name": "withMinLength",
+                "comment": " ",
+                "type": "Basics.Int -> Json.Schema.Builder.SchemaBuilder -> Json.Schema.Builder.SchemaBuilder"
+            },
+            {
+                "name": "withMinProperties",
+                "comment": " ",
+                "type": "Basics.Int -> Json.Schema.Builder.SchemaBuilder -> Json.Schema.Builder.SchemaBuilder"
+            },
+            {
+                "name": "withMinimum",
+                "comment": " ",
+                "type": "Basics.Float -> Json.Schema.Builder.SchemaBuilder -> Json.Schema.Builder.SchemaBuilder"
+            },
+            {
+                "name": "withMultipleOf",
+                "comment": " ",
+                "type": "Basics.Float -> Json.Schema.Builder.SchemaBuilder -> Json.Schema.Builder.SchemaBuilder"
+            },
+            {
+                "name": "withNot",
+                "comment": " ",
+                "type": "Json.Schema.Builder.SchemaBuilder -> Json.Schema.Builder.SchemaBuilder -> Json.Schema.Builder.SchemaBuilder"
+            },
+            {
+                "name": "withNullableType",
+                "comment": " Set the `type` property of JSON schema to a nullable type.\n\n    buildSchema\n        |> withNullableType \"string\"\n\n",
+                "type": "String.String -> Json.Schema.Builder.SchemaBuilder -> Json.Schema.Builder.SchemaBuilder"
+            },
+            {
+                "name": "withOneOf",
+                "comment": " ",
+                "type": "List.List Json.Schema.Builder.SchemaBuilder -> Json.Schema.Builder.SchemaBuilder -> Json.Schema.Builder.SchemaBuilder"
+            },
+            {
+                "name": "withPattern",
+                "comment": " ",
+                "type": "String.String -> Json.Schema.Builder.SchemaBuilder -> Json.Schema.Builder.SchemaBuilder"
+            },
+            {
+                "name": "withPatternProperties",
+                "comment": " ",
+                "type": "List.List ( String.String, Json.Schema.Builder.SchemaBuilder ) -> Json.Schema.Builder.SchemaBuilder -> Json.Schema.Builder.SchemaBuilder"
+            },
+            {
+                "name": "withPropNamesDependency",
+                "comment": " ",
+                "type": "String.String -> List.List String.String -> Json.Schema.Builder.SchemaBuilder -> Json.Schema.Builder.SchemaBuilder"
+            },
+            {
+                "name": "withProperties",
+                "comment": " ",
+                "type": "List.List ( String.String, Json.Schema.Builder.SchemaBuilder ) -> Json.Schema.Builder.SchemaBuilder -> Json.Schema.Builder.SchemaBuilder"
+            },
+            {
+                "name": "withPropertyNames",
+                "comment": " ",
+                "type": "Json.Schema.Builder.SchemaBuilder -> Json.Schema.Builder.SchemaBuilder -> Json.Schema.Builder.SchemaBuilder"
+            },
+            {
+                "name": "withRef",
+                "comment": " ",
+                "type": "String.String -> Json.Schema.Builder.SchemaBuilder -> Json.Schema.Builder.SchemaBuilder"
+            },
+            {
+                "name": "withRequired",
+                "comment": " ",
+                "type": "List.List String.String -> Json.Schema.Builder.SchemaBuilder -> Json.Schema.Builder.SchemaBuilder"
+            },
+            {
+                "name": "withSchemaDependency",
+                "comment": " ",
+                "type": "String.String -> Json.Schema.Builder.SchemaBuilder -> Json.Schema.Builder.SchemaBuilder -> Json.Schema.Builder.SchemaBuilder"
+            },
+            {
+                "name": "withTitle",
+                "comment": " ",
+                "type": "String.String -> Json.Schema.Builder.SchemaBuilder -> Json.Schema.Builder.SchemaBuilder"
+            },
+            {
+                "name": "withType",
+                "comment": " Set the `type` property of JSON schema to a specific type, accepts strings\n\n    buildSchema\n        |> withType \"boolean\"\n\n",
+                "type": "String.String -> Json.Schema.Builder.SchemaBuilder -> Json.Schema.Builder.SchemaBuilder"
+            },
+            {
+                "name": "withUnionType",
+                "comment": " Set the `type` property of JSON schema to an union type.\n\n    buildSchema\n        |> withUnionType [ \"string\", \"object\" ]\n\n",
+                "type": "List.List String.String -> Json.Schema.Builder.SchemaBuilder -> Json.Schema.Builder.SchemaBuilder"
+            },
+            {
+                "name": "withUniqueItems",
+                "comment": " ",
+                "type": "Basics.Bool -> Json.Schema.Builder.SchemaBuilder -> Json.Schema.Builder.SchemaBuilder"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Json.Schema.Definitions",
+        "comment": " This module contains low-level structures JSON Schema build from.\nNormally you wouldn't need to use any of those definitions.\n\nIf you really need this low-level API you might need [JSON Schema spec](http://json-schema.org/documentation.html) as guidance.\n\nFeel free to open [issue](https://github.com/1602/json-schema) to describe your use-case, it will affect development roadmap of this library.\n\n\n# Definitions\n\n@docs Schema, SubSchema, Schemata, Items, Dependency, Type, SingleType, blankSchema, blankSubSchema, ExclusiveBoundary\n\n\n# Decoding / encoding\n\n@docs decoder, encode\n\n\n# Misc\n\n@docs stringToType, getCustomKeywordValue\n\n",
+        "unions": [
+            {
+                "name": "Dependency",
+                "comment": " Dependency definition.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "ArrayPropNames",
+                        [
+                            "List.List String.String"
+                        ]
+                    ],
+                    [
+                        "PropSchema",
+                        [
+                            "Json.Schema.Definitions.Schema"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "ExclusiveBoundary",
+                "comment": " Exclusive boundaries. Compatibility layer between draft-04 and draft-06 (keywords `exclusiveMinimum` and `exclusiveMaximum` has been changed from a boolean to a number to be consistent with the principle of keyword independence). Since we currently keep both draft-4 and draft-6 as same type definition, we have a union of `Bool` and `Float` here. It might be not a bad idea to separate type definitions for different drafts of JSON Schema, current API decision will be reconsidered when future versions of JSON Schema will arrive.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "BoolBoundary",
+                        [
+                            "Basics.Bool"
+                        ]
+                    ],
+                    [
+                        "NumberBoundary",
+                        [
+                            "Basics.Float"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Items",
+                "comment": " Items definition.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NoItems",
+                        []
+                    ],
+                    [
+                        "ItemDefinition",
+                        [
+                            "Json.Schema.Definitions.Schema"
+                        ]
+                    ],
+                    [
+                        "ArrayOfItems",
+                        [
+                            "List.List Json.Schema.Definitions.Schema"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Schema",
+                "comment": " Schema can be either boolean or actual object containing validation and meta properties\n",
+                "args": [],
+                "cases": [
+                    [
+                        "BooleanSchema",
+                        [
+                            "Basics.Bool"
+                        ]
+                    ],
+                    [
+                        "ObjectSchema",
+                        [
+                            "Json.Schema.Definitions.SubSchema"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Schemata",
+                "comment": " List of schema-properties used in properties, definitions and patternProperties\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Schemata",
+                        [
+                            "List.List ( String.String, Json.Schema.Definitions.Schema )"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "SingleType",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "IntegerType",
+                        []
+                    ],
+                    [
+                        "NumberType",
+                        []
+                    ],
+                    [
+                        "StringType",
+                        []
+                    ],
+                    [
+                        "BooleanType",
+                        []
+                    ],
+                    [
+                        "ArrayType",
+                        []
+                    ],
+                    [
+                        "ObjectType",
+                        []
+                    ],
+                    [
+                        "NullType",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Type",
+                "comment": " Type property in json schema can be a single type or array of them, this type definition wraps up this complexity, also it introduces concept of nullable type, which is array of \"null\" type and a single type speaking JSON schema language, but also a useful concept to treat it separately from list of types.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "AnyType",
+                        []
+                    ],
+                    [
+                        "SingleType",
+                        [
+                            "Json.Schema.Definitions.SingleType"
+                        ]
+                    ],
+                    [
+                        "NullableType",
+                        [
+                            "Json.Schema.Definitions.SingleType"
+                        ]
+                    ],
+                    [
+                        "UnionType",
+                        [
+                            "List.List Json.Schema.Definitions.SingleType"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "SubSchema",
+                "comment": " This object holds all draft-6 schema properties\n",
+                "args": [],
+                "type": "{ type_ : Json.Schema.Definitions.Type, id : Maybe.Maybe String.String, ref : Maybe.Maybe String.String, title : Maybe.Maybe String.String, description : Maybe.Maybe String.String, default : Maybe.Maybe Json.Decode.Value, examples : Maybe.Maybe (List.List Json.Decode.Value), definitions : Maybe.Maybe Json.Schema.Definitions.Schemata, multipleOf : Maybe.Maybe Basics.Float, maximum : Maybe.Maybe Basics.Float, exclusiveMaximum : Maybe.Maybe Json.Schema.Definitions.ExclusiveBoundary, minimum : Maybe.Maybe Basics.Float, exclusiveMinimum : Maybe.Maybe Json.Schema.Definitions.ExclusiveBoundary, maxLength : Maybe.Maybe Basics.Int, minLength : Maybe.Maybe Basics.Int, pattern : Maybe.Maybe String.String, format : Maybe.Maybe String.String, items : Json.Schema.Definitions.Items, additionalItems : Maybe.Maybe Json.Schema.Definitions.Schema, maxItems : Maybe.Maybe Basics.Int, minItems : Maybe.Maybe Basics.Int, uniqueItems : Maybe.Maybe Basics.Bool, contains : Maybe.Maybe Json.Schema.Definitions.Schema, maxProperties : Maybe.Maybe Basics.Int, minProperties : Maybe.Maybe Basics.Int, required : Maybe.Maybe (List.List String.String), properties : Maybe.Maybe Json.Schema.Definitions.Schemata, patternProperties : Maybe.Maybe Json.Schema.Definitions.Schemata, additionalProperties : Maybe.Maybe Json.Schema.Definitions.Schema, dependencies : List.List ( String.String, Json.Schema.Definitions.Dependency ), propertyNames : Maybe.Maybe Json.Schema.Definitions.Schema, enum : Maybe.Maybe (List.List Json.Decode.Value), const : Maybe.Maybe Json.Decode.Value, allOf : Maybe.Maybe (List.List Json.Schema.Definitions.Schema), anyOf : Maybe.Maybe (List.List Json.Schema.Definitions.Schema), oneOf : Maybe.Maybe (List.List Json.Schema.Definitions.Schema), not : Maybe.Maybe Json.Schema.Definitions.Schema, source : Json.Decode.Value }"
+            }
+        ],
+        "values": [
+            {
+                "name": "blankSchema",
+                "comment": " Create blank JSON Schema `{}`.\n",
+                "type": "Json.Schema.Definitions.Schema"
+            },
+            {
+                "name": "blankSubSchema",
+                "comment": " ",
+                "type": "Json.Schema.Definitions.SubSchema"
+            },
+            {
+                "name": "decoder",
+                "comment": " ",
+                "type": "Json.Decode.Decoder Json.Schema.Definitions.Schema"
+            },
+            {
+                "name": "encode",
+                "comment": " ",
+                "type": "Json.Schema.Definitions.Schema -> Json.Decode.Value"
+            },
+            {
+                "name": "getCustomKeywordValue",
+                "comment": " Return custom keyword value by its name, useful when dealing with additional meta information added along with standard JSON Schema keywords.\n",
+                "type": "String.String -> Json.Schema.Definitions.Schema -> Maybe.Maybe Json.Decode.Value"
+            },
+            {
+                "name": "stringToType",
+                "comment": " Attempt to parse string into a single type, it recognises the following list of types:\n\n  - integer\n  - number\n  - string\n  - boolean\n  - array\n  - object\n  - null\n\n",
+                "type": "String.String -> Result.Result String.String Json.Schema.Definitions.SingleType"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Json.Schema.Random",
+        "comment": " Generate random values based on JSON Schema.\n\nExperimental module.\n\n\n# Generator\n\n@docs value, valueAt\n\n\n# Settings\n\n@docs GeneratorSettings, defaultSettings\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "GeneratorSettings",
+                "comment": " Customize generator behaviour using following parameters:\n\n  - optionalPropertyProbability : float from 0 to 1, which affects used while generating object with optional property, default 0.5\n  - degradationMultiplier : used in nested objects to affect probability of optional property appearance (must have for recursive objects), default 0.2\n  - defaultListLengthLimit : how many items in array to generate when limit is not set by a schema, default 100\n  - defaultStringLengthLimit : how many characters in random string to generate when limit is not set by a schema, default 100\n\n",
+                "args": [],
+                "type": "{ optionalPropertyProbability : Basics.Float, degradationMultiplier : Basics.Float, defaultListLengthLimit : Basics.Int, defaultStringLengthLimit : Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultSettings",
+                "comment": " Defaults for GeneratorSettings\n",
+                "type": "Json.Schema.Random.GeneratorSettings"
+            },
+            {
+                "name": "value",
+                "comment": " Random value generator.\n\n    buildSchema\n        |> withProperties\n            [ ( \"foo\", buildSchema |> withType \"integer\" ) ]\n        |> toSchema\n        |> Result.withDefault blankSchema\n        |> value defaultSettings\n        |> (\\a -> Random.step a (Random.initialSeed 2))\n        |> (\\( v, _ ) ->\n                Expect.equal v (Encode.object [ ( \"foo\", Encode.int 688281600 ) ])\n           )\n\nSee tests for more examples.\n\n",
+                "type": "Json.Schema.Random.GeneratorSettings -> Json.Schema.Definitions.Schema -> Random.Generator Json.Encode.Value"
+            },
+            {
+                "name": "valueAt",
+                "comment": " Random value generator at path.\n",
+                "type": "Json.Schema.Random.GeneratorSettings -> Json.Schema.Definitions.Schema -> String.String -> Random.Generator Json.Encode.Value"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Json.Schema.Validation",
+        "comment": "\n\n\n# Validate\n\nValidation fails with list of errors, one for each invalid leaf of the value object.\nWhen validation succeeds it also returns value being validated. Currently this value is the same as initial value, later version will allow options to be supplied in order to normalize value along the validation (e.g. apply defaults, remove additional properties, coerce types)\n\n@docs validate, ValidationOptions, defaultOptions\n\n\n# Validation Errors\n\n@docs Error, ValidationError, JsonPointer\n\n",
+        "unions": [
+            {
+                "name": "ValidationError",
+                "comment": " Validation errors with details. The rule of parametrized errors like `Maximum` is that first parameter is always expected value, second parameter is actual value. Most of errors named after respective validation properties, only exception from this rule for cases like `AlwaysFail` which doesn't have keyword (this is result of boolean schema false), or `AdditionalPropertiesDisallowed` which represent subset of `.additionalProperties` validation when its value equals to `false` and additional property is present.\n\nThere are keywords in JSON Schema which don't have their dedicated error codes:\n\n  - items\n  - additionalItems\n  - properties\n  - patternProperties\n  - dependencies\n  - allOf\n  - oneOf\n\nThe reason for this is the nature of these errors is to go deeper into the nested Schema and Value.\n\nCurrent implementation of validation only creates errors for leaves of the Value, not for nodes, e.g. if one of the properties fails a validation, error list will contain an error for the property but not for the object containing it. This decision is made to reduce noise in errors, since it is obvious that all the parent objects containing invalid properties are also invalid, and this information can be derived from json path if needed.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "MultipleOf",
+                        [
+                            "Basics.Float",
+                            "Basics.Float"
+                        ]
+                    ],
+                    [
+                        "Maximum",
+                        [
+                            "Basics.Float",
+                            "Basics.Float"
+                        ]
+                    ],
+                    [
+                        "Minimum",
+                        [
+                            "Basics.Float",
+                            "Basics.Float"
+                        ]
+                    ],
+                    [
+                        "ExclusiveMaximum",
+                        [
+                            "Basics.Float",
+                            "Basics.Float"
+                        ]
+                    ],
+                    [
+                        "ExclusiveMinimum",
+                        [
+                            "Basics.Float",
+                            "Basics.Float"
+                        ]
+                    ],
+                    [
+                        "MaxLength",
+                        [
+                            "Basics.Int",
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "MinLength",
+                        [
+                            "Basics.Int",
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "Pattern",
+                        [
+                            "String.String",
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "MaxItems",
+                        [
+                            "Basics.Int",
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "MinItems",
+                        [
+                            "Basics.Int",
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "UniqueItems",
+                        [
+                            "Json.Decode.Value"
+                        ]
+                    ],
+                    [
+                        "Contains",
+                        []
+                    ],
+                    [
+                        "MaxProperties",
+                        [
+                            "Basics.Int",
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "MinProperties",
+                        [
+                            "Basics.Int",
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "Required",
+                        [
+                            "List.List String.String"
+                        ]
+                    ],
+                    [
+                        "RequiredProperty",
+                        []
+                    ],
+                    [
+                        "AdditionalPropertiesDisallowed",
+                        [
+                            "List.List String.String"
+                        ]
+                    ],
+                    [
+                        "AdditionalPropertyDisallowed",
+                        []
+                    ],
+                    [
+                        "InvalidPropertyName",
+                        [
+                            "List.List Json.Schema.Validation.Error"
+                        ]
+                    ],
+                    [
+                        "Enum",
+                        []
+                    ],
+                    [
+                        "Const",
+                        []
+                    ],
+                    [
+                        "InvalidType",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "OneOfNoneSucceed",
+                        []
+                    ],
+                    [
+                        "OneOfManySucceed",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "Not",
+                        []
+                    ],
+                    [
+                        "UnresolvableReference",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "AlwaysFail",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Error",
+                "comment": " Attempt to validate returns `Result` with list of `Error` instances as an `Err`.\n",
+                "args": [],
+                "type": "{ jsonPointer : Json.Schema.Validation.JsonPointer, details : Json.Schema.Validation.ValidationError }"
+            },
+            {
+                "name": "JsonPointer",
+                "comment": " Path in json value.\n\nA few notes:\n\n  - empty list represents root\n  - indices of array items are integers encoded as string\n\n",
+                "args": [],
+                "type": "{ ns : String.String, path : List.List String.String }"
+            },
+            {
+                "name": "ValidationOptions",
+                "comment": " Validation options which allow to apply defaults (more options upcoming)\n",
+                "args": [],
+                "type": "{ applyDefaults : Basics.Bool }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultOptions",
+                "comment": " Default validation options, applyDefaults = True\n",
+                "type": "Json.Schema.Validation.ValidationOptions"
+            },
+            {
+                "name": "validate",
+                "comment": " Validate value against schema\n",
+                "type": "Json.Schema.Validation.ValidationOptions -> Ref.SchemataPool -> Json.Decode.Value -> Json.Schema.Definitions.Schema -> Json.Schema.Definitions.Schema -> Result.Result (List.List Json.Schema.Validation.Error) Json.Decode.Value"
+            }
+        ],
+        "binops": []
+    }
+]

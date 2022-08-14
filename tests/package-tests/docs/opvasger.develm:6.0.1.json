@@ -1,0 +1,168 @@
+[
+    {
+        "name": "DevElm",
+        "comment": "\n\n@docs Flags\n\n@docs LogFlags\n\n@docs BuildFlags, Format, Mode, defaultBuild\n\n@docs ServeFlags, defaultServe\n\n@docs TestFlags, defaultTest\n\n@docs BenchmarkFlags, defaultBenchmark\n\n\n## Internals\n\nThese definitions are for program-authors who want to consume the flags for their own programs.\n\n@docs encodeFlags\n\n",
+        "unions": [
+            {
+                "name": "Flags",
+                "comment": " Flags for the `develm` program.\n\n  - `Batch` performs tasks unordered.\n  - `Sequence` performs tasks sequentially.\n  - `OneOf` performs tasks optionally - `OneOf [(\"build\", Build defaultBuild)]` is performed with `develm build`.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Batch",
+                        [
+                            "List.List DevElm.Flags"
+                        ]
+                    ],
+                    [
+                        "Sequence",
+                        [
+                            "List.List DevElm.Flags"
+                        ]
+                    ],
+                    [
+                        "OneOf",
+                        [
+                            "List.List ( String.String, DevElm.Flags )"
+                        ]
+                    ],
+                    [
+                        "Log",
+                        [
+                            "DevElm.LogFlags"
+                        ]
+                    ],
+                    [
+                        "Build",
+                        [
+                            "DevElm.BuildFlags"
+                        ]
+                    ],
+                    [
+                        "Serve",
+                        [
+                            "DevElm.ServeFlags"
+                        ]
+                    ],
+                    [
+                        "Test",
+                        [
+                            "DevElm.TestFlags"
+                        ]
+                    ],
+                    [
+                        "Benchmark",
+                        [
+                            "DevElm.BenchmarkFlags"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Format",
+                "comment": " Flag what format the program should be built to.\n\n  - `EcmaScriptModule` allows for native JavaScript-module imports.\n  - `ImmediatelyInvokedFunctionInvocation` exposes the `Elm` global along with a Node-compatible module.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "ImmediatelyInvokedFunctionInvocation",
+                        []
+                    ],
+                    [
+                        "EcmaScriptModule",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "LogFlags",
+                "comment": " Log text to the console.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Text",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Version",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Mode",
+                "comment": " Flag what mode the program should be built in.\n\n  - `Develop` is a development-build.\n  - `Debug` is a development-build that includes the time-travelling debugger.\n  - `Optimize` is a production-build that includes minification.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Develop",
+                        []
+                    ],
+                    [
+                        "Debug",
+                        []
+                    ],
+                    [
+                        "Optimize",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "BenchmarkFlags",
+                "comment": " Flag DevElm to benchmark Elm functions.\n",
+                "args": [],
+                "type": "{ moduleName : String.String, benchmarkName : String.String }"
+            },
+            {
+                "name": "BuildFlags",
+                "comment": " Flag DevElm to build an elm program.\n",
+                "args": [],
+                "type": "{ moduleName : String.String, outputPath : Maybe.Maybe String.String, format : DevElm.Format, mode : DevElm.Mode }"
+            },
+            {
+                "name": "ServeFlags",
+                "comment": " Flag DevElm to serve an elm program over HTTP.\n",
+                "args": [],
+                "type": "{ moduleName : String.String, hostname : String.String, port_ : Basics.Int, mode : DevElm.Mode, outputPath : String.String, documentPath : Maybe.Maybe String.String, contentTypes : Dict.Dict String.String String.String, headers : Dict.Dict String.String String.String }"
+            },
+            {
+                "name": "TestFlags",
+                "comment": " Flag DevElm to test Elm functions.\n",
+                "args": [],
+                "type": "{ seed : Maybe.Maybe Basics.Int, fuzz : Basics.Int, moduleName : String.String, testName : String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultBenchmark",
+                "comment": " The default-flags for benchmarking Elm functions.\n",
+                "type": "DevElm.BenchmarkFlags"
+            },
+            {
+                "name": "defaultBuild",
+                "comment": " The default-flags for building Elm programs. It makes an unoptimized build of a module named `Main` into `build/main.js`\n",
+                "type": "DevElm.BuildFlags"
+            },
+            {
+                "name": "defaultServe",
+                "comment": " The default-flags for serving Elm programs. It assumes no HTML-document is present.\n",
+                "type": "DevElm.ServeFlags"
+            },
+            {
+                "name": "defaultTest",
+                "comment": " The default-flags for testing Elm functions.\n",
+                "type": "DevElm.TestFlags"
+            },
+            {
+                "name": "encodeFlags",
+                "comment": " Encode flags as JSON.\n",
+                "type": "DevElm.Flags -> Json.Encode.Value"
+            }
+        ],
+        "binops": []
+    }
+]

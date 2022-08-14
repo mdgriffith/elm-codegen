@@ -1,0 +1,28 @@
+[
+    {
+        "name": "SmoothScroll",
+        "comment": " Scrolling to position that always takes the same amount of time.\n\n@docs Config, createConfig, scrollTo\n\n",
+        "unions": [
+            {
+                "name": "Config",
+                "comment": " Configuration for smooth scrolling.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "createConfig",
+                "comment": " Create a smooth scroll configuration from an easing function and a duration\nin milliseconds.\n\n  - easing: [Easing functions](https://package.elm-lang.org/packages/elm-community/easing-functions/latest)\n    specify the rate of change of a parameter over time.\n\n  - duration: The total duration of the scroll in milliseconds.\n\n```\ncreateConfig Ease.outCubic 100\n```\n\n",
+                "type": "Ease.Easing -> Basics.Int -> SmoothScroll.Config"
+            },
+            {
+                "name": "scrollTo",
+                "comment": " Scroll to the `y` offset of the browser viewport using the easing function\nand duration specified in the config.\n\n    scrollTo (createConfig Ease.outCubic 100) 500\n\n",
+                "type": "SmoothScroll.Config -> Basics.Float -> Task.Task x ()"
+            }
+        ],
+        "binops": []
+    }
+]

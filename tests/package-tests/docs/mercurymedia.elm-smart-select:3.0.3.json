@@ -1,0 +1,210 @@
+[
+    {
+        "name": "MultiSelect",
+        "comment": " A select component for multi selection with local data.\n\n\n# Architecture\n\n@docs SmartSelect, Msg, init, view, viewCustom, subscriptions, update\n\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " Opaque type representing cases to be passed to MultiSelect.update\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            },
+            {
+                "name": "SmartSelect",
+                "comment": " The opaque type representing a particular smart select instance.\n",
+                "args": [
+                    "msg",
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "init",
+                "comment": " Instantiates and returns a smart select.\n\n  - `selectionMsg` takes a function that expects a tuple representing the list of selections and a MultiSelect.Msg and returns an externally defined msg for handling selection.\n  - `internalMsg` takes a function that expects a MultiSelect.Msg and returns an externally defined msg for handling the update of the select.\n\n",
+                "type": "{ selectionMsg : ( List.List a, MultiSelect.Msg a ) -> msg, internalMsg : MultiSelect.Msg a -> msg } -> MultiSelect.SmartSelect msg a"
+            },
+            {
+                "name": "subscriptions",
+                "comment": " Events external to the smart select to which it is subscribed.\n",
+                "type": "MultiSelect.SmartSelect msg a -> Platform.Sub.Sub msg"
+            },
+            {
+                "name": "update",
+                "comment": " Update the provided smart select and receive the updated select instance and a cmd to run.\n",
+                "type": "MultiSelect.Msg a -> MultiSelect.SmartSelect msg a -> ( MultiSelect.SmartSelect msg a, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "view",
+                "comment": " The smart select view for selecting multiple options at a time with local data.\n\n  - `selected` takes a list of the currently selected entities.\n  - `options` takes a list of the data being selected from.\n  - `optionLabelFn` takes a function that expects an instance of the data being selected from and returns a string naming/labeling the instance, i.e. if it is a \"Product\" being selected, the label may be \"Garden Hose\".\n  - `viewSelectedOptionFn` takes a function that expects and instance of the data being selected from and returns html to render a selected option.\n\n",
+                "type": "{ selected : List.List a, options : List.List a, optionLabelFn : a -> String.String, viewSelectedOptionFn : a -> Html.Html msg } -> MultiSelect.SmartSelect msg a -> Html.Html msg"
+            },
+            {
+                "name": "viewCustom",
+                "comment": " The smart select view for selecting multiple options at a time with local data.\n\n  - `isDisabled` takes a boolean that indicates whether or not the select can be opened.\n  - `selected` takes a list of the currently selected entities.\n  - `options` takes a list of the data being selected from.\n  - `optionLabelFn` takes a function that expects an instance of the data being selected from and returns a string naming/labeling the instance, i.e. if it is a \"Product\" being selected, the label may be \"Garden Hose\".\n  - `optionDescriptionFn` takes a function that expects an instance of the data being selected from and returns a string describing the instance, i.e. if the label is \"Garden Hose\", the description may be \"30 ft\".\n  - `viewSelectedOptionFn` takes a function that expects an instance of the data being selected from and returns html to render a selected option.\n  - `optionsContainerMaxHeight` takes a float that specifies the max height of the container of the selectable options.\n  - `searchFn` takes a function that expects the search text and the items to search and returns the filtered items.\n  - `selectTitle` takes a string to label the select in its closed state and non-selected state.\n  - `noResultsForMsg` takes a function that expects a string and returns a message indicating that the search for the provided string returned no results.\n  - `noOptionsMsg` takes a string to indicate that no options exist in the select.\n\n```elm\nimport Html exposing (Html, div)\nimport MultiSelect\n\ntype Msg\n    = HandleSelectUpdate (MultiSelect.Msg Product)\n    | HandleSelection ( List Product, MultiSelect.Msg Product )\n\ntype alias Product =\n    { name : String\n    , description : String\n    , price : Float\n    }\n\ninit : () -> ( Model, Cmd Msg )\ninit _ =\n    ( { products = exampleProducts\n      , select =\n            MultiSelect.init\n                { selectionMsg = HandleSelection\n                , internalMsg = HandleSelectUpdate\n                }\n      , selectedProduct = Nothing\n      }\n    , Cmd.none\n    )\n\ntype alias Model =\n    { products : List Product\n    , select : MultiSelect.SmartSelect Msg Product\n    , selectedProducts : List Product\n    }\n\nviewSelectedProduct : Product -> Html Msg\nviewSelectedProduct product =\n    div []\n        [ text (product.name ++ \" - \" ++ (\"$\" ++ String.fromFloat product.price)) ]\n\nviewCustomProductSelect : Model -> Html Msg\nviewCustomProductSelect model =\n    MultiSelect.viewCustom\n        { isDisabled = False\n        , selected = model.selectedProducts\n        , options = model.products\n        , optionLabelFn = .name\n        , optionDescriptionFn = \\option -> \"$\" ++ String.fromFloat option.price\n        , viewSelectedOptionFn = viewSelectedProduct\n        , optionsContainerMaxHeight = 500\n        , searchFn =\n            \\searchText allOptions ->\n                List.filter\n                    (\\option ->\n                        String.contains (String.toLower searchText) (String.toLower option.name)\n                            || String.contains (String.toLower searchText) (String.toLower option.description)\n                    )\n                    allOptions\n        , selectTitle = \"Select a Product\"\n        , noResultsForMsg = \\searchText -> \"No results found for: \" ++ searchText\n        , noOptionsMsg = \"There are no options to select\"\n        }\n        model.select\n```\n\n",
+                "type": "{ isDisabled : Basics.Bool, selected : List.List a, options : List.List a, optionLabelFn : a -> String.String, optionDescriptionFn : a -> String.String, viewSelectedOptionFn : a -> Html.Html msg, optionsContainerMaxHeight : Basics.Float, searchFn : String.String -> List.List a -> List.List a, selectTitle : String.String, noResultsForMsg : String.String -> String.String, noOptionsMsg : String.String } -> MultiSelect.SmartSelect msg a -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "MultiSelectRemote",
+        "comment": " A select component for multi selection with remote data.\n\n\n# Architecture\n\n@docs SmartSelect, Msg, init, view, viewCustom, subscriptions, update\n\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " Opaque type representing cases to be passed to MultiSelectRemote.update\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            },
+            {
+                "name": "SmartSelect",
+                "comment": " The opaque type representing a particular smart select instance.\n",
+                "args": [
+                    "msg",
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "init",
+                "comment": " Instantiates and returns a smart select.\n\n  - `selectionMsg` takes a function that expects a tuple representing the list of selections and a MultiSelectRemote.Msg and returns an externally defined msg for handling selection.\n  - `internalMsg` takes a function that expects a MultiSelectRemote.Msg and returns an externally defined msg.\n  - `characterSearchThreshold` takes an integer that specifies how many characters need to be typed before triggering the remote query.\n  - `debounceDuration` takes a float that specifies the duration in milliseconds between the last keypress and remote query being triggered.\n\n",
+                "type": "{ selectionMsg : ( List.List a, MultiSelectRemote.Msg a ) -> msg, internalMsg : MultiSelectRemote.Msg a -> msg, characterSearchThreshold : Basics.Int, debounceDuration : Basics.Float } -> MultiSelectRemote.SmartSelect msg a"
+            },
+            {
+                "name": "subscriptions",
+                "comment": " Events external to the smart select to which it is subscribed.\n",
+                "type": "MultiSelectRemote.SmartSelect msg a -> Platform.Sub.Sub msg"
+            },
+            {
+                "name": "update",
+                "comment": " Update the provided smart select and receive the updated select instance and a cmd to run.\n\n    type alias RemoteSearchAttrs a =\n        { headers : List Header\n        , url : String -> String\n        , optionDecoder : Decoder a\n        }\n\n",
+                "type": "MultiSelectRemote.Msg a -> SmartSelect.Utilities.RemoteQueryAttrs a -> MultiSelectRemote.SmartSelect msg a -> ( MultiSelectRemote.SmartSelect msg a, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "view",
+                "comment": " The smart select view for selecting multiple options at a time with local data.\n\n  - `optionLabelFn` takes a function that expects an instance of the data being selected from and returns a string naming/labeling the instance, i.e. if it is a \"Product\" being selected, the label may be \"Garden Hose\".\n  - `viewSelectedOptionFn` takes a function that expects an instance of the data being selected from and returns html to render a selected option.\n\n",
+                "type": "{ selected : List.List a, optionLabelFn : a -> String.String, viewSelectedOptionFn : a -> Html.Html msg } -> MultiSelectRemote.SmartSelect msg a -> Html.Html msg"
+            },
+            {
+                "name": "viewCustom",
+                "comment": " The smart select view for selecting multiple options at a time with local data.\n\n  - `isDisabled` takes a boolean that indicates whether or not the select can be opened.\n  - `selected` takes a list of the currently selected entities.\n  - `optionLabelFn` takes a function that expects an instance of the data being selected from and returns a string naming/labeling the instance, i.e. if it is a \"Product\" being selected, the label may be \"Garden Hose\".\n  - `optionDescriptionFn` takes a function that expects an instance of the data being selected from and returns a string describing the instance, i.e. if the label is \"Garden Hose\", the description may be \"30 ft\".\n  - `viewSelectedOptionFn` takes a function that expects and instance of the data being selected from and returns html to render a selected option.\n  - `optionsContainerMaxHeight` takes a float that specifies the max height of the container of the selectable options.\n  - `spinnerColor` takes a `Color` for the loading spinner.\n  - `selectTitle` takes a string to label the select in its closed state and non-selected state.\n  - `characterThresholdPrompt` takes a function that expects an int and returns a string indicating how many more characters need to be entered to trigger the query.\n  - `queryErrorMsg` takes a string to indicate that an error has occured while querying data.\n  - `noResultsForMsg` takes a function that expects a string and returns a message indicating that the search for the provided string returned no results.\n  - `noOptionsMsg` takes a string to indicate that no options exist in the select.\n\n```elm\nimport MultiSelectRemote\nimport Html exposing (Html)\nimport Color\n\ntype Msg\n    = HandleSelectUpdate (MultiSelectRemote.Msg Product)\n    | HandleSelection ( List Product, MultiSelectRemote.Msg Product )\n\ntype alias Product =\n    { name : String\n    , description : String\n    , price : Float\n    }\n\ninit : () -> ( Model, Cmd Msg )\ninit _ =\n    ( { products = exampleProducts\n      , select =\n            MultiSelectRemote.init\n                { selectionMsg = HandleSelection\n                , internalMsg = HandleSelectUpdate\n                ...\n                }\n      , selectedProduct = Nothing\n      }\n    , Cmd.none\n    )\n\ntype alias Model =\n    { products : List Product\n    , select : MultiSelectRemote.SmartSelect Msg Product\n    , selectedProducts : List Product\n    }\n\nviewSelectedProduct : Product -> Html Msg\nviewSelectedProduct product =\n    div []\n        [ text (product.name ++ \" - \" ++ (\"$\" ++ String.fromFloat product.price)) ]\n\nviewCustomProductSelect : Model -> Html Msg\nviewCustomProductSelect model =\n    MultiSelectRemote.viewCustom\n        { isDisabled = False\n        , selected = model.selectedProducts\n        , optionLabelFn = .name\n        , optionDescriptionFn = \\option -> \"$\" ++ String.fromFloat option.price\n        , viewSelectedOptionFn = viewSelecteProduct\n        , optionsContainerMaxHeight = 500\n        , spinnerColor = Color.rgb255 0 0 0\n        , selectTitle = \"Select a Product\"\n        , characterThresholdPrompt =\n            \\difference ->\n                if difference > 1 then\n                    \"Please enter \" ++ String.fromInt difference ++ \" more characters to search for a Product\"\n\n                else if difference == 1 then\n                    \"Please enter 1 more character to search for a Product\"\n\n                else\n                    \"\"\n        , queryErrorMsg = \"An error occured while querying Products\"\n        , noResultsForMsg = \\searchText -> \"No results found for: \" ++ searchText\n        , noOptionsMsg = \"There are no options to select\"\n        }\n        model.select\n```\n\n",
+                "type": "{ isDisabled : Basics.Bool, selected : List.List a, optionLabelFn : a -> String.String, optionDescriptionFn : a -> String.String, viewSelectedOptionFn : a -> Html.Html msg, optionsContainerMaxHeight : Basics.Float, spinnerColor : Color.Color, selectTitle : String.String, characterThresholdPrompt : Basics.Int -> String.String, queryErrorMsg : String.String, noResultsForMsg : String.String -> String.String, noOptionsMsg : String.String } -> MultiSelectRemote.SmartSelect msg a -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "SingleSelect",
+        "comment": " A select component for a single selection with local data.\n\n\n# Architecture\n\n@docs SmartSelect, Msg, init, view, viewCustom, subscriptions, update\n\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " Opaque type representing cases to be passed to SingleSelect.update\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            },
+            {
+                "name": "SmartSelect",
+                "comment": " The opaque type representing a particular smart select instance.\n",
+                "args": [
+                    "msg",
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "init",
+                "comment": " Instantiates and returns a smart select.\n\n  - `selectionMsg` takes a function that expects a tuple representing the selection and a SinglSelect.Msg msg and returns an externally defined msg for handling selection.\n  - `internalMsg` takes a function that expects a SinglSelect.Msg and returns an externally defined msg for handling the update of the select.\n\n",
+                "type": "{ selectionMsg : ( a, SingleSelect.Msg a ) -> msg, internalMsg : SingleSelect.Msg a -> msg } -> SingleSelect.SmartSelect msg a"
+            },
+            {
+                "name": "subscriptions",
+                "comment": " Events external to the smart select to which it is subscribed.\n",
+                "type": "SingleSelect.SmartSelect msg a -> Platform.Sub.Sub msg"
+            },
+            {
+                "name": "update",
+                "comment": " Update the provided smart select and receive the updated select instance and a cmd to run.\n",
+                "type": "SingleSelect.Msg a -> SingleSelect.SmartSelect msg a -> ( SingleSelect.SmartSelect msg a, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "view",
+                "comment": " The smart select view for selecting one option at a time with local data.\n\n  - `selected` takes the currently selected entity, if any.\n  - `options` takes a list of the data being selected from.\n  - `optionLabelFn` takes a function that expects an instance of the data being selected from and returns a string naming/labeling the instance, i.e. if it is a \"Product\" being selected, the label may be \"Garden Hose\".\n\n",
+                "type": "{ selected : Maybe.Maybe a, options : List.List a, optionLabelFn : a -> String.String } -> SingleSelect.SmartSelect msg a -> Html.Html msg"
+            },
+            {
+                "name": "viewCustom",
+                "comment": " The customizable smart select view for selecting one option at a time with local data.\n\n  - `isDisabled` takes a boolean that indicates whether or not the select can be opened.\n  - `selected` takes the currently selected entity, if any.\n  - `options` takes a list of the data being selected from.\n  - `optionLabelFn` takes a function that expects an instance of the data being selected from and returns a string naming/labeling the instance, i.e. if it is a \"Product\" being selected, the label may be \"Garden Hose\".\n  - `optionDescriptionFn` takes a function that expects an instance of the data being selected from and returns a string describing the instance, i.e. if the label is \"Garden Hose\", the description may be \"30 ft\".\n  - `optionsContainerMaxHeight` takes a float that specifies the max height of the container of the selectable options.\n  - `searchFn` takes a function that expects the search text and the items to search and returns the filtered items.\n  - `selectTitle` takes a string to label the select in its closed state and non-selected state.\n  - `searchPrompt` takes a string to indicate what is being searched for.\n  - `noResultsForMsg` takes a function that expects a string and returns a message indicating that the search for the provided string returned no results.\n  - `noOptionsMsg` takes a string to indicate that no options exist in the select.\n\n```elm\nimport Html exposing (Html)\nimport SingleSelect\n\ntype Msg\n    = HandleSelectUpdate (SingleSelect.Msg Product)\n    | HandleSelection ( Product, SingleSelect.Msg Product )\n\ntype alias Product =\n    { name : String\n    , description : String\n    , price : Float\n    }\n\ninit : () -> ( Model, Cmd Msg )\ninit _ =\n    ( { products = exampleProducts\n      , select =\n            SingleSelect.init\n                { selectionMsg = HandleSelection\n                , internalMsg = HandleSelectUpdate\n                }\n      , selectedProduct = Nothing\n      }\n    , Cmd.none\n    )\n\ntype alias Model =\n    { products : List Product\n    , select : SingleSelect.SmartSelect Msg Product\n    , selectedProduct : Maybe Product\n    }\n\nviewCustomProductSelect : Model -> Html Msg\nviewCustomProductSelect model =\n    SingleSelect.viewCustom\n        { isDisabled = False\n        , selected = model.selectedProduct\n        , options = model.products\n        , optionLabelFn = .name\n        , optionDescriptionFn = \\option -> \"$\" ++ String.fromFloat option.price\n        , optionsContainerMaxHeight = 500\n        , searchFn =\n            \\searchText allOptions ->\n                List.filter\n                    (\\option ->\n                        String.contains (String.toLower searchText) (String.toLower option.name)\n                            || String.contains (String.toLower searchText) (String.toLower option.description)\n                    )\n                    allOptions\n        , selectTitle = \"Select a Product\"\n        , searchPrompt = \"Search for a Product\"\n        , noResultsForMsg = \\searchText -> \"No results found for: \" ++ searchText\n        , noOptionsMsg = \"There are no options to select\"\n        }\n        model.select\n```\n\n",
+                "type": "{ isDisabled : Basics.Bool, selected : Maybe.Maybe a, options : List.List a, optionLabelFn : a -> String.String, optionDescriptionFn : a -> String.String, optionsContainerMaxHeight : Basics.Float, searchFn : String.String -> List.List a -> List.List a, selectTitle : String.String, searchPrompt : String.String, noResultsForMsg : String.String -> String.String, noOptionsMsg : String.String } -> SingleSelect.SmartSelect msg a -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "SingleSelectRemote",
+        "comment": " A select component for a single selection with remote data.\n\n\n# Architecture\n\n@docs SmartSelect, Msg, init, view, viewCustom, subscriptions, update\n\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " Opaque type representing cases to be passed to SingleSelectRemote.update\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            },
+            {
+                "name": "SmartSelect",
+                "comment": " The opaque type representing a particular smart select instance.\n",
+                "args": [
+                    "msg",
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "init",
+                "comment": " Instantiates and returns a smart select.\n\n  - `selectionMsg` takes a function that expects a tuple representing the selection and a SinglSelectRemote.Msg msg and returns an externally defined msg for handling selection.\n  - `internalMsg` takes a function that expects a SingleSelectRemote.Msg and returns an externally defined msg.\n  - `characterSearchThreshold` takes an integer that specifies how many characters need to be typed before triggering the remote query.\n  - `debounceDuration` takes a float that specifies the duration in milliseconds between the last keypress and remote query being triggered.\n\n",
+                "type": "{ selectionMsg : ( a, SingleSelectRemote.Msg a ) -> msg, internalMsg : SingleSelectRemote.Msg a -> msg, characterSearchThreshold : Basics.Int, debounceDuration : Basics.Float } -> SingleSelectRemote.SmartSelect msg a"
+            },
+            {
+                "name": "subscriptions",
+                "comment": " Events external to the smart select to which it is subscribed.\n",
+                "type": "SingleSelectRemote.SmartSelect msg a -> Platform.Sub.Sub msg"
+            },
+            {
+                "name": "update",
+                "comment": " Update the provided smart select and receive the updated select instance and a cmd to run.\n\n    type alias RemoteSearchAttrs a =\n        { headers : List Header\n        , url : String -> String\n        , optionDecoder : Decoder a\n        }\n\n",
+                "type": "SingleSelectRemote.Msg a -> SmartSelect.Utilities.RemoteQueryAttrs a -> SingleSelectRemote.SmartSelect msg a -> ( SingleSelectRemote.SmartSelect msg a, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "view",
+                "comment": " The smart select view for selecting one option at a time with remote data.\n\n  - `selected` takes the currently selected entity, if any.\n  - `optionLabelFn` takes a function that expects an instance of the data being selected from and returns a string naming/labeling the instance, i.e. if it is a \"Product\" being selected, the label may be \"Garden Hose\".\n\n",
+                "type": "{ selected : Maybe.Maybe a, optionLabelFn : a -> String.String } -> SingleSelectRemote.SmartSelect msg a -> Html.Html msg"
+            },
+            {
+                "name": "viewCustom",
+                "comment": " The customizable smart select view for selecting one option at a time with remote data. It expects the following arguments (in order):\n\n  - `isDisabled` takes a boolean that indicates whether or not the select can be opened.\n  - `selected` takes the currently selected entity, if any.\n  - `optionLabelFn` takes a function that expects an instance of the data being selected from and returns a string naming/labeling the instance, i.e. if it is a \"Product\" being selected, the label may be \"Garden Hose\".\n  - `optionDescriptionFn` takes a function that expects an instance of the data being selected from and returns a string describing the instance, i.e. if the label is \"Garden Hose\", the description may be \"30 ft\".\n  - `optionsContainerMaxHeight` takes a float that specifies the max height of the container of the selectable options.\n  - `spinnerColor` takes a `Color` for the loading spinner.\n  - `selectTitle` takes a string to label the select in its closed state and non-selected state.\n  - `searchPrompt` takes a string to indicate what is being searched for.\n  - `characterThresholdPrompt` takes a function that expects an int and returns a string indicating how many more characters need to be entered to trigger the query.\n  - `queryErrorMsg` takes a string to indicate that an error has occured while querying data.\n  - `noResultsForMsg` takes a function that expects a string and returns a message indicating that the search for the provided string returned no results.\n  - `noOptionsMsg` takes a string to indicate that no options exist in the select.\n\n```elm\nimport SingleSelectRemote\nimport Html exposing (Html)\nimport Color\n\ntype Msg\n    = HandleSelectUpdate (SingleSelectRemote.Msg Product)\n    | HandleSelection ( Product, SingleSelectRemote.Msg Product )\n\ntype alias Product =\n    { name : String\n    , description : String\n    , price : Float\n    }\n\ninit : () -> ( Model, Cmd Msg )\ninit _ =\n    ( { products = exampleProducts\n      , select =\n            SingleSelectRemote.init\n                { selectionMsg = HandleSelection\n                , internalMsg = HandleSelectUpdate\n                ...\n                }\n      , selectedProduct = Nothing\n      }\n    , Cmd.none\n    )\n\ntype alias Model =\n    { products : List Product\n    , select : SingleSelectRemote.SmartSelect Msg Product\n    , selectedProduct : Maybe Product\n    }\n\nviewCustomProductSelect : Model -> Html Msg\nviewCustomProductSelect model =\n    SingleSelectRemote.viewCustom\n        { isDisabled = False\n        , selected = model.selectedProduct\n        , optionLabelFn = .name\n        , optionDescriptionFn = \\option -> \"$\" ++ String.fromFloat option.price\n        , optionsContainerMaxHeight = 500\n        , spinnerColor = Color.rgb255 0 0 0\n        , selectTitle = \"Select a Product\"\n        , searchPrompt = \"Search for a Product\"\n        , characterThresholdPrompt =\n            \\difference ->\n                if difference > 1 then\n                    \"Please enter \" ++ String.fromInt difference ++ \" more characters to search for a Product\"\n\n                else if difference == 1 then\n                    \"Please enter 1 more character to search for a Product\"\n\n                else\n                    \"\"\n        , queryErrorMsg = \"An error occured while querying Products\"\n        , noResultsForMsg = \\searchText -> \"No results found for: \" ++ searchText\n        , noOptionsMsg = \"There are no options to select\"\n        }\n        model.select\n```\n\n",
+                "type": "{ isDisabled : Basics.Bool, selected : Maybe.Maybe a, optionLabelFn : a -> String.String, optionDescriptionFn : a -> String.String, optionsContainerMaxHeight : Basics.Float, spinnerColor : Color.Color, selectTitle : String.String, searchPrompt : String.String, characterThresholdPrompt : Basics.Int -> String.String, queryErrorMsg : String.String, noResultsForMsg : String.String -> String.String, noOptionsMsg : String.String } -> SingleSelectRemote.SmartSelect msg a -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

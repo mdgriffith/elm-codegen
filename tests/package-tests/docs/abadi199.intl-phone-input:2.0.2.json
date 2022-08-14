@@ -1,0 +1,98 @@
+[
+    {
+        "name": "IntlPhoneInput",
+        "comment": " Phone number input with built in international dial code selector.\n\n\n# View\n\n@docs input, customInput, inputStyled, customInputStyled\n\n\n# Internal\n\n@docs State, initialState\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "State",
+                "comment": " Internal state of the Intl Phone Input element.\n",
+                "args": [],
+                "type": "IntlPhoneInput.Internal.State"
+            }
+        ],
+        "values": [
+            {
+                "name": "customInput",
+                "comment": " Render the Intl Phone Input element as part of your `view` function with some custom attributes to the phone number field.\n\n    type alias model =\n        { phoneNumberstate : IntlPhoneInput.State\n        , phoneNumber : IntlPhoneInput.Type.PhoneNumber\n        }\n\n    type Msg\n        = PhoneNumberChanged IntlPhoneInput.State PhoneNumber (Cmd Msg)\n\n    view : Model -> Html Msg\n    view model =\n        IntlPhoneInput.input\n            [ Html.Attributes.class \"MyPhoneInput\" ]\n            (IntlPhoneInput.Config.defaultConfig PhoneNumberChanged)\n            model.phoneNumberstate\n            model.phoneNumber\n\n",
+                "type": "List.List (Html.Styled.Attribute msg) -> IntlPhoneInput.Config.Config msg -> IntlPhoneInput.State -> IntlPhoneInput.Type.PhoneNumber -> Html.Html msg"
+            },
+            {
+                "name": "customInputStyled",
+                "comment": " Elm CSS version of `input` function. Use this if you use Elm CSS on your project to avoid the `style` tag being rendered to early.\n",
+                "type": "List.List (Html.Styled.Attribute msg) -> IntlPhoneInput.Config.Config msg -> IntlPhoneInput.State -> IntlPhoneInput.Type.PhoneNumber -> Html.Styled.Html msg"
+            },
+            {
+                "name": "initialState",
+                "comment": " The initial state of the Intl Phone Input element\n",
+                "type": "IntlPhoneInput.State"
+            },
+            {
+                "name": "input",
+                "comment": " Render the Intl Phone Input element as part of your `view` function.\n\n    type alias model =\n        { phoneNumberstate : IntlPhoneInput.State\n        , phoneNumber : IntlPhoneInput.Type.PhoneNumber\n        }\n\n    type Msg\n        = PhoneNumberChanged IntlPhoneInput.State PhoneNumber (Cmd Msg)\n\n    view : Model -> Html Msg\n    view model =\n        IntlPhoneInput.input\n            (IntlPhoneInput.Config.defaultConfig PhoneNumberChanged)\n            model.phoneNumberstate\n            model.phoneNumber\n\n",
+                "type": "IntlPhoneInput.Config.Config msg -> IntlPhoneInput.State -> IntlPhoneInput.Type.PhoneNumber -> Html.Html msg"
+            },
+            {
+                "name": "inputStyled",
+                "comment": " Elm CSS version of `input` function. Use this if you use Elm CSS on your project to avoid the `style` tag being rendered to early.\n",
+                "type": "IntlPhoneInput.Config.Config msg -> IntlPhoneInput.State -> IntlPhoneInput.Type.PhoneNumber -> Html.Styled.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "IntlPhoneInput.Config",
+        "comment": " Contains types and helper functions for working with configuration of IntlPhoneInput\n\n\n# Config\n\n@docs Config, config\n\n\n# Helper Functions\n\n@docs getPhoneNumberInputId\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " This record type holds all configuration of IntlPhoneInput.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ hash : String.String, onChange : IntlPhoneInput.Internal.State -> IntlPhoneInput.Type.PhoneNumber -> Platform.Cmd.Cmd msg -> msg, namespace : String.String, countries : Dict.Dict String.String IntlPhoneInput.Type.CountryData, countriesSorter : List.List ( String.String, IntlPhoneInput.Type.CountryData ) -> List.List ( String.String, IntlPhoneInput.Type.CountryData ), dialCodeFormatter : String.String -> String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "config",
+                "comment": " Create the `Config` using a unique `id` value. The `id` is necessary if you have more than one IntlPhoneInput on your page.\n\n    type Msg\n        = PhoneUpdated State PhoneNumber (Cmd Msg)\n\n    homePhoneConfig =\n        config \"HomePhone\" PhoneUpdated\n\n",
+                "type": "String.String -> (IntlPhoneInput.Internal.State -> IntlPhoneInput.Type.PhoneNumber -> Platform.Cmd.Cmd msg -> msg) -> IntlPhoneInput.Config.Config msg"
+            },
+            {
+                "name": "getPhoneNumberInputId",
+                "comment": " Helper function to get the `DOM id` of the phone number `<input>` element.\n",
+                "type": "IntlPhoneInput.Config.Config msg -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "IntlPhoneInput.Type",
+        "comment": " Contains all the data types used in IntlPhoneInput\n\n\n# Types\n\n@docs PhoneNumber, CountryData\n\n\n# Helpers\n\n@docs emptyPhoneNumber\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "CountryData",
+                "comment": " Record type to hold country name and the dial code number.\nThis record is used by `Config` to hold the list of countries and their dial code.\n",
+                "args": [],
+                "type": "{ name : String.String, dialCode : String.String }"
+            },
+            {
+                "name": "PhoneNumber",
+                "comment": " Record type to hold the phone number and country ISO code\n",
+                "args": [],
+                "type": "{ isoCode : String.String, phoneNumber : String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "emptyPhoneNumber",
+                "comment": " A constant for an empty phone number.\n",
+                "type": "IntlPhoneInput.Type.PhoneNumber"
+            }
+        ],
+        "binops": []
+    }
+]

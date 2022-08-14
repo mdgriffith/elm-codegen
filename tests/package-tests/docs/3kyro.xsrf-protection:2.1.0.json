@@ -1,0 +1,36 @@
+[
+    {
+        "name": "Http.XSRF",
+        "comment": " This package helps you make [XSRF](https://en.wikipedia.org/wiki/Cross-site_request_forgery) protected HTTP requests.\n\nThis package was designed to be used with [servant-auth](https://hackage.haskell.org/package/servant-auth). However it should be compatible with any\nbackend that supports cookie based XSRF authentication.\n\nYou can find a complete example of an elm app and a servant-auth backend using XSRF tokens [here](https://github.com/3kyro/servant-auth-elm.git).\n\n\n# Setup\n\nIn order to get the cookies that the server has set, you need to ask javascript for it. The simplest way is to get hold\noff the document object and pass it through a flag to Elm as a JSON Value.\n\n    // you would normally put this in a <script> tag inside your app's\n    // index.html file\n    let app = Elm.App.init(\n        { node: document.getElementById(\"myapp\")\n        // Pass the document object as a flag\n        , flags: document\n        }\n    );\n\nIn Elm , you'll need to retrieve the document JSON Value sent by javascript.\n\n    import Json.Decode as D\n\n\n    -- main parametrised to D.Value to recieve the document object\n    main : Program D.Value Model Msg\n    main =\n        Browser.element\n            { init = init\n            , view = view\n            , update = update\n            , subscriptions = subscriptions\n            }\n\n    -- Initialize the elm runtime with the document object\n    init : D.Value -> ( Model, Cmd Msg )\n    init document =\n        ( initModel document\n        , initCmd\n        )\n\n    type alias Model =\n        { document : D.Value }\n\n    initModel : D.Value -> Model\n    initModel document =\n        Model document\n\n\n# Requests\n\nNow that you have all current cookies in your elm app, you should check if one of them is a valid XSRF one.\n\n@docs token\n\nHaving a valid token, you can now make some requests\n\n@docs get\n@docs post\n@docs put\n@docs request\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "get",
+                "comment": " Similar to [Http.get](https://package.elm-lang.org/packages/elm/http/latest/Http#get), but\nyou also need to provide a XSRF header name and token.\n\n    -- A protected request for an email address\n    getEmailRequest : Model -> Cmd Msg\n    getEmailRequest model =\n        XSRF.get\n            { url = \"http://localhost:4000/email\"\n            , expect = Http.expectJson ReceivedEmail D.string\n            , xsrfHeaderName = \"X-XSRF-TOKEN\"\n            , xsrfToken = XSRF.token \"XSRF-TOKEN=\" model.document\n            }\n\n",
+                "type": "{ url : String.String, expect : Http.Expect msg, xsrfHeaderName : String.String, xsrfToken : Maybe.Maybe String.String } -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "post",
+                "comment": " Similar to [Http.post](https://package.elm-lang.org/packages/elm/http/latest/Http#post), but\nyou also need to provide a XSRF header name and token.\n",
+                "type": "{ url : String.String, body : Http.Body, expect : Http.Expect msg, xsrfHeaderName : String.String, xsrfToken : Maybe.Maybe String.String } -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "put",
+                "comment": " Create a XSRF-protected PUT request.\n",
+                "type": "{ url : String.String, body : Http.Body, expect : Http.Expect msg, xsrfHeaderName : String.String, xsrfToken : Maybe.Maybe String.String } -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "request",
+                "comment": " Similar to [Http.request](https://package.elm-lang.org/packages/elm/http/latest/Http#request), but\nyou also need to provide a XSRF header name and token.\n\nIn case you don't want to provide any other header except the XSRF one, you can apply the empty list\nin the headers argument\n\n    -- saves a blog post\n    putPost : D.Value -> String -> Cmd msg\n    putPost document post =\n        XSRF.request\n            { method = \"PUT\"\n            , headers = []\n            , url = \"http://localhost:4000/savePost\"\n            , body = Http.jsonBody <| E.string post\n            , expect = Http.expectWhatever\n            , xsrfHeaderName = \"XSRF-CUSTOM\"\n            , xserfToken = XSRF.token \"XSRF-COOKIE=\" document\n            , timeout = Nothing\n            , tracker = Nothing\n            }\n\n",
+                "type": "{ method : String.String, headers : List.List Http.Header, url : String.String, body : Http.Body, expect : Http.Expect msg, xsrfHeaderName : String.String, xsrfToken : Maybe.Maybe String.String, timeout : Maybe.Maybe Basics.Float, tracker : Maybe.Maybe String.String } -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "token",
+                "comment": " Get an XSRF token from a document json object.\nThe first argument is name the server used to set the XSRF cookie\ne.g. \"XSRF-TOKEN=\"\n\n    token \"XSRF-TOKEN=\" model.document\n\n",
+                "type": "String.String -> Json.Decode.Value -> Maybe.Maybe String.String"
+            }
+        ],
+        "binops": []
+    }
+]

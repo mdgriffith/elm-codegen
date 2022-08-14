@@ -1,0 +1,308 @@
+[
+    {
+        "name": "Bra",
+        "comment": " Bra Module\n\n\n# Types\n\n@docs Bra\n\n\n# Manipulation\n\n@docs getAt\n@docs setAt\n\n",
+        "unions": [
+            {
+                "name": "Bra",
+                "comment": " Bra Type\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Bra",
+                        [
+                            "Matrix.Matrix a"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "getAt",
+                "comment": " Get the value in a matrix at the specified row and column\n",
+                "type": "( Basics.Int, Basics.Int ) -> Bra.Bra a -> Maybe.Maybe a"
+            },
+            {
+                "name": "setAt",
+                "comment": " Set the value in a Matrix at the specified row and column\n",
+                "type": "( Basics.Int, Basics.Int ) -> a -> Bra.Bra a -> Bra.Bra a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Ket",
+        "comment": " Ket Module\n\n\n# Types\n\n@docs Ket\n@docs VectorSpace\n@docs InnerProductSpace\n\n\n# Values\n\n@docs ket0\n@docs ket1\n@docs ketPlus\n@docs ketMinus\n@docs ketComplex0\n@docs ketComplex1\n@docs ketComplexPlus\n@docs ketComplexMinus\n@docs ketEmpty\n\n\n# Unitary Operations\n\n@docs scalarMultiplication\n@docs dimension\n@docs sum\n@docs foldl\n@docs map\n@docs lengthReal\n@docs lengthComplex\n@docs normaliseReal\n@docs normaliseComplex\n@docs conjugate\n\n\n# Binary Operations\n\n@docs add\n\n\n# Equality\n\n@docs equal\n\n\n# Manipulation\n\n@docs getAt\n@docs setAt\n\n",
+        "unions": [
+            {
+                "name": "Ket",
+                "comment": " Ket Type\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Ket",
+                        [
+                            "ColumnVector.ColumnVector a"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "InnerProductSpace",
+                "comment": " Type to represent an Inner Product Space\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ vectorSpace : Ket.VectorSpace a, innerProduct : Ket.Ket a -> Ket.Ket a -> a, length : Ket.Ket a -> Real.Real Basics.Float, distance : Ket.Ket a -> Ket.Ket a -> Real.Real Basics.Float }"
+            },
+            {
+                "name": "VectorSpace",
+                "comment": " Type to represent a Vector Space\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ abelianGroup : AbelianGroup.AbelianGroup (Ket.Ket a), vectorScalarMultiplication : a -> Ket.Ket a -> Ket.Ket a, field : Field.Field a }"
+            }
+        ],
+        "values": [
+            {
+                "name": "add",
+                "comment": " Add two Kets\n",
+                "type": "Field.Field a -> Ket.Ket a -> Ket.Ket a -> Ket.Ket a"
+            },
+            {
+                "name": "conjugate",
+                "comment": " Take the complex conjugate of a Complex Numbered Vector\n",
+                "type": "Ket.Ket (ComplexNumbers.ComplexNumber number) -> Ket.Ket (ComplexNumbers.ComplexNumber number)"
+            },
+            {
+                "name": "dimension",
+                "comment": " Count of number of elements in a Ket\n",
+                "type": "Ket.Ket a -> Basics.Int"
+            },
+            {
+                "name": "equal",
+                "comment": " Compare two vectors for equality using a comparator\n",
+                "type": "(a -> a -> Basics.Bool) -> Ket.Ket a -> Ket.Ket a -> Basics.Bool"
+            },
+            {
+                "name": "foldl",
+                "comment": " Left fold over a Ket\n",
+                "type": "(a -> b -> b) -> b -> Ket.Ket a -> b"
+            },
+            {
+                "name": "getAt",
+                "comment": " Get the value in a Ket at the specified index\n",
+                "type": "Basics.Int -> Ket.Ket a -> Maybe.Maybe a"
+            },
+            {
+                "name": "ket0",
+                "comment": " Ket representing zero state\n",
+                "type": "Ket.Ket (Real.Real Basics.Float)"
+            },
+            {
+                "name": "ket1",
+                "comment": " Ket representing one state\n",
+                "type": "Ket.Ket (Real.Real Basics.Float)"
+            },
+            {
+                "name": "ketComplex0",
+                "comment": " Ket representing zero state with complex numbers\n",
+                "type": "Ket.Ket (ComplexNumbers.ComplexNumber Basics.Float)"
+            },
+            {
+                "name": "ketComplex1",
+                "comment": " Ket representing one state with complex numbers\n",
+                "type": "Ket.Ket (ComplexNumbers.ComplexNumber Basics.Float)"
+            },
+            {
+                "name": "ketComplexMinus",
+                "comment": " Ket representing + state with complex numbers\n",
+                "type": "Ket.Ket (ComplexNumbers.ComplexNumber Basics.Float)"
+            },
+            {
+                "name": "ketComplexPlus",
+                "comment": " Ket representing + state with complex numbers\n",
+                "type": "Ket.Ket (ComplexNumbers.ComplexNumber Basics.Float)"
+            },
+            {
+                "name": "ketEmpty",
+                "comment": " Empty ket\n",
+                "type": "Ket.Ket a"
+            },
+            {
+                "name": "ketMinus",
+                "comment": " Ket representing + state\n",
+                "type": "Ket.Ket (Real.Real Basics.Float)"
+            },
+            {
+                "name": "ketPlus",
+                "comment": " Ket representing + state\n",
+                "type": "Ket.Ket (Real.Real Basics.Float)"
+            },
+            {
+                "name": "lengthComplex",
+                "comment": " Calculate the length of a Complex valued Vector\n",
+                "type": "Ket.Ket (ComplexNumbers.ComplexNumber Basics.Float) -> Real.Real Basics.Float"
+            },
+            {
+                "name": "lengthReal",
+                "comment": " Calculate the length of a Real valued Vector\n",
+                "type": "Ket.Ket (Real.Real Basics.Float) -> Real.Real Basics.Float"
+            },
+            {
+                "name": "map",
+                "comment": " Map over a vector\n",
+                "type": "(a -> b) -> Ket.Ket a -> Ket.Ket b"
+            },
+            {
+                "name": "normaliseComplex",
+                "comment": " Adjust a complex valued column vector so that its length is exactly one\n",
+                "type": "Ket.Ket (ComplexNumbers.ComplexNumber Basics.Float) -> Ket.Ket (ComplexNumbers.ComplexNumber Basics.Float)"
+            },
+            {
+                "name": "normaliseReal",
+                "comment": " Adjust a real valued column vector so that its length is exactly one\n",
+                "type": "Ket.Ket (Real.Real Basics.Float) -> Ket.Ket (Real.Real Basics.Float)"
+            },
+            {
+                "name": "scalarMultiplication",
+                "comment": " Multiply a Ket by a Scalar\n",
+                "type": "Field.Field a -> a -> Ket.Ket a -> Ket.Ket a"
+            },
+            {
+                "name": "setAt",
+                "comment": " Set the value in a Ket at the specified index\n",
+                "type": "Basics.Int -> a -> Ket.Ket a -> Ket.Ket a"
+            },
+            {
+                "name": "sum",
+                "comment": " Calculate the sum of a Ket\n",
+                "type": "Monoid.Monoid a -> Ket.Ket a -> a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Quantum",
+        "comment": " Quantum Computing Simulator in Elm\n\n\n# Types\n\n\n# Unitary Operations\n\n@docs variance\n\n\n# Binary Operations\n\n@docs multiplyInvertableMatrixKet\n\n\n# Quantum Operators\n\n@docs h\n@docs hComplex\n@docs x\n@docs squareRootNot\n@docs sigmaXReal\n@docs sigmaX\n@docs sigmaY\n@docs sigmaZ\n@docs z\n@docs toffoli\n@docs fredkin\n@docs t\n@docs s\n@docs cNOT\n@docs and\n@docs probabilityOfState\n@docs multiplyHermitianMatrixKet\n@docs expectedValue\n@docs varianceHermitianOperator\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "and",
+                "comment": " and Operation\n",
+                "type": "InvertableMatrix.InvertableMatrix (Real.Real Basics.Float)"
+            },
+            {
+                "name": "cNOT",
+                "comment": " controlled-NOT Operation\n",
+                "type": "InvertableMatrix.InvertableMatrix (Real.Real Basics.Float)"
+            },
+            {
+                "name": "expectedValue",
+                "comment": " Calculate the expected value when a Ket.Ket is multiplied by a Hermitian Matrix\n",
+                "type": "Ket.Ket (ComplexNumbers.ComplexNumber Basics.Float) -> HermitianMatrix.HermitianMatrix Basics.Float -> Result.Result String.String (Real.Real Basics.Float)"
+            },
+            {
+                "name": "fredkin",
+                "comment": " Fredkin Operation\n",
+                "type": "InvertableMatrix.InvertableMatrix Basics.Float"
+            },
+            {
+                "name": "h",
+                "comment": " Hadamard Operation\n",
+                "type": "InvertableMatrix.InvertableMatrix (Real.Real Basics.Float)"
+            },
+            {
+                "name": "hComplex",
+                "comment": " Hadamard Operation\n",
+                "type": "UnitaryMatrix.UnitaryMatrix Basics.Float"
+            },
+            {
+                "name": "multiplyHermitianMatrixKet",
+                "comment": " Multiply a Vector by a Matrix\n",
+                "type": "HermitianMatrix.HermitianMatrix Basics.Float -> Ket.Ket (ComplexNumbers.ComplexNumber Basics.Float) -> Result.Result String.String (Ket.Ket (ComplexNumbers.ComplexNumber Basics.Float))"
+            },
+            {
+                "name": "multiplyInvertableMatrixKet",
+                "comment": " Multiply a Vector by a Matrix\n",
+                "type": "RowVector.InnerProductSpace a -> InvertableMatrix.InvertableMatrix a -> Ket.Ket a -> Result.Result String.String (Ket.Ket a)"
+            },
+            {
+                "name": "probabilityOfState",
+                "comment": " Calculate the probability of end state, the Bra.Bra, with given start state, the Ket.Ket\n",
+                "type": "RowVector.InnerProductSpace a -> Ket.Ket a -> Bra.Bra a -> Result.Result String.String a"
+            },
+            {
+                "name": "s",
+                "comment": " s Operation\n",
+                "type": "UnitaryMatrix.UnitaryMatrix Basics.Float"
+            },
+            {
+                "name": "sigmaX",
+                "comment": " SigmaX Operation\n",
+                "type": "UnitaryMatrix.UnitaryMatrix Basics.Float"
+            },
+            {
+                "name": "sigmaXReal",
+                "comment": " SigmaX Operation\n",
+                "type": "InvertableMatrix.InvertableMatrix (Real.Real Basics.Float)"
+            },
+            {
+                "name": "sigmaY",
+                "comment": " SigmaX Operation\n",
+                "type": "UnitaryMatrix.UnitaryMatrix Basics.Float"
+            },
+            {
+                "name": "sigmaZ",
+                "comment": " SigmaX Operation\n",
+                "type": "UnitaryMatrix.UnitaryMatrix Basics.Float"
+            },
+            {
+                "name": "squareRootNot",
+                "comment": " square root of NOT Operation\n",
+                "type": "InvertableMatrix.InvertableMatrix (Real.Real Basics.Float)"
+            },
+            {
+                "name": "t",
+                "comment": " t Operation\n",
+                "type": "UnitaryMatrix.UnitaryMatrix Basics.Float"
+            },
+            {
+                "name": "toffoli",
+                "comment": " Toffoli Operation\n",
+                "type": "InvertableMatrix.InvertableMatrix (Real.Real Basics.Float)"
+            },
+            {
+                "name": "variance",
+                "comment": " variance\n",
+                "type": "Ket.Ket (ComplexNumbers.ComplexNumber Basics.Float) -> HermitianMatrix.HermitianMatrix Basics.Float -> Result.Result String.String (Real.Real Basics.Float)"
+            },
+            {
+                "name": "varianceHermitianOperator",
+                "comment": " varianceHermitianOperator\n",
+                "type": "Ket.Ket (ComplexNumbers.ComplexNumber Basics.Float) -> HermitianMatrix.HermitianMatrix Basics.Float -> Result.Result String.String (HermitianMatrix.HermitianMatrix Basics.Float)"
+            },
+            {
+                "name": "x",
+                "comment": " NOT Operation\n",
+                "type": "InvertableMatrix.InvertableMatrix (Real.Real Basics.Float)"
+            },
+            {
+                "name": "z",
+                "comment": " z Operation\n",
+                "type": "InvertableMatrix.InvertableMatrix (Real.Real Basics.Float)"
+            }
+        ],
+        "binops": []
+    }
+]

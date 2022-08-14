@@ -1,0 +1,597 @@
+[
+    {
+        "name": "Webnative",
+        "comment": " Interface for [webnative](https://github.com/fission-codes/webnative#readme), version `0.24` and up.\n\n1.  [Getting Started](#getting-started)\n2.  [Ports](#ports)\n3.  [Authorisation](#authorisation)\n4.  [Authentication](#authentication)\n5.  [Filesystem](#filesystem)\n6.  [Miscellaneous](#miscellaneous)\n\n\n# Getting Started\n\n@docs init, initWithOptions, InitOptions, defaultInitOptions, initialise, initialize\n\n\n# Ports\n\nData flowing through the ports. See `🚀` in the `decodeResponse` example on how to handle the result from `init`.\n\n@docs decodeResponse, DecodedResponse, Artifact, NoArtifact, Request, Response, Error, error, context\n\n\n# Authorisation\n\n@docs redirectToLobby, RedirectTo, AppPermissions, FileSystemPermissions, BranchFileSystemPermissions, Permissions\n\n\n# Authentication\n\n@docs isAuthenticated, leave, signOut, State, AuthSucceededState, AuthCancelledState, ContinuationState\n\n\n# Filesystem\n\n@docs loadFileSystem\n\n",
+        "unions": [
+            {
+                "name": "Artifact",
+                "comment": " Artifact we receive in the response.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Initialisation",
+                        [
+                            "Webnative.State"
+                        ]
+                    ],
+                    [
+                        "NoArtifact",
+                        [
+                            "Webnative.NoArtifact"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "DecodedResponse",
+                "comment": " Request, or response, context.\n",
+                "args": [
+                    "tag"
+                ],
+                "cases": [
+                    [
+                        "Webnative",
+                        [
+                            "Webnative.Artifact"
+                        ]
+                    ],
+                    [
+                        "WebnativeError",
+                        [
+                            "Webnative.Error"
+                        ]
+                    ],
+                    [
+                        "Wnfs",
+                        [
+                            "tag",
+                            "Wnfs.Artifact"
+                        ]
+                    ],
+                    [
+                        "WnfsError",
+                        [
+                            "Wnfs.Error"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Error",
+                "comment": " Possible errors.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "DecodingError",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "InvalidMethod",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "InsecureContext",
+                        []
+                    ],
+                    [
+                        "JavascriptError",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "UnsupportedBrowser",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "NoArtifact",
+                "comment": " Not really artifacts, but kind of.\nPart of the `Artifact` type.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "LoadedFileSystemManually",
+                        []
+                    ],
+                    [
+                        "RedirectingToLobby",
+                        []
+                    ],
+                    [
+                        "SignedOut",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "RedirectTo",
+                "comment": " Where the authorisation lobby should redirect to after authorisation.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "CurrentUrl",
+                        []
+                    ],
+                    [
+                        "RedirectTo",
+                        [
+                            "Url.Url"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "State",
+                "comment": " Initialisation state, result from `init`.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NotAuthorised",
+                        []
+                    ],
+                    [
+                        "AuthSucceeded",
+                        [
+                            "Webnative.AuthSucceededState"
+                        ]
+                    ],
+                    [
+                        "AuthCancelled",
+                        [
+                            "Webnative.AuthCancelledState"
+                        ]
+                    ],
+                    [
+                        "Continuation",
+                        [
+                            "Webnative.ContinuationState"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "AppPermissions",
+                "comment": " Application permissions.\n",
+                "args": [],
+                "type": "{ creator : String.String, name : String.String }"
+            },
+            {
+                "name": "AuthCancelledState",
+                "comment": " State attributes when auth was cancelled.\n",
+                "args": [],
+                "type": "{ cancellationReason : String.String, throughLobby : Basics.Bool }"
+            },
+            {
+                "name": "AuthSucceededState",
+                "comment": " State attributes when auth has succeeded.\n",
+                "args": [],
+                "type": "{ newUser : Basics.Bool, throughLobby : Basics.Bool, username : String.String }"
+            },
+            {
+                "name": "BranchFileSystemPermissions",
+                "comment": " Filesystem permissions for a branch.\n\nThis is reused for the private and public permissions.\n\n",
+                "args": [],
+                "type": "{ directories : List.List (Webnative.Path.Path Webnative.Path.Directory), files : List.List (Webnative.Path.Path Webnative.Path.File) }"
+            },
+            {
+                "name": "ContinuationState",
+                "comment": " State attributes when continueing a session.\n",
+                "args": [],
+                "type": "{ newUser : Basics.Bool, throughLobby : Basics.Bool, username : String.String }"
+            },
+            {
+                "name": "FileSystemPermissions",
+                "comment": " Filesystem permissions.\n\n    ```elm\n    import Webnative.Path as Path\n\n    { private =\n        { directories = [ Path.directory [ \"Audio\", \"Mixtapes\" ] ]\n        , files = [ Path.file [ \"Audio\", \"Playlists\", \"Jazz.json\" ] ]\n        }\n    , public =\n        { directories = []\n        , files = []\n        }\n    }\n    ```\n\n",
+                "args": [],
+                "type": "{ private : Webnative.BranchFileSystemPermissions, public : Webnative.BranchFileSystemPermissions }"
+            },
+            {
+                "name": "InitOptions",
+                "comment": " Options for `initWithOptions`.\n\nSetting `autoRemoveUrlParams` to `True` causes webnative to automatically remove the query parameters from the lobby.\n\nSetting `loadFileSystem` to `False` disables the automatic loading of the filesystem during `init`.\n\n",
+                "args": [],
+                "type": "{ autoRemoveUrlParams : Basics.Bool, loadFileSystem : Basics.Bool }"
+            },
+            {
+                "name": "Permissions",
+                "comment": " Permissions to ask the user.\nSee [`AppPermissions`](#AppPermissions) and [`FileSystemPermissions`](#FileSystemPermissions) on how to use these.\n",
+                "args": [],
+                "type": "{ app : Maybe.Maybe Webnative.AppPermissions, fs : Maybe.Maybe Webnative.FileSystemPermissions }"
+            },
+            {
+                "name": "Request",
+                "comment": " Request from webnative.\n",
+                "args": [],
+                "type": "{ context : String.String, tag : String.String, method : String.String, arguments : List.List Json.Encode.Value }"
+            },
+            {
+                "name": "Response",
+                "comment": " Response from webnative.\n",
+                "args": [],
+                "type": "{ context : String.String, error : Maybe.Maybe String.String, tag : String.String, method : String.String, data : Json.Encode.Value }"
+            }
+        ],
+        "values": [
+            {
+                "name": "context",
+                "comment": " Request/Response context.\n",
+                "type": "String.String"
+            },
+            {
+                "name": "decodeResponse",
+                "comment": " Decode the result, the `Response`, from our `Request`.\nConnect this up with `webnativeResponse` subscription port.\n\n    subscriptions =\n        Ports.webnativeResponse GotWebnativeResponse\n\nAnd then in `update` use this function.\n\n    GotWebnativeResponse response ->\n      case Webnative.decodeResponse tagFromString response of\n        -----------------------------------------\n        -- 🚀\n        -----------------------------------------\n        Webnative ( Initialisation state ) ->\n          if Webnative.isAuthenticated state then\n            loadUserData\n          else\n            welcome\n\n        -----------------------------------------\n        -- 💾\n        -----------------------------------------\n        Wnfs ReadHelloTxt ( Utf8Content helloContents ) ->\n          -- Do something with content from hello.txt\n\n        Wnfs Mutation _ ->\n          ( model\n          , { tag = PointerUpdated }\n              |> Wnfs.publish\n              |> Ports.webnativeRequest\n          )\n\n        -----------------------------------------\n        -- 🥵\n        -----------------------------------------\n        -- Do something with the errors,\n        -- here we cast them to strings\n        WebnativeError err -> Webnative.error err\n        WnfsError err -> Wnfs.error err\n\nSee the [README](../latest/) for the full example.\n\n",
+                "type": "(String.String -> Result.Result String.String tag) -> Webnative.Response -> Webnative.DecodedResponse tag"
+            },
+            {
+                "name": "defaultInitOptions",
+                "comment": " Default `InitOptions`.\n",
+                "type": "Webnative.InitOptions"
+            },
+            {
+                "name": "error",
+                "comment": " `Error` message.\n",
+                "type": "Webnative.Error -> String.String"
+            },
+            {
+                "name": "init",
+                "comment": " 🚀 **Start here**\n\nCheck if we're authenticated, process any lobby query-parameters present in the URL, and initiate the user's filesystem if authenticated (can be disabled using `initWithOptions`).\n\nSee `loadFileSystem` if you want to load the user's filesystem yourself.\n**NOTE**, this only works on the main/ui thread, as it uses `window.location`.\n\nSee the [README](../latest/) for an example.\n\n",
+                "type": "Webnative.Permissions -> Webnative.Request"
+            },
+            {
+                "name": "initWithOptions",
+                "comment": " Initialise webnative, with options.\n",
+                "type": "Webnative.InitOptions -> Webnative.Permissions -> Webnative.Request"
+            },
+            {
+                "name": "initialise",
+                "comment": " Alias for `init`.\n",
+                "type": "Webnative.Permissions -> Webnative.Request"
+            },
+            {
+                "name": "initialize",
+                "comment": " Alias for `init`.\n",
+                "type": "Webnative.Permissions -> Webnative.Request"
+            },
+            {
+                "name": "isAuthenticated",
+                "comment": " Are we authenticated?\n",
+                "type": "Webnative.State -> Basics.Bool"
+            },
+            {
+                "name": "leave",
+                "comment": " Leave the app and go the lobby.\nRemoves all traces of the user.\nUse `signOut` instead if you don't want the redirect.\n",
+                "type": "Webnative.Request"
+            },
+            {
+                "name": "loadFileSystem",
+                "comment": " Load in the filesystem manually.\n",
+                "type": "Webnative.Permissions -> Webnative.Request"
+            },
+            {
+                "name": "redirectToLobby",
+                "comment": " Redirect to the authorisation lobby.\n",
+                "type": "Webnative.RedirectTo -> Webnative.Permissions -> Webnative.Request"
+            },
+            {
+                "name": "signOut",
+                "comment": " Removes all traces of the user.\nUse `leave` instead if you want to\ngo to the lobby immediately so the user\ncan sign out there as well, if needed.\n",
+                "type": "Webnative.Request"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Webnative.Path",
+        "comment": "\n\n\n# Paths\n\n@docs Path, Directory, File, Encapsulated, Kind\n\n\n# Creation\n\n@docs directory, file, root\n\n\n# POSIX\n\n@docs fromPosix, toPosix\n\n\n# Encapsulation\n\n@docs encapsulate\n\n\n# Functions\n\n@docs kind, map, unwrap\n\n\n# Miscellaneous\n\n@docs encode\n\n",
+        "unions": [
+            {
+                "name": "Directory",
+                "comment": " 👻 Directory\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Encapsulated",
+                "comment": " 👻 Encapsulated\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "File",
+                "comment": " 👻 File\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Kind",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Directory",
+                        []
+                    ],
+                    [
+                        "File",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Path",
+                "comment": " Path type.\n\nThis is used with the [phantom 👻 types](#phantom-types).\n\n    directoryPath : Path Directory\n\n    filePath : Path File\n\n    encapsulatedPath : Path Encapsulated\n\n",
+                "args": [
+                    "t"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "directory",
+                "comment": " Create a directory path.\n\n    directory [ \"Audio\", \"Playlists\" ]\n\n",
+                "type": "List.List String.String -> Webnative.Path.Path Webnative.Path.Directory"
+            },
+            {
+                "name": "encapsulate",
+                "comment": " Encapsulate a path.\n",
+                "type": "Webnative.Path.Path t -> Webnative.Path.Path Webnative.Path.Encapsulated"
+            },
+            {
+                "name": "encode",
+                "comment": " Encode to JSON.\n\n    >>> import Json.Encode\n\n    >>> [ \"foo\" ]\n    ..>   |> directory\n    ..>   |> encode\n    ..>   |> Json.Encode.encode 0\n    \"{\\\"directory\\\":[\\\"foo\\\"]}\"\n\n    >>> [ \"bar\" ]\n    ..>   |> file\n    ..>   |> encode\n    ..>   |> Json.Encode.encode 0\n    \"{\\\"file\\\":[\\\"bar\\\"]}\"\n\n",
+                "type": "Webnative.Path.Path t -> Json.Encode.Value"
+            },
+            {
+                "name": "file",
+                "comment": " Create a file path.\n\n    file [ \"Document\", \"invoice.pdf\" ]\n\n",
+                "type": "List.List String.String -> Webnative.Path.Path Webnative.Path.File"
+            },
+            {
+                "name": "fromPosix",
+                "comment": " Convert a POSIX formatted string to a path.\n\nThis will return a `Encapsulated` path. To get a path of the type `Path Directory` or `Path File`, use the functions in the `Webnative.Path.Encapsulated` module.\n\n    >>> import Webnative.Path.Encapsulated\n\n    >>> \"foo/bar/\"\n    ..>   |> fromPosix\n    ..>   |> Webnative.Path.Encapsulated.toDirectory\n    Just (directory [ \"foo\", \"bar\" ])\n\n    >>> \"foo/bar\"\n    ..>   |> fromPosix\n    ..>   |> Webnative.Path.Encapsulated.toFile\n    Just (file [ \"foo\", \"bar\" ])\n\n",
+                "type": "String.String -> Webnative.Path.Path Webnative.Path.Encapsulated"
+            },
+            {
+                "name": "kind",
+                "comment": " Get the path kind.\n\n    >>> kind (directory [])\n    Directory\n\n    >>> kind (file [])\n    File\n\n    Even if a path is encapsulated,\n    you can still check the kind of path it is.\n\n    >>> kind (encapsulate <| directory [])\n    Directory\n\n    >>> kind (encapsulate <| file [])\n    File\n\n",
+                "type": "Webnative.Path.Path t -> Webnative.Path.Kind"
+            },
+            {
+                "name": "map",
+                "comment": " Map.\n",
+                "type": "(List.List String.String -> List.List String.String) -> Webnative.Path.Path t -> Webnative.Path.Path t"
+            },
+            {
+                "name": "root",
+                "comment": " Root directory.\n",
+                "type": "Webnative.Path.Path Webnative.Path.Directory"
+            },
+            {
+                "name": "toPosix",
+                "comment": " Convert a path to the POSIX format.\n\n    >>> toPosix (directory [ \"foo\", \"bar\"])\n    \"foo/bar/\"\n\n    >>> toPosix (file [ \"foo\", \"bar\"])\n    \"foo/bar\"\n\n",
+                "type": "Webnative.Path.Path t -> String.String"
+            },
+            {
+                "name": "unwrap",
+                "comment": " Get the path parts.\n\n    >>> unwrap (directory [ \"foo\", \"bar\" ])\n    [ \"foo\", \"bar\" ]\n\n    >>> unwrap (file [ \"foo\", \"bar\" ])\n    [ \"foo\", \"bar\" ]\n\n",
+                "type": "Webnative.Path.Path t -> List.List String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Webnative.Path.Encapsulated",
+        "comment": "\n\n\n# Encapsulated Paths\n\n@docs toDirectory, toFile\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toDirectory",
+                "comment": " Remove the membrane and extract a `Path Directory`.\n",
+                "type": "Webnative.Path.Path Webnative.Path.Encapsulated -> Maybe.Maybe (Webnative.Path.Path Webnative.Path.Directory)"
+            },
+            {
+                "name": "toFile",
+                "comment": " Remove the membrane and extract a `Path File`.\n",
+                "type": "Webnative.Path.Path Webnative.Path.Encapsulated -> Maybe.Maybe (Webnative.Path.Path Webnative.Path.File)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Wnfs",
+        "comment": " Interact with your webnative [filesystem](https://guide.fission.codes/developers/webnative#file-system).\n\n\n# Actions\n\n@docs publish\n\n\n## Mutations\n\n@docs mkdir, mv, rm, write, writeUtf8\n\n\n## Queries\n\n@docs exists, ls, read, readUtf8\n\n\n## Aliases\n\n@docs add, cat\n\n\n# Requests & Responses\n\n@docs Base, Attributes, Artifact, Entry, context\n\n\n# Errors\n\n@docs Error, error\n\n",
+        "unions": [
+            {
+                "name": "Artifact",
+                "comment": " Artifact we receive in the response.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NoArtifact",
+                        []
+                    ],
+                    [
+                        "Boolean",
+                        [
+                            "Basics.Bool"
+                        ]
+                    ],
+                    [
+                        "CID",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "DirectoryContent",
+                        [
+                            "List.List Wnfs.Entry"
+                        ]
+                    ],
+                    [
+                        "FileContent",
+                        [
+                            "Bytes.Bytes"
+                        ]
+                    ],
+                    [
+                        "Utf8Content",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Base",
+                "comment": " Base of the WNFS action.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "AppData",
+                        [
+                            "Wnfs.AppPermissions"
+                        ]
+                    ],
+                    [
+                        "Private",
+                        []
+                    ],
+                    [
+                        "Public",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Error",
+                "comment": " Possible errors.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "DecodingError",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "InvalidMethod",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "TagParsingError",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "JavascriptError",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Attributes",
+                "comment": " WNFS action attributes.\n",
+                "args": [
+                    "pathKind"
+                ],
+                "type": "{ path : Webnative.Path.Path pathKind, tag : String.String }"
+            },
+            {
+                "name": "Entry",
+                "comment": " Directory `Entry`.\n",
+                "args": [],
+                "type": "{ cid : String.String, name : String.String, kind : Webnative.Path.Kind, size : Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "add",
+                "comment": " Alias for `write`.\n",
+                "type": "Wnfs.Base -> Wnfs.Attributes Webnative.Path.File -> Bytes.Bytes -> Wnfs.Request"
+            },
+            {
+                "name": "cat",
+                "comment": " Alias for `read`.\n",
+                "type": "Wnfs.Base -> Wnfs.Attributes Webnative.Path.File -> Wnfs.Request"
+            },
+            {
+                "name": "context",
+                "comment": " Request/Response context.\n",
+                "type": "String.String"
+            },
+            {
+                "name": "error",
+                "comment": " `Error` message.\n",
+                "type": "Wnfs.Error -> String.String"
+            },
+            {
+                "name": "exists",
+                "comment": " Check if something exists.\n",
+                "type": "Wnfs.Base -> Wnfs.Attributes a -> Wnfs.Request"
+            },
+            {
+                "name": "ls",
+                "comment": " List a directory.\n",
+                "type": "Wnfs.Base -> Wnfs.Attributes Webnative.Path.Directory -> Wnfs.Request"
+            },
+            {
+                "name": "mkdir",
+                "comment": " Create a directory.\n",
+                "type": "Wnfs.Base -> Wnfs.Attributes Webnative.Path.Directory -> Wnfs.Request"
+            },
+            {
+                "name": "mv",
+                "comment": " Move something from one location to another.\n",
+                "type": "Wnfs.Base -> { from : Webnative.Path.Path t, to : Webnative.Path.Path t, tag : String.String } -> Wnfs.Request"
+            },
+            {
+                "name": "publish",
+                "comment": " Publish your changes to your filesystem.\n**📢 You should run this after doing mutations.**\nSee [README](../latest/) examples for more info.\n",
+                "type": "{ tag : String.String } -> Wnfs.Request"
+            },
+            {
+                "name": "read",
+                "comment": " Read a file from the filesystem in the form of `Bytes`.\n",
+                "type": "Wnfs.Base -> Wnfs.Attributes Webnative.Path.File -> Wnfs.Request"
+            },
+            {
+                "name": "readUtf8",
+                "comment": " Read a file from the filesystem in the form of a `String`.\n",
+                "type": "Wnfs.Base -> Wnfs.Attributes Webnative.Path.File -> Wnfs.Request"
+            },
+            {
+                "name": "rm",
+                "comment": " Remove something from the filesystem.\n",
+                "type": "Wnfs.Base -> Wnfs.Attributes a -> Wnfs.Request"
+            },
+            {
+                "name": "write",
+                "comment": " Write to a file using `Bytes`.\n",
+                "type": "Wnfs.Base -> Wnfs.Attributes Webnative.Path.File -> Bytes.Bytes -> Wnfs.Request"
+            },
+            {
+                "name": "writeUtf8",
+                "comment": " Write to a file using a `String`.\n",
+                "type": "Wnfs.Base -> Wnfs.Attributes Webnative.Path.File -> String.String -> Wnfs.Request"
+            }
+        ],
+        "binops": []
+    }
+]

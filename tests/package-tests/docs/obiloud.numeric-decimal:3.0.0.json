@@ -1,0 +1,579 @@
+[
+    {
+        "name": "Numeric.ArithmeticError",
+        "comment": "\n\n\n# Errors\n\n@docs ArithmeticError\n\n\n# Parsing / printing\n\n@docs parse, toString\n\n",
+        "unions": [
+            {
+                "name": "ArithmeticError",
+                "comment": " Arithmetic errors\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Overflow",
+                        []
+                    ],
+                    [
+                        "Underflow",
+                        []
+                    ],
+                    [
+                        "DivisionByZero",
+                        []
+                    ],
+                    [
+                        "ParsingProblem",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "parse",
+                "comment": " Parse error\n",
+                "type": "String.String -> Numeric.ArithmeticError.ArithmeticError"
+            },
+            {
+                "name": "toString",
+                "comment": " Print error\n",
+                "type": "Numeric.ArithmeticError.ArithmeticError -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Numeric.Decimal",
+        "comment": "\n\n\n# Definition\n\n@docs Decimal\n\n\n# Applicative\n\n@docs succeed, map, map2, andMap\n\n\n# Conversion\n\n@docs fromInt, fromDecimalBounded, fromRational, fromRationalBounded, toRational, withRounding, toFloat\n\n\n# Parsing and Printing\n\n@docs fromString, toString\n\n\n# Unwrapping\n\n@docs toInt, toNumerator, toDenominator, splitDecimal\n\n\n# Rounding and scaling\n\n@docs getPrecision, roundDecimal, scaleUp, scaleUpBounded\n\n\n# Simple arithmetic\n\n@docs negate, abs, add, subtract, multiply, divide\n\n\n# Bounded arithmetic\n\n@docs addBounded, subtractBounded, multiplyBounded, divideBounded\n\n",
+        "unions": [
+            {
+                "name": "Decimal",
+                "comment": " Decimal number with precision parameter (i.e. number of digits following decimal point) and rounding strategy.\n\nThe `s` type variable is for a phantom type and it is here to provide type level safety of arithmetic operations on Decimals.\nThere is nothing on the type level that is restricting you from adding two decimals with different precision parameter.\n\nThis could result in something you didn't anticipate. Precision and rounding strategy of the left operand will be used for the resulting decimal.\nThe second operand is not scaled or rounded down to match the first operand (i.e. `1.2 + 1.25 == 13.7`).\n\nBut there is a way out of this with the help of a custom phantom type:\n\n    type Dollars\n        = Dollars\n\n    type Pennies\n        = Pennies\n\n    dollars : Int -> Decimal Dollars Int\n    dollars =\n        Decimal.succeed HalfToEven nat0\n\n    pennies : Int -> Decimal Pennies Int\n    pennies =\n        Decimal.succeed HalfToEven nat2\n\n    let\n        x = pennies 120\n\n        y = dollars 210\n    in\n    Decimal.add x y\n\n    -- TYPE MISMATCH ----- ~/decimal/tests/DecimalTest.elm\n\n    -- The 2nd argument to `add` is not what I expect:\n\n    -- 105| Decimal.add x y\n    --                    ^\n    -- This `y` value is a:\n\n    --     Decimal Dollars Int\n\n    -- But `add` needs the 2nd argument to be:\n\n    --     Decimal Pennies Int\n\nThe `p` is for precision. In more advanced type system this could be arbitrary Intergal type (Integer, Int8, Int16, Int32, Int64 etc.)\nbut in Elm it is difficult to achieve that level of abstraction.\nTo support `applicative` chaining of operations there is `p` type variable (wrapped value can be a function).\n\n",
+                "args": [
+                    "s",
+                    "p"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "abs",
+                "comment": " Absolute value\n",
+                "type": "Numeric.Decimal.Decimal s Basics.Int -> Numeric.Decimal.Decimal s Basics.Int"
+            },
+            {
+                "name": "add",
+                "comment": " Add two Decimals.\n",
+                "type": "Numeric.Decimal.Decimal s Basics.Int -> Numeric.Decimal.Decimal s Basics.Int -> Numeric.Decimal.Decimal s Basics.Int"
+            },
+            {
+                "name": "addBounded",
+                "comment": " Add two Decimals while checking for `Overflow`/`Underflow`.\n",
+                "type": "Numeric.Decimal.Decimal s Basics.Int -> Numeric.Decimal.Decimal s Basics.Int -> Result.Result Numeric.ArithmeticError.ArithmeticError (Numeric.Decimal.Decimal s Basics.Int)"
+            },
+            {
+                "name": "andMap",
+                "comment": " Apply wrapped function inside `Decimal` on another decimal value.\n\n    import Numeric.Decimal as Decimal\n    import Numeric.Decimal.Rounding exposing (RoundingAlgorythm(..))\n    import Numeric.Nat exposing (nat2)\n\n    Decimal.succeed RoundDown nat2 (\\x -> x + 1)\n        |> Decimal.andMap (Decimal.succeed RoundDown nat2 567)\n        |> Decimal.toString\n        -- 5.68\n\n",
+                "type": "Numeric.Decimal.Decimal s a -> Numeric.Decimal.Decimal s (a -> b) -> Numeric.Decimal.Decimal s b"
+            },
+            {
+                "name": "divide",
+                "comment": " Divide two Decimals. Operation can fail if divisor is zero.\n",
+                "type": "Numeric.Decimal.Decimal s Basics.Int -> Numeric.Decimal.Decimal s Basics.Int -> Result.Result Numeric.ArithmeticError.ArithmeticError (Numeric.Decimal.Decimal s Basics.Int)"
+            },
+            {
+                "name": "divideBounded",
+                "comment": " Divide two Decimals while checking for `Overflow`/`Underflow` and `Division by zero`.\n",
+                "type": "Numeric.Decimal.Decimal s Basics.Int -> Numeric.Decimal.Decimal s Basics.Int -> Result.Result Numeric.ArithmeticError.ArithmeticError (Numeric.Decimal.Decimal s Basics.Int)"
+            },
+            {
+                "name": "fromDecimalBounded",
+                "comment": " Convert a `Decimal` to another `Decimal` while checking for `Overflow`/`Underflow`.\n",
+                "type": "Numeric.Decimal.Decimal s Basics.Int -> Result.Result Numeric.ArithmeticError.ArithmeticError (Numeric.Decimal.Decimal s Basics.Int)"
+            },
+            {
+                "name": "fromInt",
+                "comment": " Convert `Int` to `Decimal` while performing necessary scaling.\n\n    import Numeric.Decimal as Decimal\n    import Numeric.Decimal.Rounding exposing (RoundingAlgorythm(..))\n    import Numeric.Nat exposing (nat3)\n\n    Decimal.fromInt RoundDown nat3 7\n        |> Decimal.toString\n        -- 7.000\n\n",
+                "type": "Numeric.Decimal.Rounding.RoundingAlgorythm -> Numeric.Nat.Nat -> Basics.Int -> Numeric.Decimal.Decimal s Basics.Int"
+            },
+            {
+                "name": "fromRational",
+                "comment": " Convert `Rational` to `Decimal`.\n",
+                "type": "Numeric.Decimal.Rounding.RoundingAlgorythm -> Numeric.Nat.Nat -> Numeric.Rational.Rational -> Result.Result Numeric.ArithmeticError.ArithmeticError (Numeric.Decimal.Decimal s Basics.Int)"
+            },
+            {
+                "name": "fromRationalBounded",
+                "comment": " Convert from `Rational` to `Decimal` while checking for `Overflow`/`Underflow`.\n",
+                "type": "Numeric.Decimal.Rounding.RoundingAlgorythm -> Numeric.Nat.Nat -> Numeric.Rational.Rational -> Result.Result Numeric.ArithmeticError.ArithmeticError (Numeric.Decimal.Decimal s Basics.Int)"
+            },
+            {
+                "name": "fromString",
+                "comment": " Parse `String` to `Decimal` while chacking for formatting and `Overflow`/`Underflow`.\n",
+                "type": "Numeric.Decimal.Rounding.RoundingAlgorythm -> Numeric.Nat.Nat -> String.String -> Result.Result Numeric.ArithmeticError.ArithmeticError (Numeric.Decimal.Decimal s Basics.Int)"
+            },
+            {
+                "name": "getPrecision",
+                "comment": " Get precision of the Decimal (number of fractional digits)\n\n    import Numeric.Decimal as Decimal\n    import Numeric.Decimal.Rounding exposing (RoundingAlgorythm(..))\n    import Numeric.Nat exposing (nat1, nat2)\n\n    Decimal.succeed RoundDown nat2 123\n        |> Decimal.getPrecision\n        -- (Nat 2)\n\n",
+                "type": "Numeric.Decimal.Decimal s p -> Numeric.Nat.Nat"
+            },
+            {
+                "name": "map",
+                "comment": " Transform wrapped value with a given function.\n\n    import Numeric.Decimal as Decimal\n    import Numeric.Decimal.Rounding exposing (RoundingAlgorythm(..))\n    import Numeric.Nat exposing (nat2)\n\n    Decimal.map sqrt (Decimal.succeed RoundDown nat2 25)\n        |> Decimal.toString\n        -- 0.50\n\n",
+                "type": "(a -> b) -> Numeric.Decimal.Decimal s a -> Numeric.Decimal.Decimal s b"
+            },
+            {
+                "name": "map2",
+                "comment": " Apply a function on two decimal values.\n\n    import Numeric.Decimal as Decimal\n    import Numeric.Decimal.Rounding exposing (RoundingAlgorythm(..))\n    import Numeric.Nat exposing (nat2)\n\n    Decimal.map2 (+)\n        (Decimal.succeed RoundDown nat2 234)\n        (Decimal.succeed RoundDown nat2 567)\n        |> Decimal.toString\n        -- 8.01\n\n",
+                "type": "(a -> b -> c) -> Numeric.Decimal.Decimal s a -> Numeric.Decimal.Decimal s b -> Numeric.Decimal.Decimal s c"
+            },
+            {
+                "name": "multiply",
+                "comment": " Multiply two Decimals.\n",
+                "type": "Numeric.Decimal.Decimal s Basics.Int -> Numeric.Decimal.Decimal s Basics.Int -> Numeric.Decimal.Decimal s Basics.Int"
+            },
+            {
+                "name": "multiplyBounded",
+                "comment": " Multiply two Decimal while checking for `Overflow`/`Underflow`.\n",
+                "type": "Numeric.Decimal.Decimal s Basics.Int -> Numeric.Decimal.Decimal s Basics.Int -> Result.Result Numeric.ArithmeticError.ArithmeticError (Numeric.Decimal.Decimal s Basics.Int)"
+            },
+            {
+                "name": "negate",
+                "comment": " Unary negation\n",
+                "type": "Numeric.Decimal.Decimal s Basics.Int -> Numeric.Decimal.Decimal s Basics.Int"
+            },
+            {
+                "name": "roundDecimal",
+                "comment": " Rounding down to a number of decimals.\n\n    import Numeric.Decimal as Decimal\n    import Numeric.Decimal.Rounding exposing (RoundingAlgorythm(..))\n    import Numeric.Nat exposing (nat1, nat2)\n\n    Decimal.succeed RoundDown nat2 123  -- 1.23\n        |> Decimal.roundDown nat1\n        |> Decimal.toString\n        -- 1.2\n\n",
+                "type": "Numeric.Nat.Nat -> Numeric.Decimal.Decimal s Basics.Int -> Numeric.Decimal.Decimal s Basics.Int"
+            },
+            {
+                "name": "scaleUp",
+                "comment": " Increase the precision of a `Decimal`, use `roundDecimal` for the inverse.\n\n    import Numeric.Decimal as Decimal\n    import Numeric.Decimal.Rounding exposing (RoundingAlgorythm(..))\n    import Numeric.Nat exposing (nat2, nat3)\n\n    Decimal.succeed RoundDown nat2 123  -- 1.23\n        |> Decimal.scaleUp nat3\n        |> Decimal.toString\n        -- 1.230\n\n",
+                "type": "Numeric.Nat.Nat -> Numeric.Decimal.Decimal s Basics.Int -> Numeric.Decimal.Decimal s Basics.Int"
+            },
+            {
+                "name": "scaleUpBounded",
+                "comment": " Increase the precision of a `Decimal` while checking for `Overflow`/`Underflow`, use `roundDecimal` if inverse is desired.\n",
+                "type": "Numeric.Nat.Nat -> Numeric.Decimal.Decimal s Basics.Int -> Result.Result Numeric.ArithmeticError.ArithmeticError (Numeric.Decimal.Decimal s Basics.Int)"
+            },
+            {
+                "name": "splitDecimal",
+                "comment": " Split the number at the decimal point, i.e. whole number and the fraction.\n\n    import Numeric.Decimal as Decimal\n    import Numeric.Decimal.Rounding exposing (RoundingAlgorythm(..))\n    import Numeric.Nat exposing (nat3)\n\n    D.succeed RoundTowardsZero nat3 1234\n        |> D.splitDecimal\n        -- (1, 234)\n\n",
+                "type": "Numeric.Decimal.Decimal s Basics.Int -> ( Basics.Int, Basics.Int )"
+            },
+            {
+                "name": "subtract",
+                "comment": " Subtract one Decimal from another.\n",
+                "type": "Numeric.Decimal.Decimal s Basics.Int -> Numeric.Decimal.Decimal s Basics.Int -> Numeric.Decimal.Decimal s Basics.Int"
+            },
+            {
+                "name": "subtractBounded",
+                "comment": " Subtract one Decimal from another while checking for `Overflow`/`Underflow`.\n",
+                "type": "Numeric.Decimal.Decimal s Basics.Int -> Numeric.Decimal.Decimal s Basics.Int -> Result.Result Numeric.ArithmeticError.ArithmeticError (Numeric.Decimal.Decimal s Basics.Int)"
+            },
+            {
+                "name": "succeed",
+                "comment": " A Decimal that succeeds without scaling or rounding.\n\n    import Numeric.Decimal as Decimal\n    import Numeric.Decimal.Rounding exposing (RoundingAlgorythm(..))\n    import Numeric.Nat exposing (nat2)\n\n    Decimal.succeed RoundDown nat2 100\n        |> Decimal.toString\n        -- 1.00\n\n",
+                "type": "Numeric.Decimal.Rounding.RoundingAlgorythm -> Numeric.Nat.Nat -> p -> Numeric.Decimal.Decimal s p"
+            },
+            {
+                "name": "toDenominator",
+                "comment": " Get the Decimal denominator. Always will be a power of `10`.\n\n    import Numeric.Decimal as Decimal\n    import Numeric.Decimal.Rounding exposing (RoundingAlgorythm(..))\n    import Numeric.Nat exposing (nat3)\n\n    Decimal.succeed RoundDown nat3 8\n        |> Decimal.toDenominator\n        -- (10 ^ 3) = 1000\n\n",
+                "type": "Numeric.Decimal.Decimal s p -> Basics.Int"
+            },
+            {
+                "name": "toFloat",
+                "comment": " Converting `Decimal` to `Float`\n",
+                "type": "Numeric.Decimal.Decimal s Basics.Int -> Basics.Float"
+            },
+            {
+                "name": "toInt",
+                "comment": " toInt underlying representation for the decimal number. No rounding will be done.\n\n    import Numeric.Decimal as Decimal\n    import Numeric.Decimal.Rounding exposing (RoundingAlgorythm(..))\n    import Numeric.Nat exposing (nat2)\n\n    Decimal.toInt (Decimal.succeed RoundDown nat2 100) -- 100\n\n",
+                "type": "Numeric.Decimal.Decimal s p -> p"
+            },
+            {
+                "name": "toNumerator",
+                "comment": " Get the toNumerator. Same as `toInt`.\n",
+                "type": "Numeric.Decimal.Decimal s Basics.Int -> Basics.Int"
+            },
+            {
+                "name": "toRational",
+                "comment": " Converting `Decimal` to `Rational`.\n",
+                "type": "Numeric.Decimal.Decimal s Basics.Int -> Numeric.Rational.Rational"
+            },
+            {
+                "name": "toString",
+                "comment": " Printing Decimal to `String` representation.\n",
+                "type": "Numeric.Decimal.Decimal s Basics.Int -> String.String"
+            },
+            {
+                "name": "withRounding",
+                "comment": " Use different rounding strategy.\n",
+                "type": "Numeric.Decimal.Rounding.RoundingAlgorythm -> Numeric.Decimal.Decimal s p -> Numeric.Decimal.Decimal s p"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Numeric.Decimal.Rounding",
+        "comment": "\n\n\n# Definition\n\n@docs RoundingAlgorythm\n\n\n# Helpers\n\n@docs getRounder\n\n",
+        "unions": [
+            {
+                "name": "RoundingAlgorythm",
+                "comment": " Rounding Algorythm\n",
+                "args": [],
+                "cases": [
+                    [
+                        "RoundDown",
+                        []
+                    ],
+                    [
+                        "RoundUp",
+                        []
+                    ],
+                    [
+                        "RoundTowardsZero",
+                        []
+                    ],
+                    [
+                        "RoundAwayFromZero",
+                        []
+                    ],
+                    [
+                        "HalfUp",
+                        []
+                    ],
+                    [
+                        "HalfDown",
+                        []
+                    ],
+                    [
+                        "HalfTowardsZero",
+                        []
+                    ],
+                    [
+                        "HalfAwayFromZero",
+                        []
+                    ],
+                    [
+                        "HalfToEven",
+                        []
+                    ],
+                    [
+                        "HalfToOdd",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "getRounder",
+                "comment": " Returns rounding function matched by `RoundongAlgorythm`\n",
+                "type": "Numeric.Decimal.Rounding.RoundingAlgorythm -> Numeric.Nat.Nat -> Basics.Int -> Basics.Int"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Numeric.Integer",
+        "comment": "\n\n\n# Bounds\n\n@docs maxBound, minBound\n\n\n# Integral\n\n@docs truncate, quot, rem, div, mod, quotRem, divMod\n\n\n# Numeric functions\n\n@docs signum, even, odd, gcd, lcm\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "div",
+                "comment": " Integer division truncated towards negative infinity.\n",
+                "type": "Basics.Int -> Basics.Int -> Basics.Int"
+            },
+            {
+                "name": "divMod",
+                "comment": " simultaneous div and mod\n",
+                "type": "Basics.Int -> Basics.Int -> ( Basics.Int, Basics.Int )"
+            },
+            {
+                "name": "even",
+                "comment": " even predicate\n",
+                "type": "Basics.Int -> Basics.Bool"
+            },
+            {
+                "name": "gcd",
+                "comment": " gcd x y is the non-negative factor of both x and y of which every common factor of x and y is also x factor;\nfor example gcd 4 2 = 2, gcd (-4) 6 = 2, gcd 0 4 = 4. gcd 0 0 = 0.\n(That is, the common divisor that is \"greatest\" in the divisibility preordering.)\n\nNote: Since for signed fixed-width integer types, abs minBound < 0, the result may be negative if one of the arguments\nis minBound (and necessarily is if the other is 0 or minBound) for such types.\n\n",
+                "type": "Basics.Int -> Basics.Int -> Basics.Int"
+            },
+            {
+                "name": "lcm",
+                "comment": " lcm x y is the smallest positive integer that both `x` and `y` divide.\n",
+                "type": "Basics.Int -> Basics.Int -> Basics.Int"
+            },
+            {
+                "name": "maxBound",
+                "comment": " Max safe integer.\n",
+                "type": "Basics.Int"
+            },
+            {
+                "name": "minBound",
+                "comment": " Min safe integer.\n",
+                "type": "Basics.Int"
+            },
+            {
+                "name": "mod",
+                "comment": " integer modulus, satisfying\n\n    div x y * y + mod x y == x\n\n",
+                "type": "Basics.Int -> Basics.Int -> Basics.Int"
+            },
+            {
+                "name": "odd",
+                "comment": " odd predicate\n",
+                "type": "Basics.Int -> Basics.Bool"
+            },
+            {
+                "name": "quot",
+                "comment": " Integer division truncated towards zero.\n",
+                "type": "Basics.Int -> Basics.Int -> Basics.Int"
+            },
+            {
+                "name": "quotRem",
+                "comment": " simultaneous quot and rem\n",
+                "type": "Basics.Int -> Basics.Int -> ( Basics.Int, Basics.Int )"
+            },
+            {
+                "name": "rem",
+                "comment": " integer remainder, satisfying\n\n    quot x y * y + rem x y == x\n\n",
+                "type": "Basics.Int -> Basics.Int -> Basics.Int"
+            },
+            {
+                "name": "signum",
+                "comment": " Sign of x number. The functions abs and signum should satisfy the law:\n\n    abs x * signum x == x\n\nFor real numbers, the signum is either -1 (negative), 0 (zero) or 1 (positive).\n\n",
+                "type": "Basics.Int -> Basics.Int"
+            },
+            {
+                "name": "truncate",
+                "comment": " `truncate x` returns the integer nearest `x` between zero and `x`\n",
+                "type": "Basics.Float -> Basics.Int"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Numeric.Nat",
+        "comment": "\n\n\n# Definition\n\n@docs Nat\n\n\n# Conversion\n\n@docs fromIntAbs, fromIntOrZero, toInt\n\n\n# Arithmetic\n\n@docs add\n\n\n# Primitives\n\n@docs nat0, nat1, nat2, nat3, nat4, nat5, successor\n\n",
+        "unions": [
+            {
+                "name": "Nat",
+                "comment": " Naturals with zero.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "add",
+                "comment": " Add two Nats.\n",
+                "type": "Numeric.Nat.Nat -> Numeric.Nat.Nat -> Numeric.Nat.Nat"
+            },
+            {
+                "name": "fromIntAbs",
+                "comment": " Nat from `Int` absolute value.\n\n    fromIntAbs 2 -- (Nat 2)\n\n    fromIntAbs -3 -- (Nat 3)\n\n",
+                "type": "Basics.Int -> Numeric.Nat.Nat"
+            },
+            {
+                "name": "fromIntOrZero",
+                "comment": " Nat from positive `Int`s, otherwise 0\n\n    fromIntAbs 2 -- (Nat 2)\n\n    fromIntAbs -3 -- (Nat 0)\n\n",
+                "type": "Basics.Int -> Numeric.Nat.Nat"
+            },
+            {
+                "name": "nat0",
+                "comment": " Nat 0\n",
+                "type": "Numeric.Nat.Nat"
+            },
+            {
+                "name": "nat1",
+                "comment": " Nat 1\n",
+                "type": "Numeric.Nat.Nat"
+            },
+            {
+                "name": "nat2",
+                "comment": " Nat 2\n",
+                "type": "Numeric.Nat.Nat"
+            },
+            {
+                "name": "nat3",
+                "comment": " Nat 3\n",
+                "type": "Numeric.Nat.Nat"
+            },
+            {
+                "name": "nat4",
+                "comment": " Nat 4\n",
+                "type": "Numeric.Nat.Nat"
+            },
+            {
+                "name": "nat5",
+                "comment": " Nat 5\n",
+                "type": "Numeric.Nat.Nat"
+            },
+            {
+                "name": "successor",
+                "comment": " Increment by 1\n",
+                "type": "Numeric.Nat.Nat -> Numeric.Nat.Nat"
+            },
+            {
+                "name": "toInt",
+                "comment": " toInt Nat\n",
+                "type": "Numeric.Nat.Nat -> Basics.Int"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Numeric.Rational",
+        "comment": "\n\n\n# Definition\n\n@docs Rational\n\n\n# Build ratio\n\n@docs ratio, ratioBounded\n\n\n# Conversion\n\n@docs fromInt, toFloat, toString, inverse\n\n\n# Extracting components of fractions\n\n@docs toPropperFraction, toNumerator, toDenominator, truncate, round, ceiling, floor\n\n\n# Comparison\n\n@docs compare, greaterThan, lessThan\n\n\n# Arithmetic\n\n@docs add, subtract, multiply, divide, power\n\n\n# Bounded arithmetic\n\n@docs addBounded, subtractBounded, multiplyBounded, divideBounded, powerBounded\n\n",
+        "unions": [
+            {
+                "name": "Rational",
+                "comment": " Arbitrary-precision rational numbers, represented as a ratio of two `Int` values.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "add",
+                "comment": " Add two Rationals.\n",
+                "type": "Numeric.Rational.Rational -> Numeric.Rational.Rational -> Numeric.Rational.Rational"
+            },
+            {
+                "name": "addBounded",
+                "comment": " Adds two Rationals while checking for `Overflow`/`Underflow`.\n",
+                "type": "Numeric.Rational.Rational -> Numeric.Rational.Rational -> Result.Result Numeric.ArithmeticError.ArithmeticError Numeric.Rational.Rational"
+            },
+            {
+                "name": "ceiling",
+                "comment": " `ceiling x` returns the least integer not less than `x`.\n",
+                "type": "Numeric.Rational.Rational -> Basics.Int"
+            },
+            {
+                "name": "compare",
+                "comment": " Compare two Rationals.\n",
+                "type": "Numeric.Rational.Rational -> Numeric.Rational.Rational -> Basics.Order"
+            },
+            {
+                "name": "divide",
+                "comment": " Divide two Rationals.\n",
+                "type": "Numeric.Rational.Rational -> Numeric.Rational.Rational -> Numeric.Rational.Rational"
+            },
+            {
+                "name": "divideBounded",
+                "comment": " Divide two Rationals while checking for `Overflow`/`Underflow`.\n",
+                "type": "Numeric.Rational.Rational -> Numeric.Rational.Rational -> Result.Result Numeric.ArithmeticError.ArithmeticError Numeric.Rational.Rational"
+            },
+            {
+                "name": "floor",
+                "comment": " `floor x` returns the greatest integer not greater than `x`.\n",
+                "type": "Numeric.Rational.Rational -> Basics.Int"
+            },
+            {
+                "name": "fromInt",
+                "comment": " Converts `Int` to `Rational`.\n",
+                "type": "Basics.Int -> Numeric.Rational.Rational"
+            },
+            {
+                "name": "greaterThan",
+                "comment": " Compare two Rationals, greater than precidate.\n",
+                "type": "Numeric.Rational.Rational -> Numeric.Rational.Rational -> Basics.Bool"
+            },
+            {
+                "name": "inverse",
+                "comment": " Inverse numerator and denominator of the `Rational`.\n",
+                "type": "Numeric.Rational.Rational -> Numeric.Rational.Rational"
+            },
+            {
+                "name": "lessThan",
+                "comment": " Compare two Rationals, less than precidate.\n",
+                "type": "Numeric.Rational.Rational -> Numeric.Rational.Rational -> Basics.Bool"
+            },
+            {
+                "name": "multiply",
+                "comment": " Multiply two Rationals.\n",
+                "type": "Numeric.Rational.Rational -> Numeric.Rational.Rational -> Numeric.Rational.Rational"
+            },
+            {
+                "name": "multiplyBounded",
+                "comment": " Multiply two Rationals while checking for `Overflow`/`Underflow`.\n",
+                "type": "Numeric.Rational.Rational -> Numeric.Rational.Rational -> Result.Result Numeric.ArithmeticError.ArithmeticError Numeric.Rational.Rational"
+            },
+            {
+                "name": "power",
+                "comment": " Rase `Rational` to the power.\n",
+                "type": "Basics.Int -> Numeric.Rational.Rational -> Numeric.Rational.Rational"
+            },
+            {
+                "name": "powerBounded",
+                "comment": " Rase `Rational` to the power while checking for `Overflow`/`Underflow`\n",
+                "type": "Basics.Int -> Numeric.Rational.Rational -> Result.Result Numeric.ArithmeticError.ArithmeticError Numeric.Rational.Rational"
+            },
+            {
+                "name": "ratio",
+                "comment": " Forms the ratio of two integers.\n",
+                "type": "Basics.Int -> Basics.Int -> Numeric.Rational.Rational"
+            },
+            {
+                "name": "ratioBounded",
+                "comment": " Forms the ratio of two integers while checking for `Overflow`/`Underflow`.\n",
+                "type": "Basics.Int -> Basics.Int -> Result.Result Numeric.ArithmeticError.ArithmeticError Numeric.Rational.Rational"
+            },
+            {
+                "name": "round",
+                "comment": " `round x` returns the nearest integer to `x`: the even integer if `x` is equily distant between two integers.\n",
+                "type": "Numeric.Rational.Rational -> Basics.Int"
+            },
+            {
+                "name": "subtract",
+                "comment": " Subtract one Rational from another.\n",
+                "type": "Numeric.Rational.Rational -> Numeric.Rational.Rational -> Numeric.Rational.Rational"
+            },
+            {
+                "name": "subtractBounded",
+                "comment": " Subtract one Rational from another while checking for `Overflow`/`Underflow`.\n",
+                "type": "Numeric.Rational.Rational -> Numeric.Rational.Rational -> Result.Result Numeric.ArithmeticError.ArithmeticError Numeric.Rational.Rational"
+            },
+            {
+                "name": "toDenominator",
+                "comment": " Extract the denominator of the ratio in reduced form: the numerator and denominator have no common factor and the denominator is positive.\n",
+                "type": "Numeric.Rational.Rational -> Basics.Int"
+            },
+            {
+                "name": "toFloat",
+                "comment": " Converts Rational to `Float`\n",
+                "type": "Numeric.Rational.Rational -> Basics.Float"
+            },
+            {
+                "name": "toNumerator",
+                "comment": " Extract the numerator of the ratio in reduced form: the numerator and denominator have no common factor and the denominator is positive.\n",
+                "type": "Numeric.Rational.Rational -> Basics.Int"
+            },
+            {
+                "name": "toPropperFraction",
+                "comment": " The function `toProperFraction` takes a real fractional number `x` and returns a pair `( n, f )` such that `x = n + f`, and:\n\n  - `n` is an integral number with the same sign as `x`; and\n  - `f` is a ratio with the same type and sign as `x`, and with absolute value less than `1`.\n\n",
+                "type": "Numeric.Rational.Rational -> ( Basics.Int, Numeric.Rational.Rational )"
+            },
+            {
+                "name": "toString",
+                "comment": " Printing `Rational` to `String` representation.\n",
+                "type": "Numeric.Rational.Rational -> String.String"
+            },
+            {
+                "name": "truncate",
+                "comment": " `truncate x` returns the integer nearest `x` between zero and `x`.\n",
+                "type": "Numeric.Rational.Rational -> Basics.Int"
+            }
+        ],
+        "binops": []
+    }
+]

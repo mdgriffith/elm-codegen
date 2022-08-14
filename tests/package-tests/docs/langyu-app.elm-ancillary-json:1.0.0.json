@@ -1,0 +1,51 @@
+[
+    {
+        "name": "Json.Decode.Ancillary",
+        "comment": " The `Json.Decode.Ancillary` module provides additional, convenient Json\ndecoding functionality not found in `Json.Decode` or `Json.Decode.Extra`.\n\n\n# Validating Decoders\n\nDecode simple types from JSON with additional restrictions.\n\n@docs nonemptyString\n\n\n# Custom Validating Decoders\n\nCreate custom decoders that validate additional characteristics of the decoded\nvalues.\n\n@docs validate, mapMaybe, mapResult\n\n\n# Custom-type Decoders\n\nIt's not uncommon to want to import JSON representations of custom types, in\nwhich custom types are typically represented by strings, e.g.\n\n    {\n        \"animals\": [\"dog\", \"cat\", \"cat\"]\n    }\n\n    ->\n\n    animals : List Animal\n    animals =\n        [ Dog, Cat, Cat ]\n\nor\n\n    {\n        \"animals\": [{\n            \"dog\": \"Spot\"\n        }, {\n            \"cat\": \"Bastet\"\n        }, {\n            \"dog\": \"Rover\"\n        }]\n    }\n\n    ->\n\n    animals : List Animal\n    animals =\n        [ Dog \"Spot\"\n        , Cat \"Bastet\"\n        , Dog \"Rover\"\n        ]\n\nThese functions can help handle such JSON, though they may have applications\nbeyond mere custom type handling.\n\n@docs lookup, lookupComparable, lookupWith, mapByField\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "lookup",
+                "comment": " Given an association dictionary between strings and a type, decode a string\nfrom JSON into the associated value or fail if none match.\n\n    animalDecoder : Decoder Animal\n    animalDecoder =\n        lookup\n            (Dict.fromList\n                [ ( \"dog\", Dog )\n                , ( \"cat\", Cat )\n                , ( \"bird\", Bird )\n                ]\n            )\n\n    decodeString animalDecoder \"true\"      == Err ...\n    decodeString animalDecoder \"42\"        == Err ...\n    decodeString animalDecoder \"3.14\"      == Err ...\n    decodeString animalDecoder \"\\\"hello\\\"\" == Err ...\n    decodeString animalDecoder \"\\\"dog\\\"\"   == Ok Dog\n    decodeString animalDecoder \"\\\"bird\\\"\"  == Ok Bird\n\n",
+                "type": "Dict.Dict String.String b -> Json.Decode.Decoder b"
+            },
+            {
+                "name": "lookupComparable",
+                "comment": " Given an association dictionary between two types, decode the first type\nfrom JSON into the associated value of the second type or fail if none match.\n\nUsed `lookup` if your `comparable` type is `String`, the more common use-case.\n\n    asciiDecoder : Decoder Char\n    asciiDecoder =\n        lookupComparable\n            (Dict.fromList\n                [\n                , ...\n                , ( 65, 'A' )\n                , ( 66, 'B' )\n                , ( 67, 'C' )\n                , ...\n            )\n            Decode.int\n\n    decodeString asciiDecoder \"true\"      == Err ...\n    decodeString asciiDecoder \"66\"        == Ok 'B'\n    decodeString asciiDecoder \"99999\"     == Err ...\n    decodeString asciiDecoder \"3.14\"      == Err ...\n    decodeString asciiDecoder \"\\\"hello\\\"\" == Err ...\n\n",
+                "type": "Dict.Dict comparable a -> Json.Decode.Decoder comparable -> Json.Decode.Decoder a"
+            },
+            {
+                "name": "lookupWith",
+                "comment": " Less-efficient alternative (except perhaps with short lists) to\n`lookupComparable` for non-comparable values. Given an association list between\ntwo types, decode the first type from JSON into the associated value of the\nsecond type or fail if none match.\n\nYou should probably use `lookup` or `lookupComparable` if possible, unless your\nlist is very short.\n\n    asciiDecoder : Decoder Char\n    asciiDecoder =\n        lookupWith\n            [\n            , ...\n            , ( 65, 'A' )\n            , ( 66, 'B' )\n            , ( 67, 'C' )\n            , ...\n            ]\n            Decode.int\n\n    decodeString asciiDecoder \"true\"      == Err ...\n    decodeString asciiDecoder \"66\"        == Ok 'B'\n    decodeString asciiDecoder \"99999\"     == Err ...\n    decodeString asciiDecoder \"3.14\"      == Err ...\n    decodeString asciiDecoder \"\\\"hello\\\"\" == Err ...\n\n",
+                "type": "List.List ( a, b ) -> Json.Decode.Decoder a -> Json.Decode.Decoder b"
+            },
+            {
+                "name": "mapByField",
+                "comment": " Given an association list of fields (as strings) and functions mapping one\ntype to another, and a decoder of the first type, map the contents of a\nmatching field with the associated map.\n\nThis is a little complicated sounding, so consider the following example:\n\n    type Species\n        = Dog\n        | Cat\n        | Bird\n\n    type alias Animal =\n        { species : Species\n        , age : Int\n        }\n\n    animalDecoder : Decoder Animal\n    animalDecoder =\n        mapByField\n            [ ( \"dog\", Animal Dog )\n            , ( \"cat\", Animal Cat )\n            , ( \"bird\", Animal Bird )\n            ]\n            Decode.int\n\n    decodeString animalDecoder \"true\"                 == Err ...\n    decodeString animalDecoder \"42\"                   == Err ...\n    decodeString animalDecoder \"{\\\"dog\\\": 6}\"         == Ok ( Dog 42 )\n    decodeString animalDecoder \"{\\\"bird\\\": 10}\"       == Ok ( Bird 10 )\n    decodeString animalDecoder \"\\\"dog\\\"\"              == Err ...\n    decodeString animalDecoder \"{\\\"dog\\\": \\\"hello\\\"}\" == Err ...\n\n",
+                "type": "List.List ( String.String, a -> b ) -> Json.Decode.Decoder a -> Json.Decode.Decoder b"
+            },
+            {
+                "name": "mapMaybe",
+                "comment": " Given a function to map a value `a` into `Maybe b` and an error message for\ninvalid values, decode an `a` value from JSON and convert it into a `b` or fail.\n\n    firstChar : Decoder Char\n    firstChar =\n        Decode.string\n            |> mapMaybe (Maybe.map Tuple.first << String.uncons) \"Expected a nonempty string!\"\n\n",
+                "type": "(a -> Maybe.Maybe b) -> String.String -> Json.Decode.Decoder a -> Json.Decode.Decoder b"
+            },
+            {
+                "name": "mapResult",
+                "comment": " Given a function to map a value `a` into `Result String b`, decode an `a`\nvalue from JSON and convert it into a `b` or fail with the error message.\n\n    customParser : Parser SomeType\n    customParser =\n        ...\n\n    customDecoder : Decoder SomeType\n    customDecoder =\n        Decode.string\n            |> mapResult (Result.mapError Parser.deadEndsToString << Parser.run customParser )\n\n",
+                "type": "(a -> Result.Result String.String b) -> Json.Decode.Decoder a -> Json.Decode.Decoder b"
+            },
+            {
+                "name": "nonemptyString",
+                "comment": " Decode a JSON `String` to Elm but fail if the string is empty.\n\n    decodeString nonemptyString \"true\"              == Err ...\n    decodeString nonemptyString \"42\"                == Err ...\n    decodeString nonemptyString \"3.14\"              == Err ...\n    decodeString nonemptyString \"\\\"hello\\\"\"         == Ok \"hello\"\n    decodeString nonemptyString \"\\\" \\\"\"             == Ok \" \"\n    decodeString nonemptyString \"\\\"\\\"\"              == Err ...\n    decodeString nonemptyString \"{ \\\"hello\\\": 42 }\" == Err ...\n\n",
+                "type": "Json.Decode.Decoder String.String"
+            },
+            {
+                "name": "validate",
+                "comment": " Given a predicate to validate a decoded value and an error message for\ninvalid values, decode a value from JSON and fail if it does not evaluate to\n`True`.\n\nExamples:\n\n    nonemptyString : Decoder String\n    nonemptyString =\n        Decode.string\n            |> validate (not << String.isEmpty) \"Expected a nonempty string!\"\n\n",
+                "type": "(a -> Basics.Bool) -> String.String -> Json.Decode.Decoder a -> Json.Decode.Decoder a"
+            }
+        ],
+        "binops": []
+    }
+]

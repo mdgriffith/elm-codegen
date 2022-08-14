@@ -1,0 +1,21 @@
+[
+    {
+        "name": "Logger",
+        "comment": " Test some log functions\n\n# Functions for logging\n@docs log, dir\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "dir",
+                "comment": " log an object using console.dir ",
+                "type": "a -> a"
+            },
+            {
+                "name": "log",
+                "comment": " log an object using console.log ",
+                "type": "String.String -> a -> a"
+            }
+        ],
+        "binops": []
+    }
+]

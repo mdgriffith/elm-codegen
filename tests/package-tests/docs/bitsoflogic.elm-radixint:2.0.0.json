@@ -1,0 +1,51 @@
+[
+    {
+        "name": "RadixInt",
+        "comment": " This library allows you to convert between Int (base 10) and a List Int (base n). It purposely does not tie you to any specific notation to represent the digits.\n\n    RadixInt.fromInt (Base 6)\n        |> RadixInt.toList -- [4,5]  (54 in base6 == 34 in base10)\n        |> List.indexedMap Tuple.pair -- [(0,4),(1,5)]\n\nThe List lines up its index with the position of each digit. Using Base12 as an example, lets represent 10 as A and 11 as B. Thus, these are all equivalent:\n\n    142     -- base10\n    BA      -- base12\n    [10 11] -- RadixInt.toList num\n            -- Note: index 0 == position 0 (2 in 142; A in BA)\n            --       index 1 == position 1 (4 in 142; B in BA)\n            --       index 2 == position 2 (1 in 142)\n            -- 142 = 10^2 * 1 + 10^1 *  4 + 10^0 *  2\n            -- BA  =            12^1 * 11 + 12^0 * 10\n\n\n# Definition\n\n@docs RadixInt, Base\n\n\n# Methods\n\n@docs fromInt, toInt, fromList, toList\n\n",
+        "unions": [
+            {
+                "name": "Base",
+                "comment": " Represents the base (aka radix) of the number being used\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Base",
+                        [
+                            "Basics.Int"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "RadixInt",
+                "comment": " Represents a number with any Int base\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fromInt",
+                "comment": " Convert an Int with a custom base into a RadixInt\n\n    fromInt (Base 6) 36 == RadixInt\n\n",
+                "type": "RadixInt.Base -> Basics.Int -> RadixInt.RadixInt"
+            },
+            {
+                "name": "fromList",
+                "comment": " Convert a List Int of Base to a Maybe RadixInt.\n\nWill return Nothing if any of the Ints represent an invalid number for the given base.\n\n    fromList (Base 10) [ 9 , 1 ]  == RadixInt with decimal value of 19\n    fromList (Base 10) [ 10 , 1 ] == Nothing\n    fromList (Base 10) [ 0, 2 ]   == RadixInt with decimal value of 20\n\n",
+                "type": "RadixInt.Base -> List.List Basics.Int -> Maybe.Maybe RadixInt.RadixInt"
+            },
+            {
+                "name": "toInt",
+                "comment": " Convert a RadixInt back into the Elm's base10 Int\n\n    toInt (RadixInt.fromInt (Base 16) 24) == 24\n\n",
+                "type": "RadixInt.RadixInt -> Basics.Int"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert a RadixInt into a List of Ints, where the index in the List corresponds to the position of the numbers.\n\n    toList (RadixInt.fromInt (Base 10) 123) == [3, 2, 1]\n    toList (RadixInt.fromInt (Base 10) -123) == [-3, -2, -1]\n\n    --   1     2     3\n    --   |     |     |\n    -- 10^2  10^1  10^0\n\n",
+                "type": "RadixInt.RadixInt -> List.List Basics.Int"
+            }
+        ],
+        "binops": []
+    }
+]

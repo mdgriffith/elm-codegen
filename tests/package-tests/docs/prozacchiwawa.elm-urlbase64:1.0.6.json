@@ -1,0 +1,21 @@
+[
+    {
+        "name": "UrlBase64",
+        "comment": "\n\nA couple of functions for use with a base64 encoder and decoder that convert the\nbase64 alphabet to and from the url alphabet.\n\nThey can be composed with encode and decode in truqu/elm-base64 like this:\n\n    b64e = UrlBase64.encode Base64.encode\n    b64d = UrlBase64.decode Base64.decode\n\nApplying these to url base64 converts to and from standard base64 into and out\nof the decoders underneath.\n\n    base64_1 = b64e \"a\\255\\255\" -- Ok \"Yf__\"\n    base64_t = b64e \"a\\255\\255\" |> Result.andThen b64d -- Ok \"aÿÿ\"\n    base64_2 = b64e \"a\\255\" -- Ok \"Yf8\"\n    base64_u = b64e \"a\\255\" |> Result.andThen b64d -- Ok \"aÿ\"\n\n@docs encode, decode\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decode",
+                "comment": "\nExpose the given function to the standard base64 alphabet form of the given\nstring with padding restored.\n\nCompose this with a base64 decoder to make a url-base64 decoder.\n\n    b64d = UrlBase64.decode Base64.decode\n\n",
+                "type": "(String.String -> Result.Result String.String a) -> String.String -> Result.Result String.String a"
+            },
+            {
+                "name": "encode",
+                "comment": " Expose the given function to the given string and convert the result from\nthe standard base64 alphabet and trim trailing '=' characters.\n\nCompose this with a base64 encoder to make a url-base64 encoder.\n\n    b64e = UrlBase64.encode Base64.encode\n\n",
+                "type": "(a -> Result.Result String.String String.String) -> a -> Result.Result String.String String.String"
+            }
+        ],
+        "binops": []
+    }
+]

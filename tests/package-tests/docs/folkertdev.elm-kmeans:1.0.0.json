@@ -1,0 +1,31 @@
+[
+    {
+        "name": "KMeans",
+        "comment": " K-means is a method for partitioning data points into `k` clusters.\n\nThe standard method only guarantees at most `k` clusters: sometimes there are fewer.\nIn many cases an exact `k`-clustering is desired and this usecase is also supported.\n\n\n# Cluster\n\n@docs cluster\n@docs clusterBy\n@docs clusterExactlyBy\n\n\n# Helpers\n\n@docs associate\n\n\n# Shuffling\n\nK-means is sensitive to the initial guess of the centroids.\nIf two centroid points are too close, one of them often becomes empty during the clustering process, and we don't have `k` clusters any more.\nThis is especially likely when the input data is sorted.\n\nThe `clusterExactlyBy` function tries to solve this issue by trying `n` permutations of the list (it moves items from the front to the back, then tries clustering to see if `k` clusters emerge).\nAnother method that helps is shuffling the input list. On average, the initial clusters will be distributed more evenly.\n\nIn elm shuffling a list is easiest with the `elm-community/random-extra` package, that exposes a `Random.List.shuffle` function.\n\n    import KMeans\n    import Random\n    import Random.List\n\n    shuffleAndClusterBy :\n        (a -> List Float)\n        -> Int\n        -> List a\n        -> Random.Generator { centroids : List (List Float), clusters : List (List a) }\n    shuffleAndClusterBy toVector k items =\n        Random.List.shuffle items\n            |> Random.map (KMeans.clusterBy toVector k)\n\nThe [guide](https://guide.elm-lang.org/effects/random.html) explains how to work with randomness and `Random.Generator`.\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "associate",
+                "comment": " Associate a centroid with its points.\n",
+                "type": "{ centroids : List.List (List.List Basics.Float), clusters : List.List (List.List a) } -> List.List { centroid : List.List Basics.Float, points : List.List a }"
+            },
+            {
+                "name": "cluster",
+                "comment": " Partition a list of 2d points into at most `k` clusters.\n",
+                "type": "Basics.Int -> List.List ( Basics.Float, Basics.Float ) -> List.List (List.List ( Basics.Float, Basics.Float ))"
+            },
+            {
+                "name": "clusterBy",
+                "comment": " Partition a list of points into at most `k` clusters.\n\nThis function offers more flexibility in the type of coordinate you have: Just turn it into a list of float values, e.g.\n\n    tuple2d : ( Float, Float ) -> List Float\n    tuple2d ( x, y ) =\n        [ x, y ]\n\n    myTuples : List (Float, Float)\n\n    clusterBy tuple2d 4 myTuples\n\nOr using `ianmackenzie/elm-geometry` and `ianmackenzie/elm-units`\n\n    point2d : Point2d Pixels Float -> List Float\n    point2d point =\n        let\n            ( a, b ) =\n                Point2d.toTuple Pixels.inPixels point\n        in\n        [ a, b ]\n\n    myPoint2ds : List (Point2d Pixels Float)\n\n    clusterBy point2d 4 myPoint2ds\n\nThis function also works with 1, 3 or `n` dimensions.\nAdditionally, you get back not only the clustered values, but also the centroid (median of all points in the cluster) of each cluster.\n\n",
+                "type": "(a -> List.List Basics.Float) -> Basics.Int -> List.List a -> { centroids : List.List (List.List Basics.Float), clusters : List.List (List.List a) }"
+            },
+            {
+                "name": "clusterExactlyBy",
+                "comment": " Try to find a clustering with exactly `k` clusters\n\nThe K-means algorithm initially groups the data randomly into clusters. In some cases, this can cause a cluster to be \"bumped out\" and become empty.\nTherefore, normally you get at most, but not always exactly, `k` clusters.\n\nThis function will retry clustering when fewer than `k` clusters are found, by moving data points from the front to the back of the input.\nIt will retry at most `n` times (where `n` is the number of input points).\n\nFor big sorted inputs an initial full random shuffle can be helpful to decrease computation time. See the advice on shuffling below.\n\n",
+                "type": "(a -> List.List Basics.Float) -> Basics.Int -> List.List a -> { centroids : List.List (List.List Basics.Float), clusters : List.List (List.List a) }"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,82 @@
+[
+    {
+        "name": "StructuredText",
+        "comment": "\n\n@docs StructuredText, ItemId, itemId\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "ItemId",
+                "comment": " Represents an item ID.\n",
+                "args": [],
+                "type": "Internal.Types.DocumentItemId"
+            },
+            {
+                "name": "StructuredText",
+                "comment": " Represents a DatoCMS DAST document used in Structured Text fields. The `a` parameter represents the type of the custom blocks used inside the document.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "Internal.Types.Document a"
+            }
+        ],
+        "values": [
+            {
+                "name": "itemId",
+                "comment": " Create an item ID from a string\n",
+                "type": "String.String -> StructuredText.ItemId"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "StructuredText.Decode",
+        "comment": "\n\n@docs decoder\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decoder",
+                "comment": " Decodes a DatoCMS DAST schema.\n\nIt requires a list of items that are used within [blocks](https://www.datocms.com/docs/structured-text/dast#block), [inline items](https://www.datocms.com/docs/structured-text/dast#inlineItem) and/or [item links](https://www.datocms.com/docs/structured-text/dast#itemLink) nodes.\nIf you don't use any of those nodes in your DAST document, you can provide an empty list.\n\n    type alias ImageItem =\n        { url : String\n        , alt : String\n        }\n\n    items : List ( ItemId, ImageItem )\n    items =\n        [ ( itemId \"123456789\", { url = \"https://www.datocms-assets.com/some/path.png\", alt = \"Some image\" } ) ]\n\n    myFieldDecoder : Decoder (StructuredText ImageItem)\n    myFieldDecoder =\n        Decode.field \"value\" (StructuredText.Decode.decoder items)\n\n",
+                "type": "List.List ( StructuredText.ItemId, a ) -> Json.Decode.Decoder (StructuredText.StructuredText a)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "StructuredText.Html",
+        "comment": " Once your DAST document is parsed from JSON, you get an opaque `StructuredText` value that you then need to render into HTML.\n\nThis is what the `render` method is for! But we need a little help from you to render the [blocks](https://www.datocms.com/docs/structured-text/dast#block), [inline items](https://www.datocms.com/docs/structured-text/dast#inlineItem) and [item links](https://www.datocms.com/docs/structured-text/dast#itemLink) nodes.\nThat's what you need to provide `RenderParameters`. If you don't have any custom item in your document, you can use the `emptyRenderParameters`.\n\n@docs RenderParameters, ItemLinkData, render, emptyRenderParameters\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "ItemLinkData",
+                "comment": " Parameters that you receive when rendering an item link. `meta` is a list of key-value pairs provided in DatoCMS.\n\n    type alias ImageItem =\n        { url : String\n        , alt : String\n        }\n\n    renderParameters : RenderParameters imageItem msg\n    renderParameters =\n        { emptyRenderParameters\n            | renderItemLink =\n                \\itemLinkData children ->\n                    let\n                        metaAttributes =\n                            List.map (\\( key, value ) -> Html.attribute key value) itemLinkData.meta\n                    in\n                    a (href itemLinkData.item.url :: metaAttributes) children\n        }\n\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ item : a, meta : List.List ( String.String, String.String ) }"
+            },
+            {
+                "name": "RenderParameters",
+                "comment": " Those parameters allow us to know how to render [blocks](https://www.datocms.com/docs/structured-text/dast#block), [inline items](https://www.datocms.com/docs/structured-text/dast#inlineItem) and [item links](https://www.datocms.com/docs/structured-text/dast#itemLink) nodes.\n\nIf you don't use any or all those types, you can start from the `emptyRenderParameters`\n\nThe second argument is a list of children nodes.\n\n    type alias ImageItem =\n        { url : String\n        , alt : String\n        }\n\n    renderParameters : RenderParameters imageItem msg\n    renderParameters =\n        { renderBlock =\n            \\imageItem ->\n                div [ class \"image-block\" ] [ img [ src imageItem.url, alt imageItem.alt ] [] ]\n        , renderInlineItem =\n            \\imageItem ->\n                img [ src imageItem.url, alt imageItem.alt, class \"inline-image\" ] []\n        , renderItemLink =\n            \\itemLinkData children ->\n                a [ href itemLinkData.item.url ] children\n        }\n\n",
+                "args": [
+                    "a",
+                    "msg"
+                ],
+                "type": "{ renderBlock : a -> Html.Html msg, renderInlineItem : a -> Html.Html msg, renderItemLink : StructuredText.Html.ItemLinkData a -> List.List (Html.Html msg) -> Html.Html msg }"
+            }
+        ],
+        "values": [
+            {
+                "name": "emptyRenderParameters",
+                "comment": " Default renderParameters that basically do nothing.\n",
+                "type": "StructuredText.Html.RenderParameters a msg"
+            },
+            {
+                "name": "render",
+                "comment": " Render a StructuredText document as elm/html nodes\n\n    main =\n        Decode.decodeString myFieldDecoder myJsonDastDocument\n            |> Result.map (StructuredText.Decode.render imageItemRenderParameters)\n            |> Result.withDefault (text \"Invalid document\")\n\n",
+                "type": "StructuredText.Html.RenderParameters a msg -> StructuredText.StructuredText a -> List.List (Html.Html msg)"
+            }
+        ],
+        "binops": []
+    }
+]

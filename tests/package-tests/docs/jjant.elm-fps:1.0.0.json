@@ -1,0 +1,44 @@
+[
+    {
+        "name": "Fps",
+        "comment": " This library allows you to easily compute minimum, maximum, and average FPS for your application.\n\n\n# Setup\n\n@docs Model, init, Msg, update, subscriptions\n\n\n# View\n\n@docs fps\n\n",
+        "unions": [
+            {
+                "name": "Model",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Msg",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fps",
+                "comment": " Get FPS information.\n\nReturns Nothing if no frame times have been received yet.\n\n",
+                "type": "Fps.Model -> Maybe.Maybe { average : Basics.Float, min : Basics.Float, max : Basics.Float }"
+            },
+            {
+                "name": "init",
+                "comment": " Initializes the model, takes an integer representing how many frames we consider for the average FPS.\n\nUsually, 20 is a good number to perceive regular variations in FPS.\n\n",
+                "type": "Basics.Int -> Fps.Model"
+            },
+            {
+                "name": "subscriptions",
+                "comment": " Subscribes to animation frame to compute frame times.\n",
+                "type": "Platform.Sub.Sub Fps.Msg"
+            },
+            {
+                "name": "update",
+                "comment": " Update the state when a new frame time is received.\n",
+                "type": "Fps.Msg -> Fps.Model -> Fps.Model"
+            }
+        ],
+        "binops": []
+    }
+]

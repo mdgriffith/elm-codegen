@@ -1,0 +1,125 @@
+[
+    {
+        "name": "Reorderable",
+        "comment": " `Reorderable` is useful for structures where you want to allow a user to\nreorder things, while still wanting to make effective use of `Html.Keyed`. The\nidea is to have a datastructure that (internally) keeps the association between\nsome an incremental key and data (like an Array), but retains that association\nwhile shuffling data around.\n\n\n# Basics\n\n@docs Reorderable, empty, isEmpty, length, singleton, push, get, set, update\n\n\n# Manipulation\n\n@docs swap, moveUp, moveDown, move, insertAt, insertAfter, drop, reverse\n\n\n# List-y stuff\n\n@docs fromList, toList, toKeyedList\n\n\n# Transformation\n\n@docs map, indexedMap\n\n",
+        "unions": [
+            {
+                "name": "Reorderable",
+                "comment": " ",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "drop",
+                "comment": " Drops the entry at a certain index.\n\n    fromList [ \"a\", \"removeMe\", \"b\" ]\n        |> drop 1\n        |> toKeyedList\n    --> [ ( \"0\", \"a\" ), ( \"2\", \"b\" ) ]\n\n",
+                "type": "Basics.Int -> Reorderable.Reorderable a -> Reorderable.Reorderable a"
+            },
+            {
+                "name": "empty",
+                "comment": " Does what one would expect it to do: create an empty `Reorderable`. Note\nthat checking equality against `empty` is not a good way to check if there are 0\nvalues. Pushing and subsequently dropping entries will increment the internal\nkey.\n\n    toList empty\n    --> []\n\n    fromList []\n    --> empty\n\n",
+                "type": "Reorderable.Reorderable a"
+            },
+            {
+                "name": "fromList",
+                "comment": " Initialize a `Reorderable a` from a `List a`. Useful for initializing data\nand decoding with `Json.Decode.map Reorderable.fromList`.\n",
+                "type": "List.List a -> Reorderable.Reorderable a"
+            },
+            {
+                "name": "get",
+                "comment": " Try to get the item at a specified index.\n\n    fromList [ \"a\", \"b\", \"c\" ]\n        |> get 1\n    --> Just \"b\"\n\n",
+                "type": "Basics.Int -> Reorderable.Reorderable a -> Maybe.Maybe a"
+            },
+            {
+                "name": "indexedMap",
+                "comment": " Transform the values in a reorderable with their index\n",
+                "type": "(Basics.Int -> a -> b) -> Reorderable.Reorderable a -> Reorderable.Reorderable b"
+            },
+            {
+                "name": "insertAfter",
+                "comment": " Convenience function to insert something after a specified index.\n\n    fromList [ \"a\", \"c\" ]\n        |> insertAfter 0 \"b\"\n        |> toList\n    --> [ \"a\", \"b\", \"c\" ]\n\n\n    fromList [ \"a\", \"b\" ]\n        |> insertAfter 1 \"c\"\n        |> toList\n    --> [ \"a\", \"b\", \"c\" ]\n\n",
+                "type": "Basics.Int -> a -> Reorderable.Reorderable a -> Reorderable.Reorderable a"
+            },
+            {
+                "name": "insertAt",
+                "comment": " Inserts a piece of data into a specifc position of the `Reorderable`.\n\n    letters : Reorderable String\n    letters =\n        fromList [ \"a\", \"b\", \"c\", \"d\" ]\n\n\n    letters\n        |> insertAt 0 \"foo\"\n        |> toList\n    --> [ \"foo\", \"a\", \"b\", \"c\", \"d\" ]\n\n\n    letters\n        |> insertAt 4 \"foo\"\n        |> toList\n    --> [ \"a\", \"b\", \"c\", \"d\", \"foo\" ]\n\n\n    letters\n        |> insertAt 2 \"foo\"\n        |> toKeyedList\n    --> [ ( \"0\", \"a\" )\n    --> , ( \"1\", \"b\" )\n    --> , ( \"4\", \"foo\" )\n    --> , ( \"2\", \"c\" )\n    --> , ( \"3\", \"d\" )\n    --> ]\n\n",
+                "type": "Basics.Int -> a -> Reorderable.Reorderable a -> Reorderable.Reorderable a"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Checks if a reorderable contains zero entries.\n\n    isEmpty empty\n    --> True\n\n\n    singleton \"hi\"\n        |> isEmpty\n    --> False\n\n\n    fromList [ \"hello\", \"world\" ]\n        |> drop 0\n        |> drop 0\n        |> isEmpty\n    --> True\n\n    fromList [ \"hello\", \"world\" ]\n        |> drop 0\n        |> drop 0\n        |> (==) empty\n    --> False\n\n",
+                "type": "Reorderable.Reorderable a -> Basics.Bool"
+            },
+            {
+                "name": "length",
+                "comment": " Determine the length of a `Reorderable`.\n\n    empty\n        |> length\n    --> 0\n\n    singleton \"hi\"\n        |> length\n    --> 1\n\n    fromList [ \"hello\", \"world\" ]\n        |> length\n    --> 2\n\n",
+                "type": "Reorderable.Reorderable a -> Basics.Int"
+            },
+            {
+                "name": "map",
+                "comment": " Transform the values in a reorderable\n",
+                "type": "(a -> b) -> Reorderable.Reorderable a -> Reorderable.Reorderable b"
+            },
+            {
+                "name": "move",
+                "comment": " Move an item from one location to another location.\n\n    fromList [ \"b\", \"c\", \"a\" ]\n        |> move 2 0\n        |> toList\n    --> [ \"a\", \"b\", \"c\" ]\n\n    fromList [ \"a\", \"c\", \"b\"]\n        |> move 2 1\n        |> toList\n    --> [ \"a\", \"b\", \"c\" ]\n\n",
+                "type": "Basics.Int -> Basics.Int -> Reorderable.Reorderable a -> Reorderable.Reorderable a"
+            },
+            {
+                "name": "moveDown",
+                "comment": " Convenience function to move an item \"down\", i.e. \"forward\".\n\n    fromList [ \"a\", \"c\", \"b\" ]\n        |> moveDown 1\n        |> toKeyedList\n    --> [ ( \"0\", \"a\" )\n    --> , ( \"2\", \"b\" )\n    --> , ( \"1\", \"c\" )\n    --> ]\n\n",
+                "type": "Basics.Int -> Reorderable.Reorderable a -> Reorderable.Reorderable a"
+            },
+            {
+                "name": "moveUp",
+                "comment": " Convenience function to move an item \"up\", i.e. \"back\".\n\n    fromList [ \"a\", \"c\", \"b\" ]\n        |> moveUp 2\n        |> toKeyedList\n    --> [ ( \"0\", \"a\" )\n    --> , ( \"2\", \"b\" )\n    --> , ( \"1\", \"c\" )\n    --> ]\n\n",
+                "type": "Basics.Int -> Reorderable.Reorderable a -> Reorderable.Reorderable a"
+            },
+            {
+                "name": "push",
+                "comment": " Pushes a piece of data onto the end of a `Reorderable`.\n\n    empty\n        |> push \"hello\"\n        |> push \"world\"\n        |> toList\n    --> [ \"hello\", \"world\" ]\n\n",
+                "type": "a -> Reorderable.Reorderable a -> Reorderable.Reorderable a"
+            },
+            {
+                "name": "reverse",
+                "comment": " Reverse the order of the entries.\n\n    fromList [ \"first\", \"second\", \"third\" ]\n        |> reverse\n        |> toKeyedList\n    --> [ ( \"2\", \"third\" )\n    --> , ( \"1\", \"second\" )\n    --> , ( \"0\", \"first\" )\n    --> ]\n\n",
+                "type": "Reorderable.Reorderable a -> Reorderable.Reorderable a"
+            },
+            {
+                "name": "set",
+                "comment": " Set the value at a specified index (maintaining the key). Basically\nshorthand for `update index (always val) reorderable`.\n\nIf the specified index does not exist, this does nothing.\n\n",
+                "type": "Basics.Int -> a -> Reorderable.Reorderable a -> Reorderable.Reorderable a"
+            },
+            {
+                "name": "singleton",
+                "comment": " Create a reorderable from a single piece of data.\n\n    singleton \"hi\"\n        |> toList\n    --> [ \"hi\" ]\n\n",
+                "type": "a -> Reorderable.Reorderable a"
+            },
+            {
+                "name": "swap",
+                "comment": " Swaps two entries, unless either of the indices is out of bounds.\n\n    fromList [ \"a\", \"d\", \"c\", \"b\" ]\n        |> swap 1 3\n        |> toKeyedList\n    --> [ ( \"0\", \"a\" )\n    --> , ( \"3\", \"b\" )\n    --> , ( \"2\", \"c\" )\n    --> , ( \"1\", \"d\" )\n    --> ]\n\n\n    fromList [ \"hi\", \"there\" ]\n        |> swap 0 2\n        |> toList\n    --> [ \"hi\", \"there\" ]\n\n",
+                "type": "Basics.Int -> Basics.Int -> Reorderable.Reorderable a -> Reorderable.Reorderable a"
+            },
+            {
+                "name": "toKeyedList",
+                "comment": " Convert a `Reorderable a` to a `List (String, a)`, useful for eventually\nrendering a `Html.Keyed` node.\n\n    fromList [ \"a\", \"b\", \"c\" ]\n        |> toKeyedList\n    --> [ ( \"0\", \"a\" )\n    --> , ( \"1\", \"b\" )\n    --> , ( \"2\", \"c\" )\n    --> ]\n\nThis retains the key during swap/insertAt/drop/move\\*/.. operations, so that your\n`Html.Keyed` node can work correctly.\n\n",
+                "type": "Reorderable.Reorderable a -> List.List ( String.String, a )"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert a `Reorderable a` to a plain old `List a`.\n\n    fromList [ \"a\", \"b\", \"c\" ]\n        |> toList\n    --> [ \"a\", \"b\", \"c\" ]\n\n",
+                "type": "Reorderable.Reorderable a -> List.List a"
+            },
+            {
+                "name": "update",
+                "comment": " Run an update-function on a specified item.\n\n    fromList [ \"UPPER\", \"lower\", \"UPPER\"]\n        |> update 1 String.toUpper\n        |> toKeyedList\n    --> [ ( \"0\", \"UPPER\" )\n    --> , ( \"1\", \"LOWER\" )\n    --> , ( \"2\", \"UPPER\" )\n    --> ]\n\n",
+                "type": "Basics.Int -> (a -> a) -> Reorderable.Reorderable a -> Reorderable.Reorderable a"
+            }
+        ],
+        "binops": []
+    }
+]

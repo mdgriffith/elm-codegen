@@ -1,0 +1,58 @@
+[
+    {
+        "name": "Sat",
+        "comment": " This library offers a DPLL sat solver and some related utilities. Sat\nproblems must be converted to CNF form before they can be solved. Elm Sat should\nbe an alternative to MiniSat.js (via ports) when performance is not critical.\n\n# Types\n@docs Problem, Solution\n\n# Solver\n@docs solve\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Problem",
+                "comment": " Represents a SAT problem in CNF (conjunctive normal form). A problem can be\npassed into the `solve` function to search for a solution.\n\nProblem is a type alias for `List (List int)` where integers are names for\nboolean variables and the sign indicates if the variable is negated.\n\n    prob : Sat.Problem\n    prob = [ [ 1, 2 ], [ -2, 3 ], [ 1 ] ]\n",
+                "args": [],
+                "type": "Sat.Model.Problem"
+            },
+            {
+                "name": "Solution",
+                "comment": " Represents the boolean assignment of all literals that were present in the\nproblem which results in SAT Problem simplifying to True. Positive integers\nindicate the value is True while negative values indicate False.\n\n    solution : Sat.Solution\n    solution = [ 1, -2, -3 ]\n",
+                "args": [],
+                "type": "Sat.Model.Solution"
+            }
+        ],
+        "values": [
+            {
+                "name": "solve",
+                "comment": " Find a solution to the provided SAT problem if one exists. If the problem\nis UNSAT then `Nothing` will be returned. The solution will always contain\nan assignment for every literal in the problem.\n\n    solve [ [ 1, 2 ], [ -2, 3 ], [ 1 ] ] -- [ 1, -2, 3 ]\n    solve [ [ -1 ], [ 1 ] ] -- Nothing\n",
+                "type": "Sat.Problem -> Maybe.Maybe Sat.Solution"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Sat.Utils",
+        "comment": " This sub-module offers some utilities related to SAT solving. It also\ncontains a few general purpose functions primarily for internal use.\n\n# SAT Problems\n@docs fromDimacs, verify\n\n# DPLL Helpers\n@docs find, kernelFilter1\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "find",
+                "comment": " Find the first occurence of a list item that matches the filter.\n\n    find (\\v -> v % 2 == 0) [ 1, 2, 3, 4 ] -- Just 2\n",
+                "type": "(a -> Basics.Bool) -> List.List a -> Maybe.Maybe a"
+            },
+            {
+                "name": "fromDimacs",
+                "comment": " Create a `Sat.Problem` from DIMACS formatted string. Only `cnf`\nrepresentation is supported. The problem line and comment lines will be\nignored.\n\n    fromDimacs \"\"\"\n    c  simple_v3_c2.cnf\n    c\n    p cnf 3 2\n    1 -3 0\n    2 3 -1 0\n    \"\"\" -- [ [ 1, -3 ], [ 2, 3, -1 ] ]\n\n",
+                "type": "String.String -> Sat.Model.Problem"
+            },
+            {
+                "name": "kernelFilter1",
+                "comment": " Filter list items based on each items nearest neighbors.\n\n    touchesOne prev _ next =\n        let\n            isOne neighbor =\n                Maybe.map (\\v -> v == 1) neighbor |> Maybe.withDefault False\n\n        in\n        isOne prev || isOne next\n\n    kernelFilter1 touchesOne [ 1, 2, 3, 4, 1, 5, 6 ] -- [ 2, 4, 5 ]\n",
+                "type": "(Maybe.Maybe a -> a -> Maybe.Maybe a -> Basics.Bool) -> List.List a -> List.List a"
+            },
+            {
+                "name": "verify",
+                "comment": " Check if a given solution satifies a problem. This useful for sanity checks\nand unit testing.\n\n    verify [ [ 1, 2 ], [ -2, 3 ], [ 1 ] ] [ 1, -2, 3 ] -- True\n    verify [ [ 1, 2 ], [ -2, 3 ], [ 1 ] ] [ 1, -2, -3 ] -- True\n    verify [ [ 1, 2 ], [ -2, 3 ], [ 1 ] ] [ -1, -2, -3 ] -- False\n",
+                "type": "Sat.Model.Problem -> Sat.Model.Solution -> Basics.Bool"
+            }
+        ],
+        "binops": []
+    }
+]

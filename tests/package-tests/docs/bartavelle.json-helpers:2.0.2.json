@@ -1,0 +1,138 @@
+[
+    {
+        "name": "Json.Helpers",
+        "comment": " This module exposes helper functions for encoding sum types and maps. It was designed\nwith an eye for compatibility with the `aeson` library from the Haskell world, which explains\nwhy the various functions have such peculiar names.\n\nIf you require Haskell interop, please take a look at the [elm-bridge](https://hackage.haskell.org/package/elm-bridge) package that\nwill make it easy to derive the Elm code alongside the Haskell one.\n\n\n# The ObjectEncoding type\n\n@docs ObjectEncoding, encodeObject, encodeValue\n\n\n# Encoding schemes\n\nThe following Elm type will be used as an example for the different encoding schemes.\n\n    type Foo\n        = Bar Int\n        | Baz { a : Int, b : Int }\n        | Qux Int Int\n\n\n## ObjectWithSingleField\n\n    -- {\"Bar\":5}\n    -- {\"Baz\":{\"a\":4,\"b\":8}}\n    -- {\"Qux\":[98,42]}\n\n\n\n@docs decodeSumObjectWithSingleField, encodeSumObjectWithSingleField\n\n\n## TwoElemArray\n\n    -- [\"Bar\",5]\n    -- [\"Baz\",{\"a\":4,\"b\":8}]\n    -- [\"Qux\",[98,42]]\n\n\n\n@docs decodeSumTwoElemArray, encodeSumTwoElementArray\n\n\n## TaggedObject\n\n    -- {\"tag\":\"Bar\",\"content\":5}\n    -- {\"tag\":\"Baz\",\"a\":4,\"b\":8}\n    -- [\"tag\":\"Qux\",\"content\":[98,42]}\n\n\n\n@docs decodeSumTaggedObject, encodeSumTaggedObject\n\n\n## Nullary sum types\n\n@docs decodeSumUnaries\n@docs decodeSumNullaries\n\n@docs decodeSumNullaryOrSingleField\n\n# Pipeline utils\n\n@docs required, fnullable, custom\n\n# Containers helpers\n\n@docs decodeMap, encodeMap, jsonEncDict, jsonDecDict, encodeSet, decodeSet, maybeEncode, encodeSumUntagged\n\n# Tuple helpers\n\n@docs tuple2, tuple3\n",
+        "unions": [
+            {
+                "name": "ObjectEncoding",
+                "comment": " This is an opaque type that is to be used to give hints when using the `TaggedObject` encoding.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "custom",
+                "comment": " Stolen from NoRedInk's module. Run the given decoder and feed its result into the pipeline at this point. ",
+                "type": "Json.Decode.Decoder a -> Json.Decode.Decoder (a -> b) -> Json.Decode.Decoder b"
+            },
+            {
+                "name": "decodeMap",
+                "comment": " Helper function for decoding map-like objects. It takes a decoder for the key type and a decoder for the value type.\n",
+                "type": "Json.Decode.Decoder comparable -> Json.Decode.Decoder v -> Json.Decode.Decoder (Dict.Dict comparable v)"
+            },
+            {
+                "name": "decodeSet",
+                "comment": " A helper for set decoding\n",
+                "type": "Json.Decode.Decoder comparable -> Json.Decode.Decoder (Set.Set comparable)"
+            },
+            {
+                "name": "decodeSumNullaries",
+                "comment": " Helper for decoding enum-like sum types\n",
+                "type": "String.String -> Dict.Dict String.String a -> Json.Decode.Decoder a"
+            },
+            {
+                "name": "decodeSumNullaryOrSingleField",
+                "comment": " A convenience function to decode objects that are represented as a sum type containing only nullary or unary constructors\n",
+                "type": "String.String -> Dict.Dict String.String a -> Dict.Dict String.String (Json.Decode.Decoder a) -> Json.Decode.Decoder a"
+            },
+            {
+                "name": "decodeSumObjectWithSingleField",
+                "comment": " Decode objects encoded using the `ObjectWithSingleField` scheme.\nThe first argument is the human readable name of the type of data, and will be used in error messages.\nThe second argument is a `Dict` where the keys are the tags of each constructor of the sum type and the values\nare decoders for each case.\n",
+                "type": "String.String -> Dict.Dict String.String (Json.Decode.Decoder a) -> Json.Decode.Decoder a"
+            },
+            {
+                "name": "decodeSumTaggedObject",
+                "comment": " Decode objects encoded using the `TaggedObject` scheme.\nThe first argument is the human readable name of the type of data, and will be used in error messages.\nThe second argument is a `Dict` where the keys are the tags of each constructor of the sum type and the values\nare decoders for each case.\n\nCompared to the other functions, it expects a set of `String`s. This sets lists all the constructor tags that have an object content,\nsuch as the `Baz` constructor in the example.\n\n",
+                "type": "String.String -> String.String -> String.String -> Dict.Dict String.String (Json.Decode.Decoder a) -> Set.Set String.String -> Json.Decode.Decoder a"
+            },
+            {
+                "name": "decodeSumTwoElemArray",
+                "comment": " Decode objects encoded using the `TwoElemArray` scheme.\nThe first argument is the human readable name of the type of data, and will be used in error messages.\nThe second argument is a `Dict` where the keys are the tags of each constructor of the sum type and the values\nare decoders for each case.\n",
+                "type": "String.String -> Dict.Dict String.String (Json.Decode.Decoder a) -> Json.Decode.Decoder a"
+            },
+            {
+                "name": "decodeSumUnaries",
+                "comment": " This function is deprecated, use `decodeSumNullaries` (it is the same, only with an appropriate name)\n",
+                "type": "String.String -> Dict.Dict String.String a -> Json.Decode.Decoder a"
+            },
+            {
+                "name": "encodeMap",
+                "comment": " Helper function for encoding map-like objects. It takes an encoder for the key type and an encoder for the value type\n",
+                "type": "(comparable -> Json.Decode.Value) -> (v -> Json.Encode.Value) -> Dict.Dict comparable v -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeObject",
+                "comment": " Creates an `ObjectEncoding`, just like the `Json.Encode.object` function.\n",
+                "type": "List.List ( String.String, Json.Decode.Value ) -> Json.Helpers.ObjectEncoding"
+            },
+            {
+                "name": "encodeSet",
+                "comment": " A helper for set encoding\n",
+                "type": "(comparable -> Json.Encode.Value) -> Set.Set comparable -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeSumObjectWithSingleField",
+                "comment": " Encode objects using the `WithSingleField` scheme.\nThe first argument is a function that, for each possible value `a`, must return a `String` tag\ndescribing it along with an `ObjectEncoding`.\n",
+                "type": "(a -> ( String.String, Json.Helpers.ObjectEncoding )) -> a -> Json.Decode.Value"
+            },
+            {
+                "name": "encodeSumTaggedObject",
+                "comment": " Encode objects using the `TaggedObject` scheme.\nThe first argument is a function that, for each possible value `a`, must return a `String` tag\ndescribing it along with an `ObjectEncoding`.\n",
+                "type": "String.String -> String.String -> (a -> ( String.String, Json.Helpers.ObjectEncoding )) -> a -> Json.Decode.Value"
+            },
+            {
+                "name": "encodeSumTwoElementArray",
+                "comment": " Encode objects using the `TwoElementArray` scheme.\nThe first argument is a function that, for each possible value `a`, must return a `String` tag\ndescribing it along with an `ObjectEncoding`.\n",
+                "type": "(a -> ( String.String, Json.Helpers.ObjectEncoding )) -> a -> Json.Decode.Value"
+            },
+            {
+                "name": "encodeSumUntagged",
+                "comment": " Encode objects using the `Untagged` scheme.\n",
+                "type": "(a -> ( String.String, Json.Helpers.ObjectEncoding )) -> a -> Json.Decode.Value"
+            },
+            {
+                "name": "encodeValue",
+                "comment": " Creates an `ObjectEncoding` from any type of `Value`. You should not use this for `Value`s that are actually objects.\n",
+                "type": "Json.Decode.Value -> Json.Helpers.ObjectEncoding"
+            },
+            {
+                "name": "fnullable",
+                "comment": " Decodes a field that can be absent from a record. It can also handle fields with a null value. ",
+                "type": "String.String -> Json.Decode.Decoder a -> Json.Decode.Decoder (Maybe.Maybe a -> b) -> Json.Decode.Decoder b"
+            },
+            {
+                "name": "jsonDecDict",
+                "comment": " An alias to `decodeMap` that is compatible with the naming convention from `elm-bridge`\n",
+                "type": "Json.Decode.Decoder comparable -> Json.Decode.Decoder v -> Json.Decode.Decoder (Dict.Dict comparable v)"
+            },
+            {
+                "name": "jsonEncDict",
+                "comment": " An alias to `encodeMap` that is compatible with the naming convention from `elm-bridge`\n",
+                "type": "(comparable -> Json.Decode.Value) -> (v -> Json.Encode.Value) -> Dict.Dict comparable v -> Json.Encode.Value"
+            },
+            {
+                "name": "maybeEncode",
+                "comment": " Encodes an optional value, using `null` when there is `Nothing`\n",
+                "type": "(a -> Json.Decode.Value) -> Maybe.Maybe a -> Json.Decode.Value"
+            },
+            {
+                "name": "required",
+                "comment": " Stolen from NoRedInk's module. Decode a required field. ",
+                "type": "String.String -> Json.Decode.Decoder a -> Json.Decode.Decoder (a -> b) -> Json.Decode.Decoder b"
+            },
+            {
+                "name": "tuple2",
+                "comment": " The (,) operator ",
+                "type": "a -> b -> ( a, b )"
+            },
+            {
+                "name": "tuple3",
+                "comment": " The (,,) operator ",
+                "type": "a -> b -> c -> ( a, b, c )"
+            }
+        ],
+        "binops": []
+    }
+]

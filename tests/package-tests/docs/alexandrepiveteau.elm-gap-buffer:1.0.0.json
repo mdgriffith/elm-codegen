@@ -1,0 +1,144 @@
+[
+    {
+        "name": "Buffer.Gap",
+        "comment": " Functions for working with a `Gap` buffer.\n\n\n# Types\n\n@docs Gap, empty, initialize\n@docs fromArray, fromList\n\n\n# Editing\n\n@docs put, insert, delete\n\n\n# Inspection\n\n@docs length, isEmpty, at, cursor\n@docs foldl, foldr, foldlRange, foldrRange\n@docs slice, toList, toArray\n\n\n# Moving in the buffer\n\n@docs left, right, move\n\n",
+        "unions": [
+            {
+                "name": "Gap",
+                "comment": " A `Gap` is a [gap buffer][gb] which never shrinks:\n\n    length empty == 0\n\n    length (Extra.fromString \"hello\") == 5\n\n**Note :** You can do amortized constant-time insertions and deletions at the current cursor\nposition. Moving the cursor takes a linear time in the amount that it gets moved.\n\n[gb]: https://en.wikipedia.org/wiki/Gap_buffer\n\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "at",
+                "comment": " Return `Just` the element at the index or `Nothing` if the index is out of range.\n\n    at 0 (Extra.fromString \"hi\") == Just 'h'\n\n    at 1 (Extra.fromString \"hi\") == Just 'i'\n\n    at -1 (Extra.fromString \"hi\") == Nothing\n\n    at 5 (Extra.fromString \"hi\") == Nothing\n\n",
+                "type": "Basics.Int -> Buffer.Gap.Gap a -> Maybe.Maybe a"
+            },
+            {
+                "name": "cursor",
+                "comment": " Return the cursor position of a gap buffer.\n\n    cursor empty == 0\n\n    cursor (Extra.fromString \"hi\") == 2\n\n",
+                "type": "Buffer.Gap.Gap a -> Basics.Int"
+            },
+            {
+                "name": "delete",
+                "comment": " Delete removes characters from the current cursor position: `delete n gap`. If the cursor is\nat the position zero, no items will be removed.\n",
+                "type": "Basics.Int -> Buffer.Gap.Gap a -> Buffer.Gap.Gap a"
+            },
+            {
+                "name": "empty",
+                "comment": " Creates an empty gap buffer.\n\n    length empty == 0\n\n    toArray empty == Array.empty\n\n",
+                "type": "Buffer.Gap.Gap a"
+            },
+            {
+                "name": "foldl",
+                "comment": " Reduce a gap from the left over all its contents. Read `foldl` as fold from the left.\n\n    foldl (::) [] (fromList [ 1, 2, 3 ]) == [ 3, 2, 1 ]\n\n",
+                "type": "(a -> b -> b) -> b -> Buffer.Gap.Gap a -> b"
+            },
+            {
+                "name": "foldlRange",
+                "comment": " Reduce a gap from the left over an inclusive-exclusive range. Read `foldl` as fold from the\nleft.\n\n    foldlRange 1 3 (::) [] (Extra.fromString \"abcde\") == [ 'c', 'b' ]\n\n",
+                "type": "Basics.Int -> Basics.Int -> (a -> b -> b) -> b -> Buffer.Gap.Gap a -> b"
+            },
+            {
+                "name": "foldr",
+                "comment": " Reduce a gap from the right over all its contents. Read `foldr` as fold from the right.\n\n    foldr (::) [] (fromList [ 1, 2, 3 ]) == [ 1, 2, 3 ]\n\n",
+                "type": "(a -> b -> b) -> b -> Buffer.Gap.Gap a -> b"
+            },
+            {
+                "name": "foldrRange",
+                "comment": " Reduce a gap from the left over an inclusive-exclusive range. Read `foldr` as fold from the\nright.\n\n    foldrRange 1 3 (::) [] (Extra.fromString \"abcde\") == [ 'b', 'c' ]\n\n",
+                "type": "Basics.Int -> Basics.Int -> (a -> b -> b) -> b -> Buffer.Gap.Gap a -> b"
+            },
+            {
+                "name": "fromArray",
+                "comment": " Create a gap buffer from an `Array`.\n",
+                "type": "Array.Array a -> Buffer.Gap.Gap a"
+            },
+            {
+                "name": "fromList",
+                "comment": " Create a gap buffer from a `List`.\n",
+                "type": "List.List a -> Buffer.Gap.Gap a"
+            },
+            {
+                "name": "initialize",
+                "comment": " Initialize a gap buffer. `initialize n f` creates a buffer of length n with the element at\nindex `i` initialized to the result of `f i`\n\n    toArray (initialize 4 identity) == Array.fromList [ 0, 1, 2, 3 ]\n\n    toArray (initialize 4 (always 0)) == Array.fromList [ 0, 0, 0, 0 ]\n\n",
+                "type": "Basics.Int -> (Basics.Int -> a) -> Buffer.Gap.Gap a"
+            },
+            {
+                "name": "insert",
+                "comment": " Add multiple elements onto the cursor of the gap buffer.\n\n    insert (Array.fromList [ 1, 2, 3 ]) empty == fromArray (Array.fromList [ 1, 2, 3 ])\n\n",
+                "type": "Array.Array a -> Buffer.Gap.Gap a -> Buffer.Gap.Gap a"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Return true if a gap buffer is empty.\n\n    isEmpty empty == True\n\n",
+                "type": "Buffer.Gap.Gap a -> Basics.Bool"
+            },
+            {
+                "name": "left",
+                "comment": " Move the cursor by one index to the left. The index will remain in the bounds of the buffer.\n",
+                "type": "Buffer.Gap.Gap a -> Buffer.Gap.Gap a"
+            },
+            {
+                "name": "length",
+                "comment": " Return the length of a gap buffer.\n\n    length empty == 0\n\n    length (Extra.fromString \"hello\") 5\n\n",
+                "type": "Buffer.Gap.Gap a -> Basics.Int"
+            },
+            {
+                "name": "move",
+                "comment": " Move the cursor to the given index using the `left` or `right` functions.\n",
+                "type": "Basics.Int -> Buffer.Gap.Gap a -> Buffer.Gap.Gap a"
+            },
+            {
+                "name": "put",
+                "comment": " Add an element onto the cursor of the gap buffer.\n\n    toArray (put 1 empty) == Array.fromList [ 1 ]\n\n    Array.fromList [ 1, 3, 2 ]\n        == empty\n        |> put 1\n        |> put 2\n        |> left\n        |> put 3\n        |> toArray\n\n",
+                "type": "a -> Buffer.Gap.Gap a -> Buffer.Gap.Gap a"
+            },
+            {
+                "name": "right",
+                "comment": " Move the cursor by one index to the right. The index will remain in the bounds of the buffer.\n",
+                "type": "Buffer.Gap.Gap a -> Buffer.Gap.Gap a"
+            },
+            {
+                "name": "slice",
+                "comment": " Get a sub-section of a gap buffer: `(slice start end gap)`. The `start` is a zero-based index\nwhere we will start our slice. The `end` is a zero-based index that indicates the slice end. The\nslice extracts up to but not including `end`.\n\n    slice 0 0 empty == Array.empty\n\n    slice 0 3 (Extra.fromString \"hello\") == Array.fromList [ 'h', 'e', 'l' ]\n\nIf `start` or `end` are out of the bounds of the gap buffer, they will default to the closest value\nwithin the bounds of the buffer.\n\n    slice 2 1000 (Extra.fromString \"hello\") == Array.fromList [ 'l', 'l', 'o' ]\n\n    slice -1 5 (Extra.fromString \"hello\") == Array.fromList [ 'h', 'e', 'l', 'l', 'o' ]\n\n",
+                "type": "Basics.Int -> Basics.Int -> Buffer.Gap.Gap a -> Array.Array a"
+            },
+            {
+                "name": "toArray",
+                "comment": " Create an `Array` from the elements of the buffer.\n\n    toArray (Extra.fromString \"hi\") == Array.fromList [ 'h', 'i' ]\n\n",
+                "type": "Buffer.Gap.Gap a -> Array.Array a"
+            },
+            {
+                "name": "toList",
+                "comment": " Create a `List` from the elements of the buffer.\n\n    toList (Extra.fromString \"hi\") == [ 'h', 'i' ]\n\n",
+                "type": "Buffer.Gap.Gap a -> List.List a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Buffer.Gap.Extra",
+        "comment": " Extra functions for working with a `Gap` buffer.\n\n\n# Working with String\n\n@docs fromString, toString\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fromString",
+                "comment": " Transform a `String` into a gap buffer of `Char`.\n",
+                "type": "String.String -> Buffer.Gap.Gap Char.Char"
+            },
+            {
+                "name": "toString",
+                "comment": " Transform a gap buffer of `Char` into a `String`.\n",
+                "type": "Buffer.Gap.Gap Char.Char -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

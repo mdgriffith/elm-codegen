@@ -1,0 +1,137 @@
+[
+    {
+        "name": "Shortcut",
+        "comment": " This module provide a quick and simple (enough) way of listening for keyboard event by describing which shortcut you are interested in.\n\n\n# Shortcut description\n\nThe first important part of using this package is describing which shortcut should trigger which message.\nThis can be done by instantiating the `Shortcut` record directly or via one of the utility function\n\n\n## Keys\n\n@docs Key\n\n\n## Shortcut record\n\nIn essence, a shortcut is just an indication of which key(s) we are interested in and a message that should be sent when a keyboard event matches out.\n\n@docs Shortcut\n\n\n## Utility functions\n\n@docs simpleShortcut\n\n@docs esc\n\n@docs altShortcut\n\n@docs shiftShortcut\n\n@docs ctrlShortcut\n\n@docs metaShortcut\n\n\n# Shortcut capture\n\nThe capture part is taken care of by the custom-element that comes with this package. For a reminder on how to install it, please have a look at the [README](./).\n\n@docs shortcutElement\n\n",
+        "unions": [
+            {
+                "name": "Key",
+                "comment": " The `Key` is merely an easy way to define which key you are interested in.\nIt has an entry for all the special keys and a constructor (`Regular`) for all the rest.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Escape",
+                        []
+                    ],
+                    [
+                        "BackSpace",
+                        []
+                    ],
+                    [
+                        "Space",
+                        []
+                    ],
+                    [
+                        "Tab",
+                        []
+                    ],
+                    [
+                        "Enter",
+                        []
+                    ],
+                    [
+                        "ArrowLeft",
+                        []
+                    ],
+                    [
+                        "ArrowRight",
+                        []
+                    ],
+                    [
+                        "ArrowUp",
+                        []
+                    ],
+                    [
+                        "ArrowDown",
+                        []
+                    ],
+                    [
+                        "ShiftLeft",
+                        []
+                    ],
+                    [
+                        "ShiftRight",
+                        []
+                    ],
+                    [
+                        "MetaLeft",
+                        []
+                    ],
+                    [
+                        "MetaRight",
+                        []
+                    ],
+                    [
+                        "AltLeft",
+                        []
+                    ],
+                    [
+                        "AltRight",
+                        []
+                    ],
+                    [
+                        "ControlLeft",
+                        []
+                    ],
+                    [
+                        "ControlRight",
+                        []
+                    ],
+                    [
+                        "Regular",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Shortcut",
+                "comment": " Shortcut is simply a record of a message and a keyCombination that describe the keyboard shortcut you're interested in.\n\nPlease note that the `Maybe Bool` for the alt, shift, ctrl and meta modifirs allows you to choose if you would like to ignore a modifier (`Nothing`), force it to be present (`True`) or force it to be abscent (`False`)\n\nFor instance the following key combination will match both _Shift_ _O_ and _Ctrl_ _Shift_ _O_ but not _Shift_ _Meta_ _O_\n\n    myKeyCombination =\n        { baseKey = Regular \"O\"\n        , alt = Nothing\n        , shift = Just True\n        , ctrl = Nothing\n        , meta = Just False\n        }\n\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ msg : msg, keyCombination : { baseKey : Shortcut.Key, alt : Maybe.Maybe Basics.Bool, shift : Maybe.Maybe Basics.Bool, ctrl : Maybe.Maybe Basics.Bool, meta : Maybe.Maybe Basics.Bool } }"
+            }
+        ],
+        "values": [
+            {
+                "name": "altShortcut",
+                "comment": " equivalent of setting all the modifiers to `Nothing` and the **alt** modifier to `Just True`\n",
+                "type": "Shortcut.Key -> msg -> Shortcut.Shortcut msg"
+            },
+            {
+                "name": "ctrlShortcut",
+                "comment": " equivalent of setting all the modifiers to `Nothing` and the **ctrl** modifier to `Just True`\n",
+                "type": "Shortcut.Key -> msg -> Shortcut.Shortcut msg"
+            },
+            {
+                "name": "esc",
+                "comment": " alias of `simpleShortcut Escape`\n",
+                "type": "msg -> Shortcut.Shortcut msg"
+            },
+            {
+                "name": "metaShortcut",
+                "comment": " equivalent of setting all the modifiers to `Nothing` and the **meta** modifier to `Just True`\n",
+                "type": "Shortcut.Key -> msg -> Shortcut.Shortcut msg"
+            },
+            {
+                "name": "shiftShortcut",
+                "comment": " equivalent of setting all the modifiers to `Nothing` and the **shift** modifier to `Just True`\n",
+                "type": "Shortcut.Key -> msg -> Shortcut.Shortcut msg"
+            },
+            {
+                "name": "shortcutElement",
+                "comment": " This is the elm wrapper for the custom-element provided by the NPM companion package\n",
+                "type": "List.List (Shortcut.Shortcut msg) -> List.List (Html.Attribute msg) -> List.List (Html.Html msg) -> Html.Html msg"
+            },
+            {
+                "name": "simpleShortcut",
+                "comment": " if you're only interested in one key not in any of the modifiers then `simpleShortcut` is made for you.\nBoth of these are equivalent:\n\n    myShortcut =\n        { msg = SimpleMessage\n        , keyCombination =\n            { baseKey = Regular \"O\"\n            , alt = Nothing\n            , shift = Nothing\n            , ctrl = Nothing\n            , meta = Nothing\n            }\n        }\n\n    mySimpleShortcut =\n        simpleShortcut <| Regular \"O\"\n\n",
+                "type": "Shortcut.Key -> msg -> Shortcut.Shortcut msg"
+            }
+        ],
+        "binops": []
+    }
+]

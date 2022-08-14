@@ -1,0 +1,123 @@
+[
+    {
+        "name": "LocalStorage",
+        "comment": " A minimal local storage API that mirrors the raw API very closely.\n\n\n# User supplied port signatures.\n\n@docs ClearPort, GetItemPort, SetItemPort, ListKeysPort, ResponsePort\n\n\n# Local storage handle and constructor.\n\n@docs LocalStorage, make\n\n\n# Operations on local storage.\n\n@docs clear, getItem, setItem, listKeys\n\n\n# Responses from local storage.\n\n@docs Response, responseHandler\n\n",
+        "unions": [
+            {
+                "name": "LocalStorage",
+                "comment": " The type of the local storage handle, required to perform operations on\nlocal storage.\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Response",
+                "comment": " The possible local storage operation responses.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Item",
+                        [
+                            "String.String",
+                            "Json.Encode.Value"
+                        ]
+                    ],
+                    [
+                        "ItemNotFound",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "KeyList",
+                        [
+                            "List.List String.String"
+                        ]
+                    ],
+                    [
+                        "Error",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "ClearPort",
+                "comment": " Port to clear the whole area of local storage underneath a prefix.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "String.String -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "GetItemPort",
+                "comment": " Port to fetch an item by its key and prefix.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "String.String -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "ListKeysPort",
+                "comment": " Port to list the available local storage keys underneath a prefix.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "String.String -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "ResponsePort",
+                "comment": " Subscription port to listen to all operation responses from local storage with.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "(Json.Encode.Value -> msg) -> Platform.Sub.Sub msg"
+            },
+            {
+                "name": "SetItemPort",
+                "comment": " Port to set the value of an item by key and prefix.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "( String.String, Json.Encode.Value ) -> Platform.Cmd.Cmd msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "clear",
+                "comment": " Clears the whole area of local storage underneath a prefix.\n",
+                "type": "LocalStorage.LocalStorage msg -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "getItem",
+                "comment": " Fetches an item by its key and prefix.\n",
+                "type": "LocalStorage.LocalStorage msg -> String.String -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "listKeys",
+                "comment": " Lists the available local storage keys underneath a prefix.\n",
+                "type": "LocalStorage.LocalStorage msg -> String.String -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "make",
+                "comment": " Builds local storage using the supplied port implementations and a prefix to\nnamespace all keys stored in that area of local storage.\n",
+                "type": "LocalStorage.GetItemPort msg -> LocalStorage.SetItemPort msg -> LocalStorage.ClearPort msg -> LocalStorage.ListKeysPort msg -> String.String -> LocalStorage.LocalStorage msg"
+            },
+            {
+                "name": "responseHandler",
+                "comment": " Creates a response handler to use with the `ResponsePort` subscription port.\n\nThe operation, key and JSON value message builder combined with the storage\nprefix are needed to create a response handler.\n\n",
+                "type": "(LocalStorage.Response -> msg) -> LocalStorage.LocalStorage msg -> Json.Encode.Value -> msg"
+            },
+            {
+                "name": "setItem",
+                "comment": " Sets the value of an item by key and prefix.\n",
+                "type": "LocalStorage.LocalStorage msg -> String.String -> Json.Encode.Value -> Platform.Cmd.Cmd msg"
+            }
+        ],
+        "binops": []
+    }
+]

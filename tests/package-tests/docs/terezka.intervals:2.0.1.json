@@ -1,0 +1,96 @@
+[
+    {
+        "name": "Intervals",
+        "comment": " Produce \"nice\" intervals for e.g. axis labels.\n\n** What are \"nice\" numbers/integers/datetimes? **\n\nWhen I say \"nice\", I just mean that I try to calculate intervals which begin\nwith 10, 5, 3, 2, 1 (adjusted to magnitude, of course!). For dates, I try to\nhit whole days, weeks, months or hours, minutes, and seconds.\n\n# Nice numbers\n@docs ints, floats, Amount, around, exactly, Range\n\n# Custom numbers\n@docs custom\n\n# Nice times\n@docs times, Time, Unit\n\n\n",
+        "unions": [
+            {
+                "name": "Amount",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Unit",
+                "comment": " You can format your tick label differently based on it's unit.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Millisecond",
+                        []
+                    ],
+                    [
+                        "Second",
+                        []
+                    ],
+                    [
+                        "Minute",
+                        []
+                    ],
+                    [
+                        "Hour",
+                        []
+                    ],
+                    [
+                        "Day",
+                        []
+                    ],
+                    [
+                        "Month",
+                        []
+                    ],
+                    [
+                        "Year",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Range",
+                "comment": " The upper and lower bound of your numbers/timestamps.\n\n",
+                "args": [],
+                "type": "{ min : Basics.Float, max : Basics.Float }"
+            },
+            {
+                "name": "Time",
+                "comment": " A timestamp with extra info helpful for formatting. Explanation:\n\n  - ** timestamp ** is the position where the tick goes on the axis.\n  - ** isFirst ** is whether this is the first tick or not.\n  - ** interval ** is the interval at which all the ticks are spaced.\n  - ** change ** is a `Just` when the tick is changing to a larger unit\n    than used in the interval. E.g. if the interval is 2 hours, then\n    this will be a `Just Day` when the day changes. Useful if you\n    want a different formatting for those ticks!\n\n",
+                "args": [],
+                "type": "{ timestamp : Time.Posix, zone : Time.Zone, isFirst : Basics.Bool, unit : Intervals.Unit, multiple : Basics.Int, change : Maybe.Maybe Intervals.Unit }"
+            }
+        ],
+        "values": [
+            {
+                "name": "around",
+                "comment": " Will get you around the amount of numbers you pass it, although it will\nprioritize getting \"nice\" numbers.\n",
+                "type": "Basics.Int -> Intervals.Amount"
+            },
+            {
+                "name": "custom",
+                "comment": " Makes evenly spaced floats.\n\nArguments:\n  1. A number which must be in your resulting numbers (commonly 0).\n  2. The interval between your numbers.\n  3. The range which your numbers must be between.\n\n    Intervals.custom 45 10 (Range 25 100)\n    -- ^ Makes [ 25, 35, 45, 55, 65, 75, 85, 95 ]\n\n    Intervals.custom 30 20 (Range 25 100)\n    -- ^ Makes [ 30, 50, 70, 90 ]\n\n",
+                "type": "Basics.Float -> Basics.Float -> Intervals.Range -> List.List Basics.Float"
+            },
+            {
+                "name": "exactly",
+                "comment": " Will get you _closer_ to the amount of numbers you pass it,\nalthough not actually _exactly_, since you still want decently \"nice\" numbers.\n\nP.S. If you have a better name for this function, please contact me.\n\n",
+                "type": "Basics.Int -> Intervals.Amount"
+            },
+            {
+                "name": "floats",
+                "comment": " Produce a list of \"nice\" floats.\n\n",
+                "type": "Intervals.Amount -> Intervals.Range -> List.List Basics.Float"
+            },
+            {
+                "name": "ints",
+                "comment": " Produce a list of \"nice\" integers.\n\n",
+                "type": "Intervals.Amount -> Intervals.Range -> List.List Basics.Int"
+            },
+            {
+                "name": "times",
+                "comment": " Produce a list of \"nice\" dates.\n\nArguments:\n\n1.  The timezone which the chart is being shown in.\n2.  The maximum amount of times you'd like to have produced.\n3.  The beginning timestamp (as a float for chart convenience)\n4.  The ending timestamp (as a float for chart convenience)\n\n",
+                "type": "Time.Zone -> Basics.Int -> Intervals.Range -> List.List Intervals.Time"
+            }
+        ],
+        "binops": []
+    }
+]

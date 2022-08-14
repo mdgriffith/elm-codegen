@@ -1,0 +1,1953 @@
+[
+    {
+        "name": "Element",
+        "comment": "\n\n\n# Capture Layout in your View\n\nThink of `Elements` as `Html` with layout!\n\nBy building your view with `Elements`, you have a single place to go to adjust or add to your layout, which is great because that's usually what you're doing in your view!\n\n\n## Rendering\n\n@docs layout, viewport\n\n\n## Basic Elements\n\n@docs Element, Attribute\n\n@docs empty, text, el, when, whenJust, html, map, mapAll, full\n\n\n# Layout\n\nA layout element will explicitly define how it's children are layed out.\n\nMake sure to check out the Style Element specific attributes in `Element.Attributes` as they will help out when doing layout!\n\n\n## Linear Layouts\n\n@docs row, column, wrappedRow, wrappedColumn\n\n\n## Text Layout\n\n@docs textLayout, paragraph\n\n\n## Grid Layout\n\n@docs table, Grid, NamedGrid, grid, namedGrid, GridPosition, NamedGridPosition, OnGrid, NamedOnGrid, cell, named, span, spanAll\n\n\n## Positioning\n\nIt can be useful to position something near another element.\n\nIn CSS terms, this positions children using 'position:absolute'. So, to position three boxes below a container, we could do the following:\n\n     el MyStyle [ width (px 200), height (px 200) ] empty\n        |> below\n            [ el Box [ width (px 40), height (px 40) ] empty\n            -- below on the right\n            , el Box [ alignRight, width (px 40), height (px 40) ] empty\n            -- below and centered\n            , el Box [ center, width (px 40), height (px 40) ] empty\n            ]\n\n@docs below, above, onRight, onLeft, within, screen\n\n\n## Linking\n\n@docs link, newTab, download, downloadAs\n\n\n## Markup\n\n@docs node, button, hairline, article, section, aside, spacer, circle\n\n\n## Significant Locations\n\n@docs navigation, navigationColumn\n\n@docs header, mainContent, footer, sidebar, search\n\n@docs modal\n\n\n## Headings\n\n@docs h1, h2, h3, h4, h5, h6, subheading\n\n\n## Images\n\n@docs image, decorativeImage\n\n\n## Text Markup\n\nThese elements are useful for quick text markup.\n\n@docs bold, italic, strike, underline, sub, super\n\n\n## Responsive\n\nSince this library moves all layout and positioning logic to the view instead of the stylesheet, it doesn't make a ton of sense to support media queries in the stylesheet.\n\nInstead, responsiveness is controlled directly in the view.\n\nHere's how it's done:\n\n1.  Set up a subscription to `Window.resizes` from the `Window` package.\n2.  Use the `Element.classifyDevice` function which will convert `Window.width` and `Window.height` into a `Device` record, which you should store in your model.\n3.  Use the `Device` record in your view to specify how your page changes with window size.\n4.  If things get crazy, use the `responsive` function to map one range to another.\n\n@docs Device, classifyDevice, responsive\n\n\n## Advanced Rendering\n\n@docs toHtml, embedStylesheet\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Attribute",
+                "comment": " ",
+                "args": [
+                    "variation",
+                    "msg"
+                ],
+                "type": "Element.Internal.Model.Attribute variation msg"
+            },
+            {
+                "name": "Device",
+                "comment": " ",
+                "args": [],
+                "type": "{ width : Basics.Int, height : Basics.Int, phone : Basics.Bool, tablet : Basics.Bool, desktop : Basics.Bool, bigDesktop : Basics.Bool, portrait : Basics.Bool }"
+            },
+            {
+                "name": "Element",
+                "comment": " You can think of an `Element` as `Html` with built-in layout.\n\nIt has one `style` identifier, which you can think of as a CSS class.\n\nIt can also have style `variations`, which are covered in the `Style` module.\n\n",
+                "args": [
+                    "style",
+                    "variation",
+                    "msg"
+                ],
+                "type": "Element.Internal.Model.Element style variation msg"
+            },
+            {
+                "name": "Grid",
+                "comment": " ",
+                "args": [
+                    "style",
+                    "variation",
+                    "msg"
+                ],
+                "type": "{ rows : List.List Element.Attributes.Length, columns : List.List Element.Attributes.Length, cells : List.List (Element.OnGrid (Element.Element style variation msg)) }"
+            },
+            {
+                "name": "GridPosition",
+                "comment": " ",
+                "args": [
+                    "style",
+                    "variation",
+                    "msg"
+                ],
+                "type": "{ start : ( Basics.Int, Basics.Int ), width : Basics.Int, height : Basics.Int, content : Element.Element style variation msg }"
+            },
+            {
+                "name": "NamedGrid",
+                "comment": " ",
+                "args": [
+                    "style",
+                    "variation",
+                    "msg"
+                ],
+                "type": "{ rows : List.List ( Element.Attributes.Length, List.List Style.Internal.Model.NamedGridPosition ), columns : List.List Element.Attributes.Length, cells : List.List (Element.NamedOnGrid (Element.Element style variation msg)) }"
+            },
+            {
+                "name": "NamedGridPosition",
+                "comment": " ",
+                "args": [],
+                "type": "Style.Internal.Model.NamedGridPosition"
+            },
+            {
+                "name": "NamedOnGrid",
+                "comment": " ",
+                "args": [
+                    "thing"
+                ],
+                "type": "Element.Internal.Model.NamedOnGrid thing"
+            },
+            {
+                "name": "OnGrid",
+                "comment": " ",
+                "args": [
+                    "thing"
+                ],
+                "type": "Element.Internal.Model.OnGrid thing"
+            }
+        ],
+        "values": [
+            {
+                "name": "above",
+                "comment": " ",
+                "type": "List.List (Element.Element style variation msg) -> Element.Element style variation msg -> Element.Element style variation msg"
+            },
+            {
+                "name": "article",
+                "comment": " ",
+                "type": "style -> List.List (Element.Attribute variation msg) -> Element.Element style variation msg -> Element.Element style variation msg"
+            },
+            {
+                "name": "aside",
+                "comment": " ",
+                "type": "style -> List.List (Element.Attribute variation msg) -> Element.Element style variation msg -> Element.Element style variation msg"
+            },
+            {
+                "name": "below",
+                "comment": " ",
+                "type": "List.List (Element.Element style variation msg) -> Element.Element style variation msg -> Element.Element style variation msg"
+            },
+            {
+                "name": "bold",
+                "comment": " ",
+                "type": "String.String -> Element.Element style variation msg"
+            },
+            {
+                "name": "button",
+                "comment": " Renders as a `<button>`\n\nAlso is able to receive keyboard focus.\n\n",
+                "type": "style -> List.List (Element.Attribute variation msg) -> Element.Element style variation msg -> Element.Element style variation msg"
+            },
+            {
+                "name": "cell",
+                "comment": " A specific position on a `grid`.\n",
+                "type": "Element.GridPosition style variation msg -> Element.OnGrid (Element.Element style variation msg)"
+            },
+            {
+                "name": "circle",
+                "comment": " A simple circle. Provide the radius it should have.\n\nAutomatically sets the propery width, height, and corner rounded.\n\n",
+                "type": "Basics.Float -> style -> List.List (Element.Attribute variation msg) -> Element.Element style variation msg -> Element.Element style variation msg"
+            },
+            {
+                "name": "classifyDevice",
+                "comment": " Takes in a Window.Size and returns a device profile which can be used for responsiveness.\n",
+                "type": "{ window | width : Basics.Int, height : Basics.Int } -> Element.Device"
+            },
+            {
+                "name": "column",
+                "comment": " ",
+                "type": "style -> List.List (Element.Attribute variation msg) -> List.List (Element.Element style variation msg) -> Element.Element style variation msg"
+            },
+            {
+                "name": "decorativeImage",
+                "comment": " If an image is purely decorative, you can skip the caption.\n",
+                "type": "style -> List.List (Element.Attribute variation msg) -> { src : String.String } -> Element.Element style variation msg"
+            },
+            {
+                "name": "download",
+                "comment": " Make a link that will download a file\n\n    download \"http://zombo.com/schedule.pdf\"\n        <| el MyStyle (text \"Welcome to Zombocom\")\n\n",
+                "type": "String.String -> Element.Element style variation msg -> Element.Element style variation msg"
+            },
+            {
+                "name": "downloadAs",
+                "comment": " Make a link that will download a file and give it a specific filename.\n\n    downloadAs\n        { src = \"http://zombo.com/schedule.pdf\"\n        , filename = \"zombocomSchedule.pdf\"\n        }\n        <| el MyStyle (text \"Welcome to Zombocom\")\n\n",
+                "type": "{ src : String.String, filename : String.String } -> Element.Element style variation msg -> Element.Element style variation msg"
+            },
+            {
+                "name": "el",
+                "comment": " The most basic element.\n\nYou need to specify a style, a list of attributes, and a single child.\n\n    -- an element with the style `MyStyle`, that is aligned left, and has one child.\n    el MyStyle [ alignLeft ] (text \"Hello World!\")\n\n`el` can only have one child because in order to have multiple children, we need to specify how the layout would work.\n\n",
+                "type": "style -> List.List (Element.Attribute variation msg) -> Element.Element style variation msg -> Element.Element style variation msg"
+            },
+            {
+                "name": "embedStylesheet",
+                "comment": " Embed a stylesheet.\n",
+                "type": "Style.StyleSheet style variation -> Html.Html msg"
+            },
+            {
+                "name": "empty",
+                "comment": " ",
+                "type": "Element.Element style variation msg"
+            },
+            {
+                "name": "footer",
+                "comment": " This is the main page footer where your copyright and other infomation should live.\n",
+                "type": "style -> List.List (Element.Attribute variation msg) -> Element.Element style variation msg -> Element.Element style variation msg"
+            },
+            {
+                "name": "full",
+                "comment": " A `full` element will ignore the spacing set for it by the parent, and also grow to cover the parent's padding.\n\nThis is mostly useful in text layouts.\n\n",
+                "type": "style -> List.List (Element.Attribute variation msg) -> Element.Element style variation msg -> Element.Element style variation msg"
+            },
+            {
+                "name": "grid",
+                "comment": " An interface to css grid. Here's a basic example:\n\n    grid MyGridStyle []\n        { columns = [ px 100, px 100, px 100, px 100 ]\n        , rows =\n            [ px 100\n            , px 100\n            , px 100\n            , px 100\n            ]\n        , cells =\n             [ cell\n                { start = ( 0, 0 )\n                , width = 1\n                , height = 1\n                , content =\n                    el Box [] (text \"box\")\n                }\n            , cell\n                { start = ( 1, 1 )\n                , width = 1\n                , height = 2\n                , content =\n                    el Box [] (text \"box\")\n                }\n            ]\n        }\n\n",
+                "type": "style -> List.List (Element.Attribute variation msg) -> Element.Grid style variation msg -> Element.Element style variation msg"
+            },
+            {
+                "name": "h1",
+                "comment": " ",
+                "type": "style -> List.List (Element.Attribute variation msg) -> Element.Element style variation msg -> Element.Element style variation msg"
+            },
+            {
+                "name": "h2",
+                "comment": " ",
+                "type": "style -> List.List (Element.Attribute variation msg) -> Element.Element style variation msg -> Element.Element style variation msg"
+            },
+            {
+                "name": "h3",
+                "comment": " ",
+                "type": "style -> List.List (Element.Attribute variation msg) -> Element.Element style variation msg -> Element.Element style variation msg"
+            },
+            {
+                "name": "h4",
+                "comment": " ",
+                "type": "style -> List.List (Element.Attribute variation msg) -> Element.Element style variation msg -> Element.Element style variation msg"
+            },
+            {
+                "name": "h5",
+                "comment": " ",
+                "type": "style -> List.List (Element.Attribute variation msg) -> Element.Element style variation msg -> Element.Element style variation msg"
+            },
+            {
+                "name": "h6",
+                "comment": " ",
+                "type": "style -> List.List (Element.Attribute variation msg) -> Element.Element style variation msg -> Element.Element style variation msg"
+            },
+            {
+                "name": "hairline",
+                "comment": " Creates a 1 px tall horizontal line.\n\nIf you want a horizontal rule that is something more specific, craft it with `el`!\n\n",
+                "type": "style -> Element.Element style variation msg"
+            },
+            {
+                "name": "header",
+                "comment": " This is the main page header area.\n",
+                "type": "style -> List.List (Element.Attribute variation msg) -> Element.Element style variation msg -> Element.Element style variation msg"
+            },
+            {
+                "name": "html",
+                "comment": " For when you want to embed `Html`.\n\nIf you're using this library, I'd encourage you to try to solve your problem without using this escape hatch.\n\nUsage of this function makes the most sense when you're dealing with `Html` from another module or package or if you need to craft something \"manually\" yourself.\n\n",
+                "type": "Html.Html msg -> Element.Element style variation msg"
+            },
+            {
+                "name": "image",
+                "comment": " For images, both a source and a caption are required. The caption will serve as the alt-text.\n",
+                "type": "style -> List.List (Element.Attribute variation msg) -> { src : String.String, caption : String.String } -> Element.Element style variation msg"
+            },
+            {
+                "name": "italic",
+                "comment": " ",
+                "type": "String.String -> Element.Element style variation msg"
+            },
+            {
+                "name": "layout",
+                "comment": " Embeds the stylesheet and renders the `Element`'s into `Html`.\n",
+                "type": "Style.StyleSheet style variation -> Element.Element style variation msg -> Html.Html msg"
+            },
+            {
+                "name": "link",
+                "comment": " Turn an element into a link.\n\n    link \"http://zombo.com\"\n        <| el MyStyle [] (text \"Welcome to Zombocom\")\n\nWraps an element in an `<a>` and sets the href. `rel` properties are set to `noopener` and `noreferrer`.\n\n",
+                "type": "String.String -> Element.Element style variation msg -> Element.Element style variation msg"
+            },
+            {
+                "name": "mainContent",
+                "comment": " The main content of your page.\n",
+                "type": "style -> List.List (Element.Attribute variation msg) -> Element.Element style variation msg -> Element.Element style variation msg"
+            },
+            {
+                "name": "map",
+                "comment": " Change the msg that an Element is sending.\n\nAn analog of `Html.map`.\n\n",
+                "type": "(a -> msg) -> Element.Element style variation a -> Element.Element style variation msg"
+            },
+            {
+                "name": "mapAll",
+                "comment": " Map the msg, style, and variation that is used.\n",
+                "type": "(msgA -> msgB) -> (styleA -> styleB) -> (variationA -> variationB) -> Element.Element styleA variationA msgA -> Element.Element styleB variationB msgB"
+            },
+            {
+                "name": "modal",
+                "comment": " This is a modal\n",
+                "type": "style -> List.List (Element.Attribute variation msg) -> Element.Element style variation msg -> Element.Element style variation msg"
+            },
+            {
+                "name": "named",
+                "comment": " Specify a named postion on a `namedGrid`.\n",
+                "type": "String.String -> Element.Element style variation msg -> Element.NamedOnGrid (Element.Element style variation msg)"
+            },
+            {
+                "name": "namedGrid",
+                "comment": " With a named grid, you can name areas within the grid and use that name to place an element.\n\nHere's an example:\n\n    namedGrid MyGridStyle []\n        { columns = [ px 200, px 200, px 200, fill 1 ]\n        , rows =\n            [ px 200 => [ spanAll \"header\" ]\n            , px 200 => [ span 3 \"content\", span 1 \"sidebar\" ]\n            , px 200 => [ span 3 \"content\", span 1 \"sidebar\" ]\n            , px 200 => [ spanAll \"footer\" ]\n            ]\n        , cells =\n            [ named \"header\"\n                (el Box [] (text \"box\"))\n            , named \"sidebar\"\n                (el Box [] (text \"box\"))\n            ]\n        }\n\n**note:** this example uses rocket(`=>`) as a synonym for creating a tuple. For more, check out the [rocket update](https://github.com/NoRedInk/rocket-update) package!\n\n",
+                "type": "style -> List.List (Element.Attribute variation msg) -> Element.NamedGrid style variation msg -> Element.Element style variation msg"
+            },
+            {
+                "name": "navigation",
+                "comment": " The main navigation of the site, rendered as a row.\n\nThe required `name` is used by accessibility software to describe to non-sighted users what this navigation element pertains to.\n\nDon't leave `name` blank, even if you just put _\"Main Navigation\"_ in it.\n\n     navigation NavMenuStyle\n        []\n        { name = \"Main Navigation\"\n        , options =\n            [ link \"/profile\" (el NavLink [] (text \"profile\"))\n            , link \"/logout\" (el NavLink [] (text \"logout\"))\n            ]\n        }\n\n",
+                "type": "style -> List.List (Element.Attribute variation msg) -> { options : List.List (Element.Element style variation msg), name : String.String } -> Element.Element style variation msg"
+            },
+            {
+                "name": "navigationColumn",
+                "comment": " ",
+                "type": "style -> List.List (Element.Attribute variation msg) -> { options : List.List (Element.Element style variation msg), name : String.String } -> Element.Element style variation msg"
+            },
+            {
+                "name": "newTab",
+                "comment": " Make a link that opens in a new tab.\n\nDepending on the browsers configiration, it may open in a new window.\n\n    newTab \"http://zombo.com\"\n        <| el MyStyle (text \"Welcome to Zombocom\")\n\nSame as `target \"_blank\"`\n\n",
+                "type": "String.String -> Element.Element style variation msg -> Element.Element style variation msg"
+            },
+            {
+                "name": "node",
+                "comment": " ",
+                "type": "String.String -> Element.Element style variation msg -> Element.Element style variation msg"
+            },
+            {
+                "name": "onLeft",
+                "comment": " ",
+                "type": "List.List (Element.Element style variation msg) -> Element.Element style variation msg -> Element.Element style variation msg"
+            },
+            {
+                "name": "onRight",
+                "comment": " ",
+                "type": "List.List (Element.Element style variation msg) -> Element.Element style variation msg -> Element.Element style variation msg"
+            },
+            {
+                "name": "paragraph",
+                "comment": " Paragraph is actually a layout if you can believe it!\n\nThis is the same as a textLayout, except all of the children are set to `display:inline`.\n\nBecause all the children are inline, they will not respect a width or height set on them.\n\n",
+                "type": "style -> List.List (Element.Attribute variation msg) -> List.List (Element.Element style variation msg) -> Element.Element style variation msg"
+            },
+            {
+                "name": "responsive",
+                "comment": " Define two ranges that should linearly match up with each other.\n\nProvide a value for the first and receive the calculated value for the second.\n\n    fontsize =\n        responsive device.width ( 600, 1200 ) ( 16, 20 )\n\nWhen the device width is between 600 and 1200, set the font-size between 16 and 20 using a linear scale.\n\n",
+                "type": "Basics.Float -> ( Basics.Float, Basics.Float ) -> ( Basics.Float, Basics.Float ) -> Basics.Float"
+            },
+            {
+                "name": "row",
+                "comment": " ",
+                "type": "style -> List.List (Element.Attribute variation msg) -> List.List (Element.Element style variation msg) -> Element.Element style variation msg"
+            },
+            {
+                "name": "screen",
+                "comment": " Position an element relative to the window.\n\nEssentially the same as `display: fixed`.\n\nIf you're trying to make a modal, check out `Element.Location.modal`\n\n",
+                "type": "Element.Element style variation msg -> Element.Element style variation msg"
+            },
+            {
+                "name": "search",
+                "comment": " An area that houses the controls for running a search.\n\nWhile `Element.Input.search` will create a literal search input,\nthis element is meant to group all the controls that are involved with searching,\nsuch as filters and the search button.\n\n",
+                "type": "style -> List.List (Element.Attribute variation msg) -> Element.Element style variation msg -> Element.Element style variation msg"
+            },
+            {
+                "name": "section",
+                "comment": " ",
+                "type": "style -> List.List (Element.Attribute variation msg) -> Element.Element style variation msg -> Element.Element style variation msg"
+            },
+            {
+                "name": "sidebar",
+                "comment": " This is a sidebar which contains complementary information to your main content.\n\nIt's rendered as a column.\n\n",
+                "type": "style -> List.List (Element.Attribute variation msg) -> List.List (Element.Element style variation msg) -> Element.Element style variation msg"
+            },
+            {
+                "name": "spacer",
+                "comment": " An element for adding additional spacing. The `Float` is the multiple that should be used of the spacing that's being set by the parent.\n\nSo, if the parent element is a `column` that set spacing to `5`, and this spacer was a `2`. Then it would be a 10 pixel spacer.\n\n",
+                "type": "Basics.Float -> Element.Element style variation msg"
+            },
+            {
+                "name": "span",
+                "comment": " Used to define named areas in a `namedGrid`.\n",
+                "type": "Basics.Int -> String.String -> Element.NamedGridPosition"
+            },
+            {
+                "name": "spanAll",
+                "comment": " Used to define named areas in a `namedGrid`.\n",
+                "type": "String.String -> Element.NamedGridPosition"
+            },
+            {
+                "name": "strike",
+                "comment": " ",
+                "type": "String.String -> Element.Element style variation msg"
+            },
+            {
+                "name": "sub",
+                "comment": " ",
+                "type": "String.String -> Element.Element style variation msg"
+            },
+            {
+                "name": "subheading",
+                "comment": " Don't use a heading like `h2` if you want a subheading/subtitle, instead use this element!\n",
+                "type": "style -> List.List (Element.Attribute variation msg) -> String.String -> Element.Element style variation msg"
+            },
+            {
+                "name": "super",
+                "comment": " ",
+                "type": "String.String -> Element.Element style variation msg"
+            },
+            {
+                "name": "table",
+                "comment": " A table is a special grid\n",
+                "type": "style -> List.List (Element.Attribute variation msg) -> List.List (List.List (Element.Element style variation msg)) -> Element.Element style variation msg"
+            },
+            {
+                "name": "text",
+                "comment": " ",
+                "type": "String.String -> Element.Element style variation msg"
+            },
+            {
+                "name": "textLayout",
+                "comment": " A text layout.\n\nChildren that are aligned left or right will be floated left or right. Everything else is arranged in the standard 'block' layout of css, meaning a column flowing down.\n\n",
+                "type": "style -> List.List (Element.Attribute variation msg) -> List.List (Element.Element style variation msg) -> Element.Element style variation msg"
+            },
+            {
+                "name": "toHtml",
+                "comment": " Renders `Element`'s into `Html`, but does not embed a stylesheet.\n",
+                "type": "Style.StyleSheet style variation -> Element.Element style variation msg -> Html.Html msg"
+            },
+            {
+                "name": "underline",
+                "comment": " ",
+                "type": "String.String -> Element.Element style variation msg"
+            },
+            {
+                "name": "viewport",
+                "comment": " Same as `layout`, but the height and width of the site is set to the height and width of the screen.\n",
+                "type": "Style.StyleSheet style variation -> Element.Element style variation msg -> Html.Html msg"
+            },
+            {
+                "name": "when",
+                "comment": " A helper function. This:\n\n    when (x == 5) (text \"yay, it's 5\")\n\nis sugar for\n\n    if (x == 5) then\n        text \"yay, it's 5\"\n    else\n        empty\n\n",
+                "type": "Basics.Bool -> Element.Element style variation msg -> Element.Element style variation msg"
+            },
+            {
+                "name": "whenJust",
+                "comment": " Another helper function that defaults to `empty`\n\n    whenJust (Just (\"Hi!\")) text\n\nis sugar for\n\n    case maybe of\n        Nothing ->\n            empty\n        Just x ->\n            text x\n\n",
+                "type": "Maybe.Maybe a -> (a -> Element.Element style variation msg) -> Element.Element style variation msg"
+            },
+            {
+                "name": "within",
+                "comment": " ",
+                "type": "List.List (Element.Element style variation msg) -> Element.Element style variation msg -> Element.Element style variation msg"
+            },
+            {
+                "name": "wrappedColumn",
+                "comment": " ",
+                "type": "style -> List.List (Element.Attribute variation msg) -> List.List (Element.Element style variation msg) -> Element.Element style variation msg"
+            },
+            {
+                "name": "wrappedRow",
+                "comment": " ",
+                "type": "style -> List.List (Element.Attribute variation msg) -> List.List (Element.Element style variation msg) -> Element.Element style variation msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Element.Attributes",
+        "comment": "\n\n\n# This module is a mirror of `Html.Attributes`\n\nSome attributes have been added.\n\nThe only modification to the existing library is that `style` has been renamed `inlineStyle` to avoid collision with `Style.style`.\n\nSince this is a style library, you shouldn't need it very often.\n\n\n# Style Element Attributes\n\nThese are the new attributes that generally have to do with layout.\n\n@docs hidden, vary\n\n\n## Alignment\n\nAlignment attributes are incredibly useful for adjusting your layout.\n\nWhen applied to layout elements like `row` and `grid`, alignment will affect the alignment of the children.\n\nWhen applied to singular elements like `el`, alignment will affect the alignment of that individual element.\n\n@docs center, verticalCenter, alignTop, alignBottom, alignLeft, alignRight, spread, verticalSpread\n\n\n## Sizing\n\n@docs width, minWidth, maxWidth, height, minHeight, maxHeight, Length, px, fill, fillPortion, percent, content\n\n\n## Spacing ++ Padding\n\nSpacing allows a layout to set the distance between the children in the layout.\n\nSo this layout:\n\n    row [ spacing 10, padding 10 ]\n        [ el Box [] empty\n        , el Box [] empty\n        , el Box [] empty\n        ]\n\nIs rendered into something like this:\n\n<img src=\"https://mdgriffith.github.io/style-elements/images/spacing.png\" alt=\"Spacing\" width=\"400\">\n\n@docs spacing, spacingXY, padding, paddingXY, paddingTop, paddingRight, paddingBottom, paddingLeft\n\n\n## Positioning\n\n@docs moveUp, moveDown, moveRight, moveLeft\n\n\n## Scrollbars\n\n@docs scrollbars, yScrollbar, xScrollbar\n\n\n## Overflow\n\n@docs clip, clipX, clipY\n\n\n## Conversion\n\n@docs toAttr\n\n\n# Primitives\n\n@docs inlineStyle, property, attribute, map\n\n\n# Super Common Attributes\n\n@docs class, classList, id\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Length",
+                "comment": " ",
+                "args": [],
+                "type": "Style.Internal.Model.Length"
+            }
+        ],
+        "values": [
+            {
+                "name": "alignBottom",
+                "comment": " ",
+                "type": "Element.Internal.Model.Attribute variation msg"
+            },
+            {
+                "name": "alignLeft",
+                "comment": " ",
+                "type": "Element.Internal.Model.Attribute variation msg"
+            },
+            {
+                "name": "alignRight",
+                "comment": " ",
+                "type": "Element.Internal.Model.Attribute variation msg"
+            },
+            {
+                "name": "alignTop",
+                "comment": " ",
+                "type": "Element.Internal.Model.Attribute variation msg"
+            },
+            {
+                "name": "attribute",
+                "comment": " Create _attributes_, like saying `domNode.setAttribute('class', 'greeting')`\nin JavaScript.\n\n    class : String -> Attribute variation msg\n    class =\n        Html.Attributes.class\n\nRead more about the difference between properties and attributes [here].\n\n[here]: https://github.com/elm-lang/html/blob/master/properties-vs-attributes.md\n\n",
+                "type": "String.String -> String.String -> Element.Internal.Model.Attribute variation msg"
+            },
+            {
+                "name": "center",
+                "comment": " ",
+                "type": "Element.Internal.Model.Attribute variation msg"
+            },
+            {
+                "name": "class",
+                "comment": " Often used with CSS to style elements with common properties.\n",
+                "type": "String.String -> Element.Internal.Model.Attribute variation msg"
+            },
+            {
+                "name": "classList",
+                "comment": " This function makes it easier to build a space-separated class attribute.\nEach class can easily be added and removed depending on the boolean value it\nis paired with. For example, maybe we want a way to view notices:\n\n    viewNotice : Notice -> Html msg\n    viewNotice notice =\n        div\n            [ classList\n                [ ( \"notice\", True )\n                , ( \"notice-important\", notice.isImportant )\n                , ( \"notice-seen\", notice.isSeen )\n                ]\n            ]\n            [ text notice.content ]\n\n",
+                "type": "List.List ( String.String, Basics.Bool ) -> Element.Internal.Model.Attribute variation msg"
+            },
+            {
+                "name": "clip",
+                "comment": " Clip content that overflows.\n",
+                "type": "Element.Internal.Model.Attribute variation msg"
+            },
+            {
+                "name": "clipX",
+                "comment": " ",
+                "type": "Element.Internal.Model.Attribute variation msg"
+            },
+            {
+                "name": "clipY",
+                "comment": " ",
+                "type": "Element.Internal.Model.Attribute variation msg"
+            },
+            {
+                "name": "content",
+                "comment": " ",
+                "type": "Element.Attributes.Length"
+            },
+            {
+                "name": "fill",
+                "comment": " ",
+                "type": "Element.Attributes.Length"
+            },
+            {
+                "name": "fillPortion",
+                "comment": " ",
+                "type": "Basics.Int -> Element.Attributes.Length"
+            },
+            {
+                "name": "height",
+                "comment": " ",
+                "type": "Element.Attributes.Length -> Element.Internal.Model.Attribute variation msg"
+            },
+            {
+                "name": "hidden",
+                "comment": " Remove the element from the view.\n",
+                "type": "Element.Internal.Model.Attribute variation msg"
+            },
+            {
+                "name": "id",
+                "comment": " Often used with CSS to style a specific element. The value of this\nattribute must be unique.\n",
+                "type": "String.String -> Element.Internal.Model.Attribute variation msg"
+            },
+            {
+                "name": "inlineStyle",
+                "comment": " This is the manual override for to specify inline css properties.\n\n    myStyle : Attribute msg\n    myStyle =\n        inlineStyle \"backgroundColor\" \"red\"\n\n    greeting : Html msg\n    greeting =\n        el [ myStyle ] (text \"Hello!\")\n\nUse it if you need to, though it's obviously recommended to use the `Style` module instead.\n\n",
+                "type": "String.String -> String.String -> Element.Internal.Model.Attribute variation msg"
+            },
+            {
+                "name": "map",
+                "comment": " Transform the messages produced by an `Attribute`.\n",
+                "type": "(a -> msg) -> Element.Internal.Model.Attribute variation a -> Element.Internal.Model.Attribute variation msg"
+            },
+            {
+                "name": "maxHeight",
+                "comment": " ",
+                "type": "Element.Attributes.Length -> Element.Internal.Model.Attribute variation msg"
+            },
+            {
+                "name": "maxWidth",
+                "comment": " ",
+                "type": "Element.Attributes.Length -> Element.Internal.Model.Attribute variation msg"
+            },
+            {
+                "name": "minHeight",
+                "comment": " ",
+                "type": "Element.Attributes.Length -> Element.Internal.Model.Attribute variation msg"
+            },
+            {
+                "name": "minWidth",
+                "comment": " ",
+                "type": "Element.Attributes.Length -> Element.Internal.Model.Attribute variation msg"
+            },
+            {
+                "name": "moveDown",
+                "comment": " ",
+                "type": "Basics.Float -> Element.Internal.Model.Attribute variation msg"
+            },
+            {
+                "name": "moveLeft",
+                "comment": " ",
+                "type": "Basics.Float -> Element.Internal.Model.Attribute variation msg"
+            },
+            {
+                "name": "moveRight",
+                "comment": " ",
+                "type": "Basics.Float -> Element.Internal.Model.Attribute variation msg"
+            },
+            {
+                "name": "moveUp",
+                "comment": " ",
+                "type": "Basics.Float -> Element.Internal.Model.Attribute variation msg"
+            },
+            {
+                "name": "padding",
+                "comment": " ",
+                "type": "Basics.Float -> Element.Internal.Model.Attribute variation msg"
+            },
+            {
+                "name": "paddingBottom",
+                "comment": " ",
+                "type": "Basics.Float -> Element.Internal.Model.Attribute variation msg"
+            },
+            {
+                "name": "paddingLeft",
+                "comment": " ",
+                "type": "Basics.Float -> Element.Internal.Model.Attribute variation msg"
+            },
+            {
+                "name": "paddingRight",
+                "comment": " ",
+                "type": "Basics.Float -> Element.Internal.Model.Attribute variation msg"
+            },
+            {
+                "name": "paddingTop",
+                "comment": " ",
+                "type": "Basics.Float -> Element.Internal.Model.Attribute variation msg"
+            },
+            {
+                "name": "paddingXY",
+                "comment": " Set horizontal and vertical padding.\n",
+                "type": "Basics.Float -> Basics.Float -> Element.Internal.Model.Attribute variation msg"
+            },
+            {
+                "name": "percent",
+                "comment": " ",
+                "type": "Basics.Float -> Element.Attributes.Length"
+            },
+            {
+                "name": "property",
+                "comment": " Create _properties_, like saying `domNode.className = 'greeting'` in\nJavaScript.\n\n    import Json.Encode as Encode\n\n    class : String -> Attribute variation msg\n    class =\n        Html.Attributes.class\n\nRead more about the difference between properties and attributes [here].\n\n[here]: https://github.com/elm-lang/html/blob/master/properties-vs-attributes.md\n\n",
+                "type": "String.String -> Json.Decode.Value -> Element.Internal.Model.Attribute variation msg"
+            },
+            {
+                "name": "px",
+                "comment": " ",
+                "type": "Basics.Float -> Element.Attributes.Length"
+            },
+            {
+                "name": "scrollbars",
+                "comment": " Turn on scrollbars if content overflows.\n",
+                "type": "Element.Internal.Model.Attribute variation msg"
+            },
+            {
+                "name": "spacing",
+                "comment": " Set the spacing between children in a layout.\n",
+                "type": "Basics.Float -> Element.Internal.Model.Attribute variation msg"
+            },
+            {
+                "name": "spacingXY",
+                "comment": " Set the horizontal and vertical spacing separately.\n\nThis is generally only useful in a textLayout or a grid.\n\n",
+                "type": "Basics.Float -> Basics.Float -> Element.Internal.Model.Attribute variation msg"
+            },
+            {
+                "name": "spread",
+                "comment": " ",
+                "type": "Element.Internal.Model.Attribute variation msg"
+            },
+            {
+                "name": "toAttr",
+                "comment": " Convert an existing `Html.Attribute` to an `Element.Attribute`.\n\nThis is useful for working with any library that returns a `Html.Attribute`.\n\n",
+                "type": "Html.Attribute msg -> Element.Internal.Model.Attribute variation msg"
+            },
+            {
+                "name": "vary",
+                "comment": " Apply a style variation.\n\n    el MyButton [ vary Disabled True ] (text \"My Disabled Button!\")\n\n",
+                "type": "variation -> Basics.Bool -> Element.Internal.Model.Attribute variation msg"
+            },
+            {
+                "name": "verticalCenter",
+                "comment": " ",
+                "type": "Element.Internal.Model.Attribute variation msg"
+            },
+            {
+                "name": "verticalSpread",
+                "comment": " ",
+                "type": "Element.Internal.Model.Attribute variation msg"
+            },
+            {
+                "name": "width",
+                "comment": " ",
+                "type": "Element.Attributes.Length -> Element.Internal.Model.Attribute variation msg"
+            },
+            {
+                "name": "xScrollbar",
+                "comment": " Turn on scrollbars if content overflows horizontally.\n",
+                "type": "Element.Internal.Model.Attribute variation msg"
+            },
+            {
+                "name": "yScrollbar",
+                "comment": " Turn on scrollbars if content overflows vertically.\n",
+                "type": "Element.Internal.Model.Attribute variation msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Element.Events",
+        "comment": " This module is mirrored nearly completely from Html.Events\n\nThe only difference is that the HTML.Events are turned into Element.Events\n\n\n# Mouse Helpers\n\n@docs onClick, onDoubleClick, onMouseDown, onMouseUp, onMouseEnter, onMouseLeave, onMouseOver, onMouseOut\n\n\n# Form Helpers\n\n@docs onInput, onCheck, onSubmit\n\n\n# Focus Helpers\n\n@docs onBlur, onFocus\n\n\n# Custom Event Handlers\n\n@docs on, stopPropagationOn, preventDefaultOn, custom\n\n\n# Custom Decoders\n\n@docs targetValue, targetChecked, keyCode\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "custom",
+                "comment": " ",
+                "type": "String.String -> Json.Decode.Decoder { message : msg, stopPropagation : Basics.Bool, preventDefault : Basics.Bool } -> Element.Internal.Model.Attribute variation msg"
+            },
+            {
+                "name": "keyCode",
+                "comment": " A `Json.Decoder` for grabbing `event.keyCode`. This helps you define\nkeyboard listeners like this:\n\n    import Json.Decode as Json\n\n    onKeyUp : (Int -> msg) -> Attribute msg\n    onKeyUp tagger =\n        on \"keyup\" (Json.map tagger keyCode)\n\n**Note:** It looks like the spec is moving away from `event.keyCode` and\ntowards `event.key`. Once this is supported in more browsers, we may add\nhelpers here for `onKeyUp`, `onKeyDown`, `onKeyPress`, etc.\n\n",
+                "type": "Json.Decode.Decoder Basics.Int"
+            },
+            {
+                "name": "on",
+                "comment": " Create a custom event listener. Normally this will not be necessary, but\nyou have the power! Here is how `onClick` is defined for example:\n\n    import Json.Decode as Json\n\n    onClick : msg -> Attribute variation msg\n    onClick message =\n        on \"click\" (Json.succeed message)\n\nThe first argument is the event name in the same format as with JavaScript's\n[`addEventListener`][aEL] function.\nThe second argument is a JSON decoder. Read more about these [here][decoder].\nWhen an event occurs, the decoder tries to turn the event object into an Elm\nvalue. If successful, the value is routed to your `update` function. In the\ncase of `onClick` we always just succeed with the given `message`.\nIf this is confusing, work through the [Elm Architecture Tutorial][tutorial].\nIt really does help!\n[aEL]: <https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener>\n[decoder]: <http://package.elm-lang.org/packages/elm-lang/core/latest/Json-Decode>\n[tutorial]: <https://github.com/evancz/elm-architecture-tutorial/>\n\n",
+                "type": "String.String -> Json.Decode.Decoder msg -> Element.Internal.Model.Attribute variation msg"
+            },
+            {
+                "name": "onBlur",
+                "comment": " ",
+                "type": "msg -> Element.Internal.Model.Attribute variation msg"
+            },
+            {
+                "name": "onCheck",
+                "comment": " Capture [change](https://developer.mozilla.org/en-US/docs/Web/Events/change)\nevents on checkboxes. It will grab the boolean value from `event.target.checked`\non any input event.\nCheck out [targetChecked](#targetChecked) for more details on how this works.\n",
+                "type": "(Basics.Bool -> msg) -> Element.Internal.Model.Attribute variation msg"
+            },
+            {
+                "name": "onClick",
+                "comment": " ",
+                "type": "msg -> Element.Internal.Model.Attribute variation msg"
+            },
+            {
+                "name": "onDoubleClick",
+                "comment": " ",
+                "type": "msg -> Element.Internal.Model.Attribute variation msg"
+            },
+            {
+                "name": "onFocus",
+                "comment": " ",
+                "type": "msg -> Element.Internal.Model.Attribute variation msg"
+            },
+            {
+                "name": "onInput",
+                "comment": " Capture [input](https://developer.mozilla.org/en-US/docs/Web/Events/input)\nevents for things like text fields or text areas.\nIt grabs the **string** value at `event.target.value`, so it will not work if\nyou need some other type of information. For example, if you want to track\ninputs on a range slider, make a custom handler with [`on`](#on).\nFor more details on how `onInput` works, check out [targetValue](#targetValue).\n",
+                "type": "(String.String -> msg) -> Element.Internal.Model.Attribute variation msg"
+            },
+            {
+                "name": "onMouseDown",
+                "comment": " ",
+                "type": "msg -> Element.Internal.Model.Attribute variation msg"
+            },
+            {
+                "name": "onMouseEnter",
+                "comment": " ",
+                "type": "msg -> Element.Internal.Model.Attribute variation msg"
+            },
+            {
+                "name": "onMouseLeave",
+                "comment": " ",
+                "type": "msg -> Element.Internal.Model.Attribute variation msg"
+            },
+            {
+                "name": "onMouseOut",
+                "comment": " ",
+                "type": "msg -> Element.Internal.Model.Attribute variation msg"
+            },
+            {
+                "name": "onMouseOver",
+                "comment": " ",
+                "type": "msg -> Element.Internal.Model.Attribute variation msg"
+            },
+            {
+                "name": "onMouseUp",
+                "comment": " ",
+                "type": "msg -> Element.Internal.Model.Attribute variation msg"
+            },
+            {
+                "name": "onSubmit",
+                "comment": " Capture a [submit](https://developer.mozilla.org/en-US/docs/Web/Events/submit)\nevent with [`preventDefault`](https://developer.mozilla.org/en-US/docs/Web/API/Event/preventDefault)\nin order to prevent the form from changing the page’s location. If you need\ndifferent behavior, use `onWithOptions` to create a customized version of\n`onSubmit`.\n",
+                "type": "msg -> Element.Internal.Model.Attribute variation msg"
+            },
+            {
+                "name": "preventDefaultOn",
+                "comment": " ",
+                "type": "String.String -> Json.Decode.Decoder ( msg, Basics.Bool ) -> Element.Internal.Model.Attribute variation msg"
+            },
+            {
+                "name": "stopPropagationOn",
+                "comment": " ",
+                "type": "String.String -> Json.Decode.Decoder ( msg, Basics.Bool ) -> Element.Internal.Model.Attribute variation msg"
+            },
+            {
+                "name": "targetChecked",
+                "comment": " A `Json.Decoder` for grabbing `event.target.checked`. We use this to define\n`onCheck` as follows:\n\n    import Json.Decode as Json\n\n    onCheck : (Bool -> msg) -> Attribute msg\n    onCheck tagger =\n        on \"input\" (Json.map tagger targetChecked)\n\n",
+                "type": "Json.Decode.Decoder Basics.Bool"
+            },
+            {
+                "name": "targetValue",
+                "comment": " A `Json.Decoder` for grabbing `event.target.value`. We use this to define\n`onInput` as follows:\n\n    import Json.Decode as Json\n\n    onInput : (String -> msg) -> Attribute msg\n    onInput tagger =\n        on \"input\" (Json.map tagger targetValue)\n\nYou probably will never need this, but hopefully it gives some insights into\nhow to make custom event handlers.\n\n",
+                "type": "Json.Decode.Decoder String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Element.Input",
+        "comment": " Input Elements\n\n@docs checkbox, Checkbox, styledCheckbox, StyledCheckbox\n\n\n## Text Input\n\n@docs Text, text, multiline, search, email\n\nThe following text inputs give hints to the browser so they can be autofilled.\n\n@docs username, newPassword, currentPassword\n\n\n## 'Choose One' Inputs\n\n@docs Radio, radio, radioRow, Choice, choice, styledChoice, styledSelectChoice, radioKey, ChoiceState\n\n@docs select, Select, SelectWith, autocomplete, dropMenu, menu, menuAbove, selected, SelectMsg, updateSelection, clear\n\n\n## Labels\n\n@docs Label, labelAbove, labelBelow, labelLeft, labelRight, placeholder, hiddenLabel\n\n\n## Options\n\n@docs Option, Error, errorAbove, errorBelow, disabled, focusOnLoad, autofill, autofillSection, allowSpellcheck\n\n",
+        "unions": [
+            {
+                "name": "Choice",
+                "comment": " Add choices to your radio and select menus.\n",
+                "args": [
+                    "value",
+                    "style",
+                    "variation",
+                    "msg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "ChoiceState",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Idle",
+                        []
+                    ],
+                    [
+                        "Focused",
+                        []
+                    ],
+                    [
+                        "Selected",
+                        []
+                    ],
+                    [
+                        "SelectedInBox",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Error",
+                "comment": " ",
+                "args": [
+                    "style",
+                    "variation",
+                    "msg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Label",
+                "comment": " ",
+                "args": [
+                    "style",
+                    "variation",
+                    "msg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Option",
+                "comment": " ",
+                "args": [
+                    "style",
+                    "variation",
+                    "msg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "SelectMsg",
+                "comment": " ",
+                "args": [
+                    "opt"
+                ],
+                "cases": []
+            },
+            {
+                "name": "SelectWith",
+                "comment": " ",
+                "args": [
+                    "option",
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Checkbox",
+                "comment": " ",
+                "args": [
+                    "style",
+                    "variation",
+                    "msg"
+                ],
+                "type": "{ onChange : Basics.Bool -> msg, label : Element.Element style variation msg, checked : Basics.Bool, options : List.List (Element.Input.Option style variation msg) }"
+            },
+            {
+                "name": "Radio",
+                "comment": " ",
+                "args": [
+                    "option",
+                    "style",
+                    "variation",
+                    "msg"
+                ],
+                "type": "{ onChange : option -> msg, choices : List.List (Element.Input.Choice option style variation msg), selected : Maybe.Maybe option, label : Element.Input.Label style variation msg, options : List.List (Element.Input.Option style variation msg) }"
+            },
+            {
+                "name": "Select",
+                "comment": " ",
+                "args": [
+                    "option",
+                    "style",
+                    "variation",
+                    "msg"
+                ],
+                "type": "{ with : Element.Input.SelectWith option msg, max : Basics.Int, menu : Element.Input.Menu option style variation msg, label : Element.Input.Label style variation msg, options : List.List (Element.Input.Option style variation msg) }"
+            },
+            {
+                "name": "StyledCheckbox",
+                "comment": " ",
+                "args": [
+                    "style",
+                    "variation",
+                    "msg"
+                ],
+                "type": "{ onChange : Basics.Bool -> msg, label : Element.Element style variation msg, checked : Basics.Bool, options : List.List (Element.Input.Option style variation msg), icon : Basics.Bool -> Element.Element style variation msg }"
+            },
+            {
+                "name": "Text",
+                "comment": " ",
+                "args": [
+                    "style",
+                    "variation",
+                    "msg"
+                ],
+                "type": "{ onChange : String.String -> msg, value : String.String, label : Element.Input.Label style variation msg, options : List.List (Element.Input.Option style variation msg) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "allowSpellcheck",
+                "comment": " Allow spellcheck for this input. Only works on text based inputs.\n",
+                "type": "Element.Input.Option style variation msg"
+            },
+            {
+                "name": "autocomplete",
+                "comment": " Create a `select` menu which shows options that are filtered by the text entered.\n\nThis is the part which goes in your model.\n\nYou'll need to update it using `Input.updateSelection`.\n\nOnce you have this in your model, you can extract the current selected value from it using `Input.selected model.autocompleteState`.\n\n",
+                "type": "Maybe.Maybe option -> (Element.Input.SelectMsg option -> msg) -> Element.Input.SelectWith option msg"
+            },
+            {
+                "name": "autofill",
+                "comment": " Give a hint to the browser on what data can be used to autofill this input.\n\nThis can be very useful to allow the browser to autofill address and credit card forms.\n\nFor more general information check out the [`autocomplete` attribute of `input` elements](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input)\n\n",
+                "type": "String.String -> Element.Input.Option style variation msg"
+            },
+            {
+                "name": "autofillSection",
+                "comment": " ",
+                "type": "String.String -> Element.Input.Option style variation msg"
+            },
+            {
+                "name": "checkbox",
+                "comment": " Your basic checkbox\n\n    Input.checkbox Checkbox\n        []\n        { onChange = Check\n        , checked = model.checkbox\n        , label = el None [] (text \"hello!\")\n        , options = []\n        }\n\n",
+                "type": "style -> List.List (Element.Attribute variation msg) -> Element.Input.Checkbox style variation msg -> Element.Element style variation msg"
+            },
+            {
+                "name": "choice",
+                "comment": " ",
+                "type": "value -> Element.Element style variation msg -> Element.Input.Choice value style variation msg"
+            },
+            {
+                "name": "clear",
+                "comment": " Clear a selection.\n",
+                "type": "Element.Input.SelectWith option msg -> Element.Input.SelectWith option msg"
+            },
+            {
+                "name": "currentPassword",
+                "comment": " ",
+                "type": "style -> List.List (Element.Attribute variation msg) -> Element.Input.Text style variation msg -> Element.Element style variation msg"
+            },
+            {
+                "name": "disabled",
+                "comment": " Disable an input. This means that the input will not receive focus and can't be changed by the user.\n\nDoes not change the styling of the inputs unless they're controlled by the browser like a basic checkbox or standard radio button.\n\n",
+                "type": "Element.Input.Option style variation msg"
+            },
+            {
+                "name": "dropMenu",
+                "comment": " Create a `select` menu which shows all options and allows the user to select one.\n\nUse this if you only have 3-5 options. If you have a ton of options, use `Input.autocomplete` instead!\n\nOnce you have this in your model, you can extract the current selected value from it using `Input.selected model.dropMenuState`.\n\n",
+                "type": "Maybe.Maybe option -> (Element.Input.SelectMsg option -> msg) -> Element.Input.SelectWith option msg"
+            },
+            {
+                "name": "email",
+                "comment": " ",
+                "type": "style -> List.List (Element.Attribute variation msg) -> Element.Input.Text style variation msg -> Element.Element style variation msg"
+            },
+            {
+                "name": "errorAbove",
+                "comment": " ",
+                "type": "Element.Element style variation msg -> Element.Input.Option style variation msg"
+            },
+            {
+                "name": "errorBelow",
+                "comment": " ",
+                "type": "Element.Element style variation msg -> Element.Input.Option style variation msg"
+            },
+            {
+                "name": "focusOnLoad",
+                "comment": " Put the focus on this input when the page loads.\n\nOnly one input should have this option turned on.\n\n",
+                "type": "Element.Input.Option style variation msg"
+            },
+            {
+                "name": "hiddenLabel",
+                "comment": " ",
+                "type": "String.String -> Element.Input.Label style variation msg"
+            },
+            {
+                "name": "labelAbove",
+                "comment": " ",
+                "type": "Element.Element style variation msg -> Element.Input.Label style variation msg"
+            },
+            {
+                "name": "labelBelow",
+                "comment": " ",
+                "type": "Element.Element style variation msg -> Element.Input.Label style variation msg"
+            },
+            {
+                "name": "labelLeft",
+                "comment": " ",
+                "type": "Element.Element style variation msg -> Element.Input.Label style variation msg"
+            },
+            {
+                "name": "labelRight",
+                "comment": " ",
+                "type": "Element.Element style variation msg -> Element.Input.Label style variation msg"
+            },
+            {
+                "name": "menu",
+                "comment": " Create a dropdown menu.\n\nThis is used with `Input.select`\n\n",
+                "type": "style -> List.List (Element.Attribute variation msg) -> List.List (Element.Input.Choice option style variation msg) -> Element.Input.Menu option style variation msg"
+            },
+            {
+                "name": "menuAbove",
+                "comment": " A dropdown menu that goes up! A dropup!\n",
+                "type": "style -> List.List (Element.Attribute variation msg) -> List.List (Element.Input.Choice option style variation msg) -> Element.Input.Menu option style variation msg"
+            },
+            {
+                "name": "multiline",
+                "comment": " ",
+                "type": "style -> List.List (Element.Attribute variation msg) -> Element.Input.Text style variation msg -> Element.Element style variation msg"
+            },
+            {
+                "name": "newPassword",
+                "comment": " A password input that allows the browser to autofill.\n\nIt's `newPassword` instead of just `password` because it gives the browser a hint on what type of password input it is.\n\n",
+                "type": "style -> List.List (Element.Attribute variation msg) -> Element.Input.Text style variation msg -> Element.Element style variation msg"
+            },
+            {
+                "name": "placeholder",
+                "comment": " ",
+                "type": "{ text : String.String, label : Element.Input.Label style variation msg } -> Element.Input.Label style variation msg"
+            },
+            {
+                "name": "radio",
+                "comment": "\n\n    Input.radio Field\n        [ padding 10\n        , spacing 20\n        ]\n        { onChange = ChooseLunch\n        , selected = Just model.lunch\n        , label = Input.labelAbove (text \"Lunch\")\n        , options = []\n        , choices =\n            [ Input.styledChoice Burrito <|\n                \\selected ->\n                    Element.row None\n                        [ spacing 5 ]\n                        [ el None [] <|\n                            if selected then\n                                text \":D\"\n                            else\n                                text \":(\"\n                        , text \"burrito\"\n                        ]\n            , Input.choice Taco (text \"Taco!\")\n            , Input.choice Gyro (text \"Gyro\")\n            ]\n        }\n\n",
+                "type": "style -> List.List (Element.Attribute variation msg) -> Element.Input.Radio option style variation msg -> Element.Element style variation msg"
+            },
+            {
+                "name": "radioKey",
+                "comment": " Add a key string to a radio option.\n\nThis is used to differentiate between separate radio menus.\n\nIt's not needed if the text of the labels are unique.\n\n",
+                "type": "String.String -> Element.Input.Option style variation msg"
+            },
+            {
+                "name": "radioRow",
+                "comment": " Same as `radio`, but arranges the choices in a row instead of a column\n",
+                "type": "style -> List.List (Element.Attribute variation msg) -> Element.Input.Radio option style variation msg -> Element.Element style variation msg"
+            },
+            {
+                "name": "search",
+                "comment": " ",
+                "type": "style -> List.List (Element.Attribute variation msg) -> Element.Input.Text style variation msg -> Element.Element style variation msg"
+            },
+            {
+                "name": "select",
+                "comment": " This function needs to be paired with either `Input.autocomplete` or `Input.dropMenu`.\n\n    Input.select Field\n        [ padding 10\n        , spacing 20\n        ]\n        { label = Input.labelAbove <| text \"Lunch\"\n\n        -- model.selection is some state(value, a Msg constructor, and the focus) we store in our model.\n        -- It can be created using Input.autocomplete or Input.dropMenu\n        -- Check out the Form.elm example to see a complete version.\n        , with = model.selection\n        , max = 5\n        , options = []\n        , menu =\n            Input.menuAbove SubMenu\n                []\n                [ Input.choice Taco (text \"Taco!\")\n                , Input.choice Gyro (text \"Gyro\")\n                , Input.styledChoice Burrito <|\n                    \\selected ->\n                        Element.row None\n                            [ spacing 5 ]\n                            [ el None [] <|\n                                if selected then\n                                    text \":D\"\n                                else\n                                    text \":(\"\n                            , text \"burrito\"\n                            ]\n                ]\n        }\n\n",
+                "type": "style -> List.List (Element.Attribute variation msg) -> Element.Input.Select option style variation msg -> Element.Element style variation msg"
+            },
+            {
+                "name": "selected",
+                "comment": " Get the selected value from an `autocomplete` or a `dropMenu` type that is used for your `Input.select` element.\n",
+                "type": "Element.Input.SelectWith option msg -> Maybe.Maybe option"
+            },
+            {
+                "name": "styledCheckbox",
+                "comment": " A checkbox that allows you to style the actual checkbox:\n\n    Input.styledCheckbox Checkbox\n        []\n        { onChange = Check\n        , checked = model.checkbox\n        , label = el None [] (text \"hello!\")\n        , options = []\n        , icon =\n            -- A function which receives a checked bool\n            -- and returns the element that represents the checkbox\n            \\checked ->\n                let\n                    checkboxStyle =\n                        if checked then\n                            CheckboxChecked\n                        else\n                            Checkbox\n                in\n                el checkboxStyle [] empty\n        }\n\n",
+                "type": "style -> List.List (Element.Attribute variation msg) -> Element.Input.StyledCheckbox style variation msg -> Element.Element style variation msg"
+            },
+            {
+                "name": "styledChoice",
+                "comment": " ",
+                "type": "value -> (Basics.Bool -> Element.Element style variation msg) -> Element.Input.Choice value style variation msg"
+            },
+            {
+                "name": "styledSelectChoice",
+                "comment": " ",
+                "type": "value -> (Element.Input.ChoiceState -> Element.Element style variation msg) -> Element.Input.Choice value style variation msg"
+            },
+            {
+                "name": "text",
+                "comment": " A plain text input.\n",
+                "type": "style -> List.List (Element.Attribute variation msg) -> Element.Input.Text style variation msg -> Element.Element style variation msg"
+            },
+            {
+                "name": "updateSelection",
+                "comment": " ",
+                "type": "Element.Input.SelectMsg option -> Element.Input.SelectWith option msg -> Element.Input.SelectWith option msg"
+            },
+            {
+                "name": "username",
+                "comment": " ",
+                "type": "style -> List.List (Element.Attribute variation msg) -> Element.Input.Text style variation msg -> Element.Element style variation msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Element.Keyed",
+        "comment": " Keyed Layouts\n\n@docs row, column, wrappedRow, wrappedColumn\n\n\n## Grids\n\n@docs Grid, grid, cell,NamedGrid, namedGrid, named\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Grid",
+                "comment": " ",
+                "args": [
+                    "style",
+                    "variation",
+                    "msg"
+                ],
+                "type": "{ rows : List.List Style.Internal.Model.Length, columns : List.List Style.Internal.Model.Length, cells : List.List (Element.OnGrid ( String.String, Element.Element style variation msg )) }"
+            },
+            {
+                "name": "NamedGrid",
+                "comment": " ",
+                "args": [
+                    "style",
+                    "variation",
+                    "msg"
+                ],
+                "type": "{ rows : List.List ( Style.Internal.Model.Length, List.List Style.Internal.Model.NamedGridPosition ), columns : List.List Style.Internal.Model.Length, cells : List.List (Element.NamedOnGrid ( String.String, Element.Element style variation msg )) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "cell",
+                "comment": " A specific position on a `grid`.\n",
+                "type": "Element.Keyed.GridPosition style variation msg -> Element.OnGrid ( String.String, Element.Element style variation msg )"
+            },
+            {
+                "name": "column",
+                "comment": " ",
+                "type": "style -> List.List (Element.Attribute variation msg) -> List.List ( String.String, Element.Element style variation msg ) -> Element.Element style variation msg"
+            },
+            {
+                "name": "grid",
+                "comment": " ",
+                "type": "style -> List.List (Element.Attribute variation msg) -> Element.Keyed.Grid style variation msg -> Element.Element style variation msg"
+            },
+            {
+                "name": "named",
+                "comment": " Specify a named postion on a `namedGrid`.\n\nThe name is used as the key.\n\n",
+                "type": "String.String -> Element.Element style variation msg -> Element.NamedOnGrid ( String.String, Element.Element style variation msg )"
+            },
+            {
+                "name": "namedGrid",
+                "comment": " ",
+                "type": "style -> List.List (Element.Attribute variation msg) -> Element.Keyed.NamedGrid style variation msg -> Element.Element style variation msg"
+            },
+            {
+                "name": "row",
+                "comment": " ",
+                "type": "style -> List.List (Element.Attribute variation msg) -> List.List ( String.String, Element.Element style variation msg ) -> Element.Element style variation msg"
+            },
+            {
+                "name": "wrappedColumn",
+                "comment": " ",
+                "type": "style -> List.List (Element.Attribute variation msg) -> List.List ( String.String, Element.Element style variation msg ) -> Element.Element style variation msg"
+            },
+            {
+                "name": "wrappedRow",
+                "comment": " ",
+                "type": "style -> List.List (Element.Attribute variation msg) -> List.List ( String.String, Element.Element style variation msg ) -> Element.Element style variation msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Style",
+        "comment": "\n\n\n# The Style part of the Style Elements Library!\n\nHere is where you an create your style sheet.\n\nOne of the first concepts of `style-elements` is that layout, position, and width/height all live in your view through the `Element` module.\n\nYour style sheet handles everything else!\n\nCheck out the other `Style` modules for other properties.\n\nCheck out `Basic.elm` in the examples folder to see an example of a full style sheet.\n\n\n## The Basics\n\n`style-elements` does away with CSS selectors entirely. Every style gets one identifier, which is ultimately rendered as a `class`.\n\n@docs Style, style\n\nHere's a basic example of a style that sets a few colors.\n\n    import Style exposing (..)\n    import Style.Color as Color\n    import Color exposing (..)\n\n    type Styles\n        = Button\n\n    stylesheet =\n        Style.styleSheet\n            [ style Button\n                [ Color.background blue\n                , Color.text white\n                ]\n            ]\n    -- Which can be used in your view as:\n    el Button [ ] (text \"A button!\")\n\n@docs variation\n\nStyles can have variations. Here's what it looks like to have a button style with a variation for `Disabled`\n\n    import Style exposing (..)\n    import Style.Color as Color\n    import Color exposing (..)\n\n    type Styles = Button\n\n    -- You need to create a new type to capture variations.\n    type Variations\n        = Disabled\n\n\n    stylesheet =\n        Style.styleSheet\n            [ style Button\n                [ Color.background blue\n                , Color.text white\n                , variation Disabled\n                    [ Color.background grey\n                    ]\n                ]\n            ]\n\n    -- which can be rendered in your view as\n\n    el Button [ vary Disabled True ] (text \"A Disabled button!\")\n\nBefore you reach for a variation, consider just creating a subtype. So, something like:\n\n    import Style exposing (..)\n    import Style.Color as Color\n    import Color exposing (..)\n\n    type Styles\n        = Button ButtonStyles\n\n    type ButtonStyles\n        = Active\n        | Disabled\n\n\n    stylesheet =\n        Style.stylesheet\n            [ style (Button Active)\n                [ Color.background blue\n                ]\n            , style (Button Disabled)\n                [ Color.background grey\n                ]\n            ]\n\n    -- which can be rendered in your view as\n\n    el (Button Active) [] (text \"An Active button!\")\n\nThe main difference between these two is that `variations` can combine with other `variations`, while subtypes are mutually exclusive.\n\n\n## Properties\n\n@docs Property, prop, opacity, cursor, Font, Color, rgb, rgba\n\n\n## Transformations\n\n@docs Transform, origin, translate, rotate, rotateAround, scale\n\n\n## Pseudo Classes\n\nPsuedo classes can be nested.\n\n@docs hover, checked, focus, pseudo\n\n\n## Render into a Style Sheet\n\n@docs StyleSheet, styleSheet, styleSheetWith, Option, importUrl, importCss\n\n",
+        "unions": [
+            {
+                "name": "Option",
+                "comment": " Stylesheet options\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Color",
+                "comment": " ",
+                "args": [],
+                "type": "Style.Internal.Model.Color"
+            },
+            {
+                "name": "Font",
+                "comment": " ",
+                "args": [],
+                "type": "Style.Internal.Model.Font"
+            },
+            {
+                "name": "Property",
+                "comment": " ",
+                "args": [
+                    "class",
+                    "variation"
+                ],
+                "type": "Style.Internal.Model.Property class variation"
+            },
+            {
+                "name": "Style",
+                "comment": " ",
+                "args": [
+                    "class",
+                    "variation"
+                ],
+                "type": "Style.Internal.Batchable.Batchable (Style.Internal.Model.Style class variation)"
+            },
+            {
+                "name": "StyleSheet",
+                "comment": " ",
+                "args": [
+                    "style",
+                    "variation"
+                ],
+                "type": "Style.Internal.Model.StyleSheet style variation"
+            },
+            {
+                "name": "Transform",
+                "comment": " ",
+                "args": [],
+                "type": "Style.Internal.Model.Transformation"
+            }
+        ],
+        "values": [
+            {
+                "name": "checked",
+                "comment": " ",
+                "type": "List.List (Style.Property class variation) -> Style.Property class variation"
+            },
+            {
+                "name": "cursor",
+                "comment": " ",
+                "type": "String.String -> Style.Property class variation"
+            },
+            {
+                "name": "focus",
+                "comment": " ",
+                "type": "List.List (Style.Property class variation) -> Style.Property class variation"
+            },
+            {
+                "name": "hover",
+                "comment": " Example:\n\n    style Button\n        [ Color.background blue\n        , hover\n            [ Color.background red\n            ]\n        ]\n\n",
+                "type": "List.List (Style.Property class variation) -> Style.Property class variation"
+            },
+            {
+                "name": "importCss",
+                "comment": " ",
+                "type": "String.String -> Style.Style class variation"
+            },
+            {
+                "name": "importUrl",
+                "comment": " ",
+                "type": "String.String -> Style.Style class variation"
+            },
+            {
+                "name": "opacity",
+                "comment": " ",
+                "type": "Basics.Float -> Style.Property class variation"
+            },
+            {
+                "name": "origin",
+                "comment": " Set the transform origin.\n",
+                "type": "Basics.Float -> Basics.Float -> Basics.Float -> Style.Property class variation"
+            },
+            {
+                "name": "prop",
+                "comment": " ",
+                "type": "String.String -> String.String -> Style.Property class variation"
+            },
+            {
+                "name": "pseudo",
+                "comment": " ",
+                "type": "String.String -> List.List (Style.Property class variation) -> Style.Property class variation"
+            },
+            {
+                "name": "rgb",
+                "comment": "\nTakes values from 0 to 1 to make a nontransparent color in the rgb space.\n",
+                "type": "Basics.Float -> Basics.Float -> Basics.Float -> Style.Color"
+            },
+            {
+                "name": "rgba",
+                "comment": "\nTakes values from 0 to 1 to make a transparent color in the rgb space.\n",
+                "type": "Basics.Float -> Basics.Float -> Basics.Float -> Basics.Float -> Style.Color"
+            },
+            {
+                "name": "rotate",
+                "comment": " Units always rendered as `radians`.\n\nUse `degrees` or `turns` from the standard library if you want to use a different set of units.\n\n",
+                "type": "Basics.Float -> Style.Property class variation"
+            },
+            {
+                "name": "rotateAround",
+                "comment": " Rotate around a vector.\n\nAngle units always rendered as `radians`.\n\nUse `degrees` or `turns` from the standard library if you want to use a different set of units.\n\n",
+                "type": "( Basics.Float, Basics.Float, Basics.Float ) -> Basics.Float -> Style.Property class variation"
+            },
+            {
+                "name": "scale",
+                "comment": " ",
+                "type": "Basics.Float -> Basics.Float -> Basics.Float -> Style.Property class variation"
+            },
+            {
+                "name": "style",
+                "comment": " ",
+                "type": "class -> List.List (Style.Property class variation) -> Style.Style class variation"
+            },
+            {
+                "name": "styleSheet",
+                "comment": " ",
+                "type": "List.List (Style.Style elem variation) -> Style.StyleSheet elem variation"
+            },
+            {
+                "name": "styleSheetWith",
+                "comment": " ",
+                "type": "List.List Style.Option -> List.List (Style.Style elem variation) -> Style.StyleSheet elem variation"
+            },
+            {
+                "name": "translate",
+                "comment": " Units are always as pixels\n",
+                "type": "Basics.Float -> Basics.Float -> Basics.Float -> Style.Property class variation"
+            },
+            {
+                "name": "variation",
+                "comment": " ",
+                "type": "variation -> List.List (Style.Property class Basics.Never) -> Style.Property class variation"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Style.Background",
+        "comment": "\n\n\n## Background Image\n\n@docs image, coverImage, imageWith, repeatX, repeatY, repeat, space, stretch, noRepeat\n\n\n### Background Image Sizes\n\n@docs natural, cover, contain, width, height, size\n\n\n## Background Gradient\n\n@docs gradient, step, percent, px\n\n\n## Directed Gradients\n\n@docs gradientRight, gradientLeft, gradientUp, gradientDown, gradientTopRight, gradientBottomRight, gradientTopLeft, gradientBottomLeft\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "contain",
+                "comment": " Scale the image proportionally so that it fits entirely in view.\n",
+                "type": "Style.Background.Size"
+            },
+            {
+                "name": "cover",
+                "comment": " Scale the image proportionally so that it covers the background.\n",
+                "type": "Style.Background.Size"
+            },
+            {
+                "name": "coverImage",
+                "comment": " A background image that will scale to cover the entire background.\n",
+                "type": "String.String -> Style.Property class variation"
+            },
+            {
+                "name": "gradient",
+                "comment": " Here's an example of creating a background gradient:\n\n    Background.gradient 0 [ step Color.blue, step Color.green]\n\nThe first number of the gradient angle given in radians, where 0 is pointing up.\n\n",
+                "type": "Basics.Float -> List.List Style.Background.GradientStep -> Style.Property class variation"
+            },
+            {
+                "name": "gradientBottomLeft",
+                "comment": " ",
+                "type": "List.List Style.Background.GradientStep -> Style.Property class variation"
+            },
+            {
+                "name": "gradientBottomRight",
+                "comment": " ",
+                "type": "List.List Style.Background.GradientStep -> Style.Property class variation"
+            },
+            {
+                "name": "gradientDown",
+                "comment": " ",
+                "type": "List.List Style.Background.GradientStep -> Style.Property class variation"
+            },
+            {
+                "name": "gradientLeft",
+                "comment": " ",
+                "type": "List.List Style.Background.GradientStep -> Style.Property class variation"
+            },
+            {
+                "name": "gradientRight",
+                "comment": " ",
+                "type": "List.List Style.Background.GradientStep -> Style.Property class variation"
+            },
+            {
+                "name": "gradientTopLeft",
+                "comment": " ",
+                "type": "List.List Style.Background.GradientStep -> Style.Property class variation"
+            },
+            {
+                "name": "gradientTopRight",
+                "comment": " ",
+                "type": "List.List Style.Background.GradientStep -> Style.Property class variation"
+            },
+            {
+                "name": "gradientUp",
+                "comment": " ",
+                "type": "List.List Style.Background.GradientStep -> Style.Property class variation"
+            },
+            {
+                "name": "height",
+                "comment": " Set only the background image height, the width will be scaled autmatically.\n",
+                "type": "Style.Internal.Model.Length -> Style.Background.Size"
+            },
+            {
+                "name": "image",
+                "comment": " A background image that keeps it's natural width and height.\n",
+                "type": "String.String -> Style.Property class variation"
+            },
+            {
+                "name": "imageWith",
+                "comment": " ",
+                "type": "{ src : String.String, position : ( Basics.Float, Basics.Float ), repeat : Style.Background.Repeat, size : Style.Background.Size } -> Style.Property class variation"
+            },
+            {
+                "name": "natural",
+                "comment": " Keep the image at it's natural size.\n",
+                "type": "Style.Background.Size"
+            },
+            {
+                "name": "noRepeat",
+                "comment": " ",
+                "type": "Style.Background.Repeat"
+            },
+            {
+                "name": "percent",
+                "comment": " ",
+                "type": "Basics.Float -> Style.Color -> Style.Background.GradientStep"
+            },
+            {
+                "name": "px",
+                "comment": " ",
+                "type": "Basics.Float -> Style.Color -> Style.Background.GradientStep"
+            },
+            {
+                "name": "repeat",
+                "comment": " ",
+                "type": "Style.Background.Repeat"
+            },
+            {
+                "name": "repeatX",
+                "comment": " ",
+                "type": "Style.Background.Repeat"
+            },
+            {
+                "name": "repeatY",
+                "comment": " ",
+                "type": "Style.Background.Repeat"
+            },
+            {
+                "name": "size",
+                "comment": " Set both the width and height independently. This can potentially skew the image.\n",
+                "type": "{ height : Style.Internal.Model.Length, width : Style.Internal.Model.Length } -> Style.Background.Size"
+            },
+            {
+                "name": "space",
+                "comment": " Leftover space between tiled images will be blank.\n",
+                "type": "Style.Background.Repeat"
+            },
+            {
+                "name": "step",
+                "comment": " ",
+                "type": "Style.Color -> Style.Background.GradientStep"
+            },
+            {
+                "name": "stretch",
+                "comment": " Images will stretch to take up to take up leftover space. Background position will be ignored.\n",
+                "type": "Style.Background.Repeat"
+            },
+            {
+                "name": "width",
+                "comment": " Set only the background image width, the height will be scaled autmatically.\n",
+                "type": "Style.Internal.Model.Length -> Style.Background.Size"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Style.Border",
+        "comment": " Border Properties\n\n\n# Border Widths\n\n@docs none, all, left, right, top, bottom\n\n\n# Border Styles\n\n@docs solid, dashed, dotted\n\n\n# Rounded Border\n\n@docs rounded, roundTopLeft, roundTopRight, roundBottomRight, roundBottomLeft\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "all",
+                "comment": " ",
+                "type": "Basics.Float -> Style.Property class variation"
+            },
+            {
+                "name": "bottom",
+                "comment": " ",
+                "type": "Basics.Float -> Style.Property class variation"
+            },
+            {
+                "name": "dashed",
+                "comment": " ",
+                "type": "Style.Property class variation"
+            },
+            {
+                "name": "dotted",
+                "comment": " ",
+                "type": "Style.Property class variation"
+            },
+            {
+                "name": "left",
+                "comment": " ",
+                "type": "Basics.Float -> Style.Property class variation"
+            },
+            {
+                "name": "none",
+                "comment": " No Borders\n",
+                "type": "Style.Property class variation"
+            },
+            {
+                "name": "right",
+                "comment": " ",
+                "type": "Basics.Float -> Style.Property class variation"
+            },
+            {
+                "name": "roundBottomLeft",
+                "comment": " ",
+                "type": "Basics.Float -> Style.Property class variation"
+            },
+            {
+                "name": "roundBottomRight",
+                "comment": " ",
+                "type": "Basics.Float -> Style.Property class variation"
+            },
+            {
+                "name": "roundTopLeft",
+                "comment": " ",
+                "type": "Basics.Float -> Style.Property class variation"
+            },
+            {
+                "name": "roundTopRight",
+                "comment": " ",
+                "type": "Basics.Float -> Style.Property class variation"
+            },
+            {
+                "name": "rounded",
+                "comment": " Round all corners.\n",
+                "type": "Basics.Float -> Style.Property class variation"
+            },
+            {
+                "name": "solid",
+                "comment": " ",
+                "type": "Style.Property class variation"
+            },
+            {
+                "name": "top",
+                "comment": " ",
+                "type": "Basics.Float -> Style.Property class variation"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Style.Color",
+        "comment": " Set Colors for your style.\n\nMeant to be imported as\n\n    import Style.Color as Color\n\n@docs text, background, border, cursor, decoration, selection, placeholder\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "background",
+                "comment": " ",
+                "type": "Style.Color -> Style.Property class variation"
+            },
+            {
+                "name": "border",
+                "comment": " ",
+                "type": "Style.Color -> Style.Property class variation"
+            },
+            {
+                "name": "cursor",
+                "comment": " ",
+                "type": "Style.Color -> Style.Property class variation"
+            },
+            {
+                "name": "decoration",
+                "comment": " Text decoration color.\n",
+                "type": "Style.Color -> Style.Property class variation"
+            },
+            {
+                "name": "placeholder",
+                "comment": " The color of the input `placeholder` element.\n",
+                "type": "Style.Color -> Style.Property class variation"
+            },
+            {
+                "name": "selection",
+                "comment": " ",
+                "type": "Style.Color -> Style.Property class variation"
+            },
+            {
+                "name": "text",
+                "comment": " ",
+                "type": "Style.Color -> Style.Property class variation"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Style.Filter",
+        "comment": " Filters that can be applied to an element.\n\nIf multiple filters are given, they will stack.\n\n    import Style.Filter as Filter\n    import Style exposing (..)\n\n    style MyFitleredStyle\n        [ Filter.blur 0.5\n        , Filter.invert 0.5\n        ]\n\n@docs url, blur, brightness, contrast, grayscale, hueRotate, invert, opacity, saturate, sepia\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "blur",
+                "comment": " ",
+                "type": "Basics.Float -> Style.Property class variation"
+            },
+            {
+                "name": "brightness",
+                "comment": " ",
+                "type": "Basics.Float -> Style.Property class variation"
+            },
+            {
+                "name": "contrast",
+                "comment": " ",
+                "type": "Basics.Float -> Style.Property class variation"
+            },
+            {
+                "name": "grayscale",
+                "comment": " ",
+                "type": "Basics.Float -> Style.Property class variation"
+            },
+            {
+                "name": "hueRotate",
+                "comment": " ",
+                "type": "Basics.Float -> Style.Property class variation"
+            },
+            {
+                "name": "invert",
+                "comment": " ",
+                "type": "Basics.Float -> Style.Property class variation"
+            },
+            {
+                "name": "opacity",
+                "comment": " ",
+                "type": "Basics.Float -> Style.Property class variation"
+            },
+            {
+                "name": "saturate",
+                "comment": " ",
+                "type": "Basics.Float -> Style.Property class variation"
+            },
+            {
+                "name": "sepia",
+                "comment": " ",
+                "type": "Basics.Float -> Style.Property class variation"
+            },
+            {
+                "name": "url",
+                "comment": " ",
+                "type": "String.String -> Style.Property class variation"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Style.Font",
+        "comment": " Font Properties\n\nMeant to be imported as:\n\n    import Style.Font as Font\n\n\n## Typefaces\n\n@docs typeface, font, serif, sansSerif, cursive, fantasy, monospace, importUrl\n\n\n## Properties\n\n@docs size, lineHeight, letterSpacing, wordSpacing, alignLeft, alignRight, center, justify, justifyAll\n\n\n## Font Styles\n\n@docs uppercase, capitalize, lowercase, underline, strike, italic, bold, weight, light\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "alignLeft",
+                "comment": " Align the font to the left.\n",
+                "type": "Style.Property class variation"
+            },
+            {
+                "name": "alignRight",
+                "comment": " Align the font to the right.\n",
+                "type": "Style.Property class variation"
+            },
+            {
+                "name": "bold",
+                "comment": " ",
+                "type": "Style.Property class variation"
+            },
+            {
+                "name": "capitalize",
+                "comment": " ",
+                "type": "Style.Property class variation"
+            },
+            {
+                "name": "center",
+                "comment": " Align font center.\n",
+                "type": "Style.Property class variation"
+            },
+            {
+                "name": "cursive",
+                "comment": " ",
+                "type": "Style.Font"
+            },
+            {
+                "name": "fantasy",
+                "comment": " ",
+                "type": "Style.Font"
+            },
+            {
+                "name": "font",
+                "comment": " ",
+                "type": "String.String -> Style.Font"
+            },
+            {
+                "name": "importUrl",
+                "comment": " ",
+                "type": "{ url : String.String, name : String.String } -> Style.Font"
+            },
+            {
+                "name": "italic",
+                "comment": " ",
+                "type": "Style.Property class variation"
+            },
+            {
+                "name": "justify",
+                "comment": " ",
+                "type": "Style.Property class variation"
+            },
+            {
+                "name": "justifyAll",
+                "comment": " ",
+                "type": "Style.Property class variation"
+            },
+            {
+                "name": "letterSpacing",
+                "comment": " In `px`.\n",
+                "type": "Basics.Float -> Style.Property class variation"
+            },
+            {
+                "name": "light",
+                "comment": " ",
+                "type": "Style.Property class variation"
+            },
+            {
+                "name": "lineHeight",
+                "comment": " This is the only unitless value in the library that isn't `px`.\n\nGiven as a _proportion_ of the `Font.size`.\n\nThis means the final lineHeight in px is:\n\n      Font.size * Font.lineHeight == lineHeightInPx\n\n",
+                "type": "Basics.Float -> Style.Property class variation"
+            },
+            {
+                "name": "lowercase",
+                "comment": " ",
+                "type": "Style.Property class variation"
+            },
+            {
+                "name": "monospace",
+                "comment": " ",
+                "type": "Style.Font"
+            },
+            {
+                "name": "sansSerif",
+                "comment": " ",
+                "type": "Style.Font"
+            },
+            {
+                "name": "serif",
+                "comment": " ",
+                "type": "Style.Font"
+            },
+            {
+                "name": "size",
+                "comment": " Font size as `px`\n",
+                "type": "Basics.Float -> Style.Property class variation"
+            },
+            {
+                "name": "strike",
+                "comment": " ",
+                "type": "Style.Property class variation"
+            },
+            {
+                "name": "typeface",
+                "comment": " ",
+                "type": "List.List Style.Font -> Style.Property class variation"
+            },
+            {
+                "name": "underline",
+                "comment": " ",
+                "type": "Style.Property class variation"
+            },
+            {
+                "name": "uppercase",
+                "comment": " ",
+                "type": "Style.Property class variation"
+            },
+            {
+                "name": "weight",
+                "comment": " ",
+                "type": "Basics.Int -> Style.Property class variation"
+            },
+            {
+                "name": "wordSpacing",
+                "comment": " In `px`.\n",
+                "type": "Basics.Float -> Style.Property class variation"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Style.Scale",
+        "comment": " When designing it's nice to use a modular scale to set spacial rythms.\n\n    scaled =\n        Scale.modular 16 1.618\n\nA modular scale starts with a number, and multiplies it by a ratio a number of times.\n\nThen, when setting font sizes you can use:\n\n    Font.size (scaled 1) -- results in 16\n\n    Font.size (scaled 2) -- 16 * (1.618 ^ 2) results in 25.8\n\nWe can also provide negative numbers to scale below 16px.\n\n@docs modular, roundedModular\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "modular",
+                "comment": " ",
+                "type": "Basics.Float -> Basics.Float -> Basics.Int -> Basics.Float"
+            },
+            {
+                "name": "roundedModular",
+                "comment": " Same a modular but rounds to the nearest integer.\n\nStill returns a Float for compatibility reasons.\n\n",
+                "type": "Basics.Float -> Basics.Float -> Basics.Int -> Basics.Float"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Style.Shadow",
+        "comment": " Shadows\n\nIf multiple shadows are set, they will stack.\n\n\n# Easy Presets\n\nThese can be used directly as properties.\n\n    import Color\n    import Style exposing (..)\n    import Style.Shadow as Shadow\n\n    style MyStyleWithShadow\n        [ Shadow.glow Color.red 5\n        ]\n\n@docs simple, deep, glow, innerGlow, textGlow\n\n\n# Advanced Shadows\n\nYou can also have more control over the paraters of the shadow, such as the `Shadow.box` shown below.\n\n    import Color\n    import Style exposing (..)\n    import Style.Shadow as Shadow\n\n    style MyStyleWithShadow\n        [ Shadow.box\n            { offset = ( 0, 0 )\n            , size = 5\n            , blur = 2\n            , color = Color.blue\n            }\n\n        ]\n\n@docs box, drop, inset, text\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "box",
+                "comment": " ",
+                "type": "{ offset : ( Basics.Float, Basics.Float ), size : Basics.Float, blur : Basics.Float, color : Style.Color } -> Style.Property class variation"
+            },
+            {
+                "name": "deep",
+                "comment": " A nice preset box shadow that's deeper than `simple`.\n",
+                "type": "Style.Property class variation"
+            },
+            {
+                "name": "drop",
+                "comment": " A drop shadow will add a shadow to whatever shape you give it.\n\nSo, if you apply a drop shadow to an image with an alpha channel, the shadow will appear around the eges.\n\n",
+                "type": "{ offset : ( Basics.Float, Basics.Float ), blur : Basics.Float, color : Style.Color } -> Style.Property class variation"
+            },
+            {
+                "name": "glow",
+                "comment": " A simple glow by specifying the color and size.\n",
+                "type": "Style.Color -> Basics.Float -> Style.Property class variation"
+            },
+            {
+                "name": "innerGlow",
+                "comment": " ",
+                "type": "Style.Color -> Basics.Float -> Style.Property class variation"
+            },
+            {
+                "name": "inset",
+                "comment": " ",
+                "type": "{ offset : ( Basics.Float, Basics.Float ), size : Basics.Float, blur : Basics.Float, color : Style.Color } -> Style.Property class variation"
+            },
+            {
+                "name": "simple",
+                "comment": " A nice preset box shadow.\n",
+                "type": "Style.Property class variation"
+            },
+            {
+                "name": "text",
+                "comment": " ",
+                "type": "{ offset : ( Basics.Float, Basics.Float ), blur : Basics.Float, color : Style.Color } -> Style.Property class variation"
+            },
+            {
+                "name": "textGlow",
+                "comment": " ",
+                "type": "Style.Color -> Basics.Float -> Style.Property class variation"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Style.Sheet",
+        "comment": " Combine and mix child stylesheets.\n\n@docs ChildSheet, merge, map, mix\n\n",
+        "unions": [
+            {
+                "name": "ChildSheet",
+                "comment": " ",
+                "args": [
+                    "class",
+                    "variation"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "map",
+                "comment": " ",
+                "type": "(class -> parent) -> (variation -> parentVariation) -> List.List (Style.Style class variation) -> Style.Sheet.ChildSheet parent parentVariation"
+            },
+            {
+                "name": "merge",
+                "comment": " Merge a child stylesheet into a parent.\n",
+                "type": "Style.Sheet.ChildSheet class variation -> Style.Style class variation"
+            },
+            {
+                "name": "mix",
+                "comment": " ",
+                "type": "List.List (Style.Style class variation) -> Style.Style class variation"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Style.Transition",
+        "comment": " Transitions\n\n@docs all, performant, transitions, Transition\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Transition",
+                "comment": " ",
+                "args": [],
+                "type": "{ delay : Style.Transition.Time, duration : Style.Transition.Time, easing : String.String, props : List.List String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "all",
+                "comment": " Sets transitions on all properties.\n\nIt defaults to:\n\n    - 130ms duration\n    - \"ease\" easing.\n\n",
+                "type": "Style.Property class variation"
+            },
+            {
+                "name": "performant",
+                "comment": " This enables transitions on properties that will be GPU accelerated: `transform`, `filter`, and `opacity`.\n\nIt defaults to:\n\n    - 130ms duration\n    - \"ease\" easing.\n\n",
+                "type": "Style.Property class variation"
+            },
+            {
+                "name": "transitions",
+                "comment": " Create a set of transitions manually.\n",
+                "type": "List.List Style.Transition.Transition -> Style.Property class variation"
+            }
+        ],
+        "binops": []
+    }
+]

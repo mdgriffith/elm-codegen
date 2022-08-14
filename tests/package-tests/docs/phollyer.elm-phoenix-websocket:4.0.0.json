@@ -1,0 +1,1298 @@
+[
+    {
+        "name": "Phoenix",
+        "comment": " This module is a wrapper around the [Socket](Phoenix.Socket),\n[Channel](Phoenix.Channel) and [Presence](Phoenix.Presence) modules. It handles\nall the low level stuff with a simple, but extensive API. It automates a few\nprocesses, and generally simplifies working with Phoenix WebSockets.\n\nOnce you have installed the package, and followed the simple setup instructions\n[here](https://package.elm-lang.org/packages/phollyer/elm-phoenix-websocket/latest/),\nconfiguring this module is as simple as this:\n\n    import Phoenix\n    import Ports.Phoenix as Ports\n\n\n    -- Add the Phoenix Model to your Model\n\n    type alias Model =\n        { phoenix : Phoenix.Model\n            ...\n        }\n\n\n    -- Initialize the Phoenix Model\n\n    init : Model\n    init =\n        { phoenix = Phoenix.init Ports.config\n            ...\n        }\n\n\n    -- Add a Phoenix Msg\n\n    type Msg\n        = PhoenixMsg Phoenix.Msg\n        | ...\n\n\n    -- Handle Phoenix Msgs\n\n    update : Msg -> Model -> (Model Cmd Msg)\n    update msg model =\n        case msg of\n            PhoenixMsg subMsg ->\n                let\n                    (phoenix, phoenixCmd, phoenixMsg) =\n                        Phoenix.update subMsg model.phoenix\n                in\n                case phoenixMsg of\n                    ...\n\n                _ ->\n                    ({ model | phoenix = phoenix }\n                    , Cmd.map PhoenixMsg phoenixCmd\n                    )\n\n            _ ->\n                (model, Cmd.none)\n\n\n    -- Subscribe to receive Phoenix Msgs\n\n    subscriptions : Model -> Sub Msg\n    subscriptions model =\n        Sub.map PhoenixMsg <|\n            Phoenix.subscriptions model.phoenix\n\n\n# Model\n\n@docs Model\n\n\n# Initialising the Model\n\n@docs PortConfig, init\n\n\n# Update\n\n@docs Msg\n\n@docs SocketState, SocketMessage\n\n@docs Topic, Event, Payload, OriginalPayload, PushRef, ChannelResponse\n\n@docs Presence, PresenceDiff, PresenceEvent\n\n@docs InternalError\n\n@docs PhoenixMsg, update, updateWith, map, mapMsg\n\n\n# Pushing\n\nWhen pushing an event to a Channel, opening the Socket, and joining the\nChannel is handled automatically. Pushes will be queued until the Channel has\nbeen joined, at which point, any queued pushes will be sent in a batch.\n\nSee [Connecting to the Socket](#connecting-to-the-socket) and\n[Joining a Channel](#joining-a-channel) for more details on handling connecting\nand joining manually.\n\nIf the Socket is open and the Channel already joined, the push will be sent\nimmediately.\n\n@docs RetryStrategy, PushConfig, pushConfig, push\n\n\n# Subscriptions\n\n@docs subscriptions\n\n\n# Connecting to the Socket\n\nConnecting to the Socket is automatic on the first [push](#push) to a Channel,\nand also when a [join](#join) is attempted. However, if it is necessary to\nconnect before hand, the [connect](#connect) function is available.\n\n@docs connect\n\n\n## Setting connect options\n\n@docs addConnectOptions, setConnectOptions\n\n\n## Sending data when connecting\n\n@docs setConnectParams\n\n\n# Disconnecting from the Socket\n\n@docs disconnect, disconnectAndReset\n\n\n# Joining a Channel\n\nJoining a Channel is automatic on the first [push](#push) to the Channel.\nHowever, if it is necessary to join before hand, the [join](#join) function is\navailable.\n\n@docs join, joinAll, JoinConfig, joinConfig, setJoinConfig\n\n\n# Leaving a Channel\n\n@docs leave, leaveAll, LeaveConfig, setLeaveConfig\n\n\n# Incoming Events\n\nSetting up incoming events to receive on a Channel can be done when setting a\n[JoinConfig](#JoinConfig), but if it is necessary to switch events on and off\nintermittently, then the following functions are available.\n\n@docs addEvent, addEvents, dropEvent, dropEvents\n\n\n# Helpers\n\n\n## Socket Information\n\n@docs socketState, socketStateToString, isConnected, connectionState, disconnectReason, endPointURL, protocol\n\n\n## Channels\n\n@docs queuedChannels, channelQueued, joinedChannels, channelJoined, topicParts\n\n\n## Pushes\n\n@docs allQueuedPushes, queuedPushes, pushQueued, dropQueuedPush\n\n@docs pushInFlight, pushWaiting\n\n@docs timeoutPushes, pushTimedOut, dropTimeoutPush, pushTimeoutCountdown\n\n@docs dropPush\n\n\n## Presence Information\n\n@docs presenceState, presenceDiff, presenceJoins, presenceLeaves, lastPresenceJoin, lastPresenceLeave\n\n\n## Batching\n\n@docs batch, batchWithParams\n\n\n## Logging\n\nHere you can log data to the console, and activate and deactive the socket's\nlogger, but be warned, **there is no safeguard when you compile** such as you\nget when you use `Debug.log`. Be sure to deactive the logging before you deploy\nto production.\n\nHowever, the ability to easily toggle logging on and off leads to a possible\nuse case where, in a deployed production environment, an admin is able to see\nall the logging, while regular users do not.\n\n@docs log, startLogging, stopLogging\n\n",
+        "unions": [
+            {
+                "name": "ChannelResponse",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "ChannelError",
+                        [
+                            "Phoenix.Topic"
+                        ]
+                    ],
+                    [
+                        "ChannelClosed",
+                        [
+                            "Phoenix.Topic"
+                        ]
+                    ],
+                    [
+                        "LeaveOk",
+                        [
+                            "Phoenix.Topic"
+                        ]
+                    ],
+                    [
+                        "JoinOk",
+                        [
+                            "Phoenix.Topic",
+                            "Phoenix.Payload"
+                        ]
+                    ],
+                    [
+                        "JoinError",
+                        [
+                            "Phoenix.Topic",
+                            "Phoenix.Payload"
+                        ]
+                    ],
+                    [
+                        "JoinTimeout",
+                        [
+                            "Phoenix.Topic",
+                            "Phoenix.OriginalPayload"
+                        ]
+                    ],
+                    [
+                        "PushOk",
+                        [
+                            "Phoenix.Topic",
+                            "Phoenix.Event",
+                            "Phoenix.PushRef",
+                            "Phoenix.Payload"
+                        ]
+                    ],
+                    [
+                        "PushError",
+                        [
+                            "Phoenix.Topic",
+                            "Phoenix.Event",
+                            "Phoenix.PushRef",
+                            "Phoenix.Payload"
+                        ]
+                    ],
+                    [
+                        "PushTimeout",
+                        [
+                            "Phoenix.Topic",
+                            "Phoenix.Event",
+                            "Phoenix.PushRef",
+                            "Phoenix.OriginalPayload"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "InternalError",
+                "comment": " An `InternalError` should never happen, but if it does, it is because the\nJS is out of sync with this package.\n\nIf you ever receive this message, please\n[raise an issue](https://github.com/phollyer/elm-phoenix-websocket/issues).\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "DecoderError",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "InvalidMessage",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Model",
+                "comment": " The model that carries the internal state.\n\nThis is an opaque type, so use the provided API to interact with it.\n\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Msg",
+                "comment": " The `Msg` type that you pass into the [update](#update) function.\n\nThis is an opaque type, for pattern matching see [PhoenixMsg](#PhoenixMsg).\n\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "PhoenixMsg",
+                "comment": " Pattern match on these in your `update` function.\n\nTo handle events that are `push`ed or `broadcast` from an Elixir Channel you\nshould pattern match on `ChannelEvent`.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NoOp",
+                        []
+                    ],
+                    [
+                        "SocketMessage",
+                        [
+                            "Phoenix.SocketMessage"
+                        ]
+                    ],
+                    [
+                        "ChannelResponse",
+                        [
+                            "Phoenix.ChannelResponse"
+                        ]
+                    ],
+                    [
+                        "ChannelEvent",
+                        [
+                            "Phoenix.Topic",
+                            "Phoenix.Event",
+                            "Phoenix.Payload"
+                        ]
+                    ],
+                    [
+                        "PresenceEvent",
+                        [
+                            "Phoenix.PresenceEvent"
+                        ]
+                    ],
+                    [
+                        "PushTimeoutsSent",
+                        [
+                            "List.List Phoenix.PushConfig"
+                        ]
+                    ],
+                    [
+                        "InternalError",
+                        [
+                            "Phoenix.InternalError"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "PresenceEvent",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Join",
+                        [
+                            "Phoenix.Topic",
+                            "Phoenix.Presence"
+                        ]
+                    ],
+                    [
+                        "Leave",
+                        [
+                            "Phoenix.Topic",
+                            "Phoenix.Presence"
+                        ]
+                    ],
+                    [
+                        "State",
+                        [
+                            "Phoenix.Topic",
+                            "List.List Phoenix.Presence"
+                        ]
+                    ],
+                    [
+                        "Diff",
+                        [
+                            "Phoenix.Topic",
+                            "Phoenix.PresenceDiff"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "RetryStrategy",
+                "comment": " The retry strategy to use if a push times out.\n\n  - `Drop` - Drop the push and don't try again. This is the default if no\n    strategy is set.\n\n  - `Every second` - The number of seconds to wait between retries.\n\n  - `Backoff [List seconds] (Maybe max)` - A backoff strategy enabling you to increase\n    the delay between retries. When the list has been exhausted, `max` will be\n    used for each subsequent attempt, if max is `Nothing`, the push will then\n    be dropped, which is useful if you want to limit the number of retries.\n\n        Backoff [ 1, 5, 10, 20 ] (Just 30)\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Drop",
+                        []
+                    ],
+                    [
+                        "Every",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "Backoff",
+                        [
+                            "List.List Basics.Int",
+                            "Maybe.Maybe Basics.Int"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "SocketMessage",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "StateChange",
+                        [
+                            "Phoenix.SocketState"
+                        ]
+                    ],
+                    [
+                        "SocketError",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "ChannelMessage",
+                        [
+                            "{ topic : String.String, event : String.String, payload : Json.Encode.Value, joinRef : Maybe.Maybe String.String, ref : Maybe.Maybe String.String }"
+                        ]
+                    ],
+                    [
+                        "PresenceMessage",
+                        [
+                            "{ topic : String.String, event : String.String, payload : Json.Encode.Value }"
+                        ]
+                    ],
+                    [
+                        "Heartbeat",
+                        [
+                            "{ topic : String.String, event : String.String, payload : Json.Encode.Value, ref : String.String }"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "SocketState",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Connecting",
+                        []
+                    ],
+                    [
+                        "Connected",
+                        []
+                    ],
+                    [
+                        "Disconnecting",
+                        []
+                    ],
+                    [
+                        "Disconnected",
+                        [
+                            "{ reason : Maybe.Maybe String.String, code : Basics.Int, wasClean : Basics.Bool, type_ : String.String, isTrusted : Basics.Bool }"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Event",
+                "comment": " A type alias representing an event that is sent to, or received from, a\nChannel.\n",
+                "args": [],
+                "type": "String.String"
+            },
+            {
+                "name": "JoinConfig",
+                "comment": " A type alias representing the optional config to use when joining a\nChannel.\n\n  - `topic` - The channel topic id, for example: `\"topic:subTopic\"`.\n\n  - `payload` - Data to be sent to the Channel when joining. If no data is\n    required, set this to\n    [Json.Encode.null](https://package.elm-lang.org/packages/elm/json/latest/Json-Encode#null).\n    Defaults to\n    [Json.Encode.null](https://package.elm-lang.org/packages/elm/json/latest/Json-Encode#null).\n\n  - `events` - A list of events to receive from the Channel. Defaults to `[]`.\n\n  - `timeout` - Optional timeout, in ms, before retrying to join if the previous\n    attempt failed. Defaults to `Nothing`.\n\nIf a `JoinConfig` is not set prior to joining a Channel, the defaults will be used.\n\n",
+                "args": [],
+                "type": "{ topic : String.String, payload : Json.Encode.Value, events : List.List String.String, timeout : Maybe.Maybe Basics.Int }"
+            },
+            {
+                "name": "LeaveConfig",
+                "comment": " A type alias representing the optional config to use when leaving a\nChannel.\n\n  - `topic` - The channel topic id, for example: `\"topic:subTopic\"`.\n\n  - `timeout` - Optional timeout, in ms, before retrying to leave if the\n    previous attempt failed. Defaults to `Nothing`.\n\nIf a `LeaveConfig` is not set prior to leaving a Channel, the defaults will be used.\n\n",
+                "args": [],
+                "type": "{ topic : Phoenix.Topic, timeout : Maybe.Maybe Basics.Int }"
+            },
+            {
+                "name": "OriginalPayload",
+                "comment": " A type alias representing the original payload that was sent with a\n[push](#PushConfig).\n",
+                "args": [],
+                "type": "Json.Encode.Value"
+            },
+            {
+                "name": "Payload",
+                "comment": " A type alias representing data that is sent to, or received from, a\nChannel.\n",
+                "args": [],
+                "type": "Json.Encode.Value"
+            },
+            {
+                "name": "PortConfig",
+                "comment": " A type alias representing the ports that are needed to communicate with JS.\n\nThis is for reference only, you won't need this if you copy\n[this file](https://github.com/phollyer/elm-phoenix-websocket/tree/master/ports)\ninto your `src`.\n\n",
+                "args": [],
+                "type": "{ phoenixSend : { msg : String.String, payload : Json.Encode.Value } -> Platform.Cmd.Cmd Phoenix.Msg, socketReceiver : ({ msg : String.String, payload : Json.Encode.Value } -> Phoenix.Msg) -> Platform.Sub.Sub Phoenix.Msg, channelReceiver : ({ topic : String.String, msg : String.String, payload : Json.Encode.Value } -> Phoenix.Msg) -> Platform.Sub.Sub Phoenix.Msg, presenceReceiver : ({ topic : String.String, msg : String.String, payload : Json.Encode.Value } -> Phoenix.Msg) -> Platform.Sub.Sub Phoenix.Msg }"
+            },
+            {
+                "name": "Presence",
+                "comment": " A type alias representing a Presence on a Channel.\n\n  - `id` - The `id` used to identify the Presence map in the\n    [Presence.track/3](https://hexdocs.pm/phoenix/Phoenix.Presence.html#c:track/3)\n    Elixir function. The recommended approach is to use the users' `id`.\n\n  - `metas`- A list of metadata as stored in the\n    [Presence.track/3](https://hexdocs.pm/phoenix/Phoenix.Presence.html#c:track/3)\n    function.\n\n  - `user` - The user data that is pulled from the DB and stored on the\n    Presence in the\n    [fetch/2](https://hexdocs.pm/phoenix/Phoenix.Presence.html#c:fetch/2)\n    Elixir callback function. This is the recommended approach for storing user\n    data on the Presence. If\n    [fetch/2](https://hexdocs.pm/phoenix/Phoenix.Presence.html#c:fetch/2) is\n    not being used then `user` will be equal to\n    [Json.Encode.null](https://package.elm-lang.org/packages/elm/json/latest/Json-Encode#null).\n\n  - `presence` - The whole Presence map. This provides a way to access any\n    additional data that is stored on the Presence.\n\n```\n-- MyAppWeb.MyChannel.ex\n\ndef handle_info(:after_join, socket) do\n  {:ok, _} = Presence.track(socket, socket.assigns.user_id, %{\n    online_at: System.os_time(:millisecond)\n  })\n\n  push(socket, \"presence_state\", Presence.list(socket))\n\n  {:noreply, socket}\nend\n\n-- MyAppWeb.Presence.ex\n\ndefmodule MyAppWeb.Presence do\n  use Phoenix.Presence,\n    otp_app: :my_app,\n    pubsub_server: MyApp.PubSub\n\n  def fetch(_topic, presences) do\n    query =\n      from u in User,\n      where: u.id in ^Map.keys(presences),\n      select: {u.id, u}\n\n    users = query |> Repo.all() |> Enum.into(%{})\n\n    for {key, %{metas: metas}} <- presences, into: %{} do\n      {key, %{metas: metas, user: users[key]}}\n    end\n  end\nend\n```\n\n",
+                "args": [],
+                "type": "{ id : String.String, metas : List.List Json.Encode.Value, user : Json.Encode.Value, presence : Json.Encode.Value }"
+            },
+            {
+                "name": "PresenceDiff",
+                "comment": " ",
+                "args": [],
+                "type": "{ joins : List.List Phoenix.Presence, leaves : List.List Phoenix.Presence }"
+            },
+            {
+                "name": "PushConfig",
+                "comment": " A type alias representing the config for pushing a message to a Channel.\n\n  - `topic` - The Channel topic to send the push to.\n\n  - `event` - The event to send to the Channel.\n\n  - `payload` - The data to send with the push. If you don't need to send any\n    data, set this to\n    [Json.Encode.null](https://package.elm-lang.org/packages/elm/json/latest/Json-Encode#null).\n\n  - `timeout` - Optional timeout in milliseconds to set on the push request.\n\n  - `retryStrategy` - The retry strategy to use if the push times out.\n\n  - `ref` - Optional reference that can later be used to identify the push.\n    This is useful when using functions that need to find the push in order to\n    do their thing, such as [dropPush](#dropPush) or\n    [pushTimeoutCountdown](#pushTimeoutCountdown).\n\n",
+                "args": [],
+                "type": "{ topic : String.String, event : String.String, payload : Json.Encode.Value, timeout : Maybe.Maybe Basics.Int, retryStrategy : Phoenix.RetryStrategy, ref : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "PushRef",
+                "comment": " A type alias representing the `ref` set on a [push](#PushConfig).\n",
+                "args": [],
+                "type": "Maybe.Maybe String.String"
+            },
+            {
+                "name": "Topic",
+                "comment": " A type alias representing the Channel topic id, for example\n`\"topic:subTopic\"`.\n",
+                "args": [],
+                "type": "String.String"
+            }
+        ],
+        "values": [
+            {
+                "name": "addConnectOptions",
+                "comment": " Add some [ConnectOption](Phoenix.Socket#ConnectOption)s to set on the\nSocket when it is created.\n\n**Note:** This will overwrite any like for like\n[ConnectOption](Phoenix.Socket.ConnectOption)s that have already been set.\n\n    import Phoenix\n    import Phoenix.Socket exposing (ConnectOption(..))\n    import Ports.Phoenix as Ports\n\n    type alias Model =\n        { phoenix : Phoenix.Model\n            ...\n        }\n\n    init : Model\n    init =\n        { phoenix =\n            Phoenix.init Ports.config\n                |> Phoenix.addConnectOptions\n                    [ Timeout 7000\n                    , HeartbeatIntervalMillis 2000\n                    ]\n                |> Phoenix.addConnectOptions\n                    [ Timeout 5000 ]\n            ...\n        }\n\n    -- List ConnectOption == [ Timeout 5000, HeartbeatIntervalMillis 2000 ]\n\n",
+                "type": "List.List Phoenix.Socket.ConnectOption -> Phoenix.Model -> Phoenix.Model"
+            },
+            {
+                "name": "addEvent",
+                "comment": " Add the [Event](#Event) you want to receive from the Channel identified by\n[Topic](#Topic).\n",
+                "type": "Phoenix.Topic -> Phoenix.Event -> Phoenix.Model -> Platform.Cmd.Cmd Phoenix.Msg"
+            },
+            {
+                "name": "addEvents",
+                "comment": " Add the [Event](#Event)s you want to receive from the Channel identified by\n[Topic](#Topic).\n",
+                "type": "Phoenix.Topic -> List.List Phoenix.Event -> Phoenix.Model -> Platform.Cmd.Cmd Phoenix.Msg"
+            },
+            {
+                "name": "allQueuedPushes",
+                "comment": " Pushes that are queued and waiting for their Channel to join before being\nsent.\n",
+                "type": "Phoenix.Model -> Dict.Dict Phoenix.Topic (List.List Phoenix.PushConfig)"
+            },
+            {
+                "name": "batch",
+                "comment": " Batch a list of functions together.\n\n    import Phoenix exposing (pushConfig)\n\n    Phoenix.batch\n        [ Phoenix.join \"topic:subTopic3\"\n        , Phoenix.leave \"topic:subTopic2\"\n        , Phoenix.push\n            { pushConfig\n            | topic = \"topic:subTopic1\"\n            , event = \"hello\"\n            }\n        ]\n        model.phoenix\n\n",
+                "type": "List.List (Phoenix.Model -> ( Phoenix.Model, Platform.Cmd.Cmd Phoenix.Msg )) -> Phoenix.Model -> ( Phoenix.Model, Platform.Cmd.Cmd Phoenix.Msg )"
+            },
+            {
+                "name": "batchWithParams",
+                "comment": " Batch a list of parameters onto their functions.\n\n    import Phoenix\n\n    Phoenix.batchWithParams\n        [ (Phoenix.join, [ \"topic:subTopic1\", \"topic:subTopic2\" ])\n        , (Phoenix.leave, [ \"topic:subTopic3\", \"topic:subTopic4\" ])\n        , (Phoenix.push, [ pushConfig1, pushConfig2, pushConfig3 ])\n        ]\n        model.phoenix\n\n",
+                "type": "List.List ( a -> Phoenix.Model -> ( Phoenix.Model, Platform.Cmd.Cmd Phoenix.Msg ), List.List a ) -> Phoenix.Model -> ( Phoenix.Model, Platform.Cmd.Cmd Phoenix.Msg )"
+            },
+            {
+                "name": "channelJoined",
+                "comment": " Determine if a Channel has joined successfully.\n",
+                "type": "Phoenix.Topic -> Phoenix.Model -> Basics.Bool"
+            },
+            {
+                "name": "channelQueued",
+                "comment": " Determine if a Channel is in the queue to join.\n",
+                "type": "Phoenix.Topic -> Phoenix.Model -> Basics.Bool"
+            },
+            {
+                "name": "connect",
+                "comment": " Connect to the Socket.\n",
+                "type": "Phoenix.Model -> ( Phoenix.Model, Platform.Cmd.Cmd Phoenix.Msg )"
+            },
+            {
+                "name": "connectionState",
+                "comment": " The current connection state of the Socket as a String.\n",
+                "type": "Phoenix.Model -> String.String"
+            },
+            {
+                "name": "disconnect",
+                "comment": " Disconnect the Socket, maybe providing a status\n[code](https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent#Status_codes)\nfor the closure.\n\n[ConnectOptions](Socket#ConnectOptions) and configs etc will remain to make it\nsimpler to connect again. If you want to reset everything use the\n[disconnectAndReset](#disconnectAndReset) function instead.\n\n",
+                "type": "Maybe.Maybe Basics.Int -> Phoenix.Model -> ( Phoenix.Model, Platform.Cmd.Cmd Phoenix.Msg )"
+            },
+            {
+                "name": "disconnectAndReset",
+                "comment": " Disconnect the Socket, maybe providing a status\n[code](https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent#Status_codes)\nfor the closure.\n\nThis will reset all of the internal model, so information relating to\n[ConnectOptions](Socket#ConnectOptions) and configs etc will also be reset.\n\nThe only information that will remain is the [PortConfig](#PortConfig).\n\n",
+                "type": "Maybe.Maybe Basics.Int -> Phoenix.Model -> ( Phoenix.Model, Platform.Cmd.Cmd Phoenix.Msg )"
+            },
+            {
+                "name": "disconnectReason",
+                "comment": " The reason the Socket disconnected.\n",
+                "type": "Phoenix.Model -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "dropEvent",
+                "comment": " Remove an [Event](#Event) you no longer want to receive from the Channel\nidentified by [Topic](#Topic).\n",
+                "type": "Phoenix.Topic -> Phoenix.Event -> Phoenix.Model -> Platform.Cmd.Cmd Phoenix.Msg"
+            },
+            {
+                "name": "dropEvents",
+                "comment": " Remove [Event](#Event)s you no longer want to receive from the Channel\nidentified by [Topic](#Topic).\n",
+                "type": "Phoenix.Topic -> List.List Phoenix.Event -> Phoenix.Model -> Platform.Cmd.Cmd Phoenix.Msg"
+            },
+            {
+                "name": "dropPush",
+                "comment": " Cancel a [Push](#Push).\n\nThis will cancel pushes that are queued to be sent when their Channel joins. It\nwill also prevent pushes that timeout from being re-tried.\n\n",
+                "type": "(Phoenix.PushConfig -> Basics.Bool) -> Phoenix.Model -> Phoenix.Model"
+            },
+            {
+                "name": "dropQueuedPush",
+                "comment": " Cancel a queued [Push](#Push) that is waiting for its' Channel to\n[join](#join).\n\n    dropQueuedPush\n        (\\push -> push.topic == \"topic:subTopic\")\n        model.phoenix\n\n",
+                "type": "(Phoenix.PushConfig -> Basics.Bool) -> Phoenix.Model -> Phoenix.Model"
+            },
+            {
+                "name": "dropTimeoutPush",
+                "comment": " Cancel a timed out [Push](#Push).\n\n    dropTimeoutPush\n        (\\push -> push.topic == \"topic:subTopic\")\n        model.phoenix\n\nThis will only work after a `push` has timed out and before it is re-tried.\n\n",
+                "type": "(Phoenix.PushConfig -> Basics.Bool) -> Phoenix.Model -> Phoenix.Model"
+            },
+            {
+                "name": "endPointURL",
+                "comment": " The endpoint URL for the Socket.\n",
+                "type": "Phoenix.Model -> String.String"
+            },
+            {
+                "name": "init",
+                "comment": " Initialize the [Model](#Model) by providing the `ports` that enable\ncommunication with JS.\n\nThe easiest way to provide the `ports` is to copy\n[this file](https://github.com/phollyer/elm-phoenix-websocket/tree/master/ports)\ninto your `src`, and then use its `config` function as follows:\n\n    import Phoenix\n    import Ports.Phoenix as Ports\n\n    init : Model\n    init =\n        { phoenix = Phoenix.init Ports.config\n            ...\n        }\n\n",
+                "type": "Phoenix.PortConfig -> Phoenix.Model"
+            },
+            {
+                "name": "isConnected",
+                "comment": " Whether the Socket is connected or not.\n",
+                "type": "Phoenix.Model -> Basics.Bool"
+            },
+            {
+                "name": "join",
+                "comment": " Join a Channel referenced by the [Topic](#Topic).\n\nConnecting to the Socket is automatic if it has not already been done.\n\nIf the Socket is not open, the `join` will be queued, and the Socket will try\nto connect. Once the Socket is open, any queued `join`s will be attempted.\n\nIf the Socket is already open, the `join` will be attempted immediately.\n\n",
+                "type": "Phoenix.Topic -> Phoenix.Model -> ( Phoenix.Model, Platform.Cmd.Cmd Phoenix.Msg )"
+            },
+            {
+                "name": "joinAll",
+                "comment": " Join a `List` of Channels.\n\nThe [join](#join)s will be batched together, the order in which the requests\nwill reach their respective Channels at the `Elixir` end is undetermined.\n\n",
+                "type": "List.List Phoenix.Topic -> Phoenix.Model -> ( Phoenix.Model, Platform.Cmd.Cmd Phoenix.Msg )"
+            },
+            {
+                "name": "joinConfig",
+                "comment": " A helper function for creating a [JoinConfig](#JoinConfig).\n\n    import Phoenix exposing (joinConfig)\n\n    { joinConfig\n    | topic = \"topic:subTopic\"\n    , events = [ \"event1\", \"event2\" ]\n    }\n\n",
+                "type": "Phoenix.JoinConfig"
+            },
+            {
+                "name": "joinedChannels",
+                "comment": " Channels that have joined successfully.\n",
+                "type": "Phoenix.Model -> List.List String.String"
+            },
+            {
+                "name": "lastPresenceJoin",
+                "comment": " Maybe the last Presence to join the Channel referenced by [Topic](#Topic).\n",
+                "type": "Phoenix.Topic -> Phoenix.Model -> Maybe.Maybe Phoenix.Presence"
+            },
+            {
+                "name": "lastPresenceLeave",
+                "comment": " Maybe the last Presence to leave the Channel referenced by [Topic](#Topic).\n",
+                "type": "Phoenix.Topic -> Phoenix.Model -> Maybe.Maybe Phoenix.Presence"
+            },
+            {
+                "name": "leave",
+                "comment": " Leave a Channel referenced by the [Topic](#Topic).\n",
+                "type": "Phoenix.Topic -> Phoenix.Model -> ( Phoenix.Model, Platform.Cmd.Cmd Phoenix.Msg )"
+            },
+            {
+                "name": "leaveAll",
+                "comment": " Leave all joined Channels.\n",
+                "type": "Phoenix.Model -> ( Phoenix.Model, Platform.Cmd.Cmd Phoenix.Msg )"
+            },
+            {
+                "name": "log",
+                "comment": " Log some data to the console.\n\n    import Json.Encode as JE\n\n    log \"info\" \"foo\"\n        (JE.object\n            [ ( \"bar\", JE.string \"foo bar\" ) ]\n        )\n        model.phoenix\n\n    -- info: foo {bar: \"foo bar\"}\n\nIn order to receive any output in the console, you first need to activate the\nsocket's logger. There are two ways to do this. You can use the\n[startLogging](#startLogging) function, or you can set the `Logger True`\n[ConnectOption](#Phoenix.Socket#ConnectOption).\n\n    import Phoenix\n    import Phoenix.Socket exposing (ConnectOption(..))\n    import Ports.Phoenix as Ports\n\n    init : Model\n    init =\n        { phoenix =\n            Phoenix.init Ports.config\n                |> Phoenix.setConnectOptions\n                    [ Logger True ]\n        ...\n        }\n\n",
+                "type": "String.String -> String.String -> Json.Encode.Value -> Phoenix.Model -> Platform.Cmd.Cmd Phoenix.Msg"
+            },
+            {
+                "name": "map",
+                "comment": " Map the Phoenix [Model](#Model) and `Cmd` [Msg](#Msg) that is generated by\nthe [update](#update) function onto your `model` and `msg`.\n\n    import Phoenix\n\n    type alias Model =\n        { websocket : Phoenix.Model\n            ...\n        }\n\n    type Msg\n        = PhoenixMsg Phoenix.Msg\n        | ...\n\n\n    update : Msg -> Model -> (Model, Cmd Msg)\n    update msg model =\n        case msg of\n            PhoenixMsg subMsg ->\n                let\n                    (newModel, cmd, phoenixMsg) =\n                        Phoenix.update subMsg model.websocket\n                            |> Phoenix.map (\\p m -> { m | websocket = p }) model PhoenixMsg\n                in\n                ...\n\n",
+                "type": "(Phoenix.Model -> model -> model) -> model -> (Phoenix.Msg -> msg) -> ( Phoenix.Model, Platform.Cmd.Cmd Phoenix.Msg, Phoenix.PhoenixMsg ) -> ( model, Platform.Cmd.Cmd msg, Phoenix.PhoenixMsg )"
+            },
+            {
+                "name": "mapMsg",
+                "comment": " Map your `msg` onto the Phoenix `Cmd` [Msg](#Msg) that is generated by the\n`update` function. This is useful if you want to work with the Phoenix\n[Model](#Model) some more before updating your own `Model`.\n\n    import Phoenix\n\n    type alias Model =\n        { websocket : Phoenix.Model\n            ...\n        }\n\n    type Msg\n        = PhoenixMsg Phoenix.Msg\n        | ...\n\n\n    update : Msg -> Model -> (Model, Cmd Msg)\n    update msg model =\n        case msg of\n            PhoenixMsg subMsg ->\n                let\n                    (phoenix, cmd, phoenixMsg) =\n                        Phoenix.update subMsg model.websocket\n                            |> Phoenix.mapMsg PhoenixMsg\n                in\n                ...\n\n",
+                "type": "(Phoenix.Msg -> msg) -> ( Phoenix.Model, Platform.Cmd.Cmd Phoenix.Msg, Phoenix.PhoenixMsg ) -> ( Phoenix.Model, Platform.Cmd.Cmd msg, Phoenix.PhoenixMsg )"
+            },
+            {
+                "name": "presenceDiff",
+                "comment": " A list of Presence diffs on the Channel referenced by [Topic](#Topic).\n",
+                "type": "Phoenix.Topic -> Phoenix.Model -> List.List Phoenix.PresenceDiff"
+            },
+            {
+                "name": "presenceJoins",
+                "comment": " A list of Presences that have joined the Channel referenced by\n[Topic](#Topic).\n",
+                "type": "Phoenix.Topic -> Phoenix.Model -> List.List Phoenix.Presence"
+            },
+            {
+                "name": "presenceLeaves",
+                "comment": " A list of Presences that have left the Channel referenced by\n[Topic](#Topic).\n",
+                "type": "Phoenix.Topic -> Phoenix.Model -> List.List Phoenix.Presence"
+            },
+            {
+                "name": "presenceState",
+                "comment": " A list of Presences on the Channel referenced by [Topic](#Topic).\n",
+                "type": "Phoenix.Topic -> Phoenix.Model -> List.List Phoenix.Presence"
+            },
+            {
+                "name": "protocol",
+                "comment": " The protocol being used by the Socket.\n",
+                "type": "Phoenix.Model -> String.String"
+            },
+            {
+                "name": "push",
+                "comment": " Push a message to a Channel.\n\n    import Json.Encode as JE\n    import Phoenix exposing (pushConfig)\n\n    Phoenix.push\n        { pushConfig\n        | topic = \"topic:subTopic\"\n        , event = \"event1\"\n        , payload =\n            JE.object\n                [(\"foo\", JE.string \"bar\")]\n        }\n        model.phoenix\n\n",
+                "type": "Phoenix.PushConfig -> Phoenix.Model -> ( Phoenix.Model, Platform.Cmd.Cmd Phoenix.Msg )"
+            },
+            {
+                "name": "pushConfig",
+                "comment": " A helper function for creating a [PushConfig](#PushConfig).\n\n    import Phoenix exposing (pushConfig)\n\n    { pushConfig\n    | topic = \"topic:subTopic\"\n    , event = \"hello\"\n    }\n\n",
+                "type": "Phoenix.PushConfig"
+            },
+            {
+                "name": "pushInFlight",
+                "comment": " Determine if a Push has been sent and is on it's way to the Elixir Channel.\n\n    pushInFlight\n        (\\push -> push.event == \"custom_event\")\n        model.phoenix\n\n",
+                "type": "(Phoenix.PushConfig -> Basics.Bool) -> Phoenix.Model -> Basics.Bool"
+            },
+            {
+                "name": "pushQueued",
+                "comment": " Determine if a Push is in the queue to be sent when its' Channel joins.\n\n    pushQueued\n        (\\push -> push.ref == \"custom ref\")\n        model.phoenix\n\n",
+                "type": "(Phoenix.PushConfig -> Basics.Bool) -> Phoenix.Model -> Basics.Bool"
+            },
+            {
+                "name": "pushTimedOut",
+                "comment": " Determine if a Push has timed out and will be tried again in accordance\nwith it's [RetryStrategy](#RetryStrategy).\n\n    pushTimedOut\n        (\\push -> push.ref == \"custom ref\")\n        model.phoenix\n\n",
+                "type": "(Phoenix.PushConfig -> Basics.Bool) -> Phoenix.Model -> Basics.Bool"
+            },
+            {
+                "name": "pushTimeoutCountdown",
+                "comment": " Maybe get the number of seconds until a push is retried.\n\nThis is useful if you want to show a countdown timer to your users.\n\n",
+                "type": "(Phoenix.PushConfig -> Basics.Bool) -> Phoenix.Model -> Maybe.Maybe Basics.Int"
+            },
+            {
+                "name": "pushWaiting",
+                "comment": " Determine if a Push is waiting to be received by its' Channel.\n\nThis means the [push](#push) could be in any off the following states:\n\n  - in a queue waiting for its' Channel to be joined before being sent\n\n  - in flight and on its way to the Channel\n\n  - timed out and waiting to be tried again according to its'\n    [RetryStrategy](#RetryStrategy)\n\nThis is useful if you just need to determine if a [push](#push) is being\nactioned. Maybe you need to disable/hide a button until the\n[PushOk](#ChannelResponse) message has been received?\n\n    pushWaiting\n        (\\push -> push.event == \"custom_event\")\n        model.phoenix\n\n",
+                "type": "(Phoenix.PushConfig -> Basics.Bool) -> Phoenix.Model -> Basics.Bool"
+            },
+            {
+                "name": "queuedChannels",
+                "comment": " Channels that are queued waiting to join.\n",
+                "type": "Phoenix.Model -> List.List String.String"
+            },
+            {
+                "name": "queuedPushes",
+                "comment": " Retrieve a list of pushes, by [Topic](#Topic), that are queued and waiting\nfor their Channel to join before being sent.\n",
+                "type": "Phoenix.Topic -> Phoenix.Model -> List.List Phoenix.PushConfig"
+            },
+            {
+                "name": "setConnectOptions",
+                "comment": " Provide the [ConnectOption](Phoenix.Socket#ConnectOption)s to set on the\nSocket when it is created.\n\n**Note:** This will replace _all_ previously set\n[ConnectOption](Phoenix.Socket.ConnectOption)s.\n\n    import Phoenix\n    import Phoenix.Socket exposing (ConnectOption(..))\n    import Ports.Phoenix as Ports\n\n    type alias Model =\n        { phoenix : Phoenix.Model\n            ...\n        }\n\n    init : Model\n    init =\n        { phoenix =\n            Phoenix.init Ports.config\n                |> Phoenix.addConnectOptions\n                    [ HeartbeatIntervalMillis 2000 ]\n                |> Phoenix.setConnectOptions\n                    [ Timeout 7000 ]\n                |> Phoenix.setConnectOptions\n                    [ Timeout 5000 ]\n            ...\n        }\n\n    -- List ConnectOption == [ Timeout 5000 ]\n\n",
+                "type": "List.List Phoenix.Socket.ConnectOption -> Phoenix.Model -> Phoenix.Model"
+            },
+            {
+                "name": "setConnectParams",
+                "comment": " Provide some params to send to the `connect` function at the Elixir end.\n\n    import Json.Encode as JE\n    import Phoenix\n\n    type alias Model =\n        { phoenix : Phoenix.Model\n            ...\n        }\n\n    init : Model\n    init =\n        { phoenix =\n            Phoenix.init Ports.config\n                |> Phoenix.setConnectParams\n                    ( JE.object\n                        [ (\"username\", JE.string \"username\")\n                        , (\"password\", JE.string \"password\")\n                        ]\n                    )\n            ...\n        }\n\n",
+                "type": "Json.Encode.Value -> Phoenix.Model -> Phoenix.Model"
+            },
+            {
+                "name": "setJoinConfig",
+                "comment": " Set a [JoinConfig](#JoinConfig) to be used when joining a Channel.\n\n    import Phoenix exposing (joinConfig)\n    import Ports.Phoenix as Port\n\n    type alias Model =\n        { phoenix : Phoenix.Model\n            ...\n        }\n\n    init : Model\n    init =\n        { phoenix =\n            Phoenix.init Port.config\n                |> Phoenix.setJoinConfig\n                    { joinConfig\n                    | topic = \"topic:subTopic\"\n                    , events = [ \"event1\", \"event2\" ]\n                    }\n            ...\n        }\n\n",
+                "type": "Phoenix.JoinConfig -> Phoenix.Model -> Phoenix.Model"
+            },
+            {
+                "name": "setLeaveConfig",
+                "comment": " Set a [LeaveConfig](#LeaveConfig) to be used when leaving a Channel.\n\n    import Phoenix\n    import Ports.Phoenix as Port\n\n    type alias Model =\n        { phoenix : Phoenix.Model\n            ...\n        }\n\n    init : Model\n    init =\n        { phoenix =\n            Phoenix.init Port.config\n                |> Phoenix.setLeaveConfig\n                    { topic = \"topic:subTopic\"\n                    , timeout = Just 5000\n                    }\n            ...\n        }\n\n",
+                "type": "Phoenix.LeaveConfig -> Phoenix.Model -> Phoenix.Model"
+            },
+            {
+                "name": "socketState",
+                "comment": " The current [state](#SocketState) of the Socket.\n",
+                "type": "Phoenix.Model -> Phoenix.SocketState"
+            },
+            {
+                "name": "socketStateToString",
+                "comment": " The current [state](#SocketState) of the Socket as a String.\n",
+                "type": "Phoenix.Model -> String.String"
+            },
+            {
+                "name": "startLogging",
+                "comment": " Activate the socket's logger function. This will log all messages that the\nsocket sends and receives.\n",
+                "type": "Phoenix.Model -> Platform.Cmd.Cmd Phoenix.Msg"
+            },
+            {
+                "name": "stopLogging",
+                "comment": " Deactivate the socket's logger function.\n",
+                "type": "Phoenix.Model -> Platform.Cmd.Cmd Phoenix.Msg"
+            },
+            {
+                "name": "subscriptions",
+                "comment": " Receive `Msg`s from the Socket, Channels and Phoenix Presence.\n\n    import Phoenix\n\n    type alias Model =\n        { phoenix : Phoenix.Model\n            ...\n        }\n\n    type Msg\n        = PhoenixMsg Phoenix.Msg\n        | ...\n\n    subscriptions : Model -> Sub Msg\n    subscriptions model =\n        Sub.map PhoenixMsg <|\n            Phoenix.subscriptions model.phoenix\n\n",
+                "type": "Phoenix.Model -> Platform.Sub.Sub Phoenix.Msg"
+            },
+            {
+                "name": "timeoutPushes",
+                "comment": " Pushes that have timed out and are waiting to be sent again in accordance\nwith their [RetryStrategy](#RetryStrategy).\n\nPushes with a [RetryStrategy](#RetryStrategy) of `Drop`, won't make it here.\n\n",
+                "type": "Phoenix.Model -> Dict.Dict String.String (List.List Phoenix.PushConfig)"
+            },
+            {
+                "name": "topicParts",
+                "comment": " Split a topic into it's component parts.\n",
+                "type": "Phoenix.Topic -> List.List String.String"
+            },
+            {
+                "name": "update",
+                "comment": "\n\n    import Phoenix\n\n    type alias Model =\n        { phoenix : Phoenix.Model\n            ...\n        }\n\n    type Msg\n        = PhoenixMsg Phoenix.Msg\n        | ...\n\n    update : Msg -> Model -> (Model, Cmd Msg)\n    update msg model =\n        case msg of\n            PhoenixMsg subMsg ->\n                let\n                    (phoenix, phoenixCmd, phoenixMsg) =\n                        Phoenix.update subMsg model.phoenix\n                in\n                case phoenixMsg of\n                    ...\n\n                _ ->\n                    ( { model | phoenix = phoenix }\n                    , Cmd.map PhoenixMsg phoenixCmd\n                    )\n\n            _ ->\n                (model, Cmd.none)\n\n",
+                "type": "Phoenix.Msg -> Phoenix.Model -> ( Phoenix.Model, Platform.Cmd.Cmd Phoenix.Msg, Phoenix.PhoenixMsg )"
+            },
+            {
+                "name": "updateWith",
+                "comment": " Helper function to use with [update](#update) in order to:\n\n  - update the `phoenix` field on the `Model`\n  - map the `Cmd Phoenix.Msg` generated by `Phoenix.update` to a `Cmd Msg`.\n\n```\nimport Phoenix\n\ntype alias Model =\n    { phoenix : Phoenix.Model\n        ...\n    }\n\ntype Msg\n    = PhoenixMsg Phoenix.Msg\n    | ...\n\nupdate : Msg -> Model -> (Model, Cmd Msg)\nupdate msg model =\n    case msg of\n        PhoenixMsg subMsg ->\n            let\n                (newModel, cmd, phoenixMsg) =\n                  Phoenix.update subMsg model.phoenix\n                        |> Phoenix.updateWith PhoenixMsg model\n            in\n            case phoenixMsg of\n                ...\n\n            _ ->\n                (newModel, cmd)\n\n        _ ->\n            (model, Cmd.none)\n```\n\n**Note:** To use this function, `Phoenix.Model` needs to be stored on field `phoenix` on\nthe `Model`.\n\n",
+                "type": "(Phoenix.Msg -> msg) -> { model | phoenix : Phoenix.Model } -> ( Phoenix.Model, Platform.Cmd.Cmd Phoenix.Msg, Phoenix.PhoenixMsg ) -> ( { model | phoenix : Phoenix.Model }, Platform.Cmd.Cmd msg, Phoenix.PhoenixMsg )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Phoenix.Channel",
+        "comment": " This module can be used to talk directly to PhoenixJS without needing to\nadd anything to your Model. You can send and receive messages to and from your\nChannels from anywhere in your Elm program. That is all it does and all it is\nintended to do.\n\nIf you want more functionality, the top level [Phoenix](Phoenix#) module\ntakes care of a lot of the low level stuff such as automatically joining to\nyour Channels.\n\n\n# Joining\n\n@docs Topic, Event, Payload, JoinConfig, joinConfig, PortOut, join\n\n\n# Leaving\n\n@docs LeaveConfig, leave\n\n\n# Pushing\n\n@docs push\n\n\n# Receiving\n\n@docs PortIn, InternalError, Msg, subscriptions\n\n\n# Incoming Events\n\nThese are events that are `push`ed or `broadcast` from your Elixir Channels. It\nis necessary to set up the JS event listeners so that the events can be\ncaptured and sent on to Elm. These functions turn those event listeners on and\noff.\n\n@docs on, allOn, off, allOff\n\n",
+        "unions": [
+            {
+                "name": "InternalError",
+                "comment": " An `InternalError` should never happen, but if it does, it is because the\nJS is out of sync with this package.\n\nIf you ever receive this message, please\n[raise an issue](https://github.com/phollyer/elm-phoenix-websocket/issues).\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "DecoderError",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "InvalidMessage",
+                        [
+                            "Phoenix.Channel.Topic",
+                            "String.String",
+                            "Phoenix.Channel.Payload"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Msg",
+                "comment": " All of the messages you can receive from the Channel.\n\n  - `Topic` - The Channel [Topic](#Topic) that the message came from.\n\n  - `Event` - The original [Event](#Event) that was [push](#push)ed to the\n    Channel.\n\n  - `Payload` - The data received from the Channel, with the exception of\n    `JoinTimout` and `PushTimeout` where it will be the original payload.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "JoinOk",
+                        [
+                            "Phoenix.Channel.Topic",
+                            "Phoenix.Channel.Payload"
+                        ]
+                    ],
+                    [
+                        "JoinError",
+                        [
+                            "Phoenix.Channel.Topic",
+                            "Phoenix.Channel.Payload"
+                        ]
+                    ],
+                    [
+                        "JoinTimeout",
+                        [
+                            "Phoenix.Channel.Topic",
+                            "Phoenix.Channel.Payload"
+                        ]
+                    ],
+                    [
+                        "PushOk",
+                        [
+                            "Phoenix.Channel.Topic",
+                            "Phoenix.Channel.Event",
+                            "Phoenix.Channel.Payload",
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "PushError",
+                        [
+                            "Phoenix.Channel.Topic",
+                            "Phoenix.Channel.Event",
+                            "Phoenix.Channel.Payload",
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "PushTimeout",
+                        [
+                            "Phoenix.Channel.Topic",
+                            "Phoenix.Channel.Event",
+                            "Phoenix.Channel.Payload",
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Message",
+                        [
+                            "Phoenix.Channel.Topic",
+                            "Phoenix.Channel.Event",
+                            "Phoenix.Channel.Payload"
+                        ]
+                    ],
+                    [
+                        "Error",
+                        [
+                            "Phoenix.Channel.Topic"
+                        ]
+                    ],
+                    [
+                        "LeaveOk",
+                        [
+                            "Phoenix.Channel.Topic"
+                        ]
+                    ],
+                    [
+                        "Closed",
+                        [
+                            "Phoenix.Channel.Topic"
+                        ]
+                    ],
+                    [
+                        "InternalError",
+                        [
+                            "Phoenix.Channel.InternalError"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Event",
+                "comment": " A type alias representing an event sent to, or received from a Channel.\n",
+                "args": [],
+                "type": "String.String"
+            },
+            {
+                "name": "JoinConfig",
+                "comment": " A type alias representing the config for joining a Channel.\n\n  - `topic` - The Channel topic id, for example: `\"topic:subtopic\"`.\n\n  - `events` - A list of events to receive on the Channel.\n\n  - `payload` - Data to be sent to the Channel when joining. If no data is\n    required, set this to\n    [Json.Encode.null](https://package.elm-lang.org/packages/elm/json/latest/Json-Encode#null).\n\n  - `timeout` - Optional timeout, in ms, before retrying to join if the previous\n    attempt failed.\n\n",
+                "args": [],
+                "type": "{ topic : Phoenix.Channel.Topic, events : List.List Phoenix.Channel.Event, payload : Phoenix.Channel.Payload, timeout : Maybe.Maybe Basics.Int }"
+            },
+            {
+                "name": "LeaveConfig",
+                "comment": " A type alias representing the config for leaving a Channel.\n\n  - `topic` - The Channel topic id, for example: `\"topic:subtopic\"`.\n\n  - `timeout` - Optional timeout, in ms, before retrying to leave if the\n    previous attempt failed.\n\n",
+                "args": [],
+                "type": "{ topic : Phoenix.Channel.Topic, timeout : Maybe.Maybe Basics.Int }"
+            },
+            {
+                "name": "Payload",
+                "comment": " A type alias representing data that is sent to, or received from, a Channel.\n",
+                "args": [],
+                "type": "Json.Encode.Value"
+            },
+            {
+                "name": "PortIn",
+                "comment": " A type alias representing the `port` function required to receive\na [Msg](#Msg) from a Channel.\n\nYou will find this `port` function in the\n[Port](https://github.com/phollyer/elm-phoenix-websocket/tree/master/ports)\nmodule.\n\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "({ topic : Phoenix.Channel.Topic, msg : String.String, payload : Json.Encode.Value } -> msg) -> Platform.Sub.Sub msg"
+            },
+            {
+                "name": "PortOut",
+                "comment": " A type alias representing the `port` function required to send messages out\nto the accompanying JS.\n\nYou will find this `port` function in the\n[Port](https://github.com/phollyer/elm-phoenix-websocket/tree/master/ports)\nmodule.\n\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ msg : String.String, payload : Json.Encode.Value } -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "Topic",
+                "comment": " A type alias representing the Channel topic id. For example\n`\"topic:subTopic\"`.\n",
+                "args": [],
+                "type": "String.String"
+            }
+        ],
+        "values": [
+            {
+                "name": "allOff",
+                "comment": " Switch a list of incoming events off.\n",
+                "type": "{ topic : Phoenix.Channel.Topic, events : List.List Phoenix.Channel.Event } -> Phoenix.Channel.PortOut msg -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "allOn",
+                "comment": " Switch a list of incoming events on.\n",
+                "type": "{ topic : Phoenix.Channel.Topic, events : List.List Phoenix.Channel.Event } -> Phoenix.Channel.PortOut msg -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "join",
+                "comment": " Join a Channel.\n\n    import Json.Encode as JE\n    import Phoenix.Channel as Channel\n    import Ports.Phoenix as Ports\n\n    Channel.join\n        { topic = \"topic:subtopic\"\n        , payload = JE.null\n        , events = []\n        , timeout = Nothing\n        }\n        Ports.phoenixSend\n\n",
+                "type": "Phoenix.Channel.JoinConfig -> Phoenix.Channel.PortOut msg -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "joinConfig",
+                "comment": " A helper function for creating a [JoinConfig](#JoinConfig).\n\n    import Phoenix.Channel exposing (joinConfig)\n\n    { joinConfig\n    | topic = \"topic:subTopic\"\n    , events = [ \"event1\", \"event2\" ]\n    }\n\n",
+                "type": "Phoenix.Channel.JoinConfig"
+            },
+            {
+                "name": "leave",
+                "comment": " Leave a Channel.\n\n    import Phoenix.Channel as Channel\n    import Ports.Phoenix as Ports\n\n    Channel.leave\n        { topic = \"topic:subtopic\"\n        , timeout = Nothing\n        }\n        Ports.phoenixSend\n\n",
+                "type": "Phoenix.Channel.LeaveConfig -> Phoenix.Channel.PortOut msg -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "off",
+                "comment": " Switch an incoming event off.\n",
+                "type": "{ topic : Phoenix.Channel.Topic, event : Phoenix.Channel.Event } -> Phoenix.Channel.PortOut msg -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "on",
+                "comment": " Switch an incoming event on.\n",
+                "type": "{ topic : Phoenix.Channel.Topic, event : Phoenix.Channel.Event } -> Phoenix.Channel.PortOut msg -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "push",
+                "comment": " Push to a Channel.\n\nThe optional `ref` is returned with the response to the Push so that you can\nuse it to identify the response later on if needed.\n\n    import Json.Encode as JE\n    import Phoenix.Channel as Channel\n    import Ports.Phoenix as Port\n\n    Channel.push\n        { topic = \"topic:subtopic\"\n        , event = \"new_msg\"\n        , payload =\n            JE.object\n                [(\"msg\", JE.string \"Hello World\")]\n        , timeout = Nothing\n        , ref = Nothing\n        }\n        Port.pheonixSend\n\n",
+                "type": "{ a | topic : Phoenix.Channel.Topic, event : Phoenix.Channel.Event, payload : Phoenix.Channel.Payload, timeout : Maybe.Maybe Basics.Int, ref : Maybe.Maybe String.String } -> Phoenix.Channel.PortOut msg -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "subscriptions",
+                "comment": " Subscribe to receive incoming Channel [Msg](#Msg)s.\n\n    import Phoenix.Channel as Channel\n    import Ports.Phoenix as Port\n\n    type Msg\n      = ChannelMsg Channel.Msg\n      | ...\n\n\n    subscriptions : Model -> Sub Msg\n    subscriptions _ =\n        Channel.subscriptions\n            ChannelMsg\n            Port.channelReceiver\n\n",
+                "type": "(Phoenix.Channel.Msg -> msg) -> Phoenix.Channel.PortIn msg -> Platform.Sub.Sub msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Phoenix.Presence",
+        "comment": " This module can be used to receive Presence messages from your Channels\nfrom anywhere in your Elm program without needing to add anything to your\nModel. That is all it does and all it is intended to do.\n\n@docs Presence, PresenceDiff\n\n@docs Topic, InternalError, Msg\n\n@docs PortIn, subscriptions\n\n",
+        "unions": [
+            {
+                "name": "InternalError",
+                "comment": " An `InternalError` should never happen, but if it does, it is because the\nJS is out of sync with this package.\n\nIf you ever receive this message, please\n[raise an issue](https://github.com/phollyer/elm-phoenix-websocket/issues).\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "DecoderError",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "InvalidMessage",
+                        [
+                            "Phoenix.Presence.Topic",
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Msg",
+                "comment": " All of the Presence messages that can come from the Channel.\n\nIf you are using more than one Channel, then you can pattern match on `Topic`\nto determine which Channel the [Msg](#Msg) relates to.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Join",
+                        [
+                            "Phoenix.Presence.Topic",
+                            "Phoenix.Presence.Presence"
+                        ]
+                    ],
+                    [
+                        "Leave",
+                        [
+                            "Phoenix.Presence.Topic",
+                            "Phoenix.Presence.Presence"
+                        ]
+                    ],
+                    [
+                        "State",
+                        [
+                            "Phoenix.Presence.Topic",
+                            "List.List Phoenix.Presence.Presence"
+                        ]
+                    ],
+                    [
+                        "Diff",
+                        [
+                            "Phoenix.Presence.Topic",
+                            "Phoenix.Presence.PresenceDiff"
+                        ]
+                    ],
+                    [
+                        "InternalError",
+                        [
+                            "Phoenix.Presence.InternalError"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "PortIn",
+                "comment": " A type alias representing the `port` function required to receive\na [Msg](#Msg) from Phoenix Presence.\n\nYou will find this `port` function in the\n[Port](https://github.com/phollyer/elm-phoenix-websocket/tree/master/ports)\nmodule.\n\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "({ topic : Phoenix.Presence.Topic, msg : String.String, payload : Json.Encode.Value } -> msg) -> Platform.Sub.Sub msg"
+            },
+            {
+                "name": "Presence",
+                "comment": " A type alias representing a Presence on a Channel.\n\n  - `id` - The `id` used to identify the Presence map in the\n    [Presence.track/3](https://hexdocs.pm/phoenix/Phoenix.Presence.html#c:track/3)\n    Elixir function. The recommended approach is to use the users' `id`.\n\n  - `metas`- A list of metadata as stored in the\n    [Presence.track/3](https://hexdocs.pm/phoenix/Phoenix.Presence.html#c:track/3)\n    Elixir function.\n\n  - `user` - The user data that is pulled from the DB and stored on the\n    Presence in the\n    [fetch/2](https://hexdocs.pm/phoenix/Phoenix.Presence.html#c:fetch/2)\n    Elixir callback function. This is the recommended approach for storing user\n    data on the Presence. If\n    [fetch/2](https://hexdocs.pm/phoenix/Phoenix.Presence.html#c:fetch/2) is\n    not being used then `user` will be equal to\n    [Json.Encode.null](https://package.elm-lang.org/packages/elm/json/latest/Json-Encode#null).\n\n  - `presence` - The whole Presence map. This provides a way to access any\n    additional data that is stored on the Presence.\n\n```\n-- MyAppWeb.MyChannel.ex\n\ndef handle_info(:after_join, socket) do\n  {:ok, _} = Presence.track(socket, socket.assigns.user_id, %{\n    online_at: System.os_time(:millisecond)\n  })\n\n  push(socket, \"presence_state\", Presence.list(socket))\n\n  {:noreply, socket}\nend\n\n-- MyAppWeb.Presence.ex\n\ndefmodule MyAppWeb.Presence do\n  use Phoenix.Presence,\n    otp_app: :my_app,\n    pubsub_server: MyApp.PubSub\n\n  def fetch(_topic, presences) do\n    query =\n      from u in User,\n      where: u.id in ^Map.keys(presences),\n      select: {u.id, u}\n\n    users = query |> Repo.all() |> Enum.into(%{})\n\n    for {key, %{metas: metas}} <- presences, into: %{} do\n      {key, %{metas: metas, user: users[key]}}\n    end\n  end\nend\n```\n\n",
+                "args": [],
+                "type": "{ id : String.String, metas : List.List Json.Decode.Value, user : Json.Decode.Value, presence : Json.Decode.Value }"
+            },
+            {
+                "name": "PresenceDiff",
+                "comment": " A type alias representing the `joins` and `leaves` on the Channel as they\nhappen.\n",
+                "args": [],
+                "type": "{ joins : List.List Phoenix.Presence.Presence, leaves : List.List Phoenix.Presence.Presence }"
+            },
+            {
+                "name": "Topic",
+                "comment": " A type alias representing the Channel topic id. For example\n`\"topic:subTopic\"`.\n",
+                "args": [],
+                "type": "String.String"
+            }
+        ],
+        "values": [
+            {
+                "name": "subscriptions",
+                "comment": " Subscribe to receive incoming Presence [Msg](#Msg)s.\n\n    import Phoenix.Presence as Presence\n    import Ports.Phoenix as Port\n\n    type Msg\n      = PresenceMsg Presence.Msg\n      | ...\n\n\n    subscriptions : Model -> Sub Msg\n    subscriptions _ =\n        Presence.subscriptions\n            PresenceMsg\n            Port.presenceReceiver\n\n",
+                "type": "(Phoenix.Presence.Msg -> msg) -> Phoenix.Presence.PortIn msg -> Platform.Sub.Sub msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Phoenix.Socket",
+        "comment": " This module can be used to talk directly to PhoenixJS without needing to\nadd anything to your Model. You can send and receive messages to and from the\nJS Socket from anywhere in your Elm program. That is all it does and all it is\nintended to do.\n\nIf you want more functionality, the top level [Phoenix](Phoenix#) module\ntakes care of a lot of the low level stuff such as automatically connecting to\nthe Socket.\n\n\n# Connecting\n\n@docs ConnectOption, Params, PortOut, connect\n\n\n# Disconnecting\n\n@docs disconnect\n\n\n# Receiving Messages\n\n@docs ClosedInfo, Topic, Event, Payload, ChannelMessage, PresenceMessage, HeartbeatMessage, AllInfo, Info, InternalError, Msg, PortIn, subscriptions\n\n\n# Socket Information\n\nRequest information about the Socket.\n\n@docs connectionState, endPointURL, info, isConnected, makeRef, protocol\n\n\n# Logging\n\nHere you can log data to the console, and activate and deactive the socket's\nlogger, but be warned, **there is no safeguard when you compile** such as you\nget when you use `Debug.log`. Be sure to deactive the logging before you deploy\nto production.\n\nHowever, the ability to easily toggle logging on and off leads to a possible\nuse case where, in a deployed production environment, an admin is able to see\nall the logging, while regular users do not.\n\n@docs log, startLogging, stopLogging\n\n",
+        "unions": [
+            {
+                "name": "ConnectOption",
+                "comment": " The options that can be set on the Socket when instantiating a\n`new Socket(url, options)` on the JS side.\n\nSee <https://hexdocs.pm/phoenix/js/#Socket> for more info on the options and\nthe effect they have.\n\nHowever, there are two potential instances where we have to work around the\ninability to send functions through `ports`. This is if you wish to employ a\nbackoff strategy that increases the time interval between repeated attempts to\nreconnect or rejoin.\n\nTo do this on the JS side, you would provide a function that returns an `Int`.\nBut because we can't send functions through ports, the way to create these\nfunctions is to also use the `...SteppedBackoff` counterparts:\n\n    [ ReconnectAfterMillis 1000\n    , ReconnectSteppedBackoff [ 10, 20, 50, 100, 500 ]\n    , RejoinAfterMillis 10000\n    , RejoinSteppedBackoff [ 1000, 2000, 5000 ]\n    ]\n\nOn the JS side, the above options result in:\n\n    { reconnectAfterMs: function(tries){ return [10, 20, 50, 100, 500][tries - 1] || 1000 },\n      rejoinAfterMs: function(tries){ return [1000, 2000, 5000][tries - 1] || 10000 }\n    }\n\nFor a consistent time interval simply ignore the `...SteppedBackoff` options:\n\n    [ ReconnectAfterMillis 1000\n    , RejoinAfterMillis 10000\n    ]\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "BinaryType",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "HeartbeatIntervalMillis",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "Logger",
+                        [
+                            "Basics.Bool"
+                        ]
+                    ],
+                    [
+                        "LongpollerTimeout",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "ReconnectAfterMillis",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "ReconnectSteppedBackoff",
+                        [
+                            "List.List Basics.Int"
+                        ]
+                    ],
+                    [
+                        "RejoinAfterMillis",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "RejoinSteppedBackoff",
+                        [
+                            "List.List Basics.Int"
+                        ]
+                    ],
+                    [
+                        "Timeout",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "Transport",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Vsn",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Info",
+                "comment": " Information received about the Socket.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "All",
+                        [
+                            "Phoenix.Socket.AllInfo"
+                        ]
+                    ],
+                    [
+                        "ConnectionState",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "EndPointURL",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "IsConnected",
+                        [
+                            "Basics.Bool"
+                        ]
+                    ],
+                    [
+                        "MakeRef",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Protocol",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "InternalError",
+                "comment": " An `InternalError` should never happen, but if it does, it is because the\nJS is out of sync with this package.\n\nIf you ever receive this message, please\n[raise an issue](https://github.com/phollyer/elm-phoenix-websocket/issues).\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "DecoderError",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "InvalidMessage",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Msg",
+                "comment": " All of the messages you can receive from the Socket.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Opened",
+                        []
+                    ],
+                    [
+                        "Closed",
+                        [
+                            "Phoenix.Socket.ClosedInfo"
+                        ]
+                    ],
+                    [
+                        "Connecting",
+                        []
+                    ],
+                    [
+                        "Disconnecting",
+                        []
+                    ],
+                    [
+                        "Error",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Channel",
+                        [
+                            "Phoenix.Socket.ChannelMessage"
+                        ]
+                    ],
+                    [
+                        "Presence",
+                        [
+                            "Phoenix.Socket.PresenceMessage"
+                        ]
+                    ],
+                    [
+                        "Heartbeat",
+                        [
+                            "Phoenix.Socket.HeartbeatMessage"
+                        ]
+                    ],
+                    [
+                        "Info",
+                        [
+                            "Phoenix.Socket.Info"
+                        ]
+                    ],
+                    [
+                        "InternalError",
+                        [
+                            "Phoenix.Socket.InternalError"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "AllInfo",
+                "comment": " A type alias representing all of the info available about the Socket.\n",
+                "args": [],
+                "type": "{ connectionState : String.String, endPointURL : String.String, isConnected : Basics.Bool, makeRef : String.String, protocol : String.String }"
+            },
+            {
+                "name": "ChannelMessage",
+                "comment": " A type alias representing a raw Channel message received by the Socket.\n",
+                "args": [],
+                "type": "{ topic : Phoenix.Socket.Topic, event : Phoenix.Socket.Event, payload : Phoenix.Socket.Payload, joinRef : Maybe.Maybe String.String, ref : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "ClosedInfo",
+                "comment": " A type alias representing the information received when the Socket closes.\n",
+                "args": [],
+                "type": "{ reason : Maybe.Maybe String.String, code : Basics.Int, wasClean : Basics.Bool, type_ : String.String, isTrusted : Basics.Bool }"
+            },
+            {
+                "name": "Event",
+                "comment": " A type alias representing an event received from a Channel.\n",
+                "args": [],
+                "type": "String.String"
+            },
+            {
+                "name": "HeartbeatMessage",
+                "comment": " A type alias representing a raw Heartbeat received by the Socket.\n",
+                "args": [],
+                "type": "{ topic : Phoenix.Socket.Topic, event : Phoenix.Socket.Event, payload : Phoenix.Socket.Payload, ref : String.String }"
+            },
+            {
+                "name": "Params",
+                "comment": " A type alias repesenting the params to be sent when connecting, such as\nauthentication params like username and password.\n",
+                "args": [],
+                "type": "Json.Encode.Value"
+            },
+            {
+                "name": "Payload",
+                "comment": " A type alias representing data that is received from a Channel.\n",
+                "args": [],
+                "type": "Json.Encode.Value"
+            },
+            {
+                "name": "PortIn",
+                "comment": " A type alias representing the `port` function required to receive\na [Msg](#Msg) from the Socket.\n\nYou will find this `port` function in the\n[Port](https://github.com/phollyer/elm-phoenix-webSocket/tree/master/ports)\nmodule.\n\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "({ msg : String.String, payload : Json.Encode.Value } -> msg) -> Platform.Sub.Sub msg"
+            },
+            {
+                "name": "PortOut",
+                "comment": " A type alias representing the `port` function required to send messages out\nto the accompanying JS.\n\nYou will find this `port` function in the\n[Port](https://github.com/phollyer/elm-phoenix-webSocket/tree/master/ports)\nmodule.\n\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ msg : String.String, payload : Json.Encode.Value } -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "PresenceMessage",
+                "comment": " A type alias representing a raw Presence message received by the Socket.\n",
+                "args": [],
+                "type": "{ topic : Phoenix.Socket.Topic, event : Phoenix.Socket.Event, payload : Phoenix.Socket.Payload }"
+            },
+            {
+                "name": "Topic",
+                "comment": " A type alias representing the Channel topic id. For example\n`\"topic:subTopic\"`.\n",
+                "args": [],
+                "type": "String.String"
+            }
+        ],
+        "values": [
+            {
+                "name": "connect",
+                "comment": " Connect to the Socket, providing any required\n[ConnectOption](#ConnectOption)s and `Params` as well as the `port` function\nto use.\n\n    import Json.Encode as JE\n    import Phoenix.Socket as Socket\n    import Ports.Phoenix as Port\n\n    -- A simple connection\n\n    Socket.connect [] Nothing Port.phoenixSend\n\n    -- A connection with options and auth params\n\n    options =\n        [ Socket.HeartbeatIntervalMillis 500\n        , Socket.Timeout 10000\n        ]\n\n    params =\n        JE.object\n            [ (\"username\", JE.string \"Joe Bloggs\")\n            , (\"password\", JE.string \"password\")\n            ]\n\n    Socket.connect options (Just params) Port.phoenixSend\n\n",
+                "type": "List.List Phoenix.Socket.ConnectOption -> Maybe.Maybe Phoenix.Socket.Params -> Phoenix.Socket.PortOut msg -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "connectionState",
+                "comment": " ",
+                "type": "Phoenix.Socket.PortOut msg -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "disconnect",
+                "comment": " Disconnect the Socket, maybe providing a status\n[code](https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent#Status_codes)\nfor the closure.\n",
+                "type": "Maybe.Maybe Basics.Int -> Phoenix.Socket.PortOut msg -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "endPointURL",
+                "comment": " ",
+                "type": "Phoenix.Socket.PortOut msg -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "info",
+                "comment": " ",
+                "type": "Phoenix.Socket.PortOut msg -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "isConnected",
+                "comment": " ",
+                "type": "Phoenix.Socket.PortOut msg -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "log",
+                "comment": " Log some data to the console.\n\n    import Json.Encode as JE\n    import Ports.Phoenix as Port\n\n    log \"info\" \"foo\"\n        (JE.object\n            [ ( \"bar\", JE.string \"foo bar\" ) ]\n        )\n        port.phoenixSend\n\n    -- info: foo {bar: \"foo bar\"}\n\nIn order to receive any output in the console, you first need to activate the\nSocket's logger. There are two ways to do this. You can use the\n[startLogging](#startLogging) function, or you can pass the `Logger True`\n[ConnectOption](#Phoenix.Socket#ConnectOption) to the [connect](#connect)\nfunction.\n\n    import Ports.Phoenix as Port\n\n    connect [ Logger True ] Nothing Port.phoenixSend\n\n",
+                "type": "String.String -> String.String -> Json.Encode.Value -> Phoenix.Socket.PortOut msg -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "makeRef",
+                "comment": " ",
+                "type": "Phoenix.Socket.PortOut msg -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "protocol",
+                "comment": " ",
+                "type": "Phoenix.Socket.PortOut msg -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "startLogging",
+                "comment": " Activate the Socket's logger function. This will log all messages that the\nSocket sends and receives.\n",
+                "type": "Phoenix.Socket.PortOut msg -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "stopLogging",
+                "comment": " Deactivate the Socket's logger function.\n",
+                "type": "Phoenix.Socket.PortOut msg -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "subscriptions",
+                "comment": " Subscribe to receive incoming Socket messages.\n\n    import Phoenix.Socket as Socket\n    import Ports.Phoenix as Port\n\n    type Msg\n      = SocketMsg Socket.Msg\n      | ...\n\n\n    subscriptions : Model -> Sub Msg\n    subscriptions _ =\n        Socket.subscriptions\n            SocketMsg\n            Port.socketReceiver\n\n",
+                "type": "(Phoenix.Socket.Msg -> msg) -> Phoenix.Socket.PortIn msg -> Platform.Sub.Sub msg"
+            }
+        ],
+        "binops": []
+    }
+]

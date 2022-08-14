@@ -1,0 +1,16 @@
+[
+    {
+        "name": "VitePluginHelper",
+        "comment": " Helpers to use vite-plugin-elm handily\n\n@docs asset\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "asset",
+                "comment": " Tag asset's path to process an asset on Vite project\nvite-plugin-elm replaces a tagged path with imported URL with <https://vitejs.dev/guide/assets.html#importing-asset-as-url> after compilation of Elm scripts\nPass a returned String into `src` attribute of img tag for example\n",
+                "type": "String.String -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

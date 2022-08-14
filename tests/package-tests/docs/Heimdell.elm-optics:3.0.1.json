@@ -1,0 +1,294 @@
+[
+    {
+        "name": "Optics.Basic",
+        "comment": " Some optics for basic types.\n\n\n# Maybe\n\n@docs just_, nothing_\n\n\n# Either\n\n@docs right_, left_\n\n\n# Filter\n\n@docs only\n\n\n# List\n\n@docs each, nth, drop, take, cons, nil, head, tail\n\n\n# Array\n\n@docs every, ith\n\n\n# Tuple\n\n@docs first, second\n\n\n# Dict\n\n@docs atKey, assocs, dictValues\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "assocs",
+                "comment": " Dict <-> List.\n",
+                "type": "Optics.Core.Iso pr ls (Dict.Dict comparable_k v) (Dict.Dict comparable_l w) (List.List ( comparable_k, v )) (List.List ( comparable_l, w ))"
+            },
+            {
+                "name": "atKey",
+                "comment": " Access to the dict element at given key.\n",
+                "type": "comparable_k -> Optics.Core.SimpleTraversal (Dict.Dict comparable_k v) v"
+            },
+            {
+                "name": "cons",
+                "comment": " Match head/tail of a non-empty list.\n",
+                "type": "Optics.Core.Prism pr (List.List a) (List.List b) ( a, List.List a ) ( b, List.List b )"
+            },
+            {
+                "name": "dictValues",
+                "comment": " Traversal over values in the dictionary.\n",
+                "type": "Optics.Core.Traversal (Dict.Dict comparable_k v) (Dict.Dict comparable_k w) v w"
+            },
+            {
+                "name": "drop",
+                "comment": " Everything except first n elements of the list.\n",
+                "type": "Basics.Int -> Optics.Core.SimpleTraversal (List.List a) (List.List a)"
+            },
+            {
+                "name": "each",
+                "comment": " List fold/traversal.\n",
+                "type": "Optics.Core.Traversal (List.List a) (List.List b) a b"
+            },
+            {
+                "name": "every",
+                "comment": " Array fold/traversal.\n",
+                "type": "Optics.Core.Traversal (Array.Array a) (Array.Array b) a b"
+            },
+            {
+                "name": "first",
+                "comment": " First tuple element.\n",
+                "type": "Optics.Core.Lens n ( a, c ) ( b, c ) a b"
+            },
+            {
+                "name": "head",
+                "comment": " List head.\n",
+                "type": "Optics.Core.SimpleTraversal (List.List a) a"
+            },
+            {
+                "name": "ith",
+                "comment": " Nth element of the array.\n",
+                "type": "Basics.Int -> Optics.Core.SimpleTraversal (Array.Array a) a"
+            },
+            {
+                "name": "just_",
+                "comment": " Match (go into) `Just` constructor.\n",
+                "type": "Optics.Core.Prism pr (Maybe.Maybe a) (Maybe.Maybe b) a b"
+            },
+            {
+                "name": "left_",
+                "comment": " Match `Left` constructor.\n",
+                "type": "Optics.Core.Prism pr (Either.Either a c) (Either.Either b c) a b"
+            },
+            {
+                "name": "nil",
+                "comment": " Match end of a non-empty list.\n",
+                "type": "Optics.Core.Prism pr (List.List a) (List.List a) () ()"
+            },
+            {
+                "name": "nothing_",
+                "comment": " Match `Nothing` constructor.\n",
+                "type": "Optics.Core.SimplePrism pr (Maybe.Maybe a) ()"
+            },
+            {
+                "name": "nth",
+                "comment": " Nth element of the list.\n",
+                "type": "Basics.Int -> Optics.Core.SimpleTraversal (List.List a) a"
+            },
+            {
+                "name": "only",
+                "comment": " Pluggable filter.\n\nPrevents reading and update for all parts that do to satisfy the predicate.\n\n",
+                "type": "(a -> Basics.Bool) -> Optics.Core.SimpleTraversal a a"
+            },
+            {
+                "name": "right_",
+                "comment": " Match `Right` constructor.\n",
+                "type": "Optics.Core.Prism pr (Either.Either c a) (Either.Either c b) a b"
+            },
+            {
+                "name": "second",
+                "comment": " Second tuple element.\n",
+                "type": "Optics.Core.Lens n ( c, a ) ( c, b ) a b"
+            },
+            {
+                "name": "tail",
+                "comment": " List tail.\n",
+                "type": "Optics.Core.SimpleTraversal (List.List a) (List.List a)"
+            },
+            {
+                "name": "take",
+                "comment": " First n elements of the list.\n\nThe implementation will traverse n elements twice, because I was lazy and didn't write List.splitAt manually.\n\nAnd there is no standard one.\n\n",
+                "type": "Basics.Int -> Optics.Core.SimpleTraversal (List.List a) (List.List a)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Optics.Core",
+        "comment": " An implementation of optics in Elm.\n\n\n# Optics\n\n@docs Optic, Lens, Prism, Traversal, Iso, Y\n\n\n# Monomorphed versions\n\n@docs SimpleLens, SimplePrism, SimpleTraversal, SimpleIso\n\n\n# Constructors\n\n@docs lens, prism, traversal, iso\n\n\n# \"Category\"\n\n@docs id, o\n\n\n# `Lens` usage\n\n@docs get\n\n\n# `Prism` usage\n\n@docs review, is\n\n\n# General usage (`Traversal`s)\n\n@docs getSome, getAll, over, assign\n\n",
+        "unions": [
+            {
+                "name": "Optic",
+                "comment": " A lens, prism or a traversal.\n\nThe `pr` and `ls` are used to track `review` and `get` capabilities, leave them being type variables. The consumers of lens will try to unify either of these with `Y` type (= `()`).\n\nThe `s`, `t`, `a` and `b` are \"input object type\", \"output object type\", \"input part type\"\nand \"output part type\", accordingly.\n\nThis means that you can get `a` from `s`, and given a function `a -> b` make a `t` out of `s`.\n\nLater in this text I will use term \"final\" for \"out\" types and \"initial\" for \"in\" types.\n\n",
+                "args": [
+                    "pr",
+                    "ls",
+                    "s",
+                    "t",
+                    "a",
+                    "b"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Iso",
+                "comment": " The isomorphism is both \"lens\" and \"prism\".\n",
+                "args": [
+                    "pr",
+                    "ls",
+                    "s",
+                    "t",
+                    "a",
+                    "b"
+                ],
+                "type": "Optics.Core.Optic pr ls s t a b"
+            },
+            {
+                "name": "Lens",
+                "comment": " The lens is \"not a prism\".\n",
+                "args": [
+                    "ls",
+                    "s",
+                    "t",
+                    "a",
+                    "b"
+                ],
+                "type": "Optics.Core.Optic Optics.Core.N ls s t a b"
+            },
+            {
+                "name": "Prism",
+                "comment": " The prism is \"not a lens\".\n",
+                "args": [
+                    "pr",
+                    "s",
+                    "t",
+                    "a",
+                    "b"
+                ],
+                "type": "Optics.Core.Optic pr Optics.Core.N s t a b"
+            },
+            {
+                "name": "SimpleIso",
+                "comment": " `Iso` that cannot change type of the object.\n",
+                "args": [
+                    "pr",
+                    "ls",
+                    "s",
+                    "a"
+                ],
+                "type": "Optics.Core.Iso pr ls s s a a"
+            },
+            {
+                "name": "SimpleLens",
+                "comment": " `Lens` that cannot change type of the object.\n",
+                "args": [
+                    "ls",
+                    "s",
+                    "a"
+                ],
+                "type": "Optics.Core.Lens ls s s a a"
+            },
+            {
+                "name": "SimplePrism",
+                "comment": " `Prism` that cannot change type of the object.\n",
+                "args": [
+                    "pr",
+                    "s",
+                    "a"
+                ],
+                "type": "Optics.Core.Prism pr s s a a"
+            },
+            {
+                "name": "SimpleTraversal",
+                "comment": " `Traversal` that cannot change type of the object.\n",
+                "args": [
+                    "s",
+                    "a"
+                ],
+                "type": "Optics.Core.Traversal s s a a"
+            },
+            {
+                "name": "Traversal",
+                "comment": " The traversal is neither \"lens\" or \"prism\".\n",
+                "args": [
+                    "s",
+                    "t",
+                    "a",
+                    "b"
+                ],
+                "type": "Optics.Core.Optic Optics.Core.N Optics.Core.N s t a b"
+            },
+            {
+                "name": "Y",
+                "comment": " Use this type as replacement for `pr`/`ls` variable when they are in the\nsignature of the function that calls any of requiring eliminators (`get`/\n`review`/`is`).\n",
+                "args": [],
+                "type": "()"
+            }
+        ],
+        "values": [
+            {
+                "name": "assign",
+                "comment": " Assign into any optic.\n",
+                "type": "Optics.Core.Optic pr ls s t a b -> b -> s -> t"
+            },
+            {
+                "name": "get",
+                "comment": " Retrieve the only element using a lens.\n",
+                "type": "Optics.Core.Optic pr Optics.Core.Y s t a b -> s -> a"
+            },
+            {
+                "name": "getAll",
+                "comment": " Retrieve all elements using any optic.\n",
+                "type": "Optics.Core.Optic pr ls s t a b -> s -> List.List a"
+            },
+            {
+                "name": "getSome",
+                "comment": " Retrieve up to one element using any optic.\n",
+                "type": "Optics.Core.Optic pr ls s t a b -> s -> Maybe.Maybe a"
+            },
+            {
+                "name": "id",
+                "comment": " An identity optic.\n",
+                "type": "Optics.Core.SimpleLens ls s s"
+            },
+            {
+                "name": "is",
+                "comment": " Check if s is related to a prism.\n\n**Note:** You can change `Y` to `pr` here and it will still compile.\nI restricted it to prisms, because semantics for traversals\nis kinda be questionable.\n\n",
+                "type": "Optics.Core.Optic Optics.Core.Y ls s t a b -> s -> Basics.Bool"
+            },
+            {
+                "name": "iso",
+                "comment": " An isomorphism constructor.\n",
+                "type": "(s -> a) -> (b -> t) -> Optics.Core.Iso pr ls s t a b"
+            },
+            {
+                "name": "lens",
+                "comment": " A lens constructor.\n\nParameters are: getter and setter.\n\nIf the lens can change type of an object, the setter must return\nthe object of a new type.\n\n",
+                "type": "(s -> a) -> (s -> b -> t) -> Optics.Core.Lens ls s t a b"
+            },
+            {
+                "name": "o",
+                "comment": " Optical composition.\n",
+                "type": "Optics.Core.Optic pr ls s t a b -> Optics.Core.Optic pr ls a b x y -> Optics.Core.Optic pr ls s t x y"
+            },
+            {
+                "name": "over",
+                "comment": " Update over any optic.\n",
+                "type": "Optics.Core.Optic pr ls s t a b -> (a -> b) -> s -> t"
+            },
+            {
+                "name": "prism",
+                "comment": " A prism constructor.\n\nParameters are: reconstructor and a splitter.\n\nReconstructor takes a final value and constructs a final object.\n\nThe splitter turns initial object either to final object directly (if initial object is of wrong variant),\nor spits out `a`.\n\n",
+                "type": "(b -> t) -> (s -> Either.Either t a) -> Optics.Core.Prism pr s t a b"
+            },
+            {
+                "name": "review",
+                "comment": " Use prism to reconstruct.\n",
+                "type": "Optics.Core.Optic Optics.Core.Y ls s t a b -> b -> t"
+            },
+            {
+                "name": "traversal",
+                "comment": " A traversal constructor.\n\nParameters are: toList and a mapper.\n\nWe need `toList`, because there is no `Foldable` typeclass in Elm.\n\nThe mapper is a \"mapSomething\" function over `s`.\n\n",
+                "type": "(s -> List.List a) -> ((a -> b) -> s -> t) -> Optics.Core.Traversal s t a b"
+            }
+        ],
+        "binops": []
+    }
+]

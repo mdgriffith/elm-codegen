@@ -1,0 +1,62 @@
+[
+    {
+        "name": "DropdownContainer",
+        "comment": " A dropdown container in elm which can keep open when the user clicks inside (if you so choose).\r\n\r\n\r\n# Stuff to do with your model\r\n\r\n@docs Visibility, State, initialState\r\n\r\n\r\n# Stuff to do with your update\r\n\r\n@docs dropDownCurrentlyClicked\r\n\r\n\r\n# Stuff to do with your view\r\n\r\n@docs Config, attributes, triggerAttributes\r\n\r\n",
+        "unions": [
+            {
+                "name": "State",
+                "comment": " The dropdown's internal state. This should be somewhere in your `model`,\r\nalong with a value indicating the dropdown's `Visibility`\r\n\r\n    type alias Model =\r\n    type alias Model =\r\n        { dropdownState : Dropdown.State\r\n        , dropdownVisbility : Dropdown.Visibility\r\n        }\r\n\r\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Visibility",
+                "comment": " Whether the dropdown is visible\r\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Open",
+                        []
+                    ],
+                    [
+                        "Closed",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " The config for the dropdown. `setState` should be a message which\r\nupdates the dropdowns state. `dropdownBlur` is a message that is fired whenever\r\nthe dropdown or it's trigger loses focus. **NOTE**: `dropdownBlur` can occur when the user\r\nclicks into a child element of the dropdown, so when handling this message use\r\nthe `dropDownCurrentlyClicked` function to decide whether to close the dropdown on blur.\r\n\r\nA tab index must be given for the dropdown, otherwise it cannot recieve focus.\r\n\r\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ setState : DropdownContainer.State -> msg, dropdownBlur : msg, tabIndex : Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "attributes",
+                "comment": " These go on the dropdown container itself, such as a `div`. You'll need to style the dropdown yourself.\r\nThe function accepts a dropdown state, a config and whether it should be visible or not (which can come from your model)\r\n\r\n    dropdownView : Model -> Html Msg\r\n    dropdownView model =\r\n        div\r\n            ([ style \"width\" \"150px\"\r\n            , style \"height\" \"200px\"\r\n            , style \"border\" \"1px solid black\"\r\n            ]\r\n                ++ Dropdown.attributes model.dropdownState dropDownConfig model.dropdownVisbility\r\n            )\r\n            [ button [] [ text \"Click here\" ] ]\r\n\r\n",
+                "type": "DropdownContainer.State -> DropdownContainer.Config msg -> DropdownContainer.Visibility -> List.List (Html.Attribute msg)"
+            },
+            {
+                "name": "dropDownCurrentlyClicked",
+                "comment": " True if the user has pressed mousedown in the dropdown but\r\nnot yet released the mouse. This is useful when the `dropdownBlur` event has been\r\ntriggered and you need to decide whether you want to close the dropdown.\r\n\r\n    update : Msg -> Model -> Model\r\n    update msg model =\r\n        case msg of\r\n            DropdownBlur ->\r\n                if Dropdown.dropDownCurrentlyClicked model.dropdownState then\r\n                    model\r\n\r\n                else\r\n                    { model | dropdownVisbility = Dropdown.Closed }\r\n\r\n",
+                "type": "DropdownContainer.State -> Basics.Bool"
+            },
+            {
+                "name": "initialState",
+                "comment": " Use this in the init of your app\r\n\r\n    initialModel : Model\r\n    initialModel =\r\n        { dropdownState = Dropdown.initialState\r\n        , dropdownVisbility = Dropdown.Closed\r\n        }\r\n\r\n",
+                "type": "DropdownContainer.State"
+            },
+            {
+                "name": "triggerAttributes",
+                "comment": " Put these on your dropdown trigger: anything which causes a dropdown to open,\r\nlike a button or input text box. Remember to also set an event on the trigger to\r\nactually open the dropdown.\r\n\r\n    dropdownButton : Html Msg\r\n    dropdownButton =\r\n        button\r\n            ([ onClick OpenDropdown ] ++ Dropdown.triggerAttributes dropDownConfig)\r\n            [ text \"Open dropdown\" ]\r\n\r\n",
+                "type": "DropdownContainer.Config msg -> List.List (Html.Attribute msg)"
+            }
+        ],
+        "binops": []
+    }
+]

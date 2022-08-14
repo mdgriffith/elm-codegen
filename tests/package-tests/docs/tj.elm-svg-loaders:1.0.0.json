@@ -1,0 +1,46 @@
+[
+    {
+        "name": "Svg.Loaders",
+        "comment": " SVG loading indicators.\n\n\n# Loaders\n\n@docs audio, bars, grid, puff, rings\n\n\n# Options\n\n@docs size, color\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "audio",
+                "comment": " Audio loading indicator.\n",
+                "type": "List.List Svg.Loaders.Option -> Html.Html msg"
+            },
+            {
+                "name": "bars",
+                "comment": " Bars loading indicator.\n",
+                "type": "List.List Svg.Loaders.Option -> Html.Html msg"
+            },
+            {
+                "name": "color",
+                "comment": " Color defines the primary color of the indicator.\n",
+                "type": "String.String -> Svg.Loaders.Model -> Svg.Loaders.Model"
+            },
+            {
+                "name": "grid",
+                "comment": " Grid loading indicator.\n",
+                "type": "List.List Svg.Loaders.Option -> Html.Html msg"
+            },
+            {
+                "name": "puff",
+                "comment": " Puff loading indicator.\n",
+                "type": "List.List Svg.Loaders.Option -> Html.Html msg"
+            },
+            {
+                "name": "rings",
+                "comment": " Rings loading indicator.\n",
+                "type": "List.List Svg.Loaders.Option -> Html.Html msg"
+            },
+            {
+                "name": "size",
+                "comment": " Size defines the width of the loading indicator,\nthe height is adjusted accordingly if necessary to\nretain the correct aspect ratio.\n",
+                "type": "Basics.Int -> Svg.Loaders.Model -> Svg.Loaders.Model"
+            }
+        ],
+        "binops": []
+    }
+]

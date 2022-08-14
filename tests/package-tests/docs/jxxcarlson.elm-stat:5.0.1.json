@@ -1,0 +1,432 @@
+[
+    {
+        "name": "Chart",
+        "comment": " Functions for building graphs and charts. A chart consists of one more graphs.\nGraphs come in various flavors, notably line and scatter.\n\nIn this module, `Svg` means `TypedSvg.Core.Svg`\n\n\n## Types\n\n@docs BoundingBox, Format, Graph, GraphType, Chart\n\n\n## Constructing and operating on graphs\n\n@docs boundingBox, emptyGraph, graph, lineGraph, meanLine, scatter, errorBars\n\n\n## Constructing and operating on charts\n\n@docs view, chart, addGraph\n\n",
+        "unions": [
+            {
+                "name": "GraphType",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Line",
+                        []
+                    ],
+                    [
+                        "Scatter",
+                        []
+                    ],
+                    [
+                        "MeanLine",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "BoundingBox",
+                "comment": " A box containing data of the form `List (Float, Float)`\n",
+                "args": [],
+                "type": "{ xMin : Basics.Float, xMax : Basics.Float, yMin : Basics.Float, yMax : Basics.Float }"
+            },
+            {
+                "name": "Chart",
+                "comment": " A chart consists of a boundig box and a list of Graphs.\nA chart is rendered to SVG by the `view` function.\n",
+                "args": [],
+                "type": "{ boundingBox : Chart.BoundingBox, confidence : Maybe.Maybe Basics.Float, data : List.List Chart.Graph }"
+            },
+            {
+                "name": "Format",
+                "comment": " Format determines the height, width, and appearance of the rendered chart\n",
+                "args": [],
+                "type": "{ width : Basics.Float, height : Basics.Float, padding : Basics.Float }"
+            },
+            {
+                "name": "Graph",
+                "comment": " A Graph consists of data in the form of `List (Float, Float)`,\na bounding box, a choice of color, and a GraphType, e.g, `Line` or `Scatter`.\n",
+                "args": [],
+                "type": "{ graphType : Chart.GraphType, r : Basics.Float, g : Basics.Float, b : Basics.Float, boundingBox : Chart.BoundingBox, data : Chart.Data }"
+            }
+        ],
+        "values": [
+            {
+                "name": "addGraph",
+                "comment": " Add a graph to an existing Chart\n",
+                "type": "Chart.Graph -> Chart.Chart -> Chart.Chart"
+            },
+            {
+                "name": "boundingBox",
+                "comment": " Compute a bounding box from data, where\n\n    type alias Data =\n        List ( Float, Float )\n\n",
+                "type": "Data.Data -> Chart.BoundingBox"
+            },
+            {
+                "name": "chart",
+                "comment": " Make a chart out of a graph\n",
+                "type": "Chart.Graph -> Chart.Chart"
+            },
+            {
+                "name": "emptyGraph",
+                "comment": " ",
+                "type": "Chart.Graph"
+            },
+            {
+                "name": "errorBars",
+                "comment": " Render error bars with given confidence level for the given data as SVG\n",
+                "type": "Chart.Format -> Basics.Float -> Chart.Data -> TypedSvg.Core.Svg msg"
+            },
+            {
+                "name": "graph",
+                "comment": " Make a graph of given GraphType and given color r, g, b from the given data.\nwhere\n\n    type alias Data =\n        List ( Float, Float )\n\n",
+                "type": "Chart.GraphType -> Basics.Float -> Basics.Float -> Basics.Float -> Data.Data -> Chart.Graph"
+            },
+            {
+                "name": "lineGraph",
+                "comment": " Render graph data to SVG as a broken line.\n",
+                "type": "Chart.Format -> Chart.Graph -> TypedSvg.Core.Svg msg"
+            },
+            {
+                "name": "meanLine",
+                "comment": " Draw a line through mean values of the data.\n",
+                "type": "Chart.Format -> Chart.Graph -> TypedSvg.Core.Svg msg"
+            },
+            {
+                "name": "scatter",
+                "comment": " Render graph data to SVG as a scatter plot.\n",
+                "type": "Chart.Format -> Chart.Graph -> TypedSvg.Core.Svg msg"
+            },
+            {
+                "name": "view",
+                "comment": " Convert a chart to (typed) SVG. Parameters:\n\n  - `Format`: determines the dimensions and appearance of the output\n\n  - `Maybe (Svg mg)`: this is an \"annotation,\" which maybe`Nothing`or`Just svgValue`, where`svgValue`is any value of type`Svg msg`.\n    Here`Svg`meand `TypedSvg.Core.Svg`.\n\n  - `Chart`: the chart to be rendered\n\nOne use of annotations is to add error bars to a chart. See\n`./examples/src/Hubble.elm`\n\n",
+                "type": "Chart.Format -> Maybe.Maybe (TypedSvg.Core.Svg msg) -> Chart.Chart -> TypedSvg.Core.Svg msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Data",
+        "comment": " This module provides types and functions for\nextracting `Data` both from strings and\n`RawData` values. These types and functions are used\nin the `Chart` module.\n\n@docs Point, Data, makePoint, xCoord, yCoord\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Data",
+                "comment": " A list of points in the xy plane.\n",
+                "args": [],
+                "type": "List.List ( Basics.Float, Basics.Float )"
+            },
+            {
+                "name": "Point",
+                "comment": " A point in the xy plane\n",
+                "args": [],
+                "type": "( Basics.Float, Basics.Float )"
+            }
+        ],
+        "values": [
+            {
+                "name": "makePoint",
+                "comment": " Construct a point\n",
+                "type": "Basics.Float -> Basics.Float -> Data.Point"
+            },
+            {
+                "name": "xCoord",
+                "comment": " Get the x-coordinate of a point\n",
+                "type": "Data.Point -> Basics.Float"
+            },
+            {
+                "name": "yCoord",
+                "comment": " Get the y-coordinate of a point\n",
+                "type": "Data.Point -> Basics.Float"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ErrorBars",
+        "comment": " The `ErrorBars` module provides functions for\ndrawing graphs with errors bars. Suppose that\nwe have dome data:\n\n    > data = SampleData.errorBarData |> Data.fromString 0 1\n\nThen\n\n    > ErrorBars.mean data\n\nproduces a list of ponts that pass through the\nmean values of data points with given x value.\nFor error bars with extreme ponts one standard\ndeviatoin from the mean, use\n\n    > ErrorBars.normal 1.0 data\n\nFor error bars with endpoints at the maximumn\nand minimum of the data with given x value, use\n\n    > ErrorBars.maxmin data\n\n@docs ErrorBar, mean, normal, maxmin\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "ErrorBar",
+                "comment": " The type of an error bar containing\n(x,y) with extreme points (x,top) and\n(x,bottom)\n",
+                "args": [],
+                "type": "{ x : Basics.Float, y : Basics.Float, top : Basics.Float, bottom : Basics.Float }"
+            }
+        ],
+        "values": [
+            {
+                "name": "maxmin",
+                "comment": "\n\n    > SampleData.errorBarData |> Data.fromString 0 1 |> ErrorBars.maxmin\n      [{ bottom = 0.9, y = 1, top = 1.1, x = 0 }\n       ,{ bottom = 1.8, y = 2, top = 2.2, x = 1 }]\n\n",
+                "type": "Data.Data -> List.List ErrorBars.ErrorBar"
+            },
+            {
+                "name": "mean",
+                "comment": " Use to compute the y-centroids of the data, as in this example:\n\n    > SampleData.errorBarData |> Data.fromString 0 1 |> ErrorBars.mean\n    [{ x = 0, y = 1 },{ x = 1, y = 2 }]\n\n",
+                "type": "Data.Data -> Data.Data"
+            },
+            {
+                "name": "normal",
+                "comment": " Use to compute error bars, as in this example:\n\n    > SampleData.eberrorBarData2 |> Data.fromString 0 1 |> ErrorBars.normal 0.5\n      [{ bottom = 0.99667, y = 1, top = 1.003333, x = 0 }\n      ,{ bottom = 1.98, y = 2, top = 2.02, x = 1 }]\n\n",
+                "type": "Basics.Float -> Data.Data -> List.List ErrorBars.ErrorBar"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "RawData",
+        "comment": " The purpose of the RawData module is\nto intelligently extract a data table,\ncolumn headers, and metadata from a string\nrepresenting data in one of several formats —\ncsv, tab-delimited, or space-delimited. With\nthe second, one can extract a list of Points\nin the xy plane from a data table.\n\n@docs RawData, empty, get, toData, dataToFloatList, minimum, maximum\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "RawData",
+                "comment": " A RawData value consists of metadata, columnHeaders,\nand data. The first two are lists of strings, while the\nlast is a list of records, where a record is a lest of\nstrings.\n",
+                "args": [],
+                "type": "{ metadata : List.List String.String, columnHeaders : List.List String.String, data : Table.Table String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "dataToFloatList",
+                "comment": " Function to extract a column of values from the given data\n\n    > firstColumn = RawData.dataToFloatList data 1\n\n",
+                "type": "Maybe.Maybe RawData.RawData -> Basics.Int -> List.List Basics.Float"
+            },
+            {
+                "name": "empty",
+                "comment": " Empty RawData value\n",
+                "type": "RawData.RawData"
+            },
+            {
+                "name": "get",
+                "comment": " Example:\n\n    > import SampleData\n    > import RawData\n    > RawData.get SampleData.temperature\n         Just {\n             columnHeaders = [\"Year\",\"Value\"]\n           , metadata = [\"Global Land and Ocean Temperature Anomalies\"\n                         ,\"January-December 1880-2016\"\n                         ,\"Units: Degrees Celsius\"\n                        ]\n           , rawData = [[\"1880\",\"-0.12\"],[\"1881\",\"-0.07\"],[\"1882\",\"-0.08\"]\n                        [\"1883\",\"-0.15\"], ...\n\n",
+                "type": "String.String -> Maybe.Maybe RawData.RawData"
+            },
+            {
+                "name": "maximum",
+                "comment": " Compute the maximum of a column in a list of data, e.g.,\n\n    maximum xCoord data\n\nwhich computes the maximum of the x-values.\n\n",
+                "type": "(data -> Basics.Float) -> List.List data -> Maybe.Maybe Basics.Float"
+            },
+            {
+                "name": "minimum",
+                "comment": " Compute the minimum of a column in a list of data, e.g.,\n\n    minimum xCoord data\n\nwhich computes the minimum of the x-values.\n\n",
+                "type": "(data -> Basics.Float) -> List.List data -> Maybe.Maybe Basics.Float"
+            },
+            {
+                "name": "toData",
+                "comment": " Extracts two columns as a tuple list, usefull when checking for correlation between data.\n\n    >RawData.toData 0 1 (Maybe.withDefault (RawData.RawData [] [] [[]]) data) == [(1880,-0.12),(1881,-0.07),(1882,-0.08),(1883,-0.15),(1884,-0.22), ...]\n\n",
+                "type": "Basics.Int -> Basics.Int -> RawData.RawData -> List.List ( Basics.Float, Basics.Float )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "SampleData",
+        "comment": " The SampleData module provides a few data sets to play with:\nGlobabl temperature anomalies, sea level data, Edwin Hubble's galactic recession data,\nand historic speed of light data.\n\n@docs historicSpeedOfLightCSV, hubble1929, sealevel, temperature, errorBarData\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "errorBarData",
+                "comment": " Test data\n",
+                "type": "String.String"
+            },
+            {
+                "name": "historicSpeedOfLightCSV",
+                "comment": " Historic speed of light data\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hubble1929",
+                "comment": " Astronomer Edwin Hubble's galactic recession data\n",
+                "type": "String.String"
+            },
+            {
+                "name": "sealevel",
+                "comment": " Global Mean Sea Level Data\n",
+                "type": "String.String"
+            },
+            {
+                "name": "temperature",
+                "comment": " Global Land and Ocean Temperature Anomalies January-December 1880-2016\n",
+                "type": "String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Stat",
+        "comment": " The goal of this module is to provide the most comonly used statistical functions .\n\n\n# Measures of Central Tendency\n\n@docs mean, meanWithDefault, average, geometricMean, harmonicMean, weightedMean, median, mode, rootMeanSquare, skewness\n\n\n# Measures of Dispersion\n\n@docs variance, standardDeviation, meanAbsoluteDeviation, medianAbsoluteDeviation, zScore, zScores\n\n\n# Similarity\n\n@docs covariance, correlation, r2\n\n\n# Linear Regression\n\n@docs linearRegression, linearRegressionLine\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "average",
+                "comment": " Same as mean\n\n    > Stat.average [1,2,4,5] == Just 3\n    > Stat.average [] == Nothing\n\n",
+                "type": "List.List Basics.Float -> Maybe.Maybe Basics.Float"
+            },
+            {
+                "name": "correlation",
+                "comment": " A correlation is a “normalized” covariance, its values are between -1.0 and 1.0\n\n    > Stat.correlation[(1,2),(4,8),(5,10)] == Just 1.00\n    > Stat.correlation[(10,0),(40,-30),(50,-32)] == Just -0.98\n\n",
+                "type": "List.List ( Basics.Float, Basics.Float ) -> Maybe.Maybe Basics.Float"
+            },
+            {
+                "name": "covariance",
+                "comment": " Covariance is a measure of how two random variables vary together. When the greater values of one variable correspond to the greater values of the other variable, this is a positive covariance. Whereas when the greater values of one variable correspond to the lesser values of the other variable, this is negative covariance.\n\n    > Stat.covariance[(1,2),(4,8),(5,10)] == Just 5.77\n\n",
+                "type": "List.List ( Basics.Float, Basics.Float ) -> Maybe.Maybe Basics.Float"
+            },
+            {
+                "name": "geometricMean",
+                "comment": " Compute the geometric mean of a list of floats.\n\n    > Stat.geometricMean [1,2.7,5.9] == Just 2.51\n\n",
+                "type": "List.List Basics.Float -> Maybe.Maybe Basics.Float"
+            },
+            {
+                "name": "harmonicMean",
+                "comment": " Compute the harmonic mean of a list of floats.\n\n    > Stat.harmonicMean [1,2,4,5] == Just 2.0512820512820515\n\n",
+                "type": "List.List Basics.Float -> Maybe.Maybe Basics.Float"
+            },
+            {
+                "name": "linearRegression",
+                "comment": " Linear regression finds the line that best fits the given points. The method used here is the [simple linear regression](https://en.wikipedia.org/wiki/Linear_regression).\nThe tuple returned is `(alpha, beta)` where `y = alpha + beta * x`\n\n    > Stat.linearRegression[(1,3),(4,9),(5,11)] == Just (1,2) -- 3 = 1 + 2 * 1\n\n",
+                "type": "List.List ( Basics.Float, Basics.Float ) -> Maybe.Maybe ( Basics.Float, Basics.Float )"
+            },
+            {
+                "name": "linearRegressionLine",
+                "comment": " Returns a function that looks like this: `y = alpha + beta * x`.\nThis may come in handy when generating points on the regreesion line.\n\n    > Stat.linearRegression[(1,3),(4,9),(5,11)] == Just (1,2)\n    > f = Stat.linearRegressionLine (1,2) == <function> : Float -> Float\n    > f 5 == 11\n\n",
+                "type": "( Basics.Float, Basics.Float ) -> Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "mean",
+                "comment": " Compute the mean of a list of floats.\n\n    > Stat.mean [1,2,4,5] == Just 3\n    > Stat.mean [] == Nothing\n\n",
+                "type": "List.List Basics.Float -> Maybe.Maybe Basics.Float"
+            },
+            {
+                "name": "meanAbsoluteDeviation",
+                "comment": " The average absolute deviation, or mean absolute deviation, of a data set is the average of the absolute deviations from the mean.\n\n    > Stat.meanAbsoluteDeviation [1,2,5,4] == Just 1.5\n    > Stat.meanAbsoluteDeviation [1,2,4] == Just 1.11\n\n",
+                "type": "List.List Basics.Float -> Maybe.Maybe Basics.Float"
+            },
+            {
+                "name": "meanWithDefault",
+                "comment": " Compute the mean of a list of floats, but in case of an empty list return the default value that was provided.\n\n    > Stat.meanWithDefault [1,2,4,5] 0 == 3\n    > Stat.meanWithDefault [] 0 == 0\n\n",
+                "type": "List.List Basics.Float -> Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "median",
+                "comment": " Compute the median of the list. The median is the value separating the higher half from the lower half of a data sample. If the sample has an odd number of values, the median is the value in the middle. If the sample has an even number of values, the median is the mean of the two middle values.\n\n    > Stat.median [1,6,10] == Just 6\n    > Stat.median [1,6,8,10] == Just 7\n\n",
+                "type": "List.List Basics.Float -> Maybe.Maybe Basics.Float"
+            },
+            {
+                "name": "medianAbsoluteDeviation",
+                "comment": " The median absolute deviation, of a data set is the average of the absolute deviations from the median.\n\n    > Stat.medianAbsoluteDeviation [ 1, 2, 4 ] == Just 1\n\n",
+                "type": "List.List Basics.Float -> Maybe.Maybe Basics.Float"
+            },
+            {
+                "name": "mode",
+                "comment": " Compute the mode of the data:\n\n    > data = [1, 5, 2, 2, 2, 2, 5, 3, 1]\n    > mode data\n      Just (2,4) : Maybe ( number, Int )\n\n    > data = [\"red\", \"green\", \"red\", \"blue\", \"blue\", \"red\"]\n    > mode data\n      Just (\"red\",3) : Maybe ( String, Int )\n\n",
+                "type": "List.List comparable -> Maybe.Maybe ( comparable, Basics.Int )"
+            },
+            {
+                "name": "r2",
+                "comment": " R2 is the square of the correlation coefficient\n\n    > Stat.r2[(1,2),(4,8),(5,10)] == Just 1.00\n    > Stat.r2[(10,0),(40,-30),(50,-32)] == Just 0.97\n\n",
+                "type": "List.List ( Basics.Float, Basics.Float ) -> Maybe.Maybe Basics.Float"
+            },
+            {
+                "name": "rootMeanSquare",
+                "comment": " Root mean square (RMS) is the square root of the sum of the squares of values in a list divided by the length of the list. Also known as quadratic mean.\n\n    Stat.rootMeanSquare [ 1, 10, 20 ] == Just 12.92\n\n",
+                "type": "List.List Basics.Float -> Maybe.Maybe Basics.Float"
+            },
+            {
+                "name": "skewness",
+                "comment": " Skew or Skewness is a measure of the asymmetry of the probability distribution of a variable around its mean. There are several equations to calculate skewness. The one used in this function is [Pearson’s moment coefficient](https://en.wikipedia.org/wiki/Pearson_correlation_coefficient) of skewness.\n\n    > Stat.skewness [1,10.5,20] == Just 0\n    > Stat.skewness [1,2,3,10] == Just 1.01\n    > Stat.skewness [1,30,30,30] == Just -1.15\n\n",
+                "type": "List.List Basics.Float -> Maybe.Maybe Basics.Float"
+            },
+            {
+                "name": "standardDeviation",
+                "comment": " The standard deviation is the square root of variance. A low standard deviation indicates that the values tend to be close to the mean.\n\n    > Stat.standardDeviation [1,2,3,4,5] == Just 1.41\n    > Stat.standardDeviation [2,2,2] == Just 0\n\n",
+                "type": "List.List Basics.Float -> Maybe.Maybe Basics.Float"
+            },
+            {
+                "name": "variance",
+                "comment": " In statistics, variance is the expectation of the squared deviation of a random variable from its mean.\n\n    > Stat.variance [1,2,3,4,5] == Just 2\n\n",
+                "type": "List.List Basics.Float -> Maybe.Maybe Basics.Float"
+            },
+            {
+                "name": "weightedMean",
+                "comment": " Compute the weighted mean of a list of tuples, where the first elemnt in the tuple is the weight and the second is the value\n\n    > Stat.weightedMean [(2,5),(8,10)] == Just 9\n    > Stat.weightedMean [(0,5),(0,10)] == Nothing -- the sum of the weights can not be 0\n\n",
+                "type": "List.List ( Basics.Float, Basics.Float ) -> Maybe.Maybe Basics.Float"
+            },
+            {
+                "name": "zScore",
+                "comment": " Calculate the Z-score or standard score of a given elements provided the mean and the standard deviation.\n\n    > Stat.zScore 1 3 1.58 == -1.26\n\n",
+                "type": "Basics.Float -> Basics.Float -> Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "zScores",
+                "comment": " Calculate the Z-score or standard score of the provided list\n\n    > Stat.zScores [1,2,4,5] == Just [-1.26,-0.63,0.63,1.26]\n\n",
+                "type": "List.List Basics.Float -> Maybe.Maybe (List.List Basics.Float)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "StatRandom",
+        "comment": " The goal of this module is to provide commonly used probability distributions.\n\n\n# Discrete distributions\n\n@docs bernoulliBool, bernoulliInt, binomial, poisson, geometric\n\n\n# Continous distributions\n\n@docs normal, standardNormal, exponential, beta\n\n\n# Data Structures\n\n@docs generateList, generateMatrix\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "bernoulliBool",
+                "comment": " A discrete generator that follows the bernoulli distribution and returns `true` or `false` with the given probability.\n",
+                "type": "Basics.Float -> Random.Generator Basics.Bool"
+            },
+            {
+                "name": "bernoulliInt",
+                "comment": " A discrete generator that follows the bernoulli distribution and returns `1` or `0` with the given probability.\n",
+                "type": "Basics.Float -> Random.Generator Basics.Int"
+            },
+            {
+                "name": "beta",
+                "comment": " A generator that follows the beta distribution with the given `alpha` and `beta` parameters.\n",
+                "type": "Basics.Float -> Basics.Float -> Random.Generator Basics.Float"
+            },
+            {
+                "name": "binomial",
+                "comment": " A discrete generator that follows the binomial distribution with the given probability for `n` number of trials.\n",
+                "type": "Basics.Float -> Basics.Int -> Random.Generator Basics.Int"
+            },
+            {
+                "name": "exponential",
+                "comment": " A generator that follows the exponential distribution with the given `lambda`.\n",
+                "type": "Basics.Float -> Random.Generator Basics.Float"
+            },
+            {
+                "name": "generateList",
+                "comment": " Generates a list with the given size. `(same as Random.list)`\n",
+                "type": "Basics.Int -> Random.Generator a -> Random.Generator (List.List a)"
+            },
+            {
+                "name": "generateMatrix",
+                "comment": " Generates a matrix with the given form.\n",
+                "type": "Basics.Int -> Basics.Int -> Random.Generator a -> Random.Generator (List.List (List.List a))"
+            },
+            {
+                "name": "geometric",
+                "comment": " A discrete generator that follows the geomtric distribution with the given probability for `n` number of trials.\n",
+                "type": "Basics.Float -> Basics.Int -> Random.Generator Basics.Int"
+            },
+            {
+                "name": "normal",
+                "comment": " Create a generator of floats that is normally distributed with\ngiven mean and standard deviation.\n",
+                "type": "Basics.Float -> Basics.Float -> Random.Generator Basics.Float"
+            },
+            {
+                "name": "poisson",
+                "comment": " A discrete generator that follows the poisson distribution with the given lambda and for `n` number of trials.\n",
+                "type": "Basics.Float -> Basics.Int -> Random.Generator Basics.Int"
+            },
+            {
+                "name": "standardNormal",
+                "comment": " A generator that follows a standard normal distribution.\n",
+                "type": "Random.Generator Basics.Float"
+            }
+        ],
+        "binops": []
+    }
+]

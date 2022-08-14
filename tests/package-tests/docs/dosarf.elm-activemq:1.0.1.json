@@ -1,0 +1,166 @@
+[
+    {
+        "name": "ActiveMq",
+        "comment": " A package for very simplistic interaction with ActiveMQ REST API.\n\n## Configuration\n\n@docs ConfigParams, Configuration, configuration, Credentials, defaultPort, Destination, Host, Port\n\n## Publishing\n\n@docs PublicationResult, publishRequest\n\n## Consuming\n\n@docs consumeRequest, consumeRequestTask, ConsumptionError\n\n## Misc\n\n@docs urlOf, authenticationOf\n",
+        "unions": [
+            {
+                "name": "Configuration",
+                "comment": " A configuration needed to publish / consume, see [`configuration`](#configuration).\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "ConsumptionError",
+                "comment": " Most similar to `Http.Error`, except there is a specific case for not having\nany message to be consumed within the timeframe the call lasted (`HTTP 204 No Content`).\n",
+                "args": [],
+                "cases": [
+                    [
+                        "BadUrl",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Timeout",
+                        []
+                    ],
+                    [
+                        "NetworkError",
+                        []
+                    ],
+                    [
+                        "BadStatus",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "BadBody",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "NoMessage",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Credentials",
+                "comment": " A tuple of user/password string pair.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Credentials",
+                        [
+                            "( String.String, String.String )"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Destination",
+                "comment": " JMS destinations are either queues or topics. Both type have a name.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Queue",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Topic",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Host",
+                "comment": " Host of the ActiveMQ service.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Host",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Port",
+                "comment": " TCP Port of the ActiveMQ REST API service, see [`defaultPort`](#defaultPort).\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Port",
+                        [
+                            "Basics.Int"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "PublicationResult",
+                "comment": " The result of a publication attempt (can only convey success for now).\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Success",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "ConfigParams",
+                "comment": " A record carrying parameters for constructing a [`Configuration`](#Configuration).\n",
+                "args": [],
+                "type": "{ host : ActiveMq.Host, port_ : ActiveMq.Port, credentials : ActiveMq.Credentials, destination : ActiveMq.Destination }"
+            }
+        ],
+        "values": [
+            {
+                "name": "authenticationOf",
+                "comment": " The authentication details of a [`Configuration`](#Configuration)\nto be used by publish/consume requests.\n",
+                "type": "ActiveMq.Configuration -> String.String"
+            },
+            {
+                "name": "configuration",
+                "comment": " Constructs a [`Configuration`](#Configuration) based in config params.\n",
+                "type": "ActiveMq.ConfigParams -> ActiveMq.Configuration"
+            },
+            {
+                "name": "consumeRequest",
+                "comment": " Given\n* a configuration\n* a `createMessage` function turning the result of a publication into a\n  message of your choice,\n* a parser turning a response body into a result,\n\nit constructs an HTTP GET request that will consume a message from configured\ndestination. Success/failure responses will lead to a message of\nthe type of your choice.\n\nYou cannot cancel this request right now, and it looks you should not, either:\nthe little one-shot JMS consumer created for your request will be there, in\nthe context of the REST API servlet within ActiveMQ service, for\n30 seconds by default, even if you cancel the HTTP request (\"servlet timeout\").\nThat means certain loss of any message published between instant of canceling the\nHTTP request and that JMS consumer is being destroyed.\n\nDo _not_ use this call directly to organize a polling loop, since network failures\nand such will result in very busy polling indeed.\n",
+                "type": "ActiveMq.Configuration -> (Result.Result ActiveMq.ConsumptionError value -> msg) -> (String.String -> Result.Result String.String value) -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "consumeRequestTask",
+                "comment": " Creates a task instead of a command, but otherwise similar to [`consumeRequest`](#consumeRequest).\n\nYou may want to use this version to implement correct message pollling loop with back-off\nstrategy etc.\n",
+                "type": "ActiveMq.Configuration -> (String.String -> Result.Result String.String value) -> Task.Task ActiveMq.ConsumptionError value"
+            },
+            {
+                "name": "defaultPort",
+                "comment": " Default TCP port of the REST API of ActiveMQ installations, 8161.\n",
+                "type": "ActiveMq.Port"
+            },
+            {
+                "name": "publishRequest",
+                "comment": " Given\n* a configuration,\n* a `createMessage` function turning the result of a publication into a\n  message of your choice,\n* an HTTP body you want to publish,\n\nit constructs a POST request that will try to publish to ActiveMQ to configured\ndestination.\n",
+                "type": "ActiveMq.Configuration -> (Result.Result Http.Error ActiveMq.PublicationResult -> msg) -> Http.Body -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "urlOf",
+                "comment": " The URL of a [`Configuration`](#Configuration)\nto be used by publish/consume requests.\n",
+                "type": "ActiveMq.Configuration -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

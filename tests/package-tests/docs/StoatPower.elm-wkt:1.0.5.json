@@ -1,0 +1,21 @@
+[
+    {
+        "name": "WellKnown",
+        "comment": " Parse and unparse [Well-known Text (WKT)](https://en.wikipedia.org/wiki/Well-known_text) strings to and from\nElm `Geometry` types from [elm-geojson](http://package.elm-lang.org/packages/mgold/elm-geojson/2.0.0/).\n\nSupported Geometries include `POINT`, `MULTIPOINT`, `LINESTRING`, `MULTILINESTRING`, `POLYGON`,\n`MULTIPOLYGON`, and `GEOMETRYCOLLECTION`.\n\n#Read\n\n@docs read\n\n#Write\n\n@docs write\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "read",
+                "comment": " Attempt to read a WKT string and parse it into a `Geometry` type from `elm-geojson`.\n",
+                "type": "String.String -> Result.Result String.String GeoJson.Geometry"
+            },
+            {
+                "name": "write",
+                "comment": " Write a `Geometry` type from `elm-geojson` to a `String`, formatted as a WKT string.\n",
+                "type": "GeoJson.Geometry -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

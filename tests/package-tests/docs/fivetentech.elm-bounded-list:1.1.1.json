@@ -1,0 +1,55 @@
+[
+    {
+        "name": "BoundedList",
+        "comment": " BoundedList are just list with a set maximum size. If you've reached the max size and add more elements, then some will be dropped!\n\n\n# Definition\n\n@docs BoundedList\n\n\n# Creating BoundedList\n\n@docs empty, fromList\n\n\n# Manipulating BoundedLists\n\n@docs appendEnd, appendStart, toList, cons, addLast\n\n",
+        "unions": [
+            {
+                "name": "BoundedList",
+                "comment": " A list of `itemType` that will have a maximum number of items within.\n\nThe type is opaque so refer to the next section to see how to create a `BoundedList`\n\n",
+                "args": [
+                    "itemType"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "addLast",
+                "comment": " Adds an item at the end of the list dropping one from the start if the list is already at max capacity\n\n    (fromList 2 [ 1, 2, 3 ] |> addLast 4 |> toList) == [ 3, 4 ]\n\n    (fromList 4 [ 1, 2, 3 ] |> addLast 4 |> toList) == [ 1, 2, 3, 4 ]\n\n    (fromList 4 [ 1, 2, 3 ] |> addLast 4 |> addLast 5 |> toList) == [ 2, 3, 4, 5 ]\n\n",
+                "type": "a -> BoundedList.BoundedList a -> BoundedList.BoundedList a"
+            },
+            {
+                "name": "appendEnd",
+                "comment": " take a List and adds it at the end of an existing BoundedList.\nIf the resulting list is too large, elements from the top of the list are dropped until it fits\n\n    (appendEnd (fromList 2 [ 1, 2, 3 ]) [ 4, 5, 6 ] |> toList) == [ 5, 6 ]\n\n    (appendEnd (fromList 6 [ 1, 2, 3 ]) [ 4, 5, 6 ] |> toList) == [ 1, 2, 3, 4, 5, 6 ]\n\n    (appendEnd (fromList 4 [ 1, 2 ]) [ 3, 4, 5 ] |> toList) == [ 2, 3, 4, 5 ]\n\n",
+                "type": "BoundedList.BoundedList a -> List.List a -> BoundedList.BoundedList a"
+            },
+            {
+                "name": "appendStart",
+                "comment": " take a List and adds it at the start of an existing BoundedList.\nIf the resulting list is too large, elements from the end of the list are dropped until it fits.\n\n    (appendStart [ 1, 2, 3 ] (fromList 2 [ 4, 5, 6 ]) |> toList) == [ 1, 2 ]\n\n    (appendStart [ 1, 2, 3 ] (fromList 6 [ 4, 5, 6 ]) |> toList) == [ 1, 2, 3, 4, 5, 6 ]\n\n    (appendStart [ 1, 2, 3 ] (fromList 4 [ 4, 5 ]) |> toList) == [ 1, 2, 3, 4 ]\n\n",
+                "type": "List.List a -> BoundedList.BoundedList a -> BoundedList.BoundedList a"
+            },
+            {
+                "name": "cons",
+                "comment": " Adds an item at the start of the list and drops one at the end if needed\n\n    (fromList 2 [ 1, 2, 3 ] |> cons 4 |> toList) == [ 4, 1 ]\n\n    (fromList 4 [ 1, 2, 3 ] |> addLast 4 |> toList) == [ 4, 1, 2, 3 ]\n\n    (fromList 4 [ 1, 2, 3 ] |> addLast 4 |> addLast 5 |> toList) == [ 5, 4, 1, 2 ]\n\n",
+                "type": "a -> BoundedList.BoundedList a -> BoundedList.BoundedList a"
+            },
+            {
+                "name": "empty",
+                "comment": " Create an empty BoundedList with a specific `maxSize`\n\n    (empty 4 |> tolist) == []\n\n",
+                "type": "Basics.Int -> BoundedList.BoundedList a"
+            },
+            {
+                "name": "fromList",
+                "comment": " Create a BoundedList from a given list and maximum size. If the given list doesn't respect the size constraint, elements from the begining of the list will be drop to fit in.\n\n    (fromList 2 [ 1, 2, 3, 4 ] |> toList) == [ 3, 4 ]\n\n",
+                "type": "Basics.Int -> List.List a -> BoundedList.BoundedList a"
+            },
+            {
+                "name": "toList",
+                "comment": " extract the List part from a BoundedList\n\n    (empty 4 |> tolist) == []\n\n    (fromList 4 [ 1, 2 ] |> tolist) == [ 1, 2 ]\n\n",
+                "type": "BoundedList.BoundedList a -> List.List a"
+            }
+        ],
+        "binops": []
+    }
+]

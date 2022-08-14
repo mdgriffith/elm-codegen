@@ -1,0 +1,133 @@
+[
+    {
+        "name": "AuthAPI",
+        "comment": " AuthAPI defines an extensible API for interacting with authentication.\nIt provides the most common authentication commands that applications need, and\nleaves room for implementations to extend the set of commands to cater for\nvariations in the behaviour of authentication services.\n\nIn particular the `Status` type defines a `Challenged` state which has a `chal`\ntype variable, but there are no commands for answering challenges. Some\nimplementations that do not have challenges will use the `Never` type for this,\nand other implementations with support for things such as 2-factor authentication\nwill supply an appropriate challenge type and commands to answer challenges.\n\n\n# The authentication API.\n\n@docs AuthAPI, AuthInfo, Credentials, Status\n\n",
+        "unions": [
+            {
+                "name": "Status",
+                "comment": " The visible status of the authentication model.\n",
+                "args": [
+                    "auth",
+                    "chal",
+                    "fail"
+                ],
+                "cases": [
+                    [
+                        "LoggedOut",
+                        []
+                    ],
+                    [
+                        "LoggedIn",
+                        [
+                            "AuthAPI.AuthInfo auth"
+                        ]
+                    ],
+                    [
+                        "Failed",
+                        [
+                            "fail"
+                        ]
+                    ],
+                    [
+                        "Challenged",
+                        [
+                            "chal"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "AuthAPI",
+                "comment": " The extensible authentication API.\n\nThis is presented as functions in an extensible record. The reason for this\nslightly unusual presentation is that it allows a type to be defined for the\nwhole API, with all the parts that are variable amongst implementations presented\nas type variables.\n\nThis allows multiple implementations of this API to be written that all conform\nto a common pattern. This standardizes how authentcation is handled in\napplications.\n\n",
+                "args": [
+                    "config",
+                    "model",
+                    "msg",
+                    "auth",
+                    "chal",
+                    "ext",
+                    "fail"
+                ],
+                "type": "{ ext | init : config -> Result.Result String.String model, login : AuthAPI.Credentials -> Platform.Cmd.Cmd msg, logout : Platform.Cmd.Cmd msg, unauthed : Platform.Cmd.Cmd msg, refresh : Platform.Cmd.Cmd msg, update : msg -> model -> ( model, Platform.Cmd.Cmd msg, Maybe.Maybe (AuthAPI.Status auth chal fail) ), addAuthHeaders : model -> List.List Http.Header -> List.List Http.Header }"
+            },
+            {
+                "name": "AuthInfo",
+                "comment": " Defines properties that must be available once authenticated. This is\nextensible so implementations can add extra information.\n\n`subject` should provide some unique id for the authenticated user. This might\ntypically be used as the key to request the users profile.\n\n`scopes` may contain strings that give some application specific indication of\nwhat access rights the authenticated user has. This might typically be used to\nonly render parts of the UI that are going to be able to work correctly when a\nuser has certain permissions.\n\n",
+                "args": [
+                    "auth"
+                ],
+                "type": "{ auth | scopes : List.List String.String, subject : String.String }"
+            },
+            {
+                "name": "Credentials",
+                "comment": " Username and password credentials.\n",
+                "args": [],
+                "type": "{ username : String.String, password : String.String }"
+            }
+        ],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "Jwt",
+        "comment": " JWT tokens are usually base64 encoded. This module provides some utility functions\nto assist with decoding such tokens.\n\n@docs decode, isExpired, extractTokenBody\n@docs StandardToken, standardTokenDecoder\n@docs JwtError\n\n",
+        "unions": [
+            {
+                "name": "JwtError",
+                "comment": " Defines the possible errors that can be encountered when decoding a token.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "TokenExpired",
+                        []
+                    ],
+                    [
+                        "TokenProcessingError",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "TokenDecodeError",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "StandardToken",
+                "comment": " Describes the standard JWT token fields.\n\nNote that the standard token does not have to be used, it is provided\nhere for convenience. All of the fields are `Maybe`s which is not very nice\nwhen you know that some implementation can be relied on to provide certain\nfields.\n\nThis module can work with any token definition; supply a decoder for the token\nyou want to use. A decoder for the standard token is provided in this module.\n\n",
+                "args": [],
+                "type": "{ sub : Maybe.Maybe String.String, iss : Maybe.Maybe String.String, aud : Maybe.Maybe String.String, exp : Maybe.Maybe Time.Posix, nbf : Maybe.Maybe Time.Posix, iat : Maybe.Maybe Time.Posix, jti : Maybe.Maybe String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "decode",
+                "comment": " Decodes a JWT token from its encoded string format.\n",
+                "type": "Json.Decode.Decoder token -> String.String -> Result.Result Jwt.JwtError token"
+            },
+            {
+                "name": "extractTokenBody",
+                "comment": " Extracts the base64 encoded token body.\n",
+                "type": "String.String -> Result.Result Jwt.JwtError String.String"
+            },
+            {
+                "name": "isExpired",
+                "comment": " Decodes just the \"exp\" field from a JWT token from its encoded string format\nand compares for expiry with the supplied time stamp.\n\nIf the token does not contain an \"exp\" field, this function will always return\n`True`. It is expected that the supplied token will contain this field.\n\n",
+                "type": "Time.Posix -> String.String -> Basics.Bool"
+            },
+            {
+                "name": "standardTokenDecoder",
+                "comment": " A decoder for the standard token.\n",
+                "type": "Json.Decode.Decoder Jwt.StandardToken"
+            }
+        ],
+        "binops": []
+    }
+]

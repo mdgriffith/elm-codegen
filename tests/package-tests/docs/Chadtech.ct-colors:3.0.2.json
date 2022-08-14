@@ -1,0 +1,106 @@
+[
+    {
+        "name": "Chadtech.Colors",
+        "comment": " Colors in the Chadtech design standard v2.0\n\n\n# Background\n\n@docs background0, background1, background2, background3, background4\n\n\n# Content\n\n@docs content0, content1, content2, content3, content4, content5\n\n\n# Important\n\n@docs important0, important1\n\n\n# Decoration\n\n@docs decoration0, decoration1\n\n\n# Problem\n\n@docs problem0, problem1\n\n\n# Success\n\n@docs success0, success1\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "background0",
+                "comment": " #030907\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "background1",
+                "comment": " #071D10\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "background2",
+                "comment": " #082208\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "background3",
+                "comment": " #142909\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "background4",
+                "comment": " #30371A\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "content0",
+                "comment": " #131610\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "content1",
+                "comment": " #2C2826\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "content2",
+                "comment": " #57524F\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "content3",
+                "comment": " #807672\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "content4",
+                "comment": " #B0A69A\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "content5",
+                "comment": " #E0D6CA\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "decoration0",
+                "comment": " #175CFE\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "decoration1",
+                "comment": " #0ABAB5\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "important0",
+                "comment": " #B39F4B\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "important1",
+                "comment": " #E3D34B\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "problem0",
+                "comment": " #651A20\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "problem1",
+                "comment": " #F21D23\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "success0",
+                "comment": " #366317\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "success1",
+                "comment": " #0ACA1A\n",
+                "type": "Css.Color"
+            }
+        ],
+        "binops": []
+    }
+]

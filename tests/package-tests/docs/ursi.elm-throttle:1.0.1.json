@@ -1,0 +1,40 @@
+[
+    {
+        "name": "Throttle",
+        "comment": "\n\n@docs Throttle\n\n@docs create, update, try, ifNeeded\n\n",
+        "unions": [
+            {
+                "name": "Throttle",
+                "comment": " Internally, a throttle keeps track of two things:\n\n  - How many times [`update`](#update) needs to be applied before it will allow the next command to be executed (we'll call this the \"counter\")\n  - A potential command to be executed when [`update`](#update) sets the counter to `0` (we'll call this the \"stored command\")\n\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "create",
+                "comment": " Create a throttle that will ensure that commands will be executed at most once per `n` applications of [`update`](#update). We'll call `n` the \"counter maximum\". The counter is initially set to `0` to ensure the execution of the first command is not delayed (see [`try`](#try)).\n\n    throttle : Throttle msg\n    throttle =\n        Throttle.create n\n\n",
+                "type": "Basics.Int -> Throttle.Throttle msg"
+            },
+            {
+                "name": "ifNeeded",
+                "comment": " If the throttle's counter is `0` and there is no stored command, return `Sub.none`, otherwise, return the subscription that was passed in.\n\nThis allows you to use high frequency subscriptions for throttling and not worry about it running when it's not needed.\n\n",
+                "type": "Platform.Sub.Sub msg -> Throttle.Throttle msg -> Platform.Sub.Sub msg"
+            },
+            {
+                "name": "try",
+                "comment": " Try to execute a command.\n\n\n## In the example below:\n\nIf `model.throttle`'s counter is `0`, `newThrottle` is a `Throttle` whose counter is set to the counter maximum, and `cmd` is `doSomething`.\n\nIf `model.throttle`'s counter is not `0`, `newThrottle` is a `Throttle` with `doSomething` set as the stored command, and `cmd` is `Cmd.none`.\n\n    update msg model =\n        case msg of\n            MouseMoved ->\n                let\n                    ( newThrottle, cmd ) =\n                        Throttle.try\n                            doSomething\n                            model.throttle\n                in\n                ( { model | throttle = newThrottle }, cmd )\n\n",
+                "type": "Platform.Cmd.Cmd msg -> Throttle.Throttle msg -> ( Throttle.Throttle msg, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "update",
+                "comment": "\n\n\n## If the counter is `0` and there is a stored command:\n\nReturns a `Throttle` whose counter is set to the counter maximum, and the stored command\n\n\n## If the counter is `0` and there is not a stored command:\n\nReturns an identical `Throttle` and `Cmd.none`\n\n(**note:** As this case accomplishes nothing, if performance is a concern and you're using a subscription to update your throttle, use [`ifNeeded`](#ifNeeded) and this will never happen.)\n\n\n## If the counter is not `0`:\n\nReturns a throttle with a counter equal to the old counter minus one, and `Cmd.none`\n\n",
+                "type": "Throttle.Throttle msg -> ( Throttle.Throttle msg, Platform.Cmd.Cmd msg )"
+            }
+        ],
+        "binops": []
+    }
+]

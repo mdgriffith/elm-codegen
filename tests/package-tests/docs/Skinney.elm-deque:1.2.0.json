@@ -1,0 +1,160 @@
+[
+    {
+        "name": "Deque",
+        "comment": " A double ended queue (deque, pronounced 'deck')\n\n\n## Type\n\n@docs Deque\n\n\n## Construct\n\n@docs empty, singleton, initialize, repeat, range\n\n\n## Modify\n\n@docs pushFront, pushBack, append\n\n\n## Deconstruct\n\n@docs popFront, popBack, left, right, dropLeft, dropRight\n\n\n## Lists\n\n@docs fromList, toList\n\n\n## Query\n\n@docs isEmpty, member, length, first, last, equals\n\n\n## Transform\n\n@docs map, filter, filterMap, foldl, foldr, partition\n\n",
+        "unions": [
+            {
+                "name": "Deque",
+                "comment": " The deque datatype\n\nDeque equality with (==) is unreliable (equivalent deques can have a different distribution of elements between the back and the front) and should not be used.\n\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "append",
+                "comment": " Create a new deque containing all the elements of the provided deques. Order is preserved.\n",
+                "type": "Deque.Deque a -> Deque.Deque a -> Deque.Deque a"
+            },
+            {
+                "name": "dropLeft",
+                "comment": " Drop `n` number of elements from the left\n",
+                "type": "Basics.Int -> Deque.Deque a -> Deque.Deque a"
+            },
+            {
+                "name": "dropRight",
+                "comment": " Drop `n` number of elements from the right\n",
+                "type": "Basics.Int -> Deque.Deque a -> Deque.Deque a"
+            },
+            {
+                "name": "empty",
+                "comment": " The empty deque\n",
+                "type": "Deque.Deque a"
+            },
+            {
+                "name": "equals",
+                "comment": " Check if two deques contain the same elements\n",
+                "type": "Deque.Deque a -> Deque.Deque a -> Basics.Bool"
+            },
+            {
+                "name": "filter",
+                "comment": " Create a new deque which only contains the elements where the provided `fn` returned `True`\n",
+                "type": "(a -> Basics.Bool) -> Deque.Deque a -> Deque.Deque a"
+            },
+            {
+                "name": "filterMap",
+                "comment": " Allows running both `filter` and `map` in the same operation. The provided function\nis run on every element and returns a `Maybe`. Only the `Just` values will be kept in the\nresulting deque\n",
+                "type": "(a -> Maybe.Maybe b) -> Deque.Deque a -> Deque.Deque b"
+            },
+            {
+                "name": "first",
+                "comment": " Get the first element of the deque\n",
+                "type": "Deque.Deque a -> Maybe.Maybe a"
+            },
+            {
+                "name": "foldl",
+                "comment": " Fold over the elements of the deque starting from the front.\n",
+                "type": "(a -> b -> b) -> b -> Deque.Deque a -> b"
+            },
+            {
+                "name": "foldr",
+                "comment": " Fold over the elements of the deque starting from the back.\n",
+                "type": "(a -> b -> b) -> b -> Deque.Deque a -> b"
+            },
+            {
+                "name": "fromList",
+                "comment": " Converts a `List` to a deque.\n",
+                "type": "List.List a -> Deque.Deque a"
+            },
+            {
+                "name": "initialize",
+                "comment": " Initialize a list of some length with some function.\n\ninitialize n f creates a list of length n with the element at index i initialized to the result of f i.\n\n",
+                "type": "Basics.Int -> (Basics.Int -> a) -> Deque.Deque a"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Check if the deque holds no elements\n",
+                "type": "Deque.Deque a -> Basics.Bool"
+            },
+            {
+                "name": "last",
+                "comment": " Get the last element of the deque\n",
+                "type": "Deque.Deque a -> Maybe.Maybe a"
+            },
+            {
+                "name": "left",
+                "comment": " Take `n` number of elements from the left\n",
+                "type": "Basics.Int -> Deque.Deque a -> Deque.Deque a"
+            },
+            {
+                "name": "length",
+                "comment": " Get the length of the deque\n",
+                "type": "Deque.Deque a -> Basics.Int"
+            },
+            {
+                "name": "map",
+                "comment": " Create a new deque where every element is the result of running `fn` on every element.\n",
+                "type": "(a -> b) -> Deque.Deque a -> Deque.Deque b"
+            },
+            {
+                "name": "member",
+                "comment": " Check if the provided element exists in this deque (using `==`).\n",
+                "type": "a -> Deque.Deque a -> Basics.Bool"
+            },
+            {
+                "name": "partition",
+                "comment": " Returns a tuple of deques, where the first deque contains every element where the function\nreturned `True`, while the second deque contains the other elements.\n",
+                "type": "(a -> Basics.Bool) -> Deque.Deque a -> ( Deque.Deque a, Deque.Deque a )"
+            },
+            {
+                "name": "popBack",
+                "comment": " Returns a tuple containing the last element and the remaining elements of the deque.\nThe first element of the tuple will be `Nothing` if this function is run on the empty deque.\n",
+                "type": "Deque.Deque a -> ( Maybe.Maybe a, Deque.Deque a )"
+            },
+            {
+                "name": "popFront",
+                "comment": " Returns a tuple of the first element and the remaining elements of the deque.\nThe first element of the tuple will be `Nothing` íf this is run on the empty deque.\n",
+                "type": "Deque.Deque a -> ( Maybe.Maybe a, Deque.Deque a )"
+            },
+            {
+                "name": "pushBack",
+                "comment": " Adds an element as the last element of the deque\n",
+                "type": "a -> Deque.Deque a -> Deque.Deque a"
+            },
+            {
+                "name": "pushFront",
+                "comment": " Adds an element to the front of the deque\n",
+                "type": "a -> Deque.Deque a -> Deque.Deque a"
+            },
+            {
+                "name": "range",
+                "comment": " Create a list of numbers, every element increasing by one.\nYou give the lowest and highest number that should be in the list.\n\n    range 3 6 == [ 3, 4, 5, 6 ]\n\n    range 3 3 == [ 3 ]\n\n    range 6 3 == []\n\n",
+                "type": "Basics.Int -> Basics.Int -> Deque.Deque Basics.Int"
+            },
+            {
+                "name": "repeat",
+                "comment": " Create a list with _n_ copies of a value:\n\n    repeat 3 ( 0, 0 ) == [ ( 0, 0 ), ( 0, 0 ), ( 0, 0 ) ]\n\n",
+                "type": "Basics.Int -> a -> Deque.Deque a"
+            },
+            {
+                "name": "right",
+                "comment": " Take `n` number of elements from the right\n",
+                "type": "Basics.Int -> Deque.Deque a -> Deque.Deque a"
+            },
+            {
+                "name": "singleton",
+                "comment": " Create a deque consisting of a single element\n",
+                "type": "a -> Deque.Deque a"
+            },
+            {
+                "name": "toList",
+                "comment": " Converts the deque to a `List`\n",
+                "type": "Deque.Deque a -> List.List a"
+            }
+        ],
+        "binops": []
+    }
+]

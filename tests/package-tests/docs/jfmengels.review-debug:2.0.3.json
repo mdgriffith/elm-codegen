@@ -1,0 +1,30 @@
+[
+    {
+        "name": "NoDebug.Log",
+        "comment": "\n\n@docs rule\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": " Forbid the use of [`Debug.log`](https://package.elm-lang.org/packages/elm/core/latest/Debug) before it goes into production or fails in the CI.\n\n`Debug.log` is useful to debug your code, but should not be pushed to production.\n\n    config =\n        [ NoDebug.Log.rule\n        ]\n\n\n## Fail\n\n    if Debug.log \"condition\" condition then\n        a\n\n    else\n        b\n\n\n## Success\n\n    if condition then\n        a\n\n    else\n        b\n\n\n# When (not) to use this rule\n\nYou should use this rule if you're developing a package meant to be published,\nor an application that is put into production, and wish to know about the use of\n[`Debug.log`](https://package.elm-lang.org/packages/elm/core/latest/Debug#log)\nmodule before committing your changes.\n\nYou should not use this rule if you are developing an application that is not\nput into production, and you do not care about having stray debug logs, and you\ndo not ship to production.\n\n",
+                "type": "Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "NoDebug.TodoOrToString",
+        "comment": "\n\n@docs rule\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": " Forbid the use of [`Debug.todo`] and [`Debug.toString`].\n\n    config =\n        [ NoDebug.TodoOrToString.rule\n        ]\n\nThe reason why there is a is separate rule for handling [`Debug.log`] and one for\nhandling [`Debug.todo`] and [`Debug.toString`], is because these two functions\nare reasonable and useful to have in tests.\n\nYou can for instance create test data without having to handle the error case\neverywhere. If you do enter the error case in the following example, then tests\nwill fail.\n\n    testEmail : Email\n    testEmail =\n        case Email.fromString \"some.email@domain.com\" of\n            Just email ->\n                email\n\n            Nothing ->\n                Debug.todo \"Supplied an invalid email in tests\"\n\nIf you want to allow these functions in tests but not in production code, you\ncan configure the rule like this.\n\n    import Review.Rule as Rule exposing (Rule)\n\n    config =\n        [ NoDebug.TodoOrToString.rule\n            |> Rule.ignoreErrorsForDirectories [ \"tests/\" ]\n        ]\n\n\n## Fail\n\n    _ =\n        if condition then\n            a\n\n        else\n            Debug.todo \"\"\n\n    _ =\n        Debug.toString data\n\n\n## Success\n\n    if condition then\n        a\n\n    else\n        b\n\n[`Debug.log`]: https://package.elm-lang.org/packages/elm/core/latest/Debug#log\n[`Debug.todo`]: https://package.elm-lang.org/packages/elm/core/latest/Debug#todo\n[`Debug.toString`]: https://package.elm-lang.org/packages/elm/core/latest/Debug#toString\n\n",
+                "type": "Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    }
+]

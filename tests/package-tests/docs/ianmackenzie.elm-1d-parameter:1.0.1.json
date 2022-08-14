@@ -1,0 +1,70 @@
+[
+    {
+        "name": "Parameter1d",
+        "comment": " All of the functions in this module take as their first argument the number\nof steps to take from 0 to 1, and a function to evaluate, but evaluate that\nfunction at a different number of parameter values to obtain different numbers\nof results:\n\n    Function call | Results | Parameter values passed\n    --------------|---------|-------------------------------\n    steps 4       | 5       | [ 0, 0.25, 0.5, 0.75, 1 ]\n    leading 4     | 4       | [ 0, 0.25, 0.5, 0.75 ]\n    trailing 4    | 4       | [ 0.25, 0.5, 0.75, 1 ]\n    inBetween 4   | 3       | [ 0.25, 0.5, 0.75 ]\n    midpoints 4   | 4       | [ 0.125, 0.375, 0.625, 0.875 ]\n\nSee the documentation of each function for details.\n\n@docs steps, leading, trailing, inBetween, midpoints\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "inBetween",
+                "comment": " Like `steps` but with both the first _and_ last values omitted (the\n\"in-between\" values only). Note that the given `n` still refers to the number of\nsteps to take; the number of returned values will be one less than the number of\nsteps.\n\n    import Float.Extra as Float\n\n    Parameter1d.inBetween 4 (Float.interpolateFrom 10 20)\n    --> [ 12.5, 15, 17.5 ]\n\n    Parameter1d.inBetween 3 (Float.interpolateFrom 10 20)\n    --> [ 13.3333, 16.6667 ]\n\n    Parameter1d.inBetween 2 (Float.interpolateFrom 10 20)\n    --> [ 15 ]\n\nPassing a value less than 2 will result in an empty list being returned.\n\n",
+                "type": "Basics.Int -> (Basics.Float -> a) -> List.List a"
+            },
+            {
+                "name": "leading",
+                "comment": " Like `steps`, but with the last value omitted:\n\n    import Float.Extra as Float\n\n    Parameter1d.leading 4 (Float.interpolateFrom 10 20)\n    --> [ 10, 12.5, 15, 17.5 ]\n\n",
+                "type": "Basics.Int -> (Basics.Float -> a) -> List.List a"
+            },
+            {
+                "name": "midpoints",
+                "comment": " For a given `n` > 0, construct `n` equal-width intervals between 0 and 1 and\ncall the given function at the midpoint of each interval. This is useful for\nsome mathematical operations like [numerical\nintegration](https://en.wikipedia.org/wiki/Riemann_sum#Midpoint_rule).\n\n    import Float.Extra as Float\n\n    Parameter1d.midpoints 4 (Float.interpolateFrom 10 20)\n    --> [ 11.25, 13.75, 16.25, 18.75 ]\n\n",
+                "type": "Basics.Int -> (Basics.Float -> a) -> List.List a"
+            },
+            {
+                "name": "steps",
+                "comment": " For a given `n` (which must be greater than zero), call the given function\n`n + 1` times with values evenly spaced between 0 and 1 inclusive, and return\nthe results as a list:\n\n    import Float.Extra as Float\n\n    Parameter1d.steps 4 (Float.interpolateFrom 10 20)\n    --> [ 10, 12.5, 15, 17.5, 20 ]\n\nYou can read this as \"take 4 steps to interpolate from 10 to 20\". More generally,\n\n    Parameter1d.steps 4 someFunction\n\nwill return\n\n    [ someFunction 0.0\n    , someFunction 0.25\n    , someFunction 0.5\n    , someFunction 0.75\n    , someFunction 1.0\n    ]\n\nNote that the results do not themselves have to be `Float`s:\n\n    import Point2d\n\n    p1 =\n        Point2d.fromCoordinates ( 0, 0 )\n\n    p2 =\n        Point2d.fromCoordinates ( 100, 200 )\n\n    Parameter1d.steps 4 (Point2d.interpolateFrom p1 p2)\n    --> [ Point2d.fromCoordinates ( 0, 0 )\n    --> , Point2d.fromCoordinates ( 25, 50 )\n    --> , Point2d.fromCoordinates ( 50, 100 )\n    --> , Point2d.fromCoordinates ( 75, 150 )\n    --> , Point2d.fromCoordinates ( 100, 200 )\n    --> ]\n\nPassing a negative or zero value as the first argument will result in an empty\nlist being returned.\n\n",
+                "type": "Basics.Int -> (Basics.Float -> a) -> List.List a"
+            },
+            {
+                "name": "trailing",
+                "comment": " Also like `steps`, but with the first value omitted:\n\n    import Float.Extra as Float\n\n    Parameter1d.trailing 4 (Float.interpolateFrom 10 20)\n    --> [ 12.5, 15, 17.5, 20 ]\n\n",
+                "type": "Basics.Int -> (Basics.Float -> a) -> List.List a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Parameter1d.Array",
+        "comment": " These functions behave exactly like the corresponding ones in the base\n`Parameter1d` module, but return `Array`s instead of `List`s. For example,\n\n    Parameter1d.Array.steps 4 (Float.interplateFrom 10 20)\n\nis equivalent to\n\n    Parameter1d.steps 4 (Float.interpolateFrom 10 20)\n        |> Array.fromList\n\nbut is more efficient (internally, `Parameter1d.Array.steps` calls\n`Array.initialize` directly instead of constructing a temporary list).\n\n@docs steps, leading, trailing, inBetween, midpoints\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "inBetween",
+                "comment": " ",
+                "type": "Basics.Int -> (Basics.Float -> a) -> Array.Array a"
+            },
+            {
+                "name": "leading",
+                "comment": " ",
+                "type": "Basics.Int -> (Basics.Float -> a) -> Array.Array a"
+            },
+            {
+                "name": "midpoints",
+                "comment": " ",
+                "type": "Basics.Int -> (Basics.Float -> a) -> Array.Array a"
+            },
+            {
+                "name": "steps",
+                "comment": " ",
+                "type": "Basics.Int -> (Basics.Float -> a) -> Array.Array a"
+            },
+            {
+                "name": "trailing",
+                "comment": " ",
+                "type": "Basics.Int -> (Basics.Float -> a) -> Array.Array a"
+            }
+        ],
+        "binops": []
+    }
+]

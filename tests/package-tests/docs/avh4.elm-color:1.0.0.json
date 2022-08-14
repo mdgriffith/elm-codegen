@@ -1,0 +1,228 @@
+[
+    {
+        "name": "Color",
+        "comment": " This package defines a standard `Color` type\nwith the hope that all Elm packages that produce colors and\nall Elm packages that consume colors will use this type\nto allow all such packages to easily interoperate\nfor the ultimate benefit of all Elm developers.\n\nNote about color space conversions:\nWhen converting between RGB and HSL, this module produce results consistent with\nthe algorithm specified in the CSS Color Module Level 3,\n[Section 4.2.4. HSL color values](https://www.w3.org/TR/css-color-3/#hsl-color).\n\n\n# Types\n\n@docs Color\n\n\n# Creating colors\n\n\n## From numbers\n\nThese are the most concise ways to create colors:\n\n@docs rgb255, rgb, rgba, hsl, hsla\n\n\n## From records\n\nThese ways to make colors make the names of each component explicit,\nand are compatible with the corresponding `to...` function.\n\n@docs fromRgba, fromHsla\n\n\n# Using colors with HTML/CSS/SVG\n\n@docs toCssString\n\n\n# Extracing values from colors\n\n@docs toRgba, toHsla\n\n\n# Built-in Colors\n\nThese colors come from the [Tango palette](http://tango.freedesktop.org/Tango_Icon_Theme_Guidelines)\nwhich provides aesthetically reasonable defaults for colors.\nEach color also comes with a light and dark version.\n\n\n## Standard\n\n@docs red, orange, yellow, green, blue, purple, brown\n\n\n## Light\n\n@docs lightRed, lightOrange, lightYellow, lightGreen, lightBlue, lightPurple, lightBrown\n\n\n## Dark\n\n@docs darkRed, darkOrange, darkYellow, darkGreen, darkBlue, darkPurple, darkBrown\n\n\n## Eight Shades of Grey\n\nThese colors are a compatible series of shades of grey, fitting nicely\nwith the Tango palette.\n\n@docs white, lightGrey, grey, darkGrey, lightCharcoal, charcoal, darkCharcoal, black\n\nThese are identical to the _grey_ versions. It seems the spelling is regional, but\nthat has never helped me remember which one I should be writing.\n\n@docs lightGray, gray, darkGray\n\n",
+        "unions": [
+            {
+                "name": "Color",
+                "comment": " Represents a color.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "black",
+                "comment": " ",
+                "type": "Color.Color"
+            },
+            {
+                "name": "blue",
+                "comment": " ",
+                "type": "Color.Color"
+            },
+            {
+                "name": "brown",
+                "comment": " ",
+                "type": "Color.Color"
+            },
+            {
+                "name": "charcoal",
+                "comment": " ",
+                "type": "Color.Color"
+            },
+            {
+                "name": "darkBlue",
+                "comment": " ",
+                "type": "Color.Color"
+            },
+            {
+                "name": "darkBrown",
+                "comment": " ",
+                "type": "Color.Color"
+            },
+            {
+                "name": "darkCharcoal",
+                "comment": " ",
+                "type": "Color.Color"
+            },
+            {
+                "name": "darkGray",
+                "comment": " ",
+                "type": "Color.Color"
+            },
+            {
+                "name": "darkGreen",
+                "comment": " ",
+                "type": "Color.Color"
+            },
+            {
+                "name": "darkGrey",
+                "comment": " ",
+                "type": "Color.Color"
+            },
+            {
+                "name": "darkOrange",
+                "comment": " ",
+                "type": "Color.Color"
+            },
+            {
+                "name": "darkPurple",
+                "comment": " ",
+                "type": "Color.Color"
+            },
+            {
+                "name": "darkRed",
+                "comment": " ",
+                "type": "Color.Color"
+            },
+            {
+                "name": "darkYellow",
+                "comment": " ",
+                "type": "Color.Color"
+            },
+            {
+                "name": "fromHsla",
+                "comment": " Creates a color from [HSLA](https://en.wikipedia.org/wiki/HSL_and_HSV) (hue, saturation, lightness, alpha)\nvalues between 0.0 and 1.0 (inclusive).\n\nSee also:\n\nIf you want to be more concise, see [`hsla`](#hsla) or [`hsl`](#hsl).\n\n",
+                "type": "{ hue : Basics.Float, saturation : Basics.Float, lightness : Basics.Float, alpha : Basics.Float } -> Color.Color"
+            },
+            {
+                "name": "fromRgba",
+                "comment": " Creates a color from a record of RGBA values (red, green, blue, alpha) between 0.0 and 1.0 (inclusive).\n\nThe RGB values are interpreted in the [sRGB](https://en.wikipedia.org/wiki/SRGB) color space,\nwhich is the color space specified by the HTML, [CSS](https://www.w3.org/TR/css-color-3/#rgb-color),\nand [SVG](https://www.w3.org/Graphics/SVG/1.1/color.html) specs\n(and is also widely considered the default color space for digital images that do not explicitly contain color space information).\n\nThis is a strict function that will force you to name all channel parameters, to avoid mixing them up.\n\nSee also:\n\nIf you want to be more concise, see [`rgba`](#rgba) or [`rgb`](#rgb).\n\n",
+                "type": "{ red : Basics.Float, green : Basics.Float, blue : Basics.Float, alpha : Basics.Float } -> Color.Color"
+            },
+            {
+                "name": "gray",
+                "comment": " ",
+                "type": "Color.Color"
+            },
+            {
+                "name": "green",
+                "comment": " ",
+                "type": "Color.Color"
+            },
+            {
+                "name": "grey",
+                "comment": " ",
+                "type": "Color.Color"
+            },
+            {
+                "name": "hsl",
+                "comment": " Creates a color from [HSL](https://en.wikipedia.org/wiki/HSL_and_HSV) (hue, saturation, lightness)\nvalues between 0.0 and 1.0 (inclusive).\n\nSee also:\n\nIf you need to provide an alpha value, see [`hsla`](#hsla).\n\nIf you want to be more explicit with parameter names, see [`fromHsla`](#fromHsla).\n\n",
+                "type": "Basics.Float -> Basics.Float -> Basics.Float -> Color.Color"
+            },
+            {
+                "name": "hsla",
+                "comment": " Creates a color from [HSLA](https://en.wikipedia.org/wiki/HSL_and_HSV) (hue, saturation, lightness, alpha)\nvalues between 0.0 and 1.0 (inclusive).\n\nSee also:\n\nIf you want to be more concise and want full alpha, see [`hsl`](#hsl).\n\nIf you want to be more explicit with parameter names, see [`fromHsla`](#fromHsla).\n\n",
+                "type": "Basics.Float -> Basics.Float -> Basics.Float -> Basics.Float -> Color.Color"
+            },
+            {
+                "name": "lightBlue",
+                "comment": " ",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lightBrown",
+                "comment": " ",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lightCharcoal",
+                "comment": " ",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lightGray",
+                "comment": " ",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lightGreen",
+                "comment": " ",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lightGrey",
+                "comment": " ",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lightOrange",
+                "comment": " ",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lightPurple",
+                "comment": " ",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lightRed",
+                "comment": " ",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lightYellow",
+                "comment": " ",
+                "type": "Color.Color"
+            },
+            {
+                "name": "orange",
+                "comment": " ",
+                "type": "Color.Color"
+            },
+            {
+                "name": "purple",
+                "comment": " ",
+                "type": "Color.Color"
+            },
+            {
+                "name": "red",
+                "comment": " ",
+                "type": "Color.Color"
+            },
+            {
+                "name": "rgb",
+                "comment": " Creates a color from RGB (red, green, blue) values between 0.0 and 1.0 (inclusive).\n\nThis is a convenience function for making a color value with full opacity.\n\nSee also:\n\nIf you want to pass RGB values as `Int` values between 0 and 255, see [`rgb255`](#rgb255).\n\nIf you need to provide an alpha value, see [`rgba`](#rgba).\n\nIf you want to be more explicit with parameter names, see [`fromRgba`](#fromRgba).\n\n",
+                "type": "Basics.Float -> Basics.Float -> Basics.Float -> Color.Color"
+            },
+            {
+                "name": "rgb255",
+                "comment": " Creates a color from RGB (red, green, blue) integer values between 0 and 255.\n\nThis is a convenience function if you find passing RGB channels as integers scaled to 255 more intuitive.\n\nSee also:\n\nIf you want to provide RGB values as `Float` values between 0.0 and 1.0, see [`rgb`](#rgb).\n\n",
+                "type": "Basics.Int -> Basics.Int -> Basics.Int -> Color.Color"
+            },
+            {
+                "name": "rgba",
+                "comment": " Creates a color from RGBA (red, green, blue, alpha) values between 0.0 and 1.0 (inclusive).\n\nSee also:\n\nIf you want to be more concise and want full alpha, see [`rgb`](#rgb).\n\nIf you want to be more explicit with parameter names, see [`fromRgba`](#fromRgba).\n\n",
+                "type": "Basics.Float -> Basics.Float -> Basics.Float -> Basics.Float -> Color.Color"
+            },
+            {
+                "name": "toCssString",
+                "comment": " Converts a color to a string suitable for use in CSS.\nThe string will conform to [CSS Color Module Level 3](https://www.w3.org/TR/css-color-3/),\nwhich is supported by all current web browsers, all versions of Firefox,\nall versions of Chrome, IE 9+, and all common mobile browsers\n([browser support details](https://caniuse.com/#feat=css3-colors)).\n\n    Html.Attributes.style \"background-color\" (Color.toCssString Color.lightPurple)\n\nNote: the current implementation produces a string in the form\n`rgba(rr.rr%,gg.gg%,bb.bb%,a.aaa)`, but this may change in the\nfuture, and you should not rely on this implementation detail.\n\n",
+                "type": "Color.Color -> String.String"
+            },
+            {
+                "name": "toHsla",
+                "comment": " Extract the [HSLA](https://en.wikipedia.org/wiki/HSL_and_HSV) (hue, saturation, lightness, alpha)\ncomponents from a color.\nThe component values will be between 0.0 and 1.0 (inclusive).\n",
+                "type": "Color.Color -> { hue : Basics.Float, saturation : Basics.Float, lightness : Basics.Float, alpha : Basics.Float }"
+            },
+            {
+                "name": "toRgba",
+                "comment": " Extract the RGBA (red, green, blue, alpha) components from a color.\nThe component values will be between 0.0 and 1.0 (inclusive).\n\nThe RGB values are interpreted in the [sRGB](https://en.wikipedia.org/wiki/SRGB) color space,\nwhich is the color space specified by the HTML, [CSS](https://www.w3.org/TR/css-color-3/#rgb-color),\nand [SVG](https://www.w3.org/Graphics/SVG/1.1/color.html) specs\n(and is also widely considered the default color space for digital images that do not explicitly contain color space information).\n\n",
+                "type": "Color.Color -> { red : Basics.Float, green : Basics.Float, blue : Basics.Float, alpha : Basics.Float }"
+            },
+            {
+                "name": "white",
+                "comment": " ",
+                "type": "Color.Color"
+            },
+            {
+                "name": "yellow",
+                "comment": " ",
+                "type": "Color.Color"
+            }
+        ],
+        "binops": []
+    }
+]

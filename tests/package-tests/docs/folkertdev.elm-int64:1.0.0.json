@@ -1,0 +1,128 @@
+[
+    {
+        "name": "Int64",
+        "comment": " An efficient 64-bit integer with correct overflow.\n\nBitwise operators in javascript can only use 32 bits. Sometimes, external protocols use 64-bit integers. This package implementes such integers with \"correct\" overflow behavior.\n\nThis is a low-level package focussed on speed. The 64-bit integers are represented as a 2-tuple of 32-bit numbers.\n\n@docs Int64, fromInt, fromInt32s\n\n\n## Arithmetic\n\n@docs add, subtract\n\n\n## Bitwise\n\n@docs and, or, xor, complement\n@docs shiftLeftBy, shiftRightZfBy, rotateLeftBy, rotateRightBy\n\n\n## Compare\n\n@docs signedCompare, unsignedCompare\n\n\n## Conversion to String\n\n@docs toSignedString, toUnsignedString\n@docs toHex, toBitString\n\n\n## Conversion to Bytes\n\n@docs decoder, encoder\n@docs toByteValues, toBits\n\n",
+        "unions": [
+            {
+                "name": "Int64",
+                "comment": " A 64-bit integer type with correct overflow behavior\n\nInternally, the number is stored as two 32-bit integers.\n\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "add",
+                "comment": " 64-bit addition, with correct overflow\n\n    fromInt32s 0xFFFFFFFF 0xFFFFFFFF\n        |> Int64.add (Int64.fromInt 1)\n        |> Int64.toUnsignedString\n        --> \"0\"\n\n    fromInt32s 0xFFFFFFFF 0xFFFFFFFF\n        |> Int64.add (Int64.fromInt 2)\n        |> Int64.toUnsignedString\n        --> \"1\"\n\n",
+                "type": "Int64.Int64 -> Int64.Int64 -> Int64.Int64"
+            },
+            {
+                "name": "and",
+                "comment": " Bitwise and\n",
+                "type": "Int64.Int64 -> Int64.Int64 -> Int64.Int64"
+            },
+            {
+                "name": "complement",
+                "comment": " Bitwise complement\n",
+                "type": "Int64.Int64 -> Int64.Int64"
+            },
+            {
+                "name": "decoder",
+                "comment": " A `elm/bytes` Decoder for `Int64`\n",
+                "type": "Bytes.Endianness -> Bytes.Decode.Decoder Int64.Int64"
+            },
+            {
+                "name": "encoder",
+                "comment": " A `elm/bytes` Encoder for `Int64`\n",
+                "type": "Bytes.Endianness -> Int64.Int64 -> Bytes.Encode.Encoder"
+            },
+            {
+                "name": "fromInt",
+                "comment": " Convert a `Int` to `Int64`. This is guaranteed to work for integers in the [safe JS range](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/MAX_SAFE_INTEGER).\n\n    fromInt 42\n        |> toSignedString\n        --> \"42\"\n\n",
+                "type": "Basics.Int -> Int64.Int64"
+            },
+            {
+                "name": "fromInt32s",
+                "comment": " Give two integers, corresponding to the upper and lower 32 bits\n\n    fromInt32s 4 2\n        |> toHex\n        --> \"0000000400000002\"\n\n",
+                "type": "Basics.Int -> Basics.Int -> Int64.Int64"
+            },
+            {
+                "name": "or",
+                "comment": " Bitwise or\n",
+                "type": "Int64.Int64 -> Int64.Int64 -> Int64.Int64"
+            },
+            {
+                "name": "rotateLeftBy",
+                "comment": " Left bitwise rotation\n\n    Int64.fromInt32s 0xDEADBEAF 0xBAAAAAAD\n        |> Int64.rotateLeftBy 16\n        |> Int64.toHex\n        --> \"beafbaaaaaaddead\"\n\n",
+                "type": "Basics.Int -> Int64.Int64 -> Int64.Int64"
+            },
+            {
+                "name": "rotateRightBy",
+                "comment": " Right bitwise rotation\n\n    Int64.fromInt32s 0xDEADBEAF 0xBAAAAAAD\n        |> Int64.rotateRightBy 16\n        |> Int64.toHex\n        --> \"aaaddeadbeafbaaa\"\n\n",
+                "type": "Basics.Int -> Int64.Int64 -> Int64.Int64"
+            },
+            {
+                "name": "shiftLeftBy",
+                "comment": " Left bitwise shift, typically written `<<`\n\nFills in zeros from the right.\n\n    Int64.fromInt32s 0xDEADBEAF 0xBAAAAAAD\n        |> Int64.shiftLeftBy 16\n        |> Int64.toHex\n        --> \"beafbaaaaaad0000\"\n\n",
+                "type": "Basics.Int -> Int64.Int64 -> Int64.Int64"
+            },
+            {
+                "name": "shiftRightZfBy",
+                "comment": " Right bitwise shift, typically written `>>` (but `>>>` in JavaScript)\n\nFills in zeros from the left.\n\n    Int64.fromInt32s 0xDEADBEAF 0xBAAAAAAD\n        |> Int64.shiftRightZfBy 16\n        |> Int64.toHex\n        --> \"0000deadbeafbaaa\"\n\n",
+                "type": "Basics.Int -> Int64.Int64 -> Int64.Int64"
+            },
+            {
+                "name": "signedCompare",
+                "comment": " Compare two `Int64` values, intepreting the bits as a signed integer.\n",
+                "type": "Int64.Int64 -> Int64.Int64 -> Basics.Order"
+            },
+            {
+                "name": "subtract",
+                "comment": " 64-bit subtraction, with correct overflow\n\n    -- equivalent to `0 - 1`\n    Int64.subtract  (Int64.fromInt 0) (Int64.fromInt 1)\n        |> Int64.toUnsignedString\n        --> \"18446744073709551615\"\n\n    -- equivalent to `0 - 1`\n    Int64.subtract  (Int64.fromInt 0) (Int64.fromInt 1)\n        |> Int64.toSignedString\n        --> \"-1\"\n\n\n    -- equivalent to `1 - 0`\n    Int64.subtract  (Int64.fromInt 1) (Int64.fromInt 0)\n        |> Int64.toUnsignedString\n        --> \"1\"\n\n",
+                "type": "Int64.Int64 -> Int64.Int64 -> Int64.Int64"
+            },
+            {
+                "name": "toBitString",
+                "comment": " Bits as a string of `0`s and `1`s in big-endian order.\n\n    toBitString (fromInt 42)\n        --> \"0000000000000000000000000000000000000000000000000000000000101010\"\n\n",
+                "type": "Int64.Int64 -> String.String"
+            },
+            {
+                "name": "toBits",
+                "comment": " The individual bits as a list of `Bool` in big-endian order.\n\n    toBits (fromInt 10)\n        --> [False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,True,False]\n\n",
+                "type": "Int64.Int64 -> List.List Basics.Bool"
+            },
+            {
+                "name": "toByteValues",
+                "comment": " Convert an `Int64` to its 8 byte values in big-endian order\n\n    toByteValues  (fromInt 0xDEADBEAF)\n        --> [0,0,0,0,222,173,190,175]\n\n",
+                "type": "Int64.Int64 -> List.List Basics.Int"
+            },
+            {
+                "name": "toHex",
+                "comment": " Convert a `Int64` to a hexadecimal string\n\n    toHex (fromInt (256 - 1))\n        -->  \"00000000000000ff\"\n\n",
+                "type": "Int64.Int64 -> String.String"
+            },
+            {
+                "name": "toSignedString",
+                "comment": " Interpret a `Int64` as an unsigned integer, and give its string representation\n\n    toSignedString (fromInt 10)\n        --> \"10\"\n\n    toSignedString (fromInt -10)\n        --> \"-10\"\n\n",
+                "type": "Int64.Int64 -> String.String"
+            },
+            {
+                "name": "toUnsignedString",
+                "comment": " Interpret a `Int64` as an unsigned integer, and give its string representation\n\n    toUnsignedString (fromInt 10)\n        --> \"10\"\n\n    toUnsignedString (fromInt -10)\n        --> \"18446744073709551606\"\n\n",
+                "type": "Int64.Int64 -> String.String"
+            },
+            {
+                "name": "unsignedCompare",
+                "comment": " Compare two `Int64` values, intepreting the bits as an unsigned integer.\n",
+                "type": "Int64.Int64 -> Int64.Int64 -> Basics.Order"
+            },
+            {
+                "name": "xor",
+                "comment": " Bitwise xor\n",
+                "type": "Int64.Int64 -> Int64.Int64 -> Int64.Int64"
+            }
+        ],
+        "binops": []
+    }
+]

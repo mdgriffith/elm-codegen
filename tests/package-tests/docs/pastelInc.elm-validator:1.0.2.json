@@ -1,0 +1,31 @@
+[
+    {
+        "name": "Validator",
+        "comment": " This module supports validation.\n\n@docs Rule\n@docs rule\n@docs validate\n\n",
+        "unions": [
+            {
+                "name": "Rule",
+                "comment": " Validation rules. You can create rules what have any type of validation\nmethod and error.\n",
+                "args": [
+                    "error",
+                    "subject"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": " Create an rule.\n\n    rule\n        { field = .age\n        , method = (>) 18\n        , validWhen = True\n        , error = \"Age must be greater than 18.\"\n        }\n\n",
+                "type": "{ field : subject -> field, method : field -> Basics.Bool, validWhen : Basics.Bool, error : error } -> Validator.Rule error subject"
+            },
+            {
+                "name": "validate",
+                "comment": " Validate a subject using rules.\n\n    validate\n        [ rule\n            { field = .age\n            , method = (>) 18\n            , validWhen = True\n            , error = \"Age must be greater than 18.\"\n            }\n        ]\n        { age = 18 }\n\n",
+                "type": "List.List (Validator.Rule error subject) -> subject -> Result.Result (List.List error) subject"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,558 @@
+[
+    {
+        "name": "Html.Styled.Attributes.Autocomplete",
+        "comment": " This module contains types and values you can use to build up a list of\nautocomplete tokens for form fields. Simple values like `On` or `Off` are\navailable, as well as more complex, nestable values: `Detailed <| Section \"red\"\n<| Shipping <| Contact (Just Fax) Telephone`.\n\nYou'll probably want to import this module with an alias:\n\n    import Html.Styled exposing (input)\n    import Html.Styled.Attributes.Autocomplete as Autocomplete\n    import Html.Styled.Attributes.Extra exposing (autocomplete)\n\n    myShippingEmailInput =\n        input\n            [ autocomplete <|\n                Autocomplete.Detailed <|\n                    Autocomplete.Shipping <|\n                        Autocomplete.Contact Nothing <|\n                            Autocomplete.Email\n            ]\n            []\n\nCheck out the [HTML Spec][spec] for more information about the `autocomplete`\nattribute and the autocomplete detail tokens, such as their meaning, valid\ncontrols, and inputformat.\n\n[spec]: https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#autofill\n\n@docs Completion, completionValue\n\n@docs DetailedCompletion, detailedValue\n\n@docs ContactType, contactTypeValue\n\n@docs ContactCompletion, contactValue\n\n",
+        "unions": [
+            {
+                "name": "Completion",
+                "comment": " This is the generalized completion value. You explicitly toggle completion\non or off, or use a more complex `DetailedCompletion`.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "On",
+                        []
+                    ],
+                    [
+                        "Off",
+                        []
+                    ],
+                    [
+                        "Detailed",
+                        [
+                            "Html.Styled.Attributes.Autocomplete.DetailedCompletion"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "ContactCompletion",
+                "comment": " Autocomplete tokens with the ability to be tagged with a `ContactType`.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Telephone",
+                        []
+                    ],
+                    [
+                        "TelephoneCountryCode",
+                        []
+                    ],
+                    [
+                        "TelephoneNational",
+                        []
+                    ],
+                    [
+                        "TelephoneAreaCode",
+                        []
+                    ],
+                    [
+                        "TelephoneLocal",
+                        []
+                    ],
+                    [
+                        "TelephoneLocalPrefix",
+                        []
+                    ],
+                    [
+                        "TelephoneLocalSuffix",
+                        []
+                    ],
+                    [
+                        "TelephoneExtension",
+                        []
+                    ],
+                    [
+                        "Email",
+                        []
+                    ],
+                    [
+                        "IMPP",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "ContactType",
+                "comment": " The optional contact types a `ContactCompletion` can be tagged with.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Home",
+                        []
+                    ],
+                    [
+                        "Work",
+                        []
+                    ],
+                    [
+                        "Mobile",
+                        []
+                    ],
+                    [
+                        "Fax",
+                        []
+                    ],
+                    [
+                        "Pager",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "DetailedCompletion",
+                "comment": " The base type for detailed autocomplete attributes. Some of these are\nsimple, like `Email`, while some allow nesting of autocomplete tokens, like\n`Billing Email`.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Section",
+                        [
+                            "String.String",
+                            "Html.Styled.Attributes.Autocomplete.DetailedCompletion"
+                        ]
+                    ],
+                    [
+                        "Shipping",
+                        [
+                            "Html.Styled.Attributes.Autocomplete.DetailedCompletion"
+                        ]
+                    ],
+                    [
+                        "Billing",
+                        [
+                            "Html.Styled.Attributes.Autocomplete.DetailedCompletion"
+                        ]
+                    ],
+                    [
+                        "Contact",
+                        [
+                            "Maybe.Maybe Html.Styled.Attributes.Autocomplete.ContactType",
+                            "Html.Styled.Attributes.Autocomplete.ContactCompletion"
+                        ]
+                    ],
+                    [
+                        "Name",
+                        []
+                    ],
+                    [
+                        "HonorificPrefix",
+                        []
+                    ],
+                    [
+                        "GivenName",
+                        []
+                    ],
+                    [
+                        "AdditionalName",
+                        []
+                    ],
+                    [
+                        "FamilyName",
+                        []
+                    ],
+                    [
+                        "HonorificSuffix",
+                        []
+                    ],
+                    [
+                        "Nickname",
+                        []
+                    ],
+                    [
+                        "Username",
+                        []
+                    ],
+                    [
+                        "NewPassword",
+                        []
+                    ],
+                    [
+                        "CurrentPassword",
+                        []
+                    ],
+                    [
+                        "OneTimeCode",
+                        []
+                    ],
+                    [
+                        "OrganizationTitle",
+                        []
+                    ],
+                    [
+                        "Organization",
+                        []
+                    ],
+                    [
+                        "StreetAddress",
+                        []
+                    ],
+                    [
+                        "AddressLine1",
+                        []
+                    ],
+                    [
+                        "AddressLine2",
+                        []
+                    ],
+                    [
+                        "AddressLine3",
+                        []
+                    ],
+                    [
+                        "AddressLevel4",
+                        []
+                    ],
+                    [
+                        "AddressLevel3",
+                        []
+                    ],
+                    [
+                        "AddressLevel2",
+                        []
+                    ],
+                    [
+                        "AddressLevel1",
+                        []
+                    ],
+                    [
+                        "Country",
+                        []
+                    ],
+                    [
+                        "CountryName",
+                        []
+                    ],
+                    [
+                        "PostalCode",
+                        []
+                    ],
+                    [
+                        "CreditCardName",
+                        []
+                    ],
+                    [
+                        "CreditCardGivenName",
+                        []
+                    ],
+                    [
+                        "CreditCardAdditionalName",
+                        []
+                    ],
+                    [
+                        "CreditCardFamilyName",
+                        []
+                    ],
+                    [
+                        "CreditCardNumber",
+                        []
+                    ],
+                    [
+                        "CreditCardExpiration",
+                        []
+                    ],
+                    [
+                        "CreditCardExpirationMonth",
+                        []
+                    ],
+                    [
+                        "CreditCardExpirationYear",
+                        []
+                    ],
+                    [
+                        "CreditCardCSC",
+                        []
+                    ],
+                    [
+                        "CreditCardType",
+                        []
+                    ],
+                    [
+                        "TransactionCurrency",
+                        []
+                    ],
+                    [
+                        "TransactionAmount",
+                        []
+                    ],
+                    [
+                        "Language",
+                        []
+                    ],
+                    [
+                        "Birthday",
+                        []
+                    ],
+                    [
+                        "BirthdayDay",
+                        []
+                    ],
+                    [
+                        "BirthdayMonth",
+                        []
+                    ],
+                    [
+                        "BirthdayYear",
+                        []
+                    ],
+                    [
+                        "Sex",
+                        []
+                    ],
+                    [
+                        "Url",
+                        []
+                    ],
+                    [
+                        "Photo",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "completionValue",
+                "comment": " Build the attribute value for a `Completion`.\n",
+                "type": "Html.Styled.Attributes.Autocomplete.Completion -> String.String"
+            },
+            {
+                "name": "contactTypeValue",
+                "comment": " Transform a ContactType into it's autocomplete detail token.\n",
+                "type": "Html.Styled.Attributes.Autocomplete.ContactType -> String.String"
+            },
+            {
+                "name": "contactValue",
+                "comment": " Transform a ContactCompletion into it's autocomplete detail token.\n",
+                "type": "Html.Styled.Attributes.Autocomplete.ContactCompletion -> String.String"
+            },
+            {
+                "name": "detailedValue",
+                "comment": " Build a list of autocomplete tokens for a `DetailedCompletion`.\n",
+                "type": "Html.Styled.Attributes.Autocomplete.DetailedCompletion -> List.List String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Html.Styled.Attributes.Extra",
+        "comment": " Additional attributes for html\n\n\n# Embedding static attributes\n\n@docs static\n\n\n# Conditional attribute handling\n\n@docs empty, attributeIf, attributeMaybe\n\n\n# Inputs\n\n@docs valueAsFloat, valueAsInt, autocomplete\n\n\n# Semantic web\n\n@docs role\n\n\n# Meter element\n\n@docs low, high, optimum\n\n\n# Media element\n\n@docs volume\n\n\n# Custom Attributes\n\n@docs stringProperty\n@docs boolProperty\n@docs floatProperty\n@docs intProperty\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "attributeIf",
+                "comment": " A function to only render a HTML attribute under a certain condition\n",
+                "type": "Basics.Bool -> Html.Styled.Attribute msg -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "attributeMaybe",
+                "comment": " Renders `empty` attribute in case of Nothing, uses the provided function in case of Just.\n",
+                "type": "(a -> Html.Styled.Attribute msg) -> Maybe.Maybe a -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "autocomplete",
+                "comment": " Render one of the possible `Completion` types into an `Attribute`.\n",
+                "type": "Html.Styled.Attributes.Autocomplete.Completion -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "boolProperty",
+                "comment": " Create arbitrary bool _properties_.\n",
+                "type": "String.String -> Basics.Bool -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "empty",
+                "comment": " A no-op attribute.\n\nAllows for patterns like:\n\n    Html.Styled.div\n        [ someAttr\n        , if someCondition then\n            empty\n\n          else\n            someAttr2\n        ]\n        [ someHtml ]\n\ninstead of\n\n    Html.Styled.div\n        (someAttr\n            :: (if someCondition then\n                    []\n\n                else\n                    [ someAttr2 ]\n               )\n        )\n        [ someHtml ]\n\nThis is useful eg. for conditional event handlers.\n\n---\n\nThe only effect it can have on the resulting DOM is adding a `class` attribute,\nor adding an extra trailing space in the `class` attribute if added after\n`Html.Styled.Attribute.class` or `Html.Styled.Attribute.classList`:\n\n    -- side effect 1:\n    -- <div class=\"\" />\n    Html.Styled.div [ empty ] []\n\n    -- side effect 2:\n    -- <div class=\"x \" />\n    Html.Styled.div [ class \"x\", empty ] []\n\n    -- no side effect:\n    -- <div class=\"x\" />\n    Html.Styled.div [ empty, class \"x\" ] []\n\n    -- side effect 2:\n    -- <div class=\"x \" />\n    Html.Styled.div [ classList [ ( \"x\", True ) ], empty ] []\n\n    -- no side effect:\n    -- <div class=\"x\" />\n    Html.Styled.div [ empty, classList [ ( \"x\", True ) ] ] []\n\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "floatProperty",
+                "comment": " Create arbitrary floating-point _properties_.\n",
+                "type": "String.String -> Basics.Float -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "high",
+                "comment": " The lower numeric bound of the high end of the measured range, used with the meter element.\n",
+                "type": "String.String -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "intProperty",
+                "comment": " Create arbitrary integer _properties_.\n",
+                "type": "String.String -> Basics.Int -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "low",
+                "comment": " The upper numeric bound of the low end of the measured range, used with the meter element.\n",
+                "type": "String.String -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "optimum",
+                "comment": " This attribute indicates the optimal numeric value, used with the meter element.\n",
+                "type": "String.String -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "role",
+                "comment": " Used to annotate markup languages with machine-extractable semantic information about the purpose of an element.\nSee the [official specs](http://www.w3.org/TR/role-attribute/).\n",
+                "type": "String.String -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "static",
+                "comment": " Embedding static attributes.\n\nWorks alike to [`Html.Styled.Extra.static`](Html-Styled-Extra#static).\n\n",
+                "type": "Html.Styled.Attribute Basics.Never -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "stringProperty",
+                "comment": " Create arbitrary string _properties_.\n",
+                "type": "String.String -> String.String -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "valueAsFloat",
+                "comment": " Uses `valueAsNumber` to update an input with a floating-point value.\nThis should only be used on &lt;input&gt; of type `number`, `range`, or `date`.\nIt differs from `value` in that a floating point value will not necessarily overwrite the contents on an input element.\n\n    valueAsFloat 2.5 -- e.g. will not change the displayed value for input showing \"2.5000\"\n\n    valueAsFloat 0.4 -- e.g. will not change the displayed value for input showing \".4\"\n\n",
+                "type": "Basics.Float -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "valueAsInt",
+                "comment": " Uses `valueAsNumber` to update an input with an integer value.\nThis should only be used on &lt;input&gt; of type `number`, `range`, or `date`.\nIt differs from `value` in that an integer value will not necessarily overwrite the contents on an input element.\n\n    valueAsInt 18 -- e.g. will not change the displayed value for input showing \"00018\"\n\n",
+                "type": "Basics.Int -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "volume",
+                "comment": " Audio volume, starting from 0.0 (silent) up to 1.0 (loudest).\n",
+                "type": "Basics.Float -> Html.Styled.Attribute msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Html.Styled.Events.Extra",
+        "comment": " Additional decoders for use with event handlers in html.\n\n\n# Event decoders\n\n  - TODO: `key`\n\n  - TODO: `code`\n\n  - TODO: `KeyEvent`, `keyEvent`\n\n@docs charCode\n\n\n# Typed event decoders\n\n@docs targetValueFloat, targetValueInt, targetValueMaybe, targetValueMaybeFloat, targetValueMaybeInt\n@docs targetValueFloatParse, targetValueIntParse, targetValueMaybeFloatParse, targetValueMaybeIntParse\n@docs targetSelectedIndex, targetSelectedOptions\n\n\n# Event Handlers\n\n@docs onClickPreventDefault, onClickStopPropagation, onClickPreventDefaultAndStopPropagation, onEnter, onChange, onMultiSelect\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "charCode",
+                "comment": " Character code for key board events.\nThis is being deprecated, but support for DOM3 Keyboard events is not yet present in most browsers.\n",
+                "type": "Json.Decode.Decoder (Maybe.Maybe Char.Char)"
+            },
+            {
+                "name": "onChange",
+                "comment": " An HTML Event attribute that passes the `event.target.value` to a `msg`\nconstructor when an `input`, `select`, or `textarea` element has changed.\n",
+                "type": "(String.String -> msg) -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "onClickPreventDefault",
+                "comment": " Always send `msg` upon click, preventing the browser's default behavior.\n",
+                "type": "msg -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "onClickPreventDefaultAndStopPropagation",
+                "comment": " Always send `msg` upon click, preventing the browser's default behavior and propagation\n",
+                "type": "msg -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "onClickStopPropagation",
+                "comment": " Always send `msg` upon click, preventing click propagation.\n",
+                "type": "msg -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "onEnter",
+                "comment": " When the enter key is released, send the `msg`.\nOtherwise, do nothing.\n",
+                "type": "msg -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "onMultiSelect",
+                "comment": " Detect change events on multi-choice select elements.\n\nIt will grab the string values of `event.target.selectedOptions` on any change\nevent.\n\nCheck out [`targetSelectedOptions`](#targetSelectedOptions) for more details on\nhow this works.\n\nNote: [`onChange`](#onChange) parses `event.target.value` that doesn't work with\nmulti-choice select elements.\n\nNote 2:\n[`selectedOptions`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLSelectElement/selectedOptions)\nis not supported by Internet Explorer.\n\n",
+                "type": "(List.List String.String -> msg) -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "targetSelectedIndex",
+                "comment": " Parse the index of the selected option of a select.\nReturns Nothing in place of the spec's magic value -1.\n",
+                "type": "Json.Decode.Decoder (Maybe.Maybe Basics.Int)"
+            },
+            {
+                "name": "targetSelectedOptions",
+                "comment": " Parse `event.target.selectedOptions` and return option values.\n",
+                "type": "Json.Decode.Decoder (List.List String.String)"
+            },
+            {
+                "name": "targetValueFloat",
+                "comment": " Floating-point target value.\n",
+                "type": "Json.Decode.Decoder Basics.Float"
+            },
+            {
+                "name": "targetValueFloatParse",
+                "comment": " Parse a floating-point value from the input instead of using `valueAsNumber`.\nUse this with inputs that do not have a `number` type.\n",
+                "type": "Json.Decode.Decoder Basics.Float"
+            },
+            {
+                "name": "targetValueInt",
+                "comment": " Integer target value.\n",
+                "type": "Json.Decode.Decoder Basics.Int"
+            },
+            {
+                "name": "targetValueIntParse",
+                "comment": " Parse an integer value from the input instead of using `valueAsNumber`.\nUse this with inputs that do not have a `number` type.\n",
+                "type": "Json.Decode.Decoder Basics.Int"
+            },
+            {
+                "name": "targetValueMaybe",
+                "comment": " String or empty target value.\n",
+                "type": "Json.Decode.Decoder (Maybe.Maybe String.String)"
+            },
+            {
+                "name": "targetValueMaybeFloat",
+                "comment": " Floating-point or empty target value.\n",
+                "type": "Json.Decode.Decoder (Maybe.Maybe Basics.Float)"
+            },
+            {
+                "name": "targetValueMaybeFloatParse",
+                "comment": " Parse an optional floating-point value from the input instead of using `valueAsNumber`.\nUse this with inputs that do not have a `number` type.\n",
+                "type": "Json.Decode.Decoder (Maybe.Maybe Basics.Float)"
+            },
+            {
+                "name": "targetValueMaybeInt",
+                "comment": " Integer or empty target value.\n",
+                "type": "Json.Decode.Decoder (Maybe.Maybe Basics.Int)"
+            },
+            {
+                "name": "targetValueMaybeIntParse",
+                "comment": " Parse an optional integer value from the input instead of using `valueAsNumber`.\nUse this with inputs that do not have a `number` type.\n",
+                "type": "Json.Decode.Decoder (Maybe.Maybe Basics.Int)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Html.Styled.Extra",
+        "comment": " Convenience functionality on\n[`Html.Styled`](https://package.elm-lang.org/packages/rtfeldman/elm-css/latest/Html-Styled#Html)\n\n@docs static, nothing, viewIf, viewIfLazy, viewMaybe\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "nothing",
+                "comment": " Render nothing.\n\nA more idiomatic way of rendering nothing compared to using\n`Html.Styled.text \"\"` directly.\n\n",
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "static",
+                "comment": " Embedding static html.\n\nThe type argument\n[`Never`](http://package.elm-lang.org/packages/elm-lang/core/latest/Basics#Never)\nin `Html Never` tells us that the html has no event handlers attached,\nit will not generate any messages. We may want to embed such static\nhtml into arbitrary views, while using types to enforce the\nstaticness. That is what this function provides.\n\n_Note:_ To call this function, the argument need not be literally of type\n`Html Never`. It suffices if it is a fully polymorphic (in the message type)\n`Html` value. For example, this works: `static (Html.Styled.text \"abcdef\")`.\n\n",
+                "type": "Html.Styled.Html Basics.Never -> Html.Styled.Html msg"
+            },
+            {
+                "name": "viewIf",
+                "comment": " A function to only render html under a certain condition\n\n    fieldView : Model -> Html Msg\n    fieldView model =\n        div\n            []\n            [ fieldInput model\n            , viewIf\n                (not <| List.isEmpty model.errors)\n                errorsView\n            ]\n\n",
+                "type": "Basics.Bool -> Html.Styled.Html msg -> Html.Styled.Html msg"
+            },
+            {
+                "name": "viewIfLazy",
+                "comment": " Just like `viewIf` except its more performant. In viewIf, the html is always evaluated, even if its not rendered. `viewIfLazy` only evaluates your view function if it needs to. The trade off is your view function needs to accept a unit type (`()`) as its final parameter\n\n    fieldView : Model -> Html Msg\n    fieldView model =\n        div\n            []\n            [ fieldInput model\n            , viewIfLazy\n                (not <| List.isEmpty model.errors)\n                (\\() -> errorsView)\n            ]\n\n",
+                "type": "Basics.Bool -> (() -> Html.Styled.Html msg) -> Html.Styled.Html msg"
+            },
+            {
+                "name": "viewMaybe",
+                "comment": " Renders `Html.Styled.nothing` in case of Nothing, uses the provided function in case of Just.\n\n    viewMaybePost : Maybe Post -> Html Msg\n    viewMaybePost maybePost =\n        viewMaybe viewPost maybePost\n\n    viewPost : Post -> Html Msg\n\n",
+                "type": "(a -> Html.Styled.Html msg) -> Maybe.Maybe a -> Html.Styled.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,72 @@
+[
+    {
+        "name": "Limiter",
+        "comment": " A Limiter is a handy way of slowing down the number of messages or events\nwe get from a particular source. We have two main methods of rate-limiting this\ndata:\n\n  - Debouncing\n  - Throttling\n\nA debouncer will wait a short delay after a burst of inputs and then emit the\nmost recent message. On the other hand, a throttler will typically emit the\nfirst message from a burst and then emit a second message after a fixed time\nperiod has passed, and then a third after that time period again and so on.\n\nYou can visualise the difference like so:\n\n  - Debouncing\n\n```\n--a-b-cd--e----------f--------\n---------------e----------f---\n\n\n```\n\n  - Throttling\n\n```\n--a-b-cd--e----------f--------\n--a---c---e----------f--------\n\n\n```\n\nThere are also two ways to limit messages with this module. We can limit messages\ndirectly from a HTML event or we can manually push messages into the Limiter,\ntypically inside our `update` function. Which approach you take is typically\ndecided on whether you need to save some information from the event directly.\n\nIf the answer is no, as is the case with click events on buttons and similar\nelements, then limiting at the source of the event using `Limiter.event` is\nthe cleanest solution. If the answer is yes, as is potentially the case with\ntext inputs, then you're likely to want `Limiter.push` so you can save the\nraw input text in real-time and rate-limit some reaction to those events.\n\nA simple but complete example demonstrating how both types on limiter and\nboth approaches to limiting can be used is found at the bottom of this page,\nafter the documentation.\n\n\n# The Limiter type\n\n@docs Limiter, Msg\n\n\n# Constructing a Limiter\n\n@docs debounce, throttle\n\n\n# Adding events to a Limiter\n\n@docs push\n\n\n# Updating a Limiter\n\n@docs update\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Limiter",
+                "comment": " The `Limiter` type wraps up all the data necessary to properly rate-limit\nincoming messages. You will need a separate Limiter for every event/message\nyou want to limit (unless you want to share the same timing across different\nevents).\n\nThis means you'll need to store each Limiter in your model.\n\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "Limiter.Internals.Limiter msg"
+            },
+            {
+                "name": "Msg",
+                "comment": " A type for messages internal to the Limiter. Notice how it is parameterised\nby the `msg` type you want to rate-limit (although this could be any time, not\njust a message).\n\nThese just get passed into the Limiter in your `update` function.\n\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "Limiter.Internals.Msg msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "debounce",
+                "comment": " A debouncer limits messages by waiting for a burst of messages to settle\nbefore emitting the most recent message. This means they'll always be a brief\ndelay even if only one message is received; this is demonstrated below.\n\n    --a-b-cd--e----------f--------\n    ---------------e----------f---\n\n\n\nTo construct a debouncer you need to pass in a \"tagger\" function that will wrap\nthe Limiter's internal `Msg` type. You also need to supply the cooldown time\nin milliseconds which is the delay between the last message in a burst being\nsent and that message being emitted.\n\n",
+                "type": "(Limiter.Msg msg -> msg) -> Basics.Int -> Limiter.Limiter msg"
+            },
+            {
+                "name": "push",
+                "comment": " Sometimes we don't want to limit events coming from the HTML, but we want\nto limit how often we perform an action based on that event instead. A typical\nexample is searching for things on the backend in realtime as the user types.\n\nWe don't want to send a HTTP request on each keypress, but we also don't want\nto limit the events coming from the HTML otherwise we'll lose the user's input.\nIn these cases we use `Limiter.push` to manually push messages into the\nLimiter.\n\nWhat we get back is a tuple with a new Limiter and a `Cmd` that will immediately\nresolve if the message we pushed in was allowed through.\n\nAs a rule of thumb, if you _do_ need to capture some data from the event source\nthen `Limiter.push` will allow you to store that data before rate-limiting some\nadditional message in response.\n\n    update msg model =\n        case msg of\n            GotInput input ->\n                Limiter.push (SearchFor input) model.throttler\n                    |> Tuple.mapFirst\n                        (\\throttler ->\n                            { model\n                                | throttler = throttler\n                                , input = input\n                            }\n                        )\n\n            SearchFor input ->\n                ( model\n                , Http.get\n                    { ...\n                    }\n                )\n\n",
+                "type": "msg -> Limiter.Limiter msg -> ( Limiter.Limiter msg, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "throttle",
+                "comment": " A throttler limits messages by only alowwing messages to come in as fast\nas a fixed interval allows. When receive a burst of messages, the first one\nwill pass through the emitter and then all messages are ignored for a period of\ntime, then the next message will pass through and so on.\n\n    --a-b-cd--e----------f--------\n    --a---c---e----------f--------\n\n\n\nTo construct a debouncer you need to pass in a \"tagger\" function that will wrap\nthe Limiter's internal `Msg` type. You also need to supply the interval time in\nmilliseconds, which is the minimum amount of time that must pass before\nconsecutive messages can be emitted.\n\n",
+                "type": "(Limiter.Msg msg -> msg) -> Basics.Int -> Limiter.Limiter msg"
+            },
+            {
+                "name": "update",
+                "comment": " Limiters work by producing their own `Msg` values and using them to update\nthe internal state of the Limiter. When you construct a Limiter you have to\nprovide a \"tagger\" function that wraps these internal messages into a type\nthat your own update function can deal with.\n\nYou don't need to do much with this function, just ensure that you're calling\nit in your update function whenever you get a wrapper message:\n\n    update : Msg -> Model -> (Model, Cmd Msg)\n    update msg model =\n        case msg of\n            ...\n\n            LimiterMsg limiterMsg ->\n                Limiter.update limiterMsg model.limiter\n                    |> Tuple.mapFirst (\\limiter -> { model | limiter = limiter })\n\nThe update function produces Cmds like any other update function might, and this\nis how the messages we care about make their way into our application. You will\nneed to repeat the little bit of code above for every Limiter you have in an\napplication.\n\n",
+                "type": "Limiter.Msg msg -> Limiter.Limiter msg -> ( Limiter.Limiter msg, Platform.Cmd.Cmd msg )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Limiter.Events",
+        "comment": " \n\n@docs event\n\n@docs onClick, onInput\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "event",
+                "comment": "\n\n    Html.button\n        [ Html.Events.onClick (Limiter.event Increment model.debouncer) ]\n        [ Html.text \"+\" ]\n\n",
+                "type": "msg -> Limiter.Internals.Limiter msg -> msg"
+            },
+            {
+                "name": "onClick",
+                "comment": "\n\n    Html.button\n        [ Limiter.Events.onClick Increment model.debouncer ]\n        [ Html.text \"+\" ]\n\n",
+                "type": "msg -> Limiter.Internals.Limiter msg -> Html.Attribute msg"
+            },
+            {
+                "name": "onInput",
+                "comment": " ",
+                "type": "(String.String -> msg) -> Limiter.Internals.Limiter msg -> Html.Attribute msg"
+            }
+        ],
+        "binops": []
+    }
+]

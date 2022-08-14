@@ -1,0 +1,23 @@
+[
+    {
+        "name": "PolylinearScale",
+        "comment": " PolylinearScale\n\n@docs DomainAndRange, polylinearScale\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "DomainAndRange",
+                "comment": "\n\n    The domain and range\n\n",
+                "args": [],
+                "type": "( Basics.Float, Basics.Float )"
+            }
+        ],
+        "values": [
+            {
+                "name": "polylinearScale",
+                "comment": "\n\n    Create a polylinear scale. Map from the domain to the range.\n\n        scale = polylinearScale [(0, 0), (100, 50), (300, 100)]\n\n        scale 100 == 50\n        scale 150 == 62.5\n\n",
+                "type": "List.List PolylinearScale.DomainAndRange -> Basics.Float -> Maybe.Maybe Basics.Float"
+            }
+        ],
+        "binops": []
+    }
+]

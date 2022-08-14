@@ -1,0 +1,84 @@
+[
+    {
+        "name": "GenGarden",
+        "comment": " A `GenGarden` displays an image generated from a draw function passed\nto it. Including settings will create sliders that well to change variables\nto the draw function.\n\n\n# Using GenGarden\n\n@docs init, update, view, subscriptions, Drawing, Model, Msg\n\n\n# Drawing in the GenGarden\n\n@docs circle, ellipse, grid, line, rect\n\n\n# Slider\n\n@docs Slider\n\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " The `Msg` for the `GenGarden` used for timing frames drawing and\nslider interation. The app must define one of its Msg types to\ninclude a `GenGarden.Msg`. For example:\n\n    type Msg\n        = GardenMsg GenGarden.Msg\n\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Drawing",
+                "comment": " Drawing functions return a `Drawing`.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "Svg.Svg msg"
+            },
+            {
+                "name": "Model",
+                "comment": " The model for the `GenGarden`. One must be included in the app's model.\n",
+                "args": [],
+                "type": "{ frame : Basics.Float, frameRate : Basics.Float, settings : Dict.Dict String.String Basics.Float, sliders : List.List GenGarden.Slider_Model, time : Time.Posix }"
+            },
+            {
+                "name": "Slider",
+                "comment": " The `Slider` record describes the values needing to display a slider.\nA list of `Slider`s must be passed to `GenGarden.init`.\nThe label of the `Slider` will serve as the key to the dictionary of\ncurrent values sent to the draw functions.\n",
+                "args": [],
+                "type": "{ label : String.String, max : Basics.Float, min : Basics.Float, step : Basics.Float, value : Basics.Float }"
+            }
+        ],
+        "values": [
+            {
+                "name": "circle",
+                "comment": " Draw a circle. Example of usage:\n\n    type Msg\n        = GardenMsg GenGarden.Msg\n\n    drawFrame : List GenGarden.Slider -> Float -> List (GenGarden.Drawing msg)\n    drawFrame settings frame =\n        GenGarden.circle ( -5, -5 ) 20 \"red\" [] []\n            :: GenGarden.grid\n\n",
+                "type": "( Basics.Float, Basics.Float ) -> Basics.Float -> String.String -> List.List (Html.Attribute msg) -> List.List (GenGarden.Drawing msg) -> GenGarden.Drawing msg"
+            },
+            {
+                "name": "ellipse",
+                "comment": " Draw an ellipse. Example of usage:\n\n    type Msg\n        = GardenMsg GenGarden.Msg\n\n    drawFrame : List GenGarden.Slider -> Float -> List (GenGarden.Drawing msg)\n    drawFrame settings frame =\n        GenGarden.ellipse ( -5, -5 ) 4 8 \"red\" [] []\n            :: GenGarden.grid\n\n",
+                "type": "( Basics.Float, Basics.Float ) -> Basics.Float -> Basics.Float -> String.String -> List.List (Html.Attribute msg) -> List.List (GenGarden.Drawing msg) -> GenGarden.Drawing msg"
+            },
+            {
+                "name": "grid",
+                "comment": " Draw the coordinate grid. Example of usage:\n\n    type Msg\n        = GardenMsg GenGarden.Msg\n\n    drawFrame : List GenGarden.Slider -> Float -> List (GenGarden.Drawing msg)\n    drawFrame settings frame =\n        GenGarden.circle ( -5, -5 ) 20 \"red\" [] []\n            :: GenGarden.grid\n\n",
+                "type": "List.List (GenGarden.Drawing msg)"
+            },
+            {
+                "name": "init",
+                "comment": " Initialize the GenGarden. The `frameRate` is the length of each animation\nframe in milliseconds. A `frameRate` of 0 or less will only update on setting\nchanges.\nA slider will be created for each setting in list of\nsettings. This example will create a GenGarden that updated once a second\nand has one settings slider.\n\n    mySliders =\n    [ { label = \"Number of Columns and Rows\"\n      , max = 60\n      , min = 1\n      , step = 1\n      , value = 10\n      }\n    ]\n    GenGarden.init 1000 mySliders\n\n",
+                "type": "Basics.Float -> List.List GenGarden.Slider -> GenGarden.Model"
+            },
+            {
+                "name": "line",
+                "comment": " Draw a line. Example of usage:\n\n    type Msg\n        = GardenMsg GenGarden.Msg\n\n    drawFrame : List GenGarden.Slider -> Float -> List (GenGarden.Drawing msg)\n    drawFrame settings frame =\n        [ GenGarden.line ( -5, -5 ) ( 20, 15 ) \"red\" [] [] ]\n\n",
+                "type": "( Basics.Float, Basics.Float ) -> ( Basics.Float, Basics.Float ) -> String.String -> List.List (Html.Attribute msg) -> List.List (GenGarden.Drawing msg) -> GenGarden.Drawing msg"
+            },
+            {
+                "name": "rect",
+                "comment": " Draw a rect. Example of usage:\n\n    type Msg\n        = GardenMsg GenGarden.Msg\n\n    drawFrame : List GenGarden.Slider -> Float -> List (GenGarden.Drawing msg)\n    drawFrame settings frame =\n        [ GenGarden.rect (( -5, -5 ) ( 20, 15 )) \"red\" [] [] ]\n\n",
+                "type": "( ( Basics.Float, Basics.Float ), ( Basics.Float, Basics.Float ) ) -> String.String -> List.List (Html.Attribute msg) -> List.List (GenGarden.Drawing msg) -> GenGarden.Drawing msg"
+            },
+            {
+                "name": "subscriptions",
+                "comment": " Set the subscriptions for `GenGarden`. Example of usage:\n\n    type Msg\n        = GardenMsg GenGarden.Msg\n\n    subscriptions : Model -> Sub Msg\n    subscriptions model =\n        Sub.batch\n            [ Sub.map GardenMsg <| GenGarden.subscriptions model.garden\n            ]\n\n",
+                "type": "GenGarden.Model -> Platform.Sub.Sub GenGarden.Msg"
+            },
+            {
+                "name": "update",
+                "comment": " Updates the `GenGarden` model. Example of usage:\n\n    type Msg\n        = GardenMsg GenGarden.Msg\n\n    update : Msg -> Model -> ( Model, Cmd Msg )\n    update msg model =\n        case msg of\n            GardenMsg gMsg ->\n                let\n                    ( gModel, cmd ) =\n                        GenGarden.update gMsg model.garden\n                in\n                ( { model | garden = gModel }\n                , Cmd.batch\n                    [ Cmd.map GardenMsg cmd\n                    ]\n                )\n\n",
+                "type": "GenGarden.Msg -> GenGarden.Model -> ( GenGarden.Model, Platform.Cmd.Cmd GenGarden.Msg )"
+            },
+            {
+                "name": "view",
+                "comment": " Display the GenGarden. Provide the drawing function in `drawFrame`, and the\n`GenGarden.Model` in 'model\\`. Example of usage:\n\n    type Msg\n        = GardenMsg GenGarden.Msg\n\n    view : Model -> Document Msg\n    view model =\n        { title = \"Gen Garden\"\n        , body =\n            List.map (Html.map GardenMsg) <|\n                GenGarden.view drawFrame model.garden\n        }\n\n",
+                "type": "(Dict.Dict String.String Basics.Float -> Basics.Float -> List.List (GenGarden.Drawing GenGarden.Msg)) -> GenGarden.Model -> List.List (Html.Html GenGarden.Msg)"
+            }
+        ],
+        "binops": []
+    }
+]

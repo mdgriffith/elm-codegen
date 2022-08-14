@@ -1,0 +1,16 @@
+[
+    {
+        "name": "Hello",
+        "comment": " This module does something\n\n@docs fullName\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fullName",
+                "comment": " Generate a full name ",
+                "type": "String.String -> String.String -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

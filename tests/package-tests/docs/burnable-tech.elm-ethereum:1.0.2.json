@@ -1,0 +1,1454 @@
+[
+    {
+        "name": "Abi.Decode",
+        "comment": " Decode RPC Responses\n\n)\n\n\n# Primitives\n\n@docs AbiDecoder, uint, int, bool, address, string\n\n\n# Bytes\n\n@docs staticBytes, dynamicBytes\n\n\n# Arrays\n\n@docs staticArray, dynamicArray\n\n\n# Run Decoders\n\n@docs abiDecode, andMap, toElmDecoder, fromString\n\n\n# Events/Logs\n\n@docs topic, data\n\n",
+        "unions": [
+            {
+                "name": "AbiDecoder",
+                "comment": " ",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "abiDecode",
+                "comment": " Similar to Json.Decode.succeed, or `pure` in Haskell\n",
+                "type": "a -> Abi.Decode.AbiDecoder a"
+            },
+            {
+                "name": "address",
+                "comment": " ",
+                "type": "Abi.Decode.AbiDecoder Eth.Types.Address"
+            },
+            {
+                "name": "andMap",
+                "comment": " ",
+                "type": "Abi.Decode.AbiDecoder a -> Abi.Decode.AbiDecoder (a -> b) -> Abi.Decode.AbiDecoder b"
+            },
+            {
+                "name": "bool",
+                "comment": " ",
+                "type": "Abi.Decode.AbiDecoder Basics.Bool"
+            },
+            {
+                "name": "data",
+                "comment": " Useful for decoding data withing events/logs.\n\nTODO - Will this work if dynamic types are in the log data?\ndropBytes might mess with the length of grabbing dyn vals off the Original Tape\n\n",
+                "type": "Basics.Int -> Abi.Decode.AbiDecoder a -> Json.Decode.Decoder a"
+            },
+            {
+                "name": "dynamicArray",
+                "comment": " Decode Dynamically Sized Arrays\n",
+                "type": "Abi.Decode.AbiDecoder a -> Abi.Decode.AbiDecoder (List.List a)"
+            },
+            {
+                "name": "dynamicBytes",
+                "comment": " ",
+                "type": "Abi.Decode.AbiDecoder String.String"
+            },
+            {
+                "name": "fromString",
+                "comment": " ",
+                "type": "Abi.Decode.AbiDecoder a -> String.String -> Result.Result String.String a"
+            },
+            {
+                "name": "int",
+                "comment": " ",
+                "type": "Abi.Decode.AbiDecoder BigInt.BigInt"
+            },
+            {
+                "name": "staticArray",
+                "comment": " Decode Statically Sized Arrays\n\n    staticArray 10 uint == uint256 [ 10 ]\n\n",
+                "type": "Basics.Int -> Abi.Decode.AbiDecoder a -> Abi.Decode.AbiDecoder (List.List a)"
+            },
+            {
+                "name": "staticBytes",
+                "comment": " ",
+                "type": "Basics.Int -> Abi.Decode.AbiDecoder String.String"
+            },
+            {
+                "name": "string",
+                "comment": " ",
+                "type": "Abi.Decode.AbiDecoder String.String"
+            },
+            {
+                "name": "toElmDecoder",
+                "comment": " ",
+                "type": "Abi.Decode.AbiDecoder a -> Json.Decode.Decoder a"
+            },
+            {
+                "name": "topic",
+                "comment": " Useful for decoding data withing events/logs.\n",
+                "type": "Basics.Int -> Abi.Decode.AbiDecoder a -> Json.Decode.Decoder a"
+            },
+            {
+                "name": "uint",
+                "comment": " ",
+                "type": "Abi.Decode.AbiDecoder BigInt.BigInt"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Abi.Encode",
+        "comment": " Encode before sending RPC Calls\n\n@docs Encoding, functionCall\n\n\n# Static Type Encoding\n\n@docs uint, int, staticBytes\n\n\n# Dynamic Types\n\n@docs string, list, bytes\n\n\n# Misc\n\n@docs address, bool, custom\n\n\n# Low-Level\n\n@docs abiEncode, abiEncodeList, stringToHex\n\n",
+        "unions": [
+            {
+                "name": "Encoding",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "AddressE",
+                        [
+                            "Eth.Types.Address"
+                        ]
+                    ],
+                    [
+                        "UintE",
+                        [
+                            "BigInt.BigInt"
+                        ]
+                    ],
+                    [
+                        "IntE",
+                        [
+                            "BigInt.BigInt"
+                        ]
+                    ],
+                    [
+                        "BoolE",
+                        [
+                            "Basics.Bool"
+                        ]
+                    ],
+                    [
+                        "DBytesE",
+                        [
+                            "Eth.Types.Hex"
+                        ]
+                    ],
+                    [
+                        "BytesE",
+                        [
+                            "Eth.Types.Hex"
+                        ]
+                    ],
+                    [
+                        "StringE",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "ListE",
+                        [
+                            "List.List Abi.Encode.Encoding"
+                        ]
+                    ],
+                    [
+                        "CustomE",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "abiEncode",
+                "comment": " ",
+                "type": "Abi.Encode.Encoding -> Eth.Types.Hex"
+            },
+            {
+                "name": "abiEncodeList",
+                "comment": " ",
+                "type": "List.List Abi.Encode.Encoding -> Eth.Types.Hex"
+            },
+            {
+                "name": "address",
+                "comment": " ",
+                "type": "Eth.Types.Address -> Abi.Encode.Encoding"
+            },
+            {
+                "name": "bool",
+                "comment": " ",
+                "type": "Basics.Bool -> Abi.Encode.Encoding"
+            },
+            {
+                "name": "bytes",
+                "comment": " ",
+                "type": "Eth.Types.Hex -> Abi.Encode.Encoding"
+            },
+            {
+                "name": "custom",
+                "comment": " ",
+                "type": "String.String -> Abi.Encode.Encoding"
+            },
+            {
+                "name": "functionCall",
+                "comment": " ",
+                "type": "String.String -> List.List Abi.Encode.Encoding -> Eth.Types.Hex"
+            },
+            {
+                "name": "int",
+                "comment": " ",
+                "type": "BigInt.BigInt -> Abi.Encode.Encoding"
+            },
+            {
+                "name": "list",
+                "comment": " ",
+                "type": "List.List Abi.Encode.Encoding -> Abi.Encode.Encoding"
+            },
+            {
+                "name": "staticBytes",
+                "comment": " ",
+                "type": "Basics.Int -> Eth.Types.Hex -> Result.Result String.String Abi.Encode.Encoding"
+            },
+            {
+                "name": "string",
+                "comment": " ",
+                "type": "String.String -> Abi.Encode.Encoding"
+            },
+            {
+                "name": "stringToHex",
+                "comment": " Converts utf8 string to string of hex\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "uint",
+                "comment": " ",
+                "type": "BigInt.BigInt -> Abi.Encode.Encoding"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Eth",
+        "comment": " Ethereum RPC Methods\n\nSee the [official docs][rpc-docs] for reference.\n\n[rpc-docs]: [https://github.com/ethereum/wiki/wiki/JSON-RPC]\n\n\n# Contracts\n\nMake sure to use the [elm-ethereum-generator](https://github.com/cmditch/elm-ethereum-generator)\nto auto-generate the necessary `Elm <-> Contract` interface from a contract's ABI.\n\nIf you're making Eth transactions, you'll need to build a `Call`,\nconvert it to a `Send`, and use `Eth.Sentry.Tx` to hand it off to your browser's wallet (e.g., MetaMask, Trust).\n\n    ( newSentry, sentryCmd ) =\n        myCallParams\n            |> Eth.toSend\n            |> TxSentry.send TxSendResponse model.txSentry\n\n@docs call, getStorageAt, getCode, callAtBlock, getStorageAtBlock, getCodeAtBlock\n\n\n# Transactions\n\n@docs getTx, getTxReceipt, toSend, encodeSend, sendTx, sendRawTx, getTxByBlockHashAndIndex, getTxByBlockNumberAndIndex\n\n\n# Address/Accounts\n\n@docs getBalance, getTxCount, getBalanceAtBlock, getTxCountAtBlock\n\n\n# Blocks\n\n@docs getBlockNumber, getBlock, getBlockByHash, getBlockWithTxObjs, getBlockByHashWithTxObjs, getBlockTxCount, getBlockTxCountByHash, getUncleCount, getUncleCountByHash, getUncleAtIndex, getUncleByBlockHashAtIndex\n\n\n# Filter/Logs/Events\n\nIf you have access to a websocket RPC endpoint, it's much easier to just use `Eth.Sentry.Event`.\nGeth, Parity, and Infura support websockets.\n\n@docs getLogs, newFilter, newBlockFilter, newPendingTxFilter, getFilterChanges, getFilterLogs, uninstallFilter\n\n\n# Misc\n\n@docs sign, protocolVersion, syncing, coinbase, mining, hashrate, gasPrice, accounts, estimateGas\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "accounts",
+                "comment": " Returns a list of addresses owned by client.\n",
+                "type": "Eth.Types.HttpProvider -> Task.Task Http.Error (List.List Eth.Types.Address)"
+            },
+            {
+                "name": "call",
+                "comment": " Call a function on an Ethereum contract.\nUseful for reading data from contracts, or simulating a transaction before doing a real `Send`.\n\nUse the [elm-ethereum-generator](https://github.com/cmditch/elm-ethereum-generator) code generator to produce an interface for a smart contract from it's ABI.\n\n**Note** The decoder for a call is baked into the Call record to allow for a smoother developer experience.\n\n",
+                "type": "Eth.Types.HttpProvider -> Eth.Types.Call a -> Task.Task Http.Error a"
+            },
+            {
+                "name": "callAtBlock",
+                "comment": " Call a function on an Ethereum contract from a particular point in history.\n",
+                "type": "Eth.Types.HttpProvider -> Eth.Types.Call a -> Eth.Types.BlockId -> Task.Task Http.Error a"
+            },
+            {
+                "name": "coinbase",
+                "comment": " Get the client's coinbase address.\n",
+                "type": "Eth.Types.HttpProvider -> Task.Task Http.Error Eth.Types.Address"
+            },
+            {
+                "name": "encodeSend",
+                "comment": " Useful if your handling txParams in javascript land yourself.\nWill return Error if params are invalid. e.g., buffer overflow\n",
+                "type": "Eth.Types.Send -> Json.Encode.Value"
+            },
+            {
+                "name": "estimateGas",
+                "comment": " Generates and returns an estimate of how much gas is necessary to allow the transaction to complete.\n**Note** that the estimate may be significantly more than the amount of gas actually used by the transaction,\nfor a variety of reasons including EVM mechanics and node performance.\n",
+                "type": "Eth.Types.HttpProvider -> Eth.Types.Call a -> Task.Task Http.Error Basics.Int"
+            },
+            {
+                "name": "gasPrice",
+                "comment": " Get the current price per gas in wei\n\n**Note**: not always accurate. See EthGasStation website\n\n",
+                "type": "Eth.Types.HttpProvider -> Task.Task Http.Error BigInt.BigInt"
+            },
+            {
+                "name": "getBalance",
+                "comment": " Get the balance of a given address/account.\nReturns Wei amount as BigInt\n",
+                "type": "Eth.Types.HttpProvider -> Eth.Types.Address -> Task.Task Http.Error BigInt.BigInt"
+            },
+            {
+                "name": "getBalanceAtBlock",
+                "comment": " Get the balance of a given address/account, at a certain block height\n",
+                "type": "Eth.Types.HttpProvider -> Eth.Types.Address -> Eth.Types.BlockId -> Task.Task Http.Error BigInt.BigInt"
+            },
+            {
+                "name": "getBlock",
+                "comment": " Get information about a block given a valid block number.\n\nThe transactions field will be an array of TxHash's mined during this block.\n\n",
+                "type": "Eth.Types.HttpProvider -> Basics.Int -> Task.Task Http.Error (Eth.Types.Block Eth.Types.TxHash)"
+            },
+            {
+                "name": "getBlockByHash",
+                "comment": " Get information about a block given a valid block hash.\n",
+                "type": "Eth.Types.HttpProvider -> Eth.Types.BlockHash -> Task.Task Http.Error (Eth.Types.Block Eth.Types.TxHash)"
+            },
+            {
+                "name": "getBlockByHashWithTxObjs",
+                "comment": " See `getBlockWithTxObjs` above.\n\nUses block hash instead of number for the identifier.\n\n",
+                "type": "Eth.Types.HttpProvider -> Eth.Types.BlockHash -> Task.Task Http.Error (Eth.Types.Block Eth.Types.Tx)"
+            },
+            {
+                "name": "getBlockNumber",
+                "comment": " Get the block number of the most recently mined block.\n",
+                "type": "Eth.Types.HttpProvider -> Task.Task Http.Error Basics.Int"
+            },
+            {
+                "name": "getBlockTxCount",
+                "comment": " Get the number of transactions in a block from a given block number.\n",
+                "type": "Eth.Types.HttpProvider -> Basics.Int -> Task.Task Http.Error Basics.Int"
+            },
+            {
+                "name": "getBlockTxCountByHash",
+                "comment": " Get the number of transactions in a block from a given block hash.\n",
+                "type": "Eth.Types.HttpProvider -> Eth.Types.BlockHash -> Task.Task Http.Error Basics.Int"
+            },
+            {
+                "name": "getBlockWithTxObjs",
+                "comment": " Get information about a block given a valid block number.\n\nThe transactions field will be an array of `Tx` objects instead of TxHash's.\n\n",
+                "type": "Eth.Types.HttpProvider -> Basics.Int -> Task.Task Http.Error (Eth.Types.Block Eth.Types.Tx)"
+            },
+            {
+                "name": "getCode",
+                "comment": " Returns the bytecode from a contract at a given contract's address.\n",
+                "type": "Eth.Types.HttpProvider -> Eth.Types.Address -> Task.Task Http.Error String.String"
+            },
+            {
+                "name": "getCodeAtBlock",
+                "comment": " Returns the bytecode from a contract at a given address, at a certain block height.\n",
+                "type": "Eth.Types.HttpProvider -> Eth.Types.Address -> Eth.Types.BlockId -> Task.Task Http.Error String.String"
+            },
+            {
+                "name": "getFilterChanges",
+                "comment": " Polling method for a filter, which returns an array of logs which occurred since last poll.\n\nUse the correct decoder for the given filter type:\n\nFor a `newFilter`:\n\n    import Eth.Abi.Decode as Abi\n    import Eth.Decode as Decode\n    import Json.Decode exposing (Decoder)\n    import Json.Decode.Pipeline exposing (custom)\n\n    transferEventDecoder : Decoder (Event Erc20Transfer)\n    transferEventDecoder =\n        Decode.event erc20TransferDecoder\n\n    type alias Erc20Transfer =\n        { from : Address\n        , to : Address\n        , value : BigInt\n        }\n\n    erc20TransferDecoder : Decoder Erc20Transfer\n    erc20TransferDecoder =\n        decode Transfer\n            |> custom (Evm.topic 1 Abi.address)\n            |> custom (Evm.topic 2 Abi.address)\n            |> custom (Evm.data 0 Abi.uint)\n\nFor a `newBlockFilter`:\n\n    newBlockDecoder : Decoder BlockHead\n    newBlockDecoder =\n        Eth.Decode.blockHead\n\nFor a `newPendingTxFilter`:\n\n    newPendingTxDecoder : Decoder TxHash\n    newPendingTxDecoder =\n        Eth.Decode.tx\n\n",
+                "type": "Eth.Types.HttpProvider -> Json.Decode.Decoder a -> Eth.Types.FilterId -> Task.Task Http.Error (List.List a)"
+            },
+            {
+                "name": "getFilterLogs",
+                "comment": " Returns an array of all logs matching filter with given id. See above note on decoders.\n",
+                "type": "Eth.Types.HttpProvider -> Json.Decode.Decoder a -> Eth.Types.FilterId -> Task.Task Http.Error (List.List a)"
+            },
+            {
+                "name": "getLogs",
+                "comment": " Get an array of all logs matching a given filter object.\nMost likely you won't need this, as they are generated for you in [elm-ethereum-generator](https://github.com/cmditch/elm-ethereum-generator)\n",
+                "type": "Eth.Types.HttpProvider -> Eth.Types.LogFilter -> Task.Task Http.Error (List.List Eth.Types.Log)"
+            },
+            {
+                "name": "getStorageAt",
+                "comment": " Returns the value from a storage position at a given address.\nSee Ethereum JSON-RPC methods for specification on retrieving data from complex data structures like maps.\n",
+                "type": "Eth.Types.HttpProvider -> Eth.Types.Address -> Basics.Int -> Task.Task Http.Error String.String"
+            },
+            {
+                "name": "getStorageAtBlock",
+                "comment": " Returns the value from a storage position at a given address, at a certain block height.\n",
+                "type": "Eth.Types.HttpProvider -> Eth.Types.Address -> Basics.Int -> Eth.Types.BlockId -> Task.Task Http.Error String.String"
+            },
+            {
+                "name": "getTx",
+                "comment": " Get transaction information from it's hash.\nIncludes pre-execution info: value, nonce, data/input, gas, gasPrice, to, and from.\n",
+                "type": "Eth.Types.HttpProvider -> Eth.Types.TxHash -> Task.Task Http.Error Eth.Types.Tx"
+            },
+            {
+                "name": "getTxByBlockHashAndIndex",
+                "comment": " Get a transaction by it's index in a certain block given the block hash.\n",
+                "type": "Eth.Types.HttpProvider -> Eth.Types.BlockHash -> Basics.Int -> Task.Task Http.Error Eth.Types.Tx"
+            },
+            {
+                "name": "getTxByBlockNumberAndIndex",
+                "comment": " Get a transaction by it's index in a certain block given the block number.\n",
+                "type": "Eth.Types.HttpProvider -> Basics.Int -> Basics.Int -> Task.Task Http.Error Eth.Types.Tx"
+            },
+            {
+                "name": "getTxCount",
+                "comment": " Get the number of transactions sent from a given address/account.\n",
+                "type": "Eth.Types.HttpProvider -> Eth.Types.Address -> Task.Task Http.Error Basics.Int"
+            },
+            {
+                "name": "getTxCountAtBlock",
+                "comment": " Get the number of transactions sent from a given address/account at a given block height.\n",
+                "type": "Eth.Types.HttpProvider -> Eth.Types.Address -> Eth.Types.BlockId -> Task.Task Http.Error Basics.Int"
+            },
+            {
+                "name": "getTxReceipt",
+                "comment": " Get the receipt of a transaction from it's hash.\nOnly exists after the transaction has been mined!\n\nIncludes post-execution info: gasUsed, cumulativeGasUsed, contractAddress, logs, logsBloom.\nAlso includes the tx execution status (only if block is post-byzantium).\n\n",
+                "type": "Eth.Types.HttpProvider -> Eth.Types.TxHash -> Task.Task Http.Error Eth.Types.TxReceipt"
+            },
+            {
+                "name": "getUncleAtIndex",
+                "comment": " Get information about an uncle given it's index in a block by block number\n",
+                "type": "Eth.Types.HttpProvider -> Basics.Int -> Basics.Int -> Task.Task Http.Error Eth.Types.Uncle"
+            },
+            {
+                "name": "getUncleByBlockHashAtIndex",
+                "comment": " Get information about an uncle given it's index in a block by block hash\n",
+                "type": "Eth.Types.HttpProvider -> Eth.Types.BlockHash -> Basics.Int -> Task.Task Http.Error Eth.Types.Uncle"
+            },
+            {
+                "name": "getUncleCount",
+                "comment": " Get the number of uncles in a given block given a block number.\n",
+                "type": "Eth.Types.HttpProvider -> Basics.Int -> Task.Task Http.Error Basics.Int"
+            },
+            {
+                "name": "getUncleCountByHash",
+                "comment": " Get the number of uncles in a given block given a block hash.\n",
+                "type": "Eth.Types.HttpProvider -> Eth.Types.BlockHash -> Task.Task Http.Error Basics.Int"
+            },
+            {
+                "name": "hashrate",
+                "comment": " Returns the number of hashes per second that the node is mining with.\n",
+                "type": "Eth.Types.HttpProvider -> Task.Task Http.Error Basics.Int"
+            },
+            {
+                "name": "mining",
+                "comment": " See whether or not a given node is mining.\n",
+                "type": "Eth.Types.HttpProvider -> Task.Task Http.Error Basics.Bool"
+            },
+            {
+                "name": "newBlockFilter",
+                "comment": " Creates a filter in the node to notify when a new block arrives.\nTo check if the state has changed, call getFilterChanges.\n",
+                "type": "Eth.Types.HttpProvider -> Task.Task Http.Error Eth.Types.FilterId"
+            },
+            {
+                "name": "newFilter",
+                "comment": " Establishes a filter object on a given node.\nUseful for contract events.\n\nTo check if the state has changed, call getFilterChanges.\n\n",
+                "type": "Eth.Types.HttpProvider -> Eth.Types.LogFilter -> Task.Task Http.Error Eth.Types.FilterId"
+            },
+            {
+                "name": "newPendingTxFilter",
+                "comment": " Creates a filter in the node to notify when new pending transactions arrive.\nTo check if the state has changed, call getFilterChanges.\n",
+                "type": "Eth.Types.HttpProvider -> Task.Task Http.Error Eth.Types.FilterId"
+            },
+            {
+                "name": "protocolVersion",
+                "comment": " Get the current ethereum protocol version.\n",
+                "type": "Eth.Types.HttpProvider -> Task.Task Http.Error Basics.Int"
+            },
+            {
+                "name": "sendRawTx",
+                "comment": " Broadcast a signed and RLP encoded transaction.\n",
+                "type": "Eth.Types.HttpProvider -> String.String -> Task.Task Http.Error Eth.Types.TxHash"
+            },
+            {
+                "name": "sendTx",
+                "comment": " Execute a transaction on chain.\nOnly useful if your keys live on the node your talking too, which is generally considered very poor practice.\n\nNOTE: You probably don't need this.\nIf you're writing a proper dApp, look at using the `Eth.Sentry.Tx` to interface with wallets like MetaMask.\n\n",
+                "type": "Eth.Types.HttpProvider -> Eth.Types.Send -> Task.Task Http.Error Eth.Types.TxHash"
+            },
+            {
+                "name": "sign",
+                "comment": " Sign an arbitrary chunk of N bytes.\n\nThe sign method calculates an Ethereum specific signature with: sign(keccak256(\"\\\\x19Ethereum Signed Message:\\\\n\" + len(message) + message))).\n\nBy adding a prefix to the message makes the calculated signature recognisable as an Ethereum specific signature.\nThis prevents misuse where a malicious DApp can sign arbitrary data (e.g. transaction) and use the signature to impersonate the victim.\n\n**Note** the address to sign with must be unlocked.\n\n",
+                "type": "Eth.Types.HttpProvider -> Eth.Types.Address -> String.String -> Task.Task Http.Error String.String"
+            },
+            {
+                "name": "syncing",
+                "comment": " Get the sync status of a particular node.\n\n    Nothing == Not Syncing\n    Just SyncStatus == starting, current, and highestBlock\n\n",
+                "type": "Eth.Types.HttpProvider -> Task.Task Http.Error (Maybe.Maybe Eth.Types.SyncStatus)"
+            },
+            {
+                "name": "toSend",
+                "comment": " Prepare a Call to be executed on chain.\nUsed in `Eth.Sentry.Tx`, a means to interact with MetaMask.\n",
+                "type": "Eth.Types.Call a -> Eth.Types.Send"
+            },
+            {
+                "name": "uninstallFilter",
+                "comment": " Uninstalls a filter with given id.\nShould always be called when watch is no longer needed.\nAdditonally Filters timeout when they aren't requested with eth\\_getFilterChanges for a period of time.\n",
+                "type": "Eth.Types.HttpProvider -> Eth.Types.FilterId -> Task.Task Http.Error Eth.Types.FilterId"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Eth.Decode",
+        "comment": "\n\n@docs address, bigInt, block, blockHash, blockHead, hex, hexBool, hexInt, hexTime, log, event, nonZero, resultToDecoder, stringInt, syncStatus, tx, txHash, txReceipt, uncle\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "address",
+                "comment": " ",
+                "type": "Json.Decode.Decoder Eth.Types.Address"
+            },
+            {
+                "name": "bigInt",
+                "comment": " ",
+                "type": "Json.Decode.Decoder BigInt.BigInt"
+            },
+            {
+                "name": "block",
+                "comment": " ",
+                "type": "Json.Decode.Decoder a -> Json.Decode.Decoder (Eth.Types.Block a)"
+            },
+            {
+                "name": "blockHash",
+                "comment": " ",
+                "type": "Json.Decode.Decoder Eth.Types.BlockHash"
+            },
+            {
+                "name": "blockHead",
+                "comment": " ",
+                "type": "Json.Decode.Decoder Eth.Types.BlockHead"
+            },
+            {
+                "name": "event",
+                "comment": " ",
+                "type": "Json.Decode.Decoder a -> Eth.Types.Log -> Eth.Types.Event (Result.Result Json.Decode.Error a)"
+            },
+            {
+                "name": "hex",
+                "comment": " ",
+                "type": "Json.Decode.Decoder Eth.Types.Hex"
+            },
+            {
+                "name": "hexBool",
+                "comment": " ",
+                "type": "Json.Decode.Decoder Basics.Bool"
+            },
+            {
+                "name": "hexInt",
+                "comment": " ",
+                "type": "Json.Decode.Decoder Basics.Int"
+            },
+            {
+                "name": "hexTime",
+                "comment": " ",
+                "type": "Json.Decode.Decoder Time.Posix"
+            },
+            {
+                "name": "log",
+                "comment": " ",
+                "type": "Json.Decode.Decoder Eth.Types.Log"
+            },
+            {
+                "name": "nonZero",
+                "comment": " ",
+                "type": "Json.Decode.Decoder a -> Json.Decode.Decoder (Maybe.Maybe a)"
+            },
+            {
+                "name": "resultToDecoder",
+                "comment": " ",
+                "type": "(String.String -> Result.Result String.String a) -> Json.Decode.Decoder a"
+            },
+            {
+                "name": "stringInt",
+                "comment": " ",
+                "type": "Json.Decode.Decoder Basics.Int"
+            },
+            {
+                "name": "syncStatus",
+                "comment": " ",
+                "type": "Json.Decode.Decoder (Maybe.Maybe Eth.Types.SyncStatus)"
+            },
+            {
+                "name": "tx",
+                "comment": " ",
+                "type": "Json.Decode.Decoder Eth.Types.Tx"
+            },
+            {
+                "name": "txHash",
+                "comment": " ",
+                "type": "Json.Decode.Decoder Eth.Types.TxHash"
+            },
+            {
+                "name": "txReceipt",
+                "comment": " ",
+                "type": "Json.Decode.Decoder Eth.Types.TxReceipt"
+            },
+            {
+                "name": "uncle",
+                "comment": " ",
+                "type": "Json.Decode.Decoder (Eth.Types.Block ())"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Eth.Defaults",
+        "comment": " Default values.\nFor those withDefault shenanigans.\n\n@docs invalidAddress, zeroAddress, emptyBlockHash, emptyTxHash, emptyLogFilter\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "emptyBlockHash",
+                "comment": " ",
+                "type": "Eth.Types.BlockHash"
+            },
+            {
+                "name": "emptyLogFilter",
+                "comment": " ",
+                "type": "Eth.Types.LogFilter"
+            },
+            {
+                "name": "emptyTxHash",
+                "comment": " ",
+                "type": "Eth.Types.TxHash"
+            },
+            {
+                "name": "invalidAddress",
+                "comment": " ",
+                "type": "Eth.Types.Address"
+            },
+            {
+                "name": "zeroAddress",
+                "comment": " Danger Will Robinson, why are you using this?\nOnly to burn things should it be used.\n",
+                "type": "Eth.Types.Address"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Eth.Encode",
+        "comment": "\n\n@docs address, bigInt, blockHash, blockId, hex, hexInt, listOfMaybesToVal, logFilter, topicsList, txCall, txHash\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "address",
+                "comment": " ",
+                "type": "Eth.Types.Address -> Json.Encode.Value"
+            },
+            {
+                "name": "bigInt",
+                "comment": " ",
+                "type": "BigInt.BigInt -> Json.Encode.Value"
+            },
+            {
+                "name": "blockHash",
+                "comment": " ",
+                "type": "Eth.Types.BlockHash -> Json.Encode.Value"
+            },
+            {
+                "name": "blockId",
+                "comment": " ",
+                "type": "Eth.Types.BlockId -> Json.Encode.Value"
+            },
+            {
+                "name": "hex",
+                "comment": " ",
+                "type": "Eth.Types.Hex -> Json.Encode.Value"
+            },
+            {
+                "name": "hexInt",
+                "comment": " ",
+                "type": "Basics.Int -> Json.Encode.Value"
+            },
+            {
+                "name": "listOfMaybesToVal",
+                "comment": " ",
+                "type": "List.List ( String.String, Maybe.Maybe Json.Encode.Value ) -> Json.Encode.Value"
+            },
+            {
+                "name": "logFilter",
+                "comment": " ",
+                "type": "Eth.Types.LogFilter -> Json.Encode.Value"
+            },
+            {
+                "name": "topicsList",
+                "comment": " ",
+                "type": "List.List (Maybe.Maybe Eth.Types.Hex) -> Json.Encode.Value"
+            },
+            {
+                "name": "txCall",
+                "comment": " ",
+                "type": "Eth.Types.Call a -> Json.Encode.Value"
+            },
+            {
+                "name": "txHash",
+                "comment": " ",
+                "type": "Eth.Types.TxHash -> Json.Encode.Value"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Eth.Net",
+        "comment": " NetworkId and RPC Methods\n\n@docs NetworkId, version, clientVersion, listening, peerCount, toNetworkId, networkIdToInt, networkIdToString, networkIdDecoder\n\n",
+        "unions": [
+            {
+                "name": "NetworkId",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Mainnet",
+                        []
+                    ],
+                    [
+                        "Expanse",
+                        []
+                    ],
+                    [
+                        "Ropsten",
+                        []
+                    ],
+                    [
+                        "Rinkeby",
+                        []
+                    ],
+                    [
+                        "RskMain",
+                        []
+                    ],
+                    [
+                        "RskTest",
+                        []
+                    ],
+                    [
+                        "Kovan",
+                        []
+                    ],
+                    [
+                        "ETCMain",
+                        []
+                    ],
+                    [
+                        "ETCTest",
+                        []
+                    ],
+                    [
+                        "Private",
+                        [
+                            "Basics.Int"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "clientVersion",
+                "comment": " Get the current client version.\n\n    Ok \"Mist/v0.9.3/darwin/go1.4.1\"\n\n",
+                "type": "Eth.Types.HttpProvider -> Task.Task Http.Error String.String"
+            },
+            {
+                "name": "listening",
+                "comment": " Returns true if the node is actively listening for network connections.\n",
+                "type": "Eth.Types.HttpProvider -> Task.Task Http.Error Basics.Bool"
+            },
+            {
+                "name": "networkIdDecoder",
+                "comment": " Decode a JSON stringy int or JSON int to a NetworkId\n\n    decodeString networkIdDecoder \"1\"          == Ok Mainnet\n    decodeString networkIdDecoder 3            == Ok Ropsten\n    decodeString networkIdDecoder \"five\"       == Err ...\n\n",
+                "type": "Json.Decode.Decoder Eth.Net.NetworkId"
+            },
+            {
+                "name": "networkIdToInt",
+                "comment": " Convert an int into it's NetworkId\n",
+                "type": "Eth.Net.NetworkId -> Basics.Int"
+            },
+            {
+                "name": "networkIdToString",
+                "comment": " Get a NetworkId's name\n",
+                "type": "Eth.Net.NetworkId -> String.String"
+            },
+            {
+                "name": "peerCount",
+                "comment": " Get the number of peers currently connected to the client.\n",
+                "type": "Eth.Types.HttpProvider -> Task.Task Http.Error Basics.Int"
+            },
+            {
+                "name": "toNetworkId",
+                "comment": " Convert an int into it's NetworkId\n",
+                "type": "Basics.Int -> Eth.Net.NetworkId"
+            },
+            {
+                "name": "version",
+                "comment": " Get the current network id.\n\n    Ok Mainnet\n\n",
+                "type": "Eth.Types.HttpProvider -> Task.Task Http.Error Eth.Net.NetworkId"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Eth.RPC",
+        "comment": " Json RPC Helpers\n\n@docs RpcRequest, toTask\n\n\n# Low Level\n\n@docs encode, toHttpBody\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "RpcRequest",
+                "comment": " ",
+                "args": [
+                    "a"
+                ],
+                "type": "{ url : String.String, method : String.String, params : List.List Json.Encode.Value, decoder : Json.Decode.Decoder a }"
+            }
+        ],
+        "values": [
+            {
+                "name": "encode",
+                "comment": " ",
+                "type": "Basics.Int -> String.String -> List.List Json.Encode.Value -> Json.Encode.Value"
+            },
+            {
+                "name": "toHttpBody",
+                "comment": " ",
+                "type": "Basics.Int -> String.String -> List.List Json.Encode.Value -> Http.Body"
+            },
+            {
+                "name": "toTask",
+                "comment": " ",
+                "type": "Eth.RPC.RpcRequest a -> Task.Task Http.Error a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Eth.Sentry.Event",
+        "comment": " Event Sentry - HTTP Style - Polling ftw\n\n@docs EventSentry, Msg, Ref, init, stopWatching, update, watch, watchOnce\n\n",
+        "unions": [
+            {
+                "name": "EventSentry",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Msg",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Ref",
+                "comment": " ",
+                "args": [],
+                "type": "Basics.Int"
+            }
+        ],
+        "values": [
+            {
+                "name": "init",
+                "comment": " ",
+                "type": "(Eth.Sentry.Event.Msg -> msg) -> Eth.Types.HttpProvider -> ( Eth.Sentry.Event.EventSentry msg, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "stopWatching",
+                "comment": " ",
+                "type": "Eth.Sentry.Event.Ref -> Eth.Sentry.Event.EventSentry msg -> Eth.Sentry.Event.EventSentry msg"
+            },
+            {
+                "name": "update",
+                "comment": " ",
+                "type": "Eth.Sentry.Event.Msg -> Eth.Sentry.Event.EventSentry msg -> ( Eth.Sentry.Event.EventSentry msg, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "watch",
+                "comment": " Continuously polls for logs in newly mined blocks.\n\nIf the range within the LogFilter includes past blocks,\nthen all events within the given block range are returned,\nalong with events in the latest block.\n\nPolling continues until `stopWatching` is called.\n\n",
+                "type": "(Eth.Types.Log -> msg) -> Eth.Sentry.Event.EventSentry msg -> Eth.Types.LogFilter -> ( Eth.Sentry.Event.EventSentry msg, Platform.Cmd.Cmd msg, Eth.Sentry.Event.Ref )"
+            },
+            {
+                "name": "watchOnce",
+                "comment": " Returns the first log found.\n\nIf a block range is defined in the LogFilter,\nthis will only return the first log found within that given block range.\n\n",
+                "type": "(Eth.Types.Log -> msg) -> Eth.Sentry.Event.EventSentry msg -> Eth.Types.LogFilter -> ( Eth.Sentry.Event.EventSentry msg, Platform.Cmd.Cmd msg )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Eth.Sentry.Tx",
+        "comment": "\n\n\n# Core\n\n@docs TxSentry, Msg, update, init, OutPort, InPort, listen\n\n\n# Send Txs\n\n@docs send, sendWithReceipt\n\n\n# Custom Send\n\n@docs CustomSend, TxTracker, customSend\n\n\n# Utils\n\n@docs changeNode\n\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "TxSentry",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "CustomSend",
+                "comment": "\n\n    onSign : Message after metamask/wallet has signed tx and returned tx hash\n    onBroadcast : Message after tx is confirmed sitting in tx queue on the node\n    onMined : ( message after tx is mined,\n                (number of blocks deep to watch tx, message on each mined block after tx is sent - stops sending messages when first tuple value is reached)\n              )\n\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ onSign : Maybe.Maybe (Result.Result String.String Eth.Types.TxHash -> msg), onBroadcast : Maybe.Maybe (Result.Result String.String Eth.Types.Tx -> msg), onMined : Maybe.Maybe ( Result.Result String.String Eth.Types.TxReceipt -> msg, Maybe.Maybe { confirmations : Basics.Int, toMsg : Eth.Sentry.Tx.TxTracker -> msg } ) }"
+            },
+            {
+                "name": "InPort",
+                "comment": " The `txIn` subscription.\nWhere information from the outside comes IN to your elm app.\nUsed for getting the TxHash response from Metamask, or other wallets.\n\n     port txIn : (Value -> msg) -> Sub msg\n\n",
+                "args": [],
+                "type": "(Json.Decode.Value -> Eth.Sentry.Tx.Msg) -> Platform.Sub.Sub Eth.Sentry.Tx.Msg"
+            },
+            {
+                "name": "OutPort",
+                "comment": " The `txOut` port.\nWhere information from your elm app is sent OUT to javascript land.\nUsed for sending `Send` Tx parameters to Metamask, or other wallets.\n\n    port txOut : Value -> Cmd msg\n\n",
+                "args": [],
+                "type": "Json.Decode.Value -> Platform.Cmd.Cmd Eth.Sentry.Tx.Msg"
+            },
+            {
+                "name": "TxTracker",
+                "comment": " For checking whether a tx has reached a certain block depth (# of confirmations) in a customSend\n",
+                "args": [],
+                "type": "{ currentDepth : Basics.Int, minedInBlock : Basics.Int, stopWatchingAtBlock : Basics.Int, lastCheckedBlock : Basics.Int, txHash : Eth.Types.TxHash, doneWatching : Basics.Bool, reOrg : Basics.Bool }"
+            }
+        ],
+        "values": [
+            {
+                "name": "changeNode",
+                "comment": " Look into the errors this might cause,\nsome kind of cleanup process should probably occur on changing a node.\n",
+                "type": "Eth.Types.HttpProvider -> Eth.Sentry.Tx.TxSentry msg -> Eth.Sentry.Tx.TxSentry msg"
+            },
+            {
+                "name": "customSend",
+                "comment": " ",
+                "type": "Eth.Sentry.Tx.TxSentry msg -> Eth.Sentry.Tx.CustomSend msg -> Eth.Types.Send -> ( Eth.Sentry.Tx.TxSentry msg, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "init",
+                "comment": " ",
+                "type": "( Eth.Sentry.Tx.OutPort, Eth.Sentry.Tx.InPort ) -> (Eth.Sentry.Tx.Msg -> msg) -> Eth.Types.HttpProvider -> Eth.Sentry.Tx.TxSentry msg"
+            },
+            {
+                "name": "listen",
+                "comment": " ",
+                "type": "Eth.Sentry.Tx.TxSentry msg -> Platform.Sub.Sub msg"
+            },
+            {
+                "name": "send",
+                "comment": " ",
+                "type": "(Result.Result String.String Eth.Types.Tx -> msg) -> Eth.Sentry.Tx.TxSentry msg -> Eth.Types.Send -> ( Eth.Sentry.Tx.TxSentry msg, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "sendWithReceipt",
+                "comment": " ",
+                "type": "(Result.Result String.String Eth.Types.Tx -> msg) -> (Result.Result String.String Eth.Types.TxReceipt -> msg) -> Eth.Sentry.Tx.TxSentry msg -> Eth.Types.Send -> ( Eth.Sentry.Tx.TxSentry msg, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "update",
+                "comment": " ",
+                "type": "Eth.Sentry.Tx.Msg -> Eth.Sentry.Tx.TxSentry msg -> ( Eth.Sentry.Tx.TxSentry msg, Platform.Cmd.Cmd msg )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Eth.Sentry.Wallet",
+        "comment": " Wallet Sentry\n\n@docs WalletSentry, default, decoder, decodeToMsg\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "WalletSentry",
+                "comment": " ",
+                "args": [],
+                "type": "{ account : Maybe.Maybe Eth.Types.Address, networkId : Eth.Net.NetworkId }"
+            }
+        ],
+        "values": [
+            {
+                "name": "decodeToMsg",
+                "comment": " ",
+                "type": "(String.String -> msg) -> (Eth.Sentry.Wallet.WalletSentry -> msg) -> Json.Decode.Value -> msg"
+            },
+            {
+                "name": "decoder",
+                "comment": " ",
+                "type": "Json.Decode.Decoder Eth.Sentry.Wallet.WalletSentry"
+            },
+            {
+                "name": "default",
+                "comment": " ",
+                "type": "Eth.Sentry.Wallet.WalletSentry"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Eth.Types",
+        "comment": " Types\n\n\n# Simple\n\n@docs Address, TxHash, BlockHash, Hex\n\n\n# Complex\n\n@docs Call, Send, Tx, TxReceipt, BlockId, Block, Uncle, BlockHead, Log, Event, LogFilter, SyncStatus\n\n\n# Misc\n\n@docs HttpProvider, WebsocketProvider, FilterId\n\n",
+        "unions": [
+            {
+                "name": "BlockId",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "BlockNum",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "EarliestBlock",
+                        []
+                    ],
+                    [
+                        "LatestBlock",
+                        []
+                    ],
+                    [
+                        "PendingBlock",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Address",
+                "comment": " ",
+                "args": [],
+                "type": "Internal.Types.Address"
+            },
+            {
+                "name": "Block",
+                "comment": " ",
+                "args": [
+                    "a"
+                ],
+                "type": "{ number : Basics.Int, hash : Eth.Types.BlockHash, parentHash : Eth.Types.BlockHash, nonce : String.String, sha3Uncles : String.String, logsBloom : String.String, transactionsRoot : String.String, stateRoot : String.String, receiptsRoot : String.String, miner : Eth.Types.Address, difficulty : BigInt.BigInt, totalDifficulty : BigInt.BigInt, extraData : String.String, size : Basics.Int, gasLimit : Basics.Int, gasUsed : Basics.Int, timestamp : Time.Posix, transactions : List.List a, uncles : List.List String.String }"
+            },
+            {
+                "name": "BlockHash",
+                "comment": " ",
+                "args": [],
+                "type": "Internal.Types.BlockHash"
+            },
+            {
+                "name": "BlockHead",
+                "comment": " ",
+                "args": [],
+                "type": "{ number : Basics.Int, hash : Eth.Types.BlockHash, parentHash : Eth.Types.BlockHash, nonce : String.String, sha3Uncles : String.String, logsBloom : String.String, transactionsRoot : String.String, stateRoot : String.String, receiptsRoot : String.String, miner : Eth.Types.Address, difficulty : BigInt.BigInt, extraData : String.String, gasLimit : Basics.Int, gasUsed : Basics.Int, mixHash : String.String, timestamp : Time.Posix }"
+            },
+            {
+                "name": "Call",
+                "comment": " ",
+                "args": [
+                    "a"
+                ],
+                "type": "{ to : Maybe.Maybe Eth.Types.Address, from : Maybe.Maybe Eth.Types.Address, gas : Maybe.Maybe Basics.Int, gasPrice : Maybe.Maybe BigInt.BigInt, value : Maybe.Maybe BigInt.BigInt, data : Maybe.Maybe Eth.Types.Hex, nonce : Maybe.Maybe Basics.Int, decoder : Json.Decode.Decoder a }"
+            },
+            {
+                "name": "Event",
+                "comment": " ",
+                "args": [
+                    "a"
+                ],
+                "type": "{ address : Eth.Types.Address, data : String.String, topics : List.List Eth.Types.Hex, removed : Basics.Bool, logIndex : Basics.Int, transactionIndex : Basics.Int, transactionHash : Eth.Types.TxHash, blockHash : Eth.Types.BlockHash, blockNumber : Basics.Int, returnData : a }"
+            },
+            {
+                "name": "FilterId",
+                "comment": " ",
+                "args": [],
+                "type": "String.String"
+            },
+            {
+                "name": "Hex",
+                "comment": " ",
+                "args": [],
+                "type": "Internal.Types.Hex"
+            },
+            {
+                "name": "HttpProvider",
+                "comment": " ",
+                "args": [],
+                "type": "String.String"
+            },
+            {
+                "name": "Log",
+                "comment": " ",
+                "args": [],
+                "type": "{ address : Eth.Types.Address, data : String.String, topics : List.List Eth.Types.Hex, removed : Basics.Bool, logIndex : Basics.Int, transactionIndex : Basics.Int, transactionHash : Eth.Types.TxHash, blockHash : Eth.Types.BlockHash, blockNumber : Basics.Int }"
+            },
+            {
+                "name": "LogFilter",
+                "comment": " NOTE: Different from JSON RPC API, removed some optionality to reduce complexity (array with array)\n",
+                "args": [],
+                "type": "{ fromBlock : Eth.Types.BlockId, toBlock : Eth.Types.BlockId, address : Eth.Types.Address, topics : List.List (Maybe.Maybe Eth.Types.Hex) }"
+            },
+            {
+                "name": "Send",
+                "comment": " ",
+                "args": [],
+                "type": "{ to : Maybe.Maybe Eth.Types.Address, from : Maybe.Maybe Eth.Types.Address, gas : Maybe.Maybe Basics.Int, gasPrice : Maybe.Maybe BigInt.BigInt, value : Maybe.Maybe BigInt.BigInt, data : Maybe.Maybe Eth.Types.Hex, nonce : Maybe.Maybe Basics.Int }"
+            },
+            {
+                "name": "SyncStatus",
+                "comment": " ",
+                "args": [],
+                "type": "{ startingBlock : Basics.Int, currentBlock : Basics.Int, highestBlock : Basics.Int, knownStates : Basics.Int, pulledStates : Basics.Int }"
+            },
+            {
+                "name": "Tx",
+                "comment": " ",
+                "args": [],
+                "type": "{ hash : Eth.Types.TxHash, nonce : Basics.Int, blockHash : Maybe.Maybe Eth.Types.BlockHash, blockNumber : Maybe.Maybe Basics.Int, transactionIndex : Basics.Int, from : Eth.Types.Address, to : Maybe.Maybe Eth.Types.Address, value : BigInt.BigInt, gasPrice : BigInt.BigInt, gas : Basics.Int, input : String.String }"
+            },
+            {
+                "name": "TxHash",
+                "comment": " ",
+                "args": [],
+                "type": "Internal.Types.TxHash"
+            },
+            {
+                "name": "TxReceipt",
+                "comment": " ",
+                "args": [],
+                "type": "{ hash : Eth.Types.TxHash, index : Basics.Int, blockHash : Eth.Types.BlockHash, blockNumber : Basics.Int, gasUsed : BigInt.BigInt, cumulativeGasUsed : BigInt.BigInt, contractAddress : Maybe.Maybe Eth.Types.Address, logs : List.List Eth.Types.Log, logsBloom : String.String, root : Maybe.Maybe String.String, status : Maybe.Maybe Basics.Bool }"
+            },
+            {
+                "name": "Uncle",
+                "comment": " ",
+                "args": [],
+                "type": "Eth.Types.Block ()"
+            },
+            {
+                "name": "WebsocketProvider",
+                "comment": " ",
+                "args": [],
+                "type": "String.String"
+            }
+        ],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "Eth.Units",
+        "comment": " Conversions and Helpers\n\n\n# Concise Units\n\nUseful helpers for concise value declarations.\n\n    txParams : Send\n    txParams =\n        { to = Just myContract\n        , from = Nothing\n        , gas = Nothing\n        , gasPrice = Just (gwei 3)\n        , value = Just (eth 3)\n        , data = Just data\n        , nonce = Nothing\n        }\n\n@docs gwei, eth\n\n\n# Precise Units\n\nHelpers for dealing with floats.\n\n@docs EthUnit, toWei, fromWei, bigIntToWei\n\n",
+        "unions": [
+            {
+                "name": "EthUnit",
+                "comment": " Eth Unit\nUseful for displaying to, and taking user input from, the UI\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Wei",
+                        []
+                    ],
+                    [
+                        "Kwei",
+                        []
+                    ],
+                    [
+                        "Mwei",
+                        []
+                    ],
+                    [
+                        "Gwei",
+                        []
+                    ],
+                    [
+                        "Microether",
+                        []
+                    ],
+                    [
+                        "Milliether",
+                        []
+                    ],
+                    [
+                        "Ether",
+                        []
+                    ],
+                    [
+                        "Kether",
+                        []
+                    ],
+                    [
+                        "Mether",
+                        []
+                    ],
+                    [
+                        "Gether",
+                        []
+                    ],
+                    [
+                        "Tether",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "bigIntToWei",
+                "comment": " Convert a given BigInt EthUnit to it's Wei equivalent\n",
+                "type": "Eth.Units.EthUnit -> BigInt.BigInt -> BigInt.BigInt"
+            },
+            {
+                "name": "eth",
+                "comment": " ",
+                "type": "Basics.Int -> BigInt.BigInt"
+            },
+            {
+                "name": "fromWei",
+                "comment": " Convert stringy Wei to a given EthUnit\n\n    fromWei Gwei (BigInt.fromInt 123456789) == \"0.123456789\"\n\n    fromWei Ether (BigInt.fromInt 123456789) == \"0.000000000123456789\"\n\n**Note** Do not pass anything larger than MAX\\_SAFE\\_INTEGER into BigInt.fromInt\nMAX\\_SAFE\\_INTEGER == 9007199254740991\n\n",
+                "type": "Eth.Units.EthUnit -> BigInt.BigInt -> String.String"
+            },
+            {
+                "name": "gwei",
+                "comment": " ",
+                "type": "Basics.Int -> BigInt.BigInt"
+            },
+            {
+                "name": "toWei",
+                "comment": " Convert a given stringy EthUnit to it's Wei equivalent\n\n    toWei Gwei \"50\" == Ok (BigInt.fromInt 50000000000)\n\n    toWei Wei \"40.9123\" == Ok (BigInt.fromInt 40)\n\n    toWei Kwei \"40.9123\" == Ok (BigInt.fromInt 40912)\n\n    toWei Gwei \"ten\" == Err\n\n",
+                "type": "Eth.Units.EthUnit -> String.String -> Result.Result String.String BigInt.BigInt"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Eth.Utils",
+        "comment": " String/Type Conversion and Application Helpers\n\n\n# Address\n\n@docs toAddress, addressToString, addressToChecksumString, isAddress, isChecksumAddress\n\n\n# Hex\n\n@docs toHex, hexToString, isHex, hexToAscii, hexToUtf8, hexAppend, hexConcat\n\n\n# Transaction Hash\n\n@docs toTxHash, txHashToString, isTxHash\n\n\n# Block Hash\n\n@docs toBlockHash, blockHashToString, isBlockHash\n\n\n# SHA3\n\n@docs functionSig, keccak256, isSha256, lowLevelKeccak256\n\n\n# Unsafe\n\nUser beware!! These are sidestepping the power of Elm, and it's static types.\n\nUndoubtedly convenient for baking values, like contract addresses, into your source code.\n\nAll values coming from the outside world, like user input or server responses, should use the safe functions.\n\n@docs unsafeToHex, unsafeToAddress, unsafeToTxHash, unsafeToBlockHash\n\n\n# Application Helpers\n\n@docs Retry, retry, valueToMsg\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Retry",
+                "comment": " Config for a `retry` task\n",
+                "args": [],
+                "type": "{ attempts : Basics.Int, sleep : Basics.Float }"
+            }
+        ],
+        "values": [
+            {
+                "name": "addressToChecksumString",
+                "comment": " Convert an Address to a string conforming to the EIP-55 checksum.\n\n**Note**: This lowercases all the characters inside the `Address` and runs it through the checksum algorithm.\n\n",
+                "type": "Eth.Types.Address -> String.String"
+            },
+            {
+                "name": "addressToString",
+                "comment": " Convert an Address to a String\n",
+                "type": "Eth.Types.Address -> String.String"
+            },
+            {
+                "name": "blockHashToString",
+                "comment": " Convert a given BlockHash to a string.\n",
+                "type": "Eth.Types.BlockHash -> String.String"
+            },
+            {
+                "name": "functionSig",
+                "comment": " Convert a contract function name to it's 4-byte function signature.\n\n    Utils.functionSig \"transfer(address,uint256)\" == Hex \"a9059cbb\"\n\n",
+                "type": "String.String -> Eth.Types.Hex"
+            },
+            {
+                "name": "hexAppend",
+                "comment": " Append two Hex's together.\n\n    hexAppend (Hex 0x12) (Hex 0x34) == Hex 0x1234\n\n",
+                "type": "Eth.Types.Hex -> Eth.Types.Hex -> Eth.Types.Hex"
+            },
+            {
+                "name": "hexConcat",
+                "comment": " Concatenate a list of Hex's\n\n    hexConcat [ Hex 0x12, Hex 0x34, Hex 0x56 ] == Hex 0x 00123456\n\n",
+                "type": "List.List Eth.Types.Hex -> Eth.Types.Hex"
+            },
+            {
+                "name": "hexToAscii",
+                "comment": " Convert Given Hex into ASCII. Will fail if Hex is an uneven length.\n",
+                "type": "Eth.Types.Hex -> Result.Result String.String String.String"
+            },
+            {
+                "name": "hexToString",
+                "comment": " Convert a `Hex` into a string.\n",
+                "type": "Eth.Types.Hex -> String.String"
+            },
+            {
+                "name": "hexToUtf8",
+                "comment": " Convert Given Hex into UTF8. Will fail if Hex is an uneven length.\n",
+                "type": "Eth.Types.Hex -> Result.Result String.String String.String"
+            },
+            {
+                "name": "isAddress",
+                "comment": " Check if given string is a valid address.\n\n**Note**: Works on mixed case strings, with or without the 0x.\n\n",
+                "type": "String.String -> Basics.Bool"
+            },
+            {
+                "name": "isBlockHash",
+                "comment": " Check if given string is a valid BlockHash.\n\ni.e. Hex and 64 characters long.\n\n",
+                "type": "String.String -> Basics.Bool"
+            },
+            {
+                "name": "isChecksumAddress",
+                "comment": " Check if given string is a valid checksum address.\n",
+                "type": "String.String -> Basics.Bool"
+            },
+            {
+                "name": "isHex",
+                "comment": " Check if given string is valid Hex\n",
+                "type": "String.String -> Basics.Bool"
+            },
+            {
+                "name": "isSha256",
+                "comment": " Checks if a given string is valid hex and 64 chars long.\n",
+                "type": "String.String -> Basics.Bool"
+            },
+            {
+                "name": "isTxHash",
+                "comment": " Check if given string is a valid TxHash.\n\ni.e. Hex and 64 characters long.\n\n",
+                "type": "String.String -> Basics.Bool"
+            },
+            {
+                "name": "keccak256",
+                "comment": " Hash a given string into it's SHA3/Keccak256 form.\n",
+                "type": "String.String -> Eth.Types.Hex"
+            },
+            {
+                "name": "lowLevelKeccak256",
+                "comment": " Same as `ethereum_keccak_256` from [this](http://package.elm-lang.org/packages/prozacchiwawa/elm-keccak/latest) library.\n",
+                "type": "List.List Basics.Int -> List.List Basics.Int"
+            },
+            {
+                "name": "retry",
+                "comment": " Retry a given `Task` till it succeeds, or runs out of time.\n\nThe below will wait for 5 minutes until giving up, and polls every 5 seconds.\n\n    pollForMinedTx : HttpProvider -> TxHash -> Task Http.Error TxReceipt\n    pollForMinedTx ethNode txHash =\n        Eth.getTxReceipt ethNode txHash\n            |> retry { attempts = 60, sleep = 5 }\n\n",
+                "type": "Eth.Utils.Retry -> Task.Task x a -> Task.Task x a"
+            },
+            {
+                "name": "toAddress",
+                "comment": " Safely convert a string into an address.\n\nAll lowercase or uppercase strings, shaped like addresses, will result in `Ok`.\nMixed case strings will return `Err` if the EIP-55 checksum is invalid.\n\n",
+                "type": "String.String -> Result.Result String.String Eth.Types.Address"
+            },
+            {
+                "name": "toBlockHash",
+                "comment": " Safely convert a given string to a BlockHash.\n",
+                "type": "String.String -> Result.Result String.String Eth.Types.BlockHash"
+            },
+            {
+                "name": "toHex",
+                "comment": " Safely convert a string into Hex.\n",
+                "type": "String.String -> Result.Result String.String Eth.Types.Hex"
+            },
+            {
+                "name": "toTxHash",
+                "comment": " Safely convert a string to a TxHash.\n",
+                "type": "String.String -> Result.Result String.String Eth.Types.TxHash"
+            },
+            {
+                "name": "txHashToString",
+                "comment": " Convert a given TxHash to a string.\n",
+                "type": "Eth.Types.TxHash -> String.String"
+            },
+            {
+                "name": "unsafeToAddress",
+                "comment": " ",
+                "type": "String.String -> Eth.Types.Address"
+            },
+            {
+                "name": "unsafeToBlockHash",
+                "comment": " ",
+                "type": "String.String -> Eth.Types.BlockHash"
+            },
+            {
+                "name": "unsafeToHex",
+                "comment": " ",
+                "type": "String.String -> Eth.Types.Hex"
+            },
+            {
+                "name": "unsafeToTxHash",
+                "comment": " ",
+                "type": "String.String -> Eth.Types.TxHash"
+            },
+            {
+                "name": "valueToMsg",
+                "comment": " Useful for decoding past a result straight into a Msg.\nComes in handy with Eth.Sentry.Event values.\n\n    transferDecoder : Value -> Msg\n    transferDecoder =\n        valueToMsg Transfer Error transferEventDecoder\n\n    type Msg\n        = Transfer (Event Transfer)\n        | Error String\n\n",
+                "type": "(a -> msg) -> (Json.Decode.Error -> msg) -> Json.Decode.Decoder a -> Json.Encode.Value -> msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Internal.Utils",
+        "comment": "\n\n@docs add0x, drop64, leftPadTo64, quote, remove0x, take64, toByteLength\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "add0x",
+                "comment": " ",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "drop64",
+                "comment": " ",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "leftPadTo64",
+                "comment": " ",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "quote",
+                "comment": " ",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "remove0x",
+                "comment": " ",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "take64",
+                "comment": " ",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "toByteLength",
+                "comment": " ",
+                "type": "String.String -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Shh",
+        "comment": " Whipser API (Use at your own risk! Work in progress)\n\n\n# Whisper messaging\n\n@docs Post, post\n\n\n# Whisper Id's\n\n@docs WhisperId, newIdentity, whisperIdToString, toWhisperId, version\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Post",
+                "comment": " ",
+                "args": [],
+                "type": "{ from : Maybe.Maybe String.String, to : Maybe.Maybe String.String, topics : List.List String.String, payload : String.String, priority : Basics.Int, ttl : Basics.Int }"
+            },
+            {
+                "name": "WhisperId",
+                "comment": " ",
+                "args": [],
+                "type": "Internal.Types.WhisperId"
+            }
+        ],
+        "values": [
+            {
+                "name": "newIdentity",
+                "comment": " ",
+                "type": "Eth.Types.HttpProvider -> Task.Task Http.Error Shh.WhisperId"
+            },
+            {
+                "name": "post",
+                "comment": " ",
+                "type": "Eth.Types.HttpProvider -> Shh.Post -> Task.Task Http.Error Basics.Bool"
+            },
+            {
+                "name": "toWhisperId",
+                "comment": " ",
+                "type": "String.String -> Result.Result String.String Shh.WhisperId"
+            },
+            {
+                "name": "version",
+                "comment": " ",
+                "type": "Eth.Types.HttpProvider -> Task.Task Http.Error Basics.Int"
+            },
+            {
+                "name": "whisperIdToString",
+                "comment": " ",
+                "type": "Shh.WhisperId -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

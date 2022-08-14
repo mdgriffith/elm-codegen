@@ -1,0 +1,389 @@
+[
+    {
+        "name": "Markdown.AnchorValidation",
+        "comment": "\n\n\n# Validate internal markdown links\n\nThese internal markdown links (what appear when you link to sections in wikipedia, for\nexample) are called 'Anchor Links'.\n\nCheck out the [example](https://elm-markdown-transforms.netlify.app/generate-and-check-anchor-links.html)\nthat uses this module and it's [source code](https://github.com/matheus23/elm-markdown-transforms/blob/master/examples/src/GenerateAndCheckAnchorLinks.elm).\n\n@docs Validated, Anchors, Error\n\n\n## Render with Validation\n\n@docs fold\n\n@docs map, mapWithGeneratedAnchor, mapWithCustomGeneratedAnchor\n\n@docs validateLink\n\n@docs liftHtmlRenderer\n\n\n## Resolve Validation\n\n@docs resolve, errorToString\n\n",
+        "unions": [
+            {
+                "name": "Error",
+                "comment": " Anchor link checking can go wrong in two ways:\n\n  - `DuplicatedAnchors`: We generated two headings or so with the same anchor.\n    This is an issue, since linking to one of them won't work.\n  - `InvalidAnchorLink`: We generated a link to an anchor that doesn't exist.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "DuplicatedAnchors",
+                        [
+                            "List.List Markdown.AnchorValidation.Anchors"
+                        ]
+                    ],
+                    [
+                        "InvalidAnchorLink",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Anchors",
+                "comment": " We model all existing anchors simply as a list of strings.\n",
+                "args": [],
+                "type": "List.List String.String"
+            },
+            {
+                "name": "Validated",
+                "comment": " The type we use for folds. You don't need to worry about it. You can use the API for\nworking with it exclusively. That is, `resolve`, `fold`, the various `map`s and\n`validateLink`.\n\nIf you're curious what this type is about:\nAnchor link checking works in two phases:\n\n1.  The markdown gets reduced to the list of words and all used anchors at the same time\n    (the `words` and `generatedAnchors` fields).\n2.  With the information about what anchors there are in the markdown, we can now render\n    it, validating that our links are not invalid at the same time (the `validate` field).\n\n",
+                "args": [
+                    "view"
+                ],
+                "type": "{ validate : Markdown.AnchorValidation.Anchors -> Result.Result Markdown.AnchorValidation.Error view, words : List.List String.String, generatedAnchors : Markdown.AnchorValidation.Anchors }"
+            }
+        ],
+        "values": [
+            {
+                "name": "errorToString",
+                "comment": " Generate fairly descriptive error messages\n",
+                "type": "Markdown.AnchorValidation.Error -> String.String"
+            },
+            {
+                "name": "fold",
+                "comment": " Fold a Validated value through your block.\n\nIf you don't know how to use this function, take a look at the [example].\n\nIf you want to know more about what `fold`s are, take a look at the [docs for\n`Scaffolded`].\n\n[example]: https://github.com/matheus23/elm-markdown-transforms/blob/master/examples/src/GenerateAndCheckAnchorLinks.elm\n[docs for `Scaffolded`]: Markdown/Scaffolded#what-are-folds-\n\n",
+                "type": "Markdown.Scaffolded.Block (Markdown.AnchorValidation.Validated view) -> Markdown.AnchorValidation.Validated (Markdown.Scaffolded.Block view)"
+            },
+            {
+                "name": "liftHtmlRenderer",
+                "comment": " If you just started building in your anchor validation, but haven't updated your\nHtml renderers to reduce to `Validated` values, just use this function to lift them\nautomatically.\n",
+                "type": "Markdown.Html.Renderer (List.List a -> a) -> Markdown.Html.Renderer (List.List (Markdown.AnchorValidation.Validated a) -> Markdown.AnchorValidation.Validated a)"
+            },
+            {
+                "name": "map",
+                "comment": " Map over the view inside a `Validated` value.\n\nYou can use this to construct a view function\n\n    myViewReducer : Scaffolded.Block (Html Msg) -> Html Msg\n    myViewReducer =\n        -- or any other implementation\n        Scaffolded.reduceHtml []\n\n    viewValidated : Scaffolded.Block (Validated (Html Msg)) -> Validated (Html Msg)\n    viewValidated block =\n        block\n            |> fold\n            -- Now, we have a `Validated (Scaffolded.Block (Html Msg))`\n            |> map myViewReducer\n\n",
+                "type": "(a -> b) -> Markdown.AnchorValidation.Validated a -> Markdown.AnchorValidation.Validated b"
+            },
+            {
+                "name": "mapWithCustomGeneratedAnchor",
+                "comment": " Same as [`mapWithGeneratedAnchor`], but you decide how to extract an anchor link from\nthe words inside markdown.\n\n[`mapWithGeneratedAnchor`]: #mapWithGeneratedAnchor\n\n",
+                "type": "(List.List String.String -> String.String) -> (String.String -> a -> b) -> Markdown.AnchorValidation.Validated a -> Markdown.AnchorValidation.Validated b"
+            },
+            {
+                "name": "mapWithGeneratedAnchor",
+                "comment": " Map over the `Validated` value and generate an anchor at the same time!\n\n    viewValidated : Scaffolded.Block (Validated (Html Msg)) -> Validated (Html Msg)\n    viewValidated block =\n        case block of\n            Scaffolded.Heading _ ->\n                block\n                    |> fold\n                    |> mapWithGeneratedAnchor\n                        (\\anchor -> Scaffolded.reduceHtml [ Attr.id anchor ])\n\n            _ ->\n                block\n                    |> fold\n                    |> map (Scaffolded.reduceHtml [])\n\n(See also the [docs for `map`].)\n\nThe extracted words from markdown here are transformed into an 'anchor', which is a\nstring, consisting only of the alphanumeric characters of the contained markdown joined by\ndashes.\n\n[docs for `map`]: #map\n\n",
+                "type": "(String.String -> a -> b) -> Markdown.AnchorValidation.Validated a -> Markdown.AnchorValidation.Validated b"
+            },
+            {
+                "name": "resolve",
+                "comment": " Resolve validation errors\n",
+                "type": "(Markdown.AnchorValidation.Error -> error) -> List.List (Markdown.AnchorValidation.Validated a) -> Result.Result error (List.List a)"
+            },
+            {
+                "name": "validateLink",
+                "comment": " Validate given anchor link, to make sure it exists.\n\n    viewValidated : Scaffolded.Block (Validated (Html Msg)) -> Validated (Html Msg)\n    viewValidated block =\n        case block of\n            Scaffolded.Link { destination } ->\n                block\n                    |> fold\n                    |> validateLink destination\n                    |> map (Scaffolded.foldHtml [])\n\n            Scaffolded.Heading _ ->\n                block\n                    |> fold\n                    |> mapWithGeneratedAnchor\n                        (\\anchor -> Scaffolded.foldHtml [ Attr.id anchor ])\n\n            _ ->\n                block\n                    |> fold\n                    |> map (Scaffolded.foldHtml [])\n\n(See also the [docs for `map`](#map) and [docs for `mapWithGeneratedAnchor`](#mapWithGeneratedAnchor).)\n\n",
+                "type": "String.String -> Markdown.AnchorValidation.Validated view -> Markdown.AnchorValidation.Validated view"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Markdown.PrettyTables",
+        "comment": "\n\n\n# Pretty-printing Markdown files with Tables\n\n(Tables defined by the github flavoured markdown (GFM) spec).\n\nElm-markdown supports GFM tables. The function `reducePretty`\nin the `Markdown.Scaffolded` module doesn't support pretty\nprinting these.\n\nThis module includes the function `reducePrettyTable`, which\nsupports pretty-printing markdown tables.\n\nDue to this being slightly complicated, this functionality was\nmoved into this module together with its helpers.\n\n@docs reducePrettyTable, finishReduction\n\n\n## Rendering styles\n\n@docs TableStyle, defaultStyle, compactStyle\n\n\n## Internal datatypes\n\n@docs TableInfo, ColumnInfo\n@docs resolve, pure\n@docs map, map2, fold\n@docs combineColumnInfo\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "ColumnInfo",
+                "comment": " All additional column information needed to support pretty-printing.\n",
+                "args": [],
+                "type": "{ size : Basics.Int, alignment : Maybe.Maybe Markdown.Block.Alignment }"
+            },
+            {
+                "name": "TableInfo",
+                "comment": " The main datatype that drives pretty-printing.\n\nThis allows the pretty-printing to work in a two-step process:\n\n1.  Collect all the pretty-printed cells and their information `ColumnInfo`\n2.  Use the maximum cell sizes as column sizes to add padding around cells\n\n",
+                "args": [
+                    "view"
+                ],
+                "type": "{ render : Dict.Dict Basics.Int Markdown.PrettyTables.ColumnInfo -> view, info : Dict.Dict Basics.Int Markdown.PrettyTables.ColumnInfo }"
+            },
+            {
+                "name": "TableStyle",
+                "comment": " The style to render tables to. There are two values for this provided for your\nconvenience (defaultStyle, compactStyle), so check those out before creating a value of\nyour own.\n\nIn case you still want to, you need to provide:\n\n1.  `renderCell`: A function that renders a cell content and applies appropriate padding\n    using the given `ColumnInfo`.\n2.  `renderDelimiter`: A function that renders the horizontal line between the table header\n    and table body. Remember that to write valid markdown, you need to include a pipe (|)\n    for each delimiter between columns.\n3.  `renderRow`: A function for combining multiple cells in a row. Remember that to write\n    valid markdown, you'll need to include a pipe (|) between each cell.\n\n",
+                "args": [],
+                "type": "{ renderCell : String.String -> Markdown.PrettyTables.ColumnInfo -> String.String, renderDelimiter : List.List Markdown.PrettyTables.ColumnInfo -> String.String, renderRow : List.List String.String -> String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "combineColumnInfo",
+                "comment": " A helper function for combining two column infos form two cells of the same column.\n",
+                "type": "Markdown.PrettyTables.ColumnInfo -> Markdown.PrettyTables.ColumnInfo -> Markdown.PrettyTables.ColumnInfo"
+            },
+            {
+                "name": "compactStyle",
+                "comment": " This style will try to produce valid markdown tables without padding or additional\nborders (unlike `defaultStyle`).\n\nHowever, it's not the minimal amount of characters needed to get a parsing table.\n\n",
+                "type": "Markdown.PrettyTables.TableStyle"
+            },
+            {
+                "name": "defaultStyle",
+                "comment": " A sensible default for pretty-printing tables.\n\nIt will:\n\n1.  Make all cells in a column have uniform width\n2.  Left/Center/Right-align cell contents (left by default)\n3.  Add a border (|) to the left and right side of your table\n\n",
+                "type": "Markdown.PrettyTables.TableStyle"
+            },
+            {
+                "name": "finishReduction",
+                "comment": " Transform the result of `reducePrettyTable` after being put through\n`Markdown.render` to a string.\n\nUse it like this:\n\n    markdownBlocks\n        |> Markdown.render\n            (Scaffolded.toRenderer\n                { renderHtml = Markdown.Html.oneOf []\n                , renderMarkdown = Tables.reducePrettyTable style\n                }\n            )\n        |> Result.map Tables.finishReduction\n\n",
+                "type": "List.List (Basics.Int -> Markdown.PrettyTables.TableInfo String.String) -> String.String"
+            },
+            {
+                "name": "fold",
+                "comment": " Combine all column information inside a `TableInfo` from a whole list.\n",
+                "type": "List.List (Markdown.PrettyTables.TableInfo a) -> Markdown.PrettyTables.TableInfo (List.List a)"
+            },
+            {
+                "name": "map",
+                "comment": " Transform the value that would be generated in the first step of the `TableInfo`\nprocess by applying a function.\n",
+                "type": "(a -> b) -> Markdown.PrettyTables.TableInfo a -> Markdown.PrettyTables.TableInfo b"
+            },
+            {
+                "name": "map2",
+                "comment": " Combine two `TableInfo` values using given function.\nThis does two things:\n\n1.  It combines what the `TableInfo`s render to in their first step using the function\n2.  It merges the collected column information from both\n\n",
+                "type": "(a -> b -> c) -> Markdown.PrettyTables.TableInfo a -> Markdown.PrettyTables.TableInfo b -> Markdown.PrettyTables.TableInfo c"
+            },
+            {
+                "name": "pure",
+                "comment": " Make anything a `TableInfo` without adding column information.\n",
+                "type": "view -> Markdown.PrettyTables.TableInfo view"
+            },
+            {
+                "name": "reducePrettyTable",
+                "comment": " Convert a block of markdown back to markdown text.\n\nSee the 'Formatting Markdown Tables' test in the `example/` folder:\n\n1.  It will show you how pretty-printed tables will look like\n2.  It shows you how to transform the result of this function to a string\n    (See `finishReduction`).\n\n",
+                "type": "Markdown.PrettyTables.TableStyle -> Markdown.Scaffolded.Block (Basics.Int -> Markdown.PrettyTables.TableInfo String.String) -> Basics.Int -> Markdown.PrettyTables.TableInfo String.String"
+            },
+            {
+                "name": "resolve",
+                "comment": " Resolve the two-step process that a `TableInfo` encodes by running the steps.\n",
+                "type": "Markdown.PrettyTables.TableInfo view -> view"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Markdown.Scaffolded",
+        "comment": "\n\n\n# Rendering Markdown with Scaffolds, Reducers and Folds\n\n(This is called recursion-schemes in other languages, but don't worry, you don't have to\nwrite recursive functions (this is the point of all of this ;) )!)\n\nThis is module provides a more **complicated**, but also **more powerful and\ncomposable** way of rendering markdown than the built-in elm-markdown\n[`Renderer`](https://package.elm-lang.org/packages/dillonkearns/elm-markdown/latest/Markdown-Renderer).\n\nIf you feel a little overwhelmed with this module at first, I recommend taking a look at\nthe [What are reducers?](#what-are-reducers-) section.\n\n\n# Main Datastructure\n\n@docs Block\n\n@docs map, indexedMap\n\n\n# High-level Transformations\n\nThese functions are not as composable as [transformation building blocks](#transformation-building-blocks),\nbut might suffice for your use case. Take a look at the other section if you find you need\nsomething better.\n\n@docs parameterized, validating, withDataSource\n\n\n# Transformation Building Blocks\n\n@docs reduceHtml, reduceWords, reducePretty, reduce\n@docs foldFunction, foldResults, foldStaticHttpRequests, foldIndexed\n\n\n### What are 'reducers'?\n\nIn this context of the library, we're often working with functions of the type\n`Block view -> view`, where `view` might be something like `Html Msg` or `String`, etc.\nor, generally, functions of structure `Block a -> b`.\n\nI refer to functions of that structure as 'reducers'. (This is somewhat different to the\n'real' terminology, but I feel like they capture the nature of 'reducing once' very well.)\n\nIf you know `List.foldr` you already know an example for a reducer (the first argument)!\nThe reducers in this module are no different, we just write them in different ways.\n\nWe can do the same thing we did for this library for lists:\n\n    type ListScaffold elem a\n        = Empty\n        | Cons elem a\n\n    reduceEmpty = 0\n\n    reduceCons a b = a + b\n\n    handler listElement =\n        case listElement of\n            Empty ->\n                reduceEmpty\n\n            Cons elem accumulated ->\n                reduceCons elem accumulated\n\n    foldl : (ListScaffold a b -> b) -> List a -> b\n    foldl handle list =\n        case list of\n            [] -> handle Empty\n            (x:xs) -> handle (Cons x xs)\n\n    foldl handler == List.foldl reduceCons reduceEmpty\n\nThe last line illustrates how different ways of writing these reducers relate: For\n`List.foldl` we simply provide the cases (empty or cons) as different arguments,\nfor reducers in this library, we create a custom type case for empty and cons.\n\n\n### What are 'folds'?\n\nSome functions have similar, but not quite the type that a reducers has. For example:\n\n  - `Block (Request a) -> Request (Block a)`\n  - `Block (Maybe a) -> Maybe (Block a)`\n  - `Block (Result err a) -> Result err (Block a)`\n  - `Block (environment -> a) -> environment -> Block a`\n\nAll of these examples have the structure `Block (F a) -> F (Block a)` for some `F`. You\nmight have to squint your eyes at the last two of these examples. Especially the last one.\nLet me rewrite it with a type alias:\n\n    type alias Function a b =\n        a -> b\n\n    foldFunction : Block (Function env a) -> Function env (Block a)\n\n\n### Combining Reducers\n\nYou can combine multiple 'reducers' into one. There's no function for doing this, but a\npattern you might want to follow.\n\nLet's say you want to accumulate both all the words in your markdown and the `Html` you\nwant it to render to, then you can do this:\n\n    type alias Rendered =\n        { html : Html Msg\n        , words : List String\n        }\n\n    reduceRendered : Block Rendered -> Rendered\n    reduceRendered block =\n        { html = block |> map .html |> reduceHtml\n        , words = block |> map .words |> reduceWords\n        }\n\nIf you want to render to more things, just add another parameter to the record type and\nfollow the pattern. It is even possible to let the rendered html to depend on the words\ninside itself (or maybe something else you're additionally reducing to).\n\n\n# Conversions\n\nDid you already start to write a custom elm-markdown `Renderer`, but want to use this\nlibrary? Don't worry. They're compatible. You can convert between them!\n\n@docs fromRenderer, toRenderer\n\n\n# Utilities\n\nI mean to aggregate utilites for transforming Blocks in this section.\n\n@docs bumpHeadings\n\n",
+        "unions": [
+            {
+                "name": "Block",
+                "comment": " A datatype that enumerates all possible ways markdown could wrap some children.\n\nKind of like a 'Scaffold' around something that's already built, which will get torn down\nafter building is finished.\n\nThis does not include Html tags.\n\nIf you look at the left hand sides of all of the functions in the elm-markdown\n[`Renderer`](https://package.elm-lang.org/packages/dillonkearns/elm-markdown/latest/Markdown-Renderer),\nyou'll notice a similarity to this custom type, except it's missing a type for 'html'.\n\nDefining this data structure has some advantages in composing multiple Renderers.\n\nIt has a type parameter `children`, which is supposed to be filled with `String`,\n`Html msg` or similar. Take a look at some [reducers](#transformation-building-blocks) for examples of this.\n\nThere are some neat tricks you can do with this data structure, for example, `Block Never`\nrepresents only non-nested blocks of markdown.\n\n",
+                "args": [
+                    "children"
+                ],
+                "cases": [
+                    [
+                        "Heading",
+                        [
+                            "{ level : Markdown.Block.HeadingLevel, rawText : String.String, children : List.List children }"
+                        ]
+                    ],
+                    [
+                        "Paragraph",
+                        [
+                            "List.List children"
+                        ]
+                    ],
+                    [
+                        "BlockQuote",
+                        [
+                            "List.List children"
+                        ]
+                    ],
+                    [
+                        "Text",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "CodeSpan",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Strong",
+                        [
+                            "List.List children"
+                        ]
+                    ],
+                    [
+                        "Emphasis",
+                        [
+                            "List.List children"
+                        ]
+                    ],
+                    [
+                        "Strikethrough",
+                        [
+                            "List.List children"
+                        ]
+                    ],
+                    [
+                        "Link",
+                        [
+                            "{ title : Maybe.Maybe String.String, destination : String.String, children : List.List children }"
+                        ]
+                    ],
+                    [
+                        "Image",
+                        [
+                            "{ alt : String.String, src : String.String, title : Maybe.Maybe String.String }"
+                        ]
+                    ],
+                    [
+                        "UnorderedList",
+                        [
+                            "{ items : List.List (Markdown.Block.ListItem children) }"
+                        ]
+                    ],
+                    [
+                        "OrderedList",
+                        [
+                            "{ startingIndex : Basics.Int, items : List.List (List.List children) }"
+                        ]
+                    ],
+                    [
+                        "CodeBlock",
+                        [
+                            "{ body : String.String, language : Maybe.Maybe String.String }"
+                        ]
+                    ],
+                    [
+                        "HardLineBreak",
+                        []
+                    ],
+                    [
+                        "ThematicBreak",
+                        []
+                    ],
+                    [
+                        "Table",
+                        [
+                            "List.List children"
+                        ]
+                    ],
+                    [
+                        "TableHeader",
+                        [
+                            "List.List children"
+                        ]
+                    ],
+                    [
+                        "TableBody",
+                        [
+                            "List.List children"
+                        ]
+                    ],
+                    [
+                        "TableRow",
+                        [
+                            "List.List children"
+                        ]
+                    ],
+                    [
+                        "TableCell",
+                        [
+                            "Maybe.Maybe Markdown.Block.Alignment",
+                            "List.List children"
+                        ]
+                    ],
+                    [
+                        "TableHeaderCell",
+                        [
+                            "Maybe.Maybe Markdown.Block.Alignment",
+                            "List.List children"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "bumpHeadings",
+                "comment": " Bump all `Heading` elements by given positive amount of levels.\n\n    import Markdown.Block as Block\n\n    bumpHeadings 2\n        (Heading\n            { level = Block.H1\n            , rawText = \"\"\n            , children = []\n            }\n        )\n    --> Heading\n    -->     { level = Block.H3\n    -->     , rawText = \"\"\n    -->     , children = []\n    -->     }\n\n    bumpHeadings 1\n        (Heading\n            { level = Block.H6\n            , rawText = \"\"\n            , children = []\n            }\n        )\n    --> Heading\n    -->     { level = Block.H6\n    -->     , rawText = \"\"\n    -->     , children = []\n    -->     }\n\n    bumpHeadings -1\n        (Heading\n            { level = Block.H2\n            , rawText = \"\"\n            , children = []\n            }\n        )\n    --> Heading\n    -->     { level = Block.H2\n    -->     , rawText = \"\"\n    -->     , children = []\n    -->     }\n\n",
+                "type": "Basics.Int -> Markdown.Scaffolded.Block view -> Markdown.Scaffolded.Block view"
+            },
+            {
+                "name": "foldFunction",
+                "comment": " Transform a block that contains functions into a function that produces blocks.\n\nOne really common use-case is having access to a `Model` inside your html renderers.\nIn these cases you want your markdown to be 'rendered to a function'.\n\nSo let's say you've got a\n[`Markdown.Html.Renderer`]()\nlike so:\n\n    renderHtml :\n        Markdown.Html.Renderer\n            (List (Model -> Html Msg)\n             -> (Model -> Html Msg)\n            )\n\nIt has this type to be able to depend on the `Model`. Eventually you'll want to render to\n`Model -> Html Msg`.\n\nSo now you can define your\n[`Markdown.Renderer.Renderer`]()\nlike so:\n\n\n    renderer : Markdown.Renderer.Renderer (Model -> Html Msg)\n    renderer =\n        toRenderer\n            { renderHtml = renderHtml\n            , renderMarkdown = renderMarkdown\n            }\n\n    renderMarkdown :\n        Block (Model -> Html Msg)\n        -> (Model -> Html Msg)\n    renderMarkdown block model =\n        foldFunction block\n            -- ^ result : Model -> Block (Html Msg)\n            model\n            -- ^ result : Block (Html Msg)\n            |> reduceHtml\n\n    -- ^ result : Html Msg\n\n",
+                "type": "Markdown.Scaffolded.Block (environment -> view) -> environment -> Markdown.Scaffolded.Block view"
+            },
+            {
+                "name": "foldIndexed",
+                "comment": " Fold your blocks with index information. This uses [`indexedMap`](#indexedMap) under\nthe hood.\n\nThis is quite advanced, but also very useful. If you're looking for a working example,\nplease take a look at the test for this function.\n\n",
+                "type": "Markdown.Scaffolded.Block (List.List Basics.Int -> view) -> List.List Basics.Int -> Markdown.Scaffolded.Block view"
+            },
+            {
+                "name": "foldResults",
+                "comment": " Thread results through your Blocks.\n\nThe input is a block that contains possibly failed views. The output becomes `Err`, if\nany of the input block's children had an error (then it's the first error).\nIf all of the block's children were `Ok`, then the result is going to be `Ok`.\n\n",
+                "type": "Markdown.Scaffolded.Block (Result.Result error view) -> Result.Result error (Markdown.Scaffolded.Block view)"
+            },
+            {
+                "name": "foldStaticHttpRequests",
+                "comment": " Accumulate elm-page's\n[`DataSource`](https://package.elm-lang.org/packages/dillonkearns/elm-pages/latest/Pages-DataSource#Request)s\nover blocks.\n\nUsing this, it is possible to write reducers that produce views as a result of performing\nstatic http requests.\n\n",
+                "type": "Markdown.Scaffolded.Block (DataSource.DataSource view) -> DataSource.DataSource (Markdown.Scaffolded.Block view)"
+            },
+            {
+                "name": "fromRenderer",
+                "comment": " There are two ways of thinking about this function:\n\n1.  Render a `Block` using the given elm-markdown `Renderer`.\n2.  Extract a function of type `(Block view -> view)` out of\n    the elm-markdown `Renderer`. This is useful if you want to make use\n    of the utilities present in this library.\n\n",
+                "type": "Markdown.Renderer.Renderer view -> Markdown.Scaffolded.Block view -> view"
+            },
+            {
+                "name": "indexedMap",
+                "comment": " Block's children are mapped from 0 to n (if n+1 is the amount of children).\n\nMost arguments to the mapping function are therefore [0], [1], ... etc.\n\nAll children will get unique `List Int` arguments.\n\nIn some cases like lists, there might be two levels of indices: [0,0], or [1,0].\n\nIn these cases, the first integer is the 'closest' index from the point of view of the\nchild.\n\n    OrderedList\n        { startingIndex = 0\n        , items =\n            [ [ (), () ]\n            , [ (), (), () ]\n            ]\n        }\n        |> indexedMap (\\indices _ -> indices)\n    --> OrderedList\n    -->     { startingIndex = 0\n    -->     , items =\n    -->         [ [ [ 0, 0 ], [ 1, 0 ] ]\n    -->         , [ [ 0, 1 ], [ 1, 1 ], [ 2, 1 ] ]\n    -->         ]\n    -->     }\n\n",
+                "type": "(List.List Basics.Int -> a -> b) -> Markdown.Scaffolded.Block a -> Markdown.Scaffolded.Block b"
+            },
+            {
+                "name": "map",
+                "comment": " Transform each child of a `Block` using the given function.\n\nFor example, we can transform the lists of words inside each block into concatenated\nStrings:\n\n    wordsToWordlist : Block (List String) -> Block String\n    wordsToWordlist block =\n        map (\\listOfWords -> String.join \", \" listOfWords)\n            block\n\n    Paragraph\n        [ [ \"This\", \"paragraph\", \"was\", \"full\", \"of\", \"individual\", \"words\", \"once.\" ]\n        , [ \"It\", \"also\", \"contained\", \"another\", \"paragraph\" ]\n        ]\n        |> wordsToWordlist\n    --> Paragraph\n    -->     [ \"This, paragraph, was, full, of, individual, words, once.\"\n    -->     , \"It, also, contained, another, paragraph\"\n    -->     ]\n\n    HardLineBreak |> wordsToWordlist\n    --> HardLineBreak\n\nThe ability to define this function is one of the reasons for our `Block` definition. If\nyou try defining `map` for elm-markdown's `Renderer` you'll find out it doesn't work.\n\n",
+                "type": "(a -> b) -> Markdown.Scaffolded.Block a -> Markdown.Scaffolded.Block b"
+            },
+            {
+                "name": "parameterized",
+                "comment": " Use this function if you want to parameterize your view by an environment.\n\nAnother way of thinking about this use-case is: use this if you want to 'render to\nfunctions'.\n\nExamples for what the `environment` type variable can be:\n\n  - A `Model`, for rendering to `Model -> Html Msg` for `view`.\n  - Templating information, in case you want to use markdown as templates and want to\n    render to a function that expects templating parameters.\n\nUsually, for the above usecases you would have to define a function of type\n\n    reduceTemplate :\n        Block (TemplateInfo -> Html msg)\n        -> (TemplateInfo -> Html msg)\n\nfor example, so that you can turn it back into a `Renderer (Template Info -> Html msg)`\nfor elm-markdown.\n\nIf you were to define such a function, you would have to pass around the `TemplateInfo`\nparameter a lot. This function will take care of that for you.\n\n\n### Anti use-cases\n\nIn some cases using this function would be overkill. The alternative to this function is\nto simply parameterize your whole renderer (and not use this library):\n\n    renderMarkdown : List String -> Block (Html Msg) -> Html Msg\n    renderMarkdown censoredWords markdown =\n        ...\n\n    renderer : List String -> Markdown.Renderer (Html Msg)\n    renderer censoredWords =\n        toRenderer\n            { renderHtml = ...\n            , renderMarkdown = renderMarkdown censoredWords\n            }\n\nIn this example you can see how we pass through the 'censored words'. It behaves kind of\nlike some global context in which we create our renderer.\n\nIt is hard to convey the abstract notion of when to use `parameterized` and when not to.\nI'll give it a try: If you want to parse your markdown once and need to quickly render\ndifferent versions of it (for example with different `Model`s or different\n`TemplateInfo`s), then use this. In other cases, if you probably only want to de-couple\nsome variable out of your renderer that is pretty static in general (for example censored\nwords), don't use this.\n\n\n### `parameterized` over multiple Parameters\n\nIf you want to parameterize your renderer over multiple variables, there are two options:\n\n1.  Add a field to the `environment` type used in this function\n2.  Take another parameter in curried form\n\nAlthough both are possible, I highly recommend the first option, as it is by far easier\nto deal with only one call to `parameterized`, not with two calls that would be required\nfor option 2.\n\n\n### Missing Functionality\n\nIf this function doesn't quite do what you want, just try to re-create what you need by\nusing `map` directly. `parameterized` basically just documents a pattern that is really\neasy to re-create: Its implementation is just 1 line of code.\n\n",
+                "type": "(Markdown.Scaffolded.Block view -> environment -> view) -> Markdown.Scaffolded.Block (environment -> view) -> environment -> view"
+            },
+            {
+                "name": "reduce",
+                "comment": " Reduces a block down to anything that can be accumulated.\n\nYou provide two functions\n\n  - `accumulate`: Describe how values of type `a` are combined. Examples: `List.concat`,\n    `List.sum`, etc.\n  - `extract`: Descibe how a blocks generate values that are supposed to be accumulated.\n\nFor example, this can count the amount of headings in a markdown document:\n\n    reduce\n        { accumulate = List.sum\n        , extract =\n            \\block ->\n                case block of\n                    Heading _ ->\n                        1\n\n                    _ ->\n                        0\n        }\n\nOr this extracts code blocks:\n\n    reduce\n        { accumulate = List.concat\n        , extract =\n            \\block ->\n                case block of\n                    CodeBlock codeBlock ->\n                        [ codeBlock ]\n\n                    _ ->\n                        []\n        }\n\nThe special thing about this function is how you don't have to worry about accumulating\nthe other generated values recursively.\n\n",
+                "type": "{ accumulate : List.List a -> a, extract : Markdown.Scaffolded.Block a -> a } -> Markdown.Scaffolded.Block a -> a"
+            },
+            {
+                "name": "reduceHtml",
+                "comment": " This will reduce a `Block` to `Html` similar to what the\n[`defaultHtmlRenderer` in elm-markdown](https://package.elm-lang.org/packages/dillonkearns/elm-markdown/latest/Markdown-Renderer#defaultHtmlRenderer)\ndoes. That is, it renders similar to what the CommonMark spec expects.\n\nIt also takes a list of attributes for convenience, so if you want to attach styles,\nid's, classes or events, you can use this.\n\nHowever, **the attributes parameter is ignored for `Text` nodes**.\n\n",
+                "type": "List.List (Html.Attribute msg) -> Markdown.Scaffolded.Block (Html.Html msg) -> Html.Html msg"
+            },
+            {
+                "name": "reducePretty",
+                "comment": " Convert a block of markdown back to markdown text.\n(See the 'Formatting Markdown' test in the test suite.)\n\nThis just renders one particular style of markdown. Your use-case might need something\ncompletely different. I recommend taking a look at the source code and adapting it to\nyour needs.\n\nNote: **This function doesn't support GFM tables**.\nThe function `Markdown.PrettyTables.reducePrettyTable` extends this function with table\npretty-printing.\nTable pretty-printing is complicated, even when ignoring column sizes. The type\n`Block String -> String` is just \"not powerful\" enough to render a table to a string in\nsuch a way that it is syntactically valid again.\n\n",
+                "type": "Markdown.Scaffolded.Block String.String -> String.String"
+            },
+            {
+                "name": "reduceWords",
+                "comment": " Extracts all words from the blocks and inlines. Excludes any markup characters, if\nthey had an effect on the markup.\n\nThe words are split according to the `\\s` javascript regular expression (regex).\n\nInline code spans are split, but **code blocks fragments are ignored** (code spans are\nincluded).\n\nIf you need something more specific, I highly recommend rolling your own function for\nthis.\n\nThis is useful if you need to e.g. create header slugs.\n\n",
+                "type": "Markdown.Scaffolded.Block (List.List String.String) -> List.List String.String"
+            },
+            {
+                "name": "toRenderer",
+                "comment": " Convert a function that works with `Block` to a `Renderer` for use with\nelm-markdown.\n\n(The second parameter is a [`Markdown.Html.Renderer`](/packages/dillonkearns/elm-markdown/3.0.0/Markdown-Html#Renderer))\n\n",
+                "type": "{ renderMarkdown : Markdown.Scaffolded.Block view -> view, renderHtml : Markdown.Html.Renderer (List.List view -> view) } -> Markdown.Renderer.Renderer view"
+            },
+            {
+                "name": "validating",
+                "comment": " This transform enables validating the content of your `Block` before\nrendering.\n\nThis function's most prominent usecases are linting markdown files, so for example:\n\n  - Make sure all your code snippets are specified only with valid languages\n    ('elm', 'javascript', 'js', 'html' etc.)\n  - Make sure all your links are `https://` links\n  - Generate errors/warnings on typos or words not contained in a dictionary\n  - Disallow `h1` (alternatively, consider bumping the heading level)\n\nBut it might also be possible that your `view` type can't _always_ be reduced from a\n`Block view` to a `view`, so you need to generate an error in these cases.\n\n\n### Missing Functionality\n\nIf this function doesn't quite do what you need to do, try using `foldResults`.\nThe `validating` definition basically just documents a common pattern. Its implementation\nis just 1 line of code.\n\n",
+                "type": "(Markdown.Scaffolded.Block view -> Result.Result error view) -> Markdown.Scaffolded.Block (Result.Result error view) -> Result.Result error view"
+            },
+            {
+                "name": "withDataSource",
+                "comment": " This transform allows you to perform elm-pages' DataSource requests without having to\nthink about how to thread these through your renderer.\n\nSome applications that can be realized like this:\n\n  - Verifying that all links in your markdown do resolve at page build-time\n    (Note: This currently needs some change in elm-pages, so it's not possible _yet_)\n  - Giving custom elm-markdown HTML elements the ability to perform DataSource requests\n\n\n### Missing Functionality\n\nIf this function doesn't quite do what you need to do, try using `foldStaticHttpRequests`.\nThe `wihtStaticHttpRequests` definition basically just documents a common pattern.\nIts implementation is just 1 line of code.\n\n",
+                "type": "(Markdown.Scaffolded.Block view -> DataSource.DataSource view) -> Markdown.Scaffolded.Block (DataSource.DataSource view) -> DataSource.DataSource view"
+            }
+        ],
+        "binops": []
+    }
+]

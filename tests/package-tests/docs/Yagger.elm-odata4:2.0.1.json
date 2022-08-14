@@ -1,0 +1,211 @@
+[
+    {
+        "name": "OData4.Url",
+        "comment": " Build Open Data Protocol (OData v4) queries in Elm.\n\nThis package supports a _subset_ of OData 4.01\n[_query option_](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part2-url-conventions.html#sec_CommonExpressionSyntax),\n[_common expression_](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part2-url-conventions.html#sec_CommonExpressionSyntax), and\n[_primitive literal_](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part2-url-conventions.html#sec_PrimitiveLiterals).\n\n<http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html>\n\n<http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part2-url-conventions.html>\n\n  - If you need a _query option_, _common expression_, or _primitive literal_\n    that is missing in this package undeservedly, suggest a PR\n  - If what you need is missing in this package and it's ok, or it deviates from the standard,\n    or [other](https://github.com/microsoftgraph/microsoft-graph-docs/issues/14547), then for:\n      - _query option_, append custom [`Url.Builder.QueryParameter`](https://package.elm-lang.org/packages/elm/url/latest/Url-Builder#QueryParameter) (see example)\n      - _common expression_, use [`plainStringOperator`](#plainStringOperator) (see example)\n      - _primitive literal_, use [`customValue`](#customValue) (see example)\n\n\n# Example\n\n    import Time\n    import Url\n    import Url.Builder\n\n    -- Custom value function\n    dateAsString : Time.Posix -> Value\n    dateAsString posix =\n        customValue (\\s -> \"'\" ++ s ++ \"'\") (date posix)\n\n    [ filter\n        ( or\n            [ eq \"City\" (string \"Tallinn\")\n            , eq \"City\" (string \"Singapore\")\n            -- Custom operator\n            , plainStringOperator \"concat(concat(City,', '), Country) eq 'Berlin, Germany'\"\n            -- Custom value\n            , ge \"start/dateTime\" (dateAsString (Time.millisToPosix 1631124861000))\n            ]\n        )\n    , top 20\n    , skip 40\n    , orderBy [ (\"Created\", Just desc), (\"City\", Just asc) ]\n    , select [ \"Id\", \"City\", \"Created\", \"Body\" ]\n    ]\n    |> List.map toQueryParameter\n    -- Custom query option\n    |> List.append [ Url.Builder.string \"$search\" \"blue OR green\" ]\n    |> Url.Builder.toQuery >> Url.percentDecode\n    --> Just (String.join \"\"\n    --> [ \"?$search=blue OR green&\"\n    --> , \"$filter=City eq 'Tallinn' or \"\n    --> ,   \"City eq 'Singapore' or \"\n    --> ,   \"concat(concat(City,', '), Country) eq 'Berlin, Germany' or \"\n    --> ,   \"start/dateTime ge '2021-09-08'&\"\n    --> , \"$top=20&\"\n    --> , \"$skip=40&\"\n    --> , \"$orderBy=Created desc,City asc&\"\n    --> , \"$select=Id,City,Created,Body\"\n    --> ])\n\n\n# Query Options\n\n@docs QueryOption, select, filter, orderBy, top, skip\n\n\n# Order\n\n@docs Order, asc, desc\n\n\n# Common Expression Syntax [[doc](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part2-url-conventions.html#sec_CommonExpressionSyntax)]\n\n@docs CommonExpression\n\n\n## Logical Operators [[doc](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part2-url-conventions.html#sec_LogicalOperators)]\n\n@docs eq, ne, gt, ge, lt, le, and, or, not_, in_\n\n\n## String Functions [[doc](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part2-url-conventions.html#sec_StringandCollectionFunctions)]\n\n@docs startsWith, endsWith, contains\n\n\n## Lambda Operators [[doc](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part2-url-conventions.html#sec_LambdaOperators)]\n\n@docs any, all\n\n\n# Primitive Literals [[doc](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part2-url-conventions.html#sec_PrimitiveLiterals)]\n\n@docs Value, null, true, false, int, float, string, date, dateTime, guid\n\n\n## Custom\n\n@docs plainStringOperator, customValue\n\n\n# Building Url.Builder.QueryParameter\n\n@docs toQueryParameter\n\n\n# Test internals\n\n@docs test\n\n",
+        "unions": [
+            {
+                "name": "CommonExpression",
+                "comment": " The following operators, functions, and literals can be used in `$filter` and `$orderby`\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Order",
+                "comment": " The expression _can_ include the suffix\n[`asc`](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#sec_SystemQueryOptionorderby) for ascending or\n[`desc`](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#sec_SystemQueryOptionorderby) for descending.\nDefaults to `asc`.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "QueryOption",
+                "comment": " [System query options](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part2-url-conventions.html#sec_SystemQueryOptions)\nare query string parameters that control the amount and order of the data returned for the resource identified by the URL.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Value",
+                "comment": " `Value` type represents [primitive literals](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part2-url-conventions.html#sec_PrimitiveLiterals)\n\n    NullValue eq null\n    TrueValue eq true\n    FalseValue eq false\n    IntegerValue lt -128\n    FloatValue eq 34.95\n    StringValue eq 'Say Hello,then go'\n    DateValue eq 2012-12-03\n    DateTimeOffsetValue eq 2012-12-03T07:16:23Z\n    GuidValue eq 01234567-89ab-cdef-0123-456789abcdef\n\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "all",
+                "comment": " The `all` operator applies a Boolean expression to each member of a collection and returns `true`\nif the expression is `true` for _all_ members of the collection, otherwise it returns `false`.\n\n    import Url\n    import Url.Builder\n\n    filter (all \"Items\" (gt \"Quantity\" (int 100)))\n    |> toQueryParameter >> List.singleton >> Url.Builder.toQuery >> Url.percentDecode\n    --> Just \"?$filter=Items/all(a:a/Quantity gt 100)\"\n\n",
+                "type": "String.String -> OData4.Url.CommonExpression -> OData4.Url.CommonExpression"
+            },
+            {
+                "name": "and",
+                "comment": " The `and` operator returns `true` if both the left and right operands evaluate to `true`, otherwise it returns `false`.\n\nThe `null` value is treated as unknown, so if one operand evaluates to `null` and the other operand to `false`, the and operator returns `false`.\nAll other combinations with `null` return `null`.\n\n    import Url\n    import Url.Builder\n\n    filter (and [ eq \"name\" (string \"Luna\"), le \"age\" (int 14)])\n    |> toQueryParameter >> List.singleton >> Url.Builder.toQuery >> Url.percentDecode\n    --> Just \"?$filter=name eq 'Luna' and age le 14\"\n\n",
+                "type": "List.List OData4.Url.CommonExpression -> OData4.Url.CommonExpression"
+            },
+            {
+                "name": "any",
+                "comment": " The `any` operator applies a Boolean expression to each member of a collection and returns `true`\nif the expression is `true` for _any_ member of the collection, otherwise it returns `false`.\nThe `any` operator without an argument returns `true` if the collection is not empty.\n\n    import Url\n    import Url.Builder\n\n    filter (any \"Items\" (gt \"Quantity\" (int 100)))\n    |> toQueryParameter >> List.singleton >> Url.Builder.toQuery >> Url.percentDecode\n    --> Just \"?$filter=Items/any(a:a/Quantity gt 100)\"\n\n",
+                "type": "String.String -> OData4.Url.CommonExpression -> OData4.Url.CommonExpression"
+            },
+            {
+                "name": "asc",
+                "comment": " Ascending order\n\n    import Url\n    import Url.Builder\n\n    orderBy [ (\"displayName\", Just asc) ]\n    |> toQueryParameter >> List.singleton >> Url.Builder.toQuery >> Url.percentDecode\n    --> Just \"?$orderBy=displayName asc\"\n\n    orderBy [ (\"displayName\", Nothing) ]\n    |> toQueryParameter >> List.singleton >> Url.Builder.toQuery >> Url.percentDecode\n    --> Just \"?$orderBy=displayName\"\n\n",
+                "type": "OData4.Url.Order"
+            },
+            {
+                "name": "contains",
+                "comment": " The `contains` function returns `true` if the second string is a substring of the first string, otherwise it returns `false`\n\n    import Url\n    import Url.Builder\n\n    filter (contains \"CompanyName\" \"Alfreds\")\n    |> toQueryParameter >> List.singleton >> Url.Builder.toQuery >> Url.percentDecode\n    --> Just \"?$filter=contains(CompanyName,'Alfreds')\"\n\n",
+                "type": "String.String -> String.String -> OData4.Url.CommonExpression"
+            },
+            {
+                "name": "customValue",
+                "comment": " In situations like this <https://github.com/microsoftgraph/microsoft-graph-docs/issues/14547>,\ncustom value may come in handy.\nIn the example below, date needs to be treated as string (with single quotes):\n\n    import Time\n\n    dateAsString : Time.Posix -> Value\n    dateAsString posix =\n        customValue (\\s -> \"'\" ++ s ++ \"'\") (date posix)\n\n    dateAsString (Time.millisToPosix 1631124861000)\n    |> test.stringFromValue\n    --> \"'2021-09-08'\"\n\n",
+                "type": "(String.String -> String.String) -> OData4.Url.Value -> OData4.Url.Value"
+            },
+            {
+                "name": "date",
+                "comment": "\n\n    import Time\n\n    date (Time.millisToPosix 1631124861000)\n    |> test.stringFromValue\n    --> \"2021-09-08\"\n\n",
+                "type": "Time.Posix -> OData4.Url.Value"
+            },
+            {
+                "name": "dateTime",
+                "comment": "\n\n    import Time\n\n    dateTime (Time.millisToPosix 1631124861000)\n    |> test.stringFromValue\n    --> \"2021-09-08T18:14:21Z\"\n\n",
+                "type": "Time.Posix -> OData4.Url.Value"
+            },
+            {
+                "name": "desc",
+                "comment": " Descending order\n\n    import Url\n    import Url.Builder\n\n    orderBy [ (\"created\", Just desc) ]\n    |> toQueryParameter >> List.singleton >> Url.Builder.toQuery >> Url.percentDecode\n    --> Just \"?$orderBy=created desc\"\n\n    orderBy [ (\"created\", Nothing) ]\n    |> toQueryParameter >> List.singleton >> Url.Builder.toQuery >> Url.percentDecode\n    --> Just \"?$orderBy=created\"\n\n",
+                "type": "OData4.Url.Order"
+            },
+            {
+                "name": "endsWith",
+                "comment": " The `endsWith` function returns `true` if the first string ends with the second string, otherwise it returns `false`\n\n    import Url\n    import Url.Builder\n\n    filter (endsWith \"CompanyName\" \"Futterkiste\")\n    |> toQueryParameter >> List.singleton >> Url.Builder.toQuery >> Url.percentDecode\n    --> Just \"?$filter=endswith(CompanyName,'Futterkiste')\"\n\n",
+                "type": "String.String -> String.String -> OData4.Url.CommonExpression"
+            },
+            {
+                "name": "eq",
+                "comment": " Equals\n\nThe `null` value is equal to itself, and only to itself.\n\n    import Url\n    import Url.Builder\n\n    filter (eq \"name\" (string \"Luna\"))\n    |> toQueryParameter >> List.singleton >> Url.Builder.toQuery >> Url.percentDecode\n    --> Just \"?$filter=name eq 'Luna'\"\n\n",
+                "type": "String.String -> OData4.Url.Value -> OData4.Url.CommonExpression"
+            },
+            {
+                "name": "false",
+                "comment": "\n\n    false\n    |> test.stringFromValue\n    --> \"false\"\n\n",
+                "type": "OData4.Url.Value"
+            },
+            {
+                "name": "filter",
+                "comment": " The [`$filter`](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#sec_SystemQueryOptionfilter)\nsystem query option restricts the set of items returned.\n\n    import Url\n    import Url.Builder\n\n    filter (endsWith \"mail\" \"@hotmail.com\")\n    |> toQueryParameter >> List.singleton >> Url.Builder.toQuery >> Url.percentDecode\n    --> Just \"?$filter=endswith(mail,'@hotmail.com')\"\n\n",
+                "type": "OData4.Url.CommonExpression -> OData4.Url.QueryOption"
+            },
+            {
+                "name": "float",
+                "comment": "\n\n    float 0.31415\n    |> test.stringFromValue\n    --> \"0.31415\"\n\n",
+                "type": "Basics.Float -> OData4.Url.Value"
+            },
+            {
+                "name": "ge",
+                "comment": " Greater Than or Equal\n\n    import Url\n    import Url.Builder\n\n    filter (ge \"age\" (int 14))\n    |> toQueryParameter >> List.singleton >> Url.Builder.toQuery >> Url.percentDecode\n    --> Just \"?$filter=age ge 14\"\n\n",
+                "type": "String.String -> OData4.Url.Value -> OData4.Url.CommonExpression"
+            },
+            {
+                "name": "gt",
+                "comment": " Greater Than\n\n    import Url\n    import Url.Builder\n\n    filter (gt \"age\" (int 14))\n    |> toQueryParameter >> List.singleton >> Url.Builder.toQuery >> Url.percentDecode\n    --> Just \"?$filter=age gt 14\"\n\n",
+                "type": "String.String -> OData4.Url.Value -> OData4.Url.CommonExpression"
+            },
+            {
+                "name": "guid",
+                "comment": "\n\n    guid \"01234567-89ab-cdef-0123-456789abcdef\"\n    |> test.stringFromValue\n    --> \"01234567-89ab-cdef-0123-456789abcdef\"\n\n",
+                "type": "String.String -> OData4.Url.Value"
+            },
+            {
+                "name": "in_",
+                "comment": " The `in` operator returns true if the left operand is a member of the right operand.\n\nThe right operand is a comma-separated list of primitive values.\n\n    import Url\n    import Url.Builder\n\n    filter (in_ \"department\" [string \"Retail\", string \"Sales\"])\n    |> toQueryParameter >> List.singleton >> Url.Builder.toQuery >> Url.percentDecode\n    --> Just \"?$filter=department in ('Retail', 'Sales')\"\n\n",
+                "type": "String.String -> List.List OData4.Url.Value -> OData4.Url.CommonExpression"
+            },
+            {
+                "name": "int",
+                "comment": "\n\n    int -128\n    |> test.stringFromValue\n    --> \"-128\"\n\n",
+                "type": "Basics.Int -> OData4.Url.Value"
+            },
+            {
+                "name": "le",
+                "comment": " Less Than or Equal\n\n    import Url\n    import Url.Builder\n\n    filter (le \"age\" (int 14))\n    |> toQueryParameter >> List.singleton >> Url.Builder.toQuery >> Url.percentDecode\n    --> Just \"?$filter=age le 14\"\n\n",
+                "type": "String.String -> OData4.Url.Value -> OData4.Url.CommonExpression"
+            },
+            {
+                "name": "lt",
+                "comment": " Less Than\n\n    import Url\n    import Url.Builder\n\n    filter (lt \"age\" (int 14))\n    |> toQueryParameter >> List.singleton >> Url.Builder.toQuery >> Url.percentDecode\n    --> Just \"?$filter=age lt 14\"\n\n",
+                "type": "String.String -> OData4.Url.Value -> OData4.Url.CommonExpression"
+            },
+            {
+                "name": "ne",
+                "comment": " Not Equals\n\n    import Url\n    import Url.Builder\n\n    filter (ne \"deleted\" null)\n    |> toQueryParameter >> List.singleton >> Url.Builder.toQuery >> Url.percentDecode\n    --> Just \"?$filter=deleted ne null\"\n\n",
+                "type": "String.String -> OData4.Url.Value -> OData4.Url.CommonExpression"
+            },
+            {
+                "name": "not_",
+                "comment": " The `not` operator returns `true` if the operand returns `false`, otherwise it returns `false`.\n\nThe `null` value is treated as unknown, so `not null` returns `null`.\n\n    import Url\n    import Url.Builder\n\n    filter (not_ (contains \"email\" \"@org.com\"))\n    |> toQueryParameter >> List.singleton >> Url.Builder.toQuery >> Url.percentDecode\n    --> Just \"?$filter=not contains(email,'@org.com')\"\n\n",
+                "type": "OData4.Url.CommonExpression -> OData4.Url.CommonExpression"
+            },
+            {
+                "name": "null",
+                "comment": "\n\n    null\n    |> test.stringFromValue\n    --> \"null\"\n\n",
+                "type": "OData4.Url.Value"
+            },
+            {
+                "name": "or",
+                "comment": " The `or` operator returns `false` if both the left and right operands both evaluate to `false`, otherwise it returns `true`.\n\nThe `null` value is treated as unknown, so if one operand evaluates to `null` and the other operand to `true`, the `or` operator returns `true`.\nAll other combinations with `null` return `null`.\n\n    import Url\n    import Url.Builder\n\n    filter (or [ eq \"department\" (string \"Sales\"), eq \"department\" (string \"Marketing\")])\n    |> toQueryParameter >> List.singleton >> Url.Builder.toQuery >> Url.percentDecode\n    --> Just \"?$filter=department eq 'Sales' or department eq 'Marketing'\"\n\n",
+                "type": "List.List OData4.Url.CommonExpression -> OData4.Url.CommonExpression"
+            },
+            {
+                "name": "orderBy",
+                "comment": " The [`$orderby`](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#sec_SystemQueryOptionorderby)\nSystem Query option specifies the order in which items are returned from the service.\n\n    import Url\n    import Url.Builder\n\n    orderBy [ (\"created\", Just desc), (\"displayName\", Just asc) ]\n    |> toQueryParameter >> List.singleton >> Url.Builder.toQuery >> Url.percentDecode\n    --> Just \"?$orderBy=created desc,displayName asc\"\n\n",
+                "type": "List.List ( String.String, Maybe.Maybe OData4.Url.Order ) -> OData4.Url.QueryOption"
+            },
+            {
+                "name": "plainStringOperator",
+                "comment": " `plainStringOperator` is useful\n\n  - when your target API offers OData operator that is out of the standard scope\n\n  - when your target API OData formatting differs from standard formatting\n\n  - for OData operators that are not implemented by this package\n\nIn the following example, `concat` is not implemented in this package.\n\n    import Url\n    import Url.Builder\n\n    filter\n        ( or\n            [ eq \"Country\" (string \"France\")\n            , plainStringOperator \"concat(concat(City,', '), Country) eq 'Berlin, Germany'\"\n            ]\n        )\n    |> toQueryParameter >> List.singleton >> Url.Builder.toQuery >> Url.percentDecode\n    --> Just \"?$filter=Country eq 'France' or concat(concat(City,', '), Country) eq 'Berlin, Germany'\"\n\n",
+                "type": "String.String -> OData4.Url.CommonExpression"
+            },
+            {
+                "name": "select",
+                "comment": " The [`$select`](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#sec_SystemQueryOptionselect)\nsystem query option requests that the service return only the properties explicitly requested by the client.\n\n    import Url\n    import Url.Builder\n\n    select [ \"id\", \"subject\", \"body\" ]\n    |> toQueryParameter >> List.singleton >> Url.Builder.toQuery >> Url.percentDecode\n    --> Just \"?$select=id,subject,body\"\n\n",
+                "type": "List.List String.String -> OData4.Url.QueryOption"
+            },
+            {
+                "name": "skip",
+                "comment": " The [`$skip`](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#sec_SystemQueryOptionskip)\nquery parameter requests the number of items in the queried collection that are to be skipped and not included in the result.\nA client can request a particular page of items by combining `$top` and `$skip`.\n\n    import Url\n    import Url.Builder\n\n    skip 10\n    |> toQueryParameter >> List.singleton >> Url.Builder.toQuery >> Url.percentDecode\n    --> Just \"?$skip=10\"\n\n",
+                "type": "Basics.Int -> OData4.Url.QueryOption"
+            },
+            {
+                "name": "startsWith",
+                "comment": " The `startsWith` function returns `true` if the first string starts with the second string, otherwise it returns `false`\n\n    import Url\n    import Url.Builder\n\n    filter (startsWith \"CompanyName\" \"Alfr\")\n    |> toQueryParameter >> List.singleton >> Url.Builder.toQuery >> Url.percentDecode\n    --> Just \"?$filter=startswith(CompanyName,'Alfr')\"\n\n",
+                "type": "String.String -> String.String -> OData4.Url.CommonExpression"
+            },
+            {
+                "name": "string",
+                "comment": " _Note the single quotes_\n\n    string \"Say Hello,then go\"\n    |> test.stringFromValue\n    --> \"'Say Hello,then go'\"\n\n",
+                "type": "String.String -> OData4.Url.Value"
+            },
+            {
+                "name": "test",
+                "comment": " Test internals are needed for [`elm-verify-examples`](https://github.com/stoeffel/elm-verify-examples)\n",
+                "type": "{ stringFromValue : OData4.Url.Value -> String.String }"
+            },
+            {
+                "name": "toQueryParameter",
+                "comment": " Build [`Url.Builder.QueryParameter`](https://package.elm-lang.org/packages/elm/url/latest/Url-Builder#QueryParameter) from [`QueryOption`](#QueryOption),\nwhich you can further combine with other `QueryParameter`s and convert to string using\n[`Url.Builder.toQuery`](https://package.elm-lang.org/packages/elm/url/latest/Url-Builder#toQuery)\n\n    import Url\n    import Url.Builder\n\n    [ toQueryParameter (top 10) ]\n    |> Url.Builder.toQuery >> Url.percentDecode\n    --> Just \"?$top=10\"\n\n",
+                "type": "OData4.Url.QueryOption -> Url.Builder.QueryParameter"
+            },
+            {
+                "name": "top",
+                "comment": " The [`$top`](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#sec_SystemQueryOptiontop)\nquery parameter requests the number of items in the queried collection to be included in the result.\nA client can request a particular page of items by combining `$top` and `$skip`.\n\n    import Url\n    import Url.Builder\n\n    top 10\n    |> toQueryParameter >> List.singleton >> Url.Builder.toQuery >> Url.percentDecode\n    --> Just \"?$top=10\"\n\n",
+                "type": "Basics.Int -> OData4.Url.QueryOption"
+            },
+            {
+                "name": "true",
+                "comment": "\n\n    true\n    |> test.stringFromValue\n    --> \"true\"\n\n",
+                "type": "OData4.Url.Value"
+            }
+        ],
+        "binops": []
+    }
+]

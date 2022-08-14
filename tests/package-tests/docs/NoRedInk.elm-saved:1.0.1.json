@@ -1,0 +1,84 @@
+[
+    {
+        "name": "Saved",
+        "comment": " A type to keep track of a value that can be saved. It keeps track of the\nchanges to a value since it was last saved.\n\nInternally the `Saved a` keeps track of two values: the last saved value and\nthe current value.\n\n@docs Saved\n@docs new\n@docs value\n@docs change\n@docs save\n@docs discard\n@docs saved\n\n\n## Advanced\n\nThese functions can be very useful.\nThey are not the best way to get to know this library though, which is why they\nare split out into this section.\n\n@docs setSaved\n@docs update\n@docs map\n\n\n## Using a custom equality check\n\nTo determine whether a `Saved a` has changes, the saved and changed values are\ncompared.\nSometimes you may want to use a custom equality check for this.\nThe functions below allow you to create `Saved a` instances with such a custom\ncheck.\n\n@docs Eq\n@docs customNew\n@docs customMap\n\n",
+        "unions": [
+            {
+                "name": "Saved",
+                "comment": " A type representing a value that can be saved.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Eq",
+                "comment": " Alias for an equality function used to tell if two values are equal.\nFor most purposes this can be `==`, but some types require a customized\nequality check.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "a -> a -> Basics.Bool"
+            }
+        ],
+        "values": [
+            {
+                "name": "change",
+                "comment": " Modify the current value in your `Saved a` using a function.\nThis does not affect the last saved value.\n\n    new \"Bear\"\n        |> change (\\animal -> animal ++ \"s\")\n        |> saved\n        --> False\n\n",
+                "type": "(a -> a) -> Saved.Saved a -> Saved.Saved a"
+            },
+            {
+                "name": "customMap",
+                "comment": " Like `map`, but allowing you to specify a new equality function for the new\ntype returned from the mapping function.\n",
+                "type": "Saved.Eq b -> (a -> b) -> Saved.Saved a -> Saved.Saved b"
+            },
+            {
+                "name": "customNew",
+                "comment": " Like `new`, but allowing you to specify an equality function.\n",
+                "type": "Saved.Eq a -> a -> Saved.Saved a"
+            },
+            {
+                "name": "discard",
+                "comment": " Discard any changes and reset the current value to the last saved value.\n\n    new \"Bear\"\n        |> change (\\animal -> animal ++ \"s\")\n        |> discard\n        |> value\n        --> \"Bear\"\n\n",
+                "type": "Saved.Saved a -> Saved.Saved a"
+            },
+            {
+                "name": "map",
+                "comment": " Map over the values in a saved.\n\nBeware that this applies the mapping function to both the last saved and the\ncurrent value, and so should not be used to make changes only to the current\nvalue (for that, use 'change').\n\nAs a rule of thumb, if your map function does not go from a type to another type\nand so is `a -> a`, you probably don't want to use this.\n\n",
+                "type": "(a -> b) -> Saved.Saved a -> Saved.Saved b"
+            },
+            {
+                "name": "new",
+                "comment": " Take a value and wrap it into a `Saved a`.\nThis initial value is marked as having been saved.\n\n    new \"Bear\"\n        |> saved --> True\n\n",
+                "type": "a -> Saved.Saved a"
+            },
+            {
+                "name": "save",
+                "comment": " Save the current value.\n\n    new \"Bear\"\n        |> change (\\animal -> animal ++ \"s\")\n        |> save\n        |> saved\n        --> True\n\n",
+                "type": "Saved.Saved a -> Saved.Saved a"
+            },
+            {
+                "name": "saved",
+                "comment": " Check if any changes have been made since the value was last changed.\n\n    new \"Bear\"\n        |> saved\n        --> True\n\n    new \"Bear\"\n        |> change (\\animal -> animal ++ \"s\")\n        |> saved\n        --> False\n\n",
+                "type": "Saved.Saved a -> Basics.Bool"
+            },
+            {
+                "name": "setSaved",
+                "comment": " Set the last saved value, keeping the current value unchanged.\n\nYou might use this when your backend reports to you a previous value was saved,\nbut your user might have made new changes in the meanwhile.\n\nIf you want to immediately mark the current value as saved you can use `save`.\n\n    new \"Bear\"\n        |> change (\\animal -> animal ++ \"s\")\n        |> change (\\animal -> animal ++ \"kin\")\n        |> setSaved \"bears\"\n        |> saved\n        --> False\n\n",
+                "type": "a -> Saved.Saved a -> Saved.Saved a"
+            },
+            {
+                "name": "update",
+                "comment": " This function is like `change`, but allows your changing function to\nproduce a command. This is typically useful in the `update` function of your\nprogram.\n",
+                "type": "(a -> ( a, cmd )) -> Saved.Saved a -> ( Saved.Saved a, cmd )"
+            },
+            {
+                "name": "value",
+                "comment": " Get the current value from a `Saved a`.\n\n    new \"Bear\"\n        |> value --> \"Bear\"\n\n",
+                "type": "Saved.Saved a -> a"
+            }
+        ],
+        "binops": []
+    }
+]

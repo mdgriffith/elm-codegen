@@ -1,0 +1,62 @@
+[
+    {
+        "name": "Eexl.Context",
+        "comment": " This module manages the context that an expression runs with. Specifically it is used to assign\nvalues to constants, and set functions that can be called from the expression.\n\n    context : Context\n    context =\n        Context.empty\n            |> Context.addConstant \"x\" 5\n            |> Context.addFunction \"stringToInt\" stringToInt\n\n\n    Eexl.evaluateInt context \"\"\"x + 5 + stringToInt(\"7\")\"\"\" -- = Ok 17\n\n\n# Definition\n\n@docs Context\n\n\n# Creation\n\n@docs empty\n\n\n# Adding constants and functions\n\n@docs addConstant, addFunction\n\n\n# Reading constants and function\n\n@docs getConstant, getFunction\n\n",
+        "unions": [
+            {
+                "name": "Context",
+                "comment": " This is the type of `Context` that is passed into the functions that evaluate expressions.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "addConstant",
+                "comment": " Add a constant to the context.\n",
+                "type": "String.String -> Basics.Int -> Eexl.Context.Context -> Eexl.Context.Context"
+            },
+            {
+                "name": "addFunction",
+                "comment": " Add a function to the context.\n",
+                "type": "String.String -> (String.String -> Basics.Int) -> Eexl.Context.Context -> Eexl.Context.Context"
+            },
+            {
+                "name": "empty",
+                "comment": " An empty context containing no functions or constants.\n",
+                "type": "Eexl.Context.Context"
+            },
+            {
+                "name": "getConstant",
+                "comment": " Retrieve a constant from the context (not usually used).\n",
+                "type": "String.String -> Eexl.Context.Context -> Maybe.Maybe Basics.Int"
+            },
+            {
+                "name": "getFunction",
+                "comment": " Retrieve a constant from the context (not usually used).\n",
+                "type": "String.String -> Eexl.Context.Context -> Maybe.Maybe (String.String -> Basics.Int)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Eexl.Eexl",
+        "comment": " This library allows the evaluation of expressions at runtime.\n\n@docs evaluateBool, evaluateInt\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "evaluateBool",
+                "comment": " Evaluate an expression that returns a Bool.\n",
+                "type": "Eexl.Context.Context -> String.String -> Result.Result String.String Basics.Bool"
+            },
+            {
+                "name": "evaluateInt",
+                "comment": " Evaluate an expression that returns an Int.\n",
+                "type": "Eexl.Context.Context -> String.String -> Result.Result String.String Basics.Int"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,304 @@
+[
+    {
+        "name": "Csv.Decode",
+        "comment": " Decode values from CSV. This package tries to be as\nunsurprising as possible, imitating [`elm/json`][elm-json] and\n[`NoRedInk/elm-json-decode-pipeline`][json-decode-pipeline] so that you can\napply whatever you already know about JSON decoders to a different data format.\n\n[elm-json]: https://package.elm-lang.org/packages/elm/json/latest/\n[json-decode-pipline]: https://package.elm-lang.org/packages/NoRedInk/elm-json-decode-pipeline/latest/\n\n\n## A Crash Course on Constructing Decoders\n\nSay you have a CSV like this:\n\n    ID,Name,Species\n    1,Atlas,cat\n    2,Axel,puffin\n\nYou want to get some data out of it, so you're looking through these docs.\nWhere do you begin?\n\nThe first thing you need to know is that decoders are designed to fit together\nto match whatever data shapes are in your CSV. So to decode the ID (an `Int` in\nthe \"ID\" field), you'd combine [`int`](#int) and [`field`](#field) like this:\n\n    data : String\n    data =\n        -- \\u{000D} is the carriage return\n        \"ID,Name,Species\\u{000D}\\n1,Atlas,cat\\u{000D}\\n2,Axel,puffin\"\n\n    decodeCsv FieldNamesFromFirstRow (field \"ID\" int) data\n    --> Ok [ 1, 2 ]\n\nBut this is probably not enough, so we'll need to combine a bunch of decoders\ntogether using [`into`](#into):\n\n    decodeCsv FieldNamesFromFirstRow\n        (into\n            (\\id name species ->\n                { id = id\n                , name = name\n                , species = species\n                }\n            )\n            |> pipeline (field \"ID\" int)\n            |> pipeline (field \"Name\" string)\n            |> pipeline (field \"Species\" string)\n        )\n        data\n    --> Ok\n    -->     [ { id = 1, name = \"Atlas\", species = \"cat\" }\n    -->     , { id = 2, name = \"Axel\", species = \"puffin\" }\n    -->     ]\n\nYou can decode as many things as you want by giving [`into`](#into) a function\nthat takes more arguments.\n\n\n## Basic Decoders\n\n@docs Decoder, string, int, float, blank\n\n\n## Finding Values\n\n@docs column, field\n\n\n## Running Decoders\n\n@docs FieldNames, decodeCsv, decodeCustom, Error, errorToString, Column, Problem\n\n\n## Transforming Values\n\n@docs map, map2, map3, into, pipeline\n\n\n## Fancy Decoding\n\n@docs oneOf, andThen, succeed, fail, fromResult, fromMaybe\n\n",
+        "unions": [
+            {
+                "name": "Column",
+                "comment": " Where did the problem happen?\n\n  - `Column`: at the given column number\n  - `Field`: at the given named column (with optional column number if we were\n    able to look up what column we _should_ have found.)\n  - `OnlyColumn`: at the only column in the row\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Column",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "Field",
+                        [
+                            "String.String",
+                            "Maybe.Maybe Basics.Int"
+                        ]
+                    ],
+                    [
+                        "OnlyColumn",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Decoder",
+                "comment": " A way to specify what kind of thing you want to decode into. For example,\nif you have a `Pet` data type, you'd want a `Decoder Pet`.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Error",
+                "comment": " Sometimes we cannot decode every row in a CSV. This is how we tell\nyou what went wrong. If you need to present this to someone, you can get a\nhuman-readable version with [`errorToString`](#errorToString)\n\nSome more detail:\n\n  - `ParsingError`: there was a problem parsing the CSV into rows and\n    columns. All these errors have to do with quoting issues. Check that\n    any quoted fields are closed and that quotes are escaped.\n  - `NoFieldNamesOnFirstRow`: we tried to get the field names from the first\n    row (using [`FieldNames`](#FieldNames)) but couldn't find any, probably\n    because the input was blank.\n  - `DecodingErrors`: we couldn't decode a value using the specified\n    decoder. See [`Problem`](#Problem) for more details.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "ParsingError",
+                        [
+                            "Csv.Parser.Problem"
+                        ]
+                    ],
+                    [
+                        "NoFieldNamesOnFirstRow",
+                        []
+                    ],
+                    [
+                        "DecodingErrors",
+                        [
+                            "List.List { row : Basics.Int, column : Csv.Decode.Column, problems : List.List Csv.Decode.Problem }"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "FieldNames",
+                "comment": " Where do we get names for use with [`field`](#field)?\n\n  - `NoFieldNames`: don't get field names at all. [`field`](#field) will\n    always fail.\n  - `CustomFieldNames`: use the provided field names in order (so `[\"Id\", \"Name\"]`\n    will mean that \"Id\" is in column 0 and \"Name\" is in column 1.)\n  - `FieldNamesFromFirstRow`: use the first row of the CSV as the source of\n    field names.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NoFieldNames",
+                        []
+                    ],
+                    [
+                        "CustomFieldNames",
+                        [
+                            "List.List String.String"
+                        ]
+                    ],
+                    [
+                        "FieldNamesFromFirstRow",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Problem",
+                "comment": " Things that can go wrong while decoding:\n\n  - `ColumnNotFound Int` and `FieldNotFound String`: we looked for the\n    specified column, but couldn't find it. The argument specifies where we\n    tried to look.\n  - `FieldNotProvided String`: we looked for a specific field, but it wasn't\n    present in the first row or the provided field names (depending on your\n    configuration.)\n  - `ExpectedOneColumn Int`: basic decoders like [`string`](#string) and\n    [`int`](#int) expect to find a single column per row. If there are multiple\n    columns, and you don't specify which to use with [`column`](#column)\n    or [`field`](#field), you'll get this error. The argument says how many\n    columns we found.\n  - `ExpectedInt String` and `ExpectedFloat String`: we failed to parse a\n    string into a number. The argument specifies the string we got.\n  - `Failure`: we got a custom failure message from [`fail`](#fail).\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "ColumnNotFound",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "FieldNotFound",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "FieldNotProvided",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "ExpectedOneColumn",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "ExpectedInt",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "ExpectedFloat",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Failure",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "andThen",
+                "comment": " Decode some value _and then_ make a decoding decision based on the\noutcome. For example, if you wanted to reject negative numbers, you might\ndo something like this:\n\n    positiveInt : Decoder Int\n    positiveInt =\n        int\n            |> andThen\n                (\\rawInt ->\n                    if rawInt < 0 then\n                        Decode.fail \"Only positive numbers allowed!\"\n\n                    else\n                        Decode.succeed rawInt\n                )\n\nYou could then use it like this:\n\n    decodeCsv NoFieldNames positiveInt \"1\" -- Ok [ 1 ]\n\n    decodeCsv NoFieldNames positiveInt \"-1\"\n    -- Err { row = 0, problem = Failure \"Only positive numbers allowed!\" }\n\n",
+                "type": "(a -> Csv.Decode.Decoder b) -> Csv.Decode.Decoder a -> Csv.Decode.Decoder b"
+            },
+            {
+                "name": "blank",
+                "comment": " Handle blank fields by turning them into `Maybe`s. We consider a field\nto be blank if it's empty or consists solely of whitespace characters.\n\n    decodeCsv NoFieldNames (blank int) \"\\r\\n1\"\n    --> Ok [ Nothing, Just 1 ]\n\n",
+                "type": "Csv.Decode.Decoder a -> Csv.Decode.Decoder (Maybe.Maybe a)"
+            },
+            {
+                "name": "column",
+                "comment": " Parse a value at a numbered column, starting from 0.\n\n    decodeCsv NoFieldNames (column 1 string) \"a,b,c\" --> Ok [ \"b\" ]\n\n    decodeCsv NoFieldNames (column 100 float) \"3.14\"\n    --> Err\n    -->     (DecodingErrors\n    -->         [ { row = 0\n    -->           , column = Column 100\n    -->           , problems = [ ColumnNotFound 100 ]\n    -->           }\n    -->         ]\n    -->     )\n\n",
+                "type": "Basics.Int -> Csv.Decode.Decoder a -> Csv.Decode.Decoder a"
+            },
+            {
+                "name": "decodeCsv",
+                "comment": " Convert a CSV string into some type you care about using the\n[`Decoder`](#Decoder)s in this module!\n",
+                "type": "Csv.Decode.FieldNames -> Csv.Decode.Decoder a -> String.String -> Result.Result Csv.Decode.Error (List.List a)"
+            },
+            {
+                "name": "decodeCustom",
+                "comment": " Convert something shaped roughly like a CSV. For example, to decode\na TSV (_tab_-separated values) string:\n\n    decodeCustom {  fieldSeparator = '\\t' }\n        NoFieldNames\n        (map2 Tuple.pair\n            (column 0 int)\n            (column 1 string)\n        )\n        \"1\\tBrian\\n2\\tAtlas\"\n        --> Ok [ ( 1, \"Brian\" ), ( 2, \"Atlas\" ) ]\n\n",
+                "type": "{ fieldSeparator : Char.Char } -> Csv.Decode.FieldNames -> Csv.Decode.Decoder a -> String.String -> Result.Result Csv.Decode.Error (List.List a)"
+            },
+            {
+                "name": "errorToString",
+                "comment": " Produce a human-readable version of an [`Error`](#Error)?!\n",
+                "type": "Csv.Decode.Error -> String.String"
+            },
+            {
+                "name": "fail",
+                "comment": " Always fail with the given message, no matter what. Mostly useful with\n[`andThen`](#andThen).\n",
+                "type": "String.String -> Csv.Decode.Decoder a"
+            },
+            {
+                "name": "field",
+                "comment": " Parse a value at a named column. There are a number of ways to provide\nthese names, see [`FieldNames`](#FieldNames)\n\n    decodeCsv\n        FieldNamesFromFirstRow\n        (field \"Country\" string)\n        \"Country\\r\\nArgentina\"\n    --> Ok [ \"Argentina\" ]\n\n",
+                "type": "String.String -> Csv.Decode.Decoder a -> Csv.Decode.Decoder a"
+            },
+            {
+                "name": "float",
+                "comment": " Decode a floating-point number.\n\n    decodeCsv NoFieldNames float \"3.14\" --> Ok [ 3.14 ]\n\n    decodeCsv NoFieldNames float \"mimesis\"\n    --> Err\n    -->     (DecodingErrors\n    -->         [ { row = 0\n    -->           , column = OnlyColumn\n    -->           , problems = [ ExpectedFloat \"mimesis\" ]\n    -->           }\n    -->         ]\n    -->     )\n\nUnless you specify otherwise (e.g. with [`field`](#field)) this will assume\nthere is only one column in the CSV and try to decode that.\n\n    decodeCsv NoFieldNames float \"1.0,2.0\"\n    --> Err\n    -->     (DecodingErrors\n    -->         [ { row = 0\n    -->           , column = OnlyColumn\n    -->           , problems = [ ExpectedOneColumn 2 ]\n    -->           }\n    -->         ]\n    -->     )\n\n",
+                "type": "Csv.Decode.Decoder Basics.Float"
+            },
+            {
+                "name": "fromMaybe",
+                "comment": " Like [`fromResult`](#fromResult) but you have to specify the error\nmessage since `Nothing` has no further information.\n\nFor example, you could implement something like [`int`](#int) using this:\n\n    myInt : Decoder Int\n    myInt =\n        andThen\n            (\\value ->\n                fromMaybe \"Expected an int\"\n                    (String.toInt value)\n            )\n            string\n\n    decodeCsv NoFieldNames myInt \"123\"\n    --> Ok [ 123 ]\n\n(That said, you probably want to use [`int`](#int) instead... it has better\nerror messages and is more tolerant of unusual situations!)\n\n",
+                "type": "String.String -> Maybe.Maybe a -> Csv.Decode.Decoder a"
+            },
+            {
+                "name": "fromResult",
+                "comment": " Make creating custom decoders a little easier. If you already have a\nfunction that parses into something you care about, you can combine it with\nthis.\n\nFor example, here's how you could parse a hexadecimal number with\n[`rtfeldman/elm-hex`](https://package.elm-lang.org/packages/rtfeldman/elm-hex/latest/):\n\n    import Hex\n\n    hex : Decoder Int\n    hex =\n        andThen\n            (\\value -> fromResult (Hex.fromString value))\n            string\n\n    decodeCsv NoFieldNames hex \"ff\"\n    --> Ok [ 255 ]\n\n",
+                "type": "Result.Result String.String a -> Csv.Decode.Decoder a"
+            },
+            {
+                "name": "int",
+                "comment": " Decode an integer.\n\n    decodeCsv NoFieldNames int \"1\" --> Ok [ 1 ]\n\n    decodeCsv NoFieldNames int \"volcano\"\n    --> Err\n    -->     (DecodingErrors\n    -->         [ { row = 0\n    -->           , column = OnlyColumn\n    -->           , problems = [ ExpectedInt \"volcano\" ]\n    -->           }\n    -->         ]\n    -->     )\n\nUnless you specify otherwise (e.g. with [`field`](#field)) this will assume\nthere is only one column in the CSV and try to decode that.\n\n    decodeCsv NoFieldNames int \"1,2\"\n    --> Err\n    -->     (DecodingErrors\n    -->         [ { row = 0\n    -->           , column = OnlyColumn\n    -->           , problems = [ ExpectedOneColumn 2 ]\n    -->           }\n    -->         ]\n    -->     )\n\n",
+                "type": "Csv.Decode.Decoder Basics.Int"
+            },
+            {
+                "name": "into",
+                "comment": " Combine an arbitrary amount of fields. You provide a function that takes\nas many arguments as you need, then send it values by providing decoders with\n[`pipeline`](#pipeline).\n\n    type alias Pet =\n        { id : Int\n        , name : String\n        , species : String\n        , weight : Float\n        }\n\n    petDecoder : Decoder Pet\n    petDecoder =\n        into Pet\n            |> pipeline (column 0 int)\n            |> pipeline (column 1 string)\n            |> pipeline (column 2 string)\n            |> pipeline (column 3 float)\n\nNow you can decode pets like this:\n\n    decodeCsv NoFieldNames petDecoder \"1,Atlas,cat,14\\r\\n2,Axel,puffin,1.37\"\n    --> Ok\n    -->     [ { id = 1, name = \"Atlas\", species = \"cat\", weight = 14 }\n    -->     , { id = 2, name = \"Axel\", species = \"puffin\", weight = 1.37 }\n    -->     ]\n\n",
+                "type": "(a -> b) -> Csv.Decode.Decoder (a -> b)"
+            },
+            {
+                "name": "map",
+                "comment": " Transform a decoded value.\n\n    decodeCsv NoFieldNames (map (\\i -> i * 2) int) \"15\"\n    --> Ok [ 30 ]\n\n    decodeCsv NoFieldNames (map String.reverse string) \"slap\"\n    --> Ok [ \"pals\" ]\n\n",
+                "type": "(from -> to) -> Csv.Decode.Decoder from -> Csv.Decode.Decoder to"
+            },
+            {
+                "name": "map2",
+                "comment": " Combine two decoders to make something else.\n\n    decodeCsv NoFieldNames\n        (map2 Tuple.pair\n            (column 0 int)\n            (column 1 string)\n        )\n        \"1,Atlas\"\n        --> Ok [ (1, \"Atlas\") ]\n\n",
+                "type": "(a -> b -> c) -> Csv.Decode.Decoder a -> Csv.Decode.Decoder b -> Csv.Decode.Decoder c"
+            },
+            {
+                "name": "map3",
+                "comment": " Like [`map2`](#map2), but with three decoders. `map4` and beyond don't\nexist in this package. Use [`into`](#into) to decode records instead!\n\n    decodeCsv NoFieldNames\n        (map3 (\\r g b -> (r, g, b))\n            (column 0 int)\n            (column 1 int)\n            (column 2 int)\n        )\n        \"255,255,0\"\n        --> Ok [ (255, 255, 0) ]\n\n",
+                "type": "(a -> b -> c -> d) -> Csv.Decode.Decoder a -> Csv.Decode.Decoder b -> Csv.Decode.Decoder c -> Csv.Decode.Decoder d"
+            },
+            {
+                "name": "oneOf",
+                "comment": " Try several possible decoders in sequence, committing to the first one\nthat passes.\n\n    decodeCsv NoFieldNames\n        (oneOf\n            (map Just int)\n            [ succeed Nothing ]\n        )\n        \"1\"\n    --> Ok [ Just 1 ]\n\n    decodeCsv NoFieldNames\n        (oneOf\n            (map Just int)\n            [ succeed Nothing ]\n        )\n        \"a\"\n    --> Ok [ Nothing ]\n\n",
+                "type": "Csv.Decode.Decoder a -> List.List (Csv.Decode.Decoder a) -> Csv.Decode.Decoder a"
+            },
+            {
+                "name": "pipeline",
+                "comment": " See [`into`](#into).\n",
+                "type": "Csv.Decode.Decoder a -> Csv.Decode.Decoder (a -> b) -> Csv.Decode.Decoder b"
+            },
+            {
+                "name": "string",
+                "comment": " Decode a string.\n\n    decodeCsv NoFieldNames string \"a\" --> Ok [ \"a\" ]\n\nUnless you specify otherwise (e.g. with [`field`](#field)) this will assume\nthere is only one column in the CSV and try to decode that.\n\n    decodeCsv NoFieldNames string \"a,b\"\n    --> Err\n    -->     (DecodingErrors\n    -->         [ { row = 0\n    -->           , column = OnlyColumn\n    -->           , problems = [ ExpectedOneColumn 2 ]\n    -->           }\n    -->         ]\n    -->     )\n\n",
+                "type": "Csv.Decode.Decoder String.String"
+            },
+            {
+                "name": "succeed",
+                "comment": " Always succeed, no matter what. Mostly useful with [`andThen`](#andThen).\n",
+                "type": "a -> Csv.Decode.Decoder a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Csv.Encode",
+        "comment": "\n\n@docs encode, Encoder, withFieldNames, withoutFieldNames\n\n",
+        "unions": [
+            {
+                "name": "Encoder",
+                "comment": " Describe how you want the output CSV to be shaped. Constructe\nencoders with [`withFieldNames`](#withFieldNames) and\n[`withoutFieldNames`](#withoutFieldNames).\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "encode",
+                "comment": " Encode some data to a CSV string, quoting and escaping characters as\nnecessary.\n",
+                "type": "{ encoder : Csv.Encode.Encoder a, fieldSeparator : Char.Char } -> List.List a -> String.String"
+            },
+            {
+                "name": "withFieldNames",
+                "comment": " When provided a function that maps field names to values, this function\nuses it to produce a perfectly rectangular CSV.\n\n    [ ( \"FF\", \"FF\", \"FF\" )\n    , ( \"80\", \"80\", \"80\" )\n    , ( \"00\", \"00\", \"00\" )\n    ]\n        |> encode\n            { encoder =\n                withFieldNames\n                    (\\( r, g, b ) ->\n                        [ ( \"red\", r )\n                        , ( \"green\", g )\n                        , ( \"blue\", b )\n                        ]\n                    )\n            , fieldSeparator = ','\n            }\n        --> \"red,green,blue\\r\\nFF,FF,FF\\r\\n80,80,80\\r\\n00,00,00\"\n\nThe ordering of columns is determined by the order of values returned from\nthe function.\n\n  - If the function returns fields in an inconsistent order, we will determine\n    a final ordering based on the average position of each column.\n\n  - If the function sometimes omits `(field, value)` pairs, we will leave\n    fields blank to avoid generating a misaligned CSV.\n\n",
+                "type": "(a -> List.List ( String.String, String.String )) -> Csv.Encode.Encoder a"
+            },
+            {
+                "name": "withoutFieldNames",
+                "comment": " Encode your data however you like. This is the \"live an exciting adventure\"\nencoder in that it will let you output rows with uneven lengths.\n\n    [ ( \"FF\", \"FF\", \"FF\" )\n    , ( \"80\", \"80\", \"80\" )\n    , ( \"00\", \"00\", \"00\" )\n    ]\n        |> encode\n            { encoder = withoutFieldNames (\\(r,g, b) -> [ r, g, b ] )\n            , fieldSeparator = ','\n            }\n        --> \"FF,FF,FF\\r\\n80,80,80\\r\\n00,00,00\"\n\n",
+                "type": "(a -> List.List String.String) -> Csv.Encode.Encoder a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Csv.Parser",
+        "comment": " CSV (and TSV) parsing.\n\n@docs parse, Problem\n\n",
+        "unions": [
+            {
+                "name": "Problem",
+                "comment": " Something went wrong during parsing! What was it?\n\n  - `SourceEndedWithoutClosingQuote`: we started parsing a quoted field,\n    but the file ended before we saw a closing quote. If you meant to have\n    a literal quote in your data, quote the whole field and then escape the\n    literal quote by replacing it with `\"\"`. For example, `\": double prime`\n    would be encoded as `\"\"\": double prime\"`.\n  - `AdditionalCharactersAfterClosingQuote`: we found the closing pair of a\n    quoted field, but there was data after it but before a separator or the\n    end of the file. Follow the quote-escaping advice above to get around this.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "SourceEndedWithoutClosingQuote",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "AdditionalCharactersAfterClosingQuote",
+                        [
+                            "Basics.Int"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "parse",
+                "comment": " Turn a CSV string into a list of rows. Prefer using `Csv.Decode.decodeCsv`\nor `Csv.Decode.decodeCustom` unless you need something unusally custom (and\nplease [open an issue](https://github.com/BrianHicks/elm-csv/issues/new)\nif so!)\n",
+                "type": "{ fieldSeparator : Char.Char } -> String.String -> Result.Result Csv.Parser.Problem (List.List (List.List String.String))"
+            }
+        ],
+        "binops": []
+    }
+]

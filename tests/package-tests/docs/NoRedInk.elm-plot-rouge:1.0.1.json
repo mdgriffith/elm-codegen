@@ -1,0 +1,273 @@
+[
+    {
+        "name": "Svg.Coordinates",
+        "comment": " _Disclaimer:_ If you're looking for a plotting library, then please\nuse [elm-plot](https://github.com/terezka/elm-plot) instead, as this library is not\nmade to be user friendly. If you feel like you're missing something in elm-plot,\nyou're welcome to open an issue in the repo and I'll see what I can do\nto accommodate your needs!\n\n---\n\nThis module contains helpers for cartesian/SVG coordinate translation.\n\n\n# Plane\n\n@docs Plane, Axis\n\n\n# Plane from data\n\nYou may want to produce a plane which fits all your data. For that you need\nto find the minimum and maximum values withing your data in order to calculate\nthe domain and range.\n\n@docs minimum, maximum\n\n    planeFromPoints : List Point -> Plane\n    planeFromPoints points =\n        { x =\n            { marginLower = 10\n            , marginUpper = 10\n            , length = 300\n            , min = minimum .x points\n            , max = maximum .x points\n            }\n        , y =\n            { marginLower = 10\n            , marginUpper = 10\n            , length = 300\n            , min = minimum .y points\n            , max = maximum .y points\n            }\n        }\n\n\n# Cartesian to SVG\n\n@docs toSVGX, toSVGY, scaleSVG\n\n\n# SVG to cartesian\n\n@docs toCartesianX, toCartesianY, scaleCartesian\n\n\n# Helpers\n\n@docs Point, place, placeWithOffset\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Axis",
+                "comment": " The axis of the plane.\n\n  - The margin properties are the upper and lower margins for the axis. So for example,\n    if you want to add margin on top of the plot, increase the marginUpper of\n    the y-`Axis`.\n  - The length is the length of your SVG axis. (`plane.x.length` is the width,\n    `plane.y.length` is the height)\n  - The `min` and `max` values is the reach of your plane. (Domain for the y-axis, range\n    for the x-axis)\n\n",
+                "args": [],
+                "type": "{ marginLower : Basics.Float, marginUpper : Basics.Float, length : Basics.Float, min : Basics.Float, max : Basics.Float }"
+            },
+            {
+                "name": "Plane",
+                "comment": " The properties of your plane.\n",
+                "args": [],
+                "type": "{ x : Svg.Coordinates.Axis, y : Svg.Coordinates.Axis }"
+            },
+            {
+                "name": "Point",
+                "comment": " Representation of a point in your plane.\n",
+                "args": [],
+                "type": "{ x : Basics.Float, y : Basics.Float }"
+            }
+        ],
+        "values": [
+            {
+                "name": "maximum",
+                "comment": " Helper to extract the maximum value amongst your coordinates.\n",
+                "type": "(a -> Basics.Float) -> List.List a -> Basics.Float"
+            },
+            {
+                "name": "minimum",
+                "comment": " Helper to extract the minimum value amongst your coordinates.\n",
+                "type": "(a -> Basics.Float) -> List.List a -> Basics.Float"
+            },
+            {
+                "name": "place",
+                "comment": " A `transform translate(x, y)` SVG attribute. Beware that using this and\nand another transform attribute on the same node, will overwrite the first.\nIf that's the case, just make one yourself:\n\n    myTransformAttribute : Svg.Attribute msg\n    myTransformAttribute =\n        transform <|\n            \"translate(\"\n                ++ String.fromFloat (toSVGX plane x)\n                ++ \",\"\n                ++ String.fromFloat (toSVGY plane y)\n                ++ \") \"\n                ++ \"rotateX(\"\n                ++ whatever\n                ++ \")\"\n\n",
+                "type": "Svg.Coordinates.Plane -> Svg.Coordinates.Point -> Svg.Attribute msg"
+            },
+            {
+                "name": "placeWithOffset",
+                "comment": " Place at coordinate, but you may add a SVG offset. See `place` above for important notes.\n",
+                "type": "Svg.Coordinates.Plane -> Svg.Coordinates.Point -> Basics.Float -> Basics.Float -> Svg.Attribute msg"
+            },
+            {
+                "name": "scaleCartesian",
+                "comment": " For scaling a SVG value to a cartesian value. Note that this will _not_\nreturn a coordinate on the plane, but the scaled value.\n",
+                "type": "Svg.Coordinates.Axis -> Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "scaleSVG",
+                "comment": " For scaling a cartesian value to a SVG value. Note that this will _not_\nreturn a coordinate on the plane, but the scaled value.\n",
+                "type": "Svg.Coordinates.Axis -> Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "toCartesianX",
+                "comment": " Translate a cartesian x-coordinate to its SVG x-coordinate.\n",
+                "type": "Svg.Coordinates.Plane -> Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "toCartesianY",
+                "comment": " Translate a cartesian y-coordinate to its SVG y-coordinate.\n",
+                "type": "Svg.Coordinates.Plane -> Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "toSVGX",
+                "comment": " Translate a SVG x-coordinate to its cartesian x-coordinate.\n",
+                "type": "Svg.Coordinates.Plane -> Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "toSVGY",
+                "comment": " Translate a SVG y-coordinate to its cartesian y-coordinate.\n",
+                "type": "Svg.Coordinates.Plane -> Basics.Float -> Basics.Float"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Svg.Plot",
+        "comment": " _Disclaimer:_ If you're looking for a plotting library, then please\nuse [elm-plot](https://github.com/terezka/elm-plot) instead, as this library is not\nmade to be user friendly. If you feel like you're missing something in elm-plot,\nyou're welcome to open an issue in the repo and I'll see what I can do\nto accommodate your needs!\n\n---\n\nThis module contains higher-level SVG plotting elements.\n\n\n# Series\n\n\n## Dots\n\n@docs Dot, dot, clear, customDot\n\n\n## Interpolation\n\n@docs scatter, linear, monotone, linearArea, monotoneArea\n\n\n## Note on usage\n\nThese elements render a line series if no `fill` attribute is added!\n\n    areaSeries : Svg msg\n    areaSeries =\n        monotone plane [ fill \"pink\" ] dots\n\n    lineSeries : Svg msg\n    lineSeries =\n        monotone plane [] dots\n\n\n# Bars\n\n@docs Bar\n\n\n# Groups\n\n@docs Groups, grouped\n\n\n## Histograms\n\n@docs Histogram, histogram\n\n\n# Straight lines\n\n@docs line, fullHorizontal, fullVertical, horizontal, vertical\n\n\n## Ticks\n\nProTip: Passing a negative value as the height/width of a tick renders it\nmirrored on the other side of the axis!\n\n@docs xTick, xTicks, yTick, yTicks\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Bar",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ attributes : List.List (Svg.Attribute msg), y : Basics.Float }"
+            },
+            {
+                "name": "Dot",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ view : Maybe.Maybe (Basics.Float -> Basics.Float -> Svg.Svg msg), x : Basics.Float, y : Basics.Float }"
+            },
+            {
+                "name": "Groups",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ groups : List.List (List.List (Svg.Plot.Bar msg)), width : Basics.Float }"
+            },
+            {
+                "name": "Histogram",
+                "comment": " The bars are the class frequencies and the interval is the class interval's\nupper limit minus lower limit. Right now, you can only have equal class intervals,\nbut I might add unequal support later!\n\n[What is going on with all these words?](http://onlinestatbook.com/2/graphing_distributions/histograms.html)\n\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ bars : List.List (Svg.Plot.Bar msg), interval : Basics.Float, intervalBegin : Basics.Float }"
+            }
+        ],
+        "values": [
+            {
+                "name": "clear",
+                "comment": " A dot without visual representation.\n",
+                "type": "Basics.Float -> Basics.Float -> Svg.Plot.Dot msg"
+            },
+            {
+                "name": "customDot",
+                "comment": " An dot with a view where you control how it's positioned.\n",
+                "type": "(Basics.Float -> Basics.Float -> Svg.Svg msg) -> Basics.Float -> Basics.Float -> Svg.Plot.Dot msg"
+            },
+            {
+                "name": "dot",
+                "comment": " An dot with a view which is wrapped in a `g` element and positioned with a transform.\n",
+                "type": "Svg.Svg msg -> Basics.Float -> Basics.Float -> Svg.Plot.Dot msg"
+            },
+            {
+                "name": "fullHorizontal",
+                "comment": " Renders a horizontal line with the full length of the range.\n\n    myXAxisOrGridLine : Svg msg\n    myXAxisOrGridLine =\n        fullHorizontal plane [] yPosition\n\n",
+                "type": "Svg.Coordinates.Plane -> List.List (Svg.Attribute msg) -> Basics.Float -> Svg.Svg msg"
+            },
+            {
+                "name": "fullVertical",
+                "comment": " Renders a vertical line with the full length of the domain.\n\n    myYAxisOrGridLine : Svg msg\n    myYAxisOrGridLine =\n        fullVertical plane [] xPosition\n\n",
+                "type": "Svg.Coordinates.Plane -> List.List (Svg.Attribute msg) -> Basics.Float -> Svg.Svg msg"
+            },
+            {
+                "name": "grouped",
+                "comment": " You can draw a bar chart like this:\n\n    group : List Float -> List (Bar msg)\n    group =\n        List.map (Bar [ stroke \"pink\", fill \"lightpink\" ])\n\n    groups : Groups msg\n    groups =\n        { groups = List.map group [ [ 2, 3, 1 ], [ 5, 1, 4 ], [ 1, 5, 3 ] ]\n        , width = 0.8\n        }\n\n    main : Svg msg\n    main =\n        svg\n            [ width (String.fromFloat plane.x.length)\n            , height (String.fromFloat plane.y.length)\n            ]\n            [ grouped plane groups ]\n\nNote on `width`: The width takes catersian units, however, should you have\na width in SVG units, you can use `Svg.Coordinates.scaleCartesian` to\ntranslate it into cartesian units.\n\n",
+                "type": "Svg.Coordinates.Plane -> Svg.Plot.Groups msg -> Svg.Svg msg"
+            },
+            {
+                "name": "histogram",
+                "comment": "\n\n    frequencies : List Float\n    frequencies =\n        [ 1, 2, 3, 6, 8, 9, 6, 4, 2, 1 ]\n\n    testScores : Histogram msg\n    testScores =\n        { bars = List.map (Bar [ stroke blueStroke, fill blueFill ]) frequencies\n        , interval = 1\n        }\n\n    main : Svg msg\n    main =\n        svg\n            [ width (String.fromFloat plane.x.length)\n            , height (String.fromFloat plane.y.length)\n            ]\n            [ histogram plane testScores ]\n\n",
+                "type": "Svg.Coordinates.Plane -> Svg.Plot.Histogram msg -> Svg.Svg msg"
+            },
+            {
+                "name": "horizontal",
+                "comment": " Renders a horizontal line.\n\n    myLine : Svg msg\n    myLine =\n        horizontal plane [ stroke \"pink\" ] y x0 x1\n\n",
+                "type": "Svg.Coordinates.Plane -> List.List (Svg.Attribute msg) -> Basics.Float -> Basics.Float -> Basics.Float -> Svg.Svg msg"
+            },
+            {
+                "name": "line",
+                "comment": " Renders a line.\n\n    myLine : Svg msg\n    myLine =\n        horizontal plane [ stroke \"pink\" ] x0 y0 x1 y1\n\n",
+                "type": "Svg.Coordinates.Plane -> List.List (Svg.Attribute msg) -> Basics.Float -> Basics.Float -> Basics.Float -> Basics.Float -> Svg.Svg msg"
+            },
+            {
+                "name": "linear",
+                "comment": " Series with linear interpolation.\n",
+                "type": "Svg.Coordinates.Plane -> List.List (Svg.Attribute msg) -> List.List (Svg.Plot.Dot msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "linearArea",
+                "comment": " Area series with linear interpolation.\n",
+                "type": "Svg.Coordinates.Plane -> List.List (Svg.Attribute msg) -> List.List (Svg.Plot.Dot msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "monotone",
+                "comment": " Series with monotone interpolation.\n",
+                "type": "Svg.Coordinates.Plane -> List.List (Svg.Attribute msg) -> List.List (Svg.Plot.Dot msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "monotoneArea",
+                "comment": " Area series with monotone interpolation.\n",
+                "type": "Svg.Coordinates.Plane -> List.List (Svg.Attribute msg) -> List.List (Svg.Plot.Dot msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "scatter",
+                "comment": " Series with no interpolation.\n",
+                "type": "Svg.Coordinates.Plane -> List.List (Svg.Plot.Dot msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "vertical",
+                "comment": " Renders a vertical line.\n\n    myLine : Svg msg\n    myLine =\n        vertical plane [ stroke \"pink\" ] x y0 y1\n\n",
+                "type": "Svg.Coordinates.Plane -> List.List (Svg.Attribute msg) -> Basics.Float -> Basics.Float -> Basics.Float -> Svg.Svg msg"
+            },
+            {
+                "name": "xTick",
+                "comment": " Renders a single tick for the horizontal axis.\n",
+                "type": "Svg.Coordinates.Plane -> Basics.Int -> List.List (Svg.Attribute msg) -> Basics.Float -> Basics.Float -> Svg.Svg msg"
+            },
+            {
+                "name": "xTicks",
+                "comment": " Renders ticks for the horizontal axis.\n\n    horizontalTicks : Svg msg\n    horizontalTicks =\n        xTicks plane height [ stroke \"pink\" ] axisYCoordinate tickPositions\n\n",
+                "type": "Svg.Coordinates.Plane -> Basics.Int -> List.List (Svg.Attribute msg) -> Basics.Float -> List.List Basics.Float -> Svg.Svg msg"
+            },
+            {
+                "name": "yTick",
+                "comment": " Renders a single tick for the vertical axis.\n",
+                "type": "Svg.Coordinates.Plane -> Basics.Int -> List.List (Svg.Attribute msg) -> Basics.Float -> Basics.Float -> Svg.Svg msg"
+            },
+            {
+                "name": "yTicks",
+                "comment": " Renders ticks for the vertical axis.\n\n    verticalTicks : Svg msg\n    verticalTicks =\n        yTicks plane width [ stroke \"pink\" ] axisXCoordinate tickPositions\n\n",
+                "type": "Svg.Coordinates.Plane -> Basics.Int -> List.List (Svg.Attribute msg) -> Basics.Float -> List.List Basics.Float -> Svg.Svg msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Svg.Tiles",
+        "comment": " _Disclaimer:_ If you're looking for a plotting library, then please\nuse [elm-plot](https://github.com/terezka/elm-plot) instead, as this library is not\nmade to be user friendly. If you feel like you're missing something in elm-plot,\nyou're welcome to open an issue in the repo and I'll see what I can do\nto accommodate your needs!\n\n---\n\nView for creating tiled maps like heatmaps or choropleths. Note that this return a SVG element not yet wrapped\nin the `svg` tag.\n\n\n# Composing\n\n@docs Map, Tile, view\n\n\n# Helpers\n\n@docs tileWidth, tileHeight, tileXCoord, tileYCoord, proportion\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Map",
+                "comment": " (You can use the helpers for calculating most of these properties. You're welcome.)\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ tiles : List.List (Svg.Tiles.Tile msg), tilesPerRow : Basics.Int, tileWidth : Basics.Float, tileHeight : Basics.Float }"
+            },
+            {
+                "name": "Tile",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ content : Maybe.Maybe (Svg.Svg msg), attributes : List.List (Svg.Attribute msg), index : Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "proportion",
+                "comment": " For heatmaps. It calculates a value's value relative to all values.\n",
+                "type": "(a -> Basics.Float) -> List.List a -> Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "tileHeight",
+                "comment": " Pass the **height** of your map, the **amount of\ntiles in a row**, and the **total number of tiles**,\nand it gives you back the height of a single tile.\n",
+                "type": "Basics.Int -> Basics.Int -> Basics.Int -> Basics.Int"
+            },
+            {
+                "name": "tileWidth",
+                "comment": " Pass the **width** of your map, and the **amount of\ntiles in a row**, and it gives you back the width of\na single tile.\n",
+                "type": "Basics.Int -> Basics.Int -> Basics.Int"
+            },
+            {
+                "name": "tileXCoord",
+                "comment": " Pass the **tile width**, the **amount of tiles in a row**, and\nthe **tile's index** and it'll get you it's x-coordinate.\n",
+                "type": "Basics.Float -> Basics.Int -> Basics.Int -> Basics.Float"
+            },
+            {
+                "name": "tileYCoord",
+                "comment": " Pass the **tile height**, the **amount of tiles in a row** and\nthe **tile's index** and it'll get you it's y-coordinate.\n",
+                "type": "Basics.Float -> Basics.Int -> Basics.Int -> Basics.Float"
+            },
+            {
+                "name": "view",
+                "comment": " View a map!\n",
+                "type": "Svg.Tiles.Map msg -> Svg.Svg msg"
+            }
+        ],
+        "binops": []
+    }
+]

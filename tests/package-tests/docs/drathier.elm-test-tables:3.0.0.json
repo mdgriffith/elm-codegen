@@ -1,0 +1,503 @@
+[
+    {
+        "name": "Expect.Category",
+        "comment": " Expect.Category provides expectations for common properties of binary functions, like `(a+b)+c = a+(b+c)` or `a+b = b+a`:\n\n    fuzz3 int int int \"+\" <|\n        \\a b c ->\n            { f = (+), a = a, b = b, c = c }\n                |> Expect.all [ associative, commutative ]\n\nThese mathematical properties are actually quite useful, so try to follow a few of them for whatever data type you're building.\n\n\n# How to use this module\n\nThe function signatures in this module are horrible. Sorry about that. Here's how I intend the functions to be used:\n\n    fuzz3 int int int \"+\" <|\n        \\a b c ->\n            { f = (+), a = a, b = b, c = c }\n                |> Expect.all [ identityElement 0, associative, commutative ]\n\nor\n\n    fuzz3 appendable appendable appendable \"++\" <|\n        \\a b c ->\n            { f = (++), a = a, b = b, c = c }\n                |> Expect.all [ associative ]\n\n\n# The properties to choose from\n\n@docs associative, commutative, idempotent, identityElement, zeroElement\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "associative",
+                "comment": " Associativity is the property that `(a ⊕ b) ⊕ c = a ⊕ (b ⊕ c)`, or `f (f a b) c = f a (f b c)`, for some infix operator `⊕`, or binary function `f`.\n\nNotable examples include `+`, `*` and `max`, but note that float operations generally aren't associative.\n\n",
+                "type": "{ r | f : a -> a -> a, a : a, b : a, c : a } -> Expect.Expectation"
+            },
+            {
+                "name": "commutative",
+                "comment": " Commutativity is the property that `a ⊕ b = b ⊕ a`, or `f a b = f b a`, for some infix operator `⊕`, or binary function `f`.\n\nNotable examples include `+`, `*` and `max`.\n\n",
+                "type": "{ r | f : a -> a -> a, a : a, b : a } -> Expect.Expectation"
+            },
+            {
+                "name": "idempotent",
+                "comment": " Idempotence is the property that `a ⊕ a = a`, or `f a a = a`, for some infix operator `⊕`, or binary function `f`.\n\nNotable examples include `Bitwise.or`, `Bitwise.and` and `max`.\n\n",
+                "type": "{ r | f : a -> a -> a, a : a } -> Expect.Expectation"
+            },
+            {
+                "name": "identityElement",
+                "comment": " The identity element is the element `e` such that `a ⊕ e = e ⊕ a = a`, or `f e a = f a e = a`, for some infix operator `⊕`, or binary function `f`.\n\nNotable examples include `0` for `+`, `1` for `*` and `0` for `Bitwise.or`.\n\n",
+                "type": "a -> { r | f : a -> a -> a, a : a } -> Expect.Expectation"
+            },
+            {
+                "name": "zeroElement",
+                "comment": " The zero element is the element `0` such that `a ⊕ 0 = 0 ⊕ a = 0`, or `f 0 a = f a 0 = 0`, for some infix operator `⊕`, or binary function `f`.\n\nNotable examples include `0` for `*`, `Infinity` for `max` and `0` for `Bitwise.and`.\n\n",
+                "type": "a -> { r | f : a -> a -> a, a : a } -> Expect.Expectation"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Fuzz.Category",
+        "comment": " Fuzz.Category provides fuzz tests for common functions, like `map` and `andThen`.\n\nMany Elm data structures share some similar functions. I'm sure you've noticed `map` and `andThen`. There's `List.map`, `Set.map`, `Maybe.map` and so on. Since this is a very common pattern in Elm, you should provide them wherever they make sense for your own data structures, and use the functions in this module to make sure they behave as expected.\n\n\n# Map\n\nA common function for data structures in Elm is `map : (a -> b) -> T a -> T b` for some type `T`, such as `List` or `Set`. In mathematics, this is called a functor.\n\n    describe \"List.map\"\n        [ mapv1 List.map Fuzz.list\n        , mapv2 List.map Fuzz.list\n        , mapv3 List.map Fuzz.list\n        ]\n\nFunctors follow two laws:\nIdentity: `map identity = identity`, and\nComposition: `map (f << g) = map f << map g`.\n\n@docs mapv1, mapv2, mapv3\n\n\n# AndThen (also known as concatMap)\n\nAnother common function for data structures in Elm is `andThen : (a -> T b) -> T a -> T b` for some type `T`, such as `List` or `Set`. In mathematics, this is called a monad.\n\n    describe \"List.andThen\"\n        [ andThenv1 List.singleton List.concatMap Fuzz.list\n        , andThenv2 List.singleton List.concatMap Fuzz.list\n        , andThenv3 List.singleton List.concatMap Fuzz.list\n        ]\n\nMonads follow three laws:\nLeft identity: `singleton a |> andThen f ≡ f a`,\nRight identity: `m |> andThen singleton ≡ m`, and\nAssociativity: `(m |> andThen f) |> andThen g ≡ m |> andThen (\\x -> f x |> andThen g)`,\nwhere `m` is anything with the same type as `singleton a`, and `f` and `g` are `(a -> a)` functions.\n\n@docs andThenv1, andThenv2, andThenv3\n\n\n# Confessions\n\nActually, the real laws aren't quite as strict as what I wrote above. In order to make the Elm type checker happy, I had to apply more constraints than the mathematical theory strictly requires. We're using endofunctors `(a -> a)` instead of covariant functors `(a -> b)`, for example.\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "andThenv1",
+                "comment": " This function helps you test your `T.andThen` function, for every module `T` you can think of.\n",
+                "type": "(Basics.Float -> fa) -> ((Basics.Float -> fa) -> fa -> fa) -> (Fuzz.Fuzzer Basics.Float -> Fuzz.Fuzzer fa) -> Test.Test"
+            },
+            {
+                "name": "andThenv2",
+                "comment": " Another version of the `andThen` test helper, with a new set of types.\n",
+                "type": "(String.String -> fa) -> ((String.String -> fa) -> fa -> fa) -> (Fuzz.Fuzzer String.String -> Fuzz.Fuzzer fa) -> Test.Test"
+            },
+            {
+                "name": "andThenv3",
+                "comment": " A third version of the `map` test helper, with a third set of types.\n",
+                "type": "(List.List Char.Char -> fa) -> ((List.List Char.Char -> fa) -> fa -> fa) -> (Fuzz.Fuzzer (List.List Char.Char) -> Fuzz.Fuzzer fa) -> Test.Test"
+            },
+            {
+                "name": "mapv1",
+                "comment": " This function helps you test your `T.map` function, for every module `T` you can think of.\n",
+                "type": "((Basics.Float -> Basics.Float) -> la -> la) -> (Fuzz.Fuzzer Basics.Float -> Fuzz.Fuzzer la) -> Test.Test"
+            },
+            {
+                "name": "mapv2",
+                "comment": " Another version of the `map` test helper, with a new set of types.\n",
+                "type": "((String.String -> String.String) -> la -> la) -> (Fuzz.Fuzzer String.String -> Fuzz.Fuzzer la) -> Test.Test"
+            },
+            {
+                "name": "mapv3",
+                "comment": " A third version of the `map` test helper, with a third set of types.\n",
+                "type": "((List.List Char.Char -> List.List Char.Char) -> la -> la) -> (Fuzz.Fuzzer (List.List Char.Char) -> Fuzz.Fuzzer la) -> Test.Test"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Fuzz.Json",
+        "comment": " Fuzz.Json lets you test your json encoders and decoders.\n\n    roundtripTests =\n        describe \"json roundtrip tests\"\n            [ roundtrip \"int encode/decode\" Fuzz.int Json.Encode.int Json.Decode.int\n            , roundtrip \"float encode/decode\" Fuzz.float Json.Encode.float Json.Decode.float\n            , roundtrip \"string encode/decode\" Fuzz.string Json.Encode.string Json.Decode.string\n            , roundtrip \"bool encode/decode\" Fuzz.bool Json.Encode.bool Json.Decode.bool\n            ]\n\n@docs roundtrip\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "roundtrip",
+                "comment": " Roundtrip takes a fuzzer, a json encoder, a json decoder, and sees if an encode/decode cycle succeeds without losing any data.\n",
+                "type": "String.String -> Fuzz.Fuzzer a -> (a -> Json.Encode.Value) -> Json.Decode.Decoder a -> Test.Test"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Fuzz.Opaque",
+        "comment": " Let's say you're testing a `List`, and you don't really care what you put into the list, as long as there are values, perhaps with a certain property.\n\nWhy would you use a list of `int`, when what you really want is a list of `a`, or a list of `comparable`? That's where this module fits in.\n\nAlso see docs for `Fuzz.Opaque.Unique`. That's a collection of these same fuzzers, but constructed in a way as to never give duplicate values. That is, if you generate a list of those values, there will be a very very low probability of a duplicate element in that list.\n\nTypes match `Fuzz.Opaque.Unique` with same name. Collision risk between `Fuzz.Opaque.a` and `Fuzz.Opaque.Unique.a` is very very low.\n\n\n# Comparable\n\nTypes match `Fuzz.Opaque.Unique.comparable` with same number.\n\n@docs comparable, comparable2, comparable3\n\n\n# Appendable\n\nTypes match `Fuzz.Opaque.Unique.appendable` with same number.\n\n@docs appendable, appendable2\n\n\n# Number\n\nNumbers were removed for Elm 0.19, because `elm-test` now fails `Expect.equal` if the arguments are `Float`. There are too many exposed things relying on `Expect.equal` for arbitrary types, that documenting that `Float`s don't work anymore would be way to noisy.\n\n\n# Opaque\n\nFuzzers that generate opaque types with no constraints, e.g. `Fuzzer a`. Their types aren't exposed, so you cannot create an `A` in your code; `Fuzzer a` is your only option.\n\nNote that `Fuzzer a` is a different type from `Fuzzer b` etc.\n\n@docs a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "a",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Fuzz.Opaque.A"
+            },
+            {
+                "name": "appendable",
+                "comment": " `Fuzzer appendable`\n",
+                "type": "Fuzz.Fuzzer String.String"
+            },
+            {
+                "name": "appendable2",
+                "comment": " `Fuzzer appendable2`\n",
+                "type": "Fuzz.Fuzzer (List.List Fuzz.Opaque.Opaque)"
+            },
+            {
+                "name": "b",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Fuzz.Opaque.B"
+            },
+            {
+                "name": "c",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Fuzz.Opaque.C"
+            },
+            {
+                "name": "comparable",
+                "comment": " `Fuzzer comparable`\n",
+                "type": "Fuzz.Fuzzer ( String.String, Basics.Int )"
+            },
+            {
+                "name": "comparable2",
+                "comment": " `Fuzzer comparable2`\n",
+                "type": "Fuzz.Fuzzer ( String.String, Basics.Int, String.String )"
+            },
+            {
+                "name": "comparable3",
+                "comment": " `Fuzzer comparable3`\n",
+                "type": "Fuzz.Fuzzer ( String.String, Basics.Int, Char.Char )"
+            },
+            {
+                "name": "d",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Fuzz.Opaque.D"
+            },
+            {
+                "name": "e",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Fuzz.Opaque.E"
+            },
+            {
+                "name": "f",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Fuzz.Opaque.F"
+            },
+            {
+                "name": "g",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Fuzz.Opaque.G"
+            },
+            {
+                "name": "h",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Fuzz.Opaque.H"
+            },
+            {
+                "name": "i",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Fuzz.Opaque.I"
+            },
+            {
+                "name": "j",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Fuzz.Opaque.J"
+            },
+            {
+                "name": "k",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Fuzz.Opaque.K"
+            },
+            {
+                "name": "l",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Fuzz.Opaque.L"
+            },
+            {
+                "name": "m",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Fuzz.Opaque.M"
+            },
+            {
+                "name": "n",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Fuzz.Opaque.N"
+            },
+            {
+                "name": "o",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Fuzz.Opaque.O"
+            },
+            {
+                "name": "p",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Fuzz.Opaque.P"
+            },
+            {
+                "name": "q",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Fuzz.Opaque.Q"
+            },
+            {
+                "name": "r",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Fuzz.Opaque.R"
+            },
+            {
+                "name": "s",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Fuzz.Opaque.S"
+            },
+            {
+                "name": "t",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Fuzz.Opaque.T"
+            },
+            {
+                "name": "u",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Fuzz.Opaque.U"
+            },
+            {
+                "name": "v",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Fuzz.Opaque.V"
+            },
+            {
+                "name": "w",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Fuzz.Opaque.W"
+            },
+            {
+                "name": "x",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Fuzz.Opaque.X"
+            },
+            {
+                "name": "y",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Fuzz.Opaque.Y"
+            },
+            {
+                "name": "z",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Fuzz.Opaque.Z"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Fuzz.Opaque.Unique",
+        "comment": " See docs for `Fuzz.Opaque`. This is a collection of those same fuzzers, but constructed in a way as to never give duplicate values. That is, if you generate a list of these values, there will be a very very low probability of a duplicate element in that list.\n\nTypes match `Fuzz.Opaque` with same name. Collision risk between `Fuzz.Opaque.a` and `Fuzz.Opaque.Unique.a` is very very low.\n\n\n# Comparable\n\nTypes match `Fuzz.Opaque.comparable` with same number.\n\n@docs comparable, comparable2, comparable3\n\n\n# Appendable\n\nTypes match `Fuzz.Opaque.appendable` with same number.\n\n@docs appendable\n\n\n# Number\n\nNumbers were removed for Elm 0.19, because `elm-test` now fails `Expect.equal` if the arguments are `Float`. There are too many exposed things relying on `Expect.equal` for arbitrary types, that documenting that `Float`s don't work anymore would be way to noisy.\n\n\n# Opaque\n\nFuzzers that generate opaque types with no constraints, e.g. `Fuzzer a`. Their types aren't exposed, so you cannot create an `A` in your code; `Fuzzer a` is your only option.\n\nNote that `Fuzzer a` is a different type from `Fuzzer b` etc.\n\n@docs a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "a",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Fuzz.Opaque.Unique.A"
+            },
+            {
+                "name": "appendable",
+                "comment": " `Fuzzer appendable`\n",
+                "type": "Fuzz.Fuzzer String.String"
+            },
+            {
+                "name": "b",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Fuzz.Opaque.Unique.B"
+            },
+            {
+                "name": "c",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Fuzz.Opaque.Unique.C"
+            },
+            {
+                "name": "comparable",
+                "comment": " `Fuzzer comparable`\n",
+                "type": "Fuzz.Fuzzer ( String.String, Basics.Int )"
+            },
+            {
+                "name": "comparable2",
+                "comment": " `Fuzzer comparable2`\n",
+                "type": "Fuzz.Fuzzer ( String.String, Basics.Int, String.String )"
+            },
+            {
+                "name": "comparable3",
+                "comment": " `Fuzzer comparable3`\n",
+                "type": "Fuzz.Fuzzer ( String.String, Basics.Int, Char.Char )"
+            },
+            {
+                "name": "d",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Fuzz.Opaque.Unique.D"
+            },
+            {
+                "name": "e",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Fuzz.Opaque.Unique.E"
+            },
+            {
+                "name": "f",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Fuzz.Opaque.Unique.F"
+            },
+            {
+                "name": "g",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Fuzz.Opaque.Unique.G"
+            },
+            {
+                "name": "h",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Fuzz.Opaque.Unique.H"
+            },
+            {
+                "name": "i",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Fuzz.Opaque.Unique.I"
+            },
+            {
+                "name": "j",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Fuzz.Opaque.Unique.J"
+            },
+            {
+                "name": "k",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Fuzz.Opaque.Unique.K"
+            },
+            {
+                "name": "l",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Fuzz.Opaque.Unique.L"
+            },
+            {
+                "name": "m",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Fuzz.Opaque.Unique.M"
+            },
+            {
+                "name": "n",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Fuzz.Opaque.Unique.N"
+            },
+            {
+                "name": "o",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Fuzz.Opaque.Unique.O"
+            },
+            {
+                "name": "p",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Fuzz.Opaque.Unique.P"
+            },
+            {
+                "name": "q",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Fuzz.Opaque.Unique.Q"
+            },
+            {
+                "name": "r",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Fuzz.Opaque.Unique.R"
+            },
+            {
+                "name": "s",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Fuzz.Opaque.Unique.S"
+            },
+            {
+                "name": "t",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Fuzz.Opaque.Unique.T"
+            },
+            {
+                "name": "u",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Fuzz.Opaque.Unique.U"
+            },
+            {
+                "name": "v",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Fuzz.Opaque.Unique.V"
+            },
+            {
+                "name": "w",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Fuzz.Opaque.Unique.W"
+            },
+            {
+                "name": "x",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Fuzz.Opaque.Unique.X"
+            },
+            {
+                "name": "y",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Fuzz.Opaque.Unique.Y"
+            },
+            {
+                "name": "z",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Fuzz.Opaque.Unique.Z"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Fuzz.Preprocess",
+        "comment": " Sometimes you want positive integers, or strings that don't contain spaces, or some other thing that's slightly different from the normal fuzzers. It would be really nice if we could preprocess them, with e.g. `abs`, or `String.filter (\\c -> c /= ' ')`, or some other function.\n\nIn order to preprocess inputs before they enter the fuzz function, it would be useful to have a function like this:\n\n    preprocess : (a -> a) -> (a -> Expect.Expectation) -> a -> Expect.Expectation\n\nLuckily, this exactly matches forward function composition:\n\n    (>>) : (a -> b) -> (b -> c) -> a -> c\n    -- in this case, a is the same type as b:\n         : (a -> a) -> (a -> c) -> a -> c\n\nSo use that instead, like this:\n\n    fuzz int \"expect input to be positive\" <|\n        abs\n            >> (\\a -> a + 1 |> Expect.greaterThan 0)\n\nBut if you want multiple inputs, it's a bit trickier. We have two easy options. Either, use tuples:\n\n    fuzz (tuple ( int, int )) \"expect sum to be positive\" <|\n        (\\( a, b ) -> ( abs a, abs b ))\n            >> (\\( a, b ) -> a + b |> Expect.greaterThan 0)\n\nOr, use a let-binding:\n\n    fuzz2 int int \"expect sum to be positive\" <|\n        \\a b ->\n            let\n                a =\n                    abs a\n\n                b =\n                    abs b\n            in\n            a + b |> Expect.greaterThan 0\n\n@docs preprocess\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "preprocess",
+                "comment": " ",
+                "type": "(a -> a) -> (a -> Expect.Expectation) -> a -> Expect.Expectation"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Fuzz.Table",
+        "comment": " Fuzz.Table allows you to run fuzzers with known edge-cases. It'll run a fuzzer just like normal, but in addition, you can give it a list of inputs to try first.\n\nNext time you have a test that only fails once in a blue moon, like this one:\n\n    fuzz int \"input is not equal to 11147\" <|\n        \\a -> a |> Expect.notEqual 11147\n\nyou can replace it with a `fuzzTable` and add that edge case, so that elm-test will try that edge case on each test run from now on:\n\n    fuzzTable int \"input is not equal to 11147\" [ 11147 ] <|\n        \\a -> a |> Expect.notEqual 11147\n\nThen that particular bug will never make it through your tests again!\n\n# FuzzTable\n\n@docs fuzzTable, fuzzTable2, fuzzTable3\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fuzzTable",
+                "comment": " Run a fuzzer just like normal, but first run a supplied list of edge cases.\n",
+                "type": "Fuzz.Fuzzer a -> String.String -> List.List a -> (a -> Expect.Expectation) -> Test.Test"
+            },
+            {
+                "name": "fuzzTable2",
+                "comment": " Run a 2-fuzzer just like normal, but first run a supplied list of edge cases.\n",
+                "type": "Fuzz.Fuzzer a -> Fuzz.Fuzzer b -> String.String -> List.List ( a, b ) -> (a -> b -> Expect.Expectation) -> Test.Test"
+            },
+            {
+                "name": "fuzzTable3",
+                "comment": " Run a 3-fuzzer just like normal, but first run a supplied list of edge cases.\n",
+                "type": "Fuzz.Fuzzer a -> Fuzz.Fuzzer b -> Fuzz.Fuzzer c -> String.String -> List.List ( a, b, c ) -> (a -> b -> c -> Expect.Expectation) -> Test.Test"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Fuzz.Unique",
+        "comment": " Fuzz.Unique contains fuzzers for built-in types, but with a very low probability of ever generating two equal values. Perfect if you're filling up a `Set comparable` from a `List comparable` and want that `Set` to be the same size as the `List`, or you just want each value to be unique.\n\n@docs int, float, string, char\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "char",
+                "comment": " Note: there are only ~113k possible unicode characters, so the probability of at least one duplicate `Char` in a `list char` is actually pretty high.\n",
+                "type": "Fuzz.Fuzzer Char.Char"
+            },
+            {
+                "name": "float",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Basics.Float"
+            },
+            {
+                "name": "int",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Basics.Int"
+            },
+            {
+                "name": "string",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Test.Table",
+        "comment": " Test.Table provides tools for writing table-driven tests. Only use `Test.Table` if you have a bunch of similar test cases that can all be reasonably described as a group. If you can, use `Fuzz.Table` instead.\n\n    testTable3 \"pythagorean triples\"\n        [ ( 3, 4, 5 )\n        , ( 5, 12, 13 )\n        , ( 6, 8, 10 )\n        , ( 7, 24, 25 )\n        , ( 8, 15, 17 )\n        , ( 9, 12, 15 )\n        , ( 9, 40, 41 )\n        , ( 10, 24, 26 )\n        , ( 12, 16, 20 )\n        , ( 12, 35, 37 )\n        , ( 14, 48, 50 )\n        , ( 15, 20, 25 )\n        , ( 15, 36, 39 )\n        , ( 16, 30, 34 )\n        , ( 18, 24, 30 )\n        , ( 20, 21, 29 )\n        , ( 21, 28, 35 )\n        , ( 24, 32, 40 )\n        , ( 24, 45, 51 )\n        , ( 27, 36, 45 )\n        , ( 30, 40, 50 )\n        ]\n        (\\a b c -> (a * a) + (b * b) |> Expect.equal (c * c))\n\n# TestTable\n\n@docs testTable, testTable2, testTable3\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "testTable",
+                "comment": " Test a list of inputs. Please use `Fuzz.Table.fuzzTable` instead if you can.\n",
+                "type": "String.String -> List.List a -> (a -> Expect.Expectation) -> Test.Test"
+            },
+            {
+                "name": "testTable2",
+                "comment": " Test a list of inputs. Please use `Fuzz.Table.fuzzTable2` instead if you can.\n",
+                "type": "String.String -> List.List ( a, b ) -> (a -> b -> Expect.Expectation) -> Test.Test"
+            },
+            {
+                "name": "testTable3",
+                "comment": " Test a list of inputs. Please use `Fuzz.Table.fuzzTable3` instead if you can.\n",
+                "type": "String.String -> List.List ( a, b, c ) -> (a -> b -> c -> Expect.Expectation) -> Test.Test"
+            }
+        ],
+        "binops": []
+    }
+]

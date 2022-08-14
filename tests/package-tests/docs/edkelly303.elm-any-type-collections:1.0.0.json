@@ -1,0 +1,77 @@
+[
+    {
+        "name": "Any.Dict",
+        "comment": "\n\n\n# Data\n\n@docs Dict\n\n\n# Interface\n\n@docs Interface\n\n@docs makeInterface\n\n",
+        "unions": [
+            {
+                "name": "Dict",
+                "comment": " A replacement for `elm/core`'s `Dict` data structure; the difference is that\nkeys can be of any type, not just `comparable`.\n\n(When I say \"any\" type, there's one proviso: you must be able to provide a pair\nof functions that can convert your key type into a `comparable` and back\nagain. So this won't work with functions, but it will work with custom types.)\n\n",
+                "args": [
+                    "k",
+                    "v",
+                    "comparable"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Interface",
+                "comment": " An `Interface` is just a record containing functions that mirror the API of\nthe `elm/core` `Dict` module.\n\nThe type signature might look daunting, but in practice you can ignore it.\n\nAll you need to remember is that if you create an `Interface` called `dict`, you\ncan use it just like the `elm-core` `Dict` API:\n\n    -- elm/core\n    myDict =\n        Dict.singleton 1 \"hello\"\n\n    -- edkelly303/elm-any-type-collections\n    dict =\n        Any.Dict.makeInterface\n            { fromComparable = identity\n            , toComparable = identity\n            }\n\n    myDict =\n        dict.singleton 1 \"hello\"\n\n",
+                "args": [
+                    "k",
+                    "v",
+                    "v2",
+                    "output",
+                    "comparable"
+                ],
+                "type": "{ empty : Any.Dict.Dict k v comparable, singleton : k -> v -> Any.Dict.Dict k v comparable, insert : k -> v -> Any.Dict.Dict k v comparable -> Any.Dict.Dict k v comparable, update : k -> (Maybe.Maybe v -> Maybe.Maybe v) -> Any.Dict.Dict k v comparable -> Any.Dict.Dict k v comparable, remove : k -> Any.Dict.Dict k v comparable -> Any.Dict.Dict k v comparable, isEmpty : Any.Dict.Dict k v comparable -> Basics.Bool, member : k -> Any.Dict.Dict k v comparable -> Basics.Bool, get : k -> Any.Dict.Dict k v comparable -> Maybe.Maybe v, size : Any.Dict.Dict k v comparable -> Basics.Int, keys : Any.Dict.Dict k v comparable -> List.List k, values : Any.Dict.Dict k v comparable -> List.List v, toList : Any.Dict.Dict k v comparable -> List.List ( k, v ), fromList : List.List ( k, v ) -> Any.Dict.Dict k v comparable, map : (k -> v -> v2) -> Any.Dict.Dict k v comparable -> Any.Dict.Dict k v2 comparable, foldl : (k -> v -> output -> output) -> output -> Any.Dict.Dict k v comparable -> output, foldr : (k -> v -> output -> output) -> output -> Any.Dict.Dict k v comparable -> output, filter : (k -> v -> Basics.Bool) -> Any.Dict.Dict k v comparable -> Any.Dict.Dict k v comparable, partition : (k -> v -> Basics.Bool) -> Any.Dict.Dict k v comparable -> ( Any.Dict.Dict k v comparable, Any.Dict.Dict k v comparable ), union : Any.Dict.Dict k v comparable -> Any.Dict.Dict k v comparable -> Any.Dict.Dict k v comparable, intersect : Any.Dict.Dict k v comparable -> Any.Dict.Dict k v comparable -> Any.Dict.Dict k v comparable, diff : Any.Dict.Dict k v comparable -> Any.Dict.Dict k v comparable -> Any.Dict.Dict k v comparable, merge : (k -> v -> output -> output) -> (k -> v -> v2 -> output -> output) -> (k -> v2 -> output -> output) -> Any.Dict.Dict k v comparable -> Any.Dict.Dict k v2 comparable -> output -> output }"
+            }
+        ],
+        "values": [
+            {
+                "name": "makeInterface",
+                "comment": " Use `makeInterface` to define an `Interface` for your custom `Dict`\ntype. You need to supply two functions:\n\n1.  `toComparable`, which converts your key type into any `comparable` type (i.e.\n    `Int`, `String`, `Float`, or a tuple containing only `comparable` types)\n2.  `fromComparable`, which converts that same `comparable` type back into your\n    key type.\n\nIt's a good idea to define the `Interface` as a top-level value. Once you've\ndefined the `Interface`, you can use it anywhere in your code without needing to\npass it explicitly to your functions.\n\nFor example, here we define the `Interface` as a top-level value called\n`colourDictInterface`:\n\n    type Colour\n        = Red\n        | Green\n        | Blue\n\n    colourToInt c =\n        case c of\n            Red ->\n                0\n\n            Green ->\n                1\n\n            Blue ->\n                2\n\n    colourFromInt i =\n        case i of\n            0 ->\n                Red\n\n            1 ->\n                Green\n\n            _ ->\n                Blue\n\n    colourDictInterface =\n        makeInterface\n            { toComparable = colourToInt\n            , fromComparable = colourFromInt\n            }\n\n    myColourDict =\n        colourDictInterface.fromList\n            [ ( Red, \"This is red!\" )\n            , ( Blue, \"This is blue!\" )\n            ]\n\n    thisIsTrue : Bool\n    thisIsTrue =\n        colourDictInterface.get Red myColourDict\n            == Just \"This is red!\"\n\n",
+                "type": "{ toComparable : k -> comparable, fromComparable : comparable -> k } -> Any.Dict.Interface k v v2 output comparable"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Any.Set",
+        "comment": "\n\n\n# Data\n\n@docs Set\n\n\n# Interface\n\n@docs Interface\n\n@docs makeInterface\n\n",
+        "unions": [
+            {
+                "name": "Set",
+                "comment": " A replacement for `elm/core`'s `Set` data structure; the difference is that\nmembers can be of any type, not just `comparable`.\n\n(When I say \"any\" type, there's one proviso: you must be able to provide a pair\nof functions that can convert your member type into a `comparable` and back\nagain. So this won't work with functions, but it will work with custom types.)\n\n",
+                "args": [
+                    "a",
+                    "comparable"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Interface",
+                "comment": " An `Interface` is just a record containing functions that mirror the API of\nthe `elm/core` `Set` module.\n\nThe type signature might look daunting, but in practice you can ignore it.\n\nAll you need to remember is that if you create an `Interface` called `set`, you\ncan use it just like the `elm-core` `Set` API:\n\n    -- elm/core\n    mySet =\n        Set.singleton 1\n\n    -- edkelly303/elm-any-type-collections\n    set =\n        Any.Set.makeInterface\n            { fromComparable = identity\n            , toComparable = identity\n            }\n\n    mySet =\n        set.singleton 1\n\n\n## The exception: `map`\n\nThere is one function in this package's `Set` interface that doesn't quite match\nthe `elm-core` `Set` API.\n\nThe `map` function takes an extra argument:\n\n    -- elm/core\n    Set.map :\n        (comparable -> comparable2)\n        -> Set comparable\n        -> Set comparable2\n\n    -- edkelly303/elm-any-type-collections\n    set.map :\n        (b -> comparable2)\n        (a -> b)\n        -> Set a comparable\n        -> Set b comparable2\n\nThis is necessary because `map` is able to change the type of the members of the\n`Set` from `a` to `b`. We need to provide a way to turn that `b` into another\n`comparable` type so that the resulting `Set` will be able to store it.\n\n",
+                "args": [
+                    "a",
+                    "b",
+                    "output",
+                    "comparable",
+                    "comparable2"
+                ],
+                "type": "{ empty : Any.Set.Set a comparable, singleton : a -> Any.Set.Set a comparable, insert : a -> Any.Set.Set a comparable -> Any.Set.Set a comparable, remove : a -> Any.Set.Set a comparable -> Any.Set.Set a comparable, isEmpty : Any.Set.Set a comparable -> Basics.Bool, member : a -> Any.Set.Set a comparable -> Basics.Bool, size : Any.Set.Set a comparable -> Basics.Int, union : Any.Set.Set a comparable -> Any.Set.Set a comparable -> Any.Set.Set a comparable, intersect : Any.Set.Set a comparable -> Any.Set.Set a comparable -> Any.Set.Set a comparable, diff : Any.Set.Set a comparable -> Any.Set.Set a comparable -> Any.Set.Set a comparable, toList : Any.Set.Set a comparable -> List.List a, fromList : List.List a -> Any.Set.Set a comparable, map : (b -> comparable2) -> (a -> b) -> Any.Set.Set a comparable -> Any.Set.Set b comparable2, foldl : (a -> output -> output) -> output -> Any.Set.Set a comparable -> output, foldr : (a -> output -> output) -> output -> Any.Set.Set a comparable -> output, filter : (a -> Basics.Bool) -> Any.Set.Set a comparable -> Any.Set.Set a comparable, partition : (a -> Basics.Bool) -> Any.Set.Set a comparable -> ( Any.Set.Set a comparable, Any.Set.Set a comparable ), toggle : a -> Any.Set.Set a comparable -> Any.Set.Set a comparable }"
+            }
+        ],
+        "values": [
+            {
+                "name": "makeInterface",
+                "comment": " Use `makeInterface` to define an `Interface` for your custom `Set`\ntype. You need to supply two functions:\n\n1.  `toComparable`, which converts your key type into any `comparable` type (i.e.\n    `Int`, `String`, `Float`, or a tuple containing only `comparable` types)\n2.  `fromComparable`, which converts that same `comparable` type back into your\n    key type.\n\nIt's a good idea to define the `Interface` as a top-level value. Once you've\ndefined the `Interface`, you can use it anywhere in your code without needing to\npass it explicitly to your functions.\n\nFor example, here we define the `Interface` as a top-level value called `idSet`:\n\n    type Id\n        = Id Int\n\n    idSet =\n        makeInterface\n            { toComparable = \\(Id int) = int\n            , fromComparable = Id\n            }\n\n    myIdSet =\n        idSet.fromList [ Id 1, Id 2, Id 3 ]\n\n    thisIsTrue : Bool\n    thisIsTrue =\n        idSet.member (Id 2) myIdSet\n\n",
+                "type": "{ toComparable : a -> comparable, fromComparable : comparable -> a } -> Any.Set.Interface a b output comparable comparable2"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,451 @@
+[
+    {
+        "name": "UiBase.AircraftDetails",
+        "comment": " Provide consistent view of related items\n\n\n# View methods\n\n@docs aircraftDetailsColumn, relatedItemsListAsRow, sectionHeadingRow\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "aircraftDetailsColumn",
+                "comment": " The details of an aircraft, included misnomers and related items,\narranged in a column to consistently control spacing\n",
+                "type": "(UiBase.AircraftTypes.TypedAircraftData -> msg) -> Maybe.Maybe UiBase.AircraftTypes.RelatedToAircraft -> Element.Element msg"
+            },
+            {
+                "name": "relatedItemsListAsRow",
+                "comment": " All the related items of a single type as a single row\n",
+                "type": "(UiBase.AircraftTypes.TypedAircraftData -> msg) -> UiBase.AircraftTypes.TypedAircraftList -> Element.Element msg"
+            },
+            {
+                "name": "sectionHeadingRow",
+                "comment": " Heading row for a section\n",
+                "type": "List.List (Element.Element msg) -> Element.Element msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "UiBase.AircraftTypes",
+        "comment": " Provide types to be shared across applications\n\n\n# Generic Aircraft Data\n\n@docs GenericAircraftData\n\n# Aircraft Type\n\n@docs AircraftType, aircraftTypeString\n\n# Typed Aircraft, single and lists\n\n@docs TypedAircraftData, TypedAircraftList, isEmpty, toTypedList\n\n# Collections of related aircraft data\n\n@docs RelatedToAircraft, RelatedToSearch\n\n",
+        "unions": [
+            {
+                "name": "AircraftType",
+                "comment": " Enumerated types of aircraft\n",
+                "args": [],
+                "cases": [
+                    [
+                        "ManufacturerType",
+                        []
+                    ],
+                    [
+                        "AircraftType",
+                        []
+                    ],
+                    [
+                        "VariantType",
+                        []
+                    ],
+                    [
+                        "CommonNameType",
+                        []
+                    ],
+                    [
+                        "ToBeDeletedSearchType",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "GenericAircraftData",
+                "comment": " Data that is common to all kinds of aircraft related entities\n",
+                "args": [],
+                "type": "{ id : Basics.Int, name : String.String, notes_markdown : String.String, misnomers : List.List String.String }"
+            },
+            {
+                "name": "RelatedToAircraft",
+                "comment": " All the typed entities related to some particular typed aircraft data, grouped by type and including the base.\nThere will never be other items of the same type.\n",
+                "args": [],
+                "type": "{ base : UiBase.AircraftTypes.TypedAircraftData, lists : Vector3.Vector3 UiBase.AircraftTypes.TypedAircraftList }"
+            },
+            {
+                "name": "RelatedToSearch",
+                "comment": " All the typed entities related to a particular search, grouped by type\n",
+                "args": [],
+                "type": "{ lists : Vector4.Vector4 UiBase.AircraftTypes.TypedAircraftList }"
+            },
+            {
+                "name": "TypedAircraftData",
+                "comment": " Generic aircraft data plus an aircraft type\n",
+                "args": [],
+                "type": "{ aircraftType : UiBase.AircraftTypes.AircraftType, aircraftData : UiBase.AircraftTypes.GenericAircraftData }"
+            },
+            {
+                "name": "TypedAircraftList",
+                "comment": " List of generic aircraft data of the same aircraft type\n",
+                "args": [],
+                "type": "{ aircraftType : UiBase.AircraftTypes.AircraftType, list : List.List UiBase.AircraftTypes.GenericAircraftData }"
+            }
+        ],
+        "values": [
+            {
+                "name": "aircraftTypeString",
+                "comment": " Convert an aircraft type to a string\n",
+                "type": "UiBase.AircraftTypes.AircraftType -> String.String"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Check of a typed aircraft list is empty\n",
+                "type": "UiBase.AircraftTypes.TypedAircraftList -> Basics.Bool"
+            },
+            {
+                "name": "toTypedList",
+                "comment": " Convert a list of a single type of entity to a generic list that holds items typed individually\n",
+                "type": "UiBase.AircraftTypes.TypedAircraftList -> List.List UiBase.AircraftTypes.TypedAircraftData"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "UiBase.Alerts",
+        "comment": " Display an alert, inline on the page\n\n\n# Alert\n\n@docs alert\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "alert",
+                "comment": " Display an alert, inline on the page\n",
+                "type": "String.String -> Element.Element msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "UiBase.Buttons",
+        "comment": " Provide clickable buttons\n\n\n# Action buttons\n\n@docs actionButton, mediumActionButton, smallActionButton, pageSelectButton\n\n\n# Highlighting buttons\n\n@docs highlightingButton, smallHighlightingButton\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "actionButton",
+                "comment": " Largest button that indicates you can do something\n",
+                "type": "msg -> String.String -> Element.Element msg"
+            },
+            {
+                "name": "highlightingButton",
+                "comment": " Normal sized button with white background, becomes royal blue on mouseover\n",
+                "type": "msg -> String.String -> Element.Element msg"
+            },
+            {
+                "name": "mediumActionButton",
+                "comment": " Medium button that indicates you can do something\n",
+                "type": "msg -> String.String -> Element.Element msg"
+            },
+            {
+                "name": "pageSelectButton",
+                "comment": " Button for right hand top menu that selects a page\n",
+                "type": "msg -> String.String -> Element.Element msg"
+            },
+            {
+                "name": "smallActionButton",
+                "comment": " Smallest button that indicates you can do something\n",
+                "type": "msg -> String.String -> Element.Element msg"
+            },
+            {
+                "name": "smallHighlightingButton",
+                "comment": " Small button with white background, becomes royal blue on mouseover\n",
+                "type": "msg -> String.String -> Element.Element msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "UiBase.Colors",
+        "comment": " Predefine some colors by role. Uses phollyer/elm-ui-colors, which provides named colors.\n\n\n# Colours by role\n\n@docs navBackground, navTextColour\n\n\n# Utilities\n\n@docs toCssColor\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "navBackground",
+                "comment": " Return navigation background colour\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "navTextColour",
+                "comment": " Return navigation text colour\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "toCssColor",
+                "comment": " Convert an elm-ui color to a programmable css color\n",
+                "type": "Element.Color -> Css.Color"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "UiBase.Constants",
+        "comment": " Provide style constants\n\n\n# Constants\n\n@docs defaultRounding\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "defaultRounding",
+                "comment": " Default rounding\n",
+                "type": "number"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "UiBase.FontSizes",
+        "comment": " Support consistent fontSizes\n\n\n# Sizes (in increasing size order)\n\n@docs smallFontSize, normalFontSize, largeFontSize, superLargeFontSize, extraLargeFontSize\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "extraLargeFontSize",
+                "comment": " Extra large\n",
+                "type": "Element.Attr decorative msg"
+            },
+            {
+                "name": "largeFontSize",
+                "comment": " Large\n",
+                "type": "Element.Attr decorative msg"
+            },
+            {
+                "name": "normalFontSize",
+                "comment": " Normal\n",
+                "type": "Element.Attr decorative msg"
+            },
+            {
+                "name": "smallFontSize",
+                "comment": " Small\n",
+                "type": "Element.Attr decorative msg"
+            },
+            {
+                "name": "superLargeFontSize",
+                "comment": " Super large\n",
+                "type": "Element.Attr decorative msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "UiBase.Help",
+        "comment": " Provide control structues and a method for adding onHover help text\n\n\n# Control the visibility of the help\n\n@docs HelpControl\n\n\n# Formatting\n\n@docs withHelp\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "HelpControl",
+                "comment": " Toggle is sent each time hovering starts or ends, with the current open/closed state\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ toggle : Basics.Bool -> msg, state : Basics.Bool }"
+            }
+        ],
+        "values": [
+            {
+                "name": "withHelp",
+                "comment": " Add an info icon to the right of the element passed in\n",
+                "type": "List.List String.String -> Maybe.Maybe (UiBase.Help.HelpControl msg) -> Element.Element msg -> Element.Element msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "UiBase.OnKey",
+        "comment": " Send messages when particular keys are pressed\n\n\n# Convenience methods\n\n@docs onEnter, onEscape\n\n\n# General method\n\n@docs onKey\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "onEnter",
+                "comment": " Send msg when Enter key is pressed\n",
+                "type": "msg -> Element.Attribute msg"
+            },
+            {
+                "name": "onEscape",
+                "comment": " Send msg when Escape key is pressed\n",
+                "type": "msg -> Element.Attribute msg"
+            },
+            {
+                "name": "onKey",
+                "comment": " Send msg when keyValue key is pressed. Keyvalue must be a string that is the value of a particular key\n\n        onKey \"Enter\" msg\n\n        onKey \"Q\" msg\n\n",
+                "type": "String.String -> msg -> Element.Attribute msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "UiBase.Product",
+        "comment": " Provide Product type and functions for sorting lists of products\n\n\n# Product\n\n@docs Product\n\n\n# Sorting\n\n@docs SortDirection, SortDescription, sortDirection, toggleSort\n\n\n# Utility\n\n@docs productSources\n\n",
+        "unions": [
+            {
+                "name": "SortDirection",
+                "comment": " Possible sort directions\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Ascending",
+                        []
+                    ],
+                    [
+                        "Descending",
+                        []
+                    ],
+                    [
+                        "Unsorted",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Product",
+                "comment": " Product type\n",
+                "args": [],
+                "type": "{ id : Basics.Int, source : String.String, manufacturer : String.String, product_code : String.String, description : String.String, scale : String.String, category : String.String, url : String.String, image_url : Maybe.Maybe String.String, price : String.String, display_short_description : Basics.Bool, indexed : Basics.Bool, first_seen : Date.Date, last_price_update : Date.Date }"
+            },
+            {
+                "name": "SortDescription",
+                "comment": " Details of what column is currently sorted, and how to sort it\n",
+                "args": [],
+                "type": "{ columnName : String.String, accessor : UiBase.Product.Product -> String.String, direction : UiBase.Product.SortDirection }"
+            }
+        ],
+        "values": [
+            {
+                "name": "productSources",
+                "comment": " List of product sources\n",
+                "type": "List.List String.String"
+            },
+            {
+                "name": "sortDirection",
+                "comment": " Given a column name and the current sort description, determine the appropriate sort direction\n",
+                "type": "String.String -> UiBase.Product.SortDescription -> UiBase.Product.SortDirection"
+            },
+            {
+                "name": "toggleSort",
+                "comment": " Given a column name to sort on and the current sort description, determine the new sort description\n",
+                "type": "String.String -> (UiBase.Product.Product -> String.String) -> UiBase.Product.SortDescription -> UiBase.Product.SortDescription"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "UiBase.ProductTable",
+        "comment": " Provide a consistent Product table experience\n\n\n# Description\n\n@docs ProductTableDescription, ProductTableSorting\n\n\n# Table\n\n@docs productTable\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "ProductTableDescription",
+                "comment": " Shared attributes and state/events that must be provided by provided by consumers\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ sorting : UiBase.ProductTable.ProductTableSorting (UiBase.Product.Product -> String.String) msg, setDisplayImage : Basics.Int -> msg, currentDate : Date.Date, sourceHelpControl : Maybe.Maybe (UiBase.Help.HelpControl msg), imageHelpControl : Maybe.Maybe (UiBase.Help.HelpControl msg) }"
+            },
+            {
+                "name": "ProductTableSorting",
+                "comment": " Message used to change sorting direction, and the specification of the current sorting\n",
+                "args": [
+                    "c",
+                    "msg"
+                ],
+                "type": "{ toggleSort : String.String -> c -> msg, sortDescription : UiBase.Product.SortDescription }"
+            }
+        ],
+        "values": [
+            {
+                "name": "productTable",
+                "comment": " The overall table\n",
+                "type": "UiBase.ProductTable.ProductTableDescription msg -> List.List UiBase.Product.Product -> Element.Element msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "UiBase.RelatedItemButtons",
+        "comment": " Provide consistent clickable buttons for search and related items\n\n\n# Buttons\n\n@docs searchResultButton, relatedItemButton\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "relatedItemButton",
+                "comment": " Related item button\n",
+                "type": "(UiBase.AircraftTypes.TypedAircraftData -> msg) -> UiBase.AircraftTypes.TypedAircraftData -> Element.Element msg"
+            },
+            {
+                "name": "searchResultButton",
+                "comment": " Search result button\n",
+                "type": "(UiBase.AircraftTypes.TypedAircraftData -> msg) -> UiBase.AircraftTypes.TypedAircraftData -> Element.Element msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "UiBase.SearchResults",
+        "comment": " Consistent search result rows\n\n\n# Search Results Rows\n\n@docs searchAircraftList\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "searchAircraftList",
+                "comment": " Formatted list, or nothing\n",
+                "type": "(UiBase.AircraftTypes.TypedAircraftData -> msg) -> Maybe.Maybe UiBase.AircraftTypes.RelatedToSearch -> Element.Element msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "UiBase.StringExtensions",
+        "comment": " Extensions to String and Lists of String\n\n\n# List String\n\n@docs joinGrammatically\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "joinGrammatically",
+                "comment": " Join a list of string, with Oxford comma\n",
+                "type": "List.List String.String -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "UiBase.SvgExtensions",
+        "comment": " Provide icons as elm-ui Elements\n\n# Icons\n\n@docs upArrow, downArrow, spinner, angleUp, angleDown\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "angleDown",
+                "comment": " Angle Down\n",
+                "type": "Element.Element msg"
+            },
+            {
+                "name": "angleUp",
+                "comment": " Angle Up\n",
+                "type": "Element.Element msg"
+            },
+            {
+                "name": "downArrow",
+                "comment": " Down arrow\n",
+                "type": "Element.Element msg"
+            },
+            {
+                "name": "spinner",
+                "comment": " Spinner\n",
+                "type": "Element.Element msg"
+            },
+            {
+                "name": "upArrow",
+                "comment": " Up arrow\n",
+                "type": "Element.Element msg"
+            }
+        ],
+        "binops": []
+    }
+]

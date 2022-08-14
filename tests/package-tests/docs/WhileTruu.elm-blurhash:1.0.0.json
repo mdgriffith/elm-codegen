@@ -1,0 +1,21 @@
+[
+    {
+        "name": "BlurHash",
+        "comment": " Display [blurhash](https://blurha.sh/)\n\n@docs toUri\n\n\n## Encoding\n\n@docs fromPixels\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fromPixels",
+                "comment": " Encode an array of pixel colors as a blurhash\n\n    import Color exposing (Color)\n    import Array exposing (Array)\n\n    pixels : Array Color\n    pixels =\n        Array.initialize 25 (\\i -> Color.rgb255 i i i)\n\n    mask : { width : Int, height : Int }\n    mask =\n        { width = 4, height = 4 }\n\n    fromPixels mask { rows = 5, columns = 5 } pixels\n        --> \"U01fC^t7WB%MIUWBayWBIUWBfQWB%Mj[ayof\"\n\n",
+                "type": "{ width : Basics.Int, height : Basics.Int } -> { rows : Basics.Int, columns : Basics.Int } -> Array.Array Color.Color -> String.String"
+            },
+            {
+                "name": "toUri",
+                "comment": " Convert a blurhash into an image URI. The float parameter is the `punch`,\nused to increase/decrease contrast of the resulting image\n\n    punch : Float\n    punch =\n        0.9\n\n    hash : String\n    hash =\n        \"LGFFaXYk^6#M@-5c,1J5@[or[Q6.\"\n\n    BlurHash.toUri { width = 3, height = 3 } punch hash\n    -->  \"data:image/bmp;base64,Qk1aAAAAAAAAADYAAAAoAAAAAwAAAAMAAAABABgAAAAAACQAAAATCwAAEwsAAAAAAAAAAAAAmp6Rr5BTZXaAAAAAsoyUvoRlY22PAAAAo3etuXWZiliIAAAA\"\n\n",
+                "type": "{ width : Basics.Int, height : Basics.Int } -> Basics.Float -> String.String -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

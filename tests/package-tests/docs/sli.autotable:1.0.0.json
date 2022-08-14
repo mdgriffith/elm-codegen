@@ -1,0 +1,330 @@
+[
+    {
+        "name": "Autotable",
+        "comment": " A datatable.\n\nSee an example of this library in action [here](https://gitlab.com/docmenthol/autotable/-/blob/master/examples/basic/src/Main.elm).\n\n\n# Types\n\n@docs Column, Filter, Model, Msg, Sorting\n\n\n# Defaults\n\n@docs noFiltering, noSorting\n\n\n# Init\n\n@docs init\n\n\n# Update\n\n@docs update\n\n\n# View\n\n@docs view\n\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " Table signals.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Sort",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Filter",
+                        [
+                            "String.String",
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "DragStart",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "DragEnd",
+                        []
+                    ],
+                    [
+                        "DragOver",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Drop",
+                        []
+                    ],
+                    [
+                        "StartEdit",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "FinishEdit",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "Edit",
+                        [
+                            "String.String",
+                            "Basics.Int",
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "NextPage",
+                        []
+                    ],
+                    [
+                        "PrevPage",
+                        []
+                    ],
+                    [
+                        "SetPage",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "ToggleSelection",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "ToggleSelectAll",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Column",
+                "comment": " Define a table column.\n",
+                "args": [
+                    "msg",
+                    "a"
+                ],
+                "type": "{ label : String.String, key : String.String, render : a -> String.String, editRender : a -> Basics.Int -> Html.Html msg, sort : a -> String.String, filter : a -> String.String -> Basics.Bool, update : a -> String.String -> a }"
+            },
+            {
+                "name": "Filter",
+                "comment": " Represents a filter.\n",
+                "args": [],
+                "type": "( String.String, String.String )"
+            },
+            {
+                "name": "Model",
+                "comment": " Table state.\n",
+                "args": [
+                    "msg",
+                    "a"
+                ],
+                "type": "{ columns : List.List (Autotable.Column msg a), data : Array.Array a, sorting : List.List Autotable.Sorting, filters : List.List Autotable.Filter, dragging : Maybe.Maybe String.String, editing : List.List Basics.Int, selections : List.List Basics.Int, page : Basics.Int, options : Autotable.Options.Options, key : String.String }"
+            },
+            {
+                "name": "Sorting",
+                "comment": " Represents a sorting direction.\n",
+                "args": [],
+                "type": "( String.String, Autotable.Direction )"
+            }
+        ],
+        "values": [
+            {
+                "name": "init",
+                "comment": " Create table state.\n",
+                "type": "String.String -> List.List (Autotable.Column msg a) -> List.List a -> Autotable.Options.Options -> Autotable.Model msg a"
+            },
+            {
+                "name": "noFiltering",
+                "comment": " No-op function for diabled filtering. This will also go away one day.\n",
+                "type": "a -> String.String -> Basics.Bool"
+            },
+            {
+                "name": "noSorting",
+                "comment": " No-op function for disabled sorting. This will go away one day.\n",
+                "type": "a -> String.String"
+            },
+            {
+                "name": "update",
+                "comment": " Update table state.\n",
+                "type": "Autotable.Msg -> Autotable.Model msg a -> Autotable.Model msg a"
+            },
+            {
+                "name": "view",
+                "comment": " Render table.\n",
+                "type": "Autotable.Model msg a -> (Autotable.Msg -> msg) -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Autotable.Options",
+        "comment": " Autotable options, allows configuration and toggling of features.\n\n\n# Types\n\n@docs SortingOption, FilteringOption, SelectingOption, DraggingOption, EditingOption, PaginationOption, FillOption, Options\n\n\n# Defaults\n\n@docs defaultOptions\n\n\n# Accessors\n\n@docs sorting, filtering, selecting, dragging, editing, pagination, fill\n\n",
+        "unions": [
+            {
+                "name": "DraggingOption",
+                "comment": " Toggle column re-ordering.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Dragging",
+                        []
+                    ],
+                    [
+                        "NoDragging",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "EditingOption",
+                "comment": " Toggle row editing.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Editing",
+                        []
+                    ],
+                    [
+                        "NoEditing",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "FillOption",
+                "comment": " Configure empty row fill.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NoFill",
+                        []
+                    ],
+                    [
+                        "Fill",
+                        [
+                            "Basics.Int"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "FilteringOption",
+                "comment": " Toggle column filtering.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Filtering",
+                        []
+                    ],
+                    [
+                        "NoFiltering",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Options",
+                "comment": " Options to be passed to the table.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Options",
+                        [
+                            "Autotable.Options.SortingOption",
+                            "Autotable.Options.FilteringOption",
+                            "Autotable.Options.SelectingOption",
+                            "Autotable.Options.DraggingOption",
+                            "Autotable.Options.EditingOption",
+                            "Autotable.Options.PaginationOption",
+                            "Autotable.Options.FillOption"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "PaginationOption",
+                "comment": " Configure pagination.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NoPagination",
+                        []
+                    ],
+                    [
+                        "Pagination",
+                        [
+                            "Basics.Int"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "SelectingOption",
+                "comment": " Toggle row selection.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Selecting",
+                        []
+                    ],
+                    [
+                        "NoSelecting",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "SortingOption",
+                "comment": " Toggle column sorting.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Sorting",
+                        []
+                    ],
+                    [
+                        "NoSorting",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "defaultOptions",
+                "comment": " Some nice defaults.\n",
+                "type": "Autotable.Options.Options"
+            },
+            {
+                "name": "dragging",
+                "comment": " Access dragging option.\n",
+                "type": "Autotable.Options.Options -> Autotable.Options.DraggingOption"
+            },
+            {
+                "name": "editing",
+                "comment": " Access editing option.\n",
+                "type": "Autotable.Options.Options -> Autotable.Options.EditingOption"
+            },
+            {
+                "name": "fill",
+                "comment": " Access fill option.\n",
+                "type": "Autotable.Options.Options -> Autotable.Options.FillOption"
+            },
+            {
+                "name": "filtering",
+                "comment": " Access filtering option.\n",
+                "type": "Autotable.Options.Options -> Autotable.Options.FilteringOption"
+            },
+            {
+                "name": "pagination",
+                "comment": " Access pagination option.\n",
+                "type": "Autotable.Options.Options -> Autotable.Options.PaginationOption"
+            },
+            {
+                "name": "selecting",
+                "comment": " Access selecting option.\n",
+                "type": "Autotable.Options.Options -> Autotable.Options.SelectingOption"
+            },
+            {
+                "name": "sorting",
+                "comment": " Access sorting option.\n",
+                "type": "Autotable.Options.Options -> Autotable.Options.SortingOption"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,365 @@
+[
+    {
+        "name": "Phoenix",
+        "comment": " Entrypoint for Phoenix\n\n\n# Definition\n\n@docs Msg\n@docs Model\n\n\n# Helpers\n\n@docs connect, new, push, update, mapMsg\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Model",
+                "comment": " Internal model\n",
+                "args": [
+                    "msg",
+                    "channelsModel"
+                ],
+                "type": "Phoenix.Internal.Types.Model msg channelsModel"
+            },
+            {
+                "name": "Msg",
+                "comment": " Internal messages\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "Phoenix.Internal.Types.Msg msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "connect",
+                "comment": " Connect the socket\n",
+                "type": "Phoenix.Config.Config msg -> Platform.Sub.Sub msg"
+            },
+            {
+                "name": "mapMsg",
+                "comment": " Map the msg\n",
+                "type": "(a -> b) -> Phoenix.Msg a -> Phoenix.Msg b"
+            },
+            {
+                "name": "new",
+                "comment": " Initialise the model\n",
+                "type": "Phoenix.Model msg channelsModel"
+            },
+            {
+                "name": "push",
+                "comment": " Push an event to a channel\n",
+                "type": "Phoenix.Config.Config msg -> Phoenix.Push.Push msg -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "update",
+                "comment": " Update the model\n",
+                "type": "Phoenix.Config.Config msg -> Phoenix.Socket.Socket msg -> (channelsModel -> List.List (Phoenix.Channel.Channel msg)) -> channelsModel -> Phoenix.Msg msg -> Phoenix.Model msg channelsModel -> ( Phoenix.Model msg channelsModel, Platform.Cmd.Cmd msg )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Phoenix.Channel",
+        "comment": " A channel declares which topic should be joined, registers event handlers and has various callbacks for possible lifecycle events.\n\n\n# Definition\n\n@docs Channel\n@docs Topic\n\n\n# Helpers\n\n@docs init, withPayload, on, onJoin, onRequestJoin, onJoinError, onError, onLeave, onLeaveError, withDebug, withPresence, map\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Channel",
+                "comment": " Representation of a Phoenix Channel\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "Phoenix.Channel.PhoenixChannel msg"
+            },
+            {
+                "name": "Topic",
+                "comment": " Topic of channel\n",
+                "args": [],
+                "type": "String.String"
+            }
+        ],
+        "values": [
+            {
+                "name": "init",
+                "comment": " Initialize a channel to a given topic.\n\n    init \"room:lobby\"\n\n",
+                "type": "Phoenix.Channel.Topic -> Phoenix.Channel.Channel msg"
+            },
+            {
+                "name": "map",
+                "comment": " Composes each callback with the function `a -> b`.\n",
+                "type": "(a -> b) -> Phoenix.Channel.Channel a -> Phoenix.Channel.Channel b"
+            },
+            {
+                "name": "on",
+                "comment": " Register an event handler for a event.\n\n    type Msg = NewMsg Value | ...\n\n    init \"roomy:lobby\"\n        |> on \"new_msg\" NewMsg\n\n",
+                "type": "String.String -> (Json.Decode.Value -> msg) -> Phoenix.Channel.Channel msg -> Phoenix.Channel.Channel msg"
+            },
+            {
+                "name": "onError",
+                "comment": " Set a callback which will be called if the channel process on the server crashed. The effect manager will automatically rejoin the channel after a crash.\n\n    type Msg =\n         ChannelCrashed | ...\n\n    init \"room:lobby\"\n        |> onError ChannelCrashed\n\n",
+                "type": "msg -> Phoenix.Channel.Channel msg -> Phoenix.Channel.Channel msg"
+            },
+            {
+                "name": "onJoin",
+                "comment": " Set a callback which will be called after you sucessfully joined the channel. It will also be called after you rejoined the channel after a disconnect unless you specified an `onRejoin` handler.\n\n    type Msg =\n        IsOnline Json.Encode.Value | ...\n\n    init \"room:lobby\"\n        |> onJoin IsOnline\n\n",
+                "type": "(Json.Decode.Value -> msg) -> Phoenix.Channel.Channel msg -> Phoenix.Channel.Channel msg"
+            },
+            {
+                "name": "onJoinError",
+                "comment": " Set a callback which will be called if the server declined your request to join the channel.\n\n    type Msg =\n        CouldNotJoin Json.Encode.Value | ...\n\n    init \"room:lobby\"\n        |> onJoinError CouldNotJoin\n\n**Note**: If a channel declined a request to join a topic the effect manager won\\_t try again.\n\n",
+                "type": "(Json.Decode.Value -> msg) -> Phoenix.Channel.Channel msg -> Phoenix.Channel.Channel msg"
+            },
+            {
+                "name": "onLeave",
+                "comment": " Set a callback which will be called after you sucessfully left a channel.\n\n    type Msg =\n        LeftLobby Json.Encode.Value | ...\n\n    init \"room:lobby\"\n        |> onLeave LeftLobby\n\n",
+                "type": "(Json.Decode.Value -> msg) -> Phoenix.Channel.Channel msg -> Phoenix.Channel.Channel msg"
+            },
+            {
+                "name": "onLeaveError",
+                "comment": " Set a callback which will be called if the server declined your request to left a channel.\n_(It seems that Phoenix v1.2 doesn_t send this)\\_\n",
+                "type": "(Json.Decode.Value -> msg) -> Phoenix.Channel.Channel msg -> Phoenix.Channel.Channel msg"
+            },
+            {
+                "name": "onRequestJoin",
+                "comment": " Set a callback which will be called after you request to join the channel.\n\n    type Msg =\n        JoinLobbyRequested\n\n    init \"room:lobby\"\n        |> onRequestJoin JoinLobbyRequested\n\n",
+                "type": "msg -> Phoenix.Channel.Channel msg -> Phoenix.Channel.Channel msg"
+            },
+            {
+                "name": "withDebug",
+                "comment": " Print all status changes.\n",
+                "type": "Phoenix.Channel.Channel msg -> Phoenix.Channel.Channel msg"
+            },
+            {
+                "name": "withPayload",
+                "comment": " Attach a payload to the join message. You can use this to submit e.g. a user id or authentication infos. This will be the second argument in your `join/3` callback on the server.\n\n    payload =\n        Json.Encode.object [(\"user_id\", \"123\")]\n\n    init \"room:lobby\"\n        |> withPayload payload\n\n",
+                "type": "Json.Decode.Value -> Phoenix.Channel.Channel msg -> Phoenix.Channel.Channel msg"
+            },
+            {
+                "name": "withPresence",
+                "comment": " Set a callback which will be called when there is a change in the presence state caused by \"presence\\_state\" and \"presence\\_diff\" events.\n\n    type Msg =\n        PresenceChange (Dict String (List Json.Encode.Value)) | ...\n\n    init \"room:lobby\"\n        |> onPresenceChange PresenceChange\n\n",
+                "type": "Phoenix.Presence.Presence msg -> Phoenix.Channel.Channel msg -> Phoenix.Channel.Channel msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Phoenix.Config",
+        "comment": " Defines the Config for Phoenix\n\n\n# Definition\n\n@docs Config\n\n\n# Helpers\n\n@docs new, withDebug, map\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " The config for Phoenix\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ parentMsg : Phoenix.Internal.Types.Msg msg -> msg, debug : Basics.Bool, ports : Maybe.Maybe (Phoenix.PortsAPI.Ports msg) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "map",
+                "comment": " Maps the config. The ports is not mapped as it is only needed at the top level update/subscriptions\n",
+                "type": "(Phoenix.Internal.Types.Msg b -> b) -> Phoenix.Config.Config a -> Phoenix.Config.Config b"
+            },
+            {
+                "name": "new",
+                "comment": " Creates a new config\n",
+                "type": "(Phoenix.Internal.Types.Msg msg -> msg) -> Phoenix.PortsAPI.Ports msg -> Phoenix.Config.Config msg"
+            },
+            {
+                "name": "withDebug",
+                "comment": " Enable debug logs. Every incoming and outgoing message will be printed.\n",
+                "type": "Phoenix.Config.Config msg -> Phoenix.Config.Config msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Phoenix.PortsAPI",
+        "comment": " Defines the API for the ports that are required to interface with JS.\n\nThis is just an internal implementation, but exposed so the types are available via\nthe implementation of the ports in `PhoenixPorts` (which must be installed via NPM). See `README.md`\nfor details.\n\n\n# External Ports API\n\nThis is the API that the ports module must implement.\n\n@docs Ports\n\n\n# Internal types\n\nThese types are used internally to communicate between Elm and the JS ports code.\n\n@docs ChannelMsg, OnHandlers, JoinParams, PushParams, PushReply, ConnectParams, SocketCloseParams, PresenceUpdate\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "ChannelMsg",
+                "comment": " Message from a channel\n",
+                "args": [],
+                "type": "( Phoenix.Channel.Topic, Phoenix.Internal.Types.Event, Json.Encode.Value )"
+            },
+            {
+                "name": "ConnectParams",
+                "comment": " Socket connect params\n",
+                "args": [],
+                "type": "{ endpoint : String.String, params : Json.Encode.Value }"
+            },
+            {
+                "name": "JoinParams",
+                "comment": " Channel join params\n",
+                "args": [],
+                "type": "{ topic : Phoenix.Channel.Topic, payload : Json.Encode.Value, onHandlers : Phoenix.PortsAPI.OnHandlers, presence : Basics.Bool }"
+            },
+            {
+                "name": "OnHandlers",
+                "comment": " Handlers to invoke on a push\n",
+                "args": [],
+                "type": "{ onOk : Basics.Bool, onError : Basics.Bool, onTimeout : Basics.Bool }"
+            },
+            {
+                "name": "Ports",
+                "comment": " Functions that need to implemented by Ports\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ channelMessage : (( Phoenix.Channel.Topic, String.String, Json.Encode.Value ) -> Phoenix.Internal.Types.Msg msg) -> Platform.Sub.Sub (Phoenix.Internal.Types.Msg msg), pushReply : (Phoenix.PortsAPI.PushReply -> Phoenix.Internal.Types.Msg msg) -> Platform.Sub.Sub (Phoenix.Internal.Types.Msg msg), channelsCreated : (List.List ( Phoenix.Channel.Topic, Phoenix.Internal.ChannelStates.ChannelObj ) -> Phoenix.Internal.Types.Msg msg) -> Platform.Sub.Sub (Phoenix.Internal.Types.Msg msg), channelError : (Phoenix.Channel.Topic -> Phoenix.Internal.Types.Msg msg) -> Platform.Sub.Sub (Phoenix.Internal.Types.Msg msg), socketOpened : (() -> Phoenix.Internal.Types.Msg msg) -> Platform.Sub.Sub (Phoenix.Internal.Types.Msg msg), socketClosed : (Phoenix.PortsAPI.SocketCloseParams -> Phoenix.Internal.Types.Msg msg) -> Platform.Sub.Sub (Phoenix.Internal.Types.Msg msg), presenceUpdated : (Phoenix.PortsAPI.PresenceUpdate -> Phoenix.Internal.Types.Msg msg) -> Platform.Sub.Sub (Phoenix.Internal.Types.Msg msg), connectSocket : Phoenix.PortsAPI.ConnectParams -> Platform.Cmd.Cmd (Phoenix.Internal.Types.Msg msg), joinChannels : List.List Phoenix.PortsAPI.JoinParams -> Platform.Cmd.Cmd (Phoenix.Internal.Types.Msg msg), leaveChannel : Phoenix.Internal.ChannelStates.ChannelObj -> Platform.Cmd.Cmd (Phoenix.Internal.Types.Msg msg), pushChannel : Phoenix.PortsAPI.PushParams -> Platform.Cmd.Cmd (Phoenix.Internal.Types.Msg msg) }"
+            },
+            {
+                "name": "PresenceUpdate",
+                "comment": " Presence update reply params\n",
+                "args": [],
+                "type": "{ eventName : String.String, topic : Phoenix.Channel.Topic, presences : List.List ( String.String, List.List Json.Encode.Value ) }"
+            },
+            {
+                "name": "PushParams",
+                "comment": " Push params\n",
+                "args": [],
+                "type": "{ ref : Basics.Int, channel : Phoenix.Internal.ChannelStates.ChannelObj, event : Phoenix.Internal.Types.Event, payload : Json.Encode.Value, onHandlers : Phoenix.PortsAPI.OnHandlers }"
+            },
+            {
+                "name": "PushReply",
+                "comment": " Push reply params\n",
+                "args": [],
+                "type": "{ eventName : String.String, topic : Phoenix.Channel.Topic, pushType : String.String, ref : Maybe.Maybe Basics.Int, payload : Json.Encode.Value }"
+            },
+            {
+                "name": "SocketCloseParams",
+                "comment": " Socket closed params\n",
+                "args": [],
+                "type": "{ code : Basics.Int, reason : String.String, wasClean : Basics.Bool }"
+            }
+        ],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "Phoenix.Presence",
+        "comment": " Presence is an extension for channels to support the Presence feature of Phoenix.\n\n\n# Definition\n\n@docs Presence\n\n\n# Helpers\n\n@docs create, onChange, onJoins, onLeaves, map\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Presence",
+                "comment": " Representation of a Presence configuration\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "Phoenix.Presence.PhoenixPresence msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "create",
+                "comment": " Create a Presence configuration\n",
+                "type": "Phoenix.Presence.PhoenixPresence msg"
+            },
+            {
+                "name": "map",
+                "comment": " Maps the callbacks\n",
+                "type": "(a -> b) -> Phoenix.Presence.PhoenixPresence a -> Phoenix.Presence.PhoenixPresence b"
+            },
+            {
+                "name": "onChange",
+                "comment": " This will be called each time the Presence state changes. The `Dict` contains as keys your presence keys and\nas values a list of the payloads you sent from the server.\nIf you have on the elixir side `Presence.track(socket, user_name, %{online_at: now()})`\nthen an example would be a Dict with\n\n    { \"user1\": [{online_at: 1491493666123}]\n    , \"user2\": [{online_at: 1491492646123}, {online_at: 1491492646624}]\n    }\n\n",
+                "type": "(Dict.Dict String.String (List.List Json.Decode.Value) -> msg) -> Phoenix.Presence.PhoenixPresence msg -> Phoenix.Presence.PhoenixPresence msg"
+            },
+            {
+                "name": "onJoins",
+                "comment": " This will be called each time user some user joins. This callback is useful to have special events\nif a user joins. To obtain a list of all users use `onChange`.\n",
+                "type": "(Dict.Dict String.String (List.List Json.Decode.Value) -> msg) -> Phoenix.Presence.PhoenixPresence msg -> Phoenix.Presence.PhoenixPresence msg"
+            },
+            {
+                "name": "onLeaves",
+                "comment": " This will be called each time user some user leaves. This callback is useful to have special events\nif a user leaves. To obtain a list of all users use `onChange`.\n",
+                "type": "(Dict.Dict String.String (List.List Json.Decode.Value) -> msg) -> Phoenix.Presence.PhoenixPresence msg -> Phoenix.Presence.PhoenixPresence msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Phoenix.Push",
+        "comment": " A message to push informations to a channel.\n\n\n# Definition\n\n@docs Push\n\n\n# Helpers\n\n@docs init, withPayload, onOk, onError, map\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Push",
+                "comment": " The message abstraction\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "Phoenix.Push.PhoenixPush msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "init",
+                "comment": " Initialize a message with a topic and an event.\n\n    init \"room:lobby\" \"new_msg\"\n\n",
+                "type": "Phoenix.Push.Topic -> Phoenix.Push.Event -> Phoenix.Push.Push msg"
+            },
+            {
+                "name": "map",
+                "comment": " Applies the function on the onOk and onError callback\n",
+                "type": "(a -> b) -> Phoenix.Push.Push a -> Phoenix.Push.Push b"
+            },
+            {
+                "name": "onError",
+                "comment": " Callback if the server replies with an \"error\" status.\n\n    type Msg = MessageFailed Value | ...\n\n    payload =\n        Json.Encode.object [(\"msg\", \"Hello Phoenix\")]\n\n    init \"room:lobby\" \"new_msg\"\n        |> withPayload\n        |> onError MessageFailed\n\n",
+                "type": "(Json.Encode.Value -> msg) -> Phoenix.Push.Push msg -> Phoenix.Push.Push msg"
+            },
+            {
+                "name": "onOk",
+                "comment": " Callback if the server replies with an \"ok\" status.\n\n    type Msg = MessageArrived | ...\n\n    payload =\n        Json.Encode.object [(\"msg\", \"Hello Phoenix\")]\n\n    init \"room:lobby\" \"new_msg\"\n        |> withPayload\n        |> onOk (\\_ -> MessageArrived)\n\n",
+                "type": "(Json.Encode.Value -> msg) -> Phoenix.Push.Push msg -> Phoenix.Push.Push msg"
+            },
+            {
+                "name": "withPayload",
+                "comment": " Attach a payload to a message\n\n    payload =\n        Json.Encode.object [(\"msg\", \"Hello Phoenix\")]\n\n    init \"room:lobby\" \"new_msg\"\n        |> withPayload\n\n",
+                "type": "Json.Encode.Value -> Phoenix.Push.Push msg -> Phoenix.Push.Push msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Phoenix.Socket",
+        "comment": " A socket declares to which endpoint a socket connection should be established.\n\n\n# Definition\n\n@docs Socket\n\n\n# Helpers\n\n@docs init, withParams, onOpen, onClose, map\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Socket",
+                "comment": " Representation of a Socket connection\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "Phoenix.Socket.PhoenixSocket msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "init",
+                "comment": " Initialize a Socket connection with an endpoint.\n\n    init \"ws://localhost:4000/socket/websocket\"\n\n",
+                "type": "String.String -> Phoenix.Socket.Socket msg"
+            },
+            {
+                "name": "map",
+                "comment": " Composes each callback with the function `a -> b`.\n",
+                "type": "(a -> b) -> Phoenix.Socket.Socket a -> Phoenix.Socket.Socket b"
+            },
+            {
+                "name": "onClose",
+                "comment": " Set a callback which will be called if the socket connection got closed. You can learn more about the code [here](https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent).\n",
+                "type": "({ code : Basics.Int, reason : String.String, wasClean : Basics.Bool } -> msg) -> Phoenix.Socket.Socket msg -> Phoenix.Socket.Socket msg"
+            },
+            {
+                "name": "onOpen",
+                "comment": " Set a callback which will be called if the socket connection gets open.\n",
+                "type": "msg -> Phoenix.Socket.Socket msg -> Phoenix.Socket.Socket msg"
+            },
+            {
+                "name": "withParams",
+                "comment": " Attach parameters to the socket connecton. You can use this to do authentication on the socket level. This will be the first argument (as a map) in your `connect/2` callback on the server.\n\n    init \"ws://localhost:4000/socket/websocket\"\n        |> withParams [ ( \"token\", \"GYMXZwXzKFzfxyGntVkYt7uAJnscVnFJ\" ) ]\n\n",
+                "type": "List.List ( String.String, String.String ) -> Phoenix.Socket.Socket msg -> Phoenix.Socket.Socket msg"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,50 @@
+[
+    {
+        "name": "UnionFind",
+        "comment": " The Union Find data structure.\n\nInspiration has been gotten from the book\n[Algorithms](https://algs4.cs.princeton.edu/15uf) by Robert Sedgewick and Kevin Wayne.\n\n@docs UnionFind, quickUnionPathCompression, union, get, find, connected, count\n\n",
+        "unions": [
+            {
+                "name": "UnionFind",
+                "comment": " Representation of Union Find data structure.\nYou can create Union Find of any comparable primitives.\n",
+                "args": [
+                    "id"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "connected",
+                "comment": " Given two elements, returns `True` when both are in the same component.\n\n    \"\"\"\n    elements0and3AreConnected : Bool\n    elements0and3AreConnected =\n        quickUnionPathCompression\n            |> union 0 1\n            |> union 1 2\n            |> union 3 2\n            |> connected 0 3  -- would be equal True\n\n    elements0and3AreNotConnected : Bool\n    elements0and3AreNotConnected =\n        quickUnionPathCompression\n            |> union 0 1\n            |> union 1 2\n            |> union 3 4\n            |> connected 0 3  -- would be equal False\n    \"\"\"\n\n",
+                "type": "comparable -> comparable -> UnionFind.UnionFind comparable -> Basics.Bool"
+            },
+            {
+                "name": "count",
+                "comment": " Returns number of connections.\n\n    \"\"\"\n    amountOfConnections : Int\n    amountOfConnections =\n        quickUnionPathCompression\n            |> union 0 1\n            |> union 1 2\n            |> union 0 2\n            |> count      -- would be equal 2\n    \"\"\"\n\n",
+                "type": "UnionFind.UnionFind comparable -> Basics.Int"
+            },
+            {
+                "name": "find",
+                "comment": " Given an element, returns the leader identifying the component to which the element belongs.\n\n    \"\"\"\n    leaderOf0 : Int\n    leaderOf0 =\n        quickUnionPathCompression\n            |> union 0 1\n            |> union 1 2\n            |> find 0     -- would be equal 2\n    \"\"\"\n\n",
+                "type": "comparable -> UnionFind.UnionFind comparable -> comparable"
+            },
+            {
+                "name": "get",
+                "comment": " Given an element, returns the \"parent\" of the element.\n\n    \"\"\"\n    parentOf0 : Int\n    parentOf0 =\n        quickUnionPathCompression\n            |> union 0 1\n            |> get 0      -- would be equal 1\n\n    parentOf2 : Int\n    parentOf2 =\n        quickUnionPathCompression\n            |> union 0 1\n            |> get 2      -- would be equal 2\n    \"\"\"\n\n",
+                "type": "comparable -> UnionFind.UnionFind comparable -> comparable"
+            },
+            {
+                "name": "quickUnionPathCompression",
+                "comment": " There are a number of easy ways to improve the union-find algorithm.\nIdeally, we would like every node to link directly to the root of its tree,\nbut we do not want to pay the price of changing a large number of links.\nWe can approach the ideal simply by making all the nodes that we do examine directly link to the root.\n\nThe amortized cost per operation for this algorithm is known to be logarithmic.\n\n",
+                "type": "UnionFind.UnionFind comparable"
+            },
+            {
+                "name": "union",
+                "comment": " Add connection between two elements.\n\n    \"\"\"\n    unionFind : UnionFind\n    unionFind =\n        quickUnionPathCompression\n            |> union 0 1  -- creates connection between 0 and 1\n            |> union 1 2  -- creates connection between 1 and 2\n            |> union 0 2  -- already connected\n    \"\"\"\n\n",
+                "type": "comparable -> comparable -> UnionFind.UnionFind comparable -> UnionFind.UnionFind comparable"
+            }
+        ],
+        "binops": []
+    }
+]

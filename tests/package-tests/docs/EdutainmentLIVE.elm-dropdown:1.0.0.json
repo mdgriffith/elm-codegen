@@ -1,0 +1,150 @@
+[
+    {
+        "name": "Dropdown",
+        "comment": " Dropdown component\n\n\n# Types\n\n@docs Config, State, Msg\n\n\n# Configuration\n\n@docs newConfig, withClear, withPrompt\n\n\n# Styling\n\n@docs withArrowClass, withArrowStyles, withArrowSvgClass, withClearClass, withClearStyles, withClearSvgClass, withItemClass, withItemStyles, withMenuClass, withMenuStyles, withPromptClass, withPromptStyles, withSelectedClass, withSelectedStyles, withTriggerClass, withTriggerStyles\n\n\n# State\n\n@docs newState, isOpen\n\n\n# view\n\n@docs view\n\n\n# Update\n\n@docs update\n\n",
+        "unions": [
+            {
+                "name": "Config",
+                "comment": " Opaque type that holds the configuration\n",
+                "args": [
+                    "msg",
+                    "item"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Msg",
+                "comment": " Opaque type for internal library messages\n",
+                "args": [
+                    "item"
+                ],
+                "cases": []
+            },
+            {
+                "name": "State",
+                "comment": " Opaque type that holds the current state\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "isOpen",
+                "comment": " Get the current open state\n",
+                "type": "Dropdown.State -> Basics.Bool"
+            },
+            {
+                "name": "newConfig",
+                "comment": " Create a new configuration. This takes:\n\n  - A message to trigger when an item is selected\n\n  - A function to get a label to display from an item\n\n    Dropdown.newConfig OnSelect .label\n\n",
+                "type": "(Maybe.Maybe item -> msg) -> (item -> String.String) -> Dropdown.Config msg item"
+            },
+            {
+                "name": "newState",
+                "comment": " Create a new state. You must pass a unique identifier for each select component.\n\n    {\n        ...\n        dropdownState = Dropdown.newState \"dropdown1\"\n    }\n\n",
+                "type": "String.String -> Dropdown.State"
+            },
+            {
+                "name": "update",
+                "comment": " Update the component state\n\n    DropdownMsg subMsg ->\n        let\n            ( updated, cmd ) =\n                Dropdown.update dropdownConfig subMsg model.dropdownState\n        in\n            ( { model | dropdownState = updated }, cmd )\n\n",
+                "type": "Dropdown.Config msg item -> Dropdown.Msg item -> Dropdown.State -> ( Dropdown.State, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "view",
+                "comment": " Render the view\n\n    Html.map DropdownMsg (Dropdown.view dropdownConfig model.dropdownState model.items selectedItem)\n\n",
+                "type": "Dropdown.Config msg item -> Dropdown.State -> List.List item -> Maybe.Maybe item -> Html.Html (Dropdown.Msg item)"
+            },
+            {
+                "name": "withArrowClass",
+                "comment": " Add classes to the arrow wrapper\n\n    Dropdown.withArrowClass \"arrow\" config\n\n",
+                "type": "String.String -> Dropdown.Config msg item -> Dropdown.Config msg item"
+            },
+            {
+                "name": "withArrowStyles",
+                "comment": " Add styles to the arrow wrapper\n\n    Dropdown.withArrowStyles [ ( \"color\", \"red\" ) ] config\n\n",
+                "type": "List.List ( String.String, String.String ) -> Dropdown.Config msg item -> Dropdown.Config msg item"
+            },
+            {
+                "name": "withArrowSvgClass",
+                "comment": " Add classes to the arrow svg icon\n\n    Dropdown.withArrowSvgClass \"arrow\" config\n\n",
+                "type": "String.String -> Dropdown.Config msg item -> Dropdown.Config msg item"
+            },
+            {
+                "name": "withClear",
+                "comment": " Show or hide the clear (x) button, default is true\n\n    Dropdown.withClear False config\n\n",
+                "type": "Basics.Bool -> Dropdown.Config msg item -> Dropdown.Config msg item"
+            },
+            {
+                "name": "withClearClass",
+                "comment": " Add classes to the clear button wrapper\n\n    Dropdown.withClearClass \"clear\" config\n\n",
+                "type": "String.String -> Dropdown.Config msg item -> Dropdown.Config msg item"
+            },
+            {
+                "name": "withClearStyles",
+                "comment": " Add styles to the clear button wrapper\n\n    Dropdown.withClearStyles [ ( \"color\", \"red\" ) ] config\n\n",
+                "type": "List.List ( String.String, String.String ) -> Dropdown.Config msg item -> Dropdown.Config msg item"
+            },
+            {
+                "name": "withClearSvgClass",
+                "comment": " Add classes to the clear icon\n\n    Dropdown.withClearSvgClass \"clear\" config\n\n",
+                "type": "String.String -> Dropdown.Config msg item -> Dropdown.Config msg item"
+            },
+            {
+                "name": "withItemClass",
+                "comment": " Add classes to the items in the list\n\n    Dropdown.withItemClass \"bg-white\" config\n\n",
+                "type": "String.String -> Dropdown.Config msg item -> Dropdown.Config msg item"
+            },
+            {
+                "name": "withItemStyles",
+                "comment": " Add styles to the items in the list\n\n    Dropdown.withInputStyles [ ( \"color\", \"red\" ) ] config\n\n",
+                "type": "List.List ( String.String, String.String ) -> Dropdown.Config msg item -> Dropdown.Config msg item"
+            },
+            {
+                "name": "withMenuClass",
+                "comment": " Add classes to the menu (list of items)\n\n    Dropdown.withMenuClass \"bg-white\" config\n\n",
+                "type": "String.String -> Dropdown.Config msg item -> Dropdown.Config msg item"
+            },
+            {
+                "name": "withMenuStyles",
+                "comment": " Add styles to menu\n\n    Dropdown.withMenuStyles [ ( \"color\", \"red\" ) ] config\n\n",
+                "type": "List.List ( String.String, String.String ) -> Dropdown.Config msg item -> Dropdown.Config msg item"
+            },
+            {
+                "name": "withPrompt",
+                "comment": " Add a prompt text to be displayed when no element is selected\n\n    Dropdown.withPrompt \"Select a movie\" config\n\n",
+                "type": "String.String -> Dropdown.Config msg item -> Dropdown.Config msg item"
+            },
+            {
+                "name": "withPromptClass",
+                "comment": " Add classes to the prompt text (When no item is selected)\n\n    Dropdown.withPromptClass \"prompt\" config\n\n",
+                "type": "String.String -> Dropdown.Config msg item -> Dropdown.Config msg item"
+            },
+            {
+                "name": "withPromptStyles",
+                "comment": " Add styles to prompt text\n\n    Dropdown.withPromptStyles [ ( \"color\", \"red\" ) ] config\n\n",
+                "type": "List.List ( String.String, String.String ) -> Dropdown.Config msg item -> Dropdown.Config msg item"
+            },
+            {
+                "name": "withSelectedClass",
+                "comment": " Add classes to currently selected item in the menu\n\n    Dropdown.withSelectedClass \"bg-white\" config\n\n",
+                "type": "String.String -> Dropdown.Config msg item -> Dropdown.Config msg item"
+            },
+            {
+                "name": "withSelectedStyles",
+                "comment": " Add styles to currently selected item in the menu\n\n    Dropdown.withSelectedStyles [ ( \"color\", \"red\" ) ] config\n\n",
+                "type": "List.List ( String.String, String.String ) -> Dropdown.Config msg item -> Dropdown.Config msg item"
+            },
+            {
+                "name": "withTriggerClass",
+                "comment": " Add classes to trigger element\n\n    Dropdown.withTriggerClass \"bg-white\" config\n\n",
+                "type": "String.String -> Dropdown.Config msg item -> Dropdown.Config msg item"
+            },
+            {
+                "name": "withTriggerStyles",
+                "comment": " Add styles to trigger element\n\n    Dropdown.withTriggerStyles [ ( \"width\", \"100px\" ) ] config\n\n",
+                "type": "List.List ( String.String, String.String ) -> Dropdown.Config msg item -> Dropdown.Config msg item"
+            }
+        ],
+        "binops": []
+    }
+]

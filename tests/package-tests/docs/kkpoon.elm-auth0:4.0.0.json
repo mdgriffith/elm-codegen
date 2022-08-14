@@ -1,0 +1,71 @@
+[
+    {
+        "name": "Auth0",
+        "comment": " This library provides data types and helper functions for [Auth0](https://auth0.com)\n\n\n# Auth0 Basis\n\n@docs Endpoint, IdToken, UserID, Auth0Config\n\n\n# User Profile\n\n@docs Profile, OAuth2Identity, profileDecoder\n\n\n# Helpers\n\n@docs auth0AuthorizeURL, getAuthedUserProfile, updateUserMetaData\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Auth0Config",
+                "comment": " A config record of Auth0\n",
+                "args": [],
+                "type": "{ endpoint : Auth0.Endpoint, clientId : String.String }"
+            },
+            {
+                "name": "Endpoint",
+                "comment": " Auth0 Endpoint of Authentication API and Management API\n\ne.g. <https://your-auth0-app.auth0.com>\n\n",
+                "args": [],
+                "type": "String.String"
+            },
+            {
+                "name": "IdToken",
+                "comment": " The idToken returns from Auth0 authenticated result, it is usually in JSON\nWeb Token ([JWT](https://jwt.io)) format.\n",
+                "args": [],
+                "type": "String.String"
+            },
+            {
+                "name": "OAuth2Identity",
+                "comment": " The OAuth2 identity of the unified user profile. This usually tell the\nsocial account or database account linked with the unified user profile.\n",
+                "args": [],
+                "type": "{ connection : String.String, isSocial : Basics.Bool, provider : String.String, user_id : String.String }"
+            },
+            {
+                "name": "Profile",
+                "comment": " Auth0 unified user profile\n\nThe `user_metatdata` and `app_metadata` varies in different application.\nYou should define your own `user_metadata` and `app_metadata` records.\n\n",
+                "args": [
+                    "userMetaData",
+                    "appMetaData"
+                ],
+                "type": "{ email : String.String, email_verified : Basics.Bool, created_at : Time.Posix, family_name : Maybe.Maybe String.String, given_name : Maybe.Maybe String.String, global_client_id : Maybe.Maybe String.String, identities : List.List Auth0.OAuth2Identity, locale : Maybe.Maybe String.String, name : String.String, nickname : String.String, picture : String.String, user_id : Auth0.UserID, user_metadata : Maybe.Maybe userMetaData, app_metadata : Maybe.Maybe appMetaData }"
+            },
+            {
+                "name": "UserID",
+                "comment": " Represent the Auth0 unified user ID\n",
+                "args": [],
+                "type": "String.String"
+            }
+        ],
+        "values": [
+            {
+                "name": "auth0AuthorizeURL",
+                "comment": " Create the URL to the login page\n\n    auth0AuthorizeURL :\n        Auth0Config\n        -> String -- responseType\n        -> String -- redirectURL\n        -> List String -- scopes\n        -> Maybe String -- connection\n        -> String\n\ne.g.\n\n    auth0AuthorizeURL\n        (Auth0Config \"https://my-app.auth0.com\" \"aBcD1234\")\n        \"token\"\n        \"https://my-app/\"\n        [ \"openid\", \"name\", \"email\" ]\n        (Just \"google-oauth2\")\n\n",
+                "type": "Auth0.Auth0Config -> String.String -> String.String -> List.List String.String -> Maybe.Maybe String.String -> String.String"
+            },
+            {
+                "name": "getAuthedUserProfile",
+                "comment": " Get the Auth0 unified user profile which is represented by the `IdToken`\n",
+                "type": "Auth0.Endpoint -> Auth0.IdToken -> Json.Decode.Decoder String.String -> Platform.Cmd.Cmd Auth0.Msg"
+            },
+            {
+                "name": "profileDecoder",
+                "comment": " Auth0 unified user profile decoder\n\nThe `user_metatdata` and `app_metadata` varies in different application.\nYou should define your own `user_metadata` and `app_metadata` decoders.\n\n",
+                "type": "Json.Decode.Decoder a -> Json.Decode.Decoder b -> Json.Decode.Decoder (Auth0.Profile a b)"
+            },
+            {
+                "name": "updateUserMetaData",
+                "comment": " Update the `user_metadata` in the Auth0 unified user profile\n",
+                "type": "Auth0.Endpoint -> Auth0.IdToken -> Auth0.UserID -> Json.Encode.Value -> Json.Decode.Decoder String.String -> Platform.Cmd.Cmd Auth0.Msg"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,31 @@
+[
+    {
+        "name": "Inflect",
+        "comment": " `elm-inflect` lets you convert a String to its plural, singular, camelCase,\nand PascalCase forms.\n\n@docs pluralize, singularize, camelize, pascalize\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "camelize",
+                "comment": " Convert a String to camelCase.\n\n    camelize \"foo bar\" == \"fooBar\"\n\n    camelize \"foo-bar\" == \"fooBar\"\n\n    camelize \"foo-_bar\" == \"fooBar\"\n\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "pascalize",
+                "comment": " Convert a String to PascalCase\n\n    pascalize \"foo bar\" == \"FooBar\"\n\n    pascalize \"foo-bar\" == \"FooBar\"\n\n    pascalize \"foo-_bar\" == \"FooBar\"\n\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "pluralize",
+                "comment": " Convert a String to its plural form.\n\n    pluralize \"foo\" == \"foos\"\n\n    pluralize \"axis\" == \"axes\"\n\n    pluralize \"bus\" == \"buses\"\n\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "singularize",
+                "comment": " Convert a String to its singular form.\n\n    singularize \"foos\" == \"foo\"\n\n    singularize \"axes\" == \"axis\"\n\n    singularize \"buses\" == \"bus\"\n\n",
+                "type": "String.String -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

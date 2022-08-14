@@ -1,0 +1,31 @@
+[
+    {
+        "name": "Init",
+        "comment": " Build the root init function from submodel init functions.\n\n\n# Core\n\n@docs top\n@docs field\n@docs noCmd\n@docs andThen\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "andThen",
+                "comment": " ",
+                "type": "(model -> ( model, Platform.Cmd.Cmd msg )) -> ( model, Platform.Cmd.Cmd msg ) -> ( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "field",
+                "comment": " ",
+                "type": "( a, Platform.Cmd.Cmd msg ) -> ( a -> b, Platform.Cmd.Cmd msg ) -> ( b, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "noCmd",
+                "comment": "\n\n    noCmd a == field ( a, Cmd.none )\n\n",
+                "type": "a -> ( a -> b, Platform.Cmd.Cmd msg ) -> ( b, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "top",
+                "comment": " ",
+                "type": "(a -> model) -> ( a -> model, Platform.Cmd.Cmd msg )"
+            }
+        ],
+        "binops": []
+    }
+]

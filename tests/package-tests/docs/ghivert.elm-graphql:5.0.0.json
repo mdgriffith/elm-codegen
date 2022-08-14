@@ -1,0 +1,191 @@
+[
+    {
+        "name": "GraphQl",
+        "comment": " GraphQL queries and mutations made easy in Elm!\nThis package provides an easier way to deal with GraphQL queries and mutations.\nThis package is agnostic about how you send your requests through the wire. It\ncould packages the request inside an HTTP post for you with `GraphQl.Http`, but\nalso allows you to extract the JSON and send it through whatever way you want,\nWebSocket for example.\n\n```\nimport GraphQl exposing (Mutation, Query, Variables, Named, Operation)\nimport GraphQl.Http\nimport Http\nimport Json.Decode as Decode exposing (Decoder)\nimport Json.Encode as Encode\n\n-- Define the request.\nuserRequest : Operation Query Variables\nuserRequest =\n  GraphQl.named \"MySuperQuery\"\n    [ GraphQl.field \"user\"\n      |> GraphQl.withArgument \"id\" (GraphQl.variable \"id\")\n      |> GraphQl.withSelectors\n        [ GraphQl.field \"id\"\n        , GraphQl.field \"name\"\n          |> GraphQl.withSelectors\n            [ GraphQl.field \"first_name\"\n            , GraphQl.field \"last_name\"\n            ]\n          |> GraphQl.withArgument \"id\" (GraphQl.type_ \"INT!\")\n        ]\n    , GraphQl.field \"address\"\n      |> GraphQl.withArgument \"city\" (GraphQl.string \"Paris\")\n      |> GraphQl.withArgument \"id\" (GraphQl.int 12)\n      |> GraphQl.withArgument \"type\" (GraphQl.type_ \"LOFT\")\n      |> GraphQl.withSelectors\n        [ GraphQl.field \"street\"\n        , GraphQl.field \"neighborhood\"\n        ]\n    ]\n    |> GraphQl.withVariables [ (\"id\", \"INT!\") ]\n\nuserModifying : Operation Mutation Named\nuserModifying =\n  GraphQl.named \"MySuperMutation\"\n    [ GraphQl.field \"CreateUser\"\n      |> GraphQl.withArgument \"user\"\n        (GraphQl.input\n          [ (\"first\", GraphQl.string \"John\")\n          , (\"last\", GraphQl.string \"Doe\")\n          ]\n        )\n    ]\n\n-- And Send It through HTTP!\nsendRequest : Int -> (Result Http.Error a -> msg) -> Decoder a -> Cmd msg\nsendRequest id msg decoder =\n  GraphQl.query userRequest\n    |> GraphQl.addVariables [ (\"id\", Encode.int id) ]\n    |> GraphQl.Http.send \"/example_endpoint\" msg decoder\n```\n\n# Field\n@docs Operation\n@docs Field\n@docs Anonymous\n@docs Named\n@docs Variables\n@docs Mutation\n@docs Query\n\n# Constructors\n@docs object\n@docs named\n@docs field\n\n# Modifiers\n@docs withArgument\n@docs withVariables\n@docs withAlias\n@docs withSelectors\n\n# Arguments\n@docs Argument\n@docs int\n@docs bool\n@docs float\n@docs string\n@docs type_\n@docs variable\n@docs input\n@docs nestedInput\n\n# Requests\n@docs Request\n@docs query\n@docs mutation\n@docs addVariables\n@docs toJson\n",
+        "unions": [
+            {
+                "name": "Anonymous",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Argument",
+                "comment": " Handle arguments on GraphQL fields. ",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Mutation",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Named",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Operation",
+                "comment": " Handle GraphQL operations ",
+                "args": [
+                    "a",
+                    "b"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Query",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Request",
+                "comment": " Requests contains the query or the mutation and the variables of each GraphQL requests.\nThe variables can't be used with an anonymous Request, due to the nature of GraphQL.\n",
+                "args": [
+                    "a",
+                    "b"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Variables",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Field",
+                "comment": " Handle GraphQL values. ",
+                "args": [
+                    "a"
+                ],
+                "type": "GraphQl.Field.Field a"
+            }
+        ],
+        "values": [
+            {
+                "name": "addVariables",
+                "comment": " Add variables to a request. Useful when defining variables in your GraphQL request.\nIf no variables has been defined in your operation, no variables can be added: the\ncompiler will reject it.\n\n    named [ field \"user\" |> withArgument \"id\" (variable \"id\") ]\n      |> withVariables [ (\"id\", \"INT\") ]\n      |> query\n      |> addVariables [ (\"id\", Encode.int 12) ]\n      |> toJson\n",
+                "type": "List.List ( String.String, Json.Encode.Value ) -> GraphQl.Request a b -> GraphQl.Request a b"
+            },
+            {
+                "name": "bool",
+                "comment": " Generates an argument, to use with `withArgument`.\n\n    field \"user\"\n      |> withArgument \"admin\" (GraphQl.bool False)\n\nTurns into:\n\n    user(id: false)\n",
+                "type": "Basics.Bool -> GraphQl.Argument"
+            },
+            {
+                "name": "field",
+                "comment": " Generates a field. ",
+                "type": "String.String -> GraphQl.Field a"
+            },
+            {
+                "name": "float",
+                "comment": " Generates an argument, to use with `withArgument`.\n\n    field \"user\"\n      |> withArgument \"score\" (GraphQl.float 12.1)\n\nTurns into:\n\n    user(id: 12)\n",
+                "type": "Basics.Float -> GraphQl.Argument"
+            },
+            {
+                "name": "input",
+                "comment": " Generates an argument, to use with 'withArgument'.\n\n    field \"CreateUser\"\n      |> withArgument \"user\"\n        (GraphQl.input\n          [ (\"first\", (GraphQl.string \"John\"))\n          , (\"last\",  (GraphQl.string \"Doe\"))\n          ]\n        )\n\nTurns into:\n\n    CreateUser(user: {first: \"John\", last: \"Doe\"})\n",
+                "type": "List.List ( String.String, GraphQl.Argument ) -> GraphQl.Argument"
+            },
+            {
+                "name": "int",
+                "comment": " Generates an argument, to use with `withArgument`.\n\n    field \"user\"\n      |> withArgument \"id\" (GraphQl.int 12)\n\nTurns into:\n\n    user(id: 12)\n",
+                "type": "Basics.Int -> GraphQl.Argument"
+            },
+            {
+                "name": "mutation",
+                "comment": " Entry of every GraphQL mutation to turn them into requests, which can be launched!\n\n    object []\n      |> mutation\n      |> Http.send \"https://example.com\" msg decoder\n",
+                "type": "GraphQl.Operation GraphQl.Mutation a -> GraphQl.Request GraphQl.Mutation a"
+            },
+            {
+                "name": "named",
+                "comment": " Generates a Field with a name.\n\n    named \"MySuperRequest\"\n      [ field \"user\" ]\n\nTurns into:\n\n    MySuperRequest {\n      user\n    }\n",
+                "type": "String.String -> List.List (GraphQl.Field a) -> GraphQl.Operation a GraphQl.Named"
+            },
+            {
+                "name": "nestedInput",
+                "comment": " Generates an argument, to use with 'withArgument'.\n\n    field \"CreateUser\"\n      |> withArgument \"users\"\n        (GraphQl.nestedInput\n          [ [ (\"first\", (GraphQl.string \"John\"))\n            , (\"last\", (GraphQl.string \"Doe\"))\n            ]\n          , [ (\"first\", (GraphQl.string \"Jane\"))\n            , (\"last\", (GraphQl.string \"Smith\"))\n            ]\n          ]\n        )\n\nTurns into:\n\n    CreateUsers(users: [\n      {first: \"John\", last: \"Doe\"},\n      {first: \"Jane\", last: \"Smith\"}\n    ])\n",
+                "type": "List.List (List.List ( String.String, GraphQl.Argument )) -> GraphQl.Argument"
+            },
+            {
+                "name": "object",
+                "comment": " Generates a Field, from a list of fields.\n\n    object\n      [ field \"user\" ]\n\nTurns into:\n\n    {\n      user\n    }\n",
+                "type": "List.List (GraphQl.Field a) -> GraphQl.Operation a GraphQl.Anonymous"
+            },
+            {
+                "name": "query",
+                "comment": " Entry of every GraphQL query to turn them into requests, which can be launched!\n\n    object []\n      |> query\n      |> Http.send \"https://example.com\" msg decoder\n",
+                "type": "GraphQl.Operation GraphQl.Query a -> GraphQl.Request GraphQl.Query a"
+            },
+            {
+                "name": "string",
+                "comment": " Generates an argument, to use with `withArgument`.\n\n    field \"user\"\n      |> withArgument \"id\" (GraphQl.string \"12\")\n\nTurns into:\n\n    user(id: \"12\")\n",
+                "type": "String.String -> GraphQl.Argument"
+            },
+            {
+                "name": "toJson",
+                "comment": " Extract the JSON part of a `Request` to use it into your own requests.\n\n    sendUserRequest : Cmd msg\n    sendUserRequest =\n      myAwesomeRequest\n        |> toJson\n        |> Json.Encode.encode 0\n        |> WebSocket.send\n",
+                "type": "GraphQl.Request a b -> Json.Encode.Value"
+            },
+            {
+                "name": "type_",
+                "comment": " Generates an argument, to use with `withArgument`.\nGenerate a type in GraphQL.\n\n    field \"user\"\n      |> withArgument \"id\" (GraphQl.type_ \"INT\")\n\nTurns into:\n\n    user(id: INT)\n",
+                "type": "String.String -> GraphQl.Argument"
+            },
+            {
+                "name": "variable",
+                "comment": " Generates an argument, to use with `withArgument`.\nYou don't have to handle the $ sign.\n\n    field \"user\"\n      |> withArgument \"id\" (GraphQl.variable \"id\")\n\nTurns into:\n\n    user(id: $id)\n",
+                "type": "String.String -> GraphQl.Argument"
+            },
+            {
+                "name": "withAlias",
+                "comment": " Adds an alias to a Field.\n\n    field \"user\"\n      |> withAlias \"currentUser\"\n      |> withSelectors\n        [ field \"id\"\n        , field \"first_name\"\n        , field \"last_name\"\n        ]\n\nTurns into:\n\n    currentUser: user {\n      id\n      first_name\n      last_name\n    }\n",
+                "type": "String.String -> GraphQl.Field a -> GraphQl.Field a"
+            },
+            {
+                "name": "withArgument",
+                "comment": " Adds an argument to a Field.\n\n    field \"user\"\n      |> withArgument \"id\" (GraphQl.string \"12\")\n      |> withSelectors\n        [ field \"id\"\n        , field \"first_name\"\n        , field \"last_name\"\n        ]\n\nTurns into:\n\n    user(id: \"12\") {\n      id\n      first_name\n      last_name\n    }\n",
+                "type": "String.String -> GraphQl.Argument -> GraphQl.Field a -> GraphQl.Field a"
+            },
+            {
+                "name": "withSelectors",
+                "comment": " Adds selectors to a Field.\n\n    field \"user\"\n      |> withSelectors\n        [ field \"id\"\n        , field \"first_name\"\n        , field \"last_name\"\n        ]\n\nTurns into:\n\n    user {\n      id\n      first_name\n      last_name\n    }\n",
+                "type": "List.List (GraphQl.Field a) -> GraphQl.Field a -> GraphQl.Field a"
+            },
+            {
+                "name": "withVariables",
+                "comment": " Adds variables to an Operation.\n\n    \"UserRequest\" [ field \"user\" ]\n      |> withVariables [ (\"id\", \"id\") ]\n\nTurns into:\n\n    query UserRequest(id: $id) {\n      user\n    }\n",
+                "type": "List.List ( String.String, String.String ) -> GraphQl.Operation a GraphQl.Named -> GraphQl.Operation a GraphQl.Variables"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "GraphQl.Http",
+        "comment": " This module provides helpers to directly deal with HTTP with GraphQL.\n\n@docs Options\n@docs send\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Options",
+                "comment": " Defines all the options for a GraphQl request. ",
+                "args": [],
+                "type": "{ url : String.String, headers : List.List Http.Header }"
+            }
+        ],
+        "values": [
+            {
+                "name": "send",
+                "comment": " Send a GraphQL request directly through an HTTP post, directly decoding the\n`data` field in the response.\n\n    graphQlRequestOptions : GraphQl.Options\n    graphQlRequestOptions =\n      { url = \"/example_endpoint\"\n      , headers = []\n      }\n\n    sendMyAwesomeRequest : (Result Http.Error a -> msg) -> Decoder a -> Cmd msg\n    sendMyAwesomeRequest msg decoder =\n      GraphQl.query myAwesomeRequest\n      |> GraphQl.Http.send graphQlRequestOptions msg decoder\n",
+                "type": "GraphQl.Http.Options -> (Result.Result Http.Error c -> msg) -> Json.Decode.Decoder c -> GraphQl.Request a b -> Platform.Cmd.Cmd msg"
+            }
+        ],
+        "binops": []
+    }
+]

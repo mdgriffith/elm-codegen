@@ -1,0 +1,389 @@
+[
+    {
+        "name": "StandardApi",
+        "comment": " Module for interfacing with StandardAPI.\n\nFor example you can make queries like the following:\n\n    --> \"https://example.com/accounts?where[emails][eq]=e%40mail.com&limit=1\"\n\n\n\n\n# Configuration\n\n@docs Config\n\n\n# Schema\n\n@docs Schema, Route, Model, Attribute\n@docs schemaRequest, schemaRequestTask\n\n\n# Requests\n\n@docs Error\n@docs errorToString, request, requestTask, cancel\n\n\n# Body\n\n@docs emptyBody, jsonBody\n\n\n# Expect\n\n@docs expectJson, expectWhatever, jsonResolver\n\n\n# Querying\n\n@docs Query, Operation, Direction, Limit, Offset, Order, Value, Include\n@docs emptyQuery, include, unwrapInclude\n\n\n# Url generation\n\n\n# Url parsing\n\n",
+        "unions": [
+            {
+                "name": "Direction",
+                "comment": " The `Direction` type is used to order a query.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Asc",
+                        []
+                    ],
+                    [
+                        "Desc",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Error",
+                "comment": " Error responses.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "BadUrl",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Timeout",
+                        []
+                    ],
+                    [
+                        "NetworkError",
+                        []
+                    ],
+                    [
+                        "BadStatus",
+                        [
+                            "Basics.Int",
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "BadBody",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Include",
+                "comment": " The `Include` type is for including related results in a query. For example,\nin the query `{ emptyQuery | includes = [ include ( \"line_items\", emptyQuery ) ]`\nwould include related `line_items` in the response.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Include",
+                        [
+                            "( String.String, StandardApi.Query )"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Operation",
+                "comment": " The `Operation` type is used for making comparisons in a predicate.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Ilike",
+                        [
+                            "List.List String.String",
+                            "StandardApi.Value"
+                        ]
+                    ],
+                    [
+                        "In",
+                        [
+                            "List.List String.String",
+                            "List.List StandardApi.Value"
+                        ]
+                    ],
+                    [
+                        "NotIn",
+                        [
+                            "List.List String.String",
+                            "List.List StandardApi.Value"
+                        ]
+                    ],
+                    [
+                        "Lt",
+                        [
+                            "List.List String.String",
+                            "StandardApi.Value"
+                        ]
+                    ],
+                    [
+                        "Lte",
+                        [
+                            "List.List String.String",
+                            "StandardApi.Value"
+                        ]
+                    ],
+                    [
+                        "Eq",
+                        [
+                            "List.List String.String",
+                            "StandardApi.Value"
+                        ]
+                    ],
+                    [
+                        "Gt",
+                        [
+                            "List.List String.String",
+                            "StandardApi.Value"
+                        ]
+                    ],
+                    [
+                        "Gte",
+                        [
+                            "List.List String.String",
+                            "StandardApi.Value"
+                        ]
+                    ],
+                    [
+                        "Null",
+                        [
+                            "List.List String.String"
+                        ]
+                    ],
+                    [
+                        "Set",
+                        [
+                            "List.List String.String"
+                        ]
+                    ],
+                    [
+                        "Overlaps",
+                        [
+                            "List.List String.String",
+                            "List.List StandardApi.Value"
+                        ]
+                    ],
+                    [
+                        "Contains",
+                        [
+                            "List.List String.String",
+                            "StandardApi.Value"
+                        ]
+                    ],
+                    [
+                        "Conjunction",
+                        [
+                            "StandardApi.Operation",
+                            "StandardApi.Operation"
+                        ]
+                    ],
+                    [
+                        "Disjunction",
+                        [
+                            "StandardApi.Operation",
+                            "StandardApi.Operation"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Value",
+                "comment": " A `Value` is used for making comparisons. In the example `x > 3`, `3` is\nthe value.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Int",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "String",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Float",
+                        [
+                            "Basics.Float"
+                        ]
+                    ],
+                    [
+                        "Bool",
+                        [
+                            "Basics.Bool"
+                        ]
+                    ],
+                    [
+                        "Posix",
+                        [
+                            "Time.Posix"
+                        ]
+                    ],
+                    [
+                        "Dict",
+                        [
+                            "Dict.Dict String.String StandardApi.Value"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Attribute",
+                "comment": " A StandardAPI attribute definition.\n",
+                "args": [],
+                "type": "{ name : String.String, type_ : String.String, default : Maybe.Maybe String.String, primaryKey : Basics.Bool, null : Basics.Bool, array : Basics.Bool, comment : String.String }"
+            },
+            {
+                "name": "Config",
+                "comment": " StandardAPI configuration.\n",
+                "args": [],
+                "type": "{ url : Url.Url, headers : List.List ( String.String, String.String ), timeout : Maybe.Maybe Basics.Float, format : String.String, version : String.String }"
+            },
+            {
+                "name": "Limit",
+                "comment": " The `Limit` type for limiting the results of a query. If the value is\n`Nothing`, the default value is used (which may be unlimited). If the value is\na `Just x`, then the limit will be x.\n",
+                "args": [],
+                "type": "Maybe.Maybe Basics.Int"
+            },
+            {
+                "name": "Model",
+                "comment": " A StandardAPI model definition.\n",
+                "args": [],
+                "type": "{ name : String.String, attributes : List.List StandardApi.Attribute, comment : String.String }"
+            },
+            {
+                "name": "Offset",
+                "comment": " The `Offset` type is for offseting the results of a query. If the value is\n`Nothing`, there will be no offset (the same as `Just 0`). If the value is\na `Just x`, then the offset will be x.\n",
+                "args": [],
+                "type": "Maybe.Maybe Basics.Int"
+            },
+            {
+                "name": "Order",
+                "comment": " The `Order` type is used to order a query. It is represented as a list\ncontaining a tuple with the name of the colum and the direction to order.\n",
+                "args": [],
+                "type": "List.List ( String.String, StandardApi.Direction )"
+            },
+            {
+                "name": "Query",
+                "comment": " A `Query` is used to make a request against the server. This is similar to a\nSQL query.\n",
+                "args": [],
+                "type": "{ limit : StandardApi.Limit, order : StandardApi.Order, offset : StandardApi.Offset, predicate : Maybe.Maybe StandardApi.Operation, includes : List.List (Tree.Tree StandardApi.Include) }"
+            },
+            {
+                "name": "Route",
+                "comment": " A StandardAPI route definition.\n",
+                "args": [],
+                "type": "{ path : String.String, method : String.String, model : Maybe.Maybe StandardApi.Model, array : Basics.Bool, limit : Maybe.Maybe Basics.Int, wheres : List.List StandardApi.Attribute, orders : List.List String.String, includes : List.List (Tree.Tree String.String) }"
+            },
+            {
+                "name": "Schema",
+                "comment": " A StandardAPI schema definition.\n",
+                "args": [],
+                "type": "{ comment : String.String, models : List.List StandardApi.Model, routes : List.List StandardApi.Route }"
+            }
+        ],
+        "values": [
+            {
+                "name": "cancel",
+                "comment": " Try to cancel an ongoing request based on a tracker.\n",
+                "type": "String.String -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "emptyBody",
+                "comment": " An empty body for a request. This is simply an alias for\n`Http.emptyBody` so you don't need to import `Http`.\n",
+                "type": "Http.Body"
+            },
+            {
+                "name": "emptyQuery",
+                "comment": " An empty query.\n",
+                "type": "StandardApi.Query"
+            },
+            {
+                "name": "errorToString",
+                "comment": " Convert a `Error` into a `String` that is nice for debugging.\n",
+                "type": "StandardApi.Error -> String.String"
+            },
+            {
+                "name": "expectJson",
+                "comment": " Just like [`Http.expectJson`](https://package.elm-lang.org/packages/elm/http/latest/Http#expectJson),\nbut for decoding a JSON value in StandardAPI.\n",
+                "type": "(Result.Result StandardApi.Error a -> msg) -> Json.Decode.Decoder a -> Http.Expect msg"
+            },
+            {
+                "name": "expectWhatever",
+                "comment": " Just like [`Http.expectWhatever`](https://package.elm-lang.org/packages/elm/http/latest/Http#expectWhatever),\nbut for decoding a JSON value in StandardAPI.\n",
+                "type": "(Result.Result StandardApi.Error () -> msg) -> Http.Expect msg"
+            },
+            {
+                "name": "include",
+                "comment": " Helper method to generate an include.\n\n    import StandardApi exposing (..)\n\n    include (\"users\", { emptyQuery | limit = Just 1 })\n    --> Include (\"users\", { emptyQuery | limit = Just 1 })\n\n",
+                "type": "( String.String, StandardApi.Query ) -> StandardApi.Include"
+            },
+            {
+                "name": "jsonBody",
+                "comment": " Put a JSON value in the body of the request. This is simply an alias for\n`Http.jsonBody` so you don't need to import `Http`.\n",
+                "type": "Json.Encode.Value -> Http.Body"
+            },
+            {
+                "name": "jsonResolver",
+                "comment": " Just like [`Http.stringResolver`](https://package.elm-lang.org/packages/elm/http/latest/Http#stringResolver),\nbut for decoding a JSON value.\n",
+                "type": "Json.Decode.Decoder a -> Http.Resolver StandardApi.Error a"
+            },
+            {
+                "name": "request",
+                "comment": " Create a HTTP request to a StandardAPI enpoint.\n\n    import Url exposing (Protocol(..))\n\n    config =\n        { url =\n            { protocol = Https\n            , host = \"example.com\"\n            , port_ = Nothing\n            , path = \"\"\n            , query = Nothing\n            , fragment = Nothing\n            }\n        , headers = [ ( \"Api-Key\", \"token\") ]\n        , timeout = Just 20\n        , format = \"application/json\"\n        , version = \"0.1.0\"\n        }\n\n    request config\n        { method = \"GET\"\n        , headers = []\n        , path = \"/posts\"\n        , body = emptyBody\n        , msg = ReceivedPosts\n        , decoder = list postDecoder\n        , tracker = Nothing\n        }\n\n",
+                "type": "StandardApi.Config -> { method : String.String, headers : List.List Http.Header, path : String.String, body : Http.Body, expect : Http.Expect msg, tracker : Maybe.Maybe String.String } -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "requestTask",
+                "comment": " Just like [`request`](#request), but it creates a `Task`.\n",
+                "type": "StandardApi.Config -> { method : String.String, headers : List.List Http.Header, path : String.String, body : Http.Body, resolver : Http.Resolver StandardApi.Error a } -> Task.Task StandardApi.Error a"
+            },
+            {
+                "name": "schemaRequest",
+                "comment": " Request the `Schema` from a StandardAPI resource.\n",
+                "type": "StandardApi.Config -> { msg : Result.Result StandardApi.Error StandardApi.Schema -> msg, tracker : Maybe.Maybe String.String } -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "schemaRequestTask",
+                "comment": " Just like `schemaRequest`, but it creates a `Task`.\n",
+                "type": "StandardApi.Config -> Task.Task StandardApi.Error StandardApi.Schema"
+            },
+            {
+                "name": "unwrapInclude",
+                "comment": " Helper method to unwrap and include into the name of the include and its\nsubinclude. This is necessary due to recursion in the types.\n\n    import StandardApi exposing (..)\n\n    unwrapInclude (include (\"users\", { emptyQuery | limit = Just 1 }))\n    --> (\"users\", { emptyQuery | limit = Just 1 })\n\n",
+                "type": "StandardApi.Include -> ( String.String, StandardApi.Query )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "StandardApi.Url.Builder",
+        "comment": "\n\n\n## Generation\n\n@docs absolute, includes, limit, order, predicate, query, offset\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "absolute",
+                "comment": " Create an absolute URL.let\n\n    import StandardApi exposing (..)\n    import StandardApi.Url.Builder exposing (..)\n\n    absolute [ \"packages\" ] emptyQuery\n    --> \"/packages\"\n\n    absolute [ \"packages\" ] { emptyQuery | limit = Just 1 }\n    --> \"/packages?limit=1\"\n\n",
+                "type": "List.List String.String -> StandardApi.Query -> String.String"
+            },
+            {
+                "name": "includes",
+                "comment": " Convert a Tree Include to a list of query parameters.\n\n    import StandardApi exposing (..)\n    import StandardApi.Url.Builder exposing (..)\n    import Url.Builder\n    import Tree exposing (tree)\n\n    includes [] [ tree (include (\"users\", emptyQuery)) []  ]\n    --> [ Url.Builder.string \"include[users]\" \"true\" ]\n\n    includes [] [ tree (include (\"users\", emptyQuery))\n                    [ tree (include (\"account\", emptyQuery)) [] ]\n                ]\n    --> [ Url.Builder.string \"include[users][account]\" \"true\" ]\n\n    includes [] [ tree (include (\"users\", emptyQuery))\n                    [ tree (include (\"comments\", { emptyQuery | limit = Just 2 } )) [] ]\n                ]\n    --> [ Url.Builder.int \"include[users][comments][limit]\" 2 ]\n\n",
+                "type": "List.List String.String -> List.List (Tree.Tree StandardApi.Include) -> List.List Url.Builder.QueryParameter"
+            },
+            {
+                "name": "limit",
+                "comment": " Convert a Limit to a list of query parameters.\n\n    import StandardApi exposing (..)\n    import StandardApi.Url.Builder exposing (..)\n    import Url.Builder\n\n    limit [] (Just 1)\n    --> [ Url.Builder.int \"limit\" 1 ]\n\n",
+                "type": "List.List String.String -> StandardApi.Limit -> List.List Url.Builder.QueryParameter"
+            },
+            {
+                "name": "offset",
+                "comment": " Convert an Offset to a list of query parameters.\n\n    import StandardApi exposing (..)\n    import StandardApi.Url.Builder exposing (..)\n    import Url.Builder\n\n    offset [] (Just 1)\n    --> [ Url.Builder.int \"offset\" 1 ]\n\n",
+                "type": "List.List String.String -> StandardApi.Offset -> List.List Url.Builder.QueryParameter"
+            },
+            {
+                "name": "order",
+                "comment": " Convert an Order to a list of query parameters.\n\n    import StandardApi exposing (..)\n    import StandardApi.Url.Builder exposing (..)\n    import Url.Builder\n\n    order [] [ ( \"created_at\", Desc ) ]\n    --> [ Url.Builder.string \"order[created_at]\" \"desc\" ]\n\n",
+                "type": "List.List String.String -> StandardApi.Order -> List.List Url.Builder.QueryParameter"
+            },
+            {
+                "name": "predicate",
+                "comment": " Convert a `Operation` to a `QueryParameter` to send to a StandardAPI server.\n",
+                "type": "List.List String.String -> StandardApi.Operation -> List.List Url.Builder.QueryParameter"
+            },
+            {
+                "name": "query",
+                "comment": " Convert a Query to a list of query parameters.\n",
+                "type": "List.List String.String -> StandardApi.Query -> List.List Url.Builder.QueryParameter"
+            }
+        ],
+        "binops": []
+    }
+]

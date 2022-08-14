@@ -1,0 +1,28 @@
+[
+    {
+        "name": "Paragraph",
+        "comment": " This package picks (close to) optimal points to break a paragraph into lines.\n\nBased on the paper [Bridging the Algorithm Gap: A Linear-time Functional Program for Paragraph Formatting][paper]\n\n[paper]: http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.33.7923&rep=rep1&type=pdf\n\n@docs Options, format, lines\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Options",
+                "comment": " Formatting options\n\n  - **maximumWidth**: the maximum width of a line\n  - **optimalWidth**: the optimal width of a line. Often this is slightly smaller than the maximum width\n  - **stringWidth**: function that calculates the width of a string. `String.length` usually gives good results, but other options (based on a font, or something creative) can be used as well.\n\n> **Note:** if a word is longer than the maximum width of a line it is left as-is. The line is broken after the word.\n\n",
+                "args": [],
+                "type": "{ maximumWidth : Basics.Int, optimalWidth : Basics.Int, stringWidth : String.String -> Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "format",
+                "comment": " Format a string using the given options\n\nThe output is one string where the lines are broken with newline `\\n` characters.\n\n",
+                "type": "Paragraph.Options -> String.String -> String.String"
+            },
+            {
+                "name": "lines",
+                "comment": " Format a string using the given options, returning the individual lines\n",
+                "type": "Paragraph.Options -> String.String -> List.List String.String"
+            }
+        ],
+        "binops": []
+    }
+]

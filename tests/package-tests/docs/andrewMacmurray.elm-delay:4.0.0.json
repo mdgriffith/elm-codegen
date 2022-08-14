@@ -1,0 +1,59 @@
+[
+    {
+        "name": "Delay",
+        "comment": " Utilities to delay updates after a given number of milliseconds\n\n\n# Delay one message\n\n@docs after\n\n\n# Delay a sequence of messages\n\n@docs sequence, sequenceIf, withUnit\n\n\n# Time units\n\n@docs Millis, ToUnit, seconds, minutes, hours\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Millis",
+                "comment": " Default unit of time\n",
+                "args": [],
+                "type": "Basics.Int"
+            },
+            {
+                "name": "ToUnit",
+                "comment": " Alias for converting `milliseconds` to another unit\n",
+                "args": [],
+                "type": "Delay.Millis -> Delay.Millis"
+            }
+        ],
+        "values": [
+            {
+                "name": "after",
+                "comment": " Triggers a Message after given number of milliseconds\n\n    after 500 DelayedMsg\n\n",
+                "type": "Delay.Millis -> msg -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "hours",
+                "comment": " Convert `milliseconds` to `hours`\n",
+                "type": "Delay.Millis -> Delay.Millis"
+            },
+            {
+                "name": "minutes",
+                "comment": " Convert `milliseconds` to `minutes`\n",
+                "type": "Delay.Millis -> Delay.Millis"
+            },
+            {
+                "name": "seconds",
+                "comment": " Convert `milliseconds` to `seconds`\n",
+                "type": "Delay.Millis -> Delay.Millis"
+            },
+            {
+                "name": "sequence",
+                "comment": " Start a sequence of delayed Messages\n\nthis can be read as:\n\n  - after `1000ms` `FirstMessage` will be triggered\n  - then after `2000ms` `SecondMessage` will be triggered\n  - then after `1000ms` `ThirdMessage` will be triggered\n\n```\nsequence\n    [ ( 1000, FirstMessage )\n    , ( 2000, SecondMessage )\n    , ( 1000, ThirdMessage )\n    ]\n```\n\n",
+                "type": "List.List ( Delay.Millis, msg ) -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "sequenceIf",
+                "comment": " Conditionally start a sequence of delayed Messages\n\n    sequenceIf (not model.updating)\n        [ ( 1000, FirstMessage )\n        , ( 2000, SecondMessage )\n        , ( 1000, ThirdMessage )\n        ]\n\n",
+                "type": "Basics.Bool -> List.List ( Delay.Millis, msg ) -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "withUnit",
+                "comment": " Helper for making all steps have the same unit\n\n    sequence\n        (withUnit seconds\n            [ ( 1, FirstMessage )\n            , ( 2, SecondMessage )\n            , ( 1, ThirdMessage )\n            ]\n        )\n\n",
+                "type": "Delay.ToUnit -> List.List ( Delay.Millis, msg ) -> List.List ( Delay.Millis, msg )"
+            }
+        ],
+        "binops": []
+    }
+]

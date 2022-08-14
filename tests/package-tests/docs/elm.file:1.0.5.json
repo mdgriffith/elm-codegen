@@ -1,0 +1,101 @@
+[
+    {
+        "name": "File",
+        "comment": "\n\n# Files\n@docs File, decoder\n\n# Extract Content\n@docs toString, toBytes, toUrl\n\n# Read Metadata\n@docs name, mime, size, lastModified\n\n",
+        "unions": [
+            {
+                "name": "File",
+                "comment": " Represents an uploaded file. From there you can read the content, check\nthe metadata, send it over [`elm/http`](/packages/elm/http/latest), etc.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decoder",
+                "comment": " Decode `File` values. For example, if you want to create a drag-and-drop\nfile uploader, you can listen for `drop` events with a decoder like this:\n\n    import File\n    import Json.Decode exposing (Decoder, field, list)\n\n    files : Decode.Decoder (List File)\n    files =\n      field \"dataTransfer\" (field \"files\" (list File.decoder))\n\nOnce you have the files, you can use functions like [`File.toString`](#toString)\nto process the content. Or you can send the file along to someone else with the\n[`elm/http`](/packages/elm/http/latest) package.\n",
+                "type": "Json.Decode.Decoder File.File"
+            },
+            {
+                "name": "lastModified",
+                "comment": " Get the time the file was last modified.\n\n    lastModified file1 -- 1536872423\n    lastModified file2 -- 860581394\n    lastModified file3 -- 1340375405\n\nLearn more about how time is represented by reading through the\n[`elm/time`](/packages/elm/time/latest) package!\n",
+                "type": "File.File -> Time.Posix"
+            },
+            {
+                "name": "mime",
+                "comment": " Get the MIME type of a file.\n\n    mime file1 == \"text/markdown\"\n    mime file2 == \"image/gif\"\n    mime file3 == \"application/zip\"\n",
+                "type": "File.File -> String.String"
+            },
+            {
+                "name": "name",
+                "comment": " Get the name of a file.\n\n    name file1 == \"README.md\"\n    name file2 == \"math.gif\"\n    name file3 == \"archive.zip\"\n",
+                "type": "File.File -> String.String"
+            },
+            {
+                "name": "size",
+                "comment": " Get the size of the file in bytes.\n\n    size file1 == 395\n    size file2 == 65813\n    size file3 == 81481\n",
+                "type": "File.File -> Basics.Int"
+            },
+            {
+                "name": "toBytes",
+                "comment": " Extract the content of a `File` as `Bytes`. So if you have an `archive.zip`\nfile you could read the content like this:\n\n    import Bytes exposing (Bytes)\n    import File exposing (File)\n    import Task\n\n    type Msg\n      = ZipLoaded Bytes\n\n    read : File -> Cmd Msg\n    read file =\n      Task.perform ZipLoaded (File.toBytes file)\n\nFrom here you can use the [`elm/bytes`](/packages/elm/bytes/latest) package to\nwork with the bytes and turn them into whatever you want.\n",
+                "type": "File.File -> Task.Task x Bytes.Bytes"
+            },
+            {
+                "name": "toString",
+                "comment": " Extract the content of a `File` as a `String`. So if you have a `notes.md`\nfile you could read the content like this:\n\n    import File exposing (File)\n    import Task\n\n    type Msg\n      = MarkdownLoaded String\n\n    read : File -> Cmd Msg\n    read file =\n      Task.perform MarkdownLoaded (File.toString file)\n\nReading the content is asynchronous because browsers want to avoid allocating\nthe file content into memory if possible. (E.g. if you are just sending files\nalong to a server with [`elm/http`](/packages/elm/http/latest) there is no\npoint having their content in memory!)\n",
+                "type": "File.File -> Task.Task x String.String"
+            },
+            {
+                "name": "toUrl",
+                "comment": " The `File.toUrl` function will convert files into URLs like this:\n\n- `data:*/*;base64,V2hvIGF0ZSBhbGwgdGhlIHBpZT8=`\n- `data:*/*;base64,SXQgd2FzIG1lLCBXaWxleQ==`\n- `data:*/*;base64,SGUgYXRlIGFsbCB0aGUgcGllcywgYm95IQ==`\n\nThis is using a [Base64](https://en.wikipedia.org/wiki/Base64) encoding to\nturn arbitrary binary data into ASCII characters that safely fit in strings.\n\nThis is primarily useful when you want to show images that were just uploaded\nbecause **an `<img>` tag expects its `src` attribute to be a URL.** So if you\nhave a website for selling furniture, using `File.toUrl` could make it easier\nto create a screen to preview and reorder images. This way people can make\nsure their old table looks great!\n",
+                "type": "File.File -> Task.Task x String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "File.Download",
+        "comment": " Commands for downloading files.\n\n**SECURITY NOTE:** Browsers require that all downloads are initiated by a user\nevent. So rather than allowing malicious sites to put files on your computer\nhowever they please, the user at least have to click a button first. As a\nresult, the following commands only work when they are triggered by some user\nevent.\n\n# Download\n@docs string, bytes, url\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "bytes",
+                "comment": " Download some `Bytes` as a file. Maybe you are creating custom images,\nand you want a button to download them as PNG files. After using\n[`elm/bytes`][bytes] to generate the file content, you can download it like\nthis:\n\n    import Bytes exposing (Bytes)\n    import File.Download as Download\n\n    savePng : Bytes -> Cmd msg\n    savePng bytes =\n      Download.bytes \"frog.png\" \"image/png\" bytes\n\nSo the arguments are file name, MIME type, and then the file content. With the\nability to build any byte sequence you want with [`elm/bytes`][bytes], you can\ncreate `.zip` files, `.jpg` files, or whatever else you might need!\n\n[bytes]: /packages/elm/bytes/latest\n",
+                "type": "String.String -> String.String -> Bytes.Bytes -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "string",
+                "comment": " Download a `String` as a file. Maybe you markdown editor in the browser,\nand you want to provide a button to download markdown files:\n\n    import File.Download as Download\n\n    save : String -> Cmd msg\n    save markdown =\n      Download.string \"draft.md\" \"text/markdown\" markdown\n\nSo the arguments are file name, MIME type, and then the file content. In this\ncase is is markdown, but it could be any string information.\n",
+                "type": "String.String -> String.String -> String.String -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "url",
+                "comment": " Download a file from a URL on the same origin. So if you have a website\nat `https://example.com`, you could download a math GIF like this:\n\n    import File.Download as Download\n\n    downloadMathGif : Cmd msg\n    downloadMathGif =\n      Download.url \"https://example.com/math.gif\"\n\nThe downloaded file will use whatever name the server suggests. So if you want\na different name, have your server add a [`Content-Disposition`][cd] header like\n`Content-Disposition: attachment; filename=\"triangle.gif\"` when it serves the\nfile.\n\n**Warning:** The implementation uses `<a href=\"...\" download></a>` which has\ntwo important consequences:\n\n1. **Cross-origin downloads are weird.** If you want a file from a different\ndomain (like `https://files.example.com` or `https://www.wikipedia.org`) this\nfunction adds a `target=\"_blank\"`, opening the file in a new tab. Otherwise\nthe link would just take over the current page, replacing your website with a\nGIF or whatever. To make cross-origin downloads work differently, you can (1)\nmake the request same-origin by sending it to your server and then having your\nserver fetch the file or (2) fetch the file with `elm/http` and then go through\n`File.Download.bytes`.\n2. **Same-origin downloads are weird in IE10 and IE11.** These browsers do not\nsupport the `download` attribute, so you should always get the `target=\"_blank\"`\nbehavior where the URL opens in a new tab. Again, you can fetch the file with\n`elm/http` and then use `File.Download.bytes` to get around this.\n\nThings are quite tricky here between the intentional security constraints and\nparticularities of browser implementations, so remember that you can always\nsend the URL out a `port` and do something even more custom in JavaScript!\n\n[cd]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Disposition\n",
+                "type": "String.String -> Platform.Cmd.Cmd msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "File.Select",
+        "comment": " Ask the user to select some files.\n\n**SECURITY NOTE:** Browsers will only open a file selector in reaction to a\nuser event. So rather than allowing malicious sites to ask for files whenever\nthey please, the user at least have to click a button first. As a result, the\nfollowing commands only work when they are triggered by some user event.\n\n# Select Files\n@docs file, files\n\n# Limitations\n\nThe API here uses commands, but it seems like it could also provide tasks.\nThe trouble is that a `Task` is guaranteed to succeed or fail. There should\nnot be any cases where it just does neither. File selection makes this tricky\nbecause there are two limitations in JavaScript as of this writing:\n\n1. File selection must be a direct response to a user event. This is intended\nto help with security. It is not clear how to reliably detect when these\ncommands were issued at invalid times, especially across browsers.\n2. The user can always click `Cancel` on the file dialog. It is quite\ndifficult to reliably detect if someone has clicked this button across\nbrowsers, especially when it is hard to know if the dialog is even open in the\nfirst place.\n\nI think it would be worth figuring out how to know these two things reliably\nbefore exposing a `Task` API for things.\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "file",
+                "comment": " Ask the user to select **one** file. To ask for a single `.zip` file you\ncould say:\n\n    import File.Select as Select\n\n    type Msg\n      = ZipRequested\n      | ZipLoaded File\n\n    requestZip : Cmd Msg\n    requestZip =\n      Select.file [\"application/zip\"] ZipLoaded\n\nYou provide (1) a list of acceptable MIME types and (2) a function to turn the\nresulting file into a message for your `update` function. In this case, we only\nwant files with MIME type `application/zip`.\n\n**Note:** This only works when the command is the direct result of a user\nevent, like clicking something.\n\n**Note:** This command may not resolve, partly because it is unclear how to\nreliably detect `Cancel` clicks across browsers. More about that in the\nsection on [limitations](#limitations) below.\n",
+                "type": "List.List String.String -> (File.File -> msg) -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "files",
+                "comment": " Ask the user to select **one or more** files. To ask for many image files,\nyou could say:\n\n    import File.Select as Select\n\n    type Msg\n      = ImagesRequested\n      | ImagesLoaded File (List File)\n\n    requestImages : Cmd Msg\n    requestImages =\n      Select.files [\"image/png\",\"image/jpg\"] ImagesLoaded\n\nIn this case, we only want PNG and JPG files.\n\nNotice that the function that turns the resulting files into a message takes\ntwo arguments: the first file selected and then a list of the other selected\nfiles. This guarantees that one file (or more) is available. This way you do\nnot have to handle “no files loaded” in your code. That can never happen!\n\n**Note:** This only works when the command is the direct result of a user\nevent, like clicking something.\n\n**Note:** This command may not resolve, partly because it is unclear how to\nreliably detect `Cancel` clicks across browsers. More about that in the\nsection on [limitations](#limitations) below.\n",
+                "type": "List.List String.String -> (File.File -> List.List File.File -> msg) -> Platform.Cmd.Cmd msg"
+            }
+        ],
+        "binops": []
+    }
+]

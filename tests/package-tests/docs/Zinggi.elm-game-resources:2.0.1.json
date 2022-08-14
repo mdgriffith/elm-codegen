@@ -1,0 +1,58 @@
+[
+    {
+        "name": "Game.Resources",
+        "comment": " A module for managing resources needed for games.\nThis currently only manages textures, but a future version might add sounds, 3d-meshes etc..\n\nSuggested import:\n\n    import Game.Resources as Resources exposing (Resources)\n\n\n# Usage\n\nAdd `resources` to your `initialModel`:\n\n    initialModel =\n        { ..\n        , resources = Resources.init\n        }\n\nAdd the resources message to your `Msg`\n\n    type Msg\n        = ..\n        | Resources Resources.Msg\n\nLoad textures at `init`:\n\n    init =\n        ( initialModel\n        , Resources.loadTextures [ \"images/box.png\" ]\n            |> Cmd.map Resources\n        )\n\nAdd a case for the `Resources.Msg` in `update`\n\n    Resources msg ->\n        { model | resources = Resources.update msg model.resources } ! []\n\nRequest your texture when you need it\n\n    Resources.getTexture \"images/box.png\" resources\n\n\n# Resources\n\n@docs Resources, init, update, Msg\n\n\n## Textures\n\n@docs loadTextures, getTexture\n\n@docs loadTexturesWithConfig, LoadTextureConfig\n\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Resources",
+                "comment": " The main type of this library\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "LoadTextureConfig",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ success : Game.Resources.Msg -> msg, failed : String.String -> msg }"
+            }
+        ],
+        "values": [
+            {
+                "name": "getTexture",
+                "comment": " Returns a maybe as the texture might not be loaded yet.\n",
+                "type": "String.String -> Game.Resources.Resources -> Maybe.Maybe WebGL.Texture.Texture"
+            },
+            {
+                "name": "init",
+                "comment": " ",
+                "type": "Game.Resources.Resources"
+            },
+            {
+                "name": "loadTextures",
+                "comment": " Loads a list of textures from the given urls.\nPNGs and JPEGs are known to work.\nFor WebGL make sure that your textures have a dimension with a power of two, e.g. 2^n x 2^m\n",
+                "type": "List.List String.String -> Platform.Cmd.Cmd Game.Resources.Msg"
+            },
+            {
+                "name": "loadTexturesWithConfig",
+                "comment": " Same as loadTextures, but gives you more control\nby being able to react to a texture loading error\nand by specifying a texture filter.\n\n    loadTexturesWithConfig\n        { success = Resources\n        , failed = LoadingTextureFailed\n        }\n        [ ( linear, \"images/blob.png\" ), ( nearest, \"images/box.jpeg\" ) ]\n\n",
+                "type": "Game.Resources.LoadTextureConfig msg -> List.List ( WebGL.Texture.Options, String.String ) -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "update",
+                "comment": " ",
+                "type": "Game.Resources.Msg -> Game.Resources.Resources -> Game.Resources.Resources"
+            }
+        ],
+        "binops": []
+    }
+]

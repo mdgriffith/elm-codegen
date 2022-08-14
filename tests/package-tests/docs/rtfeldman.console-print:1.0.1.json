@@ -1,0 +1,116 @@
+[
+    {
+        "name": "Console",
+        "comment": " Functions to wrap strings in ANSI Escape sequences for colors and styling.\n\n\n## Text Styles\n\n@docs plain, dark, bold, underline, colorsInverted\n\n\n## Foreground Colors\n\n@docs black, red, green, yellow, blue, magenta, cyan, white\n\n\n## Background Colors\n\n@docs bgBlack, bgRed, bgGreen, bgYellow, bgBlue, bgMagenta, bgCyan, bgWhite\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "bgBlack",
+                "comment": " Make the background black.\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "bgBlue",
+                "comment": " Make the background blue.\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "bgCyan",
+                "comment": " Make the background cyan.\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "bgGreen",
+                "comment": " Make the background green.\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "bgMagenta",
+                "comment": " Make the background magenta.\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "bgRed",
+                "comment": " Make the background red.\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "bgWhite",
+                "comment": " Make the background white.\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "bgYellow",
+                "comment": " Make the background yellow.\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "black",
+                "comment": " Make the foreground text black.\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "blue",
+                "comment": " Make the foreground text blue.\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "bold",
+                "comment": " Make the text bold.\n\nThis can be used with other text modifiers, such as color.\n\n    import Console exposing (blue, bold)\n\n    -- \"Hello, bold blue world!\" with \"bold blue\" in bold and blue\n\n    greeting : String\n    greeting =\n        \"Hello, \" ++ (bold << blue) \"bold blue\" ++ \" world!\"\n\nSome terminals implement this as a color change rather than a boldness change.\n\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "colorsInverted",
+                "comment": " Invert the foreground and background colors from what they would otherwise be.\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "cyan",
+                "comment": " Make the foreground text cyan.\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "dark",
+                "comment": " Make the text darker.\n\nThis can be used with other text modifiers, such as color.\n\n    import Console exposing (dark, green)\n\n    -- \"Hello, dark green world!\" with \"dark green\" in dark green\n\n    greeting : String\n    greeting =\n        \"Hello, \" ++ (dark << green) \"dark green\" ++ \" world!\"\n\nNot all terminals support this.\n\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "green",
+                "comment": " Make the foreground text green.\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "magenta",
+                "comment": " Make the foreground text magenta.\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "plain",
+                "comment": " Display the text in the console's default style.\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "red",
+                "comment": " Make the foreground text red.\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "underline",
+                "comment": " Make the text underlined.\n\nThis can be used with other text modifiers, such as color.\n\n    import Console exposing (underline)\n\n    -- \"This will look like a hyperlink\" with \"hyperlink\" underlined\n\n    example : String\n    example =\n        \"This will look like a \" ++ underline \"hyperlink\"\n\nNot all terminals support this.\n\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "white",
+                "comment": " Make the foreground text white.\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "yellow",
+                "comment": " Make the foreground text yellow.\n",
+                "type": "String.String -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

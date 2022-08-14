@@ -1,0 +1,124 @@
+[
+    {
+        "name": "Piano",
+        "comment": " A customizable piano component\n\n# Model\n@docs Model\n@docs initialModel\n@docs Note\n\n# Messages and updates\n@docs update\n@docs Msg\n\n# Keyboard size helpers\n@docs keyboard12Keys\n@docs keyboard25Keys\n@docs keyboard49Keys\n@docs keyboard61Keys\n@docs keyboard76Keys\n@docs keyboard88Keys\n\n# HTML rendering\n@docs view\n\n# Note helpers\n@docs noteName\n@docs isNatural\n@docs octave\n\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " Messages received when clicking a key or\nchanging the keyboard's size\n",
+                "args": [],
+                "cases": [
+                    [
+                        "KeyUp",
+                        [
+                            "Piano.Note"
+                        ]
+                    ],
+                    [
+                        "KeyDown",
+                        [
+                            "Piano.Note"
+                        ]
+                    ],
+                    [
+                        "ChangeNoteRange",
+                        [
+                            "( Basics.Int, Basics.Int )"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Model",
+                "comment": " The model of the component.\n\nnotes is the set of currently pressed notes.\n\nnoteRange determines the first and last notes of the keyboard.\n\nIf interactive is True, the component will generate KeyUp and KeyDown messages\nwhen the user clicks on a note. (Now this mode is experimental and has some\nUI issues).\n\nIf showSizeSelector is True a button group will be shown to select the keyboard\nsize.\n\nIf debugNotes is True a text will appear, showin the note names of each\ncurrently pressed note.\n",
+                "args": [],
+                "type": "{ notes : Set.Set Piano.Note, noteRange : ( Piano.Note, Piano.Note ), interactive : Basics.Bool, showSizeSelector : Basics.Bool, debugNotes : Basics.Bool }"
+            },
+            {
+                "name": "Note",
+                "comment": " Represents a note giving its MIDI Note Number\n\nSee http://www.electronics.dit.ie/staff/tscarff/Music_technology/midi/midi_note_numbers_for_octaves.htm for more information\n",
+                "args": [],
+                "type": "Basics.Int"
+            }
+        ],
+        "values": [
+            {
+                "name": "initialModel",
+                "comment": " Common initial configuration for the component\n\nNow it starts with no keys being pressed in a 25-key keyboard, in interactive\nmode and with the size selector and the note debugger.\n",
+                "type": "Piano.Model"
+            },
+            {
+                "name": "isNatural",
+                "comment": " Return False is note is a flat or sharp, True otherwise\n",
+                "type": "Piano.Note -> Basics.Bool"
+            },
+            {
+                "name": "keyboard12Keys",
+                "comment": " Note range of a 12-key keyboard\n",
+                "type": "( Basics.Int, Basics.Int )"
+            },
+            {
+                "name": "keyboard25Keys",
+                "comment": " Note range of a 25-key keyboard\n",
+                "type": "( Basics.Int, Basics.Int )"
+            },
+            {
+                "name": "keyboard49Keys",
+                "comment": " Note range of a 49-key keyboard\n",
+                "type": "( Basics.Int, Basics.Int )"
+            },
+            {
+                "name": "keyboard61Keys",
+                "comment": " Note range of a 61-key keyboard\n",
+                "type": "( Basics.Int, Basics.Int )"
+            },
+            {
+                "name": "keyboard76Keys",
+                "comment": " Note range of a 76-key keyboard\n",
+                "type": "( Basics.Int, Basics.Int )"
+            },
+            {
+                "name": "keyboard88Keys",
+                "comment": " Note range of a 88-key keyboard\n",
+                "type": "( Basics.Int, Basics.Int )"
+            },
+            {
+                "name": "noteName",
+                "comment": " Represent a note number as a string\n",
+                "type": "Piano.Note -> String.String"
+            },
+            {
+                "name": "octave",
+                "comment": " Octave number of a note\n",
+                "type": "Piano.Note -> Basics.Int"
+            },
+            {
+                "name": "update",
+                "comment": " Handle the messages by updating model.notes or model.noteRange\n",
+                "type": "Piano.Msg -> Piano.Model -> Piano.Model"
+            },
+            {
+                "name": "view",
+                "comment": " Show the Piano component and, if set in the model, the debug text and the\nkeyboard size changer.\n",
+                "type": "Piano.Model -> Html.Html Piano.Msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Piano.PianoStyle",
+        "comment": "\nExposes a single string with the correct CSS styles for the component.\n\nThis was made an extra module to avoid long CSS styles in the main script.\n\n@docs css\n\nBased on javascript-piano by michaelemp\nhttps://github.com/michaelmp/js-piano\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "css",
+                "comment": " CSS style\n",
+                "type": "String.String"
+            }
+        ],
+        "binops": []
+    }
+]

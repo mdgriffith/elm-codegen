@@ -1,0 +1,283 @@
+[
+    {
+        "name": "Http",
+        "comment": " Send HTTP requests.\n\n# Requests\n@docs get, post, request\n\n# Header\n@docs Header, header\n\n# Body\n@docs Body, emptyBody, stringBody, jsonBody, fileBody, bytesBody\n\n# Body Parts\n@docs multipartBody, Part, stringPart, filePart, bytesPart\n\n# Expect\n@docs Expect, expectString, expectJson, expectBytes, expectWhatever, Error\n\n# Progress\n@docs track, Progress, fractionSent, fractionReceived\n\n# Cancel\n@docs cancel\n\n# Risky Requests\n@docs riskyRequest\n\n# Elaborate Expectations\n@docs expectStringResponse, expectBytesResponse, Response, Metadata\n\n# Tasks\n@docs task, Resolver, stringResolver, bytesResolver, riskyTask\n",
+        "unions": [
+            {
+                "name": "Body",
+                "comment": " Represents the body of a `Request`.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Error",
+                "comment": " A `Request` can fail in a couple ways:\n\n- `BadUrl` means you did not provide a valid URL.\n- `Timeout` means it took too long to get a response.\n- `NetworkError` means the user turned off their wifi, went in a cave, etc.\n- `BadStatus` means you got a response back, but the status code indicates failure.\n- `BadBody` means you got a response back with a nice status code, but the body\nof the response was something unexpected. The `String` in this case is a\ndebugging message that explains what went wrong with your JSON decoder or\nwhatever.\n\n**Note:** You can use [`expectStringResponse`](#expectStringResponse) and\n[`expectBytesResponse`](#expectBytesResponse) to get more flexibility on this.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "BadUrl",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Timeout",
+                        []
+                    ],
+                    [
+                        "NetworkError",
+                        []
+                    ],
+                    [
+                        "BadStatus",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "BadBody",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Expect",
+                "comment": " Logic for interpreting a response body.\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Header",
+                "comment": " An HTTP header for configuring requests. See a bunch of common headers\n[here](https://en.wikipedia.org/wiki/List_of_HTTP_header_fields).\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Part",
+                "comment": " One part of a `multipartBody`.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Progress",
+                "comment": " There are two phases to HTTP requests. First you **send** a bunch of data,\nthen you **receive** a bunch of data. For example, say you use `fileBody` to\nupload a file of 262144 bytes. From there, progress will go like this:\n\n```\nSending   { sent =      0, size = 262144 }  -- 0.0\nSending   { sent =  65536, size = 262144 }  -- 0.25\nSending   { sent = 131072, size = 262144 }  -- 0.5\nSending   { sent = 196608, size = 262144 }  -- 0.75\nSending   { sent = 262144, size = 262144 }  -- 1.0\nReceiving { received =  0, size = Just 16 } -- 0.0\nReceiving { received = 16, size = Just 16 } -- 1.0\n```\n\nWith file uploads, the **send** phase is expensive. That is what we saw in our\nexample. But with file downloads, the **receive** phase is expensive.\n\nUse [`fractionSent`](#fractionSent) and [`fractionReceived`](#fractionReceived)\nto turn this progress information into specific fractions!\n\n**Note:** The `size` of the response is based on the [`Content-Length`][cl]\nheader, and in rare and annoying cases, a server may not include that header.\nThat is why the `size` is a `Maybe Int` in `Receiving`.\n\n[cl]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Length\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Sending",
+                        [
+                            "{ sent : Basics.Int, size : Basics.Int }"
+                        ]
+                    ],
+                    [
+                        "Receiving",
+                        [
+                            "{ received : Basics.Int, size : Maybe.Maybe Basics.Int }"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Resolver",
+                "comment": " Describes how to resolve an HTTP task. You can create a resolver with\n[`stringResolver`](#stringResolver) and [`bytesResolver`](#bytesResolver).\n",
+                "args": [
+                    "x",
+                    "a"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Response",
+                "comment": " A `Response` can come back a couple different ways:\n\n- `BadUrl_` &mdash; you did not provide a valid URL.\n- `Timeout_` &mdash; it took too long to get a response.\n- `NetworkError_` &mdash; the user turned off their wifi, went in a cave, etc.\n- `BadStatus_` &mdash; a response arrived, but the status code indicates failure.\n- `GoodStatus_` &mdash; a response arrived with a nice status code!\n\nThe type of the `body` depends on whether you use\n[`expectStringResponse`](#expectStringResponse)\nor [`expectBytesResponse`](#expectBytesResponse).\n",
+                "args": [
+                    "body"
+                ],
+                "cases": [
+                    [
+                        "BadUrl_",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Timeout_",
+                        []
+                    ],
+                    [
+                        "NetworkError_",
+                        []
+                    ],
+                    [
+                        "BadStatus_",
+                        [
+                            "Http.Metadata",
+                            "body"
+                        ]
+                    ],
+                    [
+                        "GoodStatus_",
+                        [
+                            "Http.Metadata",
+                            "body"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Metadata",
+                "comment": " Extra information about the response:\n\n- `url` of the server that actually responded (so you can detect redirects)\n- `statusCode` like `200` or `404`\n- `statusText` describing what the `statusCode` means a little\n- `headers` like `Content-Length` and `Expires`\n\n**Note:** It is possible for a response to have the same header multiple times.\nIn that case, all the values end up in a single entry in the `headers`\ndictionary. The values are separated by commas, following the rules outlined\n[here](https://stackoverflow.com/questions/4371328/are-duplicate-http-response-headers-acceptable).\n",
+                "args": [],
+                "type": "{ url : String.String, statusCode : Basics.Int, statusText : String.String, headers : Dict.Dict String.String String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "bytesBody",
+                "comment": " Put some `Bytes` in the body of your `Request`. This allows you to use\n[`elm/bytes`](/packages/elm/bytes/latest) to have full control over the binary\nrepresentation of the data you are sending. For example, you could create an\n`archive.zip` file and send it along like this:\n\n    import Bytes exposing (Bytes)\n\n    zipBody : Bytes -> Body\n    zipBody bytes =\n      bytesBody \"application/zip\" bytes\n\nThe first argument is a [MIME type](https://en.wikipedia.org/wiki/Media_type)\nof the body. In other scenarios you may want to use MIME types like `image/png`\nor `image/jpeg` instead.\n\n**Note:** Use [`track`](#track) to track upload progress.\n",
+                "type": "String.String -> Bytes.Bytes -> Http.Body"
+            },
+            {
+                "name": "bytesPart",
+                "comment": " A part that contains bytes, allowing you to use\n[`elm/bytes`](/packages/elm/bytes/latest) to encode data exactly in the format\nyou need.\n\n    multipartBody\n      [ stringPart \"title\" \"Tom\"\n      , bytesPart \"photo\" \"image/png\" bytes\n      ]\n\n**Note:** You must provide a MIME type so that the receiver has clues about\nhow to interpret the bytes.\n",
+                "type": "String.String -> String.String -> Bytes.Bytes -> Http.Part"
+            },
+            {
+                "name": "bytesResolver",
+                "comment": " Turn a response with a `Bytes` body into a result.\nSimilar to [`expectBytesResponse`](#expectBytesResponse).\n",
+                "type": "(Http.Response Bytes.Bytes -> Result.Result x a) -> Http.Resolver x a"
+            },
+            {
+                "name": "cancel",
+                "comment": " Try to cancel an ongoing request based on a `tracker`.\n",
+                "type": "String.String -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "emptyBody",
+                "comment": " Create an empty body for your `Request`. This is useful for GET requests\nand POST requests where you are not sending any data.\n",
+                "type": "Http.Body"
+            },
+            {
+                "name": "expectBytes",
+                "comment": " Expect the response body to be binary data. For example, maybe you are\ntalking to an endpoint that gives back ProtoBuf data:\n\n    import Bytes.Decode as Bytes\n    import Http\n\n    type Msg\n      = GotData (Result Http.Error Data)\n\n    getData : Cmd Msg\n    getData =\n      Http.get\n        { url = \"/data\"\n        , expect = Http.expectBytes GotData dataDecoder\n        }\n\n    -- dataDecoder : Bytes.Decoder Data\n\nYou would use [`elm/bytes`](/packages/elm/bytes/latest/) to decode the binary\ndata according to a proto definition file like `example.proto`.\n\nIf the decoder fails, you get a `BadBody` error that just indicates that\n_something_ went wrong. It probably makes sense to debug by peeking at the\nbytes you are getting in the browser developer tools or something.\n",
+                "type": "(Result.Result Http.Error a -> msg) -> Bytes.Decode.Decoder a -> Http.Expect msg"
+            },
+            {
+                "name": "expectBytesResponse",
+                "comment": " Expect a [`Response`](#Response) with a `Bytes` body.\n\nIt works just like [`expectStringResponse`](#expectStringResponse), giving you\nmore access to headers and more leeway in defining your own errors.\n",
+                "type": "(Result.Result x a -> msg) -> (Http.Response Bytes.Bytes -> Result.Result x a) -> Http.Expect msg"
+            },
+            {
+                "name": "expectJson",
+                "comment": " Expect the response body to be JSON. Like if you want to get a random cat\nGIF you might say:\n\n    import Http\n    import Json.Decode exposing (Decoder, field, string)\n\n    type Msg\n      = GotGif (Result Http.Error String)\n\n    getRandomCatGif : Cmd Msg\n    getRandomCatGif =\n      Http.get\n        { url = \"https://api.giphy.com/v1/gifs/random?api_key=dc6zaTOxFJmzC&tag=cat\"\n        , expect = Http.expectJson GotGif gifDecoder\n        }\n\n    gifDecoder : Decoder String\n    gifDecoder =\n      field \"data\" (field \"image_url\" string)\n\nThe official guide goes through this particular example [here][]. That page\nalso introduces [`elm/json`][json] to help you get started turning JSON into\nElm values in other situations.\n\n[here]: https://guide.elm-lang.org/interop/json.html\n[json]: /packages/elm/json/latest/\n\nIf the JSON decoder fails, you get a `BadBody` error that tries to explain\nwhat went wrong.\n",
+                "type": "(Result.Result Http.Error a -> msg) -> Json.Decode.Decoder a -> Http.Expect msg"
+            },
+            {
+                "name": "expectString",
+                "comment": " Expect the response body to be a `String`. Like when getting the full text\nof a book:\n\n    import Http\n\n    type Msg\n      = GotText (Result Http.Error String)\n\n    getPublicOpinion : Cmd Msg\n    getPublicOpinion =\n      Http.get\n        { url = \"https://elm-lang.org/assets/public-opinion.txt\"\n        , expect = Http.expectString GotText\n        }\n\nThe response body is always some sequence of bytes, but in this case, we\nexpect it to be UTF-8 encoded text that can be turned into a `String`.\n",
+                "type": "(Result.Result Http.Error String.String -> msg) -> Http.Expect msg"
+            },
+            {
+                "name": "expectStringResponse",
+                "comment": " Expect a [`Response`](#Response) with a `String` body. So you could define\nyour own [`expectJson`](#expectJson) like this:\n\n    import Http\n    import Json.Decode as D\n\n    expectJson : (Result Http.Error a -> msg) -> D.Decoder a -> Expect msg\n    expectJson toMsg decoder =\n      expectStringResponse toMsg <|\n        \\response ->\n          case response of\n            Http.BadUrl_ url ->\n              Err (Http.BadUrl url)\n\n            Http.Timeout_ ->\n              Err Http.Timeout\n\n            Http.NetworkError_ ->\n              Err Http.NetworkError\n\n            Http.BadStatus_ metadata body ->\n              Err (Http.BadStatus metadata.statusCode)\n\n            Http.GoodStatus_ metadata body ->\n              case D.decodeString decoder body of\n                Ok value ->\n                  Ok value\n\n                Err err ->\n                  Err (Http.BadBody (D.errorToString err))\n\nThis function is great for fancier error handling and getting response headers.\nFor example, maybe when your sever gives a 404 status code (not found) it also\nprovides a helpful JSON message in the response body. This function lets you\nadd logic to the `BadStatus_` branch so you can parse that JSON and give users\na more helpful message! Or make your own custom error type for your particular\napplication!\n",
+                "type": "(Result.Result x a -> msg) -> (Http.Response String.String -> Result.Result x a) -> Http.Expect msg"
+            },
+            {
+                "name": "expectWhatever",
+                "comment": " Expect the response body to be whatever. It does not matter. Ignore it!\nFor example, you might want this when uploading files:\n\n    import Http\n\n    type Msg\n      = Uploaded (Result Http.Error ())\n\n    upload : File -> Cmd Msg\n    upload file =\n      Http.post\n        { url = \"/upload\"\n        , body = Http.fileBody file\n        , expect = Http.expectWhatever Uploaded\n        }\n\nThe server may be giving back a response body, but we do not care about it.\n",
+                "type": "(Result.Result Http.Error () -> msg) -> Http.Expect msg"
+            },
+            {
+                "name": "fileBody",
+                "comment": " Use a file as the body of your `Request`. When someone uploads an image\ninto the browser with [`elm/file`](/packages/elm/file/latest) you can forward\nit to a server.\n\nThis will automatically set the `Content-Type` to the MIME type of the file.\n\n**Note:** Use [`track`](#track) to track upload progress.\n",
+                "type": "File.File -> Http.Body"
+            },
+            {
+                "name": "filePart",
+                "comment": " A part that contains a file. You can use\n[`elm/file`](/packages/elm/file/latest) to get files loaded into the\nbrowser. From there, you can send it along to a server like this:\n\n    multipartBody\n      [ stringPart \"product\" \"Ikea Bekant\"\n      , stringPart \"description\" \"Great desk for home office.\"\n      , filePart \"image[]\" file1\n      , filePart \"image[]\" file2\n      , filePart \"image[]\" file3\n      ]\n",
+                "type": "String.String -> File.File -> Http.Part"
+            },
+            {
+                "name": "fractionReceived",
+                "comment": " Turn `Receiving` progress into a useful fraction for progress bars.\n\n    fractionReceived { received =   0, size = Just 1024 } == 0.0\n    fractionReceived { received = 256, size = Just 1024 } == 0.25\n    fractionReceived { received = 512, size = Just 1024 } == 0.5\n\n    -- fractionReceived { received =   0, size = Nothing } == 0.0\n    -- fractionReceived { received = 256, size = Nothing } == 0.0\n    -- fractionReceived { received = 512, size = Nothing } == 0.0\n\nThe `size` here is based on the [`Content-Length`][cl] header which may be\nmissing in some cases. A server may be misconfigured or it may be streaming\ndata and not actually know the final size. Whatever the case, this function\nwill always give `0.0` when the final size is unknown.\n\nFurthermore, the `Content-Length` header may be incorrect! The implementation\nclamps the fraction between `0.0` and `1.0`, so you will just get `1.0` if\nyou ever receive more bytes than promised.\n\n**Note:** If you are streaming something, you can write a custom version of\nthis function that just tracks bytes received. Maybe you show that 22kb or 83kb\nhave been downloaded, without a specific fraction. If you do this, be wary of\ndivide-by-zero errors because `size` can always be zero!\n\n[cl]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Length\n",
+                "type": "{ received : Basics.Int, size : Maybe.Maybe Basics.Int } -> Basics.Float"
+            },
+            {
+                "name": "fractionSent",
+                "comment": " Turn `Sending` progress into a useful fraction.\n\n    fractionSent { sent =   0, size = 1024 } == 0.0\n    fractionSent { sent = 256, size = 1024 } == 0.25\n    fractionSent { sent = 512, size = 1024 } == 0.5\n\n    -- fractionSent { sent = 0, size = 0 } == 1.0\n\nThe result is always between `0.0` and `1.0`, ensuring that any progress bar\nanimations never go out of bounds.\n\nAnd notice that `size` can be zero. That means you are sending a request with\nan empty body. Very common! When `size` is zero, the result is always `1.0`.\n\n**Note:** If you create your own function to compute this fraction, watch out\nfor divide-by-zero errors!\n",
+                "type": "{ sent : Basics.Int, size : Basics.Int } -> Basics.Float"
+            },
+            {
+                "name": "get",
+                "comment": " Create a `GET` request.\n\n    import Http\n\n    type Msg\n      = GotText (Result Http.Error String)\n\n    getPublicOpinion : Cmd Msg\n    getPublicOpinion =\n      Http.get\n        { url = \"https://elm-lang.org/assets/public-opinion.txt\"\n        , expect = Http.expectString GotText\n        }\n\nYou can use functions like [`expectString`](#expectString) and\n[`expectJson`](#expectJson) to interpret the response in different ways. In\nthis example, we are expecting the response body to be a `String` containing\nthe full text of _Public Opinion_ by Walter Lippmann.\n\n**Note:** Use [`elm/url`](/packages/elm/url/latest) to build reliable URLs.\n",
+                "type": "{ url : String.String, expect : Http.Expect msg } -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "header",
+                "comment": " Create a `Header`.\n\n    header \"If-Modified-Since\" \"Sat 29 Oct 1994 19:43:31 GMT\"\n    header \"Max-Forwards\" \"10\"\n    header \"X-Requested-With\" \"XMLHttpRequest\"\n",
+                "type": "String.String -> String.String -> Http.Header"
+            },
+            {
+                "name": "jsonBody",
+                "comment": " Put some JSON value in the body of your `Request`. This will automatically\nadd the `Content-Type: application/json` header.\n",
+                "type": "Json.Encode.Value -> Http.Body"
+            },
+            {
+                "name": "multipartBody",
+                "comment": " When someone clicks submit on the `<form>`, browsers send a special HTTP\nrequest with all the form data. Something like this:\n\n```\nPOST /test.html HTTP/1.1\nHost: example.org\nContent-Type: multipart/form-data;boundary=\"7MA4YWxkTrZu0gW\"\n\n--7MA4YWxkTrZu0gW\nContent-Disposition: form-data; name=\"title\"\n\nTrip to London\n--7MA4YWxkTrZu0gW\nContent-Disposition: form-data; name=\"album[]\"; filename=\"parliment.jpg\"\n\n...RAW...IMAGE...BITS...\n--7MA4YWxkTrZu0gW--\n```\n\nThis was the only way to send files for a long time, so many servers expect\ndata in this format. **The `multipartBody` function lets you create these\nrequests.** For example, to upload a photo album all at once, you could create\na body like this:\n\n    multipartBody\n      [ stringPart \"title\" \"Trip to London\"\n      , filePart \"album[]\" file1\n      , filePart \"album[]\" file2\n      , filePart \"album[]\" file3\n      ]\n\nAll of the body parts need to have a name. Names can be repeated. Adding the\n`[]` on repeated names is a convention from PHP. It seems weird, but I see it\nenough to mention it. You do not have to do it that way, especially if your\nserver uses some other convention!\n\nThe `Content-Type: multipart/form-data` header is automatically set when\ncreating a body this way.\n\n**Note:** Use [`track`](#track) to track upload progress.\n",
+                "type": "List.List Http.Part -> Http.Body"
+            },
+            {
+                "name": "post",
+                "comment": " Create a `POST` request. So imagine we want to send a POST request for\nsome JSON data. It might look like this:\n\n    import Http\n    import Json.Decode exposing (list, string)\n\n    type Msg\n      = GotBooks (Result Http.Error (List String))\n\n    postBooks : Cmd Msg\n    postBooks =\n      Http.post\n        { url = \"https://example.com/books\"\n        , body = Http.emptyBody\n        , expect = Http.expectJson GotBooks (list string)\n        }\n\nNotice that we are using [`expectJson`](#expectJson) to interpret the response\nas JSON. You can learn more about how JSON decoders work [here][] in the guide.\n\nWe did not put anything in the body of our request, but you can use functions\nlike [`stringBody`](#stringBody) and [`jsonBody`](#jsonBody) if you need to\nsend information to the server.\n\n[here]: https://guide.elm-lang.org/interop/json.html\n",
+                "type": "{ url : String.String, body : Http.Body, expect : Http.Expect msg } -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "request",
+                "comment": " Create a custom request. For example, a PUT for files might look like this:\n\n    import File\n    import Http\n\n    type Msg = Uploaded (Result Http.Error ())\n\n    upload : File.File -> Cmd Msg\n    upload file =\n      Http.request\n        { method = \"PUT\"\n        , headers = []\n        , url = \"https://example.com/publish\"\n        , body = Http.fileBody file\n        , expect = Http.expectWhatever Uploaded\n        , timeout = Nothing\n        , tracker = Nothing\n        }\n\nIt lets you set custom `headers` as needed. The `timeout` is the number of\nmilliseconds you are willing to wait before giving up. The `tracker` lets you\n[`cancel`](#cancel) and [`track`](#track) requests.\n",
+                "type": "{ method : String.String, headers : List.List Http.Header, url : String.String, body : Http.Body, expect : Http.Expect msg, timeout : Maybe.Maybe Basics.Float, tracker : Maybe.Maybe String.String } -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "riskyRequest",
+                "comment": " Create a request with a risky security policy. Things like:\n\n- Allow responses from other domains to set cookies.\n- Include cookies in requests to other domains.\n\nThis is called [`withCredentials`][wc] in JavaScript, and it allows a couple\nother risky things as well. It can be useful if `www.example.com` needs to\ntalk to `uploads.example.com`, but it should be used very carefully!\n\nFor example, every HTTP request includes a `Host` header revealing the domain,\nso any request to `facebook.com` reveals the website that sent it. From there,\ncookies can be used to correlate browsing habits with specific users. “Oh, it\nlooks like they visited `example.com`. Maybe they want ads about examples!”\nThis is why you can get shoe ads for months without saying anything about it\non any social networks. **This risk exists even for people who do not have an\naccount.** Servers can set a new cookie to uniquely identify the browser and\nbuild a profile around that. Same kind of tricks for logged out users.\n\n**Context:** A significantly worse version of this can happen when trying to\nadd integrations with Google, Facebook, Pinterest, Twitter, etc. “Add our share\nbutton. It is super easy. Just add this `<script>` tag!” But the goal here is\nto get _arbitrary_ access to the executing context. Now they can track clicks,\nread page content, use time zones to approximate location, etc. As of this\nwriting, suggesting that developers just embed `<script>` tags is the default\nfor Google Analytics, Facebook Like Buttons, Twitter Follow Buttons, Pinterest\nSave Buttons, and Instagram Embeds.\n\n[ah]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Authorization\n[wc]: https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/withCredentials\n",
+                "type": "{ method : String.String, headers : List.List Http.Header, url : String.String, body : Http.Body, expect : Http.Expect msg, timeout : Maybe.Maybe Basics.Float, tracker : Maybe.Maybe String.String } -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "riskyTask",
+                "comment": " Just like [`riskyRequest`](#riskyRequest), but it creates a `Task`. **Use\nwith caution!** This has all the same security concerns as `riskyRequest`.\n",
+                "type": "{ method : String.String, headers : List.List Http.Header, url : String.String, body : Http.Body, resolver : Http.Resolver x a, timeout : Maybe.Maybe Basics.Float } -> Task.Task x a"
+            },
+            {
+                "name": "stringBody",
+                "comment": " Put some string in the body of your `Request`. Defining `jsonBody` looks\nlike this:\n\n    import Json.Encode as Encode\n\n    jsonBody : Encode.Value -> Body\n    jsonBody value =\n      stringBody \"application/json\" (Encode.encode 0 value)\n\nThe first argument is a [MIME type](https://en.wikipedia.org/wiki/Media_type)\nof the body. Some servers are strict about this!\n",
+                "type": "String.String -> String.String -> Http.Body"
+            },
+            {
+                "name": "stringPart",
+                "comment": " A part that contains `String` data.\n\n    multipartBody\n      [ stringPart \"title\" \"Tom\"\n      , filePart \"photo\" tomPng\n      ]\n",
+                "type": "String.String -> String.String -> Http.Part"
+            },
+            {
+                "name": "stringResolver",
+                "comment": " Turn a response with a `String` body into a result.\nSimilar to [`expectStringResponse`](#expectStringResponse).\n",
+                "type": "(Http.Response String.String -> Result.Result x a) -> Http.Resolver x a"
+            },
+            {
+                "name": "task",
+                "comment": " Just like [`request`](#request), but it creates a `Task`. This makes it\npossible to pair your HTTP request with `Time.now` if you need timestamps for\nsome reason. **This should be quite rare.**\n",
+                "type": "{ method : String.String, headers : List.List Http.Header, url : String.String, body : Http.Body, resolver : Http.Resolver x a, timeout : Maybe.Maybe Basics.Float } -> Task.Task x a"
+            },
+            {
+                "name": "track",
+                "comment": " Track the progress of a request. Create a [`request`](#request) where\n`tracker = Just \"form.pdf\"` and you can track it with a subscription like\n`track \"form.pdf\" GotProgress`.\n",
+                "type": "String.String -> (Http.Progress -> msg) -> Platform.Sub.Sub msg"
+            }
+        ],
+        "binops": []
+    }
+]

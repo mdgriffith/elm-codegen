@@ -1,0 +1,50 @@
+[
+    {
+        "name": "Getto.Json.SafeDecode",
+        "comment": " json utilities\n\n    value |> SafeDecode.at [\"name\"]    (SafeDecode.string \"\")\n    value |> SafeDecode.at [\"age\"]     (SafeDecode.string 0)\n    value |> SafeDecode.at [\"isValid\"] (SafeDecode.bool False)\n\n    value |> SafeDecode.at [\"roles\"] (SafeDecode.list (SafeDecode.string \"\"))\n\n    obj |> SafeDecode.valueAt [\"object\"]\n\n# Definition\n@docs Decoder\n\n# Decoders\n@docs string, int, bool, list\n\n# Decode\n@docs at, valueAt\n ",
+        "unions": [
+            {
+                "name": "Decoder",
+                "comment": " decoder and default value\n ",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "at",
+                "comment": " decode from json value with safe decoder\n ",
+                "type": "List.List String.String -> Getto.Json.SafeDecode.Decoder a -> Json.Decode.Value -> a"
+            },
+            {
+                "name": "bool",
+                "comment": " bool safe decoder\n ",
+                "type": "Basics.Bool -> Getto.Json.SafeDecode.Decoder Basics.Bool"
+            },
+            {
+                "name": "int",
+                "comment": " int safe decoder\n ",
+                "type": "Basics.Int -> Getto.Json.SafeDecode.Decoder Basics.Int"
+            },
+            {
+                "name": "list",
+                "comment": " list safe decoder\n ",
+                "type": "Getto.Json.SafeDecode.Decoder a -> Getto.Json.SafeDecode.Decoder (List.List a)"
+            },
+            {
+                "name": "string",
+                "comment": " string safe decoder\n ",
+                "type": "String.String -> Getto.Json.SafeDecode.Decoder String.String"
+            },
+            {
+                "name": "valueAt",
+                "comment": " decode to json value\n ",
+                "type": "List.List String.String -> Json.Decode.Value -> Json.Decode.Value"
+            }
+        ],
+        "binops": []
+    }
+]

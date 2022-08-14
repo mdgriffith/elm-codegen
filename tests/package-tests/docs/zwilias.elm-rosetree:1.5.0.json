@@ -1,0 +1,383 @@
+[
+    {
+        "name": "Tree",
+        "comment": " A multiway tree or rosetree is a labeled tree where each node can have zero,\none or more children, each of which represents a tree in its own right.\n\nThe root of the tree is always labeled, so a tree always has at least one label.\n\nAs an example, such a structure could represent a directory structure:\n\n    tree \"root\"\n        [ tree \"home\"\n            [ tree \"user1\" []\n            , tree \"user2\" []\n            ]\n        , tree \"etc\" []\n        , tree \"var\"\n            [ tree \"log\" []\n            ]\n        ]\n\nIn a sense, `Html msg` is pretty similar to how such trees look, but they can be\nused to represent other things. A nested menu structure, or a sitemap, or any\nother structure where a single root is connected to children which can each have\nchildren of their own, and so on.\n\n\n# Structure\n\n@docs Tree, singleton, tree, label, children\n\n\n# Modification\n\n@docs mapLabel, replaceLabel, mapChildren, replaceChildren, prependChild, appendChild\n\n\n# Folds\n\n@docs foldl, foldr, count, flatten\n\n\n# Mapping and traversing\n\n@docs map, indexedMap, mapAccumulate, map2, indexedMap2, mapAccumulate2, andMap\n\n\n# Fancy stuff\n\n@docs unfold, restructure\n\n",
+        "unions": [
+            {
+                "name": "Tree",
+                "comment": " Represents a multiway tree. Each node in the tree holds a piece of\ninformation (the `label`) and a list of children, each of which is a tree.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "andMap",
+                "comment": " Given a tree of functions and a tree of values, applies the functions to the\nmatching labels in the tree of values, truncating branches to match the common\nshape of the trees.\n",
+                "type": "Tree.Tree (a -> b) -> Tree.Tree a -> Tree.Tree b"
+            },
+            {
+                "name": "appendChild",
+                "comment": " Append a child to a tree. Note that this uses `children ++ [ newChild ]`\nunder the hood so use sparingly.\n\n    tree \"hello\" [ singleton \"you\" ]\n        |> appendChild (singleton \"and you!\")\n    --> tree \"hello\" [ singleton \"you\", singleton \"and you!\" ]\n\n",
+                "type": "Tree.Tree a -> Tree.Tree a -> Tree.Tree a"
+            },
+            {
+                "name": "children",
+                "comment": " Returns the children of a tree as a list.\n\n    singleton \"heh\"\n        |> children\n    --> []\n\n\n    tree \"hello\" [ singleton \"world\", singleton \"etc\" ]\n        |> children\n    --> [ singleton \"world\", singleton \"etc\" ]\n\n",
+                "type": "Tree.Tree a -> List.List (Tree.Tree a)"
+            },
+            {
+                "name": "count",
+                "comment": " Count the labels in a tree.\n\n    singleton \"foo\"\n        |> count\n    --> 1\n\n    tree \"foo\" [ singleton \"bar\", singleton \"baz\" ]\n        |> count\n    --> 3\n\n",
+                "type": "Tree.Tree a -> Basics.Int"
+            },
+            {
+                "name": "flatten",
+                "comment": " Flattens the tree into a list. This is equivalent to `foldr (::) []`\n",
+                "type": "Tree.Tree a -> List.List a"
+            },
+            {
+                "name": "foldl",
+                "comment": " Fold over all the labels in a tree, left to right, depth first.\n\n    tree \"Hello \"\n        [ singleton \"world \"\n        , tree \"and \"\n            [ singleton \"you \"\n            , singleton \"and \"\n            , singleton \"you\"\n            ]\n        , singleton \"!\"\n        ]\n        |> foldl (\\label acc -> acc ++ label) \"\"\n    --> \"Hello world and you and you!\"\n\n",
+                "type": "(a -> b -> b) -> b -> Tree.Tree a -> b"
+            },
+            {
+                "name": "foldr",
+                "comment": " Fold over all the labels in a tree, right to left, depth first.\n\n    tree 1\n        [ singleton 2\n        , tree 3\n            [ singleton 4\n            , singleton 5\n            ]\n        , singleton 6\n        ]\n        |> foldr (::) []\n    --> [ 1, 2, 3, 4, 5, 6 ]\n\n",
+                "type": "(a -> b -> b) -> b -> Tree.Tree a -> b"
+            },
+            {
+                "name": "indexedMap",
+                "comment": " Run a function on every label in the tree while getting access to the\n\"index\" of the label. This looks at thing in the same order as `foldl`.\n\n    tree \"foo\"\n        [ singleton \"bar\"\n        , tree \"baz\" [ singleton \"hello\", singleton \"world\" ]\n        , singleton \"qlux\"\n        ]\n        |> indexedMap (\\idx val -> String.fromInt idx ++ \" - \" ++ val)\n    --> tree \"0 - foo\"\n    -->     [ singleton \"1 - bar\"\n    -->     , tree \"2 - baz\"\n    -->         [ singleton \"3 - hello\"\n    -->         , singleton \"4 - world\"\n    -->         ]\n    -->     , singleton \"5 - qlux\"\n    -->     ]\n\n",
+                "type": "(Basics.Int -> a -> b) -> Tree.Tree a -> Tree.Tree b"
+            },
+            {
+                "name": "indexedMap2",
+                "comment": " Like `map2`, but with the \"index\" added as the first argument.\n",
+                "type": "(Basics.Int -> a -> b -> c) -> Tree.Tree a -> Tree.Tree b -> Tree.Tree c"
+            },
+            {
+                "name": "label",
+                "comment": " Gives you the label of a tree.\n\n    tree \"hello\" [ singleton \"world\", singleton \"etc\" ]\n        |> label\n    --> \"hello\"\n\n",
+                "type": "Tree.Tree a -> a"
+            },
+            {
+                "name": "map",
+                "comment": " Run a function on every label in the tree.\n\n    tree 1\n        [ singleton 2\n        , tree 3 [ singleton 4 ]\n        , singleton 5\n        ]\n        |> map (\\x -> String.fromInt (x * 2))\n    --> tree \"2\"\n    -->     [ singleton \"4\"\n    -->     , tree \"6\" [ singleton \"8\" ]\n    -->     , singleton \"10\"\n    -->     ]\n\n",
+                "type": "(a -> b) -> Tree.Tree a -> Tree.Tree b"
+            },
+            {
+                "name": "map2",
+                "comment": " Map over 2 trees. Much like `List.map2`, the result will be truncated to the shorter result.\n\n    left : Tree Int\n    left =\n        tree 3\n            [ singleton 5\n            , tree 6 [ singleton 12 ]\n            , singleton 4\n            ]\n\n    right : Tree Int\n    right =\n        tree 8\n            [ tree 5 [ singleton 9 ]\n            , singleton 3\n            ]\n\n\n    map2 (\\x y -> x + y) left right\n    --> tree 11\n    -->     [ singleton 10\n    -->     , singleton 9\n    -->     ]\n\n",
+                "type": "(a -> b -> c) -> Tree.Tree a -> Tree.Tree b -> Tree.Tree c"
+            },
+            {
+                "name": "mapAccumulate",
+                "comment": " Map a function over every note while accumulating some value.\n\n    tree 1\n        [ singleton 2\n        , tree 3 [ singleton 4 ]\n        ]\n        |> mapAccumulate (\\acc label -> ( acc + label, String.fromInt label)) 0\n    --> ( 10\n    --> , tree \"1\"\n    -->     [ singleton \"2\"\n    -->     , tree \"3\" [ singleton \"4\" ]\n    -->     ]\n    --> )\n\n",
+                "type": "(s -> a -> ( s, b )) -> s -> Tree.Tree a -> ( s, Tree.Tree b )"
+            },
+            {
+                "name": "mapAccumulate2",
+                "comment": " Allows mapping over 2 trees while also accumulating a value.\n\n    left : Tree Int\n    left =\n        tree 3\n            [ singleton 5\n            , tree 6 [ singleton 12 ]\n            , singleton 4\n            ]\n\n    right : Tree Int\n    right =\n        tree 8\n            [ tree 5 [ singleton 9 ]\n            , singleton 3\n            ]\n\n\n    mapAccumulate2 (\\sum x y -> ( sum + x + y, x + y )) 0 left right\n    --> ( 30\n    --> , tree 11\n    -->     [ singleton 10\n    -->     , singleton 9\n    -->     ]\n    --> )\n\n",
+                "type": "(s -> a -> b -> ( s, c )) -> s -> Tree.Tree a -> Tree.Tree b -> ( s, Tree.Tree c )"
+            },
+            {
+                "name": "mapChildren",
+                "comment": " Execute a function on the children of a tree.\n\n    tree \"lower1\"\n        [ singleton \"upper1\"\n        , tree \"upper2\" [ singleton \"lower2\"]\n        , singleton \"upper3\"\n        ]\n        |> mapChildren (List.map (mapLabel String.toUpper))\n    --> tree \"lower1\"\n    -->     [ singleton \"UPPER1\"\n    -->     , tree \"UPPER2\" [ singleton \"lower2\"]\n    -->     , singleton \"UPPER3\"\n    -->     ]\n\n",
+                "type": "(List.List (Tree.Tree a) -> List.List (Tree.Tree a)) -> Tree.Tree a -> Tree.Tree a"
+            },
+            {
+                "name": "mapLabel",
+                "comment": " Execute a function on the label of this tree.\n\n    tree \"hello\" [ singleton \"world\", singleton \"etc\" ]\n        |> mapLabel String.toUpper\n    --> tree \"HELLO\" [ singleton \"world\", singleton \"etc\" ]\n\n",
+                "type": "(a -> a) -> Tree.Tree a -> Tree.Tree a"
+            },
+            {
+                "name": "prependChild",
+                "comment": " Prepend a single child to a tree.\n\n    tree \"hello\" [ singleton \"everyone\" ]\n        |> prependChild (singleton \"dear\")\n    --> tree \"hello\" [ singleton \"dear\", singleton \"everyone\" ]\n\n",
+                "type": "Tree.Tree a -> Tree.Tree a -> Tree.Tree a"
+            },
+            {
+                "name": "replaceChildren",
+                "comment": " Replace the children of a tree.\n\n    tree \"hello\" [ singleton \"world\" ]\n        |> replaceChildren [ singleton \"everyone\" ]\n    --> tree \"hello\" [ singleton \"everyone\" ]\n\n",
+                "type": "List.List (Tree.Tree a) -> Tree.Tree a -> Tree.Tree a"
+            },
+            {
+                "name": "replaceLabel",
+                "comment": " Replace the label of this tree.\n\n    singleton \"foo\"\n        |> replaceLabel \"bar\"\n    --> singleton \"bar\"\n\n",
+                "type": "a -> Tree.Tree a -> Tree.Tree a"
+            },
+            {
+                "name": "restructure",
+                "comment": " Restructure a `Tree` into another type of structure.\n\nImagine you have a `Tree String` and you can to turn it into nested `<ul>`s.\nThis function can help!\n\n    import Html exposing (Html)\n\n\n    labelToHtml : String -> Html msg\n    labelToHtml l =\n        Html.text l\n\n\n    toListItems : Html msg -> List (Html msg) -> Html msg\n    toListItems label children =\n        case children of\n            [] ->\n                Html.li [] [ label ]\n            _ ->\n                Html.li []\n                    [ label\n                    , Html.ul [] children\n                    ]\n\n\n    tree \"root\"\n        [ tree \"folder\"\n            [ singleton \"foo\"\n            , singleton \"bar\"\n            ]\n        , singleton \"yeah\"\n        ]\n        |> restructure labelToHtml toListItems\n        |> \\root -> Html.ul [] [ root ]\n    --> Html.ul []\n    -->     [ Html.li []\n    -->         [ Html.text \"root\"\n    -->         , Html.ul []\n    -->             [ Html.li []\n    -->                 [ Html.text \"folder\"\n    -->                 , Html.ul []\n    -->                     [ Html.li [] [ Html.text \"foo\" ]\n    -->                     , Html.li [] [ Html.text \"bar\" ]\n    -->                     ]\n    -->                 ]\n    -->             , Html.li [] [ Html.text \"yeah\" ]\n    -->             ]\n    -->         ]\n    -->     ]\n\nOr perhaps you have your own tree datastructure and you want to convert to it:\n\n    type MyTree a = MyTree a (List (MyTree a))\n\n\n    tree \"root\"\n        [ tree \"folder\"\n            [ singleton \"foo\"\n            , singleton \"bar\"\n            ]\n        , singleton \"yeah\"\n        ]\n        |> restructure identity MyTree\n    --> MyTree \"root\"\n    -->     [ MyTree \"folder\"\n    -->         [ MyTree \"foo\" []\n    -->         , MyTree \"bar\" []\n    -->         ]\n    -->     , MyTree \"yeah\" []\n    -->     ]\n\n",
+                "type": "(a -> b) -> (b -> List.List c -> c) -> Tree.Tree a -> c"
+            },
+            {
+                "name": "singleton",
+                "comment": " Creates a singleton tree. This corresponds to `tree v []`.\n\n    singleton 5\n        |> label\n    --> 5\n\n    singleton \"foo\"\n        |> children\n    --> []\n\n",
+                "type": "a -> Tree.Tree a"
+            },
+            {
+                "name": "tree",
+                "comment": " Construct a tree from a label and a list of children.\n\n    tree 5 []\n    --> singleton 5\n\n\n    tree 5\n        [ singleton 1\n        , singleton 2\n        , tree 3\n            [ singleton 4\n            , singleton 5\n            ]\n        ]\n        |> count\n    --> 6\n\n",
+                "type": "a -> List.List (Tree.Tree a) -> Tree.Tree a"
+            },
+            {
+                "name": "unfold",
+                "comment": " Create a tree from a seed.\n\nRunning the function on the seed should return a label and a list of seeds to\nuse for the children.\n\nFor example, this function takes and int, and uses the string representation of\nthat int as the label, with its children representing the integers from 0 up to\nbut not including the value. The expected result is a tree in which each label\nhas the number of children mentioned in the label, recursively.\n\n    unfolder : Int -> (String, List Int)\n    unfolder x =\n        ( String.fromInt x, List.range 0 (x - 1) )\n\n\n    unfold unfolder 3\n    --> tree \"3\"\n    -->     [ singleton \"0\"\n    -->     , tree \"1\" [ singleton \"0\" ]\n    -->     , tree \"2\"\n    -->         [ singleton \"0\"\n    -->         , tree \"1\" [ singleton \"0\" ]\n    -->         ]\n    -->     ]\n\n",
+                "type": "(b -> ( a, List.List b )) -> b -> Tree.Tree a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Tree.Diff",
+        "comment": " Diffing and merging trees\n\nThe `Tree.Diff` module offers datastructures and function to handle diffing and\nmerging trees. A diff represents the abstract action that need to be taken to go\nfrom one tree to another. Merging trees allows actually executing these actions.\n\n\n## Data types\n\n@docs Diff, Tail\n\n\n## Diffing\n\n@docs diff, diffWith, diffBy\n\n\n## Merging\n\n**Note:** Merging trees according to the diff structure described here using\nregular equality on the labels will always result in the second tree being\nreturned. For that reason, only `mergeWith` and `mergeBy` exist: `merge a b = b`\nfeels like a silly function to offer!\n\n@docs mergeWith, mergeBy\n\n",
+        "unions": [
+            {
+                "name": "Diff",
+                "comment": " Either nothing changed, and we can keep a (sub)tree, or something changed.\n\nWhen something changed, there are essentially 2 cases:\n\n  - the labels on the matching nodes were different. If so, we `Replace` the\n    left with the right tree.\n  - the labels on this node were the same, but there was a difference in one or\n    more of the children.\n\nIn case there was a different with the children, there is also the possibility\nthat the length was different. This is described in the `Tail` of the `Copy`.\n\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Keep",
+                        [
+                            "Tree.Tree a"
+                        ]
+                    ],
+                    [
+                        "Replace",
+                        [
+                            "Tree.Tree a",
+                            "Tree.Tree a"
+                        ]
+                    ],
+                    [
+                        "Copy",
+                        [
+                            "a",
+                            "List.List (Tree.Diff.Diff a)",
+                            "Tree.Diff.Tail a"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Tail",
+                "comment": " If the left node had more children than the right now, we get a `Left` tail\nwith the trailing children from the left tree.\n\nOn the other hand, if the right node had more children we get a `Right` tail.\n\nIf both trees has the same number of children, the tail is `Empty`.\n\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Left",
+                        [
+                            "List.List (Tree.Tree a)"
+                        ]
+                    ],
+                    [
+                        "Right",
+                        [
+                            "List.List (Tree.Tree a)"
+                        ]
+                    ],
+                    [
+                        "Empty",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "diff",
+                "comment": " Diffing 2 trees (using standard equivalence `(==)`) produces a `Diff`!\n\n    import Tree.Diff as Diff\n    import Tree exposing (tree, singleton)\n\n    Diff.diff\n        (tree \"root\"\n            [ tree \"folder\"\n                [ singleton \"foo\"\n                , singleton \"bar\"\n                ]\n            , singleton \"yeah\"\n            , singleton \"keep me!\"\n            ]\n        )\n        (tree \"root\"\n            [ tree \"folder\"\n                [ singleton \"foo\" ]\n            , tree \"folder2\"\n                [ singleton \"nice\" ]\n            , singleton \"keep me!\"\n            ]\n        )\n    --> Diff.Copy \"root\"\n    -->     [ Diff.Copy \"folder\"\n    -->         [ Diff.Keep (singleton \"foo\") ]\n    -->         (Diff.Left [ singleton \"bar\" ])\n    -->     , Diff.Replace\n    -->         (singleton \"yeah\")\n    -->         (tree \"folder2\" [ singleton \"nice\" ])\n    -->     , Diff.Keep (singleton \"keep me!\")\n    -->     ]\n    -->     Diff.Empty\n\n",
+                "type": "Tree.Tree a -> Tree.Tree a -> Tree.Diff.Diff a"
+            },
+            {
+                "name": "diffBy",
+                "comment": " Diff using regular equality on a derived property of the label.\n\nThis is related to `diffWith` in the same way `List.sortBy` is related to\n`List.sortWith`. Imagine, for example, that your labels are tuples and you're\nonly interested in the second value.\n\nYou could either write `diffWith (\\(_, x) (_, y) -> x == y) left right` or the\nequivalent but much simple `diffBy Tuple.second`.\n\nIf you find yourself being worried about performance: Please benchmark!\n\n",
+                "type": "(a -> b) -> Tree.Tree a -> Tree.Tree a -> Tree.Diff.Diff a"
+            },
+            {
+                "name": "diffWith",
+                "comment": " Diff using custom equivalence.\n\nThis allows using a custom function to decide whether two labels are really\nequivalent. Perhaps you're using some custom datatype and you consider two\ninstances of them to be equivalent if they hold the same data, regardless of\ntheir structural equality? Or perhaps your labels are floats, and you want to\ncheck using some epsilon value?\n\nThis is your function!\n\n",
+                "type": "(a -> a -> Basics.Bool) -> Tree.Tree a -> Tree.Tree a -> Tree.Diff.Diff a"
+            },
+            {
+                "name": "mergeBy",
+                "comment": " Has the same relation to `mergeWith` as `diffBy` has to `diffWith`.\n\n    import Tree.Diff as Diff\n    import Tree exposing (tree, singleton)\n\n    Diff.mergeBy Tuple.second\n        (tree ( 1, \"root\" )\n            [ tree ( 1, \"folder\" )\n                [ singleton ( 1, \"foo\" )\n                , singleton ( 1, \"bar\" )\n                ]\n            , singleton ( 1, \"yeah\" )\n            , singleton ( 1, \"keep me!\" )\n            ]\n        )\n        (tree ( 2, \"root\" )\n            [ tree ( 2, \"folder\" )\n                [ singleton ( 2, \"foo\" ) ]\n            , tree ( 2, \"folder2\" )\n                [ singleton ( 2, \"nice\" ) ]\n            , singleton ( 2, \"keep me!\" )\n            ]\n        )\n    --> tree ( 1, \"root\" )\n    -->     [ tree ( 1, \"folder\" )\n    -->         [ singleton ( 1, \"foo\" ) ]\n    -->     , tree ( 2, \"folder2\" )\n    -->         [ singleton ( 2, \"nice\" ) ]\n    -->     , singleton ( 1, \"keep me!\" )\n    -->     ]\n\n",
+                "type": "(a -> b) -> Tree.Tree a -> Tree.Tree a -> Tree.Tree a"
+            },
+            {
+                "name": "mergeWith",
+                "comment": " ",
+                "type": "(a -> a -> Basics.Bool) -> Tree.Tree a -> Tree.Tree a -> Tree.Tree a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Tree.Zipper",
+        "comment": " Imagine walking through a `Tree` structure. You can step from a node to its\nparent, its children or one of its sibling. At every step of the way, you're \"at\"\na tree. A `Tree.Zipper` represents such a step, and offers an API to navigate and\nmodify the tree structure while walking through it.\n\n\n# Structure\n\n@docs Zipper, fromTree, fromForest, toTree, toForest, tree, label, children\n\n\n# Navigation\n\n@docs firstChild, lastChild, parent, forward, backward, root, lastDescendant, nextSibling, previousSibling\n\n\n# Location\n\n@docs siblingsBeforeFocus, siblingsAfterFocus\n\n\n# Modification\n\n@docs mapTree, replaceTree, removeTree, mapLabel, replaceLabel, append, prepend\n\n\n# Utility\n\n@docs findNext, findPrevious, findFromRoot\n\n",
+        "unions": [
+            {
+                "name": "Zipper",
+                "comment": " Represents a location within a tree, always pointing at the root or one of\nits descendant trees.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "append",
+                "comment": " Append a tree as a sibling _after_ the currently focused tree.\n",
+                "type": "Tree.Tree a -> Tree.Zipper.Zipper a -> Tree.Zipper.Zipper a"
+            },
+            {
+                "name": "backward",
+                "comment": " `backward` is the inverse of `forward`. As such, it will first try to go the\nlast descendant of a previous sibling, or the previous sibling if it has no\ndescendants. If there are no previous siblings, it will move up to its parent.\n\nIf all else fails (i.e. you are at the root) this returns `Nothing`.\n\n    import Tree exposing (Tree)\n\n    myTree : Tree String\n    myTree =\n        Tree.tree \"root\"\n            [ Tree.singleton \"first child\"\n            , Tree.tree \"second child\"\n                [ Tree.singleton \"third child\" ]\n            , Tree.singleton \"last child\"\n            ]\n\n\n    fromTree myTree\n        |> lastDescendant -- Focus on \"last child\"\n        |> backward -- jump to the last child of the previous sibling\n        |> Maybe.map label\n    --> Just \"third child\"\n\n\n    fromTree myTree\n        |> backward\n    --> Nothing\n\n",
+                "type": "Tree.Zipper.Zipper a -> Maybe.Maybe (Tree.Zipper.Zipper a)"
+            },
+            {
+                "name": "children",
+                "comment": " The children of the currently focused tree.\n",
+                "type": "Tree.Zipper.Zipper a -> List.List (Tree.Tree a)"
+            },
+            {
+                "name": "findFromRoot",
+                "comment": " Find a tree whose label matches a given predicate, starting from (and\nincluding) the root of the tree this zipper operates over.\n",
+                "type": "(a -> Basics.Bool) -> Tree.Zipper.Zipper a -> Maybe.Maybe (Tree.Zipper.Zipper a)"
+            },
+            {
+                "name": "findNext",
+                "comment": " Looks for a matching tree _after_ the current focus, using `forward` to\nnavigate. Excludes the current focus.\n",
+                "type": "(a -> Basics.Bool) -> Tree.Zipper.Zipper a -> Maybe.Maybe (Tree.Zipper.Zipper a)"
+            },
+            {
+                "name": "findPrevious",
+                "comment": " Looks for a matching tree _before_ the current focus, using `backward` to\nnavigate. Excludes the current focus.\n",
+                "type": "(a -> Basics.Bool) -> Tree.Zipper.Zipper a -> Maybe.Maybe (Tree.Zipper.Zipper a)"
+            },
+            {
+                "name": "firstChild",
+                "comment": " Move to the first child of the currently focused tree, if it has children.\n\nIf the current tree is a singeton, this returns `Nothing`.\n\n    import Tree exposing (Tree)\n\n\n    fromTree (Tree.singleton \"root\")\n        |> firstChild\n    --> Nothing\n\n\n    Tree.tree \"root\"\n        [ Tree.singleton \"child\" ]\n        |> fromTree\n        |> firstChild\n        |> Maybe.map label\n    --> Just \"child\"\n\n",
+                "type": "Tree.Zipper.Zipper a -> Maybe.Maybe (Tree.Zipper.Zipper a)"
+            },
+            {
+                "name": "forward",
+                "comment": " Try to move \"forward\". This means either to the first child, the next\nsibling, the next descendant of an ancestor or - if all else fails - `Nothing`.\n\n    import Tree exposing (Tree)\n\n    myTree : Tree String\n    myTree =\n        Tree.tree \"root\"\n            [ Tree.singleton \"first child\"\n            , Tree.tree \"second child\"\n                [ Tree.singleton \"third child\" ]\n            , Tree.singleton \"last child\"\n            ]\n\nFirst direction is to go down to the first child.\n\n    fromTree myTree\n        |> forward\n        |> Maybe.map label\n    --> Just \"first child\"\n\nSince the first child doesn't have children of its own, the next step is to go\nto the next sibling.\n\n    fromTree myTree\n        |> forward\n        |> Maybe.andThen forward\n        |> Maybe.map label\n    --> Just \"second child\"\n\nThe next sibling _does_ have a child, so we go there, next.\n\n    fromTree myTree\n        |> forward\n        |> Maybe.andThen forward\n        |> Maybe.andThen forward\n        |> Maybe.map label\n    --> Just \"third child\"\n\nThe third child doesn't have children or siblings. However, its parent does, so\nwe go up a level and to the next sibling. If the direct parent doesn't have a\nnext sibling either, `forward` will look up the chain of ancestors one that has\na sibling.\n\n    fromTree myTree\n        |> forward\n        |> Maybe.andThen forward\n        |> Maybe.andThen forward\n        |> Maybe.andThen forward\n        |> Maybe.map label\n    --> Just \"last child\"\n\nFinally, after the last child, there is no next node - it doesn't have children,\nno next siblings, and no ancestors that have any siblings left. So, we've reached\nthe end of the tree.\n\n    fromTree myTree\n        |> forward\n        |> Maybe.andThen forward\n        |> Maybe.andThen forward\n        |> Maybe.andThen forward\n        |> Maybe.andThen forward\n    --> Nothing\n\n",
+                "type": "Tree.Zipper.Zipper a -> Maybe.Maybe (Tree.Zipper.Zipper a)"
+            },
+            {
+                "name": "fromForest",
+                "comment": " Every once in a while, we'll start at a tree that has siblings, but no\nparent.\n\n    import Tree\n\n\n    fromForest (Tree.singleton \"first\") [ Tree.singleton \"second\" ]\n        |> nextSibling\n        |> Maybe.map label\n    --> Just \"second\"\n\n",
+                "type": "Tree.Tree a -> List.List (Tree.Tree a) -> Tree.Zipper.Zipper a"
+            },
+            {
+                "name": "fromTree",
+                "comment": " To start your journey, you need to start at a tree. `fromTree` creates a\nzipper with the given tree as its root.\n\n    import Tree exposing (Tree)\n\n\n    myTree : Tree Int\n    myTree =\n        Tree.tree 1\n            [ Tree.singleton 2\n            , Tree.singleton 3\n            ]\n\n\n    fromTree myTree\n        |> label\n    --> 1\n\n",
+                "type": "Tree.Tree a -> Tree.Zipper.Zipper a"
+            },
+            {
+                "name": "label",
+                "comment": " The label of the currently focused tree.\n",
+                "type": "Tree.Zipper.Zipper a -> a"
+            },
+            {
+                "name": "lastChild",
+                "comment": " If the current tree has children, move to the last of those.\n\n    import Tree exposing (Tree)\n\n\n    myTree : Tree String\n    myTree =\n        Tree.tree \"root\"\n            [ Tree.singleton \"first\"\n            , Tree.tree \"last child\"\n                [ Tree.singleton \"child of last child\"\n                ]\n            ]\n\n\n    fromTree myTree\n        |> lastChild\n        |> Maybe.map label\n    --> Just \"last child\"\n\n\n    fromTree myTree\n        |> lastChild\n        |> Maybe.andThen lastChild\n        |> Maybe.map label\n    --> Just \"child of last child\"\n\n",
+                "type": "Tree.Zipper.Zipper a -> Maybe.Maybe (Tree.Zipper.Zipper a)"
+            },
+            {
+                "name": "lastDescendant",
+                "comment": " The inverse of `root`. Think of it as repeating `lastChild` as long as it\nreturns something.\n\nNote that this will only try to descent within the current focus.\n\n    import Tree exposing (Tree)\n\n\n    myTree : Tree Int\n    myTree =\n        Tree.tree 0\n            [ Tree.tree 1\n                [ Tree.singleton 2\n                , Tree.singleton 3\n                ]\n            , Tree.tree 4\n                [ Tree.singleton 5 ]\n            ]\n\n\n    fromTree myTree\n        |> lastDescendant\n        |> label\n    --> 5\n\n\n    fromTree myTree\n        |> firstChild\n        |> Maybe.map lastDescendant\n        |> Maybe.map label\n    --> Just 3\n\n",
+                "type": "Tree.Zipper.Zipper a -> Tree.Zipper.Zipper a"
+            },
+            {
+                "name": "mapLabel",
+                "comment": " Map a function on the label of the currently focused tree.\n",
+                "type": "(a -> a) -> Tree.Zipper.Zipper a -> Tree.Zipper.Zipper a"
+            },
+            {
+                "name": "mapTree",
+                "comment": " Execute a function on the currently focused tree, replacing it in the zipper.\n",
+                "type": "(Tree.Tree a -> Tree.Tree a) -> Tree.Zipper.Zipper a -> Tree.Zipper.Zipper a"
+            },
+            {
+                "name": "nextSibling",
+                "comment": " Does what it says on the tin. Move to the next sibling if the node has some\nmore siblings left.\n",
+                "type": "Tree.Zipper.Zipper a -> Maybe.Maybe (Tree.Zipper.Zipper a)"
+            },
+            {
+                "name": "parent",
+                "comment": " Move to the parent. If the focus is on the root, there is no parent and this\nreturns `Nothing`.\n\n    import Tree exposing (Tree)\n\n\n    fromTree (Tree.singleton \"root\")\n        |> parent\n    --> Nothing\n\n\n    Tree.tree \"root\"\n        [ Tree.singleton \"child\" ]\n        |> fromTree\n        |> firstChild\n        |> Maybe.andThen parent\n        |> Maybe.map label\n    --> Just \"root\"\n\n",
+                "type": "Tree.Zipper.Zipper a -> Maybe.Maybe (Tree.Zipper.Zipper a)"
+            },
+            {
+                "name": "prepend",
+                "comment": " Prepend a tree as a sibling _before_ the currently focused tree.\n",
+                "type": "Tree.Tree a -> Tree.Zipper.Zipper a -> Tree.Zipper.Zipper a"
+            },
+            {
+                "name": "previousSibling",
+                "comment": " Not too surprisingly, moves to the previous sibling if there are any.\n\nIn particular, this returns `Nothing` for nodes that are the first child or the\nroot.\n\n",
+                "type": "Tree.Zipper.Zipper a -> Maybe.Maybe (Tree.Zipper.Zipper a)"
+            },
+            {
+                "name": "removeTree",
+                "comment": " Remove currently focused tree and return the parent, a previous sibling or a next sibling of it. If there is neither,\nreturn `Nothing`.\n\n    import Tree exposing (Tree)\n    import Tree.Zipper as Zipper exposing (Zipper)\n\n    myTree : Tree Int\n    myTree =\n        Tree.tree 0\n            [ Tree.tree 1\n                [ Tree.singleton 2\n                , Tree.singleton 3\n                ]\n            , Tree.tree 4\n                [ Tree.singleton 5 ]\n            ]\n\n\n    fromTree myTree\n        |> lastDescendant\n        |> removeTree\n        |> Maybe.map label\n    --> Just 4\n\n\n    myForest : (Tree Int, List (Tree Int))\n    myForest =\n        ( Tree.tree 0\n              [ Tree.singleton 1\n              , Tree.singleton 2\n              , Tree.singleton 3\n              ]\n        , [ Tree.singleton 4\n          , Tree.singleton 5\n          , Tree.singleton 6\n          ]\n        )\n\n\n    fromForest (Tuple.first myForest) (Tuple.second myForest)\n        |> findFromRoot ((==) 1)\n        |> Maybe.andThen removeTree\n        |> Maybe.map label\n    --> Just 0\n\n\n    fromForest (Tuple.first myForest) (Tuple.second myForest)\n        |> findFromRoot ((==) 4)\n        |> Maybe.andThen removeTree\n        |> Maybe.map label\n    --> Just 0\n\n\n    fromForest (Tuple.first myForest) (Tuple.second myForest)\n        |> removeTree\n        |> Maybe.map label\n    --> Just 4\n\n\n    fromForest (Tuple.first myForest) (Tuple.second myForest)\n        |> removeTree\n        |> Maybe.andThen nextSibling\n        |> Maybe.map label\n    --> Just 5\n\n\n    fromForest (Tuple.first myForest) (Tuple.second myForest)\n        |> findFromRoot ((==) 6)\n        |> Maybe.andThen removeTree\n        |> Maybe.andThen previousSibling\n        |> Maybe.map label\n    --> Just 4\n\n",
+                "type": "Tree.Zipper.Zipper a -> Maybe.Maybe (Tree.Zipper.Zipper a)"
+            },
+            {
+                "name": "replaceLabel",
+                "comment": " Replace the label of the currently focused tree.\n",
+                "type": "a -> Tree.Zipper.Zipper a -> Tree.Zipper.Zipper a"
+            },
+            {
+                "name": "replaceTree",
+                "comment": " Replace the currently focused tree in the zipper with a different one.\n",
+                "type": "Tree.Tree a -> Tree.Zipper.Zipper a -> Tree.Zipper.Zipper a"
+            },
+            {
+                "name": "root",
+                "comment": " From anywhere, this zooms back up to the root of the tree.\n\nThis is essentially equivalent to executing `parent` over and over as long as it\nsucceeds.\n\n",
+                "type": "Tree.Zipper.Zipper a -> Tree.Zipper.Zipper a"
+            },
+            {
+                "name": "siblingsAfterFocus",
+                "comment": " The siblings after the currently focused tree.\n\n    import Tree exposing (Tree)\n    import Tree.Zipper as Zipper exposing (Zipper)\n\n    myTree : Tree Int\n    myTree =\n        Tree.tree 0\n            [ Tree.singleton 1\n            , Tree.singleton 2\n            , Tree.singleton 3\n            ]\n\n\n    fromTree myTree\n        |> forward\n        |> Maybe.map siblingsAfterFocus\n        |> Maybe.map (List.map Tree.label)\n    --> Just [2, 3]\n\n\n    fromTree myTree\n        |> lastDescendant\n        |> siblingsAfterFocus\n        |> List.map Tree.label\n    --> []\n\n\n    myForest : (Tree Int, List (Tree Int))\n    myForest =\n        ( Tree.singleton 0\n        , [ Tree.singleton 4\n          , Tree.singleton 5\n          , Tree.singleton 6\n          ]\n        )\n\n\n    fromForest (Tuple.first myForest) (Tuple.second myForest)\n        |> siblingsAfterFocus\n        |> List.map Tree.label\n    --> [4, 5, 6]\n\n",
+                "type": "Tree.Zipper.Zipper a -> List.List (Tree.Tree a)"
+            },
+            {
+                "name": "siblingsBeforeFocus",
+                "comment": " The siblings before the currently focused tree.\n\n    import Tree exposing (Tree)\n    import Tree.Zipper as Zipper exposing (Zipper)\n\n    myTree : Tree Int\n    myTree =\n        Tree.tree 0\n            [ Tree.singleton 1\n            , Tree.singleton 2\n            , Tree.singleton 3\n            ]\n\n\n    fromTree myTree\n        |> forward\n        |> Maybe.map siblingsBeforeFocus\n        |> Maybe.map (List.map Tree.label)\n    --> Just []\n\n\n    fromTree myTree\n        |> lastDescendant\n        |> siblingsBeforeFocus\n        |> List.map Tree.label\n    --> [1, 2]\n\n\n    myForest : (Tree Int, List (Tree Int))\n    myForest =\n        ( Tree.singleton 0\n        , [ Tree.singleton 4\n          , Tree.singleton 5\n          , Tree.singleton 6\n          ]\n        )\n\n\n    fromForest (Tuple.first myForest) (Tuple.second myForest)\n        |> findFromRoot ((==) 4)\n        |> Maybe.map siblingsBeforeFocus\n        |> Maybe.map  (List.map Tree.label)\n    --> Just [0]\n\n",
+                "type": "Tree.Zipper.Zipper a -> List.List (Tree.Tree a)"
+            },
+            {
+                "name": "toForest",
+                "comment": " Occasionally, we'll want to rebuild the forest, returning the \"root\" and its\nsubsequent siblings.\n\n    import Tree\n\n    Tree.singleton \"root\"\n        |> fromTree\n        |> prepend (Tree.singleton \"before\")\n        |> append (Tree.singleton \"after\")\n        |> toForest\n    --> ( Tree.singleton \"before\"\n    --> , [ Tree.singleton \"root\"\n    -->   , Tree.singleton \"after\"\n    -->   ]\n    --> )\n\n",
+                "type": "Tree.Zipper.Zipper a -> ( Tree.Tree a, List.List (Tree.Tree a) )"
+            },
+            {
+                "name": "toTree",
+                "comment": " `toTree` rebuilds the tree to its root, and returns that.\n\nNote that if the root has siblings, these end up being ignored!\n\n    import Tree exposing (Tree)\n\n\n    myTree : Tree Int\n    myTree =\n        Tree.tree 1\n            [ Tree.singleton 2\n            , Tree.singleton 3\n            ]\n\n\n    fromTree myTree\n        |> lastDescendant\n        |> mapLabel (\\x -> x * 2)\n        |> toTree\n    --> Tree.tree 1\n    -->     [ Tree.singleton 2\n    -->     , Tree.singleton 6\n    -->     ]\n\n",
+                "type": "Tree.Zipper.Zipper a -> Tree.Tree a"
+            },
+            {
+                "name": "tree",
+                "comment": " Sometimes you don't want to extract the tree from the root, but just look at\nthe tree that's current in \"in focus\" in isolation.\n\n    import Tree exposing (Tree)\n\n\n    myTree : Tree Int\n    myTree =\n        Tree.tree 1\n            [ Tree.singleton 2\n            , Tree.singleton 3\n            ]\n\n\n    fromTree myTree\n        |> lastDescendant\n        |> mapLabel (\\x -> x * 2)\n        |> tree\n    --> Tree.singleton 6\n\n",
+                "type": "Tree.Zipper.Zipper a -> Tree.Tree a"
+            }
+        ],
+        "binops": []
+    }
+]

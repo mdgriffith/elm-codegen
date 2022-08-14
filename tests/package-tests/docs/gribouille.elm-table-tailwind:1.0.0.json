@@ -1,0 +1,447 @@
+[
+    {
+        "name": "Table",
+        "comment": " Full featured table.\n\n\n# Data\n\n@docs Model, Row, Rows, RowID, init, loaded, loadedDynamic, loadedStatic, loading, failed\n\n\n# State\n\n@docs Pipe, State, Pagination, pagination, selected, subSelected\n\n\n# Configuration\n\n@docs Config, Column, static, dynamic\n\n\n# View\n\n@docs view, subscriptions\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Column",
+                "comment": " Column's configuration (opaque).\n",
+                "args": [
+                    "a",
+                    "msg"
+                ],
+                "type": "Internal.Column.Column a msg"
+            },
+            {
+                "name": "Config",
+                "comment": " Table's configuration (opaque).\n",
+                "args": [
+                    "a",
+                    "b",
+                    "msg"
+                ],
+                "type": "Internal.Config.Config a b msg"
+            },
+            {
+                "name": "Model",
+                "comment": " Model of component (opaque).\n",
+                "args": [
+                    "a"
+                ],
+                "type": "Internal.Data.Model a"
+            },
+            {
+                "name": "Pagination",
+                "comment": " Pagination values.\n",
+                "args": [],
+                "type": "Internal.State.Pagination"
+            },
+            {
+                "name": "Pipe",
+                "comment": " Pipe for the table's messages to change the state.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "Internal.Column.Pipe msg"
+            },
+            {
+                "name": "Row",
+                "comment": " Table's row (opaque).\n",
+                "args": [
+                    "a"
+                ],
+                "type": "Internal.Data.Row a"
+            },
+            {
+                "name": "RowID",
+                "comment": " Unique ID of one row.\n",
+                "args": [],
+                "type": "Internal.State.RowID"
+            },
+            {
+                "name": "Rows",
+                "comment": " List of table's rows (opaque).\n",
+                "args": [
+                    "a"
+                ],
+                "type": "Internal.Data.Rows a"
+            },
+            {
+                "name": "State",
+                "comment": " Internal table's state.\n",
+                "args": [],
+                "type": "Internal.State.State"
+            }
+        ],
+        "values": [
+            {
+                "name": "dynamic",
+                "comment": " Define a configuration for a table with dynamic data (i.e. with paginated\nloaded data).\n",
+                "type": "(Table.Model a -> msg) -> (Table.Model a -> msg) -> (a -> String.String) -> List.List (Table.Column a msg) -> Table.Config a () msg"
+            },
+            {
+                "name": "failed",
+                "comment": " Data loading has failed.\n",
+                "type": "Table.Model a -> String.String -> Table.Model a"
+            },
+            {
+                "name": "init",
+                "comment": " Initialize the table's model.\n",
+                "type": "Table.Config a b msg -> Table.Model a"
+            },
+            {
+                "name": "loaded",
+                "comment": " Load the data in the model with the total number of rows if the data are\nincomplete.\n",
+                "type": "Table.Model a -> List.List a -> Basics.Int -> Table.Model a"
+            },
+            {
+                "name": "loadedDynamic",
+                "comment": " Similar to `loaded`. Load partial data in the model and specified the total\nnumber of rows.\n",
+                "type": "List.List a -> Basics.Int -> Table.Model a -> Table.Model a"
+            },
+            {
+                "name": "loadedStatic",
+                "comment": " Similar to `loaded` with all data so `List.length rows == total`.\n",
+                "type": "List.List a -> Table.Model a -> Table.Model a"
+            },
+            {
+                "name": "loading",
+                "comment": " Data loading is in progress.\n",
+                "type": "Table.Model a -> Table.Model a"
+            },
+            {
+                "name": "pagination",
+                "comment": " Get the pagination values from model.\n",
+                "type": "Table.Model a -> Table.Pagination"
+            },
+            {
+                "name": "selected",
+                "comment": " Return the list of selected rows.\n",
+                "type": "Table.Model a -> List.List Table.RowID"
+            },
+            {
+                "name": "static",
+                "comment": " Define a configuration for a table with static data (i.e. with all loaded\ndata at once).\n",
+                "type": "(Table.Model a -> msg) -> (a -> String.String) -> List.List (Table.Column a msg) -> Table.Config a () msg"
+            },
+            {
+                "name": "subSelected",
+                "comment": " Return the list of selected rows in the sub tables.\n",
+                "type": "Table.Model a -> List.List Table.RowID"
+            },
+            {
+                "name": "subscriptions",
+                "comment": " Table's subscriptions.\n",
+                "type": "Table.Config a b msg -> Table.Model a -> Platform.Sub.Sub msg"
+            },
+            {
+                "name": "view",
+                "comment": " Table's view.\n",
+                "type": "Table.Config a b msg -> Table.Model a -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Table.Column",
+        "comment": " Configure the table's columns.\n\n@docs Column, ViewCell, ViewHeader\n\n\n# Constructors\n\n@docs bool, default, float, int, string\n\n\n# Customization\n\n@docs withClass, withDefault, withHeaderView, withHiddable, withHidden\n@docs withSearchable, withSortable, withUnSortable, withView, withWidth\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Column",
+                "comment": " Column's configuration (opaque).\n",
+                "args": [
+                    "a",
+                    "msg"
+                ],
+                "type": "Internal.Column.Column a msg"
+            },
+            {
+                "name": "ViewCell",
+                "comment": " Function to render a cell.\n",
+                "args": [
+                    "a",
+                    "msg"
+                ],
+                "type": "Internal.Column.ViewCell a msg"
+            },
+            {
+                "name": "ViewHeader",
+                "comment": " Function to render the column's header.\n",
+                "args": [
+                    "a",
+                    "msg"
+                ],
+                "type": "Internal.Column.ViewHeader a msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "bool",
+                "comment": " Create a column for booleans.\n",
+                "type": "(a -> Basics.Bool) -> String.String -> String.String -> Table.Column.Column a msg"
+            },
+            {
+                "name": "default",
+                "comment": " Create an agnostic column with a rendering function.\n",
+                "type": "String.String -> String.String -> Table.Column.ViewCell a msg -> Table.Column.Column a msg"
+            },
+            {
+                "name": "float",
+                "comment": " Create a column for floats.\n",
+                "type": "(a -> Basics.Float) -> String.String -> String.String -> Table.Column.Column a msg"
+            },
+            {
+                "name": "int",
+                "comment": " Create an column for integers.\n",
+                "type": "(a -> Basics.Int) -> String.String -> String.String -> Table.Column.Column a msg"
+            },
+            {
+                "name": "string",
+                "comment": " Create a column for strings.\n",
+                "type": "(a -> String.String) -> String.String -> String.String -> Table.Column.Column a msg"
+            },
+            {
+                "name": "withClass",
+                "comment": " Define a CSS class for the column.\n",
+                "type": "String.String -> Table.Column.Column a msg -> Table.Column.Column a msg"
+            },
+            {
+                "name": "withDefault",
+                "comment": " Define a column visible by default.\n",
+                "type": "Basics.Bool -> Table.Column.Column a msg -> Table.Column.Column a msg"
+            },
+            {
+                "name": "withHeaderView",
+                "comment": " Define a specific function to render the header.\n",
+                "type": "Table.Column.ViewHeader a msg -> Table.Column.Column a msg -> Table.Column.Column a msg"
+            },
+            {
+                "name": "withHiddable",
+                "comment": " Define a hiddable column.\n",
+                "type": "Basics.Bool -> Table.Column.Column a msg -> Table.Column.Column a msg"
+            },
+            {
+                "name": "withHidden",
+                "comment": " Define a hidden column.\n",
+                "type": "Table.Column.Column a msg -> Table.Column.Column a msg"
+            },
+            {
+                "name": "withSearchable",
+                "comment": " Define a function to filter the data in the table (usefull only for the static table).\n",
+                "type": "Maybe.Maybe (a -> String.String) -> Table.Column.Column a msg -> Table.Column.Column a msg"
+            },
+            {
+                "name": "withSortable",
+                "comment": " Define a function to sort the data (for the dynamic table, a fake function\nshould be defined here and capture the pagination in the `update` function to\nload the sorted data).\n",
+                "type": "Maybe.Maybe (a -> a -> Basics.Order) -> Table.Column.Column a msg -> Table.Column.Column a msg"
+            },
+            {
+                "name": "withUnSortable",
+                "comment": " Define an unsortable column.\n",
+                "type": "Table.Column.Column a msg -> Table.Column.Column a msg"
+            },
+            {
+                "name": "withView",
+                "comment": " Define a specific function to render the value.\n",
+                "type": "Table.Column.ViewCell a msg -> Table.Column.Column a msg -> Table.Column.Column a msg"
+            },
+            {
+                "name": "withWidth",
+                "comment": " Define a static width (CSS value).\n",
+                "type": "String.String -> Table.Column.Column a msg -> Table.Column.Column a msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Table.Config",
+        "comment": " Configuration of the table.\n\n@docs Config\n\n\n# Constructors\n\n@docs static, dynamic\n\n\n# Customizations\n\n@docs withExpand, withSelection, withSelectionFree, withSelectionLinked\n@docs withSelectionLinkedStrict, withSelectionExclusive\n@docs withSelectionExclusiveStrict, withPagination, withProgressiveLoading\n@docs withToolbar, withErrorView, withSubtable\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " Table's configuration (opaque).\n",
+                "args": [
+                    "a",
+                    "b",
+                    "msg"
+                ],
+                "type": "Internal.Config.Config a b msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "dynamic",
+                "comment": " Define a configuration for a table with dynamic data (i.e. with paginated\nloaded data).\n",
+                "type": "(Internal.Data.Model a -> msg) -> (Internal.Data.Model a -> msg) -> (a -> String.String) -> List.List (Table.Column.Column a msg) -> Table.Config.Config a () msg"
+            },
+            {
+                "name": "static",
+                "comment": " Define a configuration for a table with static data (i.e. with all loaded\ndata at once).\n",
+                "type": "(Internal.Data.Model a -> msg) -> (a -> String.String) -> List.List (Table.Column.Column a msg) -> Table.Config.Config a () msg"
+            },
+            {
+                "name": "withErrorView",
+                "comment": " Define a specific error message.\n",
+                "type": "(String.String -> Html.Html msg) -> Table.Config.Config a b msg -> Table.Config.Config a b msg"
+            },
+            {
+                "name": "withExpand",
+                "comment": " Add an full-width expandable row.\n",
+                "type": "Table.Column.Column a msg -> Table.Config.Config a b msg -> Table.Config.Config a b msg"
+            },
+            {
+                "name": "withPagination",
+                "comment": " Enable the pagination and define the page sizes and the detault page size.\n",
+                "type": "List.List Basics.Int -> Basics.Int -> Table.Config.Config a b msg -> Table.Config.Config a b msg"
+            },
+            {
+                "name": "withProgressiveLoading",
+                "comment": " Enable the progressive loading pagination (not implemented).\n",
+                "type": "Basics.Int -> Basics.Int -> Table.Config.Config a b msg -> Table.Config.Config a b msg"
+            },
+            {
+                "name": "withSelection",
+                "comment": " Enable the selection (see `Selection` type for the different logics).\n",
+                "type": "Table.Types.Selection -> Table.Config.Config a b msg -> Table.Config.Config a b msg"
+            },
+            {
+                "name": "withSelectionExclusive",
+                "comment": " Enable the selection with the _exclusive_ logic (see `Selection` for more details).\n",
+                "type": "Table.Config.Config a b msg -> Table.Config.Config a b msg"
+            },
+            {
+                "name": "withSelectionExclusiveStrict",
+                "comment": " Enable the selection with the _strict excluive_ logic (see `Selection` for more details).\n",
+                "type": "Table.Config.Config a b msg -> Table.Config.Config a b msg"
+            },
+            {
+                "name": "withSelectionFree",
+                "comment": " Enable the selection with the _free_ logic (see `Selection` for more details).\n",
+                "type": "Table.Config.Config a b msg -> Table.Config.Config a b msg"
+            },
+            {
+                "name": "withSelectionLinked",
+                "comment": " Enable the selection with the _linked_ logic (see `Selection` for more details).\n",
+                "type": "Table.Config.Config a b msg -> Table.Config.Config a b msg"
+            },
+            {
+                "name": "withSelectionLinkedStrict",
+                "comment": " Enable the selection with the _linked_ logic (see `Selection` for more details).\n",
+                "type": "Table.Config.Config a b msg -> Table.Config.Config a b msg"
+            },
+            {
+                "name": "withSubtable",
+                "comment": " Define a subtable.\n",
+                "type": "(a -> List.List b) -> (b -> String.String) -> List.List (Table.Column.Column b msg) -> Maybe.Maybe (Table.Column.Column b msg) -> Table.Config.Config a () msg -> Table.Config.Config a b msg"
+            },
+            {
+                "name": "withToolbar",
+                "comment": " Add a custom toolbar.\n",
+                "type": "List.List (Html.Html msg) -> Table.Config.Config a b msg -> Table.Config.Config a b msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Table.Types",
+        "comment": " Common types.\n\n@docs Selection, Type, Sort, Status\n\n",
+        "unions": [
+            {
+                "name": "Selection",
+                "comment": " Type of selection.\n\n\n## `Disable`\n\nNo selection.\n\n\n## `Free`\n\nFree selection i.e. with no constraint on the parents and children rows.\n\n\n## `Linked`\n\nAuto select all children rows if the parent is selected.\n\n\n## `LinkedStrict`\n\nSimilar to `Linked` but cannot unselect the children rows.\n\n\n## `Exclusive`\n\nParents and children rows cannot get mixed up. It is possible to select the\nchildren of different parents.\n\n\n## `ExclusiveStrict`\n\nSimilar to `Exclusive` but it is not possible to select the children of different\nparents.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Disable",
+                        []
+                    ],
+                    [
+                        "Free",
+                        []
+                    ],
+                    [
+                        "Linked",
+                        []
+                    ],
+                    [
+                        "LinkedStrict",
+                        []
+                    ],
+                    [
+                        "Exclusive",
+                        []
+                    ],
+                    [
+                        "ExclusiveStrict",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Sort",
+                "comment": " Sort status.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Ascending",
+                        []
+                    ],
+                    [
+                        "Descending",
+                        []
+                    ],
+                    [
+                        "StandBy",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Status",
+                "comment": " Data loading status.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Loading",
+                        []
+                    ],
+                    [
+                        "Loaded",
+                        [
+                            "a"
+                        ]
+                    ],
+                    [
+                        "Failed",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Type",
+                "comment": " Type of data loading.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Static",
+                        []
+                    ],
+                    [
+                        "Dynamic",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [],
+        "binops": []
+    }
+]

@@ -1,0 +1,29 @@
+[
+    {
+        "name": "Raycast2D",
+        "comment": " A library for raycasting geometric tasks in 2D space.\n\n\n# Types\n\n@docs PxCoords, TileCoords\n\n\n# Raycasting\n\n@docs touchedTiles\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "PxCoords",
+                "comment": " ",
+                "args": [],
+                "type": "( Basics.Float, Basics.Float )"
+            },
+            {
+                "name": "TileCoords",
+                "comment": " ",
+                "args": [],
+                "type": "( Basics.Int, Basics.Int )"
+            }
+        ],
+        "values": [
+            {
+                "name": "touchedTiles",
+                "comment": " This is an Elm implementation of the DDA (Digital Differential Analysis) algorithm popularized by [OneLoneCoder (Javidx9)](https://twitter.com/javidx9).\n\n  - [YouTube video](https://www.youtube.com/watch?v=NbSee-XM7WA)\n\n  - [Article](https://lodev.org/cgtutor/raycasting.html)\n\n  - [Code](https://github.com/OneLoneCoder/olcPixelGameEngine/blob/61d0e06766c3dbf7571cbf39d1727b1c8b84fedf/Videos/OneLoneCoder_PGE_RayCastDDA.cpp)\n\n```elm\ntileSize = 50\nfrom = (25, 75) -- center of tile (0,1)\nto = (275, 175) -- center of tile (5,3)\n\ntouchedTiles tileSize from to\n--> Set.fromList [(0,1),(1,1),(1,2),(2,2),(3,2),(4,2),(4,3),(5,3)]\n```\n\n",
+                "type": "Basics.Float -> Raycast2D.PxCoords -> Raycast2D.PxCoords -> Set.Set Raycast2D.TileCoords"
+            }
+        ],
+        "binops": []
+    }
+]

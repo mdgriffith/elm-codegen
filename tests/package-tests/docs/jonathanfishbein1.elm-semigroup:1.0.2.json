@@ -1,0 +1,107 @@
+[
+    {
+        "name": "SemiGroup",
+        "comment": " A module to define generic functions for semigroup.\r\n\r\n\r\n# Types\r\n\r\n@docs SemiGroup\r\n@docs Sum\r\n@docs Product\r\n\r\n@docs append\r\n\r\n\r\n# SemiGroup types for popular types\r\n\r\n@docs string\r\n@docs sum\r\n@docs product\r\n@docs list\r\n@docs array\r\n@docs dict\r\n@docs set\r\n@docs cmd\r\n@docs sub\r\n\r\n",
+        "unions": [
+            {
+                "name": "Product",
+                "comment": " `MoSemigroupnoid` under multiplication.\r\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Product",
+                        [
+                            "a"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "SemiGroup",
+                "comment": " Main type.\r\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "SemiGroup",
+                        [
+                            "a -> a -> a"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Sum",
+                "comment": " `Semigroup` under addition\r\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Sum",
+                        [
+                            "a"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "append",
+                "comment": " Take the way to append a semigroups.\r\n",
+                "type": "SemiGroup.SemiGroup a -> a -> a -> a"
+            },
+            {
+                "name": "array",
+                "comment": " `SemiGroup` type for `Array`.\r\n",
+                "type": "SemiGroup.SemiGroup (Array.Array a)"
+            },
+            {
+                "name": "cmd",
+                "comment": " `SemiGroup` type for `Cmd`.\r\n",
+                "type": "SemiGroup.SemiGroup (Platform.Cmd.Cmd comparable)"
+            },
+            {
+                "name": "dict",
+                "comment": " `SemiGroup` type for `Dict`.\r\n",
+                "type": "SemiGroup.SemiGroup (Dict.Dict comparable a)"
+            },
+            {
+                "name": "list",
+                "comment": " `Semigroup` type for `List`.\r\n",
+                "type": "SemiGroup.SemiGroup (List.List a)"
+            },
+            {
+                "name": "product",
+                "comment": " `Semigroup` type for `Product`.\r\n",
+                "type": "SemiGroup.SemiGroup (SemiGroup.Product number)"
+            },
+            {
+                "name": "set",
+                "comment": " `SemiGroup` type for `Set`.\r\n",
+                "type": "SemiGroup.SemiGroup (Set.Set comparable)"
+            },
+            {
+                "name": "string",
+                "comment": " `Semigroup` type for `String`.\r\n",
+                "type": "SemiGroup.SemiGroup String.String"
+            },
+            {
+                "name": "sub",
+                "comment": " `Monoid` type for `Sub`.\r\n",
+                "type": "SemiGroup.SemiGroup (Platform.Sub.Sub comparable)"
+            },
+            {
+                "name": "sum",
+                "comment": " `Semigroup` type for `Sum`.\r\n",
+                "type": "SemiGroup.SemiGroup (SemiGroup.Sum number)"
+            }
+        ],
+        "binops": []
+    }
+]

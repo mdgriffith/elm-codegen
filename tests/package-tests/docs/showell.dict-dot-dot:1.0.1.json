@@ -1,0 +1,181 @@
+[
+    {
+        "name": "DictDotDot",
+        "comment": " This is nearly a verbatim\ncopy of `Dict.elm` taken from Elm core. I actually borrowed\nthe code from this unmerged PR (I'm assuming it will be merged\neventually):\n\n<https://github.com/elm/core/pull/1033>\n\n\n# Modifications\n\nMy only change is to expose these two types:\n\n@docs Dict, NColor\n\n(I also renamed the module and upgraded docs for Dict/NColor.)\n\nEverything documented below this line is verbatim from core Dict.\n\n\n# Dictionaries\n\nA dictionary mapping unique keys to values. The keys can be any comparable\ntype. This includes `Int`, `Float`, `Time`, `Char`, `String`, and tuples or\nlists of comparable types.\n\nInsert, remove, and query operations all take _O(log n)_ time.\n\n\n# Build\n\n@docs empty, singleton, insert, update, remove\n\n\n# Query\n\n@docs isEmpty, member, get, size\n\n\n# Lists\n\n@docs keys, values, toList, fromList\n\n\n# Transform\n\n@docs map, foldl, foldr, filter, partition\n\n\n# Combine\n\n@docs union, intersect, diff, merge\n\n",
+        "unions": [
+            {
+                "name": "Dict",
+                "comment": " A dictionary of keys and values. So a `Dict String User` is a dictionary\nthat lets you look up a `String` (such as user names) and find the associated\n`User`.\n\n    import Dict exposing (Dict)\n\n    users : Dict String User\n    users =\n        Dict.fromList\n            [ ( \"Alice\", User \"Alice\" 28 1.65 )\n            , ( \"Bob\", User \"Bob\" 19 1.82 )\n            , ( \"Chuck\", User \"Chuck\" 33 1.75 )\n            ]\n\n    type alias User =\n        { name : String\n        , age : Int\n        , height : Float\n        }\n\nInternally, it's a red-black tree.\n\n",
+                "args": [
+                    "k",
+                    "v"
+                ],
+                "cases": [
+                    [
+                        "RBNode_elm_builtin",
+                        [
+                            "DictDotDot.NColor",
+                            "k",
+                            "v",
+                            "DictDotDot.Dict k v",
+                            "DictDotDot.Dict k v"
+                        ]
+                    ],
+                    [
+                        "RBEmpty_elm_builtin",
+                        []
+                    ],
+                    [
+                        "RBBlackMissing_elm_builtin",
+                        [
+                            "DictDotDot.Dict k v"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "NColor",
+                "comment": " (Dict is a left-leaning red-black tree.)\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Red",
+                        []
+                    ],
+                    [
+                        "Black",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "diff",
+                "comment": " Keep a key-value pair when its key does not appear in the second dictionary.\n",
+                "type": "DictDotDot.Dict comparable a -> DictDotDot.Dict comparable b -> DictDotDot.Dict comparable a"
+            },
+            {
+                "name": "empty",
+                "comment": " Create an empty dictionary.\n",
+                "type": "DictDotDot.Dict k v"
+            },
+            {
+                "name": "filter",
+                "comment": " Keep only the key-value pairs that pass the given test.\n",
+                "type": "(comparable -> v -> Basics.Bool) -> DictDotDot.Dict comparable v -> DictDotDot.Dict comparable v"
+            },
+            {
+                "name": "foldl",
+                "comment": " Fold over the key-value pairs in a dictionary from lowest key to highest key.\n\n    import Dict exposing (Dict)\n\n    getAges : Dict String User -> List String\n    getAges users =\n        Dict.foldl addAge [] users\n\n    addAge : String -> User -> List String -> List String\n    addAge _ user ages =\n        user.age :: ages\n\n    -- getAges users == [33,19,28]\n\n",
+                "type": "(k -> v -> b -> b) -> b -> DictDotDot.Dict k v -> b"
+            },
+            {
+                "name": "foldr",
+                "comment": " Fold over the key-value pairs in a dictionary from highest key to lowest key.\n\n    import Dict exposing (Dict)\n\n    getAges : Dict String User -> List String\n    getAges users =\n        Dict.foldr addAge [] users\n\n    addAge : String -> User -> List String -> List String\n    addAge _ user ages =\n        user.age :: ages\n\n    -- getAges users == [28,19,33]\n\n",
+                "type": "(k -> v -> b -> b) -> b -> DictDotDot.Dict k v -> b"
+            },
+            {
+                "name": "fromList",
+                "comment": " Convert an association list into a dictionary.\n",
+                "type": "List.List ( comparable, v ) -> DictDotDot.Dict comparable v"
+            },
+            {
+                "name": "get",
+                "comment": " Get the value associated with a key. If the key is not found, return\n`Nothing`. This is useful when you are not sure if a key will be in the\ndictionary.\n\n    animals = fromList [ (\"Tom\", Cat), (\"Jerry\", Mouse) ]\n\n    get \"Tom\"   animals == Just Cat\n    get \"Jerry\" animals == Just Mouse\n    get \"Spike\" animals == Nothing\n\n",
+                "type": "comparable -> DictDotDot.Dict comparable v -> Maybe.Maybe v"
+            },
+            {
+                "name": "insert",
+                "comment": " Insert a key-value pair into a dictionary. Replaces value when there is\na collision.\n",
+                "type": "comparable -> v -> DictDotDot.Dict comparable v -> DictDotDot.Dict comparable v"
+            },
+            {
+                "name": "intersect",
+                "comment": " Keep a key-value pair when its key appears in the second dictionary.\nPreference is given to values in the first dictionary.\n",
+                "type": "DictDotDot.Dict comparable v -> DictDotDot.Dict comparable v -> DictDotDot.Dict comparable v"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Determine if a dictionary is empty.\n\n    isEmpty_elm_builtin empty == True\n\n",
+                "type": "DictDotDot.Dict k v -> Basics.Bool"
+            },
+            {
+                "name": "keys",
+                "comment": " Get all of the keys in a dictionary, sorted from lowest to highest.\n\n    keys (fromList [ ( 0, \"Alice\" ), ( 1, \"Bob\" ) ]) == [ 0, 1 ]\n\n",
+                "type": "DictDotDot.Dict k v -> List.List k"
+            },
+            {
+                "name": "map",
+                "comment": " Apply a function to all values in a dictionary.\n",
+                "type": "(k -> a -> b) -> DictDotDot.Dict k a -> DictDotDot.Dict k b"
+            },
+            {
+                "name": "member",
+                "comment": " Determine if a key is in a dictionary.\n",
+                "type": "comparable -> DictDotDot.Dict comparable v -> Basics.Bool"
+            },
+            {
+                "name": "merge",
+                "comment": " The most general way of combining two dictionaries. You provide three\naccumulators for when a given key appears:\n\n1.  Only in the left dictionary.\n2.  In both dictionaries.\n3.  Only in the right dictionary.\n\nYou then traverse all the keys from lowest to highest, building up whatever\nyou want.\n\n",
+                "type": "(comparable -> a -> result -> result) -> (comparable -> a -> b -> result -> result) -> (comparable -> b -> result -> result) -> DictDotDot.Dict comparable a -> DictDotDot.Dict comparable b -> result -> result"
+            },
+            {
+                "name": "partition",
+                "comment": " Partition a dictionary according to some test. The first dictionary\ncontains all key-value pairs which passed the test, and the second contains\nthe pairs that did not.\n",
+                "type": "(comparable -> v -> Basics.Bool) -> DictDotDot.Dict comparable v -> ( DictDotDot.Dict comparable v, DictDotDot.Dict comparable v )"
+            },
+            {
+                "name": "remove",
+                "comment": " Remove a key-value pair from a dictionary. If the key is not found,\nno changes are made.\n",
+                "type": "comparable -> DictDotDot.Dict comparable v -> DictDotDot.Dict comparable v"
+            },
+            {
+                "name": "singleton",
+                "comment": " Create a dictionary with one key-value pair.\n",
+                "type": "comparable -> v -> DictDotDot.Dict comparable v"
+            },
+            {
+                "name": "size",
+                "comment": " Determine the number of key-value pairs in the dictionary.\n",
+                "type": "DictDotDot.Dict k v -> Basics.Int"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert a dictionary into an association list of key-value pairs, sorted by keys.\n",
+                "type": "DictDotDot.Dict k v -> List.List ( k, v )"
+            },
+            {
+                "name": "union",
+                "comment": " Combine two dictionaries. If there is a collision, preference is given\nto the first dictionary.\n",
+                "type": "DictDotDot.Dict comparable v -> DictDotDot.Dict comparable v -> DictDotDot.Dict comparable v"
+            },
+            {
+                "name": "update",
+                "comment": " Update the value of a dictionary for a specific key with a given function.\n",
+                "type": "comparable -> (Maybe.Maybe v -> Maybe.Maybe v) -> DictDotDot.Dict comparable v -> DictDotDot.Dict comparable v"
+            },
+            {
+                "name": "values",
+                "comment": " Get all of the values in a dictionary, in the order of their keys.\n\n    values (fromList [ ( 0, \"Alice\" ), ( 1, \"Bob\" ) ]) == [ \"Alice\", \"Bob\" ]\n\n",
+                "type": "DictDotDot.Dict k v -> List.List v"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "DictInternal",
+        "comment": " helper(s) to see Dict internal\n\n@docs toInternalRepresentation\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toInternalRepresentation",
+                "comment": " Reveal internal representation of Dict for advanced testing/debugging.\nThis returns a list of nodes in sorted order. Each node has k/v, plus\na path to the node that looks something like \"llr\", and the color of\nthe node (\"R\" or \"B\").\n\nExample output is something like this:\n\n        [{ color = \"B\", k = 1, path = \"l\", v = \"one\" },\n         { color = \"B\", k = 2, path = \"\", v = \"two\" },\n         { color = \"R\", k = 3, path = \"rl\", v = \"three\" },\n         { color = \"B\", k = 4, path = \"r\", v = \"four\" }]\n\n",
+                "type": "DictDotDot.Dict k v -> List.List (DictInternal.InternalNode k v)"
+            }
+        ],
+        "binops": []
+    }
+]

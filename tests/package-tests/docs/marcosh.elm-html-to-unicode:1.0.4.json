@@ -1,0 +1,21 @@
+[
+    {
+        "name": "ElmEscapeHtml",
+        "comment": " This library allows to escape html string and unescape named and numeric\ncharacter references (e.g. &gt;, &#62;, &x3e;) to the corresponding unicode\ncharacters\n\n#Definition\n\n@docs escape, unescape\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "escape",
+                "comment": " Escapes a string converting characters that could be used to inject XSS\nvectors (<http://wonko.com/post/html-escaping>). At the moment we escape &, <, >,\n\", ', \\`, , !, @, $, %, (, ), =, +, {, }, [ and ]\n\nfor example\n\nescape \"&<>\\\"\" == \"&amp;&lt;&gt;&quot;\"\n\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "unescape",
+                "comment": " Unescapes a string, converting all named and numeric character references\n(e.g. &gt;, &#62;, &x3e;) to their corresponding unicode characters.\n\nfor example\n\nunescape \"&quot;&amp;&lt;&gt;\" == \"\\\"&<>\"\n\n",
+                "type": "String.String -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

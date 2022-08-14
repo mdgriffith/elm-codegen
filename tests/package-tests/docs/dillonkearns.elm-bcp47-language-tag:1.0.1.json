@@ -1,0 +1,5335 @@
+[
+    {
+        "name": "LanguageTag",
+        "comment": " A LanguageTag represents a BCP 47 value, and can be used in the `lang` attribute of HTML\nelements to tell the web page which language it's written in, including script and region information.\n\nSee <https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/lang>.\n\n@docs LanguageTag\n\n@docs Options, emptySubtags\n\n@docs build, custom, unknown\n\n@docs toString, toHtmlAttribute\n\n",
+        "unions": [
+            {
+                "name": "LanguageTag",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Options",
+                "comment": " ",
+                "args": [],
+                "type": "{ extendedLanguage : Maybe.Maybe LanguageTag.ExtendedLanguage.ExtendedLanguage, region : Maybe.Maybe LanguageTag.Country.Country, script : Maybe.Maybe LanguageTag.Script.Script, variants : List.List LanguageTag.Variant.Variant }"
+            }
+        ],
+        "values": [
+            {
+                "name": "build",
+                "comment": " ",
+                "type": "LanguageTag.Options -> LanguageTag.Language.Language -> LanguageTag.LanguageTag"
+            },
+            {
+                "name": "custom",
+                "comment": " This is an escape hatch with no validation. It will just directly use the String you pass in. So be sure to test out\nyour LanguageTag that you construct with this function!\n\nIf you've encountered a use case that isn't well supported by the current API, please feel free to open a GitHub Issues\nto share your use case.\n\n",
+                "type": "String.String -> LanguageTag.LanguageTag"
+            },
+            {
+                "name": "emptySubtags",
+                "comment": " This is useful for building up a LanguageTag with no subtags directly:\n\n    import LanguageTag\n    import LanguageTag.Language as Language\n    import LanguageTag.Country as Country\n\n    Language.en\n        |> build emptySubtags\n        |> LanguageTag.toString\n        --> \"en\"\n\nIt's also useful as the starting record for building a LanguageTag that has subtags.\n\n    Language.en\n        |> build { emptySubtags | region = Just Country.us }\n        |> LanguageTag.toString\n        --> \"en-us\"\n\n",
+                "type": "LanguageTag.Options"
+            },
+            {
+                "name": "toHtmlAttribute",
+                "comment": " Most often, you'll want to use BCP 47 tags in the top-level tag `<html lang=\"en-US\">`. If you have multiple languages\non the same page, you can also set the language for individual sections separately.\n",
+                "type": "LanguageTag.LanguageTag -> Html.Attribute msg"
+            },
+            {
+                "name": "toString",
+                "comment": " Get a BCP 47 formatted language tag String.\n",
+                "type": "LanguageTag.LanguageTag -> String.String"
+            },
+            {
+                "name": "unknown",
+                "comment": " Unknown tags can be expressed by an empty string in the `lang` tag (see\n<https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/lang>).\nYou may want to set the language as unknown rather than an incorrect specific\nlanguage to prevent translation plugins from attempting to translate\nthe page incorrectly.\n\n    import LanguageTag\n\n    LanguageTag.unknown\n        |> LanguageTag.toString\n        --> \"\"\n\n",
+                "type": "LanguageTag.LanguageTag"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "LanguageTag.Country",
+        "comment": " ISO 3166-1 country codes. See <https://en.wikipedia.org/wiki/ISO_3166-1>.\n\n@docs Country, toCodeString\n\n@docs n_001, n_002, n_003, n_005, n_009, n_011, n_013, n_014, n_015, n_017, n_018, n_019, n_021, n_029, n_030, n_034, n_035, n_039, n_053, n_054, n_057, n_061, n_142, n_143, n_145, n_150, n_151, n_154, n_155, n_202, n_419, ac, ad, ae, af, ag, ai, al, am, an, ao, aq, ar, as_, at, au, aw, ax, az, ba, bb, bd, be, bf, bg, bh, bi, bj, bl, bm, bn, bo, bq, br, bs, bt, bu, bv, bw, by, bz, ca, cc, cd, cf, cg, ch, ci, ck, cl, cm, cn, co, cp, cr, cs, cu, cv, cw, cx, cy, cz, dd, de, dg, dj, dk, dm, do, dz, ea, ec, ee, eg, eh, er, es, et, eu, ez, fi, fj, fk, fm, fo, fr, fx, ga, gb, gd, ge, gf, gg, gh, gi, gl, gm, gn, gp, gq, gr, gs, gt, gu, gw, gy, hk, hm, hn, hr, ht, hu, ic, id, ie, il, im, in_, io, iq, ir, is, it, je, jm, jo, jp, ke, kg, kh, ki, km, kn, kp, kr, kw, ky, kz, la, lb, lc, li, lk, lr, ls, lt, lu, lv, ly, ma, mc, md, me, mf, mg, mh, mk, ml, mm, mn, mo, mp, mq, mr, ms, mt, mu, mv, mw, mx, my, mz, na, nc, ne, nf, ng, ni, nl, no, np, nr, nt, nu, nz, om, pa, pe, pf, pg, ph, pk, pl, pm, pn, pr, ps, pt, pw, py, qa, re, ro, rs, ru, rw, sa, sb, sc, sd, se, sg, sh, si, sj, sk, sl, sm, sn, so, sr, ss, st, su, sv, sx, sy, sz, ta, tc, td, tf, tg, th, tj, tk, tl, tm, tn, to, tp, tr, tt, tv, tw, tz, ua, ug, um, un, us, uy, uz, va, vc, ve, vg, vi, vn, vu, wf, ws, yd, ye, yt, yu, za, zm, zr, zw\n\n",
+        "unions": [
+            {
+                "name": "Country",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "ac",
+                "comment": " Ascension Island\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "ad",
+                "comment": " Andorra\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "ae",
+                "comment": " United Arab Emirates\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "af",
+                "comment": " Afghanistan\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "ag",
+                "comment": " Antigua and Barbuda\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "ai",
+                "comment": " Anguilla\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "al",
+                "comment": " Albania\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "am",
+                "comment": " Armenia\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "an",
+                "comment": " Netherlands Antilles\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "ao",
+                "comment": " Angola\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "aq",
+                "comment": " Antarctica\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "ar",
+                "comment": " Argentina\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "as_",
+                "comment": " American Samoa\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "at",
+                "comment": " Austria\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "au",
+                "comment": " Australia\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "aw",
+                "comment": " Aruba\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "ax",
+                "comment": " Åland Islands\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "az",
+                "comment": " Azerbaijan\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "ba",
+                "comment": " Bosnia and Herzegovina\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "bb",
+                "comment": " Barbados\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "bd",
+                "comment": " Bangladesh\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "be",
+                "comment": " Belgium\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "bf",
+                "comment": " Burkina Faso\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "bg",
+                "comment": " Bulgaria\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "bh",
+                "comment": " Bahrain\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "bi",
+                "comment": " Burundi\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "bj",
+                "comment": " Benin\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "bl",
+                "comment": " Saint Barthélemy\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "bm",
+                "comment": " Bermuda\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "bn",
+                "comment": " Brunei Darussalam\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "bo",
+                "comment": " Bolivia\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "bq",
+                "comment": " Bonaire, Sint Eustatius and Saba\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "br",
+                "comment": " Brazil\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "bs",
+                "comment": " Bahamas\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "bt",
+                "comment": " Bhutan\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "bu",
+                "comment": " Burma\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "bv",
+                "comment": " Bouvet Island\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "bw",
+                "comment": " Botswana\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "by",
+                "comment": " Belarus\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "bz",
+                "comment": " Belize\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "ca",
+                "comment": " Canada\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "cc",
+                "comment": " Cocos (Keeling) Islands\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "cd",
+                "comment": " The Democratic Republic of the Congo\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "cf",
+                "comment": " Central African Republic\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "cg",
+                "comment": " Congo\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "ch",
+                "comment": " Switzerland\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "ci",
+                "comment": " Côte d'Ivoire\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "ck",
+                "comment": " Cook Islands\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "cl",
+                "comment": " Chile\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "cm",
+                "comment": " Cameroon\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "cn",
+                "comment": " China\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "co",
+                "comment": " Colombia\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "cp",
+                "comment": " Clipperton Island\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "cr",
+                "comment": " Costa Rica\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "cs",
+                "comment": " Serbia and Montenegro\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "cu",
+                "comment": " Cuba\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "cv",
+                "comment": " Cabo Verde\nCape Verde\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "cw",
+                "comment": " Curaçao\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "cx",
+                "comment": " Christmas Island\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "cy",
+                "comment": " Cyprus\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "cz",
+                "comment": " Czechia\nCzech Republic\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "dd",
+                "comment": " German Democratic Republic\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "de",
+                "comment": " Germany\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "dg",
+                "comment": " Diego Garcia\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "dj",
+                "comment": " Djibouti\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "dk",
+                "comment": " Denmark\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "dm",
+                "comment": " Dominica\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "do",
+                "comment": " Dominican Republic\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "dz",
+                "comment": " Algeria\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "ea",
+                "comment": " Ceuta, Melilla\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "ec",
+                "comment": " Ecuador\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "ee",
+                "comment": " Estonia\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "eg",
+                "comment": " Egypt\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "eh",
+                "comment": " Western Sahara\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "er",
+                "comment": " Eritrea\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "es",
+                "comment": " Spain\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "et",
+                "comment": " Ethiopia\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "eu",
+                "comment": " European Union\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "ez",
+                "comment": " Eurozone\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "fi",
+                "comment": " Finland\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "fj",
+                "comment": " Fiji\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "fk",
+                "comment": " Falkland Islands (Malvinas)\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "fm",
+                "comment": " Federated States of Micronesia\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "fo",
+                "comment": " Faroe Islands\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "fr",
+                "comment": " France\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "fx",
+                "comment": " Metropolitan France\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "ga",
+                "comment": " Gabon\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "gb",
+                "comment": " United Kingdom\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "gd",
+                "comment": " Grenada\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "ge",
+                "comment": " Georgia\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "gf",
+                "comment": " French Guiana\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "gg",
+                "comment": " Guernsey\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "gh",
+                "comment": " Ghana\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "gi",
+                "comment": " Gibraltar\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "gl",
+                "comment": " Greenland\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "gm",
+                "comment": " Gambia\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "gn",
+                "comment": " Guinea\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "gp",
+                "comment": " Guadeloupe\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "gq",
+                "comment": " Equatorial Guinea\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "gr",
+                "comment": " Greece\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "gs",
+                "comment": " South Georgia and the South Sandwich Islands\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "gt",
+                "comment": " Guatemala\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "gu",
+                "comment": " Guam\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "gw",
+                "comment": " Guinea-Bissau\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "gy",
+                "comment": " Guyana\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "hk",
+                "comment": " Hong Kong\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "hm",
+                "comment": " Heard Island and McDonald Islands\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "hn",
+                "comment": " Honduras\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "hr",
+                "comment": " Croatia\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "ht",
+                "comment": " Haiti\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "hu",
+                "comment": " Hungary\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "ic",
+                "comment": " Canary Islands\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "id",
+                "comment": " Indonesia\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "ie",
+                "comment": " Ireland\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "il",
+                "comment": " Israel\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "im",
+                "comment": " Isle of Man\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "in_",
+                "comment": " India\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "io",
+                "comment": " British Indian Ocean Territory\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "iq",
+                "comment": " Iraq\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "ir",
+                "comment": " Islamic Republic of Iran\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "is",
+                "comment": " Iceland\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "it",
+                "comment": " Italy\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "je",
+                "comment": " Jersey\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "jm",
+                "comment": " Jamaica\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "jo",
+                "comment": " Jordan\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "jp",
+                "comment": " Japan\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "ke",
+                "comment": " Kenya\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "kg",
+                "comment": " Kyrgyzstan\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "kh",
+                "comment": " Cambodia\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "ki",
+                "comment": " Kiribati\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "km",
+                "comment": " Comoros\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "kn",
+                "comment": " Saint Kitts and Nevis\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "kp",
+                "comment": " Democratic People's Republic of Korea\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "kr",
+                "comment": " Republic of Korea\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "kw",
+                "comment": " Kuwait\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "ky",
+                "comment": " Cayman Islands\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "kz",
+                "comment": " Kazakhstan\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "la",
+                "comment": " Lao People's Democratic Republic\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "lb",
+                "comment": " Lebanon\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "lc",
+                "comment": " Saint Lucia\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "li",
+                "comment": " Liechtenstein\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "lk",
+                "comment": " Sri Lanka\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "lr",
+                "comment": " Liberia\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "ls",
+                "comment": " Lesotho\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "lt",
+                "comment": " Lithuania\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "lu",
+                "comment": " Luxembourg\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "lv",
+                "comment": " Latvia\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "ly",
+                "comment": " Libya\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "ma",
+                "comment": " Morocco\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "mc",
+                "comment": " Monaco\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "md",
+                "comment": " Moldova\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "me",
+                "comment": " Montenegro\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "mf",
+                "comment": " Saint Martin (French part)\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "mg",
+                "comment": " Madagascar\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "mh",
+                "comment": " Marshall Islands\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "mk",
+                "comment": " North Macedonia\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "ml",
+                "comment": " Mali\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "mm",
+                "comment": " Myanmar\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "mn",
+                "comment": " Mongolia\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "mo",
+                "comment": " Macao\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "mp",
+                "comment": " Northern Mariana Islands\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "mq",
+                "comment": " Martinique\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "mr",
+                "comment": " Mauritania\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "ms",
+                "comment": " Montserrat\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "mt",
+                "comment": " Malta\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "mu",
+                "comment": " Mauritius\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "mv",
+                "comment": " Maldives\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "mw",
+                "comment": " Malawi\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "mx",
+                "comment": " Mexico\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "my",
+                "comment": " Malaysia\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "mz",
+                "comment": " Mozambique\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "n_001",
+                "comment": " World\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "n_002",
+                "comment": " Africa\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "n_003",
+                "comment": " North America\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "n_005",
+                "comment": " South America\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "n_009",
+                "comment": " Oceania\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "n_011",
+                "comment": " Western Africa\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "n_013",
+                "comment": " Central America\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "n_014",
+                "comment": " Eastern Africa\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "n_015",
+                "comment": " Northern Africa\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "n_017",
+                "comment": " Middle Africa\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "n_018",
+                "comment": " Southern Africa\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "n_019",
+                "comment": " Americas\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "n_021",
+                "comment": " Northern America\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "n_029",
+                "comment": " Caribbean\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "n_030",
+                "comment": " Eastern Asia\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "n_034",
+                "comment": " Southern Asia\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "n_035",
+                "comment": " South-Eastern Asia\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "n_039",
+                "comment": " Southern Europe\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "n_053",
+                "comment": " Australia and New Zealand\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "n_054",
+                "comment": " Melanesia\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "n_057",
+                "comment": " Micronesia\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "n_061",
+                "comment": " Polynesia\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "n_142",
+                "comment": " Asia\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "n_143",
+                "comment": " Central Asia\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "n_145",
+                "comment": " Western Asia\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "n_150",
+                "comment": " Europe\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "n_151",
+                "comment": " Eastern Europe\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "n_154",
+                "comment": " Northern Europe\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "n_155",
+                "comment": " Western Europe\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "n_202",
+                "comment": " Sub-Saharan Africa\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "n_419",
+                "comment": " Latin America and the Caribbean\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "na",
+                "comment": " Namibia\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "nc",
+                "comment": " New Caledonia\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "ne",
+                "comment": " Niger\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "nf",
+                "comment": " Norfolk Island\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "ng",
+                "comment": " Nigeria\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "ni",
+                "comment": " Nicaragua\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "nl",
+                "comment": " Netherlands\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "no",
+                "comment": " Norway\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "np",
+                "comment": " Nepal\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "nr",
+                "comment": " Nauru\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "nt",
+                "comment": " Neutral Zone\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "nu",
+                "comment": " Niue\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "nz",
+                "comment": " New Zealand\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "om",
+                "comment": " Oman\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "pa",
+                "comment": " Panama\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "pe",
+                "comment": " Peru\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "pf",
+                "comment": " French Polynesia\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "pg",
+                "comment": " Papua New Guinea\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "ph",
+                "comment": " Philippines\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "pk",
+                "comment": " Pakistan\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "pl",
+                "comment": " Poland\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "pm",
+                "comment": " Saint Pierre and Miquelon\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "pn",
+                "comment": " Pitcairn\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "pr",
+                "comment": " Puerto Rico\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "ps",
+                "comment": " State of Palestine\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "pt",
+                "comment": " Portugal\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "pw",
+                "comment": " Palau\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "py",
+                "comment": " Paraguay\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "qa",
+                "comment": " Qatar\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "re",
+                "comment": " Réunion\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "ro",
+                "comment": " Romania\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "rs",
+                "comment": " Serbia\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "ru",
+                "comment": " Russian Federation\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "rw",
+                "comment": " Rwanda\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "sa",
+                "comment": " Saudi Arabia\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "sb",
+                "comment": " Solomon Islands\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "sc",
+                "comment": " Seychelles\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "sd",
+                "comment": " Sudan\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "se",
+                "comment": " Sweden\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "sg",
+                "comment": " Singapore\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "sh",
+                "comment": " Saint Helena, Ascension and Tristan da Cunha\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "si",
+                "comment": " Slovenia\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "sj",
+                "comment": " Svalbard and Jan Mayen\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "sk",
+                "comment": " Slovakia\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "sl",
+                "comment": " Sierra Leone\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "sm",
+                "comment": " San Marino\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "sn",
+                "comment": " Senegal\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "so",
+                "comment": " Somalia\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "sr",
+                "comment": " Suriname\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "ss",
+                "comment": " South Sudan\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "st",
+                "comment": " Sao Tome and Principe\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "su",
+                "comment": " Union of Soviet Socialist Republics\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "sv",
+                "comment": " El Salvador\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "sx",
+                "comment": " Sint Maarten (Dutch part)\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "sy",
+                "comment": " Syrian Arab Republic\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "sz",
+                "comment": " Eswatini\neSwatini\nSwaziland\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "ta",
+                "comment": " Tristan da Cunha\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "tc",
+                "comment": " Turks and Caicos Islands\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "td",
+                "comment": " Chad\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "tf",
+                "comment": " French Southern Territories\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "tg",
+                "comment": " Togo\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "th",
+                "comment": " Thailand\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "tj",
+                "comment": " Tajikistan\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "tk",
+                "comment": " Tokelau\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "tl",
+                "comment": " Timor-Leste\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "tm",
+                "comment": " Turkmenistan\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "tn",
+                "comment": " Tunisia\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "to",
+                "comment": " Tonga\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "toCodeString",
+                "comment": " Get the ISO 3166-1 country code value for this Country.\n",
+                "type": "LanguageTag.Country.Country -> String.String"
+            },
+            {
+                "name": "tp",
+                "comment": " East Timor\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "tr",
+                "comment": " Turkey\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "tt",
+                "comment": " Trinidad and Tobago\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "tv",
+                "comment": " Tuvalu\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "tw",
+                "comment": " Taiwan, Province of China\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "tz",
+                "comment": " United Republic of Tanzania\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "ua",
+                "comment": " Ukraine\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "ug",
+                "comment": " Uganda\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "um",
+                "comment": " United States Minor Outlying Islands\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "un",
+                "comment": " United Nations\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "us",
+                "comment": " United States\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "uy",
+                "comment": " Uruguay\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "uz",
+                "comment": " Uzbekistan\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "va",
+                "comment": " Holy See (Vatican City State)\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "vc",
+                "comment": " Saint Vincent and the Grenadines\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "ve",
+                "comment": " Venezuela\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "vg",
+                "comment": " British Virgin Islands\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "vi",
+                "comment": " U.S. Virgin Islands\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "vn",
+                "comment": " Viet Nam\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "vu",
+                "comment": " Vanuatu\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "wf",
+                "comment": " Wallis and Futuna\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "ws",
+                "comment": " Samoa\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "yd",
+                "comment": " Democratic Yemen\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "ye",
+                "comment": " Yemen\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "yt",
+                "comment": " Mayotte\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "yu",
+                "comment": " Yugoslavia\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "za",
+                "comment": " South Africa\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "zm",
+                "comment": " Zambia\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "zr",
+                "comment": " Zaire\n",
+                "type": "LanguageTag.Country.Country"
+            },
+            {
+                "name": "zw",
+                "comment": " Zimbabwe\n",
+                "type": "LanguageTag.Country.Country"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "LanguageTag.ExtendedLanguage",
+        "comment": " [ISO 639](https://en.wikipedia.org/wiki/ISO_639) has some macrolanguages. Sometimes macrolanguages\ncan be used as standalone languages. Sometimes there are specific language variants that belong to those macrolanguages.\nFor example, `zh` is a macrolanguage for Chinese. Sometimes it is used to refer to Mandarin (and some tools will expect\nto see zh for Mandarin). But you can also specify Mandarin specifically with an extended language specifier, `zh-cmn`.\nThat form disambiguates from other Chinese language variants, such as `zh-yue`.\n\nAgain, this depends on the tool consuming these language codes. Some tools expect to see Mandarin written as\n`zh-CN` (Chinese in the region Mainland China). Be sure to test your implementation because even if your language\ntag is precise, specific tools may depend on it being written in a specific way and may not interpret all correct\nvariations.\n\n@docs ExtendedLanguage, toCodeString\n\n@docs aao, abh, abv, acm, acq, acw, acx, acy, adf, ads, aeb, aec, aed, aen, afb, afg, ajp, apc, apd, arb, arq, ars, ary, arz, ase, asf, asp, asq, asw, auz, avl, ayh, ayl, ayn, ayp, bbz, bfi, bfk, bjn, bog, bqn, bqy, btj, bve, bvl, bvu, bzs, cdo, cds, cjy, cmn, cnp, coa, cpx, csc, csd, cse, csf, csg, csl, csn, csp, csq, csr, czh, czo, doq, dse, dsl, dup, ecs, esl, esn, eso, eth, fcs, fse, fsl, fss, gan, gds, gom, gse, gsg, gsm, gss, gus, hab, haf, hak, hds, hji, hks, hos, hps, hsh, hsl, hsn, icl, iks, ils, inl, ins, ise, isg, isr, jak, jax, jcs, jhs, jls, jos, jsl, jus, kgi, knn, kvb, kvk, kvr, kxd, lbs, lce, lcf, liw, lls, lsg, lsl, lsn, lso, lsp, lst, lsv, lsy, ltg, lvs, lws, lzh, max, mdl, meo, mfa, mfb, mfs, min, mnp, mqg, mre, msd, msi, msr, mui, mzc, mzg, mzy, nan, nbs, ncs, nsi, nsl, nsp, nsr, nzs, okl, orn, ors, pel, pga, pgz, pks, prl, prz, psc, psd, pse, psg, psl, pso, psp, psr, pys, rms, rsi, rsl, rsm, sdl, sfb, sfs, sgg, sgx, shu, slf, sls, sqk, sqs, ssh, ssp, ssr, svk, swc, swh, swl, syy, szs, tmw, tse, tsm, tsq, tss, tsy, tza, ugn, ugy, ukl, uks, urk, uzn, uzs, vgt, vkk, vkt, vsi, vsl, vsv, wbs, wuu, xki, xml, xmm, xms, yds, ygs, yhs, ysl, yue, zib, zlm, zmi, zsl, zsm\n\n",
+        "unions": [
+            {
+                "name": "ExtendedLanguage",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "aao",
+                "comment": " Algerian Saharan Arabic\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "abh",
+                "comment": " Tajiki Arabic\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "abv",
+                "comment": " Baharna Arabic\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "acm",
+                "comment": " Mesopotamian Arabic\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "acq",
+                "comment": " Ta'izzi-Adeni Arabic\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "acw",
+                "comment": " Hijazi Arabic\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "acx",
+                "comment": " Omani Arabic\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "acy",
+                "comment": " Cypriot Arabic\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "adf",
+                "comment": " Dhofari Arabic\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "ads",
+                "comment": " Adamorobe Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "aeb",
+                "comment": " Tunisian Arabic\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "aec",
+                "comment": " Saidi Arabic\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "aed",
+                "comment": " Argentine Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "aen",
+                "comment": " Armenian Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "afb",
+                "comment": " Gulf Arabic\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "afg",
+                "comment": " Afghan Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "ajp",
+                "comment": " South Levantine Arabic\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "apc",
+                "comment": " North Levantine Arabic\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "apd",
+                "comment": " Sudanese Arabic\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "arb",
+                "comment": " Standard Arabic\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "arq",
+                "comment": " Algerian Arabic\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "ars",
+                "comment": " Najdi Arabic\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "ary",
+                "comment": " Moroccan Arabic\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "arz",
+                "comment": " Egyptian Arabic\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "ase",
+                "comment": " American Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "asf",
+                "comment": " Auslan\nAustralian Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "asp",
+                "comment": " Algerian Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "asq",
+                "comment": " Austrian Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "asw",
+                "comment": " Australian Aborigines Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "auz",
+                "comment": " Uzbeki Arabic\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "avl",
+                "comment": " Eastern Egyptian Bedawi Arabic\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "ayh",
+                "comment": " Hadrami Arabic\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "ayl",
+                "comment": " Libyan Arabic\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "ayn",
+                "comment": " Sanaani Arabic\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "ayp",
+                "comment": " North Mesopotamian Arabic\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "bbz",
+                "comment": " Babalia Creole Arabic\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "bfi",
+                "comment": " British Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "bfk",
+                "comment": " Ban Khor Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "bjn",
+                "comment": " Banjar\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "bog",
+                "comment": " Bamako Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "bqn",
+                "comment": " Bulgarian Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "bqy",
+                "comment": " Bengkala Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "btj",
+                "comment": " Bacanese Malay\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "bve",
+                "comment": " Berau Malay\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "bvl",
+                "comment": " Bolivian Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "bvu",
+                "comment": " Bukit Malay\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "bzs",
+                "comment": " Brazilian Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "cdo",
+                "comment": " Min Dong Chinese\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "cds",
+                "comment": " Chadian Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "cjy",
+                "comment": " Jinyu Chinese\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "cmn",
+                "comment": " Mandarin Chinese\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "cnp",
+                "comment": " Northern Ping Chinese\nNorthern Pinghua\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "coa",
+                "comment": " Cocos Islands Malay\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "cpx",
+                "comment": " Pu-Xian Chinese\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "csc",
+                "comment": " Catalan Sign Language\nLengua de señas catalana\nLlengua de Signes Catalana\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "csd",
+                "comment": " Chiangmai Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "cse",
+                "comment": " Czech Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "csf",
+                "comment": " Cuba Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "csg",
+                "comment": " Chilean Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "csl",
+                "comment": " Chinese Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "csn",
+                "comment": " Colombian Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "csp",
+                "comment": " Southern Ping Chinese\nSouthern Pinghua\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "csq",
+                "comment": " Croatia Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "csr",
+                "comment": " Costa Rican Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "czh",
+                "comment": " Huizhou Chinese\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "czo",
+                "comment": " Min Zhong Chinese\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "doq",
+                "comment": " Dominican Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "dse",
+                "comment": " Dutch Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "dsl",
+                "comment": " Danish Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "dup",
+                "comment": " Duano\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "ecs",
+                "comment": " Ecuadorian Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "esl",
+                "comment": " Egypt Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "esn",
+                "comment": " Salvadoran Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "eso",
+                "comment": " Estonian Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "eth",
+                "comment": " Ethiopian Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "fcs",
+                "comment": " Quebec Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "fse",
+                "comment": " Finnish Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "fsl",
+                "comment": " French Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "fss",
+                "comment": " Finland-Swedish Sign Language\nfinlandssvenskt teckenspråk\nsuomenruotsalainen viittomakieli\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "gan",
+                "comment": " Gan Chinese\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "gds",
+                "comment": " Ghandruk Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "gom",
+                "comment": " Goan Konkani\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "gse",
+                "comment": " Ghanaian Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "gsg",
+                "comment": " German Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "gsm",
+                "comment": " Guatemalan Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "gss",
+                "comment": " Greek Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "gus",
+                "comment": " Guinean Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "hab",
+                "comment": " Hanoi Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "haf",
+                "comment": " Haiphong Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "hak",
+                "comment": " Hakka Chinese\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "hds",
+                "comment": " Honduras Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "hji",
+                "comment": " Haji\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "hks",
+                "comment": " Hong Kong Sign Language\nHeung Kong Sau Yue\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "hos",
+                "comment": " Ho Chi Minh City Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "hps",
+                "comment": " Hawai'i Sign Language (HSL)\nHawai'i Pidgin Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "hsh",
+                "comment": " Hungarian Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "hsl",
+                "comment": " Hausa Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "hsn",
+                "comment": " Xiang Chinese\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "icl",
+                "comment": " Icelandic Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "iks",
+                "comment": " Inuit Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "ils",
+                "comment": " International Sign\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "inl",
+                "comment": " Indonesian Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "ins",
+                "comment": " Indian Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "ise",
+                "comment": " Italian Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "isg",
+                "comment": " Irish Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "isr",
+                "comment": " Israeli Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "jak",
+                "comment": " Jakun\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "jax",
+                "comment": " Jambi Malay\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "jcs",
+                "comment": " Jamaican Country Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "jhs",
+                "comment": " Jhankot Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "jls",
+                "comment": " Jamaican Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "jos",
+                "comment": " Jordanian Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "jsl",
+                "comment": " Japanese Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "jus",
+                "comment": " Jumla Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "kgi",
+                "comment": " Selangor Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "knn",
+                "comment": " Konkani (individual language)\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "kvb",
+                "comment": " Kubu\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "kvk",
+                "comment": " Korean Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "kvr",
+                "comment": " Kerinci\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "kxd",
+                "comment": " Brunei\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "lbs",
+                "comment": " Libyan Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "lce",
+                "comment": " Loncong\nSekak\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "lcf",
+                "comment": " Lubu\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "liw",
+                "comment": " Col\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "lls",
+                "comment": " Lithuanian Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "lsg",
+                "comment": " Lyons Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "lsl",
+                "comment": " Latvian Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "lsn",
+                "comment": " Tibetan Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "lso",
+                "comment": " Laos Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "lsp",
+                "comment": " Panamanian Sign Language\nLengua de Señas Panameñas\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "lst",
+                "comment": " Trinidad and Tobago Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "lsv",
+                "comment": " Sivia Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "lsy",
+                "comment": " Mauritian Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "ltg",
+                "comment": " Latgalian\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "lvs",
+                "comment": " Standard Latvian\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "lws",
+                "comment": " Malawian Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "lzh",
+                "comment": " Literary Chinese\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "max",
+                "comment": " North Moluccan Malay\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "mdl",
+                "comment": " Maltese Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "meo",
+                "comment": " Kedah Malay\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "mfa",
+                "comment": " Pattani Malay\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "mfb",
+                "comment": " Bangka\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "mfs",
+                "comment": " Mexican Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "min",
+                "comment": " Minangkabau\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "mnp",
+                "comment": " Min Bei Chinese\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "mqg",
+                "comment": " Kota Bangun Kutai Malay\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "mre",
+                "comment": " Martha's Vineyard Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "msd",
+                "comment": " Yucatec Maya Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "msi",
+                "comment": " Sabah Malay\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "msr",
+                "comment": " Mongolian Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "mui",
+                "comment": " Musi\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "mzc",
+                "comment": " Madagascar Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "mzg",
+                "comment": " Monastic Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "mzy",
+                "comment": " Mozambican Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "nan",
+                "comment": " Min Nan Chinese\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "nbs",
+                "comment": " Namibian Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "ncs",
+                "comment": " Nicaraguan Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "nsi",
+                "comment": " Nigerian Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "nsl",
+                "comment": " Norwegian Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "nsp",
+                "comment": " Nepalese Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "nsr",
+                "comment": " Maritime Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "nzs",
+                "comment": " New Zealand Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "okl",
+                "comment": " Old Kentish Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "orn",
+                "comment": " Orang Kanaq\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "ors",
+                "comment": " Orang Seletar\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "pel",
+                "comment": " Pekal\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "pga",
+                "comment": " Sudanese Creole Arabic\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "pgz",
+                "comment": " Papua New Guinean Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "pks",
+                "comment": " Pakistan Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "prl",
+                "comment": " Peruvian Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "prz",
+                "comment": " Providencia Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "psc",
+                "comment": " Persian Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "psd",
+                "comment": " Plains Indian Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "pse",
+                "comment": " Central Malay\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "psg",
+                "comment": " Penang Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "psl",
+                "comment": " Puerto Rican Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "pso",
+                "comment": " Polish Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "psp",
+                "comment": " Philippine Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "psr",
+                "comment": " Portuguese Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "pys",
+                "comment": " Paraguayan Sign Language\nLengua de Señas del Paraguay\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "rms",
+                "comment": " Romanian Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "rsi",
+                "comment": " Rennellese Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "rsl",
+                "comment": " Russian Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "rsm",
+                "comment": " Miriwoong Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "sdl",
+                "comment": " Saudi Arabian Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "sfb",
+                "comment": " Langue des signes de Belgique Francophone\nFrench Belgian Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "sfs",
+                "comment": " South African Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "sgg",
+                "comment": " Swiss-German Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "sgx",
+                "comment": " Sierra Leone Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "shu",
+                "comment": " Chadian Arabic\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "slf",
+                "comment": " Swiss-Italian Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "sls",
+                "comment": " Singapore Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "sqk",
+                "comment": " Albanian Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "sqs",
+                "comment": " Sri Lankan Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "ssh",
+                "comment": " Shihhi Arabic\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "ssp",
+                "comment": " Spanish Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "ssr",
+                "comment": " Swiss-French Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "svk",
+                "comment": " Slovakian Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "swc",
+                "comment": " Congo Swahili\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "swh",
+                "comment": " Swahili (individual language)\nKiswahili\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "swl",
+                "comment": " Swedish Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "syy",
+                "comment": " Al-Sayyid Bedouin Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "szs",
+                "comment": " Solomon Islands Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "tmw",
+                "comment": " Temuan\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "toCodeString",
+                "comment": " Get the ISO 639 code for this ExtendedLanguage.\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage -> String.String"
+            },
+            {
+                "name": "tse",
+                "comment": " Tunisian Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "tsm",
+                "comment": " Turkish Sign Language\nTürk İşaret Dili\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "tsq",
+                "comment": " Thai Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "tss",
+                "comment": " Taiwan Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "tsy",
+                "comment": " Tebul Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "tza",
+                "comment": " Tanzanian Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "ugn",
+                "comment": " Ugandan Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "ugy",
+                "comment": " Uruguayan Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "ukl",
+                "comment": " Ukrainian Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "uks",
+                "comment": " Urubú-Kaapor Sign Language\nKaapor Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "urk",
+                "comment": " Urak Lawoi'\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "uzn",
+                "comment": " Northern Uzbek\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "uzs",
+                "comment": " Southern Uzbek\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "vgt",
+                "comment": " Vlaamse Gebarentaal\nFlemish Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "vkk",
+                "comment": " Kaur\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "vkt",
+                "comment": " Tenggarong Kutai Malay\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "vsi",
+                "comment": " Moldova Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "vsl",
+                "comment": " Venezuelan Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "vsv",
+                "comment": " Valencian Sign Language\nLlengua de signes valenciana\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "wbs",
+                "comment": " West Bengal Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "wuu",
+                "comment": " Wu Chinese\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "xki",
+                "comment": " Kenyan Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "xml",
+                "comment": " Malaysian Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "xmm",
+                "comment": " Manado Malay\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "xms",
+                "comment": " Moroccan Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "yds",
+                "comment": " Yiddish Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "ygs",
+                "comment": " Yolŋu Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "yhs",
+                "comment": " Yan-nhaŋu Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "ysl",
+                "comment": " Yugoslavian Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "yue",
+                "comment": " Yue Chinese\nCantonese\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "zib",
+                "comment": " Zimbabwe Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "zlm",
+                "comment": " Malay (individual language)\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "zmi",
+                "comment": " Negeri Sembilan Malay\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "zsl",
+                "comment": " Zambian Sign Language\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            },
+            {
+                "name": "zsm",
+                "comment": " Standard Malay\n",
+                "type": "LanguageTag.ExtendedLanguage.ExtendedLanguage"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "LanguageTag.Language",
+        "comment": " ISO 639-1 language codes. See <https://en.wikipedia.org/wiki/ISO_639>.\n\n\n## Limitations\n\nThere are about 8000 possibilities, and it causes performance issues for the Elm compiler, editor tooling, elm-format, and the Elm doc site if I generate all of those options.\nThe Language codes that I've included in this module represent the majority of common cases, and together with the `ExtendedLanguage` values, you can build most of what you want.\nFor everything else, there's [`LanguageTag.custom`](LanguageTag#custom) as an escape hatch (or open an issue to share your use case).\n\n@docs Language, toCodeString\n\n@docs aa, ab, ae, af, ak, am, an, ar, as_, av, ay, az, ba, be, bg, bh, bi, bm, bn, bo, br, bs, ca, ce, ch, co, cr, cs, cu, cv, cy, da, de, dv, dz, ee, el, en, eo, es, et, eu, fa, ff, fi, fj, fo, fr, fy, ga, gd, gl, gn, gu, gv, ha, he, hi, ho, hr, ht, hu, hy, hz, ia, id, ie, ig, ii, ik, in_, io, is, it, iu, iw, ja, ji, jv, jw, ka, kg, ki, kj, kk, kl, km, kn, ko, kr, ks, ku, kv, kw, ky, la, lb, lg, li, ln, lo, lt, lu, lv, mg, mh, mi, mk, ml, mn, mo, mr, ms, mt, my, na, nb, nd, ne, ng, nl, nn, no, nr, nv, ny, oc, oj, om, or, os, pa, pi, pl, ps, pt, qu, rm, rn, ro, ru, rw, sa, sc, sd, se, sg, sh, si, sk, sl, sm, sn, so, sq, sr, ss, st, su, sv, sw, ta, te, tg, th, ti, tk, tl, tn, to, tr, ts, tt, tw, ty, ug, uk, ur, uz, ve, vi, vo, wa, wo, xh, yi, yo, za, zh, zu\n\n",
+        "unions": [
+            {
+                "name": "Language",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "aa",
+                "comment": " Afar\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "ab",
+                "comment": " Abkhazian\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "ae",
+                "comment": " Avestan\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "af",
+                "comment": " Afrikaans\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "ak",
+                "comment": " Akan\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "am",
+                "comment": " Amharic\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "an",
+                "comment": " Aragonese\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "ar",
+                "comment": " Arabic\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "as_",
+                "comment": " Assamese\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "av",
+                "comment": " Avaric\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "ay",
+                "comment": " Aymara\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "az",
+                "comment": " Azerbaijani\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "ba",
+                "comment": " Bashkir\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "be",
+                "comment": " Belarusian\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "bg",
+                "comment": " Bulgarian\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "bh",
+                "comment": " Bihari languages\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "bi",
+                "comment": " Bislama\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "bm",
+                "comment": " Bambara\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "bn",
+                "comment": " Bengali Bangla\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "bo",
+                "comment": " Tibetan\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "br",
+                "comment": " Breton\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "bs",
+                "comment": " Bosnian\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "ca",
+                "comment": " Catalan Valencian\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "ce",
+                "comment": " Chechen\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "ch",
+                "comment": " Chamorro\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "co",
+                "comment": " Corsican\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "cr",
+                "comment": " Cree\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "cs",
+                "comment": " Czech\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "cu",
+                "comment": " Church Slavic Church Slavonic Old Bulgarian Old Church Slavonic Old Slavonic\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "cv",
+                "comment": " Chuvash\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "cy",
+                "comment": " Welsh\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "da",
+                "comment": " Danish\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "de",
+                "comment": " German\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "dv",
+                "comment": " Dhivehi Divehi Maldivian\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "dz",
+                "comment": " Dzongkha\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "ee",
+                "comment": " Ewe\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "el",
+                "comment": " Modern Greek (1453-)\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "en",
+                "comment": " English\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "eo",
+                "comment": " Esperanto\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "es",
+                "comment": " Spanish Castilian\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "et",
+                "comment": " Estonian\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "eu",
+                "comment": " Basque\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "fa",
+                "comment": " Persian\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "ff",
+                "comment": " Fulah\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "fi",
+                "comment": " Finnish\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "fj",
+                "comment": " Fijian\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "fo",
+                "comment": " Faroese\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "fr",
+                "comment": " French\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "fy",
+                "comment": " Western Frisian\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "ga",
+                "comment": " Irish\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "gd",
+                "comment": " Scottish Gaelic Gaelic\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "gl",
+                "comment": " Galician\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "gn",
+                "comment": " Guarani\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "gu",
+                "comment": " Gujarati\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "gv",
+                "comment": " Manx\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "ha",
+                "comment": " Hausa\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "he",
+                "comment": " Hebrew\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "hi",
+                "comment": " Hindi\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "ho",
+                "comment": " Hiri Motu\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "hr",
+                "comment": " Croatian\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "ht",
+                "comment": " Haitian Haitian Creole\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "hu",
+                "comment": " Hungarian\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "hy",
+                "comment": " Armenian\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "hz",
+                "comment": " Herero\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "ia",
+                "comment": " Interlingua (International Auxiliary Language Association)\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "id",
+                "comment": " Indonesian\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "ie",
+                "comment": " Interlingue Occidental\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "ig",
+                "comment": " Igbo\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "ii",
+                "comment": " Sichuan Yi Nuosu\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "ik",
+                "comment": " Inupiaq\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "in_",
+                "comment": " Indonesian\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "io",
+                "comment": " Ido\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "is",
+                "comment": " Icelandic\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "it",
+                "comment": " Italian\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "iu",
+                "comment": " Inuktitut\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "iw",
+                "comment": " Hebrew\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "ja",
+                "comment": " Japanese\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "ji",
+                "comment": " Yiddish\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "jv",
+                "comment": " Javanese\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "jw",
+                "comment": " Javanese\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "ka",
+                "comment": " Georgian\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "kg",
+                "comment": " Kongo\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "ki",
+                "comment": " Kikuyu Gikuyu\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "kj",
+                "comment": " Kuanyama Kwanyama\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "kk",
+                "comment": " Kazakh\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "kl",
+                "comment": " Kalaallisut Greenlandic\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "km",
+                "comment": " Khmer Central Khmer\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "kn",
+                "comment": " Kannada\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "ko",
+                "comment": " Korean\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "kr",
+                "comment": " Kanuri\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "ks",
+                "comment": " Kashmiri\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "ku",
+                "comment": " Kurdish\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "kv",
+                "comment": " Komi\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "kw",
+                "comment": " Cornish\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "ky",
+                "comment": " Kirghiz Kyrgyz\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "la",
+                "comment": " Latin\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "lb",
+                "comment": " Luxembourgish Letzeburgesch\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "lg",
+                "comment": " Ganda Luganda\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "li",
+                "comment": " Limburgan Limburger Limburgish\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "ln",
+                "comment": " Lingala\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "lo",
+                "comment": " Lao\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "lt",
+                "comment": " Lithuanian\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "lu",
+                "comment": " Luba-Katanga\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "lv",
+                "comment": " Latvian\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "mg",
+                "comment": " Malagasy\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "mh",
+                "comment": " Marshallese\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "mi",
+                "comment": " Maori\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "mk",
+                "comment": " Macedonian\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "ml",
+                "comment": " Malayalam\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "mn",
+                "comment": " Mongolian\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "mo",
+                "comment": " Moldavian Moldovan\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "mr",
+                "comment": " Marathi\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "ms",
+                "comment": " Malay (macrolanguage)\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "mt",
+                "comment": " Maltese\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "my",
+                "comment": " Burmese\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "na",
+                "comment": " Nauru\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "nb",
+                "comment": " Norwegian Bokmål\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "nd",
+                "comment": " North Ndebele\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "ne",
+                "comment": " Nepali (macrolanguage)\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "ng",
+                "comment": " Ndonga\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "nl",
+                "comment": " Dutch Flemish\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "nn",
+                "comment": " Norwegian Nynorsk\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "no",
+                "comment": " Norwegian\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "nr",
+                "comment": " South Ndebele\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "nv",
+                "comment": " Navajo Navaho\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "ny",
+                "comment": " Nyanja Chewa Chichewa\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "oc",
+                "comment": " Occitan (post 1500)\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "oj",
+                "comment": " Ojibwa\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "om",
+                "comment": " Oromo\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "or",
+                "comment": " Oriya (macrolanguage) Odia (macrolanguage)\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "os",
+                "comment": " Ossetian Ossetic\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "pa",
+                "comment": " Panjabi Punjabi\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "pi",
+                "comment": " Pali\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "pl",
+                "comment": " Polish\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "ps",
+                "comment": " Pushto Pashto\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "pt",
+                "comment": " Portuguese\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "qu",
+                "comment": " Quechua\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "rm",
+                "comment": " Romansh\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "rn",
+                "comment": " Rundi\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "ro",
+                "comment": " Romanian Moldavian Moldovan\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "ru",
+                "comment": " Russian\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "rw",
+                "comment": " Kinyarwanda\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "sa",
+                "comment": " Sanskrit\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "sc",
+                "comment": " Sardinian\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "sd",
+                "comment": " Sindhi\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "se",
+                "comment": " Northern Sami\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "sg",
+                "comment": " Sango\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "sh",
+                "comment": " Serbo-Croatian\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "si",
+                "comment": " Sinhala Sinhalese\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "sk",
+                "comment": " Slovak\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "sl",
+                "comment": " Slovenian\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "sm",
+                "comment": " Samoan\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "sn",
+                "comment": " Shona\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "so",
+                "comment": " Somali\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "sq",
+                "comment": " Albanian\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "sr",
+                "comment": " Serbian\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "ss",
+                "comment": " Swati\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "st",
+                "comment": " Southern Sotho\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "su",
+                "comment": " Sundanese\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "sv",
+                "comment": " Swedish\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "sw",
+                "comment": " Swahili (macrolanguage)\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "ta",
+                "comment": " Tamil\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "te",
+                "comment": " Telugu\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "tg",
+                "comment": " Tajik\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "th",
+                "comment": " Thai\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "ti",
+                "comment": " Tigrinya\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "tk",
+                "comment": " Turkmen\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "tl",
+                "comment": " Tagalog\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "tn",
+                "comment": " Tswana\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "to",
+                "comment": " Tonga (Tonga Islands)\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "toCodeString",
+                "comment": " Get the ISO 639 language code value for this Language.\n",
+                "type": "LanguageTag.Language.Language -> String.String"
+            },
+            {
+                "name": "tr",
+                "comment": " Turkish\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "ts",
+                "comment": " Tsonga\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "tt",
+                "comment": " Tatar\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "tw",
+                "comment": " Twi\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "ty",
+                "comment": " Tahitian\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "ug",
+                "comment": " Uighur Uyghur\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "uk",
+                "comment": " Ukrainian\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "ur",
+                "comment": " Urdu\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "uz",
+                "comment": " Uzbek\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "ve",
+                "comment": " Venda\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "vi",
+                "comment": " Vietnamese\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "vo",
+                "comment": " Volapük\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "wa",
+                "comment": " Walloon\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "wo",
+                "comment": " Wolof\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "xh",
+                "comment": " Xhosa\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "yi",
+                "comment": " Yiddish\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "yo",
+                "comment": " Yoruba\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "za",
+                "comment": " Zhuang Chuang\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "zh",
+                "comment": " Chinese\n",
+                "type": "LanguageTag.Language.Language"
+            },
+            {
+                "name": "zu",
+                "comment": " Zulu\n",
+                "type": "LanguageTag.Language.Language"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "LanguageTag.Script",
+        "comment": " ISO 15924 language script codes. See <https://en.wikipedia.org/wiki/ISO_15924>.\n\n@docs Script, toCodeString\n\n@docs adlm, afak, aghb, ahom, arab, aran, armi, armn, avst, bali, bamu, bass, batk, beng, bhks, blis, bopo, brah, brai, bugi, buhd, cakm, cans, cari, cham, cher, chrs, cirt, copt, cpmn, cprt, cyrl, cyrs, deva, diak, dogr, dsrt, dupl, egyd, egyh, egyp, elba, elym, ethi, geok, geor, glag, gong, gonm, goth, gran, grek, gujr, guru, hanb, hang, hani, hano, hans, hant, hatr, hebr, hira, hluw, hmng, hmnp, hrkt, hung, inds, ital, jamo, java, jpan, jurc, kali, kana, khar, khmr, khoj, kitl, kits, knda, kore, kpel, kthi, lana, laoo, latf, latg, latn, leke, lepc, limb, lina, linb, lisu, loma, lyci, lydi, mahj, maka, mand, mani, marc, maya, medf, mend, merc, mero, mlym, modi, mong, moon, mroo, mtei, mult, mymr, nand, narb, nbat, newa, nkdb, nkgb, nkoo, nshu, ogam, olck, orkh, orya, osge, osma, palm, pauc, perm, phag, phli, phlp, phlv, phnx, piqd, plrd, prti, rjng, rohg, roro, runr, samr, sara, sarb, saur, sgnw, shaw, shrd, shui, sidd, sind, sinh, sogd, sogo, sora, soyo, sund, sylo, syrc, syre, syrj, syrn, tagb, takr, tale, talu, taml, tang, tavt, telu, teng, tfng, tglg, thaa, thai, tibt, tirh, toto, ugar, vaii, visp, wara, wcho, wole, xpeo, xsux, yezi, yiii, zanb, zinh, zmth, zsye, zsym, zxxx, zyyy, zzzz\n\n",
+        "unions": [
+            {
+                "name": "Script",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "adlm",
+                "comment": " Adlam\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "afak",
+                "comment": " Afaka\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "aghb",
+                "comment": " Caucasian Albanian\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "ahom",
+                "comment": " Ahom\nTai Ahom\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "arab",
+                "comment": " Arabic\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "aran",
+                "comment": " Arabic (Nastaliq variant)\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "armi",
+                "comment": " Imperial Aramaic\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "armn",
+                "comment": " Armenian\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "avst",
+                "comment": " Avestan\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "bali",
+                "comment": " Balinese\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "bamu",
+                "comment": " Bamum\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "bass",
+                "comment": " Bassa Vah\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "batk",
+                "comment": " Batak\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "beng",
+                "comment": " Bengali\nBangla\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "bhks",
+                "comment": " Bhaiksuki\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "blis",
+                "comment": " Blissymbols\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "bopo",
+                "comment": " Bopomofo\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "brah",
+                "comment": " Brahmi\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "brai",
+                "comment": " Braille\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "bugi",
+                "comment": " Buginese\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "buhd",
+                "comment": " Buhid\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "cakm",
+                "comment": " Chakma\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "cans",
+                "comment": " Unified Canadian Aboriginal Syllabics\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "cari",
+                "comment": " Carian\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "cham",
+                "comment": " Cham\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "cher",
+                "comment": " Cherokee\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "chrs",
+                "comment": " Chorasmian\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "cirt",
+                "comment": " Cirth\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "copt",
+                "comment": " Coptic\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "cpmn",
+                "comment": " Cypro-Minoan\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "cprt",
+                "comment": " Cypriot syllabary\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "cyrl",
+                "comment": " Cyrillic\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "cyrs",
+                "comment": " Cyrillic (Old Church Slavonic variant)\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "deva",
+                "comment": " Devanagari\nNagari\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "diak",
+                "comment": " Dives Akuru\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "dogr",
+                "comment": " Dogra\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "dsrt",
+                "comment": " Deseret\nMormon\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "dupl",
+                "comment": " Duployan shorthand\nDuployan stenography\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "egyd",
+                "comment": " Egyptian demotic\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "egyh",
+                "comment": " Egyptian hieratic\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "egyp",
+                "comment": " Egyptian hieroglyphs\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "elba",
+                "comment": " Elbasan\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "elym",
+                "comment": " Elymaic\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "ethi",
+                "comment": " Ethiopic\nGeʻez\nGe'ez\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "geok",
+                "comment": " Khutsuri (Asomtavruli and Nuskhuri)\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "geor",
+                "comment": " Georgian (Mkhedruli and Mtavruli)\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "glag",
+                "comment": " Glagolitic\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "gong",
+                "comment": " Gunjala Gondi\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "gonm",
+                "comment": " Masaram Gondi\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "goth",
+                "comment": " Gothic\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "gran",
+                "comment": " Grantha\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "grek",
+                "comment": " Greek\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "gujr",
+                "comment": " Gujarati\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "guru",
+                "comment": " Gurmukhi\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "hanb",
+                "comment": " Han with Bopomofo (alias for Han + Bopomofo)\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "hang",
+                "comment": " Hangul\nHangŭl\nHangeul\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "hani",
+                "comment": " Han\nHanzi\nKanji\nHanja\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "hano",
+                "comment": " Hanunoo\nHanunóo\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "hans",
+                "comment": " Han (Simplified variant)\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "hant",
+                "comment": " Han (Traditional variant)\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "hatr",
+                "comment": " Hatran\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "hebr",
+                "comment": " Hebrew\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "hira",
+                "comment": " Hiragana\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "hluw",
+                "comment": " Anatolian Hieroglyphs\nLuwian Hieroglyphs\nHittite Hieroglyphs\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "hmng",
+                "comment": " Pahawh Hmong\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "hmnp",
+                "comment": " Nyiakeng Puachue Hmong\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "hrkt",
+                "comment": " Japanese syllabaries (alias for Hiragana + Katakana)\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "hung",
+                "comment": " Old Hungarian\nHungarian Runic\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "inds",
+                "comment": " Indus\nHarappan\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "ital",
+                "comment": " Old Italic (Etruscan, Oscan, etc.)\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "jamo",
+                "comment": " Jamo (alias for Jamo subset of Hangul)\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "java",
+                "comment": " Javanese\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "jpan",
+                "comment": " Japanese (alias for Han + Hiragana + Katakana)\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "jurc",
+                "comment": " Jurchen\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "kali",
+                "comment": " Kayah Li\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "kana",
+                "comment": " Katakana\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "khar",
+                "comment": " Kharoshthi\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "khmr",
+                "comment": " Khmer\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "khoj",
+                "comment": " Khojki\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "kitl",
+                "comment": " Khitan large script\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "kits",
+                "comment": " Khitan small script\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "knda",
+                "comment": " Kannada\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "kore",
+                "comment": " Korean (alias for Hangul + Han)\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "kpel",
+                "comment": " Kpelle\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "kthi",
+                "comment": " Kaithi\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "lana",
+                "comment": " Tai Tham\nLanna\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "laoo",
+                "comment": " Lao\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "latf",
+                "comment": " Latin (Fraktur variant)\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "latg",
+                "comment": " Latin (Gaelic variant)\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "latn",
+                "comment": " Latin\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "leke",
+                "comment": " Leke\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "lepc",
+                "comment": " Lepcha\nRóng\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "limb",
+                "comment": " Limbu\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "lina",
+                "comment": " Linear A\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "linb",
+                "comment": " Linear B\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "lisu",
+                "comment": " Lisu\nFraser\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "loma",
+                "comment": " Loma\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "lyci",
+                "comment": " Lycian\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "lydi",
+                "comment": " Lydian\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "mahj",
+                "comment": " Mahajani\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "maka",
+                "comment": " Makasar\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "mand",
+                "comment": " Mandaic\nMandaean\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "mani",
+                "comment": " Manichaean\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "marc",
+                "comment": " Marchen\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "maya",
+                "comment": " Mayan hieroglyphs\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "medf",
+                "comment": " Medefaidrin\nOberi Okaime\nOberi Ɔkaimɛ\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "mend",
+                "comment": " Mende Kikakui\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "merc",
+                "comment": " Meroitic Cursive\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "mero",
+                "comment": " Meroitic Hieroglyphs\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "mlym",
+                "comment": " Malayalam\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "modi",
+                "comment": " Modi\nMoḍī\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "mong",
+                "comment": " Mongolian\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "moon",
+                "comment": " Moon\nMoon code\nMoon script\nMoon type\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "mroo",
+                "comment": " Mro\nMru\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "mtei",
+                "comment": " Meitei Mayek\nMeithei\nMeetei\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "mult",
+                "comment": " Multani\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "mymr",
+                "comment": " Myanmar\nBurmese\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "nand",
+                "comment": " Nandinagari\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "narb",
+                "comment": " Old North Arabian\nAncient North Arabian\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "nbat",
+                "comment": " Nabataean\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "newa",
+                "comment": " Newa\nNewar\nNewari\nNepāla lipi\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "nkdb",
+                "comment": " Naxi Dongba\nna²¹ɕi³³ to³³ba²¹\nNakhi Tomba\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "nkgb",
+                "comment": " Naxi Geba\nna²¹ɕi³³ gʌ²¹ba²¹\n'Na-'Khi ²Ggŏ-¹baw\nNakhi Geba\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "nkoo",
+                "comment": " N’Ko\nN'Ko\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "nshu",
+                "comment": " Nüshu\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "ogam",
+                "comment": " Ogham\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "olck",
+                "comment": " Ol Chiki\nOl Cemet'\nOl\nSantali\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "orkh",
+                "comment": " Old Turkic\nOrkhon Runic\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "orya",
+                "comment": " Oriya\nOdia\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "osge",
+                "comment": " Osage\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "osma",
+                "comment": " Osmanya\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "palm",
+                "comment": " Palmyrene\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "pauc",
+                "comment": " Pau Cin Hau\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "perm",
+                "comment": " Old Permic\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "phag",
+                "comment": " Phags-pa\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "phli",
+                "comment": " Inscriptional Pahlavi\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "phlp",
+                "comment": " Psalter Pahlavi\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "phlv",
+                "comment": " Book Pahlavi\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "phnx",
+                "comment": " Phoenician\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "piqd",
+                "comment": " Klingon (KLI pIqaD)\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "plrd",
+                "comment": " Miao\nPollard\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "prti",
+                "comment": " Inscriptional Parthian\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "rjng",
+                "comment": " Rejang\nRedjang\nKaganga\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "rohg",
+                "comment": " Hanifi Rohingya\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "roro",
+                "comment": " Rongorongo\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "runr",
+                "comment": " Runic\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "samr",
+                "comment": " Samaritan\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "sara",
+                "comment": " Sarati\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "sarb",
+                "comment": " Old South Arabian\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "saur",
+                "comment": " Saurashtra\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "sgnw",
+                "comment": " SignWriting\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "shaw",
+                "comment": " Shavian\nShaw\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "shrd",
+                "comment": " Sharada\nŚāradā\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "shui",
+                "comment": " Shuishu\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "sidd",
+                "comment": " Siddham\nSiddhaṃ\nSiddhamātṛkā\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "sind",
+                "comment": " Khudawadi\nSindhi\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "sinh",
+                "comment": " Sinhala\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "sogd",
+                "comment": " Sogdian\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "sogo",
+                "comment": " Old Sogdian\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "sora",
+                "comment": " Sora Sompeng\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "soyo",
+                "comment": " Soyombo\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "sund",
+                "comment": " Sundanese\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "sylo",
+                "comment": " Syloti Nagri\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "syrc",
+                "comment": " Syriac\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "syre",
+                "comment": " Syriac (Estrangelo variant)\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "syrj",
+                "comment": " Syriac (Western variant)\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "syrn",
+                "comment": " Syriac (Eastern variant)\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "tagb",
+                "comment": " Tagbanwa\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "takr",
+                "comment": " Takri\nṬākrī\nṬāṅkrī\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "tale",
+                "comment": " Tai Le\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "talu",
+                "comment": " New Tai Lue\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "taml",
+                "comment": " Tamil\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "tang",
+                "comment": " Tangut\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "tavt",
+                "comment": " Tai Viet\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "telu",
+                "comment": " Telugu\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "teng",
+                "comment": " Tengwar\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "tfng",
+                "comment": " Tifinagh\nBerber\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "tglg",
+                "comment": " Tagalog\nBaybayin\nAlibata\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "thaa",
+                "comment": " Thaana\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "thai",
+                "comment": " Thai\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "tibt",
+                "comment": " Tibetan\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "tirh",
+                "comment": " Tirhuta\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "toCodeString",
+                "comment": " Get the ISO 15924 language script code value for this Script.\n",
+                "type": "LanguageTag.Script.Script -> String.String"
+            },
+            {
+                "name": "toto",
+                "comment": " Toto\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "ugar",
+                "comment": " Ugaritic\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "vaii",
+                "comment": " Vai\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "visp",
+                "comment": " Visible Speech\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "wara",
+                "comment": " Warang Citi\nVarang Kshiti\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "wcho",
+                "comment": " Wancho\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "wole",
+                "comment": " Woleai\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "xpeo",
+                "comment": " Old Persian\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "xsux",
+                "comment": " Sumero-Akkadian cuneiform\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "yezi",
+                "comment": " Yezidi\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "yiii",
+                "comment": " Yi\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "zanb",
+                "comment": " Zanabazar Square\nZanabazarin Dörböljin Useg\nXewtee Dörböljin Bicig\nHorizontal Square Script\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "zinh",
+                "comment": " Code for inherited script\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "zmth",
+                "comment": " Mathematical notation\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "zsye",
+                "comment": " Symbols (Emoji variant)\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "zsym",
+                "comment": " Symbols\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "zxxx",
+                "comment": " Code for unwritten documents\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "zyyy",
+                "comment": " Code for undetermined script\n",
+                "type": "LanguageTag.Script.Script"
+            },
+            {
+                "name": "zzzz",
+                "comment": " Code for uncoded script\n",
+                "type": "LanguageTag.Script.Script"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "LanguageTag.Variant",
+        "comment": "\n\n@docs Variant, toCodeString\n\n@docs n_1606nict, n_1694acad, n_1901, n_1959acad, n_1994, n_1996, abl1943, akuapem, alalc97, aluku, ao1990, aranes, arevela, arevmda, asante, auvern, baku1926, balanka, barla, basiceng, bauddha, biscayan, biske, bohoric, boont, bornholm, cisaup, colb1945, cornu, creiss, dajnko, ekavsk, emodeng, fonipa, fonkirsh, fonnapa, fonupa, fonxsamp, gascon, grclass, grital, grmistr, hepburn, heploc, hognorsk, hsistemo, ijekavsk, itihasa, ivanchov, jauer, jyutping, kkcor, kociewie, kscor, laukika, lemosin, lengadoc, lipaw, luna1918, metelko, monoton, ndyuka, nedis, newfound, nicard, njiva, nulik, osojs, oxendict, pahawh2, pahawh3, pahawh4, pamaka, peano, petr1708, pinyin, polyton, provenc, puter, rigik, rozaj, rumgr, scotland, scouse, simple, solba, sotav, spanglis, surmiran, sursilv, sutsilv, tarask, tongyong, tunumiit, uccor, ucrcor, ulster, unifon, vaidika, valencia, vallader, vecdruka, vivaraup, wadegile, xsistemo\n\n",
+        "unions": [
+            {
+                "name": "Variant",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "abl1943",
+                "comment": " Orthographic formulation of 1943 - Official in Brazil (Formulário Ortográfico de 1943 - Oficial no Brasil)\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "akuapem",
+                "comment": " Akuapem Twi\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "alalc97",
+                "comment": " ALA-LC Romanization, 1997 edition\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "aluku",
+                "comment": " Aluku dialect\nBoni dialect\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "ao1990",
+                "comment": " Portuguese Language Orthographic Agreement of 1990 (Acordo Ortográfico da Língua Portuguesa de 1990)\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "aranes",
+                "comment": " Aranese\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "arevela",
+                "comment": " Eastern Armenian\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "arevmda",
+                "comment": " Western Armenian\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "asante",
+                "comment": " Asante Twi\nAshanti Twi\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "auvern",
+                "comment": " Auvergnat\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "baku1926",
+                "comment": " Unified Turkic Latin Alphabet (Historical)\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "balanka",
+                "comment": " The Balanka dialect of Anii\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "barla",
+                "comment": " The Barlavento dialect group of Kabuverdianu\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "basiceng",
+                "comment": " Basic English\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "bauddha",
+                "comment": " Buddhist Hybrid Sanskrit\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "biscayan",
+                "comment": " Biscayan dialect of Basque\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "biske",
+                "comment": " The San Giorgio dialect of Resian\nThe Bila dialect of Resian\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "bohoric",
+                "comment": " Slovene in Bohorič alphabet\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "boont",
+                "comment": " Boontling\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "bornholm",
+                "comment": " Bornholmsk\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "cisaup",
+                "comment": " Cisalpine\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "colb1945",
+                "comment": " Portuguese-Brazilian Orthographic Convention of 1945 (Convenção Ortográfica Luso-Brasileira de 1945)\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "cornu",
+                "comment": " Cornu-English\nCornish English\nAnglo-Cornish\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "creiss",
+                "comment": " Occitan variants of the Croissant area\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "dajnko",
+                "comment": " Slovene in Dajnko alphabet\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "ekavsk",
+                "comment": " Serbian with Ekavian pronunciation\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "emodeng",
+                "comment": " Early Modern English (1500-1700)\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "fonipa",
+                "comment": " International Phonetic Alphabet\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "fonkirsh",
+                "comment": " Kirshenbaum Phonetic Alphabet\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "fonnapa",
+                "comment": " North American Phonetic Alphabet\nAmericanist Phonetic Notation\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "fonupa",
+                "comment": " Uralic Phonetic Alphabet\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "fonxsamp",
+                "comment": " X-SAMPA transcription\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "gascon",
+                "comment": " Gascon\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "grclass",
+                "comment": " Classical Occitan orthography\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "grital",
+                "comment": " Italian-inspired Occitan orthography\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "grmistr",
+                "comment": " Mistralian or Mistralian-inspired Occitan orthography\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "hepburn",
+                "comment": " Hepburn romanization\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "heploc",
+                "comment": " Hepburn romanization, Library of Congress method\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "hognorsk",
+                "comment": " Norwegian in Høgnorsk (High Norwegian) orthography\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "hsistemo",
+                "comment": " Standard H-system orthographic fallback for spelling Esperanto\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "ijekavsk",
+                "comment": " Serbian with Ijekavian pronunciation\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "itihasa",
+                "comment": " Epic Sanskrit\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "ivanchov",
+                "comment": " Bulgarian in 1899 orthography\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "jauer",
+                "comment": " Jauer dialect of Romansh\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "jyutping",
+                "comment": " Jyutping Cantonese Romanization\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "kkcor",
+                "comment": " Common Cornish orthography of Revived Cornish\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "kociewie",
+                "comment": " The Kociewie dialect of Polish\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "kscor",
+                "comment": " Standard Cornish orthography of Revived Cornish\nKernowek Standard\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "laukika",
+                "comment": " Classical Sanskrit\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "lemosin",
+                "comment": " Limousin\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "lengadoc",
+                "comment": " Languedocien\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "lipaw",
+                "comment": " The Lipovaz dialect of Resian\nThe Lipovec dialect of Resian\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "luna1918",
+                "comment": " Post-1917 Russian orthography\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "metelko",
+                "comment": " Slovene in Metelko alphabet\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "monoton",
+                "comment": " Monotonic Greek\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "n_1606nict",
+                "comment": " Late Middle French (to 1606)\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "n_1694acad",
+                "comment": " Early Modern French\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "n_1901",
+                "comment": " Traditional German orthography\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "n_1959acad",
+                "comment": " \"Academic\" (\"governmental\") variant of Belarusian as codified in 1959\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "n_1994",
+                "comment": " Standardized Resian orthography\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "n_1996",
+                "comment": " German orthography of 1996\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "ndyuka",
+                "comment": " Ndyuka dialect\nAukan dialect\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "nedis",
+                "comment": " Natisone dialect\nNadiza dialect\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "newfound",
+                "comment": " Newfoundland English\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "nicard",
+                "comment": " Niçard\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "njiva",
+                "comment": " The Gniva dialect of Resian\nThe Njiva dialect of Resian\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "nulik",
+                "comment": " Volapük nulik\nVolapük perevidöl\nVolapük nulädik\nde Jong's Volapük\nNew Volapük\nRevised Volapük\nModern Volapük\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "osojs",
+                "comment": " The Oseacco dialect of Resian\nThe Osojane dialect of Resian\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "oxendict",
+                "comment": " Oxford English Dictionary spelling\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "pahawh2",
+                "comment": " Pahawh Hmong Second Stage Reduced orthography\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "pahawh3",
+                "comment": " Pahawh Hmong Third Stage Reduced orthography\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "pahawh4",
+                "comment": " Pahawh Hmong Final Version orthography\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "pamaka",
+                "comment": " Pamaka dialect\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "peano",
+                "comment": " Latino Sine Flexione\nInterlingua de API\nInterlingua de Peano\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "petr1708",
+                "comment": " Petrine orthography\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "pinyin",
+                "comment": " Pinyin romanization\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "polyton",
+                "comment": " Polytonic Greek\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "provenc",
+                "comment": " Provençal\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "puter",
+                "comment": " Puter idiom of Romansh\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "rigik",
+                "comment": " Volapük rigik\nSchleyer's Volapük\nOriginal Volapük\nClassic Volapük\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "rozaj",
+                "comment": " Resian\nResianic\nRezijan\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "rumgr",
+                "comment": " Rumantsch Grischun\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "scotland",
+                "comment": " Scottish Standard English\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "scouse",
+                "comment": " Scouse\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "simple",
+                "comment": " Simplified form\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "solba",
+                "comment": " The Stolvizza dialect of Resian\nThe Solbica dialect of Resian\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "sotav",
+                "comment": " The Sotavento dialect group of Kabuverdianu\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "spanglis",
+                "comment": " Spanglish\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "surmiran",
+                "comment": " Surmiran idiom of Romansh\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "sursilv",
+                "comment": " Sursilvan idiom of Romansh\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "sutsilv",
+                "comment": " Sutsilvan idiom of Romansh\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "tarask",
+                "comment": " Belarusian in Taraskievica orthography\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "toCodeString",
+                "comment": " Get the code for this Variant.\n",
+                "type": "LanguageTag.Variant.Variant -> String.String"
+            },
+            {
+                "name": "tongyong",
+                "comment": " Tongyong Pinyin romanization\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "tunumiit",
+                "comment": " Tunumiisiut\nEast Greenlandic\nØstgrønlandsk\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "uccor",
+                "comment": " Unified Cornish orthography of Revived Cornish\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "ucrcor",
+                "comment": " Unified Cornish Revised orthography of Revived Cornish\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "ulster",
+                "comment": " Ulster dialect of Scots\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "unifon",
+                "comment": " Unifon phonetic alphabet\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "vaidika",
+                "comment": " Vedic Sanskrit\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "valencia",
+                "comment": " Valencian\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "vallader",
+                "comment": " Vallader idiom of Romansh\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "vecdruka",
+                "comment": " Latvian orthography used before 1920s (\"vecā druka\")\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "vivaraup",
+                "comment": " Vivaro-Alpine\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "wadegile",
+                "comment": " Wade-Giles romanization\n",
+                "type": "LanguageTag.Variant.Variant"
+            },
+            {
+                "name": "xsistemo",
+                "comment": " Standard X-system orthographic fallback for spelling Esperanto\n",
+                "type": "LanguageTag.Variant.Variant"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,40 @@
+[
+    {
+        "name": "Fable",
+        "comment": " Fable allows you to create a book (like a repository) of your html views, they are grouped as chapters, stories.\n\n\n# App\n\n@docs app\n\n\n# Model\n\n@docs Book\n\n\n# Element\n\n@docs chapter\n@docs story\n@docs ui\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Book",
+                "comment": " Book application type\n\n    main : Book Msg\n    main =\n        let\n            chapters =\n                [ Fable.chapter \"chapter1\" [] ]\n        in\n        Fable.app chapters\n\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "Platform.Program () (Fable.Model msg) (Data.Msg.Msg msg)"
+            }
+        ],
+        "values": [
+            {
+                "name": "app",
+                "comment": " Launch a fable application with a list of chapters\n\n      main : Book Msg\n      main =\n          Fable.app []\n\n",
+                "type": "List.List (Data.Chapter.Chapter msg) -> Fable.Book msg"
+            },
+            {
+                "name": "chapter",
+                "comment": " Chapter represents a category like Forms, Blocks, or whatever. It needs an unique id.\n\n      chapters = [\n        Fable.chapter \"chapter 1\" []\n      ]\n\n",
+                "type": "String.String -> List.List (Data.Story.Story msg) -> Data.Chapter.Chapter msg"
+            },
+            {
+                "name": "story",
+                "comment": " Story represents a list of element html (like input with different state). It needs an unique id.\n\n      stories = [\n        Fable.story \"story 1\" []\n      ]\n\n",
+                "type": "String.String -> List.List (Data.Ui.Ui msg) -> Data.Story.Story msg"
+            },
+            {
+                "name": "ui",
+                "comment": " Ui represents an element of your view. It needs an unique id.\n\n      ui = [\n        Fable.ui \"ui 1\" (div [] [])\n      ]\n\n",
+                "type": "String.String -> Html.Styled.Html msg -> Data.Ui.Ui msg"
+            }
+        ],
+        "binops": []
+    }
+]

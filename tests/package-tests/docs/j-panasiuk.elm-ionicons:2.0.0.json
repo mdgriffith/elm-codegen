@@ -1,0 +1,3703 @@
+[
+    {
+        "name": "Ionicon",
+        "comment": " Generic icons\n\n\n# Icons\n\n@docs alert\n@docs alertCircled\n@docs aperture\n@docs archive\n@docs arrowDownA\n@docs arrowDownB\n@docs arrowDownC\n@docs arrowExpand\n@docs arrowGraphDownLeft\n@docs arrowGraphDownRight\n@docs arrowGraphUpLeft\n@docs arrowGraphUpRight\n@docs arrowLeftA\n@docs arrowLeftB\n@docs arrowLeftC\n@docs arrowMove\n@docs arrowResize\n@docs arrowReturnLeft\n@docs arrowReturnRight\n@docs arrowRightA\n@docs arrowRightB\n@docs arrowRightC\n@docs arrowShrink\n@docs arrowSwap\n@docs arrowUpA\n@docs arrowUpB\n@docs arrowUpC\n@docs asterisk\n@docs at\n@docs backspace\n@docs backspaceOutline\n@docs bag\n@docs batteryCharging\n@docs batteryEmpty\n@docs batteryFull\n@docs batteryHalf\n@docs batteryLow\n@docs beaker\n@docs beer\n@docs bluetooth\n@docs bonfire\n@docs bookmark\n@docs bowtie\n@docs briefcase\n@docs bug\n@docs calculator\n@docs calendar\n@docs camera\n@docs card\n@docs cash\n@docs chatbox\n@docs chatboxWorking\n@docs chatboxes\n@docs chatbubble\n@docs chatbubbleWorking\n@docs chatbubbles\n@docs checkmark\n@docs checkmarkCircled\n@docs checkmarkRound\n@docs chevronDown\n@docs chevronLeft\n@docs chevronRight\n@docs chevronUp\n@docs clipboard\n@docs clock\n@docs close\n@docs closeCircled\n@docs closeRound\n@docs closedCaptioning\n@docs cloud\n@docs code\n@docs codeDownload\n@docs codeWorking\n@docs coffee\n@docs compass\n@docs compose\n@docs connectionBars\n@docs contrast\n@docs crop\n@docs cube\n@docs disc\n@docs document\n@docs documentText\n@docs drag\n@docs earth\n@docs easel\n@docs edit\n@docs egg\n@docs eject\n@docs email\n@docs emailUnread\n@docs erlenmeyerFlask\n@docs erlenmeyerFlaskBubbles\n@docs eye\n@docs eyeDisabled\n@docs female\n@docs filing\n@docs filmMarker\n@docs fireball\n@docs flag\n@docs flame\n@docs flash\n@docs flashOff\n@docs folder\n@docs fork\n@docs forkRepo\n@docs forward\n@docs funnel\n@docs gearA\n@docs gearB\n@docs grid\n@docs hammer\n@docs happy\n@docs happyOutline\n@docs headphone\n@docs heart\n@docs heartBroken\n@docs help\n@docs helpBuoy\n@docs helpCircled\n@docs home\n@docs icecream\n@docs image\n@docs images\n@docs information\n@docs informationCircled\n@docs ionic\n@docs ipad\n@docs iphone\n@docs ipod\n@docs jet\n@docs key\n@docs knife\n@docs laptop\n@docs leaf\n@docs levels\n@docs lightbulb\n@docs link\n@docs loadA\n@docs loadB\n@docs loadC\n@docs loadD\n@docs location\n@docs lockCombination\n@docs locked\n@docs logIn\n@docs logOut\n@docs loop\n@docs magnet\n@docs male\n@docs man\n@docs map\n@docs medkit\n@docs merge\n@docs micA\n@docs micB\n@docs micC\n@docs minus\n@docs minusCircled\n@docs minusRound\n@docs modelS\n@docs monitor\n@docs more\n@docs mouse\n@docs musicNote\n@docs navicon\n@docs naviconRound\n@docs navigate\n@docs network\n@docs noSmoking\n@docs nuclear\n@docs outlet\n@docs paintbrush\n@docs paintbucket\n@docs paperAirplane\n@docs paperclip\n@docs pause\n@docs person\n@docs personAdd\n@docs personStalker\n@docs pieGraph\n@docs pin\n@docs pinpoint\n@docs pizza\n@docs plane\n@docs planet\n@docs play\n@docs playstation\n@docs plus\n@docs plusCircled\n@docs plusRound\n@docs podium\n@docs pound\n@docs power\n@docs pricetag\n@docs pricetags\n@docs printer\n@docs pullRequest\n@docs qrScanner\n@docs quote\n@docs radioWaves\n@docs record\n@docs refresh\n@docs reply\n@docs replyAll\n@docs ribbonA\n@docs ribbonB\n@docs sad\n@docs sadOutline\n@docs scissors\n@docs search\n@docs settings\n@docs share\n@docs shuffle\n@docs skipBackward\n@docs skipForward\n@docs soupCan\n@docs soupCanOutline\n@docs speakerphone\n@docs speedometer\n@docs spoon\n@docs star\n@docs starBars\n@docs steam\n@docs stop\n@docs thermometer\n@docs thumbsdown\n@docs thumbsup\n@docs toggle\n@docs toggleFilled\n@docs transgender\n@docs trashA\n@docs trashB\n@docs trophy\n@docs tshirt\n@docs tshirtOutline\n@docs umbrella\n@docs university\n@docs unlocked\n@docs upload\n@docs usb\n@docs videocamera\n@docs volumeHigh\n@docs volumeLow\n@docs volumeMedium\n@docs volumeMute\n@docs wand\n@docs waterdrop\n@docs wifi\n@docs wineglass\n@docs woman\n@docs wrench\n@docs xbox\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "alert",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "alertCircled",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "aperture",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "archive",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "arrowDownA",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "arrowDownB",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "arrowDownC",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "arrowExpand",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "arrowGraphDownLeft",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "arrowGraphDownRight",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "arrowGraphUpLeft",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "arrowGraphUpRight",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "arrowLeftA",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "arrowLeftB",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "arrowLeftC",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "arrowMove",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "arrowResize",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "arrowReturnLeft",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "arrowReturnRight",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "arrowRightA",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "arrowRightB",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "arrowRightC",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "arrowShrink",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "arrowSwap",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "arrowUpA",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "arrowUpB",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "arrowUpC",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "asterisk",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "at",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "backspace",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "backspaceOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "bag",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "batteryCharging",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "batteryEmpty",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "batteryFull",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "batteryHalf",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "batteryLow",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "beaker",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "beer",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "bluetooth",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "bonfire",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "bookmark",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "bowtie",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "briefcase",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "bug",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "calculator",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "calendar",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "camera",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "card",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "cash",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "chatbox",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "chatboxWorking",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "chatboxes",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "chatbubble",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "chatbubbleWorking",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "chatbubbles",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "checkmark",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "checkmarkCircled",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "checkmarkRound",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "chevronDown",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "chevronLeft",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "chevronRight",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "chevronUp",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "clipboard",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "clock",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "close",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "closeCircled",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "closeRound",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "closedCaptioning",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "cloud",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "code",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "codeDownload",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "codeWorking",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "coffee",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "compass",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "compose",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "connectionBars",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "contrast",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "crop",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "cube",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "disc",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "document",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "documentText",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "drag",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "earth",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "easel",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "edit",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "egg",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "eject",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "email",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "emailUnread",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "erlenmeyerFlask",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "erlenmeyerFlaskBubbles",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "eye",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "eyeDisabled",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "female",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "filing",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "filmMarker",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "fireball",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "flag",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "flame",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "flash",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "flashOff",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "folder",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "fork",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "forkRepo",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "forward",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "funnel",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "gearA",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "gearB",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "grid",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "hammer",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "happy",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "happyOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "headphone",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "heart",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "heartBroken",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "help",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "helpBuoy",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "helpCircled",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "home",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "icecream",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "image",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "images",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "information",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "informationCircled",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "ionic",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "ipad",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "iphone",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "ipod",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "jet",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "key",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "knife",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "laptop",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "leaf",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "levels",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "lightbulb",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "link",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "loadA",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "loadB",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "loadC",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "loadD",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "location",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "lockCombination",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "locked",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "logIn",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "logOut",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "loop",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "magnet",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "male",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "man",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "map",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "medkit",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "merge",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "micA",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "micB",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "micC",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "minus",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "minusCircled",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "minusRound",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "modelS",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "monitor",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "more",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "mouse",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "musicNote",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "navicon",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "naviconRound",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "navigate",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "network",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "noSmoking",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "nuclear",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "outlet",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "paintbrush",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "paintbucket",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "paperAirplane",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "paperclip",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "pause",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "person",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "personAdd",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "personStalker",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "pieGraph",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "pin",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "pinpoint",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "pizza",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "plane",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "planet",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "play",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "playstation",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "plus",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "plusCircled",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "plusRound",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "podium",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "pound",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "power",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "pricetag",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "pricetags",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "printer",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "pullRequest",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "qrScanner",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "quote",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "radioWaves",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "record",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "refresh",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "reply",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "replyAll",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "ribbonA",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "ribbonB",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "sad",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "sadOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "scissors",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "search",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "settings",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "share",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "shuffle",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "skipBackward",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "skipForward",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "soupCan",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "soupCanOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "speakerphone",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "speedometer",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "spoon",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "star",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "starBars",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "steam",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "stop",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "thermometer",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "thumbsdown",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "thumbsup",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "toggle",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "toggleFilled",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "transgender",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "trashA",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "trashB",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "trophy",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "tshirt",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "tshirtOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "umbrella",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "university",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "unlocked",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "upload",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "usb",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "videocamera",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "volumeHigh",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "volumeLow",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "volumeMedium",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "volumeMute",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "wand",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "waterdrop",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "wifi",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "wineglass",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "woman",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "wrench",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "xbox",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.RGBA -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Ionicon.Android",
+        "comment": " Android icons\n\n\n# Icons\n\n@docs add\n@docs addCircle\n@docs alarmClock\n@docs alert\n@docs apps\n@docs archive\n@docs arrowBack\n@docs arrowDown\n@docs arrowDropdown\n@docs arrowDropdownCircle\n@docs arrowDropleft\n@docs arrowDropleftCircle\n@docs arrowDropright\n@docs arrowDroprightCircle\n@docs arrowDropup\n@docs arrowDropupCircle\n@docs arrowForward\n@docs arrowUp\n@docs attach\n@docs bar\n@docs bicycle\n@docs boat\n@docs bookmark\n@docs bulb\n@docs bus\n@docs calendar\n@docs call\n@docs camera\n@docs cancel\n@docs car\n@docs cart\n@docs chat\n@docs checkbox\n@docs checkboxBlank\n@docs checkboxOutline\n@docs checkboxOutlineBlank\n@docs checkmarkCircle\n@docs clipboard\n@docs close\n@docs cloud\n@docs cloudCircle\n@docs cloudDone\n@docs cloudOutline\n@docs colorPalette\n@docs compass\n@docs contact\n@docs contacts\n@docs contract\n@docs create\n@docs delete\n@docs desktop\n@docs document\n@docs done\n@docs doneAll\n@docs download\n@docs drafts\n@docs exit\n@docs expand\n@docs favorite\n@docs favoriteOutline\n@docs film\n@docs folder\n@docs folderOpen\n@docs funnel\n@docs globe\n@docs hand\n@docs hangout\n@docs happy\n@docs home\n@docs image\n@docs laptop\n@docs list\n@docs locate\n@docs lock\n@docs mail\n@docs map\n@docs menu\n@docs microphone\n@docs microphoneOff\n@docs moreHorizontal\n@docs moreVertical\n@docs navigate\n@docs notifications\n@docs notificationsNone\n@docs notificationsOff\n@docs open\n@docs options\n@docs people\n@docs person\n@docs personAdd\n@docs phoneLandscape\n@docs phonePortrait\n@docs pin\n@docs plane\n@docs playstore\n@docs print\n@docs radioButtonOff\n@docs radioButtonOn\n@docs refresh\n@docs remove\n@docs removeCircle\n@docs restaurant\n@docs sad\n@docs search\n@docs send\n@docs settings\n@docs share\n@docs shareAlt\n@docs star\n@docs starHalf\n@docs starOutline\n@docs stopwatch\n@docs subway\n@docs sunny\n@docs sync\n@docs textsms\n@docs time\n@docs train\n@docs unlock\n@docs upload\n@docs volumeDown\n@docs volumeMute\n@docs volumeOff\n@docs volumeUp\n@docs walk\n@docs warning\n@docs watch\n@docs wifi\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "add",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "addCircle",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "alarmClock",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "alert",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "apps",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "archive",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "arrowBack",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "arrowDown",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "arrowDropdown",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "arrowDropdownCircle",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "arrowDropleft",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "arrowDropleftCircle",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "arrowDropright",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "arrowDroprightCircle",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "arrowDropup",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "arrowDropupCircle",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "arrowForward",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "arrowUp",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "attach",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "bar",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "bicycle",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "boat",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "bookmark",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "bulb",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "bus",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "calendar",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "call",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "camera",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "cancel",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "car",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "cart",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "chat",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "checkbox",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "checkboxBlank",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "checkboxOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "checkboxOutlineBlank",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "checkmarkCircle",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "clipboard",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "close",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "cloud",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "cloudCircle",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "cloudDone",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "cloudOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "colorPalette",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "compass",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "contact",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "contacts",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "contract",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "create",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "delete",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "desktop",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "document",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "done",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "doneAll",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "download",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "drafts",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "exit",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "expand",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "favorite",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "favoriteOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "film",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "folder",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "folderOpen",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "funnel",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "globe",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "hand",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "hangout",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "happy",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "home",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "image",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "laptop",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "list",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "locate",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "lock",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "mail",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "map",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "menu",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "microphone",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "microphoneOff",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "moreHorizontal",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "moreVertical",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "navigate",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "notifications",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "notificationsNone",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "notificationsOff",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "open",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "options",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "people",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "person",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "personAdd",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "phoneLandscape",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "phonePortrait",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "pin",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "plane",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "playstore",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "print",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "radioButtonOff",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "radioButtonOn",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "refresh",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "remove",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "removeCircle",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "restaurant",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "sad",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "search",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "send",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "settings",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "share",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "shareAlt",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "star",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "starHalf",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "starOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "stopwatch",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "subway",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "sunny",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "sync",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "textsms",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "time",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "train",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "unlock",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "upload",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "volumeDown",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "volumeMute",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "volumeOff",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "volumeUp",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "walk",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "warning",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "watch",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "wifi",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Android.RGBA -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Ionicon.Ios",
+        "comment": " iOS icons\n\n\n# Icons\n\n@docs alarm\n@docs alarmOutline\n@docs albums\n@docs albumsOutline\n@docs americanfootball\n@docs americanfootballOutline\n@docs analytics\n@docs analyticsOutline\n@docs arrowBack\n@docs arrowDown\n@docs arrowForward\n@docs arrowLeft\n@docs arrowRight\n@docs arrowThinDown\n@docs arrowThinLeft\n@docs arrowThinRight\n@docs arrowThinUp\n@docs arrowUp\n@docs at\n@docs atOutline\n@docs barcode\n@docs barcodeOutline\n@docs baseball\n@docs baseballOutline\n@docs basketball\n@docs basketballOutline\n@docs bell\n@docs bellOutline\n@docs body\n@docs bodyOutline\n@docs bolt\n@docs boltOutline\n@docs book\n@docs bookOutline\n@docs bookmarks\n@docs bookmarksOutline\n@docs box\n@docs boxOutline\n@docs briefcase\n@docs briefcaseOutline\n@docs browsers\n@docs browsersOutline\n@docs calculator\n@docs calculatorOutline\n@docs calendar\n@docs calendarOutline\n@docs camera\n@docs cameraOutline\n@docs cart\n@docs cartOutline\n@docs chatboxes\n@docs chatboxesOutline\n@docs chatbubble\n@docs chatbubbleOutline\n@docs checkmark\n@docs checkmarkEmpty\n@docs checkmarkOutline\n@docs circleFilled\n@docs circleOutline\n@docs clock\n@docs clockOutline\n@docs close\n@docs closeEmpty\n@docs closeOutline\n@docs cloud\n@docs cloudDownload\n@docs cloudDownloadOutline\n@docs cloudOutline\n@docs cloudUpload\n@docs cloudUploadOutline\n@docs cloudy\n@docs cloudyNight\n@docs cloudyNightOutline\n@docs cloudyOutline\n@docs cog\n@docs cogOutline\n@docs colorFilter\n@docs colorFilterOutline\n@docs colorWand\n@docs colorWandOutline\n@docs compose\n@docs composeOutline\n@docs contact\n@docs contactOutline\n@docs copy\n@docs copyOutline\n@docs crop\n@docs cropStrong\n@docs download\n@docs downloadOutline\n@docs drag\n@docs email\n@docs emailOutline\n@docs eye\n@docs eyeOutline\n@docs fastforward\n@docs fastforwardOutline\n@docs filing\n@docs filingOutline\n@docs film\n@docs filmOutline\n@docs flag\n@docs flagOutline\n@docs flame\n@docs flameOutline\n@docs flask\n@docs flaskOutline\n@docs flower\n@docs flowerOutline\n@docs folder\n@docs folderOutline\n@docs football\n@docs footballOutline\n@docs gameControllerA\n@docs gameControllerAOutline\n@docs gameControllerB\n@docs gameControllerBOutline\n@docs gear\n@docs gearOutline\n@docs glasses\n@docs glassesOutline\n@docs gridView\n@docs gridViewOutline\n@docs heart\n@docs heartOutline\n@docs help\n@docs helpEmpty\n@docs helpOutline\n@docs home\n@docs homeOutline\n@docs infinite\n@docs infiniteOutline\n@docs information\n@docs informationEmpty\n@docs informationOutline\n@docs ionicOutline\n@docs keypad\n@docs keypadOutline\n@docs lightbulb\n@docs lightbulbOutline\n@docs list\n@docs listOutline\n@docs location\n@docs locationOutline\n@docs locked\n@docs lockedOutline\n@docs loop\n@docs loopStrong\n@docs medical\n@docs medicalOutline\n@docs medkit\n@docs medkitOutline\n@docs mic\n@docs micOff\n@docs micOutline\n@docs minus\n@docs minusEmpty\n@docs minusOutline\n@docs monitor\n@docs monitorOutline\n@docs moon\n@docs moonOutline\n@docs more\n@docs moreOutline\n@docs musicalNote\n@docs musicalNotes\n@docs navigate\n@docs navigateOutline\n@docs nutrition\n@docs nutritionOutline\n@docs paper\n@docs paperOutline\n@docs paperplane\n@docs paperplaneOutline\n@docs partlySunny\n@docs partlySunnyOutline\n@docs pause\n@docs pauseOutline\n@docs paw\n@docs pawOutline\n@docs people\n@docs peopleOutline\n@docs person\n@docs personOutline\n@docs personadd\n@docs personaddOutline\n@docs photos\n@docs photosOutline\n@docs pie\n@docs pieOutline\n@docs pint\n@docs pintOutline\n@docs play\n@docs playOutline\n@docs plus\n@docs plusEmpty\n@docs plusOutline\n@docs pricetag\n@docs pricetagOutline\n@docs pricetags\n@docs pricetagsOutline\n@docs printer\n@docs printerOutline\n@docs pulse\n@docs pulseStrong\n@docs rainy\n@docs rainyOutline\n@docs recording\n@docs recordingOutline\n@docs redo\n@docs redoOutline\n@docs refresh\n@docs refreshEmpty\n@docs refreshOutline\n@docs reload\n@docs reverseCamera\n@docs reverseCameraOutline\n@docs rewind\n@docs rewindOutline\n@docs rose\n@docs roseOutline\n@docs search\n@docs searchStrong\n@docs settings\n@docs settingsStrong\n@docs shuffle\n@docs shuffleStrong\n@docs skipbackward\n@docs skipbackwardOutline\n@docs skipforward\n@docs skipforwardOutline\n@docs snowy\n@docs speedometer\n@docs speedometerOutline\n@docs star\n@docs starHalf\n@docs starOutline\n@docs stopwatch\n@docs stopwatchOutline\n@docs sunny\n@docs sunnyOutline\n@docs telephone\n@docs telephoneOutline\n@docs tennisball\n@docs tennisballOutline\n@docs thunderstorm\n@docs thunderstormOutline\n@docs time\n@docs timeOutline\n@docs timer\n@docs timerOutline\n@docs toggle\n@docs toggleOutline\n@docs trash\n@docs trashOutline\n@docs undo\n@docs undoOutline\n@docs unlocked\n@docs unlockedOutline\n@docs upload\n@docs uploadOutline\n@docs videocam\n@docs videocamOutline\n@docs volumeHigh\n@docs volumeLow\n@docs wineglass\n@docs wineglassOutline\n@docs world\n@docs worldOutline\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "alarm",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "alarmOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "albums",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "albumsOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "americanfootball",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "americanfootballOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "analytics",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "analyticsOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "arrowBack",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "arrowDown",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "arrowForward",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "arrowLeft",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "arrowRight",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "arrowThinDown",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "arrowThinLeft",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "arrowThinRight",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "arrowThinUp",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "arrowUp",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "at",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "atOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "barcode",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "barcodeOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "baseball",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "baseballOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "basketball",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "basketballOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "bell",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "bellOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "body",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "bodyOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "bolt",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "boltOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "book",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "bookOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "bookmarks",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "bookmarksOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "box",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "boxOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "briefcase",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "briefcaseOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "browsers",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "browsersOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "calculator",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "calculatorOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "calendar",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "calendarOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "camera",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "cameraOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "cart",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "cartOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "chatboxes",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "chatboxesOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "chatbubble",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "chatbubbleOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "checkmark",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "checkmarkEmpty",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "checkmarkOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "circleFilled",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "circleOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "clock",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "clockOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "close",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "closeEmpty",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "closeOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "cloud",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "cloudDownload",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "cloudDownloadOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "cloudOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "cloudUpload",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "cloudUploadOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "cloudy",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "cloudyNight",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "cloudyNightOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "cloudyOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "cog",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "cogOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "colorFilter",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "colorFilterOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "colorWand",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "colorWandOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "compose",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "composeOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "contact",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "contactOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "copy",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "copyOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "crop",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "cropStrong",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "download",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "downloadOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "drag",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "email",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "emailOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "eye",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "eyeOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "fastforward",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "fastforwardOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "filing",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "filingOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "film",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "filmOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "flag",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "flagOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "flame",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "flameOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "flask",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "flaskOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "flower",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "flowerOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "folder",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "folderOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "football",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "footballOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "gameControllerA",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "gameControllerAOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "gameControllerB",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "gameControllerBOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "gear",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "gearOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "glasses",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "glassesOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "gridView",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "gridViewOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "heart",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "heartOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "help",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "helpEmpty",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "helpOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "home",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "homeOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "infinite",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "infiniteOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "information",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "informationEmpty",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "informationOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "ionicOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "keypad",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "keypadOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "lightbulb",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "lightbulbOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "list",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "listOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "location",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "locationOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "locked",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "lockedOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "loop",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "loopStrong",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "medical",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "medicalOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "medkit",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "medkitOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "mic",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "micOff",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "micOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "minus",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "minusEmpty",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "minusOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "monitor",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "monitorOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "moon",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "moonOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "more",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "moreOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "musicalNote",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "musicalNotes",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "navigate",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "navigateOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "nutrition",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "nutritionOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "paper",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "paperOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "paperplane",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "paperplaneOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "partlySunny",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "partlySunnyOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "pause",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "pauseOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "paw",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "pawOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "people",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "peopleOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "person",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "personOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "personadd",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "personaddOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "photos",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "photosOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "pie",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "pieOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "pint",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "pintOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "play",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "playOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "plus",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "plusEmpty",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "plusOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "pricetag",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "pricetagOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "pricetags",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "pricetagsOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "printer",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "printerOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "pulse",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "pulseStrong",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "rainy",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "rainyOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "recording",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "recordingOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "redo",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "redoOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "refresh",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "refreshEmpty",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "refreshOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "reload",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "reverseCamera",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "reverseCameraOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "rewind",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "rewindOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "rose",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "roseOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "search",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "searchStrong",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "settings",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "settingsStrong",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "shuffle",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "shuffleStrong",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "skipbackward",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "skipbackwardOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "skipforward",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "skipforwardOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "snowy",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "speedometer",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "speedometerOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "star",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "starHalf",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "starOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "stopwatch",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "stopwatchOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "sunny",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "sunnyOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "telephone",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "telephoneOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "tennisball",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "tennisballOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "thunderstorm",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "thunderstormOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "time",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "timeOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "timer",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "timerOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "toggle",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "toggleOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "trash",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "trashOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "undo",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "undoOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "unlocked",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "unlockedOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "upload",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "uploadOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "videocam",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "videocamOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "volumeHigh",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "volumeLow",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "wineglass",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "wineglassOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "world",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "worldOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Ios.RGBA -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Ionicon.Social",
+        "comment": " Social icons\n\n\n# Icons\n\n@docs android\n@docs androidOutline\n@docs angular\n@docs angularOutline\n@docs apple\n@docs appleOutline\n@docs bitcoin\n@docs bitcoinOutline\n@docs buffer\n@docs bufferOutline\n@docs chrome\n@docs chromeOutline\n@docs codepen\n@docs codepenOutline\n@docs css3\n@docs css3Outline\n@docs designernews\n@docs designernewsOutline\n@docs dribbble\n@docs dribbbleOutline\n@docs dropbox\n@docs dropboxOutline\n@docs euro\n@docs euroOutline\n@docs facebook\n@docs facebookOutline\n@docs foursquare\n@docs foursquareOutline\n@docs freebsdDevil\n@docs github\n@docs githubOutline\n@docs google\n@docs googleOutline\n@docs googleplus\n@docs googleplusOutline\n@docs hackernews\n@docs hackernewsOutline\n@docs html5\n@docs html5Outline\n@docs instagram\n@docs instagramOutline\n@docs javascript\n@docs javascriptOutline\n@docs linkedin\n@docs linkedinOutline\n@docs markdown\n@docs nodejs\n@docs octocat\n@docs pinterest\n@docs pinterestOutline\n@docs python\n@docs reddit\n@docs redditOutline\n@docs rss\n@docs rssOutline\n@docs sass\n@docs skype\n@docs skypeOutline\n@docs snapchat\n@docs snapchatOutline\n@docs tumblr\n@docs tumblrOutline\n@docs tux\n@docs twitch\n@docs twitchOutline\n@docs twitter\n@docs twitterOutline\n@docs usd\n@docs usdOutline\n@docs vimeo\n@docs vimeoOutline\n@docs whatsapp\n@docs whatsappOutline\n@docs windows\n@docs windowsOutline\n@docs wordpress\n@docs wordpressOutline\n@docs yahoo\n@docs yahooOutline\n@docs yen\n@docs yenOutline\n@docs youtube\n@docs youtubeOutline\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "android",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "androidOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "angular",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "angularOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "apple",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "appleOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "bitcoin",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "bitcoinOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "buffer",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "bufferOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "chrome",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "chromeOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "codepen",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "codepenOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "css3",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "css3Outline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "designernews",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "designernewsOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "dribbble",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "dribbbleOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "dropbox",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "dropboxOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "euro",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "euroOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "facebook",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "facebookOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "foursquare",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "foursquareOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "freebsdDevil",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "github",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "githubOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "google",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "googleOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "googleplus",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "googleplusOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "hackernews",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "hackernewsOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "html5",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "html5Outline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "instagram",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "instagramOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "javascript",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "javascriptOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "linkedin",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "linkedinOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "markdown",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "nodejs",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "octocat",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "pinterest",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "pinterestOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "python",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "reddit",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "redditOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "rss",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "rssOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "sass",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "skype",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "skypeOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "snapchat",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "snapchatOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "tumblr",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "tumblrOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "tux",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "twitch",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "twitchOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "twitter",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "twitterOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "usd",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "usdOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "vimeo",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "vimeoOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "whatsapp",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "whatsappOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "windows",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "windowsOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "wordpress",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "wordpressOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "yahoo",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "yahooOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "yen",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "yenOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "youtube",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            },
+            {
+                "name": "youtubeOutline",
+                "comment": " ",
+                "type": "Basics.Int -> Ionicon.Social.RGBA -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

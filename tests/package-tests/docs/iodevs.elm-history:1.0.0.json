@@ -1,0 +1,45 @@
+[
+    {
+        "name": "History",
+        "comment": " This library helps with keeping history of states of your variables.\nFor example, you defined a width of some div (elm-css or style or ...) and\nthis width has been changed by user's action. After that you want to have\nsame width of div as before user's action.\n\n\n# Definition\n\n@docs History\n\n\n# Helpers\n\n@docs create, forward, rewind, rewindAll, current\n\n",
+        "unions": [
+            {
+                "name": "History",
+                "comment": " Define data type.\nA list contains history of changes which you want to keep.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "create",
+                "comment": " Create history for your a variable.\n\n    import History exposing (History, create, forward, rewind)\n\n    boxWidth : History String\n    boxWidth =\n        create \"200px\"\n\n\n    -- creates: History \"200px\" []\n\n",
+                "type": "a -> History.History a"
+            },
+            {
+                "name": "current",
+                "comment": " Gets current a value from history.\n\n    addNew |> current --\"300px\"\n\n    addNew |> rewind |> current --\"200px\"\n\n",
+                "type": "History.History a -> a"
+            },
+            {
+                "name": "forward",
+                "comment": " Adds newly incoming a variable and older puts to the list.\n\n\n    addNew =\n        forward \"300px\" boxWidth\n\n\n    -- creates: History \"300px\" [\"200px\"]\n\n",
+                "type": "a -> History.History a -> History.History a"
+            },
+            {
+                "name": "rewind",
+                "comment": " Inserts last added element of list to history.\n\n    rewind addNew\n\n    -- creates: History \"200px\" []\n\n",
+                "type": "History.History a -> History.History a"
+            },
+            {
+                "name": "rewindAll",
+                "comment": " Inserts first added element of list to history.\n\n    rewindAll (History \"1000px\" [\"800px\", \"600px\", \"400px\", \"200px\"])\n\n    -- creates: History \"200px\" []\n\n",
+                "type": "History.History a -> History.History a"
+            }
+        ],
+        "binops": []
+    }
+]

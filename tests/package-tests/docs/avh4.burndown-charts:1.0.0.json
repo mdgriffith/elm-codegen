@@ -1,0 +1,86 @@
+[
+    {
+        "name": "BurndownChart",
+        "comment": "\n\n\n## Burndown charts\n\n@docs view, Date, Config\n\n\n## Estimation method\n\n@docs EstimationMethod, estimatedVelocity, targetDate\n\n\n## Colors\n\nThese are the basic colors available in `terezka/line-charts` exposed here for convenience so you don't have to add `line-charts` as a direct dependency.\n\nIf you want other colors, you can use colors from [`LineCharts.Colors`](https://package.elm-lang.org/packages/terezka/line-charts/latest/LineChart-Colors),\nany color you can create with [`avh4/elm-color`](https://package.elm-lang.org/packages/avh4/elm-color/latest),\nor colors from any other package that produces a [`Color`](https://package.elm-lang.org/packages/avh4/elm-color/latest/Color).\n\n@docs red, pink, gold, green, teal, cyan, blue, purple\n\n",
+        "unions": [
+            {
+                "name": "EstimationMethod",
+                "comment": " A burndown chart shows a baseline (or goal line) starting from the baseline date\nwith the number of points remaining on that date to the estimated end date\n(with the slope of the line beind the estimated velocity).\n\nYou can specify the target date (a time-based estimate) and have the estimated velocity be calculated;\nor you can specify the estimated velocity (a scope-based estimate) and have the target date be calculated.\n\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": "\n\n  - `name`: The name of the project. This will be used as the title of the chart.\n  - `color`: The color used for the burndown line. If not given, this will use the default color from `terezka/line-charts`.\n  - `startDate`: The start date of the project.\n  - `baseline`: A baseline estimate for the project. This is a tuple containing:\n      - The date on which the baseline was set (typically this will be the same as the project start date).\n      - The [`EstimationMethod`](#EstimationMethod) to use to calculate the goal line.\n  - `milestones`: (optional) A list of intermediate milestones to draw on the chart. Each milestone includes:\n      - The name of the milestone (consider using a single-character emoji for this!)\n      - The number of points that will remain in the project after this milestone is completed\n      - The date the milestone was accepted, or `Nothing` if it has not been accepted yet.\n  - `pointsRemaining`: A list containing the number of points remaining at the start of each day of the project.\n\n",
+                "args": [],
+                "type": "{ name : String.String, color : Maybe.Maybe Color.Color, startDate : BurndownChart.Date, baseline : ( BurndownChart.Date, BurndownChart.EstimationMethod ), milestones : List.List ( String.String, Basics.Int, Maybe.Maybe BurndownChart.Date ), pointsRemaining : List.List Basics.Int }"
+            },
+            {
+                "name": "Date",
+                "comment": " (year, month, day)\n",
+                "args": [],
+                "type": "( Basics.Int, Time.Month, Basics.Int )"
+            }
+        ],
+        "values": [
+            {
+                "name": "blue",
+                "comment": " ",
+                "type": "Color.Color"
+            },
+            {
+                "name": "cyan",
+                "comment": " ",
+                "type": "Color.Color"
+            },
+            {
+                "name": "estimatedVelocity",
+                "comment": " A scope-based estimate where the estimated velocity is specified and the target date will be calculated.\n",
+                "type": "Basics.Float -> BurndownChart.EstimationMethod"
+            },
+            {
+                "name": "gold",
+                "comment": " ",
+                "type": "Color.Color"
+            },
+            {
+                "name": "green",
+                "comment": " ",
+                "type": "Color.Color"
+            },
+            {
+                "name": "pink",
+                "comment": " ",
+                "type": "Color.Color"
+            },
+            {
+                "name": "purple",
+                "comment": " ",
+                "type": "Color.Color"
+            },
+            {
+                "name": "red",
+                "comment": " ",
+                "type": "Color.Color"
+            },
+            {
+                "name": "targetDate",
+                "comment": " A time-based estimate where the target date is specified and the estimated velocity will be calculated.\n",
+                "type": "BurndownChart.Date -> BurndownChart.EstimationMethod"
+            },
+            {
+                "name": "teal",
+                "comment": " ",
+                "type": "Color.Color"
+            },
+            {
+                "name": "view",
+                "comment": " **Show a burndown chart**\n\nSee [`Config`](#Config).\n\n",
+                "type": "BurndownChart.Config -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,21 @@
+[
+    {
+        "name": "Add",
+        "comment": " This module exposes a simple add function, as well as internals for test.\n  \n@docs add\n\n`add` relies on an `internalAdd` function which is not exposed.\n\nHowever, `internalAdd` is wrapped in forTest:\n\n@docs forTest\n```\nforTest = ForTest { internalAdd = internalAdd }\n```\n\nsee `tests/Spec.elm` to see how this is used.\n|",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "add",
+                "comment": " This is exposed in the module and the package. |",
+                "type": "Basics.Int -> Basics.Int -> Basics.Int"
+            },
+            {
+                "name": "forTest",
+                "comment": " This is exposed in the module and the package,\nbut since `ForTest` is not exposed by the package,\nit is unusable outside of the package. |",
+                "type": "Internal.ForTest { internalAdd : Basics.Int -> Basics.Int -> Basics.Int }"
+            }
+        ],
+        "binops": []
+    }
+]

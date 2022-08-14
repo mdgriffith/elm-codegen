@@ -1,0 +1,244 @@
+[
+    {
+        "name": "HttpBuilder",
+        "comment": " Extra helpers for more easily building Http requests that require greater\nconfiguration than what is provided by `elm/http` out of the box.\n\n\n# Start a request\n\n@docs RequestBuilder, get, post, put, patch, delete, options, trace, head\n\n\n# Configure request properties\n\n@docs withHeader, withHeaders, withBody, withStringBody, withJsonBody\n@docs withMultipartStringBody, withUrlEncodedBody, withTimeout, withCredentials\n@docs withExpect\n@docs withBearerToken\n@docs withTracker\n\n\n# Make the request\n\n@docs request\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "RequestBuilder",
+                "comment": " A type for chaining request configuration\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ method : String.String, headers : List.List Http.Header, url : String.String, body : Http.Body, expect : Http.Expect msg, timeout : Maybe.Maybe Basics.Float, withCredentials : Basics.Bool, tracker : Maybe.Maybe String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "delete",
+                "comment": " Start building a DELETE request with a given URL\n\n    delete \"https://example.com/api/items/1\"\n\n",
+                "type": "String.String -> HttpBuilder.RequestBuilder ()"
+            },
+            {
+                "name": "get",
+                "comment": " Start building a GET request with a given URL\n\n    get \"https://example.com/api/items/1\"\n\n",
+                "type": "String.String -> HttpBuilder.RequestBuilder ()"
+            },
+            {
+                "name": "head",
+                "comment": " Start building a HEAD request with a given URL\n\n    head \"https://example.com/api/items/1\"\n\n",
+                "type": "String.String -> HttpBuilder.RequestBuilder ()"
+            },
+            {
+                "name": "options",
+                "comment": " Start building a OPTIONS request with a given URL\n\n    options \"https://example.com/api/items/1\"\n\n",
+                "type": "String.String -> HttpBuilder.RequestBuilder ()"
+            },
+            {
+                "name": "patch",
+                "comment": " Start building a PATCH request with a given URL\n\n    patch \"https://example.com/api/items/1\"\n\n",
+                "type": "String.String -> HttpBuilder.RequestBuilder ()"
+            },
+            {
+                "name": "post",
+                "comment": " Start building a POST request with a given URL\n\n    post \"https://example.com/api/items\"\n\n",
+                "type": "String.String -> HttpBuilder.RequestBuilder ()"
+            },
+            {
+                "name": "put",
+                "comment": " Start building a PUT request with a given URL\n\n    put \"https://example.com/api/items/1\"\n\n",
+                "type": "String.String -> HttpBuilder.RequestBuilder ()"
+            },
+            {
+                "name": "request",
+                "comment": " Send the request\n",
+                "type": "HttpBuilder.RequestBuilder msg -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "trace",
+                "comment": " Start building a TRACE request with a given URL\n\n    trace \"https://example.com/api/items/1\"\n\n",
+                "type": "String.String -> HttpBuilder.RequestBuilder ()"
+            },
+            {
+                "name": "withBearerToken",
+                "comment": " Add a bearer token to a request\n\n    get \"https://example.com/api/items/1\"\n        |> withBearerToken \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhIjoiYSJ9.MvhYYpYBuN1rUaV0GGnQGvr889zY0xSc20Lnt8nMTfE\"\n\n",
+                "type": "String.String -> HttpBuilder.RequestBuilder msg -> HttpBuilder.RequestBuilder msg"
+            },
+            {
+                "name": "withBody",
+                "comment": " Add an Http.Body to the request\n\n    post \"https://example.com/api/save-text\"\n        |> withBody (Http.stringBody \"text/plain\" \"Hello!\")\n\n",
+                "type": "Http.Body -> HttpBuilder.RequestBuilder msg -> HttpBuilder.RequestBuilder msg"
+            },
+            {
+                "name": "withCredentials",
+                "comment": " Set the `withCredentials` flag on the request to True. Works via\n[`XMLHttpRequest#withCredentials`](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/withCredentials)\n\n    get \"https://example.com/api/items/1\"\n        |> withCredentials\n\n",
+                "type": "HttpBuilder.RequestBuilder msg -> HttpBuilder.RequestBuilder msg"
+            },
+            {
+                "name": "withExpect",
+                "comment": " Choose an `Expect` for the request\n\n    get \"https://example.com/api/items/1\"\n        |> withExpect (Http.expectJson GotItem itemsDecoder)\n\n",
+                "type": "Http.Expect b -> HttpBuilder.RequestBuilder msg -> HttpBuilder.RequestBuilder b"
+            },
+            {
+                "name": "withHeader",
+                "comment": " Add a single header to a request\n\n    get \"https://example.com/api/items/1\"\n        |> withHeader \"Content-Type\" \"application/json\"\n\n",
+                "type": "String.String -> String.String -> HttpBuilder.RequestBuilder msg -> HttpBuilder.RequestBuilder msg"
+            },
+            {
+                "name": "withHeaders",
+                "comment": " Add many headers to a request\n\n    get \"https://example.com/api/items/1\"\n        |> withHeaders [ ( \"Content-Type\", \"application/json\" ), ( \"Accept\", \"application/json\" ) ]\n\n",
+                "type": "List.List ( String.String, String.String ) -> HttpBuilder.RequestBuilder msg -> HttpBuilder.RequestBuilder msg"
+            },
+            {
+                "name": "withJsonBody",
+                "comment": " Convenience function for adding a JSON body to a request\n\n    params = Json.Encode.object\n        [ (\"sortBy\", Json.Encode.string \"coolness\")\n        , (\"take\", Json.Encode.int 10)\n        ]\n\n    post \"https://example.com/api/items/1\"\n        |> withJsonBody params\n\n",
+                "type": "Json.Encode.Value -> HttpBuilder.RequestBuilder msg -> HttpBuilder.RequestBuilder msg"
+            },
+            {
+                "name": "withMultipartStringBody",
+                "comment": " Convenience function for adding multipart bodies composed of String, String\nkey-value pairs. Since `Http.stringData` is currently the only `Http.Data`\ncreator having this function removes the need to use the `Http.Data` type in\nyour type signatures.\n\n    post \"https://example.com/api/items/1\"\n        |> withMultipartStringBody [ ( \"user\", JS.encode user ) ]\n\n",
+                "type": "List.List ( String.String, String.String ) -> HttpBuilder.RequestBuilder msg -> HttpBuilder.RequestBuilder msg"
+            },
+            {
+                "name": "withStringBody",
+                "comment": " Convenience function for adding a string body to a request\n\n    post \"https://example.com/api/items/1\"\n        |> withStringBody \"application/json\" \"\"\"{ \"sortBy\": \"coolness\", \"take\": 10 }\"\"\"\n\n",
+                "type": "String.String -> String.String -> HttpBuilder.RequestBuilder msg -> HttpBuilder.RequestBuilder msg"
+            },
+            {
+                "name": "withTimeout",
+                "comment": " Set the `timeout` setting on the request\n\n    get \"https://example.com/api/items/1\"\n        |> withTimeout (10 * Time.second)\n\n",
+                "type": "Basics.Float -> HttpBuilder.RequestBuilder msg -> HttpBuilder.RequestBuilder msg"
+            },
+            {
+                "name": "withTracker",
+                "comment": " Set the `tracker` on the request.\n\n    get \"<https://example.com/api/items/1\">\n        |> withTracker \"tracker\"\n\n",
+                "type": "String.String -> HttpBuilder.RequestBuilder msg -> HttpBuilder.RequestBuilder msg"
+            },
+            {
+                "name": "withUrlEncodedBody",
+                "comment": " Convenience function for adding url encoded bodies\n\n    post \"https://example.com/api/whatever\"\n        |> withUrlEncodedBody [ ( \"user\", \"Luke\" ), ( \"pwd\", \"secret\" ) ]\n\n",
+                "type": "List.List ( String.String, String.String ) -> HttpBuilder.RequestBuilder msg -> HttpBuilder.RequestBuilder msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "HttpBuilder.Task",
+        "comment": " Extra helpers for more easily building Http requests that require greater\nconfiguration than what is provided by `elm/http` out of the box.\n\n\n# Start a request\n\n@docs RequestBuilder, get, post, put, patch, delete, options, trace, head\n\n\n# Configure request properties\n\n@docs withHeader, withHeaders, withBody, withStringBody, withJsonBody\n@docs withMultipartStringBody, withUrlEncodedBody, withTimeout, withCredentials\n@docs withResolver\n@docs withBearerToken\n\n\n# Make the request\n\n@docs toTask\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "RequestBuilder",
+                "comment": " A type for chaining request configuration\n",
+                "args": [
+                    "x",
+                    "a"
+                ],
+                "type": "{ method : String.String, headers : List.List Http.Header, url : String.String, body : Http.Body, resolver : Http.Resolver x a, timeout : Maybe.Maybe Basics.Float, withCredentials : Basics.Bool }"
+            }
+        ],
+        "values": [
+            {
+                "name": "delete",
+                "comment": " Start building a DELETE request with a given URL\n\n    delete \"https://example.com/api/items/1\"\n\n",
+                "type": "String.String -> HttpBuilder.Task.RequestBuilder x ()"
+            },
+            {
+                "name": "get",
+                "comment": " Start building a GET request with a given URL\n\n    get \"https://example.com/api/items/1\"\n\n",
+                "type": "String.String -> HttpBuilder.Task.RequestBuilder x ()"
+            },
+            {
+                "name": "head",
+                "comment": " Start building a HEAD request with a given URL\n\n    head \"https://example.com/api/items/1\"\n\n",
+                "type": "String.String -> HttpBuilder.Task.RequestBuilder x ()"
+            },
+            {
+                "name": "options",
+                "comment": " Start building a OPTIONS request with a given URL\n\n    options \"https://example.com/api/items/1\"\n\n",
+                "type": "String.String -> HttpBuilder.Task.RequestBuilder x ()"
+            },
+            {
+                "name": "patch",
+                "comment": " Start building a PATCH request with a given URL\n\n    patch \"https://example.com/api/items/1\"\n\n",
+                "type": "String.String -> HttpBuilder.Task.RequestBuilder x ()"
+            },
+            {
+                "name": "post",
+                "comment": " Start building a POST request with a given URL\n\n    post \"https://example.com/api/items\"\n\n",
+                "type": "String.String -> HttpBuilder.Task.RequestBuilder x ()"
+            },
+            {
+                "name": "put",
+                "comment": " Start building a PUT request with a given URL\n\n    put \"https://example.com/api/items/1\"\n\n",
+                "type": "String.String -> HttpBuilder.Task.RequestBuilder x ()"
+            },
+            {
+                "name": "toTask",
+                "comment": " Send the request\n",
+                "type": "HttpBuilder.Task.RequestBuilder x a -> Task.Task x a"
+            },
+            {
+                "name": "trace",
+                "comment": " Start building a TRACE request with a given URL\n\n    trace \"https://example.com/api/items/1\"\n\n",
+                "type": "String.String -> HttpBuilder.Task.RequestBuilder x ()"
+            },
+            {
+                "name": "withBearerToken",
+                "comment": " Add a bearer token to a request\n\n    get \"https://example.com/api/items/1\"\n        |> withBearerToken \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhIjoiYSJ9.MvhYYpYBuN1rUaV0GGnQGvr889zY0xSc20Lnt8nMTfE\"\n\n",
+                "type": "String.String -> HttpBuilder.Task.RequestBuilder x a -> HttpBuilder.Task.RequestBuilder x a"
+            },
+            {
+                "name": "withBody",
+                "comment": " Add an Http.Body to the request\n\n    post \"https://example.com/api/save-text\"\n        |> withBody (Http.stringBody \"text/plain\" \"Hello!\")\n\n",
+                "type": "Http.Body -> HttpBuilder.Task.RequestBuilder x a -> HttpBuilder.Task.RequestBuilder x a"
+            },
+            {
+                "name": "withCredentials",
+                "comment": " Set the `withCredentials` flag on the request to True. Works via\n[`XMLHttpRequest#withCredentials`](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/withCredentials)\n\n    get \"https://example.com/api/items/1\"\n        |> withCredentials\n\n",
+                "type": "HttpBuilder.Task.RequestBuilder x a -> HttpBuilder.Task.RequestBuilder x a"
+            },
+            {
+                "name": "withHeader",
+                "comment": " Add a single header to a request\n\n    get \"https://example.com/api/items/1\"\n        |> withHeader \"Content-Type\" \"application/json\"\n\n",
+                "type": "String.String -> String.String -> HttpBuilder.Task.RequestBuilder x a -> HttpBuilder.Task.RequestBuilder x a"
+            },
+            {
+                "name": "withHeaders",
+                "comment": " Add many headers to a request\n\n    get \"https://example.com/api/items/1\"\n        |> withHeaders [ ( \"Content-Type\", \"application/json\" ), ( \"Accept\", \"application/json\" ) ]\n\n",
+                "type": "List.List ( String.String, String.String ) -> HttpBuilder.Task.RequestBuilder x a -> HttpBuilder.Task.RequestBuilder x a"
+            },
+            {
+                "name": "withJsonBody",
+                "comment": " Convenience function for adding a JSON body to a request\n\n    params = Json.Encode.object\n        [ (\"sortBy\", Json.Encode.string \"coolness\")\n        , (\"take\", Json.Encode.int 10)\n        ]\n\n    post \"https://example.com/api/items/1\"\n        |> withJsonBody params\n\n",
+                "type": "Json.Encode.Value -> HttpBuilder.Task.RequestBuilder x a -> HttpBuilder.Task.RequestBuilder x a"
+            },
+            {
+                "name": "withMultipartStringBody",
+                "comment": " Convenience function for adding multipart bodies composed of String, String\nkey-value pairs. Since `Http.stringData` is currently the only `Http.Data`\ncreator having this function removes the need to use the `Http.Data` type in\nyour type signatures.\n\n    post \"https://example.com/api/items/1\"\n        |> withMultipartStringBody [ ( \"user\", JS.encode user ) ]\n\n",
+                "type": "List.List ( String.String, String.String ) -> HttpBuilder.Task.RequestBuilder x a -> HttpBuilder.Task.RequestBuilder x a"
+            },
+            {
+                "name": "withResolver",
+                "comment": " Choose a `Resolver` for the request\n\n    get \"https://example.com/api/items/1\"\n        |> withResolver (Http.stringResolver toResult)\n\n",
+                "type": "Http.Resolver y b -> HttpBuilder.Task.RequestBuilder x a -> HttpBuilder.Task.RequestBuilder y b"
+            },
+            {
+                "name": "withStringBody",
+                "comment": " Convenience function for adding a string body to a request\n\n    post \"https://example.com/api/items/1\"\n        |> withStringBody \"application/json\" \"\"\"{ \"sortBy\": \"coolness\", \"take\": 10 }\"\"\"\n\n",
+                "type": "String.String -> String.String -> HttpBuilder.Task.RequestBuilder x a -> HttpBuilder.Task.RequestBuilder x a"
+            },
+            {
+                "name": "withTimeout",
+                "comment": " Set the `timeout` setting on the request\n\n    get \"https://example.com/api/items/1\"\n        |> withTimeout (10 * Time.second)\n\n",
+                "type": "Basics.Float -> HttpBuilder.Task.RequestBuilder x a -> HttpBuilder.Task.RequestBuilder x a"
+            },
+            {
+                "name": "withUrlEncodedBody",
+                "comment": " Convenience function for adding url encoded bodies\n\n    post \"https://example.com/api/whatever\"\n        |> withUrlEncodedBody [ ( \"user\", \"Luke\" ), ( \"pwd\", \"secret\" ) ]\n\n",
+                "type": "List.List ( String.String, String.String ) -> HttpBuilder.Task.RequestBuilder x a -> HttpBuilder.Task.RequestBuilder x a"
+            }
+        ],
+        "binops": []
+    }
+]

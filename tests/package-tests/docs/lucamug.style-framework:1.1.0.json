@@ -1,0 +1,1236 @@
+[
+    {
+        "name": "Framework",
+        "comment": " [Demo](https://lucamug.github.io/style-framework/)\n\nThis file (`Framework.elm`) is used to generate the **Living Style Guides**.\n\nThe idea is to have a living version of the Style Guide that stays always updated without manual intervention.\n\nFor more info about the idea, see [this post](https://medium.com/@l.mugnaini/zero-maintenance-always-up-to-date-living-style-guide-in-elm-dbf236d07522).\n\nThere are three ways to configure and customize this package.\n\n\n## Overwrite variables\n\n  - To change the variables (mainly colors), as defined inside `Configuration.elm` use the file `FrameworkConfiguration.elm`. You can create such file in the root folder of your project or better you should copy the entire framework inside your repository. The file should contain\n\n```\nimport Dict\n\nconfiguration : Dict.Dict String String\nconfiguration =\n    Dict.fromList [ ( \"primary\", \"#909\" ) ]\n```\n\nALso add `module FrameworkConfiguration exposing (configuration)` at the very top.\nIn this example we are replacing the primary color with#909.\n\n\n## Change the automatically-generated-styleguide\n\n  - To change the automatically-generated-styleguide logo, title and description you need to pass a new configuration file. SOmething like:\n\n```\nview : Framework.Model -> Html.Html Framework.Msg\nview model =\n    Framework.view\n        { model\n            | conf = initConf\n        }\n\ninitConf : Framework.Conf msg\ninitConf =\n    let\n        confData =\n            Framework.initConf\n    in\n    { confData\n        | title = text \"New Title\"\n        , subTitle = \"New Subtitle\"\n    }\n```\n\n\n## Add completely new features\n\n  - To add new feature and have them showing up in the style guide just\n    remember to output the `introspection` and add them into the configurations\n\n```\nview : Framework.Model -> Html.Html Framework.Msg\nview model =\n    Framework.view\n        { model\n            | introspections = introspections\n        }\n\nintrospections : List ( Framework.Introspection, Bool )\nintrospections =\n    [ ( Color.introspection, True )\n    , ( Logo.introspection, True )\n    , ( Icon.introspection, True )\n    ]\n        ++ Framework.introspections\n```\n\nYou can combine the latest two points with\n\n    view : Framework.Model -> Html.Html Framework.Msg\n    view model =\n        Framework.view\n            { model\n                | conf = initConf\n                | introspections = introspections\n            }\n\nIf you believe that your new feature is something that everybody should have\nplease add it to the package and contribute to the opensource!\n\nFor any issue or to get in touch with the authors, refer to the github page.\n\n\n# Types\n\n@docs Conf, Flags, Model, Msg\n\n\n# Functions\n\n@docs init, initCmd, initConf, initModel, subscriptions, update, view, viewPage, viewDocument, main\n\n\n# Introspection\n\nUsed internally to generate the [Style Guide](https://lucamug.github.io/style-framework/generated-framework.html)\n\n@docs Introspection, introspections\n\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "MsgToggleSection",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "MsgOpenAllSections",
+                        []
+                    ],
+                    [
+                        "MsgCloseAllSections",
+                        []
+                    ],
+                    [
+                        "MsgChangeWindowSize",
+                        [
+                            "Basics.Int",
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "MsgStyleElementsInput",
+                        [
+                            "Framework.StyleElementsInput.Msg"
+                        ]
+                    ],
+                    [
+                        "MsgFormField",
+                        [
+                            "Framework.FormField.Msg"
+                        ]
+                    ],
+                    [
+                        "MsgFormFieldWithPattern",
+                        [
+                            "Framework.FormFieldWithPattern.Msg"
+                        ]
+                    ],
+                    [
+                        "MsgCards",
+                        [
+                            "Framework.Card.Msg"
+                        ]
+                    ],
+                    [
+                        "MsgChangePassword",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "MsgNoOp",
+                        []
+                    ],
+                    [
+                        "LinkClicked",
+                        [
+                            "Browser.UrlRequest"
+                        ]
+                    ],
+                    [
+                        "UrlChanged",
+                        [
+                            "Url.Url"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Conf",
+                "comment": " Configuration\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ grey3 : Element.Color, grey9 : Element.Color, greyB : Element.Color, greyD : Element.Color, greyF : Element.Color, titleLeftSide : Element.Element msg, title : Element.Element msg, subTitle : String.String, version : String.String, introduction : Element.Element msg, mainPadding : Basics.Int, password : String.String, forkMe : Element.Attribute msg, hostnamesWithoutPassword : String.String -> Basics.Bool }"
+            },
+            {
+                "name": "Flags",
+                "comment": " ",
+                "args": [],
+                "type": "{ width : Basics.Int, height : Basics.Int, locationHref : String.String }"
+            },
+            {
+                "name": "Introspection",
+                "comment": " This is the type that is required for Introspection\n\nExample, inside Framework.Button:\n\n    introspection : Styleguide.Introspection msg\n    introspection =\n        { name = \"Button\"\n        , signature = \"button : List Modifier -> Maybe msg -> String -> Element msg\"\n        , description = \"Buttons accept a list of modifiers, a Maybe msg (for example: \\\"Just DoSomething\\\") and the text to display inside the button.\"\n        , variations =\n            [ ( \"Sizes\"\n              , [ ( button [ Small ] Nothing \"Button\", \"button [ Small ] Nothing \\\"Button\\\"\" )\n                , ( button [ Medium ] Nothing \"Button\", \"button [ Medium ] Nothing \\\"Button\\\"\" )\n                , ( button [ Large ] Nothing \"Button\", \"button [ Large ] Nothing \\\"Button\\\"\" )\n                ]\n              )\n            ]\n        }\n\n",
+                "args": [],
+                "type": "{ name : String.String, signature : String.String, description : String.String, variations : List.List Framework.Variation }"
+            },
+            {
+                "name": "Model",
+                "comment": " ",
+                "args": [],
+                "type": "{ maybeUrl : Maybe.Maybe Url.Url, maybeWindowSize : Maybe.Maybe Framework.WindowSize, modelStyleElementsInput : Framework.StyleElementsInput.Model, modelFormField : Framework.FormField.Model, modelFormFieldWithPattern : Framework.FormFieldWithPattern.Model, modelCards : Framework.Card.Model, introspections : List.List ( Framework.Introspection, Basics.Bool ), password : String.String, conf : Framework.Conf Framework.Msg, key : Browser.Navigation.Key }"
+            }
+        ],
+        "values": [
+            {
+                "name": "init",
+                "comment": " ",
+                "type": "Framework.Flags -> Url.Url -> Browser.Navigation.Key -> ( Framework.Model, Platform.Cmd.Cmd Framework.Msg )"
+            },
+            {
+                "name": "initCmd",
+                "comment": " ",
+                "type": "Framework.Flags -> Url.Url -> Browser.Navigation.Key -> Platform.Cmd.Cmd Framework.Msg"
+            },
+            {
+                "name": "initConf",
+                "comment": " ",
+                "type": "Framework.Conf msg"
+            },
+            {
+                "name": "initModel",
+                "comment": " ",
+                "type": "Framework.Flags -> Url.Url -> Browser.Navigation.Key -> Framework.Model"
+            },
+            {
+                "name": "introspections",
+                "comment": " ",
+                "type": "List.List ( Framework.Introspection, Basics.Bool )"
+            },
+            {
+                "name": "main",
+                "comment": " ",
+                "type": "Platform.Program Framework.Flags Framework.Model Framework.Msg"
+            },
+            {
+                "name": "subscriptions",
+                "comment": " ",
+                "type": "Framework.Model -> Platform.Sub.Sub Framework.Msg"
+            },
+            {
+                "name": "update",
+                "comment": " ",
+                "type": "Framework.Msg -> Framework.Model -> ( Framework.Model, Platform.Cmd.Cmd Framework.Msg )"
+            },
+            {
+                "name": "view",
+                "comment": " ",
+                "type": "Framework.Model -> Html.Html Framework.Msg"
+            },
+            {
+                "name": "viewDocument",
+                "comment": " This create the entire page of Browser.Document type.\n",
+                "type": "Framework.Model -> Browser.Document Framework.Msg"
+            },
+            {
+                "name": "viewPage",
+                "comment": " This create the entire page of Element type. If you are working\nwith elm-ui this is the way to go, so you can customize your page.\n\nExample, in your Style Guide page:\n\n    main : Html.Html msg\n    main =\n        layout layoutFontsAndAttributes <|\n            column []\n                [ ...\n                , Styleguide.page\n                    [ Framework.Button.introspection\n                    , Framework.Color.introspection\n                    ]\n                ...\n                ]\n\n",
+                "type": "Maybe.Maybe Framework.WindowSize -> Framework.Model -> Element.Element Framework.Msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Framework.Button",
+        "comment": " [Demo](https://lucamug.github.io/style-framework/generated-framework.html#/framework/Buttons/States)\n\n[![Buttons](https://lucamug.github.io/style-framework/images/demos/buttons.png)](https://lucamug.github.io/style-framework/generated-framework.html#/framework/Buttons/States)\n\n\n# Buttons\n\n@docs button, buttonWidth\n\n\n# Buttons as Link\n\n@docs buttonLink, buttonLinkWidth\n\n\n# Customizable Buttons\n\n@docs buttonCustomizable\n\n\n# Button Attributes\n\n@docs buttonAttr\n\n\n# Introspection\n\nUsed internally to generate the [Style Guide](https://lucamug.github.io/)\n\n@docs introspection\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "button",
+                "comment": " Generate an Input.button element. Example:\n\n    button [ Medium, Success, Outlined ] Nothing \"Button\"\n\n",
+                "type": "List.List Framework.Modifier.Modifier -> Maybe.Maybe msg -> String.String -> Element.Element msg"
+            },
+            {
+                "name": "buttonAttr",
+                "comment": " Generate a list of attributes that can be attached to any element\n\n    row (buttonAttr [ Info ] ++ [ spacing 10 ]) [ text \"Col 1\", text \"Col 2\" ]\n\n",
+                "type": "List.List Framework.Modifier.Modifier -> List.List (Element.Attribute msg)"
+            },
+            {
+                "name": "buttonCustomizable",
+                "comment": " ",
+                "type": "{ width : Basics.Int, label : String.String, onPress : Maybe.Maybe msg, modifiers : List.List Framework.Modifier.Modifier, extraAttrs : List.List (Element.Attribute msg) } -> Element.Element msg"
+            },
+            {
+                "name": "buttonLink",
+                "comment": " ",
+                "type": "List.List Framework.Modifier.Modifier -> String.String -> String.String -> Element.Element msg"
+            },
+            {
+                "name": "buttonLinkWidth",
+                "comment": " ",
+                "type": "List.List Framework.Modifier.Modifier -> String.String -> String.String -> Basics.Int -> Element.Element msg"
+            },
+            {
+                "name": "buttonWidth",
+                "comment": " ",
+                "type": "List.List Framework.Modifier.Modifier -> Maybe.Maybe msg -> String.String -> Basics.Int -> Element.Element msg"
+            },
+            {
+                "name": "introspection",
+                "comment": " ",
+                "type": "{ name : String.String, description : String.String, signature : String.String, variations : List.List ( String.String, List.List ( Element.Element a1, String.String ) ) }"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Framework.Card",
+        "comment": " [Demo](https://lucamug.github.io/style-framework/generated-framework.html#/framework/Cards/Flipping)\n\n[![Cards](https://lucamug.github.io/style-framework/images/demos/cards.png)](https://lucamug.github.io/style-framework/generated-framework.html#/framework/Cards/Flipping)\n\n\n# Cards\n\n@docs flipping, simpleWithTitle, simple\n\n\n# Introspection\n\nUsed internally to generate the [Style Guide](https://lucamug.github.io/)\n\n@docs introspection, example1, Model, Msg, initModel, update\n\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Model",
+                "comment": " ",
+                "args": [],
+                "type": "Basics.Bool"
+            }
+        ],
+        "values": [
+            {
+                "name": "example1",
+                "comment": " ",
+                "type": "Basics.Bool -> ( Element.Element Framework.Card.Msg, String.String )"
+            },
+            {
+                "name": "flipping",
+                "comment": " ",
+                "type": "{ a | activeFront : Basics.Bool, back : Element.Element msg, front : Element.Element msg, height : Basics.Int, width : Basics.Int } -> Element.Element msg"
+            },
+            {
+                "name": "initModel",
+                "comment": " ",
+                "type": "Framework.Card.Model"
+            },
+            {
+                "name": "introspection",
+                "comment": " ",
+                "type": "{ name : String.String, description : String.String, signature : String.String, variations : List.List ( String.String, List.List ( Element.Element msg1, String.String ) ) }"
+            },
+            {
+                "name": "simple",
+                "comment": " ",
+                "type": "Element.Element msg -> Element.Element msg"
+            },
+            {
+                "name": "simpleWithTitle",
+                "comment": " ",
+                "type": "String.String -> String.String -> Element.Element msg -> Element.Element msg"
+            },
+            {
+                "name": "update",
+                "comment": " ",
+                "type": "Framework.Card.Msg -> Framework.Card.Model -> ( Framework.Card.Model, Platform.Cmd.Cmd Framework.Card.Msg )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Framework.Color",
+        "comment": " [Demo](https://lucamug.github.io/style-framework/generated-framework.html#/framework/Colors/Colors)\n\n[![Cards](https://lucamug.github.io/style-framework/images/demos/colors.png)](https://lucamug.github.io/style-framework/generated-framework.html#/framework/Colors/Colors)\n\nColors are inspired by the Bulma framework: <https://bulma.io/documentation/overview/variables/>\n\n\n# Colors\n\n@docs orange, yellow, green, turquoise, cyan, blue, purple, red\n\n\n# Grey Scale\n\n[Demo](https://lucamug.github.io/style-framework/generated-framework.html#/framework/Colors/Grey%20Scale)\n\n@docs black, black_bis, black_ter, grey_darker, grey_dark, grey, grey_light, grey_lighter, white_ter, white_bis, white\n\n\n# Derived\n\n[Demo](https://lucamug.github.io/style-framework/generated-framework.html#/framework/Colors/Derived)\n\n@docs primary, info, success, warning, danger, light, dark\n\n\n# Fonts\n\n[Demo](https://lucamug.github.io/style-framework/generated-framework.html#/framework/Colors/Fonts)\n\n@docs text, text_light, text_strong, code, code_background, pre, pre_background\n\n\n# Links\n\n[Demo](https://lucamug.github.io/style-framework/generated-framework.html#/framework/Colors/Links)\n\n@docs link, link_active, link_active_border, link_focus, link_focus_border, link_hover, link_hover_border, link_invert, link_visited\n\n\n# Others\n\n[Demo](https://lucamug.github.io/style-framework/generated-framework.html#/framework/Colors/Others)\n\n@docs background, border, border_hover, muted, transparent, disabledButtonBackground, disabledButtonFont\n\n\n# Introspection\n\nUsed internally to generate the [Style Guide](https://lucamug.github.io/)\n\n@docs introspection\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "background",
+                "comment": " ",
+                "type": "Element.Color"
+            },
+            {
+                "name": "black",
+                "comment": " ",
+                "type": "Element.Color"
+            },
+            {
+                "name": "black_bis",
+                "comment": " ",
+                "type": "Element.Color"
+            },
+            {
+                "name": "black_ter",
+                "comment": " ",
+                "type": "Element.Color"
+            },
+            {
+                "name": "blue",
+                "comment": " ",
+                "type": "Element.Color"
+            },
+            {
+                "name": "border",
+                "comment": " ",
+                "type": "Element.Color"
+            },
+            {
+                "name": "border_hover",
+                "comment": " ",
+                "type": "Element.Color"
+            },
+            {
+                "name": "code",
+                "comment": " ",
+                "type": "Element.Color"
+            },
+            {
+                "name": "code_background",
+                "comment": " ",
+                "type": "Element.Color"
+            },
+            {
+                "name": "cyan",
+                "comment": " ",
+                "type": "Element.Color"
+            },
+            {
+                "name": "danger",
+                "comment": " ",
+                "type": "Element.Color"
+            },
+            {
+                "name": "dark",
+                "comment": " ",
+                "type": "Element.Color"
+            },
+            {
+                "name": "disabledButtonBackground",
+                "comment": " ",
+                "type": "Element.Color"
+            },
+            {
+                "name": "disabledButtonFont",
+                "comment": " ",
+                "type": "Element.Color"
+            },
+            {
+                "name": "green",
+                "comment": " ",
+                "type": "Element.Color"
+            },
+            {
+                "name": "grey",
+                "comment": " ",
+                "type": "Element.Color"
+            },
+            {
+                "name": "grey_dark",
+                "comment": " ",
+                "type": "Element.Color"
+            },
+            {
+                "name": "grey_darker",
+                "comment": " ",
+                "type": "Element.Color"
+            },
+            {
+                "name": "grey_light",
+                "comment": " ",
+                "type": "Element.Color"
+            },
+            {
+                "name": "grey_lighter",
+                "comment": " ",
+                "type": "Element.Color"
+            },
+            {
+                "name": "info",
+                "comment": " ",
+                "type": "Element.Color"
+            },
+            {
+                "name": "introspection",
+                "comment": " ",
+                "type": "{ name : String.String, description : String.String, signature : String.String, variations : List.List ( String.String, List.List ( Element.Element msg1, String.String ) ) }"
+            },
+            {
+                "name": "light",
+                "comment": " ",
+                "type": "Element.Color"
+            },
+            {
+                "name": "link",
+                "comment": " ",
+                "type": "Element.Color"
+            },
+            {
+                "name": "link_active",
+                "comment": " ",
+                "type": "Element.Color"
+            },
+            {
+                "name": "link_active_border",
+                "comment": " ",
+                "type": "Element.Color"
+            },
+            {
+                "name": "link_focus",
+                "comment": " ",
+                "type": "Element.Color"
+            },
+            {
+                "name": "link_focus_border",
+                "comment": " ",
+                "type": "Element.Color"
+            },
+            {
+                "name": "link_hover",
+                "comment": " ",
+                "type": "Element.Color"
+            },
+            {
+                "name": "link_hover_border",
+                "comment": " ",
+                "type": "Element.Color"
+            },
+            {
+                "name": "link_invert",
+                "comment": " ",
+                "type": "Element.Color"
+            },
+            {
+                "name": "link_visited",
+                "comment": " ",
+                "type": "Element.Color"
+            },
+            {
+                "name": "muted",
+                "comment": " ",
+                "type": "Element.Color"
+            },
+            {
+                "name": "orange",
+                "comment": " ",
+                "type": "Element.Color"
+            },
+            {
+                "name": "pre",
+                "comment": " ",
+                "type": "Element.Color"
+            },
+            {
+                "name": "pre_background",
+                "comment": " ",
+                "type": "Element.Color"
+            },
+            {
+                "name": "primary",
+                "comment": " ",
+                "type": "Element.Color"
+            },
+            {
+                "name": "purple",
+                "comment": " ",
+                "type": "Element.Color"
+            },
+            {
+                "name": "red",
+                "comment": " ",
+                "type": "Element.Color"
+            },
+            {
+                "name": "success",
+                "comment": " ",
+                "type": "Element.Color"
+            },
+            {
+                "name": "text",
+                "comment": " ",
+                "type": "Element.Color"
+            },
+            {
+                "name": "text_light",
+                "comment": " ",
+                "type": "Element.Color"
+            },
+            {
+                "name": "text_strong",
+                "comment": " ",
+                "type": "Element.Color"
+            },
+            {
+                "name": "transparent",
+                "comment": " ",
+                "type": "Element.Color"
+            },
+            {
+                "name": "turquoise",
+                "comment": " ",
+                "type": "Element.Color"
+            },
+            {
+                "name": "warning",
+                "comment": " ",
+                "type": "Element.Color"
+            },
+            {
+                "name": "white",
+                "comment": " ",
+                "type": "Element.Color"
+            },
+            {
+                "name": "white_bis",
+                "comment": " ",
+                "type": "Element.Color"
+            },
+            {
+                "name": "white_ter",
+                "comment": " ",
+                "type": "Element.Color"
+            },
+            {
+                "name": "yellow",
+                "comment": " ",
+                "type": "Element.Color"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Framework.Color.Extra",
+        "comment": "\n\n\n# Utilities\n\n@docs darken, desaturate, lighten, maximumContrast, saturate\n\n\n# Convertions to/from Hex\n\n@docs colorToHex, hexToColor\n\n\n# Convertions to/from Color.Color\n\n@docs fromColor, toColor\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "colorToHex",
+                "comment": " Converts a color to a hexadecimal string.\n",
+                "type": "Element.Color -> String.String"
+            },
+            {
+                "name": "darken",
+                "comment": " Decrease the lightning of a color\n",
+                "type": "Basics.Float -> Element.Color -> Element.Color"
+            },
+            {
+                "name": "desaturate",
+                "comment": " Decrease the saturation of a color\n",
+                "type": "Basics.Float -> Element.Color -> Element.Color"
+            },
+            {
+                "name": "fromColor",
+                "comment": " Convert a Color.Color into an Element.Color\n",
+                "type": "Color.Color -> Element.Color"
+            },
+            {
+                "name": "hexToColor",
+                "comment": " Converts a string to a color.\n",
+                "type": "String.String -> Element.Color"
+            },
+            {
+                "name": "lighten",
+                "comment": " Increase the lightning of a color\n",
+                "type": "Basics.Float -> Element.Color -> Element.Color"
+            },
+            {
+                "name": "maximumContrast",
+                "comment": " Returns the color with the highest contrast to the base color.\n",
+                "type": "Element.Color -> Element.Color -> Element.Color -> Element.Color"
+            },
+            {
+                "name": "saturate",
+                "comment": " Increase the saturation of a color\n",
+                "type": "Basics.Float -> Element.Color -> Element.Color"
+            },
+            {
+                "name": "toColor",
+                "comment": " Convert an Element.Color into a Color.Color\n",
+                "type": "Element.Color -> Color.Color"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Framework.Configuration",
+        "comment": " List of values that you can change to costumize the aspect of the framwork\n\nThis list is inspired by Bulma framework: <https://bulma.io/documentation/overview/variables/>\n\n\n# Functions\n\n@docs conf\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "conf",
+                "comment": " ",
+                "type": "{ color : { background : Element.Color, black : Element.Color, black_bis : Element.Color, black_ter : Element.Color, blue : Element.Color, border : Element.Color, border_hover : Element.Color, code : Element.Color, code_background : Element.Color, cyan : Element.Color, danger : Element.Color, dark : Element.Color, green : Element.Color, grey : Element.Color, grey_dark : Element.Color, grey_darker : Element.Color, grey_light : Element.Color, grey_lighter : Element.Color, info : Element.Color, light : Element.Color, link : Element.Color, link_active : Element.Color, link_active_border : Element.Color, link_focus : Element.Color, link_focus_border : Element.Color, link_hover : Element.Color, link_hover_border : Element.Color, link_invert : Element.Color, link_visited : Element.Color, muted : Element.Color, orange : Element.Color, pre : Element.Color, pre_background : Element.Color, primary : Element.Color, purple : Element.Color, red : Element.Color, success : Element.Color, text : Element.Color, text_light : Element.Color, text_strong : Element.Color, transparent : Element.Color, turquoise : Element.Color, warning : Element.Color, white : Element.Color, white_bis : Element.Color, white_ter : Element.Color, yellow : Element.Color }, font : { typeface : String.String, typefaceFallback : Element.Font.Font, url : String.String }, moveDownPlaceHolder : { large : Basics.Float, small : Basics.Float }, size : { size1 : Basics.Float, size2 : Basics.Float, size3 : Basics.Float, size4 : Basics.Float, size5 : Basics.Float, size6 : Basics.Float, size7 : Basics.Float }, button : { fontSmall : Basics.Int, fontDefault : Basics.Int, fontMedium : Basics.Int, fontLarge : Basics.Int, fontJumbo : Basics.Int, paddingXSmall : Basics.Int, paddingYSmall : Basics.Int, paddingXDefault : Basics.Int, paddingYDefault : Basics.Int, paddingXMedium : Basics.Int, paddingYMedium : Basics.Int, paddingXLarge : Basics.Int, paddingYLarge : Basics.Int, paddingXJumbo : Basics.Int, paddingYJumbo : Basics.Int } }"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Framework.FormField",
+        "comment": " [Demo](https://lucamug.github.io/style-framework/generated-framework.html#/framework/Fields/Text)\n\n[![Fields](https://lucamug.github.io/style-framework/images/demos/fields.png)](https://lucamug.github.io/style-framework/generated-framework.html#/framework/Fields/Text)\n\n\n# Input fields\n\n@docs inputText, inputPassword\n\n\n# Introspection\n\nUsed internally to generate the [Style Guide](https://lucamug.github.io/)\n\n@docs introspection, example5, example6, example7, example8, example9, Field, Model, Msg, initModel, update\n\n",
+        "unions": [
+            {
+                "name": "Field",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "FieldEmail",
+                        []
+                    ],
+                    [
+                        "FieldText",
+                        []
+                    ],
+                    [
+                        "FieldUsername",
+                        []
+                    ],
+                    [
+                        "FieldNewPassword",
+                        []
+                    ],
+                    [
+                        "FieldCurrentPassword",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Msg",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "OnChange",
+                        [
+                            "Framework.FormField.Field",
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "OnFocus",
+                        [
+                            "Framework.FormField.Field"
+                        ]
+                    ],
+                    [
+                        "OnLoseFocus",
+                        [
+                            "Framework.FormField.Field"
+                        ]
+                    ],
+                    [
+                        "OnEnter",
+                        [
+                            "Framework.FormField.Field"
+                        ]
+                    ],
+                    [
+                        "OnViewToggle",
+                        [
+                            "Framework.FormField.Field"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Model",
+                "comment": " ",
+                "args": [],
+                "type": "{ valueText : String.String, valueEmail : String.String, valueUsername : String.String, valueNewPassword : String.String, valueNewPasswordShow : Basics.Bool, valueCurrentPassword : String.String, valueCurrentPasswordShow : Basics.Bool, focusedField : Maybe.Maybe Framework.FormField.Field, enteredField : Maybe.Maybe Framework.FormField.Field }"
+            }
+        ],
+        "values": [
+            {
+                "name": "example5",
+                "comment": " ",
+                "type": "Framework.FormField.Model -> ( Element.Element Framework.FormField.Msg, String.String )"
+            },
+            {
+                "name": "example6",
+                "comment": " ",
+                "type": "Framework.FormField.Model -> ( Element.Element Framework.FormField.Msg, String.String )"
+            },
+            {
+                "name": "example7",
+                "comment": " ",
+                "type": "Framework.FormField.Model -> ( Element.Element Framework.FormField.Msg, String.String )"
+            },
+            {
+                "name": "example8",
+                "comment": " ",
+                "type": "Framework.FormField.Model -> ( Element.Element Framework.FormField.Msg, String.String )"
+            },
+            {
+                "name": "example9",
+                "comment": " ",
+                "type": "Framework.FormField.Model -> ( Element.Element Framework.FormField.Msg, String.String )"
+            },
+            {
+                "name": "initModel",
+                "comment": " ",
+                "type": "Framework.FormField.Model"
+            },
+            {
+                "name": "inputPassword",
+                "comment": " ",
+                "type": "List.List (Element.Attribute msg) -> { field : field, fieldValue : String.String, helperText : Maybe.Maybe (Element.Element msg), inputType : List.List (Element.Attribute msg) -> { label : Element.Input.Label msg, onChange : String.String -> msg, placeholder : Maybe.Maybe (Element.Input.Placeholder msg), text : String.String, show : Basics.Bool } -> Element.Element msg, inputTypeAttrs : List.List (Element.Attribute msg), label : Element.Element msg, maybeFieldFocused : Maybe.Maybe field, maybeMsgOnEnter : Maybe.Maybe (field -> msg), msgOnChange : field -> String.String -> msg, msgOnFocus : field -> msg, msgOnLoseFocus : field -> msg, show : Basics.Bool, maybeShowHidePassword : Maybe.Maybe { maybeHideIcon : Maybe.Maybe (Element.Element msg), maybeShowIcon : Maybe.Maybe (Element.Element msg), msgOnViewToggle : field -> msg } } -> Element.Element msg"
+            },
+            {
+                "name": "inputText",
+                "comment": " ",
+                "type": "List.List (Element.Attribute msg) -> { field : field, fieldValue : String.String, helperText : Maybe.Maybe (Element.Element msg), inputType : List.List (Element.Attribute msg) -> { label : Element.Input.Label msg, onChange : String.String -> msg, placeholder : Maybe.Maybe (Element.Input.Placeholder msg), text : String.String } -> Element.Element msg, inputTypeAttrs : List.List (Element.Attribute msg), label : Element.Element msg, maybeFieldFocused : Maybe.Maybe field, maybeMsgOnEnter : Maybe.Maybe (field -> msg), msgOnChange : field -> String.String -> msg, msgOnFocus : field -> msg, msgOnLoseFocus : field -> msg } -> Element.Element msg"
+            },
+            {
+                "name": "introspection",
+                "comment": " ",
+                "type": "{ name : String.String, description : String.String, signature : String.String, variations : List.List ( String.String, List.List ( Element.Element msg1, String.String ) ) }"
+            },
+            {
+                "name": "update",
+                "comment": " ",
+                "type": "Framework.FormField.Msg -> Framework.FormField.Model -> ( Framework.FormField.Model, Platform.Cmd.Cmd Framework.FormField.Msg )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Framework.FormFieldWithPattern",
+        "comment": " [Demo](https://lucamug.github.io/style-framework/generated-framework.html#/framework/Fields%20With%20Patterns/Phone%20number%20USA)\n\n[![Fields with patterns](https://lucamug.github.io/style-framework/images/demos/fields-with-patterns.png)](https://lucamug.github.io/style-framework/generated-framework.html#/framework/Fields%20With%20Patterns/Phone%20number%20USA)\n\n\n# Input fields\n\n@docs inputText\n\n\n# Introspection\n\nUsed internally to generate the [Style Guide](https://lucamug.github.io/)\n\n@docs introspection, example1, example2, example3, Field, Model, Msg, initModel, update\n\n",
+        "unions": [
+            {
+                "name": "Field",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "FieldTelephone",
+                        []
+                    ],
+                    [
+                        "FieldCreditCard",
+                        []
+                    ],
+                    [
+                        "Field6DigitCode",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Msg",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Model",
+                "comment": " ",
+                "args": [],
+                "type": "{ value : String.String, focus : Maybe.Maybe Framework.FormFieldWithPattern.Field }"
+            }
+        ],
+        "values": [
+            {
+                "name": "example1",
+                "comment": " ",
+                "type": "Framework.FormFieldWithPattern.Model -> ( Element.Element Framework.FormFieldWithPattern.Msg, String.String )"
+            },
+            {
+                "name": "example2",
+                "comment": " ",
+                "type": "Framework.FormFieldWithPattern.Model -> ( Element.Element Framework.FormFieldWithPattern.Msg, String.String )"
+            },
+            {
+                "name": "example3",
+                "comment": " ",
+                "type": "Framework.FormFieldWithPattern.Model -> ( Element.Element Framework.FormFieldWithPattern.Msg, String.String )"
+            },
+            {
+                "name": "initModel",
+                "comment": " ",
+                "type": "Framework.FormFieldWithPattern.Model"
+            },
+            {
+                "name": "inputText",
+                "comment": " ",
+                "type": "Framework.FormFieldWithPattern.Model -> { a | id : String.String, field : Framework.FormFieldWithPattern.Field, label : String.String, pattern : String.String } -> Element.Element Framework.FormFieldWithPattern.Msg"
+            },
+            {
+                "name": "introspection",
+                "comment": " ",
+                "type": "{ name : String.String, description : String.String, signature : String.String, variations : List.List ( String.String, List.List ( Element.Element msg1, String.String ) ) }"
+            },
+            {
+                "name": "update",
+                "comment": " ",
+                "type": "Framework.FormFieldWithPattern.Msg -> Framework.FormFieldWithPattern.Model -> ( Framework.FormFieldWithPattern.Model, Platform.Cmd.Cmd Framework.FormFieldWithPattern.Msg )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Framework.Icon",
+        "comment": " [Demo](https://lucamug.github.io/style-framework/generated-framework.html#/framework/Icons/Icons)\n\n[![Icons](https://lucamug.github.io/style-framework/images/demos/icons.png)](https://lucamug.github.io/style-framework/generated-framework.html#/framework/Icons/Icons)\n\n\n# Icons (Element msg)\n\n@docs arrows, chevronDown, exitFullscreen, fullscreen, hide, home, mobileNotification, mobileNotification2, mobileRinging, pencil, show, blackFlag, blackStar, circle, edit, exclamation, featureFlag, smile, userVerification, whiteFlag, whiteStar, whitelist\n\n\n# Icons (Html msg)\n\n@docs blackFlag_, blackStar_, circle_, edit_, exclamation_, featureFlag_, smile_, userVerification_, whiteFlag_, whiteStar_, whitelist_\n\n\n# Introspection\n\nUsed internally to generate the [Style Guide](https://lucamug.github.io/)\n\n@docs introspection\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "arrows",
+                "comment": " ",
+                "type": "Element.Color -> Basics.Int -> Element.Element msg"
+            },
+            {
+                "name": "blackFlag",
+                "comment": " ",
+                "type": "Element.Color -> Basics.Int -> Element.Element msg"
+            },
+            {
+                "name": "blackFlag_",
+                "comment": " ",
+                "type": "Element.Color -> Basics.Int -> Html.Html msg"
+            },
+            {
+                "name": "blackStar",
+                "comment": " ",
+                "type": "Element.Color -> Basics.Int -> Element.Element msg"
+            },
+            {
+                "name": "blackStar_",
+                "comment": " ",
+                "type": "Element.Color -> Basics.Int -> Html.Html msg"
+            },
+            {
+                "name": "chevronDown",
+                "comment": " ",
+                "type": "Element.Color -> Basics.Int -> Element.Element msg"
+            },
+            {
+                "name": "circle",
+                "comment": " ",
+                "type": "Element.Color -> Basics.Int -> Element.Element msg"
+            },
+            {
+                "name": "circle_",
+                "comment": " ",
+                "type": "Element.Color -> Basics.Int -> Html.Html msg"
+            },
+            {
+                "name": "edit",
+                "comment": " ",
+                "type": "Element.Color -> Basics.Int -> Element.Element msg"
+            },
+            {
+                "name": "edit_",
+                "comment": " ",
+                "type": "Element.Color -> Basics.Int -> Html.Html msg"
+            },
+            {
+                "name": "exclamation",
+                "comment": " ",
+                "type": "Element.Color -> Basics.Int -> Element.Element msg"
+            },
+            {
+                "name": "exclamation_",
+                "comment": " ",
+                "type": "Element.Color -> Basics.Int -> Html.Html msg"
+            },
+            {
+                "name": "exitFullscreen",
+                "comment": " ",
+                "type": "Element.Color -> Basics.Int -> Element.Element msg"
+            },
+            {
+                "name": "featureFlag",
+                "comment": " ",
+                "type": "Element.Color -> Basics.Int -> Element.Element msg"
+            },
+            {
+                "name": "featureFlag_",
+                "comment": " ",
+                "type": "Element.Color -> Basics.Int -> Html.Html msg"
+            },
+            {
+                "name": "fullscreen",
+                "comment": " ",
+                "type": "Element.Color -> Basics.Int -> Element.Element msg"
+            },
+            {
+                "name": "hide",
+                "comment": " ",
+                "type": "Element.Color -> Basics.Int -> Element.Element msg"
+            },
+            {
+                "name": "home",
+                "comment": " ",
+                "type": "Element.Color -> Basics.Int -> Element.Element msg"
+            },
+            {
+                "name": "introspection",
+                "comment": " ",
+                "type": "{ name : String.String, description : String.String, signature : String.String, variations : List.List ( String.String, List.List ( Element.Element msg1, String.String ) ) }"
+            },
+            {
+                "name": "mobileNotification",
+                "comment": " ",
+                "type": "Element.Color -> Basics.Int -> Element.Element msg"
+            },
+            {
+                "name": "mobileNotification2",
+                "comment": " ",
+                "type": "Element.Color -> Basics.Int -> Element.Element msg"
+            },
+            {
+                "name": "mobileRinging",
+                "comment": " ",
+                "type": "Element.Color -> Basics.Int -> Element.Element msg"
+            },
+            {
+                "name": "pencil",
+                "comment": " ",
+                "type": "Element.Color -> Basics.Int -> Element.Element msg"
+            },
+            {
+                "name": "show",
+                "comment": " ",
+                "type": "Element.Color -> Basics.Int -> Element.Element msg"
+            },
+            {
+                "name": "smile",
+                "comment": " ",
+                "type": "Element.Color -> Basics.Int -> Element.Element msg"
+            },
+            {
+                "name": "smile_",
+                "comment": " ",
+                "type": "Element.Color -> Basics.Int -> Html.Html msg"
+            },
+            {
+                "name": "userVerification",
+                "comment": " ",
+                "type": "Element.Color -> Basics.Int -> Element.Element msg"
+            },
+            {
+                "name": "userVerification_",
+                "comment": " ",
+                "type": "Element.Color -> Basics.Int -> Html.Html msg"
+            },
+            {
+                "name": "whiteFlag",
+                "comment": " ",
+                "type": "Element.Color -> Basics.Int -> Element.Element msg"
+            },
+            {
+                "name": "whiteFlag_",
+                "comment": " ",
+                "type": "Element.Color -> Basics.Int -> Html.Html msg"
+            },
+            {
+                "name": "whiteStar",
+                "comment": " ",
+                "type": "Element.Color -> Basics.Int -> Element.Element msg"
+            },
+            {
+                "name": "whiteStar_",
+                "comment": " ",
+                "type": "Element.Color -> Basics.Int -> Html.Html msg"
+            },
+            {
+                "name": "whitelist",
+                "comment": " ",
+                "type": "Element.Color -> Basics.Int -> Element.Element msg"
+            },
+            {
+                "name": "whitelist_",
+                "comment": " ",
+                "type": "Element.Color -> Basics.Int -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Framework.Logo",
+        "comment": " [Demo](https://lucamug.github.io/style-framework/generated-framework.html#/framework/Logos/Logos)\n\n[![Logos](https://lucamug.github.io/style-framework/images/demos/logos.png)](https://lucamug.github.io/style-framework/generated-framework.html#/framework/Logos/Logos)\n\n\n# Logos\n\n@docs logo, Logo\n\n\n# Logo Elm\n\n@docs LogoElmType, Color\n\n\n# Introspection\n\nUsed internally to generate the [Style Guide](https://lucamug.github.io/)\n\n@docs introspection\n\n",
+        "unions": [
+            {
+                "name": "Color",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Orange",
+                        []
+                    ],
+                    [
+                        "Green",
+                        []
+                    ],
+                    [
+                        "LightBlue",
+                        []
+                    ],
+                    [
+                        "Blue",
+                        []
+                    ],
+                    [
+                        "White",
+                        []
+                    ],
+                    [
+                        "Black",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Logo",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "LogoElm",
+                        [
+                            "Framework.Logo.LogoElmType"
+                        ]
+                    ],
+                    [
+                        "LogoLucamug",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "LogoElmType",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "ElmColor",
+                        [
+                            "Framework.Logo.Color"
+                        ]
+                    ],
+                    [
+                        "ElmColorful",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "introspection",
+                "comment": " ",
+                "type": "{ name : String.String, description : String.String, signature : String.String, variations : List.List ( String.String, List.List ( Element.Element msg1, String.String ) ) }"
+            },
+            {
+                "name": "logo",
+                "comment": " ",
+                "type": "Framework.Logo.Logo -> Basics.Int -> Element.Element msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Framework.Modifier",
+        "comment": " [Demo](https://lucamug.github.io/style-framework/generated-framework.html#/framework/Buttons/States)\n\n\n# Functions\n\n@docs Modifier\n\n",
+        "unions": [
+            {
+                "name": "Modifier",
+                "comment": " This is the main list of modifier that can be used with all elements\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Muted",
+                        []
+                    ],
+                    [
+                        "Primary",
+                        []
+                    ],
+                    [
+                        "Success",
+                        []
+                    ],
+                    [
+                        "Info",
+                        []
+                    ],
+                    [
+                        "Warning",
+                        []
+                    ],
+                    [
+                        "Danger",
+                        []
+                    ],
+                    [
+                        "Small",
+                        []
+                    ],
+                    [
+                        "Medium",
+                        []
+                    ],
+                    [
+                        "Large",
+                        []
+                    ],
+                    [
+                        "Jumbo",
+                        []
+                    ],
+                    [
+                        "Outlined",
+                        []
+                    ],
+                    [
+                        "Loading",
+                        []
+                    ],
+                    [
+                        "Waiting",
+                        []
+                    ],
+                    [
+                        "Disabled",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "Framework.Spinner",
+        "comment": " [Demo](https://lucamug.github.io/style-framework/generated-framework.html#/framework/Spinners/Spinners)\n\n[![Spinners](https://lucamug.github.io/style-framework/images/demos/spinners.png)](https://lucamug.github.io/style-framework/generated-framework.html#/framework/Spinners/Spinners)\n\n\n# Functions\n\n@docs Spinner, spinner\n\n\n# Introspection\n\nUsed internally to generate the [Style Guide](https://lucamug.github.io/)\n\n@docs introspection\n\n",
+        "unions": [
+            {
+                "name": "Spinner",
+                "comment": " Type of spinners\n",
+                "args": [],
+                "cases": [
+                    [
+                        "ThreeCircles",
+                        []
+                    ],
+                    [
+                        "Rotation",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "introspection",
+                "comment": " ",
+                "type": "{ name : String.String, description : String.String, signature : String.String, variations : List.List ( String.String, List.List ( Element.Element msg1, String.String ) ) }"
+            },
+            {
+                "name": "spinner",
+                "comment": " Example\n\n    spinner ThreeCircles 32 Color.black\n\n",
+                "type": "Framework.Spinner.Spinner -> Basics.Int -> Element.Color -> Element.Element msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Framework.Typography",
+        "comment": " [Demo](https://lucamug.github.io/style-framework/generated-framework.html#/framework/Typography/Heading)\n\n[![Typography](https://lucamug.github.io/style-framework/images/demos/typography.png)](https://lucamug.github.io/style-framework/generated-framework.html#/framework/Typography/Heading)\n\n\n# Headings\n\n@docs h1, h2, h3, h4, h5, h6\n\n\n# Others\n\n@docs textLead, textSmall, textExtraSmall\n\n\n# Introspection\n\nUsed internally to generate the [Style Guide](https://lucamug.github.io/)\n\n@docs introspection\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "h1",
+                "comment": " ",
+                "type": "List.List (Element.Attribute msg) -> Element.Element msg -> Element.Element msg"
+            },
+            {
+                "name": "h2",
+                "comment": " ",
+                "type": "List.List (Element.Attribute msg) -> Element.Element msg -> Element.Element msg"
+            },
+            {
+                "name": "h3",
+                "comment": " ",
+                "type": "List.List (Element.Attribute msg) -> Element.Element msg -> Element.Element msg"
+            },
+            {
+                "name": "h4",
+                "comment": " ",
+                "type": "List.List (Element.Attribute msg) -> Element.Element msg -> Element.Element msg"
+            },
+            {
+                "name": "h5",
+                "comment": " ",
+                "type": "List.List (Element.Attribute msg) -> Element.Element msg -> Element.Element msg"
+            },
+            {
+                "name": "h6",
+                "comment": " ",
+                "type": "List.List (Element.Attribute msg) -> Element.Element msg -> Element.Element msg"
+            },
+            {
+                "name": "introspection",
+                "comment": " ",
+                "type": "{ name : String.String, description : String.String, signature : String.String, variations : List.List ( String.String, List.List ( Element.Element msg1, String.String ) ) }"
+            },
+            {
+                "name": "textExtraSmall",
+                "comment": " ",
+                "type": "List.List (Element.Attribute msg) -> Element.Element msg -> Element.Element msg"
+            },
+            {
+                "name": "textLead",
+                "comment": " ",
+                "type": "List.List (Element.Attribute msg) -> Element.Element msg -> Element.Element msg"
+            },
+            {
+                "name": "textSmall",
+                "comment": " ",
+                "type": "List.List (Element.Attribute msg) -> Element.Element msg -> Element.Element msg"
+            }
+        ],
+        "binops": []
+    }
+]

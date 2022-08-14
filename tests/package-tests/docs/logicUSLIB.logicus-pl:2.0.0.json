@@ -1,0 +1,1192 @@
+[
+    {
+        "name": "LogicUS.PL.CSP",
+        "comment": " This module is designed for working with Constraint Satisfaction Problems, defining it by Big Formulas using Big Operators. For this purpose this module provides a parser, for reading a big formula directly from a String, a transformer from BigFormulas to standard FormulaPL, a SAT Solver (inspired in Chronological Backtracking + MRV) and the functions for representing the big formulas in string (raw) and in Latex format.\n\n\n# Defining BigFPL\n\n@docs BigFPL, bfplReadFromString, bfplReadExtraction\n\n\n# BigFPL to FormulaPL\n\n@docs bfplToFPL, sbfplToSPL\n\n\n# CSP Solver\n\n@docs sbfplsolver, solver\n\n\n# Representation\n\n@docs bfplToString, bfplToMathString, bfplToMathString2, solutionModelToString, solutionModelToMathString\n\n",
+        "unions": [
+            {
+                "name": "BigFPL",
+                "comment": " It defines the structure of a BigFPL Formula\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "bfplReadExtraction",
+                "comment": " It allows to extract the formula readed. If there is a parsing error, then it returns Insat formula\n",
+                "type": "( Maybe.Maybe LogicUS.PL.CSP.BigFPL, String.String ) -> LogicUS.PL.CSP.BigFPL"
+            },
+            {
+                "name": "bfplReadFromString",
+                "comment": " It allows defining BFPL from text strings, through a parser. To do this, a series of rules are established:\n\n  - Atomic formulas (propositional variables) correspond to propositional variables, made up of text strings, with uppercase characters, and can optionally be sub-indexed by a series of indices that correspond to arithmetic expressions. Said indices are specified between the symbols `_{` and `}`; and separated by commas. Examples of atomic formulas are: `P`,`Q_{i, j}`,`AL_{i + k, i-k}`.\n\n  - An arithmetic expression can correspond to an integer, to a variable specified as a string of characters in lowercase followed, optionally, by some numeric digits (x, i1, y33), or the binary combination of two arithmetic expressions through the infix operators: + (sum), - (subtraction), \\* (product), // (integer division),% (modulus).\n\n  - The formulas can be defined as atomic formulas or as associations of them through infix binary connectives: `&` (conjunction), `|` (disjubation), `->` (implication), `<->` (equivalence ); the unitary connective: `¬` (negation); or two big connectives that follow the format: BigOp + PARAMETERS + CONDITION + BigFPL\n      - The BigOp can correspond to `!&` (BigAnd) or `!|` (BigOr).\n\n      - The list of parameters that establishes associations between the parameter's Paramifier and its variation universe in the form `Paramifier {universe}` or `Paramifier (universe)` (according to the cases described below). These associations are enclosed in brackets `[`, `]`, and separated by commas. Note that, for example, `!& [I (1..8), j (1..8)] {T} (...)` would be equivalent to `!& [I (1..8) ] {T}!& [J (1..8)] {T} (....)`\n\n      - The universe of variation of a parameter can be specified through discrete integer values, expressed between braces and separated by commas, for example `i {1,2,3,4,5,6,7,8}`; Or as a range expressed as `(ll:up)` in the way `ll` corresponds to the lower limit, and`ul` to the upper limit, both included in the range, equivalent to the previous example `i (1:8)`\n\n      - The condition is established from a Boolean expression expressed between braces and that can correspond to: the true condition `T`, the false expression`F`, a comparison between arithmetic expressions (in which parameters defined in the operator itself or in predecessor, more external operators). These comparative expressions are expressed in brackets and can correspond to the comparative ones: `=` (equal), `!=` (Different), `> =` (greater or equal), `<=` (less or equal), `>`(major strict),`<`(minor strict); Or with Boolean expressions created from Boolean operators `AND`,`OR`, `NOT`.\n\nAs a final example, the restriction of the absence of two queens on the same secondary diagonal, in the 8 Queens problem, could be expressed as:\n\n`!& [i (0:7), j (0:7)] {T} (P_{i, j} ->!& [k (-7:7)] {[k!= 0] AND [i + k> = 0] AND [j-k> = 0] AND [i + k <= 7] AND [j-k <= 7]} (¬P_{i + k, j-k}))`\n\n",
+                "type": "String.String -> ( Maybe.Maybe LogicUS.PL.CSP.BigFPL, String.String )"
+            },
+            {
+                "name": "bfplToFPL",
+                "comment": " It converts a BigFPL to a FPL\n",
+                "type": "LogicUS.PL.CSP.BigFPL -> LogicUS.PL.SyntaxSemantics.FormulaPL"
+            },
+            {
+                "name": "bfplToMathString",
+                "comment": " It generates the String representation of a BigFPL formula in Latex Format\n",
+                "type": "LogicUS.PL.CSP.BigFPL -> String.String"
+            },
+            {
+                "name": "bfplToMathString2",
+                "comment": " It generates the String representation of a BigFPL formula in Latex Format, separating the representation of the formula and the representations of the conditions.\n",
+                "type": "LogicUS.PL.CSP.BigFPL -> ( String.String, String.String )"
+            },
+            {
+                "name": "bfplToString",
+                "comment": " It generates the String representation of a BigFPL formula.\n",
+                "type": "LogicUS.PL.CSP.BigFPL -> String.String"
+            },
+            {
+                "name": "sbfplToSPL",
+                "comment": " It converts a BigFPL to a FPL\n",
+                "type": "List.List LogicUS.PL.CSP.BigFPL -> LogicUS.PL.SyntaxSemantics.SetPL"
+            },
+            {
+                "name": "sbfplsolver",
+                "comment": " It allows resolve the satisfiability of a set of BigFormulas using Backtracking + MRV\n",
+                "type": "List.List LogicUS.PL.CSP.BigFPL -> ( Basics.Bool, List.List LogicUS.PL.SyntaxSemantics.PSymb )"
+            },
+            {
+                "name": "solutionModelToMathString",
+                "comment": " It gives the true variables of the model in a string in Latex format\n",
+                "type": "LogicUS.PL.SyntaxSemantics.Interpretation -> String.String"
+            },
+            {
+                "name": "solutionModelToString",
+                "comment": " It gives the true variables of the model in a string\n",
+                "type": "LogicUS.PL.SyntaxSemantics.Interpretation -> String.String"
+            },
+            {
+                "name": "solver",
+                "comment": " It allows resolve the satisfiability of a set of clauses using Backtracking + MRV\n",
+                "type": "List.List LogicUS.PL.Clauses.ClausePL -> ( Basics.Bool, List.List LogicUS.PL.SyntaxSemantics.PSymb )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "LogicUS.PL.Clauses",
+        "comment": " The module provides the tools for express formulas in their Clausal Form.\n\n\n# Types\n\n@docs ClausePLLiteral, ClausePL, ClausePLSet\n\n\n# Work with clauses\n\n@docs cplSort, cplIsPositive, cplIsNegative, cplSubsumes, cplIsTautology, csplRemoveEqClauses, csplRemoveTautClauses, csplRemoveSubsumedClauses, cplSymbols, csplSymbols, cplInterpretations, csplInterpretations, cplValuation, csplValuation, cplModels, csplModels, cplIsInsat, csplIsTaut, csplIsSat, csplIsInsat\n\n\n# Formulas and Clauses\n\n@docs clauseLitToLiteral, cplFromCNF, fplToClauses, splToClauses\n\n\n# Clauses Parser\n\n@docs cplReadFromString, cplReadExtraction, cplToInputString\n\n\n# Clauses Representation\n\n@docs cplToString, cplToMathString, csplToString, csplToMathString\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "ClausePL",
+                "comment": " It represent a set of clause literals.\n\n    c1 : ClausePL\n    c1 =\n        [ ( \"p\", False ), ( \"q\", False ), ( \"r\", True ) ]\n\n    c2 : ClausePL\n    c2 =\n        [ ( \"p\", False ), ( \"r\", True ) ]\n\n    c3 : ClausePL\n    c3 =\n        [ ( \"r\", True ) ]\n\n",
+                "args": [],
+                "type": "List.List LogicUS.PL.Clauses.ClausePLLiteral"
+            },
+            {
+                "name": "ClausePLLiteral",
+                "comment": " It represent a literal of a clause as a tuple with the symbol of the literal (string) and the sign of the literal (False:negative literal, True:positive literal).\n",
+                "args": [],
+                "type": "( LogicUS.PL.SyntaxSemantics.PSymb, Basics.Bool )"
+            },
+            {
+                "name": "ClausePLSet",
+                "comment": " It represent a set of ClausePL\n\n    cs : ClausePLSet\n    cs =\n        [ c1, c2, c3 ]\n\n",
+                "args": [],
+                "type": "List.List LogicUS.PL.Clauses.ClausePL"
+            }
+        ],
+        "values": [
+            {
+                "name": "clauseLitToLiteral",
+                "comment": " It converts a ClausePLLiteral to a Literal (FormulaPL)\n",
+                "type": "LogicUS.PL.Clauses.ClausePLLiteral -> LogicUS.PL.SyntaxSemantics.Literal"
+            },
+            {
+                "name": "cplFromCNF",
+                "comment": " It pass a CNF formula to a Set of clausses\n",
+                "type": "LogicUS.PL.SyntaxSemantics.FormulaPL -> Maybe.Maybe LogicUS.PL.Clauses.ClausePLSet"
+            },
+            {
+                "name": "cplInterpretations",
+                "comment": " It gives all possible interpretations for a clause\n\n    cplInterpretations c1 == [ [], [ \"p\" ], [ \"p\", \"q\" ], [ \"p\", \"q\", \"r\" ], [ \"p\", \"r\" ], [ \"q\" ], [ \"q\", \"r\" ], [ \"r\" ] ]\n\n    cplInterpretation c2 == [ [], [ \"p\" ], [ \"p\", \"r\" ], [ \"r\" ] ]\n\n",
+                "type": "LogicUS.PL.Clauses.ClausePL -> List.List LogicUS.PL.SyntaxSemantics.Interpretation"
+            },
+            {
+                "name": "cplIsInsat",
+                "comment": " It checks if a clause is unsatisfible, that is if it is empty.\n\n    cplIsInsat c1 == False\n\n    cplIsInsat c2 == False\n\n    cplIsInsat [] == True\n\n",
+                "type": "LogicUS.PL.Clauses.ClausePL -> Basics.Bool"
+            },
+            {
+                "name": "cplIsNegative",
+                "comment": " Indicates if the clause is enterly negative, this is with all its literals negative\n\n    cplIsNegative c1 == False\n\n    cplIsNegative (List.take 2 c1) == True\n\n",
+                "type": "LogicUS.PL.Clauses.ClausePL -> Basics.Bool"
+            },
+            {
+                "name": "cplIsPositive",
+                "comment": " Indicates if the clause is enterly positive, this is with all its literals positive\n\n    cplIsPositive c1 == False\n\n    cplIsPositive c3 == True\n\n",
+                "type": "LogicUS.PL.Clauses.ClausePL -> Basics.Bool"
+            },
+            {
+                "name": "cplIsTautology",
+                "comment": " Indicates if the clause is a tautology, that is if it contains a literal and its complement.\n\n    cplIsTautology c1 == False\n\n    (cplIsTautology <| c1 ++ [ ( \"p\", True ) ]) == True\n\n",
+                "type": "LogicUS.PL.Clauses.ClausePL -> Basics.Bool"
+            },
+            {
+                "name": "cplModels",
+                "comment": " It generates all models of a clause by bruteforce, valuating the truth value for each interpretation\n\n    plModels c1 == [ [], [ \"p\" ], [ \"p\", \"q\", \"r\" ], [ \"p\", \"r\" ], [ \"q\" ], [ \"q\", \"r\" ], [ \"r\" ] ]\n\n    cplModels c2 == [ [], [ \"p\", \"r\" ], [ \"r\" ] ]\n\n    cplModels c3 == [ [ ( \"r\", True ) ] ]\n\n",
+                "type": "LogicUS.PL.Clauses.ClausePL -> List.List LogicUS.PL.SyntaxSemantics.Interpretation"
+            },
+            {
+                "name": "cplReadExtraction",
+                "comment": " It extracts the clause readed. If it is Nothing then it returns an empty clause\n\n    (cplReadExtraction << cplReadFromString) \"p_{1}, p_{2}, ¬q_{1}, q_{2}\" == [ ( \"p_{1}\", True ), ( \"p_{2}\", True ), ( \"q_{1}\", False ), ( \"q_{2}\", True ) ]\n\n    (cplReadExtraction << cplReadFromString) \"{p_{1}, p_{2}, ¬q_{1}, q_{2}\" == []\n\n    (cplReadExtraction << cplReadFromString) \"{}\" == []\n\n",
+                "type": "( Maybe.Maybe LogicUS.PL.Clauses.ClausePL, String.String, String.String ) -> LogicUS.PL.Clauses.ClausePL"
+            },
+            {
+                "name": "cplReadFromString",
+                "comment": " It reads the formula from a string. It returns a tuple with may be a formula (if it can be read it) and a message of error it it cannot.\n\n    cplReadFromString \"p_{1}, p_{2}, ¬q_{1}, q_{2}\" == (Just [(\"p_{1}\",True),(\"p_{2}\",True),(\"q_{1}\",False),(\"q_{2}\",True)],\"\",\"\")\n\n    cplReadFromString \"{p_{1}, p_{2}, ¬q_{1}, q_{2}}\" == (Just [(\"p_{1}\",True),(\"p_{2}\",True),(\"q_{1}\",False),(\"q_{2}\",True)],\"\",\"\"\n\n    cplReadFromString \"{p_{1}, p_{2}, ¬q_{1}, q_{2}\" == (Nothing,\"{p_{1},p_{2},¬q_{1},q_{2}\",\"Error: [{ col = 26, problem = Expecting ',', row = 1 },{ col = 26, problem = Expecting '}', row = 1 }]\")\n\n    cplReadFromString \"{}\" == ( Just [], \"\", \"\" )\n\n    cplReadFromString \"\" == ( Nothing, \"\", \"Argument is empty\" )\n\n",
+                "type": "String.String -> ( Maybe.Maybe LogicUS.PL.Clauses.ClausePL, String.String, String.String )"
+            },
+            {
+                "name": "cplSort",
+                "comment": " It sorts the literals of the clause by alphabetical order.\n",
+                "type": "LogicUS.PL.Clauses.ClausePL -> LogicUS.PL.Clauses.ClausePL"
+            },
+            {
+                "name": "cplSubsumes",
+                "comment": " Indicates if the first clause subsumes the second, that is, if the first is entirely contained in the second.\n\n    cplSubsumes c1 c2 == False\n\n    cplSubsumes c2 c1 == True\n\n",
+                "type": "LogicUS.PL.Clauses.ClausePL -> LogicUS.PL.Clauses.ClausePL -> Basics.Bool"
+            },
+            {
+                "name": "cplSymbols",
+                "comment": " It gives the propositional symbols that take place in the clause\n\n    cplSymbols c1 =\n        [ \"p\", \"q\", \"r\" ]\n    cplSymbols c2 =\n        [ \"p\", \"r\" ]\n    cplSymbols c3 =\n        [ \"r\" ]\n\n",
+                "type": "LogicUS.PL.Clauses.ClausePL -> List.List LogicUS.PL.SyntaxSemantics.PSymb"
+            },
+            {
+                "name": "cplToInputString",
+                "comment": " It gives the corresponding input syntax of a clause\n\n    cplToInputString c1 = \"{¬p,¬q,r}\"\n\n    cplToInputString c3 == \"{r}\"\n\n",
+                "type": "LogicUS.PL.Clauses.ClausePL -> String.String"
+            },
+            {
+                "name": "cplToMathString",
+                "comment": " It generates the Latex string of a ClausePL. The result requires a math enviroment to be displayed.\n\n    cplToMathString c1 == \"\\\\lbrace \\\\neg p, \\\\neg q, r\\\\rbrace\"\n\n",
+                "type": "LogicUS.PL.Clauses.ClausePL -> String.String"
+            },
+            {
+                "name": "cplToString",
+                "comment": " It generates the String representation of a ClausePL using unicode symbols.\n\n    cplToString c1 == \"{¬ p, ¬ q, r}\"\n\n",
+                "type": "LogicUS.PL.Clauses.ClausePL -> String.String"
+            },
+            {
+                "name": "cplValuation",
+                "comment": " It evaluates the truth value of the clause regarding to a interpretation\n\n    cplValuation c2 [ \"p\", \"r\" ] == True\n\n    cplValuation c2 [] == True\n\n    cplValuation c2 [ \"p\" ] == False\n\n",
+                "type": "LogicUS.PL.Clauses.ClausePL -> LogicUS.PL.SyntaxSemantics.Interpretation -> Basics.Bool"
+            },
+            {
+                "name": "csplInterpretations",
+                "comment": " It gives all possible interpretations for a set of clauses\n\n    csplInterpretations cs1 == [ [], [ \"p\" ], [ \"p\", \"q\" ], [ \"p\", \"q\", \"r\" ], [ \"p\", \"r\" ], [ \"q\" ], [ \"q\", \"r\" ], [ \"r\" ] ]\n\n    csplInterpretations [ [ Atom \"p\" ], [ Atom \"q\" ] ] == [ [], [ \"p\" ], [ \"p\", \"q\" ], [ \"q\" ] ]\n\n",
+                "type": "LogicUS.PL.Clauses.ClausePLSet -> List.List LogicUS.PL.SyntaxSemantics.Interpretation"
+            },
+            {
+                "name": "csplIsInsat",
+                "comment": " It checks if a set of clauses are satisfiable by brute force, calculates its models and verifies that none exist.\n",
+                "type": "LogicUS.PL.Clauses.ClausePLSet -> Basics.Bool"
+            },
+            {
+                "name": "csplIsSat",
+                "comment": " It checks if a set of clauses is satisfiable by bruteforce, calculating its models and checking any exists\n\n    csplIsSat cs1 == True\n\n    csplIsSat (cs1 ++ [ ( \"r\", False ) ]) == False\n\n",
+                "type": "LogicUS.PL.Clauses.ClausePLSet -> Basics.Bool"
+            },
+            {
+                "name": "csplIsTaut",
+                "comment": " It checks if a set of clauses is a tautology, that is if all clauses are tautologies.\n\n    csplIsTaut cs1 == False\n\n    csplIsTaut (List.map (\\x -> x ++ [ ( \"r\", False ) ]) cs1) == True\n\n",
+                "type": "LogicUS.PL.Clauses.ClausePLSet -> Basics.Bool"
+            },
+            {
+                "name": "csplModels",
+                "comment": " It generates all models of a set of clauses by bruteforce, valuating the truth value for each interpretation\n\n    csplModels cs1 == [ [ \"p\", \"q\", \"r\" ], [ \"p\", \"r\" ], [ \"q\", \"r\" ], [ \"r\" ] ]\n\n",
+                "type": "LogicUS.PL.Clauses.ClausePLSet -> List.List LogicUS.PL.SyntaxSemantics.Interpretation"
+            },
+            {
+                "name": "csplRemoveEqClauses",
+                "comment": " It removes clauses that are equal from a list of clauses\n\n    cs1 = [c1, c2, c3]\n\n    csplRemoveEqClauses cs1 == cs1\n\n    csplRemoveEqClauses (cs1 ++ (List.map (List.reverse) cs1)) == cs1\n\n",
+                "type": "LogicUS.PL.Clauses.ClausePLSet -> LogicUS.PL.Clauses.ClausePLSet"
+            },
+            {
+                "name": "csplRemoveSubsumedClauses",
+                "comment": " It removes clauses that are subsumed by other from the list\n\n    csplRemoveSubsumedClauses cs1 == [ [ Atom \"r\" ] ]\n\n",
+                "type": "LogicUS.PL.Clauses.ClausePLSet -> LogicUS.PL.Clauses.ClausePLSet"
+            },
+            {
+                "name": "csplRemoveTautClauses",
+                "comment": " It removes clauses that are tautological clauses\n\n    csplRemoveTautClauses <| List.map (\\\\x -> x ++ [(\"q\", True)]) cs1 ==\n        [[(\"p\",False),(\"r\",True),(\"q\",True)],[(\"r\",True),(\"q\",True)]]\n\n",
+                "type": "LogicUS.PL.Clauses.ClausePLSet -> LogicUS.PL.Clauses.ClausePLSet"
+            },
+            {
+                "name": "csplSymbols",
+                "comment": " It gives the propositional symbols that take place in the clause\n\n    csplSymbols cs1 =\n        [ \"p\", \"q\", \"r\" ]\n\n",
+                "type": "LogicUS.PL.Clauses.ClausePLSet -> List.List LogicUS.PL.SyntaxSemantics.PSymb"
+            },
+            {
+                "name": "csplToMathString",
+                "comment": " It generates the Latex string of a Set of Clauses. The result requires a math enviroment to be displayed.\n\n    csplToMathString cs == \"\\\\lbrace\\\\lbrace \\\\neg p, q\\\\rbrace, \\\\, \\\\lbrace \\\\neg p, r\\\\rbrace, \\\\, \\\\lbrace \\\\neg q, r\\\\rbrace\\\\rbrace\"\n\n",
+                "type": "LogicUS.PL.Clauses.ClausePLSet -> String.String"
+            },
+            {
+                "name": "csplToString",
+                "comment": " It generates the String representation of a Set of Clauses using unicode symbols.\n\n    csplToString cs == \"{{¬ p, q},{¬ p, r},{¬ q, r}}\"\n\n",
+                "type": "LogicUS.PL.Clauses.ClausePLSet -> String.String"
+            },
+            {
+                "name": "csplValuation",
+                "comment": " It evaluates the truth value of a set of clauses regarding to a interpretation\n\n    csplValuation cs1 [ \"r\" ] == True\n\n    csplValuation cs1 [] == False\n\n",
+                "type": "LogicUS.PL.Clauses.ClausePLSet -> LogicUS.PL.SyntaxSemantics.Interpretation -> Basics.Bool"
+            },
+            {
+                "name": "fplToClauses",
+                "comment": " Express a formula as a Set of clauses.\n\n    f1 = (fplReadExtraction << fplReadFromString) \"¬p & q <-> r\"\n    fplToClauses f1 == [[(\"p\",True),(\"q\",False),(\"r\",True)],[(\"p\",False),(\"r\",False)],[(\"q\",True),(\"r\",False)]]\n\n",
+                "type": "LogicUS.PL.SyntaxSemantics.FormulaPL -> LogicUS.PL.Clauses.ClausePLSet"
+            },
+            {
+                "name": "splToClauses",
+                "comment": " Express a set of formulas as a Set of clauses.\n\n    fs = List.map (fplReadExtraction << fplReadFromString) [\"p->q\", \"p | q -> r\", \"¬p | q\"]\n\n    cs = splToClauses fs\n    cs == [[(\"p\",False),(\"q\",True)],[(\"p\",False),(\"r\",True)],[(\"q\",False),(\"r\",True)]]\n\n",
+                "type": "LogicUS.PL.SyntaxSemantics.SetPL -> LogicUS.PL.Clauses.ClausePLSet"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "LogicUS.PL.DPLL",
+        "comment": " The module provides the tools for applying the DPLL algorithm to solve the fesibility of a set of propositional clauses and calculates its models if they exist.\n\n\n# DPLL TABLEAU\n\n@docs DPLLTableau\n\n\n# DPLL Algorithm\n\n@docs dpll, dpllTableauModels\n\n\n# Representation\n\n@docs dpllTableauToString, dpllTableauToDOT, dpllTableauToDOTStyled\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "DPLLTableau",
+                "comment": " Defines the DPLL Tableau type as a Graph whose node labels are pairs of an integer (0: internal node, 1: open leaf, -1: closed leaf) and the set of PL clauses considered in the corresponding node; and a edge label is just the literal which is propagated.\n",
+                "args": [],
+                "type": "Graph.Graph ( Basics.Int, List.List LogicUS.PL.Clauses.ClausePL ) LogicUS.PL.Clauses.ClausePLLiteral"
+            }
+        ],
+        "values": [
+            {
+                "name": "dpll",
+                "comment": " It computes DPLL algorithm given the result and the process as a DPLL Tableau\n\n    cs1 =\n        [ [ ( \"r\", False ), ( \"p\", True ), ( \"q\", True ) ], [ ( \"p\", False ), ( \"r\", True ) ], [ ( \"q\", False ), ( \"r\", True ) ], [ ( \"s\", False ), ( \"p\", True ) ], [ ( \"s\", True ), ( \"r\", True ), ( \"t\", True ) ], [ ( \"p\", False ) ], [ ( \"q\", False ) ], [ ( \"t\", False ) ] ]\n\n    t1 =\n        dpll cs1\n\n    cs2 =\n        [ [ ( \"r\", False ), ( \"p\", True ), ( \"q\", True ) ], [ ( \"p\", False ), ( \"r\", True ) ], [ ( \"q\", False ), ( \"r\", True ) ], [ ( \"s\", False ), ( \"p\", True ) ], [ ( \"s\", True ), ( \"r\", True ), ( \"t\", True ) ], [ ( \"p\", False ) ] ]\n\n    t2 =\n        dpll cs2\n\n",
+                "type": "List.List LogicUS.PL.Clauses.ClausePL -> LogicUS.PL.DPLL.DPLLTableau"
+            },
+            {
+                "name": "dpllTableauModels",
+                "comment": " Gets the Tableau DPLL models. It requires a set of reference symbols that are added to those present in the tableau since in the transformation to clauses some symbols may have disappeared.\n\n    dpllTableauModels [] t1 == []\n\n    dpllTableauModels [] t2 == [ [ \"q\", \"r\" ], [ \"q\", \"r\", \"t\" ], [ \"t\" ] ]\n\n",
+                "type": "List.List LogicUS.PL.SyntaxSemantics.PSymb -> LogicUS.PL.DPLL.DPLLTableau -> List.List LogicUS.PL.SyntaxSemantics.Interpretation"
+            },
+            {
+                "name": "dpllTableauToDOT",
+                "comment": " Express a DPLL Tableau as a string in DOT format that is viewable with a GraphViz Render.\n\n**Note:** If you are using elm repl, before introducing the code you must replace _\\\\n_ by _\\\\n_ and _\\\\\"_ by _\"_ in a simple text editor.\n\n    dpllTableauToDOT t1 == \"digraph G {\\n  rankdir=TB\\n  graph []\\n  node [shape=box, color=black]\\n  edge [dir=none, color=blue, fontcolor=blue]\\n\\n  0 -> 1 [label=\\\"¬ p\\\"]\\n  1 -> 2 [label=\\\"¬ s\\\"]\\n  2 -> 3 [label=\\\"¬ q\\\"]\\n  3 -> 4 [label=\\\"¬ r\\\"]\\n  4 -> 5 [label=\\\"t\\\"]\\n\\n  0 [label=\\\"{¬ r, p, q}, {¬ s, p}, {s, r, t}, {¬ p}, {¬ q}, {¬ t}\\\"]\\n  1 [label=\\\"{¬ r, q}, {¬ s}, {s, r, t}, {¬ q}, {¬ t}\\\"]\\n  2 [label=\\\"{¬ r, q}, {r, t}, {¬ q}, {¬ t}\\\"]\\n  3 [label=\\\"{¬ r}, {r, t}, {¬ t}\\\"]\\n  4 [label=\\\"{t}, {¬ t}\\\"]\\n  5 [label=\\\"□\\\"]\\n}\"\n\n    dpllTableauToDOT t2 = \"digraph G {\\n  rankdir=TB\\n  graph []\\n  node [shape=box, color=black]\\n  edge [dir=none, color=blue, fontcolor=blue]\\n\\n  0 -> 1 [label=\\\"¬ p\\\"]\\n  1 -> 2 [label=\\\"¬ s\\\"]\\n  2 -> 3 [label=\\\"r\\\"]\\n  2 -> 5 [label=\\\"¬ r\\\"]\\n  3 -> 4 [label=\\\"q\\\"]\\n  5 -> 6 [label=\\\"¬ q\\\"]\\n  6 -> 7 [label=\\\"t\\\"]\\n\\n  0 [label=\\\"{¬ r, p, q}, {¬ q, r}, {¬ s, p}, {s, r, t}, {¬ p}\\\"]\\n  1 [label=\\\"{¬ r, q}, {¬ q, r}, {¬ s}, {s, r, t}\\\"]\\n  2 [label=\\\"{¬ r, q}, {¬ q, r}, {r, t}\\\"]\\n  3 [label=\\\"{q}\\\"]\\n  4 [label=\\\"◯\\\"]\\n  5 [label=\\\"{¬ q}, {t}\\\"]\\n  6 [label=\\\"{t}\\\"]\\n  7 [label=\\\"◯\\\"]\\n}\"\n\n",
+                "type": "LogicUS.PL.DPLL.DPLLTableau -> String.String"
+            },
+            {
+                "name": "dpllTableauToDOTStyled",
+                "comment": " Express a DPLL Tableau as a string in DOT format that is viewable with a GraphViz Render with Style.\n",
+                "type": "LogicUS.PL.DPLL.DPLLTableau -> String.String"
+            },
+            {
+                "name": "dpllTableauToString",
+                "comment": " Express a DPLL Tableau as a string.\n\n    dpllTableauToString t1 == \"Graph [Node 0 ({¬ r, p, q}, {¬ s, p}, {s, r, t}, {¬ p}, {¬ q}, {¬ t}), Node 1 ({¬ r, q}, {¬ s}, {s, r, t}, {¬ q}, {¬ t}), Node 2 ({¬ r, q}, {r, t}, {¬ q}, {¬ t}), Node 3 ({¬ r}, {r, t}, {¬ t}), Node 4 ({t}, {¬ t}), Node 5 (□)] [Edge 4->5 (t), Edge 3->4 (¬ r), Edge 2->3 (¬ q), Edge 1->2 (¬ s), Edge 0->1 (¬ p)]\"\n\n    dpllTableauToString t2 == \"Graph [Node 0 ({¬ r, p, q}, {¬ q, r}, {¬ s, p}, {s, r, t}, {¬ p}), Node 1 ({¬ r, q}, {¬ q, r}, {¬ s}, {s, r, t}), Node 2 ({¬ r, q}, {¬ q, r}, {r, t}), Node 3 ({q}), Node 4 (◯), Node 5 ({¬ q}, {t}), Node 6 ({t}), Node 7 (◯)] [Edge 6->7 (t), Edge 5->6 (¬ q), Edge 3->4 (q), Edge 2->5 (¬ r), Edge 2->3 (r), Edge 1->2 (¬ s), Edge 0->1 (¬ p)]\"\n\n",
+                "type": "LogicUS.PL.DPLL.DPLLTableau -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "LogicUS.PL.HornRS",
+        "comment": " The module provides the tools to work with Horn Reasoning Systems (HRS) through the definition of facts and rules and the use of forward and backward chaining to make deductions. Conversion to standard formulas and clauses is also provided to apply other algorithms on them.\n\n\n# HRS Elements\n\n@docs HornFact, HornRule, HornKB\n\n\n# HRS Deductions I: Forward Chaining\n\n@docs FwChRow, FwChResult, forwardChaining1, forwardChaining2, forwardChainingResultToMDString\n\n\n# HRS Deductions II: Backward Chaining\n\n@docs BwChRow, BwChResult, backwardChaining1, backwardChainingResultToMDString\n\n\n# HRS Trasformations\n\n@docs hornFactToFPL, hornKBToSPL, hornRuleToFPL, hornRulesToSPL, hornFactToClause, hornKBToClauses, hornRuleToClause, hornRulesToClauses\n\n\n# HRS Parser\n\n@docs hornFactReadFromString, hornFactReadExtraction, hornFactToInputString, hornKBReadFromString, hornKBReadExtraction, hornKBToInputString, hornRuleReadFromString, hornRuleReadExtraction, hornRuleToInputString, hornRulesReadFromString, hornRulesReadExtraction, hornRulesToInputString\n\n\n# HRS Representations\n\n@docs hornFactToString, hornFactToMathString, hornKBToStringComma, hornKBToStringWedge, hornKBToMathStringComma, hornKBToMathStringWedge, hornRuleToString, hornRuleToMathString, hornRulesToString, hornRulesToMathString\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "BwChResult",
+                "comment": " It holds the result of backward chaining process including rules, the initial KB, the goal, a table that summarizes the development of the algorithm and the result (if the goal can be deducted from initial KB with the rules given).\n",
+                "args": [],
+                "type": "{ rules : List.List LogicUS.PL.HornRS.HornRule, initialKB : LogicUS.PL.HornRS.HornKB, goal : LogicUS.PL.HornRS.HornFact, table : List.List LogicUS.PL.HornRS.BwChRow, res : Basics.Bool }"
+            },
+            {
+                "name": "BwChRow",
+                "comment": " It defines a row of a table of BW process with the properties:\n\n  - step: indicates the step of the algorithm\n  - opened: indicates the opened ways at the regarding step\n  - currentNode : indicates the way treated at the regarding step\n  - goal : indicates the goal of currentNode way treated at the regarding step\n  - descendents : indicates the new ways deducted at the regarding step\n\n",
+                "args": [],
+                "type": "{ step : Basics.Int, opened : List.List ( Basics.Bool, LogicUS.PL.HornRS.HornKB ), currentNode : Maybe.Maybe LogicUS.PL.HornRS.HornKB, goal : Maybe.Maybe LogicUS.PL.HornRS.HornFact, descendents : List.List ( Basics.Bool, Basics.Int, List.List ( Basics.Bool, LogicUS.PL.HornRS.HornFact ) ) }"
+            },
+            {
+                "name": "FwChResult",
+                "comment": " It holds the result of forward chaining process including rules, the initial KB, the goal, a table that summarizes the development of the algorithm and the result (if the goal can be deducted from initial KB with the rules given )\n",
+                "args": [],
+                "type": "{ rules : List.List LogicUS.PL.HornRS.HornRule, initialKB : LogicUS.PL.HornRS.HornKB, goal : LogicUS.PL.HornRS.HornFact, table : List.List LogicUS.PL.HornRS.FwChRow, res : Basics.Bool }"
+            },
+            {
+                "name": "FwChRow",
+                "comment": " It defines a row of a table of FC process with the properties:\n\n  - step: indicates the step of the algorithm\n  - kb: indicates the knowledge base handled at the regarding step\n  - avRules : indicates the indices of rules available at the regarding step\n  - shRules : indicates the indices of rules shooted at the regarding step\n  - newFacts : indicates the new knowledge deducted at the regarding step\n\n",
+                "args": [],
+                "type": "{ step : Basics.Int, kb : LogicUS.PL.HornRS.HornKB, avRules : List.List Basics.Int, shRules : List.List Basics.Int, newFacts : LogicUS.PL.HornRS.HornKB }"
+            },
+            {
+                "name": "HornFact",
+                "comment": " It defines a fact as a propositional variable. Use (\"⟂\", []) for represent inconsistence and (\"⊤\", []) for represent tautology.\n",
+                "args": [],
+                "type": "LogicUS.PL.SyntaxSemantics.PSymb"
+            },
+            {
+                "name": "HornKB",
+                "comment": " It defines a Knowledge Base of Horn as a set of facts.\n",
+                "args": [],
+                "type": "Set.Set LogicUS.PL.HornRS.HornFact"
+            },
+            {
+                "name": "HornRule",
+                "comment": " It defines an inference rule of Horn as a tuple whose first element regards to the antecedents of the rule and the second one to de consecuent of the rule.\n",
+                "args": [],
+                "type": "( Set.Set LogicUS.PL.HornRS.HornFact, LogicUS.PL.HornRS.HornFact )"
+            }
+        ],
+        "values": [
+            {
+                "name": "backwardChaining1",
+                "comment": " It performs the backward chaining algorithm by selecting at each step the way with the fewest remaining goals and the goal using alphabetical order.\n",
+                "type": "List.List LogicUS.PL.HornRS.HornRule -> LogicUS.PL.HornRS.HornKB -> LogicUS.PL.HornRS.HornFact -> LogicUS.PL.HornRS.BwChResult"
+            },
+            {
+                "name": "backwardChainingResultToMDString",
+                "comment": " It generates a MD string (including latex notation) of the result of an execution of BC algorithm\n",
+                "type": "LogicUS.PL.HornRS.BwChResult -> String.String"
+            },
+            {
+                "name": "forwardChaining1",
+                "comment": " It performs forwardChaining algorithm with removing, at each step, the rules shot from available rules.\n",
+                "type": "List.List LogicUS.PL.HornRS.HornRule -> LogicUS.PL.HornRS.HornKB -> LogicUS.PL.HornRS.HornFact -> LogicUS.PL.HornRS.FwChResult"
+            },
+            {
+                "name": "forwardChaining2",
+                "comment": " It performs forwardChaining algorithm with removing, at each step, the rules whose consecuent is already in the KB from available rules.\n",
+                "type": "List.List LogicUS.PL.HornRS.HornRule -> LogicUS.PL.HornRS.HornKB -> LogicUS.PL.HornRS.HornFact -> LogicUS.PL.HornRS.FwChResult"
+            },
+            {
+                "name": "forwardChainingResultToMDString",
+                "comment": " It generates a markdown string (includinf latex notation) of the result of a forwarding chaining execution.\n",
+                "type": "LogicUS.PL.HornRS.FwChResult -> String.String"
+            },
+            {
+                "name": "hornFactReadExtraction",
+                "comment": " It extract the Horn fact read. If it is not present it returns a fact of inconsistency\n",
+                "type": "( Maybe.Maybe LogicUS.PL.HornRS.HornFact, String.String, String.String ) -> LogicUS.PL.HornRS.HornFact"
+            },
+            {
+                "name": "hornFactReadFromString",
+                "comment": " It reads a Horn fact from a string. The string may correspond to:\n\n  - A string of uppercase letters optionaly subindexed using \"_{\" \"}\" as delimiters and integers separated by commas as indices. Ex: \"P\", \"PAUL\", \"P_{1}\", \"PAUL\\_{1,2,3}\"\n  - A string with \"!F\" that represents inconsistence.\n  - A string with \"!T\" that represents tautology.\n\nIt gives a tuple with the Horn fact (if it could be read) , the input string and the message of error (if fact couldn't be read).\n\n",
+                "type": "String.String -> ( Maybe.Maybe LogicUS.PL.HornRS.HornFact, String.String, String.String )"
+            },
+            {
+                "name": "hornFactToClause",
+                "comment": " It transform a Horn fact to a clause\n",
+                "type": "LogicUS.PL.HornRS.HornFact -> LogicUS.PL.Clauses.ClausePL"
+            },
+            {
+                "name": "hornFactToFPL",
+                "comment": " It transform a Horn fact to a standard formula\n",
+                "type": "LogicUS.PL.HornRS.HornFact -> LogicUS.PL.SyntaxSemantics.FormulaPL"
+            },
+            {
+                "name": "hornFactToInputString",
+                "comment": " It generates the string that corresponds to the input of a given Horn fact\n",
+                "type": "LogicUS.PL.HornRS.HornFact -> String.String"
+            },
+            {
+                "name": "hornFactToMathString",
+                "comment": " It gives the string representation of a Horn fact using latex notation\n",
+                "type": "LogicUS.PL.HornRS.HornFact -> String.String"
+            },
+            {
+                "name": "hornFactToString",
+                "comment": " It gives the string representation of a Horn fact using unicode notation\n",
+                "type": "LogicUS.PL.HornRS.HornFact -> String.String"
+            },
+            {
+                "name": "hornKBReadExtraction",
+                "comment": " It extract the Horn KB read. If it is not present it returns an empty set\n",
+                "type": "( Maybe.Maybe LogicUS.PL.HornRS.HornKB, String.String, String.String ) -> LogicUS.PL.HornRS.HornKB"
+            },
+            {
+                "name": "hornKBReadFromString",
+                "comment": " It reads a Horn KB from a string. The string has to match to a serial of facts separated by commas, following the rules defined for facts parsing.\n\nIt gives a tuple with the Horn KB (if it could be read) , the input string and the message of error (if fact couldn't be read).\n\n",
+                "type": "String.String -> ( Maybe.Maybe LogicUS.PL.HornRS.HornKB, String.String, String.String )"
+            },
+            {
+                "name": "hornKBToClauses",
+                "comment": " It transform a Horn kb to a set of clauses\n",
+                "type": "LogicUS.PL.HornRS.HornKB -> LogicUS.PL.Clauses.ClausePLSet"
+            },
+            {
+                "name": "hornKBToInputString",
+                "comment": " It generates the string that corresponds to the input of a given Horn KB\n",
+                "type": "LogicUS.PL.HornRS.HornKB -> String.String"
+            },
+            {
+                "name": "hornKBToMathStringComma",
+                "comment": " It gives the string representation of a Horn KB separating facts by comma using latex notation\n",
+                "type": "LogicUS.PL.HornRS.HornKB -> String.String"
+            },
+            {
+                "name": "hornKBToMathStringWedge",
+                "comment": " It gives the string representation of a Horn KB separating facts by & using latex notation\n",
+                "type": "LogicUS.PL.HornRS.HornKB -> String.String"
+            },
+            {
+                "name": "hornKBToSPL",
+                "comment": " It transform a Horn KB to a standard formula set\n",
+                "type": "LogicUS.PL.HornRS.HornKB -> LogicUS.PL.SyntaxSemantics.SetPL"
+            },
+            {
+                "name": "hornKBToStringComma",
+                "comment": " It gives the string representation of a Horn KB separating facts by comma using unicode notation\n",
+                "type": "LogicUS.PL.HornRS.HornKB -> String.String"
+            },
+            {
+                "name": "hornKBToStringWedge",
+                "comment": " It gives the string representation of a Horn KB separating facts by & using unicode notation\n",
+                "type": "LogicUS.PL.HornRS.HornKB -> String.String"
+            },
+            {
+                "name": "hornRuleReadExtraction",
+                "comment": " It extract the Horn rule read. If it is not present it returns a rule with inconsistence as antecedent and consecuent\n",
+                "type": "( Maybe.Maybe LogicUS.PL.HornRS.HornRule, String.String, String.String ) -> LogicUS.PL.HornRS.HornRule"
+            },
+            {
+                "name": "hornRuleReadFromString",
+                "comment": " It reads a Horn rule from a string. The string has to match to a serial of facts separated by `&` for the antecedents, followed by the symbol `->` and a unique fact as consecuent.\n\nIt gives a tuple with the Horn rule (if it could be read) , the input string and the message of error (if fact couldn't be read).\n\n",
+                "type": "String.String -> ( Maybe.Maybe LogicUS.PL.HornRS.HornRule, String.String, String.String )"
+            },
+            {
+                "name": "hornRuleToClause",
+                "comment": " It transform a Horn rule to a clause\n",
+                "type": "LogicUS.PL.HornRS.HornRule -> LogicUS.PL.Clauses.ClausePL"
+            },
+            {
+                "name": "hornRuleToFPL",
+                "comment": " It transform a Horn rule to a standard formula\n",
+                "type": "LogicUS.PL.HornRS.HornRule -> LogicUS.PL.SyntaxSemantics.FormulaPL"
+            },
+            {
+                "name": "hornRuleToInputString",
+                "comment": " It generates the string that corresponds to the input of a given Horn rule\n",
+                "type": "LogicUS.PL.HornRS.HornRule -> String.String"
+            },
+            {
+                "name": "hornRuleToMathString",
+                "comment": " It gives the string representation of a Horn rule using latex notation\n",
+                "type": "LogicUS.PL.HornRS.HornRule -> String.String"
+            },
+            {
+                "name": "hornRuleToString",
+                "comment": " It gives the string representation of a Horn rule using unicode notation\n",
+                "type": "LogicUS.PL.HornRS.HornRule -> String.String"
+            },
+            {
+                "name": "hornRulesReadExtraction",
+                "comment": " It extract the list of Horn rules read. If it is not present it returns an empty list\n",
+                "type": "( Maybe.Maybe (List.List LogicUS.PL.HornRS.HornRule), String.String, String.String ) -> List.List LogicUS.PL.HornRS.HornRule"
+            },
+            {
+                "name": "hornRulesReadFromString",
+                "comment": " It reads a Horn rule list from a string. The string has to match to a serial of rules separated by commas.\n\nIt gives a tuple with the Horn rule list (if it could be read) , the input string and the message of error (if fact couldn't be read).\n\n",
+                "type": "String.String -> ( Maybe.Maybe (List.List LogicUS.PL.HornRS.HornRule), String.String, String.String )"
+            },
+            {
+                "name": "hornRulesToClauses",
+                "comment": " It transform a list of Horn rules to a set of clauses\n",
+                "type": "List.List LogicUS.PL.HornRS.HornRule -> LogicUS.PL.Clauses.ClausePLSet"
+            },
+            {
+                "name": "hornRulesToInputString",
+                "comment": " It generates the string that corresponds to the input of a given list of Horn rules\n",
+                "type": "List.List LogicUS.PL.HornRS.HornRule -> String.String"
+            },
+            {
+                "name": "hornRulesToMathString",
+                "comment": " It gives the string representation of a Horn rule list using latex notation and indexing the formulas by its position in the list\n",
+                "type": "List.List LogicUS.PL.HornRS.HornRule -> String.String"
+            },
+            {
+                "name": "hornRulesToSPL",
+                "comment": " It transform a list of Horn rules to a standard formula\n",
+                "type": "List.List LogicUS.PL.HornRS.HornRule -> LogicUS.PL.SyntaxSemantics.SetPL"
+            },
+            {
+                "name": "hornRulesToString",
+                "comment": " It gives the string representation of a Horn rule list using unicode notation and indexing the formulas by its position in the list\n",
+                "type": "List.List LogicUS.PL.HornRS.HornRule -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "LogicUS.PL.NormalForms",
+        "comment": " The module provides the tools for express formulas in their NN, CNF, DNF.\n\n\n# Normal Forms\n\n@docs fplContainsEquiv, fplContainsDisj, fplContainsConj, fplRemoveAllEquiv, fplContainsImpl, fplRemoveAllImpl, fplInteriorizeAllDisj, fplInteriorizeAllConj, fplToNNF, fplToCNF, fplToDNF, dnfAsLiteralSets, cnfAsLiteralSets, fplSatisfiabilityDNF, fplModelsDNF, fplValidityCNF\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "cnfAsLiteralSets",
+                "comment": " It gives a formula in CNF as a list of literal sets. If the formula given is not in CNF it returns Nothing.\n",
+                "type": "LogicUS.PL.SyntaxSemantics.FormulaPL -> Maybe.Maybe (List.List LogicUS.PL.SyntaxSemantics.SetPL)"
+            },
+            {
+                "name": "dnfAsLiteralSets",
+                "comment": " It gives a formula in DNF as a list of literal sets. If the formula given is not in DNF it returns Nothing.\n",
+                "type": "LogicUS.PL.SyntaxSemantics.FormulaPL -> Maybe.Maybe (List.List LogicUS.PL.SyntaxSemantics.SetPL)"
+            },
+            {
+                "name": "fplContainsConj",
+                "comment": " It checks if the formula contains any conjunction as a part of the formula\n\n    fplContainsConj f1 == False\n\n    fplContainsConj f2 == True\n\n",
+                "type": "LogicUS.PL.SyntaxSemantics.FormulaPL -> Basics.Bool"
+            },
+            {
+                "name": "fplContainsDisj",
+                "comment": "\n\n    It checks if the formula contains any disjunction as a part of the formula\n\n    fplContainsDisj f1 == False\n\n    fplContainsDisj f2 == True\n\n",
+                "type": "LogicUS.PL.SyntaxSemantics.FormulaPL -> Basics.Bool"
+            },
+            {
+                "name": "fplContainsEquiv",
+                "comment": "\n\n    It checks if the formula contains any equivalence as a part of it.\n\n    f1 = Neg (Equi (Atom \"p\") (Impl (Atom \"q\") (Atom \"r\")))\n    fplContainsEquiv f1 == True\n\n    f2 = Disj (Neg (Conj (Atom \"p\") (Conj (Atom \"q\") (Atom \"r\")))) (Disj (Conj (Atom \"p\") (Atom \"q\")) (Atom \"r\"))\n    fplContainsEquiv f2 == False\n\n",
+                "type": "LogicUS.PL.SyntaxSemantics.FormulaPL -> Basics.Bool"
+            },
+            {
+                "name": "fplContainsImpl",
+                "comment": "\n\n    It checks if the formula contains any implication as a part of the formula\n\n    fplContainsImpl f1 == True\n\n    fplContainsImpl f2 == False\n\n",
+                "type": "LogicUS.PL.SyntaxSemantics.FormulaPL -> Basics.Bool"
+            },
+            {
+                "name": "fplInteriorizeAllConj",
+                "comment": "\n\n    It interiorizes the conjunctions by applying the OR Distributive law where appropriate.\n\n    f8 = fplInteriorizeAllConj f6\n    f8 == Disj (Conj (Atom \"p\") (Conj (Atom \"q\") (Neg (Atom \"r\")))) (Disj (Conj (Neg (Atom \"q\")) (Neg (Atom \"p\"))) (Conj (Atom \"r\") (Neg (Atom \"p\"))))\n\n",
+                "type": "LogicUS.PL.SyntaxSemantics.FormulaPL -> Maybe.Maybe LogicUS.PL.SyntaxSemantics.FormulaPL"
+            },
+            {
+                "name": "fplInteriorizeAllDisj",
+                "comment": "\n\n    It interiorizes the disjunctions by applying the AND Distributive law where appropriate.\n\n    f7 = fplInteriorizeAllDisj f6\n    f7 == Conj (Conj (Disj (Atom \"p\") (Disj (Neg (Atom \"q\")) (Atom \"r\"))) (Disj (Atom \"p\") (Neg (Atom \"p\")))) (Conj (Conj (Disj (Atom \"q\") (Disj (Neg (Atom \"q\")) (Atom \"r\"))) (Disj (Atom \"q\") (Neg (Atom \"p\")))) (Conj (Disj (Neg (Atom \"r\")) (Disj (Neg (Atom \"q\")) (Atom \"r\"))) (Disj (Neg (Atom \"r\")) (Neg (Atom \"p\")))))\n\n",
+                "type": "LogicUS.PL.SyntaxSemantics.FormulaPL -> Maybe.Maybe LogicUS.PL.SyntaxSemantics.FormulaPL"
+            },
+            {
+                "name": "fplModelsDNF",
+                "comment": " It gets the models by DNF of a formula\n",
+                "type": "LogicUS.PL.SyntaxSemantics.FormulaPL -> List.List LogicUS.PL.SyntaxSemantics.Interpretation"
+            },
+            {
+                "name": "fplRemoveAllEquiv",
+                "comment": "\n\n    It eliminates all equivalences of a formula by replacing it with the conjunction of the corresponding implications.\n\n    f3 = fplRemoveAllEquiv f1\n    f3 == Neg (Conj (Impl (Atom \"p\") (Impl (Atom \"q\") (Atom \"r\"))) (Impl (Impl (Atom \"q\") (Atom \"r\")) (Atom \"p\")))\n\n",
+                "type": "LogicUS.PL.SyntaxSemantics.FormulaPL -> LogicUS.PL.SyntaxSemantics.FormulaPL"
+            },
+            {
+                "name": "fplRemoveAllImpl",
+                "comment": "\n\n    It eliminates all implications of a formula by replacing it with the conjunction of the corresponding implications.\n\n    f4 = fplRemoveAllImpl f3\n    f4 == Neg (Conj (Disj (Neg (Atom \"p\")) (Disj (Neg (Atom \"q\")) (Atom \"r\"))) (Disj (Neg (Disj (Neg (Atom \"q\")) (Atom \"r\"))) (Atom \"p\")))\n\n",
+                "type": "LogicUS.PL.SyntaxSemantics.FormulaPL -> LogicUS.PL.SyntaxSemantics.FormulaPL"
+            },
+            {
+                "name": "fplSatisfiabilityDNF",
+                "comment": " It solves the satisfiability of a formula by its DNF\n",
+                "type": "LogicUS.PL.SyntaxSemantics.FormulaPL -> Basics.Bool"
+            },
+            {
+                "name": "fplToCNF",
+                "comment": "\n\n    Express a formula in its Conjuction Normal Form (CNF) that is formed as a conjuction of disjuntive formulas.\n\n     -- Check if f1 is in CNF\n    (f1 == fplToCNF f1) == False\n\n    -- Check if f7 is in CNF\n    (f7 == fplToCNF f7) == True\n\n    -- Calculate CNF for f1\n    f10 = fplToCNF f1\n    f10 == Conj (Conj (Disj (Atom \"p\") (Disj (Neg (Atom \"q\")) (Atom \"r\"))) (Disj (Atom \"p\") (Neg (Atom \"p\")))) (Conj (Conj (Disj (Atom \"q\") (Disj (Neg (Atom \"q\")) (Atom \"r\"))) (Disj (Atom \"q\") (Neg (Atom \"p\")))) (Conj (Disj (Neg (Atom \"r\")) (Disj (Neg (Atom \"q\")) (Atom \"r\"))) (Disj (Neg (Atom \"r\")) (Neg (Atom \"p\")))))\n\n    -- It is equal to f7\n    (f10 == f7) == True\n\n",
+                "type": "LogicUS.PL.SyntaxSemantics.FormulaPL -> LogicUS.PL.SyntaxSemantics.FormulaPL"
+            },
+            {
+                "name": "fplToDNF",
+                "comment": "\n\n    Express a formula in its Disjunction Normal Form (CNF) that is formed as a conjuction of disjuntive formulas.\n\n    -- Check if f1 is in DNF\n    (f1 == fplToDNF f1) == False\n\n    -- Check if f8 is in DNF\n    (f8 == fplToCNF f8) == True\n\n    -- Calculate CNF for f1\n    f11 = fplToDNF f1\n    f11 == Disj (Conj (Atom \"p\") (Conj (Atom \"q\") (Neg (Atom \"r\")))) (Disj (Conj (Neg (Atom \"q\")) (Neg (Atom \"p\"))) (Conj (Atom \"r\") (Neg (Atom \"p\"))))\n\n    -- It is equal to f8\n    (f11 == f8) == True\n\n",
+                "type": "LogicUS.PL.SyntaxSemantics.FormulaPL -> LogicUS.PL.SyntaxSemantics.FormulaPL"
+            },
+            {
+                "name": "fplToNNF",
+                "comment": "\n\n    It interiorizes the negations by applying De Morgan's laws where appropriate\n\n    f5 = fplInteriorizeAllNeg f2\n    f5 == Disj (Disj (Neg (Atom \"p\")) (Disj (Neg (Atom \"q\")) (Neg (Atom \"r\")))) (Disj (Conj (Atom \"p\") (Atom \"q\")) (Atom \"r\"))\n\n    f6 = fplInteriorizeAllNeg f4\n    f6 == Disj (Conj (Atom \"p\") (Conj (Atom \"q\") (Neg (Atom \"r\")))) (Conj (Disj (Neg (Atom \"q\")) (Atom \"r\")) (Neg (Atom \"p\")))\n\n",
+                "type": "LogicUS.PL.SyntaxSemantics.FormulaPL -> LogicUS.PL.SyntaxSemantics.FormulaPL"
+            },
+            {
+                "name": "fplValidityCNF",
+                "comment": " It solves the validity of a formula by its CNF.\n",
+                "type": "LogicUS.PL.SyntaxSemantics.FormulaPL -> Basics.Bool"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "LogicUS.PL.Resolution",
+        "comment": " The module provides the tools for aplying the differents resolution strategies to a set of propositional clauses for verifying its unfeasibility.\n\n\n# Types\n\n@docs ResolutionTableau\n\n\n# Resolvents\n\n@docs cplResolventByPSymb, cplAllResolvents, csplAllResolventsByPsymb, csplResolventsByClause, csplAllResolvents\n\n\n# Saturation and Regular Resolution\n\n@docs csplSaturationResolution, csplRegularResolution\n\n\n# Refutationally Complete Resolution Algorithms\n\n@docs csplSCFResolution, csplSCFLinearResolution, csplSCFPositiveResolution, csplSCFNegativeResolution\n\n\n# Non Refutationally Complete Resolution Algorithms\n\n@docs csplSCFUnitaryResolution, csplSCFByEntriesResolution\n\n\n# Resolution Tableau Representation\n\n@docs resolutionProcessListToMathString, resolutionProcessListToString, resolutionProcessListToStringTable, resolutionTableauToString, resolutionTableauToDOT, resolutionTableauToDOTStyled\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "ResolutionTableau",
+                "comment": " Defines the Resolution Tableau type as a Graph whose node labels are pairs of a bool (indicates if the node is in the original clause set (True) or is a deduction (False)) and the clause considered in the corresponding node; and a edge label is just the literal of source node which is considered in the resolvent.\n",
+                "args": [],
+                "type": "Graph.Graph ( Basics.Bool, LogicUS.PL.Clauses.ClausePL ) LogicUS.PL.Clauses.ClausePLLiteral"
+            }
+        ],
+        "values": [
+            {
+                "name": "cplAllResolvents",
+                "comment": " It gets all passible resolvents between two clauses. Note that if several resolvents can be performed then all of them are tautologies.\n\n    cplAllResolvents [ ( \"p\", True ), ( \"q\", True ) ] [ ( \"p\", False ), ( \"q\", False ) ]\n        == [ ( [ ( \"q\", False ), ( \"q\", True ) ], ( \"p\", True ), ( \"p\", False ) ), ( [ ( \"p\", False ), ( \"p\", True ) ], ( \"q\", True ), ( \"q\", False ) ) ]\n\n    cplAllResolvents [ ( \"p\", True ), ( \"q\", True ) ] [ ( \"p\", False ), ( \"q\", True ) ]\n        == [ ( [ ( \"q\", True ) ], ( \"p\", True ), ( \"p\", False ) ) ]\n\n    cplAllResolvents [ ( \"p\", True ), ( \"q\", True ) ] [ ( \"q\", True ) ] == []\n\n",
+                "type": "LogicUS.PL.Clauses.ClausePL -> LogicUS.PL.Clauses.ClausePL -> List.List ( LogicUS.PL.Clauses.ClausePL, LogicUS.PL.Clauses.ClausePLLiteral, LogicUS.PL.Clauses.ClausePLLiteral )"
+            },
+            {
+                "name": "cplResolventByPSymb",
+                "comment": " It gets the resolvent from two clauses by one literal. If it can be performed then it returns the resolvent and the literal considerated in each clause. If the resolvent does not exist it returns Nothing.\n\n    cplResolventByPSymb [ ( \"p\", True ), ( \"q\", True ) ] [ ( \"p\", False ), ( \"q\", True ) ] \"p\" == Just ( [ ( \"q\", True ) ], ( \"p\", True ), ( \"p\", False ) )\n\n    cplResolventByPSymb [ ( \"p\", True ), ( \"q\", True ) ] [ ( \"p\", False ), ( \"q\", True ) ] \"q\" == Nothing\n\n",
+                "type": "LogicUS.PL.Clauses.ClausePL -> LogicUS.PL.Clauses.ClausePL -> LogicUS.PL.SyntaxSemantics.PSymb -> Maybe.Maybe ( LogicUS.PL.Clauses.ClausePL, LogicUS.PL.Clauses.ClausePLLiteral, LogicUS.PL.Clauses.ClausePLLiteral )"
+            },
+            {
+                "name": "csplAllResolvents",
+                "comment": " It gets all possible resolvents each two clauses of the set, and gives it as a clause set ommitting who are the parents and removing duplicated clauses.\n\n    csplAllResolvents [ [ ( \"p\", True ), ( \"q\", True ) ], [ ( \"p\", False ), ( \"q\", False ) ], [ ( \"p\", False ), ( \"q\", True ) ] ]\n        == [ [ ( \"q\", False ), ( \"q\", True ) ], [ ( \"p\", False ), ( \"p\", True ) ], [ ( \"q\", True ) ], [ ( \"p\", False ) ] ]\n\n",
+                "type": "List.List LogicUS.PL.Clauses.ClausePL -> List.List LogicUS.PL.Clauses.ClausePL"
+            },
+            {
+                "name": "csplAllResolventsByPsymb",
+                "comment": " It gets the resolvents between the clauses of a set by the variable given.\n\n    csplAllResolventsByPsymb [ [ ( \"p\", True ), ( \"q\", True ) ], [ ( \"p\", False ), ( \"q\", False ) ], [ ( \"p\", False ), ( \"q\", True ) ] ] \"p\"\n        == [ [ ( \"q\", False ), ( \"q\", True ) ], [ ( \"q\", True ) ] ]\n\n",
+                "type": "List.List LogicUS.PL.Clauses.ClausePL -> LogicUS.PL.SyntaxSemantics.PSymb -> List.List LogicUS.PL.Clauses.ClausePL"
+            },
+            {
+                "name": "csplRegularResolution",
+                "comment": " It uses regular resolution algorithm for determining the feasibilibity of a set ot clauses. It gives the insatisfactibility (True:Insat, False:SAT) and the clause set considerated in each step of the algorithm.\n\n    csplRegularResolution [ \"p\", \"q\", \"r\" ] cs\n        == ( True, [ [ [ ( \"p\", False ), ( \"q\", False ), ( \"r\", True ) ], [ ( \"q\", True ), ( \"p\", True ) ], [ ( \"r\", False ), ( \"p\", True ) ], [ ( \"p\", False ), ( \"q\", True ) ], [ ( \"q\", False ), ( \"p\", True ) ], [ ( \"p\", False ), ( \"r\", False ) ] ], [ [ ( \"q\", False ), ( \"q\", True ), ( \"r\", True ) ], [ ( \"q\", False ), ( \"r\", False ), ( \"r\", True ) ], [ ( \"q\", True ) ], [ ( \"q\", True ), ( \"r\", False ) ], [ ( \"q\", False ), ( \"r\", True ) ], [ ( \"q\", False ), ( \"q\", True ) ], [ ( \"r\", False ) ], [ ( \"q\", False ), ( \"r\", False ) ] ], [ [ ( \"r\", False ) ], [ ( \"r\", False ), ( \"r\", True ) ], [ ( \"r\", True ) ], [ ( \"r\", False ) ] ], [ [] ] ] )\n\n",
+                "type": "List.List LogicUS.PL.SyntaxSemantics.PSymb -> List.List LogicUS.PL.Clauses.ClausePL -> ( Basics.Bool, List.List LogicUS.PL.Clauses.ClausePLSet )"
+            },
+            {
+                "name": "csplResolventsByClause",
+                "comment": " It gets all resolvents of each clause of a set with a clause given. It returns a list of a pair with the index of the formula with which the reference clause is resolved and all the resolvents obtained.\n\n    csplResolventsByClause [ [ ( \"p\", True ), ( \"q\", True ) ], [ ( \"p\", False ), ( \"q\", False ) ] ] [ ( \"p\", False ), ( \"q\", True ) ]\n        == [ ( 0, [ ( [ ( \"q\", True ) ], ( \"p\", False ), ( \"p\", True ) ) ] ), ( 1, [ ( [ ( \"p\", False ) ], ( \"q\", True ), ( \"q\", False ) ) ] ) ]\n\n",
+                "type": "List.List LogicUS.PL.Clauses.ClausePL -> LogicUS.PL.Clauses.ClausePL -> List.List ( Basics.Int, List.List ( LogicUS.PL.Clauses.ClausePL, LogicUS.PL.Clauses.ClausePLLiteral, LogicUS.PL.Clauses.ClausePLLiteral ) )"
+            },
+            {
+                "name": "csplSCFByEntriesResolution",
+                "comment": " It uses resolution by entries algorithm using shortest clause first heuristic for determining the feasibilibity of a set of clauses. It gives the insatisfactibility (True:Insat, False:SAT) and a graph with the resolution path to inconsitence. If clause set is feasible then a graph with only initial nodes is returned.\n\n    res_SCFByEntriesResolution = csplSCFByEntriesResolution cs\n    Tuple.first res_SCFByEntriesResolution == False\n    res_SCFByEntriesResolution |> Tuple.second |> resolutionTableauToDOT\n        == \"digraph G {\\n  rankdir=TB\\n  graph []\\n  node [shape=box, color=black]\\n  edge [dir=none, color=blue, fontcolor=blue]\\n\\n\\n\\n  1 [label=\\\"{¬ p,¬ q,r}\\\"]\\n  2 [label=\\\"{p,q}\\\"]\\n  3 [label=\\\"{p,¬ r}\\\"]\\n  4 [label=\\\"{¬ p,q}\\\"]\\n  5 [label=\\\"{p,¬ q}\\\"]\\n  6 [label=\\\"{¬ p,¬ r}\\\"]\\n\\n  {rank=same; 1;2;3;4;5;6;}\\n}\"\n\nNote: You can render the graph with GraphViz Viewer and _resolutionTableauToDOT_ described at the end.\n\n",
+                "type": "List.List LogicUS.PL.Clauses.ClausePL -> ( Basics.Bool, Graph.Graph ( Basics.Bool, LogicUS.PL.Clauses.ClausePL ) LogicUS.PL.Clauses.ClausePLLiteral )"
+            },
+            {
+                "name": "csplSCFLinearResolution",
+                "comment": " It uses linear resolution algorithm using shortest clause first heuristic for determining the feasibilibity of a set of clauses. It gives the insatisfactibility (True:Insat, False:SAT) and a graph with the resolution path to inconsitence. If clause set is feasible then a graph with only initial nodes is returned.\n\n    res_SCFLinearResolution = csplSCFLinearResolution cs\n    Tuple.first res_SCFLinearResolution == True\n    res_SCFLinearResolution |> Tuple.second |> resolutionTableauToDOT\n        == \"digraph G {\\n  rankdir=TB\\n  graph []\\n  node [shape=box, color=black]\\n  edge [dir=none, color=blue, fontcolor=blue]\\n\\n  1 -> 8 [label=\\\"p\\\"]\\n  3 -> 8 [label=\\\"¬ p\\\"]\\n  4 -> 9 [label=\\\"¬ q\\\"]\\n  5 -> 10 [label=\\\"¬ p\\\"]\\n  6 -> 11 [label=\\\"r\\\"]\\n  8 -> 9 [label=\\\"q\\\"]\\n  8 -> 12 [label=\\\"q\\\"]\\n  9 -> 10 [label=\\\"p\\\"]\\n  9 -> 13 [label=\\\"p\\\"]\\n  10 -> 11 [label=\\\"¬ r\\\"]\\n  11 -> 12 [label=\\\"¬ q\\\"]\\n  12 -> 13 [label=\\\"¬ p\\\"]\\n\\n  1 [label=\\\"{p,q}\\\"]\\n  3 [label=\\\"{¬ p,q}\\\"]\\n  4 [label=\\\"{p,¬ q}\\\"]\\n  5 [label=\\\"{¬ p,¬ r}\\\"]\\n  6 [label=\\\"{¬ p,¬ q,r}\\\"]\\n  8 [label=\\\"{q}\\\"]\\n  9 [label=\\\"{p}\\\"]\\n  10 [label=\\\"{¬ r}\\\"]\\n  11 [label=\\\"{¬ p,¬ q}\\\"]\\n  12 [label=\\\"{¬ p}\\\"]\\n  13 [label=\\\"□\\\"]\\n  14 [label=\\\"{p,¬ r}\\\"]\\n\\n  {rank=same; 1;3;4;5;6;14;}\\n}\"\n\nNote: You can render the graph with GraphViz Viewer and _resolutionTableauToDOT_ described at the end.\n\n",
+                "type": "List.List LogicUS.PL.Clauses.ClausePL -> ( Basics.Bool, LogicUS.PL.Resolution.ResolutionTableau )"
+            },
+            {
+                "name": "csplSCFNegativeResolution",
+                "comment": " It uses negative resolution algorithm using shortest clause first heuristic for determining the feasibilibity of a set of clauses. It gives the insatisfactibility (True:Insat, False:SAT) and a graph with the resolution path to inconsitence. If clause set is feasible then a graph with only initial nodes is returned.\n\n    res_SCFNegativeResolution = csplSCFNegativeResolution cs\n    Tuple.first res_SCFNegativeResolution == True\n    res_SCFNegativeResolution |> Tuple.second |> resolutionTableauToDOT\n        == \"digraph G {\\n  rankdir=TB\\n  graph []\\n  node [shape=box, color=black]\\n  edge [dir=none, color=blue, fontcolor=blue]\\n\\n  1 -> 16 [label=\\\"p\\\"]\\n  2 -> 10 [label=\\\"p\\\"]\\n  3 -> 14 [label=\\\"q\\\"]\\n  4 -> 17 [label=\\\"p\\\"]\\n  5 -> 10 [label=\\\"¬ p\\\"]\\n  6 -> 12 [label=\\\"r\\\"]\\n  10 -> 12 [label=\\\"¬ r\\\"]\\n  12 -> 14 [label=\\\"¬ q\\\"]\\n  14 -> 16 [label=\\\"¬ p\\\"]\\n  14 -> 17 [label=\\\"¬ p\\\"]\\n  16 -> 19 [label=\\\"q\\\"]\\n  17 -> 19 [label=\\\"¬ q\\\"]\\n\\n  1 [label=\\\"{p,q}\\\"]\\n  2 [label=\\\"{p,¬ r}\\\"]\\n  3 [label=\\\"{¬ p,q}\\\"]\\n  4 [label=\\\"{p,¬ q}\\\"]\\n  5 [label=\\\"{¬ p,¬ r}\\\"]\\n  6 [label=\\\"{¬ p,¬ q,r}\\\"]\\n  10 [label=\\\"{¬ r}\\\"]\\n  12 [label=\\\"{¬ p,¬ q}\\\"]\\n  14 [label=\\\"{¬ p}\\\"]\\n  16 [label=\\\"{q}\\\"]\\n  17 [label=\\\"{¬ q}\\\"]\\n  19 [label=\\\"□\\\"]\\n\\n  {rank=same; 1;2;3;4;5;6;}\\n}\"\n\nNote: You can render the graph with GraphViz Viewer and _resolutionTableauToDOT_ described at the end.\n\n",
+                "type": "List.List LogicUS.PL.Clauses.ClausePL -> ( Basics.Bool, Graph.Graph ( Basics.Bool, LogicUS.PL.Clauses.ClausePL ) LogicUS.PL.Clauses.ClausePLLiteral )"
+            },
+            {
+                "name": "csplSCFPositiveResolution",
+                "comment": " It uses positive resolution algorithm using shortest clause first heuristic for determining the feasibilibity of a set of clauses. It gives the insatisfactibility (True:Insat, False:SAT) and a graph with the resolution path to inconsitence. If clause set is feasible then a graph with only initial nodes is returned.\n\n    res_SCFPositiveResolution = csplSCFPositiveResolution cs\n    Tuple.first res_SCFPositiveResolution == True\n    res_SCFPositiveResolution |> Tuple.second |> resolutionTableauToDOT\n        == \"digraph G {\\n  rankdir=TB\\n  graph []\\n  node [shape=box, color=black]\\n  edge [dir=none, color=blue, fontcolor=blue]\\n\\n  1 -> 8 [label=\\\"p\\\"]\\n  1 -> 9 [label=\\\"q\\\"]\\n  3 -> 8 [label=\\\"¬ p\\\"]\\n  4 -> 9 [label=\\\"¬ q\\\"]\\n  5 -> 14 [label=\\\"¬ p\\\"]\\n  6 -> 12 [label=\\\"¬ q\\\"]\\n  8 -> 12 [label=\\\"q\\\"]\\n  9 -> 14 [label=\\\"p\\\"]\\n  9 -> 15 [label=\\\"p\\\"]\\n  12 -> 15 [label=\\\"¬ p\\\"]\\n  14 -> 17 [label=\\\"¬ r\\\"]\\n  15 -> 17 [label=\\\"r\\\"]\\n\\n  1 [label=\\\"{p,q}\\\"]\\n  3 [label=\\\"{¬ p,q}\\\"]\\n  4 [label=\\\"{p,¬ q}\\\"]\\n  5 [label=\\\"{¬ p,¬ r}\\\"]\\n  6 [label=\\\"{¬ p,¬ q,r}\\\"]\\n  8 [label=\\\"{q}\\\"]\\n  9 [label=\\\"{p}\\\"]\\n  12 [label=\\\"{¬ p,r}\\\"]\\n  14 [label=\\\"{¬ r}\\\"]\\n  15 [label=\\\"{r}\\\"]\\n  17 [label=\\\"□\\\"]\\n  18 [label=\\\"{p,¬ r}\\\"]\\n\\n  {rank=same; 1;3;4;5;6;18;}\\n}\"\n\nNote: You can render the graph with GraphViz Viewer and _resolutionTableauToDOT_ described at the end.\n\n",
+                "type": "List.List LogicUS.PL.Clauses.ClausePL -> ( Basics.Bool, Graph.Graph ( Basics.Bool, LogicUS.PL.Clauses.ClausePL ) LogicUS.PL.Clauses.ClausePLLiteral )"
+            },
+            {
+                "name": "csplSCFResolution",
+                "comment": " It uses resolution algorithm using shortes clause first heuristic for determining the feasibilibity of a set of clauses. It gives the insatisfactibility (True:Insat, False:SAT) and a graph with the resolution path to inconsitence. If clause set is feasible then a graph with only initial nodes is returned.\n\n    res_SCFResolution = csplSCFResolution cs\n    Tuple.first res_SCFResolution == True\n    res_SCFResolution |> Tuple.second |> resolutionTableauToDOT\n        == \"digraph G {\\n  rankdir=TB\\n  graph []\\n  node [shape=box, color=black]\\n  edge [dir=none, color=blue, fontcolor=blue]\\n\\n  1 -> 6 [label=\\\"q\\\"]\\n  2 -> 8 [label=\\\"p\\\"]\\n  3 -> 10 [label=\\\"q\\\"]\\n  5 -> 6 [label=\\\"¬ q\\\"]\\n  6 -> 11 [label=\\\"p\\\"]\\n  7 -> 8 [label=\\\"¬ p\\\"]\\n  8 -> 12 [label=\\\"¬ r\\\"]\\n  9 -> 10 [label=\\\"¬ q\\\"]\\n  10 -> 11 [label=\\\"¬ p\\\"]\\n  11 -> 12 [label=\\\"r\\\"]\\n\\n  1 [label=\\\"{p,q}\\\"]\\n  2 [label=\\\"{p,¬ r}\\\"]\\n  3 [label=\\\"{¬ p,q}\\\"]\\n  5 [label=\\\"{p,¬ q}\\\"]\\n  6 [label=\\\"{p}\\\"]\\n  7 [label=\\\"{¬ p,¬ r}\\\"]\\n  8 [label=\\\"{¬ r}\\\"]\\n  9 [label=\\\"{¬ p,¬ q,r}\\\"]\\n  10 [label=\\\"{¬ p,r}\\\"]\\n  11 [label=\\\"{r}\\\"]\\n  12 [label=\\\"□\\\"]\\n\\n  {rank=same; 1;2;3;5;7;9;}\\n}\"\n\nNote: You can render the graph with GraphViz Viewer and _resolutionTableauToDOt_ as we show in the example above.\n\n",
+                "type": "List.List LogicUS.PL.Clauses.ClausePL -> ( Basics.Bool, LogicUS.PL.Resolution.ResolutionTableau )"
+            },
+            {
+                "name": "csplSCFUnitaryResolution",
+                "comment": " It uses unitary resolution algorithm using shortest clause first heuristic for determining the feasibilibity of a set of clauses. It gives the insatisfactibility (True:Insat, False:SAT) and a graph with the resolution path to inconsitence. If clause set is feasible then a graph with only initial nodes is returned.\n\n    res_SCFUnitaryResolution = csplSCFUnitaryResolution cs\n    Tuple.first res_SCFUnitaryResolution == False\n    res_SCFUnitaryResolution |> Tuple.second |> resolutionTableauToDOT\n        == \"digraph G {\\n  rankdir=TB\\n  graph []\\n  node [shape=box, color=black]\\n  edge [dir=none, color=blue, fontcolor=blue]\\n\\n\\n\\n  1 [label=\\\"{¬ p,¬ q,r}\\\"]\\n  2 [label=\\\"{p,q}\\\"]\\n  3 [label=\\\"{p,¬ r}\\\"]\\n  4 [label=\\\"{¬ p,q}\\\"]\\n  5 [label=\\\"{p,¬ q}\\\"]\\n  6 [label=\\\"{¬ p,¬ r}\\\"]\\n\\n  {rank=same; 1;2;3;4;5;6;}\\n}\"\n\nNote: You can render the graph with GraphViz Viewer and _resolutionTableauToDOT_ described at the end.\n\n",
+                "type": "List.List LogicUS.PL.Clauses.ClausePL -> ( Basics.Bool, Graph.Graph ( Basics.Bool, LogicUS.PL.Clauses.ClausePL ) LogicUS.PL.Clauses.ClausePLLiteral )"
+            },
+            {
+                "name": "csplSaturationResolution",
+                "comment": " It uses saturation resolution algorithm for determining the feasibilibity of a set ot clauses. It gives the insatisfactibility (True:Insat, False:SAT) and the clause set considerated in each step of the algorithm.\n\n    cs = [[(\"p\",False),(\"q\",False),(\"r\",True)],[(\"q\",True),(\"p\",True)],[(\"r\",False),(\"p\",True)],[(\"p\",False),(\"q\",True)],[(\"q\",False),(\"p\",True)],[(\"p\",False),(\"r\",False)]]\n\n    csplSaturationResolution  cs\n        == (True,[[[(\"p\",False),(\"q\",False),(\"r\",True)],[(\"q\",True),(\"p\",True)],[(\"r\",False),(\"p\",True)],[(\"p\",False),(\"q\",True)],[(\"q\",False),(\"p\",True)],[(\"p\",False),(\"r\",False)],[(\"q\",False),(\"q\",True),(\"r\",True)],[(\"p\",False),(\"p\",True),(\"r\",True)],[(\"q\",False),(\"r\",False),(\"r\",True)],[(\"p\",False),(\"p\",True),(\"q\",False)],[(\"p\",False),(\"r\",True)],[(\"q\",True)],...\n\n",
+                "type": "List.List LogicUS.PL.Clauses.ClausePL -> ( Basics.Bool, List.List (List.List LogicUS.PL.Clauses.ClausePL) )"
+            },
+            {
+                "name": "resolutionProcessListToMathString",
+                "comment": " It gives a string representation in Latex notation for a list of clauseSets. It must be displayed in a math environment\n",
+                "type": "List.List LogicUS.PL.Clauses.ClausePLSet -> String.String"
+            },
+            {
+                "name": "resolutionProcessListToString",
+                "comment": " It gives a string representation for a list of clauseSets from resolution process\n",
+                "type": "List.List LogicUS.PL.Clauses.ClausePLSet -> String.String"
+            },
+            {
+                "name": "resolutionProcessListToStringTable",
+                "comment": " It gives a table as a string representation for a list of clauseSets from resolution process\n",
+                "type": "List.List LogicUS.PL.Clauses.ClausePLSet -> String.String"
+            },
+            {
+                "name": "resolutionTableauToDOT",
+                "comment": " Express a Resolution Tableau as a string in DOT format that is viewable with a GraphViz Render.\n**Note:** If you are using elm repl, before introducing the code you must replace _\\\\n_ by _\\\\n_ and _\\\\\"_ by _\"_ in a simple text editor.\n",
+                "type": "LogicUS.PL.Resolution.ResolutionTableau -> String.String"
+            },
+            {
+                "name": "resolutionTableauToDOTStyled",
+                "comment": " Express a Resolution Tableau as a string in DOT format that is viewable with a GraphViz Render including some styles.\n**Note:** If you are using elm repl, before introducing the code you must replace _\\\\n_ by _\\\\n_ and _\\\\\"_ by _\"_ in a simple text editor.\n",
+                "type": "LogicUS.PL.Resolution.ResolutionTableau -> String.String"
+            },
+            {
+                "name": "resolutionTableauToString",
+                "comment": " Express a Resolution Tableau as a string.\n",
+                "type": "LogicUS.PL.Resolution.ResolutionTableau -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "LogicUS.PL.SemanticTableaux",
+        "comment": " The module provides the elementary tools for building the semantic tableau of a set of PL formulas.\n\n\n# Definition Types\n\n@docs FormulaPLType, PLSemanticTableau\n\n\n# Formulas types and components\n\n@docs fplType, fplComponents\n\n\n# Semantic Tableau operations\n\n@docs splAllLiterals, splRemoveTaut, splSearchContradiction, splSearchDN, splSearchAlpha, splSearchBeta, splExpandDN, splExpandAlpha, splExpandBeta\n\n\n# Semantic Tableau algorithm and models\n\n@docs semanticTableau, semanticTableauRelevantLeaves, semanticTableauOpenLeaves, semanticTableauModels\n\n\n# Fuctions for representation\n\n@docs semanticTableauToString, semanticTableauToDOT, semanticTableauToJSON\n\n",
+        "unions": [
+            {
+                "name": "FormulaPLType",
+                "comment": "\n\n    It defines the type of a PL formula which can be a *Literal*, *Double Negation*, *Alpha*, *Beta*, *Insat* or *Taut*\n\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "PLSemanticTableau",
+                "comment": " Defines the PL Semantic Tableau type as a Graph whose node labels are pairs of an integer (0: internal node, 1: open leaf, -1: closed leaf) and the PL set considered in the corresponding node; and the edge labels are defined as pairs of the applied rule (A, B, DN, L, I, T) and the list of indexes of the formulas on which the rule is applied.\n",
+                "args": [],
+                "type": "Graph.Tree.Tree { id : Basics.Int, fs : LogicUS.PL.SyntaxSemantics.SetPL, parents : List.List Basics.Int, rule : LogicUS.PL.SemanticTableaux.STRule }"
+            }
+        ],
+        "values": [
+            {
+                "name": "fplComponents",
+                "comment": " It gives the components of a formula for using them in the semantic board\n\n    fplComponents f1 == [ Atom \"a\" ]\n\n    fplComponents (Neg f1) == [ Neg (Atom \"a\") ]\n\n    fplComponents (Neg (Neg f1)) == [ Atom \"a\" ]\n\n    fplComponents (Conj f1 f2) == [ Atom \"a\", Atom \"b\" ]\n\n    fplComponents (Disj f1 f2) == [ Atom \"a\", Atom \"b\" ]\n\n    fplComponents (Impl f1 f2) == [ Neg (Atom \"a\"), Atom \"b\" ]\n\n    fplComponents (Equi f1 f2) == [ Impl (Atom \"a\") (Atom \"b\"), Impl (Atom \"b\") (Atom \"a\") ]\n\n    fplComponents (Neg (Conj f1 f2)) == [ Neg (Atom \"a\"), Neg (Atom \"b\") ]\n\n    fplComponents (Neg (Disj f1 f2)) == [ Neg (Atom \"a\"), Neg (Atom \"b\") ]\n\n    fplComponents (Neg (Impl f1 f2)) == [ Atom \"a\", Neg (Atom \"b\") ]\n\n    fplComponents (Neg (Equi f1 f2)) == [ Neg (Impl (Atom \"a\") (Atom \"b\")), Neg (Impl (Atom \"b\") (Atom \"a\")) ]\n\n",
+                "type": "LogicUS.PL.SyntaxSemantics.FormulaPL -> List.List LogicUS.PL.SyntaxSemantics.FormulaPL"
+            },
+            {
+                "name": "fplType",
+                "comment": " It gives the type of a PL formula. Atoms and their negations are literals, double negation are typed as DN, conjunction, equivalence are classified as ALPHA, as well as disjunction and implications are classified as BETA. The negation of an alpha formula is a beta and vice versa.\n\n    f1 : FormulaPL\n    f1 = Atom \"a\"\n\n    f2 : FormulaPL\n    f2 = Atom \"b\"\n\n    fplType f1 == L\n    fplType (Neg f1) == L\n    fplType (Neg (Neg f1)) == DN\n    fplType (Conj f1 f2) == A\n    fplType (Disj f1 f2) == B\n    fplType (Impl f1 f2) == B\n    fplType (Equi f1 f2) == A\n    fplType (Neg (Conj f1 f2)) == B\n    fplType (Neg (Disj f1 f2)) == A\n    fplType (Neg (Impl f1 f2)) == A\n    fplType (Neg (Equi f1 f2)) == B\n\n",
+                "type": "LogicUS.PL.SyntaxSemantics.FormulaPL -> LogicUS.PL.SemanticTableaux.FormulaPLType"
+            },
+            {
+                "name": "semanticTableau",
+                "comment": " It generates the complete SemanticTableaux as a Tree, which is renderizable with representations methods.\n",
+                "type": "LogicUS.PL.SyntaxSemantics.SetPL -> LogicUS.PL.SemanticTableaux.PLSemanticTableau"
+            },
+            {
+                "name": "semanticTableauModels",
+                "comment": " It extracts all the models from a semantic tableau.\n\n    splSemanticTableau fs4 |> plSemanticTableauModels == []\n\n    fs5 = [Disj f1 f2, Neg(Equi f1 f2)]\n    splSemanticTableau fs5 |> plSemanticTableauModels == [[\"a\"],[\"b\"]]\n\n",
+                "type": "LogicUS.PL.SemanticTableaux.PLSemanticTableau -> List.List LogicUS.PL.SyntaxSemantics.Interpretation"
+            },
+            {
+                "name": "semanticTableauOpenLeaves",
+                "comment": " It extracts all the leaves removing duplicates.\n",
+                "type": "LogicUS.PL.SemanticTableaux.PLSemanticTableau -> List.List LogicUS.PL.SyntaxSemantics.SetPL"
+            },
+            {
+                "name": "semanticTableauRelevantLeaves",
+                "comment": " It extracts all the leaves applying subsumption for simplification.\n",
+                "type": "LogicUS.PL.SemanticTableaux.PLSemanticTableau -> List.List LogicUS.PL.SyntaxSemantics.SetPL"
+            },
+            {
+                "name": "semanticTableauToDOT",
+                "comment": " It gives a DOT representation for the tableau.\n",
+                "type": "LogicUS.PL.SemanticTableaux.PLSemanticTableau -> String.String"
+            },
+            {
+                "name": "semanticTableauToJSON",
+                "comment": " It gives a JSON object with the content of the tableau.\n",
+                "type": "LogicUS.PL.SemanticTableaux.PLSemanticTableau -> Json.Encode.Value"
+            },
+            {
+                "name": "semanticTableauToString",
+                "comment": " It gives the String representation of a tableau.\n\n    splSemanticTableau fs4 |> semanticTableauToString == \"Graph [Node 0 ({a, ¬ b, ( a ∧ b ), ( a ∨ b ), ¬ ( a ↔ b )}), Node 1 ({a, ¬ b, ( a ∨ b ), ¬ ( a ↔ b ), b}), Node 2 (×)] [Edge 1->2 (I (2, 5)), Edge 0->1 (α (3))]\"\n\n",
+                "type": "LogicUS.PL.SemanticTableaux.PLSemanticTableau -> String.String"
+            },
+            {
+                "name": "splAllLiterals",
+                "comment": " It gives if all formulas in a Set of PL formulas are literals.\n\n    fs1  = [f1, Neg f2]\n    fs2 = [f1, Neg f2, Conj f1 f2, Disj f1 f2, Neg (Impl f1 f2), Neg (Equi f1 f2)]\n    splAllLiterals fs1 == True\n    splAllLiterals fs2 == False\n\n",
+                "type": "LogicUS.PL.SyntaxSemantics.SetPL -> Basics.Bool"
+            },
+            {
+                "name": "splExpandAlpha",
+                "comment": " It gives a set of formulas with changing an Alpha formula by its expansion. If formula is not Alpha the original set is returned.\n\n    splExpandAlpha fs2 (Conj (Atom \"a\") (Atom \"b\")) == [ Atom \"a\", Neg (Atom \"b\"), Disj (Atom \"a\") (Atom \"b\"), Neg (Impl (Atom \"a\") (Atom \"b\")), Neg (Equi (Atom \"a\") (Atom \"b\")), Atom \"b\" ]\n\n",
+                "type": "LogicUS.PL.SyntaxSemantics.SetPL -> LogicUS.PL.SyntaxSemantics.FormulaPL -> LogicUS.PL.SyntaxSemantics.SetPL"
+            },
+            {
+                "name": "splExpandBeta",
+                "comment": " It gives a tuple of two sets of formulas with changing a Beta formula by its expansion. If formula is not Beta original set is returned in both sets.\n\n    splExpandBeta fs2 (Disj (Atom \"a\") (Atom \"b\")) == ( [ Atom \"a\", Neg (Atom \"b\"), Conj (Atom \"a\") (Atom \"b\"), Neg (Impl (Atom \"a\") (Atom \"b\")), Neg (Equi (Atom \"a\") (Atom \"b\")) ], [ Atom \"a\", Neg (Atom \"b\"), Conj (Atom \"a\") (Atom \"b\"), Neg (Impl (Atom \"a\") (Atom \"b\")), Neg (Equi (Atom \"a\") (Atom \"b\")), Atom \"b\" ] )\n\n",
+                "type": "LogicUS.PL.SyntaxSemantics.SetPL -> LogicUS.PL.SyntaxSemantics.FormulaPL -> ( LogicUS.PL.SyntaxSemantics.SetPL, LogicUS.PL.SyntaxSemantics.SetPL )"
+            },
+            {
+                "name": "splExpandDN",
+                "comment": " It gives a set of formulas with changing a DN formula by its expansion. If formula is not DN the original set is returned.\n\n    splExpandDN fs4 (Neg (Neg f2)) == [ Atom \"a\", Neg (Atom \"b\"), Conj (Atom \"a\") (Atom \"b\"), Disj (Atom \"a\") (Atom \"b\"), Atom \"a\", Neg (Equi (Atom \"a\") (Atom \"b\")), Atom \"b\" ]\n\n",
+                "type": "LogicUS.PL.SyntaxSemantics.SetPL -> LogicUS.PL.SyntaxSemantics.FormulaPL -> LogicUS.PL.SyntaxSemantics.SetPL"
+            },
+            {
+                "name": "splRemoveTaut",
+                "comment": " It removes all Tautological formulas from a set.\n",
+                "type": "LogicUS.PL.SyntaxSemantics.SetPL -> LogicUS.PL.SyntaxSemantics.SetPL"
+            },
+            {
+                "name": "splSearchAlpha",
+                "comment": " It searches an Alpha formula in the set. If it gets it they return a tuple with the index and the formula, if not Nothing is returned\n\n    splSearchAlpha fs1 == Nothing\n\n    splSearchAlpha fs2 == Just ( 2, Conj (Atom \"a\") (Atom \"b\") )\n\n",
+                "type": "LogicUS.PL.SyntaxSemantics.SetPL -> Maybe.Maybe ( Basics.Int, LogicUS.PL.SyntaxSemantics.FormulaPL )"
+            },
+            {
+                "name": "splSearchBeta",
+                "comment": " It searches an Beta formula in the set. If it gets it they return a tuple with the index and the formula, if not Nothing is returned\n\n    splSearchBeta fs1 == Nothing\n\n    splSearchBeta fs2 == Just ( 3, Disj (Atom \"a\") (Atom \"b\") )\n\n",
+                "type": "LogicUS.PL.SyntaxSemantics.SetPL -> Maybe.Maybe ( Basics.Int, LogicUS.PL.SyntaxSemantics.FormulaPL )"
+            },
+            {
+                "name": "splSearchContradiction",
+                "comment": " It gives if one set of PL formulas contains a formula and its negation or contains the Insat formula (the set is unsatisfiable). If it finds them they return the formulas indices in the set (it is actually a list).\n\n    splSearchContradiction fs1 == Nothing\n    splSearchContradiction fs2 == Nothing\n\n    -- If we expand ( Conj f1 f2 ) as [f1, f2] (note that f1 is repeated so we keep only one of its instances)\n    fs3 = [f1, Neg f2, f2, Disj f1 f2, Neg (Impl f1 f2), Neg (Equi f1 f2)]\n    splSearchContradiction fs3 == Just [1,2]\n\n",
+                "type": "LogicUS.PL.SyntaxSemantics.SetPL -> Maybe.Maybe (List.List Basics.Int)"
+            },
+            {
+                "name": "splSearchDN",
+                "comment": " It searches a DN formula in the set. If it gets it they return a tuple with the index and the formula, if not Nothing is returned\n\n    splSearchDN fs2 == Nothing\n\n    -- If we expand Neg(Impl f1 f2) as [(Neg (Neg f1)), (Neg f2)] (note that (Neg f2) is repeated so we keep only one of its instances)\n    fs4 = [f1, Neg f2, Conj f1 f2, Disj f1 f2, f1, Neg (Equi f1 f2)]\n    splSearchDN fs4 == Just (4, (Atom \"a\"))\n\n",
+                "type": "LogicUS.PL.SyntaxSemantics.SetPL -> Maybe.Maybe ( Basics.Int, LogicUS.PL.SyntaxSemantics.FormulaPL )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "LogicUS.PL.SyntaxSemantics",
+        "comment": " The module provides the elementary tools for working with propositional logic. It allows defining both formulas and sets as well as performing some basic operations on them, such as evaluations regarding interpretations, construction of truth tables, extraction of models and decision of satisfaction, tautology and logical consequence.\n\n\n# Definition Types\n\n@docs PSymb, FormulaPL, Literal, SetPL, Interpretation\n\n\n# Work with PL Formulas\n\n@docs fplIsLiteral, fplIsPositiveLiteral, fplIsNegativeLiteral, fplNegation, fplSymbols, fplFormTree, fplValuation, fplInterpretations, fplModels, fplCountermodels, fplModelsCountermodels, fplTruthTable, fplSatisfiability, fplValidity, fplUnsatisfiability\n\n\n# Work with PL Sets\n\n@docs splSymbols, splValuation, splInterpretations, splModels, splCountermodels, splModelsCountermodels, splTruthTable, splSatisfiability, splUnsatisfiability, logicalConsecuence, logicalConsecuence2\n\n\n# Parsing PL Formulas\n\n@docs fplReadFromString, fplReadExtraction, fplRead, splRead, fplToInputString\n\n\n# Parsing Interpretations\n\n@docs interpretationReadFromString, interpretationReadExtraction\n\n\n# Repesentation for PL Formulas\n\n@docs fplToString, fplToMathString, fplTruthTableString, fplTruthTableMathString, fplFormTreeToString, fplFormTreeToDOT\n\n\n# Representation for PL Sets\n\n@docs splToString, splToMathString, splToMathString2, splTruthTableString, splTruthTableMathString, splCompactTruthTableString, splCompactTruthTableMathString\n\n\n# Representation for Interpretations\n\n@docs interpretationToString, interpretationsToString, interpretationToMathString, interpretationsToMathString\n\n\n# Other functions\n\n@docs interpretationsFromSymbolsAndLiterals, splConjunction, splDisjunction\n\n",
+        "unions": [
+            {
+                "name": "FormulaPL",
+                "comment": " It is used to define propositional formulas recursively. It allows defining atoms, negations, conjunctions, disjunctions, implications, equivalences, and unsatisfiable formulas.\n\n    -- Some examples of definition of propositional formulas\n    -- f1 = a → b\n    f1 =\n        Impl (Atom \"a\") (Atom \"b\")\n\n    -- f2 = ¬(a ∧ b) ↔ (¬a ∨ ¬b)\n    f2 =\n        Equi (Neg (Conj (Atom \"a\") (Atom \"b\"))) (Disj (Neg (Atom \"a\")) (Neg (Atom \"b\")))\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Atom",
+                        [
+                            "LogicUS.PL.SyntaxSemantics.PSymb"
+                        ]
+                    ],
+                    [
+                        "Neg",
+                        [
+                            "LogicUS.PL.SyntaxSemantics.FormulaPL"
+                        ]
+                    ],
+                    [
+                        "Conj",
+                        [
+                            "LogicUS.PL.SyntaxSemantics.FormulaPL",
+                            "LogicUS.PL.SyntaxSemantics.FormulaPL"
+                        ]
+                    ],
+                    [
+                        "Disj",
+                        [
+                            "LogicUS.PL.SyntaxSemantics.FormulaPL",
+                            "LogicUS.PL.SyntaxSemantics.FormulaPL"
+                        ]
+                    ],
+                    [
+                        "Impl",
+                        [
+                            "LogicUS.PL.SyntaxSemantics.FormulaPL",
+                            "LogicUS.PL.SyntaxSemantics.FormulaPL"
+                        ]
+                    ],
+                    [
+                        "Equi",
+                        [
+                            "LogicUS.PL.SyntaxSemantics.FormulaPL",
+                            "LogicUS.PL.SyntaxSemantics.FormulaPL"
+                        ]
+                    ],
+                    [
+                        "Insat",
+                        []
+                    ],
+                    [
+                        "Taut",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Interpretation",
+                "comment": " It is used to give a sparse definition of an Interpretation as a list of PSymb. This definition assumed that symbols including in the list are considered True. The rest are considered False.\n\n    -- i1 = {a=0, b=1}\n    i1 =\n        [ \"b\" ]\n\n    -- i2 ={a=1, b=0}\n    i2 =\n        [ \"a\" ]\n\n    -- i3 = {a=1, b=1}\n    i3 =\n        [ \"a\", \"b\" ]\n\n",
+                "args": [],
+                "type": "List.List LogicUS.PL.SyntaxSemantics.PSymb"
+            },
+            {
+                "name": "Literal",
+                "comment": "\n\n    It corresponds to an Atom or a negation of an Atom\n\n",
+                "args": [],
+                "type": "LogicUS.PL.SyntaxSemantics.FormulaPL"
+            },
+            {
+                "name": "PSymb",
+                "comment": " It is used to represent the propositional symbols of the formulas. It is recommended to use lowercase alphabetic characters using \"\\_ {...}\" to indicate subscripts.\n\n    -- Some examples of propositional symbols\n    simpleSymbs : List PSymb\n    simpleSymbs =\n        [ \"a\", \"b\", \"p\", \"q\", \"jhon\", \"marie\" ]\n\n    subindexedSymb : List PSymb\n    subindexedSymb =\n        [ \"a_{1}\", \"p_{2,3}\" ]\n\n",
+                "args": [],
+                "type": "( String.String, List.List Basics.Int )"
+            },
+            {
+                "name": "SetPL",
+                "comment": " It is used to define sets of propositional formulas.\n\n    -- fs = {a → b, ¬(a ∧ b) ↔ (¬a ∨ ¬b)}\n    fs =\n        [ f1, f2 ]\n\n",
+                "args": [],
+                "type": "List.List LogicUS.PL.SyntaxSemantics.FormulaPL"
+            }
+        ],
+        "values": [
+            {
+                "name": "fplCountermodels",
+                "comment": " It gives all countermodels of a formula\n\n    fplCountermodels f1 == [ [ \"a\" ] ]\n\n    fplCountermodels f2 == []\n\n",
+                "type": "LogicUS.PL.SyntaxSemantics.FormulaPL -> List.List LogicUS.PL.SyntaxSemantics.Interpretation"
+            },
+            {
+                "name": "fplFormTree",
+                "comment": " It gives a Graph.Graph with the form tree of a formula. If you want visualize it you can use formTreeHTML (defined in module Logicus.Base.Repr.SintaxSemantics.HTML) that gives a dot code of the graph. You can visualize it in a online graphviz visualizer or you can create an html file and follow the instructions (defined in Logicus.PL.Repr.Common.GraphViz).\n\n    fplFormTree f1 == Graph.Graph (Inner { left = Inner { left = Leaf { key = 0, value = { incoming = Empty, node = { id = 0, label = Impl (Atom \"a\") (Atom \"b\") }, outgoing = Inner { left = Leaf { key = 1, value = () }, prefix = { branchingBit = 2, prefixBits = 0 }, right = Leaf { key = 2, value = () }, size = 2 } } }, prefix = { branchingBit = 1, prefixBits = 0 }, right = Leaf { key = 1, value = { incoming = Leaf { key = 0, value = () }, node = { id = 1, label = Atom \"a\" }, outgoing = Empty } }, size = 2 }, prefix = { branchingBit = 2, prefixBits = 0 }, right = Leaf { key = 2, value = { incoming = Leaf { key = 0, value = () }, node = { id = 2, label = Atom \"b\" }, outgoing = Empty } }, size = 3 })\n\n",
+                "type": "LogicUS.PL.SyntaxSemantics.FormulaPL -> Graph.Graph LogicUS.PL.SyntaxSemantics.FormulaPL ()"
+            },
+            {
+                "name": "fplFormTreeToDOT",
+                "comment": " It generates the formation tree of a formula as DOT string. It requires a GraphViz interpreter to be displayed.\n\n    fplFormTreeToDOT <| fplFormTree f3 == \"digraph G {\\n  rankdir=TB\\n  graph []\\n  node [shape=plaintext, color=black]\\n  edge [dir=none]\\n\\n  0 -> 1\\n  0 -> 4\\n  1 -> 2\\n  1 -> 3\\n\\n  0 [label=\\\"( ( p ∨ q ) → r )\\\"]\\n  1 [label=\\\"( p ∨ q )\\\"]\\n  2 [label=\\\"p\\\"]\\n  3 [label=\\\"q\\\"]\\n  4 [label=\\\"r\\\"]\\n}\"\n\n",
+                "type": "Graph.Graph LogicUS.PL.SyntaxSemantics.FormulaPL () -> String.String"
+            },
+            {
+                "name": "fplFormTreeToString",
+                "comment": " It gives the String representation of a formTree.\n\n    fplFormTreeToString <| fplFormTree f3 == \"0 ( ( p ∨ q ) → r )\\n1 ( p ∨ q )\\n2 p\\n3 q\\n4 r\\n#\\n0 1\\n0 4\\n1 2\\n1 3\"\n\n",
+                "type": "Graph.Graph LogicUS.PL.SyntaxSemantics.FormulaPL () -> String.String"
+            },
+            {
+                "name": "fplInterpretations",
+                "comment": " It gives all possible interpretations of a formula.\n\n    fplInterpretations f1 == [ [], [ \"b\" ], [ \"a\" ], [ \"a\", \"b\" ] ]\n\n    fplInterpretations f2 == [ [], [ \"b\" ], [ \"a\" ], [ \"a\", \"b\" ] ]\n\n",
+                "type": "LogicUS.PL.SyntaxSemantics.FormulaPL -> List.List LogicUS.PL.SyntaxSemantics.Interpretation"
+            },
+            {
+                "name": "fplIsLiteral",
+                "comment": " It checks if a formula is a literal or not.\n\n    fplIsLiteral (Atom \"p\\_{1}\") == True\n    fplIsLiteral (Neg(Atom \"p\\_{1}\")) == True\n    fplIsLiteral (Disj (Atom \"p\\_{1}\") (Atom \"p\\_{2}\")) == False\n\n",
+                "type": "LogicUS.PL.SyntaxSemantics.FormulaPL -> Basics.Bool"
+            },
+            {
+                "name": "fplIsNegativeLiteral",
+                "comment": " It checks if a formula is a negative literal or not\n\n    fplIsNegativeLiteral (Atom \"p\\_{1}\") == False\n\n    fplIsNegativeLiteral (Neg(Atom \"p\\_{1}\")) == True\n\n    fplIsNegativeLiteral (Disj (Atom \"p\\_{1}\") (Atom \"p\\_{2}\")) == False\n\n",
+                "type": "LogicUS.PL.SyntaxSemantics.FormulaPL -> Basics.Bool"
+            },
+            {
+                "name": "fplIsPositiveLiteral",
+                "comment": " It checks if a formula is a positive literal or not\n\n    fplIsPositiveLiteral (Atom \"p\\_{1}\") == True\n\n    fplIsPositiveLiteral (Neg(Atom \"p\\_{1}\")) == False\n\n    fplIsPositiveLiteral (Disj (Atom \"p\\_{1}\") (Atom \"p\\_{2}\")) == False\n\n",
+                "type": "LogicUS.PL.SyntaxSemantics.FormulaPL -> Basics.Bool"
+            },
+            {
+                "name": "fplModels",
+                "comment": " It gives all models of a formula\n\n    fplModels f1 == [ [], [ \"b\" ], [ \"a\", \"b\" ] ]\n\n    fplModels f2 == [ [], [ \"b\" ], [ \"a\" ], [ \"a\", \"b\" ] ]\n\n",
+                "type": "LogicUS.PL.SyntaxSemantics.FormulaPL -> List.List LogicUS.PL.SyntaxSemantics.Interpretation"
+            },
+            {
+                "name": "fplModelsCountermodels",
+                "comment": " It gives all models and countermodels of a formula as a tuple (models, countermodels).\n\n    fplModelsCountermodels f1 == ( [ [], [ \"b\" ], [ \"a\", \"b\" ] ], [ [ \"a\" ] ] )\n\n    fplModelsCountermodels f2 == ( [ [], [ \"b\" ], [ \"a\" ], [ \"a\", \"b\" ] ], [] )\n\n",
+                "type": "LogicUS.PL.SyntaxSemantics.FormulaPL -> ( List.List LogicUS.PL.SyntaxSemantics.Interpretation, List.List LogicUS.PL.SyntaxSemantics.Interpretation )"
+            },
+            {
+                "name": "fplNegation",
+                "comment": " It gives the negation of a formula.\n\n    fplNegation (Neg f1) == f1\n\n    fplNegation Insat == Taut\n\n    fplNegation f1 = Neg f1\n\n",
+                "type": "LogicUS.PL.SyntaxSemantics.FormulaPL -> LogicUS.PL.SyntaxSemantics.FormulaPL"
+            },
+            {
+                "name": "fplRead",
+                "comment": " It reads the formula from a string. It returns the Formula if the string si correct, otherwise it returns Insat.\n",
+                "type": "String.String -> LogicUS.PL.SyntaxSemantics.FormulaPL"
+            },
+            {
+                "name": "fplReadExtraction",
+                "comment": " It extract the formula readed. If it is Nothing it returns Insat\n\n    f3 = fplReadExtraction <| fplReadFromString \"(p | q -> r)\"\n    f3 == Impl (Disj (Atom \"p\") (Atom \"q\")) (Atom \"r\")\n    f4 = fplReadExtraction <| fplReadFromString \"(p | q <- r)\"\n    f4 == Insat\n\n",
+                "type": "( Maybe.Maybe LogicUS.PL.SyntaxSemantics.FormulaPL, String.String, String.String ) -> LogicUS.PL.SyntaxSemantics.FormulaPL"
+            },
+            {
+                "name": "fplReadFromString",
+                "comment": " It reads the formula from a string.It returns a tuple with may be a formula (if it can be read it), the input considerated to parse and a message of error it it is not able to performs the parsing.\n\nThe string must satisfy the following rules:\n\n  - Propositional variables must correspond to strings of lowercase characters indexed, optionally, by a series of indices, corresponding to integers, specified between the symbols `_{` and `}` and separated by commas. Examples of valid propositional variables are `p`, `p_{1}`, `p_{1,2,3}`, `p_{1,2,3}`, `p_{1,2,3}` and `p_{1}`.\n\n  - The unitary negation connective is represented by the symbol `¬` (Alt Gr + 6) and is used prefixed (as in formalism) while the binary connectives are used infixed (as in formalism) and are represented by the following symbols: `&` (conjunction), `|` (disjunction), `->` (implication) and `<->` (equivalence). So examples of definition with connectives are : `p -> q`, `p_{1} & p_{2} -> p_{1} | p_{2}`, `p -> q <-> p | q`.\n\n  - In case of the same connective, it will be associated from the right, although it is advisable to use the brackets `(`...`)` as special symbols that allow altering the priority of the connectives by explicitly establishing the order of association. For example `¬(p -> q) | r & s)`.\n\n  - The inconsistent formula is represented by the symbol `!F` and the valid formula by the symbol `!V`.\n\n  - The use of spaces is irrelevant.\n\n```\nfplReadFromString \"p\" == ( Just (Atom \"p\"), \"p\", \"\" )\n\nfplReadFromString \"p_{1} & p_{2}\" == ( Just (Conj (Atom \"p_{1}\") (Atom \"p_{2}\")), \"(p_{1}&p_{2})\", \"\" )\n\nfplReadFromString \"(p | q -> r)\" == ( Just (Impl (Disj (Atom \"p\") (Atom \"q\")) (Atom \"r\")), \"((p|q)->r)\", \"\" )\n\nfplReadFromString \"p_{1,1} <-> p_{1,2}\" == ( Just (Equi (Atom \"p_{1,1}\") (Atom \"p_{1,2}\")), \"(p_{1,1}<->p_{1,2})\", \"\" )\n\nfplReadFromString \"!F\" == ( Just Insat, \"!F\", \"\" )\n\nfplReadFromString \"p_1\" == ( Nothing, \"(p_1)\", \"Error: [{ col = 3, problem = ExpectingSymbol ')', row = 1 }]\" )\n```\n\nMessages are not perfect but we're working to improve it.\n\n",
+                "type": "String.String -> ( Maybe.Maybe LogicUS.PL.SyntaxSemantics.FormulaPL, String.String, String.String )"
+            },
+            {
+                "name": "fplSatisfiability",
+                "comment": " It gives if a formula is satisfiable (bruteforce)\n\n    fplSatisfiability f1 == True\n\n    fplSatisfiability f2 == True\n\n",
+                "type": "LogicUS.PL.SyntaxSemantics.FormulaPL -> Basics.Bool"
+            },
+            {
+                "name": "fplSymbols",
+                "comment": " It calculates all the symbols that take place in a formula\n\n    fplSymbols f1 == [ \"a\", \"b\" ]\n\n    fplSymbols f2 == [ \"a\", \"b\" ]\n\n",
+                "type": "LogicUS.PL.SyntaxSemantics.FormulaPL -> List.List LogicUS.PL.SyntaxSemantics.PSymb"
+            },
+            {
+                "name": "fplToInputString",
+                "comment": " It gives the corresponding input syntax of a formula\n\n    fplToInputString f3 == \"((p|q)->r)\"\n\n    fplToInputString f4 == \"_|_\"\n\n",
+                "type": "LogicUS.PL.SyntaxSemantics.FormulaPL -> String.String"
+            },
+            {
+                "name": "fplToMathString",
+                "comment": " It generates the Latex string of a PL formula. The result requires a math enviroment to be displayed.\n\n    fplToMathString f1 == \"( a\\\\rightarrow b )\"\n\n    fplToMathString f2 == \"( \\\\neg ( a \\\\wedge b ) \\\\leftrightarrow ( \\\\neg a \\\\vee \\\\neg b ) )\"\n\n",
+                "type": "LogicUS.PL.SyntaxSemantics.FormulaPL -> String.String"
+            },
+            {
+                "name": "fplToString",
+                "comment": " It generates the String representation of a PL formula using unicode symbols.\n\n    fplToString f1 == \"( a → b )\"\n\n    fplToString f2 == \"( ¬ ( a ∧ b ) ↔ ( ¬ a ∨ ¬ b ) )\"\n\n",
+                "type": "LogicUS.PL.SyntaxSemantics.FormulaPL -> String.String"
+            },
+            {
+                "name": "fplTruthTable",
+                "comment": " It gives the truth table of a formula as a List(Interpretation, Bool). You cab visualize it as a table using the function fplTruthTableHTML (defined in module Logicus.Base.Repr.SintaxSemantics.HTML) or using fplTruthTableMathString (defined in module Logicus.Base.Repr.SintaxSemantics.Latex) and follow the instructions given in the respective module.\n\n    fplTruthTable f1 == [ ( [], True ), ( [ \"b\" ], True ), ( [ \"a\" ], False ), ( [ \"a\", \"b\" ], True ) ]\n\n    flpTruthTable f2 == [ ( [], True ), ( [ \"b\" ], True ), ( [ \"a\" ], True ), ( [ \"a\", \"b\" ], True ) ]\n\n",
+                "type": "LogicUS.PL.SyntaxSemantics.FormulaPL -> List.List ( LogicUS.PL.SyntaxSemantics.Interpretation, Basics.Bool )"
+            },
+            {
+                "name": "fplTruthTableMathString",
+                "comment": " It generates the Latex code of a Truth Table of a PL formula. The result requires a math enviroment to be displayed.\n\n    fplTruthTableMathString f1 == \"\\\\begin{array}{c|c|c|}\\n\\mathbf{a} & \\\\mathbf{b} & \\\\mathbf{( a\\\\rightarrow b )} \\\\\\\\ \\\\hline \\nF & F & T \\\\\\\\ \\nF & T & T \\\\\\\\ \\nT & F & F \\\\\\\\ \\nT & T & T \\\\\\\\ \\\\end{array}\"\n\n    fplTruthTableMathString f2 == \"\\\\begin{array}{c|c|c|}\\n\\n\\\\mathbf{a} & \\\\mathbf{b} & \\\\mathbf{( \\\\neg ( a \\\\wedge b )\\\\leftrightarrow ( \\\\neg a \\\\vee \\\\neg b ) )} \\\\\\\\\\\\hlineF & F & T \\\\\\\\ \\nF & T & T \\\\\\\\ \\nT & F & T \\\\\\\\ \\nT & T & T \\\\\\\\ \\\\end{array}\"\n\n",
+                "type": "LogicUS.PL.SyntaxSemantics.FormulaPL -> String.String"
+            },
+            {
+                "name": "fplTruthTableString",
+                "comment": " It generates the Truth Table of a PL formula as a string using CSV format (separated by ';')\n\n    fplTruthTableString f1 == \"a ; b ; ( a → b ) \\nF ; F ; T \\nF ; T ; T \\nT ; F ; F \\nT ; T ; T\"\"\n    fplTruthTableString f2 == \"a ; b ; ( ¬ ( a ∧ b ) ↔ ( ¬ a ∨ ¬ b ) ) \\nF ; F ; T \\nF ; T ; T \\nT ; F ; T \\nT ; T ; T\"\n\n",
+                "type": "LogicUS.PL.SyntaxSemantics.FormulaPL -> String.String"
+            },
+            {
+                "name": "fplUnsatisfiability",
+                "comment": " It gives if a formula is unsatisfiable (bruteforce)\n\n    fplUnsatisfiability f1 == False\n\n    fplUnsatisfiability f2 == False\n\n    fplUnsatisfiability Insat == True\n\n",
+                "type": "LogicUS.PL.SyntaxSemantics.FormulaPL -> Basics.Bool"
+            },
+            {
+                "name": "fplValidity",
+                "comment": " It gives if a formula is a tautology (bruteforce)\n\n    fplValidity f1 == False\n\n    fplValidity f2 == True\n\n",
+                "type": "LogicUS.PL.SyntaxSemantics.FormulaPL -> Basics.Bool"
+            },
+            {
+                "name": "fplValuation",
+                "comment": " It calculates the truth value of a formula regarding to an interpretation.\n\n    fplValuation f1 i1 == True\n\n    fplValuation f1 i2 == False\n\n    fplValuation f2 i3 == True\n\n",
+                "type": "LogicUS.PL.SyntaxSemantics.FormulaPL -> LogicUS.PL.SyntaxSemantics.Interpretation -> Basics.Bool"
+            },
+            {
+                "name": "interpretationReadExtraction",
+                "comment": " It extract the interpretation readed. If it is Nothing it returns an empty list (all vars taking as false).\n",
+                "type": "( Maybe.Maybe LogicUS.PL.SyntaxSemantics.Interpretation, String.String ) -> LogicUS.PL.SyntaxSemantics.Interpretation"
+            },
+            {
+                "name": "interpretationReadFromString",
+                "comment": " It reads an interpretation from a string that represents the list of propositional variables (following the rules given in `fplReadFromString` function) separated by commas and surrounded by `[` at the beginning and `]` at the end.\n",
+                "type": "String.String -> ( Maybe.Maybe LogicUS.PL.SyntaxSemantics.Interpretation, String.String )"
+            },
+            {
+                "name": "interpretationToMathString",
+                "comment": " It gives a interpretation as a string in latex format.\n\n    interpretationToMathString [ \"a\" ] [ \"a\", \"b\" ] == \"\\\\lbrace a:T, b:F \\\\rbrace\"\n\n",
+                "type": "LogicUS.PL.SyntaxSemantics.Interpretation -> List.List LogicUS.PL.SyntaxSemantics.PSymb -> String.String"
+            },
+            {
+                "name": "interpretationToString",
+                "comment": " It gives a interpretation as a string.\n\n     interpretationToString [\"a\"] [\"a\", \"b\"] == \"{a:T, b:F}\"\n\n",
+                "type": "LogicUS.PL.SyntaxSemantics.Interpretation -> List.List LogicUS.PL.SyntaxSemantics.PSymb -> String.String"
+            },
+            {
+                "name": "interpretationsFromSymbolsAndLiterals",
+                "comment": " It calculates the list of interpretations from a list of symbols and a list of literals taking each symbol as true if it apears as positive literal,\nas negative if it apears as negative literal and indiferent if it doesn't appear.\n",
+                "type": "List.List LogicUS.PL.SyntaxSemantics.PSymb -> List.List LogicUS.PL.SyntaxSemantics.Literal -> List.List LogicUS.PL.SyntaxSemantics.Interpretation"
+            },
+            {
+                "name": "interpretationsToMathString",
+                "comment": " It gives a interpretation list as a string in latex format.\n\n    interpretationsToMathString [ [], [ \"a\" ], [ \"a\", \"b\" ] ] [ \"a\", \"b\", \"c\" ]\n        == \"\\\\begin{array}{c}\\\\lbrace a:F, b:F, c:F \\\\rbrace \\\\\\\\ \\\\lbrace a:T, b:F, c:F \\\\rbrace \\\\\\\\ \\\\lbrace a:T, b:T, c:F \\\\rbrace \\\\end{array}\"\n\n",
+                "type": "List.List LogicUS.PL.SyntaxSemantics.Interpretation -> List.List LogicUS.PL.SyntaxSemantics.PSymb -> String.String"
+            },
+            {
+                "name": "interpretationsToString",
+                "comment": " It gives a interpretation list as a string.\n\n    interpretationsToString [ [], [ \"a\" ], [ \"a\", \"b\" ] ] [ \"a\", \"b\", \"c\" ]\n        == \"{{a:F, b:F, c:F}\\n{a:T, b:F, c:F}\\n{a:T, b:T, c:F}}\"\n\n",
+                "type": "List.List LogicUS.PL.SyntaxSemantics.Interpretation -> List.List LogicUS.PL.SyntaxSemantics.PSymb -> String.String"
+            },
+            {
+                "name": "logicalConsecuence",
+                "comment": " It gives if a if a formula F is consecuence of a set of formulas S checking if all model of S is also model of F. (bruteforce)\n\n    logicalConsecuence fs (Disj (Neg (Atom \"a\")) (Atom \"b\")) == True\n\n    logicalConsecuence fs Insat == False\n\n    logicalConsecuence [ Insat ] f1 == True -- You can deduce anything of an unsatifiable set.\n\n",
+                "type": "LogicUS.PL.SyntaxSemantics.SetPL -> LogicUS.PL.SyntaxSemantics.FormulaPL -> Basics.Bool"
+            },
+            {
+                "name": "logicalConsecuence2",
+                "comment": " It gives if a if a formula F is consecuence of a set of formulas S checking if S U {F} is unsatisfiable. (bruteforce)\n\n    logicalConsecuence2 fs (Disj (Neg (Atom \"a\")) (Atom \"b\")) == True\n\n    logicalConsecuence2 fs Insat == False\n\n    logicalConsecuence2 [ Insat ] f1 == True -- You can deduce anything of an unsatifiable set.\n\n",
+                "type": "LogicUS.PL.SyntaxSemantics.SetPL -> LogicUS.PL.SyntaxSemantics.FormulaPL -> Basics.Bool"
+            },
+            {
+                "name": "splCompactTruthTableMathString",
+                "comment": " It generates the Latex code of a Truth Table of Set of PL formulas. It only shows the truth values of the variables and the evaluation of the set. The result requires a math enviroment to be displayed.\n",
+                "type": "LogicUS.PL.SyntaxSemantics.SetPL -> String.String"
+            },
+            {
+                "name": "splCompactTruthTableString",
+                "comment": " It generates the Truth Table of a set of PL formulas as a string using CSV format. It only shows the truth values of variables and the evaluation of the set.\n",
+                "type": "LogicUS.PL.SyntaxSemantics.SetPL -> String.String"
+            },
+            {
+                "name": "splConjunction",
+                "comment": " It transforms a SetPL into a FormulaPL using conjuction between formulas. If Set is empty Taut is given\n",
+                "type": "LogicUS.PL.SyntaxSemantics.SetPL -> LogicUS.PL.SyntaxSemantics.FormulaPL"
+            },
+            {
+                "name": "splCountermodels",
+                "comment": " It gives all countermodels of a set of formulas\n\n    splCountermodels fs == [ [ \"a\" ] ]\n\n",
+                "type": "LogicUS.PL.SyntaxSemantics.SetPL -> List.List LogicUS.PL.SyntaxSemantics.Interpretation"
+            },
+            {
+                "name": "splDisjunction",
+                "comment": " It transforms a SetPL into a FormulaPL using disjunction between formulas. If Set is empty Taut is given\n",
+                "type": "LogicUS.PL.SyntaxSemantics.SetPL -> LogicUS.PL.SyntaxSemantics.FormulaPL"
+            },
+            {
+                "name": "splInterpretations",
+                "comment": " It gives all possible interpretations of a set of formulas.\n\n    splInterpretations fs == [ [], [ \"b\" ], [ \"a\" ], [ \"a\", \"b\" ] ]\n\n",
+                "type": "LogicUS.PL.SyntaxSemantics.SetPL -> List.List LogicUS.PL.SyntaxSemantics.Interpretation"
+            },
+            {
+                "name": "splModels",
+                "comment": " It gives all models of a set of formulas\n\n    splModels fs == [ [], [ \"b\" ], [ \"a\", \"b\" ] ]\n\n",
+                "type": "LogicUS.PL.SyntaxSemantics.SetPL -> List.List LogicUS.PL.SyntaxSemantics.Interpretation"
+            },
+            {
+                "name": "splModelsCountermodels",
+                "comment": " It gives all models and countermodels of a set of formulas as a tuple (models, countermodels).\n\n    splModelsCountermodels fs == ( [ [], [ \"b\" ], [ \"a\", \"b\" ] ], [ [ \"a\" ] ] )\n\n",
+                "type": "LogicUS.PL.SyntaxSemantics.SetPL -> ( List.List LogicUS.PL.SyntaxSemantics.Interpretation, List.List LogicUS.PL.SyntaxSemantics.Interpretation )"
+            },
+            {
+                "name": "splRead",
+                "comment": " It reads a set of formulas from a string. Each string that corresponds to each of the formulas of the set must be ended by a point `.`\n(the last formula can, optionally, not be ended by a point).\n",
+                "type": "String.String -> LogicUS.PL.SyntaxSemantics.SetPL"
+            },
+            {
+                "name": "splSatisfiability",
+                "comment": " It gives if a set of formulas is satisfiable (bruteforce)\n\n    splSatisfiability fs == True\n\n    splSatisfiability (fs ++ [ Atom \"a\", Neg (Atom \"b\") ]) == False\n\n",
+                "type": "LogicUS.PL.SyntaxSemantics.SetPL -> Basics.Bool"
+            },
+            {
+                "name": "splSymbols",
+                "comment": " It calculates all the symbols that take place in a set of formulas\n\n    fplSymbols f2 == [ \"a\", \"b\" ]\n\n",
+                "type": "List.List LogicUS.PL.SyntaxSemantics.FormulaPL -> List.List LogicUS.PL.SyntaxSemantics.PSymb"
+            },
+            {
+                "name": "splToMathString",
+                "comment": " It generates the Latex string of a Set of PL formulas. The result requires a math enviroment to be displayed.\n\n    splToMathString [ f1, f2 ] == \"\\\\lbrace ( a\\\\rightarrow b ), ( \\\\neg ( a \\\\wedge b )\\\\leftrightarrow ( \\\\neg a \\\\vee \\\\neg b ) )\\\\rbrace\"\n\n",
+                "type": "List.List LogicUS.PL.SyntaxSemantics.FormulaPL -> String.String"
+            },
+            {
+                "name": "splToMathString2",
+                "comment": " It generates the Latex string of a Set of PL formulas in one line, avoiding the use of the array. The result requires a math enviroment to be displayed.\n",
+                "type": "List.List LogicUS.PL.SyntaxSemantics.FormulaPL -> String.String"
+            },
+            {
+                "name": "splToString",
+                "comment": " It generates the String of Set of PL formulas using unicode symbols.\n\n    splToString [ f1, f2 ] == \"{( a → b ), ( ¬ ( a ∧ b ) ↔ ( ¬ a ∨ ¬ b ) )}\"\n\n",
+                "type": "LogicUS.PL.SyntaxSemantics.SetPL -> String.String"
+            },
+            {
+                "name": "splTruthTable",
+                "comment": " It gives the truth table of a set of formulas as a List(Interpretation, Bool). You can visualize it as a table using the function splTruthTableHTML (defined in module Logicus.Base.Repr.SintaxSemantics.HTML) or using splTruthTableLatex (defined in module Logicus.Base.Repr.SintaxSemantics.Latex) and follow the instructions given in the respective module.\n\n    splTruthTable fs == [ ( [], True ), ( [ \"b\" ], True ), ( [ \"a\" ], False ), ( [ \"a\", \"b\" ], True ) ]\n\n",
+                "type": "LogicUS.PL.SyntaxSemantics.SetPL -> List.List ( LogicUS.PL.SyntaxSemantics.Interpretation, Basics.Bool )"
+            },
+            {
+                "name": "splTruthTableMathString",
+                "comment": " It generates the Latex code of a Truth Table of Set of PL formulas. The result requires a math enviroment to be displayed.\n\n    splTruthTableMathString [ f1, f2 ] =\n        \"\\\\begin{array}{c|c|c|c|c|}\\\\mathbf{a} & \\\\mathbf{b} & \\\\mathbf{( a \\\\rightarrow b )} & \\\\mathbf{( \\\\neg ( a \\\\wedge b ) \\\\leftrightarrow ( \\\\neg a \\\\vee \\\\neg b ) )} & \\\\mathbf{U} \\\\\\\\ \\\\hlineF & F & T & T & T \\\\\\\\ F & T & T & T & T \\\\\\\\ T & F & F & T & F \\\\\\\\ T & T & T & T & T \\\\\\\\ \\\\end{array}\"\n\n",
+                "type": "LogicUS.PL.SyntaxSemantics.SetPL -> String.String"
+            },
+            {
+                "name": "splTruthTableString",
+                "comment": " It generates the Truth Table of a set of PL formulas as a string using CSV format.\n\n    splTruthTableString [ f1, f2 ] == \"a ; b ; ( a → b ) ; ( ¬ ( a ∧ b ) ↔ ( ¬ a ∨ ¬ b ) ) ; U \\n0 ; 0 ; T ; T ; T \\n0 ; 1 ; T ; T ; T \\n1 ; 0 ; F ; T ; F \\n1 ; 1 ; T ; T ; T\"\n\n",
+                "type": "LogicUS.PL.SyntaxSemantics.SetPL -> String.String"
+            },
+            {
+                "name": "splUnsatisfiability",
+                "comment": " It gives if a set of formulas is unsatisfiable (bruteforce)\n\n    splUnsatisfiability fs == False\n\n    splUnatisfiability (fs ++ [ Atom \"a\", Neg (Atom \"b\") ]) == True\n\n",
+                "type": "LogicUS.PL.SyntaxSemantics.SetPL -> Basics.Bool"
+            },
+            {
+                "name": "splValuation",
+                "comment": " It calculates the truth value of a set of formulas regarding to an interpretation.\n\n    splValuation fs i1 == True\n\n    splValuation fs i2 == False\n\n    splValuation fs i3 == True\n\n",
+                "type": "LogicUS.PL.SyntaxSemantics.SetPL -> LogicUS.PL.SyntaxSemantics.Interpretation -> Basics.Bool"
+            }
+        ],
+        "binops": []
+    }
+]

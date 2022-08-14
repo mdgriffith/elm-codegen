@@ -1,0 +1,353 @@
+[
+    {
+        "name": "Thread.Browser",
+        "comment": " [Browser](https://package.elm-lang.org/packages/elm/browser/latest/Browser) alternatives.\n\nIf your needs cannot be met by this module, use the low level functions of [`Thread.Procedure`](https://package.elm-lang.org/packages/arowM/elm-thread/latest/Thread-Procedure).\n\n@docs element\n@docs document\n@docs application\n@docs Program\n@docs Document\n@docs globalHtml\n@docs globalDocument\n@docs globalSubscriptions\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Document",
+                "comment": " Reexport [Browser.Document](https://package.elm-lang.org/packages/elm/browser/latest/Browser#Document) for convenience.\n",
+                "args": [
+                    "event"
+                ],
+                "type": "Browser.Document event"
+            },
+            {
+                "name": "Program",
+                "comment": " An alias for [Platform.Program](https://package.elm-lang.org/packages/elm/core/latest/Platform#Program).\n",
+                "args": [
+                    "flags",
+                    "memory",
+                    "event"
+                ],
+                "type": "Platform.Program flags (Thread.Procedure.Model memory event) (Thread.Procedure.Msg event)"
+            }
+        ],
+        "values": [
+            {
+                "name": "application",
+                "comment": " Threads version of [Browser.application](https://package.elm-lang.org/packages/elm/browser/latest/Browser#application)\n",
+                "type": "{ init : memory, procedures : flags -> Url.Url -> Browser.Navigation.Key -> Thread.Procedure.Block memory event, view : Thread.Procedure.ThreadId -> memory -> Thread.Browser.Document (Thread.Procedure.Msg event), subscriptions : Thread.Procedure.ThreadId -> memory -> Platform.Sub.Sub (Thread.Procedure.Msg event), onUrlRequest : Browser.UrlRequest -> event, onUrlChange : Url.Url -> event } -> Thread.Browser.Program flags memory event"
+            },
+            {
+                "name": "document",
+                "comment": " Threads version of [Browser.document](https://package.elm-lang.org/packages/elm/browser/latest/Browser#document)\n",
+                "type": "{ init : memory, procedures : flags -> Thread.Procedure.Block memory event, view : Thread.Procedure.ThreadId -> memory -> Thread.Browser.Document (Thread.Procedure.Msg event), subscriptions : Thread.Procedure.ThreadId -> memory -> Platform.Sub.Sub (Thread.Procedure.Msg event) } -> Thread.Browser.Program flags memory event"
+            },
+            {
+                "name": "element",
+                "comment": " Threads version of [Browser.element](https://package.elm-lang.org/packages/elm/browser/latest/Browser#element)\n",
+                "type": "{ init : memory, procedures : flags -> Thread.Procedure.Block memory event, view : Thread.Procedure.ThreadId -> memory -> Html.Html (Thread.Procedure.Msg event), subscriptions : Thread.Procedure.ThreadId -> memory -> Platform.Sub.Sub (Thread.Procedure.Msg event) } -> Thread.Browser.Program flags memory event"
+            },
+            {
+                "name": "globalDocument",
+                "comment": " Construct a `view` field for `document` and `application` from `Document event`. All the events fired in the resulting `Document` is delivered to all threads.\n",
+                "type": "(memory -> Thread.Browser.Document event) -> Thread.Procedure.ThreadId -> memory -> Thread.Browser.Document (Thread.Procedure.Msg event)"
+            },
+            {
+                "name": "globalHtml",
+                "comment": " Construct a `view` field for `element` from `Html event`. All the events fired in the resulting `Html` is delivered to all threads.\n",
+                "type": "(memory -> Html.Html event) -> Thread.Procedure.ThreadId -> memory -> Html.Html (Thread.Procedure.Msg event)"
+            },
+            {
+                "name": "globalSubscriptions",
+                "comment": " Construct a `subscriptions` field from `Sub event`. All the events fired in the resulting `Sub` is delivered to all threads.\n",
+                "type": "(memory -> Platform.Sub.Sub event) -> Thread.Procedure.ThreadId -> memory -> Platform.Sub.Sub (Thread.Procedure.Msg event)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Thread.Lifter",
+        "comment": " Helper module for converting [`Procedure`](https://package.elm-lang.org/packages/arowM/elm-thread/latest/Thread-Procedure#Procedure).\n\n@docs Lifter\n@docs compose\n@docs cond\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Lifter",
+                "comment": " Use to convert shared memory types.\n",
+                "args": [
+                    "a",
+                    "b"
+                ],
+                "type": "{ get : a -> Maybe.Maybe b, set : b -> a -> a }"
+            }
+        ],
+        "values": [
+            {
+                "name": "compose",
+                "comment": " ",
+                "type": "Thread.Lifter.Lifter a b -> Thread.Lifter.Lifter b c -> Thread.Lifter.Lifter a c"
+            },
+            {
+                "name": "cond",
+                "comment": " ",
+                "type": "Thread.Lifter.Lifter a b -> (b -> Basics.Bool) -> a -> Basics.Bool"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Thread.LocalMemory",
+        "comment": " Helper module that enable to manage the local memory state of each thread.\nFor a sample, see [`sample/src/Advanced.elm`](https://github.com/arowM/elm-thread/tree/main/sample/src) and its [live demo](https://arowm.github.io/elm-thread/advanced.html).\n\n\n# Core\n\n@docs LocalMemory\n@docs init\n@docs toList\n\n\n# Procedures\n\n@docs asyncChild\n@docs blockChild\n@docs async\n@docs block\n\n",
+        "unions": [
+            {
+                "name": "LocalMemory",
+                "comment": " Core type to store local memory states.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "async",
+                "comment": " Similar to `asyncChild`, but `async` can also handle parent `Procedure`s in the new thread.\n",
+                "type": "Thread.Lifter.Lifter memory (Thread.LocalMemory.LocalMemory a) -> a -> ((Thread.Procedure.Block a event -> Thread.Procedure.Block memory event) -> Thread.Procedure.Block memory event) -> Thread.Procedure.Procedure memory event"
+            },
+            {
+                "name": "asyncChild",
+                "comment": " Run a child `Block` in a new thread by [`Thread.Procedure.async`](https://package.elm-lang.org/packages/arowM/elm-thread/latest/Thread-Procedure#async), assign a local memory for the thread, and free the local memory when the thread is end.\n\nThe second argument is initial value of the local memory.\n\n",
+                "type": "Thread.Lifter.Lifter memory (Thread.LocalMemory.LocalMemory a) -> a -> Thread.Procedure.Block a event -> Thread.Procedure.Procedure memory event"
+            },
+            {
+                "name": "block",
+                "comment": " Similar to `blockChild`, but `block` can also handle parent `Procedure`s in the new thread.\n",
+                "type": "Thread.Lifter.Lifter memory (Thread.LocalMemory.LocalMemory a) -> a -> ((Thread.Procedure.Block a event -> Thread.Procedure.Block memory event) -> Thread.Procedure.Block memory event) -> Thread.Procedure.Procedure memory event"
+            },
+            {
+                "name": "blockChild",
+                "comment": " Run a child `Block` by [`Thread.Procedure.block`](https://package.elm-lang.org/packages/arowM/elm-thread/latest/Thread-Procedure#block), assign a local memory for the thread, and free the local memory when the thread is end.\n\nThe second argument is initial value of the local memory.\n\n",
+                "type": "Thread.Lifter.Lifter memory (Thread.LocalMemory.LocalMemory a) -> a -> Thread.Procedure.Block a event -> Thread.Procedure.Procedure memory event"
+            },
+            {
+                "name": "init",
+                "comment": " Construct an initial instance of `LocalMemory`.\n",
+                "type": "Thread.LocalMemory.LocalMemory a"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert into list. The elements in this list are ordered by the time the thread was created, from newest to oldest.\n",
+                "type": "Thread.LocalMemory.LocalMemory a -> List.List ( Thread.Procedure.ThreadId, a )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Thread.Procedure",
+        "comment": "\n\n\n# Core\n\n@docs Procedure\n@docs batch\n@docs ThreadId\n@docs stringifyThreadId\n@docs Block\n\n\n# Constructors\n\n@docs none\n@docs modify\n@docs push\n@docs await\n@docs async\n@docs block\n@docs sync\n@docs race\n@docs quit\n@docs jump\n@docs doUntil\n@docs addFinalizer\n@docs modifyAndThen\n\n\n# Conditions\n\n@docs when\n@docs unless\n@docs withMemory\n\n\n# Converters\n\nThese items are needed when you try to build a hierarchy of memory and events in an SPA.\n\nThese items are used to build memory and event hierarchies, for example in SPAs.\nNote that the pattern often unnecessarily increases complexity, so you should first consider using monolithic shared memory and events.\n\nFor a sample, see [`sample/src/Advanced.elm`](https://github.com/arowM/elm-thread/tree/main/sample/src) and [`sample/src/SPA.elm`](https://github.com/arowM/elm-thread/tree/main/sample/src).\n\n@docs lift\n@docs wrap\n@docs liftBlock\n@docs wrapBlock\n\n\n# Lower level functions\n\nIt is recommended to use `Thread.Browser` for normal use.\n\n@docs init\n@docs initThreadId\n@docs update\n@docs Model\n@docs extractMemory\n@docs Msg\n@docs mapMsg\n@docs setTarget\n\n",
+        "unions": [
+            {
+                "name": "Model",
+                "comment": " ",
+                "args": [
+                    "memory",
+                    "event"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Msg",
+                "comment": " ",
+                "args": [
+                    "event"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Procedure",
+                "comment": " Procedures to be processed in a thread.\n\n  - memory: State shared between threads.\n  - event: Message generated and received only within specific threads.\n\n",
+                "args": [
+                    "memory",
+                    "event"
+                ],
+                "cases": []
+            },
+            {
+                "name": "ThreadId",
+                "comment": " An identifier for a thread.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Block",
+                "comment": " An alias for a bunch of `Procedure`s.\n",
+                "args": [
+                    "memory",
+                    "event"
+                ],
+                "type": "Thread.Procedure.ThreadId -> List.List (Thread.Procedure.Procedure memory event)"
+            }
+        ],
+        "values": [
+            {
+                "name": "addFinalizer",
+                "comment": " For a thread running this `Procedure`, add a finalizer: `Procedure`s to be evaluated when the thread is terminated, such as when the last `Procedure` for the thread has finished to be evaluated, or when the thread is interrupted by `quit` or `race`, or the parent thread ends by such reasons.\n\nSince `addFinally` **appends** the finalizer, it is especially important to note that if you use `addFinally` in a thread that self-recurses with `turn`, the finalizer will be executed as many times as it self-recurses.\n\n",
+                "type": "Thread.Procedure.Block memory event -> Thread.Procedure.Procedure memory event"
+            },
+            {
+                "name": "async",
+                "comment": " Construct a `Procedure` instance that evaluates the given `Block` in the asynchronous thread.\n\nThe asynchronous thread is provided new `ThreadId` and runs independently of the original thread; therefore the subsequent `Procedure`s in the original thread are evaluated immediately, and the asynchronous thread is cancelled when the original thread ends.\n\nInfinite recursion by giving itself as the argument to `async` is not recommended to prevent threads from overgrowing. Use `jump` if you want to create threads that never end.\n\n",
+                "type": "Thread.Procedure.Block memory event -> Thread.Procedure.Procedure memory event"
+            },
+            {
+                "name": "await",
+                "comment": " Construct a `Procedure` instance that awaits the local events for the thread.\n\nIf it returns empty list, it awaits again.\nOtherwise, it evaluates the given `Procedure`.\n\nNote1: The shared memory state passed to the first argument function may become outdated during running the thread for the `Procedure` generated by that function, so it is safe to use this shared memory state only to determine whether to accept or miss events.\n\nNote2: Technically, all the `modify` `push` `async` written before the `await` will be executed internally as a single operation. This avoids the situation where a local event triggered by a `push` occurs while processing tons of subsequent `modify`s and `push`s, thus ensuring that the `await` always can catch the local event caused by the previous `Procedure`s.\n\nNote3: `push`s written before an `await` will not necessarily cause local events in the order written. For example, if the first `push` sends a request to the server and it fires a local event with its result, and the second `push` sleeps for 0.1 seconds and then returns a local event, the first local event can fire later if the server is slow to respond. To avoid this situation, after using one `push`, catch it with `await` and use the next `push`, or use `sync`.\n\n",
+                "type": "(event -> memory -> List.List (Thread.Procedure.Procedure memory event)) -> Thread.Procedure.Procedure memory event"
+            },
+            {
+                "name": "batch",
+                "comment": " Batch `Procedure`s together. The elements are evaluated in order.\n",
+                "type": "List.List (Thread.Procedure.Procedure memory event) -> Thread.Procedure.Procedure memory event"
+            },
+            {
+                "name": "block",
+                "comment": " Construct a `Procedure` instance that wait for the given `Procedure` to be completed.\n\nGiven `Procedure` is evaluated in the independent threads with new `ThreadId`, but the subsequent `Procedure`s in the original thread are **not** evaluated immediately. For example, the following sleep function uses `block` to scope the `WakeUp` event so that it only affects the inside of the `sleep` function.\n\n    import Process\n    import Task\n    import Thread.Procedure as Procedure exposing (Procedure)\n\n    sleep : Float -> Procedure Memory Event\n    sleep msec =\n        Procedure.block <|\n            \\_ ->\n                [ Procedure.push <|\n                    \\_ ->\n                        Process.sleep msec\n                            |> Task.perform (\\() -> WakeUp)\n                , Procedure.await <|\n                    \\event _ ->\n                        case event of\n                            WakeUp ->\n                                [ Procedure.none\n                                ]\n\n                            _ ->\n                                []\n                ]\n\nInfinite recursion by giving itself as the argument to `async` is not recommended to prevent threads from overgrowing. Use `jump` if you want to create threads that never end.\n\n",
+                "type": "Thread.Procedure.Block memory event -> Thread.Procedure.Procedure memory event"
+            },
+            {
+                "name": "doUntil",
+                "comment": " Evaluate another `Block`, provided as a first argument, with new `ThreadId` until the second argument returns non-empty list.\n\nFor example, you could use it to define a function that executes the `Block` for appropreate SPA page until the URL changes:\n\n    import Thread.Procedure as Procedure exposing (Block)\n    import Url exposing (Url)\n\n    pageController : Route -> Block Memory Event\n    pageController route tid =\n        [ Procedure.doUntil\n            -- The thread for the `pageProcedures` will be killed\n            -- when the URL canges.\n            (pageProcedures route)\n          <|\n            \\event _ ->\n                case event of\n                    UrlChanged url ->\n                        [ Procedure.jump <| pageController (routeFromUrl url)\n                        ]\n\n                    _ ->\n                        []\n        ]\n\n",
+                "type": "Thread.Procedure.Block memory event -> (event -> memory -> List.List (Thread.Procedure.Procedure memory event)) -> Thread.Procedure.Procedure memory event"
+            },
+            {
+                "name": "extractMemory",
+                "comment": " ",
+                "type": "Thread.Procedure.Model memory event -> memory"
+            },
+            {
+                "name": "init",
+                "comment": " ",
+                "type": "memory -> Thread.Procedure.Block memory event -> ( Thread.Procedure.Model memory event, Platform.Cmd.Cmd (Thread.Procedure.Msg event) )"
+            },
+            {
+                "name": "initThreadId",
+                "comment": " `ThreadId` for the initially loaded procedure.\n",
+                "type": "Thread.Procedure.ThreadId"
+            },
+            {
+                "name": "jump",
+                "comment": " Ignore subsequent `Procedure`s, and evaluate given `Block` in the current thread. It is convenient for following two situations.\n\n\n## Make recursive Block\n\nCalling itself in the `Block` will result in a compile error; The `jump` avoids it to makes the recursive `Block`.\n\n    import Thread.Procedure as Procedure exposing (Block)\n    import Time exposing (Posix)\n\n    clockProcedures : Block Memory Event\n    clockProcedures tid =\n        [ Procedure.await <|\n            \\event _ ->\n                case event of\n                    ReceiveTick time ->\n                        [ Procedure.modify <|\n                            \\memory ->\n                                { memory | time = time }\n                        ]\n\n                    _ ->\n                        []\n        , Procedure.jump clockProcedures\n        ]\n\nYou can use `block` or `async` for a similar purpose, but whereas they create new threads for the given `Block`; it causes threads overgrowing.\n\n\n## Safe pruning\n\nSometimes you may want to handle errors as follows:\n\n    unsafePruning : Block Memory Event\n    unsafePruning tid =\n        [ requestPosts\n        , Procedure.await <|\n            \\event _ ->\n                case event of\n                    ReceivePosts (Err error) ->\n                        [ handleError error tid\n                            |> Procedure.batch\n                        ]\n\n                    ReceivePosts (Ok posts) ->\n                        [ Procedure.modify <|\n                            \\memory ->\n                                { memory | posts = posts }\n                        ]\n\n                    _ ->\n                        []\n        , Procedure.block blockForNewPosts\n        ]\n\nIt appears to be nice, but it does not work as intended. Actually, the above `Block` can evaluate the `blockForNewPosts` even after evaluating `handleError`. To avoid this, you can use `jump`:\n\n    safePruning : Block Memory Event\n    safePruning tid =\n        [ requestPosts\n        , Procedure.await <|\n            \\event _ ->\n                case event of\n                    ReceivePosts (Err error) ->\n                        [ Procedure.jump <| handleError error\n                        ]\n\n                    ReceivePosts (Ok posts) ->\n                        [ Procedure.modify <|\n                            \\memory ->\n                                { memory | posts = posts }\n                        ]\n\n                    _ ->\n                        []\n        , Procedure.block blockForNewPosts\n        ]\n\n",
+                "type": "Thread.Procedure.Block memory event -> Thread.Procedure.Procedure memory event"
+            },
+            {
+                "name": "lift",
+                "comment": " Lift the memory type of of the given `Procedure`.\n\nNote that this function does not set up a dedicated memory for `b`, but simply makes it operate on the part of memory `a`; so the memory `b` is shared with other threads.\nIf you want to create a thread that allocates a dedicated memory area of type `b` for a given procedure, use functions in the [`Thread.LocalMemory` module](https://package.elm-lang.org/packages/arowM/elm-thread/latest/Thread-LocalMemory).\n\n",
+                "type": "Thread.Lifter.Lifter a b -> Thread.Procedure.Procedure b event -> Thread.Procedure.Procedure a event"
+            },
+            {
+                "name": "liftBlock",
+                "comment": " `Block` version of `liftMemory`.\n",
+                "type": "Thread.Lifter.Lifter a b -> Thread.Procedure.Block b event -> Thread.Procedure.ThreadId -> List.List (Thread.Procedure.Procedure a event)"
+            },
+            {
+                "name": "mapMsg",
+                "comment": " ",
+                "type": "(a -> b) -> Thread.Procedure.Msg a -> Thread.Procedure.Msg b"
+            },
+            {
+                "name": "modify",
+                "comment": " Construct a `Procedure` instance that modifies shared memory state.\n\nNote that the update operation, passed as the first argument, is performed atomically. It means the state of shared memory read by a particular thread with `modify` is not updated by another thread until it is updated by the thread.\n\n",
+                "type": "(memory -> memory) -> Thread.Procedure.Procedure memory event"
+            },
+            {
+                "name": "modifyAndThen",
+                "comment": " Modify the shared memory atomically, creating the intermediate value in the process, and pass the value to the another `Block` in the original thread.\n\nThe intermediate value is supposed to be the information of the certain resource at a particular time.\n\n",
+                "type": "(memory -> ( memory, x )) -> (x -> Thread.Procedure.Block memory event) -> Thread.Procedure.Procedure memory event"
+            },
+            {
+                "name": "none",
+                "comment": " Construct a `Procedure` instance that do nothing.\n",
+                "type": "Thread.Procedure.Procedure memory event"
+            },
+            {
+                "name": "push",
+                "comment": " Construct a `Procedure` instance that issues a `Cmd` directed to the thread on which this function is evaluated.\n",
+                "type": "(memory -> Platform.Cmd.Cmd event) -> Thread.Procedure.Procedure memory event"
+            },
+            {
+                "name": "quit",
+                "comment": " Quit the thread immediately.\n\nSubsequent `Procedure`s are not evaluated and are discarded.\n\n",
+                "type": "Thread.Procedure.Procedure memory event"
+            },
+            {
+                "name": "race",
+                "comment": " Construct a `Procedure` instance that wait for one of the given `Block`s to be completed.\n\nEach `Block` is evaluated in the independent thread with its own `ThreadId`, but the subsequent `Procedure`s in the original thread are **not** evaluated immediately, but wait for one of the given `Block`s to be completed.\n\nNote1: If one of the threads exits, all other threads will be suspended after processing until the next `await`.\n\n",
+                "type": "List.List (Thread.Procedure.Block memory event) -> Thread.Procedure.Procedure memory event"
+            },
+            {
+                "name": "setTarget",
+                "comment": " Set the target thread for an event by its `ThreadId`.\n",
+                "type": "Thread.Procedure.ThreadId -> event -> Thread.Procedure.Msg event"
+            },
+            {
+                "name": "stringifyThreadId",
+                "comment": " Convert `ThreadId` into `String`.\n\nDifferent `ThreadId`s will be converted to different strings, and the same `ThreadId`s will always be converted to the same string.\n\n",
+                "type": "Thread.Procedure.ThreadId -> String.String"
+            },
+            {
+                "name": "sync",
+                "comment": " Construct a `Procedure` instance that wait for all the given `Block`s to be completed.\n\nEach `Block` is evaluated in the independent threads with its own `ThreadId`, but the subsequent `Procedure`s in the original thread are **not** evaluated immediately, but wait for all the given `Block`s to be completed.\n\n",
+                "type": "List.List (Thread.Procedure.Block memory event) -> Thread.Procedure.Procedure memory event"
+            },
+            {
+                "name": "unless",
+                "comment": " Evaluate given `Procedure`s only if the first argument is `False` with current memory state, otherwise returns `none`.\n",
+                "type": "(memory -> Basics.Bool) -> List.List (Thread.Procedure.Procedure memory event) -> Thread.Procedure.Procedure memory event"
+            },
+            {
+                "name": "update",
+                "comment": " ",
+                "type": "Thread.Procedure.Msg event -> Thread.Procedure.Model memory event -> ( Thread.Procedure.Model memory event, Platform.Cmd.Cmd (Thread.Procedure.Msg event) )"
+            },
+            {
+                "name": "when",
+                "comment": " Evaluate given `Procedure`s only if the first argument returns `True` with current memory state, otherwise returns `none`.\n",
+                "type": "(memory -> Basics.Bool) -> List.List (Thread.Procedure.Procedure memory event) -> Thread.Procedure.Procedure memory event"
+            },
+            {
+                "name": "withMemory",
+                "comment": " Select a `Block` to run by the current memory state.\n\nDo not use the provided memory state in the `Block` in order to avoid using outdated memory state.\n\n",
+                "type": "(memory -> Thread.Procedure.Block memory event) -> Thread.Procedure.Procedure memory event"
+            },
+            {
+                "name": "wrap",
+                "comment": " Wrap the event type of the given `Procedure`.\n",
+                "type": "Thread.Wrapper.Wrapper a b -> Thread.Procedure.Procedure memory b -> Thread.Procedure.Procedure memory a"
+            },
+            {
+                "name": "wrapBlock",
+                "comment": " Wrap the event type of the given `Block`.\n",
+                "type": "Thread.Wrapper.Wrapper a b -> Thread.Procedure.Block memory b -> Thread.Procedure.ThreadId -> List.List (Thread.Procedure.Procedure memory a)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Thread.Wrapper",
+        "comment": " Helper module for converting [`Procedure`](https://package.elm-lang.org/packages/arowM/elm-thread/latest/Thread-Procedure#Procedure).\n\n@docs Wrapper\n@docs compose\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Wrapper",
+                "comment": " Use to convert local event types.\n",
+                "args": [
+                    "a",
+                    "b"
+                ],
+                "type": "{ unwrap : a -> Maybe.Maybe b, wrap : b -> a }"
+            }
+        ],
+        "values": [
+            {
+                "name": "compose",
+                "comment": " ",
+                "type": "Thread.Wrapper.Wrapper a b -> Thread.Wrapper.Wrapper b c -> Thread.Wrapper.Wrapper a c"
+            }
+        ],
+        "binops": []
+    }
+]

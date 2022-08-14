@@ -1,0 +1,179 @@
+[
+    {
+        "name": "QS",
+        "comment": " Parse an manipulate query strings\n\n\n# Types\n\n@docs Query, OneOrMany\n\n\n# Parse and Serialize\n\n@docs parse, serialize\n\n\n# Config\n\n@docs Config, config, addQuestionMark, encodeBrackets\n\n\n# Decode and Encode\n\n@docs decoder, encode\n\n\n# Transform\n\n@docs empty\n@docs get, getAsStringList, getAsMaybeStringList, has\n@docs set, setOne, setStr, setBool, setNum\n@docs setList, setListStr, setListBool, setListNum\n@docs push, pushBool, pushNum, pushStr\n@docs merge, remove\n\n",
+        "unions": [
+            {
+                "name": "Config",
+                "comment": " Opaque configuration type\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "OneOrMany",
+                "comment": " A query value can be a unique value (One) e.g.\n\n    a =\n        1\n            == One \"1\"\n\nOr it can be a list (Many) e.g.\n\n    a[]=1&a[]=2\n\n    ==\n\n    Many [ \"1\", \"2\" ]\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "One",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Many",
+                        [
+                            "List.List String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Query",
+                "comment": " A parsed query string\n\n    \"?a=x&b[]=1&b=2\"\n        == Dict.fromList\n            [ ( \"a\", One <| \"x\" )\n            , ( \"b\", Many [ \"1\", \"2\" ] )\n            ]\n\n",
+                "args": [],
+                "type": "Dict.Dict String.String QS.OneOrMany"
+            }
+        ],
+        "values": [
+            {
+                "name": "addQuestionMark",
+                "comment": " Wherever to add ? when serializing. Default is True.\n\n    QS.serialize Qs.config query\n        == \"?a[]=1\"\n\n    QS.serialize (Qs.config |> Qs.addQuestionMark False) query\n        == \"a[]=1\"\n\n",
+                "type": "Basics.Bool -> QS.Config -> QS.Config"
+            },
+            {
+                "name": "config",
+                "comment": " Get a default configuration\n\n    encodeBrackets =\n        True\n\n",
+                "type": "QS.Config"
+            },
+            {
+                "name": "decoder",
+                "comment": " Decode JSON into a QS.Query\n\n    json =\n        \"\"\"{\"a\":[\"x\", 1, true]}\"\"\"\n\n    Decode.decodeString QS.decoder json\n\n    ===\n\n    Dict.fromList [ ( \"a\", Many [ \"x\", \"1\", \"true\" ] ) ]\n\nThis decoder doesn't handle nested values. Nested data will fail the decoder.\n\n",
+                "type": "Json.Decode.Decoder QS.Query"
+            },
+            {
+                "name": "empty",
+                "comment": " Get an empty QS.Query\n",
+                "type": "QS.Query"
+            },
+            {
+                "name": "encode",
+                "comment": " Encode a QS.Query to a JSON value\n\n    query =\n        Many [ \"x\", \"true\" ] )\n\n    encodedQuery =\n        QS.encode query\n\n    Encode.encode 0 encodedQuery\n\n    ==\n\n    \"\"\"{\"a\":[\"x\",true]}\"\"\"\n\n",
+                "type": "QS.Query -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeBrackets",
+                "comment": " Wherever to encode brackets or not\n\n    QS.serialize (Qs.config |> Qs.encodeBrackets False) query\n        == \"?a[]=1&a[]=2\"\n\n",
+                "type": "Basics.Bool -> QS.Config -> QS.Config"
+            },
+            {
+                "name": "get",
+                "comment": " Get a value from the query\n\n    QS.get \"a\" query\n        == Maybe (One \"1\")\n\n",
+                "type": "String.String -> QS.Query -> Maybe.Maybe QS.OneOrMany"
+            },
+            {
+                "name": "getAsMaybeStringList",
+                "comment": " Get values from the query as a maybe list of strings.\nIf keys are not present this returns a Nothing\n\n    query =\n        Dict.fromList [ (\"a\", Many [\"true\", \"1\"]) ]\n\n    QS.getAsStringList \"a\" query\n\n    ==\n\n    Just [\"true\", \"1\"]\n\n",
+                "type": "String.String -> QS.Query -> Maybe.Maybe (List.List String.String)"
+            },
+            {
+                "name": "getAsStringList",
+                "comment": " Get values from the query as a list of strings (regardless if one or many).\nIf keys are not present this defaults to an empty list\n\n    query =\n        Dict.fromList [ (\"a\", Many [\"true\", \"1\"]) ]\n\n    QS.getAsStringList \"a\" query\n\n    ==\n\n    [\"true\", \"1\"]\n\n",
+                "type": "String.String -> QS.Query -> List.List String.String"
+            },
+            {
+                "name": "has",
+                "comment": " Tell if the query has the given key (regardless if one or many)\n\n    query =\n        Dict.fromList [ (\"a\", One \"true\" ]\n\n    QS.has \"a\" query == True\n\n",
+                "type": "String.String -> QS.Query -> Basics.Bool"
+            },
+            {
+                "name": "merge",
+                "comment": " Merge two Querys.\nValues in the first override values in the second.\n",
+                "type": "QS.Query -> QS.Query -> QS.Query"
+            },
+            {
+                "name": "parse",
+                "comment": " Parse a query string.\nThis loosely follows <https://github.com/ljharb/qs>\n\n    QS.parse\n        QS.config\n        \"?a=1&b=x\"\n        == Dict.fromList [ ( \"a\", One \"1\" ), ( \"b\", One \"x\" ) ]\n\n",
+                "type": "QS.Config -> String.String -> QS.Query"
+            },
+            {
+                "name": "push",
+                "comment": " Adds one value to a list\n\n    QS.push \"a\" \"2\" Qs.empty\n\n  - If the key is not a list then it will be promoted to a list\n  - If the key doesn't exist then it will be added a list of one item\n\n",
+                "type": "String.String -> String.String -> QS.Query -> QS.Query"
+            },
+            {
+                "name": "pushBool",
+                "comment": " Add one boolean to a list\n",
+                "type": "String.String -> Basics.Bool -> QS.Query -> QS.Query"
+            },
+            {
+                "name": "pushNum",
+                "comment": " Add one number to a list\n",
+                "type": "String.String -> Basics.Float -> QS.Query -> QS.Query"
+            },
+            {
+                "name": "pushStr",
+                "comment": " Add one string to a list\n",
+                "type": "String.String -> String.String -> QS.Query -> QS.Query"
+            },
+            {
+                "name": "remove",
+                "comment": " Remove a key from the query\n",
+                "type": "String.String -> QS.Query -> QS.Query"
+            },
+            {
+                "name": "serialize",
+                "comment": " Serialize the query.\nThis follows <https://github.com/ljharb/qs> serialization.\n\n    QS.serialize Qs.config <|\n        Dict.fromList [ ( \"a\", QueryString \"1\" ), ( \"b\", QueryString \"2\" ) ]\n            == \"?a=1&b=2\"\n\nList are serialized by adding `[]`\n\n    QS.serialize Qs.config <|\n        Dict.fromList [ ( \"a\", QueryStringList [ \"1\", \"2\" ] ) ]\n            == \"?a%5B%5D=1&a%5B%5D=2\" (equivalent to \"?a[]=1&a[]=2\")\n\nIf your don't want to encode `[]` use `encodeBrackets False`.\n\n    QS.serialize\n        (Qs.config |> encodeBrackets False) ...\n\n    ==\n\n    \"?a[]=1&a[]=2\"\n\nHowever brackets in the value are always encoded.\n\n",
+                "type": "QS.Config -> QS.Query -> String.String"
+            },
+            {
+                "name": "set",
+                "comment": " Set a value in the query\n\n    QS.set \"a\" (One <| Str \"1\") query\n\n",
+                "type": "String.String -> QS.OneOrMany -> QS.Query -> QS.Query"
+            },
+            {
+                "name": "setBool",
+                "comment": " Set a boolean value in the query\n\n    QS.setBool \"a\" True Qs.empty\n        == Dict.fromList [ ( \"a\", One \"true\" ) ]\n\n",
+                "type": "String.String -> Basics.Bool -> QS.Query -> QS.Query"
+            },
+            {
+                "name": "setList",
+                "comment": " Set a list of values in the query\n\n    QS.setList \"a\" [ \"1\", \"true\" ] query\n\n",
+                "type": "String.String -> List.List String.String -> QS.Query -> QS.Query"
+            },
+            {
+                "name": "setListBool",
+                "comment": " Set a list of boolean values in the query\n\n    QS.setListBool \"a\" [ True, False ] Qs.empty\n\n",
+                "type": "String.String -> List.List Basics.Bool -> QS.Query -> QS.Query"
+            },
+            {
+                "name": "setListNum",
+                "comment": " Set a list of numeric values in the query\n\n    QS.setListNum \"a\" [ 2, 3 ] Qs.empty\n\n",
+                "type": "String.String -> List.List Basics.Float -> QS.Query -> QS.Query"
+            },
+            {
+                "name": "setListStr",
+                "comment": " Set a list of string values in the query\n\n    QS.setListStr \"a\" [\"1\", \"x\"] Qs.empty\n\n    ==\n\n    Dict.fromList [ (\"a\", Many [ \"1\", \"x\" ] ]\n\n",
+                "type": "String.String -> List.List String.String -> QS.Query -> QS.Query"
+            },
+            {
+                "name": "setNum",
+                "comment": " Set a numeric value in the query\n\n    QS.setBool \"a\" 2 Qs.empty\n        == Dict.fromList [ ( \"a\", One \"2\" ) ]\n\n",
+                "type": "String.String -> Basics.Float -> QS.Query -> QS.Query"
+            },
+            {
+                "name": "setOne",
+                "comment": " Set a unique value in the query\n\n    QS.setOne \"a\" \"1\" query\n\n",
+                "type": "String.String -> String.String -> QS.Query -> QS.Query"
+            },
+            {
+                "name": "setStr",
+                "comment": " Set a string value in the query\n\n    QS.setStr \"a\" \"1\" Qs.empty\n        == Dict.fromList [ ( \"a\", One \"1\" ) ]\n\n",
+                "type": "String.String -> String.String -> QS.Query -> QS.Query"
+            }
+        ],
+        "binops": []
+    }
+]

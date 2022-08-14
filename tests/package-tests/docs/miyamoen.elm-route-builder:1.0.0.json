@@ -1,0 +1,106 @@
+[
+    {
+        "name": "RouteBuilder",
+        "comment": "\n\n@docs Route\n\n\n## Builder\n\n@docs RouteBuilder, root, s, string, int\n@docs static, dynamic1, dynamic2, dynamic3, dynamic4, dynamic5, dynamic\n@docs custom, customWithParser\n\n\n## Utility\n\n@docs parseUrl, mapParser\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Route",
+                "comment": " ",
+                "args": [
+                    "params",
+                    "page"
+                ],
+                "type": "{ toString : params -> String.String, toPaths : params -> List.List String.String, toParser : (params -> page) -> Url.Parser.Parser (page -> page) page }"
+            },
+            {
+                "name": "RouteBuilder",
+                "comment": " ",
+                "args": [
+                    "params",
+                    "a",
+                    "b"
+                ],
+                "type": "{ parser : Url.Parser.Parser a b, toPaths : List.List (params -> String.String) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "custom",
+                "comment": " ",
+                "type": "(String.String -> Maybe.Maybe v) -> (v -> String.String) -> (params -> v) -> RouteBuilder.RouteBuilder params a (v -> b) -> RouteBuilder.RouteBuilder params a b"
+            },
+            {
+                "name": "customWithParser",
+                "comment": " ",
+                "type": "Url.Parser.Parser (v -> b) b -> (v -> String.String) -> (params -> v) -> RouteBuilder.RouteBuilder params a (v -> b) -> RouteBuilder.RouteBuilder params a b"
+            },
+            {
+                "name": "dynamic",
+                "comment": " Converter to `Route`.\n",
+                "type": "toParams -> RouteBuilder.RouteBuilder params toParams params -> RouteBuilder.Route params page"
+            },
+            {
+                "name": "dynamic1",
+                "comment": " alias to `dynamic`\n",
+                "type": "(p1 -> params) -> RouteBuilder.RouteBuilder params (p1 -> params) params -> RouteBuilder.Route params page"
+            },
+            {
+                "name": "dynamic2",
+                "comment": " alias to `dynamic`\n",
+                "type": "(p1 -> p2 -> params) -> RouteBuilder.RouteBuilder params (p1 -> p2 -> params) params -> RouteBuilder.Route params page"
+            },
+            {
+                "name": "dynamic3",
+                "comment": " alias to `dynamic`\n",
+                "type": "(p1 -> p2 -> p3 -> params) -> RouteBuilder.RouteBuilder params (p1 -> p2 -> p3 -> params) params -> RouteBuilder.Route params page"
+            },
+            {
+                "name": "dynamic4",
+                "comment": " alias to `dynamic`\n",
+                "type": "(p1 -> p2 -> p3 -> p4 -> params) -> RouteBuilder.RouteBuilder params (p1 -> p2 -> p3 -> p4 -> params) params -> RouteBuilder.Route params page"
+            },
+            {
+                "name": "dynamic5",
+                "comment": " alias to `dynamic`\n",
+                "type": "(p1 -> p2 -> p3 -> p4 -> p5 -> params) -> RouteBuilder.RouteBuilder params (p1 -> p2 -> p3 -> p4 -> p5 -> params) params -> RouteBuilder.Route params page"
+            },
+            {
+                "name": "int",
+                "comment": " ",
+                "type": "(params -> Basics.Int) -> RouteBuilder.RouteBuilder params a (Basics.Int -> b) -> RouteBuilder.RouteBuilder params a b"
+            },
+            {
+                "name": "mapParser",
+                "comment": " ",
+                "type": "RouteBuilder.Route params ( model, Platform.Cmd.Cmd msg ) -> ( childModel -> model, childMsg -> msg ) -> (params -> ( childModel, Platform.Cmd.Cmd childMsg )) -> Url.Parser.Parser (( model, Platform.Cmd.Cmd msg ) -> ( model, Platform.Cmd.Cmd msg )) ( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "parseUrl",
+                "comment": " ",
+                "type": "Url.Url -> page -> List.List (Url.Parser.Parser (page -> page) page) -> page"
+            },
+            {
+                "name": "root",
+                "comment": " ",
+                "type": "RouteBuilder.RouteBuilder params a a"
+            },
+            {
+                "name": "s",
+                "comment": " ",
+                "type": "String.String -> RouteBuilder.RouteBuilder params a b -> RouteBuilder.RouteBuilder params a b"
+            },
+            {
+                "name": "static",
+                "comment": " Converter to `Route`.\n",
+                "type": "RouteBuilder.RouteBuilder () () () -> RouteBuilder.Route () page"
+            },
+            {
+                "name": "string",
+                "comment": " ",
+                "type": "(params -> String.String) -> RouteBuilder.RouteBuilder params a (String.String -> b) -> RouteBuilder.RouteBuilder params a b"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,144 @@
+[
+    {
+        "name": "HashingContainers.HashDict",
+        "comment": "\nHashDict API.\n\n@docs HashDict\n\n# Construction\n\nAll construction functions require you to provide\ninstances for\n[`Equality`](/packages/nikita-volkov/typeclasses/1.5.0/Typeclasses-Classes-Equality)\nand\n[`Hashing`](/packages/nikita-volkov/typeclasses/1.5.0/Typeclasses-Classes-Hashing)\nexplicit typeclasses.\n\nFor general introduction to explicit typeclasses,\nsee [the readme of the \"typeclasses\" library](/packages/nikita-volkov/typeclasses/1.5.0).\n\n@docs empty, fromList, fromArray\n\n# Transformation\n\n@docs insert, remove, update\n\n# Access\n\n@docs get, isEmpty, size, foldl, toList\n",
+        "unions": [
+            {
+                "name": "HashDict",
+                "comment": "\nGeneric dictionary from hashable keys to values.\n\nUnlike `Dict` from the \"core\" library it is not\nlimited to any specific set of supported types for keys.\n\nUnlike the association list implementations it does not suffer\nfrom linear performance characteristics.\n",
+                "args": [
+                    "key",
+                    "value"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "empty",
+                "comment": "\nConstruct an empty HashDict,\nproviding the required instances for key.\n",
+                "type": "Typeclasses.Classes.Equality.Equality key -> Typeclasses.Classes.Hashing.Hashing key -> HashingContainers.HashDict.HashDict key value"
+            },
+            {
+                "name": "foldl",
+                "comment": "\nFold over the key-value pairs in the dictionary.\n",
+                "type": "(( key, value ) -> folding -> folding) -> folding -> HashingContainers.HashDict.HashDict key value -> folding"
+            },
+            {
+                "name": "fromArray",
+                "comment": "\nConstruct HashDict from an array of association pairs,\nproviding the required instances for key.\n",
+                "type": "Typeclasses.Classes.Equality.Equality key -> Typeclasses.Classes.Hashing.Hashing key -> Array.Array ( key, value ) -> HashingContainers.HashDict.HashDict key value"
+            },
+            {
+                "name": "fromList",
+                "comment": "\nConstruct HashDict from a list of association pairs,\nproviding the required instances for key.\n",
+                "type": "Typeclasses.Classes.Equality.Equality key -> Typeclasses.Classes.Hashing.Hashing key -> List.List ( key, value ) -> HashingContainers.HashDict.HashDict key value"
+            },
+            {
+                "name": "get",
+                "comment": "\nLookup a value by key.\nReturns `Nothing`, when there is none.\n",
+                "type": "key -> HashingContainers.HashDict.HashDict key value -> Maybe.Maybe value"
+            },
+            {
+                "name": "insert",
+                "comment": "\nInsert an association pair into dictionary,\nreplacing a value if it already exists.\n",
+                "type": "key -> value -> HashingContainers.HashDict.HashDict key value -> HashingContainers.HashDict.HashDict key value"
+            },
+            {
+                "name": "isEmpty",
+                "comment": "\nDetermine if a dictionary is empty.\n",
+                "type": "HashingContainers.HashDict.HashDict key value -> Basics.Bool"
+            },
+            {
+                "name": "remove",
+                "comment": "\nRemove a key-value pair from a dictionary.\nIf the key is not found, no changes are made.\n",
+                "type": "key -> HashingContainers.HashDict.HashDict key value -> HashingContainers.HashDict.HashDict key value"
+            },
+            {
+                "name": "size",
+                "comment": "\n_O(n)_. Count the elements of the dict.\nSame as `foldl (\\ _ x -> x + 1) 0`.\n",
+                "type": "HashingContainers.HashDict.HashDict key value -> Basics.Int"
+            },
+            {
+                "name": "toList",
+                "comment": "\nConvert a dictionary into an association list of key-value pairs.\n",
+                "type": "HashingContainers.HashDict.HashDict key value -> List.List ( key, value )"
+            },
+            {
+                "name": "update",
+                "comment": "\nUpdate the value of a dictionary for a specific key with a given function.\n",
+                "type": "key -> (Maybe.Maybe value -> Maybe.Maybe value) -> HashingContainers.HashDict.HashDict key value -> HashingContainers.HashDict.HashDict key value"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "HashingContainers.HashSet",
+        "comment": "\nHashSet API.\n\n@docs HashSet\n\n# Construction\n\nAll construction functions require you to provide\ninstances for\n[`Equality`](/packages/nikita-volkov/typeclasses/1.5.0/Typeclasses-Classes-Equality)\nand\n[`Hashing`](/packages/nikita-volkov/typeclasses/1.5.0/Typeclasses-Classes-Hashing)\nexplicit typeclasses.\n\nFor general introduction to explicit typeclasses,\nsee [the readme of the \"typeclasses\" library](/packages/nikita-volkov/typeclasses/1.5.0).\n\n@docs empty, fromList, fromArray\n\n# Transformation\n\n@docs insert, remove\n\n# Access\n\n@docs member, isEmpty, size, foldl, toList\n",
+        "unions": [
+            {
+                "name": "HashSet",
+                "comment": "\nGeneric set of hashable elements.\n\nUnlike `Set` from the \"core\" library it is not\nlimited to any specific set of supported types for elements.\n",
+                "args": [
+                    "value"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "empty",
+                "comment": "\nConstruct an empty HashSet,\nproviding the required instances.\n",
+                "type": "Typeclasses.Classes.Equality.Equality value -> Typeclasses.Classes.Hashing.Hashing value -> HashingContainers.HashSet.HashSet value"
+            },
+            {
+                "name": "foldl",
+                "comment": "\nFold over the values in a set.\n",
+                "type": "(value -> folding -> folding) -> folding -> HashingContainers.HashSet.HashSet value -> folding"
+            },
+            {
+                "name": "fromArray",
+                "comment": "\nConstruct from an array of values,\nproviding the required instances.\n",
+                "type": "Typeclasses.Classes.Equality.Equality value -> Typeclasses.Classes.Hashing.Hashing value -> Array.Array value -> HashingContainers.HashSet.HashSet value"
+            },
+            {
+                "name": "fromList",
+                "comment": "\nConstruct from a list of values,\nproviding the required instances.\n",
+                "type": "Typeclasses.Classes.Equality.Equality value -> Typeclasses.Classes.Hashing.Hashing value -> List.List value -> HashingContainers.HashSet.HashSet value"
+            },
+            {
+                "name": "insert",
+                "comment": "\nInsert a value into a set.\n",
+                "type": "value -> HashingContainers.HashSet.HashSet value -> HashingContainers.HashSet.HashSet value"
+            },
+            {
+                "name": "isEmpty",
+                "comment": "\nDetermine if a set is empty.\n",
+                "type": "HashingContainers.HashSet.HashSet value -> Basics.Bool"
+            },
+            {
+                "name": "member",
+                "comment": "\nDetermine if a value is in a set.\n",
+                "type": "value -> HashingContainers.HashSet.HashSet value -> Basics.Bool"
+            },
+            {
+                "name": "remove",
+                "comment": "\nRemove a value from a set. If the value is not found, no changes are made.\n",
+                "type": "value -> HashingContainers.HashSet.HashSet value -> HashingContainers.HashSet.HashSet value"
+            },
+            {
+                "name": "size",
+                "comment": "\n_O(n)_. Count the elements of the set.\nSame as `foldl (\\ _ x -> x + 1) 0`.\n",
+                "type": "HashingContainers.HashSet.HashSet value -> Basics.Int"
+            },
+            {
+                "name": "toList",
+                "comment": "\nConvert a set into a list.\n",
+                "type": "HashingContainers.HashSet.HashSet value -> List.List value"
+            }
+        ],
+        "binops": []
+    }
+]

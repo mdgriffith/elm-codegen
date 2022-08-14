@@ -1,0 +1,560 @@
+[
+    {
+        "name": "ECharts",
+        "comment": " This is a [ECharts](http://echarts.baidu.com/) chart option types\ncollection and a helper to use\n[ECharts WebComponent](https://github.com/kkpoon/echarts-webcomponent).\n\n\n## Why Web Component?\n\nPlease watch [this](https://www.youtube.com/watch?v=ar3TakwE8o0&t=1s)\nvideo about Elm and Web Components by Richard Feldman\n\n\n# Create\n\n@docs echarts\n\n\n# Definitions\n\n@docs EChartsConfig\n\n\n# Helpers\n\n@docs toJsonString\n\n",
+        "unions": [
+            {
+                "name": "EChartsConfig",
+                "comment": " the chart type\n",
+                "args": [],
+                "cases": [
+                    [
+                        "PieChart",
+                        [
+                            "ECharts.PieChart.PieChartOption"
+                        ]
+                    ],
+                    [
+                        "BarChart",
+                        [
+                            "ECharts.BarChart.BarChartOption"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "echarts",
+                "comment": " create echarts DOM node\n",
+                "type": "ECharts.EChartsConfig -> Html.Html msg"
+            },
+            {
+                "name": "toJsonString",
+                "comment": " convert the chart option to a string of json, which could apply to the\n[echarts-webcomponent](https://github.com/kkpoon/echarts-webcomponent) `option`\nattribute\n",
+                "type": "ECharts.EChartsConfig -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ECharts.BarChart",
+        "comment": " Bar Chart Options\n\nThis module helps to create Bar Chart Option.\n\nECharts official [examples](https://ecomfe.github.io/echarts-examples/public/index.html#chart-type-Bar)\n\n\n# Definitions\n\n@docs BarChartOption\n\n@docs defaultBarChartOption\n\n@docs BarSeriesOption\n\n@docs defaultBarSeriesOption\n\n\n# Encoders\n\n@docs encodeBarChartOption\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "BarChartOption",
+                "comment": " describe the chart option of Bar chart\n",
+                "args": [],
+                "type": "{ title : Maybe.Maybe ECharts.Style.TitleOption, color : Maybe.Maybe (List.List String.String), tooltip : Maybe.Maybe ECharts.Style.TooltipOption, legend : Maybe.Maybe ECharts.Style.LegendOption, xAxis : Maybe.Maybe ECharts.Style.XAxisOption, yAxis : Maybe.Maybe ECharts.Style.YAxisOption, series : Maybe.Maybe (List.List ECharts.BarChart.BarSeriesOption) }"
+            },
+            {
+                "name": "BarSeriesOption",
+                "comment": " describe the [data series](https://ecomfe.github.io/echarts-doc/public/en/option.html#series-Bar) of Bar chart\n",
+                "args": [],
+                "type": "{ name : Maybe.Maybe String.String, barGap : Maybe.Maybe Basics.Int, data : Maybe.Maybe (List.List { value : Basics.Float }) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultBarChartOption",
+                "comment": " create a Bar chart option of for default value\n\nThis function creates an All-Nothing TitleOption.\n[ECharts](https://ecomfe.github.io/echarts-doc/public/en/option.html)\napplies the default value when the option attribute is not specified.\n\n",
+                "type": "ECharts.BarChart.BarChartOption"
+            },
+            {
+                "name": "defaultBarSeriesOption",
+                "comment": " create a Bar chart series option of for default value\n\nThis function creates an All-Nothing TitleOption.\n[ECharts](https://ecomfe.github.io/echarts-doc/public/en/option.html)\napplies the default value when the option attribute is not specified.\n\n",
+                "type": "ECharts.BarChart.BarSeriesOption"
+            },
+            {
+                "name": "encodeBarChartOption",
+                "comment": " encode the Bar chart option to Json.Encode.Value\n",
+                "type": "ECharts.BarChart.BarChartOption -> Json.Encode.Value"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ECharts.PieChart",
+        "comment": " Pie Chart Options\n\nThis module helps to create Pie Chart Option.\n\nECharts official [examples](https://ecomfe.github.io/echarts-examples/public/index.html#chart-type-pie)\n\n\n# Definitions\n\n@docs PieChartOption\n\n@docs defaultPieChartOption\n\n@docs PieSeriesOption\n\n@docs defaultPieSeriesOption\n\n\n# Encoders\n\n@docs encodePieChartOption\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "PieChartOption",
+                "comment": " describe the chart option of pie chart\n",
+                "args": [],
+                "type": "{ title : Maybe.Maybe ECharts.Style.TitleOption, tooltip : Maybe.Maybe ECharts.Style.TooltipOption, legend : Maybe.Maybe ECharts.Style.LegendOption, series : Maybe.Maybe (List.List ECharts.PieChart.PieSeriesOption) }"
+            },
+            {
+                "name": "PieSeriesOption",
+                "comment": " describe the [data series](https://ecomfe.github.io/echarts-doc/public/en/option.html#series-pie) of pie chart\n",
+                "args": [],
+                "type": "{ name : Maybe.Maybe String.String, legendHoverLink : Maybe.Maybe Basics.Bool, hoverAnimation : Maybe.Maybe Basics.Bool, selectedMode : Maybe.Maybe ECharts.Style.SelectedMode, selectedOffset : Maybe.Maybe Basics.Int, clockwise : Maybe.Maybe Basics.Bool, startAngle : Maybe.Maybe Basics.Float, minAngle : Maybe.Maybe Basics.Float, roseType : Maybe.Maybe Basics.Bool, avoidLabelOverlap : Maybe.Maybe Basics.Bool, stillShowZeroSum : Maybe.Maybe Basics.Bool, radius : Maybe.Maybe ( String.String, String.String ), center : Maybe.Maybe ( String.String, String.String ), itemStyle : Maybe.Maybe { emphasis : Maybe.Maybe { shadowBlur : Maybe.Maybe Basics.Int, shadowOffsetX : Maybe.Maybe Basics.Int, shadowColor : Maybe.Maybe String.String } }, data : Maybe.Maybe (List.List { value : Basics.Float, name : String.String }) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultPieChartOption",
+                "comment": " create a pie chart option of for default value\n\nThis function creates an All-Nothing TitleOption.\n[ECharts](https://ecomfe.github.io/echarts-doc/public/en/option.html)\napplies the default value when the option attribute is not specified.\n\n",
+                "type": "ECharts.PieChart.PieChartOption"
+            },
+            {
+                "name": "defaultPieSeriesOption",
+                "comment": " create a pie chart series option of for default value\n\nThis function creates an All-Nothing TitleOption.\n[ECharts](https://ecomfe.github.io/echarts-doc/public/en/option.html)\napplies the default value when the option attribute is not specified.\n\n",
+                "type": "ECharts.PieChart.PieSeriesOption"
+            },
+            {
+                "name": "encodePieChartOption",
+                "comment": " encode the pie chart option to Json.Encode.Value\n",
+                "type": "ECharts.PieChart.PieChartOption -> Json.Encode.Value"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ECharts.Style",
+        "comment": " Chart layout and style related options\n\n\n# Chart Title Options\n\n@docs TitleOption\n\n@docs defaultTitleOption\n\n@docs encodeTitleOption\n\n\n# Tooltip Options\n\n@docs TooltipOption\n\n@docs defaultTooltipOption\n\n@docs encodeTooltipOption\n\n@docs TooltipAxisPointerOption\n\n@docs defaultTooltipAxisPointerOption\n\n\n## Tooltip Attribute Values\n\n@docs TooltipTrigger\n\n@docs TooltipTriggerOn\n\n@docs TooltipPosition\n\n@docs TooltipAxisPointerType\n\n\n# Legend Options\n\n@docs LegendOption\n\n@docs defaultLegendOption\n\n@docs encodeLegendOption\n\n\n# XAxis Options\n\n@docs XAxisOption\n\n@docs defaultXAxisOption\n\n@docs encodeXAxisOption\n\n\n# YAxis Options\n\n@docs YAxisOption\n\n@docs defaultYAxisOption\n\n@docs encodeYAxisOption\n\n\n# Axis Label\n\n@docs AxisLabel\n\n@docs defaultAxisLabel\n\n@docs encodeAxisLabel\n\n\n## Legend Attribute Values\n\n@docs LegendAlignment\n\n\n# Style Options\n\n@docs LineStyleOption\n\n@docs defaultLineStyleOption\n\n@docs encodeLineStyleOption\n\n@docs CrossStyleOption\n\n@docs defaultCrossStyleOption\n\n@docs encodeCrossStyleOption\n\n@docs ShadowStyleOption\n\n@docs defaultShadowStyleOption\n\n@docs encodeShadowStyleOption\n\n@docs TextStyleOption\n\n@docs defaultTextStyleOption\n\n@docs encodeTextStyleOption\n\n\n## Style Attribute Values\n\n@docs Orientation\n\n@docs encodeOrientationValue\n\n@docs HorizontalAlignment\n\n@docs encodeHorizontalAlignmentValue\n\n@docs VerticalAlignment\n\n@docs encodeVerticalAlignmentValue\n\n@docs Spacing\n\n@docs encodeSpacingValue\n\n@docs SelectedMode\n\n@docs encodeSelectedModeValue\n\n@docs AnimationEasing\n\n@docs encodeAnimationEasingValue\n\n@docs LineStyleType\n\n@docs encodeLineStyleTypeValue\n\n",
+        "unions": [
+            {
+                "name": "AnimationEasing",
+                "comment": " describe the animation easing\n",
+                "args": [],
+                "cases": [
+                    [
+                        "CubicOutAnimationEasing",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "HorizontalAlignment",
+                "comment": " describe horizontal alignment: left, center, right\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Left",
+                        []
+                    ],
+                    [
+                        "Center",
+                        []
+                    ],
+                    [
+                        "Right",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "LegendAlignment",
+                "comment": " legend alignment\n[value](https://ecomfe.github.io/echarts-doc/public/en/option.html#legend.align)\n",
+                "args": [],
+                "cases": [
+                    [
+                        "AutoLegendAlignment",
+                        []
+                    ],
+                    [
+                        "LeftLegendAlignment",
+                        []
+                    ],
+                    [
+                        "RightLegendAlignment",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "LineStyleType",
+                "comment": " describe the line style type\n",
+                "args": [],
+                "cases": [
+                    [
+                        "SolidLine",
+                        []
+                    ],
+                    [
+                        "DashedLine",
+                        []
+                    ],
+                    [
+                        "DottedLine",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Orientation",
+                "comment": " describe the orientation attribute\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Horizontal",
+                        []
+                    ],
+                    [
+                        "Vertical",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "SelectedMode",
+                "comment": " describe the item selected mode\n",
+                "args": [],
+                "cases": [
+                    [
+                        "TrueSelectedMode",
+                        []
+                    ],
+                    [
+                        "FalseSelectedMode",
+                        []
+                    ],
+                    [
+                        "SingleSelectedMode",
+                        []
+                    ],
+                    [
+                        "MultipleSelectedMode",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Spacing",
+                "comment": " describe spacing setting\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Spacing",
+                        [
+                            "Basics.Float"
+                        ]
+                    ],
+                    [
+                        "VHSpacing",
+                        [
+                            "Basics.Float",
+                            "Basics.Float"
+                        ]
+                    ],
+                    [
+                        "FineSpacing",
+                        [
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "TooltipAxisPointerType",
+                "comment": " tooltip axis pointer type\n[value](https://ecomfe.github.io/echarts-doc/public/en/option.html#tooltip.axisPointer.type)\n",
+                "args": [],
+                "cases": [
+                    [
+                        "LineTooltipAxisPointer",
+                        []
+                    ],
+                    [
+                        "CrossTooltipAxisPointer",
+                        []
+                    ],
+                    [
+                        "ShadowTooltipAxisPointer",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "TooltipPosition",
+                "comment": " tooltip position\n[value](https://ecomfe.github.io/echarts-doc/public/en/option.html#tooltip.position)\n",
+                "args": [],
+                "cases": [
+                    [
+                        "AbsoluteTooltipPosiotion",
+                        [
+                            "Basics.Int",
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "RelativeTooltipPosition",
+                        [
+                            "String.String",
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "TooltipTrigger",
+                "comment": " tooltip trigger\n[value](https://ecomfe.github.io/echarts-doc/public/en/option.html#tooltip.trigger)\n",
+                "args": [],
+                "cases": [
+                    [
+                        "TriggerByItem",
+                        []
+                    ],
+                    [
+                        "TriggerByAxis",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "TooltipTriggerOn",
+                "comment": " tooltip triggerOn\n[value](https://ecomfe.github.io/echarts-doc/public/en/option.html#tooltip.triggerOn)\n",
+                "args": [],
+                "cases": [
+                    [
+                        "MouseMoveTriggerTooltip",
+                        []
+                    ],
+                    [
+                        "ClickTriggerTooltip",
+                        []
+                    ],
+                    [
+                        "NoneTriggerTooltip",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "VerticalAlignment",
+                "comment": " describe vertical alignment: top, middle, bottom\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Top",
+                        []
+                    ],
+                    [
+                        "Middle",
+                        []
+                    ],
+                    [
+                        "Bottom",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "AxisLabel",
+                "comment": " describe the [axisLabel](https://ecomfe.github.io/echarts-doc/public/en/option.html#xAxis.axisLabel)\n",
+                "args": [],
+                "type": "{ show : Maybe.Maybe Basics.Bool, inside : Maybe.Maybe Basics.Bool, rotate : Maybe.Maybe Basics.Float, margin : Maybe.Maybe Basics.Float, fontSize : Maybe.Maybe Basics.Float, padding : Maybe.Maybe Basics.Float, shadowBlur : Maybe.Maybe Basics.Float, shadowOffsetX : Maybe.Maybe Basics.Float, shadowOffsetY : Maybe.Maybe Basics.Float }"
+            },
+            {
+                "name": "CrossStyleOption",
+                "comment": " describe the cross style option\n",
+                "args": [],
+                "type": "{ color : Maybe.Maybe String.String, width : Maybe.Maybe Basics.Int, type_ : Maybe.Maybe ECharts.Style.LineStyleType, shadowBlur : Maybe.Maybe Basics.Int, shadowColor : Maybe.Maybe String.String, shadowOffsetX : Maybe.Maybe Basics.Int, shadowOffsetY : Maybe.Maybe Basics.Int, opacity : Maybe.Maybe Basics.Float, textStyle : Maybe.Maybe ECharts.Style.TextStyleOption }"
+            },
+            {
+                "name": "LegendOption",
+                "comment": " describe the legend\n[option](https://ecomfe.github.io/echarts-doc/public/en/option.html#legend)\n",
+                "args": [],
+                "type": "{ show : Maybe.Maybe Basics.Bool, zlevel : Maybe.Maybe Basics.Int, z : Maybe.Maybe Basics.Int, left : Maybe.Maybe String.String, top : Maybe.Maybe String.String, right : Maybe.Maybe String.String, bottom : Maybe.Maybe String.String, width : Maybe.Maybe String.String, height : Maybe.Maybe String.String, orient : Maybe.Maybe ECharts.Style.Orientation, align : Maybe.Maybe ECharts.Style.LegendAlignment, padding : Maybe.Maybe ECharts.Style.Spacing, itemGap : Maybe.Maybe Basics.Int, itemWidth : Maybe.Maybe Basics.Int, itemHeight : Maybe.Maybe Basics.Int, formatter : Maybe.Maybe String.String, selectedMode : Maybe.Maybe ECharts.Style.SelectedMode, inactiveColor : Maybe.Maybe String.String, selected : Maybe.Maybe (List.List ( String.String, Basics.Bool )), textStyle : Maybe.Maybe ECharts.Style.TextStyleOption, tooltip : Maybe.Maybe ECharts.Style.TooltipOption, data : Maybe.Maybe (List.List { name : String.String, icon : String.String, textStyle : ECharts.Style.TextStyleOption }), backgroundColor : Maybe.Maybe String.String, borderColor : Maybe.Maybe String.String, borderWidth : Maybe.Maybe Basics.Int, shadowBlur : Maybe.Maybe Basics.Int, shadowColor : Maybe.Maybe String.String, shadowOffsetX : Maybe.Maybe Basics.Int, shadowOffsetY : Maybe.Maybe Basics.Int }"
+            },
+            {
+                "name": "LineStyleOption",
+                "comment": " describe the line style option\n",
+                "args": [],
+                "type": "{ color : Maybe.Maybe String.String, width : Maybe.Maybe Basics.Int, type_ : Maybe.Maybe ECharts.Style.LineStyleType, shadowBlur : Maybe.Maybe Basics.Int, shadowColor : Maybe.Maybe String.String, shadowOffsetX : Maybe.Maybe Basics.Int, shadowOffsetY : Maybe.Maybe Basics.Int, opacity : Maybe.Maybe Basics.Float }"
+            },
+            {
+                "name": "ShadowStyleOption",
+                "comment": " describe the shadow style option\n",
+                "args": [],
+                "type": "{ color : Maybe.Maybe String.String, shadowBlur : Maybe.Maybe Basics.Int, shadowColor : Maybe.Maybe String.String, shadowOffsetX : Maybe.Maybe Basics.Int, shadowOffsetY : Maybe.Maybe Basics.Int, opacity : Maybe.Maybe Basics.Float }"
+            },
+            {
+                "name": "TextStyleOption",
+                "comment": " describe the text style option\n",
+                "args": [],
+                "type": "{ color : Maybe.Maybe String.String, fontStyle : Maybe.Maybe String.String, fontWeight : Maybe.Maybe String.String, fontFamily : Maybe.Maybe String.String, fontSize : Maybe.Maybe Basics.Float, lineHeight : Maybe.Maybe Basics.Float, rich : Maybe.Maybe ECharts.Style.RichOption }"
+            },
+            {
+                "name": "TitleOption",
+                "comment": " describe the chart title\n[option](https://ecomfe.github.io/echarts-doc/public/en/option.html#title)\n",
+                "args": [],
+                "type": "{ show : Maybe.Maybe Basics.Bool, text : Maybe.Maybe String.String, link : Maybe.Maybe String.String, target : Maybe.Maybe String.String, textStyle : Maybe.Maybe ECharts.Style.TextStyleOption, textAlign : Maybe.Maybe ECharts.Style.HorizontalAlignment, textBaseline : Maybe.Maybe ECharts.Style.VerticalAlignment, subtext : Maybe.Maybe String.String, sublink : Maybe.Maybe String.String, subtarget : Maybe.Maybe String.String, subtextStyle : Maybe.Maybe ECharts.Style.TextStyleOption, padding : Maybe.Maybe ECharts.Style.Spacing, itemGap : Maybe.Maybe Basics.Float, zlevel : Maybe.Maybe Basics.Int, z : Maybe.Maybe Basics.Int, left : Maybe.Maybe String.String, top : Maybe.Maybe String.String, right : Maybe.Maybe String.String, bottom : Maybe.Maybe String.String, backgroundColor : Maybe.Maybe String.String, borderColor : Maybe.Maybe String.String, borderWidth : Maybe.Maybe String.String, shadowBlur : Maybe.Maybe Basics.Int, shadowColor : Maybe.Maybe String.String, shadowOffsetX : Maybe.Maybe Basics.Int, shadowOffsetY : Maybe.Maybe Basics.Int }"
+            },
+            {
+                "name": "TooltipAxisPointerOption",
+                "comment": " describe the tooltip axis pointer\n[option](https://ecomfe.github.io/echarts-doc/public/en/option.html#tooltip.axisPointer)\n",
+                "args": [],
+                "type": "{ type_ : Maybe.Maybe ECharts.Style.TooltipAxisPointerType, axis : Maybe.Maybe String.String, animation : Maybe.Maybe Basics.Bool, animationThreshold : Maybe.Maybe Basics.Int, animationDuration : Maybe.Maybe Basics.Int, animationEasing : Maybe.Maybe ECharts.Style.AnimationEasing, animationDelay : Maybe.Maybe Basics.Int, animationDurationUpdate : Maybe.Maybe Basics.Int, animationEasingUpdate : Maybe.Maybe ECharts.Style.AnimationEasing, animationDelayUpdate : Maybe.Maybe Basics.Int, lineStyle : Maybe.Maybe ECharts.Style.LineStyleOption, crossStyle : Maybe.Maybe ECharts.Style.CrossStyleOption, shadowStyle : Maybe.Maybe ECharts.Style.ShadowStyleOption }"
+            },
+            {
+                "name": "TooltipOption",
+                "comment": " describe the tooltip\n[option](https://ecomfe.github.io/echarts-doc/public/en/option.html#tooltip)\n",
+                "args": [],
+                "type": "{ show : Maybe.Maybe Basics.Bool, showContent : Maybe.Maybe Basics.Bool, trigger : Maybe.Maybe ECharts.Style.TooltipTrigger, triggerOn : Maybe.Maybe ECharts.Style.TooltipTriggerOn, alwaysShowContent : Maybe.Maybe Basics.Bool, showDelay : Maybe.Maybe Basics.Int, hideDelay : Maybe.Maybe Basics.Int, enterable : Maybe.Maybe Basics.Bool, position : Maybe.Maybe ECharts.Style.TooltipPosition, confine : Maybe.Maybe Basics.Bool, transitionDuration : Maybe.Maybe Basics.Float, formatter : Maybe.Maybe String.String, backgroundColor : Maybe.Maybe String.String, borderColor : Maybe.Maybe String.String, borderWidth : Maybe.Maybe String.String, padding : Maybe.Maybe ECharts.Style.Spacing, textStyle : Maybe.Maybe ECharts.Style.TextStyleOption, extraCssText : Maybe.Maybe String.String, axisPointer : Maybe.Maybe ECharts.Style.TooltipAxisPointerOption, data : Maybe.Maybe (List.List { date : String.String, value : Basics.Float, name : String.String }) }"
+            },
+            {
+                "name": "XAxisOption",
+                "comment": " describe the xAxis\n[option](https://ecomfe.github.io/echarts-doc/public/en/option.html#xAxis)\n",
+                "args": [],
+                "type": "{ show : Maybe.Maybe Basics.Bool, type_ : Maybe.Maybe String.String, axisLabel : Maybe.Maybe ECharts.Style.AxisLabel, data : Maybe.Maybe (List.List { value : String.String, textStyle : ECharts.Style.TextStyleOption }) }"
+            },
+            {
+                "name": "YAxisOption",
+                "comment": " describe the yAxis\n[option](https://ecomfe.github.io/echarts-doc/public/en/option.html#yAxis)\n",
+                "args": [],
+                "type": "{ show : Maybe.Maybe Basics.Bool, type_ : Maybe.Maybe String.String, axisLabel : Maybe.Maybe ECharts.Style.AxisLabel, data : Maybe.Maybe (List.List { value : String.String, textStyle : ECharts.Style.TextStyleOption }) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultAxisLabel",
+                "comment": " create a axisLabel of for default value\n\nThis function creates an All-Nothing XAxisOption.\n[ECharts](https://ecomfe.github.io/echarts-doc/public/en/option.html)\napplies the default value when the option attribute is not specified.\n\n",
+                "type": "ECharts.Style.AxisLabel"
+            },
+            {
+                "name": "defaultCrossStyleOption",
+                "comment": " create a cross style option of for default value\n\nThis function creates an All-Nothing TitleOption.\n[ECharts](https://ecomfe.github.io/echarts-doc/public/en/option.html)\napplies the default value when the option attribute is not specified.\n\n",
+                "type": "ECharts.Style.CrossStyleOption"
+            },
+            {
+                "name": "defaultLegendOption",
+                "comment": " create a legend option of for default value\n\nThis function creates an All-Nothing TitleOption.\n[ECharts](https://ecomfe.github.io/echarts-doc/public/en/option.html)\napplies the default value when the option attribute is not specified.\n\n",
+                "type": "ECharts.Style.LegendOption"
+            },
+            {
+                "name": "defaultLineStyleOption",
+                "comment": " create a line style option of for default value\n\nThis function creates an All-Nothing TitleOption.\n[ECharts](https://ecomfe.github.io/echarts-doc/public/en/option.html)\napplies the default value when the option attribute is not specified.\n\n",
+                "type": "ECharts.Style.LineStyleOption"
+            },
+            {
+                "name": "defaultShadowStyleOption",
+                "comment": " create a shadow style option of for default value\n\nThis function creates an All-Nothing TitleOption.\n[ECharts](https://ecomfe.github.io/echarts-doc/public/en/option.html)\napplies the default value when the option attribute is not specified.\n\n",
+                "type": "ECharts.Style.ShadowStyleOption"
+            },
+            {
+                "name": "defaultTextStyleOption",
+                "comment": " create a text style option of for default value\n\nThis function creates an All-Nothing TitleOption.\n[ECharts](https://ecomfe.github.io/echarts-doc/public/en/option.html)\napplies the default value when the option attribute is not specified.\n\n",
+                "type": "ECharts.Style.TextStyleOption"
+            },
+            {
+                "name": "defaultTitleOption",
+                "comment": " create a title option of for default value\n\nThis function creates an All-Nothing TitleOption.\n[ECharts](https://ecomfe.github.io/echarts-doc/public/en/option.html)\napplies the default value when the option attribute is not specified.\n\n",
+                "type": "ECharts.Style.TitleOption"
+            },
+            {
+                "name": "defaultTooltipAxisPointerOption",
+                "comment": " create a tooltip axis pointer option of for default value\n\nThis function creates an All-Nothing TitleOption.\n[ECharts](https://ecomfe.github.io/echarts-doc/public/en/option.html)\napplies the default value when the option attribute is not specified.\n\n",
+                "type": "ECharts.Style.TooltipAxisPointerOption"
+            },
+            {
+                "name": "defaultTooltipOption",
+                "comment": " create a tooltip option of for default value\n\nThis function creates an All-Nothing TitleOption.\n[ECharts](https://ecomfe.github.io/echarts-doc/public/en/option.html)\napplies the default value when the option attribute is not specified.\n\n",
+                "type": "ECharts.Style.TooltipOption"
+            },
+            {
+                "name": "defaultXAxisOption",
+                "comment": " create a xAxis option of for default value\n\nThis function creates an All-Nothing XAxisOption.\n[ECharts](https://ecomfe.github.io/echarts-doc/public/en/option.html)\napplies the default value when the option attribute is not specified.\n\n",
+                "type": "ECharts.Style.XAxisOption"
+            },
+            {
+                "name": "defaultYAxisOption",
+                "comment": " create a yAxis option of for default value\n\nThis function creates an All-Nothing YAxisOption.\n[ECharts](https://ecomfe.github.io/echarts-doc/public/en/option.html)\napplies the default value when the option attribute is not specified.\n\n",
+                "type": "ECharts.Style.YAxisOption"
+            },
+            {
+                "name": "encodeAnimationEasingValue",
+                "comment": " encode the animation easing value to Json.Encode.Value\n",
+                "type": "ECharts.Style.AnimationEasing -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeAxisLabel",
+                "comment": " encode the axisLabel option to Json.Encode.Value\n",
+                "type": "ECharts.Style.AxisLabel -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeCrossStyleOption",
+                "comment": " encode the cross style option to Json.Encode.Value\n",
+                "type": "ECharts.Style.CrossStyleOption -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeHorizontalAlignmentValue",
+                "comment": " encode the horizontal alignment value to Json.Encode.Value\n",
+                "type": "ECharts.Style.HorizontalAlignment -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeLegendOption",
+                "comment": " encode the legend option to Json.Encode.Value\n",
+                "type": "ECharts.Style.LegendOption -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeLineStyleOption",
+                "comment": " encode the line style option to Json.Encode.Value\n",
+                "type": "ECharts.Style.LineStyleOption -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeLineStyleTypeValue",
+                "comment": " encode the line style type value to Json.Encode.Value\n",
+                "type": "ECharts.Style.LineStyleType -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeOrientationValue",
+                "comment": " encode the orientation value to Json.Encode.Value\n",
+                "type": "ECharts.Style.Orientation -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeSelectedModeValue",
+                "comment": " encode the selected mode value to Json.Encode.Value\n",
+                "type": "ECharts.Style.SelectedMode -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeShadowStyleOption",
+                "comment": " encode the shadow option to Json.Encode.Value\n",
+                "type": "ECharts.Style.ShadowStyleOption -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeSpacingValue",
+                "comment": " encode the spacing value to Json.Encode.Value\n",
+                "type": "ECharts.Style.Spacing -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeTextStyleOption",
+                "comment": " encode the text style option to Json.Encode.Value\n",
+                "type": "ECharts.Style.TextStyleOption -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeTitleOption",
+                "comment": " encode the title option to Json.Encode.Value\n",
+                "type": "ECharts.Style.TitleOption -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeTooltipOption",
+                "comment": " encode the tooltip option to Json.Encode.Value\n",
+                "type": "ECharts.Style.TooltipOption -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeVerticalAlignmentValue",
+                "comment": " encode the vertical alignment value to Json.Encode.Value\n",
+                "type": "ECharts.Style.VerticalAlignment -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeXAxisOption",
+                "comment": " encode the xAxis option to Json.Encode.Value\n",
+                "type": "ECharts.Style.XAxisOption -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeYAxisOption",
+                "comment": " encode the yAxis option to Json.Encode.Value\n",
+                "type": "ECharts.Style.YAxisOption -> Json.Encode.Value"
+            }
+        ],
+        "binops": []
+    }
+]

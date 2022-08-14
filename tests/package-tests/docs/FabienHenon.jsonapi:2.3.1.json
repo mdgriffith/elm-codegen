@@ -1,0 +1,312 @@
+[
+    {
+        "name": "JsonApi.Decode",
+        "comment": " Provides functions to decode json api document with their resources and their relationships\n\n_Example json:_\n\n```json\n{\n    \"meta\": {\n        \"redirect\": true\n    },\n    \"data\": [\n        {\n            \"type\": \"posts\",\n            \"id\": \"13608770-76dd-47e5-a1c4-4d0d9c2483ad\",\n            \"links\": {\n                \"self\": \"http://link-to-post/2\"\n            },\n            \"attributes\": {\n                \"title\": \"First post\",\n                \"content\": \"First post content\"\n            },\n            \"relationships\": {\n                \"creator\": {\n                    \"data\": {\n                        \"type\": \"creators\",\n                        \"id\": \"22208770-76dd-47e5-a1c4-4d0d9c2483ad\"\n                    },\n                    \"links\": {\n                        \"related\": \"http://link-to-creator/1\"\n                    }\n                },\n                \"comments\": {\n                    \"links\": {},\n                    \"data\": [\n                        {\n                            \"type\": \"comment\",\n                            \"id\": \"22208770-76dd-47e5-a1c4-4d0d9c2483ab\"\n                        },\n                        {\n                            \"type\": \"comment\",\n                            \"id\": \"cb0759b0-03ab-4291-b067-84a9017fea6f\"\n                        }\n                    ]\n                }\n            }\n        },\n        {\n            \"type\": \"posts\",\n            \"id\": \"13608770-76dd-47e5-a1c4-4d0d9c2483ae\",\n            \"links\": {\n                \"self\": \"http://link-to-post/2\"\n            },\n            \"attributes\": {\n                \"title\": \"Second post\",\n                \"content\": \"Second post content\"\n            },\n            \"relationships\": {\n                \"creator\": {\n                    \"data\": {\n                        \"type\": \"creators\",\n                        \"id\": \"22208770-76dd-47e5-a1c4-4d0d9c2483ad\"\n                    },\n                    \"links\": {\n                        \"related\": \"http://lnk-to-creator/1\"\n                    }\n                },\n                \"comments\": {\n                    \"links\": {},\n                    \"data\": [\n                        {\n                            \"type\": \"comment\",\n                            \"id\": \"22208770-76dd-47e5-a1c4-4d0d9c2483ac\"\n                        }\n                    ]\n                }\n            }\n        }\n    ],\n    \"included\": [\n        {\n            \"type\": \"creators\",\n            \"id\": \"22208770-76dd-47e5-a1c4-4d0d9c2483ad\",\n            \"attributes\": {\n                \"firstname\": \"John\",\n                \"lastname\": \"Doe\"\n            },\n            \"links\": {\n                \"self\": \"http://link-to-creator/1\"\n            },\n            \"relationships\": {}\n        },\n        {\n            \"type\": \"comment\",\n            \"id\": \"22208770-76dd-47e5-a1c4-4d0d9c2483ac\",\n            \"attributes\": {\n                \"content\": \"Comment 1 content\",\n                \"email\": \"john@doe.com\"\n            },\n            \"links\": {\n                \"self\": \"http://link-to-comment/1\"\n            },\n            \"relationships\": {}\n        },\n        {\n            \"type\": \"comment\",\n            \"id\": \"22208770-76dd-47e5-a1c4-4d0d9c2483ab\",\n            \"attributes\": {\n                \"content\": \"Comment 2 content\",\n                \"email\": \"john@doe.com\"\n            },\n            \"links\": {\n                \"self\": \"http://link-to-comment/2\"\n            },\n            \"relationships\": {}\n        },\n        {\n            \"type\": \"comment\",\n            \"id\": \"cb0759b0-03ab-4291-b067-84a9017fea6f\",\n            \"attributes\": {\n                \"content\": \"Comment 3 content\",\n                \"email\": \"john@doe.com\"\n            },\n            \"links\": {\n                \"self\": \"http://link-to-comment/3\"\n            },\n            \"relationships\": {}\n        }\n    ]\n}\n```\n\n\n# Decoders\n\n@docs resources, resource, resourcesWithMeta, resourceWithMeta, relationship, relationships, meta\n\n\n# Errors\n\n@docs Error, errorToFailure\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Error",
+                "comment": " `Error` object containing information about the error in the document\n",
+                "args": [],
+                "type": "{ id : Maybe.Maybe String.String, links : Maybe.Maybe (Dict.Dict String.String String.String), status : Maybe.Maybe String.String, code : Maybe.Maybe String.String, title : Maybe.Maybe String.String, detail : Maybe.Maybe String.String, source : Maybe.Maybe Json.Decode.Value, meta : Maybe.Maybe Json.Decode.Value }"
+            }
+        ],
+        "values": [
+            {
+                "name": "errorToFailure",
+                "comment": " Converts a `Decoder` with an `Err` `Result` to a failed `Decoder`, and\na `Decoder` with an `Ok` `Result` to a succeed `Decoder` with the `Document`.\n",
+                "type": "Json.Decode.Decoder (Result.Result (List.List JsonApi.Decode.Error) (JsonApi.Document.Document meta data)) -> Json.Decode.Decoder (JsonApi.Document.Document meta data)"
+            },
+            {
+                "name": "meta",
+                "comment": " Decode a document, its meta object and no resource from the json api content.\n\nYou pass it the meta decoder and it will return a\nnew `Decoder` representing a `Document` with your meta object and no resource, **OR**\na list of `Error`s.\n\n**(No `data` property is decoded from the json api document)**\n\nHere is an example of document `Decoder` with only meta:\n\n    type alias Meta =\n        { redirect : Bool\n        }\n\n    metaDecoder : Decoder Meta\n    metaDecoder =\n        map Meta\n            (field \"redirect\" bool)\n\n    -- Decoder for our meta object from json api\n    meta metaDecoder\n\n",
+                "type": "Json.Decode.Decoder meta -> Json.Decode.Decoder (Result.Result (List.List JsonApi.Decode.Error) (JsonApi.Document.Document meta JsonApi.Document.NoData))"
+            },
+            {
+                "name": "relationship",
+                "comment": " Decode a relationship from your json api resources.\n\nYou pass it the type of the relationship resource (`\"creator\"` in our example above), the `ResourceInfo`\npassed to your resources `Decoder` and the relationship decoder. It will return a\nnew `Decoder` representing the relationship.\n\nHere is an example of resource `Decoder` with a relationship:\n\n    type alias Post =\n        { id : String\n        , title : String\n        , content : String\n        , creator : Creator\n        }\n\n    type alias Creator =\n        { id : String\n        , firstname : String\n        , lastname : String\n        }\n\n    creatorDecoder : Resource -> Decoder Creator\n    creatorDecoder resourceInfo =\n        map3 Creator\n            (succeed (JsonApi.Resource.id resourceInfo))\n            (field \"firstname\" string)\n            (field \"lastname\" string)\n\n    postDecoder : Resource -> Decoder Post\n    postDecoder resourceInfo =\n        map4 Post\n            (succeed (JsonApi.Resource.id resourceInfo))\n            (field \"title\" string)\n            (field \"content\" string)\n            (relationship \"creator\" resourceInfo creatorDecoder)\n\n    -- Decoder for our posts and its creator from json api\n    resources \"posts\" postDecoder\n\n",
+                "type": "String.String -> JsonApi.Resource.Resource -> (JsonApi.Resource.Resource -> Json.Decode.Decoder a) -> Json.Decode.Decoder a"
+            },
+            {
+                "name": "relationships",
+                "comment": " Decode a list of relationships from your json api resources.\n\nYou pass it the type of the relationship resource (`\"comments\"` in our example above), the `ResourceInfo`\npassed to your resources `Decoder` and the relationship decoder. It will return a\nnew `Decoder` representing the `List` of relationships.\n\nHere is an example of resource `Decoder` with a list of relationships:\n\n    type alias Post =\n        { id : String\n        , title : String\n        , content : String\n        , comments : List Comment\n        }\n\n    type alias Comment =\n        { id : String\n        , content : String\n        , email : String\n        }\n\n    commentDecoder : Resource -> Decoder Comment\n    commentDecoder resourceInfo =\n        map3 Comment\n            (succeed (JsonApi.Resource.id resourceInfo))\n            (field \"content\" string)\n            (field \"email\" string)\n\n    postDecoder : Resource -> Decoder Post\n    postDecoder resourceInfo =\n        map4 Post\n            (succeed (JsonApi.Resource.id resourceInfo))\n            (field \"title\" string)\n            (field \"content\" string)\n            (relationships \"comments\" resourceInfo commentDecoder)\n\n    -- Decoder for our posts and its creator from json api\n    resources \"posts\" postDecoder\n\n",
+                "type": "String.String -> JsonApi.Resource.Resource -> (JsonApi.Resource.Resource -> Json.Decode.Decoder a) -> Json.Decode.Decoder (List.List a)"
+            },
+            {
+                "name": "resource",
+                "comment": " Decode a document with only one resource from the json api content.\n\nYou pass it the type of the resource (`\"posts\"` in our example above) and the resource decoder and it will return a\nnew `Decoder` representing a `Document` with `NoMeta` and your resource, **OR**\na list of `Error`s.\n\n**(The json `data` attribute is an object and not a list)**\n\nHere is an example of resource `Decoder`:\n\n    type alias Post =\n        { id : String\n        , title : String\n        , content : String\n        }\n\n    postDecoder : Resource -> Decoder Post\n    postDecoder resourceInfo =\n        map3 Post\n            (succeed (JsonApi.Resource.id resourceInfo))\n            (field \"title\" string)\n            (field \"content\" string)\n\n    -- Decoder for our post from json api\n    resource \"posts\" postDecoder\n\n",
+                "type": "String.String -> (JsonApi.Resource.Resource -> Json.Decode.Decoder a) -> Json.Decode.Decoder (Result.Result (List.List JsonApi.Decode.Error) (JsonApi.Document.Document JsonApi.Document.NoMeta a))"
+            },
+            {
+                "name": "resourceWithMeta",
+                "comment": " Decode a document, its meta object and only one resource from the json api content.\n\nYou pass it the type of the resources (`\"posts\"` in our example above), the resource decoder and the meta decoder and it will return a\nnew `Decoder` representing a `Document` with your meta object and your resource, **OR**\na list of `Error`s.\n\n**(The json `data` attribute is an object and not a list)**\n\nHere is an example of resource `Decoder` with meta:\n\n    type alias Post =\n        { id : String\n        , title : String\n        , content : String\n        }\n\n    type alias Meta =\n        { redirect : Bool\n        }\n\n    postDecoder : Resource -> Decoder Post\n    postDecoder resourceInfo =\n        map3 Post\n            (succeed (JsonApi.Resource.id resourceInfo))\n            (field \"title\" string)\n            (field \"content\" string)\n\n    metaDecoder : Decoder Meta\n    metaDecoder =\n        map Meta\n            (field \"redirect\" bool)\n\n    -- Decoder for our post from json api\n    resourceWithMeta \"posts\" postDecoder metaDecoder\n\n",
+                "type": "String.String -> (JsonApi.Resource.Resource -> Json.Decode.Decoder a) -> Json.Decode.Decoder meta -> Json.Decode.Decoder (Result.Result (List.List JsonApi.Decode.Error) (JsonApi.Document.Document meta a))"
+            },
+            {
+                "name": "resources",
+                "comment": " Decode a document and its resources from the json api content.\n\nYou pass it the type of the resources (`\"posts\"` in our example above) and the resource decoder and it will return a\nnew `Decoder` representing a `Document` with `NoMeta` and a `List` of your resources, **OR**\na list of `Error`s.\n\nHere is an example of resource `Decoder`:\n\n    type alias Post =\n        { id : String\n        , title : String\n        , content : String\n        }\n\n    postDecoder : Resource -> Decoder Post\n    postDecoder resourceInfo =\n        map3 Post\n            (succeed (JsonApi.Resource.id resourceInfo))\n            (field \"title\" string)\n            (field \"content\" string)\n\n    -- Decoder for our posts from json api\n    resources \"posts\" postDecoder\n\n",
+                "type": "String.String -> (JsonApi.Resource.Resource -> Json.Decode.Decoder a) -> Json.Decode.Decoder (Result.Result (List.List JsonApi.Decode.Error) (JsonApi.Document.Document JsonApi.Document.NoMeta (List.List a)))"
+            },
+            {
+                "name": "resourcesWithMeta",
+                "comment": " Decode a document, its meta object and its resources from the json api content.\n\nYou pass it the type of the resources (`\"posts\"` in our example above), the resource decoder and the meta decoder and it will return a\nnew `Decoder` representing a `Document` with your meta object and a `List` of your resources, **OR**\na list of `Error`s.\n\nHere is an example of resource `Decoder` with meta:\n\n    type alias Post =\n        { id : String\n        , title : String\n        , content : String\n        }\n\n    type alias Meta =\n        { redirect : Bool\n        }\n\n    postDecoder : Resource -> Decoder Post\n    postDecoder resourceInfo =\n        map3 Post\n            (succeed (JsonApi.Resource.id resourceInfo))\n            (field \"title\" string)\n            (field \"content\" string)\n\n    metaDecoder : Decoder Meta\n    metaDecoder =\n        map Meta\n            (field \"redirect\" bool)\n\n    -- Decoder for our posts from json api\n    resourcesWithMeta \"posts\" postDecoder metaDecoder\n\n",
+                "type": "String.String -> (JsonApi.Resource.Resource -> Json.Decode.Decoder a) -> Json.Decode.Decoder meta -> Json.Decode.Decoder (Result.Result (List.List JsonApi.Decode.Error) (JsonApi.Document.Document meta (List.List a)))"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "JsonApi.Document",
+        "comment": " Provides a type alias and functions to handle decoded Json API documents.\n\n\n# Types\n\n@docs Document, NoMeta, NoData\n\n\n# Getter functions\n\n@docs jsonApiVersion, meta, resource, links\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Document",
+                "comment": " The `Document` represents the global Json API document.\nThis version of the `Document` is retrieved via `JsonApi.Decode.` functions.\n\nIt allows you to retrieve information about the decoded `Document` and the decoded\n`Resource`(s)\n\n_Example of json api document:_\n\n```json\n{\n    \"data\": [\n        // resources ...\n    ],\n    \"meta\": {\n        \"redirect\": true\n    },\n    \"jsonapi\": {\n        \"version\": \"1.0\"\n    },\n    \"links\": {\n        \"self\": \"http://self\"\n    }\n}\n```\n\nWith a resource and a meta with the following type aliases:\n\n    type alias Post =\n        { id : String\n        , name : String\n        }\n\n    type alias Meta =\n        { redirect : Bool\n        }\n\nThe decoded `Document` will have the following type `Document Meta Post` if it contains\nonly one resource, or `Document Meta (List Post)` if it contains several resources.\n\n",
+                "args": [
+                    "meta",
+                    "data"
+                ],
+                "type": "JsonApi.Internal.Document.Document meta data"
+            },
+            {
+                "name": "NoData",
+                "comment": " `NoData` is a type of resource that means there is no `data` object or array in\nthe json api document.\n",
+                "args": [],
+                "type": "JsonApi.Internal.Document.NoData"
+            },
+            {
+                "name": "NoMeta",
+                "comment": " `NoMeta` is a type of `meta` object from a Json API `Document` that means\nthere is no meta to be decoded in this `Document`.\n",
+                "args": [],
+                "type": "JsonApi.Internal.Document.NoMeta"
+            }
+        ],
+        "values": [
+            {
+                "name": "jsonApiVersion",
+                "comment": " Retrieves the Json API version.\n\n_The default version is 1.0_\n\n",
+                "type": "JsonApi.Document.Document meta data -> String.String"
+            },
+            {
+                "name": "links",
+                "comment": " Retrieves the root links of the document.\n",
+                "type": "JsonApi.Document.Document meta data -> Dict.Dict String.String String.String"
+            },
+            {
+                "name": "meta",
+                "comment": " Retrieves the `meta` object of the `Document` if it exists or a `NoMeta` object.\n",
+                "type": "JsonApi.Document.Document meta data -> meta"
+            },
+            {
+                "name": "resource",
+                "comment": " Retrieves the resource or the `List` of resources in this `Document`.\n",
+                "type": "JsonApi.Document.Document meta data -> data"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "JsonApi.Encode",
+        "comment": " Provides a function to encode documents to a `Json.Encode.Value`. You can then finally\nencode it to a json api string with `Json.Encode.encode`.\n\n\n# Encoders\n\n@docs document\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "document",
+                "comment": " Encodes a document.\n\nHere is an example with many resources and a `meta` object:\n\n    type alias Post =\n        { id : String\n        , links : Dict String String\n        , title : String\n        , content : String\n        , creator : Creator\n        , comments : List Comment\n        }\n\n    type alias Creator =\n        { id : String\n        , links : Dict String String\n        , firstname : String\n        , lastname : String\n        }\n\n    type alias Comment =\n        { id : String\n        , links : Dict String String\n        , content : String\n        , email : String\n        }\n\n    post : Post\n    post =\n        { id = \"post-1\"\n        , links = Dict.fromList [ ( \"self\", \"http://url-to-post/1\" ) ]\n        , title = \"Post 1\"\n        , content = \"Post content 1\"\n        , creator = creator\n        , comments = [ comment1 ]\n        }\n\n    creator : Creator\n    creator =\n        { id = \"creator-1\"\n        , links = Dict.fromList [ ( \"self\", \"http://url-to-creator/1\" ) ]\n        , firstname = \"John\"\n        , lastname = \"Doe\"\n        }\n\n    comment1 : Comment\n    comment1 =\n        { id = \"comment-1\"\n        , links = Dict.fromList [ ( \"self\", \"http://url-to-comment/1\" ) ]\n        , content = \"Comment 1\"\n        , email = \"email@email.com\"\n        }\n\n    postToResource : Post -> Resource\n    postToResource post =\n        JsonApi.Resource.build \"posts\"\n            |> JsonApi.Resource.withId post.id\n            |> JsonApi.Resource.withLinks post.links\n            |> JsonApi.Resource.withAttributes\n                [ ( \"title\", string post.title )\n                , ( \"content\", string post.content )\n                ]\n            |> JsonApi.Resource.withRelationship \"creator\" (JsonApi.Resource.relationship post.creator.id (creatorToResource post.creator))\n            |> JsonApi.Resource.withRelationship \"comments\" (JsonApi.Resource.relationships (List.map commentRelationship post.comments))\n\n    creatorToResource : Creator -> Resource\n    creatorToResource creator =\n        JsonApi.Resource.build \"creators\"\n            |> JsonApi.Resource.withId creator.id\n            |> JsonApi.Resource.withLinks creator.links\n            |> JsonApi.Resource.withAttributes\n                [ ( \"firstname\", string creator.firstname )\n                , ( \"lastname\", string creator.lastname )\n                ]\n\n    commentRelationship : Comment -> ( String, Resource )\n    commentRelationship comment =\n        ( comment.id, commentToResource comment )\n\n    commentToResource : Comment -> Resource\n    commentToResource comment =\n        JsonApi.Resource.build \"comment\"\n            |> JsonApi.Resource.withId comment.id\n            |> JsonApi.Resource.withLinks comment.links\n            |> JsonApi.Resource.withAttributes\n                [ ( \"content\", string comment.content )\n                , ( \"email\", string comment.email )\n                ]\n\n    documentToEncode : Document\n    documentToEncode =\n        JsonApi.Encode.Document.build\n            |> JsonApi.Encode.Document.withResource (postToResource post)\n            |> JsonApi.Encode.Document.withMeta (object [ ( \"redirect\", bool True ) ])\n\n\n    -- Encodes the document\n    JsonApi.Encode.document documentToEncode\n\n",
+                "type": "JsonApi.Encode.Document.Document -> Json.Encode.Value"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "JsonApi.Encode.Document",
+        "comment": " Provides a type alias and functions to create a new Json API document to be\nencoded via `JsonApi.Encode.document`.\n\n\n# Type\n\n@docs Document\n\n\n# New document\n\n@docs build\n\n\n# Getter functions\n\n@docs jsonApiVersion, meta, resource, resources, links\n\n\n# Setter functions\n\n@docs withJsonApiVersion, withMeta, withResource, withResources, withLinks\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Document",
+                "comment": " The `Document` represents the global Json API document.\nThis version of the `Document` is to be encoded via `JsonApi.Encode.document`. Thus\nit has functions to create a new `Document`.\n\n_Example of json api document:_\n\n```json\n{\n    \"data\": [\n        // resources ...\n    ],\n    \"meta\": {\n        \"redirect\": true\n    },\n    \"jsonapi\": {\n        \"version\": \"1.0\"\n    }\n}\n```\n\nAnd how to build it with the `JsonApi.Encode.Document` module:\n\n    build\n        |> withJsonApiVersion \"1.0\"\n        |> withMeta (object [ ( \"redirect\", bool True ) ])\n        |> withResources resources\n\n",
+                "args": [],
+                "type": "JsonApi.Internal.Document.DocumentEncode"
+            }
+        ],
+        "values": [
+            {
+                "name": "build",
+                "comment": " Creates a new Json API `Document` with no meta, no resource and a default\nJson API version set to 1.0\n\n    myDocument : Document\n    myDocument =\n        build\n\n",
+                "type": "JsonApi.Encode.Document.Document"
+            },
+            {
+                "name": "jsonApiVersion",
+                "comment": " Retrieves the Json API version.\n\nFrom the json document above, `jsonApiVersion` will return `\"1.0\"`\n\n",
+                "type": "JsonApi.Encode.Document.Document -> String.String"
+            },
+            {
+                "name": "links",
+                "comment": " Retrieves the `links` object of the `Document`.\n",
+                "type": "JsonApi.Encode.Document.Document -> Dict.Dict String.String String.String"
+            },
+            {
+                "name": "meta",
+                "comment": " Retrieves the `meta` object of the `Document` if it exists.\n",
+                "type": "JsonApi.Encode.Document.Document -> Maybe.Maybe Json.Encode.Value"
+            },
+            {
+                "name": "resource",
+                "comment": " Retrieves the resource (in the `data` object) of the `Document`.\nIf there is no resource `Nothing` is returned.\nIf there are several resources, the first resource is returned.\n",
+                "type": "JsonApi.Encode.Document.Document -> Maybe.Maybe JsonApi.Resource.Resource"
+            },
+            {
+                "name": "resources",
+                "comment": " Retrieves the resources (in the `data` array) of the `Document`.\nIf there is no resource set `Nothing` is returned.\nIf resources have been set but the list is empty, an empty list is also returned.\nIf there is only a resouce, a list with this resource is returned.\n",
+                "type": "JsonApi.Encode.Document.Document -> Maybe.Maybe (List.List JsonApi.Resource.Resource)"
+            },
+            {
+                "name": "withJsonApiVersion",
+                "comment": " Sets the Json API version of the document\n\n    myDocument : Document\n    myDocument =\n        build\n            |> withJsonApiVersion \"1.0\"\n\n\\_The default version is 1.0\n\n",
+                "type": "String.String -> JsonApi.Encode.Document.Document -> JsonApi.Encode.Document.Document"
+            },
+            {
+                "name": "withLinks",
+                "comment": " Sets the `links` value of the `Document`\n\n    myDocument : Document\n    myDocument =\n        build\n            |> withLinks (Dict.fromList [ ( \"self\", \"http://self\" ) ])\n\n",
+                "type": "Dict.Dict String.String String.String -> JsonApi.Encode.Document.Document -> JsonApi.Encode.Document.Document"
+            },
+            {
+                "name": "withMeta",
+                "comment": " Sets the `meta` value of the `Document`\n\n    myDocument : Document\n    myDocument =\n        build\n            |> withMeta (object [ ( \"redirect\", bool True ) ])\n\n",
+                "type": "Json.Encode.Value -> JsonApi.Encode.Document.Document -> JsonApi.Encode.Document.Document"
+            },
+            {
+                "name": "withResource",
+                "comment": " Sets the `data` value of the Json API `Document` to one resource.\n\n    myResource : Resource\n    myResource =\n        Resource.build \"posts\"\n            |> Resource.withId \"post-1\"\n\n    myDocument : Document\n    myDocument =\n        build\n            |> withResource myResource\n\n",
+                "type": "JsonApi.Resource.Resource -> JsonApi.Encode.Document.Document -> JsonApi.Encode.Document.Document"
+            },
+            {
+                "name": "withResources",
+                "comment": " Sets the `data` value of the Json API `Document` to a list of resources.\n\n    myResources : List Resource\n    myResources =\n        [ Resource.build \"posts\"\n            |> Resource.withId \"post-1\"\n        , Resource.build \"posts\"\n            |> Resource.withId \"post-2\"\n        ]\n\n    myDocument : Document\n    myDocument =\n        build\n            |> withResources myResources\n\n",
+                "type": "List.List JsonApi.Resource.Resource -> JsonApi.Encode.Document.Document -> JsonApi.Encode.Document.Document"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "JsonApi.Resource",
+        "comment": " JsonApi.Resource exposes the `Resource` type and functions to get and set information\nfor your resources.\n\n\n# Type\n\n@docs Resource, OneOrManyRelationships, OneOrMoreRelationshipData, RelationshipData, RelationshipDesc\n\n\n# New resource\n\n@docs build, fromResource\n\n\n# Getter functions\n\n@docs id, links, resType, getRelationshipsDesc\n\n\n# Setter functions\n\n@docs withId, withLinks, withAttributes, withRelationship\n\n\n# Relationships\n\n@docs relationship, relationships\n\n",
+        "unions": [
+            {
+                "name": "OneOrMoreRelationshipData",
+                "comment": " Relationship's data object. It's a variant type because in a relationship\nthe `data` field can either: be null, have one relationship, have many relationships.\n\n_See `getRelationshipsDesc` for more information_\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NoRelationship",
+                        []
+                    ],
+                    [
+                        "One",
+                        [
+                            "JsonApi.Resource.RelationshipData"
+                        ]
+                    ],
+                    [
+                        "Many",
+                        [
+                            "List.List JsonApi.Resource.RelationshipData"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "OneOrManyRelationships",
+                "comment": " This type is used to represent either one or many relationships in your `Resource` object.\n\nSee `withRelationship` function for more information\n\n",
+                "args": [],
+                "type": "JsonApi.Internal.ResourceInfo.OneOrManyRelationships"
+            },
+            {
+                "name": "RelationshipData",
+                "comment": " Description of the `data` object in a `relationship` object.\nContains the `id` of the relationship and it's `type`\n\n_See `getRelationshipsDesc` for more information_\n\n",
+                "args": [],
+                "type": "{ id : String.String, type_ : String.String }"
+            },
+            {
+                "name": "RelationshipDesc",
+                "comment": " The description of a relationship in the `relationships` field of the jsonapi object.\n\nFor instance (in jsonapi):\n\n    \"relationships\": {\n        \"creator\": {\n            \"data\": {\n                \"type\": \"creators\",\n                \"id\": \"22208770-76dd-47e5-a1c4-4d0d9c2483ad\"\n            },\n            \"links\": {\n                \"related\": \"http://link-to-creator/1\"\n            }\n        }\n    }\n\nThis type contains the links defined in the relationship and the `data` object of\nthe relationship\n\n_See `getRelationshipsDesc` for more information_\n\n",
+                "args": [],
+                "type": "{ data : JsonApi.Resource.OneOrMoreRelationshipData, links : Dict.Dict String.String String.String }"
+            },
+            {
+                "name": "Resource",
+                "comment": " The `Resource` represents a resource. It is passed to your resource decoders, but you can also use it to encode resources to json api, via a `Document`.\nIt contains useful information for decoding and encoding your resource: resource `id`, `links`, `attributes`, `relationships`, ...\n\n\\_Example of json api <resource:_>\n\n```json\n{\n    \"data\": [\n        {\n            \"type\": \"users\",\n            \"id\": \"13608770-76dd-47e5-a1c4-4d0d9c2483ad\",\n            \"links\": {\n                \"self\": \"http://link-to-user\",\n                \"profile\": \"http://link-to-user-profile\"\n            },\n            \"attributes\": {\n                \"firstname\": \"John\",\n                \"lastname\": \"Doe\",\n                \"gender\": \"male\"\n            },\n            \"relationships\": {}\n        }\n    ]\n}\n```\n\nAnd how to build it with the `JsonApi.Resource` module:\n\n    build \"users\"\n        |> withId \"13608770-76dd-47e5-a1c4-4d0d9c2483ad\"\n        |> withLinks\n            (Dict.fromList\n                [ ( \"self\", \"http://link-to-user\" )\n                , ( \"profile\", \"http://link-to-user-profile\" )\n                ]\n            )\n        |> withAttributes\n            [ ( \"firstname\", string \"John\" )\n            , ( \"lastname\", string \"Doe\" )\n            , ( \"gender\", string \"male\" )\n            ]\n\n",
+                "args": [],
+                "type": "JsonApi.Internal.ResourceInfo.ResourceInfo"
+            }
+        ],
+        "values": [
+            {
+                "name": "build",
+                "comment": " Builds a new `Resource` with the specified type name\n\nYou can build your resources like this:\n\n    myResource : Post -> Resource\n    myResource post =\n        build \"posts\"\n            |> withId \"post-1\"\n            |> withLinks (Dict.fromList [ ( \"self\", \"http://url-to-post/1\" ) ])\n\n",
+                "type": "String.String -> JsonApi.Resource.Resource"
+            },
+            {
+                "name": "fromResource",
+                "comment": " Builds a new `Resource` from the specified `Resource` and with the specified type name\n\nYou can build your resources like this:\n\n    myResource : Resource -> Resource\n    myResource resource =\n        fromResource \"posts\" resource\n\n",
+                "type": "String.String -> JsonApi.Resource.Resource -> JsonApi.Resource.Resource"
+            },
+            {
+                "name": "getRelationshipsDesc",
+                "comment": " Returns the relationships description of your resource.\n\n**This is not a way to decode a relationship, only a quick way to get the relationship ids and types**\n\n    type alias Post =\n        { id : String\n        , links : Dict String String\n        , title : String\n        , content : String\n        , relationships : Dict String JsonApi.Resource.RelationshipDesc\n        }\n\n    decoder : Resource -> Decoder Post\n    decoder resourceInfo =\n        map5 Post\n            (succeed (JsonApi.Resource.id resourceInfo))\n            (succeed (JsonApi.Resource.links resourceInfo))\n            (field \"title\" string)\n            (field \"content\" string)\n            (succeed (JsonApi.Resource.getRelationshipsDesc resourceInfo))\n\nSay the relationships for this post are:\n\n    \"relationships\": {\n        \"creator\": {\n            \"data\": {\n                \"type\": \"creators\",\n                \"id\": \"22208770-76dd-47e5-a1c4-4d0d9c2483ad\"\n            },\n            \"links\": {\n                \"related\": \"http://link-to-creator/1\"\n            }\n        },\n        \"comments\": {\n            \"links\": {},\n            \"data\": [\n                {\n                    \"type\": \"comment\",\n                    \"id\": \"22208770-76dd-47e5-a1c4-4d0d9c2483ab\"\n                },\n                {\n                    \"type\": \"comment\",\n                    \"id\": \"cb0759b0-03ab-4291-b067-84a9017fea6f\"\n                }\n            ]\n        }\n    }\n\nThen you will get these information:\n\n    Dict.get \"creator\" post.relationships\n\n    Just\n        { links = [ ( \"related\", \"http://link-to-creator/1\" ) ]\n        , data =\n            JsonApi.Resource.One\n                { id = \"22208770-76dd-47e5-a1c4-4d0d9c2483ad\"\n                , type_ = \"creators\"\n                }\n        }\n\n    Dict.get \"comments\" post.relationships\n\n    Just\n        { links = []\n        , data =\n            JsonApi.Resource.Many\n                [ { id = \"22208770-76dd-47e5-a1c4-4d0d9c2483ab\"\n                  , type_ = \"comment\"\n                  }\n                , { id = \"cb0759b0-03ab-4291-b067-84a9017fea6f\"\n                  , type_ = \"comment\"\n                  }\n                ]\n        }\n\n",
+                "type": "JsonApi.Resource.Resource -> Dict.Dict String.String JsonApi.Resource.RelationshipDesc"
+            },
+            {
+                "name": "id",
+                "comment": " Returns the `id` of your resource.\n\nFrom the json example above, `id` will return `13608770-76dd-47e5-a1c4-4d0d9c2483ad`\n\n",
+                "type": "JsonApi.Resource.Resource -> String.String"
+            },
+            {
+                "name": "links",
+                "comment": " Returns the `links` of your resource.\n\nFrom the json example above, `links` will return a `Dict` with this value:\n\n    [ ( \"self\", \"http://link-to-user\" )\n    , ( \"profile\", \"http://link-to-user-profile\" )\n    ]\n\n",
+                "type": "JsonApi.Resource.Resource -> Dict.Dict String.String String.String"
+            },
+            {
+                "name": "relationship",
+                "comment": " Defines a relationship that can then be added to its parent `Resource`.\nIt takes the `id` of the resource and the resource.\n\n    creatorResource : Creator -> Resource\n    creatorResource creator =\n        build \"creator\"\n            |> withAttributes [ ( \"firstname\", string creator.firstname ) ]\n\n    myResource : Post -> Resource\n    myResource post =\n        build \"posts\"\n            |> withRelationship \"creators\" (relationship creator.id (creatorResource creator))\n\n",
+                "type": "String.String -> JsonApi.Resource.Resource -> JsonApi.Resource.OneOrManyRelationships"
+            },
+            {
+                "name": "relationships",
+                "comment": " Defines a list of relationships that can then be added to a parent `Resource`.\nIt takes a `List` of `Tuple`s with the `id` of the resource and the resource.\n\n    commentResource : Comment -> Resource\n    commentResource comment =\n        build \"comment\"\n            |> withAttributes [ ( \"content\", string comment.content ) ]\n\n    myResource : Post -> Resource\n    myResource post =\n        build \"posts\"\n            |> withRelationship \"comments\" (relationships (List.map (\\comment -> ( \"comment\", commentResource comment )) comments))\n\n",
+                "type": "List.List ( String.String, JsonApi.Resource.Resource ) -> JsonApi.Resource.OneOrManyRelationships"
+            },
+            {
+                "name": "resType",
+                "comment": " Returns the `type` of your resource.\n\nFrom the json example above, `type_` will return `users`\n\n",
+                "type": "JsonApi.Resource.Resource -> String.String"
+            },
+            {
+                "name": "withAttributes",
+                "comment": " Sets the attributes of the `Resource` object.\nThis is the payload of your resource.\n\n    myResource : Post -> Resource\n    myResource post =\n        build \"posts\"\n            |> withAttributes\n                [ ( \"firstname\", string \"John\" )\n                , ( \"lastname\", string \"Doe\" )\n                , ( \"gender\", string \"male\" )\n                ]\n\n",
+                "type": "List.List ( String.String, Json.Encode.Value ) -> JsonApi.Resource.Resource -> JsonApi.Resource.Resource"
+            },
+            {
+                "name": "withId",
+                "comment": " Sets the id of the `Resource` object\n\n    myResource : Post -> Resource\n    myResource post =\n        build \"posts\"\n            |> withId \"post-1\"\n\n",
+                "type": "String.String -> JsonApi.Resource.Resource -> JsonApi.Resource.Resource"
+            },
+            {
+                "name": "withLinks",
+                "comment": " Sets the links of the `Resource` object\n\n    myResource : Post -> Resource\n    myResource post =\n        build \"posts\"\n            |> withLinks (Dict.fromList [ ( \"self\", \"http://url-to-post/1\" ) ])\n\n",
+                "type": "Dict.Dict String.String String.String -> JsonApi.Resource.Resource -> JsonApi.Resource.Resource"
+            },
+            {
+                "name": "withRelationship",
+                "comment": " Adds a relationship in the `Resource` object.\nYou have to pass it the name of the relationship and a description of the relationship resource (See `relationship` and `relationships`)\n\n    myResource : Post -> Resource\n    myResource post =\n        build \"posts\"\n            |> withRelationship \"creators\" (relationship creator.id (creatorResource creator))\n\n",
+                "type": "String.String -> JsonApi.Resource.OneOrManyRelationships -> JsonApi.Resource.Resource -> JsonApi.Resource.Resource"
+            }
+        ],
+        "binops": []
+    }
+]

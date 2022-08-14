@@ -1,0 +1,236 @@
+[
+    {
+        "name": "TDict",
+        "comment": " A dictionary mapping unique keys to values. The keys can be any type that can be converted to an elm 'comparable'.\n\nThis is helpful if you have keys that are really just a comparable underneath, but you want to keep them separate using the type system. For instance\n\n    type TagId\n        = TagId Int\n\n    type CustomerId\n        = CustomerId Int\n\n    emptyTagDict =\n        TDict.empty (\\(TagId id) -> id) TagId String\n\n    emptyCustomerDict =\n        TDict.empty (\\(CustomerId id) -> id) CustomerId String\n\nSo inserting a (tag,string) into an emptyTagDict works:\n\n    TDict.insert ( TagId 1, \"some string of interest\" ) emptyTagDict\n\nBut inserting a (tag,string) into an emptyCustomerDict doesn't:\n\n    TDict.insert ( TagId 1, \"some string of interest\" ) emptyCustomerDict\n\n\n# Dictionaries\n\n@docs TDict\n\n\n# Build\n\n@docs empty, clear, insert, update, remove\n\n\n# Query\n\n@docs isEmpty, member, get, size\n\n\n# Lists\n\n@docs keys, values, toList, insertList\n\n\n# Transform\n\n@docs map, foldl, foldr, filter, partition\n\n\n# Combine\n\n@docs union, intersect, diff, merge\n\n",
+        "unions": [
+            {
+                "name": "TDict",
+                "comment": " A dictionary of keys and values. Create a TDict with the `empty` function.\n",
+                "args": [
+                    "k",
+                    "comparable",
+                    "val"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "clear",
+                "comment": " Remove all elements from the TDict\n",
+                "type": "TDict.TDict k comparable val -> TDict.TDict k comparable val"
+            },
+            {
+                "name": "diff",
+                "comment": " Keep a key-value pair when its key does not appear in the second dictionary.\n",
+                "type": "TDict.TDict k comparable v -> TDict.TDict k comparable v -> TDict.TDict k comparable v"
+            },
+            {
+                "name": "empty",
+                "comment": " Create an empty dictionary of keys and values. Requires two conversion functions:\none from the key to comparable, and the other from comparable to key.\n",
+                "type": "(k -> comparable) -> (comparable -> k) -> TDict.TDict k comparable val"
+            },
+            {
+                "name": "filter",
+                "comment": " Keep a key-value pair when it satisfies a predicate.\n",
+                "type": "(k -> v -> Basics.Bool) -> TDict.TDict k comparable v -> TDict.TDict k comparable v"
+            },
+            {
+                "name": "foldl",
+                "comment": " Fold over the key-value pairs in a dictionary, in order from lowest\nkey to highest key.\n",
+                "type": "(k -> v -> b -> b) -> b -> TDict.TDict k comparable v -> b"
+            },
+            {
+                "name": "foldr",
+                "comment": " Fold over the key-value pairs in a dictionary, in order from highest\nkey to lowest key.\n",
+                "type": "(k -> v -> b -> b) -> b -> TDict.TDict k comparable v -> b"
+            },
+            {
+                "name": "get",
+                "comment": " Get the value associated with a key. If the key is not found, return\n`Nothing`. This is useful when you are not sure if a key will be in the\ndictionary.\n",
+                "type": "k -> TDict.TDict k comparable v -> Maybe.Maybe v"
+            },
+            {
+                "name": "insert",
+                "comment": " Insert a key-value pair into a dictionary. Replaces value when there is\na collision.\n",
+                "type": "k -> v -> TDict.TDict k comparable v -> TDict.TDict k comparable v"
+            },
+            {
+                "name": "insertList",
+                "comment": " Merge an association list into a dictionary.\n",
+                "type": "TDict.TDict k comparable v -> List.List ( k, v ) -> TDict.TDict k comparable v"
+            },
+            {
+                "name": "intersect",
+                "comment": " Keep a key-value pair when its key appears in the second dictionary.\nPreference is given to values in the first dictionary.\n",
+                "type": "TDict.TDict k comparable v -> TDict.TDict k comparable v -> TDict.TDict k comparable v"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Determine if a dictionary is empty.\n",
+                "type": "TDict.TDict k comparable val -> Basics.Bool"
+            },
+            {
+                "name": "keys",
+                "comment": " Get all of the keys in a dictionary, sorted from lowest to highest.\n",
+                "type": "TDict.TDict k comparable v -> List.List k"
+            },
+            {
+                "name": "map",
+                "comment": " Apply a function to all values in a dictionary.\n",
+                "type": "(k -> a -> b) -> TDict.TDict k comparable a -> TDict.TDict k comparable b"
+            },
+            {
+                "name": "member",
+                "comment": " Determine if a key is in a dictionary.\n",
+                "type": "k -> TDict.TDict k comparable v -> Basics.Bool"
+            },
+            {
+                "name": "merge",
+                "comment": " The most general way of combining two dictionaries. You provide three\naccumulators for when a given key appears:\n\n1.  Only in the left dictionary.\n2.  In both dictionaries.\n3.  Only in the right dictionary.\n\nYou then traverse all the keys from lowest to highest, building up whatever\nyou want.\n\n",
+                "type": "(k -> a -> result -> result) -> (k -> a -> b -> result -> result) -> (k -> b -> result -> result) -> TDict.TDict k comparable a -> TDict.TDict k comparable b -> result -> result"
+            },
+            {
+                "name": "partition",
+                "comment": " Partition a dictionary according to a predicate. The first dictionary\ncontains all key-value pairs which satisfy the predicate, and the second\ncontains the rest.\n",
+                "type": "(k -> v -> Basics.Bool) -> TDict.TDict k comparable v -> ( TDict.TDict k comparable v, TDict.TDict k comparable v )"
+            },
+            {
+                "name": "remove",
+                "comment": " Remove a key-value pair from a dictionary. If the key is not found,\nno changes are made.\n",
+                "type": "k -> TDict.TDict k comparable val -> TDict.TDict k comparable val"
+            },
+            {
+                "name": "size",
+                "comment": " Determine the number of key-value pairs in the dictionary.\n",
+                "type": "TDict.TDict k comparable v -> Basics.Int"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert a dictionary into an association list of key-value pairs, sorted by keys.\n",
+                "type": "TDict.TDict k comparable v -> List.List ( k, v )"
+            },
+            {
+                "name": "union",
+                "comment": " Combine two dictionaries. If there is a collision, preference is given\nto the first dictionary.\n",
+                "type": "TDict.TDict k comparable v -> TDict.TDict k comparable v -> TDict.TDict k comparable v"
+            },
+            {
+                "name": "update",
+                "comment": " Update the value of a dictionary for a specific key with a given function.\n",
+                "type": "k -> (Maybe.Maybe v -> Maybe.Maybe v) -> TDict.TDict k comparable v -> TDict.TDict k comparable v"
+            },
+            {
+                "name": "values",
+                "comment": " Get all of the values in a dictionary, in the order of their keys.\n",
+                "type": "TDict.TDict k comparable v -> List.List v"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "TSet",
+        "comment": " A set of unique values. The elements can be any type that can be converted to an elm 'comparable'.\n\nThis is helpful if you have values that are really just a comparable underneath, but you want to keep them separate using the type system. For instance:\n\n    type Kilos\n        = Kilos Float\n\n    type Pounds\n        = Pounds Float\n\nCreate a TSet with the `empty` function, which takes two converter functions as arguments.\nIt can be convenient to create a canonical empty TSet for a certain type:\n\n    emptyKiloSet =\n        TSet.empty\n            (\\(Kilos n) -> n)\n            Kilos\n\nThen to do the equivalent of Set.fromList:\n\n    TSet.insertList emptyKiloSet mykilolist\n\nInsert, remove, and query operations all take _O(log n)_ time, just like Set.\n\n\n# Sets\n\n@docs TSet\n\n\n# Build\n\n@docs empty, clear, insert, remove\n\n\n# Query\n\n@docs isEmpty, member, size\n\n\n# Combine\n\n@docs union, intersect, diff\n\n\n# Lists\n\n@docs toList, insertList\n\n\n# Transform\n\n@docs mapInto, foldl, foldr, filter, partition\n\n",
+        "unions": [
+            {
+                "name": "TSet",
+                "comment": " Represents a set of unique values. Create with the `empty` function.\n",
+                "args": [
+                    "k",
+                    "comparable"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "clear",
+                "comment": " remove all values from the set.\n",
+                "type": "TSet.TSet k comparable -> TSet.TSet k comparable"
+            },
+            {
+                "name": "diff",
+                "comment": " Get the difference between the first set and the second. Keeps values\nthat do not appear in the second set.\n",
+                "type": "TSet.TSet k comparable -> TSet.TSet k comparable -> TSet.TSet k comparable"
+            },
+            {
+                "name": "empty",
+                "comment": " Create an empty TSet. Requires two conversion functions:\none from the key to comparable, and the other from comparable to key.\n",
+                "type": "(k -> comparable) -> (comparable -> k) -> TSet.TSet k comparable"
+            },
+            {
+                "name": "filter",
+                "comment": " Create a new set consisting only of elements which satisfy a predicate.\n",
+                "type": "(k -> Basics.Bool) -> TSet.TSet k comparable -> TSet.TSet k comparable"
+            },
+            {
+                "name": "foldl",
+                "comment": " Fold over the values in a set, in order from lowest to highest.\n",
+                "type": "(k -> b -> b) -> b -> TSet.TSet k comparable -> b"
+            },
+            {
+                "name": "foldr",
+                "comment": " Fold over the values in a set, in order from highest to lowest.\n",
+                "type": "(k -> b -> b) -> b -> TSet.TSet k comparable -> b"
+            },
+            {
+                "name": "insert",
+                "comment": " Insert a value into a set.\n",
+                "type": "k -> TSet.TSet k comparable -> TSet.TSet k comparable"
+            },
+            {
+                "name": "insertList",
+                "comment": " Insert a list of values into a set.\n",
+                "type": "TSet.TSet k comparable -> List.List k -> TSet.TSet k comparable"
+            },
+            {
+                "name": "intersect",
+                "comment": " Get the intersection of two sets. Keeps values that appear in both sets.\n",
+                "type": "TSet.TSet k comparable -> TSet.TSet k comparable -> TSet.TSet k comparable"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Determine if a set is empty.\n",
+                "type": "TSet.TSet k comparable -> Basics.Bool"
+            },
+            {
+                "name": "mapInto",
+                "comment": " Map a function onto a set, inserting into a second set.\n",
+                "type": "(k -> k2) -> TSet.TSet k comparable -> TSet.TSet k2 comparable2 -> TSet.TSet k2 comparable2"
+            },
+            {
+                "name": "member",
+                "comment": " Determine if a value is in a set.\n",
+                "type": "k -> TSet.TSet k comparable -> Basics.Bool"
+            },
+            {
+                "name": "partition",
+                "comment": " Create two new sets; the first consisting of elements which satisfy a\npredicate, the second consisting of elements which do not.\n",
+                "type": "(k -> Basics.Bool) -> TSet.TSet k comparable -> ( TSet.TSet k comparable, TSet.TSet k comparable )"
+            },
+            {
+                "name": "remove",
+                "comment": " Remove a value from a set. If the value is not found, no changes are made.\n",
+                "type": "k -> TSet.TSet k comparable -> TSet.TSet k comparable"
+            },
+            {
+                "name": "size",
+                "comment": " Determine the number of elements in a set.\n",
+                "type": "TSet.TSet k comparable -> Basics.Int"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert a set into a list, sorted from lowest to highest.\n",
+                "type": "TSet.TSet k comparable -> List.List k"
+            },
+            {
+                "name": "union",
+                "comment": " Get the union of two sets. Keep all values.\n",
+                "type": "TSet.TSet k comparable -> TSet.TSet k comparable -> TSet.TSet k comparable"
+            }
+        ],
+        "binops": []
+    }
+]

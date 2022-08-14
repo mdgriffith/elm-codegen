@@ -1,0 +1,40 @@
+[
+    {
+        "name": "Resetable",
+        "comment": " Simple datastructure which allows you to reset to it's original value.\nIt's kinda like `Editable` (<http://package.elm-lang.org/packages/stoeffel/editable/latest>), but simpler and there is no way to override its original value.\n\n@docs Resetable, init, value, map, reset\n\n",
+        "unions": [
+            {
+                "name": "Resetable",
+                "comment": " Wraps a type in a Resetable.\nYou can construct a `Resetable` using `init`.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "init",
+                "comment": " Creates a Resetable and initializes its value.\n\n    Resetable.init \"a\"\n\n",
+                "type": "a -> Resetable.Resetable a"
+            },
+            {
+                "name": "map",
+                "comment": " Map a resetable value.\nThis allows you to change the value without loosing its original value.\n\n    Resetable.init \"hello\"\n        |> Resetable.map String.toUpper\n        |> Resetable.value\n    --> \"HELLO\"\n\n",
+                "type": "(a -> a) -> Resetable.Resetable a -> Resetable.Resetable a"
+            },
+            {
+                "name": "reset",
+                "comment": " Reset a Resetable to its original value.\n\n    Resetable.init \"hello\"\n        |> Resetable.map String.toUpper\n        |> Resetable.reset\n        |> Resetable.value\n    --> \"hello\"\n\n",
+                "type": "Resetable.Resetable a -> Resetable.Resetable a"
+            },
+            {
+                "name": "value",
+                "comment": " Get the current value of a Resetable.\n\n    Resetable.init \"a\"\n        |> Resetable.value\n    --> \"a\"\n\n",
+                "type": "Resetable.Resetable a -> a"
+            }
+        ],
+        "binops": []
+    }
+]

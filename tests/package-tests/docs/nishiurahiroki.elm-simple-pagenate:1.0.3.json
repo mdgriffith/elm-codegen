@@ -1,0 +1,16 @@
+[
+    {
+        "name": "SimplePager",
+        "comment": " A elm simple pagenater.\n@docs viewPager\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "viewPager",
+                "comment": "\n    currentPage : Require, current page number.\n    totalPage : Require, total page number.\n    pageRangeDisplayed : Require, display page range number.\n    customPreviousLabel : custom previous button label.\n    customNextLabel : custom next button label.\n    customBreakLabel : custom break label.\n    pageClassName : page button style class name.\n    previousClassName : previous button style class name.\n    nextClassName : next button style class name.\n    breakClassName : break label style class name.\n    onClickPager : on pager click action, page button, previous, next.\n",
+                "type": "{ currentPage : Basics.Int, totalPage : Basics.Int, pageRangeDisplayed : Basics.Int, customPreviousLabel : Maybe.Maybe String.String, customNextLabel : Maybe.Maybe String.String, customBreakLabel : Maybe.Maybe String.String, pageClassName : Maybe.Maybe String.String, previousClassName : Maybe.Maybe String.String, nextClassName : Maybe.Maybe String.String, breakClassName : Maybe.Maybe String.String, onClickPager : Basics.Int -> msg } -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,123 @@
+[
+    {
+        "name": "Formatting",
+        "comment": " A type-safe string formatting library. It fulfils the need for\nstring-interpolation or a `printf` function, without sacrificing Elm's\nruntime guarantees or requiring any language-level changes. It also\ncomposes well, to make building up complex formatters easy.\n\n@docs Format\n@docs bs\n@docs map\n@docs premap\n@docs toFormatter\n@docs apply\n@docs print\n@docs html\n@docs s\n@docs string\n@docs int\n@docs bool\n@docs float\n@docs wrap\n@docs pad\n@docs padLeft\n@docs padRight\n@docs dp\n@docs roundTo\n@docs uriFragment\n\n",
+        "unions": [
+            {
+                "name": "Format",
+                "comment": " A formatter. This type holds all the information we need to\ncreate a formatting function, wrapped up in a way that makes it easy\nto compose.\n\nBuild one of these up with primitives like `s`, `string` and `int`,\njoin them together with `|> bs`, and when you're done, generate the final\nprinting function with `print`.\n\n\n## Example\n\n    import Formatting exposing (..)\n\n    greeting =\n        s \"Hello \" |> bs string |> bs \"!\"\n\n    print greeting \"Kris\"\n\n    --> \"Hello Kris!\"\n\n\n## Creating Custom Formatters\n\nImagine you have an existing formatting rule you'd like to turn into a formatter:\n\n    tweetSummary : Int -> String -> String\n    tweetSummary starCount body =\n        \"(\" ++ toString starCount ++ \") \" ++ body\n\nFirst, wrap the type signature in brackets:\n\n    tweetSummary : Int -> String -> String\n\nThen change the result type to a variable. (That's where the magic\nbegins - the Formatting library gets control of the final result\ntype.):\n\n    tweetSummary : Int -> String -> r\n\nNow add `Format r` to the start.\n\n    tweetSummary : Format r (Int -> String -> r)\n\nAll very mechanical. Now for the function body. Let's recall what it\nlooked like at the start:\n\n    tweetSummary starCount body =\n        \"(\" ++ toString starCount ++ \") \" ++ body\n\nChange that into an anonymous function:\n\n    tweetSummary =\n        \\starCount body ->\n            \"(\" ++ toString starCount ++ \") \" ++ body\n\nNow add in a `callback` function as the first argument:\n\n    tweetSummary =\n        \\callback starCount body ->\n            \"(\" ++ toString starCount ++ \") \" ++ body\n\nPass your function's result to that callback (using `<|` is the easy way):\n\n    tweetSummary =\n        \\callback starCount body ->\n            callback <| \"(\" ++ toString starCount ++ \") \" ++ body\n\nFinally, wrap that all up in a `Format` constructor:\n\n    tweetSummary =\n        Format\n            (\\callback starCount body ->\n                callback <| \"(\" ++ toString starCount ++ \") \" ++ body\n            )\n\nAnd you're done. You have a composable formatting function. It's a\nmechanical process that's probably a bit weird at first, but easy to\nget used to.\n\nFormat (\\\\callback -> g (\\\\strG -> f (\\\\strF -> callback (strG ++ strF))))\n\n",
+                "args": [
+                    "r",
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Format",
+                        [
+                            "(String.String -> r) -> a"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "apply",
+                "comment": " Apply an argument to a Formatter. Useful when you want to supply\nan argument, but don't yet want to convert your formatter to a plain\nol' function (with `print`).\n",
+                "type": "Formatting.Format r (a -> b -> r) -> a -> Formatting.Format r (b -> r)"
+            },
+            {
+                "name": "bool",
+                "comment": " A placeholder for an `Bool` argument.\n",
+                "type": "Formatting.Format r (Basics.Bool -> r)"
+            },
+            {
+                "name": "bs",
+                "comment": " Compose two formatters together.\n",
+                "type": "Formatting.Format b a -> Formatting.Format a c -> Formatting.Format b c"
+            },
+            {
+                "name": "dp",
+                "comment": " _DEPRECATED_: Use `roundTo` instead.\n",
+                "type": "Basics.Int -> Formatting.Format r (Basics.Float -> r)"
+            },
+            {
+                "name": "float",
+                "comment": " A placeholder for a `Float` argument.\n",
+                "type": "Formatting.Format r (Basics.Float -> r)"
+            },
+            {
+                "name": "html",
+                "comment": " Convenience function. Like `print`, but returns an `Html.text`\nnode as its final result, instead of a `String`.\n\nHint: If you're using any formatters where whitespace is sigificant,\nyou might well need one or both of these CSS rules:\n\n```css\nfont-family: monospace;\nwhite-space: pre;\n```\n\n",
+                "type": "Formatting.Format (Html.Html msg) a -> a"
+            },
+            {
+                "name": "int",
+                "comment": " A placeholder for an `Int` argument.\n",
+                "type": "Formatting.Format r (Basics.Int -> r)"
+            },
+            {
+                "name": "map",
+                "comment": " Create a new formatter by applying a function to the output of this formatter.\n\nFor example:\n\n    import String exposing (toUpper)\n\n    format =\n        s \"Name: \" |> bs map toUpper string\n\n...produces a formatter that uppercases the name:\n\n    print format \"Kris\"\n\n    --> \"Name: KRIS\"\n\n",
+                "type": "(String.String -> String.String) -> Formatting.Format r a -> Formatting.Format r a"
+            },
+            {
+                "name": "pad",
+                "comment": " `String.pad` lifted into the world of Formatters.\n\nFor example:\n\n    print (pad 10 '-' string) \"KRIS\"\n\n    --> \"---KRIS---\"\n\n",
+                "type": "Basics.Int -> Char.Char -> Formatting.Format r a -> Formatting.Format r a"
+            },
+            {
+                "name": "padLeft",
+                "comment": " `String.padLeft` lifted into the world of Formatters.\n\nFor example:\n\n    print (padLeft 10 '_' float) 1.72\n\n    --> \"______1.72\"\n\n",
+                "type": "Basics.Int -> Char.Char -> Formatting.Format r a -> Formatting.Format r a"
+            },
+            {
+                "name": "padRight",
+                "comment": " `String.padRight` lifted into the world of Formatters.\n\nFor example:\n\n    print (padRight 10 '.' int) 789\n\n    --> \"789.......\"\n\n",
+                "type": "Basics.Int -> Char.Char -> Formatting.Format r a -> Formatting.Format r a"
+            },
+            {
+                "name": "premap",
+                "comment": " Create a new formatter by applying a function to the input of this\nformatter. The dual of `map`.\n\nFor example:\n\n    format =\n        s \"Height: \" |> bs premap .height float\n\n...produces a formatter that accesses a `.height` record field:\n\n    print format { height: 1.72 }\n\n    --> \"Height: 1.72\"\n\n",
+                "type": "(a -> b) -> Formatting.Format r (b -> v) -> Formatting.Format r (a -> v)"
+            },
+            {
+                "name": "print",
+                "comment": " Turn your formatter into a function that's just waiting for its arguments.\n\nGiven this format:\n\n    orderFormat =\n        s \"FREE: \" |> bs int |> bs s \" x \" |> bs string |> bs s \"!\"\n\n...we can either use it immediately:\n\n\n    order : String\n    order =\n        print orderFormat 2 \"Ice Cream\"\n\n    --> \"FREE: 2 x Ice Cream!\"\n\n...or turn it into an ordinary function to be used later:\n\n    orderFormatter : Int -> String -> String\n    orderFormatter =\n        print orderFormat\n\n\n    ...elsewhere...\n\n\n    order : String\n    order = orderFormatter 2 \"Ice Cream\"\n\n    --> \"FREE: 2 x Ice Cream!\"\n\n",
+                "type": "Formatting.Format String.String a -> a"
+            },
+            {
+                "name": "roundTo",
+                "comment": " A float rounded to `n` decimal places.\n",
+                "type": "Basics.Int -> Formatting.Format r (Basics.Float -> r)"
+            },
+            {
+                "name": "s",
+                "comment": " A boilerplate string.\n",
+                "type": "String.String -> Formatting.Format r r"
+            },
+            {
+                "name": "string",
+                "comment": " A placeholder for a `String` argument.\n",
+                "type": "Formatting.Format r (String.String -> r)"
+            },
+            {
+                "name": "toFormatter",
+                "comment": " Convert an ordinary 'stringifying' function into a Formatter.\n",
+                "type": "(a -> String.String) -> Formatting.Format r (a -> r)"
+            },
+            {
+                "name": "uriFragment",
+                "comment": " Format a URI fragment.\n\nFor example:\n\n    print uriFragment \"this string\"\n\n    --> \"this%20string\"\n\n",
+                "type": "Formatting.Format r (String.String -> r)"
+            },
+            {
+                "name": "wrap",
+                "comment": " `wrap` one string with another. It's convenient for building strings\nlike \\`\"Invalid key '<keyname>'.\" For example:\n\n    print (wrap \"'\" string) \"tester\"\n\n    --> \"'tester'\"\n\n",
+                "type": "String.String -> Formatting.Format r a -> Formatting.Format r a"
+            }
+        ],
+        "binops": []
+    }
+]

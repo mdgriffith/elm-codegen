@@ -1,0 +1,524 @@
+[
+    {
+        "name": "Element.Cursor",
+        "comment": " Cursors for use with\n[Elm-UI](https://package.elm-lang.org/packages/mdgriffith/elm-ui/latest/).\n\nTo see the graphical representation of these visit\n[MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/cursor#Keyword_values).\n\n\n# General\n\n@docs auto, default, none\n\n\n# Links & Status\n\n@docs contextMenu, help, pointer, progress, wait\n\n\n# Selection\n\n@docs cell, crosshair, text, verticalText\n\n\n# Drag & Drop\n\n@docs alias, copy, move, noDrop, notAllowed, grab, grabbing\n\n\n# Resizing & Scrolling\n\n@docs nResize, eResize, sResize, wResize, neResize, nwResize, seResize, swResize, ewResize, nsResize, neswResize, nwseResize\n\n\n# Zooming\n\n@docs zoomIn, zoomOut\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "alias",
+                "comment": " ",
+                "type": "Element.Attribute msg"
+            },
+            {
+                "name": "auto",
+                "comment": " ",
+                "type": "Element.Attribute msg"
+            },
+            {
+                "name": "cell",
+                "comment": " ",
+                "type": "Element.Attribute msg"
+            },
+            {
+                "name": "contextMenu",
+                "comment": " ",
+                "type": "Element.Attribute msg"
+            },
+            {
+                "name": "copy",
+                "comment": " ",
+                "type": "Element.Attribute msg"
+            },
+            {
+                "name": "crosshair",
+                "comment": " ",
+                "type": "Element.Attribute msg"
+            },
+            {
+                "name": "default",
+                "comment": " ",
+                "type": "Element.Attribute msg"
+            },
+            {
+                "name": "eResize",
+                "comment": " ",
+                "type": "Element.Attribute msg"
+            },
+            {
+                "name": "ewResize",
+                "comment": " ",
+                "type": "Element.Attribute msg"
+            },
+            {
+                "name": "grab",
+                "comment": " ",
+                "type": "Element.Attribute msg"
+            },
+            {
+                "name": "grabbing",
+                "comment": " ",
+                "type": "Element.Attribute msg"
+            },
+            {
+                "name": "help",
+                "comment": " ",
+                "type": "Element.Attribute msg"
+            },
+            {
+                "name": "move",
+                "comment": " ",
+                "type": "Element.Attribute msg"
+            },
+            {
+                "name": "nResize",
+                "comment": " ",
+                "type": "Element.Attribute msg"
+            },
+            {
+                "name": "neResize",
+                "comment": " ",
+                "type": "Element.Attribute msg"
+            },
+            {
+                "name": "neswResize",
+                "comment": " ",
+                "type": "Element.Attribute msg"
+            },
+            {
+                "name": "noDrop",
+                "comment": " ",
+                "type": "Element.Attribute msg"
+            },
+            {
+                "name": "none",
+                "comment": " ",
+                "type": "Element.Attribute msg"
+            },
+            {
+                "name": "notAllowed",
+                "comment": " ",
+                "type": "Element.Attribute msg"
+            },
+            {
+                "name": "nsResize",
+                "comment": " ",
+                "type": "Element.Attribute msg"
+            },
+            {
+                "name": "nwResize",
+                "comment": " ",
+                "type": "Element.Attribute msg"
+            },
+            {
+                "name": "nwseResize",
+                "comment": " ",
+                "type": "Element.Attribute msg"
+            },
+            {
+                "name": "pointer",
+                "comment": " ",
+                "type": "Element.Attribute msg"
+            },
+            {
+                "name": "progress",
+                "comment": " ",
+                "type": "Element.Attribute msg"
+            },
+            {
+                "name": "sResize",
+                "comment": " ",
+                "type": "Element.Attribute msg"
+            },
+            {
+                "name": "seResize",
+                "comment": " ",
+                "type": "Element.Attribute msg"
+            },
+            {
+                "name": "swResize",
+                "comment": " ",
+                "type": "Element.Attribute msg"
+            },
+            {
+                "name": "text",
+                "comment": " ",
+                "type": "Element.Attribute msg"
+            },
+            {
+                "name": "verticalText",
+                "comment": " ",
+                "type": "Element.Attribute msg"
+            },
+            {
+                "name": "wResize",
+                "comment": " ",
+                "type": "Element.Attribute msg"
+            },
+            {
+                "name": "wait",
+                "comment": " ",
+                "type": "Element.Attribute msg"
+            },
+            {
+                "name": "zoomIn",
+                "comment": " ",
+                "type": "Element.Attribute msg"
+            },
+            {
+                "name": "zoomOut",
+                "comment": " ",
+                "type": "Element.Attribute msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Element.WithContext.Cursor",
+        "comment": " Cursors for use with\n[elm-ui-with-context](https://package.elm-lang.org/packages/miniBill/elm-ui-with-context/latest).\n\nTo see the graphical representation of these visit\n[MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/cursor#Keyword_values).\n\n\n# General\n\n@docs auto, default, none\n\n\n# Links & Status\n\n@docs contextMenu, help, pointer, progress, wait\n\n\n# Selection\n\n@docs cell, crosshair, text, verticalText\n\n\n# Drag & Drop\n\n@docs alias, copy, move, noDrop, notAllowed, grab, grabbing\n\n\n# Resizing & Scrolling\n\n@docs nResize, eResize, sResize, wResize, neResize, nwResize, seResize, swResize, ewResize, nsResize, neswResize, nwseResize\n\n\n# Zooming\n\n@docs zoomIn, zoomOut\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "alias",
+                "comment": " ",
+                "type": "Element.WithContext.Attribute ctx msg"
+            },
+            {
+                "name": "auto",
+                "comment": " ",
+                "type": "Element.WithContext.Attribute ctx msg"
+            },
+            {
+                "name": "cell",
+                "comment": " ",
+                "type": "Element.WithContext.Attribute ctx msg"
+            },
+            {
+                "name": "contextMenu",
+                "comment": " ",
+                "type": "Element.WithContext.Attribute ctx msg"
+            },
+            {
+                "name": "copy",
+                "comment": " ",
+                "type": "Element.WithContext.Attribute ctx msg"
+            },
+            {
+                "name": "crosshair",
+                "comment": " ",
+                "type": "Element.WithContext.Attribute ctx msg"
+            },
+            {
+                "name": "default",
+                "comment": " ",
+                "type": "Element.WithContext.Attribute ctx msg"
+            },
+            {
+                "name": "eResize",
+                "comment": " ",
+                "type": "Element.WithContext.Attribute ctx msg"
+            },
+            {
+                "name": "ewResize",
+                "comment": " ",
+                "type": "Element.WithContext.Attribute ctx msg"
+            },
+            {
+                "name": "grab",
+                "comment": " ",
+                "type": "Element.WithContext.Attribute ctx msg"
+            },
+            {
+                "name": "grabbing",
+                "comment": " ",
+                "type": "Element.WithContext.Attribute ctx msg"
+            },
+            {
+                "name": "help",
+                "comment": " ",
+                "type": "Element.WithContext.Attribute ctx msg"
+            },
+            {
+                "name": "move",
+                "comment": " ",
+                "type": "Element.WithContext.Attribute ctx msg"
+            },
+            {
+                "name": "nResize",
+                "comment": " ",
+                "type": "Element.WithContext.Attribute ctx msg"
+            },
+            {
+                "name": "neResize",
+                "comment": " ",
+                "type": "Element.WithContext.Attribute ctx msg"
+            },
+            {
+                "name": "neswResize",
+                "comment": " ",
+                "type": "Element.WithContext.Attribute ctx msg"
+            },
+            {
+                "name": "noDrop",
+                "comment": " ",
+                "type": "Element.WithContext.Attribute ctx msg"
+            },
+            {
+                "name": "none",
+                "comment": " ",
+                "type": "Element.WithContext.Attribute ctx msg"
+            },
+            {
+                "name": "notAllowed",
+                "comment": " ",
+                "type": "Element.WithContext.Attribute ctx msg"
+            },
+            {
+                "name": "nsResize",
+                "comment": " ",
+                "type": "Element.WithContext.Attribute ctx msg"
+            },
+            {
+                "name": "nwResize",
+                "comment": " ",
+                "type": "Element.WithContext.Attribute ctx msg"
+            },
+            {
+                "name": "nwseResize",
+                "comment": " ",
+                "type": "Element.WithContext.Attribute ctx msg"
+            },
+            {
+                "name": "pointer",
+                "comment": " ",
+                "type": "Element.WithContext.Attribute ctx msg"
+            },
+            {
+                "name": "progress",
+                "comment": " ",
+                "type": "Element.WithContext.Attribute ctx msg"
+            },
+            {
+                "name": "sResize",
+                "comment": " ",
+                "type": "Element.WithContext.Attribute ctx msg"
+            },
+            {
+                "name": "seResize",
+                "comment": " ",
+                "type": "Element.WithContext.Attribute ctx msg"
+            },
+            {
+                "name": "swResize",
+                "comment": " ",
+                "type": "Element.WithContext.Attribute ctx msg"
+            },
+            {
+                "name": "text",
+                "comment": " ",
+                "type": "Element.WithContext.Attribute ctx msg"
+            },
+            {
+                "name": "verticalText",
+                "comment": " ",
+                "type": "Element.WithContext.Attribute ctx msg"
+            },
+            {
+                "name": "wResize",
+                "comment": " ",
+                "type": "Element.WithContext.Attribute ctx msg"
+            },
+            {
+                "name": "wait",
+                "comment": " ",
+                "type": "Element.WithContext.Attribute ctx msg"
+            },
+            {
+                "name": "zoomIn",
+                "comment": " ",
+                "type": "Element.WithContext.Attribute ctx msg"
+            },
+            {
+                "name": "zoomOut",
+                "comment": " ",
+                "type": "Element.WithContext.Attribute ctx msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Html.Cursor",
+        "comment": " Cursors for use with the\n[elm/html](https://package.elm-lang.org/packages/elm/html/latest/Html) package.\n\nTo see the graphical representation of these visit\n[MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/cursor#Keyword_values).\n\n\n# General\n\n@docs auto, default, none\n\n\n# Links & Status\n\n@docs contextMenu, help, pointer, progress, wait\n\n\n# Selection\n\n@docs cell, crosshair, text, verticalText\n\n\n# Drag & Drop\n\n@docs alias, copy, move, noDrop, notAllowed, grab, grabbing\n\n\n# Resizing & Scrolling\n\n@docs nResize, eResize, sResize, wResize, neResize, nwResize, seResize, swResize, ewResize, nsResize, neswResize, nwseResize\n\n\n# Zooming\n\n@docs zoomIn, zoomOut\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "alias",
+                "comment": " ",
+                "type": "Html.Attribute msg"
+            },
+            {
+                "name": "auto",
+                "comment": " ",
+                "type": "Html.Attribute msg"
+            },
+            {
+                "name": "cell",
+                "comment": " ",
+                "type": "Html.Attribute msg"
+            },
+            {
+                "name": "contextMenu",
+                "comment": " ",
+                "type": "Html.Attribute msg"
+            },
+            {
+                "name": "copy",
+                "comment": " ",
+                "type": "Html.Attribute msg"
+            },
+            {
+                "name": "crosshair",
+                "comment": " ",
+                "type": "Html.Attribute msg"
+            },
+            {
+                "name": "default",
+                "comment": " ",
+                "type": "Html.Attribute msg"
+            },
+            {
+                "name": "eResize",
+                "comment": " ",
+                "type": "Html.Attribute msg"
+            },
+            {
+                "name": "ewResize",
+                "comment": " ",
+                "type": "Html.Attribute msg"
+            },
+            {
+                "name": "grab",
+                "comment": " ",
+                "type": "Html.Attribute msg"
+            },
+            {
+                "name": "grabbing",
+                "comment": " ",
+                "type": "Html.Attribute msg"
+            },
+            {
+                "name": "help",
+                "comment": " ",
+                "type": "Html.Attribute msg"
+            },
+            {
+                "name": "move",
+                "comment": " ",
+                "type": "Html.Attribute msg"
+            },
+            {
+                "name": "nResize",
+                "comment": " ",
+                "type": "Html.Attribute msg"
+            },
+            {
+                "name": "neResize",
+                "comment": " ",
+                "type": "Html.Attribute msg"
+            },
+            {
+                "name": "neswResize",
+                "comment": " ",
+                "type": "Html.Attribute msg"
+            },
+            {
+                "name": "noDrop",
+                "comment": " ",
+                "type": "Html.Attribute msg"
+            },
+            {
+                "name": "none",
+                "comment": " ",
+                "type": "Html.Attribute msg"
+            },
+            {
+                "name": "notAllowed",
+                "comment": " ",
+                "type": "Html.Attribute msg"
+            },
+            {
+                "name": "nsResize",
+                "comment": " ",
+                "type": "Html.Attribute msg"
+            },
+            {
+                "name": "nwResize",
+                "comment": " ",
+                "type": "Html.Attribute msg"
+            },
+            {
+                "name": "nwseResize",
+                "comment": " ",
+                "type": "Html.Attribute msg"
+            },
+            {
+                "name": "pointer",
+                "comment": " ",
+                "type": "Html.Attribute msg"
+            },
+            {
+                "name": "progress",
+                "comment": " ",
+                "type": "Html.Attribute msg"
+            },
+            {
+                "name": "sResize",
+                "comment": " ",
+                "type": "Html.Attribute msg"
+            },
+            {
+                "name": "seResize",
+                "comment": " ",
+                "type": "Html.Attribute msg"
+            },
+            {
+                "name": "swResize",
+                "comment": " ",
+                "type": "Html.Attribute msg"
+            },
+            {
+                "name": "text",
+                "comment": " ",
+                "type": "Html.Attribute msg"
+            },
+            {
+                "name": "verticalText",
+                "comment": " ",
+                "type": "Html.Attribute msg"
+            },
+            {
+                "name": "wResize",
+                "comment": " ",
+                "type": "Html.Attribute msg"
+            },
+            {
+                "name": "wait",
+                "comment": " ",
+                "type": "Html.Attribute msg"
+            },
+            {
+                "name": "zoomIn",
+                "comment": " ",
+                "type": "Html.Attribute msg"
+            },
+            {
+                "name": "zoomOut",
+                "comment": " ",
+                "type": "Html.Attribute msg"
+            }
+        ],
+        "binops": []
+    }
+]

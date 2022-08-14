@@ -1,0 +1,46 @@
+[
+    {
+        "name": "MultiSelect",
+        "comment": " Multiselect component.\n\n\n# Data\n\n@docs Config, State, config, init, values\n\n\n# View\n\n@docs view\n\n",
+        "unions": [
+            {
+                "name": "Config",
+                "comment": " Opaque type to configure the component (construct with the `config` function).\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "State",
+                "comment": " Opaque type to manage the states of component.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "config",
+                "comment": " Config constructor.\n",
+                "type": "String.String -> (MultiSelect.State -> msg) -> List.List String.String -> MultiSelect.Config msg"
+            },
+            {
+                "name": "init",
+                "comment": " Initialize the component state.\n",
+                "type": "List.List String.String -> MultiSelect.State"
+            },
+            {
+                "name": "values",
+                "comment": " Get the selected values.\n",
+                "type": "MultiSelect.State -> List.List String.String"
+            },
+            {
+                "name": "view",
+                "comment": " Component view.\n",
+                "type": "MultiSelect.Config msg -> MultiSelect.State -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

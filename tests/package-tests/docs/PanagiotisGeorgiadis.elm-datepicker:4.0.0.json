@@ -1,0 +1,328 @@
+[
+    {
+        "name": "DatePicker",
+        "comment": " The `DatePicker` component is a DatePicker that allows the user to\r\nselect a **single date**. It has its own [Model](DatePicker#Model)\r\nand [Msg](DatePicker#Msg) types which handle the rendering and date\r\nselection functionalities. It also exposes a list of **external messages**\r\n( [ExtMsg](DatePicker#ExtMsg) ) which can be used by the consumer to extract the **selected date**.\r\nYou can see a simple `DatePicker` application in\r\n[this ellie-app example](https://ellie-app.com/new) or you can clone [this\r\nexample repository](https://github.com/PanagiotisGeorgiadis/).\r\n\r\n@docs Model, Msg, ExtMsg\r\n\r\n@docs setSelectedDate, resetSelectedDate\r\n\r\n@docs initialise, update, view\r\n\r\n",
+        "unions": [
+            {
+                "name": "ExtMsg",
+                "comment": " The _**external messages**_ that are being used to pass information to the\r\nparent component. These messages are being returned by the [update function](DatePicker#update)\r\nso that the consumer can pattern match on them and get the selected `DateTime`.\r\n",
+                "args": [],
+                "cases": [
+                    [
+                        "None",
+                        []
+                    ],
+                    [
+                        "DateSelected",
+                        [
+                            "Maybe.Maybe DateTime.DateTime"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Model",
+                "comment": " The `DatePicker` Model.\r\n",
+                "args": [],
+                "type": "DatePicker.Internal.Update.Model"
+            },
+            {
+                "name": "Msg",
+                "comment": " The internal messages that are being used by the `DatePicker`. You can map\r\nthis message with your own message in order to \"wire up\" the `DatePicker` with your\r\napplication. Example of wiring up:\r\n\r\n    import DatePicker\r\n\r\n    type Msg\r\n        = DatePickerMsg DatePicker.Msg\r\n\r\n    DatePickerMsg subMsg ->\r\n        let\r\n            (subModel, subCmd, extMsg) =\r\n                DatePicker.update subMsg model.datePicker\r\n\r\n            selectedDateTime =\r\n                case extMsg of\r\n                    DatePicker.DateSelected dateTime ->\r\n                        dateTime\r\n\r\n                    DatePicker.None ->\r\n                        Nothing\r\n        in\r\n        ( { model | datePicker = subModel }\r\n        , Cmd.map DatePickerMsg subCmd\r\n        )\r\n\r\n",
+                "args": [],
+                "type": "DatePicker.Internal.Update.Msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "initialise",
+                "comment": " The initialisation function of the `DatePicker`.\r\n\r\n    import Clock\r\n    import DatePicker\r\n    import DateTime\r\n    import Time exposing (Month(..))\r\n    import TimePicker.Types as TimePicker\r\n\r\n    myInitialise : DateTime -> DatePicker.Model\r\n    myInitialise today =\r\n        let\r\n            ( date1, date2 ) =\r\n                ( DateTime.fromRawParts { day = 1, month = Jan, year = 2019 } { hours = 0, minutes = 0, seconds = 0, milliseconds = 0 }\r\n                , DateTime.fromRawParts { day = 31, month = Dec, year = 2019 } { hours = 0, minutes = 0, seconds = 0, milliseconds = 0 }\r\n                )\r\n\r\n            calendarConfig =\r\n                { today = today\r\n                , primaryDate = Nothing\r\n                , dateLimit =\r\n                    case ( date1, date2 ) of\r\n                        ( Just d1, Just d2 ) ->\r\n                            DateLimit { minDate = d1, maxDate = d2 }\r\n\r\n                        _ ->\r\n                            NoLimit\r\n                }\r\n\r\n            timePickerConfig =\r\n                Just\r\n                    { pickerType = TimePicker.HH_MM { hoursStep = 1, minutesStep = 5 }\r\n                    , defaultTime = Clock.midnight\r\n                    , pickerTitle = \"Date Time\"\r\n                    }\r\n        in\r\n        DatePicker.initialise DatePicker.Single calendarConfig timePickerConfig Nothing\r\n\r\n",
+                "type": "DatePicker.Types.ViewType -> DatePicker.Types.CalendarConfig -> Maybe.Maybe DatePicker.Types.TimePickerConfig -> Maybe.Maybe DatePicker.I18n.I18n -> DatePicker.Model"
+            },
+            {
+                "name": "resetSelectedDate",
+                "comment": " Removes the date selection.\r\n",
+                "type": "DatePicker.Model -> DatePicker.Model"
+            },
+            {
+                "name": "setSelectedDate",
+                "comment": " Sets the date that's marked as selected.\r\n",
+                "type": "DateTime.DateTime -> DatePicker.Model -> DatePicker.Model"
+            },
+            {
+                "name": "update",
+                "comment": " The `DatePicker's` update function. Can be used in order to \"wire up\" the `DatePicker`\r\nwith the **main application** as shown in the example of the [DatePicker.Msg](DatePicker#Msg).\r\n",
+                "type": "DatePicker.Msg -> DatePicker.Model -> ( DatePicker.Model, Platform.Cmd.Cmd DatePicker.Msg, DatePicker.ExtMsg )"
+            },
+            {
+                "name": "view",
+                "comment": " The `DatePicker` view.\r\n",
+                "type": "DatePicker.Model -> Html.Html DatePicker.Msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "DatePicker.I18n",
+        "comment": " The `I18n` module is responsible for providing a config for translating parts of the\n`DatePicker` or `DateRangePicker` components. When initializing a `DatePicker` you can provide an `I18n` config\nwhich will in turn be used to translate anything that has been configured.\n\nIf `Nothing` is provided as the `I18n` config, the language will be defaulted to `English` with the\ndefault text that can be seen in the [example screenshots](https://github.com/PanagiotisGeorgiadis/Elm-DatePicker/tree/master/screenshots).\n\n@docs I18n, TextMode\n\n",
+        "unions": [
+            {
+                "name": "TextMode",
+                "comment": " The Month / Weekday Text Mode\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Condensed",
+                        []
+                    ],
+                    [
+                        "Full",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "I18n",
+                "comment": " The `I18n` model.\n",
+                "args": [],
+                "type": "{ monthToString : DatePicker.I18n.TextMode -> Time.Month -> String.String, weekdayToString : DatePicker.I18n.TextMode -> Time.Weekday -> String.String, todayButtonText : String.String }"
+            }
+        ],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "DatePicker.Types",
+        "comment": " Contains types that are being used by the _**parent application**_ in order to initialise\r\na `DatePicker`.\r\n\r\n\r\n# Types\r\n\r\n@docs ViewType\r\n\r\n@docs CalendarConfig, DateLimit\r\n\r\n@docs TimePickerConfig\r\n\r\n",
+        "unions": [
+            {
+                "name": "DateLimit",
+                "comment": " The _**optional**_ `DatePicker` date restrictions. You can cover most of the\r\ndate restriction cases with the type below. If by any change you need to achieve\r\na case which is not possible by the current implementation please raise an issue\r\non the repository of this package.\r\n\r\n    -- A Custom imposed restriction for the year 2019\r\n    -- inclusive of the minDate and maxDate.\r\n    DateLimit { minDate = 1 Jan 2019, maxDate = 31 Dec 2019 }\r\n\r\n    -- An unlimited Calendar.\r\n    NoLimit\r\n\r\n",
+                "args": [],
+                "cases": [
+                    [
+                        "DateLimit",
+                        [
+                            "{ minDate : DateTime.DateTime, maxDate : DateTime.DateTime }"
+                        ]
+                    ],
+                    [
+                        "NoLimit",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "ViewType",
+                "comment": " The Calendar ViewTypes.\r\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Single",
+                        []
+                    ],
+                    [
+                        "Double",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "CalendarConfig",
+                "comment": " Used in order to configure the `Calendar` part of the `DatePicker`.\r\n\r\n  - **`today`:** Represents today as `DateTime` provided by the **parent application**.\r\n\r\n  - **`startingWeekday`:** The starting weekday of the calendar.\r\n\r\n  - **`primaryDate`:** Represents the default `month - year` calendar screen.\r\n      - If the **primaryDate** is set to `Nothing` the `DatePicker` will\r\n        set the **primaryDate** equal to the **today** property.\r\n\r\n      - If the consumer has provided both a **primaryDate** and a **dateLimit**\r\n        but the **primaryDate** is out of bounds, the `DatePicker` will set\r\n        the **primaryDate** equal to the minium date of the constrains.\r\n\r\n  - **`dateLimit`:** Used to impose date restrictions on the `DatePicker`.\r\n    The different configuration settings can be seen on the\r\n    [DateLimit](DatePicker.Types#DateLimit) definition.\r\n\r\n",
+                "args": [],
+                "type": "{ today : DateTime.DateTime, startingWeekday : Time.Weekday, primaryDate : Maybe.Maybe DateTime.DateTime, dateLimit : DatePicker.Types.DateLimit }"
+            },
+            {
+                "name": "TimePickerConfig",
+                "comment": " Used in order to configure the `TimePicker` part of the `DatePicker`.\r\n\r\n  - **`pickerType`:** Defines the type of the picker as described in the [TimePicker module](TimePicker.Types#PickerType).\r\n\r\n  - **`defaultTime`:** Defines the defaultTime that will be used as the default value of the `TimePicker`.\r\n\r\n  - **`pickerTitle`:** Defines the `TimePicker` title.\r\n\r\n",
+                "args": [],
+                "type": "{ pickerType : TimePicker.Types.PickerType, defaultTime : Clock.Time, pickerTitle : String.String }"
+            }
+        ],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "DateRangePicker",
+        "comment": " The `DateRangePicker` component is a DatePicker that allows the user to\r\nselect a **range of dates**. It has its own [Model](DateRangePicker#Model)\r\nand [Msg](DateRangePicker#Msg) types which handle the rendering and date\r\nselection functionalities. It also exposes a list of **external messages**\r\n( [ExtMsg](DateRangePicker#ExtMsg) ) which can be used by the consumer to extract the selected dates in\r\nthe form of a **startDate** and an **endDate**. You can see a simple `DateRangePicker`\r\napplication in [this ellie-app example](https://ellie-app.com/new) or you can clone [this\r\nexample repository](https://github.com/PanagiotisGeorgiadis/).\r\n\r\n@docs Model, Msg, ExtMsg, SelectedDateRange\r\n\r\n@docs resetVisualSelection, resetSelectedDateRange, setDateRange\r\n\r\n@docs initialise, update, view\r\n\r\n",
+        "unions": [
+            {
+                "name": "ExtMsg",
+                "comment": " The _**external messages**_ that are being used to pass information to the\r\nparent component. These messages are being returned by the [update function](DateRangePicker#update)\r\nso that the consumer can pattern match on them and get the selected `DateTime`.\r\n",
+                "args": [],
+                "cases": [
+                    [
+                        "None",
+                        []
+                    ],
+                    [
+                        "DateRangeSelected",
+                        [
+                            "Maybe.Maybe DateRangePicker.SelectedDateRange"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Model",
+                "comment": " The `DateRangePicker` model.\r\n",
+                "args": [],
+                "type": "DateRangePicker.Internal.Update.Model"
+            },
+            {
+                "name": "Msg",
+                "comment": " The internal messages that are being used by the `DateRangePicker`. You can map\r\nthis message with your own message in order to \"wire up\" the `DateRangePicker` with your\r\napplication. Example of wiring up:\r\n\r\n    import DateRangePicker\r\n\r\n    type Msg\r\n        = DateRangePickerMsg DateRangePicker.Msg\r\n\r\n    DateRangePickerMsg subMsg ->\r\n        let\r\n            ( subModel, subCmd, extMsg ) =\r\n                DateRangePicker.update subMsg model.dateRangePicker\r\n\r\n            selectedDateRange =\r\n                case extMsg of\r\n                    DateRangePicker.DateRangeSelected dateRange ->\r\n                        dateRange\r\n\r\n                    DateRangePicker.None ->\r\n                        Nothing\r\n        in\r\n        ( { model | dateRangePicker = subModel }\r\n        , Cmd.map DateRangePickerMsg subCmd\r\n        )\r\n\r\n",
+                "args": [],
+                "type": "DateRangePicker.Internal.Update.Msg"
+            },
+            {
+                "name": "SelectedDateRange",
+                "comment": " The start and end dates returned as a payload by the `DateRangeSelected` external message.\r\n",
+                "args": [],
+                "type": "{ startDate : DateTime.DateTime, endDate : DateTime.DateTime }"
+            }
+        ],
+        "values": [
+            {
+                "name": "initialise",
+                "comment": " The initialisation function of the `DateRangePicker`.\r\n\r\n    import Clock\r\n    import DateRangePicker\r\n    import DateTime\r\n    import Time exposing (Month(..))\r\n    import TimePicker.Types as TimePicker\r\n\r\n    myInitialise : DateTime -> DateRangePicker.Model\r\n    myInitialise today =\r\n        let\r\n            ( date1, date2 ) =\r\n                ( DateTime.fromRawParts { day = 1, month = Jan, year = 2019 } { hours = 0, minutes = 0, seconds = 0, milliseconds = 0 }\r\n                , DateTime.fromRawParts { day = 31, month = Dec, year = 2019 } { hours = 0, minutes = 0, seconds = 0, milliseconds = 0 }\r\n                )\r\n\r\n            calendarConfig =\r\n                { today = today\r\n                , primaryDate = Nothing\r\n                , dateLimit =\r\n                    case ( date1, date2 ) of\r\n                        ( Just d1, Just d2 ) ->\r\n                            DateLimit { minDate = d1, maxDate = d2 }\r\n\r\n                        _ ->\r\n                            NoLimit\r\n                , dateRangeOffset = Just { minDateRangeLength = 7 }\r\n                }\r\n\r\n            timePickerConfig =\r\n                Just\r\n                    { pickerType = TimePicker.HH_MM { hoursStep = 1, minutesStep = 5 }\r\n                    , defaultTime = Clock.midnight\r\n                    , mirrorTimes = True\r\n                    , i18n =\r\n                        { start = \"Arrival time\"\r\n                        , end = \"Departure time\"\r\n                        , checkboxText = \"Same as arrival time\"\r\n                        }\r\n                    }\r\n        in\r\n        DateRangePicker.initialise DateRangePicker.Single calendarConfig timePickerConfig Nothing\r\n\r\n",
+                "type": "DateRangePicker.Types.ViewType -> DateRangePicker.Types.CalendarConfig -> Maybe.Maybe DateRangePicker.Types.TimePickerConfig -> Maybe.Maybe DatePicker.I18n.I18n -> DateRangePicker.Model"
+            },
+            {
+                "name": "resetSelectedDateRange",
+                "comment": " Helper function that resets the `SelectedDateRange`.\r\n",
+                "type": "DateRangePicker.Model -> DateRangePicker.Model"
+            },
+            {
+                "name": "resetVisualSelection",
+                "comment": " Helper function that resets the `Visually` selected date range. **It will reset the date range if\r\nthe user has selected only a start date.** In case the user has already selected a _**valid date range**_\r\nthis function will do nothing.\r\n",
+                "type": "DateRangePicker.Model -> DateRangePicker.Model"
+            },
+            {
+                "name": "setDateRange",
+                "comment": " Sets the date range based on the dates that were provided.\r\nThis can be useful in setting a **default value** or even **updating the date range** from\r\nan \"external\" action that took place in the \"parent\" component.\r\n\r\n**Note:**\r\n\r\n  - If you've provided a `DateLimit` on your `DateRangePicker` module you need to make\r\n    sure that the **start and end dates** that you are using here **are within these limitations.**\r\n\r\n  - If you are using a **dateRangeOffset** limitation on your `DateRangePicker`, then you'll\r\n    need to make sure that the **start and end dates** are at least **n** number of dates apart,\r\n    where _**n == minDateRangeLength**_.\r\n\r\n  - In the case of an **invalid start or end date** the `setDateRange` function\r\n    will return the `Model` without any changes.\r\n\r\n",
+                "type": "DateRangePicker.SelectedDateRange -> DateRangePicker.Model -> DateRangePicker.Model"
+            },
+            {
+                "name": "update",
+                "comment": " The `DateRangePicker's` update function. Can be used in order to \"wire up\" the `DateRangePicker`\r\nwith the **main application** as shown in the example of the [DateRangePicker.Msg](DateRangePicker#Msg).\r\n",
+                "type": "DateRangePicker.Msg -> DateRangePicker.Model -> ( DateRangePicker.Model, Platform.Cmd.Cmd DateRangePicker.Msg, DateRangePicker.ExtMsg )"
+            },
+            {
+                "name": "view",
+                "comment": " The `DateRangePicker` view function.\r\n",
+                "type": "DateRangePicker.Model -> Html.Html DateRangePicker.Msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "DateRangePicker.Types",
+        "comment": " Contains types that are being used by the _**parent application**_ in order to initialise\r\na `DateRangePicker`.\r\n\r\n\r\n# Types\r\n\r\n@docs ViewType\r\n\r\n@docs CalendarConfig, DateLimit\r\n\r\n@docs TimePickerConfig\r\n\r\n@docs I18n\r\n\r\n",
+        "unions": [
+            {
+                "name": "DateLimit",
+                "comment": " The _**optional**_ `DateRangePicker` date restrictions. You can cover most of the\r\ndate restriction cases with the type below. If by any change you need to achieve\r\na case which is not possible by the current implementation please raise an issue\r\non the repository of this package.\r\n\r\n    -- A Custom imposed restriction for the year 2019\r\n    -- inclusive of the minDate and maxDate.\r\n    DateLimit { minDate = 1 Jan 2019, maxDate = 31 Dec 2019 }\r\n\r\n    -- An unlimited Calendar.\r\n    NoLimit\r\n\r\n",
+                "args": [],
+                "cases": [
+                    [
+                        "DateLimit",
+                        [
+                            "{ minDate : DateTime.DateTime, maxDate : DateTime.DateTime }"
+                        ]
+                    ],
+                    [
+                        "NoLimit",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "ViewType",
+                "comment": " The Calendar ViewTypes.\r\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Single",
+                        []
+                    ],
+                    [
+                        "Double",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "CalendarConfig",
+                "comment": " Used in order to configure the `Calendar` part of the `DateRangePicker`.\r\n\r\n  - **`today`:** Represents today as `DateTime` provided by the **parent application**.\r\n\r\n  - **`startingWeekday`:** The starting weekday of the calendar.\r\n\r\n  - **`primaryDate`:** Represents the default `month - year` calendar screen.\r\n      - If the **primaryDate** is set to `Nothing` the `DateRangePicker` will\r\n        set the **primaryDate** equal to the **today** property.\r\n      - If the consumer has provided both a **primaryDate** and a **dateLimit**\r\n        but the **primaryDate** is out of bounds, the `DateRangePicker` will set\r\n        the **primaryDate** equal to the minium date of the constrains.\r\n\r\n  - **`dateLimit`:** Used to impose date restrictions on the `DateRangePicker`.\r\n    The different configuration settings can be seen on the\r\n    [DateLimit](DateRangePicker.Types#DateLimit) definition.\r\n\r\n  - **`dateRangeOffset`:** Used to set a minimum length on the selected date range.\r\n    This basically means that if we set a **minimumDateRangeLength** of 3, the user\r\n    will be able to select a minimum of 3 dates.\r\n\r\n",
+                "args": [],
+                "type": "{ today : DateTime.DateTime, startingWeekday : Time.Weekday, primaryDate : Maybe.Maybe DateTime.DateTime, dateLimit : DateRangePicker.Types.DateLimit, dateRangeOffset : Maybe.Maybe { minDateRangeLength : Basics.Int } }"
+            },
+            {
+                "name": "I18n",
+                "comment": " The TimePicker `I18n` config\r\n\r\n  - **start:** Refers to the start time title\r\n  - **end:** Refers to the end time title\r\n  - **checkboxText:** Refers to the `mirrorTimes` checkbox text\r\n\r\n",
+                "args": [],
+                "type": "{ start : String.String, end : String.String, checkboxText : String.String }"
+            },
+            {
+                "name": "TimePickerConfig",
+                "comment": " Used in order to configure the `TimePicker` part of the `DateRangePicker`.\r\n\r\n  - **`pickerType`:** Defines the type of the picker as described in the [TimePicker module](TimePicker.Types#PickerType).\r\n\r\n  - **`defaultTime`:** Defines the defaultTime that will be used as the default value of the `TimePicker`.\r\n\r\n  - **`mirrorTimes`:** Dictates if both the `TimePickers` should be in sync.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\r\n    **Note:** The synchronisation takes place using the\r\n    [onBlur](https://package.elm-lang.org/packages/elm/html/latest/Html-Events#onBlur)\r\n    event of the input.\r\n\r\n  - **i18n:** The TimePicker `I18n` config\r\n\r\n",
+                "args": [],
+                "type": "{ pickerType : TimePicker.Types.PickerType, defaultTime : Clock.Time, mirrorTimes : Basics.Bool, i18n : DateRangePicker.Types.I18n }"
+            }
+        ],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "TimePicker.Types",
+        "comment": " This module contains the `Public types` that are being used by the\n_**parent application**_ in order to create a `TimePickerConfig` for either\nthe `DatePicker` or the `DateRangePicker` modules.\n\n\n# Types\n\n@docs PickerType\n\n",
+        "unions": [
+            {
+                "name": "PickerType",
+                "comment": " Describes the different _**picker types**_ along with their _**stepping function**_.\n\n    -- An `Hours` and `Minutes` picker. The `Hours` part\n    -- will increment / decrement their value by 1 whereas\n    -- the `Minutes` will increment / decrement by 5.\n    HH_MM { hoursStep = 1, minutesStep = 5 }\n\n    -- An `Hours`, `Minutes` and `Seconds` picker.\n    -- The `Hours` and `Minutes` will increment / decrement\n    -- their values by 1 whereas the `Seconds` will\n    -- increment / decrement by 10.\n    HH_MM_SS { hoursStep = 1, minutesStep = 1, secondsStep = 10 }\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "HH",
+                        [
+                            "{ hoursStep : Basics.Int }"
+                        ]
+                    ],
+                    [
+                        "HH_MM",
+                        [
+                            "{ hoursStep : Basics.Int, minutesStep : Basics.Int }"
+                        ]
+                    ],
+                    [
+                        "HH_MM_SS",
+                        [
+                            "{ hoursStep : Basics.Int, minutesStep : Basics.Int, secondsStep : Basics.Int }"
+                        ]
+                    ],
+                    [
+                        "HH_MM_SS_MMMM",
+                        [
+                            "{ hoursStep : Basics.Int, minutesStep : Basics.Int, secondsStep : Basics.Int, millisecondsStep : Basics.Int }"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [],
+        "binops": []
+    }
+]

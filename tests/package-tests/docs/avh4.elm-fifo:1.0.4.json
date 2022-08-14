@@ -1,0 +1,45 @@
+[
+    {
+        "name": "Fifo",
+        "comment": "\n\n\n# Creating FIFOs\n\n@docs Fifo, empty, fromList\n\n\n# Inserting/Removing\n\n@docs insert, remove\n\n\n# To List\n\n@docs toList\n\n",
+        "unions": [
+            {
+                "name": "Fifo",
+                "comment": " A FIFO containing items of type `a`.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "empty",
+                "comment": " Creates an empty Fifo.\n\n    Fifo.empty\n        -- == Fifo.fromList []\n\n",
+                "type": "Fifo.Fifo a"
+            },
+            {
+                "name": "fromList",
+                "comment": " Creates a Fifo from a List.\n\n    Fifo.fromList [3,4,5]\n    |> Fifo.remove\n    |> Tuple.first\n        -- == Just 3\n\n",
+                "type": "List.List a -> Fifo.Fifo a"
+            },
+            {
+                "name": "insert",
+                "comment": " Inserts an item into a Fifo\n\n    Fifo.empty\n    |> Fifo.insert 7\n    |> Fifo.insert 8\n        -- == Fifo.fromList [7,8]\n\n",
+                "type": "a -> Fifo.Fifo a -> Fifo.Fifo a"
+            },
+            {
+                "name": "remove",
+                "comment": " Removes the next (oldest) item from a Fifo, returning the item (if any), and the updated Fifo.\n\n    Fifo.fromList [3,7]\n    |> Fifo.remove\n        -- == (Just 3, Fifo.fromList [7])\n\n",
+                "type": "Fifo.Fifo a -> ( Maybe.Maybe a, Fifo.Fifo a )"
+            },
+            {
+                "name": "toList",
+                "comment": " Converts a Fifo to a List.\n\n    Fifo.empty\n    |> Fifo.insert 7\n    |> Fifo.insert 9\n    |> Fifo.toList\n        -- == [7,9]\n\n",
+                "type": "Fifo.Fifo a -> List.List a"
+            }
+        ],
+        "binops": []
+    }
+]

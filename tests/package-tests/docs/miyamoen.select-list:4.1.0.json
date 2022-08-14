@@ -1,0 +1,270 @@
+[
+    {
+        "name": "SelectList",
+        "comment": " Yet another SelectList implementation\n\nA SelectList is a non-empty list which always has exactly one element selected.\nIt is an example of a list zipper.\n\nInspired by these modules\n\n  - [rtfeldman/selectlist](http://package.elm-lang.org/packages/rtfeldman/selectlist/latest)\n  - [turboMaCk/lazy-tree-with-zipper](http://package.elm-lang.org/packages/turboMaCk/lazy-tree-with-zipper/latest)\n\n[`selectedMap`](#selectedMap) is the feature function in this package.\nUse `selectedMap` in view.\n\n    view : SelectList String -> Html Msg\n    view selectList =\n        ul [] <|\n            SelectList.selectedMap\n                (\\position item ->\n                    li [ onClick (Set item) ]\n                        [ text <| toString <| SelectList.index item\n                        , toString <| SelectList.selected item\n                        ]\n                )\n                selectList\n\n\n# Type\n\n@docs SelectList\n\n\n## Constructor\n\n@docs fromLists, fromList, singleton\n\n\n## Destructor\n\n@docs toTuple, selected, listAfter, listBefore, toList\n\n\n# Query\n\n@docs isHead, isLast, isSingle\n@docs length, beforeLength, afterLength, index\n\n\n# Operation\n\n@docs reverse, attempt, delete, insertBefore, insertAfter\n\n\n# Transform\n\n@docs map, mapBefore, mapAfter\n\n\n## Update\n\n@docs updateSelected, updateBefore, updateAfter\n\n\n### Replace\n\nAlias of update function.\n\n    replaceX x =\n        updateX (always x)\n\n@docs replaceSelected, replaceBefore, replaceAfter\n\n\n## Feature Functions\n\n@docs Position, selectedMap, selectedMapForList\n\n@docs indexedMap, indexedMap_\n\n\n# Move\n\nMove selected element.\n\n@docs moveBy, moveWhileLoopBy, moveToHead, moveToLast\n\n\n# Select\n\nSelect new element, otherwise move focus.\n\n\n## Predicate\n\n@docs selectBeforeIf, selectAfterIf\n\n\n## Index\n\n@docs selectBy, selectWhileLoopBy, selectHead, selectLast\n\n\n## Multi\n\n@docs selectAll, selectAllBefore, selectAllAfter\n\n",
+        "unions": [
+            {
+                "name": "Position",
+                "comment": " `Position` is used with [`selectedMap`](#selectedMap).\n\n`Position` is Selected if the selected element,\nBeforeSelected if an element before the selected element,\nand AfterSelected if an element after the selected element.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "BeforeSelected",
+                        []
+                    ],
+                    [
+                        "Selected",
+                        []
+                    ],
+                    [
+                        "AfterSelected",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "SelectList",
+                "comment": " A nonempty list which always has exactly one element selected.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "Types.SelectList a"
+            }
+        ],
+        "values": [
+            {
+                "name": "afterLength",
+                "comment": " Length of the elements after the selected element\n\n    fromLists [ 1, 2, 3 ] 4 [ 5, 6 ]\n        |> afterLength\n        == 2\n\n",
+                "type": "SelectList.SelectList a -> Basics.Int"
+            },
+            {
+                "name": "attempt",
+                "comment": " Attempt to perform action over selectList and return original `SelectList`\nin cases where this action returns `Nothing`.\n\n    attempt f selectList =\n        f selectList\n            |> Maybe.withDefault selectList\n\n",
+                "type": "(SelectList.SelectList a -> Maybe.Maybe (SelectList.SelectList a)) -> SelectList.SelectList a -> SelectList.SelectList a"
+            },
+            {
+                "name": "beforeLength",
+                "comment": " Length of the elements before the selected element\n\n    fromLists [ 1, 2, 3 ] 4 [ 5, 6 ]\n        |> beforeLength\n        == 3\n\n",
+                "type": "SelectList.SelectList a -> Basics.Int"
+            },
+            {
+                "name": "delete",
+                "comment": " Delete the selected element, then select an element after the selected.\n\nIf a list after selected is empty, then select an element before the selected.\n\nReturns Nothing if SelectList has only single value.\n\n    fromLists [ 1, 2, 3 ] 4 [ 5, 6 ]\n        |> delete\n        == Just (fromLists [ 1, 2, 3 ] 5 [ 6 ])\n\n    fromLists [ 1, 2, 3 ] 4 []\n        |> delete\n        == Just (fromLists [ 1, 2 ] 3 [])\n\n    fromLists [] 4 []\n        |> delete\n        == Nothing\n\n",
+                "type": "SelectList.SelectList a -> Maybe.Maybe (SelectList.SelectList a)"
+            },
+            {
+                "name": "fromList",
+                "comment": " Create a `SelectList` if list has elements.\n\nIf empty, `Nothing`.\n\n    fromList [] == Nothing\n\n    fromList [ 2, 3, 4 ] == Just (fromLists [] 2 [ 3, 4 ])\n\n",
+                "type": "List.List a -> Maybe.Maybe (SelectList.SelectList a)"
+            },
+            {
+                "name": "fromLists",
+                "comment": " Create a `SelectList`.\n\n    fromLists [ 1, 2, 3 ] 4 [ 5, 6 ]\n        |> selected\n        == 4\n\n",
+                "type": "List.List a -> a -> List.List a -> SelectList.SelectList a"
+            },
+            {
+                "name": "index",
+                "comment": " Index of the selected element.\n\nThis is alias of `beforeLength`.\n\n    index =\n        beforeLength\n\n",
+                "type": "SelectList.SelectList a -> Basics.Int"
+            },
+            {
+                "name": "indexedMap",
+                "comment": " Apply a function to every element of a `SelectList`.\n\nThe transform function receives an index and an element.\n\nA problem with `selectedMap` is to produce many `SelectList`s. `indexedMap` solves it.\n\nThe index is relative. We can create new list with original list and relative index.\n\n    fromLists [ 1, 2, 3 ] 4 [ 5, 6 ]\n        |> indexedMap (\\index elm -> ( index, elm * 2 ))\n        == [ ( -3, 2 )\n           , ( -2, 4 )\n           , ( -1, 6 )\n           , ( 0, 8 )\n           , ( 1, 10 )\n           , ( 2, 12 )\n           ]\n\n",
+                "type": "(Basics.Int -> a -> b) -> SelectList.SelectList a -> List.List b"
+            },
+            {
+                "name": "indexedMap_",
+                "comment": " Absolute index version.\n\n    fromLists [ 1, 2, 3 ] 4 [ 5, 6 ]\n        |> indexedMap_ (\\selected index elm -> ( selected, index, 2 * elm ))\n        == [ ( False, 0, 2 )\n           , ( False, 1, 4 )\n           , ( False, 2, 6 )\n           , ( True, 3, 8 )\n           , ( False, 4, 10 )\n           , ( False, 5, 12 )\n           ]\n\n",
+                "type": "(Basics.Bool -> Basics.Int -> a -> b) -> SelectList.SelectList a -> List.List b"
+            },
+            {
+                "name": "insertAfter",
+                "comment": " Insert new selected element, then move the old after it.\n\n    fromLists [ 1, 2, 3 ] 4 [ 5, 6 ]\n        |> insertAfter 8\n        == fromLists [ 1, 2, 3 ] 8 [ 4, 5, 6 ]\n\n",
+                "type": "a -> SelectList.SelectList a -> SelectList.SelectList a"
+            },
+            {
+                "name": "insertBefore",
+                "comment": " Insert new selected element, then move the old before it.\n\n    fromLists [ 1, 2, 3 ] 4 [ 5, 6 ]\n        |> insertBefore 8\n        == fromLists [ 1, 2, 3, 4 ] 8 [ 5, 6 ]\n\n",
+                "type": "a -> SelectList.SelectList a -> SelectList.SelectList a"
+            },
+            {
+                "name": "isHead",
+                "comment": " Check if the selected element is first element.\n\n    fromLists [] 4 [ 5, 6 ]\n        |> isHead\n        == True\n\n",
+                "type": "SelectList.SelectList a -> Basics.Bool"
+            },
+            {
+                "name": "isLast",
+                "comment": " Check if the selected element is last element.\n\n    fromLists [ 1, 2, 3 ] 4 []\n        |> isLast\n        == True\n\n",
+                "type": "SelectList.SelectList a -> Basics.Bool"
+            },
+            {
+                "name": "isSingle",
+                "comment": " Check if the selected element is only element in select list.\n\n    fromLists [] 4 []\n        |> isSingle\n        == True\n\n",
+                "type": "SelectList.SelectList a -> Basics.Bool"
+            },
+            {
+                "name": "length",
+                "comment": " Length of `SelectList`.\n\n    fromLists [ 1, 2, 3 ] 4 [ 5, 6 ]\n        |> length\n        == 6\n\n",
+                "type": "SelectList.SelectList a -> Basics.Int"
+            },
+            {
+                "name": "listAfter",
+                "comment": " Return the elements after the selected element.\n\n    fromLists [ 1, 2, 3 ] 4 [ 5, 6 ]\n        |> listAfter\n        == [ 5, 6 ]\n\n",
+                "type": "SelectList.SelectList a -> List.List a"
+            },
+            {
+                "name": "listBefore",
+                "comment": " Return the elements before the selected element.\n\n    fromLists [ 1, 2, 3 ] 4 [ 5, 6 ]\n        |> listBefore\n        == [ 1, 2, 3 ]\n\n",
+                "type": "SelectList.SelectList a -> List.List a"
+            },
+            {
+                "name": "map",
+                "comment": " Apply a function to every element of a `SelectList`.\n\n    fromLists [ 1, 2, 3 ] 4 [ 5, 6 ]\n        |> map (\\num -> num * 2)\n        == fromLists [ 2, 4, 6 ] 8 [ 10, 12 ]\n\n",
+                "type": "(a -> b) -> SelectList.SelectList a -> SelectList.SelectList b"
+            },
+            {
+                "name": "mapAfter",
+                "comment": " Apply a function to elements after the selected element.\n\n    fromLists [ 1, 2, 3 ] 4 [ 5, 6 ]\n        |> mapAfter (\\selected -> 2 * selected)\n        == fromLists [ 1, 2, 3 ] 4 [ 10, 12 ]\n\n",
+                "type": "(a -> a) -> SelectList.SelectList a -> SelectList.SelectList a"
+            },
+            {
+                "name": "mapBefore",
+                "comment": " Apply a function to elements before the selected element.\n\n    fromLists [ 1, 2, 3 ] 4 [ 5, 6 ]\n        |> mapBefore (\\selected -> 2 * selected)\n        == fromLists [ 2, 4, 6 ] 4 [ 5, 6 ]\n\n",
+                "type": "(a -> a) -> SelectList.SelectList a -> SelectList.SelectList a"
+            },
+            {
+                "name": "moveBy",
+                "comment": " Move a selected element by n steps.\nPass an index over the length, then move to head/last.\n\n    fromLists [ 1, 2, 3 ] 4 [ 5, 6 ]\n        |> moveBy -2\n        == fromLists [ 1 ] 4 [ 2, 3, 5, 6 ]\n\n    fromLists [ 1, 2, 3 ] 4 [ 5, 6 ]\n        |> moveBy 1\n        == fromLists [ 1, 2, 3, 5 ] 4 [ 6 ]\n\n    fromLists [ 1, 2, 3 ] 4 [ 5, 6 ]\n        |> moveBy 3\n        == fromLists [ 1, 2, 3, 5, 6 ] 4 []\n\n",
+                "type": "Basics.Int -> SelectList.SelectList a -> SelectList.SelectList a"
+            },
+            {
+                "name": "moveToHead",
+                "comment": " Move a selected element to head.\n\n    fromLists [ 1, 2, 3 ] 4 [ 5, 6 ]\n        |> moveToHead\n        == fromLists [] 4 [ 1, 2, 3, 5, 6 ]\n\n",
+                "type": "SelectList.SelectList a -> SelectList.SelectList a"
+            },
+            {
+                "name": "moveToLast",
+                "comment": " Move a selected element to last.\n\n    fromLists [ 1, 2, 3 ] 4 [ 5, 6 ]\n        |> moveToLast\n        == fromLists [ 1, 2, 3, 5, 6 ] 4 []\n\n",
+                "type": "SelectList.SelectList a -> SelectList.SelectList a"
+            },
+            {
+                "name": "moveWhileLoopBy",
+                "comment": " Move a selected element by n steps while loop.\nPass an index over the length, then loop.\n\n    fromLists [ 1, 2, 3 ] 4 [ 5, 6 ]\n        |> moveWhileLoopBy 4\n        == fromLists [ 1 ] 4 [ 2, 3, 5, 6 ]\n\n    fromLists [ 1, 2, 3 ] 4 [ 5, 6 ]\n        |> moveWhileLoopBy -4\n        == fromLists [ 1 2, 3, 5, 6 ] 4 []\n\n",
+                "type": "Basics.Int -> SelectList.SelectList a -> SelectList.SelectList a"
+            },
+            {
+                "name": "replaceAfter",
+                "comment": " Replace elements after the selected element with new elements.\n\n    fromLists [ 1, 2, 3 ] 4 [ 5, 6 ]\n        |> replaceAfter [ 9, 10, 11 ]\n        == fromLists [ 1, 2, 3 ] 4 [ 9, 10, 11 ]\n\n",
+                "type": "List.List a -> SelectList.SelectList a -> SelectList.SelectList a"
+            },
+            {
+                "name": "replaceBefore",
+                "comment": " Replace elements before the selected element with new elements.\n\n    fromLists [ 1, 2, 3 ] 4 [ 5, 6 ]\n        |> replaceBefore [ 7, 8 ]\n        == fromLists [ 7, 8 ] 4 [ 5, 6 ]\n\n",
+                "type": "List.List a -> SelectList.SelectList a -> SelectList.SelectList a"
+            },
+            {
+                "name": "replaceSelected",
+                "comment": " Replace the selected element with new one.\n\n    fromLists [ 1, 2, 3 ] 4 [ 5, 6 ]\n        |> replaceSelected 10\n        == fromLists [ 1, 2, 3 ] 10 [ 5, 6 ]\n\n",
+                "type": "a -> SelectList.SelectList a -> SelectList.SelectList a"
+            },
+            {
+                "name": "reverse",
+                "comment": " Reverse a select list. Pivot is selected element.\n\n    fromLists [ 1, 2, 3 ] 4 [ 5, 6 ]\n        |> reverse\n        == fromLists [ 6, 5 ] 4 [ 3, 2, 1 ]\n\n",
+                "type": "SelectList.SelectList a -> SelectList.SelectList a"
+            },
+            {
+                "name": "selectAfterIf",
+                "comment": " Select the first element, after the old selected, that satisfies a predicate. If none match, return Nothing.\n\n    isOdd num =\n        modBy 2 num /= 0\n\n    fromLists [ 1, 2 ] 3 [ 4, 5, 6 ]\n        |> selectAfterIf isOdd\n        == Just (fromLists [ 1, 2, 3, 4 ] 5 [ 6 ])\n\n",
+                "type": "(a -> Basics.Bool) -> SelectList.SelectList a -> Maybe.Maybe (SelectList.SelectList a)"
+            },
+            {
+                "name": "selectAll",
+                "comment": " List of all SelectList.\n\n    fromLists [ 1, 2, 3 ] 4 [ 5, 6 ]\n        == [ fromLists [] 1 [ 2, 3, 4, 5, 6 ]\n           , fromLists [ 1 ] 2 [ 3, 4, 5, 6 ]\n           , fromLists [ 1, 2 ] 3 [ 4, 5, 6 ]\n           , fromLists [ 1, 2, 3 ] 4 [ 5, 6 ]\n           , fromLists [ 1, 2, 3, 4 ] 5 [ 6 ]\n           , fromLists [ 1, 2, 3, 4, 5 ] 6 []\n           ]\n\n",
+                "type": "SelectList.SelectList a -> List.List (SelectList.SelectList a)"
+            },
+            {
+                "name": "selectAllAfter",
+                "comment": " List of all SelectList after the selected.\n\n    fromLists [ 1, 2, 3 ] 4 [ 5, 6 ]\n        == [ fromLists [ 1, 2, 3, 4 ] 5 [ 6 ]\n           , fromLists [ 1, 2, 3, 4, 5 ] 6 []\n           ]\n\n",
+                "type": "SelectList.SelectList a -> List.List (SelectList.SelectList a)"
+            },
+            {
+                "name": "selectAllBefore",
+                "comment": " List of all SelectList before the selected.\n\n    fromLists [ 1, 2, 3 ] 4 [ 5, 6 ]\n        == [ fromLists [] 1 [ 2, 3, 4, 5, 6 ]\n           , fromLists [ 1 ] 2 [ 3, 4, 5, 6 ]\n           , fromLists [ 1, 2 ] 3 [ 4, 5, 6 ]\n           , fromLists [ 1, 2, 3 ] 4 [ 5, 6 ]\n           ]\n\n",
+                "type": "SelectList.SelectList a -> List.List (SelectList.SelectList a)"
+            },
+            {
+                "name": "selectBeforeIf",
+                "comment": " Select the first element, before the old selected, that satisfies a predicate. If none match, return Nothing.\n\n    isOdd num =\n        modBy 2 num /= 0\n\n    fromLists [ 1, 2 ] 3 [ 4, 5, 6 ]\n        |> selectBeforeIf isOdd\n        == Just (fromLists [ 0 ] 1 [ 2, 3, 4, 5, 6 ])\n\n",
+                "type": "(a -> Basics.Bool) -> SelectList.SelectList a -> Maybe.Maybe (SelectList.SelectList a)"
+            },
+            {
+                "name": "selectBy",
+                "comment": " Select an element by n steps.\nPass an index over the length, then returns Nothing.\n\n    fromLists [ 1, 2, 3 ] 4 [ 5, 6 ]\n        |> selectBy -1\n        == Just (fromLists [ 1, 2 ] 3 [ 4, 5, 6 ])\n\n    fromLists [ 1, 2, 3 ] 4 [ 5, 6 ]\n        |> selectBy 2\n        == Just (fromLists [ 1, 2, 3, 4, 5 ] 6 [])\n\n    fromLists [ 1, 2, 3 ] 4 [ 5, 6 ]\n        |> selectBy 3\n        == Nothing\n\n",
+                "type": "Basics.Int -> SelectList.SelectList a -> Maybe.Maybe (SelectList.SelectList a)"
+            },
+            {
+                "name": "selectHead",
+                "comment": " Select a head element.\n\n    fromLists [ 1, 2, 3 ] 4 [ 5, 6 ]\n        |> selectHead\n        == fromLists [] 1 [ 2, 3, 4, 5, 6 ]\n\n",
+                "type": "SelectList.SelectList a -> SelectList.SelectList a"
+            },
+            {
+                "name": "selectLast",
+                "comment": " Select a last element.\n\n    fromLists [ 1, 2, 3 ] 4 [ 5, 6 ]\n        |> selectLast\n        == fromLists [ 1, 2, 3, 4, 5 ] 6 []\n\n",
+                "type": "SelectList.SelectList a -> SelectList.SelectList a"
+            },
+            {
+                "name": "selectWhileLoopBy",
+                "comment": " Select an element by n steps while loop.\nPass an index over the length, then loop.\n\n    fromLists [ 1, 2, 3 ] 4 [ 5, 6 ]\n        |> selectWhileLoopBy 3\n        == fromLists [] 1 [ 2, 3, 4, 5, 6 ]\n\n    fromLists [ 1, 2, 3 ] 4 [ 5, 6 ]\n        |> selectWhileLoopBy -5\n        == fromLists [ 1, 2, 3, 4 ] 5 [ 6 ]\n\n",
+                "type": "Basics.Int -> SelectList.SelectList a -> SelectList.SelectList a"
+            },
+            {
+                "name": "selected",
+                "comment": " Return the selected element.\n\n    fromLists [ 1, 2, 3 ] 4 [ 5, 6 ]\n        |> selected\n        == 4\n\n",
+                "type": "SelectList.SelectList a -> a"
+            },
+            {
+                "name": "selectedMap",
+                "comment": " Apply a function to every element of a `SelectList`.\n\nThe transform function receives a `Position` and `SelectList` which selects a focused element.\n\nUse in view.\n\n    view : SelectList String -> Html Msg\n    view selectList =\n        ul [] <|\n            SelectList.selectedMap\n                (\\position item ->\n                    li [ onClick (Set item) ]\n                        [ text <| toString <| SelectList.index item\n                        , toString <| SelectList.selected item\n                        ]\n                )\n                selectList\n\nGet a focused item and index from select list.\n`Position` describes whether it is selected, or not.\n\nCompared with `List.indexedMap`.\n\n    selectedMap : (Position -> SelectList a -> b) -> SelectList a -> List b\n\n    indexedMap : (Int -> a -> b) -> List a -> List b\n\nUnlike `indexedMap`, we can get full access to all elements in the list.\nAnd set new list to `Model`.\n\nIf you don't use non-empty list, use [`selectedMapForList`](#selectedMapForList) that receives `List` instead of `SelectList`.\n\n",
+                "type": "(SelectList.Position -> SelectList.SelectList a -> b) -> SelectList.SelectList a -> List.List b"
+            },
+            {
+                "name": "selectedMapForList",
+                "comment": " Apply a function to every element of a `List`.\n\nThe transform function receives a `SelectList` which selects a focused element.\n\nUse in view.\n\n    view : SelectList String -> Html Msg\n    view selectList =\n        ul [] <|\n            SelectList.selectedMapForList\n                (\\item ->\n                    li [ onClick (Set <| SelectList.toList <| SelectList.update updateFunction item) ]\n                        [ text <| toString <| SelectList.index item\n                        , toString <| SelectList.selected item\n                        ]\n                )\n                selectList\n\nUse this instead of `indexedMap`.\n\n",
+                "type": "(SelectList.SelectList a -> b) -> List.List a -> List.List b"
+            },
+            {
+                "name": "singleton",
+                "comment": " Create a `SelectList` containing exactly one element.\n\n    singleton 3 == fromLists [] 3 []\n\n",
+                "type": "a -> SelectList.SelectList a"
+            },
+            {
+                "name": "toList",
+                "comment": " Destruct `SelectList`.\n\n    fromLists [ 1, 2, 3 ] 4 [ 5, 6 ]\n        |> toList\n        == [ 1, 2, 3, 4, 5, 6 ]\n\n",
+                "type": "SelectList.SelectList a -> List.List a"
+            },
+            {
+                "name": "toTuple",
+                "comment": " Destruct `SelectList`.\n\n    fromLists [ 1, 2, 3 ] 4 [ 5, 6 ]\n        |> toTuple\n        == ( 1, 2, 3 ) 4 ( 5, 6 )\n\n",
+                "type": "SelectList.SelectList a -> ( List.List a, a, List.List a )"
+            },
+            {
+                "name": "updateAfter",
+                "comment": " Update elements after the selected element using given function.\n\n    fromLists [ 1, 2, 3 ] 4 [ 5, 6 ]\n        |> updateBefore (\\after -> List.map ((*) 2) after)\n        == fromLists [ 1, 2, 3 ] 4 [ 10, 12 ]\n\n",
+                "type": "(List.List a -> List.List a) -> SelectList.SelectList a -> SelectList.SelectList a"
+            },
+            {
+                "name": "updateBefore",
+                "comment": " Update elements before the selected element using given function.\n\n    fromLists [ 1, 2, 3 ] 4 [ 5, 6 ]\n        |> updateBefore (\\before -> List.map ((*) 2) before)\n        == fromLists [ 2, 4, 6 ] 4 [ 5, 6 ]\n\n",
+                "type": "(List.List a -> List.List a) -> SelectList.SelectList a -> SelectList.SelectList a"
+            },
+            {
+                "name": "updateSelected",
+                "comment": " Update the selected element using given function.\n\n    fromLists [ 1, 2, 3 ] 4 [ 5, 6 ]\n        |> updateSelected (\\selected -> 2 * selected)\n        == fromLists [ 1, 2, 3 ] 8 [ 5, 6 ]\n\n",
+                "type": "(a -> a) -> SelectList.SelectList a -> SelectList.SelectList a"
+            }
+        ],
+        "binops": []
+    }
+]

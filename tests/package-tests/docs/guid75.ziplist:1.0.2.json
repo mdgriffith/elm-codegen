@@ -1,0 +1,55 @@
+[
+    {
+        "name": "ZipList",
+        "comment": " A `ZipList` is a collection which can be moved forward/backward and that exposes a single current element\n\n\n# ZipLists\n\n@docs ZipList\n\n\n# Creation\n\n@docs fromList, singleton\n\n\n# Consultation\n\n@docs current, toList, length\n\n\n# Moving\n\n@docs forward, backward\n\n",
+        "unions": [
+            {
+                "name": "ZipList",
+                "comment": " A collection data type that can be moved forward/backward and that exposes a current element (see the `current` function)\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "backward",
+                "comment": " Move backward a `ZipList`\n",
+                "type": "ZipList.ZipList a -> ZipList.ZipList a"
+            },
+            {
+                "name": "current",
+                "comment": " Return the current element of a ZipList. `Nothing` will be returned if the ziplist is empty\n",
+                "type": "ZipList.ZipList a -> Maybe.Maybe a"
+            },
+            {
+                "name": "forward",
+                "comment": " Move forward a `ZipList`\n",
+                "type": "ZipList.ZipList a -> ZipList.ZipList a"
+            },
+            {
+                "name": "fromList",
+                "comment": " Craft a new ZipList out of a List\n",
+                "type": "List.List a -> ZipList.ZipList a"
+            },
+            {
+                "name": "length",
+                "comment": " Return a `ZipList` length\n",
+                "type": "ZipList.ZipList a -> Basics.Int"
+            },
+            {
+                "name": "singleton",
+                "comment": " Create a new ZipList with a single element in it\n",
+                "type": "a -> ZipList.ZipList a"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert a `ZipList` into a `List`\n",
+                "type": "ZipList.ZipList a -> List.List a"
+            }
+        ],
+        "binops": []
+    }
+]

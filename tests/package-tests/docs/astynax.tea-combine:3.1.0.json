@@ -1,0 +1,311 @@
+[
+    {
+        "name": "TeaCombine",
+        "comment": " The common types and combinators.\n\nTODO: add some great docs.\n\n@docs View, Both, Ix\n@docs initAll\n@docs viewBoth, viewAll, viewEach, viewSome, previewEvery\n@docs joinViews, withView\n@docs bind, thenBind\n@docs oneOfViews, orView, oneOfPaths, orPath\n@docs eitherView\n@docs mapBoth\n\n",
+        "unions": [
+            {
+                "name": "Ix",
+                "comment": " Wrapper type that adds an index.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Ix",
+                        [
+                            "Basics.Int",
+                            "a"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Both",
+                "comment": " An alias for the pair of things (product of two types).\n",
+                "args": [
+                    "a",
+                    "b"
+                ],
+                "type": "( a, b )"
+            },
+            {
+                "name": "View",
+                "comment": " An alias for the view function.\n",
+                "args": [
+                    "model",
+                    "msg"
+                ],
+                "type": "model -> Html.Html msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "bind",
+                "comment": " Makes a function that applies a getter to the model and\nthen modifies result.\n\nThis is a first step in the _\"bind+[thenBind]\"-chain_.\n\n",
+                "type": "(a -> b) -> (model -> a) -> model -> b"
+            },
+            {
+                "name": "eitherView",
+                "comment": " Combines two views into view for the SUM of models.\n",
+                "type": "TeaCombine.View model2 msg2 -> TeaCombine.View model1 msg1 -> Either.Either model1 model2 -> Html.Html (Either.Either msg1 msg2)"
+            },
+            {
+                "name": "initAll",
+                "comment": " Just an alias for [Array.fromList](Array#fromList) (made for convinience).\n",
+                "type": "List.List a -> Array.Array a"
+            },
+            {
+                "name": "joinViews",
+                "comment": " Works as [viewBoth](#viewBoth) but returns a function that produces a\n`List` of sub-views.\n\nThis is a first step of _\"joinViews+[withView]\" chain_.\n\n",
+                "type": "TeaCombine.View model1 msg1 -> TeaCombine.View model2 msg2 -> TeaCombine.Both model1 model2 -> List.List (Html.Html (Either.Either msg1 msg2))"
+            },
+            {
+                "name": "mapBoth",
+                "comment": " Applies two functions to the \"sides\" of the `Both`.\n",
+                "type": "(a -> c) -> (b -> d) -> TeaCombine.Both a b -> TeaCombine.Both c d"
+            },
+            {
+                "name": "oneOfPaths",
+                "comment": " Combines two path labels.\n\nThis is a first step in the _\"oneOfPaths+[orPath]\"-chain_.\n\n",
+                "type": "a -> a -> List.Nonempty.Nonempty ( a, Either.Either () () )"
+            },
+            {
+                "name": "oneOfViews",
+                "comment": " Combines two views and lets to select (using path)\nwhich one should be applied to the PRODUCT of models.\n\nThis is a first step in a _\"oneOfViews+[orView]\"-chain_.\n\n",
+                "type": "TeaCombine.View model1 msg1 -> TeaCombine.View model2 msg2 -> Either.Either () () -> TeaCombine.Both model1 model2 -> Html.Html (Either.Either msg1 msg2)"
+            },
+            {
+                "name": "orPath",
+                "comment": " Adds an another path label to the _\"oneOfPaths+[orPath]\"-chain_.\n",
+                "type": "a -> List.Nonempty.Nonempty ( a, b ) -> List.Nonempty.Nonempty ( a, Either.Either b () )"
+            },
+            {
+                "name": "orView",
+                "comment": " Adds an another view to the _\"oneOfViews+[orView]\"-chain_.\n",
+                "type": "TeaCombine.View model2 msg2 -> (path -> TeaCombine.View model1 msg1) -> Either.Either path () -> TeaCombine.Both model1 model2 -> Html.Html (Either.Either msg1 msg2)"
+            },
+            {
+                "name": "previewEvery",
+                "comment": " Returns a list of [Html](Html#Html) produced by applying a\nsub-view to the `List` of sub-models (like [List.map](List#map) does).\n",
+                "type": "TeaCombine.View model msg -> Array.Array model -> List.List (Html.Html (TeaCombine.Ix msg))"
+            },
+            {
+                "name": "thenBind",
+                "comment": " Adds an another step to the _\"bind+[thenBind]\"-chain_.\n",
+                "type": "(model2 -> a) -> (model1 -> a -> b) -> TeaCombine.Both model1 model2 -> b"
+            },
+            {
+                "name": "viewAll",
+                "comment": " Returns a list of [Html](Html#Html) produced by applying a `List`\nof sub-views to the `List` of sub-models (like [List.zip](List#zip) does).\n",
+                "type": "List.List (TeaCombine.View model msg) -> Array.Array model -> List.List (Html.Html (TeaCombine.Ix msg))"
+            },
+            {
+                "name": "viewBoth",
+                "comment": " Combines two sub-views into a pair ([Both](#Both)).\n",
+                "type": "TeaCombine.View model1 msg1 -> TeaCombine.View model2 msg2 -> TeaCombine.Both model1 model2 -> TeaCombine.Both (Html.Html (Either.Either msg1 msg2)) (Html.Html (Either.Either msg1 msg2))"
+            },
+            {
+                "name": "viewEach",
+                "comment": " Returns a list of [Html](Html#Html) produced by applying\nan index-aware view to the each of sub-models.\n",
+                "type": "(Basics.Int -> TeaCombine.View model msg) -> Array.Array model -> List.List (Html.Html (TeaCombine.Ix msg))"
+            },
+            {
+                "name": "viewSome",
+                "comment": " Works as [viewEach](#viewEach) but returns only some of sub-views.\n",
+                "type": "(Basics.Int -> Maybe.Maybe (TeaCombine.View model msg)) -> Array.Array model -> List.List (Html.Html (TeaCombine.Ix msg))"
+            },
+            {
+                "name": "withView",
+                "comment": " Adds an another step to the _\"joinViews+[withView]\" chain_.\n",
+                "type": "TeaCombine.View model2 msg2 -> (model1 -> List.List (Html.Html msg1)) -> TeaCombine.Both model1 model2 -> List.List (Html.Html (Either.Either msg1 msg2))"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "TeaCombine.Effectful",
+        "comment": " A common types for the effectful cominators.\n\nTODO: add some great docs.\n\n@docs Update, Subscription\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Subscription",
+                "comment": " A type alias for the subscription function.\n",
+                "args": [
+                    "model",
+                    "msg"
+                ],
+                "type": "model -> Platform.Sub.Sub msg"
+            },
+            {
+                "name": "Update",
+                "comment": " A type alias for the effectful update function.\n",
+                "args": [
+                    "model",
+                    "msg"
+                ],
+                "type": "msg -> model -> ( model, Platform.Cmd.Cmd msg )"
+            }
+        ],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "TeaCombine.Effectful.Either",
+        "comment": " Combinators for work with effectful programs (those use @Cms and @Sub).\n\nTODO: add some great docs.\n\n@docs oneOfInits, orInit, updateEither, subscribeEither\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "oneOfInits",
+                "comment": " Combines two inits models to selector and list of paths.\n\nThis is a first step in the _\"oneOfInits+[orInit]\"-chain_.\n\n",
+                "type": "(flags -> ( model2, Platform.Cmd.Cmd msg2 )) -> (flags -> ( model1, Platform.Cmd.Cmd msg1 )) -> ( Either.Either () () -> flags -> ( Either.Either model1 model2, Platform.Cmd.Cmd (Either.Either msg1 msg2) ), List.Nonempty.Nonempty (Either.Either () ()) )"
+            },
+            {
+                "name": "orInit",
+                "comment": " Adds an another init to the _\"oneOfInits+[orInit]\"-chain_.\n",
+                "type": "(flags -> ( model2, Platform.Cmd.Cmd msg2 )) -> ( path -> flags -> ( model1, Platform.Cmd.Cmd msg1 ), List.Nonempty.Nonempty path ) -> ( Either.Either path () -> flags -> ( Either.Either model1 model2, Platform.Cmd.Cmd (Either.Either msg1 msg2) ), List.Nonempty.Nonempty (Either.Either path ()) )"
+            },
+            {
+                "name": "subscribeEither",
+                "comment": " Combines two subscriptions.\n",
+                "type": "TeaCombine.Effectful.Subscription model2 msg2 -> TeaCombine.Effectful.Subscription model1 msg1 -> Either.Either model1 model2 -> Platform.Sub.Sub (Either.Either msg1 msg2)"
+            },
+            {
+                "name": "updateEither",
+                "comment": " Updates one of two submodels using corresponding subupdate function.\n",
+                "type": "TeaCombine.Effectful.Update model2 msg2 -> TeaCombine.Effectful.Update model1 msg1 -> Either.Either msg1 msg2 -> Either.Either model1 model2 -> ( Either.Either model1 model2, Platform.Cmd.Cmd (Either.Either msg1 msg2) )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "TeaCombine.Effectful.Many",
+        "comment": " Combinators those help to work with homogenous sets of sub-models\n(in a form of @Array).\n\nTODO: add some great docs.\n\n@docs updateEach, updateAll, subscribeEach\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "subscribeEach",
+                "comment": " Subscribes each element of the @Array using a sub-subscription (by index).\n",
+                "type": "(Basics.Int -> TeaCombine.Effectful.Subscription model msg) -> TeaCombine.Effectful.Subscription (Array.Array model) (TeaCombine.Ix msg)"
+            },
+            {
+                "name": "updateAll",
+                "comment": " Updates an @Array of sub-models using a @List of sub-updates.\n",
+                "type": "List.List (TeaCombine.Effectful.Update model msg) -> TeaCombine.Effectful.Update (Array.Array model) (TeaCombine.Ix msg)"
+            },
+            {
+                "name": "updateEach",
+                "comment": " Updates each sub-model in @Array using a function\nfrom sub-model index to sub-update.\n",
+                "type": "(Basics.Int -> TeaCombine.Effectful.Update model msg) -> TeaCombine.Ix msg -> Array.Array model -> ( Array.Array model, Platform.Cmd.Cmd (TeaCombine.Ix msg) )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "TeaCombine.Effectful.Pair",
+        "comment": " Combinators for work with effectful programs (those use @Cms and @Sub).\n\nTODO: add some great docs.\n\n@docs initWith, updateWith, subscribeWith\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "initWith",
+                "comment": " Inits both models (with Cmds).\n",
+                "type": "(flags -> ( model2, Platform.Cmd.Cmd msg2 )) -> (flags -> ( model1, Platform.Cmd.Cmd msg1 )) -> flags -> ( TeaCombine.Both model1 model2, Platform.Cmd.Cmd (Either.Either msg1 msg2) )"
+            },
+            {
+                "name": "subscribeWith",
+                "comment": " Combines two subscriptions.\n",
+                "type": "TeaCombine.Effectful.Subscription model2 msg2 -> TeaCombine.Effectful.Subscription model1 msg1 -> TeaCombine.Both model1 model2 -> Platform.Sub.Sub (Either.Either msg1 msg2)"
+            },
+            {
+                "name": "updateWith",
+                "comment": " Updates one of two submodels using corresponding subupdate function.\n",
+                "type": "TeaCombine.Effectful.Update model2 msg2 -> TeaCombine.Effectful.Update model1 msg1 -> TeaCombine.Effectful.Update (TeaCombine.Both model1 model2) (Either.Either msg1 msg2)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "TeaCombine.Pure",
+        "comment": " A common stuff for the pure combinators.\n\nTODO: add some great docs.\n\n@docs Update\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Update",
+                "comment": " A type alias for the pure update function.\n",
+                "args": [
+                    "model",
+                    "msg"
+                ],
+                "type": "msg -> model -> model"
+            }
+        ],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "TeaCombine.Pure.Either",
+        "comment": " Combinators for work with pure programs (those doesn't use @Cmd and @Sub).\n\nTODO: add some great docs\n\n@docs oneOfInits, orInit, updateEither\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "oneOfInits",
+                "comment": " Combines two initial models to selector and list of paths.\n\nThis is a first step in the _\"oneOfInits+[orInit]\"-chain_.\n\n",
+                "type": "m1 -> m2 -> ( Either.Either () () -> Either.Either m1 m2, List.Nonempty.Nonempty (Either.Either () ()) )"
+            },
+            {
+                "name": "orInit",
+                "comment": " Adds an another init to the _\"oneOfInits+[orInit]\"-chain_.\n",
+                "type": "m2 -> ( path -> m1, List.Nonempty.Nonempty path ) -> ( Either.Either path () -> Either.Either m1 m2, List.Nonempty.Nonempty (Either.Either path ()) )"
+            },
+            {
+                "name": "updateEither",
+                "comment": " Updates one of two sub-models using corresponding sub-update function.\n",
+                "type": "TeaCombine.Pure.Update model2 msg2 -> TeaCombine.Pure.Update model1 msg1 -> Either.Either msg1 msg2 -> Either.Either model1 model2 -> Either.Either model1 model2"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "TeaCombine.Pure.Many",
+        "comment": " Combinators those help to work with homogenous sets of sub-models\n(in a form of @Array).\n\nTODO: add some great docs\n\n@docs updateEach, updateAll\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "updateAll",
+                "comment": " Updates an @Array of sub-models using a @List of sub-updates.\n",
+                "type": "List.List (TeaCombine.Pure.Update model msg) -> TeaCombine.Pure.Update (Array.Array model) (TeaCombine.Ix msg)"
+            },
+            {
+                "name": "updateEach",
+                "comment": " Updates each sub-model in @Array using a function\nfrom sub-model index to sub-update.\n",
+                "type": "(Basics.Int -> TeaCombine.Pure.Update model msg) -> TeaCombine.Ix msg -> Array.Array model -> Array.Array model"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "TeaCombine.Pure.Pair",
+        "comment": " Combinators for work with pure programs (those doesn't use @Cmd and @Sub).\n\nTODO: add some great docs\n\n@docs initWith, updateWith\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "initWith",
+                "comment": " Inits two sub-models as pair.\n",
+                "type": "model2 -> model1 -> TeaCombine.Both model1 model2"
+            },
+            {
+                "name": "updateWith",
+                "comment": " Updates one of two sub-models using corresponding sub-update function.\n",
+                "type": "TeaCombine.Pure.Update model2 msg2 -> TeaCombine.Pure.Update model1 msg1 -> TeaCombine.Pure.Update (TeaCombine.Both model1 model2) (Either.Either msg1 msg2)"
+            }
+        ],
+        "binops": []
+    }
+]

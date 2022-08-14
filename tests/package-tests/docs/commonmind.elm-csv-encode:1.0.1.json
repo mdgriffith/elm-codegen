@@ -1,0 +1,33 @@
+[
+    {
+        "name": "Csv.Encode",
+        "comment": " This module provides support for rendering data in csv (comma separateed\nvalues) format. The format emitted is as described in [RFC4180][1].\n\nIf you want to _parse_ csv files, look at the package `periodic/elm-csv`;\nthis package is designed to work well with it.\n\n@docs Csv, toString, toBytes, toEncoder\n\n[1]: https://tools.ietf.org/html/rfc4180\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Csv",
+                "comment": " The `Csv` type structure. This is the same as the `Csv`\ntype from `periodic/elm-csv`.\n",
+                "args": [],
+                "type": "{ headers : List.List String.String, records : List.List (List.List String.String) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "toBytes",
+                "comment": " Convert a `Csv` to bytes.\n",
+                "type": "Csv.Encode.Csv -> Bytes.Bytes"
+            },
+            {
+                "name": "toEncoder",
+                "comment": " A bytes encoder for `Csv`s\n",
+                "type": "Csv.Encode.Csv -> Bytes.Encode.Encoder"
+            },
+            {
+                "name": "toString",
+                "comment": " Convert a `Csv` to a string.\n",
+                "type": "Csv.Encode.Csv -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

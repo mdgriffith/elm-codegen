@@ -1,0 +1,31 @@
+[
+    {
+        "name": "UiCards",
+        "comment": " This library allows you to lay out pieces of UI on a single page, and to have\nthese pieces _actually work_ - responding to clicks, typing and so on.\n\n\n# Defining cards and decks\n\n@docs card\n@docs cardError\n@docs deck\n\n\n# Displaying the cards\n\n@docs show\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "card",
+                "comment": " Define a UI card. As its arguments, the function takes a card title, the initial model\nand a function that takes a model and produces an `Html` value\n\n    card \"Menu button\" initialMenuModel <|\n        \\model ->\n            menuButton model\n\n",
+                "type": "String.String -> model -> (model -> Html.Html msg) -> UiCards.Card msg model"
+            },
+            {
+                "name": "cardError",
+                "comment": " Dispay an error instead of card content. This is a helper function, and you are free\nto display any other `Html` value when it isn't possible to render the expected content\nof the card (eg due to the model changing in a way that doesn't make sense).\n\n    cardError \"The UI element could not be displayed\"\n\n",
+                "type": "String.String -> Html.Html msg"
+            },
+            {
+                "name": "deck",
+                "comment": " Combine multiple cards into a deck. One deck will be displayed at a time, and\nall defined decks will be listed in a menu for you to choose which one to show. As its\narguments, this function takes a deck name followed by a list of cards which comprise the deck.\n\n    deck \"Menu deck\" [ menuButtonsCard, menuPanelCard, submenuCard ]\n\n",
+                "type": "String.String -> List.List (UiCards.Card msg model) -> UiCards.Deck msg model"
+            },
+            {
+                "name": "show",
+                "comment": " Generate a `Browser.application` based on the supplied `update` function and a list of decks.\n\n    main =\n        show App.update\n            [ deck \"Deck 1\" [ card \"Card 1-1\" ... ]\n            , deck \"Deck 2\" [ card \"Card 2-1\" ...]\n            ]\n\n",
+                "type": "UiCards.AppUpdate msg model -> List.List (UiCards.Deck msg model) -> Platform.Program () (UiCards.Model msg model) (UiCards.Msg msg)"
+            }
+        ],
+        "binops": []
+    }
+]

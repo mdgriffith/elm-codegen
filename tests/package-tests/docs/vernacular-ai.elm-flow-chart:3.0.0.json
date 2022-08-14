@@ -1,0 +1,215 @@
+[
+    {
+        "name": "FlowChart",
+        "comment": " This library aims to provide a flow chart builder in Elm.\n\n\n# Definition\n\n@docs Model, Msg, FCEvent, FCEventConfig\n\n\n# Subscriptions\n\n@docs init, initEventConfig, defaultPortConfig, defaultLinkConfig, subscriptions\n\n\n# Update\n\n@docs update, view\n\n\n# Functionalities\n\n@docs addNode, removeNode, removeLink\n@docs getFCState, setFCState\n\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " flowchart message\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "FCEvent",
+                "comment": " Event declaration for event config\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "FlowChart.FCEventConfig msg -> FlowChart.FCEventConfig msg"
+            },
+            {
+                "name": "FCEventConfig",
+                "comment": " Config for subscribing to events\n\n        onCanvasClick -> when canvas is clicked\n        onNodeClick FCNode -> when any node is clicked\n        onLinkClick FCLink -> when any link is clicked\n\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "Internal.FCEventConfig msg"
+            },
+            {
+                "name": "Model",
+                "comment": " flowchart model\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ position : FlowChart.Types.Vector2, nodes : Dict.Dict String.String FlowChart.Types.FCNode, links : Dict.Dict String.String Link.Model, currentlyDragging : Internal.DraggableTypes, dragState : Utils.Draggable.DragState, targetMsg : FlowChart.Msg -> msg, portConfig : { portSize : FlowChart.Types.Vector2, portColor : String.String }, linkConfig : { linkSize : Basics.Int, linkColor : String.String } }"
+            }
+        ],
+        "values": [
+            {
+                "name": "addNode",
+                "comment": " add node to canvas\n\n        addNode fcNode Model\n\n",
+                "type": "FlowChart.Types.FCNode -> { m | fcModel : FlowChart.Model msg } -> { m | fcModel : FlowChart.Model msg }"
+            },
+            {
+                "name": "defaultLinkConfig",
+                "comment": " Get default link config\n\n    linkSize = stroke width of link (2px)\n    linkColor = Color of link (#6495ED)\n\n",
+                "type": "{ linkSize : Basics.Int, linkColor : String.String }"
+            },
+            {
+                "name": "defaultPortConfig",
+                "comment": " Get default port config\n\n    portSize = Size of port in Vector2 (20, 20)\n    portColor = Color of port (grey)\n\n",
+                "type": "{ portSize : FlowChart.Types.Vector2, portColor : String.String }"
+            },
+            {
+                "name": "getFCState",
+                "comment": " Get current flowchart state i.e position of canvas, nodes and links\n\n        getFCState FlowChart.Model\n\n",
+                "type": "FlowChart.Model msg -> { position : FlowChart.Types.Vector2, nodes : List.List FlowChart.Types.FCNode, links : List.List FlowChart.Types.FCLink }"
+            },
+            {
+                "name": "init",
+                "comment": "\n\n    ** Initiaze the flowchart **\n\n        init fcCanvas targetMsg\n\n",
+                "type": "FlowChart.Types.FCCanvas -> (FlowChart.Msg -> msg) -> FlowChart.Model msg"
+            },
+            {
+                "name": "initEventConfig",
+                "comment": " List of events to subscribe\n\n    Currently supported are :\n    onCanvasClick, onNodeClick, onLinkClick\n\n",
+                "type": "List.List (FlowChart.FCEvent msg) -> FlowChart.FCEventConfig msg"
+            },
+            {
+                "name": "removeLink",
+                "comment": " remove link from canvas\n\n        removeLink \"link-id\" FlowChartModel\n\n",
+                "type": "String.String -> { m | fcModel : FlowChart.Model msg } -> { m | fcModel : FlowChart.Model msg }"
+            },
+            {
+                "name": "removeNode",
+                "comment": " remove node from canvas\n\n        removeNode \"node-id\" Model\n\n",
+                "type": "String.String -> { m | fcModel : FlowChart.Model msg } -> { m | fcModel : FlowChart.Model msg }"
+            },
+            {
+                "name": "setFCState",
+                "comment": "\n\n    Set flowchart state i.e will override position of canvas, nodes and links\n",
+                "type": "{ position : FlowChart.Types.Vector2, nodes : List.List FlowChart.Types.FCNode, links : List.List FlowChart.Types.FCLink } -> FlowChart.Model msg -> FlowChart.Model msg"
+            },
+            {
+                "name": "subscriptions",
+                "comment": " subscriptions\n",
+                "type": "{ m | fcModel : FlowChart.Model msg } -> Platform.Sub.Sub msg"
+            },
+            {
+                "name": "update",
+                "comment": "\n\n    ** Update the flowchart **\n\n",
+                "type": "FlowChart.FCEventConfig msg -> FlowChart.Msg -> { m | fcModel : FlowChart.Model msg } -> ( { m | fcModel : FlowChart.Model msg }, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "view",
+                "comment": "\n\n    ** Display the flowchart **\n\n    - model -> Model holding flowchart Model\n    - nodeMap -> function which gives node's html. For example:\n\n        nodeMap : FCNode -> Model -> Html FlowChart.Msg\n        nodeMap fcNode model =\n            div\n                [ A.style \"width\" \"100%\"\n                , A.style \"height\" \"100%\"\n                , A.style \"background-color\" \"white\"\n                ]\n                [ text fcNode.id ]\n\n    - fcChartStyle -> css attributes for flowchart\n\n",
+                "type": "{ m | fcModel : FlowChart.Model msg } -> (FlowChart.Types.FCNode -> { m | fcModel : FlowChart.Model msg } -> Html.Html FlowChart.Msg) -> List.List (Html.Attribute FlowChart.Msg) -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "FlowChart.Events",
+        "comment": " Listeners for the various flowchart events.\n\n@docs onCanvasClick, onNodeClick, onLinkClick\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "onCanvasClick",
+                "comment": " Register a `CanvasClick` event listener. It will not trigger if canvas has moved\nafter mouse down.\n",
+                "type": "msg -> FlowChart.FCEventConfig msg -> FlowChart.FCEventConfig msg"
+            },
+            {
+                "name": "onLinkClick",
+                "comment": " Register a `LinkClick` event listener.\n",
+                "type": "(FlowChart.Types.FCLink -> msg) -> FlowChart.FCEventConfig msg -> FlowChart.FCEventConfig msg"
+            },
+            {
+                "name": "onNodeClick",
+                "comment": " Register a `NodeClick` event listener. It will not trigger if node has moved\nafter mouse down.\n",
+                "type": "(FlowChart.Types.FCNode -> msg) -> FlowChart.FCEventConfig msg -> FlowChart.FCEventConfig msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "FlowChart.Json",
+        "comment": " Encoders and decoders for flowchart data types\n\n\n# Encoders\n\n@docs encodeVector2, encodeFCNode, encodeFCPort, encodeFCLink\n\n\n# Decoders\n\n@docs vector2Decoder, fcNodeDecoder, fcPortDecoder, fcLinkDecoder\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "encodeFCLink",
+                "comment": " encoder for a FCLink\n",
+                "type": "FlowChart.Types.FCLink -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeFCNode",
+                "comment": " encoder for a FCNode\n",
+                "type": "FlowChart.Types.FCNode -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeFCPort",
+                "comment": " encoder for a FCPort\n",
+                "type": "FlowChart.Types.FCPort -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeVector2",
+                "comment": " encoder for Vector2\n",
+                "type": "FlowChart.Types.Vector2 -> Json.Encode.Value"
+            },
+            {
+                "name": "fcLinkDecoder",
+                "comment": " FCLink Decoder\n",
+                "type": "Json.Decode.Decoder FlowChart.Types.FCLink"
+            },
+            {
+                "name": "fcNodeDecoder",
+                "comment": " FCNode Decoder\n",
+                "type": "Json.Decode.Decoder FlowChart.Types.FCNode"
+            },
+            {
+                "name": "fcPortDecoder",
+                "comment": " FCPort Decoder\n",
+                "type": "Json.Decode.Decoder FlowChart.Types.FCPort"
+            },
+            {
+                "name": "vector2Decoder",
+                "comment": " vector2 decoder\n",
+                "type": "Json.Decode.Decoder FlowChart.Types.Vector2"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "FlowChart.Types",
+        "comment": "\n\n\n# Defination\n\n@docs Vector2, FCNode, FCPort, FCLink, FCCanvas\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "FCCanvas",
+                "comment": " Canvas data to initialize the flowchart\n",
+                "args": [],
+                "type": "{ nodes : List.List FlowChart.Types.FCNode, position : FlowChart.Types.Vector2, links : List.List FlowChart.Types.FCLink, portConfig : { portSize : FlowChart.Types.Vector2, portColor : String.String }, linkConfig : { linkSize : Basics.Int, linkColor : String.String } }"
+            },
+            {
+                "name": "FCLink",
+                "comment": " Link data to connect nodes through ports\n\n    id = Id of the link, should be unique\n    from = NodeId, portId of the start of link\n    to = NodeId, portId of the end of link\n\n",
+                "args": [],
+                "type": "{ id : String.String, from : { nodeId : String.String, portId : String.String }, to : { nodeId : String.String, portId : String.String } }"
+            },
+            {
+                "name": "FCNode",
+                "comment": " Represent the data of a single node in flowchart\n\n    id = unique identifier for node\n    position = position of node wrt to position of canvas\n    dim = width and height of node\n    nodeType = string identifier used to render html from node map\n    port = List of ports\n\n        node = FCNode \"node-1\" (Vector2 20 20) (Vector2 100 100) \"default\"\n            [ FCPort \"port-1\" Vector2 0 0.42\n            , FCPort \"port-2\" Vector2 0.85 0.42\n            ]\n\n",
+                "args": [],
+                "type": "{ id : String.String, position : FlowChart.Types.Vector2, dim : FlowChart.Types.Vector2, nodeType : String.String, ports : List.List FlowChart.Types.FCPort }"
+            },
+            {
+                "name": "FCPort",
+                "comment": " Nodes are connected through links via Ports. Use a value between [0, 1] for port position\n\n        port = FCPort \"port-1\" Vector2 0 0.42\n\n",
+                "args": [],
+                "type": "{ id : String.String, position : FlowChart.Types.Vector2 }"
+            },
+            {
+                "name": "Vector2",
+                "comment": " Vector2 which can represent position or dimension of node, canvas, etc.\n\n        pos = Vector2 10 10\n\n",
+                "args": [],
+                "type": "{ x : Basics.Float, y : Basics.Float }"
+            }
+        ],
+        "values": [],
+        "binops": []
+    }
+]

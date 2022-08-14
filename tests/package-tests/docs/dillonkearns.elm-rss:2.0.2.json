@@ -1,0 +1,49 @@
+[
+    {
+        "name": "Rss",
+        "comment": " Build a feed following the RSS 2.0 format <https://validator.w3.org/feed/docs/rss2.html>.\n<http://www.rssboard.org/rss-specification>\n\n@docs generate, Item, DateOrTime, Enclosure\n\n",
+        "unions": [
+            {
+                "name": "DateOrTime",
+                "comment": " Can be one of:\n\n  - `Rss.Date` - a `Date` value from `justinmimbs/date`, or\n  - `Rss.DateTime` - a `Time.Posix` from `elm/time`.\n\nIf you pass in an `Rss.Date`, it will format it at `00:00:00 GMT` on the given date (start of day).\nIf you pass in an `Rss.DateTime`, it will format the time in UTC.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Date",
+                        [
+                            "Date.Date"
+                        ]
+                    ],
+                    [
+                        "DateTime",
+                        [
+                            "Time.Posix"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Enclosure",
+                "comment": " Represents a linked file.\n\n<https://validator.w3.org/feed/docs/rss2.html#ltenclosuregtSubelementOfLtitemgt>\n\n",
+                "args": [],
+                "type": "{ url : String.String, mimeType : String.String, bytes : Maybe.Maybe Basics.Int }"
+            },
+            {
+                "name": "Item",
+                "comment": " Data representing an RSS feed item.\n\ncontentEncoded - Use this to\n[add HTML content](https://developer.mozilla.org/en-US/docs/Archive/RSS/Article/Why_RSS_Content_Module_is_Popular_-_Including_HTML_Contents)\nin a `<content:encoded>` tag in the RSS feed. Some feed readers\nwill use this field if present to render HTML. Note that Elm doesn't\nprovide a way to turn `Html.Html` values into a `String`.\n\nYou can use [`zwilias/elm-html-string`](https://package.elm-lang.org/packages/zwilias/elm-html-string/latest/) to\nrender HTML using a drop-in replacement API and then turn that into a String.\n\nHere's an example that shows how to [render to an HTML String\nusing `dillonkearns/elm-markdown`](https://github.com/dillonkearns/elm-markdown/blob/2650722990d61c8948d7998168d3bceb0ee6f298/spec-tests/OutputMarkdownHtml.elm).\n\n<https://demo.ghost.io/author/lewis/rss/>\n\nEncoding\n\nenclosure - link to an attached file\n\n<https://www.rssboard.org/rss-enclosures-use-case>\n\n",
+                "args": [],
+                "type": "{ title : String.String, description : String.String, url : String.String, categories : List.List String.String, author : String.String, pubDate : Rss.DateOrTime, content : Maybe.Maybe String.String, contentEncoded : Maybe.Maybe String.String, enclosure : Maybe.Maybe { url : String.String, mimeType : String.String, bytes : Maybe.Maybe Basics.Int } }"
+            }
+        ],
+        "values": [
+            {
+                "name": "generate",
+                "comment": " Generate an RSS feed from feed metadata and a list of `Rss.Item`s.\n",
+                "type": "{ title : String.String, description : String.String, url : String.String, lastBuildTime : Time.Posix, generator : Maybe.Maybe String.String, items : List.List Rss.Item, siteUrl : String.String } -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

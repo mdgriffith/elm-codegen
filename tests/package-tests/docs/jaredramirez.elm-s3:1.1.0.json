@@ -1,0 +1,80 @@
+[
+    {
+        "name": "S3",
+        "comment": " This package helps make uploading file to [Amazon S3](https://aws.amazon.com/s3/) quick and easy.\n\nTake a look at the [`README`](https://package.elm-lang.org/packages/jaredramirez/elm-s3/latest/) for an example!\n\n\n# Creating a Config\n\n@docs Config, config, withPrefix, withSuccessActionStatus, withAwsS3Host, withAcl, withTimeout\n\n\n# Uploading a file\n\n@docs FileData, Response, uploadFileCmd, uploadFileTask, uploadFileHttp, uploadFile\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " Opaque configuration type for S3 requests\n",
+                "args": [],
+                "type": "S3.Internals.Config"
+            },
+            {
+                "name": "FileData",
+                "comment": " All the information needed for a specific file upload.\n",
+                "args": [],
+                "type": "{ fileName : String.String, contentType : String.String, file : File.File }"
+            },
+            {
+                "name": "Response",
+                "comment": " The response from the upload request.\n",
+                "args": [],
+                "type": "{ etag : String.String, location : String.String, bucket : String.String, key : String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "config",
+                "comment": " Create S3 config with the required files common across all requets\n",
+                "type": "{ accessKey : String.String, secretKey : String.String, bucket : String.String, region : String.String } -> S3.Config"
+            },
+            {
+                "name": "uploadFile",
+                "comment": " Deprecated. Use `uploadFileCmd` instead\n",
+                "type": "S3.FileData -> S3.Config -> (Result.Result Http.Error S3.Response -> msg) -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "uploadFileCmd",
+                "comment": " Upload a file\n",
+                "type": "(Result.Result Http.Error S3.Response -> msg) -> S3.FileData -> S3.Config -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "uploadFileHttp",
+                "comment": " Upload file via `Http.request`. Useful if you want to get the `tracker` but you must provide your own `Time.now` due to limitations with `Http` + `Task`.\n",
+                "type": "{ toMsg : Result.Result Http.Error S3.Response -> msg, maybeTracker : Maybe.Maybe String.String, now : Time.Posix } -> S3.FileData -> S3.Config -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "uploadFileTask",
+                "comment": " Upload a file but as a task. This is helpful if you need to upload a file, then\nget it's location from the [`Response`](#Response) and send that on your server.\n",
+                "type": "S3.FileData -> S3.Config -> Task.Task Http.Error S3.Response"
+            },
+            {
+                "name": "withAcl",
+                "comment": " Add a custom acl (Access Control List) for the uploaded document.\n**This defaults to `public-read`**\n\n    config |> withAcl \"private\"\n\n",
+                "type": "String.String -> S3.Config -> S3.Config"
+            },
+            {
+                "name": "withAwsS3Host",
+                "comment": " Add a custom S3 host. This defaults to `s3.amazonaws.com`.\n\n    config |> withAwsS3Host \"customhost.aws.com\"\n\n",
+                "type": "String.String -> S3.Config -> S3.Config"
+            },
+            {
+                "name": "withPrefix",
+                "comment": " Add a prefix to the file being uploaded. This is helpful to\nspecify a sub directory to upload the file to.\n\n    config |> withPrefix \"my/sub/dir/\"\n\n",
+                "type": "String.String -> S3.Config -> S3.Config"
+            },
+            {
+                "name": "withSuccessActionStatus",
+                "comment": " Add a custom success HTTP status. This defaults to `201`.\n\n    config |> withSuccessActionStatus 200\n\n",
+                "type": "Basics.Int -> S3.Config -> S3.Config"
+            },
+            {
+                "name": "withTimeout",
+                "comment": " Add a timeout to the network request. From the elm-http docs: \"The timeout is the number of milliseconds you are willing to wait before giving up.\"\n\n    config |> withTimeout 5000\n\n",
+                "type": "Basics.Float -> S3.Config -> S3.Config"
+            }
+        ],
+        "binops": []
+    }
+]

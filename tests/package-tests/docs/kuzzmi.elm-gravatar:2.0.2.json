@@ -1,0 +1,122 @@
+[
+    {
+        "name": "Gravatar",
+        "comment": " Returns URL or img DOM element for a given `email`,\nuses `options` as query parameters with URL.\nMore about query parameters read at [Gravatar](https://en.gravatar.com/site/implement/images/)\nwebsite.\n\n\n# Gravatar image\n\n@docs img, url\n\n\n# Options\n\n@docs Options, defaultOptions, Default, Rating, withSize, withRating, withDefault, forceDefault\n\n",
+        "unions": [
+            {
+                "name": "Default",
+                "comment": " By default, if there is no (allowed) image associated with an emailaddress,\ngravatar will display the gravatar logo. However, there are other fallback\nimages, too. For more explanation about these, please see [the gravatar docs][default-image].\n\n[default-image]: https://en.gravatar.com/site/implement/images/#default-image\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "None",
+                        []
+                    ],
+                    [
+                        "Url",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "FourOhFour",
+                        []
+                    ],
+                    [
+                        "MysteryMan",
+                        []
+                    ],
+                    [
+                        "Identicon",
+                        []
+                    ],
+                    [
+                        "MonsterID",
+                        []
+                    ],
+                    [
+                        "Wavatar",
+                        []
+                    ],
+                    [
+                        "Retro",
+                        []
+                    ],
+                    [
+                        "Blank",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Rating",
+                "comment": " Gravatar allows adding \"rating\" meta-data to its avatars. By default, you\nwill only get G-rated images. For more information, please see [the gravatar docs][rating].\n\n[rating]: https://en.gravatar.com/site/implement/images/#rating\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "RatedG",
+                        []
+                    ],
+                    [
+                        "RatedPG",
+                        []
+                    ],
+                    [
+                        "RatedR",
+                        []
+                    ],
+                    [
+                        "RatedX",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Options",
+                "comment": " Allows specifying all the options you could possibly need for gravatar urls.\n\n[Full overview of what the options do](https://en.gravatar.com/site/implement/images/).\n\n",
+                "args": [],
+                "type": "{ size : Maybe.Maybe Basics.Int, default : Gravatar.Default, rating : Gravatar.Rating, forceDefault : Basics.Bool }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultOptions",
+                "comment": " Default options. Passing these results in passing no options in the final\nurl at all.\n",
+                "type": "Gravatar.Options"
+            },
+            {
+                "name": "forceDefault",
+                "comment": " Enables the `forceDefault` flag.\n\n    defaultOptions |> forceDefault\n    --> { forceDefault = True, ... }\n\n",
+                "type": "Gravatar.Options -> Gravatar.Options"
+            },
+            {
+                "name": "img",
+                "comment": " Returns img DOM element which points to Gravatar for a given `email`\nand using options as query parameters with URL\n\n    img defaultOptions \"kuzzmi@example.com\"\n    -- returns image node with 200px x 200px image\n    -- for \"kuzzmi@example.com\" email.\n\n",
+                "type": "Gravatar.Options -> String.String -> Html.Html msg"
+            },
+            {
+                "name": "url",
+                "comment": " Returns URL which points to Gravatar for a given `email`\nand using options as query parameters with URL\n\n    url defaultOptions \"kuzzmi@example.com\"\n    -- returns url to 200px x 200px image\n    -- for \"kuzzmi@example.com\" email.\n\n    let\n        options =\n            defaultOptions\n                |> withDefault Retro\n                |> forceDefault\n    in\n    url options \"kuzzme@example.com\"\n    -- url to 200 x 200 image in the 'retro' format\n\n",
+                "type": "Gravatar.Options -> String.String -> String.String"
+            },
+            {
+                "name": "withDefault",
+                "comment": " Sets the default to the passed in value.\n\n    defaultOptions |> withDefault Retro\n    --> { default = Retro, ... }\n\n",
+                "type": "Gravatar.Default -> Gravatar.Options -> Gravatar.Options"
+            },
+            {
+                "name": "withRating",
+                "comment": " Sets the rating to the passed in value.\n\n    defaultOptions |> withRating RatedPG\n    --> { rating = RatedPG, ... }\n\n",
+                "type": "Gravatar.Rating -> Gravatar.Options -> Gravatar.Options"
+            },
+            {
+                "name": "withSize",
+                "comment": " Sets the size to the passed in value.\n\n    defaultOptions |> withSize (Just 80)\n    --> { size = Just 80, ... }\n\n",
+                "type": "Maybe.Maybe Basics.Int -> Gravatar.Options -> Gravatar.Options"
+            }
+        ],
+        "binops": []
+    }
+]

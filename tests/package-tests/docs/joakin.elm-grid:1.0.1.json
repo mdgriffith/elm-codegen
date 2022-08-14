@@ -1,0 +1,31 @@
+[
+    {
+        "name": "Grid",
+        "comment": " Functions to operate on a set of coordinates and do something with them.\n\nYou can think of them as kind of like list comprehension helpers for 2d and 3d\nlists.\n\nVery useful where you would write nested for loops in imperative languages. For\n1 dimensional comprehensions use `List.range`.\n\n\n# 2d grid\n\n@docs fold2d, foldr2d\n\n\n# 3d grid\n\n@docs fold3d, foldr3d\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fold2d",
+                "comment": " Fold over a 2 dimensional grid.\n\nGetting just coordinates:\n\n    (fold2d\n        {rows = 2, cols = 3 }\n        (\\(x, y) result -> (x, y) :: result)\n        []\n    )\n        |> List.reverse\n    {-\n        [(0,0),(1,0),(2,0),(0,1),(1,1),(2,1)]\n    -}\n\n",
+                "type": "{ rows : Basics.Int, cols : Basics.Int } -> (( Basics.Int, Basics.Int ) -> result -> result) -> result -> result"
+            },
+            {
+                "name": "fold3d",
+                "comment": " Fold over a 3 dimensional grid of coordinates\n\n    (fold3d\n        { rows = 2, cols = 3, depth = 2 }\n        (\\( x, y, z ) result -> ( x, y, z ) :: result)\n        []\n    )\n        |> List.reverse\n    {-\n        -- First plane depth=0\n        [(0,0,0),(1,0,0),(2,0,0)\n        ,(0,1,0),(1,1,0),(2,1,0)\n        -- Second plane depth=1\n        ,(0,0,1),(1,0,1),(2,0,1)\n        ,(0,1,1),(1,1,1),(2,1,1)]\n    -}\n\n",
+                "type": "{ rows : Basics.Int, cols : Basics.Int, depth : Basics.Int } -> (( Basics.Int, Basics.Int, Basics.Int ) -> result -> result) -> result -> result"
+            },
+            {
+                "name": "foldr2d",
+                "comment": " Fold over a 2 dimensional grid from the right. Starts at the end of the\ndimensions space, and goes backwards.\n\nGetting just coordinates:\n\n    foldr2d\n        {rows = 2, cols = 3 }\n        (::)\n        []\n    {-\n        [(0,0),(1,0),(2,0),(0,1),(1,1),(2,1)]\n    -}\n\n",
+                "type": "{ rows : Basics.Int, cols : Basics.Int } -> (( Basics.Int, Basics.Int ) -> result -> result) -> result -> result"
+            },
+            {
+                "name": "foldr3d",
+                "comment": " Fold over a 3 dimensional grid of coordinates from the right. Starts at the\nend of the\ndimensions space, and goes backwards.\n\n    foldr3d\n        { rows = 2, cols = 3, depth = 2 }\n        (\\( x, y, z ) result -> ( x, y, z ) :: result)\n        []\n    {-\n        -- First plane depth=0\n        [(0,0,0),(1,0,0),(2,0,0)\n        ,(0,1,0),(1,1,0),(2,1,0)\n        -- Second plane depth=1\n        ,(0,0,1),(1,0,1),(2,0,1)\n        ,(0,1,1),(1,1,1),(2,1,1)]\n    -}\n\n",
+                "type": "{ rows : Basics.Int, cols : Basics.Int, depth : Basics.Int } -> (( Basics.Int, Basics.Int, Basics.Int ) -> result -> result) -> result -> result"
+            }
+        ],
+        "binops": []
+    }
+]

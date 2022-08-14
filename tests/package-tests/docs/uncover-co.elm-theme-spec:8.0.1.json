@@ -1,0 +1,97 @@
+[
+    {
+        "name": "ThemeSpec",
+        "comment": " ThemeSpec is a theme specification that can be used across a variety of projects to quickly theme them based on CSS variables. Themes are scoped and multiple can be used at the same time in an application. ThemeSpec is fully compatible with darkmode and any theme can have dark variants.\n\n@docs lightTheme, darkTheme, theme, themeSpec, ThemeSpec, ThemeSpecData, ThemeSpecColor\n\n\n# Theme Sample\n\n@docs sample\n\n\n# Theme Variables\n\n@docs fonts, base, primary, secondary, success, warning, danger, ThemeSpecColorVars\n\n",
+        "unions": [
+            {
+                "name": "ThemeSpec",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "ThemeSpecColor",
+                "comment": " ",
+                "args": [],
+                "type": "{ bg : Color.Color, fg : Color.Color, aux : Color.Color }"
+            },
+            {
+                "name": "ThemeSpecColorVars",
+                "comment": " ",
+                "args": [],
+                "type": "{ bg : String.String, bgChannels : String.String, fg : String.String, fgChannels : String.String, aux : String.String, auxChannels : String.String }"
+            },
+            {
+                "name": "ThemeSpecData",
+                "comment": " ",
+                "args": [],
+                "type": "{ fonts : { title : String.String, text : String.String, code : String.String }, colors : { base : ThemeSpec.ThemeSpecColor, primary : ThemeSpec.ThemeSpecColor, secondary : ThemeSpec.ThemeSpecColor, success : ThemeSpec.ThemeSpecColor, warning : ThemeSpec.ThemeSpecColor, danger : ThemeSpec.ThemeSpecColor } }"
+            }
+        ],
+        "values": [
+            {
+                "name": "base",
+                "comment": " ",
+                "type": "ThemeSpec.ThemeSpecColorVars"
+            },
+            {
+                "name": "danger",
+                "comment": " ",
+                "type": "ThemeSpec.ThemeSpecColorVars"
+            },
+            {
+                "name": "darkTheme",
+                "comment": " ",
+                "type": "ThemeSpec.ThemeSpec"
+            },
+            {
+                "name": "fonts",
+                "comment": " `var(--tmspc-font-title)`\n",
+                "type": "{ title : String.String, text : String.String, code : String.String }"
+            },
+            {
+                "name": "lightTheme",
+                "comment": " ",
+                "type": "ThemeSpec.ThemeSpec"
+            },
+            {
+                "name": "primary",
+                "comment": " ",
+                "type": "ThemeSpec.ThemeSpecColorVars"
+            },
+            {
+                "name": "sample",
+                "comment": " ",
+                "type": "Html.Html msg"
+            },
+            {
+                "name": "secondary",
+                "comment": " ",
+                "type": "ThemeSpec.ThemeSpecColorVars"
+            },
+            {
+                "name": "success",
+                "comment": " ",
+                "type": "ThemeSpec.ThemeSpecColorVars"
+            },
+            {
+                "name": "theme",
+                "comment": " ",
+                "type": "ThemeSpec.ThemeSpec -> ThemeProvider.Theme"
+            },
+            {
+                "name": "themeSpec",
+                "comment": " ",
+                "type": "ThemeSpec.ThemeSpecData -> List.List ( String.String, String.String ) -> ThemeSpec.ThemeSpec"
+            },
+            {
+                "name": "warning",
+                "comment": " ",
+                "type": "ThemeSpec.ThemeSpecColorVars"
+            }
+        ],
+        "binops": []
+    }
+]

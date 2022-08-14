@@ -1,0 +1,76 @@
+[
+    {
+        "name": "WebSocket",
+        "comment": " This WebSocket Elm module lets you encode and decode messages to pass to javascript,\nwhere the actual websocket sending and receiving will take place. See the README for more.\n\n@docs WebSocketCmd\n@docs WebSocketMsg\n@docs decodeMsg\n@docs encodeCmd\n@docs receive\n@docs send\n\n",
+        "unions": [
+            {
+                "name": "WebSocketCmd",
+                "comment": " WebSocketCmds go from from elm out to javascript to be processed.\n\n  - name: You should give each websocket connection a unique name.\n  - address: is the websocket address, for instance \"<ws://127.0.0.1:9000\">.\n  - protocol: is an extra string to help the server know what kind of data to expect, like\n    if your server handled either json or binary data. Probably you can just pass it \"\".\n  - content: the data you're sending through the socket.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Connect",
+                        [
+                            "{ name : String.String, address : String.String, protocol : String.String }"
+                        ]
+                    ],
+                    [
+                        "Send",
+                        [
+                            "{ name : String.String, content : String.String }"
+                        ]
+                    ],
+                    [
+                        "Close",
+                        [
+                            "{ name : String.String }"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "WebSocketMsg",
+                "comment": " WebSocketMsgs are responses from javascript to elm after websocket operations.\nThe name should be the same string you used in Connect.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Error",
+                        [
+                            "{ name : String.String, error : String.String }"
+                        ]
+                    ],
+                    [
+                        "Data",
+                        [
+                            "{ name : String.String, data : String.String }"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decodeMsg",
+                "comment": " decode incoming messages from the websocket javascript.\n",
+                "type": "Json.Decode.Decoder WebSocket.WebSocketMsg"
+            },
+            {
+                "name": "encodeCmd",
+                "comment": " encode websocket commands into json.\n",
+                "type": "WebSocket.WebSocketCmd -> Json.Encode.Value"
+            },
+            {
+                "name": "receive",
+                "comment": " make a subscription function with receive and a port, like so:\n\n      port receiveSocketMsg : (JD.Value -> msg) -> Sub msg\n\n      wsreceive =\n          receiveSocketMsg <| WebSocket.receive WsMsg\n\nWhere WsMessage is defined in your app like this:\n\n      type Msg\n          = WsMsg (Result JD.Error WebSocket.WebSocketMsg)\n          | <other message types>\n\nthen in your application subscriptions:\n\n      subscriptions =\n          \\_ -> wsreceive\n\n",
+                "type": "(Result.Result Json.Decode.Error WebSocket.WebSocketMsg -> msg) -> Json.Decode.Value -> msg"
+            },
+            {
+                "name": "send",
+                "comment": " use send to make a websocket convenience function,\nlike so:\n\n      port sendSocketCommand : JE.Value -> Cmd msg\n\n      wssend =\n          WebSocket.send sendSocketCommand\n\nthen you can call (makes a Cmd):\n\n      wssend <|\n          WebSocket.Send\n              { name = \"touchpage\"\n              , content = dta\n              }\n\n",
+                "type": "(Json.Encode.Value -> Platform.Cmd.Cmd msg) -> WebSocket.WebSocketCmd -> Platform.Cmd.Cmd msg"
+            }
+        ],
+        "binops": []
+    }
+]

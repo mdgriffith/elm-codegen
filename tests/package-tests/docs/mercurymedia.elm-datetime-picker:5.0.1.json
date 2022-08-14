@@ -1,0 +1,190 @@
+[
+    {
+        "name": "DurationDatePicker",
+        "comment": " A date picker component for picking a datetime range.\n\n\n# Architecture\n\n@docs DatePicker, init, view, subscriptions\n\n\n# Settings\n\n@docs Settings, defaultSettings, TimePickerVisibility\n@docs TimePickerSettings, defaultTimePickerSettings\n\n\n# Externally Triggered Actions\n\n@docs openPicker, closePicker\n\n\n# Query\n\n@docs isOpen\n\n",
+        "unions": [
+            {
+                "name": "DatePicker",
+                "comment": " The opaque type representing a particular date picker instance.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "TimePickerVisibility",
+                "comment": " Set the visibility of the timepicker in the `DateTimePicker`\n\n`NeverVisible` - The time picker is never visible. Please note that\nwhile ostensibly picking a day, a selection still returns a Posix\nrepresenting the beginning of the day (00:00) when selecting the start\nof the date range and the end of the day (23:59) when selecting the end\nof the date range.\n\n`Toggleable` - The time picker visibility can be toggled but\nis by default closed when the datetime picker is opened. Additional\nconfiguration can be achieved via `TimePickerSettings`.\n\n`AlwaysVisible` - The time picker is always visible. This is the default setting\nas it most explicitly shows that the datetime picker is indeed picking both\na date and time, not simply a date. Additional configuration can be achieved\nvia `TimePickerSettings`.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NeverVisible",
+                        []
+                    ],
+                    [
+                        "Toggleable",
+                        [
+                            "DurationDatePicker.TimePickerSettings"
+                        ]
+                    ],
+                    [
+                        "AlwaysVisible",
+                        [
+                            "DurationDatePicker.TimePickerSettings"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Settings",
+                "comment": " The type facilitating the configuration of the datepicker settings.\n\n`internalMsg` - a function that returns a `msg` for the calling module to handle picker updates\n`zone` - the `Zone` in which the date picker is being used (client zone)\n`formattedDay` - a function that returns a string representation for the provided day of the week\n`formattedMonth` - a function that returns a string representation for the provided month\n`isDayDisabled` - a function that determines if the combined `Posix` and `Zone` represent a day that should be disabled in the picker\n`focusedDate` - a `Posix` that represents a day that should be highlighted on the picker (i.e. the current day)\n`dateStringFn` - a function that returns a string representation of the selected day\n`timePickerVisibility` - see below\n\nMore information can be found in the [examples](https://github.com/mercurymedia/elm-datetime-picker/tree/master/examples).\n\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ internalMsg : ( DurationDatePicker.DatePicker, Maybe.Maybe ( Time.Posix, Time.Posix ) ) -> msg, zone : Time.Zone, firstWeekDay : Time.Weekday, formattedDay : Time.Weekday -> String.String, formattedMonth : Time.Month -> String.String, isDayDisabled : Time.Zone -> Time.Posix -> Basics.Bool, focusedDate : Maybe.Maybe Time.Posix, dateStringFn : Time.Zone -> Time.Posix -> String.String, timePickerVisibility : DurationDatePicker.TimePickerVisibility }"
+            },
+            {
+                "name": "TimePickerSettings",
+                "comment": " The type facilitating the configuration of the timepicker settings.\n\n`timeStringFn` - a function that returns a string representation of the selected time of day\n\nBecause it could be the case that a picker is being used in a different\ntimezone than the home timezone of the implementor, the `allowedTimesofDay`\nfunction ingests a `Zone` in addition to a `Posix`. The\n`Zone` represents the time zone in which the picker is being used. An\nimplementor can leverage this to compare against a base time zone when\nenforcing allowable times of day, etc. You SHOULD assume that the `Posix`\npassed into these functions is floored to the start of its respective `Day`.\n\nMore information can be found in the [examples](https://github.com/mercurymedia/elm-datetime-picker/tree/master/examples).\n\n",
+                "args": [],
+                "type": "{ timeStringFn : Time.Zone -> Time.Posix -> String.String, allowedTimesOfDay : Time.Zone -> Time.Posix -> { startHour : Basics.Int, startMinute : Basics.Int, endHour : Basics.Int, endMinute : Basics.Int } }"
+            }
+        ],
+        "values": [
+            {
+                "name": "closePicker",
+                "comment": " Close the provided date picker and receive the updated picker instance.\n",
+                "type": "DurationDatePicker.DatePicker -> DurationDatePicker.DatePicker"
+            },
+            {
+                "name": "defaultSettings",
+                "comment": " A record of default settings for the date picker. Extend this if\nyou want to further customize the date picker.\n\nRequires a `Zone` to inform the picker in which time zone it should\ndisplay the selected duration as well as a `msg` that expects a tuple containing\na datepicker instance and a `Maybe` tuple representing a selected duration.\n\n    ( DatePicker, Maybe ( Posix, Posix ) ) -> msg\n\n",
+                "type": "Time.Zone -> (( DurationDatePicker.DatePicker, Maybe.Maybe ( Time.Posix, Time.Posix ) ) -> msg) -> DurationDatePicker.Settings msg"
+            },
+            {
+                "name": "defaultTimePickerSettings",
+                "comment": " A record of default settings for the time picker. Extend this if\nyou want to further customize the time picker.\n",
+                "type": "DurationDatePicker.TimePickerSettings"
+            },
+            {
+                "name": "init",
+                "comment": " Instantiates and returns a date picker.\n",
+                "type": "DurationDatePicker.DatePicker"
+            },
+            {
+                "name": "isOpen",
+                "comment": " Indicates whether the DatePicker is open\n",
+                "type": "DurationDatePicker.DatePicker -> Basics.Bool"
+            },
+            {
+                "name": "openPicker",
+                "comment": " Open the provided date picker and receive the updated picker instance. Also\ntakes a default time the picker should center on (in the event a time has not yet\nbeen picked) as well as the picked start and end times. A common example of a default time\nwould be the datetime for the current day.\n",
+                "type": "DurationDatePicker.Settings msg -> Time.Posix -> Maybe.Maybe Time.Posix -> Maybe.Maybe Time.Posix -> DurationDatePicker.DatePicker -> DurationDatePicker.DatePicker"
+            },
+            {
+                "name": "subscriptions",
+                "comment": " Events external to the picker to which it is subscribed.\n",
+                "type": "DurationDatePicker.Settings msg -> (( DurationDatePicker.DatePicker, Maybe.Maybe ( Time.Posix, Time.Posix ) ) -> msg) -> DurationDatePicker.DatePicker -> Platform.Sub.Sub msg"
+            },
+            {
+                "name": "view",
+                "comment": " The date picker view. Simply pass it the configured settings\nand the date picker instance you wish to view.\n",
+                "type": "DurationDatePicker.Settings msg -> DurationDatePicker.DatePicker -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "SingleDatePicker",
+        "comment": " A date picker component for a single datetime.\n\n\n# Architecture\n\n@docs DatePicker, init, view, subscriptions\n\n\n# Settings\n\n@docs Settings, defaultSettings, TimePickerVisibility\n@docs TimePickerSettings, defaultTimePickerSettings\n\n\n# Externally Triggered Actions\n\n@docs openPicker, closePicker\n\n\n# Query\n\n@docs isOpen\n\n",
+        "unions": [
+            {
+                "name": "DatePicker",
+                "comment": " The opaque type representing a particular date picker instance.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "TimePickerVisibility",
+                "comment": " Set the visibility of the timepicker in the `DateTimePicker`\n\n`NeverVisible` - The time picker is never visible. Please note that\nwhile ostensibly picking a day, a selection still returns a Posix\nrepresenting the beginning of that day (00:00). It is up to you to\nprocess the selection accordingly if you wish to treat it as a whole day.\n\n`Toggleable` - The time picker visibility can be toggled but\nis by default closed when the datetime picker is opened. Additional\nconfiguration can be achieved via `TimePickerSettings`.\n\n`AlwaysVisible` - The time picker is always visible. This is the default setting\nas it most explicitly shows that the datetime picker is indeed picking both\na date and time, not simply a date. Additional configuration can be achieved\nvia `TimePickerSettings`.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NeverVisible",
+                        []
+                    ],
+                    [
+                        "Toggleable",
+                        [
+                            "SingleDatePicker.TimePickerSettings"
+                        ]
+                    ],
+                    [
+                        "AlwaysVisible",
+                        [
+                            "SingleDatePicker.TimePickerSettings"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Settings",
+                "comment": " The type facilitating the configuration of the datepicker settings.\n\n`internalMsg` - a function that returns a `msg` for the calling module to handle picker updates\n`zone` - the `Zone` in which the date picker is being used (client zone)\n`formattedDay` - a function that returns a string representation for the provided day of the week\n`formattedMonth` - a function that returns a string representation for the provided month\n`isDayDisabled` - a function that determines if the combined `Posix` and `Zone` represent a day that should be disabled in the picker\n`focusedDate` - a `Posix` that represents a day that should be highlighted on the picker (i.e. the current day)\n`dateStringFn` - a function that returns a string representation of the selected day\n`timePickerVisibility` - see below\n\nMore information can be found in the [examples](https://github.com/mercurymedia/elm-datetime-picker/tree/master/examples).\n\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ internalMsg : ( SingleDatePicker.DatePicker, Maybe.Maybe Time.Posix ) -> msg, zone : Time.Zone, firstWeekDay : Time.Weekday, formattedDay : Time.Weekday -> String.String, formattedMonth : Time.Month -> String.String, isDayDisabled : Time.Zone -> Time.Posix -> Basics.Bool, focusedDate : Maybe.Maybe Time.Posix, dateStringFn : Time.Zone -> Time.Posix -> String.String, timePickerVisibility : SingleDatePicker.TimePickerVisibility }"
+            },
+            {
+                "name": "TimePickerSettings",
+                "comment": " The type facilitating the configuration of the timepicker settings.\n\n`timeStringFn` - a function that returns a string representation of the selected time of day\n\nBecause it could be the case that a picker is being used in a different\ntimezone than the home timezone of the implementor, the `allowedTimesofDay`\nfunction ingests a `Zone` in addition to a `Posix`. The\n`Zone` represents the time zone in which the picker is being used. An\nimplementor can leverage this to compare against a base time zone when\nenforcing allowable times of day, etc. You SHOULD assume that the `Posix`\npassed into these functions is floored to the start of its respective `Day`.\n\nMore information can be found in the [examples](https://github.com/mercurymedia/elm-datetime-picker/tree/master/examples).\n\n",
+                "args": [],
+                "type": "{ timeStringFn : Time.Zone -> Time.Posix -> String.String, allowedTimesOfDay : Time.Zone -> Time.Posix -> { startHour : Basics.Int, startMinute : Basics.Int, endHour : Basics.Int, endMinute : Basics.Int } }"
+            }
+        ],
+        "values": [
+            {
+                "name": "closePicker",
+                "comment": " Close the provided date picker and receive the updated picker instance.\n",
+                "type": "SingleDatePicker.DatePicker -> SingleDatePicker.DatePicker"
+            },
+            {
+                "name": "defaultSettings",
+                "comment": " A record of default settings for the date picker. Extend this if\nyou want to further customize the date picker.\n\nRequires a `Zone` to inform the picker in which time zone it should\ndisplay the picked time as well as a `msg` that expects a tuple containing a\ndatepicker instance and a `Maybe Posix` representing a selected datetime.\n\n    ( DatePicker, Maybe Posix ) -> msg\n\n",
+                "type": "Time.Zone -> (( SingleDatePicker.DatePicker, Maybe.Maybe Time.Posix ) -> msg) -> SingleDatePicker.Settings msg"
+            },
+            {
+                "name": "defaultTimePickerSettings",
+                "comment": " A record of default settings for the time picker. Extend this if\nyou want to further customize the time picker.\n",
+                "type": "SingleDatePicker.TimePickerSettings"
+            },
+            {
+                "name": "init",
+                "comment": " Instantiates and returns a date picker.\n",
+                "type": "SingleDatePicker.DatePicker"
+            },
+            {
+                "name": "isOpen",
+                "comment": " Indicates whether the DatePicker is open\n",
+                "type": "SingleDatePicker.DatePicker -> Basics.Bool"
+            },
+            {
+                "name": "openPicker",
+                "comment": " Open the provided date picker and receive the updated picker instance. Also\ntakes a default time the picker should center on (in the event a time has not yet\nbeen picked) as well as the picked time. A common example of a default time\nwould be the datetime for the current day.\n",
+                "type": "SingleDatePicker.Settings msg -> Time.Posix -> Maybe.Maybe Time.Posix -> SingleDatePicker.DatePicker -> SingleDatePicker.DatePicker"
+            },
+            {
+                "name": "subscriptions",
+                "comment": " Events external to the picker to which it is subscribed.\n",
+                "type": "SingleDatePicker.Settings msg -> (( SingleDatePicker.DatePicker, Maybe.Maybe Time.Posix ) -> msg) -> SingleDatePicker.DatePicker -> Platform.Sub.Sub msg"
+            },
+            {
+                "name": "view",
+                "comment": " The date picker view. Simply pass it the configured settings\nand the date picker instance you wish to view.\n",
+                "type": "SingleDatePicker.Settings msg -> SingleDatePicker.DatePicker -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

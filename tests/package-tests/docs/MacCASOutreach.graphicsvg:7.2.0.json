@@ -1,0 +1,1221 @@
+[
+    {
+        "name": "GraphicSVG",
+        "comment": " A library for creating SVG graphics in a way that is compatible with Elm's\nold Graphics library. Also includes built-in functions for creating games and\nother applications including keyboard presses and mouse movements.\n\n\n# Basic Types\n\n@docs Stencil, Shape, Collage, GraphicSVG\n\n\n# Rendering To Screen\n\n@docs collage, mapCollage\n\n\n# App\n\n@docs App, app\n\n\n# EllieApp\n\n@docs EllieApp, ellieApp\n\n\n# Stencils\n\n@docs line, polygon, openPolygon, ngon, triangle, rightTriangle, isosceles, sideAngleSide, square, rect, rectangle, roundedRect, circle, oval, wedge\n\n\n# Creating Shapes from Stencils\n\n@docs filled, outlined, repaint, addOutline, rgb, rgba, hsl, hsla\n\n\n# Grouping Shapes\n\n@docs group\n\n\n# Rendering HTML\n\nThis feature is still very much experimental. Cross-platform support is\nnot guaranteed and weird things can happen.\n\n@docs html\n\n\n# Curves\n\n@docs curve, Pull, curveHelper\n\n\n# Line Styles\n\n@docs LineType, noline, solid, dotted, dashed, longdash, dotdash, custom\n\n\n# Text\n\n@docs text, size, bold, italic, underline, strikethrough, centered, alignLeft, alignRight, selectable, sansserif, serif, fixedwidth, customFont\n\n\n# Transformations\n\n@docs move, rotate, scale, scaleX, scaleY, mirrorX, mirrorY, skewX, skewY\n\n\n# Group Operations\n\n@docs clip, union, subtract, outside, ghost\n\n\n# Notifications\n\n@docs notifyTap, notifyTapAt, notifyEnter, notifyEnterAt, notifyLeave, notifyLeaveAt, notifyMouseMoveAt, notifyMouseDown, notifyMouseDownAt, notifyMouseUp, notifyMouseUpAt, notifyTouchStart, notifyTouchStartAt, notifyTouchEnd, notifyTouchEndAt, notifyTouchMoveAt\n\n\n# Miscellaneous\n\n@docs makeTransparent, addHyperlink, puppetShow\n\n\n# Helpers\n\n@docs graphPaper, graphPaperCustom, map\n\n\n# Let there be colours!\n\n@docs Color, black, blank, blue, brown, charcoal, darkBlue, darkBrown, darkCharcoal, darkGray, darkGreen, darkGrey, darkOrange, darkPurple, darkRed, darkYellow, gray, green, grey, hotPink, lightBlue, lightBrown, lightCharcoal, lightGray, lightGreen, lightGrey, lightOrange, lightPurple, lightRed, lightYellow, orange, pink, purple, red, white, yellow\n\n\n# Let there be gradients!\n\n@docs stop, transparentStop, gradient, radialGradient, rotateGradient\n\n# Advanced Transformations\n\n_Advanced section warning!_ These functions provide a way to interface on a lower\nlevel to the transformations normally handled in the background by GraphicSVG.\nMost users should be happy to use the regular functions applied directly to shapes,\nwhich are provided in the section above this one.\n\n@docs Transform, ident, moveT, rotateT, scaleT, skewT, rotateAboutT, transform\n\n# More Advanced Things\n\nDon't worry about these unless you *_really_* know what you're doing!\n\n@docs Msg, createSVG\n\n",
+        "unions": [
+            {
+                "name": "Collage",
+                "comment": " The Collage type represents the drawable surface of the window which contains\na (x, y) pair of horizontal and vertical dimensions (arbitrary units,\nnot necessarily in pixels) to which the drawing surface will be scaled,\nand the \\`List' of Shapes to be drawn on the drawing surface.\n",
+                "args": [
+                    "userMsg"
+                ],
+                "cases": [
+                    [
+                        "Collage",
+                        [
+                            "Basics.Float",
+                            "Basics.Float",
+                            "List.List (GraphicSVG.Shape userMsg)"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Color",
+                "comment": " The `Color` type is used for filling or outlining a `Stencil`.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "LineType",
+                "comment": " The `LineType` type is used to define the appearance of an outline for a `Stencil`.\n`LineType` also defines the appearence of `line` and `curve`.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Msg",
+                "comment": " The `Msg` type encapsulates all GraphicSVG internal messages.\n\nThis type is only used to define type signature fors user defined\n`view` and `main` as follows:\n\n    view : GraphicSVG.Collage (GraphicSVG.Msg Msg)\n\nfor use with `graphicsApp` and `notificationsApp`, and as follows:\n\n    view : Model -> GraphicSVG.Collage (GraphicSVG.Msg Msg)\n\nfor use with `gameApp`.\n\nIt is also used to define the type signature for\na user supplied `main` as follows:\n\n    main : Program Never (GraphicsModel Model Msg) (GraphicSVG.Msg Msg)\n\nfor use with `graphicsApp` and `notificationsApp`, and as follows:\n\n    main : Program Never (GamesModel Model Msg) (GraphicSVG.Msg Msg)\n\nfor use when `main` calls `gameApp`\n\nThese assume that `Model` is the type alias of the user persistent model, and\n`Msg` is the name of the user message type.\n\n",
+                "args": [
+                    "userMsg"
+                ],
+                "cases": [
+                    [
+                        "Graphics",
+                        [
+                            "userMsg"
+                        ]
+                    ],
+                    [
+                        "WindowResize",
+                        [
+                            "Maybe.Maybe ( Basics.Int, Basics.Int )"
+                        ]
+                    ],
+                    [
+                        "ReturnPosition",
+                        [
+                            "( Basics.Float, Basics.Float ) -> userMsg",
+                            "( Basics.Float, Basics.Float )"
+                        ]
+                    ],
+                    [
+                        "NoOp",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Pull",
+                "comment": " To make it easier to read the code defining a `curve`,\nand to make sure we always use the right number of curve points\nand pull points (which is one more curve point than pull points),\nwe define a special `Pull` type, whose first point is the point\nwe pull towards, and second point is the end point for this\ncurve segments.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Pull",
+                        [
+                            "( Basics.Float, Basics.Float )",
+                            "( Basics.Float, Basics.Float )"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Shape",
+                "comment": " A filled, outlined, or filled and outlined object that can be drawn to the screen using `collage`.\n",
+                "args": [
+                    "userMsg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Stencil",
+                "comment": " A primitive template representing the shape you wish to draw. This must be turned into\na `Shape` before being drawn to the screen with `collage` (see below).\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "App",
+                "comment": " This type alias is only used as a target for a user `main` type signature to make\nthe type signature more clear and concise when `main` calls `app`:\n\n    main : App Flags Model Msg\n    main =\n        app Tick\n            { init = init\n            , update = update\n            , view = view\n            , subscriptions = subscriptions\n            , onUrlRequest = onUrlRequest\n            , onUrlChange = onUrlChange\n            }\n\nwhere `Tick` is a message handler called once per browser window update,\n`Flags` is the type alias (or type) of the flags input from JavaScript\n`Model` is the type alias of the user persistent model, and\n`Msg` is the name of the user message type; if other names are used,\nthey can just be substituted for these names.\n\nNote that \"type alias\" could also be an ordinary \"type\" in all case,\njust that the syntax for producing a new type is not as clean as using a\ntype alias for a record.\n\n",
+                "args": [
+                    "flags",
+                    "userModel",
+                    "userMsg"
+                ],
+                "type": "Platform.Program flags ( userModel, GraphicSVG.HiddenModel ) (GraphicSVG.Msg userMsg)"
+            },
+            {
+                "name": "EllieApp",
+                "comment": " This type alias is only used as a target for a user `main` type signature to make\nthe type signature more clear and concise when `main` calls `ellieApp`:\n\n    main : EllieApp Flags Model Msg\n    main =\n        ellieApp Tick\n            { init = init\n            , update = update\n            , view = view\n            , subscriptions = subscriptions\n            }\n\nwhere `Tick` is a message handler called once per browser window update,\n`Flags` is the type alias (or type) of the flags input from JavaScript\n`Model` is the type alias of the user persistent model, and\n`Msg` is the name of the user message type; if other names are used,\nthey can just be substituted for these names.\n\nNote that \"type alias\" could also be an ordinary \"type\" in all case,\njust that the syntax for producing a new type is not as clean as using a\ntype alias for a record.\n\n",
+                "args": [
+                    "flags",
+                    "userModel",
+                    "userMsg"
+                ],
+                "type": "Platform.Program flags ( userModel, GraphicSVG.HiddenModel ) (GraphicSVG.Msg userMsg)"
+            },
+            {
+                "name": "GraphicSVG",
+                "comment": " The `GraphicSVG` type alias represents the drawable surface of the window.\n\nThis type is only used to define a type signature for a user defined `view` as follows:\n\n    view : GraphicSVG.GraphicSVG userMsg\n\nfor use with `graphicsApp` and as follows:\n\n    view : Model -> GraphicSVG.GraphicSVG MyMsg\n\nfor use with `notificationsApp`, `gameApp` and `App`.\n\nThese assume that `Model` is the name of the user model type alias and\n`MyMsg` is the name of the user message type. Simply substitute the names\nactually used for these labels.\n\nTHIS IS DEPRECIATED AND ONLY KEPT FOR COMPATIBILITY WITH THE PREVIOUS VERSION;\nUse \"Collage userMsg\" instead of \"GraphicSVG userMsg\", as they are identical except in name.\n\n",
+                "args": [
+                    "userMsg"
+                ],
+                "type": "GraphicSVG.Collage userMsg"
+            },
+            {
+                "name": "Transform",
+                "comment": " A matrix representing an SVG transformation matrix of the form:\n\n```\n( ( a , c , e ) , ( b , d , f ) )\n```\n\nor\n\n```\n a c e\n b d f\n```\n\nThe a, c, b and d control transformations such as skew, rotate and scale;\ne and f control translation.\n\nThese matrices are best built up by starting with the identity matrix and\napplying any number of `*T` functions (see below); for example,\n\n```\nmyTransform =\n    ident\n        |> scaleT 2 2\n        |> rotateT (degrees 30)\n        |> moveT (0, 50)\n```\n\n",
+                "args": [],
+                "type": "( ( Basics.Float, Basics.Float, Basics.Float ), ( Basics.Float, Basics.Float, Basics.Float ) )"
+            }
+        ],
+        "values": [
+            {
+                "name": "addHyperlink",
+                "comment": " Add a hyperlink to any `Shape`:\n\n    circle 10\n        |> filled red\n        |> addHyperlink \"http://outreach.mcmaster.ca\"\n\n",
+                "type": "String.String -> GraphicSVG.Shape userMsg -> GraphicSVG.Shape userMsg"
+            },
+            {
+                "name": "addOutline",
+                "comment": " Add an outline to an already-filled `Shape`.\n\nWhen applied to `Group`'s including `Shape`'s that have had `union` applied to them,\nthe outline will have half the expected stroke width only outside the `Shape`'s and\nfor `Shape`'s with `clip` or `subtract` applied to them, the half width stroke will be\ninterior to the composite shapes displayed.\n\nThe limitation is that when displaying \"clip's\" or \"subtract's\" containing \"Group's\",\nthe outline for the \"Group's\" won't be visibile at all (less common), nor will the\noutline's for \"clip's\" or \"subtract's\" inside \"Group's\" be visible (more common);\nalso, the outline for the clipping or subtraction pattern may not be as expected when\nthe pattern is a \"Group\" as it won't appear at all in a \"clip\".\n\nIn these cases the workaround is just as before this was made available, to build up\nthe outlines desired using combinations of other shapes such as curves, clipped or\nsubtracted shapes, convential pre-applied outlines, etc.\n\nNote that when applied to `Group`(s), `Clip`(s), and `AlphaMask`(s) (from subtracts),\nthe body colour may still be transparent so that `Shape`(s) can be revealed beneath,\nbut the bodies are not \"click-through\" so that notifications can be passed through to them,\nand the transparent bodies can still capture notifications enabled on the resulting `Shape`(s).\n\n    circle 10\n        |> filled red\n        |> addOutline (solid 5) white\n\n",
+                "type": "GraphicSVG.LineType -> GraphicSVG.Color -> GraphicSVG.Shape userMsg -> GraphicSVG.Shape userMsg"
+            },
+            {
+                "name": "alignLeft",
+                "comment": " Apply to a `text` `Stencil` to left-align the text.\n",
+                "type": "GraphicSVG.Stencil -> GraphicSVG.Stencil"
+            },
+            {
+                "name": "alignRight",
+                "comment": " Apply to a `text` `Stencil` to right-align the text.\n",
+                "type": "GraphicSVG.Stencil -> GraphicSVG.Stencil"
+            },
+            {
+                "name": "app",
+                "comment": " _Advanced Function Warning!_ `app` takes one parameter of its own type of the form:\n\n    {\n      init = \\flags url key -> (model, cmd)\n    , view = \\model -> { title = \"Your Title goes here\",\n                       , body = view model\n                       }\n    , update = \\userMsg userModel -> ( userModel, Cmd userMsg )\n    , subscriptions = \\userModel -> Sub userMsg\n    , onUrlRequest = \\urlRequest -> userMsg\n    , onUrlChange = \\url -> userMsg\n    }\n\nThis matches the Elm architecture and is analogous to `Browser.application`.\n\n",
+                "type": "{ init : flags -> Url.Url -> Browser.Navigation.Key -> ( userModel, Platform.Cmd.Cmd userMsg ), update : userMsg -> userModel -> ( userModel, Platform.Cmd.Cmd userMsg ), view : userModel -> { title : String.String, body : GraphicSVG.Collage userMsg }, subscriptions : userModel -> Platform.Sub.Sub userMsg, onUrlRequest : Browser.UrlRequest -> userMsg, onUrlChange : Url.Url -> userMsg } -> GraphicSVG.App flags userModel userMsg"
+            },
+            {
+                "name": "black",
+                "comment": " ",
+                "type": "GraphicSVG.Color"
+            },
+            {
+                "name": "blank",
+                "comment": " ",
+                "type": "GraphicSVG.Color"
+            },
+            {
+                "name": "blue",
+                "comment": " ",
+                "type": "GraphicSVG.Color"
+            },
+            {
+                "name": "bold",
+                "comment": " Apply to a `text` `Stencil` to make the text bold.\n",
+                "type": "GraphicSVG.Stencil -> GraphicSVG.Stencil"
+            },
+            {
+                "name": "brown",
+                "comment": " ",
+                "type": "GraphicSVG.Color"
+            },
+            {
+                "name": "centered",
+                "comment": " Apply to a `text` `Stencil` to centre the text.\n",
+                "type": "GraphicSVG.Stencil -> GraphicSVG.Stencil"
+            },
+            {
+                "name": "charcoal",
+                "comment": " ",
+                "type": "GraphicSVG.Color"
+            },
+            {
+                "name": "circle",
+                "comment": " Creates a circle with a given radius.\n",
+                "type": "Basics.Float -> GraphicSVG.Stencil"
+            },
+            {
+                "name": "clip",
+                "comment": " Clipping to a shape\n\nCut out the `Shape` on the right using the `Shape` on the left.\n\n",
+                "type": "GraphicSVG.Shape userMsg -> GraphicSVG.Shape userMsg -> GraphicSVG.Shape userMsg"
+            },
+            {
+                "name": "collage",
+                "comment": " Creates a blank canvas on which you can draw. Takes a width, height and a\nlist of `Shape`s. Use this in your `view` functions in the three types of Apps above:\n\n    collage 500 500\n        [\n            circle 10 |> filled red\n        ]\n\n",
+                "type": "Basics.Float -> Basics.Float -> List.List (GraphicSVG.Shape userMsg) -> GraphicSVG.Collage userMsg"
+            },
+            {
+                "name": "createSVG",
+                "comment": " Create Svg from a Shape. This is considered an advanced function and\nis usually not used. Instead, use collage as part of a regular GraphicSVG\napp or create a widget with GraphicSVG.Widget. \n",
+                "type": "String.String -> Basics.Float -> Basics.Float -> GraphicSVG.Transform -> (a -> b) -> ((( Basics.Float, Basics.Float ) -> a) -> ( Basics.Float, Basics.Float ) -> b) -> GraphicSVG.Shape a -> Svg.Svg b"
+            },
+            {
+                "name": "curve",
+                "comment": " Creates a curve starting at a point, pulled towards a point, ending at a third point. For example,\n\n    curve (0,0) [Pull (0,10) (0,20)]\n\ngives a curve starting at (0,0), pulled towards (0,10) and ending at (0,20).\n\nThink about curves as what you get when you take a bunch of\nbendy sticks with their ends glued down to a board, and then pulling each stick\ntowards another point.\nYou always need an initial point and at least one `Pull`, but you can add as many `Pull`s as you want to\nadd additional curve segments, but each curve segment can only bend one way, since it is pulled in one direction.\n\n",
+                "type": "( Basics.Float, Basics.Float ) -> List.List GraphicSVG.Pull -> GraphicSVG.Stencil"
+            },
+            {
+                "name": "curveHelper",
+                "comment": " Apply to a curve or group of curves in order to view their start points,\nend points and `Pull` points. Helpful while perfecting curves.\n\n    curve (0,0) [Pull (0,10) (0,20)]\n        |> curveHelper\n\n",
+                "type": "GraphicSVG.Shape userMsg -> GraphicSVG.Shape userMsg"
+            },
+            {
+                "name": "custom",
+                "comment": " A custom line defined by a list of (on,off):\n\n    custom [ ( 10, 5 ) ] 5 -- a line with dashes 10 long and spaces 5 long\n\n    custom [ ( 10, 5 ), ( 20, 5 ) ] -- on for 10, off 5, on 20, off 5\n\n",
+                "type": "List.List ( Basics.Float, Basics.Float ) -> Basics.Float -> GraphicSVG.LineType"
+            },
+            {
+                "name": "customFont",
+                "comment": " Apply to a `text` `Stencil` to render the text with a font of your choosing by specifying its name in a `String`.\n\n_Use this sparingly as support for each font will vary across browsers and devices._\n\n",
+                "type": "String.String -> GraphicSVG.Stencil -> GraphicSVG.Stencil"
+            },
+            {
+                "name": "darkBlue",
+                "comment": " ",
+                "type": "GraphicSVG.Color"
+            },
+            {
+                "name": "darkBrown",
+                "comment": " ",
+                "type": "GraphicSVG.Color"
+            },
+            {
+                "name": "darkCharcoal",
+                "comment": " ",
+                "type": "GraphicSVG.Color"
+            },
+            {
+                "name": "darkGray",
+                "comment": " ",
+                "type": "GraphicSVG.Color"
+            },
+            {
+                "name": "darkGreen",
+                "comment": " ",
+                "type": "GraphicSVG.Color"
+            },
+            {
+                "name": "darkGrey",
+                "comment": " ",
+                "type": "GraphicSVG.Color"
+            },
+            {
+                "name": "darkOrange",
+                "comment": " ",
+                "type": "GraphicSVG.Color"
+            },
+            {
+                "name": "darkPurple",
+                "comment": " ",
+                "type": "GraphicSVG.Color"
+            },
+            {
+                "name": "darkRed",
+                "comment": " ",
+                "type": "GraphicSVG.Color"
+            },
+            {
+                "name": "darkYellow",
+                "comment": " ",
+                "type": "GraphicSVG.Color"
+            },
+            {
+                "name": "dashed",
+                "comment": " Define a dashed `LineType` with the given width. Dashes are short line segments, versus dots which are theoretically points, but may be drawn with very short line segments.\n",
+                "type": "Basics.Float -> GraphicSVG.LineType"
+            },
+            {
+                "name": "dotdash",
+                "comment": " Define a `LineType` with the given width, including alternating dots and dashes.\n",
+                "type": "Basics.Float -> GraphicSVG.LineType"
+            },
+            {
+                "name": "dotted",
+                "comment": " Define a dotted `LineType` with the given width.\n",
+                "type": "Basics.Float -> GraphicSVG.LineType"
+            },
+            {
+                "name": "ellieApp",
+                "comment": " _Advanced Function Warning!_ `ellieApp` takes one parameter of its own type of the form:\n\n    {\n      init = \\flags url key -> (model, cmd)\n    , view = \\model -> { title = \"Your Title goes here\",\n                       , body = view model\n                       }\n    , update = \\userMsg userModel -> ( userModel, Cmd userMsg )\n    , subscriptions = \\userModel -> Sub userMsg\n    }\n\nThis matches the Elm architecture and is analogous to `Browser.document`.\nIt is called ellieApp because this version is compatible with the online\nElm IDE Ellie.\n\n",
+                "type": "{ init : flags -> ( userModel, Platform.Cmd.Cmd userMsg ), update : userMsg -> userModel -> ( userModel, Platform.Cmd.Cmd userMsg ), view : userModel -> { title : String.String, body : GraphicSVG.Collage userMsg }, subscriptions : userModel -> Platform.Sub.Sub userMsg } -> GraphicSVG.EllieApp flags userModel userMsg"
+            },
+            {
+                "name": "filled",
+                "comment": " Fill a `Stencil` with a `Color`, creating a `Shape`;\nNote that any `Stencil` converted to a `Shape` this way can be made\ntransparent (for instance by using the `blank` `Color`) but will not be\n\"click-through\", meaning that the body will catch any attached notifications\nand not let them through to any visible `Shape`(s) revealed beneath them.\n\n    circle 10\n        |> filled red\n\n",
+                "type": "GraphicSVG.Color -> GraphicSVG.Stencil -> GraphicSVG.Shape userMsg"
+            },
+            {
+                "name": "fixedwidth",
+                "comment": " Apply to a text `Stencil` to render the text `Stencil` with a font in which every character has the same width.\nThis will mean that the letters line up from line to line which is important in programming languages like Elm.\n",
+                "type": "GraphicSVG.Stencil -> GraphicSVG.Stencil"
+            },
+            {
+                "name": "ghost",
+                "comment": " Make a `Shape` into a ghost. Mostly to be used inside of the clip operations.\nNote that although the `blank` `Color` is transparent, it will still catch\nnotifications enabled on the `Shape` or block them if not enabled on the `Shape`.\n",
+                "type": "GraphicSVG.Stencil -> GraphicSVG.Shape userMsg"
+            },
+            {
+                "name": "gradient",
+                "comment": " Create a linear gradient from a list of colour stops.\n",
+                "type": "List.List GraphicSVG.Stop -> GraphicSVG.Color"
+            },
+            {
+                "name": "graphPaper",
+                "comment": " Creates a graph paper with squares of a given size.\n",
+                "type": "Basics.Float -> GraphicSVG.Shape userMsg"
+            },
+            {
+                "name": "graphPaperCustom",
+                "comment": " Creates graph paper with squares of a given size, with a user-defined thickness and colour.\n",
+                "type": "Basics.Float -> Basics.Float -> GraphicSVG.Color -> GraphicSVG.Shape userMsg"
+            },
+            {
+                "name": "gray",
+                "comment": " ",
+                "type": "GraphicSVG.Color"
+            },
+            {
+                "name": "green",
+                "comment": " ",
+                "type": "GraphicSVG.Color"
+            },
+            {
+                "name": "grey",
+                "comment": " ",
+                "type": "GraphicSVG.Color"
+            },
+            {
+                "name": "group",
+                "comment": " Combine any number of `Shape` types into one `Shape` that can be\ntransformed (moved, rotated, scaled, etc) as one `Shape`.\n",
+                "type": "List.List (GraphicSVG.Shape userMsg) -> GraphicSVG.Shape userMsg"
+            },
+            {
+                "name": "hotPink",
+                "comment": " ",
+                "type": "GraphicSVG.Color"
+            },
+            {
+                "name": "hsl",
+                "comment": " Define a colour given its hue, saturation and light components.\n",
+                "type": "Basics.Float -> Basics.Float -> Basics.Float -> GraphicSVG.Color"
+            },
+            {
+                "name": "hsla",
+                "comment": " Define a colour given its hue, saturation, light and alpha components.\nAlpha is a decimal number (`Float`) from 0 to 1 representing the level of transparency.\n",
+                "type": "Basics.Float -> Basics.Float -> Basics.Float -> Basics.Float -> GraphicSVG.Color"
+            },
+            {
+                "name": "html",
+                "comment": " Display HTML inside an SVG foreignObject.\n",
+                "type": "Basics.Float -> Basics.Float -> Html.Html userMsg -> GraphicSVG.Shape userMsg"
+            },
+            {
+                "name": "ident",
+                "comment": " The identity or \"starting\" matrix. Applying this matrix to a shape is the equivalent\nof doing no transformations at all. The matrix itself looks like\n\n```\nident = ( ( 1 , 0 , 0 ) , ( 0 , 1 , 0 ) )\n```\n\nor,\n\n```\n 1 0 0\n 0 1 0\n```\n\n",
+                "type": "GraphicSVG.Transform"
+            },
+            {
+                "name": "isosceles",
+                "comment": " Creates an isosceles triangle with a given base and height.\n",
+                "type": "Basics.Float -> Basics.Float -> GraphicSVG.Stencil"
+            },
+            {
+                "name": "italic",
+                "comment": " Apply to a `text` `Stencil` to make the text italicized (slanted).\n",
+                "type": "GraphicSVG.Stencil -> GraphicSVG.Stencil"
+            },
+            {
+                "name": "lightBlue",
+                "comment": " ",
+                "type": "GraphicSVG.Color"
+            },
+            {
+                "name": "lightBrown",
+                "comment": " ",
+                "type": "GraphicSVG.Color"
+            },
+            {
+                "name": "lightCharcoal",
+                "comment": " ",
+                "type": "GraphicSVG.Color"
+            },
+            {
+                "name": "lightGray",
+                "comment": " ",
+                "type": "GraphicSVG.Color"
+            },
+            {
+                "name": "lightGreen",
+                "comment": " ",
+                "type": "GraphicSVG.Color"
+            },
+            {
+                "name": "lightGrey",
+                "comment": " ",
+                "type": "GraphicSVG.Color"
+            },
+            {
+                "name": "lightOrange",
+                "comment": " ",
+                "type": "GraphicSVG.Color"
+            },
+            {
+                "name": "lightPurple",
+                "comment": " ",
+                "type": "GraphicSVG.Color"
+            },
+            {
+                "name": "lightRed",
+                "comment": " ",
+                "type": "GraphicSVG.Color"
+            },
+            {
+                "name": "lightYellow",
+                "comment": " ",
+                "type": "GraphicSVG.Color"
+            },
+            {
+                "name": "line",
+                "comment": " Create a line from a point to a point. Use `outlined` to convert to a viewable\n`Shape`.\n",
+                "type": "( Basics.Float, Basics.Float ) -> ( Basics.Float, Basics.Float ) -> GraphicSVG.Stencil"
+            },
+            {
+                "name": "longdash",
+                "comment": " Define a dashed `LineType` with the given width, where the dashes are longer than normal.\n",
+                "type": "Basics.Float -> GraphicSVG.LineType"
+            },
+            {
+                "name": "makeTransparent",
+                "comment": " Make a `Shape` transparent by the fraction given. Multiplies on top of other transparencies:\n\n    circle 10\n        |> filled red\n        |> makeTransparent 0.5\n    --results in a transparency of 0.5 (half vislible)\n\n    circle 10\n        |> filled red\n        |> makeTransparent 0.5\n        |> makeTransparent 0.5\n    --results in a transparency of 0.25 (a quarter visible)\n\n",
+                "type": "Basics.Float -> GraphicSVG.Shape userMsg -> GraphicSVG.Shape userMsg"
+            },
+            {
+                "name": "map",
+                "comment": " To compose multiple pages or components which each have a Msg/view/update, we need to map messages.\n(Ask if you don't know what this means.)\n",
+                "type": "(a -> b) -> GraphicSVG.Shape a -> GraphicSVG.Shape b"
+            },
+            {
+                "name": "mapCollage",
+                "comment": " To apply the function over all the shapes in the given `Collage` using the `map` function.\n(Ask if you don't know what this means.)\n",
+                "type": "(a -> b) -> GraphicSVG.Collage a -> GraphicSVG.Collage b"
+            },
+            {
+                "name": "mirrorX",
+                "comment": " Flip a `Shape` along the x-axis.\n",
+                "type": "GraphicSVG.Shape userMsg -> GraphicSVG.Shape userMsg"
+            },
+            {
+                "name": "mirrorY",
+                "comment": " Flip a `Shape` along the y-axis.\n",
+                "type": "GraphicSVG.Shape userMsg -> GraphicSVG.Shape userMsg"
+            },
+            {
+                "name": "move",
+                "comment": " Move a `Shape` by a number of units along the x-axis and y-axis.\n",
+                "type": "( Basics.Float, Basics.Float ) -> GraphicSVG.Shape userMsg -> GraphicSVG.Shape userMsg"
+            },
+            {
+                "name": "moveT",
+                "comment": " Apply a move (translation) transformation to a transformation matrix.\nThis is designed to be used as part of a pipe:\n\n```\nident\n    |> moveT (15,-30.5)\n```\n\n",
+                "type": "( Basics.Float, Basics.Float ) -> GraphicSVG.Transform -> GraphicSVG.Transform"
+            },
+            {
+                "name": "ngon",
+                "comment": " Create a regular polygon with a given number of sides and radius. Examples:\n\n    ngon 3 50 -- triangle\n\n    ngon 5 50 -- pentagon\n\n    ngon 8 50 -- octogon\n\n",
+                "type": "Basics.Int -> Basics.Float -> GraphicSVG.Stencil"
+            },
+            {
+                "name": "noline",
+                "comment": " Define a`LineType` that doesn't exist, doesn't appear.\n",
+                "type": "() -> GraphicSVG.LineType"
+            },
+            {
+                "name": "notifyEnter",
+                "comment": " Receive a message (`userMsg`) when the mouse enters a `Shape`.\n",
+                "type": "userMsg -> GraphicSVG.Shape userMsg -> GraphicSVG.Shape userMsg"
+            },
+            {
+                "name": "notifyEnterAt",
+                "comment": " Receive a message (`userMsg`) with the x and y position of the mouse when the mouse enters a `Shape`.\n",
+                "type": "(( Basics.Float, Basics.Float ) -> userMsg) -> GraphicSVG.Shape userMsg -> GraphicSVG.Shape userMsg"
+            },
+            {
+                "name": "notifyLeave",
+                "comment": " Receive a message (`userMsg`) when the mouse leaves a `Shape`.\n",
+                "type": "userMsg -> GraphicSVG.Shape userMsg -> GraphicSVG.Shape userMsg"
+            },
+            {
+                "name": "notifyLeaveAt",
+                "comment": " Receive a message (`userMsg`) with the x and y position of the mouse when the mouse leaves a `Shape`.\n",
+                "type": "(( Basics.Float, Basics.Float ) -> userMsg) -> GraphicSVG.Shape userMsg -> GraphicSVG.Shape userMsg"
+            },
+            {
+                "name": "notifyMouseDown",
+                "comment": " Receive a message (`userMsg`) when the mouse button is pressed while the cursor is over a `Shape`.\n",
+                "type": "userMsg -> GraphicSVG.Shape userMsg -> GraphicSVG.Shape userMsg"
+            },
+            {
+                "name": "notifyMouseDownAt",
+                "comment": " Receive a message (`userMsg`) with the x and y position of the mouse when the mouse button is pressed while the cursor is over a `Shape`.\n",
+                "type": "(( Basics.Float, Basics.Float ) -> userMsg) -> GraphicSVG.Shape userMsg -> GraphicSVG.Shape userMsg"
+            },
+            {
+                "name": "notifyMouseMoveAt",
+                "comment": " Receive a message (`userMsg`) with the x and y position of the mouse when the mouse is moved across a `Shape`.\n",
+                "type": "(( Basics.Float, Basics.Float ) -> userMsg) -> GraphicSVG.Shape userMsg -> GraphicSVG.Shape userMsg"
+            },
+            {
+                "name": "notifyMouseUp",
+                "comment": " Receive a message (`userMsg`) when the mouse button is released while the cursor is over a `Shape`.\n",
+                "type": "userMsg -> GraphicSVG.Shape userMsg -> GraphicSVG.Shape userMsg"
+            },
+            {
+                "name": "notifyMouseUpAt",
+                "comment": " Receive a message (`userMsg`) with the x and y position of the mouse when the mouse button is released while the cursor is over a `Shape`.\n",
+                "type": "(( Basics.Float, Basics.Float ) -> userMsg) -> GraphicSVG.Shape userMsg -> GraphicSVG.Shape userMsg"
+            },
+            {
+                "name": "notifyTap",
+                "comment": " Receive a message (`userMsg`) when a `Shape` is clicked or tapped.\n",
+                "type": "userMsg -> GraphicSVG.Shape userMsg -> GraphicSVG.Shape userMsg"
+            },
+            {
+                "name": "notifyTapAt",
+                "comment": " Receive a message (`userMsg`) with the x and y position of the mouse or finger when the `Shape` is clicked or tapped.\n",
+                "type": "(( Basics.Float, Basics.Float ) -> userMsg) -> GraphicSVG.Shape userMsg -> GraphicSVG.Shape userMsg"
+            },
+            {
+                "name": "notifyTouchEnd",
+                "comment": " Receive a message (`userMsg`) when the user lifts their finger off a `Shape`.\n",
+                "type": "userMsg -> GraphicSVG.Shape userMsg -> GraphicSVG.Shape userMsg"
+            },
+            {
+                "name": "notifyTouchEndAt",
+                "comment": " Receive a message (`userMsg`) with the x and y position of the user's finger when the user lifts their finger off a `Shape`.\n",
+                "type": "(( Basics.Float, Basics.Float ) -> userMsg) -> GraphicSVG.Shape userMsg -> GraphicSVG.Shape userMsg"
+            },
+            {
+                "name": "notifyTouchMoveAt",
+                "comment": " Receive a message (`userMsg`) with the x and y position of the user's finger when the user moves their finger over a `Shape`.\n",
+                "type": "(( Basics.Float, Basics.Float ) -> userMsg) -> GraphicSVG.Shape userMsg -> GraphicSVG.Shape userMsg"
+            },
+            {
+                "name": "notifyTouchStart",
+                "comment": " Receive a message (`userMsg`) when the user begins touching a `Shape`.\n",
+                "type": "userMsg -> GraphicSVG.Shape userMsg -> GraphicSVG.Shape userMsg"
+            },
+            {
+                "name": "notifyTouchStartAt",
+                "comment": " Receive a message (`userMsg`) with the x and y position of the user's finger when the user begins touching a `Shape`.\n",
+                "type": "(( Basics.Float, Basics.Float ) -> userMsg) -> GraphicSVG.Shape userMsg -> GraphicSVG.Shape userMsg"
+            },
+            {
+                "name": "openPolygon",
+                "comment": " Create an open shape given a list of points. Unlike with polygon, the first and\nlast points will not join up automatically. Can use `outlined` or `filled` to\nconvert to a `Shape`.\n",
+                "type": "List.List ( Basics.Float, Basics.Float ) -> GraphicSVG.Stencil"
+            },
+            {
+                "name": "orange",
+                "comment": " ",
+                "type": "GraphicSVG.Color"
+            },
+            {
+                "name": "outlined",
+                "comment": " Outline a Stencil with a `LineType` and `Color`, creating a `Shape`;\nNote that this is the only way to convert a `Stencil` into a `Shape` that is\n\"click-through\" as if the body is not just transparent but doesn't exist at all.\nIt works for all `Stencil`'s except for `Text` which can never be made \"click-through\"\ndue to a permanent transparent background area that cannot be disabled.\n\n    circle 10\n        |> outlined (solid 5) red\n\n",
+                "type": "GraphicSVG.LineType -> GraphicSVG.Color -> GraphicSVG.Stencil -> GraphicSVG.Shape userMsg"
+            },
+            {
+                "name": "outside",
+                "comment": " The whole region outside the given `Shape`.\n",
+                "type": "GraphicSVG.Shape userMsg -> GraphicSVG.Shape userMsg"
+            },
+            {
+                "name": "oval",
+                "comment": " Creates an oval with a given width and height.\n",
+                "type": "Basics.Float -> Basics.Float -> GraphicSVG.Stencil"
+            },
+            {
+                "name": "pink",
+                "comment": " ",
+                "type": "GraphicSVG.Color"
+            },
+            {
+                "name": "polygon",
+                "comment": " Create a closed shape given a list of points. Can use `outlined` or `filled` to\nconvert to a `Shape`.\n",
+                "type": "List.List ( Basics.Float, Basics.Float ) -> GraphicSVG.Stencil"
+            },
+            {
+                "name": "puppetShow",
+                "comment": " Take a `Collage` width and height as well as a list of tuples of depth and `Shape`.\nto produce a list of `Shape`'s suitable for display as a group in a `Collage` with\n`Shape`'s with lesser depth larger and in front of `Shape`'s with greater depth.\n",
+                "type": "Basics.Float -> Basics.Float -> List.List ( Basics.Float, GraphicSVG.Shape userMsg ) -> List.List (GraphicSVG.Shape userMsg)"
+            },
+            {
+                "name": "purple",
+                "comment": " ",
+                "type": "GraphicSVG.Color"
+            },
+            {
+                "name": "radialGradient",
+                "comment": " Create a radial gradient from a list of colour stops.\n",
+                "type": "List.List GraphicSVG.Stop -> GraphicSVG.Color"
+            },
+            {
+                "name": "rect",
+                "comment": " Creates a rectangle with a given width and height.\n",
+                "type": "Basics.Float -> Basics.Float -> GraphicSVG.Stencil"
+            },
+            {
+                "name": "rectangle",
+                "comment": " Synonym for `rect`.\n",
+                "type": "Basics.Float -> Basics.Float -> GraphicSVG.Stencil"
+            },
+            {
+                "name": "red",
+                "comment": " ",
+                "type": "GraphicSVG.Color"
+            },
+            {
+                "name": "repaint",
+                "comment": " Repaint an already-`filled` `Shape`. This is helpful for repainting every `Shape` inside a `group` as well.\n\nRepaints the outline the same color as the body of the shape including the outline, if used;\nNote that this can repaint with a transparent `Color` (for instance, the `blank` `Color`) but\nwill never have the ability to be \"click-through\" so that it will always block (or catch)\nnotifications to covered `Shape`(s) revealed beneath.\n\n    group\n        [ circle 10\n            |> filled orange\n        , rect 10 40\n            |> filled blue\n        ]\n        |> repaint green\n\n",
+                "type": "GraphicSVG.Color -> GraphicSVG.Shape userMsg -> GraphicSVG.Shape userMsg"
+            },
+            {
+                "name": "rgb",
+                "comment": " Define a colour given its red, green and blue components.\n",
+                "type": "Basics.Float -> Basics.Float -> Basics.Float -> GraphicSVG.Color"
+            },
+            {
+                "name": "rgba",
+                "comment": " Define a colour given its red, green, blue and alpha components.\nAlpha is a decimal number (`Float`) from 0 to 1 representing the level of transparency.\n",
+                "type": "Basics.Float -> Basics.Float -> Basics.Float -> Basics.Float -> GraphicSVG.Color"
+            },
+            {
+                "name": "rightTriangle",
+                "comment": " Creates a right-angled triangle with a given base and height.\n",
+                "type": "Basics.Float -> Basics.Float -> GraphicSVG.Stencil"
+            },
+            {
+                "name": "rotate",
+                "comment": " Rotate a `Shape` by the specified amount (in radians). Use the `degrees` function to convert\nfrom degrees into radians:\n\n    [\n        rect 30 60\n            |> filled blue\n            |> rotate(degrees 30)\n    ]\n\n",
+                "type": "Basics.Float -> GraphicSVG.Shape userMsg -> GraphicSVG.Shape userMsg"
+            },
+            {
+                "name": "rotateAboutT",
+                "comment": " Apply a rotation about a given point to a `Transform` matrix. For example,\nthe following transform will rotate a `Shape` 30 degrees about the point (0,50):\n\n```\nrotateAbout050 =\n    ident\n        |> rotateAboutT (0, 50) (degrees 30)\n```\n\n",
+                "type": "( Basics.Float, Basics.Float ) -> Basics.Float -> GraphicSVG.Transform -> GraphicSVG.Transform"
+            },
+            {
+                "name": "rotateGradient",
+                "comment": " Rotate a linear gradient by a certain angle in radians.\n",
+                "type": "Basics.Float -> GraphicSVG.Color -> GraphicSVG.Color"
+            },
+            {
+                "name": "rotateT",
+                "comment": " Apply a rotation transformation to a transformation matrix.\nThis is designed to be used as part of a pipe:\n\n```\nident\n    |> moveT (15,-30.5)\n    |> rotateT (degrees -30)\n```\n\n",
+                "type": "Basics.Float -> GraphicSVG.Transform -> GraphicSVG.Transform"
+            },
+            {
+                "name": "roundedRect",
+                "comment": " Creates a rectangle with a given width, height, and circular rounded\ncorners with the given radius.\n",
+                "type": "Basics.Float -> Basics.Float -> Basics.Float -> GraphicSVG.Stencil"
+            },
+            {
+                "name": "sansserif",
+                "comment": " Apply to a `text` `Stencil` to render the text with a Sans Serif font (ie one without thinner and thicker bits).\n",
+                "type": "GraphicSVG.Stencil -> GraphicSVG.Stencil"
+            },
+            {
+                "name": "scale",
+                "comment": " Scale a `Shape` by a given factor.\n",
+                "type": "Basics.Float -> GraphicSVG.Shape userMsg -> GraphicSVG.Shape userMsg"
+            },
+            {
+                "name": "scaleT",
+                "comment": " Apply a scale transformation to a transformation matrix. The first argument\nscales in x and the second argument scales in y. This is designed\nto be used as part of a pipe:\n\n```\nident\n    |> moveT (15,-30.5)\n    |> rotateT (degrees -30)\n    |> scaleT 4 0.4\n```\n\n",
+                "type": "Basics.Float -> Basics.Float -> GraphicSVG.Transform -> GraphicSVG.Transform"
+            },
+            {
+                "name": "scaleX",
+                "comment": " Scale a `Shape` in the x-axis by a given factor.\n",
+                "type": "Basics.Float -> GraphicSVG.Shape userMsg -> GraphicSVG.Shape userMsg"
+            },
+            {
+                "name": "scaleY",
+                "comment": " Scale a `Shape` in the y-axis by a given factor.\n",
+                "type": "Basics.Float -> GraphicSVG.Shape userMsg -> GraphicSVG.Shape userMsg"
+            },
+            {
+                "name": "selectable",
+                "comment": " Apply to a `text` `Stencil` to make the text selectable (so users can copy your text and paste it elsewhere).\n",
+                "type": "GraphicSVG.Stencil -> GraphicSVG.Stencil"
+            },
+            {
+                "name": "serif",
+                "comment": " Apply to a `text` `Stencil` to render the text with a Serif font (ie one with thinner and thicker bits).\n",
+                "type": "GraphicSVG.Stencil -> GraphicSVG.Stencil"
+            },
+            {
+                "name": "sideAngleSide",
+                "comment": " Creates a triangle given two side lengths and the angle between them.\n\nFor example, `sideAngleSide 30 (degrees 45) 50` creates a triangle with side lengths\n30 and 50 with an angle of 45 degrees between them.\n\n",
+                "type": "Basics.Float -> Basics.Float -> Basics.Float -> GraphicSVG.Stencil"
+            },
+            {
+                "name": "size",
+                "comment": " Apply to a `text` `Stencil` to change the font size of the text.\n\nThe size has a unit called \"points\", which depends on the size and type of screen used, but try 12 to start.\n\n",
+                "type": "Basics.Float -> GraphicSVG.Stencil -> GraphicSVG.Stencil"
+            },
+            {
+                "name": "skewT",
+                "comment": " Apply a skew transformation to a matrix. The first argument\nskews in x and the second argument skews in y. This is designed\nto be used as part of a pipe:\n\n```\nident\n    |> moveT (15,-30.5)\n    |> rotateT (degrees -30)\n    |> scaleT 4 0.4\n    |> skewT 0.5 1.3\n```\n\n",
+                "type": "Basics.Float -> Basics.Float -> GraphicSVG.Transform -> GraphicSVG.Transform"
+            },
+            {
+                "name": "skewX",
+                "comment": " Skew a `Shape` along the x-axis.\n",
+                "type": "Basics.Float -> GraphicSVG.Shape userMsg -> GraphicSVG.Shape userMsg"
+            },
+            {
+                "name": "skewY",
+                "comment": " Skew a `Shape` along the y-axis.\n",
+                "type": "Basics.Float -> GraphicSVG.Shape userMsg -> GraphicSVG.Shape userMsg"
+            },
+            {
+                "name": "solid",
+                "comment": " Define a solid `LineType` with the given width.\n",
+                "type": "Basics.Float -> GraphicSVG.LineType"
+            },
+            {
+                "name": "square",
+                "comment": " Creates a square with a given side length. (Synonym for `rect s s`)\n",
+                "type": "Basics.Float -> GraphicSVG.Stencil"
+            },
+            {
+                "name": "stop",
+                "comment": " A colour stop in a gradient. This takes a colour and a position.\n",
+                "type": "GraphicSVG.Color -> Basics.Float -> GraphicSVG.Stop"
+            },
+            {
+                "name": "strikethrough",
+                "comment": " Apply to a `text` `Stencil` to put a line through the centre of the text.\n",
+                "type": "GraphicSVG.Stencil -> GraphicSVG.Stencil"
+            },
+            {
+                "name": "subtract",
+                "comment": " Shape subtraction\n\nSubtract the `Shape` on the left from the `Shape` on the right.\n\n",
+                "type": "GraphicSVG.Shape userMsg -> GraphicSVG.Shape userMsg -> GraphicSVG.Shape userMsg"
+            },
+            {
+                "name": "text",
+                "comment": " Creates a text `Stencil`. You can change this `Stencil` using the text helper\nfunctions. Note that `|> filled ...` or `|> outlined ...` must go at the _end_ of the text helper functions\n(ie note that all these functions have type `Stencil -> Stencil`). For example,\n\n    text \"Hello World\"\n        |> fixedwidth\n        |> bold\n        |> size 14\n        |> filled black\n\n",
+                "type": "String.String -> GraphicSVG.Stencil"
+            },
+            {
+                "name": "transform",
+                "comment": " Manually transform a shape using a `Transform` matrix. Matrix multiplication will\nbe used to apply the given matrix to any transformations of the current\nshape. This is designed to be used in the usual way in a pipe:\n\n```\ncircle 10\n    |> filled red\n    |> transform moveLeft50\n\nmoveLeft50 =\n    ident\n        |> moveT (50,0)\n```\n\nNOTE: Transformations generated using pipes this way are applied backwards compared\nto the \"regular\" `Shape userMsg` transformation functions. For example, `rect0` and\n`rect1` below are equivalent:\n\n```\nmyTransform =\n    ident\n        |> scaleT 2 2\n        |> rotateT (degrees 30)\n        |> moveT (0, 50)\n\nrect0 =\n    rect 20 10\n        |> filled red\n        |> transform myTransform\n\nrect1 =\n    rect 20 10\n        |> filled red\n        |> move (0, 50)\n        |> rotate (degrees 30)\n        |> scale 2\n```\n\nOn the other hand, single transformations produce a result consistent with the\n`Shape userMsg` transformations. `rect2` is also equivalent to the two above:\n\n```\nmoveRight50 =\n    ident\n        |> moveT (50,0)\n\nscale2 =\n    ident\n        |> scaleT 2 2\n\nrotate30 =\n    ident\n        |> rotateT (degrees 30)\n\nrect2 =\n    rect 20 10\n        |> filled red\n        |> transform moveRight50\n        |> transform scale2\n        |> transform rotate30\n```\n\nHowever, chaining together transformations in this way is discouraged because\nit is less efficient than the regular `Shape userMsg` transformations in\nthe \"Transformations\" section.\n\n",
+                "type": "GraphicSVG.Transform -> GraphicSVG.Shape userMsg -> GraphicSVG.Shape userMsg"
+            },
+            {
+                "name": "transparentStop",
+                "comment": " A colour stop with transparency.\n",
+                "type": "GraphicSVG.Color -> Basics.Float -> Basics.Float -> GraphicSVG.Stop"
+            },
+            {
+                "name": "triangle",
+                "comment": " Synonym for `ngon 3`. Creates a triangle with a given size.\n",
+                "type": "Basics.Float -> GraphicSVG.Stencil"
+            },
+            {
+                "name": "underline",
+                "comment": " Apply to a `text` `Stencil` to underline the text.\n",
+                "type": "GraphicSVG.Stencil -> GraphicSVG.Stencil"
+            },
+            {
+                "name": "union",
+                "comment": " Shape union\n\nCombine two `Shape`s together into one to use with clip.\n\n",
+                "type": "GraphicSVG.Shape userMsg -> GraphicSVG.Shape userMsg -> GraphicSVG.Shape userMsg"
+            },
+            {
+                "name": "wedge",
+                "comment": " Creates a wedge with a given radius, and a given fraction of a circle.\n\n    wedge 50 0.5 -- semi-circle\n\n    wedge 50 0.25 -- quarter-circle\n\n    wedge 50 0.75 -- three-quarter circle\n\n",
+                "type": "Basics.Float -> Basics.Float -> GraphicSVG.Stencil"
+            },
+            {
+                "name": "white",
+                "comment": " ",
+                "type": "GraphicSVG.Color"
+            },
+            {
+                "name": "yellow",
+                "comment": " ",
+                "type": "GraphicSVG.Color"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "GraphicSVG.App",
+        "comment": " A module using the SVG graphics library to implement easily usable apps,\nwhich includes built-in functions for creating plain graphics, interactions, games\nand other applications including response to time, keyboard presses, and mouse actions.\n\n\n# Apps\n\n@docs graphicsApp, GraphicsApp, notificationsApp, NotificationsApp, gameApp, GameApp\n\n\n# Time and Keyboard interactions\n\n@docs InputHandler, GetKeyState, Keys, KeyState\n\n\n# Barebones app with keyboard and time\n\n@docs AppWithTick, appWithTick\n\n",
+        "unions": [
+            {
+                "name": "KeyState",
+                "comment": " The possible states when you ask for a key's state:\n\n  - `JustDown` is the frame after the key went down (will show up exactly once per press)\n  - `Down` is a press that is continuing for more than one frame\n  - `JustUp` is the frame after the key went up / stopped being pressed (will show up exactly once per press)\n  - `Up` means the key is not currently being pressed nor was it recently released\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "JustDown",
+                        []
+                    ],
+                    [
+                        "Down",
+                        []
+                    ],
+                    [
+                        "JustUp",
+                        []
+                    ],
+                    [
+                        "Up",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Keys",
+                "comment": " Includes all the regular keys. Ask for letters and numbers using `Key String`, e.g. `Key \"a\"` or `Key \"3\"`.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Key",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Backspace",
+                        []
+                    ],
+                    [
+                        "Tab",
+                        []
+                    ],
+                    [
+                        "Enter",
+                        []
+                    ],
+                    [
+                        "Shift",
+                        []
+                    ],
+                    [
+                        "Ctrl",
+                        []
+                    ],
+                    [
+                        "Alt",
+                        []
+                    ],
+                    [
+                        "Caps",
+                        []
+                    ],
+                    [
+                        "LeftArrow",
+                        []
+                    ],
+                    [
+                        "UpArrow",
+                        []
+                    ],
+                    [
+                        "RightArrow",
+                        []
+                    ],
+                    [
+                        "DownArrow",
+                        []
+                    ],
+                    [
+                        "Delete",
+                        []
+                    ],
+                    [
+                        "Space",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "AppWithTick",
+                "comment": " This type alias is only used as a target for a user `main` type signature to make\nthe type signature more clear and concise when `main` calls `gameApp`:\nmain : GameApp Model Msg\nmain =\n    appWithTick Tick\n        { model = init\n        , update = update\n        , view = view\n        , subscriptions = subscriptions\n        , onUrlRequest = OnUrlRequest\n        , onUrlChange = OnUrlChange\n        }\nwhere `Tick` is the message handler called once per browser window update,\n`Model` is the type alias of the user persistent model, and\n`Msg` is the name of the user message type; if other names are used,\nthey can be substituted for these names.\n",
+                "args": [
+                    "flags",
+                    "userModel",
+                    "userMsg"
+                ],
+                "type": "GraphicSVG.App flags ( userModel, GraphicSVG.App.HiddenModel userMsg ) (GraphicSVG.App.HiddenMsg userMsg)"
+            },
+            {
+                "name": "GameApp",
+                "comment": " This type alias is only used as a target for a user `main` type signature to make\nthe type signature more clear and concise when `main` calls `gameApp`:\nmain : GameApp Model Msg\nmain =\ngameApp Tick\n{ model = init\n, update = update\n, view = view\n}\nwhere `Tick` is the message handler called once per browser window update,\n`Model` is the type alias of the user persistent model, and\n`Msg` is the name of the user message type; if other names are used,\nthey can be substituted for these names.\n",
+                "args": [
+                    "userModel",
+                    "userMsg"
+                ],
+                "type": "GraphicSVG.App () ( userModel, GraphicSVG.App.HiddenModel userMsg ) (GraphicSVG.App.HiddenMsg userMsg)"
+            },
+            {
+                "name": "GetKeyState",
+                "comment": " `GetKeyState` returns a triple where the first argument is of type `Keys -> KeyState`\nso you can ask if a certain key is pressed. The other two are tuples of arrow keys and\nWASD keys, respectively. They're in the form (x,y) which represents the key presses\nof each player. For example, (0,-1) represents the left arrow (or \"A\") key, and (1,1)\nwould mean the up (or \"W\") and right (or \"D\") key are being pressed at the same time.\n",
+                "args": [],
+                "type": "( GraphicSVG.App.Keys -> GraphicSVG.App.KeyState, ( Basics.Float, Basics.Float ), ( Basics.Float, Basics.Float ) )"
+            },
+            {
+                "name": "GraphicsApp",
+                "comment": " This type alias is only used as a target for a user `main` type signature\nto make the type signature more clear and concise when `main` calls\n`graphicsApp`:\nmain : GraphicsApp userMsg\nmain =\ngraphicsApp { view = view }\nNote that `userMsg` can be anything as no messages are used in this type of program.\n",
+                "args": [],
+                "type": "GraphicSVG.App () () (GraphicSVG.App.HiddenMsg ())"
+            },
+            {
+                "name": "InputHandler",
+                "comment": " The `InputHandler` type alias descripts a message that contains a Float representing the time in seconds from\nthe time the program started and the `GetKeyState` type alias used for returning key actions.\nThis type is used for by the `gameApp` fully interactive application.\n",
+                "args": [
+                    "userMsg"
+                ],
+                "type": "Basics.Float -> GraphicSVG.App.GetKeyState -> userMsg"
+            },
+            {
+                "name": "NotificationsApp",
+                "comment": " This type alias is only used as a target for a user `main` type signature\nto make the type signature more clear and concise when `main` calls\n`notificationsApp`:\nmain : NotificationsApp Model MyMsg\nmain =\nnotificationsApp { model = init, update = update, view = view }\nwhere `Model` is the type alias of the user persistent model, and\n`MyMsg` is the name of the user defined message type;\nif other names are used, they can be substituted for these names.\n",
+                "args": [
+                    "userModel",
+                    "userMsg"
+                ],
+                "type": "GraphicSVG.App () userModel (GraphicSVG.App.HiddenMsg userMsg)"
+            }
+        ],
+        "values": [
+            {
+                "name": "appWithTick",
+                "comment": "\nA GraphicSVG.app with automatic time and keyboard presses passed into the update function.\n`appWithTick` takes two parameters: one is your own type of `InputHandler` message\nwhich will be automatically called each time the browser window is refreshed\n(30 times per second)\nof the form `Float -> GetKeyState -> UserMsg` and the other is\n```\n{\n    init = model\n,   view = view\n,   update = update\n,   subscriptions = subscriptions\n,   onUrlRequest = OnUrlRequest\n,   onUrlChange = OnUrlChange\n}\nwhere init is the model and initial commands, view is a collage and a title,\nupdate is the usual update function with commands, subscriptions are things\nwhich you'd like to be notified about on a regular basis (e.g. changes in time, \nincoming WebSocket messages), onUrlRequest is sent\nwhenever the user initiates a URL action (e.g. clicks a link) and onUrlChange\nis when the user changes the url in the browser. See https://package.elm-lang.org/packages/elm/browser/latest/Browser#application\nfor a more clear description of these.\n",
+                "type": "GraphicSVG.App.InputHandler userMsg -> { init : flags -> Url.Url -> Browser.Navigation.Key -> ( userModel, Platform.Cmd.Cmd userMsg ), update : userMsg -> userModel -> ( userModel, Platform.Cmd.Cmd userMsg ), view : userModel -> { title : String.String, body : GraphicSVG.Collage userMsg }, subscriptions : userModel -> Platform.Sub.Sub userMsg, onUrlRequest : Browser.UrlRequest -> userMsg, onUrlChange : Url.Url -> userMsg } -> GraphicSVG.App.AppWithTick flags userModel userMsg"
+            },
+            {
+                "name": "gameApp",
+                "comment": " Automatically maps time and keyboard presses to your program. This should\nbe all you need for making complex interactive games and animations.\n`gameApp` takes two parameters: one is your own type of `InputHandler` message\nwhich will be automatically called each time the browser window is refreshed\n(30 times per second)\nof the form `Float -> GetKeyState -> UserMsg` and the other is\n```\n{\n  model = model\n, view = view\n, update = update\n}\n```\nThe following program causes animation of the drawn line,\ncausing it to spin around; also, a press of the \"r\" key\ncauses the direction of the spin to reverse:\n```\ntype Msg\n    = Tick Float GetKeyState\n\ntype alias Model = { angle : Float, speed : Float }\n\ninit = { angle = 0, speed = 1 }\n\nupdate msg model =\n    case msg of\n        Tick _ ( keys, _, _ ) ->\n            case keys (Key \"r\") of\n                JustDown ->\n                    { model\n                    | angle = model.angle - model.speed\n                    , speed = -model.speed\n                    }\n            _ -> { model | angle = model.angle + model.speed }\n\nview model =\n    collage 500 500\n        [ line ( 0, 0 ) ( 250, 0 )\n            |> outlined (solid 1) green\n            |> rotate (degrees model.angle)\n        ]\n        \nmain =\n    gameApp Tick\n        { model = init\n        , update = update\n        , view = view\n        }\n```\n",
+                "type": "GraphicSVG.App.InputHandler userMsg -> { model : userModel, view : userModel -> GraphicSVG.Collage userMsg, update : userMsg -> userModel -> userModel, title : String.String } -> GraphicSVG.App.GameApp userModel userMsg"
+            },
+            {
+                "name": "graphicsApp",
+                "comment": " The simplest way to render graphics to the screen. These graphics will be\nstatic (they don't move) and cannot be interacted with. This is great for beginners\nor for when only need static graphics are needed. Note that your `view` function is bare,\nwith no parameters:\nview =\ncollage 500 500\n[ circle 10 |> filled red\n][ circle 10 |> filled red\n]\n`graphicsApp` takes a parameter like `{ view = view }`\nso the main program that would get the whole thing started for the above\n`view` would be:\nmain =\ngraphicsApp { view = view }\n",
+                "type": "{ view : GraphicSVG.Collage () } -> GraphicSVG.App.GraphicsApp"
+            },
+            {
+                "name": "notificationsApp",
+                "comment": " Like `graphicsApp`, but you can add interactivity to your graphics by using the\n`notify*` functions. This allows you to learn Elm's architecture in a fun way with\ngraphics. Note that your `view` function needs a `model` parameter now, which in this\nexample is the colour of the shape:\nview model =\ncollage 500 500\n[ circle 10 |> filled model |> notifyTap Change\n][ circle 10 |> filled model |> notifyTap Change\n]\n`notificationsApp` takes a parameter like:\n{\nmodel = model\n, view = view\n, update = update\n}\nso the functions that would be required to make the above `view` function work\nare as follows:\ntype Msg\n= Change\nupdate msg model =\ncase msg of\nChange ->\ngreen\nmain =\nnotificationsApp\n{ model = red -- causes circle to start red\n, update = update -- function which changes the model\n, view = view\n}\nwhich will cause the drawn red circle to change to green the first time\nit is mouse clicked or tapped.\n",
+                "type": "{ model : userModel, view : userModel -> GraphicSVG.Collage userMsg, update : userMsg -> userModel -> userModel } -> GraphicSVG.App.NotificationsApp userModel userMsg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "GraphicSVG.EllieApp",
+        "comment": " The methods in this library are analogous to those in GraphicSVG.App; however,\nthey are built upon `GraphicSVG.ellieApp` for compatibility with that platform.\n\n\n# Apps\n\n@docs graphicsApp, GraphicsApp, notificationsApp, NotificationsApp, gameApp, GameApp\n\n\n# Time and Keyboard interactions\n\n@docs InputHandler, GetKeyState, Keys, KeyState\n\n\n# Barebones ellieApp with keyboard and time\n\n@docs EllieAppWithTick, ellieAppWithTick\n\n",
+        "unions": [
+            {
+                "name": "KeyState",
+                "comment": " The possible states when you ask for a key's state:\n\n  - `JustDown` is the frame after the key went down (will show up exactly once per press)\n  - `Down` is a press that is continuing for more than one frame\n  - `JustUp` is the frame after the key went up / stopped being pressed (will show up exactly once per press)\n  - `Up` means the key is not currently being pressed nor was it recently released\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "JustDown",
+                        []
+                    ],
+                    [
+                        "Down",
+                        []
+                    ],
+                    [
+                        "JustUp",
+                        []
+                    ],
+                    [
+                        "Up",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Keys",
+                "comment": " Includes all the regular keys. Ask for letters and numbers using `Key String`, e.g. `Key \"a\"` or `Key \"3\"`.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Key",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Backspace",
+                        []
+                    ],
+                    [
+                        "Tab",
+                        []
+                    ],
+                    [
+                        "Enter",
+                        []
+                    ],
+                    [
+                        "Shift",
+                        []
+                    ],
+                    [
+                        "Ctrl",
+                        []
+                    ],
+                    [
+                        "Alt",
+                        []
+                    ],
+                    [
+                        "Caps",
+                        []
+                    ],
+                    [
+                        "LeftArrow",
+                        []
+                    ],
+                    [
+                        "UpArrow",
+                        []
+                    ],
+                    [
+                        "RightArrow",
+                        []
+                    ],
+                    [
+                        "DownArrow",
+                        []
+                    ],
+                    [
+                        "Delete",
+                        []
+                    ],
+                    [
+                        "Space",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "EllieAppWithTick",
+                "comment": " This type alias is only used as a target for a user `main` type signature to make\nthe type signature more clear and concise when `main` calls `gameApp`:\n```\nmain : EllieAppWithTick Model Msg\nmain =\n    ellieAppWithTick Tick\n        { model = init\n        , update = update\n        , view = view\n        , subscriptions = subscriptions\n        }\n```\nwhere `Tick` is the message handler called once per browser window update,\n`Model` is the type alias of the user persistent model, and\n`Msg` is the name of the user message type; if other names are used,\nthey can be substituted for these names.\n",
+                "args": [
+                    "flags",
+                    "userModel",
+                    "userMsg"
+                ],
+                "type": "GraphicSVG.EllieApp flags ( userModel, GraphicSVG.EllieApp.HiddenModel userMsg ) (GraphicSVG.EllieApp.HiddenMsg userMsg)"
+            },
+            {
+                "name": "GameApp",
+                "comment": " This type alias is only used as a target for a user `main` type signature to make\nthe type signature more clear and concise when `main` calls `gameApp`:\n```\nmain : GameApp Model Msg\nmain =\n    gameApp Tick\n        { model = init\n        , update = update\n        , view = view\n        }\n```\nwhere `Tick` is the message handler called once per browser window update,\n`Model` is the type alias of the user persistent model, and\n`Msg` is the name of the user message type; if other names are used,\nthey can be substituted for these names.\n",
+                "args": [
+                    "userModel",
+                    "userMsg"
+                ],
+                "type": "GraphicSVG.EllieApp () ( userModel, GraphicSVG.EllieApp.HiddenModel userMsg ) (GraphicSVG.EllieApp.HiddenMsg userMsg)"
+            },
+            {
+                "name": "GetKeyState",
+                "comment": " `GetKeyState` returns a triple where the first argument is of type `Keys -> KeyState`\nso you can ask if a certain key is pressed. The other two are tuples of arrow keys and\nWASD keys, respectively. They're in the form (x,y) which represents the key presses\nof each player. For example, (0,-1) represents the left arrow (or \"A\") key, and (1,1)\nwould mean the up (or \"W\") and right (or \"D\") key are being pressed at the same time.\n",
+                "args": [],
+                "type": "( GraphicSVG.EllieApp.Keys -> GraphicSVG.EllieApp.KeyState, ( Basics.Float, Basics.Float ), ( Basics.Float, Basics.Float ) )"
+            },
+            {
+                "name": "GraphicsApp",
+                "comment": " This type alias is only used as a target for a user `main` type signature\nto make the type signature more clear and concise when `main` calls\n`graphicsApp`:\nmain : GraphicsApp userMsg\nmain =\ngraphicsApp { view = view }\nNote that `userMsg` can be anything as no messages are used in this type of program.\n",
+                "args": [],
+                "type": "GraphicSVG.EllieApp () () ()"
+            },
+            {
+                "name": "InputHandler",
+                "comment": " The `InputHandler` type alias descripts a message that contains a Float representing the time in seconds from\nthe time the program started and the `GetKeyState` type alias used for returning key actions.\nThis type is used for by the `gameApp` fully interactive application.\n",
+                "args": [
+                    "userMsg"
+                ],
+                "type": "Basics.Float -> GraphicSVG.EllieApp.GetKeyState -> userMsg"
+            },
+            {
+                "name": "NotificationsApp",
+                "comment": " This type alias is only used as a target for a user `main` type signature\nto make the type signature more clear and concise when `main` calls\n`notificationsApp`:\nmain : NotificationsApp Model MyMsg\nmain =\nnotificationsApp { model = init, update = update, view = view }\nwhere `Model` is the type alias of the user persistent model, and\n`MyMsg` is the name of the user defined message type;\nif other names are used, they can be substituted for these names.\n",
+                "args": [
+                    "userModel",
+                    "userMsg"
+                ],
+                "type": "GraphicSVG.EllieApp () userModel (GraphicSVG.EllieApp.HiddenMsg userMsg)"
+            }
+        ],
+        "values": [
+            {
+                "name": "ellieAppWithTick",
+                "comment": "\nA GraphicSVG.ellieApp with automatic time and keyboard presses passed into the update function.\n`ellieAppWithTick` takes two parameters: one is your own type of `InputHandler` message\nwhich will be automatically called each time the browser window is refreshed\n(30 times per second)\nof the form `Float -> GetKeyState -> UserMsg` and the other is\n```\n{\n    init = model\n,   view = view\n,   update = update\n,   subscriptions = subscriptions\n}\nwhere init is the model and initial commands, view is a collage and a title,\nupdate is the usual update function with commands, and subscriptions are things\nwhich you'd like to be notified about on a regular basis (e.g. changes in time, \nincoming WebSocket messages)\n",
+                "type": "GraphicSVG.EllieApp.InputHandler userMsg -> { init : flags -> ( userModel, Platform.Cmd.Cmd userMsg ), update : userMsg -> userModel -> ( userModel, Platform.Cmd.Cmd userMsg ), view : userModel -> { title : String.String, body : GraphicSVG.Collage userMsg }, subscriptions : userModel -> Platform.Sub.Sub userMsg } -> GraphicSVG.EllieApp.EllieAppWithTick flags userModel userMsg"
+            },
+            {
+                "name": "gameApp",
+                "comment": " Automatically maps time and keyboard presses to your program. This should\nbe all you need for making complex interactive games and animations.\n`gameApp` takes two parameters: one is your own type of `InputHandler` message\nwhich will be automatically called each time the browser window is refreshed\n(30 times per second)\nof the form `Float -> GetKeyState -> UserMsg` and the other is\n```\n{\n  model = model\n, view = view\n, update = update\n}\n````\nThe following program causes animation of the drawn line,\ncausing it to spin around; also, a press of the \"r\" key\ncauses the direction of the spin to reverse:\n```\ntype Msg\n    = Tick Float GetKeyState\n\ntype alias Model = { angle : Float, speed : Float }\n\ninit = { angle = 0, speed = 1 }\n\nupdate msg model =\n    case msg of\n        Tick _ ( keys, _, _ ) ->\n            case keys (Key \"r\") of\n                JustDown ->\n                    { model\n                    | angle = model.angle - model.speed\n                    , speed = -model.speed\n                    }\n            _ -> { model | angle = model.angle + model.speed }\n\nview model =\n    collage 500 500\n        [ line ( 0, 0 ) ( 250, 0 )\n            |> outlined (solid 1) green\n            |> rotate (degrees model.angle)\n        ]\n\nmain =\n    gameApp Tick\n        { model = init\n        , update = update\n        , view = view\n        }\n```\n",
+                "type": "GraphicSVG.EllieApp.InputHandler userMsg -> { model : userModel, view : userModel -> GraphicSVG.Collage userMsg, update : userMsg -> userModel -> userModel, title : String.String } -> GraphicSVG.EllieApp.GameApp userModel userMsg"
+            },
+            {
+                "name": "graphicsApp",
+                "comment": " The simplest way to render graphics to the screen. These graphics will be\nstatic (they don't move) and cannot be interacted with. This is great for beginners\nor for when only need static graphics are needed. Note that your `view` function is bare,\nwith no parameters:\nview =\ncollage 500 500\n[ circle 10 |> filled red\n][ circle 10 |> filled red\n]\n`graphicsApp` takes a parameter like `{ view = view }`\nso the main program that would get the whole thing started for the above\n`view` would be:\nmain =\ngraphicsApp { view = view }\n",
+                "type": "{ view : GraphicSVG.Collage () } -> GraphicSVG.EllieApp.GraphicsApp"
+            },
+            {
+                "name": "notificationsApp",
+                "comment": " Like `graphicsApp`, but you can add interactivity to your graphics by using the\n`notify*` functions. This allows you to learn Elm's architecture in a fun way with\ngraphics. Note that your `view` function needs a `model` parameter now, which in this\nexample is the colour of the shape:\nview model =\n    collage 500 500\n        [ circle 10 |> filled model |> notifyTap Change\n        ]\n`notificationsApp` takes a parameter like:\n{\n    model = model\n,   view = view\n,   update = update\n}\nso the functions that would be required to make the above `view` function work\nare as follows:\ntype Msg = Change\nupdate msg model =\n    case msg of\n        Change ->\n            green\nmain = notificationsApp\n{   \n    model = red -- causes circle to start red\n,   update = update -- function which changes the model\n,   view = view\n}\nwhich will cause the drawn red circle to change to green the first time\nit is mouse clicked or tapped.\n",
+                "type": "{ model : userModel, view : userModel -> GraphicSVG.Collage userMsg, update : userMsg -> userModel -> userModel } -> GraphicSVG.EllieApp.NotificationsApp userModel userMsg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "GraphicSVG.Widget",
+        "comment": " Include GraphicSVG animations and functionality within your own elm/html\napp! Your existing code can utilize as many widgets as it likes; each one\nreceives its own co-ordinate system and view!\n\n[See GitHub](https://github.com/MacCASOutreach/graphicsvg/tree/master/src/Templates/Widget/Widget.elm)\nfor a full example of widgets embedded inside Elm Html.\n\n# Static Icons\nStatic icons can render shapes without requiring you to modify your models and messages\nto include special things, as in the case of the Interactive Widgets below. Use this when\nyou don't need the user to interact with the shapes (i.e. you don't need to _receieve_\nany messages from the shape). For example, avatars and icons can use this.\n\n@docs icon\n\n# Interactive Widgets\n## Basic Types\nThe basic message and model types must be wrapped and contained within your app's\nmessage type and model type respectively. These are mostly opaque data types of which\nyou do not need to know the gritty details. Simply include them in your app and\nyou're all set!\n\n@docs Msg, Model\n\n## Initialization\nSome helper functions for initializing your widget(s). \n\n@docs init, subscriptions\n\n## Updating a widget model\n\n@docs update\n\n## Rendering a widget\n\n@docs view\n\n### Custom view\nWhen the default resizing behaviour of the widget is limiting, use the functions \nfrom this section.\n\n@docs ViewOption\n\n@docs defaultViewOption\n\n@docs noViewOption\n\n@docs viewCustom\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": "The messages a widget can send and receive. It is only necessary to pipe these\nby including them in your message type. Ensure that you send each and every message\nreceived in your main update function to the `Widget.update` function to maintain\nconsistency. See the above discussion under `Wrapper` for a more detailed idea of\nhow to use this.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "ViewOption",
+                "comment": "Options to set a Widget's attributes in a more constrained way.\n",
+                "args": [
+                    "userMsg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Model",
+                "comment": "The state of a given widget. This is considered an opaque type; as such it\nis not necessary to know what is inside for your app to function. It stores\ninformation about the size of the widget and the co-ordinate system for purposes\nof rendering and sending messages with mouse position. It must be kept up to date\nusing subscriptions and commands, and can be created with the `init` function. This\nis most often included in your app's model, e.g.\n\n```\n-- your app's Model type\ntype alias Model = \n    {\n        ...\n    ,   widgetState : Widget.Model\n        ...\n    }\n```\nSeveral of these could easily be saved in a structure such as a dictionary\nto maintain the state of several widgets at once!\n",
+                "args": [],
+                "type": "{ cw : Basics.Float, ch : Basics.Float, ww : Basics.Float, wh : Basics.Float, id : String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultViewOption",
+                "comment": "The default view options where a widget resizes to the size of the container\nit's inside of. This is the view option used in the non-custom `view` function.\n",
+                "type": "List.List (GraphicSVG.Widget.ViewOption userMsg)"
+            },
+            {
+                "name": "icon",
+                "comment": "A static graphic that returns no messages. Use this when you don't need to\nhandle messages about clicking shapes, getting mouse positions, etc. This function\nis simpler and requires no other modifications to your model and message types.\n\nThen, use `icon` as follows in your view function:\n```\nicon \"Circle\" 50 50\n    [\n        circle 5\n            |> filled blue\n    ]\n```\nNote that including any of the `notify*` functions will result in a type error.\nThis is because the type `Shape Never` is a shape which can never send any\nmessages. This is great! It means you can't compile with messages accidentally.\nIt also means that, for compatibility with older code, you might need to change\nthat code's type signature to be more generic (e.g. Shape a). And, for older\ncode with any `notify*`, you'll have to use a proper `Widget` (below), even if\nyou don't plan on using the messages.\n",
+                "type": "String.String -> Basics.Float -> Basics.Float -> List.List (GraphicSVG.Shape Basics.Never) -> Html.Html a"
+            },
+            {
+                "name": "init",
+                "comment": "The init function takes the\nsize of the widget as well as the wrapper message and a unique string identifier of the \nwidget. You must ensure that the identifier is unique, otherwise undefined behaviour can\noccur related to notification functions (especially the `*At` functions). You are free to \nchange the size or idenfier at any time throughout the execution of your program, simply\nby calling init again and storing the model. However, note that each time init is called\nfor a given widget, its accompanying command must also be executed.\n\n**Note:** You should issue the command given by `init` each time the widget becomes \nvisible again after being offscreen, to ensure that the co-ordinate system is kept \nup-to-date. Therefore, storing the command for use later is a good idea.\n",
+                "type": "Basics.Float -> Basics.Float -> String.String -> ( GraphicSVG.Widget.Model, Platform.Cmd.Cmd GraphicSVG.Widget.Msg )"
+            },
+            {
+                "name": "noViewOption",
+                "comment": "A type of view that sets no style attributes limiting the size of the widget\nas part of your Html.\n",
+                "type": "List.List (GraphicSVG.Widget.ViewOption userMsg)"
+            },
+            {
+                "name": "subscriptions",
+                "comment": "Generate a subscription related to each widget in your app. It must be\nactive whenever the widget in question is onscreen. It can be active when the widget\nis not onscreen, however this is not necessary and may be a waste of resources.\n",
+                "type": "Platform.Sub.Sub GraphicSVG.Widget.Msg"
+            },
+            {
+                "name": "update",
+                "comment": "Helper function to update the state of the widget. This can be considered a\nblack box and should be used to simply update the Model stored inside of your\napp's model. Be sure to pipe every message through this update, to ensure the\nconsistency of the widget's model and that you receive all notifications coming\nfrom the widget.\n",
+                "type": "GraphicSVG.Widget.Msg -> GraphicSVG.Widget.Model -> ( GraphicSVG.Widget.Model, Platform.Cmd.Cmd GraphicSVG.Widget.Msg )"
+            },
+            {
+                "name": "view",
+                "comment": "Helper function which takes the widget's opaque model as well as a list\nof shapes to include in the widget. Widgets are compatible with all\nnotification functions available in GraphicSVG. Each widget is given its\nown co-ordinate system defined by the widget's model. The `*At` notification\nfunctions return points relative to the widget (as long as the user has\nproperly piped together the commands and subscriptions to their copy of \n`Widget.Model`. Widgets are clipped so they fit the aspect ratio defined in \nthe widget's model.\n",
+                "type": "GraphicSVG.Widget.Model -> List.List (GraphicSVG.Shape userMsg) -> Html.Html userMsg"
+            },
+            {
+                "name": "viewCustom",
+                "comment": "Like `view`, but with the ability to set view options that determine\nhow the widget fits into your existing Html.\n\nSee `view` for more details.\n",
+                "type": "List.List (GraphicSVG.Widget.ViewOption userMsg) -> GraphicSVG.Widget.Model -> List.List (GraphicSVG.Shape userMsg) -> Html.Html userMsg"
+            }
+        ],
+        "binops": []
+    }
+]

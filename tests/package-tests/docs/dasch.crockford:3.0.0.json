@@ -1,0 +1,57 @@
+[
+    {
+        "name": "Crockford",
+        "comment": " Encode integers as [Crockford-style base32 strings](https://www.crockford.com/base32.html).\n\nFrom the specification:\n\n> Base 32 is a textual 32-symbol notation for expressing numbers in a form that can be conveniently and accurately transmitted between humans and computer systems. It can be used for out of band communication of public keys.\n>\n> The encoding scheme is required to\n>\n>   - Be human readable and machine readable.\n>   - Be compact. Humans have difficulty in manipulating long strings of arbitrary symbols.\n>   - Be error resistant. Entering the symbols must not require keyboarding gymnastics.\n>   - Be pronounceable. Humans should be able to accurately transmit the symbols to other humans using a telephone.\n\nThis package provides functions for encoding and decoding base32 data.\n\n\n# Encoding & decoding\n\n@docs encode, decode, Error\n\n\n# Checksums\n\nYou can optionally insert a checksum at the end of the encoded data.\n\nThis allows validating the correctness of the string at a later point. For example, you may want to allow people to communicate the string over the phone, which obviously introduces a source of error. Crockford's base32 is optimized for communication, avoiding characters that look the same, but it's still possible for characters to be swapped or omitted during communication. By encoding with a checksum, and later decoding with a checksum again, you can validate that the string has not been modified and therefore corrupted.\n\n@docs encodeWithChecksum, decodeWithChecksum\n\n",
+        "unions": [
+            {
+                "name": "Error",
+                "comment": " Encoding or decoding can fail in a couple of ways:\n\n  - `NegativeNumber` means you tried to encode a negative integer, which isn't supported.\n  - `InvalidChecksum` means you tried to decode a base32 string with a checksum, but the checksum didn't match.\n  - `InvalidCharacter` means you tried to decode a base32 string, but an invalid character was encountered.\n  - `EmptyString` means you tried to decode an empty string.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NegativeNumber",
+                        []
+                    ],
+                    [
+                        "InvalidChecksum",
+                        []
+                    ],
+                    [
+                        "InvalidCharacter",
+                        [
+                            "Char.Char"
+                        ]
+                    ],
+                    [
+                        "EmptyString",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decode",
+                "comment": " Decode a base32 string to an integer.\n\n    Crockford.decode \"19S\" --> Ok 1337 : Result Crockford.Error Int\n\n",
+                "type": "String.String -> Result.Result Crockford.Error Basics.Int"
+            },
+            {
+                "name": "decodeWithChecksum",
+                "comment": " Like `decode`, but expects a checksum character at the end of the string.\n\nSee `encodeWithChecksum` for more information.\n\n",
+                "type": "String.String -> Result.Result Crockford.Error Basics.Int"
+            },
+            {
+                "name": "encode",
+                "comment": " Encode an integer as a base32 string.\n\n    Crockford.encode 1337 --> Ok \"19S\" : Result Crockford.Error String\n\n",
+                "type": "Basics.Int -> Result.Result Crockford.Error String.String"
+            },
+            {
+                "name": "encodeWithChecksum",
+                "comment": " Like `encode`, but appends a checksum character to the end of the string.\n\n    Crockford.encodeWithChecksum 32 --> Ok \"10*\" : Result Crockford.Error String\n\n    Crockford.decodeWithChecksum \"10*\" --> Ok 32 : Result Crockford.Error Int\n\n    Crockford.decodeWithChecksum \"10~\" --> Err InvalidChecksum : Result Crockford.Error Int\n\n",
+                "type": "Basics.Int -> Result.Result Crockford.Error String.String"
+            }
+        ],
+        "binops": []
+    }
+]

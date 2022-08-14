@@ -1,0 +1,2341 @@
+[
+    {
+        "name": "LngLat",
+        "comment": " Encodes geographic position.\n\n@docs LngLat, encodeAsPair, encodeAsObject, decodeFromPair, decodeFromObject, map, toString\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "LngLat",
+                "comment": " A LngLat represents a geographic position.\n",
+                "args": [],
+                "type": "{ lng : Basics.Float, lat : Basics.Float }"
+            }
+        ],
+        "values": [
+            {
+                "name": "decodeFromObject",
+                "comment": " We can also encode from an `{lng: 32, lat: 435}` object.\n",
+                "type": "Json.Decode.Decoder LngLat.LngLat"
+            },
+            {
+                "name": "decodeFromPair",
+                "comment": " Most implementations seem to encode these as a 2 member array.\n",
+                "type": "Json.Decode.Decoder LngLat.LngLat"
+            },
+            {
+                "name": "encodeAsObject",
+                "comment": " We can also encode as an `{lng: 32, lat: 435}` object.\n",
+                "type": "LngLat.LngLat -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeAsPair",
+                "comment": " Most implementations seem to encode these as a 2 member array.\n",
+                "type": "LngLat.LngLat -> Json.Encode.Value"
+            },
+            {
+                "name": "map",
+                "comment": " ",
+                "type": "(Basics.Float -> Basics.Float) -> LngLat.LngLat -> LngLat.LngLat"
+            },
+            {
+                "name": "toString",
+                "comment": " Returns a text representation suitable for humans.\n",
+                "type": "LngLat.LngLat -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Mapbox.Cmd.Option",
+        "comment": "\n\n\n### Animation options\n\nOptions common to map movement commands that involve animation, such as panBy and easeTo, controlling the duration and easing function of the animation. All properties are optional.\n\n@docs duration, easing, offset, animate\n\n@docs curve, minZoom, speed, screenSpeed, maxDuration\n\n\n### Camera Options\n\nOptions common to `jumpTo`, `easeTo`, and `flyTo`, controlling the desired location, zoom, bearing, and pitch of the camera. All properties are optional, and when a property is omitted, the current camera value for that property will remain unchanged.\n\n@docs center, zoom, bearing, pitch, around\n\n\n### Fiting bounds\n\n@docs padding, Padding, linear, maxZoom\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Padding",
+                "comment": " ",
+                "args": [],
+                "type": "{ top : Basics.Int, right : Basics.Int, bottom : Basics.Int, left : Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "animate",
+                "comment": " If false, no animation will occur.\n",
+                "type": "Basics.Bool -> Mapbox.Cmd.Internal.Option { a | animate : Mapbox.Cmd.Internal.Supported }"
+            },
+            {
+                "name": "around",
+                "comment": " If `zoom` is specified, `around` determines the point around which the zoom is centered.\n",
+                "type": "LngLat.LngLat -> Mapbox.Cmd.Internal.Option { a | around : Mapbox.Cmd.Internal.Supported }"
+            },
+            {
+                "name": "bearing",
+                "comment": " The desired bearing, in degrees. The bearing is the compass direction that is \"up\"; for example, a bearing of 90° orients the map so that east is up.\n",
+                "type": "Basics.Float -> Mapbox.Cmd.Internal.Option { a | bearing : Mapbox.Cmd.Internal.Supported }"
+            },
+            {
+                "name": "center",
+                "comment": " The desired center.\n",
+                "type": "LngLat.LngLat -> Mapbox.Cmd.Internal.Option { a | center : Mapbox.Cmd.Internal.Supported }"
+            },
+            {
+                "name": "curve",
+                "comment": " The zooming \"curve\" that will occur along the flight path.\nA high value maximizes zooming for an exaggerated animation, while a\nlow value minimizes zooming for an effect closer to `easeTo`.\n1.42 is the average value selected by participants in the user study discussed in [van Wijk (2003)](https://www.win.tue.nl/~vanwijk/zoompan.pdf).\nA value of `6 ^ 0.25` would be equivalent to the root mean squared average velocity. A value of 1 would produce a circular motion.\n",
+                "type": "Basics.Float -> Mapbox.Cmd.Internal.Option { a | curve : Mapbox.Cmd.Internal.Supported }"
+            },
+            {
+                "name": "duration",
+                "comment": " The animation's duration, measured in milliseconds.\n",
+                "type": "Basics.Int -> Mapbox.Cmd.Internal.Option { a | duration : Mapbox.Cmd.Internal.Supported }"
+            },
+            {
+                "name": "easing",
+                "comment": " The name of an easing function. These must be passed to `elmMapbox`\nin the `easingFunctions` option.\n",
+                "type": "String.String -> Mapbox.Cmd.Internal.Option { a | easing : Mapbox.Cmd.Internal.Supported }"
+            },
+            {
+                "name": "linear",
+                "comment": " If true, the map transitions using `easeTo` . If false, the map transitions using `flyTo`.\n",
+                "type": "Basics.Bool -> Mapbox.Cmd.Internal.Option { a | linear : Mapbox.Cmd.Internal.Supported }"
+            },
+            {
+                "name": "maxDuration",
+                "comment": " The animation's maximum duration, measured in milliseconds. If duration exceeds maximum duration, it resets to 0.\n",
+                "type": "Basics.Float -> Mapbox.Cmd.Internal.Option { a | maxDuration : Mapbox.Cmd.Internal.Supported }"
+            },
+            {
+                "name": "maxZoom",
+                "comment": " The maximum zoom level to allow when the map view transitions to the specified bounds.\n",
+                "type": "Basics.Float -> Mapbox.Cmd.Internal.Option { a | maxZoom : Mapbox.Cmd.Internal.Supported }"
+            },
+            {
+                "name": "minZoom",
+                "comment": " The zero-based zoom level at the peak of the flight path.\nIf `curve` is specified, this option is ignored.\n",
+                "type": "Basics.Float -> Mapbox.Cmd.Internal.Option { a | minZoom : Mapbox.Cmd.Internal.Supported }"
+            },
+            {
+                "name": "offset",
+                "comment": " Offset of the target center relative to real map container center at the end of animation.\n",
+                "type": "( Basics.Int, Basics.Int ) -> Mapbox.Cmd.Internal.Option { a | offset : Mapbox.Cmd.Internal.Supported }"
+            },
+            {
+                "name": "padding",
+                "comment": " The amount of padding in pixels to add to the given bounds.\n",
+                "type": "Mapbox.Cmd.Option.Padding -> Mapbox.Cmd.Internal.Option { a | padding : Mapbox.Cmd.Internal.Supported }"
+            },
+            {
+                "name": "pitch",
+                "comment": " The desired pitch, in degrees.\n",
+                "type": "Basics.Float -> Mapbox.Cmd.Internal.Option { a | pitch : Mapbox.Cmd.Internal.Supported }"
+            },
+            {
+                "name": "screenSpeed",
+                "comment": " The average speed of the animation measured in screenfuls per second, assuming a linear timing curve. If `speed` is specified, this option is ignored.\n",
+                "type": "Basics.Float -> Mapbox.Cmd.Internal.Option { a | screenSpeed : Mapbox.Cmd.Internal.Supported }"
+            },
+            {
+                "name": "speed",
+                "comment": " The average speed of the animation defined in relation to `curve`. A speed of 1.2 means that the map appears to move along the flight path by 1.2 times `curve` screenfuls every second. A screenful is the map's visible span. It does not correspond to a fixed physical distance, but varies by zoom level.\n",
+                "type": "Basics.Float -> Mapbox.Cmd.Internal.Option { a | speed : Mapbox.Cmd.Internal.Supported }"
+            },
+            {
+                "name": "zoom",
+                "comment": " The desired zoom level.\n",
+                "type": "Basics.Float -> Mapbox.Cmd.Internal.Option { a | zoom : Mapbox.Cmd.Internal.Supported }"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Mapbox.Cmd.Template",
+        "comment": " This module has a bunch of essentially imperative commands for your map.\n\nHowever, since a published library can't have ports in it, you will need to do some setup. The easiest way to do this is to copy [this file into your app](https://github.com/gampleman/elm-mapbox/blob/master/examples/MapCommands.elm). You can see the module docs for that [here](https://github.com/gampleman/elm-mapbox/blob/master/docs/MapCommands.md).\n\n@docs Id, Outgoing, Option, Supported\n\nYou can of course customize the module you copy into your codebase to support things like having multiple maps on the page at once, etc.\n\n\n### Moving the map around\n\n@docs panBy, panTo, zoomTo, zoomIn, zoomOut, rotateTo, jumpTo, easeTo, flyTo, stop\n\n\n### Fiting bounds\n\n@docs fitBounds\n\n\n### Other\n\n@docs resize\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Id",
+                "comment": " Every command takes the DOM id of the map that it should operate on.\n",
+                "args": [],
+                "type": "String.String"
+            },
+            {
+                "name": "Option",
+                "comment": " This is exported here to simply for convenience. See `Cmd.Option` for more docs.\n",
+                "args": [
+                    "support"
+                ],
+                "type": "Mapbox.Cmd.Internal.Option support"
+            },
+            {
+                "name": "Outgoing",
+                "comment": " The type of a port that you need to provide for this module to work.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "Json.Encode.Value -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "Supported",
+                "comment": " ",
+                "args": [],
+                "type": "Mapbox.Cmd.Internal.Supported"
+            }
+        ],
+        "values": [
+            {
+                "name": "easeTo",
+                "comment": " Changes any combination of center, zoom, bearing, and pitch, with an animated transition between old and new values. The map will retain its current values for any details not specified in options.\n",
+                "type": "Mapbox.Cmd.Template.Outgoing msg -> Mapbox.Cmd.Template.Id -> List.List (Mapbox.Cmd.Template.Option { center : Mapbox.Cmd.Template.Supported, zoom : Mapbox.Cmd.Template.Supported, bearing : Mapbox.Cmd.Template.Supported, pitch : Mapbox.Cmd.Template.Supported, around : Mapbox.Cmd.Template.Supported, duration : Mapbox.Cmd.Template.Supported, easing : Mapbox.Cmd.Template.Supported, offset : Mapbox.Cmd.Template.Supported, animate : Mapbox.Cmd.Template.Supported }) -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "fitBounds",
+                "comment": " Pans and zooms the map to contain its visible area within the specified geographical bounds. This function will also reset the map's bearing to 0 if bearing is nonzero.\n",
+                "type": "Mapbox.Cmd.Template.Outgoing msg -> Mapbox.Cmd.Template.Id -> List.List (Mapbox.Cmd.Template.Option { padding : Mapbox.Cmd.Template.Supported, easing : Mapbox.Cmd.Template.Supported, linear : Mapbox.Cmd.Template.Supported, offset : Mapbox.Cmd.Template.Supported, maxZoom : Mapbox.Cmd.Template.Supported }) -> ( LngLat.LngLat, LngLat.LngLat ) -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "flyTo",
+                "comment": " Changes any combination of center, zoom, bearing, and pitch, animating the transition along a curve that evokes flight. The animation seamlessly incorporates zooming and panning to help the user maintain her bearings even after traversing a great distance.\n",
+                "type": "Mapbox.Cmd.Template.Outgoing msg -> Mapbox.Cmd.Template.Id -> List.List (Mapbox.Cmd.Template.Option { center : Mapbox.Cmd.Template.Supported, zoom : Mapbox.Cmd.Template.Supported, bearing : Mapbox.Cmd.Template.Supported, pitch : Mapbox.Cmd.Template.Supported, around : Mapbox.Cmd.Template.Supported, duration : Mapbox.Cmd.Template.Supported, easing : Mapbox.Cmd.Template.Supported, offset : Mapbox.Cmd.Template.Supported, animate : Mapbox.Cmd.Template.Supported, curve : Mapbox.Cmd.Template.Supported, minZoom : Mapbox.Cmd.Template.Supported, speed : Mapbox.Cmd.Template.Supported, screenSpeed : Mapbox.Cmd.Template.Supported, maxDuration : Mapbox.Cmd.Template.Supported }) -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "jumpTo",
+                "comment": " Changes any combination of center, zoom, bearing, and pitch, without an animated transition. The map will retain its current values for any details not specified in options.\n",
+                "type": "Mapbox.Cmd.Template.Outgoing msg -> Mapbox.Cmd.Template.Id -> List.List (Mapbox.Cmd.Template.Option { center : Mapbox.Cmd.Template.Supported, zoom : Mapbox.Cmd.Template.Supported, bearing : Mapbox.Cmd.Template.Supported, pitch : Mapbox.Cmd.Template.Supported, around : Mapbox.Cmd.Template.Supported }) -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "panBy",
+                "comment": " Pans the map by the specified offest.\n",
+                "type": "Mapbox.Cmd.Template.Outgoing msg -> Mapbox.Cmd.Template.Id -> List.List (Mapbox.Cmd.Template.Option { duration : Mapbox.Cmd.Template.Supported, easing : Mapbox.Cmd.Template.Supported, offset : Mapbox.Cmd.Template.Supported, animate : Mapbox.Cmd.Template.Supported }) -> ( Basics.Int, Basics.Int ) -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "panTo",
+                "comment": " Pans the map to the specified location, with an animated transition.\n",
+                "type": "Mapbox.Cmd.Template.Outgoing msg -> Mapbox.Cmd.Template.Id -> List.List (Mapbox.Cmd.Template.Option { duration : Mapbox.Cmd.Template.Supported, easing : Mapbox.Cmd.Template.Supported, offset : Mapbox.Cmd.Template.Supported, animate : Mapbox.Cmd.Template.Supported }) -> LngLat.LngLat -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "resize",
+                "comment": " Resizes the map according to the dimensions of its container element.\n\nThis command must be sent after the map's container is resized, or when the map is shown after being initially hidden with CSS.\n\n",
+                "type": "Mapbox.Cmd.Template.Outgoing msg -> Mapbox.Cmd.Template.Id -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "rotateTo",
+                "comment": " Rotates the map to the specified bearing, with an animated transition. The bearing is the compass direction that is \"up\"; for example, a bearing of 90° orients the map so that east is up.\n",
+                "type": "Mapbox.Cmd.Template.Outgoing msg -> Mapbox.Cmd.Template.Id -> List.List (Mapbox.Cmd.Template.Option { duration : Mapbox.Cmd.Template.Supported, easing : Mapbox.Cmd.Template.Supported, offset : Mapbox.Cmd.Template.Supported, animate : Mapbox.Cmd.Template.Supported }) -> Basics.Float -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "stop",
+                "comment": " Stops any animated transition underway.\n",
+                "type": "Mapbox.Cmd.Template.Outgoing msg -> Mapbox.Cmd.Template.Id -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "zoomIn",
+                "comment": " Increases the map's zoom level by 1.\n",
+                "type": "Mapbox.Cmd.Template.Outgoing msg -> Mapbox.Cmd.Template.Id -> List.List (Mapbox.Cmd.Template.Option { duration : Mapbox.Cmd.Template.Supported, easing : Mapbox.Cmd.Template.Supported, offset : Mapbox.Cmd.Template.Supported, animate : Mapbox.Cmd.Template.Supported }) -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "zoomOut",
+                "comment": " Decreases the map's zoom level by 1.\n",
+                "type": "Mapbox.Cmd.Template.Outgoing msg -> Mapbox.Cmd.Template.Id -> List.List (Mapbox.Cmd.Template.Option { duration : Mapbox.Cmd.Template.Supported, easing : Mapbox.Cmd.Template.Supported, offset : Mapbox.Cmd.Template.Supported, animate : Mapbox.Cmd.Template.Supported }) -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "zoomTo",
+                "comment": " Zooms the map to the specified zoom level, with an animated transition.\n",
+                "type": "Mapbox.Cmd.Template.Outgoing msg -> Mapbox.Cmd.Template.Id -> List.List (Mapbox.Cmd.Template.Option { duration : Mapbox.Cmd.Template.Supported, easing : Mapbox.Cmd.Template.Supported, offset : Mapbox.Cmd.Template.Supported, animate : Mapbox.Cmd.Template.Supported }) -> Basics.Float -> Platform.Cmd.Cmd msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Mapbox.Element",
+        "comment": " This library wraps a Custom Element that actually renders a map.\n\n@docs map, css, MapboxAttr\n\n\n### Attributes\n\n@docs token, id, zoom_, center_, maxZoom, minZoom, maxBounds, renderWorldCopies, featureState\n\n\n### Events\n\n@docs EventData, TouchEvent, eventFeaturesFilter, eventFeaturesLayers\n\n@docs onMouseDown, onMouseUp, onMouseOver, onMouseMove, onClick, onDblClick, onMouseOut, onContextMenu, onZoom, onZoomStart, onZoomEnd, onRotate, onRotateStart, onRotateEnd, onTouchEnd, onTouchMove, onTouchCancel, on\n\n",
+        "unions": [
+            {
+                "name": "MapboxAttr",
+                "comment": " This is the type that all attributes have.\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "EventData",
+                "comment": " `point` is the coordinates in pixels in screen space.\n\n`lngLat` is the coordinates as a longitude, latitude in geographic space.\n\n`renderedFeatures` is a geojson that intersect the `lngLat`:\n\nThe properties value of each returned feature object contains the properties of its source feature. For GeoJSON sources, only string and numeric property values are supported (i.e. null, Array, and Object values are not supported).\n\nEach feature includes a top-level layer property whose value is an object representing the style layer to which the feature belongs. Layout and paint properties in this object contain values which are fully evaluated for the given zoom level and feature.\n\nFeatures from layers whose visibility property is \"none\", or from layers whose zoom range excludes the current zoom level are not included. Symbol features that have been hidden due to text or icon collision are not included. Features from all other layers are included, including features that may have no visible contribution to the rendered result; for example, because the layer's opacity or color alpha component is set to 0.\n\nThe topmost rendered feature appears first in the returned array, and subsequent features are sorted by descending z-order. Features that are rendered multiple times (due to wrapping across the antimeridian at low zoom levels) are returned only once (though subject to the following caveat).\n\nBecause features come from tiled vector data or GeoJSON data that is converted to tiles internally, feature geometries may be split or duplicated across tile boundaries and, as a result, features may appear multiple times in query results. For example, suppose there is a highway running through the bounding rectangle of a query. The results of the query will be those parts of the highway that lie within the map tiles covering the bounding rectangle, even if the highway extends into other tiles, and the portion of the highway within each map tile will be returned as a separate feature. Similarly, a point feature near a tile boundary may appear in multiple tiles due to tile buffering.\n\n",
+                "args": [],
+                "type": "{ point : ( Basics.Int, Basics.Int ), lngLat : LngLat.LngLat, renderedFeatures : List.List Json.Decode.Value }"
+            },
+            {
+                "name": "TouchEvent",
+                "comment": " `touches` will list stuff for every finger involved in a gesture.\n\n`center` refers to the point in the geometric center of `touches`.\n\n",
+                "args": [],
+                "type": "{ touches : List.List Mapbox.Element.EventData, center : Mapbox.Element.EventData }"
+            }
+        ],
+        "values": [
+            {
+                "name": "center_",
+                "comment": " The default center pos.\n",
+                "type": "LngLat.LngLat -> Mapbox.Element.MapboxAttr msg"
+            },
+            {
+                "name": "css",
+                "comment": " This is literally:\n\n    <link\n      href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.53.0/mapbox-gl.css'\n      rel='stylesheet' />\n\nYou can include the required styles yourself if it fits better with the way you deploy your assets, this is meant as a quick way to get started.\n\n",
+                "type": "Html.Html msg"
+            },
+            {
+                "name": "eventFeaturesFilter",
+                "comment": " By default the `renderedFeatures` property in events will return\na lot of data. If you don't need it, you can provide a filter to filter that data. This will make things more performant.\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.DataExpression Basics.Bool -> Mapbox.Element.MapboxAttr msg"
+            },
+            {
+                "name": "eventFeaturesLayers",
+                "comment": " By default the `renderedFeatures` property in events will return\na lot of data. Here you can specify which layers you want to search for intersections. If you don't care about intersecting data at all, you can optimize performance by passing an empty list to this attribute.\n",
+                "type": "List.List String.String -> Mapbox.Element.MapboxAttr msg"
+            },
+            {
+                "name": "featureState",
+                "comment": " Sometimes you need to give certain geographic features some state.\n\nThe most common is user interaction states like hover, selected, etc.\n\nThe feature here is accepted as a `Value`. This is partially due to its flexibility, but in order for this to work, this must be an object with the following **top-level** propreties:\n\n  - `source`\n  - `sourceLayer` (only for vector sources)\n  - `id` the feature's unique id (this must be a positive, non-zero integer).\n\nYou can get these `Value`s from event listeners and pass them straight through. The state is a list of `(key, value)` pairs.\n\nYou can use this state infromation through the `Mapbox.Expression.featureState` expression.\n\n    Layer.fillOpacity <|\n        E.ifElse\n            (E.toBool (E.featureState (str \"hover\")))\n            (float 0.9)\n            (float 0.1)\n\nNote that this attribute is quite awkward to use directly. I recommend defining some helpers that suite your situation. For example:\n\n    hoveredFeature : Value -> MapboxAttr msg\n    hoveredFeature feat =\n        Element.featureState [ ( feat, [ ( \"hover\", Json.Encode.bool True ) ] ) ]\n\nor\n\n    dataJoins : List (Int, Float) -> MapboxAttr msg\n    dataJoins =\n        List.map (\\(id, population) ->\n          (Json.Encode.object\n            [( \"source\", Json.Encode.string \"postcodes\")\n            , (\"id\", Json.Encode.int id)\n            ]\n          , [ (\"population\", Json.Encode.float population)]\n          )\n         >> Element.featureState\n\nThis will make your view code much neater, by not mixing in JSON encoding directly.\n\n",
+                "type": "List.List ( Json.Decode.Value, List.List ( String.String, Json.Decode.Value ) ) -> Mapbox.Element.MapboxAttr msg"
+            },
+            {
+                "name": "id",
+                "comment": " The element's Id. This should be unique. You will need this if you want to use the Mapbox.Cmd module.\n",
+                "type": "String.String -> Mapbox.Element.MapboxAttr msg"
+            },
+            {
+                "name": "map",
+                "comment": " A Map html element renders a map based on a Style.\n",
+                "type": "List.List (Mapbox.Element.MapboxAttr msg) -> Mapbox.Style.Style -> Html.Html msg"
+            },
+            {
+                "name": "maxBounds",
+                "comment": " If set, the map will be constrained to the given bounds. The bounds are the `(south-west corner, north-east corner)`.\n",
+                "type": "( LngLat.LngLat, LngLat.LngLat ) -> Mapbox.Element.MapboxAttr msg"
+            },
+            {
+                "name": "maxZoom",
+                "comment": " The maximum zoom level of the map (0-24). Default 22.\n",
+                "type": "Basics.Float -> Mapbox.Element.MapboxAttr msg"
+            },
+            {
+                "name": "minZoom",
+                "comment": " The minimum zoom level of the map (0-24).\n",
+                "type": "Basics.Float -> Mapbox.Element.MapboxAttr msg"
+            },
+            {
+                "name": "on",
+                "comment": " This allows you to use other events not provided by this libary, or decode more or different data.\n\nSee <https://www.mapbox.com/mapbox-gl-js/api/#map.event> for all supported events.\n\n",
+                "type": "String.String -> Json.Decode.Decoder msg -> Mapbox.Element.MapboxAttr msg"
+            },
+            {
+                "name": "onClick",
+                "comment": " Fired when a pointing device (usually a mouse) is pressed and released at the same point on the map.\n",
+                "type": "(Mapbox.Element.EventData -> msg) -> Mapbox.Element.MapboxAttr msg"
+            },
+            {
+                "name": "onContextMenu",
+                "comment": " Fired when the right button of the mouse is clicked or the context menu key is pressed within the map.\n",
+                "type": "(Mapbox.Element.EventData -> msg) -> Mapbox.Element.MapboxAttr msg"
+            },
+            {
+                "name": "onDblClick",
+                "comment": " Fired when a pointing device (usually a mouse) is clicked twice at the same point on the map.\n",
+                "type": "(Mapbox.Element.EventData -> msg) -> Mapbox.Element.MapboxAttr msg"
+            },
+            {
+                "name": "onMouseDown",
+                "comment": " Fired when a pointing device (usually a mouse) is pressed within the map.\n",
+                "type": "(Mapbox.Element.EventData -> msg) -> Mapbox.Element.MapboxAttr msg"
+            },
+            {
+                "name": "onMouseMove",
+                "comment": " Fired when a pointing device (usually a mouse) is moved within the map.\n",
+                "type": "(Mapbox.Element.EventData -> msg) -> Mapbox.Element.MapboxAttr msg"
+            },
+            {
+                "name": "onMouseOut",
+                "comment": " Fired when a point device (usually a mouse) leaves the map's canvas.\n",
+                "type": "(Mapbox.Element.EventData -> msg) -> Mapbox.Element.MapboxAttr msg"
+            },
+            {
+                "name": "onMouseOver",
+                "comment": " Fired when a pointing device (usually a mouse) is moved within the map.\n",
+                "type": "(Mapbox.Element.EventData -> msg) -> Mapbox.Element.MapboxAttr msg"
+            },
+            {
+                "name": "onMouseUp",
+                "comment": " Fired when a pointing device (usually a mouse) is released within the map.\n",
+                "type": "(Mapbox.Element.EventData -> msg) -> Mapbox.Element.MapboxAttr msg"
+            },
+            {
+                "name": "onRotate",
+                "comment": " Fired repeatedly during a \"drag to rotate\" interaction.\n",
+                "type": "(Mapbox.Element.EventData -> msg) -> Mapbox.Element.MapboxAttr msg"
+            },
+            {
+                "name": "onRotateEnd",
+                "comment": " Fired when a \"drag to rotate\" interaction ends.\n",
+                "type": "(Mapbox.Element.EventData -> msg) -> Mapbox.Element.MapboxAttr msg"
+            },
+            {
+                "name": "onRotateStart",
+                "comment": " Fired when a \"drag to rotate\" interaction starts.\n",
+                "type": "(Mapbox.Element.EventData -> msg) -> Mapbox.Element.MapboxAttr msg"
+            },
+            {
+                "name": "onTouchCancel",
+                "comment": " Fired when a touchcancel event occurs within the map.\n",
+                "type": "(Mapbox.Element.TouchEvent -> msg) -> Mapbox.Element.MapboxAttr msg"
+            },
+            {
+                "name": "onTouchEnd",
+                "comment": " Fired when a touchend event occurs within the map.\n",
+                "type": "(Mapbox.Element.TouchEvent -> msg) -> Mapbox.Element.MapboxAttr msg"
+            },
+            {
+                "name": "onTouchMove",
+                "comment": " Fired when a touchmove event occurs within the map.\n",
+                "type": "(Mapbox.Element.TouchEvent -> msg) -> Mapbox.Element.MapboxAttr msg"
+            },
+            {
+                "name": "onZoom",
+                "comment": " Fired repeatedly during an animated transition from one zoom level to another.\n",
+                "type": "(Mapbox.Element.EventData -> msg) -> Mapbox.Element.MapboxAttr msg"
+            },
+            {
+                "name": "onZoomEnd",
+                "comment": " Fired just after the map completes a transition from one zoom level to another.\n",
+                "type": "(Mapbox.Element.EventData -> msg) -> Mapbox.Element.MapboxAttr msg"
+            },
+            {
+                "name": "onZoomStart",
+                "comment": " Fired just before the map begins a transition from one zoom level to another.\n",
+                "type": "(Mapbox.Element.EventData -> msg) -> Mapbox.Element.MapboxAttr msg"
+            },
+            {
+                "name": "renderWorldCopies",
+                "comment": " If true, multiple copies of the world will be rendered, when zoomed out.\n",
+                "type": "Basics.Bool -> Mapbox.Element.MapboxAttr msg"
+            },
+            {
+                "name": "token",
+                "comment": " Your [Mapbox API Token](https://www.mapbox.com/help/create-api-access-token/).\n",
+                "type": "String.String -> Mapbox.Element.MapboxAttr msg"
+            },
+            {
+                "name": "zoom_",
+                "comment": " Define the default zoom level of the map (0-24).\n",
+                "type": "Basics.Float -> Mapbox.Element.MapboxAttr msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Mapbox.Expression",
+        "comment": " Expressions form a little language that can be used to compute values for various layer properties.\n\nIt is recommended to import them in the following fashion:\n\n    import Mapbox.Expression as E exposing (Expression, CameraExpression, DataExpression, str, float, int, true, false)\n\nThis way you can use the language without much syntactic fuss and you have easy access to the literals.\n\n\n### Example\n\nYou'd like to adjust font size of a town based on the number of people who live there. In plain Elm, you might wright the following function:\n\n    sizeByPopulation : Dict String Int -> Int\n    sizeByPopulation properties =\n        Dict.get \"population\" properties\n            |> Maybe.withDefault 1000\n            |> scale ( 0, 1000 ) ( 9, 20 )\n\nIn the expression language you can do this in a similar fassion:\n\n    sizeByPopulation : Expression DataExpression Float\n    sizeByPopulation =\n        E.getProperty \"population\"\n            |> E.toFloat 1000\n            |> E.interpolate E.Linear\n                [ ( 0, int 9 )\n                , ( 1000, int 20 )\n                ]\n\n\n### Table of contents\n\n  - [Types](#types)\n  - [Lookup](#lookup)\n  - [Feature data](#feature-data)\n  - [Decision](#decision)\n  - [Ramps, scales, curves](#ramps-scales-curves)\n  - [String](#string)\n  - [Formatted Text](#formatted-text)\n  - [Color](#color)\n  - [Math](#math)\n  - [Misx](#misc)\n  - [Enums](#enums)\n\n**Note**: If you are familiar with the JS version of the style spec,\nwe have made a few changes. Argument order has been switched for many functions to support using pipeline style more naturally. Some functions use overloading in the original, these have been renamed to\nnot be overloaded. Finally, we have chosen not to represent some parts of the spec that are superflous (especially when used from Elm), namely functions and let-in expressions.\n\n@docs Expression, DataExpression, CameraExpression\n\n@docs encode\n\n\n### Types\n\nAll of the types used as expression results are phantom (i.e. they don't have any runtime values but are used purely for compile-time checking). As such we use a mix of standard elm types for their familiarty:\n\n  - `Float`\n  - `String`\n  - `Array`\n  - `Bool`\n\nWe introduce the following types:\n\n@docs Color, Object, Collator, FormattedText\n\n(And also a bunch of Enum types, that will be documented in the Enums section).\n\nYou can use the following functions to transfer Elm values into the Expression language:\n\n@docs true, false, bool, int, float, str, rgba, floats, strings, object, collator, defaultCollator\n\nIn some cases, you will need to force the type system to cooperate.\nThe following assertions will force the type and cause a run-time error\nif the type is wrong:\n\n@docs assertArray, assertArrayOfStrings, assertArrayOfFloats, assertArrayOfBools, assertBool, assertFloat, assertObject, assertString\n\nYou can also use these functions to explicitly cast to a particular type:\n\n@docs toBool, toColor, toFloat, toString, toFormattedText\n\n@docs formatNumber, NumberFormatOption, locale, currency, minFractionDigits, maxFractionDigits\n\n@docs typeof\n\n\n### Lookup\n\n@docs at, get, has, count, length\n\n\n### Feature data\n\n@docs featureState, geometryType, id, properties, getProperty, hasProperty\n\n\n### Decision\n\nThe expressions in this section can be used to add conditional logic to your styles.\n\n@docs isEqual, notEqual, lessThan, lessThanOrEqual, greaterThan, greaterThanOrEqual\n\nStrings can be compared with a collator for locale specific comparisons:\n\n@docs isEqualWithCollator, notEqualWithCollator, lessThanWithCollator, lessThanOrEqualWithCollator, greaterThanWithCollator, greaterThanOrEqualWithCollator\n\nLogical operators:\n\n@docs not, all, any\n\nControl flow:\n\n@docs ifElse, conditionally, matchesStr, matchesFloat, coalesce\n\n\n### Ramps, scales, curves\n\n@docs interpolate, Interpolation, step\n\n\n### String\n\n@docs append, downcase, upcase, isSupportedScript, resolvedLocale\n\n\n### Formatted Text\n\n@docs format, FormattedString, formatted, fontScaledBy, withFont\n\n\n### Color\n\n@docs makeRGBColor, makeRGBAColor, rgbaChannels\n\n\n### Math\n\n@docs minus, multiply, divideBy, modBy, plus, raiseBy, sqrt, abs, ceil, floor, round, cos, sin, tan, acos, asin, atan, e, pi, ln, ln2, log10, log2\n\n\n### Misc\n\n@docs zoom, heatmapDensity, lineProgress\n\n\n### Enums\n\nThese are required for various layer properties. They are not documented here as they are overloaded - you will find descriptions\nof their effects at the relevant layer property.\n\n**Note:** You may notice that these have slightly odd types. These types allow them to be overloaded for multiple properties, but still remain type safe. Don't worry about these too much!\n\n@docs map, viewport, auto, center, left, right, top, bottom, topLeft, topRight, bottomLeft, bottomRight, none, width, height, both, butt, rounded, square, bevel, miter, point, lineCenter, line, uppercase, lowercase, linear, nearest, viewportY, source\n\n",
+        "unions": [
+            {
+                "name": "CameraExpression",
+                "comment": " A camera expression is any expression that uses the zoom operator. Such expressions allow the appearance of a layer\nto change with the map's zoom level. Camera expressions can be used to create the appearance of depth and to control data density.\n\n    zoom\n        |> interpolate Linear\n            [ ( 5, int 1 )\n            , ( 10, int 5 )\n            ]\n        |> Layer.circleRadius\n\nThis example uses the `interpolate` operator to define a linear relationship between zoom level and circle size using a set of input-output pairs. In this case, the expression indicates that the circle radius should be 1 pixel when the zoom level is 5 or below, and 5 pixels when the zoom is 10 or above. In between, the radius will be linearly interpolated between 1 and 5 pixels\n\nCamera expressions are allowed anywhere an expression may be used. However, when a camera expression used as the value of a layout or paint property, the `zoom` operator must appear only as the input to an outer `interpolate` or `step` expression\n\nThere is an important difference between layout and paint properties in the timing of camera expression evaluation. Paint property camera expressions are re-evaluated whenever the zoom level changes, even fractionally. For example, a paint property camera expression will be re-evaluated continuously as the map moves between zoom levels 4.1 and 4.6. On the other hand, a layout property camera expression is evaluated only at integer zoom levels. It will not be re-evaluated as the zoom changes from 4.1 to 4.6 -- only if it goes above 5 or below 4.\n\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Collator",
+                "comment": " Used for locale sensitive string comparisons.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Color",
+                "comment": " Represents a color value\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "DataExpression",
+                "comment": " A data expression is any expression that access feature data -- that is, any expression that uses one of the data operators: `getProperty`, `hasProperty` , `id`, `geometryType`, or `properties`. Data expressions allow a feature's properties to determine its appearance. They can be used to differentiate features within the same layer and to create data visualizations.\n\n    makeRGBColor\n        -- red is higher when feature.properties.temperature is higher\n        (getProperty \"temperature\")\n        -- green is always zero\n        (int 0)\n        -- blue is higher when feature.properties.temperature is lower\n        (getProperty \"temperature\" |> minus 100)\n        |> Layer.circleColor\n\nThis example uses the `getProperty` operator to obtain the temperature value of each feature. That value is used to compute arguments to the `makeRGBColor` operator, defining a color in terms of its red, green, and blue components.\n\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "FormattedString",
+                "comment": " A FormattedText is composed of a list of FormattedString which essentially are a tuple of a string expression and some formatting information that applies to that string.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "FormattedText",
+                "comment": " Represents a richly formatted string.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Interpolation",
+                "comment": " Interpolation types:\n\n  - `Linear`: interpolates linearly between the pair of stops just less than and just greater than the input.\n  - `Exponential base`: interpolates exponentially between the stops just less than and just greater than the input. `base` controls the rate at which the output increases: higher values make the output increase more towards the high end of the range. With values close to 1 the output increases linearly.\n  - `CubicBezier (x1, y1)  (x2, y2)`: interpolates using the cubic bezier curve defined by the given control points.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Linear",
+                        []
+                    ],
+                    [
+                        "Exponential",
+                        [
+                            "Basics.Float"
+                        ]
+                    ],
+                    [
+                        "CubicBezier",
+                        [
+                            "( Basics.Float, Basics.Float )",
+                            "( Basics.Float, Basics.Float )"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "NumberFormatOption",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Object",
+                "comment": " Represents a mixed-type dictionary where keys are always strings\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Expression",
+                "comment": " Expressions are zero overhead wrappers over the underlying JSON language that attempt to provide some type safety.\n\nNote however, that while being a strictly typed language, it has slighlty different semantics tham Elm:\n\n  - There is only a single number type. I have denoted it `Float`. You will notice that the `int` function takes an Elm int\n    value and converts it to an `Expression expr Float`.\n  - All values may be `null`. There is no `Maybe` type. You can use the `coalesce` function to handle this.\n  - There is no distinction between `List`, `Array`, and tuples. Hence all collections are labeled as `Array`.\n  - Dictionaries are called `Object`. The keys are always `String`, but the values can be of mixed types. Hence retrieving\n    values from them makes code untyped.\n  - You can force the types of things using the `assert...` functions. This will generate a runtime error if the type doesn't\n    match. This should be necessary only rarely.\n\nThe `exprType` can be:\n\n  - `CameraExpression`\n  - `DataExpression`\n  - or a type variable representing either of the above\n\nThe intent is to help you not break your style by using a DataExpression (for example) where it isn't supported. However, this isn't entirely foolproof, so some caution is advised.\n\n",
+                "args": [
+                    "exprType",
+                    "resultType"
+                ],
+                "type": "Internal.Expression exprType resultType"
+            }
+        ],
+        "values": [
+            {
+                "name": "abs",
+                "comment": " Returns the absolute value of the input.\n",
+                "type": "Mapbox.Expression.Expression exprType Basics.Float -> Mapbox.Expression.Expression exprType Basics.Float"
+            },
+            {
+                "name": "acos",
+                "comment": " Returns the arccosine of the input.\n",
+                "type": "Mapbox.Expression.Expression exprType Basics.Float -> Mapbox.Expression.Expression exprType Basics.Float"
+            },
+            {
+                "name": "all",
+                "comment": " Returns true if all the inputs are true, false otherwise. The inputs are evaluated in order, and evaluation is short-circuiting: once an input expression evaluates to false, the result is false and no further input expressions are evaluated.\n",
+                "type": "List.List (Mapbox.Expression.Expression exprType Basics.Bool) -> Mapbox.Expression.Expression exprType Basics.Bool"
+            },
+            {
+                "name": "any",
+                "comment": " Returns true if any of the inputs are true, false otherwise. The inputs are evaluated in order, and evaluation is short-circuiting: once an input expression evaluates to true, the result is true and no further input expressions are evaluated.\n",
+                "type": "List.List (Mapbox.Expression.Expression exprType Basics.Bool) -> Mapbox.Expression.Expression exprType Basics.Bool"
+            },
+            {
+                "name": "append",
+                "comment": " Returns a string consisting of the concatenation of the inputs.\n\nArgument order designed for pipelines:\n\n    a |> append b --> a ++ b\n\n",
+                "type": "Mapbox.Expression.Expression exprType String.String -> Mapbox.Expression.Expression exprType String.String -> Mapbox.Expression.Expression exprType String.String"
+            },
+            {
+                "name": "asin",
+                "comment": " Returns the arcsine of the input.\n",
+                "type": "Mapbox.Expression.Expression exprType Basics.Float -> Mapbox.Expression.Expression exprType Basics.Float"
+            },
+            {
+                "name": "assertArray",
+                "comment": " ",
+                "type": "Mapbox.Expression.Expression exprType any -> Mapbox.Expression.Expression exprType (Array.Array any)"
+            },
+            {
+                "name": "assertArrayOfBools",
+                "comment": " ",
+                "type": "Mapbox.Expression.Expression exprType any -> Mapbox.Expression.Expression exprType (Array.Array Basics.Bool)"
+            },
+            {
+                "name": "assertArrayOfFloats",
+                "comment": " ",
+                "type": "Mapbox.Expression.Expression exprType any -> Mapbox.Expression.Expression exprType (Array.Array Basics.Float)"
+            },
+            {
+                "name": "assertArrayOfStrings",
+                "comment": " ",
+                "type": "Mapbox.Expression.Expression exprType any -> Mapbox.Expression.Expression exprType (Array.Array String.String)"
+            },
+            {
+                "name": "assertBool",
+                "comment": " ",
+                "type": "Mapbox.Expression.Expression exprType any -> Mapbox.Expression.Expression exprType Basics.Bool"
+            },
+            {
+                "name": "assertFloat",
+                "comment": " ",
+                "type": "Mapbox.Expression.Expression exprType any -> Mapbox.Expression.Expression exprType Basics.Float"
+            },
+            {
+                "name": "assertObject",
+                "comment": " ",
+                "type": "Mapbox.Expression.Expression exprType any -> Mapbox.Expression.Expression exprType Mapbox.Expression.Object"
+            },
+            {
+                "name": "assertString",
+                "comment": " ",
+                "type": "Mapbox.Expression.Expression exprType any -> Mapbox.Expression.Expression exprType String.String"
+            },
+            {
+                "name": "at",
+                "comment": " Retrieves an item from an array.\n",
+                "type": "Mapbox.Expression.Expression exprType1 Basics.Float -> Mapbox.Expression.Expression exprType2 (Array.Array a) -> Mapbox.Expression.Expression exprType2 a"
+            },
+            {
+                "name": "atan",
+                "comment": " Returns the arctangent of the input.\n",
+                "type": "Mapbox.Expression.Expression exprType Basics.Float -> Mapbox.Expression.Expression exprType Basics.Float"
+            },
+            {
+                "name": "auto",
+                "comment": " ",
+                "type": "Mapbox.Expression.Expression exprType { a | auto : Internal.Supported }"
+            },
+            {
+                "name": "bevel",
+                "comment": " ",
+                "type": "Mapbox.Expression.Expression exprType { a | bevel : Internal.Supported }"
+            },
+            {
+                "name": "bool",
+                "comment": " ",
+                "type": "Basics.Bool -> Mapbox.Expression.Expression exprType Basics.Bool"
+            },
+            {
+                "name": "both",
+                "comment": " ",
+                "type": "Mapbox.Expression.Expression exprType { a | both : Internal.Supported }"
+            },
+            {
+                "name": "bottom",
+                "comment": " ",
+                "type": "Mapbox.Expression.Expression exprType { a | bottom : Internal.Supported }"
+            },
+            {
+                "name": "bottomLeft",
+                "comment": " ",
+                "type": "Mapbox.Expression.Expression exprType { a | bottomLeft : Internal.Supported }"
+            },
+            {
+                "name": "bottomRight",
+                "comment": " ",
+                "type": "Mapbox.Expression.Expression exprType { a | bottomRight : Internal.Supported }"
+            },
+            {
+                "name": "butt",
+                "comment": " ",
+                "type": "Mapbox.Expression.Expression exprType { a | butt : Internal.Supported }"
+            },
+            {
+                "name": "ceil",
+                "comment": " Returns the smallest integer that is greater than or equal to the input.\n",
+                "type": "Mapbox.Expression.Expression exprType Basics.Float -> Mapbox.Expression.Expression exprType Basics.Float"
+            },
+            {
+                "name": "center",
+                "comment": " ",
+                "type": "Mapbox.Expression.Expression exprType { a | center : Internal.Supported }"
+            },
+            {
+                "name": "coalesce",
+                "comment": " Evaluates each expression in turn until the first non-null value is obtained, and returns that value.\n",
+                "type": "List.List (Mapbox.Expression.Expression exprType outputType) -> Mapbox.Expression.Expression exprType outputType"
+            },
+            {
+                "name": "collator",
+                "comment": " Returns a `Collator` for use in locale-dependent comparison operations. The first argument specifies if the comparison should be case sensitive. The second specifies if it is diacritic sensitive. The final locale argument specifies the IETF language tag of the locale to use.\n",
+                "type": "Mapbox.Expression.Expression e1 Basics.Bool -> Mapbox.Expression.Expression e2 Basics.Bool -> Mapbox.Expression.Expression e3 String.String -> Mapbox.Expression.Expression e4 Mapbox.Expression.Collator"
+            },
+            {
+                "name": "conditionally",
+                "comment": " Selects the first output whose condition evaluates to `true`\n",
+                "type": "List.List ( Mapbox.Expression.Expression exprType1 Basics.Bool, Mapbox.Expression.Expression exprType2 output ) -> Mapbox.Expression.Expression exprType2 output -> Mapbox.Expression.Expression exprType1 output"
+            },
+            {
+                "name": "cos",
+                "comment": " Returns the cosine of the input.\n",
+                "type": "Mapbox.Expression.Expression exprType Basics.Float -> Mapbox.Expression.Expression exprType Basics.Float"
+            },
+            {
+                "name": "count",
+                "comment": " Gets the length of an array.\n",
+                "type": "Mapbox.Expression.Expression exprType (Array.Array any) -> Mapbox.Expression.Expression exprType Basics.Float"
+            },
+            {
+                "name": "currency",
+                "comment": " If set, will include a currency symbol in the resulting number (such as \"JP¥\" or \"€\"). Should be a ISO 4217 currency code.\n",
+                "type": "Mapbox.Expression.Expression exprType String.String -> Mapbox.Expression.NumberFormatOption"
+            },
+            {
+                "name": "defaultCollator",
+                "comment": " Returns a `Collator` with the default locale (which depends on the system running the code), which is not sensitive to case nor diacritic.\n",
+                "type": "Mapbox.Expression.Expression exprType Mapbox.Expression.Collator"
+            },
+            {
+                "name": "divideBy",
+                "comment": " Returns the result of floating point division of the second input by the first.\n\n    a |> divideBy b --> a / b\n\n",
+                "type": "Mapbox.Expression.Expression exprType Basics.Float -> Mapbox.Expression.Expression exprType Basics.Float -> Mapbox.Expression.Expression exprType Basics.Float"
+            },
+            {
+                "name": "downcase",
+                "comment": " Returns the input string converted to lowercase. Follows the Unicode Default Case Conversion algorithm and the locale-insensitive case mappings in the Unicode Character Database.\n",
+                "type": "Mapbox.Expression.Expression exprType String.String -> Mapbox.Expression.Expression exprType String.String"
+            },
+            {
+                "name": "e",
+                "comment": " Returns the mathematical constant e.\n",
+                "type": "Mapbox.Expression.Expression exprType Basics.Float"
+            },
+            {
+                "name": "encode",
+                "comment": " Turns an expression into JSON\n",
+                "type": "Mapbox.Expression.Expression exprType a -> Json.Encode.Value"
+            },
+            {
+                "name": "false",
+                "comment": " ",
+                "type": "Mapbox.Expression.Expression exprType Basics.Bool"
+            },
+            {
+                "name": "featureState",
+                "comment": " Retrieves a property value from the current feature's state. Returns null if the requested property is not present on the feature's state. A feature's state is not part of the GeoJSON or vector tile data, and must be set programmatically on each feature. Note that `featureState` can only be used with paint properties that support data-driven styling.\n",
+                "type": "Mapbox.Expression.Expression exprType String.String -> Mapbox.Expression.Expression Mapbox.Expression.DataExpression any"
+            },
+            {
+                "name": "float",
+                "comment": " ",
+                "type": "Basics.Float -> Mapbox.Expression.Expression exprType Basics.Float"
+            },
+            {
+                "name": "floats",
+                "comment": " ",
+                "type": "List.List Basics.Float -> Mapbox.Expression.Expression exprType (Array.Array Basics.Float)"
+            },
+            {
+                "name": "floor",
+                "comment": " Returns the largest integer that is less than or equal to the input.\n",
+                "type": "Mapbox.Expression.Expression exprType Basics.Float -> Mapbox.Expression.Expression exprType Basics.Float"
+            },
+            {
+                "name": "fontScaledBy",
+                "comment": " Specifies a scaling factor relative to the text-size specified in the root layout properties.\n\nNote: this is indempotent, so calling `str \"hi\" |> formatted |> fontScaledBy 1.2 |> fontScaledBy 1.2` is equivalent to `str \"hi\" |> formatted |> fontScaledBy 1.2` rather than `str \"hi\" |> formatted |> fontScaledBy 1.44`.\n\n",
+                "type": "Mapbox.Expression.Expression exprType Basics.Float -> Mapbox.Expression.FormattedString -> Mapbox.Expression.FormattedString"
+            },
+            {
+                "name": "format",
+                "comment": " Returns formatted text containing annotations for use in mixed-format text-field entries.\n\n    Layer.textField <|\n        E.format\n            [ E.getProperty (str \"name_en\")\n                |> E.formatted\n                |> E.fontScaledBy (float 1.2)\n            , E.formatted (str \"\\n\")\n            , E.getProperty (str \"name\")\n                |> E.formatted\n                |> E.fontScaledBy (float 0.8)\n                |> E.withFont (E.strings [ \"DIN Offc Pro Medium\" ])\n\n",
+                "type": "List.List Mapbox.Expression.FormattedString -> Mapbox.Expression.Expression exprType Mapbox.Expression.FormattedText"
+            },
+            {
+                "name": "formatNumber",
+                "comment": " Converts the input number into a string representation following locale dependent formatting rules.\n",
+                "type": "List.List Mapbox.Expression.NumberFormatOption -> Mapbox.Expression.Expression exprType Basics.Float -> Mapbox.Expression.Expression exprType String.String"
+            },
+            {
+                "name": "formatted",
+                "comment": " Takes a String Expression and turns it into a FormattedString with default formatting.\n",
+                "type": "Mapbox.Expression.Expression exprType String.String -> Mapbox.Expression.FormattedString"
+            },
+            {
+                "name": "geometryType",
+                "comment": " Gets the feature's geometry type: Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon.\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.DataExpression String.String"
+            },
+            {
+                "name": "get",
+                "comment": " Retrieves a property value from an object. Returns null if the requested property is missing.\n",
+                "type": "Mapbox.Expression.Expression exprType1 String.String -> Mapbox.Expression.Expression exprType2 Mapbox.Expression.Object -> Mapbox.Expression.Expression exprType2 any"
+            },
+            {
+                "name": "getProperty",
+                "comment": " Retrieves a property value from the current feature's properties. Returns null if the requested property is missing.\n",
+                "type": "Mapbox.Expression.Expression exprType String.String -> Mapbox.Expression.Expression Mapbox.Expression.DataExpression any"
+            },
+            {
+                "name": "greaterThan",
+                "comment": " Returns true if the first input is strictly greater than the second, false otherwise.\n",
+                "type": "Mapbox.Expression.Expression exprType1 comparable -> Mapbox.Expression.Expression exprType2 comparable -> Mapbox.Expression.Expression exprType1 Basics.Bool"
+            },
+            {
+                "name": "greaterThanOrEqual",
+                "comment": " Returns true if the first input is greater than or equal to the second, false otherwise.\n",
+                "type": "Mapbox.Expression.Expression exprType1 comparable -> Mapbox.Expression.Expression exprType2 comparable -> Mapbox.Expression.Expression exprType1 Basics.Bool"
+            },
+            {
+                "name": "greaterThanOrEqualWithCollator",
+                "comment": " ",
+                "type": "Mapbox.Expression.Expression exprType1 String.String -> Mapbox.Expression.Expression exprType2 String.String -> Mapbox.Expression.Expression exprType3 Mapbox.Expression.Collator -> Mapbox.Expression.Expression exprType1 Basics.Bool"
+            },
+            {
+                "name": "greaterThanWithCollator",
+                "comment": " ",
+                "type": "Mapbox.Expression.Expression exprType1 String.String -> Mapbox.Expression.Expression exprType2 String.String -> Mapbox.Expression.Expression exprType3 Mapbox.Expression.Collator -> Mapbox.Expression.Expression exprType1 Basics.Bool"
+            },
+            {
+                "name": "has",
+                "comment": " Tests for the presence of an property value in an object.\n",
+                "type": "Mapbox.Expression.Expression exprType1 String.String -> Mapbox.Expression.Expression exprType2 Mapbox.Expression.Object -> Mapbox.Expression.Expression exprType2 Basics.Bool"
+            },
+            {
+                "name": "hasProperty",
+                "comment": " Tests for the presence of an property value in the current feature's properties.\n",
+                "type": "Mapbox.Expression.Expression exprType String.String -> Mapbox.Expression.Expression Mapbox.Expression.DataExpression Basics.Bool"
+            },
+            {
+                "name": "heatmapDensity",
+                "comment": " Gets the kernel density estimation of a pixel in a heatmap layer, which is a relative measure of how many data points are crowded around a particular pixel. Can only be used in the `heatmapColor` property.\n",
+                "type": "Mapbox.Expression.Expression exprType Basics.Float"
+            },
+            {
+                "name": "height",
+                "comment": " ",
+                "type": "Mapbox.Expression.Expression exprType { a | height : Internal.Supported }"
+            },
+            {
+                "name": "id",
+                "comment": " Gets the feature's id, if it has one.\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.DataExpression any"
+            },
+            {
+                "name": "ifElse",
+                "comment": " The ternary operator:\n\n    Layer.iconImage <|\n        ifElse\n            (greaterThan (getProperty (str \"size\")) (float 30))\n            (str \"hospital-32\")\n            (str \"clinic-32\")\n\n",
+                "type": "Mapbox.Expression.Expression exprType1 Basics.Bool -> Mapbox.Expression.Expression exprType2 output -> Mapbox.Expression.Expression exprType3 output -> Mapbox.Expression.Expression exprType1 output"
+            },
+            {
+                "name": "int",
+                "comment": " ",
+                "type": "Basics.Int -> Mapbox.Expression.Expression exprType Basics.Float"
+            },
+            {
+                "name": "interpolate",
+                "comment": " Produces continuous, smooth results by interpolating between pairs of input and output values (\"stops\"). The output type must be `Float`, `Array Float`, or `Color`.\n\n    zoom\n        |> interpolate Linear\n            [ ( 5, int 1 )\n            , ( 10, int 5 )\n            ]\n        |> Layer.circleRadius\n\n",
+                "type": "Mapbox.Expression.Interpolation -> List.List ( Basics.Float, Mapbox.Expression.Expression exprType2 outputType ) -> Mapbox.Expression.Expression exprType1 Basics.Float -> Mapbox.Expression.Expression exprType1 outputType"
+            },
+            {
+                "name": "isEqual",
+                "comment": " Returns true if the input values are equal, false otherwise.\n",
+                "type": "Mapbox.Expression.Expression exprType1 a -> Mapbox.Expression.Expression exprType2 a -> Mapbox.Expression.Expression exprType1 Basics.Bool"
+            },
+            {
+                "name": "isEqualWithCollator",
+                "comment": " ",
+                "type": "Mapbox.Expression.Expression exprType1 String.String -> Mapbox.Expression.Expression exprType2 String.String -> Mapbox.Expression.Expression exprType3 Mapbox.Expression.Collator -> Mapbox.Expression.Expression exprType1 Basics.Bool"
+            },
+            {
+                "name": "isSupportedScript",
+                "comment": " Returns true if the input string is expected to render legibly. Returns false if the input string contains sections that cannot be rendered without potential loss of meaning (e.g. Indic scripts that require complex text shaping, or right-to-left scripts if the mapbox-gl-rtl-text plugin is not in use in Mapbox GL JS).\n",
+                "type": "Mapbox.Expression.Expression exprType String.String -> Mapbox.Expression.Expression exprType Basics.Bool"
+            },
+            {
+                "name": "left",
+                "comment": " ",
+                "type": "Mapbox.Expression.Expression exprType { a | left : Internal.Supported }"
+            },
+            {
+                "name": "length",
+                "comment": " Gets the length of a string.\n",
+                "type": "Mapbox.Expression.Expression exprType String.String -> Mapbox.Expression.Expression exprType Basics.Float"
+            },
+            {
+                "name": "lessThan",
+                "comment": " Returns true if the first input is strictly less than the second, false otherwise.\n",
+                "type": "Mapbox.Expression.Expression exprType1 comparable -> Mapbox.Expression.Expression exprType2 comparable -> Mapbox.Expression.Expression exprType1 Basics.Bool"
+            },
+            {
+                "name": "lessThanOrEqual",
+                "comment": " Returns true if the first input is less than or equal to the second, false otherwise.\n",
+                "type": "Mapbox.Expression.Expression exprType1 comparable -> Mapbox.Expression.Expression exprType2 comparable -> Mapbox.Expression.Expression exprType1 Basics.Bool"
+            },
+            {
+                "name": "lessThanOrEqualWithCollator",
+                "comment": " ",
+                "type": "Mapbox.Expression.Expression exprType1 String.String -> Mapbox.Expression.Expression exprType2 String.String -> Mapbox.Expression.Expression exprType3 Mapbox.Expression.Collator -> Mapbox.Expression.Expression exprType1 Basics.Bool"
+            },
+            {
+                "name": "lessThanWithCollator",
+                "comment": " ",
+                "type": "Mapbox.Expression.Expression exprType1 String.String -> Mapbox.Expression.Expression exprType2 String.String -> Mapbox.Expression.Expression exprType3 Mapbox.Expression.Collator -> Mapbox.Expression.Expression exprType1 Basics.Bool"
+            },
+            {
+                "name": "line",
+                "comment": " ",
+                "type": "Mapbox.Expression.Expression exprType { a | line : Internal.Supported }"
+            },
+            {
+                "name": "lineCenter",
+                "comment": " ",
+                "type": "Mapbox.Expression.Expression exprType { a | lineCenter : Internal.Supported }"
+            },
+            {
+                "name": "lineProgress",
+                "comment": " Gets the progress along a gradient line. Can only be used in the `lineGradient` property.\n",
+                "type": "Mapbox.Expression.Expression exprType Basics.Float"
+            },
+            {
+                "name": "linear",
+                "comment": " ",
+                "type": "Mapbox.Expression.Expression exprType { a | linear : Internal.Supported }"
+            },
+            {
+                "name": "ln",
+                "comment": " Returns the natural logarithm of the input.\n",
+                "type": "Mapbox.Expression.Expression exprType Basics.Float -> Mapbox.Expression.Expression exprType Basics.Float"
+            },
+            {
+                "name": "ln2",
+                "comment": " Returns mathematical constant ln(2).\n",
+                "type": "Mapbox.Expression.Expression exprType Basics.Float"
+            },
+            {
+                "name": "locale",
+                "comment": " Specifies the locale to use as a BCP 47 language tag. Defaults to the current locale.\n",
+                "type": "Mapbox.Expression.Expression exprType String.String -> Mapbox.Expression.NumberFormatOption"
+            },
+            {
+                "name": "log10",
+                "comment": " Returns the base-ten logarithm of the input.\n",
+                "type": "Mapbox.Expression.Expression exprType Basics.Float -> Mapbox.Expression.Expression exprType Basics.Float"
+            },
+            {
+                "name": "log2",
+                "comment": " Returns the base-two logarithm of the input.\n",
+                "type": "Mapbox.Expression.Expression exprType Basics.Float -> Mapbox.Expression.Expression exprType Basics.Float"
+            },
+            {
+                "name": "lowercase",
+                "comment": " ",
+                "type": "Mapbox.Expression.Expression exprType { a | lowercase : Internal.Supported }"
+            },
+            {
+                "name": "makeRGBAColor",
+                "comment": " Creates a color value from red, green, blue components, which must range between 0 and 255, and an alpha component which must range between 0 and 1. If any component is out of range, the expression is an error.\n",
+                "type": "Mapbox.Expression.Expression exprType Basics.Float -> Mapbox.Expression.Expression exprType Basics.Float -> Mapbox.Expression.Expression exprType Basics.Float -> Mapbox.Expression.Expression exprType Basics.Float -> Mapbox.Expression.Expression exprType Mapbox.Expression.Color"
+            },
+            {
+                "name": "makeRGBColor",
+                "comment": " Creates a color value from red, green, and blue components, which must range between 0 and 255, and an alpha component of 1. If any component is out of range, the expression is an error.\n",
+                "type": "Mapbox.Expression.Expression exprType Basics.Float -> Mapbox.Expression.Expression exprType Basics.Float -> Mapbox.Expression.Expression exprType Basics.Float -> Mapbox.Expression.Expression exprType Mapbox.Expression.Color"
+            },
+            {
+                "name": "map",
+                "comment": " ",
+                "type": "Mapbox.Expression.Expression exprType { a | map : Internal.Supported }"
+            },
+            {
+                "name": "matchesFloat",
+                "comment": " Selects the output whose label value matches the input value, or the fallback value if no match is found.\n\n    getProperty (str \"size\")\n        |> matchesFloat\n            [ ( 1, str \"icon-hospital\" )\n            , ( 2, str \"icon-medical\" )\n            ]\n            (str \"icon-generic\")\n        -- fallback value\n        |> Layer.iconImage\n\n",
+                "type": "List.List ( Basics.Float, Mapbox.Expression.Expression exprType2 output ) -> Mapbox.Expression.Expression exprType1 output -> Mapbox.Expression.Expression exprType3 Basics.Float -> Mapbox.Expression.Expression exprType3 output"
+            },
+            {
+                "name": "matchesStr",
+                "comment": " Selects the output whose label value matches the input value, or the fallback value if no match is found.\n\n    getProperty (str \"type\")\n        |> matchesStr\n            [ ( \"hospital\", str \"icon-hospital\" )\n            , ( \"clinic\", str \"icon-medical\" )\n            ]\n            (str \"icon-generic\")\n        -- fallback value\n        |> Layer.iconImage\n\n",
+                "type": "List.List ( String.String, Mapbox.Expression.Expression exprType2 output ) -> Mapbox.Expression.Expression exprType1 output -> Mapbox.Expression.Expression exprType3 String.String -> Mapbox.Expression.Expression exprType3 output"
+            },
+            {
+                "name": "maxFractionDigits",
+                "comment": " Formatter will include at most this many digits after the decimal point. Defaults to 3.\n",
+                "type": "Mapbox.Expression.Expression exprType Basics.Float -> Mapbox.Expression.NumberFormatOption"
+            },
+            {
+                "name": "minFractionDigits",
+                "comment": " Formatter will include at least this many digits after the decimal point. Defaults to 0.\n",
+                "type": "Mapbox.Expression.Expression exprType Basics.Float -> Mapbox.Expression.NumberFormatOption"
+            },
+            {
+                "name": "minus",
+                "comment": " Returns the result of subtracting the first input from the second.\n\n    a |> minus b --> a - b\n\n",
+                "type": "Mapbox.Expression.Expression exprType Basics.Float -> Mapbox.Expression.Expression exprType Basics.Float -> Mapbox.Expression.Expression exprType Basics.Float"
+            },
+            {
+                "name": "miter",
+                "comment": " ",
+                "type": "Mapbox.Expression.Expression exprType { a | miter : Internal.Supported }"
+            },
+            {
+                "name": "modBy",
+                "comment": " Returns the remainder after integer division of the second input by the first.\n\n    a |> modBy b --> a % b\n\n",
+                "type": "Mapbox.Expression.Expression exprType Basics.Float -> Mapbox.Expression.Expression exprType Basics.Float -> Mapbox.Expression.Expression exprType Basics.Float"
+            },
+            {
+                "name": "multiply",
+                "comment": " Returns the product of the inputs.\n",
+                "type": "Mapbox.Expression.Expression exprType Basics.Float -> Mapbox.Expression.Expression exprType Basics.Float -> Mapbox.Expression.Expression exprType Basics.Float"
+            },
+            {
+                "name": "nearest",
+                "comment": " ",
+                "type": "Mapbox.Expression.Expression exprType { a | nearest : Internal.Supported }"
+            },
+            {
+                "name": "none",
+                "comment": " ",
+                "type": "Mapbox.Expression.Expression exprType { a | none : Internal.Supported }"
+            },
+            {
+                "name": "not",
+                "comment": " Logical negation. Returns true if the input is false, and false if the input is true.\n",
+                "type": "Mapbox.Expression.Expression exprType Basics.Bool -> Mapbox.Expression.Expression exprType Basics.Bool"
+            },
+            {
+                "name": "notEqual",
+                "comment": " Returns true if the input values are not equal, false otherwise.\n",
+                "type": "Mapbox.Expression.Expression exprType1 a -> Mapbox.Expression.Expression exprType2 a -> Mapbox.Expression.Expression exprType1 Basics.Bool"
+            },
+            {
+                "name": "notEqualWithCollator",
+                "comment": " ",
+                "type": "Mapbox.Expression.Expression exprType1 String.String -> Mapbox.Expression.Expression exprType2 String.String -> Mapbox.Expression.Expression exprType3 Mapbox.Expression.Collator -> Mapbox.Expression.Expression exprType1 Basics.Bool"
+            },
+            {
+                "name": "object",
+                "comment": " Takes a list of key value pairs. The values are JSON Values,\ntherefore allowing for mixed types.\n",
+                "type": "List.List ( String.String, Json.Encode.Value ) -> Mapbox.Expression.Expression exprType Mapbox.Expression.Object"
+            },
+            {
+                "name": "pi",
+                "comment": " ",
+                "type": "Mapbox.Expression.Expression exprType Basics.Float"
+            },
+            {
+                "name": "plus",
+                "comment": " Returns the sum of the inputs.\n",
+                "type": "Mapbox.Expression.Expression exprType Basics.Float -> Mapbox.Expression.Expression exprType Basics.Float -> Mapbox.Expression.Expression exprType Basics.Float"
+            },
+            {
+                "name": "point",
+                "comment": " ",
+                "type": "Mapbox.Expression.Expression exprType { a | point : Internal.Supported }"
+            },
+            {
+                "name": "properties",
+                "comment": " Gets the feature properties object. Note that in some cases, it may be more efficient to use `getProperty (str \"property-name\")` directly.\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.DataExpression Mapbox.Expression.Object"
+            },
+            {
+                "name": "raiseBy",
+                "comment": " Returns the result of raising the second input to the power specified by the first.\n\n    a |> raiseBy b --> a ^ b\n\n",
+                "type": "Mapbox.Expression.Expression exprType Basics.Float -> Mapbox.Expression.Expression exprType Basics.Float -> Mapbox.Expression.Expression exprType Basics.Float"
+            },
+            {
+                "name": "resolvedLocale",
+                "comment": " Returns the IETF language tag of the locale being used by the provided collator. This can be used to determine the default system locale, or to determine if a requested locale was successfully loaded.\n",
+                "type": "Mapbox.Expression.Expression exprType Mapbox.Expression.Collator -> Mapbox.Expression.Expression exprType String.String"
+            },
+            {
+                "name": "rgba",
+                "comment": " ",
+                "type": "Basics.Float -> Basics.Float -> Basics.Float -> Basics.Float -> Mapbox.Expression.Expression exprType Mapbox.Expression.Color"
+            },
+            {
+                "name": "rgbaChannels",
+                "comment": " Returns a four-element array containing the input color's red, green, blue, and alpha components, in that order.\n",
+                "type": "Mapbox.Expression.Expression exprType Mapbox.Expression.Color -> Mapbox.Expression.Expression exprType (Array.Array Basics.Float)"
+            },
+            {
+                "name": "right",
+                "comment": " ",
+                "type": "Mapbox.Expression.Expression exprType { a | right : Internal.Supported }"
+            },
+            {
+                "name": "round",
+                "comment": " Rounds the input to the nearest integer. Halfway values are rounded away from zero. For example, `round  (float -1.5)` evaluates to -2.\n",
+                "type": "Mapbox.Expression.Expression exprType Basics.Float -> Mapbox.Expression.Expression exprType Basics.Float"
+            },
+            {
+                "name": "rounded",
+                "comment": " ",
+                "type": "Mapbox.Expression.Expression exprType { a | rounded : Internal.Supported }"
+            },
+            {
+                "name": "sin",
+                "comment": " Returns the sine of the input.\n",
+                "type": "Mapbox.Expression.Expression exprType Basics.Float -> Mapbox.Expression.Expression exprType Basics.Float"
+            },
+            {
+                "name": "source",
+                "comment": " ",
+                "type": "Mapbox.Expression.Expression exprType { a | source : Internal.Supported }"
+            },
+            {
+                "name": "sqrt",
+                "comment": " Returns the square root of the input.\n",
+                "type": "Mapbox.Expression.Expression exprType Basics.Float -> Mapbox.Expression.Expression exprType Basics.Float"
+            },
+            {
+                "name": "square",
+                "comment": " ",
+                "type": "Mapbox.Expression.Expression exprType { a | square : Internal.Supported }"
+            },
+            {
+                "name": "step",
+                "comment": " Produces discrete, stepped results by evaluating a piecewise-constant function defined by pairs of input and output values (\"stops\"). Stop inputs must be Floats in strictly ascending order. Returns the output value of the stop just less than the input, or the first input if the input is less than the first stop.\n\n    zoom\n        |> step (int 1)\n            [ ( 5, int 3 )\n            , ( 10, int 5 )\n            ]\n        |> Layer.circleRadius\n\n",
+                "type": "Mapbox.Expression.Expression exprType1 output -> List.List ( Basics.Float, Mapbox.Expression.Expression exprType1 output ) -> Mapbox.Expression.Expression exprType2 Basics.Float -> Mapbox.Expression.Expression exprType2 output"
+            },
+            {
+                "name": "str",
+                "comment": " ",
+                "type": "String.String -> Mapbox.Expression.Expression exprType String.String"
+            },
+            {
+                "name": "strings",
+                "comment": " ",
+                "type": "List.List String.String -> Mapbox.Expression.Expression exprType (Array.Array String.String)"
+            },
+            {
+                "name": "tan",
+                "comment": " Returns the tangent of the input.\n",
+                "type": "Mapbox.Expression.Expression exprType Basics.Float -> Mapbox.Expression.Expression exprType Basics.Float"
+            },
+            {
+                "name": "toBool",
+                "comment": " Converts the input value to a boolean. The result is false when then input is an empty string, 0, false, null, or NaN; otherwise it is true.\n",
+                "type": "Mapbox.Expression.Expression exprType any -> Mapbox.Expression.Expression exprType Basics.Bool"
+            },
+            {
+                "name": "toColor",
+                "comment": " Converts the input value to a color. If it can't be converted, the falback value will be used.\n\n    input\n      |> toColor (rgba 0 0 0 1) -- fallback color\n\n",
+                "type": "Mapbox.Expression.Expression exprType2 Mapbox.Expression.Color -> Mapbox.Expression.Expression exprType any -> Mapbox.Expression.Expression exprType Mapbox.Expression.Color"
+            },
+            {
+                "name": "toFloat",
+                "comment": " Converts the input value to a number, if possible. If the input is null or false, the result is 0. If the input is true, the result is 1. If the input is a string, it is converted to a number as specified by the [\"ToNumber Applied to the String Type\" algorithm of the ECMAScript Language Specification](https://tc39.github.io/ecma262/#sec-tonumber-applied-to-the-string-type). If this fails, the fallback value is used.\n\n    input\n      |> toFloat 0 -- fallback\n\n",
+                "type": "Basics.Float -> Mapbox.Expression.Expression exprType any -> Mapbox.Expression.Expression exprType Basics.Float"
+            },
+            {
+                "name": "toFormattedText",
+                "comment": " Just like `toString`, but outputs a formatted string useable for displaying to users.\n",
+                "type": "Mapbox.Expression.Expression exprType any -> Mapbox.Expression.Expression exprType Mapbox.Expression.FormattedText"
+            },
+            {
+                "name": "toString",
+                "comment": " Converts the input value to a string. If the input is `null`, the result is `\"\"`. If the input is a boolean, the result is `\"true\"` or `\"false\"`. If the input is a number, it is converted to a string as specified by the [\"NumberToString\" algorithm](https://tc39.github.io/ecma262/#sec-tostring-applied-to-the-number-type) of the ECMAScript Language Specification. If the input is a color, it is converted to a string of the form `\"rgba(r,g,b,a)\"`, where r, g, and b are numerals ranging from 0 to 255, and a ranges from 0 to 1. Otherwise, the input is converted to a string in the format specified by the [`JSON.stringify`](https://tc39.github.io/ecma262/#sec-json.stringify) function of the ECMAScript Language Specification.\n",
+                "type": "Mapbox.Expression.Expression exprType any -> Mapbox.Expression.Expression exprType String.String"
+            },
+            {
+                "name": "top",
+                "comment": " ",
+                "type": "Mapbox.Expression.Expression exprType { a | top : Internal.Supported }"
+            },
+            {
+                "name": "topLeft",
+                "comment": " ",
+                "type": "Mapbox.Expression.Expression exprType { a | topLeft : Internal.Supported }"
+            },
+            {
+                "name": "topRight",
+                "comment": " ",
+                "type": "Mapbox.Expression.Expression exprType { a | topRight : Internal.Supported }"
+            },
+            {
+                "name": "true",
+                "comment": " ",
+                "type": "Mapbox.Expression.Expression exprType Basics.Bool"
+            },
+            {
+                "name": "typeof",
+                "comment": " Returns a string describing the type of the given value.\n",
+                "type": "Mapbox.Expression.Expression exprType any -> Mapbox.Expression.Expression exprType String.String"
+            },
+            {
+                "name": "upcase",
+                "comment": " Returns the input string converted to uppercase. Follows the Unicode Default Case Conversion algorithm and the locale-insensitive case mappings in the Unicode Character Database.\n",
+                "type": "Mapbox.Expression.Expression exprType String.String -> Mapbox.Expression.Expression exprType String.String"
+            },
+            {
+                "name": "uppercase",
+                "comment": " ",
+                "type": "Mapbox.Expression.Expression exprType { a | uppercase : Internal.Supported }"
+            },
+            {
+                "name": "viewport",
+                "comment": " ",
+                "type": "Mapbox.Expression.Expression exprType { a | viewport : Internal.Supported }"
+            },
+            {
+                "name": "viewportY",
+                "comment": " ",
+                "type": "Mapbox.Expression.Expression exprType { a | viewportY : Internal.Supported }"
+            },
+            {
+                "name": "width",
+                "comment": " ",
+                "type": "Mapbox.Expression.Expression exprType { a | width : Internal.Supported }"
+            },
+            {
+                "name": "withFont",
+                "comment": " Overrides the font specified by the root layout properties.\n",
+                "type": "Mapbox.Expression.Expression exprType (Array.Array String.String) -> Mapbox.Expression.FormattedString -> Mapbox.Expression.FormattedString"
+            },
+            {
+                "name": "zoom",
+                "comment": " Gets the current zoom level. Note that in style layout and paint properties, `zoom` may only appear as the input to a top-level `step` or `interpolate` expression.\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression Basics.Float"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Mapbox.Layer",
+        "comment": " Layers specify what is actually rendered on the map and are rendered in order.\n\nExcept for layers of the background type, each layer needs to refer to a source. Layers take the data that they get from a source, optionally filter features, and then define how those features are styled.\n\nThere are two kinds of properties: _Layout_ and _Paint_ properties.\n\nLayout properties are applied early in the rendering process and define how data for that layer is passed to the GPU. Changes to a layout property require an asynchronous \"layout\" step.\n\nPaint properties are applied later in the rendering process. Changes to a paint property are cheap and happen synchronously.\n\n\n#### Skip to:\n\n  - [Fill Attributes](#fill-attributes)\n  - [Line Attributes](#line-attributes)\n  - [Circle Attributes](#circle-attributes)\n  - [Heatmap Attributes](#heatmap-attributes)\n  - [FillExtrusion Attributes](#fillextrusion-attributes)\n  - [Symbol Attributes](#symbol-attributes)\n  - [Raster Attributes](#raster-attributes)\n  - [Hillshade Attributes](#hillshade-attributes)\n  - [Background Attributes](#background-attributes)\n\n\n### Working with layers\n\n@docs Layer, SourceId, encode\n\n\n### Layer Types\n\n@docs background, fill, json, jsonList, symbol, line, raster, circle, fillExtrusion, heatmap, hillshade\n@docs Background, Fill, Symbol, Line, Raster, Circle, FillExtrusion, Heatmap, Hillshade\n\n\n### General Attributes\n\n@docs LayerAttr\n@docs metadata, sourceLayer, minzoom, maxzoom, filter, visible, visible2\n\n\n### Fill Attributes\n\n@docs fillAntialias, fillColor, fillOpacity, fillOutlineColor, fillPattern, fillTranslate, fillTranslateAnchor\n\n\n### Line Attributes\n\n@docs lineBlur, lineCap, lineColor, lineDasharray, lineDasharray2, lineGapWidth, lineGradient, lineJoin, lineMiterLimit, lineOffset, lineOpacity, linePattern, lineRoundLimit, lineTranslate, lineTranslateAnchor, lineWidth\n\n\n### Circle Attributes\n\n@docs circleBlur, circleColor, circleOpacity, circlePitchAlignment, circlePitchScale, circleRadius, circleStrokeColor, circleStrokeOpacity, circleStrokeWidth, circleTranslate, circleTranslateAnchor\n\n\n### Heatmap Attributes\n\n@docs heatmapColor, heatmapIntensity, heatmapOpacity, heatmapRadius, heatmapWeight\n\n\n### FillExtrusion Attributes\n\n@docs fillExtrusionBase, fillExtrusionColor, fillExtrusionHeight, fillExtrusionOpacity, fillExtrusionPattern, fillExtrusionTranslate, fillExtrusionTranslateAnchor, fillExtrusionVerticalGradient\n\n\n### Symbol Attributes\n\n@docs iconAllowOverlap, iconAnchor, iconColor, iconHaloBlur, iconHaloColor, iconHaloWidth, iconIgnorePlacement, iconImage, iconKeepUpright, iconOffset, iconOpacity, iconOptional, iconPadding, iconPitchAlignment, iconRotate, iconRotationAlignment, iconSize, iconTextFit, iconTextFitPadding, iconTranslate, iconTranslateAnchor, symbolAvoidEdges, symbolPlacement, symbolSortKey, symbolSpacing, symbolZOrder, textAllowOverlap, textAnchor, textColor, textField, textFont, textHaloBlur, textHaloColor, textHaloWidth, textIgnorePlacement, textJustify, textKeepUpright, textLetterSpacing, textLineHeight, textMaxAngle, textMaxWidth, textOffset, textOpacity, textOptional, textPadding, textPitchAlignment, textRadialOffset, textRotate, textRotationAlignment, textSize, textTransform, textTranslate, textTranslateAnchor, textVariableAnchor\n\n\n### Raster Attributes\n\n@docs rasterBrightnessMax, rasterBrightnessMin, rasterContrast, rasterFadeDuration, rasterHueRotate, rasterOpacity, rasterResampling, rasterSaturation\n\n\n### Hillshade Attributes\n\n@docs hillshadeAccentColor, hillshadeExaggeration, hillshadeHighlightColor, hillshadeIlluminationAnchor, hillshadeIlluminationDirection, hillshadeShadowColor\n\n\n### Background Attributes\n\n@docs backgroundColor, backgroundOpacity, backgroundPattern\n\n\n### List Decoder\n\n@docs decode\n\n",
+        "unions": [
+            {
+                "name": "Background",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Circle",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Fill",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "FillExtrusion",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Heatmap",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Hillshade",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Layer",
+                "comment": " Represents a layer.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "LayerAttr",
+                "comment": " ",
+                "args": [
+                    "tipe"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Line",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Raster",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Symbol",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "SourceId",
+                "comment": " All layers (except background layers) need a source\n",
+                "args": [],
+                "type": "String.String"
+            }
+        ],
+        "values": [
+            {
+                "name": "background",
+                "comment": " The background color or pattern of the map.\n",
+                "type": "String.String -> List.List (Mapbox.Layer.LayerAttr Mapbox.Layer.Background) -> Mapbox.Layer.Layer"
+            },
+            {
+                "name": "backgroundColor",
+                "comment": " The color with which the background will be drawn. Paint property. Defaults to `#000000`. Disabled by `backgroundPattern`.\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression Mapbox.Expression.Color -> Mapbox.Layer.LayerAttr Mapbox.Layer.Background"
+            },
+            {
+                "name": "backgroundOpacity",
+                "comment": " The opacity at which the background will be drawn. Paint property.\n\nShould be between `0` and `1` inclusive. Defaults to `1`.\n\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression Basics.Float -> Mapbox.Layer.LayerAttr Mapbox.Layer.Background"
+            },
+            {
+                "name": "backgroundPattern",
+                "comment": " Name of image in sprite to use for drawing an image background. For seamless patterns, image width and height must be a factor of two (2, 4, 8, ..., 512). Note that zoom-dependent expressions will be evaluated only at integer zoom levels. Paint property.\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression String.String -> Mapbox.Layer.LayerAttr Mapbox.Layer.Background"
+            },
+            {
+                "name": "circle",
+                "comment": " A filled circle.\n",
+                "type": "String.String -> Mapbox.Layer.SourceId -> List.List (Mapbox.Layer.LayerAttr Mapbox.Layer.Circle) -> Mapbox.Layer.Layer"
+            },
+            {
+                "name": "circleBlur",
+                "comment": " Amount to blur the circle. 1 blurs the circle such that only the centerpoint is full opacity. Paint property. Defaults to `0`.\n",
+                "type": "Mapbox.Expression.Expression any Basics.Float -> Mapbox.Layer.LayerAttr Mapbox.Layer.Circle"
+            },
+            {
+                "name": "circleColor",
+                "comment": " The fill color of the circle. Paint property. Defaults to `#000000`.\n",
+                "type": "Mapbox.Expression.Expression any Mapbox.Expression.Color -> Mapbox.Layer.LayerAttr Mapbox.Layer.Circle"
+            },
+            {
+                "name": "circleOpacity",
+                "comment": " The opacity at which the circle will be drawn. Paint property.\n\nShould be between `0` and `1` inclusive. Defaults to `1`.\n\n",
+                "type": "Mapbox.Expression.Expression any Basics.Float -> Mapbox.Layer.LayerAttr Mapbox.Layer.Circle"
+            },
+            {
+                "name": "circlePitchAlignment",
+                "comment": " Orientation of circle when map is pitched. Paint property. Defaults to `viewport`.\n\n  - `map`: The circle is aligned to the plane of the map.\n  - `viewport`: The circle is aligned to the plane of the viewport.\n\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression { map : Internal.Supported, viewport : Internal.Supported } -> Mapbox.Layer.LayerAttr Mapbox.Layer.Circle"
+            },
+            {
+                "name": "circlePitchScale",
+                "comment": " Controls the scaling behavior of the circle when the map is pitched. Paint property. Defaults to `map`.\n\n  - `map`: Circles are scaled according to their apparent distance to the camera.\n  - `viewport`: Circles are not scaled.\n\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression { map : Internal.Supported, viewport : Internal.Supported } -> Mapbox.Layer.LayerAttr Mapbox.Layer.Circle"
+            },
+            {
+                "name": "circleRadius",
+                "comment": " Circle radius. Paint property.\n\nShould be greater than or equal to `0`.\nUnits in pixels. Defaults to `5`.\n\n",
+                "type": "Mapbox.Expression.Expression any Basics.Float -> Mapbox.Layer.LayerAttr Mapbox.Layer.Circle"
+            },
+            {
+                "name": "circleStrokeColor",
+                "comment": " The stroke color of the circle. Paint property. Defaults to `#000000`.\n",
+                "type": "Mapbox.Expression.Expression any Mapbox.Expression.Color -> Mapbox.Layer.LayerAttr Mapbox.Layer.Circle"
+            },
+            {
+                "name": "circleStrokeOpacity",
+                "comment": " The opacity of the circle's stroke. Paint property.\n\nShould be between `0` and `1` inclusive. Defaults to `1`.\n\n",
+                "type": "Mapbox.Expression.Expression any Basics.Float -> Mapbox.Layer.LayerAttr Mapbox.Layer.Circle"
+            },
+            {
+                "name": "circleStrokeWidth",
+                "comment": " The width of the circle's stroke. Strokes are placed outside of the `circleRadius`. Paint property.\n\nShould be greater than or equal to `0`.\nUnits in pixels. Defaults to `0`.\n\n",
+                "type": "Mapbox.Expression.Expression any Basics.Float -> Mapbox.Layer.LayerAttr Mapbox.Layer.Circle"
+            },
+            {
+                "name": "circleTranslate",
+                "comment": " The geometry's offset. Values are [x, y] where negatives indicate left and up, respectively. Paint property.\nUnits in pixels. Defaults to `0,0`.\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression (Array.Array Basics.Float) -> Mapbox.Layer.LayerAttr Mapbox.Layer.Circle"
+            },
+            {
+                "name": "circleTranslateAnchor",
+                "comment": " Controls the frame of reference for `circleTranslate`. Paint property. Defaults to `map`. Requires `circleTranslate`.\n\n  - `map`: The circle is translated relative to the map.\n  - `viewport`: The circle is translated relative to the viewport.\n\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression { map : Internal.Supported, viewport : Internal.Supported } -> Mapbox.Layer.LayerAttr Mapbox.Layer.Circle"
+            },
+            {
+                "name": "decode",
+                "comment": " Directly aass a json value layer\n",
+                "type": "Json.Decode.Decoder (List.List Mapbox.Layer.Layer)"
+            },
+            {
+                "name": "encode",
+                "comment": " Turns a layer into JSON\n",
+                "type": "Mapbox.Layer.Layer -> Json.Encode.Value"
+            },
+            {
+                "name": "fill",
+                "comment": " A filled polygon with an optional stroked border.\n",
+                "type": "String.String -> Mapbox.Layer.SourceId -> List.List (Mapbox.Layer.LayerAttr Mapbox.Layer.Fill) -> Mapbox.Layer.Layer"
+            },
+            {
+                "name": "fillAntialias",
+                "comment": " Whether or not the fill should be antialiased. Paint property. Defaults to `true`.\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression Basics.Bool -> Mapbox.Layer.LayerAttr Mapbox.Layer.Fill"
+            },
+            {
+                "name": "fillColor",
+                "comment": " The color of the filled part of this layer. This color can be specified as `rgba` with an alpha component and the color's opacity will not affect the opacity of the 1px stroke, if it is used. Paint property. Defaults to `#000000`. Disabled by `fillPattern`.\n",
+                "type": "Mapbox.Expression.Expression any Mapbox.Expression.Color -> Mapbox.Layer.LayerAttr Mapbox.Layer.Fill"
+            },
+            {
+                "name": "fillExtrusion",
+                "comment": " An extruded (3D) polygon.\n",
+                "type": "String.String -> Mapbox.Layer.SourceId -> List.List (Mapbox.Layer.LayerAttr Mapbox.Layer.FillExtrusion) -> Mapbox.Layer.Layer"
+            },
+            {
+                "name": "fillExtrusionBase",
+                "comment": " The height with which to extrude the base of this layer. Must be less than or equal to `fillExtrusionHeight`. Paint property.\n\nShould be greater than or equal to `0`.\nUnits in meters. Defaults to `0`. Requires `fillExtrusionHeight`.\n\n",
+                "type": "Mapbox.Expression.Expression any Basics.Float -> Mapbox.Layer.LayerAttr Mapbox.Layer.FillExtrusion"
+            },
+            {
+                "name": "fillExtrusionColor",
+                "comment": " The base color of the extruded fill. The extrusion's surfaces will be shaded differently based on this color in combination with the root `light` settings. If this color is specified as `rgba` with an alpha component, the alpha component will be ignored; use `fillExtrusionOpacity` to set layer opacity. Paint property. Defaults to `#000000`. Disabled by `fillExtrusionPattern`.\n",
+                "type": "Mapbox.Expression.Expression any Mapbox.Expression.Color -> Mapbox.Layer.LayerAttr Mapbox.Layer.FillExtrusion"
+            },
+            {
+                "name": "fillExtrusionHeight",
+                "comment": " The height with which to extrude this layer. Paint property.\n\nShould be greater than or equal to `0`.\nUnits in meters. Defaults to `0`.\n\n",
+                "type": "Mapbox.Expression.Expression any Basics.Float -> Mapbox.Layer.LayerAttr Mapbox.Layer.FillExtrusion"
+            },
+            {
+                "name": "fillExtrusionOpacity",
+                "comment": " The opacity of the entire fill extrusion layer. This is rendered on a per-layer, not per-feature, basis, and data-driven styling is not available. Paint property.\n\nShould be between `0` and `1` inclusive. Defaults to `1`.\n\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression Basics.Float -> Mapbox.Layer.LayerAttr Mapbox.Layer.FillExtrusion"
+            },
+            {
+                "name": "fillExtrusionPattern",
+                "comment": " Name of image in sprite to use for drawing images on extruded fills. For seamless patterns, image width and height must be a factor of two (2, 4, 8, ..., 512). Note that zoom-dependent expressions will be evaluated only at integer zoom levels. Paint property.\n",
+                "type": "Mapbox.Expression.Expression any String.String -> Mapbox.Layer.LayerAttr Mapbox.Layer.FillExtrusion"
+            },
+            {
+                "name": "fillExtrusionTranslate",
+                "comment": " The geometry's offset. Values are [x, y] where negatives indicate left and up (on the flat plane), respectively. Paint property.\nUnits in pixels. Defaults to `0,0`.\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression (Array.Array Basics.Float) -> Mapbox.Layer.LayerAttr Mapbox.Layer.FillExtrusion"
+            },
+            {
+                "name": "fillExtrusionTranslateAnchor",
+                "comment": " Controls the frame of reference for `fillExtrusionTranslate`. Paint property. Defaults to `map`. Requires `fillExtrusionTranslate`.\n\n  - `map`: The fill extrusion is translated relative to the map.\n  - `viewport`: The fill extrusion is translated relative to the viewport.\n\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression { map : Internal.Supported, viewport : Internal.Supported } -> Mapbox.Layer.LayerAttr Mapbox.Layer.FillExtrusion"
+            },
+            {
+                "name": "fillExtrusionVerticalGradient",
+                "comment": " Whether to apply a vertical gradient to the sides of a fill-extrusion layer. If true, sides will be shaded slightly darker farther down. Paint property. Defaults to `true`.\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression Basics.Bool -> Mapbox.Layer.LayerAttr Mapbox.Layer.FillExtrusion"
+            },
+            {
+                "name": "fillOpacity",
+                "comment": " The opacity of the entire fill layer. In contrast to the `fillColor`, this value will also affect the 1px stroke around the fill, if the stroke is used. Paint property.\n\nShould be between `0` and `1` inclusive. Defaults to `1`.\n\n",
+                "type": "Mapbox.Expression.Expression any Basics.Float -> Mapbox.Layer.LayerAttr Mapbox.Layer.Fill"
+            },
+            {
+                "name": "fillOutlineColor",
+                "comment": " The outline color of the fill. Matches the value of `fillColor` if unspecified. Paint property. Disabled by `fillPattern`. Requires `fillAntialias` to be `true`.\n",
+                "type": "Mapbox.Expression.Expression any Mapbox.Expression.Color -> Mapbox.Layer.LayerAttr Mapbox.Layer.Fill"
+            },
+            {
+                "name": "fillPattern",
+                "comment": " Name of image in sprite to use for drawing image fills. For seamless patterns, image width and height must be a factor of two (2, 4, 8, ..., 512). Note that zoom-dependent expressions will be evaluated only at integer zoom levels. Paint property.\n",
+                "type": "Mapbox.Expression.Expression any String.String -> Mapbox.Layer.LayerAttr Mapbox.Layer.Fill"
+            },
+            {
+                "name": "fillTranslate",
+                "comment": " The geometry's offset. Values are [x, y] where negatives indicate left and up, respectively. Paint property.\nUnits in pixels. Defaults to `0,0`.\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression (Array.Array Basics.Float) -> Mapbox.Layer.LayerAttr Mapbox.Layer.Fill"
+            },
+            {
+                "name": "fillTranslateAnchor",
+                "comment": " Controls the frame of reference for `fillTranslate`. Paint property. Defaults to `map`. Requires `fillTranslate`.\n\n  - `map`: The fill is translated relative to the map.\n  - `viewport`: The fill is translated relative to the viewport.\n\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression { map : Internal.Supported, viewport : Internal.Supported } -> Mapbox.Layer.LayerAttr Mapbox.Layer.Fill"
+            },
+            {
+                "name": "filter",
+                "comment": " A expression specifying conditions on source features. Only features that match the filter are displayed.\n",
+                "type": "Mapbox.Expression.Expression any Basics.Bool -> Mapbox.Layer.LayerAttr all"
+            },
+            {
+                "name": "heatmap",
+                "comment": " A heatmap.\n",
+                "type": "String.String -> Mapbox.Layer.SourceId -> List.List (Mapbox.Layer.LayerAttr Mapbox.Layer.Heatmap) -> Mapbox.Layer.Layer"
+            },
+            {
+                "name": "heatmapColor",
+                "comment": " Defines the color of each pixel based on its density value in a heatmap. The value should be an Expression that uses `heatmapDensity` as input. Defaults to:\n\n      E.heatmapDensity\n      |> E.interpolate E.Linear\n        [ (0.0, rgba 0 0 255 0)\n        , (0.1, rgba 65 105 225 1)\n        , (0.3, rgba 0 255 255 1)\n        , (0.5, rgba 0 255 0 1)\n        , (0.7, rgba 255 255 0 1)\n        , (1.0, rgba 255 0 0 1)] Paint property.\n\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression Mapbox.Expression.Color -> Mapbox.Layer.LayerAttr Mapbox.Layer.Heatmap"
+            },
+            {
+                "name": "heatmapIntensity",
+                "comment": " Similar to `heatmapWeight` but controls the intensity of the heatmap globally. Primarily used for adjusting the heatmap based on zoom level. Paint property.\n\nShould be greater than or equal to `0`. Defaults to `1`.\n\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression Basics.Float -> Mapbox.Layer.LayerAttr Mapbox.Layer.Heatmap"
+            },
+            {
+                "name": "heatmapOpacity",
+                "comment": " The global opacity at which the heatmap layer will be drawn. Paint property.\n\nShould be between `0` and `1` inclusive. Defaults to `1`.\n\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression Basics.Float -> Mapbox.Layer.LayerAttr Mapbox.Layer.Heatmap"
+            },
+            {
+                "name": "heatmapRadius",
+                "comment": " Radius of influence of one heatmap point in pixels. Increasing the value makes the heatmap smoother, but less detailed. Paint property.\n\nShould be greater than or equal to `1`.\nUnits in pixels. Defaults to `30`.\n\n",
+                "type": "Mapbox.Expression.Expression any Basics.Float -> Mapbox.Layer.LayerAttr Mapbox.Layer.Heatmap"
+            },
+            {
+                "name": "heatmapWeight",
+                "comment": " A measure of how much an individual point contributes to the heatmap. A value of 10 would be equivalent to having 10 points of weight 1 in the same spot. Especially useful when combined with clustering. Paint property.\n\nShould be greater than or equal to `0`. Defaults to `1`.\n\n",
+                "type": "Mapbox.Expression.Expression any Basics.Float -> Mapbox.Layer.LayerAttr Mapbox.Layer.Heatmap"
+            },
+            {
+                "name": "hillshade",
+                "comment": " Client-side hillshading visualization based on DEM data. Currently, the implementation only supports Mapbox Terrain RGB and Mapzen Terrarium tiles.\n",
+                "type": "String.String -> Mapbox.Layer.SourceId -> List.List (Mapbox.Layer.LayerAttr Mapbox.Layer.Hillshade) -> Mapbox.Layer.Layer"
+            },
+            {
+                "name": "hillshadeAccentColor",
+                "comment": " The shading color used to accentuate rugged terrain like sharp cliffs and gorges. Paint property. Defaults to `#000000`.\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression Mapbox.Expression.Color -> Mapbox.Layer.LayerAttr Mapbox.Layer.Hillshade"
+            },
+            {
+                "name": "hillshadeExaggeration",
+                "comment": " Intensity of the hillshade Paint property.\n\nShould be between `0` and `1` inclusive. Defaults to `0.5`.\n\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression Basics.Float -> Mapbox.Layer.LayerAttr Mapbox.Layer.Hillshade"
+            },
+            {
+                "name": "hillshadeHighlightColor",
+                "comment": " The shading color of areas that faces towards the light source. Paint property. Defaults to `#FFFFFF`.\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression Mapbox.Expression.Color -> Mapbox.Layer.LayerAttr Mapbox.Layer.Hillshade"
+            },
+            {
+                "name": "hillshadeIlluminationAnchor",
+                "comment": " Direction of light source when map is rotated. Paint property. Defaults to `viewport`.\n\n  - `map`: The hillshade illumination is relative to the north direction.\n  - `viewport`: The hillshade illumination is relative to the top of the viewport.\n\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression { map : Internal.Supported, viewport : Internal.Supported } -> Mapbox.Layer.LayerAttr Mapbox.Layer.Hillshade"
+            },
+            {
+                "name": "hillshadeIlluminationDirection",
+                "comment": " The direction of the light source used to generate the hillshading with 0 as the top of the viewport if `hillshadeIlluminationAnchor` is set to `viewport` and due north if `hillshadeIlluminationAnchor` is set to `map`. Paint property.\n\nShould be between `0` and `359` inclusive. Defaults to `335`.\n\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression Basics.Float -> Mapbox.Layer.LayerAttr Mapbox.Layer.Hillshade"
+            },
+            {
+                "name": "hillshadeShadowColor",
+                "comment": " The shading color of areas that face away from the light source. Paint property. Defaults to `#000000`.\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression Mapbox.Expression.Color -> Mapbox.Layer.LayerAttr Mapbox.Layer.Hillshade"
+            },
+            {
+                "name": "iconAllowOverlap",
+                "comment": " If true, the icon will be visible even if it collides with other previously drawn symbols. Layout property. Defaults to `false`. Requires `iconImage`.\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression Basics.Bool -> Mapbox.Layer.LayerAttr Mapbox.Layer.Symbol"
+            },
+            {
+                "name": "iconAnchor",
+                "comment": " Part of the icon placed closest to the anchor. Layout property. Defaults to `center`. Requires `iconImage`.\n\n  - `center`: The center of the icon is placed closest to the anchor.\n  - `left`: The left side of the icon is placed closest to the anchor.\n  - `right`: The right side of the icon is placed closest to the anchor.\n  - `top`: The top of the icon is placed closest to the anchor.\n  - `bottom`: The bottom of the icon is placed closest to the anchor.\n  - `topLeft`: The top left corner of the icon is placed closest to the anchor.\n  - `topRight`: The top right corner of the icon is placed closest to the anchor.\n  - `bottomLeft`: The bottom left corner of the icon is placed closest to the anchor.\n  - `bottomRight`: The bottom right corner of the icon is placed closest to the anchor.\n\n",
+                "type": "Mapbox.Expression.Expression any { center : Internal.Supported, left : Internal.Supported, right : Internal.Supported, top : Internal.Supported, bottom : Internal.Supported, topLeft : Internal.Supported, topRight : Internal.Supported, bottomLeft : Internal.Supported, bottomRight : Internal.Supported } -> Mapbox.Layer.LayerAttr Mapbox.Layer.Symbol"
+            },
+            {
+                "name": "iconColor",
+                "comment": " The color of the icon. This can only be used with sdf icons. Paint property. Defaults to `#000000`. Requires `iconImage`.\n",
+                "type": "Mapbox.Expression.Expression any Mapbox.Expression.Color -> Mapbox.Layer.LayerAttr Mapbox.Layer.Symbol"
+            },
+            {
+                "name": "iconHaloBlur",
+                "comment": " Fade out the halo towards the outside. Paint property.\n\nShould be greater than or equal to `0`.\nUnits in pixels. Defaults to `0`. Requires `iconImage`.\n\n",
+                "type": "Mapbox.Expression.Expression any Basics.Float -> Mapbox.Layer.LayerAttr Mapbox.Layer.Symbol"
+            },
+            {
+                "name": "iconHaloColor",
+                "comment": " The color of the icon's halo. Icon halos can only be used with SDF icons. Paint property. Defaults to `rgba 0 0 0 0`. Requires `iconImage`.\n",
+                "type": "Mapbox.Expression.Expression any Mapbox.Expression.Color -> Mapbox.Layer.LayerAttr Mapbox.Layer.Symbol"
+            },
+            {
+                "name": "iconHaloWidth",
+                "comment": " Distance of halo to the icon outline. Paint property.\n\nShould be greater than or equal to `0`.\nUnits in pixels. Defaults to `0`. Requires `iconImage`.\n\n",
+                "type": "Mapbox.Expression.Expression any Basics.Float -> Mapbox.Layer.LayerAttr Mapbox.Layer.Symbol"
+            },
+            {
+                "name": "iconIgnorePlacement",
+                "comment": " If true, other symbols can be visible even if they collide with the icon. Layout property. Defaults to `false`. Requires `iconImage`.\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression Basics.Bool -> Mapbox.Layer.LayerAttr Mapbox.Layer.Symbol"
+            },
+            {
+                "name": "iconImage",
+                "comment": " Name of image in sprite to use for drawing an image background. Layout property.\n",
+                "type": "Mapbox.Expression.Expression any String.String -> Mapbox.Layer.LayerAttr Mapbox.Layer.Symbol"
+            },
+            {
+                "name": "iconKeepUpright",
+                "comment": " If true, the icon may be flipped to prevent it from being rendered upside-down. Layout property. Defaults to `false`. Requires `iconImage`. Requires `iconRotationAlignment` to be `map`. Requires `symbolPlacement` to be `line`, or `lineCenter`.\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression Basics.Bool -> Mapbox.Layer.LayerAttr Mapbox.Layer.Symbol"
+            },
+            {
+                "name": "iconOffset",
+                "comment": " Offset distance of icon from its anchor. Positive values indicate right and down, while negative values indicate left and up. Each component is multiplied by the value of `iconSize` to obtain the final offset in pixels. When combined with `iconRotate` the offset will be as if the rotated direction was up. Layout property. Defaults to `0,0`. Requires `iconImage`.\n",
+                "type": "Mapbox.Expression.Expression any (Array.Array Basics.Float) -> Mapbox.Layer.LayerAttr Mapbox.Layer.Symbol"
+            },
+            {
+                "name": "iconOpacity",
+                "comment": " The opacity at which the icon will be drawn. Paint property.\n\nShould be between `0` and `1` inclusive. Defaults to `1`. Requires `iconImage`.\n\n",
+                "type": "Mapbox.Expression.Expression any Basics.Float -> Mapbox.Layer.LayerAttr Mapbox.Layer.Symbol"
+            },
+            {
+                "name": "iconOptional",
+                "comment": " If true, text will display without their corresponding icons when the icon collides with other symbols and the text does not. Layout property. Defaults to `false`. Requires `iconImage`. Requires `textField`.\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression Basics.Bool -> Mapbox.Layer.LayerAttr Mapbox.Layer.Symbol"
+            },
+            {
+                "name": "iconPadding",
+                "comment": " Size of the additional area around the icon bounding box used for detecting symbol collisions. Layout property.\n\nShould be greater than or equal to `0`.\nUnits in pixels. Defaults to `2`. Requires `iconImage`.\n\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression Basics.Float -> Mapbox.Layer.LayerAttr Mapbox.Layer.Symbol"
+            },
+            {
+                "name": "iconPitchAlignment",
+                "comment": " Orientation of icon when map is pitched. Layout property. Defaults to `auto`. Requires `iconImage`.\n\n  - `map`: The icon is aligned to the plane of the map.\n  - `viewport`: The icon is aligned to the plane of the viewport.\n  - `auto`: Automatically matches the value of `iconRotationAlignment`.\n\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression { map : Internal.Supported, viewport : Internal.Supported, auto : Internal.Supported } -> Mapbox.Layer.LayerAttr Mapbox.Layer.Symbol"
+            },
+            {
+                "name": "iconRotate",
+                "comment": " Rotates the icon clockwise. Layout property.\nUnits in degrees. Defaults to `0`. Requires `iconImage`.\n",
+                "type": "Mapbox.Expression.Expression any Basics.Float -> Mapbox.Layer.LayerAttr Mapbox.Layer.Symbol"
+            },
+            {
+                "name": "iconRotationAlignment",
+                "comment": " In combination with `symbolPlacement`, determines the rotation behavior of icons. Layout property. Defaults to `auto`. Requires `iconImage`.\n\n  - `map`: When `symbolPlacement` is set to `point`, aligns icons east-west. When `symbolPlacement` is set to `line` or `lineCenter`, aligns icon x-axes with the line.\n  - `viewport`: Produces icons whose x-axes are aligned with the x-axis of the viewport, regardless of the value of `symbolPlacement`.\n  - `auto`: When `symbolPlacement` is set to `point`, this is equivalent to `viewport`. When `symbolPlacement` is set to `line` or `lineCenter`, this is equivalent to `map`.\n\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression { map : Internal.Supported, viewport : Internal.Supported, auto : Internal.Supported } -> Mapbox.Layer.LayerAttr Mapbox.Layer.Symbol"
+            },
+            {
+                "name": "iconSize",
+                "comment": " Scales the original size of the icon by the provided factor. The new pixel size of the image will be the original pixel size multiplied by `iconSize`. 1 is the original size; 3 triples the size of the image. Layout property.\n\nShould be greater than or equal to `0`.\nUnits in factor of the original icon size. Defaults to `1`. Requires `iconImage`.\n\n",
+                "type": "Mapbox.Expression.Expression any Basics.Float -> Mapbox.Layer.LayerAttr Mapbox.Layer.Symbol"
+            },
+            {
+                "name": "iconTextFit",
+                "comment": " Scales the icon to fit around the associated text. Layout property. Defaults to `none`. Requires `iconImage`. Requires `textField`.\n\n  - `none`: The icon is displayed at its intrinsic aspect ratio.\n  - `width`: The icon is scaled in the x-dimension to fit the width of the text.\n  - `height`: The icon is scaled in the y-dimension to fit the height of the text.\n  - `both`: The icon is scaled in both x- and y-dimensions.\n\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression { none : Internal.Supported, width : Internal.Supported, height : Internal.Supported, both : Internal.Supported } -> Mapbox.Layer.LayerAttr Mapbox.Layer.Symbol"
+            },
+            {
+                "name": "iconTextFitPadding",
+                "comment": " Size of the additional area added to dimensions determined by `iconTextFit`, in clockwise order: top, right, bottom, left. Layout property.\nUnits in pixels. Defaults to `0,0,0,0`. Requires `iconImage`. Requires `textField`. Requires `iconTextFit` to be `both`, or `width`, or `height`.\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression (Array.Array Basics.Float) -> Mapbox.Layer.LayerAttr Mapbox.Layer.Symbol"
+            },
+            {
+                "name": "iconTranslate",
+                "comment": " Distance that the icon's anchor is moved from its original placement. Positive values indicate right and down, while negative values indicate left and up. Paint property.\nUnits in pixels. Defaults to `0,0`. Requires `iconImage`.\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression (Array.Array Basics.Float) -> Mapbox.Layer.LayerAttr Mapbox.Layer.Symbol"
+            },
+            {
+                "name": "iconTranslateAnchor",
+                "comment": " Controls the frame of reference for `iconTranslate`. Paint property. Defaults to `map`. Requires `iconImage`. Requires `iconTranslate`.\n\n  - `map`: Icons are translated relative to the map.\n  - `viewport`: Icons are translated relative to the viewport.\n\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression { map : Internal.Supported, viewport : Internal.Supported } -> Mapbox.Layer.LayerAttr Mapbox.Layer.Symbol"
+            },
+            {
+                "name": "json",
+                "comment": " Directly aass a json value layer\n",
+                "type": "Json.Encode.Value -> Mapbox.Layer.Layer"
+            },
+            {
+                "name": "jsonList",
+                "comment": " Directly aass a json value layer\n",
+                "type": "String.String -> List.List Mapbox.Layer.Layer"
+            },
+            {
+                "name": "line",
+                "comment": " A stroked line.\n",
+                "type": "String.String -> Mapbox.Layer.SourceId -> List.List (Mapbox.Layer.LayerAttr Mapbox.Layer.Line) -> Mapbox.Layer.Layer"
+            },
+            {
+                "name": "lineBlur",
+                "comment": " Blur applied to the line, in pixels. Paint property.\n\nShould be greater than or equal to `0`.\nUnits in pixels. Defaults to `0`.\n\n",
+                "type": "Mapbox.Expression.Expression any Basics.Float -> Mapbox.Layer.LayerAttr Mapbox.Layer.Line"
+            },
+            {
+                "name": "lineCap",
+                "comment": " The display of line endings. Layout property. Defaults to `butt`.\n\n  - `butt`: A cap with a squared-off end which is drawn to the exact endpoint of the line.\n  - `rounded`: A cap with a rounded end which is drawn beyond the endpoint of the line at a radius of one-half of the line's width and centered on the endpoint of the line.\n  - `square`: A cap with a squared-off end which is drawn beyond the endpoint of the line at a distance of one-half of the line's width.\n\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression { butt : Internal.Supported, rounded : Internal.Supported, square : Internal.Supported } -> Mapbox.Layer.LayerAttr Mapbox.Layer.Line"
+            },
+            {
+                "name": "lineColor",
+                "comment": " The color with which the line will be drawn. Paint property. Defaults to `#000000`. Disabled by `linePattern`.\n",
+                "type": "Mapbox.Expression.Expression any Mapbox.Expression.Color -> Mapbox.Layer.LayerAttr Mapbox.Layer.Line"
+            },
+            {
+                "name": "lineDasharray",
+                "comment": " Specifies the lengths of the alternating dashes and gaps that form the dash pattern. The lengths are later scaled by the line width. To convert a dash length to pixels, multiply the length by the current line width. Note that GeoJSON sources with `lineMetrics: true` specified won't render dashed lines to the expected scale. Also note that zoom-dependent expressions will be evaluated only at integer zoom levels. Paint property.\n\nShould be greater than or equal to `0`.\nUnits in line widths. Disabled by `linePattern`.\n\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression (Array.Array Basics.Float) -> Mapbox.Layer.LayerAttr Mapbox.Layer.Line"
+            },
+            {
+                "name": "lineDasharray2",
+                "comment": " Specifies the lengths of the alternating dashes and gaps that form the dash pattern. The lengths are later scaled by the line width. To convert a dash length to pixels, multiply the length by the current line width. Note that GeoJSON sources with `lineMetrics: true` specified won't render dashed lines to the expected scale. Also note that zoom-dependent expressions will be evaluated only at integer zoom levels. Paint property.\n\nShould be greater than or equal to `0`.\nUnits in line widths. Disabled by `linePattern`.\n\n",
+                "type": "Mapbox.Expression.Expression any (Array.Array Basics.Float) -> Mapbox.Layer.LayerAttr Mapbox.Layer.Line"
+            },
+            {
+                "name": "lineGapWidth",
+                "comment": " Draws a line casing outside of a line's actual path. Value indicates the width of the inner gap. Paint property.\n\nShould be greater than or equal to `0`.\nUnits in pixels. Defaults to `0`.\n\n",
+                "type": "Mapbox.Expression.Expression any Basics.Float -> Mapbox.Layer.LayerAttr Mapbox.Layer.Line"
+            },
+            {
+                "name": "lineGradient",
+                "comment": " Defines a gradient with which to color a line feature. Can only be used with GeoJSON sources that specify `\"lineMetrics\": true`. Paint property. Disabled by `lineDasharray`. Disabled by `linePattern`. Requires `source` to be `geojson`.\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression Mapbox.Expression.Color -> Mapbox.Layer.LayerAttr Mapbox.Layer.Line"
+            },
+            {
+                "name": "lineJoin",
+                "comment": " The display of lines when joining. Layout property. Defaults to `miter`.\n\n  - `bevel`: A join with a squared-off end which is drawn beyond the endpoint of the line at a distance of one-half of the line's width.\n  - `rounded`: A join with a rounded end which is drawn beyond the endpoint of the line at a radius of one-half of the line's width and centered on the endpoint of the line.\n  - `miter`: A join with a sharp, angled corner which is drawn with the outer sides beyond the endpoint of the path until they meet.\n\n",
+                "type": "Mapbox.Expression.Expression any { bevel : Internal.Supported, rounded : Internal.Supported, miter : Internal.Supported } -> Mapbox.Layer.LayerAttr Mapbox.Layer.Line"
+            },
+            {
+                "name": "lineMiterLimit",
+                "comment": " Used to automatically convert miter joins to bevel joins for sharp angles. Layout property. Defaults to `2`. Requires `lineJoin` to be `miter`.\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression Basics.Float -> Mapbox.Layer.LayerAttr Mapbox.Layer.Line"
+            },
+            {
+                "name": "lineOffset",
+                "comment": " The line's offset. For linear features, a positive value offsets the line to the right, relative to the direction of the line, and a negative value to the left. For polygon features, a positive value results in an inset, and a negative value results in an outset. Paint property.\nUnits in pixels. Defaults to `0`.\n",
+                "type": "Mapbox.Expression.Expression any Basics.Float -> Mapbox.Layer.LayerAttr Mapbox.Layer.Line"
+            },
+            {
+                "name": "lineOpacity",
+                "comment": " The opacity at which the line will be drawn. Paint property.\n\nShould be between `0` and `1` inclusive. Defaults to `1`.\n\n",
+                "type": "Mapbox.Expression.Expression any Basics.Float -> Mapbox.Layer.LayerAttr Mapbox.Layer.Line"
+            },
+            {
+                "name": "linePattern",
+                "comment": " Name of image in sprite to use for drawing image lines. For seamless patterns, image width must be a factor of two (2, 4, 8, ..., 512). Note that zoom-dependent expressions will be evaluated only at integer zoom levels. Paint property.\n",
+                "type": "Mapbox.Expression.Expression any String.String -> Mapbox.Layer.LayerAttr Mapbox.Layer.Line"
+            },
+            {
+                "name": "lineRoundLimit",
+                "comment": " Used to automatically convert round joins to miter joins for shallow angles. Layout property. Defaults to `1.05`. Requires `lineJoin` to be `round`.\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression Basics.Float -> Mapbox.Layer.LayerAttr Mapbox.Layer.Line"
+            },
+            {
+                "name": "lineTranslate",
+                "comment": " The geometry's offset. Values are [x, y] where negatives indicate left and up, respectively. Paint property.\nUnits in pixels. Defaults to `0,0`.\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression (Array.Array Basics.Float) -> Mapbox.Layer.LayerAttr Mapbox.Layer.Line"
+            },
+            {
+                "name": "lineTranslateAnchor",
+                "comment": " Controls the frame of reference for `lineTranslate`. Paint property. Defaults to `map`. Requires `lineTranslate`.\n\n  - `map`: The line is translated relative to the map.\n  - `viewport`: The line is translated relative to the viewport.\n\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression { map : Internal.Supported, viewport : Internal.Supported } -> Mapbox.Layer.LayerAttr Mapbox.Layer.Line"
+            },
+            {
+                "name": "lineWidth",
+                "comment": " Stroke thickness. Paint property.\n\nShould be greater than or equal to `0`.\nUnits in pixels. Defaults to `1`.\n\n",
+                "type": "Mapbox.Expression.Expression any Basics.Float -> Mapbox.Layer.LayerAttr Mapbox.Layer.Line"
+            },
+            {
+                "name": "maxzoom",
+                "comment": " The maximum zoom level for the layer. At zoom levels equal to or greater than the maxzoom, the layer will be hidden. A number between 0 and 24 inclusive.\n",
+                "type": "Basics.Float -> Mapbox.Layer.LayerAttr all"
+            },
+            {
+                "name": "metadata",
+                "comment": " Arbitrary properties useful to track with the layer, but do not influence rendering. Properties should be prefixed to avoid collisions, like 'mapbox:'.\n",
+                "type": "Json.Encode.Value -> Mapbox.Layer.LayerAttr all"
+            },
+            {
+                "name": "minzoom",
+                "comment": " The minimum zoom level for the layer. At zoom levels less than the minzoom, the layer will be hidden. A number between 0 and 24 inclusive.\n",
+                "type": "Basics.Float -> Mapbox.Layer.LayerAttr all"
+            },
+            {
+                "name": "raster",
+                "comment": " Raster map textures such as satellite imagery.\n",
+                "type": "String.String -> Mapbox.Layer.SourceId -> List.List (Mapbox.Layer.LayerAttr Mapbox.Layer.Raster) -> Mapbox.Layer.Layer"
+            },
+            {
+                "name": "rasterBrightnessMax",
+                "comment": " Increase or reduce the brightness of the image. The value is the maximum brightness. Paint property.\n\nShould be between `0` and `1` inclusive. Defaults to `1`.\n\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression Basics.Float -> Mapbox.Layer.LayerAttr Mapbox.Layer.Raster"
+            },
+            {
+                "name": "rasterBrightnessMin",
+                "comment": " Increase or reduce the brightness of the image. The value is the minimum brightness. Paint property.\n\nShould be between `0` and `1` inclusive. Defaults to `0`.\n\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression Basics.Float -> Mapbox.Layer.LayerAttr Mapbox.Layer.Raster"
+            },
+            {
+                "name": "rasterContrast",
+                "comment": " Increase or reduce the contrast of the image. Paint property.\n\nShould be between `-1` and `1` inclusive. Defaults to `0`.\n\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression Basics.Float -> Mapbox.Layer.LayerAttr Mapbox.Layer.Raster"
+            },
+            {
+                "name": "rasterFadeDuration",
+                "comment": " Fade duration when a new tile is added. Paint property.\n\nShould be greater than or equal to `0`.\nUnits in milliseconds. Defaults to `300`.\n\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression Basics.Float -> Mapbox.Layer.LayerAttr Mapbox.Layer.Raster"
+            },
+            {
+                "name": "rasterHueRotate",
+                "comment": " Rotates hues around the color wheel. Paint property.\nUnits in degrees. Defaults to `0`.\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression Basics.Float -> Mapbox.Layer.LayerAttr Mapbox.Layer.Raster"
+            },
+            {
+                "name": "rasterOpacity",
+                "comment": " The opacity at which the image will be drawn. Paint property.\n\nShould be between `0` and `1` inclusive. Defaults to `1`.\n\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression Basics.Float -> Mapbox.Layer.LayerAttr Mapbox.Layer.Raster"
+            },
+            {
+                "name": "rasterResampling",
+                "comment": " The resampling/interpolation method to use for overscaling, also known as texture magnification filter Paint property. Defaults to `linear`.\n\n  - `linear`: (Bi)linear filtering interpolates pixel values using the weighted average of the four closest original source pixels creating a smooth but blurry look when overscaled\n  - `nearest`: Nearest neighbor filtering interpolates pixel values using the nearest original source pixel creating a sharp but pixelated look when overscaled\n\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression { linear : Internal.Supported, nearest : Internal.Supported } -> Mapbox.Layer.LayerAttr Mapbox.Layer.Raster"
+            },
+            {
+                "name": "rasterSaturation",
+                "comment": " Increase or reduce the saturation of the image. Paint property.\n\nShould be between `-1` and `1` inclusive. Defaults to `0`.\n\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression Basics.Float -> Mapbox.Layer.LayerAttr Mapbox.Layer.Raster"
+            },
+            {
+                "name": "sourceLayer",
+                "comment": " Layer to use from a vector tile source. Required for vector tile sources; prohibited for all other source types, including GeoJSON sources.\n",
+                "type": "String.String -> Mapbox.Layer.LayerAttr all"
+            },
+            {
+                "name": "symbol",
+                "comment": " An icon or a text label.\n",
+                "type": "String.String -> Mapbox.Layer.SourceId -> List.List (Mapbox.Layer.LayerAttr Mapbox.Layer.Symbol) -> Mapbox.Layer.Layer"
+            },
+            {
+                "name": "symbolAvoidEdges",
+                "comment": " If true, the symbols will not cross tile edges to avoid mutual collisions. Recommended in layers that don't have enough padding in the vector tile to prevent collisions, or if it is a point symbol layer placed after a line symbol layer. Layout property. Defaults to `false`.\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression Basics.Bool -> Mapbox.Layer.LayerAttr Mapbox.Layer.Symbol"
+            },
+            {
+                "name": "symbolPlacement",
+                "comment": " Label placement relative to its geometry. Layout property. Defaults to `point`.\n\n  - `point`: The label is placed at the point where the geometry is located.\n  - `line`: The label is placed along the line of the geometry. Can only be used on `lineString` and `polygon` geometries.\n  - `lineCenter`: The label is placed at the center of the line of the geometry. Can only be used on `lineString` and `polygon` geometries. Note that a single feature in a vector tile may contain multiple line geometries.\n\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression { point : Internal.Supported, line : Internal.Supported, lineCenter : Internal.Supported } -> Mapbox.Layer.LayerAttr Mapbox.Layer.Symbol"
+            },
+            {
+                "name": "symbolSortKey",
+                "comment": " Sorts features in ascending order based on this value. Features with a higher sort key will appear above features with a lower sort key when they overlap. Features with a lower sort key will have priority over other features when doing placement. Layout property.\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression Basics.Float -> Mapbox.Layer.LayerAttr Mapbox.Layer.Symbol"
+            },
+            {
+                "name": "symbolSpacing",
+                "comment": " Distance between two symbol anchors. Layout property.\n\nShould be greater than or equal to `1`.\nUnits in pixels. Defaults to `250`. Requires `symbolPlacement` to be `line`.\n\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression Basics.Float -> Mapbox.Layer.LayerAttr Mapbox.Layer.Symbol"
+            },
+            {
+                "name": "symbolZOrder",
+                "comment": " Controls the order in which overlapping symbols in the same layer are rendered Layout property. Defaults to `auto`.\n\n  - `auto`: If `symbolSortKey` is set, sort based on that. Otherwise sort symbols by their position relative to the viewport.\n  - `viewportY`: Symbols will be sorted by their y-position relative to the viewport.\n  - `source`: Symbols will be rendered in the same order as the source data with no sorting applied.\n\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression { auto : Internal.Supported, viewportY : Internal.Supported, source : Internal.Supported } -> Mapbox.Layer.LayerAttr Mapbox.Layer.Symbol"
+            },
+            {
+                "name": "textAllowOverlap",
+                "comment": " If true, the text will be visible even if it collides with other previously drawn symbols. Layout property. Defaults to `false`. Requires `textField`.\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression Basics.Bool -> Mapbox.Layer.LayerAttr Mapbox.Layer.Symbol"
+            },
+            {
+                "name": "textAnchor",
+                "comment": " Part of the text placed closest to the anchor. Layout property. Defaults to `center`. Requires `textField`.\n\n  - `center`: The center of the text is placed closest to the anchor.\n  - `left`: The left side of the text is placed closest to the anchor.\n  - `right`: The right side of the text is placed closest to the anchor.\n  - `top`: The top of the text is placed closest to the anchor.\n  - `bottom`: The bottom of the text is placed closest to the anchor.\n  - `topLeft`: The top left corner of the text is placed closest to the anchor.\n  - `topRight`: The top right corner of the text is placed closest to the anchor.\n  - `bottomLeft`: The bottom left corner of the text is placed closest to the anchor.\n  - `bottomRight`: The bottom right corner of the text is placed closest to the anchor.\n\n",
+                "type": "Mapbox.Expression.Expression any { center : Internal.Supported, left : Internal.Supported, right : Internal.Supported, top : Internal.Supported, bottom : Internal.Supported, topLeft : Internal.Supported, topRight : Internal.Supported, bottomLeft : Internal.Supported, bottomRight : Internal.Supported } -> Mapbox.Layer.LayerAttr Mapbox.Layer.Symbol"
+            },
+            {
+                "name": "textColor",
+                "comment": " The color with which the text will be drawn. Paint property. Defaults to `#000000`. Requires `textField`.\n",
+                "type": "Mapbox.Expression.Expression any Mapbox.Expression.Color -> Mapbox.Layer.LayerAttr Mapbox.Layer.Symbol"
+            },
+            {
+                "name": "textField",
+                "comment": " Value to use for a text label. Layout property. Defaults to `\"\"`.\n",
+                "type": "Mapbox.Expression.Expression any Mapbox.Expression.FormattedText -> Mapbox.Layer.LayerAttr Mapbox.Layer.Symbol"
+            },
+            {
+                "name": "textFont",
+                "comment": " Font stack to use for displaying text. Layout property. Requires `textField`.\n",
+                "type": "Mapbox.Expression.Expression any (Array.Array String.String) -> Mapbox.Layer.LayerAttr Mapbox.Layer.Symbol"
+            },
+            {
+                "name": "textHaloBlur",
+                "comment": " The halo's fadeout distance towards the outside. Paint property.\n\nShould be greater than or equal to `0`.\nUnits in pixels. Defaults to `0`. Requires `textField`.\n\n",
+                "type": "Mapbox.Expression.Expression any Basics.Float -> Mapbox.Layer.LayerAttr Mapbox.Layer.Symbol"
+            },
+            {
+                "name": "textHaloColor",
+                "comment": " The color of the text's halo, which helps it stand out from backgrounds. Paint property. Defaults to `rgba 0 0 0 0`. Requires `textField`.\n",
+                "type": "Mapbox.Expression.Expression any Mapbox.Expression.Color -> Mapbox.Layer.LayerAttr Mapbox.Layer.Symbol"
+            },
+            {
+                "name": "textHaloWidth",
+                "comment": " Distance of halo to the font outline. Max text halo width is 1/4 of the font-size. Paint property.\n\nShould be greater than or equal to `0`.\nUnits in pixels. Defaults to `0`. Requires `textField`.\n\n",
+                "type": "Mapbox.Expression.Expression any Basics.Float -> Mapbox.Layer.LayerAttr Mapbox.Layer.Symbol"
+            },
+            {
+                "name": "textIgnorePlacement",
+                "comment": " If true, other symbols can be visible even if they collide with the text. Layout property. Defaults to `false`. Requires `textField`.\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression Basics.Bool -> Mapbox.Layer.LayerAttr Mapbox.Layer.Symbol"
+            },
+            {
+                "name": "textJustify",
+                "comment": " Text justification options. Layout property. Defaults to `center`. Requires `textField`.\n\n  - `left`: The text is aligned to the left.\n  - `center`: The text is centered.\n  - `right`: The text is aligned to the right.\n\n",
+                "type": "Mapbox.Expression.Expression any { left : Internal.Supported, center : Internal.Supported, right : Internal.Supported } -> Mapbox.Layer.LayerAttr Mapbox.Layer.Symbol"
+            },
+            {
+                "name": "textKeepUpright",
+                "comment": " If true, the text may be flipped vertically to prevent it from being rendered upside-down. Layout property. Defaults to `true`. Requires `textField`. Requires `textRotationAlignment` to be `map`. Requires `symbolPlacement` to be `line`, or `lineCenter`.\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression Basics.Bool -> Mapbox.Layer.LayerAttr Mapbox.Layer.Symbol"
+            },
+            {
+                "name": "textLetterSpacing",
+                "comment": " Text tracking amount. Layout property.\nUnits in ems. Defaults to `0`. Requires `textField`.\n",
+                "type": "Mapbox.Expression.Expression any Basics.Float -> Mapbox.Layer.LayerAttr Mapbox.Layer.Symbol"
+            },
+            {
+                "name": "textLineHeight",
+                "comment": " Text leading value for multi-line text. Layout property.\nUnits in ems. Defaults to `1.2`. Requires `textField`.\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression Basics.Float -> Mapbox.Layer.LayerAttr Mapbox.Layer.Symbol"
+            },
+            {
+                "name": "textMaxAngle",
+                "comment": " Maximum angle change between adjacent characters. Layout property.\nUnits in degrees. Defaults to `45`. Requires `textField`. Requires `symbolPlacement` to be `line`, or `lineCenter`.\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression Basics.Float -> Mapbox.Layer.LayerAttr Mapbox.Layer.Symbol"
+            },
+            {
+                "name": "textMaxWidth",
+                "comment": " The maximum line width for text wrapping. Layout property.\n\nShould be greater than or equal to `0`.\nUnits in ems. Defaults to `10`. Requires `textField`.\n\n",
+                "type": "Mapbox.Expression.Expression any Basics.Float -> Mapbox.Layer.LayerAttr Mapbox.Layer.Symbol"
+            },
+            {
+                "name": "textOffset",
+                "comment": " Offset distance of text from its anchor. Positive values indicate right and down, while negative values indicate left and up. Layout property.\nUnits in ems. Defaults to `0,0`. Requires `textField`. Disabled by `textRadialOffset`.\n",
+                "type": "Mapbox.Expression.Expression any (Array.Array Basics.Float) -> Mapbox.Layer.LayerAttr Mapbox.Layer.Symbol"
+            },
+            {
+                "name": "textOpacity",
+                "comment": " The opacity at which the text will be drawn. Paint property.\n\nShould be between `0` and `1` inclusive. Defaults to `1`. Requires `textField`.\n\n",
+                "type": "Mapbox.Expression.Expression any Basics.Float -> Mapbox.Layer.LayerAttr Mapbox.Layer.Symbol"
+            },
+            {
+                "name": "textOptional",
+                "comment": " If true, icons will display without their corresponding text when the text collides with other symbols and the icon does not. Layout property. Defaults to `false`. Requires `textField`. Requires `iconImage`.\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression Basics.Bool -> Mapbox.Layer.LayerAttr Mapbox.Layer.Symbol"
+            },
+            {
+                "name": "textPadding",
+                "comment": " Size of the additional area around the text bounding box used for detecting symbol collisions. Layout property.\n\nShould be greater than or equal to `0`.\nUnits in pixels. Defaults to `2`. Requires `textField`.\n\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression Basics.Float -> Mapbox.Layer.LayerAttr Mapbox.Layer.Symbol"
+            },
+            {
+                "name": "textPitchAlignment",
+                "comment": " Orientation of text when map is pitched. Layout property. Defaults to `auto`. Requires `textField`.\n\n  - `map`: The text is aligned to the plane of the map.\n  - `viewport`: The text is aligned to the plane of the viewport.\n  - `auto`: Automatically matches the value of `textRotationAlignment`.\n\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression { map : Internal.Supported, viewport : Internal.Supported, auto : Internal.Supported } -> Mapbox.Layer.LayerAttr Mapbox.Layer.Symbol"
+            },
+            {
+                "name": "textRadialOffset",
+                "comment": " Radial offset of text, in the direction of the symbol's anchor. Useful in combination with `textVariableAnchor`, which doesn't support the two-dimensional `textOffset`. Layout property.\nUnits in ems. Defaults to `0`. Disabled by `textOffset`.\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression Basics.Float -> Mapbox.Layer.LayerAttr Mapbox.Layer.Symbol"
+            },
+            {
+                "name": "textRotate",
+                "comment": " Rotates the text clockwise. Layout property.\nUnits in degrees. Defaults to `0`. Requires `textField`.\n",
+                "type": "Mapbox.Expression.Expression any Basics.Float -> Mapbox.Layer.LayerAttr Mapbox.Layer.Symbol"
+            },
+            {
+                "name": "textRotationAlignment",
+                "comment": " In combination with `symbolPlacement`, determines the rotation behavior of the individual glyphs forming the text. Layout property. Defaults to `auto`. Requires `textField`.\n\n  - `map`: When `symbolPlacement` is set to `point`, aligns text east-west. When `symbolPlacement` is set to `line` or `lineCenter`, aligns text x-axes with the line.\n  - `viewport`: Produces glyphs whose x-axes are aligned with the x-axis of the viewport, regardless of the value of `symbolPlacement`.\n  - `auto`: When `symbolPlacement` is set to `point`, this is equivalent to `viewport`. When `symbolPlacement` is set to `line` or `lineCenter`, this is equivalent to `map`.\n\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression { map : Internal.Supported, viewport : Internal.Supported, auto : Internal.Supported } -> Mapbox.Layer.LayerAttr Mapbox.Layer.Symbol"
+            },
+            {
+                "name": "textSize",
+                "comment": " Font size. Layout property.\n\nShould be greater than or equal to `0`.\nUnits in pixels. Defaults to `16`. Requires `textField`.\n\n",
+                "type": "Mapbox.Expression.Expression any Basics.Float -> Mapbox.Layer.LayerAttr Mapbox.Layer.Symbol"
+            },
+            {
+                "name": "textTransform",
+                "comment": " Specifies how to capitalize text, similar to the CSS `textTransform` property. Layout property. Defaults to `none`. Requires `textField`.\n\n  - `none`: The text is not altered.\n  - `uppercase`: Forces all letters to be displayed in uppercase.\n  - `lowercase`: Forces all letters to be displayed in lowercase.\n\n",
+                "type": "Mapbox.Expression.Expression any { none : Internal.Supported, uppercase : Internal.Supported, lowercase : Internal.Supported } -> Mapbox.Layer.LayerAttr Mapbox.Layer.Symbol"
+            },
+            {
+                "name": "textTranslate",
+                "comment": " Distance that the text's anchor is moved from its original placement. Positive values indicate right and down, while negative values indicate left and up. Paint property.\nUnits in pixels. Defaults to `0,0`. Requires `textField`.\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression (Array.Array Basics.Float) -> Mapbox.Layer.LayerAttr Mapbox.Layer.Symbol"
+            },
+            {
+                "name": "textTranslateAnchor",
+                "comment": " Controls the frame of reference for `textTranslate`. Paint property. Defaults to `map`. Requires `textField`. Requires `textTranslate`.\n\n  - `map`: The text is translated relative to the map.\n  - `viewport`: The text is translated relative to the viewport.\n\n",
+                "type": "Mapbox.Expression.Expression Mapbox.Expression.CameraExpression { map : Internal.Supported, viewport : Internal.Supported } -> Mapbox.Layer.LayerAttr Mapbox.Layer.Symbol"
+            },
+            {
+                "name": "textVariableAnchor",
+                "comment": " To increase the chance of placing high-priority labels on the map, you can provide an array of `textAnchor` locations: the render will attempt to place the label at each location, in order, before moving onto the next label. Use `textJustify:Auto` to choose justification based on anchor position. To apply an offset, use the `textRadialOffset` instead of the two-dimensional `textOffset`. Layout property. Disabled by `textAnchor`. Disabled by `textOffset`. Requires `symbolPlacement` to be `point`.\n\n  - `center`: The center of the text is placed closest to the anchor.\n  - `left`: The left side of the text is placed closest to the anchor.\n  - `right`: The right side of the text is placed closest to the anchor.\n  - `top`: The top of the text is placed closest to the anchor.\n  - `bottom`: The bottom of the text is placed closest to the anchor.\n  - `topLeft`: The top left corner of the text is placed closest to the anchor.\n  - `topRight`: The top right corner of the text is placed closest to the anchor.\n  - `bottomLeft`: The bottom left corner of the text is placed closest to the anchor.\n  - `bottomRight`: The bottom right corner of the text is placed closest to the anchor.\n\n",
+                "type": "Mapbox.Expression.Expression any (Array.Array { center : Internal.Supported, left : Internal.Supported, right : Internal.Supported, top : Internal.Supported, bottom : Internal.Supported, topLeft : Internal.Supported, topRight : Internal.Supported, bottomLeft : Internal.Supported, bottomRight : Internal.Supported }) -> Mapbox.Layer.LayerAttr Mapbox.Layer.Symbol"
+            },
+            {
+                "name": "visible",
+                "comment": " Whether this layer is displayed.\n",
+                "type": "Basics.Bool -> Mapbox.Layer.LayerAttr any"
+            },
+            {
+                "name": "visible2",
+                "comment": " Directly use a boolean value to set a layer to visible or not.\n",
+                "type": "Basics.Bool -> Mapbox.Layer.LayerAttr any"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Mapbox.Source",
+        "comment": "\n\n\n# Sources\n\n@docs Source, SourceOption\n\n@docs Id, Url, decode\n\n\n### Vector\n\n@docs vector, vectorFromUrl, VectorSource\n\n\n### Raster\n\n@docs raster, tileSize, rasterFromUrl, RasterSource\n\n\n### Raster DEM\n\n@docs rasterDEMMapbox, rasterDEMTerrarium\n\n\n### GeoJSON\n\n@docs geoJSONFromUrl, geoJSONFromValue, GeoJSONSource, buffer, tolerance, cluster, clusterRadius, clusterProperties, lineMetrics, generateIds\n\n\n### Image, Video & Canvas\n\n@docs Coords, image, video, staticCanvas, animatedCanvas\n\n\n### Tiled sources\n\nTiled sources can also take the following attributes:\n\n@docs bounds, minzoom, maxzoom, attribution, scheme, Scheme\n\n\n### Working with sources\n\n@docs encode, getId\n\n",
+        "unions": [
+            {
+                "name": "GeoJSONSource",
+                "comment": " Marks attributes that are only applicable to GeoJSON sources\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "RasterSource",
+                "comment": " Marks attributes that are only applicable to raster sources\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Scheme",
+                "comment": " `XYZ`: Slippy map tilenames scheme.\n\n`TMS`: OSGeo spec scheme.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "XYZ",
+                        []
+                    ],
+                    [
+                        "TMS",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Source",
+                "comment": " Sources supply data to be shown on the map. Adding a source won't immediately make data appear on the map because sources don't contain styling details like color or width. Layers refer to a source and give it a visual representation. This makes it possible to style the same source in different ways, like differentiating between types of roads in a highways layer.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "SourceOption",
+                "comment": " Some sources can take options.\n",
+                "args": [
+                    "sourceType"
+                ],
+                "cases": []
+            },
+            {
+                "name": "VectorSource",
+                "comment": " Marks attributes that are only applicable to vector sources\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Coords",
+                "comment": " `(longitude, latitude)` pairs for the corners. You can use the type alias constructor in clockwise order: top left, top right, bottom right, bottom left.\n",
+                "args": [],
+                "type": "{ topLeft : LngLat.LngLat, topRight : LngLat.LngLat, bottomRight : LngLat.LngLat, bottomLeft : LngLat.LngLat }"
+            },
+            {
+                "name": "Id",
+                "comment": " Every layer is identified by an id.\n",
+                "args": [],
+                "type": "String.String"
+            },
+            {
+                "name": "Url",
+                "comment": " Represents a URL. For tiles hosted by Mapbox, the \"url\" value should be of the form mapbox://mapid.\n",
+                "args": [],
+                "type": "String.String"
+            }
+        ],
+        "values": [
+            {
+                "name": "animatedCanvas",
+                "comment": " A data source containing the contents of an HTML canvas. The second argument must be the DOM ID of the canvas element. This method is only appropriate with an animated Canvas (i.e. one that changes over time).\n",
+                "type": "Mapbox.Source.Id -> String.String -> Mapbox.Source.Coords -> Mapbox.Source.Source"
+            },
+            {
+                "name": "attribution",
+                "comment": " Contains an attribution to be displayed when the map is shown to a user.\n",
+                "type": "String.String -> Mapbox.Source.SourceOption any"
+            },
+            {
+                "name": "bounds",
+                "comment": " The longitude and latitude of the southwest and northeast corners of the source's bounding box. When this property is included in a source, no tiles outside of the given bounds are requested by Mapbox GL.\n",
+                "type": "LngLat.LngLat -> LngLat.LngLat -> Mapbox.Source.SourceOption any"
+            },
+            {
+                "name": "buffer",
+                "comment": " Size of the tile buffer on each side. A value of 0 produces no buffer. A value of 512 produces a buffer as wide as the tile itself. Larger values produce fewer rendering artifacts near tile edges and slower performance. Defaults to 128.\n",
+                "type": "Basics.Int -> Mapbox.Source.SourceOption Mapbox.Source.GeoJSONSource"
+            },
+            {
+                "name": "cluster",
+                "comment": " If the data is a collection of point features, setting this clusters the points by radius into groups.\n\nCluster groups become new Point features in the source with additional properties:\n\n  - `cluster` Is `True` if the point is a cluster\n  - `cluster_id` A unqiue id for the cluster.\n  - `point_count` Number of original points grouped into this cluster\n  - `point_count_abbreviated` An abbreviated point count\n\n",
+                "type": "Mapbox.Source.SourceOption Mapbox.Source.GeoJSONSource"
+            },
+            {
+                "name": "clusterProperties",
+                "comment": " When clustering, you may want to aggregate values from the points included in the cluster. This function allows you to associate a name that will be the property name with a fold that computes the aggregation. For example:\n\n    clusterProperties\n        [ ( \"sum\", E.plus, E.getProperty (str \"scalerank\") )\n        , ( \"max\", \\point aggregate -> E.max aggregate point, E.getProperty (str \"scalerank\") )\n        ]\n\nWould produce clusters with two additional properties: `sum` and `max`, which you could then further use in data driven styling.\n\n",
+                "type": "List.List ( String.String, Mapbox.Expression.Expression Mapbox.Expression.DataExpression a -> Mapbox.Expression.Expression Mapbox.Expression.DataExpression b -> Mapbox.Expression.Expression Mapbox.Expression.DataExpression b, Mapbox.Expression.Expression Mapbox.Expression.DataExpression a ) -> Mapbox.Source.SourceOption Mapbox.Source.GeoJSONSource"
+            },
+            {
+                "name": "clusterRadius",
+                "comment": " Radius of each cluster if clustering is enabled. A value of 512 indicates a radius equal to the width of a tile.\n",
+                "type": "Basics.Float -> Mapbox.Source.SourceOption Mapbox.Source.GeoJSONSource"
+            },
+            {
+                "name": "decode",
+                "comment": " ",
+                "type": "Json.Decode.Decoder (List.List Mapbox.Source.Source)"
+            },
+            {
+                "name": "encode",
+                "comment": " ",
+                "type": "Mapbox.Source.Source -> Json.Encode.Value"
+            },
+            {
+                "name": "generateIds",
+                "comment": " When set, the feature.id property will be auto assigned based on its index in the features array, over-writing any previous values.\n",
+                "type": "Mapbox.Source.SourceOption Mapbox.Source.GeoJSONSource"
+            },
+            {
+                "name": "geoJSONFromUrl",
+                "comment": " A remote GeoJSON source.\n",
+                "type": "Mapbox.Source.Id -> Mapbox.Source.Url -> List.List (Mapbox.Source.SourceOption Mapbox.Source.GeoJSONSource) -> Mapbox.Source.Source"
+            },
+            {
+                "name": "geoJSONFromValue",
+                "comment": " A GeoJSON source from some local data.\n",
+                "type": "Mapbox.Source.Id -> List.List (Mapbox.Source.SourceOption Mapbox.Source.GeoJSONSource) -> Json.Encode.Value -> Mapbox.Source.Source"
+            },
+            {
+                "name": "getId",
+                "comment": " ",
+                "type": "Mapbox.Source.Source -> String.String"
+            },
+            {
+                "name": "image",
+                "comment": " An image source\n",
+                "type": "Mapbox.Source.Id -> Mapbox.Source.Url -> Mapbox.Source.Coords -> Mapbox.Source.Source"
+            },
+            {
+                "name": "lineMetrics",
+                "comment": " Whether to calculate line distance metrics. This is required for line layers that specify `lineGradient` values.\n",
+                "type": "Basics.Bool -> Mapbox.Source.SourceOption Mapbox.Source.GeoJSONSource"
+            },
+            {
+                "name": "maxzoom",
+                "comment": " Maximum zoom level for which tiles are available, as in the TileJSON spec. Data from tiles at the maxzoom are used when displaying the map at higher zoom levels.\n",
+                "type": "Basics.Float -> Mapbox.Source.SourceOption any"
+            },
+            {
+                "name": "minzoom",
+                "comment": " Minimum zoom level for which tiles are available, as in the TileJSON spec.\n",
+                "type": "Basics.Float -> Mapbox.Source.SourceOption any"
+            },
+            {
+                "name": "raster",
+                "comment": " A raster tile source. Takes a list of one or more tile source URLs, as in the TileJSON spec.\n",
+                "type": "Mapbox.Source.Id -> List.List Mapbox.Source.Url -> List.List (Mapbox.Source.SourceOption Mapbox.Source.RasterSource) -> Mapbox.Source.Source"
+            },
+            {
+                "name": "rasterDEMMapbox",
+                "comment": " The [Mapbox Terrain RGB](https://blog.mapbox.com/global-elevation-data-6689f1d0ba65) DEM source.\n",
+                "type": "Mapbox.Source.Id -> Mapbox.Source.Source"
+            },
+            {
+                "name": "rasterDEMTerrarium",
+                "comment": " A raster DEM source in the Terarrium format.\n",
+                "type": "Mapbox.Source.Id -> Mapbox.Source.Url -> List.List (Mapbox.Source.SourceOption Mapbox.Source.RasterSource) -> Mapbox.Source.Source"
+            },
+            {
+                "name": "rasterFromUrl",
+                "comment": " A raster tile source configured from a TileJSON spec.\n",
+                "type": "Mapbox.Source.Id -> Mapbox.Source.Url -> Mapbox.Source.Source"
+            },
+            {
+                "name": "scheme",
+                "comment": " Influences the y direction of the tile coordinates. The global-mercator (aka Spherical Mercator) profile is assumed.\n",
+                "type": "Mapbox.Source.Scheme -> Mapbox.Source.SourceOption any"
+            },
+            {
+                "name": "staticCanvas",
+                "comment": " A data source containing the contents of an HTML canvas. The second argument must be the DOM ID of the canvas element. This method is only appropriate with a static Canvas (i.e. one that doesn't change), as it will be cached to improve performance.\n",
+                "type": "Mapbox.Source.Id -> String.String -> Mapbox.Source.Coords -> Mapbox.Source.Source"
+            },
+            {
+                "name": "tileSize",
+                "comment": " The minimum visual size to display tiles for this layer.\n",
+                "type": "Basics.Int -> Mapbox.Source.SourceOption Mapbox.Source.RasterSource"
+            },
+            {
+                "name": "tolerance",
+                "comment": " Douglas-Peucker simplification tolerance (higher means simpler geometries and faster performance). Defaults to 0.375.\n",
+                "type": "Basics.Float -> Mapbox.Source.SourceOption Mapbox.Source.GeoJSONSource"
+            },
+            {
+                "name": "vector",
+                "comment": " A vector tile source. Tiles must be in [Mapbox Vector Tile format](https://www.mapbox.com/developers/vector-tiles/). All geometric coordinates in vector tiles must be between `-1 * extent` and `(extent * 2) - 1` inclusive. All layers that use a vector source must specify a `sourceLayer` value.\n\nThis takes an array of one or more tile source URLs, as in the TileJSON spec.\n\n",
+                "type": "Mapbox.Source.Id -> List.List Mapbox.Source.Url -> List.List (Mapbox.Source.SourceOption Mapbox.Source.VectorSource) -> Mapbox.Source.Source"
+            },
+            {
+                "name": "vectorFromUrl",
+                "comment": " A vector tile source. Tiles must be in [Mapbox Vector Tile format](https://www.mapbox.com/developers/vector-tiles/). All geometric coordinates in vector tiles must be between `-1 * extent` and `(extent * 2) - 1` inclusive. All layers that use a vector source must specify a `sourceLayer` value.\n\nThe first argument is the layers id, the second is a url to a [TileJSON specification](https://github.com/mapbox/tilejson-spec) that configures the source.\n\n",
+                "type": "Mapbox.Source.Id -> Mapbox.Source.Url -> Mapbox.Source.Source"
+            },
+            {
+                "name": "video",
+                "comment": " A video source. For each URL in the list, a video element source will be created, in order to support same media in multiple formats supported by different browsers.\n",
+                "type": "Mapbox.Source.Id -> List.List Mapbox.Source.Url -> Mapbox.Source.Coords -> Mapbox.Source.Source"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Mapbox.Style",
+        "comment": " A Mapbox style is a document that defines the visual appearance of a map: what data to draw, the order to draw it in, and how to style the data when drawing it. A style document is a JSON object with specific root level and nested properties. This specification defines and describes these properties.\n\n@docs Style, encode, StyleDef, decode, MiscDef, decodeMiscDef, miscDefToList\n\n\n### Light\n\n@docs Light, defaultLight\n\n\n### Transition\n\n@docs Transition, defaultTransition\n\n\n### Misc Attributes\n\n@docs MiscAttr, sprite, glyphs, name, defaultCenter, defaultZoomLevel, defaultBearing, defaultPitch, metadata\n\n\n### Predefined styles\n\nYou can also use one of these predefined styles.\n\n@docs streets, outdoors, light, dark, satellite, satelliteStreets\n\n",
+        "unions": [
+            {
+                "name": "MiscAttr",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Style",
+                "comment": " A mapbox style.\n\nYou can either create a style spec in Elm (for which the rest of this library is useful :) or load one from a remote URL.\n\nTo load a style from the Mapbox API, you can use a URL of the form `FromUrl \"mapbox://styles/:owner/:style\"`, where `:owner` is your Mapbox account name and `:style` is the style ID.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Style",
+                        [
+                            "Mapbox.Style.StyleDef"
+                        ]
+                    ],
+                    [
+                        "FromUrl",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Light",
+                "comment": " The global light source.\n\n\n### `anchor`\n\nWhether extruded geometries are lit relative to the map or viewport.\n\n\n### `position`\n\nPosition of the light source relative to lit (extruded) geometries, in `[r radial coordinate, a azimuthal angle, p polar angle]` where `r` indicates the distance from the center of the base of an object to its light, `a` indicates the position of the light relative to 0° (0° when the `anchor` is set to `viewport` corresponds to the top of the viewport, or 0° when `anchor` is set to `map` corresponds to due north, and degrees proceed clockwise), and `p` indicates the height of the light (from 0°, directly above, to 180°, directly below).\n\n\n### `color`\n\nColor tint for lighting extruded geometries.\n\n\n### `intensity`\n\nIntensity of lighting (on a scale from 0 to 1). Higher numbers will present as more extreme contrast.\n\n",
+                "args": [],
+                "type": "{ anchor : Mapbox.Expression.Expression Mapbox.Expression.CameraExpression { map : Internal.Supported, viewport : Internal.Supported }, position : Mapbox.Expression.Expression Mapbox.Expression.CameraExpression (Array.Array Basics.Float), color : Mapbox.Expression.Expression Mapbox.Expression.CameraExpression Mapbox.Expression.Color, intensity : Mapbox.Expression.Expression Mapbox.Expression.CameraExpression Basics.Float }"
+            },
+            {
+                "name": "MiscDef",
+                "comment": " A simple record to be used, when a style is read from a json file.\n\nuse `decodeMiscDef json` to read out default values, you can reset them by\nsetting them to `Nothing` use afterwards `miscDefToList` to generate a misc-list\nto be used in your StyleDef.\n\n",
+                "args": [],
+                "type": "{ sprite : Maybe.Maybe Mapbox.Style.MiscAttr, glyphs : Maybe.Maybe Mapbox.Style.MiscAttr, name : Maybe.Maybe Mapbox.Style.MiscAttr, center : Maybe.Maybe Mapbox.Style.MiscAttr, zoom : Maybe.Maybe Mapbox.Style.MiscAttr, bearing : Maybe.Maybe Mapbox.Style.MiscAttr, pitch : Maybe.Maybe Mapbox.Style.MiscAttr, meta : Maybe.Maybe Mapbox.Style.MiscAttr }"
+            },
+            {
+                "name": "StyleDef",
+                "comment": " This is the core representation of a Mapbox style. It has the following keys:\n\n\n### Layers\n\nThese define what is actually rendered on screen. See the Mapbox.Layer module on how to configure these.\n\n\n### Sources\n\nThese define the data sources that feed the Layers. See the Mapbox.Source module for more.\n\n\n### Misc\n\nThese are all optional attributes.\n\nAll the other keys are values defined below.\n\n",
+                "args": [],
+                "type": "{ transition : Mapbox.Style.Transition, light : Mapbox.Style.Light, layers : List.List Mapbox.Layer.Layer, sources : List.List Mapbox.Source.Source, misc : List.List Mapbox.Style.MiscAttr }"
+            },
+            {
+                "name": "Transition",
+                "comment": " A transition property controls timing for the interpolation between a transitionable style property's previous value and new value.\n\n\n### `duration`\n\nTime (in ms) allotted for transitions to complete.\n\n\n### `delay`\n\nLength of time (in ms) before a transition begins.\n\n",
+                "args": [],
+                "type": "{ duration : Basics.Int, delay : Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "dark",
+                "comment": " ",
+                "type": "Mapbox.Style.Style"
+            },
+            {
+                "name": "decode",
+                "comment": " ",
+                "type": "Json.Decode.Decoder Mapbox.Style.StyleDef"
+            },
+            {
+                "name": "decodeMiscDef",
+                "comment": " ",
+                "type": "Json.Decode.Decoder Mapbox.Style.MiscDef"
+            },
+            {
+                "name": "defaultBearing",
+                "comment": " Default bearing, in degrees. The bearing is the compass direction that is \"up\"; for example, a bearing of 90° orients the map so that east is up. This value will be used only if the map has not been positioned by other means (e.g. map options or user interaction).\n",
+                "type": "Basics.Float -> Mapbox.Style.MiscAttr"
+            },
+            {
+                "name": "defaultCenter",
+                "comment": " Default map center in longitude and latitude. The style center will be used only if the map has not been positioned by other means (e.g. map options or user interaction).\n",
+                "type": "LngLat.LngLat -> Mapbox.Style.MiscAttr"
+            },
+            {
+                "name": "defaultLight",
+                "comment": " A decent default light.\n",
+                "type": "Mapbox.Style.Light"
+            },
+            {
+                "name": "defaultPitch",
+                "comment": " Default pitch, in degrees. Zero is perpendicular to the surface, for a look straight down at the map, while a greater value like 60 looks ahead towards the horizon. The style pitch will be used only if the map has not been positioned by other means (e.g. map options or user interaction).\n",
+                "type": "Basics.Float -> Mapbox.Style.MiscAttr"
+            },
+            {
+                "name": "defaultTransition",
+                "comment": " The defaults for a transition\n",
+                "type": "Mapbox.Style.Transition"
+            },
+            {
+                "name": "defaultZoomLevel",
+                "comment": " Default zoom level. The style zoom will be used only if the map has not been positioned by other means (e.g. map options or user interaction).\n",
+                "type": "Basics.Float -> Mapbox.Style.MiscAttr"
+            },
+            {
+                "name": "encode",
+                "comment": " Encodes the style into JSON.\n",
+                "type": "Mapbox.Style.Style -> Json.Encode.Value"
+            },
+            {
+                "name": "glyphs",
+                "comment": " A URL template for loading signed-distance-field glyph sets in PBF format. The URL must include `{fontstack}` and `{range}` tokens. This property is required if any layer uses the `textField` layout property.\n",
+                "type": "String.String -> Mapbox.Style.MiscAttr"
+            },
+            {
+                "name": "light",
+                "comment": " ",
+                "type": "Mapbox.Style.Style"
+            },
+            {
+                "name": "metadata",
+                "comment": " Arbitrary properties useful to track with the stylesheet, but do not influence rendering. Properties should be prefixed to avoid collisions, like 'mapbox:'.\n",
+                "type": "List.List ( String.String, Json.Encode.Value ) -> Mapbox.Style.MiscAttr"
+            },
+            {
+                "name": "miscDefToList",
+                "comment": " ",
+                "type": "Mapbox.Style.MiscDef -> List.List Mapbox.Style.MiscAttr"
+            },
+            {
+                "name": "name",
+                "comment": " A human-readable name for the style.\n",
+                "type": "String.String -> Mapbox.Style.MiscAttr"
+            },
+            {
+                "name": "outdoors",
+                "comment": " ",
+                "type": "Mapbox.Style.Style"
+            },
+            {
+                "name": "satellite",
+                "comment": " ",
+                "type": "Mapbox.Style.Style"
+            },
+            {
+                "name": "satelliteStreets",
+                "comment": " ",
+                "type": "Mapbox.Style.Style"
+            },
+            {
+                "name": "sprite",
+                "comment": " A base URL for retrieving the sprite image and metadata. The extensions .png, .json and scale factor @2x.png will be automatically appended. This property is required if any layer uses the `backgroundPattern`, `fillPattern`, `linePattern`, `fillExtrusionPattern`, or `iconImage` properties.\n",
+                "type": "String.String -> Mapbox.Style.MiscAttr"
+            },
+            {
+                "name": "streets",
+                "comment": " ",
+                "type": "Mapbox.Style.Style"
+            }
+        ],
+        "binops": []
+    }
+]

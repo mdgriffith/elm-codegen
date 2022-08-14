@@ -1,0 +1,28 @@
+[
+    {
+        "name": "Endo",
+        "comment": " Basic `Endo` to clean up code.\n\n\n# Definition\n\n@docs Endo, Over\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Endo",
+                "comment": " This is this.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "a -> a"
+            },
+            {
+                "name": "Over",
+                "comment": " This is that.\n",
+                "args": [
+                    "outer",
+                    "inner"
+                ],
+                "type": "Endo.Endo inner -> Endo.Endo outer"
+            }
+        ],
+        "values": [],
+        "binops": []
+    }
+]

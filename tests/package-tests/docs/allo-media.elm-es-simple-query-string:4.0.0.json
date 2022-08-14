@@ -1,0 +1,72 @@
+[
+    {
+        "name": "Elastic",
+        "comment": " Parse and serialize [ElasticSearch](https://www.elastic.co/en) search query strings.\n\nThis package allows to parse an\n[elastic simple query string](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-simple-query-string-query.html#_simple_query_string_syntax)\ninto an [AST](https://en.wikipedia.org/wiki/Abstract_syntax_tree), and serialize\nstring search queries out of it.\n\n**Notes:**\n\n  - `\\r`, `\\n` and `\\t` characters will be considered as blank spaces.\n  - Serialization will enforce classic boolean operator precedence by using\n    parenthesis groups everywhere applicable.\n\n[Demo](https://allo-media.github.io/elm-es-simple-query-string/)\n\n@docs Expr\n\n\n# Parser\n\n@docs parse\n\n\n# Serializer\n\n@docs serialize\n\n",
+        "unions": [
+            {
+                "name": "Expr",
+                "comment": " An ElasticSearh expression.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "And",
+                        [
+                            "List.List Elastic.Expr"
+                        ]
+                    ],
+                    [
+                        "Exact",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Exclude",
+                        [
+                            "Elastic.Expr"
+                        ]
+                    ],
+                    [
+                        "Fuzzy",
+                        [
+                            "Basics.Int",
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Or",
+                        [
+                            "List.List Elastic.Expr"
+                        ]
+                    ],
+                    [
+                        "Prefix",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Word",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "parse",
+                "comment": " Parse an ElasticSearch search query string and convert it into an\n[`Expr`](#Expr).\n",
+                "type": "String.String -> Result.Result (List.List Parser.DeadEnd) Elastic.Expr"
+            },
+            {
+                "name": "serialize",
+                "comment": " Serialize an [`Expr`](#Expr) to an ElasticSearch query string.\n\n**Note:** Operator precedence will be enforced by the use of parenthesis groups\neverywhere applicable. That also means this function might act as a formatter as\nwell as a sanitizer:\n\n    > \" a  b  |c  d  \" |> parse |> Result.map serialize\n    Ok (\"(a b) | (c d)\") : Result (List Parser.DeadEnd) String\n\n",
+                "type": "Elastic.Expr -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

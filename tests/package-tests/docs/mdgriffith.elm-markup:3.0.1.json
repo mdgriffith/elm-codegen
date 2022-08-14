@@ -1,0 +1,591 @@
+[
+    {
+        "name": "Mark",
+        "comment": "\n\n\n# Building Documents\n\n@docs Document, document, documentWith\n\n@docs Block, block\n\n\n# Primitives\n\n@docs string, int, float, bool\n\n\n# Text\n\n@docs Styles, text, textWith\n\n\n# Text Replacements\n\n@docs Replacement, commonReplacements, replacement, balanced\n\n\n# Text Annotations\n\nAlong with basic [`styling`](#text) and [`replacements`](#replacement), we also have a few ways to annotate text.\n\n@docs annotation, verbatim\n\n\n# Records\n\n@docs Record, record, field, toBlock\n\n\n# Higher Level\n\n@docs oneOf, manyOf\n\n\n# Trees\n\n@docs tree, Enumerated, Item, Icon\n\n\n# Rendering\n\n@docs Outcome, Partial\n\n@docs compile, parse, Parsed, toString, render\n\n\n# Constraining and Recovering Blocks\n\n@docs map, verify, onError\n\n@docs withId, idToString, stringToId\n\n",
+        "unions": [
+            {
+                "name": "Enumerated",
+                "comment": " ",
+                "args": [
+                    "item"
+                ],
+                "cases": [
+                    [
+                        "Enumerated",
+                        [
+                            "{ icon : Mark.Icon, items : List.List (Mark.Item item) }"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Icon",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Bullet",
+                        []
+                    ],
+                    [
+                        "Number",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Item",
+                "comment": " **Note** `index` is our position within the nested list.\n\nThe first `Int` in the tuple is our current position in the current sub list.\n\nThe `List Int` that follows are the indices for the parent list.\n\nFor example, given this list\n\n```markup\n|> List\n    1. First element\n    -- Second Element\n        1. Element #2.1\n            -- Element #2.1.1\n        -- Element #2.2\n    -- Third Element\n```\n\nhere are the indices:\n\n```markup\n1. (1, [])\n-- (2, [])\n    1. (1, [2])\n        -- (1, [1,2])\n    -- (2, [2])\n-- (3, [])\n```\n\n",
+                "args": [
+                    "item"
+                ],
+                "cases": [
+                    [
+                        "Item",
+                        [
+                            "{ index : ( Basics.Int, List.List Basics.Int ), content : List.List item, children : Mark.Enumerated item }"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Outcome",
+                "comment": " ",
+                "args": [
+                    "failure",
+                    "almost",
+                    "success"
+                ],
+                "cases": [
+                    [
+                        "Success",
+                        [
+                            "success"
+                        ]
+                    ],
+                    [
+                        "Almost",
+                        [
+                            "almost"
+                        ]
+                    ],
+                    [
+                        "Failure",
+                        [
+                            "failure"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Block",
+                "comment": " ",
+                "args": [
+                    "data"
+                ],
+                "type": "Mark.Internal.Description.Block data"
+            },
+            {
+                "name": "Document",
+                "comment": " ",
+                "args": [
+                    "data"
+                ],
+                "type": "Mark.Internal.Description.Document data"
+            },
+            {
+                "name": "Parsed",
+                "comment": " ",
+                "args": [],
+                "type": "Mark.Internal.Description.Parsed"
+            },
+            {
+                "name": "Partial",
+                "comment": " ",
+                "args": [
+                    "data"
+                ],
+                "type": "{ errors : List.List Mark.Error.Error, result : data }"
+            },
+            {
+                "name": "Record",
+                "comment": " ",
+                "args": [
+                    "a"
+                ],
+                "type": "Mark.Internal.Description.Record a"
+            },
+            {
+                "name": "Replacement",
+                "comment": " ",
+                "args": [],
+                "type": "Mark.Internal.Parser.Replacement"
+            },
+            {
+                "name": "Styles",
+                "comment": " ",
+                "args": [],
+                "type": "{ bold : Basics.Bool, italic : Basics.Bool, strike : Basics.Bool }"
+            }
+        ],
+        "values": [
+            {
+                "name": "annotation",
+                "comment": " An annotation is some **text**, a **name**, and zero or more **attributes**.\n\nSo, we can make a `link` that looks like this in markup:\n\n```markup\nHere is my [*cool* sentence]{link| url = website.com }.\n```\n\nand rendered in elm-land via:\n\n    link =\n        Mark.annotation \"link\"\n            (\\styles url ->\n                Html.a\n                    [ Html.Attributes.href url ]\n                    (List.map renderStyles styles)\n            )\n            |> Record.field \"url\" Mark.string\n\n",
+                "type": "String.String -> (List.List ( Mark.Styles, String.String ) -> result) -> Mark.Record result"
+            },
+            {
+                "name": "balanced",
+                "comment": " A balanced replacement. This is used for replacing parentheses or to do auto-curly quotes.\n\n    Mark.balanced\n        { start = ( \"\\\"\", \"“\" )\n        , end = ( \"\\\"\", \"”\" )\n        }\n\n",
+                "type": "{ start : ( String.String, String.String ), end : ( String.String, String.String ) } -> Mark.Replacement"
+            },
+            {
+                "name": "block",
+                "comment": " A named block.\n\n    Mark.block \"MyBlock\"\n        Html.text\n        Mark.string\n\nWill parse the following and render it using `Html.text`\n\n```markup\n|> MyBlock\n    Here is an unformatted string!\n```\n\n**Note** block names should be capitalized. In the future this may be enforced.\n\n",
+                "type": "String.String -> (child -> result) -> Mark.Block child -> Mark.Block result"
+            },
+            {
+                "name": "bool",
+                "comment": " Capture either `True` or `False`.\n",
+                "type": "Mark.Block Basics.Bool"
+            },
+            {
+                "name": "commonReplacements",
+                "comment": " This is a set of common character replacements with some typographical niceties.\n\n  - `...` is converted to the ellipses unicode character(`…`).\n  - `\"` Straight double quotes are [replaced with curly quotes](https://practicaltypography.com/straight-and-curly-quotes.html) (`“`, `”`)\n  - `'` Single Quotes are replaced with apostrophes(`’`).\n  - `--` is replaced with an [en-dash(`–`)](https://practicaltypography.com/hyphens-and-dashes.html).\n  - `---` is replaced with an [em-dash(`—`)](https://practicaltypography.com/hyphens-and-dashes.html).\n  - `<>` also known as \"glue\", will create a non-breaking space (`&nbsp;`). This is not for manually increasing space (sequential `<>` tokens will only render as one `&nbsp;`), but to signify that the space between two words shouldn't break when wrapping. Like glueing two words together!\n  - `//` will change to `/`. Normally `/` starts italic formatting. To escape this, we'd normally do `\\/`, though that looks pretty funky. `//` just feels better!\n\n**Note** this is included by default in `Mark.text`\n\n",
+                "type": "List.List Mark.Replacement"
+            },
+            {
+                "name": "compile",
+                "comment": " ",
+                "type": "Mark.Document data -> String.String -> Mark.Outcome (List.List Mark.Error.Error) (Mark.Partial data) data"
+            },
+            {
+                "name": "document",
+                "comment": " Create a markup `Document`. You're first goal is to describe a document in terms of the blocks you're expecting.\n\nHere's an overly simple document that captures one block, a Title, and wraps it in some `Html`\n\n    document : Mark.Document (Html msg)\n    document =\n        Mark.document\n            (\\title -> Html.main [] [ title ])\n            (Mark.block \"Title\"\n                (Html.h1 [])\n                Mark.string\n            )\n\nwill parse the following markup:\n\n```markup\n|> Title\n    Here is my title!\n```\n\nand ultimately render it as\n\n```html\n<main>\n    <h1>Here is my title!</h1>\n</main>\n```\n\n",
+                "type": "(child -> result) -> Mark.Block child -> Mark.Document result"
+            },
+            {
+                "name": "documentWith",
+                "comment": " Capture some metadata at the start of your document, followed by the body.\n\n    import Mark.Record as Record\n\n    Mark.documentWith\n        (\\metadata body ->\n            { metadata = metadata\n            , body = body\n            }\n        )\n        { metadata =\n            Record.record\n                (\\author publishedAt ->\n                    { author = author\n                    , publishedAt = publishedAt\n                    }\n                )\n                |> Record.field \"author\" Mark.string\n                |> Record.field \"publishedAt\" Mark.string\n                |> Record.toBlock\n        , body =\n            --...\n        }\n\n",
+                "type": "(metadata -> body -> document) -> { metadata : Mark.Block metadata, body : Mark.Block body } -> Mark.Document document"
+            },
+            {
+                "name": "field",
+                "comment": " ",
+                "type": "String.String -> Mark.Block value -> Mark.Record (value -> result) -> Mark.Record result"
+            },
+            {
+                "name": "float",
+                "comment": " ",
+                "type": "Mark.Block Basics.Float"
+            },
+            {
+                "name": "idToString",
+                "comment": " It may be necessary to convert an `Id` to a `String` and back in order attach it as an `Html.Attributes.id` and read it back.\n\nSee the editor example for more details.\n\n**Note** be aware that the actual string format of an `Id` is an implementation detail and may change even on patch releases of a library.\n\n",
+                "type": "Mark.Edit.Id -> String.String"
+            },
+            {
+                "name": "int",
+                "comment": " ",
+                "type": "Mark.Block Basics.Int"
+            },
+            {
+                "name": "manyOf",
+                "comment": " Many blocks that are all at the same indentation level.\n",
+                "type": "List.List (Mark.Block a) -> Mark.Block (List.List a)"
+            },
+            {
+                "name": "map",
+                "comment": " Change the result of a block by applying a function to it.\n",
+                "type": "(a -> b) -> Mark.Block a -> Mark.Block b"
+            },
+            {
+                "name": "onError",
+                "comment": " Parsing any given `Block` can fail.\n\nHowever sometimes we don't want the _whole document_ to be unable to render just because there was a small error somewhere.\n\nSo, we need some way to say \"Hey, if you run into an issue, here's a placeholder value to use.\"\n\nAnd that's what `Mark.onError` does.\n\n    Mark.int\n        |> Mark.onError 5\n\nThis means if we fail to parse an integer (let's say we added a decimal), that this block would still be renderable with a default value of `5`.\n\n**Note** If there _is_ an error that is fixed using `onError`, we'll get a [`Partial`](#Partial) when we render the document. This will let us see the _full rendered document_, but also see the _error_ that actually occurred.\n\n",
+                "type": "a -> Mark.Block a -> Mark.Block a"
+            },
+            {
+                "name": "oneOf",
+                "comment": " ",
+                "type": "List.List (Mark.Block a) -> Mark.Block a"
+            },
+            {
+                "name": "parse",
+                "comment": " ",
+                "type": "Mark.Document data -> String.String -> Mark.Outcome (List.List Mark.Error.Error) (Mark.Partial Mark.Parsed) Mark.Parsed"
+            },
+            {
+                "name": "record",
+                "comment": " Parse a record with any number of fields.\n\n    Mark.record \"Image\"\n        (\\src description ->\n            Html.img\n                [ Html.Attributes.src src\n                , Html.Attributes.alt description\n                ]\n                []\n        )\n        |> Mark.field \"src\" Mark.string\n        |> Mark.field \"description\" Mark.string\n        |> Mark.toBlock\n\nwould parse the following markup:\n\n```markup\n|> Image\n    src = http://placekitten/200/500\n    description = What a cutie.\n```\n\nFields can be in any order in the markup. Also, by convention field names should be `camelCase`. This might be enforced in the future.\n\n",
+                "type": "String.String -> data -> Mark.Record data"
+            },
+            {
+                "name": "render",
+                "comment": " ",
+                "type": "Mark.Document data -> Mark.Parsed -> Mark.Outcome (List.List Mark.Error.Error) (Mark.Partial data) data"
+            },
+            {
+                "name": "replacement",
+                "comment": " Replace a string with another string. This can be useful to have shortcuts to unicode characters.\n\nFor example, we could use this to replace `...` with the unicode ellipses character: `…`.\n\n",
+                "type": "String.String -> String.String -> Mark.Replacement"
+            },
+            {
+                "name": "string",
+                "comment": " This will capture a multiline string.\n\nFor example:\n\n    Mark.block \"Poem\"\n        (\\str -> str)\n        Mark.string\n\nwill capture\n\n```markup\n|> Poem\n    Whose woods these are I think I know.\n    His house is in the village though;\n    He will not see me stopping here\n    To watch his woods fill up with snow.\n```\n\nWhere `str` in the above function will be\n\n    \"\"\"Whose woods these are I think I know.\n    His house is in the village though;\n    He will not see me stopping here\n    To watch his woods fill up with snow.\"\"\"\n\n**Note** If you're looking for styled text, you probably want [`Mark.text`](#text) or [`Mark.textWith`](#textWith).\n\n",
+                "type": "Mark.Block String.String"
+            },
+            {
+                "name": "stringToId",
+                "comment": " ",
+                "type": "String.String -> Maybe.Maybe Mark.Edit.Id"
+            },
+            {
+                "name": "text",
+                "comment": " One of the first things that's interesting about a markup language is how to handle _styled text_.\n\nIn `elm-markup` there are only a limited number of special characters for formatting text.\n\n  - `/italic/` results in _italics_\n  - `*bold*` results in **bold**\n  - and `~strike~` results in ~~strike~~\n\nHere's an example of how to convert markup text into `Html` using `Mark.text`:\n\n    Mark.text\n        (\\styles string ->\n            Html.span\n                [ Html.Attributes.classList\n                    [ ( \"bold\", styles.bold )\n                    , ( \"italic\", styles.italic )\n                    , ( \"strike\", styles.strike )\n                    ]\n                ]\n                [ Html.text string ]\n        )\n\nThough you might be thinking that `bold`, `italic`, and `strike` are not nearly enough!\n\nAnd you're right, this is just to get you started. Your next stop is [`Mark.textWith`](#textWith), which is more involved to use but can represent everything you're used to having in a markup language.\n\n**Note:** Text blocks stop when two consecutive newline characters are encountered.\n\n",
+                "type": "(Mark.Styles -> String.String -> text) -> Mark.Block (List.List text)"
+            },
+            {
+                "name": "textWith",
+                "comment": " Handling formatted text is a little more involved than may be initially apparent, but have no fear!\n\n`textWith` is where a lot of things come together. Let's check out what these fields actually mean.\n\n  - `view` is the function to render an individual fragment of text.\n      - This is mostly what [`Mark.text`](#text) does, so it should seem familiar.\n  - `replacements` will replace characters before rendering.\n      - For example, we can replace `...` with the real ellipses unicode character, `…`.\n  - `inlines` are custom inline blocks. You can use these to render things like links or emojis :D.\n\n",
+                "type": "{ view : Mark.Styles -> String.String -> rendered, replacements : List.List Mark.Replacement, inlines : List.List (Mark.Record rendered) } -> Mark.Block (List.List rendered)"
+            },
+            {
+                "name": "toBlock",
+                "comment": " Convert a `Record` to a `Block`.\n",
+                "type": "Mark.Record a -> Mark.Block a"
+            },
+            {
+                "name": "toString",
+                "comment": " ",
+                "type": "Mark.Parsed -> String.String"
+            },
+            {
+                "name": "tree",
+                "comment": " Would you believe that a markdown list is actually a tree?\n\nHere's an example of a nested list in `elm-markup`:\n\n```markup\n|> List\n    1.  This is definitely the first thing.\n\n        With some additional content.\n\n    --- Another thing.\n\n        And some more content\n\n        1.  A sublist\n\n            With it's content\n\n            And some other content\n\n        --- Second item\n```\n\n**Note** As before, the indentation is always a multiple of 4.\n\nIn `elm-markup` you can make a nested section either `Bulleted` or `Numbered` by having the first element of the section start with `-` or `1.`.\n\nThe rest of the icons at that level are ignored. So this:\n\n```markup\n|> List\n    1. First\n    -- Second\n    -- Third\n```\n\nIs a numbered list. And this:\n\n```markup\n|> List\n    -- First\n        1. sublist one\n        -- sublist two\n        -- sublist three\n    -- Second\n    -- Third\n```\n\nis a bulleted list with a numbered list inside of it.\n\n**Note** You can use as many dashes(`-`) as you want to start an item. This can be useful to make the indentation match up. Similarly, you can also use spaces after the dash or number.\n\nHere's how to render the above list:\n\n    import Mark\n\n    myTree =\n        Mark.tree \"List\" renderList text\n\n    -- Note: we have to define this as a separate function because\n    -- `Items` and `Node` are a pair of mutually recursive data structures.\n    -- It's easiest to render them using two separate functions:\n    -- renderList and renderItem\n    renderList (Mark.Enumerated list) =\n        let\n            group =\n                case list.icon of\n                    Mark.Bullet ->\n                        Html.ul\n\n                    Mark.Number ->\n                        Html.ol\n        in\n        group []\n            (List.map renderItem list.items)\n\n    renderItem (Mark.Item item) =\n        Html.li []\n            [ Html.div [] item.content\n            , renderList item.children\n            ]\n\n",
+                "type": "String.String -> (Mark.Enumerated item -> result) -> Mark.Block item -> Mark.Block result"
+            },
+            {
+                "name": "verbatim",
+                "comment": " A `verbatim` annotation is denoted by backticks(\\`) and allows you to capture a literal string.\n\nJust like `token` and `annotation`, a `verbatim` can have a name and attributes attached to it.\n\nLet's say we wanted to embed an inline piece of elm code. We could write\n\n    inlineElm =\n        Mark.verbatim \"elm\"\n            (\\str ->\n                Html.span\n                    [ Html.Attributes.class \"elm-code\" ]\n                    [ Html.text str ]\n            )\n\nWhich would capture the following\n\n```markup\nHere's an inline function: `\\you -> Awesome`{elm}.\n```\n\n**Note** A verbatim can be written without a name or attributes and will capture the contents as a literal string, ignoring any special characters.\n\n```markup\nLet's take a look at `http://elm-lang.com`.\n```\n\n",
+                "type": "String.String -> (String.String -> result) -> Mark.Record result"
+            },
+            {
+                "name": "verify",
+                "comment": " `Mark.verify` lets you put constraints on a block.\n\nLet's say you don't just want a `Mark.string`, you actually want a date.\n\nSo, you install the [`ISO8601`](https://package.elm-lang.org/packages/rtfeldman/elm-iso8601-date-strings/latest/) and you write something that looks like:\n\n    import Iso8601\n    import Mark\n    import Mark.Error\n    import Time\n\n    date : Mark.Block Time.Posix\n    date =\n        Mark.verify\n            (\\str ->\n                str\n                    |> Iso8601.toTime\n                    |> Result.mapError\n                        (\\_ -> illformatedDateMessage)\n            )\n            Mark.string\n\n    illformatedDateMessage =\n        Mark.Error.custom\n            { title = \"Bad Date\"\n            , message =\n                [ \"I was trying to parse a date, but this format looks off.\\n\\n\"\n                , \"Dates should be in ISO 8601 format:\\n\\n\"\n                , \"YYYY-MM-DDTHH:mm:ss.SSSZ\"\n                ]\n            }\n\nNow you can use `date` whever you actually want dates and the error message will be shown if something goes wrong.\n\nMore importantly, you now know if a document parses successfully, that all your dates are correctly formatted.\n\n`Mark.verify` is a very nice way to extend your markup however you'd like.\n\nYou could use it to\n\n  - add units to numbers\n  - parse a custom format, like [Latex mathematical equations](https://en.wikibooks.org/wiki/LaTeX/Mathematics#Operators)\n  - ensure that numbers are between a range or are always positive.\n\nHow exciting! Seriously, I think this is pretty cool.\n\n",
+                "type": "(a -> Result.Result Mark.Error.Custom b) -> Mark.Block a -> Mark.Block b"
+            },
+            {
+                "name": "withId",
+                "comment": " Get an `Id` associated with a `Block`, which can be used to make updates through `Mark.Edit`.\n\n    Mark.withId\n        (\\id str ->\n            Html.span\n                [ onClick (Mark.Edit.delete id) ]\n                [ Html.text str ]\n        )\n        Mark.string\n\n",
+                "type": "(Mark.Edit.Id -> a -> b) -> Mark.Block a -> Mark.Block b"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Mark.Edit",
+        "comment": " This module allows you to make **edits** to `Parsed`, that intermediate data structure we talked about in [`Mark`](Mark).\n\nThis means you can build an editor for your document.\n\nIn order to make edits to your document you need an [`Id`](#Id) and an [`Edit`](#Edit).\n\nOnce you have those you can [`update`](#update) your document, which can succeed or fail depending on if the edit was valid.\n\n\n# Updating `Parsed`\n\n@docs update, Id, Edit\n\n\n# Text Edits\n\nHere are edits you cna make against [`Mark.text`](Mark#text) and [`Mark.textWith`](Mark#textWith) blocks.\n\n**Note** These edits don't apply to [`Mark.string`](Mark#string). If you want to modify a `Mark.string`, use [`Mark.Edit.replace`](Mark-Edit#replace).\n\n@docs Offset\n\n@docs insertText, deleteText\n\n@docs Styles, restyle, addStyles, removeStyles\n\n@docs annotate, verbatim\n\n\n# General Edits\n\n@docs replace, delete, insertAt\n\n",
+        "unions": [
+            {
+                "name": "Edit",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Id",
+                "comment": " Every block has an `Id`. You can retrieve the `Id` for a block using [`Mark.withId`](Mark#withId)\n",
+                "args": [],
+                "type": "Mark.Internal.Id.Id"
+            },
+            {
+                "name": "Offset",
+                "comment": " The index of the rendered `String`. Let's say you have this string in your markup source.\n\n```markup\nHere is *my string*.\n```\n\nWhen you're rendering this, it's broken into three segments.\n\n  - `Here is`\n  - `my string` (which is bold)\n  - `.`\n\nThe `Offset` is character position where those three strings are considered as one big one.\n\nHere are some lookups:\n\n  - `0  -> H`\n  - `8  -> m`\n  - `17 -> .`\n\nWe're not counting control characters from our markup source.\n\n",
+                "args": [],
+                "type": "Basics.Int"
+            },
+            {
+                "name": "Styles",
+                "comment": " ",
+                "args": [],
+                "type": "{ bold : Basics.Bool, italic : Basics.Bool, strike : Basics.Bool }"
+            }
+        ],
+        "values": [
+            {
+                "name": "addStyles",
+                "comment": " Add the given styles if they are not present in the text selection.\n\n**Note:** Other styling is unaffected.\n\n",
+                "type": "Mark.Edit.Id -> Mark.Edit.Offset -> Mark.Edit.Offset -> Mark.Edit.Styles -> Mark.Edit.Edit"
+            },
+            {
+                "name": "annotate",
+                "comment": " Put the current text selection within an `annotation` with some attributes.\n\nHere's an example that would turn the selection into a `link`.\n\n    Mark.Edit.annotate id\n        start\n        end\n        \"link\"\n        [ ( \"url\", Mark.New.string \"https://guide.elm-lang.org/\" ) ]\n\n**Note** existing annotations within the selection are removed.\n\n",
+                "type": "Mark.Edit.Id -> Mark.Edit.Offset -> Mark.Edit.Offset -> String.String -> List.List ( String.String, Mark.New.Block ) -> Mark.Edit.Edit"
+            },
+            {
+                "name": "delete",
+                "comment": " Delete a block at an index within a `Mark.manyOf`.\n",
+                "type": "Mark.Edit.Id -> Basics.Int -> Mark.Edit.Edit"
+            },
+            {
+                "name": "deleteText",
+                "comment": " ",
+                "type": "Mark.Edit.Id -> Mark.Edit.Offset -> Mark.Edit.Offset -> Mark.Edit.Edit"
+            },
+            {
+                "name": "insertAt",
+                "comment": " Insert a block at an index within a `Mark.manyOf`.\n",
+                "type": "Mark.Edit.Id -> Basics.Int -> Mark.New.Block -> Mark.Edit.Edit"
+            },
+            {
+                "name": "insertText",
+                "comment": " ",
+                "type": "Mark.Edit.Id -> Mark.Edit.Offset -> List.List Mark.New.Text -> Mark.Edit.Edit"
+            },
+            {
+                "name": "removeStyles",
+                "comment": " Remove the given styles if they are present in the text selection.\n\n**Note:** Other styling is unaffected.\n\n",
+                "type": "Mark.Edit.Id -> Mark.Edit.Offset -> Mark.Edit.Offset -> Mark.Edit.Styles -> Mark.Edit.Edit"
+            },
+            {
+                "name": "replace",
+                "comment": " The `Block` mentioned here is actually a `Mark.New.Block`. Use [`Mark.New`](/Mark-New) to create the new block you'd like.\n",
+                "type": "Mark.Edit.Id -> Mark.New.Block -> Mark.Edit.Edit"
+            },
+            {
+                "name": "restyle",
+                "comment": " Remove all styling on the text selection and replace with the given styling.\n",
+                "type": "Mark.Edit.Id -> Mark.Edit.Offset -> Mark.Edit.Offset -> Mark.Edit.Styles -> Mark.Edit.Edit"
+            },
+            {
+                "name": "update",
+                "comment": " ",
+                "type": "Mark.Internal.Description.Document data -> Mark.Edit.Edit -> Mark.Internal.Description.Parsed -> Result.Result (List.List Mark.Error.Error) Mark.Internal.Description.Parsed"
+            },
+            {
+                "name": "verbatim",
+                "comment": " Same as `annotate`, but creates a `verbatim` instead.\n\n**Note** existing annotations within the selection are removed.\n\n",
+                "type": "Mark.Edit.Id -> Mark.Edit.Offset -> Mark.Edit.Offset -> String.String -> List.List ( String.String, Mark.New.Block ) -> Mark.Edit.Edit"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Mark.Error",
+        "comment": "\n\n@docs Error\n\n\n# Rendering Errors\n\n@docs toString, toHtml, Theme, toDetails, Details, Text, Range, Position\n\n\n# Creating Custom Errors\n\n@docs Custom\n\n",
+        "unions": [
+            {
+                "name": "Theme",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Dark",
+                        []
+                    ],
+                    [
+                        "Light",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Custom",
+                "comment": " Create a custom error message to use with [`Mark.verify`](Mark#verify)\n",
+                "args": [],
+                "type": "{ title : String.String, message : List.List String.String }"
+            },
+            {
+                "name": "Details",
+                "comment": " ",
+                "args": [],
+                "type": "{ title : String.String, message : List.List Mark.Error.Text, region : Maybe.Maybe Mark.Error.Range }"
+            },
+            {
+                "name": "Error",
+                "comment": " ",
+                "args": [],
+                "type": "Mark.Internal.Error.Rendered"
+            },
+            {
+                "name": "Position",
+                "comment": " ",
+                "args": [],
+                "type": "{ offset : Basics.Int, line : Basics.Int, column : Basics.Int }"
+            },
+            {
+                "name": "Range",
+                "comment": " ",
+                "args": [],
+                "type": "{ start : Mark.Error.Position, end : Mark.Error.Position }"
+            },
+            {
+                "name": "Text",
+                "comment": " ",
+                "args": [],
+                "type": "{ text : String.String, bold : Basics.Bool, underline : Basics.Bool, color : Maybe.Maybe String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "toDetails",
+                "comment": " ",
+                "type": "Mark.Error.Error -> Mark.Error.Details"
+            },
+            {
+                "name": "toHtml",
+                "comment": " ",
+                "type": "Mark.Error.Theme -> Mark.Error.Error -> Html.Html msg"
+            },
+            {
+                "name": "toString",
+                "comment": " ",
+                "type": "Mark.Error.Error -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Mark.New",
+        "comment": " Create a new `Mark.Block` that can be added to your document using `Mark.Edit.replace` or `Mark.Edit.insertAt`.\n\nLet's say we are capturing a basic diagram in our document and we want to dynamically insert a circle.\n\nWe can make a new circle by writing the following function\n\n    import Mark.New as New\n\n    type alias Circle =\n        { x : Int\n        , y : Int\n        , label : String\n        }\n\n    circle : Circle -> Mark.New.Block\n    circle details =\n        New.record \"Circle\"\n            [ ( \"label\", New.string details.label )\n            , ( \"x\", New.int details.x )\n            , ( \"y\", New.int details.y )\n            ]\n\nAnd then insert our newly made circle using `Mark.Edit.insertAt`.\n\n**Note:** The document will only accept edits which are valid.\n\n@docs Block\n\n\n# Primitives\n\n@docs string, int, float, bool\n\n\n# Blocks\n\n@docs block, record, many, tree, Tree, Icon\n\n\n# Text\n\nHere's an example of creating some text.\n\n    newText =\n        New.text\n            [ Mark.unstyled \"Look at my \"\n            , Mark.bold \"cool\"\n            , Mark.unstyled \" new text!\"\n            ]\n\n@docs Text, text, unstyled, bold, italics, strike, Styles, styled\n\n\n# Text Annotation\n\n@docs annotation, verbatim\n\n",
+        "unions": [
+            {
+                "name": "Icon",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Bullet",
+                        []
+                    ],
+                    [
+                        "Number",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Tree",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Tree",
+                        [
+                            "{ icon : Mark.New.Icon, content : List.List Mark.New.Block, children : List.List Mark.New.Tree }"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Block",
+                "comment": " ",
+                "args": [],
+                "type": "Mark.Internal.Description.Expectation"
+            },
+            {
+                "name": "Styles",
+                "comment": " ",
+                "args": [],
+                "type": "{ bold : Basics.Bool, italic : Basics.Bool, strike : Basics.Bool }"
+            },
+            {
+                "name": "Text",
+                "comment": " ",
+                "args": [],
+                "type": "Mark.Internal.Description.InlineExpectation"
+            }
+        ],
+        "values": [
+            {
+                "name": "annotation",
+                "comment": "\n\n    New.annotation\n        { name = \"link\"\n        , text =\n            [ New.unstyled \"my link to the elm website!\" ]\n        , fields =\n            [ ( \"url\", Mark.string \"https://elm-lang.com\" ) ]\n        }\n\n",
+                "type": "{ name : String.String, text : List.List ( Mark.New.Styles, String.String ), fields : List.List ( String.String, Mark.New.Block ) } -> Mark.New.Text"
+            },
+            {
+                "name": "block",
+                "comment": " ",
+                "type": "String.String -> Mark.New.Block -> Mark.New.Block"
+            },
+            {
+                "name": "bold",
+                "comment": " ",
+                "type": "String.String -> Mark.New.Text"
+            },
+            {
+                "name": "bool",
+                "comment": " ",
+                "type": "Basics.Bool -> Mark.New.Block"
+            },
+            {
+                "name": "float",
+                "comment": " ",
+                "type": "Basics.Float -> Mark.New.Block"
+            },
+            {
+                "name": "int",
+                "comment": " ",
+                "type": "Basics.Int -> Mark.New.Block"
+            },
+            {
+                "name": "italics",
+                "comment": " ",
+                "type": "String.String -> Mark.New.Text"
+            },
+            {
+                "name": "many",
+                "comment": " ",
+                "type": "List.List Mark.New.Block -> Mark.New.Block"
+            },
+            {
+                "name": "record",
+                "comment": " ",
+                "type": "String.String -> List.List ( String.String, Mark.New.Block ) -> Mark.New.Block"
+            },
+            {
+                "name": "strike",
+                "comment": " ",
+                "type": "String.String -> Mark.New.Text"
+            },
+            {
+                "name": "string",
+                "comment": " ",
+                "type": "String.String -> Mark.New.Block"
+            },
+            {
+                "name": "styled",
+                "comment": " ",
+                "type": "Mark.New.Styles -> String.String -> Mark.New.Text"
+            },
+            {
+                "name": "text",
+                "comment": " ",
+                "type": "List.List Mark.New.Text -> Mark.New.Block"
+            },
+            {
+                "name": "tree",
+                "comment": " ",
+                "type": "List.List Mark.New.Tree -> Mark.New.Block"
+            },
+            {
+                "name": "unstyled",
+                "comment": " ",
+                "type": "String.String -> Mark.New.Text"
+            },
+            {
+                "name": "verbatim",
+                "comment": " ",
+                "type": "{ name : String.String, text : String.String, fields : List.List ( String.String, Mark.New.Block ) } -> Mark.New.Text"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,252 @@
+[
+    {
+        "name": "Seq",
+        "comment": " Lazy list implementation in Elm.\n\n\n# Types.\n\n@docs Seq\n\n\n# Constructors.\n\n@docs cons, empty, singleton\n\n\n# Query operations.\n\n@docs isEmpty, head, tail, headAndTail, member, length\n\n\n# Conversions.\n\n@docs toList, fromList, toArray, fromArray\n\n\n# Map, reduce and related operations.\n\n@docs map, zip, reduce, reductions, flatten, append, foldl, foldr\n\n\n# Common operations.\n\n@docs intersperse, interleave, reverse, cycle, iterate, repeat, take, takeWhile, drop, dropWhile\n\n\n# Filtering operations.\n\n@docs keepIf, dropIf, filterMap, unique\n\n\n# Chaining operations.\n\n@docs andMap, andThen\n\n\n# Useful math stuff.\n\n@docs numbers, sum, product\n\n\n# All the maps.\n\n@docs map2, map3\n\n\n# All the Cartesian products.\n\n@docs product2, product3\n\n",
+        "unions": [
+            {
+                "name": "Seq",
+                "comment": " The lazy list type.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Nil",
+                        []
+                    ],
+                    [
+                        "Cons",
+                        [
+                            "a",
+                            "() -> Seq.Seq a"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "andMap",
+                "comment": " Known as `mapN` in some circles. Allows you to apply `map` in cases\nwhere then number of arguments are greater than 5.\n\nThe argument order is such that it works well with `|>` chains.\n\n",
+                "type": "Seq.Seq a -> Seq.Seq (a -> b) -> Seq.Seq b"
+            },
+            {
+                "name": "andThen",
+                "comment": " Chain list producing operations. Map then flatten.\n",
+                "type": "(a -> Seq.Seq b) -> Seq.Seq a -> Seq.Seq b"
+            },
+            {
+                "name": "append",
+                "comment": " Append a list to another list.\n",
+                "type": "Seq.Seq a -> Seq.Seq a -> Seq.Seq a"
+            },
+            {
+                "name": "cons",
+                "comment": " Add a value to the front of a list.\n",
+                "type": "a -> Seq.Seq a -> Seq.Seq a"
+            },
+            {
+                "name": "cycle",
+                "comment": " Take a list and repeat it ad infinitum.\n",
+                "type": "Seq.Seq a -> Seq.Seq a"
+            },
+            {
+                "name": "drop",
+                "comment": " Drop at most `n` many values from a list.\n",
+                "type": "Basics.Int -> Seq.Seq a -> Seq.Seq a"
+            },
+            {
+                "name": "dropIf",
+                "comment": " Drop all elements in a list that satisfy the given predicate.\n",
+                "type": "(a -> Basics.Bool) -> Seq.Seq a -> Seq.Seq a"
+            },
+            {
+                "name": "dropWhile",
+                "comment": " Drop elements from a list as long as the predicate is satisfied.\n",
+                "type": "(a -> Basics.Bool) -> Seq.Seq a -> Seq.Seq a"
+            },
+            {
+                "name": "empty",
+                "comment": " Create an empty list.\n",
+                "type": "Seq.Seq a"
+            },
+            {
+                "name": "filterMap",
+                "comment": " Map a function that may fail over a lazy list, keeping only\nthe values that were successfully transformed.\n",
+                "type": "(a -> Maybe.Maybe b) -> Seq.Seq a -> Seq.Seq b"
+            },
+            {
+                "name": "flatten",
+                "comment": " Flatten a list of lists into a single list by appending all the inner\nlists into one big list.\n",
+                "type": "Seq.Seq (Seq.Seq a) -> Seq.Seq a"
+            },
+            {
+                "name": "foldl",
+                "comment": " Analogous to `List.foldl`. Is an alias for `reduce`.\n",
+                "type": "(a -> b -> b) -> b -> Seq.Seq a -> b"
+            },
+            {
+                "name": "foldr",
+                "comment": " Analogous to `List.foldr`.\n",
+                "type": "(a -> b -> b) -> b -> Seq.Seq a -> b"
+            },
+            {
+                "name": "fromArray",
+                "comment": " Convert an array to a lazy list.\n",
+                "type": "Array.Array a -> Seq.Seq a"
+            },
+            {
+                "name": "fromList",
+                "comment": " Convert a normal list to a lazy list.\n",
+                "type": "List.List a -> Seq.Seq a"
+            },
+            {
+                "name": "head",
+                "comment": " Get the head of a list.\n",
+                "type": "Seq.Seq a -> Maybe.Maybe a"
+            },
+            {
+                "name": "headAndTail",
+                "comment": " Get the head and tail of a list.\n",
+                "type": "Seq.Seq a -> Maybe.Maybe ( a, Seq.Seq a )"
+            },
+            {
+                "name": "interleave",
+                "comment": " Interleave the elements of a list in another list. The two lists get\ninterleaved at the end.\n",
+                "type": "Seq.Seq a -> Seq.Seq a -> Seq.Seq a"
+            },
+            {
+                "name": "intersperse",
+                "comment": " Places the given value between all members of the given list.\n",
+                "type": "a -> Seq.Seq a -> Seq.Seq a"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Detect if a list is empty or not.\n",
+                "type": "Seq.Seq a -> Basics.Bool"
+            },
+            {
+                "name": "iterate",
+                "comment": " Create an infinite list of applications of a function on some value.\n\nEquivalent to:\n\n    cons x (cons (f x) (cons (f (f x)) (cons (f (f (f x))) ... -- etc...\n\n",
+                "type": "(a -> a) -> a -> Seq.Seq a"
+            },
+            {
+                "name": "keepIf",
+                "comment": " Keep all elements in a list that satisfy the given predicate.\n",
+                "type": "(a -> Basics.Bool) -> Seq.Seq a -> Seq.Seq a"
+            },
+            {
+                "name": "length",
+                "comment": " Get the length of a lazy list - provided it is finite.\n",
+                "type": "Seq.Seq a -> Basics.Int"
+            },
+            {
+                "name": "map",
+                "comment": " Map a function over a list.\n",
+                "type": "(a -> b) -> Seq.Seq a -> Seq.Seq b"
+            },
+            {
+                "name": "map2",
+                "comment": " Map a function over 2 lists.\n",
+                "type": "(a -> b -> c) -> Seq.Seq a -> Seq.Seq b -> Seq.Seq c"
+            },
+            {
+                "name": "map3",
+                "comment": " Map a function over 3 lists.\n",
+                "type": "(a -> b -> c -> d) -> Seq.Seq a -> Seq.Seq b -> Seq.Seq c -> Seq.Seq d"
+            },
+            {
+                "name": "member",
+                "comment": " Test if a value is a member of a list.\n",
+                "type": "a -> Seq.Seq a -> Basics.Bool"
+            },
+            {
+                "name": "numbers",
+                "comment": " The infinite list of counting numbers.\n\ni.e.:\n\n    cons 1 (cons 2 (cons 3 (cons 4 (cons 5 ... -- etc...\n\n",
+                "type": "Seq.Seq number"
+            },
+            {
+                "name": "product",
+                "comment": " Get the product of a list of numbers.\n",
+                "type": "Seq.Seq number -> number"
+            },
+            {
+                "name": "product2",
+                "comment": " Create a lazy list containing all possible pairs in the given lazy lists.\n",
+                "type": "Seq.Seq a -> Seq.Seq b -> Seq.Seq ( a, b )"
+            },
+            {
+                "name": "product3",
+                "comment": " Create a lazy list containing all possible triples in the given lazy lists.\n",
+                "type": "Seq.Seq a -> Seq.Seq b -> Seq.Seq c -> Seq.Seq ( a, b, c )"
+            },
+            {
+                "name": "reduce",
+                "comment": " Reduce a list with a given reducer and an initial value.\n\nExample :\nreduce (+) 0 (fromList [1, 2, 3, 4]) == 10\n\n",
+                "type": "(a -> b -> b) -> b -> Seq.Seq a -> b"
+            },
+            {
+                "name": "reductions",
+                "comment": " Produce intermediate values of reduce.\n",
+                "type": "(a -> b -> b) -> b -> Seq.Seq a -> Seq.Seq b"
+            },
+            {
+                "name": "repeat",
+                "comment": " Repeat a value ad infinitum.\nBe careful when you use this. The result of this is a truly infinite list.\nDo not try calling `reduce` or `toList` on an infinite list as it'll never\nfinish computing. Make sure you then filter it down to a finite list with `head`\nor `take` or something.\n",
+                "type": "a -> Seq.Seq a"
+            },
+            {
+                "name": "reverse",
+                "comment": " Reverse a list.\n",
+                "type": "Seq.Seq a -> Seq.Seq a"
+            },
+            {
+                "name": "singleton",
+                "comment": " Create a singleton list.\n",
+                "type": "a -> Seq.Seq a"
+            },
+            {
+                "name": "sum",
+                "comment": " Get the sum of a list of numbers.\n",
+                "type": "Seq.Seq number -> number"
+            },
+            {
+                "name": "tail",
+                "comment": " Get the tail of a list.\n",
+                "type": "Seq.Seq a -> Maybe.Maybe (Seq.Seq a)"
+            },
+            {
+                "name": "take",
+                "comment": " Take at most `n` many values from a list.\n",
+                "type": "Basics.Int -> Seq.Seq a -> Seq.Seq a"
+            },
+            {
+                "name": "takeWhile",
+                "comment": " Take elements from a list as long as the predicate is satisfied.\n",
+                "type": "(a -> Basics.Bool) -> Seq.Seq a -> Seq.Seq a"
+            },
+            {
+                "name": "toArray",
+                "comment": " Convert a lazy list to an array.\n",
+                "type": "Seq.Seq a -> Array.Array a"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert a lazy list to a normal list.\n",
+                "type": "Seq.Seq a -> List.List a"
+            },
+            {
+                "name": "unique",
+                "comment": " Remove all duplicates from a list and return a list of distinct elements.\n",
+                "type": "Seq.Seq a -> Seq.Seq a"
+            },
+            {
+                "name": "zip",
+                "comment": " Zip two lists together.\n",
+                "type": "Seq.Seq a -> Seq.Seq b -> Seq.Seq ( a, b )"
+            }
+        ],
+        "binops": []
+    }
+]

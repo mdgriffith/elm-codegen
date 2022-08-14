@@ -1,0 +1,16 @@
+[
+    {
+        "name": "PandemicDate",
+        "comment": " When you feel like time stopped and we're still in March 2020 ...\n\n\n# Function(s)\n\n@docs toPandemicDate\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toPandemicDate",
+                "comment": " Returns the date in March 2020 that the\ndate feels like it is.\n\n    import Time exposing (Month(..))\n    import Date exposing (Unit(..))\n    import PandemicDate\n    PandemicDate.toPandemicDate (Date.fromCalendarDate 2022 Jan 13)\n\nThis will return \"March 683rd, 2020\"\n\n",
+                "type": "Date.Date -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

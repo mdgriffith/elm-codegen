@@ -1,0 +1,100 @@
+[
+    {
+        "name": "Debug.Control",
+        "comment": " Create interactive controls for complex data structures.\n\n@docs Control\n@docs value\n@docs bool, string, stringTextarea, date\n@docs values, maybe, choice, list, record, field\n@docs map\n\n@docs view, currentValue, allValues\n@docs lazy\n\n",
+        "unions": [
+            {
+                "name": "Control",
+                "comment": " An interactive control that produces a value `a`.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "allValues",
+                "comment": " TODO: revise API\n",
+                "type": "Debug.Control.Control a -> List.List a"
+            },
+            {
+                "name": "bool",
+                "comment": " A `Control` that toggles a `Bool` with a checkbox UI.\n",
+                "type": "Basics.Bool -> Debug.Control.Control Basics.Bool"
+            },
+            {
+                "name": "choice",
+                "comment": " A `Control` that chooses between a list of nested controls.\n\nThis will crash if you provide an empty list.\n\nThe first entry will be the initial value.\n\n",
+                "type": "List.List ( String.String, Debug.Control.Control a ) -> Debug.Control.Control a"
+            },
+            {
+                "name": "currentValue",
+                "comment": " Gets the current value of a `Control`.\n",
+                "type": "Debug.Control.Control a -> a"
+            },
+            {
+                "name": "date",
+                "comment": " A `Control` that allows a Date (include date and time) input\nwith a date picker UI.\n",
+                "type": "Time.Zone -> Time.Posix -> Debug.Control.Control Time.Posix"
+            },
+            {
+                "name": "field",
+                "comment": " Used with `record` to create a `Control` representing a record.\n\nSee [`record`](#record).\n\n",
+                "type": "String.String -> Debug.Control.Control a -> Debug.Control.Control (a -> b) -> Debug.Control.Control b"
+            },
+            {
+                "name": "lazy",
+                "comment": " Use lazy when working with recursive types:\n\n    import Debug.Control as Control exposing (Control)\n\n    type RecursiveType\n        = RecursiveType (Maybe RecursiveType)\n\n    recursiveTypeControl : Control RecursiveType\n    recursiveTypeControl =\n        Control.choice\n            [ ( \"No child\", Control.value Nothing )\n            , ( \"child\", Control.lazy (\\() -> recursiveTypeControl) |> Control.map Just )\n            ]\n            |> Control.map RecursiveType\n\n",
+                "type": "(() -> Debug.Control.Control a) -> Debug.Control.Control a"
+            },
+            {
+                "name": "list",
+                "comment": " A `Control` that provides a list of selected length.\n",
+                "type": "Debug.Control.Control a -> Debug.Control.Control (List.List a)"
+            },
+            {
+                "name": "map",
+                "comment": " Transform the value produced by a `Control`.\n",
+                "type": "(a -> b) -> Debug.Control.Control a -> Debug.Control.Control b"
+            },
+            {
+                "name": "maybe",
+                "comment": " A `Control` that wraps another control in a `Maybe`, which a checkbox UI.\n\nThe `Bool` parameter is the initial value, where `False` is `Nothing`,\nand `True` is `Just` with the value of the nested control.\n\n",
+                "type": "Basics.Bool -> Debug.Control.Control a -> Debug.Control.Control (Maybe.Maybe a)"
+            },
+            {
+                "name": "record",
+                "comment": " Create a `Control` representing a record with multiple fields.\n\nThis uses an API similar to [elm-decode-pipeline](http://package.elm-lang.org/packages/NoRedInk/elm-decode-pipeline/latest).\n\nYou will use this with `field`.\n\n    import Debug.Control exposing (field, record, string)\n\n    type alias Point =\n        { x : String\n        , y : String\n        }\n\n    pointControl : Control Point\n    pointControl =\n        record Point\n            |> field \"x\" (string \"initial x value\")\n            |> field \"y\" (string \"initial y value\")\n\n",
+                "type": "a -> Debug.Control.Control a"
+            },
+            {
+                "name": "string",
+                "comment": " A `Control` that allows text input.\n",
+                "type": "String.String -> Debug.Control.Control String.String"
+            },
+            {
+                "name": "stringTextarea",
+                "comment": " A `Control` that allows multiline text input.\n",
+                "type": "String.String -> Debug.Control.Control String.String"
+            },
+            {
+                "name": "value",
+                "comment": " A `Control` that has a static value (and no UI).\n",
+                "type": "a -> Debug.Control.Control a"
+            },
+            {
+                "name": "values",
+                "comment": " A `Control` that chooses between a list of values with a dropdown UI.\n\nThe first value will be the initial value.\n\n",
+                "type": "(a -> String.String) -> List.List a -> Debug.Control.Control a"
+            },
+            {
+                "name": "view",
+                "comment": " Renders the interactive UI for a `Control`.\n",
+                "type": "(Debug.Control.Control a -> msg) -> Debug.Control.Control a -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

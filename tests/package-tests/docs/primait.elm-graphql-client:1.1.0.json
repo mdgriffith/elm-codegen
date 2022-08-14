@@ -1,0 +1,214 @@
+[
+    {
+        "name": "GraphqlClient.Client",
+        "comment": " This is a Graphql client with automatic retry\n\n@docs runQuery\n@docs runMutation\n@docs authenticationChanged\n@docs manageUpdate\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "authenticationChanged",
+                "comment": " Function to call when the caller has finished its \"job\" and it's ready to perform the query/mutation again.\nIf there were queries/mutations in pipeline, that were blocked by an authentication problem, they are all returned as a Cmd to be executed.\n\nThe arguments are:\n\n  - the component model\n  - a list of headers (name: String, value: String)\n  - a closure to updater the caller model with the component model. Something like (\\\\gqlClientModel -> {model | gqlClientModel = gqlClientModel})\n  - the caller model\n\n",
+                "type": "GraphqlClient.Model.Model name decodesTo msg -> List.List GraphqlClient.Model.Authentication -> (GraphqlClient.Model.Model name decodesTo msg -> model -> model) -> model -> ( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "manageUpdate",
+                "comment": " This is a function that simplifies the wiring between the caller and the graphql client component.\nIt should be put inside the caller Update cycle.\nThe main purpose is to make it easier for the caller to remember how the integration should be done, by passing arguments to this function.\nIt is not mandatory for this reason, but highly recommended.\n\nThe arguments are:\n\n  - the component message\n  - the component model\n  - the caller Cmd Msg to get a new header\n  - a closure to handle the result of an OK query. The closure should accept the caller model and a decoder for the response\n  - a closure to handle the result of an Error query. The closure should accept the caller model and a Graphql.Http.Error\n  - a closure to updater the caller model with the component model. Something like (\\\\gqlClientModel -> {model | gqlClientModel = gqlClientModel})\n  - the caller model\n\n",
+                "type": "GraphqlClient.Model.Msg name decodesTo -> GraphqlClient.Model.Model name decodesTo msg -> Platform.Cmd.Cmd msg -> (model -> name -> decodesTo -> ( model, Platform.Cmd.Cmd msg )) -> (model -> name -> Graphql.Http.Error decodesTo -> model) -> (GraphqlClient.Model.Model name decodesTo msg -> model -> model) -> model -> ( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "runMutation",
+                "comment": " Function that execute a Graphql mutation\nIt return a tuple with the updated internal model (to be inserted in the caller model) and the Cmd to be executed.\n\nThe arguments are:\n\n  - the mutation name\n  - a list of headers (name: String, value: String)\n  - the component model\n  - the selection set of the query that will be executed\n\n",
+                "type": "name -> List.List GraphqlClient.Model.Authentication -> GraphqlClient.Model.Model name decodesTo msg -> Graphql.SelectionSet.SelectionSet decodesTo Graphql.Operation.RootMutation -> ( GraphqlClient.Model.Model name decodesTo msg, Platform.Cmd.Cmd (GraphqlClient.Model.Msg name decodesTo) )"
+            },
+            {
+                "name": "runQuery",
+                "comment": " Function that execute a Graphql query\nIt return a tuple with the updated internal model (to be inserted in the caller model) and the Cmd to be executed.\n\nThe arguments are:\n\n  - the query name\n  - a list of headers (name: String, value: String)\n  - the component model\n  - the selection set of the query that will be executed\n\n",
+                "type": "name -> List.List GraphqlClient.Model.Authentication -> GraphqlClient.Model.Model name decodesTo msg -> Graphql.SelectionSet.SelectionSet decodesTo Graphql.Operation.RootQuery -> ( GraphqlClient.Model.Model name decodesTo msg, Platform.Cmd.Cmd (GraphqlClient.Model.Msg name decodesTo) )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "GraphqlClient.Model",
+        "comment": " The Model\n\n@docs resetPipeline\n@docs removeQueryFromPipeline\n@docs Authentication\n@docs Model\n@docs Msg\n@docs PipelineElement\n@docs QueryId\n@docs addElementToPipeline\n@docs getAuthenticationErrorIdentifier\n@docs getElementsInPipeline\n@docs getMsgLifter\n@docs getPipelineElementName\n@docs getUrl\n@docs initialize\n\n",
+        "unions": [
+            {
+                "name": "Model",
+                "comment": " The component model\n",
+                "args": [
+                    "name",
+                    "decodesTo",
+                    "msg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Msg",
+                "comment": " The Msg\n",
+                "args": [
+                    "name",
+                    "decodesTo"
+                ],
+                "cases": [
+                    [
+                        "FirstAttemptFinished",
+                        [
+                            "GraphqlClient.Model.QueryId",
+                            "name",
+                            "RemoteData.RemoteData (Graphql.Http.Error decodesTo) decodesTo"
+                        ]
+                    ],
+                    [
+                        "SecondAttemptFinished",
+                        [
+                            "GraphqlClient.Model.QueryId",
+                            "name",
+                            "RemoteData.RemoteData (Graphql.Http.Error decodesTo) decodesTo"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "PipelineElement",
+                "comment": " A pipeline element\n",
+                "args": [
+                    "name",
+                    "decodesTo"
+                ],
+                "cases": [
+                    [
+                        "Query",
+                        [
+                            "name",
+                            "Graphql.SelectionSet.SelectionSet decodesTo Graphql.Operation.RootQuery"
+                        ]
+                    ],
+                    [
+                        "Mutation",
+                        [
+                            "name",
+                            "Graphql.SelectionSet.SelectionSet decodesTo Graphql.Operation.RootMutation"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Authentication",
+                "comment": " Represent an authentication header\n",
+                "args": [],
+                "type": "( GraphqlClient.Model.HeaderName, GraphqlClient.Model.HeaderValue )"
+            },
+            {
+                "name": "QueryId",
+                "comment": " Query id\n",
+                "args": [],
+                "type": "Basics.Int"
+            }
+        ],
+        "values": [
+            {
+                "name": "addElementToPipeline",
+                "comment": " Adds an element to the current pipeline\n",
+                "type": "( GraphqlClient.Model.QueryId, GraphqlClient.Model.PipelineElement name decodesTo ) -> GraphqlClient.Model.Model name decodesTo msg -> GraphqlClient.Model.Model name decodesTo msg"
+            },
+            {
+                "name": "getAuthenticationErrorIdentifier",
+                "comment": " Gets the error identifier\n",
+                "type": "GraphqlClient.Model.Model name decodesTo msg -> List.List Graphql.Http.GraphqlError.GraphqlError -> Basics.Bool"
+            },
+            {
+                "name": "getElementsInPipeline",
+                "comment": " Gets pipeline elements\n",
+                "type": "GraphqlClient.Model.Model name decodesTo msg -> List.List ( GraphqlClient.Model.QueryId, GraphqlClient.Model.PipelineElement name decodesTo )"
+            },
+            {
+                "name": "getMsgLifter",
+                "comment": " Gets the message lifter\n",
+                "type": "GraphqlClient.Model.Model name decodesTo msg -> GraphqlClient.Model.Msg name decodesTo -> msg"
+            },
+            {
+                "name": "getPipelineElementName",
+                "comment": " Gets the name of a pipeline element\n",
+                "type": "GraphqlClient.Model.PipelineElement name decodesTo -> name"
+            },
+            {
+                "name": "getUrl",
+                "comment": " Gets the client url\n",
+                "type": "GraphqlClient.Model.Model name decodesTo msg -> String.String"
+            },
+            {
+                "name": "initialize",
+                "comment": " Initialize the model\n",
+                "type": "String.String -> (GraphqlClient.Model.Msg name decodesTo -> msg) -> GraphqlClient.Model.Model name decodesTo msg"
+            },
+            {
+                "name": "removeQueryFromPipeline",
+                "comment": " Removes a query from the pipeline\n",
+                "type": "GraphqlClient.Model.QueryId -> GraphqlClient.Model.Model name decodesTo msg -> GraphqlClient.Model.Model name decodesTo msg"
+            },
+            {
+                "name": "resetPipeline",
+                "comment": " Resets the requests pipeline\n",
+                "type": "GraphqlClient.Model.Model name decodesTo msg -> GraphqlClient.Model.Model name decodesTo msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "GraphqlClient.Response",
+        "comment": " module for the Response type\n\n@docs Response\n\n",
+        "unions": [
+            {
+                "name": "Response",
+                "comment": " The response type\n",
+                "args": [
+                    "name",
+                    "decodesTo"
+                ],
+                "cases": [
+                    [
+                        "NotAsked",
+                        []
+                    ],
+                    [
+                        "ResponseOk",
+                        [
+                            "name",
+                            "RemoteData.RemoteData (Graphql.Http.Error decodesTo) decodesTo"
+                        ]
+                    ],
+                    [
+                        "RefreshTokenExpired",
+                        []
+                    ],
+                    [
+                        "DefinitiveError",
+                        [
+                            "name",
+                            "Graphql.Http.Error decodesTo"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "GraphqlClient.Update",
+        "comment": " Component update\n\n@docs update\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "update",
+                "comment": " Run the update for the component\n",
+                "type": "GraphqlClient.Model.Msg name decodesTo -> GraphqlClient.Model.Model name decodesTo msg -> ( GraphqlClient.Model.Model name decodesTo msg, Platform.Cmd.Cmd (GraphqlClient.Model.Msg name decodesTo), GraphqlClient.Response.Response name decodesTo )"
+            }
+        ],
+        "binops": []
+    }
+]

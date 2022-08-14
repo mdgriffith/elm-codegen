@@ -1,0 +1,172 @@
+[
+    {
+        "name": "Fraction",
+        "comment": " This library provides a safe and simple API to deal with fractions.\n\n\n# Definition\n\n@docs Fraction\n\n\n# Important Numbers\n\n@docs invalidDenominator, minimumSupportedInt\n\n\n# Fraction Creation\n\n@docs create, FractionCreationError, createWithFeedback, createUnsafe, fromTuple\n\n\n# Fraction Information\n\n@docs getNumerator, getDenominator, isWholeNumber, isZero, isOne, isNegativeOne\n\n\n# Manipulating Fractions\n\n@docs reciprocal, simplify, add, subtract, multiply, divide\n\n\n# Comparing Fractions\n\n@docs compare, equal, exactlyEqual, sort\n\n\n# Converting Fractions\n\n@docs convertToSameDenominator, convertAllToSameDenominator, toFloat, roundToNearestInt, toTuple\n\n",
+        "unions": [
+            {
+                "name": "Fraction",
+                "comment": " The underlying opaque type of the Fraction module. Contains a numerator and a denominator.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "FractionCreationError",
+                "comment": " Provides feedback based on the error for the user when creating a fraction.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NumeratorError",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "DenominatorError",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "add",
+                "comment": " Adds two [`Fraction`](#Fraction)s to get their sum. Does no simplification of the result.\n\n    add (Fraction 2 3) (Fraction 1 2) == Fraction 7 6\n\n",
+                "type": "Fraction.Fraction -> Fraction.Fraction -> Fraction.Fraction"
+            },
+            {
+                "name": "compare",
+                "comment": " Returns how `fraction1` compares to `fraction2`.\n",
+                "type": "Fraction.Fraction -> Fraction.Fraction -> Basics.Order"
+            },
+            {
+                "name": "convertAllToSameDenominator",
+                "comment": " Similar to [`convertToSameDenominator`](#convertToSameDenominator), but is ideal for use cases involving 3+ [`Fraction`](#Fraction)s.\n",
+                "type": "List.List Fraction.Fraction -> List.List Fraction.Fraction"
+            },
+            {
+                "name": "convertToSameDenominator",
+                "comment": " Converts `fraction1` and `fraction2` to the same denominator.\n\n    Maybe.map2\n        (\\fraction1 fraction2 -> convertToSameDenominator fraction1 fraction2)\n        (create 1 2)\n        (create 1 3) -- Just (Fraction 3 6, Fraction  2 6)\n\n",
+                "type": "Fraction.Fraction -> Fraction.Fraction -> ( Fraction.Fraction, Fraction.Fraction )"
+            },
+            {
+                "name": "create",
+                "comment": " Attempts to create a [`Fraction`](#Fraction).\n\n    create 1 2 == Just (Fraction 1 2)\n\n    create 1 0 == Nothing\n\n",
+                "type": "Basics.Int -> Basics.Int -> Maybe.Maybe Fraction.Fraction"
+            },
+            {
+                "name": "createUnsafe",
+                "comment": " **WARNING**: This should be used as a last resort. This is intended for use with integer literals, not with user input.\nNever trust user input.\nIf an invalid denominator or an out of bounds integer is supplied, weird behavior could occur.\n\n    createUnsafe 4 3 == Fraction 4 3\n\n",
+                "type": "Basics.Int -> Basics.Int -> Fraction.Fraction"
+            },
+            {
+                "name": "createWithFeedback",
+                "comment": " Attempts to create a [`Fraction`](#Fraction).\n\n    create 1 2 == Ok (Fraction 1 2)\n\n    create 1 0 == Err (DenominatorError \"Invalid denominator.\")\n\n",
+                "type": "Basics.Int -> Basics.Int -> Result.Result Fraction.FractionCreationError Fraction.Fraction"
+            },
+            {
+                "name": "divide",
+                "comment": " Divides two [`Fraction`](#Fraction)s to get their quotient. Does no simplification of the result.\n\n    divide (Fraction 2 3) (Fraction 3 4) == Just (Fraction 8 9)\n\n    divide (Fraction 0 2) (Fraction 4 7) == Nothing\n\n",
+                "type": "Fraction.Fraction -> Fraction.Fraction -> Maybe.Maybe Fraction.Fraction"
+            },
+            {
+                "name": "equal",
+                "comment": " Checks if `fraction1` is equal to `fraction2`\n",
+                "type": "Fraction.Fraction -> Fraction.Fraction -> Basics.Bool"
+            },
+            {
+                "name": "exactlyEqual",
+                "comment": " Checks if `fraction1` is exactly equal to `fraction2`.\n",
+                "type": "Fraction.Fraction -> Fraction.Fraction -> Basics.Bool"
+            },
+            {
+                "name": "fromTuple",
+                "comment": " Attempts to take a pair of ints and make a [`Fraction`](#Fraction).\n",
+                "type": "( Basics.Int, Basics.Int ) -> Maybe.Maybe Fraction.Fraction"
+            },
+            {
+                "name": "getDenominator",
+                "comment": " Gets the denominator.\n\n    getDenominator (Fraction 3 5) == 5\n\n",
+                "type": "Fraction.Fraction -> Basics.Int"
+            },
+            {
+                "name": "getNumerator",
+                "comment": " Gets the numerator.\n\n    getNumerator (Fraction 3 5) == 3\n\n",
+                "type": "Fraction.Fraction -> Basics.Int"
+            },
+            {
+                "name": "invalidDenominator",
+                "comment": " Zero is an invalid denominator value because it implies division by zero, which is mathematically undefined.\n",
+                "type": "Basics.Int"
+            },
+            {
+                "name": "isNegativeOne",
+                "comment": " Checks if a [`Fraction`](#Fraction) is equal to negative one.\n\n    isNegativeOne (Fraction 43 32) == False\n\n    isNegativeOne (Fraction -3 3) == True\n\n    isNegativeOne (Fraction 3 -3) == True\n\n",
+                "type": "Fraction.Fraction -> Basics.Bool"
+            },
+            {
+                "name": "isOne",
+                "comment": " Checks if a [`Fraction`](#Fraction) is equal to one.\n\n    isOne (Fraction 43 32) == False\n\n    isOne (Fraction 3 3) == True\n\n",
+                "type": "Fraction.Fraction -> Basics.Bool"
+            },
+            {
+                "name": "isWholeNumber",
+                "comment": " Checks if a [`Fraction`](#Fraction) is a whole number.\n\n    isWholeNumber (Fraction 5 3) == False\n\n    isWholeNumber (Fraction 8 1) == True\n\n    isWholeNumber (Fraction 8 2) == True\n\n",
+                "type": "Fraction.Fraction -> Basics.Bool"
+            },
+            {
+                "name": "isZero",
+                "comment": " Checks if a [`Fraction`](#Fraction) is equal to zero.\n\n    isZero (Fraction 43 32) == False\n\n    isZero (Fraction 0 3) == True\n\n",
+                "type": "Fraction.Fraction -> Basics.Bool"
+            },
+            {
+                "name": "minimumSupportedInt",
+                "comment": " The minimum supported integer that should be used with the Fraction module.\nThis is because `negate Random.minInt` is 1 greater than `Random.maxInt`, so [`simplify`](#simplify) doesn't work correctly.\n",
+                "type": "Basics.Int"
+            },
+            {
+                "name": "multiply",
+                "comment": " Multiplies two [`Fraction`](#Fraction)s to get their product. Does no simplification of the result.\n\n    multiply (Fraction 2 3) (Fraction 3 4) == Fraction 6 12\n\n",
+                "type": "Fraction.Fraction -> Fraction.Fraction -> Fraction.Fraction"
+            },
+            {
+                "name": "reciprocal",
+                "comment": " Attempts to take the reciprocal of a [`Fraction`](#Fraction). This returns a [`Maybe`](https://package.elm-lang.org/packages/elm/core/latest/Maybe) because the\nnumerator could be zero and then be swapped to the denominator, which is invalid.\n\n    reciprocal (Fraction 3 4) == Just (Fraction 4 3)\n\n    reciprocal (Fraction 0 4) == Nothing\n\n",
+                "type": "Fraction.Fraction -> Maybe.Maybe Fraction.Fraction"
+            },
+            {
+                "name": "roundToNearestInt",
+                "comment": " Rounds a [`Fraction`](#Fraction) to the nearest integer.\n",
+                "type": "Fraction.Fraction -> Basics.Int"
+            },
+            {
+                "name": "simplify",
+                "comment": " Puts a [`Fraction`](#Fraction) in the simplest possible terms.\n\n    simplify (Fraction 5 15) == Fraction 1 3\n\n    simplify (Fraction 3 4) == Fraction 3 4\n\n",
+                "type": "Fraction.Fraction -> Fraction.Fraction"
+            },
+            {
+                "name": "sort",
+                "comment": " Sorts a `List` of [`Fraction`](#Fraction)s.\n",
+                "type": "List.List Fraction.Fraction -> List.List Fraction.Fraction"
+            },
+            {
+                "name": "subtract",
+                "comment": " Subtracts two [`Fraction`](#Fraction)s to get their difference. Does no simplification of the result.\n\n    subtract (Fraction 5 9) (Fraction 1 2) == Fraction 1 18\n\n",
+                "type": "Fraction.Fraction -> Fraction.Fraction -> Fraction.Fraction"
+            },
+            {
+                "name": "toFloat",
+                "comment": " Gets the floating point representation of the [`Fraction`](#Fraction).\n\n    Fraction.toFloat (Fraction 1 2) == 0.5\n\n",
+                "type": "Fraction.Fraction -> Basics.Float"
+            },
+            {
+                "name": "toTuple",
+                "comment": " Converts a [`Fraction`](#Fraction) to a tuple pair.\n\n    toTuple (Fraction 5 8) == ( 5, 8 )\n\n",
+                "type": "Fraction.Fraction -> ( Basics.Int, Basics.Int )"
+            }
+        ],
+        "binops": []
+    }
+]

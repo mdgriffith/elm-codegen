@@ -1,0 +1,72 @@
+[
+    {
+        "name": "Validator",
+        "comment": " This library helps with building custom validators of a user input.\nMany validators can be chained to perform validation of a single value.\nProvides interface for combining validatiors of multiple input fields with `(|>)` operator.\nAllows combination of required and optional fields.\n\n\n# Definition\n\n@docs Validator, custom, run, succeed, fail\n\n\n# Transform\n\n@docs map, map2\n\n\n# Applicative\n\n@docs andMap, andThen\n\n\n# Compose\n\n@docs required, optional\n\n",
+        "unions": [
+            {
+                "name": "Validator",
+                "comment": " Represents a validator of the input value. Validation can fail with a list of custom error messages.\n",
+                "args": [
+                    "a",
+                    "e",
+                    "b"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "andMap",
+                "comment": " Apply wrapped function to another wrapped value.\n\n    intValidator : Validator String String Int\n    intValidator =\n        Validator.custom (String.toInt >> Result.fromMaybe [ \"Not a number\" ])\n\n    Validator.run (Validator.succeed ((+) 2) |> Validator.andMap intValidator) \"3\"\n    --> (Ok 5)\n\n",
+                "type": "Validator.Validator a e b -> Validator.Validator a e (b -> c) -> Validator.Validator a e c"
+            },
+            {
+                "name": "andThen",
+                "comment": " Chain together many validators.\n\n    intValidator\n        |> Validator.andThen\n            (\\x ->\n                if x < 0 then\n                    Validator.fail \"Must be a positive number\"\n\n                else\n                    Validator.succeed x\n            )\n        -- ...\n\n",
+                "type": "(b -> Validator.Validator a e c) -> Validator.Validator a e b -> Validator.Validator a e c"
+            },
+            {
+                "name": "custom",
+                "comment": " Build a custom validator.\n\n    intValidator : Validator String InputError Int\n    intValidator =\n        Validator.custom (String.toInt >> Result.fromMaybe [ NaN ])\n\n",
+                "type": "(a -> Result.Result (List.List e) b) -> Validator.Validator a e b"
+            },
+            {
+                "name": "fail",
+                "comment": " Create validator that always fails.\n\n    Validator.run (Validator.fail \"Invalid\") 123 --> (Err [ \"Invalid\" ])\n\n",
+                "type": "e -> Validator.Validator a e b"
+            },
+            {
+                "name": "map",
+                "comment": " Transform validated value with a given function.\n\n    Validator.run (Validator.map ((+) 1) (Validator.succeed 2)) Nothing\n    --> (Ok 3)\n\n",
+                "type": "(b -> c) -> Validator.Validator a e b -> Validator.Validator a e c"
+            },
+            {
+                "name": "map2",
+                "comment": " Apply a function if both arguments passed validation.\n\n    Validator.map2 (\\x y -> x + y)\n        (Validator.succeed 1)\n        (Validator.succeed 2)\n        |> (\\validator -> Validator.run validator ())\n        --> (Ok 3)\n\n",
+                "type": "(b -> c -> d) -> Validator.Validator a e b -> Validator.Validator a e c -> Validator.Validator a e d"
+            },
+            {
+                "name": "optional",
+                "comment": " Combine validators with optional field.\n\n    type alias User =\n        { name : String\n        , age : Int\n        , email : Email\n        }\n\n    type Email = Email String\n\n    parseEmail : String -> Result String Email\n    parseEmail str =\n        if String.contains \"@\" str then\n            Ok (Email str)\n        else\n            Err \"Invalid email\"\n\n    emailValidator : Validator String String Email\n    emailValidator =\n        Validator.custom (parseEmail >> Result.mapError List.singleton)\n\n    intValidator : Validator String String Int\n    intValidator =\n        Validator.custom (String.toInt >> Result.fromMaybe [ \"Not a number\" ])\n\n    type alias FormValues r =\n        { r\n            | name : String\n            , age : String\n            , email : String\n        }\n\n    userValidator : Validator (FormValues r) String User\n    userValidator =\n        Validator.succeed User\n            |> Validator.required .name String.isEmpty \"Name is required\" (Validator.custom Ok)\n            |> Validator.optional .age String.isEmpty 10 intValidator\n            |> Validator.required .email String.isEmpty \"Email is required\" emailValidator\n\n    Validator.run userValidator { name = \"John Doe\", age = \"\", email = \"happy@path\" }\n        --> Ok (User \"John Doe\" 10 (Email \"happy@path\"))\n\n",
+                "type": "(a -> b) -> (b -> Basics.Bool) -> c -> Validator.Validator b e c -> Validator.Validator a e (c -> d) -> Validator.Validator a e d"
+            },
+            {
+                "name": "required",
+                "comment": " Combine validators with required field.\n\n    type alias User =\n        { name : String\n        , age : Int\n        , email : Email\n        }\n\n    type Email = Email String\n\n    parseEmail : String -> Result String Email\n    parseEmail str =\n        if String.contains \"@\" str then\n            Ok (Email str)\n        else\n            Err \"Invalid email\"\n\n    emailValidator : Validator String String Email\n    emailValidator =\n        Validator.custom (parseEmail >> Result.mapError List.singleton)\n\n    intValidator : Validator String String Int\n    intValidator =\n        Validator.custom (String.toInt >> Result.fromMaybe [ \"Not a number\" ])\n\n    type alias FormValues r =\n        { r\n            | name : String\n            , age : String\n            , email : String\n        }\n\n    userValidator : Validator (FormValues r) String User\n    userValidator =\n        Validator.succeed User\n            |> Validator.required .name String.isEmpty \"Name is required\" (Validator.custom Ok)\n            |> Validator.required .age String.isEmpty \"Age is required\" intValidator\n            |> Validator.required .email String.isEmpty \"Email is required\" emailValidator\n\n    Validator.run userValidator { name = \"John Doe\", age = \"\", email = \"test\" }\n        --> Err [ \"Age is required\", \"Invalid email\" ]\n\n",
+                "type": "(a -> b) -> (b -> Basics.Bool) -> e -> Validator.Validator b e c -> Validator.Validator a e (c -> d) -> Validator.Validator a e d"
+            },
+            {
+                "name": "run",
+                "comment": " Run validator.\n\n    intValidator : Validator String String Int\n    intValidator =\n        Validator.custom (String.toInt >> Result.fromMaybe [ \"Not a number\" ])\n\n    Validator.run intValidator \"42\"\n    --> (Ok 42)\n\n    Validator.run intValidator \"Fat fingers\"\n    --> (Err [ \"Not a number\" ])\n\n",
+                "type": "Validator.Validator a e b -> a -> Result.Result (List.List e) b"
+            },
+            {
+                "name": "succeed",
+                "comment": " Create validator that always succeed.\n\n    Validator.run (Validator.succeed 3) \"blah\" --> (Ok 3)\n\n",
+                "type": "b -> Validator.Validator a e b"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,92 @@
+[
+    {
+        "name": "Triple",
+        "comment": " The elm core library is missing some functions that are usefull and I use often for my projects.\n\nThis library contains many functions to work with Triple types that are similar to the Tuple but\ncontains three different values.\n\n# Creation\n@docs Triple, triple\n\n# Access\n@docs first, second, third\n\n# Insertion\n@docs insertFirst, insertSecond, insertThird\n\n# Removing\n@docs dropFirst, dropSecond, dropThird\n\n# Mapping\n@docs mapFirst, mapSecond, mapThird, mapAll\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Triple",
+                "comment": " a type alias for the triple (a, b, c) for convenience ",
+                "args": [
+                    "a",
+                    "b",
+                    "c"
+                ],
+                "type": "( a, b, c )"
+            }
+        ],
+        "values": [
+            {
+                "name": "dropFirst",
+                "comment": " Drop the first component of the triple to create a tuple ",
+                "type": "Triple.Triple a b c -> ( b, c )"
+            },
+            {
+                "name": "dropSecond",
+                "comment": " Drop the second component of the triple to create a tuple ",
+                "type": "Triple.Triple a b c -> ( a, c )"
+            },
+            {
+                "name": "dropThird",
+                "comment": " Drop the third component of the triple to create a tuple ",
+                "type": "Triple.Triple a b c -> ( a, b )"
+            },
+            {
+                "name": "first",
+                "comment": " Access the first entry of the triple type ",
+                "type": "Triple.Triple a b c -> a"
+            },
+            {
+                "name": "insertFirst",
+                "comment": " Add a component before the tuple to create a triple ",
+                "type": "a -> ( b, c ) -> Triple.Triple a b c"
+            },
+            {
+                "name": "insertSecond",
+                "comment": " Insert a component inside a tuple to create a triple ",
+                "type": "b -> ( a, c ) -> Triple.Triple a b c"
+            },
+            {
+                "name": "insertThird",
+                "comment": " Add a component after the tuple to create a triple ",
+                "type": "c -> ( a, b ) -> Triple.Triple a b c"
+            },
+            {
+                "name": "mapAll",
+                "comment": " Map all components of the triple ",
+                "type": "(a1 -> a2) -> (b1 -> b2) -> (c1 -> c2) -> Triple.Triple a1 b1 c1 -> Triple.Triple a2 b2 c2"
+            },
+            {
+                "name": "mapFirst",
+                "comment": " Map the first component of the triple ",
+                "type": "(a1 -> a2) -> Triple.Triple a1 b c -> Triple.Triple a2 b c"
+            },
+            {
+                "name": "mapSecond",
+                "comment": " Map the second component of the triple ",
+                "type": "(b1 -> b2) -> Triple.Triple a b1 c -> Triple.Triple a b2 c"
+            },
+            {
+                "name": "mapThird",
+                "comment": " Map the third component of the triple ",
+                "type": "(c1 -> c2) -> Triple.Triple a b c1 -> Triple.Triple a b c2"
+            },
+            {
+                "name": "second",
+                "comment": " Access the second entry of the triple type ",
+                "type": "Triple.Triple a b c -> b"
+            },
+            {
+                "name": "third",
+                "comment": " Access the third entry of the triple type ",
+                "type": "Triple.Triple a b c -> c"
+            },
+            {
+                "name": "triple",
+                "comment": " creates a new triple ",
+                "type": "a -> b -> c -> Triple.Triple a b c"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,16 @@
+[
+    {
+        "name": "NoUnapprovedLicense",
+        "comment": "\n\n@docs rule\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": " Forbid the use of dependencies that use unknown or forbidden licenses.\n\n    config =\n        [ NoUnapprovedLicense.rule\n            { allowed = [ \"BSD-3-Clause\", \"MIT\" ]\n            , forbidden = [ \"GPL-3.0-only\", \"GPL-3.0-or-later\" ]\n            }\n        ]\n\nIf the license of a dependency is in the `allowed` list, the dependency will not be reported.\nIf it's in the `forbidden`, the dependency will be reported as an error.\nIf it's in neither, the dependency will be reported but with a different message asking you\nto add the license to either list.\n\n",
+                "type": "{ allowed : List.List String.String, forbidden : List.List String.String } -> Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    }
+]

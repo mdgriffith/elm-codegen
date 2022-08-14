@@ -1,0 +1,43 @@
+[
+    {
+        "name": "BeautifulExample",
+        "comment": " Create beautiful examples to show off your Elm packages and projects.\n\n@docs Config, sandbox, element, document, application, view\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " Configuration for `BeautifulExample.view`\n\n  - title: The title of the example\n  - details: An optional explanatory paragraph about the example\n  - color: The the color to use to theme the example (grey will be used if you give `Nothing`)\n  - maxWidth: The maximum width of the container for the example\n    (This allows the example to be nicely centered.)\n  - githubUrl: If given, show a github icon with a link to this URL\n  - documentationUrl: If given, show an Elm icon with a link to this URL\n\n",
+                "args": [],
+                "type": "{ title : String.String, details : Maybe.Maybe String.String, color : Maybe.Maybe Color.Color, maxWidth : Basics.Int, githubUrl : Maybe.Maybe String.String, documentationUrl : Maybe.Maybe String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "application",
+                "comment": " Turn a `Browser.application` into a beautiful example\n",
+                "type": "BeautifulExample.Config -> { init : flags -> Url.Url -> Browser.Navigation.Key -> ( model, Platform.Cmd.Cmd msg ), view : model -> Browser.Document msg, update : msg -> model -> ( model, Platform.Cmd.Cmd msg ), subscriptions : model -> Platform.Sub.Sub msg, onUrlRequest : Browser.UrlRequest -> msg, onUrlChange : Url.Url -> msg } -> Platform.Program flags model msg"
+            },
+            {
+                "name": "document",
+                "comment": " Turn a `Browser.document` into a beautiful example\n",
+                "type": "BeautifulExample.Config -> { init : flags -> ( model, Platform.Cmd.Cmd msg ), view : model -> Browser.Document msg, update : msg -> model -> ( model, Platform.Cmd.Cmd msg ), subscriptions : model -> Platform.Sub.Sub msg } -> Platform.Program flags model msg"
+            },
+            {
+                "name": "element",
+                "comment": " Turn a `Browser.element` into a beautiful example\n",
+                "type": "BeautifulExample.Config -> { init : flags -> ( model, Platform.Cmd.Cmd msg ), view : model -> Html.Html msg, update : msg -> model -> ( model, Platform.Cmd.Cmd msg ), subscriptions : model -> Platform.Sub.Sub msg } -> Platform.Program flags model msg"
+            },
+            {
+                "name": "sandbox",
+                "comment": " Turn a `Browser.sandbox` into a beautiful example\n",
+                "type": "BeautifulExample.Config -> { init : model, view : model -> Html.Html msg, update : msg -> model -> model } -> Platform.Program () model msg"
+            },
+            {
+                "name": "view",
+                "comment": " Turn arbitrary Html into a beautiful example.\n\nTypically, you will want to use [`program`](#program) or [`beginnerProgram`](#beginnerProgram) instead.\n\n",
+                "type": "BeautifulExample.Config -> Html.Html msg -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

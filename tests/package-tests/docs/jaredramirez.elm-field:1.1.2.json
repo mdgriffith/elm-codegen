@@ -1,0 +1,282 @@
+[
+    {
+        "name": "Field",
+        "comment": " This library provides a datatype to model and validate input field data.\n\nFor an example, take a look at the [README](https://package.elm-lang.org/packages/jaredramirez/elm-field/latest/)\n\n\n# Base\n\n@docs Field, Metadata\n\n\n# Viewing fields\n\n@docs ViewConfig, view\n\n\n# Interacting with fields\n\n@docs init, resetValue, extractValue, resetMetadata, extractMetadata, withDefault, toMaybe, toResult, isValid, isInvalid\n\n\n# Validation\n\n@docs ValidationFunc, test, createValidator\n\n",
+        "unions": [
+            {
+                "name": "Field",
+                "comment": " The field type, it represents all the possible state that a field\ncan be in. It has take parameters of an error type and a value type.\n\nUnless you're trying to model some unique data you probably won't be using this\ntype, but one with the `value` and `error` arguements already applied. Take a look at the [`Field.String`](#Field-String), [`Field.Int`](#Field-Int) and [`Field.Float`](#Field-Float) modules to see some common types already appplied and for examples to modeling your own data.\n\n",
+                "args": [
+                    "value",
+                    "error"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Metadata",
+                "comment": " A type to reperesent various bits of data about any individiual field. You can get this record\nfrom a field with [`extractMetadata`](#extractMetadata), and set this record with [`resetMetadata`](#resetMetadata)\n",
+                "args": [],
+                "type": "{ active : Basics.Bool, touched : Basics.Bool, disabled : Basics.Bool }"
+            },
+            {
+                "name": "ValidationFunc",
+                "comment": " Type alias that takes a field, and returns a field\n",
+                "args": [
+                    "value",
+                    "error"
+                ],
+                "type": "Field.Field value error -> Field.Field value error"
+            },
+            {
+                "name": "ViewConfig",
+                "comment": " A mapping from different field statuses to `Html`\n",
+                "args": [
+                    "value",
+                    "error",
+                    "msg"
+                ],
+                "type": "{ valid : Field.Metadata -> value -> Html.Html msg, invalid : Field.Metadata -> value -> error -> Html.Html msg }"
+            }
+        ],
+        "values": [
+            {
+                "name": "createValidator",
+                "comment": " Create a validator by testing a field against the provided function. If the field passes then return the field the exact same,\notherwise return a field marked as invalid with the provided error. If the field is already invalid,\nthen this function just returns the field as it got it. This is to keep the exisitng error, so you can\nchain together validation functions easily.\n\nLook to the [`Field.String`](#Field-String), [`Field.Int`](#Field-Int) and [`Field.Float`](#Field-Float) modules in this package. for pre-created validation functions.\n\n",
+                "type": "(value -> Basics.Bool) -> error -> Field.Field value error -> Field.Field value error"
+            },
+            {
+                "name": "extractMetadata",
+                "comment": " Extract the value from a field, regardless of the field's status\n",
+                "type": "Field.Field value error -> Field.Metadata"
+            },
+            {
+                "name": "extractValue",
+                "comment": " Extract the metadata from a field, regardless of the field's status\n",
+                "type": "Field.Field value error -> value"
+            },
+            {
+                "name": "init",
+                "comment": " Create a new field with the given value that is in a valid status\n",
+                "type": "value -> Field.Field value error"
+            },
+            {
+                "name": "isInvalid",
+                "comment": " Returns true if the field in currently in a invalid state, false otherwise\n",
+                "type": "Field.Field value error -> Basics.Bool"
+            },
+            {
+                "name": "isValid",
+                "comment": " Returns true if the field in currently in a valid state, false otherwise\n",
+                "type": "Field.Field value error -> Basics.Bool"
+            },
+            {
+                "name": "resetMetadata",
+                "comment": " Reset a field with new metadata\n",
+                "type": "Field.Field value error -> Field.Metadata -> Field.Field value error"
+            },
+            {
+                "name": "resetValue",
+                "comment": " Reset a field with a new value, _and_ set it to the valid status\n",
+                "type": "Field.Field value error -> value -> Field.Field value error"
+            },
+            {
+                "name": "test",
+                "comment": " Alias to [`createValidator`](#createValidator). Deprecated.\n",
+                "type": "(value -> Basics.Bool) -> error -> Field.ValidationFunc value error"
+            },
+            {
+                "name": "toMaybe",
+                "comment": " Convert a field to a `Maybe`. This discards the `error`.\n",
+                "type": "Field.Field value error -> Maybe.Maybe value"
+            },
+            {
+                "name": "toResult",
+                "comment": " Convert a field to a `Result`\n",
+                "type": "Field.Field value error -> Result.Result error value"
+            },
+            {
+                "name": "view",
+                "comment": " Takes a `ViewConfig` and a field and uses the different possible `Html` based on the field's status\n",
+                "type": "Field.ViewConfig value error msg -> Field.Field value error -> Html.Html msg"
+            },
+            {
+                "name": "withDefault",
+                "comment": " Return the value of a field if it is in a valid status, otherwise get the default value provided\n",
+                "type": "value -> Field.Field value error -> value"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Field.Float",
+        "comment": " A pre-applied `Float` version of the `Field` type, and validation functions\nto go along with them.\n\n\n# Base\n\n@docs Field, ViewConfig, ValidationFunc\n\n\n# Validation\n\n@docs greaterThan, lessThan\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Field",
+                "comment": " A field to hold a `Float` value, with an error type of `String`. See [`Field`](#Field)\n",
+                "args": [],
+                "type": "Field.Field Basics.Float String.String"
+            },
+            {
+                "name": "ValidationFunc",
+                "comment": " A validation function for a Float `Field`\n",
+                "args": [],
+                "type": "Field.ValidationFunc Basics.Float String.String"
+            },
+            {
+                "name": "ViewConfig",
+                "comment": " A view config object for Float fields. See [`ViewConfig`](#ViewConfig)\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "Field.ViewConfig Basics.Float String.String msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "greaterThan",
+                "comment": " Enforce that a field is greater than `x`\n",
+                "type": "Basics.Float -> Field.Float.ValidationFunc"
+            },
+            {
+                "name": "lessThan",
+                "comment": " Enforce that a field is greater than `x`\n",
+                "type": "Basics.Float -> Field.Float.ValidationFunc"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Field.Int",
+        "comment": " A pre-applied `Int` version of the `Field` type, and validation functions\nto go along with them.\n\n\n# Base\n\n@docs Field, ViewConfig, ValidationFunc\n\n\n# Validation\n\n@docs atLeast, atMost, greaterThan, greaterThanOrEqual, lessThan, lessThanOrEqual\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Field",
+                "comment": " A field to hold a `Int` value, with an error type of `String`. See [`Field`](#Field)\n",
+                "args": [],
+                "type": "Field.Field Basics.Int String.String"
+            },
+            {
+                "name": "ValidationFunc",
+                "comment": " A validation function for an Int `Field`\n",
+                "args": [],
+                "type": "Field.ValidationFunc Basics.Int String.String"
+            },
+            {
+                "name": "ViewConfig",
+                "comment": " A view config object for Int fields. See [`ViewConfig`](#ViewConfig)\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "Field.ViewConfig Basics.Int String.String msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "atLeast",
+                "comment": " Enforce that the a field is at least `x` digits long\n",
+                "type": "Basics.Int -> Field.Int.ValidationFunc"
+            },
+            {
+                "name": "atMost",
+                "comment": " Enforce that a field is at most `x` digits long\n",
+                "type": "Basics.Int -> Field.Int.ValidationFunc"
+            },
+            {
+                "name": "greaterThan",
+                "comment": " Enforce that a field is greater than `x`\n",
+                "type": "Basics.Int -> Field.Int.ValidationFunc"
+            },
+            {
+                "name": "greaterThanOrEqual",
+                "comment": " Enforce that a field is greater than or equal to `x`\n",
+                "type": "Basics.Int -> Field.Int.ValidationFunc"
+            },
+            {
+                "name": "lessThan",
+                "comment": " Enforce that a field is less than `x`\n",
+                "type": "Basics.Int -> Field.Int.ValidationFunc"
+            },
+            {
+                "name": "lessThanOrEqual",
+                "comment": " Enforce that a field is less than or equal to `x`\n",
+                "type": "Basics.Int -> Field.Int.ValidationFunc"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Field.String",
+        "comment": " A pre-applied `String` version of the `Field` type, and validation function\nto go along with them.\n\n\n# Base\n\n@docs Field, ViewConfig, ValidationFunc\n\n\n# Validation\n\n@docs notEmpty, email, numeric, nonnumeric, atLeast, atMost, exactly, optional\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Field",
+                "comment": " A field to hold a `String` value, with an error type of `String`. See [`Field`](#Field)\n",
+                "args": [],
+                "type": "Field.Field String.String String.String"
+            },
+            {
+                "name": "ValidationFunc",
+                "comment": " A validation function for a String `Field`\n",
+                "args": [],
+                "type": "Field.ValidationFunc String.String String.String"
+            },
+            {
+                "name": "ViewConfig",
+                "comment": " A view config object for String fields. See [`ViewConfig`](#ViewConfig)\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "Field.ViewConfig String.String String.String msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "atLeast",
+                "comment": " Enforce that a field is at least `x` characters long\n",
+                "type": "Basics.Int -> Field.String.ValidationFunc"
+            },
+            {
+                "name": "atMost",
+                "comment": " Enforce that a field is at most `x` characters long\n",
+                "type": "Basics.Int -> Field.String.ValidationFunc"
+            },
+            {
+                "name": "email",
+                "comment": " Enforce that a field is an email.\n\nThe format the email just follow is:\n\n    [ >1 upper,lower,digit,symbol ]@[ >2 upper,lower,digit,symbol ].[ >2 upper,lower,digit, ]\n\nTo validate emails, we don't use regex we use\n[elm-tools/parser](https://github.com/elm-tools/parser) to validate. If\nthere's a specific format you need your emails to follow, you can easily implement your\nown validation function.\n\n",
+                "type": "Field.String.ValidationFunc"
+            },
+            {
+                "name": "exactly",
+                "comment": " Enforce that a field is exactly `x` characters long\n",
+                "type": "Basics.Int -> Field.String.ValidationFunc"
+            },
+            {
+                "name": "nonnumeric",
+                "comment": " Enforce that a field does not contains only numbers.\n",
+                "type": "Field.String.ValidationFunc"
+            },
+            {
+                "name": "notEmpty",
+                "comment": " Enforces that a field is not empty\n",
+                "type": "Field.String.ValidationFunc"
+            },
+            {
+                "name": "numeric",
+                "comment": " Enforce that a field contains only numbers.\n",
+                "type": "Field.String.ValidationFunc"
+            },
+            {
+                "name": "optional",
+                "comment": " A validation function wrapper that will only run the `ValidationFunc` if the provided\nif the field's value is not `\"\"`. If the field's value is `\"\"` then this will just return the\nfield\n",
+                "type": "Field.String.ValidationFunc -> Field.String.ValidationFunc"
+            }
+        ],
+        "binops": []
+    }
+]

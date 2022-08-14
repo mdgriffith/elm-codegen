@@ -1,0 +1,325 @@
+[
+    {
+        "name": "CellAutomata",
+        "comment": " If you are new to this package, consider checking out CellAutomata.LifeLike first.\nIt is written as an introduction to this module.\n\n**If you want to create automatas with more then one state,**\n**but that still operates on a 2D-Grid, than this package is the right one for you.**\n\nFirst start by writing your own state type.\n[As an example](https://orasund.github.io/elm-cellautomata/ant), lets try to simulate an ant that always follows the right wall.\n\nOur state will now be the following\n\n    type State\n        = Wall\n        | Up\n        | Down\n        | Left\n        | Right\n\n\n# The Basics\n\n\n## Types\n\n@docs Order, Grid, Position\n\n\n## Rule\n\n@docs RuleExpression, Neighborhood, anyNeighborhood, Rule\n\n\n## Automata Without Symmetry\n\n@docs step, Automata, automataWithoutSymmetry\n\n\n# Symmetries\n\n\n## Symmetry\n\n@docs Symmetry, noSymmetry, horMirrorSymmetry, vertMirrorSymmetry, rot45Symmetry, rot90Symmetry\n\n\n## Automata\n\n@docs automata\n\n\n## Helpful sub-functions\n\n@docs mapNeighborhood\n\n",
+        "unions": [
+            {
+                "name": "RuleExpression",
+                "comment": " RuleExpressions give us a very flexible way of talking about neighbors.\n\nSaying something is `Anything`, it means its value is ignored.\n\n",
+                "args": [
+                    "state"
+                ],
+                "cases": [
+                    [
+                        "Exactly",
+                        [
+                            "state"
+                        ]
+                    ],
+                    [
+                        "OneOf",
+                        [
+                            "List.List state"
+                        ]
+                    ],
+                    [
+                        "Anything",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Automata",
+                "comment": " The Automata type can be seen as a config type.\n\nIts stores all information to specify the behaviour of a cell automata.\nSometimes more then one automata should act on to the same `Grid`.\nFor this reason it is its own type.\n\n",
+                "args": [
+                    "state",
+                    "comparable"
+                ],
+                "type": "CellAutomata.General.Automata (CellAutomata.Neighborhood (Maybe.Maybe state)) (CellAutomata.Neighborhood (CellAutomata.RuleExpression (Maybe.Maybe state))) CellAutomata.Position state comparable"
+            },
+            {
+                "name": "Grid",
+                "comment": " The grid is the _model_ of this module.\n\nYou might want to write your own view function for it\nor else you can't see what the automata has done.\n\nIn your head you should think of this as a grid, where some cells are filled in.\nIn fact, only the filled cells are stored in the `Dict`.\n\nCells have the type `Maybe state` where `state` should be a custom type.\n\n",
+                "args": [
+                    "state"
+                ],
+                "type": "Dict.Dict CellAutomata.Position state"
+            },
+            {
+                "name": "Neighborhood",
+                "comment": " The Neighborhood of a cell consists of the 8 surounding cells.\n\nIf some neighbor may have any value (that is most often the case),\nits best to use the `anyNeighborhood` template and start from there.\n\n",
+                "args": [
+                    "state"
+                ],
+                "type": "{ north : state, northEast : state, east : state, southEast : state, south : state, southWest : state, west : state, northWest : state }"
+            },
+            {
+                "name": "Order",
+                "comment": " Every state needs a defined order.\n(A function that gives each state a unique identifier)\n\nFor our ant example we define the following order:\n\n    order maybeState =\n        case maybeState of\n            Nothing ->\n                0\n\n            Just Wall ->\n                1\n\n            Just Up ->\n                2\n\n            Just Down ->\n                3\n\n            Just Left ->\n                4\n\n            Just Right ->\n                5\n\n",
+                "args": [
+                    "state",
+                    "comparable"
+                ],
+                "type": "Maybe.Maybe state -> comparable"
+            },
+            {
+                "name": "Position",
+                "comment": " The position is the unique identifier for any cell.\nFor our purpose we use `(x,y)` coordinates.\n\n**Note:** The south of `(0,0)` is `(0,y)` while the north is `(0,-y)`.\n\n",
+                "args": [],
+                "type": "( Basics.Int, Basics.Int )"
+            },
+            {
+                "name": "Rule",
+                "comment": " A rule consist of the following elements:\n\n  - **from** - The state of the cell\n  - **neighbors** - The nessesary pattern of the neighbors\n  - **to** - The state, the cell will transition to, once the rule applies\n\n",
+                "args": [
+                    "state"
+                ],
+                "type": "{ from : Maybe.Maybe state, neighbors : CellAutomata.Neighborhood (CellAutomata.RuleExpression (Maybe.Maybe state)), to : Maybe.Maybe state }"
+            },
+            {
+                "name": "Symmetry",
+                "comment": " A symmetry is just a function that determines if a rule is sucessfully applied.\nIf so, it returns the new state.\n",
+                "args": [
+                    "state"
+                ],
+                "type": "Maybe.Maybe state -> CellAutomata.Neighborhood (Maybe.Maybe state) -> CellAutomata.Rule state -> Maybe.Maybe (Maybe.Maybe state)"
+            }
+        ],
+        "values": [
+            {
+                "name": "anyNeighborhood",
+                "comment": " This template helps defining a `Neighborhood`.\n\nFor example, if we would want to only consider the north neighbor,\nwe might specify it the following way\n\n    { anyNeighborhood\n        | north = Exactly a\n    }\n\n",
+                "type": "CellAutomata.Neighborhood (CellAutomata.RuleExpression (Maybe.Maybe state))"
+            },
+            {
+                "name": "automata",
+                "comment": " With this function we can now add our own symmetry.\n\nThe ant example can now be implemented the following way:\n\n    let\n        rotState : State -> State\n        rotState state =\n            case state of\n                Up ->\n                    Right\n\n                Right ->\n                    Down\n\n                Down ->\n                    Left\n\n                Left ->\n                    Up\n\n                a ->\n                    a\n    in\n    ( List.concat\n        [   [Up,Left,Right,Down]\n            |> List.map\n                (\\dir ->\n                    { from = Just dir\n                    , neighbors = anyNeighborhood\n                    , to = Nothing\n                    }\n                )\n        ,   [   { from = Nothing\n                , to = Just Up\n                , neighbors =\n                        { anyNeighborhood\n                        | south = Exactly <| Just Up\n                        , southEast = Exactly <| Just Wall\n                        }\n                }\n            ,   { from = Nothing\n                , to = Just Right\n                , neighbors =\n                    { anyNeighborhood\n                    | south = Exactly <| Just Wall\n                    , west = Exactly <| Just Up }\n                    }\n            ,   { from = Nothing\n                , to = Just Right\n                , neighbors =\n                    { anyNeighborhood\n                    | southWest = Exactly <| Just Wall\n                    , west = Exactly <| Just Down }\n                    }\n            ]\n        ]\n    )\n        |> automata (rot90Symmetry rotState) order\n\n",
+                "type": "CellAutomata.Symmetry state -> CellAutomata.Order state comparable -> List.List (CellAutomata.Rule state) -> CellAutomata.Automata state comparable"
+            },
+            {
+                "name": "automataWithoutSymmetry",
+                "comment": " This function uses no symmetry, this means every possible combination must be\nspecified.\n\n    automataWithoutSymmetry =\n        automataWithCustomSymmetry noSymmetry\n\n**This function is not useful in practice.**\n**Most often you want at least rotational or mirrored symmetry.**\n**This function is only included for demonstration purposes.**\n\nCheckout [CellAutomata.LifeLike](https://package.elm-lang.org/packages/Orasund/elm-cellautomata/latest/CellAutomata-LifeLike) for a more detailed description.\n\nOur example with the ant, can now be implemented the following way:\n\n    [ { from = Just Up, neighbors = anyNeighborhood, to = Nothing }\n    , { from = Just Down, neighbors = anyNeighborhood, to = Nothing }\n    , { from = Just Left, neighbors = anyNeighborhood, to = Nothing }\n    , { from = Just Right, neighbors = anyNeighborhood, to = Nothing }\n    , { from = Nothing, to = Just Up, neighbors = { anyNeighborhood | south = Exactly <| Just Up, southEast = Exactly <| Just Wall } }\n    , { from = Nothing, to = Just Right, neighbors = { anyNeighborhood | south = Exactly <| Just Wall, west = Exactly <| Just Up } }\n    , { from = Nothing, to = Just Right, neighbors = { anyNeighborhood | west = Exactly <| Just Right, southWest = Exactly <| Just Wall } }\n    , { from = Nothing, to = Just Down, neighbors = { anyNeighborhood | west = Exactly <| Just Wall, north = Exactly <| Just Right } }\n    , { from = Nothing, to = Just Down, neighbors = { anyNeighborhood | north = Exactly <| Just Right, northWest = Exactly <| Just Wall } }\n    , { from = Nothing, to = Just Left, neighbors = { anyNeighborhood | north = Exactly <| Just Wall, east = Exactly <| Just Down } }\n    , { from = Nothing, to = Just Left, neighbors = { anyNeighborhood | east = Exactly <| Just Right, northEast = Exactly <| Just Wall } }\n    , { from = Nothing, to = Just Up, neighbors = { anyNeighborhood | east = Exactly <| Just Wall, south = Exactly <| Just Left } }\n    ]\n        |> automataWithoutSymmetry order\n\nThis code is on purpose more complicated as it should be.\nIf possible one should always use a custom symmetry.\n\n",
+                "type": "CellAutomata.Order state comparable -> List.List (CellAutomata.Rule state) -> CellAutomata.Automata state comparable"
+            },
+            {
+                "name": "horMirrorSymmetry",
+                "comment": " Pattern may be horizontally mirrored\n\nThe first argument is a function `(state -> state)` that states how the values of\nthe state can be mirrored (horizontally).\nUse the `identity` function if you do not see a need in specifing the first arguement.\n\nAs example, given the state\n\n    State = Up\n        | Down\n        | Left\n        | Right\n\nWe can specify a symmetry the following way\n\n    horMirrorSymmetry\n        (\\state ->\n            case state of\n                Up ->\n                    Down\n\n                Down ->\n                    Up\n\n                a ->\n                    a\n        )\n\n",
+                "type": "(state -> state) -> Maybe.Maybe state -> CellAutomata.Neighborhood (Maybe.Maybe state) -> CellAutomata.Rule state -> Maybe.Maybe (Maybe.Maybe state)"
+            },
+            {
+                "name": "mapNeighborhood",
+                "comment": " Transforms a neighborhood.\n\nIt takes a function `a -> b` in order to transform a `Neighborhood a` to `Neighborhood b`\n\n",
+                "type": "(a -> b) -> CellAutomata.Neighborhood a -> CellAutomata.Neighborhood b"
+            },
+            {
+                "name": "noSymmetry",
+                "comment": " Every possible way the neighbors might be arranged needs its own rule.\n",
+                "type": "Maybe.Maybe state -> CellAutomata.Neighborhood (Maybe.Maybe state) -> CellAutomata.Rule state -> Maybe.Maybe (Maybe.Maybe state)"
+            },
+            {
+                "name": "rot45Symmetry",
+                "comment": " Pattern may be rotated in any position.\n\nThe first argument is a function `(state -> state)` that states how the values of\nthe state can be rotated (clock-wise).\nUse the `identity` function if you dont see a need in specifing the first arguement.\n\nAs example, given the state\n\n    State = North\n        | NorthEast\n        | East\n        | SouthEast\n        | South\n        | SouthWest\n        | West\n        | NorthWest\n\nWe can specify the symmetry the following way\n\n    rot45Symmetry\n        (\\state ->\n            case state of\n                North ->\n                    NorthEast\n\n                NorthEast ->\n                    East\n\n                East ->\n                    SouthEast\n\n                SouthEast ->\n                    South\n\n                South ->\n                    SouthWest\n\n                SouthWest ->\n                    West\n\n                South ->\n                    NorthWest\n\n                NorthWest ->\n                    North\n        )\n\n",
+                "type": "(state -> state) -> Maybe.Maybe state -> CellAutomata.Neighborhood (Maybe.Maybe state) -> CellAutomata.Rule state -> Maybe.Maybe (Maybe.Maybe state)"
+            },
+            {
+                "name": "rot90Symmetry",
+                "comment": " Pattern may be rotated in 90,180 and 270 degree angles.\n\nThe first argument is a function `(state -> state)` that states how the values of\nthe state can be rotated (clock-wise).\nUse the `identity` function if you dont see a need in specifing the first arguement.\n\nAs example, given the state\n\n    State = Left\n        | Right\n        | Up\n        | Down\n\nWe can specify the symmetry the following way\n\n    rot90Symmetry\n        (\\state ->\n            case state of\n                Left ->\n                    Down\n\n                Down ->\n                    Right\n\n                Right ->\n                    Up\n\n                Up ->\n                    Left\n        )\n\n",
+                "type": "(state -> state) -> Maybe.Maybe state -> CellAutomata.Neighborhood (Maybe.Maybe state) -> CellAutomata.Rule state -> Maybe.Maybe (Maybe.Maybe state)"
+            },
+            {
+                "name": "step",
+                "comment": " This is the main function.\nIt has a wierd type, but thats because it is meant to be used with `Dict.update`:\n\n    List.range 0 12\n        |> List.foldl\n            (\\x g ->\n                List.range 0 10\n                    |> List.foldl\n                        (\\y ->\n                            Dict.update\n                                ( x, y )\n                                ( ( x, y )\n                                    |> step automata grid\n                                )\n                        )\n                        g\n            )\n            grid\n\n",
+                "type": "CellAutomata.Automata state comparable -> CellAutomata.Grid state -> CellAutomata.Position -> Maybe.Maybe state -> Maybe.Maybe state"
+            },
+            {
+                "name": "vertMirrorSymmetry",
+                "comment": " Pattern may be vertically mirrored\n\nThe first argument is a function (state -> state) that states how the values of\nthe state can be mirrored (vertically).\nUse the identity function if you dont see a need in specifing the first arguement.\n\nAs example, given the state\n\n    State = Up\n        | Down\n        | Left\n        | Right\n\nWe can specify the symmetry the following way\n\n    vertMirrorSymmetry\n        (\\state ->\n            case state of\n                Left ->\n                    Right\n\n                Right ->\n                    Left\n\n                a ->\n                    a\n        )\n\n",
+                "type": "(state -> state) -> Maybe.Maybe state -> CellAutomata.Neighborhood (Maybe.Maybe state) -> CellAutomata.Rule state -> Maybe.Maybe (Maybe.Maybe state)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "CellAutomata.LifeLike",
+        "comment": " This module was created to give a smooth introduction to the main module,\nbut also because for a lot of use cases this simpler version is already enough.\n\n**If you know of Conway's Game of Life and want to make something similiar,**\n**this module is the right one for you.**\n\nIn this module, a few assumptions about the automata were made:\n\n  - The cells are organized in a two dimensional grid.\n  - Each cell can have one of two states: _Dead_(`Nothing`) or _Alive_(`Just Alive`)\n  - Each cell has eight neighbors\n  - A rule can only take the amount of alive neighbored cells into account. (Not the pattern itself)\n\n**Note:** This last assumption can be ignored by using `automataWithoutSymmetry`\nor `automataWithCustomSymmetry`. We will look at an example further down the document.\n\n\n# The Basics\n\n\n## Basic Types\n\n@docs Grid, State, Position\n\n\n## Basic Automata\n\n@docs AliveNeighbors, step, Automata, automata\n\n\n# Rule Expressions and Symmetries\n\nUp until now, only the amount of living neighbors was important, but not their position.\n\nFor the remaining documentation we use a [modified version](https://orasund.github.io/elm-cellautomata/modGoL) of game of life,\nwhere only the four direct neighbors (North,South,East,West) are considered.\n\n\n## Rule\n\n@docs RuleExpression, Neighborhood, anyNeighborhood, Rule\n\n\n## Automata\n\n@docs automataWithoutSymmetry\n\n\n## Symmetry\n\n@docs Symmetry, fullSymmetry, noSymmetry, horMirrorSymmetry, vertMirrorSymmetry, rot45Symmetry, rot90Symmetry\n\n\n## Automata with Symmetry\n\n@docs automataWithCustomSymmetry\n\n",
+        "unions": [
+            {
+                "name": "AliveNeighbors",
+                "comment": " This type specifies how many neighbors may be alive.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "AllDead",
+                        []
+                    ],
+                    [
+                        "OneAlive",
+                        []
+                    ],
+                    [
+                        "TwoAlive",
+                        []
+                    ],
+                    [
+                        "ThreeAlive",
+                        []
+                    ],
+                    [
+                        "FourAlive",
+                        []
+                    ],
+                    [
+                        "FiveAlive",
+                        []
+                    ],
+                    [
+                        "SixAlive",
+                        []
+                    ],
+                    [
+                        "SevenAlive",
+                        []
+                    ],
+                    [
+                        "EightAlive",
+                        []
+                    ],
+                    [
+                        "AnyAmount",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "RuleExpression",
+                "comment": " RuleExpressions give us a very flexible way of talking about neighbors.\n\nWhen writing a rule for the neighbors, they can now have one of the following values:\n\n  - `(Exactly <| Just Alive)` - its alive\n  - `(Exactly <| Nothing)` - its dead\n  - `(OneOf [ Just Alive , Nothing ]` - either alive or dead (but nothing else)\n  - `Anything` - it may be dead or alive or something else - we don't care.\n\n**Note:**\nIf you would go back to counting the alive neighbors, the `Anything`-expression will\nact like an optional neighbor.\nFor example a rule that looks for 3 `Alive` and 2 `Anything`\nwill be successfull if it finds either 3,4 or 5 alive neighbors.\n\n",
+                "args": [
+                    "state"
+                ],
+                "cases": [
+                    [
+                        "Exactly",
+                        [
+                            "state"
+                        ]
+                    ],
+                    [
+                        "Anything",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "State",
+                "comment": " The State will specify all posible states a cell can be in (besides a empty Cell)\n\nThis means cells will be of type `Maybe State`.\nThis way it should be clear that, the default value for a cell is `Nothing`.\nIn this module there is just one other state: `Just Alive`.\nIf you want to add more states, then you should go to the main module.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Alive",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Automata",
+                "comment": " The `Automata` type can be seen as a config type.\nIts stores all information to specify the behaviour of a cell automata.\nSometimes more then one automata should act on to the same Grid.\nFor this reason it is its own type.\n",
+                "args": [],
+                "type": "CellAutomata.General.Automata (CellAutomata.LifeLike.Neighborhood (Maybe.Maybe CellAutomata.LifeLike.State)) (CellAutomata.LifeLike.Neighborhood (CellAutomata.LifeLike.RuleExpression (Maybe.Maybe CellAutomata.LifeLike.State))) CellAutomata.LifeLike.Position CellAutomata.LifeLike.State Basics.Int"
+            },
+            {
+                "name": "Grid",
+                "comment": " The grid is the \"model\" of this module.\n\nYou might want to write your own view function for it or else you can't see what the automata has done.\n\nIn your head you should think of this as a grid, where some cells are filled in.\nIn fact, only the filled cells are stored in the `Dict`.\nFilled cells have the value `Just Alive` while empty cells have the value `Nothing`.\nThis is why we represent the grid as a dictionary.\n\n",
+                "args": [],
+                "type": "Dict.Dict CellAutomata.LifeLike.Position CellAutomata.LifeLike.State"
+            },
+            {
+                "name": "Neighborhood",
+                "comment": " This replaces the `AliveNeighbors` type.\n\nInstead of saying \"one alive neighbor\", we now need to explicitly specify where\nthis neighbor is located.\n\nIf some neighbor may have any value (that is most often the case),\nits best to use the `anyNeighborhood` template and start from there.\n\n",
+                "args": [
+                    "state"
+                ],
+                "type": "{ north : state, northEast : state, east : state, southEast : state, south : state, southWest : state, west : state, northWest : state }"
+            },
+            {
+                "name": "Position",
+                "comment": " The position is the unique identifier for any cell.\nFor our purpose we use `(x,y)`-coordinates.\n\n**Note:** The south of `(0,0)` is `(0,y)` while the north is `(0,-y)`.\n\n",
+                "args": [],
+                "type": "( Basics.Int, Basics.Int )"
+            },
+            {
+                "name": "Rule",
+                "comment": " A rule now needs a Neighborhood instead of an `AliveNeighbors`-value.\n",
+                "args": [],
+                "type": "{ from : Maybe.Maybe CellAutomata.LifeLike.State, neighbors : CellAutomata.LifeLike.Neighborhood (CellAutomata.LifeLike.RuleExpression (Maybe.Maybe CellAutomata.LifeLike.State)), to : Maybe.Maybe CellAutomata.LifeLike.State }"
+            },
+            {
+                "name": "Symmetry",
+                "comment": " A symmetry is just a function that determines if a rule is sucessfully applied.\nIf so, it returns the new state.\nDuring this documentation we have already encountered two different symmetries:\n`fullSymmetry` and `noSymmetry`.\n",
+                "args": [],
+                "type": "Maybe.Maybe CellAutomata.LifeLike.State -> CellAutomata.LifeLike.Neighborhood (Maybe.Maybe CellAutomata.LifeLike.State) -> CellAutomata.LifeLike.Rule -> Maybe.Maybe (Maybe.Maybe CellAutomata.LifeLike.State)"
+            }
+        ],
+        "values": [
+            {
+                "name": "anyNeighborhood",
+                "comment": " this template helps defining a Neighborhood.\n\nFor example, if we would want to only consider the 4 adjacent neighbors,\nwe might specify it the following way\n\n    {anyNeighborhood\n    | north : Exactly a\n    , east : Exactly b\n    , south : Exactly c\n    , west : Exactly d\n    }\n\n",
+                "type": "CellAutomata.LifeLike.Neighborhood (CellAutomata.LifeLike.RuleExpression (Maybe.Maybe CellAutomata.LifeLike.State))"
+            },
+            {
+                "name": "automata",
+                "comment": " The input is a list of rules.\n[As an example](https://orasund.github.io/elm-cellautomata/GameOfLife), lets look at the rules for conway's game of life:\n\n  - Alive cells survive if they have 2 or 3 alive neighbors, else they die.\n  - Dead cells turn alive if exactly 3 neighbors are alive.\n\nImplemented, these rules look like this:\n\n    [ { from = Just Alive\n      , neighbors = TwoAlive\n      , to = Just Alive\n      }\n    , { from = Just Alive\n      , neighbors = ThreeAlive\n      , to = Just Alive\n      }\n    , { from = Just Alive\n      , neighbors = AnyAmount\n      , to = Nothing\n      }\n    , { from = Nothing\n      , neighbors = ThreeAlive\n      , to = Just Alive\n      }\n    ]\n    |> automata\n\nThe order of the rules are important: the automata will go through the list,\nand use the first rule it can apply.\n\n",
+                "type": "List.List { from : Maybe.Maybe CellAutomata.LifeLike.State, neighbors : CellAutomata.LifeLike.AliveNeighbors, to : Maybe.Maybe CellAutomata.LifeLike.State } -> CellAutomata.LifeLike.Automata"
+            },
+            {
+                "name": "automataWithCustomSymmetry",
+                "comment": " With this function we can now add our own symmetry.\n\nGoing back to the old example, this can now be done the following way:\n\n    let\n        neighbors a b c d =\n            {anyNeighborhood\n            | north = Exactly a\n            , east = Exactly b\n            , south = Exactly c\n            , west = Exactly d\n            }\n    in\n    [ {from = Just Alive\n      , to = Just Alive\n      , neighbors = neighbors (Just Alive) Nothing Nothing Nothing\n      }\n    , {from = Just Alive\n      , to = Nothing\n      , neighbors = anyNeighborhood\n      }\n    , {from = Nothing\n      , to = Just Alive\n      , neighbors = neighbors (Just Alive) Nothing Nothing Nothing\n      }\n    ]\n        |> automataWithCustomSymmetry rot90Symmetry\n\n",
+                "type": "CellAutomata.LifeLike.Symmetry -> List.List CellAutomata.LifeLike.Rule -> CellAutomata.LifeLike.Automata"
+            },
+            {
+                "name": "automataWithoutSymmetry",
+                "comment": " This function uses no symmetry. This means every possible combination must be\nspecified.\n\n    automataWithoutSymmetry =\n        automataWithCustomSymmetry noSymmetry\n\n**This function is not useful in practice.**\n**Most often you want at least rotational or mirrored symmetry**\n**This function is only included for demonstration purposes**\n\n[For example](https://orasund.github.io/elm-cellautomata/modGoL), lets say we want to modify conway's game of life, such that\nit only considers the four adjacent neighbors:\n\n  - Alive cells survive if they have exactly 1 adjacent neighbors\n  - Dead cells turn alive if exactly 1 neighbors are alive\n\nThe implementation would be the following list:\n\n    let\n        neighbors a b c d =\n            {anyNeighborhood\n            | north = Exactly a\n            , east = Exactly b\n            , south = Exactly c\n            , west = Exactly d\n            }\n    in\n    [ {from = Just Alive\n      , to = Just Alive\n      , neighbors = neighbors (Just Alive) Nothing Nothing Nothing\n      }\n    , {from = Just Alive\n      , to = Just Alive\n      , neighbors = neighbors Nothing (Just Alive) Nothing Nothing\n      }\n    , {from = Just Alive\n      , to = Just Alive\n      , neighbors = neighbors Nothing Nothing (Just Alive) Nothing\n      }\n    , {from = Just Alive\n      , to = Just Alive\n      , neighbors = neighbors Nothing Nothing Nothing (Just Alive)\n      }\n    , {from = Just Alive, to = Nothing, neighbors = anyNeighborhood}\n    , {from = Nothing\n      , to = Just Alive\n      , neighbors = neighbors (Just Alive) Nothing Nothing Nothing\n      }\n    , {from = Nothing\n      , to = Just Alive\n      , neighbors = neighbors Nothing (Just Alive) Nothing Nothing\n      }\n    , {from = Nothing\n      , to = Just Alive\n      , neighbors = neighbors Nothing Nothing (Just Alive) Nothing\n      }\n    , {from = Nothing\n      , to = Just Alive\n      , neighbors = neighbors Nothing Nothing Nothing (Just Alive)\n      }\n    ]\n\nAs one can tell, that example blew up. Thats because we did not use any symmetry.\n\n",
+                "type": "List.List CellAutomata.LifeLike.Rule -> CellAutomata.LifeLike.Automata"
+            },
+            {
+                "name": "fullSymmetry",
+                "comment": " The position of the neighbors is not important, only the amount.\n",
+                "type": "Maybe.Maybe CellAutomata.LifeLike.State -> CellAutomata.LifeLike.Neighborhood (Maybe.Maybe CellAutomata.LifeLike.State) -> CellAutomata.LifeLike.Rule -> Maybe.Maybe (Maybe.Maybe CellAutomata.LifeLike.State)"
+            },
+            {
+                "name": "horMirrorSymmetry",
+                "comment": " Pattern may be horizontally mirrored.\n",
+                "type": "Maybe.Maybe CellAutomata.LifeLike.State -> CellAutomata.LifeLike.Neighborhood (Maybe.Maybe CellAutomata.LifeLike.State) -> CellAutomata.LifeLike.Rule -> Maybe.Maybe (Maybe.Maybe CellAutomata.LifeLike.State)"
+            },
+            {
+                "name": "noSymmetry",
+                "comment": " Every possible way the neighbors might be arranged needs its own rule.\n",
+                "type": "Maybe.Maybe CellAutomata.LifeLike.State -> CellAutomata.LifeLike.Neighborhood (Maybe.Maybe CellAutomata.LifeLike.State) -> CellAutomata.LifeLike.Rule -> Maybe.Maybe (Maybe.Maybe CellAutomata.LifeLike.State)"
+            },
+            {
+                "name": "rot45Symmetry",
+                "comment": " Pattern may be rotated in any position.\n",
+                "type": "Maybe.Maybe CellAutomata.LifeLike.State -> CellAutomata.LifeLike.Neighborhood (Maybe.Maybe CellAutomata.LifeLike.State) -> CellAutomata.LifeLike.Rule -> Maybe.Maybe (Maybe.Maybe CellAutomata.LifeLike.State)"
+            },
+            {
+                "name": "rot90Symmetry",
+                "comment": " Pattern may be rotated in 90,180 and 270 degree angles.\n",
+                "type": "Maybe.Maybe CellAutomata.LifeLike.State -> CellAutomata.LifeLike.Neighborhood (Maybe.Maybe CellAutomata.LifeLike.State) -> CellAutomata.LifeLike.Rule -> Maybe.Maybe (Maybe.Maybe CellAutomata.LifeLike.State)"
+            },
+            {
+                "name": "step",
+                "comment": " This is the main function.\nIt has a wierd type, but thats because it is meant to be used with \\``Dict.update`:\n\n    List.range 0 12\n    |> List.foldl\n        (\\x g ->\n            List.range 0 10\n            |> List.foldl\n                (\\y ->\n                    Dict.update\n                        (x,y)\n                        ( (x,y) |> step automata grid )\n                )\n                g\n        )\n        grid\n\n",
+                "type": "CellAutomata.LifeLike.Automata -> CellAutomata.LifeLike.Grid -> CellAutomata.LifeLike.Position -> Maybe.Maybe CellAutomata.LifeLike.State -> Maybe.Maybe CellAutomata.LifeLike.State"
+            },
+            {
+                "name": "vertMirrorSymmetry",
+                "comment": " Pattern may be vertically mirrored.\n",
+                "type": "Maybe.Maybe CellAutomata.LifeLike.State -> CellAutomata.LifeLike.Neighborhood (Maybe.Maybe CellAutomata.LifeLike.State) -> CellAutomata.LifeLike.Rule -> Maybe.Maybe (Maybe.Maybe CellAutomata.LifeLike.State)"
+            }
+        ],
+        "binops": []
+    }
+]

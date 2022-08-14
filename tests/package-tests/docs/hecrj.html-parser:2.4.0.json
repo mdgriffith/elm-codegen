@@ -1,0 +1,91 @@
+[
+    {
+        "name": "Html.Parser",
+        "comment": " Parse HTML 5 in Elm.\nSee <https://www.w3.org/TR/html5/syntax.html>\n\n@docs run, runDocument, Node, Document, Attribute\n\n\n# Internals\n\nIf you are building a parser of your own using [`elm/parser`][elm-parser] and\nyou need to parse HTML... This section is for you!\n\n[elm-parser]: https://package.elm-lang.org/packages/elm/parser/latest\n\n@docs node, nodeToString, documentToString\n\n",
+        "unions": [
+            {
+                "name": "Node",
+                "comment": " An HTML node. It can either be:\n\n  - Text\n  - Element (with its **tag name**, **attributes** and **children**)\n  - Comment\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Text",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Element",
+                        [
+                            "String.String",
+                            "List.List Html.Parser.Attribute",
+                            "List.List Html.Parser.Node"
+                        ]
+                    ],
+                    [
+                        "Comment",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Attribute",
+                "comment": " An HTML attribute. For instance:\n\n    ( \"href\", \"https://elm-lang.org\" )\n\n",
+                "args": [],
+                "type": "( String.String, String.String )"
+            },
+            {
+                "name": "Document",
+                "comment": " An HTML document.\n\nThis simply separates the document into its component parts, as defined by the [WHATWG Standard][WHATWG]\n\n[WHATWG]: https://html.spec.whatwg.org/#writing\n\n",
+                "args": [],
+                "type": "{ preambleComments : List.List String.String, doctype : String.String, predocComments : List.List String.String, document : ( List.List Html.Parser.Attribute, List.List Html.Parser.Node ), postdocComments : List.List String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "documentToString",
+                "comment": " Turn a document back into its HTML string.\n\nFor instance:\n\n    { preambleComments = [ \"Early!\" ]\n    , doctype = \"LEGACY \\\"My legacy string stuff\\\"\"\n    , predocComments = [ \"Teehee!\" ]\n    , document = ( [], [ Element \"p\" [] [ Text \"Got it.\" ], Element \"br\" [] [] ] )\n    , postdocComments = [ \"Smelly feet\" ]\n    }\n        |> nodeToString\n\nProduces `<!--Early!--><!DOCTYPE html LEGACY \\\"My legacy string stuff\\\"><!--Teehee!--><html><p>Got it.</p><br></html><!--Smelly feet-->`.\n\n",
+                "type": "Html.Parser.Document -> String.String"
+            },
+            {
+                "name": "node",
+                "comment": " Parse an HTML node.\n\nYou can use this in your own parser to add support for HTML 5.\n\n",
+                "type": "Parser.Parser Html.Parser.Node"
+            },
+            {
+                "name": "nodeToString",
+                "comment": " Turn a parser node back into its HTML string.\n\nFor instance:\n\n    Element \"a\"\n        [ ( \"href\", \"https://elm-lang.org\" ) ]\n        [ Text \"Elm\" ]\n        |> nodeToString\n\nProduces `<a href=\"https://elm-lang.org\">Elm</a>`.\n\n",
+                "type": "Html.Parser.Node -> String.String"
+            },
+            {
+                "name": "run",
+                "comment": " Run the parser!\n\n    run \"<div><p>Hello, world!</p></div>\"\n    -- => Ok [ Element \"div\" [] [ Element \"p\" [] [ Text \"Hello, world!\" ] ] ]\n\n",
+                "type": "String.String -> Result.Result (List.List Parser.DeadEnd) (List.List Html.Parser.Node)"
+            },
+            {
+                "name": "runDocument",
+                "comment": " Run the parser on an entire HTML document\n\n    runDocument \"<!--First comment--><!DOCTYPE html><!--Test stuffs--><html></html><!--Footer comment!-->\"\n    -- => Ok { preambleComments = [\"First comment\"], doctype = \"\", predocComments = [\"Test stuffs\"], document = ([],[]), postdocComments = [\"Footer comment!\"] }\n\n",
+                "type": "String.String -> Result.Result (List.List Parser.DeadEnd) Html.Parser.Document"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Html.Parser.Util",
+        "comment": " Utility functions that may help you digging into the contents.\n\n\n# Virtual DOM\n\n@docs toVirtualDom\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toVirtualDom",
+                "comment": " Converts nodes to virtual dom nodes.\n",
+                "type": "List.List Html.Parser.Node -> List.List (Html.Html msg)"
+            }
+        ],
+        "binops": []
+    }
+]

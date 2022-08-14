@@ -1,0 +1,294 @@
+[
+    {
+        "name": "Arborist",
+        "comment": " Drag-and-drop interface to edit, dissect and-rearrange tree structures with arbitrary data sitting in their nodes.\n\n\n# Module setup\n\n@docs State, init, NodeView, view, subscriptions, Updater\n\n\n# Configuration\n\n@docs Setting\n\n\n# Arborist tree getters and modifiers\n\n@docs hasActiveNode, activeNode, setActiveNode, setActiveNodeWithChildren, deleteActiveNode, activeBranch, updateActiveBranch\n\n\n# Display modifiers\n\n@docs reposition, deactivate\n\n\n# Context\n\n@docs NodeState, Context\n\n",
+        "unions": [
+            {
+                "name": "NodeState",
+                "comment": " The state of a node at a given time. May be normal one of the following:\n\n  - `Normal`: node in rest state\n  - `Hovered`: a hovered over node\n  - `Active`: an activated node. Overrides hover\n  - `DropTarget`: indicates that a swap or insert of the dragged subtree will take place at this node upon release\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Normal",
+                        []
+                    ],
+                    [
+                        "Active",
+                        []
+                    ],
+                    [
+                        "Hovered",
+                        []
+                    ],
+                    [
+                        "DropTarget",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "State",
+                "comment": " Opaque type for the editor's model, dependent on a node type variable. You can only use this for type annotation - to initialize a new model, see [init](#init).\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Context",
+                "comment": " View context. Contains the following fields:\n\n  - `parent`: the item at the parent, not available for the root node\n  - `siblings`: a list of all direct siblings\n  - `children`: a list of all direct children\n  - `state`: node [state](#NodeState)\n\n",
+                "args": [
+                    "item"
+                ],
+                "type": "{ parent : Maybe.Maybe item, siblings : List.List item, children : List.List item, state : Arborist.NodeState }"
+            },
+            {
+                "name": "NodeView",
+                "comment": " View function for an individual node, depending on its [context](Context), and its value. This value is expressed as a maybe because the node may contain an `insert new node`-type placeholder.\n",
+                "args": [
+                    "node",
+                    "msg"
+                ],
+                "type": "Arborist.Context node -> Maybe.Maybe node -> Html.Html msg"
+            },
+            {
+                "name": "Setting",
+                "comment": " Type definition for the settings object\n",
+                "args": [
+                    "node"
+                ],
+                "type": "Internals.Settings.Setting node"
+            },
+            {
+                "name": "Updater",
+                "comment": " A function that updates hidden state and tree. This function is passed in the `toMsg` field of the [view function](#view).\n\nPassing functions is necessary here because in the update function using `elm-arborist`, modifications in state always need to operate on the latest value because events like mousemove are fired very frequently and therefore it is possible that the changes caused by one event in the runtime are undone by one that follows immediately after.\n\n",
+                "args": [
+                    "node"
+                ],
+                "type": "Arborist.State -> Arborist.Tree.Tree node -> ( Arborist.State, Arborist.Tree.Tree node )"
+            }
+        ],
+        "values": [
+            {
+                "name": "activeBranch",
+                "comment": " Returns the entire active branch\n",
+                "type": "Arborist.State -> Arborist.Tree.Tree node -> Maybe.Maybe (Arborist.Tree.Tree node)"
+            },
+            {
+                "name": "activeNode",
+                "comment": " Returns the current active node as a tuple of `Maybe node` (as the node maybe a placeholder for a new node), as well as some contextual information as a two-field record:\n\n  - `position : ( Float, Float )`: the node's position on the canvas (useful for rendering an edit pop-up).\n  - `context`: view context, identical to the one provided in [NodeView](#NodeView).\n\nIn order for the position calculations to match the current active node, you must supply the same settings array that the [view](#view) method gets.\n\n",
+                "type": "{ settings : List.List (Arborist.Setting node), state : Arborist.State, tree : Arborist.Tree.Tree node } -> Maybe.Maybe ( Maybe.Maybe node, { position : ( Basics.Float, Basics.Float ), context : Arborist.Context node } )"
+            },
+            {
+                "name": "deactivate",
+                "comment": " Remove active node\n",
+                "type": "Arborist.State -> Arborist.State"
+            },
+            {
+                "name": "deleteActiveNode",
+                "comment": " Delete the active node from a tree, including all of its children. If a placeholder is active, this method does nothing.\n",
+                "type": "Arborist.State -> Arborist.Tree.Tree node -> ( Arborist.State, Arborist.Tree.Tree node )"
+            },
+            {
+                "name": "hasActiveNode",
+                "comment": " Determines whether there is an active node. This is a simple alternative to [activeNode](#activeNode), which provides a lot more information and requires more inputs in scope.\n",
+                "type": "Arborist.State -> Basics.Bool"
+            },
+            {
+                "name": "init",
+                "comment": " Initialize state.\n",
+                "type": "Arborist.State"
+            },
+            {
+                "name": "reposition",
+                "comment": " Restores the original pan position of the tree.\n",
+                "type": "Arborist.State -> Arborist.State"
+            },
+            {
+                "name": "setActiveNode",
+                "comment": " Sets a new node at the active position. This may be adding a completely new node from scratch (in case the current node is a placeholder), or modifying an existing one. Typically, the modification is based off an original value provided by the [activeNode](#activeNode) method.\n",
+                "type": "node -> Arborist.State -> Arborist.Tree.Tree node -> ( Arborist.State, Arborist.Tree.Tree node )"
+            },
+            {
+                "name": "setActiveNodeWithChildren",
+                "comment": " Sets the active node with the option to also set its children. The existing children will be discarded along with their children.\n",
+                "type": "{ node : node, childrenOverride : Maybe.Maybe (List.List node) } -> Arborist.State -> Arborist.Tree.Tree node -> ( Arborist.State, Arborist.Tree.Tree node )"
+            },
+            {
+                "name": "subscriptions",
+                "comment": " Subscriptions for interactive enhancements like keyboard events\n",
+                "type": "List.List (Arborist.Setting node) -> Arborist.State -> Arborist.Tree.Tree node -> Platform.Sub.Sub ( Arborist.State, Arborist.Tree.Tree node )"
+            },
+            {
+                "name": "updateActiveBranch",
+                "comment": " Similar to [setActiveNode](#setActiveNode), but instead of updating just the node with its subtrees intact, it updates the entire branch based on a `Tree -> Tree` function.\n",
+                "type": "(Arborist.Tree.Tree node -> Arborist.Tree.Tree node) -> Arborist.State -> Arborist.Tree.Tree node -> ( Arborist.State, Arborist.Tree.Tree node )"
+            },
+            {
+                "name": "view",
+                "comment": " The editor's view function, taking the following arguments:\n\n  - [NodeView](#NodeView): view function for an individual node.\n  - a list of html attributes for the container element.\n  - the editor's [model](#State).\n\n",
+                "type": "List.List (Html.Attribute msg) -> { nodeView : Arborist.NodeView node msg, tree : Arborist.Tree.Tree node, state : Arborist.State, toMsg : Arborist.Updater node -> msg, settings : List.List (Arborist.Setting node) } -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Arborist.Settings",
+        "comment": " Various settings for the editor, defined at the time of [initialization](Arborist#initWith), or [added](Arborist#applySettings) at any time later in the program. Includes various geometric settings such as canvas dimensions and the gutter between nodes, and, in a later version of this package, more functional settings such as hiding placeholder nodes.\n\n\n## Geometry\n\n@docs nodeWidth, nodeHeight, canvasWidth, canvasHeight, level, gutter, centerOffset, connectorStroke, connectorStrokeWidth\n\n\n## Features\n\n@docs dragAndDrop, keyboardNavigation, keyboardNavigationOutside, defaultNode, showPlaceholderLeaves, showPlaceholderLeavesAdvanced, isNodeClustered, extendConnectorsBy, extendConnectorsByAdvanced, checksum\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "canvasHeight",
+                "comment": " Sets the height of the canvas.\n",
+                "type": "Basics.Int -> Internals.Settings.Setting node"
+            },
+            {
+                "name": "canvasWidth",
+                "comment": " Sets the width of the canvas.\n",
+                "type": "Basics.Int -> Internals.Settings.Setting node"
+            },
+            {
+                "name": "centerOffset",
+                "comment": " When a node is activated, the interface centers it automatically. Sometimes, though, it is useful to move it somewhere other than the center, e.g. to accommodate a large pop-up underneath. With this configuration option, you can specify this offset, horizontal first, vertical second.\n",
+                "type": "Basics.Int -> Basics.Int -> Internals.Settings.Setting node"
+            },
+            {
+                "name": "checksum",
+                "comment": " A checksum value for settings, allowing the layout algorithm to know when the settings have not meaningfully changed and that a previous computed tree layout can be re-used.\n\n    This is necessary because some settings are functions which cannot be compared directly.\n\n",
+                "type": "String.String -> Internals.Settings.Setting node"
+            },
+            {
+                "name": "connectorStroke",
+                "comment": " Stroke color of the lines connecting siblings.\n",
+                "type": "String.String -> Internals.Settings.Setting node"
+            },
+            {
+                "name": "connectorStrokeWidth",
+                "comment": " Stroke width of the lines connecting siblings.\n",
+                "type": "String.String -> Internals.Settings.Setting node"
+            },
+            {
+                "name": "defaultNode",
+                "comment": " Sets a default node to be created automatically when a child placeholder is clicked. If none is specified, the placeholder is activated so that a new node may be added manually.\n",
+                "type": "node -> Internals.Settings.Setting node"
+            },
+            {
+                "name": "dragAndDrop",
+                "comment": " Enable or disable drag and drop with this boolean flag (`True` is enabled, which is the default value). Note that the tree can still be panned if drag and drop is disabled.\n",
+                "type": "Basics.Bool -> Internals.Settings.Setting node"
+            },
+            {
+                "name": "extendConnectorsBy",
+                "comment": " Specifies whether node connectors should extend a certain distance at root- or leaf nodes to connect to peripheral UI elements\n",
+                "type": "Basics.Int -> Internals.Settings.Setting node"
+            },
+            {
+                "name": "extendConnectorsByAdvanced",
+                "comment": " A fine-grained control version of `showPlaceholderLeaves`, allowing control on the display of placeholder leaves based on the contents of the node, as well as its parent and children.\n",
+                "type": "({ node : Maybe.Maybe node, parent : Maybe.Maybe node, children : List.List node, siblings : List.List node } -> Maybe.Maybe Basics.Int) -> Internals.Settings.Setting node"
+            },
+            {
+                "name": "gutter",
+                "comment": " Horizontal gutter between nodes.\n",
+                "type": "Basics.Int -> Internals.Settings.Setting node"
+            },
+            {
+                "name": "isNodeClustered",
+                "comment": " Tells arborist which nodes should be clustered. Clustered nodes do not render their children, making the tree easier to understand. Use e.g. [setActive](#setActive) to toggle clustered state on and off.\n",
+                "type": "(node -> Basics.Bool) -> Internals.Settings.Setting node"
+            },
+            {
+                "name": "keyboardNavigation",
+                "comment": " Enable or disable keyboard navigation, which traverses and activates nodes using the arrow keys\n",
+                "type": "Basics.Bool -> Internals.Settings.Setting node"
+            },
+            {
+                "name": "keyboardNavigationOutside",
+                "comment": " Similar to `keyboardNavigation`, but only works if the event is recorded outside a DOM element with the specified ID. Use this to disable keyboard navigation if the user types inside an input.\n",
+                "type": "String.String -> Basics.Bool -> Internals.Settings.Setting node"
+            },
+            {
+                "name": "level",
+                "comment": " Vertical distance between the bottom of a parent node and the top of its child.\n",
+                "type": "Basics.Int -> Internals.Settings.Setting node"
+            },
+            {
+                "name": "nodeHeight",
+                "comment": " Sets the width of node.\n",
+                "type": "Basics.Int -> Internals.Settings.Setting node"
+            },
+            {
+                "name": "nodeWidth",
+                "comment": " Sets the width of node.\n",
+                "type": "Basics.Int -> Internals.Settings.Setting node"
+            },
+            {
+                "name": "showPlaceholderLeaves",
+                "comment": " Set whether placeholder leaves should be displayed.\n",
+                "type": "Basics.Bool -> Internals.Settings.Setting node"
+            },
+            {
+                "name": "showPlaceholderLeavesAdvanced",
+                "comment": " A fine-grained control version of `showPlaceholderLeaves`, allowing control on the display of placeholder leaves based on the contents of the node, as well as its parent and children.\n",
+                "type": "({ node : node, parent : Maybe.Maybe node, children : List.List node, siblings : List.List node } -> Basics.Bool) -> Internals.Settings.Setting node"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Arborist.Tree",
+        "comment": " A tiny tiny tree module. Only a few utility methods are provided here - after all, if you want to manupilate the tree, you should probably do so using the interface 🤓.\n\n\n# Type\n\n@docs Tree\n\n\n# Json\n\n@docs decoder, encoder\n\n\n# Methods\n\n@docs depth, flatten, map\n\n",
+        "unions": [
+            {
+                "name": "Tree",
+                "comment": " Recursive tree structure, holding any data type `node`, and any number of child nodes. Creating a tree of strings, for instance, would look like this:\n",
+                "args": [
+                    "node"
+                ],
+                "cases": [
+                    [
+                        "Empty",
+                        []
+                    ],
+                    [
+                        "Node",
+                        [
+                            "node",
+                            "List.List (Arborist.Tree.Tree node)"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decoder",
+                "comment": " Decode a tree based on the decoder of its node\n",
+                "type": "Json.Decode.Decoder node -> Json.Decode.Decoder (Arborist.Tree.Tree node)"
+            },
+            {
+                "name": "depth",
+                "comment": " Tree depth.\n",
+                "type": "Arborist.Tree.Tree node -> Basics.Int"
+            },
+            {
+                "name": "encoder",
+                "comment": " Encodes a tree based on the encoder of its node\n",
+                "type": "(node -> Json.Encode.Value) -> Arborist.Tree.Tree node -> Json.Encode.Value"
+            },
+            {
+                "name": "flatten",
+                "comment": " Flatten a tree into a list of ( path, node ) tuples. The path is a list of integers showing how you can get to the node (the root would be `[]`, its first child `[ 1 ]`).\n",
+                "type": "Arborist.Tree.Tree a -> List.List ( List.List Basics.Int, a )"
+            },
+            {
+                "name": "map",
+                "comment": " Map over the nodes of the tree.\n",
+                "type": "(a -> b) -> Arborist.Tree.Tree a -> Arborist.Tree.Tree b"
+            }
+        ],
+        "binops": []
+    }
+]

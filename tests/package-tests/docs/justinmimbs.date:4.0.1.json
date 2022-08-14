@@ -1,0 +1,290 @@
+[
+    {
+        "name": "Date",
+        "comment": "\n\n@docs Date\n\n@docs Month, Weekday\n\n\n# Create\n\n@docs today, fromPosix, fromCalendarDate, fromWeekDate, fromOrdinalDate, fromIsoString, fromRataDie\n\n\n# Convert\n\n@docs toIsoString, toRataDie\n\n\n# Extract\n\n@docs year, month, day, weekYear, weekNumber, weekday, ordinalDay, quarter, monthNumber, weekdayNumber\n\n\n# Format\n\n@docs format\n\n\n## Custom Languages\n\n@docs Language, formatWithLanguage\n\n\n# Arithmetic\n\n@docs Unit, add, diff\n\n\n# Rounding\n\n@docs Interval, ceiling, floor\n\n\n# Lists\n\n@docs range\n\n\n# Ordering\n\n@docs compare, isBetween, min, max, clamp\n\n\n# Month and Weekday helpers\n\n@docs monthToNumber, numberToMonth, weekdayToNumber, numberToWeekday\n\n",
+        "unions": [
+            {
+                "name": "Date",
+                "comment": " Represents a date.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Interval",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Year",
+                        []
+                    ],
+                    [
+                        "Quarter",
+                        []
+                    ],
+                    [
+                        "Month",
+                        []
+                    ],
+                    [
+                        "Week",
+                        []
+                    ],
+                    [
+                        "Monday",
+                        []
+                    ],
+                    [
+                        "Tuesday",
+                        []
+                    ],
+                    [
+                        "Wednesday",
+                        []
+                    ],
+                    [
+                        "Thursday",
+                        []
+                    ],
+                    [
+                        "Friday",
+                        []
+                    ],
+                    [
+                        "Saturday",
+                        []
+                    ],
+                    [
+                        "Sunday",
+                        []
+                    ],
+                    [
+                        "Day",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Unit",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Years",
+                        []
+                    ],
+                    [
+                        "Months",
+                        []
+                    ],
+                    [
+                        "Weeks",
+                        []
+                    ],
+                    [
+                        "Days",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Language",
+                "comment": " Functions to convert date information to strings in a custom language.\n",
+                "args": [],
+                "type": "{ monthName : Date.Month -> String.String, monthNameShort : Date.Month -> String.String, weekdayName : Date.Weekday -> String.String, weekdayNameShort : Date.Weekday -> String.String, dayWithSuffix : Basics.Int -> String.String }"
+            },
+            {
+                "name": "Month",
+                "comment": " The `Month` type used in this package is an alias of [`Month`][timemonth]\nfrom `elm/time`. To express literal values, like `Jan`, you must import them\nfrom `Time`.\n\n    import Date\n    import Time exposing (Month(..))\n\n    Date.fromCalendarDate 2020 Jan 1\n\n[timemonth]: https://package.elm-lang.org/packages/elm/time/latest/Time#Month\n\n",
+                "args": [],
+                "type": "Time.Month"
+            },
+            {
+                "name": "Weekday",
+                "comment": " The `Weekday` type used in this package is an alias of [`Weekday`][timeweekday]\nfrom `elm/time`. To express literal values, like `Mon`, you must import them\nfrom `Time`.\n\n    import Date\n    import Time exposing (Weekday(..))\n\n    Date.fromWeekDate 2020 1 Mon\n\n[timeweekday]: https://package.elm-lang.org/packages/elm/time/latest/Time#Weekday\n\n",
+                "args": [],
+                "type": "Time.Weekday"
+            }
+        ],
+        "values": [
+            {
+                "name": "add",
+                "comment": " Get a past or future date by adding a number of units to a date.\n\n    import Date exposing (Unit(..), add, fromCalendarDate)\n    import Time exposing (Month(..))\n\n    add Weeks -2 (fromCalendarDate 2018 Sep 26)\n        == fromCalendarDate 2018 Sep 12\n\nWhen adding `Years` or `Months`, day values are clamped to the end of the\nmonth if necessary.\n\n    add Months 1 (fromCalendarDate 2000 Jan 31)\n        == fromCalendarDate 2000 Feb 29\n\n",
+                "type": "Date.Unit -> Basics.Int -> Date.Date -> Date.Date"
+            },
+            {
+                "name": "ceiling",
+                "comment": " Round up a date to the beginning of the closest interval. The resulting\ndate will be greater than or equal to the one provided.\n\n    import Date exposing (Interval(..), ceiling, fromCalendarDate)\n    import Time exposing (Month(..))\n\n    ceiling Tuesday (fromCalendarDate 2018 May 11)\n        == fromCalendarDate 2018 May 15\n\n",
+                "type": "Date.Interval -> Date.Date -> Date.Date"
+            },
+            {
+                "name": "clamp",
+                "comment": " Clamp a date within a range.\n\n    import Date exposing (fromOrdinalDate, clamp)\n\n    minimum = fromOrdinalDate 1970 1\n    maximum = fromOrdinalDate 2038 1\n\n    clamp minimum maximum (fromOrdinalDate 1969 201)\n        == fromOrdinalDate 1970 1\n\n",
+                "type": "Date.Date -> Date.Date -> Date.Date -> Date.Date"
+            },
+            {
+                "name": "compare",
+                "comment": " Compare two dates. This can be used as the compare function for\n`List.sortWith`.\n\n    import Date exposing (fromOrdinalDate, compare)\n\n    compare (fromOrdinalDate 1970 1) (fromOrdinalDate 2038 1)\n        == LT\n\n",
+                "type": "Date.Date -> Date.Date -> Basics.Order"
+            },
+            {
+                "name": "day",
+                "comment": " The day of the month (1–31).\n",
+                "type": "Date.Date -> Basics.Int"
+            },
+            {
+                "name": "diff",
+                "comment": " Get the difference, as a number of whole units, between two dates.\n\n    import Date exposing (Unit(..), diff, fromCalendarDate)\n    import Time exposing (Month(..))\n\n    diff Months\n        (fromCalendarDate 2020 Jan 2)\n        (fromCalendarDate 2020 Apr 1)\n        == 2\n\n",
+                "type": "Date.Unit -> Date.Date -> Date.Date -> Basics.Int"
+            },
+            {
+                "name": "floor",
+                "comment": " Round down a date to the beginning of the closest interval. The resulting\ndate will be less than or equal to the one provided.\n\n    import Date exposing (Interval(..), floor, fromCalendarDate)\n    import Time exposing (Month(..))\n\n    floor Tuesday (fromCalendarDate 2018 May 11)\n        == fromCalendarDate 2018 May 8\n\n",
+                "type": "Date.Interval -> Date.Date -> Date.Date"
+            },
+            {
+                "name": "format",
+                "comment": " Format a date using a string as a template.\n\n    import Date exposing (fromOrdinalDate, format)\n\n    format \"EEEE, d MMMM y\" (fromOrdinalDate 1970 1)\n        == \"Thursday, 1 January 1970\"\n\nAlphabetic characters in the template represent date information; the number of\ntimes a character is repeated specifies the form of a name (e.g. `\"Tue\"`,\n`\"Tuesday\"`) or the padding of a number (e.g. `\"1\"`, `\"01\"`).\n\nAlphabetic characters can be escaped within single-quotes; a single-quote can\nbe escaped as a sequence of two single-quotes, whether appearing inside or\noutside an escaped sequence.\n\nTemplates are based on Date Format Patterns in [Unicode Technical\nStandard #35][uts35]. Only the following subset of formatting characters\nare available:\n\n    \"y\" -- year\n\n    \"Y\" -- week-numbering year\n\n    \"Q\" -- quarter\n\n    \"M\" -- month (number or name)\n\n    \"w\" -- week number\n\n    \"d\" -- day\n\n    \"D\" -- ordinal day\n\n    \"E\" -- weekday name\n\n    \"e\" -- weekday number\n\n[uts35]: http://www.unicode.org/reports/tr35/tr35-43/tr35-dates.html#Date_Format_Patterns\n\nThe non-standard pattern field \"ddd\" is available to indicate the day of the\nmonth with an ordinal suffix (e.g. `\"1st\"`, `\"15th\"`), as the current standard\ndoes not include such a field.\n\n    format \"MMMM ddd, y\" (fromOrdinalDate 1970 1)\n        == \"January 1st, 1970\"\n\n",
+                "type": "String.String -> Date.Date -> String.String"
+            },
+            {
+                "name": "formatWithLanguage",
+                "comment": " Format a date in a custom language using a string as a template.\n\n    import Date exposing (fromOrdinalDate, formatWithLanguage)\n\n    formatWithLanguage fr \"EEEE, ddd MMMM y\" (fromOrdinalDate 1970 1)\n        == \"jeudi, 1er janvier 1970\"\n\n    -- assuming `fr` is a custom `Date.Language`\n\n",
+                "type": "Date.Language -> String.String -> Date.Date -> String.String"
+            },
+            {
+                "name": "fromCalendarDate",
+                "comment": " Create a date from a [calendar date][gregorian]: a year, month, and day of\nthe month. Out-of-range day values will be clamped.\n\n    import Date exposing (fromCalendarDate)\n    import Time exposing (Month(..))\n\n    fromCalendarDate 2018 Sep 26\n\n[gregorian]: https://en.wikipedia.org/wiki/Proleptic_Gregorian_calendar\n\n",
+                "type": "Basics.Int -> Date.Month -> Basics.Int -> Date.Date"
+            },
+            {
+                "name": "fromIsoString",
+                "comment": " Attempt to create a date from a string in [ISO 8601][iso8601] format.\nCalendar dates, week dates, and ordinal dates are all supported in extended\nand basic format.\n\n    import Date exposing (fromIsoString, fromCalendarDate, fromWeekDate, fromOrdinalDate)\n    import Time exposing (Month(..), Weekday(..))\n\n    -- calendar date\n    fromIsoString \"2018-09-26\"\n        == Ok (fromCalendarDate 2018 Sep 26)\n\n\n    -- week date\n    fromIsoString \"2018-W39-3\"\n        == Ok (fromWeekDate 2018 39 Wed)\n\n\n    -- ordinal date\n    fromIsoString \"2018-269\"\n        == Ok (fromOrdinalDate 2018 269)\n\nThe string must represent a valid date; unlike `fromCalendarDate` and\nfriends, any out-of-range values will fail to produce a date.\n\n    fromIsoString \"2018-02-29\"\n        == Err \"Invalid calendar date (2018, 2, 29)\"\n\n[iso8601]: https://en.wikipedia.org/wiki/ISO_8601\n\n",
+                "type": "String.String -> Result.Result String.String Date.Date"
+            },
+            {
+                "name": "fromOrdinalDate",
+                "comment": " Create a date from an [ordinal date][ordinaldate]: a year and day of the\nyear. Out-of-range day values will be clamped.\n\n    import Date exposing (fromOrdinalDate)\n\n    fromOrdinalDate 2018 269\n\n[ordinaldate]: https://en.wikipedia.org/wiki/Ordinal_date\n\n",
+                "type": "Basics.Int -> Basics.Int -> Date.Date"
+            },
+            {
+                "name": "fromPosix",
+                "comment": " Create a date from a time [`Zone`][zone] and a [`Posix`][posix] time. This\nconversion loses the time information associated with the `Posix` value.\n\n    import Date exposing (fromCalendarDate, fromPosix)\n    import Time exposing (millisToPosix, utc, Month(..))\n\n    fromPosix utc (millisToPosix 0)\n        == fromCalendarDate 1970 Jan 1\n\n[zone]: https://package.elm-lang.org/packages/elm/time/latest/Time#Zone\n[posix]: https://package.elm-lang.org/packages/elm/time/latest/Time#Posix\n\n",
+                "type": "Time.Zone -> Time.Posix -> Date.Date"
+            },
+            {
+                "name": "fromRataDie",
+                "comment": " [Rata Die][ratadie] is a system for assigning numbers to calendar days,\nwhere the number 1 represents the date _1 January 0001_.\n\nYou can losslessly convert a `Date` to and from an `Int` representing the date\nin Rata Die. This makes it a convenient representation for transporting dates\nor using them as comparables. For all date values:\n\n    (date |> toRataDie |> fromRataDie)\n        == date\n\n[ratadie]: https://en.wikipedia.org/wiki/Rata_Die\n\n",
+                "type": "Basics.Int -> Date.Date"
+            },
+            {
+                "name": "fromWeekDate",
+                "comment": " Create a date from an [ISO week date][weekdate]: a week-numbering year,\nweek number, and weekday. Out-of-range week number values will be clamped.\n\n    import Date exposing (fromWeekDate)\n    import Time exposing (Weekday(..))\n\n    fromWeekDate 2018 39 Wed\n\n[weekdate]: https://en.wikipedia.org/wiki/ISO_week_date\n\n",
+                "type": "Basics.Int -> Basics.Int -> Date.Weekday -> Date.Date"
+            },
+            {
+                "name": "isBetween",
+                "comment": " Test if a date is within a range, inclusive of the range values.\n\n    import Date exposing (fromOrdinalDate, isBetween)\n\n    minimum = fromOrdinalDate 1970 1\n    maximum = fromOrdinalDate 2038 1\n\n    isBetween minimum maximum (fromOrdinalDate 1969 201)\n        == False\n\n",
+                "type": "Date.Date -> Date.Date -> Date.Date -> Basics.Bool"
+            },
+            {
+                "name": "max",
+                "comment": " Find the greater of two dates.\n\n    import Date exposing (fromOrdinalDate, max)\n\n    max (fromOrdinalDate 1970 1) (fromOrdinalDate 2038 1)\n        == (fromOrdinalDate 2038 1)\n\n",
+                "type": "Date.Date -> Date.Date -> Date.Date"
+            },
+            {
+                "name": "min",
+                "comment": " Find the lesser of two dates.\n\n    import Date exposing (fromOrdinalDate, min)\n\n    min (fromOrdinalDate 1970 1) (fromOrdinalDate 2038 1)\n        == (fromOrdinalDate 1970 1)\n\n",
+                "type": "Date.Date -> Date.Date -> Date.Date"
+            },
+            {
+                "name": "month",
+                "comment": " The month as a [`Month`](https://package.elm-lang.org/packages/elm/time/latest/Time#Month)\nvalue (`Jan`–`Dec`).\n",
+                "type": "Date.Date -> Date.Month"
+            },
+            {
+                "name": "monthNumber",
+                "comment": " The month number (1–12).\n",
+                "type": "Date.Date -> Basics.Int"
+            },
+            {
+                "name": "monthToNumber",
+                "comment": " Maps `Jan`–`Dec` to 1–12.\n",
+                "type": "Date.Month -> Basics.Int"
+            },
+            {
+                "name": "numberToMonth",
+                "comment": " Maps 1–12 to `Jan`–`Dec`.\n",
+                "type": "Basics.Int -> Date.Month"
+            },
+            {
+                "name": "numberToWeekday",
+                "comment": " Maps 1-7 to `Mon`–`Sun`.\n",
+                "type": "Basics.Int -> Date.Weekday"
+            },
+            {
+                "name": "ordinalDay",
+                "comment": " The day of the year (1–366).\n",
+                "type": "Date.Date -> Basics.Int"
+            },
+            {
+                "name": "quarter",
+                "comment": " The quarter of the year (1–4).\n",
+                "type": "Date.Date -> Basics.Int"
+            },
+            {
+                "name": "range",
+                "comment": " Create a list of dates, at rounded intervals, increasing by a step value,\nbetween two dates. The list will start on or after the first date, and end\nbefore the second date.\n\n    import Date exposing (Interval(..), range, fromCalendarDate)\n    import Time exposing (Month(..))\n\n    start = fromCalendarDate 2018 May 8\n    until = fromCalendarDate 2018 May 14\n\n    range Day 2 start until\n        == [ fromCalendarDate 2018 May 8\n           , fromCalendarDate 2018 May 10\n           , fromCalendarDate 2018 May 12\n           ]\n\n",
+                "type": "Date.Interval -> Basics.Int -> Date.Date -> Date.Date -> List.List Date.Date"
+            },
+            {
+                "name": "toIsoString",
+                "comment": " Convert a date to a string in ISO 8601 extended format.\n\n    import Date exposing (fromOrdinalDate, toIsoString)\n\n    toIsoString (fromOrdinalDate 2001 1)\n        == \"2001-01-01\"\n\n",
+                "type": "Date.Date -> String.String"
+            },
+            {
+                "name": "toRataDie",
+                "comment": " Convert a date to its number representation in Rata Die (see\n[`fromRataDie`](#fromRataDie)). For all date values:\n\n    (date |> toRataDie |> fromRataDie)\n        == date\n\n",
+                "type": "Date.Date -> Basics.Int"
+            },
+            {
+                "name": "today",
+                "comment": " Get the current local date. See [this page][calendarexample] for a full example.\n\n[calendarexample]: https://github.com/justinmimbs/date/blob/master/examples/Calendar.elm\n\n",
+                "type": "Task.Task x Date.Date"
+            },
+            {
+                "name": "weekNumber",
+                "comment": " The ISO week number of the year (1–53).\n",
+                "type": "Date.Date -> Basics.Int"
+            },
+            {
+                "name": "weekYear",
+                "comment": " The ISO week-numbering year. This is not always the same as the\ncalendar year.\n",
+                "type": "Date.Date -> Basics.Int"
+            },
+            {
+                "name": "weekday",
+                "comment": " The weekday as a [`Weekday`](https://package.elm-lang.org/packages/elm/time/latest/Time#Weekday)\nvalue (`Mon`–`Sun`).\n",
+                "type": "Date.Date -> Date.Weekday"
+            },
+            {
+                "name": "weekdayNumber",
+                "comment": " The weekday number (1–7), beginning with Monday.\n",
+                "type": "Date.Date -> Basics.Int"
+            },
+            {
+                "name": "weekdayToNumber",
+                "comment": " Maps `Mon`–`Sun` to 1-7.\n",
+                "type": "Date.Weekday -> Basics.Int"
+            },
+            {
+                "name": "year",
+                "comment": " The calendar year.\n",
+                "type": "Date.Date -> Basics.Int"
+            }
+        ],
+        "binops": []
+    }
+]

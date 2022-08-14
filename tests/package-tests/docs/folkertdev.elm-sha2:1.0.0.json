@@ -1,0 +1,206 @@
+[
+    {
+        "name": "SHA224",
+        "comment": " [SHA-224] is a [cryptographic hash function] that gives 112 bits of security.\n\n[SHA-224]: https://tools.ietf.org/rfc/rfc3874.txt\n[cryptographic hash function]: https://en.wikipedia.org/wiki/Cryptographic_hash_function\n\n@docs Digest\n\n\n# Creating digests\n\n@docs fromString\n@docs fromBytes\n@docs fromByteValues\n\n\n# Formatting digests\n\n@docs toHex, toBase64\n\n\n# To binary data\n\n@docs toBytes, toByteValues\n\n",
+        "unions": [
+            {
+                "name": "Digest",
+                "comment": " Abstract representation of a sha224 digest.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fromByteValues",
+                "comment": " Create a digest from integer byte values.\nValues are considered mod 256, which means that larger than 255 overflow.\n\n    SHA224.fromByteValues\n        [72, 105, 33, 32, 240, 159, 152, 132 ]\n    --> SHA224.fromString \"Hi! 😄\"\n\n    [0x00, 0xFF, 0x34, 0xA5]\n        |> SHA224.fromByteValues\n        |> SHA224.toBase64\n    --> \"XNMoqDRg7RdO+hXuACw+BWAVTd8aTNqXyjz35w==\"\n\n",
+                "type": "List.List Basics.Int -> SHA224.Digest"
+            },
+            {
+                "name": "fromBytes",
+                "comment": " Create a digest from a [`Bytes`](https://package.elm-lang.org/packages/elm/bytes/latest/)\n\n    import Bytes.Encode as Encode\n    import Bytes exposing (Bytes, Endianness(..))\n\n    buffer : Bytes\n    buffer = Encode.encode (Encode.unsignedInt32 BE 42)\n\n    SHA224.fromBytes buffer\n        |> SHA224.toHex\n        --> \"793ce43981dc8ea9c80d5518905c629b54dec6c94152e7dbb08a4177\"\n\n",
+                "type": "Bytes.Bytes -> SHA224.Digest"
+            },
+            {
+                "name": "fromString",
+                "comment": " Create a digest from a `String`.\n\n    \"hello world\"\n        |> SHA224.fromString\n        |> SHA224.toHex\n    --> \"2f05477fc24bb4faefd86517156dafdecec45b8ad3cf2522a563582b\"\n\n",
+                "type": "String.String -> SHA224.Digest"
+            },
+            {
+                "name": "toBase64",
+                "comment": " Represent the digest as its base-64 encoding.\n\n    \"Many more of them live next door\"\n        |> SHA224.fromString\n        |> SHA224.toBase64\n    --> \"jGqILHEjFHl4RGN0oaRtFhktytsyncZyOHob4g==\"\n\n",
+                "type": "SHA224.Digest -> String.String"
+            },
+            {
+                "name": "toByteValues",
+                "comment": " Get the individual byte values as integers.\n\n    \"And the band begins to play\"\n        |> SHA224.fromString\n        |> SHA224.toByteValues\n    --> [ 0xac, 0x41, 0xa7, 0x63\n    --> , 0x89, 0xc4, 0xe1, 0x5a\n    --> , 0x7e, 0x3b, 0x9d, 0x4a\n    --> , 0x24, 0x20, 0xef, 0xd0\n    --> , 0x32, 0x78, 0xd8, 0xfc\n    --> , 0xcb, 0x23, 0x39, 0xa1\n    --> , 0xe6, 0xaf, 0xcd, 0x18\n    --> ]\n\n",
+                "type": "SHA224.Digest -> List.List Basics.Int"
+            },
+            {
+                "name": "toBytes",
+                "comment": " Turn a digest into `Bytes`. The digest is stored as 7 big-endian 32-bit unsigned integers, so the width is 28 bytes or 224 bits.\n",
+                "type": "SHA224.Digest -> Bytes.Bytes"
+            },
+            {
+                "name": "toHex",
+                "comment": " Represent the digest as a string of hexadecimal digits.\n\n    \"And our friends are all aboard\"\n        |> SHA224.fromString\n        |> SHA224.toHex\n    --> \"43baf0c15656c9c0ecce1e4ccb8491e6e5fe01c50e33d73338e899cb\"\n\n",
+                "type": "SHA224.Digest -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "SHA256",
+        "comment": " [SHA-256] is a [cryptographic hash function] that gives 128 bits of security.\n\n[SHA-256]: http://www.iwar.org.uk/comsec/resources/cipher/sha256-384-512.pdf\n[cryptographic hash function]: https://en.wikipedia.org/wiki/Cryptographic_hash_function\n\n@docs Digest\n\n\n# Creating digests\n\n@docs fromString\n@docs fromBytes\n@docs fromByteValues\n\n\n# Formatting digests\n\n@docs toHex, toBase64\n\n\n# To binary data\n\n@docs toBytes, toByteValues\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Digest",
+                "comment": " An abstract sha256 digest\n",
+                "args": [],
+                "type": "Internal.SHA256.Digest"
+            }
+        ],
+        "values": [
+            {
+                "name": "fromByteValues",
+                "comment": " Create a digest from integer byte values.\nValues are considered mod 256, which means that larger than 255 overflow.\n\n    SHA256.fromByteValues\n        [72, 105, 33, 32, 240, 159, 152, 132]\n    --> SHA256.fromString \"Hi! 😄\"\n\n    [0x00, 0xFF, 0x34, 0xA5]\n        |> SHA256.fromByteValues\n        |> SHA256.toBase64\n    --> \"SQ/kWBD948Wwg8toEA/O0cPo+oodOMYnZc8HmexxyCs=\"\n\n",
+                "type": "List.List Basics.Int -> SHA256.Digest"
+            },
+            {
+                "name": "fromBytes",
+                "comment": " Create a digest from a [`Bytes`](https://package.elm-lang.org/packages/elm/bytes/latest/)\n\n    import Bytes.Encode as Encode\n    import Bytes exposing (Bytes, Endianness(..))\n\n    buffer : Bytes\n    buffer = Encode.encode (Encode.unsignedInt32 BE 42)\n\n    SHA256.fromBytes buffer\n        |> SHA256.toHex\n        --> \"ae3c8b8d99a39542f78af83dbbb42c81cd94199ec1b5f60a0801063e95842570\"\n\n",
+                "type": "Bytes.Bytes -> SHA256.Digest"
+            },
+            {
+                "name": "fromString",
+                "comment": " Create a digest from a `String`.\n\n    \"hello world\"\n        |> SHA256.fromString\n        |> SHA256.toHex\n    --> \"b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9\"\n\n",
+                "type": "String.String -> SHA256.Digest"
+            },
+            {
+                "name": "toBase64",
+                "comment": " Represent the digest as its base-64 encoding.\n\n    \"Many more of them live next door\"\n        |> SHA256.fromString\n        |> SHA256.toBase64\n    --> \"1ov4iAbzsCXuC2R9heu+y57YF/Seb5Vu8cRvVyEY6jM=\"\n\n",
+                "type": "SHA256.Digest -> String.String"
+            },
+            {
+                "name": "toByteValues",
+                "comment": " Get the individual byte values as integers\n\n    \"And the band begins to play\"\n        |> SHA256.fromString\n        |> SHA256.toByteValues\n        --> [ 0xb1, 0x13, 0x61, 0x72, 0xce, 0xf9, 0x6d, 0xe6, 0xf0, 0x61, 0x58, 0xd1, 0x43, 0x34, 0x32, 0xaa, 0xaf, 0xe7, 0x68, 0xf, 0xd3, 0xb4, 0x6f, 0x55, 0x92, 0xcd, 0xed, 0xb3, 0x3a, 0xf5, 0x7a, 0x50 ]\n\n",
+                "type": "SHA256.Digest -> List.List Basics.Int"
+            },
+            {
+                "name": "toBytes",
+                "comment": " Turn a digest into `Bytes`. The digest is stored as 8 big-endian 32-bit unsigned integers, so the width is 32 bytes or 256 bits.\n",
+                "type": "SHA256.Digest -> Bytes.Bytes"
+            },
+            {
+                "name": "toHex",
+                "comment": " Represent the digest as a string of hexadecimal digits.\n\n    \"And our friends are all aboard\"\n        |> SHA256.fromString\n        |> SHA256.toHex\n    --> \"a40bc1de58430a446e4b446a722fdfd493375c93bf93b1066793909f717da796\"\n\n",
+                "type": "SHA256.Digest -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "SHA384",
+        "comment": " [SHA-384] is a [cryptographic hash function] that gives 192 bits of security.\n\n[SHA-384]: http://www.iwar.org.uk/comsec/resources/cipher/sha256-384-512.pdf\n[cryptographic hash function]: https://en.wikipedia.org/wiki/Cryptographic_hash_function\n\n@docs Digest\n\n\n# Creating digests\n\n@docs fromString\n@docs fromBytes\n@docs fromByteValues\n\n\n# Formatting digests\n\n@docs toHex, toBase64\n\n\n# To binary data\n\n@docs toBytes, toByteValues\n\n",
+        "unions": [
+            {
+                "name": "Digest",
+                "comment": " Abstract representation of a sha384 digest.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fromByteValues",
+                "comment": " Create a digest from integer byte values. Values are considered mod 256, which means that larger than 255 overflow.\n\n    SHA384.fromByteValues\n        [72, 105, 33, 32, 240, 159, 152, 132]\n    --> SHA384.fromString \"Hi! 😄\"\n\n    [0x00, 0xFF, 0x34, 0xA5]\n        |> SHA384.fromByteValues\n        |> SHA384.toBase64\n    --> \"6uus8pWKLDBg2APcRPhqSZrfwu+Y71cgQjcEKu+k80yR4H8s6NimoiR00HKMGSW9\"\n\n",
+                "type": "List.List Basics.Int -> SHA384.Digest"
+            },
+            {
+                "name": "fromBytes",
+                "comment": " Create a digest from a [`Bytes`](https://package.elm-lang.org/packages/elm/bytes/latest/)\n\n    import Bytes.Encode as Encode\n    import Bytes exposing (Bytes, Endianness(..))\n\n    buffer : Bytes\n    buffer = Encode.encode (Encode.unsignedInt32 BE 42)\n\n    SHA384.fromBytes buffer\n        |> SHA384.toHex\n        --> \"169c6e0f2a73b8a3f0c6dad952ab62ee64136652d1bfcf5901951186384324070819bba50666c9371265b68b7a57410d\"\n\n",
+                "type": "Bytes.Bytes -> SHA384.Digest"
+            },
+            {
+                "name": "fromString",
+                "comment": " Create a digest from a `String`.\n\n    \"hello world\"\n        |> SHA384.fromString\n        |> SHA384.toHex\n    --> \"fdbd8e75a67f29f701a4e040385e2e23986303ea10239211af907fcbb83578b3e417cb71ce646efd0819dd8c088de1bd\"\n\n",
+                "type": "String.String -> SHA384.Digest"
+            },
+            {
+                "name": "toBase64",
+                "comment": " Represent a digest as its base-64 encoding.\n\n    \"Many more of them live next door\"\n        |> SHA384.fromString\n        |> SHA384.toBase64\n    --> \"pKq5Z/Msjg14oJ2TGHS21h+L9lMWkASENRmCgur5mpwRNoE3dAPWV6kw+aNX1gmB\"\n\n",
+                "type": "SHA384.Digest -> String.String"
+            },
+            {
+                "name": "toByteValues",
+                "comment": " Get the individual byte values as integers.\n\n    \"And the band begins to play\"\n        |> SHA384.fromString\n        |> SHA384.toByteValues\n    --> [216,234,215,67,129,199,177,6,4,113,130,141,149,211,213,72,182,77,43,191,48,162,210,207,88,239,69,109,211,248,187,238,97,27,125,162,116,132,44,35,116,33,51,81,115,241,201,137]\n\n",
+                "type": "SHA384.Digest -> List.List Basics.Int"
+            },
+            {
+                "name": "toBytes",
+                "comment": " Turn a digest into `Bytes`.\n\nThe digest is stored as 7 big-endian 64-bit unsigned integers, so the width is 48 bytes or 384 bits.\n\n",
+                "type": "SHA384.Digest -> Bytes.Bytes"
+            },
+            {
+                "name": "toHex",
+                "comment": " Represent the digest as a hexadecimal string.\n\n    \"And our friends are all aboard\"\n        |> SHA384.fromString\n        |> SHA384.toHex\n    --> \"8b955c0b596df8b93db7c9a0105098c5be18bd4dbbea4cccf9b4b138c54668d0c9295485dc3b20a1ecd1bf97762f3b47\"\n\n",
+                "type": "SHA384.Digest -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "SHA512",
+        "comment": " [SHA-512] is a [cryptographic hash function] that gives 256 bits of security.\n\n[SHA-512]: http://www.iwar.org.uk/comsec/resources/cipher/sha256-384-512.pdf\n[cryptographic hash function]: https://en.wikipedia.org/wiki/Cryptographic_hash_function\n\n@docs Digest\n\n\n# Creating digests\n\n@docs fromString\n@docs fromBytes\n@docs fromByteValues\n\n\n# Formatting digests\n\n@docs toHex, toBase64\n\n\n# To binary data\n\n@docs toBytes, toByteValues\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Digest",
+                "comment": " Abstract representation of a sha512 digest.\n",
+                "args": [],
+                "type": "Internal.SHA512.Digest"
+            }
+        ],
+        "values": [
+            {
+                "name": "fromByteValues",
+                "comment": " Create a digest from integer byte values.\nValues are considered mod 256, which means that larger than 255 overflow.\n\n    SHA512.fromByteValues\n        [72, 105, 33, 32, 240, 159, 152, 132]\n    --> SHA512.fromString \"Hi! 😄\"\n\n    [0x00, 0xFF, 0x34, 0xA5]\n        |> SHA512.fromByteValues\n        |> SHA512.toBase64\n    --> \"El+WnnuwQuhuInw0BkdTlTj/MkFOE/Rx65xiLJxvw5PjAGZ9oow71/el2OGLAULzaFmREAfEy1MWSxNSfsnVgw==\"\n\n",
+                "type": "List.List Basics.Int -> SHA512.Digest"
+            },
+            {
+                "name": "fromBytes",
+                "comment": " Create a digest from a [`Bytes`](https://package.elm-lang.org/packages/elm/bytes/latest/)\n\n    import Bytes.Encode as Encode\n    import Bytes exposing (Bytes, Endianness(..))\n\n    buffer : Bytes\n    buffer = Encode.encode (Encode.unsignedInt32 BE 42)\n\n    SHA512.fromBytes buffer\n        |> SHA512.toHex\n        --> \"08cc3f0991969ae44b05e92bcd8f6ece4dd4e9733a9288dcfff47325906c36ecab9a3c63e59411b3df1f6fed6a232c6a20bff3afff91b36689a41037cbe0b6a0\"\n\n",
+                "type": "Bytes.Bytes -> SHA512.Digest"
+            },
+            {
+                "name": "fromString",
+                "comment": " Create a digest from a `String`.\n\n    \"hello world\"\n        |> SHA512.fromString\n        |> SHA512.toHex\n    --> \"309ecc489c12d6eb4cc40f50c902f2b4d0ed77ee511a7c7a9bcd3ca86d4cd86f989dd35bc5ff499670da34255b45b0cfd830e81f605dcf7dc5542e93ae9cd76f\"\n\n",
+                "type": "String.String -> SHA512.Digest"
+            },
+            {
+                "name": "toBase64",
+                "comment": " Represent the digest as its base-64 encoding.\n\n    \"Many more of them live next door\"\n        |> SHA512.fromString\n        |> SHA512.toBase64\n    --> \"cyr6xhwqW4Fk9Gm5R4h/dqFxkPOf/gPHKiI6t00qQFC8QJAP65IlZkS4YhdGxTvL7VPFzlSPAoXtPTxPAmVJrg==\"\n\n",
+                "type": "SHA512.Digest -> String.String"
+            },
+            {
+                "name": "toByteValues",
+                "comment": " Get the individual byte values as integers.\n\n    \"And the band begins to play\"\n        |> SHA512.fromString\n        |> SHA512.toByteValues\n    --> [153,140,77,156,68,193,195,117,134,19,24,147,44,86,45,132,106,110,43,98,221,233,100,27,183,45,33,120,139,31,6,103,128,205,65,65,9,252,111,213,5,60,65,56,181,170,166,85,7,48,58,253,54,121,246,230,31,95,205,70,53,219,78,168]\n\n",
+                "type": "SHA512.Digest -> List.List Basics.Int"
+            },
+            {
+                "name": "toBytes",
+                "comment": " Turn a digest into `Bytes`.\n\nThe digest is stored as 8 big-endian 64-bit unsigned integers, so the width is 64 bytes or 512 bits.\n\n",
+                "type": "SHA512.Digest -> Bytes.Bytes"
+            },
+            {
+                "name": "toHex",
+                "comment": " Represent the digest as a string of hexadecimal digits.\n\n    \"And our friends are all aboard\"\n        |> SHA512.fromString\n        |> SHA512.toHex\n    --> \"5af050bf4b4f2fbb2f032f42521e2e46a1aff6dcd02176c31425d8777abbe5c818375de27fd8d83cd848621a85507d1bd19eb35c70152c0f8e77b9ba3104e669\"\n\n",
+                "type": "SHA512.Digest -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

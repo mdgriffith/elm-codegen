@@ -1,0 +1,78 @@
+[
+    {
+        "name": "Queue",
+        "comment": " Queues for parallel processing or rate limiting. They are totally type agnostic, soy they serve general use case. You\ncan enqueue any elm type, even Cmd or Msg.\n\n\n# Keyed queues\n\nBy providing a key you prevent duplicate entries in the queue. It also allows to remove specific entries.\n\n@docs Queue, empty, enqueueAndStart, start, enqueue, enqueueMany, dequeue\n\n\n# Unkeyed queues\n\nSimple lists of tasks, duplication allowed. Items cannot be removed.\n\n@docs QueueUnkeyed, emptyUnkeyed, startUnkeyed, enqueueUnkeyed, enqueueManyUnkeyed\n\n",
+        "unions": [
+            {
+                "name": "Queue",
+                "comment": " Keyed queue. Keyed queues don't have duplicates. You have to dequeue items that have in started in order to free up\nspace in the queue pool.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            },
+            {
+                "name": "QueueUnkeyed",
+                "comment": " Queue that does not care about when a task is finished.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "dequeue",
+                "comment": " Mark an element of the queue as complete. You have to provide the element key. This also frees up space in the pool.\n\n    queue\n        |> dequeue itemKey\n        |> start\n\n",
+                "type": "String.String -> Queue.Queue a -> Queue.Queue a"
+            },
+            {
+                "name": "empty",
+                "comment": " Created empty Queue. You have to specify the size of pool (or parallelization count).\n",
+                "type": "Basics.Int -> Queue.Queue a"
+            },
+            {
+                "name": "emptyUnkeyed",
+                "comment": " Create an empty unkeyed queue. You have to provide an integer value that states the number of items retrieved on\neach iteration.\n\n    init =\n        ( { msgQueue = emptyUnkeyed 10\n          }\n        , Cmd.none\n        )\n\n",
+                "type": "Basics.Int -> Queue.QueueUnkeyed a"
+            },
+            {
+                "name": "enqueue",
+                "comment": " Add one element to the queue. You have to provide a key be able to track the item completion.\n\n    queue\n        |> enqueue \"get-user-photo\" httpRequest\n        |> start\n\n",
+                "type": "String.String -> a -> Queue.Queue a -> Queue.Queue a"
+            },
+            {
+                "name": "enqueueAndStart",
+                "comment": " Add entry to the queue and start processing it (get first elements to start processing them).\n",
+                "type": "String.String -> a -> Queue.Queue a -> ( Queue.Queue a, List.List a )"
+            },
+            {
+                "name": "enqueueMany",
+                "comment": " Add many elements to the queue.\n",
+                "type": "List.List ( String.String, a ) -> Queue.Queue a -> Queue.Queue a"
+            },
+            {
+                "name": "enqueueManyUnkeyed",
+                "comment": " Enqueue a list of items to an unkeyed queue queue.\n\n    enqueueManyUnkeyed [ ItemMsg item1, ItemOtherMsg item1, ItemMsg item2 ] model.msgQueue\n\n",
+                "type": "List.List a -> Queue.QueueUnkeyed a -> Queue.QueueUnkeyed a"
+            },
+            {
+                "name": "enqueueUnkeyed",
+                "comment": " Enqueue an item to an unkeyed queue. It allows to enqueue repeated elements.\n\n    enqueueUnkeyed (ItemMsg item) model.msgQueue\n\n",
+                "type": "a -> Queue.QueueUnkeyed a -> Queue.QueueUnkeyed a"
+            },
+            {
+                "name": "start",
+                "comment": " Start processing the queue (get first elements to start processing them). You need to call dequeue on complete items\nin order to free up pool space.\n",
+                "type": "Queue.Queue a -> ( Queue.Queue a, List.List a )"
+            },
+            {
+                "name": "startUnkeyed",
+                "comment": " Start processing the queue (get first elements to start processing them). Started elements don't belong to the queue anymore.\n\n    startUnkeyed model.msgQueue\n\n",
+                "type": "Queue.QueueUnkeyed a -> ( Queue.QueueUnkeyed a, List.List a )"
+            }
+        ],
+        "binops": []
+    }
+]

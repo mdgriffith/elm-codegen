@@ -1,0 +1,71 @@
+[
+    {
+        "name": "Spinner",
+        "comment": " A highly configurable, efficiently rendered spinner component.\n\nCheck the [README for a general introduction into this module](http://package.elm-lang.org/packages/damienklinnert/elm-spinner/latest/).\n\n\n# The Elm Architecture\n\n@docs Model, Msg, subscription, init, update, view\n\n\n# Custom Spinners\n\n@docs Direction, Config, defaultConfig\n\n",
+        "unions": [
+            {
+                "name": "Direction",
+                "comment": " A spinner can spin `Clockwise` or `Counterclockwise`.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Clockwise",
+                        []
+                    ],
+                    [
+                        "Counterclockwise",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Model",
+                "comment": " Contains the current state for the spinner.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Msg",
+                "comment": " `Msg` messages need to be passed through your application.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " A type describing how your spinner looks like.\n\n  - `lines`: Number of lines (a value from 5 to 17, default is 13)\n  - `length`: line length (a value from 0 to 56, default is 28)\n  - `width`: line width (a value from 2 to 52, default is 14)\n  - `radius`: distance from origin to beginning of lines (a value from 0 to 84, default is 42)\n  - `scale`: scale for the whole spinner (a value from 0 to 5, default is 1)\n  - `corners`: roundness of corners (a value from 0 to 1, default is 1)\n  - `opacity`: minimum opacity of inactive lines (a value from 0 to 1, default is 0.25)\n  - `rotate`: rotate the spinner by some degrees (a value from 0 to 90, default is 0)\n  - `direction`: spinner direction (default is Clockwise)\n  - `speed`: (a value from 0.5 (slowest), 2.2 (fastest), default is 1)\n  - `trail`: how long is the trail after the active line (a value from 10 to 100, default is 60)\n  - `translateX`: moves the spinner horizontally (a value from 0 to 100, default is 50)\n  - `translateY`: moves the spinner vertically (a value from 0 to 100, default is 50)\n  - `shadow`: adds a box shadow (default is True)\n  - `hwaccel`: enables hardware acceleration for lines (default is False)\n  - `color`: determines the color for each line based on an index parameter (default is `always Color.white`)\n\n",
+                "args": [],
+                "type": "{ lines : Basics.Float, length : Basics.Float, width : Basics.Float, radius : Basics.Float, scale : Basics.Float, corners : Basics.Float, opacity : Basics.Float, rotate : Basics.Float, direction : Spinner.Direction, speed : Basics.Float, trail : Basics.Float, translateX : Basics.Float, translateY : Basics.Float, shadow : Basics.Bool, hwaccel : Basics.Bool, color : Basics.Float -> Color.Color }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultConfig",
+                "comment": " A default spinner for use in your application.\n",
+                "type": "Spinner.Config"
+            },
+            {
+                "name": "init",
+                "comment": " Defines an initial value for the `Model` type.\n",
+                "type": "Spinner.Model"
+            },
+            {
+                "name": "subscription",
+                "comment": " Add this to your `program`s subscriptions to animate the spinner.\n",
+                "type": "Platform.Sub.Sub Spinner.Msg"
+            },
+            {
+                "name": "update",
+                "comment": " Accepts `Msg` and `Model` and computes a new `Model`.\n",
+                "type": "Spinner.Msg -> Spinner.Model -> Spinner.Model"
+            },
+            {
+                "name": "view",
+                "comment": " The actual spinner component.\n",
+                "type": "Spinner.Config -> Spinner.Model -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

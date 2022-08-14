@@ -1,0 +1,45 @@
+[
+    {
+        "name": "Effects.MsgFromJs",
+        "comment": " Message from JS system is used to listen for messages from JS and decode them to Elm messages.\nIt uses effects for communication with other systems.\n\n\n# Create\n\n@docs Effects, subscribe, decode, succeed\n\n\n# Transform\n\n@docs map, decodeJsData\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Effects",
+                "comment": " Message from JS system effects.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "Effects.Effects (Effects.MsgFromJs.Effect msg)"
+            }
+        ],
+        "values": [
+            {
+                "name": "decode",
+                "comment": " Decodes JSON value into a result.\n",
+                "type": "(value -> msg) -> Json.Decode.Decoder value -> Json.Decode.Value -> Result.Result Json.Decode.Error msg"
+            },
+            {
+                "name": "decodeJsData",
+                "comment": " Decodes incoming data from JS.\nIt succeeds when at least one effect succeeds.\nOtherwise it fails with combined error from all effects.\nEffects are processed independently, means that different effects can reuse same message tag names.\n",
+                "type": "(List.List msg -> msg) -> (String.String -> msg) -> Effects.MsgFromJs.Effects msg -> JsData.JsData -> msg"
+            },
+            {
+                "name": "map",
+                "comment": " Maps effects.\n",
+                "type": "(msgA -> msgB) -> Effects.MsgFromJs.Effects msgA -> Effects.MsgFromJs.Effects msgB"
+            },
+            {
+                "name": "subscribe",
+                "comment": " Subscribes to listen incoming messages from JS.\nModule name is used for error logging.\n",
+                "type": "String.String -> List.List (Effects.MsgFromJs.ResultDecoder Json.Decode.Error msg) -> Effects.MsgFromJs.Effects msg"
+            },
+            {
+                "name": "succeed",
+                "comment": " Succeeds with a message without decoding JSON value.\n",
+                "type": "msg -> Json.Decode.Value -> Result.Result Json.Decode.Error msg"
+            }
+        ],
+        "binops": []
+    }
+]

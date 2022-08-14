@@ -1,0 +1,28 @@
+[
+    {
+        "name": "UI.Renderer.Html",
+        "comment": " [Elm's HTML](https://package.elm-lang.org/packages/elm/html/latest/Html#Html) renderer for the [UI module](https://github.com/UbiqueLambda/elm-with-ui) and [its backend](https://github.com/UbiqueLambda/elm-with-ui-backend).\n\n@docs Encoder, init, encode\n\n",
+        "unions": [
+            {
+                "name": "Encoder",
+                "comment": " Types that describes and configures the encoding to Elm-compatible HTML.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "encode",
+                "comment": " Outputs Elm-compatible HTML-structure.\n\n**NOTE**: To be used once in an entire document since it provides a generic spreadsheet.\n\n",
+                "type": "UI.Renderer.Html.Encoder -> UI.Backend.Graphics.Graphics msg -> List.List (Html.Html msg)"
+            },
+            {
+                "name": "init",
+                "comment": " Initialized the default encoder with the default settings:\n\n  - Node are tagged with `<g></g>`;\n  - Root nodes have `class=\"root\"`;\n  - Stack groups have `class=\"stack\"`;\n  - `unit` means CSS' `px`.\n\n",
+                "type": "UI.Renderer.Html.Encoder"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,47 @@
+[
+    {
+        "name": "GoogleCalendar",
+        "comment": " Build URLs for editing prefilled Google Calendar events\n\n\n# Rule\n\n@docs Duration, eventEditUrl, EventDetails\n\n",
+        "unions": [
+            {
+                "name": "Duration",
+                "comment": " How long should the event last for?\nNote: If you want an all-day event, use `CustomDates` with the requested date, a `/` and then the date of the following day.\nExample: An all-day event for `2024-01-01` can be achieved like this:\n\n    CustomDates \"20240101/20240102\"\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NoDurationLetUserChoose",
+                        []
+                    ],
+                    [
+                        "TimeSpan",
+                        [
+                            "{ from : Time.Posix, to : Time.Posix }"
+                        ]
+                    ],
+                    [
+                        "CustomDates",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "EventDetails",
+                "comment": " Values needed for creating an event\nNote that the details text might contain HTML, if you want e.g. images or anchor tags.\n",
+                "args": [],
+                "type": "{ title : String.String, duration : GoogleCalendar.Duration, details : String.String, guests : List.List String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "eventEditUrl",
+                "comment": " Create a URL for a Google Calendar Event.\n\n    import Time\n    import Url\n    import GoogleCalendar exposing (Duration(..))\n\n    Url.toString <| eventEditUrl Time.utc { title = \"Some event\", duration = NoDurationLetUserChoose, details = \"Details about the event.\\n\\nMight contain newlines.\", guests = [] }\n    --> \"https://calendar.google.com/calendar/u/0/r/eventedit?text=Some%20event&details=Details%20about%20the%20event.%0A%0AMight%20contain%20newlines.\"\n\n    Url.toString <| eventEditUrl Time.utc { title = \"Some event\", duration = TimeSpan { from = Time.millisToPosix 1612508680856, to = Time.millisToPosix 1612508680856 }, details = \"Details about the event.\\n\\nMight contain newlines.\", guests = [] }\n    --> \"https://calendar.google.com/calendar/u/0/r/eventedit?text=Some%20event&details=Details%20about%20the%20event.%0A%0AMight%20contain%20newlines.&dates=20210205T070440%2F20210205T070440\"\n\n    Url.toString <| eventEditUrl Time.utc { title = \"Some all-day event\", duration = CustomDates \"20210405/20210406\", details = \"Details about the event.\\n\\nMight contain newlines.\", guests = [] }\n    --> \"https://calendar.google.com/calendar/u/0/r/eventedit?text=Some%20all-day%20event&details=Details%20about%20the%20event.%0A%0AMight%20contain%20newlines.&dates=20210405%2F20210406\"\n\n    Url.toString <| eventEditUrl Time.utc { title = \"Some event with guests\", duration = NoDurationLetUserChoose, details = \"Details about the event.\\n\\nMight contain newlines.\", guests = [\"hello@example.com\", \"hi@example.com\"] }\n    --> \"https://calendar.google.com/calendar/u/0/r/eventedit?text=Some%20event%20with%20guests&details=Details%20about%20the%20event.%0A%0AMight%20contain%20newlines.&add=hello%40example.com,hi%40example.com\"\n\n",
+                "type": "Time.Zone -> GoogleCalendar.EventDetails -> Url.Url"
+            }
+        ],
+        "binops": []
+    }
+]

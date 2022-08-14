@@ -1,0 +1,238 @@
+[
+    {
+        "name": "AsapPathology",
+        "comment": " This module provides types related to ASAP XML format.\n\n\n# Types\n\n@docs AsapPathology, Annotation, AnnotationGroup\n\n\n# Constructor\n\n@docs asapPathology\n\n\n# Getters & Setters\n\n@docs annotations, setAnnotations, annotationGroups, setAnnotationGroups\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Annotation",
+                "comment": " Represents annotation. Corresponding to `<ASAP_Annotations><Annotations><Annotation>`.\n`AsapPathology.Annotation` provides several setters and getters for it.\n",
+                "args": [],
+                "type": "AsapPathology.Internal.AsapPathology.Annotation"
+            },
+            {
+                "name": "AnnotationGroup",
+                "comment": " Represents annotation group. Corresponding to `<ASAP_Annotations><AnnotationGroups><AnnotationGroup>`.\n`AsapPathology.AnnotationGroup` provides several setters and getters for it.\n",
+                "args": [],
+                "type": "AsapPathology.Internal.AsapPathology.AnnotationGroup"
+            },
+            {
+                "name": "AsapPathology",
+                "comment": " Represents ASAP data.\n",
+                "args": [],
+                "type": "AsapPathology.Internal.AsapPathology.AsapPathology"
+            }
+        ],
+        "values": [
+            {
+                "name": "annotationGroups",
+                "comment": " Getter for annotations groups.\n",
+                "type": "AsapPathology.AsapPathology -> List.List AsapPathology.AnnotationGroup"
+            },
+            {
+                "name": "annotations",
+                "comment": " Getter for annotations.\n",
+                "type": "AsapPathology.AsapPathology -> List.List AsapPathology.Annotation"
+            },
+            {
+                "name": "asapPathology",
+                "comment": " Constructor.\n",
+                "type": "{ annotations : List.List AsapPathology.Annotation, annotationGroups : List.List AsapPathology.AnnotationGroup } -> AsapPathology.AsapPathology"
+            },
+            {
+                "name": "setAnnotationGroups",
+                "comment": " Setter for annotations groups.\n",
+                "type": "List.List AsapPathology.AnnotationGroup -> AsapPathology.AsapPathology -> AsapPathology.AsapPathology"
+            },
+            {
+                "name": "setAnnotations",
+                "comment": " Setter for annotations.\n",
+                "type": "List.List AsapPathology.Annotation -> AsapPathology.AsapPathology -> AsapPathology.AsapPathology"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "AsapPathology.Annotation",
+        "comment": " This module provides getters and setters for `Annotation`.\n\n\n# Types\n\n@docs Coordinate\n\n\n# Constructor\n\n@docs dot, rectangle, polygon, spline, pointSet\n\n\n# Getters & Setters\n\n@docs name, setName, partOfGroup, setPartOfGroup, color, setColor, coordinates, setCoordinates\n\n\n# Utilities\n\n@docs isDot, isRectangle, isPolygon, isSpline, isPointSet, typeAsString\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Coordinate",
+                "comment": " Represents a coordinate of `Annotation`.\nCorresponding to `<ASAP_Annotation><Annotations><Annotation><Coordinates><Coordinate>`.\n",
+                "args": [],
+                "type": "{ order : Basics.Int, x : Basics.Float, y : Basics.Float }"
+            }
+        ],
+        "values": [
+            {
+                "name": "color",
+                "comment": " Getter for color of `Annotation`.\nCorresponding to attribute `Color` of `<ASAP_Annotation><Annotations><Annotation>`\n\nThe type of return value is defined at avh4/elm-color\n\n",
+                "type": "AsapPathology.Annotation.Annotation -> Color.Color"
+            },
+            {
+                "name": "coordinates",
+                "comment": " Getter for coordinates of `Annotation`.\nCorresponding to `<ASAP_Annotation><Annotations><Annotation><Coordinates>`\n",
+                "type": "AsapPathology.Annotation.Annotation -> List.List { order : Basics.Int, x : Basics.Float, y : Basics.Float }"
+            },
+            {
+                "name": "dot",
+                "comment": " Create dot annotation.\n",
+                "type": "{ name : String.String, partOfGroup : String.String, color : Color.Color, x : Basics.Float, y : Basics.Float } -> AsapPathology.Annotation.Annotation"
+            },
+            {
+                "name": "isDot",
+                "comment": " Check given annotation is dot.\n",
+                "type": "AsapPathology.Annotation.Annotation -> Basics.Bool"
+            },
+            {
+                "name": "isPointSet",
+                "comment": " Check given annotation is point set.\n",
+                "type": "AsapPathology.Annotation.Annotation -> Basics.Bool"
+            },
+            {
+                "name": "isPolygon",
+                "comment": " Check given annotation is polygon\n",
+                "type": "AsapPathology.Annotation.Annotation -> Basics.Bool"
+            },
+            {
+                "name": "isRectangle",
+                "comment": " Check given annotation is rectangle.\n",
+                "type": "AsapPathology.Annotation.Annotation -> Basics.Bool"
+            },
+            {
+                "name": "isSpline",
+                "comment": " Check given annotation is spline\n",
+                "type": "AsapPathology.Annotation.Annotation -> Basics.Bool"
+            },
+            {
+                "name": "name",
+                "comment": " Getter for name of `Annotation`.\nCorresponding to attribute `Name` of `<ASAP_Annotation><Annotations><Annotation>`\n",
+                "type": "AsapPathology.Annotation.Annotation -> String.String"
+            },
+            {
+                "name": "partOfGroup",
+                "comment": " Getter for 'part of group' of `Annotation`.\nCorresponding to attribute `PartOfGroup` of `<ASAP_Annotation><Annotations><Annotation>`\nIn most cases, this value would be \"None\".\n",
+                "type": "AsapPathology.Annotation.Annotation -> String.String"
+            },
+            {
+                "name": "pointSet",
+                "comment": " Create 'point set' annotation.\n",
+                "type": "{ name : String.String, partOfGroup : String.String, color : Color.Color, coordinates : List.List AsapPathology.Annotation.Coordinate } -> AsapPathology.Annotation.Annotation"
+            },
+            {
+                "name": "polygon",
+                "comment": " Create polygon annotation.\n",
+                "type": "{ name : String.String, partOfGroup : String.String, color : Color.Color, coordinates : List.List AsapPathology.Annotation.Coordinate } -> AsapPathology.Annotation.Annotation"
+            },
+            {
+                "name": "rectangle",
+                "comment": " Create rectangle annotation.\n",
+                "type": "{ name : String.String, partOfGroup : String.String, color : Color.Color, x0 : Basics.Float, y0 : Basics.Float, x1 : Basics.Float, y1 : Basics.Float, x2 : Basics.Float, y2 : Basics.Float, x3 : Basics.Float, y3 : Basics.Float } -> AsapPathology.Annotation.Annotation"
+            },
+            {
+                "name": "setColor",
+                "comment": " Setter for color of `Annotation`.\n",
+                "type": "Color.Color -> AsapPathology.Annotation.Annotation -> AsapPathology.Annotation.Annotation"
+            },
+            {
+                "name": "setCoordinates",
+                "comment": " Setter for coordinates of `Annotation`.\n",
+                "type": "List.List { order : Basics.Int, x : Basics.Float, y : Basics.Float } -> AsapPathology.Annotation.Annotation -> AsapPathology.Annotation.Annotation"
+            },
+            {
+                "name": "setName",
+                "comment": " Setter for name of `Annotation`.\n",
+                "type": "String.String -> AsapPathology.Annotation.Annotation -> AsapPathology.Annotation.Annotation"
+            },
+            {
+                "name": "setPartOfGroup",
+                "comment": " Setter for 'part of group' of `Annotation`.\n",
+                "type": "String.String -> AsapPathology.Annotation.Annotation -> AsapPathology.Annotation.Annotation"
+            },
+            {
+                "name": "spline",
+                "comment": " Create spline annotation.\n",
+                "type": "{ name : String.String, partOfGroup : String.String, color : Color.Color, coordinates : List.List AsapPathology.Annotation.Coordinate } -> AsapPathology.Annotation.Annotation"
+            },
+            {
+                "name": "typeAsString",
+                "comment": " It returns annotation type as `String`\nCorresponding to attribute `Type` of `<ASAP_Annotation><Annotations><Annotation>`\n\n    dotAnnotation =\n        dot { name = \"Sample\", partOfGroup = \"None\", color = Color.red, x = 100, y = 200 }\n    typeAsString dotAnnotation == \"Dot\"\n\n",
+                "type": "AsapPathology.Annotation.Annotation -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "AsapPathology.AnnotationGroup",
+        "comment": " This module provides getters and setters for `Annotation`.\n\n\n# Constructor\n\n@docs annotationGroup\n\n\n# Getters & Setters\n\n@docs name, setName, partOfGroup, setPartOfGroup, color, setColor\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "annotationGroup",
+                "comment": " Create annotation group.\nCorresponding to `<ASAP_Annotation><AnnotationGroups><AnnotationGroup>`.\n",
+                "type": "{ name : String.String, partOfGroup : String.String, color : Color.Color } -> AsapPathology.AnnotationGroup.AnnotationGroup"
+            },
+            {
+                "name": "color",
+                "comment": " Getter for color of `AnnotationGroup`.\nCorresponding to attribute `Color` of `<ASAP_Annotation><AnnotationGroups><AnnotationGroup>`\n\nThe type of return value is defined at avh4/elm-color\n\n",
+                "type": "AsapPathology.AnnotationGroup.AnnotationGroup -> Color.Color"
+            },
+            {
+                "name": "name",
+                "comment": " Getter for name of `Annotation`.\nCorresponding to attribute `Name` of `<ASAP_Annotation><AnnotationGroups><AnnotationGroup>`\n",
+                "type": "AsapPathology.AnnotationGroup.AnnotationGroup -> String.String"
+            },
+            {
+                "name": "partOfGroup",
+                "comment": " Getter for 'part of group' of `Annotation`.\nCorresponding to attribute `PartOfGroup` of `<ASAP_Annotation><AnnotationGroups><AnnotationGroup>`\nIn most cases, this value would be \"None\".\n",
+                "type": "AsapPathology.AnnotationGroup.AnnotationGroup -> String.String"
+            },
+            {
+                "name": "setColor",
+                "comment": " Setter for color of `AnnotationGroup`.\n",
+                "type": "Color.Color -> AsapPathology.AnnotationGroup.AnnotationGroup -> AsapPathology.AnnotationGroup.AnnotationGroup"
+            },
+            {
+                "name": "setName",
+                "comment": " Setter for name of `AnnotationGroup`.\n",
+                "type": "String.String -> AsapPathology.AnnotationGroup.AnnotationGroup -> AsapPathology.AnnotationGroup.AnnotationGroup"
+            },
+            {
+                "name": "setPartOfGroup",
+                "comment": " Setter for 'part of group' of `AnnotationGroup`.\n",
+                "type": "String.String -> AsapPathology.AnnotationGroup.AnnotationGroup -> AsapPathology.AnnotationGroup.AnnotationGroup"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "AsapPathology.Decode",
+        "comment": " Decoder for ASAP XML format.\n\n\n# Decoder\n\n@docs decodeString\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decodeString",
+                "comment": " Decode ASAP XML format to `AsapPathology`.\n\n    xmlString =\n        \"\"\"\n        <?xml version=\"1.0\"?>\n        <ASAP_Annotations>\n            <Annotations>\n                <Annotation Name=\"Annotation 0\" Type=\"Dot\" PartOfGroup=\"None\" Color=\"#FFFFFF\">\n                    <Coordinates>\n                        <Coordinate Order=\"0\" X=\"100\" Y=\"200\" />\n                    </Coordinates>\n                </Annotation>\n            </Annotations>\n            <AnnotationGroups></AnnotationGroups>\n        </ASAP_Annotations>\n        \"\"\"\n\n    decoded = decodeString xmlString\n    Result.map AsapPathology.annotations decoded\n        == Ok [ Annotation.dot { name = \"Sample\", partOfGroup = \"None\", color = Color.white, x = 100, y = 200 } ]\n\n",
+                "type": "String.String -> Result.Result String.String AsapPathology.Internal.AsapPathology.AsapPathology"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "AsapPathology.Encode",
+        "comment": " Encoder for ASAP XML format\n\n\n# Encoder\n\n@docs format\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "format",
+                "comment": " Encode `AsapPathology` to XML.\n\n    data =\n        AsapPathology.asapPathology { annotations = [], annotationGroups = [] }\n\n    format data\n        == \"\"\"<?xml version=\"1.0\"?><ASAP_Annotations ><Annotations ></Annotations><AnnotationGroups ></AnnotationGroups></ASAP_Annotations>\"\"\"\n\n",
+                "type": "AsapPathology.Internal.AsapPathology.AsapPathology -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

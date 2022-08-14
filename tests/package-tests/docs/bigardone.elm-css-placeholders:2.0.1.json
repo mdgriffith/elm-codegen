@@ -1,0 +1,313 @@
+[
+    {
+        "name": "Placeholders.Block",
+        "comment": " Renders a text block placeholder.\n\n\n# Definition\n\n@docs Block, default, withItems, withHeight, withBackgroundColor, init\n\n\n# Update\n\n@docs Msg, update\n\n\n# View\n\n@docs view\n\n",
+        "unions": [
+            {
+                "name": "Block",
+                "comment": " Represents the configuration for a text block placeholder.\nIt has the following attributes:\n\n  - `backgroundColor`: takes a `Css.Color` and represents the background color of the lines.\n  - `height`: takes a `Css.Px` and represents the height of the lines.\n  - `items`: a list of integers which is used to randomize the number of lines.\n\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Msg",
+                "comment": " Block msg.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "default",
+                "comment": " Returns a default configuration for a block placeholder.\n",
+                "type": "Placeholders.Block.Block"
+            },
+            {
+                "name": "init",
+                "comment": " Inits a block placeholder shuffling its items.\n",
+                "type": "Placeholders.Block.Block -> ( Placeholders.Block.Block, Platform.Cmd.Cmd Placeholders.Block.Msg )"
+            },
+            {
+                "name": "update",
+                "comment": " Block update.\n",
+                "type": "Placeholders.Block.Msg -> Placeholders.Block.Block -> ( Placeholders.Block.Block, Platform.Cmd.Cmd Placeholders.Block.Msg )"
+            },
+            {
+                "name": "view",
+                "comment": " Renders a block placeholder using the given configuration.\n",
+                "type": "Placeholders.Block.Block -> Html.Styled.Html msg"
+            },
+            {
+                "name": "withBackgroundColor",
+                "comment": " Adds `backgroundColor` to a `Block`.\n",
+                "type": "Css.Color -> Placeholders.Block.Block -> Placeholders.Block.Block"
+            },
+            {
+                "name": "withHeight",
+                "comment": " Adds `height` to a `Block`.\n",
+                "type": "Css.Px -> Placeholders.Block.Block -> Placeholders.Block.Block"
+            },
+            {
+                "name": "withItems",
+                "comment": " Adds `items` to a `Block`.\n",
+                "type": "List.List Basics.Int -> Placeholders.Block.Block -> Placeholders.Block.Block"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Placeholders.Circle",
+        "comment": " Renders a circle placeholder.\n\n\n# Definition\n\n@docs Circle, default, withBackgroundColor, withSize\n\n\n# View\n\n@docs view\n\n",
+        "unions": [
+            {
+                "name": "Circle",
+                "comment": " Represents the configuration for a circle placeholder\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "default",
+                "comment": " Returns a default configuration for a circle placeholder.\n",
+                "type": "Placeholders.Circle.Circle"
+            },
+            {
+                "name": "view",
+                "comment": " Renders a circle placeholder using the given configuration.\n",
+                "type": "Placeholders.Circle.Circle -> Html.Styled.Html msg"
+            },
+            {
+                "name": "withBackgroundColor",
+                "comment": " Adds `backgroundColor` to a `Circle`.\n",
+                "type": "Css.Color -> Placeholders.Circle.Circle -> Placeholders.Circle.Circle"
+            },
+            {
+                "name": "withSize",
+                "comment": " Adds `size` to a `Circle`.\n",
+                "type": "Css.Px -> Placeholders.Circle.Circle -> Placeholders.Circle.Circle"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Placeholders.Line",
+        "comment": " Renders a line placeholder.\n\n\n# Definition\n\n@docs Line, default, withBackgroundColor\n\n\n# View\n\n@docs view\n\n",
+        "unions": [
+            {
+                "name": "Line",
+                "comment": " Represents the configuration for a line placeholder\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "default",
+                "comment": " Returns a default configuration for a line placeholder.\n",
+                "type": "Placeholders.Line.Line"
+            },
+            {
+                "name": "view",
+                "comment": " Renders a line placeholder using the given configuration.\n",
+                "type": "Placeholders.Line.Line -> Html.Styled.Html msg"
+            },
+            {
+                "name": "withBackgroundColor",
+                "comment": " Adds `backgroundColor` to a `Line`.\n",
+                "type": "Css.Color -> Placeholders.Line.Line -> Placeholders.Line.Line"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Placeholders.Rectangle",
+        "comment": " Renders a rectangle placeholder.\n\n\n# Definition\n\n@docs Rectangle, default, withBackgroundColor, withBorderRadius, withHeight, withWidth\n\n\n# View\n\n@docs view\n\n",
+        "unions": [
+            {
+                "name": "Rectangle",
+                "comment": " Represents the configuration for a rectangle placeholder\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "default",
+                "comment": " Returns a default configuration for a rectangle placeholder.\n",
+                "type": "Placeholders.Rectangle.Rectangle"
+            },
+            {
+                "name": "view",
+                "comment": " Renders a rectangle placeholder using the given configuration.\n",
+                "type": "Placeholders.Rectangle.Rectangle -> Html.Styled.Html msg"
+            },
+            {
+                "name": "withBackgroundColor",
+                "comment": " Adds `backgroundColor` to a `Rectangle`.\n",
+                "type": "Css.Color -> Placeholders.Rectangle.Rectangle -> Placeholders.Rectangle.Rectangle"
+            },
+            {
+                "name": "withBorderRadius",
+                "comment": " Adds `borderRadius` to a `Rectangle`.\n",
+                "type": "Css.Px -> Placeholders.Rectangle.Rectangle -> Placeholders.Rectangle.Rectangle"
+            },
+            {
+                "name": "withHeight",
+                "comment": " Adds `height` to a `Rectangle`.\n",
+                "type": "Css.Px -> Placeholders.Rectangle.Rectangle -> Placeholders.Rectangle.Rectangle"
+            },
+            {
+                "name": "withWidth",
+                "comment": " Adds `width` to a `Rectangle`.\n",
+                "type": "Css.Pct -> Placeholders.Rectangle.Rectangle -> Placeholders.Rectangle.Rectangle"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Placeholders.Square",
+        "comment": " Renders a square placeholder.\n\n\n# Definition\n\n@docs Square, default, withBackgroundColor, withSize\n\n\n# View\n\n@docs view\n\n",
+        "unions": [
+            {
+                "name": "Square",
+                "comment": " Represents the configuration for a square placeholder\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "default",
+                "comment": " Returns a default configuration for a square placeholder.\n",
+                "type": "Placeholders.Square.Square"
+            },
+            {
+                "name": "view",
+                "comment": " Renders a square placeholder using the given configuration.\n",
+                "type": "Placeholders.Square.Square -> Html.Styled.Html msg"
+            },
+            {
+                "name": "withBackgroundColor",
+                "comment": " Adds `backgroundColor` to a `Square`.\n",
+                "type": "Css.Color -> Placeholders.Square.Square -> Placeholders.Square.Square"
+            },
+            {
+                "name": "withSize",
+                "comment": " Adds `size` to a `Square`.\n",
+                "type": "Css.Px -> Placeholders.Square.Square -> Placeholders.Square.Square"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Placeholders.Triangle",
+        "comment": " Renders a triangle placeholder.\n\n\n# Definition\n\n@docs Triangle, Corner, default, withBottomCorner, withLeftCorner, withRightCorner, withBackgroundColor, withSize\n\n\n# View\n\n@docs view\n\n",
+        "unions": [
+            {
+                "name": "Corner",
+                "comment": " Represents a triangle corner.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Top",
+                        []
+                    ],
+                    [
+                        "Right",
+                        []
+                    ],
+                    [
+                        "Bottom",
+                        []
+                    ],
+                    [
+                        "Left",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Triangle",
+                "comment": " Represents the configuration for a triangle placeholder\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "default",
+                "comment": " Returns a default configuration for a triangle placeholder.\n",
+                "type": "Placeholders.Triangle.Triangle"
+            },
+            {
+                "name": "view",
+                "comment": " Renders a triangle placeholder using the given configuration.\n",
+                "type": "Placeholders.Triangle.Triangle -> Html.Styled.Html msg"
+            },
+            {
+                "name": "withBackgroundColor",
+                "comment": " Adds `backgroundColor` to a `Triangle`.\n",
+                "type": "Css.Color -> Placeholders.Triangle.Triangle -> Placeholders.Triangle.Triangle"
+            },
+            {
+                "name": "withBottomCorner",
+                "comment": " Sets the bottom corner to a given triangle.\n",
+                "type": "Placeholders.Triangle.Triangle -> Placeholders.Triangle.Triangle"
+            },
+            {
+                "name": "withLeftCorner",
+                "comment": " Sets the left corner to a given triangle.\n",
+                "type": "Placeholders.Triangle.Triangle -> Placeholders.Triangle.Triangle"
+            },
+            {
+                "name": "withRightCorner",
+                "comment": " Sets the right corner to a given triangle.\n",
+                "type": "Placeholders.Triangle.Triangle -> Placeholders.Triangle.Triangle"
+            },
+            {
+                "name": "withSize",
+                "comment": " Adds `size` to a `Triangle`.\n",
+                "type": "Css.Px -> Placeholders.Triangle.Triangle -> Placeholders.Triangle.Triangle"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Placeholders.VerticalLine",
+        "comment": " Renders a vertical line placeholder.\n\n\n# Definition\n\n@docs VerticalLine, default, withBackgroundColor\n\n\n# View\n\n@docs view\n\n",
+        "unions": [
+            {
+                "name": "VerticalLine",
+                "comment": " Represents the configuration for a vertical line placeholder\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "default",
+                "comment": " Returns a default configuration for a vertical line placeholder.\n",
+                "type": "Placeholders.VerticalLine.VerticalLine"
+            },
+            {
+                "name": "view",
+                "comment": " Renders a vertical line placeholder using the given configuration.\n",
+                "type": "Placeholders.VerticalLine.VerticalLine -> Html.Styled.Html msg"
+            },
+            {
+                "name": "withBackgroundColor",
+                "comment": " Adds `backgroundColor` to a `VerticalLine`.\n",
+                "type": "Css.Color -> Placeholders.VerticalLine.VerticalLine -> Placeholders.VerticalLine.VerticalLine"
+            }
+        ],
+        "binops": []
+    }
+]

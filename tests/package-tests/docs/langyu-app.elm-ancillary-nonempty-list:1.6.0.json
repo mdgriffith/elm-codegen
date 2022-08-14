@@ -1,0 +1,216 @@
+[
+    {
+        "name": "List.Nonempty.Ancillary",
+        "comment": " The `List.Nonempty.Ancillary` module provides additional convenience\nfunctions not found in `mgold/elm-nonempty-list` for dealing with non-empty\nlists.\n\n\n# Getting, Setting, and Updating\n\n@docs setAt, updateAt\n\n\n# Building\n\n@docs appendList, prependList, initialize\n\n\n# Folds\n\n@docs foldr, foldr1, indexedFoldl, indexedFoldr\n\n\n# Uniqueness\n\n@docs unique, uniqueBy, allDifferent, allDifferentBy\n\n\n# Finding Extrema\n\nFind minimum/maximum elements without `Maybe`s.\n\n@docs maximum, maximumBy, maximumWith, minimum, minimumBy, minimumWith\n\n\n# Finding Extrema With Indices\n\nFind minimum/maximum elements and their indices without `Maybe`s.\n\n@docs indexedMaximum, indexedMaximumBy, indexedMaximumWith, indexedMinimum, indexedMinimumBy, indexedMinimumWith\n\n\n# Searching\n\n@docs find, elemIndex, elemIndices, findIndex, findIndices, findMap, count\n\n\n# `Maybe`s\n\n@docs combine, traverse\n\n\n# JSON Decoders/Encoders\n\nThe module provides two sets of JSON decoder/encodes. In the first,\n`decodeArray`/`encodeArray`, the non-empty list is represented as a standard\nJSON array. Decoding an empty array will fail, and encoding to an empty array\nwill never happen.\n\nIn the second, `decodeObject`/`encodeObject`, the non-empty list is explicitly\nrepresented as an object with two keys: `\"head\"` (containing the first element)\nand `\"tail\"`, containing a (possibly empty) array of the rest of the elements:\n\n    { \"head\": x1\n    , \"tail\": [x2, x3]\n    }\n\n@docs decodeArray, encodeArray, decodeObject, encodeObject\n\n\n# Random\n\n@docs generator, shuffle, sequenceGenerators\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "allDifferent",
+                "comment": " Indicate whether or not the non-empty list has duplicate values.\n\n    import List.Nonempty exposing (Nonempty(..))\n\n    allDifferent <| Nonempty 0 [ 1, 1, 0, 1 ]\n    --> False\n\n    allDifferent <| Nonempty 0 [ 1, 2]\n    --> True\n\n",
+                "type": "List.Nonempty.Nonempty a -> Basics.Bool"
+            },
+            {
+                "name": "allDifferentBy",
+                "comment": " Indicate whether or not the non-empty list has duplicate values after\ntransformation by some function.\n\n    import List.Nonempty exposing (Nonempty(..))\n\n    allDifferentBy (String.left 1) <| Nonempty \"foo\" [ \"bar\", \"baz\" ]\n    --> False\n\n    allDifferentBy (String.left 1) <| Nonempty \"far\" [ \"bar\", \"car\" ]\n    --> True\n\nNote that this only applies the function once for each element, in case it is an\nexpensive operation.\n\n",
+                "type": "(a -> b) -> List.Nonempty.Nonempty a -> Basics.Bool"
+            },
+            {
+                "name": "appendList",
+                "comment": " Append a list to the end of a non-empty list.\n\n    import List.Nonempty exposing (Nonempty(..))\n\n    appendList (Nonempty 1 [ 2 ]) [ 3, 4 ]\n    --> Nonempty 1 [ 2, 3, 4 ]\n\n    appendList (Nonempty 1 [ 2 ]) []\n    --> Nonempty 1 [ 2 ]\n\n",
+                "type": "List.Nonempty.Nonempty a -> List.List a -> List.Nonempty.Nonempty a"
+            },
+            {
+                "name": "combine",
+                "comment": " If every `Maybe` in the non-empty list is `Just a`, then return a list of\nall the unwrapped values. If one or more elements are `Nothing`, then the\nentire output will be `Nothing`.\n\n    import List.Nonempty exposing (Nonempty(..))\n\n    combine (Nonempty (Just 1) [ Just 2, Just 3 ])\n    --> Just (Nonempty 1 [ 2, 3 ])\n\n    combine (Nonempty (Just 1) [ Nothing, Just 3 ])\n    --> Nothing\n\n",
+                "type": "List.Nonempty.Nonempty (Maybe.Maybe a) -> Maybe.Maybe (List.Nonempty.Nonempty a)"
+            },
+            {
+                "name": "count",
+                "comment": " Return the number of elements in the list that satisfy a given predicate.\n\n    import List.Nonempty exposing (Nonempty(..))\n\n    count ((==) Nothing << String.toInt) <| Nonempty \"1\" [ \"yi\", \"2\", \"er\", \"3\", \"san\" ]\n    --> 3\n\n",
+                "type": "(a -> Basics.Bool) -> List.Nonempty.Nonempty a -> Basics.Int"
+            },
+            {
+                "name": "decodeArray",
+                "comment": " Decode a non-empty list from a JSON array, failing if it is empty.\n\n    import List.Nonempty exposing (Nonempty(..))\n    import Json.Decode as Decode\n\n    Decode.decodeString (decodeArray Decode.int) \"[1,2,3]\"\n    --> Ok (Nonempty 1 [ 2, 3 ])\n    Decode.decodeString (decodeArray Decode.int) \"[]\"\n        |> Result.toMaybe\n    --> Nothing\n\n",
+                "type": "Json.Decode.Decoder a -> Json.Decode.Decoder (List.Nonempty.Nonempty a)"
+            },
+            {
+                "name": "decodeObject",
+                "comment": " Decode a non-empty list from a JSON object of the form:\n\n    { \"head\": x1\n    , \"tail\": [x2, x3]\n    }\n\n\n    import List.Nonempty exposing (Nonempty(..))\n    import Json.Decode as Decode\n\n    Decode.decodeString (decodeObject Decode.int) \"{ \\\"head\\\": 1, \\\"tail\\\": [2,3] }\"\n    --> Ok (Nonempty 1 [ 2, 3 ])\n\n",
+                "type": "Json.Decode.Decoder a -> Json.Decode.Decoder (List.Nonempty.Nonempty a)"
+            },
+            {
+                "name": "elemIndex",
+                "comment": " Return `Just` the index (starting from 0) of the first instance of the\nelement. If the element does not exist in the list, return `Nothing`.\n\n    import List.Nonempty exposing (Nonempty(..))\n\n    elemIndex 1 <| Nonempty 1 [ 2, 3 ]\n    --> Just 0\n\n    elemIndex 4 <| Nonempty 1 [ 2, 3 ]\n    --> Nothing\n\n    elemIndex 1 <| Nonempty 1 [ 1, 7 ]\n    --> Just 0\n\n",
+                "type": "a -> List.Nonempty.Nonempty a -> Maybe.Maybe Basics.Int"
+            },
+            {
+                "name": "elemIndices",
+                "comment": " Return a (possibly empty) list of all indices (starting from 0) at which the\nelement occurs.\n\n    import List.Nonempty exposing (Nonempty(..))\n\n    elemIndices 1 <| Nonempty 1 [ 2, 3 ]\n    --> [ 0 ]\n\n    elemIndices 4 <| Nonempty 1 [ 2, 3 ]\n    --> []\n\n    elemIndices 1 <| Nonempty 1 [ 1, 7 ]\n    --> [ 0, 1 ]\n\n",
+                "type": "a -> List.Nonempty.Nonempty a -> List.List Basics.Int"
+            },
+            {
+                "name": "encodeArray",
+                "comment": " Turn a non-empty list into a JSON array.\n\n    import List.Nonempty exposing (Nonempty(..))\n    import Json.Encode as Encode\n\n    Encode.encode 0 (encodeArray Encode.int <| Nonempty 1 [ 2, 3 ])\n    --> \"[1,2,3]\"\n\n",
+                "type": "(a -> Json.Encode.Value) -> List.Nonempty.Nonempty a -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeObject",
+                "comment": " Encode a non-empty list into a JSON object of the form:\n\n    { \"head\": x1\n    , \"tail\": [x2, x3]\n    }\n\n    import List.Nonempty exposing (Nonempty(..))\n    import Json.Encode as Encode\n\n    Encode.encode 0 (encodeObject Encode.int <| Nonempty 1 [ 2, 3 ])\n    --> \"{\\\"head\\\":1,\\\"tail\\\":[2,3]}\"\n\n",
+                "type": "(a -> Json.Encode.Value) -> List.Nonempty.Nonempty a -> Json.Encode.Value"
+            },
+            {
+                "name": "find",
+                "comment": " Find the first element that satisfies a predicate and return `Just` that\nelement, or if none match, return `Nothing`.\n\n    import List.Nonempty exposing (Nonempty(..))\n\n    find (\\i -> i > 3) <| Nonempty 2 [ 4, 6, 8 ]\n    --> Just 4\n\n    find (\\i -> i > 3) <| Nonempty 0 [ 1, 2, 3 ]\n    --> Nothing\n\n",
+                "type": "(a -> Basics.Bool) -> List.Nonempty.Nonempty a -> Maybe.Maybe a"
+            },
+            {
+                "name": "findIndex",
+                "comment": " Given a predicate and a nonempty list, return `Just` the index (starting\nfrom 0) of the first element that satisfies the predicate. If no element in the\nlist satisfies the predicate, return `Nothing`.\n\n    import List.Nonempty exposing (Nonempty(..))\n\n    findIndex (\\i -> i == 7) <| Nonempty 1 [ 1, 7 ]\n    --> Just 2\n\n    findIndex (\\i -> i < 1) <| Nonempty 1 [ 3, 5 ]\n    --> Nothing\n\n    findIndex (\\i -> i > 1) <| Nonempty 1 [ 2, 3 ]\n    --> Just 1\n\n",
+                "type": "(a -> Basics.Bool) -> List.Nonempty.Nonempty a -> Maybe.Maybe Basics.Int"
+            },
+            {
+                "name": "findIndices",
+                "comment": " Given a predicate and a nonempty list, return a (possibly empty) list of all\nindices (starting from 0) at which the element satisfies the predicate.\n\n    import List.Nonempty exposing (Nonempty(..))\n\n    findIndices (\\i -> i == 7) <| Nonempty 1 [ 1, 7 ]\n    --> [ 2 ]\n\n    findIndices (\\i -> i < 1) <| Nonempty 1 [ 3, 5 ]\n    --> []\n\n    findIndices (\\i -> i > 1) <| Nonempty 1 [ 2, 3 ]\n    --> [ 1, 2 ]\n\n",
+                "type": "(a -> Basics.Bool) -> List.Nonempty.Nonempty a -> List.List Basics.Int"
+            },
+            {
+                "name": "findMap",
+                "comment": " Apply a function that may succeed (return a `Just` value) to values in a\nnon-empty list, returning the result of the first successful match. If none\nmatch, then return Nothing.\n\n    import List.Nonempty exposing (Nonempty(..))\n\n    findMap String.toInt <| Nonempty \"a\" [ \"b\", \"3\" ]\n    --> Just 3\n\n    findMap String.toInt <| Nonempty \"a\" [ \"b\", \"c\" ]\n    --> Nothing\n\n",
+                "type": "(a -> Maybe.Maybe b) -> List.Nonempty.Nonempty a -> Maybe.Maybe b"
+            },
+            {
+                "name": "foldr",
+                "comment": " Reduce a non-empty list from the right.\n\n    import List.Nonempty exposing (Nonempty(..))\n\n    foldr (+) 0 <| Nonempty 1 [ 2, 3 ]\n    --> 6\n\n    foldr (::) [] <| Nonempty 1 [ 2, 3 ]\n    --> [ 1, 2, 3 ]\n\n",
+                "type": "(a -> b -> b) -> b -> List.Nonempty.Nonempty a -> b"
+            },
+            {
+                "name": "foldr1",
+                "comment": " Reduce a non-empty list from the right, treating the last element of the list as the starting value.\n\n    import List.Nonempty exposing (Nonempty(..))\n\n    foldr1 (-) <| Nonempty 1 [ 2, 3, 4 ]\n    --> -2\n\n    foldr1 (++) <| Nonempty \"a\" [ \"b\", \"c\" ]\n    --> \"abc\"\n\n",
+                "type": "(a -> a -> a) -> List.Nonempty.Nonempty a -> a"
+            },
+            {
+                "name": "generator",
+                "comment": " Generate a non-empty list of a specified length. If the length is less than\n1, the resultant list will be of length 1.\n\nFor instance, `generator 1 g`, `generator 0 g` and `generator -1 g` will all\nproduce a non-empty list of length 1, filled with a value generated by `g`.\n\n",
+                "type": "Basics.Int -> Random.Generator a -> Random.Generator (List.Nonempty.Nonempty a)"
+            },
+            {
+                "name": "indexedFoldl",
+                "comment": " `foldl` that also passes the index of the current element to the step\nfunction.\n\n    import List.Nonempty exposing (Nonempty(..))\n\n    indexedFoldl (\\i x acc -> String.fromInt i ++ x ++ acc) \"\" <| Nonempty \"a\" [ \"b\", \"c\" ]\n    --> \"2c1b0a\"\n\n",
+                "type": "(Basics.Int -> a -> b -> b) -> b -> List.Nonempty.Nonempty a -> b"
+            },
+            {
+                "name": "indexedFoldr",
+                "comment": " `foldr` that also passes the index of the current element to the step\nfunction. Note that this isn't particularly efficient, as it traverses the list\nmultiple times.\n\n    import List.Nonempty exposing (Nonempty(..))\n\n    indexedFoldr (\\i x acc -> String.fromInt i ++ x ++ acc) \"\" <| Nonempty \"a\" [ \"b\", \"c\" ]\n    --> \"0a1b2c\"\n\n",
+                "type": "(Basics.Int -> a -> b -> b) -> b -> List.Nonempty.Nonempty a -> b"
+            },
+            {
+                "name": "indexedMaximum",
+                "comment": " Find the **first** maximum element in a non-empty list and its index.\n\n    import List.Nonempty exposing (Nonempty(..))\n\n    indexedMaximum <| Nonempty 1 [ 3, 2, 3 ]\n    --> ( 1, 3 )\n\n",
+                "type": "List.Nonempty.Nonempty comparable -> ( Basics.Int, comparable )"
+            },
+            {
+                "name": "indexedMaximumBy",
+                "comment": " Given a function to map a type to a comparable type, find the **first**\nmaximum element in a non-empty list and its index.\n\n    import List.Nonempty exposing (Nonempty(..))\n\n    indexedMaximumBy (\\i -> i * i) <| Nonempty 1 [ -3, 3 ]\n    --> ( 1, -3 )\n\n",
+                "type": "(a -> comparable) -> List.Nonempty.Nonempty a -> ( Basics.Int, a )"
+            },
+            {
+                "name": "indexedMaximumWith",
+                "comment": " Given a comparison function, find the **first** maximum element in a\nnon-empty list and its index.\n\n    import List.Nonempty exposing (Nonempty(..))\n\n    Nonempty { id = 0, val = 1 } [ { id = 1, val = 3 }, { id = 2, val = 3 } ]\n        |> indexedMaximumWith (\\a b -> compare a.val b.val)\n    --> ( 1, { id = 1, val = 3 } )\n\n",
+                "type": "(a -> a -> Basics.Order) -> List.Nonempty.Nonempty a -> ( Basics.Int, a )"
+            },
+            {
+                "name": "indexedMinimum",
+                "comment": " Find the **first** minimum element in a non-empty list and its index.\n\n    import List.Nonempty exposing (Nonempty(..))\n\n    indexedMinimum <| Nonempty 2 [ 2, 1, 1 ]\n    --> ( 2, 1 )\n\n",
+                "type": "List.Nonempty.Nonempty comparable -> ( Basics.Int, comparable )"
+            },
+            {
+                "name": "indexedMinimumBy",
+                "comment": " Given a function to map a type to a comparable type, find the **first**\nminimum element in a non-empty list and its index.\n\n    import List.Nonempty exposing (Nonempty(..))\n\n    indexedMinimumBy (\\i -> i * i) <| Nonempty 2 [ -1, 1 ]\n    --> ( 1, -1 )\n\n",
+                "type": "(a -> comparable) -> List.Nonempty.Nonempty a -> ( Basics.Int, a )"
+            },
+            {
+                "name": "indexedMinimumWith",
+                "comment": " Given a comparison function, find the **first** minimum element in a\nnon-empty list and its index.\n\n    import List.Nonempty exposing (Nonempty(..))\n\n    Nonempty { id = 0, val = 1 } [ { id = 1, val = 3 }, { id = 2, val = 1 } ]\n        |> indexedMinimumWith (\\a b -> compare a.val b.val)\n    --> ( 0, { id = 0, val = 1 } )\n\n",
+                "type": "(a -> a -> Basics.Order) -> List.Nonempty.Nonempty a -> ( Basics.Int, a )"
+            },
+            {
+                "name": "initialize",
+                "comment": " Initialize a list of a given length by calling a function with each index.\nThe resulting list will always have at least 1 item, even if called with a\nnegative or zero length.\n\n    import List.Nonempty exposing (Nonempty(..))\n\n    initialize 1 (\\i -> i)\n    --> Nonempty 0 []\n\n    initialize 3 (\\i -> i * 2)\n    --> Nonempty 0 [ 2, 4 ]\n\n    initialize 0 (\\i -> i + 1)\n    --> Nonempty 1 []\n\n    initialize -1 (\\i -> i + 1)\n    --> Nonempty 1 []\n\n",
+                "type": "Basics.Int -> (Basics.Int -> a) -> List.Nonempty.Nonempty a"
+            },
+            {
+                "name": "maximum",
+                "comment": " Find the maximum element in a non-empty list.\n\n    import List.Nonempty exposing (Nonempty(..))\n\n    maximum <| Nonempty 1 [ 3, 2 ]\n    --> 3\n\n",
+                "type": "List.Nonempty.Nonempty comparable -> comparable"
+            },
+            {
+                "name": "maximumBy",
+                "comment": " Given a function to map a type to a comparable type, find the **first**\nmaximum element in a non-empty list.\n\n    import List.Nonempty exposing (Nonempty(..))\n\n    maximumBy (\\i -> i * i) <| Nonempty 1 [ -3, 3 ]\n    --> -3\n\n",
+                "type": "(a -> comparable) -> List.Nonempty.Nonempty a -> a"
+            },
+            {
+                "name": "maximumWith",
+                "comment": " Given a comparison function, find the **first** maximum element in a\nnon-empty list.\n\n    import List.Nonempty exposing (Nonempty(..))\n\n    Nonempty { id = 0, val = 1 } [ { id = 1, val = 3 }, { id = 2, val = 0 } ]\n        |> maximumWith (\\a b -> compare a.val b.val)\n    --> { id = 1, val = 3 }\n\n",
+                "type": "(a -> a -> Basics.Order) -> List.Nonempty.Nonempty a -> a"
+            },
+            {
+                "name": "minimum",
+                "comment": " Find the minimum element in a non-empty list.\n\n    import List.Nonempty exposing (Nonempty(..))\n\n    minimum <| Nonempty 1 [ 3, 2 ]\n    --> 1\n\n",
+                "type": "List.Nonempty.Nonempty comparable -> comparable"
+            },
+            {
+                "name": "minimumBy",
+                "comment": " Given a function to map a type to a comparable type, find the **first**\nminimum element in a non-empty list.\n\n    import List.Nonempty exposing (Nonempty(..))\n\n    minimumBy (\\i -> i * i) <| Nonempty 1 [ -1, 2 ]\n    --> 1\n\n",
+                "type": "(a -> comparable) -> List.Nonempty.Nonempty a -> a"
+            },
+            {
+                "name": "minimumWith",
+                "comment": " Given a comparison function, find the **first** minimum element in a\nnon-empty list.\n\n    import List.Nonempty exposing (Nonempty(..))\n\n    Nonempty { id = 0, val = 1 } [ { id = 1, val = 3 }, { id = 2, val = 0 } ]\n        |> minimumWith (\\a b -> compare a.val b.val)\n    --> { id = 2, val = 0 }\n\n",
+                "type": "(a -> a -> Basics.Order) -> List.Nonempty.Nonempty a -> a"
+            },
+            {
+                "name": "prependList",
+                "comment": " Prepend a list to the beginning of a non-empty list.\n\n    import List.Nonempty exposing (Nonempty(..))\n\n    prependList [ 1, 2 ] <| Nonempty 3 [ 4 ]\n    --> Nonempty 1 [ 2, 3, 4 ]\n\n    prependList [] <| Nonempty 1 [ 2 ]\n    --> Nonempty 1 [ 2 ]\n\n",
+                "type": "List.List a -> List.Nonempty.Nonempty a -> List.Nonempty.Nonempty a"
+            },
+            {
+                "name": "sequenceGenerators",
+                "comment": " Given a non-empty list random generators, turn them into a generator that\nreturns a non-empty list.\n",
+                "type": "List.Nonempty.Nonempty (Random.Generator a) -> Random.Generator (List.Nonempty.Nonempty a)"
+            },
+            {
+                "name": "setAt",
+                "comment": " Given an index and a value, replace the element at that index with the given\nvalue. Indices are modulus the length of the list, so out-of-range errors\ncannot occur; this means that negative indices are supported, e.g. -1 to set the\nlast element. This is consistent with the behavior of `List.Nonempty.get`\n\nNote that this is _not_ particularly efficient (iterating over the entire list\nmultiple times) and should probably not be used for very large lists. `Array`s\nare of course preferable in such cases.\n\n    import List.Nonempty exposing (Nonempty(..))\n\n    setAt 1 \"er\" <| Nonempty \"foo\" [ \"bar\", \"baz\" ]\n    --> Nonempty \"foo\" [ \"er\", \"baz\" ]\n\n    setAt 6 \"yi\" <| Nonempty \"foo\" [ \"bar\", \"baz\" ]\n    --> Nonempty \"yi\" [ \"bar\", \"baz\" ]\n\n    setAt -1 \"san\" <| Nonempty \"foo\" [ \"bar\", \"baz\" ]\n    --> Nonempty \"foo\" [ \"bar\", \"san\" ]\n\n",
+                "type": "Basics.Int -> a -> List.Nonempty.Nonempty a -> List.Nonempty.Nonempty a"
+            },
+            {
+                "name": "shuffle",
+                "comment": " Shuffle the non-empty list. This of course has no effect on a list of one\nelement.\n",
+                "type": "List.Nonempty.Nonempty a -> Random.Generator (List.Nonempty.Nonempty a)"
+            },
+            {
+                "name": "traverse",
+                "comment": " Map a function over every element in the non-empty list. If every function\ncall returns `Just a`, then return a list of all the values. If one or more\nfunction call returns `Nothing`, then the entire output will be `Nothing`.\n\n    import List.Nonempty exposing (Nonempty(..))\n\n    traverse List.head (Nonempty [ 1 ] [ [2], [ 3, 4 ] ])\n    --> Just (Nonempty 1 [ 2, 3 ])\n\n    traverse List.head (Nonempty [ 1 ] [ [], [ 3, 4 ] ])\n    --> Nothing\n\n",
+                "type": "(a -> Maybe.Maybe b) -> List.Nonempty.Nonempty a -> Maybe.Maybe (List.Nonempty.Nonempty b)"
+            },
+            {
+                "name": "unique",
+                "comment": " Remove all duplicate values from the non-empty list, keeping only the first\ninstance of each element that appears more than once.\n\n    import List.Nonempty exposing (Nonempty(..))\n\n    unique <| Nonempty 0  [ 1, 1, 0, 1 ]\n    --> Nonempty 0 [ 1 ]\n\n",
+                "type": "List.Nonempty.Nonempty a -> List.Nonempty.Nonempty a"
+            },
+            {
+                "name": "uniqueBy",
+                "comment": " Remove all duplicate values from the non-empty list, where uniqueness is\ndetermined first by applying a function, keeping only the first instance of each\nelement that appears more than once.\n\n    import List.Nonempty exposing (Nonempty(..))\n\n    uniqueBy (String.left 1) <| Nonempty \"foo\"  [ \"bar\", \"baz\", \"fun\", \"boil\" ]\n    --> Nonempty \"foo\" [ \"bar\" ]\n\nNote that this only applies the function once for each element, in case it is an\nexpensive operation.\n\n",
+                "type": "(a -> b) -> List.Nonempty.Nonempty a -> List.Nonempty.Nonempty a"
+            },
+            {
+                "name": "updateAt",
+                "comment": " Given an index and an update function, replace the value at that index\nby calling the update function. Indices are modulus the length of the list, so\nout-of-range errors cannot occur; this means that negative indices are\nsupported, e.g. -1 to update the last element. This is consistent with the\nbehavior of `List.Nonempty.get`\n\nNote that this is _not_ particularly efficient (iterating over the entire list\nmultiple times) and should probably not be used for very large lists. `Array`s\nare of course preferable in such cases.\n\n    import List.Nonempty exposing (Nonempty(..))\n\n    updateAt 1 ((+) 1) <| Nonempty 1 [ 1, 1 ]\n    --> Nonempty 1 [ 2, 1 ]\n\n    updateAt 6 ((+) 1) <| Nonempty 1 [ 1, 1 ]\n    --> Nonempty 2 [ 1, 1 ]\n\n    updateAt -1 ((+) 1) <| Nonempty 1 [ 1, 1 ]\n    --> Nonempty 1 [ 1, 2 ]\n\n",
+                "type": "Basics.Int -> (a -> a) -> List.Nonempty.Nonempty a -> List.Nonempty.Nonempty a"
+            }
+        ],
+        "binops": []
+    }
+]

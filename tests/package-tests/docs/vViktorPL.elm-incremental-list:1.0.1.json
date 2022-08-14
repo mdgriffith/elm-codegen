@@ -1,0 +1,16 @@
+[
+    {
+        "name": "IncrementalList",
+        "comment": "\n# Range generator\n\n@docs range\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "range",
+                "comment": " Create range of values using custom increase/decrease logic,\nrelative value and number of succeeding/preceding values to be generated.\n\nUse positive number to generate succeeding values, and\nnegative number to generate values preceding the provided value:\n\n    -- Integers\n    prevInt = \\n -> n - 1\n    nextInt = (+) 1\n    intRange = range prevInt nextInt\n\n    intRange 1 5 == [1,2,3,4,5]\n    intRange 5 -5 == [1,2,3,4,5]\n\n    -- Characters\n    prevChar = Char.toCode >> (+) -1 >> Char.fromCode\n    nextChar = Char.toCode >> (+) 1 >> Char.fromCode\n    charRange = range prevChar nextChar\n\n    charRange 'A' 3 == ['A', 'B', 'C']\n    charRange 'C' -3 == ['A', 'B', 'C']\n\n",
+                "type": "(a -> a) -> (a -> a) -> a -> Basics.Int -> List.List a"
+            }
+        ],
+        "binops": []
+    }
+]

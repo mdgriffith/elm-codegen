@@ -1,0 +1,468 @@
+[
+    {
+        "name": "ReviewPipelineStyles",
+        "comment": "\n\n\n## Review Rule\n\n@docs rule\n\n\n## Premade Rules\n\nCheck out the [`ReviewPipelineStyles.Premade`](ReviewPipelineStyles-Premade)\nmodule for some ready-to-go, common `PipelineRule`s as well as how to construct\nthem.\n\n\n## Config\n\n@docs PipelineRule, forbid, that, exceptThoseThat\n\n\n## Failures\n\n@docs andCallThem, andReportCustomError\n\n\n## Fixes\n\n@docs andTryToFixThemBy\n\n\n## Pipeline Types\n\n@docs rightPizzaPipelines, leftPizzaPipelines, rightCompositionPipelines, leftCompositionPipelines, parentheticalApplicationPipelines\n\n",
+        "unions": [
+            {
+                "name": "PipelineRule",
+                "comment": " Configuration of this rule is in the form of a list of `PipelineRule`s. It\nshould be noted that these are hierarchical, i.e. only the first matching error\nwill be generated in the event that a pipeline would generate multiple errors.\n\nTo create a new `PipelineRule`, use [`forbid`](#forbid), then a pipeline type,\nthen the desired predicates and error. If no predicates are provided, the rule\nmatches **all** pipelines of that type. For example, to entirely forbid `<|` in\nyour project, you could use:\n\n    forbid leftPizzaPipelines\n        |> andCallThem \"forbidden <| pipeline\"\n\nOr, to forbid only `|>` pipelines that are extremely long, you could use:\n\n    forbid rightPizzaPipelines\n        |> that (haveMoreStepsThan 10)\n        |> andCallThem \"overly long |> pipeline\"\n\n",
+                "args": [
+                    "pipelineType"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "andCallThem",
+                "comment": " Provide a descriptive name for this type of failing pipeline. This will\nappear in the `elm-review` error generated and should give you a sense of what's\nwrong and how to fix it. Either this or\n[`andReportCustomError`](#andReportCustomError) must be the last thing in your\nrule.\n",
+                "type": "String.String -> ReviewPipelineStyles.PipelineRule anyType -> ReviewPipelineStyles.PipelineRule ()"
+            },
+            {
+                "name": "andReportCustomError",
+                "comment": " Provide a fully custom error message for failing pipelines, with both\nmessage and details. Either this or [`andCallThem`](#andCallThem) must be the\nlast thing in your rule.\n",
+                "type": "String.String -> List.List String.String -> ReviewPipelineStyles.PipelineRule anyType -> ReviewPipelineStyles.PipelineRule ()"
+            },
+            {
+                "name": "andTryToFixThemBy",
+                "comment": " Add fixes to a `PipelineRule`.\n",
+                "type": "ReviewPipelineStyles.Fixes.PipelineFix pipelineType -> ReviewPipelineStyles.PipelineRule pipelineType -> ReviewPipelineStyles.PipelineRule pipelineType"
+            },
+            {
+                "name": "exceptThoseThat",
+                "comment": " Exclude (whitelist) pipelines that match a predicate from being forbidden.\n\n    forbid rightPizzaPipelines\n        |> that spanMultipleLines\n        |> exceptThoseThat (haveMoreStepsThan 5)\n\nNote that if `exceptThoseThat` is used multiple times, it is equivalent to using\n[`or`](ReviewPipelineStyles-Predicates#or). For example, the following two rules are equivalent:\n\n    forbid leftPizzaPipelines\n        |> exceptThoseThat\n            (doNot spanMultipleLines\n                |> or (haveFewerStepsThan 2)\n            )\n\n    forbid rightPizzaPipelines\n        |> exceptThoseThat (doNot spanMultipleLines)\n        |> exceptThoseThat (haveFewerStepsThan 2)\n\n",
+                "type": "ReviewPipelineStyles.Predicates.Predicate pipelineType -> ReviewPipelineStyles.PipelineRule pipelineType -> ReviewPipelineStyles.PipelineRule pipelineType"
+            },
+            {
+                "name": "forbid",
+                "comment": " Forbid certain pipelines.\n",
+                "type": "ReviewPipelineStyles.Predicates.Operator pipelineType -> ReviewPipelineStyles.PipelineRule pipelineType"
+            },
+            {
+                "name": "leftCompositionPipelines",
+                "comment": " The left composition operator is left function composition, i.e. `<<`. An\nexample of this pipeline is below:\n\n    foo << bar << baz\n\n",
+                "type": "ReviewPipelineStyles.Predicates.Operator ReviewPipelineStyles.Predicates.CompositionPipeline"
+            },
+            {
+                "name": "leftPizzaPipelines",
+                "comment": " The left \"pizza\" operator is left function application, i.e. `<|`. An\nexample of this pipeline is below:\n\n    foo <| bar <| baz\n\n",
+                "type": "ReviewPipelineStyles.Predicates.Operator ReviewPipelineStyles.Predicates.ApplicationPipeline"
+            },
+            {
+                "name": "parentheticalApplicationPipelines",
+                "comment": " Parenthetical application is actually the absence of a pipeline, but rather\nsuccessive function calls using parentheses, e.g.\n\n    foo (bar (baz (i (j k))))\n\n",
+                "type": "ReviewPipelineStyles.Predicates.Operator ReviewPipelineStyles.Predicates.ApplicationPipeline"
+            },
+            {
+                "name": "rightCompositionPipelines",
+                "comment": " The right composition operator is right function composition, i.e. `>>`. An\nexample of this pipeline is below:\n\n    foo\n        >> bar\n        >> baz\n\n",
+                "type": "ReviewPipelineStyles.Predicates.Operator ReviewPipelineStyles.Predicates.CompositionPipeline"
+            },
+            {
+                "name": "rightPizzaPipelines",
+                "comment": " The right \"pizza\" operator is right function application, i.e. `|>`. An\nexample of this pipeline is below:\n\n    foo\n        |> bar\n        |> baz\n\n",
+                "type": "ReviewPipelineStyles.Predicates.Operator ReviewPipelineStyles.Predicates.ApplicationPipeline"
+            },
+            {
+                "name": "rule",
+                "comment": " Reports pipelines that are not valid by user-defined rules. For example,\nthe usage of `<|` or the usage of excessively-long `|>` pipelines.\n\n    config =\n        [ ReviewPipelineStyles.rule\n            [ forbid leftPizzaPipelines\n                |> andCallThem \"forbidden <| pipeline\"\n            , forbid rightPizzaPipelines\n                |> that (haveMoreStepsThan 10)\n                |> andCallThem \"overly long |> pipeline\"\n            ]\n        ]\n\nThis rule works with the following pipeline types:\n\n  - `|>` -- Right \"pizza\" pipelines, i.e. right function application, so-called\n    because the operator resembles a slice of pizza 🍕.\n  - `<|` -- Left \"pizza\" pipelines, i.e. left function application, so-called\n    because the operator resembles a slice of pizza 🍕.\n  - `>>` -- Right composition pipelines.\n  - `<<` -- Left composition pipelines.\n  - `foo (bar (baz (i (j k))))` -- Parenthetical application pipelines.\n\n\n## Fail\n\nBy the above config:\n\n    a =\n        Just <| foo bar\n\n    b =\n        foo\n            |> bar\n            |> baz\n            |> a\n            |> b\n            |> c\n            |> d\n            |> e\n            |> f\n            |> g\n            |> h\n            |> i\n            |> j\n            |> k\n\n\n## Success\n\nBy the above config:\n\n    a =\n        foo bar\n            |> Just\n\n    b =\n        foo\n            |> bar\n            |> baz\n            |> a\n            |> b\n            |> c\n            |> d\n\n\n## When (not) to enable this rule\n\nThis rule is useful when you have strong opinions about how functions should be\ncomposed/applied and/or want to enforce consistent code style in a project.\n\nThis rule is not useful if you don't care what sorts of pipelines are used in a\nproject.\n\n\n## Try it out\n\nYou can try this rule out by running the following command:\n\n```bash\nelm-review --template SiriusStarr/elm-review-pipeline-styles/example --rules ReviewPipelineStyles\n```\n\n",
+                "type": "List.List (ReviewPipelineStyles.PipelineRule ()) -> Review.Rule.Rule"
+            },
+            {
+                "name": "that",
+                "comment": " Limit (blacklist) forbidden pipelines to those that match a specific\npredicate.\n\n    forbid rightPizzaPipelines\n        |> that spanMultipleLines\n\nNote that if `that` is used multiple times, it is equivalent to using\n[`or`](ReviewPipelineStyles-Predicates#or). For example, the following two rules are equivalent:\n\n    forbid rightPizzaPipelines\n        |> that\n            (spanMultipleLines\n                |> or (haveMoreStepsThan 5)\n            )\n\n    forbid rightPizzaPipelines\n        |> that spanMultipleLines\n        |> that (haveMoreStepsThan 5)\n\n",
+                "type": "ReviewPipelineStyles.Predicates.Predicate pipelineType -> ReviewPipelineStyles.PipelineRule pipelineType -> ReviewPipelineStyles.PipelineRule pipelineType"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ReviewPipelineStyles.Fixes",
+        "comment": " This module contains various `PipelineFix`s that can be used to fix failing\npipelines.\n\nNote that all fixes will only run if it is **possible** to fix the pipeline that\nway, i.e. that the fix will not generate invalid code.\n\n\n## Fixes\n\n@docs eliminatingInputStep, makingMultiline, makingSingleLine, convertingToRightPizza, convertingToLeftPizza, convertingToParentheticalApplication, convertingToRightComposition, convertingToLeftComposition\n\n\n## Custom Fixes\n\nIf you need fixes beyond what is provided above, you can create them manually\nby writing a function of type\n`(Range -> String) -> Pipeline -> Maybe (List Fix)` or\n`ModuleNameLookupTable -> (Range -> String) -> Pipeline -> Maybe (List Fix)` and\nusing one of the functions below.\n\nUse the functions in\n[Getting Information About Pipelines](ReviewPipelineStyles-Predicates#getting-information-about-pipelines)\nto build your custom fix.\n\n@docs fix, fixWithLookupTable\n\n\n### Types\n\nThese are exposed only for the sake of type annotations; you shouldn't need to\nwork with them directly.\n\n@docs PipelineFix\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "PipelineFix",
+                "comment": " A means of fixing a pipeline, to (presumably) bring it stylistically inline\nwith what is desired.\n",
+                "args": [
+                    "pipelineType"
+                ],
+                "type": "Internal.Types.PipelineFix pipelineType"
+            }
+        ],
+        "values": [
+            {
+                "name": "convertingToLeftComposition",
+                "comment": " Convert a composition pipeline to left function composition (`<<`). This\nrequires there to be no internal comments (as they would be clobbered), to not\nalready be a left function composition pipeline, and to not be an immediate\nnested pipeline (as operator precedence rules preclude this).\n",
+                "type": "ReviewPipelineStyles.Fixes.PipelineFix ReviewPipelineStyles.Predicates.CompositionPipeline"
+            },
+            {
+                "name": "convertingToLeftPizza",
+                "comment": " Convert an application pipeline to left function application (`<|`). This\nrequires there to be no internal comments (as they would be clobbered), to not\nalready be a left function application pipeline, and to not be an immediate\nnested pipeline (as operator precedence rules preclude this).\n",
+                "type": "ReviewPipelineStyles.Fixes.PipelineFix ReviewPipelineStyles.Predicates.ApplicationPipeline"
+            },
+            {
+                "name": "convertingToParentheticalApplication",
+                "comment": " Convert an application pipeline to parenthetical function application. This\nrequires there to be no internal comments (as they would be clobbered) and to\nnot already be a parenthetical function application pipeline.\n",
+                "type": "ReviewPipelineStyles.Fixes.PipelineFix ReviewPipelineStyles.Predicates.ApplicationPipeline"
+            },
+            {
+                "name": "convertingToRightComposition",
+                "comment": " Convert a composition pipeline to right function composition (`>>`). This\nrequires there to be no internal comments (as they would be clobbered), to not\nalready be a right function composition pipeline, and to not be an immediate\nnested pipeline (as operator precedence rules preclude this).\n",
+                "type": "ReviewPipelineStyles.Fixes.PipelineFix ReviewPipelineStyles.Predicates.CompositionPipeline"
+            },
+            {
+                "name": "convertingToRightPizza",
+                "comment": " Convert an application pipeline to right function application (`|>`). This\nrequires there to be no internal comments (as they would be clobbered), to not\nalready be a right function application pipeline, and to not be an immediate\nnested pipeline (as operator precedence rules preclude this).\n",
+                "type": "ReviewPipelineStyles.Fixes.PipelineFix ReviewPipelineStyles.Predicates.ApplicationPipeline"
+            },
+            {
+                "name": "eliminatingInputStep",
+                "comment": " A fix that eliminates the input step of a pipeline by applying it directly\nto the next step, e.g.\n\n    a =\n        foo |> bar |> baz\n\nbecomes\n\n    a =\n        bar foo |> baz\n\nNote that this fix will only be applied if the input step actually _can_ be\ncombined in this way. It is thus recommended that you combine it with\n[`ReviewPipelineStyles.Predicates.haveASimpleInputStep`](ReviewPipelineStyles-Predicates#haveASimpleInputStep)\nor the like.\n\n",
+                "type": "ReviewPipelineStyles.Fixes.PipelineFix ReviewPipelineStyles.Predicates.ApplicationPipeline"
+            },
+            {
+                "name": "fix",
+                "comment": " Create a `PipelineFix` from a function that takes a source code extractor\nand a `Pipeline` and maybe returns a list of fixes. Needless to say, this is\ndangerous, as it is possible to generate invalid code if you are not careful.\n\nIf you think a generally useful fix is missing, please open an issue or PR on\nGithub:\n<https://github.com/SiriusStarr/elm-review-pipeline-styles/issues>\n\n",
+                "type": "((Elm.Syntax.Range.Range -> String.String) -> ReviewPipelineStyles.Predicates.Pipeline -> Maybe.Maybe (List.List Review.Fix.Fix)) -> ReviewPipelineStyles.Fixes.PipelineFix pipelineType"
+            },
+            {
+                "name": "fixWithLookupTable",
+                "comment": " Create a `PipelineFix` from a function that takes a `ModuleNameLookupTable`,\nsource code extractor, and a `Pipeline` and maybe returns a list of fixes.\nNeedless to say, this is dangerous, as it is possible to generate invalid code\nif you are not careful.\n\nIf you think a generally useful fix is missing, please open an issue or PR on\nGithub:\n<https://github.com/SiriusStarr/elm-review-pipeline-styles/issues>\n\n",
+                "type": "(Review.ModuleNameLookupTable.ModuleNameLookupTable -> (Elm.Syntax.Range.Range -> String.String) -> ReviewPipelineStyles.Predicates.Pipeline -> Maybe.Maybe (List.List Review.Fix.Fix)) -> ReviewPipelineStyles.Fixes.PipelineFix pipelineType"
+            },
+            {
+                "name": "makingMultiline",
+                "comment": " Force a pipeline to span a new line with each step. This will not run on\npipelines that already span multiple lines. It is thus recommended that you\ncombine it with a negated\n[`ReviewPipelineStyles.Predicates.spanMultipleLines`](ReviewPipelineStyles-Predicates#spanMultipleLines)\nor the like.\n\nThis fix (as with most) relies on `elm-format` to clean up the resulting code.\n\n",
+                "type": "ReviewPipelineStyles.Fixes.PipelineFix pipelineType"
+            },
+            {
+                "name": "makingSingleLine",
+                "comment": " Force a pipeline onto a single line. This can only run on a very limited\nset of pipelines, due to the possibility of generating invalid code.\nSpecifically, for this fix to run, all steps of a pipeline must consist of\nexpressions on a single line and no comments may exist in the pipeline (as they\nwould get clobbered by the fix). It will, of course, also not run on a pipeline\nthat is already on a single line, so it is recommended that you combine it with\n[`ReviewPipelineStyles.Predicates.spanMultipleLines`](ReviewPipelineStyles-Predicates#spanMultipleLines)\nor the like.\n",
+                "type": "ReviewPipelineStyles.Fixes.PipelineFix pipelineType"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ReviewPipelineStyles.Predicates",
+        "comment": " This module contains various `Predicate`s that can be used to filter\npipelines.\n\n\n## Combining Predicates\n\nPredicates can be combined and negated using `and`, `or`, and `doNot`.\n\n@docs and, or, doNot\n\n\n## Predicates\n\n@docs spanMultipleLines, haveMoreStepsThan, haveFewerStepsThan, haveASimpleInputStep, haveAnUnnecessaryInputStep, separateATestFromItsLambda, haveInternalComments\n\n\n## Step Predicates\n\nThese predicates allow one to filter based on a specific step of a pipeline.\n\n@docs haveAnInputStepThatIs, haveASecondStepThatIs, haveAnyNonInputStepThatIs, haveNonInputStepsThatAreAll, haveAnyStepThatIs, haveStepsThatAreAll\n\n@docs aSemanticallyInfixFunction, aConfusingNonCommutativePrefixOperator, aConfusingNonCommutativeFunction, aSimpleStep, onASingleLine, onMultipleLines, stepPredicate, stepPredicateWithLookupTable\n\n\n## Nesting Predicates\n\n@docs haveAParent, haveAParentNotSeparatedBy, haveMoreNestedParentsThan, aLetBlock, aLambdaFunction, aFlowControlStructure, aDataStructure\n\n\n## Custom Predicates\n\nIf you need predicates beyond what is provided above, you can create them\nmanually by writing a function of type `Pipeline -> Bool` or\n`ModuleNameLookupTable -> Pipeline -> Bool` and using one of the functions\nbelow.\n\nUse the functions in\n[Getting Information About Pipelines](#getting-information-about-pipelines) to\nbuild your custom predicate.\n\n@docs predicate, predicateWithLookupTable\n\n\n## Getting Information About Pipelines\n\nNote that some of the types returned by these functions are from\n[`stil4m/elm-syntax`](https://package.elm-lang.org/packages/stil4m/elm-syntax/7.2.7/)\nif you need to work with them directly.\n\n@docs getSteps, getParents, getNode, getInternalComments\n\n\n## Query Pipeline Types\n\n@docs isRightPizza, isLeftPizza, isRightComposition, isLeftComposition, isParentheticalApplication\n\n\n### Types\n\nThese are exposed only for the sake of type annotations; you shouldn't need to\nwork with them directly.\n\n@docs Predicate, StepPredicate, Operator, Pipeline, NestedWithin, ApplicationPipeline, CompositionPipeline\n\n\n### Deprecated\n\nThese functions have been deprecated and are included only to avoid a breaking\nchange.\n\n@docs haveAnInputStepOf\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "ApplicationPipeline",
+                "comment": " Pipelines that are function application.\n",
+                "args": [],
+                "type": "Internal.Types.ApplicationPipeline"
+            },
+            {
+                "name": "CompositionPipeline",
+                "comment": " Pipelines that are function composition.\n",
+                "args": [],
+                "type": "Internal.Types.CompositionPipeline"
+            },
+            {
+                "name": "NestedWithin",
+                "comment": " The degree to which a parent or child is removed from a pipeline.\n",
+                "args": [],
+                "type": "Internal.Types.NestedWithin"
+            },
+            {
+                "name": "Operator",
+                "comment": " The operator type of a pipeline, e.g. `|>` or `<<`.\n",
+                "args": [
+                    "pipelineType"
+                ],
+                "type": "Internal.Types.Operator pipelineType"
+            },
+            {
+                "name": "Pipeline",
+                "comment": " A detected pipeline. You only need be concerned with this type if you are\nwriting a manual predicate.\n",
+                "args": [],
+                "type": "Internal.Types.Pipeline"
+            },
+            {
+                "name": "Predicate",
+                "comment": " A predicate for filtering pipelines, or a logical combination of them.\n",
+                "args": [
+                    "pipelineType"
+                ],
+                "type": "Internal.Types.Predicate pipelineType"
+            },
+            {
+                "name": "StepPredicate",
+                "comment": " A predicate for a single step of a pipeline.\n",
+                "args": [],
+                "type": "Internal.Types.StepPredicate"
+            }
+        ],
+        "values": [
+            {
+                "name": "aConfusingNonCommutativeFunction",
+                "comment": " This checks if a step is a commonly-confused, non-commutative function by\nchecking if it is [`aConfusingNonCommutativePrefixOperator`](#aConfusingNonCommutativePrefixOperator)\nor on the following blacklist of such functions:\n\n  - `Basics.compare`\n\n  - `Array.append`\n\n  - `Dict.diff`\n\n  - `List.append`\n\n  - `Set.diff`\n\n  - `String.append`\n\n  - `Basics.Extra.safeDivide`\n\n  - `Basics.Extra.safeIntegerDivide`\n\n  - `IntDict.diff`\n\n  - `Maybe.Extra.or`\n\n  - `Result.Extra.or`\n\nNote that fully-saturated functions on the blacklist are allowed, e.g.\n\n    -- Passes\n    Set.diff a b\n        |> Set.toList\n\nis allowed, while\n\n    b\n        -- Fails\n        |> Set.diff a\n        |> Set.toList\n\nis not.\n\nIf you have suggestions for additions to this list, please open an issue or PR\non Github: <https://github.com/SiriusStarr/elm-review-pipeline-styles/issues>\n\n",
+                "type": "ReviewPipelineStyles.Predicates.StepPredicate"
+            },
+            {
+                "name": "aConfusingNonCommutativePrefixOperator",
+                "comment": " This checks if a step is a commonly-confused, non-commutative prefix\noperator by checking if it is on the following blacklist of such functions:\n\n  - `Basics.(-)`\n\n  - `Basics.(/)`\n\n  - `Basics.(//)`\n\n  - `Basics.(^)`\n\n  - `Basics.(<)`\n\n  - `Basics.(>)`\n\n  - `Basics.(<=)`\n\n  - `Basics.(>=)`\n\n  - `Basics.(++)`\n\n  - `Basics.(>>)`\n\n  - `Basics.(<<)`\n\n  - `Parser.(|.)`\n\n  - `Parser.(|=)`\n\n  - `Parser.Advanced.(|.)`\n\n  - `Parser.Advanced.(|=)`\n\n  - `Url.Parser.(</>)`\n\n  - `Url.Parser.(<?>)`\n\n",
+                "type": "ReviewPipelineStyles.Predicates.StepPredicate"
+            },
+            {
+                "name": "aDataStructure",
+                "comment": " Within a tuple, list, or record in the surrounding pipeline.\n",
+                "type": "ReviewPipelineStyles.Predicates.NestedWithin -> Basics.Bool"
+            },
+            {
+                "name": "aFlowControlStructure",
+                "comment": " Within a `case` expression of `if...then` expression in the surrounding\npipeline.\n",
+                "type": "ReviewPipelineStyles.Predicates.NestedWithin -> Basics.Bool"
+            },
+            {
+                "name": "aLambdaFunction",
+                "comment": " Within a lambda function in the surrounding pipeline.\n",
+                "type": "ReviewPipelineStyles.Predicates.NestedWithin -> Basics.Bool"
+            },
+            {
+                "name": "aLetBlock",
+                "comment": " Either within a `let` declaration or in the `let` expression of a `let`\nblock from the surrounding pipeline.\n",
+                "type": "ReviewPipelineStyles.Predicates.NestedWithin -> Basics.Bool"
+            },
+            {
+                "name": "aSemanticallyInfixFunction",
+                "comment": " A \"semantically-infix\" function is a function that is intended (by name) to\nbe read in an infix fashion as part of a pipeline. For example, `Maybe.andThen`\nor `remainderBy` or `Maybe.Extra.orElse`:\n\n    List.head |> Maybe.andThen String.toFloat\n\n    10 |> remainderBy 2\n\nIn practice, it checks if a step begins with a function that begins with the\nword \"or\" or \"and\" or ends in \"By\", or is on the following whitelist of\nfunctions:\n\n  - `logBase`\n  - `atMost`\n  - `atLeast`\n\nThey are then required to have exactly one argument applied to them, as with no\narguments, they are not yet infix (and with 2+ they are no longer functions).\nFor example, the following are not infix:\n\n    -- This is \"backwards\" from how it reads\n    2 |> remainderBy |> 10\n\n    -- This doesn't even compile\n    foo |> remainderBy 2 10\n\nIt also rules out confusing, non-commutative functions, even if they match the\nabove.\n\nIf you have suggestions for additions to this list, please open an issue or PR\non Github: <https://github.com/SiriusStarr/elm-review-pipeline-styles/issues>\n\n",
+                "type": "ReviewPipelineStyles.Predicates.StepPredicate"
+            },
+            {
+                "name": "aSimpleStep",
+                "comment": " Checks if a step is \"visually\" simple. This is of course extremely\nsubjective; if you require different behavior, you can use\n[`stepPredicate`](#stepPredicate) to fully customize it. A step is considered\n\"simple\" if it is **40 characters or less**, is only a **single line**, and is\none of the following:\n\n    -- Unit\n    ()\n\n    -- Name\n    a\n\n    -- Prefix operator\n    (+)\n\n    -- Int literal\n    1\n\n    -- Hex literal\n    0x0F\n\n    -- Float literal\n    1.5\n\n    -- String literal\n    \"bar\"\n\n    -- Char literal\n    'c'\n\n    -- Record access function\n    .field\n\nor is one of the following where all subexpressions are simple:\n\n    -- Application\n    foo bar baz\n\n    -- Tuple\n    ( a, \"b\" )\n\n    -- Record\n    { a = \"value\" }\n\n    -- List\n    []\n\n    -- Record access\n    a.field\n\n    -- Negation\n    elmFormatWontLetThisBeAnExample\n\n    -- Parentheses\n    elmFormatWontLetThisBeAnExample\n\n",
+                "type": "ReviewPipelineStyles.Predicates.StepPredicate"
+            },
+            {
+                "name": "and",
+                "comment": " Create a `Predicate` that matches pipelines that match both of two\npredicates.\n",
+                "type": "ReviewPipelineStyles.Predicates.Predicate anyType -> ReviewPipelineStyles.Predicates.Predicate anyType -> ReviewPipelineStyles.Predicates.Predicate anyType"
+            },
+            {
+                "name": "doNot",
+                "comment": " Negate a `Predicate`.\n",
+                "type": "ReviewPipelineStyles.Predicates.Predicate anyType -> ReviewPipelineStyles.Predicates.Predicate anyType"
+            },
+            {
+                "name": "getInternalComments",
+                "comment": " Get a list of all comments that are inside of a pipeline.\n",
+                "type": "ReviewPipelineStyles.Predicates.Pipeline -> List.List (Elm.Syntax.Node.Node String.String)"
+            },
+            {
+                "name": "getNode",
+                "comment": " Get the outermost `Node` of a pipeline; you probably don't need to work with\nthis directly.\n",
+                "type": "ReviewPipelineStyles.Predicates.Pipeline -> Elm.Syntax.Node.Node Elm.Syntax.Expression.Expression"
+            },
+            {
+                "name": "getParents",
+                "comment": " Get the \"parent\" pipelines of the pipeline, i.e. a hierarchy of pipelines\nthat this pipeline is nested within (start of the list being the most immediate\nparent). Note that you can use the functions in\n[Nesting Predicates](#nesting-predicates) to interrogate the `NestedWithin`\ntype and in [Query Pipeline Types](#query-pipeline-types) for the\n`Operator` type.\n",
+                "type": "ReviewPipelineStyles.Predicates.Pipeline -> List.List ( ReviewPipelineStyles.Predicates.Operator (), ReviewPipelineStyles.Predicates.NestedWithin )"
+            },
+            {
+                "name": "getSteps",
+                "comment": " Get the \"steps\" in the pipeline. Note that this is in \"logical\" order, e.g.\n`a 1 >> b >> c`, `c << b << a 1`, `a 1 |> b |> c`, `c <| b <| a 1`, and\n`c (b (a 1))` will all have the same steps of `[a 1, b, c]`.\n",
+                "type": "ReviewPipelineStyles.Predicates.Pipeline -> List.List (Elm.Syntax.Node.Node Elm.Syntax.Expression.Expression)"
+            },
+            {
+                "name": "haveAParent",
+                "comment": " Checks whether the pipeline is nested to any degree within another pipeline.\nNote that this is quite a strict requirement and you probably want to use one of\nthe other nesting predicates instead.\n",
+                "type": "ReviewPipelineStyles.Predicates.Predicate anyType"
+            },
+            {
+                "name": "haveAParentNotSeparatedBy",
+                "comment": " Checks whether the immediate parent of a pipeline (if one exists) is not\nseparated by one of a list of acceptable abstractions.\n",
+                "type": "List.List (ReviewPipelineStyles.Predicates.NestedWithin -> Basics.Bool) -> ReviewPipelineStyles.Predicates.Predicate anyType"
+            },
+            {
+                "name": "haveASecondStepThatIs",
+                "comment": " Given a predicate for a single step, check if the second step in a pipeline\nmatches said predicate.\n",
+                "type": "ReviewPipelineStyles.Predicates.StepPredicate -> ReviewPipelineStyles.Predicates.Predicate anyType"
+            },
+            {
+                "name": "haveASimpleInputStep",
+                "comment": " Determine whether the pipeline has a simple input or not. This is somewhat\nsubjective, of course. A pipeline is considered to have a simple input if it\n[has an unnecessary input](#haveAnUnnecessaryInputStep), if its second step is\nnot [a semantically-infix function](#aSemanticallyInfixFunction) (like `logBase`\n), and if its input step is [simple](#aSimpleStep).\n\nThis predicate is constructed as follows:\n\n    haveASimpleInputStep =\n        haveAnUnnecessaryInputStep\n            |> and (doNot <| haveASecondStepThatIs aSemanticallyInfixFunction)\n            |> and (haveAnInputStepThatIs aSimpleStep)\n\n",
+                "type": "ReviewPipelineStyles.Predicates.Predicate ReviewPipelineStyles.Predicates.ApplicationPipeline"
+            },
+            {
+                "name": "haveAnInputStepOf",
+                "comment": " @deprecated **Use [`haveAnInputStepThatIs`](#haveAnInputStepThatIs)\ninstead.**\n",
+                "type": "(Elm.Syntax.Node.Node Elm.Syntax.Expression.Expression -> Basics.Bool) -> ReviewPipelineStyles.Predicates.Predicate anyType"
+            },
+            {
+                "name": "haveAnInputStepThatIs",
+                "comment": " Given a predicate for a single step, check if the first step in a pipeline\nmatches said predicate.\n",
+                "type": "ReviewPipelineStyles.Predicates.StepPredicate -> ReviewPipelineStyles.Predicates.Predicate anyType"
+            },
+            {
+                "name": "haveAnUnnecessaryInputStep",
+                "comment": " Determine whether the pipeline has an input step that simply isn't\nnecessary, e.g. `foo |> bar |> baz`, which may be written as `bar foo |> baz`.\n\nThis is not perfectly exhaustive as it does not consider operator precedence and\nthe like but will suffice for finding most simple cases.\n\nNote that this will potentially flag quite complex inputs, so you might want to\nuse [`haveASimpleInputStep`](#haveASimpleInputStep) instead, since that only\ndetects visually simple inputs.\n\nThis predicate is constructed as follows:\n\n    haveAnUnnecessaryInputStep =\n        let\n            ableToBeAnArgument =\n                stepPredicate <|\n                    \\node ->\n                        case Node.value node of\n                            Application _ ->\n                                False\n\n                            OperatorApplication _ _ _ _ ->\n                                False\n\n                            IfBlock _ _ _ ->\n                                False\n\n                            LetExpression _ ->\n                                False\n\n                            CaseExpression _ ->\n                                False\n\n                            LambdaExpression _ ->\n                                False\n\n                            GLSLExpression _ ->\n                                False\n\n                            _ ->\n                                True\n\n            ableToTakeAnArgument =\n                stepPredicate <|\n                    \\node ->\n                        case Node.value node of\n                            Application _ ->\n                                True\n\n                            FunctionOrValue _ _ ->\n                                True\n\n                            PrefixOperator _ ->\n                                True\n\n                            RecordAccessFunction _ ->\n                                True\n\n                            ParenthesizedExpression _ ->\n                                True\n\n                            RecordAccess _ _ ->\n                                True\n\n                            _ ->\n                                False\n        in\n        haveAnInputStepThatIs ableToBeAnArgument\n            |> and (haveASecondStepThatIs ableToTakeAnArgument)\n\n",
+                "type": "ReviewPipelineStyles.Predicates.Predicate ReviewPipelineStyles.Predicates.ApplicationPipeline"
+            },
+            {
+                "name": "haveAnyNonInputStepThatIs",
+                "comment": " Given a predicate for a single step, check if any step in a pipeline except\nfor the first matches said predicate.\n",
+                "type": "ReviewPipelineStyles.Predicates.StepPredicate -> ReviewPipelineStyles.Predicates.Predicate anyType"
+            },
+            {
+                "name": "haveAnyStepThatIs",
+                "comment": " Given a predicate for a single step, check if any step in a pipeline matches\nsaid predicate.\n",
+                "type": "ReviewPipelineStyles.Predicates.StepPredicate -> ReviewPipelineStyles.Predicates.Predicate anyType"
+            },
+            {
+                "name": "haveFewerStepsThan",
+                "comment": " Checks whether the length of a pipeline is less than a specified number.\nNote that the length of a pipeline is the number of operators in it, e.g.\n\n    foo\n        |> bar\n        |> baz\n\nhas length **2** for the purposes of this predicate.\n\n",
+                "type": "Basics.Int -> ReviewPipelineStyles.Predicates.Predicate anyType"
+            },
+            {
+                "name": "haveInternalComments",
+                "comment": " Checks whether any comments are located within the pipeline, e.g.\n\n    a =\n        foo\n            -- Comment\n            |> bar\n            |> baz\n\nComments _around_ the pipeline are ignored, e.g.\n\n\n    a =\n        -- Ignored\n        foo\n            |> bar\n            |> baz\n\n    -- Ignored\n\n",
+                "type": "ReviewPipelineStyles.Predicates.Predicate anyType"
+            },
+            {
+                "name": "haveMoreNestedParentsThan",
+                "comment": " Checks whether the pipeline is nested to a greater degree than specified\nwithin other pipelines. For example, `haveMoreNestedParentsThan 1` will forbid\n\n    a =\n        foo\n            |> (bar <| (a |> b |> c))\n            |> baz\n\n",
+                "type": "Basics.Int -> ReviewPipelineStyles.Predicates.Predicate anyType"
+            },
+            {
+                "name": "haveMoreStepsThan",
+                "comment": " Checks whether the length of a pipeline is longer than a specified number.\nNote that the length of a pipeline is the number of operators in it, e.g.\n\n    foo\n        |> bar\n        |> baz\n\nhas length **2** for the purposes of this predicate.\n\n",
+                "type": "Basics.Int -> ReviewPipelineStyles.Predicates.Predicate anyType"
+            },
+            {
+                "name": "haveNonInputStepsThatAreAll",
+                "comment": " Given a predicate for a single step, check if all steps in a pipeline except\nfor the first match said predicate.\n",
+                "type": "ReviewPipelineStyles.Predicates.StepPredicate -> ReviewPipelineStyles.Predicates.Predicate anyType"
+            },
+            {
+                "name": "haveStepsThatAreAll",
+                "comment": " Given a predicate for a single step, check if all step in a pipeline match\nsaid predicate.\n",
+                "type": "ReviewPipelineStyles.Predicates.StepPredicate -> ReviewPipelineStyles.Predicates.Predicate anyType"
+            },
+            {
+                "name": "isLeftComposition",
+                "comment": " Check if an `Operator` is the left composition operator, i.e. `<<`. An\nexample of this pipeline is below:\n\n    foo << bar << baz\n\n",
+                "type": "ReviewPipelineStyles.Predicates.Operator () -> Basics.Bool"
+            },
+            {
+                "name": "isLeftPizza",
+                "comment": " Check if an `Operator` is the left \"pizza\" operator (left function\napplication), i.e. `<|`. An example of this pipeline is below:\n\n    foo <| bar <| baz\n\n",
+                "type": "ReviewPipelineStyles.Predicates.Operator () -> Basics.Bool"
+            },
+            {
+                "name": "isParentheticalApplication",
+                "comment": " Check if an `Operator` is simply parenthetical application (not an\noperator), i.e. successive function calls using parentheses, e.g.\n\n    foo (bar (baz (i (j k))))\n\n",
+                "type": "ReviewPipelineStyles.Predicates.Operator () -> Basics.Bool"
+            },
+            {
+                "name": "isRightComposition",
+                "comment": " Check if an `Operator` is the right composition operator, i.e. `>>`. An\nexample of this pipeline is below:\n\n    foo\n        >> bar\n        >> baz\n\n",
+                "type": "ReviewPipelineStyles.Predicates.Operator () -> Basics.Bool"
+            },
+            {
+                "name": "isRightPizza",
+                "comment": " Check if an `Operator` is the right \"pizza\" operator (right function\napplication), i.e. `|>`. An example of this pipeline is below:\n\n    foo\n        |> bar\n        |> baz\n\n",
+                "type": "ReviewPipelineStyles.Predicates.Operator () -> Basics.Bool"
+            },
+            {
+                "name": "onASingleLine",
+                "comment": " Checks if a step consists of a single line of code.\n",
+                "type": "ReviewPipelineStyles.Predicates.StepPredicate"
+            },
+            {
+                "name": "onMultipleLines",
+                "comment": " Checks if a step consists of more than one line of code.\n",
+                "type": "ReviewPipelineStyles.Predicates.StepPredicate"
+            },
+            {
+                "name": "or",
+                "comment": " Create a `Predicate` that matches pipelines that match either or both of two\npredicates.\n",
+                "type": "ReviewPipelineStyles.Predicates.Predicate anyType -> ReviewPipelineStyles.Predicates.Predicate anyType -> ReviewPipelineStyles.Predicates.Predicate anyType"
+            },
+            {
+                "name": "predicate",
+                "comment": " Given a function of type `Pipeline -> Bool`, create a `Predicate` from it.\nThis is only useful if you want to write custom predicates. Note that this will\nallow you to create predicates that match any type of pipeline, so be careful in\nhow you use it.\n\nIf you think a generally useful predicate is missing, please open an issue or PR\non Github: <https://github.com/SiriusStarr/elm-review-pipeline-styles/issues>\n\n",
+                "type": "(ReviewPipelineStyles.Predicates.Pipeline -> Basics.Bool) -> ReviewPipelineStyles.Predicates.Predicate anyType"
+            },
+            {
+                "name": "predicateWithLookupTable",
+                "comment": " Given a function of type `ModuleNameLookupTable -> Pipeline -> Bool`, create\na `Predicate` from it. This is only useful if you want to write custom\npredicates and are going to need the full module name for expressions in the\npipeline. Note that this will allow you to create predicates that match any type\nof pipeline, so be careful in how you use it.\n\nIf you think a generally useful predicate is missing, please open an issue or PR\non Github: <https://github.com/SiriusStarr/elm-review-pipeline-styles/issues>\n\n",
+                "type": "(Review.ModuleNameLookupTable.ModuleNameLookupTable -> ReviewPipelineStyles.Predicates.Pipeline -> Basics.Bool) -> ReviewPipelineStyles.Predicates.Predicate anyType"
+            },
+            {
+                "name": "separateATestFromItsLambda",
+                "comment": " Checks if an operator (typically left pizza (`<|`)) is used in the\n\"canonical\" fashion in a test suite, to separate the lambda containing the test\nfrom the `test`. All of the following will pass this predicate, and all other\nuses will not:\n\n    import Test exposing (..)\n\n    suite =\n        describe \"tests\"\n            [ test \"foo\" <|\n                \\() ->\n                    a\n            , fuzz fooFuzz \"fuzz\" <|\n                \\foo ->\n                    a\n            , fuzz2 fooFuzz barFuzz \"fuzz2\" <|\n                \\foo bar ->\n                    a\n            , fuzz3 fooFuzz barFuzz bazFuzz \"fuzz3\" <|\n                \\foo bar baz ->\n                    a\n            , fuzzWith { runs = 117 } fooFuzz \"fuzzWith\" <|\n                \\foo ->\n                    a\n            ]\n\nHere is how to construct this predicate, for an example of how to build complex\npredicates:\n\n    separateATestFromItsLambda =\n        let\n            aLambdaExpression : StepPredicate\n            aLambdaExpression =\n                stepPredicate <|\n                    \\node ->\n                        case Node.value node of\n                            LambdaExpression _ ->\n                                True\n\n                            _ ->\n                                False\n\n            aTestFunction : StepPredicate\n            aTestFunction =\n                stepPredicateWithLookupTable <|\n                    \\lookupTable node ->\n                        case Node.value node of\n                            Application (h :: _) ->\n                                case ( Node.value h, moduleNameFor lookupTable h ) of\n                                    ( FunctionOrValue _ n, Just [ \"Test\" ] ) ->\n                                        List.member n\n                                            [ \"test\"\n                                            , \"fuzz\"\n                                            , \"fuzz2\"\n                                            , \"fuzz3\"\n                                            , \"fuzzWith\"\n                                            ]\n\n                                    _ ->\n                                        False\n\n                            _ ->\n                                False\n        in\n        haveFewerStepsThan 3\n            |> and (haveAnInputStepThatIs aLambdaExpression)\n            |> and (haveASecondStepThatIs aTestFunction)\n\n",
+                "type": "ReviewPipelineStyles.Predicates.Predicate ReviewPipelineStyles.Predicates.ApplicationPipeline"
+            },
+            {
+                "name": "spanMultipleLines",
+                "comment": " Checks whether or not a pipeline spans multiple lines of code.\n",
+                "type": "ReviewPipelineStyles.Predicates.Predicate anyType"
+            },
+            {
+                "name": "stepPredicate",
+                "comment": " Given a function of type `Node Expression -> Bool`, create a `StepPredicate`\nfrom it. This is only useful if you want to write custom predicates for steps.\n\nIf you think a generally useful step predicate is missing, please open an issue\nor PR on Github: <https://github.com/SiriusStarr/elm-review-pipeline-styles/issues>\n\n",
+                "type": "(Elm.Syntax.Node.Node Elm.Syntax.Expression.Expression -> Basics.Bool) -> ReviewPipelineStyles.Predicates.StepPredicate"
+            },
+            {
+                "name": "stepPredicateWithLookupTable",
+                "comment": " Given a function of type `ModuleNameLookupTable -> Node Expression -> Bool`,\ncreate a `StepPredicate` from it. This is only useful if you want to write\ncustom predicates for steps and need full module names.\n\nIf you think a generally useful step predicate is missing, please open an issue\nor PR on Github: <https://github.com/SiriusStarr/elm-review-pipeline-styles/issues>\n\n",
+                "type": "(Review.ModuleNameLookupTable.ModuleNameLookupTable -> Elm.Syntax.Node.Node Elm.Syntax.Expression.Expression -> Basics.Bool) -> ReviewPipelineStyles.Predicates.StepPredicate"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ReviewPipelineStyles.Premade",
+        "comment": "\n\n\n## Premade Rules\n\nThis package module some commonly useful rules, as well as how to construct\nthem, both so that one might use them as is but also get a sense of how to\nconstruct one's own `PipelineRule`s.\n\n@docs noMultilineLeftPizza, noMultilineLeftComposition, noSingleLineRightPizza, noSingleLineRightComposition, noPipelinesWithSimpleInputs, noRepeatedParentheticalApplication, noPipelinesWithConfusingNonCommutativeFunctions, noSemanticallyInfixFunctionsInLeftPipelines\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "noMultilineLeftComposition",
+                "comment": " These `PipelineRule`s forbid left composition (`<<`) pipelines that span\nmultiple lines. Multiple operator pipelines will be converted to right\ncomposition (`>>`) pipelines, while single operator ones will (try) to be fixed\nby placing them on a single line.\n\nFor example:\n\n    foo\n        << bar\n        << baz\n\n    a\n        << b\n\nwill be converted to\n\n    baz\n        >> bar\n        >> foo\n\n    a << b\n\nConfiguration:\n\n    noMultilineLeftComposition =\n        [ forbid leftCompositionPipelines\n            |> that\n                (spanMultipleLines\n                    |> and (haveMoreStepsThan 1)\n                )\n            |> andTryToFixThemBy convertingToRightComposition\n            |> andCallThem \"multiline << pipeline with several steps\"\n        , forbid leftCompositionPipelines\n            |> that\n                (spanMultipleLines\n                    |> and (haveFewerStepsThan 2)\n                )\n            |> andTryToFixThemBy makingSingleLine\n            |> andCallThem \"multiline << pipeline with one step\"\n        ]\n\n",
+                "type": "List.List (ReviewPipelineStyles.PipelineRule ())"
+            },
+            {
+                "name": "noMultilineLeftPizza",
+                "comment": " These `PipelineRule`s forbid \"left pizza\" (`<|`) pipelines that span\nmultiple lines, except for those that are used in the common/\"canonical\" case in\ntests, separating a test from its lambda function. Multiple operator pipelines\nwill be converted to \"right pizza\" (`|>`) pipelines, while single operator ones\nwill (try) to be fixed by placing them on a single line.\n\nFor example:\n\n    foo <|\n        bar <|\n            baz\n\n    a <|\n        b c\n\nwill be converted to\n\n    baz\n        |> bar\n        |> foo\n\n    a <| b c\n\nConfiguration:\n\n    noMultilineLeftPizza =\n        [ forbid leftPizzaPipelines\n            |> that\n                (spanMultipleLines\n                    |> and (haveMoreStepsThan 1)\n                )\n            |> andTryToFixThemBy convertingToRightPizza\n            |> andCallThem \"multiline <| pipeline with several steps\"\n        , forbid leftPizzaPipelines\n            |> that\n                (spanMultipleLines\n                    |> and (haveFewerStepsThan 2)\n                )\n            |> exceptThoseThat separateATestFromItsLambda\n            |> andTryToFixThemBy makingSingleLine\n            |> andCallThem \"multiline <| pipeline with one step\"\n        ]\n\n",
+                "type": "List.List (ReviewPipelineStyles.PipelineRule ())"
+            },
+            {
+                "name": "noPipelinesWithConfusingNonCommutativeFunctions",
+                "comment": " These `PipelineRule`s forbid any pipeline that uses a non-commutative\nfunction with commonly confused argument order. It cannot provide fixes.\n\nFor example, the following are flagged by this rule:\n\n    startOfList |> (++) endOfList |> whoops\n\n    keepDict |> Dict.diff subtractDict |> whoops\n\n    1 |> (-) 2 |> whoops\n\n    startOfList |> List.append endOfList |> whoops\n\nThe following however are not flagged:\n\n    1 |> (+) 2 |> commutativeFunction\n\n    dict1 |> Dict.union |> dict2 |> commutativeFunction\n\n    foo |> bar |> baz\n\nNote that left pipelines and parenthetical application pipelines are only\nflagged with confusing prefix operators, not functions like `compare`, since the\narguments are in the correct order in those cases.\n\nConfiguration:\n\n    noPipelinesWithConfusingNonCommutativeFunctions =\n        [ forbid rightPizzaPipelines\n            |> that (haveAnyStepThatIs aConfusingNonCommutativeFunction)\n            |> andCallThem \"|> pipeline with confusing non-commutative function\"\n        , forbid rightCompositionPipelines\n            |> that (haveAnyStepThatIs aConfusingNonCommutativeFunction)\n            |> andCallThem \">> pipeline with confusing non-commutative function\"\n        , forbid leftPizzaPipelines\n            |> that (haveAnyStepThatIs aConfusingNonCommutativePrefixOperator)\n            |> andCallThem \"<| pipeline with confusing non-commutative prefix operator\"\n        , forbid leftCompositionPipelines\n            |> that (haveAnyStepThatIs aConfusingNonCommutativePrefixOperator)\n            |> andCallThem \"<< pipeline with confusing non-commutative prefix operator\"\n        , forbid parentheticalApplicationPipelines\n            |> that (haveAnyStepThatIs aConfusingNonCommutativePrefixOperator)\n            |> andCallThem \"parenthetical application pipeline with confusing non-commutative prefix operator\"\n        ]\n\n",
+                "type": "List.List (ReviewPipelineStyles.PipelineRule ())"
+            },
+            {
+                "name": "noPipelinesWithSimpleInputs",
+                "comment": " These `PipelineRule`s forbid \"right pizza\" (`|>`) and \"left pizza\" (`<|`)\npipelines that have \"simple\" (unnecessary) inputs and try to fix them by\neliminating the input step.\n\nFor example:\n\n    foo |> bar |> baz\n\n    foo <| bar <| baz\n\nwill be converted to:\n\n    bar foo |> baz\n\n    foo <| bar baz\n\nNote that all unnecessary left pipeline inputs will be removed (since those\noperators do not even add clarity), whereas only visually-simple right pipeline\ninputs are removed\n\nConfiguration:\n\n    noPipelinesWithSimpleInputs =\n        [ forbid rightPizzaPipelines\n            |> that haveASimpleInputStep\n            |> andTryToFixThemBy eliminatingInputStep\n            |> andCallThem \"|> pipeline with simple input\"\n        , forbid leftPizzaPipelines\n            |> that haveAnUnnecessaryInputStep\n            |> andTryToFixThemBy eliminatingInputStep\n            |> andCallThem \"<| pipeline with simple input\"\n        ]\n\n",
+                "type": "List.List (ReviewPipelineStyles.PipelineRule ())"
+            },
+            {
+                "name": "noRepeatedParentheticalApplication",
+                "comment": " These `PipelineRule`s forbid parenthetical application with more than a\nsingle step and try to fix it by converting it to \"right pizza\" (`|>`) pipeline.\n\nFor example:\n\n    foo (bar (baz i))\n\nwill be converted to:\n\n    baz i\n        |> bar\n        |> foo\n\nIt excludes ones that are nested immediately within a pipeline already, as is\noften the case with e.g. nested `map`s. For example:\n\n    foo\n        |> Maybe.map (Result.map (yi << er))\n        |> bar\n\nwill not be flagged, as it cannot be converted to a \"right pizza\" (`|>`)\npipeline or written in a way that is particularly \"nicer.\"\n\nConfiguration:\n\n    noRepeatedParentheticalApplication =\n        forbid parentheticalApplicationPipelines\n            |> that\n                (haveMoreStepsThan 1\n                    |> and\n                        (doNot\n                            (haveAParentNotSeparatedBy\n                                [ aLetBlock\n                                , aLambdaFunction\n                                , aFlowControlStructure\n                                , aDataStructure\n                                ]\n                            )\n                        )\n                )\n            |> andTryToFixThemBy convertingToRightPizza\n            |> andCallThem \"parenthetical application with several steps\"\n\n",
+                "type": "List.List (ReviewPipelineStyles.PipelineRule ())"
+            },
+            {
+                "name": "noSemanticallyInfixFunctionsInLeftPipelines",
+                "comment": " These `PipelineRule`s forbid any left pipelines that use a function named in\na \"semantically-infix\" fashion, i.e. whose function name is intended to be read\nwith an argument on each side. It fixes them by converting them to the\nequivalent right pipeline.\n\nFor example:\n\n    Maybe.andThen String.toFloat << List.head\n\n    remainderBy 2 <| 1 + 3\n\n    logBase 2 (10 + 2)\n\nwill be converted to:\n\n    List.head >> Maybe.andThen String.toFloat\n\n    1 + 3 |> remainderBy 2\n\n    10 + 2 |> logBase 2\n\nConfiguration:\n\n    noSemanticallyInfixFunctionsInLeftPipelines =\n        [ forbid leftPizzaPipelines\n            |> that (haveAnyNonInputStepThatIs aSemanticallyInfixFunction)\n            |> andTryToFixThemBy convertingToRightPizza\n            |> andCallThem \"<| pipeline with a semantically-infix function\"\n        , forbid leftCompositionPipelines\n            |> that (haveAnyNonInputStepThatIs aSemanticallyInfixFunction)\n            |> andTryToFixThemBy convertingToRightComposition\n            |> andCallThem \"<< pipeline with a semantically-infix function\"\n        , forbid parentheticalApplicationPipelines\n            |> that (haveAnyNonInputStepThatIs aSemanticallyInfixFunction)\n            |> andTryToFixThemBy convertingToRightPizza\n            |> andCallThem \"parenthetical application pipeline with a semantically-infix function\"\n        ]\n\n",
+                "type": "List.List (ReviewPipelineStyles.PipelineRule ())"
+            },
+            {
+                "name": "noSingleLineRightComposition",
+                "comment": " These `PipelineRule`s forbid right composition (`>>`) pipelines that are\nentirely on a single line and try to fix them by making them multiline.\n\nFor example:\n\n    foo >> bar >> baz\n\nwill be converted to:\n\n    foo\n        >> bar\n        >> baz\n\nConfiguration:\n\n    noSingleLineRightComposition =\n        [ forbid rightCompositionPipelines\n            |> that (doNot spanMultipleLines)\n            |> andTryToFixThemBy makingMultiline\n            |> andCallThem \"single line >> pipeline\"\n        ]\n\n",
+                "type": "List.List (ReviewPipelineStyles.PipelineRule ())"
+            },
+            {
+                "name": "noSingleLineRightPizza",
+                "comment": " These `PipelineRule`s forbid \"right pizza\" (`|>`) pipelines that are\nentirely on a single line and try to fix them by making them multiline.\n\nFor example:\n\n    foo |> bar |> baz\n\nwill be converted to:\n\n    foo\n        |> bar\n        |> baz\n\nConfiguration:\n\n    noSingleLineRightPizza =\n        [ forbid rightPizzaPipelines\n            |> that (doNot spanMultipleLines)\n            |> andTryToFixThemBy makingMultiline\n            |> andCallThem \"single line |> pipeline\"\n        ]\n\n",
+                "type": "List.List (ReviewPipelineStyles.PipelineRule ())"
+            }
+        ],
+        "binops": []
+    }
+]

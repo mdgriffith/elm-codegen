@@ -1,0 +1,121 @@
+[
+    {
+        "name": "CloudinaryVideoPlayer",
+        "comment": " This library will load the Custom Html Element into the DOM.\n\n\n# HTML Element\n\n@docs view\n\n\n# Attributes\n\n@docs analytics, autoShowRecommendations, autoplay, autoplayMode, cloudName, controls, crop, fluid, fontFace, height, loop, muted, pause, play, preload, publicId, stop, urlTransformation, videoId, videoTitle, width\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "analytics",
+                "comment": " Activate the analytics\n\nSee [Cloudinary Video Player API reference](https://cloudinary.com/documentation/video_player_api_reference) for more information and [Cloudinary Video Player Attributes](https://github.com/rsignavong/stencil-cloudinary-video-player/blob/master/src/components/cld-video/readme.md) for details\n\n",
+                "type": "Basics.Bool -> Html.Attribute msg"
+            },
+            {
+                "name": "autoShowRecommendations",
+                "comment": " Display videos recommendations\n\nSee [Cloudinary Video Player API reference](https://cloudinary.com/documentation/video_player_api_reference) for more information and [Cloudinary Video Player Attributes](https://github.com/rsignavong/stencil-cloudinary-video-player/blob/master/src/components/cld-video/readme.md) for details\n\n",
+                "type": "Basics.Bool -> Html.Attribute msg"
+            },
+            {
+                "name": "autoplay",
+                "comment": " Sets video autoplay on load\n\nSee [Cloudinary Video Player API reference](https://cloudinary.com/documentation/video_player_api_reference) for more information and [Cloudinary Video Player Attributes](https://github.com/rsignavong/stencil-cloudinary-video-player/blob/master/src/components/cld-video/readme.md) for details\n\n",
+                "type": "Basics.Bool -> Html.Attribute msg"
+            },
+            {
+                "name": "autoplayMode",
+                "comment": " Sets video autoplay additional mode on load\n\nSee [Cloudinary Video Player API reference](https://cloudinary.com/documentation/video_player_api_reference) for more information and [Cloudinary Video Player Attributes](https://github.com/rsignavong/stencil-cloudinary-video-player/blob/master/src/components/cld-video/readme.md) for details\n\n",
+                "type": "String.String -> Html.Attribute msg"
+            },
+            {
+                "name": "cloudName",
+                "comment": " Sets Cloudinary cloudname to build video URL\n\nSee [Cloudinary Video Player API reference](https://cloudinary.com/documentation/video_player_api_reference) for more information and [Cloudinary Video Player Attributes](https://github.com/rsignavong/stencil-cloudinary-video-player/blob/master/src/components/cld-video/readme.md) for details\n\n",
+                "type": "String.String -> Html.Attribute msg"
+            },
+            {
+                "name": "controls",
+                "comment": " Display video player controls\n\nSee [Cloudinary Video Player API reference](https://cloudinary.com/documentation/video_player_api_reference) for more information and [Cloudinary Video Player Attributes](https://github.com/rsignavong/stencil-cloudinary-video-player/blob/master/src/components/cld-video/readme.md) for details\n\n",
+                "type": "Basics.Bool -> Html.Attribute msg"
+            },
+            {
+                "name": "crop",
+                "comment": " Sets video crop transformation\n\nSee [Cloudinary Video Player API reference](https://cloudinary.com/documentation/video_player_api_reference) for more information and [Cloudinary Video Player Attributes](https://github.com/rsignavong/stencil-cloudinary-video-player/blob/master/src/components/cld-video/readme.md) for details\n\n",
+                "type": "String.String -> Html.Attribute msg"
+            },
+            {
+                "name": "fluid",
+                "comment": " Activate video fluid mode\n\nSee [Cloudinary Video Player API reference](https://cloudinary.com/documentation/video_player_api_reference) for more information and [Cloudinary Video Player Attributes](https://github.com/rsignavong/stencil-cloudinary-video-player/blob/master/src/components/cld-video/readme.md) for details\n\n",
+                "type": "Basics.Bool -> Html.Attribute msg"
+            },
+            {
+                "name": "fontFace",
+                "comment": " Sets font face to all texts displayed on video player\n\nSee [Cloudinary Video Player API reference](https://cloudinary.com/documentation/video_player_api_reference) for more information and [Cloudinary Video Player Attributes](https://github.com/rsignavong/stencil-cloudinary-video-player/blob/master/src/components/cld-video/readme.md) for details\n\n",
+                "type": "String.String -> Html.Attribute msg"
+            },
+            {
+                "name": "height",
+                "comment": " Sets transformation height property of video\n\nSee [Cloudinary Video Player API reference](https://cloudinary.com/documentation/video_player_api_reference) for more information and [Cloudinary Video Player Attributes](https://github.com/rsignavong/stencil-cloudinary-video-player/blob/master/src/components/cld-video/readme.md) for details\n\n",
+                "type": "Basics.Int -> Html.Attribute msg"
+            },
+            {
+                "name": "loop",
+                "comment": " Activate looping mode of video player\n\nSee [Cloudinary Video Player API reference](https://cloudinary.com/documentation/video_player_api_reference) for more information and [Cloudinary Video Player Attributes](https://github.com/rsignavong/stencil-cloudinary-video-player/blob/master/src/components/cld-video/readme.md) for details\n\n",
+                "type": "Basics.Bool -> Html.Attribute msg"
+            },
+            {
+                "name": "muted",
+                "comment": " Mute the sounds on video play\n\nSee [Cloudinary Video Player API reference](https://cloudinary.com/documentation/video_player_api_reference) for more information and [Cloudinary Video Player Attributes](https://github.com/rsignavong/stencil-cloudinary-video-player/blob/master/src/components/cld-video/readme.md) for details\n\n",
+                "type": "Basics.Bool -> Html.Attribute msg"
+            },
+            {
+                "name": "pause",
+                "comment": " Pause the playing video\n\nSee [Cloudinary Video Player API reference](https://cloudinary.com/documentation/video_player_api_reference) for more information and [Cloudinary Video Player Attributes](https://github.com/rsignavong/stencil-cloudinary-video-player/blob/master/src/components/cld-video/readme.md) for details\n\n",
+                "type": "Html.Attribute msg"
+            },
+            {
+                "name": "play",
+                "comment": " Play the current video\n\nSee [Cloudinary Video Player API reference](https://cloudinary.com/documentation/video_player_api_reference) for more information and [Cloudinary Video Player Attributes](https://github.com/rsignavong/stencil-cloudinary-video-player/blob/master/src/components/cld-video/readme.md) for details\n\n",
+                "type": "Html.Attribute msg"
+            },
+            {
+                "name": "preload",
+                "comment": " Preload data on video load\n\nSee [Cloudinary Video Player API reference](https://cloudinary.com/documentation/video_player_api_reference) for more information and [Cloudinary Video Player Attributes](https://github.com/rsignavong/stencil-cloudinary-video-player/blob/master/src/components/cld-video/readme.md) for details\n\n",
+                "type": "String.String -> Html.Attribute msg"
+            },
+            {
+                "name": "publicId",
+                "comment": " Sets the Cloudinary video to play\n\nSee [Cloudinary Video Player API reference](https://cloudinary.com/documentation/video_player_api_reference) for more information and [Cloudinary Video Player Attributes](https://github.com/rsignavong/stencil-cloudinary-video-player/blob/master/src/components/cld-video/readme.md) for details\n\n",
+                "type": "String.String -> Html.Attribute msg"
+            },
+            {
+                "name": "stop",
+                "comment": " Stop the playing video and set video time to 0\n\nSee [Cloudinary Video Player API reference](https://cloudinary.com/documentation/video_player_api_reference) for more information and [Cloudinary Video Player Attributes](https://github.com/rsignavong/stencil-cloudinary-video-player/blob/master/src/components/cld-video/readme.md) for details\n\n",
+                "type": "Html.Attribute msg"
+            },
+            {
+                "name": "urlTransformation",
+                "comment": " Sets the video transformation for browser HTML5 native video player in case the Cloudinary Video Player is not loaded\n\nSee [Cloudinary Video Player API reference](https://cloudinary.com/documentation/video_player_api_reference) for more information and [Cloudinary Video Player Attributes](https://github.com/rsignavong/stencil-cloudinary-video-player/blob/master/src/components/cld-video/readme.md) for details\n\n",
+                "type": "String.String -> Html.Attribute msg"
+            },
+            {
+                "name": "videoId",
+                "comment": " Sets the Id of video HTML tag, used by the WebComponent to load the Cloudinary Video Player\n\nSee [Cloudinary Video Player API reference](https://cloudinary.com/documentation/video_player_api_reference) for more information and [Cloudinary Video Player Attributes](https://github.com/rsignavong/stencil-cloudinary-video-player/blob/master/src/components/cld-video/readme.md) for details\n\n",
+                "type": "String.String -> Html.Attribute msg"
+            },
+            {
+                "name": "videoTitle",
+                "comment": " Sets the Title of the video\n\nSee [Cloudinary Video Player API reference](https://cloudinary.com/documentation/video_player_api_reference) for more information and [Cloudinary Video Player Attributes](https://github.com/rsignavong/stencil-cloudinary-video-player/blob/master/src/components/cld-video/readme.md) for details\n\n",
+                "type": "String.String -> Html.Attribute msg"
+            },
+            {
+                "name": "view",
+                "comment": " Renders a Cloudinary Video Player instance\n\n    view\n        [ CldVideoPlayer.cloudName \"cloudname\"\n        , CldVideoPlayer.videoId \"id-123\"\n        , CldVideoPlayer.videoTitle \"My great video\"\n        , CldVideoPlayer.publicId \"folder/public_id\"\n        , CldVideoPlayer.urlTransformation \"w_940,h_354,c_limit\"\n        , CldVideoPlayer.controls True\n        ]\n        []\n\n",
+                "type": "List.List (Html.Attribute msg) -> List.List (Html.Html msg) -> Html.Html msg"
+            },
+            {
+                "name": "width",
+                "comment": " Sets transformation width property of video\n\nSee [Cloudinary Video Player API reference](https://cloudinary.com/documentation/video_player_api_reference) for more information and [Cloudinary Video Player Attributes](https://github.com/rsignavong/stencil-cloudinary-video-player/blob/master/src/components/cld-video/readme.md) for details\n\n",
+                "type": "Basics.Int -> Html.Attribute msg"
+            }
+        ],
+        "binops": []
+    }
+]

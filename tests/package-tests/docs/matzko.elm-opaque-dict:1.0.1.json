@@ -1,0 +1,141 @@
+[
+    {
+        "name": "OpaqueDict",
+        "comment": " A dictionary mapping unique keys to values. The keys can be any type that can be transformed to a String.\n\n\n# Dictionaries\n\n@docs OpaqueDict\n\n\n# Build\n\n@docs empty\n@docs singleton\n@docs insert\n@docs update\n@docs remove\n\n\n# Query\n\n@docs isEmpty\n@docs member\n@docs get\n@docs size\n\n\n# Lists\n\n@docs keys\n@docs values\n@docs toList\n@docs fromList\n\n\n# Transform\n\n@docs map\n@docs foldl\n@docs foldr\n@docs filter\n@docs partition\n@docs union\n@docs intersect\n@docs diff\n@docs merge\n\n\n# Miscellaneous\n\n@docs decode\n@docs encode\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "OpaqueDict",
+                "comment": " A dictionary of keys and values. So a `OpaqueDict UserId User` is a dictionary\nthat lets you look up a `UserId` (such as a user Id) and find the associated\n`User`.\nimport OpaqueDict exposing (OpaqueDict)\n\n    users : OpaqueDict UserId User\n    users =\n        OpaqueDict.fromList userIdToString\n            [ ( UserId 1, User (UserId 1) \"Alice\" 28 1.65 )\n            , ( UserId 2, User (UserId 2) \"Bob\" 19 1.82 )\n            , ( UserId 3, User (UserId 3) \"Chuck\" 33 1.75 )\n            ]\n\n    type UserId\n        = UserId Int\n\n    userIdToString : UserId -> String\n    userIdToString (UserId id) =\n        id |> String.fromInt\n\n    type alias User =\n        { id : UserId\n        , name : String\n        , age : Int\n        , height : Float\n        }\n\n",
+                "args": [
+                    "key",
+                    "b"
+                ],
+                "type": "{ keyToString : key -> String.String, dict : Dict.Dict String.String ( key, b ) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "decode",
+                "comment": " Decode a JSON object to an OpaqueDict, analogous Json.Decode.dict.\n\n    decodeString (decode animalGroupFromString animalGroupToString int) \"{ \\\"feline\\\": 3, \\\"canine\\\": 5 }\"\n        == Ok (OpaqueDict.fromList animalGroupToString [ ( Feline, 3 ), ( Canine, 5 ) ])\n\nIf you need the keys (like `\"feline\"` and `\"canine\"`) available in the `OpaqueDict`\nvalues as well, you can use a (private) intermediate data structure like\n`Info` in this example:\n\n    import OpaqueDict exposing (OpaqueDict)\n    import Json.Decode exposing (..)\n\n    type AnimalGroup\n        = Feline\n        | Canine\n        | Rodent\n\n    {-| Get the string form of an animal group.\n    -}\n    animalGroupToString : AnimalGroup -> String\n    animalGroupToString group =\n        case group of\n            Feline ->\n                \"feline\"\n\n            Canine ->\n                \"canine\"\n\n            Rodent ->\n                \"rodent\"\n\n    {-| Maybe get an animal group from a string.\n    -}\n    animalGroupFromString : String -> Maybe AnimalGroup\n    animalGroupFromString groupName =\n        case groupName of\n            \"feline\" ->\n                Just Feline\n\n            \"canine\" ->\n                Just Canine\n\n            \"rodent\" ->\n                Just Rodent\n\n            _ ->\n                Nothing\n\n    decoder : Decoder (OpaqueDict AnimalGroup Int)\n    decoder =\n        Json.Decode.map (OpaqueDict.map infoToUser) (OpaqueDict.decode Json.Decode.int)\n\n\n    decodeString (decode animalGroupFromString animalGroupToString int) \"{ \\\"feline\\\": 3, \\\"canine\\\": 5 }\"\n        == Ok (OpaqueDict.fromList animalGroupToString [ ( Feline, 3 ), ( Canine, 5 ) ])\n\n",
+                "type": "(String.String -> Maybe.Maybe key) -> (key -> String.String) -> Json.Decode.Decoder b -> Json.Decode.Decoder (OpaqueDict.OpaqueDict key b)"
+            },
+            {
+                "name": "diff",
+                "comment": " Keep a key-value pair when its key does not appear in the second dictionary.\n",
+                "type": "OpaqueDict.OpaqueDict a b -> OpaqueDict.OpaqueDict a b -> OpaqueDict.OpaqueDict a b"
+            },
+            {
+                "name": "empty",
+                "comment": " Create an empty opaque dictionary providing a function that transforms a key type to a string.\n\n\n    type UserId\n        = UserId Int\n\n    userIdToString : UserId -> String\n    userIdToString (UserId id) =\n        id |> String.fromInt\n\n    -- OpaqueDict.empty userIdToString == [] OpaqueDict.fromList userIdToString\n\n",
+                "type": "(key -> String.String) -> OpaqueDict.OpaqueDict key val"
+            },
+            {
+                "name": "encode",
+                "comment": " Turn an OpaqueDict into a JSON object. Analogous to Json.Encode.dict.\n\n    animalCounts : OpaqueDict AnimalGroup Int\n    animalCounts =\n        [ ( Canine, 5 )\n        , ( Feline, 3 )\n        ]\n            |> fromList animalGroupToString\n\n    Encode.encode 0 (OpaqueDict.encode animalGroupToString Encode.int animalCounts)\n        == \"{\\\"canine\\\":5,\\\"feline\\\":3}\"\n\n",
+                "type": "(k -> String.String) -> (v -> Json.Encode.Value) -> OpaqueDict.OpaqueDict k v -> Json.Encode.Value"
+            },
+            {
+                "name": "filter",
+                "comment": " Keep only the key-value pairs that pass the given test.\n",
+                "type": "(a -> b -> Basics.Bool) -> OpaqueDict.OpaqueDict a b -> OpaqueDict.OpaqueDict a b"
+            },
+            {
+                "name": "foldl",
+                "comment": " Fold over the key-value pairs in a dictionary from lowest key to highest key.\n\n\n    getAges : OpaqueDict UserId User -> List Int\n    getAges users =\n        OpaqueDict.foldl addAge [] users\n\n    addAge : UserId -> User -> List UserId -> List Int\n    addAge _ user ages =\n        user.age :: ages\n\n    -- getAges users == [33,19,28]\n\n",
+                "type": "(k -> v -> b -> b) -> b -> OpaqueDict.OpaqueDict k v -> b"
+            },
+            {
+                "name": "foldr",
+                "comment": " Fold over the key-value pairs in a dictionary from highest key to lowest key.\n\n\n    getAges : OpaqueDict UserId User -> List Int\n    getAges users =\n        OpaqueDict.foldr addAge [] users\n\n    addAge : UserId -> User -> List UserId -> List Int\n    addAge _ user ages =\n        user.age :: ages\n\n    -- getAges users == [28,19,33]\n\n",
+                "type": "(k -> v -> b -> b) -> b -> OpaqueDict.OpaqueDict k v -> b"
+            },
+            {
+                "name": "fromList",
+                "comment": " Make the opaque dictionary from a list.\n",
+                "type": "(key -> String.String) -> List.List ( key, val ) -> OpaqueDict.OpaqueDict key val"
+            },
+            {
+                "name": "get",
+                "comment": " Get the value associated with a key. If the key is not found, return\n`Nothing`. This is useful when you are not sure if a key will be in the\ndictionary.\n\n    animals = fromList animalFamilyToString [ (Feline, Cat), (Rodent, Mouse) ]\n    get Feline animals == Just Cat\n    get Rodent animals == Just Mouse\n    get Canine animals == Nothing\n\n",
+                "type": "key -> OpaqueDict.OpaqueDict key val -> Maybe.Maybe val"
+            },
+            {
+                "name": "insert",
+                "comment": " Insert a key-value pair into a dictionary. Replaces value when there is a collision.\n",
+                "type": "a -> b -> OpaqueDict.OpaqueDict a b -> OpaqueDict.OpaqueDict a b"
+            },
+            {
+                "name": "intersect",
+                "comment": " Keep a key-value pair when its key appears in the second dictionary. Preference is given to values in the first dictionary.\n",
+                "type": "OpaqueDict.OpaqueDict a b -> OpaqueDict.OpaqueDict a b -> OpaqueDict.OpaqueDict a b"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Determine whether the opaque dictionary is empty.\n",
+                "type": "OpaqueDict.OpaqueDict key val -> Basics.Bool"
+            },
+            {
+                "name": "keys",
+                "comment": " Get all of the keys in a dictionary, sorted from lowest to highest by their string form.\n",
+                "type": "OpaqueDict.OpaqueDict a b -> List.List a"
+            },
+            {
+                "name": "map",
+                "comment": " Apply a function to all values in a dictionary.\n",
+                "type": "(key -> a -> b) -> OpaqueDict.OpaqueDict key a -> OpaqueDict.OpaqueDict key b"
+            },
+            {
+                "name": "member",
+                "comment": " Determine if a key is in a dictionary.\n",
+                "type": "key -> OpaqueDict.OpaqueDict key val -> Basics.Bool"
+            },
+            {
+                "name": "merge",
+                "comment": " The most general way of combining two dictionaries. You provide three\naccumulators for when a given key appears:\n\n1.  Only in the left dictionary.\n2.  In both dictionaries.\n3.  Only in the right dictionary.\n    You then traverse all the keys from lowest to highest, building up whatever\n    you want.\n\n",
+                "type": "(k -> a -> result -> result) -> (k -> a -> b -> result -> result) -> (k -> b -> result -> result) -> OpaqueDict.OpaqueDict k a -> OpaqueDict.OpaqueDict k b -> result -> result"
+            },
+            {
+                "name": "partition",
+                "comment": " Partition a dictionary according to some test. The first dictionary\ncontains all key-value pairs which passed the test, and the second contains\nthe pairs that did not.\n",
+                "type": "(key -> val -> Basics.Bool) -> OpaqueDict.OpaqueDict key val -> ( OpaqueDict.OpaqueDict key val, OpaqueDict.OpaqueDict key val )"
+            },
+            {
+                "name": "remove",
+                "comment": " Remove a key-value pair from a dictionary. If the key is not found, no changes are made.\n",
+                "type": "key -> OpaqueDict.OpaqueDict key val -> OpaqueDict.OpaqueDict key val"
+            },
+            {
+                "name": "singleton",
+                "comment": " Create a dictionary with one key-value pair.\n\n    singleton userIdToString (UserId 1) \"Bob\"\n    -- == ([ ( UserId 1, \"Bob\" ) ]\n    -- |> fromList userIdToString\n    -- )\n\n",
+                "type": "(key -> String.String) -> key -> val -> OpaqueDict.OpaqueDict key val"
+            },
+            {
+                "name": "size",
+                "comment": " Determine the number of key-value pairs in the dictionary.\n",
+                "type": "OpaqueDict.OpaqueDict key val -> Basics.Int"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert a dictionary into an association list of key-value pairs, sorted by keys.\n",
+                "type": "OpaqueDict.OpaqueDict key val -> List.List ( key, val )"
+            },
+            {
+                "name": "union",
+                "comment": " Combine two dictionaries. If there is a collision, preference is given to the first dictionary.\n",
+                "type": "OpaqueDict.OpaqueDict a b -> OpaqueDict.OpaqueDict a b -> OpaqueDict.OpaqueDict a b"
+            },
+            {
+                "name": "update",
+                "comment": " Update the value of a dictionary for a specific key with a given function.\n",
+                "type": "a -> (Maybe.Maybe b -> Maybe.Maybe b) -> OpaqueDict.OpaqueDict a b -> OpaqueDict.OpaqueDict a b"
+            },
+            {
+                "name": "values",
+                "comment": " Get the dictionary values.\n",
+                "type": "OpaqueDict.OpaqueDict key val -> List.List val"
+            }
+        ],
+        "binops": []
+    }
+]

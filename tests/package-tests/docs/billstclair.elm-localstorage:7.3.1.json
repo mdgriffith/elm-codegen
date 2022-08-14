@@ -1,0 +1,384 @@
+[
+    {
+        "name": "PortFunnel.LocalStorage",
+        "comment": " The `PortFunnelLocalStorage` uses the JavaScript `localStorage` facility to persistently store key/value pairs.\n\nIt is a `billstclair/elm-port-funnel` `PortFunnel` funnel.\n\n\n# Types\n\n@docs Message, Response, State, Key, Prefix, Value, Label, JSVersion\n\n\n# Components of a `PortFunnel.FunnelSpec`\n\n@docs moduleName, moduleDesc, commander\n\n\n# Initial `State`\n\n@docs initialState\n\n\n# Sending a `Message` out the `Cmd` Port\n\n@docs send\n\n\n# Creating Messages\n\nThe `Message` type is opaque, so there are functions to create the four messages\nyou may pass to `send`.\n\n@docs get, getLabeled, put, listKeys, listKeysLabeled, clear, useSessionStorage\n\n\n# Conversion to Strings\n\n@docs toString, toJsonString\n\n\n# Simulator\n\n@docs makeSimulatedCmdPort\n\n\n# Non-standard Functions\n\n@docs isLoaded, getPrefix, encode, decode\n\n",
+        "unions": [
+            {
+                "name": "Response",
+                "comment": " A `Response` is used to return values for `Get` and `ListKeys`.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NoResponse",
+                        []
+                    ],
+                    [
+                        "GetResponse",
+                        [
+                            "{ label : PortFunnel.LocalStorage.Label, key : PortFunnel.LocalStorage.Key, value : Maybe.Maybe PortFunnel.LocalStorage.Value }"
+                        ]
+                    ],
+                    [
+                        "ListKeysResponse",
+                        [
+                            "{ label : PortFunnel.LocalStorage.Label, prefix : String.String, keys : List.List PortFunnel.LocalStorage.Key }"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "State",
+                "comment": " Our internal state.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "JSVersion",
+                "comment": " This is used to force a major version bump when the JS changes.\n\nYou'll usually not use it for anything.\n\n",
+                "args": [],
+                "type": "{ v4_1 : () }"
+            },
+            {
+                "name": "Key",
+                "comment": " A convenience type for keys in the store. Same as `String`.\n",
+                "args": [],
+                "type": "PortFunnel.InternalTypes.Key"
+            },
+            {
+                "name": "Label",
+                "comment": " A convenience type for labels in the store. Same as `Maybe String`.\n",
+                "args": [],
+                "type": "PortFunnel.InternalTypes.Label"
+            },
+            {
+                "name": "Message",
+                "comment": " An opaque type that represents a message to send to or receive from the JS code.\n\nThere are a number of internal messages, but the ones you can use are created by `get`, `put`, `listkeys`, `clear`, and `useSessionStorage`.\n\n",
+                "args": [],
+                "type": "PortFunnel.InternalTypes.Message"
+            },
+            {
+                "name": "Prefix",
+                "comment": " A convenience type for prefixes. Same as `String`.\n",
+                "args": [],
+                "type": "PortFunnel.InternalTypes.Prefix"
+            },
+            {
+                "name": "Value",
+                "comment": " A convenience type for values in the store. Same as `Json.Encode.Value`.\n",
+                "args": [],
+                "type": "PortFunnel.InternalTypes.Value"
+            }
+        ],
+        "values": [
+            {
+                "name": "clear",
+                "comment": " Return a message to remove all keys beginning with a prefix.\n\nA prefix of `\"\"` means to remove all keys.\n\n",
+                "type": "PortFunnel.LocalStorage.Prefix -> PortFunnel.LocalStorage.Message"
+            },
+            {
+                "name": "commander",
+                "comment": " Responsible for sending a `CmdResponse` back through the port.\n\nThis funnel doesn't initiate any sends, so this function always returns `Cmd.none`.\n\n",
+                "type": "(PortFunnel.GenericMessage -> Platform.Cmd.Cmd msg) -> PortFunnel.LocalStorage.Response -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "decode",
+                "comment": " Turn a `GenericMessage` into a `Message`.\n",
+                "type": "PortFunnel.GenericMessage -> Result.Result String.String PortFunnel.LocalStorage.Message"
+            },
+            {
+                "name": "encode",
+                "comment": " Turn a `Message` into a `GenericMessage`.\n",
+                "type": "PortFunnel.LocalStorage.Message -> PortFunnel.GenericMessage"
+            },
+            {
+                "name": "get",
+                "comment": " Return a `Message` to get a value from local storage.\n",
+                "type": "PortFunnel.LocalStorage.Key -> PortFunnel.LocalStorage.Message"
+            },
+            {
+                "name": "getLabeled",
+                "comment": " Return a `Message` to get a labeled value from local storage.\n\nSometimes the `Key` alone isn't enough to mark your intention with\nthe return value. In this case you can label the return with a string\nyou can recognize. It will be returned in the `label` property of the\n`GetResponse`.\n\n",
+                "type": "String.String -> PortFunnel.LocalStorage.Key -> PortFunnel.LocalStorage.Message"
+            },
+            {
+                "name": "getPrefix",
+                "comment": " Get the prefix from the state.\n",
+                "type": "PortFunnel.LocalStorage.State -> PortFunnel.LocalStorage.Prefix"
+            },
+            {
+                "name": "initialState",
+                "comment": " The initial state.\n\nThe `Prefix` arg (plus a period, if non-blank) is prepended to all\nkeys sent to the backend, and removed from keys returned. It basically\ngive you a namespace in local storage, and usually matches your\napplication name. It allows multiple different Elm applications to be\nserved by the same domain without stepping on each other's state.\n\nThe state also stores a `Dict`, which acts as the backing store for simulation,\nand a flag saying whether the JavaScript code has sent its \"I'm loaded\" message\n(see `isLoaded`).\n\n",
+                "type": "PortFunnel.LocalStorage.Prefix -> PortFunnel.LocalStorage.State"
+            },
+            {
+                "name": "isLoaded",
+                "comment": " Returns true if a `Startup` message has been processed.\n\nThis is sent by the port code after it has initialized. Your code can use this to decide whether to use your real outgoing port or the one created by `makeSimulatedCmdPort`.\n\n",
+                "type": "PortFunnel.LocalStorage.State -> Basics.Bool"
+            },
+            {
+                "name": "listKeys",
+                "comment": " Return a `Message` to list all keys beginning with a prefix.\n",
+                "type": "PortFunnel.LocalStorage.Prefix -> PortFunnel.LocalStorage.Message"
+            },
+            {
+                "name": "listKeysLabeled",
+                "comment": " Return a `Message` to list all keys beginning with a prefix.\n\nSometimes the `Prefix` alone isn't enough to mark your intention with\nthe return value. In this case you can label the return with a string\nyou can recognize. It will be returned in the `label` property of the\n`ListKeysResponse`.\n\n",
+                "type": "String.String -> PortFunnel.LocalStorage.Prefix -> PortFunnel.LocalStorage.Message"
+            },
+            {
+                "name": "makeSimulatedCmdPort",
+                "comment": " Make a simulated `Cmd` port.\n",
+                "type": "(PortFunnel.LocalStorage.Value -> msg) -> PortFunnel.LocalStorage.Value -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "moduleDesc",
+                "comment": " Our module descriptor.\n",
+                "type": "PortFunnel.ModuleDesc PortFunnel.LocalStorage.Message PortFunnel.LocalStorage.State PortFunnel.LocalStorage.Response"
+            },
+            {
+                "name": "moduleName",
+                "comment": " The name of this funnel: \"LocalStorage\".\n",
+                "type": "String.String"
+            },
+            {
+                "name": "put",
+                "comment": " Return a `Message` to put a value into local storage.\n\n`Nothing` for the value means to remove the key.\n\n",
+                "type": "PortFunnel.LocalStorage.Key -> Maybe.Maybe PortFunnel.LocalStorage.Value -> PortFunnel.LocalStorage.Message"
+            },
+            {
+                "name": "send",
+                "comment": " Send a `Message` through a `Cmd` port.\n\nNote that this `send` function requires that you pass state,\nbut it is read-only, so you don't need to update your `Model` state\non return.\n\n",
+                "type": "(PortFunnel.LocalStorage.Value -> Platform.Cmd.Cmd msg) -> PortFunnel.LocalStorage.Message -> PortFunnel.LocalStorage.State -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "toJsonString",
+                "comment": " Convert a `Message` to the same JSON string that gets sent\n\nover the wire to the JS code.\n\n",
+                "type": "PortFunnel.LocalStorage.Message -> String.String"
+            },
+            {
+                "name": "toString",
+                "comment": " Convert a `Message` to a nice-looking human-readable string.\n",
+                "type": "PortFunnel.LocalStorage.Message -> String.String"
+            },
+            {
+                "name": "useSessionStorage",
+                "comment": " Use `sessionStorage` if the arg is True, or `localStorage` if False.\n\nThe default, if you don't send this message, is `localStorage`.\n\n`sessionStorage` is cleared when the browser window is closed.\n\n`localStorage` persists until explicitly cleared.\n\n",
+                "type": "Basics.Bool -> PortFunnel.LocalStorage.Message"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "PortFunnel.LocalStorage.Sequence",
+        "comment": " Make it easier to create complex state machines from `LocalStorage` contents.\n\nThis is too complicated for an example here, but see [ZapMeme.Sequencer](https://github.com/billstclair/zapmeme/blob/master/src/ZapMeme/Sequencer.elm) for a real-life example.\n\nThis does not support simulated `LocalStorage`. Certainly possible, but it was already plenty complicated without that.\n\nSince an instance of `LocalStorageStates` is stored in your `Model`, and it contains two functions which take a `model` as argument, there needs to be a custom class to prevent infinite type recursion:\n\n    type WrappedModel =\n        WrappedModel Model\n\n    type alias Model =\n        { localStorageStates : LocalStorageStates WrappedModel Msg\n        , ...\n        }\n\n    type Msg =\n        SequenceDone (WrappedModel -> ( WrappedModel, Cmd Msg ))\n        | ProcessLocalStorage Value\n        ...\n\n\n# Types\n\n@docs Wrappers, LocalStorageStates, State\n@docs KeyPair, DbRequest, DbResponse\n\n\n# Constructors\n\n@docs makeLocalStorageStates, makeNullState\n\n\n# Processing incoming messages\n\nYou will usually use only `update`, but the others let you do lower-level processing yourself.\n\n@docs update, processStates, process\n\n\n# LocalStorage interaction.\n\n@docs send, inject, injectTask\n\n\n# State accessors\n\n@docs getState, getFullState, setState, setStateOnly\n\n\n# Utilities\n\n@docs decodeExpectedDbGot, dbResponseToValue, decodePair, encodePair\n\n",
+        "unions": [
+            {
+                "name": "DbRequest",
+                "comment": " A high-level representation of a LocalStorage operation.\n\n`DbNothing` does nothing.\n\n`DbCustomRequest` allows you to send some command other than a message out the LocalStorage `cmdPort`.\n\n`DbBatch` allows you to gang more than one request.\n\nThe others have obvious correlation to the LocalStorage messages, but `DbPut` and `DbRemove` are decoupled, instead of using a `Maybe Value`.\n\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": [
+                    [
+                        "DbNothing",
+                        []
+                    ],
+                    [
+                        "DbGet",
+                        [
+                            "PortFunnel.LocalStorage.Sequence.KeyPair"
+                        ]
+                    ],
+                    [
+                        "DbPut",
+                        [
+                            "PortFunnel.LocalStorage.Sequence.KeyPair",
+                            "Json.Decode.Value"
+                        ]
+                    ],
+                    [
+                        "DbRemove",
+                        [
+                            "PortFunnel.LocalStorage.Sequence.KeyPair"
+                        ]
+                    ],
+                    [
+                        "DbListKeys",
+                        [
+                            "PortFunnel.LocalStorage.Sequence.KeyPair"
+                        ]
+                    ],
+                    [
+                        "DbClear",
+                        [
+                            "PortFunnel.LocalStorage.Sequence.KeyPair"
+                        ]
+                    ],
+                    [
+                        "DbCustomRequest",
+                        [
+                            "Platform.Cmd.Cmd msg"
+                        ]
+                    ],
+                    [
+                        "DbBatch",
+                        [
+                            "List.List (PortFunnel.LocalStorage.Sequence.DbRequest msg)"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "DbResponse",
+                "comment": " A high-level represenation of a message returned from LocalStorage through the subscription port.\n\nSince this module doesn't support simulated storage, only `DbGot` in response to `DbGet` and `DbKeys` in response to `DbListKeys` need to be distinguished.\n\nThe other messages are all turned into `DbNoResponse`, but there wont be any in a non-simulated environment.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "DbNoResponse",
+                        []
+                    ],
+                    [
+                        "DbGot",
+                        [
+                            "PortFunnel.LocalStorage.Sequence.KeyPair",
+                            "Maybe.Maybe Json.Decode.Value"
+                        ]
+                    ],
+                    [
+                        "DbKeys",
+                        [
+                            "PortFunnel.LocalStorage.Sequence.KeyPair",
+                            "List.List PortFunnel.LocalStorage.Sequence.KeyPair"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "LocalStorageStates",
+                "comment": " Opaque type used to store a table of state machines.\n\nCreate one with `makeLocalStorageStates`. Store it in your `Model`.\n\n",
+                "args": [
+                    "key",
+                    "state",
+                    "model",
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "KeyPair",
+                "comment": " These are converted to and from the strings sent as LocalStorage keys by `encodePair` and `decodePair`.\n",
+                "args": [],
+                "type": "{ prefix : String.String, subkey : String.String }"
+            },
+            {
+                "name": "State",
+                "comment": " Holds the state, label, and LocalStorage subscription port processing function for one state machine.\n\nYou will get very confused if you use the same label for two different `State` values passed to `makeLocalStorageStates`.\n\nSee the definition of `initialStorageStates` in [ZapMeme.Sequencer](https://github.com/billstclair/zapmeme/blob/master/src/ZapMeme/Sequencer.elm).\n\n",
+                "args": [
+                    "key",
+                    "state",
+                    "model",
+                    "msg"
+                ],
+                "type": "{ state : state, label : String.String, process : PortFunnel.LocalStorage.Sequence.Wrappers key state model msg -> PortFunnel.LocalStorage.Sequence.DbResponse -> state -> ( PortFunnel.LocalStorage.Sequence.DbRequest msg, state ) }"
+            },
+            {
+                "name": "Wrappers",
+                "comment": " Communication between `Sequence` and your main `Model` and `Msg`.\n\n`sender` is how you send messages out your command port. It's usually defined in your main program, with something like:\n\n    {-| The `model` parameter is necessary here for `PortFunnels.makeFunnelDict`.\n    -}\n    getCmdPort : String -> model -> (Value -> Cmd Msg)\n    getCmdPort moduleName _ =\n        PortFunnels.getCmdPort ProcessLocalStorage moduleName False\n\n    localStorageSend : LocalStorage.Message -> Cmd Msg\n    localStorageSend message =\n        LocalStorage.send (getCmdPort LocalStorage.moduleName ())\n            message\n            funnelState.storage\n\n`localStorageStates` and `setLocalStorageStates` are functions that read/write a `LocalStorageStates` from/to your `Model`.\n\n`sequenceDone` creates a `Msg` that calls its arg with the Model, and expects back the standard `update` result. E.g.:\n\n    type Msg\n       = SequenceDone (WrappedModel -> (WrappedModel, Cmd Msg))\n       ...\n\n    update model msg =\n       SequenceDone updater ->\n            let\n                ( WrappedModel mdl, cmd ) =\n                    updater (WrappedModel model)\n            in\n            ( mdl, cmd )\n       ...\n\nMake a `NullState` with `makeNullState`.\n\n",
+                "args": [
+                    "key",
+                    "state",
+                    "model",
+                    "msg"
+                ],
+                "type": "{ sender : PortFunnel.LocalStorage.Message -> Platform.Cmd.Cmd msg, injector : PortFunnel.LocalStorage.Sequence.Injector msg, localStorageStates : model -> PortFunnel.LocalStorage.Sequence.LocalStorageStates key state model msg, setLocalStorageStates : PortFunnel.LocalStorage.Sequence.LocalStorageStates key state model msg -> model -> model, sequenceDone : (model -> ( model, Platform.Cmd.Cmd msg )) -> msg, nullState : PortFunnel.LocalStorage.Sequence.NullState key state model msg }"
+            }
+        ],
+        "values": [
+            {
+                "name": "dbResponseToValue",
+                "comment": " Turn a DbResponse into the Value that would create it,\n\nif received from the LocalStorage port code, in response to a `DbGet` or `DbListKeys` request.\n\n`NoResponse` is treated as `DbGot` with empty string components in its `KeyPair` and `Nothing` as its value. You will likely never want to do that.\n\n",
+                "type": "String.String -> String.String -> PortFunnel.LocalStorage.Sequence.DbResponse -> Json.Decode.Value"
+            },
+            {
+                "name": "decodeExpectedDbGot",
+                "comment": " Eliminate error checking boilerplate inside `State` `process` functions.\n\n    decodeExpectedDbGot decoder expectedSubkey response\n\nIf `response` is not a `DbGot`, returns Nothing.\n\nIf `expectedSubkey` is not `\"\"`, and also not the `subkey` of that `DbGot`'s `KeyPair`, returns `Just (KeyPair, Nothing)`.\n\nIf the `DbGot`'s value is `Nothing`, returns `Just (KeyPair, Nothing)`.\n\nOtherwise, uses `decoder` to decode that value. If the result is an `Err`, returns `Just (KeyPair, Nothing)`.\n\nIf all goes well, returns `Just (KeyPair, value)`.\n\n",
+                "type": "Json.Decode.Decoder value -> String.String -> PortFunnel.LocalStorage.Sequence.DbResponse -> Maybe.Maybe ( PortFunnel.LocalStorage.Sequence.KeyPair, Maybe.Maybe value )"
+            },
+            {
+                "name": "decodePair",
+                "comment": " Turn a string that comes back from the subscription port into a `KeyPair`.\n\nSplits it on the first \".\".\n\n",
+                "type": "String.String -> PortFunnel.LocalStorage.Sequence.KeyPair"
+            },
+            {
+                "name": "encodePair",
+                "comment": " Turn a `KeyPair` into a string.\n\nThat string is used as the `Key` arg to `LocalStorage.getLabeled` or the `Prefix` arg to `LocalStorage.listKeysLabeled`.\n\n",
+                "type": "PortFunnel.LocalStorage.Sequence.KeyPair -> String.String"
+            },
+            {
+                "name": "getFullState",
+                "comment": " Look up the `State` associated with `key` in `model`'s `LocalStorageStates`\n",
+                "type": "PortFunnel.LocalStorage.Sequence.Wrappers key state model msg -> key -> model -> Maybe.Maybe (PortFunnel.LocalStorage.Sequence.State key state model msg)"
+            },
+            {
+                "name": "getState",
+                "comment": " Look up the `State` associated with `key` in `model`'s `LocalStorageStates`\n\n(with `getFullState`). If found, return its`state` field.\n\n",
+                "type": "PortFunnel.LocalStorage.Sequence.Wrappers key state model msg -> key -> model -> Maybe.Maybe state"
+            },
+            {
+                "name": "inject",
+                "comment": " Call `injectTask`, and use `Task.perform` to turn that `Task` into a `Cmd`.\n\nThe `(Value -> msg)` function will usually be the `Msg` that receives subscription input from your LocalStorage port.\n\n",
+                "type": "PortFunnel.LocalStorage.Sequence.Wrappers key state model msg -> PortFunnel.LocalStorage.Sequence.State key state model msg -> PortFunnel.LocalStorage.Sequence.DbResponse -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "injectTask",
+                "comment": " If you receive something outside of a LocalStorage return, and want to get it back into your state machine, use this.\n\nIt returns a `Task` that, if you send it with your LocalStorage `sub` port message, will make it seem as if the given DbResponse was received from LocalStorage.\n\nIt's a trivial task wrapper on the result of dbResponseToValue, using `label` property of the `State`.\n\n",
+                "type": "PortFunnel.LocalStorage.Sequence.Wrappers key state model msg -> PortFunnel.LocalStorage.Sequence.State key state model msg -> PortFunnel.LocalStorage.Sequence.DbResponse -> Task.Task Basics.Never Json.Decode.Value"
+            },
+            {
+                "name": "makeLocalStorageStates",
+                "comment": " Create a `LocalStorageStates` to store in your `Model`.\n\nThe `key` type is usually a simple enumerator custom type. You could use strings, but then the compiler won't catch typos for you.\n\nThe `state` type is usually a custom type with one tag per `key` value.\n\nthe `model` here is usually `WrappedModel` in your code, to prevent type recursion through `wrappers.localStorageStates` and `wrappers.setLocalStorageStates`.\n\n",
+                "type": "PortFunnel.LocalStorage.Sequence.Wrappers key state model msg -> List.List ( key, PortFunnel.LocalStorage.Sequence.State key state model msg ) -> PortFunnel.LocalStorage.Sequence.LocalStorageStates key state model msg"
+            },
+            {
+                "name": "makeNullState",
+                "comment": " This is how you create a `NullState` for your `Wrappers`.\n\nThe `state` you pass will never be used for anything.\n\n",
+                "type": "state -> PortFunnel.LocalStorage.Sequence.NullState key state model msg"
+            },
+            {
+                "name": "process",
+                "comment": " Process a response for a single `State`.\n\nIf the response's `label` matches the `State`'s, calls `state.process`, updates the user `state` inside the `State`, and turns the returned `DbRequest` into a `Cmd msg` (usually by calling `send`). Otherwise, returns `Nothing`.\n\nYou will usually call this indirectly, via `update`.\n\n",
+                "type": "PortFunnel.LocalStorage.Sequence.Wrappers key state model msg -> PortFunnel.LocalStorage.Response -> PortFunnel.LocalStorage.Sequence.State key state model msg -> Maybe.Maybe ( PortFunnel.LocalStorage.Sequence.State key state model msg, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "processStates",
+                "comment": " Calls `process` on each of the `State`s registered in the `LocalStorageStates`.\n\nAccumulates the results, but in practice, only one of them will do anything other than note that the `LocalStorage.Response`'s `label` doesn't match, and return the `model` unchanged with `Cmd.none`.\n\nYou will usually call this via `update`, not directly.\n\n",
+                "type": "PortFunnel.LocalStorage.Response -> PortFunnel.LocalStorage.Sequence.LocalStorageStates key state model msg -> ( PortFunnel.LocalStorage.Sequence.LocalStorageStates key state model msg, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "send",
+                "comment": " Turn a `DbRequest` into a `Cmd msg`\n\nthat sends a `LocalStorage.Message` out to the JavaScript through the `Cmd` port.\n\nUses the `sender` in `Wrappers` and `label` in `State`.\n\n",
+                "type": "PortFunnel.LocalStorage.Sequence.Wrappers key state model msg -> PortFunnel.LocalStorage.Sequence.State key state model msg -> PortFunnel.LocalStorage.Sequence.DbRequest msg -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "setState",
+                "comment": " Update one `State` inside the `LocalStorageStates` inside of the `model`.\n\nReturns the updated `model` and `State`. This version is usually used when you start up a state machine, since you need the `State` to call `send`.\n\nUse `setStateOnly` if you need only the updated `model`.\n\n",
+                "type": "PortFunnel.LocalStorage.Sequence.Wrappers key state model msg -> key -> state -> model -> ( model, PortFunnel.LocalStorage.Sequence.State key state model msg )"
+            },
+            {
+                "name": "setStateOnly",
+                "comment": " Update one `State` inside the `LocalStorageStates` inside of the `model`.\n\nReturn the updated `model`.\n\nUse `setState` if you also need the updated `State` (or call `getFullState`).\n\n",
+                "type": "PortFunnel.LocalStorage.Sequence.Wrappers key state model msg -> key -> state -> model -> model"
+            },
+            {
+                "name": "update",
+                "comment": " Modulo wrapping and unwrapping, designed to be the entire handler for incoming LocalStorage responses.\n\n    funnelDict : FunnelDict Model Msg\n    funnelDict =\n        PortFunnels.makeFunnelDict\n            [ LocalStorageHandler wrappedStorageHandler ]\n            getCmdPort\n\n    wrappedStorageHandler : LocalStorage.Response -> PortFunnels.State -> Model -> ( Model, Cmd Msg )\n    wrappedStorageHandler response _ model =\n        let\n            ( WrappedModel mdl, cmd ) =\n                Sequence.storageHandler\n                    sequenceWrappers\n                    (WrappedModel model)\n                    response\n        in\n        ( mdl, cmd )\n\n",
+                "type": "PortFunnel.LocalStorage.Sequence.Wrappers key state model msg -> model -> PortFunnel.LocalStorage.Response -> ( model, Platform.Cmd.Cmd msg )"
+            }
+        ],
+        "binops": []
+    }
+]

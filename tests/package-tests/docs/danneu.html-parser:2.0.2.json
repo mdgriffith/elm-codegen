@@ -1,0 +1,122 @@
+[
+    {
+        "name": "Html.Parser",
+        "comment": " Leniently parse html5 documents and fragments and then render them\ninto strings or Elm's virtual dom nodes.\n\n\n# Definition\n\n@docs Node, Document, Config\n\n\n# Config\n\n@docs allCharRefs, noCharRefs, customCharRefs\n\n\n# Parse\n\n@docs run, runElement, runDocument\n\n\n# Render\n\n@docs nodeToHtml, nodesToHtml, nodeToString, nodesToString, nodeToPrettyString, nodesToPrettyString, documentToString, documentToPrettyString\n\n",
+        "unions": [
+            {
+                "name": "Config",
+                "comment": " Configure the parser. Use the config constructors to create a config object.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Node",
+                "comment": " An html node is tree of text, comments, and element nodes.\n\nAn element (e.g. `<div foo=\"bar\">hello</div>`) can have attributes and child nodes.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Text",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Comment",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Element",
+                        [
+                            "String.String",
+                            "List.List ( String.String, String.String )",
+                            "List.List Html.Parser.Node"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Document",
+                "comment": " An html document has a `<!doctype>` and then a root html node.\n",
+                "args": [],
+                "type": "{ legacyCompat : Basics.Bool, root : Html.Parser.Node }"
+            }
+        ],
+        "values": [
+            {
+                "name": "allCharRefs",
+                "comment": " A config with char reference decoding turned on.\n\nThis will add ~40kb to your bundle, but it is necessary to decode\nentities like `\"&Delta;\"` into \"Δ\".\n\n    run allCharRefs \"abc&Delta;def\"\n        == Ok [ text \"abcΔdef\" ]\n\n",
+                "type": "Html.Parser.Config"
+            },
+            {
+                "name": "customCharRefs",
+                "comment": " Provide your own character reference lookup dictionary.\n\nNote that named character references are case sensitive. When providing your own,\nyou will want to consult the exhaustive `Html.CharRefs.all` dictionary to\nsee which keys appear multiple times, like \"quot\" and \"QUOT\".\n\nHere is an example of providing a small subset of commonly-seen character references.\n\n    config : Html.Parser.Config\n    config =\n        [ ( \"quot\", \"\\\"\" )\n        , ( \"QUOT\", \"\\\"\" )\n        , ( \"apos\", \"'\" )\n        , ( \"gt\", \">\" )\n        , ( \"GT\", \">\" )\n        , ( \"Gt\", \">\" )\n        , ( \"lt\", \"<\" )\n        , ( \"LT\", \"<\" )\n        , ( \"Lt\", \"<\" )\n        , ( \"amp\", \"&\" )\n        , ( \"AMP\", \"&\" )\n        , ( \"nbsp\", \"\\u{00A0}\" )\n        ]\n        |> Dict.fromList\n        |> customCharRefs\n\n    run config \"<span>&male; &amp; &female;</span>\"\n        == Ok (Element \"span\" [] [Text \"&male; & &female;\"])\n\nNotice that character references missing from the lookup table are simply parsed as text.\n\n",
+                "type": "Dict.Dict String.String String.String -> Html.Parser.Config"
+            },
+            {
+                "name": "documentToPrettyString",
+                "comment": " Convert a document into a pretty, indented string.\n",
+                "type": "Html.Parser.Document -> String.String"
+            },
+            {
+                "name": "documentToString",
+                "comment": " Convert a document into a string starting with `<!doctype html>` followed by the root html node.\n",
+                "type": "Html.Parser.Document -> String.String"
+            },
+            {
+                "name": "noCharRefs",
+                "comment": " A config with char reference decoding turned off.\n\nIf you know that the html you are parsing never has named character references,\nor if it's sufficient to just consume them as undecoded text, then turning this off will shrink your bundle size.\n\n    run noCharRefs \"abc&Delta;def\"\n        == Ok [ text \"abc&Delta;def\" ]\n\n",
+                "type": "Html.Parser.Config"
+            },
+            {
+                "name": "nodeToHtml",
+                "comment": " Turn a single node into an Elm html node that Elm can render.\n",
+                "type": "Html.Parser.Node -> Html.Html msg"
+            },
+            {
+                "name": "nodeToPrettyString",
+                "comment": " Generate a pretty string for a single html node.\n",
+                "type": "Html.Parser.Node -> String.String"
+            },
+            {
+                "name": "nodeToString",
+                "comment": " Convert an html node into a non-pretty string.\n\n    nodeToString (Element \"a\" [] [ Text \"hi\" ])\n        == \"<a>hi</a>\"\n\n",
+                "type": "Html.Parser.Node -> String.String"
+            },
+            {
+                "name": "nodesToHtml",
+                "comment": " Turn a multiple html nodes into Elm html that Elm can render.\n\n    view : Html Msg\n    view =\n        Html.div\n            []\n            (\"<p>hello world</p>\"\n                |> Html.Parser.run Html.Parser.allCharRefs\n                |> Result.map Html.Parser.nodesToHtml\n                |> Result.withDefault [ Html.text \"parse error\" ]\n            )\n\n",
+                "type": "List.List Html.Parser.Node -> List.List (Html.Html msg)"
+            },
+            {
+                "name": "nodesToPrettyString",
+                "comment": " Turn a node tree into a pretty-printed, indented html string.\n\n    (\"<a><b><c>hello</c></b></a>\"\n        |> Html.Parser.run Html.Parser.allCharRefs\n        |> Result.map nodesToPrettyString\n    )\n        == Ok \"\"\"<a>\n        <b>\n            <c>\n                hello\n            </c>\n        </b>\n    </a>\"\"\"\n\n",
+                "type": "List.List Html.Parser.Node -> String.String"
+            },
+            {
+                "name": "nodesToString",
+                "comment": " Convert multiple html nodes into a non-pretty string.\n\n    nodesToString\n        [ Element \"a\" [] [ Text \"hi\" ]\n        , Element \"div\" [] [ Element \"span\" [] [] ]\n        ]\n        == \"<a>hi</a><div><span></span></div>\"\n\n",
+                "type": "List.List Html.Parser.Node -> String.String"
+            },
+            {
+                "name": "run",
+                "comment": " Parse an html fragment into a list of html nodes.\n\nThe html fragment can have multiple top-level nodes.\n\n    run allCharRefs \"<div>hi</div><div>bye</div>\"\n        == Ok\n            [ Element \"div\" [] [ Text \"hi\" ]\n            , Element \"div\" [] [ Text \"bye\" ]\n            ]\n\n",
+                "type": "Html.Parser.Config -> String.String -> Result.Result (List.List Parser.DeadEnd) (List.List Html.Parser.Node)"
+            },
+            {
+                "name": "runDocument",
+                "comment": " Parses `<!doctype html>` and any html nodes after.\n\nAlways returns a single root node. Wraps nodes in a root `<html>` node if one is not present.\n\n**Caveat**: If there are multiple top-level nodes and one of them is `<html>`, then this\nfunction will wrap them all in another `<html>` node.\n\n",
+                "type": "Html.Parser.Config -> String.String -> Result.Result (List.List Parser.DeadEnd) Html.Parser.Document"
+            },
+            {
+                "name": "runElement",
+                "comment": " Like `run` except it only parses one top-level element and it always returns a single node.\n",
+                "type": "Html.Parser.Config -> String.String -> Result.Result (List.List Parser.DeadEnd) Html.Parser.Node"
+            }
+        ],
+        "binops": []
+    }
+]

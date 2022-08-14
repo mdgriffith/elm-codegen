@@ -1,0 +1,109 @@
+[
+    {
+        "name": "ModularScale",
+        "comment": " Generating numerical values derived from musical intervals. Use this to generate proportionally related font-sizes, line-height, element dimensions, ect.\n\nBased on the idea found at [http://www.modularscale.com/](modularscale.com).\n\n\n# Configuration\n\n@docs Config\n@docs config\n\n\n# Get a value\n\n@docs get\n\n\n# Interval or custom ratio\n\n@docs Interval\n\n",
+        "unions": [
+            {
+                "name": "Config",
+                "comment": " Stores the base(s) and `Interval`\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Interval",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "MinorSecond",
+                        []
+                    ],
+                    [
+                        "MajorSecond",
+                        []
+                    ],
+                    [
+                        "MinorThird",
+                        []
+                    ],
+                    [
+                        "MajorThird",
+                        []
+                    ],
+                    [
+                        "PerfectFourth",
+                        []
+                    ],
+                    [
+                        "AugFourth",
+                        []
+                    ],
+                    [
+                        "PerfectFifth",
+                        []
+                    ],
+                    [
+                        "MinorSixth",
+                        []
+                    ],
+                    [
+                        "GoldenSection",
+                        []
+                    ],
+                    [
+                        "MajorSixth",
+                        []
+                    ],
+                    [
+                        "MinorSeventh",
+                        []
+                    ],
+                    [
+                        "MajorSeventh",
+                        []
+                    ],
+                    [
+                        "Octave",
+                        []
+                    ],
+                    [
+                        "MajorTenth",
+                        []
+                    ],
+                    [
+                        "MajorEleventh",
+                        []
+                    ],
+                    [
+                        "MajorTwelfth",
+                        []
+                    ],
+                    [
+                        "DoubleOctave",
+                        []
+                    ],
+                    [
+                        "Ratio",
+                        [
+                            "Basics.Float"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "config",
+                "comment": " Create the `Config` for your scale. It's recommended to not use more than two base values, and often one is enough. Using more values dilutes the scale too much and the range of generated values might get too narrow.\n\n    config : Config\n    config =\n        ModularScale.config [ 1, 1.2 ] ModularScale.PerfectFifth\n\n",
+                "type": "List.List Basics.Float -> ModularScale.Interval -> ModularScale.Config"
+            },
+            {
+                "name": "get",
+                "comment": " Return the value at an index of the scale based on the provided base(s).\n\n    config : Config\n    config =\n        ModularScale.config [ 1 ] ModularScale.PerfectFifth\n\n    get config 5\n\n    --> 7.59375\n\nYou'll probably want to create a helper function like this.\n\n    ms : Int -> String\n    ms x =\n        String.fromFloat (get config x) ++ \"em\"\n\nWhich you'll use like this.\n\n    h1 [ style [ ( \"font-size\", ms 4 ) ] ] [ text \"Foo\" ]\n\nOr, if you're using elm-css\n\n    ms : Int -> Css.Rem\n    ms index =\n        rem (get config index)\n\n    style : List Style\n    style =\n        [ fontSize (ms 4) ]\n\n",
+                "type": "ModularScale.Config -> Basics.Int -> Basics.Float"
+            }
+        ],
+        "binops": []
+    }
+]

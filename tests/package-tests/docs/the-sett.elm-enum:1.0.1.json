@@ -1,0 +1,45 @@
+[
+    {
+        "name": "Enum",
+        "comment": " Enum provides support for various different ways of defining an enum in Elm.\n\n@docs Enum\n@docs decoder, encoder, find, make, toString\n\n",
+        "unions": [
+            {
+                "name": "Enum",
+                "comment": " An enum is a list of possible values and a function for turning an instance\nof one into a string.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decoder",
+                "comment": " JSON Decoder for an enum\n",
+                "type": "Enum.Enum a -> Json.Decode.Decoder a"
+            },
+            {
+                "name": "encoder",
+                "comment": " JSON Encoder for an enum.\n",
+                "type": "Enum.Enum a -> a -> Json.Encode.Value"
+            },
+            {
+                "name": "find",
+                "comment": " Looks up an instance of an enum from its string representation.\n",
+                "type": "Enum.Enum a -> String.String -> Maybe.Maybe a"
+            },
+            {
+                "name": "make",
+                "comment": " Creates an enum definition from a list of possible values and a definition opf\nthe `toString` function.\n",
+                "type": "List.List a -> (a -> String.String) -> Enum.Enum a"
+            },
+            {
+                "name": "toString",
+                "comment": " Turns an instance of an enum into a string.\n",
+                "type": "Enum.Enum a -> a -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

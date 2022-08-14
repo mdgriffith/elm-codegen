@@ -1,0 +1,466 @@
+[
+    {
+        "name": "Angle.Interval",
+        "comment": "\n\n@docs sin, cos\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "cos",
+                "comment": " For a given range of angle values θ, determine the possible range of values\nof cos(θ).\n\n    Angle.Interval.cos <|\n        Interval.from Quantity.zero (Angle.degrees 45)\n    --> Interval.from\n    -->     (Quantity.float 0.7071)\n    -->     (Quantity.float 1)\n\n    Angle.Interval.cos <|\n        Interval.from Quantity.zero (Angle.degrees 180)\n    --> Interval.from\n    -->     (Quantity.float -1)\n    -->     (Quantity.float 1)\n\n",
+                "type": "Quantity.Interval.Interval Basics.Float Angle.Radians -> Quantity.Interval.Interval Basics.Float Quantity.Unitless"
+            },
+            {
+                "name": "sin",
+                "comment": " For a given range of angle values θ, determine the possible range of values\nof sin(θ).\n\n    Angle.Interval.sin <|\n        Interval.from Quantity.zero (Angle.degrees 45)\n    --> Interval.from Quantity.zero (Quantity.float 0.7071)\n\n    Angle.Interval.sin <|\n        Interval.from Quantity.zero (Angle.degrees 180)\n    --> Interval.from Quantity.zero (Quantity.float 1)\n\n",
+                "type": "Quantity.Interval.Interval Basics.Float Angle.Radians -> Quantity.Interval.Interval Basics.Float Quantity.Unitless"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Quantity.Interval",
+        "comment": " This modules contains most of the core functionality for creating and\nworking with `Interval` values.\n\nNote: most examples assume that you have imported this module as\n\n    import Quantity.Interval as Interval\n\n@docs Interval\n\n\n# Constructors\n\n@docs fromEndpoints, singleton\n\n\n## Hull\n\nThese functions let you construct an `Interval` containing one or more input\nvalues.\n\n@docs hull2, hull3, hull4, hull, hullN, hullOf, hullOfN\n\n\n## Aggregation\n\nThese functions let you 'aggregate' one or more intervals into a single larger\ninterval that contains all of them.\n\n@docs aggregate2, aggregate3, aggregate4, aggregate, aggregateN, aggregateOf, aggregateOfN\n\n\n# Properties\n\n@docs endpoints, minValue, maxValue, midpoint, width\n\n\n# Queries\n\n@docs contains, isContainedIn, intersects, intersection, isSingleton\n\n\n# Interpolation\n\n@docs interpolate, interpolationParameter\n\n\n# Arithmetic\n\nThese functions let you do math with `Interval` values, following the rules of\n[interval arithmetic](https://en.wikipedia.org/wiki/Interval_arithmetic).\n\n@docs negate, multiplyBy, divideBy, half, twice\n@docs plus, plusInterval, minus, difference, minusInterval\n@docs times, product, timesUnitless, timesInterval, timesUnitlessInterval, reciprocal\n@docs abs, squared, squaredUnitless, cubed, cubedUnitless\n\n\n# Random value generation\n\n@docs randomValue\n\n\n# Deprecated\n\nThese functions are currently deprecated and will be removed in the next major\nrelease.\n\n@docs from, union\n\n",
+        "unions": [
+            {
+                "name": "Interval",
+                "comment": " Represents a finite, closed interval with a minimum and maximum value.\n\nThe two type parameters match those of the [`Quantity`](https://package.elm-lang.org/packages/ianmackenzie/elm-units/latest/Quantity)\ntype from `elm-units`. For example, an `Interval Int Pixels` might represent a\nvalue between 200 and 300 pixels, and an `Interval Float Meters` might represent\na value between 2.5 and 3.7 centimeters. (As with the `Quantity` type, the\n`units` type parameter refers to the _base_ unit of a particular quantity type;\nlengths in meters, centimeters, feet, miles etc. are all internally stored in\nmeters.)\n\n",
+                "args": [
+                    "number",
+                    "units"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "abs",
+                "comment": " Get the absolute value of an interval.\n\n    Interval.abs <|\n        Interval.fromEndpoints\n            ( Length.meters -3  Length.meters 2 )\n    --> Interval.fromEndpoints\n    -->     (Length.meters 0) (Length.meters 3)\n\n",
+                "type": "Quantity.Interval.Interval number units -> Quantity.Interval.Interval number units"
+            },
+            {
+                "name": "aggregate",
+                "comment": " Construct an interval containing one or more given intervals:\n\n    Interval.aggregate\n        (Interval.singleton (Length.feet 2))\n        [ Interval.fromEndpoints\n            ( Length.feet 3\n            , Length.feet 4\n            )\n        ]\n    --> Interval.fromEndpoints\n    -->     ( Length.feet 2, Length.feet 4 )\n\nWorks much like [`hull`](#hull). See also [`aggregateN`](#aggregateN).\n\n",
+                "type": "Quantity.Interval.Interval number units -> List.List (Quantity.Interval.Interval number units) -> Quantity.Interval.Interval number units"
+            },
+            {
+                "name": "aggregate2",
+                "comment": " Construct an interval containing both of the given intervals.\n\n    firstInterval =\n        Interval.fromEndpoints\n            ( Length.feet 1, Length.feet 2 )\n\n    secondInterval =\n        Interval.fromEndpoints\n            ( Length.feet 3, Length.feet 6 )\n\n    Interval.aggregate2 firstInterval secondInterval\n    --> Interval.fromEndpoints\n    -->     ( Length.feet 1, Length.feet 6 )\n\n",
+                "type": "Quantity.Interval.Interval number units -> Quantity.Interval.Interval number units -> Quantity.Interval.Interval number units"
+            },
+            {
+                "name": "aggregate3",
+                "comment": " Construct an interval containing all three of the given intervals;\n\n    Interval.aggregate3 first second third\n\nis equivalent to\n\n    Interval.aggregate first [ second, third ]\n\nbut is more efficient.\n\n",
+                "type": "Quantity.Interval.Interval number units -> Quantity.Interval.Interval number units -> Quantity.Interval.Interval number units -> Quantity.Interval.Interval number units"
+            },
+            {
+                "name": "aggregate4",
+                "comment": " Construct an interval containing all four of the given intervals.\n",
+                "type": "Quantity.Interval.Interval number units -> Quantity.Interval.Interval number units -> Quantity.Interval.Interval number units -> Quantity.Interval.Interval number units -> Quantity.Interval.Interval number units"
+            },
+            {
+                "name": "aggregateN",
+                "comment": " Attemp to construct an interval containing all of the intervals in the given\nlist. If the list is empty, returns `Nothing`. If you know you have at least one\ninterval, you can use [`aggregate`](#aggregate) instead.\n",
+                "type": "List.List (Quantity.Interval.Interval number units) -> Maybe.Maybe (Quantity.Interval.Interval number units)"
+            },
+            {
+                "name": "aggregateOf",
+                "comment": " Like [`aggregate`](#aggregate), but lets you work on any kind of item as\nlong as an interval can be generated from it (similar to [`hullOf`](#hullOf)).\n",
+                "type": "(a -> Quantity.Interval.Interval number units) -> a -> List.List a -> Quantity.Interval.Interval number units"
+            },
+            {
+                "name": "aggregateOfN",
+                "comment": " Combination of [`aggregateOf`](#aggregateOf) and [`aggregateN`](#aggregateN).\n",
+                "type": "(a -> Quantity.Interval.Interval number units) -> List.List a -> Maybe.Maybe (Quantity.Interval.Interval number units)"
+            },
+            {
+                "name": "contains",
+                "comment": " Check if an interval contains a given value:\n\n    angleInterval =\n        Interval.fromEndpoints\n            ( Angle.degrees -10\n            , Angle.degrees 30\n            )\n\n    angleInterval |> Interval.contains (Angle.degrees 0)\n    --> True\n\n    angleInterval |> Interval.contains (Angle.degrees 45)\n    --> False\n\nThe minimum and maximum values of an interval are considered to be contained in\nthe interval (but be careful of numerical roundoff):\n\n    angleInterval |> Interval.contains (Angle.degrees 30)\n    --> True\n\n",
+                "type": "Quantity.Quantity number units -> Quantity.Interval.Interval number units -> Basics.Bool"
+            },
+            {
+                "name": "cubed",
+                "comment": " Get the cube of an interval.\n",
+                "type": "Quantity.Interval.Interval number units -> Quantity.Interval.Interval number (Quantity.Cubed units)"
+            },
+            {
+                "name": "cubedUnitless",
+                "comment": " Specialized version of `cubed` for unitless intervals.\n",
+                "type": "Quantity.Interval.Interval number Quantity.Unitless -> Quantity.Interval.Interval number Quantity.Unitless"
+            },
+            {
+                "name": "difference",
+                "comment": " Subtract an interval from the given amount. So if you wanted to compute\n`interval - quantity` you would write\n\n    interval |> Interval.minus quantity\n\nbut if you wanted to compute `quantity - interval` then you would write\n\n    Interval.difference quantity interval\n\n",
+                "type": "Quantity.Quantity number units -> Quantity.Interval.Interval number units -> Quantity.Interval.Interval number units"
+            },
+            {
+                "name": "divideBy",
+                "comment": " Divide an interval by a given value:\n\n    Interval.divideBy 2 <|\n        Interval.fromEndpoints\n            ( Length.feet 2, Length.feet 3 )\n    --> Interval.fromEndpoints\n    -->     ( Length.feet 1, Length.feet 1.5 )\n\nNote that this will flip the order of the interval's endpoints if the given\nvalue is negative:\n\n    Interval.divideBy -2 <|\n        Interval.fromEndpoints\n            ( Angle.degrees 20\n            , Angle.degrees 30\n            )\n    --> Interval.fromEndpoints\n    -->     ( Angle.degrees -15\n    -->     , Angle.degrees -10\n    -->     )\n\n",
+                "type": "Basics.Float -> Quantity.Interval.Interval Basics.Float units -> Quantity.Interval.Interval Basics.Float units"
+            },
+            {
+                "name": "endpoints",
+                "comment": " Get the endpoints of an interval (its minimum and maximum values) as a\ntuple. The first value will always be less than or equal to the second.\n\n    ( minValue, maxValue ) =\n        Interval.endpoints someInterval\n\nFor any interval,\n\n    Interval.endpoints interval\n\nis equivalent to (but more efficient than)\n\n    ( Interval.minValue interval\n    , Interval.maxValue interval\n    )\n\n",
+                "type": "Quantity.Interval.Interval number units -> ( Quantity.Quantity number units, Quantity.Quantity number units )"
+            },
+            {
+                "name": "from",
+                "comment": " Deprecated alias for `hull2`.\n",
+                "type": "Quantity.Quantity number units -> Quantity.Quantity number units -> Quantity.Interval.Interval number units"
+            },
+            {
+                "name": "fromEndpoints",
+                "comment": " Construct an interval from its endpoints (the minimum and maximum values of\nthe interval).\n\n    highwayCarSpeeds =\n        Interval.fromEndpoints\n            ( Speed.kilometersPerHour 90\n            , Speed.kilometersPerHour 130\n            )\n\nThe two values should be given in order but will be swapped if\nnecessary to ensure a valid interval is returned:\n\n    Interval.endpoints <|\n        Interval.fromEndpoints\n            ( Speed.kilometersPerHour 130\n            , Speed.kilometersPerHour 90\n            )\n    --> ( Speed.kilometersPerHour 90\n    --> , Speed.kilometersPerHour 130\n    --> )\n\n",
+                "type": "( Quantity.Quantity number units, Quantity.Quantity number units ) -> Quantity.Interval.Interval number units"
+            },
+            {
+                "name": "half",
+                "comment": " Shorthand for `multiplyBy 0.5`.\n",
+                "type": "Quantity.Interval.Interval Basics.Float units -> Quantity.Interval.Interval Basics.Float units"
+            },
+            {
+                "name": "hull",
+                "comment": " Find the interval containing one or more input values, by passing the first\nvalue as the first argument and then a list of all other values as the second\nargument. For example, to find the interval containing the values 5 cm, 2 cm,\n3 cm and 4 cm:\n\n    Interval.hull\n        (Length.centimeters 5)\n        [ Length.centimeters 3\n        , Length.centimeters 2\n        , Length.centimeters 4\n        ]\n    --> Interval.fromEndpoints\n    -->     ( Length.centimeters 2\n    -->     , Length.centimeters 5\n    -->     )\n\nWhy pass the first and all other values as separate arguments? It lets this\nfunction return an `Interval` instead of a `Maybe Interval`. If there was just a\nsingle list as an argument, then this function would have to handle the case of\nan empty list being passed by returning `Nothing`. As a result, when using this\nfunction you often end up using it within a `case` expression:\n\n    case values of\n        [] ->\n            -- some default behavior\n\n        first :: rest ->\n            let\n                interval =\n                    Interval.hull first rest\n            in\n            -- normal behavior using 'interval'\n\nIf you do want the simpler behavior of taking a single list and returning a\n`Maybe Interval`, check out [`hullN`](#hullN).\n\n",
+                "type": "Quantity.Quantity number units -> List.List (Quantity.Quantity number units) -> Quantity.Interval.Interval number units"
+            },
+            {
+                "name": "hull2",
+                "comment": " Construct an interval containing the two given values (which can be provided\nin either order). `hull2 a b` is equivalent to `fromEndpoints ( a, b )`.\n\n    -- \"The heights of people participating in the study\n    -- ranged from 1.2 to 1.9 meters\"\n    heightRange =\n        Interval.hull2\n            (Length.meters 1.2)\n            (Length.meters 1.9)\n\n    -- \"Please allow 4 to 6 weeks for delivery\"\n    estimatedShippingTime =\n        Interval.hull2\n            (Duration.weeks 4)\n            (Duration.weeks 6)\n\n",
+                "type": "Quantity.Quantity number units -> Quantity.Quantity number units -> Quantity.Interval.Interval number units"
+            },
+            {
+                "name": "hull3",
+                "comment": " Construct an interval containing the three given values;\n\n    Interval.hull3 a b c\n\nis equivalent to\n\n    Interval.hull a [ b, c ]\n\nbut is more efficient.\n\n",
+                "type": "Quantity.Quantity number units -> Quantity.Quantity number units -> Quantity.Quantity number units -> Quantity.Interval.Interval number units"
+            },
+            {
+                "name": "hull4",
+                "comment": " Construct an interval containing the four given values.\n",
+                "type": "Quantity.Quantity number units -> Quantity.Quantity number units -> Quantity.Quantity number units -> Quantity.Quantity number units -> Quantity.Interval.Interval number units"
+            },
+            {
+                "name": "hullN",
+                "comment": " Attempt to construct an interval containing all _N_ values in the given\nlist. If the list is empty, returns `Nothing`. If you know you have at least one\nvalue, you can use [`hull`](#hull) instead.\n\n    Interval.hullN\n        [ Duration.hours 2\n        , Duration.hours 1\n        , Duration.hours 3\n        ]\n    --> Just <|\n    -->     Interval.fromEndpoints\n    -->         ( Duration.hours 1\n    -->         , Duration.hours 3\n    -->         )\n\n    Interval.hullN [ Duration.hours 5]\n    --> Just (Interval.singleton (Duration.hours 5))\n\n    Interval.hullN []\n    --> Nothing\n\n",
+                "type": "List.List (Quantity.Quantity number units) -> Maybe.Maybe (Quantity.Interval.Interval number units)"
+            },
+            {
+                "name": "hullOf",
+                "comment": " Like [`hull`](#hull), but lets you work on any kind of item as long as a\n`Quantity` of some kind can be extracted from it. For example, if you had\n\n    type alias Person =\n        { name : String\n        , age : Duration\n        }\n\nthen given some people you could find their range of ages as an `Interval Float\nSeconds` using\n\n    Interval.hullOf .age\n        firstPerson\n        [ secondPerson\n        , thirdPerson\n        , fourthPerson\n        ]\n\nSee also [`hullOfN`](#hullOfN).\n\n",
+                "type": "(a -> Quantity.Quantity number units) -> a -> List.List a -> Quantity.Interval.Interval number units"
+            },
+            {
+                "name": "hullOfN",
+                "comment": " Combination of [`hullOf`](#hullOf) and [`hullN`](#hullN).\n",
+                "type": "(a -> Quantity.Quantity number units) -> List.List a -> Maybe.Maybe (Quantity.Interval.Interval number units)"
+            },
+            {
+                "name": "interpolate",
+                "comment": " Interpolate between an interval's endpoints based on a parameter value. A\nvalue of 0.0 corresponds to the minimum value of the interval, a value of 0.5\ncorresponds to its midpoint and a value of 1.0 corresponds to its maximum value:\n\n    lengthInterval =\n        Interval.fromEndpoints\n            ( Length.meters 1, Length.meters 5 )\n\n    Interval.interpolate lengthInterval 0\n    --> Length.meters 1\n\n    Interval.interpolate lengthInterval 0.75\n    --> Length.meters 4\n\nValues less than 0.0 or greater than 1.0 can be used to extrapolate:\n\n    Interval.interpolate lengthInterval 1.5\n    --> Length.meters 7\n\nNote that because of how [`Interval.fromEndpoints`](#fromEndpoints) works, the\ninterpolation is in fact from the minimum value to the maximum, _not_ \"from the\nfirst argument to the second\":\n\n    Interval.interpolate\n        (Interval.fromEndpoints\n            ( Length.meters 0\n            , Length.meters 10\n            )\n        )\n        0.2\n    --> 2\n\n    Interval.interpolate\n        (Interval.fromEndpoints\n            ( Length.meters 10\n            , Length.meters 0\n            )\n        )\n        0.2\n    --> 2 -- not 8!\n\nIf you want to interpolate from one number down to another, you can use\n[`Quantity.interpolateFrom`](https://package.elm-lang.org/packages/ianmackenzie/elm-units/latest/Quantity#interpolateFrom)\nfrom the `elm-units` package.\n\n",
+                "type": "Quantity.Interval.Interval Basics.Float units -> Basics.Float -> Quantity.Quantity Basics.Float units"
+            },
+            {
+                "name": "interpolationParameter",
+                "comment": " Given an interval and a given value, determine the corresponding\ninterpolation parameter (the parameter that you would pass to [`interpolate`](#interpolate)\nto get the given value):\n\n    Interval.interpolationParameter\n        (Interval.fromEndpoints\n            ( Duration.minutes 10\n            , Duration.minutes 15\n            )\n        )\n        (Duration.minutes 12)\n    --> 0.4\n\nThe result will be between 0 and 1 if (and only if) the given value is contained\nin the given interval:\n\n    Interval.interpolationParameter\n        (Interval.fromEndpoints\n            ( Duration.minutes 10\n            , Duration.minutes 15\n            )\n        )\n        (Duration.minutes 18)\n    --> 1.6\n\n    Interval.interpolationParameter\n        (Interval.fromEndpoints\n            ( Duration.minutes 10\n            , Duration.minutes 15\n            )\n        )\n        (Duration.minutes 9)\n    --> -0.2\n\nThis is the inverse of `interpolate`; for any non-zero-width `interval`,\n\n    Interval.interpolationParameter interval value\n        |> Interval.interpolate interval\n\nshould be equal to the original `value` (within numerical roundoff).\n\n",
+                "type": "Quantity.Interval.Interval Basics.Float units -> Quantity.Quantity Basics.Float units -> Basics.Float"
+            },
+            {
+                "name": "intersection",
+                "comment": " Attempt to construct an interval containing all the values common to both\ngiven intervals:\n\n    Interval.intersection\n        (Interval.fromEndpoints\n            ( Mass.grams 1, Mass.grams 3 )\n        )\n        (Interval.fromEndpoints\n            ( Mass.grams 2, Mass.grams 5 )\n        )\n    --> Just <|\n    -->     Interval.fromEndpoints\n    -->         ( Mass.grams 2, Mass.grams 3 )\n\nIf the intervals do not intersect, returns `Nothing`:\n\n    Interval.intersection\n        (Interval.fromEndpoints\n            ( Mass.grams 1, Mass.grams 3 )\n        )\n        (Interval.fromEndpoints\n            ( Mass.grams 4, Mass.grams 7 )\n        )\n    --> Nothing\n\nIf the two intervals just touch, a singleton interval will be returned:\n\n    Interval.intersection\n        (Interval.fromEndpoints\n            ( Mass.grams 1, Mass.grams 3 )\n        )\n        (Interval.fromEndpoints\n            ( Mass.grams 3, Mass.grams 5 )\n        )\n    --> Just (Interval.singleton (Mass.grams 3))\n\n",
+                "type": "Quantity.Interval.Interval number units -> Quantity.Interval.Interval number units -> Maybe.Maybe (Quantity.Interval.Interval number units)"
+            },
+            {
+                "name": "intersects",
+                "comment": " Check if two intervals touch or overlap (have any values in common).\n\n    distanceInterval =\n        Interval.fromEndpoints\n            ( Length.kilometers 5\n            , Length.kilometers 10\n            )\n\n    distanceInterval\n        |> Interval.intersects\n            (Interval.fromEndpoints\n                ( Length.kilometers 8\n                , Length.kilometers 12\n                )\n            )\n    --> True\n\n    distanceInterval\n        |> Interval.intersects\n            (Interval.fromEndpoints\n                ( Length.kilometers 12\n                , Length.kilometers 15\n                )\n            )\n    --> False\n\nIntervals that just touch each other are considered to intersect (this is\nconsistent with `intersection` which will return a zero-width interval for the\nintersection of two just-touching intervals):\n\n    distanceInterval\n        |> Interval.intersects\n            (Interval.fromEndpoints\n                ( Length.kilometers 10\n                , Length.kilometers 15\n                )\n            )\n    --> True\n\n",
+                "type": "Quantity.Interval.Interval number units -> Quantity.Interval.Interval number units -> Basics.Bool"
+            },
+            {
+                "name": "isContainedIn",
+                "comment": " Check if the second interval is fully contained in the first.\n\n    angleInterval =\n        Interval.fromEndpoints\n            ( Angle.degrees -30, Angle.degrees 30 )\n\n    Interval.fromEndpoints\n        ( Angle.degrees -5, Angle.degrees 15 )\n        |> Interval.isContainedIn angleInterval\n    --> True\n\n    Interval.fromEndpoints\n        ( Angle.degrees 15, Angle.degrees 45 )\n        |> Interval.isContainedIn angleInterval\n    --> False\n\nBe careful with the argument order! If not using the `|>` operator, the first\nexample would be written as:\n\n    Interval.isContainedIn angleInterval\n        (Interval.fromEndpoints\n            ( Angle.degrees -5\n            , Angle.degrees 15\n            )\n        )\n    --> True\n\n",
+                "type": "Quantity.Interval.Interval number units -> Quantity.Interval.Interval number units -> Basics.Bool"
+            },
+            {
+                "name": "isSingleton",
+                "comment": " Check if the interval is a singleton (the minimum and maximum values are the\nsame).\n\n    Interval.isSingleton <|\n        Interval.fromEndpoints\n            ( Length.meters 2, Length.meters 2 )\n    --> True\n\n    Interval.isSingleton <|\n        Interval.fromEndpoints\n            ( Length.meters 2, Length.meters 3 )\n    --> False\n\n",
+                "type": "Quantity.Interval.Interval number units -> Basics.Bool"
+            },
+            {
+                "name": "maxValue",
+                "comment": " Get the maximum value of an interval.\n",
+                "type": "Quantity.Interval.Interval number units -> Quantity.Quantity number units"
+            },
+            {
+                "name": "midpoint",
+                "comment": " Get the midpoint of an interval.\n\n    Interval.midpoint <|\n        Interval.fromEndpoints\n            ( Duration.hours 2\n            , Duration.hours 3\n            )\n    --> Duration.hours 2.5\n\n",
+                "type": "Quantity.Interval.Interval Basics.Float units -> Quantity.Quantity Basics.Float units"
+            },
+            {
+                "name": "minValue",
+                "comment": " Get the minimum value of an interval.\n",
+                "type": "Quantity.Interval.Interval number units -> Quantity.Quantity number units"
+            },
+            {
+                "name": "minus",
+                "comment": " Subtract the given amount from an interval.\n\n    angleInterval =\n        Interval.fromEndpoints\n            ( Angle.degrees -10\n            , Angle.degrees 50\n            )\n\n    angleInterval |> Interval.minus (Angle.degrees 30)\n    --> Interval.fromEndpoints\n    -->     ( Angle.degrees -40\n    -->     , Angle.degrees 20\n    -->     )\n\n",
+                "type": "Quantity.Quantity number units -> Quantity.Interval.Interval number units -> Quantity.Interval.Interval number units"
+            },
+            {
+                "name": "minusInterval",
+                "comment": " Subtract the first interval from the second. This means that `minusInterval`\nmakes the most sense when using `|>`:\n\n    firstInterval =\n        Interval.fromEndpoints\n            ( Length.feet 5, Length.feet 10 )\n\n    secondInterval =\n        Interval.fromEndpoints\n            ( Length.feet 2, Length.feet 3 )\n\n    firstInterval |> Interval.minusInterval secondInterval\n    --> Interval.fromEndpoints\n    -->     ( Length.feet 2, Length.feet 8 )\n\nWithout the pipe operator, the above would be written as:\n\n    Interval.minusInterval secondInterval firstInterval\n\n",
+                "type": "Quantity.Interval.Interval number units -> Quantity.Interval.Interval number units -> Quantity.Interval.Interval number units"
+            },
+            {
+                "name": "multiplyBy",
+                "comment": " Multiply an interval by a given value:\n\n    Interval.multiplyBy 5 <|\n        Interval.fromEndpoints\n            ( Duration.minutes 20\n            , Duration.minutes 30\n            )\n    --> Interval.fromEndpoints\n    -->     ( Duration.minutes 100\n    -->     , Duration.minutes 150\n    -->     )\n\nNote that this will flip the order of the interval's endpoints if the given\nvalue is negative:\n\n    Interval.multiplyBy -2 <|\n        Interval.fromEndpoints\n            ( Angle.degrees 20\n            , Angle.degrees 30\n            )\n    --> Interval.fromEndpoints\n    -->     ( Angle.degrees -60\n    -->     , Angle.degrees -40\n    -->     )\n\n",
+                "type": "number -> Quantity.Interval.Interval number units -> Quantity.Interval.Interval number units"
+            },
+            {
+                "name": "negate",
+                "comment": " Negate an interval. Note that this will flip the order of the endpoints.\n\n    Interval.negate <|\n        Interval.fromEndpoints\n            ( Angle.degrees 20\n            , Angle.degrees 30\n            )\n    --> Interval.fromEndpoints\n    -->     ( Angle.degrees -30\n    -->     , Angle.degrees -20\n    -->     )\n\n",
+                "type": "Quantity.Interval.Interval number units -> Quantity.Interval.Interval number units"
+            },
+            {
+                "name": "plus",
+                "comment": " Add the given amount to an interval:\n\n    lengthInterval =\n        Interval.fromEndpoints\n            ( Length.meters 2, Length.meters 3 )\n\n    lengthInterval |> Interval.plus (Length.centinmeters 20)\n    --> Interval.fromEndpoints\n    -->     ( Length.meters 2.2, Length.meters 3.2 )\n\n",
+                "type": "Quantity.Quantity number units -> Quantity.Interval.Interval number units -> Quantity.Interval.Interval number units"
+            },
+            {
+                "name": "plusInterval",
+                "comment": " Add two intervals together.\n\n    firstInterval =\n        Interval.fromEndpoints\n            ( Length.feet 5, Length.feet 10 )\n\n    secondInterval =\n        Interval.fromEndpoints\n            ( Length.feet 2, Length.feet 3 )\n\n    firstInterval |> Interval.plus secondInterval\n    --> Interval.fromEndpoints\n    -->     ( Length.feet 7, Length.feet 13 )\n\n",
+                "type": "Quantity.Interval.Interval number units -> Quantity.Interval.Interval number units -> Quantity.Interval.Interval number units"
+            },
+            {
+                "name": "product",
+                "comment": " Multiply an `Interval` by a `Quantity`, for example\n\n    Interval.product quantity interval\n\nNote that unlike [`times`](#times), the units of the result will be `Product\nquantityUnits intervalUnits`, not `Product intervalUnits quantityUnits`.\n\n",
+                "type": "Quantity.Quantity number quantityUnits -> Quantity.Interval.Interval number intervalUnits -> Quantity.Interval.Interval number (Quantity.Product quantityUnits intervalUnits)"
+            },
+            {
+                "name": "randomValue",
+                "comment": " Create a [random generator](https://package.elm-lang.org/packages/elm/random/latest/Random)\nfor quantities within a given interval. For example,\n\n    Interval.randomValue <|\n        Interval.fromEndpoints\n            ( Length.meters 5, Length.meters 10 )\n\nis a `Generator` that will produce random lengths between 5 and 10 meters.\n\n",
+                "type": "Quantity.Interval.Interval Basics.Float units -> Random.Generator (Quantity.Quantity Basics.Float units)"
+            },
+            {
+                "name": "reciprocal",
+                "comment": " Find the inverse of a unitless interval:\n\n    Interval.reciprocal <|\n        Interval.fromEndpoints\n            ( Quantity.float 2\n            , Quantity.float 3\n            )\n    --> Interval.fromEndpoints\n    -->     ( Quantity.float 0.333\n    -->     , Quantity.flaot 0.500\n    -->     )\n\nAvoid using this function whenever possible, since it's very easy to get\ninfinite intervals as a result:\n\n    Interval.reciprocal <|\n        Interval.fromEndpoints\n            ( Quantity.float -1\n            , Quantity.float 2\n            )\n    --> Interval.fromEndpoints\n    -->     ( Quantity.negativeInfinity\n    -->     , Quantity.negativeInfinity\n    -->     )\n\nSince zero is contained in the above interval, the range of possible reciprocals\nranges from negative to positive infinity!\n\n",
+                "type": "Quantity.Interval.Interval Basics.Float Quantity.Unitless -> Quantity.Interval.Interval Basics.Float Quantity.Unitless"
+            },
+            {
+                "name": "singleton",
+                "comment": " Construct a zero-width interval containing a single value.\n\n    Interval.singleton (Length.meters 3)\n    --> Interval.fromEndpoints\n    -->     ( Length.meters 3\n    -->     , Length.meters 3\n    -->     )\n\n",
+                "type": "Quantity.Quantity number units -> Quantity.Interval.Interval number units"
+            },
+            {
+                "name": "squared",
+                "comment": " Get the square of an interval.\n",
+                "type": "Quantity.Interval.Interval number units -> Quantity.Interval.Interval number (Quantity.Squared units)"
+            },
+            {
+                "name": "squaredUnitless",
+                "comment": " Specialized version of `squared` for unitless intervals.\n",
+                "type": "Quantity.Interval.Interval number Quantity.Unitless -> Quantity.Interval.Interval number Quantity.Unitless"
+            },
+            {
+                "name": "times",
+                "comment": " Multiply an `Interval` by a `Quantity`, for example\n\n    interval |> Interval.times quantity\n\n",
+                "type": "Quantity.Quantity number quantityUnits -> Quantity.Interval.Interval number intervalUnits -> Quantity.Interval.Interval number (Quantity.Product intervalUnits quantityUnits)"
+            },
+            {
+                "name": "timesInterval",
+                "comment": " Multiply the second interval by the first. The order only matters if the\ntwo intervals have different units (since it will affect the units of the\nresult) but, like other functions in this module, `times` is generally designed\nto be used with `|>`:\n\n    width =\n        Interval.fromEndpoints\n            ( Length.centimeters 10, Length.centimeters 12 )\n\n    height =\n        Interval.fromEndpoints\n            ( Length.centimeters 5, Length.centimeters 6 )\n\n    width |> Interval.times height\n    --> Interval.fromEndpoints\n    -->     ( Area.squareCentimeters 50\n    -->     , Area.squareCentimeters 72\n    -->     )\n\n",
+                "type": "Quantity.Interval.Interval number units2 -> Quantity.Interval.Interval number units1 -> Quantity.Interval.Interval number (Quantity.Product units1 units2)"
+            },
+            {
+                "name": "timesUnitless",
+                "comment": " Multiply an `Interval` by a unitless `Quantity`. See the documentation for\n[`Quantity.timesUnitless`](https://package.elm-lang.org/packages/ianmackenzie/elm-units/latest/Quantity#timesUnitless)\nfor more details.\n",
+                "type": "Quantity.Quantity number Quantity.Unitless -> Quantity.Interval.Interval number units -> Quantity.Interval.Interval number units"
+            },
+            {
+                "name": "timesUnitlessInterval",
+                "comment": " Combination of [`timesInterval`](#timesInterval) and [`timesUnitless`](#timesUnitless)\nfor when one of the intervals in a product is unitless.\n",
+                "type": "Quantity.Interval.Interval number Quantity.Unitless -> Quantity.Interval.Interval number units -> Quantity.Interval.Interval number units"
+            },
+            {
+                "name": "twice",
+                "comment": " Shorthand for `multiplyBy 2`.\n",
+                "type": "Quantity.Interval.Interval number units -> Quantity.Interval.Interval number units"
+            },
+            {
+                "name": "union",
+                "comment": " Deprecated alias for `aggregate2`.\n",
+                "type": "Quantity.Interval.Interval number units -> Quantity.Interval.Interval number units -> Quantity.Interval.Interval number units"
+            },
+            {
+                "name": "width",
+                "comment": " Get the width of an interval.\n\n    Interval.width <|\n        Interval.fromEndpoints\n            ( Length.meters 1.2\n            , Length.meters 1.35\n            )\n    --> Length.centimeters 15\n\n",
+                "type": "Quantity.Interval.Interval number units -> Quantity.Quantity number units"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Temperature.Interval",
+        "comment": " This module behaves much like [`Quantity.Interval`](Quantity-Interval), but\nworks on [`Temperature`](https://package.elm-lang.org/packages/ianmackenzie/elm-units/latest/Temperature)\nvalues.\n\n@docs Interval\n\n\n# Constructors\n\n@docs fromEndpoints, singleton\n\n\n## Hull\n\nThese functions let you construct an `Interval` containing one or more input\ntemperatures.\n\n@docs hull2, hull, hullN, hullOf, hullOfN\n\n\n## Aggregation\n\nThese functions let you 'aggregate' one or more temperature intervals into a\nsingle larger interval that contains all of them.\n\n@docs aggregate2, aggregate, aggregateN, aggregateOf, aggregateOfN\n\n\n# Properties\n\n@docs endpoints, minValue, maxValue, midpoint, width\n\n\n# Queries\n\n@docs contains, isContainedIn, intersects, intersection, isSingleton\n\n\n# Interpolation\n\n@docs interpolate, interpolationParameter\n\n\n# Arithmetic\n\n@docs plus, minus\n\nThe `plusInterval` and `minusInterval` functions both involve `Interval Float\nCelsiusDegrees` values, where `Interval` in this case refers to the type in the\n`Quantity.Interval` module. This represents an interval of [temperature deltas](Temperatur#Delta).\n\n@docs plusInterval, minusInterval\n\n\n# Deprecated\n\n@docs from, union\n\n",
+        "unions": [
+            {
+                "name": "Interval",
+                "comment": " Represents a finite, closed interval with a minimum and maximum temperature,\nfor example the interval from 20 to 30 degrees Celsius.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "aggregate",
+                "comment": " Construct an interval containing one or more given intervals.\n",
+                "type": "Temperature.Interval.Interval -> List.List Temperature.Interval.Interval -> Temperature.Interval.Interval"
+            },
+            {
+                "name": "aggregate2",
+                "comment": " Construct an interval containing both of the given intervals.\n",
+                "type": "Temperature.Interval.Interval -> Temperature.Interval.Interval -> Temperature.Interval.Interval"
+            },
+            {
+                "name": "aggregateN",
+                "comment": " Construct an interval containing all of the intervals in the given list. If\nthe list is empty, returns `Nothing`.\n",
+                "type": "List.List Temperature.Interval.Interval -> Maybe.Maybe Temperature.Interval.Interval"
+            },
+            {
+                "name": "aggregateOf",
+                "comment": " Like [`aggregate`](#aggregate), but lets you work on any kind of item as\nlong as a temperature interval can be generated from it (similar to [`hullOf`](#hullOf)).\n",
+                "type": "(a -> Temperature.Interval.Interval) -> a -> List.List a -> Temperature.Interval.Interval"
+            },
+            {
+                "name": "aggregateOfN",
+                "comment": " Combination of [`aggregateOf`](#aggregateOf) and [`aggregateN`](#aggregateN).\n",
+                "type": "(a -> Temperature.Interval.Interval) -> List.List a -> Maybe.Maybe Temperature.Interval.Interval"
+            },
+            {
+                "name": "contains",
+                "comment": " Check if an interval contains a given temperature. The minimum and maximum\ntemperatures of the interval are considered to be contained in the interval.\n",
+                "type": "Temperature.Temperature -> Temperature.Interval.Interval -> Basics.Bool"
+            },
+            {
+                "name": "endpoints",
+                "comment": " Get the endpoints of an interval (its minimum and maximum temperatures) as a\ntuple. The first temperature will always be less than or equal to the second.\n",
+                "type": "Temperature.Interval.Interval -> ( Temperature.Temperature, Temperature.Temperature )"
+            },
+            {
+                "name": "from",
+                "comment": " Deprecated alias of [`hull2`](#hull2).\n",
+                "type": "Temperature.Temperature -> Temperature.Temperature -> Temperature.Interval.Interval"
+            },
+            {
+                "name": "fromEndpoints",
+                "comment": " Construct an interval from its endpoints (the minimum and maximum\ntemperatures of the interval). The two values should be given in order but will\nbe swapped if necessary to ensure a valid interval is returned.\n",
+                "type": "( Temperature.Temperature, Temperature.Temperature ) -> Temperature.Interval.Interval"
+            },
+            {
+                "name": "hull",
+                "comment": " Construct an interval containing one or more input temperatures.\n",
+                "type": "Temperature.Temperature -> List.List Temperature.Temperature -> Temperature.Interval.Interval"
+            },
+            {
+                "name": "hull2",
+                "comment": " Construct an interval with the two given endpoints (which can be provided in\neither order).\n",
+                "type": "Temperature.Temperature -> Temperature.Temperature -> Temperature.Interval.Interval"
+            },
+            {
+                "name": "hullN",
+                "comment": " Construct an interval containing all temperatures in the given list. If the\nlist is empty, returns `Nothing`.\n",
+                "type": "List.List Temperature.Temperature -> Maybe.Maybe Temperature.Interval.Interval"
+            },
+            {
+                "name": "hullOf",
+                "comment": " Like [`hull`](#hull), but lets you work on any kind of item as long as a\n`Temperature` can be extracted from it:\n\n    type alias WeatherMeasurement =\n        { windSpeed : Speed\n        , temperature : Temperature\n        , barometricPressure : Pressure\n        }\n\n    temperatureRange =\n        Temperature.Interval.hullOf .temperature <|\n            measurement1\n            [ measurement2\n            , measurement3\n            , measurement4\n            ]\n\n",
+                "type": "(a -> Temperature.Temperature) -> a -> List.List a -> Temperature.Interval.Interval"
+            },
+            {
+                "name": "hullOfN",
+                "comment": " Combination of [`hullOf`](#hullOf) and [`hullN`](#hullN).\n",
+                "type": "(a -> Temperature.Temperature) -> List.List a -> Maybe.Maybe Temperature.Interval.Interval"
+            },
+            {
+                "name": "interpolate",
+                "comment": " Interpolate between an interval's endpoints; a value of 0.0 corresponds to\nthe minimum temperature of the interval, a value of 0.5 corresponds to its\nmidpoint and a value of 1.0 corresponds to its maximum temperature. Values less\nthan 0.0 or greater than 1.0 can be used to extrapolate.\n",
+                "type": "Temperature.Interval.Interval -> Basics.Float -> Temperature.Temperature"
+            },
+            {
+                "name": "interpolationParameter",
+                "comment": " Given an interval and a given value, determine the corresponding\ninterpolation parameter (the parameter that you would pass to [`interpolate`](#interpolate)\nto get the given value).\n",
+                "type": "Temperature.Interval.Interval -> Temperature.Temperature -> Basics.Float"
+            },
+            {
+                "name": "intersection",
+                "comment": " Attempt to construct an interval containing all the temperatures common to\nboth given intervals. If the intervals do not intersect, returns `Nothing`. If\nthe two intervals just touch, a singleton interval will be returned.\n",
+                "type": "Temperature.Interval.Interval -> Temperature.Interval.Interval -> Maybe.Maybe Temperature.Interval.Interval"
+            },
+            {
+                "name": "intersects",
+                "comment": " Check if two intervals touch or overlap (have any temperatures in common).\nIntervals that just touch each other are considered to intersect.\n",
+                "type": "Temperature.Interval.Interval -> Temperature.Interval.Interval -> Basics.Bool"
+            },
+            {
+                "name": "isContainedIn",
+                "comment": " Check if the second interval is fully contained in the first.\n",
+                "type": "Temperature.Interval.Interval -> Temperature.Interval.Interval -> Basics.Bool"
+            },
+            {
+                "name": "isSingleton",
+                "comment": " Check if the interval is a singleton (the minimum and maximum temperatures\nare the same).\n",
+                "type": "Temperature.Interval.Interval -> Basics.Bool"
+            },
+            {
+                "name": "maxValue",
+                "comment": " Get the maximum temperature of an interval.\n",
+                "type": "Temperature.Interval.Interval -> Temperature.Temperature"
+            },
+            {
+                "name": "midpoint",
+                "comment": " Get the midpoint of an interval.\n",
+                "type": "Temperature.Interval.Interval -> Temperature.Temperature"
+            },
+            {
+                "name": "minValue",
+                "comment": " Get the minimum temperature of an interval.\n",
+                "type": "Temperature.Interval.Interval -> Temperature.Temperature"
+            },
+            {
+                "name": "minus",
+                "comment": " Subtract a temperature value from a temperature interval to give an interval\nof temperature deltas.\n\n    temperatureInterval =\n        Temperature.Interval.fromEndpoints\n            ( Temperature.degreesCelsius 20\n            , Temperature.degreesCelsius 25\n            )\n\n    temperatureInterval\n        |> Temperature.Interval.minus\n            (Temperature.degreesCelsius 15)\n    --> Quantity.Interval.fromEndpoints\n    -->     ( Temperature.celsiusDegrees 5\n    -->     , Temperature.celsiusDegrees 10\n    -->     )\n\n",
+                "type": "Temperature.Temperature -> Temperature.Interval.Interval -> Quantity.Interval.Interval Basics.Float Temperature.CelsiusDegrees"
+            },
+            {
+                "name": "minusInterval",
+                "comment": " Subtract the first given temperature interval from the second, resulting in\na temperature delta interval:\n\n    firstInterval =\n        Temperature.Interval.fromEndpoints\n            ( Temperature.degreesCelsius 5\n            , Temperature.degreesCelsius 10\n            )\n\n    secondInterval =\n        Temperature.Interval.fromEndpoints\n            ( Temperature.degreesCelsius 30\n            , Temperature.degreesCelsius 40\n            )\n\n    secondInterval\n        |> Temperature.Interval.minus firstInterval\n    --> Quantity.Interval.fromEndpoints\n    -->     ( Temperature.celsiusDegrees 20\n    -->     , Temperature.celsiusDegrees 35\n    -->     )\n\n",
+                "type": "Temperature.Interval.Interval -> Temperature.Interval.Interval -> Quantity.Interval.Interval Basics.Float Temperature.CelsiusDegrees"
+            },
+            {
+                "name": "plus",
+                "comment": " Add a [temperature delta](Temperature#Delta) to a temperature interval,\nresulting in a new temperature interval.\n\n    temperatureInterval =\n        Temperature.Interval.fromEndpoints\n            ( Temperature.degreesCelsius 20\n            , Temperature.degreesCelsius 25\n            )\n\n    temperatureInterval\n        |> Temperature.Interval.plus\n            (Temperature.celsiusDegrees 10)\n    --> Temperature.Interval.fromEndpoints\n    -->     ( Temperature.degreesCelsius 30\n    -->     , Temperature.degreesCelsius 35\n    -->     )\n\n",
+                "type": "Temperature.Delta -> Temperature.Interval.Interval -> Temperature.Interval.Interval"
+            },
+            {
+                "name": "plusInterval",
+                "comment": " Add a temperature delta interval to a temperature interval to give a new\ntemperature interval:\n\n    temperatureInterval =\n        Temperature.Interval.fromEndpoints\n            ( Temperature.degreesCelsius 20\n            , Temperature.degreesCelsius 25\n            )\n\n    deltaInterval =\n        Quantity.Interval.fromEndpoints\n            ( Temperature.celsiusDegrees -1\n            , Temperature.celsiusDegrees 4\n            )\n\n    temperatureInterval\n        |> Temperature.Interval.plus deltaInterval\n    --> Temperature.Interval.fromEndpoints\n    -->     ( Temperature.degreesCelsius 19\n    -->     , Temperature.degreesCelsius 29\n    -->     )\n\n",
+                "type": "Quantity.Interval.Interval Basics.Float Temperature.CelsiusDegrees -> Temperature.Interval.Interval -> Temperature.Interval.Interval"
+            },
+            {
+                "name": "singleton",
+                "comment": " Construct a zero-width interval containing a single temperature.\n",
+                "type": "Temperature.Temperature -> Temperature.Interval.Interval"
+            },
+            {
+                "name": "union",
+                "comment": " Deprecated alias of [`aggregate2`](#aggregate2).\n",
+                "type": "Temperature.Interval.Interval -> Temperature.Interval.Interval -> Temperature.Interval.Interval"
+            },
+            {
+                "name": "width",
+                "comment": " Get the width of an interval. This will never be negative. Note that this\nreturns a [`Temperature.Delta`](https://package.elm-lang.org/packages/ianmackenzie/elm-units/latest/Temperature#Delta),\nnot a `Temperature`.\n",
+                "type": "Temperature.Interval.Interval -> Temperature.Delta"
+            }
+        ],
+        "binops": []
+    }
+]

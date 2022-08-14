@@ -1,0 +1,33 @@
+[
+    {
+        "name": "Loadable",
+        "comment": "\n\n@docs element, application, Program\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Program",
+                "comment": " An alias for the Browser.Program that gets produced from this package which makes\nit easier to add type annotations for your programs.\n",
+                "args": [
+                    "flags",
+                    "model",
+                    "msg",
+                    "error"
+                ],
+                "type": "Platform.Program flags (Loadable.Types.Model flags model error) (Loadable.Types.Msg model msg error)"
+            }
+        ],
+        "values": [
+            {
+                "name": "application",
+                "comment": " Behaves a lot like application from the Browser package, with a few additions.\n\n  - `load` replaces `init` and returns a task that will return your initial model and command.\n  - `failCmd` can be used to send any error that results from the `load` task through a port.\n  - `loadingView` can take flags and return a loading view.\n  - `errorView` can take any error that results from `load` and displays an error message.\n\n",
+                "type": "{ update : innerMsg -> innerModel -> ( innerModel, Platform.Cmd.Cmd innerMsg ), subscriptions : innerModel -> Platform.Sub.Sub innerMsg, view : innerModel -> Browser.Document innerMsg, load : flags -> Url.Url -> Browser.Navigation.Key -> Task.Task e ( innerModel, Platform.Cmd.Cmd innerMsg ), failCmd : Maybe.Maybe (e -> Platform.Cmd.Cmd (Loadable.Types.Msg innerModel innerMsg e)), loadingView : Maybe.Maybe (flags -> Browser.Document (Loadable.Types.Msg innerModel innerMsg e)), errorView : Maybe.Maybe (e -> Browser.Document (Loadable.Types.Msg innerModel innerMsg e)), onUrlRequest : Browser.UrlRequest -> innerMsg, onUrlChange : Url.Url -> innerMsg } -> Loadable.Program flags innerModel innerMsg e"
+            },
+            {
+                "name": "element",
+                "comment": " Behaves a lot like element from the Browser package, with a few additions.\n\n  - `load` replaces `init` and returns a task that will return your initial model and command.\n  - `failCmd` can be used to send any error that results from the `load` task through a port.\n  - `loadingView` can take flags and return a loading view.\n  - `errorView` can take any error that results from `load` and displays an error message.\n\n",
+                "type": "{ update : innerMsg -> innerModel -> ( innerModel, Platform.Cmd.Cmd innerMsg ), subscriptions : innerModel -> Platform.Sub.Sub innerMsg, view : innerModel -> Html.Html innerMsg, load : flags -> Task.Task e ( innerModel, Platform.Cmd.Cmd innerMsg ), failCmd : Maybe.Maybe (e -> Platform.Cmd.Cmd (Loadable.Types.Msg innerModel innerMsg e)), loadingView : Maybe.Maybe (flags -> Html.Html (Loadable.Types.Msg innerModel innerMsg e)), errorView : Maybe.Maybe (e -> Html.Html (Loadable.Types.Msg innerModel innerMsg e)) } -> Loadable.Program flags innerModel innerMsg e"
+            }
+        ],
+        "binops": []
+    }
+]

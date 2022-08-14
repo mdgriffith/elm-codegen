@@ -1,0 +1,337 @@
+[
+    {
+        "name": "Tagged",
+        "comment": " A module that allows you to \"tag\" a value.\n\n@docs Tagged\n@docs tag\n@docs retag\n@docs untag\n@docs map\n@docs ap\n@docs map2\n@docs andMap\n@docs bind\n@docs andThen\n@docs extend\n\n",
+        "unions": [
+            {
+                "name": "Tagged",
+                "comment": " A Type that pairs a `value` with a `tag`.\n\nThe `tag` is ignored at runtime as evidenced by the only value constructor:\n\n    Tagged : value -> Tagged tag value\n\n",
+                "args": [
+                    "tag",
+                    "value"
+                ],
+                "cases": [
+                    [
+                        "Tagged",
+                        [
+                            "value"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "andMap",
+                "comment": " Useful for composing functions together in a pipeline:\n\n    foo =\n        Tagged Array.set\n            |> andMap index\n            |> andMap value\n            |> andMap arr\n\n",
+                "type": "Tagged.Tagged tag oldValue -> Tagged.Tagged tag (oldValue -> newValue) -> Tagged.Tagged tag newValue"
+            },
+            {
+                "name": "andThen",
+                "comment": " Useful for restricting the tag created in a polymorphic function.\n",
+                "type": "(oldValue -> Tagged.Tagged tag newValue) -> Tagged.Tagged tag oldValue -> Tagged.Tagged tag newValue"
+            },
+            {
+                "name": "ap",
+                "comment": " Useful for building more useful functions:\n\n    map f =\n        ap (Tagged f)\n\n    map2 f x =\n        ap (map f x)\n\n    map3 f x y =\n        ap (map2 f x y)\n\n",
+                "type": "Tagged.Tagged tag (oldValue -> newValue) -> Tagged.Tagged tag oldValue -> Tagged.Tagged tag newValue"
+            },
+            {
+                "name": "bind",
+                "comment": " Useful for restricting the tag created in a polymorphic function.\n",
+                "type": "Tagged.Tagged tag oldValue -> (oldValue -> Tagged.Tagged tag newValue) -> Tagged.Tagged tag newValue"
+            },
+            {
+                "name": "extend",
+                "comment": " Useful when you have a function that throws away a tag prematurely,\nbut you still need the tag later.\n",
+                "type": "(Tagged.Tagged tag oldValue -> newValue) -> Tagged.Tagged tag oldValue -> Tagged.Tagged tag newValue"
+            },
+            {
+                "name": "map",
+                "comment": " Useful for applying a function on a `Tagged` value.\n\n    foo =\n        map String.toUpper aTaggedString\n\n",
+                "type": "(oldValue -> newValue) -> Tagged.Tagged tag oldValue -> Tagged.Tagged tag newValue"
+            },
+            {
+                "name": "map2",
+                "comment": " An alternative to `ap`:\n\n    foo =\n        map2 Array.get index arr\n\n",
+                "type": "(a -> b -> c) -> Tagged.Tagged tag a -> Tagged.Tagged tag b -> Tagged.Tagged tag c"
+            },
+            {
+                "name": "retag",
+                "comment": " Explicitly changes the tag of a value.\n\nForces you to recognize that the value is being interpreted differently from before.\n\n",
+                "type": "Tagged.Tagged oldTag value -> Tagged.Tagged newTag value"
+            },
+            {
+                "name": "tag",
+                "comment": " An alias for the `Tagged` value constructor.\n",
+                "type": "value -> Tagged.Tagged tag value"
+            },
+            {
+                "name": "untag",
+                "comment": " We can remove the tag when we're done making additional compile-time assertions.\n",
+                "type": "Tagged.Tagged tag value -> value"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Tagged.Dict",
+        "comment": " A module that allows tagging dictionaries, while maintaining an API parallel to `Dict`.\n\nA common idea is wanting to use a value that is not `comparable` as the key of a `Dict a b`.\nSince we can't currently do that there are many different ways to address the problem.\nOne way to solve that problem is to use a type level assertion.\n\nRather than holding on to an entirely different type in the keys and threading a comparison function through,\nwe can just tell elm that we'd like to tag the `Dict a b` at compile time.\nDoing so allows us to reuse the underlying behavior of the `Dict a b` with very little runtime overhead.\nMost functions here are simple wrappers to refine the types without modifying the values.\n\n@docs TaggedDict\n\n\n# Build\n\n@docs empty, singleton, insert, update, remove\n\n\n# Query\n\n@docs isEmpty, member, get, size\n\n\n# Lists\n\n@docs untaggedKeys, keys, values, toUntaggedList, fromUntaggedList, toList, fromList\n\n\n# Transform\n\n@docs map, foldl, foldr, filter, partition\n\n\n# Combine\n\n@docs union, intersect, diff, merge\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "TaggedDict",
+                "comment": " A dictionary that tags the keys with an additional constraint.\n\nThe constraint is phantom in that it doesn't show up at runtime.\n\n",
+                "args": [
+                    "a",
+                    "b",
+                    "c"
+                ],
+                "type": "Tagged.Tagged a (Dict.Dict b c)"
+            }
+        ],
+        "values": [
+            {
+                "name": "diff",
+                "comment": " Keep a key-value pair when its key does not appear in the second dictionary.\n",
+                "type": "Tagged.Dict.TaggedDict tag comparable v -> Tagged.Dict.TaggedDict tag comparable v -> Tagged.Dict.TaggedDict tag comparable v"
+            },
+            {
+                "name": "empty",
+                "comment": " Create an empty dictionary.\n",
+                "type": "Tagged.Dict.TaggedDict tag comparable v"
+            },
+            {
+                "name": "filter",
+                "comment": " Keep a key-value pair when it satisfies a predicate.\n",
+                "type": "(Tagged.Tagged tag comparable -> v -> Basics.Bool) -> Tagged.Dict.TaggedDict tag comparable v -> Tagged.Dict.TaggedDict tag comparable v"
+            },
+            {
+                "name": "foldl",
+                "comment": " Fold over the key-value pairs in a dictionary, in order from lowest key to highest key.\n",
+                "type": "(Tagged.Tagged tag comparable -> v -> b -> b) -> b -> Tagged.Dict.TaggedDict tag comparable v -> b"
+            },
+            {
+                "name": "foldr",
+                "comment": " Fold over the key-value pairs in a dictionary, in order from highest key to lowest key.\n",
+                "type": "(Tagged.Tagged tag comparable -> v -> b -> b) -> b -> Tagged.Dict.TaggedDict tag comparable v -> b"
+            },
+            {
+                "name": "fromList",
+                "comment": " Convert an association list into a dictionary.\n",
+                "type": "List.List ( Tagged.Tagged tag comparable, v ) -> Tagged.Dict.TaggedDict tag comparable v"
+            },
+            {
+                "name": "fromUntaggedList",
+                "comment": " Convert an untagged association list into a dictionary.\n",
+                "type": "List.List ( comparable, v ) -> Tagged.Dict.TaggedDict tag comparable v"
+            },
+            {
+                "name": "get",
+                "comment": " Get the value associated with a key.\n",
+                "type": "Tagged.Tagged tag comparable -> Tagged.Dict.TaggedDict tag comparable v -> Maybe.Maybe v"
+            },
+            {
+                "name": "insert",
+                "comment": " Insert a key-value pair into a dictionary. Replaces value when there is a collision.\n",
+                "type": "Tagged.Tagged tag comparable -> v -> Tagged.Dict.TaggedDict tag comparable v -> Tagged.Dict.TaggedDict tag comparable v"
+            },
+            {
+                "name": "intersect",
+                "comment": " Keep a key-value pair when its key appears in the second dictionary. Preference is given to values in the first dictionary.\n",
+                "type": "Tagged.Dict.TaggedDict tag comparable v -> Tagged.Dict.TaggedDict tag comparable v -> Tagged.Dict.TaggedDict tag comparable v"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Determine if a dictionary is empty.\n",
+                "type": "Tagged.Dict.TaggedDict tag c v -> Basics.Bool"
+            },
+            {
+                "name": "keys",
+                "comment": " Get all of the keys in a dictionary, sorted from lowest to highest.\n",
+                "type": "Tagged.Dict.TaggedDict tag comparable v -> List.List (Tagged.Tagged tag comparable)"
+            },
+            {
+                "name": "map",
+                "comment": " Apply a function to all values in a dictionary.\n",
+                "type": "(Tagged.Tagged tag comparable -> a -> b) -> Tagged.Dict.TaggedDict tag comparable a -> Tagged.Dict.TaggedDict tag comparable b"
+            },
+            {
+                "name": "member",
+                "comment": " Determine if a key is in a dictionary.\n",
+                "type": "Tagged.Tagged tag comparable -> Tagged.Dict.TaggedDict tag comparable v -> Basics.Bool"
+            },
+            {
+                "name": "merge",
+                "comment": " The most general way of combining two dictionaries.\n",
+                "type": "(Tagged.Tagged tag comparable -> a -> result -> result) -> (Tagged.Tagged tag comparable -> a -> b -> result -> result) -> (Tagged.Tagged tag comparable -> b -> result -> result) -> Tagged.Dict.TaggedDict tag comparable a -> Tagged.Dict.TaggedDict tag comparable b -> result -> result"
+            },
+            {
+                "name": "partition",
+                "comment": " Partition a dictionary according to a predicate. The first dictionary contains all key-value pairs which satisfy the predicate, and the second contains the rest.\n",
+                "type": "(Tagged.Tagged tag comparable -> v -> Basics.Bool) -> Tagged.Dict.TaggedDict tag comparable v -> ( Tagged.Dict.TaggedDict tag comparable v, Tagged.Dict.TaggedDict tag comparable v )"
+            },
+            {
+                "name": "remove",
+                "comment": " Remove a key-value pair from a dictionary. If the key is not found, no changes are made.\n",
+                "type": "Tagged.Tagged tag comparable -> Tagged.Dict.TaggedDict tag comparable v -> Tagged.Dict.TaggedDict tag comparable v"
+            },
+            {
+                "name": "singleton",
+                "comment": " Create a dictionary with one key-value pair.\n",
+                "type": "Tagged.Tagged tag comparable -> v -> Tagged.Dict.TaggedDict tag comparable v"
+            },
+            {
+                "name": "size",
+                "comment": " Determine the number of key-value pairs in the dictionary.\n",
+                "type": "Tagged.Dict.TaggedDict tag c v -> Basics.Int"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert a dictionary into an association list of key-value pairs, sorted by keys.\n",
+                "type": "Tagged.Dict.TaggedDict tag comparable v -> List.List ( Tagged.Tagged tag comparable, v )"
+            },
+            {
+                "name": "toUntaggedList",
+                "comment": " Convert a dictionary into an association list of untagged key-value pairs, sorted by keys.\n",
+                "type": "Tagged.Dict.TaggedDict tag comparable v -> List.List ( comparable, v )"
+            },
+            {
+                "name": "union",
+                "comment": " Combine two dictionaries. If there is a collision, preference is given to the first dictionary.\n",
+                "type": "Tagged.Dict.TaggedDict tag comparable v -> Tagged.Dict.TaggedDict tag comparable v -> Tagged.Dict.TaggedDict tag comparable v"
+            },
+            {
+                "name": "untaggedKeys",
+                "comment": " Get all of the untagged keys in a dictionary, sorted from lowest to highest.\n",
+                "type": "Tagged.Dict.TaggedDict tag comparable v -> List.List comparable"
+            },
+            {
+                "name": "update",
+                "comment": " Update the value of a dictionary for a specific key with a given function.\n",
+                "type": "Tagged.Tagged tag comparable -> (Maybe.Maybe v -> Maybe.Maybe v) -> Tagged.Dict.TaggedDict tag comparable v -> Tagged.Dict.TaggedDict tag comparable v"
+            },
+            {
+                "name": "values",
+                "comment": " Get all of the values in a dictionary, in the order of their keys.\n",
+                "type": "Tagged.Dict.TaggedDict tag comparable v -> List.List v"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Tagged.Set",
+        "comment": " A module that allows tagging sets, while maintaining an API parallel to `Set`.\n\nA common idea is wanting to store a value that is not `comparable` in `Set a`.\nSince we can't currently do that there are many different ways to address the problem.\nOne way to solve that problem is to use a type level assertion.\n\nRather than holding on to an entirely different type for the values and threading a comparison function through,\nwe can just tell elm that we'd like to tag the `Set a` at compile time.\nDoing so allows us to reuse the underlying behavior of the `Set a` with very little runtime overhead.\nMost functions here are simple wrappers to refine the types without modifying the values.\n\n@docs TaggedSet\n\n\n# Build\n\n@docs empty, singleton, insert, remove\n\n\n# Query\n\n@docs isEmpty, member, size\n\n\n# Lists\n\n@docs toUntaggedList, fromUntaggedList, toList, fromList\n\n\n# Transform\n\n@docs map, foldl, foldr, filter, partition\n\n\n# Combine\n\n@docs union, intersect, diff\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "TaggedSet",
+                "comment": " A set that tags the values with an additional constraint.\n\nThe constraint is phantom in that it doesn't show up at runtime.\n\n",
+                "args": [
+                    "tag",
+                    "comparable"
+                ],
+                "type": "Tagged.Tagged tag (Set.Set comparable)"
+            }
+        ],
+        "values": [
+            {
+                "name": "diff",
+                "comment": " Get the difference between the first set and the second. Keeps values that do not appear in the second set.\n",
+                "type": "Tagged.Set.TaggedSet tag comparable -> Tagged.Set.TaggedSet tag comparable -> Tagged.Set.TaggedSet tag comparable"
+            },
+            {
+                "name": "empty",
+                "comment": " Create an empty set.\n",
+                "type": "Tagged.Set.TaggedSet tag comparable"
+            },
+            {
+                "name": "filter",
+                "comment": " Create a new set consisting only of elements which satisfy a predicate.\n",
+                "type": "(Tagged.Tagged tag comparable -> Basics.Bool) -> Tagged.Set.TaggedSet tag comparable -> Tagged.Set.TaggedSet tag comparable"
+            },
+            {
+                "name": "foldl",
+                "comment": " Fold over the values in a set, in order from lowest value to highest value.\n",
+                "type": "(Tagged.Tagged tag comparable -> b -> b) -> b -> Tagged.Set.TaggedSet tag comparable -> b"
+            },
+            {
+                "name": "foldr",
+                "comment": " Fold over the values in a set, in order from highest value to lowest value.\n",
+                "type": "(Tagged.Tagged tag comparable -> b -> b) -> b -> Tagged.Set.TaggedSet tag comparable -> b"
+            },
+            {
+                "name": "fromList",
+                "comment": " Convert a list into a set.\n",
+                "type": "List.List (Tagged.Tagged tag comparable) -> Tagged.Set.TaggedSet tag comparable"
+            },
+            {
+                "name": "fromUntaggedList",
+                "comment": " Convert an untagged list into a set.\n",
+                "type": "List.List comparable -> Tagged.Set.TaggedSet tag comparable"
+            },
+            {
+                "name": "insert",
+                "comment": " Insert a value pair into a set.\n",
+                "type": "Tagged.Tagged tag comparable -> Tagged.Set.TaggedSet tag comparable -> Tagged.Set.TaggedSet tag comparable"
+            },
+            {
+                "name": "intersect",
+                "comment": " Get the intersection of two sets. Keeps values that appear in both sets.\n",
+                "type": "Tagged.Set.TaggedSet tag comparable -> Tagged.Set.TaggedSet tag comparable -> Tagged.Set.TaggedSet tag comparable"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Determine if a set is empty.\n",
+                "type": "Tagged.Set.TaggedSet tag c -> Basics.Bool"
+            },
+            {
+                "name": "map",
+                "comment": " Apply a function to all values in a set.\n",
+                "type": "(Tagged.Tagged tag comparable -> comparable2) -> Tagged.Set.TaggedSet tag comparable -> Tagged.Set.TaggedSet tag comparable2"
+            },
+            {
+                "name": "member",
+                "comment": " Determine if a value is in a set.\n",
+                "type": "Tagged.Tagged tag comparable -> Tagged.Set.TaggedSet tag comparable -> Basics.Bool"
+            },
+            {
+                "name": "partition",
+                "comment": " Create two new sets; the first consisting of elements which satisfy a predicate, the second consisting of elements which do not.\n",
+                "type": "(Tagged.Tagged tag comparable -> Basics.Bool) -> Tagged.Set.TaggedSet tag comparable -> ( Tagged.Set.TaggedSet tag comparable, Tagged.Set.TaggedSet tag comparable )"
+            },
+            {
+                "name": "remove",
+                "comment": " Remove a value from a set. If the value is not found, no changes are made.\n",
+                "type": "Tagged.Tagged tag comparable -> Tagged.Set.TaggedSet tag comparable -> Tagged.Set.TaggedSet tag comparable"
+            },
+            {
+                "name": "singleton",
+                "comment": " Create a set with one value.\n",
+                "type": "Tagged.Tagged tag comparable -> Tagged.Set.TaggedSet tag comparable"
+            },
+            {
+                "name": "size",
+                "comment": " Determine the number of values in a set.\n",
+                "type": "Tagged.Set.TaggedSet tag c -> Basics.Int"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert a set into a sorted list of tagged values.\n",
+                "type": "Tagged.Set.TaggedSet tag comparable -> List.List (Tagged.Tagged tag comparable)"
+            },
+            {
+                "name": "toUntaggedList",
+                "comment": " Convert a set into a sorted list of untagged values.\n",
+                "type": "Tagged.Set.TaggedSet tag comparable -> List.List comparable"
+            },
+            {
+                "name": "union",
+                "comment": " Get the union of two sets. Keep all values.\n",
+                "type": "Tagged.Set.TaggedSet tag comparable -> Tagged.Set.TaggedSet tag comparable -> Tagged.Set.TaggedSet tag comparable"
+            }
+        ],
+        "binops": []
+    }
+]

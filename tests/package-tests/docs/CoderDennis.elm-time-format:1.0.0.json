@@ -1,0 +1,827 @@
+[
+    {
+        "name": "Time.Format",
+        "comment": " Date Format, turning dates into strings.\r\n\r\nThe format code originally came from and was modified and extended from.\r\n<https://github.com/mgold/elm-date-format/blob/1.0.4/src/Date/Format.elm>\r\n\r\n\r\n## Date presentation\r\n\r\n@docs format\r\n\r\nCopyright (c) 2016-2018 Robin Luiten\r\n\r\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "format",
+                "comment": " Use a format string to format a Posix time for a specific Zone.\r\n",
+                "type": "Time.Format.Config.Config -> String.String -> Time.Zone -> Time.Posix -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Time.Format.Config",
+        "comment": " Date configuration.\r\n\r\nFor i18n for day and month names.\r\nParameter to Format.format function.\r\n\r\nThere is scope to put in some default format strings here.\r\n\r\n@docs Config\r\n\r\nCopyright (c) 2016-2018 Robin Luiten\r\n\r\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " Configuration for formatting dates.\r\n",
+                "args": [],
+                "type": "{ i18n : { dayShort : Time.Weekday -> String.String, dayName : Time.Weekday -> String.String, monthShort : Time.Month -> String.String, monthName : Time.Month -> String.String, dayOfMonthWithSuffix : Basics.Bool -> Basics.Int -> String.String, twelveHourPeriod : Time.Format.TwelveHourClock.TwelveHourPeriod -> String.String }, format : { date : String.String, longDate : String.String, time : String.String, longTime : String.String, dateTime : String.String, firstDayOfWeek : Time.Weekday } }"
+            }
+        ],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "Time.Format.Config.Config_de_de",
+        "comment": " This is the default German config for formatting dates.\r\n\r\n@docs config\r\n\r\nCopyright (c) 2017 Frank Schmitt\r\n\r\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "config",
+                "comment": " Config for en-us.\r\n",
+                "type": "Time.Format.Config.Config"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Time.Format.Config.Config_en_au",
+        "comment": " This is the default english config for formatting dates.\r\n\r\n@docs config\r\n\r\nCopyright (c) 2016-2018 Robin Luiten\r\n\r\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "config",
+                "comment": " Config for en-au.\r\n",
+                "type": "Time.Format.Config.Config"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Time.Format.Config.Config_en_gb",
+        "comment": " This is the UK english config for formatting dates.\r\n\r\n@docs config\r\n\r\nCopyright (c) 2016-2017 Bruno Girin\r\n\r\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "config",
+                "comment": " Config for en-gb.\r\n",
+                "type": "Time.Format.Config.Config"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Time.Format.Config.Config_en_us",
+        "comment": " This is the default english config for formatting dates.\r\n\r\n@docs config\r\n\r\nCopyright (c) 2016-2018 Robin Luiten\r\n\r\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "config",
+                "comment": " Config for en-us.\r\n",
+                "type": "Time.Format.Config.Config"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Time.Format.Config.Config_es_es",
+        "comment": " This is the Spanish config for formatting dates.\r\n\r\n@docs config\r\n\r\nCopyright (c) 2018 Ángel Herranz\r\n\r\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "config",
+                "comment": " Config for es\\_es.\r\n",
+                "type": "Time.Format.Config.Config"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Time.Format.Config.Config_et_ee",
+        "comment": " This is the default Estonian config for formatting dates.\r\n\r\n@docs config\r\n\r\nCopyright (c) 2016-2018 Robin Luiten\r\n\r\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "config",
+                "comment": " Config for en-us.\r\n",
+                "type": "Time.Format.Config.Config"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Time.Format.Config.Config_fi_fi",
+        "comment": " This is the Finnish config for formatting dates.\r\n\r\n@docs config\r\n\r\nCopyright (c) 2016-2017 Ossi Hanhinen\r\n\r\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "config",
+                "comment": " Config for fi-fi.\r\n",
+                "type": "Time.Format.Config.Config"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Time.Format.Config.Config_fr_fr",
+        "comment": " This is the French config for formatting dates.\r\n\r\n@docs config\r\n\r\nCopyright (c) 2016-2017 Bruno Girin\r\n\r\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "config",
+                "comment": " Config for fr-fr.\r\n",
+                "type": "Time.Format.Config.Config"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Time.Format.Config.Config_ja_jp",
+        "comment": " This is the Japanese config for formatting dates.\r\n\r\n@docs config\r\n\r\nCopyright (c) 2017 Yosuke Torii\r\n\r\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "config",
+                "comment": " Config for ja\\_jp.\r\n",
+                "type": "Time.Format.Config.Config"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Time.Format.Config.Config_lt_lt",
+        "comment": " This is the default Lithuanian config for formatting dates.\r\n\r\n@docs config\r\n\r\nCopyright (c) 2016-2018 Robin Luiten\r\n\r\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "config",
+                "comment": " Config for en-us.\r\n",
+                "type": "Time.Format.Config.Config"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Time.Format.Config.Config_nb_no",
+        "comment": " This is the Norwegian config for formatting dates.\r\n\r\n@docs config\r\n\r\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "config",
+                "comment": " Config for nb-no.\r\n",
+                "type": "Time.Format.Config.Config"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Time.Format.Config.Config_nl_nl",
+        "comment": " This is the Dutch config for formatting dates.\r\n\r\n@docs config\r\n\r\nCopyright (c) 2016-2017 Mats Stijlaart\r\n\r\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "config",
+                "comment": " Config for nl-nl.\r\n",
+                "type": "Time.Format.Config.Config"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Time.Format.Config.Config_pl_pl",
+        "comment": " This is the Polish config for formatting dates.\r\n\r\n@docs config\r\n\r\nCopyright (c) 2016-2017 Bartosz Sokół\r\n\r\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "config",
+                "comment": " Config for pl-pl.\r\n",
+                "type": "Time.Format.Config.Config"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Time.Format.Config.Config_pt_br",
+        "comment": " This is the Brazilian Portuguese config for formatting dates.\r\n\r\n@docs config\r\n\r\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "config",
+                "comment": " Config for pt-br.\r\n",
+                "type": "Time.Format.Config.Config"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Time.Format.Config.Config_ro_ro",
+        "comment": " This is the Romanian config for formatting dates.\r\n\r\n@docs config\r\n\r\nCopyright (c) 2016-2017 Cezar Halmagean\r\n\r\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "config",
+                "comment": " Config for ro\\_ro.\r\n",
+                "type": "Time.Format.Config.Config"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Time.Format.Config.Config_ru_ru",
+        "comment": " This is the default russian config for formatting dates.\r\n\r\n@docs config\r\n\r\nCopyright (c) 2016-2017 Slava Turchaninov\r\n\r\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "config",
+                "comment": " Config for ru-ru.\r\n",
+                "type": "Time.Format.Config.Config"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Time.Format.Config.Config_sv_se",
+        "comment": " This is the Swedish config for formatting dates.\r\n\r\n@docs config\r\n\r\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "config",
+                "comment": " Config for sv-se.\r\n",
+                "type": "Time.Format.Config.Config"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Time.Format.Config.Config_tr_tr",
+        "comment": " This is the default Turkish config for formatting dates.\r\n\r\n@docs config\r\n\r\nCopyright (c) 2017 Mehmet Köse\r\n\r\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "config",
+                "comment": " Config for en-us.\r\n",
+                "type": "Time.Format.Config.Config"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Time.Format.Config.Configs",
+        "comment": " Get a Time Format Config based up on a locale code.\r\n\r\n@docs getConfig\r\n@docs configs\r\n\r\nCopyright (c) 2016-2018 Robin Luiten\r\n\r\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "configs",
+                "comment": " Built in configurations.\r\n",
+                "type": "Dict.Dict String.String Time.Format.Config.Config"
+            },
+            {
+                "name": "getConfig",
+                "comment": " Get a Time Format Config for a locale id.\r\n\r\nLower case matches strings and accepts \"-\" or \"\\_\" to seperate\r\nthe characters in code.\r\n\r\nReturns \"en\\_us\" config if it can't find a match in configs.\r\n\r\n",
+                "type": "String.String -> Time.Format.Config.Config"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Time.Format.I18n.I_de_de",
+        "comment": " German values for day and month names.\r\n\r\n@docs dayShort\r\n@docs dayName\r\n@docs monthShort\r\n@docs monthName\r\n@docs dayOfMonthWithSuffix\r\n\r\nCopyright (c) 2017 Frank Schmitt\r\n\r\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "dayName",
+                "comment": " Day full name.\r\n",
+                "type": "Time.Weekday -> String.String"
+            },
+            {
+                "name": "dayOfMonthWithSuffix",
+                "comment": " Nothing to do here for German\r\n",
+                "type": "Basics.Bool -> Basics.Int -> String.String"
+            },
+            {
+                "name": "dayShort",
+                "comment": " Day short name.\r\n",
+                "type": "Time.Weekday -> String.String"
+            },
+            {
+                "name": "monthName",
+                "comment": " Month full name.\r\n",
+                "type": "Time.Month -> String.String"
+            },
+            {
+                "name": "monthShort",
+                "comment": " Month short name.\r\n",
+                "type": "Time.Month -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Time.Format.I18n.I_default",
+        "comment": " Default values to be reused in multiple language configurations.\r\n\r\n@docs twelveHourPeriod\r\n\r\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "twelveHourPeriod",
+                "comment": " 12-hour clock period (AM/PM) translation and formatting.\r\nThis should be valid for most latin-based languages.\r\n",
+                "type": "Time.Format.TwelveHourClock.TwelveHourPeriod -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Time.Format.I18n.I_en_us",
+        "comment": " English values for day and month names.\r\n\r\n@docs dayShort\r\n@docs dayName\r\n@docs monthShort\r\n@docs monthName\r\n@docs dayOfMonthWithSuffix\r\n\r\nCopyright (c) 2016-2018 Robin Luiten\r\n\r\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "dayName",
+                "comment": " Day full name.\r\n",
+                "type": "Time.Weekday -> String.String"
+            },
+            {
+                "name": "dayOfMonthWithSuffix",
+                "comment": " Returns a common english idiom for days of month.\r\nPad indicates space pad the day of month value so single\r\ndigit outputs have space padding to make them same\r\nlength as double digit days of monnth.\r\n",
+                "type": "Basics.Bool -> Basics.Int -> String.String"
+            },
+            {
+                "name": "dayShort",
+                "comment": " Day short name.\r\n",
+                "type": "Time.Weekday -> String.String"
+            },
+            {
+                "name": "monthName",
+                "comment": " Month full name.\r\n",
+                "type": "Time.Month -> String.String"
+            },
+            {
+                "name": "monthShort",
+                "comment": " Month short name.\r\n",
+                "type": "Time.Month -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Time.Format.I18n.I_et_ee",
+        "comment": " Estonian values for day and month names.\r\n\r\n@docs dayShort\r\n@docs dayName\r\n@docs monthShort\r\n@docs monthName\r\n@docs dayOfMonthWithSuffix\r\n\r\nCopyright (c) 2016-2018 Robin Luiten\r\n\r\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "dayName",
+                "comment": " Day full name.\r\n",
+                "type": "Time.Weekday -> String.String"
+            },
+            {
+                "name": "dayOfMonthWithSuffix",
+                "comment": " Nothing to do here for Estonian.\r\n",
+                "type": "Basics.Bool -> Basics.Int -> String.String"
+            },
+            {
+                "name": "dayShort",
+                "comment": " Day short name.\r\n",
+                "type": "Time.Weekday -> String.String"
+            },
+            {
+                "name": "monthName",
+                "comment": " Month full name.\r\n",
+                "type": "Time.Month -> String.String"
+            },
+            {
+                "name": "monthShort",
+                "comment": " Month short name.\r\n",
+                "type": "Time.Month -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Time.Format.I18n.I_fi_fi",
+        "comment": " Finnish values for day and month names.\r\n\r\n@docs dayShort\r\n@docs dayName\r\n@docs monthShort\r\n@docs monthName\r\n@docs dayOfMonthWithSuffix\r\n\r\nCopyright (c) 2016 Ossi Hanhinen\r\n\r\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "dayName",
+                "comment": " Day full name.\r\n",
+                "type": "Time.Weekday -> String.String"
+            },
+            {
+                "name": "dayOfMonthWithSuffix",
+                "comment": " This may not do anything in Finish\r\n",
+                "type": "Basics.Bool -> Basics.Int -> String.String"
+            },
+            {
+                "name": "dayShort",
+                "comment": " Day short name.\r\n",
+                "type": "Time.Weekday -> String.String"
+            },
+            {
+                "name": "monthName",
+                "comment": " Month full name.\r\n",
+                "type": "Time.Month -> String.String"
+            },
+            {
+                "name": "monthShort",
+                "comment": " Month short name.\r\n",
+                "type": "Time.Month -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Time.Format.I18n.I_fr_fr",
+        "comment": " French values for day and month names.\r\n\r\n@docs dayShort\r\n@docs dayName\r\n@docs monthShort\r\n@docs monthName\r\n@docs dayOfMonthWithSuffix\r\n\r\nCopyright (c) 2016 Bruno Girin\r\n\r\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "dayName",
+                "comment": " Day full name.\r\n",
+                "type": "Time.Weekday -> String.String"
+            },
+            {
+                "name": "dayOfMonthWithSuffix",
+                "comment": " Returns a common French idiom for days of month.\r\nPad indicates space pad the day of month value so single\r\ndigit outputs have space padding to make them same\r\nlength as double digit days of month.\r\n\r\nNote that the French idiom is to use the ordinal number\r\nfor the first day of the month (1er janvier) and\r\ncardinal numbers for all other days (15 janvier). This\r\nmethod doesn't pad the value on the right even if the\r\n`pad` argument is `true`.\r\n\r\n",
+                "type": "Basics.Bool -> Basics.Int -> String.String"
+            },
+            {
+                "name": "dayShort",
+                "comment": " Day short name.\r\n",
+                "type": "Time.Weekday -> String.String"
+            },
+            {
+                "name": "monthName",
+                "comment": " Month full name.\r\n",
+                "type": "Time.Month -> String.String"
+            },
+            {
+                "name": "monthShort",
+                "comment": " Month short name.\r\n",
+                "type": "Time.Month -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Time.Format.I18n.I_ja_jp",
+        "comment": " Japanese values for day and month names.\r\n\r\n@docs dayShort\r\n@docs dayName\r\n@docs monthShort\r\n@docs monthName\r\n@docs dayOfMonthWithSuffix\r\n\r\nCopyright (c) 2017 Yosuke Torii\r\n\r\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "dayName",
+                "comment": " Day full name.\r\n",
+                "type": "Time.Weekday -> String.String"
+            },
+            {
+                "name": "dayOfMonthWithSuffix",
+                "comment": " No suffixes for Japanese\r\n",
+                "type": "Basics.Bool -> Basics.Int -> String.String"
+            },
+            {
+                "name": "dayShort",
+                "comment": " Day short name.\r\n",
+                "type": "Time.Weekday -> String.String"
+            },
+            {
+                "name": "monthName",
+                "comment": " Month full name.\r\n",
+                "type": "Time.Month -> String.String"
+            },
+            {
+                "name": "monthShort",
+                "comment": " Month short name.\r\n",
+                "type": "Time.Month -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Time.Format.I18n.I_lt_lt",
+        "comment": " Lithuanian values for day and month names.\r\n\r\n@docs dayShort\r\n@docs dayName\r\n@docs monthShort\r\n@docs monthName\r\n@docs dayOfMonthWithSuffix\r\n\r\nCopyright (c) 2016-2018 Robin Luiten\r\n\r\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "dayName",
+                "comment": " Day full name.\r\n",
+                "type": "Time.Weekday -> String.String"
+            },
+            {
+                "name": "dayOfMonthWithSuffix",
+                "comment": " Nothing to do here for Lithuanian.\r\n",
+                "type": "Basics.Bool -> Basics.Int -> String.String"
+            },
+            {
+                "name": "dayShort",
+                "comment": " Day short name.\r\n",
+                "type": "Time.Weekday -> String.String"
+            },
+            {
+                "name": "monthName",
+                "comment": " Month full name.\r\n",
+                "type": "Time.Month -> String.String"
+            },
+            {
+                "name": "monthShort",
+                "comment": " Month short name.\r\n",
+                "type": "Time.Month -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Time.Format.I18n.I_nl_nl",
+        "comment": " Dutch values for day and month names.\r\n\r\n@docs dayShort\r\n@docs dayName\r\n@docs monthShort\r\n@docs monthName\r\n@docs dayOfMonthWithSuffix\r\n\r\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "dayName",
+                "comment": " Day full name.\r\n",
+                "type": "Time.Weekday -> String.String"
+            },
+            {
+                "name": "dayOfMonthWithSuffix",
+                "comment": " There is no idiom of day suffixes in Dutch.\r\n",
+                "type": "Basics.Bool -> Basics.Int -> String.String"
+            },
+            {
+                "name": "dayShort",
+                "comment": " Day short name.\r\n",
+                "type": "Time.Weekday -> String.String"
+            },
+            {
+                "name": "monthName",
+                "comment": " Month full name.\r\n",
+                "type": "Time.Month -> String.String"
+            },
+            {
+                "name": "monthShort",
+                "comment": " Month short name.\r\n",
+                "type": "Time.Month -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Time.Format.I18n.I_pl_pl",
+        "comment": " Polish values for day and month names.\r\n\r\n@docs dayShort\r\n@docs dayName\r\n@docs monthShort\r\n@docs monthName\r\n@docs dayOfMonthWithSuffix\r\n\r\nCopyright (c) 2016-2017 Bartosz Sokół\r\n\r\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "dayName",
+                "comment": " Day full name.\r\n",
+                "type": "Time.Weekday -> String.String"
+            },
+            {
+                "name": "dayOfMonthWithSuffix",
+                "comment": " This may not do anything in French\r\n",
+                "type": "Basics.Bool -> Basics.Int -> String.String"
+            },
+            {
+                "name": "dayShort",
+                "comment": " Day short name.\r\n",
+                "type": "Time.Weekday -> String.String"
+            },
+            {
+                "name": "monthName",
+                "comment": " Month full name.\r\n",
+                "type": "Time.Month -> String.String"
+            },
+            {
+                "name": "monthShort",
+                "comment": " Month short name.\r\n",
+                "type": "Time.Month -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Time.Format.I18n.I_pt_br",
+        "comment": " Brazilian Portuguese values for day and month names.\r\n\r\n@docs dayShort\r\n@docs dayName\r\n@docs monthShort\r\n@docs monthName\r\n@docs dayOfMonthWithSuffix\r\n\r\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "dayName",
+                "comment": " Day full name.\r\n",
+                "type": "Time.Weekday -> String.String"
+            },
+            {
+                "name": "dayOfMonthWithSuffix",
+                "comment": " Returns a common Brazilian Portuguse idiom for days of month. Pad indicates\r\nspace pad the day of month value so single digit outputs have space padding to\r\nmake them same length as double digit days of month.\r\n\r\nBecause only one day has a suffix I am not sure what to do with padding.\r\nHere 4 left seemed wrong as its a lot of white space for most numbers\r\nso have reduced it to 2.\r\n\r\n",
+                "type": "Basics.Bool -> Basics.Int -> String.String"
+            },
+            {
+                "name": "dayShort",
+                "comment": " Day short name.\r\n",
+                "type": "Time.Weekday -> String.String"
+            },
+            {
+                "name": "monthName",
+                "comment": " Month full name.\r\n",
+                "type": "Time.Month -> String.String"
+            },
+            {
+                "name": "monthShort",
+                "comment": " Month short name.\r\n",
+                "type": "Time.Month -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Time.Format.I18n.I_ro_ro",
+        "comment": " Romanian values for day and month names.\r\n\r\n@docs dayShort\r\n@docs dayName\r\n@docs monthShort\r\n@docs monthName\r\n@docs dayOfMonthWithSuffix\r\n\r\nCopyright (c) 2016-2017 Cezar Halmagean\r\n\r\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "dayName",
+                "comment": " Day full name.\r\n",
+                "type": "Time.Weekday -> String.String"
+            },
+            {
+                "name": "dayOfMonthWithSuffix",
+                "comment": " No suffixes for Romanian\r\n",
+                "type": "Basics.Bool -> Basics.Int -> String.String"
+            },
+            {
+                "name": "dayShort",
+                "comment": " Day short name.\r\n",
+                "type": "Time.Weekday -> String.String"
+            },
+            {
+                "name": "monthName",
+                "comment": " Month full name.\r\n",
+                "type": "Time.Month -> String.String"
+            },
+            {
+                "name": "monthShort",
+                "comment": " Month short name.\r\n",
+                "type": "Time.Month -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Time.Format.I18n.I_ru_ru",
+        "comment": " Russian values for day and month names.\r\n\r\n@docs dayShort\r\n@docs dayName\r\n@docs monthShort\r\n@docs monthName\r\n@docs dayOfMonthWithSuffix\r\n@docs twelveHourPeriod\r\n\r\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "dayName",
+                "comment": " Day full name.\r\n",
+                "type": "Time.Weekday -> String.String"
+            },
+            {
+                "name": "dayOfMonthWithSuffix",
+                "comment": " Just convert to string\r\n",
+                "type": "Basics.Bool -> Basics.Int -> String.String"
+            },
+            {
+                "name": "dayShort",
+                "comment": " Day short name.\r\n",
+                "type": "Time.Weekday -> String.String"
+            },
+            {
+                "name": "monthName",
+                "comment": " Month full name.\r\n",
+                "type": "Time.Month -> String.String"
+            },
+            {
+                "name": "monthShort",
+                "comment": " Month short name.\r\nsources:\r\n<http://new.gramota.ru/spravka/buro/search-answer?s=242637>\r\n<http://www.unicode.org/cldr/charts/28/summary/ru.html#1753>\r\n",
+                "type": "Time.Month -> String.String"
+            },
+            {
+                "name": "twelveHourPeriod",
+                "comment": " 12-hour clock period (AM/PM) translation and formatting.\r\n",
+                "type": "Time.Format.TwelveHourClock.TwelveHourPeriod -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Time.Format.I18n.I_sv_se",
+        "comment": " Swedish values for day and month names.\r\n\r\n@docs dayShort\r\n@docs dayName\r\n@docs monthShort\r\n@docs monthName\r\n@docs dayOfMonthWithSuffix\r\n\r\nCopyright (c) 2016 Ossi Hanhinen\r\n\r\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "dayName",
+                "comment": " Day full name.\r\n",
+                "type": "Time.Weekday -> String.String"
+            },
+            {
+                "name": "dayOfMonthWithSuffix",
+                "comment": " Nothing done here for now, but it might be needed\r\n",
+                "type": "Basics.Bool -> Basics.Int -> String.String"
+            },
+            {
+                "name": "dayShort",
+                "comment": " Day short name.\r\n",
+                "type": "Time.Weekday -> String.String"
+            },
+            {
+                "name": "monthName",
+                "comment": " Month full name.\r\n",
+                "type": "Time.Month -> String.String"
+            },
+            {
+                "name": "monthShort",
+                "comment": " Month short name.\r\n",
+                "type": "Time.Month -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Time.Format.I18n.I_tr_tr",
+        "comment": " English values for day and month names.\r\n\r\n@docs dayShort\r\n@docs dayName\r\n@docs monthShort\r\n@docs monthName\r\n@docs dayOfMonthWithSuffix\r\n\r\nCopyright (c) 2017 Mehmet Köse\r\n\r\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "dayName",
+                "comment": " Day full name.\r\n",
+                "type": "Time.Weekday -> String.String"
+            },
+            {
+                "name": "dayOfMonthWithSuffix",
+                "comment": " Nothing to do here for Turkish\r\n",
+                "type": "Basics.Bool -> Basics.Int -> String.String"
+            },
+            {
+                "name": "dayShort",
+                "comment": " Day short name.\r\n",
+                "type": "Time.Weekday -> String.String"
+            },
+            {
+                "name": "monthName",
+                "comment": " Month full name.\r\n",
+                "type": "Time.Month -> String.String"
+            },
+            {
+                "name": "monthShort",
+                "comment": " Month short name.\r\n",
+                "type": "Time.Month -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Time.Format.TwelveHourClock",
+        "comment": " Definition of 12-Hour clock and AM/PM value for dates.\r\n\r\n@docs TwelveHourPeriod\r\n@docs twelveHourPeriod\r\n\r\n",
+        "unions": [
+            {
+                "name": "TwelveHourPeriod",
+                "comment": " 12-Hour clock abbreviations (AM/PM)\r\n",
+                "args": [],
+                "cases": [
+                    [
+                        "AM",
+                        []
+                    ],
+                    [
+                        "PM",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "twelveHourPeriod",
+                "comment": " Common Zone + Posix to AM/PM value.\r\n",
+                "type": "Time.Zone -> Time.Posix -> Time.Format.TwelveHourClock.TwelveHourPeriod"
+            }
+        ],
+        "binops": []
+    }
+]

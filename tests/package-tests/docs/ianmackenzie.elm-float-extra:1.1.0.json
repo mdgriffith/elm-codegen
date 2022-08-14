@@ -1,0 +1,26 @@
+[
+    {
+        "name": "Float.Extra",
+        "comment": " Convenience functions for working with `Float` values. Examples assume that\r\nthis module has been imported using:\r\n\r\n    import Float.Extra as Float\r\n\r\n@docs equalWithin, interpolateFrom, range\r\n\r\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "equalWithin",
+                "comment": " Check if two values are equal within a given tolerance.\r\n\r\n    Float.equalWithin 1e-6 1.9999 2.0001\r\n    --> False\r\n\r\n    Float.equalWithin 1e-3 1.9999 2.0001\r\n    --> True\r\n\r\n",
+                "type": "Basics.Float -> Basics.Float -> Basics.Float -> Basics.Bool"
+            },
+            {
+                "name": "interpolateFrom",
+                "comment": " Interpolate from the first value to the second, based on a parameter that\r\nranges from zero to one. Passing a parameter value of zero will return the start\r\nvalue and passing a parameter value of one will return the end value.\r\n\r\n    Float.interpolateFrom 5 10 0\r\n    --> 5\r\n\r\n    Float.interpolateFrom 5 10 1\r\n    --> 10\r\n\r\n    Float.interpolateFrom 5 10 0.6\r\n    --> 8\r\n\r\nThe end value can be less than the start value:\r\n\r\n    Float.interpolateFrom 10 5 0.1\r\n    --> 9.5\r\n\r\nParameter values less than zero or greater than one can be used to extrapolate:\r\n\r\n    Float.interpolateFrom 5 10 1.5\r\n    --> 12.5\r\n\r\n    Float.interpolateFrom 5 10 -0.5\r\n    --> 2.5\r\n\r\n    Float.interpolateFrom 10 5 -0.2\r\n    --> 11\r\n\r\n",
+                "type": "Basics.Float -> Basics.Float -> Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "range",
+                "comment": " Construct a range of evenly-spaced values given a `start` value, an `end`\r\nvalue and the number of `steps` to take from the start to the end. The first\r\nvalue in the returned list will be equal to `start` and the last value will be\r\nequal to `end`. Note that the number of returned values will be one greater than\r\nthe number of steps!\r\n\r\n    Float.range { start = 0, end = 1, steps = 1 }\r\n    --> [ 0, 1 ]\r\n\r\n    Float.range { start = 0, end = 1, steps = 2 }\r\n    --> [ 0, 0.5, 1 ]\r\n\r\n    Float.range { start = 10, end = 20, steps = 2 }\r\n    --> [ 10, 15, 20 ]\r\n\r\n    Float.range { start = 2, end = 3, steps = 5 }\r\n    --> [ 2, 2.2, 2.4, 2.6, 2.8, 3 ]\r\n\r\nThe start and end values can be in either order:\r\n\r\n    Float.range { start = 1, end = 3, steps = 4 }\r\n    --> [ 1, 1.5, 2, 2.5, 3 ]\r\n\r\n    Float.range { start = 3, end = 1, steps = 4 }\r\n    --> [ 3, 2.5, 2, 1.5, 1 ]\r\n\r\nPassing a negative or zero `steps` value will result in an empty list being\r\nreturned.\r\n\r\nIf you need finer control over what values get generated, try combining\r\n`interpolateFrom` with the various functions in the\r\n[`elm-1d-parameter`](https://package.elm-lang.org/packages/ianmackenzie/elm-1d-parameter/latest/)\r\npackage. For example:\r\n\r\n    -- Same as using Float.range\r\n    Parameter1d.steps 5 (Float.interpolateFrom 2 3)\r\n    --> [ 2, 2.2, 2.4, 2.6, 2.8, 3 ]\r\n\r\n    -- Omit the last value\r\n    Parameter1d.leading 5 (Float.interpolateFrom 2 3)\r\n    --> [ 2, 2.2, 2.4, 2.6, 2.8 ]\r\n\r\n    -- Omit the first value\r\n    Parameter1d.trailing 5 (Float.interpolateFrom 2 3)\r\n    --> [ 2.2, 2.4, 2.6, 2.8, 3 ]\r\n\r\n",
+                "type": "{ start : Basics.Float, end : Basics.Float, steps : Basics.Int } -> List.List Basics.Float"
+            }
+        ],
+        "binops": []
+    }
+]

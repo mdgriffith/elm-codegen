@@ -1,0 +1,123 @@
+[
+    {
+        "name": "Json.Patch",
+        "comment": " This module implements JSON Patch as per\n[RFC 6902](https://tools.ietf.org/html/rfc6902).\n\n\n# Types\n\n@docs Patch, Operation\n\n\n# Operation\n\n@docs apply\n\n\n# Encoder/Decoder\n\n@docs encoder, decoder\n\n",
+        "unions": [
+            {
+                "name": "Operation",
+                "comment": " An operation, as defined by RFC 6902, section 4.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Add",
+                        [
+                            "Json.Pointer.Pointer",
+                            "Json.Decode.Value"
+                        ]
+                    ],
+                    [
+                        "Remove",
+                        [
+                            "Json.Pointer.Pointer"
+                        ]
+                    ],
+                    [
+                        "Replace",
+                        [
+                            "Json.Pointer.Pointer",
+                            "Json.Decode.Value"
+                        ]
+                    ],
+                    [
+                        "Move",
+                        [
+                            "Json.Pointer.Pointer",
+                            "Json.Pointer.Pointer"
+                        ]
+                    ],
+                    [
+                        "Copy",
+                        [
+                            "Json.Pointer.Pointer",
+                            "Json.Pointer.Pointer"
+                        ]
+                    ],
+                    [
+                        "Test",
+                        [
+                            "Json.Pointer.Pointer",
+                            "Json.Decode.Value"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Patch",
+                "comment": " A `Patch` is a list of operations that are performed one after another.\n",
+                "args": [],
+                "type": "List.List Json.Patch.Operation"
+            }
+        ],
+        "values": [
+            {
+                "name": "apply",
+                "comment": " Apply a `Patch` to a `Value`\n\nOperations are applied to the `Value` in order, and if one operation fails,\nthe whole `Patch` fails, and an error is returned instead.\n\n",
+                "type": "Json.Patch.Patch -> Json.Decode.Value -> Result.Result String.String Json.Decode.Value"
+            },
+            {
+                "name": "decoder",
+                "comment": " JSON decoder for `Patch`\n",
+                "type": "Json.Decode.Decoder Json.Patch.Patch"
+            },
+            {
+                "name": "encoder",
+                "comment": " JSON encoder for `Patch`\n",
+                "type": "Json.Patch.Patch -> Json.Encode.Value"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Json.Pointer",
+        "comment": " This module implements JSON Pointer as per\n[RFC 6901](https://tools.ietf.org/html/rfc6901).\n\n\n# Type\n\n@docs Pointer\n\n\n# Operations\n\n@docs addAt, removeAt, getAt\n\n\n# Encoder/Decoder\n\n@docs encoder, decoder\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Pointer",
+                "comment": " A type alias representing a JSON Pointer.\n\nThe JSON string `\"/a/b/c\"` corresponds to `[ \"a\", \"b\", \"c\" ]`\n\n",
+                "args": [],
+                "type": "List.List String.String"
+            }
+        ],
+        "values": [
+            {
+                "name": "addAt",
+                "comment": " Add the specified value at the specified pointer.\n\nFor adding to an array, this means inserting the value at the specified index\n, shifting the following elements to the right.\n\nFor adding to an object, this means adding or replacing the specified field.\n\n",
+                "type": "Json.Pointer.Pointer -> Json.Decode.Value -> Json.Decode.Value -> Result.Result String.String Json.Decode.Value"
+            },
+            {
+                "name": "decoder",
+                "comment": " JSON decoder for `Pointer`\n",
+                "type": "Json.Decode.Decoder Json.Pointer.Pointer"
+            },
+            {
+                "name": "encoder",
+                "comment": " JSON encoder for `Pointer`\n",
+                "type": "Json.Pointer.Pointer -> Json.Encode.Value"
+            },
+            {
+                "name": "getAt",
+                "comment": " Get the `Value` at the specified pointer.\n",
+                "type": "Json.Pointer.Pointer -> Json.Decode.Value -> Result.Result String.String Json.Decode.Value"
+            },
+            {
+                "name": "removeAt",
+                "comment": " Remove the specified value at the specified pointer.\n\nFor removing from an array, this means deleting the value at the specified index\n, shifting the following elements to the left.\n\nFor removing from an object, this means removing the specified field.\n\n",
+                "type": "Json.Pointer.Pointer -> Json.Decode.Value -> Result.Result String.String Json.Decode.Value"
+            }
+        ],
+        "binops": []
+    }
+]

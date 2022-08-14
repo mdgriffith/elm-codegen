@@ -1,0 +1,167 @@
+[
+    {
+        "name": "Lambda",
+        "comment": " A simple Lambda calculus implementation with type inference.\n\n@docs Type, Expr, Error\n\n@docs evaluate\n\n",
+        "unions": [
+            {
+                "name": "Error",
+                "comment": " An error from parsing or evaluation.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "SyntaxError",
+                        [
+                            "Parser.Error"
+                        ]
+                    ],
+                    [
+                        "VariableNotFound",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "TypeMismatch",
+                        [
+                            "Lambda.Type",
+                            "Lambda.Type"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Expr",
+                "comment": " A Lambda calculus expression.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Int",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "Num",
+                        [
+                            "Basics.Float"
+                        ]
+                    ],
+                    [
+                        "Var",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Abs",
+                        [
+                            "String.String",
+                            "Lambda.Expr"
+                        ]
+                    ],
+                    [
+                        "App",
+                        [
+                            "Lambda.Expr",
+                            "Lambda.Expr"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Type",
+                "comment": " A Lambda calculus type.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "IntType",
+                        []
+                    ],
+                    [
+                        "NumType",
+                        []
+                    ],
+                    [
+                        "Type",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "AbsType",
+                        [
+                            "Lambda.Type",
+                            "Lambda.Type"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "evaluate",
+                "comment": " Evaluates an expression and returns either an `(Expr, Type)` pair, or an `Error`.\n\n    import Lambda\n\n    -- Builtin values\n    evaluate (Int 42) --> Ok (Int 42, IntType)\n    evaluate (Num 3.14) --> Ok (Num 3.14, NumType)\n\n    -- Variable: x\n    evaluate (Var \"x\") --> Err (VariableNotFound \"x\")\n\n    -- Abstraction: λx.x\n    evaluate (Abs \"x\" (Var \"x\")) --> Ok (Abs \"x\" (Var \"x\"), AbsType (Type \"a\") (Type \"a\"))\n\n    -- Application: (λx.x) 42\n    evaluate (App (Abs \"x\" (Var \"x\")) (Int 42)) --> Ok (Int 42, IntType)\n\n",
+                "type": "Lambda.Expr -> Result.Result Lambda.Error ( Lambda.Expr, Lambda.Type )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Lambda.Read",
+        "comment": " Read Lambda types and expressions.\n\n@docs type_, expression\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "expression",
+                "comment": " Reads a Lambda expression from a text representation.\n\n    import Lambda exposing (Expr(..))\n    import Lambda.Read\n\n    -- Values\n    Lambda.Read.expression \"42\" --> Ok (Int 42)\n    Lambda.Read.expression \"3.14\" --> Ok (Num 3.14)\n\n    -- Variables\n    Lambda.Read.expression \"x\" --> Ok (Var \"x\")\n\n    -- Abstractions\n    Lambda.Read.expression \"λx.y\" --> Ok (Abs \"x\" (Var \"y\"))\n    Lambda.Read.expression \"λx.λy.z\" --> Ok (Abs \"x\" (Abs \"y\" (Var \"z\")))\n\n    -- Applications\n    Lambda.Read.expression \"f x\" --> Ok (App (Var \"f\") (Var \"x\"))\n    Lambda.Read.expression \"f x y\" --> Ok (App (App (Var \"f\") (Var \"x\")) (Var \"y\"))\n    Lambda.Read.expression \"f (x y)\" --> Ok (App (Var \"f\") (App (Var \"x\") (Var \"y\")))\n    Lambda.Read.expression \"λx.y z\" --> Ok (Abs \"x\" (App (Var \"y\") (Var \"z\")))\n    Lambda.Read.expression \"(λx.y) z\" --> Ok (App (Abs \"x\" (Var \"y\")) (Var \"z\"))\n\n    -- Variable definitions (syntax sugar)\n    Lambda.Read.expression \"x=y; z\" --> Ok (App (Abs \"x\" (Var \"z\")) (Var \"y\"))\n\n",
+                "type": "String.String -> Result.Result Lambda.Error Lambda.Expr"
+            },
+            {
+                "name": "type_",
+                "comment": " Reads a Lambda type from a text representation.\n\n    import Lambda exposing (Type(..))\n    import Lambda.Read\n\n    -- Builtin types\n    Lambda.Read.type_ \"@Int\" --> Ok IntType\n    Lambda.Read.type_ \"@Num\" --> Ok NumType\n\n    -- Named types\n    Lambda.Read.type_ \"T\" --> Ok (Type \"T\")\n\n    -- Abstraction types\n    Lambda.Read.type_ \"A->B\" --> Ok (AbsType (Type \"A\") (Type \"B\"))\n    Lambda.Read.type_ \"A -> B -> C\" --> Ok (AbsType (Type \"A\") (AbsType (Type \"B\") (Type \"C\")))\n    Lambda.Read.type_ \"(A -> B) -> C\" --> Ok (AbsType (AbsType (Type \"A\") (Type \"B\")) (Type \"C\"))\n    Lambda.Read.type_ \"( A -> B ) -> C\" --> Ok (AbsType (AbsType (Type \"A\") (Type \"B\")) (Type \"C\"))\n\n    -- Invalid types\n    Lambda.Read.type_ \"->A\" |> Result.toMaybe --> Nothing\n\n",
+                "type": "String.String -> Result.Result Lambda.Error Lambda.Type"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Lambda.Util",
+        "comment": " Utility functions used by the package.\n\n@docs newLowercaseName, toBase\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "newLowercaseName",
+                "comment": " Generates a new unique name consisting only of lowercase letters.\n\n    import Lambda.Util exposing (newLowercaseName)\n\n    newLowercaseName 1 [] --> \"a\"\n    newLowercaseName 26 [] --> \"z\"\n    newLowercaseName 27 [] --> \"aa\"\n    newLowercaseName 28 [] --> \"ab\"\n\n    newLowercaseName 1 [ \"a\" ] --> \"b\"\n    newLowercaseName 1 [ \"a\", \"b\" ] --> \"c\"\n\n",
+                "type": "Basics.Int -> List.List String.String -> String.String"
+            },
+            {
+                "name": "toBase",
+                "comment": " Converts a decimal integer to another base as a `List Int`.\n\n    import Lambda.Util exposing (toBase)\n\n    99 |> toBase 2 --> [1,1,0,0,0,1,1]\n    99 |> toBase 3 --> [1,0,2,0,0]\n    99 |> toBase 4 --> [1,2,0,3]\n    99 |> toBase 5 --> [3,4,4]\n    99 |> toBase 6 --> [2,4,3]\n    99 |> toBase 7 --> [2,0,1]\n    99 |> toBase 8 --> [1,4,3]\n    99 |> toBase 9 --> [1,2,0]\n\n",
+                "type": "Basics.Int -> Basics.Int -> List.List Basics.Int"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Lambda.Write",
+        "comment": " Write Lambda types and expressions.\n\n@docs type_, expression\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "expression",
+                "comment": " Writes a Lambda expression into a text representation.\n\n    import Lambda exposing (Expr(..))\n    import Lambda.Write\n\n    -- Values\n    Lambda.Write.expression (Int 42) --> \"42\"\n    Lambda.Write.expression (Num 3.14) --> \"3.14\"\n\n    -- Variables\n    Lambda.Write.expression (Var \"x\") --> \"x\"\n\n    -- Abstractions\n    Lambda.Write.expression (Abs \"x\" (Var \"y\")) --> \"λx.y\"\n    Lambda.Write.expression (Abs \"x\" (Abs \"y\" (Var \"z\"))) --> \"λx.λy.z\"\n\n    -- Applications\n    Lambda.Write.expression (App (Var \"f\") (Var \"x\")) --> \"f x\"\n    Lambda.Write.expression (App (App (Var \"f\") (Var \"x\")) (Var \"y\")) --> \"f x y\"\n    Lambda.Write.expression (App (Var \"f\") (App (Var \"x\") (Var \"y\"))) --> \"f (x y)\"\n    Lambda.Write.expression (Abs \"x\" (App (Var \"y\") (Var \"z\"))) --> \"λx.y z\"\n\n    -- Variable definitions (syntax sugar)\n    Lambda.Write.expression (App (Abs \"x\" (Var \"z\")) (Var \"y\")) --> \"x=y; z\"\n\n",
+                "type": "Lambda.Expr -> String.String"
+            },
+            {
+                "name": "type_",
+                "comment": " Writes a Lambda type into a text representation.\n\n    import Lambda exposing (Type(..))\n    import Lambda.Write\n\n    -- Builtin types\n    Lambda.Write.type_ IntType --> \"@Int\"\n    Lambda.Write.type_ NumType --> \"@Num\"\n\n    -- Named types\n    Lambda.Write.type_ (Type \"T\") --> \"T\"\n\n    -- Abstraction types\n    Lambda.Write.type_ (AbsType (Type \"A\") (Type \"B\")) --> \"A->B\"\n    Lambda.Write.type_ (AbsType (Type \"A\") (AbsType (Type \"B\") (Type \"C\"))) --> \"A->B->C\"\n    Lambda.Write.type_ (AbsType (AbsType (Type \"A\") (Type \"B\")) (Type \"C\")) --> \"(A->B)->C\"\n\n",
+                "type": "Lambda.Type -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

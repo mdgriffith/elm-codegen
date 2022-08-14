@@ -1,0 +1,197 @@
+[
+    {
+        "name": "Json.Decode.Attempt",
+        "comment": " Module for Decoders that always return a valid value.\n\n\n# Type aliases\n\n@docs Decoder, WithDefaults, MissingDefaults, Validated\n\n\n# Runners\n\n@docs attempt, decode, toTuple, toDecoder\n\n\n# Constructors\n\n@docs withDefault, succeed, maybe\n\n\n# Primitives\n\n@docs unit, value, boolOr, intOr, floatOr, charOr, stringOr\n\n\n# Core Data Structures\n\n@docs list, filteredList, array, dict\n@docs tuple, triple\n\n\n# Records Primitives\n\n@docs required, optional\n\n\n# Functor, Applicative, Monad, Alternative\n\n@docs map, apply, try, risk, andThen, oneOf\n\n\n# Helpers\n\n@docs nullable, doubleEncoded\n\n\n# Tests\n\n@docs tests\n\n",
+        "unions": [
+            {
+                "name": "Decoder",
+                "comment": " ",
+                "args": [
+                    "status",
+                    "value"
+                ],
+                "cases": []
+            },
+            {
+                "name": "MissingDefaults",
+                "comment": " Phantom type to indicate that a Decoder has a `risk` in it's procedure thus\nrendering the entire decoder susceptible to failure.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "WithDefaults",
+                "comment": " Phantom type to indicate that a Decoder has defaults provided for all of it's fields.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Validated",
+                "comment": " A record that carries both:\nA. a properly decoded value & [] like `{ value = \"Stuff\", errors = [] }` or\nB. a default value & List Error like `{ value = \"\", [Decode.Failure \"unexpected null value\"] }`\n",
+                "args": [
+                    "value"
+                ],
+                "type": "{ errors : List.List Json.Decode.Error, value : value }"
+            }
+        ],
+        "values": [
+            {
+                "name": "andThen",
+                "comment": " ",
+                "type": "(a -> Json.Decode.Attempt.Decoder Json.Decode.Attempt.WithDefaults b) -> Json.Decode.Attempt.Decoder Json.Decode.Attempt.WithDefaults a -> Json.Decode.Attempt.Decoder Json.Decode.Attempt.WithDefaults b"
+            },
+            {
+                "name": "apply",
+                "comment": " andMap for a `Decoder WithDefaults`\n",
+                "type": "Json.Decode.Attempt.Decoder Json.Decode.Attempt.WithDefaults a -> Json.Decode.Attempt.Decoder status (a -> b) -> Json.Decode.Attempt.Decoder status b"
+            },
+            {
+                "name": "array",
+                "comment": " `Decoder` between a JSON array and an Elm `Array`.\n",
+                "type": "Json.Decode.Attempt.Decoder Json.Decode.Attempt.WithDefaults a -> Json.Decode.Attempt.Decoder Json.Decode.Attempt.WithDefaults (Array.Array a)"
+            },
+            {
+                "name": "attempt",
+                "comment": " Attempt to decode with a decoder that could potentially fail\n",
+                "type": "Json.Decode.Attempt.Decoder Json.Decode.Attempt.MissingDefaults value -> Json.Decode.Value -> Result.Result Json.Decode.Error { errors : List.List Json.Decode.Error, value : value }"
+            },
+            {
+                "name": "boolOr",
+                "comment": " `Decoder` between a JSON boolean and an Elm `Bool`\n",
+                "type": "Basics.Bool -> Json.Decode.Attempt.Decoder Json.Decode.Attempt.WithDefaults Basics.Bool"
+            },
+            {
+                "name": "charOr",
+                "comment": " `Decoder` between a JSON string of length 1 and an Elm `Char`\n",
+                "type": "Char.Char -> Json.Decode.Attempt.Decoder Json.Decode.Attempt.WithDefaults Char.Char"
+            },
+            {
+                "name": "decode",
+                "comment": " Provided with defaults using the primitives defined in this module\ndecode will return a value composed of decoded values & defaults paired with\nwhatever associated errors may have happened along the way.\n",
+                "type": "Json.Decode.Attempt.Decoder Json.Decode.Attempt.WithDefaults value -> Json.Decode.Value -> Json.Decode.Attempt.Validated value"
+            },
+            {
+                "name": "dict",
+                "comment": " `Decoder` between a JSON object and an Elm `Dict`.\n",
+                "type": "Json.Decode.Attempt.Decoder Json.Decode.Attempt.WithDefaults a -> Json.Decode.Attempt.Decoder Json.Decode.Attempt.WithDefaults (Dict.Dict String.String a)"
+            },
+            {
+                "name": "doubleEncoded",
+                "comment": " For dealing with a json string inside a json payload.\n",
+                "type": "{ hideSensitiveInfo : Basics.Bool } -> Json.Decode.Attempt.Decoder Json.Decode.Attempt.WithDefaults a -> Json.Decode.Attempt.Decoder Json.Decode.Attempt.WithDefaults a"
+            },
+            {
+                "name": "filteredList",
+                "comment": " Swallows errors for elements but probably what you want for most use cases...\n",
+                "type": "Json.Decode.Decoder a -> Json.Decode.Attempt.Decoder Json.Decode.Attempt.WithDefaults (List.List a)"
+            },
+            {
+                "name": "floatOr",
+                "comment": " `Decoder` between a JSON number and an Elm `Float`\n",
+                "type": "Basics.Float -> Json.Decode.Attempt.Decoder Json.Decode.Attempt.WithDefaults Basics.Float"
+            },
+            {
+                "name": "intOr",
+                "comment": " `Decoder` between a JSON number and an Elm `Int`\n",
+                "type": "Basics.Int -> Json.Decode.Attempt.Decoder Json.Decode.Attempt.WithDefaults Basics.Int"
+            },
+            {
+                "name": "list",
+                "comment": " `Decoder` between a JSON array and an Elm `List`.\n\nUse when a default for the elements is available to fill if decoding fails.\nWill still collect errors for the failed decoders\n\n",
+                "type": "Json.Decode.Attempt.Decoder Json.Decode.Attempt.WithDefaults a -> Json.Decode.Attempt.Decoder Json.Decode.Attempt.WithDefaults (List.List a)"
+            },
+            {
+                "name": "map",
+                "comment": " ",
+                "type": "(a -> b) -> Json.Decode.Attempt.Decoder Json.Decode.Attempt.WithDefaults a -> Json.Decode.Attempt.Decoder Json.Decode.Attempt.WithDefaults b"
+            },
+            {
+                "name": "maybe",
+                "comment": " turn a regular decoder into a Validated decoder using Maybe & Nothing as the default.\n",
+                "type": "Json.Decode.Decoder a -> Json.Decode.Attempt.Decoder Json.Decode.Attempt.WithDefaults (Maybe.Maybe a)"
+            },
+            {
+                "name": "nullable",
+                "comment": " Specify that a decoder should use it's defaults when encountering a `null`\n",
+                "type": "Json.Decode.Attempt.Decoder Json.Decode.Attempt.WithDefaults c -> Json.Decode.Attempt.Decoder Json.Decode.Attempt.WithDefaults c"
+            },
+            {
+                "name": "oneOf",
+                "comment": " Provide a list of regular elm/json decoders and if all of them fail, provide\na default.\n",
+                "type": "List.List (Json.Decode.Decoder a) -> a -> Json.Decode.Attempt.Decoder Json.Decode.Attempt.WithDefaults a"
+            },
+            {
+                "name": "optional",
+                "comment": " optional only propagates errors where the decoder doesn't match the expected type.\n",
+                "type": "String.String -> List.List String.String -> Json.Decode.Attempt.Decoder Json.Decode.Attempt.WithDefaults f -> Json.Decode.Attempt.Decoder status (f -> b) -> Json.Decode.Attempt.Decoder status b"
+            },
+            {
+                "name": "required",
+                "comment": " Specify the name, and a `Decoder` for a field.\n\nrequired propagates errors when the name is missing in the resulting json.\n\n",
+                "type": "String.String -> List.List String.String -> Json.Decode.Attempt.Decoder Json.Decode.Attempt.WithDefaults f -> Json.Decode.Attempt.Decoder status (f -> b) -> Json.Decode.Attempt.Decoder status b"
+            },
+            {
+                "name": "risk",
+                "comment": " By introducing a raw elm/json decoder you're exposing the rest of your decoder\nto the possibility of failing\n",
+                "type": "Json.Decode.Decoder a -> Json.Decode.Attempt.Decoder status (a -> b) -> Json.Decode.Attempt.Decoder Json.Decode.Attempt.MissingDefaults b"
+            },
+            {
+                "name": "stringOr",
+                "comment": " `Decoder` between a JSON string and an Elm `String`\n",
+                "type": "String.String -> Json.Decode.Attempt.Decoder Json.Decode.Attempt.WithDefaults String.String"
+            },
+            {
+                "name": "succeed",
+                "comment": " wrap a value in a Decoder\n",
+                "type": "a -> Json.Decode.Attempt.Decoder Json.Decode.Attempt.WithDefaults a"
+            },
+            {
+                "name": "tests",
+                "comment": " Tests\n",
+                "type": "Test.Test"
+            },
+            {
+                "name": "toDecoder",
+                "comment": " Convert a Validated decoder into a regular elm/json Decoder\n",
+                "type": "Json.Decode.Attempt.Decoder status value -> Json.Decode.Decoder (Json.Decode.Attempt.Validated value)"
+            },
+            {
+                "name": "toTuple",
+                "comment": " In case you need a tuple instead of record accessors :man\\_shrugging:\n",
+                "type": "{ errors : List.List Json.Decode.Error, value : value } -> ( value, List.List Json.Decode.Error )"
+            },
+            {
+                "name": "triple",
+                "comment": " `Datum` between a JSON array of length 3 and an Elm triple.\n",
+                "type": "Json.Decode.Attempt.Decoder Json.Decode.Attempt.WithDefaults a -> Json.Decode.Attempt.Decoder Json.Decode.Attempt.WithDefaults b -> Json.Decode.Attempt.Decoder Json.Decode.Attempt.WithDefaults c -> Json.Decode.Attempt.Decoder Json.Decode.Attempt.WithDefaults ( a, b, c )"
+            },
+            {
+                "name": "try",
+                "comment": " andMap for adding a call to `risk`\n",
+                "type": "Json.Decode.Attempt.Decoder Json.Decode.Attempt.MissingDefaults a -> Json.Decode.Attempt.Decoder status (a -> b) -> Json.Decode.Attempt.Decoder Json.Decode.Attempt.MissingDefaults b"
+            },
+            {
+                "name": "tuple",
+                "comment": " `Datum` between a JSON array of length 2 and an Elm `Tuple`.\n",
+                "type": "Json.Decode.Attempt.Decoder Json.Decode.Attempt.WithDefaults a -> Json.Decode.Attempt.Decoder Json.Decode.Attempt.WithDefaults b -> Json.Decode.Attempt.Decoder Json.Decode.Attempt.WithDefaults ( a, b )"
+            },
+            {
+                "name": "unit",
+                "comment": " `Decoder` for a unit value, may be useful when responding to\nDELETE requests that return HTTP 201 No Content\n",
+                "type": "Json.Decode.Attempt.Decoder Json.Decode.Attempt.WithDefaults ()"
+            },
+            {
+                "name": "value",
+                "comment": " ",
+                "type": "Json.Decode.Attempt.Decoder Json.Decode.Attempt.WithDefaults Json.Encode.Value"
+            },
+            {
+                "name": "withDefault",
+                "comment": " Provide a default value, turning a Decoder that has the potential to fail\ndue to missing fields or bad data or, into a Decoder that will always succeed.\n",
+                "type": "a -> Json.Decode.Decoder a -> Json.Decode.Attempt.Decoder Json.Decode.Attempt.WithDefaults a"
+            }
+        ],
+        "binops": []
+    }
+]

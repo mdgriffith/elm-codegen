@@ -1,0 +1,123 @@
+[
+    {
+        "name": "QuadTree",
+        "comment": " QuadTree implementation in Elm.\n\n\n# QuadTree\n\n@docs QuadTree, init\n\n\n# Bounding Boxes\n\n@docs Bounded\n\n\n# Properties\n\n@docs length, getMaxSize, getBoundingBox\n\n\n# Modification\n\n@docs insert, insertList\n@docs remove\n@docs update\n\n\n# Querying\n\n@docs findItems, findIntersecting, neighborsWithin\n\n\n## Accessing Elements\n\n@docs toList\n\n\n# Applying functions\n\n@docs apply, applySafe, map, mapSafe\n\n\n# Reset a QuadTree\n\n@docs reset\n\n\n# Testing functions\n\n@docs isValid\n\n",
+        "unions": [
+            {
+                "name": "QuadTree",
+                "comment": " QuadTree type. Keeps its elements in the leaves and\nkeeps track of the maximum number of items that\ncan be inserted in each leaf.\n",
+                "args": [
+                    "units",
+                    "coordinates",
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Bounded",
+                "comment": " Extend this record type in order to use the QuadTree.\n",
+                "args": [
+                    "units",
+                    "coordinates",
+                    "a"
+                ],
+                "type": "{ a | boundingBox : BoundingBox2d.BoundingBox2d units coordinates }"
+            }
+        ],
+        "values": [
+            {
+                "name": "apply",
+                "comment": " Apply a function, that takes an item and an array of items\nand returns an item, to a quadTree. This function is\na useful helper for collision detection and response\nwhere the input function updates an object after colliding\nit with an array of objects.\n",
+                "type": "(a -> List.List a -> a) -> QuadTree.QuadTree units coordinates a -> QuadTree.QuadTree units coordinates a"
+            },
+            {
+                "name": "applySafe",
+                "comment": " Safe version of apply. Automatically calls reset after applying\nthe function on the quadTree.\n",
+                "type": "(QuadTree.Bounded units coordinates a -> List.List (QuadTree.Bounded units coordinates a) -> QuadTree.Bounded units coordinates a) -> QuadTree.QuadTree units coordinates (QuadTree.Bounded units coordinates a) -> QuadTree.QuadTree units coordinates (QuadTree.Bounded units coordinates a)"
+            },
+            {
+                "name": "findIntersecting",
+                "comment": " Find all items that actually intersect with the given item.\n\nSimilar to `findItems` but will return only intersection items, without neighboring items.\n\n",
+                "type": "QuadTree.Bounded units coordinates a -> QuadTree.QuadTree units coordinates (QuadTree.Bounded units coordinates a) -> List.List (QuadTree.Bounded units coordinates a)"
+            },
+            {
+                "name": "findItems",
+                "comment": " Find all items in the quadTree which share a leaf with the given\nitem or would share a leaf with the given item were the item in\nthe quadTree. Useful for finding items close to the given item.\n",
+                "type": "QuadTree.Bounded units coordinates a -> QuadTree.QuadTree units coordinates (QuadTree.Bounded units coordinates a) -> List.List (QuadTree.Bounded units coordinates a)"
+            },
+            {
+                "name": "getBoundingBox",
+                "comment": " Get the bounding box of a quadTree.\n",
+                "type": "QuadTree.QuadTree units coordinates a -> BoundingBox2d.BoundingBox2d units coordinates"
+            },
+            {
+                "name": "getMaxSize",
+                "comment": " Get the maxSize of a quadTree.\n",
+                "type": "QuadTree.QuadTree units coordinates a -> Basics.Int"
+            },
+            {
+                "name": "init",
+                "comment": " Construct an empty QuadTree given a bounding box and\na maxSize. The maxSize limits the number of elements\nthat each leaf of the QuadTree can hold.\n",
+                "type": "BoundingBox2d.BoundingBox2d units coordinates -> Basics.Int -> QuadTree.QuadTree units coordinates a"
+            },
+            {
+                "name": "insert",
+                "comment": " Insert an item into a quadTree.\n",
+                "type": "QuadTree.Bounded units coordinates a -> QuadTree.QuadTree units coordinates (QuadTree.Bounded units coordinates a) -> QuadTree.QuadTree units coordinates (QuadTree.Bounded units coordinates a)"
+            },
+            {
+                "name": "insertList",
+                "comment": " ",
+                "type": "List.List (QuadTree.Bounded units coordinates a) -> QuadTree.QuadTree units coordinates (QuadTree.Bounded units coordinates a) -> QuadTree.QuadTree units coordinates (QuadTree.Bounded units coordinates a)"
+            },
+            {
+                "name": "isValid",
+                "comment": " ",
+                "type": "QuadTree.QuadTree units coordinates (QuadTree.Bounded units coordinates a) -> Result.Result QuadTree.Error ()"
+            },
+            {
+                "name": "length",
+                "comment": " Find the number of items in a quadTree. If elements are\nduplicated in different leaves, they will be counted\nmultiple times.\n",
+                "type": "QuadTree.QuadTree units coordinates a -> Basics.Int"
+            },
+            {
+                "name": "map",
+                "comment": " The good 'ol map function.\nMaps a function over a quadTree and returns a new quadTree.\nNote: If your function modifies in any way the items'\nbounding boxes, consider using `mapSafe` or calling reset\nafter you are done as the quadTree may have items in the\nwrong place. This function doesn't do the clean-up\nautomatically. If you want such functionality, use `mapSafe`.\n",
+                "type": "(a -> b) -> QuadTree.QuadTree units coordinates a -> QuadTree.QuadTree units coordinates b"
+            },
+            {
+                "name": "mapSafe",
+                "comment": " Version of `map` where the quadTree is reset\nautomatically after applying the function.\n",
+                "type": "(QuadTree.Bounded units coordinates a -> QuadTree.Bounded units coordinates b) -> QuadTree.QuadTree units coordinates (QuadTree.Bounded units coordinates a) -> QuadTree.QuadTree units coordinates (QuadTree.Bounded units coordinates b)"
+            },
+            {
+                "name": "neighborsWithin",
+                "comment": " Find all the neighbors that are within a particular distance from an input object.\n",
+                "type": "Quantity.Quantity Basics.Float units -> BoundingBox2d.BoundingBox2d units coordinates -> QuadTree.QuadTree units coordinates (QuadTree.Bounded units coordinates a) -> List.List (QuadTree.Bounded units coordinates a)"
+            },
+            {
+                "name": "remove",
+                "comment": " Remove an item from a quadTree and return the new quadTree.\nIf an item is found in multiple leaves, then the item will\nbe removed from all leaves.\n",
+                "type": "a -> QuadTree.QuadTree units coordinates a -> QuadTree.QuadTree units coordinates a"
+            },
+            {
+                "name": "reset",
+                "comment": " Reset a quadTree. This function gets all items\nin a quadTree and pours them\ninto an empty quadTree. Useful if the items in\nthe quadTree find themselves in the wrong\nleaves.\n",
+                "type": "QuadTree.QuadTree units coordinates (QuadTree.Bounded units coordinates a) -> QuadTree.QuadTree units coordinates (QuadTree.Bounded units coordinates a)"
+            },
+            {
+                "name": "toList",
+                "comment": " Get all items from a quadTree. Conserves duplicates.\n",
+                "type": "QuadTree.QuadTree units coordinates a -> List.List a"
+            },
+            {
+                "name": "update",
+                "comment": " Update an item in a quadTree. This is useful if you just want to\nupdate a single item. This removes the item from the quadTree,\napplies the given updateFunction, and then inserts the updated\nitem into the quadTree.\n",
+                "type": "(QuadTree.Bounded units coordinates a -> QuadTree.Bounded units coordinates a) -> QuadTree.Bounded units coordinates a -> QuadTree.QuadTree units coordinates (QuadTree.Bounded units coordinates a) -> QuadTree.QuadTree units coordinates (QuadTree.Bounded units coordinates a)"
+            }
+        ],
+        "binops": []
+    }
+]

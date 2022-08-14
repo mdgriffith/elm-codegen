@@ -1,0 +1,98 @@
+[
+    {
+        "name": "SimpleGrid",
+        "comment": " This library provides types and functions for building views with CSS Grid layout.\nIt depends on the package `rtfeldman/elm-css` for constructing styled Html.\n\n\n# Definition of the CSS Grid container\n\n@docs gridContainer, mediaGridContainer\n\n\n# Definition of layouted Html, identified by a value of type `GridArea`\n\n@docs gridElement\n\n\n# Defining a (CSS Grid) template- and area-definitions\n\n@docs SimpleTemplate, simpleTemplate, GridArea, gridArea\n\n\n# Binding templates to media-queries\n\n@docs ResponsiveTemplate\n\n\n# Common length\n\n@docs Length, fr, px\n\n\n# Length for template definitions\n\n@docs LengthTemplate, units, auto, minmax, gap\n\n",
+        "unions": [
+            {
+                "name": "SimpleTemplate",
+                "comment": " Represents simple template for CSS Grid\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "GridArea",
+                "comment": " Represents a [grid-area](https://developer.mozilla.org/en-US/docs/Web/CSS/grid-area), uniquely identified by a name.\nThe name of the grid-area must be unique for the entire view.\n\n    gridArea \"header\"\n\nThe resulting GridArea will be appear in the resulting CSS in two places:\n\n1.  As an element of the template-definition.\n2.  As the value of the `grid-area` property in a Html element, which gets its layout from the template-definition.\n\n",
+                "args": [],
+                "type": "CssGrid.Areas.GridArea"
+            },
+            {
+                "name": "Length",
+                "comment": " Length with explicit units.\n",
+                "args": [],
+                "type": "CssGrid.Sizes.Length"
+            },
+            {
+                "name": "LengthTemplate",
+                "comment": " Length with explicit units plus template-specific length-values.\n",
+                "args": [],
+                "type": "CssGrid.Sizes.LengthTemplate"
+            },
+            {
+                "name": "ResponsiveTemplate",
+                "comment": " A pair of values, defining the media-queries (first value) for the template (second value) to be active.\n",
+                "args": [],
+                "type": "( List.List Css.Media.MediaQuery, SimpleGrid.SimpleTemplate )"
+            }
+        ],
+        "values": [
+            {
+                "name": "auto",
+                "comment": " The `auto` value from CSS Grid.\n",
+                "type": "SimpleGrid.LengthTemplate"
+            },
+            {
+                "name": "fr",
+                "comment": " A 'fractional' length\n",
+                "type": "Basics.Float -> SimpleGrid.Length"
+            },
+            {
+                "name": "gap",
+                "comment": " The `gap` function from CSS Grid.\n",
+                "type": "SimpleGrid.Length -> CssGrid.Sizes.Gap"
+            },
+            {
+                "name": "gridArea",
+                "comment": " Constructs a GridArea\n",
+                "type": "String.String -> SimpleGrid.GridArea"
+            },
+            {
+                "name": "gridContainer",
+                "comment": " Constructs a `div` container which will layout child-elements identified by areas defined in the template-definition(s).\nUses `SimpleTemplate` to provide one single layout.\n",
+                "type": "SimpleGrid.SimpleTemplate -> List.List (Html.Styled.Attribute msg) -> List.List (CssGrid.Areas.GridAreaElement msg) -> Html.Styled.Html msg"
+            },
+            {
+                "name": "gridElement",
+                "comment": " Constructs a Html element with `grid-area`\n",
+                "type": "SimpleGrid.GridArea -> List.List (Html.Styled.Html msg) -> CssGrid.Areas.GridAreaElement msg"
+            },
+            {
+                "name": "mediaGridContainer",
+                "comment": " Constructs a `div` container which will layout child-elements identified by areas defined in the template-definition(s).\nUses `ResponsiveTemplate` to provide a responsive layout for more than one media device.\n",
+                "type": "List.List SimpleGrid.ResponsiveTemplate -> List.List (Html.Styled.Attribute msg) -> List.List (CssGrid.Areas.GridAreaElement msg) -> Html.Styled.Html msg"
+            },
+            {
+                "name": "minmax",
+                "comment": " The `minmax` function from CSS Grid.\n",
+                "type": "SimpleGrid.Length -> SimpleGrid.Length -> SimpleGrid.LengthTemplate"
+            },
+            {
+                "name": "px",
+                "comment": " A length in absolute pixels.\n",
+                "type": "Basics.Int -> SimpleGrid.Length"
+            },
+            {
+                "name": "simpleTemplate",
+                "comment": " Constructor function. The resulting value represents a minimal layout definition with areas, grid-gap and grid-template-columns.\nA value of this type, when used somewhere inside the `view` function, will produce CSS similar to this example:\n\n        display: grid;\n        grid-gap: 20px;\n        grid-template-columns: 1fr 3fr;\n        grid-template-areas:\n          \"header  header\"\n          \"nav     nav\"\n          \"sidebar content\"\n          \"ad      footer\";\n\nImplicitly, grid-template-rows are defined as needed by the area definition.\n\nSee also [common layout](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Grid_Layout/Realizing_common_layouts_using_CSS_Grid_Layout).\n\n",
+                "type": "CssGrid.Areas.Areas -> CssGrid.Sizes.Gap -> List.List CssGrid.Sizes.LengthTemplate -> SimpleGrid.SimpleTemplate"
+            },
+            {
+                "name": "units",
+                "comment": " Constructs a length from a , which can be used in a template-definition (like `grid-template-columns`)\n",
+                "type": "SimpleGrid.Length -> SimpleGrid.LengthTemplate"
+            }
+        ],
+        "binops": []
+    }
+]

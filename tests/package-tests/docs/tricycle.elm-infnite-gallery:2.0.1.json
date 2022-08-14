@@ -1,0 +1,71 @@
+[
+    {
+        "name": "InfiniteGallery",
+        "comment": "\n\n\n# Configuration\n\n@docs Config, defaultConfig\n\n\n# Framework\n\n@docs init, update, view\n\n\n# Control\n\n@docs previous, next, goTo, setIndex\n\n\n# Definitions\n\n@docs Gallery, Msg\n\n",
+        "unions": [
+            {
+                "name": "Gallery",
+                "comment": " The model of a Gallery\nYou can create a new Gallery using the init function.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Msg",
+                "comment": " The Gallery's internal Msg's\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " The configuration options of a Gallery.\nThese can be passed in while initializing a new Gallery.\n",
+                "args": [],
+                "type": "{ rootClassName : String.String, id : String.String, transitionSpeed : Basics.Int, swipeOffset : Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultConfig",
+                "comment": " A convenience function that returns some default configuration options.\n",
+                "type": "InfiniteGallery.Config"
+            },
+            {
+                "name": "goTo",
+                "comment": " Go to a specific slide, animated\n",
+                "type": "Basics.Int -> InfiniteGallery.Gallery -> ( InfiniteGallery.Gallery, Platform.Cmd.Cmd InfiniteGallery.Msg )"
+            },
+            {
+                "name": "init",
+                "comment": " Create a new Gallery, with given size, config and slides\n",
+                "type": "{ width : String.String, height : String.String } -> InfiniteGallery.Config -> List.List (Html.Html InfiniteGallery.Msg) -> InfiniteGallery.Gallery"
+            },
+            {
+                "name": "next",
+                "comment": " Go to the next slide\n",
+                "type": "InfiniteGallery.Gallery -> ( InfiniteGallery.Gallery, Platform.Cmd.Cmd InfiniteGallery.Msg )"
+            },
+            {
+                "name": "previous",
+                "comment": " Go to the previous slide\n",
+                "type": "InfiniteGallery.Gallery -> ( InfiniteGallery.Gallery, Platform.Cmd.Cmd InfiniteGallery.Msg )"
+            },
+            {
+                "name": "setIndex",
+                "comment": " Go to a specific slide, direclty\n",
+                "type": "Basics.Int -> InfiniteGallery.Gallery -> ( InfiniteGallery.Gallery, Platform.Cmd.Cmd InfiniteGallery.Msg )"
+            },
+            {
+                "name": "update",
+                "comment": " Update the gallery with given Msg.\nYou would need to wrap and unwrap these Msg's inside your own update function.\n\nExample:\n\n    type Msg\n        = MsgForGallery Gallery.Msg\n\n    update : Msg -> Model -> Model\n    update msg model =\n        case msg of\n            MsgForGallery msg ->\n                { model | gallery = Gallery.update msg model.gallery }\n\n",
+                "type": "InfiniteGallery.Msg -> InfiniteGallery.Gallery -> ( InfiniteGallery.Gallery, Platform.Cmd.Cmd InfiniteGallery.Msg )"
+            },
+            {
+                "name": "view",
+                "comment": " Render your gallery\ne.g.\n\nExample:\n\n    type Msg\n        = MsgForGallery Gallery.Msg\n\n    view : Model -> Html Msg\n    view model =\n        Html.div []\n            [ Gallery.view model.gallery\n                |> Html.map MsgForGallery\n            ]\n\n",
+                "type": "InfiniteGallery.Gallery -> Html.Html InfiniteGallery.Msg"
+            }
+        ],
+        "binops": []
+    }
+]

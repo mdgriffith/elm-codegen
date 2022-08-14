@@ -1,0 +1,51 @@
+[
+    {
+        "name": "Compare",
+        "comment": " DSL for creating compare functions\n\nThis small module provides a concise DSL for creating comparison functions.\n\n\n# Comparisons by value\n\nOftentimes, you will be able to convert a value to another, comparable, value. `by` takes a function which converts a value to a comparable value. For example, to get a list of bank account holders, ordered by wealth:\n\n    >>> List.sortWith (Compare.by (.transactions >> List.sum) descending)\n    ...     [ { holder = \"James Joyce\", transactions = [100.00, -25.00, -2.99, 30.00] }\n    ...     , { holder = \"Bill Bryson\", transactions = [999.02, -233.00, -400.00, -300.00] }\n    ...     ]\n    ...         |> List.map .holder\n    [ \"James Joyce\", \"Bill Bryson\" ]\n\n@docs by\n\n\n# If comparing by the first value does not create a definitive order, comparisons can be chained with `thenBy` and `thenByReverse`. A typical example would be sorting an address book by last name then first name:\n\n    >>> List.sortWith (Compare.by .lastName thenBy .firstName thenByReverse .age ascending)\n    ...     [ { firstName = \"Andy\", lastName = \"Baldwin\", age = 90 }\n    ...     , { firstName = \"Bert\", lastName = \"Anderson\", age = 23 }\n    ...     , { firstName = \"Alec\", lastName = \"Anderson\", age = 8 }\n    ...     , { firstName = \"Alec\", lastName = \"Anderson\", age = 100 }\n    ...     ]\n    [ { firstName = \"Alec\", lastName = \"Anderson\", age = 100 }\n    , { firstName = \"Alec\", lastName = \"Anderson\", age = 8 }\n    , { firstName = \"Bert\", lastName = \"Anderson\", age = 23 }\n    , { firstName = \"Andy\", lastName = \"Baldwin\", age = 90 }\n    ]\n\n@docs thenBy, thenByReverse\n\nComparison declarations always end with either `ascending` or `descending`. These functions return the final comparison function of type `a -> a -> Basics.Order`.\n\n@docs ascending, descending\n\n\n# Comparisons with arbitrary compare functions\n\nIf converting values to comparable types alone is not enough, arbitrary comparison functions can be introducted by swapping out `by` for `with`.\n\n    >>> Compare.with\n    ...     (\\player opponent ->\n    ...         if List.member (opponent.name) player.alwaysBeats then\n    ...             GT\n    ...         else if List.member (player.name) opponent.alwaysBeats then\n    ...             LT\n    ...         else\n    ...             EQ\n    ...     )\n    ...     thenBy .strength ascending\n    ...     { name = \"Ogre\"\n    ...     , strength = 100\n    ...     , alwaysBeats = [ \"Yeti\", \"Dragon\" ]\n    ...     }\n    ...     { name = \"Cyborg\"\n    ...     , strength = 20\n    ...     , alwaysBeats = [ \"Ogre\", \"Kappa\" ]\n    ...     }\n    LT\n\n@docs with, thenWith, thenWithReverse\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "ascending",
+                "comment": " ",
+                "type": "(a -> a -> Basics.Order) -> a -> a -> Basics.Order"
+            },
+            {
+                "name": "by",
+                "comment": " ",
+                "type": "(a -> comparable) -> ((a -> a -> Basics.Order) -> b) -> b"
+            },
+            {
+                "name": "descending",
+                "comment": " ",
+                "type": "(a -> a -> Basics.Order) -> a -> a -> Basics.Order"
+            },
+            {
+                "name": "thenBy",
+                "comment": " ",
+                "type": "(a -> a -> Basics.Order) -> (a -> comparable) -> ((a -> a -> Basics.Order) -> b) -> b"
+            },
+            {
+                "name": "thenByReverse",
+                "comment": " ",
+                "type": "(a -> a -> Basics.Order) -> (a -> comparable) -> ((a -> a -> Basics.Order) -> b) -> b"
+            },
+            {
+                "name": "thenWith",
+                "comment": " ",
+                "type": "(a -> a -> Basics.Order) -> (a -> a -> Basics.Order) -> ((a -> a -> Basics.Order) -> b) -> b"
+            },
+            {
+                "name": "thenWithReverse",
+                "comment": " ",
+                "type": "(a -> a -> Basics.Order) -> (a -> a -> Basics.Order) -> ((a -> a -> Basics.Order) -> b) -> b"
+            },
+            {
+                "name": "with",
+                "comment": " ",
+                "type": "(a -> a -> Basics.Order) -> ((a -> a -> Basics.Order) -> b) -> b"
+            }
+        ],
+        "binops": []
+    }
+]

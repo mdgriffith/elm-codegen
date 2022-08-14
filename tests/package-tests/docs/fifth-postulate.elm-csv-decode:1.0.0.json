@@ -1,0 +1,143 @@
+[
+    {
+        "name": "Csv.Decode",
+        "comment": " Turn CSV Values into Elm values. Inspired by [`elm/json`][elm-json], so make sure to check out this [intro to\nJSON decoders][guide] to get a feel for how this library works!\n\n[guide]: https://guide.elm-lang.org/effects/json.html\n[elm-json]: https://package.elm-lang.org/packages/elm/json/latest/\n\nNote this library does not include an underlying CSV parser. It assumes you are using something like [`periodic/elm-csv`][periodic] to get from `String` to `Csv`, where `Csv` is:\n\n    type alias Csv =\n        { headers : List String\n        , records : List (List String)\n        }\n\nThis library gets you the rest of the way, to a list of your own types.\n\n[periodic]: https://package.elm-lang.org/packages/periodic/elm-csv/latest/\n\nIn the examples we make use of a `decodeString` function. Which is defined as\n\n    decodeString : Decoder a -> String -> Result Error (List a)\n    decodeString decoder input =\n        input\n            |> (++) \"\\n\"\n            |> Csv.parse\n            |> Result.mapError (\\_ -> CsvParseError)\n            |> Result.andThen (decode decoder)\n\n\n# Types\n\n@docs Decoder, Csv, Error, Kind\n\n\n# Primitives\n\n@docs string, int, float, bool\n\n\n# Run Decoders\n\n@docs decode\n\n\n# Mapping\n\n@docs map, map2, map3\n\n\n# Fancy Decoding\n\n@docs succeed, fail, maybe, oneOf\n\n",
+        "unions": [
+            {
+                "name": "Decoder",
+                "comment": " A value that knows how to decode CSV values.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Error",
+                "comment": " A structured error describing exactly how the decoder failed. You can use\nthis to create more elaborate visualizations of a decoder problem. For example,\nyou could show the entire CSV record and show the part causing the failure in\nred.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "CsvParseError",
+                        []
+                    ],
+                    [
+                        "Not",
+                        [
+                            "Csv.Decode.Kind"
+                        ]
+                    ],
+                    [
+                        "FailWithReason",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "NonApply",
+                        []
+                    ],
+                    [
+                        "MultipleErrors",
+                        [
+                            "List.List ( Basics.Int, Csv.Decode.Error )"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Kind",
+                "comment": " Kind determines what type a decoder expects. Used in combination with the `Not` error.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "AString",
+                        []
+                    ],
+                    [
+                        "ABool",
+                        []
+                    ],
+                    [
+                        "AInt",
+                        []
+                    ],
+                    [
+                        "AFloat",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Csv",
+                "comment": " The raw CSV data structure.\n",
+                "args": [],
+                "type": "{ headers : List.List String.String, records : List.List (List.List String.String) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "bool",
+                "comment": " Decode a CSV boolean into an Elm `Bool`.\n\n    decodeString bool \"true\"  == Ok [ True ]\n    decodeString bool \"42\"    == Err ...\n    decodeString bool \"3.14\"  == Err ...\n    decodeString bool \"hello\" == Err ...\n\n",
+                "type": "Csv.Decode.Decoder Basics.Bool"
+            },
+            {
+                "name": "decode",
+                "comment": " Decode the given `Csv` into a list of custom value by running `Decoder` on it.\nThis will fail if any of the records can not be decoded by the `Decoder` for some reason.\n",
+                "type": "Csv.Decode.Decoder a -> Csv.Decode.Csv -> Result.Result Csv.Decode.Error (List.List a)"
+            },
+            {
+                "name": "fail",
+                "comment": " Ignore the CSV and make the decoder fail. This is handy when used with\n`oneOf` where you want to give a custom error message in some\ncase.\n",
+                "type": "String.String -> Csv.Decode.Decoder a"
+            },
+            {
+                "name": "float",
+                "comment": " Decode a CSV number into an Elm `Float`.\n\n    decodeString float \"true\"  == Err ..\n    decodeString float \"42\"    == Ok [ 42 ]\n    decodeString float \"3.14\"  == Ok [ 3.14 ]\n    decodeString float \"hello\" == Err ...\n\n",
+                "type": "Csv.Decode.Decoder Basics.Float"
+            },
+            {
+                "name": "int",
+                "comment": " Decode a CSV number into an Elm `Int`.\n\n    decodeString int \"true\"  == Err ...\n    decodeString int \"42\"    == Ok [ 42 ]\n    decodeString int \"3.14\"  == Err ...\n    decodeString int \"hello\" == Err ...\n\n",
+                "type": "Csv.Decode.Decoder Basics.Int"
+            },
+            {
+                "name": "map",
+                "comment": " Transform a decoder. Maybe you just want to know the length of a string:\n\n    import String\n\n    stringLength : Decoder Int\n    stringLength =\n        map String.length string\n\nIt is often helpful to use `map` with `oneOf`, like when defining `maybe`:\n\n    maybe : Decoder a -> Decoder (Maybe a)\n    maybe decoder =\n        oneOf\n            [ map Just decoder\n            , succeed Nothing\n            ]\n\n",
+                "type": "(a -> value) -> Csv.Decode.Decoder a -> Csv.Decode.Decoder value"
+            },
+            {
+                "name": "map2",
+                "comment": " Try two decoders and then combine the result. We can use this to decode\nobjects with many fields:\n\n\n    type alias Point =\n        { x : Float, y : Float }\n\n    point : Decoder Point\n    point =\n        map2 Point\n            float\n            float\n\n    -- decodeString point \"3,4\" == Ok { x = 3, y = 4 }\n\nIt tries each individual decoder and puts the result together with the `Point`\nconstructor.\n\n",
+                "type": "(a -> b -> value) -> Csv.Decode.Decoder a -> Csv.Decode.Decoder b -> Csv.Decode.Decoder value"
+            },
+            {
+                "name": "map3",
+                "comment": " Try three decoders and then combine the result. We can use this to decode\nobjects with many fields:\n\n\n    type alias Person =\n        { name : String, age : Int, height : Float }\n\n    person : Decoder Person\n    person =\n        map3 Person\n            string\n            int\n            float\n\n    -- csv = \"tom,42,1.8\"\n    -- decodeString person csv == Ok { name = \"tom\", age = 42, height = 1.8 }\n\nLike `map2` it tries each decoder in order and then give the results to the\n`Person` constructor. That can be any function though!\n\n",
+                "type": "(a -> b -> c -> value) -> Csv.Decode.Decoder a -> Csv.Decode.Decoder b -> Csv.Decode.Decoder c -> Csv.Decode.Decoder value"
+            },
+            {
+                "name": "maybe",
+                "comment": " Helpful for dealing with optional fields. Here are a few slightly different\nexamples:\n\n    decodeString (maybe int) \"42\" == Ok [ Just 42 ]\n\n    decodeString (maybe int) \",42\" == Ok [ Nothing ]\n\n",
+                "type": "Csv.Decode.Decoder a -> Csv.Decode.Decoder (Maybe.Maybe a)"
+            },
+            {
+                "name": "oneOf",
+                "comment": " Try a bunch of different decoders. This can be useful if the CSV may come\nin a couple different formats. For example, say you want to read an array of\nnumbers, but some of them are `null`.\n\n    import String\n\n    badInt : Decoder Int\n    badInt =\n        oneOf [ int, null 0 ]\n\n    -- decodeString (list badInt) \"[1,2,null,4]\" == Ok [1,2,0,4]\n\nWhy would someone generate CSV like this? Questions like this are not good\nfor your health. The point is that you can use `oneOf` to handle situations\nlike this!\n\n",
+                "type": "List.List (Csv.Decode.Decoder a) -> Csv.Decode.Decoder a"
+            },
+            {
+                "name": "string",
+                "comment": " Decode a CSV string into an Elm `String`.\n\n    decodeString string \"true\" == Ok [ \"true\" ]\n\n    decodeString string \"42\" == Ok [ \"42\" ]\n\n    decodeString string \"3.14\" == Ok [ \"3.14\" ]\n\n    decodeString string \"hello\" == Ok [ \"hello\" ]\n\n",
+                "type": "Csv.Decode.Decoder String.String"
+            },
+            {
+                "name": "succeed",
+                "comment": " Ignore the CSV and produce a certain Elm value.\n\n    decodeString (succeed 42) \"true\"  == Ok [ 42 ]\n    decodeString (succeed 42) \"1,2,3\" == Ok [ 42 ]\n    decodeString (succeed 42) \"hello\" == Ok [ 42 ]\n\nThis is handy when used with `oneOf`.\n\n",
+                "type": "a -> Csv.Decode.Decoder a"
+            }
+        ],
+        "binops": []
+    }
+]

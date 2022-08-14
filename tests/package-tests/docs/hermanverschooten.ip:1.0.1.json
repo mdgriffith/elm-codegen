@@ -1,0 +1,55 @@
+[
+    {
+        "name": "IP",
+        "comment": " This library allows you to validate a IP address.\n\n\n# Validation\n\n@docs validate\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "validate",
+                "comment": " Check to see if the given IP Address is valid.\n\n    validate \"192.168.0.1\" == True\n\n    validate \"320.16.1.1\" == False\n\n",
+                "type": "String.String -> Basics.Bool"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Subnet",
+        "comment": " This library contains a number of functions for working with subnets.\nIt can validate subnet mask strings, see if an address is inside a given subnet.\n\n\n# Validation\n\n@docs validate\n\n\n# CIDR\n\n@docs fromCIDR, toCIDR\n\n\n# Common functionality\n\n@docs base, hosts, included\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "base",
+                "comment": " Returns the base IP of the given subnet.\n\n    base ( \"192.168.1.25\", \"255.255.255.0\" ) == Just \"192.168.1.0\"\n\n    base ( \"192.168.1.25\", \"255.255.255.252\" ) == Just \"192.168.1.24\"\n\n    base ( \"invalid ip\", \"or invalid subnet\" ) == Nothing\n\n",
+                "type": "( String.String, String.String ) -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "fromCIDR",
+                "comment": " Get the String representation for a given CIDR.\n\n    fromCIDR 24 == Just \"255.255.255.0\"\n\n",
+                "type": "Basics.Int -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "hosts",
+                "comment": " Give a subnet mask, calculates the number of host possible.\n\n    hosts \"255.255.255.0\" == 256\n\n",
+                "type": "String.String -> Basics.Int"
+            },
+            {
+                "name": "included",
+                "comment": " Is the IP address in the subnet.\n\n    included ( \"192.168.1.0\", \"255.255.255.0\" ) \"192.168.1.5\" == True\n\n    included ( \"192.168.17.0\", \"255.255.254.0\" ) \"192.168.18.5\" == False\n\n",
+                "type": "( String.String, String.String ) -> String.String -> Basics.Bool"
+            },
+            {
+                "name": "toCIDR",
+                "comment": " Calculates the CIDR length in bits from a subnet mask.\n\n    toCIDR \"255.255.255.0\" == 24\n\n    toCIDR \"255.255.254.0\" == 23\n\n",
+                "type": "String.String -> Basics.Int"
+            },
+            {
+                "name": "validate",
+                "comment": " Check to see if the given subnet is valid.\n\n    validate \"255.255.255.0\" == True\n\n    validate \"255.0.255.128\" == False\n\n",
+                "type": "String.String -> Basics.Bool"
+            }
+        ],
+        "binops": []
+    }
+]

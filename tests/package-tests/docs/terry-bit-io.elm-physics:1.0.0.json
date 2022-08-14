@@ -1,0 +1,400 @@
+[
+    {
+        "name": "Physics.Body",
+        "comment": "\n\n@docs Body, block, plane, sphere, cylinder, particle\n\n\n## Behavior\n\n@docs Behavior, dynamic, static, withBehavior\n\n\n## Properties\n\n@docs frame, originPoint, velocity, angularVelocity, velocityAt, centerOfMass, mass\n\n\n## Position and orientation\n\n@docs moveTo, translateBy, rotateAround\n\n\n## User-Defined Data\n\n@docs data, withData\n\n\n## Interaction\n\n@docs applyForce, applyImpulse\n\n\n## Advanced\n\n@docs withMaterial, compound, withDamping, transformWithInverseInertia\n\n",
+        "unions": [
+            {
+                "name": "Behavior",
+                "comment": " Bodies may have static or dynamic behavior.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Body",
+                "comment": " Represents a physical body containing\nuser defined data, like a WebGL mesh.\n\nBy default bodies don’t move. To change this,\nuse [withBehavior](#withBehavior).\n\nAll bodies start out centered on the origin,\nuse [moveTo](#moveTo) to set the position.\n\nThe supported bodies are:\n\n  - [block](#block),\n  - [plane](#plane),\n  - [sphere](#sphere),\n  - [cylinder](#cylinder),\n  - [particle](#particle).\n\nFor complex bodies check [compound](#compound).\n\n",
+                "args": [
+                    "data"
+                ],
+                "type": "Internal.Body.Protected data"
+            }
+        ],
+        "values": [
+            {
+                "name": "angularVelocity",
+                "comment": " Get the angular velocity of a body\n",
+                "type": "Physics.Body.Body data -> Vector3d.Vector3d AngularSpeed.RadiansPerSecond Physics.Coordinates.WorldCoordinates"
+            },
+            {
+                "name": "applyForce",
+                "comment": " Apply a force in a direction at a point on a body.\nThe force will be applied during one simulation step.\n\nKeep applying the force every simulation step to accelerate.\n\n    pushedBox =\n        box\n            |> applyForce\n                (Force.newtons 50)\n                Direction3d.positiveY\n                pointOnBox\n\n",
+                "type": "Quantity.Quantity Basics.Float Force.Newtons -> Direction3d.Direction3d Physics.Coordinates.WorldCoordinates -> Point3d.Point3d Length.Meters Physics.Coordinates.WorldCoordinates -> Physics.Body.Body data -> Physics.Body.Body data"
+            },
+            {
+                "name": "applyImpulse",
+                "comment": " Apply an impulse in a direction at a point on a body.\nApplying an impulse is the same as applying a force during\nthe interval of time. The changes are applied to velocity\nand angular velocity of the body.\n\nFor example, to hit a billiard ball with a force of 50 newtons,\nwith the duration of the hit 0.005 seconds:\n\n    impulse =\n        Force.newtons 50\n            |> Quantity.times (Duration.seconds 0.005)\n\n    hitCueBall =\n        cueBall\n            |> applyImpulse\n                impulse\n                Direction3d.positiveY\n                hitPoint\n\n",
+                "type": "Quantity.Quantity Basics.Float (Quantity.Product Force.Newtons Duration.Seconds) -> Direction3d.Direction3d Physics.Coordinates.WorldCoordinates -> Point3d.Point3d Length.Meters Physics.Coordinates.WorldCoordinates -> Physics.Body.Body data -> Physics.Body.Body data"
+            },
+            {
+                "name": "block",
+                "comment": " A block is created from elm-geometry [Block3d](https://package.elm-lang.org/packages/ianmackenzie/elm-geometry/latest/Block3d).\nTo create a 1x1x1 cube, centered at the origin of\nthe body, call this:\n\n    cubeBody =\n        block\n            (Block3d.centeredOn\n                Frame3d.atOrigin\n                ( meters 1, meters 1, meters 1 )\n            )\n            data\n\n",
+                "type": "Block3d.Block3d Length.Meters Physics.Coordinates.BodyCoordinates -> data -> Physics.Body.Body data"
+            },
+            {
+                "name": "centerOfMass",
+                "comment": " Get the center of mass of a body in the body coordinate system.\n",
+                "type": "Physics.Body.Body data -> Point3d.Point3d Length.Meters Physics.Coordinates.BodyCoordinates"
+            },
+            {
+                "name": "compound",
+                "comment": " Make a compound body from a list of [shapes](Physics-Shape#Shape).\n\nFor example, the [sphere](#sphere) from above can be defined like this:\n\n    sphere radius data =\n        compound\n            [ Shape.sphere\n                (Sphere3d.atOrigin (meters 1))\n            ]\n            data\n\nWe only support [rigid bodies](https://en.wikipedia.org/wiki/Rigid_body).\n\nUnder the hood, we find the center of mass and the [inertia tensor](https://en.wikipedia.org/wiki/Moment_of_inertia#Inertia_tensor).\nIt is assumed, that the shapes have the same density and do not overlap.\n\n",
+                "type": "List.List Physics.Shape.Shape -> data -> Physics.Body.Body data"
+            },
+            {
+                "name": "cylinder",
+                "comment": " A cylinder is created from elm-geometry [Cylinder3d](https://package.elm-lang.org/packages/ianmackenzie/elm-geometry/latest/Cylinder3d).\nTo create a vertical cylinder, centered at the origin of\nthe body, call this:\n\n    cylinderBody =\n        cylinder\n            (Cylinder3d.centeredOn\n                Point3d.origin\n                Direction3d.z\n                { radius = Length.meter, length = Length.meter }\n            )\n            data\n\nThis cylinder is approximated with a convex polyhedron mesh that has 12 side faces.\n\nFor more subdivisions at the cost of worse performance,\ncreate a [compound body](#compound) with [Shape.cylinder](Physics-Shape#cylinder).\n\n",
+                "type": "Cylinder3d.Cylinder3d Length.Meters Physics.Coordinates.BodyCoordinates -> data -> Physics.Body.Body data"
+            },
+            {
+                "name": "data",
+                "comment": " Get user-defined data.\n",
+                "type": "Physics.Body.Body data -> data"
+            },
+            {
+                "name": "dynamic",
+                "comment": " Dynamic bodies move and react to forces and collide with\nother dynamic and static bodies.\n",
+                "type": "Mass.Mass -> Physics.Body.Behavior"
+            },
+            {
+                "name": "frame",
+                "comment": " Get the position and orientation of the body in the world\nas [Frame3d](https://package.elm-lang.org/packages/ianmackenzie/elm-geometry/latest/Frame3d).\n\nThis is useful to transform points and directions between\nworld and body coordinates.\n\n",
+                "type": "Physics.Body.Body data -> Frame3d.Frame3d Length.Meters Physics.Coordinates.WorldCoordinates { defines : Physics.Coordinates.BodyCoordinates }"
+            },
+            {
+                "name": "mass",
+                "comment": " Get a mass of a body. Returns Nothing if a body is not dynamic.\n",
+                "type": "Physics.Body.Body data -> Maybe.Maybe Mass.Mass"
+            },
+            {
+                "name": "moveTo",
+                "comment": " Set the position of the body in the world,\ne.g. to raise a body 5 meters above the origin:\n\n    movedBody =\n        body\n            |> moveTo (Point3d.meters 0 0 5)\n\n",
+                "type": "Point3d.Point3d Length.Meters Physics.Coordinates.WorldCoordinates -> Physics.Body.Body data -> Physics.Body.Body data"
+            },
+            {
+                "name": "originPoint",
+                "comment": " Get the origin point of a body in the world\n",
+                "type": "Physics.Body.Body data -> Point3d.Point3d Length.Meters Physics.Coordinates.WorldCoordinates"
+            },
+            {
+                "name": "particle",
+                "comment": " A particle is an abstract point that doesn’t have dimensions.\nParticles don’t collide with each other.\n",
+                "type": "data -> Physics.Body.Body data"
+            },
+            {
+                "name": "plane",
+                "comment": " A plane with the normal that points\nin the direction of the z axis.\n\nA plane is collidable in the direction of the normal.\nPlanes don’t collide with other planes and are always static.\n\n",
+                "type": "data -> Physics.Body.Body data"
+            },
+            {
+                "name": "rotateAround",
+                "comment": " Rotate the body in the world around axis,\ne.g. to rotate a body 45 degrees around Z axis:\n\n    movedBody =\n        body\n            |> rotateAround Axis3d.z (Angle.degrees 45)\n\n",
+                "type": "Axis3d.Axis3d Length.Meters Physics.Coordinates.WorldCoordinates -> Angle.Angle -> Physics.Body.Body data -> Physics.Body.Body data"
+            },
+            {
+                "name": "sphere",
+                "comment": " A sphere is created from elm-geometry [Sphere3d](https://package.elm-lang.org/packages/ianmackenzie/elm-geometry/latest/Sphere3d).\n\nTo create a 1 meter radius sphere, that is centered\nat the origin of the body, call this:\n\n    sphereBody =\n        sphere\n            (Sphere3d.atOrigin (meters 1))\n            data\n\n",
+                "type": "Sphere3d.Sphere3d Length.Meters Physics.Coordinates.BodyCoordinates -> data -> Physics.Body.Body data"
+            },
+            {
+                "name": "static",
+                "comment": " Static bodies don’t move and only collide with dynamic bodies.\n",
+                "type": "Physics.Body.Behavior"
+            },
+            {
+                "name": "transformWithInverseInertia",
+                "comment": " Transform a vector using the inverse moment of inertia of a body.\n\nThis lets you compute angular acceleration from torque,\nor angular velocity contribution from impulse.\n\nYou’ll most likely need to use [Vector3d.unwrap](https://package.elm-lang.org/packages/ianmackenzie/elm-geometry/latest/Vector3d#unwrap) on the result.\n\n",
+                "type": "Physics.Body.Body data -> Vector3d.Vector3d units Physics.Coordinates.WorldCoordinates -> Vector3d.Vector3d (Quantity.Rate units (Quantity.Product Mass.Kilograms (Quantity.Squared Length.Meters))) Physics.Coordinates.WorldCoordinates"
+            },
+            {
+                "name": "translateBy",
+                "comment": " Move the body in the world relative to its current position,\ne.g. to translate a body down by 5 meters:\n\n    translatedBody =\n        body\n            |> translateBy (Vector3d.meters 0 0 -5)\n\n",
+                "type": "Vector3d.Vector3d Length.Meters Physics.Coordinates.WorldCoordinates -> Physics.Body.Body data -> Physics.Body.Body data"
+            },
+            {
+                "name": "velocity",
+                "comment": " Get the linear velocity of a body\n",
+                "type": "Physics.Body.Body data -> Vector3d.Vector3d Speed.MetersPerSecond Physics.Coordinates.WorldCoordinates"
+            },
+            {
+                "name": "velocityAt",
+                "comment": " Get the linear velocity of a point on a body.\n\nThis takes into account both linear and angular velocities of the body.\n\n",
+                "type": "Point3d.Point3d Length.Meters Physics.Coordinates.WorldCoordinates -> Physics.Body.Body data -> Vector3d.Vector3d Speed.MetersPerSecond Physics.Coordinates.WorldCoordinates"
+            },
+            {
+                "name": "withBehavior",
+                "comment": " Change the behavior, e.g. to make a body dynamic:\n\n    dynamicBody =\n        staticBody\n            |> withBehavior (dynamic (Mass.kilograms 5))\n\n",
+                "type": "Physics.Body.Behavior -> Physics.Body.Body data -> Physics.Body.Body data"
+            },
+            {
+                "name": "withDamping",
+                "comment": " Set linear and angular damping, in order to decrease velocity over time.\n\nThese parameters specify the proportion of velocity lost per second.\n\nThis may be useful to e.g. simulate the friction of a sphere rolling on\nthe flat surface. The normal friction between these surfaces doesn’t work,\nbecause there is just 1 contact point.\n\nInputs are clamped between 0 and 1, the defaults are 0.01.\n\n",
+                "type": "{ linear : Basics.Float, angular : Basics.Float } -> Physics.Body.Body data -> Physics.Body.Body data"
+            },
+            {
+                "name": "withData",
+                "comment": " Update user-defined data.\n",
+                "type": "data -> Physics.Body.Body data -> Physics.Body.Body data"
+            },
+            {
+                "name": "withMaterial",
+                "comment": " Set the [material](Physics-Material) to control friction and bounciness.\n",
+                "type": "Physics.Material.Material -> Physics.Body.Body data -> Physics.Body.Body data"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Physics.Constraint",
+        "comment": "\n\n@docs Constraint\n\n@docs pointToPoint, hinge, distance, lock\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Constraint",
+                "comment": " Constraint allows to limit the freedom of movement\nof two bodies with relation to each other.\n",
+                "args": [],
+                "type": "Internal.Constraint.Protected"
+            }
+        ],
+        "values": [
+            {
+                "name": "distance",
+                "comment": " Keep the centers of two bodies at the constant distance\nfrom each other.\n",
+                "type": "Length.Length -> Physics.Constraint.Constraint"
+            },
+            {
+                "name": "hinge",
+                "comment": " Keep two bodies connected with each other and limit the freedom of rotation.\nUseful for e.g. connecting a window to a window frame, or to connect a wheel to a car.\n",
+                "type": "Axis3d.Axis3d Length.Meters Physics.Coordinates.BodyCoordinates -> Axis3d.Axis3d Length.Meters Physics.Coordinates.BodyCoordinates -> Physics.Constraint.Constraint"
+            },
+            {
+                "name": "lock",
+                "comment": " Keep two bodies connected with each other and remove all degrees of freedom between bodies.\n",
+                "type": "Frame3d.Frame3d Length.Meters Physics.Coordinates.BodyCoordinates {} -> Frame3d.Frame3d Length.Meters Physics.Coordinates.BodyCoordinates {} -> Physics.Constraint.Constraint"
+            },
+            {
+                "name": "pointToPoint",
+                "comment": " Connect a point on the first body with a point on the second body.\nThis doesn’t limit the freedom of rotation of two bodies.\nPoints are defined within the bodies’ local coordinate systems.\n",
+                "type": "Point3d.Point3d Length.Meters Physics.Coordinates.BodyCoordinates -> Point3d.Point3d Length.Meters Physics.Coordinates.BodyCoordinates -> Physics.Constraint.Constraint"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Physics.Contact",
+        "comment": "\n\n@docs Contact\n\n@docs bodies, either, both\n\n@docs points, centerPoint\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Contact",
+                "comment": " Contact between two colliding bodies.\n",
+                "args": [
+                    "data"
+                ],
+                "type": "Internal.Contact.Protected data"
+            }
+        ],
+        "values": [
+            {
+                "name": "bodies",
+                "comment": " Get contacting bodies in unspecified order.\n",
+                "type": "Physics.Contact.Contact data -> ( Physics.Body.Body data, Physics.Body.Body data )"
+            },
+            {
+                "name": "both",
+                "comment": " Return true if both bodies satisfy the test.\n",
+                "type": "(Physics.Body.Body data -> Basics.Bool) -> Physics.Contact.Contact data -> Basics.Bool"
+            },
+            {
+                "name": "centerPoint",
+                "comment": " Get the centroid of all the contact points.\n",
+                "type": "Physics.Contact.Contact data -> Point3d.Point3d Length.Meters Physics.Coordinates.WorldCoordinates"
+            },
+            {
+                "name": "either",
+                "comment": " Return true if at least one body satisfies the test.\n",
+                "type": "(Physics.Body.Body data -> Basics.Bool) -> Physics.Contact.Contact data -> Basics.Bool"
+            },
+            {
+                "name": "points",
+                "comment": " Get coordinates and normals of contact points.\n\nNormals are defined on the surface of the first body,\nthat is returned from [bodies](#bodies).\n\n",
+                "type": "Physics.Contact.Contact data -> List.List { point : Point3d.Point3d Length.Meters Physics.Coordinates.WorldCoordinates, normal : Direction3d.Direction3d Physics.Coordinates.WorldCoordinates }"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Physics.Coordinates",
+        "comment": " These type parameters indicate coordinate systems.\n\n@docs WorldCoordinates, BodyCoordinates\n\n",
+        "unions": [
+            {
+                "name": "BodyCoordinates",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "WorldCoordinates",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "Physics.Material",
+        "comment": "\n\n@docs Material, default, custom\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Material",
+                "comment": " Materials allow to control friction and bounciness.\nYou can change materials using [Body.withMaterial](Physics-Body#withMaterial).\n",
+                "args": [],
+                "type": "Internal.Material.Protected"
+            }
+        ],
+        "values": [
+            {
+                "name": "custom",
+                "comment": " Creates a custom material, e.g.\n\n    slippery =\n        custom { friction = 0, bounciness = 0 }\n\n    bouncy =\n        custom { friction = 0.3, bounciness = 0.9 }\n\nWhen two materials collide, their properties are averaged\nand clamped between 0 and 1.\n\n",
+                "type": "{ friction : Basics.Float, bounciness : Basics.Float } -> Physics.Material.Material"
+            },
+            {
+                "name": "default",
+                "comment": " All bodies initially use this material, it is defined like this:\n\n    default =\n        custom { friction = 0.3, bounciness = 0 }\n\n",
+                "type": "Physics.Material.Material"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Physics.Shape",
+        "comment": "\n\n@docs Shape, block, sphere, cylinder, unsafeConvex\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Shape",
+                "comment": " Shapes are only needed for creating [compound](Physics-Body#compound) bodies.\n\nIf you need a body with a single shape, use the corresponding functions\nfrom the [Physics.Body](Physics-Body) module.\n\nThe supported primitive shapes are:\n\n  - [block](#block),\n  - [sphere](#sphere),\n  - [cylinder](#cylinder).\n\nFor the more complex cases use the [unsafeConvex](#unsafeConvex) shape.\n\nShapes are defined in the body coordinate system.\n\n",
+                "args": [],
+                "type": "Internal.Shape.Protected"
+            }
+        ],
+        "values": [
+            {
+                "name": "block",
+                "comment": " ",
+                "type": "Block3d.Block3d Length.Meters Physics.Coordinates.BodyCoordinates -> Physics.Shape.Shape"
+            },
+            {
+                "name": "cylinder",
+                "comment": " Create a cylinder shape by specifying the number of subdivisions >= 3.\n\n    cylinder 12 myCylinder -- A cylinder with 12 faces (not counting the top and bottom face)\n\n    cylinder 2 myCylinder -- Too few faces so it has 3 faces instead\n\nNote that it’s more efficient to simulate cylinders with an even number of\nfaces than an odd number of faces. This is because the collision performance depends\non the number of unique faces that are not parallel with each other (and edges too).\n\n",
+                "type": "Basics.Int -> Cylinder3d.Cylinder3d Length.Meters Physics.Coordinates.BodyCoordinates -> Physics.Shape.Shape"
+            },
+            {
+                "name": "sphere",
+                "comment": " ",
+                "type": "Sphere3d.Sphere3d Length.Meters Physics.Coordinates.BodyCoordinates -> Physics.Shape.Shape"
+            },
+            {
+                "name": "unsafeConvex",
+                "comment": " Create a shape from a triangular mesh. This is useful if you want\nto import from Blender using [elm-obj-file](https://package.elm-lang.org/packages/w0rm/elm-obj-file/latest).\n\n**Note:** this may cause unexpected behavior, unless you make sure that:\n\n  - the mesh is a [convex polyhedron](https://en.wikipedia.org/wiki/Convex_polytope);\n  - the mesh is watertight, consisting of one closed surface;\n  - all faces have counterclockwise [winding order](https://cmichel.io/understanding-front-faces-winding-order-and-normals).\n\n",
+                "type": "TriangularMesh.TriangularMesh (Point3d.Point3d Length.Meters Physics.Coordinates.BodyCoordinates) -> Physics.Shape.Shape"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Physics.World",
+        "comment": "\n\n@docs World, empty, withGravity, add\n\n@docs simulate, bodies, contacts\n\n@docs raycast, RaycastResult\n\n@docs keepIf, update\n\n@docs constrain, constrainIf\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "RaycastResult",
+                "comment": " The Raycast result includes the intersected body,\nintersection point and normal vector on the face,\nexpressed within the local body coordinate system.\n\nUse the `Frame3d` from [Body.frame](Physics-Body#frame)\nto transform the result into world coordinates.\n\n",
+                "args": [
+                    "data"
+                ],
+                "type": "{ body : Physics.Body.Body data, point : Point3d.Point3d Length.Meters Physics.Coordinates.BodyCoordinates, normal : Direction3d.Direction3d Physics.Coordinates.BodyCoordinates }"
+            },
+            {
+                "name": "World",
+                "comment": " Physical world is our abstract playground for physical simulations.\n",
+                "args": [
+                    "data"
+                ],
+                "type": "Internal.World.Protected data"
+            }
+        ],
+        "values": [
+            {
+                "name": "add",
+                "comment": " Add a body to the world.\n\n    worldWithFloor =\n        add planeBody world\n\nCheck the [Physics.Body](Physics-Body) module for possible bodies.\n\n",
+                "type": "Physics.Body.Body data -> Physics.World.World data -> Physics.World.World data"
+            },
+            {
+                "name": "bodies",
+                "comment": " Get all bodies from the world in unspecified order.\n\nUse this to convert bodies into visual representation,\ne.g. WebGL entities.\n\n",
+                "type": "Physics.World.World data -> List.List (Physics.Body.Body data)"
+            },
+            {
+                "name": "constrain",
+                "comment": " Configure constraints between pairs of bodies. Constraints allow to limit the\nfreedom of movement of two bodies with relation to each other.\n\nCheck the [Physics.Constraint](Physics-Constraint) module for possible constraints.\n\n    worldWithACar : World { part : String }\n    worldWithACar =\n        constrain\n            (\\b1 b2 ->\n                case\n                    ( (Body.data b1).part\n                    , (Body.data b2).part\n                    )\n                of\n                    ( \"wheel1\", \"base\" ) ->\n                        [ hingeConstraint1 ]\n\n                    ( \"wheel2\", \"base\" ) ->\n                        [ hingeConstraint2 ]\n\n                    ( \"wheel3\", \"base\" ) ->\n                        [ hingeConstraint3 ]\n\n                    ( \"wheel4\", \"base\" ) ->\n                        [ hingeConstraint4 ]\n\n                    _ ->\n                        []\n            )\n            worldWithCarParts\n\nNote that this example only works for a single car, otherwise it would\nconnect wheels of one car with the base of another. You might want\nto use `constrainIf` to apply constraints on a subset of bodies.\n\n    constrain =\n        constrainIf (always True)\n\n",
+                "type": "(Physics.Body.Body data -> Physics.Body.Body data -> List.List Physics.Constraint.Constraint) -> Physics.World.World data -> Physics.World.World data"
+            },
+            {
+                "name": "constrainIf",
+                "comment": " Configure constraints for a subset of bodies that satisfy the test.\n\nFor the above example we can tag each part of a car with the `carId`,\nand preselect parts of a single car with:\n\n    constrainCar carId =\n        constrainIf\n            (\\body ->\n                (Body.data body).carId == carId\n            )\n\n",
+                "type": "(Physics.Body.Body data -> Basics.Bool) -> (Physics.Body.Body data -> Physics.Body.Body data -> List.List Physics.Constraint.Constraint) -> Physics.World.World data -> Physics.World.World data"
+            },
+            {
+                "name": "contacts",
+                "comment": " Get all contacts from the last simulation frame.\n",
+                "type": "Physics.World.World data -> List.List (Physics.Contact.Contact data)"
+            },
+            {
+                "name": "empty",
+                "comment": " Let be the new world!\n",
+                "type": "Physics.World.World data"
+            },
+            {
+                "name": "keepIf",
+                "comment": " Keep bodies that satisfy the test.\n",
+                "type": "(Physics.Body.Body data -> Basics.Bool) -> Physics.World.World data -> Physics.World.World data"
+            },
+            {
+                "name": "raycast",
+                "comment": " Find the closest intersection of a ray against\nall the bodies in the world. Except for particles,\nbecause they have no size.\n",
+                "type": "Axis3d.Axis3d Length.Meters Physics.Coordinates.WorldCoordinates -> Physics.World.World data -> Maybe.Maybe (Physics.World.RaycastResult data)"
+            },
+            {
+                "name": "simulate",
+                "comment": " Simulate the world, given the number of seconds since the last frame.\n\nTo animate, call this on a message from [onAnimationFrameDelta](https://package.elm-lang.org/packages/elm/browser/latest/Browser-Events#onAnimationFrameDelta):\n\n    simulatedWorld =\n        World.simulate (Duration.seconds (1 / 60)) world\n\nMake sure to pass a short duration, such that bodies do not travel\nthrough each other during the single frame. This depends on minimum body\nsize and maximum velocity.\n\n",
+                "type": "Duration.Duration -> Physics.World.World data -> Physics.World.World data"
+            },
+            {
+                "name": "update",
+                "comment": " Apply a function to every body in the world.\n",
+                "type": "(Physics.Body.Body data -> Physics.Body.Body data) -> Physics.World.World data -> Physics.World.World data"
+            },
+            {
+                "name": "withGravity",
+                "comment": " Set the [standard gravity](https://en.wikipedia.org/wiki/Standard_gravity) and its direction, e.g.:\n\n    planetEarth =\n        withGravity\n            (Acceleration.metersPerSecondSquared 9.80665)\n            Direction3d.negativeZ\n            world\n\n",
+                "type": "Acceleration.Acceleration -> Direction3d.Direction3d Physics.Coordinates.WorldCoordinates -> Physics.World.World data -> Physics.World.World data"
+            }
+        ],
+        "binops": []
+    }
+]

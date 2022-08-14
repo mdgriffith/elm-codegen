@@ -1,0 +1,65 @@
+[
+    {
+        "name": "GoogleSignIn",
+        "comment": " Elm bindings to the \"Sign in With Google\" widget\n\nSee the github for more information: <https://github.com/cedric-h/elm-google-sign-in>\n\n\n## View\n\n@docs view, styledView\n\n\n## Attribute Wrapper\n\n@docs Attribute\n\n\n## Properties\n\n@docs idAttr\n\n\n## Listeners\n\n@docs onSignIn\n\n\n## Profile\n\n@docs Profile\n\n\n## ClientId & co.\n\n@docs ClientId, encodeId\n\n",
+        "unions": [
+            {
+                "name": "Attribute",
+                "comment": " Like a normal HTML Attribute, but these can only apply to Google Sign in Buttons\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "ClientId",
+                "comment": " What Google uses to keep track of your application\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Id",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Profile",
+                "comment": " All of the important information Google stores about a user.\nThe `idToken` is what should be sent back to your server for authentication purposes.\nThe `email` field is only present if your clientId has the right scopes.\n",
+                "args": [],
+                "type": "{ id : String.String, idToken : String.String, name : String.String, givenName : String.String, familyName : String.String, imageUrl : String.String, email : Maybe.Maybe String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "encodeId",
+                "comment": " Turns a ClientId into a JSON value,\nmainly for shipping through a port.\n",
+                "type": "GoogleSignIn.ClientId -> Json.Encode.Value"
+            },
+            {
+                "name": "idAttr",
+                "comment": " Supply the ClientId for the application this button should sign in to.\n",
+                "type": "GoogleSignIn.ClientId -> GoogleSignIn.Attribute msg"
+            },
+            {
+                "name": "onSignIn",
+                "comment": " Respond to when the user completes signing in through Google.\n",
+                "type": "(GoogleSignIn.Profile -> msg) -> GoogleSignIn.Attribute msg"
+            },
+            {
+                "name": "styledView",
+                "comment": " Yields a Google sign in button\nintended for use with rtfeldman/elm-css\n",
+                "type": "List.List (GoogleSignIn.Attribute msg) -> Html.Styled.Html msg"
+            },
+            {
+                "name": "view",
+                "comment": " Yields a Google sign in button\nintended for use with elm/html\n",
+                "type": "List.List (GoogleSignIn.Attribute msg) -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

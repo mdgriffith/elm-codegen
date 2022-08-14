@@ -1,0 +1,77 @@
+[
+    {
+        "name": "SearchBox",
+        "comment": "\n\n\n# Definitions\n\n@docs input, State, ChangeEvent, Msg\n\n\n# Usage\n\nTo control the state transitions.\n\n@docs init, update, reset, setLoading\n\n",
+        "unions": [
+            {
+                "name": "ChangeEvent",
+                "comment": " This is the event that is the `onChange` wraps that you handle in your app's update function.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "SelectionChanged",
+                        [
+                            "a"
+                        ]
+                    ],
+                    [
+                        "TextChanged",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "SearchBoxChanged",
+                        [
+                            "SearchBox.Msg"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Msg",
+                "comment": " Message for internal state changes.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "State",
+                "comment": " The state of the searchbox\n",
+                "args": [],
+                "type": "{ hasFocus : Basics.Bool, selectionIndex : Basics.Int, loading : Basics.Bool }"
+            }
+        ],
+        "values": [
+            {
+                "name": "init",
+                "comment": " ",
+                "type": "SearchBox.State"
+            },
+            {
+                "name": "input",
+                "comment": " Use this in a similar way to `Element.Input.text`.\n\n**Note**: `Events.onClick`, `Events.onFocus` and `Events.onLoseFocus` are used\ninternally by the date picker. This means, that **your own `Events.onClick`,\n`Events.onFocus` and `Events.onLoseFocus` attributes have no effect and will\nnot fire**.\n\n",
+                "type": "List.List (Element.Attribute msg) -> { onChange : SearchBox.ChangeEvent a -> msg, text : String.String, selected : Maybe.Maybe a, options : Maybe.Maybe (List.List a), label : Element.Input.Label msg, placeholder : Maybe.Maybe (Element.Input.Placeholder msg), toLabel : a -> String.String, filter : String.String -> a -> Basics.Bool, state : SearchBox.State } -> Element.Element msg"
+            },
+            {
+                "name": "reset",
+                "comment": " Reset the searchbox. You'll want to call this at various points in your workflow.\n",
+                "type": "SearchBox.State -> SearchBox.State"
+            },
+            {
+                "name": "setLoading",
+                "comment": " Show a loading icon. Useful if you are retrieving a list of options remotely.\n",
+                "type": "SearchBox.State -> SearchBox.State"
+            },
+            {
+                "name": "update",
+                "comment": " Called when you need to update the searchbox's internal state.\n",
+                "type": "SearchBox.Msg -> SearchBox.State -> SearchBox.State"
+            }
+        ],
+        "binops": []
+    }
+]

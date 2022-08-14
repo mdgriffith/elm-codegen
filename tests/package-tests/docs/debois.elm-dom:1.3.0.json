@@ -1,0 +1,98 @@
+[
+    {
+        "name": "DOM",
+        "comment": " You read values off the DOM by constructing a JSON decoder.\nSee the `target` value for example use.\n\n\n# Traversing the DOM\n\n@docs target, currentTarget, offsetParent, parentElement, nextSibling, previousSibling, childNode, childNodes\n\n\n# Geometry\n\nDecoders for reading sizing etc. properties off the DOM. All decoders return\nmeasurements in pixels.\n\nRefer to, e.g.,\n[the Mozilla documentation](https://developer.mozilla.org/en-US/docs/Web/API/CSS_Object_Model/Determining_the_dimensions_of_elements)\nfor the precise semantics of these measurements. See also\n[this stackoverflow answer](https://stackoverflow.com/questions/294250/how-do-i-retrieve-an-html-elements-actual-width-and-height).\n\n@docs offsetWidth, offsetHeight\n@docs offsetLeft, offsetTop\n@docs Rectangle, boundingClientRect\n\n\n# Scroll\n\n@docs scrollLeft, scrollTop\n\n\n# Miscellanous\n\n@docs className\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Rectangle",
+                "comment": " Types for rectangles.\n",
+                "args": [],
+                "type": "{ top : Basics.Float, left : Basics.Float, width : Basics.Float, height : Basics.Float }"
+            }
+        ],
+        "values": [
+            {
+                "name": "boundingClientRect",
+                "comment": " Approximation of the method\n[getBoundingClientRect](https://developer.mozilla.org/en-US/docs/Mozilla/Tech/XPCOM/Reference/Floaterface/nsIDOMClientRect),\nbased off\n[this stackoverflow answer](https://stackoverflow.com/questions/442404/retrieve-the-position-x-y-of-an-html-element).\n\nNB! This decoder produces wrong results if a parent element is scrolled and\ndoes not have explicit positioning (e.g., `position: relative;`); see\n[this issue](https://github.com/debois/elm-dom/issues/4).\n\nAlso note that this decoder is likely computationally expensive and may produce\nresults that differ slightly from `getBoundingClientRect` in browser-dependent\nways.\n\n(I don't get to call getBoundingClientRect directly from Elm without going\nnative or using ports; my packages don't get to go native and I can find no\nsolution with ports. So we do it like in the bad old days with an O(lg n)\ntraversal of the DOM, browser-dependencies and CSS quirks, only now through\npresumably expensive JSON decoders. It's 2007 forever, baby!)\n\n",
+                "type": "Json.Decode.Decoder DOM.Rectangle"
+            },
+            {
+                "name": "childNode",
+                "comment": " Find the ith child of an element.\n",
+                "type": "Basics.Int -> Json.Decode.Decoder a -> Json.Decode.Decoder a"
+            },
+            {
+                "name": "childNodes",
+                "comment": " Get the children of an element.\n",
+                "type": "Json.Decode.Decoder a -> Json.Decode.Decoder (List.List a)"
+            },
+            {
+                "name": "className",
+                "comment": " Get the class name(s) of an element.\n",
+                "type": "Json.Decode.Decoder String.String"
+            },
+            {
+                "name": "currentTarget",
+                "comment": " Get the currentTarget DOM element of an event.\n",
+                "type": "Json.Decode.Decoder a -> Json.Decode.Decoder a"
+            },
+            {
+                "name": "nextSibling",
+                "comment": " Get the next sibling of an element.\n",
+                "type": "Json.Decode.Decoder a -> Json.Decode.Decoder a"
+            },
+            {
+                "name": "offsetHeight",
+                "comment": " Get the heigh of an element in pixels. Underlying implementation\nreads `.offsetHeight`.\n",
+                "type": "Json.Decode.Decoder Basics.Float"
+            },
+            {
+                "name": "offsetLeft",
+                "comment": " Get the left-offset of the element in the parent element in pixels.\nUnderlying implementation reads `.offsetLeft`.\n",
+                "type": "Json.Decode.Decoder Basics.Float"
+            },
+            {
+                "name": "offsetParent",
+                "comment": " Get the offsetParent of the current element. Returns first argument if the current\nelement is already the root; applies the second argument to the parent element\nif not.\n\nTo do traversals of the DOM, exploit that Elm allows recursive values.\n\n",
+                "type": "a -> Json.Decode.Decoder a -> Json.Decode.Decoder a"
+            },
+            {
+                "name": "offsetTop",
+                "comment": " Get the top-offset of the element in the parent element in pixels.\nUnderlying implementation reads `.offsetTop`.\n",
+                "type": "Json.Decode.Decoder Basics.Float"
+            },
+            {
+                "name": "offsetWidth",
+                "comment": " Get the width of an element in pixels; underlying implementation\nreads `.offsetWidth`.\n",
+                "type": "Json.Decode.Decoder Basics.Float"
+            },
+            {
+                "name": "parentElement",
+                "comment": " Get the parent of an element.\n",
+                "type": "Json.Decode.Decoder a -> Json.Decode.Decoder a"
+            },
+            {
+                "name": "previousSibling",
+                "comment": " Get the previous sibling of an element.\n",
+                "type": "Json.Decode.Decoder a -> Json.Decode.Decoder a"
+            },
+            {
+                "name": "scrollLeft",
+                "comment": " Get the amount of left scroll of the element in pixels.\nUnderlying implementation reads `.scrollLeft`.\n",
+                "type": "Json.Decode.Decoder Basics.Float"
+            },
+            {
+                "name": "scrollTop",
+                "comment": " Get the amount of top scroll of the element in pixels.\nUnderlying implementation reads `.scrollTop`.\n",
+                "type": "Json.Decode.Decoder Basics.Float"
+            },
+            {
+                "name": "target",
+                "comment": " Get the target DOM element of an event. You will usually start with this\ndecoder. E.g., to make a button which when clicked emit an Action that carries\nthe width of the button:\n\n    import DOM exposing (offsetWidth, target)\n\n    myButton : Html Float\n    myButton =\n        button\n            [ on \"click\" (target offsetWidth) ]\n            [ text \"Click me!\" ]\n\n",
+                "type": "Json.Decode.Decoder a -> Json.Decode.Decoder a"
+            }
+        ],
+        "binops": []
+    }
+]

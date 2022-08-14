@@ -1,0 +1,73 @@
+[
+    {
+        "name": "PriorityQueue",
+        "comment": " A priority queue for Elm.\n\nA [_priority queue_](https://en.wikipedia.org/wiki/Priority_queue) is an\n\n> abstract data type which is like a regular queue or stack data structure, but where additionally each element has a \"priority\" associated with it. In a priority queue, an element with high priority is served before an element with low priority.\n\nThe implementation we provide here is based on Okasaki's _leftist heaps_. See [Purely Functional Data Structures](https://www.cs.cmu.edu/~rwh/theses/okasaki.pdf) for more information.\n\n\n# Priority\n\nThroughout this package `priority` will mean a function that assigns a integer value to an element. Lower values indicate higher priority and vice versa.\n\n\n# Types\n\n@docs PriorityQueue, Priority\n\n\n# Building\n\n@docs empty, insert, fromList\n\n\n# Query\n\n@docs head, tail, take, drop, isEmpty\n\n\n# Conversion\n\n@docs toList\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Priority",
+                "comment": " A function that assigns a priority to elements.\n\nLower values correspond to higher priority.\n\n",
+                "args": [
+                    "a"
+                ],
+                "type": "PriorityQueue.Kernel.Priority a"
+            },
+            {
+                "name": "PriorityQueue",
+                "comment": " The abstract datatype of this package.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "PriorityQueue.Kernel.PriorityQueue a"
+            }
+        ],
+        "values": [
+            {
+                "name": "drop",
+                "comment": " Returns a new `PriorityQueue` with the first `n` elements dropped.\n",
+                "type": "Basics.Int -> PriorityQueue.PriorityQueue a -> PriorityQueue.PriorityQueue a"
+            },
+            {
+                "name": "empty",
+                "comment": " Create an empty `PriorityQueue`.\n",
+                "type": "PriorityQueue.Priority a -> PriorityQueue.PriorityQueue a"
+            },
+            {
+                "name": "fromList",
+                "comment": " Creates a `PriorityQueue` from a given list of elements.\n\nMust be given a `priority` function, i.e. a function that assigns the priority to elements.\n\n",
+                "type": "PriorityQueue.Priority a -> List.List a -> PriorityQueue.PriorityQueue a"
+            },
+            {
+                "name": "head",
+                "comment": " Return the element of the `PriorityQueue` with the highest priority.\n\nReturns `Nothing` when the queue is empty.\n\n",
+                "type": "PriorityQueue.PriorityQueue a -> Maybe.Maybe a"
+            },
+            {
+                "name": "insert",
+                "comment": " Insert an element into the `PriorityQueue`\n",
+                "type": "a -> PriorityQueue.PriorityQueue a -> PriorityQueue.PriorityQueue a"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Determine if the `PriorityQueue` is empty.\n",
+                "type": "PriorityQueue.PriorityQueue a -> Basics.Bool"
+            },
+            {
+                "name": "tail",
+                "comment": " Return the `PriorityQueue` that remains when the head is removed.\n",
+                "type": "PriorityQueue.PriorityQueue a -> PriorityQueue.PriorityQueue a"
+            },
+            {
+                "name": "take",
+                "comment": " Return the first `n` elements of the `PriorityQueue` with the highest priority\n",
+                "type": "Basics.Int -> PriorityQueue.PriorityQueue a -> List.List a"
+            },
+            {
+                "name": "toList",
+                "comment": " Returns all the elements in a `PriorityQueue` as a `List`.\n\nThe order will be determined by the priority, higher priority elements before lower priority elements.\n\n",
+                "type": "PriorityQueue.PriorityQueue a -> List.List a"
+            }
+        ],
+        "binops": []
+    }
+]

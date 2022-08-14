@@ -1,0 +1,39 @@
+[
+    {
+        "name": "ColorPicker",
+        "comment": " An Elm library to help you implement a color picker tool.\n\n@docs State, Msg, empty, update, view\n\nThe main picker is for saturation and lightness, while the sliders below are for hue and opacity respectively.\n\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " Opaque type. These messages are handled by `ColorPicker.update`\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "State",
+                "comment": " Opaque type. Needs to be added to your model. You will also need to store a `Color` in your model\n\n    type alias Model =\n        { myColour : Color\n        , colorPicker : ColorPicker.Model\n        }\n\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "empty",
+                "comment": " Initial ColorPicker state\n\n    init =\n        { myColour = Color.red\n        , colorPicker = ColorPicker.empty\n        }\n\n",
+                "type": "ColorPicker.State"
+            },
+            {
+                "name": "update",
+                "comment": " On each update, ColorPicker returns its model and (where appropriate) the new selected colo(u)r.\n\n    ColorPickerMsg msg ->\n        let\n            (cp, col) =\n                ColorPicker.update msg model.colorPicker\n        in\n            { model | colorPicker = cp, myColor = Maybe.withDefault model.myColor col }\n\n",
+                "type": "ColorPicker.Msg -> Color.Color -> ColorPicker.State -> ( ColorPicker.State, Maybe.Maybe Color.Color )"
+            },
+            {
+                "name": "view",
+                "comment": " Renders the color picker on screen\n",
+                "type": "Color.Color -> ColorPicker.State -> Html.Html ColorPicker.Msg"
+            }
+        ],
+        "binops": []
+    }
+]

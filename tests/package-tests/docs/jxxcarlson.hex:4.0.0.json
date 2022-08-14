@@ -1,0 +1,26 @@
+[
+    {
+        "name": "Hex.Convert",
+        "comment": " The `Hex.Convert` package converts `Bytes` values to and from `String`\nvalues.  Three functions are exposed:\n\n  - `toString : Bytes -> String`\n  - `toBytes : String -> Maybe Bytes`\n  - `blocks : Int -> String -> List String`\n\nThe `toString` function converts a `Bytes` value to\na string of hexadecimal characters representing the `Bytes` value.\nThe `toBytes` function converts a string to a value of type `Maybe Bytes`.\nThis choice of return type is necessary to account for the fact\nthat a function call can fail, e.g., on the input `\"6A45F!\"`.\nThe `blocks` function is used to \"format\" the output\nof `toString` into blocks of a given number of characters.\n\n@docs toBytes, toString, blocks\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "blocks",
+                "comment": "  The `blocks` function is a general-purpose\nstring utility which divides a string into blocks\nof characters, that is, a list of strings:\n\n    \"abcdefhij\" |> Hex.Convert.blocks 3\n    --> [\"abc\",\"def\",\"hij\"]\n\n",
+                "type": "Basics.Int -> String.String -> List.List String.String"
+            },
+            {
+                "name": "toBytes",
+                "comment": "\n    Hex.Convert.toBytes \"FF66\"\n        |> Maybe.map Hex.Convert.toString\n    --> Just \"FF66\"\n",
+                "type": "String.String -> Maybe.Maybe Bytes.Bytes"
+            },
+            {
+                "name": "toString",
+                "comment": "\nDo `import Bytes.Encode as Encode exposing(encode)`.  Then\n\n    encode (Encode.string \"Hello\")\n        |> Hex.Convert.toString\n    --> \"48656C6C6F\" : String\n\n    Hex.Convert.toBytes \"FF66!!\"\n        |> Maybe.map Hex.Convert.toString\n    --> Nothing : Maybe String\n\n",
+                "type": "Bytes.Bytes -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

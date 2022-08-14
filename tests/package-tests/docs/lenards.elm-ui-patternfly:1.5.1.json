@@ -1,0 +1,1055 @@
+[
+    {
+        "name": "PF4.Accordion",
+        "comment": " An expandable component that fills the role of an accordian\n\n\n# Definition\n\n@docs Accordion, AccordionItem\n\n\n# Constructor functions\n\n@docs accordion, accordionItem, defaultState, singleExpandState, multipleExpandState\n\n\n# Handling lifecycle of element\n\n@docs State, Msg, update\n\n\n# Rendering stateful element\n\n@docs toMarkupFor\n\n<https://www.patternfly.org/v4/components/accordion>\n\n",
+        "unions": [
+            {
+                "name": "Accordion",
+                "comment": " Opaque `Accordion` element that can produce `msg` messages\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "AccordionItem",
+                "comment": " Opaque `AccordionItem` element that can produce `msg` messages\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Msg",
+                "comment": " Internal Accordion.Msg type for handling statefulness\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "State",
+                "comment": " Opaque `State` representation of the `Accordion`.\n\nTo create a `State`, use one of the provided\n\n",
+                "args": [],
+                "type": "PF4.Accordion.Behavior"
+            }
+        ],
+        "values": [
+            {
+                "name": "accordion",
+                "comment": " Constructs an accordian given a list of `(title, content)` and a message\nmapper function.\n\nThe `msgMapper` needs to take a `PF4.Accordian.Msg` and transform it into\nto the `msg` of your Elm application.\n\n",
+                "type": "(PF4.Accordion.Msg -> msg) -> List.List ( String.String, Element.Element msg ) -> PF4.Accordion.Accordion msg"
+            },
+            {
+                "name": "accordionItem",
+                "comment": " Constructs an accordion item given a `title` and an `Element msg` as `content`\n",
+                "type": "{ title : String.String, content : Element.Element msg } -> PF4.Accordion.AccordionItem msg"
+            },
+            {
+                "name": "defaultState",
+                "comment": " Constructs a default state with the default behavior\n\nThe default behavior is \"Single Expand\".\n\nOnly a single accordion can be open at a given time.\n\n",
+                "type": "PF4.Accordion.State"
+            },
+            {
+                "name": "multipleExpandState",
+                "comment": " Constructs a state with behavior of \"Multiple Expand\"\n\nEach accordion item clicked on will be opened. An open\naccordion item clicked on will close.\n\n",
+                "type": "PF4.Accordion.State"
+            },
+            {
+                "name": "singleExpandState",
+                "comment": " Constructs a state with behavior of \"Single Expand\"\n\nOnly a single accordion can be open at a given time.\n\n",
+                "type": "PF4.Accordion.State"
+            },
+            {
+                "name": "toMarkupFor",
+                "comment": " Using the state and component's options to render as an `Element msg`\n\nStateful PF4 components will have a `toMarkupFor`, as an \"markup for a\nparticular _state_\", instead of the `toMarkup` used for stateless\ncomponents.\n\n",
+                "type": "PF4.Accordion.State -> PF4.Accordion.Accordion msg -> Element.Element msg"
+            },
+            {
+                "name": "update",
+                "comment": " Handles updating the `state` given the `Msg`\n",
+                "type": "PF4.Accordion.Msg -> PF4.Accordion.State -> PF4.Accordion.State"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "PF4.ApplicationLauncher",
+        "comment": " A component for encapsulating a utility menu allowing an individual to\nlaunch the items in a new browser window.\n\n\n# Definition\n\n@docs ApplicationLauncher\n\n\n# Constructor function\n\n@docs applicationLauncher\n\n\n# Configuration function(s)\n\n@docs withActiveMenu\n\n\n# Rendering element\n\n@docs toMarkup\n\n<https://www.patternfly.org/v4/components/application-launcher>\n\n",
+        "unions": [
+            {
+                "name": "ApplicationLauncher",
+                "comment": " Opaque `ApplicationLauncher` element that can produce `msg` messages\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "applicationLauncher",
+                "comment": " Construacts an `ApplicationLauncher` from the arguements\n",
+                "type": "{ id : String.String, items : List.List { itemId : String.String, label : String.String }, onItemSelect : String.String -> msg, onClick : msg } -> PF4.ApplicationLauncher.ApplicationLauncher msg"
+            },
+            {
+                "name": "toMarkup",
+                "comment": " Given the custom type representation, renders as an `Element msg`.\n",
+                "type": "PF4.ApplicationLauncher.ApplicationLauncher msg -> Element.Element msg"
+            },
+            {
+                "name": "withActiveMenu",
+                "comment": " Configures the active menu identifier.\n\nIf the `id` of this element equals what `menuId` passed in, then the\nlauncher's menu will _pop_ open.\n\nThis has a `with` prefix but it's more of a setter.\n\nNOTE: this PF4 component more to using `toMarkupFor` and an opaque\nstate when rendering.\n\nFuture Me apologizes in advance ...\n\n",
+                "type": "String.String -> PF4.ApplicationLauncher.ApplicationLauncher msg -> PF4.ApplicationLauncher.ApplicationLauncher msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "PF4.Badge",
+        "comment": " An element for showing off numbers in various scenarios\n\nThe `PF4.Badge` comes in handy when rendering notifications or alerts\nthat have been \"read\" or \"unread\" in the form of a \"pill\" element\nsince in other design systems.\n\n\n# Definition\n\n@docs Badge\n\n\n# Constructor functions\n\n@docs badge, unreadBadge\n\n\n# Configuration functions\n\n@docs Status, withReadStatus, withUnreadStatus\n\n\n# Checking value\n\n@docs isRead, isUnread\n\n\n# Rendering stateless element\n\n@docs toMarkup\n\n<https://www.patternfly.org/v4/components/badge>\n\n",
+        "unions": [
+            {
+                "name": "Badge",
+                "comment": " Opaque `Badge` element\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Status",
+                "comment": " Defines `Status` to be one of two values: `Read` or `Unread`\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "badge",
+                "comment": " Constructs a `Badge`\n\nDefault `status` of the `Badge` will be `Read`.\n\n",
+                "type": "Basics.Int -> PF4.Badge.Badge"
+            },
+            {
+                "name": "isRead",
+                "comment": " Indicates if the status of the `Badge` is `Read`\n",
+                "type": "PF4.Badge.Badge -> Basics.Bool"
+            },
+            {
+                "name": "isUnread",
+                "comment": " Indicates if the status of the `Badge` is `Unread`\n",
+                "type": "PF4.Badge.Badge -> Basics.Bool"
+            },
+            {
+                "name": "toMarkup",
+                "comment": " Given the custom type representation, renders as an `Element msg`.\n",
+                "type": "PF4.Badge.Badge -> Element.Element msg"
+            },
+            {
+                "name": "unreadBadge",
+                "comment": " Configures the `Badge` to have an `Unread` status\n",
+                "type": "Basics.Int -> PF4.Badge.Badge"
+            },
+            {
+                "name": "withReadStatus",
+                "comment": " Configures `Badge` to have a `Read` status\n",
+                "type": "PF4.Badge.Badge -> PF4.Badge.Badge"
+            },
+            {
+                "name": "withUnreadStatus",
+                "comment": " Configures `Badge` to have a `Unread` status\n",
+                "type": "PF4.Badge.Badge -> PF4.Badge.Badge"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "PF4.Button",
+        "comment": " A button component with variation forms\n\n\n# Definition\n\n@docs Button, Position, Size, Variant\n\n\n# Constructor functions\n\n@docs button, primary, secondary, tertiary, warning, danger, control, link\n\n\n# Configuration, sizing, functions\n\n@docs withDefaultSize, withLargeSize, withSmallSize\n\n\n# Icon functions\n\n@docs withIcon, withIconLeft, withIconRight\n\n\n# Rendering element\n\n@docs toMarkup\n\n",
+        "unions": [
+            {
+                "name": "Button",
+                "comment": " Opaque `Button` element that can produce `msg` messages\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Position",
+                "comment": " Opaque `Position` custom type that has 2 variants\n\n`Left`, `Right`\n\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Size",
+                "comment": " An opaque `Size` custom type that has 3 variants\n\n`Normal`, `Large`, `Small`\n\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Variant",
+                "comment": " Opaque `Variant` custom type that has 8 variants\n\n`Primary`, `Secondary`, `Tertiary`, `Warning`, `Danger`, `Plain` (default), `Control`, `Link`.\n\nThere is a constructor function for each.\n\nNote: the `button` constructs a `Plain` variant.\n\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "button",
+                "comment": " Configures a `Button` with default appearance\n",
+                "type": "{ label : String.String, onPress : Maybe.Maybe msg } -> PF4.Button.Button msg"
+            },
+            {
+                "name": "control",
+                "comment": " Configures appearance of `Button` to be the `Control` variant\n",
+                "type": "{ label : String.String, onPress : Maybe.Maybe msg } -> PF4.Button.Button msg"
+            },
+            {
+                "name": "danger",
+                "comment": " Configures appearance of `Button` to be the `Danger` variant\n",
+                "type": "{ label : String.String, onPress : Maybe.Maybe msg } -> PF4.Button.Button msg"
+            },
+            {
+                "name": "link",
+                "comment": " Constructs a `Link` variant `Button`\n\nHas additional required argument of `href` to be used for the hyperlink.\n\n",
+                "type": "{ label : String.String, onPress : Maybe.Maybe msg, href : String.String } -> PF4.Button.Button msg"
+            },
+            {
+                "name": "primary",
+                "comment": " Configures appearance of `Button` to be the `Primary` variant\n",
+                "type": "{ label : String.String, onPress : Maybe.Maybe msg } -> PF4.Button.Button msg"
+            },
+            {
+                "name": "secondary",
+                "comment": " Configures appearance of `Button` to be the `Secondary` variant\n",
+                "type": "{ label : String.String, onPress : Maybe.Maybe msg } -> PF4.Button.Button msg"
+            },
+            {
+                "name": "tertiary",
+                "comment": " Configures appearance of `Button` to be the `Tertiary` variant\n\nFor designs that happen to have 3 overall button styles.\n\n",
+                "type": "{ label : String.String, onPress : Maybe.Maybe msg } -> PF4.Button.Button msg"
+            },
+            {
+                "name": "toMarkup",
+                "comment": " Given the custom type representation, renders as an `Element msg`.\n",
+                "type": "PF4.Button.Button msg -> Element.Element msg"
+            },
+            {
+                "name": "warning",
+                "comment": " Configures appearance of `Button` to be the `Warning` variant\n",
+                "type": "{ label : String.String, onPress : Maybe.Maybe msg } -> PF4.Button.Button msg"
+            },
+            {
+                "name": "withDefaultSize",
+                "comment": " Configures size to be `Normal`\n\n`Normal` is the default value for button size.\n\n",
+                "type": "PF4.Button.Button msg -> PF4.Button.Button msg"
+            },
+            {
+                "name": "withIcon",
+                "comment": " Configures the button to have an `Icon`\n\nBy default, the position is left of the text\n\n",
+                "type": "Element.Element msg -> PF4.Button.Button msg -> PF4.Button.Button msg"
+            },
+            {
+                "name": "withIconLeft",
+                "comment": " Configure the position of the icon to be left of the text\n",
+                "type": "PF4.Button.Button msg -> PF4.Button.Button msg"
+            },
+            {
+                "name": "withIconRight",
+                "comment": " Configure the position of the icon to be right of the text\n",
+                "type": "PF4.Button.Button msg -> PF4.Button.Button msg"
+            },
+            {
+                "name": "withLargeSize",
+                "comment": " Configures size to be `Larger`\n",
+                "type": "PF4.Button.Button msg -> PF4.Button.Button msg"
+            },
+            {
+                "name": "withSmallSize",
+                "comment": " Configures size to be `Small`\n",
+                "type": "PF4.Button.Button msg -> PF4.Button.Button msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "PF4.Card",
+        "comment": " A component to save as a media card or general container\n\n\n# Definition\n\n@docs Card\n\n\n# Constructor function(s)\n\n@docs card\n\n\n# Configuration functions\n\n@docs withTitle, withFooter\n\n\n# Padding & Spacing functions\n\n@docs withBodyPadding, withBodyPaddingXY, withBodyPaddingEach\n@docs withBodySpacing, withBodySpacingXY, withBodySpaceEvenly\n\n\n# Rendering stateless element\n\n@docs toMarkup\n\n",
+        "unions": [
+            {
+                "name": "Card",
+                "comment": " Opaque `Card` element that can produce `msg` messages\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "card",
+                "comment": " Constructs a card element with list `Element msg` as the \"body\" content\n",
+                "type": "List.List (Element.Element msg) -> PF4.Card.Card msg"
+            },
+            {
+                "name": "toMarkup",
+                "comment": " Given the custom type representation, renders as an `Element msg`.\n",
+                "type": "PF4.Card.Card msg -> Element.Element msg"
+            },
+            {
+                "name": "withBodyPadding",
+                "comment": " Appeals padding to the \"body\" content\n",
+                "type": "Basics.Int -> PF4.Card.Card msg -> PF4.Card.Card msg"
+            },
+            {
+                "name": "withBodyPaddingEach",
+                "comment": " Appeals padding to the \"body\" content\n",
+                "type": "{ top : Basics.Int, right : Basics.Int, bottom : Basics.Int, left : Basics.Int } -> PF4.Card.Card msg -> PF4.Card.Card msg"
+            },
+            {
+                "name": "withBodyPaddingXY",
+                "comment": " Appeals padding to the \"body\" content\n",
+                "type": "Basics.Int -> Basics.Int -> PF4.Card.Card msg -> PF4.Card.Card msg"
+            },
+            {
+                "name": "withBodySpaceEvenly",
+                "comment": " Appeals spacing to the \"body\" content\n",
+                "type": "PF4.Card.Card msg -> PF4.Card.Card msg"
+            },
+            {
+                "name": "withBodySpacing",
+                "comment": " Appeals spacing to the \"body\" content\n",
+                "type": "Basics.Int -> PF4.Card.Card msg -> PF4.Card.Card msg"
+            },
+            {
+                "name": "withBodySpacingXY",
+                "comment": " Appeals spacing to the \"body\" content\n",
+                "type": "Basics.Int -> Basics.Int -> PF4.Card.Card msg -> PF4.Card.Card msg"
+            },
+            {
+                "name": "withFooter",
+                "comment": " Configures the `Card` to have a footer element with the context passed\n",
+                "type": "Element.Element msg -> PF4.Card.Card msg -> PF4.Card.Card msg"
+            },
+            {
+                "name": "withTitle",
+                "comment": " Configures the `Card` to have title text above the \"body\" content\n",
+                "type": "String.String -> PF4.Card.Card msg -> PF4.Card.Card msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "PF4.Checkbox",
+        "comment": " A component for presenting an option to select (either single item or multiple items);\ntypically this is a choose to do an action or reflects an \"on/off\" or binary setting.\n\n\n# Definition\n\n@docs Checkbox\n\n\n# Constructor function\n\n@docs checkbox\n\n\n# Configuration functions\n\n@docs Palette, withPalette, withLabelAttributes\n\n\n# Rendering element\n\n@docs toMarkup\n\n",
+        "unions": [
+            {
+                "name": "Checkbox",
+                "comment": " Opaque `Checkbox` element that can produce `msg` messages for indicating a selection\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Palette",
+                "comment": " A palette rendering the color of the checkbox\n",
+                "args": [],
+                "type": "{ idle : Element.Color, focused : Element.Color, checked : Element.Color }"
+            }
+        ],
+        "values": [
+            {
+                "name": "checkbox",
+                "comment": " Constructs a `Checkbox` from the arguments\n",
+                "type": "{ checked : Basics.Bool, onCheck : Basics.Bool -> msg, label : String.String } -> PF4.Checkbox.Checkbox msg"
+            },
+            {
+                "name": "toMarkup",
+                "comment": " Given the custom type representation, renders as an `Element msg`.\n",
+                "type": "PF4.Checkbox.Checkbox msg -> Element.Element msg"
+            },
+            {
+                "name": "withLabelAttributes",
+                "comment": " Provide a list of attributes to include on the label element.\n\nIn `Standalone` mode, the attributes won't have any impact because there is no label.\n\nYes, that sure seems like an impossible state! I haven't quite grokked how I might\ndisallow this. I realize that the Phantom Builder would be one way; but I'm not\ntotally comfortable about that.\n\nPerhaps it makes more sense for \"Standalone\" to be a wholly different type.\n\n",
+                "type": "List.List (Element.Attribute msg) -> PF4.Checkbox.Checkbox msg -> PF4.Checkbox.Checkbox msg"
+            },
+            {
+                "name": "withPalette",
+                "comment": " Render with a custom palette\n",
+                "type": "PF4.Checkbox.Palette -> PF4.Checkbox.Checkbox msg -> PF4.Checkbox.Checkbox msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "PF4.Chip",
+        "comment": " A component for displaying items that are involved in selection or filtering\nout of an overall group.\n\nSee also, `PF4.ChipGroup`\n\n\n# Definition\n\n@docs Chip\n\n\n# Constructor function\n\n@docs chip\n\n\n# Configuration functions\n\n@docs withCloseMsg, withForeground\n\n\n# Rendering element\n\n@docs toMarkup\n\n<https://www.patternfly.org/v4/components/chip>\n\n",
+        "unions": [
+            {
+                "name": "Chip",
+                "comment": " Opaque `Chip` element that can produce `msg` messages\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "chip",
+                "comment": " Constructs a `Chip` from the text\n",
+                "type": "String.String -> PF4.Chip.Chip msg"
+            },
+            {
+                "name": "toMarkup",
+                "comment": " Given the custom type representation, renders as an `Element msg`.\n",
+                "type": "PF4.Chip.Chip msg -> Element.Element msg"
+            },
+            {
+                "name": "withCloseMsg",
+                "comment": " Configures what `msg` is produced `onClick` by `Chip`\n",
+                "type": "msg -> PF4.Chip.Chip msg -> PF4.Chip.Chip msg"
+            },
+            {
+                "name": "withForeground",
+                "comment": " Configures the foreground color, in RGB\n",
+                "type": "( Basics.Int, Basics.Int, Basics.Int ) -> PF4.Chip.Chip msg -> PF4.Chip.Chip msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "PF4.ChipGroup",
+        "comment": " A container component for `PF4.Chip` element(s)\n\n\n# Definition\n\n@docs ChipGroup, ChipsShown\n\n\n# Constructor function\n\n@docs group\n\n\n# Configuration functions\n\n@docs withCategory, withClickMsg\n\n\n# Rendering element\n\n@docs toMarkup\n\n<https://www.patternfly.org/v4/components/chip-group>\n\n",
+        "unions": [
+            {
+                "name": "ChipGroup",
+                "comment": " Opaque `ChipGroup` element that can produce `msg` messages\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "ChipsShown",
+                "comment": " Defines how many `Chip`s to show when rendering.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "group",
+                "comment": " Constructs a group of `Chip`s creates from the `List String`\n",
+                "type": "List.List String.String -> (String.String -> msg) -> PF4.ChipGroup.ChipGroup msg"
+            },
+            {
+                "name": "toMarkup",
+                "comment": " Given the custom type representation, renders as an `Element msg`.\n",
+                "type": "PF4.ChipGroup.ChipGroup msg -> Element.Element msg"
+            },
+            {
+                "name": "withCategory",
+                "comment": " Configures group to have category\n",
+                "type": "String.String -> PF4.ChipGroup.ChipGroup msg -> PF4.ChipGroup.ChipGroup msg"
+            },
+            {
+                "name": "withClickMsg",
+                "comment": " Configures what `msg` is produced by group `onClick`\n",
+                "type": "msg -> PF4.ChipGroup.ChipGroup msg -> PF4.ChipGroup.ChipGroup msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "PF4.Created",
+        "comment": " A component for showing \"time since created\", in days\n\nNot listed in the official PatternFly 4 component list.\n\n\n# Constructor function\n\n@docs created\n\n\n# Rendering element\n\n@docs toMarkup\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "created",
+                "comment": " Constructs a `Created msg` element using a record\nwith a `createdOn` and `now` value.\n\nUses `Time` in `elm/time`.\n\n    Created.created\n        { createdOn = Time.millisToPosix 1609468521866\n        , now = Time.millisToPosix 1609468694666\n        }\n        |> Created.toMarkup\n\n",
+                "type": "{ createdOn : Time.Posix, now : Time.Posix } -> PF4.Created.Created msg"
+            },
+            {
+                "name": "toMarkup",
+                "comment": " Given the custom type representation, renders as an `Element msg`.\n",
+                "type": "PF4.Created.Created msg -> Element.Element msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "PF4.ExpandableSection",
+        "comment": " An expandable component that fills the role of a \"click to open\" section\n\n\n# Definition\n\n@docs ExpandableSection\n\n\n# Constructor function\n\n@docs expandableSection\n\n\n# Configuration functions\n\n@docs withDynamicText, withPressMsg\n\n\n# State-change functions\n\n@docs expandSection, collapseSection\n\n\n# Rendering element\n\n@docs toMarkup\n\n",
+        "unions": [
+            {
+                "name": "ExpandableSection",
+                "comment": " Opaque `ExpandableSection`element that can produce `msg` messages\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "collapseSection",
+                "comment": " Requests the state change of the element to a collapsed, or closed state\n",
+                "type": "PF4.ExpandableSection.ExpandableSection msg -> PF4.ExpandableSection.ExpandableSection msg"
+            },
+            {
+                "name": "expandSection",
+                "comment": " Requests the state change of the element to an expanded, or open state\n",
+                "type": "PF4.ExpandableSection.ExpandableSection msg -> PF4.ExpandableSection.ExpandableSection msg"
+            },
+            {
+                "name": "expandableSection",
+                "comment": " Constructs an expandable section given a `String` for the text, and\ncontent to \"show\" `onPress`.\n\nThe `onPress` message in this form will allow the handling of the state\nchange using `expandSection` and `collapseSection`. This will be the\nmanner of acting until the decision on whether to make this a\n\"stateful\" component has been made.\n\n",
+                "type": "{ text : String.String, content : Element.Element msg, onPress : Maybe.Maybe msg } -> PF4.ExpandableSection.ExpandableSection msg"
+            },
+            {
+                "name": "toMarkup",
+                "comment": " Given the custom type representation, renders as an `Element msg`.\n",
+                "type": "PF4.ExpandableSection.ExpandableSection msg -> Element.Element msg"
+            },
+            {
+                "name": "withDynamicText",
+                "comment": " Configure the section to have a dynamic text; text that will change\nwhen the section is \"open\", and \"closed\"\n\nBy default, an ExpandableSection will be constructed with a `Closed`\nstate.\n\n",
+                "type": "{ open : String.String, closed : String.String } -> PF4.ExpandableSection.ExpandableSection msg -> PF4.ExpandableSection.ExpandableSection msg"
+            },
+            {
+                "name": "withPressMsg",
+                "comment": " Configure the `onPress` msg produced\n",
+                "type": "msg -> PF4.ExpandableSection.ExpandableSection msg -> PF4.ExpandableSection.ExpandableSection msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "PF4.Icons",
+        "comment": " This library handles functions that will render `Svg` versions of\nthe icons used by the `PF4` library. This relieves folks from the\nneed to include a sprite sheet or other assets when using `PF4`.\n\nMost icons has functions for a default color and `Rgb255` form.\n\n\n# System Icons, no color variation\n\n@docs hamburger\n\n\n# Icons with default color and variation\n\n@docs chevronDown, chevronDownRgb255, chevronRight, chevronRightRgb255, closeCircle, closeCircleRgb255, close, closeRgb255, info, infoRgb255, times, timesRgb255, nineBox, nineBoxRgb255\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "chevronDown",
+                "comment": " ",
+                "type": "Element.Element msg"
+            },
+            {
+                "name": "chevronDownRgb255",
+                "comment": " ",
+                "type": "Basics.Int -> Basics.Int -> Basics.Int -> Element.Element msg"
+            },
+            {
+                "name": "chevronRight",
+                "comment": " ",
+                "type": "Element.Element msg"
+            },
+            {
+                "name": "chevronRightRgb255",
+                "comment": " ",
+                "type": "Basics.Int -> Basics.Int -> Basics.Int -> Element.Element msg"
+            },
+            {
+                "name": "close",
+                "comment": " ",
+                "type": "Element.Element msg"
+            },
+            {
+                "name": "closeCircle",
+                "comment": " ",
+                "type": "Element.Element msg"
+            },
+            {
+                "name": "closeCircleRgb255",
+                "comment": " ",
+                "type": "Basics.Int -> Basics.Int -> Basics.Int -> Element.Element msg"
+            },
+            {
+                "name": "closeRgb255",
+                "comment": " ",
+                "type": "Basics.Int -> Basics.Int -> Basics.Int -> Element.Element msg"
+            },
+            {
+                "name": "hamburger",
+                "comment": " ",
+                "type": "Element.Element msg"
+            },
+            {
+                "name": "info",
+                "comment": " ",
+                "type": "Element.Element msg"
+            },
+            {
+                "name": "infoRgb255",
+                "comment": " ",
+                "type": "Basics.Int -> Basics.Int -> Basics.Int -> Element.Element msg"
+            },
+            {
+                "name": "nineBox",
+                "comment": " ",
+                "type": "Element.Element msg"
+            },
+            {
+                "name": "nineBoxRgb255",
+                "comment": " ",
+                "type": "Basics.Int -> Basics.Int -> Basics.Int -> Element.Element msg"
+            },
+            {
+                "name": "times",
+                "comment": " ",
+                "type": "Element.Element msg"
+            },
+            {
+                "name": "timesRgb255",
+                "comment": " ",
+                "type": "Basics.Int -> Basics.Int -> Basics.Int -> Element.Element msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "PF4.Info",
+        "comment": " An informational text element\n\n#Defintion\n\n@docs Info\n\n\n# Constructor function\n\n@docs info\n\n\n# Configuration functions\n\n@docs withTitle, withDefaultIcon\n\n\n# Rendering element\n\n@docs toMarkup\n\n",
+        "unions": [
+            {
+                "name": "Info",
+                "comment": " Opaque `Info` element that includes information text content\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "info",
+                "comment": " Constructs an `Info` element\n",
+                "type": "String.String -> PF4.Info.Info msg"
+            },
+            {
+                "name": "toMarkup",
+                "comment": " Given the custom type representation, renders as an `Element msg`.\n",
+                "type": "PF4.Info.Info msg -> Element.Element msg"
+            },
+            {
+                "name": "withDefaultIcon",
+                "comment": " Configures the `Info` element to appear with the default icon.\n\nBy default, `Info` will not render an icon.\n\n",
+                "type": "PF4.Info.Info msg -> PF4.Info.Info msg"
+            },
+            {
+                "name": "withTitle",
+                "comment": " Configures the `Info` element appear with title text above the content.\n\nBy default, `Info` has no title text.\n\n",
+                "type": "String.String -> PF4.Info.Info msg -> PF4.Info.Info msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "PF4.Label",
+        "comment": " A label component for closable (or dismissable) text\n\n\n# Definition\n\n@docs Label, Variant\n\n\n# Constructor function\n\n@docs label\n\n\n# Configuration functions\n\n@docs withFill, withOutline, withIcon, withHyperlink, withCloseMsg\n\n\n# Rendering element\n\n@docs toMarkup\n\n<https://www.patternfly.org/v4/components/label>\n\n",
+        "unions": [
+            {
+                "name": "Label",
+                "comment": " Opaque `Label` element that can produce `msg` messages\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Variant",
+                "comment": " An opaque `Variant` custom type with 2 variants\n\n`Outline`, `Fill`\n\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "label",
+                "comment": " Constructs a label from the `text`\n",
+                "type": "String.String -> PF4.Label.Label msg"
+            },
+            {
+                "name": "toMarkup",
+                "comment": " Given the custom type representation, renders as an `Element msg`.\n",
+                "type": "PF4.Label.Label msg -> Element.Element msg"
+            },
+            {
+                "name": "withCloseMsg",
+                "comment": " Configures what `msg` is produced \"on close\"\n\nThe event \"on close\" is produce when the \"close\" **x**\nis clicked.\n\n",
+                "type": "msg -> PF4.Label.Label msg -> PF4.Label.Label msg"
+            },
+            {
+                "name": "withFill",
+                "comment": " Configures appearance to have a `Fill`\n",
+                "type": "PF4.Label.Label msg -> PF4.Label.Label msg"
+            },
+            {
+                "name": "withHyperlink",
+                "comment": " Configures appearance to have a `Hyperlink`\n",
+                "type": "String.String -> PF4.Label.Label msg -> PF4.Label.Label msg"
+            },
+            {
+                "name": "withIcon",
+                "comment": " Configures the label to include an icon defined by the `Element msg` passed\n",
+                "type": "Element.Element msg -> PF4.Label.Label msg -> PF4.Label.Label msg"
+            },
+            {
+                "name": "withOutline",
+                "comment": " Configures appearance to have an `Outline`\n",
+                "type": "PF4.Label.Label msg -> PF4.Label.Label msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "PF4.Navigation",
+        "comment": " A stateless component for application navigation\n\nIntended to have its state \"driven\" by the Elm application using it.\n\nUses the `Element.Region.navigation` to indicate semantic intent.\n\n<https://www.patternfly.org/v4/components/navigation>\n\n\n# Definition\n\n@docs Navigation\n\n\n# Constructor functions\n\n@docs nav, navItem\n\n\n# Perform State Change\n\n@docs selectItem\n\n\n# Selection functions\n\n@docs withSelectedItem, withSelectedFirstItem\n\n\n# Configuration functions\n\n@docs withHorizontalVariant, withTerinaryVariant\n\n\n# Rendering stateless element\n\n@docs toMarkup\n\n",
+        "unions": [
+            {
+                "name": "Navigation",
+                "comment": " Opaque `Navigation` element that can produce `msg` messages\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "nav",
+                "comment": " Constructs a `Navigation msg` given a list of items\n\nYou could render a `Navigation msg` with the following\n\n    [ \"Badge\"\n    , \"Chip\"\n    , \"ChipGroup\"\n    , \"Icons\"\n    , \"Info\"\n    , \"Label\"\n    , \"Navigation\"\n    , \"Title\"\n    , \"Tooltip\"\n    ]\n        |> List.map\n            (\\item ->\n                ( item, NavSelected item )\n            )\n        |> Navigation.nav\n\nHowever, you will need want to have the `navItems` available for\napplication code. It would make more sense to likely render using\nvalues that are stored your `Model`:\n\n    model.navItems\n        |> List.map\n            (\\item ->\n                ( item, NavSelected item )\n            )\n        |> Navigation.nav\n        |> Navigation.withSelectedItem\n            model.selectedNav\n\nCurrently, `Navigation msg` is implemented in a stateless manner,\nassuming the Elm application will want to _drive_ the transitions\nfrom data that is in the model.\n\n",
+                "type": "List.List ( String.String, msg ) -> PF4.Navigation.Navigation msg"
+            },
+            {
+                "name": "navItem",
+                "comment": " Constructs a `NavItem msg` given a `name` and `msg` to produce `onPress`\n\nFor a `NavItem msg` that is disabled or not clickable, you can provide\n`Nothing` for `onPress`.\n\nNote: `name` is assumed to be unique among all items\n\n",
+                "type": "{ name : String.String, onPress : Maybe.Maybe msg } -> PF4.Navigation.NavItem msg"
+            },
+            {
+                "name": "selectItem",
+                "comment": " Selects an item by `itemName`\n\nFor duplicates, the handling of selection would be predictable given\nthe underlying representation.\n\n",
+                "type": "String.String -> PF4.Navigation.Navigation msg -> PF4.Navigation.Navigation msg"
+            },
+            {
+                "name": "toMarkup",
+                "comment": " Given the custom type representation, renders as an `Element msg`.\n",
+                "type": "PF4.Navigation.Navigation msg -> Element.Element msg"
+            },
+            {
+                "name": "withHorizontalVariant",
+                "comment": " Configures the orientation for rendering to be horizontal\n",
+                "type": "PF4.Navigation.Navigation msg -> PF4.Navigation.Navigation msg"
+            },
+            {
+                "name": "withSelectedFirstItem",
+                "comment": " Configures that navigation to have the first `NavItem msg` as selected\n",
+                "type": "PF4.Navigation.Navigation msg -> PF4.Navigation.Navigation msg"
+            },
+            {
+                "name": "withSelectedItem",
+                "comment": " Configures the selected item to be `itemName`\n",
+                "type": "String.String -> PF4.Navigation.Navigation msg -> PF4.Navigation.Navigation msg"
+            },
+            {
+                "name": "withTerinaryVariant",
+                "comment": " Configures the orientation for rendering\n",
+                "type": "PF4.Navigation.Navigation msg -> PF4.Navigation.Navigation msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "PF4.Page",
+        "comment": " An appearance-oriented Page component\n\n<https://www.patternfly.org/v4/components/page>\n\n\n# Definition\n\n@docs Page, PageHeader, PageSidebar\n\n\n# Constructor functions\n\n@docs page, pageHeader\n\n\n# Content function(s)\n\n@docs sections\n\n\n# Rendering stateless element\n\n@docs toMarkup\n\n",
+        "unions": [
+            {
+                "name": "Page",
+                "comment": " Opaque `Page` element\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "PageHeader",
+                "comment": " Opaque `PageHeader` element\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "PageSidebar",
+                "comment": " Opaque `PageSidebar` element\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "page",
+                "comment": " Constructs a `Page` with a `title`, `nav` and `body` (of sections)\n",
+                "type": "{ title : String.String, nav : PF4.Navigation.Navigation msg, body : List.List (Element.Element msg) } -> PF4.Page.Page msg"
+            },
+            {
+                "name": "pageHeader",
+                "comment": " Constructs a `PageHeader` element\n",
+                "type": "String.String -> Maybe.Maybe msg -> PF4.Page.PageHeader msg"
+            },
+            {
+                "name": "sections",
+                "comment": " Adds a list of `Element msg` as sections to the page\n",
+                "type": "List.List (Element.Element msg) -> List.List (PF4.Page.PageSection msg)"
+            },
+            {
+                "name": "toMarkup",
+                "comment": " Given the custom type representation, renders as an `Element msg`.\n",
+                "type": "PF4.Page.Page msg -> Element.Element msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "PF4.Radio",
+        "comment": " A component for presenting mutually exclusive choices\n\n\n# Definition\n\n@docs Radio\n\n\n# Constructor function\n\n@docs radio\n\n\n# Configuration functions\n\n@docs OptionStatePalette, withOptionStatePalette, asRow, asColumn\n\n\n# Extra Attributes functions\n\n@docs withOptionExtraAttributes, withLabelAttributes\n\n\n# Rendering element\n\n@docs toMarkup\n\n",
+        "unions": [
+            {
+                "name": "Radio",
+                "comment": " Opaque `Radio` element that can produce `msg` messages from a mutually exclusive choices of `option`\n",
+                "args": [
+                    "option",
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "OptionStatePalette",
+                "comment": " A palette rendering the color of the radio button given the possible\n[OptionState](https://package.elm-lang.org/packages/mdgriffith/elm-ui/latest/Element-Input#OptionState)\ndefined in `elm-ui`.\n",
+                "args": [],
+                "type": "{ idle : Element.Color, focused : Element.Color, selected : Element.Color }"
+            }
+        ],
+        "values": [
+            {
+                "name": "asColumn",
+                "comment": " Configure to render options in a column, **_stacked_**\n",
+                "type": "PF4.Radio.Radio option msg -> PF4.Radio.Radio option msg"
+            },
+            {
+                "name": "asRow",
+                "comment": " Configure to render options in a row, left-to-right\n",
+                "type": "PF4.Radio.Radio option msg -> PF4.Radio.Radio option msg"
+            },
+            {
+                "name": "radio",
+                "comment": " Constructs a `Radio` from the arguments\n\nDefault configuration is to:\n\n  - position of the radio button is to the left\n  - the options are rendered \"stacked\", as a column\n\nArgument Info:\n\n  - `label` is for given _context_ to all of the `option`\n\nFor example, if a user is choosing between some type of \"resources\", like\nthe Volumes attached to a virtual machine, the `label` would be rendered\nabove chooses related to _Volumes_.\n\n",
+                "type": "{ onChange : option -> msg, selected : Maybe.Maybe option, label : String.String, options : List.List { value : option, text : String.String } } -> PF4.Radio.Radio option msg"
+            },
+            {
+                "name": "toMarkup",
+                "comment": " Given the custom type representation, renders as an `Element msg`.\n",
+                "type": "PF4.Radio.Radio option msg -> Element.Element msg"
+            },
+            {
+                "name": "withLabelAttributes",
+                "comment": " Provide a list of attributes to include on the label over the entire element.\n\nIf you're looking to add attributes to the Radio buttons options, use `withOptionExtraAttributes`.\n\n",
+                "type": "List.List (Element.Attribute msg) -> PF4.Radio.Radio option msg -> PF4.Radio.Radio option msg"
+            },
+            {
+                "name": "withOptionExtraAttributes",
+                "comment": " Provide a list of attributes to include on **option** label elements.\n\nThis will not impact the `label` rendered above the `Radio` button options.\n\nUse `withLabelAttributes` to impact that element.\n\n",
+                "type": "List.List (Element.Attribute msg) -> PF4.Radio.Radio option msg -> PF4.Radio.Radio option msg"
+            },
+            {
+                "name": "withOptionStatePalette",
+                "comment": " Render with a custom palette\n",
+                "type": "{ idle : Element.Color, focused : Element.Color, selected : Element.Color } -> PF4.Radio.Radio option msg -> PF4.Radio.Radio option msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "PF4.Switch",
+        "comment": " A component for toggling or _switching_ values **on** or **off**\n\n\n# Definition\n\n@docs Switch\n\n\n# Constructor function\n\n@docs switch\n\n\n# Configuration functions\n\n@docs withReversed, withText\n\n\n# State change functions\n\n@docs isChecked, markChecked, markUnchecked, toggleCheck\n\n\n# Rendering element\n\n@docs toMarkup\n\n",
+        "unions": [
+            {
+                "name": "Switch",
+                "comment": " Opaque `Switch` element that can produce `msg` messages\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "isChecked",
+                "comment": " Return true is the element is `checked`, otherwise false\n",
+                "type": "PF4.Switch.Switch msg -> Basics.Bool"
+            },
+            {
+                "name": "markChecked",
+                "comment": " Set the `checked` value to true\n",
+                "type": "PF4.Switch.Switch msg -> PF4.Switch.Switch msg"
+            },
+            {
+                "name": "markUnchecked",
+                "comment": " Set the `checked` value to false\n",
+                "type": "PF4.Switch.Switch msg -> PF4.Switch.Switch msg"
+            },
+            {
+                "name": "switch",
+                "comment": " Constructs a `Switch` from the arguments\n\n  - `onText` is the text that will be displayed when the switch is \"on\", or `checked` is true\n  - `offText` is the text that will be displayed when the switch is \"off\", or `checked` is false\n\n",
+                "type": "{ checked : Basics.Bool, onText : String.String, offText : String.String, onChange : Basics.Bool -> msg } -> PF4.Switch.Switch msg"
+            },
+            {
+                "name": "toMarkup",
+                "comment": " Given the custom type representation, renders as an `Element msg`.\n",
+                "type": "PF4.Switch.Switch msg -> Element.Element msg"
+            },
+            {
+                "name": "toggleCheck",
+                "comment": " Given the internal `checked` state, set it to the opposite\n",
+                "type": "PF4.Switch.Switch msg -> PF4.Switch.Switch msg"
+            },
+            {
+                "name": "withReversed",
+                "comment": " Configures the position of the text to be on the left of the switch\n\nThe default position of the text is to the right of the switch.\n\n",
+                "type": "PF4.Switch.Switch msg -> PF4.Switch.Switch msg"
+            },
+            {
+                "name": "withText",
+                "comment": " Configures the text display when the switch is \"on\" or \"off\"\n",
+                "type": "{ onText : String.String, offText : String.String } -> PF4.Switch.Switch msg -> PF4.Switch.Switch msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "PF4.Title",
+        "comment": " A title component serving as a semantic header element\n\n<https://www.patternfly.org/v4/components/title>\n\n\n# Definition\n\n@docs Title\n\n\n# Constructor function\n\n@docs title\n\n\n# Configuration function(s)\n\n@docs withRgb\n\n\n# Modifier functions, HTML semantics\n\n@docs asH1, asH2, asH3, asH4, asH5, asH6\n\n\n# Modifier functions, text sizing\n\n@docs TextSize, withSizeMd, withSizeLg, withSizeXl, withSize2xl, withSize3xl, withSize4xl\n\n\n# \"Escape Hatch\" for adding `Element.Attribute msg`\n\n@docs withExtraAttributes\n\n\n# Rendering element\n\n@docs toMarkup\n\n",
+        "unions": [
+            {
+                "name": "TextSize",
+                "comment": " Defined a vertical rhythm of text sizing\n\nWe may want to have some approach to doing a `scaled` definition of\nthese sizes from a relative measure, a la `rem` units in CSS.\n\nBorrowed from the `elm-ui` documentation:\n\n```\nscaled : Int -> Float\nscaled =\n    Element.modular 16 1.25\n```\n\nSo we'd allow you to pass in a defined \"hierarchy\" that would map the\nTextSize values to the respective `Int` value.\n\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Title",
+                "comment": " Opaque `Title` element that can produce `msg` messages\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "asH1",
+                "comment": " Alters semantics to appear as a `Element.Region.heading 1`\n",
+                "type": "PF4.Title.Title msg -> PF4.Title.Title msg"
+            },
+            {
+                "name": "asH2",
+                "comment": " Alters semantics to appear as a `Element.Region.heading 2`\n",
+                "type": "PF4.Title.Title msg -> PF4.Title.Title msg"
+            },
+            {
+                "name": "asH3",
+                "comment": " Alters semantics to appear as a `Element.Region.heading 3`\n",
+                "type": "PF4.Title.Title msg -> PF4.Title.Title msg"
+            },
+            {
+                "name": "asH4",
+                "comment": " Alters semantics to appear as a `Element.Region.heading 4`\n",
+                "type": "PF4.Title.Title msg -> PF4.Title.Title msg"
+            },
+            {
+                "name": "asH5",
+                "comment": " Alters semantics to appear as a `Element.Region.heading 5`\n",
+                "type": "PF4.Title.Title msg -> PF4.Title.Title msg"
+            },
+            {
+                "name": "asH6",
+                "comment": " Alters semantics to appear as a `Element.Region.heading 6`\n",
+                "type": "PF4.Title.Title msg -> PF4.Title.Title msg"
+            },
+            {
+                "name": "title",
+                "comment": " Constructs a `Title` element without any attributes\n\nThe default `Size` is `Medium 16`, use the various sizing\nconfiguration `with` functions to alter it.\n\n",
+                "type": "String.String -> PF4.Title.Title msg"
+            },
+            {
+                "name": "toMarkup",
+                "comment": " Given the custom type representation, renders as an `Element msg`.\n",
+                "type": "PF4.Title.Title msg -> Element.Element msg"
+            },
+            {
+                "name": "withExtraAttributes",
+                "comment": " Adds a list of `Element.Attributes` to the element\n",
+                "type": "List.List (Element.Attribute msg) -> PF4.Title.Title msg -> PF4.Title.Title msg"
+            },
+            {
+                "name": "withRgb",
+                "comment": " Changes the color of the text\n",
+                "type": "Basics.Int -> Basics.Int -> Basics.Int -> PF4.Title.Title msg -> PF4.Title.Title msg"
+            },
+            {
+                "name": "withSize2xl",
+                "comment": " Configure text size to 2XL\n",
+                "type": "PF4.Title.Title msg -> PF4.Title.Title msg"
+            },
+            {
+                "name": "withSize3xl",
+                "comment": " Configure text size to 3XL\n",
+                "type": "PF4.Title.Title msg -> PF4.Title.Title msg"
+            },
+            {
+                "name": "withSize4xl",
+                "comment": " Configure text size to 4XL\n",
+                "type": "PF4.Title.Title msg -> PF4.Title.Title msg"
+            },
+            {
+                "name": "withSizeLg",
+                "comment": " Configure text size to Lg, or large\n",
+                "type": "PF4.Title.Title msg -> PF4.Title.Title msg"
+            },
+            {
+                "name": "withSizeMd",
+                "comment": " Configure text size to Md, or medium\n",
+                "type": "PF4.Title.Title msg -> PF4.Title.Title msg"
+            },
+            {
+                "name": "withSizeXl",
+                "comment": " Configure text size to XL\n",
+                "type": "PF4.Title.Title msg -> PF4.Title.Title msg"
+            }
+        ],
+        "binops": []
+    }
+]

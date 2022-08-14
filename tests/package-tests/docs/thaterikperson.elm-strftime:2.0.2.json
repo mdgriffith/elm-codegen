@@ -1,0 +1,16 @@
+[
+    {
+        "name": "Strftime",
+        "comment": " An (incomplete) implementation of the strftime format based on rules\nfrom <http://strftime.org>.\n\n@docs format\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "format",
+                "comment": " Format a time into a string of your choice. Follow the rules at\n<http://strftime.org>.\n\nExamples\n\n    Strftime.format \"%d %B %y\" Time.utc (Time.millisToPosix 1499000000000) == \"02 July 17\"\n\n",
+                "type": "String.String -> Time.Zone -> Time.Posix -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

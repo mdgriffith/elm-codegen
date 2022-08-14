@@ -1,0 +1,42 @@
+[
+    {
+        "name": "MultiDict",
+        "comment": " MultiDict implements a one-to-many relationship, between `comparable` keys\nand `Set`s of values. Each key may be associated with zero or many values, compared\nwith a `Dict` which associated each key with just one value. Its implementation is\na `Dict` of `Set`s, but the overhead of creating new sets or removing empty sets as\nvalues are added to or removed from the data structyre is managed for you.\n\n@docs MultiDict, insert, remove, get, empty\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "MultiDict",
+                "comment": " The type of multi dicts from comparable keys to sets of values.\n",
+                "args": [
+                    "comparable",
+                    "value",
+                    "comparable1"
+                ],
+                "type": "{ vfun : value -> comparable1, dict : Dict.Dict comparable (DictSet.DictSet comparable1 value) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "empty",
+                "comment": " Creates an empty multi-dict.\n",
+                "type": "(value -> comparable1) -> MultiDict.MultiDict comparable value comparable1"
+            },
+            {
+                "name": "get",
+                "comment": " Gets the set of values associated with a key, or `Nothing` if there is no\nset of values.\n",
+                "type": "comparable -> MultiDict.MultiDict comparable value comparable1 -> Maybe.Maybe (DictSet.DictSet comparable1 value)"
+            },
+            {
+                "name": "insert",
+                "comment": " Adds a key-value pair into the dictionary. It is added to the set of values\nalready associated with that key.\n",
+                "type": "comparable -> value -> MultiDict.MultiDict comparable value comparable1 -> MultiDict.MultiDict comparable value comparable1"
+            },
+            {
+                "name": "remove",
+                "comment": " Removes a key-value pair from the dictionary. It is removed from the set of values\nassociated with the key.\n",
+                "type": "comparable -> value -> MultiDict.MultiDict comparable value comparable1 -> MultiDict.MultiDict comparable value comparable1"
+            }
+        ],
+        "binops": []
+    }
+]

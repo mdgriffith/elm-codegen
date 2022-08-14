@@ -1,0 +1,21 @@
+[
+    {
+        "name": "Luhn",
+        "comment": " This library allows you to validate data using the Luhn Algorithm.\nThe algorithm is often used to guard against simple mistakes when\na user enters something like a credit card or social security number.\n\n\n# Validation\n\n@docs validate, isValid\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "isValid",
+                "comment": " Same as `validate` but returns a `Bool` instead, for easy use in\n`if`-expressions.\n\n    isValid \"49927398716\" == True\n\n",
+                "type": "String.String -> Basics.Bool"
+            },
+            {
+                "name": "validate",
+                "comment": " Accepts a string and returns a `Result String String` indicating\nwhether the string was a valid number according to the Luhn Algorithm.\n\n    validate \"49927398716\" == Ok \"49927398716\"\n\n",
+                "type": "String.String -> Result.Result String.String String.String"
+            }
+        ],
+        "binops": []
+    }
+]

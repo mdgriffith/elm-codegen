@@ -1,0 +1,451 @@
+[
+    {
+        "name": "Cartesian",
+        "comment": " A module for cartesian structure\n\nThis is an experiment in organizing wiring diagrams\n\nWe're not implementing this paper exactly, but finding some inspiration:\n\nThe Cost of Compositionality: A High-Performance Implementation of String Diagram Composition\n\n<https://arxiv.org/abs/2105.09257>\n\n\n## Types\n\n@docs C, Interface\n\n\n## Usage\n\n@docs before, aside, init, initWith, unit, group, interface, wrap\n\n\n# Convert the inner labels\n\n@docs map\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "C",
+                "comment": " The type of a cartesian structure\n\nThis is not your typical category theory monoidal thing, as we store a recursive structure\n\n",
+                "args": [
+                    "a"
+                ],
+                "type": "Internal.Cartesian.C a"
+            },
+            {
+                "name": "Interface",
+                "comment": " The Interface type describes the Arity of the cartesian system structure\n",
+                "args": [],
+                "type": "Internal.Cartesian.Interface.Interface"
+            }
+        ],
+        "values": [
+            {
+                "name": "aside",
+                "comment": " Put two structures aside each other\n\nThe structures will be independent\n\nNote the order of arguments are flipped to support this syntax:\n\n    a |> aside b\n\nThis will put `a` 'first'\n\n",
+                "type": "Cartesian.C a -> Cartesian.C a -> Cartesian.C a"
+            },
+            {
+                "name": "before",
+                "comment": " Put one structure before another\n\nThe structures will be dependent and must match in the interface\n\nNote the order of arguments are flipped to support this syntax:\n\n    a |> before b\n\nThis will put `a` 'first'\n\n",
+                "type": "Cartesian.C a -> Cartesian.C a -> Cartesian.C a"
+            },
+            {
+                "name": "group",
+                "comment": " Group a structure\n\nThis may be used to group substructures\n\n",
+                "type": "Cartesian.C a -> Cartesian.C a"
+            },
+            {
+                "name": "init",
+                "comment": " Initialize a simple 1->1 arity morphism with label 'a'\n",
+                "type": "a -> Cartesian.C a"
+            },
+            {
+                "name": "initWith",
+                "comment": " Initialize a morphism with a given interface and label\n",
+                "type": "Basics.Int -> Basics.Int -> a -> Cartesian.C a"
+            },
+            {
+                "name": "interface",
+                "comment": " Extract the outermost interface of the structure\n",
+                "type": "Cartesian.C a -> Cartesian.Interface"
+            },
+            {
+                "name": "map",
+                "comment": " Map a function over all the label a's\n",
+                "type": "(a -> b) -> Cartesian.C a -> Cartesian.C b"
+            },
+            {
+                "name": "unit",
+                "comment": " The unit value\n\nThis is possibly not needed, but we'll start off using it.\n\nThis may disappear later.\n\n",
+                "type": "Cartesian.C a"
+            },
+            {
+                "name": "wrap",
+                "comment": " Wrap a part of the structure with a label a\n",
+                "type": "a -> Cartesian.C a -> Cartesian.C a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Cartesian.Examples",
+        "comment": " Example Cartesian diagrams with String labels\n\n\n# ![elm-wiring-diagrams](https://github.com/jcberentsen/elm-wiring-diagrams/blob/main/assets/png/bypass.png?raw=true)\n\n\n## Usage\n\n@docs basicCell, a, b, c, d, abc, axb, bxa, axb_cxd, axb_cxd_e, simpleBypass, bypass, logo\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "a",
+                "comment": " A cell with an 'a'\n\n    a =\n        C.init \"a\"\n\n",
+                "type": "Cartesian.C String.String"
+            },
+            {
+                "name": "abc",
+                "comment": " We can compose a b and c in sequence\nAh, now it is starting to make sense...\n\n    a |> C.before b |> C.before c\n\n",
+                "type": "Cartesian.C String.String"
+            },
+            {
+                "name": "axb",
+                "comment": " Compose a and b in parallel\n\n    a |> C.aside b\n\n",
+                "type": "Cartesian.C String.String"
+            },
+            {
+                "name": "axb_cxd",
+                "comment": " Compose axb and cxd in sequence.\nWe can expect a to connect with c and b to connect with d\n\n    let\n        cxd =\n            c\n                |> C.aside d\n    in\n    axb |> C.before cxd\n\n",
+                "type": "Cartesian.C String.String"
+            },
+            {
+                "name": "axb_cxd_e",
+                "comment": " Compose axb and cxd in sequence `before` 'e'\nThe 'e' node needs to be declared with 2 inputs so the outputs from both 'c' and 'd'\nwill connect to it. Otherwise the 'd' output will be dangling (which is ok if something else will be connected later)\n",
+                "type": "Cartesian.C String.String"
+            },
+            {
+                "name": "b",
+                "comment": " A cell with a 'b'\n",
+                "type": "Cartesian.C String.String"
+            },
+            {
+                "name": "basicCell",
+                "comment": " A basic cell with a label String of 'Cell'\n",
+                "type": "Cartesian.C String.String"
+            },
+            {
+                "name": "bxa",
+                "comment": " Compose a and b in parallel but b first\n",
+                "type": "Cartesian.C String.String"
+            },
+            {
+                "name": "bypass",
+                "comment": " An example of how to make a bypass\n\n    let\n        source3 =\n            C.initWith 1 3 \"src\"\n\n        sink2 =\n            C.initWith 2 1 \"sink\"\n\n        extraLane =\n            C.init \"bypass\"\n\n        conduce =\n            axb_cxd_e |> C.aside extraLane\n    in\n    source3 |> C.before conduce |> C.before sink2\n\n",
+                "type": "Cartesian.C String.String"
+            },
+            {
+                "name": "c",
+                "comment": " A cell with a 'c'\n",
+                "type": "Cartesian.C String.String"
+            },
+            {
+                "name": "d",
+                "comment": " Wow a cell with a 'd'\n",
+                "type": "Cartesian.C String.String"
+            },
+            {
+                "name": "logo",
+                "comment": " The diagram for the package logo\n\n    C.init \"elm\"\n        |> C.before (C.init \"wiring\")\n        |> C.before (C.init \"diagrams\")\n\n",
+                "type": "Cartesian.C String.String"
+            },
+            {
+                "name": "simpleBypass",
+                "comment": " A simple bypass\n\n    let\n        source =\n            C.initWith 1 3 \"src\"\n\n        sink =\n            C.initWith 1 1 \"sink\"\n    in\n    source |> C.before (sink |> C.aside bxa)\n\n",
+                "type": "Cartesian.C String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Cartesian.Layout",
+        "comment": " Layout a cartesian structure\n\n\n## Usage\n\n@docs toLayout, toLayoutWithConfig\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toLayout",
+                "comment": " Layout a cartesian structure\n\nThis is unfinished, and won't do anything interesting yet.\n\n",
+                "type": "Internal.Cartesian.C a -> Internal.Cartesian.Layout.Layout a"
+            },
+            {
+                "name": "toLayoutWithConfig",
+                "comment": " Layout with some configuration\n\nThis is unfinished, and won't do anything interesting yet.\n\n",
+                "type": "Diagram.Layout.Config.Config a -> Internal.Cartesian.C a -> Internal.Cartesian.Layout.Layout a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Cartesian.Layout.Svg",
+        "comment": " Convert a Layout to Svg\n\n\n## Usage\n\n@docs toSvgWith, viewportFor\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toSvgWith",
+                "comment": " Render a Layout to Svg\n\nThe svg styling lets you control fonts, colors, strokes, transparency...\n\n",
+                "type": "Internal.Svg.Config.Config a msg -> Internal.Cartesian.Layout.Layout a -> Svg.Svg msg"
+            },
+            {
+                "name": "viewportFor",
+                "comment": " Compute a viewport large enough for the layout\n",
+                "type": "Internal.Cartesian.Layout.Layout a -> Internal.Svg.Viewport"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Cartesian.Svg",
+        "comment": " Convert a cartesian structure to Svg\n\n\n## Usage\n\n@docs toSvg, toSvgWith, fromDiagram, Styling\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Styling",
+                "comment": " A type for configuring Layout and Svg styling\n",
+                "args": [
+                    "a",
+                    "msg"
+                ],
+                "type": "{ layoutConfig : Diagram.Layout.Config.Config a, svgConfig : Internal.Svg.Config.Config a msg }"
+            }
+        ],
+        "values": [
+            {
+                "name": "fromDiagram",
+                "comment": " An alias for toSvg\n\n    Svg.fromDiagram diagram\n",
+                "type": "Internal.Cartesian.C a -> Svg.Svg msg"
+            },
+            {
+                "name": "toSvg",
+                "comment": " Layout a cartesian structure and render to Svg\n\nThis uses some silly defaults. Use this for early testing.\n\nUse the toSvgWith function to control layout and styling in more detail\n\n",
+                "type": "Internal.Cartesian.C a -> Svg.Svg msg"
+            },
+            {
+                "name": "toSvgWith",
+                "comment": " Layout and render to Svg with Styling\n\nYou supply two configs. One for layout and one for Svg styling.\n\nThe layout styling lets you control, sizes, padding, arrow measurements...\nThe svg styling lets you control fonts, colors, strokes, transparency...\n\n",
+                "type": "Cartesian.Svg.Styling a msg -> Internal.Cartesian.C a -> Svg.Svg msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Diagram.Bound",
+        "comment": " Represent the horizontal and vertical ( possibly empty) extents of a two dimensional area.\n\n@docs Bound, init, empty\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Bound",
+                "comment": " The Bound type\n",
+                "args": [],
+                "type": "Internal.Bound.Bound"
+            }
+        ],
+        "values": [
+            {
+                "name": "empty",
+                "comment": " Initialize an empty Bound\n",
+                "type": "Diagram.Bound.Bound"
+            },
+            {
+                "name": "init",
+                "comment": " Initialize a Bound from an Extent\n",
+                "type": "Internal.Extent.Extent -> Diagram.Bound.Bound"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Diagram.Extent",
+        "comment": " Represent the horizontal and vertical extents of a two dimensinal area (also called bounding-box).\n\n@docs Extent, init\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Extent",
+                "comment": " Represent the horizontal and vertical extents of a two dimensinal area\n",
+                "args": [],
+                "type": "Internal.Extent.Extent"
+            }
+        ],
+        "values": [
+            {
+                "name": "init",
+                "comment": " Initialize an Extent from two corners, lo and hi\n",
+                "type": "Internal.Vec2.Vec2 -> Internal.Vec2.Vec2 -> Diagram.Extent.Extent"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Diagram.Layout.Config",
+        "comment": " Configuration for Layouts\n\n@docs Config, default, setLeafExtent, setSpacing\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " The Config type\n",
+                "args": [
+                    "a"
+                ],
+                "type": "Internal.Layout.Config.Config a"
+            }
+        ],
+        "values": [
+            {
+                "name": "default",
+                "comment": " A default Config\n",
+                "type": "Diagram.Layout.Config.Config a"
+            },
+            {
+                "name": "setLeafExtent",
+                "comment": " Configure a function to compute the extent of a leaf node of a diagram from a value of type 'a'\n",
+                "type": "(a -> Internal.Bound.Bound) -> Diagram.Layout.Config.Config a -> Diagram.Layout.Config.Config a"
+            },
+            {
+                "name": "setSpacing",
+                "comment": " Configure the spacing between nodes in the diagram\n",
+                "type": "Internal.Vec2.Vec2 -> Diagram.Layout.Config.Config a -> Diagram.Layout.Config.Config a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Diagram.Svg",
+        "comment": " Some helpers for rendering diagrams to SVG\n\n@docs Viewport, view, smallViewport, wideViewport, mediumViewport, largeViewport\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Viewport",
+                "comment": " Placement and dimensions of a Viewport to render SVG inside\n",
+                "args": [],
+                "type": "Internal.Svg.Viewport"
+            }
+        ],
+        "values": [
+            {
+                "name": "largeViewport",
+                "comment": " A larger sized viewport (1024x768)\n",
+                "type": "{ width : number, height : number, xMin : number, yMin : number }"
+            },
+            {
+                "name": "mediumViewport",
+                "comment": " A medium sized viewport (640x480)\n",
+                "type": "{ width : number, height : number, xMin : number, yMin : number }"
+            },
+            {
+                "name": "smallViewport",
+                "comment": " A small viewport of 200x200\n",
+                "type": "{ width : number, height : number, xMin : number, yMin : number }"
+            },
+            {
+                "name": "view",
+                "comment": " Render a list of Svg items in a viewport to Html\n",
+                "type": "Diagram.Svg.Viewport -> List.List (Svg.Svg msg) -> Html.Html msg"
+            },
+            {
+                "name": "wideViewport",
+                "comment": " A wide but low viewport of 1200x150\n",
+                "type": "{ width : number, height : number, xMin : number, yMin : number }"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Diagram.Svg.Config",
+        "comment": " Configure how to convert Layout Labels to Strings for Svg output\n\n@docs Config, forStringLabels, initWithLabelToString, default, withLabelToString\n@docs withTextAttributes, withTextAttributesFunction, withCellAttributes, withCellAttributesFunction\n@docs withCellWrappingFunction\n\n\n## Control label positions\n\n@docs withLabelPositionFunction, LabelPositionFunction, centered, bottomLeft\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " Preliminary way to control how labels turn into String for SVG\n",
+                "args": [
+                    "a",
+                    "msg"
+                ],
+                "type": "Internal.Svg.Config.Config a msg"
+            },
+            {
+                "name": "LabelPositionFunction",
+                "comment": " Type of a function that can determine a text position within a box\n\nThis can be used for centering and aligning labels towards edges or corners,\n\n",
+                "args": [
+                    "a"
+                ],
+                "type": "Internal.Svg.Config.LabelPositionFunction a"
+            }
+        ],
+        "values": [
+            {
+                "name": "bottomLeft",
+                "comment": " LabelPositionFunction for placing labels in lower left corner\n",
+                "type": "Diagram.Svg.Config.LabelPositionFunction a"
+            },
+            {
+                "name": "centered",
+                "comment": " LabelPositionFunction for centering labels in box\n",
+                "type": "Diagram.Svg.Config.LabelPositionFunction a"
+            },
+            {
+                "name": "default",
+                "comment": " Simple starting config. All labels will render as a dot\n\nUse the Config modifiers to shape your intended Config\n\n",
+                "type": "Diagram.Svg.Config.Config a msg"
+            },
+            {
+                "name": "forStringLabels",
+                "comment": " Simple starting config when labels are already String\n",
+                "type": "Diagram.Svg.Config.Config String.String msg"
+            },
+            {
+                "name": "initWithLabelToString",
+                "comment": " Init needs a labelToString function\n",
+                "type": "(a -> String.String) -> Diagram.Svg.Config.Config a msg"
+            },
+            {
+                "name": "withCellAttributes",
+                "comment": " Overload attributes for all cell boxes\n\nThese are the inner boxes with labels.\n\nOnly style colors, fonts.\n\nAvoid modifying geometry, as this will likely mess up the layout\n\n",
+                "type": "List.List (Svg.Attribute msg) -> Diagram.Svg.Config.Config a msg -> Diagram.Svg.Config.Config a msg"
+            },
+            {
+                "name": "withCellAttributesFunction",
+                "comment": " Overload attributes for each cell\n\nYou supply a function that looks at the label and decides which attributes to use\n\nOnly style colors, fonts.\n\nAvoid modifying geometry, as this will likely mess up the layout\n\n",
+                "type": "(Maybe.Maybe a -> List.List (Svg.Attribute msg)) -> Diagram.Svg.Config.Config a msg -> Diagram.Svg.Config.Config a msg"
+            },
+            {
+                "name": "withCellWrappingFunction",
+                "comment": " Overload cell wrapping\n\nLets you configure how a list of inner Svg elements will be wrapped.\n\nThis allows you to set up onClick event attributes or using Svg.a for hyperlinking when the inner svg is clicked.\n\n",
+                "type": "(Maybe.Maybe a -> List.List (Svg.Svg msg) -> Svg.Svg msg) -> Diagram.Svg.Config.Config a msg -> Diagram.Svg.Config.Config a msg"
+            },
+            {
+                "name": "withLabelPositionFunction",
+                "comment": " Control the position of labels within boxes\nThe LabelPositionFunction must give positions that are inside the given box.\n",
+                "type": "Diagram.Svg.Config.LabelPositionFunction a -> Diagram.Svg.Config.Config a msg -> Diagram.Svg.Config.Config a msg"
+            },
+            {
+                "name": "withLabelToString",
+                "comment": " Configure a function to label a cell holding an `a`\n\nThe string will be displayed in the Svg boxes\n\n",
+                "type": "(a -> String.String) -> Diagram.Svg.Config.Config a msg -> Diagram.Svg.Config.Config a msg"
+            },
+            {
+                "name": "withTextAttributes",
+                "comment": " Overload attributes for all cell label texts\n",
+                "type": "List.List (Svg.Attribute msg) -> Diagram.Svg.Config.Config a msg -> Diagram.Svg.Config.Config a msg"
+            },
+            {
+                "name": "withTextAttributesFunction",
+                "comment": " Overload attributes for any cell label text\n\nYou supply a function that looks at the label and decides which attributes to use\n\n",
+                "type": "(a -> List.List (Svg.Attribute msg)) -> Diagram.Svg.Config.Config a msg -> Diagram.Svg.Config.Config a msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Diagram.Vec2",
+        "comment": " A simple Vec2 type for geometry\n\n@docs Vec2, init, translate\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Vec2",
+                "comment": " A simple Vec2 type\n",
+                "args": [],
+                "type": "Internal.Vec2.Vec2"
+            }
+        ],
+        "values": [
+            {
+                "name": "init",
+                "comment": " Initialize a Vec2 from two floats\n",
+                "type": "Basics.Float -> Basics.Float -> Diagram.Vec2.Vec2"
+            },
+            {
+                "name": "translate",
+                "comment": " Translate one vector by another (add)\n",
+                "type": "Diagram.Vec2.Vec2 -> Diagram.Vec2.Vec2 -> Diagram.Vec2.Vec2"
+            }
+        ],
+        "binops": []
+    }
+]

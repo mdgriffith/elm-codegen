@@ -1,0 +1,756 @@
+[
+    {
+        "name": "Css.Colors",
+        "comment": "\n\n\n# Opaque\n\n@docs aliceblue\n@docs antiquewhite\n@docs aqua\n@docs aquamarine\n@docs azure\n@docs beige\n@docs bisque\n@docs black\n@docs blanchedalmond\n@docs blue\n@docs blueviolet\n@docs brown\n@docs burlywood\n@docs cadetblue\n@docs chartreuse\n@docs chocolate\n@docs coral\n@docs cornflowerblue\n@docs cornsilk\n@docs crimson\n@docs cyan\n@docs darkblue\n@docs darkcyan\n@docs darkgoldenrod\n@docs darkgray\n@docs darkgreen\n@docs darkgrey\n@docs darkkhaki\n@docs darkmagenta\n@docs darkolivegreen\n@docs darkorange\n@docs darkorchid\n@docs darkred\n@docs darksalmon\n@docs darkseagreen\n@docs darkslateblue\n@docs darkslategray\n@docs darkslategrey\n@docs darkturquoise\n@docs darkviolet\n@docs deeppink\n@docs deepskyblue\n@docs dimgray\n@docs dimgrey\n@docs dodgerblue\n@docs firebrick\n@docs floralwhite\n@docs forestgreen\n@docs fuchsia\n@docs gainsboro\n@docs ghostwhite\n@docs gold\n@docs goldenrod\n@docs gray\n@docs green\n@docs greenyellow\n@docs grey\n@docs honeydew\n@docs hotpink\n@docs indianred\n@docs indigo\n@docs ivory\n@docs khaki\n@docs lavender\n@docs lavenderblush\n@docs lawngreen\n@docs lemonchiffon\n@docs lightblue\n@docs lightcoral\n@docs lightcyan\n@docs lightgoldenrodyellow\n@docs lightgray\n@docs lightgreen\n@docs lightgrey\n@docs lightpink\n@docs lightsalmon\n@docs lightseagreen\n@docs lightskyblue\n@docs lightslategray\n@docs lightslategrey\n@docs lightsteelblue\n@docs lightyellow\n@docs lime\n@docs limegreen\n@docs linen\n@docs magenta\n@docs maroon\n@docs mediumaquamarine\n@docs mediumblue\n@docs mediumorchid\n@docs mediumpurple\n@docs mediumseagreen\n@docs mediumslateblue\n@docs mediumspringgreen\n@docs mediumturquoise\n@docs mediumvioletred\n@docs midnightblue\n@docs mintcream\n@docs mistyrose\n@docs moccasin\n@docs navajowhite\n@docs navy\n@docs oldlace\n@docs olive\n@docs olivedrab\n@docs orange\n@docs orangered\n@docs orchid\n@docs palegoldenrod\n@docs palegreen\n@docs paleturquoise\n@docs palevioletred\n@docs papayawhip\n@docs peachpuff\n@docs peru\n@docs pink\n@docs plum\n@docs powderblue\n@docs purple\n@docs rebeccapurple\n@docs red\n@docs rosybrown\n@docs royalblue\n@docs saddlebrown\n@docs salmon\n@docs sandybrown\n@docs seagreen\n@docs seashell\n@docs sienna\n@docs silver\n@docs skyblue\n@docs slateblue\n@docs slategray\n@docs slategrey\n@docs snow\n@docs springgreen\n@docs steelblue\n@docs tan\n@docs teal\n@docs thistle\n@docs tomato\n@docs turquoise\n@docs violet\n@docs wheat\n@docs white\n@docs whitesmoke\n@docs yellow\n@docs yellowgreen\n\n\n# Transparent\n\n@docs transparent\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "aliceblue",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-aliceblue)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "antiquewhite",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-antiquewhite)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "aqua",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-aqua)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "aquamarine",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-aquamarine)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "azure",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-azure)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "beige",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-beige)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "bisque",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-bisque)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "black",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-black)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "blanchedalmond",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-blanchedalmond)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "blue",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-blue)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "blueviolet",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-blueviolet)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "brown",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-brown)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "burlywood",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-burlywood)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "cadetblue",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-cadetblue)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "chartreuse",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-chartreuse)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "chocolate",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-chocolate)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "coral",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-coral)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "cornflowerblue",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-cornflowerblue)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "cornsilk",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-cornsilk)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "crimson",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-crimson)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "cyan",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-cyan)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "darkblue",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-darkblue)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "darkcyan",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-darkcyan)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "darkgoldenrod",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-darkgoldenrod)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "darkgray",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-darkgray)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "darkgreen",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-darkgreen)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "darkgrey",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-darkgrey)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "darkkhaki",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-darkkhaki)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "darkmagenta",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-darkmagenta)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "darkolivegreen",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-darkolivegreen)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "darkorange",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-darkorange)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "darkorchid",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-darkorchid)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "darkred",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-darkred)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "darksalmon",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-darksalmon)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "darkseagreen",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-darkseagreen)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "darkslateblue",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-darkslateblue)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "darkslategray",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-darkslategray)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "darkslategrey",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-darkslategrey)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "darkturquoise",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-darkturquoise)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "darkviolet",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-darkviolet)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "deeppink",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-deeppink)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "deepskyblue",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-deepskyblue)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "dimgray",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-dimgray)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "dimgrey",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-dimgrey)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "dodgerblue",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-dodgerblue)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "firebrick",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-firebrick)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "floralwhite",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-floralwhite)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "forestgreen",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-forestgreen)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "fuchsia",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-fuchsia)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "gainsboro",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-gainsboro)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "ghostwhite",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-ghostwhite)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "gold",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-gold)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "goldenrod",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-goldenrod)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "gray",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-gray)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "green",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-green)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "greenyellow",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-greenyellow)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "grey",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-grey)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "honeydew",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-honeydew)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "hotpink",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-hotpink)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "indianred",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-indianred)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "indigo",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-indigo)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "ivory",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-ivory)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "khaki",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-khaki)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "lavender",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-lavender)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "lavenderblush",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-lavenderblush)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "lawngreen",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-lawngreen)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "lemonchiffon",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-lemonchiffon)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "lightblue",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-lightblue)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "lightcoral",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-lightcoral)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "lightcyan",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-lightcyan)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "lightgoldenrodyellow",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-lightgoldenrodyellow)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "lightgray",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-lightgray)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "lightgreen",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-lightgreen)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "lightgrey",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-lightgrey)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "lightpink",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-lightpink)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "lightsalmon",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-lightsalmon)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "lightseagreen",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-lightseagreen)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "lightskyblue",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-lightskyblue)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "lightslategray",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-lightslategray)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "lightslategrey",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-lightslategrey)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "lightsteelblue",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-lightsteelblue)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "lightyellow",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-lightyellow)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "lime",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-lime)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "limegreen",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-limegreen)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "linen",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-linen)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "magenta",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-magenta)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "maroon",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-maroon)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "mediumaquamarine",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-mediumaquamarine)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "mediumblue",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-mediumblue)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "mediumorchid",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-mediumorchid)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "mediumpurple",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-mediumpurple)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "mediumseagreen",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-mediumseagreen)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "mediumslateblue",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-mediumslateblue)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "mediumspringgreen",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-mediumspringgreen)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "mediumturquoise",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-mediumturquoise)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "mediumvioletred",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-mediumvioletred)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "midnightblue",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-midnightblue)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "mintcream",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-mintcream)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "mistyrose",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-mistyrose)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "moccasin",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-moccasin)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "navajowhite",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-navajowhite)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "navy",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-navy)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "oldlace",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-oldlace)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "olive",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-olive)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "olivedrab",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-olivedrab)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "orange",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-orange)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "orangered",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-orangered)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "orchid",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-orchid)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "palegoldenrod",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-palegoldenrod)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "palegreen",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-palegreen)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "paleturquoise",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-paleturquoise)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "palevioletred",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-palevioletred)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "papayawhip",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-papayawhip)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "peachpuff",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-peachpuff)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "peru",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-peru)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "pink",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-pink)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "plum",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-plum)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "powderblue",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-powderblue)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "purple",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-purple)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "rebeccapurple",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-rebeccapurple)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "red",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-red)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "rosybrown",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-rosybrown)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "royalblue",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-royalblue)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "saddlebrown",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-saddlebrown)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "salmon",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-salmon)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "sandybrown",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-sandybrown)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "seagreen",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-seagreen)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "seashell",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-seashell)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "sienna",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-sienna)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "silver",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-silver)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "skyblue",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-skyblue)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "slateblue",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-slateblue)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "slategray",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-slategray)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "slategrey",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-slategrey)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "snow",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-snow)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "springgreen",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-springgreen)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "steelblue",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-steelblue)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "tan",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-tan)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "teal",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-teal)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "thistle",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-thistle)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "tomato",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-tomato)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "transparent",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#transparent-color)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "turquoise",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-turquoise)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "violet",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-violet)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "wheat",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-wheat)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "white",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-white)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "whitesmoke",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-whitesmoke)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "yellow",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-yellow)\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "yellowgreen",
+                "comment": " [info](https://www.w3.org/TR/css-color-4/#valdef-color-yellowgreen)\n",
+                "type": "Css.Color"
+            }
+        ],
+        "binops": []
+    }
+]

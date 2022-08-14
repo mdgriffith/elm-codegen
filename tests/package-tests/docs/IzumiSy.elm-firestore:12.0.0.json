@@ -1,0 +1,1032 @@
+[
+    {
+        "name": "Firestore",
+        "comment": " A library to have your app interact with Firestore in Elm\n\n@docs Firestore\n\n\n# Constructors\n\n@docs init, withConfig\n\n\n# Path\n\n@docs Path, root, collection, subCollection, document, build\n\n\n# CRUDs\n\n@docs Document, Documents, Name, id, get, list, create, insert, upsert, patch, delete, deleteExisting\n\n\n# Query\n\n@docs Query, runQuery\n\n\n# Error\n\n@docs Error, FirestoreError, PathError\n\n\n# Transaction\n\n@docs Transaction, TransactionId, CommitTime, begin, commit, getTx, listTx, runQueryTx, updateTx, deleteTx\n\n",
+        "unions": [
+            {
+                "name": "Error",
+                "comment": " An error type\n\nThis type is available in order to disregard type of errors between protocol related errors as Http\\_ or backend related errors as Response.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Path_",
+                        [
+                            "Firestore.PathError"
+                        ]
+                    ],
+                    [
+                        "Http_",
+                        [
+                            "Http.Error"
+                        ]
+                    ],
+                    [
+                        "Response",
+                        [
+                            "Firestore.FirestoreError"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Firestore",
+                "comment": " Data type for Firestore.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Name",
+                "comment": " Name field of Firestore document\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Path",
+                "comment": " A validated path type\n\nAn instance of this type can be constructed with `build` function.\nCRUDs function can accept this type to run their opration as follows.\n\n    firestore\n        |> Firestore.root\n        |> Firestore.collection \"users\"\n        |> Firestore.document \"user0\"\n        |> Firestore.subCollection \"tags\"\n        |> Firestore.build\n        |> ExResult.toTask\n        |> Task.andThen (Firestore.list tagDecoder ListOptions.default)\n        |> Task.attempt GotUserItemTags\n\n",
+                "args": [
+                    "type_"
+                ],
+                "cases": []
+            },
+            {
+                "name": "PathError",
+                "comment": " An error type for invalid path\n",
+                "args": [],
+                "cases": [
+                    [
+                        "InvalidPath",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Transaction",
+                "comment": " Data type for Transaction\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "TransactionId",
+                "comment": " Transaction ID\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "CommitTime",
+                "comment": " A time transaction commited at\n",
+                "args": [],
+                "type": "Time.Posix"
+            },
+            {
+                "name": "Document",
+                "comment": " A record structure for a document fetched from Firestore.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ name : Firestore.Name, fields : a, createTime : Time.Posix, updateTime : Time.Posix }"
+            },
+            {
+                "name": "Documents",
+                "comment": " A record structure composed of multiple documents fetched from Firestore.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ documents : List.List (Firestore.Document a), nextPageToken : Maybe.Maybe Firestore.Options.List.PageToken }"
+            },
+            {
+                "name": "FirestoreError",
+                "comment": " Data structure for errors from Firestore\n",
+                "args": [],
+                "type": "{ code : Basics.Int, message : String.String, status : String.String }"
+            },
+            {
+                "name": "Query",
+                "comment": " A record structure for query operation result\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ transaction : Maybe.Maybe Firestore.TransactionId, document : Firestore.Document a, readTime : Time.Posix, skippedResults : Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "begin",
+                "comment": " Starts a new transaction.\n",
+                "type": "Firestore.Firestore -> Task.Task Firestore.Error Firestore.Transaction"
+            },
+            {
+                "name": "build",
+                "comment": " Validates `PathBuilder` and converts it into `Path` if it is valid.\n",
+                "type": "Firestore.PathBuilder a -> Result.Result Firestore.Error (Firestore.Path a)"
+            },
+            {
+                "name": "collection",
+                "comment": " A collection path\n",
+                "type": "String.String -> Firestore.PathBuilder Firestore.RootType -> Firestore.PathBuilder Firestore.CollectionType"
+            },
+            {
+                "name": "commit",
+                "comment": " Commits a transaction, while optionally updating and deleting documents.\n\nOnly `readWrite` transaction is currently supported which requires authorization that can be set via `Config.withAuthorization` function.\nTransaction in Firetore works in a pattern of \"unit of work\". It requires sets of updates and deletes to be commited.\n\n    model.firestore\n        |> Firestore.begin\n        |> Task.map\n            (\\transaction ->\n                transaction\n                    |> Firestore.updateTx user1 newUser1\n                    |> Firestore.deleteTx user2\n            )\n        |> Firestore.commit\n        |> Task.attempt Commited\n\n",
+                "type": "Firestore.Firestore -> Firestore.Transaction -> Task.Task Firestore.Error Firestore.CommitTime"
+            },
+            {
+                "name": "create",
+                "comment": " Creates a document with a given document id.\n\nTakes the document id as the first argument.\n\n",
+                "type": "Firestore.Decode.Decoder a -> { id : String.String, document : Firestore.Encode.Encoder } -> Firestore.Path (Firestore.CollectionPath b) -> Task.Task Firestore.Error (Firestore.Document a)"
+            },
+            {
+                "name": "delete",
+                "comment": " Deletes a document.\n\nWill succeed if document does not exist.\n\n",
+                "type": "Firestore.Path (Firestore.DocumentPath a) -> Task.Task Firestore.Error ()"
+            },
+            {
+                "name": "deleteExisting",
+                "comment": " Deletes a document.\n\nWill fail if document does not exist.\n\n",
+                "type": "Firestore.Path (Firestore.DocumentPath a) -> Task.Task Firestore.Error ()"
+            },
+            {
+                "name": "deleteTx",
+                "comment": " Adds deletion into the transaction\n",
+                "type": "Firestore.Path (Firestore.DocumentPath a) -> Firestore.Transaction -> Firestore.Transaction"
+            },
+            {
+                "name": "document",
+                "comment": " A document path\n",
+                "type": "String.String -> Firestore.PathBuilder Firestore.CollectionType -> Firestore.PathBuilder Firestore.DocumentType"
+            },
+            {
+                "name": "get",
+                "comment": " Gets a single document.\n",
+                "type": "Firestore.Decode.Decoder a -> Firestore.Path (Firestore.DocumentPath b) -> Task.Task Firestore.Error (Firestore.Document a)"
+            },
+            {
+                "name": "getTx",
+                "comment": " Gets a single document in transaction\n",
+                "type": "Firestore.Transaction -> Firestore.Decode.Decoder a -> Firestore.Path (Firestore.DocumentPath b) -> Task.Task Firestore.Error (Firestore.Document a)"
+            },
+            {
+                "name": "id",
+                "comment": " Extracts ID from Name field\n",
+                "type": "Firestore.Name -> String.String"
+            },
+            {
+                "name": "init",
+                "comment": " Builds a new Firestore connection with Config.\n",
+                "type": "Firestore.Config.Config -> Firestore.Firestore"
+            },
+            {
+                "name": "insert",
+                "comment": " Insert a document into a collection.\n\nThe document will get a fresh document id.\n\n",
+                "type": "Firestore.Decode.Decoder a -> Firestore.Encode.Encoder -> Firestore.Path (Firestore.CollectionPath b) -> Task.Task Firestore.Error (Firestore.Document a)"
+            },
+            {
+                "name": "list",
+                "comment": " Lists documents.\n",
+                "type": "Firestore.Decode.Decoder a -> Firestore.Options.List.Options -> Firestore.Path (Firestore.CollectionPath b) -> Task.Task Firestore.Error (Firestore.Documents a)"
+            },
+            {
+                "name": "listTx",
+                "comment": " Lists documents in transaction\n",
+                "type": "Firestore.Transaction -> Firestore.Decode.Decoder a -> Firestore.Options.List.Options -> Firestore.Path (Firestore.CollectionPath b) -> Task.Task Firestore.Error (Firestore.Documents a)"
+            },
+            {
+                "name": "patch",
+                "comment": " Updates only specific fields.\n\nIf the fields do not exists, they will be created.\n\n",
+                "type": "Firestore.Decode.Decoder a -> Firestore.Options.Patch.Options -> Firestore.Path (Firestore.DocumentPath b) -> Task.Task Firestore.Error (Firestore.Document a)"
+            },
+            {
+                "name": "root",
+                "comment": " A root path\n",
+                "type": "Firestore.Firestore -> Firestore.PathBuilder Firestore.RootType"
+            },
+            {
+                "name": "runQuery",
+                "comment": " Runs a query operation\n\nThis opeartion only accepts a path built with `root` or `document`.\n\n",
+                "type": "Firestore.Decode.Decoder a -> Firestore.Query.Query -> Firestore.Path (Firestore.QueriablePath b) -> Task.Task Firestore.Error (List.List (Firestore.Query a))"
+            },
+            {
+                "name": "runQueryTx",
+                "comment": " Runs a query operation in transaction\n\nThis works as almost the same as `runQuery` function, but the difference is that this function accepts transaction.\n\n",
+                "type": "Firestore.Transaction -> Firestore.Decode.Decoder a -> Firestore.Query.Query -> Firestore.Path (Firestore.QueriablePath b) -> Task.Task Firestore.Error (List.List (Firestore.Query a))"
+            },
+            {
+                "name": "subCollection",
+                "comment": " A sub-collection path\n",
+                "type": "String.String -> Firestore.PathBuilder Firestore.DocumentType -> Firestore.PathBuilder Firestore.CollectionType"
+            },
+            {
+                "name": "updateTx",
+                "comment": " Adds update into the transaction\n",
+                "type": "Firestore.Path (Firestore.DocumentPath a) -> Firestore.Encode.Encoder -> Firestore.Transaction -> Firestore.Transaction"
+            },
+            {
+                "name": "upsert",
+                "comment": " Updates an existing document.\n\nCreates one if not present.\n\n",
+                "type": "Firestore.Decode.Decoder a -> Firestore.Encode.Encoder -> Firestore.Path (Firestore.DocumentPath b) -> Task.Task Firestore.Error (Firestore.Document a)"
+            },
+            {
+                "name": "withConfig",
+                "comment": " Updates configuration.\n",
+                "type": "Firestore.Config.Config -> Firestore.Firestore -> Firestore.Firestore"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Firestore.Codec",
+        "comment": " Codec for Firestore\n\n    type alias User =\n        { name : String\n        , age : Int\n        }\n\n    codec : Codec.Codec User\n    codec =\n        Codec.document User\n            |> Codec.required \"name\" .name Codec.string\n            |> Codec.required \"age\" .age Codec.int\n            |> Codec.build\n\n    getDocument : Firestore.Firestore -> Cmd Msg\n    getDocument firestore =\n        firestore\n            |> Firestore.root\n            |> Firestore.collection \"users\"\n            |> Firestore.document \"user0\"\n            |> Firestore.build\n            |> ExResult.toTask\n            |> Task.andThen (Firestore.get (Codec.asDecoder codec))\n            |> Task.attempt GotDocument\n\n    insertDocument : Firestore.Firestore -> Cmd Msg\n    insertDocument firestore =\n        firestore\n            |> Firestore.root\n            |> Firestore.collection \"users\"\n            |> Firestore.build\n            |> ExResult.toTask\n            |> Task.andThen\n                (Firestore.insert\n                    (Codec.asDecoder codec)\n                    (Codec.asEncoder codec { name = \"thomas\", age = 26 })\n                )\n            |> Task.attempt InsertedDocument\n\n\n# Definitions\n\n@docs Codec, asEncoder, encode, asDecoder, decode\n\n\n# Constructors\n\n@docs Document, document, build, required, optional\n\n\n# Field\n\n@docs Field, bool, bytes, int, string, list, dict, null, maybe, timestamp, geopoint, reference\n\n\n# Advanced\n\n@docs map, andThen, succeed, fail, construct\n\n",
+        "unions": [
+            {
+                "name": "Codec",
+                "comment": " ",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Document",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "cons"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Field",
+                "comment": " ",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "andThen",
+                "comment": " ",
+                "type": "(a -> Firestore.Codec.Field b) -> (b -> a) -> Firestore.Codec.Field a -> Firestore.Codec.Field b"
+            },
+            {
+                "name": "asDecoder",
+                "comment": " ",
+                "type": "Firestore.Codec.Codec a -> Firestore.Decode.Decoder a"
+            },
+            {
+                "name": "asEncoder",
+                "comment": " ",
+                "type": "Firestore.Codec.Codec a -> a -> Firestore.Encode.Encoder"
+            },
+            {
+                "name": "bool",
+                "comment": " ",
+                "type": "Firestore.Codec.Field Basics.Bool"
+            },
+            {
+                "name": "build",
+                "comment": " ",
+                "type": "Firestore.Codec.Document a a -> Firestore.Codec.Codec a"
+            },
+            {
+                "name": "bytes",
+                "comment": " ",
+                "type": "Firestore.Codec.Field String.String"
+            },
+            {
+                "name": "construct",
+                "comment": " ",
+                "type": "Firestore.Decode.Decoder a -> (a -> Firestore.Encode.Encoder) -> Firestore.Codec.Codec a"
+            },
+            {
+                "name": "decode",
+                "comment": " ",
+                "type": "Firestore.Codec.Codec a -> Json.Decode.Decoder a"
+            },
+            {
+                "name": "dict",
+                "comment": " ",
+                "type": "Firestore.Codec.Field a -> Firestore.Codec.Field (Dict.Dict String.String a)"
+            },
+            {
+                "name": "document",
+                "comment": " ",
+                "type": "cons -> Firestore.Codec.Document a cons"
+            },
+            {
+                "name": "encode",
+                "comment": " ",
+                "type": "Firestore.Codec.Codec a -> a -> Json.Encode.Value"
+            },
+            {
+                "name": "fail",
+                "comment": " ",
+                "type": "String.String -> Firestore.Codec.Field a"
+            },
+            {
+                "name": "geopoint",
+                "comment": " ",
+                "type": "Firestore.Codec.Field Firestore.Types.Geopoint.Geopoint"
+            },
+            {
+                "name": "int",
+                "comment": " ",
+                "type": "Firestore.Codec.Field Basics.Int"
+            },
+            {
+                "name": "list",
+                "comment": " ",
+                "type": "Firestore.Codec.Field a -> Firestore.Codec.Field (List.List a)"
+            },
+            {
+                "name": "map",
+                "comment": " ",
+                "type": "(a -> b) -> (b -> a) -> Firestore.Codec.Field a -> Firestore.Codec.Field b"
+            },
+            {
+                "name": "maybe",
+                "comment": " ",
+                "type": "Firestore.Codec.Field a -> Firestore.Codec.Field (Maybe.Maybe a)"
+            },
+            {
+                "name": "null",
+                "comment": " ",
+                "type": "Firestore.Codec.Field ()"
+            },
+            {
+                "name": "optional",
+                "comment": " ",
+                "type": "String.String -> (a -> b) -> Firestore.Codec.Field b -> b -> Firestore.Codec.Document a (b -> cons) -> Firestore.Codec.Document a cons"
+            },
+            {
+                "name": "reference",
+                "comment": " ",
+                "type": "Firestore.Codec.Field Firestore.Types.Reference.Reference"
+            },
+            {
+                "name": "required",
+                "comment": " ",
+                "type": "String.String -> (a -> b) -> Firestore.Codec.Field b -> Firestore.Codec.Document a (b -> cons) -> Firestore.Codec.Document a cons"
+            },
+            {
+                "name": "string",
+                "comment": " ",
+                "type": "Firestore.Codec.Field String.String"
+            },
+            {
+                "name": "succeed",
+                "comment": " ",
+                "type": "a -> Firestore.Codec.Field a"
+            },
+            {
+                "name": "timestamp",
+                "comment": " ",
+                "type": "Firestore.Codec.Field Time.Posix"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Firestore.Config",
+        "comment": " A configuration type for Firestore\n\n@docs Config\n\n\n# Constructors\n\n@docs new, withAuthorization, withDatabase, withHost\n\n\n# Extractors\n\n@docs endpoint, Appender, httpHeader, basePath\n\n",
+        "unions": [
+            {
+                "name": "Appender",
+                "comment": " Endpoint appender\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Path",
+                        [
+                            "Firestore.Internals.Path.Path"
+                        ]
+                    ],
+                    [
+                        "Op",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "PathOp",
+                        [
+                            "Firestore.Internals.Path.Path",
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Config",
+                "comment": " Data type for Firestore configuration\n\nThis type internally has all information which is required to send requests to Firestore through REST API.\n\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "basePath",
+                "comment": " Builds a path that can be used in a document name\n",
+                "type": "Firestore.Config.Config -> String.String"
+            },
+            {
+                "name": "endpoint",
+                "comment": " Builds an endpoint string\n",
+                "type": "List.List Url.Builder.QueryParameter -> Firestore.Config.Appender -> Firestore.Config.Config -> String.String"
+            },
+            {
+                "name": "httpHeader",
+                "comment": " Extracts authorization with bearer prefix as `Http.Header`.\n",
+                "type": "Firestore.Config.Config -> List.List Http.Header"
+            },
+            {
+                "name": "new",
+                "comment": " Creates a new Config\n",
+                "type": "{ apiKey : String.String, project : String.String } -> Firestore.Config.Config"
+            },
+            {
+                "name": "withAuthorization",
+                "comment": " Specifies Firebase Authorization token which can be obtained through [`firebase.User#getIdToken`][verify_token] method.\n\n[verify_token]: https://firebase.google.com/docs/auth/admin/verify-id-tokens#web\n\n",
+                "type": "String.String -> Firestore.Config.Config -> Firestore.Config.Config"
+            },
+            {
+                "name": "withDatabase",
+                "comment": " Specifies database ID to connect to.\n",
+                "type": "String.String -> Firestore.Config.Config -> Firestore.Config.Config"
+            },
+            {
+                "name": "withHost",
+                "comment": " Specifies host and port to connect to.\n\nThis function is useful when you write integration tests using mock servers such as Firestore Emulator.\n\n",
+                "type": "String.String -> Basics.Int -> Firestore.Config.Config -> Firestore.Config.Config"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Firestore.Decode",
+        "comment": " Decoders for Firestore\n\n@docs Decoder, decode, Field\n\n\n# Constructors\n\n@docs document, required, optional\n\n\n# Types\n\n@docs bool, bytes, int, string, list, dict, null, maybe, timestamp, geopoint, reference\n\n\n# Utility Functions\n\n@docs map, andThen, succeed, fail\n\n",
+        "unions": [
+            {
+                "name": "Decoder",
+                "comment": " A decoder consisted of Firestore specific decoders.\n\n`Json.Decode.Decoder` can be generate from this through `decode` function.\n\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Field",
+                "comment": " An identifier type for Firestore encoder\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "andThen",
+                "comment": " ",
+                "type": "(a -> Firestore.Decode.Field b) -> Firestore.Decode.Field a -> Firestore.Decode.Field b"
+            },
+            {
+                "name": "bool",
+                "comment": " ",
+                "type": "Firestore.Decode.Field Basics.Bool"
+            },
+            {
+                "name": "bytes",
+                "comment": " ",
+                "type": "Firestore.Decode.Field String.String"
+            },
+            {
+                "name": "decode",
+                "comment": " Generates Json.Decode.Decoder\n",
+                "type": "Firestore.Decode.Decoder a -> Json.Decode.Decoder a"
+            },
+            {
+                "name": "dict",
+                "comment": " ",
+                "type": "Firestore.Decode.Field a -> Firestore.Decode.Field (Dict.Dict String.String a)"
+            },
+            {
+                "name": "document",
+                "comment": " Creates a new decoder\n\nThis function works like `Json.Decode.Pipeline`.\n\n    Firestore.Decode.document Document\n        |> Firestore.Decode.required \"name\" Firestore.Decode.string\n        |> Firestore.Decode.required \"age\" Firestore.Decode.int\n        |> Firestore.Decode.optional \"canCode\" Firestore.Decode.bool False\n\n",
+                "type": "a -> Firestore.Decode.Decoder a"
+            },
+            {
+                "name": "fail",
+                "comment": " ",
+                "type": "String.String -> Firestore.Decode.Field a"
+            },
+            {
+                "name": "geopoint",
+                "comment": " ",
+                "type": "Firestore.Decode.Field Firestore.Types.Geopoint.Geopoint"
+            },
+            {
+                "name": "int",
+                "comment": " ",
+                "type": "Firestore.Decode.Field Basics.Int"
+            },
+            {
+                "name": "list",
+                "comment": " ",
+                "type": "Firestore.Decode.Field a -> Firestore.Decode.Field (List.List a)"
+            },
+            {
+                "name": "map",
+                "comment": " ",
+                "type": "(a -> b) -> Firestore.Decode.Field a -> Firestore.Decode.Field b"
+            },
+            {
+                "name": "maybe",
+                "comment": " ",
+                "type": "Firestore.Decode.Field a -> Firestore.Decode.Field (Maybe.Maybe a)"
+            },
+            {
+                "name": "null",
+                "comment": " ",
+                "type": "Firestore.Decode.Field ()"
+            },
+            {
+                "name": "optional",
+                "comment": " Decodes an optional field.\n\nThis function is internally delegated into [`Json.Decode.Pipeline.optional`][optional].\n\n[optional]: https://package.elm-lang.org/packages/NoRedInk/elm-json-decode-pipeline/latest/Json-Decode-Pipeline#optional\n\n",
+                "type": "String.String -> Firestore.Decode.Field a -> a -> Firestore.Decode.Decoder (a -> b) -> Firestore.Decode.Decoder b"
+            },
+            {
+                "name": "reference",
+                "comment": " ",
+                "type": "Firestore.Decode.Field Firestore.Types.Reference.Reference"
+            },
+            {
+                "name": "required",
+                "comment": " Decodes a required field.\n\nThis function is internally delegated into [`json.Decode.Pipeline.required`][required].\n\n[required]: https://package.elm-lang.org/packages/NoRedInk/elm-json-decode-pipeline/latest/Json-Decode-Pipeline#required\n\n",
+                "type": "String.String -> Firestore.Decode.Field a -> Firestore.Decode.Decoder (a -> b) -> Firestore.Decode.Decoder b"
+            },
+            {
+                "name": "string",
+                "comment": " ",
+                "type": "Firestore.Decode.Field String.String"
+            },
+            {
+                "name": "succeed",
+                "comment": " ",
+                "type": "a -> Firestore.Decode.Field a"
+            },
+            {
+                "name": "timestamp",
+                "comment": " ",
+                "type": "Firestore.Decode.Field Time.Posix"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Firestore.Encode",
+        "comment": " Encoders for Firestore\n\n@docs Encoder, encode, Field\n\n\n# Constructors\n\n@docs document\n\n\n# Types\n\n@docs bool, bytes, int, string, list, dict, null, maybe, timestamp, geopoint, reference\n\n",
+        "unions": [
+            {
+                "name": "Encoder",
+                "comment": " An encoder consisted of Firestore specific encoders.\n\nThis can be encoded into `Json.Value` through `encode` function.\n\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Field",
+                "comment": " An field identifier type for Firestore encoder\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "bool",
+                "comment": " ",
+                "type": "Basics.Bool -> Firestore.Encode.Field"
+            },
+            {
+                "name": "bytes",
+                "comment": " ",
+                "type": "String.String -> Firestore.Encode.Field"
+            },
+            {
+                "name": "dict",
+                "comment": " ",
+                "type": "(a -> Firestore.Encode.Field) -> Dict.Dict String.String a -> Firestore.Encode.Field"
+            },
+            {
+                "name": "document",
+                "comment": " Creates a new encoder\n\nThis function works like `Encode.object` but accepts a list of tuples which has only encoders provided from `Firestore.Encode` module\n\n    Firestore.Encode.document\n        [ ( \"name\", Firestore.Encode.string \"IzumiSy\" )\n        , ( \"age\", Firestore.Encode.int 26 )\n        , ( \"canCode\", Firestore.Encode.bool True )\n        ]\n\n",
+                "type": "List.List ( String.String, Firestore.Encode.Field ) -> Firestore.Encode.Encoder"
+            },
+            {
+                "name": "encode",
+                "comment": " Generates Json.Encode.Value from Encoder\n",
+                "type": "Firestore.Encode.Encoder -> Json.Encode.Value"
+            },
+            {
+                "name": "geopoint",
+                "comment": " ",
+                "type": "Firestore.Types.Geopoint.Geopoint -> Firestore.Encode.Field"
+            },
+            {
+                "name": "int",
+                "comment": " ",
+                "type": "Basics.Int -> Firestore.Encode.Field"
+            },
+            {
+                "name": "list",
+                "comment": " ",
+                "type": "(a -> Firestore.Encode.Field) -> List.List a -> Firestore.Encode.Field"
+            },
+            {
+                "name": "maybe",
+                "comment": " ",
+                "type": "(a -> Firestore.Encode.Field) -> Maybe.Maybe a -> Firestore.Encode.Field"
+            },
+            {
+                "name": "null",
+                "comment": " ",
+                "type": "Firestore.Encode.Field"
+            },
+            {
+                "name": "reference",
+                "comment": " ",
+                "type": "Firestore.Types.Reference.Reference -> Firestore.Encode.Field"
+            },
+            {
+                "name": "string",
+                "comment": " ",
+                "type": "String.String -> Firestore.Encode.Field"
+            },
+            {
+                "name": "timestamp",
+                "comment": " ",
+                "type": "Time.Posix -> Firestore.Encode.Field"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Firestore.Options.List",
+        "comment": " An option type for `list` operation.\n\n@docs Options, default, queryParameters\n\n\n# Pagination\n\n@docs PageToken, pageToken, pageSize\n\n\n# OrderBy\n\n@docs OrderBy, orderBy\n\n",
+        "unions": [
+            {
+                "name": "Options",
+                "comment": " An option type for List operation\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "OrderBy",
+                "comment": " OrderBy direction and column\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Desc",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Asc",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "PageToken",
+                "comment": " The next page token.\n\nThis token is required in fetching the next result offset by `pageSize` in `list` operation.\nThe internal implementation is intetentionally encapsulated in order not to make invalid one by hand.\nIt can be obtained only from `Documents` record.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "PageToken",
+                        [
+                            "Firestore.Internals.PageToken"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "default",
+                "comment": " Constructs options for list operation\n",
+                "type": "Firestore.Options.List.Options"
+            },
+            {
+                "name": "orderBy",
+                "comment": " Sets order to sort results by\n",
+                "type": "Firestore.Options.List.OrderBy -> Firestore.Options.List.Options -> Firestore.Options.List.Options"
+            },
+            {
+                "name": "pageSize",
+                "comment": " Sets the maximum number of documents to return\n",
+                "type": "Basics.Int -> Firestore.Options.List.Options -> Firestore.Options.List.Options"
+            },
+            {
+                "name": "pageToken",
+                "comment": " Sets the page token obtained the previous List operation, if any.\n",
+                "type": "Firestore.Options.List.PageToken -> Firestore.Options.List.Options -> Firestore.Options.List.Options"
+            },
+            {
+                "name": "queryParameters",
+                "comment": " Converts options into query parameters\n",
+                "type": "Firestore.Options.List.Options -> List.List Url.Builder.QueryParameter"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Firestore.Options.Patch",
+        "comment": " An option type for `patch` operation.\n\n@docs Options, empty, queryParameters\n\n\n# Operations\n\n@docs addUpdate, addDelete\n\n",
+        "unions": [
+            {
+                "name": "Options",
+                "comment": " An option type for Patch operation\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "addDelete",
+                "comment": " Adds a field to delete\n",
+                "type": "String.String -> Firestore.Options.Patch.Options -> Firestore.Options.Patch.Options"
+            },
+            {
+                "name": "addUpdate",
+                "comment": " Adds a field to update\n",
+                "type": "String.String -> Firestore.Encode.Field -> Firestore.Options.Patch.Options -> Firestore.Options.Patch.Options"
+            },
+            {
+                "name": "empty",
+                "comment": " Constructs options for patch operation\n",
+                "type": "Firestore.Options.Patch.Options"
+            },
+            {
+                "name": "queryParameters",
+                "comment": " Converts options into query parameters\n",
+                "type": "Firestore.Options.Patch.Options -> ( List.List Url.Builder.QueryParameter, List.List ( String.String, Firestore.Encode.Field ) )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Firestore.Query",
+        "comment": " An option type for `runQuery` operation\n\n    Query.new\n        |> Query.collection \"users\"\n        |> Query.limit 2\n        |> Query.offset 2\n        |> Query.orderBy \"age\" Query.Descending\n        |> Query.where_\n            (Query.compositeFilter Query.And\n                (Query.fieldFilter \"age\" Query.GreaterThanOrEqual (Query.int 10))\n                [ Query.fieldFilter \"age\" Query.LessThanOrEqual (Query.int 40) ]\n            )\n\n\n# Definitions\n\n@docs Query, new, encode\n\n\n# Basics\n\n@docs offset, limit, collection, collectionGroup\n\n\n# OrderBy\n\n@docs Direction, orderBy\n\n\n# Where\n\n@docs Where, FieldOp, UnaryOp, CompositeOp, compositeFilter, fieldFilter, unaryFilter, where_\n\n\n# Values\n\n@docs Value, bool, int, string, timestamp\n\n",
+        "unions": [
+            {
+                "name": "CompositeOp",
+                "comment": " Operations for CompositeFilter\n",
+                "args": [],
+                "cases": [
+                    [
+                        "And",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Direction",
+                "comment": " Ordering direction\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Unspecified",
+                        []
+                    ],
+                    [
+                        "Ascending",
+                        []
+                    ],
+                    [
+                        "Descending",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "FieldOp",
+                "comment": " Operations for FieldFilter.\n\nArray-related operations (eg, NotIn, In, etc...) are currently not supported.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "LessThan",
+                        []
+                    ],
+                    [
+                        "LessThanOrEqual",
+                        []
+                    ],
+                    [
+                        "GreaterThan",
+                        []
+                    ],
+                    [
+                        "GreaterThanOrEqual",
+                        []
+                    ],
+                    [
+                        "Equal",
+                        []
+                    ],
+                    [
+                        "NotEqual",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Query",
+                "comment": " Data type for query operation\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "UnaryOp",
+                "comment": " Oprations for UnaryFilter\n",
+                "args": [],
+                "cases": [
+                    [
+                        "IsNaN",
+                        []
+                    ],
+                    [
+                        "IsNull",
+                        []
+                    ],
+                    [
+                        "IsNotNaN",
+                        []
+                    ],
+                    [
+                        "IsNotNull",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Value",
+                "comment": " A value type for querying operation\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Where",
+                "comment": " Where type.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "bool",
+                "comment": " ",
+                "type": "Basics.Bool -> Firestore.Query.Value"
+            },
+            {
+                "name": "collection",
+                "comment": " Sets a root collection to query\n",
+                "type": "String.String -> Firestore.Query.Query -> Firestore.Query.Query"
+            },
+            {
+                "name": "collectionGroup",
+                "comment": " Sets a collection group to query\n",
+                "type": "String.String -> Firestore.Query.Query -> Firestore.Query.Query"
+            },
+            {
+                "name": "compositeFilter",
+                "comment": " Constructs CompositeFilter\n\nCompositeFilter requires at least one filter, so it has a constructor like non-empty list interface.\n\n    Query.compositeFilter Query.And\n        (Query.fieldFilter \"age\" Query.GreaterThanOrEqual (Query.int 10))\n        [ Query.fieldFilter \"age\" Query.LessThanOrEqual (Query.int 40) ]\n\n",
+                "type": "Firestore.Query.CompositeOp -> Firestore.Query.Where -> List.List Firestore.Query.Where -> Firestore.Query.Where"
+            },
+            {
+                "name": "encode",
+                "comment": " Encodes query\n",
+                "type": "Firestore.Query.Query -> Json.Encode.Value"
+            },
+            {
+                "name": "fieldFilter",
+                "comment": " Constructs FieldFilter\n\n    Query.fieldFilter \"age\" Query.GreaterThanOrEqual (Query.int 20)\n\n",
+                "type": "String.String -> Firestore.Query.FieldOp -> Firestore.Query.Value -> Firestore.Query.Where"
+            },
+            {
+                "name": "int",
+                "comment": " ",
+                "type": "Basics.Int -> Firestore.Query.Value"
+            },
+            {
+                "name": "limit",
+                "comment": " Sets the maximum number of results to return.\n",
+                "type": "Basics.Int -> Firestore.Query.Query -> Firestore.Query.Query"
+            },
+            {
+                "name": "new",
+                "comment": " Constructs an empty query\n",
+                "type": "Firestore.Query.Query"
+            },
+            {
+                "name": "offset",
+                "comment": " Sets the number of results to skip.\n",
+                "type": "Basics.Int -> Firestore.Query.Query -> Firestore.Query.Query"
+            },
+            {
+                "name": "orderBy",
+                "comment": " Sets OrderBy value to query\n",
+                "type": "String.String -> Firestore.Query.Direction -> Firestore.Query.Query -> Firestore.Query.Query"
+            },
+            {
+                "name": "string",
+                "comment": " ",
+                "type": "String.String -> Firestore.Query.Value"
+            },
+            {
+                "name": "timestamp",
+                "comment": " ",
+                "type": "Time.Posix -> Firestore.Query.Value"
+            },
+            {
+                "name": "unaryFilter",
+                "comment": " Constructs UnaryFilter\n\n    Query.unaryFilter \"name\" Query.IsNull\n\n",
+                "type": "String.String -> Firestore.Query.UnaryOp -> Firestore.Query.Where"
+            },
+            {
+                "name": "where_",
+                "comment": " Sets filter to query\n",
+                "type": "Firestore.Query.Where -> Firestore.Query.Query -> Firestore.Query.Query"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Firestore.Types.Geopoint",
+        "comment": " Geopoint data type for Firestore\n\n@docs Geopoint, new, latitude, longitude\n\n",
+        "unions": [
+            {
+                "name": "Geopoint",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "latitude",
+                "comment": " ",
+                "type": "Firestore.Types.Geopoint.Geopoint -> Basics.Int"
+            },
+            {
+                "name": "longitude",
+                "comment": " ",
+                "type": "Firestore.Types.Geopoint.Geopoint -> Basics.Int"
+            },
+            {
+                "name": "new",
+                "comment": " ",
+                "type": "{ latitude : Basics.Int, longitude : Basics.Int } -> Firestore.Types.Geopoint.Geopoint"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Firestore.Types.Reference",
+        "comment": " Reference data type for Firestore\n\n@docs Reference, new, toString\n\n",
+        "unions": [
+            {
+                "name": "Reference",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "new",
+                "comment": " ",
+                "type": "String.String -> Firestore.Types.Reference.Reference"
+            },
+            {
+                "name": "toString",
+                "comment": " ",
+                "type": "Firestore.Types.Reference.Reference -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,21 @@
+[
+    {
+        "name": "Hex",
+        "comment": " Convert to and from Hex strings.\n\n@docs fromString, toString\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fromString",
+                "comment": " Convert a hexdecimal string such as \"abc94f\" to a decimal integer.\n\n    Hex.fromString \"a5\" == Ok 165\n    Hex.fromString \"hat\" == Err \"invalid hexadecimal string\"\n\n",
+                "type": "String.String -> Result.Result String.String Basics.Int"
+            },
+            {
+                "name": "toString",
+                "comment": " Convert a decimal integer to a hexdecimal string such as `\"abc94f\"`.\n\n    Hex.toString 165 == \"a5\"\n\n",
+                "type": "Basics.Int -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

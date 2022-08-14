@@ -1,0 +1,51 @@
+[
+    {
+        "name": "Tuple.Trio",
+        "comment": " Elm has built-in syntax for tuples, so you can define 3D points like this:\n\n    origin : ( Float, Float, Float )\n    origin =\n        ( 0, 0, 0 )\n\n    position : ( Float, Float, Float )\n    position =\n        ( 3, 4, 5 )\n\nThis module is a bunch of helpers for working with 3-tuples.\n\n**Note 1:** For more complex data, it is best to switch to records. So instead\nof representing a 3D point as `(3,4,5)` and not having any helper functions,\nrepresent it as `{ x = 3, y = 4, z = 5 }` and use all the built-in record\nsyntax!\n\n**Note 2:** If your record contains a bunch of `Bool` and `Maybe` values,\nyou may want to upgrade to union types. Check out [Joël’s post][ut] for more\ninfo on this. (Picking appropriate data structures is super important in Elm!)\n\n**Note 3:** This text and most of the following documentation is shamelessly\nreplicated from the 2-tuple module of the core library and meticulously mangled\nto fit a 3-tuple.\n\n[ut]: https://robots.thoughtbot.com/modeling-with-union-types\n\n\n# Create\n\n@docs intrine\n\n\n# Access\n\n@docs first, second, third\n\n\n# Map\n\n@docs mapFirst, mapSecond, mapThird, mapAll\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "first",
+                "comment": " Extract the first value from a 3-tuple.\n\n    first ( 3, 4, 5 ) == 3\n\n    first ( \"john\", \"doe\", \"jr.\" ) == \"john\"\n\n",
+                "type": "( a, b, c ) -> a"
+            },
+            {
+                "name": "intrine",
+                "comment": " Create a 3-tuple.\n\n    -- intrine 3 4 5 == (3, 4, 5)\n    zip3 : List a -> List b -> List c -> List ( a, b, c )\n    zip3 xs ys zs =\n        List.map3 Tuple.Trio.intrine xs ys zs\n\n**Note:** I know the word _intrine_ is obscure and ancient, but it is a perfect fit\nfor this purpose. And there is a seedling of [a movement to bring it back][intrine].\n[intrine]: <https://english.stackexchange.com/questions/559409/is-there-a-verb-counterpart-to-pair-when-bringing-together-three-things/559416#comment1381195_559416>\n\n",
+                "type": "a -> b -> c -> ( a, b, c )"
+            },
+            {
+                "name": "mapAll",
+                "comment": " Transform all parts of a 3-tuple.\n\n    import String\n    mapAll String.reverse sqrt not (\"stressed\", 16, True) == (\"desserts\", 4, False)\n\n",
+                "type": "(a -> x) -> (b -> y) -> (c -> z) -> ( a, b, c ) -> ( x, y, z )"
+            },
+            {
+                "name": "mapFirst",
+                "comment": " Transform the first value in a 3-tuple.\n\n    import String\n    mapFirst String.reverse (\"stressed\", 16, True) == (\"desserts\", 16, True)\n    mapFirst String.length  (\"stressed\", 16, True) == (8, 16, True)\n\n",
+                "type": "(a -> x) -> ( a, b, c ) -> ( x, b, c )"
+            },
+            {
+                "name": "mapSecond",
+                "comment": " Transform the second value in a 3-tuple.\n\n    mapSecond sqrt ( \"stressed\", 16, True ) == ( \"stressed\", 4, True )\n\n    mapSecond negate ( \"stressed\", 16, True ) == ( \"stressed\", -16, True )\n\n",
+                "type": "(b -> y) -> ( a, b, c ) -> ( a, y, c )"
+            },
+            {
+                "name": "mapThird",
+                "comment": " Transform the third value in a 3-tuple.\n\n    mapThird not ( \"stressed\", 16, True ) == ( \"stressed\", 16, False )\n\n",
+                "type": "(c -> z) -> ( a, b, c ) -> ( a, b, z )"
+            },
+            {
+                "name": "second",
+                "comment": " Extract the second value from a 3-tuple.\n\n    second ( 3, 4, 5 ) == 4\n\n    second ( \"john\", \"doe\", \"jr.\" ) == \"doe\"\n\n",
+                "type": "( a, b, c ) -> b"
+            },
+            {
+                "name": "third",
+                "comment": " Extract the third value from a 3-tuple.\n\n    third ( 3, 4, 5 ) == 5\n\n    third ( \"john\", \"doe\", \"jr.\" ) == \"jr.\"\n\n",
+                "type": "( a, b, c ) -> c"
+            }
+        ],
+        "binops": []
+    }
+]

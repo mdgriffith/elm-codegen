@@ -1,0 +1,357 @@
+[
+    {
+        "name": "Either",
+        "comment": " A generic structure for a type with two possibilities: a `Left a` or\na `Right b`.\n\n\n# Definition\n\n@docs Either\n\n\n# Mapping (Functor & Bifunctor)\n\n@docs map, mapLeft, mapRight, voidRight, voidLeft, mapBoth, mapEach\n\n\n# Applying (Applicative)\n\n@docs singleton, andMap, andMapLeft, andMapRight, map2, map3, map4\n\n\n# Folding (Foldable)\n\n@docs length, foldl, foldr\n\n\n# Chaining (Monad)\n\n@docs andThen, andThenLeft, andThenRight, andThenBoth\n\n\n# Appending (Semigroup)\n\n@docs appendLeft, appendRight\n\n\n# Equals (Eq)\n\n@docs equals\n\n\n# List Helpers\n\n@docs toList, toListVia, lefts, rights, partition, biList\n\n\n# Array Helpers\n\n@docs toArray, toArrayVia\n\n\n# Set Helpers\n\n@docs toSet, toSetVia\n\n\n# Dict Helpers\n\n@docs toDict, toDictVia\n\n\n# Maybe Helpers\n\n@docs toMaybe, toMaybeVia, leftToMaybe, rightToMaybe, fromMaybe, leftFromMaybe, rightFromMaybe\n\n\n# Result Helpers\n\n@docs toResult, toResultVia, fromResult\n\n\n# Task Helpers\n\n@docs toTask, toTaskVia\n\n\n# Rest of the Helpers\n\n@docs isLeft, isRight, fromLeft, fromRight, withDefault, unpack, unwrap, swap\n\n",
+        "unions": [
+            {
+                "name": "Either",
+                "comment": " The only implementation\n",
+                "args": [
+                    "a",
+                    "b"
+                ],
+                "cases": [
+                    [
+                        "Left",
+                        [
+                            "a"
+                        ]
+                    ],
+                    [
+                        "Right",
+                        [
+                            "b"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "andMap",
+                "comment": " Apply the function that is inside `Either` to a value that is inside\n`Either`. Return the result inside `Either`. If one of the `Either`\narguments is `Left x`, return `Left x`. Also known as `apply`.\n\n    Left \"Hello\" |> andMap (Left \"World\") == Left \"Hello\"\n\n    Left \"Hello\" |> andMap (Right 2) == Left \"Hello\"\n\n    Right ((+) 1) |> andMap (Left \"World\") == Left \"World\"\n\n    Right ((+) 1) |> andMap (Right 2) == Right 3\n\n",
+                "type": "Either.Either x a -> Either.Either x (a -> b) -> Either.Either x b"
+            },
+            {
+                "name": "andMapLeft",
+                "comment": " Apply the function that is inside `Either` to a value that is inside\n`Either`. Return the result inside `Either`. If one of the `Either`\narguments is `Right x`, return `Right x`. Also known as `apply`.\n\n    Left (\\s -> s ++ \"!!\") |> andMap (Left \"Hello\") == Left \"Hello!!\"\n\n    Left (\\s -> s ++ \"!!\") |> andMap (Right 2) == Right 2\n\n    Right 99 |> andMap (Left \"World\") == Right 99\n\n    Right 99 |> andMap (Right 2) == Right 99\n\n",
+                "type": "Either.Either a x -> Either.Either (a -> b) x -> Either.Either b x"
+            },
+            {
+                "name": "andMapRight",
+                "comment": " Alias for `andMap`.\n",
+                "type": "Either.Either x a -> Either.Either x (a -> b) -> Either.Either x b"
+            },
+            {
+                "name": "andThen",
+                "comment": " Chain together in many computations that will stop computing if\na chain is on a `Left`. Also known as `bind`.\n\n    Left \"Hello\" |> andThen (\\i -> Right (i + 1)) == Left \"Hello\"\n\n    Right 2 |> andThen (\\i -> Right (i + 1)) == Right 3\n\n",
+                "type": "(a -> Either.Either x b) -> Either.Either x a -> Either.Either x b"
+            },
+            {
+                "name": "andThenBoth",
+                "comment": " ",
+                "type": "(a -> Either.Either c d) -> (b -> Either.Either c d) -> Either.Either a b -> Either.Either c d"
+            },
+            {
+                "name": "andThenLeft",
+                "comment": " Chain together in many computations that will stop computing if\na chain is on a `Right`. Also known as `bind`.\n\n    Left \"Hello\" |> andThen (\\s -> Left (s ++ \"!!\")) == Left \"Hello!!\"\n\n    Right 2 |> andThen (\\s -> Left (s ++ \"!!\")) == Right 2\n\n",
+                "type": "(a -> Either.Either b x) -> Either.Either a x -> Either.Either b x"
+            },
+            {
+                "name": "andThenRight",
+                "comment": " Alias for `andThen`.\n",
+                "type": "(a -> Either.Either x b) -> Either.Either x a -> Either.Either x b"
+            },
+            {
+                "name": "appendLeft",
+                "comment": " Append inner values of a `Left`.\n\n    appendLeft (Left [ 1, 2 ]) (Left [ 3, 4 ]) == Left [ 1, 2, 3, 4 ]\n\n    appendLeft (Left [ 1, 2 ]) (Right 'b') == Left [ 1, 2 ]\n\n    appendLeft (Right 'a') (Left [ 3, 4 ]) == Left [ 3, 4 ]\n\n    appendLeft (Right 'a') (Right 'b') == Right 'a'\n\n",
+                "type": "Either.Either appendable x -> Either.Either appendable x -> Either.Either appendable x"
+            },
+            {
+                "name": "appendRight",
+                "comment": " Append inner values of a `Right`.\n\n    appendRight (Right \"Hello\") (Right \"World\") == Right \"HelloWorld\"\n\n    appendRight (Right \"Hello\") (Left 1) == Right \"Hello\"\n\n    appendRight (Left 0) (Right \"World\") == Right \"World\"\n\n    appendRight (Left 0) (Left 1) == Left 0\n\n",
+                "type": "Either.Either x appendable -> Either.Either x appendable -> Either.Either x appendable"
+            },
+            {
+                "name": "biList",
+                "comment": " Collects the list of elements of a structure, from left to right.\n\n    biList (Left 4) == [ 4 ]\n\n    biList (Right 9) == [ 9 ]\n\n",
+                "type": "Either.Either a a -> List.List a"
+            },
+            {
+                "name": "equals",
+                "comment": " One rendition of equals assuming both sides of the `Either` are comparable.\n\n    equals (Right \"Hello\") (Right \"Hello\") == True\n\n    equals (Right \"Hello\") (Right \"World\") == False\n\n    equals (Right \"Hello\") (Left \"Hello\") == False\n\n    equals (Right \"Hello\") (Left 1) == False\n\n    equals (Left 0) (Right \"World\") == False\n\n    equals (Left 0) (Left 0) == True\n\n    equals (Left 0) (Left 1) == False\n\n    equals (Left 0) (Right 0) == False\n\n",
+                "type": "Either.Either comparable comparable1 -> Either.Either comparable comparable1 -> Basics.Bool"
+            },
+            {
+                "name": "foldl",
+                "comment": " Folds an `Either` over a function with an accumulator. If\nit is a `Left` the function is applied with the accumulator.\nIf it is a `Right` only the accumulator is returned.\n\n    foldl (*) 2 (Left 3) == 6\n\n    foldl (*) 2 (Right 3) == 2\n\n",
+                "type": "(a -> b -> b) -> b -> Either.Either a a -> b"
+            },
+            {
+                "name": "foldr",
+                "comment": " Folds an `Either` over a function with an accumulator. If\nit is a `Right` the function is applied with the accumulator.\nIf it is a `Left` only the accumulator is returned.\n\n    foldr (*) 2 (Left 3) == 2\n\n    foldr (*) 2 (Right 3) == 6\n\n",
+                "type": "(a -> b -> b) -> b -> Either.Either a a -> b"
+            },
+            {
+                "name": "fromLeft",
+                "comment": " Extract left value or a default.\n\n    fromLeft \"World\" (Left \"Hello\") == \"Hello\"\n\n    fromLeft \"World\" (Right 2) == \"World\"\n\n",
+                "type": "a -> Either.Either a b -> a"
+            },
+            {
+                "name": "fromMaybe",
+                "comment": " Convert from a `Maybe` to `Either` with a default value\nfor `Left` for `Nothing`.\n\n    fromMaybe \"Hello\" (Just 2) == Right 2\n\n    fromMaybe \"Hello\" Nothing == Left \"Hello\"\n\n",
+                "type": "a -> Maybe.Maybe b -> Either.Either a b"
+            },
+            {
+                "name": "fromResult",
+                "comment": " Convert from `Result` to `Either`.\n\n    fromResult (Ok 2) == Right 2\n\n    fromResult (Err \"World\") == Left \"World\"\n\n",
+                "type": "Result.Result a b -> Either.Either a b"
+            },
+            {
+                "name": "fromRight",
+                "comment": " Extract right value or a default.\n\n    fromRight 3 (Left \"Hello\") == 3\n\n    fromRight 3 (Right 2) == 2\n\n",
+                "type": "b -> Either.Either a b -> b"
+            },
+            {
+                "name": "isLeft",
+                "comment": " Returns `True` if argument is `Left _`\n\n    isLeft (Left \"World\") == True\n\n    isLeft (Right 2) == False\n\n",
+                "type": "Either.Either a b -> Basics.Bool"
+            },
+            {
+                "name": "isRight",
+                "comment": " Returns `True` if argument is `Right _`\n\n    isRight (Left \"World\") == False\n\n    isRight (Right 2) == True\n\n",
+                "type": "Either.Either a b -> Basics.Bool"
+            },
+            {
+                "name": "leftFromMaybe",
+                "comment": " Convert from a `Maybe` to `Either` with a default value\nfor `Right` for `Nothing`.\n\n    leftFromMaybe 3 (Just \"World\") == Left \"World\"\n\n    leftFromMaybe 3 Nothing == Right 3\n\n",
+                "type": "b -> Maybe.Maybe a -> Either.Either a b"
+            },
+            {
+                "name": "leftToMaybe",
+                "comment": " `Maybe` get the `Left` side of an `Either`.\n\n    leftToMaybe (Left \"World\") == Just \"World\"\n\n    leftToMaybe (Right 2) == Nothing\n\n",
+                "type": "Either.Either a x -> Maybe.Maybe a"
+            },
+            {
+                "name": "lefts",
+                "comment": " Converts a `List` of `Either a x` to a List of `a`.\n\n    lefts [ Left \"Hello\", Left \"world\", Right 2 ] == [ \"Hello\", \"world\" ]\n\n",
+                "type": "List.List (Either.Either a x) -> List.List a"
+            },
+            {
+                "name": "length",
+                "comment": " Returns the length of an `Either`. This happens to be `0` for a\n`Left` and `1` for a `Right`.\n\n    length (Left 2) == 0\n\n    length (Right \"Sharks\") == 1\n\n",
+                "type": "Either.Either a b -> Basics.Int"
+            },
+            {
+                "name": "map",
+                "comment": " Apply a function to an `Either`. If the argument is `Right`, it\nwill be converted. If the argument is an `Left`, the same left value\nwill propogate through.\n\n    map ((+) 1) (Left \"Hello\") == Left \"Hello\"\n\n    map ((+) 1) (Right 2) == Right 3\n\n",
+                "type": "(a -> b) -> Either.Either x a -> Either.Either x b"
+            },
+            {
+                "name": "map2",
+                "comment": " Apply a function to two eithers, if both arguments are `Right`.\nIf not, the first argument which is a `Left` will propagate through.\nAlso known as `liftA2`.\n\n    map2 (+) (Left \"Hello\") (Left \"World\") == Left \"Hello\"\n\n    map2 (+) (Left \"Hello\") (Right 3) == Left \"Hello\"\n\n    map2 (+) (Right 2) (Left \"World\") == Left \"World\"\n\n    map2 (+) (Right 2) (Right 3) == Right 5\n\nIt’s essentially a helper for (and why it’s under applicative)\n\n    singleton (+) |> andMap (Right 2) |> andMap (Right 3) == Right 5\n\n",
+                "type": "(a -> b -> c) -> Either.Either x a -> Either.Either x b -> Either.Either x c"
+            },
+            {
+                "name": "map3",
+                "comment": " Like `map2`, but with 3 eithers. Also known as `liftA3`\n",
+                "type": "(a -> b -> c -> d) -> Either.Either x a -> Either.Either x b -> Either.Either x c -> Either.Either x d"
+            },
+            {
+                "name": "map4",
+                "comment": " Like `map2`, but with 4 eithers. Also known as `liftA4`\n",
+                "type": "(a -> b -> c -> d -> e) -> Either.Either x a -> Either.Either x b -> Either.Either x c -> Either.Either x d -> Either.Either x e"
+            },
+            {
+                "name": "mapBoth",
+                "comment": " Apply the first argument function to a `Left` and the second\nargument function to a `Right` of an `Either`.\n\n    mapBoth (\\s -> s ++ \"!!\") ((+) 1) (Left \"Hello\") == Left \"Hello!!\"\n\n    mapBoth (\\s -> s ++ \"!!\") ((+) 1) (Right 2) == Right 3\n\n",
+                "type": "(a -> b) -> (c -> d) -> Either.Either a c -> Either.Either b d"
+            },
+            {
+                "name": "mapEach",
+                "comment": " Not crazy on the name, but apply a function to either the `Left`\nor the `Right` where the `Left` and the `Right` are of the same type.\n\n    mapEach ((+) 1) (Left 2) == Left 3\n\n    mapEach ((+) 1) (Right 3) == Right 4\n\n",
+                "type": "(a -> b) -> Either.Either a a -> Either.Either b b"
+            },
+            {
+                "name": "mapLeft",
+                "comment": " Apply a function to the `Left` of an `Either`.\n\n    mapLeft ((+) 1) (Left 2) == Left 3\n\n    mapLeft ((+) 1) (Right 2) == Right 2\n\n",
+                "type": "(a -> b) -> Either.Either a x -> Either.Either b x"
+            },
+            {
+                "name": "mapRight",
+                "comment": " Alias for `map`.\n",
+                "type": "(a -> b) -> Either.Either x a -> Either.Either x b"
+            },
+            {
+                "name": "partition",
+                "comment": " Converts a `List` of `Either a b`, into a tuple2 where\nthe first value is a `List a` and the second is `List b`.\n\n    partition [ Left \"Hello\", Left \"world\", Right 2 ] == ( [ \"Hello\", \"World\" ], [ 2 ] )\n\n",
+                "type": "List.List (Either.Either a b) -> ( List.List a, List.List b )"
+            },
+            {
+                "name": "rightFromMaybe",
+                "comment": " Alias for `fromMaybe`.\n",
+                "type": "a -> Maybe.Maybe b -> Either.Either a b"
+            },
+            {
+                "name": "rightToMaybe",
+                "comment": " Alias for `toMaybe`.\n",
+                "type": "Either.Either x b -> Maybe.Maybe b"
+            },
+            {
+                "name": "rights",
+                "comment": " Converts a `List` of `Either x b` to a List of `b`.\n\n    rights [ Left \"Hello\", Left, \"world\", Right 2 ] == [ 2 ]\n\n",
+                "type": "List.List (Either.Either x a) -> List.List a"
+            },
+            {
+                "name": "singleton",
+                "comment": " Create a `singleton` from a value to an `Either` with a `Right`\nof the same type. Also known as `pure`. Use the `Left` constructor\nfor a singleton of the `Left` variety.\n\n    singleton 2 == Right 2\n\n",
+                "type": "b -> Either.Either x b"
+            },
+            {
+                "name": "swap",
+                "comment": " Swap the `Left` and `Right` sides of an `Either`.\n\n    swap (Left \"World\") == Right \"World\"\n\n    swap (Right 2) == Left 2\n\n",
+                "type": "Either.Either a b -> Either.Either b a"
+            },
+            {
+                "name": "toArray",
+                "comment": " Convert from `Either` to `Array`\n\n    toArray (Right 1) == Array.fromList [ 1 ]\n\n    toArray (Left 'a') == Array.fromList []\n\n",
+                "type": "Either.Either x b -> Array.Array b"
+            },
+            {
+                "name": "toArrayVia",
+                "comment": " Folds from `Either` to `Array` via a transforming function.\n\n    toArrayVia ((+) 1) (Right 1) == Array.fromList [ 2 ]\n\n    toArrayVia ((+) 1) (Left 'a') == Array.fromList []\n\n",
+                "type": "(a -> b) -> Either.Either x a -> Array.Array b"
+            },
+            {
+                "name": "toDict",
+                "comment": " Convert from `Either` to `Dict`\n\n    toDict (Right ( \"KEY\", 1 )) == Dict.fromList [ ( \"KEY\", 1 ) ]\n\n    toDict (Left 'a') == Dict.fromList []\n\n",
+                "type": "Either.Either x ( comparable, v ) -> Dict.Dict comparable v"
+            },
+            {
+                "name": "toDictVia",
+                "comment": " Folds from `Either` to `Dict` via a transforming function.\n\n    toDictVia (Right ( \"KEY\", 1 )) == Dict.fromList [ ( \"KEY\", 1 ) ]\n\n    toDictVia (Left 'a') == Dict.fromList []\n\n",
+                "type": "(a -> ( comparable, v )) -> Either.Either x a -> Dict.Dict comparable v"
+            },
+            {
+                "name": "toList",
+                "comment": " Converts a `Either x b` to a `List` of `b`.\n\n    toList (Right 1) == [ 1 ]\n\n    toList (Left 'a') == []\n\n",
+                "type": "Either.Either x a -> List.List a"
+            },
+            {
+                "name": "toListVia",
+                "comment": " Folds a `Either x b` to a `List` of `c` via a transforming function.\n\n    toList ((+) 1) (Right 1) == [ 2 ]\n\n    toList ((+) 1) (Left 'a') == []\n\n",
+                "type": "(a -> b) -> Either.Either x a -> List.List b"
+            },
+            {
+                "name": "toMaybe",
+                "comment": " `Maybe` get the `Right` side of an `Either`.\n\n    toMaybe (Right 2) == Just 2\n\n    toMaybe (Left \"World\") == Nothing\n\n",
+                "type": "Either.Either x b -> Maybe.Maybe b"
+            },
+            {
+                "name": "toMaybeVia",
+                "comment": " Folds a `Maybe` get the `Right` side of an `Either` via a transforming\nfunction.\n\n    toMaybeVia ((*) 3) (Right 2) == Just 6\n\n    toMaybeVia ((*) 3) (Left \"World\") == Nothing\n\n",
+                "type": "(b -> c) -> Either.Either x b -> Maybe.Maybe c"
+            },
+            {
+                "name": "toResult",
+                "comment": " Convert from `Either` to `Result`.\n\n    toResult (Right 2) == Ok 2\n\n    toResult (Left \"World\") == Err \"World\"\n\n",
+                "type": "Either.Either a b -> Result.Result a b"
+            },
+            {
+                "name": "toResultVia",
+                "comment": " Fold from `Either` to `Result` via transforming function.\n\n    toResultVia ((+) 3) (Left \"World\") == Err \"World\"\n\n    toResultVia ((+) 3) (Right 2) == Ok 5\n\n",
+                "type": "(b -> c) -> Either.Either a b -> Result.Result a c"
+            },
+            {
+                "name": "toSet",
+                "comment": " Convert from `Either` to `Set`\n\n    toSet (Right 1) == Set.fromList [ 1 ]\n\n    toSet (Left 'a') == Set.fromList []\n\n",
+                "type": "Either.Either x comparable -> Set.Set comparable"
+            },
+            {
+                "name": "toSetVia",
+                "comment": " Folds from `Either` to `Set` via a transforming function.\n\n    toSetVia ((+) 1) (Right 1) == Set.fromList [ 2 ]\n\n    toSetVia ((+) 1) (Left 'a') == Set.fromList []\n\n",
+                "type": "(a -> comparable) -> Either.Either x a -> Set.Set comparable"
+            },
+            {
+                "name": "toTask",
+                "comment": " Convert from `Either` to `Task`\n\n    toTask (Right \"World\") -- succeed \"World\"\n\n    toTask (Left 2) -- fail 2\n\n",
+                "type": "Either.Either a b -> Task.Task a b"
+            },
+            {
+                "name": "toTaskVia",
+                "comment": " Fold from `Either` to `Task` via transforming function.\n\n    toTaskVia (\\s -> s ++ \"!!\") (Right \"World\") -- succeed \"World!!\"\n\n    toTaskVia (\\s -> s ++ \"!!\") (Left 2) -- fail 2\n\n",
+                "type": "(b -> c) -> Either.Either a b -> Task.Task a c"
+            },
+            {
+                "name": "unpack",
+                "comment": " Given a function for both `Left` and `Right` to to type a generic\ntype `c`, collapse down the `Either` to a value of that type.\n\n    unpack identity toString (Left \"World\") == \"World\"\n\n    unpack identity toString (Right 2) == \"2\"\n\n",
+                "type": "(a -> c) -> (b -> c) -> Either.Either a b -> c"
+            },
+            {
+                "name": "unwrap",
+                "comment": " Apply a function to `Right` value. If argument was a `Left` use the\ndefault value. Equivalent to `Either.map >> Either.fromRight`.\n\n    unwrap 99 ((+) 1) (Left \"Hello\") == 99\n\n    unwrap 99 ((+) 1) (Right 2) == 3\n\n",
+                "type": "b -> (a -> b) -> Either.Either x a -> b"
+            },
+            {
+                "name": "voidLeft",
+                "comment": " Ignore the return value of the `Left` using the specified value instead.\n_NOT_ the same as `$>` in other languages.\n\n    voidLeft \"two\" (Right True) == Right True\n\n    voidLeft \"two\" (Left 6) == Left \"two\"\n\n",
+                "type": "a -> Either.Either b x -> Either.Either a x"
+            },
+            {
+                "name": "voidRight",
+                "comment": " Ignore the return value of the `Right` using the specified value instead.\nExactly the same as `<$` in other languages.\n\n    voidRight 2 (Right True) == Right 2\n\n    voidRight 2 (Left \"banana\") == Left \"banana\"\n\n",
+                "type": "a -> Either.Either x b -> Either.Either x a"
+            },
+            {
+                "name": "withDefault",
+                "comment": " Alias for `fromRight`.\n",
+                "type": "b -> Either.Either a b -> b"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Either.Decode",
+        "comment": " Provides a <abbr title=\"JavaScript Object Notation\">JSON</abbr>\n[`Decoder`](http://package.elm-lang.org/packages/elm-lang/core/latest/Json-Decode#Decoder)\nfor the `Either` type.\n\n\n# Definition\n\n@docs either\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "either",
+                "comment": " Decode an `Either` from a <abbr title=\"JavaScript Object Notation\">JSON</abbr>\n[`Value`](http://package.elm-lang.org/packages/elm-lang/core/latest/Json-Decode#Value).\n\n    decodeString (either string int) \"4\" == Ok (Right 4)\n\n",
+                "type": "Json.Decode.Decoder a -> Json.Decode.Decoder b -> Json.Decode.Decoder (Either.Either a b)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Either.Prism",
+        "comment": " [elm-monocle](http://package.elm-lang.org/packages/arturopala/elm-monocle/latest)-compatible `Prism`s.\n\n@docs Prism, leftp, rightp\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Prism",
+                "comment": " Constructor\n",
+                "args": [
+                    "a",
+                    "b"
+                ],
+                "type": "{ getOption : a -> Maybe.Maybe b, reverseGet : b -> a }"
+            }
+        ],
+        "values": [
+            {
+                "name": "leftp",
+                "comment": " `Prism` for the `Left` value. Also known as `_Left` in other languages.\n\n    .getOption leftp (Left 1) == Just 1\n\n    .getOption leftp (Right \"fish\") == Nothing\n\n    .reverseGet leftp 2 == Left 2\n\n",
+                "type": "Either.Prism.Prism (Either.Either a x) a"
+            },
+            {
+                "name": "rightp",
+                "comment": " `Prism` for the `Right` value. Also known as `_Right` in other languages.\n\n    .getOption rightp (Left 1) == Nothing\n\n    .getOption rightp (Right \"fish\") == Just \"fish\"\n\n    .reverseGet rightp \"phish\" == Right \"phish\"\n\n",
+                "type": "Either.Prism.Prism (Either.Either x b) b"
+            }
+        ],
+        "binops": []
+    }
+]

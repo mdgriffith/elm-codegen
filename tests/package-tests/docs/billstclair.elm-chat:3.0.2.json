@@ -1,0 +1,245 @@
+[
+    {
+        "name": "ElmChat",
+        "comment": " This module contains a simple chat component that you can easily add to your Elm user interface.\n\n\n# Types\n\n@docs Settings, ExtraAttributes, Updater, Sender, LineSpec\n\n\n# Less used types\n\n@docs TheUpdater, CustomSettings\n\n\n# Functions\n\n@docs makeSettings, chat, addChat, inputBox, styledInputBox\n@docs addLineSpec, makeLineSpec\n@docs encodeSettings, settingsEncoder, decodeSettings, settingsDecoder\n@docs restoreScroll\n\n\n# Utilities\n\n@docs timeString, timestampString, parseOutUrl\n\n\n# Custom rendering\n\n@docs CustomRenderers, Overrider, StateRenderer\n@docs encodeCustomSettings, customSettingsEncoder\n@docs decodeCustomSettings, customSettingsDecoder\n\n\n# Variables\n\n@docs defaultExtraAttributes\n\n",
+        "unions": [
+            {
+                "name": "CustomRenderers",
+                "comment": " Used to customize rendering.\n\nSet the `customRenderers` field of your settings record to one of these, if you want to override the default rendering, or render your own CustomLineSpec.\n\nThe `overrider` can provide an alternate to the default renderers for `StringLineSpec`, `UserLineSpec`, and `TimeLineSpec`.\n\nThe `renderer` will be called on `CustomLineSpec`s.\n\n",
+                "args": [
+                    "state",
+                    "msg"
+                ],
+                "cases": [
+                    [
+                        "CustomRenderers",
+                        [
+                            "{ overrider : Maybe.Maybe (ElmChat.Overrider state msg), renderer : Maybe.Maybe (ElmChat.StateRenderer state msg) }"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "LineSpec",
+                "comment": " Represents a single line in a chat.\n",
+                "args": [
+                    "state"
+                ],
+                "cases": [
+                    [
+                        "StringLineSpec",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "UrlLineSpec",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "UserLineSpec",
+                        [
+                            "{ user : String.String, linespec : ElmChat.LineSpec state }"
+                        ]
+                    ],
+                    [
+                        "TimeLineSpec",
+                        [
+                            "{ time : Time.Posix, linespec : ElmChat.LineSpec state }"
+                        ]
+                    ],
+                    [
+                        "CustomLineSpec",
+                        [
+                            "state"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "TheUpdater",
+                "comment": " A wrapper around Updater to prevent type recursion.\n",
+                "args": [
+                    "state",
+                    "msg"
+                ],
+                "cases": [
+                    [
+                        "TheUpdater",
+                        [
+                            "ElmChat.Updater state msg"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "CustomSettings",
+                "comment": " Customizable Settings.\n\nMake one of these with `makeSettings`, optionally customize the `customRenderers` field, and store it in your model.\n\n",
+                "args": [
+                    "state",
+                    "msg"
+                ],
+                "type": "{ fontSize : Basics.Int, lines : List.List (ElmChat.LineSpec state), customRenderers : Maybe.Maybe (ElmChat.CustomRenderers state msg), input : String.String, scroll : Basics.Float, attributes : ElmChat.ExtraAttributes msg, id : String.String, defaultFontSize : Basics.Int, showSizeControls : Basics.Bool, updater : ElmChat.TheUpdater state msg, zone : Time.Zone }"
+            },
+            {
+                "name": "ExtraAttributes",
+                "comment": " Extra attributes for the UI components.\n\nThis is the initial value of `Settings.attributes`.\n\nYou'll usually create one by changing `defaultExtraAttributes`.\n\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ chatTable : List.List (Html.Attribute msg), sizeButtons : List.List (Html.Attribute msg), sizeColumn : List.List (Html.Attribute msg), textColumn : List.List (Html.Attribute msg), textArea : List.List (Html.Attribute msg) }"
+            },
+            {
+                "name": "Overrider",
+                "comment": " User function to override rendering of standard `LineSpec` options.\n",
+                "args": [
+                    "state",
+                    "msg"
+                ],
+                "type": "ElmChat.CustomSettings state msg -> ElmChat.LineSpec state -> Maybe.Maybe (Html.Html msg)"
+            },
+            {
+                "name": "Sender",
+                "comment": " A function to turn an input string and a `Settings` record into a `msg`.\n",
+                "args": [
+                    "state",
+                    "msg"
+                ],
+                "type": "String.String -> ElmChat.CustomSettings state msg -> msg"
+            },
+            {
+                "name": "Settings",
+                "comment": " Old, uncustomizable Settings for the chat component.\n\nMake one of these with `makeSettings`, and store it in your model.\n\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "ElmChat.CustomSettings () msg"
+            },
+            {
+                "name": "StateRenderer",
+                "comment": " User function to render `CustomLineSpec` state.\n",
+                "args": [
+                    "state",
+                    "msg"
+                ],
+                "type": "state -> ElmChat.CustomSettings state msg -> Html.Html msg"
+            },
+            {
+                "name": "Updater",
+                "comment": " A function to turn a `Settings` record and a `Cmd` into a `msg`.\n",
+                "args": [
+                    "state",
+                    "msg"
+                ],
+                "type": "ElmChat.CustomSettings state msg -> Platform.Cmd.Cmd msg -> msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "addChat",
+                "comment": " Add a string to the chat box.\n",
+                "type": "ElmChat.CustomSettings state msg -> String.String -> ( ElmChat.CustomSettings state msg, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "addLineSpec",
+                "comment": " Add a line to the chat box.\n",
+                "type": "ElmChat.CustomSettings state msg -> ElmChat.LineSpec state -> ( ElmChat.CustomSettings state msg, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "chat",
+                "comment": " Create a chat component.\n",
+                "type": "ElmChat.CustomSettings state msg -> Html.Html msg"
+            },
+            {
+                "name": "customSettingsDecoder",
+                "comment": " The JSON Decoder for `decodeCustomSettings`.\n",
+                "type": "ElmChat.Updater state msg -> Json.Decode.Decoder state -> Json.Decode.Decoder (ElmChat.CustomSettings state msg)"
+            },
+            {
+                "name": "customSettingsEncoder",
+                "comment": " The JSON encoder for `encodeSettings`.\n",
+                "type": "ElmChat.CustomSettings state msg -> (state -> Json.Encode.Value) -> Json.Encode.Value"
+            },
+            {
+                "name": "decodeCustomSettings",
+                "comment": " Turn a JSON string that may contain `CustomLineSpec`s back into a `CustomSettings` record.\n\n`Updater` is as to `makeSettings`.\n\nThe `state` decoder turns a `Value` into your state.\n\nRestores with default `attributes`, so you'll need to change those\nafter decoding, if you customize them.\n\n",
+                "type": "ElmChat.Updater state msg -> Json.Decode.Decoder state -> String.String -> Result.Result String.String (ElmChat.CustomSettings state msg)"
+            },
+            {
+                "name": "decodeSettings",
+                "comment": " Turn a JSON string back into a `CustomSettings` record.\n\n`Updater` is as to `makeSettings`.\n\nRestores with default `attributes`, so you'll need to change those\nafter decoding, if you customize them.\n\n",
+                "type": "ElmChat.Updater state msg -> String.String -> Result.Result String.String (ElmChat.CustomSettings state msg)"
+            },
+            {
+                "name": "defaultExtraAttributes",
+                "comment": " The default value of the `Settings.attributes` property.\n",
+                "type": "ElmChat.ExtraAttributes msg"
+            },
+            {
+                "name": "encodeCustomSettings",
+                "comment": " Turn `CustomSettings` into a JSON string.\n\nUse the `(state -> Value)` function to encode `CustomLineSpec`s.\n\nDoes not encode the `attributes` or `updater` properties.\n\n",
+                "type": "ElmChat.CustomSettings state msg -> (state -> Json.Encode.Value) -> String.String"
+            },
+            {
+                "name": "encodeSettings",
+                "comment": " Turn chat `Settings` into a JSON string.\n\nDoes not encode the `attributes` or `updater` properties.\n\n",
+                "type": "ElmChat.CustomSettings state msg -> String.String"
+            },
+            {
+                "name": "inputBox",
+                "comment": " Create a text input control.\n\nArgs are `textSize buttonText sender settings`.\n\n`textSize` is the width in characters of the input control.\n\n`buttonText` is the text for the button that sends the input.\n\n`sender` is a function to turn an input string and `settings into a`msg\\`.\n\n`settings` is your `Settings` record.\n\n",
+                "type": "Basics.Int -> String.String -> ElmChat.Sender state msg -> ElmChat.CustomSettings state msg -> Html.Html msg"
+            },
+            {
+                "name": "makeLineSpec",
+                "comment": " Make a `LineSpec` including a message and an optional user and time.\n",
+                "type": "String.String -> Maybe.Maybe String.String -> Maybe.Maybe Time.Posix -> ElmChat.LineSpec state"
+            },
+            {
+                "name": "makeSettings",
+                "comment": " Make a settings record to add to your Model.\n\nArgs are `id initialFontSize showSizeControls updater`.\n\n`id` is the Html id for the div showing the chat.\n\n`initialFontSize` is the initial font size of the div in `pt`.\n\n`showSizeControls` is `True` to show the font size controls to the left of the text area.\n\n`updater` will be called to generate messages to update the settings in your Model.\n\n",
+                "type": "String.String -> Basics.Int -> Basics.Bool -> ElmChat.Updater state msg -> ElmChat.CustomSettings state msg"
+            },
+            {
+                "name": "parseOutUrl",
+                "comment": " Parse the first URL out of a string.\n\nThe result is `Just (prefix, url, suffix)`, if there is a URL, or `Nothing` otherwise.\n\n\"foo.com\" is interpreted as a URL, but is returned as just \"foo.com\". You have to prepend the <http://> yourself, if that's what you need.\n\n",
+                "type": "String.String -> Maybe.Maybe ( String.String, String.String, String.String )"
+            },
+            {
+                "name": "restoreScroll",
+                "comment": " Restore the scroll position after restoring from a JSON string.\n",
+                "type": "ElmChat.CustomSettings state msg -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "settingsDecoder",
+                "comment": " The JSON Decoder for `decodeSettings`.\n",
+                "type": "ElmChat.Updater state msg -> Json.Decode.Decoder (ElmChat.CustomSettings state msg)"
+            },
+            {
+                "name": "settingsEncoder",
+                "comment": " The JSON encoder for `encodeSettings`.\n",
+                "type": "ElmChat.CustomSettings state msg -> Json.Encode.Value"
+            },
+            {
+                "name": "styledInputBox",
+                "comment": " Same as `inputBox`, but takes two additional lists of attributes.\n\nThe first list is for the `input` box. The second is for the `button`.\n\n",
+                "type": "List.List (Html.Attribute msg) -> List.List (Html.Attribute msg) -> Basics.Int -> String.String -> ElmChat.Sender state msg -> ElmChat.CustomSettings state msg -> Html.Html msg"
+            },
+            {
+                "name": "timeString",
+                "comment": " Convert a zoned time to a string in the format \"HH:MM\"\n",
+                "type": "Time.Zone -> Time.Posix -> String.String"
+            },
+            {
+                "name": "timestampString",
+                "comment": " Convert a zoned time to a string in the format \"HH:MM:SS\"\n",
+                "type": "Time.Zone -> Time.Posix -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

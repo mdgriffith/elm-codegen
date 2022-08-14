@@ -1,0 +1,1281 @@
+[
+    {
+        "name": "MaterialColor",
+        "comment": " This library allow to get Material colors as Elm Color.\n\n\n# Colors\n\n\n## Red Hue\n\n@docs red50, red100, red200, red300, red400, red500, red600, red700, red800, red900, redA100, redA200, redA400, redA700\n\n\n## Pink Hue\n\n@docs pink50, pink100, pink200, pink300, pink400, pink500, pink600, pink700, pink800, pink900, pinkA100, pinkA200, pinkA400, pinkA700\n\n\n## Purple Hue\n\n@docs purple50, purple100, purple200, purple300, purple400, purple500, purple600, purple700, purple800, purple900, purpleA100, purpleA200, purpleA400, purpleA700\n\n\n## Deep Purple Hue\n\n@docs deepPurple50, deepPurple100, deepPurple200, deepPurple300, deepPurple400, deepPurple500, deepPurple600, deepPurple700, deepPurple800, deepPurple900, deepPurpleA100, deepPurpleA200, deepPurpleA400, deepPurpleA700\n\n\n## Indigo Hue\n\n@docs indigo50, indigo100, indigo200, indigo300, indigo400, indigo500, indigo600, indigo700, indigo800, indigo900, indigoA100, indigoA200, indigoA400, indigoA700\n\n\n## Blue Hue\n\n@docs blue50, blue100, blue200, blue300, blue400, blue500, blue600, blue700, blue800, blue900, blueA100, blueA200, blueA400, blueA700\n\n\n## Light Blue Hue\n\n@docs lightBlue50, lightBlue100, lightBlue200, lightBlue300, lightBlue400, lightBlue500, lightBlue600, lightBlue700, lightBlue800, lightBlue900, lightBlueA100, lightBlueA200, lightBlueA400, lightBlueA700\n\n\n## Cyan Hue\n\n@docs cyan50, cyan100, cyan200, cyan300, cyan400, cyan500, cyan600, cyan700, cyan800, cyan900, cyanA100, cyanA200, cyanA400, cyanA700\n\n\n## Teal Hue\n\n@docs teal50, teal100, teal200, teal300, teal400, teal500, teal600, teal700, teal800, teal900, tealA100, tealA200, tealA400, tealA700\n\n\n## Green Hue\n\n@docs green50, green100, green200, green300, green400, green500, green600, green700, green800, green900, greenA100, greenA200, greenA400, greenA700\n\n\n## Light Green Hue\n\n@docs lightGreen50, lightGreen100, lightGreen200, lightGreen300, lightGreen400, lightGreen500, lightGreen600, lightGreen700, lightGreen800, lightGreen900, lightGreenA100, lightGreenA200, lightGreenA400, lightGreenA700\n\n\n## Lime Hue\n\n@docs lime50, lime100, lime200, lime300, lime400, lime500, lime600, lime700, lime800, lime900, limeA100, limeA200, limeA400, limeA700\n\n\n## Yellow Hue\n\n@docs yellow50, yellow100, yellow200, yellow300, yellow400, yellow500, yellow600, yellow700, yellow800, yellow900, yellowA100, yellowA200, yellowA400, yellowA700\n\n\n## Amber Hue\n\n@docs amber50, amber100, amber200, amber300, amber400, amber500, amber600, amber700, amber800, amber900, amberA100, amberA200, amberA400, amberA700\n\n\n## Orange Hue\n\n@docs orange50, orange100, orange200, orange300, orange400, orange500, orange600, orange700, orange800, orange900, orangeA100, orangeA200, orangeA400, orangeA700\n\n\n## Deep Orange Hue\n\n@docs deepOrange50, deepOrange100, deepOrange200, deepOrange300, deepOrange400, deepOrange500, deepOrange600, deepOrange700, deepOrange800, deepOrange900, deepOrangeA100, deepOrangeA200, deepOrangeA400, deepOrangeA700\n\n\n## Brown Hue\n\n@docs brown50, brown100, brown200, brown300, brown400, brown500, brown600, brown700, brown800, brown900\n\n\n## Grey Hue\n\n@docs grey50, grey100, grey200, grey300, grey400, grey500, grey600, grey700, grey800, grey900\n\n\n## Blue Grey Hue\n\n@docs blueGrey50, blueGrey100, blueGrey200, blueGrey300, blueGrey400, blueGrey500, blueGrey600, blueGrey700, blueGrey800, blueGrey900\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "amber100",
+                "comment": " Amber 100\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "amber200",
+                "comment": " Amber 200\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "amber300",
+                "comment": " Amber 300\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "amber400",
+                "comment": " Amber 400\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "amber50",
+                "comment": " Amber 50\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "amber500",
+                "comment": " Amber 500\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "amber600",
+                "comment": " Amber 600\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "amber700",
+                "comment": " Amber 700\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "amber800",
+                "comment": " Amber 800\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "amber900",
+                "comment": " Amber 900\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "amberA100",
+                "comment": " Amber A100\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "amberA200",
+                "comment": " Amber A200\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "amberA400",
+                "comment": " Amber A400\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "amberA700",
+                "comment": " Amber A700\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "blue100",
+                "comment": " Blue 100\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "blue200",
+                "comment": " Blue 200\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "blue300",
+                "comment": " Blue 300\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "blue400",
+                "comment": " Blue 400\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "blue50",
+                "comment": " Blue 50\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "blue500",
+                "comment": " Blue 500\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "blue600",
+                "comment": " Blue 600\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "blue700",
+                "comment": " Blue 700\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "blue800",
+                "comment": " Blue 800\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "blue900",
+                "comment": " Blue 900\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "blueA100",
+                "comment": " Blue A100\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "blueA200",
+                "comment": " Blue A200\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "blueA400",
+                "comment": " Blue A400\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "blueA700",
+                "comment": " Blue A700\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "blueGrey100",
+                "comment": " Blue Grey 100\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "blueGrey200",
+                "comment": " Blue Grey 200\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "blueGrey300",
+                "comment": " Blue Grey 300\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "blueGrey400",
+                "comment": " Blue Grey 400\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "blueGrey50",
+                "comment": " Blue Grey 50\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "blueGrey500",
+                "comment": " Blue Grey 500\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "blueGrey600",
+                "comment": " Blue Grey 600\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "blueGrey700",
+                "comment": " Blue Grey 700\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "blueGrey800",
+                "comment": " Blue Grey 800\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "blueGrey900",
+                "comment": " Blue Grey 900\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "brown100",
+                "comment": " Brown 100\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "brown200",
+                "comment": " Brown 200\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "brown300",
+                "comment": " Brown 300\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "brown400",
+                "comment": " Brown 400\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "brown50",
+                "comment": " Brown 50\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "brown500",
+                "comment": " Brown 500\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "brown600",
+                "comment": " Brown 600\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "brown700",
+                "comment": " Brown 700\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "brown800",
+                "comment": " Brown 800\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "brown900",
+                "comment": " Brown 900\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "cyan100",
+                "comment": " Cyan 100\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "cyan200",
+                "comment": " Cyan 200\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "cyan300",
+                "comment": " Cyan 300\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "cyan400",
+                "comment": " Cyan 400\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "cyan50",
+                "comment": " Cyan 50\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "cyan500",
+                "comment": " Cyan 500\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "cyan600",
+                "comment": " Cyan 600\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "cyan700",
+                "comment": " Cyan 700\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "cyan800",
+                "comment": " Cyan 800\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "cyan900",
+                "comment": " Cyan 900\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "cyanA100",
+                "comment": " Cyan A100\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "cyanA200",
+                "comment": " Cyan A200\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "cyanA400",
+                "comment": " Cyan A400\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "cyanA700",
+                "comment": " Cyan A700\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "deepOrange100",
+                "comment": " Deep Orange 100\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "deepOrange200",
+                "comment": " Deep Orange 200\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "deepOrange300",
+                "comment": " Deep Orange 300\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "deepOrange400",
+                "comment": " Deep Orange 400\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "deepOrange50",
+                "comment": " Deep Orange 50\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "deepOrange500",
+                "comment": " Deep Orange 500\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "deepOrange600",
+                "comment": " Deep Orange 600\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "deepOrange700",
+                "comment": " Deep Orange 700\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "deepOrange800",
+                "comment": " Deep Orange 800\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "deepOrange900",
+                "comment": " Deep Orange 900\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "deepOrangeA100",
+                "comment": " Deep Orange A100\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "deepOrangeA200",
+                "comment": " Deep Orange A200\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "deepOrangeA400",
+                "comment": " Deep Orange A400\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "deepOrangeA700",
+                "comment": " Deep Orange A700\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "deepPurple100",
+                "comment": " Deep Purple 100\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "deepPurple200",
+                "comment": " Deep Purple 200\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "deepPurple300",
+                "comment": " Deep Purple 300\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "deepPurple400",
+                "comment": " Deep Purple 400\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "deepPurple50",
+                "comment": " Deep Purple 50\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "deepPurple500",
+                "comment": " Deep Purple 500\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "deepPurple600",
+                "comment": " Deep Purple 600\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "deepPurple700",
+                "comment": " Deep Purple 700\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "deepPurple800",
+                "comment": " Deep Purple 800\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "deepPurple900",
+                "comment": " Deep Purple 900\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "deepPurpleA100",
+                "comment": " Deep Purple A100\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "deepPurpleA200",
+                "comment": " Deep Purple A200\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "deepPurpleA400",
+                "comment": " Deep Purple A400\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "deepPurpleA700",
+                "comment": " Deep Purple A700\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "green100",
+                "comment": " Green 100\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "green200",
+                "comment": " Green 200\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "green300",
+                "comment": " Green 300\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "green400",
+                "comment": " Green 400\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "green50",
+                "comment": " Green 50\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "green500",
+                "comment": " Green 500\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "green600",
+                "comment": " Green 600\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "green700",
+                "comment": " Green 700\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "green800",
+                "comment": " Green 800\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "green900",
+                "comment": " Green 900\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "greenA100",
+                "comment": " Green A100\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "greenA200",
+                "comment": " Green A200\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "greenA400",
+                "comment": " Green A400\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "greenA700",
+                "comment": " Green A700\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "grey100",
+                "comment": " Grey 100\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "grey200",
+                "comment": " Grey 200\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "grey300",
+                "comment": " Grey 300\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "grey400",
+                "comment": " Grey 400\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "grey50",
+                "comment": " Grey 50\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "grey500",
+                "comment": " Grey 500\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "grey600",
+                "comment": " Grey 600\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "grey700",
+                "comment": " Grey 700\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "grey800",
+                "comment": " Grey 800\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "grey900",
+                "comment": " Grey 900\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "indigo100",
+                "comment": " Indigo 100\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "indigo200",
+                "comment": " Indigo 200\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "indigo300",
+                "comment": " Indigo 300\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "indigo400",
+                "comment": " Indigo 400\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "indigo50",
+                "comment": " Indigo 50\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "indigo500",
+                "comment": " Indigo 500\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "indigo600",
+                "comment": " Indigo 600\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "indigo700",
+                "comment": " Indigo 700\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "indigo800",
+                "comment": " Indigo 800\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "indigo900",
+                "comment": " Indigo 900\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "indigoA100",
+                "comment": " Indigo A100\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "indigoA200",
+                "comment": " Indigo A200\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "indigoA400",
+                "comment": " Indigo A400\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "indigoA700",
+                "comment": " Indigo A700\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lightBlue100",
+                "comment": " Light Blue 100\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lightBlue200",
+                "comment": " Light Blue 200\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lightBlue300",
+                "comment": " Light Blue 300\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lightBlue400",
+                "comment": " Light Blue 400\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lightBlue50",
+                "comment": " Light Blue 50\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lightBlue500",
+                "comment": " Light Blue 500\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lightBlue600",
+                "comment": " Light Blue 600\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lightBlue700",
+                "comment": " Light Blue 700\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lightBlue800",
+                "comment": " Light Blue 800\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lightBlue900",
+                "comment": " Light Blue 900\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lightBlueA100",
+                "comment": " Light Blue A100\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lightBlueA200",
+                "comment": " Light Blue A200\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lightBlueA400",
+                "comment": " Light Blue A400\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lightBlueA700",
+                "comment": " Light Blue A700\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lightGreen100",
+                "comment": " Light Green 100\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lightGreen200",
+                "comment": " Light Green 200\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lightGreen300",
+                "comment": " Light Green 300\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lightGreen400",
+                "comment": " Light Green 400\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lightGreen50",
+                "comment": " Light Green 50\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lightGreen500",
+                "comment": " Light Green 500\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lightGreen600",
+                "comment": " Light Green 600\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lightGreen700",
+                "comment": " Light Green 700\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lightGreen800",
+                "comment": " Light Green 800\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lightGreen900",
+                "comment": " Light Green 900\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lightGreenA100",
+                "comment": " Light Green A100\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lightGreenA200",
+                "comment": " Light Green A200\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lightGreenA400",
+                "comment": " Light Green A400\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lightGreenA700",
+                "comment": " Light Green A700\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lime100",
+                "comment": " Lime 100\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lime200",
+                "comment": " Lime 200\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lime300",
+                "comment": " Lime 300\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lime400",
+                "comment": " Lime 400\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lime50",
+                "comment": " Lime 50\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lime500",
+                "comment": " Lime 500\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lime600",
+                "comment": " Lime 600\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lime700",
+                "comment": " Lime 700\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lime800",
+                "comment": " Lime 800\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lime900",
+                "comment": " Lime 900\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "limeA100",
+                "comment": " Lime A100\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "limeA200",
+                "comment": " Lime A200\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "limeA400",
+                "comment": " Lime A400\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "limeA700",
+                "comment": " Lime A700\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "orange100",
+                "comment": " Orange 100\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "orange200",
+                "comment": " Orange 200\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "orange300",
+                "comment": " Orange 300\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "orange400",
+                "comment": " Orange 400\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "orange50",
+                "comment": " Orange 50\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "orange500",
+                "comment": " Orange 500\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "orange600",
+                "comment": " Orange 600\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "orange700",
+                "comment": " Orange 700\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "orange800",
+                "comment": " Orange 800\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "orange900",
+                "comment": " Orange 900\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "orangeA100",
+                "comment": " Orange A100\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "orangeA200",
+                "comment": " Orange A200\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "orangeA400",
+                "comment": " Orange A400\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "orangeA700",
+                "comment": " Orange A700\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "pink100",
+                "comment": " Pink 100\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "pink200",
+                "comment": " Pink 200\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "pink300",
+                "comment": " Pink 300\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "pink400",
+                "comment": " Pink 400\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "pink50",
+                "comment": " Pink 50\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "pink500",
+                "comment": " Pink 500\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "pink600",
+                "comment": " Pink 600\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "pink700",
+                "comment": " Pink 700\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "pink800",
+                "comment": " Pink 800\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "pink900",
+                "comment": " Pink 900\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "pinkA100",
+                "comment": " Pink A100\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "pinkA200",
+                "comment": " Pink A200\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "pinkA400",
+                "comment": " Pink A400\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "pinkA700",
+                "comment": " Pink A700\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "purple100",
+                "comment": " Purple 100\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "purple200",
+                "comment": " Purple 200\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "purple300",
+                "comment": " Purple 300\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "purple400",
+                "comment": " Purple 400\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "purple50",
+                "comment": " Purple 50\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "purple500",
+                "comment": " Purple 500\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "purple600",
+                "comment": " Purple 600\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "purple700",
+                "comment": " Purple 700\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "purple800",
+                "comment": " Purple 800\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "purple900",
+                "comment": " Purple 900\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "purpleA100",
+                "comment": " Purple A100\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "purpleA200",
+                "comment": " Purple A200\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "purpleA400",
+                "comment": " Purple A400\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "purpleA700",
+                "comment": " Purple A700\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "red100",
+                "comment": " Red 100\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "red200",
+                "comment": " Red 200\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "red300",
+                "comment": " Red 300\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "red400",
+                "comment": " Red 400\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "red50",
+                "comment": " Red 50\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "red500",
+                "comment": " Red 500\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "red600",
+                "comment": " Red 600\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "red700",
+                "comment": " Red 700\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "red800",
+                "comment": " Red 800\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "red900",
+                "comment": " Red 900\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "redA100",
+                "comment": " Red A100\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "redA200",
+                "comment": " Red A200\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "redA400",
+                "comment": " Red A400\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "redA700",
+                "comment": " Red A700\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "teal100",
+                "comment": " Teal 100\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "teal200",
+                "comment": " Teal 200\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "teal300",
+                "comment": " Teal 300\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "teal400",
+                "comment": " Teal 400\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "teal50",
+                "comment": " Teal 50\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "teal500",
+                "comment": " Teal 500\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "teal600",
+                "comment": " Teal 600\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "teal700",
+                "comment": " Teal 700\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "teal800",
+                "comment": " Teal 800\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "teal900",
+                "comment": " Teal 900\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "tealA100",
+                "comment": " Teal A100\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "tealA200",
+                "comment": " Teal A200\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "tealA400",
+                "comment": " Teal A400\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "tealA700",
+                "comment": " Teal A700\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "yellow100",
+                "comment": " Yellow 100\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "yellow200",
+                "comment": " Yellow 200\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "yellow300",
+                "comment": " Yellow 300\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "yellow400",
+                "comment": " Yellow 400\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "yellow50",
+                "comment": " Yellow 50\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "yellow500",
+                "comment": " Yellow 500\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "yellow600",
+                "comment": " Yellow 600\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "yellow700",
+                "comment": " Yellow 700\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "yellow800",
+                "comment": " Yellow 800\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "yellow900",
+                "comment": " Yellow 900\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "yellowA100",
+                "comment": " Yellow A100\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "yellowA200",
+                "comment": " Yellow A200\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "yellowA400",
+                "comment": " Yellow A400\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "yellowA700",
+                "comment": " Yellow A700\n",
+                "type": "Color.Color"
+            }
+        ],
+        "binops": []
+    }
+]

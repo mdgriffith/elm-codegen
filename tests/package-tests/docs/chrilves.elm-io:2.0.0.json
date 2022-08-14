@@ -1,0 +1,314 @@
+[
+    {
+        "name": "CmdM",
+        "comment": " This module provides a monadic interface for commands.\n\nBasically [CmdM](#CmdM) is like `Cmd` but is a monad, which means\nyou can chain effects as you like!\n\n@docs CmdM\n\n\n# Runing an Elm application with [CmdM](#CmdM)\n\nThis module port the four main way of running an Elm application to [CmdM](#CmdM).\n\n@docs Program, element, document, application\n\n\n# Lifting values and commands into [CmdM](#CmdM)\n\n@docs pure, lift, none\n\n\n# Classic monadic operations\n\n@docs map, andThen, join, ap, flap, compose, seq, traverse, mapM\n\n# Transform CmdM into regular Elm\n\n@docs transform\n\n\n# Batch operations\n\nBeware that batch operations might not do what you think. The execution order of\nmessages and commands is **not defined**.\n\n@docs batch, batchM\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "CmdM",
+                "comment": " Monadic interface for commands.\n\nA value of type `CmdM msg` is an effectful\ncomputation that can perform commands and\ncontains values of type `msg`.\n\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "CmdM.Internal.CmdM msg"
+            },
+            {
+                "name": "Program",
+                "comment": " Program using [CmdM](#CmdM).\n",
+                "args": [
+                    "flags",
+                    "model",
+                    "msg"
+                ],
+                "type": "Platform.Program flags model (CmdM.CmdM msg)"
+            }
+        ],
+        "values": [
+            {
+                "name": "andThen",
+                "comment": " Chains [CmdM](#CmdM)s.\n\nIf you have a `CmdM a` and a function which given\na `a` can give you a `CmdM b` depending on the value\nof type `a` given to the function. Then [andThen](#andThen) gives you\na `CmdM b` that will run the first [CmdM](#CmdM) and then apply\nthe function.\n\n**Laws**\n\n  - `andThen pure = identity`\n  - `andThen (f >> pure) = map f`\n  - `(andThen f) >> (andThen g) = andThen (a -> andThen g (f a))`\n\n",
+                "type": "(a -> CmdM.CmdM b) -> CmdM.CmdM a -> CmdM.CmdM b"
+            },
+            {
+                "name": "ap",
+                "comment": " Transform a [CmdM](#CmdM) containing functions into functions on [CmdM](#CmdM).\nIt enable to easily lift functions to [CmdM](#CmdM).\n\n**Laws**\n\n  - `ap (pure identity) = identity`\n  - `ap (pure (f >> g)) = ap (pure f) >> ap (pure g)`\n\n",
+                "type": "CmdM.CmdM (a -> b) -> CmdM.CmdM a -> CmdM.CmdM b"
+            },
+            {
+                "name": "application",
+                "comment": " Transform an application program using [CmdM](#CmdM) into a normal application program.\n",
+                "type": "{ init : flags -> Url.Url -> Browser.Navigation.Key -> ( model, CmdM.CmdM msg ), view : model -> Browser.Document (CmdM.CmdM msg), update : msg -> model -> ( model, CmdM.CmdM msg ), subscriptions : model -> Platform.Sub.Sub (CmdM.CmdM msg), onUrlRequest : Browser.UrlRequest -> CmdM.CmdM msg, onUrlChange : Url.Url -> CmdM.CmdM msg } -> CmdM.Program flags model msg"
+            },
+            {
+                "name": "batch",
+                "comment": " Send messages in batch\n",
+                "type": "List.List a -> CmdM.CmdM a"
+            },
+            {
+                "name": "batchM",
+                "comment": " **I strongly discourage you from using it. Use [mapM](#mapM) instead.**\nGroup commands in a batch. Its behavior may not be what you expect!\n",
+                "type": "List.List (CmdM.CmdM a) -> CmdM.CmdM a"
+            },
+            {
+                "name": "compose",
+                "comment": " Composition of monadic functions\n",
+                "type": "(b -> CmdM.CmdM c) -> (a -> CmdM.CmdM b) -> a -> CmdM.CmdM c"
+            },
+            {
+                "name": "document",
+                "comment": " Transform a document program using [CmdM](#CmdM) into a normal document program.\n",
+                "type": "{ init : flags -> ( model, CmdM.CmdM msg ), view : model -> Browser.Document (CmdM.CmdM msg), update : msg -> model -> ( model, CmdM.CmdM msg ), subscriptions : model -> Platform.Sub.Sub (CmdM.CmdM msg) } -> CmdM.Program flags model msg"
+            },
+            {
+                "name": "element",
+                "comment": " Transform an element program using [CmdM](#CmdM) into a normal element program.\n",
+                "type": "{ init : flags -> ( model, CmdM.CmdM msg ), view : model -> Html.Html (CmdM.CmdM msg), update : msg -> model -> ( model, CmdM.CmdM msg ), subscriptions : model -> Platform.Sub.Sub (CmdM.CmdM msg) } -> CmdM.Program flags model msg"
+            },
+            {
+                "name": "flap",
+                "comment": " Flipped version of ap. To be used like:\n\n    pure f |> flap arg1 |> flap arg2 ...\n",
+                "type": "CmdM.CmdM a -> CmdM.CmdM (a -> b) -> CmdM.CmdM b"
+            },
+            {
+                "name": "join",
+                "comment": " Flatten a [CmdM](#CmdM) containing a [CmdM](#CmdM) into a simple [CmdM](#CmdM).\n\n**Laws**\n\n  - `join (pure m) = m`\n\n",
+                "type": "CmdM.CmdM (CmdM.CmdM a) -> CmdM.CmdM a"
+            },
+            {
+                "name": "lift",
+                "comment": " Transforms an Elm command into a monadic command [CmdM](#CmdM).\n",
+                "type": "Platform.Cmd.Cmd a -> CmdM.CmdM a"
+            },
+            {
+                "name": "map",
+                "comment": " Map a function over an [CmdM](#CmdM).\n\n**Laws**\n\n  - `map (f >> g) = (map f) >> (map g)`\n  - `map identity = identity`\n\n",
+                "type": "(a -> b) -> CmdM.CmdM a -> CmdM.CmdM b"
+            },
+            {
+                "name": "mapM",
+                "comment": " Transform a list of [CmdM](#CmdM) into an [CmdM](#CmdM) of list.\n",
+                "type": "List.List (CmdM.CmdM a) -> CmdM.CmdM (List.List a)"
+            },
+            {
+                "name": "none",
+                "comment": " A [CmdM](#CmdM) doing nothing (an containing no values!).\n",
+                "type": "CmdM.CmdM a"
+            },
+            {
+                "name": "pure",
+                "comment": " Returns a [CmdM](#CmdM) whose only effect is containing the value given to [pure](#pure).\n",
+                "type": "a -> CmdM.CmdM a"
+            },
+            {
+                "name": "seq",
+                "comment": " Run the second argument, ignore the result, then run the first one.\n    To be used in\n\n    first |> seq second\n",
+                "type": "CmdM.CmdM b -> CmdM.CmdM a -> CmdM.CmdM b"
+            },
+            {
+                "name": "transform",
+                "comment": " Transform a program using [CmdM](#CmdM) into a normal program.\n",
+                "type": "(msg -> model -> ( model, CmdM.CmdM msg )) -> { update : CmdM.CmdM msg -> model -> ( model, Platform.Cmd.Cmd (CmdM.CmdM msg) ), initTransformer : ( model, CmdM.CmdM msg ) -> ( model, Platform.Cmd.Cmd (CmdM.CmdM msg) ) }"
+            },
+            {
+                "name": "traverse",
+                "comment": " You can think of traverse like a [map](#map) but with effects.\nIt maps a function performing [CmdM](#CmdM) effects over a list.\n",
+                "type": "(a -> CmdM.CmdM b) -> List.List a -> CmdM.CmdM (List.List b)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "IO",
+        "comment": " This module provides a monadic interface for _The Elm Architecture_.\n\nBasically [IO](#IO) is a monad enabing two kinds of effects :\n\n  - **model modification**:\n    it is a [state monad](http://brandon.si/code/the-state-monad-a-tutorial-for-the-confused/)\n    whose state is the model. It can be read by [get](#get) and written by [set](#set).\n  - _Cmd_ and [CmdM](../CmdM) **commands**.\n\n@docs IO\n\n\n# Runing a web application with [IO](#IO)\n\nThis module port the two main ways of running an Elm application to [IO](#IO).\n\n@docs Program, sandbox, element, document, application\n\n\n# Lifting values and commands into [IO](#IO)\n\n@docs pure, lift, liftM, liftUpdate\n\n\n# The model as a state\n\n@docs get, set, modify\n\n\n# Classic monadic operations\n\n@docs map, andThen, join, ap, flap, compose, seq, traverse, mapM\n\n# Passing from a model to another via [optics](http://package.elm-lang.org/packages/arturopala/elm-monocle/latest)\n\n@docs lens, optional, iso, prism, replace\n\n# Dummy values\n\n@docs none, dummyUpdate, dummySub\n\n# Forces Elm rendering\n\n@docs yield, forceRendering\n\n# Transform IO into regular Elm\n\n@docs transform\n\n\n# Batch operations\n\nBeware that batch operations might not do what you think. The execution order of\nmessages and commands is **not defined**.\n\n@docs batch, batchM\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "IO",
+                "comment": " Monadic interface for _The Elm Architecture_.\n\nA value of type `IO model a` is an effectful\ncomputation that can modify the model `model`,\nperform commands and contains values of type `a`.\n\n",
+                "args": [
+                    "model",
+                    "msg"
+                ],
+                "type": "IO.Internal.IO model msg"
+            },
+            {
+                "name": "Program",
+                "comment": " Program using [IO](#IO).\n",
+                "args": [
+                    "flags",
+                    "model",
+                    "msg"
+                ],
+                "type": "Platform.Program flags model (IO.IO model msg)"
+            }
+        ],
+        "values": [
+            {
+                "name": "andThen",
+                "comment": " Chains [IO](#IO)s.\n\nIf you have an _IO model a_ and a function which given\na _a_ can give you an _IO model b_ depending on the value\nof type _a_ given to the function. Then [andThen](#andThen) gives you\nan _IO model b_ that will run the first [IO](#IO) and then apply\nthe function.\n\n**Laws**\n\n  - `andThen pure = identity`\n  - `andThen (f >> pure) = map f`\n  - `(andThen f) >> (andThen g) = andThen (a -> andThen g (f a))`\n\n",
+                "type": "(a -> IO.IO model b) -> IO.IO model a -> IO.IO model b"
+            },
+            {
+                "name": "ap",
+                "comment": " Transform an [IO](#IO) containing functions into functions on [IO](#IO)\nIt enable to easily lift functions to [IO](#IO).\n\n**Laws**\n\n  - `ap (pure identity) = identity`\n  - `ap (pure (f >> g)) = ap (pure f) >> ap (pure g)`\n\n",
+                "type": "IO.IO model (a -> b) -> IO.IO model a -> IO.IO model b"
+            },
+            {
+                "name": "application",
+                "comment": " Transform an application program using [IO](#IO) into a normal application program.\n",
+                "type": "{ init : flags -> Url.Url -> Browser.Navigation.Key -> ( model, IO.IO model msg ), view : model -> Browser.Document (IO.IO model msg), update : msg -> IO.IO model msg, subscriptions : model -> Platform.Sub.Sub (IO.IO model msg), onUrlRequest : Browser.UrlRequest -> IO.IO model msg, onUrlChange : Url.Url -> IO.IO model msg } -> IO.Program flags model msg"
+            },
+            {
+                "name": "batch",
+                "comment": " Send messages in batch mode\n",
+                "type": "List.List a -> IO.IO model a"
+            },
+            {
+                "name": "batchM",
+                "comment": " **Its use is strongly discouraged! Use [mapM](#mapM) instead!**\nCombine a list of [IO](#IO).\n",
+                "type": "List.List (IO.IO model a) -> IO.IO model a"
+            },
+            {
+                "name": "compose",
+                "comment": " Composition of monadic functions\n",
+                "type": "(b -> IO.IO m c) -> (a -> IO.IO m b) -> a -> IO.IO m c"
+            },
+            {
+                "name": "document",
+                "comment": " Transform a document program using [IO](#IO) into a normal document program.\n",
+                "type": "{ init : flags -> ( model, IO.IO model msg ), view : model -> Browser.Document (IO.IO model msg), update : msg -> IO.IO model msg, subscriptions : model -> Platform.Sub.Sub (IO.IO model msg) } -> IO.Program flags model msg"
+            },
+            {
+                "name": "dummySub",
+                "comment": " Dummy subscription function\n",
+                "type": "a -> Platform.Sub.Sub b"
+            },
+            {
+                "name": "dummyUpdate",
+                "comment": " Dummy update function.\n",
+                "type": "a -> IO.IO b c"
+            },
+            {
+                "name": "element",
+                "comment": " Transform an element program using [IO](#IO) into a normal element program.\n",
+                "type": "{ init : flags -> ( model, IO.IO model msg ), view : model -> Html.Html (IO.IO model msg), update : msg -> IO.IO model msg, subscriptions : model -> Platform.Sub.Sub (IO.IO model msg) } -> IO.Program flags model msg"
+            },
+            {
+                "name": "flap",
+                "comment": " Flipped version of ap. To be used like:\n\n    pure f |> flap arg1 |> flap arg2 ...\n",
+                "type": "IO.IO model a -> IO.IO model (a -> b) -> IO.IO model b"
+            },
+            {
+                "name": "forceRendering",
+                "comment": " Forces Elm to render every set operation (model update).\n    This is MUCH SLOWER than normal set operations.\n",
+                "type": "IO.IO a b -> IO.IO a b"
+            },
+            {
+                "name": "get",
+                "comment": " An [IO](#IO) that returns the current model.\n",
+                "type": "IO.IO model model"
+            },
+            {
+                "name": "iso",
+                "comment": " Congruence by a [Iso](http://package.elm-lang.org/packages/arturopala/elm-monocle/latest/Monocle-Iso) on an [IO](#IO).\nJust like lenses but with [Iso](http://package.elm-lang.org/packages/arturopala/elm-monocle/latest/Monocle-Iso).\n",
+                "type": "Monocle.Iso.Iso b a -> IO.IO a msg -> IO.IO b msg"
+            },
+            {
+                "name": "join",
+                "comment": " Flatten an [IO](#IO) containing an [IO](#IO) into a simple [IO](#IO).\n\n**Laws**\n\n  - `join (pure m) = m`\n\n",
+                "type": "IO.IO model (IO.IO model a) -> IO.IO model a"
+            },
+            {
+                "name": "lens",
+                "comment": " Congruence by a [Lens](http://package.elm-lang.org/packages/arturopala/elm-monocle/latest/Monocle-Lens) on an [IO](#IO).\n\nIt would be silly to force users to redefine every [IO](#IO)\nfor each application model. Lenses enable to lift an [IO](#IO)\naction on a model _a_ to the same [IO](#IO) but action on a\nmodel _b_.\n\nYou can then define your [IO](#IO) on the minimal model and\nlift them to you real application's model when needed.\n\n",
+                "type": "Monocle.Lens.Lens b a -> IO.IO a msg -> IO.IO b msg"
+            },
+            {
+                "name": "lift",
+                "comment": " Lift a _Cmd_ as an [IO](#IO).\n",
+                "type": "Platform.Cmd.Cmd a -> IO.IO model a"
+            },
+            {
+                "name": "liftM",
+                "comment": " Lift a [CmdM](../CmdM) into an [IO](#IO)\n",
+                "type": "CmdM.CmdM a -> IO.IO model a"
+            },
+            {
+                "name": "liftUpdate",
+                "comment": " Lift a classic update function into an [IO](#IO).\n",
+                "type": "(model -> ( model, Platform.Cmd.Cmd a )) -> IO.IO model a"
+            },
+            {
+                "name": "map",
+                "comment": " Map a function over an [IO](#IO).\n\n**Laws**\n\n  - `map (f >> g) = (map f) >> (map g)`\n  - `map identity = identity`\n\n",
+                "type": "(a -> b) -> IO.IO model a -> IO.IO model b"
+            },
+            {
+                "name": "mapM",
+                "comment": " Transform a list of [IO](#IO) into an [IO](#IO) of list.\n",
+                "type": "List.List (IO.IO model a) -> IO.IO model (List.List a)"
+            },
+            {
+                "name": "modify",
+                "comment": " A [IO](#IO) that modify the model.\n",
+                "type": "(model -> model) -> IO.IO model ()"
+            },
+            {
+                "name": "none",
+                "comment": " An [IO](#IO) doing nothing (an containing no values!).\n",
+                "type": "IO.IO model a"
+            },
+            {
+                "name": "optional",
+                "comment": " Congruence by a [Optional](http://package.elm-lang.org/packages/arturopala/elm-monocle/latest/Monocle-Optional) on an [IO](#IO).\nJust like lenses but with [Optional](http://package.elm-lang.org/packages/arturopala/elm-monocle/latest/Monocle-Optional).\nIf the optional returns `Nothing`, then the [IO](#IO) does nothing.\n",
+                "type": "Monocle.Optional.Optional b a -> IO.IO a msg -> IO.IO b msg"
+            },
+            {
+                "name": "prism",
+                "comment": " Congruence by a [Prism](http://package.elm-lang.org/packages/arturopala/elm-monocle/latest/Monocle-Prism) on an [IO](#IO).\nJust like lenses but with [Prism](http://package.elm-lang.org/packages/arturopala/elm-monocle/latest/Monocle-Iso).\nIf the prism returns `Nothing`, then the [IO](#IO) does nothing.\n",
+                "type": "Monocle.Prism.Prism b a -> IO.IO a msg -> IO.IO b msg"
+            },
+            {
+                "name": "pure",
+                "comment": " Returns an [IO](#IO) whose only effect is containing the value given to [pure](#pure).\n",
+                "type": "a -> IO.IO model a"
+            },
+            {
+                "name": "replace",
+                "comment": " Replace get and set by custom functions ",
+                "type": "IO.IO b a -> (a -> IO.IO b ()) -> IO.IO a x -> IO.IO b x"
+            },
+            {
+                "name": "sandbox",
+                "comment": " Transform a sandbox program using [IO](#IO) into a normal sandbox program.\n",
+                "type": "{ init : flags -> ( model, IO.IO model msg ), view : model -> Html.Html (IO.IO model msg), subscriptions : model -> Platform.Sub.Sub (IO.IO model msg) } -> IO.Program flags model msg"
+            },
+            {
+                "name": "seq",
+                "comment": " Run the second argument, ignore the result, then run the first one.\n    To be used in\n\n    first |> seq second\n",
+                "type": "IO.IO model b -> IO.IO model a -> IO.IO model b"
+            },
+            {
+                "name": "set",
+                "comment": " An [IO](#IO) that sets the model.\n",
+                "type": "model -> IO.IO model ()"
+            },
+            {
+                "name": "transform",
+                "comment": " Transform a program using [IO](#IO) into a normal program.\n",
+                "type": "(msg -> IO.IO model msg) -> { update : IO.IO model msg -> model -> ( model, Platform.Cmd.Cmd (IO.IO model msg) ), initTransformer : ( model, IO.IO model msg ) -> ( model, Platform.Cmd.Cmd (IO.IO model msg) ) }"
+            },
+            {
+                "name": "traverse",
+                "comment": " You can think of traverse like a [map](#map) but with effects.\nIt maps a function performing [IO](#IO) effects over a list.\n",
+                "type": "(a -> IO.IO model b) -> List.List a -> IO.IO model (List.List b)"
+            },
+            {
+                "name": "yield",
+                "comment": " Identity function that forces Elm to render\n    the current state. Is equivalent to sleep for\n    0 milliseconds.\n",
+                "type": "msg -> IO.IO model msg"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,16 @@
+[
+    {
+        "name": "Url.Interpolate",
+        "comment": " Url.Interpolate provides a single function, `interpolate`, which takes\na URI Template string and a Dict of variables, and expands\nthe input string according to the rules in IETF RFC 6570,\nup to Level 3 (Level 4 compliance is not provided or planned).\n\n@docs interpolate\n\n[rfc6570]: https://tools.ietf.org/html/rfc6570\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "interpolate",
+                "comment": " Example URI template interpolation:\n\n    interpolate \"<http://example.com/{path}{?x,y,empty}\"> <|\n    Dict.fromList [(\"path\", \"hello\"), (\"x\", \"1024\"), (\"y\", \"768\")]\n\n    -- \"<http://example.com/hello?x=1024&y=768&empty=\">\n\nInternal note: I was surprised to find that the baseline %-encode rules for URI\ntemplates are _slightly different_ than the built-in `encodeURIComponent`. For\ninstance, '!' _is_ escaped for the template operations that use the\n\"unrestricted set\" of unescaped characters, while the built-in does _not_\nescape it. Thus, we rely on the `Hex` library rather than `Url.percentEncode`.\n\n",
+                "type": "String.String -> Dict.Dict String.String String.String -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

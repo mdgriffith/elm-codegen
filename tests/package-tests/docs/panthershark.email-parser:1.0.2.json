@@ -1,0 +1,33 @@
+[
+    {
+        "name": "Email",
+        "comment": " Email parser and validation library.\n\n@docs EmailAddress, isValid, parse, toString\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "EmailAddress",
+                "comment": " A model for representing an email. This is exposed, but you'll probably only use it is using parseEmailAddress\n",
+                "args": [],
+                "type": "{ local : String.String, domain : String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "isValid",
+                "comment": " Given a string, this returns true if the email is compatible with the spec.\n\n        isValid \"hello@world.com\" == True\n        isValid \"^^^^\" == False\n\n",
+                "type": "String.String -> Basics.Bool"
+            },
+            {
+                "name": "parse",
+                "comment": " Given a string, parses into an EmailAddress model.\n\n        parse \"hello@world.com\" == Ok { local = \"hello\", domain = \"world.com\" }\n        parse \"^^^^\" == Err [ dead ends ]\n\n",
+                "type": "String.String -> Result.Result (List.List Parser.DeadEnd) Email.EmailAddress"
+            },
+            {
+                "name": "toString",
+                "comment": " Converts the EmailAddress model to a string.\n",
+                "type": "Email.EmailAddress -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

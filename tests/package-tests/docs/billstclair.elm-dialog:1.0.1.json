@@ -1,0 +1,41 @@
+[
+    {
+        "name": "Dialog",
+        "comment": " Elm Mdl Dialog\n\n@docs Config, render, Visible, hidden, visible\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " The Dialog Configuration.\n\n`styles` sets inline styles for the dialog div. You may e.g. want to set a width.\n`title` sets a header title. Since MDL does the styling, you only need to provide\na string.\n`content` is where you put all your Html to be displayed in the Dialog's body.\n`actionBar` sits at bottom of the Dialog. You may want to place some actions there,\nusually at least one close button.\n\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ styles : List.List ( String.String, String.String ), title : String.String, content : List.List (Html.Html msg), actionBar : List.List (Html.Html msg) }"
+            },
+            {
+                "name": "Visible",
+                "comment": " A helper to make things more humand readable. Use it like this:\n\n    type alias Model =\n        { myDialogVisible : Visible\n        }\n\nIn the init function initialize it like this:\n\n    init =\n        { myDialogVisible = Dialog.hidden\n        }\n\n",
+                "args": [],
+                "type": "Basics.Bool"
+            }
+        ],
+        "values": [
+            {
+                "name": "hidden",
+                "comment": " A helper function that returns False to make things more human readable\n",
+                "type": "Dialog.Visible"
+            },
+            {
+                "name": "render",
+                "comment": " Render the Dialog\n\n    Dialog.render\n        { styles = [ ( \"width\", \"40%\" ) ]\n        , title = \"My Dialog\"\n        , content = [ text \"This is my dialog's body.\" ]\n        , actionBar = [ button [ onClick ToggleMyDialogVisible ] [ text \"Close\" ] ]\n        }\n        model.myDialogVisible\n\nYou take care of the open and close Msg yourself. Just include a Visible in your\nmodel for each Dialog.\n\n    type alias Model =\n        { myDialogVisible : Visible\n        }\n\n    update msg model =\n        case msg of\n            ToggleMyDialogVisible ->\n                ( { model | myDialogVisible = not model.myDialogVisible }\n                , Cmd.none\n                )\n\n",
+                "type": "Dialog.Config msg -> Dialog.Visible -> Html.Html msg"
+            },
+            {
+                "name": "visible",
+                "comment": " A helper function that returns True to make things more human readable\n",
+                "type": "Dialog.Visible"
+            }
+        ],
+        "binops": []
+    }
+]

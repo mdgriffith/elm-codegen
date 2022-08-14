@@ -1,0 +1,26 @@
+[
+    {
+        "name": "Geohash",
+        "comment": " This module is a Geohash encoding and decoding implementation in pure Elm.\n\nThanks to [Ning Sun](https://github.com/sunng87) for the [JavaScript implementation](https://github.com/sunng87/node-geohash).\n\n\n# Functions\n\n@docs encode, decodeCoordinate, decodeBoundingBox\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decodeBoundingBox",
+                "comment": " Decodes a geohash and returns the bounding box.\n\n    decodeBoundingBox \"u281zk\" =\n        { minLat = 48.14208984375\n        , minLon = 11.568603515625\n        , maxLat = 48.1475830078125\n        , maxLon = 11.57958984375\n        }\n\n",
+                "type": "String.String -> { minLat : Basics.Float, minLon : Basics.Float, maxLat : Basics.Float, maxLon : Basics.Float }"
+            },
+            {
+                "name": "decodeCoordinate",
+                "comment": " Decodes geohash and returns center coordinate.\n\n    decodeCoordinate \"u281zk\"\n        == { lat = 48.14483642578125\n           , lon = 11.5740966796875\n           , latError = 0.00274658203125\n           , lonError = 0.0054931640625\n           }\n\n",
+                "type": "String.String -> { lat : Basics.Float, lon : Basics.Float, latError : Basics.Float, lonError : Basics.Float }"
+            },
+            {
+                "name": "encode",
+                "comment": " Encodes coordinate (latitude, longitude, precision) to geohash.\n\n    encode 57.648 10.41 6 == \"u4pruy\"\n\n",
+                "type": "Basics.Float -> Basics.Float -> Basics.Int -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

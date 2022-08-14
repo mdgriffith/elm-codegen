@@ -1,0 +1,102 @@
+[
+    {
+        "name": "BIC",
+        "comment": " This library is for parsing Business Identifier Codes (BIC) used e.g. in\nbanking. The implementation is based on [ISO 9362 Fourth edition 2014-12-01](https://www.iso.org/standard/60390.html).\n\n\n# Definition\n\n@docs BIC, PartyPrefix, CountryCode, PartySuffix, BranchId\n\n\n# Parsing\n\n@docs fromString, Error\n\n\n# Common helpers\n\n@docs toString, toString11, toPartyPrefix, toCountryCode, toPartySuffix, toBranchId, toOptionalBranchId\n\n",
+        "unions": [
+            {
+                "name": "BIC",
+                "comment": " Represents a Business Identifier Code (BIC) as an opaque type.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Error",
+                "comment": " Parser errors potentially returned by [`fromString`](#fromString).\n\n    fromString \"FDDO\" -- Err LengthError\n\n    fromString \"FDDODEMMXXX Q\" -- Err LengthError\n\n    fromString \"FD @! DEMMXXX\" -- Err NotAlphaNumeric\n\n    fromString \"FDDO QQ MMXXX\" -- Err UnknownCountryCode\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "LengthError",
+                        []
+                    ],
+                    [
+                        "NotAlphaNumeric",
+                        []
+                    ],
+                    [
+                        "UnknownCountryCode",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "BranchId",
+                "comment": " Branch identifier (3 alpha-numeric).\n\nThe branch code is optional (\"XXX\" for primary office). Where an eight digit\nBIC code is given, it may be assumed that it refers to the primary office.\n\n",
+                "args": [],
+                "type": "String.String"
+            },
+            {
+                "name": "CountryCode",
+                "comment": " CountryCode (ISO 3166). Just an alias to [Iso3166.CountryCode](https://package.elm-lang.org/packages/rl-king/elm-iso3166-country-codes/2.0.0/Iso3166#CountryCode) from `rl-king/elm-iso3166-country-codes`\n",
+                "args": [],
+                "type": "Iso3166.CountryCode"
+            },
+            {
+                "name": "PartyPrefix",
+                "comment": " Business party prefix (4 alpha-numeric).\n",
+                "args": [],
+                "type": "String.String"
+            },
+            {
+                "name": "PartySuffix",
+                "comment": " Business party suffix (2 alpha-numeric).\n",
+                "args": [],
+                "type": "String.String"
+            }
+        ],
+        "values": [
+            {
+                "name": "fromString",
+                "comment": " Try to parse a `String` into a [`BIC`](#BIC). Spaces in that `String` will\nbe removed and all letters will be upcased.\n\n    fromString \"FDDO DE MM\" -- Ok (BIC \"FDDO\" Iso3166.DE \"MM\" Nothing)\n\n    fromString \"FDDO DE MM XXX\" -- Ok (BIC \"FDDO\" Iso3166.DE \"MM\" Nothing)\n\n    fromString \"axisinbb002\" -- Ok (BIC \"AXIS\" Iso3166.IN \"BB\" (Just \"002\"))\n\n",
+                "type": "String.String -> Result.Result BIC.Error BIC.BIC"
+            },
+            {
+                "name": "toBranchId",
+                "comment": " Extract branch code from `BIC`, using `\"XXX\"` if not available.\n\n    -- bic == BIC \"FDDO\" Iso3166.DE \"MM\" Nothing\n    toBranchId bic -- \"XXX\"\n\n    -- bic == BIC \"AXIS\" Iso3166.IN \"BB\" (Just \"002\")\n    toBranchId bic -- \"002\"\n\n",
+                "type": "BIC.BIC -> BIC.BranchId"
+            },
+            {
+                "name": "toCountryCode",
+                "comment": " Extract country code from `BIC`.\n\n    -- bic == BIC \"FDDO\" Iso3166.DE \"MM\" Nothing\n    toCountryCode bic -- Iso3166.DE\n\n",
+                "type": "BIC.BIC -> BIC.CountryCode"
+            },
+            {
+                "name": "toOptionalBranchId",
+                "comment": " Extract branch code from `BIC` if available.\n\n    -- bic == BIC \"FDDO\" Iso3166.DE \"MM\" Nothing\n    toOptionalBranchId bic -- Nothing\n\n    -- bic == BIC \"AXIS\" Iso3166.IN \"BB\" (Just \"002\")\n    toOptionalBranchId bic -- Just \"002\"\n\n",
+                "type": "BIC.BIC -> Maybe.Maybe BIC.BranchId"
+            },
+            {
+                "name": "toPartyPrefix",
+                "comment": " Extract business party prefix from `BIC`.\n\n    -- bic == BIC \"FDDO\" Iso3166.DE \"MM\" Nothing\n    toPartyPrefix bic -- \"FDDO\"\n\n",
+                "type": "BIC.BIC -> BIC.PartyPrefix"
+            },
+            {
+                "name": "toPartySuffix",
+                "comment": " Extract business party suffix code from `BIC`.\n\n    -- bic == BIC \"FDDO\" Iso3166.DE \"MM\" Nothing\n    toPartySuffix bic -- \"MM\"\n\n",
+                "type": "BIC.BIC -> BIC.PartySuffix"
+            },
+            {
+                "name": "toString",
+                "comment": " Convert `BIC` to an either 8 or 11 character `String`, depending on the\navailability of the branch code.\n\n    -- bic == BIC \"FDDO\" Iso3166.DE \"MM\" Nothing\n    toString bic -- \"FDDODEMM\"\n\n    -- bic == BIC \"AXIS\" Iso3166.IN \"BB\" (Just \"002\")\n    toString bic -- \"AXISINBB002\"\n\n",
+                "type": "BIC.BIC -> String.String"
+            },
+            {
+                "name": "toString11",
+                "comment": " Convert `BIC` to an 11 character `String`, where the branch code will be set\nto `\"XXX\"` if it doesn't exist.\n\n    -- bic == BIC \"FDDO\" Iso3166.DE \"MM\" Nothing\n    toString11 bic -- \"FDDODEMMXXX\"\n\n    -- bic == BIC \"AXIS\" Iso3166.IN \"BB\" (Just \"002\")\n    toString11 bic -- \"AXISINBB002\"\n\n",
+                "type": "BIC.BIC -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

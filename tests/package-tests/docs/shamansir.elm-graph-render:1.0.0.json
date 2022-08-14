@@ -1,0 +1,243 @@
+[
+    {
+        "name": "Graph.Geometry",
+        "comment": " # Geometry\n\n@docs Geometry, Position, fold, forest\n\n# Sizes\n\n@docs none, areaSize, ItemSize, AreaSize\n",
+        "unions": [
+            {
+                "name": "AreaSize",
+                "comment": " The size of the complete area taken by `Geometry`, to differ it from `ItemSize`. ",
+                "args": [],
+                "cases": [
+                    [
+                        "AreaSize",
+                        [
+                            "{ width : Basics.Float, height : Basics.Float }"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "ItemSize",
+                "comment": " The size of the item in the `Tree`, to differ it from `AreaSize`. ",
+                "args": [],
+                "cases": [
+                    [
+                        "ItemSize",
+                        [
+                            "{ width : Basics.Float, height : Basics.Float }"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Geometry",
+                "comment": " Geometry is used to store previously-calculated positions of items in `Tree.Forest` as well as the items themselves.\n\nTo build up `Geometry a` from `Tree.Forest a`, use one of:\n\n* `Graph.Geometry.Vertical.make` - positions are calculated as the vertical flow from top to bottom;\n* `Graph.Geometry.Radial.make` - positions are calculated as spreading radially from center to the radius;\n* `Graph.Geometry.make` - combines both ways;\n",
+                "args": [
+                    "a"
+                ],
+                "type": "( Graph.Geometry.AreaSize, Graph.Tree.Forest ( Graph.Geometry.Position, a ) )"
+            },
+            {
+                "name": "Position",
+                "comment": " `Position` of the item on the area ",
+                "args": [],
+                "type": "{ x : Basics.Float, y : Basics.Float }"
+            }
+        ],
+        "values": [
+            {
+                "name": "areaSize",
+                "comment": " Get size of the geometry area. ",
+                "type": "Graph.Geometry.Geometry a -> { width : Basics.Float, height : Basics.Float }"
+            },
+            {
+                "name": "fold",
+                "comment": " Fold `Geometry` into list using items' positions. ",
+                "type": "(Graph.Geometry.Position -> a -> acc -> acc) -> acc -> Graph.Geometry.Geometry a -> List.List acc"
+            },
+            {
+                "name": "forest",
+                "comment": " Get `Forest` with positions from `Geometry` ",
+                "type": "Graph.Geometry.Geometry a -> Graph.Tree.Forest ( Graph.Geometry.Position, a )"
+            },
+            {
+                "name": "none",
+                "comment": " Empty area. ",
+                "type": "Graph.Geometry.AreaSize"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Graph.Geometry.Make",
+        "comment": "\n@docs make\n\n# Way\n\n@docs Way, defaultWay, vertical, radial\n",
+        "unions": [
+            {
+                "name": "Way",
+                "comment": " Direction of the graph ",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Vertical",
+                        [
+                            "Graph.Geometry.Vertical.Options"
+                        ]
+                    ],
+                    [
+                        "Radial",
+                        [
+                            "Graph.Geometry.Radial.Options a"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "defaultWay",
+                "comment": " ",
+                "type": "Graph.Geometry.Make.Way a"
+            },
+            {
+                "name": "make",
+                "comment": " Distribute the forest over the area: calculate positions for all the items in the requested way and the area they will take.\nAs the next step `Geometry` is provided to the rendering function to actually apply it.  ",
+                "type": "Graph.Geometry.Make.Way a -> (a -> { width : Basics.Float, height : Basics.Float }) -> Graph.Tree.Forest a -> Graph.Geometry.Geometry a"
+            },
+            {
+                "name": "radial",
+                "comment": " ",
+                "type": "Graph.Geometry.Radial.Options a -> Graph.Geometry.Make.Way a"
+            },
+            {
+                "name": "vertical",
+                "comment": " ",
+                "type": "Graph.Geometry.Vertical.Options -> Graph.Geometry.Make.Way a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Graph.Geometry.Radial",
+        "comment": "\n@docs make\n\n# Options\n\n@docs Options, defaultOptions, Force\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Force",
+                "comment": " Some vecrtor direction. ",
+                "args": [],
+                "type": "{ x : Basics.Float, y : Basics.Float }"
+            },
+            {
+                "name": "Options",
+                "comment": " ",
+                "args": [
+                    "a"
+                ],
+                "type": "{ distanceBetweenRings : Basics.Float, focusPoint : Maybe.Maybe { x : Basics.Float, y : Basics.Float }, zoom : Basics.Float, forces : Maybe.Maybe (a -> List.List Graph.Geometry.Radial.Force) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultOptions",
+                "comment": " ",
+                "type": "Graph.Geometry.Radial.Options a"
+            },
+            {
+                "name": "make",
+                "comment": " Calculate radial geometry of the given `Forest a`, using the function that provides size for each item. ",
+                "type": "Graph.Geometry.Radial.Options a -> (a -> { width : Basics.Float, height : Basics.Float }) -> Graph.Tree.Forest a -> Graph.Geometry.Geometry a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Graph.Geometry.Vertical",
+        "comment": "\n@docs make\n\n# Options\n\n@docs Options, defaultOptions\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Options",
+                "comment": " ",
+                "args": [],
+                "type": "()"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultOptions",
+                "comment": " ",
+                "type": "Graph.Geometry.Vertical.Options"
+            },
+            {
+                "name": "make",
+                "comment": " Calculate vertical flow `Geometry a` (positions together with items) of the given `Forest a`, using the function that provides size for each item. ",
+                "type": "Graph.Geometry.Vertical.Options -> (a -> { width : Basics.Float, height : Basics.Float }) -> Graph.Tree.Forest a -> Graph.Geometry.Geometry a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Graph.Render.Svg.Defs",
+        "comment": "\n@docs Defs, defs, noDefs, unDefs\n",
+        "unions": [
+            {
+                "name": "Defs",
+                "comment": " SVG items to store in `<def>...</def>`. ",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "defs",
+                "comment": " SVG `<def>...</def>`s for reuse when rendering graph. For example, arrows can be stored here. ",
+                "type": "List.List (Svg.Svg msg) -> Graph.Render.Svg.Defs.Defs msg"
+            },
+            {
+                "name": "noDefs",
+                "comment": " No defs. ",
+                "type": "Graph.Render.Svg.Defs.Defs msg"
+            },
+            {
+                "name": "unDefs",
+                "comment": " Unpack defs. ",
+                "type": "Graph.Render.Svg.Defs.Defs msg -> List.List (Svg.Svg msg)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Graph.Render.Svg.Graph",
+        "comment": "\n\n# Rendering\n\n@docs graph, graphWithDefs\n\n# Nodes Positions\n\n@docs NodesPositions\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "NodesPositions",
+                "comment": " Nodes positions stored as `Graph.NodeId -> Geom.Position` dictionary. ",
+                "args": [],
+                "type": "IntDict.IntDict Graph.Geometry.Position"
+            }
+        ],
+        "values": [
+            {
+                "name": "graph",
+                "comment": " Render the graph as SVG. Takes the function that renders the node (and could render its edges) and the function that returns size for each node. ",
+                "type": "Graph.Geometry.Make.Way (Graph.NodeContext n e) -> (Graph.Geometry.Position -> Graph.Render.Svg.Graph.NodesPositions -> Graph.NodeContext n e -> Svg.Svg msg) -> (n -> { width : Basics.Float, height : Basics.Float }) -> Graph.Graph n e -> Svg.Svg msg"
+            },
+            {
+                "name": "graphWithDefs",
+                "comment": " Render the graph as SVG. Same as above but you can also provide `Defs` to put in the `<def>`...`</def>` section of the SVG. Useful for re-usable items like arrows supposed to represent edges of a graph. ",
+                "type": "Graph.Render.Svg.Defs.Defs msg -> Graph.Geometry.Make.Way (Graph.NodeContext n e) -> (Graph.Geometry.Position -> Graph.Render.Svg.Graph.NodesPositions -> Graph.NodeContext n e -> Svg.Svg msg) -> (n -> { width : Basics.Float, height : Basics.Float }) -> Graph.Graph n e -> Svg.Svg msg"
+            }
+        ],
+        "binops": []
+    }
+]

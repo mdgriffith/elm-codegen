@@ -1,0 +1,842 @@
+[
+    {
+        "name": "Chartjs.Chart",
+        "comment": " A type-safe bridge to a Chartjs web component.\n\nNote: this library isn't usable without including Chartjs as a Javascript dependency in your project,\nalong with the sister Javascript web component that goes with this library.\nPlease see instructions here: <https://github.com/Blissfully/elm-chartjs-webcomponent>\n\n@docs Chart, Type, chart, defaultChart\n\n",
+        "unions": [
+            {
+                "name": "Type",
+                "comment": " Basic type of chart\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Bar",
+                        []
+                    ],
+                    [
+                        "Line",
+                        []
+                    ],
+                    [
+                        "Doughnut",
+                        []
+                    ],
+                    [
+                        "Pie",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Chart",
+                "comment": " Required definition for a Chartjs chart\n",
+                "args": [],
+                "type": "{ chartType : Chartjs.Chart.Type, data : Chartjs.Data.Data, options : Chartjs.Options.Options }"
+            }
+        ],
+        "values": [
+            {
+                "name": "chart",
+                "comment": " Given dimensions and a chart, creates an HMTL node\n",
+                "type": "Basics.Int -> Basics.Int -> Chartjs.Chart.Chart -> Html.Html msg"
+            },
+            {
+                "name": "defaultChart",
+                "comment": " Given a type, creates a sane Chart config you can update\n",
+                "type": "Chartjs.Chart.Type -> Chartjs.Chart.Chart"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chartjs.Common",
+        "comment": " Types for managing common configuration\n\n@docs LineCap, LineJoin, PointProperty, PointStyle, Position\n\n|",
+        "unions": [
+            {
+                "name": "LineCap",
+                "comment": " LineCap |",
+                "args": [],
+                "cases": [
+                    [
+                        "LineCapButt",
+                        []
+                    ],
+                    [
+                        "LineCapRound",
+                        []
+                    ],
+                    [
+                        "LineCapSquare",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "LineJoin",
+                "comment": " LineJoin |",
+                "args": [],
+                "cases": [
+                    [
+                        "LineJoinBevel",
+                        []
+                    ],
+                    [
+                        "LineJoinRound",
+                        []
+                    ],
+                    [
+                        "LineJoinMiter",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "PointProperty",
+                "comment": " PointProperty |",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "All",
+                        [
+                            "a"
+                        ]
+                    ],
+                    [
+                        "PerPoint",
+                        [
+                            "List.List a"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "PointStyle",
+                "comment": " PointStyle |",
+                "args": [],
+                "cases": [
+                    [
+                        "Circle",
+                        []
+                    ],
+                    [
+                        "Cross",
+                        []
+                    ],
+                    [
+                        "CrossRot",
+                        []
+                    ],
+                    [
+                        "Dash",
+                        []
+                    ],
+                    [
+                        "Line",
+                        []
+                    ],
+                    [
+                        "Rect",
+                        []
+                    ],
+                    [
+                        "RectRounded",
+                        []
+                    ],
+                    [
+                        "RectRot",
+                        []
+                    ],
+                    [
+                        "Star",
+                        []
+                    ],
+                    [
+                        "Triangle",
+                        []
+                    ],
+                    [
+                        "Image",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Position",
+                "comment": " Position |",
+                "args": [],
+                "cases": [
+                    [
+                        "Top",
+                        []
+                    ],
+                    [
+                        "Left",
+                        []
+                    ],
+                    [
+                        "Bottom",
+                        []
+                    ],
+                    [
+                        "Right",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "Chartjs.Data",
+        "comment": " Types for choosing chart data\n\n@docs DataSet, Data, defaultData\n|",
+        "unions": [
+            {
+                "name": "DataSet",
+                "comment": " DataSet |\n",
+                "args": [],
+                "cases": [
+                    [
+                        "BarDataSet",
+                        [
+                            "Chartjs.DataSets.Bar.DataSet"
+                        ]
+                    ],
+                    [
+                        "LineDataSet",
+                        [
+                            "Chartjs.DataSets.Line.DataSet"
+                        ]
+                    ],
+                    [
+                        "DoughnutAndPieDataSet",
+                        [
+                            "Chartjs.DataSets.DoughnutAndPie.DataSet"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Data",
+                "comment": " Data |\n",
+                "args": [],
+                "type": "{ labels : List.List String.String, datasets : List.List Chartjs.Data.DataSet }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultData",
+                "comment": " defaultData |\n",
+                "type": "Chartjs.Data.Data"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chartjs.DataSets.Bar",
+        "comment": " Types for Bar chart\n\n@docs DataSet, defaultFromLabel\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "DataSet",
+                "comment": " DataSet |\n",
+                "args": [],
+                "type": "{ label : String.String, data : List.List Basics.Float, xAxisID : Maybe.Maybe String.String, yAxisID : Maybe.Maybe String.String, backgroundColor : Maybe.Maybe (Chartjs.Common.PointProperty Color.Color), borderColor : Maybe.Maybe (Chartjs.Common.PointProperty Color.Color), borderWidth : Maybe.Maybe (Chartjs.Common.PointProperty Basics.Float), borderSkipped : Maybe.Maybe String.String, hoverBackgroundColor : Maybe.Maybe (Chartjs.Common.PointProperty Color.Color), hoverBorderColor : Maybe.Maybe (Chartjs.Common.PointProperty Color.Color), hoverBorderWidth : Maybe.Maybe (Chartjs.Common.PointProperty Basics.Float) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultFromLabel",
+                "comment": " defaultFromLabel |\n",
+                "type": "String.String -> Chartjs.DataSets.Bar.DataSet"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chartjs.DataSets.DoughnutAndPie",
+        "comment": " Types for Doughnut & Pie chart\n@docs DataSet, defaultFromLabel\n|",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "DataSet",
+                "comment": " DataSet |",
+                "args": [],
+                "type": "{ label : String.String, data : List.List Basics.Float, backgroundColor : Maybe.Maybe (Chartjs.Common.PointProperty Color.Color), borderColor : Maybe.Maybe (Chartjs.Common.PointProperty Color.Color), borderWidth : Maybe.Maybe (Chartjs.Common.PointProperty Basics.Float), hoverBackgroundColor : Maybe.Maybe (Chartjs.Common.PointProperty Color.Color), hoverBorderColor : Maybe.Maybe (Chartjs.Common.PointProperty Color.Color), hoverBorderWidth : Maybe.Maybe (Chartjs.Common.PointProperty Basics.Float), cutoutPercentage : Maybe.Maybe Basics.Int, rotation : Maybe.Maybe Basics.Int, circumference : Maybe.Maybe Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultFromLabel",
+                "comment": " defaultFromLabel |",
+                "type": "String.String -> Chartjs.DataSets.DoughnutAndPie.DataSet"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chartjs.DataSets.Line",
+        "comment": " Types for Line chart\n@docs DataSet, FillBoundary, FillMode, SteppedLine, defaultFromLabel\n|",
+        "unions": [
+            {
+                "name": "FillBoundary",
+                "comment": " FillBoundary |",
+                "args": [],
+                "cases": [
+                    [
+                        "Start",
+                        []
+                    ],
+                    [
+                        "End",
+                        []
+                    ],
+                    [
+                        "Origin",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "FillMode",
+                "comment": " FillMode |",
+                "args": [],
+                "cases": [
+                    [
+                        "Absolute",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "Relative",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "Boundary",
+                        [
+                            "Chartjs.DataSets.Line.FillBoundary"
+                        ]
+                    ],
+                    [
+                        "Disabled",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "SteppedLine",
+                "comment": " SteppedLine |",
+                "args": [],
+                "cases": [
+                    [
+                        "NoInterpolation",
+                        []
+                    ],
+                    [
+                        "BeforeInterpolation",
+                        []
+                    ],
+                    [
+                        "AfterInterpolation",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "DataSet",
+                "comment": " DataSet |",
+                "args": [],
+                "type": "{ label : String.String, data : List.List Basics.Float, xAxisID : Maybe.Maybe String.String, yAxisID : Maybe.Maybe String.String, backgroundColor : Maybe.Maybe (Chartjs.Common.PointProperty Color.Color), borderColor : Maybe.Maybe (Chartjs.Common.PointProperty Color.Color), borderWidth : Maybe.Maybe (Chartjs.Common.PointProperty Basics.Float), borderDash : Maybe.Maybe (Chartjs.Common.PointProperty Basics.Float), borderDashOffset : Maybe.Maybe Basics.Float, borderCapStyle : Maybe.Maybe String.String, borderJoinStyle : Maybe.Maybe String.String, cubicInterpolationMode : Maybe.Maybe String.String, fill : Maybe.Maybe Chartjs.DataSets.Line.FillMode, lineTension : Maybe.Maybe Basics.Float, pointBackgroundColor : Maybe.Maybe (Chartjs.Common.PointProperty Color.Color), pointBorderColor : Maybe.Maybe (Chartjs.Common.PointProperty Color.Color), pointBorderWidth : Maybe.Maybe (Chartjs.Common.PointProperty Basics.Float), pointRadius : Maybe.Maybe (Chartjs.Common.PointProperty Basics.Float), pointStyle : Maybe.Maybe (Chartjs.Common.PointProperty Chartjs.Common.PointStyle), pointRotation : Maybe.Maybe (Chartjs.Common.PointProperty Basics.Float), pointHitRadius : Maybe.Maybe (Chartjs.Common.PointProperty Basics.Float), pointHoverBackgroundColor : Maybe.Maybe (Chartjs.Common.PointProperty Color.Color), pointHoverBorderColor : Maybe.Maybe (Chartjs.Common.PointProperty Color.Color), pointHoverBorderWidth : Maybe.Maybe (Chartjs.Common.PointProperty Basics.Float), pointHoverRadius : Maybe.Maybe (Chartjs.Common.PointProperty Basics.Float), showLine : Maybe.Maybe Basics.Bool, spanGaps : Maybe.Maybe Basics.Bool, steppedLine : Maybe.Maybe Chartjs.DataSets.Line.SteppedLine }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultFromLabel",
+                "comment": " defaultFromLabel |",
+                "type": "String.String -> Chartjs.DataSets.Line.DataSet"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chartjs.Options",
+        "comment": " Types for Options\n@docs Options, defaultOptions\n|",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Options",
+                "comment": " Options |",
+                "args": [],
+                "type": "{ animations : Maybe.Maybe Chartjs.Options.Animations.Animations, layout : Maybe.Maybe Chartjs.Options.Layout.Layout, legend : Maybe.Maybe Chartjs.Options.Legend.Legend, title : Maybe.Maybe Chartjs.Options.Title.Title, tooltips : Maybe.Maybe Chartjs.Options.Tooltips.Tooltips, elements : Maybe.Maybe Chartjs.Options.Elements.Elements, scales : Maybe.Maybe Chartjs.Options.Scales.Scales, maintainAspectRatio : Maybe.Maybe Basics.Bool }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultOptions",
+                "comment": " defaultOptions |",
+                "type": "Chartjs.Options.Options"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chartjs.Options.Animations",
+        "comment": "| Types for managing animation configuration\n\n@docs Animation, Animations, Easing, defaultAnimations\n|",
+        "unions": [
+            {
+                "name": "Easing",
+                "comment": " Easing\n|",
+                "args": [],
+                "cases": [
+                    [
+                        "EaseLinear",
+                        []
+                    ],
+                    [
+                        "EaseInQuad",
+                        []
+                    ],
+                    [
+                        "EaseOutQuad",
+                        []
+                    ],
+                    [
+                        "EaseInOutQuad",
+                        []
+                    ],
+                    [
+                        "EaseInCubic",
+                        []
+                    ],
+                    [
+                        "EaseOutCubic",
+                        []
+                    ],
+                    [
+                        "EaseInOutCubic",
+                        []
+                    ],
+                    [
+                        "EaseInQuart",
+                        []
+                    ],
+                    [
+                        "EaseOutQuart",
+                        []
+                    ],
+                    [
+                        "EaseInOutQuart",
+                        []
+                    ],
+                    [
+                        "EaseInQuint",
+                        []
+                    ],
+                    [
+                        "EaseOutQuint",
+                        []
+                    ],
+                    [
+                        "EaseInOutQuint",
+                        []
+                    ],
+                    [
+                        "EaseInSine",
+                        []
+                    ],
+                    [
+                        "EaseOutSine",
+                        []
+                    ],
+                    [
+                        "EaseInOutSine",
+                        []
+                    ],
+                    [
+                        "EaseInExpo",
+                        []
+                    ],
+                    [
+                        "EaseOutExpo",
+                        []
+                    ],
+                    [
+                        "EaseInOutExpo",
+                        []
+                    ],
+                    [
+                        "EaseInCirc",
+                        []
+                    ],
+                    [
+                        "EaseOutCirc",
+                        []
+                    ],
+                    [
+                        "EaseInOutCirc",
+                        []
+                    ],
+                    [
+                        "EaseInElastic",
+                        []
+                    ],
+                    [
+                        "EaseOutElastic",
+                        []
+                    ],
+                    [
+                        "EaseInOutElastic",
+                        []
+                    ],
+                    [
+                        "EaseInBack",
+                        []
+                    ],
+                    [
+                        "EaseOutBack",
+                        []
+                    ],
+                    [
+                        "EaseInOutBack",
+                        []
+                    ],
+                    [
+                        "EaseInBounce",
+                        []
+                    ],
+                    [
+                        "EaseOutBounce",
+                        []
+                    ],
+                    [
+                        "EaseInOutBounce",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Animation",
+                "comment": " Animation\n|",
+                "args": [],
+                "type": "{}"
+            },
+            {
+                "name": "Animations",
+                "comment": " Animations\n|",
+                "args": [],
+                "type": "{ duration : Maybe.Maybe Basics.Int, easing : Maybe.Maybe Chartjs.Options.Animations.Easing, animateRotate : Maybe.Maybe Basics.Bool, animateScale : Maybe.Maybe Basics.Bool }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultAnimations",
+                "comment": " Default Animation\n|",
+                "type": "Chartjs.Options.Animations.Animations"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chartjs.Options.Elements",
+        "comment": " Types for managing element configuration, see https://www.chartjs.org/docs/latest/configuration/elements.html\n\n@docs Arc, Elements, Line, LineFill, Point, Rectangle, defaultElements, defaultPoint\n",
+        "unions": [
+            {
+                "name": "LineFill",
+                "comment": " LineFill |",
+                "args": [],
+                "cases": [
+                    [
+                        "Zero",
+                        []
+                    ],
+                    [
+                        "Top",
+                        []
+                    ],
+                    [
+                        "Bottom",
+                        []
+                    ],
+                    [
+                        "NoFill",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Arc",
+                "comment": " Arc |",
+                "args": [],
+                "type": "{ backgroundColor : Maybe.Maybe Color.Color, borderColor : Maybe.Maybe Color.Color, borderWidth : Maybe.Maybe Basics.Int }"
+            },
+            {
+                "name": "Elements",
+                "comment": " Elements |",
+                "args": [],
+                "type": "{ point : Maybe.Maybe Chartjs.Options.Elements.Point, line : Maybe.Maybe Chartjs.Options.Elements.Line, rectangle : Maybe.Maybe Chartjs.Options.Elements.Rectangle, arc : Maybe.Maybe Chartjs.Options.Elements.Arc }"
+            },
+            {
+                "name": "Line",
+                "comment": " Line |",
+                "args": [],
+                "type": "{ tension : Maybe.Maybe Basics.Float, backgroundColor : Maybe.Maybe Color.Color, borderWidth : Maybe.Maybe Basics.Int, borderColor : Maybe.Maybe Color.Color, borderCapStyle : Maybe.Maybe Chartjs.Common.LineCap, borderDash : Maybe.Maybe (List.List Basics.Int), borderDashOffset : Maybe.Maybe Basics.Int, borderJoinStyle : Maybe.Maybe Chartjs.Common.LineJoin, capBezierPoints : Maybe.Maybe Basics.Bool, fill : Maybe.Maybe Chartjs.Options.Elements.LineFill, stepped : Maybe.Maybe Basics.Bool }"
+            },
+            {
+                "name": "Point",
+                "comment": " Point |",
+                "args": [],
+                "type": "{ radius : Maybe.Maybe Basics.Int, pointStyle : Maybe.Maybe Chartjs.Common.PointStyle, rotation : Maybe.Maybe Basics.Int, backgroundColor : Maybe.Maybe Color.Color, borderWidth : Maybe.Maybe Basics.Int, borderColor : Maybe.Maybe Color.Color, hitRadius : Maybe.Maybe Basics.Int, hoverRadius : Maybe.Maybe Basics.Int, hoverBorderWidth : Maybe.Maybe Basics.Int }"
+            },
+            {
+                "name": "Rectangle",
+                "comment": " Rectangle |",
+                "args": [],
+                "type": "{ backgroundColor : Maybe.Maybe Color.Color, borderWidth : Maybe.Maybe Basics.Int, borderColor : Maybe.Maybe Color.Color, borderSkipped : Maybe.Maybe Chartjs.Common.Position }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultElements",
+                "comment": " defaultElements |",
+                "type": "Chartjs.Options.Elements.Elements"
+            },
+            {
+                "name": "defaultPoint",
+                "comment": " defaultPoint |",
+                "type": "Chartjs.Options.Elements.Point"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chartjs.Options.Layout",
+        "comment": " Types for managing layout configuration\n\n@docs Layout\n",
+        "unions": [
+            {
+                "name": "Layout",
+                "comment": " Layout type \n",
+                "args": [],
+                "cases": [
+                    [
+                        "Uniform",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "Specific",
+                        [
+                            "{ left : Basics.Int, right : Basics.Int, top : Basics.Int, bottom : Basics.Int }"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "Chartjs.Options.Legend",
+        "comment": " Types for managing legend configuration\n@docs Labels, Legend, defaultLabels, defaultLegend\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Labels",
+                "comment": " Labels |",
+                "args": [],
+                "type": "{ boxWidth : Maybe.Maybe Basics.Int, fontSize : Maybe.Maybe Basics.Int, fontStyle : Maybe.Maybe String.String, fontColor : Maybe.Maybe Color.Color, fontFamily : Maybe.Maybe String.String, padding : Maybe.Maybe Basics.Int, usePointStyle : Maybe.Maybe Basics.Bool }"
+            },
+            {
+                "name": "Legend",
+                "comment": " Legend |",
+                "args": [],
+                "type": "{ display : Maybe.Maybe Basics.Bool, position : Maybe.Maybe Chartjs.Common.Position, fullWidth : Maybe.Maybe Basics.Bool, reverse : Maybe.Maybe Basics.Bool, labels : Maybe.Maybe Chartjs.Options.Legend.Labels }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultLabels",
+                "comment": " defaultLabels |",
+                "type": "Chartjs.Options.Legend.Labels"
+            },
+            {
+                "name": "defaultLegend",
+                "comment": " defaultLegend |",
+                "type": "Chartjs.Options.Legend.Legend"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chartjs.Options.Scales",
+        "comment": " Types for managing scales configuration\n@docs Axis, GridLines, Scales, Ticks, defaultAxis, defaultGridLines, defaultScales, defaultTicks\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Axis",
+                "comment": " Axis |",
+                "args": [],
+                "type": "{ position : Maybe.Maybe Chartjs.Common.Position, stacked : Maybe.Maybe Basics.Bool, ticks : Maybe.Maybe Chartjs.Options.Scales.Ticks, gridLines : Maybe.Maybe Chartjs.Options.Scales.GridLines }"
+            },
+            {
+                "name": "GridLines",
+                "comment": " GridLines |",
+                "args": [],
+                "type": "{ display : Maybe.Maybe Basics.Bool, color : Maybe.Maybe (Chartjs.Common.PointProperty Color.Color) }"
+            },
+            {
+                "name": "Scales",
+                "comment": " Scales |",
+                "args": [],
+                "type": "{ xAxes : List.List Chartjs.Options.Scales.Axis, yAxes : List.List Chartjs.Options.Scales.Axis }"
+            },
+            {
+                "name": "Ticks",
+                "comment": " Ticks |",
+                "args": [],
+                "type": "{ fontFamily : Maybe.Maybe String.String, callback : Maybe.Maybe String.String, beginAtZero : Maybe.Maybe Basics.Bool, min : Maybe.Maybe Basics.Float, max : Maybe.Maybe Basics.Float, maxTicksLimit : Maybe.Maybe Basics.Int, precision : Maybe.Maybe Basics.Int, stepSize : Maybe.Maybe Basics.Float, suggestedMax : Maybe.Maybe Basics.Float, suggestedMin : Maybe.Maybe Basics.Float }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultAxis",
+                "comment": " defaultAxis |",
+                "type": "Chartjs.Options.Scales.Axis"
+            },
+            {
+                "name": "defaultGridLines",
+                "comment": " defaultGridLines |",
+                "type": "Chartjs.Options.Scales.GridLines"
+            },
+            {
+                "name": "defaultScales",
+                "comment": " defaultScales |",
+                "type": "Chartjs.Options.Scales.Scales"
+            },
+            {
+                "name": "defaultTicks",
+                "comment": " defaultTicks |",
+                "type": "Chartjs.Options.Scales.Ticks"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chartjs.Options.Title",
+        "comment": " Types for managing title configuration\n@docs Title, defaultTitle\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Title",
+                "comment": " Title |",
+                "args": [],
+                "type": "{ display : Maybe.Maybe Basics.Bool, position : Maybe.Maybe Chartjs.Common.Position, fontSize : Maybe.Maybe Basics.Int, fontFamily : Maybe.Maybe String.String, fontColor : Maybe.Maybe Color.Color, fontStyle : Maybe.Maybe String.String, padding : Maybe.Maybe Basics.Int, lineHeight : Maybe.Maybe String.String, text : Maybe.Maybe String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultTitle",
+                "comment": " defaultTitle |",
+                "type": "Chartjs.Options.Title.Title"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chartjs.Options.Tooltips",
+        "comment": " Types for managing tooltip configuration\n\n@docs Tooltips, PositionMode, Mode, Callbacks, defaultCallbacks, defaultTooltips\n|",
+        "unions": [
+            {
+                "name": "Mode",
+                "comment": " Mode\n|",
+                "args": [],
+                "cases": [
+                    [
+                        "Point",
+                        []
+                    ],
+                    [
+                        "Nearest",
+                        []
+                    ],
+                    [
+                        "Index",
+                        []
+                    ],
+                    [
+                        "DataSet",
+                        []
+                    ],
+                    [
+                        "X",
+                        []
+                    ],
+                    [
+                        "Y",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "PositionMode",
+                "comment": " PositionMode\n|",
+                "args": [],
+                "cases": [
+                    [
+                        "PositionModeAverage",
+                        []
+                    ],
+                    [
+                        "PositionModeNearest",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Callbacks",
+                "comment": " Callbacks\n|",
+                "args": [],
+                "type": "{ label : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "Tooltips",
+                "comment": " Tooltips\n|",
+                "args": [],
+                "type": "{ enabled : Maybe.Maybe Basics.Bool, mode : Maybe.Maybe Chartjs.Options.Tooltips.Mode, intersect : Maybe.Maybe Basics.Bool, position : Maybe.Maybe Chartjs.Options.Tooltips.PositionMode, callbacks : Maybe.Maybe Chartjs.Options.Tooltips.Callbacks, backgroundColor : Maybe.Maybe Color.Color, titleFontFamily : Maybe.Maybe String.String, titleFontSize : Maybe.Maybe Basics.Int, titleFontStyle : Maybe.Maybe String.String, titleFontColor : Maybe.Maybe Color.Color, titleSpacing : Maybe.Maybe Basics.Int, titleMarginBottom : Maybe.Maybe Basics.Int, bodyFontFamily : Maybe.Maybe String.String, bodyFontSize : Maybe.Maybe Basics.Int, bodyFontStyle : Maybe.Maybe String.String, bodyFontColor : Maybe.Maybe Color.Color, bodySpacing : Maybe.Maybe Basics.Int, footerFontFamily : Maybe.Maybe String.String, footerFontSize : Maybe.Maybe Basics.Int, footerFontStyle : Maybe.Maybe String.String, footerFontColor : Maybe.Maybe Color.Color, footerSpacing : Maybe.Maybe Basics.Int, footerMarginTop : Maybe.Maybe Basics.Int, xPadding : Maybe.Maybe Basics.Int, yPadding : Maybe.Maybe Basics.Int, caretPadding : Maybe.Maybe Basics.Int, carretSize : Maybe.Maybe Basics.Int, cornerRadius : Maybe.Maybe Basics.Int, multiKeyBackground : Maybe.Maybe Color.Color, displayColors : Maybe.Maybe Basics.Bool, borderColor : Maybe.Maybe Basics.Bool, borderWidth : Maybe.Maybe Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultCallbacks",
+                "comment": " Default Callbacks\n|",
+                "type": "Chartjs.Options.Tooltips.Callbacks"
+            },
+            {
+                "name": "defaultTooltips",
+                "comment": " Default Tooltips\n|",
+                "type": "Chartjs.Options.Tooltips.Tooltips"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,46 @@
+[
+    {
+        "name": "Dat",
+        "comment": " `Dat.gui` provides a low footprint way of easily tweaking variables and\nsettings within your elm project. This project is based off of the\n[elm-ui](https://package.elm-lang.org/packages/mdgriffith/elm-ui/latest/)\nlibrary. The main focus of this library is to provide easy and quick access\nto parameters within your application. This package api is different from\nthe original [dat.GUI](https://github.com/dataarts/dat.gui) application\nbecause of language differences between JavaScript and Elm. However, the same\nclean interface is provided.\n\nThe way this package works is to think of the gui as a form element with\ndifferent parameters within the form. This means that you have to keep\ntrack of all the parameter updating as you would from other forms in the\n`update` function.\n\n\n# Structure\n\nThe gui is structured around passing `OnChange` events to the update function\nso that you can update your model with new values from the gui. The gui elements\ntake in a `Form` type with each of the variables you are controlling within\nyour application. Here, I'm using very generic names for the types so don't\nthink that you need to stick to my naming conventions. In fact, you should\nuse something more descriptive to your project.\n\n    type Form\n        = Action\n        | Boolean Bool\n        | Text String\n        | Integer Int\n        | Floating Float\n\nThe gui also needs the messages to be able to change values within your project\nas well as toggling the open/close state of the gui window. To change the\nvalues of all the elements in the project, we use a single message `OnChange`\nwhich takes the `Form` object that is being changed. This gives the new\nvalue to change your model.\n\n    type Msg\n        = ToggleControls\n        | OnChange Form\n\n\n# Main\n\n@docs gui, focusStyle\n\n\n# Input Types\n\nThese are all the different variable/action types which can be added and changed\nfrom the gui. Each type needs to be added to the main gui view function and\nadded with a new `Form` handler.\n\n@docs action, boolean, string, integer, float\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "action",
+                "comment": " An element that triggers some sort of event. This is used to send an\nevent to the `update` function. In this case it sends the `Action` message.\n\n    Dat.action\n        { text = \"Action Button\"\n        , form = Action\n        , onPress = OnChange\n        }\n\n",
+                "type": "{ text : String.String, form : form, onPress : form -> msg } -> Element.Element msg"
+            },
+            {
+                "name": "boolean",
+                "comment": " Input selection for toggling boolean values.\n\n    Dat.boolean\n        { text = \"Boolean Box\"\n        , form = Boolean\n        , onClick = OnChange\n        , checked = model.boolean\n        }\n\n",
+                "type": "{ text : String.String, form : Basics.Bool -> form, onClick : form -> msg, checked : Basics.Bool } -> Element.Element msg"
+            },
+            {
+                "name": "float",
+                "comment": " Similar to the integer slider for selecting a values within a range. This\nselection provides a fine granularity over your input range. For this slider,\nthe step value is much more important. You want to make sure that the step\nvalue is small enough so that the input slider is smooth. However, if you\nhave some function that updates on every value change, small step precisions\ncould cause lag when selecting new values.\n\n    Dat.float\n        { text = \"Float\"\n        , form = Floating\n        , onChange = OnChange\n        , value = model.float\n        , min = 0\n        , max = 10\n        , step = 0.1\n        }\n\n",
+                "type": "{ text : String.String, form : Basics.Float -> form, onChange : form -> msg, value : Basics.Float, min : Basics.Float, max : Basics.Float, step : Basics.Float } -> Element.Element msg"
+            },
+            {
+                "name": "focusStyle",
+                "comment": " This removes the default focus style for elm-ui. In order to remove the normal\nfocus you must initialize the app with the following\n\n    Element.layoutWith\n        { options = [ Dat.focusStyle ] }\n        []   -- Attributes\n        none -- Page Body\n\nNote: All this does is set the three attributes for `Element.focusStyle` to\n`Nothing`. If you are already using the `Element.layoutWith` function, just\nknow that the focus styling will also be propagated into Dat.\n\n",
+                "type": "Element.Option"
+            },
+            {
+                "name": "gui",
+                "comment": " The main view function for the gui. This is the container wrapper for the\nwhole gui. To add this to your application, you are most likely going to need\nto use the [Element.inFront](https://package.elm-lang.org/packages/mdgriffith/elm-ui/latest/Element#inFront)\nfunction in order to place this above everything else you are trying to put\ninto your application. This however, is up to you. In the attributes is\nwhere you would put any location information for the gui.\n",
+                "type": "List.List (Element.Attribute msg) -> { toggleControls : msg, showControls : Basics.Bool, elements : List.List (Element.Element msg) } -> Element.Element msg"
+            },
+            {
+                "name": "integer",
+                "comment": " An input slider for changing integer values. The slider step can be changed\nto provide more or less precision over the input values between the upper\nand lower values.\n\n    Dat.integer\n        { text = \"Integer\"\n        , form = Integer\n        , onChange = OnChange\n        , value = model.integer\n        , min = 0\n        , max = 100\n        , step = 1\n        }\n\n",
+                "type": "{ text : String.String, form : Basics.Int -> form, onChange : form -> msg, value : Basics.Int, min : Basics.Int, max : Basics.Int, step : Basics.Int } -> Element.Element msg"
+            },
+            {
+                "name": "string",
+                "comment": " Text area selection for relatively short string values. This provides\ngenerally a several word length box. This is good for changing titles,\nnames, and the like.\n\n    Dat.string\n        { text = \"Text Value\"\n        , form = Text\n        , onChange = OnChange\n        , value = model.text\n        }\n\n",
+                "type": "{ text : String.String, form : String.String -> form, onChange : form -> msg, value : String.String } -> Element.Element msg"
+            }
+        ],
+        "binops": []
+    }
+]

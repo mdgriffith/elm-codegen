@@ -1,0 +1,21 @@
+[
+    {
+        "name": "Browser.Extra",
+        "comment": " Convenience functionality on\n[`Browser`](http://package.elm-lang.org/packages/elm/browser/latest/Browser)-related types\n\n@docs viewportDecoder, mapDocument\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "mapDocument",
+                "comment": " Map a [`Browser Document`](https://package.elm-lang.org/packages/elm/browser/latest/Browser#Document) from one `msg` type to another.\n\n    type Msg\n        = HomeMsg Home.Msg\n\n    view : Page -> Browser.Document Msg\n    view page =\n        case page of\n            Home model ->\n                mapDocument HomeMsg (Home.view model)\n\n\n    -- Home.elm\n    view : Home.Model -> Browser.Document Home.Msg\n\n",
+                "type": "(a -> b) -> Browser.Document a -> Browser.Document b"
+            },
+            {
+                "name": "viewportDecoder",
+                "comment": " Parse the [`Viewport`](https://package.elm-lang.org/packages/elm/browser/latest/Browser-Dom#Viewport) from eg. a `scroll` event.\n\nThis is an Elm-only version of what [`Browser.Dom.getViewportOf`](https://package.elm-lang.org/packages/elm/browser/latest/Browser-Dom#getViewportOf) does.\n\n",
+                "type": "Json.Decode.Decoder Browser.Dom.Viewport"
+            }
+        ],
+        "binops": []
+    }
+]

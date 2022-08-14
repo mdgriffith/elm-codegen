@@ -1,0 +1,51 @@
+[
+    {
+        "name": "SvgBob",
+        "comment": " Convert ASCII to SVG\n\nIt is a fork of Ivan Ceras example that is hosted at:\n\n<https://github.com/ivanceras/elm-examples>\n\n@docs getSvg, default, getSvgWith, getElements, drawElements\n\n@docs Settings, Configuration\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Configuration",
+                "comment": " This record is used to store all relevant data to draw an svg-image multiple\ntimes, without reparsing it.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ svg : List.List ( SvgBob.Types.Point, SvgBob.Types.Element ), foreign : List.List ( a, ( SvgBob.Types.Point, ( Basics.Int, Basics.Int ) ) ), settings : SvgBob.Settings, columns : Basics.Int, rows : Basics.Int }"
+            },
+            {
+                "name": "Settings",
+                "comment": " general settings ...\n\n    type alias Settings =\n        { fontSize : Float\n        , lineWidth : Float\n        , textWidth : Float\n        , textHeight : Float\n        , arcRadius : Float\n        , strokeColor : String\n        , textColor : String\n        , backgroundColor : String\n        , verbatim : Char\n        , multilineVerbatim : Bool\n        , heightVerbatim : Maybe String\n        , widthVerbatim : Maybe String\n        }\n\nThe additional `heightVerbatim` and `widthVerbatim` can be used to overwrite the\ncalculated dimensions for that specific element. Otherwise the dimensions for\nverbatim elements are calculated on the basis of the position and dimensions\nof the strings within the ASCII-Art image.\n\n",
+                "args": [],
+                "type": "SvgBob.Model.Settings"
+            }
+        ],
+        "values": [
+            {
+                "name": "default",
+                "comment": " Default parameters to work with ...\n\n    default =\n        { fontSize = 14.0\n        , lineWidth = 1.0\n        , textWidth = 8.0\n        , textHeight = 16.0\n        , arcRadius = 4.0\n        , strokeColor = \"black\"\n        , textColor = \"black\"\n        , backgroundColor = \"white\"\n        , verbatim = '\"'\n        , multilineVerbatim = False\n        , heightVerbatim = Nothing\n        , widthVerbatim = Nothing\n        }\n\n",
+                "type": "SvgBob.Settings"
+            },
+            {
+                "name": "drawElements",
+                "comment": " Use this to draw the result of the getElements function into an svg container.\nThe function that translates foreign objects into Svg elements is mandatory.\n",
+                "type": "List.List (Svg.Attribute msg) -> (a -> Svg.Svg msg) -> SvgBob.Configuration a -> Html.Html msg"
+            },
+            {
+                "name": "getElements",
+                "comment": " Identified elements can be stored for later usage and verbatim code can be\nexposed, so that it can be transformed into any other kind of representation.\n\nThe foreign part can be translated into anything, strings are not mandatory.\nThis way it can also be used within your model, if those foreign elements are\nused to store more relevant information.\n\nUse this function in conjunction with `drawElements`.\n\n",
+                "type": "SvgBob.Settings -> String.String -> SvgBob.Configuration String.String"
+            },
+            {
+                "name": "getSvg",
+                "comment": " Get the resulting svg and pass it into a div or whatever\n",
+                "type": "SvgBob.Settings -> List.List (Svg.Attribute msg) -> String.String -> Html.Html msg"
+            },
+            {
+                "name": "getSvgWith",
+                "comment": " Get the resulting svg and pass it into a div or parse it further or do whatever ...\n",
+                "type": "SvgBob.Settings -> List.List (Svg.Attribute msg) -> (String.String -> Svg.Svg msg) -> String.String -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

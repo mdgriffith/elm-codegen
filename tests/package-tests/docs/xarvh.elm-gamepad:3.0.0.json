@@ -1,0 +1,361 @@
+[
+    {
+        "name": "Gamepad",
+        "comment": " You use the functions in this module to figure out, given a `Gamepad` object,\nthe buttons and axis that the user is activating on that gamepad.\n\nYou can get the `List` of `Gamepad` objects from either the\n[Gamepad.Simple](https://package.elm-lang.org/packages/xarvh/elm-gamepad/latest/Gamepad.Simple)\nmodule or the\n[Gamepad.Advanced](https://package.elm-lang.org/packages/xarvh/elm-gamepad/latest/Gamepad.Advanced).\n\n\n# Gamepads\n\n@docs Gamepad, getIndex\n\n\n# Digital input\n\n@docs Digital, isPressed, wasClicked, wasReleased, dpadPosition\n\n\n# Analog input\n\n@docs Analog, value, leftStickPosition, rightStickPosition\n\n\n# Stuff you don't need\n\n@docs digitalToString\n\n",
+        "unions": [
+            {
+                "name": "Analog",
+                "comment": " Some controls can be accessed also as analog and this type defines special\nnames for them.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "LeftX",
+                        []
+                    ],
+                    [
+                        "LeftY",
+                        []
+                    ],
+                    [
+                        "LeftTriggerAnalog",
+                        []
+                    ],
+                    [
+                        "RightX",
+                        []
+                    ],
+                    [
+                        "RightY",
+                        []
+                    ],
+                    [
+                        "RightTriggerAnalog",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Digital",
+                "comment": " This type defines names for all available digital controls, whose\nstate can be either `True` or `False`.\n\nSince the names cover all controls defined the [W3C draft](https://www.w3.org/TR/gamepad/),\nthey are used also when when remapping the gamepad to declare which action should be\nbound to which control.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "A",
+                        []
+                    ],
+                    [
+                        "B",
+                        []
+                    ],
+                    [
+                        "X",
+                        []
+                    ],
+                    [
+                        "Y",
+                        []
+                    ],
+                    [
+                        "Start",
+                        []
+                    ],
+                    [
+                        "Back",
+                        []
+                    ],
+                    [
+                        "Home",
+                        []
+                    ],
+                    [
+                        "LeftStickPress",
+                        []
+                    ],
+                    [
+                        "LeftStickUp",
+                        []
+                    ],
+                    [
+                        "LeftStickDown",
+                        []
+                    ],
+                    [
+                        "LeftStickLeft",
+                        []
+                    ],
+                    [
+                        "LeftStickRight",
+                        []
+                    ],
+                    [
+                        "LeftTrigger",
+                        []
+                    ],
+                    [
+                        "LeftBumper",
+                        []
+                    ],
+                    [
+                        "RightStickPress",
+                        []
+                    ],
+                    [
+                        "RightStickUp",
+                        []
+                    ],
+                    [
+                        "RightStickDown",
+                        []
+                    ],
+                    [
+                        "RightStickLeft",
+                        []
+                    ],
+                    [
+                        "RightStickRight",
+                        []
+                    ],
+                    [
+                        "RightTrigger",
+                        []
+                    ],
+                    [
+                        "RightBumper",
+                        []
+                    ],
+                    [
+                        "DpadUp",
+                        []
+                    ],
+                    [
+                        "DpadDown",
+                        []
+                    ],
+                    [
+                        "DpadLeft",
+                        []
+                    ],
+                    [
+                        "DpadRight",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Gamepad",
+                "comment": " A gamepad with a known mapping.\nYou can use all control getters to query its state.\n",
+                "args": [],
+                "type": "Gamepad.Private.Gamepad"
+            }
+        ],
+        "values": [
+            {
+                "name": "digitalToString",
+                "comment": " This function is mostly used internally, you probably don't need it.\n",
+                "type": "Gamepad.Digital -> String.String"
+            },
+            {
+                "name": "dpadPosition",
+                "comment": " X and Y coordinates (-1, 0 or +1) of the digital pad.\n",
+                "type": "Gamepad.Gamepad -> { x : Basics.Int, y : Basics.Int }"
+            },
+            {
+                "name": "getIndex",
+                "comment": " Get the index of a gamepad.\nTo match the LED indicator on XBOX gamepads, indices start from 1.\n\n    getIndex gamepad == 2\n\n",
+                "type": "Gamepad.Gamepad -> Basics.Int"
+            },
+            {
+                "name": "isPressed",
+                "comment": " Returns `True` if the button is currently being held down.\n",
+                "type": "Gamepad.Gamepad -> Gamepad.Digital -> Basics.Bool"
+            },
+            {
+                "name": "leftStickPosition",
+                "comment": " X and Y coordinates (-1 to +1) of the left stick.\n",
+                "type": "Gamepad.Gamepad -> { x : Basics.Float, y : Basics.Float }"
+            },
+            {
+                "name": "rightStickPosition",
+                "comment": " X and Y coordinates (-1 to +1) of the right stick.\n",
+                "type": "Gamepad.Gamepad -> { x : Basics.Float, y : Basics.Float }"
+            },
+            {
+                "name": "value",
+                "comment": " Returns a single value from an analog control.\n",
+                "type": "Gamepad.Gamepad -> Gamepad.Analog -> Basics.Float"
+            },
+            {
+                "name": "wasClicked",
+                "comment": " Returns `True` when a button **changes** from being up to being held down.\n",
+                "type": "Gamepad.Gamepad -> Gamepad.Digital -> Basics.Bool"
+            },
+            {
+                "name": "wasReleased",
+                "comment": " Returns `True` when a button **changes** from being held down to going back up.\n",
+                "type": "Gamepad.Gamepad -> Gamepad.Digital -> Basics.Bool"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Gamepad.Advanced",
+        "comment": " You should use this module only if you need more control than what `Gamepad.Simple` offers.\n\n1.  Add the port code. See [Adding Ports](https://package.elm-lang.org/packages/xarvh/elm-gamepad/latest/#adding-ports) for how to do it.\n\n2.  Decide how you want to persist the [UserMappings](#UserMappings). This module contains functions to help you encode and decode them.\n\n3.  When your app inits, load the [UserMappings](#UserMappings). Default to [emptyUserMappings](#emptyUserMappings) if you can't load any.\n\n4.  Decide where and when you want the remapping tool to appear within your app's UI.\n\n5.  Use the [Model](#Model), [Msg](#Msg), [init](#init), [update](#update), [view](#view) in this module to add the remapping tool UI to your app.\n\n6.  Every time [update](#update) returns a function to update the [UserMappings](#UserMappings), update them in your app's model and persist them.\n\n7.  In your app's `subscriptions`, replace `Browser.Events.onAnimationFrame`/`Browser.Events.onAnimationFrameDelta` with:\n\n```\ntype TheAppMsg\n    = OnRemappingToolMsg Gamepad.Advanced.Msg\n    | ...\n\nsubscriptions : TheAppModel -> Sub TheAppMsg\nsubscriptions theAppModel =\n    if remapingToolIsOpen theAppModel then\n        GamepadPort.onBlob (Gamepad.Advanced.onBlob >> OnRemappingToolMsg)\n    else\n        GamepadPort.onBlob OnAnimationFrame\n```\n\n\n# Blob\n\n@docs Blob, animationFrameDelta, animationFrameTimestamp, getGamepads, unmappedGamepads\n\n\n# User Mappings\n\n@docs UserMappings, emptyUserMappings, userMappingsFromString, userMappingsToString, encodeUserMappings, userMappingsDecoder\n\n\n# Remapping tool\n\n@docs Model, Msg, init, view, update, onBlob\n\n",
+        "unions": [
+            {
+                "name": "Model",
+                "comment": " The Elm Architecture `Model`, ie, the current state of the remapping tool\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Msg",
+                "comment": " [The Elm Architecture](https://guide.elm-lang.org/architecture/) `Msg` type\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "UserMappings",
+                "comment": " This type contains all the custom mappings generated by the user\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Blob",
+                "comment": " The Blob contains the raw gamepad data provided by the browser.\n\nThe whole point of this library is to transform the Blob into something\nthat is nice to use with Elm.\n\n",
+                "args": [],
+                "type": "Gamepad.Private.Blob"
+            }
+        ],
+        "values": [
+            {
+                "name": "animationFrameDelta",
+                "comment": " This function gives the time passed between the last browser animation\nframe and the current one, in milliseconds.\n\nIt is the same value you get when using\n[Browser.Events.onAnimationFrameDelta](https://package.elm-lang.org/packages/elm/browser/latest/Browser-Events#onAnimationFrame).\n\n    update msg model =\n      case msg of\n        OnGamepad blob ->\n          let\n              -- Cap the elapsed time, in case the user hides the page and comes back later.\n              deltaTimeInMilliseconds = min 200 (Gamepad.animationFrameDelta blob)\n\n        ...\n\n",
+                "type": "Gamepad.Advanced.Blob -> Basics.Float"
+            },
+            {
+                "name": "animationFrameTimestamp",
+                "comment": " This function gives the Posix timestamp of the current browser animation\nframe.\n\nIt is the same value you get when using\n[Browser.Events.onAnimationFrame](https://package.elm-lang.org/packages/elm/browser/latest/Browser-Events#onAnimationFrameDelta).\n\n    update msg model =\n      case msg of\n        OnGamepad blob ->\n          let\n              posixTimestamp = Gamepad.animationFrame blob\n\n        ...\n\n",
+                "type": "Gamepad.Advanced.Blob -> Time.Posix"
+            },
+            {
+                "name": "emptyUserMappings",
+                "comment": " UserMappings without any actual user mapping.\n\nGamepads that the browser recognises as \"standard\" will still be usable.\n\n",
+                "type": "Gamepad.Advanced.UserMappings"
+            },
+            {
+                "name": "encodeUserMappings",
+                "comment": " Encodes a UserMappings into a JSON `Value`.\n",
+                "type": "Gamepad.Advanced.UserMappings -> Json.Encode.Value"
+            },
+            {
+                "name": "getGamepads",
+                "comment": " This function returns the current states of all recognised gamepads.\n\nOnly recognised gamepads will be returned; use [unmappedGamepads](#unmappedGamepads)\nto see if there is any gamepad that can be configured.\n\n    update msg model =\n      case OnGamepad blob ->\n        let\n            isFiring = Gamepad.isPressed Gamepad.A\n\n            playerFiringByIndex =\n              blob\n                |> Gamepad.getGamepads model.controls model.userMappings\n                |> List.map (\\gamepad -> Gamepad.getIndex isFiring gamepad))\n                |> Dict.fromList\n        in\n            updateState playerFiringByIndex\n\n",
+                "type": "List.List ( String.String, Gamepad.Digital ) -> Gamepad.Advanced.UserMappings -> Gamepad.Advanced.Blob -> List.List Gamepad.Private.Gamepad"
+            },
+            {
+                "name": "init",
+                "comment": " [The Elm Architecture](https://guide.elm-lang.org/architecture/) `init`\n",
+                "type": "List.List ( String.String, Gamepad.Digital ) -> Gamepad.Advanced.Model"
+            },
+            {
+                "name": "onBlob",
+                "comment": " This function turns a Blob into a Msg that you can feed to `update`.\n\nThis is how you pass the Blob information to the remapping tool, so it's very\nimportant that you do so every time the remapping tool is open, it won't work\notherwise.\n\n    subscriptions : Model -> Sub Msg\n    subscriptions model =\n        case model.state of\n            RemappingTool _ ->\n                GamepadPort.onBlob (Gamepad.Advanced.onBlob >> OnRemappingToolMsg)\n\n            _ ->\n                GamepadPort.onBlob OnAnimationFrame\n\nNote: this function replaces the Elm Architecture `subscription` function\nbecause I found that using a Msg constructor forces you to think about how\nyou want to consume gamepad inputs and animations while the remapping tool\nis open.\n\nIn general, when the remapping tool is open you want to ignore all gamepad\ninformation, but depending in your application you might still want the\ntiming information to keep the animations going.\n\n",
+                "type": "Gamepad.Advanced.Blob -> Gamepad.Advanced.Msg"
+            },
+            {
+                "name": "unmappedGamepads",
+                "comment": " This function returns the number of connected gamepads that cannot\nbe autoconfigured and are not in `UserMappings`.\nIf there are any, ask the user to remap them!\n",
+                "type": "Gamepad.Advanced.UserMappings -> Gamepad.Advanced.Blob -> Basics.Int"
+            },
+            {
+                "name": "update",
+                "comment": " [The Elm Architecture](https://guide.elm-lang.org/architecture/) `update`\nfunction.\n\nWhen a remapping is finished, it will return a function to update the user\nmappings.\n\nYou will want to persist the new user mapping, otherwise the user will need\nto remap every time tha page reloads.\n\n",
+                "type": "Gamepad.Advanced.Msg -> Gamepad.Advanced.Model -> ( Gamepad.Advanced.Model, Maybe.Maybe (Gamepad.Advanced.UserMappings -> Gamepad.Advanced.UserMappings) )"
+            },
+            {
+                "name": "userMappingsDecoder",
+                "comment": " Decodes a UserMappings from a JSON `Value`.\n",
+                "type": "Json.Decode.Decoder Gamepad.Advanced.UserMappings"
+            },
+            {
+                "name": "userMappingsFromString",
+                "comment": " Creates UserMappings from a JSON string.\n\n    userMappings =\n        flags.gamepadUserMappings\n            |> Gamepad.userMappingsFromString\n            |> Result.withDefault Gamepad.emptyUserMappings\n\n",
+                "type": "String.String -> Result.Result Json.Decode.Error Gamepad.Advanced.UserMappings"
+            },
+            {
+                "name": "userMappingsToString",
+                "comment": " Transforms UserMappings into a JSON string.\n\n    saveUserMappingsToLocalStorageCmd =\n        userMappings\n            |> Gamepad.userMappingsToString\n            |> LocalStoragePort.set 'gamepadUserMappings'\n\n",
+                "type": "Gamepad.Advanced.UserMappings -> String.String"
+            },
+            {
+                "name": "view",
+                "comment": " [The Elm Architecture](https://guide.elm-lang.org/architecture/) `view`\nfunction.\n\nYou can use it as it is, or customise it with CSS: every element has its\nown class name, all class names are prefixed with `elm-gamepad`.\n\nThe content will be translated according to `navigator.languages`.\n\n",
+                "type": "Gamepad.Advanced.UserMappings -> Gamepad.Advanced.Model -> Html.Html Gamepad.Advanced.Msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Gamepad.Simple",
+        "comment": " This is the easiest way to add gamepads to an app.\n\nIt provides four functions: `sandbox`, `element`, `document`, `application`\nthat replace those in the [elm/browser](https://package.elm-lang.org/packages/elm/browser/latest/Browser)\npackage.\n\nThese functions require an additional [Config](#Config) argument, which tells them\nwhat to do with gamepads.\n\n    import Gamepad\n    import Gamepad.Simple\n    import GamepadPort\n\n\n    type Msg\n        = OnAnimationFrame Gamepad.Simple.FrameStuff\n\n\n    config : Gamepad.Simple.Config Msg\n    config =\n        { onAnimationFrame = OnAnimationFrame\n        , onBlob = GamepadPort.onBlob\n        , saveToLocalStorage = GamepadPort.saveToLocalStorage\n        , controls =\n            [ ( \"Move LEFT\", Gamepad.LeftStickLeft )\n            , ( \"Move RIGHT\", Gamepad.LeftStickRight )\n            , ( \"Move UP\", Gamepad.LeftStickUp )\n            , ( \"Move DOWN\", Gamepad.LeftStickDown )\n\n            --\n            , ( \"Aim LEFT\", Gamepad.RightStickLeft )\n            , ( \"Aim RIGHT\", Gamepad.RightStickRight )\n            , ( \"Aim UP\", Gamepad.RightStickUp )\n            , ( \"Aim DOWN\", Gamepad.RightStickDown )\n\n            --\n            , ( \"FIRE\", Gamepad.RightTrigger )\n            , ( \"Alt FIRE\", Gamepad.RightBumper )\n            , ( \"Transform\", Gamepad.A )\n            , ( \"Rally\", Gamepad.B )\n            , ( \"Menu\", Gamepad.Start )\n            ]\n        }\n\n\n    main =\n        Gamepad.Simple.sandbox\n            config\n            { init = init\n            , view = view\n            , update = update\n            }\n\n\n    update msg model =\n        case msg of\n            OnAnimationFrame { gamepads, timestamp, dt } ->\n                ...\n\nYou will need to manually add port code. See [Adding Ports](https://package.elm-lang.org/packages/xarvh/elm-gamepad/latest/#adding-ports)\nfor how to do it.\n\nThe remapping tool can be toggled with the `Escape` key, but will pop up\nautomatically when the user tries to use an unrecognized gamepad.\n\nWhile the remapping tool is open, the wrapped app will continue to receive its\nown messages normally, but will NOT receive `onAnimationFrame`.\n\nUser mappings are saved to localStorage.\n\n@docs Program, Config, FrameStuff\n\n@docs sandbox, element, document, application\n\n@docs basicControls\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " The additional parameters needed to create a wrapped Program\n\n  - `onBlob` should be always set to `GamepadPort.onBlob`\n  - `saveToLocalStorage` should be always set to `GamepadPort.saveToLocalStorage`\n  - `onAnimationFrame` will give you timing and gamepad information\n  - `controls` specifies which controls you want and which name to use when asking the user to configure them\n\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ onBlob : (Gamepad.Advanced.Blob -> Gamepad.Simple.Msg msg) -> Platform.Sub.Sub (Gamepad.Simple.Msg msg), saveToLocalStorage : String.String -> Platform.Cmd.Cmd Basics.Never, onAnimationFrame : Gamepad.Simple.FrameStuff -> msg, controls : List.List ( String.String, Gamepad.Digital ) }"
+            },
+            {
+                "name": "FrameStuff",
+                "comment": " Gamepad polling should happen at every animation frame, so timing information\nand gamepad state information arrive together in this record.\n\nUse the functions in the [Gamepad](https://package.elm-lang.org/packages/xarvh/elm-gamepad/latest/Gamepad)\nmodule to make sense of the `Gamepad` objects.\n\nThe `timestamp` and `dt` fields are exactly what you would expect if you were using\n[Browser.Events.onAnimationFrame](https://package.elm-lang.org/packages/elm/browser/latest/Browser-Events#onAnimationFrame)\nand\n[Browser.Events.onAnimationFrameDelta](https://package.elm-lang.org/packages/elm/browser/latest/Browser-Events#onAnimationFrameDelta)\nrespectively.\n\n",
+                "args": [],
+                "type": "{ gamepads : List.List Gamepad.Gamepad, timestamp : Time.Posix, dt : Basics.Float }"
+            },
+            {
+                "name": "Program",
+                "comment": " A Program wrapped by this module\n",
+                "args": [
+                    "flags",
+                    "model",
+                    "msg"
+                ],
+                "type": "Platform.Program flags (Gamepad.Simple.Model model) (Gamepad.Simple.Msg msg)"
+            }
+        ],
+        "values": [
+            {
+                "name": "application",
+                "comment": " Same as [Browser.application](https://package.elm-lang.org/packages/elm/browser/latest/Browser#application)\n",
+                "type": "Gamepad.Simple.Config msg -> { init : flags -> Url.Url -> Browser.Navigation.Key -> ( model, Platform.Cmd.Cmd msg ), view : model -> Browser.Document msg, update : msg -> model -> ( model, Platform.Cmd.Cmd msg ), subscriptions : model -> Platform.Sub.Sub msg, onUrlRequest : Browser.UrlRequest -> msg, onUrlChange : Url.Url -> msg } -> Gamepad.Simple.Program flags model msg"
+            },
+            {
+                "name": "basicControls",
+                "comment": " If you don't know yet which controls to use for your game, you can use\nthis list: `Gamepad.Simple` will use the list to ask the user to configure\nthe Left Stick and two buttons, A and B.\n\n    basicControls =\n        [ ( \"Up\", Gamepad.LeftStickUp )\n        , ( \"Down\", Gamepad.LeftStickDown )\n        , ( \"Left\", Gamepad.LeftStickLeft )\n        , ( \"Right\", Gamepad.LeftStickRight )\n        , ( \"A\", Gamepad.A )\n        , ( \"B\", Gamepad.B )\n        ]\n\nThis means that inside your app, you will be able to use:\n\n  - `leftStickPosition`\n  - `isPressed`, `wasClicked`, `wasReleased` with `LeftStickUp`, `LeftStickDown`, `LeftStickLeft`, `LeftStickRight`, `A`, `B`\n  - `value` with `LeftX`, `LeftY`\n\n",
+                "type": "List.List ( String.String, Gamepad.Digital )"
+            },
+            {
+                "name": "document",
+                "comment": " Same as [Browser.document](https://package.elm-lang.org/packages/elm/browser/latest/Browser#document)\n",
+                "type": "Gamepad.Simple.Config msg -> { init : flags -> ( model, Platform.Cmd.Cmd msg ), view : model -> Browser.Document msg, update : msg -> model -> ( model, Platform.Cmd.Cmd msg ), subscriptions : model -> Platform.Sub.Sub msg } -> Gamepad.Simple.Program flags model msg"
+            },
+            {
+                "name": "element",
+                "comment": " Same as [Browser.element](https://package.elm-lang.org/packages/elm/browser/latest/Browser#element)\n",
+                "type": "Gamepad.Simple.Config msg -> { init : flags -> ( model, Platform.Cmd.Cmd msg ), view : model -> Html.Html msg, update : msg -> model -> ( model, Platform.Cmd.Cmd msg ), subscriptions : model -> Platform.Sub.Sub msg } -> Gamepad.Simple.Program flags model msg"
+            },
+            {
+                "name": "sandbox",
+                "comment": " Same as [Browser.sandbox](https://package.elm-lang.org/packages/elm/browser/latest/Browser#sandbox)\n",
+                "type": "Gamepad.Simple.Config msg -> { init : model, view : model -> Html.Html msg, update : msg -> model -> model } -> Gamepad.Simple.Program () model msg"
+            }
+        ],
+        "binops": []
+    }
+]

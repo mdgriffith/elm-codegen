@@ -1,0 +1,26 @@
+[
+    {
+        "name": "FrenchStemmer",
+        "comment": " This is an implementation of the french version of the Porter stemmer algorithm taken from\n<http://snowball.tartarus.org/algorithms/french/stemmer.html>\n\nThe stemmer function is a drop in replacement for <https://package.elm-lang.org/packages/rluiten/stemmer>\n\nwhen building the `ElmSearchText` index is should be used like this:\n\n    ElmTextSearch.newWith\n        { indexType = \"ElmTextSearch - Customized French index\"\n        , ref = ..\n        , fields = ..\n        , listFields = [..]\n        , initialTransformFactories = Index.Defaults.defaultInitialTransformFactories\n        , transformFactories = [ (\\func index -> ( index, func )) (FrenchStemmer.stemmer True) ]\n        , filterFactories = [ createFilterFunc FrenchStemmer.frenchStopWords ]\n        }\n\n\n## Usage\n\n@docs stemmer, debugStemmer, frenchStopWords\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "debugStemmer",
+                "comment": " Runs the stemmer algorithm and gives a detailed output containing\ninformation about the word subdivisions used by the algorithm\nand the steps realised.\n\n    debugStemmer \"documentation\" == \"{ currentR1 = \" ument \", currentR2 = \" ent \", currentRV = \" cument \", input = \" document \", lastEffective = Just Step1, realised = [Step6,Step5,Step3,Step1] }\"\n\n",
+                "type": "String.String -> FrenchStemmer.Record"
+            },
+            {
+                "name": "frenchStopWords",
+                "comment": " A list of french stop words to be ignored while indexing a document.\n\nSource: <https://github.com/stopwords-iso/stopwords-fr>\n\n",
+                "type": "List.List String.String"
+            },
+            {
+                "name": "stemmer",
+                "comment": " Runs the stemmer algorithm and returns the stem of the word.\nThe Bool parameter allows for the removal of articles or grammatical\nparticles prefixed to the word and linked to it by an apostrophe.\n\n    stemmer True \"documentation\" == \"document\"\n\n    stemmer True \"l'ail\" == \"ail\"\n\n    stemmer False \"l'ail\" == \"ail\"\n\n",
+                "type": "Basics.Bool -> String.String -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

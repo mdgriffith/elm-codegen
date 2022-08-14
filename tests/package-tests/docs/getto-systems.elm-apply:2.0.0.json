@@ -1,0 +1,91 @@
+[
+    {
+        "name": "Getto.Apply",
+        "comment": " apply utilities\n\n# Helpers\n@docs map, map2, map3, map4, map5, map6, map7, map8, map9, map10, map11, map12, map13, map14, map15, map16\n ",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "map",
+                "comment": " apply model\n\n    view a =\n      { name = a\n      }\n\n    initName model = model.name\n\n    { name = \"name\"\n    }\n    |> Apply.map view\n      ( initName )\n ",
+                "type": "(a -> model) -> (init -> a) -> init -> model"
+            },
+            {
+                "name": "map10",
+                "comment": " apply model with 10 args\n ",
+                "type": "(a -> b -> c -> d -> e -> f -> g -> h -> i -> j -> model) -> (init -> a) -> (init -> b) -> (init -> c) -> (init -> d) -> (init -> e) -> (init -> f) -> (init -> g) -> (init -> h) -> (init -> i) -> (init -> j) -> init -> model"
+            },
+            {
+                "name": "map11",
+                "comment": " apply model with 11 args\n ",
+                "type": "(a -> b -> c -> d -> e -> f -> g -> h -> i -> j -> k -> model) -> (init -> a) -> (init -> b) -> (init -> c) -> (init -> d) -> (init -> e) -> (init -> f) -> (init -> g) -> (init -> h) -> (init -> i) -> (init -> j) -> (init -> k) -> init -> model"
+            },
+            {
+                "name": "map12",
+                "comment": " apply model with 12 args\n ",
+                "type": "(a -> b -> c -> d -> e -> f -> g -> h -> i -> j -> k -> l -> model) -> (init -> a) -> (init -> b) -> (init -> c) -> (init -> d) -> (init -> e) -> (init -> f) -> (init -> g) -> (init -> h) -> (init -> i) -> (init -> j) -> (init -> k) -> (init -> l) -> init -> model"
+            },
+            {
+                "name": "map13",
+                "comment": " apply model with 13 args\n ",
+                "type": "(a -> b -> c -> d -> e -> f -> g -> h -> i -> j -> k -> l -> m -> model) -> (init -> a) -> (init -> b) -> (init -> c) -> (init -> d) -> (init -> e) -> (init -> f) -> (init -> g) -> (init -> h) -> (init -> i) -> (init -> j) -> (init -> k) -> (init -> l) -> (init -> m) -> init -> model"
+            },
+            {
+                "name": "map14",
+                "comment": " apply model with 14 args\n ",
+                "type": "(a -> b -> c -> d -> e -> f -> g -> h -> i -> j -> k -> l -> m -> n -> model) -> (init -> a) -> (init -> b) -> (init -> c) -> (init -> d) -> (init -> e) -> (init -> f) -> (init -> g) -> (init -> h) -> (init -> i) -> (init -> j) -> (init -> k) -> (init -> l) -> (init -> m) -> (init -> n) -> init -> model"
+            },
+            {
+                "name": "map15",
+                "comment": " apply model with 15 args\n ",
+                "type": "(a -> b -> c -> d -> e -> f -> g -> h -> i -> j -> k -> l -> m -> n -> o -> model) -> (init -> a) -> (init -> b) -> (init -> c) -> (init -> d) -> (init -> e) -> (init -> f) -> (init -> g) -> (init -> h) -> (init -> i) -> (init -> j) -> (init -> k) -> (init -> l) -> (init -> m) -> (init -> n) -> (init -> o) -> init -> model"
+            },
+            {
+                "name": "map16",
+                "comment": " apply model with 16 args\n ",
+                "type": "(a -> b -> c -> d -> e -> f -> g -> h -> i -> j -> k -> l -> m -> n -> o -> p -> model) -> (init -> a) -> (init -> b) -> (init -> c) -> (init -> d) -> (init -> e) -> (init -> f) -> (init -> g) -> (init -> h) -> (init -> i) -> (init -> j) -> (init -> k) -> (init -> l) -> (init -> m) -> (init -> n) -> (init -> o) -> (init -> p) -> init -> model"
+            },
+            {
+                "name": "map2",
+                "comment": " apply model with 2 args\n\n    view a b =\n      { name = a\n      , age  = b\n      }\n\n    initName model = model.name\n    initAge  model = model.age\n\n    { name = \"name\"\n    , age  = 20\n    }\n    |> Apply.map2 view\n      ( initName )\n      ( initAge )\n ",
+                "type": "(a -> b -> model) -> (init -> a) -> (init -> b) -> init -> model"
+            },
+            {
+                "name": "map3",
+                "comment": " apply model with 3 args\n ",
+                "type": "(a -> b -> c -> model) -> (init -> a) -> (init -> b) -> (init -> c) -> init -> model"
+            },
+            {
+                "name": "map4",
+                "comment": " apply model with 4 args\n ",
+                "type": "(a -> b -> c -> d -> model) -> (init -> a) -> (init -> b) -> (init -> c) -> (init -> d) -> init -> model"
+            },
+            {
+                "name": "map5",
+                "comment": " apply model with 5 args\n ",
+                "type": "(a -> b -> c -> d -> e -> model) -> (init -> a) -> (init -> b) -> (init -> c) -> (init -> d) -> (init -> e) -> init -> model"
+            },
+            {
+                "name": "map6",
+                "comment": " apply model with 6 args\n ",
+                "type": "(a -> b -> c -> d -> e -> f -> model) -> (init -> a) -> (init -> b) -> (init -> c) -> (init -> d) -> (init -> e) -> (init -> f) -> init -> model"
+            },
+            {
+                "name": "map7",
+                "comment": " apply model with 7 args\n ",
+                "type": "(a -> b -> c -> d -> e -> f -> g -> model) -> (init -> a) -> (init -> b) -> (init -> c) -> (init -> d) -> (init -> e) -> (init -> f) -> (init -> g) -> init -> model"
+            },
+            {
+                "name": "map8",
+                "comment": " apply model with 8 args\n ",
+                "type": "(a -> b -> c -> d -> e -> f -> g -> h -> model) -> (init -> a) -> (init -> b) -> (init -> c) -> (init -> d) -> (init -> e) -> (init -> f) -> (init -> g) -> (init -> h) -> init -> model"
+            },
+            {
+                "name": "map9",
+                "comment": " apply model with 9 args\n ",
+                "type": "(a -> b -> c -> d -> e -> f -> g -> h -> i -> model) -> (init -> a) -> (init -> b) -> (init -> c) -> (init -> d) -> (init -> e) -> (init -> f) -> (init -> g) -> (init -> h) -> (init -> i) -> init -> model"
+            }
+        ],
+        "binops": []
+    }
+]

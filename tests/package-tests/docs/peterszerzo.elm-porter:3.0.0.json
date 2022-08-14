@@ -1,0 +1,108 @@
+[
+    {
+        "name": "Porter",
+        "comment": " Port message manager to emulate a request-response style communication through ports, a'la `Http.send ResponseHandler request`.\n\n\n# Configuration\n\n@docs Config\n\n\n# The setup\n\n@docs Model, Msg, init, update, subscriptions\n\n\n# Transform messages\n\n@docs map, map2, map3, andThen\n\n\n# Send messages\n\n@docs Request\n@docs request, simpleRequest, succeed, send\n\n",
+        "unions": [
+            {
+                "name": "Model",
+                "comment": " Porter model, used to keep track of response handlers.\n",
+                "args": [
+                    "req",
+                    "res",
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " Porter configuration, containing:\n\n  - ports\n  - message encoders/decoders.\n  - the message that porter will use for its internal communications\n\n",
+                "args": [
+                    "req",
+                    "res",
+                    "msg"
+                ],
+                "type": "Porter.Internals.Config req res msg"
+            },
+            {
+                "name": "Msg",
+                "comment": " Module messages.\n",
+                "args": [
+                    "req",
+                    "res",
+                    "msg"
+                ],
+                "type": "Porter.Internals.Msg req res msg"
+            },
+            {
+                "name": "Request",
+                "comment": " Opaque type for porter requests, where we can either:\n\n  - perform a single request, which will run the Porter Request and at the end turn the result into an `outputRes`. See [request](#request).\n  - perform multiple requests: At the end of this request, run a function on the output that generates the next request. Note that this is set up in such a way that only the type of the final request in the chain matters. See [andThen](#andThen).\n  - short-circuit: just pass on the value `outputRes` without doing any more requests. See [succeed](#succeed).\n\n",
+                "args": [
+                    "req",
+                    "res",
+                    "outputRes"
+                ],
+                "type": "Porter.Internals.MultiRequest req res outputRes"
+            }
+        ],
+        "values": [
+            {
+                "name": "andThen",
+                "comment": " Combines together multiple Porter.Multi requests\n",
+                "type": "(outputResA -> Porter.Request req res outputResB) -> Porter.Request req res outputResA -> Porter.Request req res outputResB"
+            },
+            {
+                "name": "init",
+                "comment": " Initialize model\n",
+                "type": "Porter.Model req res msg"
+            },
+            {
+                "name": "map",
+                "comment": " Turns the request's specialized response type into a different type.\n",
+                "type": "(outputResA -> outputResB) -> Porter.Request req res outputResA -> Porter.Request req res outputResB"
+            },
+            {
+                "name": "map2",
+                "comment": " Chains two requests, and then combines their two responses into one new `c`.\n",
+                "type": "(a -> b -> c) -> Porter.Request req res a -> Porter.Request req res b -> Porter.Request req res c"
+            },
+            {
+                "name": "map3",
+                "comment": " Chains three requests, and then combines their three responses into one new `c`.\n",
+                "type": "(a -> b -> c -> d) -> Porter.Request req res a -> Porter.Request req res b -> Porter.Request req res c -> Porter.Request req res d"
+            },
+            {
+                "name": "request",
+                "comment": " Creates a new request, specifying:\n\n  - the request itself in the common `req` type\n  - a response handler function tha turns the common `res` type into a specialized `a`.\n\n",
+                "type": "(res -> outputRes) -> req -> Porter.Request req res outputRes"
+            },
+            {
+                "name": "send",
+                "comment": " Actually sends a (chain of) request(s).\n\nA final handler needs to be specified that turns the final result into a `msg`.\nThis `msg` will be called with the final resulting `a` once the final response has returned.\n\n",
+                "type": "Porter.Config req res msg -> (outputRes -> msg) -> Porter.Request req res outputRes -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "simpleRequest",
+                "comment": " A simpler version of [request](#request) where the end result is not converted into a specialized type, but left the same.\n",
+                "type": "req -> Porter.Request req res res"
+            },
+            {
+                "name": "subscriptions",
+                "comment": " Subscribe to messages from ports.\n",
+                "type": "Porter.Config req res msg -> Platform.Sub.Sub msg"
+            },
+            {
+                "name": "succeed",
+                "comment": " Succeed with an `outputRes` value without making an actual request. This is especially useful inside [andThen](#andThen), where the request chain may need to shortcircuit because of the return value (e.g. should not update a record that hasn't been found).\n",
+                "type": "outputRes -> Porter.Request req res outputRes"
+            },
+            {
+                "name": "update",
+                "comment": " Update port model based on local messages. Returns a new port model and a local command that must be mapped to the parent message.\n",
+                "type": "Porter.Config req res msg -> Porter.Msg req res msg -> Porter.Model req res msg -> ( Porter.Model req res msg, Platform.Cmd.Cmd msg )"
+            }
+        ],
+        "binops": []
+    }
+]

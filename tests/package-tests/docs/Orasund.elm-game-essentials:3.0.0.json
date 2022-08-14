@@ -1,0 +1,598 @@
+[
+    {
+        "name": "Direction",
+        "comment": "\n\n@docs Direction, asList, mirror, rotateLeftwise, rotateRightwise, fromCoord, toAngle, toCoord\n\n",
+        "unions": [
+            {
+                "name": "Direction",
+                "comment": " An abstract concept of a direction on a grid.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Up",
+                        []
+                    ],
+                    [
+                        "Down",
+                        []
+                    ],
+                    [
+                        "Left",
+                        []
+                    ],
+                    [
+                        "Right",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "asList",
+                "comment": " Create a list of all directions\n",
+                "type": "( Direction.Direction, List.List Direction.Direction )"
+            },
+            {
+                "name": "fromCoord",
+                "comment": " Convert coordinates into a direction by comparing the sign\n\n    { x = 0, y = 1 }\n        |> fromCoord\n        --> Just Down\n\n    { x = 0, y = -1 }\n        |> fromCoord\n        --> Just Up\n\n    { x = 1, y = 0 }\n        |> fromCoord\n        --> Just Right\n\n    { x = -1, y = 0 }\n        |> fromCoord\n        --> Just Left\n\n    { x = 1, y = 1 }\n        |> fromCoord\n        --> Nothing\n\n",
+                "type": "{ x : Basics.Int, y : Basics.Int } -> Maybe.Maybe Direction.Direction"
+            },
+            {
+                "name": "mirror",
+                "comment": " Rotates a `Direction` for 180 Degrees.\n\n    Up\n    |> mirror\n    --> Down\n\n    Left\n    |> mirror\n    --> Right\n\n",
+                "type": "Direction.Direction -> Direction.Direction"
+            },
+            {
+                "name": "rotateLeftwise",
+                "comment": " Rotates a `Direction` clockwise\n\n    Up\n        |> rotateLeftwise\n        --> Left\n\n",
+                "type": "Direction.Direction -> Direction.Direction"
+            },
+            {
+                "name": "rotateRightwise",
+                "comment": " Rotates a `Direction` counter-clockwise\n\n    Up\n        |> rotateRightwise\n        --> Right\n\n",
+                "type": "Direction.Direction -> Direction.Direction"
+            },
+            {
+                "name": "toAngle",
+                "comment": " Convert a direction into an angle.\n",
+                "type": "Direction.Direction -> Basics.Float"
+            },
+            {
+                "name": "toCoord",
+                "comment": " Convert a Direction into a coord.\n\n    list : List Direction\n    list =\n        asList\n        |> (\\(head,tail) -> head :: tail)\n\n    list\n        |> List.map toCoord\n        |> List.filterMap fromCoord\n        --> list\n\n    Right\n        |> toCoord\n        --> {x = 1, y = 0}\n\n",
+                "type": "Direction.Direction -> { x : Basics.Int, y : Basics.Int }"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "GJumper",
+        "comment": " The GJumper virtual console is a template for grid based games.\nIt has the following Properties:\n\n  - It displayes a 16x16 screen around the player. The player is always positioned\n    at (7,7) within the screen.\n  - It provides a 1x16 high header and a 3x16 high footer.\n  - It uses the Buttons WASD (or arrow keys) for movement and ESC to reset the game.\n  - Pressing a WASD button will first move the player and THEN trigger the tick-function.\n\nHere is a list of games that use this virtual console:\n\n  - [One Switch](https://orasund.itch.io/one-switch)\n  - [Swappernaut](https://orasund.itch.io/swappernaut)\n\nYou can find the source files in the examples folder.\n\n\n# Main Type\n\n@docs GameData, Status\n\n\n# Defining a Game\n\n@docs define, InitModel, View, view\n\n\n# Additional Features\n\n@docs withGui, footer, header, Footer, Header, Game\n\n",
+        "unions": [
+            {
+                "name": "Status",
+                "comment": " At any point in time a game is either `Ongoing`, `Won` or `Lost`. Once the game is\ndone, the game can be reset by pressing a buttion, some of the data can be also\ntransfered from one game session to another (like a level counter).\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Ongoing",
+                        []
+                    ],
+                    [
+                        "Won",
+                        []
+                    ],
+                    [
+                        "Lost",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Footer",
+                "comment": " A Footer\n",
+                "args": [],
+                "type": "GJumper.Core.Footer"
+            },
+            {
+                "name": "Game",
+                "comment": " The type of a game.\n",
+                "args": [
+                    "square",
+                    "model"
+                ],
+                "type": "PixelEngine.PixelEngine () (GJumper.Model square model) GJumper.Msg"
+            },
+            {
+                "name": "GameData",
+                "comment": " The `Model` of a GJumper Game contains a player position, a grid and some\naditional data.\n\nYou can define a `square` how ever you want. Any information, that can not be\nstored in the grid should be part of the `data`.\n\n",
+                "args": [
+                    "square",
+                    "data"
+                ],
+                "type": "{ data : data, grid : Grid.Wrapped.Grid square, player : ( Basics.Int, Basics.Int ) }"
+            },
+            {
+                "name": "Header",
+                "comment": " A header\n",
+                "args": [],
+                "type": "GJumper.Core.Header"
+            },
+            {
+                "name": "InitModel",
+                "comment": " The initial model.\n\n  - data : Some custom data (anything you like)\n  - player : The starting position of the player on the grid\n  - rows : The height of the grid\n  - columns : The width of the grid\n  - level : A Matrix (list of lists) of squares. If an entry is Nothing, it might\n    be filled later with additional stuff.\n  - fixed : After the level has be created a fixed amount of squares will be\n    randomly placed within all empty squares.\n  - distribution: Next all empty sqaures get filled regarding the given distribution.\n    The Float stated the relative occurence of the given spare. If some spots should\n    stay empty, you need to add `(float,Nothing)` to the list where `float` is higher then 0.\n\n",
+                "args": [
+                    "square",
+                    "data"
+                ],
+                "type": "{ data : data, player : ( Basics.Int, Basics.Int ), distribution : data -> ( ( Basics.Float, Maybe.Maybe square ), List.List ( Basics.Float, Maybe.Maybe square ) ), fixed : data -> List.List ( Basics.Int, square ), level : data -> List.List (List.List (Maybe.Maybe square)), rows : Basics.Int, columns : Basics.Int }"
+            },
+            {
+                "name": "View",
+                "comment": " The view of the model\n",
+                "args": [
+                    "square"
+                ],
+                "type": "GJumper.Core.View square"
+            }
+        ],
+        "values": [
+            {
+                "name": "define",
+                "comment": " The main function of the game console.\n\n  - init : The intial model (dependent on randomnes). It maybe inputs data\n    from a previous run (like a level counter).\n  - isSolid : Specifies whether a square is solid\n  - tick : Updates the game (dependent on randomnes) and also returns the current\n    status of the game. This function will only be called if the player could\n    successfully move (if the square is not solid)\n  - view : Specifies the gui.\n  - title : The title of the game\n  - imgSize : The size of a square, tile.\n  - gameWon : A end screen after the game has been won. The screen is\n    imgSize\\*16 x imgSize\\*20 big.\n  - gameOver : A end screen after the game has been lost. The screen is\n    imgSize\\*16 x imgSize\\*20 big.\n\n",
+                "type": "{ init : Maybe.Maybe data -> Random.Generator (GJumper.InitModel square data), isSolid : square -> Basics.Bool, tick : GJumper.GameData square data -> Random.Generator ( GJumper.GameData square data, GJumper.Status ), view : data -> GJumper.View square, title : String.String, imgSize : Basics.Int, gameWon : List.List ( ( Basics.Float, Basics.Float ), PixelEngine.Image.Image Basics.Never ), gameOver : List.List ( ( Basics.Float, Basics.Float ), PixelEngine.Image.Image Basics.Never ) } -> GJumper.Game square data"
+            },
+            {
+                "name": "footer",
+                "comment": " A footer. the floats specify the x position. It must be between 0 and 16\\*imgSize.\nThe y position depends on the list (first list has y=0, second list has y=1 and third has y = 2)\n",
+                "type": "List.List ( Basics.Float, PixelEngine.Image.Image Basics.Never ) -> List.List ( Basics.Float, PixelEngine.Image.Image Basics.Never ) -> List.List ( Basics.Float, PixelEngine.Image.Image Basics.Never ) -> GJumper.Footer"
+            },
+            {
+                "name": "header",
+                "comment": " A header, the floats specify the x position. It must be between 0 and 16\\*imgSize.\n",
+                "type": "List.List ( Basics.Float, PixelEngine.Image.Image Basics.Never ) -> GJumper.Header"
+            },
+            {
+                "name": "view",
+                "comment": " Specifies how things look.\n\nIt uses the [Tile](https://package.elm-lang.org/packages/Orasund/pixelengine/latest/PixelEngine-Tile) from Orasund/pixelengine.\n\n",
+                "type": "{ player : PixelEngine.Tile.Tile Basics.Never, square : square -> PixelEngine.Tile.Tile Basics.Never } -> PixelEngine.Tile.Tileset -> PixelEngine.Background -> GJumper.View square"
+            },
+            {
+                "name": "withGui",
+                "comment": " Adds a Gui to the view.\n",
+                "type": "GJumper.Header -> GJumper.Footer -> PixelEngine.Background -> GJumper.View square -> GJumper.View square"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Grid",
+        "comment": " A `Grid` is a dictionary that has a size constraint.\nHere is an example where such a grid is used:\n[Snake Example](https://orasund.github.io/pixelengine/#Snake).\n\n\n# Grids\n\n@docs Grid\n\n\n# Build\n\n@docs init, empty, build, random, getMember, insert, update, remove\n\n\n# Query\n\n@docs isEmpty, member, get, set, size, dimensions\n\n\n# List\n\n@docs positions, emptyPositions, values, toList, fromList\n\n\n# Dict\n\n@docs toDict, fromDict\n\n\n# Transform\n\n@docs map, filter, find\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Grid",
+                "comment": " A grid with a fixes amount of columns and rows.\n\nIt will wrap the borders (apply ModBy), making every (Int,Int) valid.\n\n    dimensions : { columns:Int , rows:Int }\n    dimensions =\n        { columns=42\n        , rows=3\n        }\n\n    grid : Grid (Maybe a)\n    grid =\n        empty dimensions\n\n    grid |> get ( -1, 0 )\n    --> grid |> get ( (dimensions |> .columns) - 1, 0 )\n\nIf instead you want to have hard border around your grid, use `Grid.Bordered` instead.\n\n",
+                "args": [
+                    "a"
+                ],
+                "type": "Array.Array (Array.Array a)"
+            }
+        ],
+        "values": [
+            {
+                "name": "build",
+                "comment": " Build a grid out of lists\n",
+                "type": "List.List (List.List a) -> Array.Array (Array.Array a)"
+            },
+            {
+                "name": "dimensions",
+                "comment": " Return the dimensions of the grid.\n\n    dim : { columns:Int , rows:Int }\n    dim =\n        { columns=42\n        , rows=3\n        }\n\n    grid : Grid (Maybe a)\n    grid =\n        empty dim\n\n    grid |> dimensions\n    --> dim\n\n",
+                "type": "Grid.Grid a -> { columns : Basics.Int, rows : Basics.Int }"
+            },
+            {
+                "name": "empty",
+                "comment": " Create an empty grid\n\n    dimensions : { columns:Int , rows:Int }\n    dimensions =\n        { columns=42\n        , rows=3\n        }\n\n    empty dimensions\n    --> init (always Nothing ) dimensions\n\n",
+                "type": "{ rows : Basics.Int, columns : Basics.Int } -> Array.Array (Array.Array (Maybe.Maybe a))"
+            },
+            {
+                "name": "emptyPositions",
+                "comment": " Get all empty positions in a grid, sorted from lowest to highest.\n\n    dimensions : { columns:Int , rows:Int }\n    dimensions =\n        { columns=42\n        , rows=3\n        }\n\n    grid : Grid (Maybe Int)\n    grid =\n        init\n            (always <| Just <| 42)\n            dimensions\n\n    grid |> remove (2,2) |> emptyPositions\n    --> [(2,2)]\n\n",
+                "type": "Array.Array (Array.Array (Maybe.Maybe a)) -> List.List ( Basics.Int, Basics.Int )"
+            },
+            {
+                "name": "filter",
+                "comment": " Keep only the values that pass the given test.\n\n    dimensions : { columns:Int , rows:Int }\n    dimensions =\n        { columns=42\n        , rows=3\n        }\n\n    grid : Grid (Maybe Int)\n    grid =\n        empty dimensions\n            |> insert (2,4) 2\n            |> insert (2,2) 42\n\n    grid |> filter (\\_ -> (==) 42) |> values\n    --> [42]\n\n",
+                "type": "(( Basics.Int, Basics.Int ) -> a -> Basics.Bool) -> Array.Array (Array.Array (Maybe.Maybe a)) -> Array.Array (Array.Array (Maybe.Maybe a))"
+            },
+            {
+                "name": "find",
+                "comment": " Find the first value that passes a given test.\n",
+                "type": "(( Basics.Int, Basics.Int ) -> a -> Basics.Bool) -> Array.Array (Array.Array a) -> Maybe.Maybe ( ( Basics.Int, Basics.Int ), a )"
+            },
+            {
+                "name": "fromDict",
+                "comment": " Convert an dictionary to a grid\n\n    dimensions : { columns:Int , rows:Int }\n    dimensions =\n        { columns=42\n        , rows=3\n        }\n\n    grid : Grid (Maybe Int)\n    grid =\n        empty dimensions\n\n    grid |> toDict |> fromDict dimensions |> getMember (2,2)\n    --> Nothing\n\n",
+                "type": "{ rows : Basics.Int, columns : Basics.Int } -> Dict.Dict ( Basics.Int, Basics.Int ) a -> Array.Array (Array.Array (Maybe.Maybe a))"
+            },
+            {
+                "name": "fromList",
+                "comment": " Convert an association list into a grid.\n\n    dimensions : { columns:Int , rows:Int }\n    dimensions =\n        { columns=42\n        , rows=3\n        }\n\n    grid : Grid (Maybe Int)\n    grid =\n        empty dimensions\n\n    [((2,2),42),((2,1),20)] |> fromList dimensions\n    --> grid |> insert (2,2) 42 |> insert (2,1) 20\n\n",
+                "type": "{ rows : Basics.Int, columns : Basics.Int } -> List.List ( ( Basics.Int, Basics.Int ), a ) -> Array.Array (Array.Array (Maybe.Maybe a))"
+            },
+            {
+                "name": "get",
+                "comment": " Get the element in the grid\n",
+                "type": "( Basics.Int, Basics.Int ) -> Array.Array (Array.Array a) -> Maybe.Maybe a"
+            },
+            {
+                "name": "getMember",
+                "comment": " Get the value associated with a (Int,Int). If the (Int,Int) is empty, return Nothing.\n\n    dimensions : { columns:Int , rows:Int }\n    dimensions =\n        { columns=42\n        , rows=3\n        }\n\n    grid : Grid (Maybe a)\n    grid =\n        empty dimensions\n\n    grid |> insert (2,2) 42 |> getMember (2,2)\n    --> Just 42\n\n",
+                "type": "( Basics.Int, Basics.Int ) -> Array.Array (Array.Array (Maybe.Maybe a)) -> Maybe.Maybe a"
+            },
+            {
+                "name": "init",
+                "comment": " Create a grid\n\n    dimensions : { columns:Int , rows:Int }\n    dimensions =\n        { columns=42\n        , rows=3\n        }\n\n    grid : Grid a\n    grid =\n        empty dimensions\n\n    init (always <| Just ()) dimensions |> emptyPositions\n    --> []\n\n",
+                "type": "(( Basics.Int, Basics.Int ) -> a) -> { rows : Basics.Int, columns : Basics.Int } -> Array.Array (Array.Array a)"
+            },
+            {
+                "name": "insert",
+                "comment": " Insert a value at a (Int,Int) in a grid. Replaces value when there is a collision.\n\n    dimensions : { columns:Int , rows:Int }\n    dimensions =\n        { columns=42\n        , rows=3\n        }\n\n    grid : Grid (Maybe a)\n    grid =\n        empty dimensions\n\n    grid |> insert (2,2) 42 |> getMember (2,2)\n    --> Just 42\n\n",
+                "type": "( Basics.Int, Basics.Int ) -> a -> Array.Array (Array.Array (Maybe.Maybe a)) -> Array.Array (Array.Array (Maybe.Maybe a))"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Determine if a grid is empty.\n\n    dimensions : { columns:Int , rows:Int }\n    dimensions =\n        { columns=42\n        , rows=3\n        }\n\n    grid : Grid (Maybe a)\n    grid =\n        empty dimensions\n\n    grid |> isEmpty --> True\n    grid |> insert (2,2) 42 |> isEmpty --> False\n\n",
+                "type": "Array.Array (Array.Array (Maybe.Maybe a)) -> Basics.Bool"
+            },
+            {
+                "name": "map",
+                "comment": " Apply a function to **all** positions in a grid.\n\n    dimensions : { columns:Int , rows:Int }\n    dimensions =\n        { columns=42\n        , rows=3\n        }\n\n    empty dimensions |> map (\\_ _ -> Just 42)\n    --> init (always <| Just 42) dimensions\n\n",
+                "type": "(( Basics.Int, Basics.Int ) -> a -> b) -> Array.Array (Array.Array a) -> Array.Array (Array.Array b)"
+            },
+            {
+                "name": "member",
+                "comment": " Determine if a (Int,Int) is empty.\n\n    dimensions : { columns:Int , rows:Int }\n    dimensions =\n        { columns=42\n        , rows=3\n        }\n\n    grid : Grid (Maybe a)\n    grid =\n        empty dimensions\n\n    grid |> insert (2,2) 42 |> member (2,2)\n    --> True\n\n",
+                "type": "( Basics.Int, Basics.Int ) -> Array.Array (Array.Array (Maybe.Maybe a)) -> Basics.Bool"
+            },
+            {
+                "name": "positions",
+                "comment": " Get all non empty positions in a grid, sorted from lowest to highest.\n\n    dimensions : { columns:Int , rows:Int }\n    dimensions =\n        { columns=42\n        , rows=3\n        }\n\n    grid : Grid (Maybe a)\n    grid =\n        empty dimensions\n\n    grid |> insert (2,2) 42 |> positions\n    --> [(2,2)]\n\n",
+                "type": "Array.Array (Array.Array (Maybe.Maybe a)) -> List.List ( Basics.Int, Basics.Int )"
+            },
+            {
+                "name": "random",
+                "comment": " Generate a random grid based on a cell generator\n",
+                "type": "{ columns : Basics.Int, rows : Basics.Int } -> Random.Generator a -> Random.Generator (Array.Array (Array.Array a))"
+            },
+            {
+                "name": "remove",
+                "comment": " Remove a vlaue from a grid. If the (Int,Int) is empty, no changes are made.\n\n    dimensions : { columns:Int , rows:Int }\n    dimensions =\n        { columns=42\n        , rows=3\n        }\n\n    grid : Grid (Maybe a)\n    grid =\n        empty dimensions\n\n    grid |> insert (2,2) 42 |> getMember (2,2) --> Just 42\n    grid |> insert (2,2) 42 |> remove (2,2) |> getMember (2,2)\n    --> Nothing\n\n",
+                "type": "( Basics.Int, Basics.Int ) -> Array.Array (Array.Array (Maybe.Maybe a)) -> Array.Array (Array.Array (Maybe.Maybe a))"
+            },
+            {
+                "name": "set",
+                "comment": " Set the element in the grid\n",
+                "type": "( Basics.Int, Basics.Int ) -> a -> Array.Array (Array.Array a) -> Array.Array (Array.Array a)"
+            },
+            {
+                "name": "size",
+                "comment": " Determine the number of values in the grid.\n\n    dimensions : { columns:Int , rows:Int }\n    dimensions =\n        { columns=42\n        , rows=3\n        }\n\n    grid : Grid (Maybe a)\n    grid =\n        empty dimensions\n\n    grid |> insert (2,2) 42 |> size\n    --> 1\n\n",
+                "type": "Array.Array (Array.Array (Maybe.Maybe a)) -> Basics.Int"
+            },
+            {
+                "name": "toDict",
+                "comment": " Convert a grid into an associated dictionary\n\n    dimensions : { columns:Int , rows:Int }\n    dimensions =\n        { columns=42\n        , rows=3\n        }\n\n    grid : Grid (Maybe Int)\n    grid =\n        empty dimensions\n            |> insert (2,2) 42\n\n    grid |> toDict |> fromDict dimensions |> getMember (2,2)\n    --> Just 42\n\n",
+                "type": "Array.Array (Array.Array (Maybe.Maybe a)) -> Dict.Dict ( Basics.Int, Basics.Int ) a"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert a grid into an association list of (Int,Int)-value pairs,\nsorted by the (Int,Int).\n\n    dimensions : { columns:Int , rows:Int }\n    dimensions =\n        { columns=2\n        , rows=2\n        }\n\n    grid : Grid (Maybe Int)\n    grid =\n        empty dimensions\n\n    grid |> insert (1,1) 42 |> toList\n    --> [( (0,0), Nothing ),((1,0), Nothing ),((0,1), Nothing ),( (1,1), Just 42 )]\n\n",
+                "type": "Array.Array (Array.Array a) -> List.List ( ( Basics.Int, Basics.Int ), a )"
+            },
+            {
+                "name": "update",
+                "comment": " Update the value of a grid for a specific (Int,Int) with a given function.\n\n    dimensions : { columns:Int , rows:Int }\n    dimensions =\n        { columns=42\n        , rows=3\n        }\n\n    grid : Grid (Maybe a)\n    grid =\n        empty dimensions\n\n    grid |> update (2,2) (always <| Just 42)\n    --> grid |> insert (2,2) 42\n\n",
+                "type": "( Basics.Int, Basics.Int ) -> (Maybe.Maybe a -> Maybe.Maybe a) -> Array.Array (Array.Array (Maybe.Maybe a)) -> Array.Array (Array.Array (Maybe.Maybe a))"
+            },
+            {
+                "name": "values",
+                "comment": " Get all of the values in a grid, in the order of their (Int,Int)s.\n\n    dimensions : { columns:Int , rows:Int }\n    dimensions =\n        { columns=42\n        , rows=3\n        }\n\n    grid : Grid (Maybe a)\n    grid =\n        empty dimensions\n\n    grid |> insert (2,2) 42 |> values\n    --> [42]\n\n",
+                "type": "Array.Array (Array.Array (Maybe.Maybe a)) -> List.List a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Grid.Bordered",
+        "comment": " DEPRECATED. Use `Grid` instead.\n\nA grid with a hard border around the edges. you cant read or write from squares\noutside the border.\nHere is an example where such a grid is used:\n[Space Invaders](https://orasund.github.io/pixelengine/#SpaceInvaders).\n\n\n# Error\n\n@docs Error, ignoringErrors\n\n\n# Grids\n\n@docs Grid\n\n\n# Build\n\n@docs fill, empty, insert, update, remove\n\n\n# Query\n\n@docs isEmpty, member, get, isValid, size, dimensions\n\n\n# List\n\n@docs positions, emptyPositions, values, toList, fromList\n\n\n# Dict\n\n@docs toDict, fromDict\n\n\n# Transform\n\n@docs map, foldl, foldr, filter, partition, find\n\n\n# Combine\n\n@docs union, intersect, diff\n\n",
+        "unions": [
+            {
+                "name": "Error",
+                "comment": " Possible Errors.\n\n  - `OutOfBounds` - the position is not valid\n  - `NotSuccessful` - the function as a problem fulfilling the task. (Maybe the position is occupied?)\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "OutOfBounds",
+                        []
+                    ],
+                    [
+                        "NotSuccessful",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Grid",
+                "comment": " A grid of values.\n\nIt has a fixed amount of columns and rows.\n\nIf case of a invalid position, it returns an error.\n\n    grid |> Grid.insert ( -1, 0 ) virus == Err OutOfBounds\n\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "diff",
+                "comment": " Keep a value when its position does not appear in the second grid.\n",
+                "type": "Grid.Bordered.Grid a -> Grid.Bordered.Grid a -> Grid.Bordered.Grid a"
+            },
+            {
+                "name": "dimensions",
+                "comment": " return the dimensions of the grid\n",
+                "type": "Grid.Bordered.Grid a -> { columns : Basics.Int, rows : Basics.Int }"
+            },
+            {
+                "name": "empty",
+                "comment": " Create an empty grid\n",
+                "type": "{ rows : Basics.Int, columns : Basics.Int } -> Grid.Bordered.Grid a"
+            },
+            {
+                "name": "emptyPositions",
+                "comment": " Get all empty positions in a grid, sorted from lowest to highest.\n",
+                "type": "Grid.Bordered.Grid a -> List.List ( Basics.Int, Basics.Int )"
+            },
+            {
+                "name": "fill",
+                "comment": " Create a grid\n",
+                "type": "(( Basics.Int, Basics.Int ) -> Maybe.Maybe a) -> { rows : Basics.Int, columns : Basics.Int } -> Grid.Bordered.Grid a"
+            },
+            {
+                "name": "filter",
+                "comment": " Keep only the values that pass the given test.\n",
+                "type": "(( Basics.Int, Basics.Int ) -> a -> Basics.Bool) -> Grid.Bordered.Grid a -> Grid.Bordered.Grid a"
+            },
+            {
+                "name": "find",
+                "comment": " Find the first value that passes a given test.\n",
+                "type": "(( Basics.Int, Basics.Int ) -> a -> Basics.Bool) -> Grid.Bordered.Grid a -> Maybe.Maybe ( ( Basics.Int, Basics.Int ), a )"
+            },
+            {
+                "name": "foldl",
+                "comment": " Fold over **all** positions in a grid, row by row, from top down.\n",
+                "type": "(( Basics.Int, Basics.Int ) -> Maybe.Maybe v -> b -> b) -> b -> Grid.Bordered.Grid v -> b"
+            },
+            {
+                "name": "foldr",
+                "comment": " Fold over **all** positions in a grid, row by row, from bottum up.\n",
+                "type": "(( Basics.Int, Basics.Int ) -> Maybe.Maybe v -> b -> b) -> b -> Grid.Bordered.Grid v -> b"
+            },
+            {
+                "name": "fromDict",
+                "comment": " Convert an dictionary to a grid\n",
+                "type": "{ rows : Basics.Int, columns : Basics.Int } -> Dict.Dict ( Basics.Int, Basics.Int ) a -> Grid.Bordered.Grid a"
+            },
+            {
+                "name": "fromList",
+                "comment": " Convert an association list into a grid.\n",
+                "type": "{ rows : Basics.Int, columns : Basics.Int } -> List.List ( ( Basics.Int, Basics.Int ), a ) -> Grid.Bordered.Grid a"
+            },
+            {
+                "name": "get",
+                "comment": " Get the value associated with a position. If the position is empty, return Nothing.\nReturns an `OutOfBounds` Error if the position is invalid.\n",
+                "type": "( Basics.Int, Basics.Int ) -> Grid.Bordered.Grid a -> Result.Result Grid.Bordered.Error (Maybe.Maybe a)"
+            },
+            {
+                "name": "ignoringErrors",
+                "comment": " Trys modifying a grid and if its fails it returns the original grid.\n\nPlease be aware, that by using this function you might introduce errors.\n\n",
+                "type": "(Grid.Bordered.Grid a -> Result.Result Grid.Bordered.Error (Grid.Bordered.Grid a)) -> Grid.Bordered.Grid a -> Grid.Bordered.Grid a"
+            },
+            {
+                "name": "insert",
+                "comment": " Insert a value at a position in a grid. Returns a `NotSuccessful` error if\nthe position is occupied.\n",
+                "type": "( Basics.Int, Basics.Int ) -> a -> Grid.Bordered.Grid a -> Result.Result Grid.Bordered.Error (Grid.Bordered.Grid a)"
+            },
+            {
+                "name": "intersect",
+                "comment": " Keep a value when its position appears in the second grid.\nPreference is given to values in the first grid.\n",
+                "type": "Grid.Bordered.Grid a -> Grid.Bordered.Grid a -> Grid.Bordered.Grid a"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Determine if a grid is empty.\n",
+                "type": "Grid.Bordered.Grid a -> Basics.Bool"
+            },
+            {
+                "name": "isValid",
+                "comment": " checks if a position is valid.\n\n    grid : Grid a\n    grid =\n        empty\n            { columns=42\n            , rows=3\n            }\n\n\n    grid |> isValid (-1,0) --> False\n    grid |> isValid (41,0) --> True\n    grid |> isValid (42,0) --> False\n\n",
+                "type": "( Basics.Int, Basics.Int ) -> Grid.Bordered.Grid a -> Basics.Bool"
+            },
+            {
+                "name": "map",
+                "comment": " Apply a function to **all** positions in a grid.\n",
+                "type": "(( Basics.Int, Basics.Int ) -> Maybe.Maybe a -> Maybe.Maybe b) -> Grid.Bordered.Grid a -> Grid.Bordered.Grid b"
+            },
+            {
+                "name": "member",
+                "comment": " Determine if a position is empty.\nReturns an `OutOfBounds` Error if the position is invalid.\n",
+                "type": "( Basics.Int, Basics.Int ) -> Grid.Bordered.Grid a -> Result.Result Grid.Bordered.Error Basics.Bool"
+            },
+            {
+                "name": "partition",
+                "comment": " Partition a grid according to some test.\n\nThe first grid contains all values which passed the test,\nand the second contains the values that did not.\n\n",
+                "type": "(( Basics.Int, Basics.Int ) -> a -> Basics.Bool) -> Grid.Bordered.Grid a -> ( Grid.Bordered.Grid a, Grid.Bordered.Grid a )"
+            },
+            {
+                "name": "positions",
+                "comment": " Get all non empty positions in a grid, sorted from lowest to highest.\n",
+                "type": "Grid.Bordered.Grid a -> List.List ( Basics.Int, Basics.Int )"
+            },
+            {
+                "name": "remove",
+                "comment": " Remove a vlaue from a grid. If the position is empty, it returs a\n`NotSuccessful` error.\n",
+                "type": "( Basics.Int, Basics.Int ) -> Grid.Bordered.Grid a -> Result.Result Grid.Bordered.Error (Grid.Bordered.Grid a)"
+            },
+            {
+                "name": "size",
+                "comment": " Determine the number of values in the grid.\n",
+                "type": "Grid.Bordered.Grid a -> Basics.Int"
+            },
+            {
+                "name": "toDict",
+                "comment": " Convert a grid into an associated dictionary\n",
+                "type": "Grid.Bordered.Grid a -> Dict.Dict ( Basics.Int, Basics.Int ) a"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert a grid into an association list of position-value pairs, sorted by the position.\n",
+                "type": "Grid.Bordered.Grid a -> List.List ( ( Basics.Int, Basics.Int ), a )"
+            },
+            {
+                "name": "union",
+                "comment": " Combine two grids.\nIf there is a collision, preference is given to the first grid.\n",
+                "type": "Grid.Bordered.Grid a -> Grid.Bordered.Grid a -> Grid.Bordered.Grid a"
+            },
+            {
+                "name": "update",
+                "comment": " Update the value of a grid for a specific position with a given function.\n",
+                "type": "( Basics.Int, Basics.Int ) -> (Maybe.Maybe a -> Result.Result () (Maybe.Maybe a)) -> Grid.Bordered.Grid a -> Result.Result Grid.Bordered.Error (Grid.Bordered.Grid a)"
+            },
+            {
+                "name": "values",
+                "comment": " Get all of the values in a grid, in the order of their keys.\n",
+                "type": "Grid.Bordered.Grid a -> List.List a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Location",
+        "comment": " This module contains two different type for repesenting a 2D Point:\n`Location` and `Vector`. The idea is to use `Locations` to store a Point and `Vector`\nto do caluclations. This way the compiler knows exactly what you are doing and can\ngive you appropriate error messages.\n\n\n# Angle\n\n@docs Angle, toAngle\n\n\n# Location\n\n@docs Location, move, add, vectorTo\n\n\n# Vector\n\n@docs Vector, fromAngle, distance, rotate, scaleBy, length\n\n",
+        "unions": [
+            {
+                "name": "Angle",
+                "comment": " A Angle should store Elm angles (radians).\n\nUse the functions `degrees`,`radias`,`turns` or `pi` to obtain a Angle.\n\n```\nAngle <| degree 90\n```\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Angle",
+                        [
+                            "Basics.Float"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Location",
+                "comment": " A `Location` a point, possibly stored in a dictionary. Thats why its a tuple.\nBut doing calulations with tuples can get very chaotic, thats why the module provides\n`Vectors`.\n",
+                "args": [],
+                "type": "( Basics.Float, Basics.Float )"
+            },
+            {
+                "name": "Vector",
+                "comment": " A Vector is used for calculations.\n",
+                "args": [],
+                "type": "{ x : Basics.Float, y : Basics.Float }"
+            }
+        ],
+        "values": [
+            {
+                "name": "add",
+                "comment": " simple adds a vector to a location, from geometry we know that a vector is\nactually just an angle and a length.\n\n```\nadd ( fromAngle angle |> scaleby length)\n--> move length angle\n```\n\n",
+                "type": "Location.Vector -> Location.Location -> Location.Location"
+            },
+            {
+                "name": "distance",
+                "comment": " The `Distance` between two locations is the length of the resulting vector\n\n```\ndistance == vectorTo >> length\n```\n\n",
+                "type": "Location.Location -> Location.Location -> Basics.Float"
+            },
+            {
+                "name": "fromAngle",
+                "comment": " construct a unit vector from an angle\n\n```\nfromAngle (Angle (pi/4) )\n|> length\n--> 1\n```\n\n",
+                "type": "Location.Angle -> Location.Vector"
+            },
+            {
+                "name": "length",
+                "comment": " Returns the length of the coordinate (distance to (0,0)\n",
+                "type": "Location.Vector -> Basics.Float"
+            },
+            {
+                "name": "move",
+                "comment": " given a `Location`, a distance in some direction. This is the most used\nway how to change a location.\n```\n(0,0) |> move 1 (Angle 0)\n--> (1,0)\n```\n",
+                "type": "Basics.Float -> Location.Angle -> Location.Location -> Location.Location"
+            },
+            {
+                "name": "rotate",
+                "comment": " rotate a Vector\n\n```\n{ x = 1, y = 0 } |> rotate (Angle (pi/2))\n--> {x = 0, y = -1}\n```\n\n",
+                "type": "Location.Angle -> Location.Vector -> Location.Vector"
+            },
+            {
+                "name": "scaleBy",
+                "comment": " Scales a Vector. Vectors obtained by `fromAngle` have size 1.\n\n```\nfromAngle (Angle (pi/4) ) |> scaleBy 42 |> length\n--> 42\n```\n\n",
+                "type": "Basics.Float -> Location.Vector -> Location.Vector"
+            },
+            {
+                "name": "toAngle",
+                "comment": " An Angle can be constructed from a Vector.\n\n```\n{x=0,y=0} |> Location.toAngle\n--> 0\n```\n\n",
+                "type": "Location.Vector -> Location.Angle"
+            },
+            {
+                "name": "vectorTo",
+                "comment": " The difference between to locations is a vector.\n\n```\nloc1 <----- loc2\n```\n\nthe resulting vector points from the second value to the first.\n\n```\n(1,0) |> vectorTo (1,1)\n--> { x = 0, y = 1 }\n```\n\n",
+                "type": "Location.Location -> Location.Location -> Location.Vector"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Position",
+        "comment": "\n\n@docs add, addTo, coordTo, random, toPoint\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "add",
+                "comment": " Add coordinates to a position\n\n    (2,3)\n    |> add { x = 1, y = 0}\n    --> (3,3)\n\n",
+                "type": "{ x : Basics.Int, y : Basics.Int } -> ( Basics.Int, Basics.Int ) -> ( Basics.Int, Basics.Int )"
+            },
+            {
+                "name": "addTo",
+                "comment": " Add coordinates to a position\n\n    { x = 1, y = 0 }\n    |> addTo (2,3)\n    --> (3,3)\n\n",
+                "type": "( Basics.Int, Basics.Int ) -> { x : Basics.Int, y : Basics.Int } -> ( Basics.Int, Basics.Int )"
+            },
+            {
+                "name": "coordTo",
+                "comment": " Create the coordinates to the new location using the current position as the center.\n\n    (1,1)\n    |> coordTo (1,2)\n    --> { x = 0, y = 1 }\n\n",
+                "type": "( Basics.Int, Basics.Int ) -> ( Basics.Int, Basics.Int ) -> { x : Basics.Int, y : Basics.Int }"
+            },
+            {
+                "name": "random",
+                "comment": " Generate a position inside a grid.\n",
+                "type": "{ columns : Basics.Int, rows : Basics.Int } -> Random.Generator ( Basics.Int, Basics.Int )"
+            },
+            {
+                "name": "toPoint",
+                "comment": " given the width and height in in Int, returns a point with values in (-1,1)\n",
+                "type": "{ columns : Basics.Int, rows : Basics.Int } -> ( Basics.Int, Basics.Int ) -> ( Basics.Float, Basics.Float )"
+            }
+        ],
+        "binops": []
+    }
+]

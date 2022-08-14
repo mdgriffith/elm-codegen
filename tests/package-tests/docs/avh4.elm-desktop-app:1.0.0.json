@@ -1,0 +1,213 @@
+[
+    {
+        "name": "DesktopApp",
+        "comment": " This module lets you write desktop applications (for Mac, Linux, and Windows) in Elm. You must use the [`elm-desktop-app` ![](https://img.shields.io/npm/v/elm-desktop-app.svg)][npm-package]\ncommand line tool to build your program.\n(`DesktopApp.program` will do nothing if you try to use it in a web browser.)\n\nSee the [README](./) for an example of how to set up and build your application.\n\n[npm-package]: https://www.npmjs.com/package/elm-desktop-app\n\n@docs program, Program, Model, Msg\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Model",
+                "comment": " This is the Model type for your Elm program when using [`DesktopApp.program`](#program).\n\nNormally you won't need to refer to this directly -- use [`Program`](#Program) instead.\n\n",
+                "args": [
+                    "yourModel"
+                ],
+                "type": "DesktopApp.Testable.Model yourModel"
+            },
+            {
+                "name": "Msg",
+                "comment": " This is the Msg type for your Elm program when using [`DesktopApp.program`](#program).\n\nNormally you won't need to refer to this directly -- use [`Program`](#Program) instead.\n\n",
+                "args": [
+                    "yourMsg"
+                ],
+                "type": "DesktopApp.Testable.Msg yourMsg"
+            },
+            {
+                "name": "Program",
+                "comment": " This is the type for your Elm program when using `DesktopApp.program`\n\nFor example:\n\n    module Main exposing (main)\n\n    import DesktopApp\n\n    type alias Model = { ... }\n    type Msg = ...\n\n    main : DesktopApp.Program Model Msg\n    main =\n        DesktopApp.program { ... }\n\n",
+                "args": [
+                    "model",
+                    "msg"
+                ],
+                "type": "Platform.Program () (DesktopApp.Model model) (DesktopApp.Msg msg)"
+            }
+        ],
+        "values": [
+            {
+                "name": "program",
+                "comment": " Use this to define your `main` in your `Main.elm` file, and then use the `elm-desktop-app`\ncommand line tool to build your app.\n\n  - `init`, `update`, `subscription`, `view`: These are the same as in any Elm program.\n  - `persistence`: This specifies how the data for you app will be saved to the user's filesystem. (If `Nothing`, then you app will not persist any data.)\n\n",
+                "type": "{ init : ( model, Platform.Cmd.Cmd msg ), update : msg -> model -> ( model, Platform.Cmd.Cmd msg ), subscriptions : model -> Platform.Sub.Sub msg, view : model -> Browser.Document msg, persistence : Maybe.Maybe (DesktopApp.JsonMapping.ObjectMapping model msg) } -> DesktopApp.Program model msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "DesktopApp.JsonMapping",
+        "comment": "\n\n\n# Mapping Elm values to JSON objects\n\n@docs ObjectMapping\n@docs object, with, static, mapObjectDecoding, mapObjectEncoding, customObject\n\n\n## Using `ObjectMapping`s\n\nNormally you will just pass your `ObjectMapping` to [`DesktopApp.program`](DesktopApp#program),\nbut the following functions are available if you want to manually make use of an `ObjectMapping`\nfor other purposes.\n\n@docs encodeString, encodeValue, decoder\n\n\n# Mapping Elm values to JSON\n\n@docs JsonMapping, int, string, bool\n@docs maybe, list, custom, fromObjectMapping, map\n\n@docs customType\n@docs Variant, VariantEncoder, VariantDecoder\n@docs variant0, variant1, variant2, variant3, variant4, variant5\n\n",
+        "unions": [
+            {
+                "name": "JsonMapping",
+                "comment": " Represents how to encode `a` to and from JSON.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            },
+            {
+                "name": "ObjectMapping",
+                "comment": " Represents both how to encode `encodesFrom` into a JSON object\nand decode a JSON object into `decodesTo`.\nThis is similar to `JsonMapping`, but it allows a pipeline-style API for building up mappings\n(see [`object`](#object), [`with`](#with), [`static`](#static)).\n\nNotably this is used with [`DesktopApp.program`](DesktopApp#program) to specify how to save and load data.\nWhen used in that way, the `encodesFrom` type will be your program's model,\nand the `decodesTo` type will be your program's msg (which will be produced when data is loaded).\n\nAlso of note: when `encodesFrom` and `decodesTo` are the same type it specifies a two-way mapping to and from JSON\n(and can then be turned into a [`JsonMapping`](#JsonMapping) with [`fromObjectMapping`](#fromObjectMapping)).\n\n",
+                "args": [
+                    "encodesFrom",
+                    "decodesTo"
+                ],
+                "cases": []
+            },
+            {
+                "name": "VariantDecoder",
+                "comment": " Represents how to decode an Elm [custom type](https://guide.elm-lang.org/types/custom_types.html) variant from a JSON object.\n\n**Normally you will not need to reference this type directly.** See the example for [`customType`](#customType).\n\n",
+                "args": [
+                    "decodesTo"
+                ],
+                "cases": []
+            },
+            {
+                "name": "VariantEncoder",
+                "comment": " Represents how to encode an Elm [custom type](https://guide.elm-lang.org/types/custom_types.html) variant to a JSON object.\n\n**Normally you will not need to reference this type directly.** See the example for [`customType`](#customType).\n\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Variant",
+                "comment": " Represents how to map an Elm [custom type](https://guide.elm-lang.org/types/custom_types.html) variant (sometimes also called a \"tag\", \"contructor\", or \"enum value\") to and from a JSON object.\nThis is different from a `JsonMapping` because it carries with it information about the name of the variant\nand does some tricks with the type system to make the `customType` API as nice as possible.\n\n**Normally you will not need to reference this type directly.** See the example for [`customType`](#customType).\n\n",
+                "args": [
+                    "decodesTo",
+                    "encoder"
+                ],
+                "type": "{ decode : DesktopApp.JsonMapping.VariantDecoder decodesTo, encode : encoder }"
+            }
+        ],
+        "values": [
+            {
+                "name": "bool",
+                "comment": " Maps an Elm `Bool` to and from JSON.\n",
+                "type": "DesktopApp.JsonMapping.JsonMapping Basics.Bool"
+            },
+            {
+                "name": "custom",
+                "comment": " Creates a `JsonMapping` that uses the given Elm JSON encoder and decoder\n",
+                "type": "(a -> Json.Encode.Value) -> Json.Decode.Decoder a -> DesktopApp.JsonMapping.JsonMapping a"
+            },
+            {
+                "name": "customObject",
+                "comment": " If you have some data type for which the [`object`](#object) and [`with`](#with) API doesn't meet your needs,\nyou can use `customObject` to create an `ObjectMapping` for any type that you can write an encoder and decoder for.\n",
+                "type": "(encodesFrom -> List.List ( String.String, Json.Encode.Value )) -> Json.Decode.Decoder decodesTo -> DesktopApp.JsonMapping.ObjectMapping encodesFrom decodesTo"
+            },
+            {
+                "name": "customType",
+                "comment": " Maps an Elm [custom type](https://guide.elm-lang.org/types/custom_types.html) (sometimes also called a \"union type\", \"tagged union\", or \"ADT\") to and from a JSON object.\n\n`VariantDecoder`s and `VariantEncoder`s are created using the [`variant*`](#variant0) functions (see the example below).\n\nThis function returns an `ObjectMapping` instead of a `JsonMapping` so that it is possible to have a custom type as the top-level of your persisted data when using [`DesktopApp.program`](DesktopApp#program).\nIf you need a `JsonMapping`, you can use this with [`fromObjectMapping`](#fromObjectMapping)\n(as shown in the example).\n\nAs this example shows, creating a mapping for your custom type requires the following:\n\n  - first, in a `let` block, create `Variant`s for each variant of your custom type using the [`variant*`](#variant0) funtions\n  - as the first parameter to `customType`, pass a list containing the `.decode` from **all** of your variants\n  - as the second parameter to `customType`, pass a function that destructures a value of your type and returns the corresponding variant's encoder with the destructured parameter values applied.\n\nExample:\n\n    import DesktopApp.JsonMapping exposing (JsonMapping, bool, customType, fromObjectMapping, int, string, variant0, variant1, variant2)\n\n    type MyType\n        = NotAuthorized\n        | Guest Bool String\n        | Employee Int\n\n    myTypeMapping : JsonMapping MyType\n    myTypeMapping =\n        let\n            notAuthorized =\n                variant0\n                \"NotAuthorized\"\n                NotAuthorized\n\n            guest =\n                variant2\n                    \"Guest\"\n                    Guest\n                    ( \"is_vip\", bool )\n                    ( \"name\", string )\n\n            employee =\n                variant1\n                    \"Employee\"\n                    Employee\n                    ( \"employee_id\", int )\n          in\n          customType\n              [ notAuthorized.decode\n              , guest.decode\n              , employeed.decode\n              ]\n              (\\x ->\n                  case x of\n                      NotAuthorized ->\n                          notAuthorized.encode\n\n                      Guest isVip name ->\n                          guest.encode isVip name\n\n                      Employee id ->\n                          employeed.encode id\n              )\n              |> fromObjectMapping\n\n    encodeString myTypeMapping NotAuthorized\n        --> \"\"\"{\"$\":\"NotAuthorized\"}\"\"\"\n    encodeString myTypeMapping (Guest True \"Kai\")\n        --> \"\"\"{\"$\":\"Guest\",\"is\\_vip\":true,\"name\":\"Kai\"}\"\"\"\n    encodeString myTypeMapping (Employee 24601)\n        --> \"\"\"{\"$\":\"Employee\",\"employee\\_id\":24601}\"\"\"\n\n",
+                "type": "List.List (DesktopApp.JsonMapping.VariantDecoder a) -> (a -> DesktopApp.JsonMapping.VariantEncoder) -> DesktopApp.JsonMapping.ObjectMapping a a"
+            },
+            {
+                "name": "decoder",
+                "comment": " Gets the `Json.Decode.Decoder` for the given `ObjectMapping`.\n",
+                "type": "DesktopApp.JsonMapping.ObjectMapping encodesFrom decodesTo -> Json.Decode.Decoder decodesTo"
+            },
+            {
+                "name": "encodeString",
+                "comment": " Encodes a given `encodesFrom` value with the given ObjectMapping (into a JSON string).\n",
+                "type": "DesktopApp.JsonMapping.ObjectMapping encodesFrom decodesTo -> encodesFrom -> String.String"
+            },
+            {
+                "name": "encodeValue",
+                "comment": " Encodes a given `encodesFrom` value with the given ObjectMapping (into a `Json.Encode.Value`).\n",
+                "type": "DesktopApp.JsonMapping.ObjectMapping encodesFrom decodesTo -> encodesFrom -> Json.Encode.Value"
+            },
+            {
+                "name": "fromObjectMapping",
+                "comment": " Creates a `JsonMapping` from an `ObjectMapping`.\n\nThis allows you to create `JsonMapping`s that can then be used as nested fields within other `ObjectMappings`.\n\n    import DesktopApp.JsonMapping exposing (fromObjectMapping, int, object, string, with)\n\n    type alias MyData =\n        { name : String\n        , admin : Bool\n        }\n\n    myDataMapping : JsonMapping MyData\n    myDataMapping =\n        object MyData\n            |> with \"name\" .name string\n            |> with \"admin\" .admin bool\n            |> fromObjectMapping\n\n",
+                "type": "DesktopApp.JsonMapping.ObjectMapping a a -> DesktopApp.JsonMapping.JsonMapping a"
+            },
+            {
+                "name": "int",
+                "comment": " Maps an Elm `Int` to and from JSON.\n",
+                "type": "DesktopApp.JsonMapping.JsonMapping Basics.Int"
+            },
+            {
+                "name": "list",
+                "comment": " Maps an Elm `List` to and from a JSON array.\n",
+                "type": "DesktopApp.JsonMapping.JsonMapping a -> DesktopApp.JsonMapping.JsonMapping (List.List a)"
+            },
+            {
+                "name": "map",
+                "comment": " Transforms a `JsonMapping`. This requires functions for transforming in each direction\nso that both encoding and decoding can be handled.\n",
+                "type": "(a -> b) -> (b -> a) -> DesktopApp.JsonMapping.JsonMapping a -> DesktopApp.JsonMapping.JsonMapping b"
+            },
+            {
+                "name": "mapObjectDecoding",
+                "comment": " Transforms the type that an `ObjectMapping` decodes.\n",
+                "type": "(a -> b) -> DesktopApp.JsonMapping.ObjectMapping encodesFrom a -> DesktopApp.JsonMapping.ObjectMapping encodesFrom b"
+            },
+            {
+                "name": "mapObjectEncoding",
+                "comment": " Transforms the type that an `ObjectMapping` encodes.\n",
+                "type": "(b -> a) -> DesktopApp.JsonMapping.ObjectMapping a decodesTo -> DesktopApp.JsonMapping.ObjectMapping b decodesTo"
+            },
+            {
+                "name": "maybe",
+                "comment": " Maps an Elm `Maybe` to and from JSON.\n`Nothing` will map to `null`,\nand `Just a` will use the given mapping for `a`.\n\n    import DesktopApp.JsonMapping exposing (maybe, int, encode, decoder)\n    import Json.Decode exposing (decodeString)\n\n    encode (maybe int) (Just 7)  --> \"7\"\n    encode (maybe int) Nothing  --> \"null\"\n\n    decodeString (decoder (maybe string)) \"\\\"hi\\\"\"  --> Just \"hi\"\n    decodeString (decoder (maybe string)) \"null\"  --> Nothing\n\n",
+                "type": "DesktopApp.JsonMapping.JsonMapping a -> DesktopApp.JsonMapping.JsonMapping (Maybe.Maybe a)"
+            },
+            {
+                "name": "object",
+                "comment": " Creates a trivial `ObjectMapping`.\nThis, along with [`with`](#with), [`static`](#static) make up a pipeline-style API\nwhich can be used like this:\n\n    import DesktopApp.JsonMapping exposing (ObjectMapping, int, object, with)\n\n    type alias MyData =\n        { total : Int\n        , count : Int\n        }\n\n    myObjectMapping : ObjectMapping MyData MyData\n    myObjectMapping =\n        object MyData\n            |> with \"total\" .total int\n            |> with \"count\" .count int\n\n",
+                "type": "decodesTo -> DesktopApp.JsonMapping.ObjectMapping encodesFrom decodesTo"
+            },
+            {
+                "name": "static",
+                "comment": " Adds a static field to an object. The field will not be represented in your Elm model,\nbut this exact field name and value will be added to the encoded JSON.\n",
+                "type": "String.String -> a -> DesktopApp.JsonMapping.JsonMapping a -> DesktopApp.JsonMapping.ObjectMapping encodesFrom decodesTo -> DesktopApp.JsonMapping.ObjectMapping encodesFrom decodesTo"
+            },
+            {
+                "name": "string",
+                "comment": " Maps an Elm `String` to and from JSON.\n",
+                "type": "DesktopApp.JsonMapping.JsonMapping String.String"
+            },
+            {
+                "name": "variant0",
+                "comment": " Creates a `VariantEncoder` and `VariantDecoder` for an Elm custom type variant that takes no parameters.\n\nSee [`customType`](#customType) for an example of how to use the `variant*` functions.\n\n",
+                "type": "String.String -> decodesTo -> DesktopApp.JsonMapping.Variant decodesTo DesktopApp.JsonMapping.VariantEncoder"
+            },
+            {
+                "name": "variant1",
+                "comment": " Creates a `VariantEncoder` and `VariantDecoder` for an Elm custom type variant that takes one parameter.\n\nSee [`customType`](#customType) for an example of how to use the `variant*` functions.\n\n",
+                "type": "String.String -> (a -> decodesTo) -> ( String.String, DesktopApp.JsonMapping.JsonMapping a ) -> DesktopApp.JsonMapping.Variant decodesTo (a -> DesktopApp.JsonMapping.VariantEncoder)"
+            },
+            {
+                "name": "variant2",
+                "comment": " Creates a `VariantEncoder` and `VariantDecoder` for an Elm custom type variant that takes two parameters.\n\nSee [`customType`](#customType) for an example of how to use the `variant*` functions.\n\n",
+                "type": "String.String -> (a -> b -> decodesTo) -> ( String.String, DesktopApp.JsonMapping.JsonMapping a ) -> ( String.String, DesktopApp.JsonMapping.JsonMapping b ) -> DesktopApp.JsonMapping.Variant decodesTo (a -> b -> DesktopApp.JsonMapping.VariantEncoder)"
+            },
+            {
+                "name": "variant3",
+                "comment": " Creates a `VariantEncoder` and `VariantDecoder` for an Elm custom type variant that takes three parameters.\n\nSee [`customType`](#customType) for an example of how to use the `variant*` functions.\n\n",
+                "type": "String.String -> (a -> b -> c -> decodesTo) -> ( String.String, DesktopApp.JsonMapping.JsonMapping a ) -> ( String.String, DesktopApp.JsonMapping.JsonMapping b ) -> ( String.String, DesktopApp.JsonMapping.JsonMapping c ) -> DesktopApp.JsonMapping.Variant decodesTo (a -> b -> c -> DesktopApp.JsonMapping.VariantEncoder)"
+            },
+            {
+                "name": "variant4",
+                "comment": " Creates a `VariantEncoder` and `VariantDecoder` for an Elm custom type variant that takes four parameters.\n\nSee [`customType`](#customType) for an example of how to use the `variant*` functions.\n\n",
+                "type": "String.String -> (a -> b -> c -> d -> decodesTo) -> ( String.String, DesktopApp.JsonMapping.JsonMapping a ) -> ( String.String, DesktopApp.JsonMapping.JsonMapping b ) -> ( String.String, DesktopApp.JsonMapping.JsonMapping c ) -> ( String.String, DesktopApp.JsonMapping.JsonMapping d ) -> DesktopApp.JsonMapping.Variant decodesTo (a -> b -> c -> d -> DesktopApp.JsonMapping.VariantEncoder)"
+            },
+            {
+                "name": "variant5",
+                "comment": " Creates a `VariantEncoder` and `VariantDecoder` for an Elm custom type variant that takes five parameters.\n\nSee [`customType`](#customType) for an example of how to use the `variant*` functions.\n\n",
+                "type": "String.String -> (a -> b -> c -> d -> e -> decodesTo) -> ( String.String, DesktopApp.JsonMapping.JsonMapping a ) -> ( String.String, DesktopApp.JsonMapping.JsonMapping b ) -> ( String.String, DesktopApp.JsonMapping.JsonMapping c ) -> ( String.String, DesktopApp.JsonMapping.JsonMapping d ) -> ( String.String, DesktopApp.JsonMapping.JsonMapping e ) -> DesktopApp.JsonMapping.Variant decodesTo (a -> b -> c -> d -> e -> DesktopApp.JsonMapping.VariantEncoder)"
+            },
+            {
+                "name": "with",
+                "comment": " Adds a field to an object. It will be represented in both your Elm model and in the JSON.\n",
+                "type": "String.String -> (encodesFrom -> a) -> DesktopApp.JsonMapping.JsonMapping a -> DesktopApp.JsonMapping.ObjectMapping encodesFrom (a -> decodesTo) -> DesktopApp.JsonMapping.ObjectMapping encodesFrom decodesTo"
+            }
+        ],
+        "binops": []
+    }
+]

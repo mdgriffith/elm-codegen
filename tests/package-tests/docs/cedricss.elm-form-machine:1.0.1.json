@@ -1,0 +1,120 @@
+[
+    {
+        "name": "Form.Machine",
+        "comment": " A state machine to handle forms in elm.\n\n@docs FormError, State, Event, Config, transition\n\n",
+        "unions": [
+            {
+                "name": "Event",
+                "comment": " Events to move the machine from one state to another\n",
+                "args": [
+                    "object",
+                    "objectField",
+                    "customEvents"
+                ],
+                "cases": [
+                    [
+                        "Create",
+                        []
+                    ],
+                    [
+                        "Display",
+                        [
+                            "object"
+                        ]
+                    ],
+                    [
+                        "Edit",
+                        [
+                            "objectField"
+                        ]
+                    ],
+                    [
+                        "Fail",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Perform",
+                        [
+                            "customEvents"
+                        ]
+                    ],
+                    [
+                        "Request",
+                        []
+                    ],
+                    [
+                        "Save",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "State",
+                "comment": " The form machine can have 5 states.\n",
+                "args": [
+                    "object",
+                    "objectField"
+                ],
+                "cases": [
+                    [
+                        "Displaying",
+                        [
+                            "object"
+                        ]
+                    ],
+                    [
+                        "Editing",
+                        [
+                            "{ object : object, errors : List.List (Form.Machine.FormError objectField) }"
+                        ]
+                    ],
+                    [
+                        "Failed",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Loading",
+                        []
+                    ],
+                    [
+                        "Unloaded",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " Custom handlers for the machine. Read [transition](#transition).\n",
+                "args": [
+                    "object",
+                    "objectField",
+                    "customEvents",
+                    "msg"
+                ],
+                "type": "{ badTransition : Form.Machine.Event object objectField customEvents -> Form.Machine.State object objectField -> ( Form.Machine.State object objectField, Platform.Cmd.Cmd msg ), default : object, perform : customEvents -> Form.Machine.State object objectField -> ( Form.Machine.State object objectField, Platform.Cmd.Cmd msg ), save : Validate.Valid object -> Platform.Cmd.Cmd msg, update : object -> objectField -> object, validator : Validate.Validator (Form.Machine.FormError objectField) object }"
+            },
+            {
+                "name": "FormError",
+                "comment": " An error about one specific field.\n",
+                "args": [
+                    "formField"
+                ],
+                "type": "( formField, String.String )"
+            }
+        ],
+        "values": [
+            {
+                "name": "transition",
+                "comment": " Perform a transition with the given configuration, event and current state.\n\nIf it's impossible to handle such event for the current state, the `badTransition` function is called, for example to log it to your error monitoring platform.\n\nThe `update` function will update one specific field of the object, for example after the user typed into the related input.\n\nThe `save` function only accepts a `Validate.Valid object`: you can be certain the object is validated with `validator` before saving.\nNote: you can unwrap the valid object with [`Validate.fromValid`](https://package.elm-lang.org/packages/rtfeldman/elm-validate/4.0.1/Validate#fromValid)\n\nTo handle any additional custom events, send a `Perform customEvent` event and the `perform` function will be called with this customEvent.\n\n    Common.transition\n        { badTransition = logBadRobotFormTransition\n        , default = defaultRobot\n        , perform = performCustomEvent\n        , save = Request.saveRobot SavedRobot\n        , update = updateRobotField\n        , validator = robotValidator\n        }\n        event\n        state\n\n",
+                "type": "Form.Machine.Config object objectField customEvents msg -> Form.Machine.Event object objectField customEvents -> Form.Machine.State object objectField -> ( Form.Machine.State object objectField, Platform.Cmd.Cmd msg )"
+            }
+        ],
+        "binops": []
+    }
+]

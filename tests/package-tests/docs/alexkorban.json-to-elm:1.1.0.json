@@ -1,0 +1,95 @@
+[
+    {
+        "name": "ElmCodeGenerator",
+        "comment": " This package helps generate Elm JSON decoders and encoders from a JSON sample.\n\n\n# Generator function\n\n@docs fromJsonSample\n\n\n# Types\n\n@docs DecoderStyle, ExposingSpec, GeneratorOptions, ImportSpec, NamingStyle, Output\n\n",
+        "unions": [
+            {
+                "name": "DecoderStyle",
+                "comment": " Defines the style of decoders to generate:\n\n  - Applicative decoders use `andMap` from `elm-community/json-extra`\n  - Pipeline decoders use functions from `NoRedInk/elm-json-decode-pipeline`\n  - Plain decoders only use `elm/json` functions\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "ApplicativeDecoders",
+                        [
+                            "ElmCodeGenerator.ImportSpec"
+                        ]
+                    ],
+                    [
+                        "PipelineDecoders",
+                        [
+                            "ElmCodeGenerator.ImportSpec"
+                        ]
+                    ],
+                    [
+                        "PlainDecoders",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "ExposingSpec",
+                "comment": " Defines what's exposed for an import\n",
+                "args": [],
+                "cases": [
+                    [
+                        "ExposingAll",
+                        []
+                    ],
+                    [
+                        "ExposingNone",
+                        []
+                    ],
+                    [
+                        "ExposingSome",
+                        [
+                            "List.List String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "NamingStyle",
+                "comment": " Defines function naming style:\n\n  - Verb naming will produce names like `decodeThing`\n  - Noun naming will produce names like `thingDecoder`\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "VerbNaming",
+                        []
+                    ],
+                    [
+                        "NounNaming",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "GeneratorOptions",
+                "comment": " Options for code generation given to `fromJsonSample`\n",
+                "args": [],
+                "type": "{ decodeImport : ElmCodeGenerator.ImportSpec, encodeImport : ElmCodeGenerator.ImportSpec, decoderStyle : ElmCodeGenerator.DecoderStyle, namingStyle : ElmCodeGenerator.NamingStyle, rootTypeName : String.String }"
+            },
+            {
+                "name": "ImportSpec",
+                "comment": " Details of an import\n",
+                "args": [],
+                "type": "{ importAlias : String.String, exposingSpec : ElmCodeGenerator.ExposingSpec }"
+            },
+            {
+                "name": "Output",
+                "comment": " Output Elm strings produced by `fromJsonSample`\n",
+                "args": [],
+                "type": "{ imports : List.List String.String, types : List.List String.String, decoders : List.List String.String, encoders : List.List String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "fromJsonSample",
+                "comment": " Generate Elm code from a supplied JSON sample string using the supplied options.\n\nThe output consists of:\n\n  - a set of imports\n  - a set of type and type alias definitions\n  - a set of decoder defintions\n  - a set of encoder definitions.\n\n```\n    ElmCodeGenerator.fromJsonSample\n        { rootTypeName = topLevelTypeName\n        , decodeImport = { importAlias = \"Json.Decode\", exposingSpec = ElmCodeGenerator.ExposingNone }\n        , encodeImport = { importAlias = \"Json.Encode\", exposingSpec = ElmCodeGenerator.ExposingNone }\n        , decoderStyle = ElmCodeGenerator.PlainDecoders\n        , namingStyle = ElmCodeGenerator.NounNaming\n        }\n        \"\"\"{\"a\": 1, \"b\": \"str\"}\"\"\"\n```\n\n",
+                "type": "ElmCodeGenerator.GeneratorOptions -> ElmCodeGenerator.JsonString -> Result.Result String.String ElmCodeGenerator.Output"
+            }
+        ],
+        "binops": []
+    }
+]

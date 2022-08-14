@@ -1,0 +1,350 @@
+[
+    {
+        "name": "PortFunnel.WebSocket",
+        "comment": " Web sockets make it cheaper to talk to your servers.\n\nConnecting to a server takes some time, so with web sockets, you make that\nconnection once and then keep using. The major benefits of this are:\n\n1.  It faster to send messages. No need to do a bunch of work for every single\n    message.\n\n2.  The server can push messages to you. With normal HTTP you would have to\n    keep _asking_ for changes, but a web socket, the server can talk to you\n    whenever it wants. This means there is less unnecessary network traffic.\n\n\n# Web Sockets\n\n\n## Types\n\n@docs State, Message, Response, Error, ClosedCode, JSVersion\n\n\n## Components of a `PortFunnel.FunnelSpec`\n\n@docs moduleName, moduleDesc, commander\n\n\n## Initial `State`\n\n@docs initialState\n\n\n## Creating a `Message`\n\n@docs makeOpen, makeSend, makeClose\n@docs makeOpenWithKey, makeKeepAlive, makeKeepAliveWithKey\n\n\n## Sending a `Message` out the `Cmd` Port\n\n@docs send\n\n\n# Conversion to Strings\n\n@docs toString, toJsonString, errorToString, closedCodeToString\n\n\n# Simulator\n\n@docs makeSimulatedCmdPort\n\n\n## Non-standard functions\n\n@docs isLoaded, isConnected, getKeyUrl, willAutoReopen, setAutoReopen\n@docs filterResponses, isReconnectedResponse, reconnectedResponses\n\n\n## Internal, exposed only for tests\n\n@docs encode, decode\n\n",
+        "unions": [
+            {
+                "name": "ClosedCode",
+                "comment": " This will usually be `NormalClosure`. The rest are standard, except for `UnknownClosure`, which denotes a code that is not defined, and `TimeoutOutOnReconnect`, which means that exponential backoff connection reestablishment attempts timed out.\n\nThe standard codes are from <https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent>\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NormalClosure",
+                        []
+                    ],
+                    [
+                        "GoingAwayClosure",
+                        []
+                    ],
+                    [
+                        "ProtocolErrorClosure",
+                        []
+                    ],
+                    [
+                        "UnsupportedDataClosure",
+                        []
+                    ],
+                    [
+                        "NoStatusRecvdClosure",
+                        []
+                    ],
+                    [
+                        "AbnormalClosure",
+                        []
+                    ],
+                    [
+                        "InvalidFramePayloadDataClosure",
+                        []
+                    ],
+                    [
+                        "PolicyViolationClosure",
+                        []
+                    ],
+                    [
+                        "MessageTooBigClosure",
+                        []
+                    ],
+                    [
+                        "MissingExtensionClosure",
+                        []
+                    ],
+                    [
+                        "InternalErrorClosure",
+                        []
+                    ],
+                    [
+                        "ServiceRestartClosure",
+                        []
+                    ],
+                    [
+                        "TryAgainLaterClosure",
+                        []
+                    ],
+                    [
+                        "BadGatewayClosure",
+                        []
+                    ],
+                    [
+                        "TLSHandshakeClosure",
+                        []
+                    ],
+                    [
+                        "TimedOutOnReconnect",
+                        []
+                    ],
+                    [
+                        "UnknownClosure",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Error",
+                "comment": " All the errors that can be returned in a Response.ErrorResponse.\n\nIf an error tag has a single `String` arg, that string is a socket `key`.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "SocketAlreadyOpenError",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "SocketConnectingError",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "SocketClosingError",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "SocketNotOpenError",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "UnexpectedConnectedError",
+                        [
+                            "{ key : String.String, description : String.String }"
+                        ]
+                    ],
+                    [
+                        "UnexpectedMessageError",
+                        [
+                            "{ key : String.String, message : String.String }"
+                        ]
+                    ],
+                    [
+                        "LowLevelError",
+                        [
+                            "PortFunnel.WebSocket.InternalMessage.PIErrorRecord"
+                        ]
+                    ],
+                    [
+                        "InvalidMessageError",
+                        [
+                            "{ message : PortFunnel.WebSocket.Message }"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Response",
+                "comment": " A response that your code must process to update your model.\n\n`NoResponse` means there's nothing to do.\n\n`CmdResponse` encapsulates a `Message` that needs to be sent out through your `Cmd` port. This is done internally. Your application code may ignore these responses.\n\n`ListResponse` contains a number of responses. It is generated only when you send messages while the connection is down, causing them to be queued up. It may contain one or more `ReconnectedResponse` instances, so if you care about that, you should call `reconnectedResponses` to extract them.\n\n`ConnectedResponse` tells you that an earlier call to `send` or `keepAlive` has successfully connected. You can usually ignore this.\n\n`ReconnectedResponse` is sent when the connection to the server has been re-established after being lost. If you need to re-establish logical connections after losing the physical connection, you'll need to pay attention to this. Otherwise, you can safely ignore it.\n\n`MessageReceivedResponse` is a message from one of the connected sockets.\n\n`ClosedResponse` tells you that an earlier call to `close` has completed. Its `code`, `reason`, and `wasClean` fields are as passed by the JavaScript `WebSocket` interface. Its `expected` field will be `True`, if the response is to a `close` call on your part. It will be `False` if the close was unexpected, and reconnection attempts failed for 20 seconds (using exponential backoff between attempts).\n\n`ErrorResponse` means that something went wrong. Details in the encapsulated `Error`.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NoResponse",
+                        []
+                    ],
+                    [
+                        "CmdResponse",
+                        [
+                            "PortFunnel.WebSocket.Message"
+                        ]
+                    ],
+                    [
+                        "ListResponse",
+                        [
+                            "List.List PortFunnel.WebSocket.Response"
+                        ]
+                    ],
+                    [
+                        "ConnectedResponse",
+                        [
+                            "{ key : String.String, description : String.String }"
+                        ]
+                    ],
+                    [
+                        "ReconnectedResponse",
+                        [
+                            "{ key : String.String, description : String.String }"
+                        ]
+                    ],
+                    [
+                        "MessageReceivedResponse",
+                        [
+                            "{ key : String.String, message : String.String }"
+                        ]
+                    ],
+                    [
+                        "ClosedResponse",
+                        [
+                            "{ key : String.String, code : PortFunnel.WebSocket.ClosedCode, reason : String.String, wasClean : Basics.Bool, expected : Basics.Bool }"
+                        ]
+                    ],
+                    [
+                        "BytesQueuedResponse",
+                        [
+                            "{ key : String.String, bufferedAmount : Basics.Int }"
+                        ]
+                    ],
+                    [
+                        "ErrorResponse",
+                        [
+                            "PortFunnel.WebSocket.Error"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "State",
+                "comment": " Internal state of the WebSocketClient module.\n\nGet the initial, empty state with `initialState`.\n\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "JSVersion",
+                "comment": " This is used to force a major version bump when the JS changes.\n\nYou'll usually not use it for anything.\n\n",
+                "args": [],
+                "type": "{ v4_1 : () }"
+            },
+            {
+                "name": "Message",
+                "comment": " Opaque message type.\n\nYou can create the instances you need to send with `openMessage`, `sendMessage`, `closeMessage`, and `bytesQueuedMessage`.\n\n",
+                "args": [],
+                "type": "PortFunnel.WebSocket.InternalMessage.InternalMessage"
+            }
+        ],
+        "values": [
+            {
+                "name": "closedCodeToString",
+                "comment": " Turn a `ClosedCode` into a `String`, for debugging.\n",
+                "type": "PortFunnel.WebSocket.ClosedCode -> String.String"
+            },
+            {
+                "name": "commander",
+                "comment": " Responsible for sending a `CmdResponse` back through the port.\n\nCalled by `PortFunnel.appProcess` for each response returned by `process`.\n\n",
+                "type": "(PortFunnel.GenericMessage -> Platform.Cmd.Cmd msg) -> PortFunnel.WebSocket.Response -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "decode",
+                "comment": " Decode a `GenericMessage` into a `Message`.\n\nOnly exposed so the tests can use it.\n\nUser code will use it implicitly through `moduleDesc`.\n\n",
+                "type": "PortFunnel.GenericMessage -> Result.Result String.String PortFunnel.WebSocket.Message"
+            },
+            {
+                "name": "encode",
+                "comment": " Encode a `Message` into a `GenericMessage`.\n\nOnly exposed so the tests can use it.\n\nUser code will use it implicitly through `moduleDesc`.\n\n",
+                "type": "PortFunnel.WebSocket.Message -> PortFunnel.GenericMessage"
+            },
+            {
+                "name": "errorToString",
+                "comment": " Convert an `Error` to a string, for simple reporting.\n",
+                "type": "PortFunnel.WebSocket.Error -> String.String"
+            },
+            {
+                "name": "filterResponses",
+                "comment": " Filter the `Response` arg with the predicate arg.\n\nIf the `Response` is a `ListResponse`, then return the elements of its\nencapsulated list which satisfy the predicate.\n\nIf the `Response` itself satisfies the predicate, return it in a single-element list.\n\nOtherwise, return the empty list.\n\n",
+                "type": "(PortFunnel.WebSocket.Response -> Basics.Bool) -> PortFunnel.WebSocket.Response -> List.List PortFunnel.WebSocket.Response"
+            },
+            {
+                "name": "getKeyUrl",
+                "comment": " Get the URL for a key.\n",
+                "type": "String.String -> PortFunnel.WebSocket.State -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "initialState",
+                "comment": " The initial, empty state.\n",
+                "type": "PortFunnel.WebSocket.State"
+            },
+            {
+                "name": "isConnected",
+                "comment": " Returns true if a connection is open for the given key.\n\n    isConnected key state\n\n",
+                "type": "String.String -> PortFunnel.WebSocket.State -> Basics.Bool"
+            },
+            {
+                "name": "isLoaded",
+                "comment": " Returns true if a `Startup` message has been processed.\n\nThis is sent by the port code after it has initialized.\n\n",
+                "type": "PortFunnel.WebSocket.State -> Basics.Bool"
+            },
+            {
+                "name": "isReconnectedResponse",
+                "comment": " Return `True` iff the `Response` is a `ReconnectedResponse`.\n",
+                "type": "PortFunnel.WebSocket.Response -> Basics.Bool"
+            },
+            {
+                "name": "makeClose",
+                "comment": " Create a `Message` to close a previously opened WebSocket.\n\n    makeClose key\n\nThe `key` arg is either they `key` arg to `makeOpenWithKey` or\n`makeKeepAliveWithKey` or the `url` arg to `makeOpen` or `makeKeepAlive`.\n\nExample:\n\n    makeClose \"echo\"\n        |> send cmdPort\n\n",
+                "type": "String.String -> PortFunnel.WebSocket.Message"
+            },
+            {
+                "name": "makeKeepAlive",
+                "comment": " Create a `Message` to connect to a WebSocket server, but not report received messages.\n\n    makeKeepAlive url\n\nFor keeping a connection open for when you only need to send `makeSend` messages.\n\nExample:\n\n       makeKeepAlive \"wss://echo.websocket.org\"\n         |> send cmdPort\n\n",
+                "type": "String.String -> PortFunnel.WebSocket.Message"
+            },
+            {
+                "name": "makeKeepAliveWithKey",
+                "comment": " Like `makeKeepAlive`, but allows matching a unique key to the connection.\n\n       makeKeepAliveWithKey key url\n\nExample:\n\n       makeKeepAliveWithKey \"echo\" \"wss://echo.websocket.org\"\n         |> send cmdPort\n\n",
+                "type": "String.String -> String.String -> PortFunnel.WebSocket.Message"
+            },
+            {
+                "name": "makeOpen",
+                "comment": " Create a `Message` to open a connection to a WebSocket server.\n\n    makeOpen url\n\nExample:\n\n    makeOpen \"wss://echo.websocket.org\"\n        |> send cmdPort\n\n",
+                "type": "String.String -> PortFunnel.WebSocket.Message"
+            },
+            {
+                "name": "makeOpenWithKey",
+                "comment": " Like `makeOpen`, but allows matching a unique key to the connection.\n\n`makeOpen` uses the url as the key.\n\n    makeOpenWithKey key url\n\nExample:\n\n    makeOpenWithKey \"echo\" \"wss://echo.websocket.org\"\n\n",
+                "type": "String.String -> String.String -> PortFunnel.WebSocket.Message"
+            },
+            {
+                "name": "makeSend",
+                "comment": " Create a `Message` to send a string to a particular address.\n\n    makeSend key message\n\nExample:\n\n    makeSend \"wss://echo.websocket.org\" \"Hello!\"\n        |> send cmdPort\n\nYou must send a `makeOpen` or `makeOpenWithKey` message before `makeSend`.\n\nIf you send a `makeSend` message before the connection has been established, or while it is being reestablished after it was lost, your message will be buffered and sent after the connection has been (re)established.\n\n",
+                "type": "String.String -> String.String -> PortFunnel.WebSocket.Message"
+            },
+            {
+                "name": "makeSimulatedCmdPort",
+                "comment": " Make a simulated `Cmd` port.\n",
+                "type": "(Json.Encode.Value -> msg) -> Json.Encode.Value -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "moduleDesc",
+                "comment": " Our module descriptor.\n",
+                "type": "PortFunnel.ModuleDesc PortFunnel.WebSocket.Message PortFunnel.WebSocket.State PortFunnel.WebSocket.Response"
+            },
+            {
+                "name": "moduleName",
+                "comment": " The name of this module: \"WebSocket\".\n",
+                "type": "String.String"
+            },
+            {
+                "name": "reconnectedResponses",
+                "comment": " Return a list of the `ReconnectedResponse` instances in the `Response`.\n\n    reconnectedResponses response\n\nis equivalent to:\n\n    filterResponse isReconnectedResponse response\n\n",
+                "type": "PortFunnel.WebSocket.Response -> List.List PortFunnel.WebSocket.Response"
+            },
+            {
+                "name": "send",
+                "comment": " Send a `Message` through a `Cmd` port.\n",
+                "type": "(Json.Encode.Value -> Platform.Cmd.Cmd msg) -> PortFunnel.WebSocket.Message -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "setAutoReopen",
+                "comment": " Set whether the connection for the given key will be automatically reopened if it closes unexpectedly.\n\nThis defaults to `True`. If you would rather get a `ClosedResponse` when it happens and handle it yourself, set it to `False` before sending a `makeOpen` message.\n\nYou may change it back to `False` later. Changing it to `True` later will not interrupt any ongoing reconnection process.\n\n    setAutoReopen key autoReopen\n\nThe key is either the key you plan to use for a `makeOpenWithKey` or `makeKeepAliveWithKey` message or the url for a `makeOpen` or `makeKeepAlive` message.\n\n",
+                "type": "String.String -> Basics.Bool -> PortFunnel.WebSocket.State -> PortFunnel.WebSocket.State"
+            },
+            {
+                "name": "toJsonString",
+                "comment": " Convert a `Message` to the same JSON string that gets sent\n\nover the wire to the JS code.\n\n",
+                "type": "PortFunnel.WebSocket.Message -> String.String"
+            },
+            {
+                "name": "toString",
+                "comment": " Convert a `Message` to a nice-looking human-readable string.\n",
+                "type": "PortFunnel.WebSocket.Message -> String.String"
+            },
+            {
+                "name": "willAutoReopen",
+                "comment": " Return `True` if the connection for the given key will be automatically reopened if it closes unexpectedly.\n\nThis is the default. You may change it with setAutoReopen.\n\n    willAutoReopen key state\n\n",
+                "type": "String.String -> PortFunnel.WebSocket.State -> Basics.Bool"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,3212 @@
+[
+    {
+        "name": "Acceleration",
+        "comment": " An `Acceleration` represents an acceleration in meters per second squared,\nfeet per second squared or [gees][1]. It is stored as a number of meters per\nsecond squared.\n\nNote that since `MetersPerSecondSquared` is defined as `Rate MetersPerSecond\nSeconds` (change in speed per unit time), you can construct an `Acceleration`\nvalue using `Quantity.per`:\n\n    acceleration =\n        changeInSpeed |> Quantity.per duration\n\nYou can also do rate-related calculations with `Acceleration` values to compute\n`Speed` or `Duration`:\n\n    changeInSpeed =\n        acceleration |> Quantity.for duration\n\n    alsoChangeInSpeed =\n        duration |> Quantity.at acceleration\n\n    duration =\n        changeInSpeed |> Quantity.at_ acceleration\n\n[1]: https://en.wikipedia.org/wiki/G-force#Unit_and_measurement\n\n@docs Acceleration, MetersPerSecondSquared\n\n\n## Metric\n\n@docs metersPerSecondSquared, inMetersPerSecondSquared\n\n\n## Imperial\n\n@docs feetPerSecondSquared, inFeetPerSecondSquared\n\n\n## Gravitational\n\n@docs gees, inGees\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Acceleration",
+                "comment": " ",
+                "args": [],
+                "type": "Quantity.Quantity Basics.Float Acceleration.MetersPerSecondSquared"
+            },
+            {
+                "name": "MetersPerSecondSquared",
+                "comment": " ",
+                "args": [],
+                "type": "Quantity.Rate Speed.MetersPerSecond Duration.Seconds"
+            }
+        ],
+        "values": [
+            {
+                "name": "feetPerSecondSquared",
+                "comment": " Construct an acceleration from a number of feet per second squared.\n",
+                "type": "Basics.Float -> Acceleration.Acceleration"
+            },
+            {
+                "name": "gees",
+                "comment": " Construct an acceleration from a number of [gees][1]. One gee is equal to\n9.80665 meters per second squared (the standard acceleration due to gravity).\n\n    Acceleration.gees 1\n    --> Acceleration.metersPerSecondSquared 9.80665\n\n[1]: https://en.wikipedia.org/wiki/G-force#Unit_and_measurement\n\n",
+                "type": "Basics.Float -> Acceleration.Acceleration"
+            },
+            {
+                "name": "inFeetPerSecondSquared",
+                "comment": " Convert an acceleration to a number of feet per second squared.\n",
+                "type": "Acceleration.Acceleration -> Basics.Float"
+            },
+            {
+                "name": "inGees",
+                "comment": " Convert an acceleration to a number of gees.\n",
+                "type": "Acceleration.Acceleration -> Basics.Float"
+            },
+            {
+                "name": "inMetersPerSecondSquared",
+                "comment": " Convert an acceleration to a number of meters per second squared.\n",
+                "type": "Acceleration.Acceleration -> Basics.Float"
+            },
+            {
+                "name": "metersPerSecondSquared",
+                "comment": " Construct an acceleration from a number of meters per second squared.\n",
+                "type": "Basics.Float -> Acceleration.Acceleration"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Angle",
+        "comment": " An `Angle` represents an angle in degrees, radians, or turns. It is stored\nas a number of radians.\n\n@docs Angle, Radians\n\n\n## Common units\n\n@docs radians, inRadians, degrees, inDegrees, turns, inTurns\n\n\n## Minutes and seconds\n\nAngles are sometimes measured in degrees, minutes, and seconds, where 1 minute =\n1/60th of a degree and 1 second = 1/60th of a minute.\n\n@docs minutes, inMinutes, seconds, inSeconds\n\nDegrees, minutes and seconds are often used together, so a couple of special\nfunctions are provided to convert to and from combinations of those units.\n\n@docs Sign, fromDms, toDms\n\n\n## Trigonometry\n\nIf you're using `Angle` values instead of plain `Float`s, you'll need to use\nthese functions instead of [the corresponding ones in core][1].\n\n[1]: https://package.elm-lang.org/packages/elm/core/latest/Basics#trigonometry\n\n@docs sin, cos, tan, asin, acos, atan, atan2\n\n\n## Normalization\n\n@docs normalize\n\n\n## Constants\n\nShorthand for `Angle.radians 1`, `Angle.degrees 1` etc. Can be convenient to use\nwith [`Quantity.per`](Quantity#per).\n\n@docs radian, degree, turn, minute, second\n\n",
+        "unions": [
+            {
+                "name": "Radians",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Sign",
+                "comment": " The sign of an angle given in degrees, minutes and seconds.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Positive",
+                        []
+                    ],
+                    [
+                        "Negative",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Angle",
+                "comment": " ",
+                "args": [],
+                "type": "Quantity.Quantity Basics.Float Angle.Radians"
+            }
+        ],
+        "values": [
+            {
+                "name": "acos",
+                "comment": " ",
+                "type": "Basics.Float -> Angle.Angle"
+            },
+            {
+                "name": "asin",
+                "comment": " ",
+                "type": "Basics.Float -> Angle.Angle"
+            },
+            {
+                "name": "atan",
+                "comment": " ",
+                "type": "Basics.Float -> Angle.Angle"
+            },
+            {
+                "name": "atan2",
+                "comment": " ",
+                "type": "Quantity.Quantity Basics.Float units -> Quantity.Quantity Basics.Float units -> Angle.Angle"
+            },
+            {
+                "name": "cos",
+                "comment": " ",
+                "type": "Angle.Angle -> Basics.Float"
+            },
+            {
+                "name": "degree",
+                "comment": " ",
+                "type": "Angle.Angle"
+            },
+            {
+                "name": "degrees",
+                "comment": " Construct an angle from a number of degrees.\n\n    Angle.degrees 180\n    --> Angle.radians pi\n\n",
+                "type": "Basics.Float -> Angle.Angle"
+            },
+            {
+                "name": "fromDms",
+                "comment": " Construct an angle given its sign and its degree, minute and second\ncomponents. The signs of `degrees`, `minutes` and `seconds` will be ignored\n(their absolute values will be used). Note that only `seconds` may be\nfractional! In general `minutes` and `seconds` should each be less than 60, but\nthis is not enforced.\n\n    Angle.fromDms\n        { sign = Angle.Positive\n        , degrees = 45\n        , minutes = 30\n        , seconds = 36\n        }\n    --> Angle.degrees 45.51\n\n    Angle.fromDms\n        { sign = Angle.Negative\n        , degrees = 2\n        , minutes = 15\n        , seconds = 0\n        }\n    --> Angle.degrees -2.25\n\n",
+                "type": "{ sign : Angle.Sign, degrees : Basics.Int, minutes : Basics.Int, seconds : Basics.Float } -> Angle.Angle"
+            },
+            {
+                "name": "inDegrees",
+                "comment": " Convert an angle to a number of degrees.\n\n    Angle.turns 2 |> Angle.inDegrees\n    --> 720\n\n",
+                "type": "Angle.Angle -> Basics.Float"
+            },
+            {
+                "name": "inMinutes",
+                "comment": " Convert an angle to a number of minutes.\n\n    Angle.degrees 2 |> Angle.inMinutes\n    --> 120\n\n",
+                "type": "Angle.Angle -> Basics.Float"
+            },
+            {
+                "name": "inRadians",
+                "comment": " Convert an angle to a number of radians.\n",
+                "type": "Angle.Angle -> Basics.Float"
+            },
+            {
+                "name": "inSeconds",
+                "comment": " Convert an angle to a number of seconds.\n\n    Angle.degrees 0.1 |> Angle.inSeconds\n    --> 360\n\n",
+                "type": "Angle.Angle -> Basics.Float"
+            },
+            {
+                "name": "inTurns",
+                "comment": " Convert an angle to a number of turns.\n\n    Angle.radians pi |> Angle.inTurns\n    --> 0.5\n\n",
+                "type": "Angle.Angle -> Basics.Float"
+            },
+            {
+                "name": "minute",
+                "comment": " ",
+                "type": "Angle.Angle"
+            },
+            {
+                "name": "minutes",
+                "comment": " Construct an angle from a number of minutes.\n\n    Angle.minutes 30\n    --> Angle.degrees 0.5\n\n",
+                "type": "Basics.Float -> Angle.Angle"
+            },
+            {
+                "name": "normalize",
+                "comment": " Convert an arbitrary angle to the equivalent angle in the range -180 to 180\ndegrees (-π to π radians), by adding or subtracting some multiple of 360\ndegrees (2π radians) if necessary.\n\n    Angle.normalize (Angle.degrees 45)\n    --> Angle.degrees 45\n\n    Angle.normalize (Angle.degrees 270)\n    --> Angle.degrees -90\n\n    Angle.normalize (Angle.degrees 370)\n    --> Angle.degrees 10\n\n    Angle.normalize (Angle.degrees 181)\n    --> Angle.degrees -179\n\n",
+                "type": "Angle.Angle -> Angle.Angle"
+            },
+            {
+                "name": "radian",
+                "comment": " ",
+                "type": "Angle.Angle"
+            },
+            {
+                "name": "radians",
+                "comment": " Construct an angle from a number of radians.\n",
+                "type": "Basics.Float -> Angle.Angle"
+            },
+            {
+                "name": "second",
+                "comment": " ",
+                "type": "Angle.Angle"
+            },
+            {
+                "name": "seconds",
+                "comment": " Construct an angle from a number of seconds.\n\n    Angle.seconds 120\n    --> Angle.minutes 2\n\n",
+                "type": "Basics.Float -> Angle.Angle"
+            },
+            {
+                "name": "sin",
+                "comment": " ",
+                "type": "Angle.Angle -> Basics.Float"
+            },
+            {
+                "name": "tan",
+                "comment": " ",
+                "type": "Angle.Angle -> Basics.Float"
+            },
+            {
+                "name": "toDms",
+                "comment": " Convert an angle to a number of degrees, minutes and seconds, along with its\nsign. The `degrees`, `minutes` and `seconds` values will all be non-negative,\nand both `minutes` and `seconds` will be less than 60.\n\n    Angle.toDms (Angle.degrees 1.5)\n    --> { sign = Angle.Positive\n    --> , degrees = 1\n    --> , minutes = 30\n    --> , seconds = 0\n    --> }\n\n    Angle.toDms (Angle.degrees -0.751)\n    --> { sign = Angle.Negative\n    --> , degrees = 0\n    --> , minutes = 45\n    --> , seconds = 3.6\n    --> }\n\nYou could use this to write a string-conversion function for angles, something\nlike:\n\n    angleString angle =\n        let\n            { sign, degrees, minutes, seconds } =\n                Angle.toDms angle\n\n            signString =\n                case sign of\n                    Angle.Positive ->\n                        \"\"\n\n                    Angle.Negative ->\n                        \"-\"\n        in\n        String.concat\n            [ signString\n            , String.fromInt degrees\n            , \"° \"\n            , String.fromInt minutes\n            , \"′ \"\n            , Round.round 3 seconds\n            , \"″\"\n            ]\n\n(Here we're using the\n[myrho/elm-round](https://package.elm-lang.org/packages/myrho/elm-round/latest/)\npackage to control the number of decimal places used when displaying the number\nof seconds.)\n\n",
+                "type": "Angle.Angle -> { sign : Angle.Sign, degrees : Basics.Int, minutes : Basics.Int, seconds : Basics.Float }"
+            },
+            {
+                "name": "turn",
+                "comment": " ",
+                "type": "Angle.Angle"
+            },
+            {
+                "name": "turns",
+                "comment": " Construct an angle from a number of turns.\n\n    Angle.turns -0.25\n    --> Angle.degrees -90\n\n",
+                "type": "Basics.Float -> Angle.Angle"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "AngularAcceleration",
+        "comment": " An `AngularAcceleration` represents an angular acceleration in radians per\nsecond squared, degrees per second squared, and turns per second squared. It is\nstored as a number of radians per second squared.\n\nNote that since `RadiansPerSecondSquared` is defined as `Rate RadiansPerSecond\nSeconds` (change in angular speed per unit time), you can construct an\n`AngularAcceleration` value using `Quantity.per`:\n\n    angularAcceleration =\n        changeInAngularSpeed |> Quantity.per duration\n\nYou can also do rate-related calculations with `AngularAcceleration` values to\ncompute `AngularSpeed` or `Duration`:\n\n    changeInAngularSpeed =\n        angularAcceleration |> Quantity.for duration\n\n    alsoChangeInAngularSpeed =\n        duration |> Quantity.at angularAcceleration\n\n    duration =\n        changeInAngularSpeed |> Quantity.at_ angularAcceleration\n\n@docs AngularAcceleration, RadiansPerSecondSquared\n\n\n## Conversions\n\n@docs radiansPerSecondSquared, inRadiansPerSecondSquared, degreesPerSecondSquared, inDegreesPerSecondSquared\n@docs turnsPerSecondSquared, inTurnsPerSecondSquared\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "AngularAcceleration",
+                "comment": " ",
+                "args": [],
+                "type": "Quantity.Quantity Basics.Float AngularAcceleration.RadiansPerSecondSquared"
+            },
+            {
+                "name": "RadiansPerSecondSquared",
+                "comment": " ",
+                "args": [],
+                "type": "Quantity.Rate AngularSpeed.RadiansPerSecond Duration.Seconds"
+            }
+        ],
+        "values": [
+            {
+                "name": "degreesPerSecondSquared",
+                "comment": " Construct an angular acceleration from a number of degrees per second squared.\n",
+                "type": "Basics.Float -> AngularAcceleration.AngularAcceleration"
+            },
+            {
+                "name": "inDegreesPerSecondSquared",
+                "comment": " Convert an angular acceleration to a number of degrees per second squared.\n",
+                "type": "AngularAcceleration.AngularAcceleration -> Basics.Float"
+            },
+            {
+                "name": "inRadiansPerSecondSquared",
+                "comment": " Convert an angular acceleration to a number of radians per second squared.\n",
+                "type": "AngularAcceleration.AngularAcceleration -> Basics.Float"
+            },
+            {
+                "name": "inTurnsPerSecondSquared",
+                "comment": " Convert an angular acceleration to a number of turns per second squared.\n",
+                "type": "AngularAcceleration.AngularAcceleration -> Basics.Float"
+            },
+            {
+                "name": "radiansPerSecondSquared",
+                "comment": " Construct an angular acceleration from a number of radians per second squared.\n",
+                "type": "Basics.Float -> AngularAcceleration.AngularAcceleration"
+            },
+            {
+                "name": "turnsPerSecondSquared",
+                "comment": " Construct an angular acceleration from a number of turns per second squared.\n",
+                "type": "Basics.Float -> AngularAcceleration.AngularAcceleration"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "AngularSpeed",
+        "comment": " An `AngularSpeed` represents a rotation rate in radians per second, degrees\nper second, turns (revolutions) per second or turns (revolutions) per minute.\nIt is stored as a number of radians per second.\n\nNote that since `RadiansPerSecond` is defined as `Rate Radians Seconds` (angle\nper unit time), you can construct an `AngularSpeed` value using `Quantity.per`:\n\n    angularSpeed =\n        angle |> Quantity.per duration\n\nYou can also do rate-related calculations with `AngularSpeed` values to compute\n`Angle` or `Duration`:\n\n    angle =\n        angularSpeed |> Quantity.for duration\n\n    alsoAngle =\n        duration |> Quantity.at angularSpeed\n\n    duration =\n        angle |> Quantity.at_ angularSpeed\n\n@docs AngularSpeed, RadiansPerSecond\n\n\n## Conversions\n\n@docs radiansPerSecond, inRadiansPerSecond, degreesPerSecond, inDegreesPerSecond\n@docs turnsPerSecond, inTurnsPerSecond, turnsPerMinute, inTurnsPerMinute\n\n\n## Aliases for `turns` as `revolutions`\n\nThe Elm core `Basics` module uses `turns` in its [Angle Conversions](https://package.elm-lang.org/packages/elm-lang/core/latest/Basics#angle-conversions).\nTo be consistent, this module also uses `turns`, however since 'revolutions per\nminute' (RPM) is in common usage, several aliases are provided.\n\n@docs revolutionsPerSecond, inRevolutionsPerSecond, revolutionsPerMinute, inRevolutionsPerMinute\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "AngularSpeed",
+                "comment": " ",
+                "args": [],
+                "type": "Quantity.Quantity Basics.Float AngularSpeed.RadiansPerSecond"
+            },
+            {
+                "name": "RadiansPerSecond",
+                "comment": " ",
+                "args": [],
+                "type": "Quantity.Rate Angle.Radians Duration.Seconds"
+            }
+        ],
+        "values": [
+            {
+                "name": "degreesPerSecond",
+                "comment": " Construct an angular speed from a number of degrees per second.\n",
+                "type": "Basics.Float -> AngularSpeed.AngularSpeed"
+            },
+            {
+                "name": "inDegreesPerSecond",
+                "comment": " Convert an angular speed to a number of degrees per second.\n",
+                "type": "AngularSpeed.AngularSpeed -> Basics.Float"
+            },
+            {
+                "name": "inRadiansPerSecond",
+                "comment": " Convert an angular speed to a number of radians per second.\n",
+                "type": "AngularSpeed.AngularSpeed -> Basics.Float"
+            },
+            {
+                "name": "inRevolutionsPerMinute",
+                "comment": " Alias for `inTurnsPerMinute`.\n",
+                "type": "AngularSpeed.AngularSpeed -> Basics.Float"
+            },
+            {
+                "name": "inRevolutionsPerSecond",
+                "comment": " Alias for `inTurnsPerSecond`.\n",
+                "type": "AngularSpeed.AngularSpeed -> Basics.Float"
+            },
+            {
+                "name": "inTurnsPerMinute",
+                "comment": " Convert an angular speed to a number of turns per minute.\n",
+                "type": "AngularSpeed.AngularSpeed -> Basics.Float"
+            },
+            {
+                "name": "inTurnsPerSecond",
+                "comment": " Convert an angular speed to a number of turns per second.\n",
+                "type": "AngularSpeed.AngularSpeed -> Basics.Float"
+            },
+            {
+                "name": "radiansPerSecond",
+                "comment": " Construct an angular speed from a number of radians per second.\n",
+                "type": "Basics.Float -> AngularSpeed.AngularSpeed"
+            },
+            {
+                "name": "revolutionsPerMinute",
+                "comment": " Alias for `turnsPerMinute`.\n",
+                "type": "Basics.Float -> AngularSpeed.AngularSpeed"
+            },
+            {
+                "name": "revolutionsPerSecond",
+                "comment": " Alias for `turnsPerSecond`.\n",
+                "type": "Basics.Float -> AngularSpeed.AngularSpeed"
+            },
+            {
+                "name": "turnsPerMinute",
+                "comment": " Construct an angular speed from a number of turns per minute.\n",
+                "type": "Basics.Float -> AngularSpeed.AngularSpeed"
+            },
+            {
+                "name": "turnsPerSecond",
+                "comment": " Construct an angular speed from a number of turns per second.\n",
+                "type": "Basics.Float -> AngularSpeed.AngularSpeed"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Area",
+        "comment": " An `Area` represents an area in square meters, square feet, acres, hectares\netc. It is stored as a number of square meters.\n\nNote that you can construct an `Area` value directly using the functions in this\nmodule, but it also works to call [`Quantity.squared`](Quantity#squared) on a\n`Length` or [`Quantity.times`](Quantity#times) on a pair of `Length`s. The\nfollowing are all equivalent:\n\n    Area.squareFeet 100\n\n    Quantity.squared (Length.feet 10)\n\n    Length.feet 25 |> Quantity.times (Length.feet 4)\n\n@docs Area, SquareMeters\n\n\n## Metric\n\n@docs squareMeters, inSquareMeters\n@docs squareMillimeters, inSquareMillimeters, squareCentimeters, inSquareCentimeters, hectares, inHectares, squareKilometers, inSquareKilometers\n\n\n## Imperial\n\n@docs squareInches, inSquareInches, squareFeet, inSquareFeet, squareYards, inSquareYards, acres, inAcres, squareMiles, inSquareMiles\n\n\n## Constants\n\nShorthand for `Area.squareMeters 1`, `Area.acres 1` etc. Can be convenient to\nuse with [`Quantity.per`](Quantity#per).\n\n@docs squareMeter, squareMillimeter, squareCentimeter, hectare, squareKilometer\n@docs squareInch, squareFoot, squareYard, acre, squareMile\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Area",
+                "comment": " ",
+                "args": [],
+                "type": "Quantity.Quantity Basics.Float Area.SquareMeters"
+            },
+            {
+                "name": "SquareMeters",
+                "comment": " ",
+                "args": [],
+                "type": "Quantity.Squared Length.Meters"
+            }
+        ],
+        "values": [
+            {
+                "name": "acre",
+                "comment": " ",
+                "type": "Area.Area"
+            },
+            {
+                "name": "acres",
+                "comment": " Construct an area from a number of acres.\n",
+                "type": "Basics.Float -> Area.Area"
+            },
+            {
+                "name": "hectare",
+                "comment": " ",
+                "type": "Area.Area"
+            },
+            {
+                "name": "hectares",
+                "comment": " Construct an area from a number of hectares.\n",
+                "type": "Basics.Float -> Area.Area"
+            },
+            {
+                "name": "inAcres",
+                "comment": " Convert an area to a number of acres.\n",
+                "type": "Area.Area -> Basics.Float"
+            },
+            {
+                "name": "inHectares",
+                "comment": " Convert an area to a number of hectares.\n",
+                "type": "Area.Area -> Basics.Float"
+            },
+            {
+                "name": "inSquareCentimeters",
+                "comment": " Convert an area to a number of square centimeters.\n",
+                "type": "Area.Area -> Basics.Float"
+            },
+            {
+                "name": "inSquareFeet",
+                "comment": " Convert an area to a number of square feet.\n",
+                "type": "Area.Area -> Basics.Float"
+            },
+            {
+                "name": "inSquareInches",
+                "comment": " Convert an area to a number of square inches.\n",
+                "type": "Area.Area -> Basics.Float"
+            },
+            {
+                "name": "inSquareKilometers",
+                "comment": " Convert an area to a number of square kilometers.\n",
+                "type": "Area.Area -> Basics.Float"
+            },
+            {
+                "name": "inSquareMeters",
+                "comment": " Convert an area to a number of square meters.\n",
+                "type": "Area.Area -> Basics.Float"
+            },
+            {
+                "name": "inSquareMiles",
+                "comment": " Convert an area to a number of square miles.\n",
+                "type": "Area.Area -> Basics.Float"
+            },
+            {
+                "name": "inSquareMillimeters",
+                "comment": " Convert an area to a number of square millimeters.\n",
+                "type": "Area.Area -> Basics.Float"
+            },
+            {
+                "name": "inSquareYards",
+                "comment": " Convert an area to a number of square yards.\n",
+                "type": "Area.Area -> Basics.Float"
+            },
+            {
+                "name": "squareCentimeter",
+                "comment": " ",
+                "type": "Area.Area"
+            },
+            {
+                "name": "squareCentimeters",
+                "comment": " Construct an area from a number of square centimeters.\n",
+                "type": "Basics.Float -> Area.Area"
+            },
+            {
+                "name": "squareFeet",
+                "comment": " Construct an area from a number of square feet.\n",
+                "type": "Basics.Float -> Area.Area"
+            },
+            {
+                "name": "squareFoot",
+                "comment": " ",
+                "type": "Area.Area"
+            },
+            {
+                "name": "squareInch",
+                "comment": " ",
+                "type": "Area.Area"
+            },
+            {
+                "name": "squareInches",
+                "comment": " Construct an area from a number of square inches.\n",
+                "type": "Basics.Float -> Area.Area"
+            },
+            {
+                "name": "squareKilometer",
+                "comment": " ",
+                "type": "Area.Area"
+            },
+            {
+                "name": "squareKilometers",
+                "comment": " Construct an area from a number of square kilometers.\n",
+                "type": "Basics.Float -> Area.Area"
+            },
+            {
+                "name": "squareMeter",
+                "comment": " ",
+                "type": "Area.Area"
+            },
+            {
+                "name": "squareMeters",
+                "comment": " Construct an area from a number of square meters.\n",
+                "type": "Basics.Float -> Area.Area"
+            },
+            {
+                "name": "squareMile",
+                "comment": " ",
+                "type": "Area.Area"
+            },
+            {
+                "name": "squareMiles",
+                "comment": " Construct an area from a number of square miles.\n",
+                "type": "Basics.Float -> Area.Area"
+            },
+            {
+                "name": "squareMillimeter",
+                "comment": " ",
+                "type": "Area.Area"
+            },
+            {
+                "name": "squareMillimeters",
+                "comment": " Construct an area from a number of square millimeters.\n",
+                "type": "Basics.Float -> Area.Area"
+            },
+            {
+                "name": "squareYard",
+                "comment": " ",
+                "type": "Area.Area"
+            },
+            {
+                "name": "squareYards",
+                "comment": " Construct an area from a number of square yards.\n",
+                "type": "Basics.Float -> Area.Area"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Capacitance",
+        "comment": " A `Capacitance` value represents an electrical capacitance in farads.\n\nNote that since `Capacitance` is defined as `Rate Coulombs Volts` (charge per\nvoltage), you can construct a `Capacitance` value using `Quantity.per`:\n\n    capacitance =\n        charge |> Quantity.per voltage\n\nYou can also compute `Charge` and `Voltage` using `Capacitance`:\n\n    charge =\n        voltage |> Quantity.at capacitance\n\n    voltage =\n        charge |> Quantity.at_ capacitance\n\n@docs Capacitance, Farads\n\n\n## Conversions\n\n@docs farads, inFarads\n@docs picofarads, inPicofarads, nanofarads, inNanofarads, microfarads, inMicrofarads\n\n",
+        "unions": [
+            {
+                "name": "Farads",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Capacitance",
+                "comment": " ",
+                "args": [],
+                "type": "Quantity.Quantity Basics.Float Capacitance.Farads"
+            }
+        ],
+        "values": [
+            {
+                "name": "farads",
+                "comment": " Construct capacitance from a number of farads.\n",
+                "type": "Basics.Float -> Capacitance.Capacitance"
+            },
+            {
+                "name": "inFarads",
+                "comment": " Convert capacitance to a number of farads.\n",
+                "type": "Capacitance.Capacitance -> Basics.Float"
+            },
+            {
+                "name": "inMicrofarads",
+                "comment": " Convert a capacitance to a number of microfarads\n",
+                "type": "Capacitance.Capacitance -> Basics.Float"
+            },
+            {
+                "name": "inNanofarads",
+                "comment": " Convert a capacitance to a number of nanofarads\n",
+                "type": "Capacitance.Capacitance -> Basics.Float"
+            },
+            {
+                "name": "inPicofarads",
+                "comment": " Convert a capacitance to a number of picofarads.\n",
+                "type": "Capacitance.Capacitance -> Basics.Float"
+            },
+            {
+                "name": "microfarads",
+                "comment": " Construct a capacitance from a number of microfarads.\n",
+                "type": "Basics.Float -> Capacitance.Capacitance"
+            },
+            {
+                "name": "nanofarads",
+                "comment": " Construct a capacitance from a number of nanofarads\n",
+                "type": "Basics.Float -> Capacitance.Capacitance"
+            },
+            {
+                "name": "picofarads",
+                "comment": " Construct capacitance from a number of picofarads.\n",
+                "type": "Basics.Float -> Capacitance.Capacitance"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Charge",
+        "comment": " A `Charge` value represents an electrical charge in coulombs or ampere\nhours. It is stored as a number of coulombs.\n\n@docs Charge, Coulombs\n\n\n## Conversions\n\n@docs coulombs, inCoulombs, ampereHours, inAmpereHours, milliampereHours, inMilliampereHours\n\n",
+        "unions": [
+            {
+                "name": "Coulombs",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Charge",
+                "comment": " ",
+                "args": [],
+                "type": "Quantity.Quantity Basics.Float Charge.Coulombs"
+            }
+        ],
+        "values": [
+            {
+                "name": "ampereHours",
+                "comment": " Construct a charge from a number of ampere hours.\n",
+                "type": "Basics.Float -> Charge.Charge"
+            },
+            {
+                "name": "coulombs",
+                "comment": " Construct a charge from a number of coulombs.\n",
+                "type": "Basics.Float -> Charge.Charge"
+            },
+            {
+                "name": "inAmpereHours",
+                "comment": " Convert a charge to a number of ampere hours.\n",
+                "type": "Charge.Charge -> Basics.Float"
+            },
+            {
+                "name": "inCoulombs",
+                "comment": " Convert a charge to a number of coulombs.\n",
+                "type": "Charge.Charge -> Basics.Float"
+            },
+            {
+                "name": "inMilliampereHours",
+                "comment": " Convert a charge to a number of milliampere hours.\n",
+                "type": "Charge.Charge -> Basics.Float"
+            },
+            {
+                "name": "milliampereHours",
+                "comment": " Construct a charge from a number of milliampere hours.\n",
+                "type": "Basics.Float -> Charge.Charge"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Current",
+        "comment": " A `Current` value represents an electrical current in amperes.\n\nNote that since `Amperes` is defined as `Rate Coulombs Seconds` (charge\nper unit time), you can construct a `Current` value using `Quantity.per`:\n\n    current =\n        charge |> Quantity.per duration\n\nYou can also do rate-related calculations with `Current` values to compute\n`Charge` or `Duration`:\n\n    charge =\n        current |> Quantity.for duration\n\n    alsoCharge =\n        duration |> Quantity.at current\n\n    duration =\n        charge |> Quantity.at_ current\n\n@docs Current, Amperes\n\n\n## Conversions\n\n@docs amperes, inAmperes, milliamperes, inMilliamperes\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Amperes",
+                "comment": " ",
+                "args": [],
+                "type": "Quantity.Rate Charge.Coulombs Duration.Seconds"
+            },
+            {
+                "name": "Current",
+                "comment": " ",
+                "args": [],
+                "type": "Quantity.Quantity Basics.Float Current.Amperes"
+            }
+        ],
+        "values": [
+            {
+                "name": "amperes",
+                "comment": " Construct a current from a number of amperes.\n",
+                "type": "Basics.Float -> Current.Current"
+            },
+            {
+                "name": "inAmperes",
+                "comment": " Convert a current to a number of amperes.\n\n    Charge.coulombs 10\n        |> Quantity.per (Duration.seconds 2)\n        |> Current.inAmperes\n    --> 5\n\n",
+                "type": "Current.Current -> Basics.Float"
+            },
+            {
+                "name": "inMilliamperes",
+                "comment": " Convert a current to number of milliamperes.\n\n    Current.amperes 2 |> Current.inMilliamperes\n    --> 2000\n\n",
+                "type": "Current.Current -> Basics.Float"
+            },
+            {
+                "name": "milliamperes",
+                "comment": " Construct a current from a number of milliamperes.\n\n    Current.milliamperes 500\n    --> Current.amperes 0.5\n\n",
+                "type": "Basics.Float -> Current.Current"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Density",
+        "comment": " A `Density` value represents a density in grams per cubic centimeter, pounds\nper cubic inch, etc. It is stored as a number of kilograms per cubic meter.\n\nNote that since `KilogramsPerCubicMeter` is defined as `Rate Kilograms\nCubicMeters` (mass per unit volume), you can construct a `Density` value using\n`Quantity.per`:\n\n    density =\n        mass |> Quantity.per volume\n\nYou can also do rate-related calculations with `Density` values to compute\n`Mass` or `Volume`:\n\n    mass =\n        volume |> Quantity.at density\n\n    volume =\n        mass |> Quantity.at_ density\n\n@docs Density, KilogramsPerCubicMeter\n\n\n## Metric\n\n@docs kilogramsPerCubicMeter, inKilogramsPerCubicMeter, gramsPerCubicCentimeter, inGramsPerCubicCentimeter\n\n\n## Imperial\n\n@docs poundsPerCubicInch, inPoundsPerCubicInch, poundsPerCubicFoot, inPoundsPerCubicFoot\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Density",
+                "comment": " ",
+                "args": [],
+                "type": "Quantity.Quantity Basics.Float Density.KilogramsPerCubicMeter"
+            },
+            {
+                "name": "KilogramsPerCubicMeter",
+                "comment": " ",
+                "args": [],
+                "type": "Quantity.Rate Mass.Kilograms Volume.CubicMeters"
+            }
+        ],
+        "values": [
+            {
+                "name": "gramsPerCubicCentimeter",
+                "comment": " Construct a density from a number of grams per cubic centimeter.\n",
+                "type": "Basics.Float -> Density.Density"
+            },
+            {
+                "name": "inGramsPerCubicCentimeter",
+                "comment": " Convert a density to a number of grams per cubic centimeter.\n",
+                "type": "Density.Density -> Basics.Float"
+            },
+            {
+                "name": "inKilogramsPerCubicMeter",
+                "comment": " Convert a density to a number of kilograms per cubic meter.\n",
+                "type": "Density.Density -> Basics.Float"
+            },
+            {
+                "name": "inPoundsPerCubicFoot",
+                "comment": " Convert a density to a number of pounds per cubic foot.\n",
+                "type": "Density.Density -> Basics.Float"
+            },
+            {
+                "name": "inPoundsPerCubicInch",
+                "comment": " Convert a density to a number of pounds per cubic inch.\n",
+                "type": "Density.Density -> Basics.Float"
+            },
+            {
+                "name": "kilogramsPerCubicMeter",
+                "comment": " Construct a density from a number of kilograms per cubic meter.\n",
+                "type": "Basics.Float -> Density.Density"
+            },
+            {
+                "name": "poundsPerCubicFoot",
+                "comment": " Construct a density from a number of pounds per cubic foot.\n",
+                "type": "Basics.Float -> Density.Density"
+            },
+            {
+                "name": "poundsPerCubicInch",
+                "comment": " Construct a density from a number of pounds per cubic inch.\n",
+                "type": "Basics.Float -> Density.Density"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Duration",
+        "comment": " A `Duration` refers to an elapsed time in seconds, milliseconds, hours etc.,\nas opposed to a specific instant in time (which would generally be represented\nby a [`Posix`](https://package.elm-lang.org/packages/elm/time/latest/Time#Posix)\nvalue). It is stored as a number of seconds.\n\n@docs Duration, Seconds\n\n\n## Conversions\n\n@docs seconds, inSeconds, milliseconds, inMilliseconds, minutes, inMinutes, hours, inHours, days, inDays, weeks, inWeeks, julianYears, inJulianYears\n\n\n## Working with `Time.Posix` values\n\n@docs from\n\n\n### Offsetting\n\n`addTo` and `subtractFrom` can be used to offset a [`Time.Posix`](https://package.elm-lang.org/packages/elm/time/latest/Time#Posix)\nvalue by a given `Duration`. However, note that `Time.Posix` values are stored\nas an integer number of milliseconds, so the offset amount will be rounded to\nthe nearest number of milliseconds.\n\n@docs addTo, subtractFrom\n\n\n## Constants\n\nShorthand for `Duration.seconds 1`, `Duration.hours 1` etc. Can be convenient to\nuse with [`Quantity.per`](Quantity#per).\n\n@docs second, millisecond, minute, hour, day, week, julianYear\n\n",
+        "unions": [
+            {
+                "name": "Seconds",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Duration",
+                "comment": " ",
+                "args": [],
+                "type": "Quantity.Quantity Basics.Float Duration.Seconds"
+            }
+        ],
+        "values": [
+            {
+                "name": "addTo",
+                "comment": " Offset a [`Time.Posix`](https://package.elm-lang.org/packages/elm/time/latest/Time#Posix)\nvalue forwards in time by a given `Duration`:\n\n    -- Assuming that 'now' is a Time.Posix value obtained\n    -- from Time.now\n    threeHoursFromNow =\n        Duration.addTo now (Duration.hours 3)\n\n",
+                "type": "Time.Posix -> Duration.Duration -> Time.Posix"
+            },
+            {
+                "name": "day",
+                "comment": " ",
+                "type": "Duration.Duration"
+            },
+            {
+                "name": "days",
+                "comment": " Construct a `Duration` from a given number of days. A day is defined as\nexactly 24 hours or 86400 seconds. Therefore, it is only equal to the length of\na given calendar day if that calendar day does not include either a leap second\nor any added/removed daylight savings hours.\n\n    Duration.days 1\n    --> Duration.hours 24\n\n",
+                "type": "Basics.Float -> Duration.Duration"
+            },
+            {
+                "name": "from",
+                "comment": " Find the elapsed time from a start time to an end time. For example,\nassuming that `nineAM` and `fivePM` are two [`Time.Posix`](https://package.elm-lang.org/packages/elm/time/latest/Time#Posix)\nvalues on the same day:\n\n    Duration.from nineAM fivePM\n    --> Duration.hours 8\n\n",
+                "type": "Time.Posix -> Time.Posix -> Duration.Duration"
+            },
+            {
+                "name": "hour",
+                "comment": " ",
+                "type": "Duration.Duration"
+            },
+            {
+                "name": "hours",
+                "comment": " Construct a `Duration` from a given number of hours.\n\n    Duration.hours 1\n    --> Duration.seconds 3600\n\n",
+                "type": "Basics.Float -> Duration.Duration"
+            },
+            {
+                "name": "inDays",
+                "comment": " Convert a `Duration` to a value in days.\n\n    Duration.hours 72 |> Duration.inDays\n    --> 3\n\n",
+                "type": "Duration.Duration -> Basics.Float"
+            },
+            {
+                "name": "inHours",
+                "comment": " Convert a `Duration` to a value in hours.\n\n    Duration.minutes 120 |> Duration.inHours\n    --> 2\n\n",
+                "type": "Duration.Duration -> Basics.Float"
+            },
+            {
+                "name": "inJulianYears",
+                "comment": " Convert a `Duration` to a value in Julian years.\n\n    Duration.hours 10000 |> Duration.inJulianYears\n    --> 1.1407711613050422\n\n",
+                "type": "Duration.Duration -> Basics.Float"
+            },
+            {
+                "name": "inMilliseconds",
+                "comment": " Convert a `Duration` to a value in milliseconds.\n\n    Duration.seconds 0.5 |> Duration.inMilliseconds\n    --> 500\n\n",
+                "type": "Duration.Duration -> Basics.Float"
+            },
+            {
+                "name": "inMinutes",
+                "comment": " Convert a `Duration` to a value in minutes.\n\n    Duration.seconds 90 |> Duration.inMinutes\n    --> 1.5\n\n",
+                "type": "Duration.Duration -> Basics.Float"
+            },
+            {
+                "name": "inSeconds",
+                "comment": " Convert a `Duration` to a value in seconds.\n\n    Duration.milliseconds 10 |> Duration.inSeconds\n    --> 0.01\n\n",
+                "type": "Duration.Duration -> Basics.Float"
+            },
+            {
+                "name": "inWeeks",
+                "comment": " Convert a `Duration` to a value in weeks.\n\n    Duration.days 28 |> Duration.inWeeks\n    --> 4\n\n",
+                "type": "Duration.Duration -> Basics.Float"
+            },
+            {
+                "name": "julianYear",
+                "comment": " ",
+                "type": "Duration.Duration"
+            },
+            {
+                "name": "julianYears",
+                "comment": " Construct a `Duration` from a given number of [Julian years][julian_year].\nA Julian year is defined as exactly 365.25 days, the average length of a year in\nthe historical Julian calendar. This is 10 minutes and 48 seconds longer than\na Gregorian year (365.2425 days), which is the average length of a year in the\nmodern Gregorian calendar, but the Julian year is a bit easier to remember and\nreason about and has the virtue of being the 'year' value used in the definition\nof a [light year](Length#lightYears).\n\n    Duration.julianYears 1\n    --> Duration.days 365.25\n\n[julian_year]: https://en.wikipedia.org/wiki/Julian_year_(astronomy) \"Julian year\"\n\n",
+                "type": "Basics.Float -> Duration.Duration"
+            },
+            {
+                "name": "millisecond",
+                "comment": " ",
+                "type": "Duration.Duration"
+            },
+            {
+                "name": "milliseconds",
+                "comment": " Construct a `Duration` from a given number of milliseconds.\n\n    Duration.milliseconds 5000\n    --> Duration.seconds 5\n\n",
+                "type": "Basics.Float -> Duration.Duration"
+            },
+            {
+                "name": "minute",
+                "comment": " ",
+                "type": "Duration.Duration"
+            },
+            {
+                "name": "minutes",
+                "comment": " Construct a `Duration` from a given number of minutes.\n\n    Duration.minutes 3\n    --> Duration.seconds 180\n\n",
+                "type": "Basics.Float -> Duration.Duration"
+            },
+            {
+                "name": "second",
+                "comment": " ",
+                "type": "Duration.Duration"
+            },
+            {
+                "name": "seconds",
+                "comment": " Construct a `Duration` from a given number of seconds.\n",
+                "type": "Basics.Float -> Duration.Duration"
+            },
+            {
+                "name": "subtractFrom",
+                "comment": " Offset a [`Time.Posix`](https://package.elm-lang.org/packages/elm/time/latest/Time#Posix)\nvalue backwards in time by a given `Duration`:\n\n    -- Assuming that 'now' is a Time.Posix value obtained\n    -- from Time.now\n    fiveMinutesAgo =\n        Duration.subtractFrom now (Duration.minutes 5)\n\n`Duration.subtractFrom time duration` is equivalent to `Duration.addTo time\n(Quantity.negate duration)`.\n\n",
+                "type": "Time.Posix -> Duration.Duration -> Time.Posix"
+            },
+            {
+                "name": "week",
+                "comment": " ",
+                "type": "Duration.Duration"
+            },
+            {
+                "name": "weeks",
+                "comment": " Construct a `Duration` from a given number of weeks.\n\n    Duration.weeks 1\n    --> Duration.days 7\n\n",
+                "type": "Basics.Float -> Duration.Duration"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Energy",
+        "comment": " An `Energy` value represents an amount of energy (or work) in joules,\nkilowatt hours etc. It is stored as a number of joules.\n\nNote that since `Joules` is defined as `Product Newtons Meters`, you can compute\nenergy directly as a product of force and distance:\n\n    Force.newtons 5 |> Quantity.times (Length.meters 4)\n    --> Energy.joules 20\n\n@docs Energy, Joules\n\n\n## Conversions\n\n@docs joules, inJoules, kilojoules, inKilojoules, megajoules, inMegajoules, kilowattHours, inKilowattHours\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Energy",
+                "comment": " ",
+                "args": [],
+                "type": "Quantity.Quantity Basics.Float Energy.Joules"
+            },
+            {
+                "name": "Joules",
+                "comment": " ",
+                "args": [],
+                "type": "Quantity.Product Force.Newtons Length.Meters"
+            }
+        ],
+        "values": [
+            {
+                "name": "inJoules",
+                "comment": " Convert an energy value to a number of joules.\n",
+                "type": "Energy.Energy -> Basics.Float"
+            },
+            {
+                "name": "inKilojoules",
+                "comment": " Convert an energy value to a number of kilojoules.\n",
+                "type": "Energy.Energy -> Basics.Float"
+            },
+            {
+                "name": "inKilowattHours",
+                "comment": " Convert an energy value to a number of kilowatt hours.\n",
+                "type": "Energy.Energy -> Basics.Float"
+            },
+            {
+                "name": "inMegajoules",
+                "comment": " Convert an energy value to a number of megajoules.\n",
+                "type": "Energy.Energy -> Basics.Float"
+            },
+            {
+                "name": "joules",
+                "comment": " Construct an energy value from a number of joules.\n",
+                "type": "Basics.Float -> Energy.Energy"
+            },
+            {
+                "name": "kilojoules",
+                "comment": " Construct an energy value from a number of kilojoules.\n",
+                "type": "Basics.Float -> Energy.Energy"
+            },
+            {
+                "name": "kilowattHours",
+                "comment": " Construct an energy value from a number of kilowatt hours.\n\n    Energy.kilowattHours 1\n    --> Energy.megajoules 3.6\n\n",
+                "type": "Basics.Float -> Energy.Energy"
+            },
+            {
+                "name": "megajoules",
+                "comment": " Construct an energy value from a number of megajoules.\n",
+                "type": "Basics.Float -> Energy.Energy"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Force",
+        "comment": " A `Force` value represents a force in newtons, pounds force etc. It is\nstored as a number of newtons.\n\nNote that since `Newtons` is defined as `Product Kilograms\nMetersPerSecondSquared`, you can compute force directly as a product of mass and\nacceleration:\n\n    mass =\n        Mass.kilograms 10\n\n    acceleration =\n        Acceleration.metersPerSecondSquared 2\n\n    mass |> Quantity.times acceleration\n    --> Force.newtons 20\n\n@docs Force, Newtons\n\n\n## Metric\n\n@docs newtons, inNewtons, kilonewtons, inKilonewtons, meganewtons, inMeganewtons\n\n\n## Imperial\n\n@docs pounds, inPounds, kips, inKips\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Force",
+                "comment": " ",
+                "args": [],
+                "type": "Quantity.Quantity Basics.Float Force.Newtons"
+            },
+            {
+                "name": "Newtons",
+                "comment": " ",
+                "args": [],
+                "type": "Quantity.Product Mass.Kilograms Acceleration.MetersPerSecondSquared"
+            }
+        ],
+        "values": [
+            {
+                "name": "inKilonewtons",
+                "comment": " Convert a force value to a number of kilonewtons.\n",
+                "type": "Force.Force -> Basics.Float"
+            },
+            {
+                "name": "inKips",
+                "comment": " Convert a force value to a number of kips.\n",
+                "type": "Force.Force -> Basics.Float"
+            },
+            {
+                "name": "inMeganewtons",
+                "comment": " Convert a force value to a number of meganewtons.\n",
+                "type": "Force.Force -> Basics.Float"
+            },
+            {
+                "name": "inNewtons",
+                "comment": " Convert a force value to a number of newtons.\n",
+                "type": "Force.Force -> Basics.Float"
+            },
+            {
+                "name": "inPounds",
+                "comment": " Convert a force value to a number of pounds force.\n",
+                "type": "Force.Force -> Basics.Float"
+            },
+            {
+                "name": "kilonewtons",
+                "comment": " Construct a force value from a number of kilonewtons.\n",
+                "type": "Basics.Float -> Force.Force"
+            },
+            {
+                "name": "kips",
+                "comment": " Construct a force value from a number of kips (kilopounds force).\n\n    Force.kips 2\n    --> Force.pounds 2000\n\n",
+                "type": "Basics.Float -> Force.Force"
+            },
+            {
+                "name": "meganewtons",
+                "comment": " Construct a force value from a number of meganewtons.\n",
+                "type": "Basics.Float -> Force.Force"
+            },
+            {
+                "name": "newtons",
+                "comment": " Construct a force value from a number of newtons.\n",
+                "type": "Basics.Float -> Force.Force"
+            },
+            {
+                "name": "pounds",
+                "comment": " Construct a force value from a number of pounds force. One pound force is\nthe force required to accelerate one [pound mass][1] at a rate of [one gee][2].\n\n[1]: Mass#pounds\n[2]: Acceleration#gees\n\n",
+                "type": "Basics.Float -> Force.Force"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Illuminance",
+        "comment": " [Illuminance][wp-illuminance] is a measure of how much light is striking a\nsurface: [luminous flux](LuminousFlux) per unit area. It is measured in\n[lux][wp-lux].\n\nIlluminance is useful as a measure of how brightly a surface is lit. For\nexample, on an overcast day, outside surfaces have an illuminance of\napproximately 1000 lux; inside an office might be more like 400 lux and under a\nfull moon might be only 0.2 lux.\n\n[wp-illuminance]: https://en.wikipedia.org/wiki/Illuminance\n[wp-lux]: https://en.wikipedia.org/wiki/Lux>\n\n@docs Illuminance, Lux\n\n\n## Conversions\n\n@docs lux, inLux, footCandles, inFootCandles\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Illuminance",
+                "comment": " ",
+                "args": [],
+                "type": "Quantity.Quantity Basics.Float Illuminance.Lux"
+            },
+            {
+                "name": "Lux",
+                "comment": " ",
+                "args": [],
+                "type": "Quantity.Rate LuminousFlux.Lumens Area.SquareMeters"
+            }
+        ],
+        "values": [
+            {
+                "name": "footCandles",
+                "comment": " Construct an illuminance value from a number of\n[foot-candles][wp-foot-candles]. One foot-candle is equal to one lumen per\nsquare foot.\n\n[wp-foot-candles]: https://en.wikipedia.org/wiki/Foot-candle\n\n",
+                "type": "Basics.Float -> Illuminance.Illuminance"
+            },
+            {
+                "name": "inFootCandles",
+                "comment": " Convert an illuminance value to a number of foot-candles.\n",
+                "type": "Illuminance.Illuminance -> Basics.Float"
+            },
+            {
+                "name": "inLux",
+                "comment": " Convert an illuminance value to a number of lux.\n",
+                "type": "Illuminance.Illuminance -> Basics.Float"
+            },
+            {
+                "name": "lux",
+                "comment": " Construct an illuminance value from a number of lux. One lux is equal to one\nlumen per square meter. See [here][wp-lux-illuminance] for a table of\nilluminance values in lux for common environments.\n\n[wp-lux-illuminance]: https://en.wikipedia.org/wiki/Lux#Illuminance\n\n",
+                "type": "Basics.Float -> Illuminance.Illuminance"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Inductance",
+        "comment": " A `Inductance` value represents an electrical inductance in henries.\n\n@docs Inductance, Henries\n\n\n## Conversions\n\n@docs henries, inHenries\n@docs nanohenries, inNanohenries, microhenries, inMicrohenries, millihenries, inMillihenries, kilohenries, inKilohenries\n\n",
+        "unions": [
+            {
+                "name": "Henries",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Rate",
+                        [
+                            "Voltage.Volts",
+                            "Quantity.Rate Current.Amperes Duration.Seconds"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Inductance",
+                "comment": " ",
+                "args": [],
+                "type": "Quantity.Quantity Basics.Float Inductance.Henries"
+            }
+        ],
+        "values": [
+            {
+                "name": "henries",
+                "comment": " Construct an inductance from a number of henries.\n",
+                "type": "Basics.Float -> Inductance.Inductance"
+            },
+            {
+                "name": "inHenries",
+                "comment": " Convert an inductance to a number of henries.\n",
+                "type": "Inductance.Inductance -> Basics.Float"
+            },
+            {
+                "name": "inKilohenries",
+                "comment": " Convert an inductance to a number of kilohenries.\n",
+                "type": "Inductance.Inductance -> Basics.Float"
+            },
+            {
+                "name": "inMicrohenries",
+                "comment": " Convert an inductance to a number of microhenries.\n",
+                "type": "Inductance.Inductance -> Basics.Float"
+            },
+            {
+                "name": "inMillihenries",
+                "comment": " Convert an inductance to a number of millihenries.\n",
+                "type": "Inductance.Inductance -> Basics.Float"
+            },
+            {
+                "name": "inNanohenries",
+                "comment": " Convert an inductance to a number of nanohenries.\n",
+                "type": "Inductance.Inductance -> Basics.Float"
+            },
+            {
+                "name": "kilohenries",
+                "comment": " Construct an inductance from a number of kilohenries.\n",
+                "type": "Basics.Float -> Inductance.Inductance"
+            },
+            {
+                "name": "microhenries",
+                "comment": " Construct an inductance from a number of microhenries.\n",
+                "type": "Basics.Float -> Inductance.Inductance"
+            },
+            {
+                "name": "millihenries",
+                "comment": " Construct an inductance from a number of millihenries.\n",
+                "type": "Basics.Float -> Inductance.Inductance"
+            },
+            {
+                "name": "nanohenries",
+                "comment": " Construct an inductance from a number of nanohenries.\n",
+                "type": "Basics.Float -> Inductance.Inductance"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Length",
+        "comment": " A `Length` represents a length in meters, feet, centimeters, miles etc. It\nis stored as a number of meters.\n\n@docs Length, Meters\n\n\n## Metric\n\n@docs meters, inMeters\n@docs angstroms, inAngstroms, nanometers, inNanometers, microns, inMicrons, millimeters, inMillimeters, centimeters, inCentimeters, kilometers, inKilometers\n\n\n## Imperial\n\n@docs thou, inThou, inches, inInches, feet, inFeet, yards, inYards, miles, inMiles\n\n\n## CSS and typography\n\n@docs cssPixels, inCssPixels, points, inPoints, picas, inPicas\n\n\n## Astronomical\n\n@docs astronomicalUnits, inAstronomicalUnits, parsecs, inParsecs, lightYears, inLightYears\n\n\n## Constants\n\nShorthand for `Length.meters 1`, `Length.feet 1` etc. Can be convenient to use\nwith [`Quantity.per`](Quantity#per).\n\nNote that `thou` is omitted since it doesn't have separate singular and plural\nforms.\n\n@docs meter, angstrom, nanometer, micron, millimeter, centimeter, kilometer\n@docs inch, foot, yard, mile\n@docs astronomicalUnit, parsec, lightYear\n\n",
+        "unions": [
+            {
+                "name": "Meters",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Length",
+                "comment": " ",
+                "args": [],
+                "type": "Quantity.Quantity Basics.Float Length.Meters"
+            }
+        ],
+        "values": [
+            {
+                "name": "angstrom",
+                "comment": " ",
+                "type": "Length.Length"
+            },
+            {
+                "name": "angstroms",
+                "comment": " Construct a length from a number of angstroms.\n\n    Length.angstroms 1\n    --> Length.meters 1e-10\n\n",
+                "type": "Basics.Float -> Length.Length"
+            },
+            {
+                "name": "astronomicalUnit",
+                "comment": " ",
+                "type": "Length.Length"
+            },
+            {
+                "name": "astronomicalUnits",
+                "comment": " Construct a length from a number of [astronomical units][au] (AU). One AU is\napproximately equal to the average distance of the Earth from the Sun.\n\n[au]: https://en.wikipedia.org/wiki/Astronomical_unit \"Astronomical unit\"\n\n",
+                "type": "Basics.Float -> Length.Length"
+            },
+            {
+                "name": "centimeter",
+                "comment": " ",
+                "type": "Length.Length"
+            },
+            {
+                "name": "centimeters",
+                "comment": " Construct a length from a number of centimeters.\n",
+                "type": "Basics.Float -> Length.Length"
+            },
+            {
+                "name": "cssPixels",
+                "comment": " Construct a length from a number of [CSS pixels](https://drafts.csswg.org/css-values-3/#absolute-lengths),\ndefined as 1/96 of an inch.\n\nNote the difference between this function and [`Pixels.pixels`](Pixels#pixels).\n`Length.cssPixels 1` is equivalent to `Length.inches (1 / 96)` or\napproximately `Length.millimeters 0.264583`; it returns a length in _real world_\nunits equal to the (nominal) physical size of one CSS pixel.\n\nIn contrast, `Pixels.pixels 1` simply returns an abstract \"1 pixel\" value. You\ncan think of `Length.cssPixels 1` as a shorthand for\n\n    Pixels.pixels 1\n        |> Quantity.at_\n            (Pixels.pixels 96\n                |> Quantity.per (Length.inches 1)\n            )\n\nThat is, `Length.cssPixels 1` is the size of 1 pixel at a resolution of 96 DPI.\n\n",
+                "type": "Basics.Float -> Length.Length"
+            },
+            {
+                "name": "feet",
+                "comment": " Construct a length from a number of feet.\n",
+                "type": "Basics.Float -> Length.Length"
+            },
+            {
+                "name": "foot",
+                "comment": " ",
+                "type": "Length.Length"
+            },
+            {
+                "name": "inAngstroms",
+                "comment": " Convert a length to a number of angstroms.\n\n    Length.nanometers 1 |> Length.inAngstroms\n    --> 10\n\n",
+                "type": "Length.Length -> Basics.Float"
+            },
+            {
+                "name": "inAstronomicalUnits",
+                "comment": " Convert a length to a number of astronomical units.\n",
+                "type": "Length.Length -> Basics.Float"
+            },
+            {
+                "name": "inCentimeters",
+                "comment": " Convert a length to a number of centimeters.\n",
+                "type": "Length.Length -> Basics.Float"
+            },
+            {
+                "name": "inCssPixels",
+                "comment": " Convert a length to a number of CSS pixels.\n",
+                "type": "Length.Length -> Basics.Float"
+            },
+            {
+                "name": "inFeet",
+                "comment": " Convert a length to a number of feet.\n",
+                "type": "Length.Length -> Basics.Float"
+            },
+            {
+                "name": "inInches",
+                "comment": " Convert a length to a number of inches.\n",
+                "type": "Length.Length -> Basics.Float"
+            },
+            {
+                "name": "inKilometers",
+                "comment": " Convert a length to a number of kilometers.\n",
+                "type": "Length.Length -> Basics.Float"
+            },
+            {
+                "name": "inLightYears",
+                "comment": " Convert a length to a number of light years.\n",
+                "type": "Length.Length -> Basics.Float"
+            },
+            {
+                "name": "inMeters",
+                "comment": " Convert a length to a number of meters.\n\n    Length.feet 1 |> Length.inMeters\n    --> 0.3048\n\n",
+                "type": "Length.Length -> Basics.Float"
+            },
+            {
+                "name": "inMicrons",
+                "comment": " Convert a length to a number of microns (micrometers).\n\n    Length.millimeters 1 |> Length.inMicrons\n    --> 1000\n\n",
+                "type": "Length.Length -> Basics.Float"
+            },
+            {
+                "name": "inMiles",
+                "comment": " Convert a length to a number of miles.\n",
+                "type": "Length.Length -> Basics.Float"
+            },
+            {
+                "name": "inMillimeters",
+                "comment": " Convert a length to number of millimeters.\n",
+                "type": "Length.Length -> Basics.Float"
+            },
+            {
+                "name": "inNanometers",
+                "comment": " Convert a length to a number of nanometers.\n\n    Length.microns 1 |> Length.inNanometers\n    --> 1000\n\n",
+                "type": "Length.Length -> Basics.Float"
+            },
+            {
+                "name": "inParsecs",
+                "comment": " Convert a length to a number of parsecs.\n",
+                "type": "Length.Length -> Basics.Float"
+            },
+            {
+                "name": "inPicas",
+                "comment": " Convert a length to a number of picas.\n",
+                "type": "Length.Length -> Basics.Float"
+            },
+            {
+                "name": "inPoints",
+                "comment": " Convert a length to a number of points.\n",
+                "type": "Length.Length -> Basics.Float"
+            },
+            {
+                "name": "inThou",
+                "comment": " Convert a length to a number of thou (thousandths of an inch).\n\n    Length.millimeters 1 |> Length.inThou\n    --> 39.37007874015748\n\n",
+                "type": "Length.Length -> Basics.Float"
+            },
+            {
+                "name": "inYards",
+                "comment": " Convert a length to a number of yards.\n",
+                "type": "Length.Length -> Basics.Float"
+            },
+            {
+                "name": "inch",
+                "comment": " ",
+                "type": "Length.Length"
+            },
+            {
+                "name": "inches",
+                "comment": " Construct a length from a number of inches.\n",
+                "type": "Basics.Float -> Length.Length"
+            },
+            {
+                "name": "kilometer",
+                "comment": " ",
+                "type": "Length.Length"
+            },
+            {
+                "name": "kilometers",
+                "comment": " Construct a length from a number of kilometers.\n",
+                "type": "Basics.Float -> Length.Length"
+            },
+            {
+                "name": "lightYear",
+                "comment": " ",
+                "type": "Length.Length"
+            },
+            {
+                "name": "lightYears",
+                "comment": " Construct a length from a number of light years. One light year is the\ndistance traveled when moving at the speed of light for one [Julian year](Duration#julianYear).\n",
+                "type": "Basics.Float -> Length.Length"
+            },
+            {
+                "name": "meter",
+                "comment": " ",
+                "type": "Length.Length"
+            },
+            {
+                "name": "meters",
+                "comment": " Construct a length from a number of meters.\n\n    height : Length\n    height =\n        Length.meters 2\n\n",
+                "type": "Basics.Float -> Length.Length"
+            },
+            {
+                "name": "micron",
+                "comment": " ",
+                "type": "Length.Length"
+            },
+            {
+                "name": "microns",
+                "comment": " Construct a length from a number of microns (micrometers).\n\n    Length.microns 1\n    --> Length.meters 1e-6\n\n",
+                "type": "Basics.Float -> Length.Length"
+            },
+            {
+                "name": "mile",
+                "comment": " ",
+                "type": "Length.Length"
+            },
+            {
+                "name": "miles",
+                "comment": " Construct a length from a number of miles.\n",
+                "type": "Basics.Float -> Length.Length"
+            },
+            {
+                "name": "millimeter",
+                "comment": " ",
+                "type": "Length.Length"
+            },
+            {
+                "name": "millimeters",
+                "comment": " Construct a length from number of millimeters.\n",
+                "type": "Basics.Float -> Length.Length"
+            },
+            {
+                "name": "nanometer",
+                "comment": " ",
+                "type": "Length.Length"
+            },
+            {
+                "name": "nanometers",
+                "comment": " Construct a length from a number of nanometers.\n\n    Length.nanometers 1\n    --> Length.meters 1e-9\n\n",
+                "type": "Basics.Float -> Length.Length"
+            },
+            {
+                "name": "parsec",
+                "comment": " ",
+                "type": "Length.Length"
+            },
+            {
+                "name": "parsecs",
+                "comment": " Construct a length from a number of [parsecs][parsec].\n\n[parsec]: https://en.wikipedia.org/wiki/Parsec \"Parsec\"\n\n",
+                "type": "Basics.Float -> Length.Length"
+            },
+            {
+                "name": "picas",
+                "comment": " Construct a length from a number of [picas](https://en.wikipedia.org/wiki/Pica_%28typography%29),\ndefined as 1/6 of an inch.\n",
+                "type": "Basics.Float -> Length.Length"
+            },
+            {
+                "name": "points",
+                "comment": " Construct a length from a number of [points](https://en.wikipedia.org/wiki/Point_%28typography%29),\ndefined as 1/72 of an inch.\n",
+                "type": "Basics.Float -> Length.Length"
+            },
+            {
+                "name": "thou",
+                "comment": " Construct a length from a number of thou (thousandths of an inch).\n\n    Length.thou 5\n    --> Length.inches 0.005\n\n",
+                "type": "Basics.Float -> Length.Length"
+            },
+            {
+                "name": "yard",
+                "comment": " ",
+                "type": "Length.Length"
+            },
+            {
+                "name": "yards",
+                "comment": " Construct a length from a number of yards.\n",
+                "type": "Basics.Float -> Length.Length"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Luminance",
+        "comment": " [Luminance][wp-luminance] is [luminous intensity](LuminousIntensity) per\nunit area or equivalently [illuminance](Illuminance) per [solid\nangle](SolidAngle), and is measured in [nits][wp-nits] (or, to use standard SI\nterminology, candelas per square meter - the two terms are equivalent).\nLuminance is often used to describe the brightness of a particular surface as\nviewed from a particular direction; for example, a computer monitor might be\ndescribed as having a brightness of 300 nits (but that would likely only be true\nwhen viewing straight on instead of at an angle). See [here][wp-luminance-values]\nfor some common approximate luminance values.\n\n[wp-luminance]: https://en.wikipedia.org/wiki/Luminance\n[wp-nits]: https://en.wikipedia.org/wiki/Candela_per_square_metre\n[wp-luminance-values]: https://en.wikipedia.org/wiki/Orders_of_magnitude_(luminance)\n\n@docs Luminance, Nits\n\n\n## Conversions\n\n@docs nits, inNits, footLamberts, inFootLamberts\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Luminance",
+                "comment": " ",
+                "args": [],
+                "type": "Quantity.Quantity Basics.Float Luminance.Nits"
+            },
+            {
+                "name": "Nits",
+                "comment": " ",
+                "args": [],
+                "type": "Quantity.Rate LuminousIntensity.Candelas Area.SquareMeters"
+            }
+        ],
+        "values": [
+            {
+                "name": "footLamberts",
+                "comment": " Construct a luminance value from a number of\n[foot-lamberts][wp-foot-lambert].\n\n[wp-foot-lambert]: https://en.wikipedia.org/wiki/Foot-lambert\n\n",
+                "type": "Basics.Float -> Luminance.Luminance"
+            },
+            {
+                "name": "inFootLamberts",
+                "comment": " Convert a luminance value to a number of foot-lamberts.\n",
+                "type": "Luminance.Luminance -> Basics.Float"
+            },
+            {
+                "name": "inNits",
+                "comment": " Convert a luminance value to a number of nits.\n",
+                "type": "Luminance.Luminance -> Basics.Float"
+            },
+            {
+                "name": "nits",
+                "comment": " Construct a luminance value from a number of nits. One nit is equal to one\n[candela](LuminousIntensity) per square meter, or equivalently one\n[lux](Illuminance) per [steradian](SolidAngle).\n",
+                "type": "Basics.Float -> Luminance.Luminance"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "LuminousFlux",
+        "comment": " A `LuminousFlux` value represents the total amount of light emitted by a\nlight source. You can think of it as roughly \"photons per second\", although\n[it's a bit more complicated than that][wp-luminous-flux].\n\nLuminous flux is stored in [lumens][wp-lumen]. It's often used to describe the\ntotal output of a light bulb; for example, a 50 watt incandescent bulb and a 6\nwatt LED bulb might each have an output of 400 lumens.\n\n[wp-luminous-flux]: https://en.wikipedia.org/wiki/Luminous_flux\n[wp-lumen]: https://en.wikipedia.org/wiki/Lumen_(unit)\n\n@docs Lumens, LuminousFlux, lumens, inLumens\n\n",
+        "unions": [
+            {
+                "name": "Lumens",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "LuminousFlux",
+                "comment": " ",
+                "args": [],
+                "type": "Quantity.Quantity Basics.Float LuminousFlux.Lumens"
+            }
+        ],
+        "values": [
+            {
+                "name": "inLumens",
+                "comment": " Convert a luminous flux value to a number of lumens.\n",
+                "type": "LuminousFlux.LuminousFlux -> Basics.Float"
+            },
+            {
+                "name": "lumens",
+                "comment": " Construct a luminous flux value from a number of lumens. See\n[here][wp-luminous-flux-examples] and [here][wp-lumen-lighting] for the number\nof lumens emitted by some common light sources.\n\n[wp-luminous-flux-examples]: https://en.wikipedia.org/wiki/Luminous_flux#Examples\n[wp-lumen-lighting]: https://en.wikipedia.org/wiki/Lumen_(unit)#Lighting\n\n",
+                "type": "Basics.Float -> LuminousFlux.LuminousFlux"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "LuminousIntensity",
+        "comment": " [Luminous intensity][wp-luminous-intensity] is a measure of the amount of\nlight produced ([luminous flux](LuminousFlux)) per unit [solid\nangle](SolidAngle).\n\nConsider a light bulb that emits light in all directions and a spotlight that\nonly emits light in a cone. If both lights had the same luminous flux (same\ntotal amount of light produced), then the spotlight would have higher luminous\nintensity since its light is concentrated into a smaller solid angle (and the\nlight from the spotlight would appear brighter if viewed from the same\ndistance).\n\nOn the other hand, if both lights had the same luminous intensity, then they\nwould appear equally bright when viewed from the same distance (something lit by\nthe spotlight would appear equally bright as the same object lit by the light\nbulb) but the spotlight would have lower luminous flux since its light covers a\nsmaller solid angle.\n\nLuminous intensity is measured in [candelas][wp-candelas].\n\n[wp-luminous-intensity]: https://en.wikipedia.org/wiki/Luminous_intensity\n[wp-candelas]: https://en.wikipedia.org/wiki/Candela\n\n@docs Candelas, LuminousIntensity\n\n@docs candelas, inCandelas\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Candelas",
+                "comment": " ",
+                "args": [],
+                "type": "Quantity.Rate LuminousFlux.Lumens SolidAngle.Steradians"
+            },
+            {
+                "name": "LuminousIntensity",
+                "comment": " ",
+                "args": [],
+                "type": "Quantity.Quantity Basics.Float LuminousIntensity.Candelas"
+            }
+        ],
+        "values": [
+            {
+                "name": "candelas",
+                "comment": " Construct a luminous intensity value from a number of candelas. One candela\nis roughly equivalent to the luminous intensity of a single wax candle.\n",
+                "type": "Basics.Float -> LuminousIntensity.LuminousIntensity"
+            },
+            {
+                "name": "inCandelas",
+                "comment": " Convert a luminous intensity to a number of candelas. For example, to\ncompute the luminous intensity of a light bulb with an output of 470 lumens\nwhich emits light equally in all directions:\n\n    LuminousFlux.lumens 470\n        |> Quantity.per (SolidAngle.spats 1)\n        |> LuminousIntensity.inCandelas\n    --> 37.4014\n\nIf the same amount of light was emitted over a hemisphere instead of a full\nsphere, the luminous intensity would be twice as great:\n\n    LuminousFlux.lumens 470\n        |> Quantity.per (SolidAngle.spats 0.5)\n        |> LuminousIntensity.inCandelas\n    --> 74.8028\n\n",
+                "type": "LuminousIntensity.LuminousIntensity -> Basics.Float"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Mass",
+        "comment": " A `Mass` represents a mass in kilograms, pounds, metric or imperial tons\netc. It is stored as a number of kilograms.\n\n@docs Mass, Kilograms\n\n\n## Metric\n\n@docs kilograms, inKilograms, grams, inGrams, metricTons, inMetricTons\n\n\n## Imperial\n\n@docs pounds, inPounds, ounces, inOunces, longTons, inLongTons\n\n\n## U.S. customary\n\n@docs shortTons, inShortTons\n\n\n## Constants\n\nShorthand for `Mass.kilograms 1`, `Mass.shortTons 1` etc. Can be convenient to\nuse with [`Quantity.per`](Quantity#per).\n\n@docs kilogram, gram, metricTon, pound, ounce, longTon, shortTon\n\n",
+        "unions": [
+            {
+                "name": "Kilograms",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Mass",
+                "comment": " ",
+                "args": [],
+                "type": "Quantity.Quantity Basics.Float Mass.Kilograms"
+            }
+        ],
+        "values": [
+            {
+                "name": "gram",
+                "comment": " ",
+                "type": "Mass.Mass"
+            },
+            {
+                "name": "grams",
+                "comment": " Construct a mass from a number of grams.\n",
+                "type": "Basics.Float -> Mass.Mass"
+            },
+            {
+                "name": "inGrams",
+                "comment": " Convert a mass to a number of grams.\n",
+                "type": "Mass.Mass -> Basics.Float"
+            },
+            {
+                "name": "inKilograms",
+                "comment": " Convert a mass to a number of kilograms.\n",
+                "type": "Mass.Mass -> Basics.Float"
+            },
+            {
+                "name": "inLongTons",
+                "comment": " Convert a mass to a number of long tons.\n",
+                "type": "Mass.Mass -> Basics.Float"
+            },
+            {
+                "name": "inMetricTons",
+                "comment": " Convert a mass to a number of metric tons.\n",
+                "type": "Mass.Mass -> Basics.Float"
+            },
+            {
+                "name": "inOunces",
+                "comment": " Convert a mass to a number of ounces.\n\n    Mass.pounds 1 |> Mass.inOunces\n    --> 16\n\n",
+                "type": "Mass.Mass -> Basics.Float"
+            },
+            {
+                "name": "inPounds",
+                "comment": " Convert a mass to a number of pounds.\n",
+                "type": "Mass.Mass -> Basics.Float"
+            },
+            {
+                "name": "inShortTons",
+                "comment": " Convert a mass to a number of short tons.\n",
+                "type": "Mass.Mass -> Basics.Float"
+            },
+            {
+                "name": "kilogram",
+                "comment": " ",
+                "type": "Mass.Mass"
+            },
+            {
+                "name": "kilograms",
+                "comment": " Construct a mass from a number of kilograms.\n",
+                "type": "Basics.Float -> Mass.Mass"
+            },
+            {
+                "name": "longTon",
+                "comment": " ",
+                "type": "Mass.Mass"
+            },
+            {
+                "name": "longTons",
+                "comment": " Construct a mass from a number of [long tons][1]. This is the 'ton' commonly\nused in the United Kingdom and British Commonwealth.\n\n    Mass.longTons 1\n    --> Mass.pounds 2240\n\n[1]: https://en.wikipedia.org/wiki/Long_ton\n\n",
+                "type": "Basics.Float -> Mass.Mass"
+            },
+            {
+                "name": "metricTon",
+                "comment": " ",
+                "type": "Mass.Mass"
+            },
+            {
+                "name": "metricTons",
+                "comment": " Construct a mass from a number of [metric tons][1].\n\n    Mass.metricTons 1\n    --> Mass.kilograms 1000\n\n[1]: https://en.wikipedia.org/wiki/Tonne\n\n",
+                "type": "Basics.Float -> Mass.Mass"
+            },
+            {
+                "name": "ounce",
+                "comment": " ",
+                "type": "Mass.Mass"
+            },
+            {
+                "name": "ounces",
+                "comment": " Construct a mass from a number of ounces.\n",
+                "type": "Basics.Float -> Mass.Mass"
+            },
+            {
+                "name": "pound",
+                "comment": " ",
+                "type": "Mass.Mass"
+            },
+            {
+                "name": "pounds",
+                "comment": " Construct a mass from a number of pounds.\n",
+                "type": "Basics.Float -> Mass.Mass"
+            },
+            {
+                "name": "shortTon",
+                "comment": " ",
+                "type": "Mass.Mass"
+            },
+            {
+                "name": "shortTons",
+                "comment": " Construct a mass from a number of [short tons][1]. This is the 'ton'\ncommonly used in the United States.\n\n    Mass.shortTons 1\n    --> Mass.pounds 2000\n\n[1]: https://en.wikipedia.org/wiki/Short_ton\n\n",
+                "type": "Basics.Float -> Mass.Mass"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Molarity",
+        "comment": " A `Molarity` value represents a concentration of substance in moles per\ncubic meter, moles per liter, millimoles per liter etc. It is stored as a number\nof moles per cubic meter.\n\nNote that the [NIST Guide to the\nSI](https://www.nist.gov/pml/special-publication-811/nist-guide-si-chapter-8)\nstates that the term \"molarity\" is considered obsolete, but it appears to still\nbe in common use and is far less verbose than the alternative NIST suggestion of\n\"amount-of-substance concentration\".\n\nSince the units of `Molarity` are defined to be `Rate Moles CubicMeters` (amount\nof substance per unit volume), you can construct a `Molarity` value using\n`Quantity.per`:\n\n    molarity =\n        substanceAmount |> Quantity.per volume\n\nYou can also do rate-related calculations with `Molarity` values to compute\n`SubstanceAmount` or `Volume`:\n\n    substanceAmount =\n        volume |> Quantity.at molarity\n\n    volume =\n        substanceAmount |> Quantity.at_ molarity\n\n@docs Molarity, MolesPerCubicMeter\n@docs molesPerCubicMeter, inMolesPerCubicMeter\n@docs molesPerLiter, inMolesPerLiter\n@docs decimolesPerLiter, inDecimolesPerLiter\n@docs centimolesPerLiter, inCentimolesPerLiter\n@docs millimolesPerLiter, inMillimolesPerLiter\n@docs micromolesPerLiter, inMicromolesPerLiter\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Molarity",
+                "comment": " ",
+                "args": [],
+                "type": "Quantity.Quantity Basics.Float Molarity.MolesPerCubicMeter"
+            },
+            {
+                "name": "MolesPerCubicMeter",
+                "comment": " ",
+                "args": [],
+                "type": "Quantity.Rate SubstanceAmount.Moles Volume.CubicMeters"
+            }
+        ],
+        "values": [
+            {
+                "name": "centimolesPerLiter",
+                "comment": " Construct a molarity from a number of centimoles per liter.\n",
+                "type": "Basics.Float -> Molarity.Molarity"
+            },
+            {
+                "name": "decimolesPerLiter",
+                "comment": " Construct a molarity from a number of decimoles per liter.\n",
+                "type": "Basics.Float -> Molarity.Molarity"
+            },
+            {
+                "name": "inCentimolesPerLiter",
+                "comment": " Convert a molarity to a number of centimoles per liter.\n",
+                "type": "Molarity.Molarity -> Basics.Float"
+            },
+            {
+                "name": "inDecimolesPerLiter",
+                "comment": " Convert a molarity to a number of decimoles per liter.\n",
+                "type": "Molarity.Molarity -> Basics.Float"
+            },
+            {
+                "name": "inMicromolesPerLiter",
+                "comment": " Convert a molarity to a number of micromoles per liter.\n",
+                "type": "Molarity.Molarity -> Basics.Float"
+            },
+            {
+                "name": "inMillimolesPerLiter",
+                "comment": " Convert a molarity to a number of millimoles per liter.\n",
+                "type": "Molarity.Molarity -> Basics.Float"
+            },
+            {
+                "name": "inMolesPerCubicMeter",
+                "comment": " Convert a molarity to a number of moles per cubic meter.\n",
+                "type": "Molarity.Molarity -> Basics.Float"
+            },
+            {
+                "name": "inMolesPerLiter",
+                "comment": " Convert a molarity to a number of moles per liter.\n",
+                "type": "Molarity.Molarity -> Basics.Float"
+            },
+            {
+                "name": "micromolesPerLiter",
+                "comment": " Construct a molarity from a number of micromoles per liter.\n",
+                "type": "Basics.Float -> Molarity.Molarity"
+            },
+            {
+                "name": "millimolesPerLiter",
+                "comment": " Construct a molarity from a number of millimoles per liter.\n",
+                "type": "Basics.Float -> Molarity.Molarity"
+            },
+            {
+                "name": "molesPerCubicMeter",
+                "comment": " Construct a molarity from a number of moles per cubic meter.\n",
+                "type": "Basics.Float -> Molarity.Molarity"
+            },
+            {
+                "name": "molesPerLiter",
+                "comment": " Construct a molarity from a number of moles per liter.\n",
+                "type": "Basics.Float -> Molarity.Molarity"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Pixels",
+        "comment": " Although most of the focus of `elm-units` is on physical/scientific units,\nit's often useful to be able to safely convert back and forth between (for\nexample) [`Length`](Length) values in the real world and on-screen lengths in\npixels.\n\nThis module provides a standard `Pixels` units type and basic functions for\nconstructing/converting values of type `Quantity Int Pixels` or\n`Quantity Float Pixels`, which allows you to do things like represent\nconversions between real-world and on-screen lengths as [rates of change][1].\nThis in turn means that all the normal [`Quantity`](Quantity) functions can be\nused to convert between pixels and other units, or even do type-safe math\ndirectly on pixel values.\n\n[1]: Quantity#working-with-rates\n\n@docs Pixels\n\n@docs int, float, toInt, toFloat, pixels, inPixels, pixel\n\n\n## Rates\n\n@docs PixelsPerSecond, PixelsPerSecondSquared\n\n@docs pixelsPerSecond, inPixelsPerSecond\n\n@docs pixelsPerSecondSquared, inPixelsPerSecondSquared\n\n\n## Areas\n\n@docs SquarePixels\n\n@docs squarePixels, inSquarePixels\n\n",
+        "unions": [
+            {
+                "name": "Pixels",
+                "comment": " Units type representing one on-screen pixel.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "PixelsPerSecond",
+                "comment": " Units type representing an on-screen speed of one pixel per second.\n",
+                "args": [],
+                "type": "Quantity.Rate Pixels.Pixels Duration.Seconds"
+            },
+            {
+                "name": "PixelsPerSecondSquared",
+                "comment": " Units type representing an on-screen acceleration of one pixel per second\nsquared.\n",
+                "args": [],
+                "type": "Quantity.Rate Pixels.PixelsPerSecond Duration.Seconds"
+            },
+            {
+                "name": "SquarePixels",
+                "comment": " Units type representing an on-screen area of one square pixel. For example,\na 32x32 image has an area of 1024 square pixels.\n",
+                "args": [],
+                "type": "Quantity.Squared Pixels.Pixels"
+            }
+        ],
+        "values": [
+            {
+                "name": "float",
+                "comment": " Construct a quantity representing a floating-point number of on-screen\npixels:\n\n    lineWeight =\n        Pixels.float 1.5\n\n",
+                "type": "Basics.Float -> Quantity.Quantity Basics.Float Pixels.Pixels"
+            },
+            {
+                "name": "inPixels",
+                "comment": " Convert a `Pixels` value to a plain number of pixels. This is a generic\nversion of `Pixels.toInt`/`Pixels.toFloat`.\n",
+                "type": "Quantity.Quantity number Pixels.Pixels -> number"
+            },
+            {
+                "name": "inPixelsPerSecond",
+                "comment": " Convert an on-screen speed to a number of pixels per second.\n\n    elapsedTime =\n        Duration.milliseconds 16\n\n    dragDistance =\n        Pixels.float 2\n\n    dragSpeed =\n        dragDistance |> Quantity.per elapsedTime\n\n    dragSpeed |> Pixels.inPixelsPerSecond\n    --> 125\n\n",
+                "type": "Quantity.Quantity Basics.Float Pixels.PixelsPerSecond -> Basics.Float"
+            },
+            {
+                "name": "inPixelsPerSecondSquared",
+                "comment": " Convert an on-screen acceleration to a number of pixels per second squared.\n",
+                "type": "Quantity.Quantity Basics.Float Pixels.PixelsPerSecondSquared -> Basics.Float"
+            },
+            {
+                "name": "inSquarePixels",
+                "comment": " Convert an on-screen area to a number of square pixels.\n\n    area =\n        Pixels.int 1928 |> Quantity.times (Pixels.int 1080)\n\n    area |> Pixels.inSquarePixels\n    --> 2073600\n\n",
+                "type": "Quantity.Quantity number Pixels.SquarePixels -> number"
+            },
+            {
+                "name": "int",
+                "comment": " Construct a quantity representing an integer number of on-screen pixels:\n\n    screenWidth =\n        Pixels.int 1920\n\n",
+                "type": "Basics.Int -> Quantity.Quantity Basics.Int Pixels.Pixels"
+            },
+            {
+                "name": "pixel",
+                "comment": " Shorthand for `Pixels.pixels 1`. Can be convenient to use with\n[`Quantity.per`](Quantity#per).\n",
+                "type": "Quantity.Quantity number Pixels.Pixels"
+            },
+            {
+                "name": "pixels",
+                "comment": " Generic version of `Pixels.int`/`Pixels.float`, for consistency with other\nmodules like `Length`. Note that passing an `Int` will give you a\n\n    Quantity Int Pixels\n\nwhile passing a `Float` will give you a\n\n    Quantity Float Pixels\n\nIf you pass a _literal_ integer like `1920`, you will get a generic `Quantity\nnumber Pixels` which can be used as either an `Int` _or_ `Float` number of\npixels.\n\n",
+                "type": "number -> Quantity.Quantity number Pixels.Pixels"
+            },
+            {
+                "name": "pixelsPerSecond",
+                "comment": " Construct an on-screen speed from a number of pixels per second.\n",
+                "type": "Basics.Float -> Quantity.Quantity Basics.Float Pixels.PixelsPerSecond"
+            },
+            {
+                "name": "pixelsPerSecondSquared",
+                "comment": " Construct an on-screen acceleration from a number of pixels per second\nsquared.\n",
+                "type": "Basics.Float -> Quantity.Quantity Basics.Float Pixels.PixelsPerSecondSquared"
+            },
+            {
+                "name": "squarePixels",
+                "comment": " Construct an on-screen area from a number of square pixels.\n",
+                "type": "number -> Quantity.Quantity number Pixels.SquarePixels"
+            },
+            {
+                "name": "toFloat",
+                "comment": " Convert a floating-point number of pixels back into a plain `Float`:\n\n    pixelDensity =\n        Pixels.float 96 |> Quantity.per (Length.inches 1)\n\n    Length.centimeters 1\n        |> Quantity.at pixelDensity\n        |> Pixels.toFloat\n    --> 37.795275590551185\n\n",
+                "type": "Quantity.Quantity Basics.Float Pixels.Pixels -> Basics.Float"
+            },
+            {
+                "name": "toInt",
+                "comment": " Convert an integer number of pixels back into a plain `Int`:\n\n    Pixels.int 1920\n        |> Quantity.multiplyBy 2\n        |> Pixels.toInt\n    --> 3840\n\n",
+                "type": "Quantity.Quantity Basics.Int Pixels.Pixels -> Basics.Int"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Power",
+        "comment": " A `Power` value represents power in watts or horsepower. It is stored as a\nnumber of watts.\n\nNote that since `Watts` is defined as `Rate Joules Seconds` (energy per unit\ntime), you can construct a `Power` value using `Quantity.per`:\n\n    power =\n        energy |> Quantity.per duration\n\nYou can also do rate-related calculations with `Power` values to compute\n`Energy` or `Duration`:\n\n    energy =\n        power |> Quantity.for duration\n\n    alsoEnergy =\n        duration |> Quantity.at power\n\n    duration =\n        energy |> Quantity.at_ power\n\n[1]: https://en.wikipedia.org/wiki/Horsepower#Definitions\n\n@docs Power, Watts\n\n\n## Metric\n\n@docs watts, inWatts, kilowatts, inKilowatts, megawatts, inMegawatts\n\n\n## Horsepower\n\nWho knew that there were not one, not two, but _three_ possible interpretations\nof \"one horsepower\"? (Actually there are more than that, but these three\nseemed the most reasonable.)\n\n@docs metricHorsepower, inMetricHorsepower, mechanicalHorsepower, inMechanicalHorsepower, electricalHorsepower, inElectricalHorsepower\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Power",
+                "comment": " ",
+                "args": [],
+                "type": "Quantity.Quantity Basics.Float Power.Watts"
+            },
+            {
+                "name": "Watts",
+                "comment": " ",
+                "args": [],
+                "type": "Quantity.Rate Energy.Joules Duration.Seconds"
+            }
+        ],
+        "values": [
+            {
+                "name": "electricalHorsepower",
+                "comment": " Construct a `Power` value from an number of [electrical horsepower][1].\n\n    Power.electricalHorsepower 1\n    --> Power.watts 746\n\n[1]: https://en.wikipedia.org/wiki/Horsepower#Electrical_horsepower\n\n",
+                "type": "Basics.Float -> Power.Power"
+            },
+            {
+                "name": "inElectricalHorsepower",
+                "comment": " Convert a `Power` value to a number of electrical horsepower.\n",
+                "type": "Power.Power -> Basics.Float"
+            },
+            {
+                "name": "inKilowatts",
+                "comment": " Convert a `Power` value to a number of kilowatts.\n",
+                "type": "Power.Power -> Basics.Float"
+            },
+            {
+                "name": "inMechanicalHorsepower",
+                "comment": " Convert a `Power` value to a number of mechanical horsepower.\n",
+                "type": "Power.Power -> Basics.Float"
+            },
+            {
+                "name": "inMegawatts",
+                "comment": " Convert a `Power` value to a number of megawatts.\n",
+                "type": "Power.Power -> Basics.Float"
+            },
+            {
+                "name": "inMetricHorsepower",
+                "comment": " Convert a `Power` value to a number of metric horsepower.\n",
+                "type": "Power.Power -> Basics.Float"
+            },
+            {
+                "name": "inWatts",
+                "comment": " Convert a `Power` value to a number of watts.\n",
+                "type": "Power.Power -> Basics.Float"
+            },
+            {
+                "name": "kilowatts",
+                "comment": " Construct a `Power` value from a number of kilowatts.\n",
+                "type": "Basics.Float -> Power.Power"
+            },
+            {
+                "name": "mechanicalHorsepower",
+                "comment": " Construct a `Power` value from an number of [mechanical horsepower][1].\n\n    Power.mechanicalHorsepower 1\n    --> Power.watts 745.6998715822702\n\n[1]: https://en.wikipedia.org/wiki/Horsepower#Mechanical_horsepower\n\n",
+                "type": "Basics.Float -> Power.Power"
+            },
+            {
+                "name": "megawatts",
+                "comment": " Construct a `Power` value from a number of megawatts.\n",
+                "type": "Basics.Float -> Power.Power"
+            },
+            {
+                "name": "metricHorsepower",
+                "comment": " Construct a `Power` value from an number of [metric horsepower][1].\n\n    Power.metricHorsepower 1\n    --> Power.watts 735.49875\n\n[1]: https://en.wikipedia.org/wiki/Horsepower#Metric_horsepower\n\n",
+                "type": "Basics.Float -> Power.Power"
+            },
+            {
+                "name": "watts",
+                "comment": " Construct a `Power` value from a number of watts.\n",
+                "type": "Basics.Float -> Power.Power"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Pressure",
+        "comment": " A `Pressure` value represents a pressure in kilopascals, pounds per square\ninch, [atmospheres][1] etc. It is stored as a number of pascals.\n\nNote that since `Pascals` is defined as `Rate Newtons SquareMeters` (force per\nunit area), you can construct a `Pressure` value using `Quantity.per`:\n\n    pressure =\n        force |> Quantity.per area\n\nYou can also do rate-related calculations with `Pressure` values to compute\n`Force` or `Area`:\n\n    force =\n        area |> Quantity.at pressure\n\n    area =\n        force |> Quantity.at_ pressure\n\n[1]: https://en.wikipedia.org/wiki/Atmosphere_(unit)\n\n@docs Pressure, Pascals\n\n\n## Metric\n\n@docs pascals, inPascals, kilopascals, inKilopascals, megapascals, inMegapascals\n\n\n## Imperial\n\n@docs poundsPerSquareInch, inPoundsPerSquareInch\n\n\n## Atmospheric\n\n@docs atmospheres, inAtmospheres\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Pascals",
+                "comment": " ",
+                "args": [],
+                "type": "Quantity.Rate Force.Newtons Area.SquareMeters"
+            },
+            {
+                "name": "Pressure",
+                "comment": " ",
+                "args": [],
+                "type": "Quantity.Quantity Basics.Float Pressure.Pascals"
+            }
+        ],
+        "values": [
+            {
+                "name": "atmospheres",
+                "comment": " Construct a pressure from a number of [atmospheres][1].\n\n[1]: https://en.wikipedia.org/wiki/Atmosphere_(unit)\n\n",
+                "type": "Basics.Float -> Pressure.Pressure"
+            },
+            {
+                "name": "inAtmospheres",
+                "comment": " Convert a pressure to a number of atmospheres.\n",
+                "type": "Pressure.Pressure -> Basics.Float"
+            },
+            {
+                "name": "inKilopascals",
+                "comment": " Convert a pressure to a number of kilopascals.\n",
+                "type": "Pressure.Pressure -> Basics.Float"
+            },
+            {
+                "name": "inMegapascals",
+                "comment": " Convert a pressure to a number of megapascals.\n",
+                "type": "Pressure.Pressure -> Basics.Float"
+            },
+            {
+                "name": "inPascals",
+                "comment": " Convert a pressure to a number of pascals.\n",
+                "type": "Pressure.Pressure -> Basics.Float"
+            },
+            {
+                "name": "inPoundsPerSquareInch",
+                "comment": " Convert a pressure to a number of pounds per square inch.\n",
+                "type": "Pressure.Pressure -> Basics.Float"
+            },
+            {
+                "name": "kilopascals",
+                "comment": " Construct a pressure from a number of kilopascals.\n",
+                "type": "Basics.Float -> Pressure.Pressure"
+            },
+            {
+                "name": "megapascals",
+                "comment": " Construct a pressure from a number of megapascals.\n",
+                "type": "Basics.Float -> Pressure.Pressure"
+            },
+            {
+                "name": "pascals",
+                "comment": " Construct a pressure from a number of pascals.\n",
+                "type": "Basics.Float -> Pressure.Pressure"
+            },
+            {
+                "name": "poundsPerSquareInch",
+                "comment": " Construct a pressure from a number of pounds per square inch.\n",
+                "type": "Basics.Float -> Pressure.Pressure"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Quantity",
+        "comment": "\n\n@docs Quantity\n\n\n# Unit types\n\nThe `Squared`, `Cubed`, `Product` and `Rate` units types allow you to build up\nand work with composite units in a fairly flexible way.\n\n@docs Squared, Cubed, Product, Rate\n\n\n# Constants\n\n@docs zero, infinity, positiveInfinity, negativeInfinity\n\n\n# Comparison\n\n@docs lessThan, greaterThan, lessThanOrEqualTo, greaterThanOrEqualTo\n@docs lessThanZero, greaterThanZero, lessThanOrEqualToZero, greaterThanOrEqualToZero\n@docs compare, equalWithin, max, min, isNaN, isInfinite\n\n\n# Arithmetic\n\n@docs negate, abs, plus, difference, minus, multiplyBy, divideBy, twice, half, ratio, squared, sqrt, cubed, cbrt\n\n\n## Unitless quantities\n\nSome specialized arithmetic functions for working with [unitless](#Unitless)\nquantities. `squaredUnitless`, `sqrtUnitless`, `cubedUnitless` and\n`cbrtUnitless` all behave just like their non-`Unitless` versions but return a\n`Unitless` result (instead of for example something meaningless like `Squared\nUnitless`).\n\n@docs squaredUnitless, sqrtUnitless, cubedUnitless, cbrtUnitless, reciprocal\n\n\n## Working with products\n\n@docs product, times, timesUnitless, over, over_, overUnitless\n\n\n## Working with rates\n\n@docs rate, per, at, at_, for, inverse, rateProduct\n\n\n## Modular arithmetic\n\n`modBy` and `remainderBy` behave just like the [`modBy`](https://package.elm-lang.org/packages/elm/core/latest/Basics#modBy)\nand [`remainderBy`](https://package.elm-lang.org/packages/elm/core/latest/Basics#remainderBy)\nfunctions from Elm's built-in `Basics` module, but work on `Quantity` values\ninstead of raw `Int`s. `fractionalModBy` and `fractionalRemainderBy` have the\nsame behaviour but extended to `Float`-valued quantities.\n\n    import Pixels exposing (pixels)\n    import Length exposing (meters, centimeters)\n\n    Quantity.modBy (pixels 4) (pixels 11)\n    --> pixels 3\n\n    Quantity.fractionalModBy (meters 0.5)\n        (centimeters 162.3)\n    --> centimeters 12.3\n\n@docs modBy, fractionalModBy, remainderBy, fractionalRemainderBy\n\n\n## Miscellaneous\n\n@docs clamp, interpolateFrom, midpoint, range, in_\n\n\n# `Int`/`Float` conversion\n\nThese functions only really make sense for quantities in units like pixels,\ncents or game tiles where an `Int` number of units is meaningful. For quantities\nlike `Length` or `Duration`, it doesn't really make sense to round to an `Int`\nvalue since the underyling base unit is pretty arbitrary - should `round`ing a\n`Duration` give you an `Int` number of seconds, milliseconds, or something else?\n(The actual behavior is that quantities will generally get rounded to the\nnearest SI base unit, since that is how they are stored internally - for\nexample, `Length` values will get rounded to the nearest meter regardless of\nwhether they were constructed from a number of meters, centimeters, inches or\nlight years.)\n\n@docs round, floor, ceiling, truncate, toFloatQuantity\n\n\n# List functions\n\nThese functions act just like the corresponding functions in the built-in `List`\nmodule (or, int the case of `minimumBy` and `maximumBy`, the `List.Extra` module\nfrom `elm-community/list-extra`). They're necessary because the built-in\n`List.sum` only supports `List Int` and `List Float`, and the remaining\nfunctions only support built-in `comparable` types like `Int`, `Float`, `String`\nand tuples.\n\n@docs sum, minimum, maximum, minimumBy, maximumBy, sort, sortBy\n\n\n# Unitless quantities\n\nIt is sometimes useful to be able to represent _unitless_ quantities, especially\nwhen working with generic code (in most other cases, it is likely simpler and\neasier to just use `Int` or `Float` values directly). All the conversions in\nthis section simply wrap or unwrap a `Float` or `Int` value into a `Quantity`\nvalue, and so should get compiled away entirely when using `elm make\n--optimize`.\n\n@docs Unitless, int, toInt, float, toFloat\n\n\n# Unsafe conversions\n\nThese functions are equivalent to directly constructing or unwrapping `Quantity`\nvalues, and generally shouldn't be used outside of some specialized situations\nthat can come up when authoring packages that use `elm-units`.\n\n@docs unsafe, unwrap\n\n",
+        "unions": [
+            {
+                "name": "Product",
+                "comment": " Represents a units type that is the product of two other units types. This\nis a more general form of `Squared` or `Cubed`. See [`product`](#product),\n[`times`](#times), [`over`](#over) and [`over_`](#over_) for how it can be used.\n",
+                "args": [
+                    "units1",
+                    "units2"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Quantity",
+                "comment": " A `Quantity` is effectively a `number` (an `Int` or `Float`) tagged with a\n`units` type. So a\n\n    Quantity Float Meters\n\nis a `Float` number of `Meters` and a\n\n    Quantity Int Pixels\n\nis an `Int` number of `Pixels`. When compiling with `elm make --optimize` the\n`Quantity` wrapper type will be compiled away, so the runtime performance should\nbe comparable to using a raw `Float` or `Int`.\n\n",
+                "args": [
+                    "number",
+                    "units"
+                ],
+                "cases": [
+                    [
+                        "Quantity",
+                        [
+                            "number"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Rate",
+                "comment": " Represents the units type of a rate or quotient such as a speed (`Rate\nMeters Seconds`) or a pressure (`Rate Newtons SquareMeters`). See [Working with\nrates](#working-with-rates) for details.\n",
+                "args": [
+                    "dependentUnits",
+                    "independentUnits"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Unitless",
+                "comment": " A special units type representing 'no units'. A `Quantity Int Unitless`\nvalue is interchangeable with a simple `Int`, and a `Quantity Float Unitless`\nvalue is interchangeable with a simple `Float`.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Cubed",
+                "comment": " Represents a units type that is the cube of some other units type; for\nexample, `Meters` is one units type (the units type of a [`Length`](Length)) and\n`Cubed Meters` is another (the units type of an [`Volume`](Volume)). See the\n[`cubed`](Quantity#cubed) and [`cbrt`](Quantity#cbrt) functions for examples of\nuse.\n\nThis is a special case of the `Product` units type.\n\n",
+                "args": [
+                    "units"
+                ],
+                "type": "Quantity.Product (Quantity.Product units units) units"
+            },
+            {
+                "name": "Squared",
+                "comment": " Represents a units type that is the square of some other units type; for\nexample, `Meters` is one units type (the units type of a [`Length`](Length)) and\n`Squared Meters` is another (the units type of an [`Area`](Area)). See the\n[`squared`](#squared) and [`sqrt`](#sqrt) functions for examples of use.\n\nThis is a special case of the `Product` units type.\n\n",
+                "args": [
+                    "units"
+                ],
+                "type": "Quantity.Product units units"
+            }
+        ],
+        "values": [
+            {
+                "name": "abs",
+                "comment": " Get the absolute value of a quantity.\n\n    Quantity.abs (Duration.milliseconds -10)\n    --> Duration.milliseconds 10\n\n",
+                "type": "Quantity.Quantity number units -> Quantity.Quantity number units"
+            },
+            {
+                "name": "at",
+                "comment": " Multiply a rate of change by an independent quantity (the denominator in\nthe rate) to get a total value:\n\n    Duration.minutes 30\n        |> Quantity.at\n            (Speed.kilometersPerHour 100)\n    --> Length.kilometers 50\n\nCan be useful to define conversion functions from one unit to another, since\nif you define a `rate` then `Quantity.at rate` will give you a conversion\nfunction:\n\n    pixelDensity : Quantity Float (Rate Pixels Meters)\n    pixelDensity =\n        Pixels.pixels 96 |> Quantity.per (Length.inches 1)\n\n    lengthToPixels : Length -> Quantity Float Pixels\n    lengthToPixels length =\n        Quantity.at pixelDensity length\n\n    lengthToPixels (Length.inches 3)\n    --> Pixels.pixels 288\n\nEagle-eyed readers will note that using partial application you could also\nsimply write\n\n    lengthToPixels =\n        Quantity.at pixelDensity\n\nNote that there are [other forms of multiplication](/#multiplication-and-division)!\n\n",
+                "type": "Quantity.Quantity number (Quantity.Rate dependentUnits independentUnits) -> Quantity.Quantity number independentUnits -> Quantity.Quantity number dependentUnits"
+            },
+            {
+                "name": "at_",
+                "comment": " Given a rate and a _dependent_ quantity (total value), determine the\nnecessary amount of the _independent_ quantity:\n\n    Length.kilometers 75\n        |> Quantity.at_\n            (Speed.kilometersPerHour 100)\n    --> Duration.minutes 45\n\nWhere `at` performs multiplication, `at_` performs division - you multiply a\nspeed by a duration to get a distance, but you divide a distance by a speed to\nget a duration.\n\nSimilar to `at`, `at_` can be used to define an _inverse_ conversion function:\n\n    pixelDensity : Quantity Float (Rate Pixels Meters)\n    pixelDensity =\n        Pixels.pixels 96 |> Quantity.per (Length.inches 1)\n\n    pixelsToLength : Quantity Float Pixels -> Length\n    pixelsToLength pixels =\n        Quantity.at_ pixelDensity pixels\n\n    pixelsToLength (Pixels.pixels 48)\n    --> Length.inches 0.5\n\n",
+                "type": "Quantity.Quantity Basics.Float (Quantity.Rate dependentUnits independentUnits) -> Quantity.Quantity Basics.Float dependentUnits -> Quantity.Quantity Basics.Float independentUnits"
+            },
+            {
+                "name": "cbrt",
+                "comment": " Take a quantity in `Cubed units` and return the cube root of that\nquantity in plain `units`.\n\n    Quantity.cbrt (Volume.liters 1)\n    --> Length.centimeters 10\n\nSee also [`cbrtUnitless`](#cbrtUnitless).\n\n",
+                "type": "Quantity.Quantity Basics.Float (Quantity.Cubed units) -> Quantity.Quantity Basics.Float units"
+            },
+            {
+                "name": "cbrtUnitless",
+                "comment": " ",
+                "type": "Quantity.Quantity Basics.Float Quantity.Unitless -> Quantity.Quantity Basics.Float Quantity.Unitless"
+            },
+            {
+                "name": "ceiling",
+                "comment": " Round a `Float`-valued quantity up to the nearest `Int`. Note that [this may\nnot do what you expect](#-int-float-conversion).\n\n    Quantity.ceiling (Pixels.pixels 1.2)\n    --> Pixels.pixels 2\n\n    Quantity.ceiling (Pixels.pixels -2.1)\n    --> Pixels.pixels -2\n\n",
+                "type": "Quantity.Quantity Basics.Float units -> Quantity.Quantity Basics.Int units"
+            },
+            {
+                "name": "clamp",
+                "comment": " Given a lower and upper bound, clamp a given quantity to within those\nbounds. Say you wanted to clamp an angle to be between +/-30 degrees:\n\n    lowerBound =\n        Angle.degrees -30\n\n    upperBound =\n        Angle.degrees 30\n\n    Quantity.clamp lowerBound upperBound (Angle.degrees 5)\n    --> Angle.degrees 5\n\n    -- One radian is approximately 57 degrees\n    Quantity.clamp lowerBound upperBound (Angle.radians 1)\n    --> Angle.degrees 30\n\n    Quantity.clamp lowerBound upperBound (Angle.turns -0.5)\n    --> Angle.degrees -30\n\n",
+                "type": "Quantity.Quantity number units -> Quantity.Quantity number units -> Quantity.Quantity number units -> Quantity.Quantity number units"
+            },
+            {
+                "name": "compare",
+                "comment": " Compare two quantities, returning an [`Order`](https://package.elm-lang.org/packages/elm/core/latest/Basics#Order)\nvalue indicating whether the first is less than, equal to or greater than the\nsecond.\n\n    Quantity.compare\n        (Duration.minutes 90)\n        (Duration.hours 1)\n    --> GT\n\n    Quantity.compare\n        (Duration.minutes 60)\n        (Duration.hours 1)\n    --> EQ\n\n",
+                "type": "Quantity.Quantity number units -> Quantity.Quantity number units -> Basics.Order"
+            },
+            {
+                "name": "cubed",
+                "comment": " Cube a quantity with some `units`, resulting in a new quantity in\n`Cubed units`.\n\n    Quantity.cubed (Length.meters 5)\n    --> Volume.cubicMeters 125\n\nSee also [`cubedUnitless`](#cubedUnitless).\n\n",
+                "type": "Quantity.Quantity number units -> Quantity.Quantity number (Quantity.Cubed units)"
+            },
+            {
+                "name": "cubedUnitless",
+                "comment": " ",
+                "type": "Quantity.Quantity number Quantity.Unitless -> Quantity.Quantity number Quantity.Unitless"
+            },
+            {
+                "name": "difference",
+                "comment": " Subtract one quantity from another.\n\n    Quantity.difference\n        (Duration.hours 1)\n        (Duration.minutes 15)\n    --> Duration.minutes 45\n\n",
+                "type": "Quantity.Quantity number units -> Quantity.Quantity number units -> Quantity.Quantity number units"
+            },
+            {
+                "name": "divideBy",
+                "comment": " Divide a `Quantity` by a `Float`.\n\n    Quantity.divideBy 2 (Duration.hours 1)\n    --> Duration.minutes 30\n\nNote that there are [other forms of division](/#multiplication-and-division)!\n\n",
+                "type": "Basics.Float -> Quantity.Quantity Basics.Float units -> Quantity.Quantity Basics.Float units"
+            },
+            {
+                "name": "equalWithin",
+                "comment": " Check if two quantities are equal within a given absolute tolerance. The\ngiven tolerance must be greater than or equal to zero - if it is negative, then\nthe result will always be false.\n\n    -- 3 feet is 91.44 centimeters or 0.9144 meters\n\n    Quantity.equalWithin (Length.centimeters 10)\n        (Length.meters 1)\n        (Length.feet 3)\n    --> True\n\n    Quantity.equalWithin (Length.centimeters 5)\n        (Length.meters 1)\n        (Length.feet 3)\n    --> False\n\n",
+                "type": "Quantity.Quantity number units -> Quantity.Quantity number units -> Quantity.Quantity number units -> Basics.Bool"
+            },
+            {
+                "name": "float",
+                "comment": " Convert a plain `Float` into a `Quantity Float Unitless` value.\n",
+                "type": "Basics.Float -> Quantity.Quantity Basics.Float Quantity.Unitless"
+            },
+            {
+                "name": "floor",
+                "comment": " Round a `Float`-valued quantity down to the nearest `Int`. Note that [this\nmay not do what you expect](#-int-float-conversion).\n\n    Quantity.floor (Pixels.pixels 2.9)\n    --> Pixels.pixels 2\n\n    Quantity.floor (Pixels.pixels -2.1)\n    --> Pixels.pixels -3\n\n",
+                "type": "Quantity.Quantity Basics.Float units -> Quantity.Quantity Basics.Int units"
+            },
+            {
+                "name": "for",
+                "comment": " Same as `at` but with the argument order flipped, which may read better\nin some cases:\n\n    Speed.kilometersPerHour 100\n        |> Quantity.for\n            (Duration.minutes 30)\n    --> Length.kilometers 50\n\n",
+                "type": "Quantity.Quantity number independentUnits -> Quantity.Quantity number (Quantity.Rate dependentUnits independentUnits) -> Quantity.Quantity number dependentUnits"
+            },
+            {
+                "name": "fractionalModBy",
+                "comment": " ",
+                "type": "Quantity.Quantity Basics.Float units -> Quantity.Quantity Basics.Float units -> Quantity.Quantity Basics.Float units"
+            },
+            {
+                "name": "fractionalRemainderBy",
+                "comment": " ",
+                "type": "Quantity.Quantity Basics.Float units -> Quantity.Quantity Basics.Float units -> Quantity.Quantity Basics.Float units"
+            },
+            {
+                "name": "greaterThan",
+                "comment": " Check if one quantity is greater than another. Note the [argument order](/#argument-order)!\n\n    oneMeter =\n        Length.meters 1\n\n    Length.feet 1 |> Quantity.greaterThan oneMeter\n    --> False\n\n    -- Same as:\n    Quantity.greaterThan oneMeter (Length.feet 1)\n    --> False\n\n    List.filter (Quantity.greaterThan oneMeter)\n        [ Length.feet 1\n        , Length.parsecs 1\n        , Length.yards 1\n        , Length.lightYears 1\n        ]\n    --> [ Length.parsecs 1, Length.lightYears 1 ]\n\n",
+                "type": "Quantity.Quantity number units -> Quantity.Quantity number units -> Basics.Bool"
+            },
+            {
+                "name": "greaterThanOrEqualTo",
+                "comment": " Check if one quantity is greater than or equal to another. Note the\n[argument order](/#argument-order)!\n",
+                "type": "Quantity.Quantity number units -> Quantity.Quantity number units -> Basics.Bool"
+            },
+            {
+                "name": "greaterThanOrEqualToZero",
+                "comment": " Short form for `Quantity.greaterThanOrEqualTo Quantity.zero`.\n",
+                "type": "Quantity.Quantity number units -> Basics.Bool"
+            },
+            {
+                "name": "greaterThanZero",
+                "comment": " Short form for `Quantity.greaterThan Quantity.zero`.\n",
+                "type": "Quantity.Quantity number units -> Basics.Bool"
+            },
+            {
+                "name": "half",
+                "comment": " Convenient shorthand for `Quantity.multiplyBy 0.5`.\n\n    Quantity.half (Length.meters 1)\n    --> Length.centimeters 50\n\n",
+                "type": "Quantity.Quantity Basics.Float units -> Quantity.Quantity Basics.Float units"
+            },
+            {
+                "name": "in_",
+                "comment": " Generalized units conversion function that lets you convert to many kinds of\nunits not directly supported by `elm-units`. The first argument is a function\nthat constructs a value of the desired unit type, and the second is the quantity\nto convert. For example,\n\n    Speed.metersPerSecond 5\n        |> Speed.inFeetPerSecond\n    --> 16.4042\n\nis equivalent to\n\n    Speed.metersPerSecond 5\n        |> Quantity.in_ Speed.feetPerSecond\n    --> 16.4042\n\nMore interestingly, if you wanted to get speed in some weirder unit like\nmillimeters per minute (not directly supported by `elm-units`), you could do\n\n    Speed.metersPerSecond 5\n        |> Quantity.in_\n            (Length.millimeters\n                >> Quantity.per (Duration.minutes 1)\n            )\n    --> 300000\n\nInternally,\n\n    Quantity.in_ someUnits someQuantity\n\nis simply implemented as\n\n    Quantity.ratio someQuantity (someUnits 1)\n\n",
+                "type": "(Basics.Float -> Quantity.Quantity Basics.Float units) -> Quantity.Quantity Basics.Float units -> Basics.Float"
+            },
+            {
+                "name": "infinity",
+                "comment": " Alias for `positiveInfinity`.\n",
+                "type": "Quantity.Quantity Basics.Float units"
+            },
+            {
+                "name": "int",
+                "comment": " Convert a plain `Int` into a `Quantity Int Unitless` value.\n",
+                "type": "Basics.Int -> Quantity.Quantity Basics.Int Quantity.Unitless"
+            },
+            {
+                "name": "interpolateFrom",
+                "comment": " Interpolate from the first quantity to the second, based on a parameter that\nranges from zero to one. Passing a parameter value of zero will return the start\nvalue and passing a parameter value of one will return the end value.\n\n    fiveMeters =\n        Length.meters 5\n\n    tenMeters =\n        Length.meters 10\n\n    Quantity.interpolateFrom fiveMeters tenMeters 0\n    --> Length.meters 5\n\n    Quantity.interpolateFrom fiveMeters tenMeters 1\n    --> Length.meters 10\n\n    Quantity.interpolateFrom fiveMeters tenMeters 0.6\n    --> Length.meters 8\n\nThe end value can be less than the start value:\n\n    Quantity.interpolateFrom tenMeters fiveMeters 0.1\n    --> Length.meters 9.5\n\nParameter values less than zero or greater than one can be used to extrapolate:\n\n    Quantity.interpolateFrom fiveMeters tenMeters 1.5\n    --> Length.meters 12.5\n\n    Quantity.interpolateFrom fiveMeters tenMeters -0.5\n    --> Length.meters 2.5\n\n    Quantity.interpolateFrom tenMeters fiveMeters -0.2\n    --> Length.meters 11\n\n",
+                "type": "Quantity.Quantity Basics.Float units -> Quantity.Quantity Basics.Float units -> Basics.Float -> Quantity.Quantity Basics.Float units"
+            },
+            {
+                "name": "inverse",
+                "comment": " Find the inverse of a given rate. May be useful if you are using a rate to\ndefine a conversion, and want to convert the other way;\n\n    Quantity.at (Quantity.inverse rate)\n\nis equivalent to\n\n    Quantity.at_ rate\n\n",
+                "type": "Quantity.Quantity Basics.Float (Quantity.Rate dependentUnits independentUnits) -> Quantity.Quantity Basics.Float (Quantity.Rate independentUnits dependentUnits)"
+            },
+            {
+                "name": "isInfinite",
+                "comment": " Check if a quantity is positive or negative infinity.\n\n    Quantity.isInfinite\n        (Length.meters 1\n            |> Quantity.per (Duration.seconds 0)\n        )\n    --> True\n\n    Quantity.isInfinite Quantity.negativeInfinity\n    --> True\n\n",
+                "type": "Quantity.Quantity Basics.Float units -> Basics.Bool"
+            },
+            {
+                "name": "isNaN",
+                "comment": " Check if a quantity's underlying value is NaN (not-a-number).\n\n    Quantity.isNan (Quantity.sqrt (Area.squareMeters -4))\n    --> True\n\n    Quantity.isNan (Quantity.sqrt (Area.squareMeters 4))\n    --> False\n\n",
+                "type": "Quantity.Quantity Basics.Float units -> Basics.Bool"
+            },
+            {
+                "name": "lessThan",
+                "comment": " Check if one quantity is less than another. Note the [argument order](/#argument-order)!\n\n    oneMeter =\n        Length.meters 1\n\n    Length.feet 1 |> Quantity.lessThan oneMeter\n    --> True\n\n    -- Same as:\n    Quantity.lessThan oneMeter (Length.feet 1)\n    --> True\n\n    List.filter (Quantity.lessThan oneMeter)\n        [ Length.feet 1\n        , Length.parsecs 1\n        , Length.yards 1\n        , Length.lightYears 1\n        ]\n    --> [ Length.feet 1, Length.yards 1 ]\n\n",
+                "type": "Quantity.Quantity number units -> Quantity.Quantity number units -> Basics.Bool"
+            },
+            {
+                "name": "lessThanOrEqualTo",
+                "comment": " Check if one quantity is less than or equal to another. Note the [argument\norder](/#argument-order)!\n",
+                "type": "Quantity.Quantity number units -> Quantity.Quantity number units -> Basics.Bool"
+            },
+            {
+                "name": "lessThanOrEqualToZero",
+                "comment": " Short form for `Quantity.lessThanOrEqualTo Quantity.zero`.\n",
+                "type": "Quantity.Quantity number units -> Basics.Bool"
+            },
+            {
+                "name": "lessThanZero",
+                "comment": " Short form for `Quantity.lessThan Quantity.zero`.\n",
+                "type": "Quantity.Quantity number units -> Basics.Bool"
+            },
+            {
+                "name": "max",
+                "comment": " Find the maximum of two quantities.\n\n    Quantity.max (Duration.hours 2) (Duration.minutes 100)\n    --> Duration.hours 2\n\n",
+                "type": "Quantity.Quantity number units -> Quantity.Quantity number units -> Quantity.Quantity number units"
+            },
+            {
+                "name": "maximum",
+                "comment": " Find the maximum value in a list of quantities. Returns `Nothing` if the\nlist is empty.\n\n    Quantity.maximum\n        [ Mass.kilograms 1\n        , Mass.pounds 2\n        , Mass.tonnes 3\n        ]\n    --> Just (Mass.tonnes 3)\n\n",
+                "type": "List.List (Quantity.Quantity number units) -> Maybe.Maybe (Quantity.Quantity number units)"
+            },
+            {
+                "name": "maximumBy",
+                "comment": " Find the 'maximum' item in a list as measured by some derived `Quantity`:\n\n    people =\n        [ { name = \"Bob\", height = Length.meters 1.6 }\n        , { name = \"Charlie\", height = Length.meters 2.0 }\n        , { name = \"Alice\", height = Length.meters 1.8 }\n        ]\n\n    Quantity.maximumBy .height people\n    --> Just { name = \"Charlie\", height = Length.meters 2.0 }\n\nIf the list is empty, returns `Nothing`. If multiple items in the list are tied,\nthen the first one is returned.\n\n",
+                "type": "(a -> Quantity.Quantity number units) -> List.List a -> Maybe.Maybe a"
+            },
+            {
+                "name": "midpoint",
+                "comment": " Find the midpoint between two quantities.\n\n    Quantity.midpoint (Length.meters 5) (Length.meters 10)\n    --> Length.meters 7.5\n\n",
+                "type": "Quantity.Quantity Basics.Float units -> Quantity.Quantity Basics.Float units -> Quantity.Quantity Basics.Float units"
+            },
+            {
+                "name": "min",
+                "comment": " Find the minimum of two quantities.\n\n    Quantity.min (Duration.hours 2) (Duration.minutes 100)\n    --> Duration.minutes 100\n\n",
+                "type": "Quantity.Quantity number units -> Quantity.Quantity number units -> Quantity.Quantity number units"
+            },
+            {
+                "name": "minimum",
+                "comment": " Find the minimum value in a list of quantities. Returns `Nothing` if the\nlist is empty.\n\n    Quantity.minimum\n        [ Mass.kilograms 1\n        , Mass.pounds 2\n        , Mass.tonnes 3\n        ]\n    --> Just (Mass.pounds 2)\n\n",
+                "type": "List.List (Quantity.Quantity number units) -> Maybe.Maybe (Quantity.Quantity number units)"
+            },
+            {
+                "name": "minimumBy",
+                "comment": " Find the 'minimum' item in a list as measured by some derived `Quantity`:\n\n    people =\n        [ { name = \"Bob\", height = Length.meters 1.6 }\n        , { name = \"Charlie\", height = Length.meters 2.0 }\n        , { name = \"Alice\", height = Length.meters 1.8 }\n        ]\n\n    Quantity.minimumBy .height people\n    --> Just { name = \"Bob\", height = Length.meters 1.6 }\n\nIf the list is empty, returns `Nothing`. If multiple items in the list are tied,\nthen the first one is returned.\n\n",
+                "type": "(a -> Quantity.Quantity number units) -> List.List a -> Maybe.Maybe a"
+            },
+            {
+                "name": "minus",
+                "comment": " An 'infix' version of [`difference`](#difference), intended to be used in\npipeline form;\n\n    Quantity.difference x y\n\ncan be written as\n\n    x |> Quantity.minus y\n\nNote that unlike `difference`, this also means that partial application will 'do\nthe right thing':\n\n    List.map (Quantity.minus fifteenMinutes)\n        [ Duration.hours 1\n        , Duration.hours 2\n        , Duration.minutes 30\n        ]\n    --> [ Duration.minutes 45\n    --> , Duration.minutes 105\n    --> , Duration.minutes 15\n    --> ]\n\n",
+                "type": "Quantity.Quantity number units -> Quantity.Quantity number units -> Quantity.Quantity number units"
+            },
+            {
+                "name": "modBy",
+                "comment": " ",
+                "type": "Quantity.Quantity Basics.Int units -> Quantity.Quantity Basics.Int units -> Quantity.Quantity Basics.Int units"
+            },
+            {
+                "name": "multiplyBy",
+                "comment": " Scale a `Quantity` by a `number`.\n\n    Quantity.multiplyBy 1.5 (Duration.hours 1)\n    --> Duration.minutes 90\n\nNote that there are [other forms of multiplication](/#multiplication-and-division)!\n\n",
+                "type": "number -> Quantity.Quantity number units -> Quantity.Quantity number units"
+            },
+            {
+                "name": "negate",
+                "comment": " Negate a quantity!\n\n    Quantity.negate (Length.millimeters 10)\n    --> Length.millimeters -10\n\n",
+                "type": "Quantity.Quantity number units -> Quantity.Quantity number units"
+            },
+            {
+                "name": "negativeInfinity",
+                "comment": " A generic negative infinity value.\n",
+                "type": "Quantity.Quantity Basics.Float units"
+            },
+            {
+                "name": "over",
+                "comment": " Divide a quantity in `Product units1 units2` by a quantity in `units1`,\nresulting in another quantity in `units2`. For example, the units type of a\n`Force` is `Product Kilograms MetersPerSecondSquared` (mass times acceleration),\nso we could divide a force by a given mass to determine how fast that mass would\nbe accelerated by the given force:\n\n    Force.newtons 100\n        |> Quantity.over\n            (Mass.kilograms 50)\n    --> Acceleration.metersPerSecondSquared 2\n\nNote that there are [other forms of division](/#multiplication-and-division)!\n\n",
+                "type": "Quantity.Quantity Basics.Float units1 -> Quantity.Quantity Basics.Float (Quantity.Product units1 units2) -> Quantity.Quantity Basics.Float units2"
+            },
+            {
+                "name": "overUnitless",
+                "comment": " Similar to [`timesUnitless`](#timesUnitless), `overUnitless` lets you\ndivide one quantity by a second [unitless](#Unitless) quantity without affecting\nthe units;\n\n    quantity |> Quantity.overUnitless unitlessQuantity\n\nis equivalent to\n\n    quantity\n        |> Quantity.divideBy\n            (Quantity.toFloat unitlessQuantity)\n\n",
+                "type": "Quantity.Quantity Basics.Float Quantity.Unitless -> Quantity.Quantity Basics.Float units -> Quantity.Quantity Basics.Float units"
+            },
+            {
+                "name": "over_",
+                "comment": " Just like `over` but divide by a quantity in `units2`, resulting in another\nquantity in `units1`. For example, we could divide a force by a desired\nacceleration to determine how much mass could be accelerated at that rate:\n\n    Force.newtons 100\n        |> Quantity.over_\n            (Acceleration.metersPerSecondSquared 5)\n    --> Mass.kilograms 20\n\n",
+                "type": "Quantity.Quantity Basics.Float units2 -> Quantity.Quantity Basics.Float (Quantity.Product units1 units2) -> Quantity.Quantity Basics.Float units1"
+            },
+            {
+                "name": "per",
+                "comment": " 'Infix' version of [`rate`](#rate), meant to be used in pipeline form;\n\n    Quantity.rate distance time\n\ncan be written as\n\n    distance |> Quantity.per time\n\n",
+                "type": "Quantity.Quantity Basics.Float independentUnits -> Quantity.Quantity Basics.Float dependentUnits -> Quantity.Quantity Basics.Float (Quantity.Rate dependentUnits independentUnits)"
+            },
+            {
+                "name": "plus",
+                "comment": " Add two quantities.\n\n    Length.meters 1 |> Quantity.plus (Length.centimeters 5)\n    --> Length.centimeters 105\n\n",
+                "type": "Quantity.Quantity number units -> Quantity.Quantity number units -> Quantity.Quantity number units"
+            },
+            {
+                "name": "positiveInfinity",
+                "comment": " A generic positive infinity value.\n",
+                "type": "Quantity.Quantity Basics.Float units"
+            },
+            {
+                "name": "product",
+                "comment": " Multiply two quantities with units types `units1` and `units2` together,\nresulting in a quantity with units type `Product units1 units2`.\n\nThis works for any two units types, but one special case is worth pointing out.\nThe units type of an [`Area`](Area) is `SquareMeters`, which is a type alias for\n`Squared Meters`, which in turn expands to `Product Meters Meters`. This means\nthat the product of two `Length`s does in fact give you an `Area`:\n\n    -- This is the definition of an acre, I kid you not 😈\n    Quantity.product (Length.feet 66) (Length.feet 660)\n    --> Area.acres 1\n\nWe can also multiply an `Area` by a `Length` to get a `Volume`:\n\n    Quantity.product\n        (Area.squareMeters 1)\n        (Length.centimers 1)\n    --> Volume.liters 10\n\nNote that there are [other forms of multiplication](/#multiplication-and-division)!\n\n",
+                "type": "Quantity.Quantity number units1 -> Quantity.Quantity number units2 -> Quantity.Quantity number (Quantity.Product units1 units2)"
+            },
+            {
+                "name": "range",
+                "comment": " Construct a range of evenly-spaced values given a `start` value, an `end`\nvalue and the number of `steps` to take from the start to the end. The first\nvalue in the returned list will be equal to `start` and the last value will be\nequal to `end`. Note that the number of returned values will be one greater than\nthe number of steps!\n\n    Quantity.range\n        { start = Length.meters 2\n        , end = Length.meters 3\n        , steps = 5\n        }\n    --> [ Length.centimeters 200\n    --> , Length.centimeters 220\n    --> , Length.centimeters 240\n    --> , Length.centimeters 260\n    --> , Length.centimeters 280\n    --> , Length.centimeters 300\n    --> ]\n\nThe start and end values can be in either order:\n\n    Quantity.range\n        { start = Duration.hours 1\n        , end = Quantity.zero\n        , steps = 4\n        }\n    --> [ Duration.minutes 60\n    --> , Duration.minutes 45\n    --> , Duration.minutes 30\n    --> , Duration.minutes 15\n    --> , Duration.minutes 0\n    --> ]\n\nPassing a negative or zero `steps` value will result in an empty list being\nreturned.\n\nIf you need finer control over what values get generated, try combining\n`interpolateFrom` with the various functions in the\n[`elm-1d-parameter`](https://package.elm-lang.org/packages/ianmackenzie/elm-1d-parameter/latest/)\npackage. For example:\n\n    -- Same as using Quantity.range\n    Parameter1d.steps 4 <|\n        Quantity.interpolateFrom\n            (Length.meters 2)\n            (Length.meters 3)\n    --> [ Length.centimeters 200\n    --> , Length.centimeters 225\n    --> , Length.centimeters 250\n    --> , Length.centimeters 275\n    --> , Length.centimeters 300\n    --> ]\n\n    -- Omit the last value\n    Parameter1d.leading 4 <|\n        Quantity.interpolateFrom\n            (Length.meters 2)\n            (Length.meters 3)\n    --> [ Length.centimeters 200\n    --> , Length.centimeters 225\n    --> , Length.centimeters 250\n    --> , Length.centimeters 275\n    --> ]\n\n",
+                "type": "{ start : Quantity.Quantity Basics.Float units, end : Quantity.Quantity Basics.Float units, steps : Basics.Int } -> List.List (Quantity.Quantity Basics.Float units)"
+            },
+            {
+                "name": "rate",
+                "comment": " Construct a rate of change by dividing a dependent quantity (numerator) by\nan independent quantity (denominator):\n\n    speed =\n        Quantity.rate (Length.miles 1) Duration.minute\n\n    speed |> Speed.inMilesPerHour\n    --> 60\n\nNote that we could directly use our rate of change value as a `Speed`! That is\nbecause many built-in quantity types are defined as rates of change, for\nexample:\n\n  - `Speed` is `Length` per `Duration`\n  - `Acceleration` is `Speed` per `Duration`\n  - `Pressure` is `Force` per `Area`\n  - `Power` is `Energy` per `Duration`\n  - `Current` is `Charge` per `Duration`\n  - `Resistance` is `Voltage` per `Current`\n  - `Voltage` is `Power` per `Current`\n\nNote that there are [other forms of division](/#multiplication-and-division)!\n\n",
+                "type": "Quantity.Quantity Basics.Float dependentUnits -> Quantity.Quantity Basics.Float independentUnits -> Quantity.Quantity Basics.Float (Quantity.Rate dependentUnits independentUnits)"
+            },
+            {
+                "name": "rateProduct",
+                "comment": " Multiply two rates of change that 'cancel out' together, resulting in a new\nrate. For example, if you know the real-world speed of an on-screen object and\nthe display resolution, then you can get the speed in pixels per second:\n\n    realWorldSpeed =\n        Speed.metersPerSecond 0.1\n\n    resolution =\n        Pixels.float 96 |> Quantity.per Length.inch\n\n    Quantity.rateProduct realWorldSpeed resolution\n    --> Pixels.pixelsPerSecond 377.95\n\nThat is, \"length per duration\" multiplyed by \"pixels per length\" gives you\n\"pixels per duration\".\n\nSometimes you can't directly multiply two rates to get what you want, in which\ncase you may need to use [`inverse`](#inverse) in combination with\n`rateProduct`. For example, if you know the on-screen speed of some object and\nthe display resolution, then you can use those to get the real-world speed:\n\n    pixelSpeed =\n        Pixels.pixelsPerSecond 500\n\n    resolution =\n        Pixels.float 96 |> Quantity.per Length.inch\n\n    Quantity.rateProduct pixelSpeed\n        (Quantity.inverse resolution)\n    --> Speed.metersPerSecond 0.1323\n\n",
+                "type": "Quantity.Quantity Basics.Float (Quantity.Rate units2 units1) -> Quantity.Quantity Basics.Float (Quantity.Rate units3 units2) -> Quantity.Quantity Basics.Float (Quantity.Rate units3 units1)"
+            },
+            {
+                "name": "ratio",
+                "comment": " Find the ratio of two quantities with the same units.\n\n    Quantity.ratio (Length.miles 1) (Length.yards 1)\n    --> 1760\n\n",
+                "type": "Quantity.Quantity Basics.Float units -> Quantity.Quantity Basics.Float units -> Basics.Float"
+            },
+            {
+                "name": "reciprocal",
+                "comment": " Find the inverse of a unitless value.\n\n    Quantity.reciprocal (Quantity.float 5)\n    --> Quantity.float 0.2\n\n",
+                "type": "Quantity.Quantity Basics.Float Quantity.Unitless -> Quantity.Quantity Basics.Float Quantity.Unitless"
+            },
+            {
+                "name": "remainderBy",
+                "comment": " ",
+                "type": "Quantity.Quantity Basics.Int units -> Quantity.Quantity Basics.Int units -> Quantity.Quantity Basics.Int units"
+            },
+            {
+                "name": "round",
+                "comment": " Round a `Float`-valued quantity to the nearest `Int`. Note that [this may\nnot do what you expect](#-int-float-conversion).\n\n    Quantity.round (Pixels.pixels 3.5)\n    --> Pixels.pixels 4\n\n",
+                "type": "Quantity.Quantity Basics.Float units -> Quantity.Quantity Basics.Int units"
+            },
+            {
+                "name": "sort",
+                "comment": " Sort a list of quantities.\n\n    Quantity.sort\n        [ Mass.kilograms 1\n        , Mass.pounds 2\n        , Mass.tonnes 3\n        ]\n    --> [ Mass.pounds 2\n    --> , Mass.kilograms 1\n    --> , Mass.tonnes 3\n    --> ]\n\n",
+                "type": "List.List (Quantity.Quantity number units) -> List.List (Quantity.Quantity number units)"
+            },
+            {
+                "name": "sortBy",
+                "comment": " Sort an arbitrary list of values by a derived `Quantity`. If you had\n\n    people =\n        [ { name = \"Bob\", height = Length.meters 1.6 }\n        , { name = \"Charlie\", height = Length.meters 2.0 }\n        , { name = \"Alice\", height = Length.meters 1.8 }\n        ]\n\nthen you could sort by name with\n\n    List.sortBy .name people\n    --> [ { name = \"Alice\", height = Length.meters 1.8 }\n    --> , { name = \"Bob\", height = Length.meters 1.6 }\n    --> , { name = \"Charlie\", height = Length.meters 2.0 }\n    --> ]\n\n(nothing new there!), and sort by height with\n\n    Quantity.sortBy .height people\n    --> [ { name = \"Bob\", height = Length.meters 1.6 }\n    --> , { name = \"Alice\", height = Length.meters 1.8 }\n    --> , { name = \"Charlie\", height = Length.meters 2.0 }\n    --> ]\n\n",
+                "type": "(a -> Quantity.Quantity number units) -> List.List a -> List.List a"
+            },
+            {
+                "name": "sqrt",
+                "comment": " Take a quantity in `Squared units` and return the square root of that\nquantity in plain `units`:\n\n    Quantity.sqrt (Area.hectares 1)\n    --> Length.meters 100\n\nGetting fancier, you could write a 2D hypotenuse (magnitude) function that\nworked on _any_ quantity type (length, speed, force...) as\n\n    hypotenuse :\n        Quantity Float units\n        -> Quantity Float units\n        -> Quantity Float units\n    hypotenuse x y =\n        Quantity.sqrt\n            (Quantity.squared x\n                |> Quantity.plus\n                    (Quantity.squared y)\n            )\n\nThis works because:\n\n  - The `x` and `y` arguments are both in `units`\n  - So each squared item is in `Squared units`\n  - So the sum is also in `Squared units`\n  - And calling `sqrt` on something in `Squared units` returns a value back in\n    `units`\n\nSee also [`sqrtUnitless`](#sqrtUnitless).\n\n",
+                "type": "Quantity.Quantity Basics.Float (Quantity.Squared units) -> Quantity.Quantity Basics.Float units"
+            },
+            {
+                "name": "sqrtUnitless",
+                "comment": " ",
+                "type": "Quantity.Quantity Basics.Float Quantity.Unitless -> Quantity.Quantity Basics.Float Quantity.Unitless"
+            },
+            {
+                "name": "squared",
+                "comment": " Square a quantity with some `units`, resulting in a new quantity in\n`Squared units`:\n\n    Quantity.squared (Length.meters 5)\n    --> Area.squareMeters 25\n\nSee also [`squaredUnitless`](#squaredUnitless).\n\n",
+                "type": "Quantity.Quantity number units -> Quantity.Quantity number (Quantity.Squared units)"
+            },
+            {
+                "name": "squaredUnitless",
+                "comment": " ",
+                "type": "Quantity.Quantity number Quantity.Unitless -> Quantity.Quantity number Quantity.Unitless"
+            },
+            {
+                "name": "sum",
+                "comment": " Find the sum of a list of quantities.\n\n    Quantity.sum\n        [ Length.meters 1\n        , Length.centimeters 2\n        , Length.millimeters 3\n        ]\n    --> Length.meters 1.023\n\n    Quantity.sum []\n    --> Quantity.zero\n\n",
+                "type": "List.List (Quantity.Quantity number units) -> Quantity.Quantity number units"
+            },
+            {
+                "name": "times",
+                "comment": " An 'infix' version of [`product`](#product), intended to be used in pipeline\nform;\n\n    Quantity.product a b\n\ncan be written as\n\n    a |> Quantity.times b\n\n",
+                "type": "Quantity.Quantity number units2 -> Quantity.Quantity number units1 -> Quantity.Quantity number (Quantity.Product units1 units2)"
+            },
+            {
+                "name": "timesUnitless",
+                "comment": " If you use [`times`](#times) or [`product`](#product) to multiply one\nquantity by another [unitless](#Unitless) quantity, for example\n\n    quantity |> Quantity.times unitlessQuantity\n\nthen the result you'll get will have units type `Product units Unitless`. But\nthis is silly and not super useful, since the product of `units` and `Unitless`\nshould really just be `units`. That's what `timesUnitless` does - it's a special\ncase of `times` for when you're multiplying by another unitless quantity, that\nleaves the units alone.\n\nYou can think of `timesUnitless` as shorthand for `toFloat` and `multiplyBy`;\nfor `Float`-valued quantities,\n\n    quantity |> Quantity.timesUnitless unitlessQuantity\n\nis equivalent to\n\n    quantity\n        |> Quantity.multiplyBy\n            (Quantity.toFloat unitlessQuantity)\n\n",
+                "type": "Quantity.Quantity number Quantity.Unitless -> Quantity.Quantity number units -> Quantity.Quantity number units"
+            },
+            {
+                "name": "toFloat",
+                "comment": " Convert a `Quantity Float Unitless` value into a plain `Float`.\n\nIf you're looking for a function to convert a `Quantity Int units` to `Quantity\nFloat units`, check out [`toFloatQuantity`](#toFloatQuantity).\n\n",
+                "type": "Quantity.Quantity Basics.Float Quantity.Unitless -> Basics.Float"
+            },
+            {
+                "name": "toFloatQuantity",
+                "comment": " Convert a `Quantity Int units` to a `Quantity Float units` with the same\nvalue. Useful when you have an `Int`-valued quantity and want to divide it by\nsomething, multiply it by a fractional value etc.\n",
+                "type": "Quantity.Quantity Basics.Int units -> Quantity.Quantity Basics.Float units"
+            },
+            {
+                "name": "toInt",
+                "comment": " Convert a `Quantity Int Unitless` value into a plain `Int`.\n",
+                "type": "Quantity.Quantity Basics.Int Quantity.Unitless -> Basics.Int"
+            },
+            {
+                "name": "truncate",
+                "comment": " Round a `Float`-valued quantity towards zero. Note that [this may not do\nwhat you expect](#-int-float-conversion).\n\n    Quantity.truncate (Pixels.pixels -2.8)\n    --> Pixels.pixels -2\n\n",
+                "type": "Quantity.Quantity Basics.Float units -> Quantity.Quantity Basics.Int units"
+            },
+            {
+                "name": "twice",
+                "comment": " Convenient shorthand for `Quantity.multiplyBy 2`.\n\n    Quantity.twice (Duration.minutes 30)\n    --> Duration.hours 1\n\n",
+                "type": "Quantity.Quantity number units -> Quantity.Quantity number units"
+            },
+            {
+                "name": "unsafe",
+                "comment": " ",
+                "type": "number -> Quantity.Quantity number units"
+            },
+            {
+                "name": "unwrap",
+                "comment": " ",
+                "type": "Quantity.Quantity number units -> number"
+            },
+            {
+                "name": "zero",
+                "comment": " A generic zero value. This can be treated as either an `Int` or `Float`\nquantity in any units type, similar to how `Nothing` can be treated as any kind\nof `Maybe` type and `[]` can be treated as any kind of `List`.\n",
+                "type": "Quantity.Quantity number units"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Resistance",
+        "comment": " A `Resistance` value represents an electrical resistance in ohms.\n\nNote that since `Ohms` is defined as `Rate Volts Amperes` (voltage per unit\ncurrent), you can construct a `Resistance` value using `Quantity.per`:\n\n    resistance =\n        voltage |> Quantity.per current\n\nYou can also do rate-related calculations with `Resistance` values to compute\n`Voltage` or `Current`:\n\n    voltage =\n        current |> Quantity.at resistance\n\n    current =\n        voltage |> Quantity.at_ resistance\n\n@docs Resistance, Ohms\n\n@docs ohms, inOhms\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Ohms",
+                "comment": " ",
+                "args": [],
+                "type": "Quantity.Rate Voltage.Volts Current.Amperes"
+            },
+            {
+                "name": "Resistance",
+                "comment": " ",
+                "args": [],
+                "type": "Quantity.Quantity Basics.Float Resistance.Ohms"
+            }
+        ],
+        "values": [
+            {
+                "name": "inOhms",
+                "comment": " Convert a resistance to a number of ohms.\n",
+                "type": "Resistance.Resistance -> Basics.Float"
+            },
+            {
+                "name": "ohms",
+                "comment": " Construct a resistance from a number of ohms.\n",
+                "type": "Basics.Float -> Resistance.Resistance"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "SolidAngle",
+        "comment": " [Solid angle](https://en.wikipedia.org/wiki/Solid_angle) is a tricky concept\nto explain, but roughly speaking solid angle is for 3D what angle is for 2D. It\ncan be used to measure three-dimensional field of view and is stored in\n[steradians](https://en.wikipedia.org/wiki/Steradian).\n\n2D angle can be thought of as how much circumference of the unit circle is\ncovered. The unit circle (circle of radius 1) has a circumference of 2π, and an\nangle in radians corresponds to the corresponding amount of circumference\ncovered. So an angle of 2π radians covers the entire circumference of the\ncircle, π radians covers half the circle, π/2 radians covers a quarter, etc.\n\nSimilarly, 3D solid angle can be thought of as how much surface area of the unit\nsphere is covered. The unit sphere has surface area of 4π, and a solid angle in\nsteradians corresponds to the corresponding amount of surface area covered. So a\nsolid angle of 4π steradians covers the entire sphere, 2π steradians covers half\nthe sphere (one hemisphere), etc.\n\n@docs SolidAngle, Steradians\n\n\n## Conversions\n\n@docs steradians, inSteradians, spats, inSpats, squareDegrees, inSquareDegrees\n\n\n## Computation\n\n@docs conical, pyramidal\n\n",
+        "unions": [
+            {
+                "name": "Steradians",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "SolidAngle",
+                "comment": " ",
+                "args": [],
+                "type": "Quantity.Quantity Basics.Float SolidAngle.Steradians"
+            }
+        ],
+        "values": [
+            {
+                "name": "conical",
+                "comment": " Find the solid angle of a cone with a given tip angle (the angle between two\nopposite sides of the cone, _not_ the half-angle from the axis of the cone to\nits side). A 1 degree cone has a solid angle of approximately π/4 square\ndegrees, similar to how a circle of diameter 1 has an area of π/4:\n\n    SolidAngle.conical (Angle.degrees 1)\n        |> SolidAngle.inSquareDegrees\n    --> 0.78539318\n\n    pi / 4\n    --> 0.78539816\n\nA cone with a tip angle of 180 degrees is just a hemisphere:\n\n    SolidAngle.conical (Angle.degrees 180)\n    --> SolidAngle.spats 0.5\n\n\"Inside out\" cones are also supported, up to 360 degrees (a full sphere):\n\n    SolidAngle.conical (Angle.degrees 270)\n    --> SolidAngle.spats 0.85355\n\n    SolidAngle.conical (Angle.degrees 360)\n    --> SolidAngle.spats 1\n\n",
+                "type": "Angle.Angle -> SolidAngle.SolidAngle"
+            },
+            {
+                "name": "inSpats",
+                "comment": " Convert a solid angle to a number of spats.\n\n    SolidAngle.steradians (2 * pi) |> SolidAngle.inSpats\n    --> 0.5\n\n",
+                "type": "SolidAngle.SolidAngle -> Basics.Float"
+            },
+            {
+                "name": "inSquareDegrees",
+                "comment": " Convert a solid angle to a number of square degrees.\n\n    SolidAngle.spats 1 |> SolidAngle.inSquareDegrees\n    --> 41252.96125\n\n",
+                "type": "SolidAngle.SolidAngle -> Basics.Float"
+            },
+            {
+                "name": "inSteradians",
+                "comment": " Convert a solid angle to a number of steradians.\n",
+                "type": "SolidAngle.SolidAngle -> Basics.Float"
+            },
+            {
+                "name": "pyramidal",
+                "comment": " Find the solid angle of a rectangular pyramid given the angles between the\ntwo pairs of sides. A 1 degree by 1 degree pyramid has a solid angle of almost\nexactly 1 square degree:\n\n    SolidAngle.pyramidal\n        (Angle.degrees 1)\n        (Angle.degrees 1)\n    --> SolidAngle.squareDegrees 0.9999746\n\nIn general, the solid angle of a pyramid that is _n_ degrees wide by _m_ degrees\ntall is (for relatively small values of _n_ and _m_) approximately _nm_ square\ndegrees:\n\n    SolidAngle.pyramidal\n        (Angle.degrees 10)\n        (Angle.degrees 10)\n    --> SolidAngle.squareDegrees 99.7474\n\n    SolidAngle.pyramidal\n        (Angle.degrees 60)\n        (Angle.degrees 30)\n    --> SolidAngle.squareDegrees 1704.08\n\nA pyramid that is 180 degrees by 180 degrees covers an entire hemisphere:\n\n    SolidAngle.pyramidal\n        (Angle.degrees 180)\n        (Angle.degrees 180)\n    --> SolidAngle.spats 0.5\n\n\"Inside out\" pyramids greater than 180 degrees are not supported and will be\ntreated as the corresponding \"normal\" pyramid (an angle of 240 degrees will be\ntreated as 120 degrees, an angle of 330 degrees will be treated as 30 degrees,\netc.).\n\n",
+                "type": "Angle.Angle -> Angle.Angle -> SolidAngle.SolidAngle"
+            },
+            {
+                "name": "spats",
+                "comment": " Construct a solid angle from a number of [spats][1]. One spat is the 3D\nequivalent of one full turn; in the same way that one turn is the angle that\ncovers an entire circle, one spat is the solid angle that covers an entire\nsphere. It's rare to have solid angles more than one spat, since solid angles\nare usually used to measure what angular fraction of a full sphere something\ncovers.\n\n    SolidAngle.spats 1\n    --> SolidAngle.steradians (4 * pi)\n\n[1]: https://en.wikipedia.org/wiki/Spat_(unit)\n\n",
+                "type": "Basics.Float -> SolidAngle.SolidAngle"
+            },
+            {
+                "name": "squareDegrees",
+                "comment": " Construct a solid angle from a number of [square\ndegrees](https://en.wikipedia.org/wiki/Square_degree). One square degree is,\nroughly speaking, the solid angle of a square on the surface of a sphere where\nthe square is one degree wide and one degree tall as viewed from the center of\nthe sphere.\n\n    SolidAngle.squareDegrees 100\n    -> SolidAngle.steradians 0.03046\n\n",
+                "type": "Basics.Float -> SolidAngle.SolidAngle"
+            },
+            {
+                "name": "steradians",
+                "comment": " Construct a solid angle from a number of steradians.\n",
+                "type": "Basics.Float -> SolidAngle.SolidAngle"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Speed",
+        "comment": " A `Speed` value represents a speed in meters per second, miles per hour etc.\nIt is stored as a number of meters per second.\n\nNote that since `MetersPerSecond` is defined as `Rate Meters Seconds` (length\nper unit time), you can construct a `Speed` value using `Quantity.per`:\n\n    speed =\n        length |> Quantity.per duration\n\nYou can also do rate-related calculations with `Speed` values to compute\n`Length` or `Duration`:\n\n    length =\n        speed |> Quantity.for duration\n\n    alsoLength =\n        duration |> Quantity.at speed\n\n    duration =\n        length |> Quantity.at_ speed\n\n@docs Speed, MetersPerSecond\n\n\n## Metric\n\n@docs metersPerSecond, inMetersPerSecond, kilometersPerHour, inKilometersPerHour\n\n\n## Imperial\n\n@docs feetPerSecond, inFeetPerSecond, milesPerHour, inMilesPerHour\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "MetersPerSecond",
+                "comment": " ",
+                "args": [],
+                "type": "Quantity.Rate Length.Meters Duration.Seconds"
+            },
+            {
+                "name": "Speed",
+                "comment": " ",
+                "args": [],
+                "type": "Quantity.Quantity Basics.Float Speed.MetersPerSecond"
+            }
+        ],
+        "values": [
+            {
+                "name": "feetPerSecond",
+                "comment": " Construct a speed from a number of feet per second.\n",
+                "type": "Basics.Float -> Speed.Speed"
+            },
+            {
+                "name": "inFeetPerSecond",
+                "comment": " Convert a speed to a number of feet per second.\n",
+                "type": "Speed.Speed -> Basics.Float"
+            },
+            {
+                "name": "inKilometersPerHour",
+                "comment": " Convert a speed to a number of kilometers per hour.\n",
+                "type": "Speed.Speed -> Basics.Float"
+            },
+            {
+                "name": "inMetersPerSecond",
+                "comment": " Convert a speed to a number of meters per second.\n",
+                "type": "Speed.Speed -> Basics.Float"
+            },
+            {
+                "name": "inMilesPerHour",
+                "comment": " Convert a speed to a number of miles per hour.\n",
+                "type": "Speed.Speed -> Basics.Float"
+            },
+            {
+                "name": "kilometersPerHour",
+                "comment": " Construct a speed from a number of kilometers per hour.\n",
+                "type": "Basics.Float -> Speed.Speed"
+            },
+            {
+                "name": "metersPerSecond",
+                "comment": " Construct a speed from a number of meters per second.\n",
+                "type": "Basics.Float -> Speed.Speed"
+            },
+            {
+                "name": "milesPerHour",
+                "comment": " Construct a speed from a number of miles per hour.\n",
+                "type": "Basics.Float -> Speed.Speed"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "SubstanceAmount",
+        "comment": " A `SubstanceAmount` value represents a substance amount in [moles][1].\n\n[1]: https://en.wikipedia.org/wiki/Mole_(unit)\n\n@docs SubstanceAmount, Moles\n\n\n## Conversions\n\n@docs moles, inMoles, picomoles, inPicomoles, nanomoles, inNanomoles\n@docs micromoles, inMicromoles, millimoles, inMillimoles\n@docs centimoles, inCentimoles, decimoles, inDecimoles\n@docs kilomoles, inKilomoles, megamoles, inMegamoles, gigamoles, inGigamoles\n\n",
+        "unions": [
+            {
+                "name": "Moles",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "SubstanceAmount",
+                "comment": " ",
+                "args": [],
+                "type": "Quantity.Quantity Basics.Float SubstanceAmount.Moles"
+            }
+        ],
+        "values": [
+            {
+                "name": "centimoles",
+                "comment": " Construct a substance amount from a number of centimoles.\n",
+                "type": "Basics.Float -> SubstanceAmount.SubstanceAmount"
+            },
+            {
+                "name": "decimoles",
+                "comment": " Construct a substance amount from a number of decimoles.\n",
+                "type": "Basics.Float -> SubstanceAmount.SubstanceAmount"
+            },
+            {
+                "name": "gigamoles",
+                "comment": " Construct a substance amount from a number of gigamoles.\n",
+                "type": "Basics.Float -> SubstanceAmount.SubstanceAmount"
+            },
+            {
+                "name": "inCentimoles",
+                "comment": " Convert a substance amount to a number of centimoles.\n",
+                "type": "SubstanceAmount.SubstanceAmount -> Basics.Float"
+            },
+            {
+                "name": "inDecimoles",
+                "comment": " Convert a substance amount to a number of decimoles.\n",
+                "type": "SubstanceAmount.SubstanceAmount -> Basics.Float"
+            },
+            {
+                "name": "inGigamoles",
+                "comment": " Convert a substance amount to a number of gigamoles.\n",
+                "type": "SubstanceAmount.SubstanceAmount -> Basics.Float"
+            },
+            {
+                "name": "inKilomoles",
+                "comment": " Convert a substance amount to a number of kilomoles.\n",
+                "type": "SubstanceAmount.SubstanceAmount -> Basics.Float"
+            },
+            {
+                "name": "inMegamoles",
+                "comment": " Convert a substance amount to a number of megamoles.\n",
+                "type": "SubstanceAmount.SubstanceAmount -> Basics.Float"
+            },
+            {
+                "name": "inMicromoles",
+                "comment": " Convert a substance amount to a number of micromoles.\n",
+                "type": "SubstanceAmount.SubstanceAmount -> Basics.Float"
+            },
+            {
+                "name": "inMillimoles",
+                "comment": " Convert a substance amount to a number of millimoles.\n",
+                "type": "SubstanceAmount.SubstanceAmount -> Basics.Float"
+            },
+            {
+                "name": "inMoles",
+                "comment": " Convert a substance amount to a number of moles.\n",
+                "type": "SubstanceAmount.SubstanceAmount -> Basics.Float"
+            },
+            {
+                "name": "inNanomoles",
+                "comment": " Convert a substance amount to a number of nanomoles.\n",
+                "type": "SubstanceAmount.SubstanceAmount -> Basics.Float"
+            },
+            {
+                "name": "inPicomoles",
+                "comment": " Convert a substance amount to a number of picomoles.\n",
+                "type": "SubstanceAmount.SubstanceAmount -> Basics.Float"
+            },
+            {
+                "name": "kilomoles",
+                "comment": " Construct a substance amount from a number of kilomoles.\n",
+                "type": "Basics.Float -> SubstanceAmount.SubstanceAmount"
+            },
+            {
+                "name": "megamoles",
+                "comment": " Construct a substance amount from a number of megamoles.\n",
+                "type": "Basics.Float -> SubstanceAmount.SubstanceAmount"
+            },
+            {
+                "name": "micromoles",
+                "comment": " Construct a substance amount from a number of micromoles.\n",
+                "type": "Basics.Float -> SubstanceAmount.SubstanceAmount"
+            },
+            {
+                "name": "millimoles",
+                "comment": " Construct a substance amount from a number of millimoles.\n",
+                "type": "Basics.Float -> SubstanceAmount.SubstanceAmount"
+            },
+            {
+                "name": "moles",
+                "comment": " Construct a substance amount from a number of moles.\n",
+                "type": "Basics.Float -> SubstanceAmount.SubstanceAmount"
+            },
+            {
+                "name": "nanomoles",
+                "comment": " Construct a substance amount from a number of nanomoles.\n",
+                "type": "Basics.Float -> SubstanceAmount.SubstanceAmount"
+            },
+            {
+                "name": "picomoles",
+                "comment": " Construct a substance amount from a number of picomoles.\n",
+                "type": "Basics.Float -> SubstanceAmount.SubstanceAmount"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Temperature",
+        "comment": " Unlike other modules in `elm-units`, this module contains two different\nprimary types:\n\n  - `Temperature`, which is not actually a `Quantity` since temperatures don't\n    really act like normal quantities. For example, it doesn't make sense to\n    add two temperatures or find the ratio between them.\n  - `Delta`, which represents the difference between two temperatures. A `Delta`\n    _is_ a `Quantity` since it does make sense to add two deltas to get a net\n    delta, find the ratio between two deltas (one rise in temperature might be\n    twice as much as another rise in temperature), etc.\n\nSince a `Temperature` value is not a `Quantity`, this module exposes specialized\nfunctions for doing the operations on `Temperature` values that _do_ make sense,\nsuch as comparing two temperatures or sorting a list of temperatures. It's also\npossible to find the delta from one temperature to another using [`minus`](Temperature#minus),\nand then add a `Delta` to a `Temperature` using [`plus`](Temperature#plus).\n\n@docs Temperature, Delta, CelsiusDegrees\n\n\n# Temperatures\n\n@docs degreesCelsius, inDegreesCelsius, degreesFahrenheit, inDegreesFahrenheit, kelvins, inKelvins, absoluteZero\n\n\n# Deltas\n\nFollowing the suggestion mentioned [here](https://en.wikipedia.org/wiki/Celsius#Temperatures_and_intervals),\nthis module uses (for example) `celsiusDegrees` to indicate a temperature delta\n(change in temperature), in contrast to `degreesCelsius` which indicates an\nactual temperature.\n\n@docs celsiusDegrees, inCelsiusDegrees, fahrenheitDegrees, inFahrenheitDegrees\n\n\n## Constants\n\nShorthand for `Temperature.celsiusDegrees 1` and `Temperature.fahrenheitDegrees\n1`. Can be convenient to use with [`Quantity.per`](Quantity#per).\n\n@docs celsiusDegree, fahrenheitDegree\n\n\n# Comparison\n\n@docs lessThan, greaterThan, lessThanOrEqualTo, greaterThanOrEqualTo, compare, equalWithin, min, max\n\n\n# Arithmetic\n\n@docs plus, minus, clamp\n\n\n# List functions\n\n@docs minimum, maximum, sort, sortBy\n\n",
+        "unions": [
+            {
+                "name": "CelsiusDegrees",
+                "comment": " Tempereature deltas are stored as a number of Celsius degrees.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Temperature",
+                "comment": " A temperature such as 25 degrees Celsius or 80 degrees Fahrenheit.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Delta",
+                "comment": " A `Delta` represents the difference between two temperatures.\n",
+                "args": [],
+                "type": "Quantity.Quantity Basics.Float Temperature.CelsiusDegrees"
+            }
+        ],
+        "values": [
+            {
+                "name": "absoluteZero",
+                "comment": " [Absolute zero](https://en.wikipedia.org/wiki/Absolute_zero), equal to zero\nkelvins or -273.15 degrees Celsius.\n\n    Temperature.absoluteZero\n    --> Temperature.degreesCelsius -273.15\n\n",
+                "type": "Temperature.Temperature"
+            },
+            {
+                "name": "celsiusDegree",
+                "comment": " ",
+                "type": "Temperature.Delta"
+            },
+            {
+                "name": "celsiusDegrees",
+                "comment": " Construct a temperature delta from a number of Celsius degrees.\n",
+                "type": "Basics.Float -> Temperature.Delta"
+            },
+            {
+                "name": "clamp",
+                "comment": " Given a lower and upper bound, clamp a given temperature to within those\nbounds. Say you wanted to clamp a temperature to be between 18 and 22 degrees\nCelsius:\n\n    lowerBound =\n        Temperature.degreesCelsius 18\n\n    upperBound =\n        Temperature.degreesCelsius 22\n\n    Temperature.degreesCelsius 25\n        |> Temperature.clamp lowerBound upperBound\n    --> Temperature.degreesCelsius 22\n\n    Temperature.degreesFahrenheit 67 -- approx 19.4 °C\n        |> Temperature.clamp lowerBound upperBound\n    --> Temperature.degreesFahrenheit 67\n\n    Temperature.absoluteZero\n        |> Temperature.clamp lowerBound upperBound\n    --> Temperature.degreesCelsius 18\n\n",
+                "type": "Temperature.Temperature -> Temperature.Temperature -> Temperature.Temperature -> Temperature.Temperature"
+            },
+            {
+                "name": "compare",
+                "comment": " Compare two temperatures, returning an [`Order`](https://package.elm-lang.org/packages/elm/core/latest/Basics#Order)\nvalue indicating whether the first is less than, equal to or greater than the\nsecond.\n\n    Temperature.compare\n        (Temperature.degreesCelsius 25)\n        (Temperature.degreesFahrenheit 75)\n    --> GT\n\n    Temperature.compare\n        (Temperature.degreesCelsius 25)\n        (Temperature.degreesFahrenheit 77)\n    --> EQ\n\n(Note that due to floating-point roundoff, you generally shouldn't rely on\ntemperatures comparing as exactly equal.)\n\n",
+                "type": "Temperature.Temperature -> Temperature.Temperature -> Basics.Order"
+            },
+            {
+                "name": "degreesCelsius",
+                "comment": " Construct a temperature from a number of degrees Celsius.\n",
+                "type": "Basics.Float -> Temperature.Temperature"
+            },
+            {
+                "name": "degreesFahrenheit",
+                "comment": " Construct a temperature from a number of degrees Fahrenheit.\n",
+                "type": "Basics.Float -> Temperature.Temperature"
+            },
+            {
+                "name": "equalWithin",
+                "comment": " Check if two temperatures are equal within a given delta tolerance. The\ntolerance must be greater than or equal to zero - if it is negative, then the\nresult will always be false.\n\n    Temperature.equalWithin (Temperature.fahrenheitDegrees 1)\n        (Temperature.degreesCelsius 25)\n        (Temperature.degreesFahrenheit 75)\n    --> False\n\n    Temperature.equalWithin (Temperature.fahrenheitDegrees 3)\n        (Temperature.degreesCelsius 25)\n        (Temperature.degreesFahrenheit 75)\n    --> True\n\n",
+                "type": "Temperature.Delta -> Temperature.Temperature -> Temperature.Temperature -> Basics.Bool"
+            },
+            {
+                "name": "fahrenheitDegree",
+                "comment": " ",
+                "type": "Temperature.Delta"
+            },
+            {
+                "name": "fahrenheitDegrees",
+                "comment": " Construct a temperature delta from a number of Fahrenheit degrees.\n\n    Temperature.fahrenheitDegrees 36\n    --> Temperature.celsiusDegrees 20\n\n",
+                "type": "Basics.Float -> Temperature.Delta"
+            },
+            {
+                "name": "greaterThan",
+                "comment": " Check if one temperature is greater than another. Note the [argument order](/#argument-order)!\n\n    roomTemperature =\n        Temperature.degreesCelsius 21\n\n    Temperature.degreesFahrenheit 50\n        |> Temperature.greaterThan roomTemperature\n    --> False\n\n    -- Same as:\n    Temperature.greaterThan roomTemperature\n        (Temperature.degreesFahrenheit 50)\n    --> False\n\n",
+                "type": "Temperature.Temperature -> Temperature.Temperature -> Basics.Bool"
+            },
+            {
+                "name": "greaterThanOrEqualTo",
+                "comment": " Check if one temperature is greater than or equal to another. Note the\n[argument order](/#argument-order)!\n",
+                "type": "Temperature.Temperature -> Temperature.Temperature -> Basics.Bool"
+            },
+            {
+                "name": "inCelsiusDegrees",
+                "comment": " Convert a temperature delta to a number of Celsius degrees.\n",
+                "type": "Temperature.Delta -> Basics.Float"
+            },
+            {
+                "name": "inDegreesCelsius",
+                "comment": " Convert a temperature to a number of degrees Celsius.\n",
+                "type": "Temperature.Temperature -> Basics.Float"
+            },
+            {
+                "name": "inDegreesFahrenheit",
+                "comment": " Convert a temperature to a number of degrees Fahrenheit.\n",
+                "type": "Temperature.Temperature -> Basics.Float"
+            },
+            {
+                "name": "inFahrenheitDegrees",
+                "comment": " Convert a temperature delta to a number of Fahrenheit degrees.\n\n    Temperature.celsiusDegrees 10\n        |> Temperature.inFahrenheitDegrees\n    --> 18\n\n",
+                "type": "Temperature.Delta -> Basics.Float"
+            },
+            {
+                "name": "inKelvins",
+                "comment": " Convert a temperature to a number of kelvins.\n\n    Temperature.degreesCelsius 0\n        |> Temperature.inKelvins\n    --> 273.15\n\n",
+                "type": "Temperature.Temperature -> Basics.Float"
+            },
+            {
+                "name": "kelvins",
+                "comment": " Construct a temperature from a number of [kelvins][kelvin].\n\n    Temperature.kelvins 300\n    --> Temperature.degreesCelsius 26.85\n\n[kelvin]: https://en.wikipedia.org/wiki/Kelvin \"Kelvin\"\n\n",
+                "type": "Basics.Float -> Temperature.Temperature"
+            },
+            {
+                "name": "lessThan",
+                "comment": " Check if one temperature is less than another. Note the [argument order](/#argument-order)!\n\n    roomTemperature =\n        Temperature.degreesCelsius 21\n\n    Temperature.degreesFahrenheit 50\n        |> Temperature.lessThan roomTemperature\n    --> True\n\n    -- Same as:\n    Temperature.lessThan roomTemperature\n        (Temperature.degreesFahrenheit 50)\n    --> True\n\n",
+                "type": "Temperature.Temperature -> Temperature.Temperature -> Basics.Bool"
+            },
+            {
+                "name": "lessThanOrEqualTo",
+                "comment": " Check if one temperature is less than or equal to another. Note the\n[argument order](/#argument-order)!\n",
+                "type": "Temperature.Temperature -> Temperature.Temperature -> Basics.Bool"
+            },
+            {
+                "name": "max",
+                "comment": " Find the maximum of two temperatures.\n\n    Temperature.max\n        (Temperature.degreesCelsius 25)\n        (Temperature.degreesFahrenheit 75)\n    --> Temperature.degreesCelsius 25\n\n",
+                "type": "Temperature.Temperature -> Temperature.Temperature -> Temperature.Temperature"
+            },
+            {
+                "name": "maximum",
+                "comment": " Find the maximum of a list of temperatures. Returns `Nothing` if the list\nis empty.\n\n    Temperature.maximum\n        [ Temperature.degreesCelsius 20\n        , Temperature.kelvins 300\n        , Temperature.degreesFahrenheit 74\n        ]\n    --> Just (Temperature.kelvins 300)\n\n",
+                "type": "List.List Temperature.Temperature -> Maybe.Maybe Temperature.Temperature"
+            },
+            {
+                "name": "min",
+                "comment": " Find the minimum of two temperatures.\n\n    Temperature.min\n        (Temperature.degreesCelsius 25)\n        (Temperature.degreesFahrenheit 75)\n    --> Temperature.degreesFahrenheit 75\n\n",
+                "type": "Temperature.Temperature -> Temperature.Temperature -> Temperature.Temperature"
+            },
+            {
+                "name": "minimum",
+                "comment": " Find the minimum of a list of temperatures. Returns `Nothing` if the list\nis empty.\n\n    Temperature.minimum\n        [ Temperature.degreesCelsius 20\n        , Temperature.kelvins 300\n        , Temperature.degreesFahrenheit 74\n        ]\n    --> Just (Temperature.degreesCelsius 20)\n\n",
+                "type": "List.List Temperature.Temperature -> Maybe.Maybe Temperature.Temperature"
+            },
+            {
+                "name": "minus",
+                "comment": " Subtract one `Temperature` from another to get a `Delta`. Note the [argument\norder](/#argument-order)!\n\n    -- 25 degrees Celsius is 77 degrees Fahrenheit\n    start =\n        Temperature.degreesCelsius 25\n\n    end =\n        Temperature.degreesFahrenheit 80\n\n    end |> Temperature.minus start\n    --> Temperature.fahrenheitDegrees 3\n\n    start |> Temperature.minus end\n    --> Temperature.fahrenheitDegrees -3\n\n",
+                "type": "Temperature.Temperature -> Temperature.Temperature -> Temperature.Delta"
+            },
+            {
+                "name": "plus",
+                "comment": " Add a `Delta` to a `Temperature` to get a new `Temperature`.\n\n    Temperature.degreesCelsius 25\n        |> Temperature.plus\n            (Temperature.celsiusDegrees 7)\n    --> Temperature.degreesCelsius 32\n\nIf you want to _subtract_ a `Delta` from a `Temperature`, you can [`negate`](Quantity#negate)\nthe delta first and then call `plus`.\n\n",
+                "type": "Temperature.Delta -> Temperature.Temperature -> Temperature.Temperature"
+            },
+            {
+                "name": "sort",
+                "comment": " Sort a list of temperatures from lowest to highest.\n\n    Temperature.sort\n        [ Temperature.degreesCelsius 20\n        , Temperature.kelvins 300\n        , Temperature.degreesFahrenheit 74\n        ]\n    --> [ Temperature.degreesCelsius 20\n    --> , Temperature.degreesFahrenheit 74\n    --> , Temperature.kelvins 300\n    --> ]\n\n",
+                "type": "List.List Temperature.Temperature -> List.List Temperature.Temperature"
+            },
+            {
+                "name": "sortBy",
+                "comment": " Sort an arbitrary list of values by a derived `Temperature`. If you had\n\n    rooms =\n        [ ( \"Lobby\", Temperature.degreesCelsius 21 )\n        , ( \"Locker room\", Temperature.degreesCelsius 17 )\n        , ( \"Rink\", Temperature.degreesCelsius -4 )\n        , ( \"Sauna\", Temperature.degreesCelsius 82 )\n        ]\n\nthen you could sort by temperature with\n\n    Temperature.sortBy Tuple.second rooms\n    --> [ ( \"Rink\", Temperature.degreesCelsius -4 )\n    --> , ( \"Locker room\", Temperature.degreesCelsius 17 )\n    --> , ( \"Lobby\", Temperature.degreesCelsius 21 )\n    --> , ( \"Sauna\", Temperature.degreesCelsius 82 )\n    --> ]\n\n",
+                "type": "(a -> Temperature.Temperature) -> List.List a -> List.List a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Voltage",
+        "comment": " A `Voltage` value represents a voltage (electric potential difference, if\nwe're being picky) in volts.\n\nNote that since `Volts` is defined as `Rate Watts Amperes` (power per unit\ncurrent), you can do rate-related calculations with `Voltage` values to compute\n`Power` or `Current`:\n\n    -- elm-units version of 'P = V * I'\n    power =\n        current |> Quantity.at voltage\n\n    -- I = P / V\n    current =\n        power |> Quantity.at_ voltage\n\nJust for fun, note that since you can also [express `Voltage` in terms of\n`Current` and `Resistance`](Resistance), you could rewrite the second example\nabove as\n\n    -- P = I^2 * R\n    power =\n        current\n            |> Quantity.at\n                (current\n                    |> Quantity.at resistance\n                )\n\n@docs Voltage, Volts\n\n@docs volts, inVolts\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Voltage",
+                "comment": " ",
+                "args": [],
+                "type": "Quantity.Quantity Basics.Float Voltage.Volts"
+            },
+            {
+                "name": "Volts",
+                "comment": " ",
+                "args": [],
+                "type": "Quantity.Rate Power.Watts Current.Amperes"
+            }
+        ],
+        "values": [
+            {
+                "name": "inVolts",
+                "comment": " Convert a voltage to a number of volts.\n",
+                "type": "Voltage.Voltage -> Basics.Float"
+            },
+            {
+                "name": "volts",
+                "comment": " Construct a voltage from a number of volts.\n",
+                "type": "Basics.Float -> Voltage.Voltage"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Volume",
+        "comment": " A `Volume` represents a volume in cubic meters, cubic feet, liters, US\nliquid gallons, imperial fluid ounces etc. It is stored as a number of cubic\nmeters.\n\n@docs Volume, CubicMeters\n\n\n## Metric\n\n@docs cubicMeters, inCubicMeters\n@docs milliliters, inMilliliters, liters, inLiters, cubicCentimeters, inCubicCentimeters\n\n\n## Imperial\n\n@docs cubicInches, inCubicInches, cubicFeet, inCubicFeet, cubicYards, inCubicYards\n@docs usLiquidGallons, inUsLiquidGallons, usDryGallons, inUsDryGallons, imperialGallons, inImperialGallons\n@docs usLiquidQuarts, inUsLiquidQuarts, usDryQuarts, inUsDryQuarts, imperialQuarts, inImperialQuarts\n@docs usLiquidPints, inUsLiquidPints, usDryPints, inUsDryPints, imperialPints, inImperialPints\n@docs usFluidOunces, inUsFluidOunces, imperialFluidOunces, inImperialFluidOunces\n\n\n## Constants\n\nShorthand for `Volume.cubicMeters 1`, `Volume.imperialGallons 1` etc. Can be\nconvenient to use with [`Quantity.per`](Quantity#per).\n\n@docs cubicMeter, milliliter, liter, cubicCentimeter\n@docs cubicInch, cubicFoot, cubicYard\n@docs usLiquidGallon, usDryGallon, imperialGallon\n@docs usLiquidQuart, usDryQuart, imperialQuart\n@docs usLiquidPint, usDryPint, imperialPint\n@docs usFluidOunce, imperialFluidOunce\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "CubicMeters",
+                "comment": " ",
+                "args": [],
+                "type": "Quantity.Cubed Length.Meters"
+            },
+            {
+                "name": "Volume",
+                "comment": " ",
+                "args": [],
+                "type": "Quantity.Quantity Basics.Float Volume.CubicMeters"
+            }
+        ],
+        "values": [
+            {
+                "name": "cubicCentimeter",
+                "comment": " ",
+                "type": "Volume.Volume"
+            },
+            {
+                "name": "cubicCentimeters",
+                "comment": " Construct a volume from a number of cubic centimeters.\nAlias for `milliliters`.\n",
+                "type": "Basics.Float -> Volume.Volume"
+            },
+            {
+                "name": "cubicFeet",
+                "comment": " Construct a volume from a number of cubic feet.\n",
+                "type": "Basics.Float -> Volume.Volume"
+            },
+            {
+                "name": "cubicFoot",
+                "comment": " ",
+                "type": "Volume.Volume"
+            },
+            {
+                "name": "cubicInch",
+                "comment": " ",
+                "type": "Volume.Volume"
+            },
+            {
+                "name": "cubicInches",
+                "comment": " Construct a volume from a number of cubic inches.\n",
+                "type": "Basics.Float -> Volume.Volume"
+            },
+            {
+                "name": "cubicMeter",
+                "comment": " ",
+                "type": "Volume.Volume"
+            },
+            {
+                "name": "cubicMeters",
+                "comment": " Construct a volume from a number of cubic meters.\n",
+                "type": "Basics.Float -> Volume.Volume"
+            },
+            {
+                "name": "cubicYard",
+                "comment": " ",
+                "type": "Volume.Volume"
+            },
+            {
+                "name": "cubicYards",
+                "comment": " Construct a volume from a number of cubic yards.\n",
+                "type": "Basics.Float -> Volume.Volume"
+            },
+            {
+                "name": "imperialFluidOunce",
+                "comment": " ",
+                "type": "Volume.Volume"
+            },
+            {
+                "name": "imperialFluidOunces",
+                "comment": " Construct a volume from a number of imperial fluid ounces.\n",
+                "type": "Basics.Float -> Volume.Volume"
+            },
+            {
+                "name": "imperialGallon",
+                "comment": " ",
+                "type": "Volume.Volume"
+            },
+            {
+                "name": "imperialGallons",
+                "comment": " Construct a volume from a number of imperial gallons.\n",
+                "type": "Basics.Float -> Volume.Volume"
+            },
+            {
+                "name": "imperialPint",
+                "comment": " ",
+                "type": "Volume.Volume"
+            },
+            {
+                "name": "imperialPints",
+                "comment": " Construct a volume from a number of imperial pints.\n",
+                "type": "Basics.Float -> Volume.Volume"
+            },
+            {
+                "name": "imperialQuart",
+                "comment": " ",
+                "type": "Volume.Volume"
+            },
+            {
+                "name": "imperialQuarts",
+                "comment": " Construct a volume from a number of imperial quarts.\n",
+                "type": "Basics.Float -> Volume.Volume"
+            },
+            {
+                "name": "inCubicCentimeters",
+                "comment": " Convert a volume to a number of cubic centimeters.\nAlias for `inMilliliters`.\n",
+                "type": "Volume.Volume -> Basics.Float"
+            },
+            {
+                "name": "inCubicFeet",
+                "comment": " Convert a volume to a number of cubic feet.\n",
+                "type": "Volume.Volume -> Basics.Float"
+            },
+            {
+                "name": "inCubicInches",
+                "comment": " Convert a volume to a number of cubic inches.\n",
+                "type": "Volume.Volume -> Basics.Float"
+            },
+            {
+                "name": "inCubicMeters",
+                "comment": " Convert a volume to a number of cubic meters.\n",
+                "type": "Volume.Volume -> Basics.Float"
+            },
+            {
+                "name": "inCubicYards",
+                "comment": " Convert a volume to a number of cubic yards.\n",
+                "type": "Volume.Volume -> Basics.Float"
+            },
+            {
+                "name": "inImperialFluidOunces",
+                "comment": " Convert a volume to a number of imperial fluid ounces.\n",
+                "type": "Volume.Volume -> Basics.Float"
+            },
+            {
+                "name": "inImperialGallons",
+                "comment": " Convert a volume to a number of imperial gallons.\n",
+                "type": "Volume.Volume -> Basics.Float"
+            },
+            {
+                "name": "inImperialPints",
+                "comment": " Convert a volume to a number of imperial pints.\n",
+                "type": "Volume.Volume -> Basics.Float"
+            },
+            {
+                "name": "inImperialQuarts",
+                "comment": " Convert a volume to a number of imperial quarts.\n",
+                "type": "Volume.Volume -> Basics.Float"
+            },
+            {
+                "name": "inLiters",
+                "comment": " Convert a volume to a number of liters.\n",
+                "type": "Volume.Volume -> Basics.Float"
+            },
+            {
+                "name": "inMilliliters",
+                "comment": " Convert a volume to a number of milliliters.\n",
+                "type": "Volume.Volume -> Basics.Float"
+            },
+            {
+                "name": "inUsDryGallons",
+                "comment": " Convert a volume to a number of U.S. dry gallons.\n",
+                "type": "Volume.Volume -> Basics.Float"
+            },
+            {
+                "name": "inUsDryPints",
+                "comment": " Convert a volume to a number of U.S. dry pints.\n",
+                "type": "Volume.Volume -> Basics.Float"
+            },
+            {
+                "name": "inUsDryQuarts",
+                "comment": " Convert a volume to a number of U.S. dry quarts.\n",
+                "type": "Volume.Volume -> Basics.Float"
+            },
+            {
+                "name": "inUsFluidOunces",
+                "comment": " Convert a volume to a number of U.S. fluid ounces.\n",
+                "type": "Volume.Volume -> Basics.Float"
+            },
+            {
+                "name": "inUsLiquidGallons",
+                "comment": " Convert a volume to a number of U.S. liquid gallons.\n",
+                "type": "Volume.Volume -> Basics.Float"
+            },
+            {
+                "name": "inUsLiquidPints",
+                "comment": " Convert a volume to a number of U.S. liquid pints.\n",
+                "type": "Volume.Volume -> Basics.Float"
+            },
+            {
+                "name": "inUsLiquidQuarts",
+                "comment": " Convert a volume to a number of U.S. liquid quarts.\n",
+                "type": "Volume.Volume -> Basics.Float"
+            },
+            {
+                "name": "liter",
+                "comment": " ",
+                "type": "Volume.Volume"
+            },
+            {
+                "name": "liters",
+                "comment": " Construct a volume from a number of liters.\n",
+                "type": "Basics.Float -> Volume.Volume"
+            },
+            {
+                "name": "milliliter",
+                "comment": " ",
+                "type": "Volume.Volume"
+            },
+            {
+                "name": "milliliters",
+                "comment": " Construct a volume from a number of milliliters.\n",
+                "type": "Basics.Float -> Volume.Volume"
+            },
+            {
+                "name": "usDryGallon",
+                "comment": " ",
+                "type": "Volume.Volume"
+            },
+            {
+                "name": "usDryGallons",
+                "comment": " Construct a volume from a number of U.S. dry gallons.\n",
+                "type": "Basics.Float -> Volume.Volume"
+            },
+            {
+                "name": "usDryPint",
+                "comment": " ",
+                "type": "Volume.Volume"
+            },
+            {
+                "name": "usDryPints",
+                "comment": " Construct a volume from a number of U.S. dry pints.\n",
+                "type": "Basics.Float -> Volume.Volume"
+            },
+            {
+                "name": "usDryQuart",
+                "comment": " ",
+                "type": "Volume.Volume"
+            },
+            {
+                "name": "usDryQuarts",
+                "comment": " Construct a volume from a number of U.S. dry quarts.\n",
+                "type": "Basics.Float -> Volume.Volume"
+            },
+            {
+                "name": "usFluidOunce",
+                "comment": " ",
+                "type": "Volume.Volume"
+            },
+            {
+                "name": "usFluidOunces",
+                "comment": " Construct a volume from a number of U.S. fluid ounces.\n",
+                "type": "Basics.Float -> Volume.Volume"
+            },
+            {
+                "name": "usLiquidGallon",
+                "comment": " ",
+                "type": "Volume.Volume"
+            },
+            {
+                "name": "usLiquidGallons",
+                "comment": " Construct a volume from a number of U.S. liquid gallon.\n",
+                "type": "Basics.Float -> Volume.Volume"
+            },
+            {
+                "name": "usLiquidPint",
+                "comment": " ",
+                "type": "Volume.Volume"
+            },
+            {
+                "name": "usLiquidPints",
+                "comment": " Construct a volume from a number of U.S. liquid pints.\n",
+                "type": "Basics.Float -> Volume.Volume"
+            },
+            {
+                "name": "usLiquidQuart",
+                "comment": " ",
+                "type": "Volume.Volume"
+            },
+            {
+                "name": "usLiquidQuarts",
+                "comment": " Construct a volume from a number of U.S. liquid quarts.\n",
+                "type": "Basics.Float -> Volume.Volume"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,16 @@
+[
+    {
+        "name": "Parser.Dict",
+        "comment": "\n\n@docs fromDict\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fromDict",
+                "comment": " Create a fast parser for a dictionary.\n\nThe parser succeeds with the longest matching key\n\n    type Animal\n        = Dog\n        | Cat\n        | Horse\n\n    animal : Parser Animal\n    animal =\n        [ ( \"doggo\", Dog )\n        , ( \"kitty\", Cat )\n        , ( \"horsey\", Horse )\n        ]\n            |> Dict.fromList\n            |> fromDict\n\n",
+                "type": "Dict.Dict String.String a -> Parser.Parser a"
+            }
+        ],
+        "binops": []
+    }
+]

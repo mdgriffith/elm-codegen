@@ -1,0 +1,81 @@
+[
+    {
+        "name": "Round",
+        "comment": " This library converts a `Float` to a `String` with ultimate\ncontrol how many digits after the decimal point are shown and how the remaining\ndigits are rounded. It rounds, floors and ceils the \"common\" way (ie. [half\nup](https://en.wikipedia.org/wiki/Rounding#Round_half_up)) or the \"commerical\"\nway (ie. [half away from\nzero](https://en.wikipedia.org/wiki/Rounding#Round_half_away_from_zero)).\n\nExample:\n\n    x = 3.141592653589793\n\n    round 2 x -- \"3.14\"\n    round 4 x -- \"3.1416\"\n\n    ceiling 2 x -- \"3.15\"\n    floor 4 x -- \"3.1415\"\n\nThe given number of digits after decimal point can also be negative.\n\n    x = 213.14\n\n    round -2 x -- \"200\"\n    round -1 x -- \"210\"\n\n    ceiling -2 x -- \"300\"\n    floor -3 x -- \"0\"\n\n[Commercial\nrounding](https://en.wikipedia.org/wiki/Rounding#Round_half_away_from_zero)\nmeans that negative and positive numbers are treated symmetrically. It affects\nnumbers whose last digit equals 5. For example:\n\n    x = -0.5\n\n    round 0 x -- \"0\"\n    roundCom 0 x -- \"-1\"\n\n    floor 0 x -- \"-1\"\n    floorCom 0 x -- \"0\"\n\n    ceiling 0 x -- \"0\"\n    ceilingCom 0 x -- \"-1\"\n\nHave a look at the tests for more examples!\n\nWhy couldn't you just do `x * 1000 |> round |> toFloat |> (flip (/)) 1000` in\norder to round to 3 digits after comma? Due to floating point\narithmetic it might happen that it results into someting like\n`3.1416000000001`,\nalthough we just wanted `3.1416`.\n\nUnder the hood this library converts the `Float` into a `String` and rounds it\nchar-wise. Hence it's safe from floating point arithmetic weirdness.\n\n\n# Round to String\n\n@docs round, ceiling, floor, roundCom, ceilingCom, floorCom\n\n\n# Round to Float\n\n@docs roundNum, ceilingNum, floorNum, roundNumCom, ceilingNumCom, floorNumCom\n\n\n# Utility functions\n\n@docs toDecimal, truncate\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "ceiling",
+                "comment": " Turns a `Float` into a `String` and rounds it up to the given number of\ndigits after decimal point.\n\n    x = 3.141592653589793\n\n    ceiling 2 x -- \"3.15\"\n    ceiling 4 x -- \"3.1416\"\n\nThe number of digits after decimal point can also be negative.\n\n    x = 213.35\n\n    ceiling -2 x -- \"300\"\n    ceiling -1 x -- \"220\"\n\n",
+                "type": "Basics.Int -> Basics.Float -> String.String"
+            },
+            {
+                "name": "ceilingCom",
+                "comment": " Turns a `Float` into a `String` and rounds it up to the given number of\ndigits after decimal point the commercial way.\n\n    x = -0.5\n\n    ceiling 0 x -- \"0\"\n    ceilingCom 0 x -- \"-1\"\n\nThe number of digits after decimal point can also be negative.\n\n",
+                "type": "Basics.Int -> Basics.Float -> String.String"
+            },
+            {
+                "name": "ceilingNum",
+                "comment": " As `ceiling` but turns the resulting `String` back to a `Float`.\n",
+                "type": "Basics.Int -> Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "ceilingNumCom",
+                "comment": " As `ceilingCom` but turns the resulting `String` back to a `Float`.\n",
+                "type": "Basics.Int -> Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "floor",
+                "comment": " Turns a `Float` into a `String` and rounds it down to the given number of\ndigits after decimal point.\n\n    x = 3.141592653589793\n\n    floor 2 x -- \"3.14\"\n    floor 4 x -- \"3.1415\"\n\nThe number of digits after decimal point can also be negative.\n\n    x = 213.35\n\n    floor -2 x -- \"200\"\n    floor -1 x -- \"210\"\n\n",
+                "type": "Basics.Int -> Basics.Float -> String.String"
+            },
+            {
+                "name": "floorCom",
+                "comment": " Turns a `Float` into a `String` and rounds it down to the given number of\ndigits after decimal point the commercial way.\n\n    x = -0.5\n\n    floor 0 x -- \"-1\"\n    floorCom 0 x -- \"0\"\n\nThe number of digits after decimal point can also be negative.\n\n",
+                "type": "Basics.Int -> Basics.Float -> String.String"
+            },
+            {
+                "name": "floorNum",
+                "comment": " As `floor` but turns the resulting `String` back to a `Float`.\n",
+                "type": "Basics.Int -> Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "floorNumCom",
+                "comment": " As `floorCom` but turns the resulting `String` back to a `Float`.\n",
+                "type": "Basics.Int -> Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "round",
+                "comment": " Turns a `Float` into a `String` and\n[rounds](https://en.wikipedia.org/wiki/Rounding#Round_half_up) it to the given\nnumber of digits\nafter decimal point. Behaves like `Basics.round`.\n\n    x = 3.141592653589793\n\n    round 2 x -- \"3.14\"\n    round 4 x -- \"3.1416\"\n\nThe number of digits after decimal point can also be negative.\n\n    x = 213.35\n\n    round -2 x -- \"200\"\n    round -1 x -- \"210\"\n\n",
+                "type": "Basics.Int -> Basics.Float -> String.String"
+            },
+            {
+                "name": "roundCom",
+                "comment": " Turns a `Float` into a `String` and rounds it to the given number of digits\nafter decimal point [the commercial\nway](https://en.wikipedia.org/wiki/Rounding#Round_half_away_from_zero).\n\n    x = -0.5\n\n    round 0 x -- \"0\"\n    roundCom 0 x -- \"-1\"\n\nThe number of digits after decimal point can also be negative.\n\n",
+                "type": "Basics.Int -> Basics.Float -> String.String"
+            },
+            {
+                "name": "roundNum",
+                "comment": " As `round` but turns the resulting `String` back to a `Float`.\n",
+                "type": "Basics.Int -> Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "roundNumCom",
+                "comment": " As `roundCom` but turns the resulting `String` back to a `Float`.\n",
+                "type": "Basics.Int -> Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "toDecimal",
+                "comment": " Transforms a `Float` in scientific notation into its decimal representation\nas a `String`.\n\n    x = 1e30\n    toDecimal x -- outputs \"1000000000000000000000000000000\"\n\n    x = 1.2345e-30\n    toDecimal x -- outputs \"0.0000000000000000000000000000012345\"\n\n",
+                "type": "Basics.Float -> String.String"
+            },
+            {
+                "name": "truncate",
+                "comment": " Like Elm's basic `truncate` but works on the full length of a float's 64\nbits. So it's more precise.\n\n    x = 9007199254740.99\n\n    Basics.truncate x -- 652835028 (which is not correct)\n    Round.truncate x -- 9007199254740 (which is)\n\n",
+                "type": "Basics.Float -> Basics.Int"
+            }
+        ],
+        "binops": []
+    }
+]

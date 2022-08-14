@@ -1,0 +1,21 @@
+[
+    {
+        "name": "Http.Xml",
+        "comment": " Generates HTTP request for XML API.\n\nUsing [`Xml.Decode`][xd] for decoding XML response into Elm value.\n\n[xd]: http://package.elm-lang.org/packages/ymtszw/elm-xml-decode/latest/Xml-Decode\n\n\n# Request Body\n\n@docs xmlBody\n\n\n# Response Expectation\n\n@docs expectXml\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "expectXml",
+                "comment": " Expect the response body to be XML.\n\nYou provide [`Xml.Decode.Decoder`][xdd] to decode that XML into Elm value.\n\n[xdd]: http://package.elm-lang.org/packages/ymtszw/elm-xml-decode/latest/Xml-Decode#Decoder\n\nNote: Currently, `Expect` type does not come with content-negotiation capability using `Accept` header.\nSo if your target APIs require `Accept: application/xml` headers,\nyou have to insert them using [`Http.request`](https://package.elm-lang.org/packages/elm/http/latest/Http#request).\n\nSee this issue: <https://github.com/elm/http/issues/54>\n\n",
+                "type": "(Result.Result Http.Error a -> msg) -> Xml.Decode.Decoder a -> Http.Expect msg"
+            },
+            {
+                "name": "xmlBody",
+                "comment": " Put an XML string in the body. Adding `Content-type: application/xml` header.\n\nNote: Currently `elm-xml-decode` package DOES NOT provide XML \"encode\" functions,\nnor `elm-xml-parser`. Contributions are welcomed!\n\n",
+                "type": "String.String -> Http.Body"
+            }
+        ],
+        "binops": []
+    }
+]

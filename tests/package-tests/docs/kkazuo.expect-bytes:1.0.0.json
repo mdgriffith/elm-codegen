@@ -1,0 +1,16 @@
+[
+    {
+        "name": "Http.Just",
+        "comment": " Expect Bytes with Http\n\n\n# Expect\n\n@docs expectBytes\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "expectBytes",
+                "comment": " Expect the response body to be binary data.\n\n    import Bytes exposing (Bytes)\n    import Http\n    import Http.Just\n\n    type Msg\n        = GotBytes (Result Http.Error Bytes)\n\n    getBytes : Cmd Msg\n    getBytes =\n        Http.get\n            { url = \"/bytes\"\n            , expect = Http.Just.expectBytes GotBytes\n            }\n\n",
+                "type": "(Result.Result Http.Error Bytes.Bytes -> msg) -> Http.Expect msg"
+            }
+        ],
+        "binops": []
+    }
+]

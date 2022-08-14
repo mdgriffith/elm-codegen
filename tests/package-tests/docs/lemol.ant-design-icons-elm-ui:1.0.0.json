@@ -1,0 +1,4028 @@
+[
+    {
+        "name": "Ant.Icon",
+        "comment": "\n\n\n# Basics\n\n@docs Attribute, SvgIcon, icon\n\n\n# Attributes\n\n@docs fill, height, width, rotate, spin, style, twoToneColor\n\n\n# Utils\n\n@docs iconBase, styleNode\n\n",
+        "unions": [
+            {
+                "name": "Attribute",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "SvgIcon",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "fill",
+                "comment": " ",
+                "type": "Element.Color -> Ant.Icon.Attribute msg"
+            },
+            {
+                "name": "height",
+                "comment": " ",
+                "type": "Basics.Int -> Ant.Icon.Attribute msg"
+            },
+            {
+                "name": "icon",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Ant.Icon.SvgIcon msg -> Element.Element msg"
+            },
+            {
+                "name": "iconBase",
+                "comment": " ",
+                "type": "{} -> List.List (Ant.Icon.Attribute msg) -> Ant.Icon.SvgIcon msg -> Element.Element msg"
+            },
+            {
+                "name": "rotate",
+                "comment": " ",
+                "type": "Basics.Float -> Ant.Icon.Attribute msg"
+            },
+            {
+                "name": "spin",
+                "comment": " ",
+                "type": "Ant.Icon.Attribute msg"
+            },
+            {
+                "name": "style",
+                "comment": " ",
+                "type": "List.List ( String.String, String.String ) -> Ant.Icon.Attribute msg"
+            },
+            {
+                "name": "styleNode",
+                "comment": " ",
+                "type": "Html.Html msg"
+            },
+            {
+                "name": "twoToneColor",
+                "comment": " ",
+                "type": "Element.Color -> Ant.Icon.Attribute msg"
+            },
+            {
+                "name": "width",
+                "comment": " ",
+                "type": "Basics.Int -> Ant.Icon.Attribute msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Ant.Icons",
+        "comment": " List of Ant Design icons for Elm UI\n\n\n# Directional Icons\n\n@docs stepBackwardOutlined, stepBackwardFilled, stepForwardOutlined, stepForwardFilled, fastBackwardOutlined, fastBackwardFilled, fastForwardOutlined, fastForwardFilled, shrinkOutlined, arrowsAltOutlined, downOutlined, upOutlined, leftOutlined, rightOutlined, caretUpOutlined, caretUpFilled, caretDownOutlined, caretDownFilled, caretLeftOutlined, caretLeftFilled, caretRightOutlined, caretRightFilled, upCircleOutlined, upCircleFilled, upCircleTwoTone, downCircleOutlined, downCircleFilled, downCircleTwoTone, leftCircleOutlined, leftCircleFilled, leftCircleTwoTone, rightCircleOutlined, rightCircleFilled, rightCircleTwoTone, doubleRightOutlined, doubleLeftOutlined, verticalLeftOutlined, verticalRightOutlined, verticalAlignTopOutlined, verticalAlignMiddleOutlined, verticalAlignBottomOutlined, forwardOutlined, forwardFilled, backwardOutlined, backwardFilled, rollbackOutlined, enterOutlined, retweetOutlined, swapOutlined, swapLeftOutlined, swapRightOutlined, arrowUpOutlined, arrowDownOutlined, arrowLeftOutlined, arrowRightOutlined, playCircleOutlined, playCircleFilled, playCircleTwoTone, upSquareOutlined, upSquareFilled, upSquareTwoTone, downSquareOutlined, downSquareFilled, downSquareTwoTone, leftSquareOutlined, leftSquareFilled, leftSquareTwoTone, rightSquareOutlined, rightSquareFilled, rightSquareTwoTone, loginOutlined, logoutOutlined, menuFoldOutlined, menuUnfoldOutlined, borderBottomOutlined, borderHorizontalOutlined, borderInnerOutlined, borderOuterOutlined, borderLeftOutlined, borderRightOutlined, borderTopOutlined, borderVerticleOutlined, picCenterOutlined, picLeftOutlined, picRightOutlined, radiusBottomleftOutlined, radiusBottomrightOutlined, radiusUpleftOutlined, radiusUprightOutlined, fullscreenOutlined, fullscreenExitOutlined\n\n\n# Suggested Icons\n\n@docs questionOutlined, questionCircleOutlined, questionCircleFilled, questionCircleTwoTone, plusOutlined, plusCircleOutlined, plusCircleFilled, plusCircleTwoTone, pauseOutlined, pauseCircleOutlined, pauseCircleFilled, pauseCircleTwoTone, minusOutlined, minusCircleOutlined, minusCircleFilled, minusCircleTwoTone, plusSquareOutlined, plusSquareFilled, plusSquareTwoTone, minusSquareOutlined, minusSquareFilled, minusSquareTwoTone, infoOutlined, infoCircleOutlined, infoCircleFilled, infoCircleTwoTone, exclamationOutlined, exclamationCircleOutlined, exclamationCircleFilled, exclamationCircleTwoTone, closeOutlined, closeCircleOutlined, closeCircleFilled, closeCircleTwoTone, closeSquareOutlined, closeSquareFilled, closeSquareTwoTone, checkOutlined, checkCircleOutlined, checkCircleFilled, checkCircleTwoTone, checkSquareOutlined, checkSquareFilled, checkSquareTwoTone, clockCircleOutlined, clockCircleFilled, clockCircleTwoTone, warningOutlined, warningFilled, warningTwoTone, issuesCloseOutlined, stopOutlined, stopFilled, stopTwoTone\n\n\n# Editor Icons\n\n@docs editOutlined, editFilled, editTwoTone, formOutlined, copyOutlined, copyFilled, copyTwoTone, scissorOutlined, deleteOutlined, deleteFilled, deleteTwoTone, snippetsOutlined, snippetsFilled, snippetsTwoTone, diffOutlined, diffFilled, diffTwoTone, highlightOutlined, highlightFilled, highlightTwoTone, alignCenterOutlined, alignLeftOutlined, alignRightOutlined, bgColorsOutlined, boldOutlined, italicOutlined, underlineOutlined, strikethroughOutlined, redoOutlined, undoOutlined, zoomInOutlined, zoomOutOutlined, fontColorsOutlined, fontSizeOutlined, lineHeightOutlined, dashOutlined, smallDashOutlined, sortAscendingOutlined, sortDescendingOutlined, dragOutlined, orderedListOutlined, unorderedListOutlined, radiusSettingOutlined, columnWidthOutlined, columnHeightOutlined\n\n\n# Data Icons\n\n@docs areaChartOutlined, pieChartOutlined, pieChartFilled, pieChartTwoTone, barChartOutlined, dotChartOutlined, lineChartOutlined, radarChartOutlined, heatMapOutlined, fallOutlined, riseOutlined, stockOutlined, boxPlotOutlined, boxPlotFilled, boxPlotTwoTone, fundOutlined, fundFilled, fundTwoTone, slidersOutlined, slidersFilled, slidersTwoTone\n\n\n# Brand and Logos\n\n@docs androidOutlined, androidFilled, appleOutlined, appleFilled, windowsOutlined, windowsFilled, ieOutlined, chromeOutlined, chromeFilled, githubOutlined, githubFilled, aliwangwangOutlined, aliwangwangFilled, dingdingOutlined, weiboSquareOutlined, weiboSquareFilled, weiboCircleOutlined, weiboCircleFilled, taobaoCircleOutlined, taobaoCircleFilled, html5Outlined, html5Filled, html5TwoTone, weiboOutlined, twitterOutlined, wechatOutlined, wechatFilled, youtubeOutlined, youtubeFilled, alipayCircleOutlined, alipayCircleFilled, taobaoOutlined, skypeOutlined, skypeFilled, qqOutlined, mediumWorkmarkOutlined, gitlabOutlined, gitlabFilled, mediumOutlined, linkedinOutlined, linkedinFilled, googlePlusOutlined, dropboxOutlined, facebookOutlined, facebookFilled, codepenOutlined, codeSandboxOutlined, codeSandboxCircleFilled, amazonOutlined, googleOutlined, codepenCircleOutlined, codepenCircleFilled, alipayOutlined, antDesignOutlined, antCloudOutlined, aliyunOutlined, zhihuOutlined, slackOutlined, slackSquareOutlined, slackSquareFilled, behanceOutlined, behanceSquareOutlined, behanceSquareFilled, dribbbleOutlined, dribbbleSquareOutlined, dribbbleSquareFilled, instagramOutlined, instagramFilled, yuqueOutlined, yuqueFilled, alibabaOutlined, yahooOutlined, yahooFilled, redditOutlined, sketchOutlined\n\n\n# Application Icons\n\n@docs accountBookOutlined, accountBookFilled, accountBookTwoTone, aimOutlined, alertOutlined, alertFilled, alertTwoTone, alipaySquareFilled, amazonCircleFilled, amazonSquareFilled, apartmentOutlined, apiOutlined, apiFilled, apiTwoTone, appstoreAddOutlined, appstoreOutlined, appstoreFilled, appstoreTwoTone, audioOutlined, audioFilled, audioTwoTone, audioMutedOutlined, auditOutlined, bankOutlined, bankFilled, bankTwoTone, barcodeOutlined, barsOutlined, behanceCircleFilled, bellOutlined, bellFilled, bellTwoTone, blockOutlined, bookOutlined, bookFilled, bookTwoTone, borderOutlined, borderlessTableOutlined, branchesOutlined, bugOutlined, bugFilled, bugTwoTone, buildOutlined, buildFilled, buildTwoTone, bulbOutlined, bulbFilled, bulbTwoTone, calculatorOutlined, calculatorFilled, calculatorTwoTone, calendarOutlined, calendarFilled, calendarTwoTone, cameraOutlined, cameraFilled, cameraTwoTone, carOutlined, carFilled, carTwoTone, carryOutOutlined, carryOutFilled, carryOutTwoTone, ciCircleOutlined, ciCircleFilled, ciCircleTwoTone, ciOutlined, ciTwoTone, clearOutlined, cloudDownloadOutlined, cloudOutlined, cloudFilled, cloudTwoTone, cloudServerOutlined, cloudSyncOutlined, cloudUploadOutlined, clusterOutlined, codeOutlined, codeFilled, codeTwoTone, codeSandboxSquareFilled, codepenSquareFilled, coffeeOutlined, commentOutlined, compassOutlined, compassFilled, compassTwoTone, compressOutlined, consoleSqlOutlined, contactsOutlined, contactsFilled, contactsTwoTone, containerOutlined, containerFilled, containerTwoTone, controlOutlined, controlFilled, controlTwoTone, copyrightCircleOutlined, copyrightCircleFilled, copyrightCircleTwoTone, copyrightOutlined, copyrightTwoTone, creditCardOutlined, creditCardFilled, creditCardTwoTone, crownOutlined, crownFilled, crownTwoTone, customerServiceOutlined, customerServiceFilled, customerServiceTwoTone, dashboardOutlined, dashboardFilled, dashboardTwoTone, databaseOutlined, databaseFilled, databaseTwoTone, deleteColumnOutlined, deleteRowOutlined, deliveredProcedureOutlined, deploymentUnitOutlined, desktopOutlined, dingtalkCircleFilled, dingtalkOutlined, dingtalkSquareFilled, disconnectOutlined, dislikeOutlined, dislikeFilled, dislikeTwoTone, dollarCircleOutlined, dollarCircleFilled, dollarCircleTwoTone, dollarOutlined, dollarTwoTone, downloadOutlined, dribbbleCircleFilled, dropboxCircleFilled, dropboxSquareFilled, ellipsisOutlined, environmentOutlined, environmentFilled, environmentTwoTone, euroCircleOutlined, euroCircleFilled, euroCircleTwoTone, euroOutlined, euroTwoTone, exceptionOutlined, expandAltOutlined, expandOutlined, experimentOutlined, experimentFilled, experimentTwoTone, exportOutlined, eyeOutlined, eyeFilled, eyeTwoTone, eyeInvisibleOutlined, eyeInvisibleFilled, eyeInvisibleTwoTone, fieldBinaryOutlined, fieldNumberOutlined, fieldStringOutlined, fieldTimeOutlined, fileAddOutlined, fileAddFilled, fileAddTwoTone, fileDoneOutlined, fileExcelOutlined, fileExcelFilled, fileExcelTwoTone, fileExclamationOutlined, fileExclamationFilled, fileExclamationTwoTone, fileOutlined, fileFilled, fileTwoTone, fileGifOutlined, fileImageOutlined, fileImageFilled, fileImageTwoTone, fileJpgOutlined, fileMarkdownOutlined, fileMarkdownFilled, fileMarkdownTwoTone, filePdfOutlined, filePdfFilled, filePdfTwoTone, filePptOutlined, filePptFilled, filePptTwoTone, fileProtectOutlined, fileSearchOutlined, fileSyncOutlined, fileTextOutlined, fileTextFilled, fileTextTwoTone, fileUnknownOutlined, fileUnknownFilled, fileUnknownTwoTone, fileWordOutlined, fileWordFilled, fileWordTwoTone, fileZipOutlined, fileZipFilled, fileZipTwoTone, filterOutlined, filterFilled, filterTwoTone, fireOutlined, fireFilled, fireTwoTone, flagOutlined, flagFilled, flagTwoTone, folderAddOutlined, folderAddFilled, folderAddTwoTone, folderOutlined, folderFilled, folderTwoTone, folderOpenOutlined, folderOpenFilled, folderOpenTwoTone, folderViewOutlined, forkOutlined, formatPainterOutlined, formatPainterFilled, frownOutlined, frownFilled, frownTwoTone, functionOutlined, fundProjectionScreenOutlined, fundViewOutlined, funnelPlotOutlined, funnelPlotFilled, funnelPlotTwoTone, gatewayOutlined, gifOutlined, giftOutlined, giftFilled, giftTwoTone, globalOutlined, goldOutlined, goldFilled, goldTwoTone, goldenFilled, googleCircleFilled, googlePlusCircleFilled, googlePlusSquareFilled, googleSquareFilled, groupOutlined, hddOutlined, hddFilled, hddTwoTone, heartOutlined, heartFilled, heartTwoTone, historyOutlined, homeOutlined, homeFilled, homeTwoTone, hourglassOutlined, hourglassFilled, hourglassTwoTone, idcardOutlined, idcardFilled, idcardTwoTone, ieCircleFilled, ieSquareFilled, importOutlined, inboxOutlined, insertRowAboveOutlined, insertRowBelowOutlined, insertRowLeftOutlined, insertRowRightOutlined, insuranceOutlined, insuranceFilled, insuranceTwoTone, interactionOutlined, interactionFilled, interactionTwoTone, keyOutlined, laptopOutlined, layoutOutlined, layoutFilled, layoutTwoTone, likeOutlined, likeFilled, likeTwoTone, lineOutlined, linkOutlined, loading3QuartersOutlined, loadingOutlined, lockOutlined, lockFilled, lockTwoTone, macCommandOutlined, macCommandFilled, mailOutlined, mailFilled, mailTwoTone, manOutlined, medicineBoxOutlined, medicineBoxFilled, medicineBoxTwoTone, mediumCircleFilled, mediumSquareFilled, mehOutlined, mehFilled, mehTwoTone, menuOutlined, mergeCellsOutlined, messageOutlined, messageFilled, messageTwoTone, mobileOutlined, mobileFilled, mobileTwoTone, moneyCollectOutlined, moneyCollectFilled, moneyCollectTwoTone, monitorOutlined, moreOutlined, nodeCollapseOutlined, nodeExpandOutlined, nodeIndexOutlined, notificationOutlined, notificationFilled, notificationTwoTone, numberOutlined, oneToOneOutlined, paperClipOutlined, partitionOutlined, payCircleOutlined, payCircleFilled, percentageOutlined, phoneOutlined, phoneFilled, phoneTwoTone, pictureOutlined, pictureFilled, pictureTwoTone, playSquareOutlined, playSquareFilled, playSquareTwoTone, poundCircleOutlined, poundCircleFilled, poundCircleTwoTone, poundOutlined, poweroffOutlined, printerOutlined, printerFilled, printerTwoTone, profileOutlined, profileFilled, profileTwoTone, projectOutlined, projectFilled, projectTwoTone, propertySafetyOutlined, propertySafetyFilled, propertySafetyTwoTone, pullRequestOutlined, pushpinOutlined, pushpinFilled, pushpinTwoTone, qqCircleFilled, qqSquareFilled, qrcodeOutlined, readOutlined, readFilled, reconciliationOutlined, reconciliationFilled, reconciliationTwoTone, redEnvelopeOutlined, redEnvelopeFilled, redEnvelopeTwoTone, redditCircleFilled, redditSquareFilled, reloadOutlined, restOutlined, restFilled, restTwoTone, robotOutlined, robotFilled, rocketOutlined, rocketFilled, rocketTwoTone, rotateLeftOutlined, rotateRightOutlined, safetyCertificateOutlined, safetyCertificateFilled, safetyCertificateTwoTone, safetyOutlined, saveOutlined, saveFilled, saveTwoTone, scanOutlined, scheduleOutlined, scheduleFilled, scheduleTwoTone, searchOutlined, securityScanOutlined, securityScanFilled, securityScanTwoTone, selectOutlined, sendOutlined, settingOutlined, settingFilled, settingTwoTone, shakeOutlined, shareAltOutlined, shopOutlined, shopFilled, shopTwoTone, shoppingCartOutlined, shoppingOutlined, shoppingFilled, shoppingTwoTone, signalFilled, sisternodeOutlined, sketchCircleFilled, sketchSquareFilled, skinOutlined, skinFilled, skinTwoTone, slackCircleFilled, smileOutlined, smileFilled, smileTwoTone, solutionOutlined, soundOutlined, soundFilled, soundTwoTone, splitCellsOutlined, starOutlined, starFilled, starTwoTone, subnodeOutlined, switcherOutlined, switcherFilled, switcherTwoTone, syncOutlined, tableOutlined, tabletOutlined, tabletFilled, tabletTwoTone, tagOutlined, tagFilled, tagTwoTone, tagsOutlined, tagsFilled, tagsTwoTone, taobaoSquareFilled, teamOutlined, thunderboltOutlined, thunderboltFilled, thunderboltTwoTone, toTopOutlined, toolOutlined, toolFilled, toolTwoTone, trademarkCircleOutlined, trademarkCircleFilled, trademarkCircleTwoTone, trademarkOutlined, transactionOutlined, translationOutlined, trophyOutlined, trophyFilled, trophyTwoTone, twitterCircleFilled, twitterSquareFilled, ungroupOutlined, unlockOutlined, unlockFilled, unlockTwoTone, uploadOutlined, usbOutlined, usbFilled, usbTwoTone, userAddOutlined, userDeleteOutlined, userOutlined, userSwitchOutlined, usergroupAddOutlined, usergroupDeleteOutlined, verifiedOutlined, videoCameraAddOutlined, videoCameraOutlined, videoCameraFilled, videoCameraTwoTone, walletOutlined, walletFilled, walletTwoTone, whatsAppOutlined, wifiOutlined, womanOutlined, zhihuCircleFilled, zhihuSquareFilled\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "accountBookFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "accountBookOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "accountBookTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "aimOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "alertFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "alertOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "alertTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "alibabaOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "alignCenterOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "alignLeftOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "alignRightOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "alipayCircleFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "alipayCircleOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "alipayOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "alipaySquareFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "aliwangwangFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "aliwangwangOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "aliyunOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "amazonCircleFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "amazonOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "amazonSquareFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "androidFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "androidOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "antCloudOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "antDesignOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "apartmentOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "apiFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "apiOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "apiTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "appleFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "appleOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "appstoreAddOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "appstoreFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "appstoreOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "appstoreTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "areaChartOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "arrowDownOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "arrowLeftOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "arrowRightOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "arrowUpOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "arrowsAltOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "audioFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "audioMutedOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "audioOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "audioTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "auditOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "backwardFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "backwardOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "bankFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "bankOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "bankTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "barChartOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "barcodeOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "barsOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "behanceCircleFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "behanceOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "behanceSquareFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "behanceSquareOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "bellFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "bellOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "bellTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "bgColorsOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "blockOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "boldOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "bookFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "bookOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "bookTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "borderBottomOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "borderHorizontalOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "borderInnerOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "borderLeftOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "borderOuterOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "borderOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "borderRightOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "borderTopOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "borderVerticleOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "borderlessTableOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "boxPlotFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "boxPlotOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "boxPlotTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "branchesOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "bugFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "bugOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "bugTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "buildFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "buildOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "buildTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "bulbFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "bulbOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "bulbTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "calculatorFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "calculatorOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "calculatorTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "calendarFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "calendarOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "calendarTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "cameraFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "cameraOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "cameraTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "carFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "carOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "carTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "caretDownFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "caretDownOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "caretLeftFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "caretLeftOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "caretRightFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "caretRightOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "caretUpFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "caretUpOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "carryOutFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "carryOutOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "carryOutTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "checkCircleFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "checkCircleOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "checkCircleTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "checkOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "checkSquareFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "checkSquareOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "checkSquareTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "chromeFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "chromeOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "ciCircleFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "ciCircleOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "ciCircleTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "ciOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "ciTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "clearOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "clockCircleFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "clockCircleOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "clockCircleTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "closeCircleFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "closeCircleOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "closeCircleTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "closeOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "closeSquareFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "closeSquareOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "closeSquareTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "cloudDownloadOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "cloudFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "cloudOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "cloudServerOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "cloudSyncOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "cloudTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "cloudUploadOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "clusterOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "codeFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "codeOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "codeSandboxCircleFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "codeSandboxOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "codeSandboxSquareFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "codeTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "codepenCircleFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "codepenCircleOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "codepenOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "codepenSquareFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "coffeeOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "columnHeightOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "columnWidthOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "commentOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "compassFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "compassOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "compassTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "compressOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "consoleSqlOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "contactsFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "contactsOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "contactsTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "containerFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "containerOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "containerTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "controlFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "controlOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "controlTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "copyFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "copyOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "copyTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "copyrightCircleFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "copyrightCircleOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "copyrightCircleTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "copyrightOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "copyrightTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "creditCardFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "creditCardOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "creditCardTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "crownFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "crownOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "crownTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "customerServiceFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "customerServiceOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "customerServiceTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "dashOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "dashboardFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "dashboardOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "dashboardTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "databaseFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "databaseOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "databaseTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "deleteColumnOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "deleteFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "deleteOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "deleteRowOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "deleteTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "deliveredProcedureOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "deploymentUnitOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "desktopOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "diffFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "diffOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "diffTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "dingdingOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "dingtalkCircleFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "dingtalkOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "dingtalkSquareFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "disconnectOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "dislikeFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "dislikeOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "dislikeTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "dollarCircleFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "dollarCircleOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "dollarCircleTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "dollarOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "dollarTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "dotChartOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "doubleLeftOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "doubleRightOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "downCircleFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "downCircleOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "downCircleTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "downOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "downSquareFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "downSquareOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "downSquareTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "downloadOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "dragOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "dribbbleCircleFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "dribbbleOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "dribbbleSquareFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "dribbbleSquareOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "dropboxCircleFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "dropboxOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "dropboxSquareFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "editFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "editOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "editTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "ellipsisOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "enterOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "environmentFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "environmentOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "environmentTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "euroCircleFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "euroCircleOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "euroCircleTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "euroOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "euroTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "exceptionOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "exclamationCircleFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "exclamationCircleOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "exclamationCircleTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "exclamationOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "expandAltOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "expandOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "experimentFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "experimentOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "experimentTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "exportOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "eyeFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "eyeInvisibleFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "eyeInvisibleOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "eyeInvisibleTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "eyeOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "eyeTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "facebookFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "facebookOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "fallOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "fastBackwardFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "fastBackwardOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "fastForwardFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "fastForwardOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "fieldBinaryOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "fieldNumberOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "fieldStringOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "fieldTimeOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "fileAddFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "fileAddOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "fileAddTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "fileDoneOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "fileExcelFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "fileExcelOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "fileExcelTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "fileExclamationFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "fileExclamationOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "fileExclamationTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "fileFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "fileGifOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "fileImageFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "fileImageOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "fileImageTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "fileJpgOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "fileMarkdownFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "fileMarkdownOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "fileMarkdownTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "fileOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "filePdfFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "filePdfOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "filePdfTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "filePptFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "filePptOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "filePptTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "fileProtectOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "fileSearchOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "fileSyncOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "fileTextFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "fileTextOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "fileTextTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "fileTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "fileUnknownFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "fileUnknownOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "fileUnknownTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "fileWordFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "fileWordOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "fileWordTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "fileZipFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "fileZipOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "fileZipTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "filterFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "filterOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "filterTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "fireFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "fireOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "fireTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "flagFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "flagOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "flagTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "folderAddFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "folderAddOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "folderAddTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "folderFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "folderOpenFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "folderOpenOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "folderOpenTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "folderOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "folderTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "folderViewOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "fontColorsOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "fontSizeOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "forkOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "formOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "formatPainterFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "formatPainterOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "forwardFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "forwardOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "frownFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "frownOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "frownTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "fullscreenExitOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "fullscreenOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "functionOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "fundFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "fundOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "fundProjectionScreenOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "fundTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "fundViewOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "funnelPlotFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "funnelPlotOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "funnelPlotTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "gatewayOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "gifOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "giftFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "giftOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "giftTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "githubFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "githubOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "gitlabFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "gitlabOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "globalOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "goldFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "goldOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "goldTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "goldenFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "googleCircleFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "googleOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "googlePlusCircleFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "googlePlusOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "googlePlusSquareFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "googleSquareFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "groupOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "hddFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "hddOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "hddTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "heartFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "heartOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "heartTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "heatMapOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "highlightFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "highlightOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "highlightTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "historyOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "homeFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "homeOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "homeTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "hourglassFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "hourglassOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "hourglassTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "html5Filled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "html5Outlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "html5TwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "idcardFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "idcardOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "idcardTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "ieCircleFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "ieOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "ieSquareFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "importOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "inboxOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "infoCircleFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "infoCircleOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "infoCircleTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "infoOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "insertRowAboveOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "insertRowBelowOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "insertRowLeftOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "insertRowRightOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "instagramFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "instagramOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "insuranceFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "insuranceOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "insuranceTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "interactionFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "interactionOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "interactionTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "issuesCloseOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "italicOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "keyOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "laptopOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "layoutFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "layoutOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "layoutTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "leftCircleFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "leftCircleOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "leftCircleTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "leftOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "leftSquareFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "leftSquareOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "leftSquareTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "likeFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "likeOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "likeTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "lineChartOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "lineHeightOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "lineOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "linkOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "linkedinFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "linkedinOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "loading3QuartersOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "loadingOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "lockFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "lockOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "lockTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "loginOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "logoutOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "macCommandFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "macCommandOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "mailFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "mailOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "mailTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "manOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "medicineBoxFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "medicineBoxOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "medicineBoxTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "mediumCircleFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "mediumOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "mediumSquareFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "mediumWorkmarkOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "mehFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "mehOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "mehTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "menuFoldOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "menuOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "menuUnfoldOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "mergeCellsOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "messageFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "messageOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "messageTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "minusCircleFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "minusCircleOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "minusCircleTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "minusOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "minusSquareFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "minusSquareOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "minusSquareTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "mobileFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "mobileOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "mobileTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "moneyCollectFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "moneyCollectOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "moneyCollectTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "monitorOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "moreOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "nodeCollapseOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "nodeExpandOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "nodeIndexOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "notificationFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "notificationOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "notificationTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "numberOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "oneToOneOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "orderedListOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "paperClipOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "partitionOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "pauseCircleFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "pauseCircleOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "pauseCircleTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "pauseOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "payCircleFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "payCircleOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "percentageOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "phoneFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "phoneOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "phoneTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "picCenterOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "picLeftOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "picRightOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "pictureFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "pictureOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "pictureTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "pieChartFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "pieChartOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "pieChartTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "playCircleFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "playCircleOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "playCircleTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "playSquareFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "playSquareOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "playSquareTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "plusCircleFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "plusCircleOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "plusCircleTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "plusOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "plusSquareFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "plusSquareOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "plusSquareTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "poundCircleFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "poundCircleOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "poundCircleTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "poundOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "poweroffOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "printerFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "printerOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "printerTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "profileFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "profileOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "profileTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "projectFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "projectOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "projectTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "propertySafetyFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "propertySafetyOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "propertySafetyTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "pullRequestOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "pushpinFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "pushpinOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "pushpinTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "qqCircleFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "qqOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "qqSquareFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "qrcodeOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "questionCircleFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "questionCircleOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "questionCircleTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "questionOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "radarChartOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "radiusBottomleftOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "radiusBottomrightOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "radiusSettingOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "radiusUpleftOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "radiusUprightOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "readFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "readOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "reconciliationFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "reconciliationOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "reconciliationTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "redEnvelopeFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "redEnvelopeOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "redEnvelopeTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "redditCircleFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "redditOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "redditSquareFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "redoOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "reloadOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "restFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "restOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "restTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "retweetOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "rightCircleFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "rightCircleOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "rightCircleTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "rightOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "rightSquareFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "rightSquareOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "rightSquareTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "riseOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "robotFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "robotOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "rocketFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "rocketOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "rocketTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "rollbackOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "rotateLeftOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "rotateRightOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "safetyCertificateFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "safetyCertificateOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "safetyCertificateTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "safetyOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "saveFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "saveOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "saveTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "scanOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "scheduleFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "scheduleOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "scheduleTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "scissorOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "searchOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "securityScanFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "securityScanOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "securityScanTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "selectOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "sendOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "settingFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "settingOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "settingTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "shakeOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "shareAltOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "shopFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "shopOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "shopTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "shoppingCartOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "shoppingFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "shoppingOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "shoppingTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "shrinkOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "signalFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "sisternodeOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "sketchCircleFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "sketchOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "sketchSquareFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "skinFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "skinOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "skinTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "skypeFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "skypeOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "slackCircleFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "slackOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "slackSquareFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "slackSquareOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "slidersFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "slidersOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "slidersTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "smallDashOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "smileFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "smileOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "smileTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "snippetsFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "snippetsOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "snippetsTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "solutionOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "sortAscendingOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "sortDescendingOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "soundFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "soundOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "soundTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "splitCellsOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "starFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "starOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "starTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "stepBackwardFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "stepBackwardOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "stepForwardFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "stepForwardOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "stockOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "stopFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "stopOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "stopTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "strikethroughOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "subnodeOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "swapLeftOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "swapOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "swapRightOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "switcherFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "switcherOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "switcherTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "syncOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "tableOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "tabletFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "tabletOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "tabletTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "tagFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "tagOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "tagTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "tagsFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "tagsOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "tagsTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "taobaoCircleFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "taobaoCircleOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "taobaoOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "taobaoSquareFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "teamOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "thunderboltFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "thunderboltOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "thunderboltTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "toTopOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "toolFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "toolOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "toolTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "trademarkCircleFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "trademarkCircleOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "trademarkCircleTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "trademarkOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "transactionOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "translationOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "trophyFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "trophyOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "trophyTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "twitterCircleFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "twitterOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "twitterSquareFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "underlineOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "undoOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "ungroupOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "unlockFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "unlockOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "unlockTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "unorderedListOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "upCircleFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "upCircleOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "upCircleTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "upOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "upSquareFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "upSquareOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "upSquareTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "uploadOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "usbFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "usbOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "usbTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "userAddOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "userDeleteOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "userOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "userSwitchOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "usergroupAddOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "usergroupDeleteOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "verifiedOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "verticalAlignBottomOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "verticalAlignMiddleOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "verticalAlignTopOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "verticalLeftOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "verticalRightOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "videoCameraAddOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "videoCameraFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "videoCameraOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "videoCameraTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "walletFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "walletOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "walletTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "warningFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "warningOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "warningTwoTone",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "wechatFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "wechatOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "weiboCircleFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "weiboCircleOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "weiboOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "weiboSquareFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "weiboSquareOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "whatsAppOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "wifiOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "windowsFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "windowsOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "womanOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "yahooFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "yahooOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "youtubeFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "youtubeOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "yuqueFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "yuqueOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "zhihuCircleFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "zhihuOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "zhihuSquareFilled",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "zoomInOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            },
+            {
+                "name": "zoomOutOutlined",
+                "comment": " ",
+                "type": "List.List (Ant.Icon.Attribute msg) -> Element.Element msg"
+            }
+        ],
+        "binops": []
+    }
+]

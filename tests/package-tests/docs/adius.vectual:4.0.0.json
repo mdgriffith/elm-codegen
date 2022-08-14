@@ -1,0 +1,1271 @@
+[
+    {
+        "name": "Stylus.Parser",
+        "comment": " Convert a strict subset of Stylus to CSS\n\n@docs stylusToCss\n\n\n## Internal\n\n@docs Expression\n@docs Problem\n@docs selector\n@docs selectors\n@docs section\n@docs rule\n@docs declaration\n@docs declarations\n@docs newlines\n@docs commentLine\n@docs stylus\n@docs serializeStylusAst\n\n",
+        "unions": [
+            {
+                "name": "Expression",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Rule",
+                        [
+                            "( Stylus.Parser.Selectors, List.List Stylus.Parser.Declaration )"
+                        ]
+                    ],
+                    [
+                        "Comment",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Newlines",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Problem",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "BadIndent",
+                        []
+                    ],
+                    [
+                        "BadKeyword",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "GenericProblem",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "commentLine",
+                "comment": " ",
+                "type": "Stylus.Parser.StyParser Stylus.Parser.Expression"
+            },
+            {
+                "name": "declaration",
+                "comment": " ",
+                "type": "List.List Stylus.Parser.Declaration -> Stylus.Parser.StyParser (Parser.Advanced.Step (List.List Stylus.Parser.Declaration) (List.List Stylus.Parser.Declaration))"
+            },
+            {
+                "name": "declarations",
+                "comment": " ",
+                "type": "Stylus.Parser.StyParser (List.List Stylus.Parser.Declaration)"
+            },
+            {
+                "name": "newlines",
+                "comment": " ",
+                "type": "Stylus.Parser.StyParser Stylus.Parser.Expression"
+            },
+            {
+                "name": "rule",
+                "comment": " ",
+                "type": "Stylus.Parser.StyParser Stylus.Parser.Expression"
+            },
+            {
+                "name": "section",
+                "comment": " ",
+                "type": "List.List Stylus.Parser.Expression -> Stylus.Parser.StyParser (Parser.Advanced.Step (List.List Stylus.Parser.Expression) (List.List Stylus.Parser.Expression))"
+            },
+            {
+                "name": "selector",
+                "comment": " ",
+                "type": "Stylus.Parser.StyParser String.String"
+            },
+            {
+                "name": "selectors",
+                "comment": " ",
+                "type": "Stylus.Parser.StyParser Stylus.Parser.Selectors"
+            },
+            {
+                "name": "serializeStylusAst",
+                "comment": " ",
+                "type": "List.List Stylus.Parser.Expression -> String.String"
+            },
+            {
+                "name": "stylus",
+                "comment": " ",
+                "type": "Stylus.Parser.StyParser (List.List Stylus.Parser.Expression)"
+            },
+            {
+                "name": "stylusToCss",
+                "comment": "\n\n    stylusToCss \"\"\"\n    div\n      width 400px\n      height 300px\n    \"\"\"\n\nyields\n\n    div { width: 400px; height: 300px; }\n\n",
+                "type": "String.String -> Result.Result (List.List (Parser.Advanced.DeadEnd Stylus.Parser.Context Stylus.Parser.Problem)) String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "TimeUtils.Compare",
+        "comment": " Compare dates.\n\n@docs is\n@docs is3\n@docs Compare2\n@docs Compare3\n\n",
+        "unions": [
+            {
+                "name": "Compare2",
+                "comment": " Date comparison type for 2 dates.\n\n  - After\n      - Return True if date1 is after date2.\n  - Before\n      - Return True if date1 is before date2.\n  - Same\n      - Return True if date1 is same as date2.\n  - SameOrAfter\n      - Return True if date1 is same or after date2.\n  - SameOrBefore\n      - Return True if date1 is same or before date2.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "After",
+                        []
+                    ],
+                    [
+                        "Before",
+                        []
+                    ],
+                    [
+                        "Same",
+                        []
+                    ],
+                    [
+                        "SameOrAfter",
+                        []
+                    ],
+                    [
+                        "SameOrBefore",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Compare3",
+                "comment": " Date comparison type for 3 dates.\n\nBetween does not care if date2 > date3 or date2 < date3.\n\n  - Between\n      - Return True if date1 is After date2 and Before date3\n      - Return True if date1 is After date3 and Before date2\n  - BetweenOpenStart\n      - Return True if date1 is SameOrAfter date2 and Before date3\n  - BetweenOpenEnd\n      - Return True if date1 is After date2 and SameOrBefore date3\n  - BetweenOpen\n      - Return True if date1 is SameOrAfter date2 and SameOrBefore date3\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Between",
+                        []
+                    ],
+                    [
+                        "BetweenOpenStart",
+                        []
+                    ],
+                    [
+                        "BetweenOpenEnd",
+                        []
+                    ],
+                    [
+                        "BetweenOpen",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "is",
+                "comment": " Compare two dates.\n",
+                "type": "TimeUtils.Compare.Compare2 -> Time.Posix -> Time.Posix -> Basics.Bool"
+            },
+            {
+                "name": "is3",
+                "comment": " Compare three dates.\n\nThis figures out the low and high bounds from date2\nand date3 using minimum and maximum of them respectively.\n\n",
+                "type": "TimeUtils.Compare.Compare3 -> Time.Posix -> Time.Posix -> Time.Posix -> Basics.Bool"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "TimeUtils.Config",
+        "comment": " Date configuration.\n\nFor i18n for day and month names.\nParameter to Format.format\\* functions.\n\nThere is scope to put in some default format strings here.\n\n@docs Config\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " Configuration for formatting dates.\n",
+                "args": [],
+                "type": "{ i18n : { dayShort : Time.Weekday -> String.String, dayName : Time.Weekday -> String.String, monthShort : Time.Month -> String.String, monthName : Time.Month -> String.String, dayOfMonthWithSuffix : Basics.Bool -> Basics.Int -> String.String, twelveHourPeriod : TimeUtils.TwelveHourClock.TwelveHourPeriod -> String.String }, format : { date : String.String, longDate : String.String, time : String.String, longTime : String.String, dateTime : String.String, firstDayOfWeek : Time.Weekday } }"
+            }
+        ],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "TimeUtils.Config.Configs",
+        "comment": " Get a TimeUtils.Config based up on a locale code.\n\n@docs getConfig\n@docs configs\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "configs",
+                "comment": " Built in configurations.\n",
+                "type": "Dict.Dict String.String TimeUtils.Config.Config"
+            },
+            {
+                "name": "getConfig",
+                "comment": " Get a TimeUtils.Config for a locale id.\n\nLower case matches strings and accepts \"-\" or \"\\_\" to separate\nthe characters in code.\n\nReturns \"en\\_us\" config if it can't find a match in configs.\n\n",
+                "type": "String.String -> TimeUtils.Config.Config"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "TimeUtils.Core",
+        "comment": " Date core.\n\n\n## Info\n\n@docs monthToInt\n@docs intToMonth\n@docs daysInMonth\n@docs monthList\n@docs daysInNextMonth\n@docs daysInPrevMonth\n@docs daysInMonthDate\n@docs isLeapYear\n@docs isLeapYearDate\n@docs yearToDayLength\n@docs isoDayOfWeek\n\n\n## Utility\n\n@docs toFirstOfMonth\n@docs firstOfNextMonthDate\n@docs lastOfMonthDate\n@docs lastOfPrevMonthDate\n@docs daysBackToStartOfWeek\n\n\n## Conversion\n\n@docs fromTime\n\n\n## Iteration Utility\n\n@docs nextDay\n@docs prevDay\n@docs nextMonth\n@docs prevMonth\n\n\n## Date constants\n\n@docs epochDateStr\n\n\n## Date constants\n\n@docs ticksAMillisecond\n@docs ticksASecond\n@docs ticksAMinute\n@docs ticksAnHour\n@docs ticksADay\n@docs ticksAWeek\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "daysBackToStartOfWeek",
+                "comment": " Return number of days back to start of week day.\n\nFirst parameter Weekday - is current day of week.\nSecond parameter Weekday - is start day of week.\n\n",
+                "type": "Time.Weekday -> Time.Weekday -> Basics.Int"
+            },
+            {
+                "name": "daysInMonth",
+                "comment": " Return days in month for year month.\n",
+                "type": "Basics.Int -> Time.Month -> Basics.Int"
+            },
+            {
+                "name": "daysInMonthDate",
+                "comment": " Days in month for given date.\n",
+                "type": "Time.Posix -> Basics.Int"
+            },
+            {
+                "name": "daysInNextMonth",
+                "comment": " Return days in next calendar month.\n",
+                "type": "Time.Posix -> Basics.Int"
+            },
+            {
+                "name": "daysInPrevMonth",
+                "comment": " Return days in next calendar month.\n",
+                "type": "Time.Posix -> Basics.Int"
+            },
+            {
+                "name": "epochDateStr",
+                "comment": " Epoch starting point for tick 0.\n",
+                "type": "String.String"
+            },
+            {
+                "name": "firstOfNextMonthDate",
+                "comment": " Return first of next month date.\n",
+                "type": "Time.Posix -> Time.Posix"
+            },
+            {
+                "name": "fromTime",
+                "comment": " Convenience fromTime as time ticks are Elm Ints in this library.\n",
+                "type": "Basics.Int -> Time.Posix"
+            },
+            {
+                "name": "intToMonth",
+                "comment": " Return integer as month. Jan <= 1 Feb == 2 up to Dec > 11.\n",
+                "type": "Basics.Int -> Time.Month"
+            },
+            {
+                "name": "isLeapYear",
+                "comment": " Return True if Year is a leap year.\n",
+                "type": "Basics.Int -> Basics.Bool"
+            },
+            {
+                "name": "isLeapYearDate",
+                "comment": " Return True if Year of Date is a leap year.\n",
+                "type": "Time.Posix -> Basics.Bool"
+            },
+            {
+                "name": "isoDayOfWeek",
+                "comment": " Return the Iso DayOfWeek Monday 1, to Sunday 7.\n",
+                "type": "Time.Weekday -> Basics.Int"
+            },
+            {
+                "name": "lastOfMonthDate",
+                "comment": " Return date of last day of month.\n",
+                "type": "Time.Posix -> Time.Posix"
+            },
+            {
+                "name": "lastOfPrevMonthDate",
+                "comment": " Return last of previous month date.\n",
+                "type": "Time.Posix -> Time.Posix"
+            },
+            {
+                "name": "monthList",
+                "comment": " List of months in order from Jan to Dec.\n",
+                "type": "List.List Time.Month"
+            },
+            {
+                "name": "monthToInt",
+                "comment": " Return month as integer. Jan = 1 to Dec = 12.\n",
+                "type": "Time.Month -> Basics.Int"
+            },
+            {
+                "name": "nextDay",
+                "comment": " Return next day in calendar sequence.\n",
+                "type": "Time.Weekday -> Time.Weekday"
+            },
+            {
+                "name": "nextMonth",
+                "comment": " Return next month in calendar sequence.\n",
+                "type": "Time.Month -> Time.Month"
+            },
+            {
+                "name": "prevDay",
+                "comment": " Return previous day in calendar sequence.\n",
+                "type": "Time.Weekday -> Time.Weekday"
+            },
+            {
+                "name": "prevMonth",
+                "comment": " Return previous month in calendar sequence.\n",
+                "type": "Time.Month -> Time.Month"
+            },
+            {
+                "name": "ticksADay",
+                "comment": " Ticks in a day.\n",
+                "type": "Basics.Int"
+            },
+            {
+                "name": "ticksAMillisecond",
+                "comment": " Ticks in a millisecond. (this is 1 on Win 7 in Chrome)\n",
+                "type": "Basics.Int"
+            },
+            {
+                "name": "ticksAMinute",
+                "comment": " Ticks in a minute.\n",
+                "type": "Basics.Int"
+            },
+            {
+                "name": "ticksASecond",
+                "comment": " Ticks in a second.\n",
+                "type": "Basics.Int"
+            },
+            {
+                "name": "ticksAWeek",
+                "comment": " Ticks in a week.\n",
+                "type": "Basics.Int"
+            },
+            {
+                "name": "ticksAnHour",
+                "comment": " Ticks in an hour.\n",
+                "type": "Basics.Int"
+            },
+            {
+                "name": "toFirstOfMonth",
+                "comment": " Return date of first day of month.\n",
+                "type": "Time.Posix -> Time.Posix"
+            },
+            {
+                "name": "yearToDayLength",
+                "comment": " Return number of days in a year.\n",
+                "type": "Basics.Int -> Basics.Int"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "TimeUtils.Create",
+        "comment": " Create dates and offsets.\n\n@docs getTimezoneOffset\n@docs dateFromFields\n@docs dateFromFieldsRecord\n@docs timeFromFields\n@docs timeFromFieldsRecord\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "dateFromFields",
+                "comment": " Create a date in current time zone from given fields.\n\nSee also [dateFromFieldsRecord](#dateFromFieldsRecord) for same function\nwith parameter from a record.\n\nCall Signature\n\n    dateFromFields year month day hour minute second millisecond =\n\nAll field values are clamped to there allowed range values.\nHours are input in 24 hour time range 0 to 23 valid.\nReturns dates in current time zone.\n\nUsing algorithm from <http://howardhinnant.github.io/date_algorithms.html>\nSpecifically days\\_from\\_civil function.\n\nThe two `<*>Compensate` values adjust for the zone offset time\nintroduced by `epochDate` as starting point.\n\n",
+                "type": "Basics.Int -> Time.Month -> Basics.Int -> Basics.Int -> Basics.Int -> Basics.Int -> Basics.Int -> Time.Posix"
+            },
+            {
+                "name": "dateFromFieldsRecord",
+                "comment": " Alternate record signature for [dateFromFields](#dateFromFields)\n",
+                "type": "TimeUtils.TypeAlias.DateFromFields -> Time.Posix"
+            },
+            {
+                "name": "getTimezoneOffset",
+                "comment": " Return the time zone offset of current javascript environment underneath\nElm in Minutes. This should produce the same result getTimezoneOffset()\nfor a given date in the same javascript VM.\n\nTime zone offset is always for a given date and time so an input date is required.\n\nGiven that timezones change (though slowly) this is not strictly pure, but\nI suspect it is sufficiently pure to be useful. Is is dependent on the timezone\nmechanics of the javascript VM.\n\n\n### Example zone stuff.\n\nFor an offset of -600 minutes, in +10:00 time zone offset.\n\n",
+                "type": "Time.Posix -> Basics.Int"
+            },
+            {
+                "name": "timeFromFields",
+                "comment": " Create a time in current time zone from given fields, for\nwhen you dont care about the date part but need time part anyway.\n\nSee also [timeFromFieldsRecord](#timeFromFieldsRecord) for same function\nwith parameter from a record.\n\nAll field values are clamped to there allowed range values.\nThis can only return dates in current time zone.\n\nHours are input in 24 hour time range 0 to 23 valid.\n\nThis defaults to year 1970, month Jan, day of month 1 for date part.\n\n",
+                "type": "Basics.Int -> Basics.Int -> Basics.Int -> Basics.Int -> Time.Posix"
+            },
+            {
+                "name": "timeFromFieldsRecord",
+                "comment": " Alternate record signature for [timeFromFields](#timeFromFields)\n\nTry [TimeFromFieldsTESTING](#TimeUtilsTypeAlias)\n\n",
+                "type": "TimeUtils.TypeAlias.TimeFromFields -> Time.Posix"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "TimeUtils.Duration",
+        "comment": " A Duration is a length of time that may vary with calendar date and time.\nIt can be used to modify a date.\n\nRepresents a period of time expressed in human chronological terms\nin terms of a calendar which may have varying components based upon\nthe dates involved in the math.\n\nWhen modify dates using Durations (`Day` | `Month` | `Week` | `Year`)\nthis module compensates for day light saving hour variations\nto minimize the scenarios that cause the `Hour` field in the result\nto be different to the input date.\nIt can't completely avoid the hour changing as some hours are not a real\nworld date and hence will modify the hour more than the Duration modified.\n\nThis behavior is modeled on moment.js so any observed behavior that is\nnot the same as moment.js should be raised as an issue.\n\nNote adding or subtracting 24 \\* Hour units from a date may produce a\ndifferent answer to adding or subtracting a Day if day light saving\ntransitions occur as part of the date change.\n\n**Warning**\n\nBe careful if you add Duration Delta to a Date as Duration contains months\nand Years which are not fixed elapsed times like Period Delta\n, however if\nyou really need a relative number of months or years then it may meet\nyour needs.\n\n@docs add\n@docs Duration\n@docs DurationDeltaRecord\n@docs durationToString\n@docs zeroDelta\n@docs diff\n@docs diffDays\n\n@docs addMonth\n@docs addYear\n@docs deltaToString\n@docs positiveDiff\n@docs positiveDiffDays\n@docs requireDaylightCompensateInAdd\n\n",
+        "unions": [
+            {
+                "name": "Duration",
+                "comment": " A Duration is time period that may vary with with calendar and time.\n\nUsing `Duration` adding 24 hours can produce different result to adding 1 day.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Millisecond",
+                        []
+                    ],
+                    [
+                        "Second",
+                        []
+                    ],
+                    [
+                        "Minute",
+                        []
+                    ],
+                    [
+                        "Hour",
+                        []
+                    ],
+                    [
+                        "Day",
+                        []
+                    ],
+                    [
+                        "Week",
+                        []
+                    ],
+                    [
+                        "Month",
+                        []
+                    ],
+                    [
+                        "Year",
+                        []
+                    ],
+                    [
+                        "Delta",
+                        [
+                            "TimeUtils.Duration.DurationDeltaRecord"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "DurationDeltaRecord",
+                "comment": " A multi granularity duration delta.\nThis does not contain week like Period.DeltaRecord.\nIt does contain month and year.\n",
+                "args": [],
+                "type": "{ year : Basics.Int, month : Basics.Int, day : Basics.Int, hour : Basics.Int, minute : Basics.Int, second : Basics.Int, millisecond : Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "add",
+                "comment": " Add duration count to date.\n",
+                "type": "TimeUtils.Duration.Duration -> Basics.Int -> Time.Posix -> Time.Posix"
+            },
+            {
+                "name": "addMonth",
+                "comment": " Return a date with month count added to date.\nNew version leveraging daysFromCivil does not loop\nover months so faster and only compensates at outer\nlevel for DST.\nExpects input in local time zone.\nReturn is in local time zone.\n",
+                "type": "Basics.Int -> Time.Posix -> Time.Posix"
+            },
+            {
+                "name": "addYear",
+                "comment": " Return a date with year count added to date.\n",
+                "type": "Basics.Int -> Time.Posix -> Time.Posix"
+            },
+            {
+                "name": "deltaToString",
+                "comment": " Convert a `DurationDeltaRecord` to a `String`\nto easily display it during testing.\n",
+                "type": "TimeUtils.Duration.DurationDeltaRecord -> String.String"
+            },
+            {
+                "name": "diff",
+                "comment": " Return a `Period` representing date difference `date1 - date2`.\nIf you add the result of this function to `date2` with addend of 1\nwill not always return `date1`, this is because this module supports\nhuman calendar concepts like Day Light Saving, Months with varying\nnumber of days dependent on the month and leap years. So the difference\nbetween two dates is dependent on when those dates are.\n**Differences to `Period.diff`**\n\n  - Duration `DurationDeltaRecord` excludes week field\n  - Duration `DurationDeltaRecord` includes month field\n  - Duration `DurationDeltaRecord` includes year field\n  - Day is number of days difference between months.\n    When adding a Duration `DurationDeltaRecord` to a date.\n    The larger granularity fields are added before lower granularity fields\n    so Years are added before Months before Days etc.\n  - Very different behavior to Period diff\n  - If date1 > date2\n    then all fields in `DurationDeltaRecord`\n    will be positive or zero.\n  - If date1 < date2\n    then all fields in `DurationDeltaRecord`\n    will be negative or zero.\n  - Because it deals with non fixed length periods of time\n    Example 1.\n    days in 2016-05 (May) = 31\n    days in 2016-04 (Apr) = 30\n    days in 2016-03 (Mar) = 31\n    days in 2015-03 (Mar) = 31\n    diff of \"2016-05-15\" \"2015-03-20\"\n    result naive field diff.\n    year 1, month 2, day -5\n    days \"2015-03-20\" to \"2015-04-01\" (31 - 20) = 11 days (12).\n    still in march with 11.\n    days \"2015-04-01\" to \"2016-04-15\" (15 - 1) = 14 days\n    months \"2016-04-15\" to \"2016-05-15\" 1 months\n    result field diff\n    year 1, month 1, day 26\n    This logic applies all the way down to milliseconds.\n\n",
+                "type": "Time.Posix -> Time.Posix -> TimeUtils.Duration.DurationDeltaRecord"
+            },
+            {
+                "name": "diffDays",
+                "comment": " Returns `date1 - date2` as number of days\nto add to `date1` to get to day `date2` is on.\n`date1 - date2 in days`.\nOnly calculates days difference\nand ignores any field smaller than day in calculation.\n",
+                "type": "Time.Posix -> Time.Posix -> Basics.Int"
+            },
+            {
+                "name": "durationToString",
+                "comment": " Convert a `Duration` to a `String`.\nEspecially helpful printing debugging information.\n",
+                "type": "TimeUtils.Duration.Duration -> String.String"
+            },
+            {
+                "name": "positiveDiff",
+                "comment": " Return diff between dates.\nIt returns `date1 - date2` in a `DurationDeltaRecord`.\nPrecondition for this function is `date1` must be after `date2`.\nInput multiplier is used to multiply output fields as needed for caller,\nthis is used to conditionally negate them in initial use case.\n",
+                "type": "Time.Posix -> Time.Posix -> Basics.Int -> TimeUtils.Duration.DurationDeltaRecord"
+            },
+            {
+                "name": "positiveDiffDays",
+                "comment": " Return number of days added to `date1` to produce `date2`\n",
+                "type": "Time.Posix -> Time.Posix -> Basics.Int -> Basics.Int"
+            },
+            {
+                "name": "requireDaylightCompensateInAdd",
+                "comment": " Return true if this Duration unit compensates\nfor crossing daylight saving boundaries.\nTODO: This may need to compensate for day light saving\nfor all fields as all of them\ncan cause the date to change the zone offset.\n",
+                "type": "TimeUtils.Duration.Duration -> Basics.Bool"
+            },
+            {
+                "name": "zeroDelta",
+                "comment": " All zero delta.\nUseful as a starting point if you want to set a few fields only.\n",
+                "type": "TimeUtils.Duration.DurationDeltaRecord"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "TimeUtils.Field",
+        "comment": " Setting a date field on a date.\n\n@docs fieldToDate\n@docs fieldToDateClamp\n@docs Field\n@docs fieldToString\n\n",
+        "unions": [
+            {
+                "name": "Field",
+                "comment": " Configured Field and Value to set on date.\n\nAll field values are applied Modulus there maximum value.\n\n  - DayOfWeek\n      - The week keeps the same start of week day as passed in and changes day.\n  - Month\n      - Will not change year only the month of year.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Millisecond",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "Second",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "Minute",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "Hour",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "DayOfWeek",
+                        [
+                            "( Time.Weekday, Time.Weekday )"
+                        ]
+                    ],
+                    [
+                        "DayOfMonth",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "Month",
+                        [
+                            "Time.Month"
+                        ]
+                    ],
+                    [
+                        "Year",
+                        [
+                            "Basics.Int"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fieldToDate",
+                "comment": " Set a field on a date to a specific value.\n\nIf your value in field is out side of valid range for\nthe date field this function will return Nothing.\n\n  - DayOfWeek cannot be invalid input range\n  - Month cannot be invalid\n\nValid ranges\n\n  - Millisecond 0 to 999\n  - Second 0 to 59\n  - Minute 0 to 59\n  - Hour 0 to 23\n  - DayOfMonth 1 to max day of month for year\n  - Year >= 0\n\n",
+                "type": "TimeUtils.Field.Field -> Time.Posix -> Maybe.Maybe Time.Posix"
+            },
+            {
+                "name": "fieldToDateClamp",
+                "comment": " Set a field on a date to a specific value.\n\nThis version clamps any input Field values to valid ranges as\ndescribed in the doc for fieldToDate function.\n\n",
+                "type": "TimeUtils.Field.Field -> Time.Posix -> Time.Posix"
+            },
+            {
+                "name": "fieldToString",
+                "comment": " ",
+                "type": "TimeUtils.Field.Field -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "TimeUtils.Format",
+        "comment": " Date Format, turning dates into strings.\n\nThe format code originally came from and was modified and extended from.\n<https://github.com/mgold/elm-date-format/blob/1.0.4/src/Date/Format.elm>\n\n\n## Date presentation\n\n@docs format\n@docs formatUtc\n@docs formatOffset\n\n\n## Extra presentation convenience\n\n@docs isoString\n@docs isoStringNoOffset\n@docs utcIsoString\n\n\n## Low level formats used in specific places in library.\n\n@docs isoDateString\n@docs utcIsoDateString\n\n\n## Useful strings for format\n\n@docs isoFormat\n@docs isoMsecFormat\n@docs isoOffsetFormat\n@docs isoMsecOffsetFormat\n@docs isoDateFormat\n@docs isoTimeFormat\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "format",
+                "comment": " Use a format string to format a date.\nThis gets time zone offset from provided date.\n",
+                "type": "TimeUtils.Config.Config -> String.String -> Time.Posix -> String.String"
+            },
+            {
+                "name": "formatOffset",
+                "comment": " This adjusts date for offset, and renders with the offset\n",
+                "type": "TimeUtils.Config.Config -> Basics.Int -> String.String -> Time.Posix -> String.String"
+            },
+            {
+                "name": "formatUtc",
+                "comment": " Convert date to utc then format it with offset set to 0 if rendered.\n",
+                "type": "TimeUtils.Config.Config -> String.String -> Time.Posix -> String.String"
+            },
+            {
+                "name": "isoDateFormat",
+                "comment": " ISO Date.\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isoDateString",
+                "comment": " Return date as string.\n\nLow level routine required by areas like checkDateResult to avoid\nrecursive loops in Format.format.\n\n",
+                "type": "Time.Posix -> String.String"
+            },
+            {
+                "name": "isoFormat",
+                "comment": " ISO date time, 24hr.\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isoMsecFormat",
+                "comment": " ISO Date time with milliseconds, 24hr.\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isoMsecOffsetFormat",
+                "comment": " ISO Date time with milliseconds and timezone, 24hr.\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isoOffsetFormat",
+                "comment": " ISO Date time with timezone, 24hr.\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isoString",
+                "comment": " Return date and time as string in local zone.\n",
+                "type": "Time.Posix -> String.String"
+            },
+            {
+                "name": "isoStringNoOffset",
+                "comment": " Return date and time as string in local zone, without\na timezone offset as output by `Format.isoString`.\nIntroduced to deal with dates assuming local time zone.\n",
+                "type": "Time.Posix -> String.String"
+            },
+            {
+                "name": "isoTimeFormat",
+                "comment": " ISO Time 24hr.\n",
+                "type": "String.String"
+            },
+            {
+                "name": "utcIsoDateString",
+                "comment": " Utc variant of isoDateString.\n\nLow level routine required by areas like checkDateResult to avoid\nrecursive loops in Format.format.\n\n",
+                "type": "Time.Posix -> String.String"
+            },
+            {
+                "name": "utcIsoString",
+                "comment": " Return date and time as string in ISO form with Z for UTC offset.\n",
+                "type": "Time.Posix -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "TimeUtils.Period",
+        "comment": " Period is a fixed length of time. It is an elapsed time concept, which\ndoes not include the concept of Years Months or Daylight saving variations.\n\n  - Represents a fixed (and calendar-independent) length of time.\n\nName of type concept copied from NodaTime.\n\n@docs add\n@docs diff\n@docs Period\n@docs PeriodDeltaRecord\n@docs periodToString\n@docs zeroDelta\n@docs toTicks\n@docs addTimeUnit\n\n",
+        "unions": [
+            {
+                "name": "Period",
+                "comment": " A Period.\n\nWeek is a convenience for users if they want to use it, it does\njust scale Day in functionality so is not strictly required.\n\n`PeriodDeltaRecord` values are multiplied addend on application.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Millisecond",
+                        []
+                    ],
+                    [
+                        "Second",
+                        []
+                    ],
+                    [
+                        "Minute",
+                        []
+                    ],
+                    [
+                        "Hour",
+                        []
+                    ],
+                    [
+                        "Day",
+                        []
+                    ],
+                    [
+                        "Week",
+                        []
+                    ],
+                    [
+                        "Delta",
+                        [
+                            "TimeUtils.Period.PeriodDeltaRecord"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "PeriodDeltaRecord",
+                "comment": " A multi granularity period delta.\n",
+                "args": [],
+                "type": "{ week : Basics.Int, day : Basics.Int, hour : Basics.Int, minute : Basics.Int, second : Basics.Int, millisecond : Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "add",
+                "comment": " Add Period count to date.\n",
+                "type": "TimeUtils.Period.Period -> Basics.Int -> Time.Posix -> Time.Posix"
+            },
+            {
+                "name": "addTimeUnit",
+                "comment": " Add time units.\n",
+                "type": "Basics.Int -> Basics.Int -> Time.Posix -> Time.Posix"
+            },
+            {
+                "name": "diff",
+                "comment": " Return a Period representing date difference. date1 - date2.\nIf you add the result of this function to date2 with addend of 1\nwill return date1.\n",
+                "type": "Time.Posix -> Time.Posix -> TimeUtils.Period.PeriodDeltaRecord"
+            },
+            {
+                "name": "periodToString",
+                "comment": " ",
+                "type": "TimeUtils.Period.Period -> String.String"
+            },
+            {
+                "name": "toTicks",
+                "comment": " Return tick counts for periods.\nUseful to get total ticks in a Delta.\n",
+                "type": "TimeUtils.Period.Period -> Basics.Int"
+            },
+            {
+                "name": "zeroDelta",
+                "comment": " All zero delta.\nUseful as a starting point if you want to set a few fields only.\n",
+                "type": "TimeUtils.Period.PeriodDeltaRecord"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "TimeUtils.Time",
+        "comment": " Helpers for working with elm/lang's Posix data type\n(Mostly copied from\n<https://package.elm-lang.org/packages/rluiten/elm-TimeUtils>)\n\n@docs daysInMonth\n@docs isLeapYear\n@docs isoDayOfWeek\n@docs monthToInt\n@docs utcDateTime\n@docs utcWeek\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "daysInMonth",
+                "comment": " Return days in month for year and month.\n",
+                "type": "Basics.Int -> Time.Month -> Basics.Int"
+            },
+            {
+                "name": "isLeapYear",
+                "comment": " Return `True` if year is a leap year.\n",
+                "type": "Basics.Int -> Basics.Bool"
+            },
+            {
+                "name": "isoDayOfWeek",
+                "comment": " Return the ISO day of the week. From Monday == 1, to Sunday == 7.\n",
+                "type": "Time.Weekday -> Basics.Int"
+            },
+            {
+                "name": "monthToInt",
+                "comment": " Return the ISO number of each month [1-12].\n",
+                "type": "Time.Month -> Basics.Int"
+            },
+            {
+                "name": "utcDateTime",
+                "comment": " ",
+                "type": "Time.Posix -> String.String"
+            },
+            {
+                "name": "utcWeek",
+                "comment": " ",
+                "type": "Time.Posix -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "TimeUtils.TimeUnit",
+        "comment": " Reduce or Increase a date to a given start or end\nof a `TimeUnit` granularity.\n\nThis allows you to modify a date to reset to minimum or maximum values\nall values below a given TimeUnit granularity.\n\nThis operates in local time zone so if you are not in UTC time zone\nand you output date in UTC time zone the date fields will not be to the start\nor end of the `TimeUnit`.\n\nExample `TimeUnit.startOfTime Hour date` will return a modified date with\n\n  - Minutes to 0\n  - Seconds to 0\n  - Milliseconds to 0\n\nExample `TimeUnit.endOfTime Hour date` will return a modified date with\n\n  - Minutes to 59\n  - Seconds to 59\n  - Milliseconds to 999\n\n@docs startOfTime\n@docs endOfTime\n@docs TimeUnit\n@docs timeUnitToString\n\n**Warning about using `endOfTime` for date ranges**\n\nIn the past when I have encountered people using a function like `endOfTime`\n(max date at a given granularity) it was being used in ways that could introduce\nproblems.\n\nHere is why:\n\n  - You want to do a date range comparison between the minimum date\n    (or current date) and this maximum date.\n    In all the cases I can remember\n    they were doing a date range comparison using\n    Greater Than Or Equal To minimum date\n    and Less Than or Equal To maximum date.\n      - I can't state strongly enough that this is not the way to do date ranges\n        it leads to missed matches that fall between the generated maximum date\n        and the following date at the same granularity in systems were you are\n        working at a granularity larger than the underlying stored granularity.\n        Even if you are working at the smallest granularity of the system its a\n        not a good way to think about ranges.\n      - When comparing date ranges I strongly suggest you always use a\n        half closed interval. This means always build date ranges using\n        Greater Than or Equal To minimum date and Less Than maximum date.\n        (This applies to floating point numbers as well).\n          - Its equivalently safe to go Greater Than minimum and\n            Less Than or Equal to maximum,\n            in my experience business understanding\n            nearly always dictated include minimum excluded maximum.\n      - Once you do this there is no possible gap\n        and it becomes easier to think about.\n\n",
+        "unions": [
+            {
+                "name": "TimeUnit",
+                "comment": " Date granularity of operations.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Millisecond",
+                        []
+                    ],
+                    [
+                        "Second",
+                        []
+                    ],
+                    [
+                        "Minute",
+                        []
+                    ],
+                    [
+                        "Hour",
+                        []
+                    ],
+                    [
+                        "Day",
+                        []
+                    ],
+                    [
+                        "Month",
+                        []
+                    ],
+                    [
+                        "Year",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "endOfTime",
+                "comment": " Return a date created by increasing to maximum value all values below\na given `TimeUnit` granularity.\n\nThis modifies in local time zone values, as the date element parts\nare pulled straight from the local time zone date values.\n\n",
+                "type": "TimeUtils.TimeUnit.TimeUnit -> Time.Posix -> Time.Posix"
+            },
+            {
+                "name": "startOfTime",
+                "comment": " Return a date created by reducing to minimum value all values below\na given `TimeUnit` granularity.\n\nThis modifies date in local time zone values, as the date element parts\nare pulled straight from the local time zone date values.\n\n",
+                "type": "TimeUtils.TimeUnit.TimeUnit -> Time.Posix -> Time.Posix"
+            },
+            {
+                "name": "timeUnitToString",
+                "comment": " ",
+                "type": "TimeUtils.TimeUnit.TimeUnit -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "TimeUtils.TwelveHourClock",
+        "comment": " Definition of 12-Hour clock and AM/PM value for dates.\n\n@docs TwelveHourPeriod\n@docs twelveHourPeriod\n\n",
+        "unions": [
+            {
+                "name": "TwelveHourPeriod",
+                "comment": " 12-Hour clock abbreviations (AM/PM)\n",
+                "args": [],
+                "cases": [
+                    [
+                        "AM",
+                        []
+                    ],
+                    [
+                        "PM",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "twelveHourPeriod",
+                "comment": " Common Posix to AM/PM value.\n",
+                "type": "Time.Posix -> TimeUtils.TwelveHourClock.TwelveHourPeriod"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "TimeUtils.TypeAlias",
+        "comment": " Extra types for sharing between Internal and External interface.\n\n@docs TimeFromFields\n@docs DateFromFields\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "DateFromFields",
+                "comment": " Alternate signature for Create.dateFromFieldsRecord\n\nSee Core.inToMonth for converting an integer month to a Month.\n\n",
+                "args": [],
+                "type": "{ year : Basics.Int, month : Time.Month, day : Basics.Int, hour : Basics.Int, minute : Basics.Int, second : Basics.Int, millisecond : Basics.Int }"
+            },
+            {
+                "name": "TimeFromFields",
+                "comment": " Alternate signature for Create.timeFromFields\n",
+                "args": [],
+                "type": "{ hour : Basics.Int, minute : Basics.Int, second : Basics.Int, millisecond : Basics.Int }"
+            }
+        ],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "TimeUtils.Utils",
+        "comment": "\n\n\n# Time Utils\n\n\n## Utility\n\n@docs dayList\n@docs isoWeek\n@docs isoWeekOne\n@docs getYearIsoWeekDate\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "dayList",
+                "comment": " Return a list of days dayLength long for successive days\nstarting from startDate.\n\nNow adds 1 day if dayCount is +ve to create day list.\nNow subtracts 1 day if dayCount is -ve to create day list.\n\nThis could be made much faster by using `daysFromCivil`\nand not using underlying date system at all I believe.\n\n",
+                "type": "Basics.Int -> Time.Posix -> List.List Time.Posix"
+            },
+            {
+                "name": "getYearIsoWeekDate",
+                "comment": " Return year of ISO week date\n(which can be different than the normal calendar year)\nand the timestamp of the first ISO week.\n",
+                "type": "Time.Posix -> ( Basics.Int, Time.Posix )"
+            },
+            {
+                "name": "isoWeek",
+                "comment": " Return ISO week values `year`, `week`, `isoDayOfWeek`.\nInput date is expected to be in local time zone of vm.\n",
+                "type": "Time.Posix -> ( Basics.Int, Basics.Int, Basics.Int )"
+            },
+            {
+                "name": "isoWeekOne",
+                "comment": " Return date of start of ISO week one for given year.\n",
+                "type": "Basics.Int -> Time.Posix"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Vectual",
+        "comment": " Contains methods that are relevant for all chart types\n\n@docs defaultBaseConfig\n@docs viewChart\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "defaultBaseConfig",
+                "comment": " ",
+                "type": "Vectual.Types.BaseConfigAnd {}"
+            },
+            {
+                "name": "viewChart",
+                "comment": " ",
+                "type": "Vectual.Types.Chart -> Svg.Svg msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Vectual.BarChart",
+        "comment": " This module creates a simple SVG bar chart.\n\n![Bar Chart](../images/barChart.png)\n\n@docs defaultBarChartConfig\n\n@docs viewBarChart\n\n@docs getBar\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "defaultBarChartConfig",
+                "comment": " The default configuration for the bar chart.\nCreate your own config by overwriting the fields you want to change.\n\n    barChart =\n        BarChart\n            { defaultBarChartConfig\n                | xLabelFormatter = utcWeek\n            }\n            timeData\n\n",
+                "type": "Vectual.Types.BarChartConfig"
+            },
+            {
+                "name": "getBar",
+                "comment": " Helper to get SVG element for a single bar.\n",
+                "type": "Vectual.Types.BarChartConfig -> Vectual.Types.Data -> Vectual.Types.MetaData Quantity.Unitless coordinates -> Basics.Int -> Vectual.Types.Entry -> Svg.Svg msg"
+            },
+            {
+                "name": "viewBarChart",
+                "comment": " Create SVG from bar chart config and a data set.\n\n    svgElement =\n        viewBarChart config dataSet\n\n",
+                "type": "Vectual.Types.BarChartConfig -> Vectual.Types.Data -> Svg.Svg msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Vectual.BarChartStacked",
+        "comment": " This module creates an SVG element of a stacked bar chart.\n\n![Bar Chart Stacked](../images/barChartStacked.png)\n\n@docs viewBarChartStacked\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "viewBarChartStacked",
+                "comment": " Create SVG from bar chart config and several data sets.\n\n    svgElement =\n        viewBarChartStacked config dataSets\n\n",
+                "type": "Vectual.Types.BarChartConfig -> Vectual.Types.Datas -> Svg.Svg msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Vectual.CoordinateSystem",
+        "comment": " Create ordinates, abscissas or a complete coordinate system.\n\n@docs getAbscissas\n@docs getCoordinateSystem\n@docs getOrdinates\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "getAbscissas",
+                "comment": " ",
+                "type": "Vectual.Types.BaseConfigAnd a -> Vectual.Types.Data -> Vectual.Types.MetaData Quantity.Unitless coordinates -> List.List (Svg.Svg msg)"
+            },
+            {
+                "name": "getCoordinateSystem",
+                "comment": " ",
+                "type": "Vectual.Types.BaseConfigAnd a -> Vectual.Types.Data -> Vectual.Types.MetaData Quantity.Unitless coordinates -> Svg.Svg msg"
+            },
+            {
+                "name": "getOrdinates",
+                "comment": " ",
+                "type": "Vectual.Types.BaseConfigAnd a -> Vectual.Types.Data -> Vectual.Types.MetaData Quantity.Unitless coordinates -> List.List (Svg.Svg msg)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Vectual.Helpers",
+        "comment": " Helpers for normalizing / sanitizing data and easier SVG creation.\n\n@docs getDataLabels\n@docs getDataLength\n@docs getDataRecords\n@docs getDataValues\n@docs getMetaData\n@docs toRotate\n@docs toTranslate\n@docs wrapChart\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "getDataLabels",
+                "comment": " ",
+                "type": "Vectual.Types.BaseConfigAnd a -> Vectual.Types.Data -> List.List String.String"
+            },
+            {
+                "name": "getDataLength",
+                "comment": " ",
+                "type": "Vectual.Types.Data -> Basics.Int"
+            },
+            {
+                "name": "getDataRecords",
+                "comment": " ",
+                "type": "Vectual.Types.Data -> Vectual.Types.Entries"
+            },
+            {
+                "name": "getDataValues",
+                "comment": " ",
+                "type": "Vectual.Types.Data -> List.List Basics.Float"
+            },
+            {
+                "name": "getMetaData",
+                "comment": " ",
+                "type": "{ a | width : Basics.Int, height : Basics.Int, yStartAtZero : Basics.Bool } -> Vectual.Types.Data -> Vectual.Types.MetaData Quantity.Unitless coordinates"
+            },
+            {
+                "name": "toRotate",
+                "comment": " ",
+                "type": "Basics.Int -> Point2d.Point2d units coordinates -> String.String"
+            },
+            {
+                "name": "toTranslate",
+                "comment": " ",
+                "type": "Vector2d.Vector2d units coordinates -> String.String"
+            },
+            {
+                "name": "wrapChart",
+                "comment": " ",
+                "type": "Vectual.Types.BaseConfigAnd a -> Svg.Svg msg -> Svg.Svg msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Vectual.PieChart",
+        "comment": " This module creates a simple pie chart.\n\n@docs viewPieChart\n@docs defaultPieChartConfig\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "defaultPieChartConfig",
+                "comment": " Default configuration for pie charts\n",
+                "type": "Vectual.Types.PieChartConfig"
+            },
+            {
+                "name": "viewPieChart",
+                "comment": " ",
+                "type": "Vectual.Types.PieChartConfig -> Vectual.Types.Data -> Svg.Svg msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Vectual.Types",
+        "comment": " All types that are used in Vectual\n\n@docs Alignment\n@docs LineChartConfig\n@docs BarChartConfig\n@docs BaseConfigAnd\n@docs Chart\n@docs Data\n@docs Datas\n@docs Entries\n@docs Entry\n@docs Key\n@docs KeyRecord\n@docs MetaData\n@docs PieChartConfig\n@docs Radian\n@docs TimeRecord\n@docs Value\n\n",
+        "unions": [
+            {
+                "name": "Alignment",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Left",
+                        []
+                    ],
+                    [
+                        "Center",
+                        []
+                    ],
+                    [
+                        "Right",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Chart",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "LineChart",
+                        [
+                            "Vectual.Types.LineChartConfig",
+                            "Vectual.Types.Data"
+                        ]
+                    ],
+                    [
+                        "BarChart",
+                        [
+                            "Vectual.Types.BarChartConfig",
+                            "Vectual.Types.Data"
+                        ]
+                    ],
+                    [
+                        "BarChartStacked",
+                        [
+                            "Vectual.Types.BarChartConfig",
+                            "Vectual.Types.Datas"
+                        ]
+                    ],
+                    [
+                        "PieChart",
+                        [
+                            "Vectual.Types.PieChartConfig",
+                            "Vectual.Types.Data"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Data",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "TimeData",
+                        [
+                            "List.List Vectual.Types.TimeRecord"
+                        ]
+                    ],
+                    [
+                        "KeyData",
+                        [
+                            "List.List Vectual.Types.KeyRecord"
+                        ]
+                    ],
+                    [
+                        "Values",
+                        [
+                            "List.List Basics.Float"
+                        ]
+                    ],
+                    [
+                        "InvalidData",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Value",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Int",
+                        []
+                    ],
+                    [
+                        "Float",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "BarChartConfig",
+                "comment": " ",
+                "args": [],
+                "type": "Vectual.Types.BaseConfigAnd { labelAngle : Vectual.Types.Radian, yStartAtZero : Basics.Bool, alignBars : Vectual.Types.Alignment }"
+            },
+            {
+                "name": "BaseConfigAnd",
+                "comment": " ",
+                "args": [
+                    "extraFields"
+                ],
+                "type": "{ extraFields | title : String.String, inline : Basics.Bool, width : Basics.Int, height : Basics.Int, borderRadius : ( Basics.Int, Basics.Int ), xLabelFormatter : Time.Posix -> String.String }"
+            },
+            {
+                "name": "Datas",
+                "comment": " ",
+                "args": [],
+                "type": "List.List Vectual.Types.Data"
+            },
+            {
+                "name": "Entries",
+                "comment": " ",
+                "args": [],
+                "type": "List.List Vectual.Types.Entry"
+            },
+            {
+                "name": "Entry",
+                "comment": " ",
+                "args": [],
+                "type": "{ label : String.String, value : Basics.Float, offset : Basics.Float }"
+            },
+            {
+                "name": "Key",
+                "comment": " ",
+                "args": [],
+                "type": "String.String"
+            },
+            {
+                "name": "KeyRecord",
+                "comment": " ",
+                "args": [],
+                "type": "{ key : Vectual.Types.Key, value : Basics.Float, offset : Basics.Float }"
+            },
+            {
+                "name": "LineChartConfig",
+                "comment": " ",
+                "args": [],
+                "type": "Vectual.Types.BaseConfigAnd { labelAngle : Vectual.Types.Radian, yStartAtZero : Basics.Bool, alignBars : Vectual.Types.Alignment, showAnimations : Basics.Bool }"
+            },
+            {
+                "name": "MetaData",
+                "comment": " ",
+                "args": [
+                    "units",
+                    "coordinates"
+                ],
+                "type": "{ graphWidth : Basics.Int, graphHeight : Basics.Int, coordSysWidth : Basics.Int, coordSysHeight : Basics.Int, translation : Vector2d.Vector2d units coordinates, numberOfEntries : Basics.Int, yMinimum : Basics.Float, yMaximum : Basics.Float, yRange : Basics.Float }"
+            },
+            {
+                "name": "PieChartConfig",
+                "comment": " ",
+                "args": [],
+                "type": "Vectual.Types.BaseConfigAnd { radius : Basics.Int, showAnimations : Basics.Bool, yStartAtZero : Basics.Bool }"
+            },
+            {
+                "name": "Radian",
+                "comment": " ",
+                "args": [],
+                "type": "Basics.Float"
+            },
+            {
+                "name": "TimeRecord",
+                "comment": " ",
+                "args": [],
+                "type": "{ utc : Time.Posix, value : Basics.Float, offset : Basics.Float }"
+            }
+        ],
+        "values": [],
+        "binops": []
+    }
+]

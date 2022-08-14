@@ -1,0 +1,910 @@
+[
+    {
+        "name": "OAuth",
+        "comment": " Utility library to manage client-side OAuth 2.0 authentications\n\nThe library contains a main OAuth module exposing types used accross other modules. In practice,\nyou'll only need tu use one of the additional modules:\n\n  - OAuth.AuthorizationCode: The authorization code grant type is used to obtain both access tokens\n    and refresh tokens via a redirection-based flow and is optimized for confidential clients\n    [4.1](https://tools.ietf.org/html/rfc6749#section-4.1).\n\n  - OAuth.AuthorizationCode.PKCE: An extension of the original OAuth 2.0 specification to mitigate\n    authorization code interception attacks through the use of Proof Key for Code Exchange (PKCE).\n\n  - OAuth.Implicit: The implicit grant type is used to obtain access tokens (it does not support the\n    issuance of refresh tokens) and is optimized for public clients known to operate a particular\n    redirection URI [4.2](https://tools.ietf.org/html/rfc6749#section-4.2).\n\n  - OAuth.Password: The resource owner password credentials grant type is suitable in cases where the\n    resource owner has a trust relationship with the client, such as the device operating system or a\n    highly privileged application [4.3](https://tools.ietf.org/html/rfc6749#section-4.3)\n\n  - OAuth.ClientCredentials: The client can request an access token using only its client credentials\n    (or other supported means of authentication) when the client is requesting access to the protected\n    resources under its control, or those of another resource owner that have been previously arranged\n    with the authorization server (the method of which is beyond the scope of this specification)\n    [4.4](https://tools.ietf.org/html/rfc6749#section-4.3).\n\nIn practice, you most probably want to use the _OAuth.Implicit_ module which is the most commonly\nused.\n\n\n## Token\n\n@docs Token, useToken, tokenToString, tokenFromString\n\n\n## ErrorCode\n\n@docs ErrorCode, errorCodeToString, errorCodeFromString\n\n\n## Decoders & Parsers Utils (advanced)\n\n@docs TokenType, TokenString, makeToken, makeRefreshToken\n\n",
+        "unions": [
+            {
+                "name": "ErrorCode",
+                "comment": " Describes an OAuth error response [4.1.2.1](https://tools.ietf.org/html/rfc6749#section-4.1.2.1)\n\n  - InvalidRequest: The request is missing a required parameter, includes an invalid parameter value,\n    includes a parameter more than once, or is otherwise malformed.\n\n  - UnauthorizedClient: The client is not authorized to request an authorization code using this\n    method.\n\n  - AccessDenied: The resource owner or authorization server denied the request.\n\n  - UnsupportedResponseType: The authorization server does not support obtaining an authorization code\n    using this method.\n\n  - InvalidScope: The requested scope is invalid, unknown, or malformed.\n\n  - ServerError: The authorization server encountered an unexpected condition that prevented it from\n    fulfilling the request. (This error code is needed because a 500 Internal Server Error HTTP status\n    code cannot be returned to the client via an HTTP redirect.)\n\n  - TemporarilyUnavailable: The authorization server is currently unable to handle the request due to\n    a temporary overloading or maintenance of the server. (This error code is needed because a 503\n    Service Unavailable HTTP status code cannot be returned to the client via an HTTP redirect.)\n\n  - Custom: Encountered a 'free-string' or custom code not specified by the official RFC but returned\n    by the authorization server.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "InvalidRequest",
+                        []
+                    ],
+                    [
+                        "UnauthorizedClient",
+                        []
+                    ],
+                    [
+                        "AccessDenied",
+                        []
+                    ],
+                    [
+                        "UnsupportedResponseType",
+                        []
+                    ],
+                    [
+                        "InvalidScope",
+                        []
+                    ],
+                    [
+                        "ServerError",
+                        []
+                    ],
+                    [
+                        "TemporarilyUnavailable",
+                        []
+                    ],
+                    [
+                        "Custom",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Token",
+                "comment": " Describes the type of access token to use.\n\n  - Bearer: Utilized by simply including the access token string in the request\n    [rfc6750](https://tools.ietf.org/html/rfc6750)\n\n  - Mac: Not supported.\n\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "TokenString",
+                "comment": " Alias for readability\n",
+                "args": [],
+                "type": "String.String"
+            },
+            {
+                "name": "TokenType",
+                "comment": " Alias for readability\n",
+                "args": [],
+                "type": "String.String"
+            }
+        ],
+        "values": [
+            {
+                "name": "errorCodeFromString",
+                "comment": " Build a string back into an error code. Returns `Custom _`\nwhen the string isn't recognized from the ones specified in the RFC\n",
+                "type": "String.String -> OAuth.ErrorCode"
+            },
+            {
+                "name": "errorCodeToString",
+                "comment": " Get the `String` representation of an `ErrorCode`.\n",
+                "type": "OAuth.ErrorCode -> String.String"
+            },
+            {
+                "name": "makeRefreshToken",
+                "comment": " See `makeToken`, with the subtle difference that a token value may or\nmay not be there.\n\nReturns `Nothing` when the token type isn't `\"Bearer\"`.\n\nReturns `Just Nothing` or `Just (Just token)` otherwise, depending on whether a token is\npresent or not.\n\n",
+                "type": "OAuth.TokenType -> Maybe.Maybe OAuth.TokenString -> Maybe.Maybe (Maybe.Maybe OAuth.Token)"
+            },
+            {
+                "name": "makeToken",
+                "comment": " Create a token from two string representing a token type and\nan actual token value. This is intended to be used in Json decoders\nor Query parsers.\n\nReturns `Nothing` when the token type is `Nothing`\n, different from `Just \"Bearer\"` or when there's no token at all.\n\n",
+                "type": "Maybe.Maybe OAuth.TokenType -> Maybe.Maybe OAuth.TokenString -> Maybe.Maybe OAuth.Token"
+            },
+            {
+                "name": "tokenFromString",
+                "comment": " Parse a token from an 'Authorization' header string.\n\n      tokenFromString (tokenToString token) == Just token\n\n",
+                "type": "String.String -> Maybe.Maybe OAuth.Token"
+            },
+            {
+                "name": "tokenToString",
+                "comment": " Get the `String` representation of a `Token` to be used in an 'Authorization' header\n",
+                "type": "OAuth.Token -> String.String"
+            },
+            {
+                "name": "useToken",
+                "comment": " Use a token to authenticate a request.\n",
+                "type": "OAuth.Token -> List.List Http.Header -> List.List Http.Header"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "OAuth.AuthorizationCode",
+        "comment": " The authorization code grant type is used to obtain both access\ntokens and refresh tokens and is optimized for confidential clients.\nSince this is a redirection-based flow, the client must be capable of\ninteracting with the resource owner's user-agent (typically a web\nbrowser) and capable of receiving incoming requests (via redirection)\nfrom the authorization server.\n\n       +---------+                                +--------+\n       |         |---(A)- Auth Redirection ------>|        |\n       |         |                                |  Auth  |\n       | Browser |                                | Server |\n       |         |                                |        |\n       |         |<--(B)- Redirection Callback ---|        |\n       +---------+          (w/ Auth Code)        +--------+\n         ^     |                                    ^    |\n         |     |                                    |    |\n        (A)   (B)                                   |    |\n         |     |                                    |    |\n         |     v                                    |    |\n       +---------+                                  |    |\n       |         |----(C)---- Auth Code ------------+    |\n       | Elm App |                                       |\n       |         |                                       |\n       |         |<---(D)------ Access Token ------------+\n       +---------+       (w/ Optional Refresh Token)\n\n  - (A) The client initiates the flow by directing the resource owner's\n    user-agent to the authorization endpoint.\n\n  - (B) Assuming the resource owner grants access, the authorization\n    server redirects the user-agent back to the client including an\n    authorization code and any local state provided by the client\n    earlier.\n\n  - (C) The client requests an access token from the authorization\n    server's token endpoint by including the authorization code\n    received in the previous step.\n\n  - (D) The authorization server authenticates the client and validates\n    the authorization code. If valid, the authorization server responds\n    back with an access token and, optionally, a refresh token.\n\nAfter those steps, the client owns a `Token` that can be used to authorize any subsequent\nrequest.\n\n\n## Authorize\n\n@docs makeAuthorizationUrl, parseCode, Authorization, AuthorizationCode, AuthorizationResult, AuthorizationSuccess, AuthorizationError\n\n\n## Authenticate\n\n@docs makeTokenRequest, Authentication, Credentials, AuthenticationSuccess, AuthenticationError, RequestParts\n\n\n## JSON Decoders\n\n@docs defaultAuthenticationSuccessDecoder, defaultAuthenticationErrorDecoder\n\n\n## JSON Decoders (advanced)\n\n@docs defaultExpiresInDecoder, defaultScopeDecoder, lenientScopeDecoder, defaultTokenDecoder, defaultRefreshTokenDecoder, defaultErrorDecoder, defaultErrorDescriptionDecoder, defaultErrorUriDecoder\n\n\n## Query Parsers (advanced)\n\n@docs parseCodeWith, Parsers, defaultParsers, defaultCodeParser, defaultErrorParser, defaultAuthorizationSuccessParser, defaultAuthorizationErrorParser\n\n",
+        "unions": [
+            {
+                "name": "AuthorizationResult",
+                "comment": " Describes errors coming from attempting to parse a url after an OAuth redirection\n\n  - Empty: means there were nothing (related to OAuth 2.0) to parse\n  - Error: a successfully parsed OAuth 2.0 error\n  - Success: a successfully parsed token and response\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Empty",
+                        []
+                    ],
+                    [
+                        "Error",
+                        [
+                            "OAuth.AuthorizationCode.AuthorizationError"
+                        ]
+                    ],
+                    [
+                        "Success",
+                        [
+                            "OAuth.AuthorizationCode.AuthorizationSuccess"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Authentication",
+                "comment": " Request configuration for an AuthorizationCode authentication\n\n  - credentials (_REQUIRED_):\n    Only the clientId is required. Specify a secret if a Basic OAuth\n    is required by the resource provider.\n\n  - code (_REQUIRED_):\n    Authorization code from the authorization result\n\n  - url (_REQUIRED_):\n    Token endpoint of the resource provider\n\n  - redirectUri (_REQUIRED_):\n    Redirect Uri to your webserver used in the authorization step, provided\n    here for verification.\n\n",
+                "args": [],
+                "type": "{ credentials : OAuth.AuthorizationCode.Credentials, code : String.String, redirectUri : Url.Url, url : Url.Url }"
+            },
+            {
+                "name": "AuthenticationError",
+                "comment": " Describes an OAuth error as a result of a request failure\n\n  - error (_REQUIRED_):\n    A single ASCII error code.\n\n  - errorDescription (_OPTIONAL_)\n    Human-readable ASCII text providing additional information, used to assist the client developer in\n    understanding the error that occurred. Values for the `errorDescription` parameter MUST NOT\n    include characters outside the set `%x20-21 / %x23-5B / %x5D-7E`.\n\n  - errorUri (_OPTIONAL_):\n    A URI identifying a human-readable web page with information about the error, used to\n    provide the client developer with additional information about the error. Values for the\n    `errorUri` parameter MUST conform to the URI-reference syntax and thus MUST NOT include\n    characters outside the set `%x21 / %x23-5B / %x5D-7E`.\n\n",
+                "args": [],
+                "type": "{ error : OAuth.ErrorCode, errorDescription : Maybe.Maybe String.String, errorUri : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "AuthenticationSuccess",
+                "comment": " The response obtained as a result of an authentication (implicit or not)\n\n  - token (_REQUIRED_):\n    The access token issued by the authorization server.\n\n  - refreshToken (_OPTIONAL_):\n    The refresh token, which can be used to obtain new access tokens using the same authorization\n    grant as described in [Section 6](https://tools.ietf.org/html/rfc6749#section-6).\n\n  - expiresIn (_RECOMMENDED_):\n    The lifetime in seconds of the access token. For example, the value \"3600\" denotes that the\n    access token will expire in one hour from the time the response was generated. If omitted, the\n    authorization server SHOULD provide the expiration time via other means or document the default\n    value.\n\n  - scope (_OPTIONAL, if identical to the scope requested; otherwise, REQUIRED_):\n    The scope of the access token as described by [Section 3.3](https://tools.ietf.org/html/rfc6749#section-3.3).\n\n",
+                "args": [],
+                "type": "{ token : OAuth.Token, refreshToken : Maybe.Maybe OAuth.Token, expiresIn : Maybe.Maybe Basics.Int, scope : List.List String.String }"
+            },
+            {
+                "name": "Authorization",
+                "comment": " Request configuration for an authorization (Authorization Code & Implicit flows)\n\n  - clientId (_REQUIRED_):\n    The client identifier issues by the authorization server via an off-band mechanism.\n\n  - url (_REQUIRED_):\n    The authorization endpoint to contact the authorization server.\n\n  - redirectUri (_OPTIONAL_):\n    After completing its interaction with the resource owner, the authorization\n    server directs the resource owner's user-agent back to the client via this\n    URL. May be already defined on the authorization server itself.\n\n  - scope (_OPTIONAL_):\n    The scope of the access request.\n\n  - state (_RECOMMENDED_):\n    An opaque value used by the client to maintain state between the request\n    and callback. The authorization server includes this value when redirecting\n    the user-agent back to the client. The parameter SHOULD be used for preventing\n    cross-site request forgery.\n\n",
+                "args": [],
+                "type": "{ clientId : String.String, url : Url.Url, redirectUri : Url.Url, scope : List.List String.String, state : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "AuthorizationCode",
+                "comment": " A simple type alias to ease readability of type signatures\n",
+                "args": [],
+                "type": "String.String"
+            },
+            {
+                "name": "AuthorizationError",
+                "comment": " Describes an OAuth error as a result of an authorization request failure\n\n  - error (_REQUIRED_):\n    A single ASCII error code.\n\n  - errorDescription (_OPTIONAL_)\n    Human-readable ASCII text providing additional information, used to assist the client developer in\n    understanding the error that occurred. Values for the `errorDescription` parameter MUST NOT\n    include characters outside the set `%x20-21 / %x23-5B / %x5D-7E`.\n\n  - errorUri (_OPTIONAL_):\n    A URI identifying a human-readable web page with information about the error, used to\n    provide the client developer with additional information about the error. Values for the\n    `errorUri` parameter MUST conform to the URI-reference syntax and thus MUST NOT include\n    characters outside the set `%x21 / %x23-5B / %x5D-7E`.\n\n  - state (_REQUIRED if `state` was present in the authorization request_):\n    The exact value received from the client\n\n",
+                "args": [],
+                "type": "{ error : OAuth.ErrorCode, errorDescription : Maybe.Maybe String.String, errorUri : Maybe.Maybe String.String, state : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "AuthorizationSuccess",
+                "comment": " The response obtained as a result of an authorization\n\n  - code (_REQUIRED_):\n    The authorization code generated by the authorization server. The authorization code MUST expire\n    shortly after it is issued to mitigate the risk of leaks. A maximum authorization code lifetime of\n    10 minutes is RECOMMENDED. The client MUST NOT use the authorization code more than once. If an\n    authorization code is used more than once, the authorization server MUST deny the request and\n    SHOULD revoke (when possible) all tokens previously issued based on that authorization code. The\n    authorization code is bound to the client identifier and redirection URI.\n\n  - state (_REQUIRED if `state` was present in the authorization request_):\n    The exact value received from the client\n\n",
+                "args": [],
+                "type": "{ code : OAuth.AuthorizationCode.AuthorizationCode, state : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "Credentials",
+                "comment": " Describes at least a `clientId` and if define, a complete set of credentials\nwith the `secret`. The secret is so-to-speak optional and depends on whether the\nauthorization server you interact with requires a 'Basic' authentication on top of\nthe authentication request. Provides it if you need to do so.\n\n      { clientId = \"<my-client-id>\"\n      , secret = Just \"<my-client-secret>\"\n      }\n\n",
+                "args": [],
+                "type": "{ clientId : String.String, secret : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "Parsers",
+                "comment": " Parsers used in the 'parseCode' function.\n\n  - codeParser: looks for a 'code' string\n  - errorParser: looks for an 'error' to build a corresponding `ErrorCode`\n  - authorizationSuccessParser: selected when the `tokenParser` succeeded to parse the remaining parts\n  - authorizationErrorParser: selected when the `errorParser` succeeded to parse the remaining parts\n\n",
+                "args": [],
+                "type": "{ codeParser : Url.Parser.Query.Parser (Maybe.Maybe String.String), errorParser : Url.Parser.Query.Parser (Maybe.Maybe OAuth.ErrorCode), authorizationSuccessParser : String.String -> Url.Parser.Query.Parser OAuth.AuthorizationCode.AuthorizationSuccess, authorizationErrorParser : OAuth.ErrorCode -> Url.Parser.Query.Parser OAuth.AuthorizationCode.AuthorizationError }"
+            },
+            {
+                "name": "RequestParts",
+                "comment": " Parts required to build a request. This record is given to `Http.request` in order\nto create a new request and may be adjusted at will.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ method : String.String, headers : List.List Http.Header, url : String.String, body : Http.Body, expect : Http.Expect a, timeout : Maybe.Maybe Basics.Float, tracker : Maybe.Maybe String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultAuthenticationErrorDecoder",
+                "comment": " Json decoder for an errored response.\n\n    case res of\n        Err (Http.BadStatus { body }) ->\n            case Json.decodeString OAuth.AuthorizationCode.defaultAuthenticationErrorDecoder body of\n                Ok { error, errorDescription } ->\n                    doSomething\n\n                _ ->\n                    parserFailed\n\n        _ ->\n            someOtherError\n\n",
+                "type": "Json.Decode.Decoder OAuth.AuthorizationCode.AuthenticationError"
+            },
+            {
+                "name": "defaultAuthenticationSuccessDecoder",
+                "comment": " Json decoder for a positive response. You may provide a custom response decoder using other decoders\nfrom this module, or some of your own craft.\n\n    defaultAuthenticationSuccessDecoder : Decoder AuthenticationSuccess\n    defaultAuthenticationSuccessDecoder =\n        D.map4 AuthenticationSuccess\n            tokenDecoder\n            refreshTokenDecoder\n            expiresInDecoder\n            scopeDecoder\n\n",
+                "type": "Json.Decode.Decoder OAuth.AuthorizationCode.AuthenticationSuccess"
+            },
+            {
+                "name": "defaultAuthorizationErrorParser",
+                "comment": " Default response error parser according to RFC-6749\n",
+                "type": "OAuth.ErrorCode -> Url.Parser.Query.Parser OAuth.AuthorizationCode.AuthorizationError"
+            },
+            {
+                "name": "defaultAuthorizationSuccessParser",
+                "comment": " Default response success parser according to RFC-6749\n",
+                "type": "String.String -> Url.Parser.Query.Parser OAuth.AuthorizationCode.AuthorizationSuccess"
+            },
+            {
+                "name": "defaultCodeParser",
+                "comment": " Default 'code' parser according to RFC-6749\n",
+                "type": "Url.Parser.Query.Parser (Maybe.Maybe String.String)"
+            },
+            {
+                "name": "defaultErrorDecoder",
+                "comment": " Json decoder for 'error' field\n",
+                "type": "Json.Decode.Decoder OAuth.ErrorCode"
+            },
+            {
+                "name": "defaultErrorDescriptionDecoder",
+                "comment": " Json decoder for 'error\\_description' field\n",
+                "type": "Json.Decode.Decoder (Maybe.Maybe String.String)"
+            },
+            {
+                "name": "defaultErrorParser",
+                "comment": " Default 'error' parser according to RFC-6749\n",
+                "type": "Url.Parser.Query.Parser (Maybe.Maybe OAuth.ErrorCode)"
+            },
+            {
+                "name": "defaultErrorUriDecoder",
+                "comment": " Json decoder for 'error\\_uri' field\n",
+                "type": "Json.Decode.Decoder (Maybe.Maybe String.String)"
+            },
+            {
+                "name": "defaultExpiresInDecoder",
+                "comment": " Json decoder for an 'expire' timestamp\n",
+                "type": "Json.Decode.Decoder (Maybe.Maybe Basics.Int)"
+            },
+            {
+                "name": "defaultParsers",
+                "comment": " Default parsers according to RFC-6749\n",
+                "type": "OAuth.AuthorizationCode.Parsers"
+            },
+            {
+                "name": "defaultRefreshTokenDecoder",
+                "comment": " Json decoder for a 'refresh\\_token'\n",
+                "type": "Json.Decode.Decoder (Maybe.Maybe OAuth.Token)"
+            },
+            {
+                "name": "defaultScopeDecoder",
+                "comment": " Json decoder for a 'scope'\n",
+                "type": "Json.Decode.Decoder (List.List String.String)"
+            },
+            {
+                "name": "defaultTokenDecoder",
+                "comment": " Json decoder for an 'access\\_token'\n",
+                "type": "Json.Decode.Decoder OAuth.Token"
+            },
+            {
+                "name": "lenientScopeDecoder",
+                "comment": " Json decoder for a 'scope', allowing comma- or space-separated scopes\n",
+                "type": "Json.Decode.Decoder (List.List String.String)"
+            },
+            {
+                "name": "makeAuthorizationUrl",
+                "comment": " Redirects the resource owner (user) to the resource provider server using the specified\nauthorization flow.\n",
+                "type": "OAuth.AuthorizationCode.Authorization -> Url.Url"
+            },
+            {
+                "name": "makeTokenRequest",
+                "comment": " Builds a the request components required to get a token from an authorization code\n\n    let req : Http.Request AuthenticationSuccess\n        req = makeTokenRequest toMsg authentication |> Http.request\n\n",
+                "type": "(Result.Result Http.Error OAuth.AuthorizationCode.AuthenticationSuccess -> msg) -> OAuth.AuthorizationCode.Authentication -> OAuth.AuthorizationCode.RequestParts msg"
+            },
+            {
+                "name": "parseCode",
+                "comment": " Parse the location looking for a parameters set by the resource provider server after\nredirecting the resource owner (user).\n\nReturns `AuthorizationResult Empty` when there's nothing\n\n",
+                "type": "Url.Url -> OAuth.AuthorizationCode.AuthorizationResult"
+            },
+            {
+                "name": "parseCodeWith",
+                "comment": " See `parseCode`, but gives you the ability to provide your own custom parsers.\n",
+                "type": "OAuth.AuthorizationCode.Parsers -> Url.Url -> OAuth.AuthorizationCode.AuthorizationResult"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "OAuth.AuthorizationCode.PKCE",
+        "comment": " OAuth 2.0 public clients utilizing the Authorization Code Grant are\nsusceptible to the authorization code interception attack. A possible\nmitigation against the threat is to use a technique called Proof Key for\nCode Exchange (PKCE, pronounced \"pixy\") when supported by the target\nauthorization server. See also [RFC 7636](https://tools.ietf.org/html/rfc7636).\n\n                                         +-----------------+\n                                         |  Auth   Server  |\n        +-------+                        | +-------------+ |\n        |       |--(1)- Auth Request --->| |             | |\n        |       |    + code_challenge    | |    Auth     | |\n        |       |                        | |   Endpoint  | |\n        |       |<-(2)-- Auth Code ------| |             | |\n        |  Elm  |                        | +-------------+ |\n        |  App  |                        |                 |\n        |       |                        | +-------------+ |\n        |       |--(3)- Token Request -->| |             | |\n        |       |      + code_verifier   | |   Token     | |\n        |       |                        | |  Endpoint   | |\n        |       |<-(4)- Access Token --->| |             | |\n        +-------+                        | +-------------+ |\n                                         +-----------------+\n\nSee also the Authorization Code flow for details about the basic version\nof this flow.\n\n\n## Code Verifier / Challenge\n\n@docs CodeVerifier, CodeChallenge, codeVerifierFromBytes, codeVerifierToString, mkCodeChallenge, codeChallengeToString\n\n\n## Authorize\n\n@docs makeAuthorizationUrl, parseCode, Authorization, AuthorizationCode, AuthorizationResult, AuthorizationSuccess, AuthorizationError\n\n\n## Authenticate\n\n@docs makeTokenRequest, Authentication, Credentials, AuthenticationSuccess, AuthenticationError, RequestParts\n\n\n## JSON Decoders\n\n@docs defaultAuthenticationSuccessDecoder, defaultAuthenticationErrorDecoder\n\n\n## JSON Decoders (advanced)\n\n@docs defaultExpiresInDecoder, defaultScopeDecoder, lenientScopeDecoder, defaultTokenDecoder, defaultRefreshTokenDecoder, defaultErrorDecoder, defaultErrorDescriptionDecoder, defaultErrorUriDecoder\n\n\n## Query Parsers (advanced)\n\n@docs parseCodeWith, Parsers, defaultParsers, defaultCodeParser, defaultErrorParser, defaultAuthorizationSuccessParser, defaultAuthorizationErrorParser\n\n",
+        "unions": [
+            {
+                "name": "AuthorizationResult",
+                "comment": " Describes errors coming from attempting to parse a url after an OAuth redirection\n\n  - Empty: means there were nothing (related to OAuth 2.0) to parse\n  - Error: a successfully parsed OAuth 2.0 error\n  - Success: a successfully parsed token and response\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Empty",
+                        []
+                    ],
+                    [
+                        "Error",
+                        [
+                            "OAuth.AuthorizationCode.PKCE.AuthorizationError"
+                        ]
+                    ],
+                    [
+                        "Success",
+                        [
+                            "OAuth.AuthorizationCode.PKCE.AuthorizationSuccess"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "CodeChallenge",
+                "comment": " An opaque type representing a code challenge. Typically constructed from a `CodeVerifier`.\n\n    let codeChallenge = mkCodeChallenge codeVerifier\n\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "CodeVerifier",
+                "comment": " An opaque type representing a code verifier. Typically constructed from a high quality entropy.\n\n    case codeVerifierFromBytes entropy of\n      Nothing -> {- ...-}\n      Just codeVerifier -> {- ... -}\n\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Authentication",
+                "comment": " Request configuration for an AuthorizationCode authentication\n\n  - credentials (_REQUIRED_):\n    Only the clientId is required. Specify a secret if a Basic OAuth\n    is required by the resource provider.\n\n  - code (_REQUIRED_):\n    Authorization code from the authorization result\n\n  - codeVerifier (_REQUIRED_):\n    The code verifier proving you are the rightful recipient of the\n    access token.\n\n  - url (_REQUIRED_):\n    Token endpoint of the resource provider\n\n  - redirectUri (_REQUIRED_):\n    Redirect Uri to your webserver used in the authorization step, provided\n    here for verification.\n\n",
+                "args": [],
+                "type": "{ credentials : OAuth.AuthorizationCode.PKCE.Credentials, code : String.String, codeVerifier : OAuth.AuthorizationCode.PKCE.CodeVerifier, redirectUri : Url.Url, url : Url.Url }"
+            },
+            {
+                "name": "AuthenticationError",
+                "comment": " Describes an OAuth error as a result of a request failure\n\n  - error (_REQUIRED_):\n    A single ASCII error code.\n\n  - errorDescription (_OPTIONAL_)\n    Human-readable ASCII text providing additional information, used to assist the client developer in\n    understanding the error that occurred. Values for the `errorDescription` parameter MUST NOT\n    include characters outside the set `%x20-21 / %x23-5B / %x5D-7E`.\n\n  - errorUri (_OPTIONAL_):\n    A URI identifying a human-readable web page with information about the error, used to\n    provide the client developer with additional information about the error. Values for the\n    `errorUri` parameter MUST conform to the URI-reference syntax and thus MUST NOT include\n    characters outside the set `%x21 / %x23-5B / %x5D-7E`.\n\n",
+                "args": [],
+                "type": "{ error : OAuth.ErrorCode, errorDescription : Maybe.Maybe String.String, errorUri : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "AuthenticationSuccess",
+                "comment": " The response obtained as a result of an authentication (implicit or not)\n\n  - token (_REQUIRED_):\n    The access token issued by the authorization server.\n\n  - refreshToken (_OPTIONAL_):\n    The refresh token, which can be used to obtain new access tokens using the same authorization\n    grant as described in [Section 6](https://tools.ietf.org/html/rfc6749#section-6).\n\n  - expiresIn (_RECOMMENDED_):\n    The lifetime in seconds of the access token. For example, the value \"3600\" denotes that the\n    access token will expire in one hour from the time the response was generated. If omitted, the\n    authorization server SHOULD provide the expiration time via other means or document the default\n    value.\n\n  - scope (_OPTIONAL, if identical to the scope requested; otherwise, REQUIRED_):\n    The scope of the access token as described by [Section 3.3](https://tools.ietf.org/html/rfc6749#section-3.3).\n\n",
+                "args": [],
+                "type": "{ token : OAuth.Token, refreshToken : Maybe.Maybe OAuth.Token, expiresIn : Maybe.Maybe Basics.Int, scope : List.List String.String }"
+            },
+            {
+                "name": "Authorization",
+                "comment": " Request configuration for an authorization (Authorization Code & Implicit flows)\n\n  - clientId (_REQUIRED_):\n    The client identifier issues by the authorization server via an off-band mechanism.\n\n  - url (_REQUIRED_):\n    The authorization endpoint to contact the authorization server.\n\n  - redirectUri (_OPTIONAL_):\n    After completing its interaction with the resource owner, the authorization\n    server directs the resource owner's user-agent back to the client via this\n    URL. May be already defined on the authorization server itself.\n\n  - scope (_OPTIONAL_):\n    The scope of the access request.\n\n  - state (_RECOMMENDED_):\n    An opaque value used by the client to maintain state between the request\n    and callback. The authorization server includes this value when redirecting\n    the user-agent back to the client. The parameter SHOULD be used for preventing\n    cross-site request forgery.\n\n  - codeChallenge (_REQUIRED_):\n    A challenge derived from the code verifier that is sent in the\n    authorization request, to be verified against later.\n\n",
+                "args": [],
+                "type": "{ clientId : String.String, url : Url.Url, redirectUri : Url.Url, scope : List.List String.String, state : Maybe.Maybe String.String, codeChallenge : OAuth.AuthorizationCode.PKCE.CodeChallenge }"
+            },
+            {
+                "name": "AuthorizationCode",
+                "comment": " A simple type alias to ease readability of type signatures\n",
+                "args": [],
+                "type": "String.String"
+            },
+            {
+                "name": "AuthorizationError",
+                "comment": " Describes an OAuth error as a result of an authorization request failure\n\n  - error (_REQUIRED_):\n    A single ASCII error code.\n\n  - errorDescription (_OPTIONAL_)\n    Human-readable ASCII text providing additional information, used to assist the client developer in\n    understanding the error that occurred. Values for the `errorDescription` parameter MUST NOT\n    include characters outside the set `%x20-21 / %x23-5B / %x5D-7E`.\n\n  - errorUri (_OPTIONAL_):\n    A URI identifying a human-readable web page with information about the error, used to\n    provide the client developer with additional information about the error. Values for the\n    `errorUri` parameter MUST conform to the URI-reference syntax and thus MUST NOT include\n    characters outside the set `%x21 / %x23-5B / %x5D-7E`.\n\n  - state (_REQUIRED if `state` was present in the authorization request_):\n    The exact value received from the client\n\n",
+                "args": [],
+                "type": "{ error : OAuth.ErrorCode, errorDescription : Maybe.Maybe String.String, errorUri : Maybe.Maybe String.String, state : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "AuthorizationSuccess",
+                "comment": " The response obtained as a result of an authorization\n\n  - code (_REQUIRED_):\n    The authorization code generated by the authorization server. The authorization code MUST expire\n    shortly after it is issued to mitigate the risk of leaks. A maximum authorization code lifetime of\n    10 minutes is RECOMMENDED. The client MUST NOT use the authorization code more than once. If an\n    authorization code is used more than once, the authorization server MUST deny the request and\n    SHOULD revoke (when possible) all tokens previously issued based on that authorization code. The\n    authorization code is bound to the client identifier and redirection URI.\n\n  - state (_REQUIRED if `state` was present in the authorization request_):\n    The exact value received from the client\n\n",
+                "args": [],
+                "type": "{ code : String.String, state : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "Credentials",
+                "comment": " Describes at least a `clientId` and if define, a complete set of credentials\nwith the `secret`. The secret is so-to-speak optional and depends on whether the\nauthorization server you interact with requires a 'Basic' authentication on top of\nthe authentication request. Provides it if you need to do so.\n\n      { clientId = \"<my-client-id>\"\n      , secret = Just \"<my-client-secret>\"\n      }\n\n",
+                "args": [],
+                "type": "{ clientId : String.String, secret : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "Parsers",
+                "comment": " Parsers used in the 'parseCode' function.\n\n  - codeParser: looks for a 'code' string\n  - errorParser: looks for an 'error' to build a corresponding `ErrorCode`\n  - authorizationSuccessParser: selected when the `tokenParser` succeeded to parse the remaining parts\n  - authorizationErrorParser: selected when the `errorParser` succeeded to parse the remaining parts\n\n",
+                "args": [],
+                "type": "{ codeParser : Url.Parser.Query.Parser (Maybe.Maybe String.String), errorParser : Url.Parser.Query.Parser (Maybe.Maybe OAuth.ErrorCode), authorizationSuccessParser : String.String -> Url.Parser.Query.Parser OAuth.AuthorizationCode.PKCE.AuthorizationSuccess, authorizationErrorParser : OAuth.ErrorCode -> Url.Parser.Query.Parser OAuth.AuthorizationCode.PKCE.AuthorizationError }"
+            },
+            {
+                "name": "RequestParts",
+                "comment": " Parts required to build a request. This record is given to `Http.request` in order\nto create a new request and may be adjusted at will.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ method : String.String, headers : List.List Http.Header, url : String.String, body : Http.Body, expect : Http.Expect a, timeout : Maybe.Maybe Basics.Float, tracker : Maybe.Maybe String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "codeChallengeToString",
+                "comment": " Convert a code challenge to its string representation.\n",
+                "type": "OAuth.AuthorizationCode.PKCE.CodeChallenge -> String.String"
+            },
+            {
+                "name": "codeVerifierFromBytes",
+                "comment": " Construct a code verifier from a byte sequence generated from a **high quality randomness** source (i.e. cryptographic).\n\nIdeally, the byte sequence _should be_ 32 or 64 bytes, and it _must be_ at least 32 bytes and at most 90 bytes.\n\n",
+                "type": "Bytes.Bytes -> Maybe.Maybe OAuth.AuthorizationCode.PKCE.CodeVerifier"
+            },
+            {
+                "name": "codeVerifierToString",
+                "comment": " Convert a code verifier to its string representation.\n",
+                "type": "OAuth.AuthorizationCode.PKCE.CodeVerifier -> String.String"
+            },
+            {
+                "name": "defaultAuthenticationErrorDecoder",
+                "comment": " Json decoder for an errored response.\n\n    case res of\n        Err (Http.BadStatus { body }) ->\n            case Json.decodeString OAuth.AuthorizationCode.defaultAuthenticationErrorDecoder body of\n                Ok { error, errorDescription } ->\n                    doSomething\n\n                _ ->\n                    parserFailed\n\n        _ ->\n            someOtherError\n\n",
+                "type": "Json.Decode.Decoder OAuth.AuthorizationCode.PKCE.AuthenticationError"
+            },
+            {
+                "name": "defaultAuthenticationSuccessDecoder",
+                "comment": " Json decoder for a positive response. You may provide a custom response decoder using other decoders\nfrom this module, or some of your own craft.\n\n    defaultAuthenticationSuccessDecoder : Decoder AuthenticationSuccess\n    defaultAuthenticationSuccessDecoder =\n        D.map4 AuthenticationSuccess\n            tokenDecoder\n            refreshTokenDecoder\n            expiresInDecoder\n            scopeDecoder\n\n",
+                "type": "Json.Decode.Decoder OAuth.AuthorizationCode.PKCE.AuthenticationSuccess"
+            },
+            {
+                "name": "defaultAuthorizationErrorParser",
+                "comment": " Default response error parser according to RFC-6749\n",
+                "type": "OAuth.ErrorCode -> Url.Parser.Query.Parser OAuth.AuthorizationCode.PKCE.AuthorizationError"
+            },
+            {
+                "name": "defaultAuthorizationSuccessParser",
+                "comment": " Default response success parser according to RFC-6749\n",
+                "type": "String.String -> Url.Parser.Query.Parser OAuth.AuthorizationCode.PKCE.AuthorizationSuccess"
+            },
+            {
+                "name": "defaultCodeParser",
+                "comment": " Default 'code' parser according to RFC-6749\n",
+                "type": "Url.Parser.Query.Parser (Maybe.Maybe String.String)"
+            },
+            {
+                "name": "defaultErrorDecoder",
+                "comment": " Json decoder for 'error' field\n",
+                "type": "Json.Decode.Decoder OAuth.ErrorCode"
+            },
+            {
+                "name": "defaultErrorDescriptionDecoder",
+                "comment": " Json decoder for 'error\\_description' field\n",
+                "type": "Json.Decode.Decoder (Maybe.Maybe String.String)"
+            },
+            {
+                "name": "defaultErrorParser",
+                "comment": " Default 'error' parser according to RFC-6749\n",
+                "type": "Url.Parser.Query.Parser (Maybe.Maybe OAuth.ErrorCode)"
+            },
+            {
+                "name": "defaultErrorUriDecoder",
+                "comment": " Json decoder for 'error\\_uri' field\n",
+                "type": "Json.Decode.Decoder (Maybe.Maybe String.String)"
+            },
+            {
+                "name": "defaultExpiresInDecoder",
+                "comment": " Json decoder for an 'expire' timestamp\n",
+                "type": "Json.Decode.Decoder (Maybe.Maybe Basics.Int)"
+            },
+            {
+                "name": "defaultParsers",
+                "comment": " Default parsers according to RFC-6749\n",
+                "type": "OAuth.AuthorizationCode.PKCE.Parsers"
+            },
+            {
+                "name": "defaultRefreshTokenDecoder",
+                "comment": " Json decoder for a 'refresh\\_token'\n",
+                "type": "Json.Decode.Decoder (Maybe.Maybe OAuth.Token)"
+            },
+            {
+                "name": "defaultScopeDecoder",
+                "comment": " Json decoder for a 'scope'\n",
+                "type": "Json.Decode.Decoder (List.List String.String)"
+            },
+            {
+                "name": "defaultTokenDecoder",
+                "comment": " Json decoder for an 'access\\_token'\n",
+                "type": "Json.Decode.Decoder OAuth.Token"
+            },
+            {
+                "name": "lenientScopeDecoder",
+                "comment": " Json decoder for a 'scope', allowing comma- or space-separated scopes\n",
+                "type": "Json.Decode.Decoder (List.List String.String)"
+            },
+            {
+                "name": "makeAuthorizationUrl",
+                "comment": " Redirects the resource owner (user) to the resource provider server using the specified\nauthorization flow.\n",
+                "type": "OAuth.AuthorizationCode.PKCE.Authorization -> Url.Url"
+            },
+            {
+                "name": "makeTokenRequest",
+                "comment": " Builds a the request components required to get a token from an authorization code\n\n    let req : Http.Request AuthenticationSuccess\n        req = makeTokenRequest toMsg authentication |> Http.request\n\n",
+                "type": "(Result.Result Http.Error OAuth.AuthorizationCode.PKCE.AuthenticationSuccess -> msg) -> OAuth.AuthorizationCode.PKCE.Authentication -> OAuth.AuthorizationCode.PKCE.RequestParts msg"
+            },
+            {
+                "name": "mkCodeChallenge",
+                "comment": " Construct a `CodeChallenge` to send to the authorization server. Upon receiving the authorization code, the client can then\nthe associated `CodeVerifier` to prove it is the rightful owner of the authorization code.\n",
+                "type": "OAuth.AuthorizationCode.PKCE.CodeVerifier -> OAuth.AuthorizationCode.PKCE.CodeChallenge"
+            },
+            {
+                "name": "parseCode",
+                "comment": " Parse the location looking for a parameters set by the resource provider server after\nredirecting the resource owner (user).\n\nReturns `AuthorizationResult Empty` when there's nothing.\n\n",
+                "type": "Url.Url -> OAuth.AuthorizationCode.PKCE.AuthorizationResult"
+            },
+            {
+                "name": "parseCodeWith",
+                "comment": " See `parseCode`, but gives you the ability to provide your own custom parsers.\n",
+                "type": "OAuth.AuthorizationCode.PKCE.Parsers -> Url.Url -> OAuth.AuthorizationCode.PKCE.AuthorizationResult"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "OAuth.ClientCredentials",
+        "comment": " The client can request an access token using only its client\ncredentials (or other supported means of authentication) when the client is requesting access to\nthe protected resources under its control, or those of another resource owner that have been\npreviously arranged with the authorization server (the method of which is beyond the scope of\nthis specification).\n\nThere's only one step in this process:\n\n  - The client authenticates itself directly using credentials it owns.\n\nAfter this step, the client owns a `Token` that can be used to authorize any subsequent\nrequest.\n\n\n## Authenticate\n\n@docs makeTokenRequest, Authentication, Credentials, AuthenticationSuccess, AuthenticationError, RequestParts\n\n\n## JSON Decoders\n\n@docs defaultAuthenticationSuccessDecoder, defaultAuthenticationErrorDecoder\n\n\n## JSON Decoders (advanced)\n\n@docs defaultExpiresInDecoder, defaultScopeDecoder, lenientScopeDecoder, defaultTokenDecoder, defaultRefreshTokenDecoder, defaultErrorDecoder, defaultErrorDescriptionDecoder, defaultErrorUriDecoder\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Authentication",
+                "comment": " Request configuration for a ClientCredentials authentication\n\n  - credentials (_REQUIRED_):\n    Credentials needed for `Basic` authentication.\n\n  - url (_REQUIRED_):\n    The token endpoint to contact the authorization server.\n\n  - scope (_OPTIONAL_):\n    The scope of the access request.\n\n",
+                "args": [],
+                "type": "{ credentials : OAuth.ClientCredentials.Credentials, url : Url.Url, scope : List.List String.String }"
+            },
+            {
+                "name": "AuthenticationError",
+                "comment": " Describes an OAuth error as a result of a request failure\n\n  - error (_REQUIRED_):\n    A single ASCII error code.\n\n  - errorDescription (_OPTIONAL_)\n    Human-readable ASCII text providing additional information, used to assist the client developer in\n    understanding the error that occurred. Values for the `errorDescription` parameter MUST NOT\n    include characters outside the set `%x20-21 / %x23-5B / %x5D-7E`.\n\n  - errorUri (_OPTIONAL_):\n    A URI identifying a human-readable web page with information about the error, used to\n    provide the client developer with additional information about the error. Values for the\n    `errorUri` parameter MUST conform to the URI-reference syntax and thus MUST NOT include\n    characters outside the set `%x21 / %x23-5B / %x5D-7E`.\n\n",
+                "args": [],
+                "type": "{ error : OAuth.ErrorCode, errorDescription : Maybe.Maybe String.String, errorUri : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "AuthenticationSuccess",
+                "comment": " The response obtained as a result of an authentication (implicit or not)\n\n  - token (_REQUIRED_):\n    The access token issued by the authorization server.\n\n  - refreshToken (_OPTIONAL_):\n    The refresh token, which can be used to obtain new access tokens using the same authorization\n    grant as described in [Section 6](https://tools.ietf.org/html/rfc6749#section-6).\n\n  - expiresIn (_RECOMMENDED_):\n    The lifetime in seconds of the access token. For example, the value \"3600\" denotes that the\n    access token will expire in one hour from the time the response was generated. If omitted, the\n    authorization server SHOULD provide the expiration time via other means or document the default\n    value.\n\n  - scope (_OPTIONAL, if identical to the scope requested; otherwise, REQUIRED_):\n    The scope of the access token as described by [Section 3.3](https://tools.ietf.org/html/rfc6749#section-3.3).\n\n",
+                "args": [],
+                "type": "{ token : OAuth.Token, refreshToken : Maybe.Maybe OAuth.Token, expiresIn : Maybe.Maybe Basics.Int, scope : List.List String.String }"
+            },
+            {
+                "name": "Credentials",
+                "comment": " Describes a couple of client credentials used for Basic authentication\n\n      { clientId = \"<my-client-id>\"\n      , secret = \"<my-client-secret>\"\n      }\n\n",
+                "args": [],
+                "type": "{ clientId : String.String, secret : String.String }"
+            },
+            {
+                "name": "RequestParts",
+                "comment": " Parts required to build a request. This record is given to `Http.request` in order\nto create a new request and may be adjusted at will.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ method : String.String, headers : List.List Http.Header, url : String.String, body : Http.Body, expect : Http.Expect a, timeout : Maybe.Maybe Basics.Float, tracker : Maybe.Maybe String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultAuthenticationErrorDecoder",
+                "comment": " Json decoder for an errored response.\n\n    case res of\n        Err (Http.BadStatus { body }) ->\n            case Json.decodeString OAuth.ClientCredentials.defaultAuthenticationErrorDecoder body of\n                Ok { error, errorDescription } ->\n                    doSomething\n\n                _ ->\n                    parserFailed\n\n        _ ->\n            someOtherError\n\n",
+                "type": "Json.Decode.Decoder OAuth.ClientCredentials.AuthenticationError"
+            },
+            {
+                "name": "defaultAuthenticationSuccessDecoder",
+                "comment": " Json decoder for a positive response. You may provide a custom response decoder using other decoders\nfrom this module, or some of your own craft.\n\n    defaultAuthenticationSuccessDecoder : Decoder AuthenticationSuccess\n    defaultAuthenticationSuccessDecoder =\n        D.map4 AuthenticationSuccess\n            tokenDecoder\n            refreshTokenDecoder\n            expiresInDecoder\n            scopeDecoder\n\n",
+                "type": "Json.Decode.Decoder OAuth.ClientCredentials.AuthenticationSuccess"
+            },
+            {
+                "name": "defaultErrorDecoder",
+                "comment": " Json decoder for 'error' field\n",
+                "type": "Json.Decode.Decoder OAuth.ErrorCode"
+            },
+            {
+                "name": "defaultErrorDescriptionDecoder",
+                "comment": " Json decoder for 'error\\_description' field\n",
+                "type": "Json.Decode.Decoder (Maybe.Maybe String.String)"
+            },
+            {
+                "name": "defaultErrorUriDecoder",
+                "comment": " Json decoder for 'error\\_uri' field\n",
+                "type": "Json.Decode.Decoder (Maybe.Maybe String.String)"
+            },
+            {
+                "name": "defaultExpiresInDecoder",
+                "comment": " Json decoder for an 'expire' timestamp\n",
+                "type": "Json.Decode.Decoder (Maybe.Maybe Basics.Int)"
+            },
+            {
+                "name": "defaultRefreshTokenDecoder",
+                "comment": " Json decoder for a 'refresh\\_token'\n",
+                "type": "Json.Decode.Decoder (Maybe.Maybe OAuth.Token)"
+            },
+            {
+                "name": "defaultScopeDecoder",
+                "comment": " Json decoder for a 'scope'\n",
+                "type": "Json.Decode.Decoder (List.List String.String)"
+            },
+            {
+                "name": "defaultTokenDecoder",
+                "comment": " Json decoder for an 'access\\_token'\n",
+                "type": "Json.Decode.Decoder OAuth.Token"
+            },
+            {
+                "name": "lenientScopeDecoder",
+                "comment": " Json decoder for a 'scope', allowing comma- or space-separated scopes\n",
+                "type": "Json.Decode.Decoder (List.List String.String)"
+            },
+            {
+                "name": "makeTokenRequest",
+                "comment": " Builds a the request components required to get a token from client credentials\n\n    let req : Http.Request TokenResponse\n        req = makeTokenRequest toMsg authentication |> Http.request\n\n",
+                "type": "(Result.Result Http.Error OAuth.ClientCredentials.AuthenticationSuccess -> msg) -> OAuth.ClientCredentials.Authentication -> OAuth.ClientCredentials.RequestParts msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "OAuth.Implicit",
+        "comment": " The implicit grant type is used to obtain access tokens (it does not\nsupport the issuance of refresh tokens) and is optimized for public clients known to operate a\nparticular redirection URI. These clients are typically implemented in a browser using a\nscripting language such as JavaScript.\n\n       +---------+                                +--------+\n       |         |---(A)- Auth Redirection ------>|        |\n       |         |                                |  Auth  |\n       | Browser |                                | Server |\n       |         |                                |        |\n       |         |<--(B)- Redirection Callback ---|        |\n       +---------+        w/ Access Token         +--------+\n         ^     |\n         |     |\n        (A)   (B)\n         |     |\n         |     v\n       +---------+\n       |         |\n       | Elm App |\n       |         |\n       |         |\n       +---------+\n\nAfter those steps, the client owns a `Token` that can be used to authorize any subsequent\nrequest.\n\n\n## Authorize\n\n@docs makeAuthorizationUrl, parseToken, Authorization, AuthorizationResult, AuthorizationSuccess, AuthorizationError\n\n\n## Custom Parsers (advanced)\n\n@docs parseTokenWith, Parsers, defaultParsers, defaultTokenParser, defaultErrorParser, defaultAuthorizationSuccessParser, defaultAuthorizationErrorParser\n\n",
+        "unions": [
+            {
+                "name": "AuthorizationResult",
+                "comment": " Describes errors coming from attempting to parse a url after an OAuth redirection\n\n  - Empty: means there were nothing (related to OAuth 2.0) to parse\n  - Error: a successfully parsed OAuth 2.0 error\n  - Success: a successfully parsed token and response\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Empty",
+                        []
+                    ],
+                    [
+                        "Error",
+                        [
+                            "OAuth.Implicit.AuthorizationError"
+                        ]
+                    ],
+                    [
+                        "Success",
+                        [
+                            "OAuth.Implicit.AuthorizationSuccess"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Authorization",
+                "comment": " Request configuration for an authorization\n\n  - clientId (_REQUIRED_):\n    The client identifier issues by the authorization server via an off-band mechanism.\n\n  - url (_REQUIRED_):\n    The authorization endpoint to contact the authorization server.\n\n  - redirectUri (_OPTIONAL_):\n    After completing its interaction with the resource owner, the authorization\n    server directs the resource owner's user-agent back to the client via this\n    URL. May be already defined on the authorization server itself.\n\n  - scope (_OPTIONAL_):\n    The scope of the access request.\n\n  - state (_RECOMMENDED_):\n    An opaque value used by the client to maintain state between the request\n    and callback. The authorization server includes this value when redirecting\n    the user-agent back to the client. The parameter SHOULD be used for preventing\n    cross-site request forgery.\n\n",
+                "args": [],
+                "type": "{ clientId : String.String, url : Url.Url, redirectUri : Url.Url, scope : List.List String.String, state : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "AuthorizationError",
+                "comment": " Describes an OAuth error as a result of an authorization request failure\n\n  - error (_REQUIRED_):\n    A single ASCII error code.\n\n  - errorDescription (_OPTIONAL_)\n    Human-readable ASCII text providing additional information, used to assist the client developer in\n    understanding the error that occurred. Values for the `errorDescription` parameter MUST NOT\n    include characters outside the set `%x20-21 / %x23-5B / %x5D-7E`.\n\n  - errorUri (_OPTIONAL_):\n    A URI identifying a human-readable web page with information about the error, used to\n    provide the client developer with additional information about the error. Values for the\n    `errorUri` parameter MUST conform to the URI-reference syntax and thus MUST NOT include\n    characters outside the set `%x21 / %x23-5B / %x5D-7E`.\n\n  - state (_REQUIRED if `state` was present in the authorization request_):\n    The exact value received from the client\n\n",
+                "args": [],
+                "type": "{ error : OAuth.ErrorCode, errorDescription : Maybe.Maybe String.String, errorUri : Maybe.Maybe String.String, state : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "AuthorizationSuccess",
+                "comment": " The response obtained as a result of an authentication (implicit or not)\n\n  - token (_REQUIRED_):\n    The access token issued by the authorization server.\n\n  - refreshToken (_OPTIONAL_):\n    The refresh token, which can be used to obtain new access tokens using the same authorization\n    grant as described in [Section 6](https://tools.ietf.org/html/rfc6749#section-6).\n\n  - expiresIn (_RECOMMENDED_):\n    The lifetime in seconds of the access token. For example, the value \"3600\" denotes that the\n    access token will expire in one hour from the time the response was generated. If omitted, the\n    authorization server SHOULD provide the expiration time via other means or document the default\n    value.\n\n  - scope (_OPTIONAL, if identical to the scope requested; otherwise, REQUIRED_):\n    The scope of the access token as described by [Section 3.3](https://tools.ietf.org/html/rfc6749#section-3.3).\n\n  - state (_REQUIRED if `state` was present in the authorization request_):\n    The exact value received from the client\n\n",
+                "args": [],
+                "type": "{ token : OAuth.Token, refreshToken : Maybe.Maybe OAuth.Token, expiresIn : Maybe.Maybe Basics.Int, scope : List.List String.String, state : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "Parsers",
+                "comment": " Parsers used in the 'parseToken' function.\n\n  - tokenParser: Looks for an 'access\\_token' and 'token\\_type' to build a `Token`\n  - errorParser: Looks for an 'error' to build a corresponding `ErrorCode`\n  - authorizationSuccessParser: Selected when the `tokenParser` succeeded to parse the remaining parts\n  - authorizationErrorParser: Selected when the `errorParser` succeeded to parse the remaining parts\n\n",
+                "args": [],
+                "type": "{ tokenParser : Url.Parser.Query.Parser (Maybe.Maybe OAuth.Token), errorParser : Url.Parser.Query.Parser (Maybe.Maybe OAuth.ErrorCode), authorizationSuccessParser : OAuth.Token -> Url.Parser.Query.Parser OAuth.Implicit.AuthorizationSuccess, authorizationErrorParser : OAuth.ErrorCode -> Url.Parser.Query.Parser OAuth.Implicit.AuthorizationError }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultAuthorizationErrorParser",
+                "comment": " Default response error parser according to RFC-6749\n",
+                "type": "OAuth.ErrorCode -> Url.Parser.Query.Parser OAuth.Implicit.AuthorizationError"
+            },
+            {
+                "name": "defaultAuthorizationSuccessParser",
+                "comment": " Default response success parser according to RFC-6749\n",
+                "type": "OAuth.Token -> Url.Parser.Query.Parser OAuth.Implicit.AuthorizationSuccess"
+            },
+            {
+                "name": "defaultErrorParser",
+                "comment": " Default 'error' parser according to RFC-6749\n",
+                "type": "Url.Parser.Query.Parser (Maybe.Maybe OAuth.ErrorCode)"
+            },
+            {
+                "name": "defaultParsers",
+                "comment": " Default parsers according to RFC-6749\n",
+                "type": "OAuth.Implicit.Parsers"
+            },
+            {
+                "name": "defaultTokenParser",
+                "comment": " Default 'access\\_token' parser according to RFC-6749\n",
+                "type": "Url.Parser.Query.Parser (Maybe.Maybe OAuth.Token)"
+            },
+            {
+                "name": "makeAuthorizationUrl",
+                "comment": " Redirects the resource owner (user) to the resource provider server using the specified\nauthorization flow.\n",
+                "type": "OAuth.Implicit.Authorization -> Url.Url"
+            },
+            {
+                "name": "parseToken",
+                "comment": " Parses the location looking for parameters in the 'fragment' set by the\nauthorization server after redirecting the resource owner (user).\n\nReturns `ParseResult Empty` when there's nothing or an invalid Url is passed\n\n",
+                "type": "Url.Url -> OAuth.Implicit.AuthorizationResult"
+            },
+            {
+                "name": "parseTokenWith",
+                "comment": " See 'parseToken', but gives you the ability to provide your own custom parsers.\n\nThis is especially useful when interacting with authorization servers that don't quite\nimplement the OAuth2.0 specifications.\n\n",
+                "type": "OAuth.Implicit.Parsers -> Url.Url -> OAuth.Implicit.AuthorizationResult"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "OAuth.Password",
+        "comment": " The resource owner password credentials grant type is suitable in\ncases where the resource owner has a trust relationship with the\nclient, such as the device operating system or a highly privileged\napplication. The authorization server should take special care when\nenabling this grant type and only allow it when other flows are not\nviable.\n\nThere's only one step in this process:\n\n  - The client authenticates itself directly using the resource owner (user) credentials\n\nAfter this step, the client owns a `Token` that can be used to authorize any subsequent\nrequest.\n\n\n## Authenticate\n\n@docs makeTokenRequest, Authentication, Credentials, AuthenticationSuccess, AuthenticationError, RequestParts\n\n\n## JSON Decoders\n\n@docs defaultAuthenticationSuccessDecoder, defaultAuthenticationErrorDecoder\n\n\n## JSON Decoders (advanced)\n\n@docs defaultExpiresInDecoder, defaultScopeDecoder, lenientScopeDecoder, defaultTokenDecoder, defaultRefreshTokenDecoder, defaultErrorDecoder, defaultErrorDescriptionDecoder, defaultErrorUriDecoder\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Authentication",
+                "comment": " Request configuration for a Password authentication\n\n  - credentials (_RECOMMENDED_):\n    Credentials needed for `Basic` authentication, if needed by the\n    authorization server.\n\n  - url (_REQUIRED_):\n    The token endpoint to contact the authorization server.\n\n  - scope (_OPTIONAL_):\n    The scope of the access request.\n\n  - password (_REQUIRED_):\n    Resource owner's password\n\n  - username (_REQUIRED_):\n    Resource owner's username\n\n",
+                "args": [],
+                "type": "{ credentials : Maybe.Maybe OAuth.Password.Credentials, url : Url.Url, scope : List.List String.String, username : String.String, password : String.String }"
+            },
+            {
+                "name": "AuthenticationError",
+                "comment": " Describes an OAuth error as a result of a request failure\n\n  - error (_REQUIRED_):\n    A single ASCII error code.\n\n  - errorDescription (_OPTIONAL_)\n    Human-readable ASCII text providing additional information, used to assist the client developer in\n    understanding the error that occurred. Values for the `errorDescription` parameter MUST NOT\n    include characters outside the set `%x20-21 / %x23-5B / %x5D-7E`.\n\n  - errorUri (_OPTIONAL_):\n    A URI identifying a human-readable web page with information about the error, used to\n    provide the client developer with additional information about the error. Values for the\n    `errorUri` parameter MUST conform to the URI-reference syntax and thus MUST NOT include\n    characters outside the set `%x21 / %x23-5B / %x5D-7E`.\n\n",
+                "args": [],
+                "type": "{ error : OAuth.ErrorCode, errorDescription : Maybe.Maybe String.String, errorUri : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "AuthenticationSuccess",
+                "comment": " The response obtained as a result of an authentication:\n\n  - token (_REQUIRED_):\n    The access token issued by the authorization server.\n\n  - refreshToken (_OPTIONAL_):\n    The refresh token, which can be used to obtain new access tokens using the same authorization\n    grant as described in [Section 6](https://tools.ietf.org/html/rfc6749#section-6).\n\n  - expiresIn (_RECOMMENDED_):\n    The lifetime in seconds of the access token. For example, the value \"3600\" denotes that the\n    access token will expire in one hour from the time the response was generated. If omitted, the\n    authorization server SHOULD provide the expiration time via other means or document the default\n    value.\n\n  - scope (_OPTIONAL, if identical to the scope requested; otherwise, REQUIRED_):\n    The scope of the access token as described by [Section 3.3](https://tools.ietf.org/html/rfc6749#section-3.3).\n\n",
+                "args": [],
+                "type": "{ token : OAuth.Token, refreshToken : Maybe.Maybe OAuth.Token, expiresIn : Maybe.Maybe Basics.Int, scope : List.List String.String }"
+            },
+            {
+                "name": "Credentials",
+                "comment": " Describes at least a `clientId` and if defined, a complete set of credentials\nwith the `secret`. Optional but may be required by the authorization server you\ninteract with to perform a 'Basic' authentication on top of the authentication request.\n\n      { clientId = \"<my-client-id>\"\n      , secret = \"<my-client-secret>\"\n      }\n\n",
+                "args": [],
+                "type": "{ clientId : String.String, secret : String.String }"
+            },
+            {
+                "name": "RequestParts",
+                "comment": " Parts required to build a request. This record is given to `Http.request` in order\nto create a new request and may be adjusted at will.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ method : String.String, headers : List.List Http.Header, url : String.String, body : Http.Body, expect : Http.Expect a, timeout : Maybe.Maybe Basics.Float, tracker : Maybe.Maybe String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultAuthenticationErrorDecoder",
+                "comment": " Json decoder for an errored response.\n\n    case res of\n        Err (Http.BadStatus { body }) ->\n            case Json.decodeString OAuth.Password.defaultAuthenticationErrorDecoder body of\n                Ok { error, errorDescription } ->\n                    doSomething\n\n                _ ->\n                    parserFailed\n\n        _ ->\n            someOtherError\n\n",
+                "type": "Json.Decode.Decoder OAuth.Password.AuthenticationError"
+            },
+            {
+                "name": "defaultAuthenticationSuccessDecoder",
+                "comment": " Json decoder for a positive response. You may provide a custom response decoder using other decoders\nfrom this module, or some of your own craft.\n\n    defaultAuthenticationSuccessDecoder : Decoder AuthenticationSuccess\n    defaultAuthenticationSuccessDecoder =\n        D.map4 AuthenticationSuccess\n            tokenDecoder\n            refreshTokenDecoder\n            expiresInDecoder\n            scopeDecoder\n\n",
+                "type": "Json.Decode.Decoder OAuth.Password.AuthenticationSuccess"
+            },
+            {
+                "name": "defaultErrorDecoder",
+                "comment": " Json decoder for 'error' field\n",
+                "type": "Json.Decode.Decoder OAuth.ErrorCode"
+            },
+            {
+                "name": "defaultErrorDescriptionDecoder",
+                "comment": " Json decoder for 'error\\_description' field\n",
+                "type": "Json.Decode.Decoder (Maybe.Maybe String.String)"
+            },
+            {
+                "name": "defaultErrorUriDecoder",
+                "comment": " Json decoder for 'error\\_uri' field\n",
+                "type": "Json.Decode.Decoder (Maybe.Maybe String.String)"
+            },
+            {
+                "name": "defaultExpiresInDecoder",
+                "comment": " Json decoder for an 'expire' timestamp\n",
+                "type": "Json.Decode.Decoder (Maybe.Maybe Basics.Int)"
+            },
+            {
+                "name": "defaultRefreshTokenDecoder",
+                "comment": " Json decoder for a 'refresh\\_token'\n",
+                "type": "Json.Decode.Decoder (Maybe.Maybe OAuth.Token)"
+            },
+            {
+                "name": "defaultScopeDecoder",
+                "comment": " Json decoder for a 'scope'\n",
+                "type": "Json.Decode.Decoder (List.List String.String)"
+            },
+            {
+                "name": "defaultTokenDecoder",
+                "comment": " Json decoder for an 'access\\_token'\n",
+                "type": "Json.Decode.Decoder OAuth.Token"
+            },
+            {
+                "name": "lenientScopeDecoder",
+                "comment": " Json decoder for a 'scope', allowing comma- or space-separated scopes\n",
+                "type": "Json.Decode.Decoder (List.List String.String)"
+            },
+            {
+                "name": "makeTokenRequest",
+                "comment": " Builds the request components required to get a token in exchange of the resource owner (user) credentials\n\n    let req : Http.Request TokenResponse\n        req = makeTokenRequest toMsg authentication |> Http.request\n\n",
+                "type": "(Result.Result Http.Error OAuth.Password.AuthenticationSuccess -> msg) -> OAuth.Password.Authentication -> OAuth.Password.RequestParts msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "OAuth.Refresh",
+        "comment": " If the authorization server issued a refresh token to the client, the\nclient may make a refresh request to the token endpoint to obtain a new access token\n(and refresh token) from the authorization server.\n\nThere's only one step in this process:\n\n  - The client authenticates itself directly using the previously obtained refresh token\n\nAfter this step, the client owns a fresh access `Token` and possibly, a new refresh `Token`. Both\ncan be used in subsequent requests.\n\n\n## Authenticate\n\n@docs makeTokenRequest, Authentication, Credentials, AuthenticationSuccess, AuthenticationError, RequestParts\n\n\n## JSON Decoders\n\n@docs defaultAuthenticationSuccessDecoder, defaultAuthenticationErrorDecoder\n\n\n## JSON Decoders (advanced)\n\n@docs defaultExpiresInDecoder, defaultScopeDecoder, lenientScopeDecoder, defaultTokenDecoder, defaultRefreshTokenDecoder, defaultErrorDecoder, defaultErrorDescriptionDecoder, defaultErrorUriDecoder\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Authentication",
+                "comment": " Request configuration for a Refresh authentication\n\n  - credentials (_RECOMMENDED_):\n    Credentials needed for `Basic` authentication, if needed by the\n    authorization server.\n\n  - url (_REQUIRED_):\n    The token endpoint to contact the authorization server.\n\n  - scope (_OPTIONAL_):\n    The scope of the access request.\n\n  - token (_REQUIRED_):\n    Token endpoint of the resource provider\n\n",
+                "args": [],
+                "type": "{ credentials : Maybe.Maybe OAuth.Refresh.Credentials, url : Url.Url, scope : List.List String.String, token : OAuth.Token }"
+            },
+            {
+                "name": "AuthenticationError",
+                "comment": " Describes an OAuth error as a result of a request failure\n\n  - error (_REQUIRED_):\n    A single ASCII error code.\n\n  - errorDescription (_OPTIONAL_)\n    Human-readable ASCII text providing additional information, used to assist the client developer in\n    understanding the error that occurred. Values for the `errorDescription` parameter MUST NOT\n    include characters outside the set `%x20-21 / %x23-5B / %x5D-7E`.\n\n  - errorUri (_OPTIONAL_):\n    A URI identifying a human-readable web page with information about the error, used to\n    provide the client developer with additional information about the error. Values for the\n    `errorUri` parameter MUST conform to the URI-reference syntax and thus MUST NOT include\n    characters outside the set `%x21 / %x23-5B / %x5D-7E`.\n\n",
+                "args": [],
+                "type": "{ error : OAuth.ErrorCode, errorDescription : Maybe.Maybe String.String, errorUri : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "AuthenticationSuccess",
+                "comment": " The response obtained as a result of an authentication (implicit or not)\n\n  - token (_REQUIRED_):\n    The access token issued by the authorization server.\n\n  - refreshToken (_OPTIONAL_):\n    The refresh token, which can be used to obtain new access tokens using the same authorization\n    grant as described in [Section 6](https://tools.ietf.org/html/rfc6749#section-6).\n\n  - expiresIn (_RECOMMENDED_):\n    The lifetime in seconds of the access token. For example, the value \"3600\" denotes that the\n    access token will expire in one hour from the time the response was generated. If omitted, the\n    authorization server SHOULD provide the expiration time via other means or document the default\n    value.\n\n  - scope (_OPTIONAL, if identical to the scope requested; otherwise, REQUIRED_):\n    The scope of the access token as described by [Section 3.3](https://tools.ietf.org/html/rfc6749#section-3.3).\n\n",
+                "args": [],
+                "type": "{ token : OAuth.Token, refreshToken : Maybe.Maybe OAuth.Token, expiresIn : Maybe.Maybe Basics.Int, scope : List.List String.String }"
+            },
+            {
+                "name": "Credentials",
+                "comment": " Describes a couple of client credentials used for 'Basic' authentication\n\n      { clientId = \"<my-client-id>\"\n      , secret = \"<my-client-secret>\"\n      }\n\n",
+                "args": [],
+                "type": "{ clientId : String.String, secret : String.String }"
+            },
+            {
+                "name": "RequestParts",
+                "comment": " Parts required to build a request. This record is given to `Http.request` in order\nto create a new request and may be adjusted at will.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ method : String.String, headers : List.List Http.Header, url : String.String, body : Http.Body, expect : Http.Expect a, timeout : Maybe.Maybe Basics.Float, tracker : Maybe.Maybe String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultAuthenticationErrorDecoder",
+                "comment": " Json decoder for an errored response.\n\n    case res of\n        Err (Http.BadStatus { body }) ->\n            case Json.decodeString OAuth.ClientCredentials.defaultAuthenticationErrorDecoder body of\n                Ok { error, errorDescription } ->\n                    doSomething\n\n                _ ->\n                    parserFailed\n\n        _ ->\n            someOtherError\n\n",
+                "type": "Json.Decode.Decoder OAuth.Refresh.AuthenticationError"
+            },
+            {
+                "name": "defaultAuthenticationSuccessDecoder",
+                "comment": " Json decoder for a positive response. You may provide a custom response decoder using other decoders\nfrom this module, or some of your own craft.\n\n    defaultAuthenticationSuccessDecoder : Decoder AuthenticationSuccess\n    defaultAuthenticationSuccessDecoder =\n        D.map4 AuthenticationSuccess\n            tokenDecoder\n            refreshTokenDecoder\n            expiresInDecoder\n            scopeDecoder\n\n",
+                "type": "Json.Decode.Decoder OAuth.Refresh.AuthenticationSuccess"
+            },
+            {
+                "name": "defaultErrorDecoder",
+                "comment": " Json decoder for 'error' field\n",
+                "type": "Json.Decode.Decoder OAuth.ErrorCode"
+            },
+            {
+                "name": "defaultErrorDescriptionDecoder",
+                "comment": " Json decoder for 'error\\_description' field\n",
+                "type": "Json.Decode.Decoder (Maybe.Maybe String.String)"
+            },
+            {
+                "name": "defaultErrorUriDecoder",
+                "comment": " Json decoder for 'error\\_uri' field\n",
+                "type": "Json.Decode.Decoder (Maybe.Maybe String.String)"
+            },
+            {
+                "name": "defaultExpiresInDecoder",
+                "comment": " Json decoder for an 'expire' timestamp\n",
+                "type": "Json.Decode.Decoder (Maybe.Maybe Basics.Int)"
+            },
+            {
+                "name": "defaultRefreshTokenDecoder",
+                "comment": " Json decoder for a 'refresh\\_token'\n",
+                "type": "Json.Decode.Decoder (Maybe.Maybe OAuth.Token)"
+            },
+            {
+                "name": "defaultScopeDecoder",
+                "comment": " Json decoder for a 'scope'\n",
+                "type": "Json.Decode.Decoder (List.List String.String)"
+            },
+            {
+                "name": "defaultTokenDecoder",
+                "comment": " Json decoder for an 'access\\_token'\n",
+                "type": "Json.Decode.Decoder OAuth.Token"
+            },
+            {
+                "name": "lenientScopeDecoder",
+                "comment": " Json decoder for a 'scope', allowing comma- or space-separated scopes\n",
+                "type": "Json.Decode.Decoder (List.List String.String)"
+            },
+            {
+                "name": "makeTokenRequest",
+                "comment": " Builds the request components required to refresh a token\n\n    let req : Http.Request TokenResponse\n        req = makeTokenRequest toMsg reqParts |> Http.request\n\n",
+                "type": "(Result.Result Http.Error OAuth.Refresh.AuthenticationSuccess -> msg) -> OAuth.Refresh.Authentication -> OAuth.Refresh.RequestParts msg"
+            }
+        ],
+        "binops": []
+    }
+]

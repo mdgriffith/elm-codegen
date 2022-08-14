@@ -1,0 +1,79 @@
+[
+    {
+        "name": "Tar",
+        "comment": " For more details, see the README. See also the demo app `./examples/Main.elm`\n\n@docs createArchive, extractArchive\n\n@docs Data\n\n\n## Metadata\n\n@docs Metadata, defaultMetadata\n@docs Mode, defaultMode\n\n\n## Encoders\n\nConvenient for integration with other `Bytes.Encode.Encoder`s.\n\n@docs encodeFiles, encodeTextFile, encodeTextFiles\n\n",
+        "unions": [
+            {
+                "name": "Data",
+                "comment": " Use `StringData String` for text data, `BinaryData Bytes` for binary data:\n\n    import Bytes.Encode as Encode\n\n    StringData \"This is a test\"\n\n    BinaryData (Encode.encode (Encode.string \"foo\"))\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "StringData",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "BinaryData",
+                        [
+                            "Bytes.Bytes"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Metadata",
+                "comment": " Information used in the tar header.\nYou may use `defaultMetadata` as a starting point, modifying only what is needed.\n\nFields:\n\n  - **filename**: Name of the file\n  - **mode**: Unix file permissions, e.g. 644\n  - **ownerID**: owner identifier\n  - **groupID**: group identifier\n  - **fileSize**: size of the encoded file in bytes\n  - **lastModificationTime**: last modification time as a posix value\n  - **linkIndicator**: unused\n  - **userName**: user name\n  - **groupName**: group name\n  - **fileNamePrefix**: can be thought of as the name of the folder/directory in which the files to be processed live\n\n",
+                "args": [],
+                "type": "{ filename : String.String, mode : Tar.Mode, ownerID : Basics.Int, groupID : Basics.Int, fileSize : Basics.Int, lastModificationTime : Basics.Int, linkIndicator : Tar.Link, linkedFileName : String.String, userName : String.String, groupName : String.String, fileNamePrefix : String.String }"
+            },
+            {
+                "name": "Mode",
+                "comment": " ",
+                "args": [],
+                "type": "{ owner : Tar.FilePermission, group : Tar.FilePermission, other : Tar.FilePermission, setUserID : Basics.Bool, setGroupID : Basics.Bool }"
+            }
+        ],
+        "values": [
+            {
+                "name": "createArchive",
+                "comment": " Example:\n\n    data1 : ( Metadata, Data )\n    data1 =\n        ( { defaultMetadata | filename = \"one.txt\" }\n        , StringData \"One\"\n        )\n\n    data2 : ( Metadata, Data )\n    data2 =\n        ( { defaultMetadata | filename = \"two.txt\" }\n        , StringData \"Two\"\n        )\n\n    createArchive [data1, data2]\n\n",
+                "type": "List.List ( Tar.Metadata, Tar.Data ) -> Bytes.Bytes"
+            },
+            {
+                "name": "defaultMetadata",
+                "comment": " Defined as\n\n    defaultMetadata : Metadata\n    defaultMetadata =\n        { filename = \"test.txt\"\n        , mode = defaultMode\n        , ownerID = 501\n        , groupID = 123\n        , fileSize = 20\n        , lastModificationTime = 1542665285\n        , linkIndicator = NormalFile\n        , linkedFileName = \"bar.txt\"\n        , userName = \"anonymous\"\n        , groupName = \"staff\"\n        , fileNamePrefix = \"abc\"\n        }\n\nExample usage:\n\n    myMetadata =\n        { defaultMetadata | filename = \"Test.txt\" }\n\n",
+                "type": "Tar.Metadata"
+            },
+            {
+                "name": "defaultMode",
+                "comment": " Default mode\n\n    defaultMode : Mode\n    defaultMode =\n        { owner = { read = True, write = True, execute = True }\n        , group = { read = True, write = True, execute = False }\n        , other = { read = True, write = False, execute = False }\n        , setUserID = False\n        , setGroupID = False\n        }\n\n",
+                "type": "Tar.Mode"
+            },
+            {
+                "name": "encodeFiles",
+                "comment": " Encoder for a list of files\n\n    import Bytes\n    import Bytes.Encode as Encode\n    import Tar exposing (defaultMetadata)\n\n    metaData1 : Tar.Metadata\n    metaData1 =\n        { defaultMetadata | filename = \"a.txt\" }\n\n    content1 : String\n    content1 =\n        \"One two three\\n\"\n\n    metaData2 : Tar.Metadata\n    metaData2\n        { defaultMetadata | filename = \"c.binary\" }\n\n    content2 : Bytes.Bytes\n    content2 =\n        \"1345\"\n          |> Encode.string\n          |> Encode.encode\n\n    result : Bytes\n    result =\n        [ ( metaData1, Tar.StringData content1 )\n        , ( metaData2, Tar.BinaryData content2 )\n        ]\n        |> Tar.encodeFiles\n        |> Bytes.Encode.encode\n\n",
+                "type": "List.List ( Tar.Metadata, Tar.Data ) -> Bytes.Encode.Encoder"
+            },
+            {
+                "name": "encodeTextFile",
+                "comment": " ",
+                "type": "Tar.Metadata -> String.String -> Bytes.Encode.Encoder"
+            },
+            {
+                "name": "encodeTextFiles",
+                "comment": " ",
+                "type": "List.List ( Tar.Metadata, String.String ) -> Bytes.Encode.Encoder"
+            },
+            {
+                "name": "extractArchive",
+                "comment": " Decode an archive into its constituent files.\n",
+                "type": "Bytes.Bytes -> List.List ( Tar.Metadata, Tar.Data )"
+            }
+        ],
+        "binops": []
+    }
+]

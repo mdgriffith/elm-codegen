@@ -1,0 +1,91 @@
+[
+    {
+        "name": "Bit",
+        "comment": "\nThe bit is a basic unit of information in information theory, computing.\nThis package includes bit twiddling hacks by Sean Eron Anderson and many\nothers.\\\n📦 [Package](https://package.elm-lang.org/packages/elmw/extra-boolean/latest/),\n📘 [Wiki](https://github.com/elmw/extra-boolean/wiki).\n\n@docs count, get, getAs, interleave, merge, parity, reverse, rotate\n@docs scan, scanReverse, set, setAs, signExtend, swap, toggle, toggleAs\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "count",
+                "comment": "\nCount bits set.\n[📘](https://github.com/elmw/extra-boolean/wiki/count)\n\n    -- x: an Int\n    count 7  == 3  -- 111    ⇒ 3\n    count 12 == 2  -- 1100   ⇒ 2\n    count 63 == 6  -- 111111 ⇒ 6\n",
+                "type": "Basics.Int -> Basics.Int"
+            },
+            {
+                "name": "get",
+                "comment": "\nGet a bit.\n[📘](https://github.com/elmw/extra-boolean/wiki/get)\n\n    -- x: an Int\n    -- i: bit index\n    get 6 0 == 0  -- 110,0 ⇒ 0\n    get 6 1 == 1  -- 110,1 ⇒ 1\n    get 6 2 == 1  -- 110,2 ⇒ 1\n",
+                "type": "Basics.Int -> Basics.Int -> Basics.Int"
+            },
+            {
+                "name": "getAs",
+                "comment": "\nGet bits as per mask.\n[📘](https://github.com/elmw/extra-boolean/wiki/getAs)\n\n    -- x: an Int\n    -- m: bit mask\n    getAs 6 4 == 4  -- 110,100 ⇒ 100\n    getAs 6 7 == 6  -- 110,111 ⇒ 110\n    getAs 6 5 == 4  -- 110,101 ⇒ 100\n",
+                "type": "Basics.Int -> Basics.Int -> Basics.Int"
+            },
+            {
+                "name": "interleave",
+                "comment": "\nInterleave bits of two Int16s.\n[📘](https://github.com/elmw/extra-boolean/wiki/interleave)\n\n    -- x: first Int16\n    -- y: second Int16\n    interleave 0x0000 0xFFFF == 1431655765  -- 0x55555555\n    interleave 0x1234 0x1234 == 51121968    -- 0x030C0F30\n    interleave 0x1234 0x4321 == 302845473   -- 0x120D0E21\n",
+                "type": "Basics.Int -> Basics.Int -> Basics.Int"
+            },
+            {
+                "name": "merge",
+                "comment": "\nMerge bits as per mask.\n[📘](https://github.com/elmw/extra-boolean/wiki/merge)\n\n    -- x: first Int\n    -- y: second Int\n    -- m: bit mask (0 ⇒ from x)\n    merge 0x12 0x24 0x0F       == 20     -- 0x14\n    merge 0x1234 0xABCD 0x0F0F == 6973   -- 0x1B3D\n    merge 0xAAAA 0xBBBB 0x3333 == 48059  -- 0xBBBB\n",
+                "type": "Basics.Int -> Basics.Int -> Basics.Int -> Basics.Int"
+            },
+            {
+                "name": "parity",
+                "comment": "\nGet n-bit parity.\n[📘](https://github.com/elmw/extra-boolean/wiki/parity)\n\n    -- x: an Int\n    -- n: number of bits (1)\n    parity 7 1  == 1   -- 1,1,1   ⇒ 1\n    parity 5 1  == 0   -- 1,0,1   ⇒ 0\n    parity 8 2  == 2   -- 10,00   ⇒ 10\n    parity 63 4 == 12  -- 11,1111 ⇒ 1100\n",
+                "type": "Basics.Int -> Basics.Int -> Basics.Int"
+            },
+            {
+                "name": "reverse",
+                "comment": "\nReverse all bits.\n[📘](https://github.com/elmw/extra-boolean/wiki/reverse)\n\n    -- x: an Int\n    reverse 0xFFFF0000 == 65535      -- 0x0000FFFF\n    reverse 0x00AABBCC == 870143232  -- 0x33DD5500\n    reverse 0x1234     == 742916096  -- 0x2C480000\n",
+                "type": "Basics.Int -> Basics.Int"
+            },
+            {
+                "name": "rotate",
+                "comment": "\nRotate bits.\n[📘](https://github.com/elmw/extra-boolean/wiki/rotate)\n\n    -- x: an Int\n    -- n: rotate amount (+ve: left, -ve: right)\n    rotate 0x11112222 4  == 286401057  -- 0x11122221\n    rotate 0x11112222 -4 == 554766882  -- 0x21111222\n",
+                "type": "Basics.Int -> Basics.Int -> Basics.Int"
+            },
+            {
+                "name": "scan",
+                "comment": "\nGet index of first set bit from LSB.\n[📘](https://github.com/elmw/extra-boolean/wiki/scan)\n\n    -- x: an Int\n    scan 7  == 0  -- 111     ⇒ 0\n    scan 12 == 2  -- 1100    ⇒ 2\n    scan 64 == 6  -- 1000000 ⇒ 6\n",
+                "type": "Basics.Int -> Basics.Int"
+            },
+            {
+                "name": "scanReverse",
+                "comment": "\nGets index of first set bit from MSB.\n[📘](https://github.com/elmw/extra-boolean/wiki/scanReverse)\n\n    -- x: an Int\n    scanReverse 13 == 3  -- 1101 ⇒ 3\n    scanReverse 5  == 2  -- 101  ⇒ 2\n    scanReverse 1  == 0  -- 1    ⇒ 0\n",
+                "type": "Basics.Int -> Basics.Int"
+            },
+            {
+                "name": "set",
+                "comment": "\nSet a bit.\n[📘](https://github.com/elmw/extra-boolean/wiki/set)\n\n    -- x: an Int\n    -- i: bit index\n    -- f: bit value (1)\n    set 6 0 1 == 7  -- 110,0,1 ⇒ 111\n    set 6 2 1 == 6  -- 110,2,1 ⇒ 110\n    set 6 2 0 == 2  -- 110,2,0 ⇒ 010\n",
+                "type": "Basics.Int -> Basics.Int -> Basics.Int -> Basics.Int"
+            },
+            {
+                "name": "setAs",
+                "comment": "\nSet bits as per mask.\n[📘](https://github.com/elmw/extra-boolean/wiki/setAs)\n\n    -- x: an Int\n    -- m: bit mask\n    -- f: bit value (1)\n    setAs 8 2 1          == 10    -- 0x8 set 0x2      ⇒ 0xA\n    setAs 15 3 0         == 12    -- 0xF clear 0x3    ⇒ 0xC\n    setAs 0x1234 0x430 1 == 5684  -- 0x1234 set 0x430 ⇒ 0x1634\n",
+                "type": "Basics.Int -> Basics.Int -> Basics.Int -> Basics.Int"
+            },
+            {
+                "name": "signExtend",
+                "comment": "\nSign extend variable bit-width integer.\n[📘](https://github.com/elmw/extra-boolean/wiki/signExtend)\n\n    -- x: variable bit-width Int\n    -- w: bit width (32)\n    signExtend 15 4 == -1  -- 1111 ⇒ -1\n    signExtend 3 3  == 3   -- 011  ⇒ 3\n    signExtend 4 3  == -4  -- 100  ⇒ -4\n",
+                "type": "Basics.Int -> Basics.Int -> Basics.Int"
+            },
+            {
+                "name": "swap",
+                "comment": "\nSwap bit sequences.\n[📘](https://github.com/elmw/extra-boolean/wiki/swap)\n\n    -- x: an Int\n    -- i: first bit index\n    -- j: second bit index\n    -- n: bit width (1)\n    swap 6 1 0 1      == 5      -- 110    ⇒ 101\n    swap 0x1234 8 4 4 == 4900   -- 0x1234 ⇒ 0x1324\n    swap 0x4AAB 8 0 8 == 43850  -- 0x4AAB ⇒ 0xAB4A\n",
+                "type": "Basics.Int -> Basics.Int -> Basics.Int -> Basics.Int -> Basics.Int"
+            },
+            {
+                "name": "toggle",
+                "comment": "\nToggle a bit.\n[📘](https://github.com/elmw/extra-boolean/wiki/toggle)\n\n    -- x: an Int\n    -- i: bit index\n    toggle 6 0 == 7  -- 110,0 ⇒ 111\n    toggle 6 1 == 4  -- 110,1 ⇒ 100\n    toggle 6 2 == 2  -- 110,2 ⇒ 010\n",
+                "type": "Basics.Int -> Basics.Int -> Basics.Int"
+            },
+            {
+                "name": "toggleAs",
+                "comment": "\nToggle bits as per mask.\n[📘](https://github.com/elmw/extra-boolean/wiki/toggleAs)\n\n    -- x: an Int\n    -- m: bit mask\n    toggleAs 6 1 == 7  -- 110,000 ⇒ 111\n    toggleAs 6 7 == 1  -- 110,111 ⇒ 001\n    toggleAs 6 3 == 5  -- 110,011 ⇒ 101\n",
+                "type": "Basics.Int -> Basics.Int -> Basics.Int"
+            }
+        ],
+        "binops": []
+    }
+]

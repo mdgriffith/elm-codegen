@@ -1,0 +1,361 @@
+[
+    {
+        "name": "Elmnt.BaseScrollPicker",
+        "comment": " This module is an implementation of picker by scrolling and basic view type is [`elm-ui`][elm-ui].\nand animation can be done a bit tricky but easily thanks to [`elm-style-animation`][elm-style-animation].\nDue to some non-standard way to hiding scrollbar, [`elm-css`][elm-css] is also required.\n\n**Note:** Type annotation is probably too long to see. However, it might be useful if you\nwant add some feature with your own picker model.\n\n[elm-ui]: /packages/mdgriffith/elm-ui/latest\n[elm-css]: /packages/rtfeldman/elm-css/latest\n[elm-style-animation]: /packages/mdgriffith/elm-style-animation/latest\n[exampleUpdate]: /packages/jeongoon/elmnt-scrollpicker/latest/#Update\n\n# Type\n\n@docs MinimalState, Direction, StartEnd, Option, Msg, Error\n\n# **State(picker model) Creation, Modification and Query**\n\n@docs initMinimalState, setOptions, getOptions, setScrollStopCheckTime, anyNewOptionSelected\n\n# Update\n\n@docs updateWith\n\n# Subscriptions\n\n@docs subscriptionsWith\n\n# View\n \n@docs viewAsElement, defaultTheme, BaseTheme, BaseSettings\n\n# Helper functions\n\n@docs getOptionIdString\n\n# Low-level Data types and functions\n\n@docs isSnapping, stopSnapping, unsafeSetScrollCheckTime, defaultShadeLengthWith,\ndefaultShadeAttrsWith, defaultBaseSettingsWith, Geom, getCenterPosOf,\npartitionOptionsHelper, getRelPosOfElement, taskTargetOptionRelPosHelper,\ntaskGetViewport, taskGetViewportPosHelper, toMilliPixel, fromMilliPixel,\nsubscriptionsWithHelper\n\n# FIXME\n\n    - add keyboard input support\n\n",
+        "unions": [
+            {
+                "name": "Direction",
+                "comment": " Picker direction\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Horizontal",
+                        []
+                    ],
+                    [
+                        "Vertical",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Error",
+                "comment": " Error used for Task _x_ a\n\n**XXX:** this module doesn't really analyse the error status very well,\nbut those data types are explaining the stauts in the code instead of\nany other types of comments.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Msg",
+                "comment": " Msg chain generally covers the following steps\n\n```\n1. Detect any scroll which has delayed 'Cmd' to check\n   whether scrolling is stopped or not.\n2. If scroll stopped, trigger snapping to nearst item.\n3. Find and decide which item will be target to snap.\n4. Do animation related to snapping\n5. Inform the snapping is done so outside world is able\n   to know the which item(Option) is selected.\n```\n\nUnfortunately we need own Msg here which means you might need to\nmap over those message into your own Msg type.\n\nThere are examples in this module regarding message mapping\nyou could possibly search keyword 'messageMap' where I need to map the\n`Msg' into `msg'\n\n```elm\ntype Msg vt msg\n    = SyncLastScroll            Time.Posix Bool\n    | OnScroll\n    | TriggerSnapping           Time.Posix\n    | CheckInitialTargetOption\n          (List (Option vt msg))\n          -- ^ options before the sample\n          (Option vt msg)\n          -- ^ initial sample to check\n          (List (Option vt msg))\n          -- ^ options after the sample\n\n    | DetermineTargetOption\n          (Result Error (List (Option vt msg)\n                              --^  other candidates\n                        , Maybe ( String\n                                  --^ current name of closest\n                                  --  Option\n                                 , Float )\n                                 --^ current closest position\n                                 --   of an Option\n                        )\n          )\n          \n\n    | SetSnapToTargetOption     String Float Float\n                                -- ^ id, frame position,\n                                --   relative pos to snap\n    | MoveToTargetOption        String\n    | ScrollPickerSuccess       (Option vt msg)\n    | ScrollPickerFailure       Error\n    | Animate                   Animation.Msg\n    | AnimateSnapping           Int\n    | NoOp\n```\n",
+                "args": [
+                    "vt",
+                    "msg"
+                ],
+                "cases": [
+                    [
+                        "SyncLastScroll",
+                        [
+                            "Time.Posix",
+                            "Basics.Bool"
+                        ]
+                    ],
+                    [
+                        "OnScroll",
+                        []
+                    ],
+                    [
+                        "OnKey",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "TriggerSnapping",
+                        [
+                            "Time.Posix"
+                        ]
+                    ],
+                    [
+                        "CheckInitialTargetOption",
+                        [
+                            "List.List (Elmnt.BaseScrollPicker.Option vt msg)",
+                            "Elmnt.BaseScrollPicker.Option vt msg",
+                            "List.List (Elmnt.BaseScrollPicker.Option vt msg)"
+                        ]
+                    ],
+                    [
+                        "DetermineTargetOption",
+                        [
+                            "Result.Result Elmnt.BaseScrollPicker.Error ( List.List (Elmnt.BaseScrollPicker.Option vt msg), Maybe.Maybe ( String.String, Basics.Float ) )"
+                        ]
+                    ],
+                    [
+                        "SetSnapToTargetOption",
+                        [
+                            "String.String",
+                            "Basics.Float",
+                            "Basics.Float"
+                        ]
+                    ],
+                    [
+                        "MoveToTargetOption",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "ScrollPickerSuccess",
+                        [
+                            "Elmnt.BaseScrollPicker.Option vt msg"
+                        ]
+                    ],
+                    [
+                        "ScrollPickerFailure",
+                        [
+                            "Elmnt.BaseScrollPicker.Error"
+                        ]
+                    ],
+                    [
+                        "Animate",
+                        [
+                            "Animation.Msg"
+                        ]
+                    ],
+                    [
+                        "AnimateSnapping",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "NoOp",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "StartEnd",
+                "comment": " this type is for general use, and also used in the picker shading part\nfrom the beginning and the end.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Start",
+                        []
+                    ],
+                    [
+                        "End",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "BaseSettings",
+                "comment": " Settings generated from the picker [`Direction`](#Direction) for function\nsuch as 'viewAsElement' and 'defaultShadeAttrsWith'.\n",
+                "args": [
+                    "compatible",
+                    "msg"
+                ],
+                "type": "{ lengthSetter : Element.Length -> Element.Attribute msg, widthSetter : Element.Length -> Element.Attribute msg, longitudinalContainer : List.List (Element.Attribute msg) -> List.List (Element.Element msg) -> Element.Element msg, ancherString : String.String, windowEdges : { top : Basics.Int, right : Basics.Int, bottom : Basics.Int, left : Basics.Int }, centerLateral : Element.Attribute msg, cssWidthSetter : Css.LengthOrAuto compatible -> Css.Style, cssOverFlowLongitudinal : Css.Overflow compatible -> Css.Style, cssOverFlowLateral : Css.Overflow compatible -> Css.Style, fontSize : Basics.Int, shadeLength : Basics.Int, borderWidth : Basics.Int, pickerLength : Basics.Int, pickerWidth : Basics.Int }"
+            },
+            {
+                "name": "BaseTheme",
+                "comment": " An example settings value type in use here\n",
+                "args": [
+                    "palette",
+                    "msg"
+                ],
+                "type": "{ palette : palette, borderWidth : Elmnt.Theme.Value Basics.Int, borderColorFn : Elmnt.Theme.Value (palette -> Color.Color), shadingColorFn : Elmnt.Theme.Value (palette -> Color.Color), focusColorFn : Elmnt.Theme.Value (palette -> Color.Color), backgroundColorFn : Elmnt.Theme.Value (palette -> Color.Color), fontColorFn : Elmnt.Theme.Value (palette -> Color.Color), fontSize : Elmnt.Theme.Value Basics.Int, shadeLength : Elmnt.Theme.Value Basics.Int, pickerLength : Elmnt.Theme.Value Basics.Int, pickerWidth : Elmnt.Theme.Value Basics.Int, shadeAttrsFn : Elmnt.Theme.Value (Elmnt.BaseScrollPicker.Direction -> Elmnt.BaseScrollPicker.StartEnd -> List.List (Element.Attribute msg)) }"
+            },
+            {
+                "name": "Geom",
+                "comment": " geometry data type which can be seen in 'Browser.Dom.Viewport'\n",
+                "args": [],
+                "type": "{ x : Basics.Float, y : Basics.Float, width : Basics.Float, height : Basics.Float }"
+            },
+            {
+                "name": "MinimalState",
+                "comment": " Provide Minimal model (or state) to work with. most of funciton in \nthis module works well with your own record type generally, as \nI used more generic type constraint in function definition\n\n    ..\n    , pseudoAnimState : Animation.Messenger.State msg\n    ..\n\n**Note:** elm-style-animation module doesn't supply low-level functions\nto get intermediate states of animation so I need more research\nbut now I'm using renderPairs function to get the states of current\nvalues in 'String' format which will be traslated into number.\nEven though one state value is used, I need to use Animation.style function\nto generate the state which can contain a lot more information\n\n",
+                "args": [
+                    "vt",
+                    "msg"
+                ],
+                "type": "{ idString : String.String, optionIds : List.List String.String, optionIdToRecordDict : Dict.Dict String.String (Elmnt.BaseScrollPicker.Option vt msg), targetIdString : Maybe.Maybe String.String, pseudoAnimState : Animation.Messenger.State msg, lastScrollClock : Time.Posix, scrollTraceMP : Set.Set Basics.Int, finalTargetScrollPosMP : Basics.Int, scrollStopCheckTime : Basics.Int }"
+            },
+            {
+                "name": "Option",
+                "comment": " Option record for each item in the list from which user will choose.\n\nThis record depends on the type of value and element (Element)\n",
+                "args": [
+                    "vt",
+                    "msg"
+                ],
+                "type": "{ idString : String.String, index : Basics.Int, value : vt, element : Element.Element msg }"
+            }
+        ],
+        "values": [
+            {
+                "name": "anyNewOptionSelected",
+                "comment": " Check the Msg, and return if there is any new selected option\n\nplease check this [Example][exampleUpdate].\n",
+                "type": "Elmnt.BaseScrollPicker.Msg vt msg -> Maybe.Maybe (Elmnt.BaseScrollPicker.Option vt msg)"
+            },
+            {
+                "name": "defaultBaseSettingsWith",
+                "comment": " Generate setting values for a picker which has `Direction`\n",
+                "type": "Elmnt.BaseScrollPicker.Direction -> { theme | fontSize : Elmnt.Theme.Value Basics.Int, borderWidth : Elmnt.Theme.Value Basics.Int, shadeLength : Elmnt.Theme.Value Basics.Int, pickerLength : Elmnt.Theme.Value Basics.Int, pickerWidth : Elmnt.Theme.Value Basics.Int } -> Elmnt.BaseScrollPicker.BaseSettings compatible msg"
+            },
+            {
+                "name": "defaultShadeAttrsWith",
+                "comment": " and helper function for shade elm-ui attributes (List Element.Attribute)\n",
+                "type": "Elmnt.BaseScrollPicker.BaseTheme { palette | accent : Color.Color, surface : Color.Color, background : Color.Color, on : { paletteOn | background : Color.Color, surface : Color.Color }, toElmUiColor : Color.Color -> Element.Color } msg -> Elmnt.BaseScrollPicker.Direction -> Elmnt.BaseScrollPicker.StartEnd -> List.List (Element.Attribute msg)"
+            },
+            {
+                "name": "defaultShadeLengthWith",
+                "comment": " Takes the direction of picker and gives the shade length\n",
+                "type": "Elmnt.BaseScrollPicker.Direction -> Basics.Int"
+            },
+            {
+                "name": "defaultTheme",
+                "comment": " All setting values are set to Theme.Default, which can be applied to\nscrollPicker function.\n\n```elm\n...\nexampleView model\n    = let\n        theme\n            = defaultTheme\n\n        picker\n            = viewAsElement model theme\n\n...\n",
+                "type": "Elmnt.BaseScrollPicker.BaseTheme Internal.Palette.Palette msg"
+            },
+            {
+                "name": "fromMilliPixel",
+                "comment": " An utility which converts an integer value(which contains up to thousandth value\nof original) to an float value.\n",
+                "type": "Basics.Int -> Basics.Float"
+            },
+            {
+                "name": "getCenterPosOf",
+                "comment": " [`Browser.Dom.Viewport`](/packages/elm/browser/latest/Browser-Dom#Viewport), [`Browser.Dom.Element`](/packages/elm/browser/latest/Browser-Dom#Element) share basic record accessor\nlike `.x`  `.y`  `.width`  `.height`\n\ngetCenterPosOf function try to get center poisition of the some field.\n\nex) to get center 'y' position of viewport, you can try\n\n```elm\ngetCenterPosOf .y .height .viewport aRecord\n```\n",
+                "type": "(Elmnt.BaseScrollPicker.Geom -> Basics.Float) -> (Elmnt.BaseScrollPicker.Geom -> Basics.Float) -> (rec -> Elmnt.BaseScrollPicker.Geom) -> rec -> Basics.Float"
+            },
+            {
+                "name": "getOptionIdString",
+                "comment": " make option id string value for 'Option.idString' which will be\nuseful if you want to access the id on the page.\n",
+                "type": "(vt -> String.String) -> String.String -> vt -> String.String"
+            },
+            {
+                "name": "getOptions",
+                "comment": " get a list of Option record data from the whole options by searching\noption ID in a Dict.\n\nThe order of options in the same one of optionID list.\n",
+                "type": "{ state | optionIds : List.List String.String, optionIdToRecordDict : Dict.Dict String.String (Elmnt.BaseScrollPicker.Option vt msg) } -> List.List (Elmnt.BaseScrollPicker.Option vt msg)"
+            },
+            {
+                "name": "getRelPosOfElement",
+                "comment": " To get relative position of element in the viewport.\n\nyou need to apply position accessor and length accessor which are normally\n`.x` and `.width` for Horizontal scroll picker and `.y` and `.height` for\nVertical scroll picker.\n\n**Note:** the element is got from getElement, viewport is got from getViewport\n",
+                "type": "(Elmnt.BaseScrollPicker.Geom -> Basics.Float) -> (Elmnt.BaseScrollPicker.Geom -> Basics.Float) -> { pos | element : Elmnt.BaseScrollPicker.Geom, viewport : Elmnt.BaseScrollPicker.Geom } -> Basics.Float"
+            },
+            {
+                "name": "initMinimalState",
+                "comment": " Helper function to initialise the minimal model. You can call \n[`setOptions`](#setOptions) after this.\n\n```elm\n    initMinimalState \"myPicker\"\n        |> setOptions\n           String.fromInt\n           [ ( 1, Element.text \"1\" )\n           , ( 2, Element.text \"2\" )\n           ...\n```\n\n",
+                "type": "String.String -> Elmnt.BaseScrollPicker.MinimalState vt msg"
+            },
+            {
+                "name": "isSnapping",
+                "comment": "\nminimal testing function if the picker is snapping to some item\nat the moment\n",
+                "type": "{ state | targetIdString : Maybe.Maybe String.String } -> Basics.Bool"
+            },
+            {
+                "name": "partitionOptionsHelper",
+                "comment": " when all the items are distributed uniformly, it might be easier to\nget the option to focus(for snapping). partitionOptions will provide one\ncandidate to snap and previous options prior to current one and next\noptions as well.\nCalulating relative position in Viewport probably be only way to test \nwhether the target is correct one or not, however you might need to check \naround current candidate.\n",
+                "type": "(Elmnt.BaseScrollPicker.Geom -> Basics.Float) -> (Elmnt.BaseScrollPicker.Geom -> Basics.Float) -> { state | optionIdToRecordDict : Dict.Dict String.String (Elmnt.BaseScrollPicker.Option vt msg), optionIds : List.List String.String } -> { vp | scene : { d | height : Basics.Float, width : Basics.Float }, viewport : Elmnt.BaseScrollPicker.Geom } -> Elmnt.BaseScrollPicker.OptionPartition vt msg"
+            },
+            {
+                "name": "setOptions",
+                "comment": " Save options from the list of pair of ( data, Element )\noption Ids are stored separately and details stored in a Dict\nthere is no way to know how to make data value to string\nyou should suggest the function (vt -> String)\n\n",
+                "type": "(vt -> String.String) -> List.List ( vt, Element.Element msg ) -> { state | idString : String.String, optionIds : List.List String.String, optionIdToRecordDict : Dict.Dict String.String (Elmnt.BaseScrollPicker.Option vt msg) } -> { state | idString : String.String, optionIds : List.List String.String, optionIdToRecordDict : Dict.Dict String.String (Elmnt.BaseScrollPicker.Option vt msg) }"
+            },
+            {
+                "name": "setScrollStopCheckTime",
+                "comment": " Every scroll is being watched to check whether it is stopped at the moment\nand this function will change the timing to wait until checking.\n\n**Limitation:** minimum value is 75 (ms). Animation will fail or work unexpectedly\nunder 75 ms.\n",
+                "type": "Basics.Int -> { state | scrollStopCheckTime : Basics.Int } -> { state | scrollStopCheckTime : Basics.Int }"
+            },
+            {
+                "name": "stopSnapping",
+                "comment": "\nreset some states for runtime to stop snapping\nwhich includes current target, scroll position to snap to, clock when scroll\nhappened etc.\n\n**Note:** this function only try to stop snapping but asynchronous messasing\nwill produce more animation after calling this function, so keep in mind\nthat animation for snapping is not guaranteed to be done even if call this\nfunction in `model' part.\n",
+                "type": "{ state | targetIdString : Maybe.Maybe String.String, finalTargetScrollPosMP : Basics.Int, scrollTraceMP : Set.Set Basics.Int, pseudoAnimState : Animation.Messenger.State msg } -> { state | targetIdString : Maybe.Maybe String.String, finalTargetScrollPosMP : Basics.Int, scrollTraceMP : Set.Set Basics.Int, pseudoAnimState : Animation.Messenger.State msg }"
+            },
+            {
+                "name": "subscriptionsWith",
+                "comment": " Pass the list of the scroll states with your own application model\nto inform the function `messageMapWith` function, and you will get\nsubscription (Sub msg).\n\n**Important:** no animation will work withought subscriptions!!!\n",
+                "type": "List.List { state | idString : String.String, lastScrollClock : Time.Posix, scrollTraceMP : Set.Set Basics.Int, finalTargetScrollPosMP : Basics.Int, scrollStopCheckTime : Basics.Int, optionIdToRecordDict : Dict.Dict String.String (Elmnt.BaseScrollPicker.Option vt msg), optionIds : List.List String.String, pseudoAnimState : Animation.Messenger.State msg, targetIdString : Maybe.Maybe String.String } -> { model | messageMapWith : String.String -> Elmnt.BaseScrollPicker.Msg vt msg -> msg } -> Platform.Sub.Sub msg"
+            },
+            {
+                "name": "subscriptionsWithHelper",
+                "comment": " ",
+                "type": "(String.String -> Animation.Msg -> msg) -> List.List { a | idString : String.String, pseudoAnimState : Animation.Messenger.State msg } -> Platform.Sub.Sub msg"
+            },
+            {
+                "name": "taskGetViewport",
+                "comment": " Task helper to get viewport of the item id.\n",
+                "type": "String.String -> Task.Task Elmnt.BaseScrollPicker.Error Browser.Dom.Viewport"
+            },
+            {
+                "name": "taskGetViewportPosHelper",
+                "comment": " Task helper to retreive the position. posAccessor\n",
+                "type": "(Elmnt.BaseScrollPicker.Geom -> Basics.Float) -> String.String -> Task.Task Elmnt.BaseScrollPicker.Error Basics.Float"
+            },
+            {
+                "name": "taskTargetOptionRelPosHelper",
+                "comment": " A Task helper function to get relative distance of the item from\nframe which is measured from the center position of each other.\nThis value has sign -- negtative value shows that the item is\nleft or above the centre of view frame\n",
+                "type": "(Elmnt.BaseScrollPicker.Geom -> Basics.Float) -> (Elmnt.BaseScrollPicker.Geom -> Basics.Float) -> String.String -> String.String -> Task.Task Elmnt.BaseScrollPicker.Error Basics.Float"
+            },
+            {
+                "name": "toMilliPixel",
+                "comment": " An utility which converts an floating value to an integer value which contains\nupto milli of base unit (pixel in this case)\n",
+                "type": "Basics.Float -> Basics.Int"
+            },
+            {
+                "name": "unsafeSetScrollCheckTime",
+                "comment": " You can test any value -- even under 75 ms -- however which is not recommended\n",
+                "type": "Basics.Int -> { state | scrollStopCheckTime : Basics.Int } -> { state | scrollStopCheckTime : Basics.Int }"
+            },
+            {
+                "name": "updateWith",
+                "comment": " updateWith function needs your own app model to ask to get `messageMapWith`\n and `pickerDirection` from it. So if you want to use multiple picker,\nyou can keep the same information in the same place in benefit.\n\nAs other update function supposed to do, updateWith also does the job\ndescribed in the [`Msg`](#Msg) of the module.\n\n",
+                "type": "{ a | messageMapWith : String.String -> Elmnt.BaseScrollPicker.Msg vt msg -> msg, pickerDirection : Elmnt.BaseScrollPicker.Direction } -> Elmnt.BaseScrollPicker.Msg vt msg -> { b | idString : String.String, lastScrollClock : Time.Posix, scrollTraceMP : Set.Set Basics.Int, finalTargetScrollPosMP : Basics.Int, scrollStopCheckTime : Basics.Int, optionIdToRecordDict : Dict.Dict String.String (Elmnt.BaseScrollPicker.Option vt msg), optionIds : List.List String.String, pseudoAnimState : Animation.Messenger.State msg, targetIdString : Maybe.Maybe String.String } -> ( { b | idString : String.String, lastScrollClock : Time.Posix, scrollTraceMP : Set.Set Basics.Int, finalTargetScrollPosMP : Basics.Int, scrollStopCheckTime : Basics.Int, optionIdToRecordDict : Dict.Dict String.String (Elmnt.BaseScrollPicker.Option vt msg), optionIds : List.List String.String, pseudoAnimState : Animation.Messenger.State msg, targetIdString : Maybe.Maybe String.String }, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "viewAsElement",
+                "comment": " Generating Element with theme setting and state value\neach function only try to some state value in the whole record\nso if you can apply this funciton with additional state you might want to use.\n\nBaseTheme DOES NOT use all the color in the Palette. the Colors used\nin the theme are 'accent', 'surface', 'background' 'on.background', 'on.surface'.\nas you can see in the long signature\n\nThis means the color listed above are should be in your own palette at least,\neven if you are using your own color accessor(function) with your theme.\n",
+                "type": "{ appModel | messageMapWith : String.String -> Elmnt.BaseScrollPicker.Msg vt msg -> msg, pickerDirection : Elmnt.BaseScrollPicker.Direction } -> Elmnt.BaseScrollPicker.BaseTheme { palette | accent : Color.Color, surface : Color.Color, background : Color.Color, on : { paletteOn | background : Color.Color, surface : Color.Color }, toElmUiColor : Color.Color -> Element.Color } msg -> { state | idString : String.String, optionIds : List.List String.String, optionIdToRecordDict : Dict.Dict String.String (Elmnt.BaseScrollPicker.Option vt msg) } -> Element.Element msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Elmnt.Theme",
+        "comment": " This module provides default / custom value data type and shows an example of\n'Palette' type with 'Color'\n\n# Default / Custom value\n\n@docs Value, isDefault, withDefault\n\n# Palette\n\n@docs Palette, defaultPalette, lightPalette\n\n",
+        "unions": [
+            {
+                "name": "Value",
+                "comment": " Each theme value can be default or custom value.\n\nThe function which uses 'Default' value should know how to evaluate or set the default value.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Default",
+                        []
+                    ],
+                    [
+                        "Custom",
+                        [
+                            "a"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Palette",
+                "comment": " Recommened Palette type is PaletteWith [`Color`](packages/avh4/elm-color/latest)\n",
+                "args": [],
+                "type": "Internal.Palette.Palette"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultPalette",
+                "comment": " default palette for [`defaultTheme`][defaultTheme] and\n[`viewElement`][viewAsElement]\n\n[defaultTheme]: /packages/jeongoon/elmnt-scrollpicker/latest/Elmnt-BaseScrollPicker#defaultTheme\n[viewAsElement]: /packages/jeongoon/elmnt-scrollpicker/latest/Elmnt-BaseScrollPicker#viewAsElement\n\n\n",
+                "type": "Elmnt.Theme.Palette"
+            },
+            {
+                "name": "isDefault",
+                "comment": " Helper function to determine the given value is an Default value\n",
+                "type": "Elmnt.Theme.Value a -> Basics.Bool"
+            },
+            {
+                "name": "lightPalette",
+                "comment": " Just an example of light palette\n\n```elm\nlightPalette : Palette\nlightPalette\n    = let\n        lowContrast\n         -- ^ lowContrast to `light' : dark colour\n            = Color.rgb255 0xE7 0xE0 0xD0\n        highContrast\n            = Color.rgb255 0x14 0x11 0x11\n\n   in\n       { primary\n             = Color.rgb255 0x3D 0x5A 0x75\n       , secondary\n             = Color.rgb255 0x82 0x8C 0x74\n       , success\n             = Color.rgb255 0x74 0xAC 0x88\n       , info\n             = Color.rgb255 0x7F 0xAE 0xE2\n       , warning\n             = Color.rgb255 0xFC 0xC3 0x5C\n       , danger\n             = Color.rgb255 0xB5 0x05 0x46\n       , accent\n             = Color.rgb255 0x05 0x45 0x76\n       , surface\n             = lowContrast\n       , background\n             = Color.rgb255 0xEC 0xFB 0xED\n\n      , on = { primary\n                   = lowContrast\n             , secondary\n                   = highContrast\n             , success\n                   = lowContrast\n             , info\n                   = highContrast\n             , warning\n                   = lowContrast\n             , danger\n                   = lowContrast\n             , accent\n                   = lowContrast\n             , surface\n                   = highContrast\n             , background\n                   = lowContrast\n             }\n       , toElmUiColor\n           = ColorUtil.toElmUiColor\n      }\n```\n",
+                "type": "Elmnt.Theme.Palette"
+            },
+            {
+                "name": "withDefault",
+                "comment": " It works similar to Maybe.withDefault\n\nHelps to set a value to some variable or field with default value if\nuser does not supply any custom value.\n\n```elm\n        fontSize\n            = Theme.withDefault\n                  defaultFontSize theme.fontSize\n```\n\nor\n\n```elm\n        fontSize\n            = theme.fontSize\n            |> Theme.withDefault defaultFontSize\n```\n\ndepends on your preference.\n\n",
+                "type": "a -> Elmnt.Theme.Value a -> a"
+            }
+        ],
+        "binops": []
+    }
+]

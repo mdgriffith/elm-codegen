@@ -1,0 +1,21 @@
+[
+    {
+        "name": "BayerMatrix",
+        "comment": "\n\n@docs matrix, matrixNormalized\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "matrix",
+                "comment": " Get a Bayer matrix with a width and height of 2^size.\n\n    import Array2D\n\n    matrix 1\n    --> Array2D.fromList\n    --> [ [ 0, 2 ]\n    --> , [ 3, 1 ]\n    --> ]\n\n    matrix 2\n    --> Array2D.fromList\n    --> [ [ 0, 8, 2, 10 ]\n    --> , [ 12, 4, 14, 6 ]\n    --> , [ 3, 11, 1, 9 ]\n    --> , [ 15, 7, 13, 5 ]\n    --> ]\n\n",
+                "type": "Basics.Int -> Array2D.Array2D Basics.Int"
+            },
+            {
+                "name": "matrixNormalized",
+                "comment": " Same as matrix but the values are normalized between 0 and 1.\n\n    import Array2D\n\n    matrixNormalized 1\n    --> Array2D.fromList\n    --> [ [ 0, 2 / 4 ]\n    --> , [ 3 / 4, 1 / 4 ]\n    --> ]\n\n    matrixNormalized 2\n    --> Array2D.fromList\n    --> [ [ 0, 8 / 16, 2 / 16, 10 / 16 ]\n    --> , [ 12 / 16, 4 / 16, 14 / 16, 6 / 16 ]\n    --> , [ 3 / 16, 11 / 16, 1 / 16, 9 / 16 ]\n    --> , [ 15 / 16, 7 / 16, 13 / 16, 5 / 16 ]\n    --> ]\n\n",
+                "type": "Basics.Int -> Array2D.Array2D Basics.Float"
+            }
+        ],
+        "binops": []
+    }
+]

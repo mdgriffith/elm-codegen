@@ -1,0 +1,80 @@
+[
+    {
+        "name": "DecodeComplete",
+        "comment": " This module provides a way to decode JSON objects while making sure that all fields are handled. The interface works similar to json-decode-pipeline. For example,\n\n    import Json.Decode as D exposing (Decoder)\n    import DecodeComplete exposing (..)\n\n    type alias User =\n        { name : String\n        , age : Int\n        }\n\n    userDecoder : Decoder User\n    userDecoder =\n        object User\n            |> required \"name\" D.string\n            |> required \"age\" D.int\n            |> discard \"email\"\n            |> complete\n\ndecodes JSON objects that have precisely the fields `name`, `age`, and `email` and turns it into a `User` record, discarding the email address.\n\nThe general usage is as follows: Start decoding the object with `object f`, where `f` is the function being called with the results. Then decode the individual fields with `require`, `discard`, `optional`, `discardOptional`. At the end, turn turn the `ObjectDecoder` into a normal `Decoder` by calling `complete` (or `discardRest` or `rest` or `restValues`).\n\n# Starting to decode\n@docs ObjectDecoder, object\n\n# Decoding fields\n@docs required, optional, discard, discardOptional, hardcoded\n\n# Finish decoding\n@docs complete, discardRest, rest, restValues\n\n# Special needs – decoding custom types and versioned data\n@docs andThen, fail\n",
+        "unions": [
+            {
+                "name": "ObjectDecoder",
+                "comment": " A decoder for JSON objects that makes sure that all fields in the JSON are handled\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "andThen",
+                "comment": " Decide how to proceed based on earlier fields. This can be useful if the JSON represents a sum type or has different versions. For example\n\n    userDecoder : Decoder ( String, Int )\n    userDecoder =\n        (object identity\n            |> required \"version\" D.int\n        )\n            |> andThen\n                (\\version ->\n                    case version of\n                        0 ->\n                            object Tuple.pair\n                                |> required \"name\" D.string\n                                |> required \"age\" D.int\n\n                        1 ->\n                            object Tuple.pair\n                                |> required \"fullName\" D.string\n                                |> required \"age\" D.int\n                                |> discard \"email\"\n\n                        _ ->\n                            fail \"unsupported version\"\n                )\n            |> complete\n\nfirst decodes the `version` field. If it is `0`, the JSON needs to have (exactly) the fields `name` and `age`. If the version is `1`, the JSON needs the fields `fullName`, `age` and `email` instead. If the version is anything else, fail.\n",
+                "type": "(a -> DecodeComplete.ObjectDecoder b) -> DecodeComplete.ObjectDecoder a -> DecodeComplete.ObjectDecoder b"
+            },
+            {
+                "name": "complete",
+                "comment": " Close the `ObjectDecoder`, turning it into a regular `Decoder`. If unhandled fields in the JSON remain, this decoder will fail.\n",
+                "type": "DecodeComplete.ObjectDecoder a -> Json.Decode.Decoder a"
+            },
+            {
+                "name": "discard",
+                "comment": " Require that a field is present, but discard its value.\n",
+                "type": "String.String -> DecodeComplete.ObjectDecoder a -> DecodeComplete.ObjectDecoder a"
+            },
+            {
+                "name": "discardOptional",
+                "comment": " Discard the value of a field (thus marking it as handled), but simply ignore if its not there.\n",
+                "type": "String.String -> DecodeComplete.ObjectDecoder a -> DecodeComplete.ObjectDecoder a"
+            },
+            {
+                "name": "discardRest",
+                "comment": " Turn the `ObjectDecoder` into a regular `Decoder`. Ignore if fields remain unhandled.\n\nThis might be useful if you only want the check that all fields are handled to occur during development. You can use `complete` in development and change it into `discardRest` without having to change anything else.\n",
+                "type": "DecodeComplete.ObjectDecoder a -> Json.Decode.Decoder a"
+            },
+            {
+                "name": "fail",
+                "comment": " An `ObjectDecoder` that always fails. Can be useful in combination with `andThen`.\n",
+                "type": "String.String -> DecodeComplete.ObjectDecoder a"
+            },
+            {
+                "name": "hardcoded",
+                "comment": " Don’t look at the JSON, simply use the given value.\n",
+                "type": "a -> DecodeComplete.ObjectDecoder (a -> b) -> DecodeComplete.ObjectDecoder b"
+            },
+            {
+                "name": "object",
+                "comment": " Start decoding a JSON object.\n",
+                "type": "a -> DecodeComplete.ObjectDecoder a"
+            },
+            {
+                "name": "optional",
+                "comment": " Decode the field given by the `String` parameter using the given (regular) `Decoder`. If the field is missing or the decoder fails, use the provided default value instead.\n",
+                "type": "String.String -> Json.Decode.Decoder a -> a -> DecodeComplete.ObjectDecoder (a -> b) -> DecodeComplete.ObjectDecoder b"
+            },
+            {
+                "name": "required",
+                "comment": " Decode the field given by the `String` parameter using the given (regular) `Decoder`. If the field is missing, the decoder fails.\n",
+                "type": "String.String -> Json.Decode.Decoder a -> DecodeComplete.ObjectDecoder (a -> b) -> DecodeComplete.ObjectDecoder b"
+            },
+            {
+                "name": "rest",
+                "comment": " Decode the remaining fields uniformly with the given `Decoder`, pass the dictionary of the results and close the `ObjectDecoder` turning it into a regular `Decoder`.\n",
+                "type": "Json.Decode.Decoder a -> DecodeComplete.ObjectDecoder (Dict.Dict String.String a -> b) -> Json.Decode.Decoder b"
+            },
+            {
+                "name": "restValues",
+                "comment": " Finish up the `ObjectDecoder`, turning it into a regular decoder. Pass a dictionary of the unhandled fields (as `Decode.Value` values).\n",
+                "type": "DecodeComplete.ObjectDecoder (Dict.Dict String.String Json.Decode.Value -> b) -> Json.Decode.Decoder b"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,16 @@
+[
+    {
+        "name": "NoInvalidRGBValues",
+        "comment": " Make sure rgb and rgb255 arguments are within the ranges [0, 1] and [0, 255] respectively.\n\nTo be used with <https://package.elm-lang.org/packages/jfmengels/elm-review/latest/>\n\n\n# Rule\n\n@docs rule\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": " Make sure that `rgb` and `rgb255` values make sense.\n\nThe rule is meant to be used with the color functions `rgb` and `rgb255` from `elm-ui`, and makes sure that the 3 arguments\npassed to `rgb` are within [0, 1] and that the arguments to `rgb255` are within [0, 255].\n\nIf you want to use this rule, add it to `config : List Rule` in `review/ReviewConfig.elm`\n\n",
+                "type": "Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    }
+]

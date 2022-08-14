@@ -1,0 +1,276 @@
+[
+    {
+        "name": "Serialize",
+        "comment": "\n\n\n# Serialization\n\nYou have three options when encoding data. You can represent the data either as json, bytes, or a string.\nHere's some advice when choosing:\n\n  - If performance is important, use `encodeToJson` and `decodeFromJson`\n  - If space efficiency is important, use `encodeToBytes` and `decodeFromBytes`\\*\n  - `encodeToString` and `decodeFromString` are good for URL safe strings but otherwise one of the other choices is probably better.\n\n\\*`encodeToJson` is more compact when encoding integers with 6 or fewer digits. You may want to try both `encodeToBytes` and `encodeToJson` and see which is better for your use case.\n\n@docs encodeToJson, decodeFromJson, encodeToBytes, decodeFromBytes, encodeToString, decodeFromString, getJsonDecoder\n\n\n# Definition\n\n@docs Codec, Error\n\n\n# Primitives\n\n@docs string, bool, float, int, unit, bytes, byte\n\n\n# Data Structures\n\n@docs maybe, list, array, dict, set, tuple, triple, result, enum\n\n\n# Records\n\n@docs RecordCodec, record, field, finishRecord\n\n\n# Custom Types\n\n@docs CustomTypeCodec, customType, variant0, variant1, variant2, variant3, variant4, variant5, variant6, variant7, variant8, finishCustomType, VariantEncoder\n\n\n# Mapping\n\n@docs map, mapValid, mapError\n\n\n# Stack unsafe\n\n@docs lazy\n\n",
+        "unions": [
+            {
+                "name": "Codec",
+                "comment": " A value that knows how to encode and decode an Elm data structure.\n",
+                "args": [
+                    "e",
+                    "a"
+                ],
+                "cases": []
+            },
+            {
+                "name": "CustomTypeCodec",
+                "comment": " A partially built codec for a custom type.\n",
+                "args": [
+                    "a",
+                    "e",
+                    "match",
+                    "v"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Error",
+                "comment": " Possible errors that can occur when decoding.\n\n  - `CustomError` - An error caused by `andThen` returning an Err value.\n  - `DataCorrupted` - This most likely will occur if you make breaking changes to your codec and try to decode old data\\*. Have a look at `How do I change my codecs and still be able to decode old data?` in the readme for how to avoid introducing breaking changes.\n  - `SerializerOutOfDate` - When encoding, this package will include a version number. This makes it possible for me to make improvements to how data gets encoded without introducing breaking changes to your codecs. This error then, says that you're trying to decode data encoded with a newer version of elm-serialize.\n\n\\*It's possible for corrupted data to still succeed in decoding (but with nonsense Elm values).\nThis is because internally we're just encoding Elm values and not storing any kind of structural information.\nSo if you encoded an Int and then a Float, and then tried decoding it as a Float and then an Int, there's no way for the decoder to know it read the data in the wrong order.\n\n",
+                "args": [
+                    "e"
+                ],
+                "cases": [
+                    [
+                        "CustomError",
+                        [
+                            "e"
+                        ]
+                    ],
+                    [
+                        "DataCorrupted",
+                        []
+                    ],
+                    [
+                        "SerializerOutOfDate",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "RecordCodec",
+                "comment": " A partially built Codec for a record.\n",
+                "args": [
+                    "e",
+                    "a",
+                    "b"
+                ],
+                "cases": []
+            },
+            {
+                "name": "VariantEncoder",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "array",
+                "comment": " Codec for serializing an `Array`\n",
+                "type": "Serialize.Codec e a -> Serialize.Codec e (Array.Array a)"
+            },
+            {
+                "name": "bool",
+                "comment": " Codec for serializing a `Bool`\n",
+                "type": "Serialize.Codec e Basics.Bool"
+            },
+            {
+                "name": "byte",
+                "comment": " Codec for serializing an integer ranging from 0 to 255.\nThis is useful if you have a small integer you want to serialize and not use up a lot of space.\n\n    import Serialize as S\n\n    type alias Color =\n        { red : Int\n        , green : Int\n        , blue : Int\n        }\n\n    color : S.Codec e Color\n    color =\n        Color.record Color\n            |> S.field .red byte\n            |> S.field .green byte\n            |> S.field .blue byte\n            |> S.finishRecord\n\n**Warning:** values greater than 255 or less than 0 will wrap around.\nSo if you encode -1 you'll get back 255 and if you encode 257 you'll get back 1.\n\n",
+                "type": "Serialize.Codec e Basics.Int"
+            },
+            {
+                "name": "bytes",
+                "comment": " Codec for serializing [`Bytes`](https://package.elm-lang.org/packages/elm/bytes/latest/).\nThis is useful in combination with `mapValid` for encoding and decoding data using some specialized format.\n\n    import Image exposing (Image)\n    import Serialize as S\n\n    imageCodec : S.Codec String Image\n    imageCodec =\n        S.bytes\n            |> S.mapValid\n                (Image.decode >> Result.fromMaybe \"Failed to decode PNG image.\")\n                Image.toPng\n\n",
+                "type": "Serialize.Codec e Bytes.Bytes"
+            },
+            {
+                "name": "customType",
+                "comment": " Starts building a `Codec` for a custom type.\nYou need to pass a pattern matching function, see the FAQ for details.\n\n    import Serialize as S\n\n    type Semaphore\n        = Red Int String Bool\n        | Yellow Float\n        | Green\n\n    semaphoreCodec : S.Codec e Semaphore\n    semaphoreCodec =\n        S.customType\n            (\\redEncoder yellowEncoder greenEncoder value ->\n                case value of\n                    Red i s b ->\n                        redEncoder i s b\n\n                    Yellow f ->\n                        yellowEncoder f\n\n                    Green ->\n                        greenEncoder\n            )\n            -- Note that removing a variant, inserting a variant before an existing one, or swapping two variants will prevent you from decoding any data you've previously encoded.\n            |> S.variant3 Red S.int S.string S.bool\n            |> S.variant1 Yellow S.float\n            |> S.variant0 Green\n            -- It's safe to add new variants here later though\n            |> S.finishCustomType\n\n",
+                "type": "match -> Serialize.CustomTypeCodec { youNeedAtLeastOneVariant : () } e match value"
+            },
+            {
+                "name": "decodeFromBytes",
+                "comment": " Run a `Codec` to turn a sequence of bytes into an Elm value.\n",
+                "type": "Serialize.Codec e a -> Bytes.Bytes -> Result.Result (Serialize.Error e) a"
+            },
+            {
+                "name": "decodeFromJson",
+                "comment": " Run a `Codec` to turn a json value encoded with `encodeToJson` into an Elm value.\n",
+                "type": "Serialize.Codec e a -> Json.Encode.Value -> Result.Result (Serialize.Error e) a"
+            },
+            {
+                "name": "decodeFromString",
+                "comment": " Run a `Codec` to turn a String encoded with `encodeToString` into an Elm value.\n",
+                "type": "Serialize.Codec e a -> String.String -> Result.Result (Serialize.Error e) a"
+            },
+            {
+                "name": "dict",
+                "comment": " Codec for serializing a `Dict`\n\n    import Serialize as S\n\n    type alias Name =\n        String\n\n    peoplesAgeCodec : S.Codec e (Dict Name Int)\n    peoplesAgeCodec =\n        S.dict S.string S.int\n\n",
+                "type": "Serialize.Codec e comparable -> Serialize.Codec e a -> Serialize.Codec e (Dict.Dict comparable a)"
+            },
+            {
+                "name": "encodeToBytes",
+                "comment": " Convert an Elm value into a sequence of bytes.\n",
+                "type": "Serialize.Codec e a -> a -> Bytes.Bytes"
+            },
+            {
+                "name": "encodeToJson",
+                "comment": " Convert an Elm value into json data.\n",
+                "type": "Serialize.Codec e a -> a -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeToString",
+                "comment": " Convert an Elm value into a string. This string contains only url safe characters, so you can do the following:\n\n    import Serialize as S\n\n    myUrl =\n        \"www.mywebsite.com/?data=\" ++ S.encodeToString S.float 1234\n\nand not risk generating an invalid url.\n\n",
+                "type": "Serialize.Codec e a -> a -> String.String"
+            },
+            {
+                "name": "enum",
+                "comment": " A codec for serializing an item from a list of possible items.\nIf you try to encode an item that isn't in the list then the first item is defaulted to.\n\n    import Serialize as S\n\n    type DaysOfWeek\n        = Monday\n        | Tuesday\n        | Wednesday\n        | Thursday\n        | Friday\n        | Saturday\n        | Sunday\n\n    daysOfWeekCodec : S.Codec e DaysOfWeek\n    daysOfWeekCodec =\n        S.enum Monday [ Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday ]\n\nNote that inserting new items in the middle of the list or removing items is a breaking change.\nIt's safe to add items to the end of the list though.\n\n",
+                "type": "a -> List.List a -> Serialize.Codec e a"
+            },
+            {
+                "name": "field",
+                "comment": " Add a field to the record we are creating a codec for.\n",
+                "type": "(a -> f) -> Serialize.Codec e f -> Serialize.RecordCodec e a (f -> b) -> Serialize.RecordCodec e a b"
+            },
+            {
+                "name": "finishCustomType",
+                "comment": " Finish creating a codec for a custom type.\n",
+                "type": "Serialize.CustomTypeCodec () e (a -> Serialize.VariantEncoder) a -> Serialize.Codec e a"
+            },
+            {
+                "name": "finishRecord",
+                "comment": " Finish creating a codec for a record.\n",
+                "type": "Serialize.RecordCodec e a a -> Serialize.Codec e a"
+            },
+            {
+                "name": "float",
+                "comment": " Codec for serializing a `Float`\n",
+                "type": "Serialize.Codec e Basics.Float"
+            },
+            {
+                "name": "getJsonDecoder",
+                "comment": " Get the decoder from a `Codec` which you can use inside a elm/json decoder.\n\n    import Json.Decode\n    import Serialize\n\n    type alias Point =\n        { x : Float, y : Float }\n\n    pointCodec : Serialize.Codec e Point\n    pointCodec =\n        Serialize.record Point\n            |> Serialize.field .x Serialize.float\n            |> Serialize.field .y Serialize.float\n            |> Serialize.finishRecord\n\n    pointDecoder : Json.Decode.Decoder Point\n    pointDecoder =\n        -- Since pointCodec doesn't have any custom error values, we can use `never` for our errorToString parameter.\n        Serialize.getJsonDecoder never pointCodec\n\n",
+                "type": "(e -> String.String) -> Serialize.Codec e a -> Json.Decode.Decoder a"
+            },
+            {
+                "name": "int",
+                "comment": " Codec for serializing an `Int`\n",
+                "type": "Serialize.Codec e Basics.Int"
+            },
+            {
+                "name": "lazy",
+                "comment": " Handle situations where you need to define a codec in terms of itself.\n\n    import Serialize as S\n\n    type Peano\n        = Peano (Maybe Peano)\n\n    {-| The compiler will complain that this function causes an infinite loop.\n    -}\n    badPeanoCodec : S.Codec e Peano\n    badPeanoCodec =\n        S.maybe badPeanoCodec |> S.map Peano (\\(Peano a) -> a)\n\n    {-| Now the compiler is happy!\n    -}\n    goodPeanoCodec : S.Codec e Peano\n    goodPeanoCodec =\n        S.maybe (S.lazy (\\() -> goodPeanoCodec)) |> S.map Peano (\\(Peano a) -> a)\n\n**Warning:** This is not stack safe.\n\nIn general if you have a type that contains itself, like with our the Peano example, then you're at risk of a stack overflow while decoding.\nEven if you're translating your nested data into a list before encoding, you're at risk, because the function translating back after decoding can cause a stack overflow if the original value was nested deeply enough.\nBe careful here, and test your codecs using elm-test with larger inputs than you ever expect to see in real life.\n\n",
+                "type": "(() -> Serialize.Codec e a) -> Serialize.Codec e a"
+            },
+            {
+                "name": "list",
+                "comment": " Codec for serializing a `List`\n\n    import Serialize as S\n\n    listOfStringsCodec : S.Codec e (List String)\n    listOfStringsCodec =\n        S.list S.string\n\n",
+                "type": "Serialize.Codec e a -> Serialize.Codec e (List.List a)"
+            },
+            {
+                "name": "map",
+                "comment": " Map from one codec to another codec\n\n    import Serialize as S\n\n    type UserId\n        = UserId Int\n\n    userIdCodec : S.Codec e UserId\n    userIdCodec =\n        S.int |> S.map UserId (\\(UserId id) -> id)\n\nNote that there's nothing preventing you from encoding Elm values that will map to some different value when you decode them.\nI recommend writing tests for Codecs that use `map` to make sure you get back the same Elm value you put in.\n[Here's some helper functions to get you started.](https://github.com/MartinSStewart/elm-geometry-serialize/blob/6f2244c28631ede1b864cb43541d1573dc628904/tests/Tests.elm#L49-L74)\n\n",
+                "type": "(a -> b) -> (b -> a) -> Serialize.Codec e a -> Serialize.Codec e b"
+            },
+            {
+                "name": "mapError",
+                "comment": " Map errors generated by `mapValid`.\n",
+                "type": "(e1 -> e2) -> Serialize.Codec e1 a -> Serialize.Codec e2 a"
+            },
+            {
+                "name": "mapValid",
+                "comment": " Map from one codec to another codec in a way that can potentially fail when decoding.\n\n    -- Email module is from https://package.elm-lang.org/packages/tricycle/elm-email/1.0.2/\n\n\n    import Email\n    import Serialize as S\n\n    emailCodec : S.Codec String Float\n    emailCodec =\n        S.string\n            |> S.mapValid\n                (\\text ->\n                    case Email.fromString text of\n                        Just email ->\n                            Ok email\n\n                        Nothing ->\n                            Err \"Invalid email\"\n                )\n                Email.toString\n\nNote that there's nothing preventing you from encoding Elm values that will produce Err when you decode them.\nI recommend writing tests for Codecs that use `mapValid` to make sure you get back the same Elm value you put in.\n[Here's some helper functions to get you started.](https://github.com/MartinSStewart/elm-geometry-serialize/blob/6f2244c28631ede1b864cb43541d1573dc628904/tests/Tests.elm#L49-L74)\n\n",
+                "type": "(a -> Result.Result e b) -> (b -> a) -> Serialize.Codec e a -> Serialize.Codec e b"
+            },
+            {
+                "name": "maybe",
+                "comment": " Codec for serializing a `Maybe`\n\n    import Serialize as S\n\n    maybeIntCodec : S.Codec e (Maybe Int)\n    maybeIntCodec =\n        S.maybe S.int\n\n",
+                "type": "Serialize.Codec e a -> Serialize.Codec e (Maybe.Maybe a)"
+            },
+            {
+                "name": "record",
+                "comment": " Start creating a codec for a record.\n\n    import Serialize as S\n\n    type alias Point =\n        { x : Int\n        , y : Int\n        }\n\n    pointCodec : S.Codec e Point\n    pointCodec =\n        S.record Point\n            -- Note that adding, removing, or reordering fields will prevent you from decoding any data you've previously encoded.\n            |> S.field .x S.int\n            |> S.field .y S.int\n            |> S.finishRecord\n\n",
+                "type": "b -> Serialize.RecordCodec e a b"
+            },
+            {
+                "name": "result",
+                "comment": " Codec for serializing a `Result`\n",
+                "type": "Serialize.Codec e error -> Serialize.Codec e value -> Serialize.Codec e (Result.Result error value)"
+            },
+            {
+                "name": "set",
+                "comment": " Codec for serializing a `Set`\n",
+                "type": "Serialize.Codec e comparable -> Serialize.Codec e (Set.Set comparable)"
+            },
+            {
+                "name": "string",
+                "comment": " Codec for serializing a `String`\n",
+                "type": "Serialize.Codec e String.String"
+            },
+            {
+                "name": "triple",
+                "comment": " Codec for serializing a tuple with 3 elements\n\n    import Serialize as S\n\n    pointCodec : S.Codec e ( Float, Float, Float )\n    pointCodec =\n        S.tuple S.float S.float S.float\n\n",
+                "type": "Serialize.Codec e a -> Serialize.Codec e b -> Serialize.Codec e c -> Serialize.Codec e ( a, b, c )"
+            },
+            {
+                "name": "tuple",
+                "comment": " Codec for serializing a tuple with 2 elements\n\n    import Serialize as S\n\n    pointCodec : S.Codec e ( Float, Float )\n    pointCodec =\n        S.tuple S.float S.float\n\n",
+                "type": "Serialize.Codec e a -> Serialize.Codec e b -> Serialize.Codec e ( a, b )"
+            },
+            {
+                "name": "unit",
+                "comment": " Codec for serializing `()` (aka `Unit`).\n",
+                "type": "Serialize.Codec e ()"
+            },
+            {
+                "name": "variant0",
+                "comment": " Define a variant with 0 parameters for a custom type.\n",
+                "type": "v -> Serialize.CustomTypeCodec z e (Serialize.VariantEncoder -> a) v -> Serialize.CustomTypeCodec () e a v"
+            },
+            {
+                "name": "variant1",
+                "comment": " Define a variant with 1 parameters for a custom type.\n",
+                "type": "(a -> v) -> Serialize.Codec error a -> Serialize.CustomTypeCodec z error ((a -> Serialize.VariantEncoder) -> b) v -> Serialize.CustomTypeCodec () error b v"
+            },
+            {
+                "name": "variant2",
+                "comment": " Define a variant with 2 parameters for a custom type.\n",
+                "type": "(a -> b -> v) -> Serialize.Codec error a -> Serialize.Codec error b -> Serialize.CustomTypeCodec z error ((a -> b -> Serialize.VariantEncoder) -> c) v -> Serialize.CustomTypeCodec () error c v"
+            },
+            {
+                "name": "variant3",
+                "comment": " Define a variant with 3 parameters for a custom type.\n",
+                "type": "(a -> b -> c -> v) -> Serialize.Codec error a -> Serialize.Codec error b -> Serialize.Codec error c -> Serialize.CustomTypeCodec z error ((a -> b -> c -> Serialize.VariantEncoder) -> partial) v -> Serialize.CustomTypeCodec () error partial v"
+            },
+            {
+                "name": "variant4",
+                "comment": " Define a variant with 4 parameters for a custom type.\n",
+                "type": "(a -> b -> c -> d -> v) -> Serialize.Codec error a -> Serialize.Codec error b -> Serialize.Codec error c -> Serialize.Codec error d -> Serialize.CustomTypeCodec z error ((a -> b -> c -> d -> Serialize.VariantEncoder) -> partial) v -> Serialize.CustomTypeCodec () error partial v"
+            },
+            {
+                "name": "variant5",
+                "comment": " Define a variant with 5 parameters for a custom type.\n",
+                "type": "(a -> b -> c -> d -> e -> v) -> Serialize.Codec error a -> Serialize.Codec error b -> Serialize.Codec error c -> Serialize.Codec error d -> Serialize.Codec error e -> Serialize.CustomTypeCodec z error ((a -> b -> c -> d -> e -> Serialize.VariantEncoder) -> partial) v -> Serialize.CustomTypeCodec () error partial v"
+            },
+            {
+                "name": "variant6",
+                "comment": " Define a variant with 6 parameters for a custom type.\n",
+                "type": "(a -> b -> c -> d -> e -> f -> v) -> Serialize.Codec error a -> Serialize.Codec error b -> Serialize.Codec error c -> Serialize.Codec error d -> Serialize.Codec error e -> Serialize.Codec error f -> Serialize.CustomTypeCodec z error ((a -> b -> c -> d -> e -> f -> Serialize.VariantEncoder) -> partial) v -> Serialize.CustomTypeCodec () error partial v"
+            },
+            {
+                "name": "variant7",
+                "comment": " Define a variant with 7 parameters for a custom type.\n",
+                "type": "(a -> b -> c -> d -> e -> f -> g -> v) -> Serialize.Codec error a -> Serialize.Codec error b -> Serialize.Codec error c -> Serialize.Codec error d -> Serialize.Codec error e -> Serialize.Codec error f -> Serialize.Codec error g -> Serialize.CustomTypeCodec z error ((a -> b -> c -> d -> e -> f -> g -> Serialize.VariantEncoder) -> partial) v -> Serialize.CustomTypeCodec () error partial v"
+            },
+            {
+                "name": "variant8",
+                "comment": " Define a variant with 8 parameters for a custom type.\n",
+                "type": "(a -> b -> c -> d -> e -> f -> g -> h -> v) -> Serialize.Codec error a -> Serialize.Codec error b -> Serialize.Codec error c -> Serialize.Codec error d -> Serialize.Codec error e -> Serialize.Codec error f -> Serialize.Codec error g -> Serialize.Codec error h -> Serialize.CustomTypeCodec z error ((a -> b -> c -> d -> e -> f -> g -> h -> Serialize.VariantEncoder) -> partial) v -> Serialize.CustomTypeCodec () error partial v"
+            }
+        ],
+        "binops": []
+    }
+]

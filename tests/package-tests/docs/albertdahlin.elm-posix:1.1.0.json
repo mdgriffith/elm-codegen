@@ -1,0 +1,245 @@
+[
+    {
+        "name": "Posix.IO",
+        "comment": "\n\n\n# IO Monad\n\n@docs IO, return, map, do, andThen, combine, exitOnError\n\n\n# Create IO Program\n\n@docs Process, program, PosixProgram\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "IO",
+                "comment": " ",
+                "args": [
+                    "a"
+                ],
+                "type": "Internal.Effect.IO a"
+            },
+            {
+                "name": "PosixProgram",
+                "comment": " ",
+                "args": [],
+                "type": "Internal.Program.PosixProgram"
+            },
+            {
+                "name": "Process",
+                "comment": " ",
+                "args": [],
+                "type": "{ argv : List.List String.String, pid : Basics.Int, env : Dict.Dict String.String String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "andThen",
+                "comment": " Compose IO actions, `andThen` style\n\n    File.open \"file.txt\"\n        |> exitOnError identity\n        |> andThen\n            (\\fd ->\n                File.write fd \"Hello, World\"\n            )\n\n",
+                "type": "(a -> Posix.IO.IO b) -> Posix.IO.IO a -> Posix.IO.IO b"
+            },
+            {
+                "name": "combine",
+                "comment": " Perform IO in sequence\n",
+                "type": "List.List (Posix.IO.IO a) -> Posix.IO.IO (List.List a)"
+            },
+            {
+                "name": "do",
+                "comment": " Compose IO actions, do-notation style.\n\n    do (File.open \"file.txt\" |> exitOnError identity) <| \\fd ->\n    do (File.write fd \"Hello, World\")\n\n",
+                "type": "Posix.IO.IO a -> (a -> Posix.IO.IO b) -> Posix.IO.IO b"
+            },
+            {
+                "name": "exitOnError",
+                "comment": " Print to stderr and exit program on `Err`\n",
+                "type": "(error -> String.String) -> Posix.IO.IO (Result.Result error a) -> Posix.IO.IO a"
+            },
+            {
+                "name": "map",
+                "comment": " ",
+                "type": "(a -> b) -> Posix.IO.IO a -> Posix.IO.IO b"
+            },
+            {
+                "name": "program",
+                "comment": "\n\n    module HelloUser exposing (program)\n\n    import Dict exposing (Dict)\n    import Posix.IO as IO exposing (IO, Process)\n    import Posix.IO.File as File\n\n    helloUser : Process -> IO ()\n    helloUser process =\n        let\n            userName =\n                Dict.get \"USER\" process.env\n                    |> Maybe.withDefault \"Unknown\"\n        in\n        File.write File.stdOut userName\n\n    program : IO.PosixProgram\n    program =\n        IO.program helloUser\n\n",
+                "type": "(Posix.IO.Process -> Posix.IO.IO ()) -> Internal.Program.PosixProgram"
+            },
+            {
+                "name": "return",
+                "comment": " ",
+                "type": "a -> Posix.IO.IO a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Posix.IO.File",
+        "comment": "\n\n\n# Common file IO\n\n@docs Filename\n\n@docs contentsOf, writeContentsTo, stat, Stats\n\n\n# Directory IO\n\n@docs readDir, Entry, mkDir\n\n\n# Posix Stream IO\n\n@docs FD, Flag, open\n@docs flagRead, flagReadPlus, flagWrite, flagWritePlus, flagAppend, flagAppendPlus\n\n@docs read, write\n\n\n# Standard IO streams\n\n@docs stdErr, stdIn, stdOut\n\n",
+        "unions": [
+            {
+                "name": "Entry",
+                "comment": " Directory entry\n",
+                "args": [],
+                "cases": [
+                    [
+                        "File",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Directory",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Other",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "FD",
+                "comment": " File Descriptor\n",
+                "args": [
+                    "ability"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Flag",
+                "comment": " ",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Filename",
+                "comment": " ",
+                "args": [],
+                "type": "String.String"
+            },
+            {
+                "name": "Stats",
+                "comment": " File stats\n",
+                "args": [],
+                "type": "{ size : Basics.Int, atime : Basics.Float, mtime : Basics.Float, ctime : Basics.Float }"
+            }
+        ],
+        "values": [
+            {
+                "name": "contentsOf",
+                "comment": " Read the contents of a file.\n",
+                "type": "Posix.IO.File.Filename -> Posix.IO.File.IO (Result.Result String.String String.String)"
+            },
+            {
+                "name": "flagAppend",
+                "comment": " Open file for appending (writing at the end of a file). (`a`)\n\nThe file is created if it does not exist.\nThe stream is positioned at the end of the file.\n\n",
+                "type": "Posix.IO.File.Flag (Posix.IO.File.Writable {})"
+            },
+            {
+                "name": "flagAppendPlus",
+                "comment": " Open file for reading and appending. (`a+`)\n\nThe file is created if it does not exist.\nThe stream is positioned at the end of the file.\n\n",
+                "type": "Posix.IO.File.Flag (Posix.IO.File.Readable (Posix.IO.File.Writable {}))"
+            },
+            {
+                "name": "flagRead",
+                "comment": " Open file for reading. (`r`)\n\nAn error occurs if the file does not exist.\nThe stream is positioned at the beginning of the file.\n\n",
+                "type": "Posix.IO.File.Flag (Posix.IO.File.Readable (Posix.IO.File.Seekable {}))"
+            },
+            {
+                "name": "flagReadPlus",
+                "comment": " Open file for reading and writing. (`r+`)\n\nAn exception occurs if the file does not exist.\nThe stream is positioned at the beginning of the file.\n\n",
+                "type": "Posix.IO.File.Flag (Posix.IO.File.Readable (Posix.IO.File.Writable (Posix.IO.File.Seekable {})))"
+            },
+            {
+                "name": "flagWrite",
+                "comment": " Open file for writing. (`w`)\n\nThe file is created (if it does not exist) or truncated (if it exists).\nThe stream is positioned at the beginning of the file.\n\n",
+                "type": "Posix.IO.File.Flag (Posix.IO.File.Writable (Posix.IO.File.Seekable {}))"
+            },
+            {
+                "name": "flagWritePlus",
+                "comment": " Open file for reading and writing. (`w+`)\n\nThe file is created (if it does not exist) or truncated (if it exists).\nThe stream is positioned at the beginning of the file.\n\n",
+                "type": "Posix.IO.File.Flag (Posix.IO.File.Readable (Posix.IO.File.Writable (Posix.IO.File.Seekable {})))"
+            },
+            {
+                "name": "mkDir",
+                "comment": " Create a dir.\n\n    mkdir <recursive> <name>\n\n",
+                "type": "Basics.Bool -> String.String -> Posix.IO.File.IO ()"
+            },
+            {
+                "name": "open",
+                "comment": " Open a file\n",
+                "type": "Posix.IO.File.Filename -> Posix.IO.File.Flag a -> Posix.IO.File.IO (Result.Result String.String (Posix.IO.File.FD a))"
+            },
+            {
+                "name": "read",
+                "comment": " Read a file\n",
+                "type": "Posix.IO.File.FD (Posix.IO.File.Readable a) -> Posix.IO.File.IO String.String"
+            },
+            {
+                "name": "readDir",
+                "comment": " Read the contents of a directory.\n",
+                "type": "String.String -> Posix.IO.File.IO (Result.Result String.String (List.List Posix.IO.File.Entry))"
+            },
+            {
+                "name": "stat",
+                "comment": " Read file stats\n",
+                "type": "Posix.IO.File.Filename -> Posix.IO.File.IO (Result.Result String.String Posix.IO.File.Stats)"
+            },
+            {
+                "name": "stdErr",
+                "comment": " Standard Error\n",
+                "type": "Posix.IO.File.FD (Posix.IO.File.Writable {})"
+            },
+            {
+                "name": "stdIn",
+                "comment": " Standard In\n",
+                "type": "Posix.IO.File.FD (Posix.IO.File.Readable {})"
+            },
+            {
+                "name": "stdOut",
+                "comment": " Standard Out\n",
+                "type": "Posix.IO.File.FD (Posix.IO.File.Writable {})"
+            },
+            {
+                "name": "write",
+                "comment": " Write to a file\n",
+                "type": "Posix.IO.File.FD (Posix.IO.File.Writable a) -> String.String -> Posix.IO.File.IO ()"
+            },
+            {
+                "name": "writeContentsTo",
+                "comment": " Write contents to a file. The Program will fail\nif there is a problem.\n",
+                "type": "Posix.IO.File.Filename -> String.String -> Posix.IO.File.IO ()"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Posix.IO.Process",
+        "comment": "\n\n\n# Process Operations\n\n@docs exit, sleep, print, logErr\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "exit",
+                "comment": " Exit Program with a status.\n",
+                "type": "Basics.Int -> Posix.IO.Process.IO ()"
+            },
+            {
+                "name": "logErr",
+                "comment": " ",
+                "type": "String.String -> Posix.IO.Process.IO ()"
+            },
+            {
+                "name": "print",
+                "comment": " ",
+                "type": "String.String -> Posix.IO.Process.IO ()"
+            },
+            {
+                "name": "sleep",
+                "comment": " ",
+                "type": "Basics.Float -> Posix.IO.Process.IO ()"
+            }
+        ],
+        "binops": []
+    }
+]

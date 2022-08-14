@@ -1,0 +1,201 @@
+[
+    {
+        "name": "Embed.Youtube",
+        "comment": " Create an embedded Youtube video using the [Iframe Player Api](https://developers.google.com/youtube/iframe_api_reference)\n\n\n# Youtube\n\n@docs Youtube, Attribute\n\n\n# Creation\n\n@docs fromUrl, fromString\n\n\n# Attributes\n\nCheck Embed.Youtube.Attributes for all the available Attribute helpers\n\n@docs attributes\n\n\n# Html\n\n@docs toHtml\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Attribute",
+                "comment": " The type of a Youtube Attribute\n",
+                "args": [],
+                "type": "Embed.Youtube.Internal.Attribute.Attribute"
+            },
+            {
+                "name": "Youtube",
+                "comment": " The type of an Youtube image\n",
+                "args": [],
+                "type": "Embed.Youtube.Internal.Youtube.Youtube"
+            }
+        ],
+        "values": [
+            {
+                "name": "attributes",
+                "comment": " Add Attributes to your Youtube type\n",
+                "type": "List.List Embed.Youtube.Attribute -> Embed.Youtube.Youtube -> Embed.Youtube.Youtube"
+            },
+            {
+                "name": "fromString",
+                "comment": " Create a new Youtube from a string representing a VideoId\n\n**There is no validation on the input**\n\n",
+                "type": "String.String -> Embed.Youtube.Youtube"
+            },
+            {
+                "name": "fromUrl",
+                "comment": " Attempt to create a new Youtube\n\nfrom an (Youtube) Url containing the v= param.\n<https://www.youtube.com/watch?v=0D7GrGrN1bg>\n\n    import Url\n\n    Url.fromString \"https://www.youtube.com/watch?v=0D7GrGrN1bg\"\n    |> Maybe.andThen fromUrl\n    --> Just <| fromString \"0D7GrGrN1bg\"\n\nor from shortend links such as;\n<https://youtu.be/0D7GrGrN1bg>\n\n    import Url\n\n    Url.fromString \"https://youtu.be/0D7GrGrN1bg\"\n    |> Maybe.andThen fromUrl\n    --> Just <| fromString \"0D7GrGrN1bg\"\n\n",
+                "type": "Url.Url -> Maybe.Maybe Embed.Youtube.Youtube"
+            },
+            {
+                "name": "toHtml",
+                "comment": " Renders an iFrame based on your settings\n",
+                "type": "Embed.Youtube.Youtube -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Embed.Youtube.Attributes",
+        "comment": " Helper functions for Youtube Embed Attributes.\n\n\n# Sizing\n\n@docs width, height\n\n\n# Playback\n\n@docs autoplay, loop, start, end, mute\n\n\n# Styling\n\n@docs colorRed, colorWhite, modestBranding, playsInline, hideControls, disableKeyboard, disableFullscreen, disableVideoAnnotations\n\n\n# Language\n\n@docs language\n\n\n# Closed Captions\n\n@docs closedCaptionsLanguagePreference, closedCaptionsLanguageAlwaysShow\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "autoplay",
+                "comment": " Specify whether the initial video will automatically start to play when the player loads\n",
+                "type": "Embed.Youtube.Internal.Attribute.Attribute"
+            },
+            {
+                "name": "closedCaptionsLanguageAlwaysShow",
+                "comment": " Show closed captions by default, even if the user has turned captions off.\n\nThe default behavior is based on user preference.\n\n",
+                "type": "Embed.Youtube.Internal.Attribute.Attribute"
+            },
+            {
+                "name": "closedCaptionsLanguagePreference",
+                "comment": " Specify the default language that the player will use to display captions.\n\nSet the parameter's value to an [ISO 639-1 two-letter language code](https://www.loc.gov/standards/iso639-2/php/code_list.php).\n\n",
+                "type": "String.String -> Embed.Youtube.Internal.Attribute.Attribute"
+            },
+            {
+                "name": "colorRed",
+                "comment": " This specifies the color that will be used in the player's video progress bar to highlight the amount of the video that the viewer has already seen.\n\nThe player uses the color red in the video progress bar.\n\n",
+                "type": "Embed.Youtube.Internal.Attribute.Attribute"
+            },
+            {
+                "name": "colorWhite",
+                "comment": " This specifies the color that will be used in the player's video progress bar to highlight the amount of the video that the viewer has already seen.\n\nThe player uses the color white in the video progress bar.\n\n",
+                "type": "Embed.Youtube.Internal.Attribute.Attribute"
+            },
+            {
+                "name": "disableFullscreen",
+                "comment": " Prevents the fullscreen button from displaying in the player.\n",
+                "type": "Embed.Youtube.Internal.Attribute.Attribute"
+            },
+            {
+                "name": "disableKeyboard",
+                "comment": " Setting this causes the player to not respond to keyboard controls.\n",
+                "type": "Embed.Youtube.Internal.Attribute.Attribute"
+            },
+            {
+                "name": "disableVideoAnnotations",
+                "comment": " Prevents video annotations from being shown.\n",
+                "type": "Embed.Youtube.Internal.Attribute.Attribute"
+            },
+            {
+                "name": "end",
+                "comment": " This parameter specifies the time, measured in seconds from the start of the video, when the player should stop playing the video. The parameter value is a positive integer.\n\nNote that the time is measured from the beginning of the video and not from the value of the `start` parameter.\n\n",
+                "type": "Basics.Int -> Embed.Youtube.Internal.Attribute.Attribute"
+            },
+            {
+                "name": "height",
+                "comment": " Set the height of the Embedded Youtube player\n",
+                "type": "Basics.Int -> Embed.Youtube.Internal.Attribute.Attribute"
+            },
+            {
+                "name": "hideControls",
+                "comment": " Indicates whether the video player controls are displayed.\n",
+                "type": "Embed.Youtube.Internal.Attribute.Attribute"
+            },
+            {
+                "name": "language",
+                "comment": " Sets the player's interface language\n\nSet the parameter's value to an [ISO 639-1 two-letter language code](https://www.loc.gov/standards/iso639-2/php/code_list.php).\n\n",
+                "type": "String.String -> Embed.Youtube.Internal.Attribute.Attribute"
+            },
+            {
+                "name": "loop",
+                "comment": " This setting causes the player to play the initial video again and again.\n",
+                "type": "Embed.Youtube.Internal.Attribute.Attribute"
+            },
+            {
+                "name": "modestBranding",
+                "comment": " This lets you use a YouTube player that does not show a YouTube logo.\n\nNote that a small YouTube text label will still display in the upper-right corner of a paused video when the user's mouse pointer hovers over the player.\n\n",
+                "type": "Embed.Youtube.Internal.Attribute.Attribute"
+            },
+            {
+                "name": "mute",
+                "comment": " Mute all sound\n",
+                "type": "Embed.Youtube.Internal.Attribute.Attribute"
+            },
+            {
+                "name": "playsInline",
+                "comment": " This controls whether videos play inline or fullscreen in an HTML5 player on iOS.\n",
+                "type": "Embed.Youtube.Internal.Attribute.Attribute"
+            },
+            {
+                "name": "start",
+                "comment": " This causes the player to begin playing the video at the given number of seconds from the start of the video.\n",
+                "type": "Basics.Int -> Embed.Youtube.Internal.Attribute.Attribute"
+            },
+            {
+                "name": "width",
+                "comment": " Set the width of the Embedded Youtube player\n",
+                "type": "Basics.Int -> Embed.Youtube.Internal.Attribute.Attribute"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Embed.Youtube.Thumbnail",
+        "comment": "\n\n@docs toUrl\n\n@docs ThumbnailVariant\n\n",
+        "unions": [
+            {
+                "name": "ThumbnailVariant",
+                "comment": "\n\n  - Player Background Thumbnail (480x360):\n\n    `PlayerBackground`\n\n    ![PlayerBackground](https://img.youtube.com/vi/9bZkp7q19f0/0.jpg)\n\n  - Video frames thumbnails (120x90)\n\n    `First | Second | Third`\n\n    ![First](https://img.youtube.com/vi/9bZkp7q19f0/1.jpg)\n    ![Second](https://img.youtube.com/vi/9bZkp7q19f0/2.jpg)\n    ![Third](https://img.youtube.com/vi/9bZkp7q19f0/3.jpg)\n\n  - Lowest quality thumbnail (120x90)\n\n    `LowQuality`\n\n    ![LowQuality](https://img.youtube.com/vi/9bZkp7q19f0/sddefault.jpg)\n\n  - Medium quality thumbnail (320x180)\n\n    `MediumQuality`\n\n    ![MediumQuality](https://img.youtube.com/vi/9bZkp7q19f0/mqdefault.jpg)\n\n  - High quality thumbnail (480x360)\n\n    `HighQuality`\n\n    ![HighQuality](https://img.youtube.com/vi/9bZkp7q19f0/hqdefault.jpg)\n\n  - Standard quality thumbnail (640x480)\n\n    `StandardQuality`\n\n    ![StandardQuality](https://img.youtube.com/vi/9bZkp7q19f0/default.jpg)\n\n  - Unscaled thumbnail resolution\n\n    `MaximumQuality`\n\n    ![MaximumQuality](https://img.youtube.com/vi/9bZkp7q19f0/maxresdefault.jpg)\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "PlayerBackground",
+                        []
+                    ],
+                    [
+                        "First",
+                        []
+                    ],
+                    [
+                        "Second",
+                        []
+                    ],
+                    [
+                        "Third",
+                        []
+                    ],
+                    [
+                        "LowQuality",
+                        []
+                    ],
+                    [
+                        "MediumQuality",
+                        []
+                    ],
+                    [
+                        "HighQuality",
+                        []
+                    ],
+                    [
+                        "StandardQuality",
+                        []
+                    ],
+                    [
+                        "MaximumQuality",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toUrl",
+                "comment": " Grab a thumbnail from your Youtube video\n",
+                "type": "Embed.Youtube.Thumbnail.ThumbnailVariant -> Embed.Youtube.Internal.Youtube.Youtube -> Url.Url"
+            }
+        ],
+        "binops": []
+    }
+]

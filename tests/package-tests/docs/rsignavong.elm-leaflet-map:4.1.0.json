@@ -1,0 +1,181 @@
+[
+    {
+        "name": "LeafletMap",
+        "comment": " This library will load the Custom Html Element into the DOM.\n\n\n# HTML Element\n\n@docs view\n\n\n# Attributes\n\n@docs latitude, longitude, mapId, scale, tileLayer\n@docs className, defaultPopup, iconHeight, iconUrl, iconWidth, showDefaultMarker, showScale\n@docs bubblingMouseEvents, color, dashArray, dashOffset, fill, fillColor, fillOpacity, fillRule, lineCap, lineJoin, opacity, radius, stroke, weight\n@docs userLatitude, userLongitude, userIconUrl, userIconWidth, userIconHeight\n\n\n# HTML Element\n\n@docs marker, circle\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "bubblingMouseEvents",
+                "comment": " bubblingMouseEvents\n",
+                "type": "Basics.Bool -> Html.Attribute msg"
+            },
+            {
+                "name": "circle",
+                "comment": " Add leaflet-circle child node}\n",
+                "type": "List.List (Html.Attribute msg) -> List.List (Html.Html msg) -> Html.Html msg"
+            },
+            {
+                "name": "className",
+                "comment": " className\n",
+                "type": "String.String -> Html.Attribute msg"
+            },
+            {
+                "name": "color",
+                "comment": " color\n",
+                "type": "String.String -> Html.Attribute msg"
+            },
+            {
+                "name": "dashArray",
+                "comment": " dashArray\n",
+                "type": "String.String -> Html.Attribute msg"
+            },
+            {
+                "name": "dashOffset",
+                "comment": " dashOffset\n",
+                "type": "String.String -> Html.Attribute msg"
+            },
+            {
+                "name": "defaultPopup",
+                "comment": " defaultPopup\n",
+                "type": "String.String -> Html.Attribute msg"
+            },
+            {
+                "name": "fill",
+                "comment": " fill\n",
+                "type": "Basics.Bool -> Html.Attribute msg"
+            },
+            {
+                "name": "fillColor",
+                "comment": " fillColor\n",
+                "type": "String.String -> Html.Attribute msg"
+            },
+            {
+                "name": "fillOpacity",
+                "comment": " fillOpacity\n",
+                "type": "Basics.Float -> Html.Attribute msg"
+            },
+            {
+                "name": "fillRule",
+                "comment": " fillRule\n",
+                "type": "String.String -> Html.Attribute msg"
+            },
+            {
+                "name": "iconHeight",
+                "comment": " iconHeight\n",
+                "type": "Basics.Int -> Html.Attribute msg"
+            },
+            {
+                "name": "iconUrl",
+                "comment": " iconUrl\n",
+                "type": "String.String -> Html.Attribute msg"
+            },
+            {
+                "name": "iconWidth",
+                "comment": " iconWidth\n",
+                "type": "Basics.Int -> Html.Attribute msg"
+            },
+            {
+                "name": "latitude",
+                "comment": " latitude\n",
+                "type": "Basics.Float -> Html.Attribute msg"
+            },
+            {
+                "name": "lineCap",
+                "comment": " lineCap\n",
+                "type": "String.String -> Html.Attribute msg"
+            },
+            {
+                "name": "lineJoin",
+                "comment": " lineJoin\n",
+                "type": "String.String -> Html.Attribute msg"
+            },
+            {
+                "name": "longitude",
+                "comment": " longitude\n",
+                "type": "Basics.Float -> Html.Attribute msg"
+            },
+            {
+                "name": "mapId",
+                "comment": " mapId\n",
+                "type": "String.String -> Html.Attribute msg"
+            },
+            {
+                "name": "marker",
+                "comment": " Add leaflet-marker child node\n",
+                "type": "List.List (Html.Attribute msg) -> List.List (Html.Html msg) -> Html.Html msg"
+            },
+            {
+                "name": "opacity",
+                "comment": " opacity\n",
+                "type": "Basics.Float -> Html.Attribute msg"
+            },
+            {
+                "name": "radius",
+                "comment": " radius\n",
+                "type": "Basics.Float -> Html.Attribute msg"
+            },
+            {
+                "name": "scale",
+                "comment": " scale\n",
+                "type": "Basics.Int -> Html.Attribute msg"
+            },
+            {
+                "name": "showDefaultMarker",
+                "comment": " showDefaultMarker\n",
+                "type": "Basics.Bool -> Html.Attribute msg"
+            },
+            {
+                "name": "showScale",
+                "comment": " showScale\n",
+                "type": "Basics.Bool -> Html.Attribute msg"
+            },
+            {
+                "name": "stroke",
+                "comment": " stroke\n",
+                "type": "Basics.Bool -> Html.Attribute msg"
+            },
+            {
+                "name": "tileLayer",
+                "comment": " tileLayer\n",
+                "type": "String.String -> Html.Attribute msg"
+            },
+            {
+                "name": "userIconHeight",
+                "comment": " userIconHeight\n",
+                "type": "Basics.Int -> Html.Attribute msg"
+            },
+            {
+                "name": "userIconUrl",
+                "comment": " userIconUrl\n",
+                "type": "String.String -> Html.Attribute msg"
+            },
+            {
+                "name": "userIconWidth",
+                "comment": " userIconWidth\n",
+                "type": "Basics.Int -> Html.Attribute msg"
+            },
+            {
+                "name": "userLatitude",
+                "comment": " userLatitude\n",
+                "type": "Basics.Float -> Html.Attribute msg"
+            },
+            {
+                "name": "userLongitude",
+                "comment": " userLongitude\n",
+                "type": "Basics.Float -> Html.Attribute msg"
+            },
+            {
+                "name": "view",
+                "comment": " Renders a Leaflet map\n\n    Leaflet.view\n        [ LeafletMap.mapId \"mapid\"\n        , LeafletMap.className \"map\"\n        , LeafletMap.defaultPopup \"Panda was THERE!\"\n        , LeafletMap.iconHeight 64\n        , LeafletMap.iconWidth 64\n        , LeafletMap.iconUrl \"https://image.flaticon.com/icons/svg/194/194648.svg\"\n        , LeafletMap.latitude 51.505\n        , LeafletMap.longitude -0.09\n        , LeafletMap.scale 13\n        , LeafletMap.showDefaultMarker True\n        , LeafletMap.showScale True\n        , LeafletMap.tileLayer \"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png\"\n        ]\n        [ ( \"marker\"\n          , Leaflet.marker\n                [ LeafletMap.iconUrl \"https://image.flaticon.com/icons/svg/194/194648.svg\"\n                , LeafletMap.iconHeight 64\n                , LeafletMap.iconWidth 64\n                , LeafletMap.latitude 51.505\n                , LeafletMap.longitude -0.12\n                ]\n                [ text \"... and THERE!\"\n                ]\n          )\n        ]\n\n",
+                "type": "List.List (Html.Attribute msg) -> List.List ( String.String, Html.Html msg ) -> Html.Html msg"
+            },
+            {
+                "name": "weight",
+                "comment": " weight\n",
+                "type": "Basics.Float -> Html.Attribute msg"
+            }
+        ],
+        "binops": []
+    }
+]

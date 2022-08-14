@@ -1,0 +1,16 @@
+[
+    {
+        "name": "OnlyAllSingleUseTypeVarsEndWith_",
+        "comment": "\n\n@docs rule\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": " Reports in types of module scope declarations\n\n  - single-use type variables that don't have a -\\_ suffix\n  - multi-use type variables that have a -\\_ suffix\n\n```\nconfig =\n    [ OnlyAllSingleUseTypeVarsEndWith_.rule\n    ]\n```\n\n\n### Fail\n\n    empty : List element\n\n    drop : Int -> List element_ -> List element_\n\n\n### Success\n\n    empty : List element_\n\n    drop : Int -> List element -> List element\n\ny\n\n\n## Why you might not want this\n\n  - You want to keep the conventional way of naming type variables for consistency?\n  - You already use the -\\_ suffix in possibly multi-use type variables?\n  - You dislike having possibly multi-use -\\_ suffixed type variables in your let declarations?\n\n",
+                "type": "Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    }
+]

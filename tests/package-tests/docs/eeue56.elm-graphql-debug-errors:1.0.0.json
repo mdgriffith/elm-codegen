@@ -1,0 +1,16 @@
+[
+    {
+        "name": "DebugView.Graphql",
+        "comment": "\n@docs graphqlErrorToString\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "graphqlErrorToString",
+                "comment": " Turn a GraphQL Http Error into a string in English\n",
+                "type": "Graphql.Http.Error a -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

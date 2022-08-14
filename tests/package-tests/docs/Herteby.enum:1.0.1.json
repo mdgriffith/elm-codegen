@@ -1,0 +1,48 @@
+[
+    {
+        "name": "Enum",
+        "comment": "\n\n\n# String-based Enums\n\n@docs Enum, create, fromIterator\n\n\n# Int-based Enums\n\n@docs EnumInt, createInt, fromIntIterator\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Enum",
+                "comment": " An `Enum` is a record containing common helper functions\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ toString : a -> String.String, fromString : String.String -> Maybe.Maybe a, encode : a -> Json.Decode.Value, decoder : Json.Decode.Decoder a, list : List.List ( String.String, a ) }"
+            },
+            {
+                "name": "EnumInt",
+                "comment": " Enums based on `Int` instead of `String`\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ toInt : a -> Basics.Int, fromInt : Basics.Int -> Maybe.Maybe a, encode : a -> Json.Decode.Value, decoder : Json.Decode.Decoder a, list : List.List ( Basics.Int, a ) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "create",
+                "comment": " Create an `Enum` from a list of `String` and variants\n\n    type Fruit\n        = Apple\n        | Banana\n        | Mango\n\n    fruit : Enum Fruit\n    fruit =\n        Enum.create\n            [ ( \"Apple\", Apple )\n            , ( \"Banana\", Banana )\n            , ( \"Mango\", Mango )\n            ]\n\n",
+                "type": "List.List ( String.String, a ) -> Enum.Enum a"
+            },
+            {
+                "name": "createInt",
+                "comment": " Create an `EnumInt` from a list of `Int` and variants\n\n    type Fruit\n        = Apple\n        | Banana\n        | Mango\n\n    fruit : EnumInt Fruit\n    fruit =\n        Enum.createInt\n            [ ( 1, Apple )\n            , ( 2, Banana )\n            , ( 3, Mango )\n            ]\n\n",
+                "type": "List.List ( Basics.Int, a ) -> Enum.EnumInt a"
+            },
+            {
+                "name": "fromIntIterator",
+                "comment": " Create an `EnumInt` from an iterator function and a starting variant\n\n    type Fruit\n        = Apple\n        | Banana\n        | Mango\n\n    enum : EnumInt Fruit\n    enum =\n        Enum.fromIntIterator\n            (\\a ->\n                case a of\n                    Mango ->\n                        ( 1, Apple )\n\n                    Apple ->\n                        ( 2, Banana )\n\n                    Banana ->\n                        ( 3, Mango )\n            )\n            Apple\n\n",
+                "type": "(a -> ( Basics.Int, a )) -> a -> Enum.EnumInt a"
+            },
+            {
+                "name": "fromIterator",
+                "comment": " Create an `Enum` from an iterator function and a starting variant.\nIt may look unusual, but the benefit is that the `case` statement helps ensure that you don't forget a variant.\n\n    type Fruit\n        = Apple\n        | Banana\n        | Mango\n\n    fruit : Enum Fruit\n    fruit =\n        Enum.fromIterator\n            (\\a ->\n                case a of\n                    Apple ->\n                        ( \"Banana\", Banana )\n\n                    Banana ->\n                        ( \"Mango\", Mango )\n\n                    Mango ->\n                        ( \"Apple\", Apple )\n            )\n            Apple\n\n",
+                "type": "(a -> ( String.String, a )) -> a -> Enum.Enum a"
+            }
+        ],
+        "binops": []
+    }
+]

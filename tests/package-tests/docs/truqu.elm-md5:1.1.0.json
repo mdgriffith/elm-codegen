@@ -1,0 +1,21 @@
+[
+    {
+        "name": "MD5",
+        "comment": " This library allows you to compute MD5 message digests in Elm. It exposes a\nsingle function that takes any string and outputs a \"fingerprint\" containing 32\nhexadecimal characters. More information about the MD5 algorithm can be found\n[here](https://en.wikipedia.org/wiki/MD5).\n\n\n# Digest Functions\n\n@docs hex, bytes\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "bytes",
+                "comment": " Given a string of arbitrary length, returns a list of integers representing\nthe hash as a series of individual bytes.\n\n    bytes \"hello world\"\n    --> [ 0x5e , 0xb6 , 0x3b , 0xbb\n    --> , 0xe0 , 0x1e , 0xee , 0xd0\n    --> , 0x93 , 0xcb , 0x22 , 0xbb\n    --> , 0x8f , 0x5a , 0xcd , 0xc3\n    --> ]\n\n",
+                "type": "String.String -> List.List Basics.Int"
+            },
+            {
+                "name": "hex",
+                "comment": " Given a string of arbitrary length, returns a string of 32 hexadecimal\ncharacters (a-f, 0-9) representing the 128-bit MD5 message digest.\n\n    hex \"\"\n    --> \"d41d8cd98f00b204e9800998ecf8427e\"\n\n    hex \"foobarbaz\"\n    --> \"6df23dc03f9b54cc38a0fc1483df6e21\"\n\n",
+                "type": "String.String -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

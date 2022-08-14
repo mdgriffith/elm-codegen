@@ -1,0 +1,114 @@
+[
+    {
+        "name": "Json.Diff",
+        "comment": " Create a JSON patch by inspecting the difference between two JSON values.\n\nThis has been implemented rather simply, and is probably not very optimised, but it should work for a lot of use cases.\n\n@docs diff, invertibleDiff, diffWithCustomWeight, cheapDiff\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "cheapDiff",
+                "comment": " Does a diff without using any testing of multiple options. This makes computing the diff much cheaper, but is much\nmore likely to produce less concise (but still correct) patches.\n\nIn particular, removing elements from the start of lists will produce changes for future elements, and lots of small\nchanges may be created rather than doing a single replace more efficiently.\n\n",
+                "type": "Json.Decode.Value -> Json.Decode.Value -> Json.Patch.Invertible.Patch"
+            },
+            {
+                "name": "diff",
+                "comment": " Create a [`Patch`](https://package.elm-lang.org/packages/norpan/elm-json-patch/latest/Json-Patch#Patch) that when\napplied to the first value will produce the second value.\n\nThis uses a relatively expensive, but not perfect weight function to decide what patch is best (it basically encodes\nthe JSON to a string and looks at the length), but it should give pretty reasonable results most of the time. If you\nwant something more efficient or accurate you can use [`diffWithCustomWeight`](Json.Diff#diffWithCustomWeight).\n\nThis won't produce moves in the patch. If you use [`invertibleDiff`](Json.Diff#invertibleDiff) and\n[`Invertible.merge`](Json.Patch.Invertible#merge) you can merge adds and removes of the same value into moves.\n\nNote that this diff doesn't search for duplicated values and so will never produces copies, and as such the patches\nwill not be concise if that is a common operation in your case.\n\n",
+                "type": "Json.Decode.Value -> Json.Decode.Value -> Json.Patch.Patch"
+            },
+            {
+                "name": "diffWithCustomWeight",
+                "comment": " Do a diff with a custom weight. This returns an invertible patch, if you want a normal one use\n[`Invertible.toMinimalPatch`](Json.Patch.Invertible#toMinimalPatch) on the result.\n\nThe default weight function is\n`patch |> Invertible.toMinimalPatch |> Json.Patch.encoder |> Json.Encode.encode 0 |> String.length` which is reasonably\nexpensive.\n\nThe cheapest reasonable function you might want to use is\n[`List.length`](https://package.elm-lang.org/packages/elm/core/latest/List#length), which is generally OK, but will\nproduce poor results if replacements involve large chunks of JSON.\n\nIf you always use invertible patches, then using [`Invertible.toPatch`](Json.Patch.Invertible#toPatch) in the weight\nfunction over [`Invertible.toMinimalPatch`](Json.Patch.Invertible#toMinimalPatch) would provide a more accurate weight.\n\n",
+                "type": "(Json.Patch.Invertible.Patch -> Basics.Int) -> Json.Decode.Value -> Json.Decode.Value -> Json.Patch.Invertible.Patch"
+            },
+            {
+                "name": "invertibleDiff",
+                "comment": " Create a patch just as with [`diff`](Json.Diff#diff), but in the form of an\n[`Invertible.Patch`](Json.Patch.Invertible#Patch) which contains all the extra information required to invert the patch\nto return a document to its original form.\n",
+                "type": "Json.Decode.Value -> Json.Decode.Value -> Json.Patch.Invertible.Patch"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Json.Patch.Invertible",
+        "comment": " JSON patches, when structured a specific way, can be inverted to return a patched document to its original form.\n\n\n# Types\n\n@docs Patch, Operation\n\n\n# Operations\n\n@docs apply, invert, merge\n\n\n# Compatibility\n\n@docs toPatch, toMinimalPatch, fromPatch\n\n",
+        "unions": [
+            {
+                "name": "Operation",
+                "comment": " An operation that can be inverted to produce a reverse patch.\n\nThis is largely meant to mirror\n[`Json.Patch.Operation`](https://package.elm-lang.org/packages/norpan/elm-json-patch/latest/Json-Patch#Operation), but\nstructured with any additional information required to invert the patch.\n\nHowever, there are some key differences: `Test` operations are not allowed, as they are used to include the extra\ninformation. `Copy` operations are not allowed, as they are ambiguous (the reverse of a `Copy` is a `Remove`, which\ncould then become either an `Add` or a `Copy`).\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Add",
+                        [
+                            "Json.Pointer.Pointer",
+                            "Json.Decode.Value"
+                        ]
+                    ],
+                    [
+                        "Remove",
+                        [
+                            "Json.Pointer.Pointer",
+                            "Json.Decode.Value"
+                        ]
+                    ],
+                    [
+                        "Replace",
+                        [
+                            "Json.Pointer.Pointer",
+                            "Json.Decode.Value",
+                            "Json.Decode.Value"
+                        ]
+                    ],
+                    [
+                        "Move",
+                        [
+                            "Json.Pointer.Pointer",
+                            "Json.Pointer.Pointer"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Patch",
+                "comment": " A list of invertible [`Operation`](Json.Patch.Invertible#Operation])s that are performed one after another.\n",
+                "args": [],
+                "type": "List.List Json.Patch.Invertible.Operation"
+            }
+        ],
+        "values": [
+            {
+                "name": "apply",
+                "comment": " Apply a [`Patch`](Json.Patch.Invertible#Patch) to a\n[`Value`](https://package.elm-lang.org/packages/elm/json/latest/Json-Encode#Value).\n\nThis is just a convenience function to do `patch |> toMinimalPatch |> Json.Patch.apply`.\n\n",
+                "type": "Json.Patch.Invertible.Patch -> Json.Decode.Value -> Result.Result String.String Json.Decode.Value"
+            },
+            {
+                "name": "fromPatch",
+                "comment": " Try to create an invertible patch from a normal one. This will only work if the normal patch is structured\ncorrectly (with tests before operations to establish the \"missing\" values).\n\n[`Diff.invertibleDiff`](Json.Diff#invertibleDiff) can provide one of these with no chance of failure.\n\n",
+                "type": "Json.Patch.Patch -> Result.Result String.String Json.Patch.Invertible.Patch"
+            },
+            {
+                "name": "invert",
+                "comment": " Create a patch that does the inverse of the given one.\n\n`patch |> invert |> invert` should always result in the same thing as just `patch`, and\n`value |> (apply patch) |> Result.andThen (apply (patch |> invert))` should produce `value` (assuming the patch can\nbe applied to the value).\n\n",
+                "type": "Json.Patch.Invertible.Patch -> Json.Patch.Invertible.Patch"
+            },
+            {
+                "name": "merge",
+                "comment": " Take a patch and merge any `Remove` and `Add` operations that have the same values into single `Move` options.\n\nThe resulting patch should always do the same thing as it did before, but may be smaller.\n\n",
+                "type": "Json.Patch.Invertible.Patch -> Json.Patch.Invertible.Patch"
+            },
+            {
+                "name": "toMinimalPatch",
+                "comment": " Create a patch from the invertible one, stripping out the tests that allow inversion.\n",
+                "type": "Json.Patch.Invertible.Patch -> Json.Patch.Patch"
+            },
+            {
+                "name": "toPatch",
+                "comment": " Create a normal patch from an invertible one.\n\nNote that this patch would still be invertible, you are just losing the type guarantee of that (i.e: you could run\n[`fromPatch`](Json.Patch.Invertible#fromPatch) on it and get a result). To strip the tests and make the patch truly not\ninvertible, see [`toMinimalPatch`](Json.Patch.Invertible#toMinimalPatch) instead.\n\n",
+                "type": "Json.Patch.Invertible.Patch -> Json.Patch.Patch"
+            }
+        ],
+        "binops": []
+    }
+]

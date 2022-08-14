@@ -1,0 +1,28 @@
+[
+    {
+        "name": "Csv",
+        "comment": " A parser for transforming CSV strings into usable input.\n\nThis library does its best to support RFC 4180, however, many CSV inputs do not strictly follow the standard. There are two major deviations assumed in this library.\n\n1.  The `\\n` or `\\r` character may be used instead of `\\r\\n` for line separators.\n2.  The trailing new-line may be omitted.\n\nRFC 4180 grammar, for reference, with notes.\n\nThe trailing newline is required, but we'll make it optional.\n\n    file =\n        [ header CRLF ] record * CRLF record [ CRLF ]\n\n    header =\n        name * COMMA name\n\n    record =\n        field * COMMA field\n\n    name =\n        field\n\n    field =\n        escaped / non - escaped\n\nThere is no room for spaces around the quotes. The specification is that\n\n    escaped =\n        DQUOTE * (TEXTDATA / COMMA / CR / LF / 2 DQUOTE) DQUOTE\n\nIn this specification, fields that don't have quotes surrounding them cannot have a quote inside them because it is excluded from `TEXTDATA`.\n\n    non-escaped = *TEXTDATA\n    COMMA = %x2C\n    CR = %x0D ;as per section 6.1 of RFC 2234 [2]\n    DQUOTE =  %x22 ;as per section 6.1 of RFC 2234 [2]\n    LF = %x0A ;as per section 6.1 of RFC 2234 [2]\n\nThe spec requires that new lines be `CR + LF` but we'll let them get away with just `LF` if they want..\n\n    CRLF = CR LF ;as per section 6.1 of RFC 2234 [2]\n\nAll the printable characters minus the double-quote and comma, this is important above.\n\n    TEXTDATA =  %x20-21 / %x23-2B / %x2D-7E\n\n\n# Types\n\n@docs Csv\n\n\n# Functions\n\n@docs parse\n@docs parseWith\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Csv",
+                "comment": " Represents a CSV document. All CSV documents have a header row, even if that row is empty.\n",
+                "args": [],
+                "type": "{ headers : List.List String.String, records : List.List (List.List String.String) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "parse",
+                "comment": " Parse a CSV string into it's constituent fields, using comma for separator.\n",
+                "type": "String.String -> Result.Result (List.List Parser.DeadEnd) Csv.Csv"
+            },
+            {
+                "name": "parseWith",
+                "comment": " Parse a CSV string into it's constituent fields, using the passed Char as separator.\n",
+                "type": "Char.Char -> String.String -> Result.Result (List.List Parser.DeadEnd) Csv.Csv"
+            }
+        ],
+        "binops": []
+    }
+]

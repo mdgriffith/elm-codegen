@@ -1,0 +1,182 @@
+[
+    {
+        "name": "ConfigForm",
+        "comment": " Note: The `config` in the following type signatures is a record of all your config values, like...\n\n    type alias Config =\n        { headerFontSize : Int\n        , bodyFontSize : Int\n        , backgroundColor : Color\n        }\n\nAlso, `Value` is shorthand for `Json.Encode.Value`.\n\n@docs ConfigForm, init, InitOptions, Defaults\n\n\n# Msg\n\n@docs Msg\n\n\n# Update\n\n@docs update\n\n\n# Encoding\n\n@docs encode\n\n\n# View\n\n@docs view\n\n\n# View options\n\n@docs viewOptions, withFontSize, withRowSpacing, withInputWidth, withInputSpacing, withLabelHighlightBgColor, withSectionSpacing\n\n\n# Used only by generated Config code\n\n@docs int, float, string, bool, color, section\n\n",
+        "unions": [
+            {
+                "name": "ConfigForm",
+                "comment": " ConfigForm is the state of the config form. Keep it in your model along with the `config` record.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Msg",
+                "comment": " A Msg is an opaque type for ConfigForm to communicate with your app through ConfigForm.update.\n",
+                "args": [
+                    "config"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Defaults",
+                "comment": " If a particular value isn't found from localStorage or file, then it fallbacks to these values. It might be a good idea to use wild values that are easy to spot so you can quickly replace them with real values.\n\n    defaults =\n        { int = -9999\n        , float = -9999\n        , string = \"PLEASE REPLACE ME\"\n        , bool = True\n        , color = Color.rgb 1 0 1 -- hot pink!\n        }\n\n",
+                "args": [],
+                "type": "{ int : Basics.Int, float : Basics.Float, string : String.String, bool : Basics.Bool, color : Color.Color }"
+            },
+            {
+                "name": "InitOptions",
+                "comment": " InitOptions are used to initialize your config and ConfigForm.\n\n    { flags = flagsFromJavascript\n    , logics = Config.logics\n    , emptyConfig = Config.empty\n    }\n\n`Config` is your generated module that was made using [ ConfigFormGenerator](ConfigFormGenerator).\n\n",
+                "args": [
+                    "config"
+                ],
+                "type": "{ flags : Json.Encode.Value, logics : List.List (ConfigForm.Logic config), emptyConfig : config }"
+            }
+        ],
+        "values": [
+            {
+                "name": "bool",
+                "comment": " Creates the logic for Bool values\n",
+                "type": "String.String -> String.String -> (config -> Basics.Bool) -> (Basics.Bool -> config -> config) -> ConfigForm.Logic config"
+            },
+            {
+                "name": "color",
+                "comment": " Creates the logic for Color values\n",
+                "type": "String.String -> String.String -> (config -> Color.Color) -> (Color.Color -> config -> config) -> ConfigForm.Logic config"
+            },
+            {
+                "name": "encode",
+                "comment": " Encodes the current Config (with some metadata) in your ConfigForm. Usually used for both localStorage and as a .json file.\n",
+                "type": "ConfigForm.ConfigForm -> Json.Encode.Value"
+            },
+            {
+                "name": "float",
+                "comment": " Creates the logic for Float values\n",
+                "type": "String.String -> String.String -> (config -> Basics.Float) -> (Basics.Float -> config -> config) -> ConfigForm.Logic config"
+            },
+            {
+                "name": "init",
+                "comment": " `init` will create both a valid `Config` and `ConfigForm`.\n",
+                "type": "ConfigForm.InitOptions config -> ( config, ConfigForm.ConfigForm )"
+            },
+            {
+                "name": "int",
+                "comment": " Creates the logic for Int values\n",
+                "type": "String.String -> String.String -> (config -> Basics.Int) -> (Basics.Int -> config -> config) -> ConfigForm.Logic config"
+            },
+            {
+                "name": "section",
+                "comment": " Creates the logic for Section values\n",
+                "type": "String.String -> ConfigForm.Logic config"
+            },
+            {
+                "name": "string",
+                "comment": " Creates the logic for String values\n",
+                "type": "String.String -> String.String -> (config -> String.String) -> (String.String -> config -> config) -> ConfigForm.Logic config"
+            },
+            {
+                "name": "update",
+                "comment": " When you receive a Config.Msg, update your `Config` and `ConfigForm` using this. It returns a new `Config` and `ConfigForm`, plus possible json to pass through ports for pointerlock.\n\n    update : Msg -> Model -> ( Model, Cmd Msg )\n    update msg model =\n        case msg of\n            ConfigFormMsg configFormMsg ->\n                let\n                    ( newConfig, newConfigForm, maybeJsonCmd ) =\n                        ConfigForm.update\n                            Config.logics\n                            model.config\n                            model.configForm\n                            configFormMsg\n\n                    newModel =\n                        { model\n                            | config = newConfig\n                            , configForm = newConfigForm\n                        }\n                in\n                ( newModel\n                , Cmd.batch\n                    [ saveToLocalStorageCmd newModel\n                    , case maybeJsonCmd of\n                        Just jsonCmd ->\n                            sendToPort\n                                (Json.Encode.object\n                                    [ ( \"id\", Json.Encode.string \"CONFIG\" )\n                                    , ( \"val\", jsonCmd )\n                                    ]\n                                )\n\n                        Nothing ->\n                            Cmd.none\n                    ]\n                )\n\n",
+                "type": "List.List (ConfigForm.Logic config) -> config -> ConfigForm.ConfigForm -> ConfigForm.Msg config -> ( config, ConfigForm.ConfigForm )"
+            },
+            {
+                "name": "view",
+                "comment": " View the config form.\n",
+                "type": "ConfigForm.ViewOptions -> List.List (ConfigForm.Logic config) -> ConfigForm.ConfigForm -> Html.Html (ConfigForm.Msg config)"
+            },
+            {
+                "name": "viewOptions",
+                "comment": " Default options for viewing the config form.\n",
+                "type": "ConfigForm.ViewOptions"
+            },
+            {
+                "name": "withFontSize",
+                "comment": " Update the font size in px. Default is 18.\n",
+                "type": "Basics.Int -> ConfigForm.ViewOptions -> ConfigForm.ViewOptions"
+            },
+            {
+                "name": "withInputSpacing",
+                "comment": " Update the inner spacing of inputs by a ratio of its font size. Default is 1.40.\n",
+                "type": "Basics.Float -> ConfigForm.ViewOptions -> ConfigForm.ViewOptions"
+            },
+            {
+                "name": "withInputWidth",
+                "comment": " Update the width of inputs in px. Default is 80.\n",
+                "type": "Basics.Int -> ConfigForm.ViewOptions -> ConfigForm.ViewOptions"
+            },
+            {
+                "name": "withLabelHighlightBgColor",
+                "comment": " Update the row color when hovering field labels that are pointerlock-able. Default is yellow: (0.8, 0.8, 1).\n",
+                "type": "Color.Color -> ConfigForm.ViewOptions -> ConfigForm.ViewOptions"
+            },
+            {
+                "name": "withRowSpacing",
+                "comment": " Update the row spacing in px. Default is 2.\n",
+                "type": "Basics.Int -> ConfigForm.ViewOptions -> ConfigForm.ViewOptions"
+            },
+            {
+                "name": "withSectionSpacing",
+                "comment": " Update the extra top spacing for sections in px. Default is 20.\n",
+                "type": "Basics.Int -> ConfigForm.ViewOptions -> ConfigForm.ViewOptions"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ConfigFormGenerator",
+        "comment": " Imagine being able to add a field to the config form with just one line! It can be done if you use code generation.\n\nUse `ConfigFormGenerator` in your `ConfigSchema.elm` to make a `Config.elm` file (it can be excluded from your `src/` directory if you want, since it won't be compiled directly with your other elm files):\n\n    -- ConfigSchema.elm\n\n\n    import ConfigFormGenerator exposing (Kind(..))\n    import Html exposing (Html)\n\n    myConfigFields : List ( String, Kind )\n    myConfigFields =\n        [ ( \"Header Font Size\", IntKind \"headerFontSize\" )\n        , ( \"Body Font Size\", IntKind \"bodyFontSize\" )\n        , ( \"Background Color\", ColorKind \"bgColor\" )\n        ]\n\n    main : Html msg\n    main =\n        let\n            generatedElmCode =\n                ConfigFormGenerator.toFile myConfigFields\n\n            _ =\n                Debug.log generatedElmCode \"\"\n        in\n        Html.text \"\"\n\nWhen compiled, it makes an elm app whose sole purpose is to `console.log` the elm code needed for a `Config.elm` file. To generate it, run something like this:\n\n```shell\n# Compile schema file to tmp js:\nelm make ConfigSchema.elm --output=~/tmp/tmp.js > /dev/null\n\n# Run compiled js with node, which logs out generated elm code, and save to Config.elm:\nnode ~/tmp/tmp.js > Config.elm 2>/dev/null\n```\n\n\n# How to automate with a watcher script\n\n```shell\n#!/bin/bash\n\nCONFIG_SCHEMA_ELMFILE=ConfigSchema.elm\nCONFIG_ELMFILE=Config.elm\nTMP_JS=~/tmp/gen-config.js\nMAIN_ELMFILE=Main.elm\nSERVER_DIR=public/\nMAIN_JS_OUTPUT=public/js/main.js\n\nGENERATE_ARGS=\"$CONFIG_SCHEMA_ELMFILE $TMP_JS $CONFIG_ELMFILE\"\n\n# Command for generating Config.elm from ConfigSchema.elm\ngenerate_config () {\n  CONFIG_SCHEMA_ELMFILE=$1\n  TMP_JS=$2\n  CONFIG_ELMFILE=$3\n\n  # Use `elm make` to make an elm app that console.logs the generated Config.elm code\n  elm make $CONFIG_SCHEMA_ELMFILE --output=$TMP_JS > /dev/null && \\\n    # Run it with `node` to print the output and write to Config.elm\n    node $TMP_JS > $CONFIG_ELMFILE 2>/dev/null\n}\nexport -f generate_config\n\n# Generate the config initially, just in case it doesn't exist\ngenerate_config $GENERATE_ARGS\n\n# Watch for config changes\nchokidar $CONFIG_SCHEMA_ELMFILE --command \"generate_config $GENERATE_ARGS\" &\n\n# Watch for elm changes\nelm-live $MAIN_ELMFILE --dir=$SERVER_DIR -- --output=$MAIN_JS_OUTPUT &\n\nwait\n```\n\nThis will watch for changes to `ConfigSchema.elm` and generate a `Config.elm` file. Make sure you have the following installed, too:\n\n```shell\n# (use --save-dev instead of --global if you only need it locally for one project)\nnpm install --global elm elm-live@next chokidir\n```\n\n@docs Kind\n@docs toFile\n\n",
+        "unions": [
+            {
+                "name": "Kind",
+                "comment": " Use these to define what kind of value your field is. For all values except `SectionKind`, the `String` is the field's camelCase variable name for both your `Config` record and its JSON representation, such as \"headerFontSize\".\n\n`SectionKind` is just for visually organizing your fields.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "IntKind",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "FloatKind",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "StringKind",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "BoolKind",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "ColorKind",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "SectionKind",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toFile",
+                "comment": " Generates the elm code for your Config module given a list of labels and field kinds.\n",
+                "type": "List.List ( String.String, ConfigFormGenerator.Kind ) -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

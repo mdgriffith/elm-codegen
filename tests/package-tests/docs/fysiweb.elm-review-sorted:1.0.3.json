@@ -1,0 +1,30 @@
+[
+    {
+        "name": "NoUnsortedConstructors",
+        "comment": "\n\n@docs rule\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": " Reports...\n\n    config =\n        [ NoUnsortedConstructors.rule\n        ]\n\n\n## Fail\n\n    data Foo = Baz | Bar | Quux\n\n\n## Success\n\n    data Foo = Bar | Baz | Quux\n\n\n## When (not) to enable this rule\n\nThis rule is useful when you want to enforce sorting type constructors.\nTHis rule is not useful when you don't.\n\n",
+                "type": "Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "NoUnsortedRecordFields",
+        "comment": "\n\n@docs rule\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": " Reports...\n\n    config =\n        [ NoUnsortedRecordFields.rule\n        ]\n\n\n## Fail\n\n    type alias Foo =\n        { b : Int, a : Int }\n\n    foo : Foo\n    foo =\n        { b = 1, a = 2 }\n\n    sumFoo : Foo -> Int\n    sumFoo { b, a } =\n        a + b\n\n\n## Success\n\n    type alias Foo =\n        { a : Int, b : Int }\n\n    foo : Foo\n    foo =\n        { a = 2, b = 1 }\n\n    sumFoo : Foo -> Int\n    sumFoo { a, b } =\n        a + b\n\n\n## When (not) to enable this rule\n\nThis rule is useful when you want to enforce sorting in record fields.\nTHis rule is not useful when you don't.\n\n",
+                "type": "Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    }
+]

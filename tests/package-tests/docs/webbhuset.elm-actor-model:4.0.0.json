@@ -1,0 +1,577 @@
+[
+    {
+        "name": "Webbhuset.Actor",
+        "comment": "\n\n# Actor\n\nWhen a component is incorporated in a system it becomes an Actor. The actor module\nimplements the connections to the other components in the system.\nIn practice that means mapping and sending the component's out messages to other\nactors in the system.\n\nHere is an example of wrapping a login form component to an actor in a system.\n\n\nThis is the global model for the System:\n```\nmodule AppModel exposing (..)\n\ntype AppModel\n    = LoginFormModel LoginForm.Model\n    | OtherComponent ...\n```\n\nThis is the global appMsg type for the System:\n```\nmodule AppMsg exposing (..)\n\ntype AppMsg\n    = FormMsg LoginForm.MsgIn\n    | AuthServiceMsg AuthService.MsgIn\n    | OtherComponent ...\n\n```\n\nThis is the login form actor:\n```\nmodule Actor.LoginForm exposing (..)\n\nimport Webbhuset.ActorSystem as System\nimport Webbhuset.Actor as Actor exposing (Actor)\nimport Component.LoginForm as LoginForm\nimport Component.AuthService as AuthService\nimport AppMsg exposing (AppMsg)\nimport AppModel exposing (AppModel)\n\n\nactor : Actor LoginForm.Model AppModel AppMsg\nactor =\n    Actor.fromUI\n        { wrapModel = AppModel.LoginFormModel\n        , wrapMsg = AppMsg.FormMsg\n        , mapIn = mapFormIn\n        , mapOut = mapFormOut\n        }\n        LoginForm.component\n\n\nmapFormIn : AppMsg -> Maybe LoginForm.MsgIn\nmapFormIn appMsg =\n    case appMsg of\n        AppMsg.FormMsg formMsg ->\n            Just formMsg\n\n        _ ->\n            Nothing\n\n\nmapFormOut : PID -> LoginForm.MsgOut -> System.SysMsg name AppMsg\nmapFormOut self formMsg =\n    case formMsg of\n        LoginForm.Submit user password ->\n            AuthService.Login user password self\n                |> AppMsg.AuthServiceMsg\n                |> System.toAppMsg\n                |> System.sendToSingleton AuthService\n\n```\n\n@docs PID\n\n## Create Actors from Components\n\n@docs fromUI, fromService, fromLayout\n\n## For package authors.\n\nYou probably don't need this when you are using the actor model.\nThese are useful if you need to create support for a different output type.\n\n@docs Actor\n    , Args\n    , wrapSystem\n    , wrapSub\n    , wrapInit\n    , wrapUpdate\n    , sendTo\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Actor",
+                "comment": " An actor is acomponent where the types are wrapped\nto fit the System types.\n\n",
+                "args": [
+                    "compModel",
+                    "appModel",
+                    "msg"
+                ],
+                "type": "Webbhuset.ActorSystem.Actor compModel appModel (Html.Html msg) msg"
+            },
+            {
+                "name": "Args",
+                "comment": " Args\n\n",
+                "args": [
+                    "name",
+                    "compModel",
+                    "appModel",
+                    "msgIn",
+                    "msgOut",
+                    "appMsg"
+                ],
+                "type": "{ wrapModel : compModel -> appModel, wrapMsg : msgIn -> appMsg, mapIn : appMsg -> Maybe.Maybe msgIn, mapOut : Webbhuset.Actor.PID -> msgOut -> Webbhuset.Actor.SysMsg name appMsg }"
+            },
+            {
+                "name": "PID",
+                "comment": " A PID is an identifier for a Process.\n\n",
+                "args": [],
+                "type": "Webbhuset.PID.PID"
+            }
+        ],
+        "values": [
+            {
+                "name": "fromLayout",
+                "comment": " Create an actor from a Layout Component\n\n",
+                "type": "{ wrapModel : compModel -> appModel, wrapMsg : msgIn -> appMsg, mapIn : appMsg -> Maybe.Maybe msgIn, mapOut : Webbhuset.Actor.PID -> msgOut -> Webbhuset.Actor.SysMsg name appMsg } -> Webbhuset.Component.Layout compModel msgIn msgOut (Webbhuset.Actor.SysMsg name appMsg) -> Webbhuset.Actor.Actor compModel appModel (Webbhuset.Actor.SysMsg name appMsg)"
+            },
+            {
+                "name": "fromService",
+                "comment": " Create an actor from a Service Component\n\n",
+                "type": "{ wrapModel : compModel -> appModel, wrapMsg : msgIn -> appMsg, mapIn : appMsg -> Maybe.Maybe msgIn, mapOut : Webbhuset.Actor.PID -> msgOut -> Webbhuset.Actor.SysMsg name appMsg } -> Webbhuset.Component.Service compModel msgIn msgOut -> Webbhuset.Actor.Actor compModel appModel (Webbhuset.Actor.SysMsg name appMsg)"
+            },
+            {
+                "name": "fromUI",
+                "comment": " Create an actor from a UI Component\n\n\n",
+                "type": "{ wrapModel : compModel -> appModel, wrapMsg : msgIn -> appMsg, mapIn : appMsg -> Maybe.Maybe msgIn, mapOut : Webbhuset.Actor.PID -> msgOut -> Webbhuset.Actor.SysMsg name appMsg } -> Webbhuset.Component.UI compModel msgIn msgOut -> Webbhuset.Actor.Actor compModel appModel (Webbhuset.Actor.SysMsg name appMsg)"
+            },
+            {
+                "name": "sendTo",
+                "comment": " Send to pid.\n",
+                "type": "(msgIn -> appMsg) -> Webbhuset.Actor.PID -> msgIn -> Webbhuset.Actor.SysMsg name appMsg"
+            },
+            {
+                "name": "wrapInit",
+                "comment": " Convert a component `init` field to an actor `init` field\n",
+                "type": "Webbhuset.Actor.Args name compModel appModel msgIn msgOut appMsg -> (Webbhuset.Actor.PID -> ( compModel, List.List msgOut, Platform.Cmd.Cmd msgIn )) -> Webbhuset.Actor.PID -> ( appModel, Webbhuset.Actor.SysMsg name appMsg )"
+            },
+            {
+                "name": "wrapSub",
+                "comment": " Convert a component `subs` field to an actor `subs` field\n",
+                "type": "(msgIn -> appMsg) -> (compModel -> Platform.Sub.Sub msgIn) -> compModel -> Webbhuset.Actor.PID -> Platform.Sub.Sub (Webbhuset.Actor.SysMsg name appMsg)"
+            },
+            {
+                "name": "wrapSystem",
+                "comment": " Convert a component `onSystem` field to an actor `onSystem` field\n",
+                "type": "(msgIn -> appMsg) -> (Webbhuset.Component.SystemEvent.SystemEvent -> Webbhuset.Component.SystemEvent.Handling msgIn) -> Webbhuset.Component.SystemEvent.SystemEvent -> Webbhuset.Actor.PID -> Webbhuset.Component.SystemEvent.Handling (Webbhuset.Actor.SysMsg name appMsg)"
+            },
+            {
+                "name": "wrapUpdate",
+                "comment": " Convert a component `update` field to an actor `update` field\n",
+                "type": "Webbhuset.Actor.Args name compModel appModel msgIn msgOut msg -> (msgIn -> compModel -> ( compModel, List.List msgOut, Platform.Cmd.Cmd msgIn )) -> compModel -> Webbhuset.Actor.SysMsg name msg -> Webbhuset.Actor.PID -> ( appModel, Webbhuset.Actor.SysMsg name msg )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Webbhuset.ActorSystem",
+        "comment": "\n\n@docs PID\n\n## Build and Initialize the System\n\n@docs element\n    , application\n\n\n## System Messages\n\n@docs none\n    , batch\n\n## Processes\n\nActors can be spawned (instantiated or started). A spawned actor is\ncalled Process. A process is referenced by its PID.\n\nKnowing an Actor's PID you can send messages to it or kill it.\n\n@docs spawn\n    , sendToPID\n    , kill\n\n## Singleton Processes\n\nIt can be helpful to treat some actors as a singleton process. They\nare started on application init and will always be running.\nSome examples are the Router actor or the Navigation. It does not make\nmuch sense having multiple of them either.\n\nA singleton process is just a normal actor that you can reference by\nits name instead of its PID.\n\n@docs spawnSingleton\n    , sendToSingleton\n    , withSingletonPID\n\n\n## Program Output\n\nYou Elm program's Html output (view function) is controlled here.\nYou need to add at least one process to actually see anything more\nthan just a blank page.\n\n@docs addView\n    , setDocumentTitle\n\n\n## Debug logging\n\n@docs Error\n\n## Bootstrap\n\nDon't worry about these for now.\n\n@docs AppliedActor\n    , Actor\n    , Model\n    , SysMsg\n    , applyModel\n",
+        "unions": [
+            {
+                "name": "AppliedActor",
+                "comment": " An actor after the model has been applied\n\n",
+                "args": [
+                    "appModel",
+                    "output",
+                    "msg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Error",
+                "comment": " Developer errors\n\n",
+                "args": [
+                    "name",
+                    "appMsg"
+                ],
+                "cases": [
+                    [
+                        "UnmappedInMsgFor",
+                        [
+                            "name",
+                            "appMsg"
+                        ]
+                    ],
+                    [
+                        "Bug",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Model",
+                "comment": " The Global Model\n\n",
+                "args": [
+                    "name",
+                    "appModel"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Actor",
+                "comment": " An actor is a component that is configured to be part of the system.\n\n",
+                "args": [
+                    "compModel",
+                    "appModel",
+                    "output",
+                    "msg"
+                ],
+                "type": "{ init : Webbhuset.ActorSystem.PID -> ( appModel, msg ), update : compModel -> msg -> Webbhuset.ActorSystem.PID -> ( appModel, msg ), view : compModel -> Webbhuset.ActorSystem.PID -> (Webbhuset.ActorSystem.PID -> Maybe.Maybe output) -> output, onSystem : Webbhuset.Component.SystemEvent.SystemEvent -> Webbhuset.ActorSystem.PID -> Webbhuset.Component.SystemEvent.Handling msg, subs : compModel -> Webbhuset.ActorSystem.PID -> Platform.Sub.Sub msg }"
+            },
+            {
+                "name": "PID",
+                "comment": " A PID is an identifier for a Process.\n\n",
+                "args": [],
+                "type": "Webbhuset.Internal.PID.PID"
+            },
+            {
+                "name": "SysMsg",
+                "comment": " Your Elm Program will have this as its Msg type.\n\n",
+                "args": [
+                    "name",
+                    "appMsg"
+                ],
+                "type": "Webbhuset.Internal.Msg.Msg name appMsg"
+            }
+        ],
+        "values": [
+            {
+                "name": "addView",
+                "comment": " Add a process to the global output.\n\n",
+                "type": "Webbhuset.ActorSystem.PID -> Webbhuset.ActorSystem.SysMsg name appMsg"
+            },
+            {
+                "name": "application",
+                "comment": " Create a [Browser.application] from your Actor System\n\n[Browser.application]: https://package.elm-lang.org/packages/elm/browser/latest/Browser#application\n\n",
+                "type": "{ init : flags -> Url.Url -> Browser.Navigation.Key -> Webbhuset.ActorSystem.SysMsg name appMsg, spawn : name -> Webbhuset.ActorSystem.PID -> ( appModel, Webbhuset.ActorSystem.SysMsg name appMsg ), apply : appModel -> Webbhuset.ActorSystem.AppliedActor appModel output (Webbhuset.ActorSystem.SysMsg name appMsg), view : List.List output -> Html.Html (Webbhuset.ActorSystem.SysMsg name appMsg), onUrlRequest : Browser.UrlRequest -> Webbhuset.ActorSystem.SysMsg name appMsg, onUrlChange : Url.Url -> Webbhuset.ActorSystem.SysMsg name appMsg, onDebug : Webbhuset.ActorSystem.Error name appMsg -> Webbhuset.ActorSystem.SysMsg name appMsg } -> Platform.Program flags (Webbhuset.ActorSystem.Model name appModel) (Webbhuset.ActorSystem.SysMsg name appMsg)"
+            },
+            {
+                "name": "applyModel",
+                "comment": " Apply the compModel to an actor.\n\n",
+                "type": "Webbhuset.ActorSystem.Actor compModel appModel output msg -> compModel -> Webbhuset.ActorSystem.AppliedActor appModel output msg"
+            },
+            {
+                "name": "batch",
+                "comment": " Batch control messages\n\nSimilar concept to `Cmd.batch`\n\n",
+                "type": "List.List (Webbhuset.ActorSystem.SysMsg name appMsg) -> Webbhuset.ActorSystem.SysMsg name appMsg"
+            },
+            {
+                "name": "element",
+                "comment": " Create a [Browser.element] from your Actor System\n\n[Browser.element]: https://package.elm-lang.org/packages/elm/browser/latest/Browser#element\n\n",
+                "type": "{ init : flags -> Webbhuset.ActorSystem.SysMsg name appMsg, spawn : name -> Webbhuset.ActorSystem.PID -> ( appModel, Webbhuset.ActorSystem.SysMsg name appMsg ), apply : appModel -> Webbhuset.ActorSystem.AppliedActor appModel output (Webbhuset.ActorSystem.SysMsg name appMsg), view : List.List output -> Html.Html (Webbhuset.ActorSystem.SysMsg name appMsg), onDebug : Webbhuset.ActorSystem.Error name appMsg -> Webbhuset.ActorSystem.SysMsg name appMsg } -> Platform.Program flags (Webbhuset.ActorSystem.Model name appModel) (Webbhuset.ActorSystem.SysMsg name appMsg)"
+            },
+            {
+                "name": "kill",
+                "comment": " Kill a process. This will also kill all the child processes by default.\nSee Webbhuset.Component.SystemEvent.\n\nSingleton processes can not be killed. Attempts to do so will be ignored.\n\n",
+                "type": "Webbhuset.ActorSystem.PID -> Webbhuset.ActorSystem.SysMsg name appMsg"
+            },
+            {
+                "name": "none",
+                "comment": " Don't send or do anything.\n\nSimilar concept to `Cmd.none`\n\n",
+                "type": "Webbhuset.ActorSystem.SysMsg name appMsg"
+            },
+            {
+                "name": "sendToPID",
+                "comment": " Send a message to a Process.\n\nIf the target process does not exists the sender component will\nreceive the `PIDNotFound` system event. (`onSystem`).\n\n",
+                "type": "Webbhuset.ActorSystem.PID -> appMsg -> Webbhuset.ActorSystem.SysMsg name appMsg"
+            },
+            {
+                "name": "sendToSingleton",
+                "comment": " Send a message to a Singleton Process\n\n",
+                "type": "name -> appMsg -> Webbhuset.ActorSystem.SysMsg name appMsg"
+            },
+            {
+                "name": "setDocumentTitle",
+                "comment": " Set the document title. Only works with System.application\n\n",
+                "type": "String.String -> Webbhuset.ActorSystem.SysMsg name appMsg"
+            },
+            {
+                "name": "spawn",
+                "comment": " Start an Actor. This will create a process. The PID will\nbe sent in a message using the provied message constructor.\n\nThe new process will become a child process of the process that sent the\nspawn message. This relationship is used when a process is killed.\n\n\nExample - `Actor/PageLayout.elm`:\n\n    System.spawn\n        ActorName.LoginForm\n        (\\spawnedPID ->\n            PageLayout.SetContent spawnedPID\n                |> Msg.PageLayout\n                |> System.sendToPID pageLayoutPID\n        )\n\nIn this case the `LoginForm` will be a child of `PageLayout`. If `PageLayout`\nis killed the `LoginForm` will also be killed.\n\n",
+                "type": "name -> (Webbhuset.ActorSystem.PID -> Webbhuset.ActorSystem.SysMsg name appMsg) -> Webbhuset.ActorSystem.SysMsg name appMsg"
+            },
+            {
+                "name": "spawnSingleton",
+                "comment": " Spawn a singleton process.\n\n",
+                "type": "name -> Webbhuset.ActorSystem.SysMsg name appMsg"
+            },
+            {
+                "name": "withSingletonPID",
+                "comment": " Do something with a singleton PID.\n\nSometimes you want to send a singleton PID to a process.\n\nFor example, add the root layout component to the system output.\n\n    init flags =\n        [ System.withSingletonPID ActorName.PageLayout System.addView\n        ]\n\n\nAnother example, you want to treat the site Header as a singleton\nwhich makes it easier to send messages to it.\n\n\n    System.withSingletonPID\n        ActorName.Header\n        (\\pid ->\n            PageLayout.SetHeader pid\n                |> Msg.PageLayout\n                |> System.sendToSingleton ActorName.PageLayout\n        )\n\n",
+                "type": "name -> (Webbhuset.ActorSystem.PID -> Webbhuset.ActorSystem.SysMsg name appMsg) -> Webbhuset.ActorSystem.SysMsg name appMsg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Webbhuset.Component",
+        "comment": "\n\n@docs PID\n\n# Components\n\nA component is a independent part in the system and has a single responsibility. They\ncan not import other components.\n\nComponents are like normal elm programs. They have their own\nmodel, they can do commands and subscriptions. In addition to that\nthey also have out messages.\n\nThis means you will have two `Msg` types: `MsgIn` and `MsgOut`. MsgIn\nis conceptually the same as your normal `Msg` type would be.\n\nMsgOut is a way to \"tell\" the rest of the system that something happened in your component.\n\nFor Example, the msg types for a  login form component could look like this:\n\n    type MsgIn\n        = EmailFieldChanged String\n        | PasswordFieldChanged String\n        | SubmitbuttonClicked\n\n    type MsgOut\n        = FormWasSubmitted\n            { email : String\n            , password : String\n            }\n\nFrom the system's perspective, this is all you need to care about. This\nis the public API for the component.\n\nThe normal output tuple from the `init` and `update` functions are replaced with\na 3-Tuple:\n\n    ( Model, List MsgOut, Cmd MsgIn )\n\n## UI Component\n\nA UI-component is very similar in concept to a Browser.element program.\n\n@docs UI\n\n## Service Component\n\nThe service component does not have any view function. Remember `Platform.worker`?\n\n@docs Service\n\n## Layout Component\n\nA layout component can render other components using their PID as a reference.\nThe difference comparing to a UI component is the view function.\n\n@docs Layout\n\n## Helpers for the output 3-Tuple\n\nThere is no native elm module for a Tuple with three arguments.\n\n@docs mapFirst\n    , mapSecond\n    , mapThird\n    , andThen\n    , addOutMsg\n    , addCmd\n    , toCmd\n    , toCmdWithDelay\n\n## Helper for Queue\n\nSometimes you'd want to put messages in a queue. Maybe your\ncomponent is in a state where it can't process them at this point, eg. an InitState.\n\n@docs Queue\n    , emptyQueue\n    , addToQueue\n    , runQueue\n",
+        "unions": [
+            {
+                "name": "Queue",
+                "comment": " Store messages in a queue.\n\n",
+                "args": [
+                    "msgIn"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Layout",
+                "comment": " Layout Component Type\n\nThe `view` function of a layout component:\n\n    view : (MsgIn -> msg) -> Model -> (PID -> Html msg) -> Html msg\n    view toSelf model renderPID =\n        div\n            []\n            [ renderPID model.child\n            , button [ onClick (toSelf ButtonWasClicked) ] [ text \"Button!\" ]\n            ]\n\nThe `view` function has three arguments:\n\n- `toSelf` is used to wrap all event-handlers from Html.Events\n- `renderPID` is used to render other components.\n\nAs you can see, the output type of the `view` function is `Html msg`. This is\nnecessary to allow components to be composed. What would the return type be on\n`renderPID` if they were not mapped to the same type?\n",
+                "args": [
+                    "model",
+                    "msgIn",
+                    "msgOut",
+                    "msg"
+                ],
+                "type": "{ init : Webbhuset.Component.PID -> ( model, List.List msgOut, Platform.Cmd.Cmd msgIn ), update : msgIn -> model -> ( model, List.List msgOut, Platform.Cmd.Cmd msgIn ), view : (msgIn -> msg) -> model -> (Webbhuset.Component.PID -> Html.Html msg) -> Html.Html msg, onSystem : Webbhuset.Component.SystemEvent.SystemEvent -> Webbhuset.Component.SystemEvent.Handling msgIn, subs : model -> Platform.Sub.Sub msgIn }"
+            },
+            {
+                "name": "PID",
+                "comment": " A PID is an identifier for a Process.\n\n",
+                "args": [],
+                "type": "Webbhuset.Internal.PID.PID"
+            },
+            {
+                "name": "Service",
+                "comment": " Service Component Type\n\n",
+                "args": [
+                    "model",
+                    "msgIn",
+                    "msgOut"
+                ],
+                "type": "{ init : Webbhuset.Component.PID -> ( model, List.List msgOut, Platform.Cmd.Cmd msgIn ), update : msgIn -> model -> ( model, List.List msgOut, Platform.Cmd.Cmd msgIn ), onSystem : Webbhuset.Component.SystemEvent.SystemEvent -> Webbhuset.Component.SystemEvent.Handling msgIn, subs : model -> Platform.Sub.Sub msgIn }"
+            },
+            {
+                "name": "UI",
+                "comment": " UI Component Type\n\n- **init**: Is called everytime the component is instantiated.\n- **update**: When the component recieves a message.\n- **view**: Is called when the app needs to re-render.\n- **onSystem**: Called when a system event happens. See Webbhuset.Component.SystemEvent.\n- **subs**: Normal Elm Subscriptions, called after update.\n\n",
+                "args": [
+                    "model",
+                    "msgIn",
+                    "msgOut"
+                ],
+                "type": "{ init : Webbhuset.Component.PID -> ( model, List.List msgOut, Platform.Cmd.Cmd msgIn ), update : msgIn -> model -> ( model, List.List msgOut, Platform.Cmd.Cmd msgIn ), view : model -> Html.Html msgIn, onSystem : Webbhuset.Component.SystemEvent.SystemEvent -> Webbhuset.Component.SystemEvent.Handling msgIn, subs : model -> Platform.Sub.Sub msgIn }"
+            }
+        ],
+        "values": [
+            {
+                "name": "addCmd",
+                "comment": " Add a Cmd to the output 3-Tuple.\n\n    ( model, [], Cmd.none )\n        |> Component.addCmd cmd\n",
+                "type": "Platform.Cmd.Cmd msg -> ( x, y, Platform.Cmd.Cmd msg ) -> ( x, y, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "addOutMsg",
+                "comment": " Add an out message to the output 3-Tuple.\n\n    ( model, [], Cmd.none )\n        |> Component.addOutMsg SomeOutMsg\n",
+                "type": "msg -> ( x, List.List msg, y ) -> ( x, List.List msg, y )"
+            },
+            {
+                "name": "addToQueue",
+                "comment": " Add a msg to the queue\n\n    { model\n        | queue = Component.addToQueue msgIn model.queue\n    }\n",
+                "type": "msgIn -> Webbhuset.Component.Queue msgIn -> Webbhuset.Component.Queue msgIn"
+            },
+            {
+                "name": "andThen",
+                "comment": " Run a series of updates on the model\n\nThe msgOut's and Cmd's will be composed using `System.batch` and \n`Cmd.batch`.\n\n    ( model, [], Cmd.none )\n        |> Component.andThen doSomethingWithModel\n",
+                "type": "(model -> ( model, List.List msgOut, Platform.Cmd.Cmd msgIn )) -> ( model, List.List msgOut, Platform.Cmd.Cmd msgIn ) -> ( model, List.List msgOut, Platform.Cmd.Cmd msgIn )"
+            },
+            {
+                "name": "emptyQueue",
+                "comment": " Create an Empty Queue\n\n    { model\n        | queue = Component.emptyQueue\n    }\n",
+                "type": "Webbhuset.Component.Queue msgIn"
+            },
+            {
+                "name": "mapFirst",
+                "comment": " Map the first argument (Model).\n\n",
+                "type": "(input -> out) -> ( input, x, y ) -> ( out, x, y )"
+            },
+            {
+                "name": "mapSecond",
+                "comment": " Map the second argument (List MsgOut).\n\n",
+                "type": "(input -> out) -> ( x, input, y ) -> ( x, out, y )"
+            },
+            {
+                "name": "mapThird",
+                "comment": " Map the third argument (Cmd).\n\n",
+                "type": "(input -> out) -> ( x, y, input ) -> ( x, y, out )"
+            },
+            {
+                "name": "runQueue",
+                "comment": " Run the `update` function on all messages in the queue\nand compose all output.\n\n    ( model, [], Cmd.none )\n        |> Component.runQueue queue update\n",
+                "type": "Webbhuset.Component.Queue msgIn -> (msgIn -> model -> ( model, List.List msgOut, Platform.Cmd.Cmd msgIn )) -> ( model, List.List msgOut, Platform.Cmd.Cmd msgIn ) -> ( model, List.List msgOut, Platform.Cmd.Cmd msgIn )"
+            },
+            {
+                "name": "toCmd",
+                "comment": " Convert a msg to Cmd.\n\n",
+                "type": "msg -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "toCmdWithDelay",
+                "comment": " Convert a msg to Cmd with a timeout in milliseconds.\n\n",
+                "type": "Basics.Float -> msg -> Platform.Cmd.Cmd msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Webbhuset.Component.Sandbox",
+        "comment": "\n\n# Sandbox\n\nThe sandbox module is helpful when developing components. It lets you\nrun the component using `elm reactor` outside the system and define several test cases.\n\nIf you want to run your sandbox on a CI you can add #markdown to the URL. This\nwill output the test results as a markdown string inside a pre element:\n\n    <pre id=\"markdown-output\"> Results here </pre>\n\nThis way you can complile the sandbox, run it in a headless Chrome and dump\nthe DOM. From the DOM you can extract the results.\n\n@docs SandboxProgram\n\n\n# Create Sandbox\n\nWrap a component in a sandbox application.\n\nThis will render each test case and log all messages.\nCreate a test file with a `main` function where you declare all\ntest cases.\n\nA sandbox module example for `YourComponent`:\n\n    import YourComponent exposing (Model, MsgIn, MsgOut)\n\n    main : SandboxProgram Model MsgIn MsgOut\n    main =\n        Sandbox.ui\n            { title = \"Title of your component\"\n            , component = YourComponent.component\n            , cases =\n                [ testCase1\n                , testCase2\n                ]\n            , stringifyMsgIn = Debug.toString -- Or roll your own if you want prettier messages.\n            , stringifyMsgOut = Debug.toString\n            , wrapView = identity\n            }\n\n\n@docs ui, layout, service\n\n# Create a Test Case\n\nTest cases defines scenarios for the requirements of your component.\n\nA Test Case is just a record with a title and description together\nwith a list of Actions you want to perform on your sandboxed component.\nYou can also map the component's out messages to actions to simulate the outside system.\n\n@docs TestCase\n\n    testCase1 : Sandbox.TestCase MsgIn MsgOut\n    testCase1 =\n        { title = \"Test Case Title\"\n        , desc = \"Test Case Description\"\n        , init =\n            [ Sandbox.sendMsg YourComponent.Hello\n            , Sandbox.spawnChild \"Child Title\" YourComponent.ReceiveChildPID\n            ]\n        , onMsgOut = \\msgOut ->\n            case msgOut of\n                YourComponent.ObserveSomething id ->\n                    [ YourComponent.RecevieDataFor id \"Some data\"\n                        |> Sandbox.sendMsg\n                        |> Sandbox.delay 1000\n                    ]\n\n## Actions\n\n@docs Action, sendMsg, spawnChild, delay\n\n## Assertions\n\nSometimes it is useful to test your expectations or requirements on a component.\n\nYou can express them using assertions. Assertions have three states: waiting, pass\nor fail. The state of a test case is visible in the sandbox UI.\n\nIn this example we expect that `GoodMsg` is sent by the component within 1s.\n\n    testGoodMsg : Sandbox.TestCase MsgIn MsgOut\n    testGoodMsg =\n        { title = \"Good messages are good\"\n        , desc = \"`GoodMsg` must be sent within 1 second. No other messages are allowed.\"\n        , init =\n            [ Sandbox.timeout 1000\n            , Sandbox.sendMsg YourComponent.SomeInput\n            ]\n        , onMsgOut = \\msgOut ->\n            case msgOut of\n                YourComponent.GoodMsg ->\n                    [ Sandbox.pass\n                    ]\n\n                YourComponent.BadMsg ->\n                    [ Sandbox.fail \"I don't like bad messages\"\n                    ]\n\n\n@docs pass, fail, timeout\n\n## Permutate the init order\n\nSometimes it is useful to test if the order of your init messages would\naffect the test result. One way to do so is by permuting all possible\norders and test them.\n\n@docs permuteInitOrder\n\n## Assert PIDs\n\n@docs mockPID, checkPID, assertPID\n\n@docs Msg\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Action",
+                "comment": " An action to perform on your sandboxed component.\n\n",
+                "args": [
+                    "msgIn"
+                ],
+                "type": "Webbhuset.Component.Sandbox.Layout.Action msgIn"
+            },
+            {
+                "name": "Msg",
+                "comment": " Sadbox Msg\n",
+                "args": [
+                    "msgIn",
+                    "msgOut"
+                ],
+                "type": "Webbhuset.ActorSystem.SysMsg Webbhuset.Component.Sandbox.ActorName (Webbhuset.Component.Sandbox.AppMsg msgIn msgOut)"
+            },
+            {
+                "name": "SandboxProgram",
+                "comment": " The Program type of your main function.\n\n",
+                "args": [
+                    "model",
+                    "msgIn",
+                    "msgOut"
+                ],
+                "type": "Platform.Program () (Webbhuset.Component.Sandbox.Model model msgOut) (Webbhuset.Component.Sandbox.Msg msgIn msgOut)"
+            },
+            {
+                "name": "TestCase",
+                "comment": " A test case for the Component\n\n",
+                "args": [
+                    "msgIn",
+                    "msgOut"
+                ],
+                "type": "{ title : String.String, desc : String.String, init : List.List (Webbhuset.Component.Sandbox.Action msgIn), onMsgOut : msgOut -> List.List (Webbhuset.Component.Sandbox.Action msgIn) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "assertPID",
+                "comment": " Assert that a PID matches a label.\n\nThis will result in action `pass`\n\n    mockPID \"form-component\"\n        |> assertPID \"form-component\"\n\nThis will result in the action\n`fail \"PID form-component does not match expectation other-component\"`\n\n    mockPID \"form-component\"\n        |> assertPID \"other-component\"\n\n",
+                "type": "String.String -> Webbhuset.Internal.PID.PID -> Webbhuset.Component.Sandbox.Action msgIn"
+            },
+            {
+                "name": "checkPID",
+                "comment": " Check that a mock pid matches an expected label.\n\nThis will return `True`\n\n    mockPID \"form-component\"\n        |> checkPID \"form-component\"\n\n",
+                "type": "String.String -> Webbhuset.Internal.PID.PID -> Basics.Bool"
+            },
+            {
+                "name": "delay",
+                "comment": " Perform a delayed action on your sandboxed component. Delay in\nmilliseconds.\n\n    Sandbox.sendMsg YourComponent.SomeMessage\n        |> Sandbox.delay 1000\n\n",
+                "type": "Basics.Float -> Webbhuset.Component.Sandbox.Action msgIn -> Webbhuset.Component.Sandbox.Action msgIn"
+            },
+            {
+                "name": "fail",
+                "comment": " Flag test case as failed. You can supply a message explaining what\nwent wrong.\n\n    Sandbox.fail \"Didn't receive some important out msg\"\n",
+                "type": "String.String -> Webbhuset.Component.Sandbox.Action msgIn"
+            },
+            {
+                "name": "layout",
+                "comment": " Sandbox a Layout Component\n\n",
+                "type": "{ title : String.String, component : Webbhuset.Component.Layout model msgIn msgOut (Webbhuset.Component.Sandbox.Msg msgIn msgOut), cases : List.List (Webbhuset.Component.Sandbox.TestCase msgIn msgOut), stringifyMsgIn : msgIn -> String.String, stringifyMsgOut : msgOut -> String.String, wrapView : (msgIn -> Webbhuset.Component.Sandbox.Msg msgIn msgOut) -> Html.Html (Webbhuset.Component.Sandbox.Msg msgIn msgOut) -> Html.Html (Webbhuset.Component.Sandbox.Msg msgIn msgOut) } -> Webbhuset.Component.Sandbox.SandboxProgram model msgIn msgOut"
+            },
+            {
+                "name": "mockPID",
+                "comment": " Create a mock PID for testing purposes.\n\n    mockPID \"form-component\"\n\n",
+                "type": "String.String -> Webbhuset.Internal.PID.PID"
+            },
+            {
+                "name": "pass",
+                "comment": " Flag test case as passed.\n\n    Sandbox.pass\n",
+                "type": "Webbhuset.Component.Sandbox.Action msgIn"
+            },
+            {
+                "name": "permuteInitOrder",
+                "comment": " Take one test case and permute all possible orders of init messages.\n\n\n",
+                "type": "Webbhuset.Component.Sandbox.TestCase msgIn msgOut -> List.List (Webbhuset.Component.Sandbox.TestCase msgIn msgOut)"
+            },
+            {
+                "name": "sendMsg",
+                "comment": " Send a message to you sandboxed component\n\n    Sandbox.sendMsg YourComponent.SomeMessage\n\n",
+                "type": "msgIn -> Webbhuset.Component.Sandbox.Action msgIn"
+            },
+            {
+                "name": "service",
+                "comment": " Sandbox a Service Component\n\nYou need to provied a `view` function which renders the model of\nyour service component.\n\n",
+                "type": "{ title : String.String, component : Webbhuset.Component.Service model msgIn msgOut, cases : List.List (Webbhuset.Component.Sandbox.TestCase msgIn msgOut), view : model -> Html.Html msgIn, stringifyMsgIn : msgIn -> String.String, stringifyMsgOut : msgOut -> String.String } -> Webbhuset.Component.Sandbox.SandboxProgram model msgIn msgOut"
+            },
+            {
+                "name": "spawnChild",
+                "comment": " Spawn a child component and send the PID to your component.\n\nYou can provide a String which will be displayed when the child\ncomponent is rendered (using `renderPID` in your layout component).\n\n\n    Sandbox.spawnChild \"Hello child\" YourComponent.ReceiveChild\n\n",
+                "type": "String.String -> (Webbhuset.Internal.PID.PID -> msgIn) -> Webbhuset.Component.Sandbox.Action msgIn"
+            },
+            {
+                "name": "timeout",
+                "comment": " Set a timeout in milliseconds. This will cause the test to automatically fail\nafter the timeout if the test havn't been flagged as passed by then.\n\n    Sandbox.timeout 1000\n",
+                "type": "Basics.Float -> Webbhuset.Component.Sandbox.Action msgIn"
+            },
+            {
+                "name": "ui",
+                "comment": " Sandbox a UI Component\n\n",
+                "type": "{ title : String.String, component : Webbhuset.Component.UI model msgIn msgOut, cases : List.List (Webbhuset.Component.Sandbox.TestCase msgIn msgOut), stringifyMsgIn : msgIn -> String.String, stringifyMsgOut : msgOut -> String.String, wrapView : Html.Html msgIn -> Html.Html msgIn } -> Webbhuset.Component.Sandbox.SandboxProgram model msgIn msgOut"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Webbhuset.Component.SystemEvent",
+        "comment": "\n\n# System Events\n\n@docs SystemEvent\n\nSystem events are sent to a component's `onSystem` function.\n\n    onSystem : SystemEvent -> SystemEvent.Handling MsgIn\n    onSystem event =\n        case event of\n            PIDNotFound pid ->\n                UnObserveData pid\n                    |> SystemEvent.iWillHandleIt\n\n            Kill ->\n                SystemEvent.default\n\nThis gives you the choice of how to handle them by returning `Handling`.\n\nIf you don't care you can just set the handling to default in your component's\nrecord.\n\n    component =\n        { init = init\n        , onSystem = always SystemEvent.default\n        ...\n        }\n\n## PIDNotFound\n\nIf your component sends a message to a PID that does not exist\nanymore you will receive a `PIDNotFound` event containing the PID of the\nkilled process.\nThis lets you clean up any PID's you stored in your model for example.\n\n**Default handling** for this event is to do nothing.\n\n## Kill\n\nKill is received when your component is going to be killed. You\nhave the chance to say some last words before dying.\n\n**Default handling** for Kill is to also kill all the children of\nthe process.\n\n\n# Handling\n\n@docs Handling, default, doNothing, iWillHandleIt, mapHandling\n\n",
+        "unions": [
+            {
+                "name": "SystemEvent",
+                "comment": " System Event\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "PIDNotFound",
+                        [
+                            "Webbhuset.Internal.PID.PID"
+                        ]
+                    ],
+                    [
+                        "Kill",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Handling",
+                "comment": " How should events be handeled.\n\n",
+                "args": [
+                    "msgIn"
+                ],
+                "type": "Webbhuset.Internal.SystemEvent.Handling msgIn"
+            }
+        ],
+        "values": [
+            {
+                "name": "default",
+                "comment": " Use event default handling.\n\n",
+                "type": "Webbhuset.Component.SystemEvent.Handling msgIn"
+            },
+            {
+                "name": "doNothing",
+                "comment": " Don't do anyting.\n\n",
+                "type": "Webbhuset.Component.SystemEvent.Handling msgIn"
+            },
+            {
+                "name": "iWillHandleIt",
+                "comment": " Handle it yourself.\n\n",
+                "type": "msgIn -> Webbhuset.Component.SystemEvent.Handling msgIn"
+            },
+            {
+                "name": "mapHandling",
+                "comment": " Map the Handling type.\n\n",
+                "type": "(msg1 -> msg2) -> Webbhuset.Component.SystemEvent.Handling msg1 -> Webbhuset.Component.SystemEvent.Handling msg2"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Webbhuset.PID",
+        "comment": "\n\n## PID\n\n@docs PID, toString, null\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "PID",
+                "comment": " A PID is an identifier for a Process.\n\nA process is an instance of an Actor / Component\n",
+                "args": [],
+                "type": "Webbhuset.Internal.PID.PID"
+            }
+        ],
+        "values": [
+            {
+                "name": "null",
+                "comment": " PID for testing purposes.\n\nDeprecated, see Webbhuset.Sandbox.mockPID instead\n\n",
+                "type": "Webbhuset.PID.PID"
+            },
+            {
+                "name": "toString",
+                "comment": " Stringify PID\n\nThis is useful when you need to make a unique string id, for example\nto use as html ids.\n\nThe string is unique for the component instance.\n\n",
+                "type": "Webbhuset.PID.PID -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Webbhuset.PID.Set",
+        "comment": "\n\n## Set of PID\n\nSince PIDs are not comparable they can not be used with the Set in elm/core.\n\nWhen using an event/observer pattern in the actor model it is useful\nto gather PIDs that are observing an event in a Set.\n\n@docs Set\n    , PID\n    , empty\n    , insert\n    , isEmpty\n    , remove\n    , toList\n",
+        "unions": [
+            {
+                "name": "Set",
+                "comment": " Store PIDs in a Set\n\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "PID",
+                "comment": " A PID is an identifier for a Process.\n\nA process is an instance of an Actor / Component\n",
+                "args": [],
+                "type": "Webbhuset.Internal.PID.PID"
+            }
+        ],
+        "values": [
+            {
+                "name": "empty",
+                "comment": " Create an empty set\n\n",
+                "type": "Webbhuset.PID.Set.Set"
+            },
+            {
+                "name": "insert",
+                "comment": " Insert PID in a Set\n\n",
+                "type": "Webbhuset.PID.Set.PID -> Webbhuset.PID.Set.Set -> Webbhuset.PID.Set.Set"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Check if a Set is empty.\n\n",
+                "type": "Webbhuset.PID.Set.Set -> Basics.Bool"
+            },
+            {
+                "name": "remove",
+                "comment": " Remove a PID from a Set\n\n",
+                "type": "Webbhuset.PID.Set.PID -> Webbhuset.PID.Set.Set -> Webbhuset.PID.Set.Set"
+            },
+            {
+                "name": "toList",
+                "comment": " Get all pids as a List\n\n",
+                "type": "Webbhuset.PID.Set.Set -> List.List Webbhuset.PID.Set.PID"
+            }
+        ],
+        "binops": []
+    }
+]

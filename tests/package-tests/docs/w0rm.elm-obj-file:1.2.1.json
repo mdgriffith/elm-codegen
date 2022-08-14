@@ -1,0 +1,289 @@
+[
+    {
+        "name": "Obj.Decode",
+        "comment": "\n\n@docs Decoder\n\n\n# Primitives\n\nelm-obj-file supports triangular meshes that may have normal vectors and/or texture coordinates, polylines and points.\n\nBy default, the geometrical data is returned in the `ObjCoordinates` [coordinate system](https://github.com/ianmackenzie/elm-geometry#coordinate-systems).\nIt's also possible to [transform coordinates](#coordinate-conversion) if desired.\n\nNote that all primitive decoders require at least one element and will fail if no elements are found.\n\n@docs triangles, faces, texturedTriangles, texturedFaces, polylines, points\n\n\n# Run Decoders\n\n@docs decodeString, expectObj\n\n\n# Filtering\n\nPrimitives within OBJ files can be tagged with metadata such as object name, group names and materials.\n\nUsing the filtering decoders, you can selectively decode based on this metadata.\n\nFor advanced filtering rules check the [`filter`](#filter) decoder.\n\n@docs object, group, defaultGroup, material\n\n\n# Metadata\n\nDecode useful information other than primitives. This can be useful to inspect the contents of the file.\n\nMetadata decoders can be also composed with advanced decoders [`andThen`](#andThen) and\n[`combine`](#combine) to first get the metadata, and then filter the primitives.\n\n@docs objectNames, groupNames, materialNames\n\n\n# Mapping\n\n@docs map, map2, map3, map4, map5\n\n\n# Advanced Decoding\n\n@docs filter, oneOf, fail, succeed, andThen, combine\n\n\n# Coordinate Conversion\n\n@docs ObjCoordinates\n\n@docs trianglesIn, facesIn, texturedTrianglesIn, texturedFacesIn, polylinesIn, pointsIn\n\n",
+        "unions": [
+            {
+                "name": "Decoder",
+                "comment": " A value that knows how to decode information from\n[the OBJ file format](https://en.wikipedia.org/wiki/Wavefront_.obj_file)\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            },
+            {
+                "name": "ObjCoordinates",
+                "comment": " Coordinate system for decoded meshes.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "andThen",
+                "comment": " Run one decoder and then run another decoder. Useful when you first want to look at metadata,\nand then filter based on that.\n",
+                "type": "(a -> Obj.Decode.Decoder b) -> Obj.Decode.Decoder a -> Obj.Decode.Decoder b"
+            },
+            {
+                "name": "combine",
+                "comment": " Combine multiple decoders together. For example, to extract meshes for all materials:\n\n    type alias MeshWithMaterial =\n        ( String, TriangularMesh (Point3d Meters ObjCoordinates) )\n\n    trianglesForMaterials : String -> Decode (List MeshWithMaterial)\n    trianglesForMaterials names =\n        names\n            |> List.map\n                (\\materialName ->\n                    material materialName triangles\n                        |> map (\\mesh -> ( materialName, mesh ))\n                )\n            |> combine\n\n    -- Decode material names, and then decode\n    -- triangles for these materials\n    withMaterials : Decode (List MeshWithMaterial)\n    withMaterials =\n        materialNames |> andThen trianglesForMaterials\n\n",
+                "type": "List.List (Obj.Decode.Decoder a) -> Obj.Decode.Decoder (List.List a)"
+            },
+            {
+                "name": "decodeString",
+                "comment": " Run the decoder on the string. Takes a function, that knows\nhow to convert float coordinates into physical units.\n\n    decodeString Length.meters triangles string == Ok (TriangularMesh {...})\n    decodeString Length.meters triangles string == Err \"Line 1: Invalid OBJ syntax '...'\"\n\n",
+                "type": "(Basics.Float -> Length.Length) -> Obj.Decode.Decoder a -> String.String -> Result.Result String.String a"
+            },
+            {
+                "name": "defaultGroup",
+                "comment": " Decode data for the default group. This group has a special meaning,\nall elements are assigned to it if a group is not specified.\n\n    defaultGroup =\n        group \"default\"\n\n",
+                "type": "Obj.Decode.Decoder a -> Obj.Decode.Decoder a"
+            },
+            {
+                "name": "expectObj",
+                "comment": " Load a mesh from an [HTTP request](https://package.elm-lang.org/packages/elm/http/latest/).\n\n    type Msg\n        = GotMesh (Result Http.Error (TriangularMesh (Point3d Meters ObjCoordinates)))\n\n    getMesh : Cmd Msg\n    getMesh =\n        Http.get\n            { url = \"Pod.obj.txt\"\n            , expect =\n                expectObj GotMesh\n                    Length.meters\n                    triangles\n            }\n\nNote: the .txt extension is required to work with `elm reactor`.\n\n",
+                "type": "(Result.Result Http.Error a -> msg) -> (Basics.Float -> Length.Length) -> Obj.Decode.Decoder a -> Http.Expect msg"
+            },
+            {
+                "name": "faces",
+                "comment": " Decode positions and normal vectors. Use with `Scene3d.Mesh.indexedFaces`.\n",
+                "type": "Obj.Decode.Decoder (TriangularMesh.TriangularMesh { position : Point3d.Point3d Length.Meters Obj.Decode.ObjCoordinates, normal : Vector3d.Vector3d Quantity.Unitless Obj.Decode.ObjCoordinates })"
+            },
+            {
+                "name": "facesIn",
+                "comment": " ",
+                "type": "Frame3d.Frame3d Length.Meters coordinates { defines : Obj.Decode.ObjCoordinates } -> Obj.Decode.Decoder (TriangularMesh.TriangularMesh { position : Point3d.Point3d Length.Meters coordinates, normal : Vector3d.Vector3d Quantity.Unitless coordinates })"
+            },
+            {
+                "name": "fail",
+                "comment": " A decoder that always fails with a given error message.\nUse it in case you need custom error messages.\n",
+                "type": "String.String -> Obj.Decode.Decoder a"
+            },
+            {
+                "name": "filter",
+                "comment": " Filter what should be decoded. For example, to implement the [`group`](#group) decoder from above:\n\n    group name =\n        filter\n            (\\properties ->\n                List.member name properties.groups\n            )\n\n",
+                "type": "({ groups : List.List String.String, object : Maybe.Maybe String.String, material : Maybe.Maybe String.String } -> Basics.Bool) -> Obj.Decode.Decoder a -> Obj.Decode.Decoder a"
+            },
+            {
+                "name": "group",
+                "comment": " Decode data for the given group name.\n",
+                "type": "String.String -> Obj.Decode.Decoder a -> Obj.Decode.Decoder a"
+            },
+            {
+                "name": "groupNames",
+                "comment": " Decode a sorted list of group names.\n",
+                "type": "Obj.Decode.Decoder (List.List String.String)"
+            },
+            {
+                "name": "map",
+                "comment": " Transform the decoder. For example, if you need to decode triangles’ vertices:\n\n    vertices : Decoder (List (Point3d Meters ObjCoordinates))\n    vertices =\n        map\n            (\\triangularMesh ->\n                triangularMesh\n                    |> TriangularMesh.vertices\n                    |> Array.toList\n            )\n            triangles\n\n",
+                "type": "(a -> b) -> Obj.Decode.Decoder a -> Obj.Decode.Decoder b"
+            },
+            {
+                "name": "map2",
+                "comment": " Join the result from two decoders. This lets you extract parts of the same OBJ file into separate meshes.\n\n    type alias Car =\n        { wheels : TriangularMesh (Point3d Meters ObjCoordinates)\n        , base : TriangularMesh (Point3d Meters ObjCoordinates)\n        }\n\n    carDecoder : Decoder Car\n    carDecoder =\n        map2 Car\n            (object \"wheels\" triangles)\n            (object \"base\" triangles)\n\n",
+                "type": "(a -> b -> c) -> Obj.Decode.Decoder a -> Obj.Decode.Decoder b -> Obj.Decode.Decoder c"
+            },
+            {
+                "name": "map3",
+                "comment": " ",
+                "type": "(a -> b -> c -> d) -> Obj.Decode.Decoder a -> Obj.Decode.Decoder b -> Obj.Decode.Decoder c -> Obj.Decode.Decoder d"
+            },
+            {
+                "name": "map4",
+                "comment": " ",
+                "type": "(a -> b -> c -> d -> e) -> Obj.Decode.Decoder a -> Obj.Decode.Decoder b -> Obj.Decode.Decoder c -> Obj.Decode.Decoder d -> Obj.Decode.Decoder e"
+            },
+            {
+                "name": "map5",
+                "comment": " ",
+                "type": "(a -> b -> c -> d -> e -> f) -> Obj.Decode.Decoder a -> Obj.Decode.Decoder b -> Obj.Decode.Decoder c -> Obj.Decode.Decoder d -> Obj.Decode.Decoder e -> Obj.Decode.Decoder f"
+            },
+            {
+                "name": "material",
+                "comment": " Decode data for the given material name.\n",
+                "type": "String.String -> Obj.Decode.Decoder a -> Obj.Decode.Decoder a"
+            },
+            {
+                "name": "materialNames",
+                "comment": " Decode a sorted list of material names.\n",
+                "type": "Obj.Decode.Decoder (List.List String.String)"
+            },
+            {
+                "name": "object",
+                "comment": " Decode data for the given object name.\n\n    wheels : Decoder (TriangularMesh (Point3d Meters ObjCoordinates))\n    wheels =\n        object \"wheels\" triangles\n\n",
+                "type": "String.String -> Obj.Decode.Decoder a -> Obj.Decode.Decoder a"
+            },
+            {
+                "name": "objectNames",
+                "comment": " Decode a sorted list of object names.\n",
+                "type": "Obj.Decode.Decoder (List.List String.String)"
+            },
+            {
+                "name": "oneOf",
+                "comment": " Try a bunch of different decoders. You will get the result from the first one that succeeds.\n",
+                "type": "List.List (Obj.Decode.Decoder a) -> Obj.Decode.Decoder a"
+            },
+            {
+                "name": "points",
+                "comment": " ",
+                "type": "Obj.Decode.Decoder (List.List (Point3d.Point3d Length.Meters Obj.Decode.ObjCoordinates))"
+            },
+            {
+                "name": "pointsIn",
+                "comment": " ",
+                "type": "Frame3d.Frame3d Length.Meters coordinates { defines : Obj.Decode.ObjCoordinates } -> Obj.Decode.Decoder (List.List (Point3d.Point3d Length.Meters coordinates))"
+            },
+            {
+                "name": "polylines",
+                "comment": " ",
+                "type": "Obj.Decode.Decoder (List.List (Polyline3d.Polyline3d Length.Meters Obj.Decode.ObjCoordinates))"
+            },
+            {
+                "name": "polylinesIn",
+                "comment": " ",
+                "type": "Frame3d.Frame3d Length.Meters coordinates { defines : Obj.Decode.ObjCoordinates } -> Obj.Decode.Decoder (List.List (Polyline3d.Polyline3d Length.Meters coordinates))"
+            },
+            {
+                "name": "succeed",
+                "comment": " A decoder that always succeeds with the result. May be useful in combination with [`oneOf`](#oneOf) to\nprovide a placeholder mesh if decoding fails.\n",
+                "type": "a -> Obj.Decode.Decoder a"
+            },
+            {
+                "name": "texturedFaces",
+                "comment": " Decode positions, UV and normal vectors. Use with `Scene3d.Mesh.texturedFaces`.\n",
+                "type": "Obj.Decode.Decoder (TriangularMesh.TriangularMesh { position : Point3d.Point3d Length.Meters Obj.Decode.ObjCoordinates, normal : Vector3d.Vector3d Quantity.Unitless Obj.Decode.ObjCoordinates, uv : ( Basics.Float, Basics.Float ) })"
+            },
+            {
+                "name": "texturedFacesIn",
+                "comment": " ",
+                "type": "Frame3d.Frame3d Length.Meters coordinates { defines : Obj.Decode.ObjCoordinates } -> Obj.Decode.Decoder (TriangularMesh.TriangularMesh { position : Point3d.Point3d Length.Meters coordinates, normal : Vector3d.Vector3d Quantity.Unitless coordinates, uv : ( Basics.Float, Basics.Float ) })"
+            },
+            {
+                "name": "texturedTriangles",
+                "comment": " Decode positions and [UV](https://learnopengl.com/Getting-started/Textures) (texture) coordinates.\nUse with `Scene3d.Mesh.texturedTriangles` or `Scene3d.Mesh.texturedFacets`.\n",
+                "type": "Obj.Decode.Decoder (TriangularMesh.TriangularMesh { position : Point3d.Point3d Length.Meters Obj.Decode.ObjCoordinates, uv : ( Basics.Float, Basics.Float ) })"
+            },
+            {
+                "name": "texturedTrianglesIn",
+                "comment": " ",
+                "type": "Frame3d.Frame3d Length.Meters coordinates { defines : Obj.Decode.ObjCoordinates } -> Obj.Decode.Decoder (TriangularMesh.TriangularMesh { position : Point3d.Point3d Length.Meters coordinates, uv : ( Basics.Float, Basics.Float ) })"
+            },
+            {
+                "name": "triangles",
+                "comment": " Decode just the plain positions. Use with `Scene3d.Mesh.indexedTriangles` and `Scene3d.Mesh.indexedFacets` from elm-3d-scene.\n",
+                "type": "Obj.Decode.Decoder (TriangularMesh.TriangularMesh (Point3d.Point3d Length.Meters Obj.Decode.ObjCoordinates))"
+            },
+            {
+                "name": "trianglesIn",
+                "comment": " Transform coordinates when decoding. For example, if you need to render a mesh with Z-up,\nbut it was exported with Y-up:\n\n    type ZUpCoords\n        = ZUpCoords\n\n    yUpToZUpFrame : Frame3d Meters ZUpCoords { defines : ObjCoordinates }\n    yUpToZUpFrame =\n        Frame3d.atOrigin\n            |> Frame3d.rotateAround\n                Axis3d.x\n                (Angle.degrees 90)\n\n    zUpTriangles : Decoder (TriangularMesh (Point3d Meters ZUpCoords))\n    zUpTriangles =\n        trianglesIn yUpToZUpFrame\n\n",
+                "type": "Frame3d.Frame3d Length.Meters coordinates { defines : Obj.Decode.ObjCoordinates } -> Obj.Decode.Decoder (TriangularMesh.TriangularMesh (Point3d.Point3d Length.Meters coordinates))"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Obj.Encode",
+        "comment": " Turn different geometry into OBJ files.\n\n\n# Encoding\n\n@docs encode, Geometry\n\n\n# Primitives\n\n@docs triangles, faces, texturedTriangles, texturedFaces, polylines, points\n\n\n# Advanced Encoding\n\n@docs encodeMultipart, encodeCompact, Options, defaultOptions\n@docs trianglesWith, facesWith, texturedTrianglesWith, texturedFacesWith, polylinesWith, pointsWith\n\n",
+        "unions": [
+            {
+                "name": "Geometry",
+                "comment": " Represents encoded geometry.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Options",
+                "comment": " Set decimal precision for geometry and label it with object,\ngroups or material. May be useful for labeling parts in a multipart OBJ file.\n\n    multipartObj =\n        encodeMultipart Length.inMeters\n            [ trianglesWith { defaultOptions | object = Just \"roof\" } roofMesh\n            , trianglesWith { defaultOptions | object = Just \"walls\" } wallsMesh\n            ]\n\nNote: the precision is clamped between 1 and 10, string options are stripped of whitespace.\n\n",
+                "args": [],
+                "type": "{ precision : Basics.Int, object : Maybe.Maybe String.String, groups : List.List String.String, material : Maybe.Maybe String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultOptions",
+                "comment": " Default options for geometry.\n\n    defaultOptions =\n        { precision = 6\n        , object = Nothing\n        , groups = []\n        , material = Nothing\n        }\n\n    triangles =\n        trianglesWith defaultOptions\n\n",
+                "type": "Obj.Encode.Options"
+            },
+            {
+                "name": "encode",
+                "comment": " Encode geometry in the OBJ format, parametrized by the function,\nthat knows how to convert units.\n\n    obj =\n        encode Length.inMeters (triangles mesh)\n\nTo encode multipart files, control precision or add various metadata, see\n[Advanced Encoding](#advanced-encoding).\n\n",
+                "type": "(Length.Length -> Basics.Float) -> Obj.Encode.Geometry -> String.String"
+            },
+            {
+                "name": "encodeCompact",
+                "comment": " Like `encodeMultipart`, but reindexes triangular meshes.\nThis is slower, but produces smaller result, because it\ndeduplicates stored data.\n",
+                "type": "(Length.Length -> Basics.Float) -> List.List Obj.Encode.Geometry -> String.String"
+            },
+            {
+                "name": "encodeMultipart",
+                "comment": " Like `encode`, but for files made of multiple parts.\n\n    multipartObj =\n        encodeMultipart Length.inMeters\n            [ triangles roofMesh\n            , triangles wallsMesh\n            ]\n\n",
+                "type": "(Length.Length -> Basics.Float) -> List.List Obj.Encode.Geometry -> String.String"
+            },
+            {
+                "name": "faces",
+                "comment": " Encode positions and normal vectors.\n",
+                "type": "TriangularMesh.TriangularMesh { a | position : Point3d.Point3d Length.Meters coords, normal : Vector3d.Vector3d Quantity.Unitless coords } -> Obj.Encode.Geometry"
+            },
+            {
+                "name": "facesWith",
+                "comment": " ",
+                "type": "Obj.Encode.Options -> TriangularMesh.TriangularMesh { a | position : Point3d.Point3d Length.Meters coords, normal : Vector3d.Vector3d Quantity.Unitless coords } -> Obj.Encode.Geometry"
+            },
+            {
+                "name": "points",
+                "comment": " ",
+                "type": "List.List (Point3d.Point3d Length.Meters coords) -> Obj.Encode.Geometry"
+            },
+            {
+                "name": "pointsWith",
+                "comment": " ",
+                "type": "Obj.Encode.Options -> List.List (Point3d.Point3d Length.Meters coords) -> Obj.Encode.Geometry"
+            },
+            {
+                "name": "polylines",
+                "comment": " ",
+                "type": "List.List (Polyline3d.Polyline3d Length.Meters coords) -> Obj.Encode.Geometry"
+            },
+            {
+                "name": "polylinesWith",
+                "comment": " ",
+                "type": "Obj.Encode.Options -> List.List (Polyline3d.Polyline3d Length.Meters coords) -> Obj.Encode.Geometry"
+            },
+            {
+                "name": "texturedFaces",
+                "comment": " Encode positions, UV and normal vectors.\n",
+                "type": "TriangularMesh.TriangularMesh { a | position : Point3d.Point3d Length.Meters coords, normal : Vector3d.Vector3d Quantity.Unitless coords, uv : ( Basics.Float, Basics.Float ) } -> Obj.Encode.Geometry"
+            },
+            {
+                "name": "texturedFacesWith",
+                "comment": " ",
+                "type": "Obj.Encode.Options -> TriangularMesh.TriangularMesh { a | position : Point3d.Point3d Length.Meters coords, normal : Vector3d.Vector3d Quantity.Unitless coords, uv : ( Basics.Float, Basics.Float ) } -> Obj.Encode.Geometry"
+            },
+            {
+                "name": "texturedTriangles",
+                "comment": " Encode positions and [UV](https://learnopengl.com/Getting-started/Textures) (texture) coordinates.\n",
+                "type": "TriangularMesh.TriangularMesh { a | position : Point3d.Point3d Length.Meters coords, uv : ( Basics.Float, Basics.Float ) } -> Obj.Encode.Geometry"
+            },
+            {
+                "name": "texturedTrianglesWith",
+                "comment": " ",
+                "type": "Obj.Encode.Options -> TriangularMesh.TriangularMesh { a | position : Point3d.Point3d Length.Meters coords, uv : ( Basics.Float, Basics.Float ) } -> Obj.Encode.Geometry"
+            },
+            {
+                "name": "triangles",
+                "comment": " Encode positions.\n",
+                "type": "TriangularMesh.TriangularMesh (Point3d.Point3d Length.Meters coords) -> Obj.Encode.Geometry"
+            },
+            {
+                "name": "trianglesWith",
+                "comment": " ",
+                "type": "Obj.Encode.Options -> TriangularMesh.TriangularMesh (Point3d.Point3d Length.Meters coords) -> Obj.Encode.Geometry"
+            }
+        ],
+        "binops": []
+    }
+]

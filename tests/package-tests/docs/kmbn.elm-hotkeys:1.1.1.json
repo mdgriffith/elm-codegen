@@ -1,0 +1,26 @@
+[
+    {
+        "name": "Hotkeys",
+        "comment": " Event handlers for sending content and triggering actions with keypresses.\n\n@docs onKeyCode\n\n@docs onEnter\n\n@docs onEnterSend\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "onEnter",
+                "comment": " Send a Msg when enter is pressed. This is a convenience function that\nwraps `onKeyCode`.\n\nExamples:\n\n    input [ placeholder \"Enter example\", onEnter CheckExample ] []\n\n    input [ placeholder \"Enter example\", onEnter (Update example.id) ] []\n\n",
+                "type": "msg -> Html.Attribute msg"
+            },
+            {
+                "name": "onEnterSend",
+                "comment": " Send content only when enter is pressed. Do not send anything beforehand.\n\nThis is an alternative to using `Html.Events.onInput` to update the model with\nincomplete content on every keystroke and then using another event handler to\nindicate that the content collected in the model is now complete.\n\nInstead, we only send content to `update` when the content is ready to be\nconsumed.\n\nExample:\n\n    input [ placeholder \"Enter content\", onEnterSend NewContent ] []\n\nSee `../examples/onEnterSend.elm` for a working example.\n\n",
+                "type": "(String.String -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "onKeyCode",
+                "comment": " Construct an event handler for any keycode. Send a Msg when the given key\nis pressed.\n\n(You can use <http://keycode.info> to find the keycode\nfor a given key.)\n\nExamples:\n\n    input [ onKeyCode 13 EnterWasPressed ] []\n\n    input [ onKeyCode 17 ControlWasPressed ] []\n\n",
+                "type": "Basics.Int -> msg -> Html.Attribute msg"
+            }
+        ],
+        "binops": []
+    }
+]

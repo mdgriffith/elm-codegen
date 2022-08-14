@@ -1,0 +1,790 @@
+[
+    {
+        "name": "MeBasics",
+        "comment": " wraps Basics\n\n\n# Comparison\n\n@docs compare\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "compare",
+                "comment": " wraps compare\n\n\n",
+                "type": "MeType.Expr"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "MeCodeGen",
+        "comment": " generate code from MetaElm Expr values\n(using Elm.CodeGen to produce the string output)\n\n@docs toString, fromContext\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fromContext",
+                "comment": " produce code from Dict of name -> expression\n",
+                "type": "MeType.Context -> String.String"
+            },
+            {
+                "name": "toString",
+                "comment": " turn Expr into Elm code (w/pretty printing)\n",
+                "type": "MeType.Expr -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "MeFloat",
+        "comment": " helper module for Float types\n\n@docs init, toFloat\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "init",
+                "comment": " turn raw Float into Exp\n",
+                "type": "Basics.Float -> MeType.Expr"
+            },
+            {
+                "name": "toFloat",
+                "comment": " convert Expr to raw Float (if types match)\n",
+                "type": "MeType.Expr -> Result.Result String.String Basics.Float"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "MeInt",
+        "comment": " helper module for Int types\n\n\n# conversion\n\n@docs init, toInt\n\n\n# expression\n\n@docs eq, toFloat, modBy\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "eq",
+                "comment": " wraps `==` for ints\n",
+                "type": "MeType.Expr"
+            },
+            {
+                "name": "init",
+                "comment": " turn raw Int into an Expr\n",
+                "type": "Basics.Int -> MeType.Expr"
+            },
+            {
+                "name": "modBy",
+                "comment": " wraps modBy\n",
+                "type": "MeType.Expr"
+            },
+            {
+                "name": "toFloat",
+                "comment": " wraps Basics.toFloat\n",
+                "type": "MeType.Expr"
+            },
+            {
+                "name": "toInt",
+                "comment": " convert Expr to raw Int (if types match)\n",
+                "type": "MeType.Expr -> Result.Result String.String Basics.Int"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "MeList",
+        "comment": " wrap List\n\n\n# conversion (in)\n\n@docs initInts, initFloats, empty\n\n\n# conversion (out)\n\n@docs toList, toListInts\n\n\n# operators\n\n@docs cons, append\n\n\n# wrappers\n\n@docs all, any, concat, concatMap, drop, filter, filterMap, foldl, foldr, head, indexedMap, intersperse, isEmpty, length, map, map2, map3, map4, map5, maximum, member, minimum, partition, product, range, repeat, reverse, singleton, sort, sortBy, sortWith, sum, tail, take, unzip\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "all",
+                "comment": " wraps List.all\n",
+                "type": "MeType.Expr"
+            },
+            {
+                "name": "any",
+                "comment": " wraps List.any\n",
+                "type": "MeType.Expr"
+            },
+            {
+                "name": "append",
+                "comment": " wraps List.append (++)\n",
+                "type": "MeType.Expr"
+            },
+            {
+                "name": "concat",
+                "comment": " wraps List.concat\n",
+                "type": "MeType.Expr"
+            },
+            {
+                "name": "concatMap",
+                "comment": " wraps List.concatMap\n",
+                "type": "MeType.Expr"
+            },
+            {
+                "name": "cons",
+                "comment": " wraps List.cons (::)\n",
+                "type": "MeType.Expr"
+            },
+            {
+                "name": "drop",
+                "comment": " wraps List.drop\n",
+                "type": "MeType.Expr"
+            },
+            {
+                "name": "empty",
+                "comment": " make an empty list\n",
+                "type": "MeType.Expr"
+            },
+            {
+                "name": "filter",
+                "comment": " wraps List.filter\n",
+                "type": "MeType.Expr"
+            },
+            {
+                "name": "filterMap",
+                "comment": " wraps List.filterMap\n",
+                "type": "MeType.Expr"
+            },
+            {
+                "name": "foldl",
+                "comment": " wraps List.foldl\n",
+                "type": "MeType.Expr"
+            },
+            {
+                "name": "foldr",
+                "comment": " wraps List.foldr\n",
+                "type": "MeType.Expr"
+            },
+            {
+                "name": "head",
+                "comment": " wraps List.head\n",
+                "type": "MeType.Expr"
+            },
+            {
+                "name": "indexedMap",
+                "comment": " wraps List.indexedMap\n",
+                "type": "MeType.Expr"
+            },
+            {
+                "name": "initFloats",
+                "comment": " convert list of floats to an Expr\n",
+                "type": "List.List Basics.Float -> MeType.Expr"
+            },
+            {
+                "name": "initInts",
+                "comment": " convert list of ints to an Expr\n",
+                "type": "List.List Basics.Int -> MeType.Expr"
+            },
+            {
+                "name": "intersperse",
+                "comment": " wraps List.intersperse\n",
+                "type": "MeType.Expr"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " wraps List.isEmpty\n",
+                "type": "MeType.Expr"
+            },
+            {
+                "name": "length",
+                "comment": " wraps List.length\n",
+                "type": "MeType.Expr"
+            },
+            {
+                "name": "map",
+                "comment": " wraps List.map\n",
+                "type": "MeType.Expr"
+            },
+            {
+                "name": "map2",
+                "comment": " wraps List.map2\n",
+                "type": "MeType.Expr"
+            },
+            {
+                "name": "map3",
+                "comment": " wraps List.map3\n",
+                "type": "MeType.Expr"
+            },
+            {
+                "name": "map4",
+                "comment": " wraps List.map4\n",
+                "type": "MeType.Expr"
+            },
+            {
+                "name": "map5",
+                "comment": " wraps List.map5\n",
+                "type": "MeType.Expr"
+            },
+            {
+                "name": "maximum",
+                "comment": " wraps List.maximum\n",
+                "type": "MeType.Expr"
+            },
+            {
+                "name": "member",
+                "comment": " wraps List.member\n",
+                "type": "MeType.Expr"
+            },
+            {
+                "name": "minimum",
+                "comment": " wraps List.minimum\n",
+                "type": "MeType.Expr"
+            },
+            {
+                "name": "partition",
+                "comment": " wraps List.partition\n",
+                "type": "MeType.Expr"
+            },
+            {
+                "name": "product",
+                "comment": " wraps List.product\n",
+                "type": "MeType.Expr"
+            },
+            {
+                "name": "range",
+                "comment": " wraps List.range\n",
+                "type": "MeType.Expr"
+            },
+            {
+                "name": "repeat",
+                "comment": " wraps List.repeat\n",
+                "type": "MeType.Expr"
+            },
+            {
+                "name": "reverse",
+                "comment": " wraps List.reverse\n",
+                "type": "MeType.Expr"
+            },
+            {
+                "name": "singleton",
+                "comment": " wraps List.singleton\n",
+                "type": "MeType.Expr"
+            },
+            {
+                "name": "sort",
+                "comment": " wraps List.sort\n",
+                "type": "MeType.Expr"
+            },
+            {
+                "name": "sortBy",
+                "comment": " wraps List.sortBy\n",
+                "type": "MeType.Expr"
+            },
+            {
+                "name": "sortWith",
+                "comment": " wraps List.sortWith\n",
+                "type": "MeType.Expr"
+            },
+            {
+                "name": "sum",
+                "comment": " wraps List.sum\n",
+                "type": "MeType.Expr"
+            },
+            {
+                "name": "tail",
+                "comment": " wraps List.tail\n",
+                "type": "MeType.Expr"
+            },
+            {
+                "name": "take",
+                "comment": " wraps List.take\n",
+                "type": "MeType.Expr"
+            },
+            {
+                "name": "toList",
+                "comment": " convert wrapped list to List\n\nYou must pass in a converter for the elements. Example:\n\n        expr\n            |> MeRunTime.getFinalValue\n            |> toList MeInt.toInt\n            |> Result.withDefault []\n\n",
+                "type": "(MeType.Expr -> Result.Result String.String a) -> MeType.V -> Result.Result String.String (List.List a)"
+            },
+            {
+                "name": "toListInts",
+                "comment": " convert wrapped list of ints to List Int\n",
+                "type": "MeType.V -> Result.Result String.String (List.List Basics.Int)"
+            },
+            {
+                "name": "unzip",
+                "comment": " wraps List.unzip\n",
+                "type": "MeType.Expr"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "MeNumber",
+        "comment": " wrappers for numbers\n\n@docs plus, minus, mult\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "minus",
+                "comment": " wraps `-` for numbers\n",
+                "type": "MeType.Expr"
+            },
+            {
+                "name": "mult",
+                "comment": " wraps `*` for numbers\n",
+                "type": "MeType.Expr"
+            },
+            {
+                "name": "plus",
+                "comment": " wraps `+` for numbers\n",
+                "type": "MeType.Expr"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "MeParser",
+        "comment": " parse JSON -> Expr\n\n@docs toExpr\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toExpr",
+                "comment": " convert JSON to Expr\n\n    (note that we don't have a way to read in tuples)\n\n",
+                "type": "String.String -> MeType.Expr"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "MeRepr",
+        "comment": " convert Expr to String\n\n@docs fromExpr\n\n\n# Helpers\n\n@docs fromList, fromTuple\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fromExpr",
+                "comment": " convert Expr to String\n",
+                "type": "MeType.Expr -> String.String"
+            },
+            {
+                "name": "fromList",
+                "comment": " emit a list of strings (i.e. surround with brackets, add commas)\n",
+                "type": "List.List String.String -> String.String"
+            },
+            {
+                "name": "fromTuple",
+                "comment": " emit a tuple of strings (i.e. surround with parens, add commas)\n",
+                "type": "( String.String, String.String ) -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "MeRunTime",
+        "comment": " The MetaElm RunTime (MeRunTime) can evaluate\nAST expressions inside Elm!\n\n\n# main API\n\n@docs computeExpr, compute, getFinalValue\n\n\n# helpers\n\nHelpers are mostly used for wrapping library functions\nlike List.map.\n\n@docs getFuncV, getFuncVV, getFuncVVV, getFuncVVVV, getFuncVVVVV, getValue, error\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "compute",
+                "comment": " like computeExpr, but you can pass in a context\n",
+                "type": "MeType.Context -> MeType.Expr -> MeType.Expr"
+            },
+            {
+                "name": "computeExpr",
+                "comment": " compute/evaluate an expression\n",
+                "type": "MeType.Expr -> MeType.Expr"
+            },
+            {
+                "name": "error",
+                "comment": " value representing error in computation\n",
+                "type": "String.String -> MeType.Expr"
+            },
+            {
+                "name": "getFinalValue",
+                "comment": " get the value of a computed expression (usually\nafter a call to `compute`)\n",
+                "type": "MeType.Expr -> MeType.V"
+            },
+            {
+                "name": "getFuncV",
+                "comment": " kinda gets a one-argument function from an expression\n",
+                "type": "MeType.Context -> MeType.Expr -> MeType.FV"
+            },
+            {
+                "name": "getFuncVV",
+                "comment": " kinda gets a two-argument function from an expression\n",
+                "type": "MeType.Context -> MeType.Expr -> MeType.FVV"
+            },
+            {
+                "name": "getFuncVVV",
+                "comment": " kinda gets a three-argument function from an expression\n",
+                "type": "MeType.Context -> MeType.Expr -> MeType.FVVV"
+            },
+            {
+                "name": "getFuncVVVV",
+                "comment": " kinda gets a four-argument function from an expression\n",
+                "type": "MeType.Context -> MeType.Expr -> MeType.FVVVV"
+            },
+            {
+                "name": "getFuncVVVVV",
+                "comment": " kinda gets a five-argument function from an expression\n",
+                "type": "MeType.Context -> MeType.Expr -> MeType.FVVVVV"
+            },
+            {
+                "name": "getValue",
+                "comment": " convert expression to value (or error if it's\na function\n",
+                "type": "MeType.Context -> MeType.Expr -> MeType.V"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "MeTuple",
+        "comment": " wraps Tuple\n\n@docs first, second, pair\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "first",
+                "comment": " wraps Tuple.first\n",
+                "type": "MeType.Expr"
+            },
+            {
+                "name": "pair",
+                "comment": " wraps Tuple.pair\n",
+                "type": "MeType.Expr"
+            },
+            {
+                "name": "second",
+                "comment": " wraps Tuple.second\n",
+                "type": "MeType.Expr"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "MeType",
+        "comment": " The main type here is `Expr`. In MetaElm almost\nevery piece of code is represented as an `Expr`.\n\n\n# Expr and V\n\n@docs Expr\n\n@docs V\n\n\n# Helper types\n\n@docs FV, FVV, FVVV, FVVVV, FVVVVV, Context\n\n",
+        "unions": [
+            {
+                "name": "Expr",
+                "comment": " AST node for MetaElm code\n",
+                "args": [],
+                "cases": [
+                    [
+                        "A1",
+                        [
+                            "MeType.Expr",
+                            "MeType.Expr"
+                        ]
+                    ],
+                    [
+                        "A1F2",
+                        [
+                            "MeType.Expr",
+                            "String.String",
+                            "String.String",
+                            "MeType.Expr"
+                        ]
+                    ],
+                    [
+                        "A1F3",
+                        [
+                            "MeType.Expr",
+                            "String.String",
+                            "String.String",
+                            "String.String",
+                            "MeType.Expr"
+                        ]
+                    ],
+                    [
+                        "A2F3",
+                        [
+                            "MeType.Expr",
+                            "MeType.Expr",
+                            "String.String",
+                            "String.String",
+                            "String.String",
+                            "MeType.Expr"
+                        ]
+                    ],
+                    [
+                        "A2",
+                        [
+                            "MeType.Expr",
+                            "MeType.Expr",
+                            "MeType.Expr"
+                        ]
+                    ],
+                    [
+                        "A3",
+                        [
+                            "MeType.Expr",
+                            "MeType.Expr",
+                            "MeType.Expr",
+                            "MeType.Expr"
+                        ]
+                    ],
+                    [
+                        "A4",
+                        [
+                            "MeType.Expr",
+                            "MeType.Expr",
+                            "MeType.Expr",
+                            "MeType.Expr",
+                            "MeType.Expr"
+                        ]
+                    ],
+                    [
+                        "A5",
+                        [
+                            "MeType.Expr",
+                            "MeType.Expr",
+                            "MeType.Expr",
+                            "MeType.Expr",
+                            "MeType.Expr",
+                            "MeType.Expr"
+                        ]
+                    ],
+                    [
+                        "Call",
+                        [
+                            "String.String",
+                            "List.List MeType.Expr"
+                        ]
+                    ],
+                    [
+                        "ComputedFunc",
+                        [
+                            "MeType.FV"
+                        ]
+                    ],
+                    [
+                        "ComputedValue",
+                        [
+                            "MeType.V"
+                        ]
+                    ],
+                    [
+                        "F1",
+                        [
+                            "String.String",
+                            "MeType.Expr"
+                        ]
+                    ],
+                    [
+                        "F2",
+                        [
+                            "String.String",
+                            "String.String",
+                            "MeType.Expr"
+                        ]
+                    ],
+                    [
+                        "F3",
+                        [
+                            "String.String",
+                            "String.String",
+                            "String.String",
+                            "MeType.Expr"
+                        ]
+                    ],
+                    [
+                        "F4",
+                        [
+                            "String.String",
+                            "String.String",
+                            "String.String",
+                            "String.String",
+                            "MeType.Expr"
+                        ]
+                    ],
+                    [
+                        "F5",
+                        [
+                            "String.String",
+                            "String.String",
+                            "String.String",
+                            "String.String",
+                            "String.String",
+                            "MeType.Expr"
+                        ]
+                    ],
+                    [
+                        "FuncCall",
+                        [
+                            "MeType.Context",
+                            "String.String",
+                            "List.List MeType.Expr"
+                        ]
+                    ],
+                    [
+                        "IfElse",
+                        [
+                            "MeType.Expr",
+                            "MeType.Expr",
+                            "MeType.Expr"
+                        ]
+                    ],
+                    [
+                        "Infix",
+                        [
+                            "MeType.Expr",
+                            "MeType.Expr",
+                            "MeType.Expr"
+                        ]
+                    ],
+                    [
+                        "LetIn",
+                        [
+                            "List.List ( String.String, MeType.Expr )",
+                            "MeType.Expr"
+                        ]
+                    ],
+                    [
+                        "NamedFunc",
+                        [
+                            "String.String",
+                            "MeType.FV"
+                        ]
+                    ],
+                    [
+                        "OpFunc",
+                        [
+                            "String.String",
+                            "MeType.FV",
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "PipeLine",
+                        [
+                            "MeType.Expr",
+                            "List.List MeType.Expr"
+                        ]
+                    ],
+                    [
+                        "SimpleValue",
+                        [
+                            "MeType.V"
+                        ]
+                    ],
+                    [
+                        "Var",
+                        [
+                            "String.String",
+                            "MeType.Expr"
+                        ]
+                    ],
+                    [
+                        "VarName",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "V",
+                "comment": " primitives and basic containers\n",
+                "args": [],
+                "cases": [
+                    [
+                        "VBool",
+                        [
+                            "Basics.Bool"
+                        ]
+                    ],
+                    [
+                        "VInt",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "VFloat",
+                        [
+                            "Basics.Float"
+                        ]
+                    ],
+                    [
+                        "VTuple",
+                        [
+                            "( MeType.Expr, MeType.Expr )"
+                        ]
+                    ],
+                    [
+                        "VList",
+                        [
+                            "List.List MeType.Expr"
+                        ]
+                    ],
+                    [
+                        "VError",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "VMaybe",
+                        [
+                            "Maybe.Maybe MeType.Expr"
+                        ]
+                    ],
+                    [
+                        "VOrder",
+                        [
+                            "Basics.Order"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Context",
+                "comment": " namespace (maps names to expressions)\n",
+                "args": [],
+                "type": "Dict.Dict String.String MeType.Expr"
+            },
+            {
+                "name": "FV",
+                "comment": " function w/one var\n",
+                "args": [],
+                "type": "MeType.Context -> MeType.Expr -> MeType.Expr"
+            },
+            {
+                "name": "FVV",
+                "comment": " function w/two vars\n",
+                "args": [],
+                "type": "MeType.Context -> MeType.Expr -> MeType.Expr -> MeType.Expr"
+            },
+            {
+                "name": "FVVV",
+                "comment": " function w/three vars\n",
+                "args": [],
+                "type": "MeType.Context -> MeType.Expr -> MeType.Expr -> MeType.Expr -> MeType.Expr"
+            },
+            {
+                "name": "FVVVV",
+                "comment": " function w/four vars\n",
+                "args": [],
+                "type": "MeType.Context -> MeType.Expr -> MeType.Expr -> MeType.Expr -> MeType.Expr -> MeType.Expr"
+            },
+            {
+                "name": "FVVVVV",
+                "comment": " function w/five vars\n",
+                "args": [],
+                "type": "MeType.Context -> MeType.Expr -> MeType.Expr -> MeType.Expr -> MeType.Expr -> MeType.Expr -> MeType.Expr"
+            }
+        ],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "MeWrapper",
+        "comment": " Advanced:\n\nThis returns a Dict mapping names like \"List.map\"\nto the associated wrapper functions (e.g. `MeList.map`).\n\nGenerally, you do not want to use this module unless\nyou're building something like a REPL. Instead just\ndirectly use things like `MeList.map`. When you use\n`allWrappers` it brings in all the associated code.\n\n@docs allWrappers, viewWrappers\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "allWrappers",
+                "comment": " Dict mapping names like\n\"List.name\" to associated meta-elm wrapper expression\n",
+                "type": "Dict.Dict String.String MeType.Expr"
+            },
+            {
+                "name": "viewWrappers",
+                "comment": " vanilla HTML of supported wrapper methods\n\nYou will generally only display this if you are using\nallWrappers. If you want to display these more nicely, you\ncan read the source.\n\n",
+                "type": "List.List (Html.Html msg)"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,285 @@
+[
+    {
+        "name": "DateFormat",
+        "comment": " A reliable way to format dates and times with Elm.\n\n\n# Formatting dates\n\n@docs format\n\n\n# Supporting a different language?\n\n@docs formatWithLanguage\n\n\n# Available formatting options\n\n@docs Token\n\n\n## Month\n\n@docs monthNumber, monthSuffix, monthFixed, monthNameAbbreviated, monthNameFull\n\n\n## Day of the Month\n\n@docs dayOfMonthNumber, dayOfMonthSuffix, dayOfMonthFixed\n\n\n## Day of the Year\n\n@docs dayOfYearNumber, dayOfYearSuffix, dayOfYearFixed\n\n\n## Day of the Week\n\n@docs dayOfWeekNumber, dayOfWeekSuffix, dayOfWeekNameAbbreviated, dayOfWeekNameFull\n\n\n## Year\n\n@docs yearNumberLastTwo, yearNumber\n\n\n## Quarter of the Year\n\n@docs quarterNumber, quarterSuffix\n\n\n## Week of the Year\n\n@docs weekOfYearNumber, weekOfYearSuffix, weekOfYearFixed\n\n\n## AM / PM\n\n@docs amPmUppercase, amPmLowercase\n\n\n## Hour\n\n@docs hourMilitaryNumber, hourMilitaryFixed, hourNumber, hourFixed, hourMilitaryFromOneNumber, hourMilitaryFromOneFixed\n\n\n## Minute\n\n@docs minuteNumber, minuteFixed\n\n\n## Second\n\n@docs secondNumber, secondFixed\n\n\n## Millisecond\n\n@docs millisecondNumber, millisecondFixed\n\n\n## Other Stuff\n\n@docs text\n\n",
+        "unions": [
+            {
+                "name": "Token",
+                "comment": " These are the available tokens to help you format dates.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "amPmLowercase",
+                "comment": " Get the AM / PM value of the hour, in uppercase.\n\nExamples: `am, pm`\n\n",
+                "type": "DateFormat.Token"
+            },
+            {
+                "name": "amPmUppercase",
+                "comment": " Get the AM / PM value of the hour, in uppercase.\n\nExamples: `AM, PM`\n\n",
+                "type": "DateFormat.Token"
+            },
+            {
+                "name": "dayOfMonthFixed",
+                "comment": " Get the numeric value of the day of the month, fixed to two places.\n\nExamples: `01, 02, 03, ... 30, 31`\n\n",
+                "type": "DateFormat.Token"
+            },
+            {
+                "name": "dayOfMonthNumber",
+                "comment": " Get the numeric value of the day of the month.\n\nExamples: `1, 2, 3, ... 30, 31`\n\n",
+                "type": "DateFormat.Token"
+            },
+            {
+                "name": "dayOfMonthSuffix",
+                "comment": " Get the numeric value of the day of the month, with a suffix at the end.\n\nExamples: `1st, 2nd, 3rd, ... 30th, 31st`\n\n",
+                "type": "DateFormat.Token"
+            },
+            {
+                "name": "dayOfWeekNameAbbreviated",
+                "comment": " Gets the name of the day of the week, but just the first two letters.\n\nExamples: `Su, Mo, Tu, ... Fr, Sa`\n\n",
+                "type": "DateFormat.Token"
+            },
+            {
+                "name": "dayOfWeekNameFull",
+                "comment": " Gets the full name of the day of the week.\n\nExamples: `Sunday, Monday, ... Friday, Saturday`\n\n",
+                "type": "DateFormat.Token"
+            },
+            {
+                "name": "dayOfWeekNumber",
+                "comment": " Get the numeric value of the day of the week.\n\nExamples: `0, 1, 2, ... 5, 6`\n\n",
+                "type": "DateFormat.Token"
+            },
+            {
+                "name": "dayOfWeekSuffix",
+                "comment": " Get the numeric value of the day of the week, with a suffix at the end.\n\nExamples: `0th, 1st, 2nd, ... 5th, 6th`\n\n",
+                "type": "DateFormat.Token"
+            },
+            {
+                "name": "dayOfYearFixed",
+                "comment": " Get the numeric value of the day of the year, fixed to three places.\n\nExamples: `001, 002, 003, ... 364, 365`\n\n",
+                "type": "DateFormat.Token"
+            },
+            {
+                "name": "dayOfYearNumber",
+                "comment": " Get the numeric value of the day of the year.\n\nExamples: `1, 2, 3, ... 364, 365`\n\n",
+                "type": "DateFormat.Token"
+            },
+            {
+                "name": "dayOfYearSuffix",
+                "comment": " Get the numeric value of the day of the year, with a suffix at the end.\n\nExamples: `1st, 2nd, 3rd, ... 364th, 365th`\n\n",
+                "type": "DateFormat.Token"
+            },
+            {
+                "name": "format",
+                "comment": " This function takes in a list of tokens, [`Zone`](/packages/elm-lang/time/latest/Time#Zone), and [`Posix`](/packages/elm-lang/time/latest/Time#Posix) to create your formatted string!\n\nLet's say `ourPosixValue` is November 15, 1993 at 15:06.\n\n    -- \"15:06\"\n    format\n        [ hourMilitaryFixed\n        , text \":\"\n        , minuteFixed\n        ]\n        utc\n        ourPosixValue\n\n\n    -- \"3:06 pm\"\n    format\n        [ hourNumber\n        , text \":\"\n        , minuteFixed\n        , text \" \"\n        , amPmLowercase\n        ]\n        utc\n        ourPosixValue\n\n\n    -- \"Nov 15th, 1993\"\n    format\n        [ monthNameFirstThree\n        , text \" \"\n        , dayOfMonthSuffix\n        , text \", \"\n        , yearNumber\n        ]\n        utc\n        ourPosixValue\n\n",
+                "type": "List.List DateFormat.Token -> Time.Zone -> Time.Posix -> String.String"
+            },
+            {
+                "name": "formatWithLanguage",
+                "comment": " If our users don't speak English, printing out \"Monday\" or \"Tuesday\" might not be a great fit.\n\nThanks to a great recommendation, `date-format` now supports multilingual output!\n\nAll you need to do is provide your own options, and format will use your preferences instead:\n\nFor a complete example, check out the [`FormatWithOptions.elm` in the examples folder](https://github.com/ryannhg/date-format/blob/master/examples/FormatWithOptions.elm).\n\n",
+                "type": "DateFormat.Language.Language -> List.List DateFormat.Token -> Time.Zone -> Time.Posix -> String.String"
+            },
+            {
+                "name": "hourFixed",
+                "comment": " Get the hour of the 12-hour day, fixed to two places.\n\nExamples: `00, 01, 02, ... 11, 12`\n\n",
+                "type": "DateFormat.Token"
+            },
+            {
+                "name": "hourMilitaryFixed",
+                "comment": " Get the hour of the 24-hour day, fixed to two places.\n\nExamples: `00, 01, 02, ... 22, 23`\n\n",
+                "type": "DateFormat.Token"
+            },
+            {
+                "name": "hourMilitaryFromOneFixed",
+                "comment": " Get the hour of the 24-hour day, starting from one, fixed to two places.\n\nExamples: `01, 02, ... 23, 24`\n\n",
+                "type": "DateFormat.Token"
+            },
+            {
+                "name": "hourMilitaryFromOneNumber",
+                "comment": " Get the hour of the 24-hour day, starting from one.\n\nExamples: `1, 2, ... 23, 24`\n\n",
+                "type": "DateFormat.Token"
+            },
+            {
+                "name": "hourMilitaryNumber",
+                "comment": " Get the hour of the 24-hour day.\n\nExamples: `0, 1, 2, ... 22, 23`\n\n",
+                "type": "DateFormat.Token"
+            },
+            {
+                "name": "hourNumber",
+                "comment": " Get the hour of the 12-hour day.\n\nExamples: `0, 1, 2, ... 11, 12`\n\n",
+                "type": "DateFormat.Token"
+            },
+            {
+                "name": "millisecondFixed",
+                "comment": " Get the milliseconds of the second, fixed to three places.\n\nExamples: `000, 001, 002, ... 998, 999`\n\n",
+                "type": "DateFormat.Token"
+            },
+            {
+                "name": "millisecondNumber",
+                "comment": " Get the milliseconds of the second.\n\nExamples: `0, 1, 2, ... 998, 999`\n\n",
+                "type": "DateFormat.Token"
+            },
+            {
+                "name": "minuteFixed",
+                "comment": " Get the minute of the hour, fixed to two places.\n\nExamples: `00, 01, 02, ... 58, 59`\n\n",
+                "type": "DateFormat.Token"
+            },
+            {
+                "name": "minuteNumber",
+                "comment": " Get the minute of the hour.\n\nExamples: `0, 1, 2, ... 58, 59`\n\n",
+                "type": "DateFormat.Token"
+            },
+            {
+                "name": "monthFixed",
+                "comment": " Get the numeric value of the month, fixed to two places.\n\nExamples: `01, 02, 03, ... 11, 12`\n\n",
+                "type": "DateFormat.Token"
+            },
+            {
+                "name": "monthNameAbbreviated",
+                "comment": " Get the name of the month, but abbreviated (abbreviation function comes from the language\nsettings)\n\nExamples: `Jan, Feb, Mar, ... Nov, Dec`\n\n",
+                "type": "DateFormat.Token"
+            },
+            {
+                "name": "monthNameFull",
+                "comment": " Get the full name of the month.\n\nExamples: `January, February, ... December`\n\n",
+                "type": "DateFormat.Token"
+            },
+            {
+                "name": "monthNumber",
+                "comment": " Get the numeric value of the month.\n\nExamples: `1, 2, 3, ... 11, 12`\n\n",
+                "type": "DateFormat.Token"
+            },
+            {
+                "name": "monthSuffix",
+                "comment": " Get the numeric value of the month, with a suffix at the end.\n\nExamples: `1st, 2nd, 3rd, ... 11th, 12th`\n\n",
+                "type": "DateFormat.Token"
+            },
+            {
+                "name": "quarterNumber",
+                "comment": " Get the numeric value for the quarter of the year.\n\nExamples: `1, 2, 3, 4`\n\n",
+                "type": "DateFormat.Token"
+            },
+            {
+                "name": "quarterSuffix",
+                "comment": " Get the numeric value for the quarter of the year, with a suffix.\n\nExamples: `1st, 2nd, 3rd, 4th`\n\n",
+                "type": "DateFormat.Token"
+            },
+            {
+                "name": "secondFixed",
+                "comment": " Get the second of the minute, fixed to two places.\n\nExamples: `00, 01, 02, ... 58, 59`\n\n",
+                "type": "DateFormat.Token"
+            },
+            {
+                "name": "secondNumber",
+                "comment": " Get the second of the minute.\n\nExamples: `0, 1, 2, ... 58, 59`\n\n",
+                "type": "DateFormat.Token"
+            },
+            {
+                "name": "text",
+                "comment": " Represent a string value\n\n    formatter : Zone -> Posix -> String\n    formatter =\n        DateFormat.format\n            [ DateFormat.hourMilitaryFixed\n            , DateFormat.text \":\"\n            , DateFormat.minuteFixed\n            ]\n\nWhen given a [`Zone`](/packages/elm-lang/time/latest/Time#Zone) and [`Posix`](/packages/elm-lang/time/latest/Time#Posix), this will return something like `\"23:15\"` or `\"04:43\"`\n\n",
+                "type": "String.String -> DateFormat.Token"
+            },
+            {
+                "name": "weekOfYearFixed",
+                "comment": " Get the numeric value for the week of the year, fixed to two places.\n\nExamples: `01, 02, 03, ... 51, 52`\n\n",
+                "type": "DateFormat.Token"
+            },
+            {
+                "name": "weekOfYearNumber",
+                "comment": " Get the numeric value for the week of the year.\n\nExamples: `1, 2, 3, ... 51, 52`\n\n",
+                "type": "DateFormat.Token"
+            },
+            {
+                "name": "weekOfYearSuffix",
+                "comment": " Get the numeric value for the week of the year, with a suffix at the end.\n\nExamples: `1st, 2nd, 3rd, ... 51st, 52nd`\n\n",
+                "type": "DateFormat.Token"
+            },
+            {
+                "name": "yearNumber",
+                "comment": " Get the year.\n\nExamples: `1970, 1971, ... 2018, ... 9999, ...`\n\n",
+                "type": "DateFormat.Token"
+            },
+            {
+                "name": "yearNumberLastTwo",
+                "comment": " Get the year, but just the last two letters.\n\nExamples: `70, 71, ... 29, 30`\n\n",
+                "type": "DateFormat.Token"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "DateFormat.Language",
+        "comment": "\n\n\n## Fun fact: Some people don't know english.\n\nThat's why it's important to include alternative date formatting options for other languages!\n\nThis module exposes `Language`, along with a few implementations.\n\n(If you want to see `french`, `german`, or `greek`, please add them in! I'm happy to make your language a part of the package!)\n\n\n### Language\n\n@docs Language\n\n\n### Languages\n\n@docs english, spanish, dutch, swedish, portuguese\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Language",
+                "comment": " A record with options for your language.\n",
+                "args": [],
+                "type": "{ toMonthName : Time.Month -> String.String, toMonthAbbreviation : Time.Month -> String.String, toWeekdayName : Time.Weekday -> String.String, toWeekdayAbbreviation : Time.Weekday -> String.String, toAmPm : Basics.Int -> String.String, toOrdinalSuffix : Basics.Int -> String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "dutch",
+                "comment": " The dutch language!\n",
+                "type": "DateFormat.Language.Language"
+            },
+            {
+                "name": "english",
+                "comment": " The english language! (used by default)\n",
+                "type": "DateFormat.Language.Language"
+            },
+            {
+                "name": "portuguese",
+                "comment": " The Portuguese language!\n",
+                "type": "DateFormat.Language.Language"
+            },
+            {
+                "name": "spanish",
+                "comment": " The spanish language!\n",
+                "type": "DateFormat.Language.Language"
+            },
+            {
+                "name": "swedish",
+                "comment": " The Swedish language!\n",
+                "type": "DateFormat.Language.Language"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "DateFormat.Relative",
+        "comment": " A reliable way to get a pretty message for the relative time difference between two dates.\n\n\n# Getting relative time for two dates\n\n@docs relativeTime, relativeTimeWithOptions, RelativeTimeOptions, defaultRelativeOptions\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "RelativeTimeOptions",
+                "comment": " Options for configuring your own relative message formats!\n\nFor example, here is how `someSecondsAgo` is implemented by default:\n\n    defaultSomeSecondsAgo : Int -> String\n    defaultSomeSecondsAgo seconds =\n        if seconds < 30 then\n            \"just now\"\n\n        else\n            toString seconds ++ \" seconds ago\"\n\nAnd here is how `inSomeHours` might look:\n\n    defaultInSomeHours : Int -> String\n    defaultInSomeHours hours =\n        if hours < 2 then\n            \"in an hour\"\n\n        else\n            \"in \" ++ toString hours ++ \" hours\"\n\n",
+                "args": [],
+                "type": "{ someSecondsAgo : Basics.Int -> String.String, someMinutesAgo : Basics.Int -> String.String, someHoursAgo : Basics.Int -> String.String, someDaysAgo : Basics.Int -> String.String, someMonthsAgo : Basics.Int -> String.String, someYearsAgo : Basics.Int -> String.String, rightNow : String.String, inSomeSeconds : Basics.Int -> String.String, inSomeMinutes : Basics.Int -> String.String, inSomeHours : Basics.Int -> String.String, inSomeDays : Basics.Int -> String.String, inSomeMonths : Basics.Int -> String.String, inSomeYears : Basics.Int -> String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultRelativeOptions",
+                "comment": " If there is something you'd like to tweak based off of the defaults, this record might be a good starting point!\n",
+                "type": "DateFormat.Relative.RelativeTimeOptions"
+            },
+            {
+                "name": "relativeTime",
+                "comment": " This function takes in two times and returns the relative difference!\n\nHere are a few examples to help:\n\n    relativeTime now tenSecondsAgo == \"just now\"\n\n    relativeTime now tenSecondsFromNow == \"in a few seconds\"\n\n    relativeTime now fortyThreeMinutesAgo == \"43 minutes ago\"\n\n    relativeTime now oneHundredDaysAgo == \"100 days ago\"\n\n    relativeTime now oneHundredDaysFromNow == \"in 100 days\"\n\n\n    -- Order matters!\n    relativeTime now tenSecondsAgo == \"just now\"\n\n    relativeTime tenSecondsAgo now == \"in a few seconds\"\n\n",
+                "type": "Time.Posix -> Time.Posix -> String.String"
+            },
+            {
+                "name": "relativeTimeWithOptions",
+                "comment": " Maybe `relativeTime` is too lame. (Or maybe you speak a different language than English!)\n\nWith `relativeTimeWithOptions`, you can provide your own custom messages for each time range.\n\n(That's what `relativeTime` uses under the hood!)\n\nYou can provide a set of your own custom options, and use `relativeTimeWithOptions` instead.\n\n",
+                "type": "DateFormat.Relative.RelativeTimeOptions -> Time.Posix -> Time.Posix -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

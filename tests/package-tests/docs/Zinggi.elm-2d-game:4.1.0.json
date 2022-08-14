@@ -1,0 +1,342 @@
+[
+    {
+        "name": "Game.TwoD",
+        "comment": " A set of functions used to embed a 2d game into a web page.\nThese functions specify the size and attributes passed to the canvas element.\n\nYou need to pass along the time, size and camera, as these are needed for rendering.\n\nsuggested import:\n\n    import Game.TwoD as Game\n\n@docs RenderConfig\n\n\n## Canvas element only\n\n@docs render\n@docs renderWithOptions\n\n\n## Embedded in a div\n\n@docs renderCentered\n@docs renderCenteredWithOptions\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "RenderConfig",
+                "comment": " This is used by all the functions below, it represents all the shared state needed to render stuff.\nIf you don't use sprite animations you can use `0` for the time parameter.\n",
+                "args": [],
+                "type": "{ time : Basics.Float, size : ( Basics.Int, Basics.Int ), camera : Game.TwoD.Camera.Camera }"
+            }
+        ],
+        "values": [
+            {
+                "name": "render",
+                "comment": " Creates a canvas element that renders the given Renderables.\n\nIf you don't use animated sprites, you can use `0` for the time parameter.\n\n    render { time = time, size = (800, 600), camera = state.camera }\n        [ Background.render\n        , Player.render state.Player\n        ]\n\n",
+                "type": "Game.TwoD.RenderConfig -> List.List Game.TwoD.Render.Renderable -> Html.Html x"
+            },
+            {
+                "name": "renderCentered",
+                "comment": " Same as `render`, but wrapped in a div and nicely centered on the page using flexbox\n",
+                "type": "Game.TwoD.RenderConfig -> List.List Game.TwoD.Render.Renderable -> Html.Html x"
+            },
+            {
+                "name": "renderCenteredWithOptions",
+                "comment": " Same as above, but you can specify attributes for the container div and the canvas.\n\n    renderCenteredWithOptions\n        containerAttributes\n        canvasAttributes\n        renderConfig\n        renderables\n\n",
+                "type": "List.List (Html.Attribute msg) -> List.List (Html.Attribute msg) -> Game.TwoD.RenderConfig -> List.List Game.TwoD.Render.Renderable -> Html.Html msg"
+            },
+            {
+                "name": "renderWithOptions",
+                "comment": " Same as above, but you can specify additional attributes that will be passed to the canvas element.\nA useful trick to save some GPU processing at the cost of image quality is\nto use a smaller `size` argument and than scale the canvas with CSS. e.g.\n\n    renderWithOptions [ style [ ( \"width\", \"800px\" ), ( \"height\", \"600px\" ) ] ]\n        { time = time, size = ( 400, 300 ), camera = camera }\n        (World.render model.world)\n\n",
+                "type": "List.List (Html.Attribute msg) -> Game.TwoD.RenderConfig -> List.List Game.TwoD.Render.Renderable -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Game.TwoD.Camera",
+        "comment": " A camera to view the game world.\n\n\n## camera creation\n\n@docs Camera, fixedArea, fixedWidth, fixedHeight, custom\n\n\n## manipulate camera\n\n@docs getPosition, moveBy, moveTo, follow\n\n---\n\n\n## camera transformations\n\n@docs view, getViewSize, viewportToGameCoordinates\n\n",
+        "unions": [
+            {
+                "name": "Camera",
+                "comment": " A camera represents how to render the virtual world.\nIt's essentially a transformation from virtual game coordinates to pixel coordinates on the screen.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "custom",
+                "comment": " The custom camera allows you to use a function\nthat maps viewport size (in pixel) to game units.\nE.g. here's an implementation of the fixedWidth camera using custom:\n\n    fixedWidth width =\n        custom (\\( w, h ) -> ( width, width * h / w ))\n\n",
+                "type": "(( Basics.Float, Basics.Float ) -> ( Basics.Float, Basics.Float )) -> ( Basics.Float, Basics.Float ) -> Game.TwoD.Camera.Camera"
+            },
+            {
+                "name": "fixedArea",
+                "comment": " A camera that always shows the same area.\nThis is useful in a top down game.\nYou probably want to specify the area as a multiplication of width and height:\n\n    fixedArea (16 * 10) ( x, y )\n\nThis means the camera will always show 160 square units of your game.\nIn practice, this means that on a 16:10 viewport, 16 by 10 units of your game will be visible.\nBut on a 4:3 viewport it would show 14.6 by 10.95 units. (sqrt(16\\_10\\_4/3)=14.6, sqrt(16\\_10\\_3/4)=10.95)\n\n",
+                "type": "Basics.Float -> ( Basics.Float, Basics.Float ) -> Game.TwoD.Camera.Camera"
+            },
+            {
+                "name": "fixedHeight",
+                "comment": " A camera that always shows `height` units of your game vertically.\nWell suited for a vertical scroller.\n",
+                "type": "Basics.Float -> ( Basics.Float, Basics.Float ) -> Game.TwoD.Camera.Camera"
+            },
+            {
+                "name": "fixedWidth",
+                "comment": " A camera that always shows `width` units of your game horizontally.\nWell suited for a side-scroller.\n",
+                "type": "Basics.Float -> ( Basics.Float, Basics.Float ) -> Game.TwoD.Camera.Camera"
+            },
+            {
+                "name": "follow",
+                "comment": " Smoothly follow the given target. Use this in your tick function.\n\n    follow 1.5 dt target camera\n\n",
+                "type": "Basics.Float -> Basics.Float -> ( Basics.Float, Basics.Float ) -> Game.TwoD.Camera.Camera -> Game.TwoD.Camera.Camera"
+            },
+            {
+                "name": "getPosition",
+                "comment": " ",
+                "type": "Game.TwoD.Camera.Camera -> ( Basics.Float, Basics.Float )"
+            },
+            {
+                "name": "getViewSize",
+                "comment": " Given the screen size, gets the width and height in game units\n",
+                "type": "( Basics.Float, Basics.Float ) -> Game.TwoD.Camera.Camera -> ( Basics.Float, Basics.Float )"
+            },
+            {
+                "name": "moveBy",
+                "comment": " Move a camera by the given vector _relative_ to the camera.\n",
+                "type": "( Basics.Float, Basics.Float ) -> Game.TwoD.Camera.Camera -> Game.TwoD.Camera.Camera"
+            },
+            {
+                "name": "moveTo",
+                "comment": " Move a camera to the given location. In _absolute_ coordinates.\n",
+                "type": "( Basics.Float, Basics.Float ) -> Game.TwoD.Camera.Camera -> Game.TwoD.Camera.Camera"
+            },
+            {
+                "name": "view",
+                "comment": " Gets the transformation that represents how to transform the camera back to the origin.\nThe result of this is used in the vertex shader.\n",
+                "type": "Game.TwoD.Camera.Camera -> ( Basics.Float, Basics.Float ) -> Math.Matrix4.Mat4"
+            },
+            {
+                "name": "viewportToGameCoordinates",
+                "comment": " Convert coordinates on the canvas element to coordinates in the game.\nCoordinates on the canvas element are given relative to its top left corner.\n\n    viewportToGameCoordinates camera ( elementWidth, elementHeight ) ( positionX, positionY )\n\nElement click coordinates can be extracted with a package like [Elm-Canvas/ElementRelativeMouseEvents](http://package.elm-lang.org/packages/Elm-Canvas/element-relative-mouse-events/1.0.0/ElementRelativeMouseEvents)\n\n",
+                "type": "Game.TwoD.Camera.Camera -> ( Basics.Int, Basics.Int ) -> ( Basics.Int, Basics.Int ) -> ( Basics.Float, Basics.Float )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Game.TwoD.Render",
+        "comment": "\n\n\n# 2D rendering module\n\nThis module provides a way to render commonly used objects in 2d games\nlike simple sprites and sprite animations.\n\nIt also provides colored shapes which can be great during prototyping.\nThe simple shapes can easily be replaced by nicer looking textures later.\n\nsuggested import:\n\n    import Game.TwoD.Render as Render exposing (Renderable)\n\nMost functions to render something come in 3 forms:\n\n    thing, thingZ, thingWithOptions\n\nThe first is the most common one where you can specify\nthe size, the position in 2d and some more.\n\nThe second one is the same as the first, but with a 3d position.\nThe z position goes from -1 to 1, everything outside this will be invisible.\nThis can be used to put something in front or behind regardless of the render order.\n\nThe last one gives you all possible options, e.g. the rotation\n, the pivot point of the rotation (normalized from 0 to 1), etc.\n\nTODO: insert picture to visualize coordinate system.\n\n@docs Renderable\n\n@docs Float2, Float3\n\n\n## Basic Shapes\n\n@docs shape\n@docs BasicShape, rectangle, triangle, circle, ring\n@docs shapeZ, shapeWithOptions\n\n\n### With texture\n\nTextures are `Maybe` values because you can never have a texture at the start of your game.\nYou first have to load your textures. In case you pass a `Nothing` as a value for a texture,\nA gray rectangle will be displayed instead.\n\nFor loading textures I suggest using the [game-resources library](http://package.elm-lang.org/packages/Zinggi/elm-game-resources/latest).\n\n**NOTE**: Texture dimensions should be a power of 2, e.g. (2^n)x(2^m), like 4x16, 16x16, 512x256, etc.\nNon power of two texture are possible, but [not encouraged](https://package.elm-lang.org/packages/elm-explorations/webgl/latest/WebGL-Texture#Error).\n\n@docs sprite, spriteZ, spriteWithOptions\n\n\n### Animated\n\n@docs animatedSprite, animatedSpriteWithOptions, manuallyManagedAnimatedSpriteWithOptions\n\n\n### Background\n\n@docs parallaxScroll, parallaxScrollWithOptions\n\n\n## Custom\n\nThese are useful if you want to write your own GLSL shaders.\nWhen writing your own shaders, you might want to look at\nGame.TwoD.Shaders and Game.TwoD.Shapes for reusable parts.\n\n@docs customFragment\n@docs MakeUniformsFunc\n@docs veryCustom\n@docs renderTransparent\n@docs toWebGl\n\n",
+        "unions": [
+            {
+                "name": "BasicShape",
+                "comment": " A representation of a basic shape to use when rendering a ColoredShape\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Renderable",
+                "comment": " A representation of something that can be rendered.\nTo actually render a `Renderable` onto a web page use the `Game.TwoD.*` functions\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Float2",
+                "comment": " ",
+                "args": [],
+                "type": "( Basics.Float, Basics.Float )"
+            },
+            {
+                "name": "Float3",
+                "comment": " ",
+                "args": [],
+                "type": "( Basics.Float, Basics.Float, Basics.Float )"
+            },
+            {
+                "name": "MakeUniformsFunc",
+                "comment": " Just an alias, needed when you want to use customFragment\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ cameraProj : Math.Matrix4.Mat4, time : Basics.Float, transform : Math.Matrix4.Mat4 } -> { a | cameraProj : Math.Matrix4.Mat4, transform : Math.Matrix4.Mat4 }"
+            }
+        ],
+        "values": [
+            {
+                "name": "animatedSprite",
+                "comment": " An animated sprite. `bottomLeft` and `topRight` define a sub area from a texture\nwhere the animation frames are located. It's a normalized coordinate from 0 to 1.\n\nTODO: picture!\n\n",
+                "type": "{ o | texture : Maybe.Maybe WebGL.Texture.Texture, position : Game.TwoD.Render.Float3, size : Game.TwoD.Render.Float2, bottomLeft : Game.TwoD.Render.Float2, topRight : Game.TwoD.Render.Float2, numberOfFrames : Basics.Int, duration : Basics.Float } -> Game.TwoD.Render.Renderable"
+            },
+            {
+                "name": "animatedSpriteWithOptions",
+                "comment": " the same with rotation\n",
+                "type": "{ o | texture : Maybe.Maybe WebGL.Texture.Texture, position : Game.TwoD.Render.Float3, size : Game.TwoD.Render.Float2, bottomLeft : Game.TwoD.Render.Float2, topRight : Game.TwoD.Render.Float2, rotation : Basics.Float, pivot : Game.TwoD.Render.Float2, numberOfFrames : Basics.Int, duration : Basics.Float } -> Game.TwoD.Render.Renderable"
+            },
+            {
+                "name": "circle",
+                "comment": " BasicShape constructor for a circle\n",
+                "type": "Game.TwoD.Render.BasicShape"
+            },
+            {
+                "name": "customFragment",
+                "comment": " This allows you to write your own custom fragment shader.\nTo learn about writing shaders, I recommend [this free book](https://thebookofshaders.com/00/).\n\nThe type signature may look terrifying,\nbut this is still easier than using veryCustom or using WebGL directly.\nIt handles the vertex shader for you, e.g. your object will appear at the expected location once rendered.\n\nFor the fragment shader, you have the `vec2 varying vcoord;` variable available,\nwhich can be used to sample a texture (`texture2D(texture, vcoord);`).\nIt's a vector that goes from (0,0) to (1,1)\n\nThe `MakeUniformsFunc` allows you to pass along any additional uniforms you may need.\nIn practice, this might look something like this:\n\n    makeUniforms { cameraProj, transform, time } =\n        { cameraProj = cameraProj, transform = transform, time = time, myUniform = someVector }\n\n    render =\n        customFragment makeUniforms\n            { fragmentShader = frag, position = p, size = s, rotation = 0, pivot = ( 0, 0 ) }\n\n    frag =\n        [glsl|\n\n    precision mediump float;\n\n    varying vec2 vcoord;\n    uniform vec2 myUniform;\n\n    void main () {\n      gl_FragColor = vcoord.yx + myUniform;\n    }\n    |]\n\nDon't pass the time along if your shader doesn't need it.\n\nHere is a small example that draws a circle:\n<https://ellie-app.com/LSTb2NnkDWa1/0>\n\n",
+                "type": "Game.TwoD.Render.MakeUniformsFunc u -> { b | fragmentShader : WebGL.Shader {} { u | cameraProj : Math.Matrix4.Mat4, transform : Math.Matrix4.Mat4 } { vcoord : Math.Vector2.Vec2 }, pivot : Game.TwoD.Render.Float2, position : Game.TwoD.Render.Float3, rotation : Basics.Float, size : Game.TwoD.Render.Float2 } -> Game.TwoD.Render.Renderable"
+            },
+            {
+                "name": "manuallyManagedAnimatedSpriteWithOptions",
+                "comment": " The same as animated sprite, but you control what frame to display.\n",
+                "type": "{ o | texture : Maybe.Maybe WebGL.Texture.Texture, position : Game.TwoD.Render.Float3, size : Game.TwoD.Render.Float2, bottomLeft : Game.TwoD.Render.Float2, topRight : Game.TwoD.Render.Float2, rotation : Basics.Float, pivot : Game.TwoD.Render.Float2, numberOfFrames : Basics.Int, currentFrame : Basics.Int } -> Game.TwoD.Render.Renderable"
+            },
+            {
+                "name": "parallaxScroll",
+                "comment": " Used for scrolling backgrounds.\nThis probably wont satisfy all possible needs for a scrolling background,\nbut it can give you something that looks nice quickly.\n",
+                "type": "{ o | scrollSpeed : Game.TwoD.Render.Float2, z : Basics.Float, tileWH : Game.TwoD.Render.Float2, texture : Maybe.Maybe WebGL.Texture.Texture } -> Game.TwoD.Render.Renderable"
+            },
+            {
+                "name": "parallaxScrollWithOptions",
+                "comment": " Same but with an offset parameter that you can use to position the background.\n",
+                "type": "{ o | scrollSpeed : Game.TwoD.Render.Float2, z : Basics.Float, tileWH : Game.TwoD.Render.Float2, offset : Game.TwoD.Render.Float2, texture : Maybe.Maybe WebGL.Texture.Texture } -> Game.TwoD.Render.Renderable"
+            },
+            {
+                "name": "rectangle",
+                "comment": " BasicShape constructor for a rectangle\n",
+                "type": "Game.TwoD.Render.BasicShape"
+            },
+            {
+                "name": "renderTransparent",
+                "comment": " This can be used inside `veryCustom` instead of `WebGL.entity`.\nIt's a customized blend function that works well with textures with alpha.\n",
+                "type": "WebGL.Shader attributes uniforms varyings -> WebGL.Shader {} uniforms varyings -> WebGL.Mesh attributes -> uniforms -> WebGL.Entity"
+            },
+            {
+                "name": "ring",
+                "comment": " BasicShape constructor for a ring\n",
+                "type": "Game.TwoD.Render.BasicShape"
+            },
+            {
+                "name": "shape",
+                "comment": " A colored shape, great for prototyping\n",
+                "type": "Game.TwoD.Render.BasicShape -> { o | color : Color.Color, position : Game.TwoD.Render.Float2, size : Game.TwoD.Render.Float2 } -> Game.TwoD.Render.Renderable"
+            },
+            {
+                "name": "shapeWithOptions",
+                "comment": " A colored shape, that can also be rotated\n",
+                "type": "Game.TwoD.Render.BasicShape -> { o | color : Color.Color, position : Game.TwoD.Render.Float3, size : Game.TwoD.Render.Float2, rotation : Basics.Float, pivot : Game.TwoD.Render.Float2 } -> Game.TwoD.Render.Renderable"
+            },
+            {
+                "name": "shapeZ",
+                "comment": " The same, but with 3d position.\n",
+                "type": "Game.TwoD.Render.BasicShape -> { o | color : Color.Color, position : Game.TwoD.Render.Float3, size : Game.TwoD.Render.Float2 } -> Game.TwoD.Render.Renderable"
+            },
+            {
+                "name": "sprite",
+                "comment": " A sprite.\n",
+                "type": "{ o | texture : Maybe.Maybe WebGL.Texture.Texture, position : Game.TwoD.Render.Float2, size : Game.TwoD.Render.Float2 } -> Game.TwoD.Render.Renderable"
+            },
+            {
+                "name": "spriteWithOptions",
+                "comment": " A sprite with tiling and rotation.\n\n    spriteWithOptions { config | tiling = ( 3, 5 ) }\n\nwill create a sprite with a texture that repeats itself 3 times horizontally and 5 times vertically.\nTODO: picture!\n\n",
+                "type": "{ o | texture : Maybe.Maybe WebGL.Texture.Texture, position : Game.TwoD.Render.Float3, size : Game.TwoD.Render.Float2, tiling : Game.TwoD.Render.Float2, rotation : Basics.Float, pivot : Game.TwoD.Render.Float2 } -> Game.TwoD.Render.Renderable"
+            },
+            {
+                "name": "spriteZ",
+                "comment": " A sprite with 3d position\n",
+                "type": "{ o | texture : Maybe.Maybe WebGL.Texture.Texture, position : Game.TwoD.Render.Float3, size : Game.TwoD.Render.Float2 } -> Game.TwoD.Render.Renderable"
+            },
+            {
+                "name": "toWebGl",
+                "comment": " Converts a Renderable to a WebGL.Entity.\nYou don't need this unless you want to slowly introduce\nthis library in a project that currently uses WebGL directly.\n\n    toWebGl time camera ( w, h ) renderable\n\n",
+                "type": "Basics.Float -> Game.TwoD.Camera.Camera -> Game.TwoD.Render.Float2 -> Game.TwoD.Render.Renderable -> WebGL.Entity"
+            },
+            {
+                "name": "triangle",
+                "comment": " BasicShape constructor for a triangle\n",
+                "type": "Game.TwoD.Render.BasicShape"
+            },
+            {
+                "name": "veryCustom",
+                "comment": " This allows you to specify your own attributes, vertex shader and fragment shader by using the WebGL library directly.\nIf you use this you have to calculate the transformations yourself. (You can use Shaders.makeTransform)\n\nIf you need a square as attributes, you can take the one from Game.TwoD.Shapes\n\n    veryCustom\n        (\\{ camera, screenSize, time } ->\n            WebGL.entity myVert\n                myFrag\n                Shapes.unitSquare\n                { u_crazyFrog = frogTexture\n                , transform = Shaders.makeTransform ( x, y, z ) 0 ( 2, 4 ) ( 0, 0 )\n                , cameraProj = Camera.view camera screenSize\n                }\n        )\n\n",
+                "type": "({ camera : Game.TwoD.Camera.Camera, screenSize : ( Basics.Float, Basics.Float ), time : Basics.Float } -> WebGL.Entity) -> Game.TwoD.Render.Renderable"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Game.TwoD.Shaders",
+        "comment": "\n\n\n# Standard shaders for WebGL rendering.\n\nYou don't need this module,\nunless you want to write your own vertex or fragment shader\nand a shader from here already provides one half.\n\nOr if you're using WebGL directly.\n\n\n## Vertex shaders\n\n@docs vertColoredShape, vertTexturedRect, vertParallaxScroll\n\n\n## Fragment shaders\n\n@docs fragTextured, fragAnimTextured, fragManualAnimTextured, fragUniColor, fragUniColorCircle, fragUniColorRing\n\n---\n\n\n### useful helper functions\n\n@docs colorToRGBAVector, colorToRGBVector, makeTransform\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "colorToRGBAVector",
+                "comment": " ",
+                "type": "Color.Color -> Math.Vector4.Vec4"
+            },
+            {
+                "name": "colorToRGBVector",
+                "comment": " ",
+                "type": "Color.Color -> Math.Vector3.Vec3"
+            },
+            {
+                "name": "fragAnimTextured",
+                "comment": " A shader to render spritesheet animations.\nIt assumes that the animation frames are in one horizontal line\n",
+                "type": "WebGL.Shader {} { u | texture : WebGL.Texture.Texture, bottomLeft : Math.Vector2.Vec2, topRight : Math.Vector2.Vec2, numberOfFrames : Basics.Int, duration : Basics.Float, time : Basics.Float } { vcoord : Math.Vector2.Vec2 }"
+            },
+            {
+                "name": "fragManualAnimTextured",
+                "comment": " Same as the shader above, but controlled via frame number instead of time\n",
+                "type": "WebGL.Shader {} { u | texture : WebGL.Texture.Texture, bottomLeft : Math.Vector2.Vec2, topRight : Math.Vector2.Vec2, numberOfFrames : Basics.Int, currentFrame : Basics.Int } { vcoord : Math.Vector2.Vec2 }"
+            },
+            {
+                "name": "fragTextured",
+                "comment": " Display a tiled texture.\nTileWH specifies how many times the texture should be tiled.\n",
+                "type": "WebGL.Shader {} { u | texture : WebGL.Texture.Texture, tileWH : Math.Vector2.Vec2 } { vcoord : Math.Vector2.Vec2 }"
+            },
+            {
+                "name": "fragUniColor",
+                "comment": " A very simple shader, coloring the whole area in a single color\n",
+                "type": "WebGL.Shader {} { u | color : Math.Vector3.Vec3 } { vcoord : Math.Vector2.Vec2 }"
+            },
+            {
+                "name": "fragUniColorCircle",
+                "comment": " A fragment Shader for rendering a single colored circle\n",
+                "type": "WebGL.Shader {} { u | color : Math.Vector3.Vec3 } { vcoord : Math.Vector2.Vec2 }"
+            },
+            {
+                "name": "fragUniColorRing",
+                "comment": " A fragment Shader for rendering a transparent circle with a colored border\n",
+                "type": "WebGL.Shader {} { u | color : Math.Vector3.Vec3 } { vcoord : Math.Vector2.Vec2 }"
+            },
+            {
+                "name": "makeTransform",
+                "comment": " Creates a transformation matrix usually used in the fragment shader.\n\n    makeTransform ( x, y, z ) rotation ( w, h ) ( px, py )\n\n",
+                "type": "Game.Helpers.Float3 -> Basics.Float -> Game.Helpers.Float2 -> Game.Helpers.Float2 -> Math.Matrix4.Mat4"
+            },
+            {
+                "name": "vertColoredShape",
+                "comment": " The most basic shader, renders a basic shape.\nSince it doesn't even pass along the texture coordinates,\nit's only use is to create a colored shape.\n",
+                "type": "WebGL.Shader Game.TwoD.Shapes.Vertex { a | transform : Math.Matrix4.Mat4, cameraProj : Math.Matrix4.Mat4 } { vcoord : Math.Vector2.Vec2 }"
+            },
+            {
+                "name": "vertParallaxScroll",
+                "comment": " A shader that scrolls it's texture when the camera moves, but at not at the same speed.\nGood for background images.\n",
+                "type": "WebGL.Shader Game.TwoD.Shapes.Vertex { u | cameraPos : Math.Vector2.Vec2, cameraSize : Math.Vector2.Vec2, scrollSpeed : Math.Vector2.Vec2, z : Basics.Float, offset : Math.Vector2.Vec2 } { vcoord : Math.Vector2.Vec2 }"
+            },
+            {
+                "name": "vertTexturedRect",
+                "comment": " A simple shader that passes the texture coordinates along for the fragment shader.\nCan be generally used if the fragment shader needs to display texture(s).\n",
+                "type": "WebGL.Shader Game.TwoD.Shapes.Vertex { u | transform : Math.Matrix4.Mat4, cameraProj : Math.Matrix4.Mat4 } { vcoord : Math.Vector2.Vec2 }"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Game.TwoD.Shapes",
+        "comment": "\n\n\n# Shapes for WebGL rendering.\n\nYou don't need this module,\nunless you want to have a ready made square for a custom vertex shader.\n\nPretty much anything can be created using a single square.\nIf you don't believe me, see [here](http://iquilezles.org/index.html).\n\n@docs unitSquare\n@docs unitTriangle\n\n@docs Vertex\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Vertex",
+                "comment": " Just an alias for a 2d vector.\nNeeds to be in a record because it will be passed as an\nattribute to the vertex shader\n",
+                "args": [],
+                "type": "{ position : Math.Vector2.Vec2 }"
+            }
+        ],
+        "values": [
+            {
+                "name": "unitSquare",
+                "comment": " A square with corners (0, 0), (1, 1)\n",
+                "type": "WebGL.Mesh Game.TwoD.Shapes.Vertex"
+            },
+            {
+                "name": "unitTriangle",
+                "comment": " A triangle with corners (0, 0), (0, 1), (1, 0)\n",
+                "type": "WebGL.Mesh Game.TwoD.Shapes.Vertex"
+            }
+        ],
+        "binops": []
+    }
+]

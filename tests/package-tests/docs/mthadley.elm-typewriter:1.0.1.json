@@ -1,0 +1,106 @@
+[
+    {
+        "name": "Typewriter",
+        "comment": " This module follows the Elm Architecture. If you are new, it's definitely a good\nidea to start by reading the [Official Guide](https://guide.elm-lang.org/architecture/).\n\n\n# Basics\n\n@docs Model, Config, withWords, init, view, Msg, update\n\n\n# Customizing\n\n@docs iterations, withTypeDelay, withBackspaceDelay, withJitter\n@docs Iterations, infinite, times\n\n\n# Utilities\n\n@docs togglePlay, isPaused, isDone, restart\n\n",
+        "unions": [
+            {
+                "name": "Config",
+                "comment": " The settings for the typewriter. You can create one of these using\n[`withWords`](#withWords), and then customize it using functions like\n[`iterations`](#iterations). You can then initialize your typewriter by\npassing your `Config` to [`init`](#init).\n\n    Typewriter.withWords [ \"Supercalifragilisticexpialidocious\" ]\n        |> Typewriter.iterations (Typewriter.times 3)\n        |> Typewriter.withTypeDelay 600\n        |> Typewriter.withBackspaceDelay 10\n        |> Typewriter.withJitter (Random.float 0.5 1.5)\n        |> Typewriter.init\n\nSee [Customizing](#Customizing).\n\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Iterations",
+                "comment": " Controls how many times the typewriter will play.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Model",
+                "comment": " Opaque type representing the current state of the typewriter.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Msg",
+                "comment": " The type of messages that typewriters emit.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "infinite",
+                "comment": " The typewriter will continuously type it's list of words, starting\nfrom the beginning after it finishes it's last word.\n",
+                "type": "Typewriter.Iterations"
+            },
+            {
+                "name": "init",
+                "comment": " Create a new typewriter model from some settings.\n\n    Typewriter.withWords [ \"Let's get typing!\" ]\n        |> Typwriter.init\n\nSee [`Config`](#Config) for more ways to customize it's behavior.\n\n",
+                "type": "Typewriter.Config -> ( Typewriter.Model, Platform.Cmd.Cmd Typewriter.Msg )"
+            },
+            {
+                "name": "isDone",
+                "comment": " Retuorns true if this typewriter has no more things to type! This\nwill never return false if the [`iterations`](#Config) was set to\ninfinite.\n",
+                "type": "Typewriter.Model -> Basics.Bool"
+            },
+            {
+                "name": "isPaused",
+                "comment": " Returns true if the typewriter is paused.\n\n    Typewriter.withWords [ \"Type\", \"Forever\" ]\n        |> Typwriter.init\n        |> Typewriter.isPaused\n        |> Expect.equal False\n\n",
+                "type": "Typewriter.Model -> Basics.Bool"
+            },
+            {
+                "name": "iterations",
+                "comment": " Controls how many times the typwriter will run through it's script\nof words. By default it will type infinitely, but you can also constrain\nit. See [`times`](#times).\n\n    Typewriter.withWords [ \"Type\", \"Forever\" ]\n        |> Typwriter.iterations Typewriter.infinite\n        |> Typwriter.init\n\n",
+                "type": "Typewriter.Iterations -> Typewriter.Config -> Typewriter.Config"
+            },
+            {
+                "name": "restart",
+                "comment": " Sets the typewriter back to it's original state. Useful if you have\na typewriter that is \"done\", and you want it to start typing from the\nbeginning.\n",
+                "type": "Typewriter.Model -> ( Typewriter.Model, Platform.Cmd.Cmd Typewriter.Msg )"
+            },
+            {
+                "name": "times",
+                "comment": " The typewriter will go through it's list of words a specified\namount of times, and then stop. There is a minimum of at least one\niteration, so for any value `n` where `n < 1`, it will be treated as `1`.\n",
+                "type": "Basics.Int -> Typewriter.Iterations"
+            },
+            {
+                "name": "togglePlay",
+                "comment": " Toggles the playing state of the typewriter. If it is currently playing,\nthen this will pause it. If it is already paused, then it will resume playing.\n\nYou can check if it is currently paused or playing using [`isPaused`](#isPaused).\n\n",
+                "type": "Typewriter.Model -> ( Typewriter.Model, Platform.Cmd.Cmd Typewriter.Msg )"
+            },
+            {
+                "name": "update",
+                "comment": " Make sure to call this `update` in your own `update` to make\nthe typewriter type!\n",
+                "type": "Typewriter.Msg -> Typewriter.Model -> ( Typewriter.Model, Platform.Cmd.Cmd Typewriter.Msg )"
+            },
+            {
+                "name": "view",
+                "comment": " The view function. We just give you the String, so you can render it in\nwhatever way makes sense for your application.\n",
+                "type": "Typewriter.Model -> String.String"
+            },
+            {
+                "name": "withBackspaceDelay",
+                "comment": " Change the amount of time between each character deleted. This should specified\nin **milliseconds**.\n",
+                "type": "Basics.Int -> Typewriter.Config -> Typewriter.Config"
+            },
+            {
+                "name": "withJitter",
+                "comment": " Provide a generator that produces floats, that will be used to calculate the delay\nin the next step of the typing process. The float is used as a coefficient with the delay\nconfigured for that step.\n\nIf generator produces `0.5`, then the next step will be twice as fast. Conversely, if it\nwere to produce `2.0`, then that next step will take twice as long.\n\n    Typewriter.withWords [ \"I'm\", \"All\", \"Over\", \"The\", \"Place\" ]\n        |> Typwriter.withJitter (Random.float 0.1 20)\n        |> Typwriter.init\n\n",
+                "type": "Random.Generator Basics.Float -> Typewriter.Config -> Typewriter.Config"
+            },
+            {
+                "name": "withTypeDelay",
+                "comment": " Change the amount of time between each key typed. This should specified\nin **milliseconds**.\n\nNote that this only affects how fast characters are deleted, and not how fast they\nare _deleted_. For that, see [`withBackspaceDelay`](#withBackspaceDelay).\n\n",
+                "type": "Basics.Int -> Typewriter.Config -> Typewriter.Config"
+            },
+            {
+                "name": "withWords",
+                "comment": " Initialize your typewriter [`Config`](#config) with the words you\nwant it to type. This is the only way to create a [`Config`](#Config)!\n",
+                "type": "List.List String.String -> Typewriter.Config"
+            }
+        ],
+        "binops": []
+    }
+]

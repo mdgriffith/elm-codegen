@@ -1,0 +1,46 @@
+[
+    {
+        "name": "Bitcoin",
+        "comment": " Bitcoin price web component made using Elm. Thanks to this extension, you can reflect in your application the current price of bitcoin in dollars.\n\nUse component\n\n@docs Model, init\n@docs update, Msg\n@docs view\n\n",
+        "unions": [
+            {
+                "name": "Model",
+                "comment": " State component\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Msg",
+                "comment": " Msg for HTTP Request\n",
+                "args": [],
+                "cases": [
+                    [
+                        "GotResult",
+                        [
+                            "Result.Result Http.Error String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "init",
+                "comment": " Сomponent initialization\n",
+                "type": "() -> ( Bitcoin.Model, Platform.Cmd.Cmd Bitcoin.Msg )"
+            },
+            {
+                "name": "update",
+                "comment": " Update state\n",
+                "type": "Bitcoin.Msg -> Bitcoin.Model -> ( Bitcoin.Model, Platform.Cmd.Cmd Bitcoin.Msg )"
+            },
+            {
+                "name": "view",
+                "comment": " Component display\n",
+                "type": "Bitcoin.Model -> Html.Html Bitcoin.Msg"
+            }
+        ],
+        "binops": []
+    }
+]

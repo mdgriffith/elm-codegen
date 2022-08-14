@@ -1,0 +1,52 @@
+[
+    {
+        "name": "NoRecordAliasConstructor",
+        "comment": "\n\n@docs rule\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": " 🔧`NoRecordAliasConstructor` forbids using a record type alias constructor function.\n\nRead more about the why in [`no-record-type-alias-constructor-function`](https://dark.elm.dmy.fr/packages/lue-bird/elm-no-record-type-alias-constructor-function/latest/).\n\n\n## examples\n\n    type alias User =\n        { name : String, age : Int }\n\n    User \"Balsa\" 42\n\nwill be marked as error and automatically fixed:\n\n    { name = \"Balsa\", age = 42 }\n\nThe same goes for cases where no arguments are applied:\n\n    map2 User\n        (field \"name\" string)\n        (field \"age\" int)\n\nfixed\n\n    map2 (\\name age -> { name = name, age = age })\n        (field \"name\" string)\n        (field \"age\" int)\n\nSee the [readme](https://package.elm-lang.org/packages/lue-bird/elm-review-record-alias-constructor/latest/) for why this is useful.\n\n\n## configuration\n\n    import NoRecordAliasConstructor\n\n    config : List Rule\n    config =\n        [ NoRecordAliasConstructor.rule\n        ]\n\n",
+                "type": "Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "NoRecordAliasWithConstructor",
+        "comment": "\n\n@docs rule, ruleWith\n\n\n## configure\n\n@docs Config, configDefault, importRecordWithoutConstructorFunctionTypeAlias\n\n",
+        "unions": [
+            {
+                "name": "Config",
+                "comment": " Configuration where you can specify\n\n  - where/what your `RecordWithoutConstructorFunction` is: [`importRecordWithoutConstructorFunctionTypeAlias`](#importRecordWithoutConstructorFunctionTypeAlias)\n\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "configDefault",
+                "comment": " The standard [`Config`](#Config) used for [`rule`](#rule)s without further configuration:\n\n    rule =\n        NoRecordAliasWithConstructor.ruleWith\n            NoRecordAliasWithConstructor.configDefault\n\n  - imports [`RecordWithoutConstructorFunction` from `lue-bird/elm-no-record-type-alias-constructor-function`](https://dark.elm.dmy.fr/packages/lue-bird/elm-no-record-type-alias-constructor-function/latest/):\n\n        importRecordWithoutConstructorFunctionTypeAlias\n            { moduleName = \"RecordWithoutConstructorFunction\"\n            , typeAliasName = \"RecordWithoutConstructorFunction\"\n            }\n\n",
+                "type": "NoRecordAliasWithConstructor.Config"
+            },
+            {
+                "name": "importRecordWithoutConstructorFunctionTypeAlias",
+                "comment": " Configure what\n\n    module Your.Module exposing (YourRecordWithoutConstructorFunction)\n\n    type alias YourRecordWithoutConstructorFunction record =\n        record\n\nto import:\n\n    import NoRecordAliasWithConstructor exposing (importRecordWithoutConstructorFunctionTypeAlias)\n\n    NoRecordAliasWithConstructor.configDefault\n        |> importRecordWithoutConstructorFunctionTypeAlias\n            { moduleName = \"Your.Module\"\n            , typeAliasName = \"YourRecordWithoutConstructorFunction\"\n            }\n\n[`configDefault`](#configDefault) imports\n[`RecordWithoutConstructorFunction` from `lue-bird/elm-no-record-type-alias-constructor-function`](https://dark.elm.dmy.fr/packages/lue-bird/elm-no-record-type-alias-constructor-function/latest/):\n\n    importRecordWithoutConstructorFunctionTypeAlias\n        { moduleName = \"RecordWithoutConstructorFunction\"\n        , typeAliasName = \"RecordWithoutConstructorFunction\"\n        }\n\n",
+                "type": "{ moduleName : String.String, typeAliasName : String.String } -> NoRecordAliasWithConstructor.Config -> NoRecordAliasWithConstructor.Config"
+            },
+            {
+                "name": "rule",
+                "comment": " 🔧`NoRecordAliasWithConstructor` forbids directly aliasing a record type.\nAs a consequence, its constructor function becomes unavailable.\n\nRead more about the why in [`no-record-type-alias-constructor-function`](https://dark.elm.dmy.fr/packages/lue-bird/elm-no-record-type-alias-constructor-function/latest/).\n\nUse [`RecordWithoutConstructorFunction`](https://dark.elm.dmy.fr/packages/lue-bird/elm-no-record-type-alias-constructor-function/latest/)\nwhen directly aliasing a record type to avoid its constructor function becoming unavailable.\n\n\n## example\n\n    type alias User =\n        { name : String, age : Int }\n\nwill be marked as error and automatically fixed:\n\n    import RecordWithoutConstructorFunction exposing (RecordWithoutConstructorFunction)\n\n    type alias User =\n        RecordWithoutConstructorFunction\n            { name : String, age : Int }\n\n\n## configuration\n\n    import NoRecordAliasWithConstructor\n\n    config : List Rule\n    config =\n        [ NoRecordAliasWithConstructor.rule\n        ]\n\n[Defaults](#configDefault) can be altered by using [`ruleWith`](#ruleWith) [`Config`](#Config).\n\n",
+                "type": "Review.Rule.Rule"
+            },
+            {
+                "name": "ruleWith",
+                "comment": " 🔧`NoRecordAliasWithConstructor` forbids directly aliasing a record type.\nAs a consequence, its constructor function becomes unavailable.\n\nRead more about the why in [`no-record-type-alias-constructor-function`](https://dark.elm.dmy.fr/packages/lue-bird/elm-no-record-type-alias-constructor-function/latest/).\n\nYou can use [`RecordWithoutConstructorFunction`](https://dark.elm.dmy.fr/packages/lue-bird/elm-no-record-type-alias-constructor-function/latest/)\nwhen directly aliasing a record type to avoid its constructor function becoming unavailable.\n\n\n## example\n\n    type alias User =\n        { name : String, age : Int }\n\nwill be marked as error and automatically fixed:\n\n    import Util exposing (WithoutConstructorFunction)\n\n    type alias User =\n        WithoutConstructorFunction\n            { name : String, age : Int }\n\n\n## configuration\n\n    import NoRecordAliasWithConstructor exposing (importRecordWithoutConstructorFunctionTypeAlias)\n\n    config : List Rule\n    config =\n        [ NoRecordAliasWithConstructor.ruleWith\n            (NoRecordAliasWithConstructor.configDefault\n                |> importRecordWithoutConstructorFunctionTypeAlias\n                    { moduleName = \"Util\"\n                    , typeAliasName = \"WithoutConstructorFunction\"\n                    }\n            )\n        ]\n\n[`rule`](#rule) simply uses the [default](#configDefault) [`Config`](#Config).\n\n",
+                "type": "NoRecordAliasWithConstructor.Config -> Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    }
+]

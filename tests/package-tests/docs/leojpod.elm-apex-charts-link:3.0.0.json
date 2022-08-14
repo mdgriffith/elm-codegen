@@ -1,0 +1,233 @@
+[
+    {
+        "name": "Apex",
+        "comment": " This package provide a (WIP) integration between elm and [Apex charts](https://apexcharts.com/) via either custom-element or ports.\n\nThe main thing this package does is provide a simple and declarative way to describe a chart and encode it so that it can directly be picked up by Apex Charts.\n\nNote, this package comes with an \"already made\" custom component which you can install and use via the node package version of `elm-apex-charts-link` (see the README).\n\nHere is how you would describe a simple chart with some options (checkout the example project for more use-cases):\n\n        import Apex\n        import Charts.PlotChart as Plot\n\n        myChart : Html Msg\n        myChart =\n            Apex.apexChart\n                (Plot.plot\n                    |> Plot.addLineSeries \"Connections by week\" (connectionsByWeek logins)\n                    |> Plot.addColumnSeries \"Connections within office hour for that week\" (dayTimeConnectionByWeek logins)\n                    |> Plot.addColumnSeries \"Connections outside office hour for that week\" (outsideOfficeHourConnectionByWeek logins)\n                    |> Plot.withXAxisType Plot.DateTime\n                    |> Apex.fromPlotChart\n                )\n                []\n\n\n# When should I use this package?\n\nFor that please refer to the [README](./) page\n\n\n# Creating charts\n\nCreating charts is done by using the Charts modules ([PlotChart](./Charts-PlotChart) & [RoundChart](./Charts-RoundChart))\n\nOnce you have a Chart you can transform it into an Apex chart with one of these 2 function\n\n@docs fromPlotChart\n\n@docs fromRoundChart\n\n@docs fromBarChart\n\nYou can also apply some customization\n\n@docs withColors\n\n\n# Rendering charts\n\nTo render your chart you have 2 options:\n\n  - encode it to JSON and send it to via a port to be rendered via JavaScript/TypeScript.\n\n```elm\nupdate : Msg -> Model -> ( Model, Cmd Msg )\nupdate msg _ =\n    case msg of\n        LoadFakeLogins now ->\n            let\n                logins =\n                    fictiveLogins Time.utc now\n            in\n            ( logins\n            , updateChart <|\n                Apex.encodeChart <|\n                    Apex.fromPlotChart <|\n                        (Chart.PlotChart.chart\n                            |> Chart.PlotChart.addLineSeries \"Connections by week\" (connectionsByWeek logins)\n                            |> Chart.PlotChart.addColumnSeries \"Connections within office hour for that week\" (dayTimeConnectionByWeek logins)\n                            |> Chart.PlotChart.addColumnSeries \"Connections outside office hour for that week\" (outsideOfficeHourConnectionByWeek logins)\n                            |> Chart.PlotChart.withXAxisType Chart.DateTime\n                        )\n            )\n```\n\n```js\napp.ports.updateChart.subscribe((chartDescription) => {\n  const chart = new ApexCharts(\n    document.querySelector('#chart1'),\n    chartDescription\n  )\n  chart.render()\n})\n\n\n# Note\n\nParts of the package depends on a node package for the custom-element.\nHence the use of this silly value...\n\n@docs hardCodedVersionV3\n```\n\n@docs encodeChart\n\n  - use `npm install elm-apex-charts-link` to gain access to the custom element and then use:\n\n         import Apex\n\n         myChart : Html Msg\n         myChart =\n             Apex.apexChart\n                 (Chart.PlotChart.chart\n                    |> Chart.PlotChart.addLineSeries \"Connections by week\" (connectionsByWeek logins)\n                    |> Chart.PlotChart.addColumnSeries \"Connections within office hour for that week\" (dayTimeConnectionByWeek logins)\n                    |> Chart.PlotChart.addColumnSeries \"Connections outside office hour for that week\" (outsideOfficeHourConnectionByWeek logins)\n                    |> Chart.PlotChart.withXAxisType Apex.DateTime\n                    |> Apex.fromPlotChart\n                 )\n                 []\n\n@docs apexChart\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "apexChart",
+                "comment": " this is the custom element wrapper.\nMake sure that you have installed the javascript companion package (`npm i elm-apex-charts-link`) before using this function!\n",
+                "type": "List.List (Html.Attribute msg) -> Apex.Chart -> Html.Html msg"
+            },
+            {
+                "name": "encodeChart",
+                "comment": " this function takes a chart and turns it into JSON data that Apex Charts can understand\n\nNOTE: if you are using the custom-element version you should not need to use this function\n\n",
+                "type": "Apex.Chart -> Json.Encode.Value"
+            },
+            {
+                "name": "fromBarChart",
+                "comment": " One you have a nice bar chart reprensentation from [`Charts.Bar`](./Charts-Bar) you can transform it to an Apex chart by calling this function\n",
+                "type": "Charts.Bar.Bar -> Apex.Chart"
+            },
+            {
+                "name": "fromPlotChart",
+                "comment": " One you have a nice plot chart reprensentation from [`Charts.Plot`](./Charts-Plot) you can transform it to an Apex chart by calling this function\n",
+                "type": "Charts.Plot.Plot -> Apex.Chart"
+            },
+            {
+                "name": "fromRoundChart",
+                "comment": " One you have a nice pie/radial chart reprensentation from [`Charts.RoundChart`](./Charts-RoundChart) you can transform it to an Apex chart by calling this function\n",
+                "type": "Charts.RoundChart.RoundChart -> Apex.Chart"
+            },
+            {
+                "name": "hardCodedVersionV3",
+                "comment": " the companion package changed!\nso let's try to tell the compiler that a version bump is required\n",
+                "type": "()"
+            },
+            {
+                "name": "withColors",
+                "comment": " this allows you to set the theme of the chart.\nit's mostly just setting the [`colors`](https://apexcharts.com/docs/options/colors/) value from Apex\n",
+                "type": "List.List String.String -> Apex.Chart -> Apex.Chart"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Charts.Bar",
+        "comment": " Use this module to build histograms with discrete scales or bar diagrams.\n\n\n# Building a chart\n\n@docs Bar\n\n\n## Start\n\n@docs bar\n\n\n## Adding data\n\n@docs addSeries\n\n\n## Customizations\n\n@docs isHorizontal\n@docs isStacked\n\n\n# Internals\n\n@docs chartData\n\n",
+        "unions": [
+            {
+                "name": "Bar",
+                "comment": " This is an internal type to make sure we're keeping the definitions and list handling coherent and free from outside manipulation\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "addSeries",
+                "comment": " use this function to add series to your bar chart.\n\nNOTE: it won't work well if your series have different length!\n(in a later release we might want to do something about that)\n\n",
+                "type": "String.String -> List.List ( String.String, Basics.Float ) -> Charts.Bar.Bar -> Charts.Bar.Bar"
+            },
+            {
+                "name": "bar",
+                "comment": " This is the entry point to create a bar chart.\n\nIt creates an empty chart which you can use as basis, adding series to it, tuning axis and such...\n\n",
+                "type": "Charts.Bar.Bar"
+            },
+            {
+                "name": "chartData",
+                "comment": " internal method to grab the internal plot reprensentation\n\nthis is use to transform the underlying reprensentation to an Apex chart definition\n\n",
+                "type": "Charts.Bar.Bar -> Charts.Bar.BarChartData"
+            },
+            {
+                "name": "isHorizontal",
+                "comment": " by default, bar charts are vertical but it is nice to get them horizontal sometimes\n",
+                "type": "Charts.Bar.Bar -> Charts.Bar.Bar"
+            },
+            {
+                "name": "isStacked",
+                "comment": " by default, bar charts are not stacked but you can fix this easily\n",
+                "type": "Charts.Bar.Bar -> Charts.Bar.Bar"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Charts.Plot",
+        "comment": " Use this module to create historgrams, bar charts, scatter plots, line plots, area plots and the like (basically anything that does not come in a round-like shape).\n\n\n# Building a chart\n\n@docs Plot\n\n\n## Start\n\nYou should start by creating an empty chart with:\n\n@docs plot\n\n\n## Adding data\n\nOnce you have your plot/chart, you can start adding data to it.\nAt the moment this is done with `addColumnSeries` and `addLineSeries`\n\n@docs addColumnSeries\n@docs addLineSeries\n\nThese make use of a simple record that describe data point\n\n@docs Point\n\n\n## Customizations\n\nNOTE: this part is still heavy a work in progress.\n\n@docs withXAxisType\n@docs XAxisType\n\n\n# Internals\n\nThese are stuff you should never have to care about\n\n@docs SeriesType\n@docs chartData\n@docs XAxisOptions\n\n",
+        "unions": [
+            {
+                "name": "Plot",
+                "comment": " This is an internal type to make sure we're keeping the definitions and list handling coherent and free from outside manipulation\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "SeriesType",
+                "comment": " internal type to track the type of series present in the chart.\n\n_Do not use this type without a really good reason._\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "LineSeries",
+                        []
+                    ],
+                    [
+                        "ColumnSeries",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "XAxisType",
+                "comment": " Describe how the x-axis of your graph should be labelled.\n\nIt can be either a Category, a DateTime or a Numeric value\n\nNOTE: for the DateTime to properly work I suggest that the x-values in your series should be turned into miliseconds via `Time.posixToMillis`. I hope to find something better in due time but that's the best option until then.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Category",
+                        []
+                    ],
+                    [
+                        "DateTime",
+                        []
+                    ],
+                    [
+                        "Numeric",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Point",
+                "comment": " A simple record type to make things a bit clearer when writing series\n",
+                "args": [],
+                "type": "{ x : Basics.Float, y : Basics.Float }"
+            },
+            {
+                "name": "XAxisOptions",
+                "comment": " internal type that represent all the possible options that can be supported by the chart library\n\n_Do not use this type without a really good reason._\n\n",
+                "args": [],
+                "type": "Charts.Plot.XAxisType"
+            }
+        ],
+        "values": [
+            {
+                "name": "addColumnSeries",
+                "comment": " as the name suggest, this add a new column series to your chart using the given name and by adding a bar for each of the given points.\n",
+                "type": "String.String -> List.List Charts.Plot.Point -> Charts.Plot.Plot -> Charts.Plot.Plot"
+            },
+            {
+                "name": "addLineSeries",
+                "comment": " as the name suggest, this add a line to your chart by creating a series with the given name and by linking the given points together.\n",
+                "type": "String.String -> List.List Charts.Plot.Point -> Charts.Plot.Plot -> Charts.Plot.Plot"
+            },
+            {
+                "name": "chartData",
+                "comment": " internal method to grab the internal plot reprensentation\n\nthis is use to transform the underlying reprensentation to an Apex chart definition\n\n",
+                "type": "Charts.Plot.Plot -> Charts.Plot.PlotChartData"
+            },
+            {
+                "name": "plot",
+                "comment": " This is the entry point to create a plot chart.\n\nIt creates an empty chart which you can use as basis, adding series to it, tuning axis and such...\n\n",
+                "type": "Charts.Plot.Plot"
+            },
+            {
+                "name": "withXAxisType",
+                "comment": " change the type of x-axis used in you graph\n",
+                "type": "Charts.Plot.XAxisType -> Charts.Plot.Plot -> Charts.Plot.Plot"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Charts.RoundChart",
+        "comment": " Use this module to create pie charts, radial charts (and all kind of roundly shaped charts).\nThese charts generally work with either 1 single value or a single series of values\n\n\n# Building a chart\n\n@docs RoundChart\n\n\n## Start\n\n@docs pieChart\n@docs radialBar\n\n\n## Customizations\n\n@docs withCustomAngles\n\nMore to come!\n\n\n# Internals\n\n@docs chartData\n@docs RoundChartType\n@docs RoundChartOptions\n\n",
+        "unions": [
+            {
+                "name": "RoundChart",
+                "comment": " The opaque type representing RoundCharts\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "RoundChartType",
+                "comment": " Internal representation of the chart type\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Pie",
+                        []
+                    ],
+                    [
+                        "Radial",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "RoundChartOptions",
+                "comment": " Internal type used to describe general options for the round charts\n",
+                "args": [],
+                "type": "{ type_ : Charts.RoundChart.RoundChartType, angles : Maybe.Maybe { from : Basics.Int, to : Basics.Int } }"
+            }
+        ],
+        "values": [
+            {
+                "name": "chartData",
+                "comment": " Internal accessor to the round chart definition\n\nthis is used to translate from RoundChart to ApexChart\n\n",
+                "type": "Charts.RoundChart.RoundChart -> Charts.RoundChart.RoundChartData"
+            },
+            {
+                "name": "pieChart",
+                "comment": " Creates a pie chart with the given title and series\n",
+                "type": "String.String -> List.List ( String.String, Basics.Float ) -> Charts.RoundChart.RoundChart"
+            },
+            {
+                "name": "radialBar",
+                "comment": " Create a radial bar chart with the given title and series\n\nNote for a simple \"gauge\"-type chart, simply give a single-item list as series.\n\n",
+                "type": "String.String -> List.List ( String.String, Basics.Float ) -> Charts.RoundChart.RoundChart"
+            },
+            {
+                "name": "withCustomAngles",
+                "comment": " this allows to replace the usual \"full circle\"/360 degree representation by one of custom angles\n\nNOTE: angles are in degrees and 0 represent the top of the page (i.e. noon on an analog watch)\n\n",
+                "type": "Basics.Int -> Basics.Int -> Charts.RoundChart.RoundChart -> Charts.RoundChart.RoundChart"
+            }
+        ],
+        "binops": []
+    }
+]

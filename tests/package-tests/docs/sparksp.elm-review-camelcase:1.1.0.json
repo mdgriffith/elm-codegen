@@ -1,0 +1,38 @@
+[
+    {
+        "name": "UseCamelCase",
+        "comment": "\n\n@docs rule\n\n\n## Configuration\n\n@docs Config, default, withCamel, withPascal\n\n",
+        "unions": [
+            {
+                "name": "Config",
+                "comment": " Configuration for the UseCamelCase rule.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "default",
+                "comment": " Default configuration that will suit most people.\n\n    config : List Rule\n    config =\n        [ UseCamelCase.rule UseCamelCase.default\n        ]\n\n\n### Ignoring specific files\n\nYou can ignore the errors reported for specific files. Use this when you don't want to review generated source code or files from external sources that you copied over to your project and don't want to be touched.\n\n    config : List Rule\n    config =\n        [ UseCamelCase.rule UseCamelCase.default\n            |> Rule.ignoreErrorsForFiles [ \"src/TW.elm\" ]\n        ]\n\nThere are more examples of [configuring exceptions](https://package.elm-lang.org/packages/jfmengels/elm-review/2.0.0/Review-Rule#configuring-exceptions) in the elm-review documentation.\n\n",
+                "type": "UseCamelCase.Config"
+            },
+            {
+                "name": "rule",
+                "comment": " Report any variables, constants, and other declarations that are using the wrong case style.\n\n    config : List Rule\n    config =\n        [ UseCamelCase.rule UseCamelCase.default\n        ]\n\n\n## When (not) to use this rule\n\nThis rule will report any deviation from [camelCase](#camel-case) or [PascalCase](#pascal-case) (as appropriate). Read the notes below and make sure that you and your team are 100% happy to adopt this for your codebase!\n\n\n## Implementation Notes\n\n\n### Camel Case\n\nVariable and constant names must be formatted in **camelCase**, such that each word in the middle of the phrase begins with a capital letter, with no intervening spaces or punctuation. This includes all variables, function names and arguments, and port names.\n\n  - A single underscore at the end of a token is allowed (used for masking variables), but multiple trailing underscores will be squashed.\n      - Pass: `model_`\n      - Fail: `model___` => `model_`\n  - Single-letter words and abbreviations are accepted.\n      - Pass: `hasAThing`\n      - Pass: `toHTML`\n  - We consider any numbers to be the end of a word.\n      - Pass: `person1`\n      - Fail: `address_1stLine` => `address1StLine` (note the `St`)\n      - Fail: `one_two3four_five` => `oneTwo3FourFive` (note the `Four`)\n\n\n### Pascal Case\n\nModule and type names must be formatted in **PascalCase**, such that each word of the phrase begins with a capital letter, with no intervening spaces or punctuation.\n\n  - Single-letter words and abbreviations are accepted.\n      - Pass: `HasAThing`\n      - Pass: `ToHTML`\n  - We take CONSTANT\\_CASE parts as whole words.\n      - Fail: `CONSTANT_CASE` => `ConstantCase`\n      - Fail: `TO_HTML` => `ToHtml`\n  - We consider any numbers to be the end of a word.\n      - Pass: `Person1`\n      - Fail: `Person_1` => `Person1`\n      - Fail: `Address_1stLine` => `Address1StLine` (note the `St`)\n      - Fail: `One_Two3four_Five` => `OneTwo3FourFive` (note the `Four`)\n\n\n### Unknown suggestion\n\nIf the converter fails to parse a term it will suggest \"Unknown\" as the replacement. We're confident that this will not happen, so if you encounter this please [report an issue on GitHub](https://github.com/sparksp/elm-review-camelcase/issues) so we can take a look.\n\n",
+                "type": "UseCamelCase.Config -> Review.Rule.Rule"
+            },
+            {
+                "name": "withCamel",
+                "comment": " If you do not like the provided camelCase rules you can supply your own.\n\n    config : List Rule\n    config =\n        [ UseCamelCase.rule\n            (UseCamelCase.default\n                |> UseCamelCase.withCamel customToCamel\n            )\n        ]\n\n",
+                "type": "(String.String -> String.String) -> UseCamelCase.Config -> UseCamelCase.Config"
+            },
+            {
+                "name": "withPascal",
+                "comment": " If you do not like the provided PascalCase rules you can supply your own.\n\n    config : List Rule\n    config =\n        [ UseCamelCase.rule\n            (UseCamelCase.default\n                |> UseCamelCase.withPascal customToPascal\n            )\n        ]\n\n",
+                "type": "(String.String -> String.String) -> UseCamelCase.Config -> UseCamelCase.Config"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,445 @@
+[
+    {
+        "name": "Postgrest.Client",
+        "comment": "\n\n\n# postgrest-client\n\nThis library allows you to construct and execute postgrest requests with additional type safety.\nHere's what `Api.People` might look like:\n\n    import Json.Decode exposing (..)\n    import Json.Encode as JE\n    import Postgrest.Client as P\n\n\n    -- Optional, but recommended to have a type that\n    -- represents your primary key.\n    type PersonID\n        = PersonID Int\n\n    -- And a way to unwrap it...\n    personID : PersonID -> Int\n    personID (PersonID id) =\n        id\n\n    -- Define the record you would fetch back from the server.\n    type alias Person =\n        { id : PersonID\n        , name : String\n        }\n\n    -- Define a submission record, without the primary key.\n    type alias PersonSubmission =\n        { name : String\n        }\n\n    -- Decoders are written using Json.Decode\n    decodeUnit : Decoder Person\n    decodeUnit =\n        map2 Person\n            (field \"id\" <| map PersonID int)\n            (field \"name\" string)\n\n    -- Encoders are written using Json.Encode\n    encode : PersonSubmission -> JE.Value\n    encode person =\n        JE.object\n            [ ( \"name\", JE.string person.name )\n            ]\n\n    -- Tell Postgrest.Client the column name of your primary key and\n    -- how to convert it into a parameter.\n    primaryKey : P.PrimaryKey PersonID\n    primaryKey =\n        P.primaryKey ( \"id\", P.int << personID )\n\n    -- Tell Postgrest.Client the URL of the postgrest endpoint and how\n    -- to decode an individual record from it. Postgrest will combine\n    -- the decoder with a list decoder automatically when necessary.\n    endpoint : P.Endpoint Person\n    endpoint =\n        P.endpoint \"/people\" decodeUnit\n\n    -- Fetch many records. If you want to specify parameters use `setParams`\n    getMany : P.Request (List Person)\n    getMany =\n        P.getMany endpoint\n\n    -- Delete by primary key. This is a convenience function that reduces\n    -- the likelihood that you delete more than one record by specifying incorrect\n    -- parameters.\n    delete : PersonID -> P.Request PersonID\n    delete =\n        P.deleteByPrimaryKey endpoint primaryKey\n\n    -- Create a record.\n    post : PersonSubmission -> P.Request Person\n    post =\n        P.postOne endpoint << encode\n\nHere's how you could use it:\n\n    import Api.People as People\n    import Postgrest.Client as P\n\n    jwt : P.JWT\n    jwt =\n        P.jwt \"abcdefghijklmnopqrstuvwxyz1234\"\n\n    type Msg\n        = PersonCreated (Result P.Error Person)\n        | PeopleLoaded (Result P.Error (List Person))\n        | PersonDeleted (Result P.Error PersonID)\n\n    toCmd =\n        P.toCmd jwt\n\n    cmdExamples =\n        [ People.post\n            { name = \"Yasujirō Ozu\"\n            }\n            |> P.toCmd jwt PersonCreated\n        , People.getMany\n            [ P.order [ P.asc \"name\" ], P.limit 10 ]\n            |> toCmd PeopleLoaded\n        , Person.delete personID\n            |> toCmd PersonDeleted\n        ]\n\n\n# Request Construction and Modification\n\n@docs Endpoint\n@docs Request\n@docs endpoint\n@docs customEndpoint\n\n\n# Endpoint a\n\n@docs getMany\n@docs getOne\n@docs postOne\n@docs getByPrimaryKey\n@docs patchByPrimaryKey\n@docs deleteByPrimaryKey\n\n\n# Request Options\n\n@docs setParams\n@docs setTimeout\n\n\n# Generic Requests\n\n@docs get\n@docs post\n@docs unsafePatch\n@docs unsafeDelete\n\n\n# Request Authentication\n\n@docs JWT, jwt, jwtString\n\n\n# Execution\n\n@docs toCmd, toTask\n\n\n# Primary Keys\n\n@docs PrimaryKey\n@docs primaryKey\n@docs primaryKey2\n@docs primaryKey3\n\n\n# Errors\n\n@docs Error, PostgrestErrorJSON, toHttpError\n\n\n# URL Parameter Construction\n\n@docs Param\n@docs Params\n@docs Selectable\n@docs ColumnOrder\n@docs Value\n@docs Operator\n\n\n## Select\n\n@docs select\n@docs allAttributes\n@docs attribute\n@docs attributes\n@docs resource\n@docs resourceWithParams\n\n\n## Converting/Combining Parameters\n\n@docs combineParams\n@docs concatParams\n@docs normalizeParams\n@docs toQueryString\n\n\n## Param\n\n@docs param\n@docs or\n@docs and\n@docs nestedParam\n\n\n## Operators\n\n@docs eq\n@docs gt\n@docs gte\n@docs inList\n@docs limit\n@docs lt\n@docs lte\n@docs neq\n@docs not\n@docs true\n@docs false\n@docs null\n@docs value\n@docs offset\n@docs ilike\n@docs like\n@docs contains\n@docs containedIn\n\n\n## Values\n\n@docs string\n@docs int\n@docs list\n\n\n## Order\n\n@docs order\n@docs asc\n@docs desc\n@docs nullsfirst\n@docs nullslast\n\n\n## Full-Text Search\n\n@docs plfts\n@docs phfts\n@docs fts\n\n",
+        "unions": [
+            {
+                "name": "Error",
+                "comment": " `Error` Looks a lot like `Http.Error` except `BadStatus` includes a second argument,\n`PostgrestErrorJSON` with any details that postgrest might have given us about a failed request.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Timeout",
+                        []
+                    ],
+                    [
+                        "BadUrl",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "NetworkError",
+                        []
+                    ],
+                    [
+                        "BadStatus",
+                        [
+                            "Basics.Int",
+                            "String.String",
+                            "Postgrest.Client.PostgrestErrorJSON"
+                        ]
+                    ],
+                    [
+                        "BadBody",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "PrimaryKey",
+                "comment": " Can be used together with endpoint to make request construction easier. See\n[primaryKey](#primaryKey) and [endpoint](#endpoint).\n",
+                "args": [
+                    "pk"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "ColumnOrder",
+                "comment": " A type to specify whether you want an order to be ascending or descending, and\noptionally whether you want nulls to be first or last.\n",
+                "args": [],
+                "type": "Postgrest.Internal.Params.ColumnOrder"
+            },
+            {
+                "name": "Endpoint",
+                "comment": " Think of an Endpoint as a combination between a base url like `/schools` and\nan elm/json `Decoder`. The endpoint can be passed to other functions in this library,\nsometimes along with PrimaryKey to make constructing certain types of requests easier.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "Postgrest.Internal.Endpoint.Endpoint a"
+            },
+            {
+                "name": "JWT",
+                "comment": " The type used to store the JWT string.\n",
+                "args": [],
+                "type": "Postgrest.Internal.JWT.JWT"
+            },
+            {
+                "name": "Operator",
+                "comment": " A type that represents the operator of a query. In `name=eq.John` the operator would be the `=`.\n",
+                "args": [],
+                "type": "Postgrest.Internal.Params.Operator"
+            },
+            {
+                "name": "Param",
+                "comment": " An individual postgrest parameter.\n",
+                "args": [],
+                "type": "Postgrest.Internal.Params.Param"
+            },
+            {
+                "name": "Params",
+                "comment": " A list of Param.\n",
+                "args": [],
+                "type": "List.List Postgrest.Client.Param"
+            },
+            {
+                "name": "PostgrestErrorJSON",
+                "comment": " Contains any details postgrest might have given us about a failed request.\n",
+                "args": [],
+                "type": "{ message : Maybe.Maybe String.String, details : Maybe.Maybe String.String, hint : Maybe.Maybe String.String, code : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "Request",
+                "comment": " Request can be used with toCmd and toTask to make a request.\n",
+                "args": [
+                    "r"
+                ],
+                "type": "Postgrest.Internal.Requests.Request r"
+            },
+            {
+                "name": "Selectable",
+                "comment": " A type representing which attributes and resources you want to select.\nIt also contains parameters that target nested resources.\n",
+                "args": [],
+                "type": "Postgrest.Internal.Params.Selectable"
+            },
+            {
+                "name": "Value",
+                "comment": " Type that can be represented in the queries: strings, ints and lists.\n",
+                "args": [],
+                "type": "Postgrest.Internal.Params.Value"
+            }
+        ],
+        "values": [
+            {
+                "name": "allAttributes",
+                "comment": " When you want to select all attributes. This is only useful when used\nto select attributes of a resource or override default parameters in another function\nsince postgrest returns all attributes by default.\n",
+                "type": "List.List Postgrest.Client.Selectable"
+            },
+            {
+                "name": "and",
+                "comment": " Join multiple conditions together with and.\n\n    [ and\n        [ param \"grade\" <| gte <| int 90\n        , param \"student\" <| true\n        , or\n            [ param \"age\" <| gte <| int 14\n            , param \"age\" <| null\n            ]\n        ]\n    ]\n    |> toQueryString\n\n    -- and=(grade.gte.90,student.is.true,or(age.gte.14,age.is.null))\n\n",
+                "type": "List.List Postgrest.Client.Param -> Postgrest.Client.Param"
+            },
+            {
+                "name": "asc",
+                "comment": " Used in combination with `order` to sort results ascending.\n\n    P.order [ P.asc \"name\" ]\n\n",
+                "type": "String.String -> Postgrest.Client.ColumnOrder"
+            },
+            {
+                "name": "attribute",
+                "comment": " When you want to select a certain column.\n",
+                "type": "String.String -> Postgrest.Client.Selectable"
+            },
+            {
+                "name": "attributes",
+                "comment": " Shorthand for attributes, when you don't need to specify nested resources:\n\n    -- Short version\n    attributes [ \"id\" \"name\" ]\n\n    -- Long version\n    [ attribute \"id\"\n    , attribute \"name\"\n    ]\n\n",
+                "type": "List.List String.String -> List.List Postgrest.Client.Selectable"
+            },
+            {
+                "name": "combineParams",
+                "comment": " Takes a default set of params and a custom set of params and prefers the second set.\nUseful when you're constructing reusable functions that make similar queries.\n",
+                "type": "Postgrest.Client.Params -> Postgrest.Client.Params -> Postgrest.Client.Params"
+            },
+            {
+                "name": "concatParams",
+                "comment": " Takes a list of Params and combines them, preferring the last sets first.\n",
+                "type": "List.List Postgrest.Client.Params -> Postgrest.Client.Params"
+            },
+            {
+                "name": "containedIn",
+                "comment": " Use the `cd` operator.\n\n    param \"tag\" <| containedIn <| List.map string [ \"Chico\", \"Harpo\", \"Groucho\" ]\n\n    -- tag=cd.(\\\"Chico\\\",\\\"Harpo\\\",\\\"Groucho\\\")\"\n\n",
+                "type": "List.List Postgrest.Client.Value -> Postgrest.Client.Operator"
+            },
+            {
+                "name": "contains",
+                "comment": " Use the `cs` operator.\n\n    param \"tag\" <| contains <| List.map string [ \"Chico\", \"Harpo\", \"Groucho\" ]\n\n    -- tag=cs.(\\\"Chico\\\",\\\"Harpo\\\",\\\"Groucho\\\")\"\n\n",
+                "type": "List.List Postgrest.Client.Value -> Postgrest.Client.Operator"
+            },
+            {
+                "name": "customEndpoint",
+                "comment": " Define an endpoint with extra options. To quickly construct POST, GET, PATCH, and DELETE requests.\n`defaultOrder` and `defaultSelect` can be overriden by using `setParams` once a request is constructed.\n\n    peopleEndpoint : P.Endpoint Person\n    peopleEndpoint =\n        P.endpoint \"/rest/people\"\n            decodePerson\n            { defaultSelect = Just [ P.attribute \"id\", P.attribute \"name\" ]\n            , defaultOrder = Just [ P.asc \"name\" ]\n            }\n\n",
+                "type": "String.String -> Json.Decode.Decoder a -> { defaultSelect : Maybe.Maybe (List.List Postgrest.Client.Selectable), defaultOrder : Maybe.Maybe (List.List Postgrest.Client.ColumnOrder) } -> Postgrest.Client.Endpoint a"
+            },
+            {
+                "name": "deleteByPrimaryKey",
+                "comment": " Used to DELETE a single record by primary key. This is the recommended way to do a DELETE request\nif your table has a primary key. The decoder will decode the record after it's been patched if the request is successful.\n\n    endpoint : P.Endpoint Person\n    endpoint =\n        P.endpoint \"/people\" decodePerson\n\n    primaryKey =\n        P.primaryKey ( \"id\", P.int )\n\n    delete : Int -> P.Request Int\n    delete =\n        P.deleteByPrimaryKey endpoint primaryKey\n\n    -- Would create a request to DELETE to \"/people?id=eq.3\"\n    -- and the success value would be the ID passed in.\n    -- So your Msg would look like:\n    -- | DeleteSuccess (Result P.Error Int)\n    delete 3\n\n",
+                "type": "Postgrest.Client.Endpoint a -> Postgrest.Client.PrimaryKey p -> p -> Postgrest.Client.Request p"
+            },
+            {
+                "name": "desc",
+                "comment": " Used in combination with `order` to sort results descending.\n\n    P.order [ P.desc \"name\" ]\n\n",
+                "type": "String.String -> Postgrest.Client.ColumnOrder"
+            },
+            {
+                "name": "endpoint",
+                "comment": " The simplest way to define an endpoint. You provide it the URL and a decoder.\nIt can then be used to quickly construct POST, GET, PATCH, and DELETE requests.\nThe decoder provided should just be a decoder of the record itself, not a decoder of\nan object inside an array.\n\n    decodePerson : Decoder Person\n    decodePerson =\n        map2 Person\n            (field \"first_name\" string)\n            (field \"last_name\" string)\n\n    peopleEndpoint : P.Endpoint Person\n    peopleEndpoint =\n        P.endpoint \"/rest/people\" decodePerson\n\n",
+                "type": "String.String -> Json.Decode.Decoder a -> Postgrest.Client.Endpoint a"
+            },
+            {
+                "name": "eq",
+                "comment": " Used to indicate you need a column to be equal to a certain value.\n",
+                "type": "Postgrest.Client.Value -> Postgrest.Client.Operator"
+            },
+            {
+                "name": "false",
+                "comment": " When you need a column value to be false\n\n    -- foo=is.false\n    [ P.param \"foo\" P.false ]\n        |> toQueryString\n\n",
+                "type": "Postgrest.Client.Operator"
+            },
+            {
+                "name": "fts",
+                "comment": " Full-Text Search using to\\_tsquery\n\n    [ param \"my_tsv\" <| fts (Just \"french\") \"amusant\" ]\n        |> toQueryString\n\n    \"my_tsv=fts(french).amusant\"\n\n",
+                "type": "Maybe.Maybe Postgrest.Internal.Params.Language -> String.String -> Postgrest.Client.Operator"
+            },
+            {
+                "name": "get",
+                "comment": " The most basic way to make a get request.\n",
+                "type": "String.String -> { params : Postgrest.Client.Params, decoder : Json.Decode.Decoder a } -> Postgrest.Client.Request a"
+            },
+            {
+                "name": "getByPrimaryKey",
+                "comment": " Used to GET a single record by primary key. This is the recommended way to do a singular GET request\nassuming your table has a primary key.\n\n    endpoint : P.Endpoint Person\n    endpoint =\n        P.endpoint \"/people\" decodePerson\n\n    primaryKey : P.PrimaryKey Int\n    primaryKey =\n        P.primaryKey ( \"id\", P.int )\n\n    getByPrimaryKey : Int -> P.Request Person\n    getByPrimaryKey =\n        P.getByPrimaryKey endpoint primaryKey\n\n",
+                "type": "Postgrest.Client.Endpoint a -> Postgrest.Client.PrimaryKey p -> p -> Postgrest.Client.Request a"
+            },
+            {
+                "name": "getMany",
+                "comment": " Used to GET multiple records from the provided endpoint.\nConverts your endpoint decoder into `(list decoder)` to decode multiple records.\n\n    endpoint : P.Endpoint Person\n    endpoint =\n        P.endpoint \"/people\" decodePerson\n\n    getAll : P.Request (List Person)\n    getAll =\n        P.getMany endpoint\n            |> P.setParams [ P.limit 20 ]\n\n",
+                "type": "Postgrest.Client.Endpoint a -> Postgrest.Client.Request (List.List a)"
+            },
+            {
+                "name": "getOne",
+                "comment": " Used to GET a single record. Converts your endpoint decoder into `(index 0 decoder)` to extract\nit from postgrest's JSON array response and sets `limit=1` in the parameters. If you're requesting by\nprimary key see `getOneByPrimaryKey`.\n\n    endpoint : P.Endpoint Person\n    endpoint =\n        P.endpoint \"/people\" decodePerson\n\n    getOnePersonByName : String -> P.Request Person\n    getOnePersonByName name =\n        P.getOne endpoint\n            |> P.setParams [ P.param \"name\" <| P.eq name ]\n\n",
+                "type": "Postgrest.Client.Endpoint a -> Postgrest.Client.Request a"
+            },
+            {
+                "name": "gt",
+                "comment": " Used to indicate you need a column to be greater than a certain value.\n",
+                "type": "Postgrest.Client.Value -> Postgrest.Client.Operator"
+            },
+            {
+                "name": "gte",
+                "comment": " Used to indicate you need a column to be greater than or equal than a certain value.\n",
+                "type": "Postgrest.Client.Value -> Postgrest.Client.Operator"
+            },
+            {
+                "name": "ilike",
+                "comment": " ILIKE operator (use \\* in place of %)\n\n    param \"text\" <| ilike \"foo*bar\"\n\n",
+                "type": "String.String -> Postgrest.Client.Operator"
+            },
+            {
+                "name": "inList",
+                "comment": " Used to indicate you need a column to be within a certain list of values.\n\n    param \"name\" <| inList string [ \"Chico\", \"Harpo\", \"Groucho\" ]\n\n    -- name=in.(\\\"Chico\\\",\\\"Harpo\\\",\\\"Groucho\\\")\"\n\n",
+                "type": "(a -> Postgrest.Client.Value) -> List.List a -> Postgrest.Client.Operator"
+            },
+            {
+                "name": "int",
+                "comment": " Normalize an int into a postgrest value.\n",
+                "type": "Basics.Int -> Postgrest.Client.Value"
+            },
+            {
+                "name": "jwt",
+                "comment": " Pass the jwt string into this function to make it a JWT. This is used with `toCmd` and `toTask`\nto make requests.\n\n    myJWT =\n        P.jwt \"abcdef\"\n\n",
+                "type": "String.String -> Postgrest.Client.JWT"
+            },
+            {
+                "name": "jwtString",
+                "comment": " If you've already created a JWT with `jwt` you can extract the original string with\nthis function.\n\n    myJWT = P.jwt \"abcdef\"\n\n    jwtString myJWT -- \"abcdef\"\n\n",
+                "type": "Postgrest.Client.JWT -> String.String"
+            },
+            {
+                "name": "like",
+                "comment": " LIKE operator (use \\* in place of %)\n\n    param \"text\" <| like \"foo*bar\"\n\n",
+                "type": "String.String -> Postgrest.Client.Operator"
+            },
+            {
+                "name": "limit",
+                "comment": " Limit the number of records that can be returned.\n\n    limit 10\n\n",
+                "type": "Basics.Int -> Postgrest.Client.Param"
+            },
+            {
+                "name": "list",
+                "comment": " This is available if you need it, but more likely you'll want to use\n`inList`.\n",
+                "type": "List.List Postgrest.Client.Value -> Postgrest.Client.Value"
+            },
+            {
+                "name": "lt",
+                "comment": " Used to indicate you need a column to be less than a certain value.\n",
+                "type": "Postgrest.Client.Value -> Postgrest.Client.Operator"
+            },
+            {
+                "name": "lte",
+                "comment": " Used to indicate you need a column to be less than or equal than a certain value.\n",
+                "type": "Postgrest.Client.Value -> Postgrest.Client.Operator"
+            },
+            {
+                "name": "neq",
+                "comment": " Used to indicate you need a column to be not equal to a certain value.\n",
+                "type": "Postgrest.Client.Value -> Postgrest.Client.Operator"
+            },
+            {
+                "name": "nestedParam",
+                "comment": " When you want to specify an operator for a nested resource manually.\nIt is recommended to use resourceWithParams though.\n\n    [ select\n        [ attribute \"*\"\n        , resource \"actors\" allAttributes\n        ]\n    , nestedParam [ \"actors\" ] <| limit 10\n    , nestedParam [ \"actors\" ] <| offset 2\n    ]\n    |> toQueryString\n    -- \"select=*,actors(*)&actors.limit=10&actors.offset=2\"\n\n",
+                "type": "List.List String.String -> Postgrest.Client.Param -> Postgrest.Client.Param"
+            },
+            {
+                "name": "normalizeParams",
+                "comment": " Takes Params and returns the parameters as a list of (Key, Value) strings.\n",
+                "type": "Postgrest.Client.Params -> List.List ( String.String, String.String )"
+            },
+            {
+                "name": "not",
+                "comment": " Negate a condition.\n\n    [ param \"my_tsv\" <| not <| phfts (Just \"english\") \"The Fat Cats\"\n    ]\n    |> toQueryString\n    -- my_tsv=not.phfts(english).The%20Fat%20Cats\n\n",
+                "type": "Postgrest.Client.Operator -> Postgrest.Client.Operator"
+            },
+            {
+                "name": "null",
+                "comment": " Query, specifying that a value should be null.\n\n    param \"age\" <| null\n\n",
+                "type": "Postgrest.Client.Operator"
+            },
+            {
+                "name": "nullsfirst",
+                "comment": " Sort so that nulls will come first.\n\n    order [ asc \"age\" |> nullsfirst ]\n\n",
+                "type": "Postgrest.Client.ColumnOrder -> Postgrest.Client.ColumnOrder"
+            },
+            {
+                "name": "nullslast",
+                "comment": " Sort so that nulls will come last.\n\n    order [ asc \"age\" |> nullslast ]\n\n",
+                "type": "Postgrest.Client.ColumnOrder -> Postgrest.Client.ColumnOrder"
+            },
+            {
+                "name": "offset",
+                "comment": " Specify the offset in the query.\n\n    offset 10\n\n",
+                "type": "Basics.Int -> Postgrest.Client.Param"
+            },
+            {
+                "name": "or",
+                "comment": " Join multiple conditions together with or.\n\n    [ or\n        [ param \"age\" <| gte <| int 14\n        , param \"age\" <| lte <| int 18\n        ]\n    ]\n    |> toQueryString\n\n    -- or=(age.gte.14,age.lte.18)\n\n",
+                "type": "List.List Postgrest.Client.Param -> Postgrest.Client.Param"
+            },
+            {
+                "name": "order",
+                "comment": " A constructor for the limit parameter.\n\n    order (asc \"name\")\n\n    order (desc \"name\")\n\n",
+                "type": "List.List Postgrest.Client.ColumnOrder -> Postgrest.Client.Param"
+            },
+            {
+                "name": "param",
+                "comment": " A constructor for an individual postgrest parameter.\n\n    param \"name\" (eq (string \"John\"))\n\n",
+                "type": "String.String -> Postgrest.Client.Operator -> Postgrest.Client.Param"
+            },
+            {
+                "name": "patchByPrimaryKey",
+                "comment": " Used to PATCH a single record by primary key. This is the recommended way to do a PATCH request\nassuming your table has a primary key. The decoder will decode the record after it's been patched if the request is successful.\n\n    endpoint : P.Endpoint Person\n    endpoint =\n        P.endpoint \"/people\" decodePerson\n\n    primaryKey =\n        P.primaryKey ( \"id\", P.int )\n\n    updatePerson : PersonForm -> Int -> P.Request Person\n    updatePerson submission id =\n        P.patchByPrimaryKey endpoint primaryKey (encodeSubmission submission)\n\n    -- Would create a request to patch to \"/people?id=eq.3\"\n    updatePerson form 3\n\n",
+                "type": "Postgrest.Client.Endpoint a -> Postgrest.Client.PrimaryKey p -> p -> Json.Encode.Value -> Postgrest.Client.Request a"
+            },
+            {
+                "name": "phfts",
+                "comment": " Full-Text Search using phraseto\\_tsquery\n",
+                "type": "Maybe.Maybe Postgrest.Internal.Params.Language -> String.String -> Postgrest.Client.Operator"
+            },
+            {
+                "name": "plfts",
+                "comment": " Full-Text Search using plainto\\_tsquery\n",
+                "type": "Maybe.Maybe Postgrest.Internal.Params.Language -> String.String -> Postgrest.Client.Operator"
+            },
+            {
+                "name": "post",
+                "comment": " The most basic way to make a post request.\n",
+                "type": "String.String -> { params : Postgrest.Client.Params, decoder : Json.Decode.Decoder a, body : Json.Encode.Value } -> Postgrest.Client.Request a"
+            },
+            {
+                "name": "postOne",
+                "comment": " Used to create a single record at the endpoint you provide and an encoded JSON value.\n\n    endpoint : P.Endpoint Person\n    endpoint =\n        P.endpoint \"/people\" decodePerson\n\n    encodePerson : Person -> JE.Value\n    encodePerson p =\n        object\n            [ ( \"first_name\", JE.string p.firstName )\n            , ( \"last_name\", JE.string p.lastName )\n            ]\n\n    post : PersonForm -> P.Request Person\n    post submission =\n        P.postOne endpoint (encodePerson submission)\n\n",
+                "type": "Postgrest.Client.Endpoint a -> Json.Encode.Value -> Postgrest.Client.Request a"
+            },
+            {
+                "name": "primaryKey",
+                "comment": " Used to construct a primary key made up of one column.\nTakes a tuple of the column name of your primary key and a function\nto convert your elm representation of that primary key into a postgrest parameter.\n\n    primaryKey : P.PrimaryKey Int\n    primaryKey =\n        primaryKey ( \"id\", P.int )\n\nis the simplest example. If you have custom type to represent your primary key you\ncould do this:\n\n    type ID\n        = ID Int\n\n    idToInt : ID -> Int\n    idToInt (ID id) =\n        id\n\n    primaryKey : P.PrimaryKey ID\n    primaryKey =\n        P.primaryKey ( \"id\", P.int << idToInt )\n\n",
+                "type": "( String.String, pk -> Postgrest.Client.Value ) -> Postgrest.Client.PrimaryKey pk"
+            },
+            {
+                "name": "primaryKey2",
+                "comment": " Used to construct a primary key made up of two columns.\nTakes two tuples, each with a column name and a function\nto convert your elm representation of that primary key into a postgrest parameter.\n\n    primaryKey2 ( \"id\", P.int )\n\nis the simplest example. If you have custom type to represent your primary key you\ncould do this:\n\n    type alias ParentID =\n        Int\n\n    type alias Category =\n        String\n\n    type alias MyPrimaryKey =\n        ( ParentID, Category )\n\n    primaryKey : P.PrimaryKey MyPrimaryKey\n    primaryKey =\n        P.primaryKey2\n            ( \"parent_id\", P.int << Tuple.first )\n            ( \"category\", P.string << Tuple.second )\n\n",
+                "type": "( String.String, pk -> Postgrest.Client.Value ) -> ( String.String, pk -> Postgrest.Client.Value ) -> Postgrest.Client.PrimaryKey pk"
+            },
+            {
+                "name": "primaryKey3",
+                "comment": " Used to construct primary keys that are made up of three columns. See [primaryKey2](#primaryKey2) for\na similar example of how this could be used.\n",
+                "type": "( String.String, pk -> Postgrest.Client.Value ) -> ( String.String, pk -> Postgrest.Client.Value ) -> ( String.String, pk -> Postgrest.Client.Value ) -> Postgrest.Client.PrimaryKey pk"
+            },
+            {
+                "name": "resource",
+                "comment": " When you want to select a nested resource with no special parameters for the nested\nresources. If you do want to specify parameters, see `resourceWithParams`.\n",
+                "type": "String.String -> List.List Postgrest.Client.Selectable -> Postgrest.Client.Selectable"
+            },
+            {
+                "name": "resourceWithParams",
+                "comment": " When you want to select a nested resource with special praameters.\n\n    [ P.select\n        [ P.resource \"sites\"\n            [ P.resourceWithParams \"streams\"\n                [ P.order [ P.asc \"name\" ]\n                ]\n                allAttributes\n            ]\n        ]\n    ]\n        |> toQueryString\n\n    -- select=sites(streams(*))&sites.streams.order=name.asc\n\n",
+                "type": "String.String -> Postgrest.Client.Params -> List.List Postgrest.Client.Selectable -> Postgrest.Client.Selectable"
+            },
+            {
+                "name": "select",
+                "comment": " A constructor for the select parameter.\n\n    P.select\n        [ P.attribute \"id\"\n        , P.attribute \"title\"\n        , P.resource \"user\" <|\n            P.attributes\n                [ \"email\"\n                , \"name\"\n                ]\n        ]\n\n",
+                "type": "List.List Postgrest.Client.Selectable -> Postgrest.Client.Param"
+            },
+            {
+                "name": "setParams",
+                "comment": " Used to set the parameters of your request.\n\n    getPeople : P.Request (List Person)\n    getPeople =\n        P.getMany endpoint\n            |> P.setParams\n                [ P.order [ P.asc \"first_name\" ]\n                , P.limit 20\n                ]\n\n",
+                "type": "Postgrest.Client.Params -> Postgrest.Client.Request a -> Postgrest.Client.Request a"
+            },
+            {
+                "name": "setTimeout",
+                "comment": " Sets the timeout of your request. The behaviour is the same\nof that in the elm/http package.\n",
+                "type": "Basics.Float -> Postgrest.Client.Request a -> Postgrest.Client.Request a"
+            },
+            {
+                "name": "string",
+                "comment": " Normalize a string into a postgrest value.\n",
+                "type": "String.String -> Postgrest.Client.Value"
+            },
+            {
+                "name": "toCmd",
+                "comment": " Takes a JWT, Msg and a Request and turns it into a Cmd.\n",
+                "type": "Postgrest.Client.JWT -> (Result.Result Postgrest.Client.Error a -> msg) -> Postgrest.Client.Request a -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "toHttpError",
+                "comment": " Converts the custom HTTP error used by this package into an elm/http Error.\nThis can be useful if you're using `Task.map2`, `Task.map3`, etc... and each of the\ntasks need to have the same error type.\n",
+                "type": "Postgrest.Client.Error -> Http.Error"
+            },
+            {
+                "name": "toQueryString",
+                "comment": " Takes Params and returns a query string such as\n`foo=eq.bar&baz=is.true`\n",
+                "type": "Postgrest.Client.Params -> String.String"
+            },
+            {
+                "name": "toTask",
+                "comment": " Takes a JWT and a Request and turns it into a Task.\n",
+                "type": "Postgrest.Client.JWT -> Postgrest.Client.Request a -> Task.Task Postgrest.Client.Error a"
+            },
+            {
+                "name": "true",
+                "comment": " When you need a column value to be true\n\n    -- foo=is.true\n    [ P.param \"foo\" P.true ]\n        |> toQueryString\n\n",
+                "type": "Postgrest.Client.Operator"
+            },
+            {
+                "name": "unsafeDelete",
+                "comment": " Titled unsafe because if you provide incorrect or no parameters it will make a DELETE request\nto all resources the requesting user has access to at that endpoint. Use with caution.\nSee [Block Full-Table Operations](http://postgrest.org/en/v5.2/admin.html#block-fulltable).\n",
+                "type": "String.String -> Postgrest.Client.UnsafeDeleteOptions a -> Postgrest.Client.Request a"
+            },
+            {
+                "name": "unsafePatch",
+                "comment": " Titled unsafe because if you provide incorrect or no parameters it will make a PATCH request\nto all resources the requesting user has access to at that endpoint. Use with caution.\nSee [Block Full-Table Operations](http://postgrest.org/en/v5.2/admin.html#block-fulltable).\n",
+                "type": "String.String -> { body : Json.Encode.Value, decoder : Json.Decode.Decoder a, params : Postgrest.Client.Params } -> Postgrest.Client.Request a"
+            },
+            {
+                "name": "value",
+                "comment": " When you don't want to use a specific type after the equals sign in the query, you\ncan use `value` to set anything you want.\n",
+                "type": "Postgrest.Client.Value -> Postgrest.Client.Operator"
+            }
+        ],
+        "binops": []
+    }
+]

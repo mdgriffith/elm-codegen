@@ -1,0 +1,315 @@
+[
+    {
+        "name": "AVL.Dict",
+        "comment": " An AVL Tree based dictionary.\n\nA dictionary mapping unique keys to values.\nThe keys can be any type.\nThis includes both custom and comparable types such as Int, Float, Time, Char, String, and tuples or lists of comparable types.\n\nInsert, remove, get and member operations all take `O(log n)` time.\nSize takes constant `O(1)` time.\n\n\n# Dictionary\n\n@docs Dict\n\n\n# Construction\n\n@docs Comparator\n@docs empty, emptyWith, singleton, singletonWith, fromList, fromListWith\n\n\n# Deconstruction\n\n@docs keys, values, toList\n\n\n# Manipulation\n\n@docs insert, remove, update, clear\n\n\n# Query\n\n@docs isEmpty, size, member, get, minimum, maximum\n\n\n# Transform\n\n@docs map, filter, partition, foldl, foldr\n\n\n# Combine\n\n@docs union, diff, intersect, merge\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Comparator",
+                "comment": " A comparator is a function which compares two keys.\nSo a `Dict ID User` is a dictionary\nthat lets you look up a `ID` (such as user ids)\nand find the associated `User`.\n\n    import AVL.Dict as Dict exposing (Comparator, Dict)\n\n    type ID\n        = ID Int\n\n    compareID : Comparator ID\n    compareID (ID x) (ID y) =\n        compare x y\n\n    users : Dict ID User\n    users =\n        Dict.fromListWith compareID\n            [ ( ID 0, User (ID 0) \"Alice\" 28 1.65 )\n            , ( ID 1, User (ID 1) \"Bob\" 19 1.82 )\n            , ( ID 2, User (ID 2) \"Chuck\" 33 1.75 )\n            ]\n\n    alice : Maybe User\n    alice =\n        Dict.get (ID 0) users\n\n    type alias User =\n        { id : ID\n        , name : String\n        , age : Int\n        , height : Float\n        }\n\n",
+                "args": [
+                    "key"
+                ],
+                "type": "key -> key -> Basics.Order"
+            },
+            {
+                "name": "Dict",
+                "comment": " A dictionary of keys and values.\nSo a `Dict String User` is a dictionary\nthat lets you look up a `String` (such as user names)\nand find the associated `User`.\n\n    import AVL.Dict as Dict exposing (Dict)\n\n    users : Dict String User\n    users =\n        Dict.fromList\n            [ ( \"Alice\", User \"Alice\" 28 1.65 )\n            , ( \"Bob\", User \"Bob\" 19 1.82 )\n            , ( \"Chuck\", User \"Chuck\" 33 1.75 )\n            ]\n\n    type alias User =\n        { name : String\n        , age : Int\n        , height : Float\n        }\n\n",
+                "args": [
+                    "key",
+                    "value"
+                ],
+                "type": "Internal.AVLDict key value"
+            }
+        ],
+        "values": [
+            {
+                "name": "clear",
+                "comment": " Remove all entries from a dictionary.\nUseful when you need to create new empty dictionary using same comparator.\n",
+                "type": "AVL.Dict.Dict key value -> AVL.Dict.Dict key value"
+            },
+            {
+                "name": "diff",
+                "comment": " Keep a key-value pair when its key does not appear in the right dictionary.\n",
+                "type": "AVL.Dict.Dict key value -> AVL.Dict.Dict key value -> AVL.Dict.Dict key value"
+            },
+            {
+                "name": "empty",
+                "comment": " Create an empty dictionary with comparable keys.\n",
+                "type": "AVL.Dict.Dict comparable value"
+            },
+            {
+                "name": "emptyWith",
+                "comment": " Create an empty dictionary with custom keys.\n",
+                "type": "AVL.Dict.Comparator key -> AVL.Dict.Dict key value"
+            },
+            {
+                "name": "filter",
+                "comment": " Keep only the key-value pairs that pass the given test.\n",
+                "type": "(key -> value -> Basics.Bool) -> AVL.Dict.Dict key value -> AVL.Dict.Dict key value"
+            },
+            {
+                "name": "foldl",
+                "comment": " Fold over the key-value pairs in a dictionary from lowest key to highest key.\n",
+                "type": "(key -> value -> acc -> acc) -> acc -> AVL.Dict.Dict key value -> acc"
+            },
+            {
+                "name": "foldr",
+                "comment": " Fold over the key-value pairs in a dictionary from highest key to lowest key.\n",
+                "type": "(key -> value -> acc -> acc) -> acc -> AVL.Dict.Dict key value -> acc"
+            },
+            {
+                "name": "fromList",
+                "comment": " Convert an association list into a dictionary with comparable keys.\n",
+                "type": "List.List ( comparable, value ) -> AVL.Dict.Dict comparable value"
+            },
+            {
+                "name": "fromListWith",
+                "comment": " Convert an association list into a dictionary with custom keys.\n",
+                "type": "AVL.Dict.Comparator key -> List.List ( key, value ) -> AVL.Dict.Dict key value"
+            },
+            {
+                "name": "get",
+                "comment": " Get the value associated with a key. If the key is not found, return Nothing.\nThis is useful when you are not sure if a key will be in the dictionary.\n\n    animals =\n        Dict.fromList [ ( \"Tom\", Cat ), ( \"Jerry\", Mouse ) ]\n\n    Dict.get \"Tom\" animals == Just Cat\n    Dict.get \"Jerry\" animals == Just Mouse\n    Dict.get \"Spike\" animals == Nothing\n\n",
+                "type": "key -> AVL.Dict.Dict key value -> Maybe.Maybe value"
+            },
+            {
+                "name": "insert",
+                "comment": " Insert a key-value pair into a dictionary.\nReplaces value when there is a collision.\n",
+                "type": "key -> value -> AVL.Dict.Dict key value -> AVL.Dict.Dict key value"
+            },
+            {
+                "name": "intersect",
+                "comment": " Keep a key-value pair when its key appears in the right dictionary.\nPreference is given to values in the left dictionary.\n",
+                "type": "AVL.Dict.Dict key value -> AVL.Dict.Dict key value -> AVL.Dict.Dict key value"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Determine if a dictionary is empty.\n",
+                "type": "AVL.Dict.Dict key value -> Basics.Bool"
+            },
+            {
+                "name": "keys",
+                "comment": " Get all of the keys in a dictionary, sorted from lowest to highest.\n\n    Dict.keys (Dict.fromList [ ( 1, \"Bob\" ), ( 0, \"Alice\" ) ]) == [ 0, 1 ]\n\n",
+                "type": "AVL.Dict.Dict key value -> List.List key"
+            },
+            {
+                "name": "map",
+                "comment": " Apply a function to all values in a dictionary.\n",
+                "type": "(key -> a -> b) -> AVL.Dict.Dict key a -> AVL.Dict.Dict key b"
+            },
+            {
+                "name": "maximum",
+                "comment": " Get the key-value pair associated with maximum key. If Dict is empty return Nothing.\n\n    import AVL.Dict as Dict exposing (Dict)\n\n    type alias User =\n        { name : String\n        , age : Int\n        , height : Float\n        }\n\n    users : Dict String User\n    users =\n        Dict.fromList\n            [ ( \"Bob\", User \"Bob\" 19 1.82 )\n            , ( \"Alice\", User \"Alice\" 28 1.65 )\n            , ( \"Chuck\", User \"Chuck\" 33 1.75 )\n            ]\n\n    Dict.maximum users == Just ( \"Chuck\", User \"Chuck\" 33 1.75 )\n\n",
+                "type": "AVL.Dict.Dict key value -> Maybe.Maybe ( key, value )"
+            },
+            {
+                "name": "member",
+                "comment": " Determine if a key is in a dictionary.\n",
+                "type": "key -> AVL.Dict.Dict key value -> Basics.Bool"
+            },
+            {
+                "name": "merge",
+                "comment": " The most general way of combining two dictionaries.\nYou provide three accumulators for when a given key appears:\n\n1.  Only in the left dictionary.\n2.  In both dictionaries.\n3.  Only in the right dictionary.\n\nYou then traverse all the keys from lowest to highest, building up whatever you want.\n\n",
+                "type": "(key -> left -> acc -> acc) -> (key -> left -> right -> acc -> acc) -> (key -> right -> acc -> acc) -> AVL.Dict.Dict key left -> AVL.Dict.Dict key right -> acc -> acc"
+            },
+            {
+                "name": "minimum",
+                "comment": " Get the key-value pair associated with minimum key. If Dict is empty return Nothing.\n\n    import AVL.Dict as Dict exposing (Dict)\n\n    type alias User =\n        { name : String\n        , age : Int\n        , height : Float\n        }\n\n    users : Dict String User\n    users =\n        Dict.fromList\n            [ ( \"Bob\", User \"Bob\" 19 1.82 )\n            , ( \"Alice\", User \"Alice\" 28 1.65 )\n            , ( \"Chuck\", User \"Chuck\" 33 1.75 )\n            ]\n\n    Dict.minimum users == Just ( \"Alice\", User \"Alice\" 28 1.65 )\n\n",
+                "type": "AVL.Dict.Dict key value -> Maybe.Maybe ( key, value )"
+            },
+            {
+                "name": "partition",
+                "comment": " Partition a dictionary according to some test.\nThe first dictionary contains all key-value pairs which passed the test,\nand the second contains the pairs that did not.\n",
+                "type": "(key -> value -> Basics.Bool) -> AVL.Dict.Dict key value -> ( AVL.Dict.Dict key value, AVL.Dict.Dict key value )"
+            },
+            {
+                "name": "remove",
+                "comment": " Remove a key-value pair from a dictionary.\nIf the key is not found, no changes are made.\n",
+                "type": "key -> AVL.Dict.Dict key value -> AVL.Dict.Dict key value"
+            },
+            {
+                "name": "singleton",
+                "comment": " Create a dictionary with one comparable key-value pair.\n",
+                "type": "comparable -> value -> AVL.Dict.Dict comparable value"
+            },
+            {
+                "name": "singletonWith",
+                "comment": " Create a dictionary with one custom key-value pair.\n",
+                "type": "AVL.Dict.Comparator key -> key -> value -> AVL.Dict.Dict key value"
+            },
+            {
+                "name": "size",
+                "comment": " Determine the number of key-value pairs in the dictionary.\nIt takes constant time to determine the size.\n",
+                "type": "AVL.Dict.Dict key value -> Basics.Int"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert a dictionary into an association list of key-value pairs, sorted by keys.\n\n    Dict.toList (Dict.fromList [ ( 1, \"Bob\" ), ( 0, \"Alice\" ) ]) == [ ( 0, \"Alice\" ), ( 1, \"Bob\" ) ]\n\n",
+                "type": "AVL.Dict.Dict key value -> List.List ( key, value )"
+            },
+            {
+                "name": "union",
+                "comment": " Combine two dictionaries.\nIf there is a collision, preference is given to the left dictionary.\n",
+                "type": "AVL.Dict.Dict key value -> AVL.Dict.Dict key value -> AVL.Dict.Dict key value"
+            },
+            {
+                "name": "update",
+                "comment": " Update the value of a dictionary for a specific key with a given function.\n",
+                "type": "key -> (Maybe.Maybe value -> Maybe.Maybe value) -> AVL.Dict.Dict key value -> AVL.Dict.Dict key value"
+            },
+            {
+                "name": "values",
+                "comment": " Get all of the values in a dictionary, in the order of their keys.\n\n    Dict.values (Dict.fromList [ ( 1, \"Bob\" ), ( 0, \"Alice\" ) ]) == [ \"Alice\", \"Bob\" ]\n\n",
+                "type": "AVL.Dict.Dict key value -> List.List value"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "AVL.Set",
+        "comment": " An AVL Tree based set.\n\nA set of unique values. The keys can be any type.\nThis includes both custom and comparable types such as Int, Float, Time, Char, String, and tuples or lists of comparable types.\n\nInsert, remove, get and member operations all take `O(log n)` time.\nSize takes constant `O(1)` time.\n\n\n# Set\n\n@docs Set\n\n\n# Construction\n\n@docs Comparator\n@docs empty, emptyWith, singleton, singletonWith, fromList, fromListWith\n\n\n# Deconstruction\n\n@docs toList\n\n\n# Manipulation\n\n@docs insert, remove, toggle, clear\n\n\n# Query\n\n@docs isEmpty, size, member, minimum, maximum\n\n\n# Transform\n\n@docs map, filter, partition, foldl, foldr\n\n\n# Combine\n\n@docs union, diff, intersect\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Comparator",
+                "comment": " A comparator is a function which compares two keys.\n\n    import AVL.Set as Set exposing (Comparator, Set)\n\n    type ID\n        = ID Int\n\n    compareID : Comparator ID\n    compareID (ID x) (ID y) =\n        compare x y\n\n    ids : Set ID User\n    ids =\n        Set.fromListWith compareID [ ID 0, ID 1, ID 2 ]\n\n    probs : List Bool\n    probs =\n        [ Set.member (ID 0)\n        , Set.member (ID 3)\n        ]\n\n",
+                "args": [
+                    "key"
+                ],
+                "type": "key -> key -> Basics.Order"
+            },
+            {
+                "name": "Set",
+                "comment": " Represents a set of unique values.\nSo (Set Int) is a set of integers and (Set ID) is a set of custom ID values.\n",
+                "args": [
+                    "key"
+                ],
+                "type": "Internal.AVLSet key"
+            }
+        ],
+        "values": [
+            {
+                "name": "clear",
+                "comment": " Remove all entries from a set.\nUseful when you need to create new empty set using same comparator.\n",
+                "type": "AVL.Set.Set key -> AVL.Set.Set key"
+            },
+            {
+                "name": "diff",
+                "comment": " Keep a key when them do not appear in the right set.\n",
+                "type": "AVL.Set.Set key -> AVL.Set.Set key -> AVL.Set.Set key"
+            },
+            {
+                "name": "empty",
+                "comment": " Create an empty set with comparable keys.\n",
+                "type": "AVL.Set.Set comparable"
+            },
+            {
+                "name": "emptyWith",
+                "comment": " Create an empty set with custom keys.\n",
+                "type": "AVL.Set.Comparator key -> AVL.Set.Set key"
+            },
+            {
+                "name": "filter",
+                "comment": " Only keep elements that pass the given test.\n\n\n    numbers : Set Int\n    numbers =\n        Set.fromList [ -2, -1, 0, 1, 2 ]\n\n    positives : Set Int\n    positives =\n        Set.filter (\\x -> x > 0) numbers\n\n    -- positives == [ 0, 1, 2 ]\n\n",
+                "type": "(key -> Basics.Bool) -> AVL.Set.Set key -> AVL.Set.Set key"
+            },
+            {
+                "name": "foldl",
+                "comment": " Fold over the values in a set, in order from lowest to highest.\n",
+                "type": "(key -> acc -> acc) -> acc -> AVL.Set.Set key -> acc"
+            },
+            {
+                "name": "foldr",
+                "comment": " Fold over the values in a set, in order from highest to lowest.\n",
+                "type": "(key -> acc -> acc) -> acc -> AVL.Set.Set key -> acc"
+            },
+            {
+                "name": "fromList",
+                "comment": " Convert an list into a set with comparable keys.\n",
+                "type": "List.List comparable -> AVL.Set.Set comparable"
+            },
+            {
+                "name": "fromListWith",
+                "comment": " Convert an list into a set with custom keys.\n",
+                "type": "AVL.Set.Comparator key -> List.List key -> AVL.Set.Set key"
+            },
+            {
+                "name": "insert",
+                "comment": " Insert a key into a set.\n",
+                "type": "key -> AVL.Set.Set key -> AVL.Set.Set key"
+            },
+            {
+                "name": "intersect",
+                "comment": " Keep a keys when them appear in the right set.\n",
+                "type": "AVL.Set.Set key -> AVL.Set.Set key -> AVL.Set.Set key"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Determine if a set is empty.\n",
+                "type": "AVL.Set.Set key -> Basics.Bool"
+            },
+            {
+                "name": "map",
+                "comment": " Map a function onto a set, creating a new set with no duplicates.\n",
+                "type": "(key -> key) -> AVL.Set.Set key -> AVL.Set.Set key"
+            },
+            {
+                "name": "maximum",
+                "comment": " Get the key-value pair associated with maximum key. If Set is empty return Nothing.\n\n    import AVL.Set as Set exposing (Set)\n\n    numbers : Set Int\n    numbers =\n        Set.fromList [ 0, 1, -1, 2, -2 ]\n\n    Set.maximum numbers == Just 2\n\n",
+                "type": "AVL.Set.Set key -> Maybe.Maybe key"
+            },
+            {
+                "name": "member",
+                "comment": " Determine if a value is in a set.\n",
+                "type": "key -> AVL.Set.Set key -> Basics.Bool"
+            },
+            {
+                "name": "minimum",
+                "comment": " Get the key-value pair associated with minimum key. If Set is empty return Nothing.\n\n    import AVL.Set as Set exposing (Set)\n\n    numbers : Set Int\n    numbers =\n        Set.fromList [ 0, 1, -1, 2, -2 ]\n\n    Set.minimum numbers == Just -2\n\n",
+                "type": "AVL.Set.Set key -> Maybe.Maybe key"
+            },
+            {
+                "name": "partition",
+                "comment": " Create two new sets.\nThe first contains all the elements that passed the given test,\nand the second contains all the elements that did not.\n",
+                "type": "(key -> Basics.Bool) -> AVL.Set.Set key -> ( AVL.Set.Set key, AVL.Set.Set key )"
+            },
+            {
+                "name": "remove",
+                "comment": " Remove a key from a set. If the key is not found, no changes are made.\n",
+                "type": "key -> AVL.Set.Set key -> AVL.Set.Set key"
+            },
+            {
+                "name": "singleton",
+                "comment": " Create a set with one comparable key.\n",
+                "type": "comparable -> AVL.Set.Set comparable"
+            },
+            {
+                "name": "singletonWith",
+                "comment": " Create a set with one custom key.\n",
+                "type": "AVL.Set.Comparator key -> key -> AVL.Set.Set key"
+            },
+            {
+                "name": "size",
+                "comment": " Determine the number of elements in a set.\nIt takes constant time to determine the size.\n",
+                "type": "AVL.Set.Set key -> Basics.Int"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert a set into a list, sorted from lowest to highest.\n",
+                "type": "AVL.Set.Set key -> List.List key"
+            },
+            {
+                "name": "toggle",
+                "comment": " Toggle a specific key.\n",
+                "type": "key -> AVL.Set.Set key -> AVL.Set.Set key"
+            },
+            {
+                "name": "union",
+                "comment": " Combine two sets.\n",
+                "type": "AVL.Set.Set key -> AVL.Set.Set key -> AVL.Set.Set key"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,1923 @@
+[
+    {
+        "name": "Octicons",
+        "comment": "\n\n\n# Configuration\n\n@docs size, style, width, height, fillRule, margin, color, class\n\n\n# Icons Helpers\n\n@docs alert, archive, arrowBoth, arrowDown, arrowLeft, arrowRight, arrowSmallDown\n@docs arrowSmallLeft, arrowSmallRight\n@docs arrowSmallUp, arrowUp, beaker, bell, bold\n@docs book, bookmark, briefcase, broadcast, browser, bug, calendar\n@docs check, checklist, chevronDown, chevronLeft, chevronRight\n@docs chevronUp, circleSlash, circuitBoard, clippy, clock\n@docs cloudDownload, cloudUpload, code, comment, commentDiscussion\n@docs creditCard, dash, dashboard, database, desktopDownload, deviceCamera\n@docs deviceCameraVideo, deviceDesktop, deviceMobile\n@docs diff, diffAdded, diffIgnored, diffModified\n@docs diffRemoved, diffRenamed, ellipses, ellipsis, eye, eyeClosed, file\n@docs fileBinary, fileCode, fileDirectory, fileMedia, filePdf\n@docs fileSubmodule, fileSymlinkDirectory, fileSymlinkFile, fileText, fileZip\n@docs flame, fold, foldDown, foldUp, gear, gift, gist, gistSecret, gitBranch, gitCommit\n@docs gitCompare, gitMerge, gitPullRequest, globe, grabber, graph, heart\n@docs history, home, horizontalRule, hubot, inbox, info, issueClosed, issueOpened\n@docs issueReopened, italic, jersey, kebabHorizontal, kebabVertical, key, keyboard, law, lightBulb\n@docs link, linkExternal, listOrdered, listUnordered, location, lock\n@docs logoGist, logoGithub, mail, mailRead, mailReply, markGithub, markTor, markTwitter\n@docs markdown, megaphone, mention, milestone, mirror, mortarBoard\n@docs mute, noNewline, note, octoface\n@docs organization, package, paintcan, pencil, person, pin, plug, plus\n@docs plusSmall, primitiveDot, primitiveSquare\n@docs project, pulse, question, quote, radioTower, reply, repo\n@docs repoClone, repoForcePush, repoForked, repoPull, repoPush, rocket, rss\n@docs ruby, screenFull, screenNormal, search, server, settings, shield, signIn\n@docs signOut, smiley, squirrel, star, stop, sync, tag, tasklist, telescope\n@docs terminal, textSize, threeBars, thumbsdown, thumbsup, tools\n@docs trashcan, triangleDown, triangleLeft, triangleRight, triangleUp\n@docs unfold, unmute, unverified, verified, versions, watch, x\n@docs zap\n\n\n# Custom Octicons\n\n@docs pathIconWithOptions, polygonIconWithOptions, Options, defaultOptions\n\n\n# Svg Data\n\n@docs alertPath, archivePath, arrowBothPath, arrowDownPolygon, arrowLeftPolygon, arrowRightPolygon, arrowSmallDownPolygon\n@docs arrowSmallLeftPolygon, arrowSmallRightPolygon, arrowSmallUpPolygon, arrowUpPolygon\n@docs beakerPath, bellPath, boldPath, bookPath, bookmarkPath, briefcasePath, broadcastPath\n@docs browserPath, bugPath, calendarPath, checkPolygon, checklistPath, chevronDownPolygon\n@docs chevronLeftPolygon, chevronRightPolygon, chevronUpPolygon, circleSlashPath\n@docs circuitBoardPath, clippyPath, clockPath, cloudDownloadPath, cloudUploadPath, codePath\n@docs commentDiscussionPath, commentPath, creditCardPath, dashPolygon, dashboardPath\n@docs databasePath, desktopDownloadPath, deviceCameraPath, deviceCameraVideoPath\n@docs deviceDesktopPath, deviceMobilePath, diffAddedPath, diffIgnoredPath\n@docs diffModifiedPath, diffPath, diffRemovedPath, diffRenamedPath\n@docs ellipsesPath, ellipsisPath, eyePath, eyeClosedPath, fileBinaryPath, fileCodePath\n@docs fileDirectoryPath, fileMediaPath, filePath, filePdfPath, fileSubmodulePath\n@docs fileSymlinkDirectoryPath, fileSymlinkFilePath, fileTextPath, fileZipPath, flamePath\n@docs foldPath, foldDownPath, foldUpPath, gearPath, giftPath, gistPath, gistSecretPath, gitBranchPath, gitCommitPath\n@docs gitComparePath, gitMergePath, gitPullRequestPath, globePath, grabberPath, graphPath\n@docs heartPath, historyPath, homePath, horizontalRulePath, hubotPath, inboxPath, infoPath\n@docs issueClosedPath, issueOpenedPath, issueReopenedPath, italicPath, jerseyPath, kebabHorizontalPath, kebabVerticalPath\n@docs keyPath, keyboardPath, lawPath, lightBulbPath, linkExternalPath, linkPath, listOrderedPath\n@docs listUnorderedPath, locationPath, lockPath, logoGistPath, logoGithubPath, mailPath\n@docs mailReadPath, mailReplyPath, markGithubPath, markTorPath, markTwitterPath, markdownPath, megaphonePath, mentionPath\n@docs milestonePath, mirrorPath, mortarBoardPath, mutePath, noNewlinePath, notePath\n@docs octofacePath, organizationPath, packagePath, paintcanPath, pencilPath, personPath\n@docs pinPath, plugPath, plusPolygon, plusSmallPath, primitiveDotPath\n@docs primitiveSquarePolygon, projectPath, pulsePolygon, questionPath, quotePath\n@docs radioTowerPath, replyPath, repoClonePath, repoForcePushPath, repoForkedPath, repoPath\n@docs repoPullPath, repoPushPath, rocketPath, rssPath, rubyPath, screenFullPath\n@docs screenNormalPath, searchPath, serverPath, settingsPath, shieldPath, signInPath\n@docs signOutPath, smileyPath, squirrelPath, starPolygon, stopPath, syncPath, tagPath\n@docs tasklistPath, telescopePath, terminalPath, textSizePath, threeBarsPath\n@docs thumbsdownPath, thumbsupPath, toolsPath, trashcanPath, triangleDownPolygon\n@docs triangleLeftPolygon, triangleRightPolygon, triangleUpPolygon, unfoldPath, unmutePath\n@docs unverifiedPath, verifiedPath, versionsPath, watchPath, xPolygon, zapPolygon\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Options",
+                "comment": " ",
+                "args": [],
+                "type": "Octicons.Internal.Options"
+            }
+        ],
+        "values": [
+            {
+                "name": "alert",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "alertPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "archive",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "archivePath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "arrowBoth",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "arrowBothPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "arrowDown",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "arrowDownPolygon",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "arrowLeft",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "arrowLeftPolygon",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "arrowRight",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "arrowRightPolygon",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "arrowSmallDown",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "arrowSmallDownPolygon",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "arrowSmallLeft",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "arrowSmallLeftPolygon",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "arrowSmallRight",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "arrowSmallRightPolygon",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "arrowSmallUp",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "arrowSmallUpPolygon",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "arrowUp",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "arrowUpPolygon",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "beaker",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "beakerPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "bell",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "bellPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "bold",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "boldPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "book",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "bookPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "bookmark",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "bookmarkPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "briefcase",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "briefcasePath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "broadcast",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "broadcastPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "browser",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "browserPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "bug",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "bugPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "calendar",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "calendarPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "check",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "checkPolygon",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "checklist",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "checklistPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "chevronDown",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "chevronDownPolygon",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "chevronLeft",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "chevronLeftPolygon",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "chevronRight",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "chevronRightPolygon",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "chevronUp",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "chevronUpPolygon",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "circleSlash",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "circleSlashPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "circuitBoard",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "circuitBoardPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "class",
+                "comment": " ",
+                "type": "String.String -> Octicons.Options -> Octicons.Options"
+            },
+            {
+                "name": "clippy",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "clippyPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "clock",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "clockPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "cloudDownload",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "cloudDownloadPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "cloudUpload",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "cloudUploadPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "code",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "codePath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "color",
+                "comment": " ",
+                "type": "String.String -> Octicons.Options -> Octicons.Options"
+            },
+            {
+                "name": "comment",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "commentDiscussion",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "commentDiscussionPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "commentPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "creditCard",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "creditCardPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "dash",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "dashPolygon",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "dashboard",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "dashboardPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "database",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "databasePath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "defaultOptions",
+                "comment": " ",
+                "type": "Octicons.Options"
+            },
+            {
+                "name": "desktopDownload",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "desktopDownloadPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "deviceCamera",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "deviceCameraPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "deviceCameraVideo",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "deviceCameraVideoPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "deviceDesktop",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "deviceDesktopPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "deviceMobile",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "deviceMobilePath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "diff",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "diffAdded",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "diffAddedPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "diffIgnored",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "diffIgnoredPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "diffModified",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "diffModifiedPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "diffPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "diffRemoved",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "diffRemovedPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "diffRenamed",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "diffRenamedPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "ellipses",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "ellipsesPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "ellipsis",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "ellipsisPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "eye",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "eyeClosed",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "eyeClosedPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "eyePath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "file",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "fileBinary",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "fileBinaryPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "fileCode",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "fileCodePath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "fileDirectory",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "fileDirectoryPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "fileMedia",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "fileMediaPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "filePath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "filePdf",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "filePdfPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "fileSubmodule",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "fileSubmodulePath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "fileSymlinkDirectory",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "fileSymlinkDirectoryPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "fileSymlinkFile",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "fileSymlinkFilePath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "fileText",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "fileTextPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "fileZip",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "fileZipPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "fillRule",
+                "comment": " ",
+                "type": "String.String -> Octicons.Options -> Octicons.Options"
+            },
+            {
+                "name": "flame",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "flamePath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "fold",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "foldDown",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "foldDownPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "foldPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "foldUp",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "foldUpPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "gear",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "gearPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "gift",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "giftPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "gist",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "gistPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "gistSecret",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "gistSecretPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "gitBranch",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "gitBranchPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "gitCommit",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "gitCommitPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "gitCompare",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "gitComparePath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "gitMerge",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "gitMergePath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "gitPullRequest",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "gitPullRequestPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "globe",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "globePath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "grabber",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "grabberPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "graph",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "graphPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "heart",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "heartPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "height",
+                "comment": " ",
+                "type": "Basics.Int -> Octicons.Options -> Octicons.Options"
+            },
+            {
+                "name": "history",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "historyPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "home",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "homePath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "horizontalRule",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "horizontalRulePath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "hubot",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "hubotPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "inbox",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "inboxPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "info",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "infoPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "issueClosed",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "issueClosedPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "issueOpened",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "issueOpenedPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "issueReopened",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "issueReopenedPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "italic",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "italicPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "jersey",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "jerseyPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "kebabHorizontal",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "kebabHorizontalPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "kebabVertical",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "kebabVerticalPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "key",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "keyPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "keyboard",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "keyboardPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "law",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "lawPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "lightBulb",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "lightBulbPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "link",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "linkExternal",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "linkExternalPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "linkPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "listOrdered",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "listOrderedPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "listUnordered",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "listUnorderedPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "location",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "locationPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "lock",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "lockPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "logoGist",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "logoGistPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "logoGithub",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "logoGithubPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "mail",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "mailPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "mailRead",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "mailReadPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "mailReply",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "mailReplyPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "margin",
+                "comment": " ",
+                "type": "String.String -> Octicons.Options -> Octicons.Options"
+            },
+            {
+                "name": "markGithub",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "markGithubPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "markTor",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "markTorPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "markTwitter",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "markTwitterPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "markdown",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "markdownPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "megaphone",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "megaphonePath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "mention",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "mentionPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "milestone",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "milestonePath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "mirror",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "mirrorPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "mortarBoard",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "mortarBoardPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "mute",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "mutePath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "noNewline",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "noNewlinePath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "note",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "notePath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "octoface",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "octofacePath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "organization",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "organizationPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "package",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "packagePath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "paintcan",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "paintcanPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "pathIconWithOptions",
+                "comment": " ",
+                "type": "String.String -> String.String -> String.String -> Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "pencil",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "pencilPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "person",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "personPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "pin",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "pinPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "plug",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "plugPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "plus",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "plusPolygon",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "plusSmall",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "plusSmallPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "polygonIconWithOptions",
+                "comment": " ",
+                "type": "String.String -> String.String -> String.String -> Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "primitiveDot",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "primitiveDotPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "primitiveSquare",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "primitiveSquarePolygon",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "project",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "projectPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "pulse",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "pulsePolygon",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "question",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "questionPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "quote",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "quotePath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "radioTower",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "radioTowerPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "reply",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "replyPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "repo",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "repoClone",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "repoClonePath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "repoForcePush",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "repoForcePushPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "repoForked",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "repoForkedPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "repoPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "repoPull",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "repoPullPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "repoPush",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "repoPushPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "rocket",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "rocketPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "rss",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "rssPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "ruby",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "rubyPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "screenFull",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "screenFullPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "screenNormal",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "screenNormalPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "search",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "searchPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "server",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "serverPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "settings",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "settingsPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "shield",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "shieldPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "signIn",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "signInPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "signOut",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "signOutPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "size",
+                "comment": " Set the width and height to the same value.\n",
+                "type": "Basics.Int -> Octicons.Options -> Octicons.Options"
+            },
+            {
+                "name": "smiley",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "smileyPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "squirrel",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "squirrelPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "star",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "starPolygon",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "stop",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "stopPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "style",
+                "comment": " ",
+                "type": "String.String -> Octicons.Options -> Octicons.Options"
+            },
+            {
+                "name": "sync",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "syncPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "tag",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "tagPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "tasklist",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "tasklistPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "telescope",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "telescopePath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "terminal",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "terminalPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "textSize",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "textSizePath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "threeBars",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "threeBarsPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "thumbsdown",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "thumbsdownPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "thumbsup",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "thumbsupPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "tools",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "toolsPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "trashcan",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "trashcanPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "triangleDown",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "triangleDownPolygon",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "triangleLeft",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "triangleLeftPolygon",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "triangleRight",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "triangleRightPolygon",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "triangleUp",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "triangleUpPolygon",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "unfold",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "unfoldPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "unmute",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "unmutePath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "unverified",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "unverifiedPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "verified",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "verifiedPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "versions",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "versionsPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "watch",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "watchPath",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "width",
+                "comment": " ",
+                "type": "Basics.Int -> Octicons.Options -> Octicons.Options"
+            },
+            {
+                "name": "x",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "xPolygon",
+                "comment": " ",
+                "type": "String.String"
+            },
+            {
+                "name": "zap",
+                "comment": " ",
+                "type": "Octicons.Options -> Html.Html msg"
+            },
+            {
+                "name": "zapPolygon",
+                "comment": " ",
+                "type": "String.String"
+            }
+        ],
+        "binops": []
+    }
+]

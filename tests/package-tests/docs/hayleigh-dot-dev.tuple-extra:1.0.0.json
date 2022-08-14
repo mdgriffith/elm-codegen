@@ -1,0 +1,96 @@
+[
+    {
+        "name": "Tuple.Extra",
+        "comment": " \n\n@docs Tuple\n\n## Paring\n@docs pairWith, from\n\n## Manipulating\n@docs apply, flip, join, joinBy, sum, product, sort, sortBy, sortWith\n\n## Mapping\n@docs map\n\n## Maybes\n@docs sequenceMaybe, sequenceFirstMaybe, sequenceSecondMaybe\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Tuple",
+                "comment": " By type aliasing tuples into a \"normal\" type, we remove the (small) effort\nrequired in reading types and signatures that have tuples in. I've found this\nis most beneficial when a tuple is nested inside another type. Visually, the\nTuple type is now no different to List, Maybe, or Result.\n\nFor example, this:\n\n    List (Maybe (String, Int))\n\nbecomes:\n\n    List (Maybe (Tuple String Int))\n\n",
+                "args": [
+                    "a",
+                    "b"
+                ],
+                "type": "( a, b )"
+            }
+        ],
+        "values": [
+            {
+                "name": "apply",
+                "comment": " Given a function that takes two arguments, apply that function to the two\nvalues contained in a tuple.\n\n    Tuple.apply (+) (1, 2) \n      == 3\n",
+                "type": "(a -> b -> c) -> Tuple.Extra.Tuple a b -> c"
+            },
+            {
+                "name": "flip",
+                "comment": " Flip the two values contained in a tuple.\n",
+                "type": "Tuple.Extra.Tuple a b -> Tuple.Extra.Tuple b a"
+            },
+            {
+                "name": "from",
+                "comment": " Occasionally you might want to create a Tuple from a single value. This does\njust that.\n\n    Tuple.from 1 \n      == (1, 1)\n",
+                "type": "a -> Tuple.Extra.Tuple a a"
+            },
+            {
+                "name": "join",
+                "comment": " Similar to String.join but for tuples instead of lists. Given some separator\nstring, join together two strings in a tuple.\n\n    Tuple.join \" \" (\"Hello\", \"world\") \n      == \"Hello world\"\n",
+                "type": "appendable -> Tuple.Extra.Tuple appendable appendable -> appendable"
+            },
+            {
+                "name": "joinBy",
+                "comment": " Works just like join, but first converts the values of the tuple to strings.\nThese means the function works with any type of tuple.\n\n    Tuple.joinBy String.fromInt suitToString \" of \" (7, Club)\n      == \"Seven of Clubs\"\n",
+                "type": "(a -> appendable) -> (b -> appendable) -> appendable -> Tuple.Extra.Tuple a b -> appendable"
+            },
+            {
+                "name": "map",
+                "comment": " Apply a function to both values contained in a tuple. This might also be\nknown as `mapBothWith` or `bimap`.\n\n    Tuple.map negate (-3, 10)\n      == (3, -10)\n",
+                "type": "(a -> b) -> Tuple.Extra.Tuple a a -> Tuple.Extra.Tuple b b"
+            },
+            {
+                "name": "pairWith",
+                "comment": " In certain situations, this proves more \"pipe friendly\" than the standard\n`Tuple.pair`. Fits nicely in your `update` function.\n\n    { model | count = model.count + 1 }\n      |> Tuple.pairWith Cmd.none\n",
+                "type": "b -> a -> Tuple.Extra.Tuple a b"
+            },
+            {
+                "name": "product",
+                "comment": " Similar to List.sum but for tuples instead of lists. Multiplies together two\nnumbers contained in a tuple\n\n    Tuple.product (1, 2)\n      == 2\n",
+                "type": "Tuple.Extra.Tuple number number -> number"
+            },
+            {
+                "name": "sequenceFirstMaybe",
+                "comment": " Similar to `sequenceMaybe` but only looks at the first value in a tuple\nto check for nothingness.\n\n    Tuple.sequenceFirstMaybe (Just 10, \"Cat\")\n      == Maybe (10, \"Cat\")\n",
+                "type": "Tuple.Extra.Tuple (Maybe.Maybe a) b -> Maybe.Maybe (Tuple.Extra.Tuple a b)"
+            },
+            {
+                "name": "sequenceMaybe",
+                "comment": " Occasionally you might find yourself in a situation where both values\ncontained in a tuple are `Maybe`s. Sometimes it makes more sense to take those\nvalues and make the tuple a `Maybe` instead.\n\n    Tuple.sequenceMaybe (Just 10, Nothing)\n      == Nothing\n\n    Tuple.sequenceMaybe (Just 10, Just \"Cat\")\n      == Maybe (10, \"Cat\")\n",
+                "type": "Tuple.Extra.Tuple (Maybe.Maybe a) (Maybe.Maybe b) -> Maybe.Maybe (Tuple.Extra.Tuple a b)"
+            },
+            {
+                "name": "sequenceSecondMaybe",
+                "comment": " Similar to `sequenceMaybe` but only looks at the first value in a tuple\nto check for nothingness.\n\n    Tuple.sequenceSecondMaybe (10, Just \"Cat\")\n      == Maybe (10, \"Cat\")\n",
+                "type": "Tuple.Extra.Tuple a (Maybe.Maybe b) -> Maybe.Maybe (Tuple.Extra.Tuple a b)"
+            },
+            {
+                "name": "sort",
+                "comment": " Similar to List.sort but for tuples instead of lists. Sort values contained\nin a tuple from lowest to highest\n\n    Tuple.sort (2, 1)\n      == (1, 2)\n",
+                "type": "Tuple.Extra.Tuple comparable comparable -> Tuple.Extra.Tuple comparable comparable"
+            },
+            {
+                "name": "sortBy",
+                "comment": " Similar to List.sortBy but for tuples instead of lists. Sort values\ncontained in a tuple by first converting both values to a `comparable`. The\nvalues are sorted lowest to highest\n\n    Tuple.sortBy String.length (\"mouse\", \"cat\")\n      == (\"cat\", \"mouse\")\n",
+                "type": "(a -> comparable) -> Tuple.Extra.Tuple a a -> Tuple.Extra.Tuple a a"
+            },
+            {
+                "name": "sortWith",
+                "comment": " Similar to List.sortWith but for tuples instead of lists. Instead of\nconverting values contained in a tuple to `comparable`s, instead supply a\nfunction that will produce an `Order` directly.\n\n    Tuple.sortWith Basics.compare (2, 1)\n      == Tuple.sort (2, 1)\n      == (1, 2)\n",
+                "type": "(a -> a -> Basics.Order) -> Tuple.Extra.Tuple a a -> Tuple.Extra.Tuple a a"
+            },
+            {
+                "name": "sum",
+                "comment": " Similar to List.sum but for tuples instead of lists. Adds together two\nnumbers contained in a tuple.\n\n    Tuple.sum (1, 2)\n      == 3\n",
+                "type": "Tuple.Extra.Tuple number number -> number"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,21 @@
+[
+    {
+        "name": "HtmlKeyEvents",
+        "comment": " HTML Event listeners for on 'keyup' and on 'keydown'.\nFor each one of them, it stops propagation.\n\n[stop]: https://developer.mozilla.org/en-US/docs/Web/API/Event/stopPropagation\n\n@docs onKeyDown, onKeyUp\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "onKeyDown",
+                "comment": " It will give you the ASCII code of the key being pressed.\nPlus, it will tell you if the `shift` key is pressed as well.\nYou can read a complete simple example in the README.\n\n    type Msg\n        = KeyDown ( Int, Bool )\n\n    view : Html Msg\n    view =\n        textarea\n            [ rows 10\n            , cols 40\n            , onKeyDown KeyDown\n            ]\n            []\n        ]\n\n    update : Msg -> Model -> ( Model, Cmd Msg )\n    update msg model =\n        case msg of\n            KeyDown ( code, shift ) ->\n                (model, Cmd.none)\n",
+                "type": "(( Basics.Int, Basics.Bool ) -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "onKeyUp",
+                "comment": " It will give you the ASCII code of the key being released-\nYou can read a complete simple example in the README.\n\n    type Msg\n        KeyUp Int\n\n    view : Html Msg\n    view =\n        textarea\n            [ rows 10\n            , cols 40\n            , onKeyUp KeyUp\n            ]\n            []\n        ]\n\n    update : Msg -> Model -> ( Model, Cmd Msg )\n    update msg model =\n        case msg of\n            KeyUp code ->\n                (model, Cmd.none)\n",
+                "type": "(Basics.Int -> msg) -> Html.Attribute msg"
+            }
+        ],
+        "binops": []
+    }
+]

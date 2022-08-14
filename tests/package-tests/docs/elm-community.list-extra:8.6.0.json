@@ -1,0 +1,493 @@
+[
+    {
+        "name": "List.Extra",
+        "comment": " Convenience functions for working with List\n\n\n# Basics\n\n@docs last, init, getAt, uncons, unconsLast, maximumBy, maximumWith, minimumBy, minimumWith, andMap, andThen, reverseMap, takeWhile, dropWhile, unique, uniqueBy, allDifferent, allDifferentBy, setIf, setAt, remove, updateIf, updateAt, updateIfIndex, removeAt, removeIfIndex, filterNot, swapAt, stableSortWith\n\n\n# List transformations\n\n@docs intercalate, transpose, subsequences, permutations, interweave, cartesianProduct, uniquePairs\n\n\n# Folds\n\n@docs foldl1, foldr1, indexedFoldl, indexedFoldr, Step, stoppableFoldl\n\n\n# Building lists\n\n@docs scanl, scanl1, scanr, scanr1, mapAccuml, mapAccumr, unfoldr, iterate, initialize, cycle, reverseRange\n\n\n# Sublists\n\n@docs splitAt, splitWhen, takeWhileRight, dropWhileRight, span, break, stripPrefix, group, groupWhile, inits, tails, select, selectSplit, gatherEquals, gatherEqualsBy, gatherWith\n\n\n# Predicates\n\n@docs isPrefixOf, isSuffixOf, isInfixOf, isSubsequenceOf, isPermutationOf\n\n\n# Searching\n\n@docs notMember, find, elemIndex, elemIndices, findIndex, findIndices, findMap, count\n\n\n# Zipping\n\n@docs zip, zip3\n\n\n# Lift functions onto multiple lists of arguments\n\n@docs lift2, lift3, lift4\n\n\n# Split to groups of given size\n\n@docs groupsOf, groupsOfWithStep, groupsOfVarying, greedyGroupsOf, greedyGroupsOfWithStep\n\n\n# Joins\n\n@docs joinOn\n\n",
+        "unions": [
+            {
+                "name": "Step",
+                "comment": " A custom type used for stoppable folds.",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Continue",
+                        [
+                            "a"
+                        ]
+                    ],
+                    [
+                        "Stop",
+                        [
+                            "a"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "allDifferent",
+                "comment": " Indicate if list has duplicate values.\n\n    allDifferent [ 0, 1, 1, 0, 1 ]\n    --> False\n\n    allDifferent [ 0, 1, 2]\n    --> True\n\n",
+                "type": "List.List a -> Basics.Bool"
+            },
+            {
+                "name": "allDifferentBy",
+                "comment": " Indicate if list has duplicate values when supplied function are applied on each values.\n",
+                "type": "(a -> b) -> List.List a -> Basics.Bool"
+            },
+            {
+                "name": "andMap",
+                "comment": " Map functions taking multiple arguments over multiple lists. Each list should be of the same length.\n\n    toIntFunctions : List (Float -> Int)\n    toIntFunctions =\n        [ round\n        , floor\n        , ceiling\n        , truncate\n        ]\n\n    toIntFunctions\n        |> andMap [ -1.5, -1.5, -1.5, -1.5 ]\n        --> [ -1, -2, -1, -1 ]\n\n\n    math : List (Int -> Int)\n    math =\n        [ (+) 1\n        , (*) 2\n        , (*) 3 >> (+) 1\n        ]\n\n    math\n        |> andMap [ 1, 2, 3 ]\n        --> [ 2, 4, 10 ]\n\n",
+                "type": "List.List a -> List.List (a -> b) -> List.List b"
+            },
+            {
+                "name": "andThen",
+                "comment": " Equivalent to `concatMap`. For example, suppose you want to have a cartesian product of [1,2] and [3,4]:\n\n    [ 1, 2 ]\n        |> andThen\n            (\\x ->\n                [ 3, 4 ]\n                    |> andThen (\\y -> [ ( x, y ) ])\n            )\n        --> [ ( 1, 3 ), ( 1, 4 ), ( 2, 3 ), ( 2, 4 ) ]\n\nNow suppose we want to have a cartesian product between the first list and the second list and its doubles:\n\n    [ 1, 2 ]\n        |> andThen\n            (\\x ->\n                [ 3, 4 ]\n                    |> andThen\n                        (\\y ->\n                            [ y, y * 2 ]\n                                |> andThen (\\z -> [ ( x, z ) ])\n                        )\n            )\n        --> [ ( 1, 3 ), ( 1, 6 ), ( 1, 4 ), ( 1, 8 ), ( 2, 3 ), ( 2, 6 ), ( 2, 4 ), ( 2, 8 )]\n\nAdvanced functional programmers will recognize this as the implementation of bind operator (>>=) for lists from the `Monad` typeclass.\n\n",
+                "type": "(a -> List.List b) -> List.List a -> List.List b"
+            },
+            {
+                "name": "break",
+                "comment": " Take a predicate and a list, return a tuple. The first part of the tuple is the longest prefix of that list, for each element of which the predicate _does not_ hold. The second part of the tuple is the remainder of the list. `break p xs` is equivalent to `(takeWhile (not p) xs, dropWhile (not p) xs)`.\n\n    break ((<) 3) [ 1, 2, 3, 4, 1, 2, 3, 4 ]\n    --> ( [ 1, 2, 3 ], [ 4, 1, 2, 3, 4 ] )\n\n    break ((>) 5) [ 1, 2, 3 ]\n    --> ( [], [ 1, 2, 3 ] )\n\n    break ((<) 5) [ 1, 2, 3 ]\n    --> ( [ 1, 2, 3 ], [] )\n\n",
+                "type": "(a -> Basics.Bool) -> List.List a -> ( List.List a, List.List a )"
+            },
+            {
+                "name": "cartesianProduct",
+                "comment": " Return the cartesian product of a list of lists.\nIf one list is empty, the result is an empty list.\nIf the list of lists is empty, the result is an empty singleton.\n\n    cartesianProduct [ [ 1, 2 ], [ 3, 4, 5 ], [ 6 ] ]\n    --> [ [ 1, 3, 6 ], [ 1, 4, 6 ], [ 1, 5, 6 ], [ 2, 3, 6 ], [ 2, 4, 6 ], [ 2, 5, 6 ] ]\n\n    cartesianProduct [ [ 1, 2 ] ]\n    --> [ [ 1 ], [ 2 ] ]\n\n    cartesianProduct [ [ 1, 2 ], [], [ 6 ] ]\n    --> []\n\n    cartesianProduct [ [] ]\n    --> []\n\n    cartesianProduct []\n    --> [ [] ]\n\n",
+                "type": "List.List (List.List a) -> List.List (List.List a)"
+            },
+            {
+                "name": "count",
+                "comment": " Returns the number of elements in a list that satisfy a given predicate.\nEquivalent to `List.length (List.filter pred list)` but more efficient.\n\n    count\n        (modBy 2 >> (==) 1) [ 1, 2, 3, 4, 5, 6, 7 ]\n    --> 4\n\n    count\n        ((==) \"yeah\")\n        [ \"She\", \"loves\", \"you\", \"yeah\", \"yeah\", \"yeah\" ]\n    --> 3\n\n",
+                "type": "(a -> Basics.Bool) -> List.List a -> Basics.Int"
+            },
+            {
+                "name": "cycle",
+                "comment": " Creates a list of the given length whose elements are obtained by cycling\nthrough the elements of the given list. If the given list is empty, the\nresulting list will be empty.\n\n    cycle 6 [ 4, 7, 8 ]\n    --> [ 4, 7, 8, 4, 7, 8 ]\n\n    cycle 4 [ 'a', 'b', 'c' ]\n    --> [ 'a', 'b', 'c', 'a' ]\n\n    cycle 9001 []\n    --> []\n\n    cycle 2 [ 1, 2, 3, 4, 5 ]\n    --> [ 1, 2 ]\n\n",
+                "type": "Basics.Int -> List.List a -> List.List a"
+            },
+            {
+                "name": "dropWhile",
+                "comment": " Drop elements in order as long as the predicate evaluates to `True`\n",
+                "type": "(a -> Basics.Bool) -> List.List a -> List.List a"
+            },
+            {
+                "name": "dropWhileRight",
+                "comment": " Drop elements from the right, while predicate still holds.\n\n    dropWhileRight ((<) 5) (List.range 1 10)\n    --> [ 1, 2, 3, 4, 5 ]\n\n",
+                "type": "(a -> Basics.Bool) -> List.List a -> List.List a"
+            },
+            {
+                "name": "elemIndex",
+                "comment": " Return the index of the first occurrence of the element. Otherwise, return `Nothing`. Indexing starts from 0.\n\n    elemIndex 1 [ 1, 2, 3 ]\n    --> Just 0\n\n    elemIndex 4 [ 1, 2, 3 ]\n    --> Nothing\n\n    elemIndex 1 [ 1, 2, 1 ]\n    --> Just 0\n\n",
+                "type": "a -> List.List a -> Maybe.Maybe Basics.Int"
+            },
+            {
+                "name": "elemIndices",
+                "comment": " Return all indices of occurrences of the element. If element is not found, return empty list. Indexing starts from 0.\n\n    elemIndices 1 [ 1, 2, 3 ]\n    --> [ 0 ]\n\n    elemIndices 4 [ 1, 2, 3 ]\n    --> []\n\n    elemIndices 1 [ 1, 2, 1 ]\n    --> [ 0, 2 ]\n\n",
+                "type": "a -> List.List a -> List.List Basics.Int"
+            },
+            {
+                "name": "filterNot",
+                "comment": " Take a predicate and a list, and return a list that contains elements which fails to satisfy the predicate.\nThis is equivalent to `List.filter (not << predicate) list`.\n\n    isEven : Int -> Bool\n    isEven i =\n        modBy 2 i == 0\n\n    filterNot isEven [ 1, 2, 3, 4 ]\n    --> [ 1, 3 ]\n\n",
+                "type": "(a -> Basics.Bool) -> List.List a -> List.List a"
+            },
+            {
+                "name": "find",
+                "comment": " Find the first element that satisfies a predicate and return\nJust that element. If none match, return Nothing.\n\n    find (\\num -> num > 5) [ 2, 4, 6, 8 ]\n    --> Just 6\n\n",
+                "type": "(a -> Basics.Bool) -> List.List a -> Maybe.Maybe a"
+            },
+            {
+                "name": "findIndex",
+                "comment": " Take a predicate and a list, return the index of the first element that satisfies the predicate. Otherwise, return `Nothing`. Indexing starts from 0.\n\n    isEven : Int -> Bool\n    isEven i =\n        modBy 2 i == 0\n\n    findIndex isEven [ 1, 2, 3 ]\n    --> Just 1\n\n    findIndex isEven [ 1, 3, 5 ]\n    --> Nothing\n\n    findIndex isEven [ 1, 2, 4 ]\n    --> Just 1\n\n",
+                "type": "(a -> Basics.Bool) -> List.List a -> Maybe.Maybe Basics.Int"
+            },
+            {
+                "name": "findIndices",
+                "comment": " Take a predicate and a list, return indices of all elements satisfying the predicate. Otherwise, return empty list. Indexing starts from 0.\n\n    isEven : Int -> Bool\n    isEven i =\n        modBy 2 i == 0\n\n    findIndices isEven [ 1, 2, 3 ]\n    --> [ 1 ]\n\n    findIndices isEven [ 1, 3, 5 ]\n    --> []\n\n    findIndices isEven [ 1, 2, 4 ]\n    --> [ 1, 2 ]\n\n",
+                "type": "(a -> Basics.Bool) -> List.List a -> List.List Basics.Int"
+            },
+            {
+                "name": "findMap",
+                "comment": " Apply a function that may succeed to values in the list and return the result of the first successful match. If none match, then return Nothing.\n\n    mapOverFive : Int -> Maybe Int\n    mapOverFive num =\n        if num > 5 then\n            Just (num * 2)\n        else\n            Nothing\n\n    findMap mapOverFive [2, 4, 6, 8]\n    --> Just 12\n\nThis is particularly useful in cases where you have a complex type in a list, and you need to pick out the the first one\n\n    type alias HouseModel =\n        {}\n\n    type Property\n        = Rental\n        | House HouseModel\n        | Commercial\n\n    toHouse : Property -> Maybe HouseModel\n    toHouse property =\n        case property of\n            House house ->\n                Just house\n\n            _ ->\n                Nothing\n\n    viewFirstHomeOfInterest : Viewer -> List Property -> Html msg\n    viewFirstHomeOfInterest viewer propertiesQuery =\n        propertiesQuery\n            |> findMap toHouse\n            |> Maybe.map homeView\n            |> Maybe.withDefault noHomeView\n\n",
+                "type": "(a -> Maybe.Maybe b) -> List.List a -> Maybe.Maybe b"
+            },
+            {
+                "name": "foldl1",
+                "comment": " Variant of `foldl` that has no starting value argument and treats the head of the list as its starting value. If the list is empty, return `Nothing`.\n\n    foldl1 (-) [ 1, 2, 3, 4 ]\n    --> Just 2\n\n    foldl1 (++) [ \"a\", \"b\", \"c\" ]\n    --> Just \"cba\"\n\n    foldl1 min []\n    --> Nothing\n\n**Note:** This function changed in a major way between version 7.0.0 and 8.0.0 of this package. The function `foldl1` took in 7.0.0 was `b -> a -> b` consistent with the Haskell implementation of `foldl`, but now its `a -> b -> b`, consistent with `List.foldl`. This function behaves differently in a breaking way, even though its type signature is the same.\n\n",
+                "type": "(a -> a -> a) -> List.List a -> Maybe.Maybe a"
+            },
+            {
+                "name": "foldr1",
+                "comment": " Variant of `foldr` that has no starting value argument and treats the last element of the list as its starting value. If the list is empty, return `Nothing`.\n\n    foldr1 (-) [ 1, 2, 3, 4 ]\n    --> Just -2\n\n    foldr1 (++) [ \"a\", \"b\", \"c\" ]\n    --> Just \"abc\"\n\n    foldr1 min []\n    --> Nothing\n\n",
+                "type": "(a -> a -> a) -> List.List a -> Maybe.Maybe a"
+            },
+            {
+                "name": "gatherEquals",
+                "comment": " Group equal elements together. This is different from `group` as each sublist\nwill contain _all_ equal elements of the original list. Elements will be grouped\nin the same order as they appear in the original list. The same applies to elements\nwithin each group.\n\n    gatherEquals [1,2,1,3,2]\n    --> [(1,[1]),(2,[2]),(3,[])]\n\n",
+                "type": "List.List a -> List.List ( a, List.List a )"
+            },
+            {
+                "name": "gatherEqualsBy",
+                "comment": " Group equal elements together. A function is applied to each element of the list\nand then the equality check is performed against the results of that function evaluation.\nElements will be grouped in the same order as they appear in the original list. The\nsame applies to elements within each group.\n\n    gatherEqualsBy .age [{age=25},{age=23},{age=25}]\n    --> [({age=25},[{age=25}]),({age=23},[])]\n\n",
+                "type": "(a -> b) -> List.List a -> List.List ( a, List.List a )"
+            },
+            {
+                "name": "gatherWith",
+                "comment": " Group equal elements together using a custom equality function. Elements will be\ngrouped in the same order as they appear in the original list. The same applies to\nelements within each group.\n\n    gatherWith (==) [1,2,1,3,2]\n    --> [(1,[1]),(2,[2]),(3,[])]\n\n",
+                "type": "(a -> a -> Basics.Bool) -> List.List a -> List.List ( a, List.List a )"
+            },
+            {
+                "name": "getAt",
+                "comment": " Returns `Just` the element at the given index in the list,\nor `Nothing` if the index is out of range.\n",
+                "type": "Basics.Int -> List.List a -> Maybe.Maybe a"
+            },
+            {
+                "name": "greedyGroupsOf",
+                "comment": " Greedily split list into groups of length `size`. The last group of\nelements will be included regardless of whether there are enough elements in\nthe list to completely fill it. This is equivalent to calling\n`greedyGroupsOfWithStep` with the same `size` and `step`.\n\n    greedyGroupsOf 3 (List.range 1 10)\n    --> [ [ 1, 2, 3 ], [ 4, 5, 6 ], [ 7, 8, 9 ], [ 10 ] ]\n\n",
+                "type": "Basics.Int -> List.List a -> List.List (List.List a)"
+            },
+            {
+                "name": "greedyGroupsOfWithStep",
+                "comment": " Greedily split list into groups of length `size` at offsets `step` apart.\nThe last group of elements will be included regardless of whether there are\nenough elements in the list to completely fill it. (See `groupsOfWithStep`\nfor the non-greedy version of this function).\n\n    greedyGroupsOfWithStep 4 4 (List.range 1 10)\n    --> [ [ 1, 2, 3, 4 ], [ 5, 6, 7, 8 ], [ 9, 10 ] ]\n\n    greedyGroupsOfWithStep 3 2 (List.range 1 6)\n    --> [ [ 1, 2, 3 ], [ 3, 4, 5 ], [ 5, 6 ] ]\n\n    greedyGroupsOfWithStep 3 6 (List.range 1 20)\n    --> [ [ 1, 2, 3 ], [ 7, 8, 9 ], [ 13, 14, 15 ], [ 19, 20 ] ]\n\nIf `step == size`, every element will appear in exactly one group. If\n`step < size`, there will be an overlap between groups. If `step > size`, some\nelements will be skipped and not appear in any groups.\n\n",
+                "type": "Basics.Int -> Basics.Int -> List.List a -> List.List (List.List a)"
+            },
+            {
+                "name": "group",
+                "comment": " Group similar elements together. `group` is equivalent to `groupWhile (==)`.\n\n    group [ 1, 2, 2, 3, 3, 3, 2, 2, 1 ]\n    --> [ (1, []), (2, [ 2 ]), (3, [ 3, 3 ]), (2, [ 2 ]), ( 1,  []) ]\n\n",
+                "type": "List.List a -> List.List ( a, List.List a )"
+            },
+            {
+                "name": "groupWhile",
+                "comment": " Group elements together, using a custom comparison test (`a -> a -> Bool`). Start a new group each time the comparison test doesn't hold for two adjacent elements.\n\n`groupWhile` uses a non-empty list type `(a, List a)` since groups necessarily must have at least one member since they are determined by comparing two members.\n\n    groupWhile\n        (==)\n        [ 1, 2, 3 ]\n    --> [ ( 1, [] ), ( 2, [] ), ( 3, [] ) ]\n\n    groupWhile\n        (<)\n        [ 1, 2, 3, 2, 4, 1, 3, 2, 1 ]\n    --> [ ( 1, [ 2, 3 ] ), ( 2, [ 4 ] ), ( 1, [ 3 ] ), ( 2, [] ), ( 1, [] ) ]\n\n    groupWhile\n        (\\a b -> a.id == b.id)\n        [ { value = 4, id = 9 }, { value = 7, id = 2 }, { value = 1, id = 2 } ]\n    --> [ ( { value = 4, id = 9 }, [] ), ( { value = 7, id = 2 }, [ { value = 1, id = 2 } ] ) ]\n\n**Note:**\nThe behavior of this function has changed between major versions 7 and 8. In version 7 there was `groupWhile` and `groupWhileTransitively`. The behavior of the two was almost identical, however the transitive function was closer to what users found intuitive about grouping. `groupWhileTransitively` has been deleted, and `groupWhile` has been replaced with the version 7s `groupWhileTransitively` behavior. Furthermore the group type was changed from `List a` to the non-empty list type `(a, List a)`. Sorry for any inconvenience this may cause.\n\n",
+                "type": "(a -> a -> Basics.Bool) -> List.List a -> List.List ( a, List.List a )"
+            },
+            {
+                "name": "groupsOf",
+                "comment": " Split list into groups of length `size`. If there are not enough elements\nto completely fill the last group, it will not be included. This is equivalent\nto calling `groupsOfWithStep` with the same `size` and `step`.\n\n    groupsOf 3 (List.range 1 10)\n    --> [ [ 1, 2, 3 ], [ 4, 5, 6 ], [ 7, 8, 9 ] ]\n\n",
+                "type": "Basics.Int -> List.List a -> List.List (List.List a)"
+            },
+            {
+                "name": "groupsOfVarying",
+                "comment": " `groupsOfVarying ns` takes `n` elements from a list for each `n` in `ns`, splitting the list into variably sized segments\n\n    groupsOfVarying [ 2, 3, 1 ] [ \"a\", \"b\", \"c\", \"d\", \"e\", \"f\" ]\n    --> [ [ \"a\", \"b\" ], [ \"c\", \"d\", \"e\" ], [ \"f\" ] ]\n\n    groupsOfVarying [ 2 ] [ \"a\", \"b\", \"c\", \"d\", \"e\", \"f\" ]\n    --> [ [ \"a\", \"b\" ] ]\n\n    groupsOfVarying [ 2, 3, 1, 5, 6 ] [ \"a\", \"b\", \"c\", \"d\", \"e\" ]\n    --> [ [ \"a\", \"b\" ], [ \"c\", \"d\", \"e\" ] ]\n\n",
+                "type": "List.List Basics.Int -> List.List a -> List.List (List.List a)"
+            },
+            {
+                "name": "groupsOfWithStep",
+                "comment": " Split list into groups of length `size` at offsets `step` apart. If there\nare not enough elements to completely fill the last group, it will not be\nincluded. (See `greedyGroupsOfWithStep` if you would like the last group to be\nincluded regardless.)\n\n    groupsOfWithStep 4 4 (List.range 1 10)\n    --> [ [ 1, 2, 3, 4 ], [ 5, 6, 7, 8 ] ]\n\n    groupsOfWithStep 3 1 (List.range 1 5)\n    --> [ [ 1, 2, 3 ], [ 2, 3, 4 ], [ 3, 4, 5 ] ]\n\n    groupsOfWithStep 3 6 (List.range 1 20)\n    --> [ [ 1, 2, 3 ], [ 7, 8, 9 ], [ 13, 14, 15 ] ]\n\nIf `step == size`, every element (except for perhaps the last few due to the\nnon-greedy behavior) will appear in exactly one group. If `step < size`, there\nwill be an overlap between groups. If `step > size`, some elements will be\nskipped and not appear in any groups.\n\n",
+                "type": "Basics.Int -> Basics.Int -> List.List a -> List.List (List.List a)"
+            },
+            {
+                "name": "indexedFoldl",
+                "comment": " Variant of `foldl` that passes the index of the current element to the step function. `indexedFoldl` is to `List.foldl` as `List.indexedMap` is to `List.map`.\n",
+                "type": "(Basics.Int -> a -> b -> b) -> b -> List.List a -> b"
+            },
+            {
+                "name": "indexedFoldr",
+                "comment": " Variant of `foldr` that passes the index of the current element to the step function. `indexedFoldr` is to `List.foldr` as `List.indexedMap` is to `List.map`.\n",
+                "type": "(Basics.Int -> a -> b -> b) -> b -> List.List a -> b"
+            },
+            {
+                "name": "init",
+                "comment": " Return all elements of the list except the last one.\n\n    init [ 1, 2, 3 ]\n    --> Just [ 1, 2 ]\n\n    init []\n    --> Nothing\n\n",
+                "type": "List.List a -> Maybe.Maybe (List.List a)"
+            },
+            {
+                "name": "initialize",
+                "comment": " Initialize a list of some length with some function.\n\n`initialize n f` creates a list of length `n` with the element at index `i` initialized to the result of `f i`.\n\n",
+                "type": "Basics.Int -> (Basics.Int -> a) -> List.List a"
+            },
+            {
+                "name": "inits",
+                "comment": " Return all initial segments of a list, from shortest to longest, empty list first, the list itself last.\n\n    inits [ 1, 2, 3 ]\n    --> [ [], [ 1 ], [ 1, 2 ], [ 1, 2, 3 ] ]\n\n",
+                "type": "List.List a -> List.List (List.List a)"
+            },
+            {
+                "name": "intercalate",
+                "comment": " Take a list and a list of lists, insert that list between every list in the list of lists, concatenate the result. `intercalate xs xss` is equivalent to `concat (intersperse xs xss)`.\n\n    intercalate [ 0, 0 ] [ [ 1, 2 ], [ 3, 4 ], [ 5, 6 ] ]\n    --> [ 1, 2, 0, 0, 3, 4, 0, 0, 5, 6 ]\n\n",
+                "type": "List.List a -> List.List (List.List a) -> List.List a"
+            },
+            {
+                "name": "interweave",
+                "comment": " Return a list that contains elements from the two provided, in alternate order.\nIf one list runs out of items, append the items from the remaining list.\n\n    interweave [ 1, 3 ] [ 2, 4 ]\n    --> [ 1, 2, 3, 4 ]\n\n    interweave [ 1, 3, 5, 7 ] [ 2, 4 ]\n    --> [ 1, 2, 3, 4, 5, 7 ]\n\n    interweave [ 4, 9, 16 ] [ 2, 3, 5, 7 ]\n    --> [ 4, 2, 9, 3, 16, 5, 7 ]\n\n",
+                "type": "List.List a -> List.List a -> List.List a"
+            },
+            {
+                "name": "isInfixOf",
+                "comment": " Return True if all the elements of the first list occur in-order and\nconsecutively anywhere within the second.\n\n    isInfixOf [ 5, 7, 11 ] [ 2, 3, 5, 7, 11, 13 ]\n    --> True\n\n    isInfixOf [ 5, 7, 13 ] [ 2, 3, 5, 7, 11, 13 ]\n    --> False\n\n    isInfixOf [ 3, 5, 2 ] [ 2, 3, 5, 7, 11, 13 ]\n    --> False\n\n",
+                "type": "List.List a -> List.List a -> Basics.Bool"
+            },
+            {
+                "name": "isPermutationOf",
+                "comment": " Take two lists and return `True`, if the first list is a permutation of the second list.\nIn other words: Do the 2 `List`s contain the same elements but in a different order?\n\n    [ 3, 1, 2 ]\n        |> isPermutationOf\n            [ 1, 2, 3 ]\n    --> True\n\n    [ 3, 1, 0 ]\n        |> isPermutationOf\n            [ 1, 2, 3 ]\n    --> False\n\n    [ 3, 1, 2, 2 ]\n        |> isPermutationOf\n            [ 1, 2, 3 ]\n    --> False\n\n",
+                "type": "List.List a -> List.List a -> Basics.Bool"
+            },
+            {
+                "name": "isPrefixOf",
+                "comment": " Take two lists and return `True`, if the first list is the prefix of the second list.\n",
+                "type": "List.List a -> List.List a -> Basics.Bool"
+            },
+            {
+                "name": "isSubsequenceOf",
+                "comment": " Return True if all the elements of the first list occur, in order, in the\nsecond. The elements do not have to occur consecutively.\n\n    isSubsequenceOf\n        [ \"E\", \"l\", \"m\" ]\n        [ \"E\", \"a\", \"t\", \" \", \"l\", \"i\", \"m\", \"e\", \"s\" ]\n    --> True\n\n    isSubsequenceOf\n        [ \"E\", \"l\", \"m\" ]\n        [ \"E\", \"m\", \"a\", \"i\", \"l\" ]\n    --> False\n\n",
+                "type": "List.List a -> List.List a -> Basics.Bool"
+            },
+            {
+                "name": "isSuffixOf",
+                "comment": " Take two lists and return `True`, if the first list is the suffix of the second list.\n",
+                "type": "List.List a -> List.List a -> Basics.Bool"
+            },
+            {
+                "name": "iterate",
+                "comment": " Returns a list of repeated applications of `f`. If `f` returns `Nothing`\nthe iteration will stop. If it returns `Just y` then `y` will be added to the\nlist and the iteration will continue with `f y`.\n\n    collatz : Int -> Maybe Int\n    collatz n =\n        if n == 1 then\n            Nothing\n        else\n            Just <|\n                if modBy 2 n == 0 then\n                    n // 2\n                else\n                    3 * n + 1\n\n    iterate collatz 13\n    --> [13,40,20,10,5,16,8,4,2,1]\n\n",
+                "type": "(a -> Maybe.Maybe a) -> a -> List.List a"
+            },
+            {
+                "name": "joinOn",
+                "comment": " Performs an inner join, combining data items from both lists if they match by their respective key functions.\n\n    employees : List { name : String, departmentId : Int }\n    employees =\n        [ { name = \"Rafferty\", departmentId = 31 }\n        , { name = \"Jones\", departmentId = 33 }\n        , { name = \"Heisenberg\", departmentId = 33 }\n        , { name = \"Robinson\", departmentId = 34 }\n        , { name = \"Smith\", departmentId = 34 }\n        ]\n\n    departments : List { name : String, departmentId : Int }\n    departments =\n        [ { departmentId = 31, name = \"Sales\" }\n        , { departmentId = 33, name = \"Engineering\" }\n        , { departmentId = 34, name = \"Clerical\" }\n        , { departmentId = 35, name = \"Marketing\" }\n        ]\n\n    joinOn (\\empl dep -> { employee = empl.name, department = dep.name}) .departmentId .departmentId employees departments\n    --> [ { department = \"Clerical\", employee = \"Robinson\" }\n    --> , { department = \"Clerical\", employee = \"Smith\" }\n    --> , { department = \"Engineering\", employee = \"Jones\" }\n    --> , { department = \"Engineering\", employee = \"Heisenberg\" }\n    --> , { department = \"Sales\", employee = \"Rafferty\" }\n    --> ]\n\nThis is akin to the SQL query:\n\n    SELECT employee.name, department.name\n    FROM employee\n    INNER JOIN department\n    ON employee.departmentId = department.departmentId\n\n",
+                "type": "(a -> b -> c) -> (a -> comparable) -> (b -> comparable) -> List.List a -> List.List b -> List.List c"
+            },
+            {
+                "name": "last",
+                "comment": " Extract the last element of a list.\n\n    last [ 1, 2, 3 ]\n    --> Just 3\n\n    last []\n    --> Nothing\n\n",
+                "type": "List.List a -> Maybe.Maybe a"
+            },
+            {
+                "name": "lift2",
+                "comment": " Map functions taking multiple arguments over multiple lists, regardless of list length.\nAll possible combinations will be explored.\n\n    lift2 (+) [1,2,3][4,5]\n    --> [5,6,6,7,7,8]\n\n",
+                "type": "(a -> b -> c) -> List.List a -> List.List b -> List.List c"
+            },
+            {
+                "name": "lift3",
+                "comment": " ",
+                "type": "(a -> b -> c -> d) -> List.List a -> List.List b -> List.List c -> List.List d"
+            },
+            {
+                "name": "lift4",
+                "comment": " ",
+                "type": "(a -> b -> c -> d -> e) -> List.List a -> List.List b -> List.List c -> List.List d -> List.List e"
+            },
+            {
+                "name": "mapAccuml",
+                "comment": " The mapAccuml function behaves like a combination of map and foldl; it applies a\nfunction to each element of a list, passing an accumulating parameter from left to right,\nand returning a final value of this accumulator together with the new list.\n\n    mapAccuml f a0 [ x1, x2, x3 ] == ( a3, [ y1, y2, y3 ] )\n\n    --        x1    x2    x3\n    --        |     |     |\n    --  a0 -- f --- f --- f -> a3\n    --        |     |     |\n    --        y1    y2    y3\n\nAdd a running total to a list of numbers:\n\n    mapAccuml (\\a x -> ( a + x, ( x, a + x ) )) 0 [ 2, 4, 8 ]\n        --> ( 14, [ ( 2, 2 ), ( 4, 6 ), ( 8, 14 ) ] )\n\nMap number by multiplying with accumulated sum:\n\n    mapAccuml (\\a x -> ( a + x, a * x )) 5 [ 2, 4, 8 ]\n        --> ( 19, [ 10, 28, 88 ] )\n\n",
+                "type": "(a -> b -> ( a, c )) -> a -> List.List b -> ( a, List.List c )"
+            },
+            {
+                "name": "mapAccumr",
+                "comment": " The mapAccumr function behaves like a combination of map and foldr; it applies a\nfunction to each element of a list, passing an accumulating parameter from right to left,\nand returning a final value of this accumulator together with the new list.\n\n    mapAccumr f a0 [ x1, x2, x3 ] == ( a3, [ y1, y2, y3 ] )\n\n    --        x1    x2    x3\n    --        |     |     |\n    --  a3 <- f --- f --- f -- a0\n    --        |     |     |\n    --        y1    y2    y3\n\nAdd a count of remaining elements:\n\n    mapAccumr (\\a x -> ( a + 1, ( x, a ) )) 0 [ 2, 4, 8 ]\n        --> ( 3, [ ( 2, 2 ), ( 4, 1 ), ( 8, 0 ) ] )\n\nMap number by multiplying with right-to-left accumulated sum:\n\n    mapAccumr (\\a x -> ( a + x, a * x )) 5 [ 2, 4, 8 ]\n        --> ( 19, [ 34, 52, 40 ] )\n\n",
+                "type": "(a -> b -> ( a, c )) -> a -> List.List b -> ( a, List.List c )"
+            },
+            {
+                "name": "maximumBy",
+                "comment": " Find the first maximum element in a list using a comparable transformation\n",
+                "type": "(a -> comparable) -> List.List a -> Maybe.Maybe a"
+            },
+            {
+                "name": "maximumWith",
+                "comment": " Find the first maximum element in a list using a comparison function\n\n    maximumWith compare []\n    --> Nothing\n\n    maximumWith\n      (\\x y -> compare x.val y.val)\n      [{id=1, val=1}, {id=2, val=2}, {id=3,val=2}]\n    --> Just { id = 2, val = 2 }\n\n",
+                "type": "(a -> a -> Basics.Order) -> List.List a -> Maybe.Maybe a"
+            },
+            {
+                "name": "minimumBy",
+                "comment": " Find the first minimum element in a list using a comparable transformation\n",
+                "type": "(a -> comparable) -> List.List a -> Maybe.Maybe a"
+            },
+            {
+                "name": "minimumWith",
+                "comment": " Find the first minimum element in a list using a comparison function\n\n    minimumWith compare []\n    --> Nothing\n    minimumWith\n      (\\x y -> compare x.val y.val)\n      [{id=1, val=2}, {id=2, val=1}, {id=3,val=1}]\n    --> Just { id = 2, val = 1 }\n\n",
+                "type": "(a -> a -> Basics.Order) -> List.List a -> Maybe.Maybe a"
+            },
+            {
+                "name": "notMember",
+                "comment": " Negation of `member`.\n\n    notMember 1 [ 1, 2, 3 ]\n    --> False\n\n    notMember 4 [ 1, 2, 3 ]\n    --> True\n\n",
+                "type": "a -> List.List a -> Basics.Bool"
+            },
+            {
+                "name": "permutations",
+                "comment": " Return the list of of all permutations of a list. The result is in lexicographic order.\n\n    permutations [ 1, 2, 3 ]\n    --> [ [ 1, 2, 3 ], [ 1, 3, 2 ], [ 2, 1, 3 ], [ 2, 3, 1 ], [ 3, 1, 2 ], [ 3, 2, 1 ] ]\n\n",
+                "type": "List.List a -> List.List (List.List a)"
+            },
+            {
+                "name": "remove",
+                "comment": " Remove the first occurrence of a value from a list.\n",
+                "type": "a -> List.List a -> List.List a"
+            },
+            {
+                "name": "removeAt",
+                "comment": " Remove the element at an index from a list. Return the original list if the index is out of range.\n\n    removeAt 0 [ 1, 2, 3 ]\n    --> [ 2, 3 ]\n\nSee also `removeIfIndex`.\n\n",
+                "type": "Basics.Int -> List.List a -> List.List a"
+            },
+            {
+                "name": "removeIfIndex",
+                "comment": " Remove an element at an index that satisfies a predicate.\n\n    removeIfIndex ((==) 2) [ 1, 2, 3 ]\n    --> [ 1, 2 ]\n\nSee also `removeAt`.\n\n",
+                "type": "(Basics.Int -> Basics.Bool) -> List.List a -> List.List a"
+            },
+            {
+                "name": "reverseMap",
+                "comment": " `reverseMap f xs` gives the same result as `List.reverse (List.map f xs)`,\nbut is tail-recursive and slightly more efficient.\n\n    reverseMap sqrt [ 1, 4, 9 ]\n    --> [ 3, 2, 1 ]\n\n",
+                "type": "(a -> b) -> List.List a -> List.List b"
+            },
+            {
+                "name": "reverseRange",
+                "comment": " Create a list of numbers, every element decreasing by one.\nYou give the highest and lowest number that should be in the list.\nMore efficient than calling `List.reverse (List.range lo hi)`\n\n    range 6 3 == [ 6, 5, 4, 3 ]\n\n    range 3 3 == [ 3 ]\n\n    range 3 6 == []\n\n",
+                "type": "Basics.Int -> Basics.Int -> List.List Basics.Int"
+            },
+            {
+                "name": "scanl",
+                "comment": " Reduce a list from the left, building up all of the intermediate results into a list.\n\n    scanl (+) 0 [ 1, 2, 3, 4 ]\n    --> [ 0, 1, 3, 6, 10 ]\n\n",
+                "type": "(a -> b -> b) -> b -> List.List a -> List.List b"
+            },
+            {
+                "name": "scanl1",
+                "comment": " `scanl1` is a variant of `scanl` that has no starting value argument.\n\nCompare:\n\n    scanl (+) 0 [ 1, 2, 3 ]\n    --> [ 0, 1, 3, 6 ]\n\n    scanl1 (+) [ 1, 2, 3 ]\n    --> [ 1, 3, 6 ]\n\n    scanl (-) 0 [ 1, 2, 3 ]\n    --> [ 0, 1, 1, 2 ]\n\n    scanl1 (-) [ 1, 2, 3 ]\n    --> [ 1, 1, 2 ]\n\n",
+                "type": "(a -> a -> a) -> List.List a -> List.List a"
+            },
+            {
+                "name": "scanr",
+                "comment": " `scanr` is a right-to-left dual of `scanl`. Note that:\n\n    head (scanr f z xs) == foldr f z xs\n\nExamples:\n\n    scanr (+) 0 [ 1, 2, 3 ]\n    --> [ 6, 5, 3, 0 ]\n\n    scanr (-) 0 [ 1, 2, 3 ]\n    --> [ 2, -1, 3, 0 ]\n\n",
+                "type": "(a -> b -> b) -> b -> List.List a -> List.List b"
+            },
+            {
+                "name": "scanr1",
+                "comment": " `scanr1` is a variant of `scanr` that has no starting value argument.\n\n    scanr1 (+) [ 1, 2, 3 ]\n    --> [ 6, 5, 3 ]\n\n    scanr1 (-) [ 1, 2, 3 ]\n    --> [ 2, -1, 3 ]\n\n",
+                "type": "(a -> a -> a) -> List.List a -> List.List a"
+            },
+            {
+                "name": "select",
+                "comment": " Return all combinations in the form of (element, rest of the list). Read [Haskell Libraries proposal](https://mail.haskell.org/pipermail/libraries/2008-February/009270.html) for further ideas on how to use this function.\n\n    select [ 1, 2, 3, 4 ]\n    --> [ ( 1, [ 2, 3, 4 ] ), ( 2, [ 1, 3, 4 ] ), ( 3, [ 1, 2, 4 ] ), ( 4, [ 1, 2, 3 ] ) ]\n\n",
+                "type": "List.List a -> List.List ( a, List.List a )"
+            },
+            {
+                "name": "selectSplit",
+                "comment": " Return all combinations in the form of (elements before, element, elements after).\n\n    selectSplit [ 1, 2, 3 ]\n    --> [ ( [], 1, [ 2, 3 ] ), ( [ 1 ], 2, [ 3 ] ), ( [ 1, 2 ], 3, [] ) ]\n\n",
+                "type": "List.List a -> List.List ( List.List a, a, List.List a )"
+            },
+            {
+                "name": "setAt",
+                "comment": " Set a value in a list by index. Return the original list if the index is out of range.\n\n    setAt 0 42 [ 1, 2, 3 ]\n    --> [ 42, 2, 3 ]\n\n",
+                "type": "Basics.Int -> a -> List.List a -> List.List a"
+            },
+            {
+                "name": "setIf",
+                "comment": " Replace all values that satisfy a predicate with a replacement value.\n",
+                "type": "(a -> Basics.Bool) -> a -> List.List a -> List.List a"
+            },
+            {
+                "name": "span",
+                "comment": " Take a predicate and a list, return a tuple. The first part of the tuple is the longest prefix of that list, for each element of which the predicate holds. The second part of the tuple is the remainder of the list. `span p xs` is equivalent to `(takeWhile p xs, dropWhile p xs)`.\n\n    span ((>) 3) [ 1, 2, 3, 4, 1, 2, 3, 4 ]\n    --> ( [ 1, 2 ], [ 3, 4, 1, 2, 3, 4 ] )\n\n    span ((>) 5) [ 1, 2, 3 ]\n    --> ( [ 1, 2, 3 ], [] )\n\n    span ((>) 0) [ 1, 2, 3 ]\n    --> ( [], [ 1, 2, 3 ] )\n\n",
+                "type": "(a -> Basics.Bool) -> List.List a -> ( List.List a, List.List a )"
+            },
+            {
+                "name": "splitAt",
+                "comment": " Take a number and a list, return a tuple of lists, where first part is prefix of the list of length equal the number, and second part is the remainder of the list. `splitAt n xs` is equivalent to `(take n xs, drop n xs)`.\n\n    splitAt 3 [ 1, 2, 3, 4, 5 ]\n    --> ( [ 1, 2, 3 ], [ 4, 5 ] )\n\n    splitAt 1 [ 1, 2, 3 ]\n    --> ( [ 1 ], [ 2, 3 ] )\n\n    splitAt 3 [ 1, 2, 3 ]\n    --> ( [ 1, 2, 3 ], [] )\n\n    splitAt 4 [ 1, 2, 3 ]\n    --> ( [ 1, 2, 3 ], [] )\n\n    splitAt 0 [ 1, 2, 3 ]\n    --> ( [], [ 1, 2, 3 ] )\n\n    splitAt -1 [ 1, 2, 3 ]\n    --> ( [], [ 1, 2, 3 ] )\n\n",
+                "type": "Basics.Int -> List.List a -> ( List.List a, List.List a )"
+            },
+            {
+                "name": "splitWhen",
+                "comment": " Attempts to split the list at the first element where the given predicate is true. If the predicate is not true for any elements in the list, return nothing. Otherwise, return the split list.\n\n    splitWhen (\\n -> n == 3) [ 1, 2, 3, 4, 5 ]\n    --> Just ( [ 1, 2 ], [ 3, 4, 5 ] )\n\n    splitWhen (\\n -> n == 6) [ 1, 2, 3, 4, 5 ]\n    --> Nothing\n\n",
+                "type": "(a -> Basics.Bool) -> List.List a -> Maybe.Maybe ( List.List a, List.List a )"
+            },
+            {
+                "name": "stableSortWith",
+                "comment": " Similar to List.sortWith, this sorts values with a custom comparison function.\nUnlike List.sortWith, this sort is guaranteed to be a stable sort.\nNote that List.sortWith is faster and is preferred if sort stability is not required.\n",
+                "type": "(a -> a -> Basics.Order) -> List.List a -> List.List a"
+            },
+            {
+                "name": "stoppableFoldl",
+                "comment": " A `foldl` that can stop early instead of traversing the whole list.\n\n    stoppableFoldl\n        (\\n acc ->\n            if acc >= 50 then\n                Stop acc\n            else\n                Continue (n + acc)\n        )\n        0\n        (List.range 1 10000)\n    --> 55\n\n",
+                "type": "(a -> b -> List.Extra.Step b) -> b -> List.List a -> b"
+            },
+            {
+                "name": "stripPrefix",
+                "comment": " Drop the given prefix from the list. If the list doesn't start with that prefix, return `Nothing`.\n\n    stripPrefix [ 1, 2 ] [ 1, 2, 3, 4 ]\n    --> Just [ 3, 4 ]\n\n    stripPrefix [ 1, 2, 3 ] [ 1, 2, 3, 4, 5 ]\n    --> Just [ 4, 5 ]\n\n    stripPrefix [ 1, 2, 3 ] [ 1, 2, 3 ]\n    --> Just []\n\n    stripPrefix [ 1, 2, 3 ] [ 1, 2 ]\n    --> Nothing\n\n    stripPrefix [ 3, 2, 1 ] [ 1, 2, 3, 4, 5 ]\n    --> Nothing\n\n",
+                "type": "List.List a -> List.List a -> Maybe.Maybe (List.List a)"
+            },
+            {
+                "name": "subsequences",
+                "comment": " Return the list of all subsequences of a list.\n\n    subsequences [ 1, 2, 3 ]\n    --> [ [], [ 1 ], [ 2 ], [ 1, 2 ], [ 3 ], [ 1, 3 ], [ 2, 3 ], [ 1, 2, 3 ] ]\n\n",
+                "type": "List.List a -> List.List (List.List a)"
+            },
+            {
+                "name": "swapAt",
+                "comment": " Swap two values in a list by index. Return the original list if the index is out of range.\nIf the same index is supplied twice the operation has no effect.\n\n    swapAt 1 2 [ 1, 2, 3 ]\n    --> [ 1, 3, 2 ]\n\n",
+                "type": "Basics.Int -> Basics.Int -> List.List a -> List.List a"
+            },
+            {
+                "name": "tails",
+                "comment": " Return all final segments of a list, from longest to shortest, the list itself first, empty list last.\n\n    tails [ 1, 2, 3 ]\n    --> [ [ 1, 2, 3 ], [ 2, 3 ], [ 3 ], [] ]\n\n",
+                "type": "List.List a -> List.List (List.List a)"
+            },
+            {
+                "name": "takeWhile",
+                "comment": " Take elements in order as long as the predicate evaluates to `True`\n",
+                "type": "(a -> Basics.Bool) -> List.List a -> List.List a"
+            },
+            {
+                "name": "takeWhileRight",
+                "comment": " Take elements from the right, while predicate still holds.\n\n    takeWhileRight ((<) 5) (List.range 1 10)\n    --> [ 6, 7, 8, 9, 10 ]\n\n",
+                "type": "(a -> Basics.Bool) -> List.List a -> List.List a"
+            },
+            {
+                "name": "transpose",
+                "comment": " Transpose rows and columns of the list of lists.\n\n    transpose [ [ 1, 2, 3 ], [ 4, 5, 6 ] ]\n    --> [ [ 1, 4 ], [ 2, 5 ], [ 3, 6 ] ]\n\n    transpose [ [ 10, 11 ], [ 20, 40 ], [ 30, 31, 32, 400 ] ]\n    --> [ [ 10, 20, 30 ], [ 11, 40, 31 ] ]\n\n",
+                "type": "List.List (List.List a) -> List.List (List.List a)"
+            },
+            {
+                "name": "uncons",
+                "comment": " Decompose a list into its head and tail. If the list is empty, return `Nothing`. Otherwise, return `Just (x, xs)`, where `x` is head and `xs` is tail.\n\n    uncons [1,2,3]\n    --> Just (1, [2,3])\n\n    uncons []\n    --> Nothing\n\n",
+                "type": "List.List a -> Maybe.Maybe ( a, List.List a )"
+            },
+            {
+                "name": "unconsLast",
+                "comment": " Decompose a list into its body and last element. If the list is empty, return `Nothing`. Otherwise, return `Just (x, xs)`, where `x` is the last element and `xs` is the body.\n\n    unconsLast [1,2,3]\n    --> Just (3, [1,2])\n\n    unconsLast []\n    --> Nothing\n\n",
+                "type": "List.List a -> Maybe.Maybe ( a, List.List a )"
+            },
+            {
+                "name": "unfoldr",
+                "comment": " The `unfoldr` function is \"dual\" to `foldr`. `foldr` reduces a list to a summary value, `unfoldr` builds a list from a seed. The function takes a function and a starting element. It applies the function to the element. If the result is `Just (a, b)`, `a` is accumulated and the function is applied to `b`. If the result is `Nothing`, the list accumulated so far is returned.\n\n    subtractOneUntilZero : Int -> Maybe (Int, Int)\n    subtractOneUntilZero i =\n        if i /= 0 then\n            Just (i, i - 1)\n        else\n            Nothing\n\n    unfoldr subtractOneUntilZero 5\n    --> [ 5, 4, 3, 2, 1 ]\n\n",
+                "type": "(b -> Maybe.Maybe ( a, b )) -> b -> List.List a"
+            },
+            {
+                "name": "unique",
+                "comment": " Remove duplicate values, keeping the first instance of each element which appears more than once.\n\n    unique [ 0, 1, 1, 0, 1 ]\n    --> [ 0, 1 ]\n\n",
+                "type": "List.List a -> List.List a"
+            },
+            {
+                "name": "uniqueBy",
+                "comment": " Drop duplicates where what is considered to be a duplicate is the result of first applying the supplied function to the elements of the list.\n",
+                "type": "(a -> b) -> List.List a -> List.List a"
+            },
+            {
+                "name": "uniquePairs",
+                "comment": " Return all ways to pair the elements of the list.\n(Essentially, enumerate the possible \"handshakes.\")\n\nThe order of the pair elements doesn't matter, so if `(1,2)` is a returned pair,\nwe don't return `(2,1)`.\n\nIn more mathematical terms these are 2-combinations without repetition.\n\n    uniquePairs [ 1, 2, 3, 4 ]\n    --> [ ( 1, 2 ), ( 1, 3 ), ( 1, 4 ), ( 2, 3 ), ( 2, 4 ), ( 3, 4 ) ]\n\nIn this example, everybody shakes hands with three other people.\n\n",
+                "type": "List.List a -> List.List ( a, a )"
+            },
+            {
+                "name": "updateAt",
+                "comment": " Replace a value at a specific index by calling an update function. Return the original list if the index is out of range.\n\n    updateAt 0 ((+) 1) [ 1, 2, 3 ]\n    --> [ 2, 2, 3 ]\n\nSee also `updateIfIndex`.\n\n",
+                "type": "Basics.Int -> (a -> a) -> List.List a -> List.List a"
+            },
+            {
+                "name": "updateIf",
+                "comment": " Replace all values that satisfy a predicate by calling an update function.\n",
+                "type": "(a -> Basics.Bool) -> (a -> a) -> List.List a -> List.List a"
+            },
+            {
+                "name": "updateIfIndex",
+                "comment": " Replace a value at an index that satisfies a predicate, by calling an update function.\n\n    updateIfIndex ((==) 2) ((+) 1) [ 1, 2, 3 ]\n    --> [ 1, 2, 4 ]\n\nSee also `updateAt`.\n\n",
+                "type": "(Basics.Int -> Basics.Bool) -> (a -> a) -> List.List a -> List.List a"
+            },
+            {
+                "name": "zip",
+                "comment": " Take two lists and returns a list of corresponding pairs\n",
+                "type": "List.List a -> List.List b -> List.List ( a, b )"
+            },
+            {
+                "name": "zip3",
+                "comment": " Take three lists and returns a list of triples\n",
+                "type": "List.List a -> List.List b -> List.List c -> List.List ( a, b, c )"
+            }
+        ],
+        "binops": []
+    }
+]

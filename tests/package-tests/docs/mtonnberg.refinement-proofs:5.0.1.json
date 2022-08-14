@@ -1,0 +1,445 @@
+[
+    {
+        "name": "RefinementProofs.Context",
+        "comment": "| \nSometimes we want to create \"proofs\" that is dependent other other data or other systems - for example a API backend.\nWe can use a \"Context\" to describe under which scenario the proof holds. \nNote, there is value to describe the context even if other proofs is not used.\n\nFor example:\n\n    cozyAnimals : ForVersionOf BackendResponse (Proved (List CozyAnimals) NonEmptyList)\n\nWould mean that for a given backendresponse we have proved that the list of cozy animals is non empty\nIn a different part of the code we could have this type:\n\n    animal : ForVersionOf BackendResponse (Proved Animal CozyAnimal)\n\nWhich would mean that for a given backend response we have proved that the animal in question is a cozy animal\nThen in a third part of the code we have both the cozyAnimals and the animal value\nTo see if the proofs are based on the same backend response we would\n        \n    firstCheck : Maybe (ForVersionOf BackendResponse (Proved (List CozyAnimals) NonEmptyList, Proved Animal CozyAnimal)\n    firstCheck = proveSameVersion cozyAnimals animal\n    -- Continue here, deciding what to do if the proofs came from two different API responses \n\n# Version\n@docs ForVersionOf\n    , Versioned\n    , extractVersion\n    , compareVersions\n    , forgetVersion\n    , provenForVersion\n    , incVersion\n    , initialVersion\n    , proveSameVersion\n\n# Context\nContext is more generalized data type that `Version` is based upon. This is useful if a specific v\nis prefered or needed instead of just a 'random' number.\n\nFor example:\n \n    type alias Ears = Int\n    type AnimalName = AnimalName String \n    p : For AnimalName (Proven Ears Positive)\n    p = ...\n    -- For: is the name for a Contexbased expression\n    -- AnimalName: is the constructor that is *not* exported by the Animal-module RefinementProofs.to ensure that no one\n    -- else can create an AnimalName context and rewire the proofs\n    -- Proven Ears Positive: The actual expression that is in the described context\n\nWhich would mean that for a specific AnimalName it is proven that that animal has a positive number of ears.\n\n@docs Context\n    , For\n    , compareContexts\n    , extractContext\n    , proveSameContext\n    , provenForContext\n    , specificContext\n    , provenForContextValue\n    , unwrapContext\n",
+        "unions": [
+            {
+                "name": "Context",
+                "comment": "\nDescribes a context in which something can be put.\n\nThe `key` is used to ensure that only the correct module/library can create contexts. \nRemember to keep the constructors private! \n",
+                "args": [
+                    "key",
+                    "contextId"
+                ],
+                "cases": []
+            },
+            {
+                "name": "For",
+                "comment": "\nDescribes a context and what is in that context.\n\nThe `key` is used to ensure that only the correct module/library can create contexts. \n\nThe `contextId` is the value used to check if two contexts describe the same thing\n\nThe `a` is the actual value in the context \n",
+                "args": [
+                    "key",
+                    "contextId",
+                    "a"
+                ],
+                "cases": []
+            },
+            {
+                "name": "ForVersionOf",
+                "comment": "\nA specialized case of `For` that covers a lot of the basic cases and is less verbose to work with.\n\nThe `key` is used to ensure that only the correct module/library can create contexts. \n\nThe `a` is the actual value in the context \n",
+                "args": [
+                    "key",
+                    "a"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Versioned",
+                "comment": "\nA specialized case of `Context` that is used with `ForVersionOf`.\n\nThe `key` is used to ensure that only the correct module/library can create contexts. \n",
+                "args": [
+                    "key"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "compareContexts",
+                "comment": "\nCompare two contexts for equality, if equal they describe the same context\n",
+                "type": "RefinementProofs.Context.Context key contextId -> RefinementProofs.Context.Context key contextId -> Basics.Bool"
+            },
+            {
+                "name": "compareVersions",
+                "comment": "\nCompare two contexts for equality\n",
+                "type": "RefinementProofs.Context.Versioned key -> RefinementProofs.Context.Versioned key -> Basics.Bool"
+            },
+            {
+                "name": "extractContext",
+                "comment": "\nExtract the context for comparision\n",
+                "type": "RefinementProofs.Context.For key contextId a -> RefinementProofs.Context.Context key contextId"
+            },
+            {
+                "name": "extractVersion",
+                "comment": "\nExtract the version for comparision\n",
+                "type": "RefinementProofs.Context.ForVersionOf key a -> RefinementProofs.Context.Versioned key"
+            },
+            {
+                "name": "forgetVersion",
+                "comment": "\nForget the version, analogous to exorcise for proofs.\n",
+                "type": "RefinementProofs.Context.ForVersionOf key a -> a"
+            },
+            {
+                "name": "incVersion",
+                "comment": "\nGet a new version.\nIf you are interested of the acutal value then you should use `Context` and `For`\n",
+                "type": "key -> RefinementProofs.Context.Versioned key -> RefinementProofs.Context.Versioned key"
+            },
+            {
+                "name": "initialVersion",
+                "comment": "\nGet a initial version.\nIf you are interested of the acutal value then you should use `Context` and `For`\n",
+                "type": "key -> RefinementProofs.Context.Versioned key"
+            },
+            {
+                "name": "proveSameContext",
+                "comment": "\nMerge two `For`s if they describe values in the same context\n",
+                "type": "RefinementProofs.Context.For key contextId a -> RefinementProofs.Context.For key contextId b -> Maybe.Maybe (RefinementProofs.Context.For key contextId ( a, b ))"
+            },
+            {
+                "name": "proveSameVersion",
+                "comment": "\nMerge two `For`s if they describe values in the same context\n",
+                "type": "RefinementProofs.Context.ForVersionOf key a -> RefinementProofs.Context.ForVersionOf key b -> Maybe.Maybe (RefinementProofs.Context.ForVersionOf key ( a, b ))"
+            },
+            {
+                "name": "provenForContext",
+                "comment": "\nPut a proof into a context\n",
+                "type": "key -> RefinementProofs.Context.Context key contextId -> RefinementProofs.Theory.Proven a p -> RefinementProofs.Context.For key contextId (RefinementProofs.Theory.Proven a p)"
+            },
+            {
+                "name": "provenForContextValue",
+                "comment": "\nPut a proof into a context\n",
+                "type": "key -> contextId -> RefinementProofs.Theory.Proven a p -> RefinementProofs.Context.For key contextId (RefinementProofs.Theory.Proven a p)"
+            },
+            {
+                "name": "provenForVersion",
+                "comment": "\n    Put a proof into a context\n",
+                "type": "key -> RefinementProofs.Context.Versioned key -> RefinementProofs.Theory.Proven a p -> RefinementProofs.Context.ForVersionOf key (RefinementProofs.Theory.Proven a p)"
+            },
+            {
+                "name": "specificContext",
+                "comment": "\nCreate a context with a specific value, for example an id.\n",
+                "type": "key -> contextId -> RefinementProofs.Context.Context key contextId"
+            },
+            {
+                "name": "unwrapContext",
+                "comment": "\nUsed by library writers to get the context's value\n",
+                "type": "key -> RefinementProofs.Context.Context key contextId -> contextId"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "RefinementProofs.Proofs.ListProofs",
+        "comment": " Some basic list proofs\n\n\n# Definition\n\n@docs NonEmptyList, SortedList\n\n\n# Proofs\n\n@docs proveNonEmptyList, mkSortedList\n\n\n# Functions\n\n@docs head, nonEmptyListMap, lengthOfNonEmptyList\n\n",
+        "unions": [
+            {
+                "name": "NonEmptyList",
+                "comment": " A non-empty list\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "SortedList",
+                "comment": " A sorted list\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "head",
+                "comment": " Safely get a head of a non-empty list\n",
+                "type": "RefinementProofs.Theory.Proven (List.List a) RefinementProofs.Proofs.ListProofs.NonEmptyList -> a"
+            },
+            {
+                "name": "lengthOfNonEmptyList",
+                "comment": " Get the length of a non-empty list\n",
+                "type": "RefinementProofs.Theory.Proven (List.List a) RefinementProofs.Proofs.ListProofs.NonEmptyList -> RefinementProofs.Theory.Proven Basics.Int RefinementProofs.Proofs.NumberProofs.Positive"
+            },
+            {
+                "name": "mkSortedList",
+                "comment": " Make a sorted list.\n",
+                "type": "List.List comparable -> RefinementProofs.Theory.Proven (List.List comparable) RefinementProofs.Proofs.ListProofs.SortedList"
+            },
+            {
+                "name": "nonEmptyListMap",
+                "comment": " Map over a non-empty list\n",
+                "type": "(a -> b) -> RefinementProofs.Theory.Proven (List.List a) RefinementProofs.Proofs.ListProofs.NonEmptyList -> RefinementProofs.Theory.Proven (List.List b) RefinementProofs.Proofs.ListProofs.NonEmptyList"
+            },
+            {
+                "name": "proveNonEmptyList",
+                "comment": " Prove that a list is non-empty\n",
+                "type": "List.List a -> Maybe.Maybe (RefinementProofs.Theory.Proven (List.List a) RefinementProofs.Proofs.ListProofs.NonEmptyList)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "RefinementProofs.Proofs.NumberProofs",
+        "comment": " Some basic number proofs\n\n# Definition\n@docs Even\n    , Negative\n    , Odd\n    , Positive\n    , Zero\n    , ZeroOrGreater\n\n# Proofs\n@docs proveEven\n    , proveNegative\n    , proveOdd\n    , provePositive\n    , proveZeroOrGreater\n\n# Implications\n@docs allPositivesAreZeroOrGreater\n",
+        "unions": [
+            {
+                "name": "Even",
+                "comment": " An even Int\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Positive",
+                "comment": " A positive number\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Zero",
+                "comment": " A number that is Zero\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Negative",
+                "comment": " A negative number. Alias for `Not ZeroOrGreater`\n",
+                "args": [],
+                "type": "RefinementProofs.Theory.Not RefinementProofs.Proofs.NumberProofs.ZeroOrGreater"
+            },
+            {
+                "name": "Odd",
+                "comment": " alias for `Not Even`\n",
+                "args": [],
+                "type": "RefinementProofs.Theory.Not RefinementProofs.Proofs.NumberProofs.Even"
+            },
+            {
+                "name": "ZeroOrGreater",
+                "comment": " type alias for `Or Zero Positive`. If used with an Int this the number is 0,1,2,3,....\n",
+                "args": [],
+                "type": "RefinementProofs.Theory.Or RefinementProofs.Proofs.NumberProofs.Zero RefinementProofs.Proofs.NumberProofs.Positive"
+            }
+        ],
+        "values": [
+            {
+                "name": "allPositivesAreZeroOrGreater",
+                "comment": " A simple implication.\n    Note this is strictly not needed since this implication is clear in the types - `ZeroOrGreater = Or Zero Positive`.\n    An alternative is to use `introOrL` or `or`.\n",
+                "type": "RefinementProofs.Theory.Implies RefinementProofs.Proofs.NumberProofs.Positive RefinementProofs.Proofs.NumberProofs.ZeroOrGreater"
+            },
+            {
+                "name": "proveEven",
+                "comment": " Prove that a number is even\n",
+                "type": "Basics.Int -> Maybe.Maybe (RefinementProofs.Theory.Proven Basics.Int RefinementProofs.Proofs.NumberProofs.Even)"
+            },
+            {
+                "name": "proveNegative",
+                "comment": " Prove a number is negative\n",
+                "type": "number -> Maybe.Maybe (RefinementProofs.Theory.Proven number RefinementProofs.Proofs.NumberProofs.Negative)"
+            },
+            {
+                "name": "proveOdd",
+                "comment": " Prove that a number is odd\n",
+                "type": "Basics.Int -> Maybe.Maybe (RefinementProofs.Theory.Proven Basics.Int RefinementProofs.Proofs.NumberProofs.Odd)"
+            },
+            {
+                "name": "provePositive",
+                "comment": " Prove that a number is positive (>0)\n",
+                "type": "number -> Maybe.Maybe (RefinementProofs.Theory.Proven number RefinementProofs.Proofs.NumberProofs.Positive)"
+            },
+            {
+                "name": "proveZeroOrGreater",
+                "comment": " Prove that a number is either zero or greater\n",
+                "type": "number -> Maybe.Maybe (RefinementProofs.Theory.Proven number RefinementProofs.Proofs.NumberProofs.ZeroOrGreater)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "RefinementProofs.Proofs.StringProofs",
+        "comment": " Some basic string proofs\n\n# Definition\n@docs NonEmptyString\n    , TrimmedString\n    , NonEmptyTrimmedString\n\n# Proofs\n@docs mkTrimmedString\n    , proveNonEmptyString\n    , proveNonEmptyTrimmedString\n    , proveTrimmedString\n\n# Functions\n@docs lengthOfNonEmptyString\n\n",
+        "unions": [
+            {
+                "name": "NonEmptyString",
+                "comment": " A non-empty string\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "TrimmedString",
+                "comment": " A Trimmed string\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "NonEmptyTrimmedString",
+                "comment": " A string that are both nonEmpty and trimmed, alias for \"And NonEmptyString TrimmedString\"\n",
+                "args": [],
+                "type": "RefinementProofs.Theory.And RefinementProofs.Proofs.StringProofs.NonEmptyString RefinementProofs.Proofs.StringProofs.TrimmedString"
+            }
+        ],
+        "values": [
+            {
+                "name": "lengthOfNonEmptyString",
+                "comment": " Get the length of a non-empty string\n",
+                "type": "RefinementProofs.Theory.Proven String.String RefinementProofs.Proofs.StringProofs.NonEmptyString -> RefinementProofs.Theory.Proven Basics.Int RefinementProofs.Proofs.NumberProofs.Positive"
+            },
+            {
+                "name": "mkTrimmedString",
+                "comment": " Make a trimmed string from a string. Note: will trim a non-trimmed string\n",
+                "type": "String.String -> RefinementProofs.Theory.Proven String.String RefinementProofs.Proofs.StringProofs.TrimmedString"
+            },
+            {
+                "name": "proveNonEmptyString",
+                "comment": " Prove that a string is non-empty\n",
+                "type": "String.String -> Maybe.Maybe (RefinementProofs.Theory.Proven String.String RefinementProofs.Proofs.StringProofs.NonEmptyString)"
+            },
+            {
+                "name": "proveNonEmptyTrimmedString",
+                "comment": " Prove that a string is both non-empty and trimmed\n",
+                "type": "String.String -> Maybe.Maybe (RefinementProofs.Theory.Proven String.String RefinementProofs.Proofs.StringProofs.NonEmptyTrimmedString)"
+            },
+            {
+                "name": "proveTrimmedString",
+                "comment": " Prove that a string is trimmed\n",
+                "type": "String.String -> Maybe.Maybe (RefinementProofs.Theory.Proven String.String RefinementProofs.Proofs.StringProofs.TrimmedString)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "RefinementProofs.Theory",
+        "comment": " This library allows for stronger and more refined types in Elm for both library writer and end users.\n\n\nSometimes we want to create \"proofs\" that is dependent other other data or other systems - for example a API backend.\nWe can use a \"Context\" to describe under which scenario the proof holds. \nNote, there is value to describe the context even if other proofs is not used.\n\nFor example:\n\n    cozyAnimals : ForVersionOf BackendResponse (Proved (List CozyAnimals) NonEmptyList)\n\nWould mean that for a given backendresponse we have proved that the list of cozy animals is non empty\nIn a different part of the code we could have this type:\n\n    animal : ForVersionOf BackendResponse (Proved Animal CozyAnimal)\n        \nWhich would mean that for a given backend response we have proved that the animal in question is a cozy animal\nThen in a third part of the code we have both the cozyAnimals and the animal value\nTo see if the proofs are based on the same backend response we would\n        \n    firstCheck : Maybe (ForVersionOf BackendResponse (Proved (List CozyAnimals) NonEmptyList, Proved Animal CozyAnimal)\n    firstCheck = proveSameVersion cozyAnimals animal\n    -- Continue here, deciding what to do if the proofs came from two different API responses \n\n# Context\nContext is more generalized data type that `Version` is based upon. This is useful if a specific v\nis prefered or needed instead of just a 'random' number.\n\nFor example: \n\n    type alias Ears = Int\n    type AnimalName = AnimalName String \n    p : For AnimalName (Proven Ears Positive)\n    p = ...\n    -- For: is the name for a Contexbased expression\n    -- AnimalName: is the constructor that is *not* exported by the Animal-module RefinementProofs.to ensure that no one\n    -- else can create an AnimalName context and rewire the proofs\n    -- Proven Ears Positive: The actual expression that is in the described context\n\n\n# Definition\n@docs Proven\n\n# Logic operator types\n@docs And, Or, Not, XOr, Implies\n\n# Basic function\n@docs axiom, or, and, not\n\n# Logic operators\n@docs introOrR, introOrL, makeOr, makeAnd, inverse, elimAndL, elimAndR, exorcise, modusPonens, since, modusTollens, sinceNot, imply\n\n",
+        "unions": [
+            {
+                "name": "And",
+                "comment": " Both \"p1\" and \"p2\" holds\n",
+                "args": [
+                    "p1",
+                    "p2"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Implies",
+                "comment": " Implies that if \"p1\" holds than \"p2\" holds\n",
+                "args": [
+                    "p1",
+                    "p2"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Not",
+                "comment": " A negation of a proof\n",
+                "args": [
+                    "p"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Or",
+                "comment": " \"p1\" or \"p2\" holds\n",
+                "args": [
+                    "p1",
+                    "p2"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Proven",
+                "comment": " A value \"a\" that is proven to hold the property \"b\"\n",
+                "args": [
+                    "a",
+                    "p"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "XOr",
+                "comment": " Exlusive or\n",
+                "args": [
+                    "p1",
+                    "p2"
+                ],
+                "type": "RefinementProofs.Theory.Or (RefinementProofs.Theory.And p1 (RefinementProofs.Theory.Not p2)) (RefinementProofs.Theory.And (RefinementProofs.Theory.Not p1) p2)"
+            }
+        ],
+        "values": [
+            {
+                "name": "and",
+                "comment": " Used by library writers to create build a And proof\n",
+                "type": "p1 -> p2 -> RefinementProofs.Theory.And p1 p2"
+            },
+            {
+                "name": "axiom",
+                "comment": " Used by library writers to create axioms with non-exported constructors.\n    Remember, the library/module RefinementProofs.constructors must not be exported!\n",
+                "type": "p -> a -> RefinementProofs.Theory.Proven a p"
+            },
+            {
+                "name": "elimAndL",
+                "comment": " Remove the left hand side of an And proof\n",
+                "type": "RefinementProofs.Theory.Proven a (RefinementProofs.Theory.And b c) -> RefinementProofs.Theory.Proven a b"
+            },
+            {
+                "name": "elimAndR",
+                "comment": " Remove the right hand side of an And proof\n",
+                "type": "RefinementProofs.Theory.Proven a (RefinementProofs.Theory.And b c) -> RefinementProofs.Theory.Proven a c"
+            },
+            {
+                "name": "exorcise",
+                "comment": " Extract the actual value and remove the proof. This is always safe and a library writer should always expect and allow its users to do this.\n",
+                "type": "RefinementProofs.Theory.Proven a b -> a"
+            },
+            {
+                "name": "imply",
+                "comment": " Used by library writers to imply proof relations\n",
+                "type": "p1 -> p2 -> RefinementProofs.Theory.Implies p1 p2"
+            },
+            {
+                "name": "introOrL",
+                "comment": " Same as introOrR but introduces the p2 on the other side\n",
+                "type": "RefinementProofs.Theory.Proven a p1 -> RefinementProofs.Theory.Proven a (RefinementProofs.Theory.Or p2 p1)"
+            },
+            {
+                "name": "introOrR",
+                "comment": " If a is proven to hold property p1 then classic logic gives that a holds either p1 or p2\n",
+                "type": "RefinementProofs.Theory.Proven a p1 -> RefinementProofs.Theory.Proven a (RefinementProofs.Theory.Or p1 p2)"
+            },
+            {
+                "name": "inverse",
+                "comment": " Used by library writers to show that when `p1` does not hold for a then `Not p1` holds.\n",
+                "type": "p1 -> (a -> Maybe.Maybe (RefinementProofs.Theory.Proven a p1)) -> a -> Maybe.Maybe (RefinementProofs.Theory.Proven a (RefinementProofs.Theory.Not p1))"
+            },
+            {
+                "name": "makeAnd",
+                "comment": " A convience method to check two proofs at once for And\n",
+                "type": "(a -> Maybe.Maybe (RefinementProofs.Theory.Proven a b)) -> (a -> Maybe.Maybe (RefinementProofs.Theory.Proven a c)) -> a -> Maybe.Maybe (RefinementProofs.Theory.Proven a (RefinementProofs.Theory.And b c))"
+            },
+            {
+                "name": "makeOr",
+                "comment": " A convience method to check two proofs for Or\n",
+                "type": "(a -> Maybe.Maybe (RefinementProofs.Theory.Proven a b)) -> (a -> Maybe.Maybe (RefinementProofs.Theory.Proven a c)) -> a -> Maybe.Maybe (RefinementProofs.Theory.Proven a (RefinementProofs.Theory.Or b c))"
+            },
+            {
+                "name": "modusPonens",
+                "comment": " If a library implies that when p1 holds the p2 holds then you have proven p2 by prove p1\n",
+                "type": "RefinementProofs.Theory.Implies p1 p2 -> RefinementProofs.Theory.Proven a p1 -> RefinementProofs.Theory.Proven a p2"
+            },
+            {
+                "name": "modusTollens",
+                "comment": " If a library implies that when p1 holds the p2 holds then you have proven (Not p2) by prove (Not p1)\n",
+                "type": "RefinementProofs.Theory.Implies p1 p2 -> RefinementProofs.Theory.Proven a (RefinementProofs.Theory.Not p1) -> RefinementProofs.Theory.Proven a (RefinementProofs.Theory.Not p2)"
+            },
+            {
+                "name": "not",
+                "comment": " Used by library writers to create build a Not proof\n",
+                "type": "p1 -> RefinementProofs.Theory.Not p1"
+            },
+            {
+                "name": "or",
+                "comment": " Used by library writers to create build a Or proof\n",
+                "type": "p1 -> p2 -> RefinementProofs.Theory.Or p1 p2"
+            },
+            {
+                "name": "since",
+                "comment": " Synonym for \"modus ponens\". If a library implies that when p1 holds the p2 holds then you have proven p2 by prove p1\n",
+                "type": "RefinementProofs.Theory.Implies p1 p2 -> RefinementProofs.Theory.Proven a p1 -> RefinementProofs.Theory.Proven a p2"
+            },
+            {
+                "name": "sinceNot",
+                "comment": " Synonym for \"modus tollens\". If a library implies that when p1 holds the p2 holds then you have proven (Not p2) by prove (Not p1)\n",
+                "type": "RefinementProofs.Theory.Implies p1 p2 -> RefinementProofs.Theory.Proven a (RefinementProofs.Theory.Not p1) -> RefinementProofs.Theory.Proven a (RefinementProofs.Theory.Not p2)"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,122 @@
+[
+    {
+        "name": "Crypto.HMAC",
+        "comment": " Compute HMAC SHA message digests.\n\n@docs digest, Key, Message\n\n\n## Input and Output as Bytes\n\n@docs digestBytes, KeyBytes, MessageBytes\n\n\n## Hash Algorithms\n\n@docs Hash, sha224, sha256, sha384, sha512, sha512_224, sha512_256\n\n",
+        "unions": [
+            {
+                "name": "Hash",
+                "comment": " Type of hash algorithm.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Key",
+                "comment": " Secret key\n",
+                "args": [],
+                "type": "String.String"
+            },
+            {
+                "name": "KeyBytes",
+                "comment": " Secret key, as a list of bytes.\n\nYou must ensure each `Int` is an 8-bit value.\n\n",
+                "args": [],
+                "type": "List.List Basics.Int"
+            },
+            {
+                "name": "Message",
+                "comment": " Message to be hashed\n",
+                "args": [],
+                "type": "String.String"
+            },
+            {
+                "name": "MessageBytes",
+                "comment": " Message to be hashed, as a list of bytes.\n\nYou must ensure each `Int` is an 8-bit value.\n\n",
+                "args": [],
+                "type": "List.List Basics.Int"
+            }
+        ],
+        "values": [
+            {
+                "name": "digest",
+                "comment": " HMAC digest using UTF-8 strings as input.\n\nOutputs bytes encoded as a hexadecimal string. Prefer this function when your\nkey and message are UTF-8 encoded strings.\n\n    Crypto.HMAC.digest sha256 \"key\" \"The quick brown fox jumps over the lazy dog\"\n    --> \"f7bc83f430538424b13298e6aa6fb143ef4d59a14946175997479dbc2d1a3cd8\"\n\n    Crypto.HMAC.digest sha512 \"key\" \"I ❤ cheese\"\n    --> \"a885c96140f95cb0b326306edfba49afbb5d38d3a7ed6ccfd67153429cbd3c56d0c514fcaa53b710bb7ba6cc0dfedfdb4d53795acbeb48eb23aa93e5ce9760dd\"\n\n",
+                "type": "Crypto.HMAC.Hash -> Crypto.HMAC.Key -> Crypto.HMAC.Message -> String.String"
+            },
+            {
+                "name": "digestBytes",
+                "comment": " HMAC digest using raw bytes as input and output.\n\nPrefer `digest` when your key and message are UTF-8 strings. This function\n(`digestBytes`) is unsafe, in that it does not ensure each `Int` fits into an\n8-bit value.\n\nPrefer `digestBytes` when you need to chain digests. That is, to use the output\nof a digest as the input (either key or message) to another digest.\n\nSee the [AWS Signature V4 Example](http://docs.aws.amazon.com/general/latest/gr/signature-v4-test-suite.html#signature-v4-test-suite-example)\nfor an explanation of the following algorithm:\n\n    import Word.Bytes as Bytes\n    import Word.Hex as Hex\n\n    let\n        digest =\n            \\message key ->\n                Crypto.HMAC.digestBytes sha256\n                    key\n                    (Bytes.fromUTF8 message)\n    in\n    (\"AWS4\" ++ \"wJalrXUtnFEMI/K7MDENG+bPxRfiCYEXAMPLEKEY\")\n        |> Bytes.fromUTF8\n        |> digest \"20150830\"\n        |> digest \"us-east-1\"\n        |> digest \"service\"\n        |> digest \"aws4_request\"\n        |> digest \"AWS4-HMAC-SHA256\\n20150830T123600Z\\n20150830/us-east-1/service/aws4_request\\n816cd5b414d056048ba4f7c5386d6e0533120fb1fcfa93762cf0fc39e2cf19e0\"\n        |> Hex.fromByteList\n    --> \"b97d918cfa904a5beff61c982a1b6f458b799221646efd99d3219ec94cdf2500\"\n\n",
+                "type": "Crypto.HMAC.Hash -> Crypto.HMAC.KeyBytes -> Crypto.HMAC.MessageBytes -> List.List Basics.Int"
+            },
+            {
+                "name": "sha224",
+                "comment": " Use SHA224 as the hash algorithm.\n",
+                "type": "Crypto.HMAC.Hash"
+            },
+            {
+                "name": "sha256",
+                "comment": " Use SHA256 as the hash algorithm.\n",
+                "type": "Crypto.HMAC.Hash"
+            },
+            {
+                "name": "sha384",
+                "comment": " Use SHA384 as the hash algorithm.\n",
+                "type": "Crypto.HMAC.Hash"
+            },
+            {
+                "name": "sha512",
+                "comment": " Use SHA512 as the hash algorithm.\n",
+                "type": "Crypto.HMAC.Hash"
+            },
+            {
+                "name": "sha512_224",
+                "comment": " Use SHA512/224 as the hash algorithm.\n",
+                "type": "Crypto.HMAC.Hash"
+            },
+            {
+                "name": "sha512_256",
+                "comment": " Use SHA512/256 as the hash algorithm.\n",
+                "type": "Crypto.HMAC.Hash"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Crypto.Hash",
+        "comment": " Secure Hash Algorithms.\n\n@docs sha224, sha256, sha384, sha512, sha512_224, sha512_256\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "sha224",
+                "comment": " Secure Hash Algorithm using 32-bit words and 64 rounds (truncated).\n\n    Crypto.Hash.sha224 \"\"\n    --> \"d14a028c2a3a2bc9476102bb288234c415a2b01f828ea62ac5b3e42f\"\n\n    Crypto.Hash.sha224 \"The quick brown fox jumps over the lazy dog\"\n    --> \"730e109bd7a8a32b1cb9d9a09aa2325d2430587ddbc0c38bad911525\"\n\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "sha256",
+                "comment": " Secure Hash Algorithm using 32-bit words and 64 rounds.\n\n    Crypto.Hash.sha256 \"\"\n    --> \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"\n\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "sha384",
+                "comment": " Secure Hash Algorithm using 64-bit words and 80 rounds (truncated).\n\n    Crypto.Hash.sha384 \"\"\n    --> \"38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b\"\n\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "sha512",
+                "comment": " Secure Hash Algorithm using 64-bit words and 80 rounds.\n\n    Crypto.Hash.sha512 \"\"\n    --> \"cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e\"\n\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "sha512_224",
+                "comment": " Secure Hash Algorithm using 64-bit words and 80 rounds (truncated to 224).\n\n    Crypto.Hash.sha512_224 \"\"\n    --> \"6ed0dd02806fa89e25de060c19d3ac86cabb87d6a0ddd05c333b84f4\"\n\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "sha512_256",
+                "comment": " Secure Hash Algorithm using 64-bit words and 80 rounds (truncated to 256).\n\n    Crypto.Hash.sha512_256 \"\"\n    --> \"c672b8d1ef56ed28ab87c3622c5114069bdd3ad7b8f9737498d0c01ecef0967a\"\n\n",
+                "type": "String.String -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

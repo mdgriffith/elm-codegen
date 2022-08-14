@@ -1,0 +1,64 @@
+[
+    {
+        "name": "Modal",
+        "comment": " Modal component.\n\n\n## Types\n\n@docs Button, Config, Model, Size\n\n\n## Functions\n\n@docs default, view\n\n",
+        "unions": [
+            {
+                "name": "Size",
+                "comment": " Modal size.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Small",
+                        []
+                    ],
+                    [
+                        "Medium",
+                        []
+                    ],
+                    [
+                        "Big",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Button",
+                "comment": " Modal button.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ title : String.String, trigger : msg, enable : Basics.Bool }"
+            },
+            {
+                "name": "Config",
+                "comment": " Modal configuration. If save is nothing, the save button is hidden.\n\nExample\n\n    { title = \"My Modal title\"\n    , size = Medium\n    , content = div [] [...]\n    , close = Button \"Close\" OnClose True\n    , save = Just <| Button \"Save\" OnSave True\n    }\n\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ title : String.String, size : Modal.Size, content : Html.Html msg, close : Modal.Button msg, save : Maybe.Maybe (Modal.Button msg) }"
+            },
+            {
+                "name": "Model",
+                "comment": " Modal model (active or not).\n",
+                "args": [],
+                "type": "Basics.Bool"
+            }
+        ],
+        "values": [
+            {
+                "name": "default",
+                "comment": " Default configuration for the modal view.\n",
+                "type": "msg -> msg -> String.String -> Html.Html msg -> Modal.Config msg"
+            },
+            {
+                "name": "view",
+                "comment": " Modal view.\n",
+                "type": "Modal.Config msg -> Modal.Model -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

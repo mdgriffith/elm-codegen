@@ -1,0 +1,59 @@
+[
+    {
+        "name": "Swiper",
+        "comment": " This library handles detection of specific touch events (for mobile) that indicates a user swiping across\nthe specified DOM element.\n\n\n# State\n\n@docs SwipingState, initialSwipingState\n\n\n# Events\n\n@docs SwipeEvent, onSwipeEvents\n\n\n# Swipe Detection\n\n@docs hasSwipedLeft, hasSwipedRight, hasSwipedUp, hasSwipedDown, touchFinished\n\n",
+        "unions": [
+            {
+                "name": "SwipeEvent",
+                "comment": " This event is either a \"touchstart\" or \"touchend\" event. You don't need to worry about which -\njust need to hang on to it so you can pass it back to a \"hasSwipedXXX\" function.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "SwipingState",
+                "comment": " Since there is no actual \"swipe\" event - the detection of a swipe is determined by evaluating the coordinates of \"touchstart\" and \"touchend\" events. This means some \"state\" must be stored by the application between events. That state is encapsulated in _SwipingState_. Store this so it can be passed to a hasSwipedXXX function.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "hasSwipedDown",
+                "comment": " Checks whther the event & state indicates a swipe downward.\nReturns a tuple with the new SwipingState and the Bool answer.\n",
+                "type": "Swiper.SwipeEvent -> Swiper.SwipingState -> ( Swiper.SwipingState, Basics.Bool )"
+            },
+            {
+                "name": "hasSwipedLeft",
+                "comment": " Checks whether the the event & state indicates a swipe to the left.\nReturns a tuple with the new SwipingState and the Bool answer.\n",
+                "type": "Swiper.SwipeEvent -> Swiper.SwipingState -> ( Swiper.SwipingState, Basics.Bool )"
+            },
+            {
+                "name": "hasSwipedRight",
+                "comment": " Checks whether the event & state indicates a swipe to the right.\nReturns a tuple with the new SwipingState and the Bool answer.\n",
+                "type": "Swiper.SwipeEvent -> Swiper.SwipingState -> ( Swiper.SwipingState, Basics.Bool )"
+            },
+            {
+                "name": "hasSwipedUp",
+                "comment": " Checks whether the event & state indicates a swipe upward.\nReturns a tuple with the new SwipingState and the Bool answer.\n",
+                "type": "Swiper.SwipeEvent -> Swiper.SwipingState -> ( Swiper.SwipingState, Basics.Bool )"
+            },
+            {
+                "name": "initialSwipingState",
+                "comment": " Returns an initial SwipingState with which to initialize the application.\n",
+                "type": "Swiper.SwipingState"
+            },
+            {
+                "name": "onSwipeEvents",
+                "comment": " Function that detects the touch events. A message wrapper is passed in to be handled in the application update handler.\nIt returns a list of Attributes (it must be a list because it can fire both \"touchstart\" and \"touchend\" states)\n",
+                "type": "(Swiper.SwipeEvent -> msg) -> List.List (Html.Attribute msg)"
+            },
+            {
+                "name": "touchFinished",
+                "comment": " Convenience function that will indicate if this is a \"touchend\" event.\n",
+                "type": "Swiper.SwipeEvent -> Basics.Bool"
+            }
+        ],
+        "binops": []
+    }
+]

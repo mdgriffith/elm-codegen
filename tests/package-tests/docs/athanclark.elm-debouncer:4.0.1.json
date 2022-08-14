@@ -1,0 +1,59 @@
+[
+    {
+        "name": "Debounce",
+        "comment": " This is a delay-based debouncer, where given a _minimum_ delay and an action\nto issue, we'll build a stateful component that will eventually issue the action\n_once_, after being given a slew of requests within the delay timeframe.\n\n\n## Debouncer State\n\n@docs Model\n\n@docs init\n\n\n## Starting the Debouncer\n\n@docs Msg\n\n\n## Evaluating the Debouncer\n\n@docs update\n\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " To bounce the debouncer, just make multiple calls to `Bounce`.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Bounce",
+                        [
+                            "Platform.Cmd.Cmd a"
+                        ]
+                    ],
+                    [
+                        "Assign",
+                        [
+                            "Platform.Cmd.Cmd a",
+                            "Time.Posix"
+                        ]
+                    ],
+                    [
+                        "Finish",
+                        [
+                            "Time.Posix"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Model",
+                "comment": " The state of the debouncer\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ elapsed : Maybe.Maybe (Debounce.Elapsed a) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "init",
+                "comment": " The initial debouncer\n",
+                "type": "Debounce.Model a"
+            },
+            {
+                "name": "update",
+                "comment": " The main logic of the debouncer.\n",
+                "type": "Time.Posix -> Debounce.Msg a -> Debounce.Model a -> ( Debounce.Model a, Platform.Cmd.Cmd (Result.Result (Debounce.Msg a) a) )"
+            }
+        ],
+        "binops": []
+    }
+]

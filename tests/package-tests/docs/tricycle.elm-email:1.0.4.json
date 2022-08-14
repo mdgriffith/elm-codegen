@@ -1,0 +1,28 @@
+[
+    {
+        "name": "Email",
+        "comment": "\n\n@docs Email, fromString, toString\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Email",
+                "comment": " The type of an Email\n",
+                "args": [],
+                "type": "{ localPart : String.String, tags : List.List String.String, domain : String.String, tld : List.List String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "fromString",
+                "comment": " Parse an Email address from a String\n",
+                "type": "String.String -> Maybe.Maybe Email.Email"
+            },
+            {
+                "name": "toString",
+                "comment": " Render Email to a String\n",
+                "type": "Email.Email -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

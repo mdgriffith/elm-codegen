@@ -1,0 +1,63 @@
+[
+    {
+        "name": "Ulid",
+        "comment": " A library for generating ULID and utility functions.\n\n\n# Definition\n\n@docs Ulid\n\n\n# Random Generators\n\n@docs ulidGenerator, multipleUlidGenerator\n\n\n# Conversion functions\n\n@docs toString, fromString, toTimestamp\n\n\n# Json encode and decode\n\n@docs encode, decode\n\n\n# Utility functions for UUID string\n\n@docs toUuidString, fromUuidString\n\n",
+        "unions": [
+            {
+                "name": "Ulid",
+                "comment": " opaque type for ULID.\n\nULID is composed of a Timestamp and a Randomenss part with the following format.\n\n     01AN4Z07BY      79KA1307SR9X4MV3\n\n    |----------|    |----------------|\n     Timestamp          Randomness\n       48bits             80bits\n\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decode",
+                "comment": " Decode a ULID from a JSON value\n",
+                "type": "Json.Decode.Decoder Ulid.Ulid"
+            },
+            {
+                "name": "encode",
+                "comment": " Encode a ULID as json\n",
+                "type": "Ulid.Ulid -> Json.Encode.Value"
+            },
+            {
+                "name": "fromString",
+                "comment": " Try to parse a string representation as an ULID, ie. 26 character length with valid characters of\n`0123456789ABCDEFGHJKMNPQRSTVWXYZ`. Detect overflowing if the ULID is larger than `7ZZZZZZZZZZZZZZZZZZZZZZZZZ`.\n",
+                "type": "String.String -> Maybe.Maybe Ulid.Ulid"
+            },
+            {
+                "name": "fromUuidString",
+                "comment": " Try to parse an UUID string, though the timestamp is meaningless.\nIf it overflows `Nothing` value will be returned.\n",
+                "type": "String.String -> Maybe.Maybe Ulid.Ulid"
+            },
+            {
+                "name": "multipleUlidGenerator",
+                "comment": " Random generator for multilpe ULIDs at the same milisecond.\nThe generated ULIDs have no specific sort order.\nWe can not see use cases for generating ULIDs sortable within the same milisecond on client side apps.\nSo _Monotonicity_ is not supported in this packages.\n",
+                "type": "Basics.Int -> Time.Posix -> Random.Generator (List.List Ulid.Ulid)"
+            },
+            {
+                "name": "toString",
+                "comment": " Extract the string representation.\n",
+                "type": "Ulid.Ulid -> String.String"
+            },
+            {
+                "name": "toTimestamp",
+                "comment": " Extract the Timestamp part only.\n",
+                "type": "Ulid.Ulid -> Time.Posix"
+            },
+            {
+                "name": "toUuidString",
+                "comment": " Produce a canonical 8-4-4-4-12 UUID string form.\nThe variant and version indicators of converted UUID are meaningless,\nso the `Uuid.fromString` in [dandy32/elm-uuid] will fail.\n\n[dandy32/elm-uuid]: https://package.elm-lang.org/packages/danyx23/elm-uuid/latest/\n\n",
+                "type": "Ulid.Ulid -> String.String"
+            },
+            {
+                "name": "ulidGenerator",
+                "comment": " Random generator for a single ULID at specified time.\n",
+                "type": "Time.Posix -> Random.Generator Ulid.Ulid"
+            }
+        ],
+        "binops": []
+    }
+]

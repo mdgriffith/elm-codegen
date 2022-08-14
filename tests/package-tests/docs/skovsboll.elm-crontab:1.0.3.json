@@ -1,0 +1,213 @@
+[
+    {
+        "name": "Cron",
+        "comment": " Parses a classic UNIX style crontab string into a data structure, `Cron`, from which\nyou can extract information.\n\nThe main entrypoint is the fromString function.\n\n    Cron.fromString \"* * */3 4 *\"\n\nfromString returns a `Result (List DeadEnd) Cron`.\n\n#Definition\n\n@docs Cron\n\n\n# API\n\n@docs fromString\n\n\n# Syntax Tree\n\n@docs Expr\n@docs Term\n@docs Atom\n@docs Month\n@docs WeekDay\n\n",
+        "unions": [
+            {
+                "name": "Atom",
+                "comment": " An atom is either\n\n  - Particle: a particle or \"single value\" such as 9\n  - Range: a range with two particles, i.e. 8-12 or FRI-SAT\n\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Particle",
+                        [
+                            "a"
+                        ]
+                    ],
+                    [
+                        "Range",
+                        [
+                            "a",
+                            "a"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Cron",
+                "comment": " A `Cron` expression consists of exactly five elements:\n\n    1. Minutes (0-59)\n    2. Hours (0-23)\n    3. Day of month (1-31)\n    4. Month (1-12 or jan,feb,...)\n    5. Week day (0-6 or mon, tue, ...)\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Cron",
+                        [
+                            "Cron.Expr Basics.Int",
+                            "Cron.Expr Basics.Int",
+                            "Cron.Expr Basics.Int",
+                            "Cron.Expr Cron.Month",
+                            "Cron.Expr Cron.WeekDay"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Expr",
+                "comment": " Represents each of the five parts of a crontab\n\nA Single is just a number or ordinal such as 1 or MON.\nMultiple is a comma-separated list of terms, such as 1,2,5 or JAN,FEB\nEvery represents the star meaning \"everything matches\"\n\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Single",
+                        [
+                            "Cron.Term a"
+                        ]
+                    ],
+                    [
+                        "Multiple",
+                        [
+                            "List.List (Cron.Term a)"
+                        ]
+                    ],
+                    [
+                        "Every",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Month",
+                "comment": " The months of the year\n",
+                "args": [],
+                "cases": [
+                    [
+                        "January",
+                        []
+                    ],
+                    [
+                        "February",
+                        []
+                    ],
+                    [
+                        "March",
+                        []
+                    ],
+                    [
+                        "April",
+                        []
+                    ],
+                    [
+                        "May",
+                        []
+                    ],
+                    [
+                        "June",
+                        []
+                    ],
+                    [
+                        "July",
+                        []
+                    ],
+                    [
+                        "August",
+                        []
+                    ],
+                    [
+                        "September",
+                        []
+                    ],
+                    [
+                        "October",
+                        []
+                    ],
+                    [
+                        "November",
+                        []
+                    ],
+                    [
+                        "December",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Term",
+                "comment": " A term can be either:\n\n  - Step: A step such as 2/3\n  - EveryStep: A star with a step, \\*/4 meaning \"every fourth\"\n  - Atom: A simple value such as 7 or MON-FRI\n\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Step",
+                        [
+                            "Cron.Atom a",
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "EveryStep",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "Atom",
+                        [
+                            "Cron.Atom a"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "WeekDay",
+                "comment": " The week days\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Sunday",
+                        []
+                    ],
+                    [
+                        "Monday",
+                        []
+                    ],
+                    [
+                        "Tuesday",
+                        []
+                    ],
+                    [
+                        "Wednesday",
+                        []
+                    ],
+                    [
+                        "Thursday",
+                        []
+                    ],
+                    [
+                        "Friday",
+                        []
+                    ],
+                    [
+                        "Saturday",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fromString",
+                "comment": " Parse a crontab string to a Cron expression\n",
+                "type": "String.String -> Result.Result (List.List Parser.DeadEnd) Cron.Cron"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Humanizer",
+        "comment": " Expresses a Cron expression in a human readable form.\n\nFor example:\n\n    Humanizer.toString (Cron Every Every (Single (EveryStep 3)) (Single (Simple (Particle April))) Every)\n\nWill produce:\n\n\"every minute, every hour, every third day of the month, in April, all week.\"\n\n\n# API\n\n@docs toString\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toString",
+                "comment": " Tries to explain a crontab expression in a human friendly way\n",
+                "type": "Cron.Cron -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,26 @@
+[
+    {
+        "name": "Css.ModernNormalize",
+        "comment": " An Elm port of modern-normalize\n\n@docs globalHtml, globalStyledHtml, snippets\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "globalHtml",
+                "comment": " Html msg of a global <style>\n",
+                "type": "Html.Html msg"
+            },
+            {
+                "name": "globalStyledHtml",
+                "comment": " Html.Styled.Html msg of a global <style>\n",
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "snippets",
+                "comment": " elm-css List Snippet for modern-normalize: <https://github.com/sindresorhus/modern-normalize>\n",
+                "type": "List.List Css.Global.Snippet"
+            }
+        ],
+        "binops": []
+    }
+]

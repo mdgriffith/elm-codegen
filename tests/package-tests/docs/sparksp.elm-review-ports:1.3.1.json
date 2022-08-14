@@ -1,0 +1,61 @@
+[
+    {
+        "name": "NoDuplicatePorts",
+        "comment": "\n\n@docs rule\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": " Forbid duplicate port names in your project.\n\n    config : List Rule\n    config =\n        [ NoDuplicatePorts.rule\n        ]\n\n\n## Why is this a problem?\n\nThe only way to tell which port you want to address in JavaScript is by its name, and so these must be unique within your project. When there are multiple ports with the same name you may encounter a JavaScript runtime error.\n\nIt is common practice to have a single `Ports` module to contain all of the ports in a project. The `Ports` module can then be imported anywhere that needs access to a port.\n\n\n## When (not) to use this rule\n\nPorts are not allowed in Elm packages - you should not enable this when developing an Elm package.\n\n\n## Try it out\n\nYou can try this rule out by running the following command:\n\n```bash\nelm-review --template sparksp/elm-review-ports/example --rules NoDuplicatePorts\n```\n\n",
+                "type": "Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "NoUnsafePorts",
+        "comment": "\n\n@docs rule\n\n\n## Config\n\n@docs any, onlyIncomingPorts, Check\n\n",
+        "unions": [
+            {
+                "name": "Check",
+                "comment": " Check type.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "any",
+                "comment": " Check both incoming and outgoing ports.\n\n    config : List Rule\n    config =\n        [ NoUnsafePorts.rule NoUnsafePorts.any\n        ]\n\nThis is the option you will want most of the time.\n\n",
+                "type": "NoUnsafePorts.Check"
+            },
+            {
+                "name": "onlyIncomingPorts",
+                "comment": " Check incoming ports only.\n\n    config : List Rule\n    config =\n        [ NoUnsafePorts.rule NoUnsafePorts.onlyIncomingPorts\n        ]\n\nUse this option if you want to allow basic types in outgoing ports.\n\n",
+                "type": "NoUnsafePorts.Check"
+            },
+            {
+                "name": "rule",
+                "comment": " Forbid unsafe types in ports.\n\n    config : List Rule\n    config =\n        [ NoUnsafePorts.rule NoUnsafePorts.any\n        ]\n\nThis rule reports any ports that do not send/receive a [`Json.Encode.Value`][Json.Encode.Value].\n\n[Json.Encode.Value]: https://package.elm-lang.org/packages/elm/json/latest/Json-Encode#Value\n\n\n## Why is this a problem?\n\nIf a port expecting an `Int` receives a `Float` it will cause a runtime error. We can prevent this by just wrapping the incoming data as `Json.Encode.Value` and handling the data through a [`Decoder`][Json.Decode] instead. This guarantees that your application provides some sort of error handling. This is discussed in the Elm guide under [Verifying Flags].\n\n[Json.Decode]: https://package.elm-lang.org/packages/elm/json/latest/Json-Decode\n[Verifying Flags]: https://guide.elm-lang.org/interop/flags.html#verifying-flags\n\n\n## Success\n\n    port action : (Json.Decode.Value -> msg) -> Sub msg\n\n    port alarm : Json.Encode.Value -> Cmd msg\n\n\n## Failure\n\n    port action : (Int -> msg) -> Sub msg\n\n    port alarm : String -> Cmd msg\n\n\n## Caveats\n\n  - Outgoing ports must accept a `Value` from `Json.Encode` or `Json.Decode` and result in a `Cmd`.\n  - Incoming ports must expect a `Value` from `Json.Encode` or `Json.Decode` and result in a `Sub`.\n  - The rule looks for the types `Cmd`, `Sub` and `Value` only - do not alias these types.\n\n\n## Try it out\n\nYou can try this rule out by running the following command:\n\n```bash\nelm-review --template sparksp/elm-review-ports/example --rules NoUnsafePorts\n```\n\n",
+                "type": "NoUnsafePorts.Check -> Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "NoUnusedPorts",
+        "comment": "\n\n@docs rule\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": " Forbid ports that are never used in your project.\n\n    config : List Rule\n    config =\n        [ NoUnusedPorts.rule\n        ]\n\nThis rule reports any ports that are not used _anywhere in the project_. A port is only considered used if it can be traced to a `main` function.\n\n\n## Why is this a problem?\n\nElm is very good at eliminating dead code from the compiled JavaScript. When a port is unused it will not be present in the compiled JavaScript, and when no ports are used the `app.ports` object will be `undefined`. This can lead to JavaScript runtime errors that could take you some time to figure out.\n\n```javascript\nvar app = Elm.Main.init({\n    node: document.getElementById('elm')\n});\n\napp.ports.myPort // undefined\n```\n\n\n## When (not) to use this rule\n\nPorts are not allowed in Elm packages - you should not enable this when developing an Elm package.\n\n\n## Failure\n\n    port module Main exposing (main)\n\n    import Html\n    import Json.Encode as Encode\n\n\n    -- Port `action` is never used.\n    port action : (Encode.Value -> msg) -> Sub msg\n\n    port alarm : Encode.Value -> msg\n\n    -- Port `alarm` is never used, because `play` is never used.\n    play : Cmd msg\n    play =\n        alarm (Encode.string \"play\")\n\n    main =\n        Html.text \"Hello\"\n\n\n## Try it out\n\nYou can try this rule out by running the following command:\n\n```bash\nelm-review --template sparksp/elm-review-ports/example --rules NoUnusedPorts\n```\n\n",
+                "type": "Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    }
+]

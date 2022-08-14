@@ -1,0 +1,48 @@
+[
+    {
+        "name": "Test.Graph",
+        "comment": " Execution graphs for [elm-test](/packages/elm-community/elm-test/latest). Define a graph of what operations happen and roughly in what order, and we'll generate total orderings from your graph, and execute them. Hopefully, we'll find some errors this way.\n\n\n# Fuzzers\n\n@docs fuzzGraph\n\n\n# Types\n\n@docs Action, ExecutionGraph\n\n",
+        "unions": [
+            {
+                "name": "Action",
+                "comment": " An `Action` to be performed at this step in the graph. `Expect` is used to run an [elm-test](/packages/elm-community/elm-test/latest) expectation against `a` at this point in the execution. `Modify` is used to modify `a` in some way.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Expect",
+                        [
+                            "a -> Expect.Expectation"
+                        ]
+                    ],
+                    [
+                        "Modify",
+                        [
+                            "a -> a"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "ExecutionGraph",
+                "comment": " A graph of `Action`s to be taken and the partial order to take them in. See [drathier/elm-graph](/packages/drathier/elm-graph/latest) for details on modifying the graph.\n",
+                "args": [
+                    "comparable",
+                    "a"
+                ],
+                "type": "Graph.Graph comparable (Test.Graph.Action a) ()"
+            }
+        ],
+        "values": [
+            {
+                "name": "fuzzGraph",
+                "comment": " A fuzz test that uses a concurrent execution graph to define what it should do, and then randomizes execution order through the graph.\n\nFor example, consider this execution graph:\n\n                Set.insert 1 → Set.remove 1\n              ↗                             ↘\n    Set.empty → Set.insert 2 → Set.remove 2 → Set.isEmpty\n              ↘                             ↗\n                Set.insert 3 → Set.remove 3\n\nWe could, for example, execute it in this order:\n\n    empty\n        |> insert 1\n        |> insert 2\n        |> remove 1\n        |> insert 3\n        |> remove 3\n        |> remove 2\n        |> Set.isEmpty\n\nBut who in their right mind would think of writing a test-case like that? Good thing we have this tool to find some of [the really obscure bugs](https://xkcd.com/1700).\n\nThe graph above can be modeled using this code (which also has a bunch of expectations mid-way to make narrowing in on an error easier, if there is one):\n\n    fuzzGraph \"Inserting and deleting set elements can be done in almost any order\" Set.empty <|\n        (empty\n            |> insertData 11 (Modify <| Set.insert 1)\n            |> insertData 12 (Expect <| \\set -> set |> Set.member 1 |> Expect.equal True)\n            |> insertData 13 (Modify <| Set.remove 1)\n            |> insertEdge 11 12\n            |> insertEdge 12 13\n            |> insertData 21 (Modify <| Set.insert 2)\n            |> insertData 22 (Expect <| \\set -> set |> Set.member 2 |> Expect.equal True)\n            |> insertData 23 (Modify <| Set.remove 2)\n            |> insertEdge 21 22\n            |> insertEdge 22 23\n            |> insertData 31 (Modify <| Set.insert 3)\n            |> insertData 32 (Expect <| \\set -> set |> Set.member 3 |> Expect.equal True)\n            |> insertData 33 (Modify <| Set.remove 3)\n            |> insertEdge 31 32\n            |> insertEdge 32 33\n            |> insertEdge 13 100\n            |> insertEdge 23 100\n            |> insertEdge 33 100\n            |> insertData 100 (Expect <| \\set -> set |> Set.isEmpty |> Expect.equal True)\n        )\n\n",
+                "type": "String.String -> a -> Test.Graph.ExecutionGraph comparable a -> Test.Test"
+            }
+        ],
+        "binops": []
+    }
+]

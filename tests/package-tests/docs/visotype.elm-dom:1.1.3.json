@@ -1,0 +1,394 @@
+[
+    {
+        "name": "Dom",
+        "comment": "\n\n# Element\n@docs Element\n\n# Create and Render\n@docs element\n@docs render\n\n# Build\n\n## Using a single argument...\n\n### to set the id attribute\n@docs setId\n\n### to add a class, style, or other attribute\n@docs addClass\n@docs addStyle\n@docs addAttribute\n\n### to add an event listener\n@docs addAction\n@docs addInputHandler\n@docs addChangeHandler\n@docs addToggleHandler\n\n### to append or prepend internal text\n@docs appendText\n@docs prependText\n\n### to append or prepend a child element\n@docs appendChild\n@docs prependChild\n\n**you can also supply an `Html` node**\n@docs appendNode\n@docs prependNode\n\n## Using a list argument...\n\n### to add a list of classes, styles, or other attributes\n@docs addClassList\n@docs addStyleList\n@docs addAttributeList\n\n### to append or prepend a list of child elements\n@docs appendChildList\n@docs prependChildList\n\n**you can also supply a list of `Html` nodes**\n@docs appendNodeList\n@docs prependNodeList\n\n## Using a conditional parameter...\n\n### when adding a class, style, or other attribute\n@docs addClassConditional\n@docs addStyleConditional\n@docs addAttributeConditional\n\n### when adding a list of classes, styles, or other attributes\n@docs addClassListConditional\n@docs addStyleListConditional\n@docs addAttributeListConditional\n\n### when adding an event listener for an action\n@docs addActionConditional\n\n### when appending or prepending internal text\n@docs appendTextConditional\n@docs prependTextConditional\n\n### when appending or prepending child elements\n@docs appendChildConditional\n@docs appendChildListConditional\n@docs prependChildConditional\n@docs prependChildListConditional\n\n# Modify\n\n## Removing all instances of a single name or key\n@docs removeClass\n@docs removeStyle\n@docs removeListener\n\n## Replacing the existing list of classes, styles, or other attributes\n@docs replaceClassList\n@docs replaceStyleList\n@docs replaceAttributeList\n\n## Replacing the existing text\n@docs replaceText\n@docs replaceTextConditional\n\n## Replacing the existing descendant tree\n@docs replaceChildList\n@docs replaceChildListConditional\n@docs replaceNodeList\n\n# Advanced Usage\n\n## Setting an element's HTML/XML tag and namespace\n@docs setTag\n@docs setNamespace\n\n## Using the `Html.Keyed` optimization\n@docs setChildListWithKeys\n@docs setNodeListWithKeys\n\n## Customizing event handling...\n\n### by transforming input values\n@docs addInputHandlerWithParser\n@docs addChangeHandlerWithParser\n\n### by using a custom decoder\n@docs addListener\n@docs addListenerConditional\n\n### by using custom handler options\n\n**stop propagation**\n@docs addActionStopPropagation\n@docs addListenerStopPropagation\n\n**prevent default**\n@docs addActionPreventDefault\n@docs addListenerPreventDefault\n\n**both**\n@docs addActionStopAndPrevent\n@docs addListenerStopAndPrevent\n\n# Debug\n@docs getData\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Element",
+                "comment": " `Dom.Element` is an [opaque type] that stores an internal record,\n[defined here]. The internal record contains all of the data needed to construct an\nElm `Html` node. By using a record to temporarily store data about a node, we\ncan partially construct that node with some data, but delay building it until\nall of the data has been assembled.\n\nA new `Element` record is created when you call the [element] function. The\nrecord is then rendered to `Html` when it is added as a child element to another\n`Element` record, or when it is passed as an argument to the [render]\nfunction.\n\nBecause rendering is built into the functional development pattern of\nthis package, it is often only necessary to call the `render` function once, on\nthe root node of your DOM tree. (One notable exception is when you want to use\nthe [Html.Lazy] optimization; see [here] for a very simple example of how you\nwould implement that with this package).\n\n[opaque type]: https://medium.com/@ghivert/designing-api-in-elm-opaque-types-ce9d5f113033\n[defined here]: https://package.elm-lang.org/packages/visotype/elm-dom/latest/Dom-Internal#Data\n[element]: https://package.elm-lang.org/packages/visotype/elm-dom/latest/Dom#element\n[render]: https://package.elm-lang.org/packages/visotype/elm-dom/latest/Dom#render\n[Html.Lazy]: https://package.elm-lang.org/packages/elm/html/latest/Html-Lazy\n[here]: https://github.com/visotype/elm-dom/blob/master/examples/src/Hover.elm\n\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "Dom.Internal.Element msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "addAction",
+                "comment": " Adds an action to the current list of event listeners\n\nAs defined here, an *action* is a simple event listener that does nothing except\nsend a message to your Elm program's update function when the specified event is\ntriggered. This is useful for responding to events like \"click\", \"mouseover\",\n\"mouseout\", and so on.\n\nEvent names in the DOM API are documented [here].\n\n[here]: https://developer.mozilla.org/en-US/docs/Web/Events\n\n",
+                "type": "( String.String, msg ) -> Dom.Element msg -> Dom.Element msg"
+            },
+            {
+                "name": "addActionConditional",
+                "comment": " Adds an action to the current list of event listeners when the condition is\n`True`\n",
+                "type": "( String.String, msg ) -> Basics.Bool -> Dom.Element msg -> Dom.Element msg"
+            },
+            {
+                "name": "addActionPreventDefault",
+                "comment": " Adds an action to the current list of event listeners using the [Handler]\noption `MayPreventDefault` with the option set to `True`\n\n[Handler]: https://package.elm-lang.org/packages/elm/virtual-dom/latest/VirtualDom#Handler\n\n",
+                "type": "( String.String, msg ) -> Dom.Element msg -> Dom.Element msg"
+            },
+            {
+                "name": "addActionStopAndPrevent",
+                "comment": " Adds an action to the current list of event listeners using the [Handler]\ntype `Custom` with both options set to `True`\n\n[Handler]: https://package.elm-lang.org/packages/elm/virtual-dom/latest/VirtualDom#Handler\n\n",
+                "type": "( String.String, msg ) -> Dom.Element msg -> Dom.Element msg"
+            },
+            {
+                "name": "addActionStopPropagation",
+                "comment": " Adds an action to the current list of event listeners using the [Handler]\ntype `MayStopPropagation` with the option set to `True`\n\n[Handler]: https://package.elm-lang.org/packages/elm/virtual-dom/latest/VirtualDom#Handler\n\n",
+                "type": "( String.String, msg ) -> Dom.Element msg -> Dom.Element msg"
+            },
+            {
+                "name": "addAttribute",
+                "comment": " Adds an attribute to the current list\n\nNote: For [complicated reasons], there is more than one `VirtualDom`\nprimitive for assigning attributes to DOM elements. Unless you are really\nconfident in what you are doing, I recommend using the constructors in\n`Html.Attributes` and `Html.Events` (or `Svg.Attributes` and `Svg.Events`) to\nensure that the implementation used internally best matches the current spec.\n\n[complicated reasons]: https://package.elm-lang.org/packages/elm/virtual-dom/latest/VirtualDom#Attribute\n\n",
+                "type": "VirtualDom.Attribute msg -> Dom.Element msg -> Dom.Element msg"
+            },
+            {
+                "name": "addAttributeConditional",
+                "comment": " Adds an attribute to the current list when the condition is `True`\n",
+                "type": "VirtualDom.Attribute msg -> Basics.Bool -> Dom.Element msg -> Dom.Element msg"
+            },
+            {
+                "name": "addAttributeList",
+                "comment": " Adds a list of attributes to the current list\n",
+                "type": "List.List (VirtualDom.Attribute msg) -> Dom.Element msg -> Dom.Element msg"
+            },
+            {
+                "name": "addAttributeListConditional",
+                "comment": " Adds a list of attributes to the current list when the condition is `True`\n",
+                "type": "List.List (VirtualDom.Attribute msg) -> Basics.Bool -> Dom.Element msg -> Dom.Element msg"
+            },
+            {
+                "name": "addChangeHandler",
+                "comment": " Adds value change handler for form elements to the current list of event\nlisteners\n\nThis handler captures `event.target.value` on a [\"change\"] event, which can\nsometimes be useful when designing form interaction. Unlike the default input\nhandler, it does not invoke the \"stopPropagation\" option.\n\n[\"change\"]: https://developer.mozilla.org/en-US/docs/Web/Events/change\n\n",
+                "type": "(String.String -> msg) -> Dom.Element msg -> Dom.Element msg"
+            },
+            {
+                "name": "addChangeHandlerWithParser",
+                "comment": " Adds a value change handler for form elements to the current list of event\nlisteners\n\nThis handler captures `event.target.value` on a [\"change\"] event, which can\nsometimes be useful when designing form interaction. Unlike the default input\nhandler, it does not invoke the \"stopPropagation\" option.\n\nThe parser works as follows: when the \"change\" event is triggered, a `String` is\ncaptured from `event.target.value`; then the parsing function is applied before\nthe resulting value is passed to your Elm program's update function. For simple\nerror handling, it is recommended to have your parsing function return a `Maybe`\nvalue.\n\n[\"change\"]: https://developer.mozilla.org/en-US/docs/Web/Events/change\n\n",
+                "type": "( a -> msg, String.String -> a ) -> Dom.Element msg -> Dom.Element msg"
+            },
+            {
+                "name": "addClass",
+                "comment": " Adds a class name to the current list\n",
+                "type": "String.String -> Dom.Element msg -> Dom.Element msg"
+            },
+            {
+                "name": "addClassConditional",
+                "comment": " Adds a class name to the current list when the condition is `True`\n",
+                "type": "String.String -> Basics.Bool -> Dom.Element msg -> Dom.Element msg"
+            },
+            {
+                "name": "addClassList",
+                "comment": " Adds a list of class names to the current list\n",
+                "type": "List.List String.String -> Dom.Element msg -> Dom.Element msg"
+            },
+            {
+                "name": "addClassListConditional",
+                "comment": " Adds a list of class names to the current list when the condition is `True`\n",
+                "type": "List.List String.String -> Basics.Bool -> Dom.Element msg -> Dom.Element msg"
+            },
+            {
+                "name": "addInputHandler",
+                "comment": " Adds an input handler for form elements to the current list of event\nlisteners\n\nInternally, this function is equivalent to [Html.Events.onInput].\n\n[Html.Events.onInput]: https://package.elm-lang.org/packages/elm/html/latest/Html-Events#onInput\n\n",
+                "type": "(String.String -> msg) -> Dom.Element msg -> Dom.Element msg"
+            },
+            {
+                "name": "addInputHandlerWithParser",
+                "comment": " Adds an input handler for form elements to the current list of event\nlisteners\n\nThe parser works as follows: when the \"input\" event is triggered, a `String` is\ncaptured from `event.target.value`; then the parsing function is applied before\nthe resulting value is passed to your Elm program's update function. For simple\nerror handling, it is recommended to have your parsing function return a `Maybe`\nvalue.\n\n",
+                "type": "( a -> msg, String.String -> a ) -> Dom.Element msg -> Dom.Element msg"
+            },
+            {
+                "name": "addListener",
+                "comment": " Adds a listener to the current list that will invoke a custom `Json` decoder\nwhen the specified [event] is triggered.\n\nThe `VirtualDom` implementation for this function uses the [Handler] type\n`Normal`.\n\n[event]: https://developer.mozilla.org/en-US/docs/Web/Events\n[Handler]: https://package.elm-lang.org/packages/elm/virtual-dom/latest/VirtualDom#Handler\n\n",
+                "type": "( String.String, Json.Decode.Decoder msg ) -> Dom.Element msg -> Dom.Element msg"
+            },
+            {
+                "name": "addListenerConditional",
+                "comment": " Adds a listener to the current list (via `addListener`) when the condition\nis `True`\n\n",
+                "type": "( String.String, Json.Decode.Decoder msg ) -> Basics.Bool -> Dom.Element msg -> Dom.Element msg"
+            },
+            {
+                "name": "addListenerPreventDefault",
+                "comment": " Adds a listener to the current list that will invoke a custom `Json` decoder\nwhen the specified event is triggered\n\nThe `VirtualDom` implementation for this function uses the `Handler` type\n`MayPreventDefault` with the option set to `True`.\n\n",
+                "type": "( String.String, Json.Decode.Decoder msg ) -> Dom.Element msg -> Dom.Element msg"
+            },
+            {
+                "name": "addListenerStopAndPrevent",
+                "comment": " Adds a listener to the current list that will invoke a custom `Json` decoder\nwhen the specified event is triggered\n\nThe `VirtualDom` implementation for this function uses the `Handler` type\n`Custom` with both options set to `True`.\n\n",
+                "type": "( String.String, Json.Decode.Decoder msg ) -> Dom.Element msg -> Dom.Element msg"
+            },
+            {
+                "name": "addListenerStopPropagation",
+                "comment": " Adds a listener to the current list that will invoke a custom `Json` decoder\nwhen the specified event is triggered\n\nThe `VirtualDom` implementation for this function uses the `Handler` type\n`MayStopPropagation` with the option set to `True`.\n\n",
+                "type": "( String.String, Json.Decode.Decoder msg ) -> Dom.Element msg -> Dom.Element msg"
+            },
+            {
+                "name": "addStyle",
+                "comment": " Adds a style key/value pair to the current list\n",
+                "type": "( String.String, String.String ) -> Dom.Element msg -> Dom.Element msg"
+            },
+            {
+                "name": "addStyleConditional",
+                "comment": " Adds a style key/value pair to the current list when the condition is `True`\n",
+                "type": "( String.String, String.String ) -> Basics.Bool -> Dom.Element msg -> Dom.Element msg"
+            },
+            {
+                "name": "addStyleList",
+                "comment": " Adds a list of style key/value pairs to the current list\n",
+                "type": "List.List ( String.String, String.String ) -> Dom.Element msg -> Dom.Element msg"
+            },
+            {
+                "name": "addStyleListConditional",
+                "comment": " Adds a list of style key/value pairs to the current list when the condition\nis `True`\n",
+                "type": "List.List ( String.String, String.String ) -> Basics.Bool -> Dom.Element msg -> Dom.Element msg"
+            },
+            {
+                "name": "addToggleHandler",
+                "comment": " Adds a toggle handler for checkboxes and radio buttons to the current list\nof event listeners\n\nInternally, this function is equivalent to [Html.Events.onCheck].\n\n[Html.Events.onCheck]: https://package.elm-lang.org/packages/elm/html/latest/Html-Events#onCheck\n\n",
+                "type": "(Basics.Bool -> msg) -> Dom.Element msg -> Dom.Element msg"
+            },
+            {
+                "name": "appendChild",
+                "comment": " Renders an element (the first argument) and adds it to the end of the\ncurrent child list (in the second argument)\n",
+                "type": "Dom.Element msg -> Dom.Element msg -> Dom.Element msg"
+            },
+            {
+                "name": "appendChildConditional",
+                "comment": " Renders an element and adds it to the end of the current child list when the\ncondition is true\n",
+                "type": "Dom.Element msg -> Basics.Bool -> Dom.Element msg -> Dom.Element msg"
+            },
+            {
+                "name": "appendChildList",
+                "comment": " Renders a list of elements and adds them to the end of the current child\nlist\n",
+                "type": "List.List (Dom.Element msg) -> Dom.Element msg -> Dom.Element msg"
+            },
+            {
+                "name": "appendChildListConditional",
+                "comment": " Renders a list of elements and adds them to the end of the current child\nlist when the condition is `True`\n",
+                "type": "List.List (Dom.Element msg) -> Basics.Bool -> Dom.Element msg -> Dom.Element msg"
+            },
+            {
+                "name": "appendNode",
+                "comment": " Adds an `Html` node to the end of the the current child list\n",
+                "type": "VirtualDom.Node msg -> Dom.Element msg -> Dom.Element msg"
+            },
+            {
+                "name": "appendNodeList",
+                "comment": " Adds a list of `Html` nodes to the end of the the current child list\n",
+                "type": "List.List (VirtualDom.Node msg) -> Dom.Element msg -> Dom.Element msg"
+            },
+            {
+                "name": "appendText",
+                "comment": " Adds a string to the end of the current text\n",
+                "type": "String.String -> Dom.Element msg -> Dom.Element msg"
+            },
+            {
+                "name": "appendTextConditional",
+                "comment": " Adds a string to the end of the current text when the condition is `True`\n",
+                "type": "String.String -> Basics.Bool -> Dom.Element msg -> Dom.Element msg"
+            },
+            {
+                "name": "element",
+                "comment": " Constructor for `Element` records. The string argument provides the HTML\ntag.\n",
+                "type": "String.String -> Dom.Element msg"
+            },
+            {
+                "name": "getData",
+                "comment": " Returns a record containing the `Element`'s internal data\n",
+                "type": "Dom.Element msg -> Dom.Internal.Data msg"
+            },
+            {
+                "name": "prependChild",
+                "comment": " Renders an element and adds it to the beginning of the current child list\n",
+                "type": "Dom.Element msg -> Dom.Element msg -> Dom.Element msg"
+            },
+            {
+                "name": "prependChildConditional",
+                "comment": " Renders an element and adds it to the beginning of the current child list\nwhen the condition is `True`\n",
+                "type": "Dom.Element msg -> Basics.Bool -> Dom.Element msg -> Dom.Element msg"
+            },
+            {
+                "name": "prependChildList",
+                "comment": " Renders a list of elements and adds them to the beginning of the current\nchild list\n",
+                "type": "List.List (Dom.Element msg) -> Dom.Element msg -> Dom.Element msg"
+            },
+            {
+                "name": "prependChildListConditional",
+                "comment": " Renders a list of elements and adds them to the beginning of the current child list\nwhen the condition is `True`\n",
+                "type": "List.List (Dom.Element msg) -> Basics.Bool -> Dom.Element msg -> Dom.Element msg"
+            },
+            {
+                "name": "prependNode",
+                "comment": " Adds an `Html` node to the beginning of the the current child list\n",
+                "type": "VirtualDom.Node msg -> Dom.Element msg -> Dom.Element msg"
+            },
+            {
+                "name": "prependNodeList",
+                "comment": " Adds a list of `Html` nodes to the beginning of the the current child list\n",
+                "type": "List.List (VirtualDom.Node msg) -> Dom.Element msg -> Dom.Element msg"
+            },
+            {
+                "name": "prependText",
+                "comment": " Adds a string to the beginning of the current text\n",
+                "type": "String.String -> Dom.Element msg -> Dom.Element msg"
+            },
+            {
+                "name": "prependTextConditional",
+                "comment": " Adds a string to the beginning of the current text when the condition is\n`True`\n",
+                "type": "String.String -> Basics.Bool -> Dom.Element msg -> Dom.Element msg"
+            },
+            {
+                "name": "removeClass",
+                "comment": " Removes all instances of a class name from the current list\n",
+                "type": "String.String -> Dom.Element msg -> Dom.Element msg"
+            },
+            {
+                "name": "removeListener",
+                "comment": " Removes all instances of a key (event name) from the current list of event\nlisteners\n",
+                "type": "String.String -> Dom.Element msg -> Dom.Element msg"
+            },
+            {
+                "name": "removeStyle",
+                "comment": " Removes all instances of a style key from the current list\n",
+                "type": "String.String -> Dom.Element msg -> Dom.Element msg"
+            },
+            {
+                "name": "render",
+                "comment": " Convert an `Element` record to Elm `Html`. This function only needs to be\ncalled once, on the root node of your DOM tree.\n",
+                "type": "Dom.Element msg -> VirtualDom.Node msg"
+            },
+            {
+                "name": "replaceAttributeList",
+                "comment": " Replaces the current list of attributes with a new list\n",
+                "type": "List.List (VirtualDom.Attribute msg) -> Dom.Element msg -> Dom.Element msg"
+            },
+            {
+                "name": "replaceChildList",
+                "comment": " Renders a list of elements replaces the current child list with the rendered\nlist\n",
+                "type": "List.List (Dom.Element msg) -> Dom.Element msg -> Dom.Element msg"
+            },
+            {
+                "name": "replaceChildListConditional",
+                "comment": " Replaces the current child list with the rendered list when the condition is\n`True`\n",
+                "type": "List.List (Dom.Element msg) -> Basics.Bool -> Dom.Element msg -> Dom.Element msg"
+            },
+            {
+                "name": "replaceClassList",
+                "comment": " Replaces the current list of class names with a new list\n",
+                "type": "List.List String.String -> Dom.Element msg -> Dom.Element msg"
+            },
+            {
+                "name": "replaceNodeList",
+                "comment": " Replaces the current child list with a list of `Html` nodes\n",
+                "type": "List.List (VirtualDom.Node msg) -> Dom.Element msg -> Dom.Element msg"
+            },
+            {
+                "name": "replaceStyleList",
+                "comment": " Replace the current list of style key/value pairs with a new list\n",
+                "type": "List.List ( String.String, String.String ) -> Dom.Element msg -> Dom.Element msg"
+            },
+            {
+                "name": "replaceText",
+                "comment": " Replaces the current text with new text\n",
+                "type": "String.String -> Dom.Element msg -> Dom.Element msg"
+            },
+            {
+                "name": "replaceTextConditional",
+                "comment": " Replaces the current text with new text when the condition is `True`\n",
+                "type": "String.String -> Basics.Bool -> Dom.Element msg -> Dom.Element msg"
+            },
+            {
+                "name": "setChildListWithKeys",
+                "comment": " Sets or resets the current child list from a keyed list of element records\n\nThis is a performance optimization that will flag the rendering function to use\n[keyedNode] or [keyedNodeNS]. See [here] for details.\n\n[keyedNode]: https://package.elm-lang.org/packages/elm/virtual-dom/latest/VirtualDom#keyedNode\n[keyedNodeNS]: https://package.elm-lang.org/packages/elm/virtual-dom/latest/VirtualDom#keyedNodeNS\n[here]: https://guide.elm-lang.org/optimization/keyed.html\n\n",
+                "type": "List.List ( String.String, Dom.Element msg ) -> Dom.Element msg -> Dom.Element msg"
+            },
+            {
+                "name": "setId",
+                "comment": " Sets or resets the id attribute\n",
+                "type": "String.String -> Dom.Element msg -> Dom.Element msg"
+            },
+            {
+                "name": "setNamespace",
+                "comment": " Sets the XML namespace as described [here]\n\nThis is required when using `Element` records to construct SVG nodes.\n\n[here]: https://package.elm-lang.org/packages/elm/virtual-dom/latest/VirtualDom#nodeNS\n",
+                "type": "String.String -> Dom.Element msg -> Dom.Element msg"
+            },
+            {
+                "name": "setNodeListWithKeys",
+                "comment": " Sets or resets the current child list from a keyed list of `Html` nodes\n\nThis is a performance optimization that will flag the rendering function to use\n[keyedNode] or [keyedNodeNS]. See [here] for details.\n\n[keyedNode]: https://package.elm-lang.org/packages/elm/virtual-dom/latest/VirtualDom#keyedNode\n[keyedNodeNS]: https://package.elm-lang.org/packages/elm/virtual-dom/latest/VirtualDom#keyedNodeNS\n[here]: https://guide.elm-lang.org/optimization/keyed.html\n\n",
+                "type": "List.List ( String.String, VirtualDom.Node msg ) -> Dom.Element msg -> Dom.Element msg"
+            },
+            {
+                "name": "setTag",
+                "comment": " Sets or resets the HTML tag\n\nThis is generally unnecessary because the tag is set by the `element`\nconstructor; it may be useful to have when working with component libraries\nbased on this package.\n\n",
+                "type": "String.String -> Dom.Element msg -> Dom.Element msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Dom.Internal",
+        "comment": " This module is exposed so that package developers can make use of `Element`\nrecord internals. It is not recommended for use in application code.\n\n# Internal Types\n@docs Element\n@docs Data\n\n# Internal Functions\n@docs modify\n@docs render\n\n# Internal Helpers for Event Handling\n@docs capture\n@docs captureStopPropagation\n@docs capturePreventDefault\n@docs captureStopAndPrevent\n\n",
+        "unions": [
+            {
+                "name": "Element",
+                "comment": " The type exposed by `Dom.elm`. You can think of this as an abstraction of\n[Element](https://developer.mozilla.org/en-US/docs/Web/API/Element) in the\n[Document Object Model](https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model/Introduction)\n(DOM) interface to HTML and XML documents.\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": [
+                    [
+                        "Element",
+                        [
+                            "Dom.Internal.Data msg"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Data",
+                "comment": " An `Element`'s internal data. This is just a record containing all of the\ninformation needed to construct a `VirtualDom` node.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ tag : String.String, id : String.String, classes : List.List String.String, styles : List.List ( String.String, String.String ), listeners : List.List ( String.String, VirtualDom.Handler msg ), attributes : List.List (VirtualDom.Attribute msg), text : String.String, children : List.List (VirtualDom.Node msg), namespace : String.String, keys : List.List String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "capture",
+                "comment": " Construct a `VirtualDom.Handler` that captures input by proving the name of\na field at `event.target` to capture, a decoder to read that field, and a\nmessage token to pass the result to the Elm program's update function\n",
+                "type": "( String.String, Json.Decode.Decoder a ) -> (a -> msg) -> VirtualDom.Handler msg"
+            },
+            {
+                "name": "capturePreventDefault",
+                "comment": " Construct a `VirtualDom.Handler` with `MayPreventDefault` set to `True`\n",
+                "type": "( String.String, Json.Decode.Decoder a ) -> (a -> msg) -> VirtualDom.Handler msg"
+            },
+            {
+                "name": "captureStopAndPrevent",
+                "comment": " Construct a `VirtualDom.Handler` with both `Custom` options set to `True`\n",
+                "type": "( String.String, Json.Decode.Decoder a ) -> (a -> msg) -> VirtualDom.Handler msg"
+            },
+            {
+                "name": "captureStopPropagation",
+                "comment": " Construct a `VirtualDom.Handler` with `MayStopPropagation` set to `True`\n",
+                "type": "( String.String, Json.Decode.Decoder a ) -> (a -> msg) -> VirtualDom.Handler msg"
+            },
+            {
+                "name": "modify",
+                "comment": " Modify an `Element`'s internal data by applying a record update function\n",
+                "type": "(Dom.Internal.Data msg -> Dom.Internal.Data msg) -> Dom.Internal.Element msg -> Dom.Internal.Element msg"
+            },
+            {
+                "name": "render",
+                "comment": " Internal render function\n",
+                "type": "Dom.Internal.Element msg -> VirtualDom.Node msg"
+            }
+        ],
+        "binops": []
+    }
+]

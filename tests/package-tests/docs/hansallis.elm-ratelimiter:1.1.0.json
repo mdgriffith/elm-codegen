@@ -1,0 +1,76 @@
+[
+    {
+        "name": "RateLimiter",
+        "comment": " This library provides a simple sliding log rate limiter. It should be fed a Posix.Posix using a Time.every subscription.\n\n\n# Constructor\n\n@docs slidingLog, RateLimiter\n\n\n# Triggering an operation\n\n@docs trigger\n\n\n# Defining window size\n\n@docs hours, minutes, seconds, days, weeks\n\n\n# Keeping time\n\n@docs update, sub, command, Msg\n\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " Message to update current time\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "RateLimiter",
+                "comment": " Type representing a rate limiter\n",
+                "args": [
+                    "comparable"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "command",
+                "comment": " Provides a command to initialize the current time\n",
+                "type": "Platform.Cmd.Cmd RateLimiter.Msg"
+            },
+            {
+                "name": "days",
+                "comment": " A single day\n\n    days 1\n\n",
+                "type": "Basics.Float -> TypedTime.TypedTime"
+            },
+            {
+                "name": "hours",
+                "comment": " One and a half hours\n\n    hours 1.5\n\n",
+                "type": "Basics.Float -> TypedTime.TypedTime"
+            },
+            {
+                "name": "minutes",
+                "comment": " 5 minutes\n\n    minutes 5\n\n",
+                "type": "Basics.Float -> TypedTime.TypedTime"
+            },
+            {
+                "name": "seconds",
+                "comment": " 10 seconds\n\n    seconds 10\n\n",
+                "type": "Basics.Float -> TypedTime.TypedTime"
+            },
+            {
+                "name": "slidingLog",
+                "comment": " Create a sliding log rate limiter that allows 5 operations every 5 minutes.\n\n    slidingLog 5 (minutes 5)\n\n",
+                "type": "Basics.Int -> TypedTime.TypedTime -> RateLimiter.RateLimiter comparable"
+            },
+            {
+                "name": "sub",
+                "comment": " Provides a suitable Time.every subscriptions\n",
+                "type": "RateLimiter.RateLimiter comparable -> Platform.Sub.Sub RateLimiter.Msg"
+            },
+            {
+                "name": "trigger",
+                "comment": " Try to execute an operation. If allowed, the accept function is called with an updated RateLimiter instance and then returned. If not allowed, the reject argument is returned.\n\n    let\n        accept =\n            \\rl -> ( { model | rateLimiter = rl }, expensiveHttpRequest RequestCompleted } )\n    in\n    RateLimiter.trigger rateLimiter identifier accept ( model, Cmd.none )\n\n",
+                "type": "RateLimiter.RateLimiter comparable -> comparable -> (RateLimiter.RateLimiter comparable -> response) -> response -> response"
+            },
+            {
+                "name": "update",
+                "comment": " Update the current time.\n",
+                "type": "RateLimiter.Msg -> RateLimiter.RateLimiter comparable -> RateLimiter.RateLimiter comparable"
+            },
+            {
+                "name": "weeks",
+                "comment": " A week\n\n    weeks 1\n\n",
+                "type": "Basics.Float -> TypedTime.TypedTime"
+            }
+        ],
+        "binops": []
+    }
+]

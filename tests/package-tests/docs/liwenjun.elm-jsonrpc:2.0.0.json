@@ -1,0 +1,145 @@
+[
+    {
+        "name": "JsonRpc",
+        "comment": " 一个通用的JsonRpc-V2调用接口，帮助实现JsonRpc客户端应用。\n\n\n# 数据结构\n\n\n## Http 数据结构\n\n@docs WebData\n\n\n## JsonRpc 数据结构\n\n@docs Response, RpcError, RpcData\n\n\n## 用于 Task 调用的 JsonRpc 数据结构\n\n@docs TaskData, RpcTaskData\n\n\n## 便于用户使用的 JsonRpc 数据结构\n\n@docs Data\n\n\n## JsonRpc 调用参数结构\n\n@docs Param\n\n\n# Cmd 方式调用\n\n@docs call\n\n\n# Task 方式调用\n\n@docs callTask\n\n\n# 辅助函数\n\n@docs flatResponse, flat, toResult, handleJsonResponse\n@docs httpErrToString, errorToString\n\n",
+        "unions": [
+            {
+                "name": "Data",
+                "comment": " 便于处理的返回结果\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "RpcResult",
+                        [
+                            "a"
+                        ]
+                    ],
+                    [
+                        "RpcErr",
+                        [
+                            "JsonRpc.RpcError"
+                        ]
+                    ],
+                    [
+                        "HttpErr",
+                        [
+                            "Http.Error"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Response",
+                "comment": " JsonRpc 响应结果\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "InnerResult",
+                        [
+                            "a"
+                        ]
+                    ],
+                    [
+                        "InnerError",
+                        [
+                            "JsonRpc.RpcError"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Param",
+                "comment": " 调用参数\n",
+                "args": [],
+                "type": "{ url : String.String, token : Maybe.Maybe String.String, method : String.String, params : List.List ( String.String, Json.Encode.Value ) }"
+            },
+            {
+                "name": "RpcData",
+                "comment": " 基于 http 的 JsonRpc 响应结果\n",
+                "args": [
+                    "a"
+                ],
+                "type": "JsonRpc.WebData (JsonRpc.Response a)"
+            },
+            {
+                "name": "RpcError",
+                "comment": " JsonRpc 返回错误格式定义\n",
+                "args": [],
+                "type": "{ code : Basics.Int, message : String.String, data : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "RpcTaskData",
+                "comment": " 基于 http Task 调用 JsonRpc 返回结果\n",
+                "args": [
+                    "a"
+                ],
+                "type": "JsonRpc.TaskData (JsonRpc.Response a)"
+            },
+            {
+                "name": "TaskData",
+                "comment": " Http Task 调用返回数据定义\n",
+                "args": [
+                    "a"
+                ],
+                "type": "Task.Task Http.Error a"
+            },
+            {
+                "name": "WebData",
+                "comment": " Http 返回数据定义\n",
+                "args": [
+                    "a"
+                ],
+                "type": "Result.Result Http.Error a"
+            }
+        ],
+        "values": [
+            {
+                "name": "call",
+                "comment": " HTTP 调用方法\n",
+                "type": "JsonRpc.Param -> Json.Decode.Decoder a -> (JsonRpc.RpcData a -> msg) -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "callTask",
+                "comment": " HTTP Task调用方法\n",
+                "type": "JsonRpc.Param -> Json.Decode.Decoder a -> JsonRpc.RpcTaskData a"
+            },
+            {
+                "name": "errorToString",
+                "comment": " ",
+                "type": "JsonRpc.RpcError -> String.String"
+            },
+            {
+                "name": "flat",
+                "comment": " 将rpc调用的返回结果平面化处理\n",
+                "type": "JsonRpc.RpcData a -> JsonRpc.Data a"
+            },
+            {
+                "name": "flatResponse",
+                "comment": " 返回结果平面化处理\n",
+                "type": "JsonRpc.Response a -> JsonRpc.Data a"
+            },
+            {
+                "name": "handleJsonResponse",
+                "comment": " ",
+                "type": "Json.Decode.Decoder a -> Http.Response String.String -> JsonRpc.WebData a"
+            },
+            {
+                "name": "httpErrToString",
+                "comment": " Http.Error转换为String\n",
+                "type": "Http.Error -> String.String"
+            },
+            {
+                "name": "toResult",
+                "comment": " 将平面化处理结果转换为Result\n",
+                "type": "JsonRpc.Data a -> Result.Result String.String a"
+            }
+        ],
+        "binops": []
+    }
+]

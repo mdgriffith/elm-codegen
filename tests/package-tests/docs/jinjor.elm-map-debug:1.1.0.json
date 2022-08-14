@@ -1,0 +1,137 @@
+[
+    {
+        "name": "Thing",
+        "comment": "\n\n\n# Bytes\n\n@docs AliasOfBytes, WrappedOpenBytes, WrappedClosedBytes\n\n\n# Internal\n\n@docs AliasOfInternal, AliasOfInternalAlias, WrappedOpenInternal, WrappedClosedInternal, WrappedOpenInternalAlias, WrappedClosedInternalAlias\n\n\n# Private\n\n@docs AliasOfPrivate, AliasOfPrivateAlias, WrappedOpenPrivate, WrappedClosedPrivate, WrappedOpenPrivateAlias, WrappedClosedPrivateAlias\n\n",
+        "unions": [
+            {
+                "name": "WrappedClosedBytes",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "WrappedClosedInternal",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "WrappedClosedInternalAlias",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "WrappedClosedPrivate",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "WrappedClosedPrivateAlias",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "WrappedOpenBytes",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "WrapedOpenBytes",
+                        [
+                            "Bytes.Bytes"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "WrappedOpenInternal",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "WrappedOpenInternal",
+                        [
+                            "Internal.Internal"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "WrappedOpenInternalAlias",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "WrappedOpenInternalAlias",
+                        [
+                            "Internal.InternalAlias"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "WrappedOpenPrivate",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "WrappedOpenPrivate",
+                        [
+                            "Thing.Private"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "WrappedOpenPrivateAlias",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "WrappedOpenPrivateAlias",
+                        [
+                            "Thing.PrivateAlias"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "AliasOfBytes",
+                "comment": " ",
+                "args": [],
+                "type": "Bytes.Bytes"
+            },
+            {
+                "name": "AliasOfInternal",
+                "comment": " ",
+                "args": [],
+                "type": "Internal.Internal"
+            },
+            {
+                "name": "AliasOfInternalAlias",
+                "comment": " ",
+                "args": [],
+                "type": "Internal.InternalAlias"
+            },
+            {
+                "name": "AliasOfPrivate",
+                "comment": " ",
+                "args": [],
+                "type": "Thing.Private"
+            },
+            {
+                "name": "AliasOfPrivateAlias",
+                "comment": " ",
+                "args": [],
+                "type": "Thing.PrivateAlias"
+            }
+        ],
+        "values": [],
+        "binops": []
+    }
+]

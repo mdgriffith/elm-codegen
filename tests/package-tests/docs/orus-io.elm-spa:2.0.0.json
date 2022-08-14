@@ -1,0 +1,415 @@
+[
+    {
+        "name": "Effect",
+        "comment": " This module provides a [`Effect`](#Effect) type that carry both Cmd and messages for\na shared update\n\n\n# Create\n\n@docs Effect, none, batch, fromCmd, fromSharedCmd, fromShared, perform, attempt\n\n\n# Transform\n\n@docs map, toCmd\n\n\n# Join effect to a model\n\nThese functions join an effect to a given model, for using pipeline syntax in\nyour 'update' functions\n\n@docs with, withNone, withBatch, withCmd, withSharedCmd, withShared, withMap, withPerform, withAttempt\n\n\n# Add effect to a (model, effect) pair\n\nThese functions add a new effect to a given (model, effect) pair, for using\npipeline syntax in your 'update' functions\n\n@docs add, addBatch, addCmd, addSharedCmd, addShared, addMap, addPerform, addAttempt\n\n",
+        "unions": [
+            {
+                "name": "Effect",
+                "comment": " A collection of shared and platform effects\n",
+                "args": [
+                    "sharedMsg",
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "add",
+                "comment": " Add a new Effect to an existing model-Effect pair\n",
+                "type": "Effect.Effect sharedMsg msg -> ( model, Effect.Effect sharedMsg msg ) -> ( model, Effect.Effect sharedMsg msg )"
+            },
+            {
+                "name": "addAttempt",
+                "comment": " Add an affect that attempts a Task to an existing model-Effect pair\n",
+                "type": "(Result.Result x a -> msg) -> Task.Task x a -> ( model, Effect.Effect sharedMsg msg ) -> ( model, Effect.Effect sharedMsg msg )"
+            },
+            {
+                "name": "addBatch",
+                "comment": " Add a list of new Effect to an existing model-Effect pair\n",
+                "type": "List.List (Effect.Effect sharedMsg msg) -> ( model, Effect.Effect sharedMsg msg ) -> ( model, Effect.Effect sharedMsg msg )"
+            },
+            {
+                "name": "addCmd",
+                "comment": " Add a [`Cmd`](/packages/elm/core/latest/Platform-Cmd#Cmd) to an existing\nmodel-Effect pair\n",
+                "type": "Platform.Cmd.Cmd msg -> ( model, Effect.Effect sharedMsg msg ) -> ( model, Effect.Effect sharedMsg msg )"
+            },
+            {
+                "name": "addMap",
+                "comment": " Add a new mapped Effect to an existing model-Effect pair\n",
+                "type": "(msg1 -> msg) -> Effect.Effect sharedMsg msg1 -> ( model, Effect.Effect sharedMsg msg ) -> ( model, Effect.Effect sharedMsg msg )"
+            },
+            {
+                "name": "addPerform",
+                "comment": " Add an affect that performs a Task to an existing model-Effect pair\n",
+                "type": "(a -> msg) -> Task.Task Basics.Never a -> ( model, Effect.Effect sharedMsg msg ) -> ( model, Effect.Effect sharedMsg msg )"
+            },
+            {
+                "name": "addShared",
+                "comment": " Add a new shared Msg to an existing model-Effect pair\n\n    ( model, effect )\n        |> Effect.addShared Shared.clearCache\n\n",
+                "type": "sharedMsg -> ( model, Effect.Effect sharedMsg msg ) -> ( model, Effect.Effect sharedMsg msg )"
+            },
+            {
+                "name": "addSharedCmd",
+                "comment": " Add a shared [`Cmd`](/packages/elm/core/latest/Platform-Cmd#Cmd) to an existing\nmodel-Effect pair\n\n    ( model, effect )\n        |> Effect.addShared Shared.renewToken\n\n",
+                "type": "Platform.Cmd.Cmd sharedMsg -> ( model, Effect.Effect sharedMsg msg ) -> ( model, Effect.Effect sharedMsg msg )"
+            },
+            {
+                "name": "attempt",
+                "comment": " Build an effect that attempts a Task\n",
+                "type": "(Result.Result x a -> msg) -> Task.Task x a -> Effect.Effect sharedMsg msg"
+            },
+            {
+                "name": "batch",
+                "comment": " Batch effects. Similar to\n[`Cmd.map`](/packages/elm/core/latest/Platform-Cmd#batch)\n",
+                "type": "List.List (Effect.Effect sharedMsg msg) -> Effect.Effect sharedMsg msg"
+            },
+            {
+                "name": "fromCmd",
+                "comment": " Build an effect from a Cmd\n",
+                "type": "Platform.Cmd.Cmd msg -> Effect.Effect sharedMsg msg"
+            },
+            {
+                "name": "fromShared",
+                "comment": " Build an effect from a shared Msg. The message will be send as-is to the\nshared update\n",
+                "type": "sharedMsg -> Effect.Effect sharedMsg msg"
+            },
+            {
+                "name": "fromSharedCmd",
+                "comment": " Build an effect from a shared Cmd. The result of this command will be handled\nby the shared update no matter where it is emitted from\n",
+                "type": "Platform.Cmd.Cmd sharedMsg -> Effect.Effect sharedMsg msg"
+            },
+            {
+                "name": "map",
+                "comment": " Transform the messages produced by an Effect. Similar to\n[`Cmd.map`](/packages/elm/core/latest/Platform-Cmd#map).\n",
+                "type": "(a -> b) -> Effect.Effect sharedMsg a -> Effect.Effect sharedMsg b"
+            },
+            {
+                "name": "none",
+                "comment": " Tells that there are no effect\n",
+                "type": "Effect.Effect sharedMsg msg"
+            },
+            {
+                "name": "perform",
+                "comment": " Build an effect that performs a Task\n",
+                "type": "(a -> msg) -> Task.Task Basics.Never a -> Effect.Effect sharedMsg msg"
+            },
+            {
+                "name": "toCmd",
+                "comment": " Convert a collection of effect to a connection of\n[`Cmd`](/packages/elm/core/latest/Platform-Cmd#Cmd)\n",
+                "type": "( sharedMsg -> msg, subMsg -> msg ) -> Effect.Effect sharedMsg subMsg -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "with",
+                "comment": " Wraps the model with the given Effect\n",
+                "type": "Effect.Effect sharedMsg msg -> model -> ( model, Effect.Effect sharedMsg msg )"
+            },
+            {
+                "name": "withAttempt",
+                "comment": " Wraps the model with an affect that attempts a Task\n",
+                "type": "(Result.Result x a -> msg) -> Task.Task x a -> model -> ( model, Effect.Effect sharedMsg msg )"
+            },
+            {
+                "name": "withBatch",
+                "comment": " Wraps the model with a list of Effect\n\n    init : ( Model, Effect Msg )\n    init =\n        myModel\n            |> Effect.withBatch [ someEffect, anotherEffect ]\n\n",
+                "type": "List.List (Effect.Effect sharedMsg msg) -> model -> ( model, Effect.Effect sharedMsg msg )"
+            },
+            {
+                "name": "withCmd",
+                "comment": " Wraps the model with a Cmd\n\n    init : ( Model, Effect Msg )\n    init =\n        myModel\n            |> Effect.withCmd someCmd\n\n",
+                "type": "Platform.Cmd.Cmd msg -> model -> ( model, Effect.Effect sharedMsg msg )"
+            },
+            {
+                "name": "withMap",
+                "comment": " Wraps the model with a mapped effect. Should only be used in top-level\npackages\n\n    init : ( Model, Effect Msg )\n    init =\n        myModel\n            |> Effect.withMap SharedMsg Shared.refreshIdentity\n\n",
+                "type": "(msg1 -> msg) -> Effect.Effect sharedMsg msg1 -> model -> ( model, Effect.Effect sharedMsg msg )"
+            },
+            {
+                "name": "withNone",
+                "comment": " Wraps the model with Effect.none\n\n    init : ( Model, Effect Msg )\n    init =\n        myModel\n            |> Effect.withNone\n\n",
+                "type": "model -> ( model, Effect.Effect sharedMsg msg )"
+            },
+            {
+                "name": "withPerform",
+                "comment": " Wraps the model with an affect that performs a Task\n",
+                "type": "(a -> msg) -> Task.Task Basics.Never a -> model -> ( model, Effect.Effect sharedMsg msg )"
+            },
+            {
+                "name": "withShared",
+                "comment": " Wraps the model with a shared Msg\n\n    init : ( Model, Effect Msg )\n    init =\n        myModel\n            |> Effect.withCmd Shared.clearCache\n\n",
+                "type": "sharedMsg -> model -> ( model, Effect.Effect sharedMsg msg )"
+            },
+            {
+                "name": "withSharedCmd",
+                "comment": " Wraps the model with a shared Cmd\n\n    init : ( Model, Effect Msg )\n    init =\n        myModel\n            |> Effect.withCmd Shared.refreshIdentity\n\n",
+                "type": "Platform.Cmd.Cmd sharedMsg -> model -> ( model, Effect.Effect sharedMsg msg )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Spa",
+        "comment": " A typical SPA application is defined in a few simple steps:\n\n  - boostrap the application with [init](#init) or [initNoShared](#initNoShared)\n\n  - add pages with [addPublicPage](#addPublicPage) and [addProtectedPage](#addProtectedPage)\n\n  - finalize the application with [application](#application) (with possible the help of [mapSharedMsg](#mapSharedMsg)\n\n        main =\n            Spa.init\n                { defaultView = View.defaultView\n                , extractIdentity = Shared.identity\n                }\n                |> Spa.addPublicPage mappers Route.matchHome Home.page\n                |> Spa.addPublicPage mappers Route.matchSignIn SignIn.page\n                |> Spa.addProtectedPage mappers Route.matchCounter Counter.page\n                |> Spa.addPublicPage mappers Route.matchTime Time.page\n                |> Spa.application View.map\n                    { toRoute = Route.toRoute\n                    , init = Shared.init\n                    , update = Shared.update\n                    , subscriptions = Shared.subscriptions\n                    , toDocument = toDocument\n                    , protectPage = Route.toUrl >> Just >> Route.SignIn >> Route.toUrl\n                    }\n                |> Browser.application\n\n\n# Create the application\n\n@docs init, initNoShared\n\n\n# Add pages\n\n@docs addPublicPage, addProtectedPage\n\n\n# Finalize\n\nOnce all the pages are added to the application, we can change it into a record\nsuitable for the `Browser.application` function.\n\n@docs application, mapSharedMsg, onUrlRequest\n\n\n# Types\n\n@docs Builder, Model, Msg, SetupError, Application\n\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " The Application Msg type\n",
+                "args": [
+                    "sharedMsg",
+                    "pageMsg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "SetupError",
+                "comment": " A custom setup error for the underlying PageStack.Stack\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Application",
+                "comment": " The Application type that can be passed to Browser.application\n",
+                "args": [
+                    "flags",
+                    "shared",
+                    "sharedMsg",
+                    "route",
+                    "current",
+                    "previous",
+                    "currentMsg",
+                    "previousMsg"
+                ],
+                "type": "{ init : flags -> Url.Url -> Browser.Navigation.Key -> ( Spa.Model route shared current previous, Platform.Cmd.Cmd (Spa.Msg sharedMsg (Spa.PageStack.Msg route currentMsg previousMsg)) ), view : Spa.Model route shared current previous -> Browser.Document (Spa.Msg sharedMsg (Spa.PageStack.Msg route currentMsg previousMsg)), update : Spa.Msg sharedMsg (Spa.PageStack.Msg route currentMsg previousMsg) -> Spa.Model route shared current previous -> ( Spa.Model route shared current previous, Platform.Cmd.Cmd (Spa.Msg sharedMsg (Spa.PageStack.Msg route currentMsg previousMsg)) ), subscriptions : Spa.Model route shared current previous -> Platform.Sub.Sub (Spa.Msg sharedMsg (Spa.PageStack.Msg route currentMsg previousMsg)), onUrlRequest : Browser.UrlRequest -> Spa.Msg sharedMsg (Spa.PageStack.Msg route currentMsg previousMsg), onUrlChange : Url.Url -> Spa.Msg sharedMsg (Spa.PageStack.Msg route currentMsg previousMsg) }"
+            },
+            {
+                "name": "Builder",
+                "comment": " The intermediate type for building an application.\n",
+                "args": [
+                    "route",
+                    "identity",
+                    "shared",
+                    "sharedMsg",
+                    "view",
+                    "current",
+                    "previous",
+                    "currentMsg",
+                    "previousMsg"
+                ],
+                "type": "{ extractIdentity : shared -> Maybe.Maybe identity, pageStack : Spa.PageStack.Stack Spa.SetupError shared sharedMsg route view current previous currentMsg previousMsg }"
+            },
+            {
+                "name": "Model",
+                "comment": " The Application Model\n",
+                "args": [
+                    "route",
+                    "shared",
+                    "current",
+                    "previous"
+                ],
+                "type": "{ key : Browser.Navigation.Key, currentRoute : route, shared : shared, page : Spa.PageStack.Model Spa.SetupError current previous }"
+            }
+        ],
+        "values": [
+            {
+                "name": "addProtectedPage",
+                "comment": " Add a protected page to the application\n\n    |> Spa.addProtectedPage (View.map, View.map) matchProfile Pages.Profile.page\n\nThe parameters are the same as addPublicPage, except that the page constructor\ntakes the current identity in addition to the shared state:\n\n    page : shared -> identity -> Page\n\n",
+                "type": "( Spa.PageStack.CurrentViewMap route currentPageMsg previousStackMsg pageView view, Spa.PageStack.PreviousViewMap route currentPageMsg previousStackMsg previousView view ) -> (route -> Maybe.Maybe pageFlags) -> (shared -> identity -> Spa.Page.Page pageFlags sharedMsg pageView currentPageModel currentPageMsg) -> Spa.Builder route identity shared sharedMsg previousView previousCurrent previousPrevious previousStackCurrentMsg previousStackPreviousMsg -> Spa.Builder route identity shared sharedMsg view currentPageModel (Spa.PageStack.Model Spa.SetupError previousCurrent previousPrevious) currentPageMsg (Spa.PageStack.Msg route previousStackCurrentMsg previousStackPreviousMsg)"
+            },
+            {
+                "name": "addPublicPage",
+                "comment": " Add a public page to the application\n\n    |> Spa.addPublicPage (View.map, View.map) matchHome Pages.Home.page\n\n  - `mappers` is a Tuple of view mappers. For example, if the application view is\n    a `Html msg`, the mappers will be: `( Html.map, Html.map )`. The duplication\n    is for technical reasons (see the `addPage` function implementation).\n\n  - `match` is a function that takes a route and returns the page flags if and\n    only if the route matches the page. This is the place were information can\n    be extracted from the route to be given to the page `init` function.\n\n    A simple match function can be:\n\n        matchHome : Route -> Maybe ()\n        matchHome route =\n            case route of\n                Home ->\n                    Just ()\n\n                _ ->\n                    Nothing\n\n    A match function that extract information:\n\n        matchSignIn : Route -> Maybe (Maybe String)\n        matchSignIn route =\n            case route of\n                SignIn redirect ->\n                    Just redirect\n\n                _ ->\n                    Nothing\n\n  - `page` is a page constructor. A public page constructor is a function that\n    takes the shared state:\n\n        page : shared -> Page\n\n",
+                "type": "( Spa.PageStack.CurrentViewMap route currentPageMsg previousStackMsg pageView view, Spa.PageStack.PreviousViewMap route currentPageMsg previousStackMsg previousView view ) -> (route -> Maybe.Maybe pageFlags) -> (shared -> Spa.Page.Page pageFlags sharedMsg pageView currentPageModel currentPageMsg) -> Spa.Builder route identity shared sharedMsg previousView previousCurrent previousPrevious previousStackCurrentMsg previousStackPreviousMsg -> Spa.Builder route identity shared sharedMsg view currentPageModel (Spa.PageStack.Model Spa.SetupError previousCurrent previousPrevious) currentPageMsg (Spa.PageStack.Msg route previousStackCurrentMsg previousStackPreviousMsg)"
+            },
+            {
+                "name": "application",
+                "comment": " Finalize the Spa application into a record suitable for the `Browser.application`\n\n    appWithPages\n        |> Spa.application View.map\n            { toRoute = Route.toRoute\n            , protectPage = Route.toUrl >> Just >> Route.SignIn >> Route.toUrl\n            , init = Shared.init\n            , update = Shared.update\n            , subscriptions = Shared.subscriptions\n            , toDocument = toDocument\n            }\n        |> Browser.application\n\nIt takes a view mapper, then:\n\n  - `toRoute` changes a Url.Url into a (custom) route\n  - `protectPage` produces a redirection url when a protected route is accessed\n    without being identified\n  - `init` is the init function of the shared module\n  - `update` is the update function of the shared module\n  - `subscriptions` is the subscriptions function of the shared module\n  - `toDocument` is a function that convert a view to a `Browser.Document`\n\n",
+                "type": "((Spa.PageStack.Msg route currentMsg previousMsg -> Spa.Msg sharedMsg (Spa.PageStack.Msg route currentMsg previousMsg)) -> pageView -> view) -> { toRoute : Url.Url -> route, init : flags -> Browser.Navigation.Key -> ( shared, Platform.Cmd.Cmd sharedMsg ), subscriptions : shared -> Platform.Sub.Sub sharedMsg, update : sharedMsg -> shared -> ( shared, Platform.Cmd.Cmd sharedMsg ), protectPage : route -> String.String, toDocument : shared -> view -> Browser.Document (Spa.Msg sharedMsg (Spa.PageStack.Msg route currentMsg previousMsg)) } -> Spa.Builder route identity shared sharedMsg pageView current previous currentMsg previousMsg -> Spa.Application flags shared sharedMsg route current previous currentMsg previousMsg"
+            },
+            {
+                "name": "init",
+                "comment": " Bootstrap a Spa application\n\n    Spa.init\n        { defaultView = View.defaultView\n        , extractIdentity = Shared.identity\n        }\n\n  - `defaultView` is the default view that will be used when no other page could\n    be viewed, which should be _never_ once your app is properly setup (more on\n    that a little further).\n\n  - `extractIdentity` is a function that returns a `Maybe identity` from a\n    `Shared` record. The actual `identity` type can be anything you want.\n\n",
+                "type": "{ defaultView : view, extractIdentity : shared -> Maybe.Maybe identity } -> Spa.Builder route identity shared sharedMsg view () () () ()"
+            },
+            {
+                "name": "initNoShared",
+                "comment": " Bootstrap a Spa application that has no Shared state\n",
+                "type": "{ defaultView : view } -> Spa.Builder route () () () view () () () ()"
+            },
+            {
+                "name": "mapSharedMsg",
+                "comment": " maps a sharedMsg into a Msg. Useful in the 'toDocument' function, to add\nglobal actions that trigger shared messages\n",
+                "type": "sharedMsg -> Spa.Msg sharedMsg pageMsg"
+            },
+            {
+                "name": "onUrlRequest",
+                "comment": " Set a custom message for handling the onUrlRequest event of the\nBrowser application.\n\nThe default handler does what most people expects (Nav.push internal\nurls, and Nav.load external urls).\n\n",
+                "type": "(Browser.UrlRequest -> sharedMsg) -> Spa.Application flags shared sharedMsg route current previous currentMsg previousMsg -> Spa.Application flags shared sharedMsg route current previous currentMsg previousMsg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Spa.Page",
+        "comment": " Provides `Page` builders\n\n@docs Page, static, sandbox, element\n@docs onNewFlags\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Page",
+                "comment": " A page is a small TEA app on its own.\n\nIt has the typical `Msg`, `Model`, `init`, `update`, `subscriptions` and `view`.\nIt differs from a normal application in a few ways:\n\n  - The `init` and `update` functions return `Effect Shared.Msg Msg` instead of\n    `Cmd Msg`.\n\n  - The `init` function takes a unique `flags` argument that is the output of the\n    page `match` function (see [Spa.addPublicPage](Spa#addPublicPage)).\n\n  - The `view` function returns a `View Msg`, which can be whatever you define.\n\n",
+                "args": [
+                    "flags",
+                    "sharedMsg",
+                    "view",
+                    "model",
+                    "msg"
+                ],
+                "type": "Internal.Page flags sharedMsg view model msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "element",
+                "comment": " Create a page that can communicate with the outside world.\n\nIt is the page equivalent of a [element program](/packages/elm/browser/latest/Browser#element)\n\n",
+                "type": "{ init : flags -> ( model, Effect.Effect sharedMsg msg ), update : msg -> model -> ( model, Effect.Effect sharedMsg msg ), view : model -> view, subscriptions : model -> Platform.Sub.Sub msg } -> Spa.Page.Page flags sharedMsg view model msg"
+            },
+            {
+                "name": "onNewFlags",
+                "comment": " Set the message to pass when the flags changed. If not set, the 'init'\nfunction is called, resulting in a complete reinitialisation of the page model.\n",
+                "type": "(flags -> msg) -> Spa.Page.Page flags sharedMsg view model msg -> Spa.Page.Page flags sharedMsg view model msg"
+            },
+            {
+                "name": "sandbox",
+                "comment": " Create a \"sandboxed\" page that cannot communicate with the outside world.\n\nIt is the page equivalent of a [sanboxed program](/packages/elm/browser/latest/Browser#sandbox)\n\n",
+                "type": "{ init : flags -> model, update : msg -> model -> model, view : model -> view } -> Spa.Page.Page flags sharedMsg view model msg"
+            },
+            {
+                "name": "static",
+                "comment": " Create a static page that has no state, only a view\n",
+                "type": "view -> Spa.Page.Page flags sharedMsg view () ()"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Spa.PageStack",
+        "comment": " This module provides the tools to combine multiple pages into a single TEA\ncomponent.\n\nIt can be used separately from Spa, in case it doesn't handle the complexity of\nyour application (and if it's the case I am interested to know about it!).\n\nAnother use case is to progressively port a hand-writter application to Spa, by\nembedding a PageStack in the existing application, then port pages to it one by\none. Once all the pages are in the stack, the main application can be ported to\nSpa.\n\n@docs Stack, setup, add\n\n@docs Msg, Model, empty, getError, routeChange\n\n@docs PageSetup, RouteMatcher, CurrentViewMap, PreviousViewMap\n\n",
+        "unions": [
+            {
+                "name": "Model",
+                "comment": " The Stack model\n",
+                "args": [
+                    "setupError",
+                    "current",
+                    "previous"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Msg",
+                "comment": " The Stack Msg type\n",
+                "args": [
+                    "route",
+                    "current",
+                    "previous"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "CurrentViewMap",
+                "comment": " A view mapper, for example Html.map or Element.map depending on your actual\nview type.\n",
+                "args": [
+                    "route",
+                    "currentMsg",
+                    "previousMsg",
+                    "pageView",
+                    "view"
+                ],
+                "type": "(currentMsg -> Spa.PageStack.Msg route currentMsg previousMsg) -> pageView -> view"
+            },
+            {
+                "name": "PageSetup",
+                "comment": " A page setup returns the page definition given the share current state\n\nIt can fail with a custom error\n\n",
+                "args": [
+                    "setupError",
+                    "flags",
+                    "shared",
+                    "sharedMsg",
+                    "view",
+                    "model",
+                    "msg"
+                ],
+                "type": "shared -> Result.Result setupError (Spa.Page.Page flags sharedMsg view model msg)"
+            },
+            {
+                "name": "PreviousViewMap",
+                "comment": " A view mapper, for example Html.map or Element.map depending on your actual\nview type.\n",
+                "args": [
+                    "route",
+                    "currentMsg",
+                    "previousMsg",
+                    "previousView",
+                    "view"
+                ],
+                "type": "(previousMsg -> Spa.PageStack.Msg route currentMsg previousMsg) -> previousView -> view"
+            },
+            {
+                "name": "RouteMatcher",
+                "comment": " A route matcher is provided for each page. If it matches the route of its\npage, it returns the flags that will be passed to the page 'init' function\n",
+                "args": [
+                    "route",
+                    "flags"
+                ],
+                "type": "route -> Maybe.Maybe flags"
+            },
+            {
+                "name": "Stack",
+                "comment": " A Stack combines pages into a single TEA component\n",
+                "args": [
+                    "setupError",
+                    "shared",
+                    "sharedMsg",
+                    "route",
+                    "view",
+                    "current",
+                    "previous",
+                    "currentMsg",
+                    "previousMsg"
+                ],
+                "type": "{ init : shared -> route -> ( Spa.PageStack.Model setupError current previous, Effect.Effect sharedMsg (Spa.PageStack.Msg route currentMsg previousMsg) ), update : shared -> Spa.PageStack.Msg route currentMsg previousMsg -> Spa.PageStack.Model setupError current previous -> ( Spa.PageStack.Model setupError current previous, Effect.Effect sharedMsg (Spa.PageStack.Msg route currentMsg previousMsg) ), subscriptions : shared -> Spa.PageStack.Model setupError current previous -> Platform.Sub.Sub (Spa.PageStack.Msg route currentMsg previousMsg), view : shared -> Spa.PageStack.Model setupError current previous -> view }"
+            }
+        ],
+        "values": [
+            {
+                "name": "add",
+                "comment": " Add a page to a Stack\n",
+                "type": "( Spa.PageStack.CurrentViewMap route currentMsg previousMsg pageView view, Spa.PageStack.PreviousViewMap route currentMsg previousMsg previousView view ) -> Spa.PageStack.RouteMatcher route flags -> Spa.PageStack.PageSetup setupError flags shared sharedMsg pageView pageModel pageMsg -> Spa.PageStack.Stack setupError shared sharedMsg route previousView previousCurrent previousPrevious previousCurrentMsg previousPreviousMsg -> Spa.PageStack.Stack setupError shared sharedMsg route view pageModel (Spa.PageStack.Model setupError previousCurrent previousPrevious) pageMsg (Spa.PageStack.Msg route previousCurrentMsg previousPreviousMsg)"
+            },
+            {
+                "name": "empty",
+                "comment": " An empty model for initialising a stack state\n",
+                "type": "Spa.PageStack.Model setupError a b"
+            },
+            {
+                "name": "getError",
+                "comment": " returns the current setup error if any\n",
+                "type": "Spa.PageStack.Model setupError current previous -> Maybe.Maybe setupError"
+            },
+            {
+                "name": "routeChange",
+                "comment": " Build a message that signal a route change to the page stack\n",
+                "type": "route -> Spa.PageStack.Msg route current previous"
+            },
+            {
+                "name": "setup",
+                "comment": " Setup a new stack\n\nThe defaultView is used when no other view can be applied, which should never\nhappen if the application is properly defined.\n\n",
+                "type": "{ defaultView : view } -> Spa.PageStack.Stack setupError shared sharedMsg route view () () () ()"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,126 @@
+[
+    {
+        "name": "ConsistentHashing",
+        "comment": " A pure Elm Consistent hashing module\n\n@docs ConsistentHashing\n\n@docs new, add, remove\n\n@docs getNode\n\n",
+        "unions": [
+            {
+                "name": "ConsistentHashing",
+                "comment": " A data structure for consistent hashing\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "add",
+                "comment": " Adds a node\n",
+                "type": "ConsistentHashing.Node.Node -> ConsistentHashing.ConsistentHashing -> ConsistentHashing.ConsistentHashing"
+            },
+            {
+                "name": "getNode",
+                "comment": " Gets one node by key\n\nThis function is implemented with Array internally so that looking up a possible node is done simply by Binary Search.\n\n",
+                "type": "ConsistentHashing.Key.Key -> ConsistentHashing.ConsistentHashing -> ConsistentHashing.Node.Node"
+            },
+            {
+                "name": "new",
+                "comment": " Creates a new ConsistentHashing data\n\n`new` function only takes one initial node at first. This interface is like non-empty list which aims to ensure one node always available at least for distribution.\n\nIf you want, you can add some more nodes one by one using `add` function.\n\n",
+                "type": "ConsistentHashing.Replica.Replica -> ConsistentHashing.Node.Node -> ConsistentHashing.ConsistentHashing"
+            },
+            {
+                "name": "remove",
+                "comment": " Removes a node\n\nThis function returns Nothing if all nodes were removed.\n`remove` function internally run linear removing of all replicated virtual nodes so that it possibly results in huge computation cost in case you give a big number of Replica.\n\n",
+                "type": "ConsistentHashing.Node.Node -> ConsistentHashing.ConsistentHashing -> Maybe.Maybe ConsistentHashing.ConsistentHashing"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ConsistentHashing.Key",
+        "comment": "\n\n@docs Key\n\n@docs new, toString\n\n",
+        "unions": [
+            {
+                "name": "Key",
+                "comment": " A string formed, hashed key to identify distributable nodes\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "new",
+                "comment": " Creates a new Key\n",
+                "type": "String.String -> ConsistentHashing.Key.Key"
+            },
+            {
+                "name": "toString",
+                "comment": " Unwraps Key to String\n",
+                "type": "ConsistentHashing.Key.Key -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ConsistentHashing.Node",
+        "comment": "\n\n@docs Node\n\n@docs new, toString\n\n",
+        "unions": [
+            {
+                "name": "Node",
+                "comment": " A node for distribution\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "new",
+                "comment": " Creates a new Node\n",
+                "type": "String.String -> ConsistentHashing.Node.Node"
+            },
+            {
+                "name": "toString",
+                "comment": " Unwraps Node into String\n",
+                "type": "ConsistentHashing.Node.Node -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ConsistentHashing.Replica",
+        "comment": "\n\n@docs Replica\n\n@docs new, default\n\n@docs toInt, toSuffixedKeyList\n\n",
+        "unions": [
+            {
+                "name": "Replica",
+                "comment": " Replica size\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "default",
+                "comment": " A default replica size (100)\n",
+                "type": "ConsistentHashing.Replica.Replica"
+            },
+            {
+                "name": "new",
+                "comment": " Creates a new replica size\n",
+                "type": "Basics.Int -> ConsistentHashing.Replica.Replica"
+            },
+            {
+                "name": "toInt",
+                "comment": " Unwraps Replica to Int\n",
+                "type": "ConsistentHashing.Replica.Replica -> Basics.Int"
+            },
+            {
+                "name": "toSuffixedKeyList",
+                "comment": " Builds Key list with range of Replica size, serially suffxied\n",
+                "type": "ConsistentHashing.Node.Node -> ConsistentHashing.Replica.Replica -> List.List ConsistentHashing.Key.Key"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,60 @@
+[
+    {
+        "name": "Getto.Sort",
+        "comment": " sort utilities for html table\n\n    import Html as H exposing ( Html )\n    import Html.Attributes as A\n    import Html.Events as E\n\n    type Msg\n      = SortBy Sort.Value\n\n    sort = \"id\" |> Sort.by\n\n    sort |> Sort.stateOf \"id\"   |> link \"id\"\n    sort |> Sort.stateOf \"name\" |> link \"name\"\n\n    link : String -> Sort.State -> Html Msg\n    link text {current,next} =\n      H.a\n        ( List.append\n          [ \"#\" |> A.href\n          , next |> SortBy |> E.onClick\n          ]\n          ( case current of\n            Nothing -> []\n            Just _  -> [ \"is-active\" |> A.class ]\n          )\n        )\n        [ text |> H.text\n        , \" \"  |> H.text\n        , case current of\n            Nothing        -> \"\"     |> H.text\n            Just Sort.Up   -> \"up\"   |> H.text\n            Just Sort.Down -> \"down\" |> H.text\n        ]\n\n# Definition\n@docs Value, Direction, State\n\n# Construction\n@docs by\n\n# State\n@docs stateOf\n\n# Encode/Decode\n@docs toString, fromString\n ",
+        "unions": [
+            {
+                "name": "Direction",
+                "comment": " sort direction\n ",
+                "args": [],
+                "cases": [
+                    [
+                        "Up",
+                        []
+                    ],
+                    [
+                        "Down",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Value",
+                "comment": " sort definition\n ",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "State",
+                "comment": " current sort direction and next sort definition\n ",
+                "args": [],
+                "type": "{ current : Maybe.Maybe Getto.Sort.Direction, next : Getto.Sort.Value }"
+            }
+        ],
+        "values": [
+            {
+                "name": "by",
+                "comment": " create Value that sort by \"column\"\n ",
+                "type": "String.String -> Getto.Sort.Value"
+            },
+            {
+                "name": "fromString",
+                "comment": " decode value from string\n\n    { column    = Just \"id\"\n    , direction = Just \"up\"\n    }\n    |> Sort.fromString\n ",
+                "type": "{ column : Maybe.Maybe String.String, direction : Maybe.Maybe String.String } -> Maybe.Maybe Getto.Sort.Value"
+            },
+            {
+                "name": "stateOf",
+                "comment": " get current sort state from value and \"column\"\n ",
+                "type": "String.String -> Getto.Sort.Value -> Getto.Sort.State"
+            },
+            {
+                "name": "toString",
+                "comment": " encode value to string\n\n    \"id\" |> Sort.by |> Sort.toString\n    -- { column = \"id\", direction = \"down\" }\n ",
+                "type": "Getto.Sort.Value -> { column : String.String, direction : String.String }"
+            }
+        ],
+        "binops": []
+    }
+]

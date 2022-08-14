@@ -1,0 +1,31 @@
+[
+    {
+        "name": "CodeSample",
+        "comment": " This module gives example code snippets\nusing elm-syntax-dsl. It also provides a\nlittle convenience wrapper for pretty-printing.\n\n@docs formatCode\n\n\n# Examples\n\nIn the [examples](https://github.com/showell/elm-data-util/blob/master/src/CodeSample.elm)\nI try to really break things down, by\ndefining little snippets from the bottom up and combining\nthem into the final code. You may prefer to inline things a bit\nmore.\n\n@docs factorial, factorial2, ranks\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "factorial",
+                "comment": " factorial (recursive style)\n",
+                "type": "String.String"
+            },
+            {
+                "name": "factorial2",
+                "comment": " factorial using foldl\n",
+                "type": "String.String"
+            },
+            {
+                "name": "formatCode",
+                "comment": " use Elm.Pretty to print out code\nin nicely formatted style\n",
+                "type": "Elm.CodeGen.Expression -> String.String"
+            },
+            {
+                "name": "ranks",
+                "comment": " convert items to simple rankings like [ 4, 1, 2, 3 ] based\non their order\n",
+                "type": "String.String"
+            }
+        ],
+        "binops": []
+    }
+]

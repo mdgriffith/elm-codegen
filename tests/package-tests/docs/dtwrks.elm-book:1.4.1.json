@@ -1,0 +1,467 @@
+[
+    {
+        "name": "ElmBook",
+        "comment": " **Tip:** If you're just getting started, it's usually better to start by creating a chapter (checkout the `ElmBook.Chapter` module).\n\nCheck out the [\"Books\"](https://elm-book-in-elm-book.netlify.app/guides/books) guide for more examples.\n\n\n# Creating your Book\n\nThis module is used to create your books main output. You need to list your book's chapters here and also provide any global options you may want to define.\n\n    main : Book ()\n    main =\n        book \"My Book\"\n            |> withChapters\n                [ firstChapter\n                , secondChapter\n                ]\n\n@docs book, withChapters, withChapterGroups\n\n\n# Customizing your book\n\nYou can pipe any of the customization functions on your book's creation. Just make sure you're passing these functions before you call `withChapters` or `withChapterGroups` functions.\n\n@docs withThemeOptions, withChapterOptions, withComponentOptions, withStatefulOptions\n\n\n# Types\n\n@docs Book, Msg\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Book",
+                "comment": " Defines a book with some state and some type of expected html.\n\nIf you're working with something other than `elm/html` (e.g. elm-css or elm-ui) then check out the `ElmBook.Custom` module.\n\nIf you're creating a stateful book, you will need to pass your custom `SharedState` as an argument as showcased below.\n\n    import FirstChapter\n    import SecondChapter\n\n    type alias SharedState =\n        { firstChapter : FirstChapter.Model\n        , secondChapter : SecondChapter.Model\n        }\n\n    initialState : SharedState\n    initialState =\n        { firstChapter = FirstChapter.init\n        , secondChapter = SecondChapter.init\n        }\n\n    main : Book SharedState\n    main =\n        book \"MyApp\"\n            |> withStatefulOptions\n                [ ElmBook.StatefulOptions.initialState\n                    initialState\n                ]\n\n",
+                "args": [
+                    "state"
+                ],
+                "type": "ElmBook.Internal.Application.BookApplication state (Html.Html (ElmBook.Msg state))"
+            },
+            {
+                "name": "Msg",
+                "comment": " ",
+                "args": [
+                    "state"
+                ],
+                "type": "ElmBook.Internal.Msg.Msg state"
+            }
+        ],
+        "values": [
+            {
+                "name": "book",
+                "comment": " Kickoff the creation of an ElmBook application.\n",
+                "type": "String.String -> ElmBook.Internal.Book.BookBuilder state (Html.Html (ElmBook.Msg state))"
+            },
+            {
+                "name": "withChapterGroups",
+                "comment": " Organize your book's chapters into groups.\n\n**Should be used as the final step on your setup.**\n\n    book \"MyApp\"\n        |> withChapterGroups\n            [ ( \"Guides\"\n              , [ gettingStartedChapter\n                , sendingRequestsChapter\n                ]\n              )\n            , ( \"UI Components\"\n              , [ buttonsChapter\n                , formsChapter\n                , ...\n                ]\n              )\n            ]\n\n",
+                "type": "List.List ( String.String, List.List (ElmBook.Internal.Chapter.ChapterCustom state html) ) -> ElmBook.Internal.Book.BookBuilder state html -> ElmBook.Internal.Application.BookApplication state html"
+            },
+            {
+                "name": "withChapterOptions",
+                "comment": " By default, your chapter will display its title at the top of the content. You can disable this by passing in chapter options.\n\n    book \"My Book\"\n        |> withChapterOptions\n            [ ElmBook.Chapter.hiddenTitle True\n            ]\n        |> withChapters []\n\nPlease note that chapter options are \"inherited\". So you can also override these options on a particular chapter and that will take priority of book-wide options. Take a look at `ElmBook.ChapterOptions` for all the options available.\n\n",
+                "type": "List.List ElmBook.ChapterOptions.Attribute -> ElmBook.Internal.Book.BookBuilder state html -> ElmBook.Internal.Book.BookBuilder state html"
+            },
+            {
+                "name": "withChapters",
+                "comment": " List the chapters that should be displayed on your book. Checkout `ElmBook.Chapter` if you want to create a chapter.\n\n**Should be used as the final step on your setup.**\n\n",
+                "type": "List.List (ElmBook.Internal.Chapter.ChapterCustom state html) -> ElmBook.Internal.Book.BookBuilder state html -> ElmBook.Internal.Application.BookApplication state html"
+            },
+            {
+                "name": "withComponentOptions",
+                "comment": " By default, your components will appear inside a card with some padding and a label at the top. You can customize all of that with this function and the attributes available on `ElmBook.ComponentOptions`.\n\n    main : Book ()\n    main =\n        book \"My Book\"\n            |> withComponentOptions\n                [ ElmBook.Component.background \"black\"\n                , ElmBook.Component.hiddenLabel True\n                ]\n            |> withChapters [ ... ]\n\nPlease note that component options are \"inherited\". So you can override these options on a particular chapter and even on an specific component.\n\n",
+                "type": "List.List ElmBook.Internal.ComponentOptions.Attribute -> ElmBook.Internal.Book.BookBuilder state html -> ElmBook.Internal.Book.BookBuilder state html"
+            },
+            {
+                "name": "withStatefulOptions",
+                "comment": " Stateful options are useful for interactive books. With them you can set your book's initialState or even give it your custom subscriptions. Take a look at the [\"Stateful Chapters\"](https://elm-book-in-elm-book.netlify.app/guides/stateful-chapters) guide for more details.\n\nAttributes for this function are defined on `ElmBook.StatefulOptions`.\n\n",
+                "type": "List.List (ElmBook.StatefulOptions.Attribute state) -> ElmBook.Internal.Book.BookBuilder state html -> ElmBook.Internal.Book.BookBuilder state html"
+            },
+            {
+                "name": "withThemeOptions",
+                "comment": " You can customize your book with any of the options available on the `ElmBook.Theme` module. Take a look at the [\"Theming\"](https://elm-book-in-elm-book.netlify.app/guides/theming) guide for some examples.\n\n    main : Book x\n    main =\n        book \"My Themed Book\"\n            |> withThemeOptions\n                [ ElmBook.ThemeOptions.globals [ myCssReset ]\n                , ElmBook.ThemeOptions.background \"slategray\"\n                , ElmBook.ThemeOptions.accent \"white\"\n                ]\n            |> withChapters []\n\n",
+                "type": "List.List (ElmBook.ThemeOptions.ThemeOption html) -> ElmBook.Internal.Book.BookBuilder state html -> ElmBook.Internal.Book.BookBuilder state html"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ElmBook.Actions",
+        "comment": " This module focuses on actions – a.k.a messages your book may send to its runtime. There are mainly two types of actions:\n\n  - **log actions** will not deal with any state. They will just print out some message to the action logger. This is pretty useful to get things running quickly.\n  - **update actions** are used to update your book's shared state. A bit trickier to use but you can do a lot more powerful things with it.\n  - **update mappers** are helpers for when you're using module with their own elm architecture.\n\n\n# Logging Actions\n\nTake a look at the [\"Logging Actions\"](https://elm-book-in-elm-book.netlify.app/guides/logging-actions) guide for some examples.\n\n**Tip** If you want to test anchor elements without actually changing the current url, just pass in an url like `/logAction/some-url`. Your book will intercept any url change starting with `/logAction` and will log the action intent.\n\n@docs logAction, logActionWithString, logActionWithBool, logActionWithInt, logActionWithFloat, logActionWith\n\n\n# Update Actions\n\n**Tip:** I highly recommend you read the [\"Stateful Chapters\"](https://elm-book-in-elm-book.netlify.app/guides/logging-actions) guide to learn more about update actions and stateful chapters.\n\n@docs updateState, updateStateWith, updateStateWithCmd, updateStateWithCmdWith\n\n\n# \"The Elm Architecture\" helpers\n\nIf you're working on a module with its own elm architecture, these might make things a little simpler. Everything here _could_ be done with `updateState` but why not make things easier for ourselves?\n\n    -- Your UI module stuff\n\n    type alias Model = ...\n    type Msg = ...\n\n    update : Msg -> Model -> Model\n    view : Model -> Html msg\n\n    -- The elm-book stuff\n\n    type alias ElmBookModel a =\n        { a | inputModel : Model }\n\n    chapter : Chapter (ElmBookModel a)\n    chapter \"Chapter with elm architecture\"\n        |> renderStatefulComponent (\\{ inputModel } ->\n            view inputModel\n                |> Html.map (\n                    mapUpdate\n                        { toState = \\state model -> { state | inputModel = model }\n                        , fromState = \\state -> state.inputModel\n                        , update = update\n                        }\n                    )\n        )\n\n@docs mapUpdate, mapUpdateWithCmd\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "logAction",
+                "comment": " Logs an action that takes no inputs.\n\n    -- Will log \"Clicked!\" after pressing the button\n    button [ onClick <| logAction \"Clicked!\" ] []\n\n",
+                "type": "String.String -> ElmBook.Internal.Msg.Msg state"
+            },
+            {
+                "name": "logActionWith",
+                "comment": " Logs an action that takes one generic input that can be transformed into a String.\n\n    eventToString : Event -> String\n    eventToString event =\n        case event of\n            Start ->\n                \"Start\"\n\n            Finish ->\n                \"Finish\"\n\n    myCustomComponent {\n        onEvent =\n            logActionWith\n                eventToString\n                \"Received event\"\n    }\n\n",
+                "type": "(value -> String.String) -> String.String -> value -> ElmBook.Internal.Msg.Msg state"
+            },
+            {
+                "name": "logActionWithBool",
+                "comment": " Logs an action that takes one `Bool` input.\n",
+                "type": "String.String -> Basics.Bool -> ElmBook.Internal.Msg.Msg state"
+            },
+            {
+                "name": "logActionWithFloat",
+                "comment": " Logs an action that takes one `Float` input.\n\n**WARNING**:\n\nFolks, this is function is currently broken, my bad. It will be fixed in the next major release (which won't take long).\nUntil then please use the following replacement:\n\n    logActionWith String.fromFloat\n\n",
+                "type": "String.String -> String.String -> ElmBook.Internal.Msg.Msg state"
+            },
+            {
+                "name": "logActionWithInt",
+                "comment": " Logs an action that takes one `Int` input.\n\n**WARNING**:\n\nFolks, this is function is currently broken, my bad. It will be fixed in the next major release (which won't take long).\nUntil then please use the following replacement:\n\n    logActionWith String.fromInt\n\n",
+                "type": "String.String -> String.String -> ElmBook.Internal.Msg.Msg state"
+            },
+            {
+                "name": "logActionWithString",
+                "comment": " Logs an action that takes one `String` input.\n\n    -- Will log \"Input: x\" after pressing the \"x\" key\n    input [ onInput <| logActionWithString \"Input\" ] []\n\n",
+                "type": "String.String -> String.String -> ElmBook.Internal.Msg.Msg state"
+            },
+            {
+                "name": "mapUpdate",
+                "comment": " Maps a custom msg to an elm-book msg.\n",
+                "type": "{ fromState : state -> model, toState : state -> model -> state, update : msg -> model -> model } -> msg -> ElmBook.Internal.Msg.Msg state"
+            },
+            {
+                "name": "mapUpdateWithCmd",
+                "comment": " Same as `mapUpdate` but used when your `update` returns a `( model, Cmd msg )` tuple.\n",
+                "type": "{ fromState : state -> model, toState : state -> model -> state, update : msg -> model -> ( model, Platform.Cmd.Cmd msg ) } -> msg -> ElmBook.Internal.Msg.Msg state"
+            },
+            {
+                "name": "updateState",
+                "comment": " Updates the state of your stateful book.\n\n    counterChapter : Chapter { x | counter : Int }\n    counterChapter =\n        let\n            update state =\n                { state | counter = state.counter + 1 }\n        in\n        chapter \"Counter\"\n            |> withStatefulComponent\n                (\\state ->\n                    button\n                        [ onClick (updateState update) ]\n                        [ text <| String.fromInt state.counter ]\n                )\n\n",
+                "type": "(state -> state) -> ElmBook.Internal.Msg.Msg state"
+            },
+            {
+                "name": "updateStateWith",
+                "comment": " Used when updating the state based on an argument.\n\n    inputChapter : Chapter { x | input : String }\n    inputChapter =\n        let\n            updateInput value state =\n                { state | input = value }\n        in\n        chapter \"Input\"\n            |> withStatefulComponent\n                (\\state ->\n                    input\n                        [ value state.input\n                        , onInput (updateStateWith updateInput)\n                        ]\n                        []\n                )\n\n",
+                "type": "(a -> state -> state) -> a -> ElmBook.Internal.Msg.Msg state"
+            },
+            {
+                "name": "updateStateWithCmd",
+                "comment": " Updates the state of your stateful book and possibly sends out a command. HTTP requests inside your book? Oh yeah! Get ready to go full over-engineering master.\n\n    counterChapter : Chapter { x | counter : Int }\n    counterChapter =\n        let\n            fetchCurrentCounter state =\n                ( state\n                , fetchCounterFromServer <|\n                    updateState updateCounter\n                )\n\n            updateCounter newCounter state =\n                { state | counter = newCounter }\n        in\n        chapter \"Counter\"\n            |> withStatefulComponent\n                (\\state ->\n                    button\n                        [ onClick (updateStateWithCmd fetchCurrentCounter) ]\n                        [ text <| String.fromInt state.counter ]\n                )\n\n",
+                "type": "(state -> ( state, Platform.Cmd.Cmd (ElmBook.Internal.Msg.Msg state) )) -> ElmBook.Internal.Msg.Msg state"
+            },
+            {
+                "name": "updateStateWithCmdWith",
+                "comment": " Same as `updateStateWith` but should return a `( state, Cmd msg )` tuple.\n",
+                "type": "(a -> state -> ( state, Platform.Cmd.Cmd (ElmBook.Internal.Msg.Msg state) )) -> a -> ElmBook.Internal.Msg.Msg state"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ElmBook.Chapter",
+        "comment": " Chapters are what books are made of. They can be library guides, component examples, design tokens showcases, you name it.\n\nTake a look at the [\"Chapters\"](https://elm-book-in-elm-book.netlify.app/guides/chapters) guide for a few examples.\n\n\n# Getting started\n\nLets start by creating a chapter that displays different variants of a Button component:\n\n    module UI.Button exposing (docs, view)\n\n    import ElmBook.Actions exposing (logAction)\n    import ElmBook.Chapter exposing (Chapter, chapter, renderComponentList)\n    import Html exposing (..)\n    import Html.Attributes exposing (..)\n    import Html.Events exposing (onClick)\n\n    view :\n        { label : String\n        , disabled : Bool\n        , onClick : msg\n        }\n        -> Html msg\n    view props =\n        button\n            [ class \"px-8 py-3 rounded-md bg-indigo-200\"\n            , disabled props.disabled\n            , onClick props.onClick\n            ]\n            [ text props.label ]\n\n    docs : Chapter x\n    docs =\n        let\n            props =\n                { label = \"Click me!\"\n                , disabled = False\n                , onClick = logAction \"Clicked button!\"\n                }\n        in\n        chapter \"Buttons\"\n            |> renderComponentList\n                [ ( \"Default\", view props )\n                , ( \"Disabled\", view { props | disabled = True } )\n                ]\n\n**Tip:** Since Elm has amazing [dead code elimination](https://elm-lang.org/news/small-assets-without-the-headache#dead-code-elimination) you don't need to worry about splitting your component examples from your source code. They can live side by side making your development experience much better!\n\n@docs chapter, chapterLink, renderComponent, renderComponentList, Chapter, ChapterBuilder\n\n\n# Markdown and embedded components\n\nYou're not limited to creating these \"storybook-like\" chapters though. Take a look at the functions below and you will understand how to create richer docs based on markdown and embedded components.\n\n@docs withComponent, withComponentList, render, renderWithComponentList\n\n\n# Stateful Chapters\n\nCreate chapters with interactive components that can read and update the book's shared state. These functions work exactly like their stateless counterparts with the difference that they take the current state as an argument.\n\nTake a look at the [\"Stateful Chapters\"](https://elm-book-in-elm-book.netlify.app/guides/stateful-chapters) guide for a more throughout explanation.\n\n@docs withStatefulComponent, withStatefulComponentList, renderStatefulComponent, renderStatefulComponentList, withChapterInit\n\n\n# Customizing Chapters\n\n@docs withChapterOptions, withComponentOptions\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Chapter",
+                "comment": " Defines a Chapter type. The argument is the shared state this chapter depends on. We can leave it blank (`x`) on stateless chapters. Read the [\"Stateful Chapters\"](https://elm-book-in-elm-book.netlify.app/guides/stateful-chapters) guide to know more.\n",
+                "args": [
+                    "state"
+                ],
+                "type": "ElmBook.Internal.Chapter.ChapterCustom state (Html.Html (ElmBook.Internal.Msg.Msg state))"
+            },
+            {
+                "name": "ChapterBuilder",
+                "comment": " The builder type for an incomplete chapter. Useful if you wanna reuse parts of your chapter setup pipeline across different chapters.\n",
+                "args": [
+                    "state",
+                    "html"
+                ],
+                "type": "ElmBook.Internal.Chapter.ChapterBuilder state html"
+            }
+        ],
+        "values": [
+            {
+                "name": "chapter",
+                "comment": " Creates a chapter with some title.\n",
+                "type": "String.String -> ElmBook.Chapter.ChapterBuilder state html"
+            },
+            {
+                "name": "chapterLink",
+                "comment": " Creates a chapter that links to an external resource.\n\n**Note**: Chapter links are not like normal chapters – they are not rendered, they just serve as links to external resources through the book's navigation. Useful for things like linking to a library's elm-package page.\n\n",
+                "type": "{ title : String.String, url : String.String } -> ElmBook.Internal.Chapter.ChapterCustom state html"
+            },
+            {
+                "name": "render",
+                "comment": " Used to create rich chapters with markdown and embedded components. Take a look at how you would list all buttons of the previous examples in one go:\n\n    buttonsChapter : Chapter x\n    buttonsChapter =\n        chapter \"Buttons\"\n            |> withComponentList\n                [ ( \"Default\", button [] [] )\n                , ( \"Disabled\", button [ disabled True ] [] )\n                ]\n            |> render \"\"\"\n\n        Look at all these buttons:\n\n        <component-list />\n\n    \"\"\"\n\n",
+                "type": "String.String -> ElmBook.Chapter.ChapterBuilder state html -> ElmBook.Internal.Chapter.ChapterCustom state html"
+            },
+            {
+                "name": "renderComponent",
+                "comment": " Render a single component with no markdown content.\n",
+                "type": "html -> ElmBook.Chapter.ChapterBuilder state html -> ElmBook.Internal.Chapter.ChapterCustom state html"
+            },
+            {
+                "name": "renderComponentList",
+                "comment": " Render a list of components with no markdown content.\n",
+                "type": "List.List ( String.String, html ) -> ElmBook.Chapter.ChapterBuilder state html -> ElmBook.Internal.Chapter.ChapterCustom state html"
+            },
+            {
+                "name": "renderStatefulComponent",
+                "comment": " Render a single stateful component with no markdown content.\n",
+                "type": "(state -> html) -> ElmBook.Chapter.ChapterBuilder state html -> ElmBook.Internal.Chapter.ChapterCustom state html"
+            },
+            {
+                "name": "renderStatefulComponentList",
+                "comment": " Render a list of stateful components with no markdown content.\n",
+                "type": "List.List ( String.String, state -> html ) -> ElmBook.Chapter.ChapterBuilder state html -> ElmBook.Internal.Chapter.ChapterCustom state html"
+            },
+            {
+                "name": "renderWithComponentList",
+                "comment": " Helper for creating chapters where all of the text content sits on top and all components at the bottom. It's basically an alias for what you just saw on the example above.\n\n    buttonsChapter : Chapter x\n    buttonsChapter =\n        chapter \"Buttons\"\n            |> withComponentList\n                [ ( \"Default\", button [] [] )\n                , ( \"Disabled\", button [ disabled True ] [] )\n                ]\n            |> renderWithComponentList\n                \"Look at all these buttons:\"\n\n",
+                "type": "String.String -> ElmBook.Chapter.ChapterBuilder state html -> ElmBook.Internal.Chapter.ChapterCustom state html"
+            },
+            {
+                "name": "withChapterInit",
+                "comment": " Use this to trigger a state change or command whenever this chapter is first rendered.\n",
+                "type": "(state -> ( state, Platform.Cmd.Cmd (ElmBook.Internal.Msg.Msg state) )) -> ElmBook.Chapter.ChapterBuilder state html -> ElmBook.Chapter.ChapterBuilder state html"
+            },
+            {
+                "name": "withChapterOptions",
+                "comment": " By default, your chapter will display its title at the top of the content. You can disable this by passing in chapter options.\n\n    chapter \"Buttons\"\n        |> withChapterOptions\n            [ ElmBook.Chapter.hiddenTitle True\n            ]\n        |> renderComponentList\n            [ ( \"Default\", view props )\n            , ( \"Disabled\", view { props | disabled = True } )\n            ]\n\nPlease note that chapter options are \"inherited\". So your chapters will inherit from the options passed to your book by `ElmBook.withChapterOptions`. Take a look at `ElmBook.ChapterOptions` for the options available.\n\n",
+                "type": "List.List ElmBook.ChapterOptions.Attribute -> ElmBook.Chapter.ChapterBuilder state html -> ElmBook.Chapter.ChapterBuilder state html"
+            },
+            {
+                "name": "withComponent",
+                "comment": " Adds a component to your chapter. You can display it using markdown.\n\n    inputChapter : Chapter x\n    inputChapter =\n        chapter \"Input\"\n            |> withComponent (input [] [])\n            |> render \"\"\"\n\n    Take a look at this input:\n\n    <component />\n\n    \"\"\"\n\n",
+                "type": "html -> ElmBook.Chapter.ChapterBuilder state html -> ElmBook.Chapter.ChapterBuilder state html"
+            },
+            {
+                "name": "withComponentList",
+                "comment": " Adds multiple components to your chapter. You can display them using markdown.\n\n    buttonsChapter : Chapter x\n    buttonsChapter =\n        chapter \"Buttons\"\n            |> withComponentList\n                [ ( \"Default\", button [] [] )\n                , ( \"Disabled\", button [ disabled True ] [] )\n                ]\n            |> render \"\"\"\n\n    A button might be enabled:\n\n    <component with-label=\"Default\" />\n\n    Or disabled:\n\n    <component with-label=\"Disabled\"\n\n    \"\"\"\n\n",
+                "type": "List.List ( String.String, html ) -> ElmBook.Chapter.ChapterBuilder state html -> ElmBook.Chapter.ChapterBuilder state html"
+            },
+            {
+                "name": "withComponentOptions",
+                "comment": " By default, your components will appear inside a card with some padding and a label at the top. You can customize all of that with this function and the attributes available on `ElmBook.Component`.\n\n    chapter \"Buttons\"\n        |> withComponentOptions\n            [ ElmBook.Component.background \"yellow\"\n            , ElmBook.Component.hiddenLabel True\n            ]\n        |> renderComponentList\n            [ ( \"Default\", view props )\n            , ( \"Disabled\", view { props | disabled = True } )\n            ]\n\nPlease note that component options are \"inherited\". So your components will inherit from the options passed to your book by `ElmBook.withComponentOptions` and they can also be overriden on the component level. Take a look at the `ElmBook.Component` module for more details.\n\n",
+                "type": "List.List ElmBook.Internal.ComponentOptions.Attribute -> ElmBook.Chapter.ChapterBuilder state html -> ElmBook.Chapter.ChapterBuilder state html"
+            },
+            {
+                "name": "withStatefulComponent",
+                "comment": " Used for chapters with a single stateful component.\n",
+                "type": "(state -> html) -> ElmBook.Chapter.ChapterBuilder state html -> ElmBook.Chapter.ChapterBuilder state html"
+            },
+            {
+                "name": "withStatefulComponentList",
+                "comment": " Used for chapters with multiple stateful components.\n",
+                "type": "List.List ( String.String, state -> html ) -> ElmBook.Chapter.ChapterBuilder state html -> ElmBook.Chapter.ChapterBuilder state html"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ElmBook.ChapterOptions",
+        "comment": " Attributes used by `ElmBook.withChapterOptions` and `ElmBook.Chapter.withChapterOptions`.\n\n@docs hiddenTitle\n\n\n# Types\n\n@docs Attribute\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Attribute",
+                "comment": " ",
+                "args": [],
+                "type": "ElmBook.Internal.Chapter.ChapterOptions -> ElmBook.Internal.Chapter.ChapterOptions"
+            }
+        ],
+        "values": [
+            {
+                "name": "hiddenTitle",
+                "comment": " Hides the chapter title at the top of the content.\n",
+                "type": "Basics.Bool -> ElmBook.Internal.Chapter.ChapterOptions -> ElmBook.Internal.Chapter.ChapterOptions"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ElmBook.ComponentOptions",
+        "comment": " Attributes used by `ElmBook.withComponentOptions` and `ElmBook.Chapter.withComponentOptions`.\n\nBy default, your components will appear inside a card with some padding and a label at the top. You can customize all of that with these module's functions.\n\nCustomizations might be applied for your whole book, for a particular chapter or even for a particular component.\n\n    main : Book ()\n    main =\n        book \"My Book\"\n            |> withComponentOptions\n                [ ElmBook.Component.background \"black\"\n                , ElmBook.Component.hiddenLabel True\n                ]\n            |> withChapters [ ... ]\n\nThis is the API used for defining attributes on a component level (only works for components embedded in markdown):\n\n    <component\n        with-label=\"Some Component\"\n        with-hidden-label=\"true\"\n        with-display=\"block\"\n        with-background=\"yellow\" />\n\n@docs background, hiddenLabel, fullWidth, displayBlock, displayInline, displayCard\n\n\n# Types\n\n@docs Attribute\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Attribute",
+                "comment": " ",
+                "args": [],
+                "type": "ElmBook.Internal.ComponentOptions.Attribute"
+            }
+        ],
+        "values": [
+            {
+                "name": "background",
+                "comment": " Customize the background color of the card that wraps your components.\n\nAvailable as `with-background=<string>` on embbeded components.\n\n",
+                "type": "String.String -> ElmBook.Internal.ComponentOptions.ComponentOptions -> ElmBook.Internal.ComponentOptions.ComponentOptions"
+            },
+            {
+                "name": "displayBlock",
+                "comment": " Removes the card that usually wraps your components.\n\nAvailable as `with-display=\"block\"` on embbeded components\n\n",
+                "type": "ElmBook.Internal.ComponentOptions.ComponentOptions -> ElmBook.Internal.ComponentOptions.ComponentOptions"
+            },
+            {
+                "name": "displayCard",
+                "comment": " Place your components inside a card with some padding. This is the default behavior, you can use this attribute to bypass a higher-level definition.\n\nAvailable as `with-display=\"card\"` on embbeded components\n\n",
+                "type": "ElmBook.Internal.ComponentOptions.ComponentOptions -> ElmBook.Internal.ComponentOptions.ComponentOptions"
+            },
+            {
+                "name": "displayInline",
+                "comment": " Make your components appear inline in your chapter. This is mostly useful when embedding components inside markdown.\n\nAvailable as `with-display=\"inline\"` on embbeded components\n\n",
+                "type": "ElmBook.Internal.ComponentOptions.ComponentOptions -> ElmBook.Internal.ComponentOptions.ComponentOptions"
+            },
+            {
+                "name": "fullWidth",
+                "comment": " Make the component fill the full width of the page.\n\nAvailable as `with-full-width=\"true\"` on embbeded components\n\n",
+                "type": "Basics.Bool -> ElmBook.Internal.ComponentOptions.ComponentOptions -> ElmBook.Internal.ComponentOptions.ComponentOptions"
+            },
+            {
+                "name": "hiddenLabel",
+                "comment": " Hide the label that usually appears at the top of your components.\n\nAvailable as `with-background=<\"true\" | \"false\">` on embbeded components\n\n",
+                "type": "Basics.Bool -> ElmBook.Internal.ComponentOptions.ComponentOptions -> ElmBook.Internal.ComponentOptions.ComponentOptions"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ElmBook.Custom",
+        "comment": " Use this module to integrate other rendering engines to ElmBook such as Elm-UI and Elm-CSS. Lets see how we would integrate Elm-UI and ElmBook:\n\n    module ElmBook.ElmUI exposing (Book, Chapter, book)\n\n    import Element exposing (Element, layout)\n    import ElmBook.Custom exposing (customBook)\n\n    type alias Html state =\n        Element (ElmBook.Custom.Msg state)\n\n    type alias BookBuilder state =\n        ElmBook.Custom.BookBuilder state (Html state)\n\n    type alias Book state =\n        ElmBook.Custom.Book state (Html state)\n\n    type alias Chapter state =\n        ElmBook.Custom.Chapter state (Html state)\n\n    book : String -> BookBuilder state\n    book =\n        customBook (layout [])\n\nAfter that you would only need to use this custom `book` function and `Book` type when creating a new book and the custom `Chapter` definition when creating a new chapter.\n\n@docs Book, BookBuilder, Chapter, Msg, customBook\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Book",
+                "comment": " ",
+                "args": [
+                    "state",
+                    "html"
+                ],
+                "type": "ElmBook.Internal.Application.BookApplication state html"
+            },
+            {
+                "name": "BookBuilder",
+                "comment": " ",
+                "args": [
+                    "state",
+                    "html"
+                ],
+                "type": "ElmBook.Internal.Book.BookBuilder state html"
+            },
+            {
+                "name": "Chapter",
+                "comment": " ",
+                "args": [
+                    "state",
+                    "html"
+                ],
+                "type": "ElmBook.Internal.Chapter.ChapterCustom state html"
+            },
+            {
+                "name": "Msg",
+                "comment": " ",
+                "args": [
+                    "state"
+                ],
+                "type": "ElmBook.Internal.Msg.Msg state"
+            }
+        ],
+        "values": [
+            {
+                "name": "customBook",
+                "comment": " ",
+                "type": "(html -> Html.Html (ElmBook.Custom.Msg state)) -> String.String -> ElmBook.Custom.BookBuilder state html"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ElmBook.StatefulOptions",
+        "comment": " Attributes used by `ElmBook.withStatefulOptions`.\n\nThe attributes below are mostly used for Stateful Books. Take a look at the [\"Stateful Chapters\"](https://elm-book-in-elm-book.netlify.app/guides/stateful-chapters) guide for more details.\n\n@docs initialState, subscriptions, onDarkModeChange\n\n\n# Types\n\n@docs Attribute\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Attribute",
+                "comment": " ",
+                "args": [
+                    "state"
+                ],
+                "type": "ElmBook.Internal.StatefulOptions.StatefulOptions state -> ElmBook.Internal.StatefulOptions.StatefulOptions state"
+            }
+        ],
+        "values": [
+            {
+                "name": "initialState",
+                "comment": " Add an initial state to your book.\n\n    type alias SharedState =\n        { value : String }\n\n\n    book : Book SharedState\n    book \"MyApp\"\n        |> withStatefulOptions [\n            initialState { value = \"\" }\n        ]\n\n",
+                "type": "state -> ElmBook.Internal.StatefulOptions.StatefulOptions state -> ElmBook.Internal.StatefulOptions.StatefulOptions state"
+            },
+            {
+                "name": "onDarkModeChange",
+                "comment": " Change your book's state based on the themes current mode.\n\nThis can be useful for showcasing your own dark themed components when using elm-book's dark mode.\n\n    type alias SharedState =\n        { darkMode : Bool\n        }\n\n    initialState : SharedState\n    initialState =\n        { darkMode = False\n        }\n\n    book : Book SharedState\n    book \"MyApp\"\n        |> withStatefulOptions\n            [ ElmBook.StatefulOptions.initialState\n                initialState\n            , ElmBook.StatefulOptions.onDarkModeChange\n                (\\darkMode state ->\n                    { state | darkMode = darkMode }\n                )\n            ]\n\n",
+                "type": "(Basics.Bool -> state -> state) -> ElmBook.Internal.StatefulOptions.StatefulOptions state -> ElmBook.Internal.StatefulOptions.StatefulOptions state"
+            },
+            {
+                "name": "subscriptions",
+                "comment": " Add subscriptions to your book.\n\n    import ElmBook.Actions exposing (updateState)\n\n    type alias SharedState =\n        { value : String\n        , timestamp : Posix\n        }\n\n\n    updateAnimationState : Posix -> SharedState -> SharedState\n    updateAnimationState posix state =\n        { state | timestamp = posix }\n\n\n    book : Book SharedState\n    book \"MyApp\"\n        |> withStatefulOptions [\n            subscriptions [\n                Browser.Events.onAnimationFrame\n                    (updateStateWith updateAnimationState)\n            ]\n        ]\n\n",
+                "type": "List.List (Platform.Sub.Sub (ElmBook.Internal.Msg.Msg state)) -> ElmBook.Internal.StatefulOptions.StatefulOptions state -> ElmBook.Internal.StatefulOptions.StatefulOptions state"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ElmBook.ThemeOptions",
+        "comment": " Use the attributes provided by this module to customize your book through `ElmBook.withThemeOptions`.\n\nTake a look at the [\"Theming\"](https://elm-book-in-elm-book.netlify.app/guides/theming) guide for some examples.\n\n\n# Header\n\n@docs subtitle, logo, header\n\n\n# Color palette\n\n@docs background, backgroundGradient, accent, navBackground, navAccent, navAccentHighlight\n\n\n# Dark Mode\n\n@docs preferDarkMode\n\n\n# Global CSS\n\n@docs globals\n\n\n# Routing\n\n@docs routePrefix, useHashBasedNavigation\n\n\n# Types\n\n@docs ThemeOption\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "ThemeOption",
+                "comment": " ",
+                "args": [
+                    "html"
+                ],
+                "type": "ElmBook.Internal.ThemeOptions.ThemeOptions html -> ElmBook.Internal.ThemeOptions.ThemeOptions html"
+            }
+        ],
+        "values": [
+            {
+                "name": "accent",
+                "comment": " Customize the accent color of your book. This will change the color for a few different elements that sit on top of your background like the title and default logo.\n",
+                "type": "String.String -> ElmBook.Internal.ThemeOptions.ThemeOptions html -> ElmBook.Internal.ThemeOptions.ThemeOptions html"
+            },
+            {
+                "name": "background",
+                "comment": " Customize the background color of your book. Any valid value for the `background` CSS property will work.\n",
+                "type": "String.String -> ElmBook.Internal.ThemeOptions.ThemeOptions html -> ElmBook.Internal.ThemeOptions.ThemeOptions html"
+            },
+            {
+                "name": "backgroundGradient",
+                "comment": " Customize the background of your book using a gradient by providing the start and end color. This is just a helper since the same thing can be achieved by using the `background` attribute.\n",
+                "type": "String.String -> String.String -> ElmBook.Internal.ThemeOptions.ThemeOptions html -> ElmBook.Internal.ThemeOptions.ThemeOptions html"
+            },
+            {
+                "name": "globals",
+                "comment": " Add global elements to your book. This can be helpful for things like CSS resets.\n\nFor instance, if you're using elm-tailwind-modules, this would be really helpful:\n\n    import Css.Global exposing (global)\n    import Tailwind.Utilities exposing (globalStyles)\n\n    book \"MyApp\"\n        |> withThemeOptions [\n            globals [ global globalStyles ]\n        ]\n\n",
+                "type": "List.List html -> ElmBook.Internal.ThemeOptions.ThemeOptions html -> ElmBook.Internal.ThemeOptions.ThemeOptions html"
+            },
+            {
+                "name": "header",
+                "comment": " Provide a completely custom header to your book. This will replace the whole area where usually the logo, title and subtitle appears.\n",
+                "type": "html -> ElmBook.Internal.ThemeOptions.ThemeOptions html -> ElmBook.Internal.ThemeOptions.ThemeOptions html"
+            },
+            {
+                "name": "logo",
+                "comment": " Provide a custom logo for your book.\n",
+                "type": "html -> ElmBook.Internal.ThemeOptions.ThemeOptions html -> ElmBook.Internal.ThemeOptions.ThemeOptions html"
+            },
+            {
+                "name": "navAccent",
+                "comment": " Customize the nav accent color of your book. This will affect the default text color for nav items.\n",
+                "type": "String.String -> ElmBook.Internal.ThemeOptions.ThemeOptions html -> ElmBook.Internal.ThemeOptions.ThemeOptions html"
+            },
+            {
+                "name": "navAccentHighlight",
+                "comment": " Customize the nav accent highlight color of your book. This will affect the color of active nav items.\n",
+                "type": "String.String -> ElmBook.Internal.ThemeOptions.ThemeOptions html -> ElmBook.Internal.ThemeOptions.ThemeOptions html"
+            },
+            {
+                "name": "navBackground",
+                "comment": " Customize the nav background color of your book. This will affect both the background on hovered and active nav items as well as the background of the search field.\n",
+                "type": "String.String -> ElmBook.Internal.ThemeOptions.ThemeOptions html -> ElmBook.Internal.ThemeOptions.ThemeOptions html"
+            },
+            {
+                "name": "preferDarkMode",
+                "comment": " Makes your book always start as dark mode.\n",
+                "type": "ElmBook.Internal.ThemeOptions.ThemeOptions html -> ElmBook.Internal.ThemeOptions.ThemeOptions html"
+            },
+            {
+                "name": "routePrefix",
+                "comment": " Use this to set the route prefix for your ElmBook's urls. This is useful if you're not hosting it on your root path.\n",
+                "type": "String.String -> ElmBook.Internal.ThemeOptions.ThemeOptions html -> ElmBook.Internal.ThemeOptions.ThemeOptions html"
+            },
+            {
+                "name": "subtitle",
+                "comment": " Define a custom subtitle for your book. This will appear below the title.\n",
+                "type": "String.String -> ElmBook.Internal.ThemeOptions.ThemeOptions html -> ElmBook.Internal.ThemeOptions.ThemeOptions html"
+            },
+            {
+                "name": "useHashBasedNavigation",
+                "comment": " By default ElmBook expects you to host it at the root of a SPA style server.\n\nHowever, if you'd like to use ElmBook on other situations – like on a subfolder, or a static server without these redirection settings, or even in `elm-reactor`. You can use the hash based navigation as everything should work as expected.\n\n",
+                "type": "ElmBook.Internal.ThemeOptions.ThemeOptions html -> ElmBook.Internal.ThemeOptions.ThemeOptions html"
+            }
+        ],
+        "binops": []
+    }
+]

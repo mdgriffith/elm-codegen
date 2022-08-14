@@ -1,0 +1,141 @@
+[
+    {
+        "name": "Db",
+        "comment": " A way of storing your data by `Id`\n\n\n# Db\n\n@docs Db\n\n\n# Build\n\n@docs empty, insert, insertMany, insertWithoutId, update, remove\n\n\n# Query\n\n@docs get, getMany, getWithId, getManyWithId, member\n\n\n# Lists\n\n@docs toList, fromList\n\n\n# Dict\n\n@docs toDict\n\n\n# Transform\n\n@docs map, mapItem\n\n",
+        "unions": [
+            {
+                "name": "Db",
+                "comment": " Short for \"Database\", it stores data by unique identifiers\n",
+                "args": [
+                    "item"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "empty",
+                "comment": " An empty `Db` with no entries\n",
+                "type": "Db.Db item"
+            },
+            {
+                "name": "fromList",
+                "comment": " Initialize a `Db` from a list of id-value pairs\n",
+                "type": "List.List ( Id.Id, item ) -> Db.Db item"
+            },
+            {
+                "name": "get",
+                "comment": " Get the item under the provided `Id`\n",
+                "type": "Db.Db item -> Id.Id -> Maybe.Maybe item"
+            },
+            {
+                "name": "getMany",
+                "comment": " Get many items from a `Db` from a list of `Ids`. Elements not in the `Db` simply wont appear in the return result.\n",
+                "type": "Db.Db item -> List.List Id.Id -> List.List item"
+            },
+            {
+                "name": "getManyWithId",
+                "comment": " Get many items from a `Db`, but dont filter out missing results, and pair results with their `Id`\n",
+                "type": "Db.Db item -> List.List Id.Id -> List.List ( Id.Id, Maybe.Maybe item )"
+            },
+            {
+                "name": "getWithId",
+                "comment": " Just like `get`, except it comes with the `Id`, for those cases where you dont want the item separated from its `Id`\n",
+                "type": "Db.Db item -> Id.Id -> ( Id.Id, Maybe.Maybe item )"
+            },
+            {
+                "name": "insert",
+                "comment": " Insert an item into the `Db` under the given `Id`\n",
+                "type": "Id.Id -> item -> Db.Db item -> Db.Db item"
+            },
+            {
+                "name": "insertMany",
+                "comment": " Insert many items into the `Db` under their given `Id`s\n",
+                "type": "List.List ( Id.Id, item ) -> Db.Db item -> Db.Db item"
+            },
+            {
+                "name": "insertWithoutId",
+                "comment": " Insert an item into a `Db` without an `Id`. This function takes a `Random.Seed` because it generates a random `Id` for the item you are inserting into the `Db`. This function gaurantees no id collisions; if the id it generates already exists, it simply tries again with a different id.\n",
+                "type": "Random.Seed -> item -> Db.Db item -> ( Db.Db item, Random.Seed )"
+            },
+            {
+                "name": "map",
+                "comment": " Map a `Db` to a different data type.\n",
+                "type": "(a -> b) -> Db.Db a -> Db.Db b"
+            },
+            {
+                "name": "mapItem",
+                "comment": " Apply a change to just one item in the `Db`, assuming the item is in the `Db` in the first place. This function is just like `update` except deleting the item is not possible.\n",
+                "type": "Id.Id -> (item -> item) -> Db.Db item -> Db.Db item"
+            },
+            {
+                "name": "member",
+                "comment": " Determine if a certain `Id` is in a `Db`\n",
+                "type": "Id.Id -> Db.Db item -> Basics.Bool"
+            },
+            {
+                "name": "remove",
+                "comment": " Remove the item at the given `Id`, if it exists\n",
+                "type": "Id.Id -> Db.Db item -> Db.Db item"
+            },
+            {
+                "name": "toDict",
+                "comment": " turn a `Db item` into a `Dict String item`\n",
+                "type": "Db.Db item -> Dict.Dict String.String item"
+            },
+            {
+                "name": "toList",
+                "comment": " Turn your `Db` into a list\n",
+                "type": "Db.Db item -> List.List ( Id.Id, item )"
+            },
+            {
+                "name": "update",
+                "comment": " Update an item in a `Db`, using an update function. If the item doesnt exist in the `Db`, it comes into the update as `Nothing`. If a `Nothing` comes out of the update function, the value under that id will be removed.\n",
+                "type": "Id.Id -> (Maybe.Maybe item -> Maybe.Maybe item) -> Db.Db item -> Db.Db item"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Id",
+        "comment": " A simple `Id` type for your types that have ids.\n\n\n# Id\n\n@docs Id, fromString, toString, encode, decoder, generator\n\n",
+        "unions": [
+            {
+                "name": "Id",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decoder",
+                "comment": " Decode an `Id`\n\n    Decode.decodeString (Decode.field \"id\" Id.decoder) \"{\\\"id\\\":\\\"19\\\"}\"\n    -- Ok (Id \"19\") : Result String Id\n\n",
+                "type": "Json.Decode.Decoder Id.Id"
+            },
+            {
+                "name": "encode",
+                "comment": " Encode an `Id`\n\n    Encode.encode 0 (Id.encode id)\n    -- \"\"hDFL0Cs2EqWJ4jc3kMtOrKdEUTWh\"\" : String\n\n    [ (\"id\", Id.encode id) ]\n        |> Encode.object\n        |> Encode.encode 0\n\n    -- {\\\"id\\\":\\\"hDFL0Cs2EqWJ4jc3kMtOrKdEUTWh\\\"} : String\n\n",
+                "type": "Id.Id -> Json.Encode.Value"
+            },
+            {
+                "name": "fromString",
+                "comment": " Make an id from a string\n\n    Id.fromString \"vq93rUv0A4\"\n\n",
+                "type": "String.String -> Id.Id"
+            },
+            {
+                "name": "generator",
+                "comment": " A way to generate random `Id`s\n\n    import Id exposing (Id)\n    import Random exposing (Seed)\n\n    user : Seed -> ( User, Seed )\n    user seed =\n        let\n            ( id, nextSeed ) =\n                Random.step Id.generator seed\n        in\n        ( { id = id, email = \"Bob@sci.org\" }\n        , nextSeed\n        )\n\n",
+                "type": "Random.Generator Id.Id"
+            },
+            {
+                "name": "toString",
+                "comment": " Extract the string from an id.\n",
+                "type": "Id.Id -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

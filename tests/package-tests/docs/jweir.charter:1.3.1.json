@@ -1,0 +1,240 @@
+[
+    {
+        "name": "Charter",
+        "comment": " This library is for generating inline graphs, called sparklines.\n\n\n# Definition\n\n@docs sparkline, Size, Element, chart, Layer, Box\n\n\n# Data\n\n@docs Point, DataSet, LabelSet\n\n\n# Drawing\n\n@docs line, area, dot, bar, label\n\n\n# Options\n\n@docs domain, zeroLine, highlight, Constraint, extents\n\n\n# Events\n\n    type alias Model =\n        { listener : Charter.Listener\n        }\n\n    type Msg\n        = Select Charter.Listener\n        | Click Charter.Listener\n        | Hover Charter.Listener\n\n    chart (Size 620 120)\n        [ Layer\n            (Box 600 70 10 10)\n            [ highlight [ Svg.fill \"rgba(255,255,0,0.4)\" ]\n                OnlyX\n                model.listener\n            ]\n        , Layer\n            (Box 600 50 10 10)\n            [ Charter.onClick model.listener Click\n            , Charter.onSelect model.listener Select\n            , Charter.onHover model.listener Hover\n            , Charter.line [ Svg.stroke \"red\" ] data0\n            ]\n        ]\n\n@docs Listener, listener, subscribe, onSelect, onClick, onHover\n\n\n# Event Data\n\nUse the below functions to extract the data from events. The Point values\nreturned are scaled to the input data, not the mouse events.\n\n@docs selection, clicked, hover, active\n\n",
+        "unions": [
+            {
+                "name": "Constraint",
+                "comment": " When highlighting a selected region the application can have the selection contrainted to just the X axis or be free.\n\nYou would most likely use OnlyX when selecting a timeseries.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "FreeForm",
+                        []
+                    ],
+                    [
+                        "OnlyX",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Element",
+                "comment": " ",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Layer",
+                "comment": " Layers group the chart elements. They have a size and x, y offsets\n\nLayers are drawn in the order of the list. If you want something drawn over another layer, place it after that layer.\n\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Layer",
+                        [
+                            "Charter.Box",
+                            "List.List (Charter.Element a)"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Listener",
+                "comment": " A listener to maintain the state of events (selection, hover and clicks). A\nlistener can be shared across charts with the same scale.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Box",
+                "comment": " Defines the size and position of chart elements\n",
+                "args": [],
+                "type": "{ width : Basics.Float, height : Basics.Float, x : Basics.Float, y : Basics.Float }"
+            },
+            {
+                "name": "DataSet",
+                "comment": " The data to be rendered.\n",
+                "args": [],
+                "type": "List.List Charter.Point"
+            },
+            {
+                "name": "LabelSet",
+                "comment": " The data and text to use for labeling\n",
+                "args": [
+                    "a"
+                ],
+                "type": "List.List ( Charter.Point, List.List (Svg.Attribute a), String.String )"
+            },
+            {
+                "name": "Point",
+                "comment": " Tuple of (x,y) value\n",
+                "args": [],
+                "type": "( Basics.Float, Basics.Float )"
+            },
+            {
+                "name": "Size",
+                "comment": " Defines the size of the chart\n",
+                "args": [],
+                "type": "{ width : Basics.Float, height : Basics.Float }"
+            }
+        ],
+        "values": [
+            {
+                "name": "active",
+                "comment": " Hover returns a point from a hover event.\n",
+                "type": "Charter.Listener -> Basics.Bool"
+            },
+            {
+                "name": "area",
+                "comment": " Area creates a graph meant to be filled\n",
+                "type": "List.List (Svg.Attribute a) -> Charter.DataSet -> Charter.Element a"
+            },
+            {
+                "name": "bar",
+                "comment": " Bar draws a bar graph of a given width.\n",
+                "type": "List.List (Svg.Attribute a) -> Basics.Float -> Charter.DataSet -> Charter.Element a"
+            },
+            {
+                "name": "chart",
+                "comment": " Use chart to draw graphics with layers. Layers can be positioned and overlayed, allowing for charts with margins and different regions.\n\n    chart (Size 620 120)\n        [ Layer\n            (Box 600 50 10 10)\n            [ line [] data0\n            , zeroLine []\n            ]\n        , Layer (Box 600 20 10 60)\n            [ area [ Svg.stroke \"none\", Svg.fill \"rgb(150,150,255)\" ] data1 ]\n        ]\n\n",
+                "type": "Charter.Size -> List.List (Charter.Layer a) -> Svg.Svg a"
+            },
+            {
+                "name": "clicked",
+                "comment": " Clicked returns a point from a click event.\n",
+                "type": "Charter.Listener -> Maybe.Maybe Charter.Point"
+            },
+            {
+                "name": "domain",
+                "comment": " Domain includes the given data into the graph's domain.\nThis is useful when creating multiple graphs that need to have the same scale.\n",
+                "type": "Charter.DataSet -> Charter.Element a"
+            },
+            {
+                "name": "dot",
+                "comment": " Dot draws a dot at each point. Set the radius of the dot by styling it `[Svg.r \"3\"]`\n",
+                "type": "List.List (Svg.Attribute a) -> Charter.DataSet -> Charter.Element a"
+            },
+            {
+                "name": "extents",
+                "comment": " extents will return a Maybe of two tuples from the passed Elements.\n\nThe first tuple is the low range of (x,y)\nThe second tuple is the high range of (x,y)\n\n",
+                "type": "List.List (Charter.Element a) -> Maybe.Maybe ( ( Basics.Float, Basics.Float ), ( Basics.Float, Basics.Float ) )"
+            },
+            {
+                "name": "highlight",
+                "comment": " Highlight is used to draw a region that has been selected. See `onSelect`\n",
+                "type": "List.List (Svg.Attribute a) -> Charter.Constraint -> Charter.Listener -> Charter.Element a"
+            },
+            {
+                "name": "hover",
+                "comment": " Hover returns a point from a hover event.\n",
+                "type": "Charter.Listener -> Maybe.Maybe Charter.Point"
+            },
+            {
+                "name": "label",
+                "comment": " Label plots text on the graph\n",
+                "type": "List.List (Svg.Attribute a) -> Charter.LabelSet a -> Charter.Element a"
+            },
+            {
+                "name": "line",
+                "comment": " Line creates a line chart\n",
+                "type": "List.List (Svg.Attribute a) -> Charter.DataSet -> Charter.Element a"
+            },
+            {
+                "name": "listener",
+                "comment": " Create a new event listener.\n",
+                "type": "Charter.Listener"
+            },
+            {
+                "name": "onClick",
+                "comment": " onClick tracks click events.\n",
+                "type": "Charter.Listener -> (Charter.Listener -> a) -> Charter.Element a"
+            },
+            {
+                "name": "onHover",
+                "comment": " onHover tracks the mouse moving over the chart.\n",
+                "type": "Charter.Listener -> (Charter.Listener -> a) -> Charter.Element a"
+            },
+            {
+                "name": "onSelect",
+                "comment": " onSelect event for when a selection is made.\n",
+                "type": "Charter.Listener -> (Charter.Listener -> a) -> Charter.Element a"
+            },
+            {
+                "name": "selection",
+                "comment": " Selection returns a box with the selected boundaries of the data.\n\nUse this selection to filter the applications data into a subset.\n\n    filter : DataSet -> Listener -> DataSet\n    filter data listener =\n        case selection listener of\n            Nothing ->\n                []\n\n            Just ( ( x0, _ ), ( x1, _ ) ) ->\n                data\n                    |> List.filter (\\( x, _ ) -> x >= x0 && x <= x1)\n\n",
+                "type": "Charter.Listener -> Maybe.Maybe ( Charter.Point, Charter.Point )"
+            },
+            {
+                "name": "sparkline",
+                "comment": " Draws a simple chart.\n\n          -- data is tuples with (x,y) values as floats\n          data = [(0,0),(5,10),(10,12)]\n          data2 = [(0,-5),(7,2),(12,14)]\n\n          sparkline\n              (Size 100 10)    -- the width and height\n              [ line [] data ] -- type of element to draw with SVG attributes and the data\n\nMultiple elements can be included to have muliple graphs. Each will have its data\nscaled relatively to one another. The graphs are drawn in the order they are\ngiven. So last graph will be drawn on top.\n\n          sparkline\n              (100,10)\n              [ line [] data\n              , line [Svg.stroke \"red\" ] data2\n              ]\n\n",
+                "type": "Charter.Size -> List.List (Charter.Element a) -> Svg.Svg a"
+            },
+            {
+                "name": "subscribe",
+                "comment": " When tracking `onSelect` a subscription will be required. The mouse events are tracked outside of the chart's SVG element.\n\n        type alias Model =\n            { listener : Listener }\n\n        type Msg\n            = Select Listener\n\n        subscriptions =\n            Sub.batch [ subscribe model.listener Select ]\n\n",
+                "type": "Charter.Listener -> (Charter.Listener -> a) -> Platform.Sub.Sub a"
+            },
+            {
+                "name": "zeroLine",
+                "comment": " ZeroLine will draw a line at the 0 y axis\n",
+                "type": "List.List (Svg.Attribute a) -> Charter.Element a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Charter.Extras",
+        "comment": " Additional functions to help in generating the graphs.\n\n\n# Definition\n\n@docs minMax, Axes, step, Step\n\n",
+        "unions": [
+            {
+                "name": "Axes",
+                "comment": " Descibes which axes on the graph or from the data to use.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "X",
+                        []
+                    ],
+                    [
+                        "Y",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Step",
+                "comment": " Defines where the step will occur\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Before",
+                        []
+                    ],
+                    [
+                        "After",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "minMax",
+                "comment": " Returns the min and max value for the given Axis.\nAn empty list will return (0,0)\n",
+                "type": "Charter.Extras.Axes -> List.List ( Basics.Float, Basics.Float ) -> ( Basics.Float, Basics.Float )"
+            },
+            {
+                "name": "step",
+                "comment": " step modifies the input data so it will be drawn with a step on the Y axis.\n",
+                "type": "Charter.Extras.Step -> List.List ( Basics.Float, Basics.Float ) -> List.List ( Basics.Float, Basics.Float )"
+            }
+        ],
+        "binops": []
+    }
+]

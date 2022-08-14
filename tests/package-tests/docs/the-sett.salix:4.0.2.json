@@ -1,0 +1,895 @@
+[
+    {
+        "name": "Checker",
+        "comment": " Implements a checker that ensures a data model is valid as a level 2\nconstruct.\n\n\n# Model checking processor.\n\n@docs processorImpl, errorCatalogue\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "errorCatalogue",
+                "comment": " The error catalogue for this checker.\n",
+                "type": "Dict.Dict Basics.Int Errors.ErrorMessage"
+            },
+            {
+                "name": "processorImpl",
+                "comment": " SPI for this L2 checker. Use `L2.builder` to create an `L2.Processor` out\nof this.\n",
+                "type": "L2.ProcessorImpl pos (Checker.ModelCheckingError pos)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Elm.FunDecl",
+        "comment": " FunDecl captures function declarations along with any associated linkage required.\nEverything needed to make a function declaration either at top-level or inside a let block,\nor to extract the function body as an expression is captured as a `FunDecl`.\n\n`Options` can be applied when extracting a `FunDecl` as generated code; to rename it,\nto include or exclude it from the exposings, to modify or disable its docs, to include\na function signature or not.\n\nThis allows the decision to build a function as a top-level, a let expression or to extract it\nas an expression for further manipulation, to be deferred.\n\nCode that writes function can therefore be used in many different ways as a result, and there\nis no need to write specialized cases for all the different ways in which a code generated\nfunction can be used.\n\n@docs FunGen, FunDecl\n\n@docs Options, defaultOptions\n\n@docs asTopLevel, asLetDecl, asExpression\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "FunDecl",
+                "comment": " All the parts of a function declaration.\n",
+                "args": [],
+                "type": "{ doc : Maybe.Maybe (Elm.CodeGen.Comment Elm.CodeGen.DocComment), sig : Maybe.Maybe Elm.CodeGen.TypeAnnotation, name : String.String, args : List.List Elm.CodeGen.Pattern, impl : Elm.CodeGen.Expression }"
+            },
+            {
+                "name": "FunGen",
+                "comment": " A generated function with its linkage.\n",
+                "args": [],
+                "type": "( Elm.FunDecl.FunDecl, Elm.CodeGen.Linkage )"
+            },
+            {
+                "name": "Options",
+                "comment": " Options for generating functions.\n",
+                "args": [],
+                "type": "{ name : Maybe.Maybe String.String, inExposings : Basics.Bool, includeSig : Basics.Bool, includeDoc : Basics.Bool, altDoc : Maybe.Maybe (Elm.CodeGen.Comment Elm.CodeGen.DocComment) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "asExpression",
+                "comment": " Generates an `Expression` for a function.\n\nNote: As the expression has not been assigned to a name, it cannot be visible\noutside of the module. For this reason the `inExposings` option is always set\nto `False` when using this. If you decide to expose the function you must add\nwhatever name you give it back into the linkage.\n\nAn expression will not have any docs or a type signature either.\n\n",
+                "type": "Elm.FunDecl.Options -> Elm.FunDecl.FunGen -> ( Elm.CodeGen.Expression, Elm.CodeGen.Linkage )"
+            },
+            {
+                "name": "asLetDecl",
+                "comment": " Generates a `LetDeclaration` for a function.\n\nNote: As let declaractions are not visible outside of their scope, these are\nnever exposed, so the `inExposings` option is always set to `False` when using\nthis.\n\nA let declaration will not have any docs or a type signature either.\n\n",
+                "type": "Elm.FunDecl.Options -> Elm.FunDecl.FunGen -> ( Elm.CodeGen.LetDeclaration, Elm.CodeGen.Linkage )"
+            },
+            {
+                "name": "asTopLevel",
+                "comment": " Generates a `Declaration` for a function.\n",
+                "type": "Elm.FunDecl.Options -> Elm.FunDecl.FunGen -> ( Elm.CodeGen.Declaration, Elm.CodeGen.Linkage )"
+            },
+            {
+                "name": "defaultOptions",
+                "comment": " The default set of options.\n",
+                "type": "Elm.FunDecl.Options"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Elm.Json.Coding",
+        "comment": " Elm.Json.Coding is a code generator for JSON encoders, decoders and miniBill/elm-codec\nstyle codecs. The 'codec' property when defined on a declaration will signifiy which type\nof json coding is required. The 'codec' property is also used to know how to generate\nreferences to needed json coders where data models are nested.\n\n\n# The L3 processor implementation.\n\n@docs processorImpl\n@docs JsonCodingError, errorBuilder\n\n\n# Properties\n\n@docs jsonCodingEnum\n\n\n# The code generation functions.\n\n@docs coding, partialCoding\n\n",
+        "unions": [
+            {
+                "name": "JsonCodingError",
+                "comment": " The errors that can occurr whilst generating JSON codings.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "coding",
+                "comment": " Generates a JSON coding for a `Declarable`.\n",
+                "type": "L3.PropertiesAPI pos -> L2.L2 pos -> String.String -> L1.Declarable pos L2.RefChecked -> ResultME.ResultME Elm.Json.Coding.JsonCodingError Elm.FunDecl.FunGen"
+            },
+            {
+                "name": "errorBuilder",
+                "comment": " The error building for `JsonCodingError`s.\n",
+                "type": "(pos -> SourcePos.SourceLines) -> Elm.Json.Coding.JsonCodingError -> Errors.Error"
+            },
+            {
+                "name": "jsonCodingEnum",
+                "comment": " An enumeration of the possible JSON codings that can be generated.\n\nSet this on a `Declarable` to generate a coding for it.\n\n",
+                "type": "Enum.Enum String.String"
+            },
+            {
+                "name": "partialCoding",
+                "comment": " Generates a JSON coding for a set of fields (which may be part of a product).\n",
+                "type": "L3.PropertiesAPI pos -> L2.L2 pos -> String.String -> String.String -> List.Nonempty.Nonempty (L1.Field pos L2.RefChecked) -> ResultME.ResultME Elm.Json.Coding.JsonCodingError Elm.FunDecl.FunGen"
+            },
+            {
+                "name": "processorImpl",
+                "comment": " The L3 processor implementation for JSON coding.\n",
+                "type": "L3.ProcessorImpl pos Elm.Json.Coding.JsonCodingError"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Elm.Lang",
+        "comment": " Elm code generation from L2 models. This can be used when writing a code\ngenerator that outputs Elm code. It can be used to generate type declarations\nand type annotations for Elm data models.\n\nType declarations:\n\n@docs typeDecl\n\nLowerings of L2 into Elm type annotations:\n\n@docs lowerType, lowerFun\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "lowerFun",
+                "comment": " Lowers an L1 function type into an Elm type annotation\n",
+                "type": "L1.Type pos L2.RefChecked -> L1.Type pos L2.RefChecked -> ( Elm.CodeGen.TypeAnnotation, Elm.CodeGen.Linkage )"
+            },
+            {
+                "name": "lowerType",
+                "comment": " Lowers an L1 type into an Elm type annotation.\n",
+                "type": "L1.Type pos L2.RefChecked -> ( Elm.CodeGen.TypeAnnotation, Elm.CodeGen.Linkage )"
+            },
+            {
+                "name": "typeDecl",
+                "comment": " Turns an L1 type declaration into Elm code.\n\nA type can result in a list of declarations - enums in addition to declaring a\ntype can also declare the permitted enum values.\n\n",
+                "type": "String.String -> Elm.CodeGen.Comment Elm.CodeGen.DocComment -> L1.Declarable pos L2.RefChecked -> ( List.List Elm.CodeGen.Declaration, Elm.CodeGen.Linkage )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Errors",
+        "comment": " Errors defines a format for describing human readable error messages,\nthat can also quote some source, in order to identify the source of an error.\n\n\n# Errors and Error Messages\n\n@docs Error, ErrorMessage\n\n\n# Instantiating Error Messages into Errors\n\n@docs ErrorBuilder, lookupError, lookupErrorNoArgs\n\n\n# Error formatting and printing\n\n@docs document, asConsoleString, htmlRenderer\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Error",
+                "comment": " Common Error definition, for reporting errors to users.\n\nThis contains all the information needed to build a nice human readable error\nmessage. The body is written in `mdgriffith/elm-markup` and looks like this:\n\n    There was an error in your code.\n\n    |> Source\n        label = Look, here it is:\n        pos = 0\n\n    Please fix it. This is not a helpful error message.\n\n",
+                "args": [],
+                "type": "{ code : Basics.Int, title : String.String, body : String.String, args : Dict.Dict String.String String.String, sources : List.List SourcePos.SourceLines }"
+            },
+            {
+                "name": "ErrorBuilder",
+                "comment": " Defines the signature of a function for building Errors. This keeps the\npositional information variable, but requires a function to turn source code\npositions into quotes lines of source code.\n\nTypically implementation of this will use the `lookupError` functions and an\nerror catalogue of error messages.\n\n",
+                "args": [
+                    "pos",
+                    "err"
+                ],
+                "type": "(pos -> SourcePos.SourceLines) -> err -> Errors.Error"
+            },
+            {
+                "name": "ErrorMessage",
+                "comment": " Defines the content of an error message.\n\nThe body is written in `mdgriffith/elm-markup` and looks like this:\n\n    There was an error in your code.\n\n    |> Source\n        label = Look, here it is:\n        pos = 0\n\n    Please fix it. This is not a helpful error message.\n\nAn `ErrorMessage` will be combined with some lines of source code that it can\nquote, in order to produce an `Error`.\n\n",
+                "args": [],
+                "type": "{ title : String.String, body : String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "asConsoleString",
+                "comment": " Renders an Error as a String for printing to the console with ANSI colours.\n",
+                "type": "Errors.Error -> String.String"
+            },
+            {
+                "name": "document",
+                "comment": " elm-markup Document describing the format of an error.\n",
+                "type": "Errors.Renderer content -> Errors.Error -> Mark.Document (List.List content)"
+            },
+            {
+                "name": "htmlRenderer",
+                "comment": " Renders an Error as HTML.\n",
+                "type": "Errors.Renderer (Html.Styled.Html msg)"
+            },
+            {
+                "name": "lookupError",
+                "comment": " Looks up an ErrorMessage in an error catalogue and fills in its quoted\nsource code and parameters to produce an Error.\n",
+                "type": "Dict.Dict Basics.Int Errors.ErrorMessage -> Basics.Int -> Dict.Dict String.String String.String -> List.List SourcePos.SourceLines -> Errors.Error"
+            },
+            {
+                "name": "lookupErrorNoArgs",
+                "comment": " Looks up an ErrorMessage in an error catalogue and fills in its quoted\nsource code to produce an Error.\n",
+                "type": "Dict.Dict Basics.Int Errors.ErrorMessage -> Basics.Int -> List.List SourcePos.SourceLines -> Errors.Error"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "L1",
+        "comment": " Defines the level 1 language for data modelling.\n\n\n# The L1 data modelling AST.\n\n@docs Basic, Container, Field, Type, Restricted, Declarable, L1\n\n\n# Properties that can be held against the L1 mode.\n\n@docs PropSpec, Property, Properties, PropSpecs\n@docs defineProperties, emptyProperties\n\n\n# Ref checking status - L1 is unchecked.\n\n@docs Unchecked\n\n\n# Helper functions for extracting info from the L1 model.\n\n@docs positionOfDeclarable, positionOfType, propertiesOfDeclarable\n@docs updatePropertiesOfDeclarable\n\n\n# Meta information on the model.\n\n@docs declarableConsName, typeConsName\n\n",
+        "unions": [
+            {
+                "name": "Basic",
+                "comment": " The basic data types.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "BBool",
+                        []
+                    ],
+                    [
+                        "BInt",
+                        []
+                    ],
+                    [
+                        "BReal",
+                        []
+                    ],
+                    [
+                        "BString",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Container",
+                "comment": " Containers for 0..n instances of some type.\n",
+                "args": [
+                    "pos",
+                    "ref"
+                ],
+                "cases": [
+                    [
+                        "CList",
+                        [
+                            "L1.Type pos ref"
+                        ]
+                    ],
+                    [
+                        "CSet",
+                        [
+                            "L1.Type pos ref"
+                        ]
+                    ],
+                    [
+                        "CDict",
+                        [
+                            "L1.Type pos ref",
+                            "L1.Type pos ref"
+                        ]
+                    ],
+                    [
+                        "COptional",
+                        [
+                            "L1.Type pos ref"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Declarable",
+                "comment": " Things that can be declared as named constructs.\n",
+                "args": [
+                    "pos",
+                    "ref"
+                ],
+                "cases": [
+                    [
+                        "DAlias",
+                        [
+                            "pos",
+                            "L1.Properties",
+                            "L1.Type pos ref"
+                        ]
+                    ],
+                    [
+                        "DSum",
+                        [
+                            "pos",
+                            "L1.Properties",
+                            "List.Nonempty.Nonempty ( String.String, List.List (L1.Field pos ref) )"
+                        ]
+                    ],
+                    [
+                        "DEnum",
+                        [
+                            "pos",
+                            "L1.Properties",
+                            "List.Nonempty.Nonempty String.String"
+                        ]
+                    ],
+                    [
+                        "DRestricted",
+                        [
+                            "pos",
+                            "L1.Properties",
+                            "L1.Restricted"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "PropSpec",
+                "comment": " Defines the kinds of additional property that can be placed in the model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "PSString",
+                        []
+                    ],
+                    [
+                        "PSEnum",
+                        [
+                            "Enum.Enum String.String"
+                        ]
+                    ],
+                    [
+                        "PSQName",
+                        []
+                    ],
+                    [
+                        "PSBool",
+                        []
+                    ],
+                    [
+                        "PSOptional",
+                        [
+                            "L1.PropSpec"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Property",
+                "comment": " Allows additional properties from a variety of possible kinds to be placed\nin the model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "PString",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "PEnum",
+                        [
+                            "Enum.Enum String.String",
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "PQName",
+                        [
+                            "List.List String.String"
+                        ]
+                    ],
+                    [
+                        "PBool",
+                        [
+                            "Basics.Bool"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Restricted",
+                "comment": " Restricted forms that are subsets of the basic data types.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "RInt",
+                        [
+                            "{ min : Maybe.Maybe Basics.Int, max : Maybe.Maybe Basics.Int, width : Maybe.Maybe Basics.Int }"
+                        ]
+                    ],
+                    [
+                        "RString",
+                        [
+                            "{ minLength : Maybe.Maybe Basics.Int, maxLength : Maybe.Maybe Basics.Int, regex : Maybe.Maybe String.String }"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Type",
+                "comment": " The possible type constructs.\n",
+                "args": [
+                    "pos",
+                    "ref"
+                ],
+                "cases": [
+                    [
+                        "TUnit",
+                        [
+                            "pos"
+                        ]
+                    ],
+                    [
+                        "TBasic",
+                        [
+                            "pos",
+                            "L1.Basic"
+                        ]
+                    ],
+                    [
+                        "TNamed",
+                        [
+                            "pos",
+                            "String.String",
+                            "ref"
+                        ]
+                    ],
+                    [
+                        "TProduct",
+                        [
+                            "pos",
+                            "List.Nonempty.Nonempty (L1.Field pos ref)"
+                        ]
+                    ],
+                    [
+                        "TEmptyProduct",
+                        [
+                            "pos"
+                        ]
+                    ],
+                    [
+                        "TContainer",
+                        [
+                            "pos",
+                            "L1.Container pos ref"
+                        ]
+                    ],
+                    [
+                        "TFunction",
+                        [
+                            "pos",
+                            "L1.Type pos ref",
+                            "L1.Type pos ref"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Unchecked",
+                "comment": " Indicates that the model has not been checked.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Unchecked",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Field",
+                "comment": " Re-usable field definition.\n",
+                "args": [
+                    "pos",
+                    "ref"
+                ],
+                "type": "( String.String, L1.Type pos ref, L1.Properties )"
+            },
+            {
+                "name": "L1",
+                "comment": " L1 is a list of unchecked declarables.\n",
+                "args": [
+                    "pos"
+                ],
+                "type": "List.List ( String.String, L1.Declarable pos L1.Unchecked )"
+            },
+            {
+                "name": "PropSpecs",
+                "comment": " A set of additional property kinds that can or must be defined against\nthe model.\n",
+                "args": [],
+                "type": "Dict.Dict String.String L1.PropSpec"
+            },
+            {
+                "name": "Properties",
+                "comment": " A set of additional properties on the model.\n",
+                "args": [],
+                "type": "Dict.Dict String.String L1.Property"
+            }
+        ],
+        "values": [
+            {
+                "name": "declarableConsName",
+                "comment": " Yields the constructor name for a `Declarable`.\n",
+                "type": "L1.Declarable pos ref -> String.String"
+            },
+            {
+                "name": "defineProperties",
+                "comment": " Defines a set of property specifications with possible defaults. The first argument is a\nlist of property specs, and the second is a list of default values.\n\nValues may appear in the second argument that are not in the first, in which case a specification\nfor them will be infered.\n\nValues in the second argument that are also in the first should be of the same kind, but will be\noverriden by the second argument if not.\n\n",
+                "type": "List.List ( String.String, L1.PropSpec ) -> List.List ( String.String, L1.Property ) -> ( L1.PropSpecs, L1.Properties )"
+            },
+            {
+                "name": "emptyProperties",
+                "comment": " Creates an empty set of properties.\n",
+                "type": "L1.Properties"
+            },
+            {
+                "name": "positionOfDeclarable",
+                "comment": " Gets the position context from a Declarable.\n",
+                "type": "L1.Declarable pos ref -> pos"
+            },
+            {
+                "name": "positionOfType",
+                "comment": " Gets the position context from a Type.\n",
+                "type": "L1.Type pos ref -> pos"
+            },
+            {
+                "name": "propertiesOfDeclarable",
+                "comment": " Gets the properties from a Declarable.\n",
+                "type": "L1.Declarable pos ref -> L1.Properties"
+            },
+            {
+                "name": "typeConsName",
+                "comment": " Yields the constructor name for a `Type`.\n",
+                "type": "L1.Type pos ref -> String.String"
+            },
+            {
+                "name": "updatePropertiesOfDeclarable",
+                "comment": " Updates the properties from a Declarable.\n",
+                "type": "(L1.Properties -> L1.Properties) -> L1.Declarable pos ref -> L1.Declarable pos ref"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "L2",
+        "comment": " Defines the level 2 language for data models that have been checked for\nconsitency, and have been processed for general data modelling concerns without\nregard to specific code generators.\n\n\n# The L2 data modelling language.\n\n@docs L2\n\n\n# Ref checking status - L2 is checked.\n\n@docs RefChecked\n\n\n# Standardized interface to an L2 processor.\n\n@docs Processor, ProcessorImpl, builder\n\n\n# Meta information on the model.\n\n@docs refCheckedConsName\n\n",
+        "unions": [
+            {
+                "name": "RefChecked",
+                "comment": " Indicates that named types in the model have been reference checked to\nenusure that they name something that actually exists in the L2 dictionary.\n\nSome summary information of what they refer to is also cached during ref\nchecking. This can be very convenient during code generation to avoid having\nto look up in the dictionary all the time, to find out what kind of thing a\nnamed type is.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "RcEnum",
+                        []
+                    ],
+                    [
+                        "RcRestricted",
+                        [
+                            "L1.Basic"
+                        ]
+                    ],
+                    [
+                        "RcSum",
+                        []
+                    ],
+                    [
+                        "RcTUnit",
+                        []
+                    ],
+                    [
+                        "RcTBasic",
+                        [
+                            "L1.Basic"
+                        ]
+                    ],
+                    [
+                        "RcTNamed",
+                        []
+                    ],
+                    [
+                        "RcTProduct",
+                        []
+                    ],
+                    [
+                        "RcTEmptyProduct",
+                        []
+                    ],
+                    [
+                        "RcTContainer",
+                        []
+                    ],
+                    [
+                        "RcTFunction",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "L2",
+                "comment": " L2 is a dictionary of named data model components, which has also been\nreference checked to ensure that all references in the model have named\nentries in the dictionary.\n",
+                "args": [
+                    "pos"
+                ],
+                "type": "Dict.Dict String.String (L1.Declarable pos L2.RefChecked)"
+            },
+            {
+                "name": "Processor",
+                "comment": " API for an L2 model processor.\n",
+                "args": [
+                    "pos"
+                ],
+                "type": "{ name : String.String, check : L1.L1 pos -> ResultME.ResultME Errors.Error (L2.L2 pos) }"
+            },
+            {
+                "name": "ProcessorImpl",
+                "comment": " SPI for an L2 model processor. Use the `builder` to turn one of these into\na `Processor`.\n",
+                "args": [
+                    "pos",
+                    "err"
+                ],
+                "type": "{ name : String.String, check : L1.L1 pos -> ResultME.ResultME err (L2.L2 pos), buildError : Errors.ErrorBuilder pos err }"
+            }
+        ],
+        "values": [
+            {
+                "name": "builder",
+                "comment": " Builds an L2 Processor API from an implementation. A function to turn\nsource code positions into quoted lines of source code needs to be supplied.\n",
+                "type": "(pos -> SourcePos.SourceLines) -> L2.ProcessorImpl pos err -> L2.Processor pos"
+            },
+            {
+                "name": "refCheckedConsName",
+                "comment": " Yields the constructor name for a `RefChecked`.\n",
+                "type": "L2.RefChecked -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "L3",
+        "comment": " Defines the level 3 language for data models that have been annotated with\nproperties indicating that the model has particular features needed by particular\ncode generators.\n\nA level 3 processor is something that consumes a data model with particular\nproperties. It declares up-front what the properties it consumes are, and this\nallows its input to be checked against it prior to processing it; missing or\ninvalid properties can be reported as errors back to the user.\n\nA level 3 language combines together an L2 data model, and optionally a set of\nproperties that are understood by a level 3 processor and control how it processes\nthe model. An example might be a name property that tells an L3 processor how to\nname some code module that it generates; the L3 language says what value the name\nis to take, and the L3 processor expects that to be set and will consume that value\nwhen naming the module it generates.\n\n\n# The L3 data modelling language.\n\n@docs L3\n\n\n# Standardized interface to an L3 processor.\n\n@docs Processor, ProcessorImpl, builder\n\n\n# Common L3 error catalogue for property and dereferncing errors.\n\n@docs L3Error, errorBuilder, errorCatalogue\n\n\n# Defaulting of properties across the data model, and APIs to read properties.\n\n@docs DefaultProperties, emptyDefaultProperties\n@docs PropertiesAPI, PropertyGet, makePropertiesAPI\n\n",
+        "unions": [
+            {
+                "name": "L3Error",
+                "comment": " Common Errors that L3 processors may run into when fetching properties or\ndereferencing declarations from the model. One the model has been reference and\nproperty checked these error should not be possible, but we have to allow for the\nerror code branches anyway.\n\nAs these errors should generally not happen, they should be reported as bugs when\nthey do. This error type enumerates the possible dereferencing and property bugs.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "CheckedPropertyMissing",
+                        [
+                            "String.String",
+                            "L1.PropSpec"
+                        ]
+                    ],
+                    [
+                        "CheckedPropertyWrongKind",
+                        [
+                            "String.String",
+                            "L1.PropSpec"
+                        ]
+                    ],
+                    [
+                        "DerefDeclMissing",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "NotExpectedKind",
+                        [
+                            "String.String",
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "DefaultProperties",
+                "comment": " Allows the default properties on parts of the model to be defined.\n",
+                "args": [],
+                "type": "{ top : ( L1.PropSpecs, L1.Properties ), alias : ( L1.PropSpecs, L1.Properties ), sum : ( L1.PropSpecs, L1.Properties ), enum : ( L1.PropSpecs, L1.Properties ), restricted : ( L1.PropSpecs, L1.Properties ), fields : ( L1.PropSpecs, L1.Properties ) }"
+            },
+            {
+                "name": "L3",
+                "comment": " The L3 model. This consists of an L2 model and a set of top-level properties\nthat a code generator needs to know.\n",
+                "args": [
+                    "pos"
+                ],
+                "type": "{ properties : L1.Properties, declarations : Dict.Dict String.String (L1.Declarable pos L2.RefChecked) }"
+            },
+            {
+                "name": "Processor",
+                "comment": " API for an L3 model processor.\n",
+                "args": [
+                    "pos"
+                ],
+                "type": "{ name : String.String, defaults : L3.DefaultProperties, check : L3.L3 pos -> ResultME.ResultME Errors.Error (L3.L3 pos) }"
+            },
+            {
+                "name": "ProcessorImpl",
+                "comment": " SPI for an L3 model processor. Use the `builder` to turn one of these into\na `Processor`.\n",
+                "args": [
+                    "pos",
+                    "err"
+                ],
+                "type": "{ name : String.String, defaults : L3.DefaultProperties, check : L3.L3 pos -> ResultME.ResultME err (L3.L3 pos), buildError : Errors.ErrorBuilder pos err }"
+            },
+            {
+                "name": "PropertiesAPI",
+                "comment": " An API for supplying property readers for various parts of the data model.\n",
+                "args": [
+                    "pos"
+                ],
+                "type": "{ top : L3.PropertyGet, declarable : L1.Declarable pos L2.RefChecked -> L3.PropertyGet, field : L1.Properties -> L3.PropertyGet }"
+            },
+            {
+                "name": "PropertyGet",
+                "comment": " An API for reading properties of various expected kinds.\n",
+                "args": [],
+                "type": "{ getStringProperty : String.String -> ResultME.ResultME L3.L3Error String.String, getEnumProperty : Enum.Enum String.String -> String.String -> ResultME.ResultME L3.L3Error String.String, getQNameProperty : String.String -> ResultME.ResultME L3.L3Error (List.List String.String), getBoolProperty : String.String -> ResultME.ResultME L3.L3Error Basics.Bool, getOptionalStringProperty : String.String -> ResultME.ResultME L3.L3Error (Maybe.Maybe String.String), getOptionalEnumProperty : Enum.Enum String.String -> String.String -> ResultME.ResultME L3.L3Error (Maybe.Maybe String.String) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "builder",
+                "comment": " Builds an L3 Processor API from an implementation. A function to turn\nsource code positions into quoted lines of source code needs to be supplied.\n",
+                "type": "(pos -> SourcePos.SourceLines) -> L3.ProcessorImpl pos err -> L3.Processor pos"
+            },
+            {
+                "name": "emptyDefaultProperties",
+                "comment": " An empty set of default properties. Useful for querying models during L2 processing,\nas without an L3 there are no defaults. So an L2 model can be easily turned into one\nwith a `PropertiesAPI` outside of the context of L3 procesing.\n",
+                "type": "L3.DefaultProperties"
+            },
+            {
+                "name": "errorBuilder",
+                "comment": " Convert prop check errors to standard errors.\n",
+                "type": "(pos -> SourcePos.SourceLines) -> L3.L3Error -> Errors.Error"
+            },
+            {
+                "name": "errorCatalogue",
+                "comment": " The error catalogue for this property checking.\n\nThe error message here are quite generic, and you likely want to re-write\nthis error catalogue for specific modules in order to give better messages.\n\n",
+                "type": "Dict.Dict Basics.Int Errors.ErrorMessage"
+            },
+            {
+                "name": "makePropertiesAPI",
+                "comment": " Creates a properties API from a set of defaulted property specs, and an\nL3 model.\n",
+                "type": "L3.DefaultProperties -> L3.L3 pos -> L3.PropertiesAPI pos"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Naming",
+        "comment": " Helper functions for working with names in source code.\n\n\n# Check names are valid.\n\n@docs checkName\n\n\n# Build valid names.\n\n@docs safeName, safeCCU, safeCCL\n\n\n# Sort things by name.\n\n@docs sortNamed, sortNonemptyNamed\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "checkName",
+                "comment": " Checks that a name starts with an alpha character, and is followed only\nby alpha and numeric characters.\n",
+                "type": "String.String -> Basics.Bool"
+            },
+            {
+                "name": "safeCCL",
+                "comment": " CCL stands for camel-case-lower. This puts a name into camel case lower\nformat.\n\nAdditional it checks if the name matches an Elm keyword, and proposes a\ndifferent name to use instead, which is the original with an underscore appended.\n\n    safeCCL \"type\" == \"type_\"\n\n    safeCCL \"someVar\" == \"someVar\"\n\n    safeCCL \"MyList\" == \"myList\"\n\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "safeCCU",
+                "comment": " CCL stands for camel-case-upper. This puts a name into camel case upper\nformat.\n\nAdditional it checks if the name matches an Elm keyword, and proposes a\ndifferent name to use instead, which is the original with an underscore appended.\n\n    safeCCL \"type\" == \"Type_\"\n\n    safeCCL \"someVar\" == \"SomeVar\"\n\n    safeCCL \"MyList\" == \"MyList\"\n\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "safeName",
+                "comment": " Checks if a name matches an Elm keyword, and proposes a different name to\nuse instead, which is the original with an underscore appended.\n\n    safeName \"type\" == \"type_\"\n\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "sortNamed",
+                "comment": " Sorts a list of named things alphabetically.\n",
+                "type": "List.List ( String.String, a ) -> List.List ( String.String, a )"
+            },
+            {
+                "name": "sortNonemptyNamed",
+                "comment": " Sorts an non-empty list of named things alphabetically.\n",
+                "type": "List.Nonempty.Nonempty ( String.String, a, b ) -> List.Nonempty.Nonempty ( String.String, a, b )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Query",
+        "comment": " Functions for querying Salix models.\n\n\n# Dereferencing named type aliases.\n\n@docs deref\n\n\n# Find dependency sets.\n\n@docs transitiveClosure, transitiveClosureWithoutStartingSet\n@docs transitiveClosureOfType\n\n\n# Partial projections as expectations.\n\n@docs expectAlias, expectProduct, expectProductOrEmpty\n\n\n# Filtering by properties.\n\n@docs PropertyFilter, andPropFilter, notPropFilter, orPropFilter\n@docs filterDictByProps, filterListByProps, filterNonemptyByProps\n@docs propertiesApiWithoutDefaults\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "PropertyFilter",
+                "comment": " Defines the type of a function that filters over a set of properties, to things that\nhave a certain set of properties.\n",
+                "args": [
+                    "pos",
+                    "a"
+                ],
+                "type": "L3.PropertiesAPI pos -> a -> ResultME.ResultME L3.L3Error Basics.Bool"
+            }
+        ],
+        "values": [
+            {
+                "name": "andPropFilter",
+                "comment": " ANDs two `PropertyFilter`s together.\n",
+                "type": "Query.PropertyFilter pos a -> Query.PropertyFilter pos a -> Query.PropertyFilter pos a"
+            },
+            {
+                "name": "deref",
+                "comment": " Dereferences an alias. If an alias is to another alias, since it consists only of a named\ntype, this name will also be derferences recursively, until something that is not a named type\nis encountered.\n",
+                "type": "String.String -> L2.L2 pos -> ResultME.ResultME L3.L3Error (L1.Declarable pos L2.RefChecked)"
+            },
+            {
+                "name": "expectAlias",
+                "comment": " Expects a `Declarable` to be a `DAlias` otherwise its an error.\n",
+                "type": "L1.Declarable pos ref -> ResultME.ResultME L3.L3Error ( pos, L1.Properties, L1.Type pos ref )"
+            },
+            {
+                "name": "expectProduct",
+                "comment": " Expects a `Type` to be a `TProduct` otherwise its an error.\n",
+                "type": "L1.Type pos ref -> ResultME.ResultME L3.L3Error ( pos, List.Nonempty.Nonempty (L1.Field pos ref) )"
+            },
+            {
+                "name": "expectProductOrEmpty",
+                "comment": " Expects a `Type` to be a `TProduct` or `TEmptyProduct` otherwise its an error.\n",
+                "type": "L1.Type pos ref -> ResultME.ResultME L3.L3Error ( pos, List.List (L1.Field pos ref) )"
+            },
+            {
+                "name": "filterDictByProps",
+                "comment": " Filters the values in a `Dict` by a `PropertyFilter`.\n",
+                "type": "L3.PropertiesAPI pos -> Query.PropertyFilter pos a -> Dict.Dict String.String a -> ResultME.ResultME L3.L3Error (Dict.Dict String.String a)"
+            },
+            {
+                "name": "filterListByProps",
+                "comment": " Filters the elements in a `List` by a `PropertyFilter`.\n",
+                "type": "L3.PropertiesAPI pos -> Query.PropertyFilter pos a -> List.List a -> ResultME.ResultME L3.L3Error (List.List a)"
+            },
+            {
+                "name": "filterNonemptyByProps",
+                "comment": " Filters the elements in a `Nonempty` list by a `PropertyFilter`.\n",
+                "type": "L3.PropertiesAPI pos -> Query.PropertyFilter pos a -> List.Nonempty.Nonempty a -> ResultME.ResultME L3.L3Error (List.List a)"
+            },
+            {
+                "name": "notPropFilter",
+                "comment": " Inverts a `PropertyFilter`.\n",
+                "type": "Query.PropertyFilter pos a -> Query.PropertyFilter pos a"
+            },
+            {
+                "name": "orPropFilter",
+                "comment": " ORs two `PropertyFilter`s together.\n",
+                "type": "Query.PropertyFilter pos a -> Query.PropertyFilter pos a -> Query.PropertyFilter pos a"
+            },
+            {
+                "name": "propertiesApiWithoutDefaults",
+                "comment": " This makes a properties API on top of an empty set of defaults and specs.\n\nThis is useful when you don't have an L3, but want to run queries over properties.\nThere may be intermediate properties that have been created during some processing\nthat you need to query over, for example.\n\n",
+                "type": "L2.L2 pos -> L3.PropertiesAPI pos"
+            },
+            {
+                "name": "transitiveClosure",
+                "comment": " Finds the transitive closure starting from a sub-set of declarations from an L2.\nAny type references in these declarations will pull their referred to declarations\ninto the closure, and this process will be continued recursively until no more members\nare added to the closure.\n\nThis is useful if some declarations need to be generated from, including all their\ndependencies. For example, to code generate an encoder for a declaration that references\nother types by name, the encoders for those other types also need to be generated. The\ntransitive closure gives the full set of declaration to generate encoders for to complete\nthe code.\n\nThe first argument is the starting set, and the second argument is the complete model to\nselect a transitive closure from.\n\n    transitiveClosure startingSet model\n\n",
+                "type": "L2.L2 pos -> L2.L2 pos -> ResultME.ResultME L3.L3Error (L2.L2 pos)"
+            },
+            {
+                "name": "transitiveClosureOfType",
+                "comment": " Starting from a type, computes the transitive closure from all outoing TNamed\nreferences within that type. This yields all declarations that a type depends on.\n",
+                "type": "L1.Type pos L2.RefChecked -> L2.L2 pos -> ResultME.ResultME L3.L3Error (L2.L2 pos)"
+            },
+            {
+                "name": "transitiveClosureWithoutStartingSet",
+                "comment": " Finds the transitive closure starting from a sub-set of declarations from an L2.\nAny type references in these declarations will pull their referred to declarations\ninto the closure, and this process will be continued recursively until no more members\nare added to the closure.\n\nThe starting set itself will not be automatically included in the results. Members of\nthe starting set may end up in the results, but only if they are dependencies of other\nmembers of the starting set.\n\nThis is useful if some declarations need to be generated from, including all their\ndependencies. For example, to code generate an encoder for a declaration that references\nother types by name, the encoders for those other types also need to be generated. The\ntransitive closure gives the full set of declaration to generate encoders for to complete\nthe code.\n\nThe first argument is the starting set, and the second argument is the complete model to\nselect a transitive closure from.\n\n",
+                "type": "L2.L2 pos -> L2.L2 pos -> ResultME.ResultME L3.L3Error (L2.L2 pos)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "SourcePos",
+        "comment": " SourcePos provides a way of defining regions of text to quote or to\nhighlight mainly for the purpose of showing where errors exist within some\nsource code.\n\nThe code is treated as lines of text, and positions within that described by row\nand column number.\n\n\n# Regions of text\n\n@docs Region, RowCol\n\n\n# Quoted and highlighted blocks of text\n\n@docs SourceLines, sourceLinesForRegions\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Region",
+                "comment": " Describes a region of text running from a start to an end position.\n",
+                "args": [],
+                "type": "{ start : SourcePos.RowCol, end : SourcePos.RowCol }"
+            },
+            {
+                "name": "RowCol",
+                "comment": " Describes a position within some lines of text.\n",
+                "args": [],
+                "type": "{ row : Basics.Int, col : Basics.Int }"
+            },
+            {
+                "name": "SourceLines",
+                "comment": " Captures a set of source code lines which are indexed by their line numbers,\n\nA highlight region may also be specified, and if set is used to indicate where\nwithin the source lines an error is located. All lines within the highlight\nregion are expected to be in the line dict.\n\n",
+                "args": [],
+                "type": "{ lines : Dict.Dict Basics.Int String.String, highlight : Maybe.Maybe SourcePos.Region }"
+            }
+        ],
+        "values": [
+            {
+                "name": "sourceLinesForRegions",
+                "comment": " Quotes a region of text as `SourceLines`.\n",
+                "type": "Dict.Dict Basics.Int String.String -> List.List SourcePos.Region -> List.List SourcePos.SourceLines"
+            }
+        ],
+        "binops": []
+    }
+]

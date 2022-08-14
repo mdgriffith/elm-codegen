@@ -1,0 +1,168 @@
+[
+    {
+        "name": "Binary",
+        "comment": "\n\n@docs Bits, empty\n\n\n# Converters\n\n@docs fromHex, toHex, fromDecimal, toDecimal, fromIntegers, toIntegers, fromBooleans, toBooleans, fromString, fromStringAsUtf8, toString\n\n\n# Bitwise Operators\n\n@docs and, or, xor, not\n\n\n# Bit Shifting\n\n@docs shiftLeftBy, shiftRightBy, shiftRightZfBy, rotateLeftBy, rotateRightBy\n\n\n# Mathematical Operators\n\n@docs add, subtract\n\n\n# Utilities\n\n@docs append, chunksOf, concat, dropLeadingZeros, ensureSize, makeIsometric, width\n\n",
+        "unions": [
+            {
+                "name": "Bits",
+                "comment": " **The binary sequence.**\n\nUse converters to make `Bits`.\n\n    Binary.fromIntegers [ 0, 1, 0, 1 ]\n\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "add",
+                "comment": " Add two sets of bits together.\n\n    -- ADD 1011\n    --     1011\n    --  = 10110\n\n    >>> add\n    ..>   (fromIntegers [ 1, 0, 1, 1 ])\n    ..>   (fromIntegers [ 1, 0, 1, 1 ])\n    fromIntegers [ 1, 0, 1, 1, 0  ]\n\n    >>> add\n    ..>   (fromIntegers [ 1, 1, 1, 0, 1 ])\n    ..>   (fromIntegers [ 1, 0, 1, 0 ])\n    fromIntegers [ 1, 0, 0, 1, 1, 1  ]\n\n",
+                "type": "Binary.Bits -> Binary.Bits -> Binary.Bits"
+            },
+            {
+                "name": "and",
+                "comment": " AND operator.\n\n    --     0101 (decimal 5)\n    -- AND 0011 (decimal 3)\n    --   = 0001 (decimal 1)\n\n    >>> Binary.and\n    ..>   (fromHex \"5\")\n    ..>   (fromHex \"3\")\n    ensureSize 4 (fromHex \"1\")\n\n",
+                "type": "Binary.Bits -> Binary.Bits -> Binary.Bits"
+            },
+            {
+                "name": "append",
+                "comment": " Merge two binary sequences.\n\n    >>> append\n    ..>   (fromIntegers [ 1, 0, 0, 0 ])\n    ..>   (fromIntegers [ 1, 0, 1, 0 ])\n    fromIntegers [ 1, 0, 0, 0, 1, 0, 1, 0 ]\n\n",
+                "type": "Binary.Bits -> Binary.Bits -> Binary.Bits"
+            },
+            {
+                "name": "chunksOf",
+                "comment": " Split the binary sequence in multiple chunks.\n\n    >>> fromIntegers [ 1, 0, 0, 0, 1, 0, 1, 0 ]\n    ..>   |> chunksOf 4\n    ..>   |> List.map toIntegers\n    [ [ 1, 0, 0, 0 ]\n    , [ 1, 0, 1, 0 ]\n    ]\n\n",
+                "type": "Basics.Int -> Binary.Bits -> List.List Binary.Bits"
+            },
+            {
+                "name": "concat",
+                "comment": " Concat multiple binary sequences.\n\n    >>> [ fromIntegers [ 1, 0, 0, 0 ]\n    ..> , fromIntegers [ 0, 1, 0, 1 ]\n    ..> ]\n    ..>   |> concat\n    ..>   |> toDecimal\n    133\n\n",
+                "type": "List.List Binary.Bits -> Binary.Bits"
+            },
+            {
+                "name": "dropLeadingZeros",
+                "comment": " Drops the leading zeros of a binary sequence.\n\n    >>> dropLeadingZeros (fromIntegers [ 0, 0, 1, 0 ])\n    fromIntegers [ 1, 0 ]\n\n",
+                "type": "Binary.Bits -> Binary.Bits"
+            },
+            {
+                "name": "empty",
+                "comment": " An empty binary sequence.\n",
+                "type": "Binary.Bits"
+            },
+            {
+                "name": "ensureSize",
+                "comment": " Ensure the binary sequence length is of certain size.\n\n    >>> ensureSize 4 (fromIntegers [ 1, 0 ])\n    fromIntegers [ 0, 0, 1, 0 ]\n\n",
+                "type": "Basics.Int -> Binary.Bits -> Binary.Bits"
+            },
+            {
+                "name": "fromBooleans",
+                "comment": " Convert a list of booleans to `Bits`.\n\n    >>> fromBooleans [ True, False, False, False ] |> toHex\n    \"8\"\n\n",
+                "type": "List.List Basics.Bool -> Binary.Bits"
+            },
+            {
+                "name": "fromDecimal",
+                "comment": " Convert a decimal to `Bits`.\n\n    >>> fromDecimal 8 |> toIntegers\n    [ 1, 0, 0, 0 ]\n\n",
+                "type": "Basics.Int -> Binary.Bits"
+            },
+            {
+                "name": "fromHex",
+                "comment": " Convert a hex string to list of binary numbers.\n\n    >>> fromHex \"8\" |> toIntegers\n    [ 1, 0, 0, 0 ]\n\n",
+                "type": "String.String -> Binary.Bits"
+            },
+            {
+                "name": "fromIntegers",
+                "comment": " Convert a list of integers to `Bits`.\n\nEverything below zero and zero itself becomes a `0` bit,\nand everything above zero becomes a `1` bit.\n\n    >>> fromIntegers [ 1, 0, 0, 0 ] |> toHex\n    \"8\"\n\n",
+                "type": "List.List Basics.Int -> Binary.Bits"
+            },
+            {
+                "name": "fromString",
+                "comment": " Convert a string to `Bits`.\n\nThe resulting bits will represent the decimal value\n(ie. code point) of each character (it uses `String.toList`).\n\nThe first argument determines how many bits\nare used per decimal value.\n\nWARNING: This assumes each character will fit into the range you defined.\nFor example, an emoji will not fit in 8 bits, so you can't use `fromString 8`.\nThat said, you can use `fromStringAsUtf8` to make sure each character\nis split up into multiple UTF-8 characters.\n\n    -- 1 character\n    -- Code points: [ 0x1F936 ]\n\n    >>> \"🤶\"\n    ..>   |> fromString 32\n    ..>   |> toHex\n    \"0001F936\"\n\n    -- 3 characters\n    -- Code points: [ 0x61, 0x62, 0x63 ]\n    -- These hexadecimal values are each 8 bits long.\n\n    >>> \"abc\"\n    ..>   |> fromString 8\n    ..>   |> toHex\n    \"616263\"\n\n",
+                "type": "Basics.Int -> String.String -> Binary.Bits"
+            },
+            {
+                "name": "fromStringAsUtf8",
+                "comment": " Convert a string to UTF-8 `Bits`.\n\nThis will convert every character into multiple UTF-8 codepoints,\nif necessary, and then use 8 bits per character.\n\nNOTE: This is not the same as the `fromString 8` function!\nWhich assumes every character is already UTF-8.\nOr, in other words, assumes that each character's codepoint is below 128.\n\n    >>> \"🤶\"\n    ..>   |> fromStringAsUtf8\n    ..>   |> toHex\n    \"F09FA4B6\"\n\n    >>> \"abc\"\n    ..>   |> fromStringAsUtf8\n    ..>   |> toHex\n    \"616263\"\n\n",
+                "type": "String.String -> Binary.Bits"
+            },
+            {
+                "name": "makeIsometric",
+                "comment": " Makes two sequences isometric (equal in size).\n\n    >>> makeIsometric\n    ..>   (fromIntegers [ 0, 1, 0 ])\n    ..>   (fromIntegers [ 1, 0, 0, 0 ])\n    ( fromIntegers [ 0, 0, 1, 0 ]\n    , fromIntegers [ 1, 0, 0, 0 ]\n    )\n\n",
+                "type": "Binary.Bits -> Binary.Bits -> ( Binary.Bits, Binary.Bits )"
+            },
+            {
+                "name": "not",
+                "comment": " NOT operator.\n\n    -- NOT 0111 (decimal 7)\n    --   = 1000 (decimal 8)\n\n    >>> Binary.not\n    ..>   (fromIntegers [ 0, 1, 1, 1 ])\n    fromIntegers [ 1, 0, 0, 0 ]\n\n",
+                "type": "Binary.Bits -> Binary.Bits"
+            },
+            {
+                "name": "or",
+                "comment": " OR operator.\n\n    --    0101 (decimal 5)\n    -- OR 0011 (decimal 3)\n    --  = 0111 (decimal 7)\n\n    >>> Binary.or\n    ..>   (fromHex \"5\")\n    ..>   (fromHex \"3\")\n    fromHex \"7\"\n\n",
+                "type": "Binary.Bits -> Binary.Bits -> Binary.Bits"
+            },
+            {
+                "name": "rotateLeftBy",
+                "comment": " Rotate a binary sequence to the left.\n\n_NOTE: Make sure your binary sequence is of the correct size before rotating!\nRotating 8 bits is not always the same as, for example, 16 bits._\n\n    >>> rotateLeftBy 1 (ensureSize 32 <| fromHex \"17\")\n    ensureSize 32 (fromHex \"2E\")\n\n    >>> rotateLeftBy 2 (ensureSize 32 <| fromHex \"96\")\n    ensureSize 32 (fromHex \"258\")\n\n",
+                "type": "Basics.Int -> Binary.Bits -> Binary.Bits"
+            },
+            {
+                "name": "rotateRightBy",
+                "comment": " Rotate a binary sequence to the right.\n\n_NOTE: Make sure your binary sequence is of the correct size before rotating!\nRotating 8 bits is not always the same as, for example, 16 bits._\n\n    >>> rotateRightBy 1 (ensureSize 64 <| fromHex \"17\")\n    ensureSize 64 (fromHex \"800000000000000B\")\n\n    >>> rotateRightBy 1 (ensureSize 32 <| fromHex \"96\")\n    ensureSize 32 (fromHex \"4B\")\n\n    >>> rotateRightBy 5 (ensureSize 32 <| fromHex \"96\")\n    ensureSize 32 (fromHex \"B0000004\")\n\n",
+                "type": "Basics.Int -> Binary.Bits -> Binary.Bits"
+            },
+            {
+                "name": "shiftLeftBy",
+                "comment": " Arithmetic/Logical left shift.\n\n    -- LEFTSHIFT 00010111 (decimal 23)\n    --         = 00101110 (decimal 46)\n\n    >>> [ 0, 0, 0, 1, 0, 1, 1, 1 ]\n    ..>   |> fromIntegers\n    ..>   |> shiftLeftBy 1\n    ..>   |> toIntegers\n    [ 0, 0, 1, 0, 1, 1, 1, 0 ]\n\n",
+                "type": "Basics.Int -> Binary.Bits -> Binary.Bits"
+            },
+            {
+                "name": "shiftRightBy",
+                "comment": " Arithmetic right shift.\n\n    -- ARI-RIGHTSHIFT 10010111 (decimal 151)\n    --              = 11001011 (decimal 203)\n\n    >>> [ 1, 0, 0, 1, 0, 1, 1, 1 ]\n    ..>   |> fromIntegers\n    ..>   |> shiftRightBy 1\n    ..>   |> toIntegers\n    [ 1, 1, 0, 0, 1, 0, 1, 1 ]\n\n",
+                "type": "Basics.Int -> Binary.Bits -> Binary.Bits"
+            },
+            {
+                "name": "shiftRightZfBy",
+                "comment": " Logical right shift.\n\n    -- LOG-RIGHTSHIFT 10010111 (decimal 151)\n    --              = 00001011 (decimal 11)\n\n    >>> [ 0, 0, 0, 1, 0, 1, 1, 1 ]\n    ..>   |> fromIntegers\n    ..>   |> shiftRightZfBy 1\n    ..>   |> toIntegers\n    [ 0, 0, 0, 0, 1, 0, 1, 1 ]\n\n",
+                "type": "Basics.Int -> Binary.Bits -> Binary.Bits"
+            },
+            {
+                "name": "subtract",
+                "comment": " Subtract two sets of bits from each other.\n\n    -- SUBTRACT 1011\n    --          11\n    --        = 1010\n\n    >>> subtract\n    ..>   (fromIntegers [ 1, 0, 1, 1 ])\n    ..>   (fromIntegers [ 1, 1 ])\n    fromIntegers [ 1, 0, 0, 0  ]\n\n    >>> subtract\n    ..>   (fromIntegers [ 1, 0, 0, 0, 1 ])\n    ..>   (fromIntegers [ 0, 0, 1, 0, 0 ])\n    fromIntegers [ 0, 1, 1, 0, 1  ]\n\n",
+                "type": "Binary.Bits -> Binary.Bits -> Binary.Bits"
+            },
+            {
+                "name": "toBooleans",
+                "comment": " Convert `Bits` to a list of booleans.\n\n    >>> toBooleans <| fromHex \"8\"\n    [ True, False, False, False ]\n\n",
+                "type": "Binary.Bits -> List.List Basics.Bool"
+            },
+            {
+                "name": "toDecimal",
+                "comment": " Convert `Bits` to a decimal.\n\n    >>> toDecimal <| fromIntegers [ 1, 0, 0, 0 ]\n    8\n\n",
+                "type": "Binary.Bits -> Basics.Int"
+            },
+            {
+                "name": "toHex",
+                "comment": " Convert a list of binary numbers to a hex string.\n\n    >>> toHex <| fromIntegers [ 1, 0, 0, 0 ]\n    \"8\"\n\n",
+                "type": "Binary.Bits -> String.String"
+            },
+            {
+                "name": "toIntegers",
+                "comment": " Convert `Bits` to a list of integers.\n\n    >>> toIntegers <| fromHex \"8\"\n    [ 1, 0, 0, 0 ]\n\n",
+                "type": "Binary.Bits -> List.List Basics.Int"
+            },
+            {
+                "name": "toString",
+                "comment": " Convert `Bits` to a string.\n\n1.  Splits the bits in chunks of the given number\n2.  Each chunk is converted to a decimal (code point)\n3.  Each code point is translated to a character\n4.  The list of characters is converted to a string\n\nThe first argument determines how many bits\nare used per decimal value (ie. how large the chunks are).\n\n    >>> \"0001F936\"\n    ..>   |> fromHex\n    ..>   |> toString 32\n    \"🤶\"\n\n    >>> \"616263\"\n    ..>   |> fromHex\n    ..>   |> toString 8\n    \"abc\"\n\n",
+                "type": "Basics.Int -> Binary.Bits -> String.String"
+            },
+            {
+                "name": "width",
+                "comment": " Get the amount of bits in a binary sequence.\n\n    >>> fromIntegers [ 1, 0, 0, 0 ]\n    ..>   |> width\n    4\n\n",
+                "type": "Binary.Bits -> Basics.Int"
+            },
+            {
+                "name": "xor",
+                "comment": " XOR operator.\n\n    --     0101 (decimal 5)\n    -- XOR 0011 (decimal 3)\n    --   = 0110 (decimal 6)\n\n    >>> Binary.xor\n    ..>   (fromHex \"5\")\n    ..>   (fromHex \"3\")\n    fromHex \"6\"\n\n",
+                "type": "Binary.Bits -> Binary.Bits -> Binary.Bits"
+            }
+        ],
+        "binops": []
+    }
+]

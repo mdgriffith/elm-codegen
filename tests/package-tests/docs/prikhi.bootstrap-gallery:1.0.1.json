@@ -1,0 +1,87 @@
+[
+    {
+        "name": "BootstrapGallery",
+        "comment": " This module is used to render images as gallery thumbnails & lightboxes.\n\n\n# Configuration\n\n@docs Config\n\n\n# Data\n\n@docs Model, initial\n\n\n# Rendering\n\n@docs modal, thumbnails, openOnClick\n\n\n# Updating\n\n@docs Msg, update, subscriptions, open, close, next, previous\n\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " Messages the modal may raise.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " Configuration for pulling the thumbnail & image URLs out of an arbitrary\nimage type.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ thumbnailUrl : a -> Maybe.Maybe String.String, imageUrl : a -> String.String }"
+            },
+            {
+                "name": "Model",
+                "comment": " The internal state of the Gallery.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ data : Maybe.Maybe (BootstrapGallery.SubModel a), style : Animation.State, foregroundImageStyle : Animation.State, backgroundImageStyle : Animation.State }"
+            }
+        ],
+        "values": [
+            {
+                "name": "close",
+                "comment": " Close the modal.\n",
+                "type": "BootstrapGallery.Config a -> BootstrapGallery.Model a -> List.List a -> BootstrapGallery.Model a"
+            },
+            {
+                "name": "initial",
+                "comment": " A blank gallery with no associated images.\n",
+                "type": "BootstrapGallery.Model a"
+            },
+            {
+                "name": "modal",
+                "comment": " Render the Modal.\n\nTo get nice open/close transitions, you should always render the modal, even if\nthe Modal has not been opened.\n\nPreferably place this at the end of your HTML to prevent other elements from\nobscuring the modal while it transitions to the open state.\n\n",
+                "type": "BootstrapGallery.Model a -> Html.Html (BootstrapGallery.Msg a)"
+            },
+            {
+                "name": "next",
+                "comment": " Select the next item in the list.\n",
+                "type": "BootstrapGallery.Config a -> BootstrapGallery.Model a -> List.List a -> BootstrapGallery.Model a"
+            },
+            {
+                "name": "open",
+                "comment": " Open the modal & select the given item.\n",
+                "type": "BootstrapGallery.Config a -> BootstrapGallery.Model a -> List.List a -> a -> BootstrapGallery.Model a"
+            },
+            {
+                "name": "openOnClick",
+                "comment": " Open the modal when the element is clicked & select the given item.\n",
+                "type": "(BootstrapGallery.Msg a -> msg) -> a -> Html.Attribute msg"
+            },
+            {
+                "name": "previous",
+                "comment": " Select the previous item in the list.\n",
+                "type": "BootstrapGallery.Config a -> BootstrapGallery.Model a -> List.List a -> BootstrapGallery.Model a"
+            },
+            {
+                "name": "subscriptions",
+                "comment": " Subscribe to the animation updates.\n",
+                "type": "BootstrapGallery.Model a -> Platform.Sub.Sub (BootstrapGallery.Msg a)"
+            },
+            {
+                "name": "thumbnails",
+                "comment": " Render thumbnails in a column grid using the given list of images.\n",
+                "type": "BootstrapGallery.Config a -> List.List a -> Html.Html (BootstrapGallery.Msg a)"
+            },
+            {
+                "name": "update",
+                "comment": " Update the Gallery model.\n",
+                "type": "BootstrapGallery.Config a -> BootstrapGallery.Msg a -> BootstrapGallery.Model a -> List.List a -> BootstrapGallery.Model a"
+            }
+        ],
+        "binops": []
+    }
+]

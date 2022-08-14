@@ -1,0 +1,642 @@
+[
+    {
+        "name": "N",
+        "comment": " Natural numbers within a typed range.\n\n@docs N\n\n\n# bounds\n\n@docs In, Min, MaxNo, Exactly\n@docs Up, Down, To, Fixed\n\n\n# create\n\n@docs abs, randomIn, until\n\n\n# specific numbers\n\nIf the package exposed every number 0 → 1000+, [tools can become unusably slow](https://github.com/lue-bird/elm-typesafe-array/issues/2).\n\nSo only 0 → 16 are exposed, while larger numbers have to be generated locally.\n\nCurrent method: [generate them](https://lue-bird.github.io/elm-bounded-nat/generate/) into a `module exposing (n500, N500, Add500, ...)` + `import as N exposing (n500, ...)`\n\nIn the future, [`elm-generate`](https://github.com/lue-bird/generate-elm) will allow auto-generating via [`elm-review`](https://dark.elm.dmy.fr/packages/jfmengels/elm-review/latest/).\n\n\n## type `n`\n\n[⏭ skip to last](#N16)\n\n@docs N0, N1, N2, N3, N4, N5, N6, N7, N8, N9, N10, N11, N12, N13, N14, N15, N16\n\n\n## type `n +`\n\n[⏭ skip to last](#Add16)\n\n@docs Add1, Add2, Add3, Add4, Add5, Add6, Add7, Add8, Add9, Add10, Add11, Add12, Add13, Add14, Add15, Add16\n\n\n## exact\n\n[⏭ skip to last](#n16)\n\n@docs n0, n1, n2, n3, n4, n5, n6, n7, n8, n9, n10, n11, n12, n13, n14, n15, n16\n\n\n## compare\n\n\n### `Int` clamp\n\n@docs intAtLeast, intIn\n\n\n## `Int` compare\n\n@docs intIsAtLeast, intIsIn, BelowOrAbove\n\n\n## clamp\n\n@docs atLeast, minAtLeast, atMost, in_\n\n\n## compare maximum constrained\n\n@docs is, isIn, isAtLeast, isAtMost\n\n\n# alter\n\n@docs add, minAdd\n@docs sub, minSub\n@docs toPower, remainderBy, mul, div\n\n\n## broaden\n\n@docs toInt, toFloat\n\n\n# type information\n\n@docs min, minDown\n@docs maxNo, max, maxUp\n\n\n# miss operation x?\n\nAnything that can't be expressed with the available operations? → issue/PR\n\n\n# fancy\n\nBuilding extensions to this library\n– like [`typesafe-array`](https://dark.elm.dmy.fr/packages/lue-bird/elm-typesafe-array/latest/) or other structures\n\nWhile the internally stored `Int` can't directly be guaranteed to be in bounds by elm,\n[minimum](#minimumAsDifference), [maximum](#maximumAsDifference) as their representation as a [difference](#Up)\nmust be built as actual values checked by the compiler.\nNo shenanigans like runtime errors for impossible cases.\n\n@docs range, minimumAsDifference, maximumAsDifference\n\n@docs N0able\n@docs fixed\n@docs differenceUp, differenceDown\n@docs upDifference, downDifference\n\n",
+        "unions": [
+            {
+                "name": "BelowOrAbove",
+                "comment": " The error result of comparing [`N`](#N)s.\n\n  - `Above`: greater\n  - `Below`: less\n\nValues exist for each condition.\n\n",
+                "args": [
+                    "below",
+                    "above"
+                ],
+                "cases": [
+                    [
+                        "Below",
+                        [
+                            "below"
+                        ]
+                    ],
+                    [
+                        "Above",
+                        [
+                            "above"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "N",
+                "comment": " A **bounded** natural number `>= 0`\n\n\n### argument type\n\n    -- ≥ 0, any limitations allowed\n    N range_\n\n    -- ≥ 4\n    N (In (Fixed (Add4 minMinus4_)) max_)\n\n    -- 4 ≤ n ≤ 15\n    N (In (Fixed (Add4 minMinus4_)) (Up maxTo15_ To N15))\n\n`In (Add4 minMinus4_) N15` says:\n\n  - the minimum-constraint can be `4 + 0`|`4 + 1`|`4 + 2`|...\n  - the argument's maximum `+` some variable `maxTo15` is `15`\n    which means: the maximum is ≤ 15\n\n\n### result type\n\n    -- ≥ 4\n    N (Min (Up x To (Add4 x)))\n\n    -- 2 ≤ n ≤ 12\n    N (In (Up x To (Add2 x)) (Up x To (Add12 x)))\n\n    n3 : N (In (Up minX To (Add3 minX)) (Up maxX To (Add3 maxX)))\n\n[`Up low To high`] is a representation as a difference of the limit `high - low`\n\nThis enables adding, subtracting.\nConsider it an implementation detail.\n\n    n3 |> N.add n6\n    --→ n9\n\n\n### stored type\n\nwhat to put in declared types like `Model`\n\n    -- ≥ 4\n    N (Min (Fixed N4))\n\n    -- 2 ≤ n ≤ 12\n    N (In (Fixed N2) (Fixed N12))\n\nThey are like [result types](#result-type) but type variables are set to [`N0`](#N0).\n\nmore type examples at [`In`](#In), [`Min`](#Min)\n\n",
+                "args": [
+                    "range"
+                ],
+                "cases": []
+            },
+            {
+                "name": "N0able",
+                "comment": " Base type of [`N0`](#N0), [`Add1 n`](#Add1) following [`allowable-state`](https://dark.elm.dmy.fr/packages/lue-bird/elm-allowable-state/latest/):\n\nIs the parameter `possiblyOrNever` set to `Never` like in\n\n    type alias Add1 n =\n        N0able n Never\n\n`N0` is impossible to construct.\n\nIs the parameter `possiblyOrNever` set to `Possibly` like in\n\n    type alias N0 =\n        N0able Never Possibly\n\n`N0` is a possible value.\n\n",
+                "args": [
+                    "successor",
+                    "possiblyOrNever"
+                ],
+                "cases": [
+                    [
+                        "N0",
+                        [
+                            "possiblyOrNever"
+                        ]
+                    ],
+                    [
+                        "Add1",
+                        [
+                            "successor"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "To",
+                "comment": " Just a word in a [difference type](#Up):\n\n    Up low To high\n\n    Down high To high\n\n→ distance `high - low`.\n\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Up",
+                "comment": " `Up low To high`: an exact number as the difference `high - low`.\n",
+                "args": [
+                    "low",
+                    "toTag",
+                    "high"
+                ],
+                "cases": [
+                    [
+                        "Difference",
+                        [
+                            "{ up : low -> high, down : high -> low }"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Add1",
+                "comment": " The [natural number](#N0able) `1 +` another given [natural number](#N0able) `n`\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.N0able n Basics.Never"
+            },
+            {
+                "name": "Add10",
+                "comment": " The [natural number](#N0able) `10 +` another given [natural number](#N0able) `n`\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able n Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never"
+            },
+            {
+                "name": "Add11",
+                "comment": " The [natural number](#N0able) `11 +` another given [natural number](#N0able) `n`\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able n Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never"
+            },
+            {
+                "name": "Add12",
+                "comment": " The [natural number](#N0able) `12 +` another given [natural number](#N0able) `n`\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able n Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never"
+            },
+            {
+                "name": "Add13",
+                "comment": " The [natural number](#N0able) `13 +` another given [natural number](#N0able) `n`\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able n Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never"
+            },
+            {
+                "name": "Add14",
+                "comment": " The [natural number](#N0able) `14 +` another given [natural number](#N0able) `n`\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able n Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never"
+            },
+            {
+                "name": "Add15",
+                "comment": " The [natural number](#N0able) `15 +` another given [natural number](#N0able) `n`\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able n Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never"
+            },
+            {
+                "name": "Add16",
+                "comment": " The [natural number](#N0able) `16 +` another given [natural number](#N0able) `n`\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able n Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never"
+            },
+            {
+                "name": "Add2",
+                "comment": " The [natural number](#N0able) `2 +` another given [natural number](#N0able) `n`\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.N0able (N.N0able n Basics.Never) Basics.Never"
+            },
+            {
+                "name": "Add3",
+                "comment": " The [natural number](#N0able) `3 +` another given [natural number](#N0able) `n`\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.N0able (N.N0able (N.N0able n Basics.Never) Basics.Never) Basics.Never"
+            },
+            {
+                "name": "Add4",
+                "comment": " The [natural number](#N0able) `4 +` another given [natural number](#N0able) `n`\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.N0able (N.N0able (N.N0able (N.N0able n Basics.Never) Basics.Never) Basics.Never) Basics.Never"
+            },
+            {
+                "name": "Add5",
+                "comment": " The [natural number](#N0able) `5 +` another given [natural number](#N0able) `n`\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.N0able (N.N0able (N.N0able (N.N0able (N.N0able n Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never"
+            },
+            {
+                "name": "Add6",
+                "comment": " The [natural number](#N0able) `6 +` another given [natural number](#N0able) `n`\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able n Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never"
+            },
+            {
+                "name": "Add7",
+                "comment": " The [natural number](#N0able) `7 +` another given [natural number](#N0able) `n`\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able n Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never"
+            },
+            {
+                "name": "Add8",
+                "comment": " The [natural number](#N0able) `8 +` another given [natural number](#N0able) `n`\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able n Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never"
+            },
+            {
+                "name": "Add9",
+                "comment": " The [natural number](#N0able) `9 +` another given [natural number](#N0able) `n`\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able n Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never"
+            },
+            {
+                "name": "Down",
+                "comment": " `Down high To low`: an exact number as the difference `high - low`.\n",
+                "args": [
+                    "high",
+                    "toTag",
+                    "low"
+                ],
+                "type": "N.Up low toTag high"
+            },
+            {
+                "name": "Exactly",
+                "comment": " Allow only a specific number.\n\nUseful as a **stored & argument** type in combination with [`typesafe-array`](https://package.elm-lang.org/packages/lue-bird/elm-typesafe-array/latest/)s,\nnot with [`N`](#N)s.\n\n    byte : ArraySized (Exactly N8) Bit -> Byte\n\n→ A given [`ArraySized`](https://package.elm-lang.org/packages/lue-bird/elm-typesafe-array/latest/) must have _exactly 8_ `Bit`s.\n\n    type alias TicTacToeBoard =\n        ArraySized\n            (Exactly N3)\n            (ArraySized (Exactly N3) TicTacToField)\n\n→ A given [`ArraySized`](https://package.elm-lang.org/packages/lue-bird/elm-typesafe-array/latest/) must have _exactly 3 by 3_ `TicTacToeField`s.\n\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.In (N.Fixed n) (N.Fixed n)"
+            },
+            {
+                "name": "Fixed",
+                "comment": " The exact number as the difference from 0 to the number.\n\nA stored type looks\nlike a [result type](#result-type)\nbut every [`Up x To (Add<x> x)`](#Up) becomes [`Fixed N<x>`](#Fixed)\n\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.Up N.N0 N.To n"
+            },
+            {
+                "name": "In",
+                "comment": " somewhere within a `minimum` & `maximum`\n\n       ↓ minimum   ↓ maximum\n    ⨯ [✓ ✓ ✓ ✓ ✓ ✓ ✓] ⨯ ⨯ ⨯...\n\n\n### argument type in a range\n\n    -- number between 3 and 5\n    N (In (Fixed (Add3 minX_)) (Up maxTo5_ N5))\n\n    percent : N (In min_ (Up maxTo100 To N100)) -> Percent\n\n`min ≤ max ≤ N100`\n\nIf you want a number where you just care about the minimum, leave `max` as a type _variable_\n\n       ↓ minimum    ↓ maximum or  →\n    ⨯ [✓ ✓ ✓ ✓ ✓ ✓ ✓...\n\n    -- any natural number\n    N (In min_ max_)\n\nA number, at least 5:\n\n    N (In (Add5 minMinus5_) max_)\n\n→ `max_` could be a specific maximum or [no maximum at all](#MaxNo)\n\n\n### result type in a range\n\n    n3 : N (In (Up x0 To (Add3 x0)) (Up x1 To (Add3 x1)))\n\n    between3And6 : N (In (Up minX To (Add3 minX)) (Up maxX To (Add6 maxX)))\n\n    between3And6 |> N.add n3\n    --: N (In (Up minX To (Add6 minX)) (Up maxX To (Add9 maxX)))\n\n\n### stored type in a range\n\nLike the result type but every `Up x To (Add<x> x)` becomes [`Fixed N<x>`](#Fixed)\n\nAn example where this is useful using [typesafe-array](https://package.elm-lang.org/packages/lue-bird/elm-typesafe-array/latest/):\n\n    type Tree branchingFactor element\n        = Tree\n            element\n            (ArraySized\n                branchingFactor\n                (Maybe (Tree branchingFactor element))\n            )\n\n    type alias TreeBinary element =\n        Tree (Exactly N2) element\n\nRemember: ↑ and other [`Min`](#Min)/[`Exactly`](#Exactly)/[`Fixed`](#Fixed) are result/stored types, not argument types.\n\n---\n\nDo not use `==` on 2 values storing a range.\nIt can lead to elm crashing because [difference](#Up)s are stored as functions.\n[compare](#compare) instead.\n\n",
+                "args": [
+                    "minimumAsDifference",
+                    "maximumAsDifference"
+                ],
+                "type": "RecordWithoutConstructorFunction.RecordWithoutConstructorFunction { minimumAsDifference : minimumAsDifference, maximumAsDifference : maximumAsDifference }"
+            },
+            {
+                "name": "MaxNo",
+                "comment": " Flag \"The number's upper limit is unknown\" used in the definition of [`Min`](#Min):\n\n    type alias Min min =\n        In minimum MaxNo\n\n",
+                "args": [],
+                "type": "N.Fixed { maximumUnknown : () }"
+            },
+            {
+                "name": "Min",
+                "comment": " Only **stored / result types should use the type `Min`**:\n\n       ↓ minimum    ↓ or →\n    ⨯ [✓ ✓ ✓ ✓ ✓ ✓ ✓...\n\n\n### result type without maximum constraint\n\nSometimes, you simply cannot compute a maximum.\n\n    abs : Int -> N (In (Up x To x) ??)\n                    ↓\n    abs : Int -> N (Min (Up x To x))\n\n    -- number ≥ 5\n    atLeast5 : N (Min (Up x To (Add5 x)))\n\n    atLeast5 |> N.minAdd n3\n    --: N (Min (Up x To (Add8 x)))\n\n\n### argument type without maximum constraint\n\nEvery `Min min` is of type `In min ...`,\nso using a type variable for the maximum on arguments is highly encouraged\nwhen no maximum constraint should be enforced.\n\n    -- any natural number\n    N (In min_ max_)\n\n    -- number, at least 5\n    N (In (Add5 minMinus5_) max_)\n\n\n### stored type without maximum constraint\n\nLike the result type but every `Up x To (Add<x> x)` becomes [`Fixed N<x>`](#Fixed)\n\nAn example where this is useful using [typesafe-array](https://package.elm-lang.org/packages/lue-bird/elm-typesafe-array/latest/):\n\n    type Tree branchingFactor element\n        = Tree\n            element\n            (ArraySized\n                branchingFactor\n                (Maybe (Tree branchingFactor element))\n            )\n\n    type alias TreeMulti element =\n        Tree (Min (Fixed N2)) element\n\nRemember: ↑ and other [`Min`](#Min)/[`Exactly`](#Exactly)/[`Fixed`](#Fixed) are result/stored types, not argument types.\n\n---\n\nDo not use `==` on 2 values storing a range.\nIt can lead to elm crashing because [difference](#Up)s are stored as functions.\n[compare](#compare) instead.\n\n",
+                "args": [
+                    "lowestPossibleValue"
+                ],
+                "type": "N.In lowestPossibleValue N.MaxNo"
+            },
+            {
+                "name": "N0",
+                "comment": " Type for the [exact natural number](#N0able) `0`\n",
+                "args": [],
+                "type": "N.N0able Basics.Never Possibly.Possibly"
+            },
+            {
+                "name": "N1",
+                "comment": " Type for the [exact natural number](#N0able) `1`\n",
+                "args": [],
+                "type": "N.N0able (N.N0able Basics.Never Possibly.Possibly) Basics.Never"
+            },
+            {
+                "name": "N10",
+                "comment": " Type for the [exact natural number](#N0able) `10`\n",
+                "args": [],
+                "type": "N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able Basics.Never Possibly.Possibly) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never"
+            },
+            {
+                "name": "N11",
+                "comment": " Type for the [exact natural number](#N0able) `11`\n",
+                "args": [],
+                "type": "N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able Basics.Never Possibly.Possibly) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never"
+            },
+            {
+                "name": "N12",
+                "comment": " Type for the [exact natural number](#N0able) `12`\n",
+                "args": [],
+                "type": "N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able Basics.Never Possibly.Possibly) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never"
+            },
+            {
+                "name": "N13",
+                "comment": " Type for the [exact natural number](#N0able) `13`\n",
+                "args": [],
+                "type": "N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able Basics.Never Possibly.Possibly) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never"
+            },
+            {
+                "name": "N14",
+                "comment": " Type for the [exact natural number](#N0able) `14`\n",
+                "args": [],
+                "type": "N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able Basics.Never Possibly.Possibly) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never"
+            },
+            {
+                "name": "N15",
+                "comment": " Type for the [exact natural number](#N0able) `15`\n",
+                "args": [],
+                "type": "N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able Basics.Never Possibly.Possibly) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never"
+            },
+            {
+                "name": "N16",
+                "comment": " Type for the [exact natural number](#N0able) `16`\n",
+                "args": [],
+                "type": "N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able Basics.Never Possibly.Possibly) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never"
+            },
+            {
+                "name": "N2",
+                "comment": " Type for the [exact natural number](#N0able) `2`\n",
+                "args": [],
+                "type": "N.N0able (N.N0able (N.N0able Basics.Never Possibly.Possibly) Basics.Never) Basics.Never"
+            },
+            {
+                "name": "N3",
+                "comment": " Type for the [exact natural number](#N0able) `3`\n",
+                "args": [],
+                "type": "N.N0able (N.N0able (N.N0able (N.N0able Basics.Never Possibly.Possibly) Basics.Never) Basics.Never) Basics.Never"
+            },
+            {
+                "name": "N4",
+                "comment": " Type for the [exact natural number](#N0able) `4`\n",
+                "args": [],
+                "type": "N.N0able (N.N0able (N.N0able (N.N0able (N.N0able Basics.Never Possibly.Possibly) Basics.Never) Basics.Never) Basics.Never) Basics.Never"
+            },
+            {
+                "name": "N5",
+                "comment": " Type for the [exact natural number](#N0able) `5`\n",
+                "args": [],
+                "type": "N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able Basics.Never Possibly.Possibly) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never"
+            },
+            {
+                "name": "N6",
+                "comment": " Type for the [exact natural number](#N0able) `6`\n",
+                "args": [],
+                "type": "N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able Basics.Never Possibly.Possibly) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never"
+            },
+            {
+                "name": "N7",
+                "comment": " Type for the [exact natural number](#N0able) `7`\n",
+                "args": [],
+                "type": "N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able Basics.Never Possibly.Possibly) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never"
+            },
+            {
+                "name": "N8",
+                "comment": " Type for the [exact natural number](#N0able) `8`\n",
+                "args": [],
+                "type": "N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able Basics.Never Possibly.Possibly) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never"
+            },
+            {
+                "name": "N9",
+                "comment": " Type for the [exact natural number](#N0able) `9`\n",
+                "args": [],
+                "type": "N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able (N.N0able Basics.Never Possibly.Possibly) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never) Basics.Never"
+            }
+        ],
+        "values": [
+            {
+                "name": "abs",
+                "comment": " The absolute value of an `Int` which is always `≥ 0`\n\n    -4\n        |> N.abs\n        --: N (Min (Up x To x))\n        |> N.toInt\n\n    --> 4\n    16 |> N.abs |> N.toInt --> 16\n\nReally only use this if you want the absolute value.\n\n    badLength =\n        List.length >> N.abs\n\n  - maybe, there's a solution that never even theoretically deals with unexpected values:\n\n        mostCorrectLength =\n            List.foldl\n                (\\_ -> N.minAdd n1 >> N.minDown n1)\n                (n0 |> N.maxNo)\n\n  - other times, though, like with `Array.length`, which isn't `O(n)`,\n    you can escape with for example\n\n        arrayLength =\n            Array.length >> N.intAtLeast n0\n\n",
+                "type": "Basics.Int -> N.N (N.Min (N.Up x N.To x))"
+            },
+            {
+                "name": "add",
+                "comment": " Add a given [specific](#In) [`N`](#N).\n\n    between70And100 |> N.add n7\n    --: N (In (Up minX To (Add77 minX)) (Up maxX To (Add107 maxX)))\n\nOne addend has an unconstrained maximum? → [`minAdd`](#minAdd)\n\n",
+                "type": "N.N (N.In (N.Up minPlusX N.To sumMinPlusX) (N.Up maxPlusX N.To sumMaxPlusX)) -> N.N (N.In (N.Up minX N.To minPlusX) (N.Up maxX N.To maxPlusX)) -> N.N (N.In (N.Up minX N.To sumMinPlusX) (N.Up maxX N.To sumMaxPlusX))"
+            },
+            {
+                "name": "atLeast",
+                "comment": " **Cap** the [`N`](#N) to `>=` a given new lower limit.\n\n    between5And12 |> N.atLeast n10\n    --: N (In (Up x To (Add10 x)) (Fixed N12))\n\nThe type doesn't forbid that the lower limit you're comparing against\nis below the current lower limit\n\n    n15\n        |> N.atLeast n10\n        --: N (In (Up x To (Add10 x)) (Fixed N15))\n        |> N.toInt\n    --> 15\n\nDon't know both maxima? → [`minAtLeast`](#minAtLeast)\n\n",
+                "type": "N.N (N.In minNew (N.Up minNewMaxToMax_ N.To max)) -> N.N (N.In min_ (N.Fixed max)) -> N.N (N.In minNew (N.Fixed max))"
+            },
+            {
+                "name": "atMost",
+                "comment": " **Cap** the [`N`](#N) to `<=` a given new upper limit.\n\n    between3And10\n        |> N.atMost between2And5\n    --: N (In (Fixed 2) (Up x To (Add5 x)))\n\nTo replace the [`Fixed`](#Fixed) minimum with a [difference](#Up)\n(for results etc.) → [`min`](#min)\n\nTo enforce a new minimum, too? → [`in_`](#in_)\n\n",
+                "type": "N.N (N.In (N.Fixed takenMin) takenMax) -> N.N (N.In (N.Up minToTakenMin_ N.To takenMin) max_) -> N.N (N.In (N.Fixed takenMin) takenMax)"
+            },
+            {
+                "name": "differenceDown",
+                "comment": " Chain the [difference](#Up) [`Down`](#Down) to a lower [number](#N0able)\n",
+                "type": "N.Down high N.To middle -> N.Up low N.To high -> N.Up low N.To middle"
+            },
+            {
+                "name": "differenceUp",
+                "comment": " Chain the [difference](#Up) [`Up`](#Up) to a higher [number](#N0able)\n",
+                "type": "N.Up middle N.To high -> N.Up low N.To middle -> N.Up low N.To high"
+            },
+            {
+                "name": "div",
+                "comment": " Divide (`//`) by an [`N`](#N) `d ≥ 1`.\n\n  - → `/ 0` is impossible\n  - → `x / d <= x`\n\n.\n\n    atMost7\n        |> N.div n3\n        --: N (In (Up minX To minX) (Up maxX To (Add7 maxX)))\n        |> N.toInt\n\n",
+                "type": "N.N (N.In (N.Fixed (N.Add1 divisorMinMinus1_)) divisorMax_) -> N.N (N.In min_ max) -> N.N (N.In (N.Up minX N.To minX) max)"
+            },
+            {
+                "name": "downDifference",
+                "comment": " From the [number](#N0able),\nsubtract another [number](#N0able) like shown in a given [difference](#Down)\n",
+                "type": "N.Down high N.To low -> high -> low"
+            },
+            {
+                "name": "fixed",
+                "comment": " [`To`](#To) the exact given number, create a [fixed difference from 0](#Fixed)\n",
+                "type": "n -> N.Fixed n"
+            },
+            {
+                "name": "in_",
+                "comment": " **Clamp** the number to between both given limits.\n\n    between5And9 |> N.in_ ( n10, n10 )\n    --: N (In (Up x0 To (Add10 x0)) (Up x1 To (Add10 x1)))\n\n    between5And15 |> N.in_ ( n5, n10 )\n    --: N (In (Up minX To (Add5 minX)) (Up maxX To (Add10 maxX)))\n\n    atLeast5 |> N.in_ ( n5, n10 )\n    --: N (In (Up minX To (Add5 minX)) (Up maxX To (Add10 maxX)))\n\n  - There shouldn't be an upper limit? → [`minAtLeast`](#minAtLeast)\n  - To keep the current maximum? → [`atLeast`](#atLeast)\n  - To keep the current minimum? → [`atMost`](#atMost)\n\n(The type doesn't forbid that the limits you're comparing against\nare beyond the current limits.)\n\n",
+                "type": "( N.N (N.In minNew (N.Up minNewMaxToMaxNewMin_ N.To maxNewMin)), N.N (N.In (N.Fixed maxNewMin) maxNew) ) -> N.N (N.In min_ max_) -> N.N (N.In minNew maxNew)"
+            },
+            {
+                "name": "intAtLeast",
+                "comment": " A `N (Min ...)` from an `Int`;\nif the `Int < minimum`, `minimum` is returned.\n\n    0\n        |> N.intAtLeast n3\n        --: N (Min (Up x To (Add3 x)))\n        |> N.toInt\n    --> 3\n\n    9\n        |> N.intAtLeast n3\n        --: N (Min (Up x To (Add3 x)))\n        |> N.toInt\n    --> 9\n\nYou can also use this as an escape hatch\nif you know an `Int` must be at least `minimum`.\nBut avoid it if you can do better, like\n\n    goodLength =\n        List.foldl\n            (\\_ -> N.minAdd n1 >> N.minDown n1)\n            (n0 |> N.maxNo)\n\nTo handle the case `< minimum` yourself → [`intIsAtLeast`](#intIsAtLeast)\n\n",
+                "type": "N.N (N.In min max_) -> Basics.Int -> N.N (N.Min min)"
+            },
+            {
+                "name": "intIn",
+                "comment": " Create a `N (In ...)` by **clamping** an `Int` between a minimum & maximum.\n\n  - if the `Int < minimum`, `minimum` is returned\n  - if the `Int > maximum`, `maximum` is returned\n\nIf you want to handle the cases `< minimum` & `> maximum` explicitly, use [`intIsIn`](#intIsIn).\n\n    0\n        |> N.intIn ( n3, n12 )\n        --: N (In (Up minX To (Add3 minX)) (Up minX To (Add12 minX)))\n        |> N.toInt\n    --> 3\n\n    99\n        |> N.intIn ( n3, n12 )\n        |> N.toInt\n    --> 12\n\n    9\n        |> N.intIn ( n3, n12 )\n        |> N.toInt\n    --> 9\n\n\n    toDigit : Char -> Maybe (N (In (Up minX To minX) (Up maxX To (Add9 maxX))))\n    toDigit char =\n        ((char |> Char.toCode) - ('0' |> Char.toCode))\n            |> N.intIsIn ( n0, n9 )\n            |> Result.toMaybe\n\n",
+                "type": "( N.N (N.In lowerLimitMin (N.Up lowerLimitMaxToUpperLimitMin_ N.To upperLimitMin)), N.N (N.In (N.Fixed upperLimitMin) (N.Up upperLimitMaxX N.To upperLimitMaxPlusX)) ) -> Basics.Int -> N.N (N.In lowerLimitMin (N.Up upperLimitMaxX N.To upperLimitMaxPlusX))"
+            },
+            {
+                "name": "intIsAtLeast",
+                "comment": " If the `Int ≥` a given `minimum`,\nreturn `Ok` with the `N (Min minimum)`,\nelse `Err` with the input `Int`.\n\n    4 |> N.intIsAtLeast n5\n    --: Result Int (N (Min (Up x To (Add5 x))))\n    --> Err 4\n\n    1234 |> N.intIsAtLeast n5 |> Result.map N.toInt\n    --> Ok 1234\n\n",
+                "type": "N.N (N.In min max_) -> Basics.Int -> Result.Result Basics.Int (N.N (N.Min min))"
+            },
+            {
+                "name": "intIsIn",
+                "comment": " Compared to a range from a lower to an upper bound, is the `Int` in range, [`BelowOrAbove`](#BelowOrAbove)?\n\n    inputIntJudge : Int -> Result String (N (In (Up minX To (Add1 minX)) (Up maxX To (Add10 maxX))))\n    inputIntJudge int =\n        case int |> N.intIsIn ( n1, n10 ) of\n            Ok inRange ->\n                inRange |> Ok\n            Err (N.Below _) ->\n                Err \"must be ≥ 1\"\n            Err (N.Above _) ->\n                Err \"must be ≤ 100\"\n\n    0 |> inputIntJudge\n    --> Err \"must be ≥ 1\"\n\n",
+                "type": "( N.N (N.In lowerLimitMin (N.Up lowerLimitMaxToUpperLimitMin_ N.To upperLimitMin)), N.N (N.In (N.Fixed upperLimitMin) (N.Up upperLimitMaxX N.To upperLimitMaxPlusX)) ) -> Basics.Int -> Result.Result (N.BelowOrAbove Basics.Int (N.N (N.Min (N.Up upperLimitMaxX N.To (N.Add1 upperLimitMaxPlusX))))) (N.N (N.In lowerLimitMin (N.Up upperLimitMaxX N.To upperLimitMaxPlusX)))"
+            },
+            {
+                "name": "is",
+                "comment": " Is the [`N`](#N) equal to, [`BelowOrAbove`](#BelowOrAbove) a given number?\n\n    giveAPresent { age } =\n        case age |> N.is n18 of\n            Err (N.Below younger) ->\n                toy { age = younger }\n\n            Err (N.Above older) ->\n                book { age = older }\n\n            Ok _ ->\n                bigPresent\n\n    toy : { age : N (In min_ (Up maxX To (Add17 maxX)) } -> Toy\n\n    book :\n        { age : N (In (Fixed (Add19 minMinus19_)) max_) }\n        -> Book\n\n(The type doesn't forbid that the number you're comparing against\nis below the current minimum or above the current maximum.\n→ `Err` or `Ok` values don't necessarily follow `min <= max` for `N (In min max ...)`\nLuckily that's not a problem, since the values won't be produced anyway.)\n\n",
+                "type": "N.N (N.In (N.Up minX N.To (N.Add1 comparedAgainstMinPlusXMinus1)) (N.Up maxX N.To (N.Add1 comparedAgainstMaxPlusXMinus1))) -> N.N (N.In min max) -> Result.Result (N.BelowOrAbove (N.N (N.In min (N.Up maxX N.To comparedAgainstMaxPlusXMinus1))) (N.N (N.In (N.Up minX N.To (N.Add2 comparedAgainstMinPlusXMinus1)) max))) (N.N (N.In (N.Up minX N.To (N.Add1 comparedAgainstMinPlusXMinus1)) (N.Up maxX N.To (N.Add1 comparedAgainstMaxPlusXMinus1))))"
+            },
+            {
+                "name": "isAtLeast",
+                "comment": " Is the [`N`](#N) below than or at least as big as a given number?\n\n    vote :\n        { age : N (In (Fixed (Add18 minMinus18_)) max_) }\n        -> Vote\n\n    tryToVote { age } =\n        case age |> N.isAtLeast n18 of\n            Err _ ->\n                --😓\n                Nothing\n\n            Ok oldEnough ->\n                vote { age = oldEnough } |> Just\n\n    factorial : N (In min_ max_) -> N (Min (Up x To (Add1 x)))\n    factorial =\n        factorialBody\n\n    factorialBody : N (In min_ max_) -> N (Min (Up x To (Add1 x)))\n    factorialBody x =\n        case x |> N.isAtLeast n1 of\n            Err _ ->\n                n1 |> N.maxNo\n\n            Ok atLeast1 ->\n                factorial (atLeast1 |> N.minSub n1)\n                    |> N.mul atLeast1\n\n(The type doesn't forbid that the lower limit you're comparing against\nis below the current minimum or above the current maximum.\n→ `Err` or `Ok` values don't necessarily follow `min <= max` for `N (In min max ...)`\nLuckily that's not a problem, since the values won't be produced anyway.)\n\n",
+                "type": "N.N (N.In lowerLimitMin (N.Up lowerLimitMaxX N.To (N.Add1 lowerLimitMaxMinus1PlusX))) -> N.N (N.In min max) -> Result.Result (N.N (N.In min (N.Up lowerLimitMaxX N.To lowerLimitMaxMinus1PlusX))) (N.N (N.In lowerLimitMin max))"
+            },
+            {
+                "name": "isAtMost",
+                "comment": " Is the [`N`](#N) at most (`Ok`) or greater than (`Err`) a given number?\n\n    goToBelow18Party : { age : N (In min_ (Up maxTo17 To N17)) } -> Snack\n\n    tryToGoToBelow18Party { age } =\n        case age |> N.isAtMost n17 of\n            Ok below18 ->\n                goToBelow18Party { age = below18 } |> Just\n\n            Err _ ->\n                Nothing\n\n(The type doesn't forbid that the upper limit you're comparing against\nis below the current minimum or above the current maximum.\n→ `Err` or `Ok` values don't necessarily follow `min <= max` for `N (In min max ...)`\nLuckily that's not a problem, since the values won't be produced anyway.)\n\n",
+                "type": "N.N (N.In (N.Up upperLimitMinX N.To upperLimitMinPlusX) upperLimitMax) -> N.N (N.In min max) -> Result.Result (N.N (N.In (N.Up upperLimitMinX N.To (N.Add1 upperLimitMinPlusX)) max)) (N.N (N.In min upperLimitMax))"
+            },
+            {
+                "name": "isIn",
+                "comment": " Compared to a range from a lower to an upper bound,\nis the [`N`](#N) in range or [`BelowOrAbove`](#BelowOrAbove)?\n\n    isIn3To10 : N (In min_ max_) -> Maybe (N (In (Up minX To (Add3 minX)) (Up maxX To (Add10 maxX))))\n    isIn3To10 =\n        N.isIn ( n3, n10 )\n            >> Result.toMaybe\n\n    n9 |> isIn3To10 |> Maybe.map N.toInt\n    --> Just 9\n\n    n12 |> isIn3To10\n    --> Nothing\n\n(The type doesn't forbid that the limits you're comparing against\nare below the current minimum, above the current maximum or in the wrong order.\n→ `Err` or `Ok` values don't necessarily follow `min <= max` for `N (In min max ...)`\nLuckily that's not a problem, since the values won't be produced anyway.)\n\nHere's some example-cases:\n\n  - `hi < lo < min < max` → `Below | Above`\n  - `hi < min < lo < max` → `Below | Above`\n  - `hi < min < max < lo` → `Below | Above`\n  - `lo < hi < min < max` → `Above`\n  - `max < hi < min < lo` → `Below`\n  - `min < hi < lo < max` → `Below | Above`\n  - `lo < min < hi < max` → `Ok | Above`\n  - `max < min < hi < lo` → `Below`\n  - `max < lo < hi < min` → `Below | Ok | Above` ← the default case\n  - `lo < min < max < hi` → `Ok`\n  - `min < lo < max < hi` → `Ok | Below`\n  - `min < max < lo < hi` → `Below`\n\n.\n\n  - did we miss something? → issue\n  - feel motivated to add the other cases? → PR\n\n",
+                "type": "( N.N (N.In lowerLimitMin (N.Up lowerLimitMaxX N.To (N.Add1 lowerLimitMaxPlusXMinus1))), N.N (N.In (N.Up upperLimitMinX N.To upperLimitMinPlusX) upperLimitMax) ) -> N.N (N.In min max) -> Result.Result (N.BelowOrAbove (N.N (N.In min (N.Up lowerLimitMaxX N.To lowerLimitMaxPlusXMinus1))) (N.N (N.In (N.Up upperLimitMinX N.To (N.Add1 upperLimitMinPlusX)) max))) (N.N (N.In lowerLimitMin upperLimitMax))"
+            },
+            {
+                "name": "max",
+                "comment": " Make it fit into functions with require a higher maximum.\n\nYou should type arguments and stored types as broad as possible.\n\n    onlyAtMost18 : N (In min_ (Up maxX To (Add18 maxX)) -> ...\n\n    onlyAtMost18 between3And8 -- works\n\nBut once you implement `onlyAtMost18`, you might use the n in `onlyAtMost19`:\n\n    onlyAtMost18 n =\n        -- onlyAtMost19 n → error\n        onlyAtMost19 (n |> N.max n18)\n\n",
+                "type": "N.N (N.In (N.Fixed maxNewMin) maxNew) -> N.N (N.In min (N.Up maxToMaxNewMin_ N.To maxNewMin)) -> N.N (N.In min maxNew)"
+            },
+            {
+                "name": "maxNo",
+                "comment": " On `N (In min max)`'s type, drop `max` to get a `N (Min min)`.\n\n    between3And10 |> N.maxNo\n    --: N (Min (Up x To (Add3 x)))\n\nUse it to unify different types of number minimum constraints like\n\n    [ atLeast1, between1And10 ]\n\nelm complains:\n\n> But all the previous elements in the list are: `N (Min (Up x To (Add1 x)))`\n\n    [ atLeast1\n    , between1And10 |> N.maxNo\n    ]\n\n",
+                "type": "N.N (N.In min max_) -> N.N (N.Min min)"
+            },
+            {
+                "name": "maxUp",
+                "comment": " Have a specific maximum in mind? → [`max`](#max)\n\nWant to increase the upper bound by a fixed amount? → [`maxUp`](#maxUp)\n\n",
+                "type": "N.N (N.In maxIncreasedMin_ (N.Up maxPlusX N.To maxIncreasedPlusX)) -> N.N (N.In min (N.Up x N.To maxPlusX)) -> N.N (N.In min (N.Up x N.To maxIncreasedPlusX))"
+            },
+            {
+                "name": "maximumAsDifference",
+                "comment": " The greatest allowed number promised by the range type\nas its representation as a [difference](#Up)\n",
+                "type": "N.N (N.In min_ maximumAsDifference) -> maximumAsDifference"
+            },
+            {
+                "name": "min",
+                "comment": " Set the minimum lower.\n\n    [ atLeast3, atLeast4 ]\n\nElm complains:\n\n> But all the previous elements in the list are: `N (Min N3)`\n\n    [ atLeast3\n    , atLeast4 |> N.min n3\n    ]\n\n",
+                "type": "N.N (N.In minNew (N.Up minNewMaxToMin_ N.To min)) -> N.N (N.In (N.Fixed min) max) -> N.N (N.In minNew max)"
+            },
+            {
+                "name": "minAdd",
+                "comment": " To the [`N`](#N) without a known maximum-constraint,\nadd a number that (only) has [information on how to add](#Up) the minima.\n\n    atLeast70 |> N.minAdd n7\n    --: N (Min (Up x To (Add77 x))\n\nUse [`add`](#add) if both maxima are known [difference](#Up)s as well.\n\nIf the added minimum is [`Fixed`](#Fixed), supply the [`min`](#min) manually\nto re-enable adding both minimum types!\n\n    atLeast5 |> N.minAdd (min n2 atLeastFixed2)\n    --: N (Min (Up x To (Add7 x)))\n\n",
+                "type": "N.N (N.In (N.Up minPlusX N.To sumMinPlusX) addedMax_) -> N.N (N.In (N.Up x N.To minPlusX) max_) -> N.N (N.Min (N.Up x N.To sumMinPlusX))"
+            },
+            {
+                "name": "minAtLeast",
+                "comment": " **Cap** the [`N`](#N) to `>=` a given new lower limit.\n\n    n5AtLeast |> N.minAtLeast n10\n    --: N (Min (Up x To (Add10 x)))\n\nThe type doesn't forbid that the lower limit you're comparing against\nis below the current lower limit\n\n    n15AtLeast |> N.minAtLeast n10 |> N.toInt\n    --: N (Min (Up x To (Add10 x)))\n\nKnow both maxima? → [`atLeast`](#atLeast)\n\n",
+                "type": "N.N (N.In minNew maxNew_) -> N.N (N.In min_ max_) -> N.N (N.Min minNew)"
+            },
+            {
+                "name": "minDown",
+                "comment": " Have a specific minimum in mind? → [`min`](#min)\n\nWant to decrease the lower bound by a fixed amount? → [`minDown`](#minDown)\n\n",
+                "type": "N.N (N.In maxIncreasedMin_ (N.Down minPlusX N.To minDecreasedPlusX)) -> N.N (N.In (N.Up x N.To minPlusX) max) -> N.N (N.In (N.Up x N.To minDecreasedPlusX) max)"
+            },
+            {
+                "name": "minSub",
+                "comment": " From an [`N`](#N) with an unknown maximum constraint,\nsubtract a [specific number](#In)\n\n    atLeast7 |> N.minSub n2\n    --: N (Min (Fixed N5))\n\n    atLeast6 |> N.minSub between0And5\n    --: N (Min (Fixed N1))\n\n    between6And12 |> N.minSub between1And5\n    --: N (In (Fixed min) (Up maxX To (Add12 maxX)))\n\nUse [`sub`](#sub) if you want to subtract an [`N`](#N) in a range.\n\n",
+                "type": "N.N (N.In subtractedDifference0_ (N.Down min N.To differenceMin)) -> N.N (N.In (N.Fixed min) max) -> N.N (N.In (N.Fixed differenceMin) max)"
+            },
+            {
+                "name": "minimumAsDifference",
+                "comment": " The smallest allowed number promised by the range type\nas its representation as a [difference](#Up)\n",
+                "type": "N.N (N.In minimumAsDifference maximum_) -> minimumAsDifference"
+            },
+            {
+                "name": "mul",
+                "comment": " Multiply by a given [`n`](#N) `≥ 1`.\nwhich means `x * n ≥ x`.\n\n    atLeast5 |> N.mul n2\n    --: N (Min (Up x To (Add5 x)))\n\n    atLeast2 |> N.mul n5\n    --: N (Min (Up x To (Add2 x)))\n\n",
+                "type": "N.N (N.In (N.Fixed (N.Add1 multiplicandMinMinus1_)) multiplicandMax_) -> N.N (N.In min max_) -> N.N (N.Min min)"
+            },
+            {
+                "name": "n0",
+                "comment": " The specific natural number `0`\n",
+                "type": "N.N (N.In (N.Up minX N.To minX) (N.Up maxX N.To maxX))"
+            },
+            {
+                "name": "n1",
+                "comment": " The specific natural number `1`\n",
+                "type": "N.N (N.In (N.Up minX N.To (N.Add1 minX)) (N.Up maxX N.To (N.Add1 maxX)))"
+            },
+            {
+                "name": "n10",
+                "comment": " The specific natural number `10`\n",
+                "type": "N.N (N.In (N.Up minX N.To (N.Add10 minX)) (N.Up maxX N.To (N.Add10 maxX)))"
+            },
+            {
+                "name": "n11",
+                "comment": " The specific natural number `11`\n",
+                "type": "N.N (N.In (N.Up minX N.To (N.Add11 minX)) (N.Up maxX N.To (N.Add11 maxX)))"
+            },
+            {
+                "name": "n12",
+                "comment": " The specific natural number `12`\n",
+                "type": "N.N (N.In (N.Up minX N.To (N.Add12 minX)) (N.Up maxX N.To (N.Add12 maxX)))"
+            },
+            {
+                "name": "n13",
+                "comment": " The specific natural number `13`\n",
+                "type": "N.N (N.In (N.Up minX N.To (N.Add13 minX)) (N.Up maxX N.To (N.Add13 maxX)))"
+            },
+            {
+                "name": "n14",
+                "comment": " The specific natural number `14`\n",
+                "type": "N.N (N.In (N.Up minX N.To (N.Add14 minX)) (N.Up maxX N.To (N.Add14 maxX)))"
+            },
+            {
+                "name": "n15",
+                "comment": " The specific natural number `15`\n",
+                "type": "N.N (N.In (N.Up minX N.To (N.Add15 minX)) (N.Up maxX N.To (N.Add15 maxX)))"
+            },
+            {
+                "name": "n16",
+                "comment": " The specific natural number `16`\n",
+                "type": "N.N (N.In (N.Up minX N.To (N.Add16 minX)) (N.Up maxX N.To (N.Add16 maxX)))"
+            },
+            {
+                "name": "n2",
+                "comment": " The specific natural number `2`\n",
+                "type": "N.N (N.In (N.Up minX N.To (N.Add2 minX)) (N.Up maxX N.To (N.Add2 maxX)))"
+            },
+            {
+                "name": "n3",
+                "comment": " The specific natural number `3`\n",
+                "type": "N.N (N.In (N.Up minX N.To (N.Add3 minX)) (N.Up maxX N.To (N.Add3 maxX)))"
+            },
+            {
+                "name": "n4",
+                "comment": " The specific natural number `4`\n",
+                "type": "N.N (N.In (N.Up minX N.To (N.Add4 minX)) (N.Up maxX N.To (N.Add4 maxX)))"
+            },
+            {
+                "name": "n5",
+                "comment": " The specific natural number `5`\n",
+                "type": "N.N (N.In (N.Up minX N.To (N.Add5 minX)) (N.Up maxX N.To (N.Add5 maxX)))"
+            },
+            {
+                "name": "n6",
+                "comment": " The specific natural number `6`\n",
+                "type": "N.N (N.In (N.Up minX N.To (N.Add6 minX)) (N.Up maxX N.To (N.Add6 maxX)))"
+            },
+            {
+                "name": "n7",
+                "comment": " The specific natural number `7`\n",
+                "type": "N.N (N.In (N.Up minX N.To (N.Add7 minX)) (N.Up maxX N.To (N.Add7 maxX)))"
+            },
+            {
+                "name": "n8",
+                "comment": " The specific natural number `8`\n",
+                "type": "N.N (N.In (N.Up minX N.To (N.Add8 minX)) (N.Up maxX N.To (N.Add8 maxX)))"
+            },
+            {
+                "name": "n9",
+                "comment": " The specific natural number `9`\n",
+                "type": "N.N (N.In (N.Up minX N.To (N.Add9 minX)) (N.Up maxX N.To (N.Add9 maxX)))"
+            },
+            {
+                "name": "randomIn",
+                "comment": " Generate a random [`N`](#N) in a range.\n\n    N.randomIn ( n1, n10 )\n    --: Random.Generator\n    --:     (N\n    --:         (In\n    --:             (Up minX To (Add1 minX))\n    --:             (Up maxX To (Add10 maxX))\n    --:         )\n    --:     )\n\n",
+                "type": "( N.N (N.In lowerLimitMin (N.Up lowerLimitMaxToUpperLimitMin_ N.To upperLimitMin)), N.N (N.In (N.Fixed upperLimitMin) upperLimitMax) ) -> Random.Generator (N.N (N.In lowerLimitMin upperLimitMax))"
+            },
+            {
+                "name": "range",
+                "comment": " Its limits.\nBoth its [`minimumAsDifference`](#minimumAsDifference)\nand its [`maximumAsDifference`](#maximumAsDifference)\n",
+                "type": "N.N range -> range"
+            },
+            {
+                "name": "remainderBy",
+                "comment": " The remainder after dividing by a [`N`](#N) `d ≥ 1`.\nWe know `x % d ≤ d - 1`\n\n    atMost7 |> N.remainderBy n3\n    --: N (In (Up minX To minX) (Up maxX To (Add2 maxX)))\n\n",
+                "type": "N.N (N.In (N.Fixed (N.Add1 divisorMinMinus1_)) (N.Up divX N.To (N.Add1 divisorMaxPlusXMinus1))) -> N.N (N.In min_ max_) -> N.N (N.In (N.Up x0 N.To x0) (N.Up divX N.To divisorMaxPlusXMinus1))"
+            },
+            {
+                "name": "sub",
+                "comment": " From the [`N`](#N) in a range subtract another [`N`](#N) in a range.\n\n    n6 |> N.sub n5\n    --→ n1\n    --: N (In (Fixed N1) (Fixed N1))\n\nOne of the terms has no maximum constraint? → [`minSub`](#minSub)\n\n",
+                "type": "N.N (N.In (N.Down maxPlusX N.To differenceMaxPlusX) (N.Down min N.To differenceMin)) -> N.N (N.In (N.Fixed min) (N.Up maxX N.To maxPlusX)) -> N.N (N.In (N.Fixed differenceMin) (N.Up maxX N.To differenceMaxPlusX))"
+            },
+            {
+                "name": "toFloat",
+                "comment": " Drop the range constraints\nto feed another library with its `Float` representation.\n",
+                "type": "N.N range_ -> Basics.Float"
+            },
+            {
+                "name": "toInt",
+                "comment": " Drop the range constraints\nto feed another library with its `Int` representation.\n",
+                "type": "N.N range_ -> Basics.Int"
+            },
+            {
+                "name": "toPower",
+                "comment": " [`N`](#N) Raised to a given power `p ≥ 1`\n→ `x ^ p ≥ x`\n\n    atLeast5 |> N.toPower n2\n    --: N (Min (Up x To (Add5 x)))\n\n    atLeast2 |> N.toPower n5\n    --: N (Min (Up x To (Add2 x)))\n\n",
+                "type": "N.N (N.In (N.Fixed (N.Add1 exponentMinMinus1_)) exponentMax_) -> N.N (N.In min max_) -> N.N (N.Min min)"
+            },
+            {
+                "name": "until",
+                "comment": " [`N`](#N)s increasing from `0` to `n`\nIn the end, there are `n` numbers.\n\n    import Stack\n\n    N.until n6\n        |> Stack.map (\\_ -> N.add n3)\n        --: Emptiable\n        --:     (Stacked\n        --:         (N\n        --:             (In\n        --:                 (Up minX To (Add3 minX))\n        --:                 (Up maxX To (Add9 maxX))\n        --:             )\n        --:         )\n        --:     )\n        --:     Never\n        |> Stack.map (\\_ -> N.toInt)\n    --> Stack.topDown 3 [ 4, 5, 6, 7, 8, 9 ]\n\n    N.until atLeast7 |> Stack.map (\\_ -> N.minAdd n3)\n    --: Emptiable\n    --:     (Stacked (N (Min (Up x To (Add10 x)))))\n    --:     Never\n\n[`typesafe-array`](https://package.elm-lang.org/packages/lue-bird/elm-typesafe-array/latest/ArraySized#until) even knows the length!\nWanna try it?\n\n",
+                "type": "N.N (N.In (N.Fixed min_) max) -> Emptiable.Emptiable (Stack.Stacked (N.N (N.In (N.Up x0 N.To x0) max))) Basics.Never"
+            },
+            {
+                "name": "upDifference",
+                "comment": " To the [number](#N0able),\nadd another [number](#N0able) like shown in a given [difference](#Up)\n",
+                "type": "N.Up low N.To high -> low -> high"
+            }
+        ],
+        "binops": []
+    }
+]

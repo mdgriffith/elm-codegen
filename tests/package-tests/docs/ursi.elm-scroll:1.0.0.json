@@ -1,0 +1,71 @@
+[
+    {
+        "name": "Scroll",
+        "comment": "\n\n\n# Scroll the Window\n\n@docs scrollY, scrollX, scroll\n@docs scrollYWithOffset, scrollXWithOffset, scrollWithOffset\n\n\n# Scroll an Element\n\n@docs scrollElementY, scrollElementX, scrollElement\n@docs scrollElementYWithOffset, scrollElementXWithOffset, scrollElementWithOffset\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "scroll",
+                "comment": "\n\n    scroll\n        elementId\n        xWindowPositionNumber\n        xElementPositionNumber\n        yWindowPositionNumber\n        yElementPositionNumber\n\n",
+                "type": "String.String -> Basics.Float -> Basics.Float -> Basics.Float -> Basics.Float -> Task.Task Browser.Dom.Error ()"
+            },
+            {
+                "name": "scrollElement",
+                "comment": "\n\n    scrollElement\n        outerElementId\n        innerElementId\n        xOuterPositionNumber\n        xInnerPositionNumber\n        yOuterPositionNumber\n        yInnerPositionNumber\n\n",
+                "type": "String.String -> String.String -> Basics.Float -> Basics.Float -> Basics.Float -> Basics.Float -> Task.Task Browser.Dom.Error ()"
+            },
+            {
+                "name": "scrollElementWithOffset",
+                "comment": "\n\n    scrollElementWithOffset\n        outerElementId\n        innerElementId\n        xOuterPositionNumber\n        xInnerPositionNumber\n        xOffsetInPixels\n        yOuterPositionNumber\n        yInnerPositionNumber\n        yOffsetInPixels\n\n",
+                "type": "String.String -> String.String -> Basics.Float -> Basics.Float -> Basics.Float -> Basics.Float -> Basics.Float -> Basics.Float -> Task.Task Browser.Dom.Error ()"
+            },
+            {
+                "name": "scrollElementX",
+                "comment": "\n\n    scrollElementX\n        outerElementId\n        innerElementId\n        outerPositionNumber\n        innerPositionNumber\n\n",
+                "type": "String.String -> String.String -> Basics.Float -> Basics.Float -> Task.Task Browser.Dom.Error ()"
+            },
+            {
+                "name": "scrollElementXWithOffset",
+                "comment": "\n\n    scrollElementX\n        outerElementId\n        innerElementId\n        outerPositionNumber\n        innerPositionNumber\n        offsetInPixels\n\n",
+                "type": "String.String -> String.String -> Basics.Float -> Basics.Float -> Basics.Float -> Task.Task Browser.Dom.Error ()"
+            },
+            {
+                "name": "scrollElementY",
+                "comment": "\n\n    scrollElementY\n        outerElementId\n        innerElementId\n        outerPositionNumber\n        innerPositionNumber\n\n",
+                "type": "String.String -> String.String -> Basics.Float -> Basics.Float -> Task.Task Browser.Dom.Error ()"
+            },
+            {
+                "name": "scrollElementYWithOffset",
+                "comment": "\n\n    scrollElementY\n        outerElementId\n        innerElementId\n        outerPositionNumber\n        innerPositionNumber\n        offsetInPixels\n\n",
+                "type": "String.String -> String.String -> Basics.Float -> Basics.Float -> Basics.Float -> Task.Task Browser.Dom.Error ()"
+            },
+            {
+                "name": "scrollWithOffset",
+                "comment": "\n\n    scrollWithOffset\n        elementId\n        xWindowPositionNumber\n        xElementPositionNumber\n        xOffsetInPixels\n        yWindowPositionNumber\n        yElementPositionNumber\n        yOffsetInPixels\n\n",
+                "type": "String.String -> Basics.Float -> Basics.Float -> Basics.Float -> Basics.Float -> Basics.Float -> Basics.Float -> Task.Task Browser.Dom.Error ()"
+            },
+            {
+                "name": "scrollX",
+                "comment": "\n\n    scrollX\n        elementId\n        windowPositionNumber\n        elementPositionNumber\n\n",
+                "type": "String.String -> Basics.Float -> Basics.Float -> Task.Task Browser.Dom.Error ()"
+            },
+            {
+                "name": "scrollXWithOffset",
+                "comment": "\n\n    scrollXWithOffset\n        elementId\n        windowPositionNumber\n        elementPositionNumber\n        offsetInPixels\n\n",
+                "type": "String.String -> Basics.Float -> Basics.Float -> Basics.Float -> Task.Task Browser.Dom.Error ()"
+            },
+            {
+                "name": "scrollY",
+                "comment": "\n\n    scrollY\n        elementId\n        windowPositionNumber\n        elementPositionNumber\n\n",
+                "type": "String.String -> Basics.Float -> Basics.Float -> Task.Task Browser.Dom.Error ()"
+            },
+            {
+                "name": "scrollYWithOffset",
+                "comment": "\n\n    scrollYWithOffset\n        elementId\n        windowPositionNumber\n        elementPositionNumber\n        offsetInPixels\n\n",
+                "type": "String.String -> Basics.Float -> Basics.Float -> Basics.Float -> Task.Task Browser.Dom.Error ()"
+            }
+        ],
+        "binops": []
+    }
+]

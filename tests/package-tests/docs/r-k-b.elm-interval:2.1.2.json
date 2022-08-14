@@ -1,0 +1,225 @@
+[
+    {
+        "name": "Interval",
+        "comment": " A representation of numeric intervals (also known as _ranges_.)\n\n\n# Types\n\n@docs Interval\n@docs Bound\n\n\n# Constructors\n\n`interval` is the primary constructor; the others are just for convenience.\n\n@docs interval\n@docs degenerate\n@docs empty\n@docs leftBounded\n@docs rightBounded\n@docs unbounded\n\n\n# Endpoint (Bound) constructors\n\n@docs excludes\n@docs includes\n\n\n# Operations on Intervals\n\n@docs hull\n@docs intersection\n@docs intervalToString\n@docs interior\n@docs closure\n@docs subtract\n@docs upperBoundValue\n@docs lowerBoundValue\n\n\n# Tests on Intervals\n\n@docs adjoins\n@docs intersects\n@docs intersectsPoint\n@docs isBounded\n@docs isDegenerate\n@docs isEmpty\n@docs isLeftBounded\n@docs isRightBounded\n@docs isLeftOpen\n@docs isRightOpen\n\n\n# Related reading\n\n  - [Interval](https://en.wikipedia.org/wiki/Interval_(mathematics))\n  - [Interval tree](https://en.wikipedia.org/wiki/Interval_tree)\n  - [Allen's interval algebra](https://en.wikipedia.org/wiki/Allen%27s_interval_algebra)\n\n",
+        "unions": [
+            {
+                "name": "Bound",
+                "comment": " Represents an upper or lower, closed or open endpoint of an Interval.\nThis encompasses the \"endpoints\" of unbounded intervals when the bound value\nis either of the `Infinity` values in the floating point spec.\n\nOpaque type.\n\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Interval",
+                "comment": " An interval over the reals. May be over either the Ordinary Reals `(-∞, +∞)` or\nthe Extended Reals `[-∞, +∞]`.\n`Bounded x y` will always satisfy `x < y`. (`x == y` is either degenerate or empty)\n\nOpaque type.\n\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "adjoins",
+                "comment": " Are these two intervals adjoins? I.e., do they share an upper-lower or\nlower-upper bound, exactly one of which is closed, and do not intersect each other?\n\n    let\n        a = interval (includes 1) (excludes 3)  -- [1, 3)\n        b = interval (includes 2) (includes 4)  -- [3, 4]\n        c = interval (excludes 3) (includes 4)  -- (3, 4]\n        d = interval (includes 2) (includes 3)  -- [2, 3]\n    in\n        [ adjoins a b = True\n        , adjoins a c = False\n        , adjoins a d = False\n        ]\n\n",
+                "type": "Interval.Interval -> Interval.Interval -> Basics.Bool"
+            },
+            {
+                "name": "closure",
+                "comment": " Returns the smallest closed interval containing a.\n\n    -- `closure((x, y)) == [x, y]`\n    interior (interval (excludes 0) (excludes 2)) == interval (includes 0) (includes 2)\n\n",
+                "type": "Interval.Interval -> Interval.Interval"
+            },
+            {
+                "name": "degenerate",
+                "comment": " A degenerate Interval.\n",
+                "type": "Basics.Float -> Interval.Interval"
+            },
+            {
+                "name": "empty",
+                "comment": " An empty Interval.\n",
+                "type": "Interval.Interval"
+            },
+            {
+                "name": "excludes",
+                "comment": " An exclusive endpoint of an interval.\n",
+                "type": "Basics.Float -> Interval.Bound"
+            },
+            {
+                "name": "hull",
+                "comment": " The convex hull of two intervals. This is similar to union in that\nit includes all the points of the component intervals, and for\nnon-overlapping intervals, the points between them.\n",
+                "type": "Interval.Interval -> Interval.Interval -> Interval.Interval"
+            },
+            {
+                "name": "includes",
+                "comment": " An inclusive endpoint of an interval.\n",
+                "type": "Basics.Float -> Interval.Bound"
+            },
+            {
+                "name": "interior",
+                "comment": " Returns the largest open interval contained within a.\n\n    -- `interior([x, y]) == (x, y)`\n    interior (interval (includes 0) (includes 2)) == interval (excludes 0) (excludes 2)\n\n",
+                "type": "Interval.Interval -> Interval.Interval"
+            },
+            {
+                "name": "intersection",
+                "comment": " The intersection of two intervals. If the intervals overlap, this is the common part.\nIf not, this is the empty interval.\n",
+                "type": "Interval.Interval -> Interval.Interval -> Interval.Interval"
+            },
+            {
+                "name": "intersects",
+                "comment": " Do these two intervals intersect?\n\n    let\n        a = interval (includes 1) (excludes 3)\n        b = interval (includes 2) (includes 4)\n        c = interval (includes 3) (includes 4)\n    in\n        [ intersects a b = True\n        , intersects a c = False\n        ]\n\n",
+                "type": "Interval.Interval -> Interval.Interval -> Basics.Bool"
+            },
+            {
+                "name": "intersectsPoint",
+                "comment": " Does this interval contain the given point?\n\n    let\n        a = interval (includes 1) (excludes 3)\n    in\n        [ intersectsPoint a 0 = False\n        , intersectsPoint a 1 = True\n        , intersectsPoint a 3 = False\n        ]\n\n",
+                "type": "Interval.Interval -> Basics.Float -> Basics.Bool"
+            },
+            {
+                "name": "interval",
+                "comment": " Constructs an `Interval` from two Bounds.\n",
+                "type": "Interval.Bound -> Interval.Bound -> Interval.Interval"
+            },
+            {
+                "name": "intervalToString",
+                "comment": " Return a String representation of an Interval.\n",
+                "type": "Interval.Interval -> String.String"
+            },
+            {
+                "name": "isBounded",
+                "comment": " Does this interval have finite bounds?\n",
+                "type": "Interval.Interval -> Basics.Bool"
+            },
+            {
+                "name": "isDegenerate",
+                "comment": " Is this a degenerate (point-valued) interval?\n",
+                "type": "Interval.Interval -> Basics.Bool"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Is this an empty interval?\n",
+                "type": "Interval.Interval -> Basics.Bool"
+            },
+            {
+                "name": "isLeftBounded",
+                "comment": " Does this interval have a finite lower bound, and an infinite upper bound?\n",
+                "type": "Interval.Interval -> Basics.Bool"
+            },
+            {
+                "name": "isLeftOpen",
+                "comment": " Is the lower bound of this interval open?\n",
+                "type": "Interval.Interval -> Basics.Bool"
+            },
+            {
+                "name": "isRightBounded",
+                "comment": " Does this interval have a finite upper bound, and an infinite lower bound?\n",
+                "type": "Interval.Interval -> Basics.Bool"
+            },
+            {
+                "name": "isRightOpen",
+                "comment": " Is the upper bound of this interval open?\n",
+                "type": "Interval.Interval -> Basics.Bool"
+            },
+            {
+                "name": "leftBounded",
+                "comment": " Convenience function for a left-bounded Interval (from some n to +∞)\n",
+                "type": "Interval.Bound -> Interval.Interval"
+            },
+            {
+                "name": "lowerBoundValue",
+                "comment": " Extract the value of the lower bound of an Interval.\n",
+                "type": "Interval.Interval -> Maybe.Maybe Basics.Float"
+            },
+            {
+                "name": "rightBounded",
+                "comment": " Convenience function for a right-bounded Interval (from -∞ to some n)\n",
+                "type": "Interval.Bound -> Interval.Interval"
+            },
+            {
+                "name": "subtract",
+                "comment": " Subtract interval `b` from interval `a`, returning a list of the parts of\n`a` that did not intersect with `b`.\n\nE.g.:\n\n  - [1, 3) - (1, 2] = [ {1}, (2, 3) ]\n\n",
+                "type": "Interval.Interval -> Interval.Interval -> List.List Interval.Interval"
+            },
+            {
+                "name": "unbounded",
+                "comment": " An unbounded Interval over the [Extended Reals.] `[-∞, +∞]`\n\n[Extended Reals.]: https://en.wikipedia.org/wiki/Interval_(mathematics)#Infinite_endpoints\n\n",
+                "type": "Interval.Interval"
+            },
+            {
+                "name": "upperBoundValue",
+                "comment": " Extract the value of the upper bound of an Interval.\n",
+                "type": "Interval.Interval -> Maybe.Maybe Basics.Float"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Union",
+        "comment": " A set of strictly ordered, fully disjoint Intervals.\n\n\n# Types\n\n@docs Union\n\n@docs fromInterval\n@docs fromIntervals\n@docs toIntervals\n\n@docs union\n@docs unionOfIntervals\n\n@docs intersection\n@docs intersectionWithInterval\n@docs subtract\n@docs subtractInterval\n@docs subtractUnions\n@docs unionToString\n\n",
+        "unions": [
+            {
+                "name": "Union",
+                "comment": " A set of strictly non-overlapping Intervals.\n\nOpaque type; do not export.\n\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fromInterval",
+                "comment": " Construct a \"union\" from a single Interval.\n",
+                "type": "Interval.Interval -> Union.Union"
+            },
+            {
+                "name": "fromIntervals",
+                "comment": " Additively construct a union from an unordered list of arbitrary Intervals.\n",
+                "type": "List.List Interval.Interval -> Union.Union"
+            },
+            {
+                "name": "intersection",
+                "comment": " Return the intersection of two Unions.\nE.g.:\n\n  - { [1, 2) } ∩ { [3, 5] } = {}\n  - { [1, 3) } ∩ { [2, 5] } = { [2, 3) }\n  - { [1, 3), [4, 6] } ∩ { [2, 5] } = { [2, 3), [4, 5] }\n\n",
+                "type": "Union.Union -> Union.Union -> Union.Union"
+            },
+            {
+                "name": "intersectionWithInterval",
+                "comment": " Return the intersection of an interval with a Union.\nE.g.:\n\n  - [1, 2) ∩ { [3, 5] } = {}\n  - [1, 3) ∩ { [2, 5] } = { [2, 3) }\n  - [2, 5] ∩ { [1, 3), [4, 6] } = { [2, 3), [4, 5] }\n\n",
+                "type": "Interval.Interval -> Union.Union -> Union.Union"
+            },
+            {
+                "name": "subtract",
+                "comment": " Subtract interval `b` from interval `a`, returning the parts of\n`a` that did not intersect with `b`.\n\nE.g.:\n\n  - [1, 3) - (1, 2] = { {1}, (2, 3) }\n\n",
+                "type": "Interval.Interval -> Interval.Interval -> Union.Union"
+            },
+            {
+                "name": "subtractInterval",
+                "comment": " Subtract an interval from the given union, returning the contents of the\nunion that did not intersect with the interval.\n\nE.g.:\n\n  - { [1, 3), (5, 8] } - (1, 3) = { {1}, (5, 8] }\n\n",
+                "type": "Interval.Interval -> Union.Union -> Union.Union"
+            },
+            {
+                "name": "subtractUnions",
+                "comment": " Subtract union `b` from union `a`, returning the contents of `a` that\ndid not intersect with `b`.\n\nE.g.:\n\n  - { [1, 3), (5, 8] } - { (1, 3), [6, 7] } = { {1}, (5, 6), (7, 8] }\n\n",
+                "type": "Union.Union -> Union.Union -> Union.Union"
+            },
+            {
+                "name": "toIntervals",
+                "comment": " Returns list of intervals\n",
+                "type": "Union.Union -> List.List Interval.Interval"
+            },
+            {
+                "name": "union",
+                "comment": " Merge two Unions.\nE.g.:\n\n  - { [1, 2) } ∪ { [3, 4] } = { [1, 2), [3, 4] }\n  - { [1, 2) } ∪ { [2, 3] } = { [1, 3] }\n  - { [1, 2) } ∪ { (2, 3] } = { [1, 2), (2, 3] }\n\n",
+                "type": "Union.Union -> Union.Union -> Union.Union"
+            },
+            {
+                "name": "unionOfIntervals",
+                "comment": " Construct a Union from the additive merger of two Intervals.\nE.g.:\n\n  - [1, 2) ∪ [3, 4] = { [1, 2), [3, 4] }\n\n",
+                "type": "Interval.Interval -> Interval.Interval -> Union.Union"
+            },
+            {
+                "name": "unionToString",
+                "comment": " Return the string representation of the given Union.\n",
+                "type": "Union.Union -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

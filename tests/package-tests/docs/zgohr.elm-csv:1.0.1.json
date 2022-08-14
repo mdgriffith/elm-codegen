@@ -1,0 +1,38 @@
+[
+    {
+        "name": "Csv",
+        "comment": " A CSV parser that supports different separators, and quoted fields.\nThe results are provided as lists.\n\n\n## Definitions\n\n@docs Csv\n\n\n## Parsing functions\n\n@docs parseWith, parse, split, splitWith\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Csv",
+                "comment": " The `Csv` type structure.\n",
+                "args": [],
+                "type": "{ headers : List.List String.String, records : List.List (List.List String.String) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "parse",
+                "comment": " Convert a string of comma-separated values into a `Csv` structure.\n\n    parse \"id,value\\n1,one\\n2,two\\n\"\n    --> {\n    -->  headers = [\"id\", \"value\"],\n    -->  records = [\n    -->                [\"1\", \"one\"],\n    -->                [\"2\", \"two\"]\n    -->            ]\n    --> }\n\nValues that contain the character ',' can be quoted\n\n    parse \"id,value\\n\\\"1,2,3\\\",\\\"one,two,three\\\"\\n\"\n    --> {\n    -->  headers = [\"id\", \"value\"],\n    -->  records = [\n    -->                [\"1,2,3\", \"one,two,three\"]\n    -->            ]\n    --> }\n\nDouble quotes can be escaped with a backslash or a second quote\n\n    parse \"value\\n,Here is a quote:\\\"\\\"\\nAnother one:\\\\\\\"\\n\"\n    --> {\n    -->  headers = [\"value\"],\n    -->  records = [\n    -->                [\"Here is a quote:\\\"\"],\n    -->                [\"Another one:\\\"\"]\n    -->            ]\n    --> }\n\n",
+                "type": "String.String -> Csv.Csv"
+            },
+            {
+                "name": "parseWith",
+                "comment": " Convert a string of values separated by a _separator_ into a `Csv` structure.\n\n    parseWith \";\" \"id;value\\n1;one\\n2;two\\n\"\n    --> {\n    -->  headers = [\"id\", \"value\"],\n    -->  records = [\n    -->                [\"1\", \"one\"],\n    -->                [\"2\", \"two\"]\n    -->            ]\n    --> }\n\n",
+                "type": "String.String -> String.String -> Csv.Csv"
+            },
+            {
+                "name": "split",
+                "comment": " Convert a string of comma-separated values into a list of lists.\n\n    split \"id,value\\n1,one\\n2,two\\n\"\n    --> [[\"id\", \"value\"], [\"1\", \"one\"], [\"2\", \"two\"]]\n\n",
+                "type": "String.String -> List.List (List.List String.String)"
+            },
+            {
+                "name": "splitWith",
+                "comment": " Convert a string of values separated by a character into a list of lists.\n\n    splitWith \",\" \"id,value\\n1,one\\n2,two\\n\"\n    --> [[\"id\", \"value\"], [\"1\", \"one\"], [\"2\", \"two\"]]\n\n",
+                "type": "String.String -> String.String -> List.List (List.List String.String)"
+            }
+        ],
+        "binops": []
+    }
+]

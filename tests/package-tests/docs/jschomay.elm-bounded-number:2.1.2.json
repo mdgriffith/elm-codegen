@@ -1,0 +1,60 @@
+[
+    {
+        "name": "Number.Bounded",
+        "comment": " A type representing bounded numbers. Once a bound is set, the bounded value can never go out of this range.\n\n    between 1 10\n        |> set 7\n        |> inc 5\n        |> value\n    -- (equals 10)\n\n@docs Bounded\n\n@docs between, set, inc, dec\n\n@docs value, minBound, maxBound\n\n@docs map\n\n",
+        "unions": [
+            {
+                "name": "Bounded",
+                "comment": " ",
+                "args": [
+                    "number"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "between",
+                "comment": " Initialize a bounded number by giving it a min and max for the bounds (inclusive). The value will be initialized as the provided min. The min will always be the lower number, regardless of which order you provide the arguments.\n",
+                "type": "number -> number -> Number.Bounded.Bounded number"
+            },
+            {
+                "name": "dec",
+                "comment": " Decrements the value by the given amount, \"clipping\" at the min bound if it passes it.\n",
+                "type": "number -> Number.Bounded.Bounded number -> Number.Bounded.Bounded number"
+            },
+            {
+                "name": "inc",
+                "comment": " Increments the value by the given amount, \"clipping\" at the max bound if it passes it.\n",
+                "type": "number -> Number.Bounded.Bounded number -> Number.Bounded.Bounded number"
+            },
+            {
+                "name": "map",
+                "comment": " Transforms a Bounded value with a given function. If the value returned by the given function is greater than the max bound, it will \"clip\" at the max. Likewise, if the value returned by the given function is less than the min bound, it will clip at the min.\n\n    between 1 10\n        |> set 9\n        |> map sqrt\n        |> value\n    -- (equals 3)\n\n",
+                "type": "(number -> number) -> Number.Bounded.Bounded number -> Number.Bounded.Bounded number"
+            },
+            {
+                "name": "maxBound",
+                "comment": " Get the max bound\n",
+                "type": "Number.Bounded.Bounded number -> number"
+            },
+            {
+                "name": "minBound",
+                "comment": " Get the min bound\n",
+                "type": "Number.Bounded.Bounded number -> number"
+            },
+            {
+                "name": "set",
+                "comment": " Set the value manually. If you try to set a value greater than the max bound, it will \"clip\" at the max. Likewise, if you try to set a value less than the min bound, it will clip at the min.\n",
+                "type": "number -> Number.Bounded.Bounded number -> Number.Bounded.Bounded number"
+            },
+            {
+                "name": "value",
+                "comment": " Get the value\n",
+                "type": "Number.Bounded.Bounded number -> number"
+            }
+        ],
+        "binops": []
+    }
+]

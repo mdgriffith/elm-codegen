@@ -1,0 +1,208 @@
+[
+    {
+        "name": "Tidy",
+        "comment": " Tidy and shape tabular data.\n\n@docs Table\n\n\n# Create\n\n@docs fromCSV\n@docs fromDelimited\n@docs fromGrid\n@docs fromGridRows\n@docs empty\n\n\n# Edit\n\n@docs insertRow\n@docs filterRows\n\n@docs renameColumn\n@docs insertColumn\n@docs insertColumnFromJson\n@docs insertIndexColumn\n@docs insertSetIndexColumn\n@docs removeColumn\n@docs mapColumn\n@docs filterColumns\n@docs moveColumnToEnd\n\n\n# Tidy\n\nArranging _tidy data_ ([Wickham, 2014](https://www.jstatsoft.org/index.php/jss/article/view/v059i10/v59i10.pdf))\nis a convention for organising tabular data such that columns represent distinct\n_variables_ and rows represent _observations_. This isolates the semantic meaning\nof items in any column independently of all others. The effect is to greatly\nsimplify data interchange and many data analytical functions.\n\nWickham identifies some common problems with data that are not in tidy format\n(\"messy\" data), each of which can be solved with a small number of simple operations:\n\n  - Column headers are values not variable names (solved with [gather](#gather)).\n  - Multiple variables are stored in the same column (solved with [bisect](#bisect)).\n  - Variables arranged in rows as well as columns (solved with [spread](#spread)).\n  - Multiple types of observational unit are stored in the same table (solved with [filterColumns](#filterColumns)).\n  - The same observational unit is stored in multiple tables. (solved with joins such as [leftJoin](#leftJoin)).\n\n@docs gather\n@docs spread\n@docs bisect\n@docs splitAt\n@docs headTail\n@docs disaggregate\n@docs transposeTable\n@docs normalize\n\n\n# Join\n\nJoin two tables using a common key. While not specific to tidy data, joining tidy\ntables is often more meaningful than joining messy ones. Joins often rely on the\nexistence of a 'key' column containing unique row identifiers. If tables to be\njoined do not have such a key, they can be added with\n[insertIndexColumn](#insertIndexColumn).\n\nThe examples below illustrate joining two input tables with shared key values\n`k2` and `k4`:\n\n```markdown\ntable1:\n\n| Key1 | colA | colB |\n| ---- | ---- | ---- |\n| k1   | a1   | b1   |\n| k2   | a2   | b2   |\n| k3   | a3   | b3   |\n| k4   | a4   | b4   |\n\ntable2:\n\n| Key2 | colC | colD |\n| ---- | ---- | ---- |\n| k2   | c2   | d2   |\n| k4   | c4   | d4   |\n| k6   | c6   | d6   |\n| k8   | c8   | d8   |\n```\n\n@docs leftJoin\n@docs rightJoin\n@docs innerJoin\n@docs outerJoin\n@docs leftDiff\n@docs rightDiff\n\n\n# Output\n\n@docs tableSummary\n@docs columnNames\n@docs toCSV\n@docs toDelimited\n\n\n## Column output\n\n@docs numColumn\n@docs strColumn\n@docs booColumn\n@docs toColumn\n\n",
+        "unions": [
+            {
+                "name": "Table",
+                "comment": " The basic organisational unit for tabular data. Each column in a table has a\nunique name by which it may be referenced. Table cell values are represented as\nStrings, but can be converted to other types via column output functions\n(e.g. [numColumn](#numColumn)).\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "bisect",
+                "comment": " Split a named column (first parameter) into two with a bisecting function\n(second parameter). The third parameter should be the names to give the two new\ncolumns, which are inserted into the table replacing the original bisected column.\n\nFor example, given a table\n\n```markdown\n| row | col |   z |\n| --: | --: | --- |\n|   0 |   0 | z00 |\n|   0 |   1 | z01 |\n|   0 |   2 | z02 |\n|   1 |   0 | z10 |\n|   1 |   1 | z11 |\n|   1 |   2 | z12 |\n```\n\nbisecting it with\n\n    bisect \"z\"\n        (\\z ->\n            ( String.left 2 z\n            , String.left 1 z ++ String.right 1 z\n            )\n        )\n        ( \"zr\", \"zc\" )\n\nproduces the table\n\n```markdown\n| row | col | zr | zc |\n| --: | --: | -- | -- |\n|   0 |   0 | z0 | z0 |\n|   0 |   1 | z0 | z1 |\n|   0 |   2 | z0 | z2 |\n|   1 |   0 | z1 | z0 |\n|   1 |   1 | z1 | z1 |\n|   1 |   2 | z1 | z2 |\n```\n\nIf the column to be bisected is not found, the original table is returned.\n\nFor more sophisticated disaggregation, such as splitting a column into more than\ntwo new ones, consider [disaggregate](#disaggregate).\n\n",
+                "type": "String.String -> (String.String -> ( String.String, String.String )) -> ( String.String, String.String ) -> Tidy.Table -> Tidy.Table"
+            },
+            {
+                "name": "booColumn",
+                "comment": " Extract Boolean values of a given column from a table. Assumes that `True`\nvalues can be represented by the case-insensitive strings `true`, `yes` and `1`\nwhile all other values are assumed to be false.\n\n    dataColumn =\n        myTable |> booColumn \"isMarried\"\n\n",
+                "type": "String.String -> Tidy.Table -> List.List Basics.Bool"
+            },
+            {
+                "name": "columnNames",
+                "comment": " Provide a list of column names for the given table.\n",
+                "type": "Tidy.Table -> List.List String.String"
+            },
+            {
+                "name": "disaggregate",
+                "comment": " Disaggregate the values in a given column (first parameter) according to a\nregular expression (second parameter). The names to give to the new disaggregated\ncolumns are provided in the third parameter. The number of groups returned by the\nregular expression should match the number of new column names. Performs a similar\nfunction to _tidyr_'s [extract function](https://tidyr.tidyverse.org/reference/extract.html).\n\nFor example, to disaggregate `diagnosisCohort` in the following table:\n\n```markdown\n| diagnosisCohort | numCases |\n| --------------- | -------: |\n| new_sp_m0-14    |       52 |\n| new_sp_m15-24   |      228 |\n| new_sp_f0-14    |       35 |\n| new_sp_f15-24   |      180 |\n| new_sn_m0-14    |        9 |\n| new_sn_m15-24   |       97 |\n| new_sn_f0-14    |       11 |\n| new_sn_f15-24   |       64 |\n```\n\n    disaggregate \"diagnosisCohort\"\n        \"new_?(.*)_(.)(.*)\"\n        [ \"diagnosis\", \"gender\", \"age\" ]\n\nproduces a new table:\n\n```markdown\n| numCases | diagnosis | gender | age   |\n| -------: | --------- | ------ | ----- |\n|       52 |        sp |      m | 0-14  |\n|      228 |        sp |      m | 15-24 |\n|       35 |        sp |      f | 0-14  |\n|      180 |        sp |      f | 15-24 |\n|        9 |        sn |      m | 0-14  |\n|       97 |        sn |      m | 15-24 |\n|       11 |        sn |      f | 0-14  |\n|       64 |        sn |      f | 15-24 |\n```\n\nIf the column to disaggregate cannot be found, the original table is returned.\n\n",
+                "type": "String.String -> String.String -> List.List String.String -> Tidy.Table -> Tidy.Table"
+            },
+            {
+                "name": "empty",
+                "comment": " Create an empty table. Useful if table items are to be added programatically\nwith `insertRow` and `insertColumn`.\n",
+                "type": "Tidy.Table"
+            },
+            {
+                "name": "filterColumns",
+                "comment": " Keep columns in the table whose names satisfy the given test. The test should\nbe a function that takes a column heading and returns either `True` or `False`\ndepending on whether the column should be retained.\n\n    newTable =\n        myTable\n            |> filterColumns (\\s -> String.left 11 s == \"temperature\")\n\n",
+                "type": "(String.String -> Basics.Bool) -> Tidy.Table -> Tidy.Table"
+            },
+            {
+                "name": "filterRows",
+                "comment": " Keep rows in the table where the values in the given column satisfy the given\ntest. The test should be a function that takes a cell value and returns either\n`True` or `False` depending on whether the row containing that value in the column\nshould be retained.\n\n    isWarm : String -> Bool\n    isWarm s =\n        case String.toFloat s of\n            Just x ->\n                x >= 10\n\n            Nothing ->\n                False\n\n    warmCities =\n        myTable |> filterRows \"temperature\" isWarm\n\n",
+                "type": "String.String -> (String.String -> Basics.Bool) -> Tidy.Table -> Tidy.Table"
+            },
+            {
+                "name": "fromCSV",
+                "comment": " Create a table from a multi-line comma-separated string. For example\n\n      myTable =\n          \"\"\"colA,colB,colC\n      a1,b1,c1\n      a2,b2,c2\n      a3,b3,c3\"\"\"\n              |> fromCSV\n\n",
+                "type": "String.String -> Tidy.Table"
+            },
+            {
+                "name": "fromDelimited",
+                "comment": " Create a table from a multi-line string where values are separated by the\ngiven delimiter (first parameter). For example, to process a tab-delimited values\nfile (TSV):\n\n    myTable =\n        \"\"\"colA colB colC\n    a1  b1  c1\n    a2  b2  c2\n    a3  b3  c3\"\"\"\n            |> fromDelimited '\\t'\n\n",
+                "type": "Char.Char -> String.String -> Tidy.Table"
+            },
+            {
+                "name": "fromGrid",
+                "comment": " Transform multi-line string input values in the form:\n\n    \"\"\"\n       z00,z01,z02,z03, etc.\n       z10,z11,z12,z13, etc.\n       z20,z21,z22,c23, etc.\n       z30,z31,z32,c33, etc.\n       etc.\"\"\"\n\ninto a tidy table in the form:\n\n```markdown\n| row | col |   z |\n| --: | --: | --: |\n|   0 |   0 | z00 |\n|   0 |   1 | z01 |\n|   0 |   2 | z02 |\n|   0 |   3 | z03 |\n|   1 |   0 | z10 |\n|   1 |   1 | z11 |\n|     |     |     |\n```\n\nValues between commas are outer-trimmed of whitespace unless enclosed in quotes\nand entirely blank lines are ignored. Input can be ragged with different numbers\nof columns in each row.\n\nNote the common convention that in grids, the origin (row 0, col 0) is at the top-left,\nwhereas in Cartesian coordinate systems the origin (x=0, y=0) is at the bottom-left.\nYou may therefore wish to reverse the order of row values in the input string if\nyou are mapping onto a Cartesian coordinate system. For example,\n\n    \"\"\"z00,z01,z02,z03\n    z10,z11,z12,z13\n    z20,z21,z22,c23\n    z30,z31,z32,c33\"\"\"\n        |> String.split \"\\n\"\n        |> List.reverse\n        |> String.join \"\\n\"\n        |> fromGrid\n        |> renameColumn \"row\" \"y\"\n        |> renameColumn \"col\" \"x\"\n\n",
+                "type": "String.String -> Tidy.Table"
+            },
+            {
+                "name": "fromGridRows",
+                "comment": " Transform list of input string lists in the form:\n\n    [ [z00, z01, z02, z03, ...]\n    , [z10, z11, z12, z13, ...]\n    , [z20, z21, z22, c23, ...]\n    , [z30, z31, z32, c33, ...]\n    , [...]\n    ]\n\ninto a tidy table in the form:\n\n```markdown\n| row | col | z   |\n| --: | --: | --- |\n|   0 |   0 | z00 |\n|   0 |   1 | z01 |\n|   0 |   2 | z02 |\n|   0 |   3 | z03 |\n|   1 |   0 | z10 |\n|   1 |   1 | z11 |\n|     |     |     |\n```\n\nInput can be ragged with different numbers of columns in each row. Entirely empty\nrows (i.e. `[]`) are ignored, but cells with empty strings (e.g. `[\"\"]`) are captured.\n\nAs with [fromGrid](#fromGrid), you may wish to reverse the input row order if you\nare mapping onto a Cartesian coordinate system.\n\n",
+                "type": "List.List (List.List String.String) -> Tidy.Table"
+            },
+            {
+                "name": "gather",
+                "comment": " Combine several columns that represent the same variable into two columns, one\nreferencing the original column, the other the values of the variable. For example,\nthe following messy table\n\n```markdown\n| location  | temperature2017 | temperature2018 |\n| --------- | --------------: | --------------: |\n| Bristol   |              12 |              14 |\n| Sheffield |              11 |              13 |\n| Glasgow   |               8 |               9 |\n| Aberdeen  |                 |               7 |\n```\n\ncan be gathered to create a tidy table:\n\n```markdown\n| location  | year | temperature |\n| --------- | ---- | ----------: |\n| Bristol   | 2017 |          12 |\n| Bristol   | 2018 |          14 |\n| Sheffield | 2017 |          11 |\n| Sheffield | 2018 |          13 |\n| Glasgow   | 2017 |           8 |\n| Glasgow   | 2018 |           9 |\n| Aberdeen  | 2018 |           7 |\n```\n\nThe first two parameters represent the names to be given to the new reference column\n(`year` in the example above) and variable column (`temperature` in the example\nabove). The third is a list of the (columnName,columnReference) to be gathered\n(e.g. `[ (\"temperature2017\", \"2017\"), (\"temperature2018\", \"2018\") ]` above).\n\nOnly non-empty cell values in the variable column are gathered (e.g. note that only\n`Aberdeen, 2018, 7` is gathered with no entry for 2017.)\n\nIf none of the `columnName`s in the third parameter is found in the table, an empty\ntable is returned.\n\nFor cases where more than one set of columns needs to be gathered, you can combine\nthree stages: (a) gather all columns, adding a column group id; (b) bisect column\ngroup id and column reference; (c) spread the bisected columns. For example:\n\n    \"\"\"flowID,originLong,originLat,destLong,destLat\n       1,-71.9,41.8,-71.5,41.6\n       2,-80.5,34.9,-97.6,30.2\n       3,-92.1,37.0,-86.8,43.6\"\"\"\n        |> fromCSV\n        |> gather \"odCoordType\"\n            \"value\"\n            [ ( \"originLong\", \"oLong\" )\n            , ( \"originLat\", \"oLat\" )\n            , ( \"destLong\", \"dLong\" )\n            , ( \"destLat\", \"dLat\" )\n            ]\n        |> bisect \"odCoordType\" headTail ( \"od\", \"coordType\" )\n        |> spread \"coordType\" \"value\"\n\ncreates the table\n\n```markdown\n| flowID | od |  Long |  Lat |\n| -----: | -- | ----- | ---- |\n|      1 |  o | -71.9 | 41.8 |\n|      1 |  d | -71.5 | 41.6 |\n|      2 |  o | -80.5 | 34.9 |\n|      2 |  d | -97.6 | 30.2 |\n|      3 |  o | -92.1 | 37.0 |\n|      3 |  d | -86.8 | 43.6 |\n```\n\n",
+                "type": "String.String -> String.String -> List.List ( String.String, String.String ) -> Tidy.Table -> Tidy.Table"
+            },
+            {
+                "name": "headTail",
+                "comment": " Convenience function for splitting a string into its first (head) and remaining\n(tail) characters. e.g. `headTail \"tidy\" == (\"t\",\"idy\")`. Equivalent to `splitAt 1`.\nUseful when using [bisect](#bisect) to split column values into one column of heads\nand another of tails.\n",
+                "type": "String.String -> ( String.String, String.String )"
+            },
+            {
+                "name": "innerJoin",
+                "comment": " An _inner join_ will contain only key-matched rows that are present in both\ntables. The first parameter is the name to give the new key-matched column,\nreplacing the separate key names in the two tables. Where both tables share a\ncommon column name, the one in the first table is prioritised.\n\n    innerJoin \"Key\" ( table1, \"Key1\" ) ( table2, \"Key2\" )\n\nwould generate\n\n```markdown\n| Key | colA | colB | colC | colD |\n| --- | ---- | ---- | ---- | ---- |\n| k2  | a2   | b2   | c2   | d2   |\n| k4  | a4   | b4   | c4   | d4   |\n```\n\nIf one or both of the key columns are not found, this produces an empty table.\n\n",
+                "type": "String.String -> ( Tidy.Table, String.String ) -> ( Tidy.Table, String.String ) -> Tidy.Table"
+            },
+            {
+                "name": "insertColumn",
+                "comment": " Add a column of data to a table. The first parameter is the name to give the\ncolumn. The second is a list of column values. If the table already has a column\nwith this name, it will get replaced with the given data. To ensure table rows are\nalways aligned, if the table is not empty, the column values are padded to match\nthe longest column in the table after insertion.\n",
+                "type": "String.String -> List.List String.String -> Tidy.Table -> Tidy.Table"
+            },
+            {
+                "name": "insertColumnFromJson",
+                "comment": " Add a column of data extracted from a JSON string onto a table. The first parameter\nis the name of the JSON object containing the data values to add. This will become\nthe name of the column in the table. The second is a list of JSON object names that\ndefine the path to the column object. This can be an empty list if the object is\nin an array at the root of the JSON. The third parameter is the JSON string to parse\nand the fourth the table to which a new column will be added. If there is a problem\nfinding the column object, the original table is returned.\n\nFor example,\n\n    json =\n        \"\"\"[\n      { \"person\": \"John Smith\", \"treatment\": \"b\", \"result\": 2 },\n      { \"person\": \"Jane Doe\", \"treatment\": \"a\", \"result\": 16 },\n      { \"person\": \"Jane Doe\", \"treatment\": \"b\", \"result\": 11 },\n      { \"person\": \"Mary Johnson\", \"treatment\": \"a\", \"result\": 3 },\n      { \"person\": \"Mary Johnson\", \"treatment\": \"b\", \"result\": 1 }\n    ]\"\"\"\n\n    table =\n        empty\n            |> insertColumnFromJson \"person\" [] json\n            |> insertColumnFromJson \"treatment\" [] json\n            |> insertColumnFromJson \"result\" [] json\n\nwould generate a table\n\n```markdown\n| person       | treatment | result |\n| ------------ | --------- | -----: |\n| John Smith   | b         |      2 |\n| Jane Doe     | a         |     16 |\n| Jane Doe     | b         |     11 |\n| Mary Johnson | a         |      3 |\n| Mary Johnson | b         |      1 |\n```\n\n",
+                "type": "String.String -> List.List String.String -> String.String -> Tidy.Table -> Tidy.Table"
+            },
+            {
+                "name": "insertIndexColumn",
+                "comment": " Add an index column to a table. The first parameter is the name to give the\nnew column containing index values (replacing an existing column if it shares the\nsame name). The second is a prefix to add to each index value, useful for giving\ndifferent tables different index values (or use `\"\"` for no prefix).\n\nCreating an index column can be useful when joining tables with keys that you wish\nto guarantee are unique for each row. For example, to combine the rows of two\ntables `table1` and `table2`, but which may contain repeated values:\n\n    outerJoin \"key\"\n        ( insertIndexColumn \"key\" \"t1\" table1, \"key\" )\n        ( insertIndexColumn \"key\" \"t2\" table2, \"key\" )\n\n",
+                "type": "String.String -> String.String -> Tidy.Table -> Tidy.Table"
+            },
+            {
+                "name": "insertRow",
+                "comment": " Add a row of values to a table. The new values are represented by a list of\n`(columnName,columnValue)` tuples. If the table being appended is not empty, the\ncolumn names should correspond to existing columns in the table or they will be\nignored. Any unspecified columns will have an empty string value inserted.\n",
+                "type": "List.List ( String.String, String.String ) -> Tidy.Table -> Tidy.Table"
+            },
+            {
+                "name": "insertSetIndexColumn",
+                "comment": " Add an index column to a table based on the partition of values in a given\ncolumn into a minimum number of sets. The first parameter is the name to give the\nnew column containing set index values, replacing an existing column if it shares\nthe same name. The second is the name of the column containing the values to be\npartitioned into sets. If the column name is not found, the original table is returned.\n\nFor example given the following treatment table,\n\n```markdown\n| person       | treatment |\n| ------------ | --------- |\n| John Smith   | b         |\n| Jane Doe     | a         |\n| Jane Doe     | b         |\n| Mary Johnson | a         |\n| Mary Johnson | b         |\n```\n\nApplying `insertSetIndexColumn \"id\" \"person\"` would generate,\n\n```markdown\n| id | person       | treatment |\n| -- | ------------ | --------- |\n|  1 | John Smith   | b         |\n|  1 | Jane Doe     | a         |\n|  2 | Jane Doe     | b         |\n|  1 | Mary Johnson | a         |\n|  2 | Mary Johnson | b         |\n```\n\nRows with a given id will all be unique. Creating a set index column can be useful\nwhen [spreading](#spread) a table made up of a single pair of columns. For example,\ntaking the treatment table and inserting a set ID before spreading,\n\n    treatmentTable\n        |> insertSetIndexColumn \"id\" \"person\"\n        |> spread \"person\" \"treatment\"\n\ngenerates the following table:\n\n```markdown\n| id | John Smith | Jane Doe | Mary Johnson |\n| -- | ---------- | -------- | ------------ |\n| 1  | b          | a        | a            |\n| 2  |            | b        | b            |\n```\n\n",
+                "type": "String.String -> String.String -> Tidy.Table -> Tidy.Table"
+            },
+            {
+                "name": "leftDiff",
+                "comment": " Provides a table of all the rows in the first table that do not occur in any\nkey-matched rows in the second table.\n\n    leftDiff ( table1, \"Key1\" ) ( table2, \"Key2\" )\n\nwould generate\n\n```markdown\n| Key1 | colA | colB |\n| ---- | ---- | ---- |\n| k1   | a1   | b1   |\n| k3   | a3   | b3   |\n```\n\nIf the first key is not found, an empty table is returned, if the second key is\nnot found, the first table is returned.\n\n",
+                "type": "( Tidy.Table, String.String ) -> ( Tidy.Table, String.String ) -> Tidy.Table"
+            },
+            {
+                "name": "leftJoin",
+                "comment": " A _left join_ preserves all the values in the first table and adds any key-matched\nvalues from columns in the second table to it. Where both tables share common column\nnames, including key columns, only those in the left (first) table are stored in the output.\n\n    leftJoin ( table1, \"Key1\" ) ( table2, \"Key2\" )\n\nwould generate\n\n```markdown\n| Key1 | colA | colB | Key2 | colC | colD |\n| ---- | ---- | ---- | ---- | ---- | ---- |\n| k1   | a1   | b1   |      |      |      |\n| k2   | a2   | b2   | k2   | c2   | d2   |\n| k3   | a3   | b3   |      |      |      |\n| k4   | a4   | b4   | k4   | c4   | d4   |\n```\n\nIf one or both of the key columns are not found, the left table is returned.\n\n",
+                "type": "( Tidy.Table, String.String ) -> ( Tidy.Table, String.String ) -> Tidy.Table"
+            },
+            {
+                "name": "mapColumn",
+                "comment": " Transform the contents of the given column (first parameter) with a mapping\nfunction (second parameter). For example\n\n    newTable =\n        mapColumn \"myColumnHeading\" impute myTable\n\n    impute val =\n        if val == \"\" then\n            \"0\"\n\n        else\n            val\n\nIf the column name is not found, the original table is returned.\n\n",
+                "type": "String.String -> (String.String -> String.String) -> Tidy.Table -> Tidy.Table"
+            },
+            {
+                "name": "moveColumnToEnd",
+                "comment": " Move the column with the given name (first parameter) to become the last column\nin the given table (second parameter). While column order has no effect on table\nprocessing, this can be useful for display purposes. For example when separating\nvariables that represent observation categories from those representing\nobservation measurements.\n",
+                "type": "String.String -> Tidy.Table -> Tidy.Table"
+            },
+            {
+                "name": "normalize",
+                "comment": " Replace some columns with a single _id_ column and store those column values\nin a separate table. Useful for removing redundancy in a table where multiple rows\ncontain several values that describe the same feature. The two resulting tables\nare related with a new _id_ column (named with the first parameter). The names of\ncolumns forming the key, that are moved into the key table, are provided as the\nsecond parameter. The function returns a pair of tables in the order (_key table_,\n_value table_).\n\nFor example, assuming the following table recording 5 people's favourite film is\nstored as `favFilms` :\n\n```markdown\n| person  | age | film         | release | director  |\n| ------- | --- | ------------ | ------- | --------- |\n| Alice   | 51  | Vertigo      | 1958    | Hitchcock |\n| Brenda  | 60  | Citizen Kane | 1941    | Welles    |\n| Cate    | 23  | Vertigo      | 1958    | Hitchcock |\n| Deborah | 38  | Jaws         | 1985    | Spielberg |\n| Eloise  | 45  | Citizen Kane | 1941    | Welles    |\n```\n\nNormalizing it with\n\n    favFilms\n        |> normalize \"id\" [ \"film\", \"release\", \"director\" ]\n\nproduces a tuple containing the following two tables:\n\n```markdown\n| id | film         | release | director   |\n| -- | ------------ | ------- | ---------- |\n| 1  | Citizen Kane | 1941    | Welles     |\n| 2  | Jaws         | 1975    | Spielberg  |\n| 3  | Vertigo      | 1958    | Hitchcock  |\n```\n\n```markdown\n| person  | age | id |\n| ------- | --- | -- |\n| Alice   | 51  | 3  |\n| Brenda  | 60  | 1  |\n| Cate    | 23  | 3  |\n| Deborah | 38  | 2  |\n| Eloise  | 45  | 1  |\n```\n\nThe process of separating a table into two can be reversed by applying a table\njoin, for example:\n\n    let\n        ( keyTable, valueTable ) =\n            favFilms\n                |> normalize \"id\" [ \"film\", \"release\", \"director\" ]\n    in\n    leftJoin ( valueTable, \"id\" ) ( keyTable, \"id\" )\n        |> removeColumn \"id\"\n\n",
+                "type": "String.String -> List.List String.String -> Tidy.Table -> ( Tidy.Table, Tidy.Table )"
+            },
+            {
+                "name": "numColumn",
+                "comment": " Extract the numeric values of a given column from a table. Any conversions\nthat fail, including missing values in the table are converted into zeros. If\nyou wish to handle missing data / failed conversions in a different way, use\n[toColumn](#toColumn) instead, providing a custom converter function.\n\n    dataColumn =\n        myTable |> numColumn \"year\"\n\n",
+                "type": "String.String -> Tidy.Table -> List.List Basics.Float"
+            },
+            {
+                "name": "outerJoin",
+                "comment": " An _outer join_ contains all rows of both joined tables. The first parameter\nis the name to give the new key-matched column, replacing the separate key names\nin the two tables.\n\n    outerJoin \"Key\" ( table1, \"Key1\" ) ( table2, \"Key2\" )\n\nwould generate\n\n```markdown\n| Key | colA | colB | colC | colD |\n| --- | ---- | ---- | ---- | ---- |\n| k1  | a1   | b1   |      |      |\n| k2  | a2   | b2   | c2   | d2   |\n| k3  | a3   | b3   |      |      |\n| k4  | a4   | b4   | c4   | d4   |\n| k6  |      |      | c6   | d6   |\n| k8  |      |      | c8   | d8   |\n```\n\nIf one or both of the key columns are not found, this produces an empty table.\n\n",
+                "type": "String.String -> ( Tidy.Table, String.String ) -> ( Tidy.Table, String.String ) -> Tidy.Table"
+            },
+            {
+                "name": "removeColumn",
+                "comment": " Remove a column with the given name from a table. If the column is not present\nin the table, the original table is returned.\n",
+                "type": "String.String -> Tidy.Table -> Tidy.Table"
+            },
+            {
+                "name": "renameColumn",
+                "comment": " Rename the given column (first parameter) with a new name (second parameter).\nIf the new column name matches an existing one, the existing one will be replaced\nby the renamed column.\n",
+                "type": "String.String -> String.String -> Tidy.Table -> Tidy.Table"
+            },
+            {
+                "name": "rightDiff",
+                "comment": " Provides a table of all the rows in the second table that do not occur in any\nkey-matched rows in the first table.\n\n    rightDiff ( table1, \"Key1\" ) ( table2, \"Key2\" )\n\nwould generate\n\n```markdown\n| Key2 | colC | colD |\n| ---- | ---- | ---- |\n| k6   | c6   | d6   |\n| k8   | c8   | d8   |\n```\n\nIf the first key is not found, the second table is returned, if the second key is\nnot found, an empty table is returned.\n\n",
+                "type": "( Tidy.Table, String.String ) -> ( Tidy.Table, String.String ) -> Tidy.Table"
+            },
+            {
+                "name": "rightJoin",
+                "comment": " A _right join_ preserves all the values in the second table and adds any\nkey-matched values from columns in the first table to it. Where both tables share\ncommon column names, including key columns, only those in the right (second) table\nare stored in the output.\n\n    rightJoin ( table1, \"Key1\" ) ( table2, \"Key2\" )\n\nwould generate\n\n```markdown\n| Key2 | colC | colD | Key1 | colA | colB |\n| ---- | ---- | ---- | ---- | ---- | ---- |\n| k2   | c2   | d2   | k2   | a2   | b2   |\n| k4   | c4   | d4   | k4   | a4   | b4   |\n| k6   | c6   | d6   |      |      |      |\n| k8   | c8   | d8   |      |      |      |\n```\n\nIf one or both of the key columns are not found, the right table is returned.\n\n",
+                "type": "( Tidy.Table, String.String ) -> ( Tidy.Table, String.String ) -> Tidy.Table"
+            },
+            {
+                "name": "splitAt",
+                "comment": " Convenience function for splitting a string (second parameter) at the given\nposition (first parameter).\n\n    splitAt 4 \"tidyString\" == ( \"tidy\", \"String\" )\n\nIf the first parameter is negative, the position is counted from the right rather\nthan left.\n\n    splitAt -4 \"temperature2019\" == ( \"temperature\", \"2019\" )\n\nUseful when using [bisect](#bisect) to split column values in two.\n\n",
+                "type": "Basics.Int -> String.String -> ( String.String, String.String )"
+            },
+            {
+                "name": "spread",
+                "comment": " The inverse of [gather](#gather), spreading a pair of columns rotates values\nto separate columns (like a _pivot_ in a spreadsheet). This is useful if different\nvariables are stored in separate rows of the same column. For example, the following\ntable contains two different variables in the `temperature` column:\n\n```markdown\n| location  | year | readingType | temperature |\n| --------- | ---- | ----------- | ----------: |\n| Bristol   | 2018 | minTemp     |           3 |\n| Bristol   | 2018 | maxTemp     |          27 |\n| Sheffield | 2018 | minTemp     |          -2 |\n| Sheffield | 2018 | maxTemp     |          26 |\n| Glasgow   | 2018 | minTemp     |         -10 |\n| Glasgow   | 2018 | maxTemp     |          23 |\n| Aberdeen  | 2018 | maxTemp     |          14 |\n```\n\nWe can _spread_ the temperatures into separate columns reflecting their distinct\nmeanings, generating the table:\n\n```markdown\n| location  | year | minTemp | maxTemp |\n| --------- | ---- | ------: | ------: |\n| Bristol   | 2018 |       3 |      27 |\n| Sheffield | 2018 |      -2 |      26 |\n| Glasgow   | 2018 |     -10 |      23 |\n| Aberdeen  | 2018 |         |      14 |\n```\n\nThe first parameter is the name of the column containing the values that will form\nthe new spread column names (`readingType` above). The second parameter is the name\nof the column containing the values to be inserted in each new column (`temperature`\nabove).\n\nMissing rows (e.g. `Aberdeen, 2018, minTemp` above) are rotated as empty strings\nin the spread column. If either of the columns to spread is not found, the original\ntable is returned.\n\nSpreading effectively groups by values in the non-spreading columns. If the table\nto spread only contains the type and value columns, an empty table will be created\nas there are no values to group by. In these cases, adding an index column with\n[insertSetIndexColumn](#insertSetIndexColumn) can generate values to group by.\n\n",
+                "type": "String.String -> String.String -> Tidy.Table -> Tidy.Table"
+            },
+            {
+                "name": "strColumn",
+                "comment": " Extract the string values of a given column from a table. Missing values in\nthe table are represented as empty strings. If you wish to handle missing values\nin a different way, use [toColumn](#toColumn) instead, providing a custom converter\nfunction.\n\n    dataColumn =\n        myTable |> strColumn \"cityName\"\n\n",
+                "type": "String.String -> Tidy.Table -> List.List String.String"
+            },
+            {
+                "name": "tableSummary",
+                "comment": " Provide a textual description of a table, configurable to show a given number\nof table rows. If the number of rows to show is negative, all rows are output.\nThis is designed primarily to generate markdown output, but is interpretable as\nraw text.\n",
+                "type": "Basics.Int -> Tidy.Table -> List.List String.String"
+            },
+            {
+                "name": "toCSV",
+                "comment": " Provide a CSV (comma-separated values) format version of a table. Can be useful\nfor applications that need to save a table as a file.\n",
+                "type": "Tidy.Table -> String.String"
+            },
+            {
+                "name": "toColumn",
+                "comment": " Extract the values of the column with the given name (first parameter) from a\ntable. The type of values in the column is determined by the given cell conversion\nfunction. The converter function should handle cases of missing data in the table\n(e.g. empty strings) as well as failed conversions (e.g. attempts to convert text\ninto a number).\n\n    imputeMissing : String -> Int\n    imputeMissing =\n        String.toFloat >> Maybe.withDefault 0\n\n    dataColumn =\n        myTable |> toColumn \"count\" imputeMissing\n\n",
+                "type": "String.String -> (String.String -> a) -> Tidy.Table -> List.List a"
+            },
+            {
+                "name": "toDelimited",
+                "comment": " Provide text containing table values separated by the given delimiter (first parameter).\nCan be useful for applications that need to save a table as a file. For example,\nto create tab-delimited (TSV) text representing a table for later saving as a file:\n\n    toDelimited '\\t' myTable\n\n",
+                "type": "String.String -> Tidy.Table -> String.String"
+            },
+            {
+                "name": "transposeTable",
+                "comment": " Transpose the rows and columns of a table. Provide the name of column that will\ngenerate the column headings in the transposed table as the first parameter and the\nname you wish to give the new row names as the second.\n\nFor example,\n\n    newTable =\n        myTable |> transposeTable \"location\" \"temperature\"\n\nwhere `myTable` stores:\n\n```markdown\n| location  | temperature2017 | temperature2018 |\n| --------- | --------------: | --------------: |\n| Bristol   |              12 |              14 |\n| Sheffield |              11 |              13 |\n| Glasgow   |               8 |               9 |\n```\n\ncreates the following table:\n\n```markdown\n| temperature     | Bristol | Sheffield | Glasgow |\n| --------------- | ------: | --------: | ------: |\n| temperature2017 |      12 |        11 |       8 |\n| temperature2018 |      14 |        13 |       9 |\n```\n\nIf the column to contain new headings cannot be found, an empty table is generated.\nIf there are repeated names in the new headings column, earlier rows are replaced\nwith later repeated ones.\n\n",
+                "type": "String.String -> String.String -> Tidy.Table -> Tidy.Table"
+            }
+        ],
+        "binops": []
+    }
+]

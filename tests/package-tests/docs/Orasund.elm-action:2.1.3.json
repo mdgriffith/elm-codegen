@@ -1,0 +1,68 @@
+[
+    {
+        "name": "Action",
+        "comment": " There is a quick guideline to follow if you want to use this module:\n\n1.  Add a type alias. For example:\n\n         type alias UserAction =\n             Action\n                 Never --Allow Updates?\n                 Never --Allow Cmd other then Cmd.none?\n                 Never --Allow Transitions?\n                 Never --Allow Exit?\n\n2.  Start by setting the first `Never` to your `stateModel`:\n\n         type alias UserAction =\n             Action\n                 UserModel -- updates allowed.\n                 Never --Allow Cmd other then Cmd.none?\n                 Never --Allow Transitions?\n                 Never --Allow Exit?\n\n    If you want to allow Cmd, change the second Never to your `stateMsg`. In our\n    example, this would be `UserMsg`.\n\n3.  Write your update function. In our very basic example, it looks like this:\n\n         update : Msg -> Model -> (Model, Cmd Msg)\n         update msg model =\n             case msg of\n                 (UserSpecific userMsg,User userModel) ->\n                     updateUser userMsg userModel\n                     |> Action.config\n                     |> Action.withUpdate User never\n                     -- If you want to allow Cmd you would use\n                     -- the following line\n                     --|> Action.withUpdate User UserSpecific\n                     |> Action.apply\n\n                 _ ->\n                     (model,Cmd.none)\n\n4.  If needed, go back to Step 2 and replace another `Never`.\n\n\n# Actions\n\n@docs Action, updating, transitioning, exiting\n\n\n# Config Pipeline\n\n@docs config, apply, withUpdate, withTransition, withCustomTransition, withExit\n\n",
+        "unions": [
+            {
+                "name": "Action",
+                "comment": " An `Action` specifies the behaviour of an update function.\nAn `Action` can either be\n\n  - `Update (model,Cmd msg)` - Updates the model as usual.\n  - `Transition transitionData` - Transitions to a different model using `data` (like logging in)\n  - `Exit` - Transitions to a different model with less access (like logging out)\n\nAn `Action` has 4 type parameters: `model`,`msg`,`transitionData` and `exitAllowed`.\n\n  - The type of `exitAllowed` should be set to `()`. However,\n  - If you want to forbid `Exit`, then set `exitAllowed` to `Never`.\n  - If you want to forbid `Update (model,Cmd msg)`, then set `model` to `Never`.\n  - If you want to forbid `Cmd msg` other then `Cmd.none`, then set `msg` to `Never`.\n  - If you want to forbid `Transition transitionData`, then set `transitionData` to `Never`.\n\n",
+                "args": [
+                    "model",
+                    "msg",
+                    "transitionData",
+                    "exitAllowed"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "apply",
+                "comment": " Ends the Configuration and returns a `(Model, Cmd Msg)`.\n",
+                "type": "Action.ActionConfig stateModel stateMsg transitionData exitAllowed { exitFun : exitAllowed -> ( model, Platform.Cmd.Cmd msg ), modelMapper : stateModel -> model, msgMapper : stateMsg -> msg, transitionFun : transitionData -> ( model, Platform.Cmd.Cmd msg ) } -> ( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "config",
+                "comment": " Starts the configuration of the Action.\n\nThe most basic config pipeline looks like this:\n\n    updateFunction\n        |> Action.config\n        |> Action.apply\n\nwith `updateFunction : Model -> Msg -> Action Model Msg TransitionData ExitAllowed`.\n\nYou will need to add `withExit`,`withUpdate` and or `withTransition` to make\nthe code compile.\n\n",
+                "type": "Action.Action stateModel stateMsg transitionData exitAllowed -> Action.ActionConfig stateModel stateMsg transitionData exitAllowed (Action.Config (Basics.Never -> ( model, Platform.Cmd.Cmd msg )) (Basics.Never -> model) (Basics.Never -> msg) (Basics.Never -> ( model, Platform.Cmd.Cmd msg )))"
+            },
+            {
+                "name": "exiting",
+                "comment": " Transitions to a different model with less access. (like logging out)\n\n    import Task\n\n    exiting\n    |> Action.config\n    |> Action.withExit ((42,0),Cmd.none)\n    |> Action.apply\n    |> Tuple.first\n    --> (42,0)\n\nChecklist in case of errors:\n\n  - `exitAllowed` should be `()`\n  - the config pipeline should include `withExit`\n\n",
+                "type": "Action.Action stateModel stateMsg transitionData ()"
+            },
+            {
+                "name": "transitioning",
+                "comment": " Transitions to a different model.\n\n    import Task\n\n    transitioning 42\n    |> Action.config\n    |> Action.withTransition (\\int -> ((int,0),Cmd.none)) Just never\n    |> Action.apply\n    |> Tuple.first\n    --> Just (42,0)\n\nChecklist in case of errors:\n\n  - `transitionData` should not be `Never`\n  - the config pipeline should include `withTransition`\n\n",
+                "type": "transitionData -> Action.Action stateModel stateMsg transitionData exitAllowed"
+            },
+            {
+                "name": "updating",
+                "comment": " Updates the model as usual.\n\n    import Task\n\n    updating (42, Cmd.none)\n    |> Action.config\n    |> Action.withUpdate (\\int -> (int,0)) never\n    |> Action.apply\n    |> Tuple.first\n    --> (42,0)\n\nChecklist in case of errors:\n\n  - `stateModel` should not be `Never`\n  - the config pipeline should include `withUpdate`\n\n",
+                "type": "( stateModel, Platform.Cmd.Cmd stateMsg ) -> Action.Action stateModel stateMsg transitionData exitAllowed"
+            },
+            {
+                "name": "withCustomTransition",
+                "comment": " Specifies a Transition to multiple possible states.\n\nChecklist in case of errors:\n\n  - `transitionData` should not be `Never`\n  - the config pipeline should include `withTransition`\n\n",
+                "type": "(transitionData -> ( model, Platform.Cmd.Cmd msg )) -> Action.ActionConfig stateModel stateMsg transitionData2 exitAllowed (Action.Config a b c d) -> Action.ActionConfig stateModel stateMsg transitionData2 exitAllowed (Action.Config a b c (transitionData -> ( model, Platform.Cmd.Cmd msg )))"
+            },
+            {
+                "name": "withExit",
+                "comment": " Specifies the state the resulting `(model, Cmd msg)` when exiting.\n\nFor a hard exit you can use\n\n    withExit (init ())\n\nChecklist in case of errors:\n\n  - `exitAllowed` should be `()`\n  - the config pipeline should include `withExit`\n\n",
+                "type": "( model, Platform.Cmd.Cmd msg ) -> Action.ActionConfig stateModel stateMsg transitionData () (Action.Config (Basics.Never -> ( model, Platform.Cmd.Cmd msg )) b c d) -> Action.ActionConfig stateModel stateMsg transitionData () (Action.Config (() -> ( model, Platform.Cmd.Cmd msg )) b c d)"
+            },
+            {
+                "name": "withTransition",
+                "comment": " Specifies how the state transitions to another state.\n\nLets say we want a user to login.\n\n    type alias User =\n        { name : String\n        , admin : Bool\n        }\n\n    initUser : String -> User\n    initUser string =\n        { name = string\n        , admin = string == \"Admin\"\n        }\n\n    type Model\n        = Maybe User\n\nThen we can use `withTransition \\string -> ( initUser string, Cmd.none) Just never`\nfor logging in a user.\n\nChecklist in case of errors:\n\n  - `transitionData` should not be `Never`\n  - the config pipeline should include `withTransition`\n\n",
+                "type": "(transitionData -> ( stateModel2, Platform.Cmd.Cmd stateMsg2 )) -> (stateModel2 -> model) -> (stateMsg2 -> msg) -> Action.ActionConfig stateModel stateMsg transitionData2 exitAllowed (Action.Config a b c d) -> Action.ActionConfig stateModel stateMsg transitionData2 exitAllowed (Action.Config a b c (transitionData -> ( model, Platform.Cmd.Cmd msg )))"
+            },
+            {
+                "name": "withUpdate",
+                "comment": " Specifies how the `stateModel`/`stateMsg` is embedded in the main `model`/`msg`.\n\nLets say we have a password protected area:\n\n    type Model\n        = Maybe RestrictedModel\n\n    type Msg\n        = GuestSpecific GuestMsg\n        | RestrictedSpecific RestrictedMsg\n\nThen we would use `withUpdate Just RestrictedSpecific` for the restricted area and\n`withUpdate (always Nothing) GuestSpecific` for the guest area.\n\nChecklist in case of errors:\n\n  - `stateModel` should not be `Never`\n  - the config pipeline should include `withUpdate`\n\n",
+                "type": "(stateModel -> model) -> (stateMsg -> msg) -> Action.ActionConfig stateModel2 stateMsg transitionData exitAllowed (Action.Config a b c d) -> Action.ActionConfig stateModel2 stateMsg transitionData exitAllowed (Action.Config a (stateModel -> model) (stateMsg -> msg) d)"
+            }
+        ],
+        "binops": []
+    }
+]

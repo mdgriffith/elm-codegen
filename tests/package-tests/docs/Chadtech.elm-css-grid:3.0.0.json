@@ -1,0 +1,65 @@
+[
+    {
+        "name": "Html.Grid",
+        "comment": "\n\n    import Css exposing (..)\n    import Html.Grid as Grid\n    import Html.Styled\n\n    view : Html.Styled.Html msg\n    view =\n        Grid.box\n            [ width (pct 100) ]\n            [ Grid.row\n                []\n                [ Grid.col\n                    []\n                    [ Html.text \"Hello from upper left corner\" ]\n                , Grid.col\n                    []\n                    [ Html.text \"Hello from upper right corner\" ]\n                ]\n            , Grid.row\n                []\n                [ Grid.col\n                    []\n                    [ Html.text \"Hello from lower left corner\" ]\n                , Grid.col\n                    []\n                    [ Html.text \"Hello from lower right corner\" ]\n                ]\n            ]\n\n\n# Row\n\n@docs row\n\n\n# Column\n\n@docs Col, col, mapCol, colWithAttrs\n\n\n# Column Styling\n\n@docs colShrink, exactWidthCol\n\n\n# Extras\n\n@docs box\n\n\n# Keyed\n\n@docs keyedRow, keyedCol\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Col",
+                "comment": " A Column, a horizontally positioned unit inside a row\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ styles : List.List Css.Style, attrs : List.List (Html.Styled.Attribute msg), body : Html.Grid.ColBody msg }"
+            }
+        ],
+        "values": [
+            {
+                "name": "box",
+                "comment": " I find that when I write html, many html elements are just containers for other things. Containers either dont get any attributes at all, or just some styling attributes to position them or their content. This is just a helper for those simple containers. A `box` is supposed to be simple, invisible, and not interactive. It only takes a `List Style` instead of a `List (Attribute msg)`.\n\n    Grid.box\n        [ Css.width (pct 100) ]\n        [ Grid.row [] [ Grid.col [] [] ]\n        , Grid.row [] [ Grid.col [] [] ]\n        ]\n\n",
+                "type": "List.List Css.Style -> List.List (Html.Styled.Html msg) -> Html.Styled.Html msg"
+            },
+            {
+                "name": "col",
+                "comment": " A column in a row. Give `col` some html and it positions that html horizontally inside a `row`. You can also style it, overriding its default styles.\n\n    -- columns are styled with the css:\n    --     flex-basis: 100%;\n    --     flex: 1;\n    --     display: flex;\n\n\n\n",
+                "type": "List.List Css.Style -> List.List (Html.Styled.Html msg) -> Html.Grid.Col msg"
+            },
+            {
+                "name": "colShrink",
+                "comment": " `Col`s naturally fill up horizontal space. Adding `colShrink` to a column will make it do the opposite, and shrink by default.\n\n    Grid.row\n        []\n        [ Grid.col\n            []\n            [ searchField model.searchFieldModel ]\n        , Grid.col\n            [ Grid.colShrink ]\n            [ searchButton \"Search\" SearchClicked ]\n        ]\n\n    -- Will render something like..\n    -- [ --------- <Search field> --------- ] [ Search ]\n    -- |           Column                    | Column  |\n    -- | ---------------------- Row -------------------|\n\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "colWithAttrs",
+                "comment": " Add some `Html.Attribute msg`s to a `Col msg`. Mainly useful for adding event handlers like click events. ",
+                "type": "List.List (Html.Styled.Attribute msg) -> Html.Grid.Col msg -> Html.Grid.Col msg"
+            },
+            {
+                "name": "exactWidthCol",
+                "comment": " `Column`s naturally fill up horizontal space. but if instead you want it to have a specific width, use this\n\n    Grid.row\n        []\n        [ Grid.col\n            -- This col takes up exactly 50% of the rows width\n            [ Grid.exactWidthCol (pct 50) ]\n            []\n        , Grid.col\n            -- This column takes whatever free horizontal space is available\n            []\n            []\n        , Grid.col\n            -- This col is exactly 100 pixels wide\n            [ Grid.exactWidthCol (px 100) ]\n            []\n        ]\n\n",
+                "type": "Css.LengthOrAuto compatible -> Css.Style"
+            },
+            {
+                "name": "keyedCol",
+                "comment": " The same as a regular `col`, but with keyed content ( (See Html.Styled.Keyed for more info)[<https://package.elm-lang.org/packages/rtfeldman/elm-css/latest/Html-Styled-Keyed>] )\n",
+                "type": "List.List Css.Style -> List.List ( String.String, Html.Styled.Html msg ) -> Html.Grid.Col msg"
+            },
+            {
+                "name": "keyedRow",
+                "comment": " The same as a regular `row`, but with keyed columns ( (See Html.Styled.Keyed for more info)[<https://package.elm-lang.org/packages/rtfeldman/elm-css/latest/Html-Styled-Keyed>] )\n",
+                "type": "List.List Css.Style -> List.List ( String.String, Html.Grid.Col msg ) -> Html.Styled.Html msg"
+            },
+            {
+                "name": "mapCol",
+                "comment": " Just like `Html.map`, except for `Col`\n",
+                "type": "(a -> b) -> Html.Grid.Col a -> Html.Grid.Col b"
+            },
+            {
+                "name": "row",
+                "comment": " A row in a grid. Sequential rows will stack vertically. A row takes a `List (Col msg)`, NOT `List (Html msg)`. `Col msg` inside the `row` are arranged horizontally.\n\n    -- rows are styled with the css:\n    --     display: flex;\n    --     flex-direction: row;\n\n\n\n",
+                "type": "List.List Css.Style -> List.List (Html.Grid.Col msg) -> Html.Styled.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

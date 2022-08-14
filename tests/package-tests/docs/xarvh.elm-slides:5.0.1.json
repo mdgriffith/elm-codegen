@@ -1,0 +1,229 @@
+[
+    {
+        "name": "Slides",
+        "comment": "\n\n\n# Main API\n\n@docs app, Slide, md, mdFragments, html, htmlFragments\n\n\n# Options\n\n@docs Options, slidesDefaultOptions, Action\n\n\n# Elm Architecture\n\nNormally used with [Navigation.program](http://package.elm-lang.org/packages/elm-lang/navigation/1.0.0/Navigation#program)\n@docs Msg, actionToMsg, Model, init, update, view, subscriptions\n\n",
+        "unions": [
+            {
+                "name": "Action",
+                "comment": " The available actions, in case you want to remap the keys\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Model",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Msg",
+                "comment": " The TEA Msg\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Slide",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Options",
+                "comment": " Configuration options:\n\n  - `style` &mdash; A list of [elm-css](http://package.elm-lang.org/packages/rtfeldman/elm-css/latest) `Snippets` to apply.\n    Use [] if you want to use an external CSS.\n    The `Slides.Style` module contains some preset styles ready to use.\n\n  - `slideAnimator` &mdash; The function used to customize the slide animation.\n    The `Slides.SlideAnimation` module contains some preset animators and the information for writing custom ones.\n\n  - `fragmentAnimator` &mdash; the function used to animate a fragment within a slide.\n    The `Slides.FragmentAnimation` module contains some preset animators and the information for writing custom ones.\n\n  - `easingFunction` &mdash; Any f : [0, 1] -> [0, 1]\n    The standard ones are available in Elm's [easing-functions](http://package.elm-lang.org/packages/elm-community/easing-functions/1.0.1/).\n\n  - `animationDuration` &mdash; the duration in milliseconds of a slide or fragment animation.\n\n  - `slidePixelSize` &mdash; `width` and `height` geometry of the slide area, in pixel.\n    While the slide will be scaled to the window size, the internal coordinates of the slide will refer to these values.\n\n  - `keysToActions` &mdash; a map of all Msg and the key codes that can trigger them.\n\n",
+                "args": [],
+                "type": "{ title : String.String, style : List.List Css.Global.Snippet, slideAnimator : Slides.SlideAnimation.Animator, fragmentAnimator : Slides.FragmentAnimation.Animator, easingFunction : Ease.Easing, animationDuration : Basics.Float, slidePixelSize : { height : Basics.Int, width : Basics.Int }, keysToActions : List.List { action : Slides.Action, keys : List.List String.String } }"
+            }
+        ],
+        "values": [
+            {
+                "name": "actionToMsg",
+                "comment": " This is in case you want to try something weird with the update function\n",
+                "type": "Slides.Action -> Slides.Msg"
+            },
+            {
+                "name": "app",
+                "comment": " Does all the wiring for you, returning a `Program` ready to run.\n\n    main =\n        Slides.app\n            Slides.slidesDefaultOptions\n            [ slide1\n            , slide2\n            , ...\n            ]\n\n",
+                "type": "Slides.Options -> List.List Slides.Slide -> Platform.Program () Slides.Model Slides.Msg"
+            },
+            {
+                "name": "html",
+                "comment": " Creates a single slide from a DOM node.\n\nCan be used to create custom slides constructors (yes, it is used internally by `md` and `mdMarkdown`).\n\nNote: `Html.Styled` is provided by [elm-css](https://package.elm-lang.org/packages/rtfeldman/elm-css/latest)\n\n    import Html.Styled as Html exposing (..)\n\n    slide1 =\n        Slides.html <|\n            div\n                []\n                [ h1 [] [ text \"Hello, I am the slide header\" ]\n                , div [] [ text \"and I am some content\" ]\n                ]\n\n",
+                "type": "Html.Styled.Html Slides.Msg -> Slides.Slide"
+            },
+            {
+                "name": "htmlFragments",
+                "comment": " Creates a single slide made by several fragments, which are displayed in sequence, one after the other.\n\n    slide2 =\n        Slides.htmlFragments\n            [ div [] [ text \"I am always visible when the slide is visible\" ]\n            , div [] [ text \"Then I appear\" ]\n            , div [] [ text \"and then I appear!\" ]\n            ]\n\n",
+                "type": "List.List (Html.Styled.Html Slides.Msg) -> Slides.Slide"
+            },
+            {
+                "name": "init",
+                "comment": " ",
+                "type": "Slides.Options -> List.List Slides.Slide -> () -> Url.Url -> Browser.Navigation.Key -> ( Slides.Model, Platform.Cmd.Cmd Slides.Msg )"
+            },
+            {
+                "name": "md",
+                "comment": " Creates a slide from a Markdown string.\n\nIt uses [elm-markdown](http://package.elm-lang.org/packages/evancz/elm-markdown/3.0.0/)\nso you can enable syntax highlightning by including [highlight.js](https://highlightjs.org/).\n\nIt automatically removes indentation from multi-line strings.\n\n    slide3 =\n        Slides.md\n            \"\"\"\n            # Hello! I am a header\n            *and I am emph!*\n            \"\"\"\n\n",
+                "type": "String.String -> Slides.Slide"
+            },
+            {
+                "name": "mdFragments",
+                "comment": " Turns several Markdown strings into a single slide made by several fragments,\nwhich will appear one after another:\n\n    slide4 =\n        Slides.mdFragments\n            [ \"I am always visible\"\n            , \"Then I appear\"\n            , \"and Then I\"\n            ]\n\n",
+                "type": "List.List String.String -> Slides.Slide"
+            },
+            {
+                "name": "slidesDefaultOptions",
+                "comment": " Default configuration options.\n\n    slidesDefaultOptions : Options\n    slidesDefaultOptions =\n        { title =\n            \"Presentation\"\n        , style =\n            Slides.Styles.elmBlueOnWhite\n        , slideAnimator =\n            SlideAnimation.verticalDeck\n        , fragmentAnimator =\n            FragmentAnimation.fade\n        , easingFunction =\n            Ease.inOutCubic\n        , animationDuration =\n            500\n        , slidePixelSize =\n            { height = 700\n            , width = 960\n            }\n        , keysToActions =\n            [ { action = GotoFirst\n              , keys = [ \"Home\" ]\n              }\n            , { action = GotoLast\n              , keys = [ \"End\" ]\n              }\n            , { action = GotoNext\n              , keys = [ \"Enter\", \" \", \"ArrowRight\", \"l\", \"d\" ]\n              }\n            , { action = GotoPrev\n              , keys = [ \"Backspace\", \"ArrowLeft\", \"h\", \"a\" ]\n              }\n            , { action = PauseAnimation\n              , keys = [ \"p\" ]\n              }\n            ]\n        }\n\n",
+                "type": "Slides.Options"
+            },
+            {
+                "name": "subscriptions",
+                "comment": " ",
+                "type": "Slides.Options -> Slides.Model -> Platform.Sub.Sub Slides.Msg"
+            },
+            {
+                "name": "update",
+                "comment": " ",
+                "type": "Slides.Options -> Slides.Msg -> Slides.Model -> ( Slides.Model, Platform.Cmd.Cmd Slides.Msg )"
+            },
+            {
+                "name": "view",
+                "comment": " ",
+                "type": "Slides.Options -> Slides.Model -> Browser.Document Slides.Msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Slides.FragmentAnimation",
+        "comment": " This module contains the functions used to animate the appearance\nof a new slide fragment (or the hiding of an old one, if going backwards).\n\n\n# Fragment animators\n\n@docs fade\n\n\n# Shorthand type\n\n@docs Animator\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Animator",
+                "comment": " Shorthand for the function type used to animate the fragments.\n\n    fade : Animator\n    fade completion =\n        Css.batch\n            [ Css.opacity (Css.num completion)\n            , Css.property \"filter\" (Slides.Blur.blur completion)\n            , Css.property \"-webkit-filter\" (Slides.Blur.blur completion)\n            ]\n\n",
+                "args": [],
+                "type": "Basics.Float -> Css.Style"
+            }
+        ],
+        "values": [
+            {
+                "name": "fade",
+                "comment": " Fade in\n",
+                "type": "Basics.Float -> Css.Style"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Slides.SlideAnimation",
+        "comment": " This module contains the functions used to animate the change from one slide to another,\nand the types to create your own function.\n\n\n# Slide animators\n\n@docs scroll, fade, verticalDeck\n\n\n# Types\n\n@docs Animator, Status, MotionDirection, RelativeOrder\n\n",
+        "unions": [
+            {
+                "name": "MotionDirection",
+                "comment": " This is used to tell the slideAttributes function whether it is running on\nthe slide that's coming into view or the one that's going away.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Incoming",
+                        []
+                    ],
+                    [
+                        "Outgoing",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "RelativeOrder",
+                "comment": " Usually during an animation there will be two visible slides:\nthis tells you the relative position of the two slides within the normal\nslide sequence.\n\nIf you navigate from one slide to the next, the Outgoing slide will be\nthe EarlierSlide, and the Incoming slide will be the LaterSlide.\n\nIf instead you navigate backwards, from one slide to the previous, it\nwill be the opposite.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "EarlierSlide",
+                        []
+                    ],
+                    [
+                        "LaterSlide",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Status",
+                "comment": " Tells you what a visible slide is doing.\nThe `Float` used by the `Moving` constructor is for the animation completion that runs between 0 and 1,\n0 when the animation hasn't yet started and 1 when it is completed.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Still",
+                        []
+                    ],
+                    [
+                        "Moving",
+                        [
+                            "Slides.SlideAnimation.MotionDirection",
+                            "Slides.SlideAnimation.RelativeOrder",
+                            "Basics.Float"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Animator",
+                "comment": " Shorthand for the function type used to animate the slides.\nThe first argument describes the slide state: whether it is still or moving, and if the latter\nin which direction and how much movement.\n\n    fade : SlideAttributes\n    fade status =\n        let\n            opacity =\n                case status of\n                    Still ->\n                        1\n\n                    Moving direction order completion ->\n                        case direction of\n                            Incoming ->\n                                completion\n\n                            Outgoing ->\n                                1 - completion\n        in\n        [ Css.opacity (Css.num opacity) ]\n\n",
+                "args": [],
+                "type": "Slides.SlideAnimation.Status -> Css.Style"
+            }
+        ],
+        "values": [
+            {
+                "name": "fade",
+                "comment": " Fade in\n",
+                "type": "Slides.SlideAnimation.Status -> Css.Style"
+            },
+            {
+                "name": "scroll",
+                "comment": " Scrolls the slide horizontally, right to left\n",
+                "type": "Slides.SlideAnimation.Status -> Css.Style"
+            },
+            {
+                "name": "verticalDeck",
+                "comment": " Vertical deck\n",
+                "type": "Slides.SlideAnimation.Status -> Css.Style"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Slides.Styles",
+        "comment": " A few ready made styles to use as `Options.style`.\n\n\n# Elm Minimalist\n\nA terse, clean style.\nYou can customise it by using `elmMinimalist` with the colors and font size you want,\nuse one of the presets, or [check the source](https://github.com/xarvh/elm-slides/blob/master/src/Slides/Styles.elm)\nand using as starting template.\n\n@docs elmMinimalist, elmBlueOnWhite, blackOnWhite, whiteOnBlack\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "blackOnWhite",
+                "comment": " Elm Minimalist, black text on white background\n",
+                "type": "List.List Css.Global.Snippet"
+            },
+            {
+                "name": "elmBlueOnWhite",
+                "comment": " Elm Minimalist, Elm blue on white background\n",
+                "type": "List.List Css.Global.Snippet"
+            },
+            {
+                "name": "elmMinimalist",
+                "comment": " A minimalist, clean style.\nYou can customise it by specifying the background color, the background color for\ncode samples, the font size, and finally the foreground color.\n",
+                "type": "Css.ColorValue a -> Css.ColorValue b -> Css.FontSize c -> Css.ColorValue d -> List.List Css.Global.Snippet"
+            },
+            {
+                "name": "whiteOnBlack",
+                "comment": " Elm Minimalist, white text on black background\n",
+                "type": "List.List Css.Global.Snippet"
+            }
+        ],
+        "binops": []
+    }
+]

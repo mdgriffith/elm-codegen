@@ -1,0 +1,21 @@
+[
+    {
+        "name": "Html.Attributes.Classname",
+        "comment": " A brief module for custom `class` attributes.\nIt is usefull when using with CSS modules.\n\n@docs classWith\n@docs classMixinWith\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "classMixinWith",
+                "comment": " [Mixin](https://package.elm-lang.org/packages/arowM/elm-mixin/latest/) version of `classWith`.\n\n<!--\n\nsample code:\n\n    myClass : String -> Mixin msg\n    myClass =\n        classMixinWith (\\name -> \"prefix__\" ++ name)\n\n-->\n\n",
+                "type": "(String.String -> String.String) -> String.String -> Mixin.Mixin msg"
+            },
+            {
+                "name": "classWith",
+                "comment": " Helper function to declare custom `class` function.\n\n    myClass : String -> Attribute msg\n    myClass =\n        classWith (\\name -> \"prefix__\" ++ name)\n\n",
+                "type": "(String.String -> String.String) -> String.String -> Html.Attribute msg"
+            }
+        ],
+        "binops": []
+    }
+]

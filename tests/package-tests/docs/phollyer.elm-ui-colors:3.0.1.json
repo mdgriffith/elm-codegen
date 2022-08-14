@@ -1,0 +1,1620 @@
+[
+    {
+        "name": "Colors.Alpha",
+        "comment": "\n\n\n# Alpha Colors\n\n    import Colors.Alpha exposing (black)\n\n    black 1 -- fully opaque\n\n    black 0 -- fully transparent\n\n\n## Black\n\n@docs black\n\n\n## Gray\n\n@docs gray, lightgray, dimgray, darkgray, slategray, lightslategray, darkslategray, gainsboro\n\n\n## Grey\n\n@docs grey, lightgrey, dimgrey, darkgrey, slategrey, lightslategrey, darkslategrey\n\n\n## White\n\n@docs white, antiquewhite, floralwhite, ghostwhite, navajowhite, whitesmoke, snow, ivory, linen, mintcream, oldlace, seashell\n\n\n## Red\n\n@docs red, darkred, indianred, orangered, palevioletred, mediumvioletred, crimson, firebrick, lightcoral, maroon, salmon, lightsalmon, darksalmon, tomato\n\n\n## Green\n\n@docs green, lightgreen, darkgreen, chartreuse, forestgreen, greenyellow, lawngreen, lime, limegreen, olive, darkolivegreen, olivedrab, palegreen, seagreen, lightseagreen, mediumseagreen, darkseagreen, springgreen, mediumspringgreen\n\n\n## Blue\n\n@docs blue, lightblue, mediumblue, darkblue, aliceblue, azure, blueviolet, cadetblue, cornflowerblue, dodgerblue, indigo, midnightblue, navy, powderblue, royalblue, skyblue, lightskyblue, deepskyblue, slateblue, mediumslateblue, darkslateblue, steelblue, lightsteelblue\n\n## Beige\n\n@docs beige\n\n\n## Brown\n\n@docs brown, bisque, blanchedalmond, burlywood, chocolate, cornsilk, peru, rosybrown, saddlebrown, sandybrown, sienna, wheat\n\n\n## Cyan\n\n@docs cyan, lightcyan, darkcyan, aqua, aquamarine, mediumaquamarine\n\n\n## Gold\n\n@docs gold, paleGold, goldenBrown, goldenYellow, goldenrod, lightgoldenrodyellow, palegoldenrod, metallicGold, oldGold, vegasGold\n\n\n## Lavender\n\n@docs lavender, lavenderblush\n\n\n## Magenta\n\n@docs magenta, darkmagenta, fuchsia\n\n## Orange\n\n@docs orange, coral, darkorange\n\n\n## Peach\n\n@docs peachpuff, moccasin, papayawhip\n\n\n## Pink\n\n@docs pink, deeppink, hotpink, lightpink\n\n## Purple\n\n@docs purple, mediumpurple, orchid, mediumorchid, darkorchid, plum, thistle, violet, darkviolet\n\n## Tan\n\n@docs tan\n\n\n## Teal\n\n@docs teal\n\n\n## Turquoise\n\n@docs turquoise, paleturquoise, mediumturquoise, darkturquoise\n\n\n## Yellow\n\n@docs yellow, lightyellow, lightYellow1, lightYellow2, lightYellow3, lightYellow4, darkYellow1, darkYellow2, darkYellow3, darkYellow4, yellowgreen, khaki, darkkhaki, lemonchiffon\n\n\n## Silver\n\n@docs silver\n\n@docs honeydew, mistyrose\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "aliceblue",
+                "comment": " rgb(240, 248, 255)\n#F0F8FF\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "antiquewhite",
+                "comment": " rgb(250, 235, 215)\n#FAEBD7\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "aqua",
+                "comment": " rgb(0, 255, 255)\n#00FFFF\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "aquamarine",
+                "comment": " rgb(127, 255, 212)\n#7FFFD4\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "azure",
+                "comment": " rgb(240, 255, 255)\n#F0FFFF\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "beige",
+                "comment": " rgb(245, 245, 220)\n#F5F5DC\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "bisque",
+                "comment": " rgb(255, 228, 196)\n#FFE4C4\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "black",
+                "comment": " rgb(0, 0, 0)\n#000000\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "blanchedalmond",
+                "comment": " rgb(255, 235, 205)\n#FFEBCD\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "blue",
+                "comment": " rgb(0, 0, 255)\n#0000FF\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "blueviolet",
+                "comment": " rgb(138, 43, 226)\n#8A2BE2\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "brown",
+                "comment": " rgb(165, 42, 42)\n#A52A2A\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "burlywood",
+                "comment": " rgb(222, 184, 135)\n#DEB887\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "cadetblue",
+                "comment": " rgb(95, 158, 160)\n#5F9EA0\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "chartreuse",
+                "comment": " rgb(127, 255, 0)\n#7FFF00\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "chocolate",
+                "comment": " rgb(210, 105, 30)\n#D2691E\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "coral",
+                "comment": " rgb(255, 127, 80)\n#FF7F50\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "cornflowerblue",
+                "comment": " rgb(100, 149, 237)\n#6495ED\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "cornsilk",
+                "comment": " rgb(255, 248, 220)\n#FFF8DC\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "crimson",
+                "comment": " rgb(220, 20, 60)\n#DC143C\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "cyan",
+                "comment": " rgb(0, 255, 255)\n#00FFFF\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "darkYellow1",
+                "comment": " rgb(204, 204, 0)\n#CCCC00\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "darkYellow2",
+                "comment": " rgb(153, 153, 0)\n#999900\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "darkYellow3",
+                "comment": " rgb(102, 102, 0)\n#666600\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "darkYellow4",
+                "comment": " rgb(51, 51, 0)\n#333300\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "darkblue",
+                "comment": " rgb(0, 0, 139)\n#00008B\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "darkcyan",
+                "comment": " rgb(0, 139, 139)\n#008B8B\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "darkgray",
+                "comment": " rgb(169, 169, 169)\n#A9A9A9\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "darkgreen",
+                "comment": " rgb(0, 100, 0)\n#006400\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "darkgrey",
+                "comment": " rgb(169, 169, 169)\n#A9A9A9\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "darkkhaki",
+                "comment": " rgb(189, 183, 107)\n#BDB76B\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "darkmagenta",
+                "comment": " rgb(139, 0, 139)\n#8B008B\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "darkolivegreen",
+                "comment": " rgb(85, 107, 47)\n#556B2F\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "darkorange",
+                "comment": " rgb(255, 140, 0)\n#FF8C00\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "darkorchid",
+                "comment": " rgb(153, 50, 204)\n#9932CC\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "darkred",
+                "comment": " rgb(139, 0, 0)\n#8B0000\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "darksalmon",
+                "comment": " rgb(233, 150, 122)\n#E9967A\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "darkseagreen",
+                "comment": " rgb(143, 188, 143)\n#8FBC8F\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "darkslateblue",
+                "comment": " rgb(72, 61, 139)\n#483D8B\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "darkslategray",
+                "comment": " rgb(47, 79, 79)\n#2F4F4F\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "darkslategrey",
+                "comment": " rgb(47, 79, 79)\n#2F4F4F\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "darkturquoise",
+                "comment": " rgb(0, 206, 209)\n#00CED1\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "darkviolet",
+                "comment": " rgb(148, 0, 211)\n#9400D3\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "deeppink",
+                "comment": " rgb(255, 20, 147)\n#FF1493\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "deepskyblue",
+                "comment": " rgb(0, 191, 255)\n#00BFFF\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "dimgray",
+                "comment": " rgb(105, 105, 105)\n#696969\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "dimgrey",
+                "comment": " rgb(105, 105, 105)\n#696969\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "dodgerblue",
+                "comment": " rgb(30, 144, 255)\n#1E90FF\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "firebrick",
+                "comment": " rgb(178, 34, 34)\n#B22222\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "floralwhite",
+                "comment": " rgb(255, 250, 240)\n#FFFAF0\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "forestgreen",
+                "comment": " rgb(34, 139, 34)\n#228B22\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "fuchsia",
+                "comment": " rgb(255, 0, 255)\n#FF00FF\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "gainsboro",
+                "comment": " rgb(220, 220, 220)\n#DCDCDC\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "ghostwhite",
+                "comment": " rgb(248, 248, 255)\n#F8F8FF\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "gold",
+                "comment": " rgb(255, 215, 0)\n#FFD700\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "goldenBrown",
+                "comment": " rgb(153, 101, 21)\n#996515\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "goldenYellow",
+                "comment": " rgb(255, 223, 0)\n#FFDF00\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "goldenrod",
+                "comment": " rgb(218, 165, 32)\n#DAA520\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "gray",
+                "comment": " rgb(128, 128, 128)\n#808080\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "green",
+                "comment": " rgb(0, 128, 0)\n#008000\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "greenyellow",
+                "comment": " rgb(173, 255, 47)\n#ADFF2F\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "grey",
+                "comment": " rgb(128, 128, 128)\n#808080\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "honeydew",
+                "comment": " rgb(240, 255, 240)\n#F0FFF0\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "hotpink",
+                "comment": " rgb(255, 105, 180)\n#FF69B4\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "indianred",
+                "comment": " rgb(205, 92, 92)\n#CD5C5C\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "indigo",
+                "comment": " rgb(75, 0, 130)\n#4B0082\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "ivory",
+                "comment": " rgb(255, 255, 240)\n#FFFFF0\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "khaki",
+                "comment": " rgb(240, 230, 140)\n#F0E68C\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "lavender",
+                "comment": " rgb(230, 230, 250)\n#E6E6FA\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "lavenderblush",
+                "comment": " rgb(255, 240, 245)\n#FFF0F5\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "lawngreen",
+                "comment": " rgb(124, 252, 0)\n#7CFC00\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "lemonchiffon",
+                "comment": " rgb(255, 250, 205)\n#FFFACD\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "lightYellow1",
+                "comment": " rgb(255, 255, 204)\n#FFFFCC\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "lightYellow2",
+                "comment": " rgb(255, 255, 153)\n#FFFF99\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "lightYellow3",
+                "comment": " rgb(255, 255, 102)\n#FFFF66\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "lightYellow4",
+                "comment": " rgb(255, 255, 51)\n#FFFF33\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "lightblue",
+                "comment": " rgb(173, 216, 230)\n#ADD8E6\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "lightcoral",
+                "comment": " rgb(240, 128, 128)\n#F08080\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "lightcyan",
+                "comment": " rgb(224, 255, 255)\n#E0FFFF\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "lightgoldenrodyellow",
+                "comment": " rgb(250, 250, 210)\n#FAFAD2\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "lightgray",
+                "comment": " rgb(211, 211, 211)\n#D3D3D3\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "lightgreen",
+                "comment": " rgb(144, 238, 144)\n#90EE90\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "lightgrey",
+                "comment": " rgb(211, 211, 211)\n#D3D3D3\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "lightpink",
+                "comment": " rgb(255, 182, 193)\n#FFB6C1\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "lightsalmon",
+                "comment": " rgb(255, 160, 122)\n#FFA07A\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "lightseagreen",
+                "comment": " rgb(32, 178, 170)\n#20B2AA\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "lightskyblue",
+                "comment": " rgb(135, 206, 250)\n#87CEFA\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "lightslategray",
+                "comment": " rgb(119, 136, 153)\n#778899\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "lightslategrey",
+                "comment": " rgb(119, 136, 153)\n#778899\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "lightsteelblue",
+                "comment": " rgb(176, 196, 222)\n#B0C4DE\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "lightyellow",
+                "comment": " rgb(255, 255, 224)\n#FFFFE0\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "lime",
+                "comment": " rgb(0, 255, 0)\n#00FF00\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "limegreen",
+                "comment": " rgb(127, 255, 0)\n#32CD32\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "linen",
+                "comment": " rgb(250, 240, 230)\n#FAF0E6\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "magenta",
+                "comment": " rgb(255, 0 , 255)\n#FF00FF\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "maroon",
+                "comment": " rgb(128, 0, 0)\n#800000\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "mediumaquamarine",
+                "comment": " rgb(102, 205, 170)\n#66CDAA\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "mediumblue",
+                "comment": " rgb(0, 0, 205)\n#0000CD\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "mediumorchid",
+                "comment": " rgb(186, 85, 211)\n#BA55D3\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "mediumpurple",
+                "comment": " rgb(147, 112, 219)\n#9370DB\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "mediumseagreen",
+                "comment": " rgb(60, 179, 113)\n#3CB371\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "mediumslateblue",
+                "comment": " rgb(123, 104, 238)\n#7B68EE\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "mediumspringgreen",
+                "comment": " rgb(0, 250, 154)\n#00FA9A\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "mediumturquoise",
+                "comment": " rgb(72, 209, 204)\n#48D1CC\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "mediumvioletred",
+                "comment": " rgb(199, 21, 133)\n#C71585\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "metallicGold",
+                "comment": " rgb(212, 175, 55)\n#D4AF37\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "midnightblue",
+                "comment": " rgb(25, 25, 112)\n#191970\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "mintcream",
+                "comment": " rgb(245, 255, 250)\n#F5FFFA\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "mistyrose",
+                "comment": " rgb(255, 228, 255)\n#FFE4E1\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "moccasin",
+                "comment": " rgb(255, 228, 181)\n#FFE4B5\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "navajowhite",
+                "comment": " rgb(255, 222, 173)\n#FFDEAD\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "navy",
+                "comment": " rgb(0, 0, 128)\n#000080\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "oldGold",
+                "comment": " rgb(207, 181, 59)\n#CFB53B\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "oldlace",
+                "comment": " rgb(253, 245, 230)\n#FDF5E6\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "olive",
+                "comment": " rgb(128, 128, 0)\n#808000\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "olivedrab",
+                "comment": " rgb(107, 142, 35)\n#6B8E23\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "orange",
+                "comment": " rgb(255, 165, 0)\n#FFA500\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "orangered",
+                "comment": " rgb(255, 69, 0)\n#FF4500\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "orchid",
+                "comment": " rgb(218, 112, 214)\n#DA70D6\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "paleGold",
+                "comment": " rgb(230, 190, 138)\n#E6BE8A\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "palegoldenrod",
+                "comment": " rgb(238, 232, 170)\n#EEE8AA\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "palegreen",
+                "comment": " rgb(152, 251, 152)\n#98FB98\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "paleturquoise",
+                "comment": " rgb(175, 238, 238)\n#AFEEEE\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "palevioletred",
+                "comment": " rgb(219, 112, 147)\n#DB7093\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "papayawhip",
+                "comment": " rgb(255, 239, 213)\n#FFEFD5\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "peachpuff",
+                "comment": " rgb(255, 218, 185)\n#FFDAB9\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "peru",
+                "comment": " rgb(205, 133, 63)\n#CD853F\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "pink",
+                "comment": " rgb(255, 192, 203)\n#FFC0CB\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "plum",
+                "comment": " rgb(221, 160, 221)\n#DDA0DD\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "powderblue",
+                "comment": " rgb(176, 224, 230)\n#B0E0E6\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "purple",
+                "comment": " rgb(128, 0 , 128)\n#800080\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "red",
+                "comment": " rgb(255, 0, 0)\n#FF0000\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "rosybrown",
+                "comment": " rgb(188, 143, 143)\n#BC8F8F\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "royalblue",
+                "comment": " rgb(65, 105, 225)\n#4169E1\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "saddlebrown",
+                "comment": " rgb(139, 69, 19)\n#8B4513\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "salmon",
+                "comment": " rgb(250, 128, 114)\n#FA8072\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "sandybrown",
+                "comment": " rgb(244, 164, 96)\n#F4A460\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "seagreen",
+                "comment": " rgb(46, 139, 87)\n#2E8B57\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "seashell",
+                "comment": " rgb(255, 245, 238)\n#FFF5EE\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "sienna",
+                "comment": " rgb(160, 82, 45)\n#A0522D\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "silver",
+                "comment": " rgb(192, 192, 192)\n#C0C0C0\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "skyblue",
+                "comment": " rgb(135, 206, 235)\n#87CEEB\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "slateblue",
+                "comment": " rgb(106, 90, 205)\n#6A5ACD\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "slategray",
+                "comment": " rgb(112, 128, 144)\n#708090\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "slategrey",
+                "comment": " rgb(112, 128, 144)\n#708090\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "snow",
+                "comment": " rgb(250, 250, 250)\n#FFFAFA\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "springgreen",
+                "comment": " rgb(0, 255, 127)\n#00FF7F\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "steelblue",
+                "comment": " rgb(70, 130, 180)\n#4682B4\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "tan",
+                "comment": " rgb(210, 180, 140)\n#D2B48C\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "teal",
+                "comment": " rgb(0, 128, 128)\n#008080\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "thistle",
+                "comment": " rgb(216, 191, 216)\n#D8BFD8\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "tomato",
+                "comment": " rgb(255, 99, 71)\n#FF6347\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "turquoise",
+                "comment": " rgb(64, 224, 208)\n#40E0D0\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "vegasGold",
+                "comment": " rgb(197, 179, 88)\n#C5B358\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "violet",
+                "comment": " rgb(238, 130, 238)\n#EE82EE\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "wheat",
+                "comment": " rgb(245, 222, 179)\n#F5DEB3\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "white",
+                "comment": " rgb(255, 255, 255)\n#FFFFFF\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "whitesmoke",
+                "comment": " rgb(245, 245, 245)\n#F5F5F5\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "yellow",
+                "comment": " rgb(255, 255, 0)\n#FFFF00\n",
+                "type": "Basics.Float -> Element.Color"
+            },
+            {
+                "name": "yellowgreen",
+                "comment": " rgb(154, 205, 50)\n#9ACD32\n",
+                "type": "Basics.Float -> Element.Color"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Colors.Opaque",
+        "comment": "\n\n\n# Opaque Colors\n\n\n## Black\n\n@docs black\n\n\n## Gray\n\n@docs gray, lightgray, dimgray, darkgray, slategray, lightslategray, darkslategray, gainsboro\n\n\n## Grey\n\n@docs grey, lightgrey, dimgrey, darkgrey, slategrey, lightslategrey, darkslategrey\n\n\n## White\n\n@docs white, antiquewhite, floralwhite, ghostwhite, navajowhite, whitesmoke, snow, ivory, linen, mintcream, oldlace, seashell\n\n\n## Red\n\n@docs red, darkred, indianred, orangered, palevioletred, mediumvioletred, crimson, firebrick, lightcoral, maroon, salmon, lightsalmon, darksalmon, tomato\n\n\n## Green\n\n@docs green, lightgreen, darkgreen, chartreuse, forestgreen, greenyellow, lawngreen, lime, limegreen, olive, darkolivegreen, olivedrab, palegreen, seagreen, lightseagreen, mediumseagreen, darkseagreen, springgreen, mediumspringgreen\n\n\n## Blue\n\n@docs blue, lightblue, mediumblue, darkblue, aliceblue, azure, blueviolet, cadetblue, cornflowerblue, dodgerblue, indigo, midnightblue, navy, powderblue, royalblue, skyblue, lightskyblue, deepskyblue, slateblue, mediumslateblue, darkslateblue, steelblue, lightsteelblue\n\n## Beige\n\n@docs beige\n\n\n## Brown\n\n@docs brown, bisque, blanchedalmond, burlywood, chocolate, cornsilk, peru, rosybrown, saddlebrown, sandybrown, sienna, wheat\n\n\n## Cyan\n\n@docs cyan, lightcyan, darkcyan, aqua, aquamarine, mediumaquamarine\n\n\n## Gold\n\n@docs gold, paleGold, goldenBrown, goldenYellow, goldenrod, lightgoldenrodyellow, palegoldenrod, metallicGold, oldGold, vegasGold\n\n\n## Lavender\n\n@docs lavender, lavenderblush\n\n\n## Magenta\n\n@docs magenta, darkmagenta, fuchsia\n\n## Orange\n\n@docs orange, coral, darkorange\n\n\n## Peach\n\n@docs peachpuff, moccasin, papayawhip\n\n\n## Pink\n\n@docs pink, deeppink, hotpink, lightpink\n\n## Purple\n\n@docs purple, mediumpurple, orchid, mediumorchid, darkorchid, plum, thistle, violet, darkviolet\n\n## Tan\n\n@docs tan\n\n\n## Teal\n\n@docs teal\n\n\n## Turquoise\n\n@docs turquoise, paleturquoise, mediumturquoise, darkturquoise\n\n\n## Yellow\n\n@docs yellow, lightyellow, lightYellow1, lightYellow2, lightYellow3, lightYellow4, darkYellow1, darkYellow2, darkYellow3, darkYellow4, yellowgreen, khaki, darkkhaki, lemonchiffon\n\n\n## Silver\n\n@docs silver\n\n@docs honeydew, mistyrose\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "aliceblue",
+                "comment": " rgb(240, 248, 255)\n#F0F8FF\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "antiquewhite",
+                "comment": " rgb(250, 235, 215)\n#FAEBD7\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "aqua",
+                "comment": " rgb(0, 255, 255)\n#00FFFF\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "aquamarine",
+                "comment": " rgb(127, 255, 212)\n#7FFFD4\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "azure",
+                "comment": " rgb(240, 255, 255)\n#F0FFFF\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "beige",
+                "comment": " rgb(245, 245, 220)\n#F5F5DC\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "bisque",
+                "comment": " rgb(255, 228, 196)\n#FFE4C4\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "black",
+                "comment": " rgb(0, 0, 0)\n#000000\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "blanchedalmond",
+                "comment": " rgb(255, 235, 205)\n#FFEBCD\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "blue",
+                "comment": " rgb(0, 0, 255)\n#0000FF\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "blueviolet",
+                "comment": " rgb(138, 43, 226)\n#8A2BE2\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "brown",
+                "comment": " rgb(165, 42, 42)\n#A52A2A\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "burlywood",
+                "comment": " rgb(222, 184, 135)\n#DEB887\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "cadetblue",
+                "comment": " rgb(95, 158, 160)\n#5F9EA0\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "chartreuse",
+                "comment": " rgb(127, 255, 0)\n#7FFF00\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "chocolate",
+                "comment": " rgb(210, 105, 30)\n#D2691E\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "coral",
+                "comment": " rgb(255, 127, 80)\n#FF7F50\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "cornflowerblue",
+                "comment": " rgb(100, 149, 237)\n#6495ED\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "cornsilk",
+                "comment": " rgb(255, 248, 220)\n#FFF8DC\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "crimson",
+                "comment": " rgb(220, 20, 60)\n#DC143C\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "cyan",
+                "comment": " rgb(0, 255, 255)\n#00FFFF\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "darkYellow1",
+                "comment": " rgb(204, 204, 0)\n#CCCC00\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "darkYellow2",
+                "comment": " rgb(153, 153, 0)\n#999900\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "darkYellow3",
+                "comment": " rgb(102, 102, 0)\n#666600\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "darkYellow4",
+                "comment": " rgb(51, 51, 0)\n#333300\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "darkblue",
+                "comment": " rgb(0, 0, 139)\n#00008B\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "darkcyan",
+                "comment": " rgb(0, 139, 139)\n#008B8B\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "darkgray",
+                "comment": " rgb(169, 169, 169)\n#A9A9A9\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "darkgreen",
+                "comment": " rgb(0, 100, 0)\n#006400\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "darkgrey",
+                "comment": " rgb(169, 169, 169)\n#A9A9A9\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "darkkhaki",
+                "comment": " rgb(189, 183, 107)\n#BDB76B\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "darkmagenta",
+                "comment": " rgb(139, 0, 139)\n#8B008B\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "darkolivegreen",
+                "comment": " rgb(85, 107, 47)\n#556B2F\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "darkorange",
+                "comment": " rgb(255, 140, 0)\n#FF8C00\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "darkorchid",
+                "comment": " rgb(153, 50, 204)\n#9932CC\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "darkred",
+                "comment": " rgb(139, 0, 0)\n#8B0000\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "darksalmon",
+                "comment": " rgb(233, 150, 122)\n#E9967A\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "darkseagreen",
+                "comment": " rgb(143, 188, 143)\n#8FBC8F\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "darkslateblue",
+                "comment": " rgb(72, 61, 139)\n#483D8B\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "darkslategray",
+                "comment": " rgb(47, 79, 79)\n#2F4F4F\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "darkslategrey",
+                "comment": " rgb(47, 79, 79)\n#2F4F4F\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "darkturquoise",
+                "comment": " rgb(0, 206, 209)\n#00CED1\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "darkviolet",
+                "comment": " rgb(148, 0, 211)\n#9400D3\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "deeppink",
+                "comment": " rgb(255, 20, 147)\n#FF1493\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "deepskyblue",
+                "comment": " rgb(0, 191, 255)\n#00BFFF\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "dimgray",
+                "comment": " rgb(105, 105, 105)\n#696969\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "dimgrey",
+                "comment": " rgb(105, 105, 105)\n#696969\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "dodgerblue",
+                "comment": " rgb(30, 144, 255)\n#1E90FF\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "firebrick",
+                "comment": " rgb(178, 34, 34)\n#B22222\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "floralwhite",
+                "comment": " rgb(255, 250, 240)\n#FFFAF0\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "forestgreen",
+                "comment": " rgb(34, 139, 34)\n#228B22\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "fuchsia",
+                "comment": " rgb(255, 0, 255)\n#FF00FF\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "gainsboro",
+                "comment": " rgb(220, 220, 220)\n#DCDCDC\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "ghostwhite",
+                "comment": " rgb(248, 248, 255)\n#F8F8FF\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "gold",
+                "comment": " rgb(255, 215, 0)\n#FFD700\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "goldenBrown",
+                "comment": " rgb(153, 101, 21)\n#996515\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "goldenYellow",
+                "comment": " rgb(255, 223, 0)\n#FFDF00\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "goldenrod",
+                "comment": " rgb(218, 165, 32)\n#DAA520\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "gray",
+                "comment": " rgb(128, 128, 128)\n#808080\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "green",
+                "comment": " rgb(0, 128, 0)\n#008000\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "greenyellow",
+                "comment": " rgb(173, 255, 47)\n#ADFF2F\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "grey",
+                "comment": " rgb(128, 128, 128)\n#808080\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "honeydew",
+                "comment": " rgb(240, 255, 240)\n#F0FFF0\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "hotpink",
+                "comment": " rgb(255, 105, 180)\n#FF69B4\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "indianred",
+                "comment": " rgb(205, 92, 92)\n#CD5C5C\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "indigo",
+                "comment": " rgb(75, 0, 130)\n#4B0082\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "ivory",
+                "comment": " rgb(255, 255, 240)\n#FFFFF0\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "khaki",
+                "comment": " rgb(240, 230, 140)\n#F0E68C\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "lavender",
+                "comment": " rgb(230, 230, 250)\n#E6E6FA\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "lavenderblush",
+                "comment": " rgb(255, 240, 245)\n#FFF0F5\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "lawngreen",
+                "comment": " rgb(124, 252, 0)\n#7CFC00\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "lemonchiffon",
+                "comment": " rgb(255, 250, 205)\n#FFFACD\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "lightYellow1",
+                "comment": " rgb(255, 255, 204)\n#FFFFCC\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "lightYellow2",
+                "comment": " rgb(255, 255, 153)\n#FFFF99\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "lightYellow3",
+                "comment": " rgb(255, 255, 102)\n#FFFF66\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "lightYellow4",
+                "comment": " rgb(255, 255, 51)\n#FFFF33\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "lightblue",
+                "comment": " rgb(173, 216, 230)\n#ADD8E6\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "lightcoral",
+                "comment": " rgb(240, 128, 128)\n#F08080\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "lightcyan",
+                "comment": " rgb(224, 255, 255)\n#E0FFFF\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "lightgoldenrodyellow",
+                "comment": " rgb(250, 250, 210)\n#FAFAD2\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "lightgray",
+                "comment": " rgb(211, 211, 211)\n#D3D3D3\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "lightgreen",
+                "comment": " rgb(144, 238, 144)\n#90EE90\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "lightgrey",
+                "comment": " rgb(211, 211, 211)\n#D3D3D3\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "lightpink",
+                "comment": " rgb(255, 182, 193)\n#FFB6C1\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "lightsalmon",
+                "comment": " rgb(255, 160, 122)\n#FFA07A\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "lightseagreen",
+                "comment": " rgb(32, 178, 170)\n#20B2AA\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "lightskyblue",
+                "comment": " rgb(135, 206, 250)\n#87CEFA\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "lightslategray",
+                "comment": " rgb(119, 136, 153)\n#778899\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "lightslategrey",
+                "comment": " rgb(119, 136, 153)\n#778899\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "lightsteelblue",
+                "comment": " rgb(176, 196, 222)\n#B0C4DE\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "lightyellow",
+                "comment": " rgb(255, 255, 224)\n#FFFFE0\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "lime",
+                "comment": " rgb(0, 255, 0)\n#00FF00\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "limegreen",
+                "comment": " rgb(127, 255, 0)\n#32CD32\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "linen",
+                "comment": " rgb(250, 240, 230)\n#FAF0E6\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "magenta",
+                "comment": " rgb(255, 0 , 255)\n#FF00FF\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "maroon",
+                "comment": " rgb(128, 0, 0)\n#800000\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "mediumaquamarine",
+                "comment": " rgb(102, 205, 170)\n#66CDAA\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "mediumblue",
+                "comment": " rgb(0, 0, 205)\n#0000CD\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "mediumorchid",
+                "comment": " rgb(186, 85, 211)\n#BA55D3\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "mediumpurple",
+                "comment": " rgb(147, 112, 219)\n#9370DB\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "mediumseagreen",
+                "comment": " rgb(60, 179, 113)\n#3CB371\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "mediumslateblue",
+                "comment": " rgb(123, 104, 238)\n#7B68EE\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "mediumspringgreen",
+                "comment": " rgb(0, 250, 154)\n#00FA9A\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "mediumturquoise",
+                "comment": " rgb(72, 209, 204)\n#48D1CC\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "mediumvioletred",
+                "comment": " rgb(199, 21, 133)\n#C71585\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "metallicGold",
+                "comment": " rgb(212, 175, 55)\n#D4AF37\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "midnightblue",
+                "comment": " rgb(25, 25, 112)\n#191970\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "mintcream",
+                "comment": " rgb(245, 255, 250)\n#F5FFFA\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "mistyrose",
+                "comment": " rgb(255, 228, 255)\n#FFE4E1\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "moccasin",
+                "comment": " rgb(255, 228, 181)\n#FFE4B5\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "navajowhite",
+                "comment": " rgb(255, 222, 173)\n#FFDEAD\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "navy",
+                "comment": " rgb(0, 0, 128)\n#000080\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "oldGold",
+                "comment": " rgb(207, 181, 59)\n#CFB53B\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "oldlace",
+                "comment": " rgb(253, 245, 230)\n#FDF5E6\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "olive",
+                "comment": " rgb(128, 128, 0)\n#808000\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "olivedrab",
+                "comment": " rgb(107, 142, 35)\n#6B8E23\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "orange",
+                "comment": " rgb(255, 165, 0)\n#FFA500\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "orangered",
+                "comment": " rgb(255, 69, 0)\n#FF4500\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "orchid",
+                "comment": " rgb(218, 112, 214)\n#DA70D6\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "paleGold",
+                "comment": " rgb(230, 190, 138)\n#E6BE8A\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "palegoldenrod",
+                "comment": " rgb(238, 232, 170)\n#EEE8AA\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "palegreen",
+                "comment": " rgb(152, 251, 152)\n#98FB98\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "paleturquoise",
+                "comment": " rgb(175, 238, 238)\n#AFEEEE\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "palevioletred",
+                "comment": " rgb(219, 112, 147)\n#DB7093\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "papayawhip",
+                "comment": " rgb(255, 239, 213)\n#FFEFD5\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "peachpuff",
+                "comment": " rgb(255, 218, 185)\n#FFDAB9\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "peru",
+                "comment": " rgb(205, 133, 63)\n#CD853F\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "pink",
+                "comment": " rgb(255, 192, 203)\n#FFC0CB\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "plum",
+                "comment": " rgb(221, 160, 221)\n#DDA0DD\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "powderblue",
+                "comment": " rgb(176, 224, 230)\n#B0E0E6\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "purple",
+                "comment": " rgb(128, 0 , 128)\n#800080\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "red",
+                "comment": " rgb(255, 0, 0)\n#FF0000\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "rosybrown",
+                "comment": " rgb(188, 143, 143)\n#BC8F8F\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "royalblue",
+                "comment": " rgb(65, 105, 225)\n#4169E1\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "saddlebrown",
+                "comment": " rgb(139, 69, 19)\n#8B4513\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "salmon",
+                "comment": " rgb(250, 128, 114)\n#FA8072\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "sandybrown",
+                "comment": " rgb(244, 164, 96)\n#F4A460\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "seagreen",
+                "comment": " rgb(46, 139, 87)\n#2E8B57\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "seashell",
+                "comment": " rgb(255, 245, 238)\n#FFF5EE\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "sienna",
+                "comment": " rgb(160, 82, 45)\n#A0522D\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "silver",
+                "comment": " rgb(192, 192, 192)\n#C0C0C0\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "skyblue",
+                "comment": " rgb(135, 206, 235)\n#87CEEB\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "slateblue",
+                "comment": " rgb(106, 90, 205)\n#6A5ACD\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "slategray",
+                "comment": " rgb(112, 128, 144)\n#708090\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "slategrey",
+                "comment": " rgb(112, 128, 144)\n#708090\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "snow",
+                "comment": " rgb(250, 250, 250)\n#FFFAFA\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "springgreen",
+                "comment": " rgb(0, 255, 127)\n#00FF7F\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "steelblue",
+                "comment": " rgb(70, 130, 180)\n#4682B4\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "tan",
+                "comment": " rgb(210, 180, 140)\n#D2B48C\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "teal",
+                "comment": " rgb(0, 128, 128)\n#008080\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "thistle",
+                "comment": " rgb(216, 191, 216)\n#D8BFD8\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "tomato",
+                "comment": " rgb(255, 99, 71)\n#FF6347\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "turquoise",
+                "comment": " rgb(64, 224, 208)\n#40E0D0\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "vegasGold",
+                "comment": " rgb(197, 179, 88)\n#C5B358\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "violet",
+                "comment": " rgb(238, 130, 238)\n#EE82EE\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "wheat",
+                "comment": " rgb(245, 222, 179)\n#F5DEB3\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "white",
+                "comment": " rgb(255, 255, 255)\n#FFFFFF\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "whitesmoke",
+                "comment": " rgb(245, 245, 245)\n#F5F5F5\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "yellow",
+                "comment": " rgb(255, 255, 0)\n#FFFF00\n",
+                "type": "Element.Color"
+            },
+            {
+                "name": "yellowgreen",
+                "comment": " rgb(154, 205, 50)\n#9ACD32\n",
+                "type": "Element.Color"
+            }
+        ],
+        "binops": []
+    }
+]

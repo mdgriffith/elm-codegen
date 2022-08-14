@@ -1,0 +1,93 @@
+[
+    {
+        "name": "InView",
+        "comment": " Get information on an element position relative to the current viewport.\n\n\n# Definition\n\n@docs State\n@docs Viewport\n@docs Element\n\n\n# Init\n\n@docs init\n\n\n# Update\n\n@docs Msg\n@docs update\n@docs updateViewportOffset\n@docs subscriptions\n@docs addElements\n\n\n# Check\n\n@docs isInView\n@docs isInOrAboveView\n\n\n# Check with margin\n\n@docs Margin\n@docs isInViewWithMargin\n@docs isInOrAboveViewWithMargin\n\n\n# Custom check\n\n@docs custom\n\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " A message type for the state to update.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "State",
+                "comment": " Keeps track of viewport position, viewport dimensions and element positions.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Element",
+                "comment": " Similar to Browser.Dom.Element without scene and viewport.\n",
+                "args": [],
+                "type": "{ x : Basics.Float, y : Basics.Float, width : Basics.Float, height : Basics.Float }"
+            },
+            {
+                "name": "Margin",
+                "comment": " ",
+                "args": [],
+                "type": "{ top : Basics.Float, right : Basics.Float, bottom : Basics.Float, left : Basics.Float }"
+            },
+            {
+                "name": "Viewport",
+                "comment": " Similar to Browser.Dom.Viewport with the addition of `maxX` and `maxY`.\n\nYou can use `maxX` and `maxY` to check if an element has ever been in the viewport before.\n\n",
+                "args": [],
+                "type": "{ scene : { width : Basics.Float, height : Basics.Float }, viewport : { x : Basics.Float, y : Basics.Float, maxX : Basics.Float, maxY : Basics.Float, width : Basics.Float, height : Basics.Float } }"
+            }
+        ],
+        "values": [
+            {
+                "name": "addElements",
+                "comment": " Track element positions after you've initialized the state.\n\nUse this when the page content moves around after initialization,\nlike for example when images load and stuff gets pushed down.\n\n",
+                "type": "(InView.Msg -> msg) -> List.List String.String -> InView.State -> ( InView.State, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "custom",
+                "comment": " Write your own check function.\n\nFor example `isInOrAboveViewWithMargin` is implemented like:\n\n    isInOrAboveViewWithMargin : String -> Margin -> State -> Maybe Bool\n    isInOrAboveViewWithMargin id margin state =\n        let\n            calc { viewport } element =\n                (viewport.y - margin.bottom + viewport.height > element.y)\n                    && (viewport.x - margin.right + viewport.width > element.x)\n        in\n        custom (\\a b -> Maybe.map (calc a) b) id state\n\n_note: Element is a Maybe because the element might not be on the page at all._\n\n",
+                "type": "(InView.Viewport -> Maybe.Maybe InView.Element -> a) -> String.String -> InView.State -> a"
+            },
+            {
+                "name": "init",
+                "comment": " Takes a list of element ids you want to track and attempts to find them\non the current page.\n",
+                "type": "(InView.Msg -> msg) -> List.List String.String -> ( InView.State, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "isInOrAboveView",
+                "comment": " True if the element with the given id is in _or_ above the current viewport.\n\n_note: The result is a Maybe because the element might not be on the page at all._\n\n![checkAlt](https://rl-king.github.io/elm-inview-example/illustrations/inViewAlt.svg)\n\n",
+                "type": "String.String -> InView.State -> Maybe.Maybe Basics.Bool"
+            },
+            {
+                "name": "isInOrAboveViewWithMargin",
+                "comment": " True if the element with the given id is in _or_ above the current viewport but an offset.\nA positive offset will make the viewport smaller and vice versa.\n\n_note: The result is a Maybe because the element might not be on the page at all._\n\n![isInOrAboveViewWithMargin](https://rl-king.github.io/elm-inview-example/illustrations/inViewAltWithOffset.svg)\n\n",
+                "type": "String.String -> InView.Margin -> InView.State -> Maybe.Maybe Basics.Bool"
+            },
+            {
+                "name": "isInView",
+                "comment": " True if the element with the given id is in the current viewport.\n\n_note: The result is a Maybe because the element might not be on the page at all._\n\n![check](https://rl-king.github.io/elm-inview-example/illustrations/inView.svg)\n\n",
+                "type": "String.String -> InView.State -> Maybe.Maybe Basics.Bool"
+            },
+            {
+                "name": "isInViewWithMargin",
+                "comment": " True if the element with the given id is in the current viewport but with an offset.\nA positive offset will make the viewport smaller and vice versa.\n\n_note: The result is a Maybe because the element might not be on the page at all._\n\n![isInViewWithMargin](https://rl-king.github.io/elm-inview-example/illustrations/inViewWithOffset.svg)\n\n",
+                "type": "String.String -> InView.Margin -> InView.State -> Maybe.Maybe Basics.Bool"
+            },
+            {
+                "name": "subscriptions",
+                "comment": " Subscribe to browser resize events to recalculate element positions.\n",
+                "type": "(InView.Msg -> msg) -> InView.State -> Platform.Sub.Sub msg"
+            },
+            {
+                "name": "update",
+                "comment": " Update viewport size and element positions.\n",
+                "type": "(InView.Msg -> msg) -> InView.Msg -> InView.State -> ( InView.State, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "updateViewportOffset",
+                "comment": " Update current viewport `x` and `y` offset.\n",
+                "type": "{ x : Basics.Float, y : Basics.Float } -> InView.State -> InView.State"
+            }
+        ],
+        "binops": []
+    }
+]

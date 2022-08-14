@@ -1,0 +1,392 @@
+[
+    {
+        "name": "Decimal",
+        "comment": " This library provides arbitrary precision 'Decimal' type and basic arithmetic operations on it.\n\n\n# Definition\n\n@docs Decimal\n@docs Significand\n@docs Exponent\n@docs minExponent\n\n\n# Constructors\n\n`Decimal` can be constructed from `Int`, `Float`, `String`, or `Integer`.\n\n@docs fromInt\n@docs fromFloat\n@docs fromString\n@docs fromInteger\n\n\n# Deconstructors\n\n@docs significand\n@docs exponent\n\n\n# Basic Arithmetic\n\n@docs add\n@docs sub\n@docs mul\n@docs mulToMinE\n@docs div\n@docs divToMinE\n\n\n# String Representation\n\n@docs Notation\n@docs toString\n@docs toStringIn\n\n\n# Sign Modification\n\n@docs negate\n@docs abs\n\n\n# Comparison\n\n@docs compare\n@docs lt\n@docs gt\n@docs lte\n@docs gte\n@docs eq\n\n\n# Rounding\n\n@docs round\n@docs roundTo\n@docs floor\n@docs ceiling\n@docs truncate\n@docs roundWithContext\n@docs RoundingContext\n@docs RoundingMode\n\n\n# Square Root\n\n@docs sqrt\n@docs sqrtToMinE\n\n",
+        "unions": [
+            {
+                "name": "Decimal",
+                "comment": " A `Decimal` is an arbitrary precision number with significand and exponent.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Notation",
+                "comment": " `Notation` type determines how to represent `Decimal` as `String`. `Dec` represents decimal notation such as `0.003`, `1231.6161`, `335`, or `33500`. `Sci` represents scientific notation such as `3e-3`, `1.2316161e3`, or `3.35e4`.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Dec",
+                        []
+                    ],
+                    [
+                        "Sci",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "RoundingMode",
+                "comment": " `RoundingMode` type determines rounding strategy. Default strategy is `HalfToEven`.\n\nValue | Down | Up | TowardsZero | AwayFromZero | HalfToEven\n+1.8 | +1 | +2 | +1 | +2 | +2\n+1.5 | +1 | +2 | +1 | +2 | +2\n+1.2 | +1 | +2 | +1 | +2 | +1\n+0.8 || 0 | +1 || 0 | +1 | +1\n+0.5 || 0 | +1 || 0 | +1 || 0\n+0.2 || 0 | +1 || 0 | +1 || 0\n−0.2 | −1 || 0 || 0 | −1 || 0\n−0.5 | −1 || 0 || 0 | −1 || 0\n−0.8 | −1 || 0 || 0 | -1 | -1\n−1.2 | −2 | −1 | −1 | −2 | −1\n−1.5 | −2 | −1 | −1 | −2 | −2\n−1.8 | −2 | −1 | −1 | −2 | −2\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Down",
+                        []
+                    ],
+                    [
+                        "Up",
+                        []
+                    ],
+                    [
+                        "TowardsZero",
+                        []
+                    ],
+                    [
+                        "AwayFromZero",
+                        []
+                    ],
+                    [
+                        "HalfToEven",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Exponent",
+                "comment": " `Exponent` is an alias for `Int`.\n",
+                "args": [],
+                "type": "Basics.Int"
+            },
+            {
+                "name": "RoundingContext",
+                "comment": " `RoundingContext` type can be used to specify rounding strategy. Specify `e` to designate the digit you would like to round to, and choose a `mode` for rounding. `e` of `0` will round to an integer; `e` of `-1` will round to the nearest tenths, `e` of `-2` to the nearest hundredths; `e` of `1` will round to tens, `e` of `2` to hundreds.\n",
+                "args": [],
+                "type": "{ e : Decimal.Exponent, mode : Decimal.RoundingMode }"
+            },
+            {
+                "name": "Significand",
+                "comment": " `Significand` is an alias for an `Integer`.\n",
+                "args": [],
+                "type": "Integer.Integer"
+            }
+        ],
+        "values": [
+            {
+                "name": "abs",
+                "comment": " Get absolute value of `Decimal`.\n\n    abs (fromInt 1232139812) |> toString        == \"1232139812\" : String\n\n    abs (fromInt 0) |> toString                 == \"0\" : String\n\n    abs (fromFloat -127.1232139812) |> toString == \"127.1232139812\" : String\n\n",
+                "type": "Decimal.Decimal -> Decimal.Decimal"
+            },
+            {
+                "name": "add",
+                "comment": " Add two `Decimal`s.\n\n    add (fromFloat 8172398.121) (fromFloat 0.0000001) |> toString -- \"8172398.1210001\" : String\n\n    add (fromFloat 0.000032) (fromFloat -0.000032) |> toString -- \"0\" : String\n\n    add (fromFloat -0.002) (fromFloat 0) |> toString -- \"-0.002\" : String\n\n",
+                "type": "Decimal.Decimal -> Decimal.Decimal -> Decimal.Decimal"
+            },
+            {
+                "name": "ceiling",
+                "comment": " `ceiling` to the nearest integer with `Up` mode.\n",
+                "type": "Decimal.Decimal -> Decimal.Decimal"
+            },
+            {
+                "name": "compare",
+                "comment": " Compare two `Decimal`s.\n\n    compare (fromFloat 23.223) (fromFloat 23.224) == LT : Order\n\n    compare (fromFloat 23.223) (fromFloat 23.22) == GT : Order\n\n    compare (fromFloat 23.223) (fromFloat -23.22) == GT : Order\n\n    compare (fromFloat 23.223) (fromFloat 23.223) == EQ : Order\n\n",
+                "type": "Decimal.Decimal -> Decimal.Decimal -> Basics.Order"
+            },
+            {
+                "name": "div",
+                "comment": " Divide two `Decimal`s.\n\n    div (fromFloat 8172398.121) (fromFloat 0.0000001) |> Maybe.map toString -- Just \"81723981210000\" : Maybe String\n\n    div (fromFloat 0.000032) (fromFloat -0.000032) |> Maybe.map toString -- Just \"-1\" : Maybe String\n\n    div (fromFloat 0) (fromFloat -0.002) |> Maybe.map toString -- Just \"0\" : Maybe String\n\n    div (fromFloat -0.002) (fromFloat 0) |> Maybe.map toString -- Nothing : Maybe String\n\n    Maybe.andThen (div (fromInt 1)) (fromString \"100000000000000000000000000000000000000\") |> Maybe.map toString -- Nothing : Maybe String\n\n",
+                "type": "Decimal.Decimal -> Decimal.Decimal -> Maybe.Maybe Decimal.Decimal"
+            },
+            {
+                "name": "divToMinE",
+                "comment": " Use this function when you want a division with more fraction digits than what can be expressed with `minExponent`.\n",
+                "type": "Basics.Int -> Decimal.Decimal -> Decimal.Decimal -> Maybe.Maybe Decimal.Decimal"
+            },
+            {
+                "name": "eq",
+                "comment": " ",
+                "type": "Decimal.Decimal -> Decimal.Decimal -> Basics.Bool"
+            },
+            {
+                "name": "exponent",
+                "comment": " Get exponent portion of `Decimal`.\n",
+                "type": "Decimal.Decimal -> Decimal.Exponent"
+            },
+            {
+                "name": "floor",
+                "comment": " `floor` to the nearest integer with `Down` mode.\n",
+                "type": "Decimal.Decimal -> Decimal.Decimal"
+            },
+            {
+                "name": "fromFloat",
+                "comment": " Construct `Decimal` from `Float`.\n\n    fromFloat -8213.211 -- Decimal (Integer Negative [8213211]) -3 : Decimal\n\n    fromFloat 0.0000000000000000000000000000000003323232238 -- Decimal (Integer Positive [3]) -34 : Decimal\n\n    Entering numbers that cannot be represented by Javascript number type will result in incorrect representation. Use fromString in that case.\n\n    fromFloat -1727816283761287361287631287.123123123123 |> toString -- \"-1727816283761287400000000000\" : String\n\n    fromString \"-1727816283761287361287631287.123123123123\" |> Maybe.map toString -- Just \"-1727816283761287361287631287.123123123123\" : Maybe String\n\n",
+                "type": "Basics.Float -> Decimal.Decimal"
+            },
+            {
+                "name": "fromInt",
+                "comment": " Construct `Decimal` from `Int`.\n\n    fromInt 89928271371 -- Decimal (Integer Positive [8271371,8992]) 0 : Decimal\n\n    fromInt 0 -- Decimal Integer.Zero 0 : Decimal\n\n    fromInt -899210300 -- Decimal (Integer Negative [8992103]) 2 : Decimal\n\n    Entering numbers that cannot be represented by Javascript number type will result in incorrect representation. Use fromString in that case.\n\n    fromInt 81927398127398127389172893712893712893798123 |> toString -- \"-10497034289617408\" : String\n\n    fromString \"81927398127398127389172893712893712893798123\" |> Maybe.map toString -- Just \"81927398127398127389172893712893712893798123\" : Maybe String\n\n",
+                "type": "Basics.Int -> Decimal.Decimal"
+            },
+            {
+                "name": "fromInteger",
+                "comment": " Construct `Decimal` from `Integer`.\n\n    fromInteger (Integer.fromString \"812371263726178361298371987329810000\" |> Maybe.withDefault Integer.zero) -- Decimal (Integer Positive [8732981,2983719,6178361,7126372,8123]) 4 : Decimal\n\n    fromInteger Integer.zero -- Decimal Integer.Zero 0 : Decimal\n\n    fromInteger (Integer.negate Integer.zillion) -- Decimal (Integer Negative [1]) 12 : Decimal\n\n",
+                "type": "Integer.Integer -> Decimal.Decimal"
+            },
+            {
+                "name": "fromString",
+                "comment": " Construct `Decimal` from `String`.\n\n    fromString \"0.0000000076128736\" -- Just (Decimal (Integer Positive [6128736,7]) -16) : Maybe Decimal\n\n    fromString \"-7637370.761287360000\" -- Just (Decimal (Integer Negative [6128736,6373707,7]) -8) : Maybe Decimal\n\n    fromString \"ajsdlkfj\" -- Nothing : Maybe Decimal\n\n",
+                "type": "String.String -> Maybe.Maybe Decimal.Decimal"
+            },
+            {
+                "name": "gt",
+                "comment": " ",
+                "type": "Decimal.Decimal -> Decimal.Decimal -> Basics.Bool"
+            },
+            {
+                "name": "gte",
+                "comment": " ",
+                "type": "Decimal.Decimal -> Decimal.Decimal -> Basics.Bool"
+            },
+            {
+                "name": "lt",
+                "comment": " ",
+                "type": "Decimal.Decimal -> Decimal.Decimal -> Basics.Bool"
+            },
+            {
+                "name": "lte",
+                "comment": " ",
+                "type": "Decimal.Decimal -> Decimal.Decimal -> Basics.Bool"
+            },
+            {
+                "name": "minExponent",
+                "comment": " `minExponent` specifies the default minimum exponent. It's currently -32, chosen arbitrarily.\n",
+                "type": "Basics.Int"
+            },
+            {
+                "name": "mul",
+                "comment": " Multiply two `Decimal`s.\n\n    mul (fromFloat 8172398.121) (fromFloat 0.0000001) |> toString -- \"0.8172398121\" : String\n\n    mul (fromFloat 0.000032) (fromFloat -0.000032) |> toString -- \"-0.000000001024\" : String\n\n    mul (fromFloat -0.002) (fromFloat 0) |> toString -- \"0\" : String\n\n",
+                "type": "Decimal.Decimal -> Decimal.Decimal -> Decimal.Decimal"
+            },
+            {
+                "name": "mulToMinE",
+                "comment": " Use this function when you want a multiplication with more fraction digits than what can be expressed with `minExponent`.\n",
+                "type": "Basics.Int -> Decimal.Decimal -> Decimal.Decimal -> Decimal.Decimal"
+            },
+            {
+                "name": "negate",
+                "comment": " Negate the sign of `Decimal`.\n\n    negate (fromInt 1232139812) |> toString         == \"-1232139812\" : String\n\n    negate (fromFloat -127.1232139812) |> toString  == \"127.1232139812\" : String\n\n    negate (fromInt 0) |> toString                  == \"0\" : String\n\n",
+                "type": "Decimal.Decimal -> Decimal.Decimal"
+            },
+            {
+                "name": "round",
+                "comment": " `round` to the nearest integer with `HalfToEven` mode.\n",
+                "type": "Decimal.Decimal -> Decimal.Decimal"
+            },
+            {
+                "name": "roundTo",
+                "comment": " `roundTo` given exponent with `HalfToEven` mode.\n",
+                "type": "Decimal.Exponent -> Decimal.Decimal -> Decimal.Decimal"
+            },
+            {
+                "name": "roundWithContext",
+                "comment": " Specify a `RoundingContext` to customize the rounding strategy.\n",
+                "type": "Decimal.RoundingContext -> Decimal.Decimal -> Decimal.Decimal"
+            },
+            {
+                "name": "significand",
+                "comment": " Get significand portion of `Decimal`.\n",
+                "type": "Decimal.Decimal -> Integer.Integer"
+            },
+            {
+                "name": "sqrt",
+                "comment": " Calculate Square root using Babylonian method.\n",
+                "type": "Decimal.Decimal -> Maybe.Maybe Decimal.Decimal"
+            },
+            {
+                "name": "sqrtToMinE",
+                "comment": " Use this function when you want a square root with more fraction digits than what can be expressed with `minExponent`.\n",
+                "type": "Decimal.Exponent -> Decimal.Decimal -> Maybe.Maybe Decimal.Decimal"
+            },
+            {
+                "name": "sub",
+                "comment": " Subtract two `Decimal`s.\n\n    sub (fromFloat 8172398.121) (fromFloat 0.0000001) |> toString -- \"8172398.1209999\" : String\n\n    sub (fromFloat 0.000032) (fromFloat -0.000032) |> toString -- \"0.000064\" : String\n\n    sub (fromFloat -0.002) (fromFloat 0) |> toString -- \"-0.002\" : String\n\n",
+                "type": "Decimal.Decimal -> Decimal.Decimal -> Decimal.Decimal"
+            },
+            {
+                "name": "toString",
+                "comment": " Represent `Decimal` as `String`. Default notation is `Dec`.\n\n    mul (fromFloat 8172387.1123) (fromFloat -3.3532) |> toString == \"-27403648.46496436\" : String\n\n",
+                "type": "Decimal.Decimal -> String.String"
+            },
+            {
+                "name": "toStringIn",
+                "comment": " Represent `Decimal` as `String` in desired notation.\n",
+                "type": "Decimal.Notation -> Decimal.Decimal -> String.String"
+            },
+            {
+                "name": "truncate",
+                "comment": " `truncate` to the nearest integer with `TowardsZero` mode.\n",
+                "type": "Decimal.Decimal -> Decimal.Decimal"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Integer",
+        "comment": " This library provides arbitrary precision `Integer` type and basic arithmetic operations on it.\n\n\n# Definition\n\n@docs Integer\n\n\n# Constructors\n\n`Integer` can be constructed from `Int` or `String`. Several convenience constructors for commonly used numbers are also provided.\n\n@docs fromInt\n@docs fromString\n@docs zero\n@docs one\n@docs ten\n@docs hundred\n@docs thousand\n@docs million\n@docs billion\n@docs trillion\n\n\n# Basic Arithmetic\n\n@docs add\n@docs sub\n@docs mul\n@docs divmod\n@docs div\n@docs remainderBy\n\n\n# String Representation\n\n@docs toString\n\n\n# Sign Modification\n\n@docs negate\n@docs abs\n\n\n# Comparison\n\n@docs compare\n@docs lt\n@docs gt\n@docs lte\n@docs gte\n@docs eq\n\n\n# Other Functions\n\n@docs countDigits\n\n",
+        "unions": [
+            {
+                "name": "Integer",
+                "comment": " An `Integer` is an arbitrary-precision number where its 'digits' of base 10 ^ 7 are represented as a linked list in little endian order. This base is chosen to simplify multiplication, toString, and debugging in Elm debugger.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Integer",
+                        [
+                            "Integer.Sign",
+                            "Integer.Magnitude"
+                        ]
+                    ],
+                    [
+                        "Zero",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "abs",
+                "comment": " Get absolute value of `Integer`.\n\n    negate (fromInt -332)  == Integer Positive [332] : Integer\n    negate (fromInt 8872)  == Integer Positive [8872] : Integer\n    negate zero            == Zero : Integer\n\n",
+                "type": "Integer.Integer -> Integer.Integer"
+            },
+            {
+                "name": "add",
+                "comment": " Add two `Integer`s.\n\n    add ten million == Integer Positive [1000010] : Integer\n\n",
+                "type": "Integer.Integer -> Integer.Integer -> Integer.Integer"
+            },
+            {
+                "name": "billion",
+                "comment": " Convenience constructor for one billion, equivalent to `fromInt 1000000000`\n",
+                "type": "Integer.Integer"
+            },
+            {
+                "name": "compare",
+                "comment": " Compare two `Integer`s.\n\n    compare one zero == GT\n\n    compare one one == EQ\n\n    compare (negate million) one == LT\n\n",
+                "type": "Integer.Integer -> Integer.Integer -> Basics.Order"
+            },
+            {
+                "name": "countDigits",
+                "comment": " Count the number of decimal digits.\n\n    mul (fromInt 8172387) (fromInt -332) |> countDigits == 10 : Int\n\n",
+                "type": "Integer.Integer -> Basics.Int"
+            },
+            {
+                "name": "div",
+                "comment": " Divide two `Integer`s and get quotient.\n\n    div (fromInt -873812381) (fromInt 78738732) == Just (Integer Negative [11]) : Maybe Integer\n    div zero (fromInt 871)                      == Just Zero : Maybe Integer\n    div (fromInt 871) zero                      == Nothing : Maybe Integer\n\n",
+                "type": "Integer.Integer -> Integer.Integer -> Maybe.Maybe Integer.Integer"
+            },
+            {
+                "name": "divmod",
+                "comment": " Divide two `Integer`s and get both quotient and remainder.\n\n    divmod (fromInt -873812381) (fromInt 78738732) == Just (Integer Negative [11],Integer Negative [7686329]) : Maybe ( Integer, Integer )\n    divmod zero (fromInt 871)                      == Just Zero : Maybe Integer\n    divmod (fromInt 871) zero                      == Nothing : Maybe Integer\n\n",
+                "type": "Integer.Integer -> Integer.Integer -> Maybe.Maybe ( Integer.Integer, Integer.Integer )"
+            },
+            {
+                "name": "eq",
+                "comment": " ",
+                "type": "Integer.Integer -> Integer.Integer -> Basics.Bool"
+            },
+            {
+                "name": "fromInt",
+                "comment": " Construct `Integer` from `Int`.\n\n    fromInt 83748314374831 -- Integer Positive [4374831,8374831] : Integer\n\n    fromInt 0 -- Zero : Integer\n\n    fromInt -93939193 -- Integer Negative [3939193,9] : Integer\n\n    Entering numbers that cannot be represented by Javascript number type will result in incorrect representation. Use fromString in that case.\n\n    fromInt 81927398127398127389172893712893712893798123 |> toString -- \"-10497034289617408\" : String\n\n    fromString \"81927398127398127389172893712893712893798123\" |> Maybe.map toString -- Just \"81927398127398127389172893712893712893798123\" : Maybe String\n\n",
+                "type": "Basics.Int -> Integer.Integer"
+            },
+            {
+                "name": "fromString",
+                "comment": " Construct `Integer` from `String`.\n\n    fromString \"71289371892739812798734895701347589273948523984573\" -- Just (Integer Positive [3984573,7394852,3475892,4895701,1279873,8927398,1289371,7]) : Maybe Integer\n\n    fromString \"jiaosdjf\" -- Nothing : Maybe Integer\n\n",
+                "type": "String.String -> Maybe.Maybe Integer.Integer"
+            },
+            {
+                "name": "gt",
+                "comment": " ",
+                "type": "Integer.Integer -> Integer.Integer -> Basics.Bool"
+            },
+            {
+                "name": "gte",
+                "comment": " ",
+                "type": "Integer.Integer -> Integer.Integer -> Basics.Bool"
+            },
+            {
+                "name": "hundred",
+                "comment": " Convenience constructor for one hundred, equivalent to `fromInt 100`\n",
+                "type": "Integer.Integer"
+            },
+            {
+                "name": "lt",
+                "comment": " ",
+                "type": "Integer.Integer -> Integer.Integer -> Basics.Bool"
+            },
+            {
+                "name": "lte",
+                "comment": " ",
+                "type": "Integer.Integer -> Integer.Integer -> Basics.Bool"
+            },
+            {
+                "name": "million",
+                "comment": " Convenience constructor for one million, equivalent to `fromInt 1000000`\n",
+                "type": "Integer.Integer"
+            },
+            {
+                "name": "mul",
+                "comment": " Multiply two `Integer`s.\n\n    mul (fromInt -873812381) (fromInt 78738732) == Integer Negative [5840892,287888,688] : Integer\n\n",
+                "type": "Integer.Integer -> Integer.Integer -> Integer.Integer"
+            },
+            {
+                "name": "negate",
+                "comment": " Negate the sign of `Integer`.\n\n    negate (fromInt -332)  == Integer Positive [332] : Integer\n    negate (fromInt 8872)  == Integer Negative [8872] : Integer\n    negate zero            == Zero : Integer\n\n",
+                "type": "Integer.Integer -> Integer.Integer"
+            },
+            {
+                "name": "one",
+                "comment": " Convenience constructor for 1, equivalent to `fromInt 1`\n",
+                "type": "Integer.Integer"
+            },
+            {
+                "name": "remainderBy",
+                "comment": " Divide two `Integer`s and get remainder.\n\n    remainderBy (fromInt -873812381) (fromInt 78738732) == Just (Integer Negative [7686329]) : Maybe Integer\n    remainderBy zero (fromInt 871)                      == Just Zero : Maybe Integer\n    remainderBy (fromInt 871) zero                      == Nothing : Maybe Integer\n\n",
+                "type": "Integer.Integer -> Integer.Integer -> Maybe.Maybe Integer.Integer"
+            },
+            {
+                "name": "sub",
+                "comment": " Subtract two `Integer`s.\n\n    sub million trillion == Integer Negative [9000000,99999] : Integer\n\n",
+                "type": "Integer.Integer -> Integer.Integer -> Integer.Integer"
+            },
+            {
+                "name": "ten",
+                "comment": " Convenience constructor for 10, equivalent to `fromInt 10`\n",
+                "type": "Integer.Integer"
+            },
+            {
+                "name": "thousand",
+                "comment": " Convenience constructor for one thousand, equivalent to `fromInt 1000`\n",
+                "type": "Integer.Integer"
+            },
+            {
+                "name": "toString",
+                "comment": " Represent `Integer` as `String`.\n\n    mul (fromInt 8172387) (fromInt -332)\n        |> toString == \"-2713232484\" : String\n\n",
+                "type": "Integer.Integer -> String.String"
+            },
+            {
+                "name": "trillion",
+                "comment": " Convenience constructor for one trillion, equivalent to `fromInt 1000000000000`\n",
+                "type": "Integer.Integer"
+            },
+            {
+                "name": "zero",
+                "comment": " Convenience constructor for 0, equivalent to `fromInt 0`\n",
+                "type": "Integer.Integer"
+            }
+        ],
+        "binops": []
+    }
+]

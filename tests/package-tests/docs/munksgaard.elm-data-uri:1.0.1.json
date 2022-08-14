@@ -1,0 +1,48 @@
+[
+    {
+        "name": "DataUri",
+        "comment": " Parse and handle data URIs in Elm.\n\n\n# Types\n\n@docs DataUri, Data\n\n\n# Parsing\n\n@docs fromString, parser\n\n",
+        "unions": [
+            {
+                "name": "Data",
+                "comment": " The data contained within a aata URI can either be base64 encoded raw bytes\nor a URL encoded string.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Base64",
+                        [
+                            "Bytes.Bytes"
+                        ]
+                    ],
+                    [
+                        "Raw",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "DataUri",
+                "comment": " The contents of the data URI\n",
+                "args": [],
+                "type": "{ mediaType : MediaType.MediaType, data : DataUri.Data }"
+            }
+        ],
+        "values": [
+            {
+                "name": "fromString",
+                "comment": " Attempt to parse a string as a data URI.\n",
+                "type": "String.String -> Maybe.Maybe DataUri.DataUri"
+            },
+            {
+                "name": "parser",
+                "comment": " Media types can be a part of another data schema, like the [data URI scheme](https://en.wikipedia.org/wiki/Data_URI_scheme),\nso it can be helpful to access the internal parser.\n",
+                "type": "Parser.Parser DataUri.DataUri"
+            }
+        ],
+        "binops": []
+    }
+]

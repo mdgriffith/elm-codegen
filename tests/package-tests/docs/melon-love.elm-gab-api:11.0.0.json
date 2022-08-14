@@ -1,0 +1,636 @@
+[
+    {
+        "name": "Gab",
+        "comment": " Client for the Gab.com API, documented at [developers.gab.com](https://developers.gab.com/).\n\nThis does NOT do authentication. You'll need to use [billstclair/elm-oauth-middleware](http://package.elm-lang.org/packages/billstclair/elm-oauth-middleware/latest) to get a `Token`. See the `example` directory.\n\nThe requests all come in two flavors, one which has the decoder built in, and returns a `Cmd msg`, and one for which you provide your own decoder. E.g.:\n\n    type Msg\n       = ReceiveUser (Result Http.Error User)\n       | ReceiveUserValue (Result Http.Error Value)\n       ...\n\n    getTorbaCmd : OAuth.Token -> Cmd Msg\n    getTorbaCmd token =\n        userProfile ReceiveUser token \"a\"\n\n    getTorbaParts : OAuth.Token -> RequestParts Msg\n    getTorbaParts token =\n        userProfileParts Json.Decode.value ReceiveUserValue token \"a\"\n\n\n# Normal, Auto-Decoding Functions\n\nYou'll usually use these, not the `Parts` functions below.\n\n\n## Users\n\n@docs me, userProfile\n@docs userFollowers, userFollowing\n\n\n## User Interaction\n\n@docs followUser, muteUser\n\n\n## Feeds\n\n@docs homeFeed\n@docs userFeed\n@docs groupFeed\n@docs popularFeed\n@docs popularUsers\n\n\n## Notifications\n\n@docs notifications\n\n\n## Posts\n\n@docs getPost\n@docs upvotePost, downvotePost\n@docs repost\n\n\n## New Posts\n\n@docs newPost\n@docs postImage\n\n\n# Parts Functions The Return a Value\n\nThese are mostly for the example, but if you need to get your hands on the raw return `Value` from the API, use these intead of the auto-decoding versions.\n\n\n## Users\n\n@docs meParts, userProfileParts\n@docs userFollowersParts, userFollowingParts\n\n\n## User Interaction\n\n@docs followUserParts, muteUserParts\n\n\n## Feeds\n\n@docs homeFeedParts\n@docs userFeedParts\n@docs groupFeedParts\n@docs popularFeedParts\n@docs popularUsersParts\n\n\n## Notifications\n\n@docs notificationsParts\n\n\n## Posts\n\n@docs getPostParts\n@docs upvotePostParts, downvotePostParts\n@docs repostParts\n\n\n## New Posts\n\n@docs newPostParts\n@docs postImageParts\n\n\n# Generic requests\n\nThese are low-level functions used to implement the others. You won't need them unless you need to implement new API functionality that isn't yet in this module.\n\n@docs doParts, doUsersParts, doPostsParts\n\n\n# Persistent tokens\n\n@docs savedTokenFromResponseToken\n\n\n# Low-level Http interface\n\n@docs gabApiUri, request, getParts, requestParts\n\n\n# Debugging\n\n@docs bodyToString\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "bodyToString",
+                "comment": " Debugging function for displaying a request body.\n",
+                "type": "Basics.Int -> Gab.Types.HttpBody -> String.String"
+            },
+            {
+                "name": "doParts",
+                "comment": " Shared by doUsersParts and doPostParts\n\n    doParts prefix operation decoder wrapper token identifier undo\n\n`prefix` can be \"users\" or \"posts\".\n\nIf `undo` is `True`, does a DELETE. Otherwise, does a POST.\n\n",
+                "type": "String.String -> String.String -> Json.Decode.Decoder a -> (Result.Result Http.Error a -> msg) -> OAuth.Token -> String.String -> Basics.Bool -> Gab.Types.RequestParts msg"
+            },
+            {
+                "name": "doPostsParts",
+                "comment": " Shared by upvotePostParts, downvotePostParts, repostParts\n\n    doPostsParts operation decoder wrapper token username undo\n\n`operation` can be \"upvote\", \"downvote\" or \"repost\".\n\n",
+                "type": "String.String -> Json.Decode.Decoder a -> (Result.Result Http.Error a -> msg) -> OAuth.Token -> String.String -> Basics.Bool -> Gab.Types.RequestParts msg"
+            },
+            {
+                "name": "doUsersParts",
+                "comment": " Shared by followUserParts and muteUserParts\n\n    doUsersParts operation decoder wrapper token username undo\n\n`operation` can be \"follow\" or \"mute\".\n\n",
+                "type": "String.String -> Json.Decode.Decoder a -> (Result.Result Http.Error a -> msg) -> OAuth.Token -> String.String -> Basics.Bool -> Gab.Types.RequestParts msg"
+            },
+            {
+                "name": "downvotePost",
+                "comment": " Downvote or undownvote a post. Return value not interesting.\n\n    downvotePost wrapper token postid undownvote\n\nThis will return an Http `BadStatus` error if you you're not\nauthorized to downvote.\n\n",
+                "type": "(Result.Result Http.Error Gab.Types.Success -> msg) -> OAuth.Token -> String.String -> Basics.Bool -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "downvotePostParts",
+                "comment": " Downvote or undownvote a post, with a custom decoder.\n\n    downvotePostParts decoder wrapper token postid undownvote\n\n",
+                "type": "Json.Decode.Decoder a -> (Result.Result Http.Error a -> msg) -> OAuth.Token -> String.String -> Basics.Bool -> Gab.Types.RequestParts msg"
+            },
+            {
+                "name": "followUser",
+                "comment": " Follow or unfollow a user. Return value not interesting.\n\n    followUser wrapper token username unfollow\n\n",
+                "type": "(Result.Result Http.Error Gab.Types.Success -> msg) -> OAuth.Token -> String.String -> Basics.Bool -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "followUserParts",
+                "comment": " Follow or unfollow a user, with a custom decoder.\n\n    followUserParts decoder wrapper token username unfollow\n\n",
+                "type": "Json.Decode.Decoder a -> (Result.Result Http.Error a -> msg) -> OAuth.Token -> String.String -> Basics.Bool -> Gab.Types.RequestParts msg"
+            },
+            {
+                "name": "gabApiUri",
+                "comment": " The base URI for GAB API requests. Automatically prepended to `path` args.\n",
+                "type": "String.String"
+            },
+            {
+                "name": "getParts",
+                "comment": " Simple HTTP GET request. Empty body, no custom headers.\n\n    get decoder wrapper token wrapper path\n\n",
+                "type": "Json.Decode.Decoder a -> (Result.Result Http.Error a -> msg) -> OAuth.Token -> String.String -> Gab.Types.RequestParts msg"
+            },
+            {
+                "name": "getPost",
+                "comment": " Get a single post.\n\n    getPost wrapper token postid\n\n",
+                "type": "(Result.Result Http.Error Gab.Types.Post -> msg) -> OAuth.Token -> String.String -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "getPostParts",
+                "comment": " Get a single post, using a custom decoder.\n\n    getPostParts decoder wrapper token postid\n\n",
+                "type": "Json.Decode.Decoder a -> (Result.Result Http.Error a -> msg) -> OAuth.Token -> String.String -> Gab.Types.RequestParts msg"
+            },
+            {
+                "name": "groupFeed",
+                "comment": " Return posts for a group feed.\n\n    groupFeed wrapper token group before\n\nThe posts returned will have dates before `before`. Pass the empty string to get the beginning of the list.\n\nThis is a guess at what this API command will look like. It doesn't yet exist.\n\n",
+                "type": "(Result.Result Http.Error Gab.Types.ActivityLogList -> msg) -> OAuth.Token -> String.String -> String.String -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "groupFeedParts",
+                "comment": " Return posts for a group feed, using a custom decoder.\n\n    groupFeedParts decoder wrapper token groupid before\n\nThe posts returned will have dates before `before`. Pass the empty string to get the beginning of the list.\n\nThis is a guess at what this API command will look like. It doesn't yet exist.\n\n",
+                "type": "Json.Decode.Decoder a -> (Result.Result Http.Error a -> msg) -> OAuth.Token -> String.String -> String.String -> Gab.Types.RequestParts msg"
+            },
+            {
+                "name": "homeFeed",
+                "comment": " Return posts in the home feed.\n\n    homeFeed wrapper token before\n\nThe posts returned will have dates before `before`. Pass the empty string to get the beginning of the list.\n\n",
+                "type": "(Result.Result Http.Error Gab.Types.ActivityLogList -> msg) -> OAuth.Token -> String.String -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "homeFeedParts",
+                "comment": " Return posts in the home feed, using a custom encoder.\n\n    homeFeedParts decoder wrapper token before\n\nThe posts returned will have dates before `before`. Pass the empty string to get the beginning of the list.\n\n",
+                "type": "Json.Decode.Decoder a -> (Result.Result Http.Error a -> msg) -> OAuth.Token -> String.String -> Gab.Types.RequestParts msg"
+            },
+            {
+                "name": "me",
+                "comment": " Return the logged-in user's profile information as a User record.\n",
+                "type": "(Result.Result Http.Error Gab.Types.User -> msg) -> OAuth.Token -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "meParts",
+                "comment": " Return the logged-in user's profile information, using a custom decoder.\n",
+                "type": "Json.Decode.Decoder a -> (Result.Result Http.Error a -> msg) -> OAuth.Token -> Gab.Types.RequestParts msg"
+            },
+            {
+                "name": "muteUser",
+                "comment": " Mute or unmute a user. Return value not interesting.\n\n    muteUser wrapper token username unmute\n\nThis isn't currently implemented by the API, but I expect that to change.\n\n",
+                "type": "(Result.Result Http.Error Gab.Types.Success -> msg) -> OAuth.Token -> String.String -> Basics.Bool -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "muteUserParts",
+                "comment": " Mute or unmute a user, with a custom decoder.\n\n    muteUserParts decoder wrapper token username unmute\n\nThis isn't currently implemented by the API, but I expect that to change.\n\n",
+                "type": "Json.Decode.Decoder a -> (Result.Result Http.Error a -> msg) -> OAuth.Token -> String.String -> Basics.Bool -> Gab.Types.RequestParts msg"
+            },
+            {
+                "name": "newPost",
+                "comment": " Posting uses JSON, which is not in the spec, but is what the web client does.\n",
+                "type": "(Result.Result Http.Error Gab.Types.ActivityLog -> msg) -> OAuth.Token -> Gab.Types.PostForm -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "newPostParts",
+                "comment": " Create a new post with a custom decoder.\n",
+                "type": "Json.Decode.Decoder a -> (Result.Result Http.Error a -> msg) -> OAuth.Token -> Gab.Types.PostForm -> Gab.Types.RequestParts msg"
+            },
+            {
+                "name": "notifications",
+                "comment": " Return notifications for the logged in user.\n\n    notifications wrapper token before\n\nFor notifications, the `before` parameter is a notification ID, not a date.\n\n",
+                "type": "(Result.Result Http.Error Gab.Types.NotificationsLog -> msg) -> OAuth.Token -> String.String -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "notificationsParts",
+                "comment": " Return notifications, using a custom decoder.\n\n    notificationsParts decoder wrapper token before\n\nFor notifications, the `before` parameter is a notification ID, not a date.\n\n",
+                "type": "Json.Decode.Decoder a -> (Result.Result Http.Error a -> msg) -> OAuth.Token -> String.String -> Gab.Types.RequestParts msg"
+            },
+            {
+                "name": "popularFeed",
+                "comment": " Return the posts in the \"popular\" feed, as a ActivityLogList.\n\n    popularFeed wrapper token\n\n",
+                "type": "(Result.Result Http.Error Gab.Types.ActivityLogList -> msg) -> OAuth.Token -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "popularFeedParts",
+                "comment": " Return the posts in the \"popular\" feed, using a custom decoder.\n\n    popularFeedParts decoder wrapper token\n\n",
+                "type": "Json.Decode.Decoder a -> (Result.Result Http.Error a -> msg) -> OAuth.Token -> Gab.Types.RequestParts msg"
+            },
+            {
+                "name": "popularUsers",
+                "comment": " Return a list of popular users, as a UserList record.\n\n    popularUsers wrapper token\n\n",
+                "type": "(Result.Result Http.Error Gab.Types.UserList -> msg) -> OAuth.Token -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "popularUsersParts",
+                "comment": " Return a list of popular users, using a custom decoder.\n\n    popularUserParts wrapper decoder token\n\n",
+                "type": "Json.Decode.Decoder a -> (Result.Result Http.Error a -> msg) -> OAuth.Token -> Gab.Types.RequestParts msg"
+            },
+            {
+                "name": "postImage",
+                "comment": " Posting an image.\n\nThe `String` that comes back is a media ID, to be used in `PostForm.media_attachments`.\n\n",
+                "type": "(Result.Result Http.Error String.String -> msg) -> OAuth.Token -> File.File -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "postImageParts",
+                "comment": " Post an image with a custom decoder\n",
+                "type": "Json.Decode.Decoder a -> (Result.Result Http.Error a -> msg) -> OAuth.Token -> File.File -> Gab.Types.RequestParts msg"
+            },
+            {
+                "name": "repost",
+                "comment": " Repost or unrepost. Return value not interesting.\n\n    repost wrapper token postid unrepost\n\n",
+                "type": "(Result.Result Http.Error Gab.Types.Success -> msg) -> OAuth.Token -> String.String -> Basics.Bool -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "repostParts",
+                "comment": " Repost or unrepost, with a custom decoder.\n\n    repostParts decoder wrapper token postid unrepost\n\n",
+                "type": "Json.Decode.Decoder a -> (Result.Result Http.Error a -> msg) -> OAuth.Token -> String.String -> Basics.Bool -> Gab.Types.RequestParts msg"
+            },
+            {
+                "name": "request",
+                "comment": " Turn parts into a ready-to-send `Cmd msg`.\n",
+                "type": "Gab.Types.RequestParts msg -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "requestParts",
+                "comment": " General-purpose `Http.Request` constructor.\n\n    request method headers wrapper token path body decoder\n\n`method` is the Http method, e.g. \"GET\".\n\n`headers` is a list of custom `Http.Header`s.\n\n`wrapper` maps a `Result` to a `msg`.\n\n`token` is an OAuth token, often gotten with [`billstclair/elm-oauth-middleware`](http://package.elm-lang.org/packages/billstclair/elm-oauth-middleware/latest).\n\n`path` is the path to the API endpoint, with NO leading slash.\n\n`decoder` is a JSON decoder for the result.\n\n",
+                "type": "String.String -> List.List Http.Header -> Gab.Types.HttpBody -> Json.Decode.Decoder a -> (Result.Result Http.Error a -> msg) -> OAuth.Token -> String.String -> Gab.Types.RequestParts msg"
+            },
+            {
+                "name": "savedTokenFromResponseToken",
+                "comment": " Convert an `OAuthMiddleWare.ResponseToken` to `Gab.Types.SavedToken`.\n\nUse `Gab.EncodeDecode.savedTokenEncoder` and `Gab.EncodeDecode.savedTokenDecoder` to persist it.\n\n",
+                "type": "Time.Posix -> OAuthMiddleware.ResponseToken.ResponseToken -> Gab.Types.SavedToken"
+            },
+            {
+                "name": "upvotePost",
+                "comment": " Upvote or unupvote a post. Return value not interesting.\n\n    upvotePost wrapper token postid unupvote\n\n",
+                "type": "(Result.Result Http.Error Gab.Types.Success -> msg) -> OAuth.Token -> String.String -> Basics.Bool -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "upvotePostParts",
+                "comment": " Upvote or unupvote a post, with a custom decoder.\n\n    upvotePostParts decoder wrapper token postid unupvote\n\n",
+                "type": "Json.Decode.Decoder a -> (Result.Result Http.Error a -> msg) -> OAuth.Token -> String.String -> Basics.Bool -> Gab.Types.RequestParts msg"
+            },
+            {
+                "name": "userFeed",
+                "comment": " Return posts for a user feed.\n\n    userFeed wrapper token user before\n\nThe posts returned will have dates before `before`. Pass the empty string to get the beginning of the list.\n\n",
+                "type": "(Result.Result Http.Error Gab.Types.ActivityLogList -> msg) -> OAuth.Token -> String.String -> String.String -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "userFeedParts",
+                "comment": " Return posts for a user feed, using a custom decoder.\n\n    userFeedParts decoder wrapper user token before\n\nThe posts returned will have dates before `before`. Pass the empty string to get the beginning of the list.\n\n",
+                "type": "Json.Decode.Decoder a -> (Result.Result Http.Error a -> msg) -> OAuth.Token -> String.String -> String.String -> Gab.Types.RequestParts msg"
+            },
+            {
+                "name": "userFollowers",
+                "comment": " Return the logged-in user's followers as a UserList record.\n\n    userFollowers wrapper token username before\n\n`before` is the number of following users to skip before the listing starts. This enables scrolling through a long list.\n\n",
+                "type": "(Result.Result Http.Error Gab.Types.UserList -> msg) -> OAuth.Token -> String.String -> Basics.Int -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "userFollowersParts",
+                "comment": " Return the logged-in user's followers, using a custom decoder.\n\n    userFollowersParts wrapper decoder token username before\n\n`before` is the number of following users to skip before the listing starts. This enables scrolling through a long list.\n\n",
+                "type": "Json.Decode.Decoder a -> (Result.Result Http.Error a -> msg) -> OAuth.Token -> String.String -> Basics.Int -> Gab.Types.RequestParts msg"
+            },
+            {
+                "name": "userFollowing",
+                "comment": " Return a list of users following the logged-in user, as a UserList record.\n\n    userFollowing wrapper token username before\n\n`before` is the number of followers to skip before the listing starts. This enables scrolling through a long list.\n\n",
+                "type": "(Result.Result Http.Error Gab.Types.UserList -> msg) -> OAuth.Token -> String.String -> Basics.Int -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "userFollowingParts",
+                "comment": " Return a list of users following the logged-in user, using a custom decoder.\n\n    userFollowingParts wrapper decoder token username before\n\n`before` is the number of followers to skip before the listing starts. This enables scrolling through a long list.\n\n",
+                "type": "Json.Decode.Decoder a -> (Result.Result Http.Error a -> msg) -> OAuth.Token -> String.String -> Basics.Int -> Gab.Types.RequestParts msg"
+            },
+            {
+                "name": "userProfile",
+                "comment": " Return the logged-in user's profile information as a User record.\n",
+                "type": "(Result.Result Http.Error Gab.Types.User -> msg) -> OAuth.Token -> String.String -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "userProfileParts",
+                "comment": " Return the logged-in user's profile information, using a custom decoder.\n",
+                "type": "Json.Decode.Decoder a -> (Result.Result Http.Error a -> msg) -> OAuth.Token -> String.String -> Gab.Types.RequestParts msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Gab.EncodeDecode",
+        "comment": " Encoders and decoders for the types.\n\n\n# ActivityLog\n\n@docs activityLogDecoder, activityLogEncoder\n@docs activityLogListDecoder, activityLogListEncoder\n\n\n# User\n\n@docs userDecoder, userEncoder, userListDecoder, userListEncoder\n\n\n# Post\n\n@docs postDecoder, postEncoder, postListDecoder, postListEncoder\n\n\n# Create a new post\n\n@docs postFormEncoder\n@docs mediaIdDecoder, mediaIdEncoder\n\n\n# Successful return from operations with nothing more to report.\n\n@docs successDecoder, successEncoder\n\n\n# Notifications\n\n@docs notificationTypeDecoder, notificationTypeEncoder\n@docs notificationsLogDecoder, notificationsLogEncoder\n@docs notificationDecoder, notificationEncoder\n\n\n# Persistent tokens\n\n@docs savedTokenEncoder, savedTokenDecoder\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "activityLogDecoder",
+                "comment": " Decode an `ActivityLog`.\n",
+                "type": "Json.Decode.Decoder Gab.Types.ActivityLog"
+            },
+            {
+                "name": "activityLogEncoder",
+                "comment": " Encode an `ActivityLog`.\n",
+                "type": "Gab.Types.ActivityLog -> Json.Encode.Value"
+            },
+            {
+                "name": "activityLogListDecoder",
+                "comment": " Decode an `ActivityLogList`.\n",
+                "type": "Json.Decode.Decoder Gab.Types.ActivityLogList"
+            },
+            {
+                "name": "activityLogListEncoder",
+                "comment": " Encode an `ActivityLogList`.\n",
+                "type": "Gab.Types.ActivityLogList -> Json.Encode.Value"
+            },
+            {
+                "name": "mediaIdDecoder",
+                "comment": " Decode the ID that comes back from a `media-attachments/xxx` post.\n",
+                "type": "Json.Decode.Decoder String.String"
+            },
+            {
+                "name": "mediaIdEncoder",
+                "comment": " Encode the ID that comes back from a `media-attachments/xxx` post.\n",
+                "type": "String.String -> Json.Encode.Value"
+            },
+            {
+                "name": "notificationDecoder",
+                "comment": " Decode a `Notification`.\n",
+                "type": "Json.Decode.Decoder Gab.Types.Notification"
+            },
+            {
+                "name": "notificationEncoder",
+                "comment": " Encode a `Notification`.\n",
+                "type": "Gab.Types.Notification -> Json.Encode.Value"
+            },
+            {
+                "name": "notificationTypeDecoder",
+                "comment": " Decode a `NotificationType`.\n",
+                "type": "Json.Decode.Decoder Gab.Types.NotificationType"
+            },
+            {
+                "name": "notificationTypeEncoder",
+                "comment": " Encode a `NotificationType`.\n",
+                "type": "Gab.Types.NotificationType -> Json.Encode.Value"
+            },
+            {
+                "name": "notificationsLogDecoder",
+                "comment": " Decode a `NotificationsLog`.\n",
+                "type": "Json.Decode.Decoder Gab.Types.NotificationsLog"
+            },
+            {
+                "name": "notificationsLogEncoder",
+                "comment": " Encode a `NotificationsLog`.\n",
+                "type": "Gab.Types.NotificationsLog -> Json.Encode.Value"
+            },
+            {
+                "name": "postDecoder",
+                "comment": " Decode a `Post`.\n",
+                "type": "Json.Decode.Decoder Gab.Types.Post"
+            },
+            {
+                "name": "postEncoder",
+                "comment": " Encode a `Post`.\n",
+                "type": "Gab.Types.Post -> Json.Encode.Value"
+            },
+            {
+                "name": "postFormEncoder",
+                "comment": " Encode a `PostForm`. No decoder ever used, so none defined.\n",
+                "type": "Gab.Types.PostForm -> Json.Encode.Value"
+            },
+            {
+                "name": "postListDecoder",
+                "comment": " Decode a `PostList`.\n",
+                "type": "Json.Decode.Decoder Gab.Types.PostList"
+            },
+            {
+                "name": "postListEncoder",
+                "comment": " Encode a `PostList`.\n",
+                "type": "Gab.Types.PostList -> Json.Encode.Value"
+            },
+            {
+                "name": "savedTokenDecoder",
+                "comment": " Decode a persistent token.\n",
+                "type": "Json.Decode.Decoder Gab.Types.SavedToken"
+            },
+            {
+                "name": "savedTokenEncoder",
+                "comment": " Encode a persistent token.\n",
+                "type": "Gab.Types.SavedToken -> Json.Encode.Value"
+            },
+            {
+                "name": "successDecoder",
+                "comment": " Decode a successful completion object.\n\nReturned from operations with nothing else of use to report.\n\n",
+                "type": "Json.Decode.Decoder Gab.Types.Success"
+            },
+            {
+                "name": "successEncoder",
+                "comment": " Encode a successful completion object.\n\nReturned from operations with nothing else of use to report.\n\n",
+                "type": "Gab.Types.Success -> Json.Encode.Value"
+            },
+            {
+                "name": "userDecoder",
+                "comment": " Decode a `User`.\n",
+                "type": "Json.Decode.Decoder Gab.Types.User"
+            },
+            {
+                "name": "userEncoder",
+                "comment": " Encode a `User`.\n",
+                "type": "Gab.Types.User -> Json.Encode.Value"
+            },
+            {
+                "name": "userListDecoder",
+                "comment": " Decode a list of `User`s.\n",
+                "type": "Json.Decode.Decoder Gab.Types.UserList"
+            },
+            {
+                "name": "userListEncoder",
+                "comment": " Encode a list of `User`s.\n",
+                "type": "Gab.Types.UserList -> Json.Encode.Value"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Gab.Types",
+        "comment": " Shared Types for the Gab API.\n\n\n# Http Requests\n\n@docs RequestParts, HttpBody\n\n\n# Http Results\n\n@docs PostResult, PostResultState\n\n\n# Users\n\n@docs User, UserList\n\n\n# Activity Logs\n\n@docs ActivityLog, ActivityLogList\n\n\n# Notifications\n\n@docs NotificationType, NotificationsLog, Notification\n\n\n# Posts\n\n@docs Post, PostList\n@docs Embed, CategoryDetails, Group, Topic, RelatedPosts\n\n\n# Attachments\n\n@docs Attachment, UrlRecord, MediaRecord, UnknownAttachmentRecord\n\n\n# Creating a new post\n\n@docs PostForm\n\n\n# Returned from operations that have no useful data except successful completion.\n\n@docs Success\n\n\n# Persistent tokens\n\n@docs SavedToken\n\n",
+        "unions": [
+            {
+                "name": "Attachment",
+                "comment": " Attachment to a `Post`.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NoAttachment",
+                        []
+                    ],
+                    [
+                        "UrlAttachment",
+                        [
+                            "Gab.Types.UrlRecord"
+                        ]
+                    ],
+                    [
+                        "MediaAttachment",
+                        [
+                            "List.List Gab.Types.MediaRecord"
+                        ]
+                    ],
+                    [
+                        "YoutubeAttachment",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "GiphyAttachment",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "UnknownAttachment",
+                        [
+                            "Gab.Types.UnknownAttachmentRecord"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "HttpBody",
+                "comment": " A custom type for request bodies.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "EmptyBody",
+                        []
+                    ],
+                    [
+                        "JsonBody",
+                        [
+                            "Json.Encode.Value"
+                        ]
+                    ],
+                    [
+                        "StringBody",
+                        [
+                            "String.String",
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "FileBody",
+                        [
+                            "File.File"
+                        ]
+                    ],
+                    [
+                        "OtherBody",
+                        [
+                            "Http.Body"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "NotificationType",
+                "comment": " The type of a notification.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "LikeNotification",
+                        []
+                    ],
+                    [
+                        "RepostNotification",
+                        []
+                    ],
+                    [
+                        "FollowNotification",
+                        []
+                    ],
+                    [
+                        "MentionNotification",
+                        []
+                    ],
+                    [
+                        "UnknownNotification",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "PostResultState",
+                "comment": " The value of `PostResult.state` for a successful operation.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "UnknownState",
+                        []
+                    ],
+                    [
+                        "SuccessState",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "RelatedPosts",
+                "comment": " Part of a `Post`.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "RelatedPosts",
+                        [
+                            "{ parent : Maybe.Maybe Gab.Types.Post, replies : Gab.Types.PostList }"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "ActivityLog",
+                "comment": " One element of the list returned from the feed reading functions.\n",
+                "args": [],
+                "type": "{ id : String.String, published_at : String.String, type_ : String.String, actuser : Gab.Types.User, post : Gab.Types.Post }"
+            },
+            {
+                "name": "ActivityLogList",
+                "comment": " A list of `ActivityLog` instances.\n",
+                "args": [],
+                "type": "{ data : List.List Gab.Types.ActivityLog, no_more : Basics.Bool }"
+            },
+            {
+                "name": "CategoryDetails",
+                "comment": " Category details in a `Post`.\n",
+                "args": [],
+                "type": "{ title : String.String, slug : String.String, value : Basics.Int, emoji : String.String }"
+            },
+            {
+                "name": "Embed",
+                "comment": " Embed in a `Post`.\n",
+                "args": [],
+                "type": "{ html : String.String, iframe : Basics.Bool }"
+            },
+            {
+                "name": "Group",
+                "comment": " Group description for a Post.\n",
+                "args": [],
+                "type": "{ id : String.String, title : String.String, pinned_post_id : String.String, cover_url : String.String, description : String.String, is_private : Basics.Bool, is_joined : Basics.Bool }"
+            },
+            {
+                "name": "MediaRecord",
+                "comment": " Details for a `MediaAttachment`.\n",
+                "args": [],
+                "type": "{ id : String.String, url_thumbnail : String.String, url_full : String.String, width : Basics.Int, height : Basics.Int }"
+            },
+            {
+                "name": "Notification",
+                "comment": " A single notification.\n",
+                "args": [],
+                "type": "{ id : String.String, created_at : String.String, url : String.String, type_ : Gab.Types.NotificationType, message : String.String, read : Basics.Bool, post : Maybe.Maybe Gab.Types.Post, actuser : Gab.Types.User }"
+            },
+            {
+                "name": "NotificationsLog",
+                "comment": " The result from `Gab.notifications`\n",
+                "args": [],
+                "type": "{ data : List.List Gab.Types.Notification, no_more : Basics.Bool }"
+            },
+            {
+                "name": "Post",
+                "comment": " One post returned from one of the feed reader functions.\n",
+                "args": [],
+                "type": "{ id : String.String, created_at : String.String, revised_at : Maybe.Maybe String.String, edited : Basics.Bool, body : String.String, body_html : Maybe.Maybe String.String, body_html_summary : Maybe.Maybe String.String, body_html_summary_truncated : Basics.Bool, only_emoji : Basics.Bool, liked : Basics.Bool, disliked : Basics.Bool, bookmarked : Basics.Bool, repost : Basics.Bool, reported : Basics.Bool, score : Basics.Int, like_count : Basics.Int, dislike_count : Basics.Int, reply_count : Basics.Int, repost_count : Basics.Int, is_quote : Basics.Bool, is_reply : Basics.Bool, is_replies_disabled : Basics.Bool, embed : Maybe.Maybe Gab.Types.Embed, attachment : Gab.Types.Attachment, category : Maybe.Maybe Basics.Int, category_details : Maybe.Maybe Gab.Types.CategoryDetails, language : Maybe.Maybe String.String, nsfw : Basics.Bool, is_premium : Basics.Bool, is_locked : Basics.Bool, user : Gab.Types.User, group : Maybe.Maybe Gab.Types.Group, topic : Maybe.Maybe Gab.Types.Topic, related : Gab.Types.RelatedPosts }"
+            },
+            {
+                "name": "PostForm",
+                "comment": " Creating a new post\n",
+                "args": [],
+                "type": "{ body : String.String, reply_to : Maybe.Maybe String.String, is_quote : Basics.Bool, is_html : Basics.Bool, nsfw : Basics.Bool, is_premium : Basics.Bool, gif : Maybe.Maybe String.String, topic : Maybe.Maybe String.String, group : Maybe.Maybe String.String, media_attachments : List.List String.String, premium_min_tier : Maybe.Maybe Basics.Int, poll : Basics.Bool, poll_option_1 : Maybe.Maybe String.String, poll_option_2 : Maybe.Maybe String.String, poll_option_3 : Maybe.Maybe String.String, poll_option_4 : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "PostList",
+                "comment": " A list of `Post` instances.\n",
+                "args": [],
+                "type": "List.List Gab.Types.Post"
+            },
+            {
+                "name": "PostResult",
+                "comment": " Returned from the Post and Delete actions\n",
+                "args": [],
+                "type": "{ state : Gab.Types.PostResultState, message : String.String }"
+            },
+            {
+                "name": "RequestParts",
+                "comment": " Names the argument to `Http.request` with `HttpBody`.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ method : String.String, headers : List.List Http.Header, url : String.String, body : Gab.Types.HttpBody, expect : Http.Expect msg, timeout : Maybe.Maybe Basics.Float, tracker : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "SavedToken",
+                "comment": " Persistent form of an `OAuthMiddleware.ResponseToken`.\n\nUse `Gab.savedTokenFromResponseToken` to make one of these.\n\n",
+                "args": [],
+                "type": "{ expiresAt : Maybe.Maybe Basics.Int, refreshToken : Maybe.Maybe OAuth.Token, scope : List.List String.String, token : OAuth.Token }"
+            },
+            {
+                "name": "Success",
+                "comment": " Returned from `upvotePost`, `downvotePost`, `follow`, `mute`.\n",
+                "args": [],
+                "type": "{ state : Basics.Bool, message : String.String }"
+            },
+            {
+                "name": "Topic",
+                "comment": " The topic of a `Post`.\n",
+                "args": [],
+                "type": "{ id : String.String, created_at : String.String, is_featured : Basics.Bool, title : String.String, category : Basics.Int, user : Maybe.Maybe Gab.Types.User }"
+            },
+            {
+                "name": "UnknownAttachmentRecord",
+                "comment": " Data about an `UnknownAttachment`.\n",
+                "args": [],
+                "type": "{ type_ : String.String, value : Json.Encode.Value }"
+            },
+            {
+                "name": "UrlRecord",
+                "comment": " Details of a `UrlAttachment`.\n",
+                "args": [],
+                "type": "{ image : String.String, title : Maybe.Maybe String.String, description : Maybe.Maybe String.String, url : String.String, source : String.String }"
+            },
+            {
+                "name": "User",
+                "comment": " Details of a Gab user.\n",
+                "args": [],
+                "type": "{ id : String.String, name : String.String, username : String.String, picture_url : String.String, verified : Basics.Bool, is_pro : Basics.Bool, is_donor : Basics.Bool, is_investor : Basics.Bool, is_premium : Basics.Bool, is_private : Basics.Bool, is_tippable : Basics.Bool, is_accessible : Basics.Bool, created_at_month_label : Maybe.Maybe String.String, follower_count : Maybe.Maybe Basics.Int, following_count : Maybe.Maybe Basics.Int, post_count : Maybe.Maybe Basics.Int, picture_url_full : Maybe.Maybe String.String, following : Basics.Bool, followed : Basics.Bool, premium_price : Maybe.Maybe Basics.Float, follow_pending : Basics.Bool, unread_notification_count : Maybe.Maybe Basics.Int, stream : Basics.Bool, bio : Maybe.Maybe String.String, cover_url : Maybe.Maybe String.String, show_replies : Basics.Bool, sound_alerts : Basics.Bool, email : Maybe.Maybe String.String, notify_followers : Basics.Bool, notify_mentions : Basics.Bool, notify_likes : Basics.Bool, notify_reposts : Basics.Bool, broadcast_channel : Maybe.Maybe String.String, exclusive_features : Basics.Bool, social_facebook : Basics.Bool, social_twitter : Basics.Bool, is_pro_overdue : Basics.Bool, pro_expires_at : Maybe.Maybe String.String, has_chat : Basics.Bool, has_chat_unread : Basics.Bool, germany_law : Basics.Bool, language : Maybe.Maybe String.String, pinned_post_id : Maybe.Maybe String.String, nsfw_filter : Basics.Bool, hide_premium_content : Basics.Bool, score : Maybe.Maybe Basics.Int, video_count : Maybe.Maybe Basics.Int, is_favorited : Basics.Bool, subscribing : Basics.Bool, is_muted : Basics.Bool, can_downvote : Basics.Bool }"
+            },
+            {
+                "name": "UserList",
+                "comment": " A list of `User` records.\n",
+                "args": [],
+                "type": "{ data : List.List Gab.Types.User, no_more : Basics.Bool }"
+            }
+        ],
+        "values": [],
+        "binops": []
+    }
+]

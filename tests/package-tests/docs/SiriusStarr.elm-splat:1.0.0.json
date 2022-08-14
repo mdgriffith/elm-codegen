@@ -1,0 +1,51 @@
+[
+    {
+        "name": "Splat",
+        "comment": " This package provides functions analogous to the \"splat\" operator in other\nlanguages, unpacking list elements into function arguments. All arguments must\nbe of the same type, given that lists cannot contain disparate types.\n\n\n# Functions\n\n@docs splat2, splat3, splat4, splat5, splat6, splat7, splat8, splat9\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "splat2",
+                "comment": " Unpack the first 2 elements of a list as function arguments. Returns the\nresult as `Maybe`, with `Nothing` if the list is shorter than 2 elements or\n`Just result` if the list could be unpacked successfully. If the function\ntakes more than 2 arguments, the result will be a partially applied form of the\nfunction wrapped in `Just`.\n\n    splat2 String.append [ \"butter\", \"fly\" ] == Just \"butterfly\"\n\n",
+                "type": "(a -> a -> b) -> List.List a -> Maybe.Maybe b"
+            },
+            {
+                "name": "splat3",
+                "comment": " Unpack the first 3 elements of a list as function arguments. Returns the\nresult as `Maybe`, with `Nothing` if the list is shorter than 3 elements or\n`Just result` if the list could be unpacked successfully. If the function\ntakes more than 3 arguments, the result will be a partially applied form of the\nfunction wrapped in `Just`.\n\n    splat3 String.replace [ \",\", \"/\", \"a,b,c,d,e\" ] == Just \"a/b/c/d/e\"\n\n",
+                "type": "(a -> a -> a -> b) -> List.List a -> Maybe.Maybe b"
+            },
+            {
+                "name": "splat4",
+                "comment": " Unpack the first 4 elements of a list as function arguments. Returns the\nresult as `Maybe`, with `Nothing` if the list is shorter than 4 elements or\n`Just result` if the list could be unpacked successfully. If the function\ntakes more than 4 arguments, the result will be a partially applied form of the\nfunction wrapped in `Just`.\n",
+                "type": "(a -> a -> a -> a -> b) -> List.List a -> Maybe.Maybe b"
+            },
+            {
+                "name": "splat5",
+                "comment": " Unpack the first 5 elements of a list as function arguments. Returns the\nresult as `Maybe`, with `Nothing` if the list is shorter than 5 elements or\n`Just result` if the list could be unpacked successfully. If the function\ntakes more than 5 arguments, the result will be a partially applied form of the\nfunction wrapped in `Just`.\n",
+                "type": "(a -> a -> a -> a -> a -> b) -> List.List a -> Maybe.Maybe b"
+            },
+            {
+                "name": "splat6",
+                "comment": " Unpack the first 6 elements of a list as function arguments. Returns the\nresult as `Maybe`, with `Nothing` if the list is shorter than 6 elements or\n`Just result` if the list could be unpacked successfully. If the function\ntakes more than 6 arguments, the result will be a partially applied form of the\nfunction wrapped in `Just`.\n",
+                "type": "(a -> a -> a -> a -> a -> a -> b) -> List.List a -> Maybe.Maybe b"
+            },
+            {
+                "name": "splat7",
+                "comment": " Unpack the first 7 elements of a list as function arguments. Returns the\nresult as `Maybe`, with `Nothing` if the list is shorter than 7 elements or\n`Just result` if the list could be unpacked successfully. If the function\ntakes more than 7 arguments, the result will be a partially applied form of the\nfunction wrapped in `Just`.\n",
+                "type": "(a -> a -> a -> a -> a -> a -> a -> b) -> List.List a -> Maybe.Maybe b"
+            },
+            {
+                "name": "splat8",
+                "comment": " Unpack the first 8 elements of a list as function arguments. Returns the\nresult as `Maybe`, with `Nothing` if the list is shorter than 8 elements or\n`Just result` if the list could be unpacked successfully. If the function\ntakes more than 8 arguments, the result will be a partially applied form of the\nfunction wrapped in `Just`.\n",
+                "type": "(a -> a -> a -> a -> a -> a -> a -> a -> b) -> List.List a -> Maybe.Maybe b"
+            },
+            {
+                "name": "splat9",
+                "comment": " Unpack the first 9 elements of a list as function arguments. Returns the\nresult as `Maybe`, with `Nothing` if the list is shorter than 9 elements or\n`Just result` if the list could be unpacked successfully. If the function\ntakes more than 9 arguments, the result will be a partially applied form of the\nfunction wrapped in `Just`.\n",
+                "type": "(a -> a -> a -> a -> a -> a -> a -> a -> a -> b) -> List.List a -> Maybe.Maybe b"
+            }
+        ],
+        "binops": []
+    }
+]

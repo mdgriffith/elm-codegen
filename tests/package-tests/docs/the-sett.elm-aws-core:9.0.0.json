@@ -1,0 +1,770 @@
+[
+    {
+        "name": "AWS.Config",
+        "comment": " A configuration for a service can be built directly, or by using the helper\nfunctions for convenience.\n\nTo build an AWS service configuration directly:\n\n    { endpointPrefix = \"lambda\"\n    , apiVersion = \"2015-03-31\"\n    , protocol = AWS.Config.REST_JSON\n    , signer = AWS.Config.SignV4\n    , endpoint = RegionalEndpoint \"us-east-1\"\n    , jsonVersion = Nothing\n    , signingName = Nothing\n    , xmlNamespace = Nothing\n    , timestampFormat = Nothing\n    , targetPrefix = Nothing\n    }\n\nThe same thing with the convenience functions would look like:\n\n    AWS.Service.defineRegional\n        \"lambda\"\n        \"2015-03-31\"\n        AWS.Config.REST_JSON\n        AWS.Config.SignV4\n        \"us-east-1\"\n\nIn some of the comments below you will see 'API metadata' mentioned. AWS\npublishes a set of JSON files containing metadata describing each of its services,\nand this is what is being referred to. You can find this metadata here:\n\n<https://github.com/aws/aws-sdk-js/tree/master/apis>\n\n\n# Service configuration.\n\n@docs ServiceConfig\n@docs ApiVersion, Protocol, Signer, TimestampFormat, Region, Endpoint\n\n\n# Convenience functions to help with service configuration.\n\n@docs defineGlobal, defineRegional\n@docs withJsonVersion, withSigningName, withTargetPrefix, withTimestampFormat, withXmlNamespace\n\n",
+        "unions": [
+            {
+                "name": "Endpoint",
+                "comment": " Defines an AWS service endpoint.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "GlobalEndpoint",
+                        []
+                    ],
+                    [
+                        "RegionalEndpoint",
+                        [
+                            "AWS.Config.Region"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Protocol",
+                "comment": " Defines the different protocols that AWS services can use.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "EC2",
+                        []
+                    ],
+                    [
+                        "JSON",
+                        []
+                    ],
+                    [
+                        "QUERY",
+                        []
+                    ],
+                    [
+                        "REST_JSON",
+                        []
+                    ],
+                    [
+                        "REST_XML",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Signer",
+                "comment": " Defines the different signing schemes that AWS services can use.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "SignV4",
+                        []
+                    ],
+                    [
+                        "SignS3",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "TimestampFormat",
+                "comment": " Defines the different timestamp formats that AWS services can use.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "ISO8601",
+                        []
+                    ],
+                    [
+                        "RFC822",
+                        []
+                    ],
+                    [
+                        "UnixTimestamp",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "ApiVersion",
+                "comment": " Version of a service.\n",
+                "args": [],
+                "type": "String.String"
+            },
+            {
+                "name": "Region",
+                "comment": " An AWS region string.\n\nFor example `\"us-east-1\"`.\n\n",
+                "args": [],
+                "type": "String.String"
+            },
+            {
+                "name": "ServiceConfig",
+                "comment": " Configures an AWS service.\n\nNote that `timestampFormat` defaults to `UnixTimestamp` for JSON and REST\\_JSON based\nservices and `ISO8601` for other services. Specifying `Nothing` will use the correct\ndefault, unless it is set to something different in the API metadata.\n\nAlso note that `targetPrefix` will default to AWS ++ prefix ++ (apiVersion with the\n'-' characters removed). This only needs to be set to a different value if it differs\nin the API metadata.\n\n",
+                "args": [],
+                "type": "{ endpointPrefix : String.String, apiVersion : AWS.Config.ApiVersion, protocol : AWS.Config.Protocol, signer : AWS.Config.Signer, endpoint : AWS.Config.Endpoint, jsonVersion : Maybe.Maybe String.String, signingName : Maybe.Maybe String.String, xmlNamespace : Maybe.Maybe String.String, timestampFormat : Maybe.Maybe AWS.Config.TimestampFormat, targetPrefix : Maybe.Maybe String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defineGlobal",
+                "comment": " Creates a global service definition.\n",
+                "type": "String.String -> AWS.Config.ApiVersion -> AWS.Config.Protocol -> AWS.Config.Signer -> AWS.Config.ServiceConfig"
+            },
+            {
+                "name": "defineRegional",
+                "comment": " Creates a regional service definition.\n",
+                "type": "String.String -> AWS.Config.ApiVersion -> AWS.Config.Protocol -> AWS.Config.Signer -> AWS.Config.Region -> AWS.Config.ServiceConfig"
+            },
+            {
+                "name": "withJsonVersion",
+                "comment": " Set the JSON apiVersion.\n\nUse this if `jsonVersion` is provided in the API metadata.\n\n",
+                "type": "String.String -> AWS.Config.ServiceConfig -> AWS.Config.ServiceConfig"
+            },
+            {
+                "name": "withSigningName",
+                "comment": " Set the signing name for the service.\n\nUse this if `signingName` is provided in the API metadata.\n\n",
+                "type": "String.String -> AWS.Config.ServiceConfig -> AWS.Config.ServiceConfig"
+            },
+            {
+                "name": "withTargetPrefix",
+                "comment": " Set the target prefix for the service.\n\nUse this if `targetPrefix` is provided in the API metadata.\n\nNote that `targetPrefix` will default to AWS ++ prefix ++ (apiVersion with the\n'-' characters removed). This only needs to be set to a different value if it differs\nin the API metadata.\n\n",
+                "type": "String.String -> AWS.Config.ServiceConfig -> AWS.Config.ServiceConfig"
+            },
+            {
+                "name": "withTimestampFormat",
+                "comment": " Set the timestamp format for the service.\n\nUse this if `timestampFormat` is provided in the API metadata.\n\nNote that `timestampFormat` defaults to `UnixTimestamp` for JSON and REST\\_JSON based\nservices and `ISO8601` for other services. Specifying `Nothing` will use the correct\ndefault, unless it is set to something different in the API metadata.\n\n",
+                "type": "AWS.Config.TimestampFormat -> AWS.Config.ServiceConfig -> AWS.Config.ServiceConfig"
+            },
+            {
+                "name": "withXmlNamespace",
+                "comment": " Set the XML namespace for the service.\n\nUse this if `xmlNamespace` is provided in the API metadata.\n\n",
+                "type": "String.String -> AWS.Config.ServiceConfig -> AWS.Config.ServiceConfig"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "AWS.Credentials",
+        "comment": " A set of AWS credentials consists of an acces key id, a secret access key\nand an optional session token.\n\nNote that credentials are sensitive and should not be bundled with web\napplications; it is a simple matter to extract them if they are. If your Elm\ncode is running inside a Lambda function, this may not be a concern. If you Elm\ncode is running in a browser it is definitely a security concern. If you are\nlooking for a way to obtain credentials through user sign in against AWS Congito,\nthis authentication package will do that:\n\n<https://package.elm-lang.org/packages/the-sett/elm-auth-aws/latest/>\n\n@docs Credentials, AccessKeyId, SecretAccessKey\n@docs fromAccessKeys, withSessionToken\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "AccessKeyId",
+                "comment": " The AWS access key ID.\n",
+                "args": [],
+                "type": "String.String"
+            },
+            {
+                "name": "Credentials",
+                "comment": " Holds AWS credentials.\n",
+                "args": [],
+                "type": "{ accessKeyId : String.String, secretAccessKey : String.String, sessionToken : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "SecretAccessKey",
+                "comment": " The AWS secret access key.\n",
+                "args": [],
+                "type": "String.String"
+            }
+        ],
+        "values": [
+            {
+                "name": "fromAccessKeys",
+                "comment": " Create AWS credentials given an access key and secret key.\n",
+                "type": "AWS.Credentials.AccessKeyId -> AWS.Credentials.SecretAccessKey -> AWS.Credentials.Credentials"
+            },
+            {
+                "name": "withSessionToken",
+                "comment": " Sets the session token.\n",
+                "type": "String.String -> AWS.Credentials.Credentials -> AWS.Credentials.Credentials"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "AWS.Http",
+        "comment": " Handling of HTTP requests to AWS Services.\n\n\n# Tasks for sending requests to AWS.\n\n@docs send, sendUnsigned\n\n\n# Build a Request\n\n@docs Method, Path, Request\n@docs request\n\n\n# Build the HTTP Body of a Request\n\n@docs Body, MimeType\n@docs emptyBody, stringBody, jsonBody\n\n\n# Add headers or query parameters to a Request\n\n@docs addHeaders, addQuery\n\n\n# Build decoders to interpret the response.\n\n@docs ResponseDecoder\n@docs fullDecoder, jsonFullDecoder, stringBodyDecoder, jsonBodyDecoder, constantDecoder\n\n\n# HTTP and Application level errors\n\n@docs Error, AWSAppError, awsAppErrDecoder, neverAppErrDecoder\n\n",
+        "unions": [
+            {
+                "name": "Error",
+                "comment": " The HTTP calls made to AWS can produce errors in two ways. The first is the\nnormal `Http.Error` responses. The second is an error message at the application\nlevel from one of the AWS service endpoints.\n\nOnly some endpoints can produce application level errors, in which case their error\ntype can be given as `Never`.\n\n",
+                "args": [
+                    "err"
+                ],
+                "cases": [
+                    [
+                        "HttpError",
+                        [
+                            "Http.Error"
+                        ]
+                    ],
+                    [
+                        "AWSError",
+                        [
+                            "err"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Method",
+                "comment": " HTTP request methods.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "DELETE",
+                        []
+                    ],
+                    [
+                        "GET",
+                        []
+                    ],
+                    [
+                        "HEAD",
+                        []
+                    ],
+                    [
+                        "OPTIONS",
+                        []
+                    ],
+                    [
+                        "POST",
+                        []
+                    ],
+                    [
+                        "PUT",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "AWSAppError",
+                "comment": " AWS application level errors consist of a 'type' giving the name of an 'exception'\nand possibly a message string.\n",
+                "args": [],
+                "type": "{ type_ : String.String, message : Maybe.Maybe String.String, statusCode : Basics.Int }"
+            },
+            {
+                "name": "Body",
+                "comment": " Holds a request body.\n",
+                "args": [],
+                "type": "AWS.Internal.Body.Body"
+            },
+            {
+                "name": "MimeType",
+                "comment": " MIME type.\n\nSee <https://en.wikipedia.org/wiki/Media_type>\n\n",
+                "args": [],
+                "type": "String.String"
+            },
+            {
+                "name": "Path",
+                "comment": " Request path.\n",
+                "args": [],
+                "type": "String.String"
+            },
+            {
+                "name": "Request",
+                "comment": " Holds an unsigned AWS HTTP request.\n",
+                "args": [
+                    "err",
+                    "a"
+                ],
+                "type": "AWS.Internal.Request.Request err a"
+            },
+            {
+                "name": "ResponseDecoder",
+                "comment": " Decoders that interpret responses.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "AWS.Internal.Request.ResponseDecoder a"
+            }
+        ],
+        "values": [
+            {
+                "name": "addHeaders",
+                "comment": " Appends headers to an AWS HTTP unsigned request.\n\nSee the `AWS.KVEncode` for encoder functions to build the headers with.\n\n",
+                "type": "List.List ( String.String, String.String ) -> AWS.Http.Request err a -> AWS.Http.Request err a"
+            },
+            {
+                "name": "addQuery",
+                "comment": " Appends query arguments to an AWS HTTP unsigned request.\n\nSee the `AWS.KVEncode` for encoder functions to build the query parameters with.\n\n",
+                "type": "List.List ( String.String, String.String ) -> AWS.Http.Request err a -> AWS.Http.Request err a"
+            },
+            {
+                "name": "awsAppErrDecoder",
+                "comment": " The default decoder for the standard AWS application level errors.\n\nUse this, or define your own decoder to interpret these errors.\n\n",
+                "type": "Http.Metadata -> String.String -> Result.Result String.String AWS.Http.AWSAppError"
+            },
+            {
+                "name": "constantDecoder",
+                "comment": " Not all AWS service produce a response that contains useful information.\n\nThe `constantDecoder` is helpful in those situations and just produces whatever\nvalue you give it once AWS has responded.\n\nNote that this decoder is only used when the response is Http.GoodStatus\\_. An\nHttp.BadStatus\\_ is always mapped to Http.BadStatus without attempting to decode\nthe body. If you need to handle things that Elm HTTP regards as BadStatus\\_, use\none of the 'full' decoders.\n\n",
+                "type": "a -> AWS.Http.ResponseDecoder a"
+            },
+            {
+                "name": "emptyBody",
+                "comment": " Create an empty body.\n",
+                "type": "AWS.Http.Body"
+            },
+            {
+                "name": "fullDecoder",
+                "comment": " A full decoder for the response that can look at the status code, metadata\nincluding headers and so on. The body is presented as a `String` for parsing.\n\nIt is possible to report an error as a String when interpreting the response, and\nthis will be mapped onto `Http.BadBody` when present.\n\n",
+                "type": "(Http.Metadata -> String.String -> Result.Result String.String a) -> AWS.Http.ResponseDecoder a"
+            },
+            {
+                "name": "jsonBody",
+                "comment": " Create a body containing a JSON value.\n\nThis will automatically add the `Content-Type: application/json` header.\n\n",
+                "type": "Json.Encode.Value -> AWS.Http.Body"
+            },
+            {
+                "name": "jsonBodyDecoder",
+                "comment": " A decoder for the response that uses only the body presented as a JSON `Value`\nfor decoding.\n\nAny decoder error is mapped onto `Http.BadBody` as a `String` when present using\n`Decode.errorToString`.\n\nNote that this decoder is only used when the response is Http.GoodStatus\\_. An\nHttp.BadStatus\\_ is always mapped to Http.BadStatus without attempting to decode\nthe body. If you need to handle things that Elm HTTP regards as BadStatus\\_, use\none of the 'full' decoders.\n\n",
+                "type": "Json.Decode.Decoder a -> AWS.Http.ResponseDecoder a"
+            },
+            {
+                "name": "jsonFullDecoder",
+                "comment": " A full JSON decoder for the response that can look at the status code, metadata\nincluding headers and so on. The body is presented as a JSON `Value` for decoding.\n\nAny decoder error is mapped onto `Http.BadBody` as a `String` when present using\n`Decode.errorToString`.\n\n",
+                "type": "(Http.Metadata -> Json.Decode.Decoder a) -> AWS.Http.ResponseDecoder a"
+            },
+            {
+                "name": "neverAppErrDecoder",
+                "comment": " The never error decoder for AWS endpoints that are not expected to produce\nany application level errors.\n\nIf this decoder were to be called, it will simply return the body undecoded as\nan error and this should be mapped onto Http.BadBody.\n\n",
+                "type": "Http.Metadata -> String.String -> Result.Result String.String Basics.Never"
+            },
+            {
+                "name": "request",
+                "comment": " Creates an unsigned HTTP request to an AWS service.\n",
+                "type": "String.String -> AWS.Http.Method -> AWS.Http.Path -> AWS.Http.Body -> AWS.Http.ResponseDecoder a -> AWS.Internal.Request.ErrorDecoder err -> AWS.Http.Request err a"
+            },
+            {
+                "name": "send",
+                "comment": " Signs and sends a `Request` to a `Service`.\n",
+                "type": "AWS.Internal.Service.Service -> AWS.Credentials.Credentials -> AWS.Http.Request err a -> Task.Task (AWS.Http.Error err) a"
+            },
+            {
+                "name": "sendUnsigned",
+                "comment": " Sends a `Request` to a `Service` without signing it.\n",
+                "type": "AWS.Internal.Service.Service -> AWS.Http.Request err a -> Task.Task (AWS.Http.Error err) a"
+            },
+            {
+                "name": "stringBody",
+                "comment": " Create a body with a custom MIME type and the given string as content.\n\n    stringBody \"text/html\" \"<html><body><h1>Hello</h1></body></html>\"\n\n",
+                "type": "AWS.Http.MimeType -> String.String -> AWS.Http.Body"
+            },
+            {
+                "name": "stringBodyDecoder",
+                "comment": " A decoder for the response that uses only the body presented as a `String`\nfor parsing.\n\nIt is possible to report an error as a String when interpreting the response, and\nthis will be mapped onto `Http.BadBody` when present.\n\nNote that this decoder is only used when the response is Http.GoodStatus\\_. An\nHttp.BadStatus\\_ is always mapped to Http.BadStatus without attempting to decode\nthe body. If you need to handle things that Elm HTTP regards as BadStatus\\_, use\none of the 'full' decoders.\n\n",
+                "type": "(String.String -> Result.Result String.String a) -> AWS.Http.ResponseDecoder a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "AWS.KVDecode",
+        "comment": " KVDecode provides decoders to interpret lists of `(String, String)` into some\nElm type.\n\nKVDecode is a counter-part to `AWS.KVEncode` but it has a cut down API. In\nparticular there is no scheme to number items into lists, or to nest field names\ninside each other - only simple field names and a simple values are supported.\nThe reason for this is that AWS services may return values in header fields,\nbut only do this for relatively simple data models compared with the way in\nwhich more complex encodings can be used to pass in arguments.\n\n\n# Key-Value decoders.\n\n@docs KVDecoder\n@docs decodeKVPairs\n\n\n# Simple values.\n\n@docs string, bool, int, float\n\n\n# Succeed or fail.\n\n@docs succeed, fail\n\n\n# Mapping over Key-Value decoders.\n\n@docs map, andThen\n\n\n# Decoding into records.\n\nThe term 'object' is used as the convention has been established by\n`miniBill/elm-codec`.\n\n@docs ObjectDecoder, object, field, optional, buildObject\n\n\n# Error reporting when decoding fails.\n\n@docs Error, errorToString\n\n",
+        "unions": [
+            {
+                "name": "Error",
+                "comment": " Describes the possible ways the Key-Value decoding can fail.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Failure",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "FailureWithVal",
+                        [
+                            "String.String",
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "MissingField",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "KVDecoder",
+                "comment": " The type of Key-Value decoders.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            },
+            {
+                "name": "ObjectDecoder",
+                "comment": " A decoder of fields of named records.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "andThen",
+                "comment": " Create decoders that depend on previous results.\n",
+                "type": "(a -> AWS.KVDecode.KVDecoder b) -> AWS.KVDecode.KVDecoder a -> AWS.KVDecode.KVDecoder b"
+            },
+            {
+                "name": "bool",
+                "comment": " Decodes a `Bool`value from \"true\" or \"false\".\n",
+                "type": "AWS.KVDecode.KVDecoder Basics.Bool"
+            },
+            {
+                "name": "buildObject",
+                "comment": " Turns an `ObjectDecoder` into a `KVDecoder`.\n",
+                "type": "AWS.KVDecode.ObjectDecoder a -> AWS.KVDecode.KVDecoder a"
+            },
+            {
+                "name": "decodeKVPairs",
+                "comment": " Parses a list of Key-Value pairs as a strings into the Elm type described\nby the decoder.\n\nErrors may result if the decoder fails to match the data.\n\n",
+                "type": "AWS.KVDecode.KVDecoder a -> Dict.Dict String.String String.String -> Result.Result AWS.KVDecode.Error a"
+            },
+            {
+                "name": "errorToString",
+                "comment": " Converts an `Error` to `String` describing the error.\n",
+                "type": "AWS.KVDecode.Error -> String.String"
+            },
+            {
+                "name": "fail",
+                "comment": " Make the decoder fail with the specified error message.\n",
+                "type": "String.String -> AWS.KVDecode.KVDecoder a"
+            },
+            {
+                "name": "field",
+                "comment": " Adds a mandatory field to an `ObjectDecoder`.\n",
+                "type": "String.String -> AWS.KVDecode.KVDecoder f -> AWS.KVDecode.ObjectDecoder (f -> a) -> AWS.KVDecode.ObjectDecoder a"
+            },
+            {
+                "name": "float",
+                "comment": " Decodes an `Float` value from a `String` or fails if the string is not a\nnumber.\n",
+                "type": "AWS.KVDecode.KVDecoder Basics.Float"
+            },
+            {
+                "name": "int",
+                "comment": " Decodes an `Int` value from a `String` or fails if the string is not an\ninteger.\n",
+                "type": "AWS.KVDecode.KVDecoder Basics.Int"
+            },
+            {
+                "name": "map",
+                "comment": " Maps over `KVDecoder`\n",
+                "type": "(a -> value) -> AWS.KVDecode.KVDecoder a -> AWS.KVDecode.KVDecoder value"
+            },
+            {
+                "name": "object",
+                "comment": " Creates an object decoder from a record constructor.\n",
+                "type": "a -> AWS.KVDecode.ObjectDecoder a"
+            },
+            {
+                "name": "optional",
+                "comment": " Adds an optional field to an `ObjectDecoder`.\n",
+                "type": "String.String -> AWS.KVDecode.KVDecoder f -> AWS.KVDecode.ObjectDecoder (Maybe.Maybe f -> a) -> AWS.KVDecode.ObjectDecoder a"
+            },
+            {
+                "name": "string",
+                "comment": " Decodes a string value.\n",
+                "type": "AWS.KVDecode.KVDecoder String.String"
+            },
+            {
+                "name": "succeed",
+                "comment": " Succeed with a decoder for a specified value.\n",
+                "type": "a -> AWS.KVDecode.KVDecoder a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "AWS.KVEncode",
+        "comment": " KVEncode provides encoders to turn things into list of `(String, String)`\nwhich can be used to build headers or query parameters. The encoding is one that\nis accepted by many AWS services.\n\nWhen encoding records (or objects) the following scheme is used:\n\nA field with a simple value is encoded like this:\n\n    ( \"Field\", \"value\" )\n\nA field with a list of simple values is encoded like this:\n\n    [ ( \"Field.member.1\", \"value1\" )\n    , ( \"Field.member.2\", \"value2\" )\n    , ...\n    ]\n\nA field with a single object value is encoded like this:\n\n    [ ( \"Field.InnerField1\", \"innerValue1\" )\n    , ( \"Field.InnerField2\", \"innerValue2\" )\n    , ...\n    ]\n\nA field with a list of object values is encoded like this:\n\n    [ ( \"Field.member.1.InnerField1\", \"innerValue1\" )\n    , ( \"Field.member.1.InnerField2\", \"innerValue2\" )\n    , ...\n    ]\n\n\n# Sets of KV String tuples and their encoder.\n\n@docs KVPairs, KVField\n@docs encode\n\n\n# Encoders for simple types and collections.\n\n@docs int, float, string, bool\n@docs list, dict\n\n\n# Encoders for objects with optional fields.\n\n@docs field, optional, object\n\n",
+        "unions": [
+            {
+                "name": "KVField",
+                "comment": " A field of a record to be encoded in `(String, String)` form.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "KVPairs",
+                "comment": " Describes pairs of `(String, String)` tuples.\n\nNote that this data structure also allows values on their own with no keys for\nthe convenience of keeping this API in a similar shape to JSON encoders.\n\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "bool",
+                "comment": " Encodes an Bool as a String (\"true\" or \"false\") without a key.\n",
+                "type": "Basics.Bool -> AWS.KVEncode.KVPairs"
+            },
+            {
+                "name": "dict",
+                "comment": " Combines a Dict with an encoder for its values into a set of `KVPairs`.\n",
+                "type": "(a -> AWS.KVEncode.KVPairs) -> Dict.Dict String.String a -> AWS.KVEncode.KVPairs"
+            },
+            {
+                "name": "encode",
+                "comment": " Encodes a set of KV pairs into `List (String, String)` form.\n\nThe keys in the output may be compound to describe a path through objects and\narrays into some deeper data structure. The possible formats are described in\nthe module level documentation above.\n\nNote that only `KVPairs` that have keys are encoded by this. Simple values or\nlists do not have keys and will result in `[]` being returned. This only produces\na non-empty result if the top-level `KVPair` passed in, describes an object.\n\n",
+                "type": "AWS.KVEncode.KVPairs -> List.List ( String.String, String.String )"
+            },
+            {
+                "name": "field",
+                "comment": " Encodes a pair of `(String, a)` into `KVPairs`.\n",
+                "type": "(a -> AWS.KVEncode.KVPairs) -> ( String.String, a ) -> AWS.KVEncode.KVField"
+            },
+            {
+                "name": "float",
+                "comment": " Encodes a Float as a String without a key.\n",
+                "type": "Basics.Float -> AWS.KVEncode.KVPairs"
+            },
+            {
+                "name": "int",
+                "comment": " Encodes an Int as a String without a key.\n",
+                "type": "Basics.Int -> AWS.KVEncode.KVPairs"
+            },
+            {
+                "name": "list",
+                "comment": " Encodes a list of items as `KVPairs`.\n",
+                "type": "(a -> AWS.KVEncode.KVPairs) -> List.List a -> AWS.KVEncode.KVPairs"
+            },
+            {
+                "name": "object",
+                "comment": " Encodes a list of fields as an object.\n",
+                "type": "List.List AWS.KVEncode.KVField -> AWS.KVEncode.KVPairs"
+            },
+            {
+                "name": "optional",
+                "comment": " Encodes a pair of `(String, Maybe a)` into `KVPairs`.\n\nValues that are `Nothing` are not encoded in the output, they are skipped over.\n\n",
+                "type": "(a -> AWS.KVEncode.KVPairs) -> ( String.String, Maybe.Maybe a ) -> AWS.KVEncode.KVField"
+            },
+            {
+                "name": "string",
+                "comment": " Encodes a String without a key.\n",
+                "type": "String.String -> AWS.KVEncode.KVPairs"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "AWS.Service",
+        "comment": " Build an AWS service definition from its configuration.\n\nUse the `AWS.Config` module to create the configuration for the AWS\nservice to use.\n\n@docs Service, service\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Service",
+                "comment": " An AWS Service definition. This is needed to make HTTP calls to the service.\n",
+                "args": [],
+                "type": "AWS.Internal.Service.Service"
+            }
+        ],
+        "values": [
+            {
+                "name": "service",
+                "comment": " Build an AWS service.\n",
+                "type": "AWS.Config.ServiceConfig -> AWS.Service.Service"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "AWS.ServiceSpec",
+        "comment": " Provides the data model for an AWS Service Descriptor, and a codec for that\nmodel to encode/decode it from JSON.\n\nAll AWS services also have a specification, that describes the data model that\nthe service accepts or produces, and the endpoint that the service provides. It\nis a similar concept to a Swagger or OpenAPI specification; the format is not the\nsame but the function is. The format is specific to AWS, and is encoded as JSON.\nThe most relevant place to find these service descriptors is here:\n\n<https://github.com/aws/aws-sdk-js/tree/master/apis>\n\nThese service specifications are not needed to call the services. They are meta\ndata describing the services, and can be useful for things such code generation.\nThey are not an essential part of the `elm-aws-core` package, but the data model\nis included here for convenience.\n\n\n# The JSON encoders and decoders for the service specification.\n\n@docs awsServiceDecoder, awsServiceEncoder\n\n\n# The service spec data model.\n\n@docs ServiceSpec\n@docs AWSType, AuthorizationStrategy, Authorizers, HttpMethod\n@docs Location, MetaData, Operation, Shape, ShapeRef\n\n",
+        "unions": [
+            {
+                "name": "AWSType",
+                "comment": " The basic data types that AWS uses to define its service data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "AString",
+                        []
+                    ],
+                    [
+                        "ABoolean",
+                        []
+                    ],
+                    [
+                        "AInteger",
+                        []
+                    ],
+                    [
+                        "ALong",
+                        []
+                    ],
+                    [
+                        "AFloat",
+                        []
+                    ],
+                    [
+                        "ADouble",
+                        []
+                    ],
+                    [
+                        "ABlob",
+                        []
+                    ],
+                    [
+                        "AStructure",
+                        []
+                    ],
+                    [
+                        "AList",
+                        []
+                    ],
+                    [
+                        "AMap",
+                        []
+                    ],
+                    [
+                        "ATimestamp",
+                        []
+                    ],
+                    [
+                        "AUnknown",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "HttpMethod",
+                "comment": " The HTTP method used to invoke a service.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "DELETE",
+                        []
+                    ],
+                    [
+                        "GET",
+                        []
+                    ],
+                    [
+                        "HEAD",
+                        []
+                    ],
+                    [
+                        "OPTIONS",
+                        []
+                    ],
+                    [
+                        "POST",
+                        []
+                    ],
+                    [
+                        "PUT",
+                        []
+                    ],
+                    [
+                        "PATCH",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Location",
+                "comment": " Describes the possible locations that a parameter being passed to or\nreceived from a service can occupy; is it in the HTTP header, body, query and\nso on.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Header",
+                        []
+                    ],
+                    [
+                        "QueryString",
+                        []
+                    ],
+                    [
+                        "StatusCode",
+                        []
+                    ],
+                    [
+                        "Uri",
+                        []
+                    ],
+                    [
+                        "Body",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "AuthorizationStrategy",
+                "comment": " An authorization strategy.\n",
+                "args": [],
+                "type": "{ name : String.String, placement : AWS.ServiceSpec.Placement, type_ : String.String }"
+            },
+            {
+                "name": "Authorizers",
+                "comment": " The service authorizers.\n",
+                "args": [],
+                "type": "{ authorization_strategy : AWS.ServiceSpec.AuthorizationStrategy }"
+            },
+            {
+                "name": "MetaData",
+                "comment": " The service meta data.\n",
+                "args": [],
+                "type": "{ apiVersion : String.String, endpointPrefix : String.String, protocol : AWS.Config.Protocol, serviceId : String.String, checksumFormat : Maybe.Maybe String.String, globalEndpoint : Maybe.Maybe String.String, jsonVersion : Maybe.Maybe String.String, serviceAbbreviation : Maybe.Maybe String.String, serviceFullName : Maybe.Maybe String.String, signatureVersion : Maybe.Maybe AWS.Config.Signer, signingName : Maybe.Maybe String.String, targetPrefix : Maybe.Maybe String.String, uid : Maybe.Maybe String.String, xmlNamespace : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "Operation",
+                "comment": " A descriptor for a service endpoint.\n",
+                "args": [],
+                "type": "{ http : AWS.ServiceSpec.Http, name : String.String, alias : Maybe.Maybe String.String, authtype : Maybe.Maybe String.String, deprecated : Maybe.Maybe Basics.Bool, deprecatedMessage : Maybe.Maybe String.String, documentation : Maybe.Maybe String.String, documentationUrl : Maybe.Maybe String.String, endpoint : Maybe.Maybe AWS.ServiceSpec.Endpoint, errors : Maybe.Maybe (List.List AWS.ServiceSpec.ShapeRef), idempotent : Maybe.Maybe Basics.Bool, input : Maybe.Maybe AWS.ServiceSpec.ShapeRef, output : Maybe.Maybe AWS.ServiceSpec.ShapeRef }"
+            },
+            {
+                "name": "ServiceSpec",
+                "comment": " The AWS service specification data model.\n",
+                "args": [],
+                "type": "{ metaData : AWS.ServiceSpec.MetaData, operations : Dict.Dict String.String AWS.ServiceSpec.Operation, shapes : Dict.Dict String.String AWS.ServiceSpec.Shape, authorizers : Maybe.Maybe AWS.ServiceSpec.Authorizers, documentation : Maybe.Maybe String.String, version : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "Shape",
+                "comment": " A data model descriptor\n",
+                "args": [],
+                "type": "{ type_ : AWS.ServiceSpec.AWSType, box : Maybe.Maybe Basics.Bool, deprecated : Maybe.Maybe Basics.Bool, deprecatedMessage : Maybe.Maybe String.String, documentation : Maybe.Maybe String.String, enum : Maybe.Maybe (List.List String.String), error : Maybe.Maybe AWS.ServiceSpec.Error, event : Maybe.Maybe Basics.Bool, eventstream : Maybe.Maybe Basics.Bool, exception : Maybe.Maybe Basics.Bool, fault : Maybe.Maybe Basics.Bool, flattened : Maybe.Maybe Basics.Bool, key : Maybe.Maybe AWS.ServiceSpec.ShapeRef, locationName : Maybe.Maybe String.String, max : Maybe.Maybe Basics.Int, member : Maybe.Maybe AWS.ServiceSpec.ShapeRef, members : Maybe.Maybe (Dict.Dict String.String AWS.ServiceSpec.ShapeRef), min : Maybe.Maybe Basics.Int, pattern : Maybe.Maybe String.String, payload : Maybe.Maybe String.String, required : Maybe.Maybe (List.List String.String), sensitive : Maybe.Maybe Basics.Bool, streaming : Maybe.Maybe Basics.Bool, timestampFormat : Maybe.Maybe AWS.Config.TimestampFormat, value : Maybe.Maybe AWS.ServiceSpec.ShapeRef, wrapper : Maybe.Maybe Basics.Bool, xmlNamespace : Maybe.Maybe String.String, xmlOrder : Maybe.Maybe (List.List String.String) }"
+            },
+            {
+                "name": "ShapeRef",
+                "comment": " A reference to a data model.\n",
+                "args": [],
+                "type": "{ shape : String.String, box : Maybe.Maybe Basics.Bool, deprecated : Maybe.Maybe Basics.Bool, deprecatedMessage : Maybe.Maybe String.String, documentation : Maybe.Maybe String.String, eventpayload : Maybe.Maybe Basics.Bool, flattened : Maybe.Maybe Basics.Bool, idempotencyToken : Maybe.Maybe String.String, jsonvalue : Maybe.Maybe Basics.Bool, location : AWS.ServiceSpec.Location, locationName : Maybe.Maybe String.String, queryName : Maybe.Maybe String.String, resultWrapper : Maybe.Maybe String.String, streaming : Maybe.Maybe Basics.Bool, timestampFormat : Maybe.Maybe AWS.Config.TimestampFormat, xmlAttribute : Maybe.Maybe String.String, xmlNamespace : Maybe.Maybe String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "awsServiceDecoder",
+                "comment": " A JSON decoder for the service specification.\n",
+                "type": "Json.Decode.Decoder AWS.ServiceSpec.ServiceSpec"
+            },
+            {
+                "name": "awsServiceEncoder",
+                "comment": " A JSON encoder for the service specification.\n",
+                "type": "AWS.ServiceSpec.ServiceSpec -> Json.Encode.Value"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "AWS.Uri",
+        "comment": " Helper functions for encoding URIs.\n\nAWS encodes more characters than `encodeURIComponent` does, so a special\nimplementation is needed.\n\n\n# Helpers\n\n@docs percentEncode\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "percentEncode",
+                "comment": " We don't use Url.percentEncode because it misses some characters. It uses the\nnative `encodeURIComponent` under the hood:\n\n    encodeURIComponent escapes all characters except the following:\n    alphabetic, decimal digits, - _ . ! ~ * ' ( )\n\n    - from https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent\n\nFor AWS only \"Unreserved Characters\" are allowed.\nSee <http://tools.ietf.org/html/rfc3986>\nSection 2.3\n\nSo basically we need to also cover: ! \\* ' ( )\n\n",
+                "type": "String.String -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

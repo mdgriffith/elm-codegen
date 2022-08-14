@@ -1,0 +1,103 @@
+[
+    {
+        "name": "MessageToast",
+        "comment": " MessageToast displays a list of feedback messages, each with a specified\nmessage-type.\n\n\n# Definition\n\n@docs MessageToast\n\n\n# Init\n\n@docs init, initWithConfig\n\n\n# Initial\n\n@docs danger, info, success, warning\n\n\n# Intermediate\n\n@docs persistToast\n\n\n# Final\n\n@docs withHtml, withMessage\n\n\n# View\n\n@docs view\n\n\n# Subscriptions\n\n@docs subscriptions\n\n\n# Manipulate\n\n@docs overwriteContainerAttributes, overwriteIconAttributes, overwriteMessageAttributes, overwriteToastAttributes\n\n",
+        "unions": [
+            {
+                "name": "MessageToast",
+                "comment": " MessageToast holds the collection of messages.\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": [
+                    [
+                        "MessageToast",
+                        [
+                            "MessageToast.ToastConfig msg",
+                            "List.List (MessageToast.ToastMessage msg)"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "danger",
+                "comment": " Generates a dangerous message toast.\n",
+                "type": "MessageToast.MessageToast msg -> MessageToast.IntermediateMessageToast msg"
+            },
+            {
+                "name": "info",
+                "comment": " Generates an informative message toast.\n",
+                "type": "MessageToast.MessageToast msg -> MessageToast.IntermediateMessageToast msg"
+            },
+            {
+                "name": "init",
+                "comment": " Initializes the messageToast handler with the default settings.\n\n    - Delay: 8 seconds\n    - Showing messages: 4\n    - Styling: default\n\n",
+                "type": "(MessageToast.MessageToast msg -> msg) -> MessageToast.MessageToast msg"
+            },
+            {
+                "name": "initWithConfig",
+                "comment": " Initializes a custom messageToast handler with the provided options.\n",
+                "type": "(MessageToast.MessageToast msg -> msg) -> { delayInMs : Basics.Float, toastsToShow : Basics.Int } -> MessageToast.MessageToast msg"
+            },
+            {
+                "name": "overwriteContainerAttributes",
+                "comment": " Overwrite existing styles for the message toast container that contains all the several toasts displayed.\n\nFor example, this can be used to override the position or width of the toasts.\n\n",
+                "type": "List.List (Html.Attribute msg) -> MessageToast.MessageToast msg -> MessageToast.MessageToast msg"
+            },
+            {
+                "name": "overwriteIconAttributes",
+                "comment": " Overwrite existing styles for the message toast icon that's placed inside the toast container besides the message block.\n\nFor example, this can be used to override colors, spacings or sizes of the icon.\n\n",
+                "type": "List.List (Html.Attribute msg) -> MessageToast.MessageToast msg -> MessageToast.MessageToast msg"
+            },
+            {
+                "name": "overwriteMessageAttributes",
+                "comment": " Overwrite existing styles for the message toast message block that's placed inside the toast container besides the icon.\n\nFor example, this can be used to override colors, spacings, font attributes or alignments of the toast message.\n\n",
+                "type": "List.List (Html.Attribute msg) -> MessageToast.MessageToast msg -> MessageToast.MessageToast msg"
+            },
+            {
+                "name": "overwriteToastAttributes",
+                "comment": " Override existing styles for the message toast that wraps the icon and message block.\n\nFor example, can be used to override border stylings, shadows or spacings between the toasts.\n\n",
+                "type": "List.List (Html.Attribute msg) -> MessageToast.MessageToast msg -> MessageToast.MessageToast msg"
+            },
+            {
+                "name": "persistToast",
+                "comment": " Keeps the toast persisted in the MessageToast container by making it unaffected to\nthe defined toast-timeout. The toast can still be removed by user clicks.\n",
+                "type": "MessageToast.IntermediateMessageToast msg -> MessageToast.IntermediateMessageToast msg"
+            },
+            {
+                "name": "subscriptions",
+                "comment": " Subscription to automatically remove the oldest toast that is still displayed.\n",
+                "type": "MessageToast.MessageToast msg -> Platform.Sub.Sub msg"
+            },
+            {
+                "name": "success",
+                "comment": " Generates a success message toast.\n",
+                "type": "MessageToast.MessageToast msg -> MessageToast.IntermediateMessageToast msg"
+            },
+            {
+                "name": "view",
+                "comment": " Displays the configured message toasts.\n",
+                "type": "MessageToast.MessageToast msg -> Html.Html msg"
+            },
+            {
+                "name": "warning",
+                "comment": " Generates a warning message toast.\n",
+                "type": "MessageToast.MessageToast msg -> MessageToast.IntermediateMessageToast msg"
+            },
+            {
+                "name": "withHtml",
+                "comment": " Displays a generated MessageToast content with a given user-defined layout.\n",
+                "type": "Html.Html msg -> MessageToast.IntermediateMessageToast msg -> MessageToast.MessageToast msg"
+            },
+            {
+                "name": "withMessage",
+                "comment": " Displays a generated MessageToast content with a given message in the default layout.\n",
+                "type": "String.String -> MessageToast.IntermediateMessageToast msg -> MessageToast.MessageToast msg"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,78 @@
+[
+    {
+        "name": "Partition",
+        "comment": " The partition problem is a mathematically [NP-complete](https://en.wikipedia.org/wiki/NP-completeness) task\nwhich splits a set of numbers _S_ into two subsets, where the sum of these subsets is equal.\n\nDepending on the algorithm, order of subsets may not be preserved. If order perservation\nis something you require: please file a request in the issue tracker.\n\n\n# Types\n\n@docs Partition, KPartition\n\n\n# Methods\n\n@docs bruteForce, greedy, largestDifference\n\n\n# Extended Methods\n\nPartitions are generally defined as a separation of one set into two, however there are times\nwhen further separation into `k > 2` sets is needed. Recursively calling the above methods can\nfurther split lists, although most of the time this is an expensive way of doing things.\n\nNot all `k == 2` methods can be extended to the `k > 2` case, and some are `k > 2` only.\n\n@docs greedyK\n\n\n# Utilities\n\n@docs empty, allPartitions, objective, sumOfSets, objectiveK, sumOfKSets\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "KPartition",
+                "comment": " A list of resultant partitions from an Extended method, with `k` balanced\nsubset of the original set.\n",
+                "args": [
+                    "number"
+                ],
+                "type": "List.List (List.List number)"
+            },
+            {
+                "name": "Partition",
+                "comment": " The resultant partition: two balanced subsets of the original set.\n",
+                "args": [
+                    "number"
+                ],
+                "type": "( List.List number, List.List number )"
+            }
+        ],
+        "values": [
+            {
+                "name": "allPartitions",
+                "comment": " Generates all possible partitions of a given set of numbers.\n\n    allPartitions [ 3, 15 ]\n    --> [ ( [ 3, 15 ], [] ), ( [ 3 ], [ 15 ] ), ( [ 15 ], [ 3 ] ), ( [], [ 3, 15 ] ) ]\n\nNote that this function scales as `O(2ᴺ)`, where `N` is the length of your list.\n\n",
+                "type": "List.List number -> List.List (Partition.Partition number)"
+            },
+            {
+                "name": "bruteForce",
+                "comment": " Directly partition your set by checking all possible permutations.\nThis method is best used on small sets where the solution must be accurate.\n\n    bruteForce [ 4, 5, 7, 6, 8 ]\n    --> ( [ 4, 5, 6 ], [ 7, 8 ] )\n\nThis solution is a perfect partition. Since all possible partitons must be calculated,\nthis is an `O(2ᴺ)` operation. The [greedy](#greedy) method (for example) will partition faster,\nbut yields an [objective](#objective) of `4`: missing the optimal partition.\n\nThe space scaling is quite an issue for this method as well.\n\n    bruteForce (List.range 0 22)\n\nEmits a heap limit allocation failure and sets with smaller lengths take some time to compute.\nSo alternate methods are best once your sets get large.\n\n",
+                "type": "List.List number -> Partition.Partition number"
+            },
+            {
+                "name": "empty",
+                "comment": " An empty partition constructor\n",
+                "type": "Partition.Partition number"
+            },
+            {
+                "name": "greedy",
+                "comment": " Traverse the list once i.e. `O(N)`, chosing to place the current value\ninto the sublist that minimises the objective at the current point in time.\n\nThe greedy method is fast and can handle large lists, but can be quite inaccurate.\nLet's take a look at few examples:\n\n    greedy [ 22, 5, 15, 3, 9, 12, 7, 11, 5, 2 ]\n    --> ( [ 2, 3, 5, 9, 12, 15 ], [ 5, 7, 11, 22 ] )\n\n    bruteForce [ 22, 5, 15, 3, 9, 12, 7, 11, 5, 2 ]\n    --> ( [ 22, 5, 15, 3 ], [ 9, 12, 7, 11, 5, 2 ] )\n\nBoth of these partitions have [objective](#objective) values of `1`, meaning both partitions\nare equivalent and equally valid.\n\nAs your lists get larger the performance of the greedy solution becomes obvious. The\n[bruteForce](#bruteForce) method has issues handling lists of length `23`, whereas `greedy`\nhandles them near instantaneously.\n\n    greedy (List.range 0 22)\n    --> ( [ 0, 1, 4, 5, 8, 9, 12, 13, 16, 17, 20, 21 ], [ 2, 3, 6, 7, 10, 11, 14, 15, 18, 19, 22 ] )\n\nIn fact, `List.range 0 500000` is really no problem.\n\nThe downfall of this method occurs when lists are weighted in such a manner that seems fine initially\n(to the algorithm), but is toppled at the end of the list.\n\n    greedy [ 4, 5, 7, 6, 8 ]\n    --> ( [ 6, 7 ], [ 4, 5, 8 ] )\n\n",
+                "type": "List.List number -> Partition.Partition number"
+            },
+            {
+                "name": "greedyK",
+                "comment": " The [greedy](#greedy) method extended to allow `k` partitions of the original set.\n\n    greedyK [1,2,3,4,5,6] 3\n    --> [[1,6], [2,5], [3,4]]\n\nWill return an empty partition if `k <= 0`\n\n    greedyK [1,2,3,4,5,6] -1\n    --> []\n\n",
+                "type": "List.List number -> Basics.Int -> Partition.KPartition number"
+            },
+            {
+                "name": "largestDifference",
+                "comment": " The Largest Differencing Method (LDM) orders the input set and\nreplaces the largest two values with a difference `|x₁-x₂|`.\nThe resultant set is then reordered and the method is repeated until\none value is left in the list. This value is equal to the _partition difference_\nof the partition.\n\nFrom this differencing, a graph is generated which identifies the correct path\nto follow to appropreately partition the original set.\n\nTime complexity of this method is `O(N log N)`. List size limitations are therefore in\ntime moreso than space. In terms of optimality, the method sits between\n[bruteForce](#bruteForce) and [greedy](#greedy):\n\n    seq = [8,7,6,5,4]\n    bruteForce seq |> objective\n    --> 0\n    largestDifference seq |> objective\n    --> 2\n    greedy seq |> objective\n    --> 4\n\n",
+                "type": "List.List number -> Partition.Partition number"
+            },
+            {
+                "name": "objective",
+                "comment": " The objective for our partitioning is to minimise the difference between the sum of each subset.\nMathematically stated: `min |∑S₁-∑S₂| : S₁,S₂⊂S`.\n\n    objective ( [ 22, 5, 15, 3 ], [ 9, 12, 7, 11, 5, 2 ] )\n    --> 1\n\n    objective ( [ 7, 3, 2 ], [ 22, 5, 15, 9, 12, 11, 5 ] )\n    --> 67\n\nThese examples are partitions from the same set. The first is a far better solution than the second.\n\n",
+                "type": "Partition.Partition number -> number"
+            },
+            {
+                "name": "objectiveK",
+                "comment": " The objective for our partitioning is to minimise the difference between the sum of each subset.\nMathematically stated: `minₘ,ₙ |∑Sₘ-∑Sₙ| : Sₘ,Sₙ⊂S`.\n\n    objectiveK [[5,7], [6,8], [1,6]]\n    --> Just 2\n\n",
+                "type": "Partition.KPartition number -> Maybe.Maybe number"
+            },
+            {
+                "name": "sumOfKSets",
+                "comment": " Outputs the sum of each `k` subset to validate the quality of an extended partition.\n\n    sumOfKSets [ [1 , 6 ], [ 2, 5 ], [ 3, 4 ] ]\n    --> [ 7, 7, 7 ]\n\n",
+                "type": "Partition.KPartition number -> List.List number"
+            },
+            {
+                "name": "sumOfSets",
+                "comment": " Outputs the sum of each subset to validate the quality of a partition.\n\n    sumOfSets ( [ 22, 5, 15, 3 ], [ 9, 12, 7, 11, 5, 2 ] )\n    --> ( 45, 46 )\n\n",
+                "type": "Partition.Partition number -> ( number, number )"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,1746 @@
+[
+    {
+        "name": "Button",
+        "comment": " Module to add Buttons to your app\n\n\n# Type hint\n\n@docs Button\n\n\n# Initialise\n\n@docs view, viewIf\n\n\n# Configure\n\n@docs text, icon, onClick, href, hrefBlank, small, isLoading, isDisabled, green, red\n\n\n# Render\n\n@docs render\n\n",
+        "unions": [
+            {
+                "name": "Button",
+                "comment": " Type hint buttons\n\n    type alias model =\n        { headerTitle : String\n        , headerButtons : List (Button Msg)\n        }\n\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "green",
+                "comment": " Style it green\n",
+                "type": "Basics.Bool -> Button.Button msg -> Button.Button msg"
+            },
+            {
+                "name": "href",
+                "comment": " Open a href url when clicked\n",
+                "type": "String.String -> Button.Button msg -> Button.Button msg"
+            },
+            {
+                "name": "hrefBlank",
+                "comment": " Open a href url when clicked\n",
+                "type": "String.String -> Button.Button msg -> Button.Button msg"
+            },
+            {
+                "name": "icon",
+                "comment": " Set an icon\n",
+                "type": "FeatherIcons.Icon -> Button.Button msg -> Button.Button msg"
+            },
+            {
+                "name": "isDisabled",
+                "comment": " Display as disabled, removing the click Msg\n",
+                "type": "Basics.Bool -> Button.Button msg -> Button.Button msg"
+            },
+            {
+                "name": "isLoading",
+                "comment": " Display as loading, removing the click Msg\n",
+                "type": "Basics.Bool -> Button.Button msg -> Button.Button msg"
+            },
+            {
+                "name": "onClick",
+                "comment": " Fire a Msg when clicked\n",
+                "type": "msg -> Button.Button msg -> Button.Button msg"
+            },
+            {
+                "name": "red",
+                "comment": " Style it red\n",
+                "type": "Basics.Bool -> Button.Button msg -> Button.Button msg"
+            },
+            {
+                "name": "render",
+                "comment": " Render the button\n",
+                "type": "Button.Button msg -> Html.Styled.Html msg"
+            },
+            {
+                "name": "small",
+                "comment": " Make the button small\n",
+                "type": "Button.Button msg -> Button.Button msg"
+            },
+            {
+                "name": "text",
+                "comment": " Set the text\n",
+                "type": "String.String -> Button.Button msg -> Button.Button msg"
+            },
+            {
+                "name": "view",
+                "comment": " Init a button\n",
+                "type": "Button.Button msg"
+            },
+            {
+                "name": "viewIf",
+                "comment": " Init a button if True\n",
+                "type": "Basics.Bool -> Button.Button msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Card",
+        "comment": " Module to create Cards with Headers, CardBlocks and Footers\n\n\n# Init\n\n@docs view, viewIf\n\n\n# Create blocks\n\n@docs header, body, footer, CardBlock, block, blockIf, maybeBlock, blockSizes\n\n\n# Render\n\n@docs render\n\n",
+        "unions": [
+            {
+                "name": "CardBlock",
+                "comment": " Type hint a function that returns a card block\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "block",
+                "comment": " Add a block\n",
+                "type": "Grid.Size.Cols -> List.List (Html.Styled.Html msg) -> Card.CardBlock msg"
+            },
+            {
+                "name": "blockIf",
+                "comment": " Add a block conditionally\n",
+                "type": "Grid.Size.Cols -> Basics.Bool -> List.List (Html.Styled.Html msg) -> Card.CardBlock msg"
+            },
+            {
+                "name": "blockSizes",
+                "comment": " Add a block of varying sizes\n",
+                "type": "Grid.Size.Cols -> List.List ( Grid.Size.Size, Grid.Size.Cols ) -> List.List (Html.Styled.Html msg) -> Card.CardBlock msg"
+            },
+            {
+                "name": "body",
+                "comment": " Add a body block\n",
+                "type": "List.List (Card.CardBlock msg) -> Card.Config msg -> Card.Config msg"
+            },
+            {
+                "name": "footer",
+                "comment": " Add a footer block\n",
+                "type": "List.List (Button.Button msg) -> Card.Config msg -> Card.Config msg"
+            },
+            {
+                "name": "header",
+                "comment": " Add a header block\n",
+                "type": "String.String -> List.List (Button.Button msg) -> Card.Config msg -> Card.Config msg"
+            },
+            {
+                "name": "maybeBlock",
+                "comment": " Add a block and apply Just\n",
+                "type": "Grid.Size.Cols -> Maybe.Maybe a -> (a -> List.List (Html.Styled.Html msg)) -> Card.CardBlock msg"
+            },
+            {
+                "name": "render",
+                "comment": " Render\n",
+                "type": "Card.Config msg -> Html.Styled.Html msg"
+            },
+            {
+                "name": "view",
+                "comment": " Init a card\n",
+                "type": "Card.Config msg"
+            },
+            {
+                "name": "viewIf",
+                "comment": " Init a card conditionally\n",
+                "type": "Basics.Bool -> Card.Config msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Css.Bdt",
+        "comment": " Helpers on top of Html.Styled to show/hide things\n\n\n# Show Hide Elements\n\n@docs styleIf\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "styleIf",
+                "comment": " Optionally add a Style.\n\n    css\n        [ cursor pointer |> Css.styleIf canToggle\n        ]\n\n",
+                "type": "Basics.Bool -> Css.Style -> Css.Style"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Form.DatePicker",
+        "comment": " This module is useful if you want to add a DatePicker Form element to your app.\n\n\n# Initialise and update\n\n@docs Model, init, Msg, update\n\n\n# View and render\n\n@docs view, render\n\n\n# State Setters\n\n@docs reInitialise, reset, setTimeZone, setInitialPosix, setSelectedPosix\n\n\n# View Setters\n\n@docs setMinPosix, setMaxPosix, setIncludeTime, setIsInput, setIsError, setIsLocked, setIsClearable, setDefaultLabel, setId\n\n\n# Getters\n\n@docs getIsChanged, getIsOpen, getInitialPosix, getSelectedPosix, getId\n\n",
+        "unions": [
+            {
+                "name": "Model",
+                "comment": " Add a DatePicker.Model to your model.\n\n    type alias MyModel =\n        { myDatePicker : DatePicker.Model\n        }\n\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Msg",
+                "comment": " Add a DatePicker.Msg to your Msg.\n\n    type MyMsg\n        = UpdateMyDatePicker DatePicker.Msg\n\n",
+                "args": [],
+                "type": "Form.DatePicker.Internal.Msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "getId",
+                "comment": " Useful if you need the id of the datePicker in your update function, to set focus etc.\n",
+                "type": "Form.DatePicker.View -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "getInitialPosix",
+                "comment": " Get the initial Date of your datePicker.\n",
+                "type": "Form.DatePicker.Model -> Maybe.Maybe Time.Posix"
+            },
+            {
+                "name": "getIsChanged",
+                "comment": " Whether your datePicker was changed. Useful if you want to disable save buttons unless there were changes etc.\n",
+                "type": "Form.DatePicker.Model -> Basics.Bool"
+            },
+            {
+                "name": "getIsOpen",
+                "comment": " Whether this datePicker is currently open.\n",
+                "type": "Form.DatePicker.Model -> Basics.Bool"
+            },
+            {
+                "name": "getSelectedPosix",
+                "comment": " Get the current Date of your datePicker. This is what you'd use to display the data somewhere outside of your datePicker,\nor to send the data to the backend for example etc.\n",
+                "type": "Form.DatePicker.Model -> Maybe.Maybe Time.Posix"
+            },
+            {
+                "name": "init",
+                "comment": " Init a DatePicker.Model in your model.\n\n    myInitialModel : MyModel\n    myInitialModel =\n        { myDatePicker = DatePicker.init\n        }\n\n",
+                "type": "Form.DatePicker.Model"
+            },
+            {
+                "name": "reInitialise",
+                "comment": " ReInitialise your DatePicker.Model.\n",
+                "type": "Form.DatePicker.Model -> Form.DatePicker.Model"
+            },
+            {
+                "name": "render",
+                "comment": " Transforms an DatePicker.View into Html DatePicker.Msg\n\n    myView : Model -> Html Msg\n    myView model =\n        div\n            []\n            [ DatePicker.view model.myDatePicker\n                |> DatePicker.render\n                |> Html.map UpdateMyDatePicker\n            ]\n\n",
+                "type": "Form.DatePicker.View -> Html.Styled.Html Form.DatePicker.Msg"
+            },
+            {
+                "name": "reset",
+                "comment": " Reset your DatePicker.Model.\n",
+                "type": "Form.DatePicker.Model -> Form.DatePicker.Model"
+            },
+            {
+                "name": "setDefaultLabel",
+                "comment": " Set the default label, for example (-- NOTHING SELECTED --).\n",
+                "type": "String.String -> Form.DatePicker.View -> Form.DatePicker.View"
+            },
+            {
+                "name": "setId",
+                "comment": " Give your datePicker an id. Can be useful for DOM selectors (focus, WebComponents etc.)\n",
+                "type": "String.String -> Form.DatePicker.View -> Form.DatePicker.View"
+            },
+            {
+                "name": "setIncludeTime",
+                "comment": " Sets whether your date picker should include a time picker.\n",
+                "type": "Basics.Bool -> Form.DatePicker.View -> Form.DatePicker.View"
+            },
+            {
+                "name": "setInitialPosix",
+                "comment": " Set the initial Date of your DatePicker.Model.\n",
+                "type": "Maybe.Maybe Time.Posix -> Form.DatePicker.Model -> Form.DatePicker.Model"
+            },
+            {
+                "name": "setIsClearable",
+                "comment": " Set whether your datePicker is clearable (x icon).\n",
+                "type": "Basics.Bool -> Form.DatePicker.View -> Form.DatePicker.View"
+            },
+            {
+                "name": "setIsError",
+                "comment": " Set whether your datePicker is in error mode (red border).\n",
+                "type": "Basics.Bool -> Form.DatePicker.View -> Form.DatePicker.View"
+            },
+            {
+                "name": "setIsInput",
+                "comment": " Set whether your date picker is displayed as an input.\n",
+                "type": "Basics.Bool -> Form.DatePicker.View -> Form.DatePicker.View"
+            },
+            {
+                "name": "setIsLocked",
+                "comment": " Set whether your datePicker is locked (disabled).\n",
+                "type": "Basics.Bool -> Form.DatePicker.View -> Form.DatePicker.View"
+            },
+            {
+                "name": "setMaxPosix",
+                "comment": " Set the min. date. Dates subsequent to this can't be selected. Navigation is also capped to this date.\n",
+                "type": "Maybe.Maybe Time.Posix -> Form.DatePicker.View -> Form.DatePicker.View"
+            },
+            {
+                "name": "setMinPosix",
+                "comment": " Set the min. date. Dates prior to this can't be selected. Navigation is also capped to this date.\n",
+                "type": "Maybe.Maybe Time.Posix -> Form.DatePicker.View -> Form.DatePicker.View"
+            },
+            {
+                "name": "setSelectedPosix",
+                "comment": " Change the Date of your DatePicker.Model.\n",
+                "type": "Maybe.Maybe Time.Posix -> Form.DatePicker.Model -> Form.DatePicker.Model"
+            },
+            {
+                "name": "setTimeZone",
+                "comment": " Set the TimeZone\n",
+                "type": "Time.Zone -> Form.DatePicker.Model -> Form.DatePicker.Model"
+            },
+            {
+                "name": "update",
+                "comment": " Use in your update function.\n\n    myUpdate : Msg -> Model -> ( Model, Cmd Msg )\n    myUpdate msg model =\n        case msg of\n            UpdateMyDatePicker datePickerMsg ->\n                let\n                    ( newDatePicker, cmd ) =\n                        DatePicker.update datePickerMsg mode.myDatePicker\n                in\n                { model | myDatePicker = newDatePicker } ! [ cmd ]\n\n",
+                "type": "Form.DatePicker.Msg -> Form.DatePicker.Model -> ( Form.DatePicker.Model, Platform.Cmd.Cmd Form.DatePicker.Msg )"
+            },
+            {
+                "name": "view",
+                "comment": " Transform an DatePicker.Model into an DatePicker.View, which allows us to pipe View Setters on it.\n\n    myView : Model -> Html Msg\n    myView model =\n        div\n            []\n            [ DatePicker.view model.myDatePicker -- pipe view setters here, for example |> setIsLocked 'your logic here'\n            ]\n\n",
+                "type": "Form.DatePicker.Model -> Form.DatePicker.View"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Form.FloatInput",
+        "comment": " This module is useful if you want to add an Integer based Input element to your app.\n\n\n# Initialise and update\n\n@docs Model, init, Msg, update\n\n\n# View and render\n\n@docs view, render\n\n\n# State Setters\n\n@docs reInitialise, reset, setInitialValue, setValue, setDecimal\n\n\n# View Setters\n\n@docs setPlaceholder, setMaxLength, setIsError, setIsLocked, setId\n\n\n# Getters\n\n@docs getInitialValue, getValue, getIsChanged, getId\n\n",
+        "unions": [
+            {
+                "name": "Model",
+                "comment": " Add a Input.Model to your model.\n\n    type alias MyModel =\n        { myInput : Input.Model\n        }\n\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Msg",
+                "comment": " Add a Input.Msg to your Msg.\n\n    type MyMsg\n        = UpdateMyInput Input.Msg\n\n",
+                "args": [],
+                "type": "Form.FloatInput.Internal.Msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "getId",
+                "comment": " Useful if you need the id of the input in your update function, so set focus etc.\n",
+                "type": "Form.FloatInput.View -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "getInitialValue",
+                "comment": " Get the initial value of your input.\n",
+                "type": "Form.FloatInput.Model -> Maybe.Maybe Basics.Float"
+            },
+            {
+                "name": "getIsChanged",
+                "comment": " Whether your input was changed. Useful if you want to disable save buttons unless there were changes etc.\n",
+                "type": "Form.FloatInput.Model -> Basics.Bool"
+            },
+            {
+                "name": "getValue",
+                "comment": " Get the current value of your input. This is what you'd use to display the data somewhere outside of your input,\nor to send the data to the backend for example etc.\n",
+                "type": "Form.FloatInput.Model -> Maybe.Maybe Basics.Float"
+            },
+            {
+                "name": "init",
+                "comment": " Add a Input.Model to your model.\n\n    myInitialModel : MyModel\n    myInitialModel =\n        { myInput = Input.init -- optionally pipe into State Setters\n        }\n\n",
+                "type": "Form.FloatInput.Model"
+            },
+            {
+                "name": "reInitialise",
+                "comment": " ReInitialise your FloatInput.Model.\n",
+                "type": "Form.FloatInput.Model -> Form.FloatInput.Model"
+            },
+            {
+                "name": "render",
+                "comment": " Transforms an Input.View into Html Input.Msg\n\n    myView : Model -> Html Msg\n    myView model =\n        div\n            []\n            [ Input.view model.myInput\n                |> Input.render\n                |> Html.map UpdateMyInput\n            ]\n\n",
+                "type": "Form.FloatInput.View -> Html.Styled.Html Form.FloatInput.Msg"
+            },
+            {
+                "name": "reset",
+                "comment": " Reset your FloatInput.Model.\n",
+                "type": "Form.FloatInput.Model -> Form.FloatInput.Model"
+            },
+            {
+                "name": "setDecimal",
+                "comment": " Change the number of decimal places of your FloatInput.Model.\n",
+                "type": "Basics.Int -> Form.FloatInput.Model -> Form.FloatInput.Model"
+            },
+            {
+                "name": "setId",
+                "comment": " Give your input an id. Can be useful for DOM selectors (focus, WebComponents etc.)\n",
+                "type": "String.String -> Form.FloatInput.View -> Form.FloatInput.View"
+            },
+            {
+                "name": "setInitialValue",
+                "comment": " Set the initial value of your FloatInput.Model.\n",
+                "type": "Basics.Float -> Form.FloatInput.Model -> Form.FloatInput.Model"
+            },
+            {
+                "name": "setIsError",
+                "comment": " Set whether your input is in error mode (red border).\n",
+                "type": "Basics.Bool -> Form.FloatInput.View -> Form.FloatInput.View"
+            },
+            {
+                "name": "setIsLocked",
+                "comment": " Set whether your input is locked (disabled).\n",
+                "type": "Basics.Bool -> Form.FloatInput.View -> Form.FloatInput.View"
+            },
+            {
+                "name": "setMaxLength",
+                "comment": " Set the max length for your input string.\n",
+                "type": "Basics.Int -> Form.FloatInput.View -> Form.FloatInput.View"
+            },
+            {
+                "name": "setPlaceholder",
+                "comment": " Set a placeholder for your input.\n",
+                "type": "String.String -> Form.FloatInput.View -> Form.FloatInput.View"
+            },
+            {
+                "name": "setValue",
+                "comment": " Change the value of your FloatInput.Model.\n",
+                "type": "Basics.Float -> Form.FloatInput.Model -> Form.FloatInput.Model"
+            },
+            {
+                "name": "update",
+                "comment": " Use in your update function.\n\n    myUpdate : Msg -> Model -> ( Model, Cmd Msg )\n    myUpdate msg model =\n        case msg of\n            UpdateMyInput inputMsg ->\n                { model | myInput = Input.update inputMsg mode.myInput } ! []\n\n",
+                "type": "Form.FloatInput.Msg -> Form.FloatInput.Model -> Form.FloatInput.Model"
+            },
+            {
+                "name": "view",
+                "comment": " Transform an Input.Model into an Input.View, which allows us to pipe View Setters on it.\n\n    myView : Model -> Html Msg\n    myView model =\n        div\n            []\n            [ Input.view model.myInput -- pipe view setters here, for example |> setIsLocked 'your logic here'\n            ]\n\n",
+                "type": "Form.FloatInput.Model -> Form.FloatInput.View"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Form.Input",
+        "comment": " This module is useful if you want to add an Input Form element to your app.\n\n\n# Initialise and update\n\n@docs Model, init, Msg, update\n\n\n# View and render\n\n@docs view, render\n\n\n# State Setters\n\n@docs reInitialise, reset, setInitialValue, setValue\n\n\n# View Setters\n\n@docs setPlaceholder, setMaxLength, setIsError, setIsLocked, setId\n\n\n# Type Setters\n\n@docs setTextType, setEmailType, setPasswordType, setTelType, setNumberType\n\n\n# Getters\n\n@docs getInitialValue, getValue, getIsChanged, getId\n\n",
+        "unions": [
+            {
+                "name": "Model",
+                "comment": " Add a Input.Model to your model.\n\n    type alias MyModel =\n        { myInput : Input.Model\n        }\n\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Msg",
+                "comment": " Add a Input.Msg to your Msg.\n\n    type MyMsg\n        = UpdateMyInput Input.Msg\n\n",
+                "args": [],
+                "type": "Form.Input.Internal.Msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "getId",
+                "comment": " Useful if you need the id of the input in your update function, so set focus etc.\n",
+                "type": "Form.Input.View -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "getInitialValue",
+                "comment": " Get the initial value of your input.\n",
+                "type": "Form.Input.Model -> String.String"
+            },
+            {
+                "name": "getIsChanged",
+                "comment": " Whether your input was changed. Useful if you want to disable save buttons unless there were changes etc.\n",
+                "type": "Form.Input.Model -> Basics.Bool"
+            },
+            {
+                "name": "getValue",
+                "comment": " Get the current value of your input. This is what you'd use to display the data somewhere outside of your input,\nor to send the data to the backend for example etc.\n",
+                "type": "Form.Input.Model -> String.String"
+            },
+            {
+                "name": "init",
+                "comment": " Add a Input.Model to your model.\n\n    myInitialModel : MyModel\n    myInitialModel =\n        { myInput = Input.init -- optionally pipe into State Setters\n        }\n\n",
+                "type": "Form.Input.Model"
+            },
+            {
+                "name": "reInitialise",
+                "comment": " ReInitialise your Input.Model.\n",
+                "type": "Form.Input.Model -> Form.Input.Model"
+            },
+            {
+                "name": "render",
+                "comment": " Transforms an Input.View into Html Input.Msg\n\n    myView : Model -> Html Msg\n    myView model =\n        div\n            []\n            [ Input.view model.myInput\n                |> Input.render\n                |> Html.map UpdateMyInput\n            ]\n\n",
+                "type": "Form.Input.View -> Html.Styled.Html Form.Input.Msg"
+            },
+            {
+                "name": "reset",
+                "comment": " Reset your Input.Model.\n",
+                "type": "Form.Input.Model -> Form.Input.Model"
+            },
+            {
+                "name": "setEmailType",
+                "comment": " Set the type\\_ of your input to \"email\"\n",
+                "type": "Form.Input.View -> Form.Input.View"
+            },
+            {
+                "name": "setId",
+                "comment": " Give your input an id. Can be useful for DOM selectors (focus, WebComponents etc.)\n",
+                "type": "String.String -> Form.Input.View -> Form.Input.View"
+            },
+            {
+                "name": "setInitialValue",
+                "comment": " Set the initial value of your Input.Model.\n",
+                "type": "String.String -> Form.Input.Model -> Form.Input.Model"
+            },
+            {
+                "name": "setIsError",
+                "comment": " Set whether your input is in error mode (red border).\n",
+                "type": "Basics.Bool -> Form.Input.View -> Form.Input.View"
+            },
+            {
+                "name": "setIsLocked",
+                "comment": " Set whether your input is locked (disabled).\n",
+                "type": "Basics.Bool -> Form.Input.View -> Form.Input.View"
+            },
+            {
+                "name": "setMaxLength",
+                "comment": " Set the max length for your input string.\n",
+                "type": "Basics.Int -> Form.Input.View -> Form.Input.View"
+            },
+            {
+                "name": "setNumberType",
+                "comment": " Set the type\\_ of your input to \"number\"\n",
+                "type": "Form.Input.View -> Form.Input.View"
+            },
+            {
+                "name": "setPasswordType",
+                "comment": " Set the type\\_ of your input to \"password\"\n",
+                "type": "Form.Input.View -> Form.Input.View"
+            },
+            {
+                "name": "setPlaceholder",
+                "comment": " Set a placeholder for your input.\n",
+                "type": "String.String -> Form.Input.View -> Form.Input.View"
+            },
+            {
+                "name": "setTelType",
+                "comment": " Set the type\\_ of your input to \"tel\"\n",
+                "type": "Form.Input.View -> Form.Input.View"
+            },
+            {
+                "name": "setTextType",
+                "comment": " Set the type\\_ of your input to \"text\"\n",
+                "type": "Form.Input.View -> Form.Input.View"
+            },
+            {
+                "name": "setValue",
+                "comment": " Change the value of your Input.Model.\n",
+                "type": "String.String -> Form.Input.Model -> Form.Input.Model"
+            },
+            {
+                "name": "update",
+                "comment": " Use in your update function.\n\n    myUpdate : Msg -> Model -> ( Model, Cmd Msg )\n    myUpdate msg model =\n        case msg of\n            UpdateMyInput inputMsg ->\n                { model | myInput = Input.update inputMsg mode.myInput } ! []\n\n",
+                "type": "Form.Input.Msg -> Form.Input.Model -> Form.Input.Model"
+            },
+            {
+                "name": "view",
+                "comment": " Transform an Input.Model into an Input.View, which allows us to pipe View Setters on it.\n\n    myView : Model -> Html Msg\n    myView model =\n        div\n            []\n            [ Input.view model.myInput -- pipe view setters here, for example |> setIsLocked 'your logic here'\n            ]\n\n",
+                "type": "Form.Input.Model -> Form.Input.View"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Form.IntInput",
+        "comment": " This module is useful if you want to add an Integer based Input element to your app.\n\n\n# Initialise and update\n\n@docs Model, init, Msg, update\n\n\n# View and render\n\n@docs view, render\n\n\n# State Setters\n\n@docs reInitialise, reset, setInitialValue, setValue\n\n\n# View Setters\n\n@docs setPlaceholder, setMaxLength, setIsError, setIsLocked, setId\n\n\n# Getters\n\n@docs getInitialValue, getValue, getIsChanged, getId\n\n",
+        "unions": [
+            {
+                "name": "Model",
+                "comment": " Add a Input.Model to your model.\n\n    type alias MyModel =\n        { myInput : Input.Model\n        }\n\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Msg",
+                "comment": " Add a Input.Msg to your Msg.\n\n    type MyMsg\n        = UpdateMyInput Input.Msg\n\n",
+                "args": [],
+                "type": "Form.IntInput.Internal.Msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "getId",
+                "comment": " Useful if you need the id of the input in your update function, so set focus etc.\n",
+                "type": "Form.IntInput.View -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "getInitialValue",
+                "comment": " Get the initial value of your input.\n",
+                "type": "Form.IntInput.Model -> Maybe.Maybe Basics.Int"
+            },
+            {
+                "name": "getIsChanged",
+                "comment": " Whether your input was changed. Useful if you want to disable save buttons unless there were changes etc.\n",
+                "type": "Form.IntInput.Model -> Basics.Bool"
+            },
+            {
+                "name": "getValue",
+                "comment": " Get the current value of your input. This is what you'd use to display the data somewhere outside of your input,\nor to send the data to the backend for example etc.\n",
+                "type": "Form.IntInput.Model -> Maybe.Maybe Basics.Int"
+            },
+            {
+                "name": "init",
+                "comment": " Add a Input.Model to your model.\n\n    myInitialModel : MyModel\n    myInitialModel =\n        { myInput = Input.init -- optionally pipe into State Setters\n        }\n\n",
+                "type": "Form.IntInput.Model"
+            },
+            {
+                "name": "reInitialise",
+                "comment": " ReInitialise your Input.Model.\n",
+                "type": "Form.IntInput.Model -> Form.IntInput.Model"
+            },
+            {
+                "name": "render",
+                "comment": " Transforms an Input.View into Html Input.Msg\n\n    myView : Model -> Html Msg\n    myView model =\n        div\n            []\n            [ Input.view model.myInput\n                |> Input.render\n                |> Html.map UpdateMyInput\n            ]\n\n",
+                "type": "Form.IntInput.View -> Html.Styled.Html Form.IntInput.Msg"
+            },
+            {
+                "name": "reset",
+                "comment": " Reset your Input.Model.\n",
+                "type": "Form.IntInput.Model -> Form.IntInput.Model"
+            },
+            {
+                "name": "setId",
+                "comment": " Give your input an id. Can be useful for DOM selectors (focus, WebComponents etc.)\n",
+                "type": "String.String -> Form.IntInput.View -> Form.IntInput.View"
+            },
+            {
+                "name": "setInitialValue",
+                "comment": " Set the initial value of your Input.Model.\n",
+                "type": "Basics.Int -> Form.IntInput.Model -> Form.IntInput.Model"
+            },
+            {
+                "name": "setIsError",
+                "comment": " Set whether your input is in error mode (red border).\n",
+                "type": "Basics.Bool -> Form.IntInput.View -> Form.IntInput.View"
+            },
+            {
+                "name": "setIsLocked",
+                "comment": " Set whether your input is locked (disabled).\n",
+                "type": "Basics.Bool -> Form.IntInput.View -> Form.IntInput.View"
+            },
+            {
+                "name": "setMaxLength",
+                "comment": " Set the max length for your input string.\n",
+                "type": "Basics.Int -> Form.IntInput.View -> Form.IntInput.View"
+            },
+            {
+                "name": "setPlaceholder",
+                "comment": " Set a placeholder for your input.\n",
+                "type": "String.String -> Form.IntInput.View -> Form.IntInput.View"
+            },
+            {
+                "name": "setValue",
+                "comment": " Change the value of your Input.Model.\n",
+                "type": "Basics.Int -> Form.IntInput.Model -> Form.IntInput.Model"
+            },
+            {
+                "name": "update",
+                "comment": " Use in your update function.\n\n    myUpdate : Msg -> Model -> ( Model, Cmd Msg )\n    myUpdate msg model =\n        case msg of\n            UpdateMyInput inputMsg ->\n                { model | myInput = Input.update inputMsg model.myInput } ! []\n\n",
+                "type": "Form.IntInput.Msg -> Form.IntInput.Model -> Form.IntInput.Model"
+            },
+            {
+                "name": "view",
+                "comment": " Transform an Input.Model into an Input.View, which allows us to pipe View Setters on it.\n\n    myView : Model -> Html Msg\n    myView model =\n        div\n            []\n            [ Input.view model.myInput -- pipe view setters here, for example |> setIsLocked 'your logic here'\n            ]\n\n",
+                "type": "Form.IntInput.Model -> Form.IntInput.View"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Form.Label",
+        "comment": " Module to add Labels to your app\n\n\n# Initialise\n\n@docs view\n\n\n# Configure\n\n@docs mandatory\n\n\n# Render\n\n@docs render\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "mandatory",
+                "comment": " Set whether or not a label is mandatory\n",
+                "type": "Basics.Bool -> Form.Label.Label -> Form.Label.Label"
+            },
+            {
+                "name": "render",
+                "comment": " Render the label\n",
+                "type": "Form.Label.Label -> Html.Styled.Html msg"
+            },
+            {
+                "name": "view",
+                "comment": " Init a Label\n",
+                "type": "String.String -> Form.Label.Label"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Form.MultiSelect",
+        "comment": " This module is useful if you want to add a MultiSelect Form element to your app.\n\n\n# Initialise and update\n\n@docs Model, init, Msg, update\n\n\n# View and render\n\n@docs view, render\n\n\n# State Setters\n\n@docs reInitialise, reset, setInitialOptions, setSelectedOptions, setIsOptionDisabled\n\n\n# View Setters\n\n@docs setIsError, setIsLocked, setIsClearable, setDefaultLabel, setId\n\n\n# Getters\n\n@docs getIsChanged, getIsOpen, getInitialOptions, getSelectedOptions, getId\n\n",
+        "unions": [
+            {
+                "name": "Model",
+                "comment": " Add a MultiSelect.Model to your model.\n\n    type MusicGenre\n        = Rock\n        | Jazz\n        | Blues\n        | Metal\n\n    type alias MyModel =\n        { myMultiSelect : MultiSelect.Model MusicGenre\n        }\n\n",
+                "args": [
+                    "option"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Msg",
+                "comment": " Add a MultiSelect.Msg to your Msg.\n\n    type MyMsg\n        = UpdateMyMultiSelect MultiSelect.Msg\n\n",
+                "args": [
+                    "option"
+                ],
+                "type": "Form.MultiSelect.Internal.Msg option"
+            }
+        ],
+        "values": [
+            {
+                "name": "getId",
+                "comment": " Useful if you need the id of the select in your update function, to set focus etc.\n",
+                "type": "Form.MultiSelect.View option -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "getInitialOptions",
+                "comment": " Get the initial option of your select.\n",
+                "type": "Form.MultiSelect.Model option -> List.List option"
+            },
+            {
+                "name": "getIsChanged",
+                "comment": " Whether your select was changed. Useful if you want to disable save buttons unless there were changes etc.\n",
+                "type": "Form.MultiSelect.Model option -> Basics.Bool"
+            },
+            {
+                "name": "getIsOpen",
+                "comment": " Whether this select is currently open.\n",
+                "type": "Form.MultiSelect.Model option -> Basics.Bool"
+            },
+            {
+                "name": "getSelectedOptions",
+                "comment": " Get the current option of your select. This is what you'd use to display the data somewhere outside of your select,\nor to send the data to the backend for example etc.\n",
+                "type": "Form.MultiSelect.Model option -> List.List option"
+            },
+            {
+                "name": "init",
+                "comment": " Add a MultiSelect.Model to your model.\n\n    myInitialModel : MyModel\n    myInitialModel =\n        { myMultiSelect = MultiSelect.init <| Nonempty Rock [ Jazz, Blues, Metal ]\n        }\n\n",
+                "type": "List.Nonempty.Nonempty option -> Form.MultiSelect.Model option"
+            },
+            {
+                "name": "reInitialise",
+                "comment": " ReInitialise your MultiSelect.Model.\n",
+                "type": "Form.MultiSelect.Model option -> Form.MultiSelect.Model option"
+            },
+            {
+                "name": "render",
+                "comment": " Transforms an MultiSelect.View into Html MultiSelect.Msg\n\n    myView : Model -> Html Msg\n    myView model =\n        div\n            []\n            [ MultiSelect.view model.myMultiSelect\n                |> MultiSelect.render\n                |> Html.map UpdateMyMultiSelect\n            ]\n\n",
+                "type": "Form.MultiSelect.View option -> Html.Styled.Html (Form.MultiSelect.Msg option)"
+            },
+            {
+                "name": "reset",
+                "comment": " Reset your MultiSelect.Model.\n",
+                "type": "Form.MultiSelect.Model option -> Form.MultiSelect.Model option"
+            },
+            {
+                "name": "setDefaultLabel",
+                "comment": " Set the default label, for example (-- NOTHING SELECTED --).\n",
+                "type": "String.String -> Form.MultiSelect.View option -> Form.MultiSelect.View option"
+            },
+            {
+                "name": "setId",
+                "comment": " Give your select an id. Can be useful for DOM selectors (focus, WebComponents etc.)\n",
+                "type": "String.String -> Form.MultiSelect.View option -> Form.MultiSelect.View option"
+            },
+            {
+                "name": "setInitialOptions",
+                "comment": " Set the initial option of your MultiSelect.Model.\n",
+                "type": "List.List option -> Form.MultiSelect.Model option -> Form.MultiSelect.Model option"
+            },
+            {
+                "name": "setIsClearable",
+                "comment": " Set whether your select is clearable (x icon).\n",
+                "type": "Basics.Bool -> Form.MultiSelect.View option -> Form.MultiSelect.View option"
+            },
+            {
+                "name": "setIsError",
+                "comment": " Set whether your select is in error mode (red border).\n",
+                "type": "Basics.Bool -> Form.MultiSelect.View option -> Form.MultiSelect.View option"
+            },
+            {
+                "name": "setIsLocked",
+                "comment": " Set whether your select is locked (disabled).\n",
+                "type": "Basics.Bool -> Form.MultiSelect.View option -> Form.MultiSelect.View option"
+            },
+            {
+                "name": "setIsOptionDisabled",
+                "comment": " This function allows you to disable specific options.\n",
+                "type": "(option -> Basics.Bool) -> Form.MultiSelect.View option -> Form.MultiSelect.View option"
+            },
+            {
+                "name": "setSelectedOptions",
+                "comment": " Change the option of your MultiSelect.Model.\n",
+                "type": "List.List option -> Form.MultiSelect.Model option -> Form.MultiSelect.Model option"
+            },
+            {
+                "name": "update",
+                "comment": " Use in your update function.\n\n    myUpdate : Msg -> Model -> ( Model, Cmd Msg )\n    myUpdate msg model =\n        case msg of\n            UpdateMyMultiSelect selectMsg ->\n                let\n                    ( newSelect, cmd ) =\n                        MultiSelect.update selectMsg mode.myMultiSelect\n                in\n                { model | myMultiSelect = newSelect } ! [ cmd ]\n\n",
+                "type": "Form.MultiSelect.Msg option -> Form.MultiSelect.Model option -> ( Form.MultiSelect.Model option, Platform.Cmd.Cmd (Form.MultiSelect.Msg option) )"
+            },
+            {
+                "name": "view",
+                "comment": " Transform an MultiSelect.Model into an MultiSelect.View, which allows us to pipe View Setters on it.\n\n    myView : Model -> Html Msg\n    myView model =\n        div\n            []\n            [ model.myMultiSelect\n                |> MultiSelect.view .name\n\n            -- pipe view setters here, for example |> setIsLocked 'your logic here'\n            ]\n\n",
+                "type": "(option -> String.String) -> Form.MultiSelect.Model option -> Form.MultiSelect.View option"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Form.SearchSelect",
+        "comment": " This module is useful if you want to add a Select Form element to your app,\nwith the options being searchable and coming from the backend.\n\n\n# Initialise and update\n\n@docs Model, init, Msg, update\n\n\n# View and render\n\n@docs view, render\n\n\n# State Setters\n\n@docs reInitialise, reset, setInitialOption, setSelectedOption, setIsOptionDisabled\n\n\n# View Setters\n\n@docs setIsError, setIsLocked, setIsClearable, setDefaultLabel, setId\n\n\n# Getters\n\n@docs getIsChanged, getIsOpen, getInitialOption, getSelectedOption, getId\n\n",
+        "unions": [
+            {
+                "name": "Model",
+                "comment": " Add a SearchSelect.Model to your model.\n\n    type alias MyModel =\n        { mySearchSelect : SearchSelect.Model String\n        }\n\n",
+                "args": [
+                    "option"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Msg",
+                "comment": " Add a SearchSelect.Msg to your Msg.\n\n    type MyMsg\n        = UpdateMySearchSelect SearchSelect.Msg\n\n",
+                "args": [
+                    "option"
+                ],
+                "type": "Form.SearchSelect.Internal.Msg option"
+            }
+        ],
+        "values": [
+            {
+                "name": "getId",
+                "comment": " Useful if you need the id of the search select in your update function, to set focus etc.\n",
+                "type": "Form.SearchSelect.View option -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "getInitialOption",
+                "comment": " Get the initial option of your search-select.\n",
+                "type": "Form.SearchSelect.Model option -> Maybe.Maybe option"
+            },
+            {
+                "name": "getIsChanged",
+                "comment": " Whether your search-select was changed. Useful if you want to disable save buttons unless there were changes etc.\n",
+                "type": "Form.SearchSelect.Model option -> Basics.Bool"
+            },
+            {
+                "name": "getIsOpen",
+                "comment": " Whether this select is currently open.\n",
+                "type": "Form.SearchSelect.Model option -> Basics.Bool"
+            },
+            {
+                "name": "getSelectedOption",
+                "comment": " Get the current option of your search-select. This is what you'd use to display the data somewhere outside of your search-select,\nor to send the data to the backend for example etc.\n",
+                "type": "Form.SearchSelect.Model option -> Maybe.Maybe option"
+            },
+            {
+                "name": "init",
+                "comment": " Init a SearchSelect.Model in your model.\n\n      myInitialModel : MyModel\n      myInitialModel =\n          { mySearchSelect = SearchSelect.init \"https://example.com/search\" Decode.string\n          }\n\n",
+                "type": "String.String -> Json.Decode.Decoder option -> Form.SearchSelect.Model option"
+            },
+            {
+                "name": "reInitialise",
+                "comment": " ReInitialise your SearchSelect.Model.\n",
+                "type": "Form.SearchSelect.Model option -> Form.SearchSelect.Model option"
+            },
+            {
+                "name": "render",
+                "comment": " Transforms an SearchSelect.View into Html SearchSelect.Msg\n\n    myView : Model -> Html Msg\n    myView model =\n        div\n            []\n            [ SearchSelect.view model.mySearchSelect .name\n                |> SearchSelect.render\n                |> Html.map UpdateMySearchSelect\n            ]\n\n",
+                "type": "Form.SearchSelect.View option -> Html.Styled.Html (Form.SearchSelect.Msg option)"
+            },
+            {
+                "name": "reset",
+                "comment": " Reset your SearchSelect.Model.\n",
+                "type": "Form.SearchSelect.Model option -> Form.SearchSelect.Model option"
+            },
+            {
+                "name": "setDefaultLabel",
+                "comment": " Set the default label, for example (-- NOTHING SELECTED --).\n",
+                "type": "String.String -> Form.SearchSelect.View option -> Form.SearchSelect.View option"
+            },
+            {
+                "name": "setId",
+                "comment": " Give your search-select an id. Can be useful for DOM selectors (focus, WebComponents etc.)\n",
+                "type": "String.String -> Form.SearchSelect.View option -> Form.SearchSelect.View option"
+            },
+            {
+                "name": "setInitialOption",
+                "comment": " Set the initial option of your SearchSelect.Model.\n",
+                "type": "Maybe.Maybe option -> Form.SearchSelect.Model option -> Form.SearchSelect.Model option"
+            },
+            {
+                "name": "setIsClearable",
+                "comment": " Set whether your search-select is clearable (x icon).\n",
+                "type": "Basics.Bool -> Form.SearchSelect.View option -> Form.SearchSelect.View option"
+            },
+            {
+                "name": "setIsError",
+                "comment": " Set whether your search-select is in error mode (red border).\n",
+                "type": "Basics.Bool -> Form.SearchSelect.View option -> Form.SearchSelect.View option"
+            },
+            {
+                "name": "setIsLocked",
+                "comment": " Set whether your search-select is locked (disabled).\n",
+                "type": "Basics.Bool -> Form.SearchSelect.View option -> Form.SearchSelect.View option"
+            },
+            {
+                "name": "setIsOptionDisabled",
+                "comment": " This function allows you to disable specific options.\n",
+                "type": "(option -> Basics.Bool) -> Form.SearchSelect.View option -> Form.SearchSelect.View option"
+            },
+            {
+                "name": "setSelectedOption",
+                "comment": " Change the option of your SearchSelect.Model.\n",
+                "type": "Maybe.Maybe option -> Form.SearchSelect.Model option -> Form.SearchSelect.Model option"
+            },
+            {
+                "name": "update",
+                "comment": " Use in your update function.\n\n    myUpdate : Msg -> Model -> ( Model, Cmd Msg )\n    myUpdate msg model =\n        case msg of\n            UpdateMySearchSelect selectMsg ->\n                let\n                    ( newSelect, cmd ) =\n                        SearchSelect.update selectMsg mode.mySearchSelect\n                in\n                { model | mySearchSelect = newSelect } ! [ cmd ]\n\n",
+                "type": "Form.SearchSelect.Msg option -> Form.SearchSelect.Model option -> ( Form.SearchSelect.Model option, Platform.Cmd.Cmd (Form.SearchSelect.Msg option) )"
+            },
+            {
+                "name": "view",
+                "comment": " Transform an SearchSelect.Model into an SearchSelect.View, which allows us to pipe View Setters on it.\n\n    myView : Model -> Html Msg\n    myView model =\n        div\n            []\n            [ model.mySearchSelect\n                |> SearchSelect.view .name\n\n            -- pipe view setters here, for example |> setIsLocked 'your logic here'\n            ]\n\n",
+                "type": "(option -> String.String) -> Form.SearchSelect.Model option -> Form.SearchSelect.View option"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Form.Select",
+        "comment": " This module is useful if you want to add a Select Form element to your app.\n\n\n# Initialise and update\n\n@docs Model, init, Msg, update\n\n\n# View and render\n\n@docs view, render\n\n\n# State Setters\n\n@docs reInitialise, reset, setInitialOption, setSelectedOption, setIsOptionDisabled\n\n\n# View Setters\n\n@docs setIsError, setIsLocked, setIsClearable, setDefaultLabel, setId\n\n\n# Getters\n\n@docs getIsChanged, getIsOpen, getInitialOption, getSelectedOption, getId\n\n",
+        "unions": [
+            {
+                "name": "Model",
+                "comment": " Add a Select.Model to your model.\n\n    type Title\n        = Mr\n        | Ms\n        | Dr\n\n    type alias MyModel =\n        { mySelect : Select.Model Title\n        }\n\n",
+                "args": [
+                    "option"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Msg",
+                "comment": " Add a Select.Msg to your Msg.\n\n    type MyMsg\n        = UpdateMySelect Select.Msg\n\n",
+                "args": [
+                    "option"
+                ],
+                "type": "Form.Select.Internal.Msg option"
+            }
+        ],
+        "values": [
+            {
+                "name": "getId",
+                "comment": " Useful if you need the id of the select in your update function, to set focus etc.\n",
+                "type": "Form.Select.View option -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "getInitialOption",
+                "comment": " Get the initial option of your select.\n",
+                "type": "Form.Select.Model option -> Maybe.Maybe option"
+            },
+            {
+                "name": "getIsChanged",
+                "comment": " Whether your select was changed. Useful if you want to disable save buttons unless there were changes etc.\n",
+                "type": "Form.Select.Model option -> Basics.Bool"
+            },
+            {
+                "name": "getIsOpen",
+                "comment": " Whether this select is currently open.\n",
+                "type": "Form.Select.Model option -> Basics.Bool"
+            },
+            {
+                "name": "getSelectedOption",
+                "comment": " Get the current option of your select. This is what you'd use to display the data somewhere outside of your select,\nor to send the data to the backend for example etc.\n",
+                "type": "Form.Select.Model option -> Maybe.Maybe option"
+            },
+            {
+                "name": "init",
+                "comment": " Add a Select.Model to your model.\n\n    myInitialModel : MyModel\n    myInitialModel =\n        { mySelect = Select.init [ Mr, Ms, Dr ]\n        }\n\n",
+                "type": "List.Nonempty.Nonempty option -> Form.Select.Model option"
+            },
+            {
+                "name": "reInitialise",
+                "comment": " ReInitialise your Select.Model.\n",
+                "type": "Form.Select.Model option -> Form.Select.Model option"
+            },
+            {
+                "name": "render",
+                "comment": " Transforms an Select.View into Html Select.Msg\n\n    myView : Model -> Html Msg\n    myView model =\n        div\n            []\n            [ Select.view model.mySelect\n                |> Select.render\n                |> Html.map UpdateMySelect\n            ]\n\n",
+                "type": "Form.Select.View option -> Html.Styled.Html (Form.Select.Msg option)"
+            },
+            {
+                "name": "reset",
+                "comment": " Reset your Select.Model.\n",
+                "type": "Form.Select.Model option -> Form.Select.Model option"
+            },
+            {
+                "name": "setDefaultLabel",
+                "comment": " Set the default label, for example (-- NOTHING SELECTED --).\n",
+                "type": "String.String -> Form.Select.View option -> Form.Select.View option"
+            },
+            {
+                "name": "setId",
+                "comment": " Give your select an id. Can be useful for DOM selectors (focus, WebComponents etc.)\n",
+                "type": "String.String -> Form.Select.View option -> Form.Select.View option"
+            },
+            {
+                "name": "setInitialOption",
+                "comment": " Set the initial option of your Select.Model.\n",
+                "type": "Maybe.Maybe option -> Form.Select.Model option -> Form.Select.Model option"
+            },
+            {
+                "name": "setIsClearable",
+                "comment": " Set whether your select is clearable (x icon).\n",
+                "type": "Basics.Bool -> Form.Select.View option -> Form.Select.View option"
+            },
+            {
+                "name": "setIsError",
+                "comment": " Set whether your select is in error mode (red border).\n",
+                "type": "Basics.Bool -> Form.Select.View option -> Form.Select.View option"
+            },
+            {
+                "name": "setIsLocked",
+                "comment": " Set whether your select is locked (disabled).\n",
+                "type": "Basics.Bool -> Form.Select.View option -> Form.Select.View option"
+            },
+            {
+                "name": "setIsOptionDisabled",
+                "comment": " This function allows you to disable specific options.\n",
+                "type": "(option -> Basics.Bool) -> Form.Select.View option -> Form.Select.View option"
+            },
+            {
+                "name": "setSelectedOption",
+                "comment": " Change the option of your Select.Model.\n",
+                "type": "Maybe.Maybe option -> Form.Select.Model option -> Form.Select.Model option"
+            },
+            {
+                "name": "update",
+                "comment": " Use in your update function.\n\n    myUpdate : Msg -> Model -> ( Model, Cmd Msg )\n    myUpdate msg model =\n        case msg of\n            UpdateMySelect selectMsg ->\n                let\n                    ( newSelect, cmd ) =\n                        Select.update selectMsg mode.mySelect\n                in\n                { model | mySelect = newSelect } ! [ cmd ]\n\n",
+                "type": "Form.Select.Msg option -> Form.Select.Model option -> ( Form.Select.Model option, Platform.Cmd.Cmd (Form.Select.Msg option) )"
+            },
+            {
+                "name": "view",
+                "comment": " Transform an Select.Model into an Select.View, which allows us to pipe View Setters on it.\n\n    myView : Model -> Html Msg\n    myView model =\n        div\n            []\n            [ model.mySelect\n                |> Select.view .name\n\n            -- pipe view setters here, for example |> setIsLocked 'your logic here'\n            ]\n\n",
+                "type": "(option -> String.String) -> Form.Select.Model option -> Form.Select.View option"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Form.TextArea",
+        "comment": " This module is useful if you want to add an TextArea Form element to your app.\n\n\n# Initialise and update\n\n@docs Model, init, Msg, update\n\n\n# View and render\n\n@docs view, render\n\n\n# State Setters\n\n@docs reInitialise, reset, setInitialValue, setValue, setReplacements\n\n\n# View Setters\n\n@docs setPlaceholder, setMaxLength, setIsError, setIsLocked, setId, setShouldWrap\n\n\n# Getters\n\n@docs getInitialValue, getValue, getIsChanged, getId\n\n",
+        "unions": [
+            {
+                "name": "Model",
+                "comment": " Add a TextArea.Model to your model.\n\n    type alias MyModel =\n        { myTextArea : TextArea.Model\n        }\n\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Msg",
+                "comment": " Add a TextArea.Msg to your Msg.\n\n    type MyMsg\n        = UpdateMyTextArea TextArea.Msg\n\n",
+                "args": [],
+                "type": "Form.TextArea.Internal.Msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "getId",
+                "comment": " Useful if you need the id of the input in your update function, so set focus etc.\n",
+                "type": "Form.TextArea.View -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "getInitialValue",
+                "comment": " Get the initial value of your input.\n",
+                "type": "Form.TextArea.Model -> String.String"
+            },
+            {
+                "name": "getIsChanged",
+                "comment": " Whether your input was changed. Useful if you want to disable save buttons unless there were changes etc.\n",
+                "type": "Form.TextArea.Model -> Basics.Bool"
+            },
+            {
+                "name": "getValue",
+                "comment": " Get the current value of your input. This is what you'd use to display the data somewhere outside of your input,\nor to send the data to the backend for example etc.\n",
+                "type": "Form.TextArea.Model -> String.String"
+            },
+            {
+                "name": "init",
+                "comment": " Add a TextArea.Model to your model.\n\n    myInitialModel : MyModel\n    myInitialModel =\n        { myTextArea = TextArea.init -- optionally pipe into State Setters\n        }\n\n",
+                "type": "Form.TextArea.Model"
+            },
+            {
+                "name": "reInitialise",
+                "comment": " ReInitialise your TextArea.Model.\n",
+                "type": "Form.TextArea.Model -> Form.TextArea.Model"
+            },
+            {
+                "name": "render",
+                "comment": " Transforms an TextArea.View into Html TextArea.Msg\n\n    myView : Model -> Html Msg\n    myView model =\n        div\n            []\n            [ TextArea.view model.myTextArea\n                |> TextArea.render\n                |> Html.map UpdateMyTextArea\n            ]\n\n",
+                "type": "Form.TextArea.View -> Html.Styled.Html Form.TextArea.Msg"
+            },
+            {
+                "name": "reset",
+                "comment": " Reset your TextArea.Model.\n",
+                "type": "Form.TextArea.Model -> Form.TextArea.Model"
+            },
+            {
+                "name": "setId",
+                "comment": " Give your input an id. Can be useful for DOM selectors (focus, WebComponents etc.)\n",
+                "type": "String.String -> Form.TextArea.View -> Form.TextArea.View"
+            },
+            {
+                "name": "setInitialValue",
+                "comment": " Set the initial value of your TextArea.Model.\n",
+                "type": "String.String -> Form.TextArea.Model -> Form.TextArea.Model"
+            },
+            {
+                "name": "setIsError",
+                "comment": " Set whether your input is in error mode (red border).\n",
+                "type": "Basics.Bool -> Form.TextArea.View -> Form.TextArea.View"
+            },
+            {
+                "name": "setIsLocked",
+                "comment": " Set whether your input is locked (disabled).\n",
+                "type": "Basics.Bool -> Form.TextArea.View -> Form.TextArea.View"
+            },
+            {
+                "name": "setMaxLength",
+                "comment": " Set the max length for your input string.\n",
+                "type": "Basics.Int -> Form.TextArea.View -> Form.TextArea.View"
+            },
+            {
+                "name": "setPlaceholder",
+                "comment": " Set a placeholder for your input.\n",
+                "type": "String.String -> Form.TextArea.View -> Form.TextArea.View"
+            },
+            {
+                "name": "setReplacements",
+                "comment": " Set a ist of string that should be replaced.\n",
+                "type": "List.List ( String.String, String.String ) -> Form.TextArea.Model -> Form.TextArea.Model"
+            },
+            {
+                "name": "setShouldWrap",
+                "comment": " Set whether you want text to wrap or not\n",
+                "type": "Basics.Bool -> Form.TextArea.View -> Form.TextArea.View"
+            },
+            {
+                "name": "setValue",
+                "comment": " Change the value of your TextArea.Model.\n",
+                "type": "String.String -> Form.TextArea.Model -> Form.TextArea.Model"
+            },
+            {
+                "name": "update",
+                "comment": " Use in your update function.\n\n    myUpdate : Msg -> Model -> ( Model, Cmd Msg )\n    myUpdate msg model =\n        case msg of\n            UpdateMyTextArea inputMsg ->\n                { model | myTextArea = TextArea.update inputMsg mode.myTextArea } ! []\n\n",
+                "type": "Form.TextArea.Msg -> Form.TextArea.Model -> Form.TextArea.Model"
+            },
+            {
+                "name": "view",
+                "comment": " Transform an TextArea.Model into an TextArea.View, which allows us to pipe View Setters on it.\n\n    myView : Model -> Html Msg\n    myView model =\n        div\n            []\n            [ TextArea.view model.myTextArea -- pipe view setters here, for example |> setIsLocked 'your logic here'\n            ]\n\n",
+                "type": "Form.TextArea.Model -> Form.TextArea.View"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Grid",
+        "comment": " Module to create Grids with Rows and Cols\n\n\n# Add Elements\n\n@docs container, row, col, colSizes\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "col",
+                "comment": " Add a col\n",
+                "type": "Grid.Size.Cols -> List.List (Html.Styled.Html msg) -> Grid.Col msg"
+            },
+            {
+                "name": "colSizes",
+                "comment": " Add a col, specifying different col sizes based on window size\n",
+                "type": "Grid.Size.Cols -> List.List ( Grid.Size.Size, Grid.Size.Cols ) -> List.List (Html.Styled.Html msg) -> Grid.Col msg"
+            },
+            {
+                "name": "container",
+                "comment": " Create a container\n",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Html.Styled.Html msg"
+            },
+            {
+                "name": "row",
+                "comment": " Add a row\n",
+                "type": "List.List (Grid.Col msg) -> Html.Styled.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Grid.Size",
+        "comment": " Provide the Size to Grids and CardBlocks\n\n\n# Size\n\n@docs Size, Cols\n\n",
+        "unions": [
+            {
+                "name": "Cols",
+                "comment": " Cols\n",
+                "args": [],
+                "cases": [
+                    [
+                        "One",
+                        []
+                    ],
+                    [
+                        "Two",
+                        []
+                    ],
+                    [
+                        "Three",
+                        []
+                    ],
+                    [
+                        "Four",
+                        []
+                    ],
+                    [
+                        "Five",
+                        []
+                    ],
+                    [
+                        "Six",
+                        []
+                    ],
+                    [
+                        "Seven",
+                        []
+                    ],
+                    [
+                        "Eight",
+                        []
+                    ],
+                    [
+                        "Nine",
+                        []
+                    ],
+                    [
+                        "Ten",
+                        []
+                    ],
+                    [
+                        "Eleven",
+                        []
+                    ],
+                    [
+                        "Twelve",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Size",
+                "comment": " Size\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Xs",
+                        []
+                    ],
+                    [
+                        "Sm",
+                        []
+                    ],
+                    [
+                        "Md",
+                        []
+                    ],
+                    [
+                        "Lg",
+                        []
+                    ],
+                    [
+                        "Xl",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "Html.Styled.Bdt",
+        "comment": " Helpers on top of Html.Styled to show/hide things\n\n\n# Show/Hide Elements\n\n@docs attributeIf, maybeAttribute, viewIf, divIf, maybeView\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "attributeIf",
+                "comment": " Optionally add an attribute.\n\n    button\n        [ onClick MyMessage |> attributeIf model.isButtonEnabled ]\n        [ text \"Clickety Click\" ]\n\n",
+                "type": "Basics.Bool -> Html.Styled.Attribute msg -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "divIf",
+                "comment": " Only display if True.\n\n    divIf model.isShown\n        [ id \"potato\" ]\n        [ text \"Hello\" ]\n\n",
+                "type": "Basics.Bool -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Html.Styled.Html msg"
+            },
+            {
+                "name": "maybeAttribute",
+                "comment": " Maybe add an attribute.\n\n    button\n        [ maybeAttribute onClick model.myMaybeMsg ]\n        [ text \"Clickety Click\" ]\n\n",
+                "type": "(a -> Html.Styled.Attribute msg) -> Maybe.Maybe a -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "maybeView",
+                "comment": " Maybe display a view.\n\n    maybeView view model.myMaybe\n\n",
+                "type": "Maybe.Maybe a -> (a -> Html.Styled.Html msg) -> Html.Styled.Html msg"
+            },
+            {
+                "name": "viewIf",
+                "comment": " Only display if True.\n\n    viewIf model.isShown myViewFunction\n\n",
+                "type": "Basics.Bool -> Html.Styled.Html msg -> Html.Styled.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "List.Bdt",
+        "comment": " List Helpers\n\n\n# Grouping\n\n@docs groupWhile\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "groupWhile",
+                "comment": " Group while a condition holds true\n\n    [ { name = \"One\", date = Time.second * 1 |> Date.fromTime }\n    , { name = \"Two\", date = Time.second * 2 |> Date.fromTime }\n    , { name = \"Three\", date = Time.second * 1 |> Date.fromTime }\n    ]\n        |> List.sortWith (\\rec1 rec2 -> Date.order rec1.date rec2.date)\n        |> List.groupWhile (\\rec1 rec2 -> rec1.date == rec2.date)\n\n    Will result in:\n\n    [ Nonempty { name = \"One\", date = Time.second * 1 |> Date.fromTime } [ { name = \"Three\", date = Time.second * 1 |> Date.fromTime } ]\n    , Nonempty { name = \"Two\", date = Time.second * 2 |> Date.fromTime } []\n    ]\n\n    If we didn't sort, we would be getting, :\n\n    [ Nonempty { name = \"One\", number = 1 } []\n    , Nonempty { name = \"Two\", number = 2 } []\n    , Nonempty { name = \"Three\", number = 1 } []\n    ]\n\n",
+                "type": "(a -> a -> Basics.Bool) -> List.List a -> List.List (List.Nonempty.Nonempty a)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "List.Nonempty.Bdt",
+        "comment": " Nonempty Helpers\n\n\n# Decode a Nonempty\n\n@docs decoder\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decoder",
+                "comment": " Nonempty decoder\n\n    type alias Student =\n        { firstName : String\n        , courses : Nonempty Course\n        }\n\n    decoder : Decoder Student\n    decoder =\n        Decode.decode Student\n            |> Decode.required \"firstName\" Decode.string\n            |> Decode.required \"courses\" (Nonempty.decoder courseDecoder)\n\n",
+                "type": "Json.Decode.Decoder a -> Json.Decode.Decoder (List.Nonempty.Nonempty a)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Modal",
+        "comment": " Module to create Modals with Headers, ModalBlocks and Footers\n\n\n# Init\n\n@docs view, viewIf, setSize\n\n\n# Create blocks\n\n@docs header, body, footer, block, blockSizes\n\n\n# Render\n\n@docs render\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "block",
+                "comment": " Add a block\n",
+                "type": "Grid.Size.Cols -> List.List (Html.Styled.Html msg) -> Modal.ModalBlock msg"
+            },
+            {
+                "name": "blockSizes",
+                "comment": " Add a block of varying sizes\n",
+                "type": "Grid.Size.Cols -> List.List ( Grid.Size.Size, Grid.Size.Cols ) -> List.List (Html.Styled.Html msg) -> Modal.ModalBlock msg"
+            },
+            {
+                "name": "body",
+                "comment": " Add a body block\n",
+                "type": "List.List (Modal.ModalBlock msg) -> Modal.Config msg -> Modal.Config msg"
+            },
+            {
+                "name": "footer",
+                "comment": " Add a footer block\n",
+                "type": "List.List (Button.Button msg) -> Modal.Config msg -> Modal.Config msg"
+            },
+            {
+                "name": "header",
+                "comment": " Add a header block\n",
+                "type": "String.String -> List.List (Button.Button msg) -> Modal.Config msg -> Modal.Config msg"
+            },
+            {
+                "name": "render",
+                "comment": " Render\n",
+                "type": "Modal.Config msg -> Html.Styled.Html msg"
+            },
+            {
+                "name": "setSize",
+                "comment": " Set the modal size\n",
+                "type": "Grid.Size.Size -> Modal.Config msg -> Modal.Config msg"
+            },
+            {
+                "name": "view",
+                "comment": " Init a modal\n",
+                "type": "msg -> Modal.Config msg"
+            },
+            {
+                "name": "viewIf",
+                "comment": " Init a modal conditionally\n",
+                "type": "Basics.Bool -> msg -> Modal.Config msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Resettable",
+        "comment": " This module is useful if you want to track changes to a value.\n\n\n# Definition\n\n@docs Resettable\n\n\n# Initialise and update\n\n@docs init, update, reset\n\n\n# Getters\n\n@docs getInitialValue, getValue, getIsChanged\n\n",
+        "unions": [
+            {
+                "name": "Resettable",
+                "comment": " Represent values that may be initial or updated. It can be useful if you have a\na save button that should be disabled if nothing on a form changed.\n\n    type alias MyProfileForm =\n        { firstName : Resettable String\n        , email : Resettable String\n        }\n\n    form =\n        { firstName = Resettable.init \"John Doe\"\n        , email = Resettable.init \"\"\n        }\n\n    shouldEnableSaveButton : Form -> Bool\n    shouldEnableSaveButton form =\n        Resettable.getIsChanged form.email || Resettable.getIsChanged form.password\n\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "getInitialValue",
+                "comment": " Get the initial value.\n\n    getInitialValue (Initial \"Josh\") -- \"Josh\"\n\n    getInitialValue (Updated \"Josh\" \"Joshua\") -- \"Josh\"\n\n",
+                "type": "Resettable.Resettable a -> a"
+            },
+            {
+                "name": "getIsChanged",
+                "comment": " Whether a value changed.\n\n    getIsChanged (Initial \"Josh\")         -- False\n    getIsChanged (Updated \"Josh\" \"Joshua\") -- True\n\n    when checking a lot of values, it may be helpful to put them in a list:\n\n    -- if they all have the same type:\n    List.any getIsChanged [ Initial \"Josh\", Updated \"Josh\" \"Joshua\" ]   -- True\n\n    -- if they have different types\n    List.any ((==) True) [ getIsChanged (Initial \"Josh\"), getIsChanged (Initial 12) ]   -- False\n\n",
+                "type": "Resettable.Resettable a -> Basics.Bool"
+            },
+            {
+                "name": "getValue",
+                "comment": " Get the current value.\n\n    getValue (Initial \"Josh\") -- \"Josh\"\n\n    getValue (Updated \"Josh\" \"Joshua\") -- \"Joshua\"\n\n",
+                "type": "Resettable.Resettable a -> a"
+            },
+            {
+                "name": "init",
+                "comment": " Initialise a value.\n\n    init \"Bob\" -- Initial \"Bob\"\n\n",
+                "type": "a -> Resettable.Resettable a"
+            },
+            {
+                "name": "reset",
+                "comment": " Reset to the initial value.\n\n    reset (Initial \"Josh\") -- Initial \"Josh\"\n\n    reset (Updated \"Josh\" \"Joshua\") -- Initial \"Josh\"\n\n",
+                "type": "Resettable.Resettable a -> Resettable.Resettable a"
+            },
+            {
+                "name": "update",
+                "comment": " Updates a Resettable value.\n\n    -- update to new value\n    update \"Joshua\" (Initial \"Josh\") -- Updated \"Josh\" \"Joshua\"\n\n    update \"Bob\" (Updated \"Josh\" \"Joshua\") -- Updated \"Josh\" \"Bob\"\n\n\n    -- if the new value is the initial value or a changed value is set to it's initial value, keep the initial value\n    update \"Josh\" (Initial \"Josh\") -- Initial \"Bob\"\n\n    update \"Josh\" (Updated \"Josh\" \"Joshua\") -- Initial \"Josh\"\n\n",
+                "type": "a -> Resettable.Resettable a -> Resettable.Resettable a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Set.Any.Bdt",
+        "comment": " Set.Any Helpers\n\n\n# Helpers\n\n@docs toggle\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toggle",
+                "comment": " Toggle an item (add if not existing, remove if existing)\n",
+                "type": "a -> Set.Any.AnySet comparable a -> Set.Any.AnySet comparable a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "StringFormatting",
+        "comment": " String Formatting Helpers\n\n\n# String Formatting Helpers\n\n@docs mobileNumber\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "mobileNumber",
+                "comment": " Returns a string as `xxxx xxx xxx`\n",
+                "type": "String.String -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Time.Bdt",
+        "comment": " Time Helpers\n\n\n# Print Posix\n\n@docs toDateString, toTimeString, toDateTimeString, maybeToDateString, maybeToTimeString, maybeToDateTimeString\n\n\n# Helpers\n\n@docs monthNumber, monthString, monthFromNumber, addMonths, clamp, maybeClamp\n\n# Setters\n\n@docs setDay\n\n# Sort Times\n\n@docs order\n\n# Encode/Decode Times\n\n@docs encode, encodeMaybe, decoder\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "addMonths",
+                "comment": " Add months to a posix\n",
+                "type": "Time.Zone -> Basics.Int -> Time.Posix -> Time.Posix"
+            },
+            {
+                "name": "clamp",
+                "comment": " Clamp a posix\n",
+                "type": "Time.Posix -> Time.Posix -> Time.Posix -> Time.Posix"
+            },
+            {
+                "name": "decoder",
+                "comment": " Decode a Posix\n",
+                "type": "Json.Decode.Decoder Time.Posix"
+            },
+            {
+                "name": "encode",
+                "comment": " Encode a Posix\n",
+                "type": "Time.Posix -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeMaybe",
+                "comment": " Encode a Maybe Posix\n",
+                "type": "Maybe.Maybe Time.Posix -> Json.Encode.Value"
+            },
+            {
+                "name": "maybeClamp",
+                "comment": " Clamp between maybe posix\n",
+                "type": "Maybe.Maybe Time.Posix -> Maybe.Maybe Time.Posix -> Time.Posix -> Time.Posix"
+            },
+            {
+                "name": "maybeToDateString",
+                "comment": " Returns a string as dd/mm/yyyy. Defaults to --/--/----\n",
+                "type": "Time.Zone -> Maybe.Maybe Time.Posix -> String.String"
+            },
+            {
+                "name": "maybeToDateTimeString",
+                "comment": " Returns a string as hh:mm:ss dd/mm/yyyy. Defaults to --/--/---- 00:00:00\n",
+                "type": "Time.Zone -> Maybe.Maybe Time.Posix -> String.String"
+            },
+            {
+                "name": "maybeToTimeString",
+                "comment": " Returns a string as hh:mm:ss. Defaults to 00:00:00\n",
+                "type": "Time.Zone -> Maybe.Maybe Time.Posix -> String.String"
+            },
+            {
+                "name": "monthFromNumber",
+                "comment": " Returns the Month based on it's number\n",
+                "type": "Basics.Int -> Time.Month"
+            },
+            {
+                "name": "monthNumber",
+                "comment": " Returns the Int representation of a month\n",
+                "type": "Time.Month -> Basics.Int"
+            },
+            {
+                "name": "monthString",
+                "comment": " Returns the String representation of a month\n",
+                "type": "Time.Month -> String.String"
+            },
+            {
+                "name": "order",
+                "comment": " Orders 2 dates. This comes in handy with List.sortWith:\n\n    List.sortWith Time.order [ date1, date2, date3 ]\n\n",
+                "type": "Time.Posix -> Time.Posix -> Basics.Order"
+            },
+            {
+                "name": "setDay",
+                "comment": " Set the day of the month for posix\n",
+                "type": "Time.Zone -> Basics.Int -> Time.Posix -> Time.Posix"
+            },
+            {
+                "name": "toDateString",
+                "comment": " Returns a string as dd/mm/yyyy\n",
+                "type": "Time.Zone -> Time.Posix -> String.String"
+            },
+            {
+                "name": "toDateTimeString",
+                "comment": " Returns a string as dd/mm/yyyy hh:mm:ss\n",
+                "type": "Time.Zone -> Time.Posix -> String.String"
+            },
+            {
+                "name": "toTimeString",
+                "comment": " Returns a string as hh:mm:ss\n",
+                "type": "Time.Zone -> Time.Posix -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Toasters",
+        "comment": " Module to add Toasters to your app\n\n\n# Initialise and update\n\n@docs Model, init, Msg, update, merge\n\n\n# Subscription\n\n@docs subscription\n\n\n# Add toasters\n\n@docs addGreen, addRed\n\n\n# Add to your view\n\n@docs view\n\n",
+        "unions": [
+            {
+                "name": "Model",
+                "comment": " Add a Toasters.Model to your model.\n\n    type alias MyModel =\n        { toasters : Toasters.Model\n        }\n\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Msg",
+                "comment": " Add a Toasters.Msg to your Msg.\n\n    type MyMsg\n        = ToastersMsg Toasters.Msg\n\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "addGreen",
+                "comment": " Add to your subscription function.\n\n    myUpdate : Msg -> Model -> ( Model, Cmd Msg )\n    myUpdate msg model =\n        case msg of\n            SavedSuccessfully ->\n                { model\n                    | isSaving = False\n                    , toasters = Toasters.addGreen \"Data saved Successfully :)\" model.toasters\n                }\n                    ! []\n\n",
+                "type": "String.String -> Toasters.Model -> Toasters.Model"
+            },
+            {
+                "name": "addRed",
+                "comment": " Add to your subscription function.\n\n    myUpdate : Msg -> Model -> ( Model, Cmd Msg )\n    myUpdate msg model =\n        case msg of\n            SavingFailed ->\n                { model\n                    | isSaving = False\n                    , toasters = Toasters.addRed \"Data could not be saved :(\" model.toasters\n                }\n                    ! []\n\n",
+                "type": "String.String -> Toasters.Model -> Toasters.Model"
+            },
+            {
+                "name": "init",
+                "comment": " Add a Toasters.Model to your model.\n\n    myInitialModel : MyModel\n    myInitialModel =\n        { toasters = Toasters.init\n        }\n\n",
+                "type": "Toasters.Model"
+            },
+            {
+                "name": "merge",
+                "comment": " Merge multiple toaster models into one.\nUseful when Return types that carry their own Toasters.Model want to merge back into the application Toasters.Model\n\n    { appModel | toasters = Toasters.merge return.toasters appModel.toasters }\n\n",
+                "type": "Toasters.Model -> Toasters.Model -> Toasters.Model"
+            },
+            {
+                "name": "subscription",
+                "comment": " Add to your subscription function.\n\n    subscriptions : Model -> Sub Msg\n    subscriptions model =\n        Sub.batch\n            [ Toasters.subscription model.toasters |> Sub.map Msg.ToastersMsg\n            ]\n\n",
+                "type": "Toasters.Model -> Platform.Sub.Sub Toasters.Msg"
+            },
+            {
+                "name": "update",
+                "comment": " Use in your update function.\n\n    myUpdate : Msg -> Model -> ( Model, Cmd Msg )\n    myUpdate msg model =\n        case msg of\n            ToastersMsg toastersMsg ->\n                { model | toasters = Toasters.update toastersMsg model.toasters } ! []\n\n",
+                "type": "Toasters.Msg -> Toasters.Model -> Toasters.Model"
+            },
+            {
+                "name": "view",
+                "comment": " Add to your view function.\n\n    div\n        []\n        [ Toasters.view model.toasters\n            |> Html.map ToastersMsg\n        , div\n            []\n            [ text \"My Cool App\" ]\n        ]\n\n",
+                "type": "Toasters.Model -> Html.Styled.Html Toasters.Msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Toggle",
+        "comment": " Module to add Toggles to your app\n\n\n# Views\n\n@docs view\n\n\n# Configure\n\n@docs isError, isDisabled, label\n\n\n# Render\n\n@docs render\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "isDisabled",
+                "comment": " Display as disabled, removing the click Msg\n",
+                "type": "Basics.Bool -> Toggle.Toggle msg -> Toggle.Toggle msg"
+            },
+            {
+                "name": "isError",
+                "comment": " Display as loading, removing the click Msg\n",
+                "type": "Basics.Bool -> Toggle.Toggle msg -> Toggle.Toggle msg"
+            },
+            {
+                "name": "label",
+                "comment": " Set the text\n",
+                "type": "String.String -> Toggle.Toggle msg -> Toggle.Toggle msg"
+            },
+            {
+                "name": "render",
+                "comment": " Render the toggle\n",
+                "type": "Toggle.Toggle msg -> Html.Styled.Html msg"
+            },
+            {
+                "name": "view",
+                "comment": " Init a toggle\n",
+                "type": "Basics.Bool -> msg -> Toggle.Toggle msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ToolTip",
+        "comment": " This module is useful if you want to add a ToolTip to your app.\n\n\n# Initialise and update\n\n@docs Model, init, Msg, update\n\n\n# View and render\n\n@docs view, render\n\n\n# View Setters\n\n@docs text, icon, top, left, bottom, green, red, blue\n\n",
+        "unions": [
+            {
+                "name": "Model",
+                "comment": " Add a ToolTip.Model to your model.\n\n    type alias MyModel =\n        { myToolTip : ToolTip.Model\n        }\n\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Msg",
+                "comment": " Add a ToolTip.Msg to your Msg.\n\n    type MyMsg\n        = UpdateMyToolTip ToolTip.Msg\n\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "blue",
+                "comment": " Make the ToolTip blue\n",
+                "type": "ToolTip.View -> ToolTip.View"
+            },
+            {
+                "name": "bottom",
+                "comment": " Render the tip below the content\n",
+                "type": "ToolTip.View -> ToolTip.View"
+            },
+            {
+                "name": "green",
+                "comment": " Make the ToolTip green\n",
+                "type": "ToolTip.View -> ToolTip.View"
+            },
+            {
+                "name": "icon",
+                "comment": " Set icon for the tooltip content\n",
+                "type": "FeatherIcons.Icon -> ToolTip.View -> ToolTip.View"
+            },
+            {
+                "name": "init",
+                "comment": " }\n} Init a ToolTip.Model in your model.\n\n    myInitialModel : MyModel\n    myInitialModel =\n        { myToolTip = ToolTip.init\n        }\n\n",
+                "type": "String.String -> ToolTip.Model"
+            },
+            {
+                "name": "left",
+                "comment": " Render the tip left of the content\n",
+                "type": "ToolTip.View -> ToolTip.View"
+            },
+            {
+                "name": "red",
+                "comment": " Make the ToolTip red\n",
+                "type": "ToolTip.View -> ToolTip.View"
+            },
+            {
+                "name": "render",
+                "comment": " Transforms an ToolTip.View into Html ToolTip.Msg\n\n    myView : Model -> Html Msg\n    myView model =\n        div\n            []\n            [ ToolTip.render model.myToolTip\n                |> Html.map UpdateMyToolTip\n            ]\n\n",
+                "type": "ToolTip.View -> Html.Styled.Html ToolTip.Msg"
+            },
+            {
+                "name": "text",
+                "comment": " Set text for the tooltip content\n",
+                "type": "String.String -> ToolTip.View -> ToolTip.View"
+            },
+            {
+                "name": "top",
+                "comment": " Render the tip above the content\n",
+                "type": "ToolTip.View -> ToolTip.View"
+            },
+            {
+                "name": "update",
+                "comment": " Use in your update function.\n\n    myUpdate : Msg -> Model -> ( Model, Cmd Msg )\n    myUpdate msg model =\n        case msg of\n            UpdateMyToolTip toolTipMsg ->\n                let\n                    ( newToolTip, cmd ) =\n                        ToolTip.update toolTipMsg mode.myToolTip\n                in\n                { model | myToolTip = newToolTip } ! [ cmd ]\n\n",
+                "type": "ToolTip.Msg -> ToolTip.Model -> ToolTip.Model"
+            },
+            {
+                "name": "view",
+                "comment": " Transform an ToolTip.Model into an ToolTip.View, which allows us to pipe View Setters on it.\n\n    myView : Model -> Html Msg\n    myView model =\n        div\n            []\n            [ ToolTip.view model.myToolTip -- pipe view setters here, for example |> top\n            ]\n\n",
+                "type": "ToolTip.Model -> ToolTip.View"
+            }
+        ],
+        "binops": []
+    }
+]

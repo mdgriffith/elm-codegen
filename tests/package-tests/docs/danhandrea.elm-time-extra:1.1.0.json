@@ -1,0 +1,61 @@
+[
+    {
+        "name": "TimeExtra",
+        "comment": " TimeExtra\n\nExtra functionality for Posix\n\nAll computations use `Time.utc`\n\n\n# Creation\n\n@docs epoch, fromY, fromYM, fromYMD\n@docs fromYMDH, fromYMDHM, fromYMDHMS, fromYMDHMSM\n\n\n# Query\n\n@docs isLeapYear, daysInMonth\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "daysInMonth",
+                "comment": " daysInMonth\n\n    returns the number of days in a month\n\n",
+                "type": "Year.Year -> Time.Month -> Basics.Int"
+            },
+            {
+                "name": "epoch",
+                "comment": " epoch\n",
+                "type": "Time.Posix"
+            },
+            {
+                "name": "fromY",
+                "comment": " fromY\n\nWill create a Posix date with day 1 and month 1\n\n",
+                "type": "Year.Year -> Time.Posix"
+            },
+            {
+                "name": "fromYM",
+                "comment": " fromYM\n\nWill create a Posix date with day 1\n\n",
+                "type": "Year.Year -> Time.Month -> Time.Posix"
+            },
+            {
+                "name": "fromYMD",
+                "comment": " fromYMD\n\nWill crate a Posix date\n\n",
+                "type": "Year.Year -> Time.Month -> Day.Day -> Time.Posix"
+            },
+            {
+                "name": "fromYMDH",
+                "comment": " fromYMDH\n\nWill create a Posix date\n\n",
+                "type": "Year.Year -> Time.Month -> Day.Day -> Hour.Hour -> Time.Posix"
+            },
+            {
+                "name": "fromYMDHM",
+                "comment": " fromYMDHM\n\nWill create a Posix date\n\n",
+                "type": "Year.Year -> Time.Month -> Day.Day -> Hour.Hour -> Minute.Minute -> Time.Posix"
+            },
+            {
+                "name": "fromYMDHMS",
+                "comment": " fromYMDHMS\n\nWill create a Posix date\n\n",
+                "type": "Year.Year -> Time.Month -> Day.Day -> Hour.Hour -> Minute.Minute -> Second.Second -> Time.Posix"
+            },
+            {
+                "name": "fromYMDHMSM",
+                "comment": " fromYMDHMSM\n\nWill create a Posix date\n\n",
+                "type": "Year.Year -> Time.Month -> Day.Day -> Hour.Hour -> Minute.Minute -> Second.Second -> Millis.Millis -> Time.Posix"
+            },
+            {
+                "name": "isLeapYear",
+                "comment": " isLeapYear\n",
+                "type": "Basics.Int -> Basics.Bool"
+            }
+        ],
+        "binops": []
+    }
+]

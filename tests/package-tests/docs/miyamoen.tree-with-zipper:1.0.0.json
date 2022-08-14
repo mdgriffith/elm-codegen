@@ -1,0 +1,281 @@
+[
+    {
+        "name": "Tree",
+        "comment": " This module implements Rose Tree data structure.\n\n> In computing, a multi-way tree or rose tree is a tree data structure\n> with a variable and unbounded number of branches per node.\n\n\n# Types & Constructor\n\n@docs Tree, Forest, singleton\n\n\n# Query\n\n@docs isEmpty, item, children, descendants\n\n\n# Modify\n\n@docs insert\n\n\n# Transforms\n\n@docs map, map2, filter, filterMap, sort, sortBy, sortWith, andMap, flatten, andThen\n\n\n# Forest\n\n@docs forestMap, forestMap2\n\n",
+        "unions": [
+            {
+                "name": "Tree",
+                "comment": " ",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Tree",
+                        [
+                            "a",
+                            "Tree.Forest a"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Forest",
+                "comment": " ",
+                "args": [
+                    "a"
+                ],
+                "type": "List.List (Tree.Tree a)"
+            }
+        ],
+        "values": [
+            {
+                "name": "andMap",
+                "comment": " Chain map operations.\n\n    import Lazy.LList as LL\n\n    Tree Tuple.pair [ singleton Tuple.pair, singleton Tuple.pair, singleton Tuple.pair ]\n        |> andMap (Tree 1 <| List.fromList [ singleton 2, singleton 3, singleton 4 ])\n        |> andMap (Tree 5 <| List.fromList [ singleton 6, singleton 7 ])\n        |> children\n    --> [ (2, 6), (3, 7) ]\n\n",
+                "type": "Tree.Tree a -> Tree.Tree (a -> b) -> Tree.Tree b"
+            },
+            {
+                "name": "andThen",
+                "comment": " Map given function onto a `Tree` and flatten the result.\n\n    singleton \"foo\"\n        |> insert (singleton \"bar\")\n        |> insert (singleton \"baz\")\n        |> andThen (\\a -> Tree a [ singleton <| a ++ \" fighter\" ])\n        |> children\n    --> [ \"foo fighter\", \"bar\", \"baz\" ]\n\n",
+                "type": "(a -> Tree.Tree b) -> Tree.Tree a -> Tree.Tree b"
+            },
+            {
+                "name": "children",
+                "comment": " Obtain children items of `Tree`.\n\n    singleton \"foo\"\n        |> insert (singleton \"bar\")\n        |> insert (singleton \"baz\")\n        |> children\n    --> [ \"bar\", \"baz\" ]\n\n",
+                "type": "Tree.Tree a -> List.List a"
+            },
+            {
+                "name": "descendants",
+                "comment": " Obtain descendants as `Forest` from the `Tree`.\n\n    singleton \"foo\"\n        |> insert (singleton \"bar\")\n        |> insert (singleton \"baz\")\n        |> descendants\n        |> List.map item\n    --> [ \"bar\", \"baz\" ]\n\n    singleton \"foo\"\n        |> insert (singleton \"bar\" |> insert (singleton \"baz\"))\n        |> descendants\n        |> List.map (children)\n    --> [ [ \"baz\" ] ]\n\n",
+                "type": "Tree.Tree a -> Tree.Forest a"
+            },
+            {
+                "name": "filter",
+                "comment": " Filter `Tree` children by given function.\n\nThis function goes from children of root downwards.\nThis means that nodes that doesn't satisfy predicate\nare excluded and filter is never performed over their children\neven if on those it might pass.\n\n    Tree 1 [ singleton 2, singleton 3, singleton 4 ]\n        |> filter ((>) 4)\n        |> children\n    --> [ 2, 3 ]\n\n    Tree 1 [ insert (singleton 5) <| singleton 2, insert (singleton 6) <| singleton 3, singleton 4 ]\n        |> filter ((<) 2)\n        |> descendants\n        |> List.map children\n    --> [ [ 6 ], [] ]\n\n",
+                "type": "(a -> Basics.Bool) -> Tree.Tree a -> Tree.Tree a"
+            },
+            {
+                "name": "filterMap",
+                "comment": " FilterMap on `Tree`. Works similarly to `List.filterMap` with same properties as [filter](#filter).\nIn case of `filterMap` even root node has to satisfy predicate otherwise\n`Nothing` is returned.\n\n    Tree 1 [ singleton 2, singleton 3, singleton 4 ]\n        |> filterMap (\\a -> if a < 4 then Just (a * 2) else Nothing)\n        |> Maybe.map children\n    --> Just [ 4, 6 ]\n\n    Tree 1 [ singleton 2, singleton 3, singleton 4 ]\n        |> filterMap (\\a -> if a > 2 then Just (a * 2) else Nothing)\n        |> Maybe.map children\n    --> Nothing\n\n",
+                "type": "(a -> Maybe.Maybe b) -> Tree.Tree a -> Maybe.Maybe (Tree.Tree b)"
+            },
+            {
+                "name": "flatten",
+                "comment": " Flatten `Tree` of Trees.\n\n    singleton (singleton 1)\n        |> flatten\n        |> item\n    --> 1\n\n    Tree (Tree \"foo\" [ singleton \"bar\"]) [ singleton <| singleton \"baz\" ]\n        |> flatten\n        |> children\n    --> [ \"bar\", \"baz\" ]\n\n",
+                "type": "Tree.Tree (Tree.Tree a) -> Tree.Tree a"
+            },
+            {
+                "name": "forestMap",
+                "comment": " Map function over `Forest`.\n\n    import Lazy.LList as LL\n\n    [ singleton 1, singleton 2, singleton 3 ]\n        |> forestMap ((+) 1)\n        |> List.map item\n    --> [ 2, 3, 4 ]\n\n",
+                "type": "(a -> b) -> Tree.Forest a -> Tree.Forest b"
+            },
+            {
+                "name": "forestMap2",
+                "comment": " Map function over two `Forest`s.\n\n    [ singleton 1, singleton 2, singleton 3 ]\n        |> forestMap2 (+) [ singleton 1, singleton 2]\n        |> List.map item\n        |> List.toList\n    --> [ 2, 4 ]\n\n",
+                "type": "(a -> b -> c) -> Tree.Forest a -> Tree.Forest b -> Tree.Forest c"
+            },
+            {
+                "name": "insert",
+                "comment": " Insert one `Tree` as children another.\n\n    singleton 1\n        |> insert (singleton 2)\n        |> insert (singleton 3)\n        |> children\n    --> [ 2, 3 ]\n\n    singleton 1\n        |> insert (singleton 2)\n        |> item\n    --> 1\n\n",
+                "type": "Tree.Tree a -> Tree.Tree a -> Tree.Tree a"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Check if `Tree` doesn't have any child.\n\n    singleton \"foo\"\n        |> isEmpty\n    --> True\n\n    singleton \"foo\"\n        |> insert (singleton \"bar\")\n        |> isEmpty\n    --> False\n\n",
+                "type": "Tree.Tree a -> Basics.Bool"
+            },
+            {
+                "name": "item",
+                "comment": " Obtain item from `Tree`.\n\n    singleton \"foo\"\n        |> item\n        |> \"foo\"\n\n",
+                "type": "Tree.Tree a -> a"
+            },
+            {
+                "name": "map",
+                "comment": " Map function over `Tree`.\n\n    singleton 1\n        |> map ((+) 1)\n        |> item\n    --> 2\n\n    singleton 1\n        |> insert (singleton 2)\n        |> insert (singleton 3)\n        |> map ((*) 2)\n        |> children\n    --> [ 4, 6 ]\n\n",
+                "type": "(a -> b) -> Tree.Tree a -> Tree.Tree b"
+            },
+            {
+                "name": "map2",
+                "comment": " Map function over two `Tree`s\n\n    map2 (+) (singleton 1) (singleton 5)\n        |> item\n    --> 6\n\n    import Lazy.LList as LL\n\n    Tree 1 (List.fromList [ singleton 2, singleton 3, singleton 4 ])\n        |> map2 (+) (Tree 5 <| List.fromList [ singleton 6, singleton 7 ])\n        |> children\n    --> [ 8, 10 ]\n\n",
+                "type": "(a -> b -> c) -> Tree.Tree a -> Tree.Tree b -> Tree.Tree c"
+            },
+            {
+                "name": "singleton",
+                "comment": " Puts value in minimal `Tree` context\n\n    singleton \"foo\"\n        |> item\n    --> \"foo\"\n\n",
+                "type": "a -> Tree.Tree a"
+            },
+            {
+                "name": "sort",
+                "comment": " Sort `tree`.\n\n    singleton 10\n        |> insert (singleton 5)\n        |> insert (singleton 2)\n        |> sort\n        |> children\n    --> [ 2, 5 ]\n\nit applies all levels:\n\n    import Lazy.LList as LL\n\n    singleton 10\n        |> insert (Tree 20 <| (List.reverse << List.map singleton << List.range 1) 5)\n        |> sort\n        |> descendants\n        |> List.map children\n    --> [ [ 1, 2, 3, 4, 5 ] ]\n\n",
+                "type": "Tree.Tree comparable -> Tree.Tree comparable"
+            },
+            {
+                "name": "sortBy",
+                "comment": " Sort `Tree` by a function.\n\n    singleton { val = 10 }\n       |> insert (singleton { val = 7 })\n       |> insert (singleton { val = 3 })\n       |> sortBy .val\n       |> children\n    --> [ { val = 3 }, { val = 7 } ]\n\nit applies to all levels:\n\n    singleton { a = 10 }\n        |> insert (Tree { a = 20 } <| (List.reverse << List.map (\\v -> singleton { a = v }) << List.range 1) 3)\n        |> sortBy .a\n        |> descendants\n        |> List.map children\n    --> [ [ { a = 1 }, { a = 2 }, { a = 3 } ] ]\n\n",
+                "type": "(a -> comparable) -> Tree.Tree a -> Tree.Tree a"
+            },
+            {
+                "name": "sortWith",
+                "comment": " Sort `Tree` using custom Ordering function\n\n    flippedComparison : comparable -> comparable -> Order\n    flippedComparison a b =\n        case Basics.compare a b of\n            LT -> GT\n            EQ -> EQ\n            GT -> LT\n\n    singleton 10\n        |> insert (singleton 2)\n        |> insert (singleton 5)\n        |> sortWith flippedComparison\n        |> children\n    --> [ 5, 2 ]\n\n",
+                "type": "(a -> a -> Basics.Order) -> Tree.Tree a -> Tree.Tree a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Tree.Zipper",
+        "comment": " Zipper implementation.\n\n> A zipper is a technique of representing an aggregate data structure so that it is convenient\n> for writing programs that traverse the structure arbitrarily and update its contents,\n> especially in purely functional programming languages.\n\n`Zipper` is a secret sauce that gives `Tree` real power.\nIt provides an easy way to query and modify the `Tree` in a clever and very flexible way.\n\nTypes within this module are exposed type aliases to make it easy extend default functionality of `Zipper`.\n\n\n# Types\n\n@docs Breadcrumb, Zipper, fromTree\n\n\n# Query\n\n@docs current, children, isRoot, isEmpty, attempt, getTree\n\n\n# Operations\n\n@docs insert, delete, update, updateItem, setTree, open, getPath, openPath, openAll, attemptOpenPath, up, upwards, root\n\n\n# Transformations\n\n@docs map, filter\n\n\n# Breadcrumbs\n\n@docs breadcrumbs, indexedBreadcrumbs\n\n",
+        "unions": [
+            {
+                "name": "Breadcrumb",
+                "comment": " Breadcrumbs are private type not meant to be manipulated directly.\nHowever it's possible to extract breadcrubs from `Zipper` in transformed\nformat using `breadcrumbs` and `indexedBreadcrumbs` functions which are meant for public use.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Zipper",
+                "comment": " ",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Zipper",
+                        [
+                            "Tree.Tree a",
+                            "List.List (Tree.Zipper.Breadcrumb a)"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "attempt",
+                "comment": " Attempt to perform action over zipper and return original `Zipper` in cases where this action returns `Nothing`.\n\n    import Tree as T\n\n    T.singleton \"foo\"\n        |> fromTree\n        |> attempt delete\n        |> current\n    --> \"foo\"\n\n    T.singleton \"foo\"\n        |> fromTree\n        |> insert (T.singleton \"bar\")\n        |> attempt (open ((==) \"foo\"))\n        |> attempt delete\n        |> current\n    --> \"foo\"\n\n",
+                "type": "(Tree.Zipper.Zipper a -> Maybe.Maybe (Tree.Zipper.Zipper a)) -> Tree.Zipper.Zipper a -> Tree.Zipper.Zipper a"
+            },
+            {
+                "name": "attemptOpenPath",
+                "comment": " Similar to [`openPath`](#openPath) but ingnore failed steps.\n\n    import Tree as T\n\n    T.singleton \"foo\"\n        |> fromTree\n        |> insert (T.singleton \"bar\")\n        |> attemptOpenPath (==) [ \"not-here\", \"bar\" ]\n        |> current\n    --> \"bar\"\n\n    T.singleton \"foo\"\n        |> fromTree\n        |> attemptOpenPath (==) [ \"baz\" ]\n        |> current\n    --> \"foo\"\n\n    T.singleton \"foo\"\n        |> fromTree\n        |> insert (T.singleton \"bar\" |> T.insert (T.singleton \"baz\"))\n        |> attemptOpenPath (==) [ \"not-here\", \"bar\", \"missng\", \"baz\" ]\n        |> current\n    --> \"baz\"\n\n",
+                "type": "(b -> a -> Basics.Bool) -> List.List b -> Tree.Zipper.Zipper a -> Tree.Zipper.Zipper a"
+            },
+            {
+                "name": "breadcrumbs",
+                "comment": " Get `List` of `Breacrub`s .\n\n    import Tree as T\n\n    T.singleton \"foo\"\n        |> fromTree\n        |> insert (T.singleton \"bar\" |> T.insert (T.singleton \"baz\"))\n        |> attemptOpenPath (==) [ \"bar\", \"baz\" ]\n        |> breadcrumbs\n    --> [ \"bar\", \"foo\" ]\n\n",
+                "type": "Tree.Zipper.Zipper a -> List.List a"
+            },
+            {
+                "name": "children",
+                "comment": " Get children of current `Tree`.\n\n    import Tree as T\n\n    T.singleton \"foo\"\n        |> fromTree\n        |> insert (T.singleton \"bar\")\n        |> children\n    --> [ \"bar\" ]\n\n",
+                "type": "Tree.Zipper.Zipper a -> List.List a"
+            },
+            {
+                "name": "current",
+                "comment": " Get item of current `Tree`.\n\n    import Tree as T\n\n    T.singleton \"foo\"\n        |> fromTree\n        |> insert (T.singleton \"bar\")\n        |> current\n    --> \"foo\"\n\n",
+                "type": "Tree.Zipper.Zipper a -> a"
+            },
+            {
+                "name": "delete",
+                "comment": " Delete current `Tree` from `Zipper`.\n\nReturns Nothing if root node is removed.\n\n    import Tree as T\n\n    T.singleton \"foo\"\n        |> fromTree\n        |> delete\n    --> Nothing\n\n    T.singleton \"foo\"\n        |> fromTree\n        |> insert (T.singleton \"bar\")\n        |> open (always True)\n        |> Maybe.andThen delete\n        |> Maybe.map current\n    --> Just \"foo\"\n\n",
+                "type": "Tree.Zipper.Zipper a -> Maybe.Maybe (Tree.Zipper.Zipper a)"
+            },
+            {
+                "name": "filter",
+                "comment": " Performs filter on current `Tree` in `Zipper`. See `Tree.filter` for more informations.\n\n    import Tree as T\n\n    T.Tree 1 [ T.singleton 2, T.singleton 3, T.singleton 4 ]\n        |> fromTree\n        |> filter ((>) 4)\n        |> children\n    --> [ 2, 3 ]\n\n    T.Tree 1 [ T.singleton 2, T.singleton 3, T.singleton 4 ]\n        |> fromTree\n        |> attempt (open ((==) 1))\n        |> filter ((<) 2)\n        |> root\n        |> children\n    --> [ 3, 4 ]\n\n    T.Tree 1 [ T.insert (T.singleton 5) <| T.singleton 2, T.insert (T.singleton 6) <| T.singleton 3, T.singleton 4 ]\n        |> fromTree\n        |> attempt (open ((==) 1))\n        |> filter ((<) 2)\n        |> getTree\n        |> T.descendants\n        |> List.andThen (List.map T.item << T.descendants)\n    --> [ 6 ]\n\n",
+                "type": "(a -> Basics.Bool) -> Tree.Zipper.Zipper a -> Tree.Zipper.Zipper a"
+            },
+            {
+                "name": "fromTree",
+                "comment": " Init `Zipper` for `Tree`.\n\n    import Tree as T\n\n    T.singleton \"foo\"\n        |> fromTree\n        |> current\n    --> \"foo\"\n\n",
+                "type": "Tree.Tree a -> Tree.Zipper.Zipper a"
+            },
+            {
+                "name": "getPath",
+                "comment": " Use given function to convert current breadcrumb path to a list\n\nResulting list of breadcrumbs contains currently focused item as well.\n\n    import Tree as T\n\n    T.singleton \"foo\"\n        |> fromTree\n        |> insert (T.singleton \"bar\")\n        |> attemptOpenPath (==) [ \"bar\" ]\n        |> getPath identity\n    --> [ \"foo\", \"bar\" ]\n\n    T.singleton \"foo\"\n        |> fromTree\n        |> insert (T.singleton \"bar\" |> T.insert (T.singleton \"baz\") )\n        |> attemptOpenPath (==) [ \"bar\", \"baz\" ]\n        |> getPath identity\n    --> [ \"foo\", \"bar\", \"baz\" ]\n\n",
+                "type": "(a -> b) -> Tree.Zipper.Zipper a -> List.List b"
+            },
+            {
+                "name": "getTree",
+                "comment": " Extract current `Tree` from a `Zipper`.\n\nuseful in case where you don't want to use pattern mathcing\n\n    import Tree as T\n\n    T.singleton \"foo\"\n        |> fromTree\n        |> getTree\n        |> T.item\n    --> \"foo\"\n\n",
+                "type": "Tree.Zipper.Zipper a -> Tree.Tree a"
+            },
+            {
+                "name": "indexedBreadcrumbs",
+                "comment": " Get `Breacrub`s as indexed `List`.\n\n    import Tree as T\n\n    T.singleton \"foo\"\n        |> fromTree\n        |> insert (T.singleton \"bar\" |> T.insert (T.singleton \"baz\"))\n        |> attemptOpenPath (==) [ \"bar\", \"baz\" ]\n        |> indexedBreadcrumbs\n    --> [ ( 1, \"bar\" ), ( 2, \"foo\" )]\n\n",
+                "type": "Tree.Zipper.Zipper a -> List.List ( Basics.Int, a )"
+            },
+            {
+                "name": "insert",
+                "comment": " Insert sub `Tree` into current `Tree` in `Zipper`.\n\n    import Tree as T\n\n    T.singleton \"foo\"\n        |> fromTree\n        |> insert (T.singleton \"bar\")\n        |> insert (T.singleton \"baz\")\n        |> children\n    --> [ \"bar\", \"baz\" ]\n\n",
+                "type": "Tree.Tree a -> Tree.Zipper.Zipper a -> Tree.Zipper.Zipper a"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Check if current `Tree` in `Zipper` is empty.\n\n    import Tree as T\n\n    T.singleton \"foo\"\n        |> fromTree\n        |> isEmpty\n    --> True\n\n    T.singleton \"foo\"\n        |> fromTree\n        |> insert (T.singleton \"bar\")\n        |> isEmpty\n    --> False\n\n",
+                "type": "Tree.Zipper.Zipper a -> Basics.Bool"
+            },
+            {
+                "name": "isRoot",
+                "comment": " Check if `Zipper` is focused on root `Tree`.\n\n    import Tree as T\n\n    T.singleton \"foo\"\n       |> fromTree\n       |> isRoot\n    --> True\n\n",
+                "type": "Tree.Zipper.Zipper a -> Basics.Bool"
+            },
+            {
+                "name": "map",
+                "comment": " Map function over `Zipper`.\n\n    import Tree as T\n\n    T.singleton 1\n        |> fromTree\n        |> map ((+) 1)\n        |> current\n    --> 2\n\n",
+                "type": "(a -> b) -> Tree.Zipper.Zipper a -> Tree.Zipper.Zipper b"
+            },
+            {
+                "name": "open",
+                "comment": " Open first children that satisfy given condition.\n\n    import Tree as T\n\n    T.singleton \"foo\"\n        |> fromTree\n        |> insert (T.singleton \"bar\")\n        |> open ((==) \"bar\")\n        |> Maybe.map current\n    --> Just \"bar\"\n\n    T.singleton \"foo\"\n        |> fromTree\n        |> insert (T.singleton \"bar\" |> T.insert (T.singleton \"baz\") )\n        |> attempt (open ((==) \"bar\"))\n        |> attempt (open ((==) \"baz\"))\n        |> current\n    --> \"baz\"\n\n    T.singleton \"foo\"\n        |> fromTree\n        |> open (always True)\n    --> Nothing\n\n",
+                "type": "(a -> Basics.Bool) -> Tree.Zipper.Zipper a -> Maybe.Maybe (Tree.Zipper.Zipper a)"
+            },
+            {
+                "name": "openAll",
+                "comment": " Get `List` of `Zipper`s for all children of current `Zipper`\n\n    import Tree as T\n\n    T.singleton \"foo\"\n        |> fromTree\n        |> insert (T.singleton \"bar\")\n        |> insert (T.singleton \"baz\")\n        |> openAll\n        |> List.map current\n    --> [ \"bar\", \"baz\" ]\n\n",
+                "type": "Tree.Zipper.Zipper a -> List.List (Tree.Zipper.Zipper a)"
+            },
+            {
+                "name": "openPath",
+                "comment": " Open multiple levels reducing list by given function.\n\n    import Tree as T\n\n    T.singleton \"foo\"\n        |> fromTree\n        |> insert (T.singleton \"bar\" |> T.insert (T.singleton \"baz\") )\n        |> openPath (==) [ \"bar\", \"baz\" ]\n        |> Result.map current\n    --> Ok \"baz\"\n\n    T.singleton \"foo\"\n        |> fromTree\n        |> insert (T.singleton \"bar\")\n        |> openPath (==) [ \"not-here\", \"baz\" ]\n        |> Result.map current\n    --> Err \"Can't resolve open for \\\"not-here\\\"\"\n\n",
+                "type": "(b -> a -> Basics.Bool) -> List.List b -> Tree.Zipper.Zipper a -> Result.Result b (Tree.Zipper.Zipper a)"
+            },
+            {
+                "name": "root",
+                "comment": " Back to root `Tree`.\n\n    import Tree as T\n\n    T.singleton \"foo\"\n        |> fromTree\n        |> insert (T.singleton \"bar\" |> T.insert (T.singleton \"baz\") )\n        |> open ((==) \"bar\")\n        |> Maybe.andThen (open ((==) \"baz\"))\n        |> Maybe.map root\n        |> Maybe.map current\n    --> Just \"foo\"\n\n    T.singleton \"foo\"\n        |> fromTree\n        |> root\n        |> current\n    --> \"foo\"\n\n",
+                "type": "Tree.Zipper.Zipper a -> Tree.Zipper.Zipper a"
+            },
+            {
+                "name": "setTree",
+                "comment": " Replace current `Tree` with new one.\n\n    import Tree as T\n\n    T.singleton \"foo\"\n        |> fromTree\n        |> setTree (T.singleton \"bar\")\n        |> current\n    --> \"bar\"\n\n",
+                "type": "Tree.Tree a -> Tree.Zipper.Zipper a -> Tree.Zipper.Zipper a"
+            },
+            {
+                "name": "up",
+                "comment": " Return back to parent of current `Tree` in given `Zipper`.\n\n    import Tree as T\n\n    T.singleton \"foo\"\n        |> fromTree\n        |> insert (T.singleton \"bar\")\n        |> open ((==) \"bar\")\n        |> Maybe.andThen up\n        |> Maybe.map current\n    --> Just \"foo\"\n\n    T.singleton \"baz\"\n        |> fromTree\n        |> up\n    --> Nothing\n\n",
+                "type": "Tree.Zipper.Zipper a -> Maybe.Maybe (Tree.Zipper.Zipper a)"
+            },
+            {
+                "name": "update",
+                "comment": " Update current `Tree` using given function.\n\n    import Tree as T\n\n    T.singleton \"foo\"\n        |> fromTree\n        |> update (T.map (\\a -> a ++ \" fighter\"))\n        |> current\n    --> \"foo fighter\"\n\n",
+                "type": "(Tree.Tree a -> Tree.Tree a) -> Tree.Zipper.Zipper a -> Tree.Zipper.Zipper a"
+            },
+            {
+                "name": "updateItem",
+                "comment": " Update item of current `Tree` using given function.\n\n    import Tree as T\n\n    T.singleton \"foo\"\n        |> fromTree\n        |> updateItem (\\i -> i ++ \" fighter\")\n        |> current\n    --> \"foo fighter\"\n\n",
+                "type": "(a -> a) -> Tree.Zipper.Zipper a -> Tree.Zipper.Zipper a"
+            },
+            {
+                "name": "upwards",
+                "comment": " Perform [`up`](#up) n times.\n\n    import Tree as T\n\n    T.singleton \"foo\"\n        |> fromTree\n        |> insert (T.singleton \"bar\" |> T.insert (T.singleton \"baz\") )\n        |> open ((==) \"bar\")\n        |> Maybe.andThen (open ((==) \"baz\"))\n        |> Maybe.andThen (upwards 2)\n        |> Maybe.map current\n    --> Just \"foo\"\n\nReturns given `Zipper` return if `0` is passed:\n\n    T.singleton \"foo\"\n       |> fromTree\n       |> upwards 0\n       |> Maybe.map current\n    --> Just \"foo\"\n\nReturn `Nothing` if there are not enough ancestors in `Zipper`:\n\n    T.singleton 4\n        |> fromTree\n        |> upwards 1\n    --> Nothing\n\nReturn `Nothing` if negative integer is passed:\n\n    T.singleton 4\n        |> fromTree\n        |> upwards -1\n    --> Nothing\n\n",
+                "type": "Basics.Int -> Tree.Zipper.Zipper a -> Maybe.Maybe (Tree.Zipper.Zipper a)"
+            }
+        ],
+        "binops": []
+    }
+]

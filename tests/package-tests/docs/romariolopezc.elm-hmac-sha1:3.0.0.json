@@ -1,0 +1,74 @@
+[
+    {
+        "name": "HmacSha1",
+        "comment": " Computes a Hash-based Message Authentication Code (HMAC) using the SHA-1 hash function\n\n@docs Digest, fromString, fromBytes\n\n\n# Representation\n\n@docs toBytes, toByteValues, toHex, toBase64\n\n",
+        "unions": [
+            {
+                "name": "Digest",
+                "comment": " An HMAC-SHA1 digest.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fromBytes",
+                "comment": " Pass a Key and your message in Bytes to compute a Digest\n\n    import HmacSha1.Key as Key\n    import Bytes.Encode\n\n    Bytes.Encode.sequence []\n        |> Bytes.Encode.encode\n        |> fromBytes (Key.fromString \"\")\n        |> toBase64\n    --> \"+9sdGxiqbAgyS31ktx+3Y3BpDh0=\"\n\n",
+                "type": "Internals.Key -> Bytes.Bytes -> HmacSha1.Digest"
+            },
+            {
+                "name": "fromString",
+                "comment": " Pass a Key and your message as a String to compute a Digest\n\n    import HmacSha1.Key as Key\n\n    \"The quick brown fox jumps over the lazy dog\"\n        |> fromString (Key.fromString \"key\")\n        |> toHex\n    --> \"de7c9b85b8b78aa6bc8a7a36f70a90701c9db4d9\"\n\n    \"The quick brown fox jumps over the lazy dog\"\n        |> fromString (Key.fromString \"key\")\n        |> toBase64\n    --> \"3nybhbi3iqa8ino29wqQcBydtNk=\"\n\n",
+                "type": "Internals.Key -> String.String -> HmacSha1.Digest"
+            },
+            {
+                "name": "toBase64",
+                "comment": " Convert a Digest into a base64 String\n\n    import HmacSha1.Key as Key\n\n    fromString (Key.fromString \"key\") \"message\"\n        |> toBase64\n    --> \"IIjfdNXyFGtIFGyvSWU3fp0L46Q=\"\n\n",
+                "type": "HmacSha1.Digest -> String.String"
+            },
+            {
+                "name": "toByteValues",
+                "comment": " Convert a Digest into a List of Integers. Each Integer is in the range\n0-255, and represents one byte. Can be useful for passing digest on to other\npackages that make use of this convention.\n\n    import HmacSha1.Key as Key\n\n    fromString (Key.fromString \"key\") \"message\"\n        |> toByteValues\n    --> [32, 136, 223, 116, 213, 242, 20, 107, 72, 20, 108, 175, 73, 101, 55, 126, 157, 11, 227, 164]\n\n",
+                "type": "HmacSha1.Digest -> List.List Basics.Int"
+            },
+            {
+                "name": "toBytes",
+                "comment": " Convert a Digest into [elm/bytes](https://package.elm-lang.org/packages/elm/bytes/latest/) Bytes.\nYou can use this to map it to your own representations. I use it to convert it to\nBase16 and Base64 string representations.\n\n    import Bytes\n    import HmacSha1.Key as Key\n\n    fromString (Key.fromString \"key\") \"message\"\n        |> toBytes\n        |> Bytes.width\n    --> 20\n\n",
+                "type": "HmacSha1.Digest -> Bytes.Bytes"
+            },
+            {
+                "name": "toHex",
+                "comment": " Convert a Digest into a base16 String\n\n    import HmacSha1.Key as Key\n\n    fromString (Key.fromString \"key\") \"message\"\n        |> toHex\n    --> \"2088df74d5f2146b48146caf4965377e9d0be3a4\"\n\n",
+                "type": "HmacSha1.Digest -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "HmacSha1.Key",
+        "comment": " Build an HMAC Key, either from a String or Bytes. Required to build an\nHmacSha1.Digest\n\n@docs Key, fromString, fromBytes\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Key",
+                "comment": " Opaque type representing a Key\n",
+                "args": [],
+                "type": "Internals.Key"
+            }
+        ],
+        "values": [
+            {
+                "name": "fromBytes",
+                "comment": " Builds a Key from Bytes\n",
+                "type": "Bytes.Bytes -> HmacSha1.Key.Key"
+            },
+            {
+                "name": "fromString",
+                "comment": " Builds a Key from a String\n",
+                "type": "String.String -> HmacSha1.Key.Key"
+            }
+        ],
+        "binops": []
+    }
+]

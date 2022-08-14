@@ -1,0 +1,93 @@
+[
+    {
+        "name": "Geodesy",
+        "comment": "\n\n\n# Types\n\n@docs Coordinates, DegreesMinutesSeconds, Unit\n\n\n# Helpers\n\n@docs decimalDegrees, degreesMinutesSeconds\n\n\n# Great-circle path (\"as the crow flies\")\n\n@docs distance, initialBearing, finalBearing, midpoint\n\n\n# Rhumb line\n\n@docs rhumbDistance, rhumbBearing, rhumbMidpoint\n\n",
+        "unions": [
+            {
+                "name": "Unit",
+                "comment": " Distance can be returned as kilometers, meters, miles, or feet\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Kilometers",
+                        []
+                    ],
+                    [
+                        "Meters",
+                        []
+                    ],
+                    [
+                        "Miles",
+                        []
+                    ],
+                    [
+                        "Feet",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Coordinates",
+                "comment": " Latitude & longitude pair, in decimal degrees\n",
+                "args": [],
+                "type": "( Basics.Float, Basics.Float )"
+            },
+            {
+                "name": "DegreesMinutesSeconds",
+                "comment": " Representation of degrees in degrees, minutes, and seconds\n",
+                "args": [],
+                "type": "( Basics.Int, Basics.Int, Basics.Float )"
+            }
+        ],
+        "values": [
+            {
+                "name": "decimalDegrees",
+                "comment": " Converts degrees, minutes, and seconds into decimal degrees\n",
+                "type": "Geodesy.DegreesMinutesSeconds -> Basics.Float"
+            },
+            {
+                "name": "degreesMinutesSeconds",
+                "comment": " Converts decimal degrees into degrees, minutes, and seconds\n",
+                "type": "Basics.Float -> Geodesy.DegreesMinutesSeconds"
+            },
+            {
+                "name": "distance",
+                "comment": " Great-circle distance between two points on a sphere\n",
+                "type": "Geodesy.Coordinates -> Geodesy.Coordinates -> Geodesy.Unit -> Basics.Float"
+            },
+            {
+                "name": "finalBearing",
+                "comment": " The final compass bearing of a great-circle path\n",
+                "type": "Geodesy.Coordinates -> Geodesy.Coordinates -> Basics.Float"
+            },
+            {
+                "name": "initialBearing",
+                "comment": " The initial compass bearing of a great-circle path\n",
+                "type": "Geodesy.Coordinates -> Geodesy.Coordinates -> Basics.Float"
+            },
+            {
+                "name": "midpoint",
+                "comment": " Half-way point along a great circle path\n",
+                "type": "Geodesy.Coordinates -> Geodesy.Coordinates -> Geodesy.Coordinates"
+            },
+            {
+                "name": "rhumbBearing",
+                "comment": " Constant compass bearing needed to traverse a rhumb line\n",
+                "type": "Geodesy.Coordinates -> Geodesy.Coordinates -> Basics.Float"
+            },
+            {
+                "name": "rhumbDistance",
+                "comment": " Rhumb line distance between two points\n",
+                "type": "Geodesy.Coordinates -> Geodesy.Coordinates -> Geodesy.Unit -> Basics.Float"
+            },
+            {
+                "name": "rhumbMidpoint",
+                "comment": " Half-way point along a rhumb line\n",
+                "type": "Geodesy.Coordinates -> Geodesy.Coordinates -> Geodesy.Coordinates"
+            }
+        ],
+        "binops": []
+    }
+]

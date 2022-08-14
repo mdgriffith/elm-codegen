@@ -1,0 +1,110 @@
+[
+    {
+        "name": "Number.Bounded",
+        "comment": " A number bounded between a minimum and a maximum.\n\nOnce the bounds are set the value of a bounded number can not get greater than its max bound\nneither can it get lower than its min bound.\n\n\n# Bounded numbers\n\n@docs Bounded\n\n\n# Define bounds\n\n@docs between\n\n\n# Increment / Decrement\n\n@docs inc, dec, tryInc, tryDec, incBy, decBy, tryIncBy, tryDecBy\n\n\n# Update\n\n@docs set, trySet, map, tryMap\n\n\n# Query\n\n@docs value, min, max\n\n\n# JSON encoding / decoding\n\n@docs decoder, encode\n\n",
+        "unions": [
+            {
+                "name": "Bounded",
+                "comment": " An opaque type that defines a number that is guaranteed to be between a given min and max bound\n(inclusive).\n",
+                "args": [
+                    "number"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "between",
+                "comment": " Construct a new bounded number by giving it a lower and a upper bound (inclusive). The value\nwill be initialized as the provided min. The min will always be the lower value, regardless of in\nwhich order you provide the arguments.\n",
+                "type": "number -> number -> Number.Bounded.Bounded number"
+            },
+            {
+                "name": "dec",
+                "comment": " Decrement the bounded number by 1 and clip it to the min bound.\n\nIf the resulting value is less than the min bound the actual value is the min bound.\n\n",
+                "type": "Number.Bounded.Bounded number -> Number.Bounded.Bounded number"
+            },
+            {
+                "name": "decBy",
+                "comment": " Decrement the bounded number by the given number and clip it to the min bound.\n\nIf the resulting value is less than the min bound the actual value is the min bound.\n\n",
+                "type": "number -> Number.Bounded.Bounded number -> Number.Bounded.Bounded number"
+            },
+            {
+                "name": "decoder",
+                "comment": " Get a JSON decoder for bounded numbers. You specify a JSON decoder for either ints or floats\nso that this function knows which number type it should parse.\n\nThe returned decoder expects that the JSON representation of a bounded number is a JSON object\ncontaining 3 number fields: \"min\", \"max\" and \"value\".\n\nWhen using int values the JSON might look like this:\n\n    { \"min\": 1\n    , \"max\": 15\n    , \"value\": 3\n    }\n\nThe JSON value of a bounded float value might look like this:\n\n    { \"min\": 0\n    , \"max\": 1\n    , \"value\": 0.5\n    }\n\n",
+                "type": "Json.Decode.Decoder number -> Json.Decode.Decoder (Number.Bounded.Bounded number)"
+            },
+            {
+                "name": "encode",
+                "comment": " Encode a bounded number as a JSON value. You specify a JSON encoder for either ints or floats\nso that this function knows which number type to use.\n\nThe returned JSON value is a JSON object with 3 number fields: \"min\", \"max\" and \"value\".\n\n",
+                "type": "(number -> Json.Encode.Value) -> Number.Bounded.Bounded number -> Json.Encode.Value"
+            },
+            {
+                "name": "inc",
+                "comment": " Increment the bounded number by 1 and clip it to the max bound.\n\nIf the resulting value is greater than the max bound the actual value is the max bound.\n\n",
+                "type": "Number.Bounded.Bounded number -> Number.Bounded.Bounded number"
+            },
+            {
+                "name": "incBy",
+                "comment": " Increment the bounded number by the given number and clip it to the max bound.\n\nIf the resulting value is greater than the max bound the actual value is the max bound.\n\n",
+                "type": "number -> Number.Bounded.Bounded number -> Number.Bounded.Bounded number"
+            },
+            {
+                "name": "map",
+                "comment": " Transforms a `Bounded` value with the given function. If the value returned by the given\nfunction is greater than the max bound, it will clip at the max. Likewise, if the value returned by\nthe given function is less than the min bound, it will clip at the min.\n",
+                "type": "(number -> number) -> Number.Bounded.Bounded number -> Number.Bounded.Bounded number"
+            },
+            {
+                "name": "max",
+                "comment": " Get the upper bound\n",
+                "type": "Number.Bounded.Bounded number -> number"
+            },
+            {
+                "name": "min",
+                "comment": " Get the lower bound\n",
+                "type": "Number.Bounded.Bounded number -> number"
+            },
+            {
+                "name": "set",
+                "comment": " Set the value manually. If you try to set a value greater than the max bound, the actual value\nwill be the max bound. Likewise, if you try to set a value less than the min bound, the actual value\nis the min bound.\n",
+                "type": "number -> Number.Bounded.Bounded number -> Number.Bounded.Bounded number"
+            },
+            {
+                "name": "tryDec",
+                "comment": " Try to decrement the bounded number by 1. If the resulting value is less than the min bound\n`Nothing` is returned, otherwise `Just` the result is returned.\n",
+                "type": "Number.Bounded.Bounded number -> Maybe.Maybe (Number.Bounded.Bounded number)"
+            },
+            {
+                "name": "tryDecBy",
+                "comment": " Try to decrement the bounded number by the given number. If the resulting value is less than the\nmin bound `Nothing` is returned, otherwise `Just` the result is returned.\n",
+                "type": "number -> Number.Bounded.Bounded number -> Maybe.Maybe (Number.Bounded.Bounded number)"
+            },
+            {
+                "name": "tryInc",
+                "comment": " Try to increment the bounded number by 1. If the resulting value is greater than the max bound\n`Nothing` is returned, otherwise `Just` the result is returned.\n",
+                "type": "Number.Bounded.Bounded number -> Maybe.Maybe (Number.Bounded.Bounded number)"
+            },
+            {
+                "name": "tryIncBy",
+                "comment": " Try to increment the bounded number by the given number. If the resulting value is greater than\nthe max bound `Nothing` is returned, otherwise `Just` the result is returned.\n",
+                "type": "number -> Number.Bounded.Bounded number -> Maybe.Maybe (Number.Bounded.Bounded number)"
+            },
+            {
+                "name": "tryMap",
+                "comment": " Try set transform a `Bounded` value with the given function. The returned `Maybe` indicates\nwhether the result of the transformation is within the lower and upper bounds. If yes the\ntransformed value is returned.\n\nIf the value returned by the given function is above the upper bound or below the lower bound\n`Nothing` is returned. Only if the value returned by the function is between the min and max bound\n(inclusive) the transformed `Bounded` value is returned.\n\n",
+                "type": "(number -> number) -> Number.Bounded.Bounded number -> Maybe.Maybe (Number.Bounded.Bounded number)"
+            },
+            {
+                "name": "trySet",
+                "comment": " Try to set the value manually. The returned `Maybe` indicates whether the given value is between\nthe min and max bounds. If yes the new value is returned.\n\nIf you try to set a value that is greater than the upper bound or lower than the lower bound\n`Nothing` is returned. Only if the value is between the min and max bound (inclusive) the new\n`Bounded` value is returned.\n\n",
+                "type": "number -> Number.Bounded.Bounded number -> Maybe.Maybe (Number.Bounded.Bounded number)"
+            },
+            {
+                "name": "value",
+                "comment": " Get the value\n",
+                "type": "Number.Bounded.Bounded number -> number"
+            }
+        ],
+        "binops": []
+    }
+]

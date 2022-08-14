@@ -1,0 +1,144 @@
+[
+    {
+        "name": "Alt",
+        "comment": " Elegant elm single pages composition. Aims at removing boilerplate code generated as byproduct of pages composition in SPAs.\n\n\n# Helper types\n\n@docs Subscription, Update, View, Both, Flags, Params\n\n\n# Url parsing\n\n@docs RouteParser, basicParser, topParser\n\n\n# Composition\n\n@docs PageWidget, PageWidgetComposition, join, add\n\n\n# Header and footer\n\n@docs Header, Footer, emptyHeader, emptyFooter, WindowState\n\n\n# Router\n\n@docs initRouter\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Both",
+                "comment": " Simple type used for better readability of tuple\n\n    Both a b == ( a, b )\n\n",
+                "args": [
+                    "a",
+                    "b"
+                ],
+                "type": "( a, b )"
+            },
+            {
+                "name": "Flags",
+                "comment": " Flags type. Should be as much generic as possible so anything can be passed by it and each modules parses the flags alone.\n",
+                "args": [],
+                "type": "Json.Decode.Value"
+            },
+            {
+                "name": "Footer",
+                "comment": " Footer type. Just view displayed on the bottom of the application.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Html msg"
+            },
+            {
+                "name": "Header",
+                "comment": " Header type. Function that returns view of header.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "Alt.WindowState -> msg -> Url.Url -> Html.Html msg"
+            },
+            {
+                "name": "PageWidget",
+                "comment": " Type for widet that represents page. Contains all basic elm architecture functions that need to be implemented in respective page modules.\n",
+                "args": [
+                    "model",
+                    "msg",
+                    "params"
+                ],
+                "type": "{ init : Alt.Both (params -> ( model, Platform.Cmd.Cmd msg )) Alt.RouteParser, view : Alt.View model msg, update : Alt.Update model msg, subscriptions : Alt.Subscription model msg }"
+            },
+            {
+                "name": "PageWidgetComposition",
+                "comment": " Page composition in progress. Is created by join function.\n",
+                "args": [
+                    "model",
+                    "msg",
+                    "path",
+                    "params"
+                ],
+                "type": "{ init : ( path -> params -> ( model, Platform.Cmd.Cmd msg ), List.Nonempty.Nonempty path, List.Nonempty.Nonempty Alt.RouteParser ), view : Alt.View model msg, update : Alt.Update model msg, subscriptions : Alt.Subscription model msg }"
+            },
+            {
+                "name": "Params",
+                "comment": " Params is record that router passes to each Page on initialization.\n",
+                "args": [],
+                "type": "{ flags : Alt.Flags, url : Url.Url, urlParams : List.List String.String, key : Browser.Navigation.Key }"
+            },
+            {
+                "name": "RouteParser",
+                "comment": " Parses url and returns list of strings. This is again the most generic approach.\nIn every Page, parser can be defined and exposed along with the function to transform list of strings to\nrequired data type.\n",
+                "args": [],
+                "type": "Url.Parser.Parser (List.List String.String -> List.List String.String) (List.List String.String)"
+            },
+            {
+                "name": "Subscription",
+                "comment": " Subscription function type\n",
+                "args": [
+                    "model",
+                    "msg"
+                ],
+                "type": "model -> Platform.Sub.Sub msg"
+            },
+            {
+                "name": "Update",
+                "comment": " Update function type\n",
+                "args": [
+                    "model",
+                    "msg"
+                ],
+                "type": "msg -> model -> ( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "View",
+                "comment": " View function type\n",
+                "args": [
+                    "model",
+                    "msg"
+                ],
+                "type": "model -> Html.Html msg"
+            },
+            {
+                "name": "WindowState",
+                "comment": " State that navbar expects. When implementing custom navbar, this state can be accessed.\nContains window to determine the shape of navbar and information whether it is collapsed or not.\n",
+                "args": [],
+                "type": "{ window : Alt.Window, expanded : Basics.Bool }"
+            }
+        ],
+        "values": [
+            {
+                "name": "add",
+                "comment": " Adds another PageWidget to PageWidgetComposition.\n",
+                "type": "Alt.PageWidgetComposition model1 msg1 path params -> Alt.PageWidget model2 msg2 params -> Alt.PageWidgetComposition (Either.Either model1 model2) (Either.Either msg1 msg2) (Either.Either path ()) params"
+            },
+            {
+                "name": "basicParser",
+                "comment": " Predefined function that takes one string and returns parser that parses this one path and returns empty list.\n",
+                "type": "String.String -> Url.Parser.Parser (List.List String.String -> List.List String.String) (List.List String.String)"
+            },
+            {
+                "name": "emptyFooter",
+                "comment": " Simplest empty footer\n",
+                "type": "Alt.Footer Alt.Msg"
+            },
+            {
+                "name": "emptyHeader",
+                "comment": " Simplest empty header\n",
+                "type": "Alt.WindowState -> msg -> Url.Url -> Html.Html msg"
+            },
+            {
+                "name": "initRouter",
+                "comment": " This function takes PageWidgetComposition and another information about aplications. It attaches router to composition and creates suitable output for application.\n",
+                "type": "String.String -> Alt.Header Alt.Msg -> Alt.Footer Alt.Msg -> Alt.PageWidgetComposition model msg path Alt.Params -> Alt.ApplicationWithRouter (Alt.Both model Alt.Model) (Either.Either msg Alt.Msg) Alt.Flags"
+            },
+            {
+                "name": "join",
+                "comment": " Combines first two pages and creates PageWidgetComposition. Is followed by add function.\n",
+                "type": "Alt.PageWidget model1 msg1 params -> Alt.PageWidget model2 msg2 params -> Alt.PageWidgetComposition (Either.Either model1 model2) (Either.Either msg1 msg2) (Either.Either () ()) params"
+            },
+            {
+                "name": "topParser",
+                "comment": " Predefined parser that parses \"/\" path and returns empty list.\n",
+                "type": "Url.Parser.Parser (List.List String.String -> List.List String.String) (List.List String.String)"
+            }
+        ],
+        "binops": []
+    }
+]

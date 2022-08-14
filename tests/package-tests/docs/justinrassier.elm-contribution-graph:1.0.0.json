@@ -1,0 +1,57 @@
+[
+    {
+        "name": "ContributionGraph",
+        "comment": " This module creates a GitHub-style contribution graph based on a simple Contribution model. The original\nintent is to have leaderboard, so each contribution has a point value associated.\n\n\n# Models\n\n@docs Model, Config, Contribution\n\n\n# Standard Elm Architecture Pieces\n\n@docs view, update, Msg\n\n\n# Common Helpers\n\n@docs init, setContributions\n\n",
+        "unions": [
+            {
+                "name": "Model",
+                "comment": " Opaque data model that holds the internal state of the Contribution Graph\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Msg",
+                "comment": " Messages that the Contribution Graph responds to update its internal state\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " Config options that are specific to your provider and your repo\n\nExample:\n\n    config =\n        { repoCommitUrl = \"https://github.com/justinrassier/elm-contribution-graph/\"\n        }\n\n",
+                "args": [],
+                "type": "{ repoCommitUrl : String.String }"
+            },
+            {
+                "name": "Contribution",
+                "comment": " Contribution data model used to display data in the graph.\n",
+                "args": [],
+                "type": "{ mergeTimestamp : Time.Posix, title : String.String, commitSha : String.String, points : Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "init",
+                "comment": " Initialize the [`Model`](#Model), which is an opaque type that controls the internal state of the graph\n",
+                "type": "ContributionGraph.Config -> List.List ContributionGraph.Contribution -> ( ContributionGraph.Model, Platform.Cmd.Cmd ContributionGraph.Msg )"
+            },
+            {
+                "name": "setContributions",
+                "comment": " Setter for the list of Contributions in the Model to render\n",
+                "type": "List.List ContributionGraph.Contribution -> ContributionGraph.Model -> ContributionGraph.Model"
+            },
+            {
+                "name": "update",
+                "comment": " Standard update function that handles Contribution Graph interactions. Hook up to your update function using [`Cmd.map`](#Platform.Cmd.map)\n",
+                "type": "ContributionGraph.Msg -> ContributionGraph.Model -> ( ContributionGraph.Model, Platform.Cmd.Cmd ContributionGraph.Msg )"
+            },
+            {
+                "name": "view",
+                "comment": " View function to render contribution graph as an SVG\n",
+                "type": "ContributionGraph.Model -> Html.Styled.Html ContributionGraph.Msg"
+            }
+        ],
+        "binops": []
+    }
+]

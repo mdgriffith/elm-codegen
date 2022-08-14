@@ -1,0 +1,60 @@
+[
+    {
+        "name": "Compare",
+        "comment": " Tools for composing comparison functions.\n\nA comparison function is the type of function you can pass to `List.sortWith`.\nYou pass it two elements of a type and it returns an Order (defined in the Basics module and imported by default).\n\n\n## Comparator type\n\n@docs Comparator\n\n\n## Using compare functions\n\n@docs min, max, minimum, maximum\n\n\n## Composing compare functions\n\n@docs by, concat, reverse, compose\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Comparator",
+                "comment": " A function that returns the relative ordering of two elements of a type.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "a -> a -> Basics.Order"
+            }
+        ],
+        "values": [
+            {
+                "name": "by",
+                "comment": " Take a function meant for `List.sortBy` and turn it into a Comparator.\n\n    List.sortWith (by String.length) [ \"longer\", \"short\", \"longest\" ]\n    --> [ \"short\", \"longer\", \"longest\" ]\n\n",
+                "type": "(a -> comparable) -> a -> a -> Basics.Order"
+            },
+            {
+                "name": "compose",
+                "comment": " Apply a transformation to both incoming values before attempting to apply\nthe previous comparator to the results\n\n    type alias Player =\n        { id : Id\n        , score : Score\n        }\n\n    highestScoringPlayer : List Player -> Maybe Player\n    highestScoringPlayer players =\n        players\n            |> Compare.maximum (Compare.compose .score Score.compare)\n\n",
+                "type": "(a -> b) -> Compare.Comparator b -> a -> a -> Basics.Order"
+            },
+            {
+                "name": "concat",
+                "comment": " Compare by multiple criteria in order. The first criterium that distinguishes two elements is used.\n\n    kara : { firstName : String, lastName : String }\n    kara = { firstName = \"Kara\", lastName = \"Thrace\" }\n\n    william : { firstName : String, lastName : String }\n    william = { firstName = \"William\", lastName = \"Adama\" }\n\n    lee : { firstName : String, lastName : String }\n    lee = { firstName = \"Lee\", lastName = \"Adama\" }\n\n    List.sortWith (concat [ by .lastName, by .firstName ]) [ kara, william, lee  ]\n    --> [ lee, william, kara ]\n\n",
+                "type": "List.List (Compare.Comparator a) -> a -> a -> Basics.Order"
+            },
+            {
+                "name": "max",
+                "comment": " Like `Basics.max` but using a custom comparator.\n\n    Compare.max (by String.length) \"short\" \"longer\"\n    --> \"longer\"\n\n",
+                "type": "Compare.Comparator a -> a -> a -> a"
+            },
+            {
+                "name": "maximum",
+                "comment": " Like `List.maximum` but using a custom comparator.\n\n    maximum (by String.length) [ \"longer\", \"short\", \"longest\" ]\n    --> Just \"longest\"\n\n",
+                "type": "Compare.Comparator a -> List.List a -> Maybe.Maybe a"
+            },
+            {
+                "name": "min",
+                "comment": " Like `Basics.min` but using a custom comparator.\n\n    Compare.min (by String.length) \"short\" \"longer\"\n    --> \"short\"\n\n",
+                "type": "Compare.Comparator a -> a -> a -> a"
+            },
+            {
+                "name": "minimum",
+                "comment": " Like `List.minimum` but using a custom comparator.\n\n    minimum (by String.length) [ \"longer\", \"short\", \"longest\" ]\n    --> Just \"short\"\n\n",
+                "type": "Compare.Comparator a -> List.List a -> Maybe.Maybe a"
+            },
+            {
+                "name": "reverse",
+                "comment": " Reverse an ordering function.\n\n    List.sortWith (by String.length |> reverse) [ \"longer\", \"short\", \"longest\" ]\n    --> [ \"longest\", \"longer\", \"short\" ]\n\n",
+                "type": "Compare.Comparator a -> a -> a -> Basics.Order"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,217 @@
+[
+    {
+        "name": "Maps",
+        "comment": " Functions for creating a maps program and maniuplating the maps model.\n\n\n# Showing a map\n\nYou can use the functions below to display a map.\n\n    import Html.Styled as Html exposing (program)\n    import Maps\n\n    main =\n        program\n            { init = ( Maps.defaultModel, Cmd.none )\n            , subscriptions = Maps.subscriptions\n            , update = Maps.update\n            , view = Maps.view\n            }\n\n@docs defaultModel\n@docs subscriptions\n@docs update\n@docs view\n@docs mapView\n\n\n# Update Model\n\n@docs updateMap\n@docs updateMarkers\n\n\n# Types\n\nThe following types are [opaque](http://package.elm-lang.org/help/design-guidelines#keep-tags-and-record-constructors-secret).\nUse the functions above to maniuplate and extract information from them.\n\n@docs Msg\n@docs Model\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Model",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Maps.Internal.OpaqueTypes.Model msg"
+            },
+            {
+                "name": "Msg",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Maps.Internal.Maps.Msg msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultModel",
+                "comment": " The default model is a map zoomed into Sydney, Australia with no markers.\n",
+                "type": "Maps.Model msg"
+            },
+            {
+                "name": "mapView",
+                "comment": " Transforms the Maps HTML view into an arbitrary HTML view.\nRequires a function that can transform `Maps.Msg`s into `msg`s.\n\n    import Html.Styled as Html\n    import Html.Styled.Event exposing (onClick)\n    import Maps\n\n    type MyMsg = Click | MapsMsg Maps.Msg\n\n    ...\n\n    view msg model =\n      Html.div\n        []\n        [ Maps.view model.map |> Maps.mapView MapsMsg\n        , Html.button [ onClick Click ] [ Html.text \"Click!\" ]\n        ]\n\n",
+                "type": "(Maps.Msg msg -> msg) -> Html.Styled.Html (Maps.Msg msg) -> Html.Styled.Html msg"
+            },
+            {
+                "name": "subscriptions",
+                "comment": " ",
+                "type": "Maps.Model msg -> Platform.Sub.Sub (Maps.Msg msg)"
+            },
+            {
+                "name": "update",
+                "comment": " ",
+                "type": "Maps.Msg msg -> Maps.Model msg -> ( Maps.Model msg, Platform.Cmd.Cmd (Maps.Msg msg) )"
+            },
+            {
+                "name": "updateMap",
+                "comment": " Change the map inside of a model.\n\nFor example, set the width/height of a map and zoom into Seoul, South Korea:\n\n    import Maps.Geo\n    import Maps.Map as Map\n\n    let\n      seoul = Maps.Geo.latLng 37.532600 127.024612\n    in\n      model\n      |> updateMap (Map.setHeight 600)\n      |> updateMap (Map.setWidth 1000)\n      |> updateMap (Map.viewBounds <| Maps.Geo.centeredBounds 10 seoul)\n\nSee [Maps.Map](./Maps-Map) for documentation of the Map functions.\n\n",
+                "type": "(Maps.Map.Map -> Maps.Map.Map) -> Maps.Model msg -> Maps.Model msg"
+            },
+            {
+                "name": "updateMarkers",
+                "comment": " Change the markers inside of the model\n\nFor example, add markers for some Sydney attractions and then another marker for the city center:\n\n    import Maps.Geo\n    import Maps.Marker as Marker\n\n    let\n      attractions =\n        List.map (uncurry Maps.Geo.latLng)\n          [ (-33.852324, 151.210819)\n          , (-33.856872, 151.215239)\n          , (-33.870397, 151.208835)\n          ]\n      sydney = Maps.Geo.latLng -33.865143 151.209900\n    in\n      model\n      |> updateMarkers (\\markers -> List.map Marker.create attractions ++ markers)\n      |> updateMarkers ((::) (Marker.create sydney))\n\nSee [Maps.Marker](./Maps-Marker) for documentation of the Marker functions.\n\n",
+                "type": "(List.List (Maps.Marker.Marker msg) -> List.List (Maps.Marker.Marker msg)) -> Maps.Model msg -> Maps.Model msg"
+            },
+            {
+                "name": "view",
+                "comment": " ",
+                "type": "Maps.Model msg -> Html.Styled.Html (Maps.Msg msg)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Maps.Convert",
+        "comment": " Functions for converting between different map units.\n\n\n# Map Size Properties\n\n@docs MapSizes\n\n\n# Screen Offset - Latitude/Longitude\n\n@docs screenOffsetToLatLng\n@docs latLngToScreenOffset\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "MapSizes",
+                "comment": " The size properties of a map.\nThe conversion functions that require this type can just be passed a map type.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ a | tileSize : Basics.Float, zoom : Maps.Internal.Screen.ZoomLevel, width : Basics.Float, height : Basics.Float, center : Maps.Geo.LatLng }"
+            }
+        ],
+        "values": [
+            {
+                "name": "latLngToScreenOffset",
+                "comment": " Take latitude/longitude anc convert it to an offset from the top left of the map.\nNote that it requires the dimensions of the map (or the map itself) to calculate this conversion.\n",
+                "type": "Maps.Convert.MapSizes a -> Maps.Geo.LatLng -> Maps.Internal.Screen.Offset"
+            },
+            {
+                "name": "screenOffsetToLatLng",
+                "comment": " Take an offset from the top left of the map and convert it to a latitude/longitude.\nNote that it requires the dimensions of the map (or the map itself) to calculate this conversion.\n",
+                "type": "Maps.Convert.MapSizes a -> Maps.Internal.Screen.Offset -> Maps.Geo.LatLng"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Maps.Geo",
+        "comment": " Geographic types and constructors.\n\n\n# Latitude/Longitude\n\n@docs LatLng\n@docs latLng\n\n\n# Bounds\n\n@docs Bounds\n@docs bounds\n@docs centeredBounds\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Bounds",
+                "comment": " The Bounds type has several variations.\nAll of them can be used to calculate the position and zoom of a map.\n\n\n## NorthEast/SouthWest bounds\n\n@docs bounds\n\n\n## Center and Zoom Level\n\n@docs centerBounds\n\n",
+                "args": [],
+                "type": "Maps.Internal.Bounds.Bounds"
+            },
+            {
+                "name": "LatLng",
+                "comment": " The LatLng type is a simple record containing latitude and longitude.\n\nYou can create a longitude in two equivalent ways:\n\n    Maps.Geo.latLng 10 -80 == { lat = 10, lng = -80 }\n\n",
+                "args": [],
+                "type": "Maps.Internal.LatLng.LatLng"
+            }
+        ],
+        "values": [
+            {
+                "name": "bounds",
+                "comment": " Create a Bounds using a northeast and southwest point.\n\nFor example, the bounds of Ecuador\n\n    ecuador =\n        bounds\n            { northEast = latLng 1.4284875 -75.188794\n            , southWest = latLng -5.0143511 -81.08498089999999\n            }\n\n",
+                "type": "{ northEast : Maps.Geo.LatLng, southWest : Maps.Geo.LatLng } -> Maps.Geo.Bounds"
+            },
+            {
+                "name": "centeredBounds",
+                "comment": " Create a Bounds centered on a location with a given zoom level.\n\nFor example, zoomed into the streets of Baku, Azerbaijan:\n\n    baku =\n        centeredBounds\n            14\n            (latLng 40.409264 49.867092)\n\n",
+                "type": "Basics.Float -> Maps.Geo.LatLng -> Maps.Geo.Bounds"
+            },
+            {
+                "name": "latLng",
+                "comment": " Create a LatLng.\n\nFor example:\n\n    latLng 45 -175\n\n",
+                "type": "Basics.Float -> Basics.Float -> Maps.Geo.LatLng"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Maps.Map",
+        "comment": " Functions for manipulating the Map.\n\n@docs Map\n\n\n# Setters\n\nThe setters can be used to modify a map\n\nFor example, MapBox tiles on a large map:\n\n    map\n        |> setTileServer (\"https://api.mapbox.com/v4/mapbox.streets/{z}/{x}/{y}.png?access_token=\" ++ accessToken)\n        |> setWidth 1200\n        |> setHeight 800\n\n@docs setTileServer\n@docs setWidth\n@docs setHeight\n@docs setTileSize\n\n\n# Map Movement and Zooming\n\n@docs move\n@docs moveTo\n@docs setZoom\n@docs zoom\n@docs zoomTo\n@docs viewBounds\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Map",
+                "comment": " The map type contains all the information necessary to display a map on the screen.\nThe map type is opaque, so use the functions in this module to maniuplate the map.\n",
+                "args": [],
+                "type": "Maps.Internal.OpaqueTypes.Map"
+            }
+        ],
+        "values": [
+            {
+                "name": "move",
+                "comment": " Move the map a given number of pixels in the x and y dimensions.\n\nFor example, up 10px and right 10px:\n\n    map\n        |> move { x = 10, y = -10 }\n\n",
+                "type": "Maps.Internal.Screen.Offset -> Maps.Map.Map -> Maps.Map.Map"
+            },
+            {
+                "name": "moveTo",
+                "comment": " Move the center of the map to a specific location.\n\nFor example, move the map to Shanghai:\n\n    map\n        |> moveTo (Maps.Geo.LatLng 31.267401 121.522179)\n\n",
+                "type": "Maps.Geo.LatLng -> Maps.Map.Map -> Maps.Map.Map"
+            },
+            {
+                "name": "setHeight",
+                "comment": " Set the height, as displayed on the screen, of a given Map.\n",
+                "type": "Basics.Float -> Maps.Map.Map -> Maps.Map.Map"
+            },
+            {
+                "name": "setTileServer",
+                "comment": " Set the tile server.\n\nThe format is a URL with {x} {y} {z} placeholders for the x, y and zoom coordinates.\n\n",
+                "type": "String.String -> Maps.Map.Map -> Maps.Map.Map"
+            },
+            {
+                "name": "setTileSize",
+                "comment": " Set the width/height in px of a tile.\nNote, this is dependent on the tile server, and the default of 256px is almost always correct.\n",
+                "type": "Basics.Float -> Maps.Map.Map -> Maps.Map.Map"
+            },
+            {
+                "name": "setWidth",
+                "comment": " Set the width, as displayed on the screen, of a given Map.\n",
+                "type": "Basics.Float -> Maps.Map.Map -> Maps.Map.Map"
+            },
+            {
+                "name": "setZoom",
+                "comment": " Sets the zoom to a specific level\n\nFor example, zoom all the way out\n\n    map\n        |> zoom 0\n\nOr all the way in:\n\n    map\n        |> zoom 19\n\n",
+                "type": "Basics.Float -> Maps.Map.Map -> Maps.Map.Map"
+            },
+            {
+                "name": "viewBounds",
+                "comment": " Move and zoom the map to cover given the bounds.\n\nFor example, view the bounds of Madagascar:\n\n    let\n        madagascar =\n            Maps.Geo.bounds\n                { northEast = Maps.Geo.latLng -11.9519639 50.48377989999999\n                , southWest = Maps.Geo.latLng -25.6065157 43.1851395\n                }\n    in\n    map\n        |> viewBounds madagascar\n\n",
+                "type": "Maps.Geo.Bounds -> Maps.Map.Map -> Maps.Map.Map"
+            },
+            {
+                "name": "zoom",
+                "comment": " Zoom into the center of the map.\n\nFor example zoom out two levels:\n\n    map\n        |> zoom -2\n\n",
+                "type": "Basics.Float -> Maps.Map.Map -> Maps.Map.Map"
+            },
+            {
+                "name": "zoomTo",
+                "comment": " Zoom into an x,y co-ordinate on the map.\n\nFor example, zoom into the top left corner of the map:\n\n    map\n        |> zoom 1 { x = 0, y = 0 }\n\n",
+                "type": "Basics.Float -> Maps.Internal.Screen.Offset -> Maps.Map.Map -> Maps.Map.Map"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Maps.Marker",
+        "comment": " Markers are for displaying geographic locations on the map.\n\n@docs Marker\n\n\n# Create a marker\n\n@docs createCustom\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Marker",
+                "comment": " There are currently two types of marker:\n\n  - A default marker\n  - A custom HTML marker\n\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "Maps.Internal.Marker.Marker msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "createCustom",
+                "comment": " Create a custom HTML marker at the given latitude/longitude.\n",
+                "type": "Html.Styled.Html msg -> Maps.Geo.LatLng -> Maps.Marker.Marker msg"
+            }
+        ],
+        "binops": []
+    }
+]

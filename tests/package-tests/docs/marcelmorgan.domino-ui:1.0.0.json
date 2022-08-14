@@ -1,0 +1,168 @@
+[
+    {
+        "name": "Game",
+        "comment": " This makes is possible to represent a domino game using elm\n\n\n# Definition\n\n@docs Game\n\n\n# Common Helpers\n\n@docs addChatMessage, clearChatDraft, closeChat, composeChat, decoder, encodePlay, errorToString, executeEvent, getChatDraft, getId, getTimesoutAt, hasChat, isResumable, isSetCompleted, isUpdating, moveSelectedBack, moveSelectedBy, nextRoundStartedTimeout, openChat, roundNextEvent, selectDomino, setConnectionStatus, setNextGame, setViewport, slug, stageEvent, switchToNextGame, switchToNextRoundGame, updateDecoder, view\n\n",
+        "unions": [
+            {
+                "name": "Game",
+                "comment": " Represents a Game\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "addChatMessage",
+                "comment": " adds a new chat message to the player chat\n",
+                "type": "Game.Player.Message.Message -> Game.Game -> Game.Game"
+            },
+            {
+                "name": "clearChatDraft",
+                "comment": " clear the draft being composed usually as a result of a message being sent\n",
+                "type": "Game.Game -> Game.Game"
+            },
+            {
+                "name": "closeChat",
+                "comment": " close previously opened chat\n",
+                "type": "Game.Game -> Game.Game"
+            },
+            {
+                "name": "composeChat",
+                "comment": " Updates the draft of the chat being composed\n",
+                "type": "String.String -> Game.Game -> Game.Game"
+            },
+            {
+                "name": "decoder",
+                "comment": " Decodes a game from JSON representation\n\n    decoder (Me \"nexus\") { width = 100, height = 200, ...} Online == <Decoder Game>\n\n",
+                "type": "Player.Player Player.Name -> Browser.Dom.Viewport -> ConnectionStatus.ConnectionStatus -> Json.Decode.Decoder Game.Game"
+            },
+            {
+                "name": "encodePlay",
+                "comment": " Encode a play with the game ID\n\n    encodePlay play game == <encoded-play>\n\n",
+                "type": "Game.Domino.Play.Play -> Game.Game -> Json.Encode.Value"
+            },
+            {
+                "name": "errorToString",
+                "comment": " Returns the string representation of the game error\n",
+                "type": "Game.Error -> String.String"
+            },
+            {
+                "name": "executeEvent",
+                "comment": " Execute the event staged\n",
+                "type": "Game.Event.Event -> Game.Game -> Result.Result Game.Error Game.Game"
+            },
+            {
+                "name": "getChatDraft",
+                "comment": " Returns the current chat draft being typed\n",
+                "type": "Game.Game -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "getId",
+                "comment": " Returns the game id\n\n    getId game == 3\n\n",
+                "type": "Game.Game -> Game.Id.GameId"
+            },
+            {
+                "name": "getTimesoutAt",
+                "comment": " Returns the timeout for the current game\n",
+                "type": "Game.Game -> Maybe.Maybe Basics.Int"
+            },
+            {
+                "name": "hasChat",
+                "comment": " Does this game have chat feature?\n",
+                "type": "Game.Game -> Basics.Bool"
+            },
+            {
+                "name": "isResumable",
+                "comment": " Can this game be resumed? Useful in situations where the game has been dormant and the first player opens the game\n",
+                "type": "Game.Game -> Basics.Bool"
+            },
+            {
+                "name": "isSetCompleted",
+                "comment": " Is this game set completed?\n",
+                "type": "Game.Game -> Basics.Bool"
+            },
+            {
+                "name": "isUpdating",
+                "comment": " So we know if the game is currently updating.\nThis is useful if we want to know if we can apply updates just received\n",
+                "type": "Game.Game -> Basics.Bool"
+            },
+            {
+                "name": "moveSelectedBack",
+                "comment": " Push selected back in the hand\n\n    moveSelectedBack game == game\n\n",
+                "type": "Game.Game -> Game.Game"
+            },
+            {
+                "name": "moveSelectedBy",
+                "comment": " Move the selected domino by the delta provided\n\n    moveSelectedBy ( 3, 4 ) game == game\n\n",
+                "type": "( Basics.Float, Basics.Float ) -> Game.Game -> Game.Game"
+            },
+            {
+                "name": "nextRoundStartedTimeout",
+                "comment": " Returns the timeout if a next round is just started\n\n    nextRoundStartedTimeout game == Just 25\n\n",
+                "type": "Game.Game -> Maybe.Maybe Basics.Int"
+            },
+            {
+                "name": "openChat",
+                "comment": " Opens the game chat\n",
+                "type": "Game.Game -> Game.Game"
+            },
+            {
+                "name": "roundNextEvent",
+                "comment": " Returns the next event for the current round\n\n    roundNextEvent game == Just event\n\n",
+                "type": "Game.Game -> Maybe.Maybe Game.Event.Event"
+            },
+            {
+                "name": "selectDomino",
+                "comment": " Select a domino for play\n",
+                "type": "Game.Domino.Domino -> List.List Game.End.End -> Game.Game -> Result.Result Game.Error ( Game.Game, NonEmptyList.NonEmptyList Game.Domino.Highlighter.Highlighter )"
+            },
+            {
+                "name": "setConnectionStatus",
+                "comment": " Sets the connection status of the user so the user can be alerted\n",
+                "type": "ConnectionStatus.ConnectionStatus -> Game.Game -> Game.Game"
+            },
+            {
+                "name": "setNextGame",
+                "comment": " Sets next game update usually as a result of a new game update receieved\n",
+                "type": "Game.Game -> Game.Game -> Game.Game"
+            },
+            {
+                "name": "setViewport",
+                "comment": " Sets the viewport based on browser changes\n",
+                "type": "Maybe.Maybe Browser.Dom.Viewport -> Game.Game -> Game.Game"
+            },
+            {
+                "name": "slug",
+                "comment": " Returns the game slug useful for building a url\n\n    slug game == \"3\"\n\n",
+                "type": "Game.Game -> String.String"
+            },
+            {
+                "name": "stageEvent",
+                "comment": " Stage the event\n",
+                "type": "Game.Event.Event -> Game.Game -> Game.Game"
+            },
+            {
+                "name": "switchToNextGame",
+                "comment": " Switch to the next game\n",
+                "type": "Game.Game -> Game.Game"
+            },
+            {
+                "name": "switchToNextRoundGame",
+                "comment": " Switch to the next round\n",
+                "type": "Game.Game -> Game.Game"
+            },
+            {
+                "name": "updateDecoder",
+                "comment": " Decodes an update of an existing game from one that was already decoded\n",
+                "type": "Game.Game -> Json.Decode.Decoder Game.Game"
+            },
+            {
+                "name": "view",
+                "comment": " Produced the HTML representation of the game\n\n    view game == \"<game-html>\"\n\n",
+                "type": "Game.Game -> Html.Styled.Html (Player.Msg Game.Domino.Domino)"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,168 @@
+[
+    {
+        "name": "Time.Distance",
+        "comment": " Library for getting the relative distance between two `Time.Posix` values, in words.\n\n\n# Time.Distance\n\n@docs inWords, inWordsWithConfig\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "inWords",
+                "comment": " Get the string representing the time interval, defaulting to English, with\naffixes (\"ago\"/\"in\").\n\nThe second argument is for the \"now\" time.\n\n",
+                "type": "Time.Posix -> Time.Posix -> String.String"
+            },
+            {
+                "name": "inWordsWithConfig",
+                "comment": " Get the string representing the time interval, with another language, and/\nor without affixes (\"ago\"/\"in\").\n\n`Config` is a type alias for `{ withAffix : Bool}`.\n\n",
+                "type": "Time.Distance.Types.Config -> Time.Distance.Types.Locale -> Time.Posix -> Time.Posix -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Time.Distance.I18n",
+        "comment": " Language functions to take `DistanceId` and other settings, and return\na localized string\n\nIf you'd like to add more languages, pasting this into a translation app\nwould be a start:\n\n```text\n\"in 10 minutes\"\n\n\"10 minutes ago\"\n\nless than 1 second\n\nless than X seconds\n\nhalf a minute\n\nless than a minute\n\nless than X minutes\n\n1 minute\n\nX minutes\n\nabout 1 hour\n\nabout X hours\n\n1 day\n\nX days\n\nabout 1 month\n\nabout X months\n\n1 month\n\nX months\n\nabout 1 year\n\nabout X years\n\nover 1 year\n\nover X years\n\nalmost 1 year\n\nalmost X years\n```\n\n\n# Language Functions\n\n@docs en, es, fr, sv, nl, it\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "en",
+                "comment": " English version.\n\n`Config` is a type alias for `{withAffix : Bool}`\n\n",
+                "type": "Time.Distance.Types.Config -> Time.Distance.Types.Tense -> Time.Distance.Types.DistanceId -> String.String"
+            },
+            {
+                "name": "es",
+                "comment": " Spanish version.\n\n`Config` is a type alias for `{withAffix : Bool}`\n\n",
+                "type": "Time.Distance.Types.Config -> Time.Distance.Types.Tense -> Time.Distance.Types.DistanceId -> String.String"
+            },
+            {
+                "name": "fr",
+                "comment": " French version.\n\n`Config` is a type alias for `{withAffix : Bool}`\n\n",
+                "type": "Time.Distance.Types.Config -> Time.Distance.Types.Tense -> Time.Distance.Types.DistanceId -> String.String"
+            },
+            {
+                "name": "it",
+                "comment": " Italian version.\n\n`Config` is a type alias for `{withAffix : Bool}`\n\n",
+                "type": "Time.Distance.Types.Config -> Time.Distance.Types.Tense -> Time.Distance.Types.DistanceId -> String.String"
+            },
+            {
+                "name": "nl",
+                "comment": " Dutch version.\n\n`Config` is a type alias for `{withAffix : Bool}`\n\n",
+                "type": "Time.Distance.Types.Config -> Time.Distance.Types.Tense -> Time.Distance.Types.DistanceId -> String.String"
+            },
+            {
+                "name": "sv",
+                "comment": " Swedish version.\n\n`Config` is a type alias for `{withAffix : Bool}`\n\n",
+                "type": "Time.Distance.Types.Config -> Time.Distance.Types.Tense -> Time.Distance.Types.DistanceId -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Time.Distance.Types",
+        "comment": "Types to allow you to write your own functions. Note that\nif you are doing this yourself (instead of importing translations from a server),\nit'd be helpful if you make a PR or a comment on the repo so I can make the\nlanguage available for others.\n\n# Time.Distance.Types\n@docs DistanceId, Tense, Config, Locale\n",
+        "unions": [
+            {
+                "name": "DistanceId",
+                "comment": "All available time intervals.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "LessThanXSeconds",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "HalfAMinute",
+                        []
+                    ],
+                    [
+                        "LessThanXMinutes",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "XMinutes",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "AboutXHours",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "XDays",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "AboutXMonths",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "XMonths",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "AboutXYears",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "OverXYears",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "AlmostXYears",
+                        [
+                            "Basics.Int"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Tense",
+                "comment": "Is this a time in the past, or the future?\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Past",
+                        []
+                    ],
+                    [
+                        "Future",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": "Should we include affix (\"... ago\", \"in ...\")?\n",
+                "args": [],
+                "type": "{ withAffix : Basics.Bool }"
+            },
+            {
+                "name": "Locale",
+                "comment": "Main function type : take all the above, return a string.\n",
+                "args": [],
+                "type": "Time.Distance.Types.Config -> Time.Distance.Types.Tense -> Time.Distance.Types.DistanceId -> String.String"
+            }
+        ],
+        "values": [],
+        "binops": []
+    }
+]

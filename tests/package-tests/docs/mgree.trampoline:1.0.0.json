@@ -1,0 +1,220 @@
+[
+    {
+        "name": "Trampoline",
+        "comment": " The Trampoline library is for writing suspendable computations,\ni.e., long-running computations that don't freeze the UI. The library\nsupports two interfaces: step functions and fueled computations. The\nimplementation is entirely based around step functions.\n\n# Key definitions for writing suspendable computations\n\nLong running computations have two parts: a `Stepper` and an\ninput. You'll set the stepper when configuring the trampoline state\n(see `init`).\n\n@docs Stepper, StepResult\n\n# Messages \n\nYour program will control the steppers' inputs and when it runs by\nsending messages.  Internally, long running computations use private\nmessages to continue running while allowing other messages to be\nprocessed.\n\n@docs Msg, setInput, AndGo, go, stop, msg\n\n# Models\n@docs State, Stats, Model\n\n# Helpers using the stepper\n\nA variety of wrappers will help you manage state and handle only the\nmessages your program needs to know about.\n\n@docs init, update, subscriptions\n\n",
+        "unions": [
+            {
+                "name": "AndGo",
+                "comment": " Determines whether to immediately start running after `SetInput`\nor to wait for `Go` message.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "AndGo",
+                        []
+                    ],
+                    [
+                        "AndWait",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Msg",
+                "comment": " The messages used by Trampoline's stepper. The actual definition\nis abstract, but `setInput`, `go`, `stop`, and `msg` should suffice.\n",
+                "args": [
+                    "a",
+                    "msg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "State",
+                "comment": " The current state of the stepper. This information is revealed\ncompletely so you can reflect it best in your program; you should\nprobably not change it yourself. ",
+                "args": [
+                    "a",
+                    "o"
+                ],
+                "cases": [
+                    [
+                        "NoInput",
+                        []
+                    ],
+                    [
+                        "HasInput",
+                        [
+                            "a"
+                        ]
+                    ],
+                    [
+                        "Running",
+                        [
+                            "a"
+                        ]
+                    ],
+                    [
+                        "Stopped",
+                        [
+                            "a"
+                        ]
+                    ],
+                    [
+                        "Finished",
+                        [
+                            "o"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "StepResult",
+                "comment": " The result of a single step: either another `a`, or we're done\nwith an `o`.\n",
+                "args": [
+                    "a",
+                    "o"
+                ],
+                "cases": [
+                    [
+                        "Stepping",
+                        [
+                            "a"
+                        ]
+                    ],
+                    [
+                        "Done",
+                        [
+                            "o"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Model",
+                "comment": " A `Model a o model` wraps your program's `model` type to\naccommodate an `Stepper a o`.\n",
+                "args": [
+                    "a",
+                    "o",
+                    "model"
+                ],
+                "type": "{ state : Trampoline.State a o, stats : Trampoline.Stats, stepper : Trampoline.Stepper a o, model : model }"
+            },
+            {
+                "name": "Stats",
+                "comment": " The stepper keeps some rudimentary statistics. Eventually, this\ninformation (along with some timing information) will allow for the\nstepper to adaptively determine how many steps to take at a time. As\nsuch, while it's currently harmless to change this information, it's\ninadvisable. ",
+                "args": [],
+                "type": "{ numSteps : Trampoline.Internal.Gas, totalSteps : Trampoline.Internal.Gas }"
+            },
+            {
+                "name": "Stepper",
+                "comment": " A `Stepper a o` is a function that takes a value of type `a`\nand either:\n\n- isn't yet done, so it returns another value of type `a` (which\n  should be stepped more)\n- is finished, so it returns a value of type `o`.\n\nFor example, a stepper for a programming language might look like:\n\n    type alias ExprStepper = Stepper Expr (Result RuntimeError Value)\n\nThe types `a` and `o` need not be different. A long running\ncomputation which always succeeds and produces an integer might use a\nstepper like:\n\n    type alias IntStepper = Stepper Int Int\n",
+                "args": [
+                    "a",
+                    "o"
+                ],
+                "type": "a -> Trampoline.StepResult a o"
+            }
+        ],
+        "values": [
+            {
+                "name": "go",
+                "comment": " Tells the stepper to go. It's harmless to send this message when\nthere's no input, the stepper is already running, or the stepper is\nstopped.\n",
+                "type": "Trampoline.Msg a msg"
+            },
+            {
+                "name": "init",
+                "comment": " The `init` wrapper  initializes the outer trampoline state given:\n\n- your program's inner initializer, of type `flags -> (model, Cmd (Msg\n  a o msg))`\n- a `Stepper a o` for the long running computation\n\nThis is meant to be used with Browser.element, e.g.,\n\n    Browser.element \n      { init = Trampoline.init myInit myStepper\n      , ... }\n\nSee `update` and `subscriptions`, too.\n",
+                "type": "(flags -> ( model, Platform.Cmd.Cmd (Trampoline.Msg a msg) )) -> Trampoline.Stepper a o -> flags -> ( Trampoline.Model a o model, Platform.Cmd.Cmd (Trampoline.Msg a msg) )"
+            },
+            {
+                "name": "msg",
+                "comment": " Turns a message from your application into a `Msg a msg`.\n",
+                "type": "msg -> Trampoline.Msg a msg"
+            },
+            {
+                "name": "setInput",
+                "comment": " Sets the input for the stepper function. You can set the input and start by running:\n\n    setInput 5 AndGo\n\nOr you can wait for a later `go` message by running:\n\n    setInput 5 AndWait\n",
+                "type": "a -> Trampoline.AndGo -> Trampoline.Msg a msg"
+            },
+            {
+                "name": "stop",
+                "comment": " Tells the stepper to step. It's harmless to send this message when\nthere's no input or the stepper is already stopped.\n",
+                "type": "Trampoline.Msg a msg"
+            },
+            {
+                "name": "subscriptions",
+                "comment": " A wrapper for your program's `subscriptions` function, which amounts to running `Platform.Sub.map`.\n",
+                "type": "(model -> Platform.Sub.Sub msg) -> Trampoline.Model a o model -> Platform.Sub.Sub (Trampoline.Msg a msg)"
+            },
+            {
+                "name": "update",
+                "comment": " A wrapper for your program's `update` function. You must provide:\n\n- your inner update function, of type `(msg -> model -> (model, Cmd (Msg a msg)))`\n- a function that generates message when stepping is complete, of type `o -> msg`\n\nThis is meant to be used with Browser.element, e.g.,\n\n    Browser.element \n    { update = Trampoline.init myUpdate NotifyMsg\n    , ... }\n\nwhere `NotifyMsg` is some message defined in your application of type `o -> msg`.\n",
+                "type": "(msg -> model -> ( model, Platform.Cmd.Cmd (Trampoline.Msg a msg) )) -> (o -> msg) -> Trampoline.Msg a msg -> Trampoline.Model a o model -> ( Trampoline.Model a o model, Platform.Cmd.Cmd (Trampoline.Msg a msg) )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Trampoline.Fueled",
+        "comment": " In addition to supporting `Stepper a o` functions, it's possible\nto write \"fueled\" computations. A `Fueled a` runs some number of steps\nand either `isOutOfGas` or yields a value of type `a`.\n\nFor those familiar with the functor/applicative/monad family, `Fueled`\nis a monad, and that is the best way to interact with it.\n\nThere are two ways to run programs: all the way, via\n`runToCompletion`, or by passing the `stepper` to `Trampoline.init`.\n\n# Examples of `Fueled` computations\n\nThe [repository on GitHub](https://github.com/mgree/trampoline) has\nmore examples. The basic idiom of Fueled computations can be seen in\nthe following function:\n\n    countDown : Int -> Fueled Int\n    countDown n = \n        if n <= 0\n        then return 0\n        else call countDown (n-1)\n\nA few notes:\n\n  1. Your `Fueled` functions should never take `Fueled` arguments. Use `andThen`.\n  2. Rather than simply returning a value, use `return`.\n  3. Rather than making a recursive call, use `call`.\n\nThe `countDown` example is pretty silly---it always returns 0. Boring. Here's a marginally less boring example:\n\n    factorial : Int -> Fueled Int\n    factorial n = \n        if n <= 0\n        then return 1\n        else call factorial (n-1) |> andThen (\\res -> \n             return (res * n))\n\nWe can add a note:\n\n  4. Use `andThen` for sequencing.\n\nHere are three diverging functions, in reverse order of goodness:\n\n    bestDiverge : Int -> Fueled Int\n    bestDiverge n = call bestDiverge (n+1)\n\nSimple, delightful. Like [Charlie on the MTA](https://www.youtube.com/watch?v=S7Jw_v3F_Q0), it never returns---but it doesn't blow up the stack.\n    \n    betterDiverge : Int -> Fueled Int\n    betterDiverge n = burn <| lazy (\\() -> betterDiverge (n+1))\n    \nThe `call` function amounts to exactly this idiom.\n\n    recoveringMonadAddictDiverge : Int -> Fueled Int\n    recoveringMonadAddictDiverge n = burn <|\n        (return (n+1) |> andThen diverge)\n\nUsing `return` into `andThen` is a pretty weird thing to do, but doing\nit here has the same effect as using `lazy`.\n\n    badDiverge : Int -> Fueled Int\n    badDiverge n = burn (badDiverge (n+1))\n\nThis function will blow up your stack---it won't actually suspend properly! Elm uses eager evaluation, so it has to compute `badDiverge (n+1)` before calling `burn`, which means computing `badDiverge (n+2)`, and so on.\n\n# Key definitions for writing fueled computations\n\n@docs Fueled, stepper, runToCompletion\n\n# Generic monadic operations\n\n@docs map, return, ap, andThen\n\n# Fueled-specific monadic operations\n\n@docs call, burn, lazy\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Fueled",
+                "comment": " A `Fueled a` is a suspendable computation that will either diverge\nor eventually yield a value of type `a`. The `Fueled` type is abstract\nto avoid shenanigans.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "Trampoline.Fueled.Internal.Fueled a"
+            }
+        ],
+        "values": [
+            {
+                "name": "andThen",
+                "comment": " Meant to be used with `(|>)`, as in:\n\n    f |> Trampoline.Fueled.andThen (\\x -> ...)\n\nTo bind the result of `f` as `x`.\n",
+                "type": "(a -> Trampoline.Fueled.Fueled b) -> Trampoline.Fueled.Fueled a -> Trampoline.Fueled.Fueled b"
+            },
+            {
+                "name": "ap",
+                "comment": " Combining two `Fueled` computations applicatively.\n",
+                "type": "Trampoline.Fueled.Fueled (a -> b) -> Trampoline.Fueled.Fueled a -> Trampoline.Fueled.Fueled b"
+            },
+            {
+                "name": "burn",
+                "comment": " Uses up a bit of fuel.\n",
+                "type": "Trampoline.Fueled.Fueled a -> Trampoline.Fueled.Fueled a"
+            },
+            {
+                "name": "call",
+                "comment": " Makes a suspendable call to a `Fueled` computation. All recursive\ncalls should be written:\n\n    f n = ... call f (n-1) ...\n",
+                "type": "(a -> Trampoline.Fueled.Fueled b) -> a -> Trampoline.Fueled.Fueled b"
+            },
+            {
+                "name": "lazy",
+                "comment": " Delays a Fueled computation.\n",
+                "type": "(() -> Trampoline.Fueled.Fueled a) -> Trampoline.Fueled.Fueled a"
+            },
+            {
+                "name": "map",
+                "comment": " Post-processing the results of a `Fueled` computation.\n",
+                "type": "(a -> b) -> Trampoline.Fueled.Fueled a -> Trampoline.Fueled.Fueled b"
+            },
+            {
+                "name": "return",
+                "comment": " A fueled computation that returns immediately.\n\n   runToCompletion (return x) == x\n",
+                "type": "a -> Trampoline.Fueled.Fueled a"
+            },
+            {
+                "name": "runToCompletion",
+                "comment": " Fueled computations can also be simply run... at the risk of\nfreezing the UI thread or blocking messages. Use this function carefully.\n",
+                "type": "Trampoline.Fueled.Fueled a -> a"
+            },
+            {
+                "name": "stepper",
+                "comment": " Fueled computations have a stepper that can be used with\n`Trampoline.init`. To run a fueled computation, you might write:\n\n   main = Browser.element { init = Trampoline.init myInit Trampoline.Fueled.stepper, ... }\n\nsomewhere else, you can then run `Trampoline.setInput\nmyFueledComputation AndGo` to set the fueled computation to run and\nstart stepping.\n",
+                "type": "Trampoline.Stepper (Trampoline.Fueled.Fueled a) a"
+            }
+        ],
+        "binops": []
+    }
+]

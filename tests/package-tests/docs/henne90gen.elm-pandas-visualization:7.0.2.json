@@ -1,0 +1,161 @@
+[
+    {
+        "name": "BarChart",
+        "comment": " This module takes care of drawing bar charts\n\n\n# Create bar charts\n\n@docs singleBarChart, barChart\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "barChart",
+                "comment": " Creates a bar chart with multiple bars per x-value\n",
+                "type": "BarChart.DrawingData a -> TypedSvg.Core.Svg msg"
+            },
+            {
+                "name": "singleBarChart",
+                "comment": " Creates a simple bar chart\n",
+                "type": "( Basics.Float, Basics.Float ) -> BarChart.XValueMapper a -> DataFrame.YValueMapper a -> DataFrame.DataFrame a -> TypedSvg.Core.Svg msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "DataFrame",
+        "comment": " Elm representation of a pandas DataFrame.\n\n@docs DataFrame, create, dataFrameDecoder, XValueMapper, YValueMapper\n\n\n# Helper Methods\n\n@docs map, filter, length\n\n",
+        "unions": [
+            {
+                "name": "XValueMapper",
+                "comment": " Decides how the values are mapped to the x-axis\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "TimeMapper",
+                        [
+                            "a -> Time.Posix"
+                        ]
+                    ],
+                    [
+                        "ValueMapper",
+                        [
+                            "a -> Basics.Float"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "DataFrame",
+                "comment": " The DataFrame type containing the schema of the data and the data itself\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ schema : Maybe.Maybe DataFrame.Schema, data : List.List a }"
+            },
+            {
+                "name": "YValueMapper",
+                "comment": " Decides how the values are mapped to the y-axis\n",
+                "args": [
+                    "a"
+                ],
+                "type": "a -> Basics.Float"
+            }
+        ],
+        "values": [
+            {
+                "name": "create",
+                "comment": " Creates a DataFrame from the supplied data\n",
+                "type": "List.List a -> DataFrame.DataFrame a"
+            },
+            {
+                "name": "dataFrameDecoder",
+                "comment": " Decodes a JSON serialized DataFrame\n",
+                "type": "Json.Decode.Decoder a -> Json.Decode.Decoder (DataFrame.DataFrame a)"
+            },
+            {
+                "name": "filter",
+                "comment": " Filter rows by the specified filter function\n",
+                "type": "(a -> Basics.Bool) -> DataFrame.DataFrame a -> DataFrame.DataFrame a"
+            },
+            {
+                "name": "length",
+                "comment": " Gives back the number of rows in the DataFrame\n",
+                "type": "DataFrame.DataFrame a -> Basics.Int"
+            },
+            {
+                "name": "map",
+                "comment": " Maps a function over each row of a DataFrame\n",
+                "type": "(a -> b) -> DataFrame.DataFrame a -> DataFrame.DataFrame b"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "LineChart",
+        "comment": " This module takes care of drawing line charts\n\n\n# Create line charts\n\n@docs lineChart\n\n\n# Create interactive line charts\n\n@docs lineChartInteractive\n@docs initialModel\n@docs update\n@docs subscriptions\n@docs Model\n@docs Msg\n\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " Msg object to allow interactions with an interactive chart\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Model",
+                "comment": " Model for the internal state for interactive charts\n",
+                "args": [],
+                "type": "{ id : String.String, chartInfo : LineChart.ChartInfo, mousePosition : Maybe.Maybe LineChart.MousePosition }"
+            }
+        ],
+        "values": [
+            {
+                "name": "initialModel",
+                "comment": " Initializes the model\n",
+                "type": "String.String -> LineChart.Model"
+            },
+            {
+                "name": "lineChart",
+                "comment": " Creates a line chart with multiple lines\n",
+                "type": "{ dimensions : ( Basics.Float, Basics.Float ), lineType : LineChart.LineType, xFunc : DataFrame.XValueMapper a, lines : List.List (LineChart.LineConfig a), dataFrame : DataFrame.DataFrame a, xAxisLabel : Maybe.Maybe String.String, yAxisLabel : Maybe.Maybe String.String, yMin : Maybe.Maybe Basics.Float, yMax : Maybe.Maybe Basics.Float } -> TypedSvg.Core.Svg msg"
+            },
+            {
+                "name": "lineChartInteractive",
+                "comment": " Creates an interactive line chart with multiple lines\n",
+                "type": "{ dimensions : ( Basics.Float, Basics.Float ), lineType : LineChart.LineType, xFunc : DataFrame.XValueMapper a, lines : List.List (LineChart.LineConfig a), dataFrame : DataFrame.DataFrame a, xAxisLabel : Maybe.Maybe String.String, yAxisLabel : Maybe.Maybe String.String, yMin : Maybe.Maybe Basics.Float, yMax : Maybe.Maybe Basics.Float, cursor : LineChart.CursorConfig, model : LineChart.Model, msgMapper : LineChart.Msg -> msg } -> TypedSvg.Core.Svg msg"
+            },
+            {
+                "name": "subscriptions",
+                "comment": " Subscribes to various events to allow interactive charts to function properly\n",
+                "type": "LineChart.Model -> Platform.Sub.Sub LineChart.Msg"
+            },
+            {
+                "name": "update",
+                "comment": " Updates the model with the given message\n",
+                "type": "LineChart.Msg -> LineChart.Model -> ( LineChart.Model, Platform.Cmd.Cmd LineChart.Msg )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ScatterChart",
+        "comment": " This module takes care of drawing scatter charts\n\n@docs singleScatterChart, scatterChart\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "scatterChart",
+                "comment": " Creats a scatter chart from multiple series\n",
+                "type": "( Basics.Float, Basics.Float ) -> DataFrame.XValueMapper a -> List.List (DataFrame.YValueMapper a) -> DataFrame.DataFrame a -> TypedSvg.Core.Svg msg"
+            },
+            {
+                "name": "singleScatterChart",
+                "comment": " Creats a scatter chart from a single series\n",
+                "type": "( Basics.Float, Basics.Float ) -> DataFrame.XValueMapper a -> DataFrame.YValueMapper a -> DataFrame.DataFrame a -> TypedSvg.Core.Svg msg"
+            }
+        ],
+        "binops": []
+    }
+]

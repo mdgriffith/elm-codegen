@@ -1,0 +1,80 @@
+[
+    {
+        "name": "Queue",
+        "comment": " Queue is simple FIFO (first in, first out) datastructure.\n\n\n# Type\n\n@docs Queue, empty, singleton\n\n\n# Query\n\n@docs isEmpty, size, enqueue, dequeue, front\n\n\n# Lists\n\n@docs fromList, toList\n\n\n# Transformations\n\n@docs map, filter, updateFront\n\n",
+        "unions": [
+            {
+                "name": "Queue",
+                "comment": " Equality checks (`==`) on `Queue` are unreliable due to dynamic distribution of elements.\n\nIf you need equality checks use [`toList`](#toList).\n\n    Queue.toList firstQueue == Queue.toList secondQueue\n\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "dequeue",
+                "comment": " Take item from `Queue`\n\n    Queue.dequeue Queue.empty == ( Nothing, Queue.empty )\n\n    Queue.dequeue (Queue.fromList [ 1 ]) == ( Just 1, Queue.empty )\n\n",
+                "type": "Queue.Queue a -> ( Maybe.Maybe a, Queue.Queue a )"
+            },
+            {
+                "name": "empty",
+                "comment": " Construct empty `Queue`\n",
+                "type": "Queue.Queue a"
+            },
+            {
+                "name": "enqueue",
+                "comment": " Add item to `Queue`\n\n    Queue.size (Queue.enqueue 1 Queue.empty) == 1\n\n    Queue.size (Queue.enqueue 1 (Queue.fromList [ 1, 2 ])) == 3\n\n",
+                "type": "a -> Queue.Queue a -> Queue.Queue a"
+            },
+            {
+                "name": "filter",
+                "comment": " Filter items items in `Queue`\n\n    Queue.toList (Queue.filter identity (Queue.fromList [ True, False ])) == [ True ]\n\n    Queue.toList (Queue.filter ((<) 1) (Queue.fromList [ 1, 2 ])) == [ 2 ]\n\n",
+                "type": "(a -> Basics.Bool) -> Queue.Queue a -> Queue.Queue a"
+            },
+            {
+                "name": "fromList",
+                "comment": " Build `Queue` from `List`\n\n    Queue.fromList [] == Queue.empty\n\n    Queue.size (Queue.fromList [ 1, 2, 3 ]) == 3\n\n",
+                "type": "List.List a -> Queue.Queue a"
+            },
+            {
+                "name": "front",
+                "comment": " Ask for front item without removing it from `Queue`\n\n    Queue.front Queue.empty == Nothing\n\n    Queue.front (Queue.fromList [ 1, 2 ]) == Just 1\n\n",
+                "type": "Queue.Queue a -> Maybe.Maybe a"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Determine if `Queue` is empty\n\n    Queue.isEmpty Queue.empty == True\n\n    Queue.isEmpty (Queue.fromList [ 1, 2 ]) == False\n\n",
+                "type": "Queue.Queue a -> Basics.Bool"
+            },
+            {
+                "name": "map",
+                "comment": " Map function over `Queue`\n\n    Queue.toList (Queue.map identity (Queue.fromList [ 1, 2 ])) == [ 1, 2 ]\n\n    Queue.toList (Queue.map ((+) 1) (Queue.fromList [ 1, 2 ])) == [ 2, 3 ]\n\n",
+                "type": "(a -> b) -> Queue.Queue a -> Queue.Queue b"
+            },
+            {
+                "name": "singleton",
+                "comment": " Construct Queue containing single value\n\n    Queue.toList (Queue.singleton 1) == [ 1 ]\n\n",
+                "type": "a -> Queue.Queue a"
+            },
+            {
+                "name": "size",
+                "comment": " Get size of `Queue`\n\n    Queue.size Queue.empty == 0\n\n    Queue.size (Queue.fromList [ 1, 2 ]) == 2\n\n",
+                "type": "Queue.Queue a -> Basics.Int"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert `Queue` to `List`\n\n    Queue.toList (Queue.fromList []) == []\n\n    Queue.toList (Queue.fromList [ 1, 2, 3 ]) == [ 1, 2, 3 ]\n\n",
+                "type": "Queue.Queue a -> List.List a"
+            },
+            {
+                "name": "updateFront",
+                "comment": " Update value at the front of the queue\n\n    Queue.toList (Queue.updateFront (Maybe.map (\\x -> x + 1)) (Queue.singleton 3)) == [ 4 ]\n\n    Queue.toList (Queue.updateFront (Maybe.map (\\_ -> Just 42)) Queue.empty) == [ 42 ]\n\n    Queue.toList (Queue.updateFront (Maybe.map (\\_ -> Nothing)) (Queue.singleton 3)) == []\n\n",
+                "type": "(Maybe.Maybe a -> Maybe.Maybe a) -> Queue.Queue a -> Queue.Queue a"
+            }
+        ],
+        "binops": []
+    }
+]

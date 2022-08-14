@@ -1,0 +1,60 @@
+[
+    {
+        "name": "SourceMap",
+        "comment": "\n\n\n# Creation\n\n@docs SourceMap, empty\n\n\n# Building\n\n@docs withFile, withSourceRoot\n@docs Mapping, addMapping, addMappings\n\n\n# Compiling\n\n@docs encode, toString\n\n",
+        "unions": [
+            {
+                "name": "SourceMap",
+                "comment": " Source Map is a collection of mappings from a generated (often minified) file\nto the original source code (across multiple files if needed).\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Mapping",
+                "comment": " Mapping points from the generated file to some original source code.\n\nThe `source` field should, when prefixed with the SourceMap's `sourceRoot`, give\na resolvable URL: the browser will try to reach it. (The spec also allows for\nembedding the source code in the source map, but support for that is currently\nTODO here.)\n\nThe optional `name` field specifies what was the original name of the variable\n(it could be mangled or removed during compilation/minification).\n\nNote: all the lines and columns are supposed to be 1-based (which is what\n`elm/parser` functions `Parser.getRow`, `getCol` and `getPosition` will\ngive you). The library will automatically convert them to the 0-based format\nrequired by the Source Map spec.\n\n",
+                "args": [],
+                "type": "{ generatedLine : Basics.Int, generatedColumn : Basics.Int, source : String.String, originalLine : Basics.Int, originalColumn : Basics.Int, name : Maybe.Maybe String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "addMapping",
+                "comment": " Add a mapping to the source map.\n\n    SourceMap.empty\n        |> SourceMap.addMapping (Mapping 10 35 \"foo.js\" 33 2 (Just \"christopher\"))\n\n",
+                "type": "SourceMap.Mapping -> SourceMap.SourceMap -> SourceMap.SourceMap"
+            },
+            {
+                "name": "addMappings",
+                "comment": " Add multiple mappings to the source map at once.\n\n    SourceMap.empty\n        |> SourceMap.addMappings\n            [ Mapping 1 1 \"a.js\" 2 2 (Just \"foo\")\n            , Mapping 3 3 \"b.js\" 4 4 (Just \"bar\")\n            ]\n\n",
+                "type": "List.List SourceMap.Mapping -> SourceMap.SourceMap -> SourceMap.SourceMap"
+            },
+            {
+                "name": "empty",
+                "comment": " Create an empty source map.\n\n    SourceMap.empty\n        |> SourceMap.encode\n\n    {-->\n\n    {\n      \"version\": 3,\n      \"sources\": [],\n      \"names\": [],\n      \"mappings\": \"\"\n    }\n\n    -}\n\n",
+                "type": "SourceMap.SourceMap"
+            },
+            {
+                "name": "encode",
+                "comment": " Compile the source map into a JSON value.\n\n    SourceMap.empty\n        |> SourceMap.withFile \"source-mapped.js\"\n        |> SourceMap.addMapping (Mapping 10 36 \"foo.js\" 33 3 (Just \"christopher\"))\n        |> SourceMap.encode\n\n    {-->\n\n    {\n      \"version\": 3,\n      \"sources\": [\n        \"foo.js\"\n      ],\n      \"names\": [\n        \"christopher\"\n      ],\n      \"mappings\": \";;;;;;;;;mCAgCEA\",\n      \"file\": \"source-mapped.js\"\n    }\n\n    -}\n\n",
+                "type": "SourceMap.SourceMap -> Json.Encode.Value"
+            },
+            {
+                "name": "toString",
+                "comment": " Compile the source map into a stringified JSON.\n\n    SourceMap.empty\n        |> SourceMap.withFile \"source-mapped.js\"\n        |> SourceMap.addMapping (Mapping 10 36 \"foo.js\" 33 3 (Just \"christopher\"))\n        |> SourceMap.toString\n\n    {-->\n\n    {\n      \"version\": 3,\n      \"sources\": [\n        \"foo.js\"\n      ],\n      \"names\": [\n        \"christopher\"\n      ],\n      \"mappings\": \";;;;;;;;;mCAgCEA\",\n      \"file\": \"source-mapped.js\"\n    }\n\n    -}\n\n",
+                "type": "SourceMap.SourceMap -> String.String"
+            },
+            {
+                "name": "withFile",
+                "comment": " Add an output filename to a source map.\n\n    SourceMap.empty\n        |> SourceMap.withFile \"hello.js\"\n        |> SourceMap.encode\n\n    {-->\n\n    {\n      \"version\": 3,\n      \"sources\": [],\n      \"names\": [],\n      \"mappings\": \"\",\n      \"file\": \"hello.js\"\n    }\n\n    -}\n\n",
+                "type": "String.String -> SourceMap.SourceMap -> SourceMap.SourceMap"
+            },
+            {
+                "name": "withSourceRoot",
+                "comment": " Add a source root to a source map. This will be an automatic prefix to all\nthe source paths mentioned in the mappings, and you can use paths relative to the\nroot in all the added mappings.\n\n    SourceMap.empty\n        |> SourceMap.withSourceRoot \"https://example.com/public/js/\"\n        |> SourceMap.encode\n\n    {-->\n\n    {\n      \"version\": 3,\n      \"sources\": [],\n      \"names\": [],\n      \"mappings\": \"\",\n      \"sourceRoot\": \"https://example.com/public/js/\"\n    }\n\n    -}\n\n",
+                "type": "String.String -> SourceMap.SourceMap -> SourceMap.SourceMap"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,80 @@
+[
+    {
+        "name": "Ordering",
+        "comment": " Library for building comparison functions.\r\n\r\nThis library makes it easy to create comparison functions for arbitary types by composing\r\nsmaller comparison functions. For instance, suppose you are defining a data type to represent\r\na standard deck of cards. You might define it as:\r\n\r\n    type alias Card = { value : Value, suite : Suite }\r\n    type Suite = Clubs | Hearts | Diamonds | Spades\r\n    type Value = Two | Three | Four | Five | Six | Seven\r\n               | Eight | Nine | Ten | Jack | Queen | King | Ace\r\n\r\nWith this representation, you could define an ordering for `Card` values compositionally:\r\n\r\n    import Ordering exposing (Ordering)\r\n\r\n\r\n    cardOrdering : Ordering Card\r\n    cardOrdering =\r\n        Ordering.byFieldWith suiteOrdering .suite\r\n            |> Ordering.breakTiesWith\r\n                   (Ordering.byFieldWith valueOrdering .value)\r\n\r\n\r\n    suiteOrdering : Ordering Suite\r\n    suiteOrdering =\r\n        Ordering.explicit [Clubs, Hearts, Diamonds, Spades]\r\n\r\n\r\n    valueOrdering : Ordering Value\r\n    valueOrdering =\r\n        Ordering.explicit\r\n            [ Two , Three , Four , Five , Six , Seven\r\n            , Eight, Nine, Ten, Jack, Queen, King, Ace\r\n            ]\r\n\r\n\r\nYou can then use this ordering to sort cards, make comparisons, and so on. For instance,\r\nto sort a deck of cards you can use `cardOrdering` directly:\r\n\r\n    sortCards : List Card -> List Card\r\n    sortCards = List.sortWith cardOrdering\r\n\r\n# Definition\r\n@docs Ordering\r\n\r\n# Construction\r\n@docs natural, explicit, byField, byFieldWith, byRank, noConflicts, ifStillTiedThen\r\n\r\n# Composition\r\n@docs breakTiesWith, reverse\r\n\r\n# Utility\r\n@docs isOrdered, greaterThanBy, lessThanBy\r\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Ordering",
+                "comment": " A function that compares two values and returns whether\r\nthe first is less than, equal to, or greater than the second.\r\n\r\nThough the type alias is provided by this library, its\r\ndefinition is chosen to be compatible with existing Elm functions\r\nthat accept ordering functions. So, for instance, you can\r\npass an ordering to `List.sortWith` directly:\r\n\r\n    type alias Point = { x : Int, y : Int }\r\n\r\n    myOrdering : Ordering Point\r\n    myOrdering =\r\n        Ordering.byField .x\r\n            |> Ordering.breakTiesWith (Ordering.byField .y)\r\n\r\n    List.sortWith myOrdering [Point 1 2, Point 2 3]\r\n",
+                "args": [
+                    "a"
+                ],
+                "type": "a -> a -> Basics.Order"
+            }
+        ],
+        "values": [
+            {
+                "name": "breakTiesWith",
+                "comment": " Produces an ordering that refines the second input ordering by using the first\r\nordering as a tie breaker. (Note that the second argument is the primary sort, and\r\nthe first argument is a tie breaker. This argument ordering is intended to support\r\nfunction chaining with `|>`.)\r\n\r\n    type alias Point = { x : Int, y : Int }\r\n\r\n    pointOrdering : Ordering Point\r\n    pointOrdering =\r\n        Ordering.byField .x\r\n            |> Ordering.breakTiesWith (Ordering.byField .y)\r\n",
+                "type": "Ordering.Ordering a -> Ordering.Ordering a -> a -> a -> Basics.Order"
+            },
+            {
+                "name": "byField",
+                "comment": " Produces an ordering that orders its elements using the natural ordering of the\r\nfield selected by the given function.\r\n\r\n    type alias Point = { x : Int, y : Int }\r\n\r\n    List.sort (Ordering.byField .x) [Point 3 5, Point 1 6]\r\n        == [Point 1 6, Point 3 5]\r\n    List.sort (Ordering.byField .y) [Point 3 5, Point 1 6]\r\n        == [Point 3 5, Point 1 6]\r\n",
+                "type": "(a -> comparable) -> Ordering.Ordering a"
+            },
+            {
+                "name": "byFieldWith",
+                "comment": " Produces an ordering that orders its elements using the given ordering on the\r\nfield selected by the given function.\r\n\r\n    cards =\r\n        [ { value = Two, suite = Spades }\r\n        , { value = King, suite = Hearts }\r\n        ]\r\n\r\n    List.sort\r\n        (Ordering.byFieldWith valueOrdering .value)\r\n        cards\r\n        == [ { value = Two, suite = Spades }\r\n           , { value = King, suite = Hearts }\r\n           ]\r\n    List.sort\r\n        (Ordering.byFieldWith suiteOrdering .suite)\r\n        cards\r\n        == [ { value = King, suite = Hearts }\r\n           , { value = Two, suite = Spades }\r\n           ]\r\n",
+                "type": "Ordering.Ordering b -> (a -> b) -> a -> a -> Basics.Order"
+            },
+            {
+                "name": "byRank",
+                "comment": " Produces an ordering defined by an explicit ranking function combined with a\r\nsecondary ordering function to compare elements within the same rank. The rule is\r\nthat all items are sorted first by rank, and then using the given within-rank\r\nordering for items of the same rank.\r\n\r\nThis function is intended for use with types that have multiple cases where\r\nconstructors for some or all of the cases take arguments. (Otherwise use `Ordering.explicit`\r\ninstead which has a simpler interface.) For instance, to make an ordering for\r\na type such as:\r\n\r\n    type JokerCard = NormalCard Value Suite | Joker\r\n\r\nyou could use `byRank` to sort all the normal cards before the jokers like so:\r\n\r\n    jokerCardOrdering : Ordering JokerCard\r\n    jokerCardOrdering =\r\n        Ordering.byRank\r\n            (card ->\r\n                 case card of\r\n                     NormalCard _ _ -> 1\r\n                     Joker -> 2)\r\n            (x y ->\r\n                 case (x, y) of\r\n                     (NormalCard v1 s1, NormalCard v2 s2) ->\r\n                         suiteOrdering s1 s2\r\n                             |> Ordering.ifStillTiedThen\r\n                                    (valueOrdering v1 v2)\r\n                     _ -> Ordering.noConflicts)\r\n\r\nMore generally, the expected pattern is that for each case in your type, you assign\r\nthat case to a unique rank with the ranking function. Then for your within-rank\r\nordering, you have a case statement that enumerates all the \"tie\" states and\r\nspecifies how to break ties, and then uses a catch-all case that returns\r\n`Ordering.noConflicts` to specify that all remaining cases cannot give rise to\r\nthe need to do any subcomparisons. (This can be either because the values being\r\ncompared have no internal structure and so are always equal, or because they are\r\nconstructors with different ranks and so will never be compared by this function.)\r\n",
+                "type": "(a -> Basics.Int) -> Ordering.Ordering a -> Ordering.Ordering a"
+            },
+            {
+                "name": "explicit",
+                "comment": " Creates an ordering that orders items in the order given in the input list.\r\nItems that are not part of the input list are all considered to be equal to each\r\nother and less than anything in the list.\r\n\r\n    type Day = Mon | Tue | Wed | Thu | Fri | Sat | Sun\r\n\r\n    dayOrdering : Ordering Day\r\n    dayOrdering =\r\n        Ordering.explicit\r\n            [Mon, Tue, Wed, Thu, Fri, Sat, Sun]\r\n",
+                "type": "List.List a -> a -> a -> Basics.Order"
+            },
+            {
+                "name": "greaterThanBy",
+                "comment": " Determines if one value is greater than another according to the given ordering.\r\n\r\n    greaterThanBy\r\n        xThenYOrdering\r\n        { x = 7, y = 8 }\r\n        { x = 10, y = 2 }\r\n        == False\r\n\r\n    greaterThanBy\r\n        yThenXOrdering\r\n        { x = 7, y = 8 }\r\n        { x = 10, y = 2 }\r\n        == True\r\n",
+                "type": "Ordering.Ordering a -> a -> a -> Basics.Bool"
+            },
+            {
+                "name": "ifStillTiedThen",
+                "comment": " Returns the main order unless it is `EQ`, in which case returns the tiebreaker.\r\n\r\nThis function does for `Order`s what `breakTiesWith` does for `Ordering`s. It is\r\nuseful in cases where you want to perform a cascading comparison of multiple pairs\r\nof values that are not wrapped in a container value, as happens when examining the\r\nindividual fields of a constructor.\r\n",
+                "type": "Basics.Order -> Basics.Order -> Basics.Order"
+            },
+            {
+                "name": "isOrdered",
+                "comment": " Determines if the given list is ordered according to the given ordering.\r\n\r\n    Ordering.isOrdered Ordering.natural [1, 2, 3]\r\n        == True\r\n    Ordering.isOrdered Ordering.natural [2, 1, 3]\r\n        == False\r\n    Ordering.isOrdered Ordering.natural []\r\n        == True\r\n    Ordering.isOrdered\r\n        (Ordering.reverse Ordering.natural)\r\n        [1, 2, 3]\r\n        == False\r\n",
+                "type": "Ordering.Ordering a -> List.List a -> Basics.Bool"
+            },
+            {
+                "name": "lessThanBy",
+                "comment": " Determines if one value is less than another according to the given ordering.\r\n\r\n    lessThanBy\r\n        xThenYOrdering\r\n        { x = 7, y = 8 }\r\n        { x = 10, y = 2 }\r\n        == True\r\n\r\n    lessThanBy\r\n        yThenXOrdering\r\n        { x = 7, y = 8 }\r\n        { x = 10, y = 2 }\r\n        == False\r\n",
+                "type": "Ordering.Ordering a -> a -> a -> Basics.Bool"
+            },
+            {
+                "name": "natural",
+                "comment": " Ordering that works with any built-in comparable type.\r\n\r\n    -- orders in numeric order: 1, 2, 3, ...\r\n    intOrdering : Ordering Int\r\n    intOrdering = natural\r\n\r\n\r\n    -- orders lexicographically: \"a\", \"ab\", \"b\", ...\r\n    stringOrdering : Ordering String\r\n    stringOrdering : natural\r\n",
+                "type": "Ordering.Ordering comparable"
+            },
+            {
+                "name": "noConflicts",
+                "comment": " Marker for functions provided to `byRank` to indicate that a given case\r\nhas no possible rank conflicts.\r\n",
+                "type": "Basics.Order"
+            },
+            {
+                "name": "reverse",
+                "comment": " Returns an ordering that reverses the input ordering.\r\n\r\n    List.sortWith\r\n        (Ordering.reverse Ordering.natural)\r\n        [1, 2, 3, 4, 5]\r\n        == [5, 4, 3, 2, 1]\r\n",
+                "type": "Ordering.Ordering a -> a -> a -> Basics.Order"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,250 @@
+[
+    {
+        "name": "Graph",
+        "comment": " A simple functional graph library. Keys used to identify nodes can be any `comparable`, and both nodes and edges can have any kind of metadata associated with them.\n\nAll operations that look at a single node are at most `O(log n)`.\nOperations that look at all elements in the graph are at most `O(n log n)`.\n\n\n# Graphs\n\n@docs Graph\n\n\n# Query\n\n@docs getData, getEdgeData, member, memberEdge, incoming, outgoing, isEmpty, size, keys, nodes, edges, edgesWithData, isAcyclic\n\n\n# Build\n\n@docs empty, insert, insertData, insertEdge, insertEdgeData, remove, removeData, removeEdge, removeEdgeData, update, updateEdge\n\n\n# Transform\n\n@docs map, mapEdge, foldl, foldr\n\n\n# Combine\n\n@docs filter, partition, union, intersect\n\n\n# Algorithms and Traversal\n\n@docs postOrder, topologicalSort\n\n\n# Debugging tools\n\nThese are commented out in the release build, since they rely on `Debug.toString`.\n\n  - `graphviz` generates a graphviz file from a Graph.\n  - `valid` checks if there's any internal inconsistency in the graph.\n\n",
+        "unions": [
+            {
+                "name": "Graph",
+                "comment": " A directed graph. `(Graph Int String Float)` is a graph that uses `Int`s for identifying its nodes, and lets you store a `String` on each node and a `Float` on each edge.\n",
+                "args": [
+                    "comparable",
+                    "data",
+                    "edgeData"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "edges",
+                "comment": " Get the (from, to) pair for each edge in the graph.\n",
+                "type": "Graph.Graph comparable data edgeData -> List.List ( comparable, comparable )"
+            },
+            {
+                "name": "edgesWithData",
+                "comment": " Get the (from, to, Maybe edgeData) pair for each edge in the graph.\n",
+                "type": "Graph.Graph comparable data edgeData -> List.List ( comparable, comparable, Maybe.Maybe edgeData )"
+            },
+            {
+                "name": "empty",
+                "comment": " Create an empty graph.\n",
+                "type": "Graph.Graph comparable data edgeData"
+            },
+            {
+                "name": "filter",
+                "comment": " Create a copy of the graph, only keeping nodes where the predicate function returned True.\n",
+                "type": "(comparable -> Maybe.Maybe data -> Basics.Bool) -> Graph.Graph comparable data edgeData -> Graph.Graph comparable data edgeData"
+            },
+            {
+                "name": "foldl",
+                "comment": " Fold over the node keys and data in a graph, in order from lowest key to highest key.\n",
+                "type": "(comparable -> Maybe.Maybe data -> a -> a) -> a -> Graph.Graph comparable data edgeData -> a"
+            },
+            {
+                "name": "foldr",
+                "comment": " Fold over the node keys and data in a graph, in order from highest key to lowest key.\n",
+                "type": "(comparable -> Maybe.Maybe data -> a -> a) -> a -> Graph.Graph comparable data edgeData -> a"
+            },
+            {
+                "name": "getData",
+                "comment": " Get the data associated with a specific node.\n",
+                "type": "comparable -> Graph.Graph comparable data edgeData -> Maybe.Maybe data"
+            },
+            {
+                "name": "getEdgeData",
+                "comment": " Get the data associated with a specific edge.\n\nIf you want to pass the edge as a 2-tuple instead, you can use [`getEdgeData`](Graph-Pair#getEdgeData) from the [Pair](Graph-Pair) module.\n\n",
+                "type": "comparable -> comparable -> Graph.Graph comparable data edgeData -> Maybe.Maybe edgeData"
+            },
+            {
+                "name": "incoming",
+                "comment": " Get the set of incoming edges to a node.\n",
+                "type": "comparable -> Graph.Graph comparable data edgeData -> Set.Set comparable"
+            },
+            {
+                "name": "insert",
+                "comment": " Insert a node. Does not overwrite metadata if node already exists.\n",
+                "type": "comparable -> Graph.Graph comparable data edgeData -> Graph.Graph comparable data edgeData"
+            },
+            {
+                "name": "insertData",
+                "comment": " Update metadata for a node. Creates the node if it does not already exist.\n",
+                "type": "comparable -> data -> Graph.Graph comparable data edgeData -> Graph.Graph comparable data edgeData"
+            },
+            {
+                "name": "insertEdge",
+                "comment": " Insert an edge between two nodes. Creates any nodes that do not already exist.\n\nIf you want to pass the edge as a 2-tuple instead, you can use [`insertEdge`](Graph-Pair#insertEdge) from the [Pair](Graph-Pair) module.\n\n",
+                "type": "comparable -> comparable -> Graph.Graph comparable data edgeData -> Graph.Graph comparable data edgeData"
+            },
+            {
+                "name": "insertEdgeData",
+                "comment": " Insert an edge with some metadata between two nodes. Creates any nodes that do not already exist.\n\nIf you want to pass the edge as a 2-tuple instead, you can use [`insertEdgeData`](Graph-Pair#insertEdgeData) from the [Pair](Graph-Pair) module.\n\n",
+                "type": "comparable -> comparable -> edgeData -> Graph.Graph comparable data edgeData -> Graph.Graph comparable data edgeData"
+            },
+            {
+                "name": "intersect",
+                "comment": " Create a graph based on the intersection of two graphs. If both graphs have the same node, edge or associated metadata, it will be in the resulting graph. If both graphs have metadata for the same node or edge, the metadata in the left graph will be used.\n",
+                "type": "Graph.Graph comparable data edgeData -> Graph.Graph comparable data edgeData -> Graph.Graph comparable data edgeData"
+            },
+            {
+                "name": "isAcyclic",
+                "comment": " Determine if a graph contains any loops or cycles.\n",
+                "type": "Graph.Graph comparable data edgeData -> Basics.Bool"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Determine if the graph is empty.\n",
+                "type": "Graph.Graph comparable data edgeData -> Basics.Bool"
+            },
+            {
+                "name": "keys",
+                "comment": " Get the keys for all nodes in the graph.\n",
+                "type": "Graph.Graph comparable data edgeData -> List.List comparable"
+            },
+            {
+                "name": "map",
+                "comment": " Apply a function to the data associated with each node in a graph.\n",
+                "type": "(comparable -> Maybe.Maybe data1 -> Maybe.Maybe data2) -> Graph.Graph comparable data1 edgeData -> Graph.Graph comparable data2 edgeData"
+            },
+            {
+                "name": "mapEdge",
+                "comment": " Apply a function to the data associated with each edge in a graph.\n\nIf you want to pass the edge as a 2-tuple instead, you can use [`mapEdge`](Graph-Pair#mapEdge) from the [Pair](Graph-Pair) module.\n\n",
+                "type": "(comparable -> comparable -> Maybe.Maybe edgeData1 -> Maybe.Maybe edgeData2) -> Graph.Graph comparable data edgeData1 -> Graph.Graph comparable data edgeData2"
+            },
+            {
+                "name": "member",
+                "comment": " Determine if a node identified by a key is in the graph.\n",
+                "type": "comparable -> Graph.Graph comparable data edgeData -> Basics.Bool"
+            },
+            {
+                "name": "memberEdge",
+                "comment": " Determine if an edge identified by a pair of keys is in the graph.\n",
+                "type": "( comparable, comparable ) -> Graph.Graph comparable data edgeData -> Basics.Bool"
+            },
+            {
+                "name": "nodes",
+                "comment": " Get the (key, data) pair for each node in the graph.\n",
+                "type": "Graph.Graph comparable data edgeData -> List.List ( comparable, Maybe.Maybe data )"
+            },
+            {
+                "name": "outgoing",
+                "comment": " Get the set of outgoing edges from a node.\n",
+                "type": "comparable -> Graph.Graph comparable data edgeData -> Set.Set comparable"
+            },
+            {
+                "name": "partition",
+                "comment": " Partition a graph into two parts. The left one, with the nodes where the predicate function returned True, and right one, where it returned False.\n",
+                "type": "(comparable -> Maybe.Maybe data -> Basics.Bool) -> Graph.Graph comparable data edgeData -> ( Graph.Graph comparable data edgeData, Graph.Graph comparable data edgeData )"
+            },
+            {
+                "name": "postOrder",
+                "comment": " Get a list of all keys in postorder.\n",
+                "type": "Graph.Graph comparable data edgeData -> List.List comparable"
+            },
+            {
+                "name": "remove",
+                "comment": " Remove a node by its key. No-op if node doesn't exist.\n",
+                "type": "comparable -> Graph.Graph comparable data edgeData -> Graph.Graph comparable data edgeData"
+            },
+            {
+                "name": "removeData",
+                "comment": " Remove the metadata associated with a specific node.\n",
+                "type": "comparable -> Graph.Graph comparable data edgeData -> Graph.Graph comparable data edgeData"
+            },
+            {
+                "name": "removeEdge",
+                "comment": " Remove an edge identified by its source and target keys. No-op if source, target or edge doesn't exist.\n\nIf you want to pass the edge as a 2-tuple instead, you can use [`removeEdge`](Graph-Pair#removeEdge) from the [Pair](Graph-Pair) module.\n\n",
+                "type": "comparable -> comparable -> Graph.Graph comparable data edgeData -> Graph.Graph comparable data edgeData"
+            },
+            {
+                "name": "removeEdgeData",
+                "comment": " Remove the metadata associated with a specific edge.\n\nIf you want to pass the edge as a 2-tuple instead, you can use [`removeEdgeData`](Graph-Pair#removeEdgeData) from the [Pair](Graph-Pair) module.\n\n",
+                "type": "comparable -> comparable -> Graph.Graph comparable data edgeData -> Graph.Graph comparable data edgeData"
+            },
+            {
+                "name": "size",
+                "comment": " Determine the number of nodes in the graph.\n",
+                "type": "Graph.Graph comparable data edgeData -> Basics.Int"
+            },
+            {
+                "name": "topologicalSort",
+                "comment": " Get a topological sorting of the graph, if the graph doesn't contain any loops or cycles.\n",
+                "type": "Graph.Graph comparable data edgeData -> Maybe.Maybe (List.List comparable)"
+            },
+            {
+                "name": "union",
+                "comment": " Join two graphs together. If an edge appears between two nodes in either of the graphs, it will be in the resulting graph. If a node identified by a specific key appears in any of the graphs, it will be in the resulting graph. If both graphs have metadata for the same node or edge, the metadata in the left graph will be used.\n",
+                "type": "Graph.Graph comparable data edgeData -> Graph.Graph comparable data edgeData -> Graph.Graph comparable data edgeData"
+            },
+            {
+                "name": "update",
+                "comment": " Update the metadata associated with a specific node.\n",
+                "type": "comparable -> (Maybe.Maybe data -> Maybe.Maybe data) -> Graph.Graph comparable data edgeData -> Graph.Graph comparable data edgeData"
+            },
+            {
+                "name": "updateEdge",
+                "comment": " Update the metadata associated with a specific edge.\n\nIf you want to pass the edge as a 2-tuple instead, you can use [`updateEdge`](Graph-Pair#updateEdge) from the [Pair](Graph-Pair) module.\n\n",
+                "type": "comparable -> comparable -> (Maybe.Maybe edgeData -> Maybe.Maybe edgeData) -> Graph.Graph comparable data edgeData -> Graph.Graph comparable data edgeData"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Graph.Pair",
+        "comment": " Graph.Pair provides an alternative api for all functions that in some way take an edge as an argument. All functions in the normal api take edges as two arguments. This module provides the 2-tuple alternatives to those functions. It's basically just doing `uncurry` for you.\n\n@docs getEdgeData, insertEdge, insertEdgeData, removeEdge, removeEdgeData, mapEdge\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "getEdgeData",
+                "comment": " Uncurried version of [`getEdgeData`](Graph#getEdgeData).\n",
+                "type": "( comparable, comparable ) -> Graph.Graph comparable data edgeData -> Maybe.Maybe edgeData"
+            },
+            {
+                "name": "insertEdge",
+                "comment": " Uncurried version of [`insertEdge`](Graph#insertEdge).\n",
+                "type": "( comparable, comparable ) -> Graph.Graph comparable data edgeData -> Graph.Graph comparable data edgeData"
+            },
+            {
+                "name": "insertEdgeData",
+                "comment": " Uncurried version of [`insertEdgeData`](Graph#insertEdgeData).\n",
+                "type": "( comparable, comparable ) -> edgeData -> Graph.Graph comparable data edgeData -> Graph.Graph comparable data edgeData"
+            },
+            {
+                "name": "mapEdge",
+                "comment": " Uncurried version of [`mapEdge`](Graph#mapEdge).\n",
+                "type": "(( comparable, comparable ) -> Maybe.Maybe edgeData1 -> Maybe.Maybe edgeData2) -> Graph.Graph comparable data edgeData1 -> Graph.Graph comparable data edgeData2"
+            },
+            {
+                "name": "removeEdge",
+                "comment": " Uncurried version of [`removeEdge`](Graph#removeEdge).\n",
+                "type": "( comparable, comparable ) -> Graph.Graph comparable data edgeData -> Graph.Graph comparable data edgeData"
+            },
+            {
+                "name": "removeEdgeData",
+                "comment": " Uncurried version of [`removeEdgeData`](Graph#removeEdgeData).\n",
+                "type": "( comparable, comparable ) -> Graph.Graph comparable data edgeData -> Graph.Graph comparable data edgeData"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Graph.Random",
+        "comment": " Graph.Random provides graph functions that require randomness to work.\n\n\n# Elm-test fuzzers\n\n@docs topologicalSortFuzzer\n\n\n# Random\n\n@docs randomTopologicalSort\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "randomTopologicalSort",
+                "comment": " Generate a random topological sorting of a _directed acyclic graph_. Hangs if the graph contains cycles.\n",
+                "type": "Graph.Graph comparable data edgeData -> Random.Generator (List.List comparable)"
+            },
+            {
+                "name": "topologicalSortFuzzer",
+                "comment": " Elm-test fuzzer that generates random topological sortings of a _directed acyclic graph_. Hangs if the graph contains cycles.\n",
+                "type": "Graph.Graph comparable data edgeData -> Fuzz.Fuzzer (List.List comparable)"
+            }
+        ],
+        "binops": []
+    }
+]

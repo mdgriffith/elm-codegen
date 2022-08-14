@@ -1,0 +1,230 @@
+[
+    {
+        "name": "UndoList",
+        "comment": " UndoList Data Structure.\n\n\n# Definition\n\n@docs UndoList\n\n\n# Basic Operations\n\n@docs undo, redo, fresh, new, forget, reset\n\n\n# Query UndoList\n\n@docs hasPast, hasFuture, length, lengthPast, lengthFuture\n\n\n# Messages\n\n@docs Msg, mapMsg\n\n\n# Functional Operations\n\n@docs map, mapPresent, update, connect, reduce, foldl, foldr, reverse, flatten, flatMap, andThen, map2, andMap\n\n\n\n# Shorthands\n\n@docs view\n\n\n# Conversions\n\n@docs toList, fromList\n\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " Simple UndoList Msg type. This is a simple type that can be used for\nmost use cases. This works best when paired with the `update` function as\n`update` will perform the corresponding operations on the undolist automatically.\n\nConsider using your own data type only if you really need it.\n\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": [
+                    [
+                        "Reset",
+                        []
+                    ],
+                    [
+                        "Redo",
+                        []
+                    ],
+                    [
+                        "Undo",
+                        []
+                    ],
+                    [
+                        "Forget",
+                        []
+                    ],
+                    [
+                        "New",
+                        [
+                            "msg"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "UndoList",
+                "comment": " The UndoList data structure.\nAn UndoList has:\n\n1.  A list of past states\n2.  A present state\n3.  A list of future states\n\nThe head of the past list is the most recent state and the head of the future\nlist is the next state. (i.e., the tails of both lists point away from the\npresent)\n\n",
+                "args": [
+                    "state"
+                ],
+                "type": "{ past : List.List state, present : state, future : List.List state }"
+            }
+        ],
+        "values": [
+            {
+                "name": "andMap",
+                "comment": " Map a function over any number of undo-lists.\n\n    map f xs\n        |> andMap ys\n        |> andMap zs\n\n",
+                "type": "UndoList.UndoList a -> UndoList.UndoList (a -> b) -> UndoList.UndoList b"
+            },
+            {
+                "name": "andThen",
+                "comment": " Chain undo-list operations. This is simply an alias of `flatMap`\n",
+                "type": "(a -> UndoList.UndoList b) -> UndoList.UndoList a -> UndoList.UndoList b"
+            },
+            {
+                "name": "connect",
+                "comment": " Connect two undo-lists end to end. The present of the first undolist is\nconsidered the present of the output undolist.\n",
+                "type": "UndoList.UndoList state -> UndoList.UndoList state -> UndoList.UndoList state"
+            },
+            {
+                "name": "flatMap",
+                "comment": " Map over an undo-list and then flatten the result.\n",
+                "type": "(a -> UndoList.UndoList b) -> UndoList.UndoList a -> UndoList.UndoList b"
+            },
+            {
+                "name": "flatten",
+                "comment": " Flatten an undo-list of undo-lists into a single undo-list.\n",
+                "type": "UndoList.UndoList (UndoList.UndoList a) -> UndoList.UndoList a"
+            },
+            {
+                "name": "foldl",
+                "comment": " Reduce an undo-list from the left (or from the past)\n",
+                "type": "(a -> b -> b) -> b -> UndoList.UndoList a -> b"
+            },
+            {
+                "name": "foldr",
+                "comment": " Reduce an undo-list from the right (or from the future)\n",
+                "type": "(a -> b -> b) -> b -> UndoList.UndoList a -> b"
+            },
+            {
+                "name": "forget",
+                "comment": " Forget the past and look to the future!\nThis simply clears the past list.\n\ni.e.\n\n    forget (UndoList [3,2,1] 4 [5,6]) --> UndoList [] 4 [5,6]\n\n",
+                "type": "UndoList.UndoList state -> UndoList.UndoList state"
+            },
+            {
+                "name": "fresh",
+                "comment": " Turn a state into an undo-list with neither past nor future.\n",
+                "type": "state -> UndoList.UndoList state"
+            },
+            {
+                "name": "fromList",
+                "comment": " Convert a list to undolist. The provided state is used as the present\nstate and the list is used as the future states.\n\n    fromList 1 [ 2, 3, 4 ] --> UndoList [] 1 [ 2, 3, 4 ]\n\n",
+                "type": "state -> List.List state -> UndoList.UndoList state"
+            },
+            {
+                "name": "hasFuture",
+                "comment": " Check if the undo-list has any future states.\n\n    hasFuture (UndoList [] 1 []) --> False\n    hasFuture (UndoList [] 1 [ 2, 3, 4 ]) --> True\n",
+                "type": "UndoList.UndoList state -> Basics.Bool"
+            },
+            {
+                "name": "hasPast",
+                "comment": " Check if the undo-list has any past states.\n\n    hasPast (UndoList [] 1 []) --> False\n    hasPast (UndoList [ 1, 2, 3 ] 4 []) --> True\n",
+                "type": "UndoList.UndoList state -> Basics.Bool"
+            },
+            {
+                "name": "length",
+                "comment": " Get the full length of an undo-list\n\n    length (UndoList [ 0 ] 1 [ 2, 3, 4 ]) --> 5\n",
+                "type": "UndoList.UndoList state -> Basics.Int"
+            },
+            {
+                "name": "lengthFuture",
+                "comment": " Get the length of the future\n\n    lengthFuture (UndoList [ 0 ] 1 [ 2, 3, 4 ]) --> 3\n",
+                "type": "UndoList.UndoList state -> Basics.Int"
+            },
+            {
+                "name": "lengthPast",
+                "comment": " Get the length of the past.\n\n    lengthPast (UndoList [ 0 ] 1 [ 2, 3, 4 ]) --> 1\n",
+                "type": "UndoList.UndoList state -> Basics.Int"
+            },
+            {
+                "name": "map",
+                "comment": " Map a function over an undo-list.\nBe careful with this. The function will be applied to the past and the future\nas well. If you just want to change the present, use `mapPresent`.\n\nA good use case for `map` is to encode an undo-list as JSON.\n\nExample:\n\n    import UndoList.Encode as Encode\n\n    encode encoder undolist =\n        map encoder undolist\n            |> Encode.undolist\n",
+                "type": "(a -> b) -> UndoList.UndoList a -> UndoList.UndoList b"
+            },
+            {
+                "name": "map2",
+                "comment": " Map a function over a pair of undo-lists.\n",
+                "type": "(a -> b -> c) -> UndoList.UndoList a -> UndoList.UndoList b -> UndoList.UndoList c"
+            },
+            {
+                "name": "mapMsg",
+                "comment": " Map a function over a msg.\n\n    mapMsg sqrt (New 100) --> New 10\n    mapMsg sqrt Undo --> Undo\n",
+                "type": "(a -> b) -> UndoList.Msg a -> UndoList.Msg b"
+            },
+            {
+                "name": "mapPresent",
+                "comment": " Apply a function only to the present.\n",
+                "type": "(a -> a) -> UndoList.UndoList a -> UndoList.UndoList a"
+            },
+            {
+                "name": "new",
+                "comment": " Add a new present state to the undo-list, turning the old\npresent state into a past state and erasing the future.\n",
+                "type": "state -> UndoList.UndoList state -> UndoList.UndoList state"
+            },
+            {
+                "name": "redo",
+                "comment": " If the undo-list has any future states, set the next\nfuture state as the current state and turn the old present state\ninto a past state.\n\ni.e.\n\n    redo (UndoList [ 3, 2, 1 ] 4 [ 5, 6 ]) --> UndoList [ 4, 3, 2, 1 ] 5 [ 6 ]\n\n",
+                "type": "UndoList.UndoList state -> UndoList.UndoList state"
+            },
+            {
+                "name": "reduce",
+                "comment": " Alias for `foldl`\n",
+                "type": "(a -> b -> b) -> b -> UndoList.UndoList a -> b"
+            },
+            {
+                "name": "reset",
+                "comment": " Reset the undo-list by returning to the very first state\nand clearing all other states.\n\ni.e.\n\n    reset (UndoList [ 3, 2, 1 ] 4 [ 5, 6 ]) --> UndoList [] 1 []\n\n",
+                "type": "UndoList.UndoList state -> UndoList.UndoList state"
+            },
+            {
+                "name": "reverse",
+                "comment": " Reverse an undo-list.\n",
+                "type": "UndoList.UndoList a -> UndoList.UndoList a"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert an undo-list to a list :\n\n    toList (UndoList [ 3, 2, 1 ] 4 [ 5, 6 ]) --> [ 1, 2, 3, 4, 5, 6 ]\n\n",
+                "type": "UndoList.UndoList state -> List.List state"
+            },
+            {
+                "name": "undo",
+                "comment": " If the undolist has any past states, set the most recent past\nstate as the current state and turn the old present state into\na future state.\n\ni.e.\n\n    undo (UndoList [ 3, 2, 1 ] 4 [ 5, 6 ]) --> UndoList [ 2, 1 ] 3 [ 4, 5, 6 ]\n\n",
+                "type": "UndoList.UndoList state -> UndoList.UndoList state"
+            },
+            {
+                "name": "update",
+                "comment": " Convert a function that updates the state to a function that updates an undo-list.\nThis is very useful to allow you to write update functions that only deal with\nthe individual states of your system and treat undo/redo as an add on.\n\nExample:\n\n    -- Your update function\n    update msg state =\n      case msg of\n        ... -- some implementation\n\n    -- Your new update function\n    updateWithUndo = UndoList.update update\n\n",
+                "type": "(msg -> state -> state) -> UndoList.Msg msg -> UndoList.UndoList state -> UndoList.UndoList state"
+            },
+            {
+                "name": "view",
+                "comment": " Function to help not having to deal with the full undolist from with\nyour actual view function.\n\nSuppose you define the following:\n\n    initial : model\n\n    update : msg -> model -> model\n\n    view : model -> Html (UndoList.Msg msg)\n\nThen, you could construct the main function as follows:\n\n    main =\n        Html.beginnerProgram\n            { model = UndoList.fresh initial\n            , update = UndoList.update update\n            , view = UndoList.view view\n            }\n\n",
+                "type": "(state -> view) -> UndoList.UndoList state -> view"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "UndoList.Decode",
+        "comment": " Decode UndoList submodule.\n\nProvides JSON decoders for Timelines and UndoList Messages.\n\n\n# Decoders\n\n@docs undolist, msg\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "msg",
+                "comment": " Decode an undo-list msg given a decoder of messages.\n\n    import Json.Decode\n    import UndoList exposing (Msg(..))\n\n    Json.Decode.decodeString (msg Json.Decode.string) \"{ \\\"New\\\": \\\"Hello!\\\" }\"\n    --> Ok (New \"Hello!\")\n\n    json : String\n    json = \"\"\"[ \"Reset\", \"Redo\", \"Undo\", \"Forget\", { \"New\": 1 } ]\"\"\"\n\n    Json.Decode.decodeString (Json.Decode.list <| msg Json.Decode.int) json\n    --> Ok [ Reset, Redo, Undo, Forget, New 1 ]\n",
+                "type": "Json.Decode.Decoder msg -> Json.Decode.Decoder (UndoList.Msg msg)"
+            },
+            {
+                "name": "undolist",
+                "comment": " Decode an undo-list given a decoder of state.\n\n    import Json.Decode\n\n    json : String\n    json = \"\"\"{\n        \"past\": [ 1, 2 ],\n        \"present\": 3,\n        \"future\": [ 4, 5 ]\n    }\"\"\"\n\n    Json.Decode.decodeString (undolist Json.Decode.int) json\n    --> Ok { past = [ 1, 2 ], present = 3, future = [ 4, 5 ] }\n",
+                "type": "Json.Decode.Decoder state -> Json.Decode.Decoder (UndoList.UndoList state)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "UndoList.Encode",
+        "comment": " Encode UndoList submodule.\n\nProvides JSON encoders for Timelines and UndoList Messages.\n\n\n# Encoders\n\n@docs undolist, msg\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "msg",
+                "comment": " Encode an UndoList Msg of JSON values.\nBest paired with the `mapMsg` function from UndoList.\n\n    encodeMsg msgEncoder =\n        UndoList.mapMsg msgEncoder >> msg\n\n",
+                "type": "UndoList.Msg Json.Encode.Value -> Json.Encode.Value"
+            },
+            {
+                "name": "undolist",
+                "comment": " Encode an undolist of JSON values.\nBest paired with the `map` function from UndoList.\n\n    encodeUndoList stateEncoder =\n        UndoList.map stateEncoder >> undolist\n\n",
+                "type": "UndoList.UndoList Json.Encode.Value -> Json.Encode.Value"
+            }
+        ],
+        "binops": []
+    }
+]

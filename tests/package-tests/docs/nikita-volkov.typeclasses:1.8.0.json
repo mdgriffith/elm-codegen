@@ -1,0 +1,615 @@
+[
+    {
+        "name": "Typeclasses.Classes.Bounds",
+        "comment": " Bounds typeclass definition and its instances for basic types.\n\n\n# Definition\n\n@docs Bounds\n\n\n# Instances\n\n@docs int, char, bool, order, unit\n\n\n# Composites\n\n@docs tuple2, tuple3\n\n\n# Instance transformation utilities\n\n@docs map\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Bounds",
+                "comment": " Explicit typeclass which implements a bounded type `a`.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ min : a, max : a }"
+            }
+        ],
+        "values": [
+            {
+                "name": "bool",
+                "comment": " Instance for `Bool`.\n",
+                "type": "Typeclasses.Classes.Bounds.Bounds Basics.Bool"
+            },
+            {
+                "name": "char",
+                "comment": " Instance for `Char`.\n",
+                "type": "Typeclasses.Classes.Bounds.Bounds Char.Char"
+            },
+            {
+                "name": "int",
+                "comment": " Instance for `Int`.\n",
+                "type": "Typeclasses.Classes.Bounds.Bounds Basics.Int"
+            },
+            {
+                "name": "map",
+                "comment": " Map over the owner type of an instance to produce a new instance.\n\nFor example, to create a bounded record type:\n\n    map (\\v -> { x = v }) int == Bounds { x = int.min } { x = int.max }\n\n",
+                "type": "(a -> b) -> Typeclasses.Classes.Bounds.Bounds a -> Typeclasses.Classes.Bounds.Bounds b"
+            },
+            {
+                "name": "order",
+                "comment": " Instance for `Order`.\n",
+                "type": "Typeclasses.Classes.Bounds.Bounds Basics.Order"
+            },
+            {
+                "name": "tuple2",
+                "comment": " Instance for tuple (pair), with instances for its members provided.\n",
+                "type": "Typeclasses.Classes.Bounds.Bounds a -> Typeclasses.Classes.Bounds.Bounds b -> Typeclasses.Classes.Bounds.Bounds ( a, b )"
+            },
+            {
+                "name": "tuple3",
+                "comment": " Instance for tuple (triple), with instances for its members provided.\n",
+                "type": "Typeclasses.Classes.Bounds.Bounds a -> Typeclasses.Classes.Bounds.Bounds b -> Typeclasses.Classes.Bounds.Bounds c -> Typeclasses.Classes.Bounds.Bounds ( a, b, c )"
+            },
+            {
+                "name": "unit",
+                "comment": " Instance for `()`.\n",
+                "type": "Typeclasses.Classes.Bounds.Bounds ()"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Typeclasses.Classes.Comparison",
+        "comment": "\nComparison typeclass definition and its instances for basic types.\n\n# Definition\n@docs Comparison\n\n# Construction utilities\n@docs compare, equalityAndLt, comparable\n\n# Instance transformation utilities\n@docs map\n\n# Instances\n@docs int, float\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Comparison",
+                "comment": " Explicit typeclass which implements comparison operations for type `a`. ",
+                "args": [
+                    "a"
+                ],
+                "type": "{ equality : Typeclasses.Classes.Equality.Equality a, compare : a -> a -> Basics.Order, lt : a -> a -> Basics.Bool, le : a -> a -> Basics.Bool, gt : a -> a -> Basics.Bool, ge : a -> a -> Basics.Bool, min : a -> a -> a, max : a -> a -> a }"
+            }
+        ],
+        "values": [
+            {
+                "name": "comparable",
+                "comment": " Construct an instance for a comparable type using the compiler-generated definitions. ",
+                "type": "Typeclasses.Classes.Comparison.Comparison comparable"
+            },
+            {
+                "name": "compare",
+                "comment": " Construct an instance from just a `compare` function. ",
+                "type": "(a -> a -> Basics.Order) -> Typeclasses.Classes.Comparison.Comparison a"
+            },
+            {
+                "name": "equalityAndLt",
+                "comment": " Construct an instance from an instance of equality and\na lesser-than function. ",
+                "type": "Typeclasses.Classes.Equality.Equality a -> (a -> a -> Basics.Bool) -> Typeclasses.Classes.Comparison.Comparison a"
+            },
+            {
+                "name": "float",
+                "comment": " Instance for `Float`. ",
+                "type": "Typeclasses.Classes.Comparison.Comparison Basics.Float"
+            },
+            {
+                "name": "int",
+                "comment": " Instance for `Int`. ",
+                "type": "Typeclasses.Classes.Comparison.Comparison Basics.Int"
+            },
+            {
+                "name": "map",
+                "comment": " Map over the owner type of an instance to produce a new instance.\n\nYou need to provide both a covariant and a contravariant mapping\n(i.e., `(a -> b)` and `(b -> a)`).\n",
+                "type": "(a -> b) -> (b -> a) -> Typeclasses.Classes.Comparison.Comparison a -> Typeclasses.Classes.Comparison.Comparison b"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Typeclasses.Classes.Equality",
+        "comment": "\nEquality typeclass definition and its instances for basic types.\n\n# Definition\n@docs Equality\n\n# Construction utilities\n@docs eqAndNotEq, eq, compare, comparable\n\n# Instance transformation utilities\n@docs map\n\n# Instances\n\n## Primitives\n\n@docs bool, int, float, char, string\n\n## Composites\n\n@docs maybe, result, either, list, array\n\n## Tuples\n\n@docs tuple2, tuple3\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Equality",
+                "comment": " Explicit typeclass which implements equality for type `a`. ",
+                "args": [
+                    "a"
+                ],
+                "type": "{ eq : a -> a -> Basics.Bool, notEq : a -> a -> Basics.Bool }"
+            }
+        ],
+        "values": [
+            {
+                "name": "array",
+                "comment": " Equality for `Array`, with instance for its member provided. ",
+                "type": "Typeclasses.Classes.Equality.Equality a -> Typeclasses.Classes.Equality.Equality (Array.Array a)"
+            },
+            {
+                "name": "bool",
+                "comment": " Instance for `Bool`. ",
+                "type": "Typeclasses.Classes.Equality.Equality Basics.Bool"
+            },
+            {
+                "name": "char",
+                "comment": " Instance for `Char`. ",
+                "type": "Typeclasses.Classes.Equality.Equality Char.Char"
+            },
+            {
+                "name": "comparable",
+                "comment": " Instance for any type, which satisfies the magic comparable constraint. ",
+                "type": "Typeclasses.Classes.Equality.Equality comparable"
+            },
+            {
+                "name": "compare",
+                "comment": " Construct from a comparison operation. ",
+                "type": "(a -> a -> Basics.Order) -> Typeclasses.Classes.Equality.Equality a"
+            },
+            {
+                "name": "either",
+                "comment": " Instance for `Either`, with instances for its members provided. ",
+                "type": "Typeclasses.Classes.Equality.Equality a -> Typeclasses.Classes.Equality.Equality b -> Typeclasses.Classes.Equality.Equality (Either.Either a b)"
+            },
+            {
+                "name": "eq",
+                "comment": " Construct just from the eq operation. ",
+                "type": "(a -> a -> Basics.Bool) -> Typeclasses.Classes.Equality.Equality a"
+            },
+            {
+                "name": "eqAndNotEq",
+                "comment": " Construct from the eq and not-eq operations. ",
+                "type": "(a -> a -> Basics.Bool) -> (a -> a -> Basics.Bool) -> Typeclasses.Classes.Equality.Equality a"
+            },
+            {
+                "name": "float",
+                "comment": " Instance for `Float`. ",
+                "type": "Typeclasses.Classes.Equality.Equality Basics.Float"
+            },
+            {
+                "name": "int",
+                "comment": " Instance for `Int`. ",
+                "type": "Typeclasses.Classes.Equality.Equality Basics.Int"
+            },
+            {
+                "name": "list",
+                "comment": " Equality for `List`, with instance for its member provided. ",
+                "type": "Typeclasses.Classes.Equality.Equality a -> Typeclasses.Classes.Equality.Equality (List.List a)"
+            },
+            {
+                "name": "map",
+                "comment": " Map over the owner type of an instance to produce a new instance.\n\nPlease notice that mapping is contravariant (i.e., `(b -> a)` instead of `(a -> b)`).\n",
+                "type": "(b -> a) -> Typeclasses.Classes.Equality.Equality a -> Typeclasses.Classes.Equality.Equality b"
+            },
+            {
+                "name": "maybe",
+                "comment": " Equality for `Maybe`, with instance for its member provided. ",
+                "type": "Typeclasses.Classes.Equality.Equality a -> Typeclasses.Classes.Equality.Equality (Maybe.Maybe a)"
+            },
+            {
+                "name": "result",
+                "comment": " Instance for `Result`, with instances for its members provided. ",
+                "type": "Typeclasses.Classes.Equality.Equality a -> Typeclasses.Classes.Equality.Equality b -> Typeclasses.Classes.Equality.Equality (Result.Result a b)"
+            },
+            {
+                "name": "string",
+                "comment": " Instance for `String`. ",
+                "type": "Typeclasses.Classes.Equality.Equality String.String"
+            },
+            {
+                "name": "tuple2",
+                "comment": " Instance for tuple, with instances for its members provided. ",
+                "type": "Typeclasses.Classes.Equality.Equality a -> Typeclasses.Classes.Equality.Equality b -> Typeclasses.Classes.Equality.Equality ( a, b )"
+            },
+            {
+                "name": "tuple3",
+                "comment": " Instance for tuple, with instances for its members provided. ",
+                "type": "Typeclasses.Classes.Equality.Equality a -> Typeclasses.Classes.Equality.Equality b -> Typeclasses.Classes.Equality.Equality c -> Typeclasses.Classes.Equality.Equality ( a, b, c )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Typeclasses.Classes.Hashing",
+        "comment": "\nHashing typeclass definition and its instances for basic types.\nImplements fast non-cryptographic hashing for arbitrary types,\nsuitable for implementing generic hashing-based datastructures,\nlike hash-tables and hash-sets. \n\nMuch inspired by [the \"hashable\" Haskell library](http://hackage.haskell.org/package/hashable).\n\n# Definition\n@docs Hashing\n\n# Construction utilities\n@docs hash, hashWithSalt\n\n# Instance transformation utilities\n@docs map, concat\n\n# Instances\n@docs bool, int, float, char, string, maybe, either, list, array\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Hashing",
+                "comment": " Explicit typeclass which implements hashing for type `a`. ",
+                "args": [
+                    "a"
+                ],
+                "type": "{ hash : a -> Basics.Int, hashWithSalt : Basics.Int -> a -> Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "array",
+                "comment": " Hashing instance for arrays,\ndetermined by the Hashing instance for elements and sampling.\nSampling determines the maximum amount of elements to be picked\nfrom the array while constructing the hash,\nallowing you to control the balance between the quality of hashing and its performance.\n",
+                "type": "Typeclasses.Classes.Hashing.Hashing a -> Basics.Int -> Typeclasses.Classes.Hashing.Hashing (Array.Array a)"
+            },
+            {
+                "name": "bool",
+                "comment": " Instance for `Bool`. ",
+                "type": "Typeclasses.Classes.Hashing.Hashing Basics.Bool"
+            },
+            {
+                "name": "char",
+                "comment": " Instance for `Char`. ",
+                "type": "Typeclasses.Classes.Hashing.Hashing Char.Char"
+            },
+            {
+                "name": "concat",
+                "comment": "\nCompose multiple instances together.\n\nAllows to create instances for product-types (records). E.g.,\n\n```\ntype alias Person = { name : String, age : Int }\n\nhashing : Hashing Person\nhashing =\n  Hashing.concat\n    [\n      Hashing.map .name (Hashing.string 4),\n      Hashing.map .age Hashing.int\n    ]\n```\n",
+                "type": "List.List (Typeclasses.Classes.Hashing.Hashing a) -> Typeclasses.Classes.Hashing.Hashing a"
+            },
+            {
+                "name": "either",
+                "comment": "\nInstance for [`Either`](/packages/toastal/either/3.5.1/Either#Either),\nwhich utilizes instances for its contents.\n\nAllows to create instances for sum-types (ADTs with multiple constructors). E.g.,\n\n```\ntype IntOrBoolOrString = Int Int | Bool Bool | String String\n\nhashing : Hashing IntOrBoolOrString\nhashing =\n  either int (either bool (string 3)) |>\n  map (\\ a -> case a of\n    Int b -> Left b\n    Bool b -> Right (Left b)\n    String b -> Right (Right b))\n```\n",
+                "type": "Typeclasses.Classes.Hashing.Hashing a -> Typeclasses.Classes.Hashing.Hashing b -> Typeclasses.Classes.Hashing.Hashing (Either.Either a b)"
+            },
+            {
+                "name": "float",
+                "comment": " Instance for `Float`. ",
+                "type": "Typeclasses.Classes.Hashing.Hashing Basics.Float"
+            },
+            {
+                "name": "hash",
+                "comment": " Construct from just the hashing function. ",
+                "type": "(a -> Basics.Int) -> Typeclasses.Classes.Hashing.Hashing a"
+            },
+            {
+                "name": "hashWithSalt",
+                "comment": " Construct from just the hashing function, which combines the hash with salt. ",
+                "type": "(Basics.Int -> a -> Basics.Int) -> Typeclasses.Classes.Hashing.Hashing a"
+            },
+            {
+                "name": "int",
+                "comment": " Instance for `Int`. ",
+                "type": "Typeclasses.Classes.Hashing.Hashing Basics.Int"
+            },
+            {
+                "name": "list",
+                "comment": " Instance for `List`, which utilizes an instance for its element.\nTraverses the list in whole. ",
+                "type": "Typeclasses.Classes.Hashing.Hashing a -> Typeclasses.Classes.Hashing.Hashing (List.List a)"
+            },
+            {
+                "name": "map",
+                "comment": " Map over the owner type of an instance to produce a new instance.\n\nPlease notice that mapping is contravariant (i.e., `(b -> a)` instead of `(a -> b)`).\n",
+                "type": "(b -> a) -> Typeclasses.Classes.Hashing.Hashing a -> Typeclasses.Classes.Hashing.Hashing b"
+            },
+            {
+                "name": "maybe",
+                "comment": " Instance for `Maybe`, which utilizes an instance for its element. ",
+                "type": "Typeclasses.Classes.Hashing.Hashing a -> Typeclasses.Classes.Hashing.Hashing (Maybe.Maybe a)"
+            },
+            {
+                "name": "string",
+                "comment": " Hashing instance for strings, determined by sampling.\nSampling determines the maximum amount of characters to be picked\nfrom the string while constructing the hash,\nallowing you to control the balance between the quality of hashing and its performance.\n",
+                "type": "Basics.Int -> Typeclasses.Classes.Hashing.Hashing String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Typeclasses.Classes.Monoid",
+        "comment": "\nMonoid typeclass definition and its instances for basic types.\n\n# Definition\n@docs Monoid\n\n# Construction utilities\n@docs identityAndConcat, semigroupAndIdentity, appendable, numberProduct, numberSum\n\n# Instance transformation utilities\n@docs map\n\n# Instances\n@docs intProduct, intSum, string, maybeFirst, list, setUnion, setDifference, cmd, sub, task\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Monoid",
+                "comment": " Explicit typeclass which implements monoid operations for type `a`. ",
+                "args": [
+                    "a"
+                ],
+                "type": "{ semigroup : Typeclasses.Classes.Semigroup.Semigroup a, identity : a, concat : List.List a -> a }"
+            }
+        ],
+        "values": [
+            {
+                "name": "appendable",
+                "comment": " Construct an instance for any type which satisfies Elm's `appendable` magic constraint,\nby providing an identity value. ",
+                "type": "appendable -> Typeclasses.Classes.Monoid.Monoid appendable"
+            },
+            {
+                "name": "cmd",
+                "comment": " Instance for commands under the batch operation. ",
+                "type": "Typeclasses.Classes.Monoid.Monoid (Platform.Cmd.Cmd msg)"
+            },
+            {
+                "name": "identityAndConcat",
+                "comment": " Construct an instance by specifying identity value and a concatenation operation. ",
+                "type": "a -> (List.List a -> a) -> Typeclasses.Classes.Monoid.Monoid a"
+            },
+            {
+                "name": "intProduct",
+                "comment": " Instance for integers under the multiplication operation. ",
+                "type": "Typeclasses.Classes.Monoid.Monoid Basics.Int"
+            },
+            {
+                "name": "intSum",
+                "comment": " Instance for integers under the sum operation. ",
+                "type": "Typeclasses.Classes.Monoid.Monoid Basics.Int"
+            },
+            {
+                "name": "list",
+                "comment": " Instance for list under concatenation. ",
+                "type": "Typeclasses.Classes.Monoid.Monoid (List.List a)"
+            },
+            {
+                "name": "map",
+                "comment": " Map over the owner type of an instance to produce a new instance.\n\nYou need to provide both a covariant and a contravariant mapping\n(i.e., `(a -> b)` and `(b -> a)`).\n",
+                "type": "(a -> b) -> (b -> a) -> Typeclasses.Classes.Monoid.Monoid a -> Typeclasses.Classes.Monoid.Monoid b"
+            },
+            {
+                "name": "maybeFirst",
+                "comment": " Instance for maybe, which chooses the first `Just` value. ",
+                "type": "Typeclasses.Classes.Monoid.Monoid (Maybe.Maybe a)"
+            },
+            {
+                "name": "numberProduct",
+                "comment": " Construct an instance for any type which satisfies Elm's `number` magic constraint.\nImplements multiplication. ",
+                "type": "Typeclasses.Classes.Monoid.Monoid number"
+            },
+            {
+                "name": "numberSum",
+                "comment": " Construct an instance for any type which satisfies Elm's `number` magic constraint.\nImplements sum. ",
+                "type": "Typeclasses.Classes.Monoid.Monoid number"
+            },
+            {
+                "name": "semigroupAndIdentity",
+                "comment": " Construct an instance by specifying a semigroup instance and an identity value. ",
+                "type": "Typeclasses.Classes.Semigroup.Semigroup a -> a -> Typeclasses.Classes.Monoid.Monoid a"
+            },
+            {
+                "name": "setDifference",
+                "comment": " Instance for set under the difference operation. ",
+                "type": "Typeclasses.Classes.Monoid.Monoid (Set.Set comparable)"
+            },
+            {
+                "name": "setUnion",
+                "comment": " Instance for set under the union operation. ",
+                "type": "Typeclasses.Classes.Monoid.Monoid (Set.Set comparable)"
+            },
+            {
+                "name": "string",
+                "comment": " Instance for strings under the appending operation. ",
+                "type": "Typeclasses.Classes.Monoid.Monoid String.String"
+            },
+            {
+                "name": "sub",
+                "comment": " Instance for subscriptions under the batch operation. ",
+                "type": "Typeclasses.Classes.Monoid.Monoid (Platform.Sub.Sub msg)"
+            },
+            {
+                "name": "task",
+                "comment": " Instance for tasks, which sequentially executes them and groups the results. ",
+                "type": "Typeclasses.Classes.Monoid.Monoid a -> Typeclasses.Classes.Monoid.Monoid (Task.Task x a)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Typeclasses.Classes.Semigroup",
+        "comment": "\nSemigroup typeclass definition and its instances for basic types.\n\n# Definition\n@docs Semigroup\n\n# Construction utilities\n@docs prepend, concat, appendable, numberProduct, numberSum\n\n# Instance transformation utilities\n@docs map\n\n# Instances\n@docs intProduct, intSum, string, maybeFirst, list, setUnion, setIntersection, setDifference, cmd, sub, task\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Semigroup",
+                "comment": " Explicit typeclass which implements semigroup operations for type `a`.\n\nNotice that the binary operation function is named \"prepend\" instead of \"append\",\nbecause it follows the convention of having the context value come as the last value.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ prepend : a -> a -> a }"
+            }
+        ],
+        "values": [
+            {
+                "name": "appendable",
+                "comment": " Construct an instance for any type which satisfies Elm's `appendable` magic constraint. ",
+                "type": "Typeclasses.Classes.Semigroup.Semigroup appendable"
+            },
+            {
+                "name": "cmd",
+                "comment": " Instance for commands under the batch operation. ",
+                "type": "Typeclasses.Classes.Semigroup.Semigroup (Platform.Cmd.Cmd msg)"
+            },
+            {
+                "name": "concat",
+                "comment": " Construct from a concatenation function. ",
+                "type": "(List.List a -> a) -> Typeclasses.Classes.Semigroup.Semigroup a"
+            },
+            {
+                "name": "intProduct",
+                "comment": " Instance for integers under the multiplication operation. ",
+                "type": "Typeclasses.Classes.Semigroup.Semigroup Basics.Int"
+            },
+            {
+                "name": "intSum",
+                "comment": " Instance for integers under the sum operation. ",
+                "type": "Typeclasses.Classes.Semigroup.Semigroup Basics.Int"
+            },
+            {
+                "name": "list",
+                "comment": " Instance for list under concatenation. ",
+                "type": "Typeclasses.Classes.Semigroup.Semigroup (List.List a)"
+            },
+            {
+                "name": "map",
+                "comment": " Map over the owner type of an instance to produce a new instance.\n\nYou need to provide both a covariant and a contravariant mapping\n(i.e., `(a -> b)` and `(b -> a)`).\n",
+                "type": "(a -> b) -> (b -> a) -> Typeclasses.Classes.Semigroup.Semigroup a -> Typeclasses.Classes.Semigroup.Semigroup b"
+            },
+            {
+                "name": "maybeFirst",
+                "comment": " Instance for maybe, which chooses the first `Just` value. ",
+                "type": "Typeclasses.Classes.Semigroup.Semigroup (Maybe.Maybe a)"
+            },
+            {
+                "name": "numberProduct",
+                "comment": " Construct an instance for any type which satisfies Elm's `number` magic constraint.\nImplements multiplication. ",
+                "type": "Typeclasses.Classes.Semigroup.Semigroup number"
+            },
+            {
+                "name": "numberSum",
+                "comment": " Construct an instance for any type which satisfies Elm's `number` magic constraint.\nImplements sum. ",
+                "type": "Typeclasses.Classes.Semigroup.Semigroup number"
+            },
+            {
+                "name": "prepend",
+                "comment": " Construct from a prepend function. ",
+                "type": "(a -> a -> a) -> Typeclasses.Classes.Semigroup.Semigroup a"
+            },
+            {
+                "name": "setDifference",
+                "comment": " Instance for set under the difference operation. ",
+                "type": "Typeclasses.Classes.Semigroup.Semigroup (Set.Set comparable)"
+            },
+            {
+                "name": "setIntersection",
+                "comment": " Instance for set under the intersection operation. ",
+                "type": "Typeclasses.Classes.Semigroup.Semigroup (Set.Set comparable)"
+            },
+            {
+                "name": "setUnion",
+                "comment": " Instance for set under the union operation. ",
+                "type": "Typeclasses.Classes.Semigroup.Semigroup (Set.Set comparable)"
+            },
+            {
+                "name": "string",
+                "comment": " Instance for strings under the appending operation. ",
+                "type": "Typeclasses.Classes.Semigroup.Semigroup String.String"
+            },
+            {
+                "name": "sub",
+                "comment": " Instance for subscriptions under the batch operation. ",
+                "type": "Typeclasses.Classes.Semigroup.Semigroup (Platform.Sub.Sub msg)"
+            },
+            {
+                "name": "task",
+                "comment": " Instance for tasks, which sequentially executes them and groups the results. ",
+                "type": "Typeclasses.Classes.Semigroup.Semigroup a -> Typeclasses.Classes.Semigroup.Semigroup (Task.Task x a)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Typeclasses.Extensions.Array",
+        "comment": " Extensions to the array API, which utilise typeclasses.\n\n@docs fold, foldMap, member\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fold",
+                "comment": " *O(n)*. Combine the elements of array using a `Monoid` instance. ",
+                "type": "Typeclasses.Classes.Monoid.Monoid a -> Array.Array a -> a"
+            },
+            {
+                "name": "foldMap",
+                "comment": " *O(n)*. Map each element of the array to a type which has an instance of `Monoid`,\nand combine the results. ",
+                "type": "Typeclasses.Classes.Monoid.Monoid b -> (a -> b) -> Array.Array a -> b"
+            },
+            {
+                "name": "member",
+                "comment": " *O(n)*. Check whether a value is a member of an array based on the value's `Equality` instance. ",
+                "type": "Typeclasses.Classes.Equality.Equality a -> a -> Array.Array a -> Basics.Bool"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Typeclasses.Extensions.Dict",
+        "comment": " Extensions to the dict API, which utilise typeclasses.\n\n@docs foldMap\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "foldMap",
+                "comment": " *O(n)*. Map each entry of dict to a type which has an instance of `Monoid`,\nand combine the results. ",
+                "type": "Typeclasses.Classes.Monoid.Monoid c -> (a -> b -> c) -> Dict.Dict a b -> c"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Typeclasses.Extensions.List",
+        "comment": " Extensions to the list API, which utilise typeclasses.\n\n@docs fold, foldMap, sort, sortBy, member, dedupe, remove\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "dedupe",
+                "comment": " *O(n^2)*. Deduplicate a list using an instance of `Equality`. ",
+                "type": "Typeclasses.Classes.Equality.Equality a -> List.List a -> List.List a"
+            },
+            {
+                "name": "fold",
+                "comment": " *O(n)*. Combine the elements of list using a `Monoid` instance. ",
+                "type": "Typeclasses.Classes.Monoid.Monoid a -> List.List a -> a"
+            },
+            {
+                "name": "foldMap",
+                "comment": " *O(n)*. Map each element of the list to a type which has an instance of `Monoid`,\nand combine the results. ",
+                "type": "Typeclasses.Classes.Monoid.Monoid b -> (a -> b) -> List.List a -> b"
+            },
+            {
+                "name": "member",
+                "comment": " *O(n)*. Check whether a value is a member of a list based on the value's `Equality` instance. ",
+                "type": "Typeclasses.Classes.Equality.Equality a -> a -> List.List a -> Basics.Bool"
+            },
+            {
+                "name": "remove",
+                "comment": " *O(n)*. Remove the first occurrence of equaling element. ",
+                "type": "Typeclasses.Classes.Equality.Equality a -> a -> List.List a -> List.List a"
+            },
+            {
+                "name": "sort",
+                "comment": " Sort the elements using a `Comparison` instance. ",
+                "type": "Typeclasses.Classes.Comparison.Comparison a -> List.List a -> List.List a"
+            },
+            {
+                "name": "sortBy",
+                "comment": " Sort the elements by mapping to a type which has an instance of `Comparison`. ",
+                "type": "Typeclasses.Classes.Comparison.Comparison b -> (a -> b) -> List.List a -> List.List a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Typeclasses.Extensions.Maybe",
+        "comment": " Extensions to the Maybe API, which utilise typeclasses.\n\n@docs fold, foldMap\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fold",
+                "comment": "\nExtract a value or use the Monoid's identity.\n",
+                "type": "Typeclasses.Classes.Monoid.Monoid a -> Maybe.Maybe a -> a"
+            },
+            {
+                "name": "foldMap",
+                "comment": "\nMap the element of Maybe to a type which has an instance of `Monoid`,\nor use its identity, when Maybe is Nothing.\n",
+                "type": "Typeclasses.Classes.Monoid.Monoid b -> (a -> b) -> Maybe.Maybe a -> b"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Typeclasses.Extensions.Set",
+        "comment": " Extensions to the set API, which utilise typeclasses.\n\n@docs fold, foldMap\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fold",
+                "comment": " *O(n)*. Combine the elements of set using a `Monoid` instance. ",
+                "type": "Typeclasses.Classes.Monoid.Monoid a -> Set.Set a -> a"
+            },
+            {
+                "name": "foldMap",
+                "comment": " *O(n)*. Map each element of the set to a type which has an instance of `Monoid`,\nand combine the results. ",
+                "type": "Typeclasses.Classes.Monoid.Monoid b -> (a -> b) -> Set.Set a -> b"
+            }
+        ],
+        "binops": []
+    }
+]

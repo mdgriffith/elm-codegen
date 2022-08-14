@@ -1,0 +1,361 @@
+[
+    {
+        "name": "Handlebars",
+        "comment": " compiles Handlebars templates.\n\n\n# Compile Templates\n\n@docs Template, Error, compile, defaultConfig, errorToString\n\n\n# Advanced\n\n@docs eval, parse\n\n",
+        "unions": [
+            {
+                "name": "Error",
+                "comment": " Possible error are either syntactical or semantical.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Template",
+                "comment": " Template\n",
+                "args": [],
+                "type": "List.List Handlebars.Expression.Expression"
+            }
+        ],
+        "values": [
+            {
+                "name": "compile",
+                "comment": " parses the template and then evaluates it.\n\n    compile config string json =\n        parse string\n            |> Result.mapError SyntaxError\n            |> Result.andThen\n                (\\expressions ->\n                    eval config expressions json\n                        |> Result.mapError SemanticError\n                )\n\nTests:\n\n    import Parser\n    import Handlebars.Expression as Expression exposing (Expression(..), SubExp(..))\n    import Result.Extra as Result\n    import Handlebars\n    import Json.Decode as D\n\n    compile : String -> String -> (Result Error String)\n    compile  template value =\n        case value |> D.decodeString D.value of\n            Ok v ->\n                v\n                    |> Handlebars.compile Handlebars.defaultConfig\n                        template\n            Err err -> Ok (D.errorToString err)\n\n    \"{ \\\"valid\\\":true }\"\n        |> compile \"Hello There\"\n        --> (Ok \"Hello There\")\n\n",
+                "type": "Handlebars.Expression.Config -> String.String -> Json.Encode.Value -> Result.Result Handlebars.Error String.String"
+            },
+            {
+                "name": "defaultConfig",
+                "comment": " the default config.\n",
+                "type": "Handlebars.Expression.Config"
+            },
+            {
+                "name": "errorToString",
+                "comment": " Print the error in a nice and readable way.\n",
+                "type": "Handlebars.Error -> String.String"
+            },
+            {
+                "name": "eval",
+                "comment": " evaluate a template using a json value\n",
+                "type": "Handlebars.Expression.Config -> Handlebars.Template -> Json.Encode.Value -> Result.Result Handlebars.Expression.Error String.String"
+            },
+            {
+                "name": "parse",
+                "comment": " parse a string into a template\n",
+                "type": "String.String -> Result.Result (List.List Parser.DeadEnd) Handlebars.Template"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Handlebars.Expression",
+        "comment": " A Handlebar template is composed out of expression.\n\n@docs BlockHelper, Config, Error, ExpHelper, Expression, SubExp, evalExp, evalSubExp\n\n",
+        "unions": [
+            {
+                "name": "Error",
+                "comment": " Evaluation Errors\n",
+                "args": [],
+                "cases": [
+                    [
+                        "StringExpected",
+                        [
+                            "( Handlebars.Expression.SubExp, Handlebars.Value.Value )"
+                        ]
+                    ],
+                    [
+                        "CollectionExpected",
+                        [
+                            "Handlebars.Path.Path",
+                            "Handlebars.Path.RelativePath"
+                        ]
+                    ],
+                    [
+                        "BlockHelperNotFound",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "FromBlockHelper",
+                        [
+                            "{ helper : String.String, error : String.String }"
+                        ]
+                    ],
+                    [
+                        "PathNotValid",
+                        [
+                            "Handlebars.Path.Path",
+                            "Handlebars.Path.RelativePath"
+                        ]
+                    ],
+                    [
+                        "PathNotFound",
+                        [
+                            "Handlebars.Path.Path"
+                        ]
+                    ],
+                    [
+                        "HelperNotFound",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "FromHelper",
+                        [
+                            "{ helper : String.String, error : String.String }"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Expression",
+                "comment": " Expression\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Text",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Variable",
+                        [
+                            "Handlebars.Expression.SubExp"
+                        ]
+                    ],
+                    [
+                        "For",
+                        [
+                            "Handlebars.Path.RelativePath",
+                            "List.List Handlebars.Expression.Expression"
+                        ]
+                    ],
+                    [
+                        "Block",
+                        [
+                            "String.String",
+                            "Handlebars.Expression.SubExp",
+                            "List.List Handlebars.Expression.Expression"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "SubExp",
+                "comment": " Sub expressions\n",
+                "args": [],
+                "cases": [
+                    [
+                        "LookUp",
+                        [
+                            "Handlebars.Path.RelativePath"
+                        ]
+                    ],
+                    [
+                        "Helper",
+                        [
+                            "String.String",
+                            "( Handlebars.Expression.SubExp, List.List Handlebars.Expression.SubExp )"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "BlockHelper",
+                "comment": " Block Helper\n",
+                "args": [],
+                "type": "{ arg : Handlebars.Value.Value, throw : String.String -> Handlebars.Expression.Error, content : Handlebars.Path.Path -> Result.Result Handlebars.Expression.Error String.String } -> Handlebars.Path.Path -> Result.Result Handlebars.Expression.Error String.String"
+            },
+            {
+                "name": "Config",
+                "comment": " The config can be used to extend the helpers.\n",
+                "args": [],
+                "type": "{ expHelpers : Dict.Dict String.String Handlebars.Expression.ExpHelper, blockHelpers : Dict.Dict String.String Handlebars.Expression.BlockHelper, root : Handlebars.Path.Path }"
+            },
+            {
+                "name": "ExpHelper",
+                "comment": " Expression Helper\n",
+                "args": [],
+                "type": "List.List Handlebars.Value.Value -> Result.Result String.String Handlebars.Value.Value"
+            }
+        ],
+        "values": [
+            {
+                "name": "evalExp",
+                "comment": " Evaluate a value based on a template\n\n    import Dict\n    import Handlebars.Value exposing (Value(..))\n    import Handlebars\n    import Array\n\n    jack : Value\n    jack =\n        StringValue \"jack\"\n\n    value : Value\n    value =\n        [ ( \"name\", jack )\n        , ( \"key\", StringValue \"name\" )\n        , ( \"valid\", BooleanValue True)\n        , ( \"people\",\n            [ StringValue \"jack\" , StringValue \"gill\" ]\n            |> Array.fromList\n            |> ArrayValue\n        )\n        ]\n            |> Dict.fromList\n            |> ObjectValue\n\n    evalExp Handlebars.defaultConfig\n        (\"Hello World\"\n            |> Text\n        )\n        value\n        --> Ok \"Hello World\"\n\n    evalExp Handlebars.defaultConfig\n        ( (0,[\"name\"])\n            |> LookUp\n            |> Variable\n        )\n        value\n        --> Ok \"jack\"\n\n    evalExp Handlebars.defaultConfig\n        ( Helper \"equals\"\n            ( LookUp (0,[ \"name\"])\n            , [ LookUp (0,[ \"key\"]) ]\n            )\n            |> Variable\n        )\n        value\n        |> (\\err ->\n            case err of\n                Err (StringExpected _) ->\n                    False\n                _ ->\n                    True\n            )\n        --> False\n\n    evalExp Handlebars.defaultConfig\n        ( For (0,[\"people\"])\n            [(0,[ \"@index\"]) |> LookUp |> Variable]\n        )\n        value\n        --> Ok \"01\"\n\n    evalExp Handlebars.defaultConfig\n        ( For (0,[])\n            [ \"+\" |> Text]\n        )\n        value\n        --> Ok \"++++\"\n\n    evalExp Handlebars.defaultConfig\n        ( For (0,[\"doesNotExist\"])\n            [\"Success\" |> Text]\n        )\n        value\n        |> (\\err ->\n            case err of\n                Err (PathNotFound _) ->\n                    False\n                _ ->\n                    True\n            )\n        --> False\n\n    evalExp Handlebars.defaultConfig\n        ( For (0,[\"..notValid..\"])\n            [\"Success\" |> Text]\n        )\n        value\n        |> (\\err ->\n            case err of\n                Err (PathNotFound _) ->\n                    False\n                _ ->\n                    True\n            )\n        --> False\n\n    evalExp Handlebars.defaultConfig\n        ( For (42,[])\n            [\"Success\" |> Text]\n        )\n        value\n        |> (\\err ->\n            case err of\n                Err (PathNotValid _ _) ->\n                    False\n                _ ->\n                    True\n            )\n        --> False\n\n    evalExp Handlebars.defaultConfig\n        ( For (0,[\"valid\"])\n            [\"Success\" |> Text]\n        )\n        value\n        |> (\\err ->\n            case err of\n                Err (CollectionExpected _ _) ->\n                    False\n                _ ->\n                    True\n            )\n        --> False\n\n    evalExp Handlebars.defaultConfig\n        ( Block \"if\" (LookUp (0,[\"valid\"]))\n            [Text \"Hello\"]\n        )\n        value\n        --> Ok \"Hello\"\n\n    evalExp Handlebars.defaultConfig\n        ( Block \"invalid\" (LookUp (0,[]))\n            [Text \"Hello\"]\n        )\n        value\n        --> Err (BlockHelperNotFound \"invalid\")\n\n",
+                "type": "Handlebars.Expression.Config -> Handlebars.Expression.Expression -> Handlebars.Value.Value -> Result.Result Handlebars.Expression.Error String.String"
+            },
+            {
+                "name": "evalSubExp",
+                "comment": " Evaluate a subexpression\n\n    import Dict\n    import Handlebars exposing (defaultConfig)\n    import Handlebars.Value exposing (Value(..))\n\n    expression : Expression\n    expression =\n        Text \"\"\n\n    jack : Value\n    jack =\n        StringValue \"jack\"\n\n    value : Value\n    value =\n        [ ( \"name\", jack )\n        , ( \"key\", StringValue \"name\" )\n        ]\n            |> Dict.fromList\n            |> ObjectValue\n\nSimplest subexpression is a look up to a relative path.\n\n    LookUp (0,[\"name\"])\n        |> evalSubExp defaultConfig value\n        --> Ok jack\n\n    LookUp (0,[\"job\"])\n        |> evalSubExp defaultConfig  value\n        --> Err (PathNotFound [\"job\"])\n\n    LookUp (1,[])\n        |> evalSubExp defaultConfig value\n        --> Err (PathNotValid [] (1,[]))\n\n    LookUp (1,[])\n        |> evalSubExp {defaultConfig | root = [\"name\"]} value\n        --> Ok value\n\nHelper can also be used inside of subexpression.\n\n    Helper \"lookup\" ( LookUp (0,[]), [LookUp (0,[ \"key\" ])] )\n        |> evalSubExp defaultConfig value\n        --> Ok jack\n\n    Helper \"lookup\" ( LookUp (0,[ \"name\"]), [LookUp (0,[ \"key\" ])] )\n        |> evalSubExp defaultConfig value\n        |> (\\err ->\n            case err of\n                Err (FromHelper args) ->\n                    args.helper == \"lookup\"\n                _ ->\n                    False\n        )\n        --> True\n\n    Helper \"lookup\" (LookUp (0,[]),[])\n        |> evalSubExp defaultConfig value\n        |> (\\err ->\n            case err of\n                Err (FromHelper args) ->\n                    args.helper == \"lookup\"\n                _ ->\n                    False\n        )\n        --> True\n\n    Helper \"invalid\" (LookUp (0,[]),[])\n        |> evalSubExp defaultConfig value\n        |> (\\err ->\n            case err of\n                Err (HelperNotFound _) ->\n                    False\n                _ ->\n                    True\n        )\n        --> False\n\n",
+                "type": "Handlebars.Expression.Config -> Handlebars.Value.Value -> Handlebars.Expression.SubExp -> Result.Result Handlebars.Expression.Error Handlebars.Value.Value"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Handlebars.Helper",
+        "comment": " Helpers can be set in the config type.\n\nThere are two kinds of helpers:\n\n  - (Expression) Helpers `{{helper a b c}}`\n  - (Block) Helpers `{{#helper a}} content {{/helper}}`\n\n\n# Expression Helper\n\n@docs lookup, equals\n\n\n# Block Helper\n\n@docs if_, unless, inline, inside\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "equals",
+                "comment": "\n\n    import Parser\n    import Handlebars.Expression as Expression exposing (Expression(..), SubExp(..))\n    import Result.Extra as Result\n    import Handlebars\n    import Json.Decode as D\n\n    compile : String -> String -> Maybe String\n    compile template value =\n        case value |> D.decodeString D.value of\n            Ok v ->\n                case\n                    v\n                    |> Handlebars.compile Handlebars.defaultConfig\n                        template\n                of\n                Ok result -> Just result\n                Err _ -> Nothing\n            Err _ -> Nothing\n\n    \"{ \\\"first\\\":[\\\"Gill\\\",\\\"Jack\\\"],\\\"second\\\": [\\\"Jack\\\",\\\"Gill\\\"] }\"\n        |> compile \"{{#if (equals first second)}}equal{{/if}}\"\n        --> Just \"\"\n\n    \"{ \\\"first\\\":[\\\"Jack\\\", \\\"Gill\\\"],\\\"second\\\": [\\\"Jack\\\",\\\"Gill\\\"] }\"\n        |> compile \"{{#if (equals first second)}}equal{{/if}}\"\n        --> Just \"equal\"\n\n    \"{ \\\"first\\\":[\\\"Jack\\\", \\\"Gill\\\"],\\\"second\\\": [\\\"Jack\\\",\\\"Gill\\\"] }\"\n        |> compile \"{{#if (equals first.0 second.0)}}equal{{/if}}\"\n        --> Just \"equal\"\n\n    \"{ \\\"first\\\":[\\\"Jack\\\", \\\"Gill\\\"],\\\"second\\\": [\\\"Jack\\\",\\\"Gill\\\"] }\"\n        |> compile \"{{#if (equals first.0)}}equal{{/if}}\"\n        --> Nothing\n\n",
+                "type": "List.List Handlebars.Value.Value -> Result.Result String.String Handlebars.Value.Value"
+            },
+            {
+                "name": "if_",
+                "comment": "\n\n    import Parser\n    import Handlebars.Expression as Expression exposing (Expression(..), SubExp(..))\n    import Result.Extra as Result\n    import Handlebars\n    import Json.Decode as D\n\n    compile : String -> String -> Maybe String\n    compile template value =\n        case value |> D.decodeString D.value of\n            Ok v ->\n                case\n                    v\n                    |> Handlebars.compile Handlebars.defaultConfig\n                        template\n                of\n                Ok result -> Just result\n                Err _ -> Nothing\n            Err _ -> Nothing\n\n    \"{ \\\"valid\\\":null }\"\n        |> compile \"{{#if valid}}Hello There{{/if}}\"\n\n        --> Just \"\"\n\n    \"{ \\\"valid\\\":false }\"\n        |> compile \"{{#if valid}}Hello There{{/if}}\"\n\n        --> Just \"\"\n\n    \"{ \\\"valid\\\":true }\"\n        |> compile \"{{#if valid}}Hello There{{/if}}\"\n\n        --> Just \"Hello There\"\n\n    \"{ \\\"name\\\":\\\"Jack\\\" }\"\n        |> compile \"{{#if name}}Hello There{{/if}}\"\n\n        --> Just \"Hello There\"\n\n    \"{ \\\"name\\\":\\\"\\\" }\"\n        |> compile \"{{#if name}}Hello There{{/if}}\"\n\n        --> Just \"\"\n\n    \"{ \\\"list\\\": [] }\"\n        |> compile \"{{#if list}}Hello There{{/if}}\"\n\n        --> Just \"\"\n\n    \"{ \\\"list\\\": [ \\\"something\\\" ] }\"\n        |> compile \"{{#if list}}Hello There{{/if}}\"\n\n        --> Just \"Hello There\"\n\n    \"{ \\\"list\\\": [ \\\"something\\\" ] }\"\n        |> compile \"{{#if .}}Hello There{{/if}}\"\n\n        --> Just \"Hello There\"\n\n    \"{}\"\n        |> compile \"{{#if .}}Hello There{{/if}}\"\n\n        --> Just \"\"\n\n",
+                "type": "{ arg : Handlebars.Value.Value, throw : String.String -> Handlebars.Expression.Error, content : Handlebars.Path.Path -> Result.Result Handlebars.Expression.Error String.String } -> Handlebars.Path.Path -> Result.Result Handlebars.Expression.Error String.String"
+            },
+            {
+                "name": "inline",
+                "comment": "\n\n    import Parser\n    import Handlebars.Expression as Expression exposing (Expression(..), SubExp(..))\n    import Result.Extra as Result\n    import Handlebars\n    import Json.Decode as D\n\n    compile : String -> String -> Maybe String\n    compile template value =\n        case value |> D.decodeString D.value of\n            Ok v ->\n                case\n                    v\n                    |> Handlebars.compile Handlebars.defaultConfig\n                        template\n                of\n                Ok result -> Just result\n                Err _ -> Nothing\n            Err _ -> Nothing\n\n    \"{ \\\"test\\\":\\\"true\\\" }\"\n        |> compile \"{{#inline .}}Hello\\n There{{/inline}}\"\n        --> Just \"Hello There\"\n\n",
+                "type": "{ arg : Handlebars.Value.Value, throw : String.String -> Handlebars.Expression.Error, content : Handlebars.Path.Path -> Result.Result Handlebars.Expression.Error String.String } -> Handlebars.Path.Path -> Result.Result Handlebars.Expression.Error String.String"
+            },
+            {
+                "name": "inside",
+                "comment": "\n\n    import Parser\n    import Handlebars.Expression as Expression exposing (Expression(..), SubExp(..))\n    import Handlebars exposing (Error(..))\n    import Result.Extra as Result\n    import Json.Decode as D\n\n    compile : String -> String -> Maybe String\n    compile template value =\n        case value |> D.decodeString D.value of\n            Ok v ->\n                case\n                    v\n                    |> Handlebars.compile Handlebars.defaultConfig\n                        template\n                of\n                Ok result -> Just result\n                Err _ -> Nothing\n            Err _ -> Nothing\n\n\n    \"{ \\\"name\\\":\\\"Jack\\\",\\\"key\\\":\\\"name\\\" }\"\n        |> compile \"{{#inside key}}{{.}}{{/inside}}\"\n\n        --> Just (\"Jack\")\n\n    \"{ \\\"name\\\":\\\"Jack\\\",\\\"key\\\":false }\"\n        |> compile \"{{#inside key}}{{.}}{{/inside}}\"\n\n        --> Nothing\n\n    \"{ \\\"name\\\":\\\"Jack\\\",\\\"key\\\":0 }\"\n        |> compile \"{{#inside key}}{{.}}{{/inside}}\"\n\n        --> Nothing\n    \"{ \\\"name\\\":\\\"Jack\\\",\\\"key\\\":\\\"notAPath...\\\" }\"\n        |> compile \"{{#inside key}}{{.}}{{/inside}}\"\n\n        --> Nothing\n\n",
+                "type": "{ arg : Handlebars.Value.Value, throw : String.String -> Handlebars.Expression.Error, content : Handlebars.Path.Path -> Result.Result Handlebars.Expression.Error String.String } -> Handlebars.Path.Path -> Result.Result Handlebars.Expression.Error String.String"
+            },
+            {
+                "name": "lookup",
+                "comment": "\n\n    import Parser\n    import Handlebars.Expression as Expression exposing (Expression(..), SubExp(..))\n    import Result.Extra as Result\n    import Handlebars\n    import Json.Decode as D\n\n    compile : String -> String -> Maybe String\n    compile template value =\n        case value |> D.decodeString D.value of\n            Ok v ->\n                case\n                    v\n                    |> Handlebars.compile Handlebars.defaultConfig\n                        template\n                of\n                Ok result -> Just result\n                Err _ -> Nothing\n            Err _ -> Nothing\n\n    \"{ \\\"key\\\":\\\"1\\\",\\\"users\\\": [\\\"Jack\\\",\\\"Gill\\\"] }\"\n        |> compile \"Hello {{lookup users key}}\"\n        --> Just \"Hello Gill\"\n\n",
+                "type": "List.List Handlebars.Value.Value -> Result.Result String.String Handlebars.Value.Value"
+            },
+            {
+                "name": "unless",
+                "comment": "\n\n    import Parser\n    import Handlebars.Expression as Expression exposing (Expression(..), SubExp(..))\n    import Result.Extra as Result\n    import Handlebars\n    import Json.Decode as D\n\n    compile : String -> String -> Maybe String\n    compile template value =\n        case value |> D.decodeString D.value of\n            Ok v ->\n                case\n                    v\n                    |> Handlebars.compile Handlebars.defaultConfig\n                        template\n                of\n                Ok result -> Just result\n                Err _ -> Nothing\n            Err _ -> Nothing\n\n    \"{ \\\"valid\\\":null }\"\n        |> compile \"{{#unless valid}}Hello There{{/unless}}\"\n\n        --> Just \"Hello There\"\n\n    \"{ \\\"valid\\\":false }\"\n        |> compile \"{{#unless valid}}Hello There{{/unless}}\"\n\n        --> Just \"Hello There\"\n\n    \"{ \\\"valid\\\":true }\"\n        |> compile \"{{#unless valid}}Hello There{{/unless}}\"\n\n        --> Just \"\"\n\n    \"{ \\\"name\\\":\\\"Jack\\\" }\"\n        |> compile \"{{#unless name}}Hello There{{/unless}}\"\n\n        --> Just \"\"\n\n    \"{ \\\"name\\\":\\\"\\\" }\"\n        |> compile \"{{#unless name}}Hello There{{/unless}}\"\n\n        --> Just \"Hello There\"\n\n    \"{ \\\"list\\\": [] }\"\n        |> compile \"{{#unless list}}Hello There{{/unless}}\"\n\n        --> Just \"Hello There\"\n\n    \"{ \\\"list\\\": [ \\\"something\\\" ] }\"\n        |> compile \"{{#unless list}}Hello There{{/unless}}\"\n\n        --> Just \"\"\n\n    \"{ \\\"list\\\": [ \\\"something\\\" ] }\"\n        |> compile \"{{#unless .}}Hello There{{/unless}}\"\n\n        --> Just \"\"\n\n    \"{}\"\n        |> compile \"{{#unless .}}Hello There{{/unless}}\"\n\n        --> Just \"Hello There\"\n\n",
+                "type": "{ arg : Handlebars.Value.Value, throw : String.String -> Handlebars.Expression.Error, content : Handlebars.Path.Path -> Result.Result Handlebars.Expression.Error String.String } -> Handlebars.Path.Path -> Result.Result Handlebars.Expression.Error String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Handlebars.Path",
+        "comment": " Paths let you navigate through values.\n\n@docs Path, RelativePath, relativeToString, toString, withRelativePath\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Path",
+                "comment": " A Path is list of strings\n",
+                "args": [],
+                "type": "List.List String.String"
+            },
+            {
+                "name": "RelativePath",
+                "comment": " Relative paths can go backwards.\n\nFirst argument states how many layers to go back.\n\n",
+                "args": [],
+                "type": "( Basics.Int, List.List String.String )"
+            }
+        ],
+        "values": [
+            {
+                "name": "relativeToString",
+                "comment": "\n\n    (0,[])\n        |> relativeToString\n        --> \".\"\n\n    (1,[])\n        |> relativeToString\n        --> \"../.\"\n\n    (0,[\"a\"])\n        |> relativeToString\n        --> \"a\"\n\n    (-1,[\"a\"])\n        |> relativeToString\n        --> \"a\"\n\n    (1,[\"a\"])\n        |> relativeToString\n        --> \"../a\"\n\n    (2,[])\n        |> relativeToString\n        --> \"../../.\"\n\n    (0,[\"a\", \"b\"])\n        |> relativeToString\n        --> \"a.b\"\n\n    (1,[\"a\", \"b\"])\n        |> relativeToString\n        --> \"../a.b\"\n\n",
+                "type": "Handlebars.Path.RelativePath -> String.String"
+            },
+            {
+                "name": "toString",
+                "comment": "\n\n    list : List String\n    list =\n        [\"people\",\"Jack\"]\n\n    list\n        |> toString\n        --> relativeToString (0,list)\n\n",
+                "type": "Handlebars.Path.Path -> String.String"
+            },
+            {
+                "name": "withRelativePath",
+                "comment": " Turns relative path to path\n\n    [ \"people\", \"jack\"]\n        |> withRelativePath (-1,[])\n        --> Nothing\n\n    [ \"people\", \"jack\"]\n        |> withRelativePath (0,[])\n        --> Just [\"people\",\"jack\"]\n\n    [ \"people\",\"jack\"]\n        |> withRelativePath (1,[ \"gill\"])\n        --> Just [\"people\",\"gill\"]\n\n    [ \"people\",\"jack\" ]\n        |> withRelativePath (2,[ \"cities\" ])\n        --> Just [ \"cities\"]\n\n\n    [ \"people\",\"jack\"]\n        |> withRelativePath (3,[])\n        --> Nothing\n\n",
+                "type": "Handlebars.Path.RelativePath -> Handlebars.Path.Path -> Maybe.Maybe Handlebars.Path.Path"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Handlebars.Syntax",
+        "comment": " Parsing a Template\n\n@docs exp, parser, path, subExp, variable\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "exp",
+                "comment": "\n\n    import Parser\n    import Handlebars.Expression as Expression exposing (Expression(..), SubExp(..))\n    import Result.Extra as Result\n\ntext\n\n    \"Hello {{\"\n    |> Parser.run exp\n    --> Ok (Text \"Hello \")\n\n    \"Hello \\\\{\\\\{world\\\\}\\\\}\"\n    |> Parser.run exp\n    --> Ok (Text \"Hello {{world}}\")\n\nvariables\n\n    \"{{test}}\"\n    |> Parser.run exp\n    --> Ok (Variable (LookUp (0,[\"test\"])))\n\nFor block\n\n    \"{{#test}}hello world{{/test}}\"\n        |> Parser.run exp\n    --> Ok (For (0,[\"test\"]) [Text \"hello world\"])\n\n    \"{{#some}}hello world{{/test}}\"\n        |> Parser.run exp\n        |> Result.isOk\n    --> False\n\n    \"{{#test}}hello world\"\n        |> Parser.run exp\n        |> Result.isOk\n    --> False\n\nHelper Block\n\n    \"{{#test a}}hello world{{/test}}\"\n    |> Parser.run exp\n    --> Ok (Block \"test\" (LookUp (0,[\"a\"])) [Text \"hello world\"])\n\n    \"{{#some.test a}}hello world{{/test}}\"\n    |> Parser.run exp\n    |> Result.isOk\n    --> False\n\n    \"{{#. a}}hello world{{/test}}\"\n    |> Parser.run exp\n    |> Result.isOk\n    --> False\n\n    \"{{#.invalid.}}hello world{{/.invalid.}}\"\n    |> Parser.run exp\n    |> Result.isOk\n    --> False\n\n    \"{{#. a}}hello world{{/.}}\"\n    |> Parser.run exp\n    |> Result.isOk\n    --> False\n\n    \"{{#blockHelper (helper a)}}hello world{{/blockHelper}}\"\n    |> Parser.run exp\n    --> Ok (Block \"blockHelper\" (Helper \"helper\" (LookUp (0,[\"a\"]),[])) [Text \"hello world\"])\n\n    \"{{#test}}hello {{name}}{{/test}}\"\n    |> Parser.run exp\n    --> Ok (For (0,[\"test\"]) [Text \"hello \",Variable (LookUp (0,[\"name\"]))])\n\n    \"{{#test}}{{#test}}hello world{{/test}}{{/test}}\"\n    |> Parser.run exp\n    --> Ok (For (0,[\"test\"]) [For (0,[\"test\"]) [Text \"hello world\"]])\n\n",
+                "type": "Parser.Parser Handlebars.Expression.Expression"
+            },
+            {
+                "name": "parser",
+                "comment": " Parser for a template\n",
+                "type": "Parser.Parser (List.List Handlebars.Expression.Expression)"
+            },
+            {
+                "name": "path",
+                "comment": "\n\n    import Parser\n    import Handlebars.Expression as Expression exposing (Expression(..), SubExp(..))\n    import Result.Extra as Result\n\n    \"\"\n    |> Parser.run path\n    |> Result.isOk\n    --> False\n\n    \".\"\n    |> Parser.run path\n    --> Ok (0,[])\n\n    \"../\"\n    |> Parser.run path\n    |> Result.isOk\n    --> False\n\n    \"../.\"\n    |> Parser.run path\n    --> Ok (1,[])\n\n    \"some.test\"\n    |> Parser.run path\n    --> Ok (0,[\"some\", \"test\"])\n\n    \"../some\"\n    |> Parser.run path\n    --> Ok (1,[\"some\"])\n\n    \"some.test a\"\n    |> Parser.run path\n    --> Ok (0,[\"some\", \"test\"])\n\n",
+                "type": "Parser.Parser Handlebars.Path.RelativePath"
+            },
+            {
+                "name": "subExp",
+                "comment": "\n\n    import Parser\n    import Handlebars.Expression as Expression exposing (Expression(..), SubExp(..))\n    import Result.Extra as Result\n\n    \"test some.test\"\n    |> Parser.run subExp\n    --> Ok (Helper \"test\" (LookUp (0,[\"some\",\"test\"]),[]))\n\n    \"test a b c\"\n    |> Parser.run subExp\n    --> Ok (Helper \"test\" (LookUp (0,[\"a\"]),[LookUp (0,[\"b\"]),LookUp (0,[\"c\"])]))\n\n    \"some.test a\"\n    |> Parser.run subExp\n    |> Result.isOk\n    --> False\n\n    \"some (test a) b\"\n    |> Parser.run subExp\n    --> Ok (Helper \"some\" ( (Helper \"test\" (LookUp (0,[\"a\"]),[]) ), [LookUp (0,[\"b\"])]) )\n\n    \"(test)\"\n    |> Parser.run subExp\n    |> Result.isOk\n    --> False\n\n    \"some (a)\"\n    |> Parser.run subExp\n    --> Ok (Helper \"some\" (LookUp (0,[\"a\"]),[]))\n\n",
+                "type": "Parser.Parser Handlebars.Expression.SubExp"
+            },
+            {
+                "name": "variable",
+                "comment": "\n\n    import Parser\n    import Handlebars.Expression as Expression exposing (Expression(..), SubExp(..))\n    import Result.Extra as Result\n\n    \"\"\n        |> Parser.run variable\n        |> Result.isOk\n        --> False\n\n",
+                "type": "Parser.Parser String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Handlebars.Value",
+        "comment": " Represents Json values inside the Handelbar context.\n\n@docs Value, get, fromJson\n\n",
+        "unions": [
+            {
+                "name": "Value",
+                "comment": " Handlebar values\n\n    undefined =\n        BoolenValue False\n\n    null =\n        BooleanValue False\n\n    int =\n        StringValue (String.fromInt int)\n\n    float =\n        StringValue (String.fromFloat float)\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "StringValue",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "BooleanValue",
+                        [
+                            "Basics.Bool"
+                        ]
+                    ],
+                    [
+                        "ArrayValue",
+                        [
+                            "Array.Array Handlebars.Value.Value"
+                        ]
+                    ],
+                    [
+                        "ObjectValue",
+                        [
+                            "Dict.Dict String.String Handlebars.Value.Value"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fromJson",
+                "comment": " convert Json into Handlebar values\n",
+                "type": "Json.Encode.Value -> Handlebars.Value.Value"
+            },
+            {
+                "name": "get",
+                "comment": " Get a value by the path.\n\nUse `@key` to get the key of a value.\n\n    import Dict\n\n    object : Value\n    object = Dict.fromList [ ( \"name\", StringValue \"Jack\" ) ] |> ObjectValue\n\n    object\n        |> get [ \"name\" ]\n        --> Just (StringValue \"Jack\")\n\n    object\n        |> get [ \"name\", \"@key\" ]\n        --> Just (StringValue \"name\")\n\n    [ ( \"name\"\n      , [ ( \"@key\", StringValue \"impossible State\" ) ] |> Dict.fromList |> ObjectValue\n      )\n    ]\n        |> Dict.fromList\n        |> ObjectValue\n        |> get [ \"name\", \"@key\" ]\n        --> Just (StringValue \"name\")\n\n    object\n        |> get [ \"@key\" ]\n        --> Nothing\n\n    object\n        |> get []\n        --> Just object\n\nUse `@index` to get the index\n\n    import Array\n\n    jack : Value\n    jack = StringValue \"Jack\"\n\n    gill : Value\n    gill = StringValue \"Gill\"\n\n    array : Value\n    array =\n        [ jack, gill ]\n        |> Array.fromList\n        |> ArrayValue\n\n    array\n        |> get []\n        --> Just array\n\n    array\n        |> get [\"0\"]\n        --> Just jack\n\n    array\n        |> get [\"0\",\"@index\"]\n        --> Just (StringValue \"0\")\n\n    array\n        |> get [\"0\",\"@first\"]\n        --> Just (BooleanValue True)\n\n    array\n        |> get [\"0\",\"@last\"]\n        --> Just (BooleanValue False)\n\n    array\n        |> get [\"1\"]\n        --> Just gill\n\n    array\n        |> get [\"1\",\"@index\"]\n        --> Just (StringValue \"1\")\n\n    array\n        |> get [\"1\",\"@last\"]\n        --> Just (BooleanValue True)\n\n    array\n        |> get [\"0\",\"@last\"]\n        --> Just (BooleanValue False)\n\n    array\n        |> get [\"-1\"]\n        --> Nothing\n\n    Array.empty\n        |> ArrayValue\n        |> get [\"0\"]\n        --> Nothing\n\n    Array.empty\n        |> ArrayValue\n        |> get [\"0\",\"@index\"]\n        --> Nothing\n\n    Array.empty\n        |> ArrayValue\n        |> get [\"0\",\"@first\"]\n        --> Nothing\n\n    Array.empty\n        |> ArrayValue\n        |> get [\"0\",\"@last\"]\n        --> Nothing\n\nFor Strings and Boolean only an empty path is allowed.\n\n    jack\n        |> get [\"something\"]\n        --> Nothing\n\n    jack\n        |> get []\n        --> Just jack\n\n    isValid : Value\n    isValid =\n        BooleanValue True\n\n    isValid\n        |> get [\"something\"]\n        --> Nothing\n\n    isValid\n        |> get []\n        --> Just isValid\n\n",
+                "type": "Handlebars.Path.Path -> Handlebars.Value.Value -> Maybe.Maybe Handlebars.Value.Value"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,2053 @@
+[
+    {
+        "name": "Chartjs.Chart",
+        "comment": " A type-safe bridge to a Chartjs web component.\n\nThis library requires both Chart.js and the web component to function properly.\nCheck the README.md for this package for more detailed instructions on setting up.\n\n@docs Chart, Type, defaultChart\n\n@docs setData, setOptions\n\n@docs chart\n\n",
+        "unions": [
+            {
+                "name": "Type",
+                "comment": " Basic type for a Chart\n\nFor charts containing multiple datasets, both a chart type needs to specified\nand a type for each dataset. Default Chart.js parameters will inherit from this type.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Bar",
+                        []
+                    ],
+                    [
+                        "HorizontalBar",
+                        []
+                    ],
+                    [
+                        "Line",
+                        []
+                    ],
+                    [
+                        "Scatter",
+                        []
+                    ],
+                    [
+                        "Doughnut",
+                        []
+                    ],
+                    [
+                        "Pie",
+                        []
+                    ],
+                    [
+                        "Polar",
+                        []
+                    ],
+                    [
+                        "Radar",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Chart",
+                "comment": " Main type helper for a Chartjs chart\n\nBoth a Data and an Options object must be specified to help configure this chart.\n\n",
+                "args": [],
+                "type": "{ chartType : Chartjs.Chart.Type, data : Chartjs.Data.Data, options : Chartjs.Options.Options }"
+            }
+        ],
+        "values": [
+            {
+                "name": "chart",
+                "comment": " Given attributes and a chart, creates an HTML node using the web component\n\nChartJs is smart enough to figure out scaling naturally\nTo set the size of the chart, use CSS styles (either in a stylesheet or using the attributes)\n\n",
+                "type": "List.List (Html.Attribute msg) -> Chartjs.Chart.Chart -> Html.Html msg"
+            },
+            {
+                "name": "defaultChart",
+                "comment": " Given a chart type, creates a default chart that can then be updated.\n",
+                "type": "Chartjs.Chart.Type -> Chartjs.Chart.Chart"
+            },
+            {
+                "name": "setData",
+                "comment": " Update the data for a chart.\n",
+                "type": "Chartjs.Data.Data -> Chartjs.Chart.Chart -> Chartjs.Chart.Chart"
+            },
+            {
+                "name": "setOptions",
+                "comment": " Update the options for a chart.\n",
+                "type": "Chartjs.Options.Options -> Chartjs.Chart.Chart -> Chartjs.Chart.Chart"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chartjs.Common",
+        "comment": " Common types used for various configuration properties\n\n@docs PointStyle, LineCap, LineJoin, Position, Align, PointProperty, IndexAxis\n\n",
+        "unions": [
+            {
+                "name": "Align",
+                "comment": " Alignment for certain text properties, such as title\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Start",
+                        []
+                    ],
+                    [
+                        "End",
+                        []
+                    ],
+                    [
+                        "Center",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "IndexAxis",
+                "comment": " Some charts can be transformed from horizontal to vertical by setting the index axis\nXAxis will produce a vertical chart (this is the default)\nYAxis will produce a horizontal chart\n",
+                "args": [],
+                "cases": [
+                    [
+                        "XAxis",
+                        []
+                    ],
+                    [
+                        "YAxis",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "LineCap",
+                "comment": " For more information, see <https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/lineCap>\n",
+                "args": [],
+                "cases": [
+                    [
+                        "LineCapButt",
+                        []
+                    ],
+                    [
+                        "LineCapRound",
+                        []
+                    ],
+                    [
+                        "LineCapSquare",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "LineJoin",
+                "comment": " For more information, see <https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/lineJoin>\n",
+                "args": [],
+                "cases": [
+                    [
+                        "LineJoinBevel",
+                        []
+                    ],
+                    [
+                        "LineJoinRound",
+                        []
+                    ],
+                    [
+                        "LineJoinMiter",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "PointProperty",
+                "comment": " Many properties that apply to datasets\ncan either be applied to the whole dataset, or to each individual point\n\nFor applying a property to every point in the dataset, use the All type\nFor using a list of properties on a per-point basis, use the PerPoint type\n\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "All",
+                        [
+                            "a"
+                        ]
+                    ],
+                    [
+                        "PerPoint",
+                        [
+                            "List.List a"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "PointStyle",
+                "comment": " For more information, see <https://www.chartjs.org/samples/latest/charts/line/point-styles.html>\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Circle",
+                        []
+                    ],
+                    [
+                        "Cross",
+                        []
+                    ],
+                    [
+                        "CrossRot",
+                        []
+                    ],
+                    [
+                        "Dash",
+                        []
+                    ],
+                    [
+                        "Line",
+                        []
+                    ],
+                    [
+                        "Rect",
+                        []
+                    ],
+                    [
+                        "RectRounded",
+                        []
+                    ],
+                    [
+                        "RectRot",
+                        []
+                    ],
+                    [
+                        "Star",
+                        []
+                    ],
+                    [
+                        "Triangle",
+                        []
+                    ],
+                    [
+                        "Image",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Position",
+                "comment": " Positioning often used in options such as axes and legends\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Top",
+                        []
+                    ],
+                    [
+                        "Left",
+                        []
+                    ],
+                    [
+                        "Bottom",
+                        []
+                    ],
+                    [
+                        "Right",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "Chartjs.Data",
+        "comment": " The Data type is used as a basic container for all the chart datasets,\nalong with the corresponding labels\n\n@docs DataSet, Data, defaultData\n\n@docs dataFromLabels, buildData, addDataset, setDatasets, setLabels\n\n",
+        "unions": [
+            {
+                "name": "DataSet",
+                "comment": " Type wrapper for an individual dataset\n\nWhile this type should match the overall chart type,\nit is possible to put multiple types of dataset on one chart\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "BarData",
+                        [
+                            "Chartjs.DataSets.Bar.DataSet"
+                        ]
+                    ],
+                    [
+                        "LineData",
+                        [
+                            "Chartjs.DataSets.Line.DataSet"
+                        ]
+                    ],
+                    [
+                        "PieData",
+                        [
+                            "Chartjs.DataSets.DoughnutAndPie.DataSet"
+                        ]
+                    ],
+                    [
+                        "PolarData",
+                        [
+                            "Chartjs.DataSets.Polar.DataSet"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Data",
+                "comment": " All datasets for a chart are contained in a single Data object\nThis also specifies the category labels, which are shared across datasets\n(eg. multiple bar charts with the same categories)\n",
+                "args": [],
+                "type": "{ labels : Maybe.Maybe (List.List String.String), datasets : List.List Chartjs.Data.DataSet }"
+            }
+        ],
+        "values": [
+            {
+                "name": "addDataset",
+                "comment": " Add a dataset to a Data object\nThis is very useful for use with the |> operator\n\n    defaultData\n        |> addDataset dataset1\n        |> addDataset dataset2\n\n",
+                "type": "Chartjs.Data.DataSet -> Chartjs.Data.Data -> Chartjs.Data.Data"
+            },
+            {
+                "name": "buildData",
+                "comment": " Build a Data object from a list of labels and a list of datasets\n",
+                "type": "List.List String.String -> List.List Chartjs.Data.DataSet -> Chartjs.Data.Data"
+            },
+            {
+                "name": "dataFromLabels",
+                "comment": " Data object with specified labels but no datasets\n",
+                "type": "List.List String.String -> Chartjs.Data.Data"
+            },
+            {
+                "name": "defaultData",
+                "comment": " Data object with no labels or datasets defined\n",
+                "type": "Chartjs.Data.Data"
+            },
+            {
+                "name": "setDatasets",
+                "comment": " Set all the datasets for a Data object\n",
+                "type": "List.List Chartjs.Data.DataSet -> Chartjs.Data.Data -> Chartjs.Data.Data"
+            },
+            {
+                "name": "setLabels",
+                "comment": " Set the labels for a Data object\n",
+                "type": "List.List String.String -> Chartjs.Data.Data -> Chartjs.Data.Data"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chartjs.DataSets.Bar",
+        "comment": " A bar chart provides a way of showing data values represented as vertical bars.\n\n\n## Bars\n\nBar datasets are easy to create - just provide a dataset label and a list of floats\n\n    defaultBarFromData \"Example Chart\" [ 4, 8, 15, 16, 23, 42 ]\n\nWhen grouping datasets into a chart data object, the labels specified will be used as the bar chart categories:\n\n    dataset =\n        defaultBarFromData \"Example Chart\" [ 4, 8, 15, 16, 23, 42 ]\n            |> ChartData.BarData\n\n    data =\n        ChartData.dataFromLabels [ \"One\", \"Two\", \"Three\", \"Four\", \"Five\", \"Six\" ]\n            |> ChartData.addDataset dataset\n\n@docs DataSet, defaultBarFromLabel, defaultBarFromData\n@docs setData, setLabel, setHidden, setOrder\n\n\n## Stacking\n\nTo stack bars, use setStack to assign each dataset to a stacking group. In this example, dataset1 and dataset2 will be stacked together:\n\n    dataset1 =\n        BarData.defaultBarFromData [ 10, 20, 30 ]\n            |> setStack \"Stack 1\"\n\n    dataset2 =\n        BarData.defaultBarFromData [ 5, 15, 25 ]\n            |> setStack \"Stack 1\"\n\n    dataset3 =\n        BarData.defaultBarFromData [ 20, 40, 30 ]\n            |> setStack \"Stack 2\"\n\n@docs setStack\n\n\n## Axes\n\nSee the [`Scale`](Chartjs-Options-Scale) module for more information on custom axes\n\n@docs setIndexAxis, setXAxisID, setYAxisID\n\n\n## Bar Sizing\n\n@docs setBarPercentage, setBarThickness, setCategoryPercentage, setMaxBarThickness, setMinBarLength\n\n\n## Colors and Borders\n\n@docs setBackgroundColor, setBorderColor, setBorderRadius, setBorderSkipped, setBorderWidth\n@docs setHoverBackgroundColor, setHoverBorderColor, setHoverBorderWidth\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "DataSet",
+                "comment": " For further information on these properties, see <https://www.chartjs.org/docs/latest/charts/bar.html>\n\nYou should not use the dataset type directly\nInstead use the updater pipeline functions:\n\n    defaultBarFromLabel \"Example\"\n        |> setBackgroundColor (Common.All Color.red)\n        |> setBorderColor (Common.All Color.white)\n\n",
+                "args": [],
+                "type": "{ label : String.String, data : List.List Basics.Float, hidden : Maybe.Maybe Basics.Bool, order : Maybe.Maybe Basics.Int, stack : Maybe.Maybe String.String, indexAxis : Maybe.Maybe Chartjs.Common.IndexAxis, xAxisID : Maybe.Maybe String.String, yAxisID : Maybe.Maybe String.String, backgroundColor : Maybe.Maybe (Chartjs.Common.PointProperty Color.Color), barPercentage : Maybe.Maybe Basics.Float, barThickness : Maybe.Maybe Basics.Int, borderColor : Maybe.Maybe (Chartjs.Common.PointProperty Color.Color), borderRadius : Maybe.Maybe (Chartjs.Common.PointProperty Basics.Int), borderSkipped : Maybe.Maybe String.String, borderWidth : Maybe.Maybe (Chartjs.Common.PointProperty Basics.Float), categoryPercentage : Maybe.Maybe Basics.Float, hoverBackgroundColor : Maybe.Maybe (Chartjs.Common.PointProperty Color.Color), hoverBorderColor : Maybe.Maybe (Chartjs.Common.PointProperty Color.Color), hoverBorderWidth : Maybe.Maybe (Chartjs.Common.PointProperty Basics.Float), maxBarThickness : Maybe.Maybe Basics.Int, minBarLength : Maybe.Maybe Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultBarFromData",
+                "comment": " Create a Bar dataset with a label and data\n",
+                "type": "String.String -> List.List Basics.Float -> Chartjs.DataSets.Bar.DataSet"
+            },
+            {
+                "name": "defaultBarFromLabel",
+                "comment": " Create a Bar dataset with just a label\n",
+                "type": "String.String -> Chartjs.DataSets.Bar.DataSet"
+            },
+            {
+                "name": "setBackgroundColor",
+                "comment": " Fill color of the bar\n",
+                "type": "Chartjs.Common.PointProperty Color.Color -> Chartjs.DataSets.Bar.DataSet -> Chartjs.DataSets.Bar.DataSet"
+            },
+            {
+                "name": "setBarPercentage",
+                "comment": " 0-1 percentage of the available width each bar should be within the category width.\n",
+                "type": "Basics.Float -> Chartjs.DataSets.Bar.DataSet -> Chartjs.DataSets.Bar.DataSet"
+            },
+            {
+                "name": "setBarThickness",
+                "comment": " Manually force the width (in pixels) of each bar\n",
+                "type": "Basics.Int -> Chartjs.DataSets.Bar.DataSet -> Chartjs.DataSets.Bar.DataSet"
+            },
+            {
+                "name": "setBorderColor",
+                "comment": " Border color of the bar\n",
+                "type": "Chartjs.Common.PointProperty Color.Color -> Chartjs.DataSets.Bar.DataSet -> Chartjs.DataSets.Bar.DataSet"
+            },
+            {
+                "name": "setBorderRadius",
+                "comment": " Border radius for each bar\n",
+                "type": "Chartjs.Common.PointProperty Basics.Int -> Chartjs.DataSets.Bar.DataSet -> Chartjs.DataSets.Bar.DataSet"
+            },
+            {
+                "name": "setBorderSkipped",
+                "comment": " Which edge to skip drawing border for\nOne of: 'bottom' 'left' 'top' 'right'\n",
+                "type": "String.String -> Chartjs.DataSets.Bar.DataSet -> Chartjs.DataSets.Bar.DataSet"
+            },
+            {
+                "name": "setBorderWidth",
+                "comment": " Stroke width of the bar in pixels\n",
+                "type": "Chartjs.Common.PointProperty Basics.Float -> Chartjs.DataSets.Bar.DataSet -> Chartjs.DataSets.Bar.DataSet"
+            },
+            {
+                "name": "setCategoryPercentage",
+                "comment": " Percent (0-1) of the available width each category should be within the sample width.\n",
+                "type": "Basics.Float -> Chartjs.DataSets.Bar.DataSet -> Chartjs.DataSets.Bar.DataSet"
+            },
+            {
+                "name": "setData",
+                "comment": " Set the data displayed by this dataset\nThis is a list of floats, where each float is represented as a bar\n",
+                "type": "List.List Basics.Float -> Chartjs.DataSets.Bar.DataSet -> Chartjs.DataSets.Bar.DataSet"
+            },
+            {
+                "name": "setHidden",
+                "comment": " Set whether this dataset should be hidden from the chart\n",
+                "type": "Basics.Bool -> Chartjs.DataSets.Bar.DataSet -> Chartjs.DataSets.Bar.DataSet"
+            },
+            {
+                "name": "setHoverBackgroundColor",
+                "comment": " Fill color of the bar when hovered\n",
+                "type": "Chartjs.Common.PointProperty Color.Color -> Chartjs.DataSets.Bar.DataSet -> Chartjs.DataSets.Bar.DataSet"
+            },
+            {
+                "name": "setHoverBorderColor",
+                "comment": " Border color of the bar when hovered\n",
+                "type": "Chartjs.Common.PointProperty Color.Color -> Chartjs.DataSets.Bar.DataSet -> Chartjs.DataSets.Bar.DataSet"
+            },
+            {
+                "name": "setHoverBorderWidth",
+                "comment": " Border width of the bar when hovered\n",
+                "type": "Chartjs.Common.PointProperty Basics.Float -> Chartjs.DataSets.Bar.DataSet -> Chartjs.DataSets.Bar.DataSet"
+            },
+            {
+                "name": "setIndexAxis",
+                "comment": " Which axis to use for indexing\nSet to XAxis for a vertical chart, set to YAxis for a horizontal chart\n",
+                "type": "Chartjs.Common.IndexAxis -> Chartjs.DataSets.Bar.DataSet -> Chartjs.DataSets.Bar.DataSet"
+            },
+            {
+                "name": "setLabel",
+                "comment": " Set the label for this dataset\n",
+                "type": "String.String -> Chartjs.DataSets.Bar.DataSet -> Chartjs.DataSets.Bar.DataSet"
+            },
+            {
+                "name": "setMaxBarThickness",
+                "comment": " Max bar thickness, in pixels\nIf set, bars will not be thicker than this value\n",
+                "type": "Basics.Int -> Chartjs.DataSets.Bar.DataSet -> Chartjs.DataSets.Bar.DataSet"
+            },
+            {
+                "name": "setMinBarLength",
+                "comment": " Minimum bar length, in pixels\nIf set, bars will not be shorter than this value\n",
+                "type": "Basics.Int -> Chartjs.DataSets.Bar.DataSet -> Chartjs.DataSets.Bar.DataSet"
+            },
+            {
+                "name": "setOrder",
+                "comment": " Set the drawing order of the dataset\nThis also affects stacking, tooltips, and legends\n",
+                "type": "Basics.Int -> Chartjs.DataSets.Bar.DataSet -> Chartjs.DataSets.Bar.DataSet"
+            },
+            {
+                "name": "setStack",
+                "comment": " ID of the group, used for stacking datasets\neg. two datasets with the same field for stack will be stacked together\n",
+                "type": "String.String -> Chartjs.DataSets.Bar.DataSet -> Chartjs.DataSets.Bar.DataSet"
+            },
+            {
+                "name": "setXAxisID",
+                "comment": " The ID of the X axis to plot the dataset on\n",
+                "type": "String.String -> Chartjs.DataSets.Bar.DataSet -> Chartjs.DataSets.Bar.DataSet"
+            },
+            {
+                "name": "setYAxisID",
+                "comment": " The ID of the Y axis to plot the dataset on\n",
+                "type": "String.String -> Chartjs.DataSets.Bar.DataSet -> Chartjs.DataSets.Bar.DataSet"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chartjs.DataSets.DoughnutAndPie",
+        "comment": " Pie and doughnut charts are divided into segments, where the arc of each segment shows the proportion of each data.\n\nIn Chart.js, these two charts are essentially the same. The only different value is the cutoutPercentage.\nThis dataset class will work for either pie or doughtnut charts interchangably\n\n@docs DataSet, defaultPieFromLabel, defaultPieFromData\n@docs setLabel, setData, setHidden, setOrder\n\n\n## Pies\n\nPie datasets are quite similar to bar dataset - provide a dataset label and a list of floats\n\n    defaultPieFromData \"Example Chart\" [ 4, 8, 15, 16, 23, 42 ]\n\nWhen grouping datasets into a chart data object, the labels specified will be used as the categories:\n\n    dataset =\n        defaultPieFromData \"Example Chart\" [ 4, 8, 15, 16, 23, 42 ]\n            |> ChartData.PieData\n\n    data =\n        ChartData.dataFromLabels [ \"One\", \"Two\", \"Three\", \"Four\", \"Five\", \"Six\" ]\n            |> ChartData.addDataset dataset\n\n\n## Doughnuts, Arcs, and Other Shapes\n\nThere are a wide variety of methods that can be used to adjust the shape of your pie chart.\nBy setting a cutout value, a pie dataset will be transformed into a doughnut dataset.\n\n    defaultPieFromData \"Example Chart\" [ 4, 8, 15, 16, 23, 42 ]\n        |> setCutout 50\n\nTo create an arc, set the circumference and initial rotation (both in degrees) to adjust the extents of the chart:\n\n    defaultPieFromData \"Bottom Half Pie\" [ 4, 8, 15, 16, 23, 42 ]\n        |> setCircumference 180\n        |> setRotation 90\n\n@docs setCircumference, setCutout, setOffset, setRotation, setWeight\n\n\n## Colors and Borders\n\n@docs setBackgroundColor, setBorderAlign, setBorderColor, setBorderWidth\n@docs setHoverBackgroundColor, setHoverBorderColor, setHoverBorderWidth\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "DataSet",
+                "comment": " For further information on these properties, see <https://www.chartjs.org/docs/latest/charts/doughnut.html>\n\nYou should not use the dataset type directly\nInstead use the updater pipeline functions:\n\n    defaultBarFromLabel \"Example\"\n        |> setBackgroundColor (Common.All Color.red)\n        |> setBorderColor (Common.All Color.white)\n\n",
+                "args": [],
+                "type": "{ label : String.String, data : List.List Basics.Float, hidden : Maybe.Maybe Basics.Bool, order : Maybe.Maybe Basics.Int, backgroundColor : Maybe.Maybe (Chartjs.Common.PointProperty Color.Color), borderAlign : Maybe.Maybe String.String, borderColor : Maybe.Maybe (Chartjs.Common.PointProperty Color.Color), borderWidth : Maybe.Maybe (Chartjs.Common.PointProperty Basics.Float), circumference : Maybe.Maybe Basics.Int, cutout : Maybe.Maybe Basics.Int, hoverBackgroundColor : Maybe.Maybe (Chartjs.Common.PointProperty Color.Color), hoverBorderColor : Maybe.Maybe (Chartjs.Common.PointProperty Color.Color), hoverBorderWidth : Maybe.Maybe (Chartjs.Common.PointProperty Basics.Float), offset : Maybe.Maybe (Chartjs.Common.PointProperty Basics.Int), rotation : Maybe.Maybe Basics.Int, weight : Maybe.Maybe Basics.Float }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultPieFromData",
+                "comment": " Create a Pie dataset with a label and data\n",
+                "type": "String.String -> List.List Basics.Float -> Chartjs.DataSets.DoughnutAndPie.DataSet"
+            },
+            {
+                "name": "defaultPieFromLabel",
+                "comment": " Create a Pie dataset with just a label\n",
+                "type": "String.String -> Chartjs.DataSets.DoughnutAndPie.DataSet"
+            },
+            {
+                "name": "setBackgroundColor",
+                "comment": " Fill color of the arcs\n",
+                "type": "Chartjs.Common.PointProperty Color.Color -> Chartjs.DataSets.DoughnutAndPie.DataSet -> Chartjs.DataSets.DoughnutAndPie.DataSet"
+            },
+            {
+                "name": "setBorderAlign",
+                "comment": " Whether the borders of each arc should overlap or not\nSet to 'center' to overlap\nSet to 'inner' to not overlap\n",
+                "type": "String.String -> Chartjs.DataSets.DoughnutAndPie.DataSet -> Chartjs.DataSets.DoughnutAndPie.DataSet"
+            },
+            {
+                "name": "setBorderColor",
+                "comment": " Color of the border\n",
+                "type": "Chartjs.Common.PointProperty Color.Color -> Chartjs.DataSets.DoughnutAndPie.DataSet -> Chartjs.DataSets.DoughnutAndPie.DataSet"
+            },
+            {
+                "name": "setBorderWidth",
+                "comment": " Width of the border\n",
+                "type": "Chartjs.Common.PointProperty Basics.Float -> Chartjs.DataSets.DoughnutAndPie.DataSet -> Chartjs.DataSets.DoughnutAndPie.DataSet"
+            },
+            {
+                "name": "setCircumference",
+                "comment": " Total sweep, in degrees, to allow arcs to cover\n",
+                "type": "Basics.Int -> Chartjs.DataSets.DoughnutAndPie.DataSet -> Chartjs.DataSets.DoughnutAndPie.DataSet"
+            },
+            {
+                "name": "setCutout",
+                "comment": " Cutout, in pixels\n",
+                "type": "Basics.Int -> Chartjs.DataSets.DoughnutAndPie.DataSet -> Chartjs.DataSets.DoughnutAndPie.DataSet"
+            },
+            {
+                "name": "setData",
+                "comment": " Set the data displayed by this dataset\nThis is a list of floats, where each float is represented as an arc\n",
+                "type": "List.List Basics.Float -> Chartjs.DataSets.DoughnutAndPie.DataSet -> Chartjs.DataSets.DoughnutAndPie.DataSet"
+            },
+            {
+                "name": "setHidden",
+                "comment": " Set whether this dataset should be hidden from the chart\n",
+                "type": "Basics.Bool -> Chartjs.DataSets.DoughnutAndPie.DataSet -> Chartjs.DataSets.DoughnutAndPie.DataSet"
+            },
+            {
+                "name": "setHoverBackgroundColor",
+                "comment": " Fill color of the arcs when hovered\n",
+                "type": "Chartjs.Common.PointProperty Color.Color -> Chartjs.DataSets.DoughnutAndPie.DataSet -> Chartjs.DataSets.DoughnutAndPie.DataSet"
+            },
+            {
+                "name": "setHoverBorderColor",
+                "comment": " Border color of the arcs when hovered\n",
+                "type": "Chartjs.Common.PointProperty Color.Color -> Chartjs.DataSets.DoughnutAndPie.DataSet -> Chartjs.DataSets.DoughnutAndPie.DataSet"
+            },
+            {
+                "name": "setHoverBorderWidth",
+                "comment": " Width of the border when hovered\n",
+                "type": "Chartjs.Common.PointProperty Basics.Float -> Chartjs.DataSets.DoughnutAndPie.DataSet -> Chartjs.DataSets.DoughnutAndPie.DataSet"
+            },
+            {
+                "name": "setLabel",
+                "comment": " Set the label for this dataset\n",
+                "type": "String.String -> Chartjs.DataSets.DoughnutAndPie.DataSet -> Chartjs.DataSets.DoughnutAndPie.DataSet"
+            },
+            {
+                "name": "setOffset",
+                "comment": " Offset for each arc, in pixels\n",
+                "type": "Chartjs.Common.PointProperty Basics.Int -> Chartjs.DataSets.DoughnutAndPie.DataSet -> Chartjs.DataSets.DoughnutAndPie.DataSet"
+            },
+            {
+                "name": "setOrder",
+                "comment": " Set the drawing order of the dataset\nThis also affects stacking, tooltips, and legends\n",
+                "type": "Basics.Int -> Chartjs.DataSets.DoughnutAndPie.DataSet -> Chartjs.DataSets.DoughnutAndPie.DataSet"
+            },
+            {
+                "name": "setRotation",
+                "comment": " Starting angle, in degrees, to draw dataset from\n",
+                "type": "Basics.Int -> Chartjs.DataSets.DoughnutAndPie.DataSet -> Chartjs.DataSets.DoughnutAndPie.DataSet"
+            },
+            {
+                "name": "setWeight",
+                "comment": " The relative thickness of this dataset\nIf specified, then this dataset will be drawn with a thickness relative to the sum of all dataset weights\n",
+                "type": "Basics.Float -> Chartjs.DataSets.DoughnutAndPie.DataSet -> Chartjs.DataSets.DoughnutAndPie.DataSet"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chartjs.DataSets.Line",
+        "comment": " The Line dataset is the most general dataset - it can be used for line graphs, area charts, and even scatter plots\n\n@docs DataPoints, DataSet, defaultLineFromLabel\n\n@docs setLabel, setData, setPointData, setHidden, setOrder\n\n\n# Lines\n\nLine datasets are super easy to create - just provide a dataset label and a list of numbers:\n\n    defaultLineFromData \"Dataset Label\" [ 1, 2, 3, 4, 5 ]\n\n@docs defaultLineFromData\n\nYou can then adjust the line styling with pipeline operators:\n\n    defaultLineFromData \"Dataset Label\" [ 1, 2, 3, 4, 5 ]\n        |> setBorderWidth 4\n        |> setLineTension 0.5\n\n@docs setBorderColor, setBorderWidth, setBorderDash, setBorderDashOffset, setBorderCapStyle, setBorderJoinStyle\n\nBy default, the line will linearly connect points. You can adjust the interpolation, or set the line to produce a stepped chart instead:\n\n@docs setShowLine, setCubicInterpolationMode, setLineTension, setSteppedLine, SteppedLine\n\n\n# Radars\n\nRadars are esentially a line dataset, but on a radial axis. These are slightly different internally, so you will need to create them slightly differently:\n\n    defaultRadarFromData \"DatasetLabel\" [ 1, 2, 3, 4, 5 ]\n\nAlternatively:\n\n    defaultLineFromData \"Dataset Label\" [ 1, 2, 3, 4, 5 ]\n        |> setLineDatasetType Radar\n\n@docs defaultRadarFromLabel, defaultRadarFromData, LineDataSetType, setLineDatasetType\n\n\n# Scatters\n\nScatter charts are essentially line charts without a line\n\n    defaultLineFromPointData \"Scatter\" [ ( 1, 2 ), ( 2, 5 ), ( 3, 8 ) ]\n        |> setShowLine False\n\nFor best results, you'll also want to assign a linear scale to your chart\n\n@docs defaultLineFromPointData\n\nYou can style the points in various ways.\n\n@docs setPointBackgroundColor, setPointBorderColor, setPointBorderWidth, setPointRadius, setPointStyle, setPointRotation\n\nCertain properties are used to change how points are displayed when hovered over:\n\n@docs setPointHitRadius, setPointHoverBackgroundColor, setPointHoverBorderColor, setPointHoverBorderWidth, setPointHoverRadius\n\n\n# Filling Areas\n\n    defaultLineFromData \"Filled Chart\" [ 1, 2, 3, 4, 5 ]\n        |> setFill (Boundary Origin)\n\n@docs setFill, FillMode, FillBoundary, setBackgroundColor\n\n\n# Other\n\nSee the [`Scale`](Chartjs-Options-Scale) module for more information on custom axes\n\n@docs setIndexAxis, setXAxisID, setYAxisID, setSpanGaps\n\n",
+        "unions": [
+            {
+                "name": "DataPoints",
+                "comment": " These datasets can be made from two different data formats\nEither a list of numbers can be specified, or a list of (x, y) tuples\n\nSee <https://www.chartjs.org/docs/latest/general/data-structures.html> for more info\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Numbers",
+                        [
+                            "List.List Basics.Float"
+                        ]
+                    ],
+                    [
+                        "Points",
+                        [
+                            "List.List ( Basics.Float, Basics.Float )"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "FillBoundary",
+                "comment": " Which boundary to use when using FillBoundary\nCan be the scale origin, start, or end\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Start",
+                        []
+                    ],
+                    [
+                        "End",
+                        []
+                    ],
+                    [
+                        "Origin",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "FillMode",
+                "comment": " Fill modes handle how area charts should be displayed\nCan be:\n\n  - an absolute dataset index\n  - a relative dataset index\n  - between the dataset and the boundaries\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Absolute",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "Relative",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "Boundary",
+                        [
+                            "Chartjs.DataSets.Line.FillBoundary"
+                        ]
+                    ],
+                    [
+                        "Disabled",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "LineDataSetType",
+                "comment": " Chart.js requires the type to be specified for datasets and trying to have a line type on a radar chart causes some issues\n\nThis type allows explicitness whether this dataset is a line dataset or a radar dataset\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Line",
+                        []
+                    ],
+                    [
+                        "Radar",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "SteppedLine",
+                "comment": " Step Interpolation for lines <https://www.chartjs.org/docs/3.3.2/charts/line.html#stepped>\n\nBeforeInterpolation: Step-before Interpolation\n\nAfterInterpolation: Step-after Interpolation\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NoInterpolation",
+                        []
+                    ],
+                    [
+                        "BeforeInterpolation",
+                        []
+                    ],
+                    [
+                        "AfterInterpolation",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "DataSet",
+                "comment": " For further information on these properties, see <https://www.chartjs.org/docs/latest/charts/line.html>\n",
+                "args": [],
+                "type": "{ type_ : Chartjs.DataSets.Line.LineDataSetType, label : String.String, data : Chartjs.DataSets.Line.DataPoints, hidden : Maybe.Maybe Basics.Bool, order : Maybe.Maybe Basics.Int, indexAxis : Maybe.Maybe Chartjs.Common.IndexAxis, xAxisID : Maybe.Maybe String.String, yAxisID : Maybe.Maybe String.String, backgroundColor : Maybe.Maybe (Chartjs.Common.PointProperty Color.Color), borderColor : Maybe.Maybe (Chartjs.Common.PointProperty Color.Color), borderWidth : Maybe.Maybe (Chartjs.Common.PointProperty Basics.Float), borderDash : Maybe.Maybe (Chartjs.Common.PointProperty Basics.Float), borderDashOffset : Maybe.Maybe Basics.Float, borderCapStyle : Maybe.Maybe String.String, borderJoinStyle : Maybe.Maybe String.String, cubicInterpolationMode : Maybe.Maybe String.String, fill : Maybe.Maybe Chartjs.DataSets.Line.FillMode, lineTension : Maybe.Maybe Basics.Float, pointBackgroundColor : Maybe.Maybe (Chartjs.Common.PointProperty Color.Color), pointBorderColor : Maybe.Maybe (Chartjs.Common.PointProperty Color.Color), pointBorderWidth : Maybe.Maybe (Chartjs.Common.PointProperty Basics.Float), pointRadius : Maybe.Maybe (Chartjs.Common.PointProperty Basics.Float), pointStyle : Maybe.Maybe (Chartjs.Common.PointProperty Chartjs.Common.PointStyle), pointRotation : Maybe.Maybe (Chartjs.Common.PointProperty Basics.Float), pointHitRadius : Maybe.Maybe (Chartjs.Common.PointProperty Basics.Float), pointHoverBackgroundColor : Maybe.Maybe (Chartjs.Common.PointProperty Color.Color), pointHoverBorderColor : Maybe.Maybe (Chartjs.Common.PointProperty Color.Color), pointHoverBorderWidth : Maybe.Maybe (Chartjs.Common.PointProperty Basics.Float), pointHoverRadius : Maybe.Maybe (Chartjs.Common.PointProperty Basics.Float), showLine : Maybe.Maybe Basics.Bool, spanGaps : Maybe.Maybe Basics.Bool, steppedLine : Maybe.Maybe Chartjs.DataSets.Line.SteppedLine }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultLineFromData",
+                "comment": " Create a Line dataset with a label and data list\nTo create a dataset from points, see defaultLineFromPointData\n",
+                "type": "String.String -> List.List Basics.Float -> Chartjs.DataSets.Line.DataSet"
+            },
+            {
+                "name": "defaultLineFromLabel",
+                "comment": " Create a Line dataset with just a label\n",
+                "type": "String.String -> Chartjs.DataSets.Line.DataSet"
+            },
+            {
+                "name": "defaultLineFromPointData",
+                "comment": " Create a Line dataset with a label and points list\n",
+                "type": "String.String -> List.List ( Basics.Float, Basics.Float ) -> Chartjs.DataSets.Line.DataSet"
+            },
+            {
+                "name": "defaultRadarFromData",
+                "comment": " Create a Radar dataset with a label\n",
+                "type": "String.String -> List.List Basics.Float -> Chartjs.DataSets.Line.DataSet"
+            },
+            {
+                "name": "defaultRadarFromLabel",
+                "comment": " Create a Radar dataset with a label\n",
+                "type": "String.String -> Chartjs.DataSets.Line.DataSet"
+            },
+            {
+                "name": "setBackgroundColor",
+                "comment": " Fill color of the area under the bar\nApplies for area charts\n",
+                "type": "Chartjs.Common.PointProperty Color.Color -> Chartjs.DataSets.Line.DataSet -> Chartjs.DataSets.Line.DataSet"
+            },
+            {
+                "name": "setBorderCapStyle",
+                "comment": " Cap style of the line\n",
+                "type": "String.String -> Chartjs.DataSets.Line.DataSet -> Chartjs.DataSets.Line.DataSet"
+            },
+            {
+                "name": "setBorderColor",
+                "comment": " Color of the line\n",
+                "type": "Chartjs.Common.PointProperty Color.Color -> Chartjs.DataSets.Line.DataSet -> Chartjs.DataSets.Line.DataSet"
+            },
+            {
+                "name": "setBorderDash",
+                "comment": " Length and spacing of line dashes\n",
+                "type": "Chartjs.Common.PointProperty Basics.Float -> Chartjs.DataSets.Line.DataSet -> Chartjs.DataSets.Line.DataSet"
+            },
+            {
+                "name": "setBorderDashOffset",
+                "comment": " Offset for line dashes\n",
+                "type": "Basics.Float -> Chartjs.DataSets.Line.DataSet -> Chartjs.DataSets.Line.DataSet"
+            },
+            {
+                "name": "setBorderJoinStyle",
+                "comment": " Joint style of the line\n",
+                "type": "String.String -> Chartjs.DataSets.Line.DataSet -> Chartjs.DataSets.Line.DataSet"
+            },
+            {
+                "name": "setBorderWidth",
+                "comment": " Line width (in pixels)\n",
+                "type": "Chartjs.Common.PointProperty Basics.Float -> Chartjs.DataSets.Line.DataSet -> Chartjs.DataSets.Line.DataSet"
+            },
+            {
+                "name": "setCubicInterpolationMode",
+                "comment": " Which cubic interpolation mode to use\n'default' uses a weighted cubic interpolation\n'monotone' is better at preserving monotonicity\n",
+                "type": "String.String -> Chartjs.DataSets.Line.DataSet -> Chartjs.DataSets.Line.DataSet"
+            },
+            {
+                "name": "setData",
+                "comment": " Set the data displayed by this dataset\nThis is a list of floats, where each float is represented as a point on the line\n",
+                "type": "List.List Basics.Float -> Chartjs.DataSets.Line.DataSet -> Chartjs.DataSets.Line.DataSet"
+            },
+            {
+                "name": "setFill",
+                "comment": " How to fill the area under the line\n\nThe most common use case would be filling the area under a line. For that, you'll want to use Boundary Origin:\n\n    defaultLineFromData \"Title\" data\n        |> setBackgroundColor Color.red\n        |> setFill (Boundary Origin)\n\nFor more information, check out <https://www.chartjs.org/docs/latest/charts/area.html>\n\n",
+                "type": "Chartjs.DataSets.Line.FillMode -> Chartjs.DataSets.Line.DataSet -> Chartjs.DataSets.Line.DataSet"
+            },
+            {
+                "name": "setHidden",
+                "comment": " Set whether this dataset should be hidden from the chart\n",
+                "type": "Basics.Bool -> Chartjs.DataSets.Line.DataSet -> Chartjs.DataSets.Line.DataSet"
+            },
+            {
+                "name": "setIndexAxis",
+                "comment": " Which axis to use for indexing\nSet to XAxis for a vertical chart, set to YAxis for a horizontal chart\n",
+                "type": "Chartjs.Common.IndexAxis -> Chartjs.DataSets.Line.DataSet -> Chartjs.DataSets.Line.DataSet"
+            },
+            {
+                "name": "setLabel",
+                "comment": " Set the label for this dataset\n",
+                "type": "String.String -> Chartjs.DataSets.Line.DataSet -> Chartjs.DataSets.Line.DataSet"
+            },
+            {
+                "name": "setLineDatasetType",
+                "comment": " Set the dataset type for this dataset\n\nFor most cases (yes, even scatter plots), Line works fine\nFor radar datasets, this needs to be set to Radar\n\n",
+                "type": "Chartjs.DataSets.Line.LineDataSetType -> Chartjs.DataSets.Line.DataSet -> Chartjs.DataSets.Line.DataSet"
+            },
+            {
+                "name": "setLineTension",
+                "comment": " Beizer curve tension\n0 is straight lines\n\nThis option is ignored if cubicInterpolation is set to 'monotone'\n\n",
+                "type": "Basics.Float -> Chartjs.DataSets.Line.DataSet -> Chartjs.DataSets.Line.DataSet"
+            },
+            {
+                "name": "setOrder",
+                "comment": " Set the drawing order of the dataset\nThis also affects stacking, tooltips, and legends\n",
+                "type": "Basics.Int -> Chartjs.DataSets.Line.DataSet -> Chartjs.DataSets.Line.DataSet"
+            },
+            {
+                "name": "setPointBackgroundColor",
+                "comment": " Fill color for points\n",
+                "type": "Chartjs.Common.PointProperty Color.Color -> Chartjs.DataSets.Line.DataSet -> Chartjs.DataSets.Line.DataSet"
+            },
+            {
+                "name": "setPointBorderColor",
+                "comment": " Border color for points\n",
+                "type": "Chartjs.Common.PointProperty Color.Color -> Chartjs.DataSets.Line.DataSet -> Chartjs.DataSets.Line.DataSet"
+            },
+            {
+                "name": "setPointBorderWidth",
+                "comment": " Border width (in pixels) for points\n",
+                "type": "Chartjs.Common.PointProperty Basics.Float -> Chartjs.DataSets.Line.DataSet -> Chartjs.DataSets.Line.DataSet"
+            },
+            {
+                "name": "setPointData",
+                "comment": " Set the data displayed by this dataset, in a point based format\nThis is a list of tuples, where each tuple defines the X, Y location of a point\n",
+                "type": "List.List ( Basics.Float, Basics.Float ) -> Chartjs.DataSets.Line.DataSet -> Chartjs.DataSets.Line.DataSet"
+            },
+            {
+                "name": "setPointHitRadius",
+                "comment": " Hit radius for point interactivity\n",
+                "type": "Chartjs.Common.PointProperty Basics.Float -> Chartjs.DataSets.Line.DataSet -> Chartjs.DataSets.Line.DataSet"
+            },
+            {
+                "name": "setPointHoverBackgroundColor",
+                "comment": " Fill color for points when hovered\n",
+                "type": "Chartjs.Common.PointProperty Color.Color -> Chartjs.DataSets.Line.DataSet -> Chartjs.DataSets.Line.DataSet"
+            },
+            {
+                "name": "setPointHoverBorderColor",
+                "comment": " Border color for points when hovered\n",
+                "type": "Chartjs.Common.PointProperty Color.Color -> Chartjs.DataSets.Line.DataSet -> Chartjs.DataSets.Line.DataSet"
+            },
+            {
+                "name": "setPointHoverBorderWidth",
+                "comment": " Border width for points when hovered\n",
+                "type": "Chartjs.Common.PointProperty Basics.Float -> Chartjs.DataSets.Line.DataSet -> Chartjs.DataSets.Line.DataSet"
+            },
+            {
+                "name": "setPointHoverRadius",
+                "comment": " Radius for points when hovered\n",
+                "type": "Chartjs.Common.PointProperty Basics.Float -> Chartjs.DataSets.Line.DataSet -> Chartjs.DataSets.Line.DataSet"
+            },
+            {
+                "name": "setPointRadius",
+                "comment": " Radius of the point shape\n",
+                "type": "Chartjs.Common.PointProperty Basics.Float -> Chartjs.DataSets.Line.DataSet -> Chartjs.DataSets.Line.DataSet"
+            },
+            {
+                "name": "setPointRotation",
+                "comment": " Rotation of the point (in degrees)\n",
+                "type": "Chartjs.Common.PointProperty Basics.Float -> Chartjs.DataSets.Line.DataSet -> Chartjs.DataSets.Line.DataSet"
+            },
+            {
+                "name": "setPointStyle",
+                "comment": " Style of the point\n",
+                "type": "Chartjs.Common.PointProperty Chartjs.Common.PointStyle -> Chartjs.DataSets.Line.DataSet -> Chartjs.DataSets.Line.DataSet"
+            },
+            {
+                "name": "setShowLine",
+                "comment": " Whether the line for this dataset should be drawn\n",
+                "type": "Basics.Bool -> Chartjs.DataSets.Line.DataSet -> Chartjs.DataSets.Line.DataSet"
+            },
+            {
+                "name": "setSpanGaps",
+                "comment": " Whether points with no data should be filled in or not\n",
+                "type": "Basics.Bool -> Chartjs.DataSets.Line.DataSet -> Chartjs.DataSets.Line.DataSet"
+            },
+            {
+                "name": "setSteppedLine",
+                "comment": " Set the step interpolation for the line\n\nIf set to anything other than false, lineTension will be ignored\n\n",
+                "type": "Chartjs.DataSets.Line.SteppedLine -> Chartjs.DataSets.Line.DataSet -> Chartjs.DataSets.Line.DataSet"
+            },
+            {
+                "name": "setXAxisID",
+                "comment": " The ID of the X axis to plot this dataset on\n",
+                "type": "String.String -> Chartjs.DataSets.Line.DataSet -> Chartjs.DataSets.Line.DataSet"
+            },
+            {
+                "name": "setYAxisID",
+                "comment": " The ID of the Y axis to plot this dataset on\n",
+                "type": "String.String -> Chartjs.DataSets.Line.DataSet -> Chartjs.DataSets.Line.DataSet"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chartjs.DataSets.Polar",
+        "comment": " Polar charts are similar to pie charts, but each segment has the same angle\n\n  - the radius of the segment differs depending on the value.\n\n@docs DataSet, defaultPolarFromLabel, defaultPolarFromData\n@docs setData, setBackgroundColor, setBorderAlign, setBorderColor, setBorderWidth, setHoverBackgroundColor, setHoverBorderColor, setHoverBorderWidth\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "DataSet",
+                "comment": " For further information on these properties, see <https://www.chartjs.org/docs/latest/charts/polar.html>\n\nYou should not use the dataset type directly\nInstead use the updater pipeline functions:\n\n    defaultBarFromLabel \"Example\"\n        |> setBackgroundColor (Common.All Color.red)\n        |> setBorderColor (Common.All Color.white)\n\n",
+                "args": [],
+                "type": "{ label : String.String, data : List.List Basics.Float, backgroundColor : Maybe.Maybe (Chartjs.Common.PointProperty Color.Color), borderAlign : Maybe.Maybe String.String, borderColor : Maybe.Maybe (Chartjs.Common.PointProperty Color.Color), borderWidth : Maybe.Maybe (Chartjs.Common.PointProperty Basics.Float), hoverBackgroundColor : Maybe.Maybe (Chartjs.Common.PointProperty Color.Color), hoverBorderColor : Maybe.Maybe (Chartjs.Common.PointProperty Color.Color), hoverBorderWidth : Maybe.Maybe (Chartjs.Common.PointProperty Basics.Float) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultPolarFromData",
+                "comment": " Create a Polar dataset with a label and data\n",
+                "type": "String.String -> List.List Basics.Float -> Chartjs.DataSets.Polar.DataSet"
+            },
+            {
+                "name": "defaultPolarFromLabel",
+                "comment": " Create a Polar dataset with just a label\n",
+                "type": "String.String -> Chartjs.DataSets.Polar.DataSet"
+            },
+            {
+                "name": "setBackgroundColor",
+                "comment": " Fill color of the segments\n",
+                "type": "Chartjs.Common.PointProperty Color.Color -> Chartjs.DataSets.Polar.DataSet -> Chartjs.DataSets.Polar.DataSet"
+            },
+            {
+                "name": "setBorderAlign",
+                "comment": " Whether the borders of each segment should overlap or not\nSet to 'center' to overlap\nSet to 'inner' to not overlap\n",
+                "type": "String.String -> Chartjs.DataSets.Polar.DataSet -> Chartjs.DataSets.Polar.DataSet"
+            },
+            {
+                "name": "setBorderColor",
+                "comment": " Color of the border\n",
+                "type": "Chartjs.Common.PointProperty Color.Color -> Chartjs.DataSets.Polar.DataSet -> Chartjs.DataSets.Polar.DataSet"
+            },
+            {
+                "name": "setBorderWidth",
+                "comment": " Width of the border\n",
+                "type": "Chartjs.Common.PointProperty Basics.Float -> Chartjs.DataSets.Polar.DataSet -> Chartjs.DataSets.Polar.DataSet"
+            },
+            {
+                "name": "setData",
+                "comment": " Set the data displayed by this dataset\nThis is a list of floats, where each float is represented as a segment on the chart\n",
+                "type": "List.List Basics.Float -> Chartjs.DataSets.Polar.DataSet -> Chartjs.DataSets.Polar.DataSet"
+            },
+            {
+                "name": "setHoverBackgroundColor",
+                "comment": " Fill color of the segments when hovered\n",
+                "type": "Chartjs.Common.PointProperty Color.Color -> Chartjs.DataSets.Polar.DataSet -> Chartjs.DataSets.Polar.DataSet"
+            },
+            {
+                "name": "setHoverBorderColor",
+                "comment": " Border color of the segements when hovered\n",
+                "type": "Chartjs.Common.PointProperty Color.Color -> Chartjs.DataSets.Polar.DataSet -> Chartjs.DataSets.Polar.DataSet"
+            },
+            {
+                "name": "setHoverBorderWidth",
+                "comment": " Width of the border when hovered\n",
+                "type": "Chartjs.Common.PointProperty Basics.Float -> Chartjs.DataSets.Polar.DataSet -> Chartjs.DataSets.Polar.DataSet"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chartjs.Options",
+        "comment": " The Options type is used for configuring how the chart behaves\nThis contains properties to control things like styling, fonts, etc.\n\n@docs Options, defaultOptions\n\n@docs setAnimations, setElements, setLayout, setLegend, setMaintainAspectRatio, setResponsive, setScales, addScale, setTitle, setTooltips, setCircumference, setCutoutPercentage, setRotation\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Options",
+                "comment": " These options are applied to the whole chart and not an individual dataset\n",
+                "args": [],
+                "type": "{ animations : Maybe.Maybe Chartjs.Options.Animations.Animations, layout : Maybe.Maybe Chartjs.Options.Layout.Layout, legend : Maybe.Maybe Chartjs.Options.Legend.Legend, title : Maybe.Maybe Chartjs.Options.Title.Title, tooltips : Maybe.Maybe Chartjs.Options.Tooltips.Tooltips, elements : Maybe.Maybe Chartjs.Options.Elements.Elements, scales : Maybe.Maybe (List.List Chartjs.Options.Scale.Scale), maintainAspectRatio : Maybe.Maybe Basics.Bool, responsive : Maybe.Maybe Basics.Bool, cutoutPercentage : Maybe.Maybe Basics.Int, rotation : Maybe.Maybe Basics.Float, circumference : Maybe.Maybe Basics.Float }"
+            }
+        ],
+        "values": [
+            {
+                "name": "addScale",
+                "comment": " ",
+                "type": "Chartjs.Options.Scale.Scale -> Chartjs.Options.Options -> Chartjs.Options.Options"
+            },
+            {
+                "name": "defaultOptions",
+                "comment": " Creates a blank options structure which can then be edited using the below set functions\n",
+                "type": "Chartjs.Options.Options"
+            },
+            {
+                "name": "setAnimations",
+                "comment": " Set the animations property\n",
+                "type": "Chartjs.Options.Animations.Animations -> Chartjs.Options.Options -> Chartjs.Options.Options"
+            },
+            {
+                "name": "setCircumference",
+                "comment": " Set the sweep (in radians) that arcs are allowed to cover\n",
+                "type": "Basics.Float -> Chartjs.Options.Options -> Chartjs.Options.Options"
+            },
+            {
+                "name": "setCutoutPercentage",
+                "comment": " Set the cutout percentage of this chart.\nBy default, Doughnuts are 50 and Pies are 0\n",
+                "type": "Basics.Int -> Chartjs.Options.Options -> Chartjs.Options.Options"
+            },
+            {
+                "name": "setElements",
+                "comment": " Set the elements property\n",
+                "type": "Chartjs.Options.Elements.Elements -> Chartjs.Options.Options -> Chartjs.Options.Options"
+            },
+            {
+                "name": "setLayout",
+                "comment": " Set the layout property\n",
+                "type": "Chartjs.Options.Layout.Layout -> Chartjs.Options.Options -> Chartjs.Options.Options"
+            },
+            {
+                "name": "setLegend",
+                "comment": " Set the legend property\n",
+                "type": "Chartjs.Options.Legend.Legend -> Chartjs.Options.Options -> Chartjs.Options.Options"
+            },
+            {
+                "name": "setMaintainAspectRatio",
+                "comment": " Set whether to keep the aspect ratio of this chart consistent\n",
+                "type": "Basics.Bool -> Chartjs.Options.Options -> Chartjs.Options.Options"
+            },
+            {
+                "name": "setResponsive",
+                "comment": " Set whether this chart should be responsive\nNote: there is currently no parameters to directly set the width and hieght of the chart\nI strongly recommend sizing the parent web component and leaving this option enabled\n",
+                "type": "Basics.Bool -> Chartjs.Options.Options -> Chartjs.Options.Options"
+            },
+            {
+                "name": "setRotation",
+                "comment": " Set the starting angle (in radians) to draw arcs from\n",
+                "type": "Basics.Float -> Chartjs.Options.Options -> Chartjs.Options.Options"
+            },
+            {
+                "name": "setScales",
+                "comment": " Set the scales property\n",
+                "type": "List.List Chartjs.Options.Scale.Scale -> Chartjs.Options.Options -> Chartjs.Options.Options"
+            },
+            {
+                "name": "setTitle",
+                "comment": " Set the title property\n",
+                "type": "Chartjs.Options.Title.Title -> Chartjs.Options.Options -> Chartjs.Options.Options"
+            },
+            {
+                "name": "setTooltips",
+                "comment": " Set the tootlips property\n",
+                "type": "Chartjs.Options.Tooltips.Tooltips -> Chartjs.Options.Options -> Chartjs.Options.Options"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chartjs.Options.Animations",
+        "comment": " These options are provided to help configure how the animation functions\nBy default, the chart should automatically animate updates good enough for most use cases\n\nFor more information, see <https://www.chartjs.org/docs/latest/configuration/animations.html>\n\n@docs Animations, defaultAnimations\n@docs Easing, setEasing\n@docs setDuration, setAnimateRotate, setAnimateScale\n\n",
+        "unions": [
+            {
+                "name": "Easing",
+                "comment": " Different easings for animations\nTo see examples of these easings, see <https://easings.net>\n",
+                "args": [],
+                "cases": [
+                    [
+                        "EaseLinear",
+                        []
+                    ],
+                    [
+                        "EaseInQuad",
+                        []
+                    ],
+                    [
+                        "EaseOutQuad",
+                        []
+                    ],
+                    [
+                        "EaseInOutQuad",
+                        []
+                    ],
+                    [
+                        "EaseInCubic",
+                        []
+                    ],
+                    [
+                        "EaseOutCubic",
+                        []
+                    ],
+                    [
+                        "EaseInOutCubic",
+                        []
+                    ],
+                    [
+                        "EaseInQuart",
+                        []
+                    ],
+                    [
+                        "EaseOutQuart",
+                        []
+                    ],
+                    [
+                        "EaseInOutQuart",
+                        []
+                    ],
+                    [
+                        "EaseInQuint",
+                        []
+                    ],
+                    [
+                        "EaseOutQuint",
+                        []
+                    ],
+                    [
+                        "EaseInOutQuint",
+                        []
+                    ],
+                    [
+                        "EaseInSine",
+                        []
+                    ],
+                    [
+                        "EaseOutSine",
+                        []
+                    ],
+                    [
+                        "EaseInOutSine",
+                        []
+                    ],
+                    [
+                        "EaseInExpo",
+                        []
+                    ],
+                    [
+                        "EaseOutExpo",
+                        []
+                    ],
+                    [
+                        "EaseInOutExpo",
+                        []
+                    ],
+                    [
+                        "EaseInCirc",
+                        []
+                    ],
+                    [
+                        "EaseOutCirc",
+                        []
+                    ],
+                    [
+                        "EaseInOutCirc",
+                        []
+                    ],
+                    [
+                        "EaseInElastic",
+                        []
+                    ],
+                    [
+                        "EaseOutElastic",
+                        []
+                    ],
+                    [
+                        "EaseInOutElastic",
+                        []
+                    ],
+                    [
+                        "EaseInBack",
+                        []
+                    ],
+                    [
+                        "EaseOutBack",
+                        []
+                    ],
+                    [
+                        "EaseInOutBack",
+                        []
+                    ],
+                    [
+                        "EaseInBounce",
+                        []
+                    ],
+                    [
+                        "EaseOutBounce",
+                        []
+                    ],
+                    [
+                        "EaseInOutBounce",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Animations",
+                "comment": " Animations structure\nThese settings will apply to all the animations in the chart\n\nThe default settings should work fine for most cases, but if needed,\nyou can use this object to fine-tune them\n\n",
+                "args": [],
+                "type": "{ duration : Maybe.Maybe Basics.Int, easing : Maybe.Maybe Chartjs.Options.Animations.Easing, animateRotate : Maybe.Maybe Basics.Bool, animateScale : Maybe.Maybe Basics.Bool }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultAnimations",
+                "comment": " Create a blank animations object\n",
+                "type": "Chartjs.Options.Animations.Animations"
+            },
+            {
+                "name": "setAnimateRotate",
+                "comment": " Used for Pie charts\nShould the rotation of the chart be animated?\n",
+                "type": "Basics.Bool -> Chartjs.Options.Animations.Animations -> Chartjs.Options.Animations.Animations"
+            },
+            {
+                "name": "setAnimateScale",
+                "comment": " Used for Pie/Polar charts\nShould the scaling of the chart be animated?\n",
+                "type": "Basics.Bool -> Chartjs.Options.Animations.Animations -> Chartjs.Options.Animations.Animations"
+            },
+            {
+                "name": "setDuration",
+                "comment": " Time (in milliseconds) an animation takes\n",
+                "type": "Basics.Int -> Chartjs.Options.Animations.Animations -> Chartjs.Options.Animations.Animations"
+            },
+            {
+                "name": "setEasing",
+                "comment": " Easing function to use\n",
+                "type": "Chartjs.Options.Animations.Easing -> Chartjs.Options.Animations.Animations -> Chartjs.Options.Animations.Animations"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chartjs.Options.Elements",
+        "comment": " While there is ways to configure the styling of each dataset, sometimes you want custom styles applied to all datasets\nFor more information, see <https://www.chartjs.org/docs/latest/configuration/elements.html>\n\nPlease note that this module does not have updater functions and you will need to use record update syntax if using this functionality\n\n@docs Elements, defaultElements, Point, defaultPoint, Line, LineFill, Rectangle, Arc\n\n",
+        "unions": [
+            {
+                "name": "LineFill",
+                "comment": " Line fill mode\nUseful for area charts\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Zero",
+                        []
+                    ],
+                    [
+                        "Top",
+                        []
+                    ],
+                    [
+                        "Bottom",
+                        []
+                    ],
+                    [
+                        "NoFill",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Arc",
+                "comment": " Arc specific properties (eg. pie chart, polar chart)\n",
+                "args": [],
+                "type": "{ backgroundColor : Maybe.Maybe Color.Color, borderColor : Maybe.Maybe Color.Color, borderWidth : Maybe.Maybe Basics.Int }"
+            },
+            {
+                "name": "Elements",
+                "comment": " Controls for all element types in a chart\n",
+                "args": [],
+                "type": "{ point : Maybe.Maybe Chartjs.Options.Elements.Point, line : Maybe.Maybe Chartjs.Options.Elements.Line, rectangle : Maybe.Maybe Chartjs.Options.Elements.Rectangle, arc : Maybe.Maybe Chartjs.Options.Elements.Arc }"
+            },
+            {
+                "name": "Line",
+                "comment": " Line specific properties\n",
+                "args": [],
+                "type": "{ tension : Maybe.Maybe Basics.Float, backgroundColor : Maybe.Maybe Color.Color, borderWidth : Maybe.Maybe Basics.Int, borderColor : Maybe.Maybe Color.Color, borderCapStyle : Maybe.Maybe Chartjs.Common.LineCap, borderDash : Maybe.Maybe (List.List Basics.Int), borderDashOffset : Maybe.Maybe Basics.Int, borderJoinStyle : Maybe.Maybe Chartjs.Common.LineJoin, capBezierPoints : Maybe.Maybe Basics.Bool, fill : Maybe.Maybe Chartjs.Options.Elements.LineFill, stepped : Maybe.Maybe Basics.Bool }"
+            },
+            {
+                "name": "Point",
+                "comment": " Point specific properties\n",
+                "args": [],
+                "type": "{ radius : Maybe.Maybe Basics.Int, pointStyle : Maybe.Maybe Chartjs.Common.PointStyle, rotation : Maybe.Maybe Basics.Int, backgroundColor : Maybe.Maybe Color.Color, borderWidth : Maybe.Maybe Basics.Int, borderColor : Maybe.Maybe Color.Color, hitRadius : Maybe.Maybe Basics.Int, hoverRadius : Maybe.Maybe Basics.Int, hoverBorderWidth : Maybe.Maybe Basics.Int }"
+            },
+            {
+                "name": "Rectangle",
+                "comment": " Rectangle specific properties (eg. bar charts)\n",
+                "args": [],
+                "type": "{ backgroundColor : Maybe.Maybe Color.Color, borderWidth : Maybe.Maybe Basics.Int, borderColor : Maybe.Maybe Color.Color, borderSkipped : Maybe.Maybe Chartjs.Common.Position }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultElements",
+                "comment": " Create a blank elements object\n",
+                "type": "Chartjs.Options.Elements.Elements"
+            },
+            {
+                "name": "defaultPoint",
+                "comment": " Create a blank point object\n",
+                "type": "Chartjs.Options.Elements.Point"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chartjs.Options.Font",
+        "comment": " For more information, see <https://www.chartjs.org/docs/3.3.2/api/interfaces/fontspec.html>\n\nFontSpec objects are used throughout chart.js to style text\n\n\n## Examples\n\nTo create a simple font spec, just specify a font-family and a size:\n\n    create \"sans-serif\" 16\n\nAny CSS font-family option will work, allowing for fallbacks:\n\n    create \"'Helvetica Neue', 'Helvetica', 'Arial', sans-serif\"\n\nFor more advanced styling, you can adjust the style and weight:\n\n    create \"sans-serif\" 16\n        |> setStyle \"italic\"\n        |> setWeight \"600\"\n\nYou can then apply this to a title, legend, or axis label:\n\n    let\n        font =\n            create \"sans-serif\" 24\n                |> setWeight \"600\"\n    in\n    ChartTitle.defaultTitle\n        |> ChartTitle.setText \"My Cool Chart\"\n        |> ChartTitle.setDisplay True\n        |> ChartTitle.setFont font\n\n@docs FontSpec, defaultFont, create\n\n@docs setFamily, setLineHeight, setSize, setStyle, setWeight\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "FontSpec",
+                "comment": " A font spec object controls how various chart text is rendered\nThis can be applied to things such as labels, legends, titles, etc.\n",
+                "args": [],
+                "type": "{ family : Maybe.Maybe String.String, lineHeight : Maybe.Maybe Basics.Float, size : Maybe.Maybe Basics.Int, style : Maybe.Maybe String.String, weight : Maybe.Maybe String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "create",
+                "comment": " Quick function to create a basic font, specifying just the family and size\n",
+                "type": "String.String -> Basics.Int -> Chartjs.Options.Font.FontSpec"
+            },
+            {
+                "name": "defaultFont",
+                "comment": " Create a blank font object that can then be updated with the below functions\n",
+                "type": "Chartjs.Options.Font.FontSpec"
+            },
+            {
+                "name": "setFamily",
+                "comment": " Set the font family to use - this follows the standard CSS font-family options\n",
+                "type": "String.String -> Chartjs.Options.Font.FontSpec -> Chartjs.Options.Font.FontSpec"
+            },
+            {
+                "name": "setLineHeight",
+                "comment": " Set the height for each individual line of text\n",
+                "type": "Basics.Float -> Chartjs.Options.Font.FontSpec -> Chartjs.Options.Font.FontSpec"
+            },
+            {
+                "name": "setSize",
+                "comment": " Set the font size, in pixels\n",
+                "type": "Basics.Int -> Chartjs.Options.Font.FontSpec -> Chartjs.Options.Font.FontSpec"
+            },
+            {
+                "name": "setStyle",
+                "comment": " Set the font style. Does not apply to titles. Follows the standard CSS font-style options.\n",
+                "type": "String.String -> Chartjs.Options.Font.FontSpec -> Chartjs.Options.Font.FontSpec"
+            },
+            {
+                "name": "setWeight",
+                "comment": " Set the font weight. Follows the standard CSS font-weight options.\n",
+                "type": "String.String -> Chartjs.Options.Font.FontSpec -> Chartjs.Options.Font.FontSpec"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chartjs.Options.Layout",
+        "comment": " For more information, see <https://www.chartjs.org/docs/latest/configuration/layout.html>\n\n@docs Layout\n\n",
+        "unions": [
+            {
+                "name": "Layout",
+                "comment": " Controls the amount of padding inside the chart\nBy default, this is 0 on all sides\n\nThis can be set as either Uniform (applied to all sides)\nor Specific (different paddings for each side)\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Uniform",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "Specific",
+                        [
+                            "{ left : Basics.Int, right : Basics.Int, top : Basics.Int, bottom : Basics.Int }"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "Chartjs.Options.Legend",
+        "comment": " For more information, see <https://www.chartjs.org/docs/latest/configuration/legend.html>\n\n@docs Legend, defaultLegend\n\n@docs setDisplay, setPosition, setFullWidth, setReverse, setLabels, setTitle\n\n@docs Labels, defaultLabels, setBoxWidth, setBoxHeight, setLabelColor, setLabelFont, setLabelPadding, setPointStyle\n\n@docs Title, defaultTitle, setTitleColor, setTitleFont, setTitlePadding\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Labels",
+                "comment": " Properties for the labels that make up the legend\n",
+                "args": [],
+                "type": "{ boxWidth : Maybe.Maybe Basics.Int, boxHeight : Maybe.Maybe Basics.Int, color : Maybe.Maybe Color.Color, font : Maybe.Maybe Chartjs.Options.Font.FontSpec, padding : Maybe.Maybe Basics.Int, pointStyle : Maybe.Maybe Chartjs.Common.PointStyle }"
+            },
+            {
+                "name": "Legend",
+                "comment": " The chart legend displays data about the datasets that are appearing on the chart\n",
+                "args": [],
+                "type": "{ display : Maybe.Maybe Basics.Bool, position : Maybe.Maybe Chartjs.Common.Position, fullWidth : Maybe.Maybe Basics.Bool, reverse : Maybe.Maybe Basics.Bool, labels : Maybe.Maybe Chartjs.Options.Legend.Labels, title : Maybe.Maybe Chartjs.Options.Legend.Title }"
+            },
+            {
+                "name": "Title",
+                "comment": " ",
+                "args": [],
+                "type": "{ text : String.String, color : Maybe.Maybe Color.Color, font : Maybe.Maybe Chartjs.Options.Font.FontSpec, padding : Maybe.Maybe Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultLabels",
+                "comment": " Create a blank labels object that can then be updated with the below functions\n",
+                "type": "Chartjs.Options.Legend.Labels"
+            },
+            {
+                "name": "defaultLegend",
+                "comment": " Create a blank legend object that can then be updated with the below functions\n",
+                "type": "Chartjs.Options.Legend.Legend"
+            },
+            {
+                "name": "defaultTitle",
+                "comment": " Create a blank legend title object that can then be updated with the below functions\n",
+                "type": "String.String -> Chartjs.Options.Legend.Title"
+            },
+            {
+                "name": "setBoxHeight",
+                "comment": " Specify the height of the coloured box / icon next to each legend entry\n",
+                "type": "Basics.Int -> Chartjs.Options.Legend.Labels -> Chartjs.Options.Legend.Labels"
+            },
+            {
+                "name": "setBoxWidth",
+                "comment": " Specify the width of the coloured box / icon next to each legend entry\n",
+                "type": "Basics.Int -> Chartjs.Options.Legend.Labels -> Chartjs.Options.Legend.Labels"
+            },
+            {
+                "name": "setDisplay",
+                "comment": " Is the legend shown?\n",
+                "type": "Basics.Bool -> Chartjs.Options.Legend.Legend -> Chartjs.Options.Legend.Legend"
+            },
+            {
+                "name": "setFullWidth",
+                "comment": " Marks that this box should take the full width of the canvas (pushing down other boxes).\nThis is unlikely to need to be changed in day-to-day use.\n",
+                "type": "Basics.Bool -> Chartjs.Options.Legend.Legend -> Chartjs.Options.Legend.Legend"
+            },
+            {
+                "name": "setLabelColor",
+                "comment": " Set the text color to be used for legend labels\n",
+                "type": "Color.Color -> Chartjs.Options.Legend.Labels -> Chartjs.Options.Legend.Labels"
+            },
+            {
+                "name": "setLabelFont",
+                "comment": " Set the font properties to be used for legend labels\n",
+                "type": "Chartjs.Options.Font.FontSpec -> Chartjs.Options.Legend.Labels -> Chartjs.Options.Legend.Labels"
+            },
+            {
+                "name": "setLabelPadding",
+                "comment": " Set the padding around each legend label\n",
+                "type": "Basics.Int -> Chartjs.Options.Legend.Labels -> Chartjs.Options.Legend.Labels"
+            },
+            {
+                "name": "setLabels",
+                "comment": " Set properties for the labels of this legend\n",
+                "type": "Chartjs.Options.Legend.Labels -> Chartjs.Options.Legend.Legend -> Chartjs.Options.Legend.Legend"
+            },
+            {
+                "name": "setPointStyle",
+                "comment": " Set a special point style for the legend label boxes\n",
+                "type": "Chartjs.Common.PointStyle -> Chartjs.Options.Legend.Labels -> Chartjs.Options.Legend.Labels"
+            },
+            {
+                "name": "setPosition",
+                "comment": " Position of the legend (relative to the chart)\n",
+                "type": "Chartjs.Common.Position -> Chartjs.Options.Legend.Legend -> Chartjs.Options.Legend.Legend"
+            },
+            {
+                "name": "setReverse",
+                "comment": " Legend will show datasets in reverse order\n",
+                "type": "Basics.Bool -> Chartjs.Options.Legend.Legend -> Chartjs.Options.Legend.Legend"
+            },
+            {
+                "name": "setTitle",
+                "comment": " Set properties for the title of this legend\n",
+                "type": "Chartjs.Options.Legend.Title -> Chartjs.Options.Legend.Legend -> Chartjs.Options.Legend.Legend"
+            },
+            {
+                "name": "setTitleColor",
+                "comment": " Set the text color for the legend title\n",
+                "type": "Color.Color -> Chartjs.Options.Legend.Title -> Chartjs.Options.Legend.Title"
+            },
+            {
+                "name": "setTitleFont",
+                "comment": " Set the font properties for the legend title\n",
+                "type": "Chartjs.Options.Font.FontSpec -> Chartjs.Options.Legend.Title -> Chartjs.Options.Legend.Title"
+            },
+            {
+                "name": "setTitlePadding",
+                "comment": " Set the padding around the legend title\n",
+                "type": "Basics.Int -> Chartjs.Options.Legend.Title -> Chartjs.Options.Legend.Title"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chartjs.Options.Scale",
+        "comment": " Axes are an integral part of a chart.\n\nFor more information, see <https://www.chartjs.org/docs/3.3.2/axes/>\n\n\n## Scale IDs\n\nEach scale requires an identifier. This is used to determine the axis, and can also be used to assign datasets to specific axises.\n\nBy default, ChartJs determines the axis based on the first letter of the axis id -> eg using the id \"x\" will create an x axis.\nFor best results, you can explicitly set an axis using setAxis\n\n\n## Example Scales\n\nCreate a Linear x-axis, ranging from 0 to 100\n\n    defaultScale Linear \"x\"\n        |> setMin 0\n        |> setMax 100\n\nCreate a Logarithmic y-axis, aligned to the right hand side, suggesting to start at 0:\n\n    defaultScale Logarithmic \"y\"\n        |> setPosition Common.Right\n        |> setSuggestedMin 0\n\nTo adjust the step size of ticks, you will need to set a ScaleTicks object (see below)\n\n@docs ScaleType, Scale, defaultScale\n@docs setAxis, setPosition, setReverse, setMin, setMax, setSuggestedMin, setSuggestedMax, setGrid, setTitle, setTicks\n\n\n## Styling the Grid\n\n@docs ScaleGrid, defaultGrid, setBorderColor, setBorderWidth, setDrawBorder, setDrawOnChartArea, setDrawTicks, setGridColor, setTickColor, setTickLength, setTickWidth\n\n\n## Titles / Axis Labels\n\nTo help tell users what they're looking at, you can set a title to label each axis.\n\n    defaultScale Linear \"x\"\n        |> setTitle\n            (defaultTitle \"The X Axis\"\n                |> setTitleColor Color.red\n            )\n\n@docs ScaleTitle, defaultTitle, setTitleColor, setTitleFont, setTitlePadding\n\n\n## Styling the Tick Labels\n\n    defaultScale Linear \"y\"\n        |> setMin 0\n        |> setMax 100\n        |> setTicks\n            (defaultTicks\n                |> setTickTextColor Color.white\n                |> setTickStrokeColor Color.red\n                |> setTickStrokeWidth 2\n                |> setTickPadding 4\n            )\n\nScaleTicks also contains the stepSize property, which can be used to explicitly set the gap between ticks:\n\n    defaultScale Linear \"y\"\n        |> setMin 0\n        |> setMax 100\n        |> setTicks\n            (defaultTicks\n                |> setStepSize 20\n            )\n\n@docs ScaleTicks, defaultTicks, setStepSize, setBackdropColor, setBackdropPadding, setTickDisplay, setTickPadding, setTickTextColor, setTickFont, setTickStrokeColor, setTickStrokeWidth, setTickZ\n\n\n## Label Formatting\n\nYou can additionally add prefixes or suffixes to a tick label.\n\n@docs TickFormat, setTickPrefix, setTickSuffix\n\n",
+        "unions": [
+            {
+                "name": "ScaleType",
+                "comment": " Linear and logarithmic scales work best\n\nFor categorical scales, you're probably best using a data object with labels set\nFor time scales, good luck\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Linear",
+                        []
+                    ],
+                    [
+                        "Logarithmic",
+                        []
+                    ],
+                    [
+                        "Categorical",
+                        []
+                    ],
+                    [
+                        "Time",
+                        []
+                    ],
+                    [
+                        "RadialLinear",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "TickFormat",
+                "comment": " Formatting callbacks for the scale ticks\nUse setPrefix and setSuffix instead\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Prefix",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Suffix",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Scale",
+                "comment": " ",
+                "args": [],
+                "type": "{ id : String.String, type_ : Chartjs.Options.Scale.ScaleType, axis : Maybe.Maybe Chartjs.Common.IndexAxis, position : Maybe.Maybe Chartjs.Common.Position, reverse : Maybe.Maybe Basics.Bool, min : Maybe.Maybe Basics.Float, max : Maybe.Maybe Basics.Float, suggestedMin : Maybe.Maybe Basics.Float, suggestedMax : Maybe.Maybe Basics.Float, grid : Maybe.Maybe Chartjs.Options.Scale.ScaleGrid, title : Maybe.Maybe Chartjs.Options.Scale.ScaleTitle, ticks : Maybe.Maybe Chartjs.Options.Scale.ScaleTicks }"
+            },
+            {
+                "name": "ScaleGrid",
+                "comment": " Styling properties for the grid lines of a scale\n",
+                "args": [],
+                "type": "{ borderColor : Maybe.Maybe Color.Color, borderWidth : Maybe.Maybe Basics.Int, gridColor : Maybe.Maybe Color.Color, drawBorder : Maybe.Maybe Basics.Bool, drawOnChartArea : Maybe.Maybe Basics.Bool, drawTicks : Maybe.Maybe Basics.Bool, tickColor : Maybe.Maybe Color.Color, tickLength : Maybe.Maybe Basics.Int, tickWidth : Maybe.Maybe Basics.Int }"
+            },
+            {
+                "name": "ScaleTicks",
+                "comment": " Styling properties for the tick labels of a scale\n",
+                "args": [],
+                "type": "{ backdropColor : Maybe.Maybe Color.Color, backdropPadding : Maybe.Maybe Basics.Int, color : Maybe.Maybe Color.Color, display : Maybe.Maybe Basics.Bool, font : Maybe.Maybe Chartjs.Options.Font.FontSpec, padding : Maybe.Maybe Basics.Int, stepSize : Maybe.Maybe Basics.Float, textStrokeColor : Maybe.Maybe Color.Color, textStrokeWidth : Maybe.Maybe Basics.Int, z : Maybe.Maybe Basics.Int, tickFormat : Maybe.Maybe Chartjs.Options.Scale.TickFormat }"
+            },
+            {
+                "name": "ScaleTitle",
+                "comment": " Scale titles are used for labelling the graph axes\n",
+                "args": [],
+                "type": "{ text : String.String, color : Maybe.Maybe Color.Color, font : Maybe.Maybe Chartjs.Options.Font.FontSpec, padding : Maybe.Maybe Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultGrid",
+                "comment": " Create a blank grid properties object that can then be manipulated\n",
+                "type": "Chartjs.Options.Scale.ScaleGrid"
+            },
+            {
+                "name": "defaultScale",
+                "comment": " Given a scale type and an ID, creates an empty scale object\n\nIt's best practice to set the ID of your scales to \"x\" or \"y\", depending on what axis you need\nFor more complicated use cases, you can assign these objects to datasets using the XAxisID / YAxisID properties\n\n",
+                "type": "Chartjs.Options.Scale.ScaleType -> String.String -> Chartjs.Options.Scale.Scale"
+            },
+            {
+                "name": "defaultTicks",
+                "comment": " Create a blank ticks properties object that can then be manipulated\n",
+                "type": "Chartjs.Options.Scale.ScaleTicks"
+            },
+            {
+                "name": "defaultTitle",
+                "comment": " Create a basic title from the given text\n",
+                "type": "String.String -> Chartjs.Options.Scale.ScaleTitle"
+            },
+            {
+                "name": "setAxis",
+                "comment": " Set the axis for this scale - is this an X axis or a Y axis?\n\nIf this is not set, Chartjs will try and guess based on the first letter of your axis ID\nFor best practices, you should set this explicitly!\n\n",
+                "type": "Chartjs.Common.IndexAxis -> Chartjs.Options.Scale.Scale -> Chartjs.Options.Scale.Scale"
+            },
+            {
+                "name": "setBackdropColor",
+                "comment": " Set the color of tick label backdrops\n",
+                "type": "Color.Color -> Chartjs.Options.Scale.ScaleTicks -> Chartjs.Options.Scale.ScaleTicks"
+            },
+            {
+                "name": "setBackdropPadding",
+                "comment": " Set the padding around tick label backdrops\n",
+                "type": "Basics.Int -> Chartjs.Options.Scale.ScaleTicks -> Chartjs.Options.Scale.ScaleTicks"
+            },
+            {
+                "name": "setBorderColor",
+                "comment": " Set the edge border color\n",
+                "type": "Color.Color -> Chartjs.Options.Scale.ScaleGrid -> Chartjs.Options.Scale.ScaleGrid"
+            },
+            {
+                "name": "setBorderWidth",
+                "comment": " Set the edge border width\n",
+                "type": "Basics.Int -> Chartjs.Options.Scale.ScaleGrid -> Chartjs.Options.Scale.ScaleGrid"
+            },
+            {
+                "name": "setDrawBorder",
+                "comment": " Set whether the border should be drawn\n",
+                "type": "Basics.Bool -> Chartjs.Options.Scale.ScaleGrid -> Chartjs.Options.Scale.ScaleGrid"
+            },
+            {
+                "name": "setDrawOnChartArea",
+                "comment": " Set whether the border should be drawn\n",
+                "type": "Basics.Bool -> Chartjs.Options.Scale.ScaleGrid -> Chartjs.Options.Scale.ScaleGrid"
+            },
+            {
+                "name": "setDrawTicks",
+                "comment": " Set whether to draw the tick dashes\n",
+                "type": "Basics.Bool -> Chartjs.Options.Scale.ScaleGrid -> Chartjs.Options.Scale.ScaleGrid"
+            },
+            {
+                "name": "setGrid",
+                "comment": " Set the grid properties for this scale\n",
+                "type": "Chartjs.Options.Scale.ScaleGrid -> Chartjs.Options.Scale.Scale -> Chartjs.Options.Scale.Scale"
+            },
+            {
+                "name": "setGridColor",
+                "comment": " Set the color of grid lines\n",
+                "type": "Color.Color -> Chartjs.Options.Scale.ScaleGrid -> Chartjs.Options.Scale.ScaleGrid"
+            },
+            {
+                "name": "setMax",
+                "comment": " Set the maximum value for this scale\nThis will override the maximum value from the data\n",
+                "type": "Basics.Float -> Chartjs.Options.Scale.Scale -> Chartjs.Options.Scale.Scale"
+            },
+            {
+                "name": "setMin",
+                "comment": " Set the minimum value for this scale\nThis will override the minimum value from the data\n",
+                "type": "Basics.Float -> Chartjs.Options.Scale.Scale -> Chartjs.Options.Scale.Scale"
+            },
+            {
+                "name": "setPosition",
+                "comment": " Set the position of this scale\n",
+                "type": "Chartjs.Common.Position -> Chartjs.Options.Scale.Scale -> Chartjs.Options.Scale.Scale"
+            },
+            {
+                "name": "setReverse",
+                "comment": " Set whether the ticks on this scale should be reversed\n",
+                "type": "Basics.Bool -> Chartjs.Options.Scale.Scale -> Chartjs.Options.Scale.Scale"
+            },
+            {
+                "name": "setStepSize",
+                "comment": " Set a fixed step size for these ticks\n",
+                "type": "Basics.Float -> Chartjs.Options.Scale.ScaleTicks -> Chartjs.Options.Scale.ScaleTicks"
+            },
+            {
+                "name": "setSuggestedMax",
+                "comment": " Set a suggestion, used when calculating the maximum extent\n",
+                "type": "Basics.Float -> Chartjs.Options.Scale.Scale -> Chartjs.Options.Scale.Scale"
+            },
+            {
+                "name": "setSuggestedMin",
+                "comment": " Set a suggestion, used when calculating the minimum extent\n",
+                "type": "Basics.Float -> Chartjs.Options.Scale.Scale -> Chartjs.Options.Scale.Scale"
+            },
+            {
+                "name": "setTickColor",
+                "comment": " Set the color of the tick dashes\n",
+                "type": "Color.Color -> Chartjs.Options.Scale.ScaleGrid -> Chartjs.Options.Scale.ScaleGrid"
+            },
+            {
+                "name": "setTickDisplay",
+                "comment": " Set whether or not these ticks should be displayed\n",
+                "type": "Basics.Bool -> Chartjs.Options.Scale.ScaleTicks -> Chartjs.Options.Scale.ScaleTicks"
+            },
+            {
+                "name": "setTickFont",
+                "comment": " Set the font properties for the tick labels\n",
+                "type": "Chartjs.Options.Font.FontSpec -> Chartjs.Options.Scale.ScaleTicks -> Chartjs.Options.Scale.ScaleTicks"
+            },
+            {
+                "name": "setTickLength",
+                "comment": " Set the length (how far into the chart they extend) of tick dashes\n",
+                "type": "Basics.Int -> Chartjs.Options.Scale.ScaleGrid -> Chartjs.Options.Scale.ScaleGrid"
+            },
+            {
+                "name": "setTickPadding",
+                "comment": " Set the padding around the tick labels\n",
+                "type": "Basics.Int -> Chartjs.Options.Scale.ScaleTicks -> Chartjs.Options.Scale.ScaleTicks"
+            },
+            {
+                "name": "setTickPrefix",
+                "comment": " Set a prefix to apply to all the tick labels\n",
+                "type": "String.String -> Chartjs.Options.Scale.ScaleTicks -> Chartjs.Options.Scale.ScaleTicks"
+            },
+            {
+                "name": "setTickStrokeColor",
+                "comment": " Set the tick stroke color\n",
+                "type": "Color.Color -> Chartjs.Options.Scale.ScaleTicks -> Chartjs.Options.Scale.ScaleTicks"
+            },
+            {
+                "name": "setTickStrokeWidth",
+                "comment": " Set the tick stroke width\n",
+                "type": "Basics.Int -> Chartjs.Options.Scale.ScaleTicks -> Chartjs.Options.Scale.ScaleTicks"
+            },
+            {
+                "name": "setTickSuffix",
+                "comment": " Set a suffix to apply to all the tick labels\n",
+                "type": "String.String -> Chartjs.Options.Scale.ScaleTicks -> Chartjs.Options.Scale.ScaleTicks"
+            },
+            {
+                "name": "setTickTextColor",
+                "comment": " Set the color for the tick labels\n",
+                "type": "Color.Color -> Chartjs.Options.Scale.ScaleTicks -> Chartjs.Options.Scale.ScaleTicks"
+            },
+            {
+                "name": "setTickWidth",
+                "comment": " Set the width of tick dashes\n",
+                "type": "Basics.Int -> Chartjs.Options.Scale.ScaleGrid -> Chartjs.Options.Scale.ScaleGrid"
+            },
+            {
+                "name": "setTickZ",
+                "comment": " Set the z-index of the tick layer\n\nValues <= 0 are under datasets, > 0 are drawn on top\n\n",
+                "type": "Basics.Int -> Chartjs.Options.Scale.ScaleTicks -> Chartjs.Options.Scale.ScaleTicks"
+            },
+            {
+                "name": "setTicks",
+                "comment": " Set the tick properties for this scale\n",
+                "type": "Chartjs.Options.Scale.ScaleTicks -> Chartjs.Options.Scale.Scale -> Chartjs.Options.Scale.Scale"
+            },
+            {
+                "name": "setTitle",
+                "comment": " Set the title properties for this scale\n",
+                "type": "Chartjs.Options.Scale.ScaleTitle -> Chartjs.Options.Scale.Scale -> Chartjs.Options.Scale.Scale"
+            },
+            {
+                "name": "setTitleColor",
+                "comment": " Set the text color for this title\n",
+                "type": "Color.Color -> Chartjs.Options.Scale.ScaleTitle -> Chartjs.Options.Scale.ScaleTitle"
+            },
+            {
+                "name": "setTitleFont",
+                "comment": " Set the font properties for this title text\n",
+                "type": "Chartjs.Options.Font.FontSpec -> Chartjs.Options.Scale.ScaleTitle -> Chartjs.Options.Scale.ScaleTitle"
+            },
+            {
+                "name": "setTitlePadding",
+                "comment": " Set the padding around the title text\n",
+                "type": "Basics.Int -> Chartjs.Options.Scale.ScaleTitle -> Chartjs.Options.Scale.ScaleTitle"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chartjs.Options.Title",
+        "comment": " For more information, see <https://www.chartjs.org/docs/latest/configuration/title.html>\n\n@docs Title, defaultTitle\n@docs setDisplay, setAlign, setPosition, setPadding, setText, setFont, setColor\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Title",
+                "comment": " The Title is text that is drawn outside of the Chart\n",
+                "args": [],
+                "type": "{ display : Maybe.Maybe Basics.Bool, align : Maybe.Maybe Chartjs.Common.Align, position : Maybe.Maybe Chartjs.Common.Position, padding : Maybe.Maybe Basics.Int, text : Maybe.Maybe String.String, font : Maybe.Maybe Chartjs.Options.Font.FontSpec, color : Maybe.Maybe Color.Color }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultTitle",
+                "comment": " Create a blank title object\n",
+                "type": "Chartjs.Options.Title.Title"
+            },
+            {
+                "name": "setAlign",
+                "comment": " Text alignment of the title\n",
+                "type": "Chartjs.Common.Align -> Chartjs.Options.Title.Title -> Chartjs.Options.Title.Title"
+            },
+            {
+                "name": "setColor",
+                "comment": " Color for the title text\n",
+                "type": "Color.Color -> Chartjs.Options.Title.Title -> Chartjs.Options.Title.Title"
+            },
+            {
+                "name": "setDisplay",
+                "comment": " Is the title shown?\n",
+                "type": "Basics.Bool -> Chartjs.Options.Title.Title -> Chartjs.Options.Title.Title"
+            },
+            {
+                "name": "setFont",
+                "comment": " Font properties to use for the title text\n",
+                "type": "Chartjs.Options.Font.FontSpec -> Chartjs.Options.Title.Title -> Chartjs.Options.Title.Title"
+            },
+            {
+                "name": "setPadding",
+                "comment": " Padding (in pixels) above and below the title text\n",
+                "type": "Basics.Int -> Chartjs.Options.Title.Title -> Chartjs.Options.Title.Title"
+            },
+            {
+                "name": "setPosition",
+                "comment": " Position of the title\n",
+                "type": "Chartjs.Common.Position -> Chartjs.Options.Title.Title -> Chartjs.Options.Title.Title"
+            },
+            {
+                "name": "setText",
+                "comment": " Title text to be displayed\n",
+                "type": "String.String -> Chartjs.Options.Title.Title -> Chartjs.Options.Title.Title"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chartjs.Options.Tooltips",
+        "comment": " For more information, see <https://www.chartjs.org/docs/latest/configuration/tooltip.html>\n\n@docs Tooltips, defaultTooltips\n\n@docs PositionMode, Mode\n\n@docs setBackgroundColor, setEnabled, setIntersect, setMode, setPosition\n\n\n## Label Formatting\n\nWhile most of the Chart.js callbacks aren't supported, there's a couple of helpers for formatting labels.\n\n@docs LabelFormat, setLabelPrefix, setLabelSuffix\n\n\n## Titles & Text\n\n@docs TooltipTextAlign\n\n@docs setTitleColor, setTitleFont, setTitleAlign, setTitleSpacing, setTitleMarginBottom\n\n@docs setBodyColor, setBodyFont, setBodyAlign, setBodySpacing\n\n@docs setFooterText, setFooterColor, setFooterFont, setFooterAlign, setFooterSpacing, setFooterMarginTop\n\n@docs setCaretPadding, setCaretSize\n\n\n## Tooltip Borders\n\n@docs setCornerRadius, setBorderColor, setBorderWidth\n\n\n## Other Properties\n\n@docs setMultiKeyBackground, setDisplayColors\n\n",
+        "unions": [
+            {
+                "name": "LabelFormat",
+                "comment": " Use setLabelPrefix and setLabelSuffix instead of this directly\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Prefix",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Suffix",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Mode",
+                "comment": " Controls what elements are displayed in the tooltip\nPoint: finds all items that intersect the point\nNearest: gets the items that are at the nearest distance to the point\nIndex: finds item at the same index\nX: find all items that interesct (based on X axis only)\nY: find all items that intersect (based on Y axis only)\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Point",
+                        []
+                    ],
+                    [
+                        "Nearest",
+                        []
+                    ],
+                    [
+                        "Index",
+                        []
+                    ],
+                    [
+                        "DataSet",
+                        []
+                    ],
+                    [
+                        "X",
+                        []
+                    ],
+                    [
+                        "Y",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "PositionMode",
+                "comment": " Positioning mode for tooltips\n\nAverage will place the tooltip at the average position of the displayed items\nNearest will place the tooltip at the element closest to the event position\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "PositionModeAverage",
+                        []
+                    ],
+                    [
+                        "PositionModeNearest",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "TooltipTextAlign",
+                "comment": " How to align tooltip text\n\nThis is different to the Common.Align type for some reason - sorry.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Left",
+                        []
+                    ],
+                    [
+                        "Right",
+                        []
+                    ],
+                    [
+                        "Center",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Tooltips",
+                "comment": " Tooltips are displayed when interacting with charts\n",
+                "args": [],
+                "type": "{ enabled : Maybe.Maybe Basics.Bool, mode : Maybe.Maybe Chartjs.Options.Tooltips.Mode, intersect : Maybe.Maybe Basics.Bool, position : Maybe.Maybe Chartjs.Options.Tooltips.PositionMode, labelFormat : Maybe.Maybe Chartjs.Options.Tooltips.LabelFormat, backgroundColor : Maybe.Maybe Color.Color, titleColor : Maybe.Maybe Color.Color, titleFont : Maybe.Maybe Chartjs.Options.Font.FontSpec, titleAlign : Maybe.Maybe Chartjs.Options.Tooltips.TooltipTextAlign, titleSpacing : Maybe.Maybe Basics.Int, titleMarginBottom : Maybe.Maybe Basics.Int, bodyColor : Maybe.Maybe Color.Color, bodyFont : Maybe.Maybe Chartjs.Options.Font.FontSpec, bodyAlign : Maybe.Maybe Chartjs.Options.Tooltips.TooltipTextAlign, bodySpacing : Maybe.Maybe Basics.Int, footerText : Maybe.Maybe String.String, footerColor : Maybe.Maybe Color.Color, footerFont : Maybe.Maybe Chartjs.Options.Font.FontSpec, footerAlign : Maybe.Maybe Chartjs.Options.Tooltips.TooltipTextAlign, footerSpacing : Maybe.Maybe Basics.Int, footerMarginTop : Maybe.Maybe Basics.Int, caretPadding : Maybe.Maybe Basics.Int, caretSize : Maybe.Maybe Basics.Int, cornerRadius : Maybe.Maybe Basics.Int, multiKeyBackground : Maybe.Maybe Color.Color, displayColors : Maybe.Maybe Basics.Bool, borderColor : Maybe.Maybe Color.Color, borderWidth : Maybe.Maybe Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultTooltips",
+                "comment": " Create a blank tooltips object\n",
+                "type": "Chartjs.Options.Tooltips.Tooltips"
+            },
+            {
+                "name": "setBackgroundColor",
+                "comment": " Set the background color of the tooltip\n",
+                "type": "Color.Color -> Chartjs.Options.Tooltips.Tooltips -> Chartjs.Options.Tooltips.Tooltips"
+            },
+            {
+                "name": "setBodyAlign",
+                "comment": " Set the text alignment for the body text\n",
+                "type": "Chartjs.Options.Tooltips.TooltipTextAlign -> Chartjs.Options.Tooltips.Tooltips -> Chartjs.Options.Tooltips.Tooltips"
+            },
+            {
+                "name": "setBodyColor",
+                "comment": " Set the color of the body text\n",
+                "type": "Color.Color -> Chartjs.Options.Tooltips.Tooltips -> Chartjs.Options.Tooltips.Tooltips"
+            },
+            {
+                "name": "setBodyFont",
+                "comment": " Set the font properties for the body text\n",
+                "type": "Chartjs.Options.Font.FontSpec -> Chartjs.Options.Tooltips.Tooltips -> Chartjs.Options.Tooltips.Tooltips"
+            },
+            {
+                "name": "setBodySpacing",
+                "comment": " Set the spacing to add around each tooltip item\n",
+                "type": "Basics.Int -> Chartjs.Options.Tooltips.Tooltips -> Chartjs.Options.Tooltips.Tooltips"
+            },
+            {
+                "name": "setBorderColor",
+                "comment": " Set the color of the tooltip border\n",
+                "type": "Color.Color -> Chartjs.Options.Tooltips.Tooltips -> Chartjs.Options.Tooltips.Tooltips"
+            },
+            {
+                "name": "setBorderWidth",
+                "comment": " Set the width of the tooltip border\n",
+                "type": "Basics.Int -> Chartjs.Options.Tooltips.Tooltips -> Chartjs.Options.Tooltips.Tooltips"
+            },
+            {
+                "name": "setCaretPadding",
+                "comment": " Set the padding for the caret - how far away to move the tooltip arrow from the tooltip point\n",
+                "type": "Basics.Int -> Chartjs.Options.Tooltips.Tooltips -> Chartjs.Options.Tooltips.Tooltips"
+            },
+            {
+                "name": "setCaretSize",
+                "comment": " Set the size (in pixels) of the tooltip arrow\n",
+                "type": "Basics.Int -> Chartjs.Options.Tooltips.Tooltips -> Chartjs.Options.Tooltips.Tooltips"
+            },
+            {
+                "name": "setCornerRadius",
+                "comment": " Set the radius of the tooltip corners\n",
+                "type": "Basics.Int -> Chartjs.Options.Tooltips.Tooltips -> Chartjs.Options.Tooltips.Tooltips"
+            },
+            {
+                "name": "setDisplayColors",
+                "comment": " Set whether color boxes are shown in the tooltip\n",
+                "type": "Basics.Bool -> Chartjs.Options.Tooltips.Tooltips -> Chartjs.Options.Tooltips.Tooltips"
+            },
+            {
+                "name": "setEnabled",
+                "comment": " Set whether tooltips are enabled or not\n",
+                "type": "Basics.Bool -> Chartjs.Options.Tooltips.Tooltips -> Chartjs.Options.Tooltips.Tooltips"
+            },
+            {
+                "name": "setFooterAlign",
+                "comment": " Set the text alignment for the footer text\n",
+                "type": "Chartjs.Options.Tooltips.TooltipTextAlign -> Chartjs.Options.Tooltips.Tooltips -> Chartjs.Options.Tooltips.Tooltips"
+            },
+            {
+                "name": "setFooterColor",
+                "comment": " Set the color of the footer text\n",
+                "type": "Color.Color -> Chartjs.Options.Tooltips.Tooltips -> Chartjs.Options.Tooltips.Tooltips"
+            },
+            {
+                "name": "setFooterFont",
+                "comment": " Set the font properties for the footer text\n",
+                "type": "Chartjs.Options.Font.FontSpec -> Chartjs.Options.Tooltips.Tooltips -> Chartjs.Options.Tooltips.Tooltips"
+            },
+            {
+                "name": "setFooterMarginTop",
+                "comment": " Set the margin on the top of the footer\n",
+                "type": "Basics.Int -> Chartjs.Options.Tooltips.Tooltips -> Chartjs.Options.Tooltips.Tooltips"
+            },
+            {
+                "name": "setFooterSpacing",
+                "comment": " Set the spacing to add around each footer line\n",
+                "type": "Basics.Int -> Chartjs.Options.Tooltips.Tooltips -> Chartjs.Options.Tooltips.Tooltips"
+            },
+            {
+                "name": "setFooterText",
+                "comment": " Set the content for the footer\n",
+                "type": "String.String -> Chartjs.Options.Tooltips.Tooltips -> Chartjs.Options.Tooltips.Tooltips"
+            },
+            {
+                "name": "setIntersect",
+                "comment": " If true, the tooltip mode applies only when the mouse position intersects.\nIf false, the tooltip mode will be applied at all types.\n",
+                "type": "Basics.Bool -> Chartjs.Options.Tooltips.Tooltips -> Chartjs.Options.Tooltips.Tooltips"
+            },
+            {
+                "name": "setLabelPrefix",
+                "comment": " Set a prefix that should be added to all labels in the tooltip\n\nexample: To format values as currency:\n\n    defaultTooltips\n        |> setLabelPrefix \"$\"\n\n",
+                "type": "String.String -> Chartjs.Options.Tooltips.Tooltips -> Chartjs.Options.Tooltips.Tooltips"
+            },
+            {
+                "name": "setLabelSuffix",
+                "comment": " Set a suffix that should be added to all labels in the tooltip\n\nexample: To format values as percentages:\n\n    defaultTooltips\n        |> setLabelSuffix \"%\"\n\n",
+                "type": "String.String -> Chartjs.Options.Tooltips.Tooltips -> Chartjs.Options.Tooltips.Tooltips"
+            },
+            {
+                "name": "setMode",
+                "comment": " Set the tooltip mode\n\nCheck the [Chart.js docs](https://www.chartjs.org/docs/latest/configuration/interactions.html#modes)\n\n",
+                "type": "Chartjs.Options.Tooltips.Mode -> Chartjs.Options.Tooltips.Tooltips -> Chartjs.Options.Tooltips.Tooltips"
+            },
+            {
+                "name": "setMultiKeyBackground",
+                "comment": " Set the color to draw behind the colored boxes when multiple items are in the tooltip\n",
+                "type": "Color.Color -> Chartjs.Options.Tooltips.Tooltips -> Chartjs.Options.Tooltips.Tooltips"
+            },
+            {
+                "name": "setPosition",
+                "comment": " Set how the tooltip should be positioned - see the PositionMode type for more details\n",
+                "type": "Chartjs.Options.Tooltips.PositionMode -> Chartjs.Options.Tooltips.Tooltips -> Chartjs.Options.Tooltips.Tooltips"
+            },
+            {
+                "name": "setTitleAlign",
+                "comment": " Set the text alignment for the title\n",
+                "type": "Chartjs.Options.Tooltips.TooltipTextAlign -> Chartjs.Options.Tooltips.Tooltips -> Chartjs.Options.Tooltips.Tooltips"
+            },
+            {
+                "name": "setTitleColor",
+                "comment": " Set the color of the title text\n",
+                "type": "Color.Color -> Chartjs.Options.Tooltips.Tooltips -> Chartjs.Options.Tooltips.Tooltips"
+            },
+            {
+                "name": "setTitleFont",
+                "comment": " Set the font properties for the title text\n",
+                "type": "Chartjs.Options.Font.FontSpec -> Chartjs.Options.Tooltips.Tooltips -> Chartjs.Options.Tooltips.Tooltips"
+            },
+            {
+                "name": "setTitleMarginBottom",
+                "comment": " Set the margin on the bottom of the title\n",
+                "type": "Basics.Int -> Chartjs.Options.Tooltips.Tooltips -> Chartjs.Options.Tooltips.Tooltips"
+            },
+            {
+                "name": "setTitleSpacing",
+                "comment": " Set the spacing to add around each title line\n",
+                "type": "Basics.Int -> Chartjs.Options.Tooltips.Tooltips -> Chartjs.Options.Tooltips.Tooltips"
+            }
+        ],
+        "binops": []
+    }
+]

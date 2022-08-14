@@ -1,0 +1,63 @@
+[
+    {
+        "name": "WeakCss",
+        "comment": " Abstraction for working with [`Weak Css`](https://github.com/GlobalWebIndex/weak-css)\nstyle class names.\n\n\n# Type and Constructor\n\n@docs ClassName, namespace\n\n\n# Adding Elements\n\n@docs add, addMany\n\n\n# Convert to Attribute\n\n@docs toClass, nest, nestMany, withStates, withActiveStates\n\n\n# Convert to String\n\n@docs toString\n\n",
+        "unions": [
+            {
+                "name": "ClassName",
+                "comment": " ClassName type describes class selector used to style element.\n\nAll strings are sanitized to prevent missuse and odd resulting selectors.\n**It's highly recommended to avoid spaces, `__` and `--` in arguments though.**\n\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "add",
+                "comment": " Add element\n\n    import Html.Attributes exposing (class)\n\n    namespace \"menu\"\n        |> add \"list\"\n        |> toClass\n\n    --> class \"menu__list\"\n\n",
+                "type": "String.String -> WeakCss.ClassName -> WeakCss.ClassName"
+            },
+            {
+                "name": "addMany",
+                "comment": " Add new elements from list.\n\n    import Html.Attributes exposing (class)\n\n    namespace \"menu\"\n        |> addMany [\"item\", \"link\"]\n        |> toClass\n\n    --> class \"menu__item--link\"\n\n",
+                "type": "List.List String.String -> WeakCss.ClassName -> WeakCss.ClassName"
+            },
+            {
+                "name": "namespace",
+                "comment": " Construct [`ClassName`](#ClassName) with given namespace.\n\n    import Html.Attributes exposing (class)\n\n    namespace \"menu\" |> toClass\n\n    --> class \"menu\"\n\n",
+                "type": "String.String -> WeakCss.ClassName"
+            },
+            {
+                "name": "nest",
+                "comment": " Add new element and convert to `Html.Attribute msg`.\n\n    import Html.Attributes exposing (class)\n\n    namespace \"menu\"\n        |> nest \"item\"\n    --> class \"menu__item\"\n\n    namespace \"menu\"\n        |> add \"item\"\n        |> nest \"link\"\n    --> class \"menu__item--link\"\n\n",
+                "type": "String.String -> WeakCss.ClassName -> Html.Attribute msg"
+            },
+            {
+                "name": "nestMany",
+                "comment": " Add new elements from list and convert it all to `Html.Attribute msg`.\n\n    import Html.Attributes exposing (class)\n\n    namespace \"menu\"\n        |> nestMany [\"item\", \"link\"]\n    --> class \"menu__item--link\"\n\n    namespace \"menu\"\n        |> nestMany [\"item\"]\n    --> class \"menu__item\"\n\n",
+                "type": "List.List String.String -> WeakCss.ClassName -> Html.Attribute msg"
+            },
+            {
+                "name": "toClass",
+                "comment": " Convert [`ClassName`](#ClassName) to `Html.Attribute msg`.\n\n    import Html.Attributes exposing (class)\n\n    namespace \"menu\"\n        |> toClass\n    --> class \"menu\"\n\n    namespace \"menu\"\n        |> add \"list\"\n        |> toClass\n    --> class \"menu__list\"\n\n",
+                "type": "WeakCss.ClassName -> Html.Attribute msg"
+            },
+            {
+                "name": "toString",
+                "comment": " Convert the `ClassName` into a `String`\n",
+                "type": "WeakCss.ClassName -> String.String"
+            },
+            {
+                "name": "withActiveStates",
+                "comment": " Add state to last element [`ClassName`](#ClassName) and convert to `Html.Attribute msg`.\n\n    import Html.Attributes exposing (class)\n\n    namespace \"menu\"\n        |> add \"item\"\n        |> withActiveStates [ \"active\", \"highlighted\" ]\n    --> class \"menu__item active highlighted\"\n\n    namespace \"menu\"\n        |> withActiveStates []\n    --> class \"menu\"\n\n",
+                "type": "List.List String.String -> WeakCss.ClassName -> Html.Attribute msg"
+            },
+            {
+                "name": "withStates",
+                "comment": " Add state to last element [`ClassName`](#ClassName) and convert to `Html.Attribute msg`.\n\n    import Html.Attributes exposing (class)\n\n    isActive : Bool\n    isActive =\n        True\n\n    isHighlighted : Bool\n    isHighlighted =\n        False\n\n    namespace \"menu\"\n        |> add \"item\"\n        |> withStates\n            [ ( \"active\", isActive )\n            , ( \"highlighted\", isHighlighted )\n            ]\n    --> class \"menu__item active\"\n\n    namespace \"menu\"\n        |> withStates []\n    --> class \"menu\"\n\n",
+                "type": "List.List ( String.String, Basics.Bool ) -> WeakCss.ClassName -> Html.Attribute msg"
+            }
+        ],
+        "binops": []
+    }
+]

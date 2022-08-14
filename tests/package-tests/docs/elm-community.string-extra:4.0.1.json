@@ -1,0 +1,211 @@
+[
+    {
+        "name": "String.Extra",
+        "comment": " Additional functions for working with Strings\n\n\n## Change words casing\n\n@docs toSentenceCase, toTitleCase, decapitalize\n\n\n## Inflector functions\n\nFunctions borrowed from the Rails Inflector class\n\n@docs camelize, classify, underscored, dasherize, humanize\n\n\n## Replace and Splice\n\n@docs replaceSlice, insertAt, nonEmpty, nonBlank, removeAccents\n\n\n## Splitting\n\n@docs break, softBreak\n\n\n## Wrapping\n\n@docs wrap, wrapWith, softWrap, softWrapWith, quote, surround\n\n\n## Checks\n\n@docs isBlank, countOccurrences\n\n\n## Formatting\n\n@docs clean, unquote, unsurround, unindent, ellipsis, softEllipsis, ellipsisWith, stripTags, pluralize\n\n\n## Converting Lists\n\n@docs toSentence, toSentenceOxford\n\n\n## Finding\n\n@docs rightOf, leftOf, rightOfBack, leftOfBack\n\n\n## Converting UTF-32\n\n@docs toCodePoints, fromCodePoints\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "break",
+                "comment": " Break a string into a list of strings of a specified maximum length.\n\n    break 10 \"The quick brown fox\" == [ \"The quick \", \"brown fox\" ]\n\n    break 2 \"\" == [ \"\" ]\n\n",
+                "type": "Basics.Int -> String.String -> List.List String.String"
+            },
+            {
+                "name": "camelize",
+                "comment": " Convert an underscored or dasherized string to a camelized one.\n\n    camelize \"-moz-transform\" == \"MozTransform\"\n\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "classify",
+                "comment": " Convert a string to a camelized string starting with an uppercase letter.\nAll non-word characters will be stripped out of the original string.\n\n    classify \"some_class_name\" == \"SomeClassName\"\n\n    classify \"myLittleCamel.class.name\" == \"MyLittleCamelClassName\"\n\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "clean",
+                "comment": " Trim the whitespace of both sides of the string and compress\nrepeated whitespace internally to a single whitespace char.\n\n    clean \" The   quick brown   fox    \" == \"The quick brown fox\"\n\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "countOccurrences",
+                "comment": " Return the number of occurrences of a substring in another string.\n\n    countOccurrences \"Hello\" \"Hello World\" == 1\n\n    countOccurrences \"o\" \"Hello World\" == 2\n\n",
+                "type": "String.String -> String.String -> Basics.Int"
+            },
+            {
+                "name": "dasherize",
+                "comment": " Return a string joined by dashes after separating it by its uppercase characters.\nAny sequence of spaces or underscores will also be converted to a single dash.\nThe final string will be lowercased.\n\n    dasherize \"SomeClassName\" == \"-some-class-name\"\n    dasherize \"some_class_name\" = \"some-class-name\"\n    dasherize \"someClass name\" = \"some-class-name\"\n\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "decapitalize",
+                "comment": " Decapitalize the first letter of a string.\n\n    decapitalize \"This is a phrase\" == \"this is a phrase\"\n\n    decapitalize \"Hello, World\" == \"hello, World\"\n\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "ellipsis",
+                "comment": " Truncate the string at the specified length if the string is\nlonger than the specified length, and replace the end of the truncated\nstring with `\"...\"`, such that the resulting string is of the\nspecified length.\n\nThe resulting string will have at most the specified length.\n\n    ellipsis 5 \"Hello World\" == \"He...\"\n\n    ellipsis 10 \"Hello World\" == \"Hello W...\"\n\n    ellipsis 10 \"Hello\" == \"Hello\"\n\n    ellipsis 8 \"Hello World\" == \"Hello...\"\n\n",
+                "type": "Basics.Int -> String.String -> String.String"
+            },
+            {
+                "name": "ellipsisWith",
+                "comment": " Truncate the second string at the specified length if the string is\nlonger than the specified length, and replace the end of the truncated\nstring with the first string, such that the resulting string is of the\nspecified length.\n\nThe resulting string will have at most the specified length.\n\n    ellipsisWith 5 \" ..\" \"Hello World\" == \"He ..\"\n\n    ellipsisWith 10 \" ..\" \"Hello World\" == \"Hello W ..\"\n\n    ellipsisWith 10 \" ..\" \"Hello\" == \"Hello\"\n\n    ellipsisWith 8 \" ..\" \"Hello World\" == \"Hello ..\"\n\n",
+                "type": "Basics.Int -> String.String -> String.String -> String.String"
+            },
+            {
+                "name": "fromCodePoints",
+                "comment": " Convert a list of UTF-32 code points into a string. Inverse of\n`toCodePoints`.\n\n    fromCodePoints [ 97, 98, 99 ] == \"abc\"\n\n    fromCodePoints [ 169, 167, 960 ] == \"©§π\"\n\n    fromCodePoints [ 128169, 33 ] == \"💩!\"\n\n`fromCodePoints codePoints` is equivalent to:\n\n    String.fromList (List.map Char.fromCode codePoints)\n\n",
+                "type": "List.List Basics.Int -> String.String"
+            },
+            {
+                "name": "humanize",
+                "comment": " Convert an underscored, camelized, or dasherized string into one that can be\nread by humans. Also remove beginning and ending whitespace, and removes the\npostfix '\\_id'. The first character will be capitalized.\n\n    humanize \"this_is_great\" == \"This is great\"\n    humanize \"ThisIsGreat\" = \"This is great\"\n    humanize \"this-is-great\" = \"This is great\"\n    humanize \"author_id\" = \"Author\"\n\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "insertAt",
+                "comment": " Insert a substring at the specified index.\n\n    insertAt \"world\" 6 \"Hello \" == \"Hello world\"\n\n",
+                "type": "String.String -> Basics.Int -> String.String -> String.String"
+            },
+            {
+                "name": "isBlank",
+                "comment": " Test if a string is empty or only contains whitespace.\n\n    isBlank \"\" == True\n\n    isBlank \"\\n\" == True\n\n    isBlank \"  \" == True\n\n    isBlank \" a\" == False\n\n",
+                "type": "String.String -> Basics.Bool"
+            },
+            {
+                "name": "leftOf",
+                "comment": " Search a string from left to right for a pattern and return a substring\nconsisting of the characters in the string that are to the left of the pattern.\n\n    leftOf \"_\" \"This_is_a_test_string\" == \"This\"\n\n",
+                "type": "String.String -> String.String -> String.String"
+            },
+            {
+                "name": "leftOfBack",
+                "comment": " Search a string from right to left for a pattern and return a substring\nconsisting of the characters in the string that are to the left of the pattern.\n\n    leftOfBack \"_\" \"This_is_a_test_string\" == \"This_is_a_test\"\n\n",
+                "type": "String.String -> String.String -> String.String"
+            },
+            {
+                "name": "nonBlank",
+                "comment": " Convert a string to a Nothing when blank.\n\n    nonBlank \"\" == Nothing\n\n    nonBlank \"Hello world\" == Just \"Hello world\"\n\n",
+                "type": "String.String -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "nonEmpty",
+                "comment": " Convert a string to a Nothing when empty.\n\n    nonEmpty \"\" == Nothing\n\n    nonEmpty \"Hello world\" == Just \"Hello world\"\n\n",
+                "type": "String.String -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "pluralize",
+                "comment": " Given a number, a singular string, and a plural string, return the number\nfollowed by a space, followed by either the singular string if the number was 1,\nor the plural string otherwise.\n\n    pluralize \"elf\" \"elves\" 2 == \"2 elves\"\n\n    pluralize \"elf\" \"elves\" 1 == \"1 elf\"\n\n    pluralize \"elf\" \"elves\" 0 == \"0 elves\"\n\n",
+                "type": "String.String -> String.String -> Basics.Int -> String.String"
+            },
+            {
+                "name": "quote",
+                "comment": " Add quotes to a string.\n\n    quote \"foo\" == \"\\\"foo\\\"\"\n\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "removeAccents",
+                "comment": " Remove accents from string.\n\n    removeAccents \"andré\" == \"andre\"\n\n    removeAccents \"Atenção\" == \"Atencao\"\n\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "replaceSlice",
+                "comment": " Replace text within a portion of a string given a substitution\nstring, a start index and an end index. The substitution includes the character\nat the start index but not the one at the end index.\n\n    replaceSlice \"Sue\" 4 7 \"Hi, Bob\" == \"Hi, Sue\"\n\n    replaceSlice \"elephants\" 0 6 \"snakes on a plane!\" == \"elephants on a plane!\"\n\n    replaceSlice \"under\" 7 9 \"snakes on a plane!\" == \"snakes under a plane!\"\n\n",
+                "type": "String.String -> Basics.Int -> Basics.Int -> String.String -> String.String"
+            },
+            {
+                "name": "rightOf",
+                "comment": " Search a string from left to right for a pattern and return a substring\nconsisting of the characters in the string that are to the right of the pattern.\n\n    rightOf \"_\" \"This_is_a_test_string\" == \"is_a_test_string\"\n\n",
+                "type": "String.String -> String.String -> String.String"
+            },
+            {
+                "name": "rightOfBack",
+                "comment": " Search a string from right to left for a pattern and return a substring\nconsisting of the characters in the string that are to the right of the pattern.\n\n    rightOfBack \"_\" \"This_is_a_test_string\" == \"string\"\n\n",
+                "type": "String.String -> String.String -> String.String"
+            },
+            {
+                "name": "softBreak",
+                "comment": " Break a string into a list of strings of a specified maximum length,\nwithout truncating words.\n\n    softBreak 6 \"The quick brown fox\" == [ \"The quick\", \" brown\", \" fox\" ]\n\n",
+                "type": "Basics.Int -> String.String -> List.List String.String"
+            },
+            {
+                "name": "softEllipsis",
+                "comment": " Truncate the string at the last complete word less than or equal to\nthe specified length and append `\"...\"`. When the specified length is\nless than the length of the first word, the ellipsis is appended to the\nfirst word. When the specified length is greater than or equal to the\nlength of the string, an identical string is returned.\n\nIn contrast to `ellipsis`, this function will not produce incomplete\nwords, and the resulting string can exceed the specified length. In\naddition, it removes trailing whitespace and punctuation characters at\nthe end of the truncated string.\n\n    softEllipsis 1 \"Hello, World\" == \"Hello...\"\n\n    softEllipsis 5 \"Hello, World\" == \"Hello...\"\n\n    softEllipsis 6 \"Hello, World\" == \"Hello...\"\n\n    softEllipsis 15 \"Hello, cruel world\" == \"Hello, cruel...\"\n\n    softEllipsis 10 \"Hello\" == \"Hello\"\n\n",
+                "type": "Basics.Int -> String.String -> String.String"
+            },
+            {
+                "name": "softWrap",
+                "comment": " Chop a given string into parts of a given width without breaking words apart,\nand then separate them using a new line.\n\n    softWrap 7 \"My very long text\" === \"My very\\nlong text\"\n\n    softWrap 3 \"Hello World\" === \"Hello \\nWorld\"\n\n    softWrap 100 \"Too short\" === \"Too short\"\n\n",
+                "type": "Basics.Int -> String.String -> String.String"
+            },
+            {
+                "name": "softWrapWith",
+                "comment": " Chop a given string into parts of a given width without breaking words apart,\nand then separate them using the given separator.\n\n    softWrapWith 7 \"...\" \"My very long text\" === \"My very...long text\"\n\n    softWrapWith 3 \"\\n\" \"Hello World\" === \"Hello \\nWorld\"\n\n    softWrapWith 100 \"\\t\" \"Too short\" === \"Too short\"\n\n",
+                "type": "Basics.Int -> String.String -> String.String -> String.String"
+            },
+            {
+                "name": "stripTags",
+                "comment": " Remove all HTML tags from the string, preserving the text inside them.\n\n    stripTags \"a <a href=\\\"#\\\">link</a>\" == \"a link\"\n    stripTags \"<script>alert('hello world!')</script> == \"alert('hello world!')\"\n\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "surround",
+                "comment": " Surround a string with another string.\n\n    surround \"bar\" \"foo\" == \"barfoobar\"\n\n",
+                "type": "String.String -> String.String -> String.String"
+            },
+            {
+                "name": "toCodePoints",
+                "comment": " Convert a string into a list of UTF-32 code points.\n\n    toCodePoints \"abc\" == [ 97, 98, 99 ]\n\n    toCodePoints \"©§π\" == [ 169, 167, 960 ]\n\n    toCodePoints \"💩!\" == [ 128169, 33 ]\n\nNote that code points do not necessarily correspond to logical/visual\ncharacters, since it is possible for things like accented characters to be\nrepresented as two separate UTF-32 code points (a base character and a\ncombining accent).\n\n`toCodePoints string` is equivalent to:\n\n    List.map Char.toCode (String.toList string)\n\n",
+                "type": "String.String -> List.List Basics.Int"
+            },
+            {
+                "name": "toSentence",
+                "comment": " Convert a list of strings into a human-readable list.\n\n    toSentence [] == \"\"\n\n    toSentence [ \"lions\" ] == \"lions\"\n\n    toSentence [ \"lions\", \"tigers\" ] == \"lions and tigers\"\n\n    toSentence [ \"lions\", \"tigers\", \"bears\" ] == \"lions, tigers and bears\"\n\n",
+                "type": "List.List String.String -> String.String"
+            },
+            {
+                "name": "toSentenceCase",
+                "comment": " Capitalize the first letter of a string.\n\n    toSentenceCase \"this is a phrase\" == \"This is a phrase\"\n\n    toSentenceCase \"hello, world\" == \"Hello, world\"\n\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "toSentenceOxford",
+                "comment": " Convert a list of strings into a human-readable list using an oxford comma.\n\n    toSentenceOxford [] == \"\"\n\n    toSentenceOxford [ \"lions\" ] == \"lions\"\n\n    toSentenceOxford [ \"lions\", \"tigers\" ] == \"lions and tigers\"\n\n    toSentenceOxford [ \"lions\", \"tigers\", \"bears\" ] == \"lions, tigers, and bears\"\n\n",
+                "type": "List.List String.String -> String.String"
+            },
+            {
+                "name": "toTitleCase",
+                "comment": " Capitalize the first character of each word in a string.\n\n    toTitleCase \"this is a phrase\" == \"This Is A Phrase\"\n\n    toTitleCase \"hello, world\" == \"Hello, World\"\n\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "underscored",
+                "comment": " Return a string joined by underscores after separating it by its uppercase characters.\nAny sequence of spaces or dashes will also be converted to a single underscore.\nThe final string will be lowercased.\n\n    underscored \"SomeClassName\" == \"some_class_name\"\n    underscored \"some-class-name\" == \"some_class_name\"\n    underscored \"SomeClass name\" == \"some_class_name\n\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "unindent",
+                "comment": " Remove the shortest sequence of leading spaces or tabs on each line\nof the string, so that at least one of the lines will not have any\nleading spaces nor tabs and the rest of the lines will have the same\namount of indentation removed.\n\n    unindent \"  Hello\\n    World \" == \"Hello\\n  World\"\n\n    unindent \"\\t\\tHello\\n\\t\\t\\t\\tWorld\" == \"Hello\\n\\t\\tWorld\"\n\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "unquote",
+                "comment": " Remove quotes that surround a string.\n\n    unquote \"\\\"foo\\\"\" == \"foo\"\n\n    unquote \"\\\"foo\\\"bar\\\"\"\n\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "unsurround",
+                "comment": " Remove surrounding strings from another string.\n\n    unsurround \"foo\" \"foobarfoo\" == \"bar\"\n\n",
+                "type": "String.String -> String.String -> String.String"
+            },
+            {
+                "name": "wrap",
+                "comment": " Chop a given string into parts of a given width, separating them with a\nnew line.\n\n    wrap 7 \"My very long text\" === \"My very\\nlong te\\nxt\"\n\n    wrap 100 \"Too short\" === \"Too short\"\n\n",
+                "type": "Basics.Int -> String.String -> String.String"
+            },
+            {
+                "name": "wrapWith",
+                "comment": " Separate a string into parts of a given width, using a given separator.\n\nLook at `wrap` if you just want to wrap using newlines.\n\n    wrapWith 7 \"\\n\" \"My very long text\" === \"My very\\nlong text\"\n\n    wrapWith 100 \"\\n\" \"Too short\" === \"Too short\"\n\n",
+                "type": "Basics.Int -> String.String -> String.String -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,268 @@
+[
+    {
+        "name": "Update",
+        "comment": " Module providing a way to build scalable update function.\nIt enables you to build a complex update function by composing primitive functions.\n\n\n# Core\n\n@docs Update\n@docs run\n@docs batch\n\n\n# Primitive Updates\n\n@docs none\n@docs modify\n@docs push\n@docs init\n\n\n# Handle conditions\n\n@docs when\n@docs unless\n@docs whenNothing\n@docs whenJust\n@docs whenOk\n@docs whenErr\n\n\n# Handle cases\n\n@docs with\n@docs on\n@docs onNothing\n@docs onJust\n@docs onOk\n@docs onErr\n\n\n# Lower level functions\n\n@docs map\n@docs child\n@docs maybeChild\n\n",
+        "unions": [
+            {
+                "name": "Update",
+                "comment": " Alternative type for update function.\n\n    update : msg -> Update model msg\n\n",
+                "args": [
+                    "model",
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "batch",
+                "comment": " When you need to evaluate a couple `Update`s, you can batch them together. Each is evaluated from top to bottom.\n\n    type alias Model = { foo : String }\n\n    myUpdate : Update Model msg\n    myUpdate =\n        batch\n            [ modify (\\m -> { m | foo = m.foo ++ \"-1\" })\n            , modify (\\m -> { m | foo = m.foo ++ \"-2\" })\n            ]\n\n    run myUpdate { foo = \"bar\" }\n        |> Tuple.first\n    --> { foo = \"bar-1-2\" }\n\n",
+                "type": "List.List (Update.Update model msg) -> Update.Update model msg"
+            },
+            {
+                "name": "child",
+                "comment": " Lift `Update` for a child model to one for the parent model.\n\ne.g.,\n\n    type alias Model =\n        { child1 : ChildModel\n        }\n\n    type alias ChildModel =\n        { foo : String\n        }\n\n    child1Update : Update ChildModel msg\n    child1Update =\n        Debug.todo \"Update for the `ChildModel`\"\n\n    update : Update Model msg\n    update =\n        child\n            .child1\n            (\\c model -> { model | child1 = c })\n            child1Update\n\n",
+                "type": "(b -> a) -> (a -> b -> b) -> Update.Update a msg -> Update.Update b msg"
+            },
+            {
+                "name": "init",
+                "comment": " An `Update` to initialize.\n\n    init f =\n        batch\n            [ modify (f >> Tuple.first)\n            , push (f >> Tuple.second)\n            ]\n\n",
+                "type": "(model -> ( model, Platform.Cmd.Cmd msg )) -> Update.Update model msg"
+            },
+            {
+                "name": "map",
+                "comment": " ",
+                "type": "(a -> b) -> Update.Update model a -> Update.Update model b"
+            },
+            {
+                "name": "maybeChild",
+                "comment": " Same as `child` but do nothing if first argument becomes to `Nothing`.\nIt is useful for handling page updates of SPA.\n\ne.g.,\n\n    type alias Model =\n        { page : Page\n        }\n\n    type Page\n        = Page1 Page1Model\n        | Page2 Page2Model\n\n    type alias Page1Model =\n        { foo : String\n        }\n\n    type alias Page2Model =\n        { bar : Int\n        }\n\n    page1Update : Update Page1Model msg\n    page1Update =\n        Debug.todo \"update function for `Page1`.\"\n\n    update : Update Model msg\n    update =\n        Update.with identity\n            [ \\{ page } ->\n                case page of\n                    Page1 page1 ->\n                        page1Update\n                            (\\model ->\n                                case model.page of\n                                    Page1 a ->\n                                        Just a\n\n                                    _ ->\n                                        Nothing\n                            )\n                            (\\p model ->\n                                case model.page of\n                                    Page1 _ ->\n                                        { model | page = Page1 p }\n\n                                    _ ->\n                                        model\n                            )\n                            page1Update\n\n                    _ ->\n                        Debug.todo \"\"\n            ]\n\n",
+                "type": "(b -> Maybe.Maybe a) -> (a -> b -> b) -> Update.Update a msg -> Update.Update b msg"
+            },
+            {
+                "name": "modify",
+                "comment": " Primitive `Update` that modifies Model.\n",
+                "type": "(model -> model) -> Update.Update model msg"
+            },
+            {
+                "name": "none",
+                "comment": " Do nothing.\n",
+                "type": "Update.Update model msg"
+            },
+            {
+                "name": "on",
+                "comment": " Evaluate `Update` only if it matches the case.\n",
+                "type": "(a -> Basics.Bool) -> List.List (Update.Update model msg) -> a -> Update.Update model msg"
+            },
+            {
+                "name": "onErr",
+                "comment": " Evaluate `Update` only if the case is `Err`.\n",
+                "type": "List.List (err -> Update.Update model msg) -> Result.Result err a -> Update.Update model msg"
+            },
+            {
+                "name": "onJust",
+                "comment": " Evaluate `Update` only if the case is `Just`.\n",
+                "type": "List.List (a -> Update.Update model msg) -> Maybe.Maybe a -> Update.Update model msg"
+            },
+            {
+                "name": "onNothing",
+                "comment": " Evaluate `Update` only if the case is `Nothing`.\n",
+                "type": "List.List (Update.Update model msg) -> Maybe.Maybe a -> Update.Update model msg"
+            },
+            {
+                "name": "onOk",
+                "comment": " Evaluate `Update` only if the case is `Ok`.\n",
+                "type": "List.List (a -> Update.Update model msg) -> Result.Result err a -> Update.Update model msg"
+            },
+            {
+                "name": "push",
+                "comment": " Primitive `Update` that pushes a `Cmd`.\n",
+                "type": "(model -> Platform.Cmd.Cmd msg) -> Update.Update model msg"
+            },
+            {
+                "name": "run",
+                "comment": " Evaluate to a model-cmd pair.\n\nIt is for converting to the normal update function.\ne.g.,\n\n    main : Program flags model msg\n    main =\n        element\n            { init = init\n            , view = view\n            , update = Update.run << update\n            , subscriptions = subscriptions\n            }\n\n    update : msg -> Update model msg\n    update =\n        ...\n\n",
+                "type": "Update.Update model msg -> model -> ( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "unless",
+                "comment": " Evaluate `Update` unless it meets the condition.\n",
+                "type": "Basics.Bool -> List.List (Update.Update model msg) -> Update.Update model msg"
+            },
+            {
+                "name": "when",
+                "comment": " Evaluate `Update` only if it meets the condition.\n",
+                "type": "Basics.Bool -> List.List (Update.Update model msg) -> Update.Update model msg"
+            },
+            {
+                "name": "whenErr",
+                "comment": " Evaluate `Update` only if the first argument value is `Err`.\n",
+                "type": "Result.Result err a -> List.List (err -> Update.Update model msg) -> Update.Update model msg"
+            },
+            {
+                "name": "whenJust",
+                "comment": " Evaluate `Update` only if the first argument value is `Just`.\n",
+                "type": "Maybe.Maybe a -> List.List (a -> Update.Update model msg) -> Update.Update model msg"
+            },
+            {
+                "name": "whenNothing",
+                "comment": " Evaluate `Update` only if the first argument value is `Nothing`.\n",
+                "type": "Maybe.Maybe a -> List.List (Update.Update model msg) -> Update.Update model msg"
+            },
+            {
+                "name": "whenOk",
+                "comment": " Evaluate `Update` only if the first argument value is `Ok`.\n",
+                "type": "Result.Result err a -> List.List (a -> Update.Update model msg) -> Update.Update model msg"
+            },
+            {
+                "name": "with",
+                "comment": " Branch the update process according to the situation.\n\n    type alias Model =\n        { foo : String\n        , bar : Maybe Int\n        }\n\n    updateWithFoo : Update Model msg\n    updateWithFoo =\n        with .foo\n            [ on String.isEmpty\n                [ Update.modify <| \\model ->\n                    { model | foo = \"empty\" }\n                ]\n            ]\n\n    updateWithBar : Update Model msg\n    updateWithBar =\n        with .bar\n            [ onJust\n                [ \\n -> Update.modify <| \\model ->\n                    { model | foo = String.fromInt n }\n                ]\n            ]\n\n\n    updateWithBarSequentially : Update Model msg\n    updateWithBarSequentially =\n        with .bar\n            [ onJust\n                [ \\n -> Update.modify <| \\model ->\n                    { model | bar = Nothing }\n                ]\n            , onJust\n                [ \\_ -> Update.modify <| \\model ->\n                    { model | foo = \"This Update is not evaluated\" }\n                ]\n            , onNothing\n                [ Update.modify <| \\model ->\n                    { model | foo = \"bar has changed\" }\n                ]\n            ]\n\n\n    run updateWithFoo\n        { foo = \"\"\n        , bar = Nothing\n        }\n            |> Tuple.first\n    --> { foo = \"empty\", bar = Nothing }\n\n    run updateWithFoo\n        { foo = \"foo\"\n        , bar = Nothing\n        }\n            |> Tuple.first\n    --> { foo = \"foo\", bar = Nothing }\n\n    run updateWithBar\n        { foo = \"foo\"\n        , bar = Just 4\n        }\n            |> Tuple.first\n    --> { foo = \"4\", bar = Just 4 }\n\n    run updateWithBarSequentially\n        { foo = \"foo\"\n        , bar = Just 4\n        }\n            |> Tuple.first\n    --> { foo = \"bar has changed\", bar = Nothing }\n\n",
+                "type": "(model -> a) -> List.List (a -> Update.Update model msg) -> Update.Update model msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Update.Lifter",
+        "comment": " Helper module to lift `Update`s.\n\n@docs Lifter\n@docs compose\n@docs run\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Lifter",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b"
+                ],
+                "type": "{ get : a -> b, set : b -> a -> a }"
+            }
+        ],
+        "values": [
+            {
+                "name": "compose",
+                "comment": " ",
+                "type": "Update.Lifter.Lifter a b -> Update.Lifter.Lifter b c -> Update.Lifter.Lifter a c"
+            },
+            {
+                "name": "run",
+                "comment": " Alternative to `Update.child`, but more scalable.\n",
+                "type": "Update.Lifter.Lifter a b -> Update.Update b msg -> Update.Update a msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Update.Sequence",
+        "comment": " Run `Update`s sequentially.\n\n\n# A Quick Sample\n\n    import Update exposing (Update)\n    import Update.Sequence as Sequence exposing (Sequence)\n\n    type Value\n        = Start\n        | ClickNext\n        | SubmitText\n        | NeverUsed\n\n    type Msg\n        = SequenceMsg (Sequence.Msg Value)\n\n    type alias Model =\n        { sequence : Sequence.Model\n        , notice : String\n        , text : String\n        }\n\n    update : Msg -> Update Model Msg\n    update (SequenceMsg msg) =\n        Sequence.run\n            { get = .sequence\n            , set = \\seq model -> { model | sequence = seq }\n            }\n            msg\n            [ Sequence.on Start\n                [ setNotice \"Tutorial has started!\"\n                ]\n            , Sequence.on ClickNext\n                [ setNotice \"The first next button is clicked.\"\n                ]\n            , Sequence.on ClickNext\n                [ setNotice \"The second next button is clicked.\"\n                ]\n            , \\v -> Sequence.when (v == SubmitText) <| Sequence.with <| \\{ text } ->\n                if text == \"\" then\n                    Sequence.waitAgain <|\n                        setNotice \"Invalid text. Retry!\"\n                else\n                    Sequence.succeed <|\n                        setNotice <| text ++ \" is submitted.\"\n            , Sequence.on ClickNext\n                [ setNotice \"The last next button is clicked.\"\n                ]\n            ]\n\n\n\n    -- Helper functions\n\n    setNotice : String -> Update Model msg\n    setNotice notice = Update.modify <| \\model -> { model | notice = notice }\n\n\n    -- Test the update function\n\n\n    model0 : Model\n    model0 =\n        { sequence = Sequence.initModel\n        , notice = \"initial\"\n        , text = \"initial text\"\n        }\n\n    model1 : Model\n    model1 =\n        Update.run\n            (update <| SequenceMsg <| Sequence.resolve Start)\n            model0\n            |> Tuple.first\n\n\n    model1.notice\n    --> \"Tutorial has started!\"\n\n    model2 : Model\n    model2 =\n        Update.run\n            (update <| SequenceMsg <| Sequence.resolve ClickNext)\n            model1\n            |> Tuple.first\n\n    model2.notice\n    --> \"The first next button is clicked.\"\n\n    -- Notice that here we provide the very same event as previous.\n    model3 : Model\n    model3 =\n        Update.run\n            (update <| SequenceMsg <| Sequence.resolve ClickNext)\n            model2\n            |> Tuple.first\n\n\n    model3.notice\n    --> \"The second next button is clicked.\"\n    -- The result shows that we get the second notice rather than the first one.\n\n    model4 : Model\n    model4 =\n        Update.run\n            (update <| SequenceMsg <| Sequence.resolve SubmitText)\n            { model3 | text = \"\" }\n            |> Tuple.first\n\n    model4.notice\n    --> \"Invalid text. Retry!\"\n\n    -- Notice that here we provides the resulting `model4`, but not the previous `model3` again.\n    model5 : Model\n    model5 =\n        Update.run\n            (update <| SequenceMsg <| Sequence.resolve SubmitText)\n            { model4 | text = \"valid text\" }\n            |> Tuple.first\n\n    model5.notice\n    --> \"valid text is submitted.\"\n    -- The result shows that we can retry the current `Sequence`.\n\n    model6 : Model\n    model6 =\n        Update.run\n            (update <| SequenceMsg <| Sequence.resolve <| ClickNext)\n            model5\n            |> Tuple.first\n\n\n    model6.notice\n    --> \"The last next button is clicked.\"\n\n\n# Core\n\n@docs Sequence\n@docs run\n@docs Msg\n@docs Model\n@docs initModel\n\n\n# Msg Constructors\n\n@docs resolve\n\n\n# Controllers\n\n@docs call\n\n\n# Primitive Constructors\n\n@docs succeed\n@docs waitAgain\n\n\n# Handle conditions\n\n@docs with\n@docs when\n@docs unless\n\n\n# Handle cases\n\n@docs on\n@docs onAnyOf\n@docs anyOf\n@docs onJust\n@docs onNothing\n@docs onOk\n@docs onErr\n\n",
+        "unions": [
+            {
+                "name": "Model",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Msg",
+                "comment": " ",
+                "args": [
+                    "value"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Sequence",
+                "comment": " ",
+                "args": [
+                    "model",
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "anyOf",
+                "comment": " Evaluate `Sequence`s from top to bottom.\n\nOnce a `Sequence` succeeds, it does not evaluate subsequent `Sequence`s.\n\n    Sequence.anyOf\n        [ Sequence.on ClickOk\n            [ setNotice \"Ok\"\n            ]\n        , Sequence.on ClickNg\n            [ setNotice \"Ng\"\n            ]\n        ]\n\n",
+                "type": "List.List (value -> Update.Sequence.Sequence model msg) -> value -> Update.Sequence.Sequence model msg"
+            },
+            {
+                "name": "call",
+                "comment": " ",
+                "type": "v -> Update.Update model (Update.Sequence.Msg v)"
+            },
+            {
+                "name": "initModel",
+                "comment": " ",
+                "type": "Update.Sequence.Model"
+            },
+            {
+                "name": "on",
+                "comment": " Generate a Sequence that succeeds only under certain value.\n\nIt succeeds with `Update`s only if the fired message value is equals to its first argument, otherwise it `waitAgain` with `Update.none`.\n\n",
+                "type": "value -> List.List (Update.Update model msg) -> value -> Update.Sequence.Sequence model msg"
+            },
+            {
+                "name": "onAnyOf",
+                "comment": " Generate a Sequence that succeeds only under certain values.\n\nIt succeeds with `Update`s only if the fired message value is one of its first argument, otherwise it `waitAgain` with `Update.none`.\n\n",
+                "type": "List.List value -> List.List (Update.Update model msg) -> value -> Update.Sequence.Sequence model msg"
+            },
+            {
+                "name": "onErr",
+                "comment": " Generate a Sequence that succeeds only on `Err` values.\n\nIt succeeds with `Update`s only if the value is `Err`, otherwise it `waitAgain` with `Update.none`.\n\n",
+                "type": "List.List (err -> Update.Update model msg) -> Result.Result err a -> Update.Sequence.Sequence model msg"
+            },
+            {
+                "name": "onJust",
+                "comment": " Generate a Sequence that succeeds only on `Just` values.\n\nIt succeeds with `Update`s only if the value is `Just`, otherwise it `waitAgain` with `Update.none`.\n\n",
+                "type": "List.List (a -> Update.Update model msg) -> Maybe.Maybe a -> Update.Sequence.Sequence model msg"
+            },
+            {
+                "name": "onNothing",
+                "comment": " Generate a Sequence that succeeds only on `Nothing` values.\n\nIt succeeds with `Update`s only if the value is `Nothing`, otherwise it `waitAgain` with `Update.none`.\n\n",
+                "type": "List.List (Update.Update model msg) -> Maybe.Maybe a -> Update.Sequence.Sequence model msg"
+            },
+            {
+                "name": "onOk",
+                "comment": " Generate a Sequence that succeeds only on `Ok` values.\n\nIt succeeds with `Update`s only if the value is `Ok`, otherwise it `waitAgain` with `Update.none`.\n\n",
+                "type": "List.List (a -> Update.Update model msg) -> Result.Result err a -> Update.Sequence.Sequence model msg"
+            },
+            {
+                "name": "resolve",
+                "comment": " ",
+                "type": "value -> Update.Sequence.Msg value"
+            },
+            {
+                "name": "run",
+                "comment": " ",
+                "type": "Update.Lifter.Lifter model Update.Sequence.Model -> Update.Sequence.Msg value -> List.List (value -> Update.Sequence.Sequence model msg) -> Update.Update model msg"
+            },
+            {
+                "name": "succeed",
+                "comment": " Construct a `Sequence` always succeeds with given `Update`s.\n",
+                "type": "Update.Update model msg -> Update.Sequence.Sequence model msg"
+            },
+            {
+                "name": "unless",
+                "comment": " Succeed `Sequence` unless it meets the condition.\n\nOtherwise, it `waitAgain` with `Update.none`.\n\n",
+                "type": "Basics.Bool -> Update.Sequence.Sequence model msg -> Update.Sequence.Sequence model msg"
+            },
+            {
+                "name": "waitAgain",
+                "comment": " Construct a `Sequence` always wait again after evaluating given `Update`s.\n",
+                "type": "Update.Update model msg -> Update.Sequence.Sequence model msg"
+            },
+            {
+                "name": "when",
+                "comment": " Succeed `Sequence` only if it meets the condition.\n\nOtherwise, it `waitAgain` with `Update.none`.\n\n",
+                "type": "Basics.Bool -> Update.Sequence.Sequence model msg -> Update.Sequence.Sequence model msg"
+            },
+            {
+                "name": "with",
+                "comment": " ",
+                "type": "(model -> Update.Sequence.Sequence model msg) -> Update.Sequence.Sequence model msg"
+            }
+        ],
+        "binops": []
+    }
+]

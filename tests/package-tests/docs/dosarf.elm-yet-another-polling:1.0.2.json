@@ -1,0 +1,103 @@
+[
+    {
+        "name": "YetAnotherPolling",
+        "comment": " A package for polling made easier.\n\nYou need to initialize it's model with\n* basic retry-after and backing-off configuration\n  ([`Configuration`](#Configuration)),\n* a function that yields a task (this would be your HTTP task polling\n  something, but it can actually be any other task)\n* another function that defines, based on the result of a task, how to\n  continue with polling,\n* a constructor of a message of yours,\n\nand out come messages bearing results of those tasks attempted.\n\nYou have to call [`update`](#update) the polling model ([`Model`](#Model))\nwith the messages you recieve to keep it going.\n\n## Configuration\n\n@docs Configuration, defaultConfiguration\n\n## Model\n\nThe model for tracking polling state as well issuing request tasks.\n\n@docs State, Model, stateOf, init\n\n## Operations\n\n@docs start, stop, update\n\n@docs PollingDecision\n",
+        "unions": [
+            {
+                "name": "PollingDecision",
+                "comment": " Decision to bring the model from previous polling state to the next one.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "PollOne",
+                        []
+                    ],
+                    [
+                        "QuitPolling",
+                        []
+                    ],
+                    [
+                        "RetryAfter",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "State",
+                "comment": " Current state of polling.\nWhenever entering or re-entering the state `Polling`, a request task will\nbe executed.\n\n`QuittingPolling` is that state between a call to\n[`stop`](#stop) and the next result that comes back from a\ncurrently outstanding retry, only after which the state will be finally\n`NotPolling`. During this `QuittingPolling` state, any new calls to\n`start` will be ignored.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Polling",
+                        []
+                    ],
+                    [
+                        "NotPolling",
+                        []
+                    ],
+                    [
+                        "RetryAfterMillis",
+                        [
+                            "Basics.Float"
+                        ]
+                    ],
+                    [
+                        "QuittingPolling",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Configuration",
+                "comment": " How polling should behave in case of _recoverable_ failure\n(see [`PollOne`](#PollingDecision)):\n* `minRetryAfterMillis`: the minimum time interval to wait before retrying,\n* `maxRetryAfterMillis`: the maximum time interval to wait before retrying,\n* `backOffRate`: the ratio of the time interval to wait before retrying\nand the time interval waited on the last try.\n",
+                "args": [],
+                "type": "{ minRetryAfterMillis : Basics.Float, maxRetryAfterMillis : Basics.Float, backOffRate : Basics.Float }"
+            },
+            {
+                "name": "Model",
+                "comment": " Model to track polling state, [`init`](#init)ialized with\n[`Configuration`](#Configuration) and some necessary\nfunctions.\n\nUse [`stateOf`](#stateOf) to figure out the current [`State`](#State).\n",
+                "args": [
+                    "error",
+                    "value",
+                    "msg"
+                ],
+                "type": "{ configuration : YetAnotherPolling.Configuration, requestTask : () -> Task.Task error value, decidePolling : Result.Result error value -> YetAnotherPolling.PollingDecision, createMessage : Result.Result error value -> msg, state : YetAnotherPolling.State }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultConfiguration",
+                "comment": " Default [`Configuration`](#Configuration)\n* `minRetryAfterMillis`: 10 seconds,\n* `maxRetryAfterMillis`: 160 seconds,\n* `backOffRate`: 2, i.e. twice the time interval will be waited before\nsubsequent retry attempts.\n",
+                "type": "YetAnotherPolling.Configuration"
+            },
+            {
+                "name": "init",
+                "comment": " Constructs a model to execute and track polling.\n\nArguments:\n* `configuration`: min/max time intervals before retries as well as\n  back-off rate, see [`Configuration`](#Configuration).\n* `requestTask`: Provides the task to execute, for each try. Normally an\n  `Http.task`, but could be anything, really.\n* `decidePolling`: Based on the result of a try, decides the fate of the polling\n  loop. Should a `HTTP 204 No Content` be interpreted as re-try immediately,\n  or back-off, or quit the loop entirely? How about `HTTP 429 Too Many Requests`?\n  In some cases, even a successfully obtained response (`HTTP 200 Ok`) could mean,\n  based on the received contents, to quit the polling loop. Therefore such decision\n  is application specific.\n* `createMessage`: Turns the result of a try to a message of yours.\n\n",
+                "type": "YetAnotherPolling.Configuration -> (() -> Task.Task error value) -> (Result.Result error value -> YetAnotherPolling.PollingDecision) -> (Result.Result error value -> msg) -> YetAnotherPolling.Model error value msg"
+            },
+            {
+                "name": "start",
+                "comment": " Puts the model into polling state and produces a command with an HTTP task.\n",
+                "type": "YetAnotherPolling.Model error value msg -> ( YetAnotherPolling.Model error value msg, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "stateOf",
+                "comment": " The current state of polling.\n",
+                "type": "YetAnotherPolling.Model error value msg -> YetAnotherPolling.State"
+            },
+            {
+                "name": "stop",
+                "comment": " If currently in any of the states: `Polling`, `RetryAfterMillis` or\n`QuittingPolling`, it will put to the state `QuittingPolling` (so that the\nnext result will put to final `NotPolling`).\n\nIf already in state `NotPolling`, remains in `NotPolling`.\n",
+                "type": "YetAnotherPolling.Model error value msg -> ( YetAnotherPolling.Model error value msg, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "update",
+                "comment": " Updates the model, based on the results of the previous polling that you feed back.\n\nInvoke this function on the current polling model whenever you get your message\ncarrying a `Result error value`, to keep things rolling.\n",
+                "type": "Result.Result error value -> YetAnotherPolling.Model error value msg -> ( YetAnotherPolling.Model error value msg, Platform.Cmd.Cmd msg )"
+            }
+        ],
+        "binops": []
+    }
+]

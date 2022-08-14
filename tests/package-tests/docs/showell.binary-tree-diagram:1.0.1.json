@@ -1,0 +1,38 @@
+[
+    {
+        "name": "BinaryTreeDiagram",
+        "comment": " Create a diagram of a binary tree.\n\n@docs BinaryTree, diagramView\n\n",
+        "unions": [
+            {
+                "name": "BinaryTree",
+                "comment": " Example tree:\n\n```elem\nNode 2 (Node 1 Empty Empty) (Node 3 Empty Empty)\n```\n\nThe arguments are value, leftTree, rightTree.\n\n",
+                "args": [
+                    "v"
+                ],
+                "cases": [
+                    [
+                        "Node",
+                        [
+                            "v",
+                            "BinaryTreeDiagram.BinaryTree v",
+                            "BinaryTreeDiagram.BinaryTree v"
+                        ]
+                    ],
+                    [
+                        "Empty",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "diagramView",
+                "comment": " Pass in functions to set the color and text.\n\n    diagramView (\\v -> v.color) (\\v -> v.text) tree\n\n    diagramView (\\_ -> \"blue\") (\\_ -> \"\") tree\n\n",
+                "type": "(v -> String.String) -> (v -> String.String) -> BinaryTreeDiagram.BinaryTree v -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

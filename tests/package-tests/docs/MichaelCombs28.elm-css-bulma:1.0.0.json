@@ -1,0 +1,2694 @@
+[
+    {
+        "name": "Bulma.Styled.CDN",
+        "comment": "\n\n@docs stylesheet\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "stylesheet",
+                "comment": " Include Bulma 0.7.0 in your Elm project.\n\n    import Bulma.CDN exposing (stylesheet)\n\n    view : Model -> Html msg\n    view model =\n        div []\n            [ stylesheet\n            , text \"wow!\"\n            ]\n\n",
+                "type": "Html.Styled.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Bulma.Styled.Columns",
+        "comment": " A simple way to build responsive grids.\n\n\n# Columns\n\nLearn more about columnar grids in the [official docs](http://bulma.io/documentation/grid/columns/).\n\n    myGrid : Html msg\n    myGrid =\n        columns myColumnsModifiers\n            []\n            [ column myColumnModifiers\n                []\n                [ text \"First Column\"\n                ]\n            , column myColumnModifiers\n                []\n                [ text \"Second Column\"\n                ]\n            , column myColumnModifiers\n                []\n                [ text \"Third Column\"\n                ]\n            ]\n\n@docs ColumnsModifiers\n@docs Display, mobile, tablet, desktop\n@docs Gap, gap0, gap1, gap2, gap3, gap4, gap5, gap6, gap7, gap8\n@docs columnsModifiers\n@docs columns\n\n\n## Column\n\n@docs Column, ColumnModifiers, Offset, columnModifiers, narrowColumnModifiers\n@docs column\n\n",
+        "unions": [
+            {
+                "name": "Display",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Gap",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Column",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "ColumnModifiers",
+                "comment": " The `widths` field requires a `Maybe Width` for each device size.\n`Nothing` will create a narrow column for that device range.\n",
+                "args": [],
+                "type": "{ offset : Bulma.Styled.Modifiers.Width, widths : Bulma.Styled.Modifiers.Devices (Maybe.Maybe Bulma.Styled.Modifiers.Width) }"
+            },
+            {
+                "name": "ColumnsModifiers",
+                "comment": " ",
+                "args": [],
+                "type": "{ multiline : Basics.Bool, gap : Bulma.Styled.Columns.Gap, display : Bulma.Styled.Columns.Display, centered : Basics.Bool }"
+            },
+            {
+                "name": "Offset",
+                "comment": " ",
+                "args": [],
+                "type": "Bulma.Styled.Modifiers.Width"
+            }
+        ],
+        "values": [
+            {
+                "name": "column",
+                "comment": " A column element that is meant to be placed in `columns`.\n\n    myColumn : Html msg\n    myColumn =\n        column myColumnModifiers\n            []\n            [ h1 [] [ text \"Lorem\" ]\n            , h2 [] [ text \"ipsum\" ]\n            , h3 [] [ text \"dolor\" ]\n            , h4 [] [ text \"sit\" ]\n            , h5 [] [ text \"amet\" ]\n            ]\n\n",
+                "type": "Bulma.Styled.Columns.ColumnModifiers -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Columns.Column msg"
+            },
+            {
+                "name": "columnModifiers",
+                "comment": " Default offsets and widths for an individiual column.\nThe offset defaults to `Auto`. Each device defaults to `Just Auto`.\n",
+                "type": "Bulma.Styled.Columns.ColumnModifiers"
+            },
+            {
+                "name": "columns",
+                "comment": " Make a columnar grid! The widths of all your columns should be no greater than twelve.\n",
+                "type": "Bulma.Styled.Columns.ColumnsModifiers -> List.List (Html.Styled.Attribute msg) -> List.List (Bulma.Styled.Columns.Column msg) -> Html.Styled.Html msg"
+            },
+            {
+                "name": "columnsModifiers",
+                "comment": " Default column attributes.\n\n    myColumnsModifiers : ColumnsModifiers\n    myColumnsModifiers\n      = { multiline          = False\n        , gap                = Gap3\n        , display            = TabletAndBeyond\n        , centered           = False\n        }\n\n    myColumnsModifiers == columnsModifiers\n\n",
+                "type": "Bulma.Styled.Columns.ColumnsModifiers"
+            },
+            {
+                "name": "desktop",
+                "comment": " ",
+                "type": "Bulma.Styled.Columns.Display"
+            },
+            {
+                "name": "gap0",
+                "comment": " ",
+                "type": "Bulma.Styled.Columns.Gap"
+            },
+            {
+                "name": "gap1",
+                "comment": " ",
+                "type": "Bulma.Styled.Columns.Gap"
+            },
+            {
+                "name": "gap2",
+                "comment": " ",
+                "type": "Bulma.Styled.Columns.Gap"
+            },
+            {
+                "name": "gap3",
+                "comment": " ",
+                "type": "Bulma.Styled.Columns.Gap"
+            },
+            {
+                "name": "gap4",
+                "comment": " ",
+                "type": "Bulma.Styled.Columns.Gap"
+            },
+            {
+                "name": "gap5",
+                "comment": " ",
+                "type": "Bulma.Styled.Columns.Gap"
+            },
+            {
+                "name": "gap6",
+                "comment": " ",
+                "type": "Bulma.Styled.Columns.Gap"
+            },
+            {
+                "name": "gap7",
+                "comment": " ",
+                "type": "Bulma.Styled.Columns.Gap"
+            },
+            {
+                "name": "gap8",
+                "comment": " ",
+                "type": "Bulma.Styled.Columns.Gap"
+            },
+            {
+                "name": "mobile",
+                "comment": " ",
+                "type": "Bulma.Styled.Columns.Display"
+            },
+            {
+                "name": "narrowColumnModifiers",
+                "comment": " Default offsets and widths for an individiual column.\nThe offset defaults to `Auto`. Each device defaults to `Nothing`.\n",
+                "type": "Bulma.Styled.Columns.ColumnModifiers"
+            },
+            {
+                "name": "tablet",
+                "comment": " ",
+                "type": "Bulma.Styled.Columns.Display"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Bulma.Styled.Components",
+        "comment": "\n\n\n# Table of Contents\n\n  - [Aliases](#aliases)\n  - [Breadcrumb](#breadcrumb)\n  - [Card](#card)\n  - [Dropdown](#dropdown)\n  - [Menu](#menu)\n  - [Message](#message)\n  - [Modal](#modal)\n  - [Navbar](#navbar)\n  - [Pagination](#pagination)\n  - [Panel](#panel)\n  - [Tabs](#tabs)\n\n\n# Aliases\n\n@docs IsActive\n\n\n# Breadcrumb\n\n@docs Breadcrumb, slash, arrow, bullet, dot, succeeds\n@docs BreadcrumbModifiers, BreadcrumbSeparator, breadcrumbModifiers\n@docs breadcrumb\n\n\n## Crumblet\n\n@docs Crumblet\n@docs crumblet\n\n\n# Card\n\n@docs Card\n@docs card\n\n\n## Card Partitions\n\n@docs CardPartition\n\n\n### Card Header\n\n@docs cardHeader, easyCardHeader, easierCardHeader\n\n\n#### Card Header Item\n\n@docs CardHeaderItem\n@docs cardTitle, easyCardTitle\n@docs cardIcon, cardIconLink, easyCardIconLink\n\n\n### Card Image\n\n@docs cardImage\n\n\n### Card Content\n\n@docs cardContent\n\n\n### Card Footer\n\n@docs cardFooter\n\n\n#### Card Footer Item\n\n@docs CardFooterItem\n@docs cardFooterItem, cardFooterItemLink\n\n\n# Dropdown\n\n@docs Dropdown, DropdownModifiers, dropdownModifiers\n@docs dropdown, hoverableDropdown\n\n\n## Dropdown Content\n\n@docs DropdownContent\n@docs dropdownTrigger\n@docs dropdownMenu\n\n\n### Dropdown Item\n\n@docs DropdownItem\n@docs dropdownItem, dropdownItemLink, dropdownDivider\n\n\n# Menu\n\n@docs Menu\n@docs menu\n\n\n## Menu Part\n\n@docs MenuPart\n\n\n### Menu Label\n\n@docs menuLabel\n\n\n### Menu List\n\n@docs menuList\n\n\n#### Menu List Item\n\n@docs MenuListItem\n@docs menuListItem\n@docs menuListItemLink, easyMenuListItemLink\n\n\n# Message\n\n@docs Message, MessageModifiers, messageModifiers\n@docs message\n\n\n## Message Partition\n\n@docs MessagePartition\n@docs messageBody\n@docs messageHeader, messageHeaderWithDelete\n\n\n# Modal\n\n@docs Modal, IsModalOpen\n@docs modal, easyModal\n\n\n## Modal Partition\n\n@docs ModalPartition\n@docs modalContent\n@docs modalBackground, easyModalBackground\n@docs modalClose, easyModalClose\n@docs modalCard\n\n\n### Modal Card Partition\n\n@docs ModalCardPartition\n@docs modalCardBody\n@docs modalCardHead, modalCardTitle\n@docs modalCardFoot\n\n\n# Navbar\n\n@docs Navbar, NavbarModifiers, navbarModifiers\n@docs navbar\n@docs fixedNavbar\n\n\n## Navbar Sections\n\n@docs NavbarSection\n@docs navbarBrand, navbarMenu\n@docs NavbarSide, navbarStart, navbarEnd\n\n\n### Navbar Burger\n\n@docs NavbarBurger\n@docs navbarBurger, navbarCross\n\n\n### Navbar Item\n\n@docs NavbarItem\n@docs navbarItem, navbarItemLink, arrowlessNavbarLink\n@docs navbarDivider\n\n\n#### Navbar Item Dropdown\n\n@docs navbarItemDropdown, hoverableNavbarItemDropdown\n@docs NavbarDropdown, IsBoxed, navbarDropdown\n@docs NavbarLink, navbarLink\n\n\n# Pagination\n\n@docs Pagination, pagination, roundedPagination\n\n\n## Pagination Partition\n\n@docs PaginationPartition\n@docs paginationPrev, easyPaginationPrev\n@docs paginationNext, easyPaginationNext\n@docs paginationList\n\n\n## Pagination List Item\n\n@docs PaginationListItem, IsCurrent\n@docs paginationLink, easyPaginationLink\n@docs paginationEllipsis, easyPaginationEllipsis\n\n\n# Panel\n\n@docs Panel\n@docs panel\n\n\n## Panel Partition\n\n@docs PanelPartition\n@docs panelHeading\n@docs panelBlock, panelLabel, panelLink, panelLinkWithIcon, panelCheckbox\n@docs panelTabs\n\n\n### Panel Tab\n\n@docs PanelTab\n@docs panelTab\n\n\n# Tabs\n\n@docs Tabs, TabsModifiers, tabsModifiers\n@docs TabsStyle, minimal, boxed, toggle, round\n@docs tabs\n\n\n## Tab\n\n@docs Tab\n@docs tab\n\n",
+        "unions": [
+            {
+                "name": "BreadcrumbSeparator",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "TabsStyle",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Breadcrumb",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "BreadcrumbModifiers",
+                "comment": " ",
+                "args": [],
+                "type": "{ separator : Bulma.Styled.Components.BreadcrumbSeparator, alignment : Bulma.Styled.Modifiers.Internal.HorizontalAlignment, size : Bulma.Styled.Modifiers.Internal.Size }"
+            },
+            {
+                "name": "Card",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "CardFooterItem",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "CardHeaderItem",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "CardPartition",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "Crumblet",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "Dropdown",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "DropdownContent",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "DropdownItem",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "DropdownModifiers",
+                "comment": " ",
+                "args": [],
+                "type": "{ horizontalAlignment : Bulma.Styled.Modifiers.Internal.HorizontalAlignment, verticalDirection : Bulma.Styled.Modifiers.Internal.VerticalDirection }"
+            },
+            {
+                "name": "IsActive",
+                "comment": " ",
+                "args": [],
+                "type": "Basics.Bool"
+            },
+            {
+                "name": "IsBoxed",
+                "comment": " ",
+                "args": [],
+                "type": "Basics.Bool"
+            },
+            {
+                "name": "IsCurrent",
+                "comment": " ",
+                "args": [],
+                "type": "Basics.Bool"
+            },
+            {
+                "name": "IsModalOpen",
+                "comment": " ",
+                "args": [],
+                "type": "Basics.Bool"
+            },
+            {
+                "name": "Menu",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "MenuListItem",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "MenuPart",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "Message",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "MessageModifiers",
+                "comment": " ",
+                "args": [],
+                "type": "{ color : Bulma.Styled.Modifiers.Internal.Color, size : Bulma.Styled.Modifiers.Internal.Size }"
+            },
+            {
+                "name": "MessagePartition",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "Modal",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "ModalCardPartition",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "ModalPartition",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "Navbar",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "NavbarBurger",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "NavbarDropdown",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "NavbarItem",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "NavbarLink",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "NavbarModifiers",
+                "comment": " ",
+                "args": [],
+                "type": "{ color : Bulma.Styled.Modifiers.Internal.Color, transparent : Basics.Bool }"
+            },
+            {
+                "name": "NavbarSection",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "NavbarSide",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "Pagination",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "PaginationListItem",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "PaginationPartition",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "Panel",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "PanelPartition",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "PanelTab",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "Tab",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "Tabs",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "TabsModifiers",
+                "comment": " ",
+                "args": [],
+                "type": "{ style : Bulma.Styled.Components.TabsStyle, alignment : Bulma.Styled.Modifiers.Internal.HorizontalAlignment, size : Bulma.Styled.Modifiers.Internal.Size }"
+            }
+        ],
+        "values": [
+            {
+                "name": "arrow",
+                "comment": " ",
+                "type": "Bulma.Styled.Components.BreadcrumbSeparator"
+            },
+            {
+                "name": "arrowlessNavbarLink",
+                "comment": " This element represents `a.navbar-link.is-arrowless`. It is only useful as a child of `navbarDropdown`.\n",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Components.NavbarLink msg"
+            },
+            {
+                "name": "boxed",
+                "comment": " ",
+                "type": "Bulma.Styled.Components.TabsStyle"
+            },
+            {
+                "name": "breadcrumb",
+                "comment": " A navigation thingy.\nThe first list of attributes is for a `nav.breadcrumb` tag. The second is for an inner `ul` tag.\n\n    type Msg\n        = GoHome\n        | GoAway\n        | GoTeam\n\n    myBreadCrumb : Html Msg\n    myBreadCrumb =\n        breadcrumb breadcrumbModifiers\n            []\n            []\n            [ crumblet False [] [ onClick GoHome ]\n            , crumblet False [] [ onClick GoAway ]\n            , crumblet False [] [ onClick GoTeam ]\n            , crumblet True [] []\n            ]\n\n",
+                "type": "Bulma.Styled.Components.BreadcrumbModifiers -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Attribute msg) -> List.List (Bulma.Styled.Components.Crumblet msg) -> Bulma.Styled.Components.Breadcrumb msg"
+            },
+            {
+                "name": "breadcrumbModifiers",
+                "comment": " ",
+                "type": "Bulma.Styled.Components.BreadcrumbModifiers"
+            },
+            {
+                "name": "bullet",
+                "comment": " ",
+                "type": "Bulma.Styled.Components.BreadcrumbSeparator"
+            },
+            {
+                "name": "card",
+                "comment": " The card component comprises several elements that you can mix and match.\n`card` is the main container for the card-partitions.\n\n    myCard : Html msg\n    myCard =\n        card []\n            [ cardImage [] []\n            , cardContent [] []\n            ]\n\n",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Bulma.Styled.Components.CardPartition msg) -> Bulma.Styled.Components.Card msg"
+            },
+            {
+                "name": "cardContent",
+                "comment": " ",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Components.CardPartition msg"
+            },
+            {
+                "name": "cardFooter",
+                "comment": "\n\n    myCardFooter : Html msg\n    myCardFooter =\n        cardFooter []\n            [ cardFooterItemLink [] [ text \"Save\" ]\n            , cardFooterItemLink [] [ text \"Edit\" ]\n            , cardFooterItemLink [] [ text \"Delete\" ]\n            ]\n\n",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Bulma.Styled.Components.CardFooterItem msg) -> Bulma.Styled.Components.CardPartition msg"
+            },
+            {
+                "name": "cardFooterItem",
+                "comment": " ",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Components.CardFooterItem msg"
+            },
+            {
+                "name": "cardFooterItemLink",
+                "comment": " ",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Components.CardFooterItem msg"
+            },
+            {
+                "name": "cardHeader",
+                "comment": " A horizontal bar with a shadow.\n\n    myCardHeader : Html msg\n    myCardHeader =\n        cardHeader []\n            [ cardTitle []\n                [ text \"Queen of Hearts\"\n                ]\n            , cardIcon []\n                [ icon Standard\n                    []\n                    [ heart_o\n                    ]\n                ]\n            ]\n\n",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Components.CardPartition msg"
+            },
+            {
+                "name": "cardIcon",
+                "comment": " ",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Bulma.Styled.Elements.Icon msg) -> Bulma.Styled.Components.CardHeaderItem msg"
+            },
+            {
+                "name": "cardIconLink",
+                "comment": " ",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Bulma.Styled.Elements.Icon msg) -> Bulma.Styled.Components.CardHeaderItem msg"
+            },
+            {
+                "name": "cardImage",
+                "comment": "\n\n    import B.Elements exposing (image, imageModifiers)\n\n    myImage : Html msg\n    myImage =\n        image imageModifiers\n            []\n            [ img [ src \"http://i.imgur.com/LcvP04R.gif\" ] []\n            ]\n\n    myCardImage : Html msg\n    myCardImage =\n        cardImage [] [ myImage ]\n\n",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Bulma.Styled.Elements.Image msg) -> Bulma.Styled.Components.CardPartition msg"
+            },
+            {
+                "name": "cardTitle",
+                "comment": " ",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Components.CardHeaderItem msg"
+            },
+            {
+                "name": "crumblet",
+                "comment": " A convenience element for `breadcrumb`.\nThe first attribute list applies to the outer `li` tag. The second attribute list applies to the inner `a` tag.\n",
+                "type": "Bulma.Styled.Components.IsActive -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Components.Crumblet msg"
+            },
+            {
+                "name": "dot",
+                "comment": " ",
+                "type": "Bulma.Styled.Components.BreadcrumbSeparator"
+            },
+            {
+                "name": "dropdown",
+                "comment": "\n\n    type Msg\n        = ToggleMenu\n\n    myDropdownTrigger : Html Msg\n    myDropdownTrigger =\n        dropdownTrigger []\n            [ button buttonModifiers\n                [ onClick ToggleMenu\n                , attribute \"aria-haspopup\" \"true\"\n                , attribute \"aria-controls\" \"dropdown-menu\"\n                ]\n                [ text \"Toggle Me\"\n                ]\n            ]\n\n    myDropdownMenu : Html Msg\n    myDropdownMenu =\n        dropdownMenu []\n            []\n            [ dropdownItem False [] [ text \"Cool Birds\" ]\n            , dropdownDivider [] []\n            , dropdownItemLink False [ href \"#duck\" ] [ text \"Duck\" ]\n            , dropdownItemLink False [ href \"#duck\" ] [ text \"Duck\" ]\n            , dropdownItemLink True [ href \"#goose\" ] [ text \"Goose\" ]\n            ]\n\n    myDropdown : Bool -> Html Msg\n    myDropdown isMenuOpen =\n        dropdown isMenuOpen\n            dropdownModifiers\n            []\n            [ myDropdownTrigger\n            , myDropdownMenu\n            ]\n\n",
+                "type": "Bulma.Styled.Components.IsActive -> Bulma.Styled.Components.DropdownModifiers -> List.List (Html.Styled.Attribute msg) -> List.List (Bulma.Styled.Components.DropdownContent msg) -> Bulma.Styled.Components.Dropdown msg"
+            },
+            {
+                "name": "dropdownDivider",
+                "comment": " An empty `hr.dropdown-divider` element.\n",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Components.DropdownItem msg"
+            },
+            {
+                "name": "dropdownItem",
+                "comment": " A synonym for `div.dropdown-item.is-active`.\n",
+                "type": "Bulma.Styled.Components.IsActive -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Components.DropdownItem msg"
+            },
+            {
+                "name": "dropdownItemLink",
+                "comment": " A synonym for `a.dropdown-item.is-active`.\n",
+                "type": "Bulma.Styled.Components.IsActive -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Components.DropdownItem msg"
+            },
+            {
+                "name": "dropdownMenu",
+                "comment": " The container for the dropdown's items.\nThe first attributes list is for the outer `div.dropdown-menu`. The inner list is for the `dropdown-content`.\n",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Attribute msg) -> List.List (Bulma.Styled.Components.DropdownItem msg) -> Bulma.Styled.Components.DropdownContent msg"
+            },
+            {
+                "name": "dropdownModifiers",
+                "comment": " ",
+                "type": "Bulma.Styled.Components.DropdownModifiers"
+            },
+            {
+                "name": "dropdownTrigger",
+                "comment": " The container for the button/link that activates the dropdown menu.\n",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Bulma.Styled.Elements.Button msg) -> Bulma.Styled.Components.DropdownContent msg"
+            },
+            {
+                "name": "easierCardHeader",
+                "comment": " ",
+                "type": "List.List (Html.Styled.Attribute msg) -> { title : String.String, icon : Bulma.Styled.Elements.Icon msg, onClickIcon : msg } -> Bulma.Styled.Components.CardPartition msg"
+            },
+            {
+                "name": "easyCardHeader",
+                "comment": "\n\n    type Msg\n        = ShowCard\n\n    myIcon : Html msg\n    myIcon =\n        icon Standard [] [ diamond ]\n\n    myCardHeader : Html Msg\n    myCardHeader =\n        easyCardHeader []\n            { title = [ text \"4 of Diamonds\" ]\n            , icon = [ myIcon ]\n            , onClickIcon = ShowCard\n            }\n\n",
+                "type": "List.List (Html.Styled.Attribute msg) -> { title : List.List (Html.Styled.Html msg), icon : List.List (Html.Styled.Html msg), onClickIcon : msg } -> Bulma.Styled.Components.CardPartition msg"
+            },
+            {
+                "name": "easyCardIconLink",
+                "comment": " ",
+                "type": "List.List (Html.Styled.Attribute msg) -> msg -> Bulma.Styled.Elements.Icon msg -> Bulma.Styled.Components.CardHeaderItem msg"
+            },
+            {
+                "name": "easyCardTitle",
+                "comment": " ",
+                "type": "List.List (Html.Styled.Attribute msg) -> String.String -> Bulma.Styled.Components.CardHeaderItem msg"
+            },
+            {
+                "name": "easyMenuListItemLink",
+                "comment": " ",
+                "type": "Bulma.Styled.Components.IsActive -> List.List (Html.Styled.Attribute msg) -> msg -> Bulma.Styled.Elements.Icon msg -> String.String -> Bulma.Styled.Components.MenuListItem msg"
+            },
+            {
+                "name": "easyModal",
+                "comment": "\n\n    type Msg\n        = CloseModal\n\n    myModal : Html Msg\n    myModal =\n        easyModal True\n            []\n            CloseModal\n            [ text \"Your content goes here.\"\n            ]\n\n",
+                "type": "Bulma.Styled.Components.IsModalOpen -> List.List (Html.Styled.Attribute msg) -> msg -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Components.Modal msg"
+            },
+            {
+                "name": "easyModalBackground",
+                "comment": " ",
+                "type": "List.List (Html.Styled.Attribute msg) -> msg -> Bulma.Styled.Components.ModalPartition msg"
+            },
+            {
+                "name": "easyModalClose",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.Internal.Size -> List.List (Html.Styled.Attribute msg) -> msg -> Bulma.Styled.Components.ModalPartition msg"
+            },
+            {
+                "name": "easyPaginationEllipsis",
+                "comment": " ",
+                "type": "List.List (Html.Styled.Attribute msg) -> Bulma.Styled.Components.PaginationListItem msg"
+            },
+            {
+                "name": "easyPaginationLink",
+                "comment": " ",
+                "type": "Bulma.Styled.Components.IsCurrent -> List.List (Html.Styled.Attribute msg) -> msg -> Basics.Int -> Bulma.Styled.Components.PaginationListItem msg"
+            },
+            {
+                "name": "easyPaginationNext",
+                "comment": " ",
+                "type": "List.List (Html.Styled.Attribute msg) -> msg -> String.String -> Bulma.Styled.Components.PaginationPartition msg"
+            },
+            {
+                "name": "easyPaginationPrev",
+                "comment": " ",
+                "type": "List.List (Html.Styled.Attribute msg) -> msg -> String.String -> Bulma.Styled.Components.PaginationPartition msg"
+            },
+            {
+                "name": "fixedNavbar",
+                "comment": " A sticky variant of `navbar`.\nRemember to change your root `<html>` tag to `<html class=\"has-navbar-fixed-top\">` or `<html class=\"has-navbar-fixed-bottom\">`.\n",
+                "type": "Bulma.Styled.Modifiers.Internal.VerticalAlignment -> Bulma.Styled.Components.NavbarModifiers -> List.List (Html.Styled.Attribute msg) -> List.List (Bulma.Styled.Components.NavbarSection msg) -> Bulma.Styled.Components.Navbar msg"
+            },
+            {
+                "name": "hoverableDropdown",
+                "comment": " A hoverable variant of `dropdown`.\n",
+                "type": "Bulma.Styled.Components.DropdownModifiers -> List.List (Html.Styled.Attribute msg) -> List.List (Bulma.Styled.Components.DropdownContent msg) -> Bulma.Styled.Components.Dropdown msg"
+            },
+            {
+                "name": "hoverableNavbarItemDropdown",
+                "comment": " A hoverable variant of `navbarItemDropdown`.\n",
+                "type": "Bulma.Styled.Modifiers.Internal.VerticalDirection -> List.List (Html.Styled.Attribute msg) -> Bulma.Styled.Components.NavbarLink msg -> List.List (Bulma.Styled.Components.NavbarDropdown msg) -> Bulma.Styled.Components.NavbarItem msg"
+            },
+            {
+                "name": "menu",
+                "comment": " Simple menus for vertical navigation.\n\n    myMenu : Html msg\n    myMenu =\n        menu []\n            [ menuLabel [] [ text \"General\" ]\n            , menuList []\n                [ menuListItemLink False [] [ text \"Dashboard\" ]\n                , menuListItemLink False [] [ text \"Customers\" ]\n                ]\n            , menuLabel [] [ text \"Administration\" ]\n            , menuList []\n                [ menuListItem []\n                    [ menuListItemLink False [] [ text \"Team Settings\" ]\n                    ]\n                , menuListItem []\n                    [ menuListItemLink True [] [ text \"Manage Your Team\" ]\n                    , menuList []\n                        [ menuListItemLink False [] [ text \"Members\" ]\n                        ]\n                    ]\n                ]\n            ]\n\n",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Bulma.Styled.Components.MenuPart msg) -> Bulma.Styled.Components.Menu msg"
+            },
+            {
+                "name": "menuLabel",
+                "comment": " ",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Components.MenuPart msg"
+            },
+            {
+                "name": "menuList",
+                "comment": " ",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Bulma.Styled.Components.MenuListItem msg) -> Bulma.Styled.Components.MenuPart msg"
+            },
+            {
+                "name": "menuListItem",
+                "comment": " ",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Components.MenuListItem msg"
+            },
+            {
+                "name": "menuListItemLink",
+                "comment": " ",
+                "type": "Bulma.Styled.Components.IsActive -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Components.MenuListItem msg"
+            },
+            {
+                "name": "message",
+                "comment": "\n\n    myMessage : Html msg\n    myMessage =\n        message myMessageModifiers\n            []\n            [ messageHeader []\n                [ p [] [ text \"hello\" ]\n                ]\n            , messageBody []\n                [ text \"lorem ipsum\"\n                ]\n            ]\n\n",
+                "type": "Bulma.Styled.Components.MessageModifiers -> List.List (Html.Styled.Attribute msg) -> List.List (Bulma.Styled.Components.MessagePartition msg) -> Bulma.Styled.Components.Message msg"
+            },
+            {
+                "name": "messageBody",
+                "comment": " ",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Components.MessagePartition msg"
+            },
+            {
+                "name": "messageHeader",
+                "comment": " ",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Components.MessagePartition msg"
+            },
+            {
+                "name": "messageHeaderWithDelete",
+                "comment": " ",
+                "type": "List.List (Html.Styled.Attribute msg) -> msg -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Components.MessagePartition msg"
+            },
+            {
+                "name": "messageModifiers",
+                "comment": " ",
+                "type": "Bulma.Styled.Components.MessageModifiers"
+            },
+            {
+                "name": "minimal",
+                "comment": " ",
+                "type": "Bulma.Styled.Components.TabsStyle"
+            },
+            {
+                "name": "modal",
+                "comment": "\n\n    myModal : Html msg\n    myModal =\n        modal True\n            []\n            [ modalBackground [] []\n            , modalContent []\n                [ text \"Anything can go here!\"\n                ]\n            , modalClose Large [] []\n            ]\n\n",
+                "type": "Bulma.Styled.Components.IsModalOpen -> List.List (Html.Styled.Attribute msg) -> List.List (Bulma.Styled.Components.ModalPartition msg) -> Bulma.Styled.Components.Modal msg"
+            },
+            {
+                "name": "modalBackground",
+                "comment": " ",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Components.ModalPartition msg"
+            },
+            {
+                "name": "modalCard",
+                "comment": " ",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Bulma.Styled.Components.ModalCardPartition msg) -> Bulma.Styled.Components.ModalPartition msg"
+            },
+            {
+                "name": "modalCardBody",
+                "comment": " ",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Components.ModalCardPartition msg"
+            },
+            {
+                "name": "modalCardFoot",
+                "comment": " ",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Components.ModalCardPartition msg"
+            },
+            {
+                "name": "modalCardHead",
+                "comment": " ",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Components.ModalCardPartition msg"
+            },
+            {
+                "name": "modalCardTitle",
+                "comment": " ",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Html.Styled.Html msg"
+            },
+            {
+                "name": "modalClose",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.Internal.Size -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Components.ModalPartition msg"
+            },
+            {
+                "name": "modalContent",
+                "comment": " ",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Components.ModalPartition msg"
+            },
+            {
+                "name": "navbar",
+                "comment": "\n\n    myNavbarBurger : Html Msg\n    myNavbarBurger =\n        navbarBurger isMenuOpen\n            []\n            [ span [] []\n            , span [] []\n            , span [] []\n            ]\n\n    myNavbarLink : Html Msg\n    myNavbarLink =\n        navbarLink []\n            [ text \"More Junk\"\n            ]\n\n    myNavbar : Bool -> Bool -> Html Msg\n    myNavbar isMenuOpen isMenuDropdownOpen =\n        navbar navbarModifiers\n            []\n            [ navbarBrand []\n                myNavbarBurger\n                [ navbarItem False\n                    []\n                    [ img [ src \"https://B.io/images/bulma-logo.png\" ] []\n                    ]\n                ]\n            , navbarMenu isMenuOpen\n                []\n                [ navbarStart []\n                    [ navbarItemLink False [] [ text \"Home\" ]\n                    , navbarItemLink False [] [ text \"Blog\" ]\n                    , navbarItemLink True [] [ text \"Carrots\" ]\n                    , navbarItemLink False [] [ text \"About\" ]\n                    ]\n                , navbarEnd []\n                    [ navbarItemDropdown isMenuDropdownOpen\n                        Down\n                        []\n                        myNavbarLink\n                        [ navbarDropdown False\n                            Left\n                            []\n                            [ navbarItemLink False [] [ text \"Crud\" ]\n                            , navbarItemLink False [] [ text \"Detritus\" ]\n                            , navbarItemLink True [] [ text \"Refuse\" ]\n                            , navbarItemLink False [] [ text \"Trash\" ]\n                            ]\n                        ]\n                    ]\n                ]\n            ]\n\n",
+                "type": "Bulma.Styled.Components.NavbarModifiers -> List.List (Html.Styled.Attribute msg) -> List.List (Bulma.Styled.Components.NavbarSection msg) -> Bulma.Styled.Components.Navbar msg"
+            },
+            {
+                "name": "navbarBrand",
+                "comment": " This is a child of `navbar`, and a sibling to `navbarBrand`.\nThis element stays to the left side of the `navbar`.\nThis section is always visible, so try not to place too many links in here -- they'll overflow past the right side of the screen on mobile devices.\n",
+                "type": "List.List (Html.Styled.Attribute msg) -> Bulma.Styled.Components.NavbarBurger msg -> List.List (Bulma.Styled.Components.NavbarItem msg) -> Bulma.Styled.Components.NavbarSection msg"
+            },
+            {
+                "name": "navbarBurger",
+                "comment": " This is a little hamburger menu icon that only appears on mobile devices, when placed in a `navbarBrand`.\nPlace empty `span` elements inside to add/subtract numbers of lines.\nWhen its first argument is `True`, it transforms into a `navbarCross`.\n\n    myNavbarBurger : Bool -> Html Msg\n    myNavbarBurger isMenuOpen =\n        navbarBurger isMenuOpen\n            []\n            [ span [] []\n            , span [] []\n            , span [] []\n            ]\n\n",
+                "type": "Bulma.Styled.Components.IsActive -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Components.NavbarBurger msg"
+            },
+            {
+                "name": "navbarCross",
+                "comment": " A simple \"X\" character; the active version of `navbarBurger`.\n",
+                "type": "List.List (Html.Styled.Attribute msg) -> Bulma.Styled.Components.NavbarBurger msg"
+            },
+            {
+                "name": "navbarDivider",
+                "comment": " A tiny 'lil `hr.navbar-divider`.\n",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Components.NavbarItem msg"
+            },
+            {
+                "name": "navbarDropdown",
+                "comment": " This is a `div.navbar-dropdown` element.\nIt is intended to be a child of `navbarItemDropdown`.\nWhen its first argument is `True`, it will add a border on the top of the menu. This is most useful when you're using a transparent menu.\nIts second argument determines which side of the button the menu aligns with.\n",
+                "type": "Bulma.Styled.Components.IsBoxed -> Bulma.Styled.Modifiers.Internal.HorizontalAlignment -> List.List (Html.Styled.Attribute msg) -> List.List (Bulma.Styled.Components.NavbarItem msg) -> Bulma.Styled.Components.NavbarDropdown msg"
+            },
+            {
+                "name": "navbarEnd",
+                "comment": " This element is a child of `navbarMenu`.\nOn normal screens, this section will appear on the left of the `navbar`.\n",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Bulma.Styled.Components.NavbarItem msg) -> Bulma.Styled.Components.NavbarSide msg"
+            },
+            {
+                "name": "navbarItem",
+                "comment": " This is a synonym for `div.navbar-item`.\nYou can use this element in `navbarStart`, `navbarEnd`, `navbarBrand`, and `navbarDropdown`.\n",
+                "type": "Bulma.Styled.Components.IsActive -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Components.NavbarItem msg"
+            },
+            {
+                "name": "navbarItemDropdown",
+                "comment": " This is a dropdown item that expects `navbarLink` and `navbarDropdown` tags.\nWhen the first argument is `True` the menu contents will be visible.\nThe second argument determines which way its child dropdown opens vertically.\nYou can use this element in `navbarStart`, `navbarEnd`, `navbarBrand`, and `navbarDropdown`.\n",
+                "type": "Bulma.Styled.Components.IsActive -> Bulma.Styled.Modifiers.Internal.VerticalDirection -> List.List (Html.Styled.Attribute msg) -> Bulma.Styled.Components.NavbarLink msg -> List.List (Bulma.Styled.Components.NavbarDropdown msg) -> Bulma.Styled.Components.NavbarItem msg"
+            },
+            {
+                "name": "navbarItemLink",
+                "comment": " This is a synonym for `a.navbar-item`.\nYou can use this element in `navbarStart`, `navbarEnd`, `navbarBrand`, and `navbarDropdown`.\nWhen the first argument is `True`, the link will be highlighted.\n",
+                "type": "Bulma.Styled.Components.IsActive -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Components.NavbarItem msg"
+            },
+            {
+                "name": "navbarLink",
+                "comment": " This element represents `a.navbar-link`. It is only useful as a child of `navbarDropdown`.\n",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Components.NavbarLink msg"
+            },
+            {
+                "name": "navbarMenu",
+                "comment": " This is a child of `navbar`, and a sibling to `navbarBrand`.\nOn small screens, passing `True` to `navbarMenu` will show the mobile-device menu.\nIts third argument should be `[ navbarStart [] [], navbarEnd [] [] ]`.\n",
+                "type": "Bulma.Styled.Components.IsActive -> List.List (Html.Styled.Attribute msg) -> List.List (Bulma.Styled.Components.NavbarSide msg) -> Bulma.Styled.Components.NavbarSection msg"
+            },
+            {
+                "name": "navbarModifiers",
+                "comment": " ",
+                "type": "Bulma.Styled.Components.NavbarModifiers"
+            },
+            {
+                "name": "navbarStart",
+                "comment": " This element is a child of `navbarMenu`.\nOn normal screens, this section will appear on the left of the `navbar`.\n",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Bulma.Styled.Components.NavbarItem msg) -> Bulma.Styled.Components.NavbarSide msg"
+            },
+            {
+                "name": "pagination",
+                "comment": "\n\n    myPagination : Html msg\n    myPagination\n      = pagination Left []\n        [ paginationPrev [] [ text \"Previous\" ]\n        , paginationNext [] [ text \"Next\"     ]\n        , paginationList []\n          [ paginationLink False [] [ text \"1\"  ]\n          , paginationEllipsis   [] [           ]\n          , paginationLink False [] [ text \"45\" ]\n          , paginationLink True  [] [ text \"46\" ]\n          , paginationLink False [] [ text \"47\" ]\n          , paginationEllipsis   [] [           ]\n          , paginationLink False [] [ text \"83\" ]\n          ]\n\n",
+                "type": "Bulma.Styled.Modifiers.Internal.HorizontalAlignment -> List.List (Html.Styled.Attribute msg) -> List.List (Bulma.Styled.Components.PaginationPartition msg) -> Bulma.Styled.Components.Pagination msg"
+            },
+            {
+                "name": "paginationEllipsis",
+                "comment": " ",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Components.PaginationListItem msg"
+            },
+            {
+                "name": "paginationLink",
+                "comment": " ",
+                "type": "Bulma.Styled.Components.IsCurrent -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Components.PaginationListItem msg"
+            },
+            {
+                "name": "paginationList",
+                "comment": " ",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Bulma.Styled.Components.PaginationListItem msg) -> Bulma.Styled.Components.PaginationPartition msg"
+            },
+            {
+                "name": "paginationNext",
+                "comment": " ",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Components.PaginationPartition msg"
+            },
+            {
+                "name": "paginationPrev",
+                "comment": " ",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Components.PaginationPartition msg"
+            },
+            {
+                "name": "panel",
+                "comment": "\n\n    myPanel : Html msg\n    myPanel =\n        panel []\n            [ panelHeading [] [ text \"Repositories\" ]\n            , panelBlock False\n                []\n                [ controlInput controlInputModifiers [] [] []\n                ]\n            , panelTabs []\n                [ panelTab False [] [ text \"all\" ]\n                , panelTab True [] [ text \"public\" ]\n                , panelTab True [] [ text \"private\" ]\n                ]\n            , panelLink False [] [ text \"bulma\" ]\n            , panelLink False [] [ text \"marksheet\" ]\n            , panelLink True [] [ text \"test\" ]\n            , panelLink False [] [ text \"horsin\" ]\n            ]\n\n",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Bulma.Styled.Components.PanelPartition msg) -> Bulma.Styled.Components.Panel msg"
+            },
+            {
+                "name": "panelBlock",
+                "comment": " ",
+                "type": "Bulma.Styled.Components.IsActive -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Components.PanelPartition msg"
+            },
+            {
+                "name": "panelCheckbox",
+                "comment": "\n\n    myPanelBlockAttrs : List (Attribute msg)\n    myPanelBlockAttrs =\n        []\n\n    myPanelCheckboxInputAttrs : List (Attribute msg)\n    myPanelCheckboxInputAttrs =\n        [ onClick ToggleThing ]\n\n    myPanelLink : Html msg\n    myPanelLink =\n        panelLinkWithIcon False\n            myPanelBlockAttrs\n            myPanelCheckboxInputAttrs\n            [ text \"Remember Me\" ]\n\n",
+                "type": "Bulma.Styled.Components.IsActive -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Components.PanelPartition msg"
+            },
+            {
+                "name": "panelHeading",
+                "comment": " ",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Components.PanelPartition msg"
+            },
+            {
+                "name": "panelLabel",
+                "comment": " ",
+                "type": "Bulma.Styled.Components.IsActive -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Components.PanelPartition msg"
+            },
+            {
+                "name": "panelLink",
+                "comment": " ",
+                "type": "Bulma.Styled.Components.IsActive -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Components.PanelPartition msg"
+            },
+            {
+                "name": "panelLinkWithIcon",
+                "comment": "\n\n    myPanelBlockAttrs : List (Attribute msg)\n    myPanelBlockAttrs =\n        []\n\n    myPanelIconAttrs : List (Attribute msg)\n    myPanelIconAttrs =\n        []\n\n    myPanelLink : Html msg\n    myPanelLink =\n        panelLinkWithIcon False\n            myPanelBlockAttrs\n            myPanelIconAttrs\n            [ B.Elements.Icon.book ]\n            [ text \"github.com/evancz\" ]\n\n",
+                "type": "Bulma.Styled.Components.IsActive -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Attribute msg) -> List.List (Bulma.Styled.Elements.IconBody msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Components.PanelPartition msg"
+            },
+            {
+                "name": "panelTab",
+                "comment": " ",
+                "type": "Bulma.Styled.Components.IsActive -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Components.PanelTab msg"
+            },
+            {
+                "name": "panelTabs",
+                "comment": " ",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Bulma.Styled.Components.PanelTab msg) -> Bulma.Styled.Components.PanelPartition msg"
+            },
+            {
+                "name": "round",
+                "comment": " ",
+                "type": "Bulma.Styled.Components.TabsStyle"
+            },
+            {
+                "name": "roundedPagination",
+                "comment": " A rounded variant of `pagination`.\n",
+                "type": "Bulma.Styled.Modifiers.Internal.HorizontalAlignment -> List.List (Html.Styled.Attribute msg) -> List.List (Bulma.Styled.Components.PaginationPartition msg) -> Bulma.Styled.Components.Pagination msg"
+            },
+            {
+                "name": "slash",
+                "comment": " ",
+                "type": "Bulma.Styled.Components.BreadcrumbSeparator"
+            },
+            {
+                "name": "succeeds",
+                "comment": " ",
+                "type": "Bulma.Styled.Components.BreadcrumbSeparator"
+            },
+            {
+                "name": "tab",
+                "comment": " ",
+                "type": "Bulma.Styled.Components.IsActive -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Components.Tab msg"
+            },
+            {
+                "name": "tabs",
+                "comment": "\n\n    myTabs : Html msg\n    myTabs =\n        tabs myTabsModifiers\n            []\n            []\n            [ tab False [] [] [ text \"Pictures\" ]\n            , tab False [] [] [ text \"Music\" ]\n            , tab True [] [] [ text \"Videos\" ]\n            , tab False [] [] [ text \"Docs\" ]\n            ]\n\n",
+                "type": "Bulma.Styled.Components.TabsModifiers -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Attribute msg) -> List.List (Bulma.Styled.Components.Tab msg) -> Bulma.Styled.Components.Tabs msg"
+            },
+            {
+                "name": "tabsModifiers",
+                "comment": " ",
+                "type": "Bulma.Styled.Components.TabsModifiers"
+            },
+            {
+                "name": "toggle",
+                "comment": " ",
+                "type": "Bulma.Styled.Components.TabsStyle"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Bulma.Styled.Elements",
+        "comment": "\n\n\n# Table of Contents\n\n  - [Box](#box)\n  - [Button](#button)\n  - [Content](#content)\n  - [Delete](#delete)\n  - [Icon](#icon)\n  - [Image](#image)\n  - [Notification](#notification)\n  - [Progress](#progress)\n  - [Table](#table)\n  - [Tag](#tag)\n  - [Title](#title)\n\n\n# Box\n\n@docs Box\n@docs box\n\n\n# Button\n\n@docs Button, ButtonModifiers, buttonModifiers\n@docs button, easyButton\n@docs buttons, connectedButtons\n\n\n# Content\n\n@docs Content\n@docs content\n\n\n# Delete\n\n@docs Delete\n@docs delete, easyDelete\n\n\n# Icon\n\n@docs Icon, IconBody\n@docs icon\n\n\n# Image\n\n@docs Image, ImageSize, x16, x24, x32, x48, x64, x96, x128, unbounded, ImageShape, natural, oneByOne, fourByThree, threeByTwo, sixteenByNine, twoByOne\n@docs image, easyImage, easyPlaceholderImage\n\n\n# Notification\n\n@docs Notification\n@docs notification, notificationWithDelete\n\n\n# Progress\n\n@docs Progress, ProgressModifiers, progressModifiers\n@docs progress, easyProgress\n\n\n# Table\n\n@docs Table, TableModifiers, tableModifiers\n@docs table\n\n\n## Table Partition\n\n@docs TablePartition\n@docs tableBody, tableHead, tableFoot\n\n\n### Table Row\n\n@docs TableRow, IsHighlighted\n@docs tableRow\n\n\n#### Table Cell\n\n@docs TableCell\n@docs tableCell, tableCellHead\n\n\n# Tag\n\n@docs Tag, TagModifiers, tagModifiers\n@docs tag, easyTag, deleteTag\n@docs roundedTag, easyRoundedTag\n@docs tagWithDelete, easyTagWithDelete, easyRoundedTagWithDelete\n\n\n## Tags\n\n@docs tags\n@docs multitag\n\n\n# Title\n\n@docs Title, TitleSize, h1, h2, h3, h4, h5, h6\n@docs title, subtitle\n\n\n## Title Pair\n\n@docs TitleSpacing\n@docs easyTitleWithSubtitle\n\n",
+        "unions": [
+            {
+                "name": "ImageShape",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "ImageSize",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "TitleSize",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Box",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "Button",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "ButtonModifiers",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ disabled : Basics.Bool, outlined : Basics.Bool, inverted : Basics.Bool, rounded : Basics.Bool, static : Basics.Bool, size : Bulma.Styled.Modifiers.Size, state : Bulma.Styled.Modifiers.State, color : Bulma.Styled.Modifiers.Color, iconLeft : Maybe.Maybe ( Bulma.Styled.Modifiers.Size, List.List (Html.Styled.Attribute msg), Bulma.Styled.Elements.IconBody msg ), iconRight : Maybe.Maybe ( Bulma.Styled.Modifiers.Size, List.List (Html.Styled.Attribute msg), Bulma.Styled.Elements.IconBody msg ) }"
+            },
+            {
+                "name": "Content",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "Delete",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "Icon",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "IconBody",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "Image",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "IsHighlighted",
+                "comment": " ",
+                "args": [],
+                "type": "Basics.Bool"
+            },
+            {
+                "name": "Notification",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "Progress",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "ProgressModifiers",
+                "comment": " ",
+                "args": [],
+                "type": "{ size : Bulma.Styled.Modifiers.Size, color : Bulma.Styled.Modifiers.Color }"
+            },
+            {
+                "name": "Table",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "TableCell",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "TableModifiers",
+                "comment": " ",
+                "args": [],
+                "type": "{ bordered : Basics.Bool, striped : Basics.Bool, narrow : Basics.Bool, hoverable : Basics.Bool, fullWidth : Basics.Bool }"
+            },
+            {
+                "name": "TablePartition",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "TableRow",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "Tag",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "TagModifiers",
+                "comment": " ",
+                "args": [],
+                "type": "{ size : Bulma.Styled.Modifiers.Size, color : Bulma.Styled.Modifiers.Color, isLink : Basics.Bool }"
+            },
+            {
+                "name": "Title",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "TitleSpacing",
+                "comment": " ",
+                "args": [],
+                "type": "Basics.Bool"
+            }
+        ],
+        "values": [
+            {
+                "name": "box",
+                "comment": " A white box to contain other elements.\nThe box is simply a container with a shadow, a border, a radius, and some padding.\n\n    myBox : Html msg\n    myBox =\n        box []\n            [ p []\n                [ text \"I'm the box ghost!\" ]\n            ]\n\n",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Elements.Box msg"
+            },
+            {
+                "name": "button",
+                "comment": "\n\n    type Msg\n        = DoSomething\n        | DoSomethingElse\n\n    myButton : Html Msg\n    myButton =\n        button myButtonModifiers\n            [ onClick DoSomething ]\n            [ text \"Click me!\" ]\n\n    myIconButton : Html Msg\n    myIconButton =\n        button myButtonModifiers\n            [ onClick DoSomething ]\n            [ icon [] [ Bulm.Elements.Icon.star ]\n            , span [] [ text \"No, click me!\" ]\n            ]\n\n",
+                "type": "Bulma.Styled.Elements.ButtonModifiers msg -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Elements.Button msg"
+            },
+            {
+                "name": "buttonModifiers",
+                "comment": " The basic defaults for buttons.\n\n    import Bulma.Modifiers\n        exposing\n            ( Color(Default)\n            , Size(Standard)\n            , State(Blur)\n            )\n\n    myButtonModifiers : ButtonModifiers msg\n    myButtonModifiers =\n        { disabled = False\n        , outlined = False\n        , inverted = False\n        , size = Standard\n        , state = Blur\n        , color = Default\n        }\n\n",
+                "type": "Bulma.Styled.Elements.ButtonModifiers msg"
+            },
+            {
+                "name": "buttons",
+                "comment": "\n\n    myButtons : Html Msg\n    myButtons =\n        buttons Left\n            []\n            [ button { buttonModifiers | color = Success } [ text \"Save changes\" ]\n            , button { buttonModifiers | color = Primary } [ text \"Save and continue\" ]\n            , button { buttonModifiers | color = Danger } [ text \"Cancel\" ]\n            ]\n\n",
+                "type": "Bulma.Styled.Modifiers.HorizontalAlignment -> List.List (Html.Styled.Attribute msg) -> List.List (Bulma.Styled.Elements.Button msg) -> Html.Styled.Html msg"
+            },
+            {
+                "name": "connectedButtons",
+                "comment": "\n\n    myConnectedButtons : Html Msg\n    myConnectedButtons =\n        connectedButtons Left\n            []\n            [ button buttonModifiers [ text \"Yes\" ]\n            , button { buttonModifiers | color = Primary } [ text \"Maybe\" ]\n            , button buttonModifiers [ text \"No\" ]\n            ]\n\n",
+                "type": "Bulma.Styled.Modifiers.HorizontalAlignment -> List.List (Html.Styled.Attribute msg) -> List.List (Bulma.Styled.Elements.Button msg) -> Html.Styled.Html msg"
+            },
+            {
+                "name": "content",
+                "comment": " A single class to handle WYSIWYG-generated content, where only HTML tags are available.\n\n    import Bulma.Modifiers exposing (Size(Standard))\n\n    myContent : Html msg\n    myContent =\n        content Standard\n            []\n            [ p [] [ text \"Lorem ipsum...\" ]\n            ]\n\nIt can handle almost any HTML element, including:\n\n  - `p`\n  - `ul` / `ol` / `dl`\n  - `h1` through `h6`\n  - `blockquote`\n  - `em` & `strong`\n  - `table`, `tr`, `th`, and `td` tables\n\n",
+                "type": "Bulma.Styled.Modifiers.Size -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Elements.Content msg"
+            },
+            {
+                "name": "delete",
+                "comment": " Versatile delete cross.\n",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Elements.Delete msg"
+            },
+            {
+                "name": "deleteTag",
+                "comment": "\n\n    myMultitag : Html msg\n    myMultitag =\n        multitag []\n            [ myMainTag\n            , myDeleteTag\n            ]\n\n    myDeleteTag : Html msg\n    myDeleteTag =\n        deleteTag myTagModifiers\n            [ onClick DeleteTag ]\n            \"Delete me!\"\n\n",
+                "type": "Bulma.Styled.Elements.TagModifiers -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Elements.Tag msg"
+            },
+            {
+                "name": "easyButton",
+                "comment": "\n\n    type Msg\n        = DoSomething\n        | DoSomethingElse\n\n    myEasyButton : Html Msg\n    myEasyButton =\n        easyButton myButtonModifiers\n            []\n            DoSomethingElse\n            \"Click me!\"\n\n",
+                "type": "Bulma.Styled.Elements.ButtonModifiers msg -> List.List (Html.Styled.Attribute msg) -> msg -> String.String -> Bulma.Styled.Elements.Button msg"
+            },
+            {
+                "name": "easyDelete",
+                "comment": "\n\n    type Msg\n        = DeleteMsg\n\n    myEasyDelete : Html Msg\n    myEasyDelete =\n        easyDelete [] DeleteMsg\n\n",
+                "type": "List.List (Html.Styled.Attribute msg) -> msg -> Bulma.Styled.Elements.Delete msg"
+            },
+            {
+                "name": "easyImage",
+                "comment": "\n\n    myEasyImage : Html msg\n    myEasyImage =\n        easyImage Natural\n            []\n            \"http://i.imgur.com/I47PSAO.png\"\n\n",
+                "type": "Bulma.Styled.Elements.ImageShape -> List.List (Html.Styled.Attribute msg) -> String.String -> Bulma.Styled.Elements.Image msg"
+            },
+            {
+                "name": "easyPlaceholderImage",
+                "comment": " This is a quick and dirty way to make placeholder images, using sources like <http://bulma.io/images/placeholders/16x16.png> .\n\n    -- OneByOne X16       ->  16 X  16\n    -- OneByOne X24       ->  24 X  24\n    -- OneByOne X32       ->  32 X  32\n    -- OneByOne X48       ->  48 X  48\n    -- OneByOne X64       ->  64 X  64\n    -- OneByOne X96       ->  96 X  96\n    -- OneByOne X128      -> 128 X 128\n    -- OneByOne Unbounded -> 256 X 256\n    -- FourByThree        -> 640 X 480\n    -- ThreeByTwo         -> 480 X 320\n    -- SixteenByNine      -> 640 X 360\n    -- TwoByOne           -> 640 X 320\n    -- _                  -> 256 X 256\n    myEasyPlaceholderImage : Html msg\n    myEasyPlaceholderImage =\n        easyPlaceholderImage (OneByOne Unbounded) []\n\n",
+                "type": "Bulma.Styled.Elements.ImageShape -> List.List (Html.Styled.Attribute msg) -> Bulma.Styled.Elements.Image msg"
+            },
+            {
+                "name": "easyProgress",
+                "comment": "\n\n    myProgressBar : Float -> Html msg\n    myProgressBar percentCompleted =\n        progress myProgressModifiers\n            []\n            percentCompleted\n\n",
+                "type": "Bulma.Styled.Elements.ProgressModifiers -> List.List (Html.Styled.Attribute msg) -> Basics.Float -> Bulma.Styled.Elements.Progress msg"
+            },
+            {
+                "name": "easyRoundedTag",
+                "comment": " ",
+                "type": "Bulma.Styled.Elements.TagModifiers -> List.List (Html.Styled.Attribute msg) -> String.String -> Bulma.Styled.Elements.Tag msg"
+            },
+            {
+                "name": "easyRoundedTagWithDelete",
+                "comment": " ",
+                "type": "Bulma.Styled.Elements.TagModifiers -> List.List (Html.Styled.Attribute msg) -> msg -> String.String -> Bulma.Styled.Elements.Tag msg"
+            },
+            {
+                "name": "easyTag",
+                "comment": "\n\n    myTag : Html msg\n    myTag =\n        easyTag myTagModifiers\n            []\n            \"That was easy.\"\n\n",
+                "type": "Bulma.Styled.Elements.TagModifiers -> List.List (Html.Styled.Attribute msg) -> String.String -> Bulma.Styled.Elements.Tag msg"
+            },
+            {
+                "name": "easyTagWithDelete",
+                "comment": "\n\n    type Msg\n        = DeleteTag Id\n\n    myTag : Id -> Html Msg\n    myTag id =\n        tagWithDelete myTagModifiers\n            []\n            (DeleteTag id)\n            \"cooler\"\n\n",
+                "type": "Bulma.Styled.Elements.TagModifiers -> List.List (Html.Styled.Attribute msg) -> msg -> String.String -> Bulma.Styled.Elements.Tag msg"
+            },
+            {
+                "name": "easyTitleWithSubtitle",
+                "comment": "\n\n    myTitle : Html msg\n    myTitle =\n        easyTitleWithSubtitle False\n            H1\n            [ text \"EPISODE V\" ]\n            [ text \"THE EMPIRE STRIKES BACK\" ]\n\n",
+                "type": "Bulma.Styled.Elements.TitleSpacing -> Bulma.Styled.Elements.TitleSize -> List.List (Html.Styled.Html msg) -> List.List (Html.Styled.Html msg) -> List.List (Bulma.Styled.Elements.Title msg)"
+            },
+            {
+                "name": "fourByThree",
+                "comment": " ",
+                "type": "Bulma.Styled.Elements.ImageShape"
+            },
+            {
+                "name": "h1",
+                "comment": " ",
+                "type": "Bulma.Styled.Elements.TitleSize"
+            },
+            {
+                "name": "h2",
+                "comment": " ",
+                "type": "Bulma.Styled.Elements.TitleSize"
+            },
+            {
+                "name": "h3",
+                "comment": " ",
+                "type": "Bulma.Styled.Elements.TitleSize"
+            },
+            {
+                "name": "h4",
+                "comment": " ",
+                "type": "Bulma.Styled.Elements.TitleSize"
+            },
+            {
+                "name": "h5",
+                "comment": " ",
+                "type": "Bulma.Styled.Elements.TitleSize"
+            },
+            {
+                "name": "h6",
+                "comment": " ",
+                "type": "Bulma.Styled.Elements.TitleSize"
+            },
+            {
+                "name": "icon",
+                "comment": " import Icon.FontAwesome exposing ( fontAwesomeCDN, meh\\_o )\n-- see <http://package.elm-lang.org/packages/surprisetalk/elm-icon/latest>\n\n    import Bulma.Modifiers exposing (Size(Large))\n\n    view : Model -> Html msg\n    view model =\n        div []\n            [ fontAwesomeCDN\n            , icon Large [] [ meh_o ]\n            , icon Large [] [ i [ class \"fas fa-meh-o\" ] [] ]\n            ]\n\n",
+                "type": "Bulma.Styled.Modifiers.Size -> List.List (Html.Styled.Attribute msg) -> List.List (Bulma.Styled.Elements.IconBody msg) -> Bulma.Styled.Elements.Icon msg"
+            },
+            {
+                "name": "image",
+                "comment": " Use the `image` container to specify a precisely-sized container so that your layout isn't broken because of loading or broken images.\n\n    myImage : Html msg\n    myImage =\n        image FourByThree\n            []\n            [ img [ src \"https://i.imgur.com/pPjvmVS.jpg\" ] []\n            ]\n\n",
+                "type": "Bulma.Styled.Elements.ImageShape -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Elements.Image msg"
+            },
+            {
+                "name": "multitag",
+                "comment": "\n\n    myMultitag : Html msg\n    myMultitag =\n        multitag []\n            [ myFirstTag\n            , mySecondTag\n            ]\n\n    myMultitags : Html msg\n    myMultitags =\n        multilineFields []\n            [ control myControlModifiers\n                []\n                [ myMultiTag\n                ]\n            , control myControlModifiers\n                []\n                [ myMultiTag\n                ]\n            , control myControlModifiers\n                []\n                [ myMultiTag\n                ]\n            ]\n\n",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Bulma.Styled.Elements.Tag msg) -> Html.Styled.Html msg"
+            },
+            {
+                "name": "natural",
+                "comment": " ",
+                "type": "Bulma.Styled.Elements.ImageShape"
+            },
+            {
+                "name": "notification",
+                "comment": "\n\n    import Bulma.Modifiers exposing (Color(Danger))\n\n    myNotification : Html msg\n    myNotification =\n        notification Danger\n            []\n            [ text \"Something went wrong!\"\n            ]\n\n",
+                "type": "Bulma.Styled.Modifiers.Color -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Elements.Notification msg"
+            },
+            {
+                "name": "notificationWithDelete",
+                "comment": "\n\n    import Bulma.Modifiers exposing (Color(Success))\n\n    type Msg\n        = ClearNotificationsMsg\n\n    myNotification : Html Msg\n    myNotification =\n        notificationWithDelete Danger\n            []\n            ClearNotificationsMsg\n            [ text \"Something went right!\"\n            ]\n\n",
+                "type": "Bulma.Styled.Modifiers.Color -> List.List (Html.Styled.Attribute msg) -> msg -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Elements.Notification msg"
+            },
+            {
+                "name": "oneByOne",
+                "comment": " ",
+                "type": "Bulma.Styled.Elements.ImageSize -> Bulma.Styled.Elements.ImageShape"
+            },
+            {
+                "name": "progress",
+                "comment": "\n\n    myProgressBar : Int -> Int -> Html msg\n    myProgressBar pVal pMax =\n        progress myProgressModifiers\n            [ value <| toString pVal\n            , max <| toString pMax\n            ]\n            []\n\n",
+                "type": "Bulma.Styled.Elements.ProgressModifiers -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Elements.Progress msg"
+            },
+            {
+                "name": "progressModifiers",
+                "comment": " ",
+                "type": "Bulma.Styled.Elements.ProgressModifiers"
+            },
+            {
+                "name": "roundedTag",
+                "comment": "\n\n    myTag : Html msg\n    myTag =\n        roundedTag myTagModifiers\n            []\n            [ text \"Behold! I'm circlular!\"\n            ]\n\n",
+                "type": "Bulma.Styled.Elements.TagModifiers -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Elements.Tag msg"
+            },
+            {
+                "name": "sixteenByNine",
+                "comment": " ",
+                "type": "Bulma.Styled.Elements.ImageShape"
+            },
+            {
+                "name": "subtitle",
+                "comment": "\n\n    mySubtitle : Html msg\n    mySubtitle =\n        subtitle H3\n            []\n            [ text \"World\"\n            ]\n\n",
+                "type": "Bulma.Styled.Elements.TitleSize -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Elements.Title msg"
+            },
+            {
+                "name": "table",
+                "comment": "\n\n    myTable : Html msg\n    myTable =\n        table myTableModifiers\n            []\n            [ tableHead [] []\n            , tableBody [] []\n            , tableFoot [] []\n            ]\n\n",
+                "type": "Bulma.Styled.Elements.TableModifiers -> List.List (Html.Styled.Attribute msg) -> List.List (Bulma.Styled.Elements.TablePartition msg) -> Bulma.Styled.Elements.Table msg"
+            },
+            {
+                "name": "tableBody",
+                "comment": "\n\n    myTableBody : Html msg\n    myTableBody =\n        tableBody []\n            [ tableRow False\n                []\n                [ tableCell [] []\n                , tableCell [] []\n                , tableCell [] []\n                ]\n            , tableRow True\n                []\n                [ tableCell [] []\n                , tableCell [] []\n                , tableCell [] []\n                ]\n            ]\n\n",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Bulma.Styled.Elements.TableRow msg) -> Bulma.Styled.Elements.TablePartition msg"
+            },
+            {
+                "name": "tableCell",
+                "comment": " ",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Elements.TableCell msg"
+            },
+            {
+                "name": "tableCellHead",
+                "comment": " ",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Elements.TableCell msg"
+            },
+            {
+                "name": "tableFoot",
+                "comment": "\n\n    myTableFoot : Html msg\n    myTableFoot =\n        tableFoot []\n            [ tableRow False\n                []\n                [ tableCellHead [] []\n                , tableCellHead [] []\n                , tableCellHead [] []\n                ]\n            ]\n\n",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Bulma.Styled.Elements.TableRow msg) -> Bulma.Styled.Elements.TablePartition msg"
+            },
+            {
+                "name": "tableHead",
+                "comment": "\n\n    myTableHead : Html msg\n    myTableHead =\n        tableHead []\n            [ tableRow False\n                []\n                [ tableCellHead [] []\n                , tableCellHead [] []\n                , tableCellHead [] []\n                ]\n            ]\n\n",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Bulma.Styled.Elements.TableRow msg) -> Bulma.Styled.Elements.TablePartition msg"
+            },
+            {
+                "name": "tableModifiers",
+                "comment": " ",
+                "type": "Bulma.Styled.Elements.TableModifiers"
+            },
+            {
+                "name": "tableRow",
+                "comment": " ",
+                "type": "Bulma.Styled.Elements.IsHighlighted -> List.List (Html.Styled.Attribute msg) -> List.List (Bulma.Styled.Elements.TableCell msg) -> Bulma.Styled.Elements.TableRow msg"
+            },
+            {
+                "name": "tag",
+                "comment": "\n\n    myTag : Html msg\n    myTag =\n        tag myTagModifiers\n            []\n            [ text \"Hip to Be Square\"\n            ]\n\n",
+                "type": "Bulma.Styled.Elements.TagModifiers -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Elements.Tag msg"
+            },
+            {
+                "name": "tagModifiers",
+                "comment": " ",
+                "type": "Bulma.Styled.Elements.TagModifiers"
+            },
+            {
+                "name": "tagWithDelete",
+                "comment": "\n\n    type Msg\n        = DeleteTag Id\n\n    myTag : Id -> Html Msg\n    myTag id =\n        tagWithDelete myTagModifiers\n            []\n            (DeleteTag id)\n            [ text \"cool\"\n            ]\n\n",
+                "type": "Bulma.Styled.Elements.TagModifiers -> List.List (Html.Styled.Attribute msg) -> msg -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Elements.Tag msg"
+            },
+            {
+                "name": "tags",
+                "comment": "\n\n    myTags : Html msg\n    myTags =\n        tags []\n            [ myFirstTag\n            , mySecondTag\n            ]\n\n",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Bulma.Styled.Elements.Tag msg) -> Html.Styled.Html msg"
+            },
+            {
+                "name": "threeByTwo",
+                "comment": " ",
+                "type": "Bulma.Styled.Elements.ImageShape"
+            },
+            {
+                "name": "title",
+                "comment": "\n\n    myTitle : Html msg\n    myTitle =\n        title H1\n            []\n            [ text \"Hullo\"\n            ]\n\n",
+                "type": "Bulma.Styled.Elements.TitleSize -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Elements.Title msg"
+            },
+            {
+                "name": "twoByOne",
+                "comment": " ",
+                "type": "Bulma.Styled.Elements.ImageShape"
+            },
+            {
+                "name": "unbounded",
+                "comment": " ",
+                "type": "Bulma.Styled.Elements.ImageSize"
+            },
+            {
+                "name": "x128",
+                "comment": " ",
+                "type": "Bulma.Styled.Elements.ImageSize"
+            },
+            {
+                "name": "x16",
+                "comment": " ",
+                "type": "Bulma.Styled.Elements.ImageSize"
+            },
+            {
+                "name": "x24",
+                "comment": " ",
+                "type": "Bulma.Styled.Elements.ImageSize"
+            },
+            {
+                "name": "x32",
+                "comment": " ",
+                "type": "Bulma.Styled.Elements.ImageSize"
+            },
+            {
+                "name": "x48",
+                "comment": " ",
+                "type": "Bulma.Styled.Elements.ImageSize"
+            },
+            {
+                "name": "x64",
+                "comment": " ",
+                "type": "Bulma.Styled.Elements.ImageSize"
+            },
+            {
+                "name": "x96",
+                "comment": " ",
+                "type": "Bulma.Styled.Elements.ImageSize"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Bulma.Styled.Form",
+        "comment": "\n\n\n# Table of Contents\n\n  - [Aliases](#aliases)\n  - [Field](#field)\n      - [Control](#control)\n          - [Input](#input)\n          - [TextArea](#textarea)\n          - [Select](#select)\n          - [Label](#label)\n          - [CheckBox](#button)\n          - [Radio](#radio)\n          - [Help](#help)\n          - [Button](#button)\n          - [File](#file)\n      - [Fields](#fields)\n\n\n# Aliases\n\n@docs IsDisabled\n\n\n# Field\n\n@docs Field\n@docs field\n\n\n## Control\n\n@docs Control, ControlModifiers, controlModifiers\n@docs control\n\n\n### Input\n\n@docs ControlInputModifiers, controlInputModifiers\n@docs controlInput\n@docs controlText, controlPassword, controlEmail, controlPhone\n\n\n### TextArea\n\n@docs ControlTextAreaModifiers, controlTextAreaModifiers\n@docs controlTextArea\n\n\n### Select\n\n@docs ControlSelectModifiers, controlSelectModifiers\n@docs Option\n@docs controlSelect, controlSelectRounded\n@docs controlMultiselect\n\n\n### Label\n\n@docs controlLabel\n@docs label\n\n\n### CheckBox\n\n@docs controlCheckBox\n\n\n### Radio\n\n@docs IsChecked\n@docs RadioButton\n@docs controlRadio, controlRadioButton\n\n\n### Button\n\n@docs controlButton\n\n\n### Help\n\n@docs controlHelp\n@docs help\n\n\n### File\n\nComing Soon!\n\n\n## Fields\n\n@docs fields, connectedFields\n@docs multilineFields\n@docs horizontalFields\n\n\n### Horizontal Field Partition\n\n@docs HorizontalFieldPartition\n@docs fieldLabel, fieldBody\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Control",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "ControlInputModifiers",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ size : Bulma.Styled.Modifiers.Internal.Size, state : Bulma.Styled.Modifiers.Internal.State, color : Bulma.Styled.Modifiers.Internal.Color, expanded : Basics.Bool, rounded : Basics.Bool, readonly : Basics.Bool, disabled : Basics.Bool, iconLeft : Maybe.Maybe ( Bulma.Styled.Modifiers.Internal.Size, List.List (Html.Styled.Attribute msg), Bulma.Styled.Elements.IconBody msg ), iconRight : Maybe.Maybe ( Bulma.Styled.Modifiers.Internal.Size, List.List (Html.Styled.Attribute msg), Bulma.Styled.Elements.IconBody msg ) }"
+            },
+            {
+                "name": "ControlModifiers",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ loading : Maybe.Maybe Bulma.Styled.Modifiers.Internal.Size, expanded : Basics.Bool, iconLeft : Maybe.Maybe ( Bulma.Styled.Modifiers.Internal.Size, List.List (Html.Styled.Attribute msg), Bulma.Styled.Elements.IconBody msg ), iconRight : Maybe.Maybe ( Bulma.Styled.Modifiers.Internal.Size, List.List (Html.Styled.Attribute msg), Bulma.Styled.Elements.IconBody msg ) }"
+            },
+            {
+                "name": "ControlSelectModifiers",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ size : Bulma.Styled.Modifiers.Internal.Size, state : Bulma.Styled.Modifiers.Internal.State, color : Bulma.Styled.Modifiers.Internal.Color, expanded : Basics.Bool, iconLeft : Maybe.Maybe ( Bulma.Styled.Modifiers.Internal.Size, List.List (Html.Styled.Attribute msg), Bulma.Styled.Elements.IconBody msg ) }"
+            },
+            {
+                "name": "ControlTextAreaModifiers",
+                "comment": " ",
+                "args": [],
+                "type": "{ size : Bulma.Styled.Modifiers.Internal.Size, state : Bulma.Styled.Modifiers.Internal.State, color : Bulma.Styled.Modifiers.Internal.Color, readonly : Basics.Bool, disabled : Basics.Bool }"
+            },
+            {
+                "name": "Field",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "HorizontalFieldPartition",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "IsChecked",
+                "comment": " ",
+                "args": [],
+                "type": "Basics.Bool"
+            },
+            {
+                "name": "IsDisabled",
+                "comment": " ",
+                "args": [],
+                "type": "Basics.Bool"
+            },
+            {
+                "name": "Option",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "RadioButton",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Html msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "connectedFields",
+                "comment": " This is a container for gluing controls together on the same line.\nThis variation will connect them as \"addons\".\n\n    myFields : Html msg\n    myFields =\n        connectedFields Centered\n            []\n            [ controlInput myControlInputModifiers [] [] []\n            , control myControlModifiers\n                []\n                [ button myButtonModifiers [] []\n                ]\n            ]\n\n",
+                "type": "Bulma.Styled.Modifiers.Internal.HorizontalAlignment -> List.List (Html.Styled.Attribute msg) -> List.List (Bulma.Styled.Form.Control msg) -> Bulma.Styled.Form.Field msg"
+            },
+            {
+                "name": "control",
+                "comment": " Controls are containers for singlular form controls.\nThey can only contain the folling elements:\n\n  - `label` (for radio and checkbox)\n  - `input`\n  - `select`\n  - `button`\n  - `icon`\n\nYou really shouldn't need to use this function.\n`controlLabel`, `controlButton`, `controlInput`, etc. should be everything you need.\n\n",
+                "type": "Bulma.Styled.Form.ControlModifiers msg -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Form.Control msg"
+            },
+            {
+                "name": "controlButton",
+                "comment": "\n\n    type Msg\n        = DoSomething\n\n    myButton : Html Msg\n    myButton =\n        let\n            myControlAttrs : List (Attribute Msg)\n            myControlAttrs =\n                []\n\n            myButtonAttrs : List (Attribute Msg)\n            myButtonAttrs =\n                [ onClick DoSomething ]\n        in\n        controlButton myButtonModifiers\n            myControlAttrs\n            myButtonAttrs\n            [ text \"Click me!\"\n            ]\n\n",
+                "type": "Bulma.Styled.Elements.ButtonModifiers msg -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Form.Control msg"
+            },
+            {
+                "name": "controlCheckBox",
+                "comment": "\n\n    type Msg\n        = UpdateChoice Bool\n\n    myCheckBox : Html Msg\n    myCheckBox =\n        let\n            myControlAttrs : List (Attribute Msg)\n            myControlAttrs =\n                []\n\n            myLabelAttrs : List (Attribute Msg)\n            myLabelAttrs =\n                []\n\n            myCheckBoxAttrs : List (Attribute Msg)\n            myCheckBoxAttrs =\n                [ onCheck UpdateChoice ]\n        in\n        controlCheckBox False\n            myControlAttrs\n            myLabelAttrs\n            myCheckBoxAttrs\n            [ text \"I don't agree to the terms and conditions\"\n            ]\n\n",
+                "type": "Bulma.Styled.Form.IsDisabled -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Form.Control msg"
+            },
+            {
+                "name": "controlEmail",
+                "comment": " Just like `controlInput`, but with the `type=\"email\"` attribute added to the input.\n",
+                "type": "Bulma.Styled.Form.ControlInputModifiers msg -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Form.Control msg"
+            },
+            {
+                "name": "controlHelp",
+                "comment": " Secretly just `help`. Created this just for consistency.\n",
+                "type": "Bulma.Styled.Modifiers.Internal.Color -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Form.Control msg"
+            },
+            {
+                "name": "controlInput",
+                "comment": "\n\n    type Msg\n        = UpdateName String\n\n    myInput : Html Msg\n    myInput =\n        let\n            myControlAttrs : List (Attribute Msg)\n            myControlAttrs =\n                []\n\n            myInputAttrs : List (Attribute Msg)\n            myInputAttrs =\n                [ onInput UpdateName\n                , placeholder \"Name\"\n                ]\n        in\n        controlInput myControlInputModifiers\n            myControlAttrs\n            myInputAttrs\n            []\n\n",
+                "type": "Bulma.Styled.Form.ControlInputModifiers msg -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Form.Control msg"
+            },
+            {
+                "name": "controlInputModifiers",
+                "comment": " ",
+                "type": "Bulma.Styled.Form.ControlInputModifiers msg"
+            },
+            {
+                "name": "controlLabel",
+                "comment": " Secretly the same thing as a label. This is just for consistency's sake.\n\n    myLabel : Html msg\n    myLabel =\n        controlLabel [] [ text \"hello\" ]\n\n",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Form.Control msg"
+            },
+            {
+                "name": "controlModifiers",
+                "comment": " ",
+                "type": "Bulma.Styled.Form.ControlModifiers msg"
+            },
+            {
+                "name": "controlMultiselect",
+                "comment": " Accepts options just like `controlSelect`, except it allows you to select multiple list items.\n",
+                "type": "Bulma.Styled.Form.ControlSelectModifiers msg -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Attribute msg) -> List.List (Bulma.Styled.Form.Option msg) -> Bulma.Styled.Form.Control msg"
+            },
+            {
+                "name": "controlPassword",
+                "comment": " Just like `controlInput`, but with the `type=\"password\"` attribute added to the input.\n",
+                "type": "Bulma.Styled.Form.ControlInputModifiers msg -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Form.Control msg"
+            },
+            {
+                "name": "controlPhone",
+                "comment": " Just like `controlInput`, but with the `type=\"tel\"` attribute added to the input.\n",
+                "type": "Bulma.Styled.Form.ControlInputModifiers msg -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Form.Control msg"
+            },
+            {
+                "name": "controlRadio",
+                "comment": "\n\n    type Msg\n        = UpdateChoice String\n\n    myRadio : Html Msg\n    myRadio =\n        let\n            myControlAttrs : List (Attribute Msg)\n            myControlAttrs =\n                []\n\n            myLabelAttrs : List (Attribute Msg)\n            myLabelAttrs =\n                []\n\n            myRadioAttrs : List (Attribute Msg)\n            myRadioAttrs =\n                [ onInput UpdateChoice ]\n        in\n        controlRadio myControlAttrs\n            [ controlRadioButton False\n                False\n                \"yes\"\n                myLabelAttrs\n                (value \"1\" :: myRadioAttrs)\n                [ text \"yep\" ]\n            , controlRadioButton False\n                True\n                \"no\"\n                myLabelAttrs\n                (value \"0\" :: myRadioAttrs)\n                [ text \"nope\" ]\n            , controlRadioButton True\n                False\n                \"maybe\"\n                myLabelAttrs\n                (value \"0\" :: myRadioAttrs)\n                [ text \"uhh\" ]\n            ]\n\n",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Bulma.Styled.Form.RadioButton msg) -> Bulma.Styled.Form.Control msg"
+            },
+            {
+                "name": "controlRadioButton",
+                "comment": " ",
+                "type": "Bulma.Styled.Form.IsDisabled -> Bulma.Styled.Form.IsChecked -> String.String -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Form.RadioButton msg"
+            },
+            {
+                "name": "controlSelect",
+                "comment": "\n\n    type Msg\n        = UpdateChoice String\n\n    myOption : ( String, String ) -> Html msg\n    myOption ( key, val ) =\n        option [ value val ]\n            [ text key\n            ]\n\n    mySelect : Html Msg\n    mySelect =\n        let\n            myControlAttrs : List (Attribute Msg)\n            myControlAttrs =\n                []\n\n            mySelectAttrs : List (Attribute Msg)\n            mySelectAttrs =\n                [ onInput UpdateChoice ]\n        in\n        controlSelect myControlModifiers\n            myControlAttrs\n            mySelectAttrs\n        <|\n            List.map myOption <|\n                [ ( \"grow\", \"eat me\" )\n                , ( \"shrink\", \"drink me\" )\n                ]\n\n",
+                "type": "Bulma.Styled.Form.ControlSelectModifiers msg -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Attribute msg) -> List.List (Bulma.Styled.Form.Option msg) -> Bulma.Styled.Form.Control msg"
+            },
+            {
+                "name": "controlSelectModifiers",
+                "comment": " ",
+                "type": "Bulma.Styled.Form.ControlSelectModifiers msg"
+            },
+            {
+                "name": "controlSelectRounded",
+                "comment": " A rounded variation of `controlSelect`.\n",
+                "type": "Bulma.Styled.Form.ControlSelectModifiers msg -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Form.Control msg"
+            },
+            {
+                "name": "controlText",
+                "comment": " Just like `controlInput`, but with the `type=\"text\"` attribute added to the input.\n",
+                "type": "Bulma.Styled.Form.ControlInputModifiers msg -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Form.Control msg"
+            },
+            {
+                "name": "controlTextArea",
+                "comment": "\n\n    type Msg\n        = UpdateDesc String\n\n    myTextArea : Html Msg\n    myTextArea =\n        let\n            myControlAttrs : List (Attribute Msg)\n            myControlAttrs =\n                []\n\n            myTextAreaAttrs : List (Attribute Msg)\n            myTextAreaAttrs =\n                [ onInput UpdateDesc\n                , placeholder \"Description\"\n                ]\n        in\n        controlTextArea myControlTextAreaModifiers\n            myControlAttrs\n            myTextAreaAttrs\n            []\n\n",
+                "type": "Bulma.Styled.Form.ControlTextAreaModifiers -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Form.Control msg"
+            },
+            {
+                "name": "controlTextAreaModifiers",
+                "comment": " ",
+                "type": "Bulma.Styled.Form.ControlTextAreaModifiers"
+            },
+            {
+                "name": "field",
+                "comment": " Fields are containers for Controls.\nUsually this will be a single `control`, with optional an `label` and `help`.\n\n    import Bulma.Form\n        exposing\n            ( controlInput\n            , controlModifiers\n            , field\n            , help\n            , label\n            )\n\n    myField : Html msg\n    myField =\n        field []\n            [ controlLabel [] []\n            , controlInput myControlInputModifiers [] [] []\n            , controlHelp Default [] []\n            ]\n\n",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Bulma.Styled.Form.Control msg) -> Bulma.Styled.Form.Field msg"
+            },
+            {
+                "name": "fieldBody",
+                "comment": "\n\n    myFieldBody : Html msg\n    myFieldBody =\n        fieldBody []\n            [ field []\n                [ controlInput myControlInputModifiers [] [] []\n                ]\n            , field []\n                [ controlInput myControlInputModifiers [] [] []\n                ]\n            ]\n\n",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Bulma.Styled.Form.Field msg) -> Bulma.Styled.Form.HorizontalFieldPartition msg"
+            },
+            {
+                "name": "fieldLabel",
+                "comment": " `fieldLabel` expects a Bulma label element.\n\n    import B.Form\n        exposing\n            ( fieldLabel\n            , label\n            )\n    import B.Modifiers exposing (Size(Large))\n\n    myFieldLabel : Html msg\n    myFieldLabel =\n        fieldLabel Large\n            []\n            [ label []\n                [ text \"Email?\"\n                ]\n            ]\n\n",
+                "type": "Bulma.Styled.Modifiers.Internal.Size -> List.List (Html.Styled.Attribute msg) -> List.List (Bulma.Styled.Form.Control msg) -> Bulma.Styled.Form.HorizontalFieldPartition msg"
+            },
+            {
+                "name": "fields",
+                "comment": " This is a container for gluing controls together on the same line.\nThis variation will leave spaces between each control.\n\n    myFields : Html msg\n    myFields =\n        fields Right\n            []\n            [ controlInput myControlInputModifiers [] [] []\n            , control myControlModifiers\n                []\n                [ button myButtonModifiers [] []\n                ]\n            ]\n\n",
+                "type": "Bulma.Styled.Modifiers.Internal.HorizontalAlignment -> List.List (Html.Styled.Attribute msg) -> List.List (Bulma.Styled.Form.Control msg) -> Bulma.Styled.Form.Field msg"
+            },
+            {
+                "name": "help",
+                "comment": "\n\n    import B.Modifiers exposing (Color(Danger))\n\n    myHelp : Html msg\n    myHelp =\n        help Danger\n            []\n            [ text \"This field is required.\"\n            ]\n\n",
+                "type": "Bulma.Styled.Modifiers.Internal.Color -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Html.Styled.Html msg"
+            },
+            {
+                "name": "horizontalFields",
+                "comment": " The `horizontalFields` expects a `fieldLabel` and a `fieldBody`.\n\n    import B.Modifiers exposing (Size(Standard))\n\n    myFields : Html msg\n    myFields =\n        horizontalFields []\n            [ fieldLabel Standard\n                []\n                [ label []\n                    [ text \"name\"\n                    ]\n                ]\n            , fieldBody []\n                [ field []\n                    [ controlInput myControlInputModifiers [] [] []\n                    ]\n                , field []\n                    [ controlInput myControlInputModifiers [] [] []\n                    ]\n                ]\n            ]\n\n",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Bulma.Styled.Form.HorizontalFieldPartition msg) -> Bulma.Styled.Form.Field msg"
+            },
+            {
+                "name": "label",
+                "comment": " Just a simple label.\n\n    myLabel : Html msg\n    myLabel =\n        label [] [ text \"hi\" ]\n\n",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Html.Styled.Html msg"
+            },
+            {
+                "name": "multilineFields",
+                "comment": " This is a container for gluing controls together when you expect it to take up multiple lines.\n\n    myControlButton : String -> Html msg\n    myControlButton buttonText =\n        control myControlModifiers\n            []\n            [ button myButtonModifiers\n                []\n                [ text buttonText ]\n            ]\n\n    myFields : Html msg\n    myFields =\n        multilineFields [] <|\n            List.map myControlButton <|\n                List.map toString <|\n                    List.range 0 10\n\n",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Bulma.Styled.Form.Control msg) -> Bulma.Styled.Form.Field msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Bulma.Styled.Layout",
+        "comment": "\n\n\n# Table of Contents\n\n  - [Container](#container)\n  - [Level](#level)\n  - [Media](#media)\n  - [Hero](#hero)\n  - [Section](#section)\n  - [Footer](#footer)\n  - [Tile](#tile)\n\n\n# Container\n\n@docs Container\n@docs container, fluidContainer\n@docs widescreenContainer, fullHDContainer\n\n\n# Level\n\n@docs Level\n@docs level, horizontalLevel\n@docs centeredLevel\n\n\n## Level Partition\n\n@docs LevelPartition\n@docs levelLeft, levelRight\n\n\n## Level Item\n\n@docs LevelItem\n@docs levelItem, levelItemLink, levelItemText\n@docs easyLevelItemWithHeading\n\n\n# Media Object\n\n@docs Media\n@docs media\n\n\n## Media Object Partition\n\n@docs MediaPartition\n@docs mediaContent\n@docs mediaLeft, mediaRight\n\n\n# Hero\n\n@docs Hero, HeroModifiers, heroModifiers\n@docs hero, easyHero\n\n\n## Hero Partition\n\n@docs HeroPartition\n@docs heroBody, heroFoot, heroHead\n\n\n# Section\n\n@docs Section, SectionSpacing\n@docs section, notSpaced, spaced, verySpaced\n\n\n# Footer\n\n@docs Footer\n@docs footer\n\n\n# Tile\n\nLearn more about tiled grids in the [official docs](http://bulma.io/documentation/grid/tiles/).\n\n    myGrid : Html msg\n    myGrid =\n        tileAncestor Auto\n            []\n            [ verticalTile Width8\n                []\n                [ tile Auto\n                    []\n                    [ verticalTileParent Auto\n                        []\n                        [ tileChild Auto\n                            []\n                            [ text \"I'm in the top-left corner!\"\n                            ]\n                        , [ text \"I'm on the middle-left edge!\"\n                          ]\n                        ]\n                    , tileParent Auto\n                        []\n                        [ text \"I'm a tile touching the top-middle edge!\"\n                        ]\n                    ]\n                , tileParent Auto\n                    []\n                    [ tileChild Auto\n                        []\n                        [ text \"I'm taking up the bottom-left half of the grid!\"\n                        ]\n                    ]\n                ]\n            , tileParent Auto\n                []\n                [ tileChild Auto\n                    []\n                    [ text \"I'm a tall column taking up the entire right edge!\"\n                    ]\n                ]\n            ]\n\n@docs Tile\n@docs tile\n@docs tileAncestor, tileParent, tileChild\n@docs verticalTile, verticalTileParent\n\n",
+        "unions": [
+            {
+                "name": "SectionSpacing",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Container",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "Footer",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "Hero",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "HeroModifiers",
+                "comment": " ",
+                "args": [],
+                "type": "{ bold : Basics.Bool, size : Bulma.Styled.Modifiers.Internal.Size, color : Bulma.Styled.Modifiers.Internal.Color }"
+            },
+            {
+                "name": "HeroPartition",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "Level",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "LevelItem",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "LevelPartition",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "Media",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "MediaPartition",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "Section",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "Tile",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Html msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "centeredLevel",
+                "comment": "\n\n    myLevel : Html msg\n    myLevel =\n        centeredLevel []\n            [ levelItem [] []\n            , levelItem [] []\n            , levelItem [] []\n            ]\n\n",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Bulma.Styled.Layout.LevelItem msg) -> Bulma.Styled.Layout.Level msg"
+            },
+            {
+                "name": "container",
+                "comment": " A simple container to center your content horizontally.\n\n    myContainer : Html msg\n    myContainer =\n        container []\n            [ p []\n                [ text \"My container is centered on a desktop!\"\n                ]\n            ]\n\nContainers can be used in any context, but mostly as a direct child of:\n\n  - `navbar`\n  - `hero`\n  - `section`\n  - `footer`\n\n",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Layout.Container msg"
+            },
+            {
+                "name": "easyHero",
+                "comment": " The `hero` element with some added guard-rails.\n\n    myHero : Html msg\n    myHero =\n        easyHero myHeroModifiers\n            []\n            { head = heroHead [] []\n            , body = heroBody [] []\n            , foot = heroFoot [] []\n            }\n\n",
+                "type": "Bulma.Styled.Layout.HeroModifiers -> List.List (Html.Styled.Attribute msg) -> { head : Bulma.Styled.Layout.HeroPartition msg, body : Bulma.Styled.Layout.HeroPartition msg, foot : Bulma.Styled.Layout.HeroPartition msg } -> Bulma.Styled.Layout.Hero msg"
+            },
+            {
+                "name": "easyLevelItemWithHeading",
+                "comment": " ",
+                "type": "List.List (Html.Styled.Attribute msg) -> String.String -> String.String -> Bulma.Styled.Layout.LevelItem msg"
+            },
+            {
+                "name": "fluidContainer",
+                "comment": " If you don't want to have a maximum width, but want to keep the 24px margin on the left and right sides, `fluidContainer` is for you!\n\n    myFluidContainer : Html msg\n    myFluidContainer\n      = container []\n        [ p []\n          [ text \"My container will have a 24px gap on its left and right.\"\n          ]\n        [ p []\n          [ text \"This gap holds for all viewport sizes.\"\n          ]\n        ]\n\n",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Layout.Container msg"
+            },
+            {
+                "name": "footer",
+                "comment": " A simple responsive footer which can include anything: lists, headings, columns, icons, buttons, etc.\n\n    myFooter : Html msg\n    myFooter =\n        footer []\n            [ container []\n                [ content [ textCentered ]\n                    [ p []\n                        [ text \"Ask your doctor if Bulma is right for you.\"\n                        ]\n                    ]\n                ]\n            ]\n\n",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Layout.Footer msg"
+            },
+            {
+                "name": "fullHDContainer",
+                "comment": " This container is full-width until the \"fullHD\" breakpoint.\n\n    fullHDContainer : Html msg\n    fullHDContainer =\n        widescreenContainer []\n            [ p [] [ text \"This container fills the screen-width...\" ]\n            , p [] [ text \"...until it hits the fullHD breakpoint.\" ]\n            ]\n\n",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Layout.Container msg"
+            },
+            {
+                "name": "hero",
+                "comment": " An imposing Hero banner to showcase something.\n\n    import B.Elements exposing (TitleSize(H1, H2), title)\n    import B.Layout exposing (container, hero, heroBody)\n\n    myHero : Html msg\n    myHero =\n        hero myHeroModifiers\n            []\n            [ heroBody []\n                [ container []\n                    [ title H1 [] [ text \"Hero Title\" ]\n                    , title H2 [] [ text \"Hero Subtitle\" ]\n                    ]\n                ]\n            ]\n\n",
+                "type": "Bulma.Styled.Layout.HeroModifiers -> List.List (Html.Styled.Attribute msg) -> List.List (Bulma.Styled.Layout.HeroPartition msg) -> Bulma.Styled.Layout.Hero msg"
+            },
+            {
+                "name": "heroBody",
+                "comment": " ",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Layout.HeroPartition msg"
+            },
+            {
+                "name": "heroFoot",
+                "comment": " ",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Layout.HeroPartition msg"
+            },
+            {
+                "name": "heroHead",
+                "comment": " ",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Layout.HeroPartition msg"
+            },
+            {
+                "name": "heroModifiers",
+                "comment": " These are the stylistic defaults for `hero` containers.\n\n    import B.Modifiers\n        exposing\n            ( Color(Default)\n            , Size(Standard)\n            )\n\n\n    -- Small    -> \"is-small\"\n    -- Standard -> \"is-medium\"\n    -- Medium   -> \"is-large\"\n    -- Large    -> \"is-fullheight\"\n    myHeroModifiers : HeroModifiers\n    myHeroModifiers =\n        { bold = False\n        , size = Large\n        , color = Default\n        }\n\n",
+                "type": "Bulma.Styled.Layout.HeroModifiers"
+            },
+            {
+                "name": "horizontalLevel",
+                "comment": " ",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Bulma.Styled.Layout.LevelPartition msg) -> Bulma.Styled.Layout.Level msg"
+            },
+            {
+                "name": "level",
+                "comment": "\n\n    myLevel : Html msg\n    myLevel =\n        level []\n            [ levelLeft []\n                [ levelItem [] []\n                , levelItem [] []\n                , levelItem [] []\n                ]\n            , levelRight []\n                [ levelItem [] []\n                , levelItem [] []\n                , levelItem [] []\n                ]\n            ]\n\n",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Bulma.Styled.Layout.LevelPartition msg) -> Bulma.Styled.Layout.Level msg"
+            },
+            {
+                "name": "levelItem",
+                "comment": " ",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Layout.LevelItem msg"
+            },
+            {
+                "name": "levelItemLink",
+                "comment": " ",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Layout.LevelItem msg"
+            },
+            {
+                "name": "levelItemText",
+                "comment": " ",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Layout.LevelItem msg"
+            },
+            {
+                "name": "levelLeft",
+                "comment": " ",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Bulma.Styled.Layout.LevelItem msg) -> Bulma.Styled.Layout.LevelPartition msg"
+            },
+            {
+                "name": "levelRight",
+                "comment": " ",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Bulma.Styled.Layout.LevelItem msg) -> Bulma.Styled.Layout.LevelPartition msg"
+            },
+            {
+                "name": "media",
+                "comment": "\n\n    myMediaObject : Html msg\n    myMediaObject =\n        media []\n            [ mediaLeft [] []\n            , mediaContent [] []\n            , mediaRight [] []\n            ]\n\n",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Bulma.Styled.Layout.MediaPartition msg) -> Bulma.Styled.Layout.Media msg"
+            },
+            {
+                "name": "mediaContent",
+                "comment": " ",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Layout.MediaPartition msg"
+            },
+            {
+                "name": "mediaLeft",
+                "comment": " ",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Layout.MediaPartition msg"
+            },
+            {
+                "name": "mediaRight",
+                "comment": " ",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Layout.MediaPartition msg"
+            },
+            {
+                "name": "notSpaced",
+                "comment": " ",
+                "type": "Bulma.Styled.Layout.SectionSpacing"
+            },
+            {
+                "name": "section",
+                "comment": " Use sections as direct children of your top HTML element.\n\n    view : Model -> Html msg\n    view model =\n        div []\n            [ section NotSpaced\n                []\n                [ container []\n                    [ p [] [ text \"Containers for your containers!\" ]\n                    ]\n                ]\n            ]\n\n",
+                "type": "Bulma.Styled.Layout.SectionSpacing -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Layout.Section msg"
+            },
+            {
+                "name": "spaced",
+                "comment": " ",
+                "type": "Bulma.Styled.Layout.SectionSpacing"
+            },
+            {
+                "name": "tile",
+                "comment": " This element is a plain tile container.\nIt's best used as an intermediate tile in a 2D grid.\nYou can also add \"is-ancestor\", \"is-parent\", \"is-child\", and \"is-vertical\" classes to to make a custom Bulma-grid implementation.\n",
+                "type": "Bulma.Styled.Modifiers.Internal.Width -> List.List (Html.Styled.Attribute msg) -> List.List (Bulma.Styled.Layout.Tile msg) -> Bulma.Styled.Layout.Tile msg"
+            },
+            {
+                "name": "tileAncestor",
+                "comment": " This should always be your outer-most tile.\n\n    myGrid : Html msg\n    myGrid =\n        tileAncestor Auto\n            []\n            [ tileParent Width8\n                []\n                [ tileChild Auto [] []\n                , tileChild Auto [] []\n                ]\n            , verticalTileParent Width4\n                []\n                [ tileChild Auto [] []\n                , tileChild Auto [] []\n                ]\n            ]\n\n",
+                "type": "Bulma.Styled.Modifiers.Internal.Width -> List.List (Html.Styled.Attribute msg) -> List.List (Bulma.Styled.Layout.Tile msg) -> Html.Styled.Html msg"
+            },
+            {
+                "name": "tileChild",
+                "comment": " This tile holds your content! Its parent should always be `tileParent` or `verticalTileParent`.\n",
+                "type": "Bulma.Styled.Modifiers.Internal.Width -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Layout.Tile msg"
+            },
+            {
+                "name": "tileParent",
+                "comment": " Your tile-children must always be accompanied by a parent!\n",
+                "type": "Bulma.Styled.Modifiers.Internal.Width -> List.List (Html.Styled.Attribute msg) -> List.List (Bulma.Styled.Layout.Tile msg) -> Bulma.Styled.Layout.Tile msg"
+            },
+            {
+                "name": "verticalTile",
+                "comment": " If you want to stack tiles vertically, use a vertical tile!\n",
+                "type": "Bulma.Styled.Modifiers.Internal.Width -> List.List (Html.Styled.Attribute msg) -> List.List (Bulma.Styled.Layout.Tile msg) -> Bulma.Styled.Layout.Tile msg"
+            },
+            {
+                "name": "verticalTileParent",
+                "comment": " Your tile-children must always be accompanied by a parent!\n",
+                "type": "Bulma.Styled.Modifiers.Internal.Width -> List.List (Html.Styled.Attribute msg) -> List.List (Bulma.Styled.Layout.Tile msg) -> Bulma.Styled.Layout.Tile msg"
+            },
+            {
+                "name": "verySpaced",
+                "comment": " ",
+                "type": "Bulma.Styled.Layout.SectionSpacing"
+            },
+            {
+                "name": "widescreenContainer",
+                "comment": " This container is full-width until the \"widescreen\" breakpoint.\n\n    myWidescreenContainer : Html msg\n    myWidescreenContainer =\n        widescreenContainer []\n            [ p [] [ text \"This container fills the screen-width...\" ]\n            , p [] [ text \"...until it hits the widescreen breakpoint.\" ]\n            ]\n\n",
+                "type": "List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Bulma.Styled.Layout.Container msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Bulma.Styled.Modifiers",
+        "comment": " Most Bulma elements have alternative styles.\nThese types will come in handy for various modifiers records throughout this library.\nAlso included are a set of helpers for style, layout.\n\n\n# Table of Contents\n\n  - [Global Union Types](#types)\n  - [Global Attributes](#attributes)\n      - [General Helpers](#general)\n      - [Display Helpers](#display)\n      - [Typography Helpers](#typography)\n\n\n# Types\n\n\n## Size\n\n@docs Size, small, standard, medium, large\n@docs Width, auto, width1, width2, width3, width4, width5, width6, width7, width8, width9, width10, width11\n\n\n## State\n\n@docs State, blur, hover, focus, active, loading\n@docs IsActive\n\n\n## Color\n\n@docs Color, default, white, light, dark, black, primary, link, info, success, warning, danger\n\n\n## Alignment\n\n@docs HorizontalAlignment, left, centered, right\n@docs VerticalAlignment, top, bottom, verticallyCentered\n\n\n## Direction\n\n@docs VerticalDirection, up, down\n\n\n# Attributes\n\n\n## General\n\n\n### Float\n\n@docs clearfix\n@docs pulledLeft, pulledRight\n\n\n### Overlay\n\n@docs overlay\n\n\n### Size\n\n\n### Sizing\n\n@docs fullWidth\n\n\n### Spacing\n\n@docs marginless, paddingless\n\n\n### Selectability\n\n@docs unselectable\n\n\n### Overflow\n\n@docs clipped\n\n\n### Style\n\n@docs radiusless, shadowless, invisible, screenReaderOnly\n\n\n## Display\n\n@docs Devices, Display, block, flex, hidden, inline, inlineBlock, inlineFlex\n@docs display, displayByDevice\n\n\n### Typography\n\nSee [Bulma.Modifiiers.Typography](http://package.elm-lang.org/packages/surprisetalk/elm-bulma/latest/Bulma-Modifiers-Typography).\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Color",
+                "comment": " ",
+                "args": [],
+                "type": "Bulma.Styled.Modifiers.Internal.Color"
+            },
+            {
+                "name": "Devices",
+                "comment": " ",
+                "args": [
+                    "a"
+                ],
+                "type": "Bulma.Styled.Modifiers.Internal.Devices a"
+            },
+            {
+                "name": "Display",
+                "comment": " ",
+                "args": [],
+                "type": "Bulma.Styled.Modifiers.Internal.Display"
+            },
+            {
+                "name": "HorizontalAlignment",
+                "comment": " ",
+                "args": [],
+                "type": "Bulma.Styled.Modifiers.Internal.HorizontalAlignment"
+            },
+            {
+                "name": "IsActive",
+                "comment": " ",
+                "args": [],
+                "type": "Bulma.Styled.Modifiers.Internal.IsActive"
+            },
+            {
+                "name": "Size",
+                "comment": " ",
+                "args": [],
+                "type": "Bulma.Styled.Modifiers.Internal.Size"
+            },
+            {
+                "name": "State",
+                "comment": " ",
+                "args": [],
+                "type": "Bulma.Styled.Modifiers.Internal.State"
+            },
+            {
+                "name": "VerticalAlignment",
+                "comment": " ",
+                "args": [],
+                "type": "Bulma.Styled.Modifiers.Internal.VerticalAlignment"
+            },
+            {
+                "name": "VerticalDirection",
+                "comment": " ",
+                "args": [],
+                "type": "Bulma.Styled.Modifiers.Internal.VerticalDirection"
+            },
+            {
+                "name": "Width",
+                "comment": " ",
+                "args": [],
+                "type": "Bulma.Styled.Modifiers.Internal.Width"
+            }
+        ],
+        "values": [
+            {
+                "name": "active",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.State"
+            },
+            {
+                "name": "auto",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.Width"
+            },
+            {
+                "name": "black",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.Color"
+            },
+            {
+                "name": "block",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.Display"
+            },
+            {
+                "name": "blur",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.State"
+            },
+            {
+                "name": "bottom",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.VerticalAlignment"
+            },
+            {
+                "name": "centered",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.HorizontalAlignment"
+            },
+            {
+                "name": "clearfix",
+                "comment": " Fixes an element's floating children.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "clipped",
+                "comment": " Adds overflow:hidden.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "danger",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.Color"
+            },
+            {
+                "name": "dark",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.Color"
+            },
+            {
+                "name": "default",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.Color"
+            },
+            {
+                "name": "display",
+                "comment": " This sets a certain display attributes across all device sizes.\n",
+                "type": "Bulma.Styled.Modifiers.Display -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "displayByDevice",
+                "comment": " This sets display attributes per-device.\n\n    tabletOnly =\n        displayByDevice\n            { mobile = Hidden\n            , tablet = Block\n            , desktop = Hidden\n            , widescreen = Hidden\n            , fullHD = Hidden\n            }\n\n",
+                "type": "Bulma.Styled.Modifiers.Devices Bulma.Styled.Modifiers.Display -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "down",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.VerticalDirection"
+            },
+            {
+                "name": "flex",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.Display"
+            },
+            {
+                "name": "focus",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.State"
+            },
+            {
+                "name": "fullWidth",
+                "comment": " Takes up the whole width (100%).\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "hidden",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.Display"
+            },
+            {
+                "name": "hover",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.State"
+            },
+            {
+                "name": "info",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.Color"
+            },
+            {
+                "name": "inline",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.Display"
+            },
+            {
+                "name": "inlineBlock",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.Display"
+            },
+            {
+                "name": "inlineFlex",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.Display"
+            },
+            {
+                "name": "invisible",
+                "comment": " Makes it disappear.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "large",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.Size"
+            },
+            {
+                "name": "left",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.HorizontalAlignment"
+            },
+            {
+                "name": "light",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.Color"
+            },
+            {
+                "name": "link",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.Color"
+            },
+            {
+                "name": "loading",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.State"
+            },
+            {
+                "name": "marginless",
+                "comment": " Removes all margins.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "medium",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.Size"
+            },
+            {
+                "name": "overlay",
+                "comment": " Completely covers the first-positioned parent.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "paddingless",
+                "comment": " Removes all paddings.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "primary",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.Color"
+            },
+            {
+                "name": "pulledLeft",
+                "comment": " Moves an element to the left.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "pulledRight",
+                "comment": " Moves an element to the right.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "radiusless",
+                "comment": " Removes any radius.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "right",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.HorizontalAlignment"
+            },
+            {
+                "name": "screenReaderOnly",
+                "comment": " Hides element visually, but keeps the element available to be announced by a screen reader.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "shadowless",
+                "comment": " Removes any shadow.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "small",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.Size"
+            },
+            {
+                "name": "standard",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.Size"
+            },
+            {
+                "name": "success",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.Color"
+            },
+            {
+                "name": "top",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.VerticalAlignment"
+            },
+            {
+                "name": "unselectable",
+                "comment": " Prevents text from being selectable.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "up",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.VerticalDirection"
+            },
+            {
+                "name": "verticallyCentered",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.VerticalAlignment"
+            },
+            {
+                "name": "warning",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.Color"
+            },
+            {
+                "name": "white",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.Color"
+            },
+            {
+                "name": "width1",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.Width"
+            },
+            {
+                "name": "width10",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.Width"
+            },
+            {
+                "name": "width11",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.Width"
+            },
+            {
+                "name": "width2",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.Width"
+            },
+            {
+                "name": "width3",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.Width"
+            },
+            {
+                "name": "width4",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.Width"
+            },
+            {
+                "name": "width5",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.Width"
+            },
+            {
+                "name": "width6",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.Width"
+            },
+            {
+                "name": "width7",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.Width"
+            },
+            {
+                "name": "width8",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.Width"
+            },
+            {
+                "name": "width9",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.Width"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Bulma.Styled.Modifiers.Typography",
+        "comment": " This module includes all the modifiers that apply exclusively to text!\nIt's really handy have attributes like `textCentered` and `Text.danger` to throw at all your Html elements.\n\n\n# Transformations\n\n@docs capitalize, uppercase, lowercase, italicize\n\n\n# Size\n\n@docs Size, largest, evenLarger, larger, large, medium, standard, small\n@docs textSize, textSizeByDevice\n\n\n# Weight\n\n@docs Weight, light, normal, semibold, bold\n@docs textWeight\n\n\n# Colors\n\n@docs Color, black, blackLight, blackLighter, greyDarker, greyDark, grey, greyLight, greyLighter, whiteDarker, whiteDark, white, primary, info, success, warning, danger\n@docs textColor\n\n\n# Alignment\n\n@docs textLeft, textCentered, textRight, textJustified\n@docs textAlignment, textAlignmentByDevice\n\n",
+        "unions": [
+            {
+                "name": "Color",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Black",
+                        []
+                    ],
+                    [
+                        "BlackLight",
+                        []
+                    ],
+                    [
+                        "BlackLighter",
+                        []
+                    ],
+                    [
+                        "GreyDarker",
+                        []
+                    ],
+                    [
+                        "GreyDark",
+                        []
+                    ],
+                    [
+                        "Grey",
+                        []
+                    ],
+                    [
+                        "GreyLight",
+                        []
+                    ],
+                    [
+                        "GreyLighter",
+                        []
+                    ],
+                    [
+                        "WhiteDarker",
+                        []
+                    ],
+                    [
+                        "WhiteDark",
+                        []
+                    ],
+                    [
+                        "White",
+                        []
+                    ],
+                    [
+                        "Primary",
+                        []
+                    ],
+                    [
+                        "Info",
+                        []
+                    ],
+                    [
+                        "Success",
+                        []
+                    ],
+                    [
+                        "Warning",
+                        []
+                    ],
+                    [
+                        "Danger",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Size",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Largest",
+                        []
+                    ],
+                    [
+                        "EvenLarger",
+                        []
+                    ],
+                    [
+                        "Larger",
+                        []
+                    ],
+                    [
+                        "Large",
+                        []
+                    ],
+                    [
+                        "Medium",
+                        []
+                    ],
+                    [
+                        "Standard",
+                        []
+                    ],
+                    [
+                        "Small",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Weight",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Light",
+                        []
+                    ],
+                    [
+                        "Normal",
+                        []
+                    ],
+                    [
+                        "Semibold",
+                        []
+                    ],
+                    [
+                        "Bold",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "black",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.Typography.Color"
+            },
+            {
+                "name": "blackLight",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.Typography.Color"
+            },
+            {
+                "name": "blackLighter",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.Typography.Color"
+            },
+            {
+                "name": "bold",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.Typography.Weight"
+            },
+            {
+                "name": "capitalize",
+                "comment": " Transforms the first character to each word to uppercase.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "danger",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.Typography.Color"
+            },
+            {
+                "name": "evenLarger",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.Typography.Size"
+            },
+            {
+                "name": "grey",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.Typography.Color"
+            },
+            {
+                "name": "greyDark",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.Typography.Color"
+            },
+            {
+                "name": "greyDarker",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.Typography.Color"
+            },
+            {
+                "name": "greyLight",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.Typography.Color"
+            },
+            {
+                "name": "greyLighter",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.Typography.Color"
+            },
+            {
+                "name": "info",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.Typography.Color"
+            },
+            {
+                "name": "italicize",
+                "comment": " Italicizes text.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "large",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.Typography.Size"
+            },
+            {
+                "name": "larger",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.Typography.Size"
+            },
+            {
+                "name": "largest",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.Typography.Size"
+            },
+            {
+                "name": "light",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.Typography.Weight"
+            },
+            {
+                "name": "lowercase",
+                "comment": " Transforms all characters to lowercase.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "medium",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.Typography.Size"
+            },
+            {
+                "name": "normal",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.Typography.Weight"
+            },
+            {
+                "name": "primary",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.Typography.Color"
+            },
+            {
+                "name": "semibold",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.Typography.Weight"
+            },
+            {
+                "name": "small",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.Typography.Size"
+            },
+            {
+                "name": "standard",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.Typography.Size"
+            },
+            {
+                "name": "success",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.Typography.Color"
+            },
+            {
+                "name": "textAlignment",
+                "comment": " Aligns text.\n",
+                "type": "Bulma.Styled.Modifiers.Internal.HorizontalAlignment -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "textAlignmentByDevice",
+                "comment": " Aligns text based on a device's viewport width.\n",
+                "type": "Bulma.Styled.Modifiers.Internal.Devices Bulma.Styled.Modifiers.Internal.HorizontalAlignment -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "textCentered",
+                "comment": " Centers text.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "textColor",
+                "comment": " You can set any text to one of the 5 colors or 11 shades of grey.\n",
+                "type": "Bulma.Styled.Modifiers.Typography.Color -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "textJustified",
+                "comment": " Justifies text.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "textLeft",
+                "comment": " Aligns text to the left.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "textRight",
+                "comment": " Aligns text to the right.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "textSize",
+                "comment": " There are 7 font sizes to choose from:\n\n  - `textSize Largest`: 3.00rem\n  - `textSize EvenLarger`: 2.50rem\n  - `textSize Larger`: 2.00rem\n  - `textSize Large`: 1.50rem\n  - `textSize Medium`: 1.25rem\n  - `textSize Standard`: 1.00rem\n  - `textSize Small`: 0.75rem\n\n",
+                "type": "Bulma.Styled.Modifiers.Typography.Size -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "textSizeByDevice",
+                "comment": " You can choose a font specific size for each viewport width.\n",
+                "type": "Bulma.Styled.Modifiers.Internal.Devices Bulma.Styled.Modifiers.Typography.Size -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "textWeight",
+                "comment": " You can set any text to one of four font-weights.\n",
+                "type": "Bulma.Styled.Modifiers.Typography.Weight -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "uppercase",
+                "comment": " Transforms all characters to uppercase.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "warning",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.Typography.Color"
+            },
+            {
+                "name": "white",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.Typography.Color"
+            },
+            {
+                "name": "whiteDark",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.Typography.Color"
+            },
+            {
+                "name": "whiteDarker",
+                "comment": " ",
+                "type": "Bulma.Styled.Modifiers.Typography.Color"
+            }
+        ],
+        "binops": []
+    }
+]

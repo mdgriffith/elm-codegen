@@ -1,0 +1,26 @@
+[
+    {
+        "name": "Simple.Fuzzy",
+        "comment": " Fuzzy match through a list of strings\n\n\n# Matching and Filtering\n\n@docs match, filter\n\n\n# Helpers\n\n@docs root\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "filter",
+                "comment": " `filter` will filter an arbitrary list of objects given a function that\nconverts the object to value you want to match on\n\n    let\n        languages =\n            [ { name = \"Elm\" }\n            , { name = \"Ruby\" }\n            , { name = \"Rust\" }\n            , { name = \"Haskell\" }\n            , { name = \"javascript\" }\n            , { name = \"English\" }\n            ]\n    in\n        filter .name \"el\" languages\n    --> [ { name = \"Elm\" }\n    --> , { name = \"Haskell\"}\n    --> , { name = \"English\"}\n    --> ]\n\n",
+                "type": "(a -> String.String) -> String.String -> List.List a -> List.List a"
+            },
+            {
+                "name": "match",
+                "comment": " `match` allows you to see if the letters of your query\nmatch within a bigger string.\n\n    match \"poo\" \"Poo\" --> True\n\n    match \"poo\" \"Police\" --> False\n\n    match \"poo\" \"Please be polite Online!\" --> True\n\n",
+                "type": "String.String -> String.String -> Basics.Bool"
+            },
+            {
+                "name": "root",
+                "comment": " `root` strips a word down to just the lower case version of itself\nwithout any punctuation or spacing. Digits are retained.\n\n    root \"Wow, I'm excited!!!!\" --> \"wowimexcited\"\n\n    root \"I'm excited 2!\" --> \"imexcited2\"\n\n",
+                "type": "String.String -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

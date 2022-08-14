@@ -1,0 +1,127 @@
+[
+    {
+        "name": "Return",
+        "comment": " This package proposes a Return type that helps building a structure for scalable programming on TEA.\n\n# Definition\n@docs Return\n\n# Getting a value\n@docs asModelModifier, asCmd, asOutputs\n\n# Generating a Return value\n@docs returnModel, returnCmd, returnOutput, returnOutputs, returnNothing\n\n# Decorating a generated Return.\n@docs withModel, withCmd, withOutput, withOutputs\n\n# Transforming and mapping\n@docs transformModel, mapCmd, mapOutputs\n\n# Merging multiple Returns into a single Return\n@docs merge, mergeAll\n\n# Using a Return value\n@docs applyModel, handleOutputs, clearOutputs, consumeOutputs\n",
+        "unions": [
+            {
+                "name": "Return",
+                "comment": "\nAn alternative type to (Model, Cmd msg), which is the return value of the general update function.\n\n```elm\n-- before\nupdate : Msg -> Model -> (Model, Cmd Msg)\n\n-- after\nupdate : Msg -> Return Model Msg Output\n```\n",
+                "args": [
+                    "model",
+                    "msg",
+                    "output"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "applyModel",
+                "comment": " Apply a Model to ModelModifier.\n",
+                "type": "Return.Return mod msg out -> mod -> mod"
+            },
+            {
+                "name": "asCmd",
+                "comment": " Convert to Cmd\n",
+                "type": "Return.Return mod msg out -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "asModelModifier",
+                "comment": " Convert to ModelModifier\n",
+                "type": "Return.Return mod msg out -> Maybe.Maybe (Return.ModelModifier mod)"
+            },
+            {
+                "name": "asOutputs",
+                "comment": " Convert to Outputs\n",
+                "type": "Return.Return mod msg out -> List.List out"
+            },
+            {
+                "name": "clearOutputs",
+                "comment": " Make outputs empty.\n",
+                "type": "Return.Return mod msg out -> Return.Return mod msg out_"
+            },
+            {
+                "name": "consumeOutputs",
+                "comment": " Handle outputs then clear it.\n",
+                "type": "(out -> Return.Return mod msg out) -> Return.Return mod msg out -> Return.Return mod msg out_"
+            },
+            {
+                "name": "handleOutputs",
+                "comment": " Reflects the Output in the Return.\nthe Return returned by the handle function is merged with the original Return.\n",
+                "type": "(out -> Return.Return mod msg out) -> Return.Return mod msg out -> Return.Return mod msg out"
+            },
+            {
+                "name": "mapCmd",
+                "comment": " Map a Cmd in a Return.\n",
+                "type": "(msg -> msg_) -> Return.Return mod msg out -> Return.Return mod msg_ out"
+            },
+            {
+                "name": "mapOutputs",
+                "comment": " Map Outputs in a Return.\n",
+                "type": "(out -> out_) -> Return.Return mod msg out -> Return.Return mod msg out_"
+            },
+            {
+                "name": "merge",
+                "comment": " Merge two Returns into a one Return.\n",
+                "type": "Return.Return mod msg out -> Return.Return mod msg out -> Return.Return mod msg out"
+            },
+            {
+                "name": "mergeAll",
+                "comment": " Merge multiple Returns into a one Return.\n",
+                "type": "List.List (Return.Return mod msg out) -> Return.Return mod msg out"
+            },
+            {
+                "name": "returnCmd",
+                "comment": " Generate a Return having a Cmd.\n",
+                "type": "Return.ReturnF mod msg out (Platform.Cmd.Cmd msg)"
+            },
+            {
+                "name": "returnModel",
+                "comment": " Generate a Return having a ModelModifier.\n",
+                "type": "Return.ReturnF mod msg out (Return.ModelModifier mod)"
+            },
+            {
+                "name": "returnNothing",
+                "comment": " Generate an empty Return.\n",
+                "type": "Return.Return mod msg out"
+            },
+            {
+                "name": "returnOutput",
+                "comment": " Generate a Return having a Output.\n",
+                "type": "Return.ReturnF mod msg out out"
+            },
+            {
+                "name": "returnOutputs",
+                "comment": " Generate a Return having Output list.\n",
+                "type": "Return.ReturnF mod msg out (List.List out)"
+            },
+            {
+                "name": "transformModel",
+                "comment": " Transform a model type to the other.\n",
+                "type": "(after -> before) -> (after -> before -> after) -> Return.Return before msg out -> Return.Return after msg out"
+            },
+            {
+                "name": "withCmd",
+                "comment": " Add a Cmd to the return\n",
+                "type": "Platform.Cmd.Cmd msg -> Return.Return mod msg out -> Return.Return mod msg out"
+            },
+            {
+                "name": "withModel",
+                "comment": " Add a ModelModifier to the return\n",
+                "type": "Return.ModelModifier mod -> Return.Return mod msg out -> Return.Return mod msg out"
+            },
+            {
+                "name": "withOutput",
+                "comment": " Add a Output to the return\n",
+                "type": "out -> Return.Return mod msg out -> Return.Return mod msg out"
+            },
+            {
+                "name": "withOutputs",
+                "comment": " Add Output list to the return\n",
+                "type": "List.List out -> Return.Return mod msg out -> Return.Return mod msg out"
+            }
+        ],
+        "binops": []
+    }
+]

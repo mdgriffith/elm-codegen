@@ -1,0 +1,26 @@
+[
+    {
+        "name": "Http.Extras",
+        "comment": " Convenience functions for working with elm/http\n\n# Asserting status\n\n@docs isStatus, is401\n\n# Rendering Http.Error\n\n@docs errorToString\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "errorToString",
+                "comment": " Render HTTP error to a string. Useful for showing the user what happened.\n",
+                "type": "Http.Error -> String.String"
+            },
+            {
+                "name": "is401",
+                "comment": " Do we have a HTTP 401 response?\n",
+                "type": "Http.Error -> Basics.Bool"
+            },
+            {
+                "name": "isStatus",
+                "comment": " Given an expected status code, return True if that's the given Http error.\n",
+                "type": "Basics.Int -> Http.Error -> Basics.Bool"
+            }
+        ],
+        "binops": []
+    }
+]

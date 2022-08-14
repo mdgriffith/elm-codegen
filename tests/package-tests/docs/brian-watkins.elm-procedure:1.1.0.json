@@ -1,0 +1,213 @@
+[
+    {
+        "name": "Procedure",
+        "comment": " Orchestrate commands, subscriptions, and tasks.\n\n@docs Procedure\n\n# Execute a Procedure\n@docs run, try\n\n# Basic Procedures\n@docs provide, fetch, fetchResult, collect, fromTask, break, do, endWith\n\n# Build a Procedure\n@docs andThen, catch\n\n# Map the Output of a Procedure\n@docs map, map2, map3, mapError\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Procedure",
+                "comment": " Represents some sequence of commands, subscriptions, or tasks that ultimately results in some value. \n",
+                "args": [
+                    "e",
+                    "a",
+                    "msg"
+                ],
+                "type": "Procedure.Internal.Procedure e a msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "andThen",
+                "comment": " Generate a new procedure based on the result of the previous procedure.\n\n    Procedure.provide \"An awesome value\"\n      |> Procedure.andThen (\\data -> \n        Procedure.provide <| data ++ \"!!!\"\n      )\n      |> Procedure.run ProcedureTagger StringTagger\n\nThen the result would be `StringTagger \"An awesome value!!!\"`.\n\n",
+                "type": "(a -> Procedure.Procedure e b msg) -> Procedure.Procedure e a msg -> Procedure.Procedure e b msg"
+            },
+            {
+                "name": "break",
+                "comment": " Generate a procedure that breaks out of the current procedure.\n\nYou can use this to stop a procedure early:\n\n    Procedure.fetch (File.Select.file [\"text/plain\"])\n      |> Procedure.andThen (\\file ->\n        File.toString file\n          |> Procedure.fromTask\n      )\n      |> Procedure.andThen (\\text ->\n        if String.length text > 100 then\n          Procedure.break \"File is too long!\"\n        else\n          Procedure.provide text\n      )\n      |> Procedure.map (\\text -> doSomethingWithTheText text)\n      |> Procedure.try ProcedureTagger StringResultTagger\n\nwhere `StringResultTagger` tags a `Result String String`. If the break is triggered,\nthen the result would be `Err \"File is too long!\"`.\n\n",
+                "type": "e -> Procedure.Procedure e a msg"
+            },
+            {
+                "name": "catch",
+                "comment": " Generate a new procedure when some previous procedure results in an error, usually\ndo to processing a `break` procedure.\n\nFor example, you could check the result of some data\nand then break to skip the next steps until you reach a `catch` step.\n\n    Procedure.fetch someCommand\n      |> Procedure.andThen (\\data ->\n        if data.message == \"Success\" then\n          Procedure.provide data\n        else\n          Procedure.break data.message\n      )\n      |> Procedure.andThen (\\data ->\n        Channel.send (somePortCommand data)\n          |> Channel.receive somePortSubscription\n          |> Channel.await\n      )\n      |> Procedure.catch (\\errorData -> \n        Procedure.provide \"Some default message\"\n      )\n      |> Procedure.map (\\data -> data ++ \"!\")\n      |> Procedure.run ProcedureTagger StringTagger\n\nIf the data fetched via `someCommand` is deemed not successful, then \nthe next steps will be skipped and the result of this procedure will\nbe `StringTagger \"Some default message!\"`.\n\n",
+                "type": "(e -> Procedure.Procedure f a msg) -> Procedure.Procedure e a msg -> Procedure.Procedure f a msg"
+            },
+            {
+                "name": "collect",
+                "comment": " Generate a procedure that collects the results of a list of procedures.\n\n    Procedure.collect\n      [ Procedure.provide \"One\"\n      , Procedure.provide \"Two\"\n      , Procedure.provide \"Three\"\n      ]\n      |> Procedure.run ProcedureTagger ListStringTagger\n\nThen the result would be `ListStringTagger [ \"One\", \"Two\", \"Three\" ]`.\n\n",
+                "type": "List.List (Procedure.Procedure e a msg) -> Procedure.Procedure e (List.List a) msg"
+            },
+            {
+                "name": "do",
+                "comment": " Generate a procedure that executes a `Cmd` that does not produce any value directly.\n\nUse `do` to execute port functions that generate `Cmd` values. \n\n    Procedure.do myFunPortCommand\n      |> Procedure.map (\\_ -> \"We did it!\")\n      |> Procedure.run ProcedureTagger StringTagger\n\nIf you want to send a port command and expect a response later via some subscription, use\na `Channel`.\n\n",
+                "type": "Platform.Cmd.Cmd msg -> Procedure.Procedure Basics.Never () msg"
+            },
+            {
+                "name": "endWith",
+                "comment": " Generate a procedure that runs a command and states that no further value will be provided,\neffectively ending the procedure.\n\nUse this function when you need to end a procedure with a command that produces no message\ndirectly, such as a port command, and you don't want to add a `NoOp` case to your update function.\n\nFor example, this procedure gets the current time and sends it out via a port (called `sendMillisOut` in this\ncase), and never produces a message for the update function.\n\n    Procedure.fromTask Task.now\n      |> Procedure.map Time.posixToMillis\n      |> Procedure.andThen (\\millis ->\n        Procedure.endWith <| sendMillisOut millis\n      )\n      |> Procedure.run ProcedureMsg never\n\n",
+                "type": "Platform.Cmd.Cmd msg -> Procedure.Procedure Basics.Never Basics.Never msg"
+            },
+            {
+                "name": "fetch",
+                "comment": " Generate a procedure that gets the value produced by executing some `Cmd`.\n\nFor example, if you wanted to have the user select a file and then convert\nthat to a string, you could do the following:\n\n    Procedure.fetch (File.Select.file [\"application/zip\"])\n      |> Procedure.andThen (\\file -> \n        File.toString file\n          |> Procedure.fromTask\n      )\n      |> Procedure.run ProcedureTagger StringTagger\n\nNote that only some commands produce a value directly. To execute those commands\nthat do not produce a value, use `do`. \n\n",
+                "type": "((a -> msg) -> Platform.Cmd.Cmd msg) -> Procedure.Procedure e a msg"
+            },
+            {
+                "name": "fetchResult",
+                "comment": " Generate a procedure that gets the result produced by executing some `Cmd`.\n\nFor example, if you wanted to make an Http request and then map the response,\nyou could do the following:\n\n    Procedure.fetchResult (\\tagger ->\n      Http.get\n        { url = \"http://fun.com/fun.html\"\n        , expect = Http.expectString tagger\n        }\n      )\n      |> Procedure.map (\\words ->\n        \"Fun stuff: \" ++ words\n      )\n      |> Procedure.catch (\\error ->\n        Procedure.provide \"No Response\"\n      )\n      |> Procedure.run ProcedureTagger StringTagger\n\nIf the Http request fails, then the result will be: `No response`.\n\n",
+                "type": "((Result.Result e a -> msg) -> Platform.Cmd.Cmd msg) -> Procedure.Procedure e a msg"
+            },
+            {
+                "name": "fromTask",
+                "comment": " Generate a procedure that runs a task.\n\nFor example, if you wanted to have the user select a file and then convert\nthat to a string, you could do the following:\n\n    Procedure.fetch (File.Select.file [\"application/zip\"])\n      |> Procedure.andThen (\\file ->\n        File.toString file\n          |> Procedure.fromTask\n      )\n      |> Procedure.run ProcedureTagger StringTagger\n\nIf the task fails, the procedure will break at this point, just as\nif `Procedure.break` had been used.\n\n",
+                "type": "Task.Task e a -> Procedure.Procedure e a msg"
+            },
+            {
+                "name": "map",
+                "comment": " Generate a procedure that transforms the value of the previous procedure.\n\n    Procedure.collect\n      [ Procedure.provide \"One\"\n      , Procedure.provide \"Two\"\n      , Procedure.provide \"Three\"\n      ]\n      |> Procedure.map (String.join \", \")\n      |> Procedure.run ProcedureTagger StringTagger\n\nThen the result would be `StringTagger \"One, Two, Three\"`.\n",
+                "type": "(a -> b) -> Procedure.Procedure e a msg -> Procedure.Procedure e b msg"
+            },
+            {
+                "name": "map2",
+                "comment": " Generate a procedure that provides a new value based on the values of two other procedures.\n\n    Procedure.map2\n      (\\a b -> a ++ \" AND \" ++ b)\n      (Procedure.provide \"One\")\n      (Procedure.provide \"Two\")\n      |> Procedure.run ProcedureTagger StringTagger\n\nThen the result would be `StringTagger \"One AND Two\".\n\nNote: `map2` executes each procedure in order. The second procedure will be executed only\nif the first succeeds; if the first fails, then the whole procedure will fail. This follows\nthe behavior of `Task.map2` in the core library.\n",
+                "type": "(a -> b -> c) -> Procedure.Procedure e a msg -> Procedure.Procedure e b msg -> Procedure.Procedure e c msg"
+            },
+            {
+                "name": "map3",
+                "comment": " Generate a procedure that provides a new value based on the values of three other procedures.\n\nNote: `map3` executes each procedure in order. See [map2](#map2) for more details.\n",
+                "type": "(a -> b -> c -> d) -> Procedure.Procedure e a msg -> Procedure.Procedure e b msg -> Procedure.Procedure e c msg -> Procedure.Procedure e d msg"
+            },
+            {
+                "name": "mapError",
+                "comment": " Generate a procedure that transforms the error value of a previous procedure.\n\n    Procedure.provide \"Start\"\n      |> Procedure.andThen (\\_ -> Procedure.break \"Oops\")\n      |> Procedure.mapError (\\err -> err ++ \"???\")\n      |> Procedure.try ProcedureTagger ResultTagger\n\nThen the result would be `Err \"Oops???\"`.\n\nNote: Error values can be set explicitly by using `break`. \n",
+                "type": "(e -> f) -> Procedure.Procedure e a msg -> Procedure.Procedure f a msg"
+            },
+            {
+                "name": "provide",
+                "comment": " Generate a procedure that simply provides a value.\n\n    Procedure.provide \"Hello!\"\n      |> Procedure.run ProcedureTagger StringTagger\n\nThis will result in `StringTagger \"Hello\"`.\n\n",
+                "type": "a -> Procedure.Procedure e a msg"
+            },
+            {
+                "name": "run",
+                "comment": " Execute a procedure that cannot fail.\n\nNote: The first argument tags a `Procedure.Program.Msg` as a `Msg` in your application.\nThe second argument tags the value produced by the Procedure as a `Msg` in your application.\n",
+                "type": "(Procedure.Internal.Msg msg -> msg) -> (a -> msg) -> Procedure.Procedure Basics.Never a msg -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "try",
+                "comment": " Execute a procedure that may fail. \n\nNote: The first argument tags a `Procedure.Program.Msg` as a `Msg` in your application.\nThe second argument tags the result of the Procedure as a `Msg` in your application.\n",
+                "type": "(Procedure.Internal.Msg msg -> msg) -> (Result.Result e a -> msg) -> Procedure.Procedure e a msg -> Platform.Cmd.Cmd msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Procedure.Channel",
+        "comment": " A channel represents a method for receiving messages from the outside world.\n\n@docs Channel\n\n# Define a Channel\n\nYou can define a channel that simply listens for messages on a subscription.\n\n@docs join\n\n----\n\nYou can also define a channel by providing a command and a subscription to receive messages in response. \n\n@docs ChannelKey, ChannelRequest, open, connect\n\n# Work with a Channel\n@docs filter\n\n# Use a Channel in a Procedure\n@docs accept, acceptOne, acceptUntil\n\n",
+        "unions": [
+            {
+                "name": "Channel",
+                "comment": " Represents a method for receiving messages from the outside world. \n",
+                "args": [
+                    "a",
+                    "msg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "ChannelRequest",
+                "comment": " Represents a request to open a channel.\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "ChannelKey",
+                "comment": " Represents the unique key assigned to each procedure.\n\nThis is most useful when opening a channel by sending a command, where you might pass the key\nthrough a port and then use it to filter incoming messages to a subscription.\n",
+                "args": [],
+                "type": "String.String"
+            }
+        ],
+        "values": [
+            {
+                "name": "accept",
+                "comment": " Generate a procedure that processes messages on a channel indefinitely.\n\nFor example, suppose `mySubscription` provides a stream of numbers. If you wanted to filter and map\nthese messages before passing these to your update function, you could do the following:\n\n    Channel.join mySubscription\n      |> Channel.filter (\\_ data -> modBy 2 data == 0)\n      |> Channel.accept\n      |> Procedure.map String.fromInt\n      |> Procedure.run ProcedureTagger StringTagger\n\nThen, as numbers come in through `mySubscription`, a `StringTagger` message will be sent\nthat tags the even numbers as a string.\n\n",
+                "type": "Procedure.Channel.Channel a msg -> Procedure.Internal.Procedure e a msg"
+            },
+            {
+                "name": "acceptOne",
+                "comment": " Generate a procedure that accepts the first message to be processed from a channel. After\nthat message is processed, the channel is closed. \n\nFor example, if you wanted to send a request via a port command and wait for a response on some port subscription,\nyou could do the following:\n\n    Channel.open (\\_ -> myPortCommand)\n      |> Channel.connect myPortSubscription\n      |> Channel.acceptOne\n      |> Procedure.run ProcedureTagger DataTagger\n\n",
+                "type": "Procedure.Channel.Channel a msg -> Procedure.Internal.Procedure e a msg"
+            },
+            {
+                "name": "acceptUntil",
+                "comment": " Generate a procedure that processes messages on a channel as they are received until the \npredicate is satisfied. When the predicate is satisfied, the last message received on the channel\nwill be processed and the channel will be closed. \n\nFor example, suppose `mySubscription` provides a stream of numbers. If you wanted to filter and map \nthese messages before passing these to your update function, you could do the following:\n\n    Channel.join mySubscription\n      |> Channel.filter (\\_ data -> modBy 2 data == 0)\n      |> Channel.acceptUntil (\\data -> data == 20)\n      |> Procedure.map String.fromInt\n      |> Procedure.run ProcedureTagger StringTagger\n\nThen, as numbers come in through `mySubscription`, a `StringTagger` message will be sent\nthat tags the number as a string. Once the number `20` is received from the subscription, the\nchannel will close and process no more messages. The last message sent by this procedure will\nbe `StringTagger \"20\"`.\n\n",
+                "type": "(a -> Basics.Bool) -> Procedure.Channel.Channel a msg -> Procedure.Internal.Procedure e a msg"
+            },
+            {
+                "name": "connect",
+                "comment": " Define a channel by providing a subscription to receive messages after\nyou use `open` to send a command that opens a channel.\n\n",
+                "type": "((a -> msg) -> Platform.Sub.Sub msg) -> Procedure.Channel.ChannelRequest msg -> Procedure.Channel.Channel a msg"
+            },
+            {
+                "name": "filter",
+                "comment": " Filter messages received by whatever subscription is listening on this channel.\n\nFor example, you might need to send a command over a port and then wait for a response via a port subscription. \nYou could accomplish that like so:\n\n    Channel.open (\\key -> myPortCommand key)\n      |> Channel.connect myPortSubscription\n      |> Channel.filter (\\key data -> data.key == key)\n      |> Channel.acceptOne\n      |> Procedure.run ProcedureTagger DataTagger\n\nIn this example, we pass the channel key through the port and use it to filter incoming subscription messages. This\nallows us to associate the messages we receive with a particular channel (and procedure), in case multiple procedures\nwith channels that utilize this subscription are running simultaneously. \n\nNote: Calling filter multiple times on a channel simply replaces any existing filter on that channel.\n\n",
+                "type": "(Procedure.Channel.ChannelKey -> a -> Basics.Bool) -> Procedure.Channel.Channel a msg -> Procedure.Channel.Channel a msg"
+            },
+            {
+                "name": "join",
+                "comment": " Define a channel by providing a subscription to receive messages.\n\nFor example, you might want to listen for key presses but only send certain\nones to your update function. You could accomplish that like so:\n\n    Channel.join (\\tagger ->\n      Decode.map tagger keyDecoder\n        |> Browser.Events.onKeyPress \n    )\n    |> Channel.filter (\\_ keyPress -> \n      keyPress == \"Z\"\n        || keyPress == \"X\"\n        || keyPress == \"Y\"\n    )\n    |> Channel.acceptUntil (\\_ -> False)\n    |> Procedure.run ProcMsg PressedKey\n\n",
+                "type": "((a -> msg) -> Platform.Sub.Sub msg) -> Procedure.Channel.Channel a msg"
+            },
+            {
+                "name": "open",
+                "comment": " Open a channel by sending a command. Use this in conjunction with `connect` to define a channel.\n\nFor example, you might need to send a command over a port and then wait for a response via a port subscription. \nYou could accomplish that like so:\n\n    Channel.open (\\_ -> myPortCommand)\n      |> Channel.connect myPortSubscription\n      |> Channel.acceptOne\n      |> Procedure.run ProcedureTagger DataTagger\n\nUse the provided `ChannelKey` if you need something to connect subscription messages with the command that opens the channel.\nOn the JS side, your port command could take the channel key and pass it back when supplying a subscription message.\nIn your channel setup, you would filter messages by this key. See `filter` for an example.\n\n",
+                "type": "(Procedure.Channel.ChannelKey -> Platform.Cmd.Cmd msg) -> Procedure.Channel.ChannelRequest msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Procedure.Program",
+        "comment": " Use these functions to configure your program to run procedures.\n\n@docs Msg, Model, init, update, subscriptions\n\n",
+        "unions": [
+            {
+                "name": "Model",
+                "comment": " Represents the internal state used to track running procedures. \n\nYou should store this in your application's model like so:\n\n    type alias AppModel =\n      { procModel : Procedure.Program.Model AppMsg\n      }\n\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Msg",
+                "comment": " Represents the internal `Msg` values used to track the state of a procedure.\n\nThe type variable refers to the `Msg` type used by your application. \nYou should provide a message type that wraps these values like so:\n\n    type AppMsg\n      = ProcMsg (Procedure.Program.Msg AppMsg)\n\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "Procedure.Internal.Msg msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "init",
+                "comment": " Generate the model used to track procedures.\n",
+                "type": "Procedure.Program.Model msg"
+            },
+            {
+                "name": "subscriptions",
+                "comment": " Get any subscriptions necessary for running procedures. \n\nAdd this to your application's subscriptions function like so:\n\n    appSubscriptions : AppModel -> Sub AppMsg\n    appSubscriptions appModel =\n      Procedure.Program.subscriptions appModel.procModel\n\nNote: You only need to use this function if you are using procedures \nwith channels, i.e. if you have subscriptions in your procedures.\n\n",
+                "type": "Procedure.Program.Model msg -> Platform.Sub.Sub msg"
+            },
+            {
+                "name": "update",
+                "comment": " Update the state of running procedures.\n\nYou should add this to your application's update function like so:\n\n    update : AppMsg -> AppModel -> (AppModel, Cmd AppMsg)\n    update appMsg appModel =\n      case appMsg of\n        ProcedureTagger procMsg ->\n          Procedure.Program.update procMsg appModel.procModel\n            |> Tuple.mapFirst (\\updated -> { appModel | procModel = updated })\n\n",
+                "type": "Procedure.Program.Msg msg -> Procedure.Program.Model msg -> ( Procedure.Program.Model msg, Platform.Cmd.Cmd msg )"
+            }
+        ],
+        "binops": []
+    }
+]

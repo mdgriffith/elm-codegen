@@ -1,0 +1,606 @@
+[
+    {
+        "name": "WebDriver",
+        "comment": "\n\n@docs Test, test, describe, skip, only, browsers, concat\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Test",
+                "comment": " A test which has yet to be evaluated. When evaluated,\nit produces one or more scenarios execution agains [`WebDriver`](https://w3c.github.io/webdriver/) host\n\nSee [`test`](#test) for some ways to create a `Test`.\n\n",
+                "args": [
+                    "browserInfo"
+                ],
+                "type": "WebDriver.Internal.Test browserInfo"
+            }
+        ],
+        "values": [
+            {
+                "name": "browsers",
+                "comment": " Test wrapper that run tests inside in all discribed\n",
+                "type": "List.List browserInfo -> WebDriver.Test browserInfo -> WebDriver.Test browserInfo"
+            },
+            {
+                "name": "concat",
+                "comment": " Run each of the given tests.\n\n    concat [ testDecoder, testSorting ]\n\n",
+                "type": "List.List (WebDriver.Test browserInfo) -> WebDriver.Test browserInfo"
+            },
+            {
+                "name": "describe",
+                "comment": " Apply a description to a list of tests.\n\n    import WebDriver.Test exposing (describe, test)\n\n\n    describe \"WebDriver\"\n        [ describe \"Navigate\"\n            [ test \"go to github main page\" <|\n                \\{ url } ->\n                    url \"https://github.com\"\n            ]\n        ]\n\nPassing an empty list will result in a failing test, because you either made a\nmistake or are creating a placeholder.\n\n",
+                "type": "String.String -> List.List (WebDriver.Test browserInfo) -> WebDriver.Test browserInfo"
+            },
+            {
+                "name": "only",
+                "comment": " Returns a [`Test`](#Test) that causes other tests to be skipped, and only runs the given one.\n\nCalls to `only` aren't meant to be committed to version control. Instead, use\nthem when you want to focus on getting a particular subset of your tests to pass.\nIf you use `only`, your entire test suite will fail, even if\neach of the individual tests pass. This is to help avoid accidentally\ncommitting a `only` to version control.\n\nIf you use `only` on multiple tests, only those tests will run. If you\nput a `only` inside another `only`, only the outermost `only`\nwill affect which tests gets run.\n\nSee also [`skip`](#skip). Note that `skip` takes precedence over `only`;\nif you use a `skip` inside an `only`, it will still get skipped, and if you use\nan `only` inside a `skip`, it will also get skipped.\n\n    import WebDriver.Test exposing (describe, only, skip)\n    import Task\n\n    describe \"WebDriver\"\n        [ describe \"Navigate\"\n            [ test \"this test will not be executed\" <|\n                \\_ -> Task.succeed ()\n             only <| test \"this test will be executed\" <|\n                \\_ -> Task.succeed ()\n            ]\n        ]\n\n",
+                "type": "WebDriver.Test browserInfo -> WebDriver.Test browserInfo"
+            },
+            {
+                "name": "skip",
+                "comment": " Returns a [`Test`](#Test) that gets skipped.\n\nCalls to `skip` aren't meant to be committed to version control. Instead, use\nit when you want to focus on getting a particular subset of your tests to\npass. If you use `skip`, your entire test suite will fail, even if\neach of the individual tests pass. This is to help avoid accidentally\ncommitting a `skip` to version control.\n\nSee also [`only`](#only). Note that `skip` takes precedence over `only`;\nif you use a `skip` inside an `only`, it will still get skipped, and if you use\nan `only` inside a `skip`, it will also get skipped.\n\n    import WebDriver.Test exposing (describe, test, skip)\n    import Task\n\n    describe \"WebDriver\"\n        [ describe \"Navigate\"\n            [ skip <| test \"this test will not be executed\" <|\n                \\_ -> Task.succeed ()\n             test \"this test will be executed\" <|\n                \\_ -> Task.succeed ()\n            ]\n        ]\n\n",
+                "type": "WebDriver.Test browserInfo -> WebDriver.Test browserInfo"
+            },
+            {
+                "name": "test",
+                "comment": " Return a [`Test`](#Test) that evaluates a single\nscenario agains [`WebDriver`](https://w3c.github.io/webdriver/) host.\n\n    import Test exposing (test)\n    import Expect\n    test \"go to github main page\" <|\n        \\{ url } ->\n            url \"https://github.com\"\n\n",
+                "type": "String.String -> (WebDriver.Step.Functions -> Task.Task String.String out) -> WebDriver.Test browserInfo"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "WebDriver.Assert",
+        "comment": "\n\n@docs custom, fail\n@docs equal, equalInt, true, false, atLeast, greaterThan\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "atLeast",
+                "comment": " Passes if the second argument is greater than or equal to the first.\n",
+                "type": "Basics.Int -> Basics.Int -> Task.Task String.String Basics.Int"
+            },
+            {
+                "name": "custom",
+                "comment": " Checks if both values is same, and if not fails with fail function\n",
+                "type": "(a -> String.String) -> a -> a -> Task.Task String.String a"
+            },
+            {
+                "name": "equal",
+                "comment": " Passes if the arguments is same strings.\n",
+                "type": "String.String -> String.String -> Task.Task String.String String.String"
+            },
+            {
+                "name": "equalInt",
+                "comment": " Passes if the arguments is same Int.\n",
+                "type": "Basics.Int -> Basics.Int -> Task.Task String.String Basics.Int"
+            },
+            {
+                "name": "fail",
+                "comment": " Throws an Assertion Error\n",
+                "type": "a -> e -> Task.Task e b"
+            },
+            {
+                "name": "false",
+                "comment": " Passes if the argument is 'False', and otherwise fails with the given message.\n",
+                "type": "String.String -> Basics.Bool -> Task.Task String.String Basics.Bool"
+            },
+            {
+                "name": "greaterThan",
+                "comment": " Passes if the second argument is greater than the first.\n",
+                "type": "Basics.Int -> Basics.Int -> Task.Task String.String Basics.Int"
+            },
+            {
+                "name": "true",
+                "comment": " Passes if the argument is 'True', and otherwise fails with the given message.\n",
+                "type": "String.String -> Basics.Bool -> Task.Task String.String Basics.Bool"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "WebDriver.Setup",
+        "comment": "\n\n\n## Runing\n\n@docs setup, next, Next, Return, Reference, SuiteState, Validator\n\n\n## Report\n\n@docs Report, Status\n\n\n## helper\n\n@docs isFail\n\n",
+        "unions": [
+            {
+                "name": "Next",
+                "comment": " ",
+                "args": [
+                    "info"
+                ],
+                "cases": [
+                    [
+                        "Report",
+                        [
+                            "WebDriver.Setup.Report info"
+                        ]
+                    ],
+                    [
+                        "Tasks",
+                        [
+                            "WebDriver.Setup.Tasks info"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Reference",
+                "comment": " ",
+                "args": [
+                    "info"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Status",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Pass",
+                        []
+                    ],
+                    [
+                        "Fail",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Skip",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "SuiteState",
+                "comment": " ",
+                "args": [
+                    "info"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Report",
+                "comment": " ",
+                "args": [
+                    "info"
+                ],
+                "type": "List.List { desc : List.List String.String, info : info, status : WebDriver.Setup.Status }"
+            },
+            {
+                "name": "Return",
+                "comment": " ",
+                "args": [
+                    "info"
+                ],
+                "type": "( WebDriver.Setup.SuiteState info, WebDriver.Setup.Next info )"
+            },
+            {
+                "name": "Validator",
+                "comment": " ",
+                "args": [
+                    "info"
+                ],
+                "type": "Basics.Int -> info -> Maybe.Maybe (WebDriver.Setup.InfoData info)"
+            }
+        ],
+        "values": [
+            {
+                "name": "isFail",
+                "comment": " ",
+                "type": "WebDriver.Setup.Reference info -> Basics.Bool"
+            },
+            {
+                "name": "next",
+                "comment": " ",
+                "type": "WebDriver.Setup.Validator info -> WebDriver.Setup.Reference info -> WebDriver.Setup.SuiteState info -> WebDriver.Setup.Return info"
+            },
+            {
+                "name": "setup",
+                "comment": " ",
+                "type": "info -> WebDriver.Internal.Test info -> WebDriver.Setup.Validator info -> Result.Result String.String (WebDriver.Setup.Return info)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "WebDriver.Step",
+        "comment": "\n\n\n## Location Navigation\n\n@docs url, getUrl\n\n\n## Elements\n\n@docs element, elements, click, clear, value, elementInElement, elementsInElement, selected, enabled, tagName, text, attribute, property, css, rect, elementScreenshot, source\n\n\n## History Navigation\n\n@docs back, forward, refresh\n\n\n## Window\n\n@docs title, windowHandle, windowHandles, window, getWindowRect, setWindowRect, fullscreen, maximize, minimize, close, screenshot\n\n\n## Alerts\n\n@docs alertAccept, alertDismiss, alertText, promptText\n\n\n## Inject a snippet of JavaScript\n\n@docs execute, executeAsync\n\n\n## Frames / iFrames\n\n@docs frameParent, frame\n\n\n## Timeouts\n\n@docs getTimeouts, setTimeouts\n\n\n## Cookies\n\n@docs cookies, cookie, deleteCookies, deleteCookie, addCookie\n\n\n## Actions\n\n@docs actions, release\n\n\n## Webdriver Host info\n\n@docs status\n\n#Low level function\n\n@docs Functions, Host, WithSession, functions, sessionStart, sessionStop\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Functions",
+                "comment": " Functions that is passed to [tests](../WebDriver#test), with already created session\n",
+                "args": [],
+                "type": "{ back : WebDriver.Step.Step (), close : WebDriver.Step.Step (List.List WebDriver.Internal.Value.WindowHandle), forward : WebDriver.Step.Step (), getTimeouts : WebDriver.Step.Step WebDriver.Internal.Value.Timeouts.Timeouts, getUrl : WebDriver.Step.Step String.String, refresh : WebDriver.Step.Step (), setTimeouts : WebDriver.Internal.Value.Timeouts.Timeouts -> WebDriver.Step.Step WebDriver.Internal.Value.Timeouts.Timeouts, status : WebDriver.Step.Step WebDriver.Internal.Value.Status.Status, title : WebDriver.Step.Step String.String, url : String.String -> WebDriver.Step.Step (), windowHandle : WebDriver.Step.Step WebDriver.Internal.Value.WindowHandle, windowHandles : WebDriver.Step.Step (List.List WebDriver.Internal.Value.WindowHandle), window : WebDriver.Internal.Value.WindowHandle -> WebDriver.Step.Step (), fullscreen : WebDriver.Step.Step (), maximize : WebDriver.Step.Step (), minimize : WebDriver.Step.Step { height : Basics.Float, width : Basics.Float, x : Basics.Float, y : Basics.Float }, frameParent : WebDriver.Step.Step (), frame : Json.Encode.Value -> WebDriver.Step.Step (), source : WebDriver.Step.Step String.String, element : WebDriver.Step.Element.Selector -> WebDriver.Step.Step WebDriver.Step.Element.Element, elements : WebDriver.Step.Element.Selector -> WebDriver.Step.Step (List.List WebDriver.Step.Element.Element), attribute : String.String -> WebDriver.Step.Element.Element -> WebDriver.Step.Step String.String, css : String.String -> WebDriver.Step.Element.Element -> WebDriver.Step.Step String.String, enabled : WebDriver.Step.Element.Element -> WebDriver.Step.Step Basics.Bool, property : String.String -> WebDriver.Step.Element.Element -> WebDriver.Step.Step String.String, rect : WebDriver.Step.Element.Element -> WebDriver.Step.Step { height : Basics.Float, width : Basics.Float, x : Basics.Float, y : Basics.Float }, selected : WebDriver.Step.Element.Element -> WebDriver.Step.Step Basics.Bool, tagName : WebDriver.Step.Element.Element -> WebDriver.Step.Step String.String, text : WebDriver.Step.Element.Element -> WebDriver.Step.Step String.String, elementInElement : WebDriver.Step.Element.Selector -> WebDriver.Step.Element.Element -> WebDriver.Step.Step WebDriver.Step.Element.Element, elementsInElement : WebDriver.Step.Element.Selector -> WebDriver.Step.Element.Element -> WebDriver.Step.Step (List.List WebDriver.Step.Element.Element), getWindowRect : WebDriver.Step.Step { height : Basics.Float, width : Basics.Float, x : Basics.Float, y : Basics.Float }, setWindowRect : { height : Basics.Float, width : Basics.Float, x : Basics.Float, y : Basics.Float } -> WebDriver.Step.Step { height : Basics.Float, width : Basics.Float, x : Basics.Float, y : Basics.Float }, clear : WebDriver.Step.Element.Element -> WebDriver.Step.Step (), click : WebDriver.Step.Element.Element -> WebDriver.Step.Step (), value : String.String -> WebDriver.Step.Element.Element -> WebDriver.Step.Step (), execute : String.String -> List.List Json.Encode.Value -> WebDriver.Step.Step Json.Encode.Value, executeAsync : String.String -> List.List Json.Encode.Value -> WebDriver.Step.Step Json.Encode.Value, addCookie : String.String -> String.String -> WebDriver.Step.Step (), cookie : String.String -> WebDriver.Step.Step WebDriver.Internal.Value.Cookie, cookies : WebDriver.Step.Step (List.List WebDriver.Internal.Value.Cookie), deleteCookie : String.String -> WebDriver.Step.Step (), deleteCookies : WebDriver.Step.Step (), alertAccept : WebDriver.Step.Step (), alertDismiss : WebDriver.Step.Step (), alertText : WebDriver.Step.Step String.String, promptText : String.String -> WebDriver.Step.Step (), elementScreenshot : WebDriver.Step.Element.Element -> WebDriver.Step.Step String.String, screenshot : WebDriver.Step.Step String.String, actions : List.List WebDriver.Step.Action.Action -> WebDriver.Step.Step (), release : WebDriver.Step.Step (), selenium : { execute : String.String -> List.List Json.Encode.Value -> WebDriver.Step.Step Json.Encode.Value, executeAsync : String.String -> List.List Json.Encode.Value -> WebDriver.Step.Step Json.Encode.Value } }"
+            },
+            {
+                "name": "Host",
+                "comment": " Configuration containing url to WebDriver host, used in\n\n  - [sessionStart](#sessionStart)\n  - [status](#status)\n\n",
+                "args": [],
+                "type": "{ url : String.String }"
+            },
+            {
+                "name": "WithSession",
+                "comment": " Url to WebDriver host and current browsing session\nused in most of step functins\n",
+                "args": [],
+                "type": "WebDriver.Internal.Value.WithSession"
+            }
+        ],
+        "values": [
+            {
+                "name": "actions",
+                "comment": " Actions are a very complex portion of the spec. Some preliminary understanding of concepts is useful:\n\n  - tick: a slice of an action chain. Actions from different input sources can be executed simultaneously.\n    These are first lined up from the first action. Every vertical “slice” across the different input sources’ action lists is a tick.\n    A tick is not associated with any particular time value, and lasts as long as the longest action duration inside the tick.\n  - input source: a representation of an input device like a keyboard, mouse, finger, or pen. There can be any number of input sources. Each one has its own id.\n  - action: a behavior performed by an input source. Different types of input source have different types of possible actions\n\nThe command takes a list of input source actions. In other words, a list of objects,\neach of which represents an input source and its associated actions.\nEach input source must have the following properties:\n\n  - type: String, one of pointer, key, or none\n  - id: String, a unique id chosen to represent this input source for this and future actions\n  - parameters: pointer-type input sources can also have a parameters property, which is an object with a pointerType key specifying either mouse, pen, or touch. If parameters is omitted, the pointerType is considered to be mouse.\n  - actions: a list of action objects for this particular input source. An action object has different fields based on the kind of input device it belongs to (see also [`here`](https://github.com/jlipps/simple-wd-spec#input-sources-and-corresponding-actions))\n\n",
+                "type": "WebDriver.Step.WithSession -> List.List WebDriver.Step.Action.Action -> WebDriver.Internal.Value.Out ()"
+            },
+            {
+                "name": "addCookie",
+                "comment": " Sets a cookie for current page.\nMake sure you are on the page that should receive the cookie.\nYou can’t set a cookie for an arbitrary page without being on that page.\n",
+                "type": "WebDriver.Step.WithSession -> String.String -> String.String -> WebDriver.Internal.Value.Out ()"
+            },
+            {
+                "name": "alertAccept",
+                "comment": " Accepts the currently displayed alert dialog. Usually, this is equivalent to clicking on the ‘OK’ button in the dialog.\n",
+                "type": "WebDriver.Step.WithSession -> WebDriver.Internal.Value.Out ()"
+            },
+            {
+                "name": "alertDismiss",
+                "comment": " Dismisses the currently displayed alert dialog. For confirm() and prompt() dialogs, this is equivalent to clicking the ‘Cancel’ button. For alert() dialogs, this is equivalent to clicking the ‘OK’ button.\n",
+                "type": "WebDriver.Step.WithSession -> WebDriver.Internal.Value.Out ()"
+            },
+            {
+                "name": "alertText",
+                "comment": " Gets the text of the currently displayed JavaScript alert(), confirm(), or prompt() dialog.\n",
+                "type": "WebDriver.Step.WithSession -> WebDriver.Internal.Value.Out String.String"
+            },
+            {
+                "name": "attribute",
+                "comment": " Get an attribute from a DOM-element based attribute name.\nReturns a attribute value.\n",
+                "type": "WebDriver.Step.WithSession -> String.String -> WebDriver.Step.Element.Element -> WebDriver.Internal.Value.Out String.String"
+            },
+            {
+                "name": "back",
+                "comment": " Navigate backwards in the browser history, if possible.\n",
+                "type": "WebDriver.Step.WithSession -> WebDriver.Internal.Value.Out ()"
+            },
+            {
+                "name": "clear",
+                "comment": " Clear a `TEXTAREA` or text `INPUT` element’s value.\n",
+                "type": "WebDriver.Step.WithSession -> WebDriver.Step.Element.Element -> WebDriver.Internal.Value.Out ()"
+            },
+            {
+                "name": "click",
+                "comment": " The Element Click command scrolls into view the element if it is not already pointer-interactable,\nand clicks its in-view center point.\n\nIf the element’s center point is obscured by another element,\nan element click intercepted error is returned. If the element is outside the viewport,\nan element not interactable error is returned.\n\nOther input way (touch events, mouse up/down ...) can be done by [`actions`](#actions)\n\n",
+                "type": "WebDriver.Step.WithSession -> WebDriver.Step.Element.Element -> WebDriver.Internal.Value.Out ()"
+            },
+            {
+                "name": "close",
+                "comment": " Close current window (and focus on an other window).\n",
+                "type": "WebDriver.Step.WithSession -> WebDriver.Internal.Value.Out (List.List WebDriver.Internal.Value.WindowHandle)"
+            },
+            {
+                "name": "cookie",
+                "comment": " Get Named Cookie\n",
+                "type": "{ a | sessionId : String.String, url : String.String } -> String.String -> WebDriver.Internal.Value.Out WebDriver.Internal.Value.Cookie"
+            },
+            {
+                "name": "cookies",
+                "comment": " Get All Cookies\n",
+                "type": "WebDriver.Step.WithSession -> WebDriver.Internal.Value.Out (List.List WebDriver.Internal.Value.Cookie)"
+            },
+            {
+                "name": "css",
+                "comment": " Get a css property from a DOM-element.\nThe return value is not formatted.\n\n> Note that shorthand CSS properties (e.g. background, font, border, margin, padding, list-style, outline, pause, cue) are not returned, in accordance with the DOM CSS2 specification - you should directly access the longhand properties (e.g. background-color) to access the desired values.\n\n",
+                "type": "WebDriver.Step.WithSession -> String.String -> WebDriver.Step.Element.Element -> WebDriver.Internal.Value.Out String.String"
+            },
+            {
+                "name": "deleteCookie",
+                "comment": " Delete cookie visible to the current page.\nBy providing a cookie name.\n",
+                "type": "WebDriver.Step.WithSession -> String.String -> WebDriver.Internal.Value.Out ()"
+            },
+            {
+                "name": "deleteCookies",
+                "comment": " Delete cookies visible to the current page.\n",
+                "type": "WebDriver.Step.WithSession -> WebDriver.Internal.Value.Out ()"
+            },
+            {
+                "name": "element",
+                "comment": " Search for an element on the page, starting from the document root.\nThe located element will be returned as a `Element`.\n",
+                "type": "WebDriver.Step.WithSession -> WebDriver.Step.Element.Selector -> WebDriver.Internal.Value.Out WebDriver.Step.Element.Element"
+            },
+            {
+                "name": "elementInElement",
+                "comment": " Search for an element on the page, starting from an element.\nThe located element will be returned as a `Element`.\n",
+                "type": "WebDriver.Step.WithSession -> WebDriver.Step.Element.Selector -> WebDriver.Step.Element.Element -> WebDriver.Internal.Value.Out WebDriver.Step.Element.Element"
+            },
+            {
+                "name": "elementScreenshot",
+                "comment": " The Take Element Screenshot command takes a screenshot of the visible region encompassed by the bounding rectangle of an element.\nIf given a parameter argument scroll that evaluates to false, the element will not be scrolled into view.\n",
+                "type": "WebDriver.Step.WithSession -> WebDriver.Step.Element.Element -> WebDriver.Internal.Value.Out String.String"
+            },
+            {
+                "name": "elements",
+                "comment": " Search for multiple elements on the page, starting from the document root.\nThe located elements will be returned as a `List Element`.\nElements should be returned in the order located in the DOM.\n",
+                "type": "WebDriver.Step.WithSession -> WebDriver.Step.Element.Selector -> WebDriver.Internal.Value.Out (List.List WebDriver.Step.Element.Element)"
+            },
+            {
+                "name": "elementsInElement",
+                "comment": " Search for multiple elements on the page, starting from an element.\nThe located elements will be returned as a `List Element`.\nElements should be returned in the order located in the DOM.\n",
+                "type": "WebDriver.Step.WithSession -> WebDriver.Step.Element.Selector -> WebDriver.Step.Element.Element -> WebDriver.Internal.Value.Out (List.List WebDriver.Step.Element.Element)"
+            },
+            {
+                "name": "enabled",
+                "comment": " Determine if an element is currently enabled.\n",
+                "type": "WebDriver.Step.WithSession -> WebDriver.Step.Element.Element -> WebDriver.Internal.Value.Out Basics.Bool"
+            },
+            {
+                "name": "execute",
+                "comment": " Inject a snippet of JavaScript into the page for execution in the context of the currently selected frame.\nThe executed script is assumed to be synchronous and the result of evaluating the script is returned to the client.\n\nThe script argument defines the script to execute in the form of a function body.\nThe value returned by that function will be returned to the client.\nThe function will be invoked with the provided args `List Json.Value`\nand the values may be accessed via the arguments object in the order specified.\n\nArguments may be any JSON-primitive, array, or JSON object.\n\n    execute\n        settings\n        \"alert(arguments[arguments.length - 1])\"\n        [ Json.string \"4123412\", Json.int 3 ]\n\n",
+                "type": "WebDriver.Step.WithSession -> String.String -> List.List Json.Encode.Value -> WebDriver.Internal.Value.Out Json.Encode.Value"
+            },
+            {
+                "name": "executeAsync",
+                "comment": " Inject a snippet of JavaScript into the page for execution in the context of the currently selected frame.\nThe executed script is assumed to be asynchronous and must signal that is done by invoking the provided callback,\nwhich is always provided as the final argument to the function.\nThe value to this callback will be returned to the client.\n\nAsynchronous script commands may not span page loads.\nIf an unload event is fired while waiting for a script result,\nan error should be returned to the client.\n\nThe script argument defines the script to execute in the form of a function body.\nThe function will be invoked with the provided args `List Json.Value`\nand the values may be accessed via the arguments object in the order specified.\nThe final argument will always be a callback function that must be invoked to signal that the script has finished.\n\nArguments may be any JSON-primitive, array, or JSON object.\n\n    let\n        script =\n            \"\"\"\n        const {a,b,c,d,done} = arguments;\n        setTimeout(function() {\n                done(a + b + c + d);\n            }, 3000);\"\"\"\n    in\n    executeAsync\n        settings\n        script\n        [ Json.string \"4123412\", Json.int 3 ]\n\n",
+                "type": "WebDriver.Step.WithSession -> String.String -> List.List Json.Encode.Value -> WebDriver.Internal.Value.Out Json.Encode.Value"
+            },
+            {
+                "name": "forward",
+                "comment": " Navigate forwards in the browser history, if possible.\n",
+                "type": "WebDriver.Step.WithSession -> WebDriver.Internal.Value.Out ()"
+            },
+            {
+                "name": "frame",
+                "comment": "\n\n> TODO improve arguments\n\nChange focus to another frame on the page.\nIf the frame id is null, the server should switch to the page’s default content.\n\n",
+                "type": "WebDriver.Step.WithSession -> Json.Encode.Value -> WebDriver.Internal.Value.Out ()"
+            },
+            {
+                "name": "frameParent",
+                "comment": " Change focus to the parent context.\nIf the current context is the top level browsing context,\nthe context remains unchanged.\n",
+                "type": "WebDriver.Step.WithSession -> WebDriver.Internal.Value.Out ()"
+            },
+            {
+                "name": "fullscreen",
+                "comment": " The Fullscreen Window command invokes the window manager-specific “full screen” operation,\nif any, on the window containing the current top-level browsing context.\nThis typically increases the window to the size of the physical display\nand can hide browser UI elements such as toolbars.\n\n> _Note_: this command was recently added to the official Webdriver protocol\n> and might not be working with current Selenium driver.\n\n",
+                "type": "WebDriver.Step.WithSession -> WebDriver.Internal.Value.Out ()"
+            },
+            {
+                "name": "functions",
+                "comment": " ",
+                "type": "WebDriver.Step.WithSession -> WebDriver.Step.Functions"
+            },
+            {
+                "name": "getTimeouts",
+                "comment": " ",
+                "type": "WebDriver.Step.WithSession -> WebDriver.Internal.Value.Out WebDriver.Internal.Value.Timeouts.Timeouts"
+            },
+            {
+                "name": "getUrl",
+                "comment": " Get the url of current opened website.\n",
+                "type": "WebDriver.Step.WithSession -> WebDriver.Internal.Value.Out String.String"
+            },
+            {
+                "name": "getWindowRect",
+                "comment": " The Get Window Rect command returns the size and position\non the screen of the operating system window corresponding\nto the current top-level browsing context.\n",
+                "type": "WebDriver.Step.WithSession -> WebDriver.Internal.Value.Out { height : Basics.Float, width : Basics.Float, x : Basics.Float, y : Basics.Float }"
+            },
+            {
+                "name": "maximize",
+                "comment": " The Maximize Window command invokes the window manager-specific “maximize” operation,\nif any, on the window containing the current top-level browsing context.\nThis typically increases the window to the maximum available size without going full-screen.\n",
+                "type": "WebDriver.Step.WithSession -> WebDriver.Internal.Value.Out ()"
+            },
+            {
+                "name": "minimize",
+                "comment": " The Minimize Window command invokes the window manager-specific “minimize” operation,\nif any, on the window containing the current top-level browsing context.\nThis typically hides the window in the system tray.\n",
+                "type": "WebDriver.Step.WithSession -> WebDriver.Internal.Value.Out { height : Basics.Float, width : Basics.Float, x : Basics.Float, y : Basics.Float }"
+            },
+            {
+                "name": "promptText",
+                "comment": " Keystrokes to send to the prompt() dialog.\n",
+                "type": "WebDriver.Step.WithSession -> String.String -> WebDriver.Internal.Value.Out ()"
+            },
+            {
+                "name": "property",
+                "comment": " Get the value of an element’s property.\n",
+                "type": "WebDriver.Step.WithSession -> String.String -> WebDriver.Step.Element.Element -> WebDriver.Internal.Value.Out String.String"
+            },
+            {
+                "name": "rect",
+                "comment": " The Get Element Rect command returns the dimensions and coordinates of the given web element.\nThe returned value is a record with `x`, `y`, `width` and `height` properties.\n\n> Note: this command was recently added to the official Webdriver protocol\n> and might not be working with current Selenium driver.\n\n",
+                "type": "WebDriver.Step.WithSession -> WebDriver.Step.Element.Element -> WebDriver.Internal.Value.Out { height : Basics.Float, width : Basics.Float, x : Basics.Float, y : Basics.Float }"
+            },
+            {
+                "name": "refresh",
+                "comment": " Refresh the current page.\n",
+                "type": "WebDriver.Step.WithSession -> WebDriver.Internal.Value.Out ()"
+            },
+            {
+                "name": "release",
+                "comment": " The Release Actions command is used to release all the keys and pointer buttons that are currently depressed.\nThis causes events to be fired as if the state was released by an explicit series of actions.\nIt also clears all the internal state of the virtual devices.\n",
+                "type": "WebDriver.Step.WithSession -> WebDriver.Internal.Value.Out ()"
+            },
+            {
+                "name": "screenshot",
+                "comment": " Take a screenshot of the current viewport.\n",
+                "type": "WebDriver.Step.WithSession -> WebDriver.Internal.Value.Out String.String"
+            },
+            {
+                "name": "selected",
+                "comment": " The Is Element Selected command determines\nif the referenced element is selected or not.\nThis operation only makes sense on input elements\nof the Checkbox- and Radio Button states, or on option elements.\n",
+                "type": "WebDriver.Step.WithSession -> WebDriver.Step.Element.Element -> WebDriver.Internal.Value.Out Basics.Bool"
+            },
+            {
+                "name": "sessionStart",
+                "comment": " Creates a new session with the desired capabilities.\nand task result in info of created session as Json.Value\n\n> Note: Most of cases you don't need it runner will create session for you and stop, after test is done\n\n",
+                "type": "WebDriver.Step.Host -> Json.Encode.Value -> Http.Request { sessionId : String.String, value : Json.Encode.Value }"
+            },
+            {
+                "name": "sessionStop",
+                "comment": " Stops session created with [`sessionStart`](#sessionStart) functon\n\n> Note: Most of cases you don't need it runner will crates session for you and stop, after test is done\n\n",
+                "type": "WebDriver.Step.WithSession -> WebDriver.Internal.Value.Out ()"
+            },
+            {
+                "name": "setTimeouts",
+                "comment": "\n\n  - `script` - session script timeout - Determines when to interrupt a script that is being evaluated.\n  - `pageLoad` - session page load timeout - Provides the timeout limit used to interrupt navigation of the browsing context.\n  - `implicit`- session implicit wait timeout - Gives the timeout of when to abort locating an element.\n\nConfigure the amount of time that a particular type of operation can execute for before they are aborted and a Timeout error is returned to the client.\n\n",
+                "type": "WebDriver.Step.WithSession -> WebDriver.Internal.Value.Timeouts.Timeouts -> WebDriver.Internal.Value.Out WebDriver.Internal.Value.Timeouts.Timeouts"
+            },
+            {
+                "name": "setWindowRect",
+                "comment": " The Set Window Rect command alters the size and the position\nof the operating system window corresponding\nto the current top-level browsing context.\n",
+                "type": "WebDriver.Step.WithSession -> { height : Basics.Float, width : Basics.Float, x : Basics.Float, y : Basics.Float } -> WebDriver.Internal.Value.Out { height : Basics.Float, width : Basics.Float, x : Basics.Float, y : Basics.Float }"
+            },
+            {
+                "name": "source",
+                "comment": " Get source code of the page. This command won’t work in mobile environments for native apps.\nIf you are running hybrid tests make sure that you are in the webview before calling this command.\n",
+                "type": "WebDriver.Step.WithSession -> WebDriver.Internal.Value.Out String.String"
+            },
+            {
+                "name": "status",
+                "comment": " Query the server’s current status. The server should respond with a general “HTTP 200 OK” response if it is alive and accepting commands. The response body should be a JSON object describing the state of the server. All server implementations should return two basic objects describing the server’s current platform and when the server was built. All fields are optional; if omitted, the client should assume the value is unknown. Furthermore, server implementations may include additional fields not listed here.\n",
+                "type": "WebDriver.Step.Host -> WebDriver.Internal.Value.Out WebDriver.Internal.Value.Status.Status"
+            },
+            {
+                "name": "tagName",
+                "comment": " Get tag name of a DOM-element.\n",
+                "type": "WebDriver.Step.WithSession -> WebDriver.Step.Element.Element -> WebDriver.Internal.Value.Out String.String"
+            },
+            {
+                "name": "text",
+                "comment": " Get the text content from a DOM-elemen.\nMake sure the element you want to request the text from is interactable\notherwise you will get an empty string as return value.\nIf the element is disabled or not visible and you still want to receive the text content use `getHTML` (TODO) as a workaround.\n",
+                "type": "WebDriver.Step.WithSession -> WebDriver.Step.Element.Element -> WebDriver.Internal.Value.Out String.String"
+            },
+            {
+                "name": "title",
+                "comment": " Get the title of current opened website.\n",
+                "type": "WebDriver.Step.WithSession -> WebDriver.Internal.Value.Out String.String"
+            },
+            {
+                "name": "url",
+                "comment": " Load the URL of the browser.\n",
+                "type": "WebDriver.Step.WithSession -> String.String -> WebDriver.Internal.Value.Out ()"
+            },
+            {
+                "name": "value",
+                "comment": " Send a sequence of key strokes to an element.\nYou can also use unicode characters like `Left arrow` or `Backspace` ([`keys`](../WebDriver.Keyboard#key))\nWebdriverIO will take care of translating them into unicode characters.\nYou’ll find all supported characters here. To do that, the value has to correspond to a key from the table.\n",
+                "type": "WebDriver.Step.WithSession -> String.String -> WebDriver.Step.Element.Element -> WebDriver.Internal.Value.Out ()"
+            },
+            {
+                "name": "window",
+                "comment": " Switching window will select the current top-level browsing context used as the target for all subsequent commands.\nIn a tabbed browser, this will typically make the tab containing the browsing context the selected tab.\n",
+                "type": "WebDriver.Step.WithSession -> WebDriver.Internal.Value.WindowHandle -> WebDriver.Internal.Value.Out ()"
+            },
+            {
+                "name": "windowHandle",
+                "comment": " Get handle with tabs in the browser.\n",
+                "type": "WebDriver.Step.WithSession -> WebDriver.Internal.Value.Out WebDriver.Internal.Value.WindowHandle"
+            },
+            {
+                "name": "windowHandles",
+                "comment": " Retrieve the list of all window handles available to the session.\n",
+                "type": "WebDriver.Step.WithSession -> WebDriver.Internal.Value.Out (List.List WebDriver.Internal.Value.WindowHandle)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "WebDriver.Step.Action",
+        "comment": "\n\n  - Example 1 (expressing a 1-second pinch-and-zoom with a 500ms wait after the fingers first touch):\n\n         {\n         \"actions\": [\n             {\n             \"type\": \"pointer\",\n             \"id\": \"finger1\",\n             \"parameters\": {\"pointerType\": \"touch\"},\n             \"actions\": [\n                 {\"type\": \"pointerMove\", \"duration\": 0, \"x\": 100, \"y\": 100},\n                 {\"type\": \"pointerDown\", \"button\": 0},\n                 {\"type\": \"pause\", \"duration\": 500},\n                 {\"type\": \"pointerMove\", \"duration\": 1000, \"origin\": \"pointer\", \"x\": -50, \"y\": 0},\n                 {\"type\": \"pointerUp\", \"button\": 0}\n             ]\n             }, {\n             \"type\": \"pointer\",\n             \"id\": \"finger2\",\n             \"parameters\": {\"pointerType\": \"touch\"},\n             \"actions\": [\n                 {\"type\": \"pointerMove\", \"duration\": 0, \"x\": 100, \"y\": 100},\n                 {\"type\": \"pointerDown\", \"button\": 0},\n                 {\"type\": \"pause\", \"duration\": 500},\n                 {\"type\": \"pointerMove\", \"duration\": 1000, \"origin\": \"pointer\", \"x\": 50, \"y\": 0},\n                 {\"type\": \"pointerUp\", \"button\": 0}\n             ]\n             }\n         ]\n         }\n\n  - Example 2 (equivalent to typing CTRL+S and releasing the keys, though releasing would be better performed by a call to Release Actions):\n\n         {\n         \"actions\": [\n             {\n             \"type\": \"key\",\n             \"id\": \"keyboard\",\n             \"actions\": [\n                 {\"type\": \"keyDown\", \"value\": \"\\uE009\"},\n                 {\"type\": \"keyDown\", \"value\": \"s\"},\n                 {\"type\": \"keyUp\", \"value\": \"\\uE009\"},\n                 {\"type\": \"keyUp\", \"value\": \"s\"}\n             ]\n             }\n         ]\n         }\n\n\n## Creators\n\n@docs mouse, pen, touch, key, Origin\n\n@docs PointerMapper\n\n\n## Low Level\n\n@docs Action, encode\n\n",
+        "unions": [
+            {
+                "name": "Action",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Origin",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "OriginElement",
+                        [
+                            "WebDriver.Step.Element.Element"
+                        ]
+                    ],
+                    [
+                        "OriginViewport",
+                        []
+                    ],
+                    [
+                        "OriginPointer",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "PointerMapper",
+                "comment": " ",
+                "args": [],
+                "type": "{ cancel : WebDriver.Step.Action.PointerActivity, down : Basics.Int -> WebDriver.Step.Action.PointerActivity, move : { duration : Basics.Int, origin : WebDriver.Step.Action.Origin, x : Basics.Int, y : Basics.Int } -> WebDriver.Step.Action.PointerActivity, pause : Basics.Int -> WebDriver.Step.Action.PointerActivity, up : Basics.Int -> WebDriver.Step.Action.PointerActivity } -> List.List WebDriver.Step.Action.PointerActivity"
+            }
+        ],
+        "values": [
+            {
+                "name": "encode",
+                "comment": " ",
+                "type": "WebDriver.Step.Action.Action -> Json.Encode.Value"
+            },
+            {
+                "name": "key",
+                "comment": " ",
+                "type": "String.String -> WebDriver.Step.Action.KeyMapper -> WebDriver.Step.Action.Action"
+            },
+            {
+                "name": "mouse",
+                "comment": " ",
+                "type": "String.String -> WebDriver.Step.Action.PointerMapper -> WebDriver.Step.Action.Action"
+            },
+            {
+                "name": "pen",
+                "comment": " ",
+                "type": "String.String -> WebDriver.Step.Action.PointerMapper -> WebDriver.Step.Action.Action"
+            },
+            {
+                "name": "touch",
+                "comment": " ",
+                "type": "String.String -> WebDriver.Step.Action.PointerMapper -> WebDriver.Step.Action.Action"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "WebDriver.Step.Element",
+        "comment": " #Helper functions\n\n@docs css, xPath\n\n#Types\n\n@docs Element, Selector\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Element",
+                "comment": " ",
+                "args": [],
+                "type": "WebDriver.Internal.Value.Element"
+            },
+            {
+                "name": "Selector",
+                "comment": " ",
+                "args": [],
+                "type": "WebDriver.Internal.Value.Selector"
+            }
+        ],
+        "values": [
+            {
+                "name": "css",
+                "comment": " Creates CSS selector to search for element in webpage\n",
+                "type": "String.String -> WebDriver.Step.Element.Selector"
+            },
+            {
+                "name": "xPath",
+                "comment": " Creates XPath Selector to search for element in webpage\n",
+                "type": "String.String -> WebDriver.Internal.Value.Selector"
+            }
+        ],
+        "binops": []
+    }
+]

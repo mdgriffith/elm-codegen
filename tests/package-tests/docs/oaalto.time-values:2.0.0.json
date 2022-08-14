@@ -1,0 +1,33 @@
+[
+    {
+        "name": "Time.Values",
+        "comment": " Extract time values from numbers.\n\n@docs TimeValues\n\n@docs fromMilliseconds, fromSeconds, fromMinutes\n\nimport Time.Values as TimeValues exposing (TimeValues)\n\nvalues = TimeValues.fromSeconds 60\n\nminutes = values.minutes\n\nThe functions fromMilliseconds, fromSeconds and fromMinutes split the given\nvalue into its compound elements, namely: ms, secs, mins, hours, days, weeks.\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "TimeValues",
+                "comment": " Container for the compound elements.\n",
+                "args": [],
+                "type": "{ milliseconds : Basics.Int, seconds : Basics.Int, minutes : Basics.Int, hours : Basics.Int, days : Basics.Int, weeks : Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "fromMilliseconds",
+                "comment": " Extracts the compound elements from the given milliseconds.\n",
+                "type": "Basics.Int -> Time.Values.TimeValues"
+            },
+            {
+                "name": "fromMinutes",
+                "comment": " Extracts the compound elements from the given minutes.\n",
+                "type": "Basics.Int -> Time.Values.TimeValues"
+            },
+            {
+                "name": "fromSeconds",
+                "comment": " Extracts the compound elements from the given seconds.\n",
+                "type": "Basics.Int -> Time.Values.TimeValues"
+            }
+        ],
+        "binops": []
+    }
+]

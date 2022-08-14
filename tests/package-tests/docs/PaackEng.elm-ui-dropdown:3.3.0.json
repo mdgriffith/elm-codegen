@@ -1,0 +1,155 @@
+[
+    {
+        "name": "Dropdown",
+        "comment": " Elm UI Dropdown.\n\n\n# Component constructors\n\n@docs basic, filterable, multi, autocompleteHelper\n\n\n# State\n\n@docs Config, State, Msg\n@docs init, update, view\n\n\n## Effects\n\n@docs Effect, mapEffect, performEffect, updateWithoutPerform\n\n\n# Options\n\n@docs onOutsideClick, withContainerAttributes, withEmptyListElement\n@docs withFilterPlaceholder, withListAttributes, withOpenCloseButtons\n@docs withPromptElement, withSearchAttributes, withSelectAttributes\n\n",
+        "unions": [
+            {
+                "name": "Config",
+                "comment": " Opaque type that holds the current config\n\n    dropdownConfig =\n        Dropdown.basic\n            { allItems = always [ \"apples\", \"bananas\", \"oranges\" ]\n            , selectedItem = .selectedFruit\n            , dropdownMsg = DropdownMsg\n            , onSelectMsg = FruitPicked\n            , itemToPrompt = Element.text\n            , itemToElement = \\selected -> \\highlighted -> Element.text\n            }\n\n",
+                "args": [
+                    "item",
+                    "msg",
+                    "model"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Effect",
+                "comment": " Allows tests with `elm-program-test`\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": [
+                    [
+                        "Loopback",
+                        [
+                            "msg"
+                        ]
+                    ],
+                    [
+                        "DomFocus",
+                        [
+                            "Result.Result Browser.Dom.Error () -> msg",
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Msg",
+                "comment": " Opaque type for the internal dropdown messages\n",
+                "args": [
+                    "item"
+                ],
+                "cases": []
+            },
+            {
+                "name": "State",
+                "comment": " Opaque type that holds the current state\n\n    type alias Model =\n        { dropdownState : Dropdown.State\n        }\n\n",
+                "args": [
+                    "item"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "autocompleteHelper",
+                "comment": " Create a configuration which can be used as an autocomplete. It emits a message on every filter change which can be handled in parent application to fetch predictions. This takes:\n\n  - `itemsFromModel`: The list of items to display in the dropdown (as a function of the model)\n  - `selectionFromModel`: The function to get the selected item from the model\n  - `dropdownMsg`: The message to wrap all the internal messages of the dropdown\n  - `onSelectMsg`: A message to trigger when an item is selected\n  - `onFilterChangeMsg`: A message emitted when text in the search input changes, this message can be used to fetch predictions from a remote server to be rendered in the dropdown\n  - `itemToPrompt`: A function to get the Element to display from an item, to be used in the select part of the dropdown\n  - `itemToElement`: A function that takes a bool for whether the item is selected followed by a bool for whether the item is highlighted, followed by the item and returns the Element to display, to be used in the list part of the dropdown\n  - `itemToText`: A function to get the text representation from an item, to be used when filtering elements in the list\n\n",
+                "type": "{ itemsFromModel : model -> List.List item, selectionFromModel : model -> Maybe.Maybe item, dropdownMsg : Dropdown.Msg item -> msg, onSelectMsg : Maybe.Maybe item -> msg, onFilterChangeMsg : Maybe.Maybe (String.String -> msg), itemToPrompt : item -> Element.Element msg, itemToElement : Basics.Bool -> Basics.Bool -> item -> Element.Element msg, itemToText : item -> String.String } -> Dropdown.Config item msg model"
+            },
+            {
+                "name": "basic",
+                "comment": " Create a basic configuration. This takes:\n\n  - `itemsFromModel`: The list of items to display in the dropdown (as a function of the model)\n  - `selectionFromModel`: The function to get the selected item from the model\n  - `dropdownMsg`: The message to wrap all the internal messages of the dropdown\n  - `onSelectMsg`: A message to trigger when an item is selected\n  - `itemToPrompt`: A function to get the Element to display from an item, to be used in the select part of the dropdown\n  - `itemToElement`: A function that takes a bool for whether the item is selected followed by a bool for whether the item is highlighted, followed by the item and returns the Element to display, to be used in the list part of the dropdown\n\n",
+                "type": "{ itemsFromModel : model -> List.List item, selectionFromModel : model -> Maybe.Maybe item, dropdownMsg : Dropdown.Msg item -> msg, onSelectMsg : Maybe.Maybe item -> msg, itemToPrompt : item -> Element.Element msg, itemToElement : Basics.Bool -> Basics.Bool -> item -> Element.Element msg } -> Dropdown.Config item msg model"
+            },
+            {
+                "name": "filterable",
+                "comment": " Create a filterable configuration. This takes:\n\n  - `itemsFromModel`: The list of items to display in the dropdown (as a function of the model)\n  - `selectionFromModel`: The function to get the selected item from the model\n  - `dropdownMsg`: The message to wrap all the internal messages of the dropdown\n  - `onSelectMsg`: A message to trigger when an item is selected\n  - `itemToPrompt`: A function to get the Element to display from an item, to be used in the select part of the dropdown\n  - `itemToElement`: A function that takes a bool for whether the item is selected followed by a bool for whether the item is highlighted, followed by the item and returns the Element to display, to be used in the list part of the dropdown\n  - `itemToText`: A function to get the text representation from an item, to be used when filtering elements in the list\n\n",
+                "type": "{ itemsFromModel : model -> List.List item, selectionFromModel : model -> Maybe.Maybe item, dropdownMsg : Dropdown.Msg item -> msg, onSelectMsg : Maybe.Maybe item -> msg, itemToPrompt : item -> Element.Element msg, itemToElement : Basics.Bool -> Basics.Bool -> item -> Element.Element msg, itemToText : item -> String.String } -> Dropdown.Config item msg model"
+            },
+            {
+                "name": "init",
+                "comment": " Create a new state. You must pass a unique identifier for each dropdown component.\n\n    {\n        ...\n        dropdownState = Dropdown.init \"country-dropdown\"\n    }\n\n",
+                "type": "String.String -> Dropdown.State item"
+            },
+            {
+                "name": "mapEffect",
+                "comment": " Same as `Cmd.map`, but for an [`Effect`](#Effect).\n",
+                "type": "(a -> b) -> Dropdown.Effect a -> Dropdown.Effect b"
+            },
+            {
+                "name": "multi",
+                "comment": " Create a multiselect configuration. This takes:\n\n  - `itemsFromModel`: The list of items to display in the dropdown (as a function of the model)\n  - `selectionFromModel`: The function to get the selected items from the model\n  - `dropdownMsg`: The message to wrap all the internal messages of the dropdown\n  - `onSelectMsg`: A message to trigger when an item is selected\n  - `itemsToPrompt`: A function to get the Element to display from the list of selected items, to be used in the select part of the dropdown\n  - `itemToElement`: A function that takes a bool for whether the item is selected followed by a bool for whether the item is highlighted, followed by the item and returns the Element to display, to be used in the list part of the dropdown\n\n",
+                "type": "{ itemsFromModel : model -> List.List item, selectionFromModel : model -> List.List item, dropdownMsg : Dropdown.Msg item -> msg, onSelectMsg : List.List item -> msg, itemsToPrompt : List.List item -> Element.Element msg, itemToElement : Basics.Bool -> Basics.Bool -> item -> Element.Element msg } -> Dropdown.Config item msg model"
+            },
+            {
+                "name": "onOutsideClick",
+                "comment": " Serves as a subscription to know when the user has clicked outside a certain dropdown\n\n  - dropdownState: State of the dropdown we want to subscribe to\n\n  - dropdownMsg: The message to wrap all the internal messages of the dropdown\n\n```\nsubscriptions : Model -> Sub Msg\nsubscriptions model =\n    Dropdown.onOutsideClick model.dropdownState DropdownMsg\n```\n\n",
+                "type": "Dropdown.State item -> (Dropdown.Msg item -> msg) -> Platform.Sub.Sub msg"
+            },
+            {
+                "name": "performEffect",
+                "comment": " Resolves [`Effect`](#Effect) as Elm's `Cmd`s. If you plan to implement this yourself, it looks like this:\n\n    performEffect : Effect msg -> Cmd msg\n    performEffect effect =\n        case effect of\n            Loopback msg ->\n                Task.perform identity <| Task.succeed msg\n\n            DomFocus msg id ->\n                Task.attempt msg (Dom.focus id)\n\n",
+                "type": "Dropdown.Effect msg -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "update",
+                "comment": " Update the component state\n\n    DropdownMsg subMsg ->\n        let\n            ( updated, cmd ) =\n                Dropdown.update dropdownConfig subMsg model model.dropdownState model.items\n        in\n            ( { model | dropdownState = updated }, cmd )\n\n",
+                "type": "Dropdown.Config item msg model -> Dropdown.Msg item -> model -> Dropdown.State item -> ( Dropdown.State item, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "updateWithoutPerform",
+                "comment": " Same as [`update`](#update) but returning a list of [`Effect`](#Effect).\n",
+                "type": "Dropdown.Config item msg model -> Dropdown.Msg item -> model -> Dropdown.State item -> ( Dropdown.State item, List.List (Dropdown.Effect msg) )"
+            },
+            {
+                "name": "view",
+                "comment": " Render the view\n\n    Dropdown.view dropdownConfig model model.dropdownState model.items\n\n",
+                "type": "Dropdown.Config item msg model -> model -> Dropdown.State item -> Element.Element msg"
+            },
+            {
+                "name": "withContainerAttributes",
+                "comment": " Sets the container visual attributes, default is empty\n\n    Dropdown.withContainerAttributes [ width (px 300) ] config\n\n",
+                "type": "List.List (Element.Attribute msg) -> Dropdown.Config item msg model -> Dropdown.Config item msg model"
+            },
+            {
+                "name": "withEmptyListElement",
+                "comment": " When the list is empty, show this element instead.\n\nMost useful in filterable, it shows up when nothing matches the filter value.\n\n",
+                "type": "Element.Element msg -> Dropdown.Config item msg model -> Dropdown.Config item msg model"
+            },
+            {
+                "name": "withFilterPlaceholder",
+                "comment": " Sets the placeholder of the Filterable dropdown, default is \"Filter values\"\n\n    Dropdown.withFilterPlaceholder \"Type here...\" config\n\n",
+                "type": "String.String -> Dropdown.Config item msg model -> Dropdown.Config item msg model"
+            },
+            {
+                "name": "withListAttributes",
+                "comment": " Sets the item list visual attributes, default is empty\n\n    Dropdown.withListAttributes [ Border.width 1, Border.rounded ] config\n\n",
+                "type": "List.List (Element.Attribute msg) -> Dropdown.Config item msg model -> Dropdown.Config item msg model"
+            },
+            {
+                "name": "withOpenCloseButtons",
+                "comment": " Sets the open and close buttons' visual attributes, default is empty\n\n    Dropdown.withOpenCloseButtons { openButton = text \"+\", closeButton = \"-\" } config\n\n",
+                "type": "{ openButton : Element.Element msg, closeButton : Element.Element msg } -> Dropdown.Config item msg model -> Dropdown.Config item msg model"
+            },
+            {
+                "name": "withPromptElement",
+                "comment": " Sets the content of the Select, default is \"-- Select --\"\n\n    Dropdown.withPromptElement (el [ Font.color (rgb255 123 123 123) ] <| text \"Pick one\") config\n\n",
+                "type": "Element.Element msg -> Dropdown.Config item msg model -> Dropdown.Config item msg model"
+            },
+            {
+                "name": "withSearchAttributes",
+                "comment": " Sets the search visual attributes, default is empty\n\n    Dropdown.withSearchAttributes [ Border.width 0, padding 0 ] config\n\n",
+                "type": "List.List (Element.Attribute msg) -> Dropdown.Config item msg model -> Dropdown.Config item msg model"
+            },
+            {
+                "name": "withSelectAttributes",
+                "comment": " Sets the select visual attributes, default is empty\n\n    Dropdown.withSelectAttributes [ Border.width 1, Border.rounded 5, paddingXY 16 8 ] config\n\n",
+                "type": "List.List (Element.Attribute msg) -> Dropdown.Config item msg model -> Dropdown.Config item msg model"
+            }
+        ],
+        "binops": []
+    }
+]

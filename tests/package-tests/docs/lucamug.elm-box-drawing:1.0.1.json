@@ -1,0 +1,177 @@
+[
+    {
+        "name": "BoxDrawing",
+        "comment": "\n\n\n# Basic Elements\n\n@docs picture, animation, render, move, group, CanvasSize\n\n\n# Shapes\n\n@docs line, arrow, rectangle, box, words, paragraph, label, Shape\n\n\n# Animations\n\n@docs moving, blinking\n\n\n# Attributes\n\n\n## Weight\n\n@docs Weight, none, single, double\n\n\n# Direction\n\n@docs Direction, horizontal, vertical, diagonalUp, diagonalDown\n\n\n## Arrow Direction\n\n@docs ArrowDirection, standard, reversed\n\n\n# Encoders and Decoders\n\nTo serialize a list of shapes.\n\nUseful if you want to send a list of shapes via HTTP requests or to save them in the local storage.\n\nThe minified versions have a smaller footprint but are less human-readable.\n\n@docs shapesEncoder, shapesDecoder\n\nThe minified versions output a smaller but less less human-readable.\n\n@docs shapesEncoderMinified, shapesDecoderMinified\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "ArrowDirection",
+                "comment": " ",
+                "args": [],
+                "type": "Internal.ArrowDirection.ArrowDirection"
+            },
+            {
+                "name": "CanvasSize",
+                "comment": " The size of the canvas\n",
+                "args": [],
+                "type": "( Basics.Int, Basics.Int )"
+            },
+            {
+                "name": "Direction",
+                "comment": " ",
+                "args": [],
+                "type": "Internal.Direction.Direction"
+            },
+            {
+                "name": "Shape",
+                "comment": " The building block of your pictures.\n",
+                "args": [],
+                "type": "Internal.Shape.Shape"
+            },
+            {
+                "name": "Weight",
+                "comment": " ",
+                "args": [],
+                "type": "Internal.Weight.Weight"
+            }
+        ],
+        "values": [
+            {
+                "name": "animation",
+                "comment": " Creates animated pictures using box-drawing characters.\n\nFor example, to draw a rectangle that expands like this:\n\n    ╔═══╗\n    ║   ║ ⇨\n    ╚═══╝\n      ⇩\n\nYou can write\n\n    import BoxDrawing exposing (..)\n\n    main =\n        animation\n            ( 150, 40 )\n            (\\counter ->\n                [ rectangle\n                    (min 150 counter)\n                    (min 40 counter)\n                    double\n                ]\n            )\n\nThe first argument is the canvas size, the second is a function that gets an `Int` and returns a list of `Shape`.\n\nThe `Int` is a counter that increases by one 60 times per second making the drawing expand.\n\n",
+                "type": "BoxDrawing.CanvasSize -> (Basics.Int -> List.List BoxDrawing.Shape) -> Platform.Program () Basics.Int ()"
+            },
+            {
+                "name": "arrow",
+                "comment": " Make arrows:\n\n    import BoxDrawing exposing (..)\n\n    main =\n        picture ( 10, 1 ) <|\n            [ arrow 10 horizontal double standard ]\n\nResult:\n\n    ═══════>\n\nAn `arrow` is similar to a [`line`](#line) but with a point at the end.\n\nYou give in order:\n\n  - The length\n  - The `Direction`\n  - The `Weight`\n  - The `ArrowDirection`\n\n[`ArrowDirection`](#ArrowDirection) can be\n\n  - `standard` ══>\n  - `reversed` <══\n\n",
+                "type": "Basics.Int -> BoxDrawing.Direction -> BoxDrawing.Weight -> BoxDrawing.ArrowDirection -> BoxDrawing.Shape"
+            },
+            {
+                "name": "blinking",
+                "comment": " Alternates two values.\n\nFor example, if you want to make the eye of a robot blinking:\n\n    import BoxDrawing exposing (..)\n\n    main : Program () Int ()\n    main =\n        animation\n            ( 13, 7 )\n            (\\counter ->\n                -- Head\n                [ rectangle 11 7 double |> move 1 0\n\n                -- Hears\n                , rectangle 2 2 single |> move 11 2\n                , rectangle 2 2 single |> move 0 2\n\n                -- Unibrow\n                , words \"~~~/~~~\" |> move 3 1\n\n                -- Eyes\n                , words\n                    (blinking\n                        { speed = 5\n                        , valueA = \" _   _ \"\n                        , valueB = \" o   O \"\n                        , counter = counter\n                        , modBy = 30\n                        , delay = 0\n                        , offset = 0\n                        }\n                    )\n                    |> move 3 2\n\n                -- Nose\n                , words \"   └   \" |> move 3 3\n\n                -- Mouth\n                , words \" _   _ \" |> move 3 4\n                , words \" └───┘ \" |> move 3 5\n                ]\n            )\n\nResult:\n\n![Animated Robot](https://lucamug.github.io/elm-box-drawing/images/blinking-small.gif)\n\n",
+                "type": "{ counter : Basics.Int, delay : Basics.Int, speed : Basics.Int, offset : Basics.Int, valueA : a, valueB : a, modBy : Basics.Int } -> a"
+            },
+            {
+                "name": "box",
+                "comment": " Make boxes:\n\n    import BoxDrawing exposing (..)\n\n    main =\n        box ( 5, 3 ) <|\n            [ rectangle 5 3 double '▒' ]\n\nResult:\n\n    ╔═══╗\n    ║▒▒▒║\n    ╚═══╝\n\nYou give in order:\n\n  - The width\n  - The height\n  - The `Weight`\n  - A filling `Char`\n\nA `box` is similar to a [`rectangle`](#rectangle) but it also fills the inner area with a `Char`. Useful if you want to cover something underneath. For example:\n\n\n### Overlapping rectangles\n\n    main =\n        picture ( 6, 4 ) <|\n            [ rectangle 5 3 single\n            , rectangle 5 3 double |> move 1 1\n            ]\n\nResult :\n\n    ┌───┐\n    │╔══╪╗\n    └╫──┘║\n     ╚═══╝\n\n\n### Overlapping boxes\n\n    main =\n        picture ( 6, 4 ) <|\n            [ rectangle 5 3 single\n            , box 5 3 double ' ' |> move 1 1\n            ]\n\nResult:\n\n    ┌───┐\n    │╔══╧╗\n    └╢   ║\n     ╚═══╝\n\n",
+                "type": "Basics.Int -> Basics.Int -> BoxDrawing.Weight -> Char.Char -> BoxDrawing.Shape"
+            },
+            {
+                "name": "diagonalDown",
+                "comment": "\n\n    \\\n     \\\n      \\\n\n",
+                "type": "BoxDrawing.Direction"
+            },
+            {
+                "name": "diagonalUp",
+                "comment": "\n\n      /\n     /\n    /\n\n",
+                "type": "BoxDrawing.Direction"
+            },
+            {
+                "name": "double",
+                "comment": "\n\n    ══════\n\n",
+                "type": "BoxDrawing.Weight"
+            },
+            {
+                "name": "group",
+                "comment": " Groups shapes together. Particularly useful when you need to move shapes of the same amount:\n\n    import BoxDrawing exposing (..)\n\n    main : Program () () ()\n    main =\n        picture ( 17, 3 ) <|\n            [ rectangle 7 3 single\n            , arrow 4 horizontal single standard\n                |> move 6 1\n            , group\n                [ box 7 3 double ' '\n                , words \"box\" |> move 2 1\n                ]\n                |> move 10 0\n            ]\n\nResult:\n\n    ┌─────┐   ╔═════╗\n    │     ├──>║ box ║\n    └─────┘   ╚═════╝\n\n",
+                "type": "List.List BoxDrawing.Shape -> BoxDrawing.Shape"
+            },
+            {
+                "name": "horizontal",
+                "comment": "\n\n    ══════\n\n",
+                "type": "BoxDrawing.Direction"
+            },
+            {
+                "name": "label",
+                "comment": " Make labels. Labels are boxes with text inside:\n\n    import BoxDrawing exposing (..)\n\n    main =\n        picture ( 17, 3 ) <|\n            [ label \" Hello, World! \" single ]\n\nResult:\n\n    ┌───────────────┐\n    │ Hello, World! │\n    └───────────────┘\n\n",
+                "type": "String.String -> BoxDrawing.Weight -> BoxDrawing.Shape"
+            },
+            {
+                "name": "line",
+                "comment": " Make lines:\n\n    import BoxDrawing exposing (..)\n\n    main =\n        picture ( 10, 1 ) <|\n            [ line 10 horizontal double ]\n\nResult:\n\n    ════════\n\nYou give in order:\n\n  - The length\n  - The `Direction`\n  - The `Weight`\n\n`Direction` can be\n\n  - `horizontal` ⇨\n  - `vertical` ⇩\n  - `diagonalUp` ⬀\n  - `diagonalDown` ⬂\n\n`Weight` can be\n\n  - `none`\n  - `single` ─\n  - `double` ═\n\n",
+                "type": "Basics.Int -> BoxDrawing.Direction -> BoxDrawing.Weight -> BoxDrawing.Shape"
+            },
+            {
+                "name": "move",
+                "comment": " Move shapes around the canvas.\n\n`move` takes, in order, the horizontal and vertical quantity of how many characters the object should move.\n\nRemember that the coordinates (0, 0) are at the top left corner of the screen.\n\nPositive quantities move objects toward the bottom right corner.\n\n",
+                "type": "Basics.Int -> Basics.Int -> BoxDrawing.Shape -> BoxDrawing.Shape"
+            },
+            {
+                "name": "moving",
+                "comment": " Moves shapes.\n\nUseful to move shapes during an animation.\n\n  - `counter`: An `Int` that increase (tick) 60 times per second\n  - `delay`: Delay in number of ticks before the movement starts\n  - `speed`: Smaller number: faster speed. Bigger number: slower speed\n  - `offset`: Offset\n  - `from`: Initial value\n  - `to`: Final value\n\nFind examples of usage in the Robot animation:\n\n",
+                "type": "{ counter : Basics.Int, delay : Basics.Int, speed : Basics.Float, offset : Basics.Int, from : Basics.Int, to : Basics.Int } -> Basics.Int"
+            },
+            {
+                "name": "none",
+                "comment": " ",
+                "type": "BoxDrawing.Weight"
+            },
+            {
+                "name": "paragraph",
+                "comment": " Print paragraphs:\n\n    import BoxDrawing exposing (..)\n\n    main =\n        picture ( 13, 1 ) <|\n            [ paragraph \"Hello,\\nWorld!\" ]\n\nResult:\n\n    Hello,\n    World!\n\n",
+                "type": "String.String -> BoxDrawing.Shape"
+            },
+            {
+                "name": "picture",
+                "comment": " Creates a picture using box-drawing characters.\n\nFor example, to get this:\n\n     ┌─────────┐     ┌─────────┐\n     │  box 1  ╞════>│  box 2  │\n     └────┬────┘     └─────────┘\n          │\n    ┌─────┴─────┐\n    │╔══════════╧╗\n    └╢   boxes   ║\n     ╚═══════════╝\n\nYou can write\n\n    import BoxDrawing exposing (..)\n\n    main : Program () () ()\n    main =\n        picture ( 28, 8 ) <|\n            [ group\n                [ rectangle 11 3 single\n                , words \"box 1\" |> move 3 1\n                , line 3 vertical single |> move 5 2\n                , arrow 6 horizontal double standard |> move 10 1\n                ]\n                |> move 1 0\n            , group\n                [ rectangle 11 3 single\n                , words \"box 2\" |> move 3 1\n                ]\n                |> move 17 0\n            , group\n                [ rectangle 13 3 single\n                , box 13 3 double ' ' |> move 1 1\n                , words \"boxes\" |> move 5 2\n                ]\n                |> move 0 4\n            ]\n\nThe first argument is the canvas size, the second is a list of `Shape`.\n\nThe (0, 0) coordinates are at the top left corner of the screen. Positive quantities move objects toward the bottom right corner.\n\nIf you see gaps between characters, you need to adjust the style, for example, in CSS:\n\n    pre { line-height: 19px }\n\n",
+                "type": "BoxDrawing.CanvasSize -> List.List BoxDrawing.Shape -> Platform.Program () () ()"
+            },
+            {
+                "name": "rectangle",
+                "comment": " Make rectangles:\n\n    import BoxDrawing exposing (..)\n\n    main =\n        picture ( 5, 3 ) <|\n            [ rectangle 5 3 double ]\n\nResult:\n\n    ╔═══╗\n    ║   ║\n    ╚═══╝\n\nYou give in order:\n\n  - The width\n  - The height\n  - The `Weight`\n\n",
+                "type": "Basics.Int -> Basics.Int -> BoxDrawing.Weight -> BoxDrawing.Shape"
+            },
+            {
+                "name": "render",
+                "comment": " Transforms a list of `Shape` into a `String` using box-drawing characters.\n\nThis is what is used internally by [`picture`](#picture) and [`animation`](#animation).\n\nUse [`render`](#render) instead of [`picture`](#picture) and [`animation`](#animation) if you want to embed this library in a larger application so that you can control your \"Elm Architecture\".\n\nThese two examples are equivalent:\n\nExample with [`picture`](#picture)\n\n    import BoxDrawing exposing (..)\n\n    main =\n        picture ( 5, 3 ) <|\n            [ rectangle 5 3 double ]\n\nExample with [`render`](#render)\n\n    import BoxDrawing exposing (..)\n    import Html\n\n    main =\n        Html.pre []\n            [ Html.text <|\n                render ( 5, 3 )\n                    [ rectangle 5 3 double ]\n            ]\n\n",
+                "type": "BoxDrawing.CanvasSize -> List.List BoxDrawing.Shape -> String.String"
+            },
+            {
+                "name": "reversed",
+                "comment": "\n\n    <───\n\n",
+                "type": "BoxDrawing.ArrowDirection"
+            },
+            {
+                "name": "shapesDecoder",
+                "comment": " ",
+                "type": "Json.Decode.Decoder (List.List Internal.Shape.Shape)"
+            },
+            {
+                "name": "shapesDecoderMinified",
+                "comment": " ",
+                "type": "Json.Decode.Decoder (List.List Internal.Shape.Shape)"
+            },
+            {
+                "name": "shapesEncoder",
+                "comment": " ",
+                "type": "List.List Internal.Shape.Shape -> Json.Encode.Value"
+            },
+            {
+                "name": "shapesEncoderMinified",
+                "comment": " ",
+                "type": "List.List Internal.Shape.Shape -> Json.Encode.Value"
+            },
+            {
+                "name": "single",
+                "comment": "\n\n    ──────\n\n",
+                "type": "BoxDrawing.Weight"
+            },
+            {
+                "name": "standard",
+                "comment": "\n\n    ───>\n\n",
+                "type": "BoxDrawing.ArrowDirection"
+            },
+            {
+                "name": "vertical",
+                "comment": "\n\n    ║\n    ║\n    ║\n\n",
+                "type": "BoxDrawing.Direction"
+            },
+            {
+                "name": "words",
+                "comment": " Print words:\n\n    import BoxDrawing exposing (..)\n\n    main =\n        picture ( 13, 1 ) <|\n            [ words \"Hello, World!\" ]\n\nResult:\n\n    Hello, World!\n\n",
+                "type": "String.String -> BoxDrawing.Shape"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,141 @@
+[
+    {
+        "name": "Result.Extra",
+        "comment": " Convenience functions for working with `Result`.\n\n\n# Common Helpers\n\n@docs isOk, isErr, extract, unwrap, unpack, error, mapBoth, merge, join, partition, filter\n\n\n# Combining\n\n@docs combine, combineMap, combineFirst, combineSecond, combineBoth, combineMapFirst, combineMapSecond, combineMapBoth\n\n\n# Applying\n\n@docs singleton, andMap\n\n\n# Alternatives\n\n@docs or, orLazy, orElseLazy, orElse\n\n\n# Conversions\n\n@docs toTask\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "andMap",
+                "comment": " Apply the function that is inside `Result` to a value that is inside\n`Result`. Return the result inside `Result`. If one of the `Result`\narguments is `Err e`, return `Err e`. Also known as `apply`.\n\n    Err \"Oh\" |> andMap (Err \"No!\") == Err \"Oh\"\n\n    Err \"Oh\" |> andMap (Ok 2) == Err \"Oh\"\n\n    Ok ((+) 1) |> andMap (Err \"No!\") == Err \"No!\"\n\n    Ok ((+) 1) |> andMap (Ok 2) == Ok 3\n\n",
+                "type": "Result.Result e a -> Result.Result e (a -> b) -> Result.Result e b"
+            },
+            {
+                "name": "combine",
+                "comment": " Combine a list of results into a single result (holding a list).\nAlso known as `sequence` on lists.\n",
+                "type": "List.List (Result.Result x a) -> Result.Result x (List.List a)"
+            },
+            {
+                "name": "combineBoth",
+                "comment": " Combine all results in a tuple\ninto a single result holding the tuple's values.\nAlso know as `bisequence` on tuples.\n",
+                "type": "( Result.Result x a, Result.Result x b ) -> Result.Result x ( a, b )"
+            },
+            {
+                "name": "combineFirst",
+                "comment": " Pull a result out of the _first_ element of a tuple\nand combine it into a result holding the tuple's values.\n",
+                "type": "( Result.Result x a, c ) -> Result.Result x ( a, c )"
+            },
+            {
+                "name": "combineMap",
+                "comment": " Map a function producing results on a list\nand combine those into a single result (holding a list).\nAlso known as `traverse` on lists.\n\n    combineMap f xs == combine (List.map f xs)\n\n",
+                "type": "(a -> Result.Result x b) -> List.List a -> Result.Result x (List.List b)"
+            },
+            {
+                "name": "combineMapBoth",
+                "comment": " Map a function producing results on the _both_ elements of a tuple\nand then pull them out using `combineBoth`.\nAlso know as `bitraverse` on tuples.\n\n    combineMapBoth f g ( x, y )\n        == combineBoth (Tuple.mapBoth f g ( x, y ))\n        == Result.map2 Tuple.pair (f x) (g y)\n\n",
+                "type": "(a -> Result.Result x c) -> (b -> Result.Result x d) -> ( a, b ) -> Result.Result x ( c, d )"
+            },
+            {
+                "name": "combineMapFirst",
+                "comment": " Map a function producing results on the _first_ element of a tuple\nand then pull it out using `combineFirst`.\nAlso know as `sequence` on tuples.\n\n    combineMapFirst f ( x, y )\n        == combineFirst (Tuple.mapFirst f ( x, y ))\n        == Result.map (flip Tuple.pair y) (f x)\n\n",
+                "type": "(a -> Result.Result x b) -> ( a, c ) -> Result.Result x ( b, c )"
+            },
+            {
+                "name": "combineMapSecond",
+                "comment": " Map a function producing results on the _second_ element of a tuple\nand then pull it out using `combineSecond`.\nAlso know as `traverse` on tuples.\n\n    combineMapSecond f ( x, y )\n        == combineSecond (Tuple.mapSecond f ( x, y ))\n        == Result.map (Tuple.pair x) (f y)\n\n",
+                "type": "(a -> Result.Result x b) -> ( c, a ) -> Result.Result x ( c, b )"
+            },
+            {
+                "name": "combineSecond",
+                "comment": " Pull a result out of the _second_ element of a tuple\nand combine it into a result holding the tuple's values.\nAlso known as `sequence` on tuples.\n",
+                "type": "( c, Result.Result x a ) -> Result.Result x ( c, a )"
+            },
+            {
+                "name": "error",
+                "comment": " Convert to a Maybe containing the error, if there is one.\n\n    parseInt : String -> Result ParseError Int\n\n    maybeParseError : String -> Maybe ParseError\n    maybeParseError string =\n        error (parseInt string)\n\n",
+                "type": "Result.Result e a -> Maybe.Maybe e"
+            },
+            {
+                "name": "extract",
+                "comment": " Turn a `Result e a` to an `a`, by applying the conversion\nfunction specified to the `e`.\n",
+                "type": "(e -> a) -> Result.Result e a -> a"
+            },
+            {
+                "name": "filter",
+                "comment": " Take a `Result` and a predicate function and return a `Result` with the\noriginal value when a predicate matches.\n\n    filter \"is not 1\" (\\v -> v == 1) (Ok 1) == Ok 1\n\n    filter \"is not 2\" (\\v -> v == 2) (Ok 1) == Err \"is not 2\"\n\n",
+                "type": "e -> (a -> Basics.Bool) -> Result.Result e a -> Result.Result e a"
+            },
+            {
+                "name": "isErr",
+                "comment": " Check whether the result is `Err` without unwrapping it.\n",
+                "type": "Result.Result e a -> Basics.Bool"
+            },
+            {
+                "name": "isOk",
+                "comment": " Check whether the result is `Ok` without unwrapping it.\n",
+                "type": "Result.Result e a -> Basics.Bool"
+            },
+            {
+                "name": "join",
+                "comment": " Join contained results with the same error into one result.\n\nUsefull if you have a \"result in a result\":\n\n    join <| Ok (Ok 4) == Ok 4\n\n    join <| Ok (Err \"message\") == Err \"message\"\n\n",
+                "type": "Result.Result x (Result.Result x a) -> Result.Result x a"
+            },
+            {
+                "name": "mapBoth",
+                "comment": " Apply the first argument function to an `Err` and the second\nargument function to an `Ok` of a `Result`.\n",
+                "type": "(e -> f) -> (a -> b) -> Result.Result e a -> Result.Result f b"
+            },
+            {
+                "name": "merge",
+                "comment": " Eliminate Result when error and success have been mapped to the same\ntype, such as a message type.\n\n    merge (Ok 4) == 4\n\n    merge (Err -1) == -1\n\nMore pragmatically:\n\n    type Msg\n        = UserTypedInt Int\n        | UserInputError String\n\n    msgFromInput : String -> Msg\n    msgFromInput =\n        String.toInt\n            >> Result.mapError UserInputError\n            >> Result.map UserTypedInt\n            >> Result.Extra.merge\n\n",
+                "type": "Result.Result a a -> a"
+            },
+            {
+                "name": "or",
+                "comment": " Like the Boolean `||` this will return the first value that is\npositive (`Ok`). However, unlike with `||`, both values will be\ncomputed anyway (there is no short-circuiting).\n\n    or (Ok 4) (Ok 5) == Ok 4\n\n    or (Err \"Oh!\") (Ok 5) == Ok 5\n\n    or (Ok 4) (Err \"No!\") == Ok 4\n\n    or (Err \"Oh!\") (Err \"No!\") == Err \"No!\"\n\nAs the last example line shows, the second error is returned if both\nresults are erroneous.\n\n",
+                "type": "Result.Result e a -> Result.Result e a -> Result.Result e a"
+            },
+            {
+                "name": "orElse",
+                "comment": " Strict version of `orElseLazy` (and at the same time,\npiping-friendly version of `or`).\n\n    orElse (Ok 4) (Ok 5) == Ok 5 -- crucial difference from `or`\n\n    orElse (Err \"Oh!\") (Ok 5) == Ok 5\n\n    orElse (Ok 4) (Err \"No!\") == Ok 4\n\n    orElse (Err \"Oh!\") (Err \"No!\") == Err \"Oh!\" -- also different from `or`\n\nAlso:\n\n    String.toInt \"Hello\"\n        |> orElse (String.toInt \"42\")\n\n",
+                "type": "Result.Result e a -> Result.Result e a -> Result.Result e a"
+            },
+            {
+                "name": "orElseLazy",
+                "comment": " Piping-friendly version of `orLazy`. The first argument will only\nbe evaluated if the second argument is an `Err`. Example use:\n\n    String.toInt \"Hello\"\n        |> orElseLazy (\\() -> String.toInt \"42\")\n\n",
+                "type": "(() -> Result.Result e a) -> Result.Result e a -> Result.Result e a"
+            },
+            {
+                "name": "orLazy",
+                "comment": " Non-strict version of `or`. The second argument will only be\nevaluated if the first argument is an `Err`.\n",
+                "type": "Result.Result e a -> (() -> Result.Result e a) -> Result.Result e a"
+            },
+            {
+                "name": "partition",
+                "comment": " Partition a list of Results into two lists of values (successes\nand failures), much as List.partition takes a predicate and splits\na list based on whether the predicate indicates success or failure.\n\n    partition ( Ok 4, Err \"no\", Err \"hi\" ) == ( [ 4 ], [ \"no\", \"hi\" ] )\n\n    partition ( Err 7.1, Ok 'k', Err 9.0, Ok 'p' ) == ( [ 'k', 'p' ], [ 7.1, 9.0 ] )\n\n",
+                "type": "List.List (Result.Result e a) -> ( List.List a, List.List e )"
+            },
+            {
+                "name": "singleton",
+                "comment": " Create a `singleton` from a value to an `Result` with a `Ok`\nof the same type. Also known as `pure`. You can use the `Err`\nconstructor for a singleton of the `Err` variety.\n\n    singleton 2 == Ok 2\n\n",
+                "type": "a -> Result.Result e a"
+            },
+            {
+                "name": "toTask",
+                "comment": " Convert a `Result` to a `Task` that will fail or succeed immediately.\n\n    toTask (Ok 4) == Task.succeed 4\n\n    toTask (Err \"msg\") == Task.fail \"msg\"\n\nThis can be helpful when the value of a succeeding Task needs to be decoded, but\na failure to decode should result in a failing `Task`, not a succeeding Task\ncontaining a `Result.Err`:\n\nandThenDecode : (a -> Result x b) -> Task x a -> Task x b\nandThenDecode decode =\nTask.andThen (decode >> Result.Extra.toTask)\n\n",
+                "type": "Result.Result x a -> Task.Task x a"
+            },
+            {
+                "name": "unpack",
+                "comment": " Convert a `Result e a` to a `b` by applying either the first\nfunction if the `Result` is an `Err` or the second function if the\n`Result` is `Ok`. Both of these functions must return the same type.\n",
+                "type": "(e -> b) -> (a -> b) -> Result.Result e a -> b"
+            },
+            {
+                "name": "unwrap",
+                "comment": " Convert a `Result e a` to a `b` by applying a function if\nthe `Result` is `Ok` or using the provided default value if it\nis an `Err`.\n",
+                "type": "b -> (a -> b) -> Result.Result e a -> b"
+            }
+        ],
+        "binops": []
+    }
+]

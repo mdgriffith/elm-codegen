@@ -1,0 +1,820 @@
+[
+    {
+        "name": "Schelme.Eval",
+        "comment": " functions to 'eval' steps, yielding the next step in the computation.\n\n@docs evalBody\n@docs evalFtn\n@docs evalList\n@docs evalTerm\n@docs evalTerms\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "evalBody",
+                "comment": " Given an EvalBodyStep, compute the next EvalBodyStep.\n",
+                "type": "Schelme.EvalStep.EvalBodyStep a -> Schelme.EvalStep.EvalBodyStep a"
+            },
+            {
+                "name": "evalFtn",
+                "comment": " Given an EvalFtnStep, compute the next EvalFtnStep.\n",
+                "type": "Schelme.EvalStep.EvalFtnStep a -> Schelme.EvalStep.EvalFtnStep a"
+            },
+            {
+                "name": "evalList",
+                "comment": " Given an ListStep, compute the next ListStep.\n",
+                "type": "Schelme.EvalStep.ListStep a -> Schelme.EvalStep.ListStep a"
+            },
+            {
+                "name": "evalTerm",
+                "comment": " Given an EvalTermStep, compute the next EvalTermStep.\n",
+                "type": "Schelme.EvalStep.EvalTermStep a -> Schelme.EvalStep.EvalTermStep a"
+            },
+            {
+                "name": "evalTerms",
+                "comment": " Given an EvalTermsStep, compute the next EvalTermsStep.\n",
+                "type": "Schelme.EvalStep.EvalTermsStep a -> Schelme.EvalStep.EvalTermsStep a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Schelme.EvalStep",
+        "comment": " EvalStep\n\n@docs Term\n@docs NameSpace\n@docs TermGlossary\n@docs GlossaryEntry\n@docs EvalTermStep\n@docs EvalTermsStep\n@docs EvalBodyStep\n@docs ListStep\n@docs Function\n@docs EvalFtnStep\n@docs BuiltIn\n@docs BuiltInStep\n@docs SideEffector\n@docs SideEffectorStep\n@docs sxpToTerm\n@docs sxpsToTerms\n\n",
+        "unions": [
+            {
+                "name": "BuiltInStep",
+                "comment": " The set of states used in defining a BuiltIn function.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "BuiltInStart",
+                        [
+                            "Schelme.EvalStep.NameSpace a",
+                            "a",
+                            "List.List (Schelme.EvalStep.Term a)"
+                        ]
+                    ],
+                    [
+                        "BuiltInArgs",
+                        [
+                            "Schelme.EvalStep.NameSpace a",
+                            "a",
+                            "Schelme.EvalStep.EvalTermsStep a"
+                        ]
+                    ],
+                    [
+                        "BuiltInEval",
+                        [
+                            "Schelme.EvalStep.NameSpace a",
+                            "a",
+                            "List.List (Schelme.EvalStep.Term a)",
+                            "Schelme.EvalStep.EvalTermStep a"
+                        ]
+                    ],
+                    [
+                        "BuiltInFinal",
+                        [
+                            "Schelme.EvalStep.NameSpace a",
+                            "Schelme.EvalStep.Term a"
+                        ]
+                    ],
+                    [
+                        "BuiltInError",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "EvalBodyStep",
+                "comment": " EvalBodyStep is for evaling a list of Terms, throwing away the results\nfrom all but the last Term. State is modified along the way, as is the\nnamespace. Used for processing the body of a schelme function.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "EbStart",
+                        [
+                            "Schelme.EvalStep.NameSpace a",
+                            "a",
+                            "List.List (Schelme.EvalStep.Term a)"
+                        ]
+                    ],
+                    [
+                        "EbStep",
+                        [
+                            "Schelme.EvalStep.NameSpace a",
+                            "a",
+                            "Schelme.EvalStep.EvalTermStep a",
+                            "List.List (Schelme.EvalStep.Term a)"
+                        ]
+                    ],
+                    [
+                        "EbFinal",
+                        [
+                            "Schelme.EvalStep.NameSpace a",
+                            "a",
+                            "Schelme.EvalStep.Term a"
+                        ]
+                    ],
+                    [
+                        "EbError",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "EvalFtnStep",
+                "comment": " The set of states during eval of a schelme function.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "EfStart",
+                        [
+                            "Schelme.EvalStep.NameSpace a",
+                            "a",
+                            "Schelme.EvalStep.Function a",
+                            "List.List (Schelme.EvalStep.Term a)"
+                        ]
+                    ],
+                    [
+                        "EfArgs",
+                        [
+                            "Schelme.EvalStep.NameSpace a",
+                            "a",
+                            "Schelme.EvalStep.Function a",
+                            "Schelme.EvalStep.EvalTermsStep a"
+                        ]
+                    ],
+                    [
+                        "EfBody",
+                        [
+                            "Schelme.EvalStep.NameSpace a",
+                            "a",
+                            "Schelme.EvalStep.EvalBodyStep a"
+                        ]
+                    ],
+                    [
+                        "EfFinal",
+                        [
+                            "Schelme.EvalStep.NameSpace a",
+                            "a",
+                            "Schelme.EvalStep.Term a"
+                        ]
+                    ],
+                    [
+                        "EfError",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "EvalTermStep",
+                "comment": " EvalTermStep represents the possible states during eval of a\nsingle Term. As with all the 'Steps', the state is modified during\neval, as is the namespace, although these changes may be thrown away by higher\nlevels of eval.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "EvalStart",
+                        [
+                            "Schelme.EvalStep.NameSpace a",
+                            "a",
+                            "Schelme.EvalStep.Term a"
+                        ]
+                    ],
+                    [
+                        "EvalFinal",
+                        [
+                            "Schelme.EvalStep.NameSpace a",
+                            "a",
+                            "Schelme.EvalStep.Term a"
+                        ]
+                    ],
+                    [
+                        "EvalListStep",
+                        [
+                            "Schelme.EvalStep.ListStep a"
+                        ]
+                    ],
+                    [
+                        "EvalError",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "EvalTermsStep",
+                "comment": " EvalTermsStep is a set of states used to eval a list of Terms,\nreturning the list of resulting Terms. Mainly for processing function\narguments.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "EtStart",
+                        [
+                            "Schelme.EvalStep.NameSpace a",
+                            "a",
+                            "List.List (Schelme.EvalStep.Term a)"
+                        ]
+                    ],
+                    [
+                        "EtStep",
+                        [
+                            "{ ns : Schelme.EvalStep.NameSpace a, state : a, unevaledTerms : List.List (Schelme.EvalStep.Term a), currentTerm : Schelme.EvalStep.EvalTermStep a, evaledTerms : List.List (Schelme.EvalStep.Term a) }"
+                        ]
+                    ],
+                    [
+                        "EtFinal",
+                        [
+                            "Schelme.EvalStep.NameSpace a",
+                            "a",
+                            "List.List (Schelme.EvalStep.Term a)"
+                        ]
+                    ],
+                    [
+                        "EtError",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "ListStep",
+                "comment": " The ListStep is the set of states for evaling a list Term. Evaling a list\nusually results in function calls - fuctions defined in schelme, functions that\nmodify namespace but not state (builtin) and functions that modify namespace and\nstate (sideeffectors).\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "ListEvalStart",
+                        [
+                            "Schelme.EvalStep.NameSpace a",
+                            "a",
+                            "List.List (Schelme.EvalStep.Term a)"
+                        ]
+                    ],
+                    [
+                        "ListTerm1",
+                        [
+                            "Schelme.EvalStep.NameSpace a",
+                            "a",
+                            "List.List (Schelme.EvalStep.Term a)",
+                            "Schelme.EvalStep.EvalTermStep a"
+                        ]
+                    ],
+                    [
+                        "ListFunction",
+                        [
+                            "Schelme.EvalStep.NameSpace a",
+                            "a",
+                            "Schelme.EvalStep.EvalFtnStep a"
+                        ]
+                    ],
+                    [
+                        "ListBuiltIn",
+                        [
+                            "Schelme.EvalStep.NameSpace a",
+                            "a",
+                            "Schelme.EvalStep.BuiltIn a",
+                            "Schelme.EvalStep.BuiltInStep a"
+                        ]
+                    ],
+                    [
+                        "ListSideEffector",
+                        [
+                            "Schelme.EvalStep.NameSpace a",
+                            "a",
+                            "Schelme.EvalStep.SideEffector a",
+                            "Schelme.EvalStep.SideEffectorStep a"
+                        ]
+                    ],
+                    [
+                        "ListFinal",
+                        [
+                            "Schelme.EvalStep.NameSpace a",
+                            "a",
+                            "Schelme.EvalStep.Term a"
+                        ]
+                    ],
+                    [
+                        "ListError",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "SideEffectorStep",
+                "comment": " The steps involved in a SideEffector function. Not all these steps\nhave to be used. Check out the prelude for some examples.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "SideEffectorStart",
+                        [
+                            "Schelme.EvalStep.NameSpace a",
+                            "a",
+                            "List.List (Schelme.EvalStep.Term a)"
+                        ]
+                    ],
+                    [
+                        "SideEffectorArgs",
+                        [
+                            "Schelme.EvalStep.NameSpace a",
+                            "a",
+                            "Schelme.EvalStep.EvalTermsStep a"
+                        ]
+                    ],
+                    [
+                        "SideEffectorEval",
+                        [
+                            "Schelme.EvalStep.NameSpace a",
+                            "a",
+                            "List.List (Schelme.EvalStep.Term a)",
+                            "Schelme.EvalStep.EvalTermStep a"
+                        ]
+                    ],
+                    [
+                        "SideEffectorRequest",
+                        [
+                            "Schelme.EvalStep.NameSpace a",
+                            "a"
+                        ]
+                    ],
+                    [
+                        "SideEffectorBody",
+                        [
+                            "Schelme.EvalStep.NameSpace a",
+                            "a",
+                            "List.List (Schelme.EvalStep.Term a)",
+                            "Schelme.EvalStep.EvalBodyStep a"
+                        ]
+                    ],
+                    [
+                        "SideEffectorFinal",
+                        [
+                            "Schelme.EvalStep.NameSpace a",
+                            "a",
+                            "Schelme.EvalStep.Term a"
+                        ]
+                    ],
+                    [
+                        "SideEffectorError",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Term",
+                "comment": " A Schelme program is a list of Terms.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "TString",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "TNumber",
+                        [
+                            "Basics.Float"
+                        ]
+                    ],
+                    [
+                        "TList",
+                        [
+                            "List.List (Schelme.EvalStep.Term a)"
+                        ]
+                    ],
+                    [
+                        "TSymbol",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "TBool",
+                        [
+                            "Basics.Bool"
+                        ]
+                    ],
+                    [
+                        "TBreak",
+                        [
+                            "Schelme.EvalStep.Term a"
+                        ]
+                    ],
+                    [
+                        "TFunction",
+                        [
+                            "Schelme.EvalStep.Function a"
+                        ]
+                    ],
+                    [
+                        "TBuiltIn",
+                        [
+                            "Schelme.EvalStep.BuiltIn a"
+                        ]
+                    ],
+                    [
+                        "TSideEffector",
+                        [
+                            "Schelme.EvalStep.SideEffector a"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "BuiltIn",
+                "comment": " A builtin function is defined in Elm. It should process any of\nthe BuiltInStep states, hopefully resulting in a BuiltInFinal at the\nend. BuiltInFinal doesn't include the state ('a'), so any changes\nmades to state are always thrown away.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "Schelme.EvalStep.BuiltInStep a -> Schelme.EvalStep.BuiltInStep a"
+            },
+            {
+                "name": "Function",
+                "comment": " a schelme function is a list of arg names and a list of Terms, which\nare evaled sequentially when the function is called.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ args : List.List String.String, body : List.List (Schelme.EvalStep.Term a) }"
+            },
+            {
+                "name": "GlossaryEntry",
+                "comment": " data structure used for making a language reference.\n",
+                "args": [],
+                "type": "{ syntax : String.String, description : String.String }"
+            },
+            {
+                "name": "NameSpace",
+                "comment": " schelme code is always executed with a namespace, which\nmaps from symbol names to Terms.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "Dict.Dict String.String (Schelme.EvalStep.Term a)"
+            },
+            {
+                "name": "SideEffector",
+                "comment": " A sideeffector function processes SideEffectorSteps, and should\neventually return either a SideEffectorFinal or SideEffectorError.\nUnlike the BuiltIn, the SideEffector returns a modified state ('a') in\nits Final step.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "Schelme.EvalStep.SideEffectorStep a -> Schelme.EvalStep.SideEffectorStep a"
+            },
+            {
+                "name": "TermGlossary",
+                "comment": " type for a language reference\n",
+                "args": [],
+                "type": "Dict.Dict String.String Schelme.EvalStep.GlossaryEntry"
+            }
+        ],
+        "values": [
+            {
+                "name": "sxpToTerm",
+                "comment": " parse an s-expression, yielding a single term.\n",
+                "type": "Schelme.SExpression.Sxp -> Result.Result (List.List Parser.DeadEnd) (Schelme.EvalStep.Term a)"
+            },
+            {
+                "name": "sxpsToTerms",
+                "comment": " parse a series of s-expressions, yielding a list of terms.\n",
+                "type": "List.List Schelme.SExpression.Sxp -> Result.Result (List.List Parser.DeadEnd) (List.List (Schelme.EvalStep.Term a))"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Schelme.Prelude",
+        "comment": " Implementation of some fundamental functions, and a few values.\nAlso some helpers for defining your own BuiltIn or SideEffector functions.\n\n@docs BuiltInFn\n@docs SideEffectorFn\n@docs builtInFn\n@docs evalArgsBuiltIn\n@docs evalArgsSideEffector\n@docs math\n@docs prelude\n@docs mathGlossary\n@docs preludeGlossary\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "BuiltInFn",
+                "comment": " function type for evalArgsBuiltIn\n",
+                "args": [
+                    "a"
+                ],
+                "type": "Schelme.EvalStep.NameSpace a -> a -> List.List (Schelme.EvalStep.Term a) -> Result.Result String.String ( Schelme.EvalStep.NameSpace a, Schelme.EvalStep.Term a )"
+            },
+            {
+                "name": "SideEffectorFn",
+                "comment": " function type to pass to evalArgsSideEffector\n",
+                "args": [
+                    "a"
+                ],
+                "type": "Schelme.EvalStep.NameSpace a -> a -> List.List (Schelme.EvalStep.Term a) -> Result.Result String.String ( Schelme.EvalStep.NameSpace a, a, Schelme.EvalStep.Term a )"
+            }
+        ],
+        "values": [
+            {
+                "name": "builtInFn",
+                "comment": " make a BuiltIn function where arguments are NOT evaled before the BuiltInFn function is called.\nUseful for things like defn and comment.\n",
+                "type": "Schelme.Prelude.BuiltInFn a -> Schelme.EvalStep.BuiltIn a"
+            },
+            {
+                "name": "evalArgsBuiltIn",
+                "comment": " make a BuiltIn function where arguments are evaled before the BuiltInFn function is called.\n",
+                "type": "Schelme.Prelude.BuiltInFn a -> Schelme.EvalStep.BuiltIn a"
+            },
+            {
+                "name": "evalArgsSideEffector",
+                "comment": " make a SideEffector function where arguments are evaled before the SideEffectorFn function is called.\n",
+                "type": "Schelme.Prelude.SideEffectorFn a -> Schelme.EvalStep.SideEffector a"
+            },
+            {
+                "name": "math",
+                "comment": " a NameSpace of mathy schelme functions.\n",
+                "type": "Dict.Dict String.String (Schelme.EvalStep.Term a)"
+            },
+            {
+                "name": "mathGlossary",
+                "comment": " Glossary of math functions\n",
+                "type": "Schelme.EvalStep.TermGlossary"
+            },
+            {
+                "name": "prelude",
+                "comment": " a NameSpace of fundamental schelme functions.\n",
+                "type": "Dict.Dict String.String (Schelme.EvalStep.Term a)"
+            },
+            {
+                "name": "preludeGlossary",
+                "comment": " Glossary of prelude terms\n",
+                "type": "Schelme.EvalStep.TermGlossary"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Schelme.Run",
+        "comment": " Some functions for compiling and running schelme scripts.\n\n@docs compile\n@docs run\n@docs evalBodyLimit\n@docs runBody\n@docs runBodyCount\n@docs runBodyLimit\n@docs runCount\n@docs runLimit\n@docs runNamedFunction\n@docs runFunctionStep\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "compile",
+                "comment": " parse a string, emitting a series of Terms, which will hopefully be a valid schelme program.\n",
+                "type": "String.String -> Result.Result String.String (List.List (Schelme.EvalStep.Term a))"
+            },
+            {
+                "name": "evalBodyLimit",
+                "comment": " The way to go for incremental execution. Given an EvalBodyStep (the normal top\nlevel of a running schelme program), execute it up to /count/ evals, returning the\nlast EvalBodyStep state.\n",
+                "type": "Schelme.EvalStep.EvalBodyStep a -> Basics.Int -> Schelme.EvalStep.EvalBodyStep a"
+            },
+            {
+                "name": "run",
+                "comment": " given a namespace (for instance Prelude.prelude) and a state (see examples), and a schelme program,\nrun the program to completion, emitting an updated namespace, state, and final Term\n",
+                "type": "Schelme.EvalStep.NameSpace a -> a -> List.List (Schelme.EvalStep.Term a) -> Result.Result String.String ( Schelme.EvalStep.NameSpace a, a, Schelme.EvalStep.Term a )"
+            },
+            {
+                "name": "runBody",
+                "comment": " starting with an EvalBodyStep, run to completion\n",
+                "type": "Schelme.EvalStep.EvalBodyStep a -> Result.Result String.String ( Schelme.EvalStep.NameSpace a, a, Schelme.EvalStep.Term a )"
+            },
+            {
+                "name": "runBodyCount",
+                "comment": " continue execution of an EvalBodyStep, returning the final Term and number of evals used.\n",
+                "type": "Schelme.EvalStep.EvalBodyStep a -> Basics.Int -> Result.Result String.String ( Schelme.EvalStep.NameSpace a, a, ( Basics.Int, Schelme.EvalStep.Term a ) )"
+            },
+            {
+                "name": "runBodyLimit",
+                "comment": " run a schelme EvalBodyStep with a max number of evals, erroring out if the max is reached.\n",
+                "type": "Schelme.EvalStep.EvalBodyStep a -> Basics.Int -> Result.Result String.String ( Schelme.EvalStep.NameSpace a, a, ( Basics.Int, Schelme.EvalStep.Term a ) )"
+            },
+            {
+                "name": "runCount",
+                "comment": " run a schelme program, emitting the usual products but also the number of evals taken\n",
+                "type": "Schelme.EvalStep.NameSpace a -> a -> List.List (Schelme.EvalStep.Term a) -> Result.Result String.String ( Schelme.EvalStep.NameSpace a, a, ( Basics.Int, Schelme.EvalStep.Term a ) )"
+            },
+            {
+                "name": "runFunctionStep",
+                "comment": " run a function to completion, returning updated namespace, state, and result term\n",
+                "type": "Schelme.EvalStep.EvalFtnStep a -> Result.Result String.String ( Schelme.EvalStep.NameSpace a, a, Schelme.EvalStep.Term a )"
+            },
+            {
+                "name": "runLimit",
+                "comment": " run a schelme program with a max number of evals, erroring out if the max is reached.\n",
+                "type": "Schelme.EvalStep.NameSpace a -> a -> Basics.Int -> List.List (Schelme.EvalStep.Term a) -> Result.Result String.String ( Schelme.EvalStep.NameSpace a, a, ( Basics.Int, Schelme.EvalStep.Term a ) )"
+            },
+            {
+                "name": "runNamedFunction",
+                "comment": " find a schelme function by name and run it, with the passed list of args.\n",
+                "type": "Schelme.EvalStep.NameSpace a -> a -> String.String -> List.List (Schelme.EvalStep.Term a) -> Result.Result String.String ( Schelme.EvalStep.NameSpace a, a, Schelme.EvalStep.Term a )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Schelme.SExpression",
+        "comment": " Parse S-Expressions, yielding STerms and SLists\n\n@docs Sxp\n@docs showSxp\n@docs sTerm\n@docs sList\n@docs sSxp\n@docs sSxps\n\n",
+        "unions": [
+            {
+                "name": "Sxp",
+                "comment": " S expression - either a string or a list of s expressions.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "STerm",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "SList",
+                        [
+                            "List.List Schelme.SExpression.Sxp"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "sList",
+                "comment": " a list is a series of space separated terms surrounded by parens.\n",
+                "type": "Parser.Parser Schelme.SExpression.Sxp"
+            },
+            {
+                "name": "sSxp",
+                "comment": " parse an s-expression - either a term or a list.\n",
+                "type": "Parser.Parser Schelme.SExpression.Sxp"
+            },
+            {
+                "name": "sSxps",
+                "comment": " parse a series of whitespace separated terms.\n",
+                "type": "Parser.Parser (List.List Schelme.SExpression.Sxp)"
+            },
+            {
+                "name": "sTerm",
+                "comment": " parse an individual s-expression term (not a list).\n",
+                "type": "Parser.Parser Schelme.SExpression.Sxp"
+            },
+            {
+                "name": "showSxp",
+                "comment": " print an s-expression for debug\n",
+                "type": "Schelme.SExpression.Sxp -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Schelme.Show",
+        "comment": " Functions for showing eval Steps as string.\n\n@docs showTerm\n@docs showTerms\n@docs showListStep\n@docs showEvalTermStep\n@docs showEvalTermsStep\n@docs showEvalBodyStep\n@docs showEvalFtnStep\n@docs showBuiltInStep\n@docs showSideEffectorStep\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "showBuiltInStep",
+                "comment": " Show a BuiltInStep.\n",
+                "type": "Schelme.EvalStep.BuiltInStep a -> String.String"
+            },
+            {
+                "name": "showEvalBodyStep",
+                "comment": " Show a EvalBodyStep.\n",
+                "type": "Schelme.EvalStep.EvalBodyStep a -> String.String"
+            },
+            {
+                "name": "showEvalFtnStep",
+                "comment": " Show a EvalFtnStep.\n",
+                "type": "Schelme.EvalStep.EvalFtnStep a -> String.String"
+            },
+            {
+                "name": "showEvalTermStep",
+                "comment": " Show a EvalTermStep.\n",
+                "type": "Schelme.EvalStep.EvalTermStep a -> String.String"
+            },
+            {
+                "name": "showEvalTermsStep",
+                "comment": " Show a EvalTermsStep.\n",
+                "type": "Schelme.EvalStep.EvalTermsStep a -> String.String"
+            },
+            {
+                "name": "showListStep",
+                "comment": " Show a ListStep.\n",
+                "type": "Schelme.EvalStep.ListStep a -> String.String"
+            },
+            {
+                "name": "showSideEffectorStep",
+                "comment": " Show a SideEffectorStep.\n",
+                "type": "Schelme.EvalStep.SideEffectorStep a -> String.String"
+            },
+            {
+                "name": "showTerm",
+                "comment": " Show a Term.\n",
+                "type": "Schelme.EvalStep.Term a -> String.String"
+            },
+            {
+                "name": "showTerms",
+                "comment": " Show a List of Terms.\n",
+                "type": "List.List (Schelme.EvalStep.Term a) -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Schelme.StateGet",
+        "comment": " StateGet - functions for retrieving the most nested state instance ('a') in a Step.\n\n@docs getEvalBodyStepState\n@docs getEvalTermStepState\n@docs getEvalTermsStepState\n@docs getListStepState\n@docs getEvalFtnStepState\n@docs getBuiltInStepState\n@docs getSideEffectorStepState\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "getBuiltInStepState",
+                "comment": " Get the state from an BuiltInStep.\n",
+                "type": "Schelme.EvalStep.BuiltInStep a -> Maybe.Maybe a"
+            },
+            {
+                "name": "getEvalBodyStepState",
+                "comment": " Get the state from an EvalBodyStep.\n",
+                "type": "Schelme.EvalStep.EvalBodyStep a -> Maybe.Maybe a"
+            },
+            {
+                "name": "getEvalFtnStepState",
+                "comment": " Get the state from an EvalFtnStep.\n",
+                "type": "Schelme.EvalStep.EvalFtnStep a -> Maybe.Maybe a"
+            },
+            {
+                "name": "getEvalTermStepState",
+                "comment": " Get the state from an EvalTermStep.\n",
+                "type": "Schelme.EvalStep.EvalTermStep a -> Maybe.Maybe a"
+            },
+            {
+                "name": "getEvalTermsStepState",
+                "comment": " Get the state from an EvalTermsStep.\n",
+                "type": "Schelme.EvalStep.EvalTermsStep a -> Maybe.Maybe a"
+            },
+            {
+                "name": "getListStepState",
+                "comment": " Get the state from an ListStep.\n",
+                "type": "Schelme.EvalStep.ListStep a -> Maybe.Maybe a"
+            },
+            {
+                "name": "getSideEffectorStepState",
+                "comment": " Get the state from an SideEffectorStep.\n",
+                "type": "Schelme.EvalStep.SideEffectorStep a -> Maybe.Maybe a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Schelme.StateSet",
+        "comment": " StateSet - functions for replacing all the state instances in a Step.\n\n@docs setEvalBodyStepState\n@docs setEvalTermStepState\n@docs setEvalTermsStepState\n@docs setListStepState\n@docs setEvalFtnStepState\n@docs setBuiltInStepState\n@docs setSideEffectorStepState\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "setBuiltInStepState",
+                "comment": " Replace the state in an BuiltInStep.\n",
+                "type": "Schelme.EvalStep.BuiltInStep a -> a -> Schelme.EvalStep.BuiltInStep a"
+            },
+            {
+                "name": "setEvalBodyStepState",
+                "comment": " Replace the state in an EvalBodyStep.\n",
+                "type": "Schelme.EvalStep.EvalBodyStep a -> a -> Schelme.EvalStep.EvalBodyStep a"
+            },
+            {
+                "name": "setEvalFtnStepState",
+                "comment": " Replace the state in an EvalFtnStep.\n",
+                "type": "Schelme.EvalStep.EvalFtnStep a -> a -> Schelme.EvalStep.EvalFtnStep a"
+            },
+            {
+                "name": "setEvalTermStepState",
+                "comment": " Replace the state in an EvalTermStep.\n",
+                "type": "Schelme.EvalStep.EvalTermStep a -> a -> Schelme.EvalStep.EvalTermStep a"
+            },
+            {
+                "name": "setEvalTermsStepState",
+                "comment": " Replace the state in an EvalTermsStep.\n",
+                "type": "Schelme.EvalStep.EvalTermsStep a -> a -> Schelme.EvalStep.EvalTermsStep a"
+            },
+            {
+                "name": "setListStepState",
+                "comment": " Replace the state in an ListStep.\n",
+                "type": "Schelme.EvalStep.ListStep a -> a -> Schelme.EvalStep.ListStep a"
+            },
+            {
+                "name": "setSideEffectorStepState",
+                "comment": " Replace the state in an SideEffectorStep.\n",
+                "type": "Schelme.EvalStep.SideEffectorStep a -> a -> Schelme.EvalStep.SideEffectorStep a"
+            }
+        ],
+        "binops": []
+    }
+]

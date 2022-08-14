@@ -1,0 +1,151 @@
+[
+    {
+        "name": "ContextMenu",
+        "comment": " The ContextMenu component that follows the Elm Architecture.\n\nSee [How to use](http://package.elm-lang.org/packages/jinjor/elm-contextmenu/latest).\n\n\n# TEA Parts\n\nThe boilerplace functions. See [The Elm Architecture](https://guide.elm-lang.org/architecture/) for more information.\n\n@docs ContextMenu, Msg, init, update, subscriptions\n\n\n# Item\n\n@docs Item, item, itemWithAnnotation, disabled, icon, shortcut\n\n\n# Config\n\n@docs Config, Direction, Overflow, Cursor, defaultConfig\n\n\n# View\n\n@docs view, open, openIf\n\n\n# Advanced\n\n@docs setOnDehover\n\n",
+        "unions": [
+            {
+                "name": "ContextMenu",
+                "comment": " The Model. Put whatever context you like, which is used to create menu items.\n",
+                "args": [
+                    "context"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Cursor",
+                "comment": " The shape of cursor during hovering on the menu.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Arrow",
+                        []
+                    ],
+                    [
+                        "Pointer",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Direction",
+                "comment": " The default direction the menu will be shown at.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "LeftBottom",
+                        []
+                    ],
+                    [
+                        "RightBottom",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Item",
+                "comment": " The menu item. You can construct it with pipe-friendly functions.\n\n    ContextMenu.item \"Take photos\"\n        -- This library is outdated. See README.\n        -- |> ContextMenu.icon FontAwesome.camera Color.green\n        |> ContextMenu.disabled True\n\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Msg",
+                "comment": " The Message.\n",
+                "args": [
+                    "context"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Overflow",
+                "comment": " The strategies how to show the menu when it goes out of window.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Shift",
+                        []
+                    ],
+                    [
+                        "Mirror",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " Defines the styles of the menu. See [examples](https://github.com/jinjor/elm-contextmenu/blob/master/examples/Configs.elm).\n",
+                "args": [],
+                "type": "{ width : Basics.Int, direction : ContextMenu.Direction, overflowX : ContextMenu.Overflow, overflowY : ContextMenu.Overflow, containerColor : ContextMenu.Color, hoverColor : ContextMenu.Color, invertText : Basics.Bool, cursor : ContextMenu.Cursor, rounded : Basics.Bool, fontFamily : String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultConfig",
+                "comment": " The default config.\n\n    defaultConfig =\n        { width = 300\n        , direction = RightBottom\n        , overflowX = Mirror\n        , overflowY = Mirror\n        , containerColor = \"white\"\n        , hoverColor = \"rgb(240 240 240)\"\n        , invertText = False\n        , cursor = Pointer\n        , rounded = False\n        , fontFamily = \"initial\"\n        }\n\n",
+                "type": "ContextMenu.Config"
+            },
+            {
+                "name": "disabled",
+                "comment": " Disables the item. True = disabled, False = enabled.\n",
+                "type": "Basics.Bool -> ContextMenu.Item -> ContextMenu.Item"
+            },
+            {
+                "name": "icon",
+                "comment": " Shows the icon.\n\nThe first argument is a function that creates an icon,\ngiven a color string(like `#fff`, `rgb(100,200,200)`, etc.) and icon size (px).\n\n",
+                "type": "(String.String -> Basics.Int -> Html.Html Basics.Never) -> String.String -> ContextMenu.Item -> ContextMenu.Item"
+            },
+            {
+                "name": "init",
+                "comment": " The init function.\n",
+                "type": "( ContextMenu.ContextMenu context, Platform.Cmd.Cmd (ContextMenu.Msg context) )"
+            },
+            {
+                "name": "item",
+                "comment": " Creates a simple text item.\n",
+                "type": "String.String -> ContextMenu.Item"
+            },
+            {
+                "name": "itemWithAnnotation",
+                "comment": " Creates an item with annotation which will displayed just below the item name.\n",
+                "type": "String.String -> String.String -> ContextMenu.Item"
+            },
+            {
+                "name": "open",
+                "comment": " Makes the attribute that triggers to open the menu.\nThis attribute is passed for each element that needs a menu.\n\nArguments:\n\n1.  function to transform component's message into user's message\n2.  the context which is used to create items\n\n",
+                "type": "(ContextMenu.Msg context -> msg) -> context -> Html.Attribute msg"
+            },
+            {
+                "name": "openIf",
+                "comment": " Similar to `open` but only works under particular condition.\n\nThis is useful for debugging on browser.\n\n",
+                "type": "Basics.Bool -> (ContextMenu.Msg context -> msg) -> context -> Html.Attribute msg"
+            },
+            {
+                "name": "setOnDehover",
+                "comment": " This switches when the menu should be closed.\n\n  - True: Closes when mouse leaves the menu (keeps opening on cliking)\n  - False(default): Closes when somewhere in the window is clicked\n\n",
+                "type": "Basics.Bool -> ContextMenu.ContextMenu context -> ContextMenu.ContextMenu context"
+            },
+            {
+                "name": "shortcut",
+                "comment": " Displays the shortcut key at the right.\n",
+                "type": "String.String -> ContextMenu.Item -> ContextMenu.Item"
+            },
+            {
+                "name": "subscriptions",
+                "comment": " The Subscription.\n",
+                "type": "ContextMenu.ContextMenu context -> Platform.Sub.Sub (ContextMenu.Msg context)"
+            },
+            {
+                "name": "update",
+                "comment": " The update function.\n",
+                "type": "ContextMenu.Msg context -> ContextMenu.ContextMenu context -> ( ContextMenu.ContextMenu context, Platform.Cmd.Cmd (ContextMenu.Msg context) )"
+            },
+            {
+                "name": "view",
+                "comment": " Shows the menu. This should be called at only one place.\n\nArguments:\n\n1.  the Config\n2.  function to transform component's message into user's message\n3.  function to create item groups\n4.  the Model\n\n",
+                "type": "ContextMenu.Config -> (ContextMenu.Msg context -> msg) -> (context -> List.List (List.List ( ContextMenu.Item, msg ))) -> ContextMenu.ContextMenu context -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,146 @@
+[
+    {
+        "name": "Return2",
+        "comment": " This package makes it easier to build `(module, Cmd msg)`, the typical result of an update function\n\n\n# With\n\n@docs withCmd, withCmds, withNoCmd, withModel\n\n\n# Add\n\n@docs addCmd, addCmds\n\n\n# Map\n\n@docs mapModel, mapCmd\n\n\n# Get\n\n@docs model, cmd\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "addCmd",
+                "comment": " Sometimes you need to add a cmd to an already packaged model and cmd.\n\n    (model, cmd0)\n        |> addCmd cmd1\n\n        -- == (model, Cmd.batch [ cmd1, cmd0 ])\n\n",
+                "type": "Platform.Cmd.Cmd msg -> ( model, Platform.Cmd.Cmd msg ) -> ( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "addCmds",
+                "comment": " Add many cmds to an already packaged model and cmd.\n\n    (model, cmd0)\n        |> addCmds [ cmd1, cmd2 ]\n\n        -- == (model, Cmd.batch [ cmd0, cmd1, cmd2 ])\n\n",
+                "type": "List.List (Platform.Cmd.Cmd msg) -> ( model, Platform.Cmd.Cmd msg ) -> ( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "cmd",
+                "comment": " Get the cmd of an already tupled model and cmd.\n\n    Return2.cmd (model, cmd) == cmd\n\n",
+                "type": "( model, Platform.Cmd.Cmd msg ) -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "mapCmd",
+                "comment": " If you need to transform just the cmd in a tuple, such as if you need to wrap a sub-modules msg type\n\n    loginModel\n        |> Login.update subMsg\n        |> mapCmd LoginMsg\n\n",
+                "type": "(a -> b) -> ( model, Platform.Cmd.Cmd a ) -> ( model, Platform.Cmd.Cmd b )"
+            },
+            {
+                "name": "mapModel",
+                "comment": " If you need to transform just the model in a tuple, such as if you need to pack a submodel into the main model\n\n    loginModel\n        |> Login.update subMsg\n        |> mapModel (setPage model Page.Login)\n\n",
+                "type": "(a -> b) -> ( a, Platform.Cmd.Cmd msg ) -> ( b, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "model",
+                "comment": " Ideally you wouldnt have to deconstruct a tupled model and cmd, but if you need to, this function does it.\n\n    Return2.model (model, cmd) == model\n\n",
+                "type": "( model, Platform.Cmd.Cmd msg ) -> model"
+            },
+            {
+                "name": "withCmd",
+                "comment": " Pack a cmd with your model\n\n    model\n        |> withCmd cmd\n\n",
+                "type": "Platform.Cmd.Cmd msg -> model -> ( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "withCmds",
+                "comment": " Pack multiple cmds with your model\n\n    model\n        |> withCmds [ cmd0, cmd1 ]\n\n",
+                "type": "List.List (Platform.Cmd.Cmd msg) -> model -> ( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "withModel",
+                "comment": " Pack a model with your cmd. This is useful if the business logic for your command is more complicated than the business logic for your model\n\n    Close ->\n        model.sessionId\n            |> Ports.Close\n            |> Ports.send\n            |> withModel model\n\n",
+                "type": "model -> Platform.Cmd.Cmd msg -> ( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "withNoCmd",
+                "comment": " Pack your model with no cmd\n\n    model\n        |> withNoCmd\n\n",
+                "type": "model -> ( model, Platform.Cmd.Cmd msg )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Return3",
+        "comment": " This package makes it easier to build `(module, Cmd msg, reply)` a common return value for big sub-modules. See the readme for an explanation of what `Return3` is all about.\n\n\n# Return\n\n@docs Return\n\n\n# With\n\n@docs withReply, withNoReply, withTuple, withNothing\n\n\n# Add\n\n@docs addCmd, addCmds\n\n\n# Map\n\n@docs mapModel, mapCmd, mapReply\n\n\n# Get\n\n@docs model, cmd, reply\n\n\n# Incorporate\n\n@docs incorp\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Return",
+                "comment": " This alias formalizes that this particular triple is our return value.\n",
+                "args": [
+                    "model",
+                    "msg",
+                    "reply"
+                ],
+                "type": "( model, Platform.Cmd.Cmd msg, Maybe.Maybe reply )"
+            }
+        ],
+        "values": [
+            {
+                "name": "addCmd",
+                "comment": " Sometimes you need to add a cmd to an already packaged `Return`\n\n    (model, cmd0, reply)\n        |> addCmd cmd1\n\n        -- == (model, Cmd.batch [ cmd1, cmd0 ], reply)\n\n",
+                "type": "Platform.Cmd.Cmd msg -> Return3.Return model msg reply -> Return3.Return model msg reply"
+            },
+            {
+                "name": "addCmds",
+                "comment": " Add many cmds to an already packaged `Return`\n\n    (model, cmd0, reply)\n        |> addCmds [ cmd1, cmd2 ]\n\n        -- == (model, Cmd.batch [ cmd0, cmd1, cmd2 ], reply)\n\n",
+                "type": "List.List (Platform.Cmd.Cmd msg) -> Return3.Return model msg reply -> Return3.Return model msg reply"
+            },
+            {
+                "name": "cmd",
+                "comment": " Get the cmd of an already packed `Return`.\n\n    Return3.cmd (model, cmd, reply) == cmd\n\n",
+                "type": "Return3.Return model msg reply -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "incorp",
+                "comment": " `Return`s contain a reply, and that reply needs to be handled much like a `msg` does in an update function.\n\n    loginModel\n        |> Login.update loginMsg\n        |> R3.mapCmd LoginMsg\n        |> incorp handleLoginReply model\n\n\n    handleLoginReply : Login.Model -> Maybe Reply -> Model -> (Model, Cmd Msg)\n    handleLoginreply loginModel maybeReply model =\n        case maybeReply of\n            Nothing ->\n                { model | page = Login loginModel }\n                    |> R2.withNoCmd\n\n            Just (LoggedIn user) ->\n                { model\n                    | page = Home Home.init\n                    , user = Just user\n                }\n                    |> R2.withNoCmd\n\n",
+                "type": "(subModel -> Maybe.Maybe reply -> model -> ( model, Platform.Cmd.Cmd msg )) -> model -> Return3.Return subModel msg reply -> ( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "mapCmd",
+                "comment": " If you need to transform just the cmd in a `Return`, such as if you need to wrap a sub-modules msg type\n\n    loginModel\n        |> Login.update subMsg\n        |> mapCmd LoginMsg\n\n",
+                "type": "(a -> b) -> Return3.Return model a reply -> Return3.Return model b reply"
+            },
+            {
+                "name": "mapModel",
+                "comment": " If you need to transform just the model in a `Return`, such as if you need to pack a submodel into the main model\n\n    loginModel\n        |> Login.update subMsg\n        |> mapModel (setPage model Page.Login)\n\n",
+                "type": "(a -> b) -> Return3.Return a msg reply -> Return3.Return b msg reply"
+            },
+            {
+                "name": "mapReply",
+                "comment": " ",
+                "type": "(Maybe.Maybe a -> Maybe.Maybe b) -> Return3.Return model msg a -> Return3.Return model msg b"
+            },
+            {
+                "name": "model",
+                "comment": " Ideally you wouldnt have to deconstruct a `Return`, but if you need to, this function does it.\n\n    Return3.model (model, cmd, Nothing) == model\n\n",
+                "type": "Return3.Return model msg reply -> model"
+            },
+            {
+                "name": "reply",
+                "comment": " Get the reply of an already packed `Return`, if it exists\n\n    Return3.reply (model, cmd, maybeReply) == maybeReply\n\n",
+                "type": "Return3.Return model msg reply -> Maybe.Maybe reply"
+            },
+            {
+                "name": "withNoReply",
+                "comment": " Dont add a reply to your tuple.\n\n    FetchingData\n        |> R2.withCmd getLocalStorage\n        |> R3.withNoReply\n\n",
+                "type": "( model, Platform.Cmd.Cmd msg ) -> Return3.Return model msg reply"
+            },
+            {
+                "name": "withNothing",
+                "comment": " Return the model with no cmd and no reply\n\n    model\n        |> withNothing\n\n",
+                "type": "model -> Return3.Return model msg reply"
+            },
+            {
+                "name": "withReply",
+                "comment": " Add a reply to your tuple.\n\n    model\n        |> R2.withNoCmd\n        |> R3.withReply UserNameChanged\n\n",
+                "type": "reply -> ( model, Platform.Cmd.Cmd msg ) -> Return3.Return model msg reply"
+            },
+            {
+                "name": "withTuple",
+                "comment": " If building your reply takes a lot of work, use this function.\n\n    calculate width height x y\n        |> center model.size\n        |> UpdateSpace\n        |> R3.withTuple\n            (model |> R2.withNoCmd)\n\n",
+                "type": "( model, Platform.Cmd.Cmd msg ) -> reply -> Return3.Return model msg reply"
+            }
+        ],
+        "binops": []
+    }
+]

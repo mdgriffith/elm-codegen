@@ -1,0 +1,152 @@
+[
+    {
+        "name": "Dict.Verify",
+        "comment": " Functions to verify properties of a Dict.\n\n@docs notEmpty\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "notEmpty",
+                "comment": " Fails if a Dict is empty.\n\n    import Dict\n\n    notEmpty \"error\" <| Dict.empty\n    --> Err ( \"error\" , [])\n\n    notEmpty \"error\" <| Dict.fromList [ (1, 1) ]\n    --> Ok <| Dict.fromList [ (1, 1) ]\n\n",
+                "type": "error -> Dict.Dict a b -> Result.Result ( error, List.List error ) (Dict.Dict a b)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "List.Verify",
+        "comment": " Functions to verify properties of a List.\n\n@docs notEmpty\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "notEmpty",
+                "comment": " Fails if a List is empty.\n\n    notEmpty \"error\" []\n    --> Err ( \"error\" , [])\n\n    notEmpty \"error\" [1]\n    --> Ok [1]\n\n",
+                "type": "error -> List.List a -> Result.Result ( error, List.List error ) (List.List a)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Maybe.Verify",
+        "comment": " Functions to verify properties of a Maybe.\n\n@docs isJust\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "isJust",
+                "comment": " Fails if a Maybe is Nothing.\n\n    isJust \"error\" Nothing\n    --> Err ( \"error\" , [])\n\n\n    isJust \"error\" (Just 42)\n    --> Ok 42 -- It removes the wrapper as well!\n\n",
+                "type": "error -> Verify.Validator error (Maybe.Maybe a) a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Set.Verify",
+        "comment": " Functions to verify properties of a Set.\n\n@docs notEmpty\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "notEmpty",
+                "comment": " Fails if a Set is empty.\n\n    import Set\n\n    notEmpty \"error\" <| Set.empty\n    --> Err ( \"error\" , [])\n\n    notEmpty \"error\" <| Set.fromList [ (1, 1) ]\n    --> Ok <| Set.fromList [ (1, 1) ]\n\n",
+                "type": "error -> Set.Set a -> Result.Result ( error, List.List error ) (Set.Set a)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "String.Verify",
+        "comment": " Functions to verify properties of a String.\n\n@docs notBlank, minLength, maxLength, isInt\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "isInt",
+                "comment": " Fails if a String is not an Int. It will return the Int in the result.\n\n    isInt \"error\" \"a\"\n    --> Err ( \"error\" , [])\n\n    isInt \"error\" \"42\"\n    --> Ok 42\n\n",
+                "type": "error -> Verify.Validator error String.String Basics.Int"
+            },
+            {
+                "name": "maxLength",
+                "comment": " Fails if a String is smaller than a given maximum.\n\n    maxLength 3 \"error\" \"abc\"\n    --> Ok \"abc\"\n\n    maxLength 3 \"error\" \"abcd\"\n    --> Err ( \"error\" , [])\n\n",
+                "type": "Basics.Int -> error -> String.String -> Result.Result ( error, List.List error ) String.String"
+            },
+            {
+                "name": "minLength",
+                "comment": " Fails if a String is smaller than a given minimum.\n\n    minLength 3 \"error\" \"ab\"\n    --> Err ( \"error\" , [])\n\n    minLength 3 \"error\" \"abc\"\n    --> Ok \"abc\"\n\n",
+                "type": "Basics.Int -> error -> String.String -> Result.Result ( error, List.List error ) String.String"
+            },
+            {
+                "name": "notBlank",
+                "comment": " Fails if a String is blank (empty or only whitespace).\n\n    notBlank \"error\" \"\"\n    --> Err ( \"error\" , [])\n\n",
+                "type": "error -> String.String -> Result.Result ( error, List.List error ) String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Verify",
+        "comment": " Verify allows you to validate a model into a structure that makes forbidden states impossible.\n\n@docs Validator, ok, fail, validate, verify, keep, custom, compose, andThen, fromMaybe\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Validator",
+                "comment": " This is just an alias for a function from an input to a result.\nThe result is either:\n\n  - contains a list of all errors that didn't satisfy the given spec.\n  - contains an verified structure.\n\n",
+                "args": [
+                    "error",
+                    "input",
+                    "verified"
+                ],
+                "type": "input -> Result.Result ( error, List.List error ) verified"
+            }
+        ],
+        "values": [
+            {
+                "name": "andThen",
+                "comment": " This allows you to chain multiple Validators.\n\n    import Maybe.Verify\n\n\n    validator { firstName = Nothing }\n    --> Err ( \"You need to provide a first name.\" , [])\n\n    validator { firstName = Just \"   \" }\n    --> Err ( \"Name is too short\" , [])\n\n    validator { firstName = Just \"Stöffel\" }\n    --> Ok \"Stöffel\"\n\n    validator : Verify.Validator String { a | firstName : Maybe String } String\n    validator =\n        Verify.validate identity\n            |> Verify.verify .firstName verifyName\n\n    verifyName : Verify.Validator String (Maybe String) String\n    verifyName =\n        Maybe.Verify.isJust \"You need to provide a first name.\"\n            |> Verify.andThen (\\name ->\n                if String.length name > 5 then\n                    Verify.ok name\n                else\n                    Verify.fail \"Name is too short\"\n            )\n\n",
+                "type": "(a -> Verify.Validator error input b) -> Verify.Validator error input a -> Verify.Validator error input b"
+            },
+            {
+                "name": "compose",
+                "comment": " This allows you to compose multiple Validators.\n\n    import Maybe.Verify\n    import String.Verify\n\n\n    validator { firstName = Nothing }\n    --> Err ( \"You need to provide a first name.\" , [])\n\n    validator { firstName = Just \"   \" }\n    --> Err ( \"You need to provide a none empty first name.\" , [])\n\n    validator { firstName = Just \"Stöffel\" }\n    --> Ok \"Stöffel\"\n\n    validator : Verify.Validator String { a | firstName : Maybe String } String\n    validator =\n        Verify.validate identity\n            |> Verify.verify .firstName verifyName\n\n    verifyName : Verify.Validator String (Maybe String) String\n    verifyName =\n        Maybe.Verify.isJust \"You need to provide a first name.\"\n            |> Verify.compose (String.Verify.notBlank \"You need to provide a none empty first name.\")\n\n",
+                "type": "Verify.Validator error verified finally -> Verify.Validator error input verified -> Verify.Validator error input finally"
+            },
+            {
+                "name": "custom",
+                "comment": " Sometimes the verification of a part only makes sense in a bigger context.\nThis means your Validator needs access to the whole structure.\n\n    import Maybe.Verify\n\n\n    validator : Verify.Validator String { a | username : Maybe String, level: Int, strength: Int } (String, Int)\n    validator =\n        Verify.validate (,)\n            |> Verify.verify .username (Maybe.Verify.isJust \"You need to provide a username.\")\n            |> Verify.custom (\\{level, strength} ->\n                if strength > level then\n                    Err ( \"Your strength can exceed your level.\" , [])\n                else\n                    Ok strength\n                )\n\n\n    validator { username = Just \"Ork1\", level = 3, strength = 5 }\n    --> Err ( \"Your strength can exceed your level.\" , [])\n\n    validator { username = Just \"Ork1\", level = 6, strength = 5 }\n    --> Ok (\"Ork1\", 5)\n\n    validator { username = Nothing, level = 3, strength = 5 }\n    --> Err ( \"You need to provide a username.\"\n    -->     , [ \"Your strength can exceed your level.\"]\n    -->     )\n\n",
+                "type": "Verify.Validator error input verified -> Verify.Validator error input (verified -> finally) -> input -> Result.Result ( error, List.List error ) finally"
+            },
+            {
+                "name": "fail",
+                "comment": " Allows you to create a failing Validator.\n\n    fail \"always fail\" Nothing\n    --> Err ( \"always fail\" , [])\n\n",
+                "type": "error -> input -> Result.Result ( error, List.List error ) verified"
+            },
+            {
+                "name": "fromMaybe",
+                "comment": " This is a convenient function to create a `Validator` from a function that returns a maybe instead of a `Result`.\nIt fails if the function returns a Nothing.\nThis allows you to verify a input and return a verified result of a different type.\n\n    fromMaybe hasInitial \"error\" \"\"\n    --> Err ( \"error\" , [])\n\n    fromMaybe hasInitial \"error\" \"Christoph\"\n    --> Ok 'C'\n\n    hasInitial : String -> Maybe Char\n    hasInitial str =\n        case String.uncons str of\n            Just (initial, _) -> Just initial\n            Nothing -> Nothing\n\n",
+                "type": "(input -> Maybe.Maybe verified) -> error -> Verify.Validator error input verified"
+            },
+            {
+                "name": "keep",
+                "comment": " You can use `keep` if you want a value to be in the verified structure without any verification.\n\n    import Maybe.Verify\n\n\n    validator : Validator String { a | id : Int, firstName : Maybe String } (Int, String)\n    validator =\n        Verify.validate (,)\n            |> Verify.keep .id\n            |> Verify.verify .firstName (Maybe.Verify.isJust \"You need to provide a first name.\")\n\n\n    validator { id = 1, firstName = Nothing }\n    --> Err ( \"You need to provide a first name.\" , [])\n\n    validator { id = 1, firstName = Just \"Stöffel\" }\n    --> Ok (1, \"Stöffel\")\n\n",
+                "type": "(bigger -> smaller) -> Verify.Validator error bigger (smaller -> finally) -> Verify.Validator error bigger finally"
+            },
+            {
+                "name": "ok",
+                "comment": " This allows you to lift any value into a validator.\nThis is particularly useful to initialize a pipeline.\n\n    ok \"always ok\" Nothing\n    --> Ok \"always ok\"\n\n",
+                "type": "finally -> input -> Result.Result ( error, List.List error ) finally"
+            },
+            {
+                "name": "validate",
+                "comment": " Allows you to start a validation pipeline. It is a synonym for `Verify.ok`, intended to make\nthings clearer to read.\n\n    import Maybe.Verify\n\n\n    type alias User =\n        { id : Int\n        , firstName : String\n        }\n\n    validator : Verify.Validator String { a | id : Int, firstName : Maybe String } User\n    validator =\n        Verify.validate User\n            |> Verify.keep .id\n            |> Verify.verify .firstName (Maybe.Verify.isJust \"You need to provide a first name.\")\n\n    validator { id = 1, firstName = Nothing }\n    --> Err ( \"You need to provide a first name.\" , [])\n\n    validator { id = 1, firstName = Just \"Stöffel\" }\n    --> Ok { id = 1, firstName = \"Stöffel\" }\n\n",
+                "type": "finally -> Verify.Validator error input finally"
+            },
+            {
+                "name": "verify",
+                "comment": " Allows you to verify a part of a structure.\n\n    import Maybe.Verify\n\n\n    validator : Verify.Validator String { a | firstName : Maybe String } String\n    validator =\n        Verify.validate identity\n            |> Verify.verify .firstName (Maybe.Verify.isJust \"You need to provide a first name.\")\n\n    validator { firstName = Nothing }\n    --> Err ( \"You need to provide a first name.\" , [])\n\n    validator { firstName = Just \"Stöffel\" }\n    --> Ok \"Stöffel\"\n\n",
+                "type": "(bigger -> smaller) -> Verify.Validator error smaller verified -> Verify.Validator error bigger (verified -> finally) -> Verify.Validator error bigger finally"
+            }
+        ],
+        "binops": []
+    }
+]

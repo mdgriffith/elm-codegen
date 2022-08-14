@@ -1,0 +1,100 @@
+[
+    {
+        "name": "Sentry",
+        "comment": " Sentry SDK\n\n\n## Types\n\n@docs Sentry, Level, Config, config, Environment, environment, Context, context, ReleaseVersion, releaseVersion\n\n\n## Reporting errors\n\n@docs send, withContext\n\n",
+        "unions": [
+            {
+                "name": "Config",
+                "comment": " The configuration of the SDK.\n\nSpecifies the Public Key, the Host, and the Project ID.\n\nCreate one using [`config`](#config).\n\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Context",
+                "comment": " The Context, for example, the Page name.\n\nCrate one using [`context`](#context).\n\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Environment",
+                "comment": " The environment name, such as \"production\" or \"staging\".\n\nCreate one using [`environment`](#environment).\n\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Level",
+                "comment": " The event severity.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Fatal",
+                        []
+                    ],
+                    [
+                        "Error",
+                        []
+                    ],
+                    [
+                        "Warning",
+                        []
+                    ],
+                    [
+                        "Info",
+                        []
+                    ],
+                    [
+                        "Debug",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "ReleaseVersion",
+                "comment": " The release version of the application.\n\nThis value can be a git SHA, or a product identifier with a semantic version.\n\nCreate one using [`releaseVersion`](#releaseVersion).\n\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Sentry",
+                "comment": " Record that contains functions to report errors by Level.\n\nCreate one using [`withContext`](#withContext).\n\n",
+                "args": [],
+                "type": "{ fatal : String.String -> Dict.Dict String.String Json.Encode.Value -> Task.Task Http.Error UUID.UUID, error : String.String -> Dict.Dict String.String Json.Encode.Value -> Task.Task Http.Error UUID.UUID, warning : String.String -> Dict.Dict String.String Json.Encode.Value -> Task.Task Http.Error UUID.UUID, info : String.String -> Dict.Dict String.String Json.Encode.Value -> Task.Task Http.Error UUID.UUID, debug : String.String -> Dict.Dict String.String Json.Encode.Value -> Task.Task Http.Error UUID.UUID }"
+            }
+        ],
+        "values": [
+            {
+                "name": "config",
+                "comment": " Creates a [`Config`](#Config).\n\nUse the dsn to provide the publicKey, host and projectId.\n\nThe @ character in the DSN separates the PublicKey and the Host.\n\n    -- DSN: https://1900942c246350fdacb4c9369cac2ets@o298593.ingest.sentry.io/2312456\n    --                      ^ PublicKey                       ^ Host           ^ ProjectId\n    Sentry.config\n        { publicKey = \"1900942c246350fdacb4c9369cac2ets\"\n        , host = \"o298593.ingest.sentry.io\"\n        , projectId = \"2312456\"\n        }\n\n",
+                "type": "{ publicKey : String.String, host : String.String, projectId : String.String } -> Sentry.Config"
+            },
+            {
+                "name": "context",
+                "comment": " Create a [`Context`](#Context).\n\n    Sentry.context \"profile/settings\"\n\n",
+                "type": "String.String -> Sentry.Context"
+            },
+            {
+                "name": "environment",
+                "comment": " Create an [`Environment`](#Environment).\n\n    Sentry.environment \"production\"\n\n",
+                "type": "String.String -> Sentry.Environment"
+            },
+            {
+                "name": "releaseVersion",
+                "comment": " Create a [`ReleaseVersion`](#ReleaseVersion).\n\n    Sentry.releaseVersion \"721e41770371db95eee98ca2707686226b993eda\"\n\n",
+                "type": "String.String -> Sentry.ReleaseVersion"
+            },
+            {
+                "name": "send",
+                "comment": " Send an error to Sentry.\n\nNormally, it's preferable to use [`withContext`](#withContext)\nas it provides a reusable configured [`Sentry`](#Sentry).\n\nArguments:\n\n  - [`Config`](#Config): The configuration about your Sentry team and project. Create one using [`config`](#config)\n  - [`Level`](#Level): The severity of the error, e.g. `Fatal`, `Error`, `Info`\n  - [`ReleaseVersion`](#ReleaseVersion): Your app version. Can be a git commit SHA.\n  - [`Environment`](#Environment): e.g. `\"production\"`, `\"staging\"`\n  - [`Context`](#Context): Scopes the message. It can be the name of the Page that produced this error, e.g. `\"profile/settings\"`\n  - `String`: The error message, e.g. `\"Backend on fire!\"`\n  - `Dict String Value`: Extra information, e.g. `{\"response\": \"503 Service unavailable\"}`\n\nOn success, the [`Task`](http://package.elm-lang.org/packages/elm-lang/core/latest/Task#Task)\nwill resolve to a [`UUID`](https://package.elm-lang.org/packages/TSFoster/elm-uuid/latest/UUID#UUID)\nthat was sent to Sentry as the Event ID.\n\nOn failure, the [`Http.Error`](http://package.elm-lang.org/packages/elm-lang/http/latest/Http#Error) will\nhold the information about the problem.\n\n",
+                "type": "Sentry.Config -> Sentry.Level -> Sentry.ReleaseVersion -> Sentry.Environment -> Sentry.Context -> String.String -> Dict.Dict String.String Json.Encode.Value -> Task.Task Http.Error UUID.UUID"
+            },
+            {
+                "name": "withContext",
+                "comment": " Build a [`Sentry`](#Sentry) record configured with the given\n[`Config`](#Config), [`ReleaseVersion`](#ReleaseVersion), an\n[`Environment`](#Environment) and a [`Context`](#Context) string.\n\n        import Sentry exposing (Sentry)\n\n        config : Sentry.Config\n        config =\n            Sentry.config\n                { publicKey = \"1900942c246350fdacb4c9369cac2ets\"\n                , host = \"o298593.ingest.sentry.io\"\n                , projectId = \"2312456\"\n                }\n\n        releaseVersion : Sentry.ReleaseVersion\n        releaseVersion =\n            Sentry.releaseVersion \"721e41770371db95eee98ca2707686226b993eda\"\n\n        environment : Sentry.Environment\n        environment =\n            Sentry.environment \"production\"\n\n        sentry : Sentry\n        sentry =\n            Sentry.withContext config releaseVersion environment \"profile/settings\"\n\n        sentry.fatal \"Backend on fire!\" (Dict.fromList [(\"response\", toString response)])\n        sentry.debug \"Testing sentry integration\" Dict.empty\n        sentry.info \"Backend timeout when saving the profile settings\" Dict.empty\n\n",
+                "type": "Sentry.Config -> Sentry.ReleaseVersion -> Sentry.Environment -> String.String -> Sentry.Sentry"
+            }
+        ],
+        "binops": []
+    }
+]

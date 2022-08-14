@@ -1,0 +1,98 @@
+[
+    {
+        "name": "DoubleSlider",
+        "comment": " A single slider built natively in Elm\n\n\n# Model\n\n@docs Model, defaultModel\n\n\n# Update\n\n@docs Msg, update, subscriptions\n\n\n# View\n\n@docs view, fallbackView, formatCurrentRange\n\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " The basic type accepted by the update\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Model",
+                "comment": " The base model for the slider\n",
+                "args": [],
+                "type": "{ min : Basics.Float, max : Basics.Float, step : Basics.Int, lowValue : Basics.Float, highValue : Basics.Float, dragging : Basics.Bool, draggedValueType : DoubleSlider.SliderValueType, rangeStartValue : Basics.Float, thumbStartingPosition : Basics.Float, dragStartPosition : Basics.Float, thumbParentWidth : Basics.Float, overlapThreshold : Basics.Float, minFormatter : Basics.Float -> String.String, maxFormatter : Basics.Float -> String.String, currentRangeFormatter : Basics.Float -> Basics.Float -> Basics.Float -> Basics.Float -> String.String, ratio : Basics.Float }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultModel",
+                "comment": " Returns a default range slider\n",
+                "type": "DoubleSlider.Model"
+            },
+            {
+                "name": "fallbackView",
+                "comment": " Displays the slider using two inputs\n",
+                "type": "DoubleSlider.Model -> Html.Html DoubleSlider.Msg"
+            },
+            {
+                "name": "formatCurrentRange",
+                "comment": " Renders the current values using the formatter\n",
+                "type": "DoubleSlider.Model -> String.String"
+            },
+            {
+                "name": "subscriptions",
+                "comment": " Returns the subscriptions necessary to run\n",
+                "type": "DoubleSlider.Model -> Platform.Sub.Sub DoubleSlider.Msg"
+            },
+            {
+                "name": "update",
+                "comment": " takes a model and a message and applies it to create an updated model\n",
+                "type": "DoubleSlider.Msg -> DoubleSlider.Model -> ( DoubleSlider.Model, Platform.Cmd.Cmd DoubleSlider.Msg, Basics.Bool )"
+            },
+            {
+                "name": "view",
+                "comment": " Displays the slider\n",
+                "type": "DoubleSlider.Model -> Html.Html DoubleSlider.Msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "SingleSlider",
+        "comment": " A single slider built natively in Elm\n\n\n# Model\n\n@docs Model, defaultModel\n\n\n# Update\n\n@docs Msg, update, subscriptions\n\n\n# View\n\n@docs view\n\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " The basic type accepted by the update\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Model",
+                "comment": " The base model for the slider\n",
+                "args": [],
+                "type": "{ min : Basics.Float, max : Basics.Float, step : Basics.Float, value : Basics.Float, minFormatter : Basics.Float -> String.String, maxFormatter : Basics.Float -> String.String, currentValueFormatter : Basics.Float -> Basics.Float -> String.String, disabled : Basics.Bool }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultModel",
+                "comment": " Default model\n",
+                "type": "SingleSlider.Model"
+            },
+            {
+                "name": "subscriptions",
+                "comment": " Returns the subscriptions necessary to run\n",
+                "type": "SingleSlider.Model -> Platform.Sub.Sub SingleSlider.Msg"
+            },
+            {
+                "name": "update",
+                "comment": " takes a model and a message and applies it to create an updated model\n",
+                "type": "SingleSlider.Msg -> SingleSlider.Model -> ( SingleSlider.Model, Platform.Cmd.Cmd SingleSlider.Msg, Basics.Bool )"
+            },
+            {
+                "name": "view",
+                "comment": " Displays the slider\n",
+                "type": "SingleSlider.Model -> Html.Html SingleSlider.Msg"
+            }
+        ],
+        "binops": []
+    }
+]

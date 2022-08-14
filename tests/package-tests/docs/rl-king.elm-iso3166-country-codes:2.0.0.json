@@ -1,0 +1,1372 @@
+[
+    {
+        "name": "Iso3166",
+        "comment": " Convert to and from Iso3166 country codes.\n@docs toAlpha2\n@docs fromAlpha2\n@docs toAlpha3\n@docs fromAlpha3\n@docs toNumeric\n@docs fromNumeric\n@docs all\n# Definition\n@docs CountryCode\n",
+        "unions": [
+            {
+                "name": "CountryCode",
+                "comment": " `GT` and `LT` are defined in `Basics` so we define them as `GT_` and `LT_`.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "AD",
+                        []
+                    ],
+                    [
+                        "AE",
+                        []
+                    ],
+                    [
+                        "AF",
+                        []
+                    ],
+                    [
+                        "AG",
+                        []
+                    ],
+                    [
+                        "AI",
+                        []
+                    ],
+                    [
+                        "AL",
+                        []
+                    ],
+                    [
+                        "AM",
+                        []
+                    ],
+                    [
+                        "AO",
+                        []
+                    ],
+                    [
+                        "AQ",
+                        []
+                    ],
+                    [
+                        "AR",
+                        []
+                    ],
+                    [
+                        "AS",
+                        []
+                    ],
+                    [
+                        "AT",
+                        []
+                    ],
+                    [
+                        "AU",
+                        []
+                    ],
+                    [
+                        "AW",
+                        []
+                    ],
+                    [
+                        "AX",
+                        []
+                    ],
+                    [
+                        "AZ",
+                        []
+                    ],
+                    [
+                        "BA",
+                        []
+                    ],
+                    [
+                        "BB",
+                        []
+                    ],
+                    [
+                        "BD",
+                        []
+                    ],
+                    [
+                        "BE",
+                        []
+                    ],
+                    [
+                        "BF",
+                        []
+                    ],
+                    [
+                        "BG",
+                        []
+                    ],
+                    [
+                        "BH",
+                        []
+                    ],
+                    [
+                        "BI",
+                        []
+                    ],
+                    [
+                        "BJ",
+                        []
+                    ],
+                    [
+                        "BL",
+                        []
+                    ],
+                    [
+                        "BM",
+                        []
+                    ],
+                    [
+                        "BN",
+                        []
+                    ],
+                    [
+                        "BO",
+                        []
+                    ],
+                    [
+                        "BQ",
+                        []
+                    ],
+                    [
+                        "BR",
+                        []
+                    ],
+                    [
+                        "BS",
+                        []
+                    ],
+                    [
+                        "BT",
+                        []
+                    ],
+                    [
+                        "BV",
+                        []
+                    ],
+                    [
+                        "BW",
+                        []
+                    ],
+                    [
+                        "BY",
+                        []
+                    ],
+                    [
+                        "BZ",
+                        []
+                    ],
+                    [
+                        "CA",
+                        []
+                    ],
+                    [
+                        "CC",
+                        []
+                    ],
+                    [
+                        "CD",
+                        []
+                    ],
+                    [
+                        "CF",
+                        []
+                    ],
+                    [
+                        "CG",
+                        []
+                    ],
+                    [
+                        "CH",
+                        []
+                    ],
+                    [
+                        "CI",
+                        []
+                    ],
+                    [
+                        "CK",
+                        []
+                    ],
+                    [
+                        "CL",
+                        []
+                    ],
+                    [
+                        "CM",
+                        []
+                    ],
+                    [
+                        "CN",
+                        []
+                    ],
+                    [
+                        "CO",
+                        []
+                    ],
+                    [
+                        "CR",
+                        []
+                    ],
+                    [
+                        "CU",
+                        []
+                    ],
+                    [
+                        "CV",
+                        []
+                    ],
+                    [
+                        "CW",
+                        []
+                    ],
+                    [
+                        "CX",
+                        []
+                    ],
+                    [
+                        "CY",
+                        []
+                    ],
+                    [
+                        "CZ",
+                        []
+                    ],
+                    [
+                        "DE",
+                        []
+                    ],
+                    [
+                        "DJ",
+                        []
+                    ],
+                    [
+                        "DK",
+                        []
+                    ],
+                    [
+                        "DM",
+                        []
+                    ],
+                    [
+                        "DO",
+                        []
+                    ],
+                    [
+                        "DZ",
+                        []
+                    ],
+                    [
+                        "EC",
+                        []
+                    ],
+                    [
+                        "EE",
+                        []
+                    ],
+                    [
+                        "EG",
+                        []
+                    ],
+                    [
+                        "EH",
+                        []
+                    ],
+                    [
+                        "ER",
+                        []
+                    ],
+                    [
+                        "ES",
+                        []
+                    ],
+                    [
+                        "ET",
+                        []
+                    ],
+                    [
+                        "FI",
+                        []
+                    ],
+                    [
+                        "FJ",
+                        []
+                    ],
+                    [
+                        "FK",
+                        []
+                    ],
+                    [
+                        "FM",
+                        []
+                    ],
+                    [
+                        "FO",
+                        []
+                    ],
+                    [
+                        "FR",
+                        []
+                    ],
+                    [
+                        "GA",
+                        []
+                    ],
+                    [
+                        "GB",
+                        []
+                    ],
+                    [
+                        "GD",
+                        []
+                    ],
+                    [
+                        "GE",
+                        []
+                    ],
+                    [
+                        "GF",
+                        []
+                    ],
+                    [
+                        "GG",
+                        []
+                    ],
+                    [
+                        "GH",
+                        []
+                    ],
+                    [
+                        "GI",
+                        []
+                    ],
+                    [
+                        "GL",
+                        []
+                    ],
+                    [
+                        "GM",
+                        []
+                    ],
+                    [
+                        "GN",
+                        []
+                    ],
+                    [
+                        "GP",
+                        []
+                    ],
+                    [
+                        "GQ",
+                        []
+                    ],
+                    [
+                        "GR",
+                        []
+                    ],
+                    [
+                        "GS",
+                        []
+                    ],
+                    [
+                        "GT_",
+                        []
+                    ],
+                    [
+                        "GU",
+                        []
+                    ],
+                    [
+                        "GW",
+                        []
+                    ],
+                    [
+                        "GY",
+                        []
+                    ],
+                    [
+                        "HK",
+                        []
+                    ],
+                    [
+                        "HM",
+                        []
+                    ],
+                    [
+                        "HN",
+                        []
+                    ],
+                    [
+                        "HR",
+                        []
+                    ],
+                    [
+                        "HT",
+                        []
+                    ],
+                    [
+                        "HU",
+                        []
+                    ],
+                    [
+                        "ID",
+                        []
+                    ],
+                    [
+                        "IE",
+                        []
+                    ],
+                    [
+                        "IL",
+                        []
+                    ],
+                    [
+                        "IM",
+                        []
+                    ],
+                    [
+                        "IN",
+                        []
+                    ],
+                    [
+                        "IO",
+                        []
+                    ],
+                    [
+                        "IQ",
+                        []
+                    ],
+                    [
+                        "IR",
+                        []
+                    ],
+                    [
+                        "IS",
+                        []
+                    ],
+                    [
+                        "IT",
+                        []
+                    ],
+                    [
+                        "JE",
+                        []
+                    ],
+                    [
+                        "JM",
+                        []
+                    ],
+                    [
+                        "JO",
+                        []
+                    ],
+                    [
+                        "JP",
+                        []
+                    ],
+                    [
+                        "KE",
+                        []
+                    ],
+                    [
+                        "KG",
+                        []
+                    ],
+                    [
+                        "KH",
+                        []
+                    ],
+                    [
+                        "KI",
+                        []
+                    ],
+                    [
+                        "KM",
+                        []
+                    ],
+                    [
+                        "KN",
+                        []
+                    ],
+                    [
+                        "KP",
+                        []
+                    ],
+                    [
+                        "KR",
+                        []
+                    ],
+                    [
+                        "KW",
+                        []
+                    ],
+                    [
+                        "KY",
+                        []
+                    ],
+                    [
+                        "KZ",
+                        []
+                    ],
+                    [
+                        "LA",
+                        []
+                    ],
+                    [
+                        "LB",
+                        []
+                    ],
+                    [
+                        "LC",
+                        []
+                    ],
+                    [
+                        "LI",
+                        []
+                    ],
+                    [
+                        "LK",
+                        []
+                    ],
+                    [
+                        "LR",
+                        []
+                    ],
+                    [
+                        "LS",
+                        []
+                    ],
+                    [
+                        "LT_",
+                        []
+                    ],
+                    [
+                        "LU",
+                        []
+                    ],
+                    [
+                        "LV",
+                        []
+                    ],
+                    [
+                        "LY",
+                        []
+                    ],
+                    [
+                        "MA",
+                        []
+                    ],
+                    [
+                        "MC",
+                        []
+                    ],
+                    [
+                        "MD",
+                        []
+                    ],
+                    [
+                        "ME",
+                        []
+                    ],
+                    [
+                        "MF",
+                        []
+                    ],
+                    [
+                        "MG",
+                        []
+                    ],
+                    [
+                        "MH",
+                        []
+                    ],
+                    [
+                        "MK",
+                        []
+                    ],
+                    [
+                        "ML",
+                        []
+                    ],
+                    [
+                        "MM",
+                        []
+                    ],
+                    [
+                        "MN",
+                        []
+                    ],
+                    [
+                        "MO",
+                        []
+                    ],
+                    [
+                        "MP",
+                        []
+                    ],
+                    [
+                        "MQ",
+                        []
+                    ],
+                    [
+                        "MR",
+                        []
+                    ],
+                    [
+                        "MS",
+                        []
+                    ],
+                    [
+                        "MT",
+                        []
+                    ],
+                    [
+                        "MU",
+                        []
+                    ],
+                    [
+                        "MV",
+                        []
+                    ],
+                    [
+                        "MW",
+                        []
+                    ],
+                    [
+                        "MX",
+                        []
+                    ],
+                    [
+                        "MY",
+                        []
+                    ],
+                    [
+                        "MZ",
+                        []
+                    ],
+                    [
+                        "NA",
+                        []
+                    ],
+                    [
+                        "NC",
+                        []
+                    ],
+                    [
+                        "NE",
+                        []
+                    ],
+                    [
+                        "NF",
+                        []
+                    ],
+                    [
+                        "NG",
+                        []
+                    ],
+                    [
+                        "NI",
+                        []
+                    ],
+                    [
+                        "NL",
+                        []
+                    ],
+                    [
+                        "NO",
+                        []
+                    ],
+                    [
+                        "NP",
+                        []
+                    ],
+                    [
+                        "NR",
+                        []
+                    ],
+                    [
+                        "NU",
+                        []
+                    ],
+                    [
+                        "NZ",
+                        []
+                    ],
+                    [
+                        "OM",
+                        []
+                    ],
+                    [
+                        "PA",
+                        []
+                    ],
+                    [
+                        "PE",
+                        []
+                    ],
+                    [
+                        "PF",
+                        []
+                    ],
+                    [
+                        "PG",
+                        []
+                    ],
+                    [
+                        "PH",
+                        []
+                    ],
+                    [
+                        "PK",
+                        []
+                    ],
+                    [
+                        "PL",
+                        []
+                    ],
+                    [
+                        "PM",
+                        []
+                    ],
+                    [
+                        "PN",
+                        []
+                    ],
+                    [
+                        "PR",
+                        []
+                    ],
+                    [
+                        "PS",
+                        []
+                    ],
+                    [
+                        "PT",
+                        []
+                    ],
+                    [
+                        "PW",
+                        []
+                    ],
+                    [
+                        "PY",
+                        []
+                    ],
+                    [
+                        "QA",
+                        []
+                    ],
+                    [
+                        "RE",
+                        []
+                    ],
+                    [
+                        "RO",
+                        []
+                    ],
+                    [
+                        "RS",
+                        []
+                    ],
+                    [
+                        "RU",
+                        []
+                    ],
+                    [
+                        "RW",
+                        []
+                    ],
+                    [
+                        "SA",
+                        []
+                    ],
+                    [
+                        "SB",
+                        []
+                    ],
+                    [
+                        "SC",
+                        []
+                    ],
+                    [
+                        "SD",
+                        []
+                    ],
+                    [
+                        "SE",
+                        []
+                    ],
+                    [
+                        "SG",
+                        []
+                    ],
+                    [
+                        "SH",
+                        []
+                    ],
+                    [
+                        "SI",
+                        []
+                    ],
+                    [
+                        "SJ",
+                        []
+                    ],
+                    [
+                        "SK",
+                        []
+                    ],
+                    [
+                        "SL",
+                        []
+                    ],
+                    [
+                        "SM",
+                        []
+                    ],
+                    [
+                        "SN",
+                        []
+                    ],
+                    [
+                        "SO",
+                        []
+                    ],
+                    [
+                        "SR",
+                        []
+                    ],
+                    [
+                        "SS",
+                        []
+                    ],
+                    [
+                        "ST",
+                        []
+                    ],
+                    [
+                        "SV",
+                        []
+                    ],
+                    [
+                        "SX",
+                        []
+                    ],
+                    [
+                        "SY",
+                        []
+                    ],
+                    [
+                        "SZ",
+                        []
+                    ],
+                    [
+                        "TC",
+                        []
+                    ],
+                    [
+                        "TD",
+                        []
+                    ],
+                    [
+                        "TF",
+                        []
+                    ],
+                    [
+                        "TG",
+                        []
+                    ],
+                    [
+                        "TH",
+                        []
+                    ],
+                    [
+                        "TJ",
+                        []
+                    ],
+                    [
+                        "TK",
+                        []
+                    ],
+                    [
+                        "TL",
+                        []
+                    ],
+                    [
+                        "TM",
+                        []
+                    ],
+                    [
+                        "TN",
+                        []
+                    ],
+                    [
+                        "TO",
+                        []
+                    ],
+                    [
+                        "TR",
+                        []
+                    ],
+                    [
+                        "TT",
+                        []
+                    ],
+                    [
+                        "TV",
+                        []
+                    ],
+                    [
+                        "TW",
+                        []
+                    ],
+                    [
+                        "TZ",
+                        []
+                    ],
+                    [
+                        "UA",
+                        []
+                    ],
+                    [
+                        "UG",
+                        []
+                    ],
+                    [
+                        "UM",
+                        []
+                    ],
+                    [
+                        "US",
+                        []
+                    ],
+                    [
+                        "UY",
+                        []
+                    ],
+                    [
+                        "UZ",
+                        []
+                    ],
+                    [
+                        "VA",
+                        []
+                    ],
+                    [
+                        "VC",
+                        []
+                    ],
+                    [
+                        "VE",
+                        []
+                    ],
+                    [
+                        "VG",
+                        []
+                    ],
+                    [
+                        "VI",
+                        []
+                    ],
+                    [
+                        "VN",
+                        []
+                    ],
+                    [
+                        "VU",
+                        []
+                    ],
+                    [
+                        "WF",
+                        []
+                    ],
+                    [
+                        "WS",
+                        []
+                    ],
+                    [
+                        "YE",
+                        []
+                    ],
+                    [
+                        "YT",
+                        []
+                    ],
+                    [
+                        "ZA",
+                        []
+                    ],
+                    [
+                        "ZM",
+                        []
+                    ],
+                    [
+                        "ZW",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "all",
+                "comment": " All `CountryCode`s sorted alphabetically.\n",
+                "type": "List.List Iso3166.CountryCode"
+            },
+            {
+                "name": "fromAlpha2",
+                "comment": " `CountryCode` from two-letter `ISO 3166-1 alpha-2` code.\n",
+                "type": "String.String -> Maybe.Maybe Iso3166.CountryCode"
+            },
+            {
+                "name": "fromAlpha3",
+                "comment": " `CountryCode` from three-letter `ISO 3166-1 alpha-3` code.\n",
+                "type": "String.String -> Maybe.Maybe Iso3166.CountryCode"
+            },
+            {
+                "name": "fromNumeric",
+                "comment": " `CountryCode` from `ISO 3166-1 numeric` code.\n",
+                "type": "Basics.Int -> Maybe.Maybe Iso3166.CountryCode"
+            },
+            {
+                "name": "toAlpha2",
+                "comment": " Two-letter `ISO 3166-1 alpha-2` code from `CountryCode`.\n",
+                "type": "Iso3166.CountryCode -> String.String"
+            },
+            {
+                "name": "toAlpha3",
+                "comment": " Three-letter `ISO 3166-1 alpha-3` code from `CountryCode`.\n",
+                "type": "Iso3166.CountryCode -> String.String"
+            },
+            {
+                "name": "toNumeric",
+                "comment": " `ISO 3166-1 numeric` code from `CountryCode`.\n",
+                "type": "Iso3166.CountryCode -> Basics.Int"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Iso3166.Arabic",
+        "comment": "\n@docs toName\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toName",
+                "comment": " Name for `CountryCode` in Arabic.\n\n```\nAD \"أندورا\"\nAE \"الإمارات العربية المتحدة\"\nAF \"أفغانستان\"\nAG \"أنتيغوا وباربودا\"\nAI \"أنغويلا\"\nAL \"ألبانيا\"\nAM \"أرمينيا\"\nAO \"أنغولا\"\nAQ \"القارة القطبية الجنوبية\"\nAR \"الأرجنتين\"\nAS \"ساموا الأمريكية\"\nAT \"النمسا\"\nAU \"أستراليا\"\nAW \"أروبا\"\nAX \"جزر أولاند\"\nAZ \"أذربيجان\"\nBA \"البوسنة والهرسك\"\nBB \"باربادوس\"\nBD \"بنغلاديش\"\nBE \"بلجيكا\"\nBF \"بوركينا فاسو\"\nBG \"بلغاريا\"\nBH \"البحرين\"\nBI \"بوروندي\"\nBJ \"بنين\"\nBL \"سان بارتيلمي\"\nBM \"برمودا\"\nBN \"بروناي\"\nBO \"بوليفيا\"\nBQ \"الجزر الكاريبية الهولندية\"\nBR \"البرازيل\"\nBS \"باهاماس\"\nBT \"بوتان\"\nBV \"جزيرة بوفيه\"\nBW \"بوتسوانا\"\nBY \"روسيا البيضاء\"\nBZ \"بليز\"\nCA \"كندا\"\nCC \"جزر كوكوس\"\nCD \"جمهورية الكونغو الديمقراطية\"\nCF \"جمهورية أفريقيا الوسطى\"\nCG \"جمهورية الكونغو\"\nCH \"سويسرا\"\nCI \"ساحل العاج\"\nCK \"جزر كوك\"\nCL \"تشيلي\"\nCM \"الكاميرون\"\nCN \"الصين\"\nCO \"كولومبيا\"\nCR \"كوستاريكا\"\nCU \"كوبا\"\nCV \"الرأس الأخضر\"\nCW \"كوراساو\"\nCX \"جزيرة عيد الميلاد\"\nCY \"قبرص\"\nCZ \"جمهورية التشيك\"\nDE \"ألمانيا\"\nDJ \"جيبوتي\"\nDK \"الدنمارك\"\nDM \"دومينيكا\"\nDO \"جمهورية الدومينيكان\"\nDZ \"الجزائر\"\nEC \"الإكوادور\"\nEE \"إستونيا\"\nEG \"مصر\"\nEH \"الصحراء الغربية\"\nER \"إريتريا\"\nES \"إسبانيا\"\nET \"إثيوبيا\"\nFI \"فنلندا\"\nFJ \"فيجي\"\nFK \"جزر فوكلاند\"\nFM \"ولايات ميكرونيسيا المتحدة\"\nFO \"جزر فارو\"\nFR \"فرنسا\"\nGA \"الغابون\"\nGB \"المملكة المتحدة\"\nGD \"غرينادا\"\nGE \"جورجيا\"\nGF \"غويانا الفرنسية\"\nGG \"غيرنزي\"\nGH \"غانا\"\nGI \"جبل طارق\"\nGL \"جرينلاند\"\nGM \"غامبيا\"\nGN \"غينيا\"\nGP \"غوادلوب\"\nGQ \"غينيا الاستوائية\"\nGR \"اليونان\"\nGS \"جورجيا الجنوبية وجزر ساندويتش الجنوبية\"\nGT_ \"غواتيمالا\"\nGU \"غوام\"\nGW \"غينيا بيساو\"\nGY \"غيانا\"\nHK \"هونغ كونغ\"\nHM \"جزيرة هيرد وجزر ماكدونالد\"\nHN \"هندوراس\"\nHR \"كرواتيا\"\nHT \"هايتي\"\nHU \"المجر\"\nID \"إندونيسيا\"\nIE \"أيرلندا\"\nIL \"إسرائيل\"\nIM \"جزيرة مان\"\nIN \"الهند\"\nIO \"إقليم المحيط الهندي البريطاني\"\nIQ \"العراق\"\nIR \"إيران\"\nIS \"آيسلندا\"\nIT \"إيطاليا\"\nJE \"جيرزي\"\nJM \"جامايكا\"\nJO \"الأردن\"\nJP \"اليابان\"\nKE \"كينيا\"\nKG \"قيرغيزستان\"\nKH \"كمبوديا\"\nKI \"كيريباتي\"\nKM \"جزر القمر\"\nKN \"سانت كيتس ونيفيس\"\nKP \"كوريا الشمالية\"\nKR \"كوريا الجنوبية\"\nKW \"الكويت\"\nKY \"جزر كايمان\"\nKZ \"كازاخستان\"\nLA \"لاوس\"\nLB \"لبنان\"\nLC \"سانت لوسيا\"\nLI \"ليختنشتاين\"\nLK \"سريلانكا\"\nLR \"ليبيريا\"\nLS \"ليسوتو\"\nLT_ \"ليتوانيا\"\nLU \"لوكسمبورغ\"\nLV \"لاتفيا\"\nLY \"ليبيا\"\nMA \"المغرب\"\nMC \"موناكو\"\nMD \"مولدوفا\"\nME \"الجبل الأسود\"\nMF \"تجمع سان مارتين\"\nMG \"مدغشقر\"\nMH \"جزر مارشال\"\nMK \"مقدونيا\"\nML \"مالي\"\nMM \"ميانمار\"\nMN \"منغوليا\"\nMO \"ماكاو\"\nMP \"جزر ماريانا الشمالية\"\nMQ \"مارتينيك\"\nMR \"موريتانيا\"\nMS \"مونتسرات\"\nMT \"مالطا\"\nMU \"موريشيوس\"\nMV \"جزر المالديف\"\nMW \"مالاوي\"\nMX \"المكسيك\"\nMY \"ماليزيا\"\nMZ \"موزمبيق\"\nNA \"ناميبيا\"\nNC \"كاليدونيا الجديدة\"\nNE \"النيجر\"\nNF \"جزيرة نورفولك\"\nNG \"نيجيريا\"\nNI \"نيكاراغوا\"\nNL \"هولندا\"\nNO \"النرويج\"\nNP \"نيبال\"\nNR \"ناورو\"\nNU \"نييوي\"\nNZ \"نيوزيلندا\"\nOM \"عمان\"\nPA \"بنما\"\nPE \"بيرو\"\nPF \"بولينزيا الفرنسية\"\nPG \"بابوا غينيا الجديدة\"\nPH \"الفلبين\"\nPK \"باكستان\"\nPL \"بولندا\"\nPM \"سان بيير وميكلون\"\nPN \"جزر بيتكيرن\"\nPR \"بورتوريكو\"\nPS \"فلسطين\"\nPT \"البرتغال\"\nPW \"بالاو\"\nPY \"باراغواي\"\nQA \"قطر\"\nRE \"لا ريونيون\"\nRO \"رومانيا\"\nRS \"صربيا\"\nRU \"روسيا\"\nRW \"رواندا\"\nSA \"السعودية\"\nSB \"جزر سليمان\"\nSC \"سيشل\"\nSD \"السودان\"\nSE \"السويد\"\nSG \"سنغافورة\"\nSH \"سانت هيلانة وأسينشين وتريستان دا كونا\"\nSI \"سلوفينيا\"\nSJ \"سفالبارد ويان ماين\"\nSK \"سلوفاكيا\"\nSL \"سيراليون\"\nSM \"سان مارينو\"\nSN \"السنغال\"\nSO \"الصومال\"\nSR \"سورينام\"\nSS \"جنوب السودان\"\nST \"ساو تومي وبرينسيب\"\nSV \"السلفادور\"\nSX \"سينت مارتن\"\nSY \"سوريا\"\nSZ \"إسواتيني\"\nTC \"جزر توركس وكايكوس\"\nTD \"تشاد\"\nTF \"أراض فرنسية جنوبية وأنتارتيكية\"\nTG \"توغو\"\nTH \"تايلاند\"\nTJ \"طاجيكستان\"\nTK \"توكيلاو\"\nTL \"تيمور الشرقية\"\nTM \"تركمانستان\"\nTN \"تونس\"\nTO \"تونغا\"\nTR \"تركيا\"\nTT \"ترينيداد وتوباغو\"\nTV \"توفالو\"\nTW \"تايوان\"\nTZ \"تنزانيا\"\nUA \"أوكرانيا\"\nUG \"أوغندا\"\nUM \"جزر الولايات المتحدة الصغيرة النائية\"\nUS \"الولايات المتحدة\"\nUY \"الأوروغواي\"\nUZ \"أوزبكستان\"\nVA \"الفاتيكان\"\nVC \"سانت فينسنت والغرينادين\"\nVE \"فنزويلا\"\nVG \"جزر العذراء البريطانية\"\nVI \"جزر العذراء الأمريكية\"\nVN \"فيتنام\"\nVU \"فانواتو\"\nWF \"والس وفوتونا\"\nWS \"ساموا\"\nYE \"اليمن\"\nYT \"مايوت\"\nZA \"جنوب أفريقيا\"\nZM \"زامبيا\"\nZW \"زيمبابوي\"\n```\n",
+                "type": "Iso3166.CountryCode -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Iso3166.Chinese",
+        "comment": "\n@docs toName\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toName",
+                "comment": " Name for `CountryCode` in Chinese.\n\n```\nAD \"安道尔\"\nAE \"阿联酋\"\nAF \"阿富汗\"\nAG \"安提瓜和巴布达\"\nAI \"安圭拉\"\nAL \"阿尔巴尼亚\"\nAM \"亚美尼亚\"\nAO \"安哥拉\"\nAQ \"南极洲\"\nAR \"阿根廷\"\nAS \"美属萨摩亚\"\nAT \"奥地利\"\nAU \"澳大利亚\"\nAW \"阿鲁巴\"\nAX \"奥兰\"\nAZ \"阿塞拜疆\"\nBA \"波黑\"\nBB \"巴巴多斯\"\nBD \"孟加拉国\"\nBE \"比利时\"\nBF \"布基纳法索\"\nBG \"保加利亚\"\nBH \"巴林\"\nBI \"布隆迪\"\nBJ \"贝宁\"\nBL \"圣巴泰勒米\"\nBM \"百慕大\"\nBN \"文莱\"\nBO \"玻利维亚\"\nBQ \"荷兰加勒比区\"\nBR \"巴西\"\nBS \"巴哈马\"\nBT \"不丹\"\nBV \"布韦岛\"\nBW \"博茨瓦纳\"\nBY \"白俄罗斯\"\nBZ \"伯利兹\"\nCA \"加拿大\"\nCC \"科科斯（基林）群岛\"\nCD \"刚果民主共和国\"\nCF \"中非\"\nCG \"刚果共和国\"\nCH \"瑞士\"\nCI \"科特迪瓦\"\nCK \"库克群岛\"\nCL \"智利\"\nCM \"喀麦隆\"\nCN \"中国\"\nCO \"哥伦比亚\"\nCR \"哥斯达黎加\"\nCU \"古巴\"\nCV \"佛得角\"\nCW \"库拉索\"\nCX \"圣诞岛\"\nCY \"塞浦路斯\"\nCZ \"捷克\"\nDE \"德国\"\nDJ \"吉布提\"\nDK \"丹麦\"\nDM \"多米尼克\"\nDO \"多米尼加\"\nDZ \"阿尔及利亚\"\nEC \"厄瓜多尔\"\nEE \"爱沙尼亚\"\nEG \"埃及\"\nEH \"阿拉伯撒哈拉民主共和国\"\nER \"厄立特里亚\"\nES \"西班牙\"\nET \"埃塞俄比亚\"\nFI \"芬兰\"\nFJ \"斐济\"\nFK \"福克兰群岛\"\nFM \"密克罗尼西亚联邦\"\nFO \"法罗群岛\"\nFR \"法国\"\nGA \"加蓬\"\nGB \"英国\"\nGD \"格林纳达\"\nGE \"格鲁吉亚\"\nGF \"法属圭亚那\"\nGG \"根西\"\nGH \"加纳\"\nGI \"直布罗陀\"\nGL \"格陵兰\"\nGM \"冈比亚\"\nGN \"几内亚\"\nGP \"瓜德罗普\"\nGQ \"赤道几内亚\"\nGR \"希腊\"\nGS \"南乔治亚和南桑威奇群岛\"\nGT_ \"危地马拉\"\nGU \"关岛\"\nGW \"几内亚比绍\"\nGY \"圭亚那\"\nHK \"香港\"\nHM \"赫德岛和麦克唐纳群岛\"\nHN \"洪都拉斯\"\nHR \"克罗地亚\"\nHT \"海地\"\nHU \"匈牙利\"\nID \"印尼\"\nIE \"爱尔兰\"\nIL \"以色列\"\nIM \"马恩岛\"\nIN \"印度\"\nIO \"英属印度洋领地\"\nIQ \"伊拉克\"\nIR \"伊朗\"\nIS \"冰岛\"\nIT \"意大利\"\nJE \"泽西\"\nJM \"牙买加\"\nJO \"约旦\"\nJP \"日本\"\nKE \"肯尼亚\"\nKG \"吉尔吉斯斯坦\"\nKH \"柬埔寨\"\nKI \"基里巴斯\"\nKM \"科摩罗\"\nKN \"圣基茨和尼维斯\"\nKP \"朝鲜\"\nKR \"韩国\"\nKW \"科威特\"\nKY \"开曼群岛\"\nKZ \"哈萨克斯坦\"\nLA \"老挝\"\nLB \"黎巴嫩\"\nLC \"圣卢西亚\"\nLI \"列支敦士登\"\nLK \"斯里兰卡\"\nLR \"利比里亚\"\nLS \"莱索托\"\nLT_ \"立陶宛\"\nLU \"卢森堡\"\nLV \"拉脱维亚\"\nLY \"利比亚\"\nMA \"摩洛哥\"\nMC \"摩纳哥\"\nMD \"摩尔多瓦\"\nME \"黑山\"\nMF \"法属圣马丁\"\nMG \"马达加斯加\"\nMH \"马绍尔群岛\"\nMK \"北马其顿\"\nML \"马里\"\nMM \"缅甸\"\nMN \"蒙古国\"\nMO \"澳门\"\nMP \"北马里亚纳群岛\"\nMQ \"马提尼克\"\nMR \"毛里塔尼亚\"\nMS \"蒙特塞拉特\"\nMT \"马耳他\"\nMU \"毛里求斯\"\nMV \"马尔代夫\"\nMW \"马拉维\"\nMX \"墨西哥\"\nMY \"马来西亚\"\nMZ \"莫桑比克\"\nNA \"纳米比亚\"\nNC \"新喀里多尼亚\"\nNE \"尼日尔\"\nNF \"诺福克岛\"\nNG \"尼日利亚\"\nNI \"尼加拉瓜\"\nNL \"荷兰\"\nNO \"挪威\"\nNP \"尼泊尔\"\nNR \"瑙鲁\"\nNU \"纽埃\"\nNZ \"新西兰\"\nOM \"阿曼\"\nPA \"巴拿马\"\nPE \"秘鲁\"\nPF \"法属波利尼西亚\"\nPG \"巴布亚新几内亚\"\nPH \"菲律宾\"\nPK \"巴基斯坦\"\nPL \"波兰\"\nPM \"圣皮埃尔和密克隆\"\nPN \"皮特凯恩群岛\"\nPR \"波多黎各\"\nPS \"巴勒斯坦\"\nPT \"葡萄牙\"\nPW \"帕劳\"\nPY \"巴拉圭\"\nQA \"卡塔尔\"\nRE \"留尼汪\"\nRO \"罗马尼亚\"\nRS \"塞尔维亚\"\nRU \"俄罗斯\"\nRW \"卢旺达\"\nSA \"沙特阿拉伯\"\nSB \"所罗门群岛\"\nSC \"塞舌尔\"\nSD \"苏丹\"\nSE \"瑞典\"\nSG \"新加坡\"\nSH \"圣赫勒拿、阿森松和特里斯坦-达库尼亚\"\nSI \"斯洛文尼亚\"\nSJ \"斯瓦尔巴和扬马延\"\nSK \"斯洛伐克\"\nSL \"塞拉利昂\"\nSM \"圣马力诺\"\nSN \"塞内加尔\"\nSO \"索马里\"\nSR \"苏里南\"\nSS \"南苏丹\"\nST \"圣多美和普林西比\"\nSV \"萨尔瓦多\"\nSX \"荷属圣马丁\"\nSY \"叙利亚\"\nSZ \"斯威士兰\"\nTC \"特克斯和凯科斯群岛\"\nTD \"乍得\"\nTF \"法属南部和南极领地\"\nTG \"多哥\"\nTH \"泰国\"\nTJ \"塔吉克斯坦\"\nTK \"托克劳\"\nTL \"东帝汶\"\nTM \"土库曼斯坦\"\nTN \"突尼斯\"\nTO \"汤加\"\nTR \"土耳其\"\nTT \"特立尼达和多巴哥\"\nTV \"图瓦卢\"\nTW \"中国台湾省\"\nTZ \"坦桑尼亚\"\nUA \"乌克兰\"\nUG \"乌干达\"\nUM \"美国本土外小岛屿\"\nUS \"美国\"\nUY \"乌拉圭\"\nUZ \"乌兹别克斯坦\"\nVA \"梵蒂冈\"\nVC \"圣文森特和格林纳丁斯\"\nVE \"委内瑞拉\"\nVG \"英属维尔京群岛\"\nVI \"美属维尔京群岛\"\nVN \"越南\"\nVU \"瓦努阿图\"\nWF \"瓦利斯和富图纳\"\nWS \"萨摩亚\"\nYE \"也门\"\nYT \"马约特\"\nZA \"南非\"\nZM \"赞比亚\"\nZW \"津巴布韦\"\n```\n",
+                "type": "Iso3166.CountryCode -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Iso3166.Czech",
+        "comment": "\n@docs toName\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toName",
+                "comment": " Name for `CountryCode` in Czech.\n\n```\nAD \"Andorra\"\nAE \"Spojené arabské emiráty\"\nAF \"Afghánistán\"\nAG \"Antigua a Barbuda\"\nAI \"Anguilla\"\nAL \"Albánie\"\nAM \"Arménie\"\nAO \"Angola\"\nAQ \"Antarktida\"\nAR \"Argentina\"\nAS \"Americká Samoa\"\nAT \"Rakousko\"\nAU \"Austrálie\"\nAW \"Aruba\"\nAX \"Alandy\"\nAZ \"Ázerbájdžán\"\nBA \"Bosna a Hercegovina\"\nBB \"Barbados\"\nBD \"Bangladéš\"\nBE \"Belgie\"\nBF \"Burkina Faso\"\nBG \"Bulharsko\"\nBH \"Bahrajn\"\nBI \"Burundi\"\nBJ \"Benin\"\nBL \"Svatý Bartoloměj\"\nBM \"Bermudy\"\nBN \"Brunej\"\nBO \"Bolívie\"\nBQ \"Bonaire, Svatý Eustach a Saba\"\nBR \"Brazílie\"\nBS \"Bahamy\"\nBT \"Bhútán\"\nBV \"Bouvetův ostrov\"\nBW \"Botswana\"\nBY \"Bělorusko\"\nBZ \"Belize\"\nCA \"Kanada\"\nCC \"Kokosové ostrovy\"\nCD \"Demokratická republika Kongo\"\nCF \"Středoafrická republika\"\nCG \"Kongo\"\nCH \"Švýcarsko\"\nCI \"Pobřeží slonoviny\"\nCK \"Cookovy ostrovy\"\nCL \"Chile\"\nCM \"Kamerun\"\nCN \"Čína\"\nCO \"Kolumbie\"\nCR \"Kostarika\"\nCU \"Kuba\"\nCV \"Kapverdy\"\nCW \"Curaçao\"\nCX \"Vánoční ostrov\"\nCY \"Kypr\"\nCZ \"Česko\"\nDE \"Německo\"\nDJ \"Džibutsko\"\nDK \"Dánsko\"\nDM \"Dominika\"\nDO \"Dominikánská republika\"\nDZ \"Alžírsko\"\nEC \"Ekvádor\"\nEE \"Estonsko\"\nEG \"Egypt\"\nEH \"Západní Sahara\"\nER \"Eritrea\"\nES \"Španělsko\"\nET \"Etiopie\"\nFI \"Finsko\"\nFJ \"Fidži\"\nFK \"Falklandy (Malvíny)\"\nFM \"Mikronésie\"\nFO \"Faerské ostrovy\"\nFR \"Francie\"\nGA \"Gabon\"\nGB \"Spojené království Velké Británie a Severního Irska\"\nGD \"Grenada\"\nGE \"Gruzie\"\nGF \"Francouzská Guyana\"\nGG \"Guernsey\"\nGH \"Ghana\"\nGI \"Gibraltar\"\nGL \"Grónsko\"\nGM \"Gambie\"\nGN \"Guinea\"\nGP \"Guadeloupe\"\nGQ \"Rovníková Guinea\"\nGR \"Řecko\"\nGS \"Jižní Georgie a Jižní Sandwichovy ostrovy\"\nGT_ \"Guatemala\"\nGU \"Guam\"\nGW \"Guinea-Bissau\"\nGY \"Guyana\"\nHK \"Hongkong\"\nHM \"Heardův ostrov a McDonaldovy ostrovy\"\nHN \"Honduras\"\nHR \"Chorvatsko\"\nHT \"Haiti\"\nHU \"Maďarsko\"\nID \"Indonésie\"\nIE \"Irsko\"\nIL \"Izrael\"\nIM \"Ostrov Man\"\nIN \"Indie\"\nIO \"Britské indickooceánské území\"\nIQ \"Irák\"\nIR \"Írán\"\nIS \"Island\"\nIT \"Itálie\"\nJE \"Jersey\"\nJM \"Jamajka\"\nJO \"Jordánsko\"\nJP \"Japonsko\"\nKE \"Keňa\"\nKG \"Kyrgyzstán\"\nKH \"Kambodža\"\nKI \"Kiribati\"\nKM \"Komory\"\nKN \"Svatý Kryštof a Nevis\"\nKP \"Severní Korea\"\nKR \"Jižní Korea\"\nKW \"Kuvajt\"\nKY \"Kajmanské ostrovy\"\nKZ \"Kazachstán\"\nLA \"Laos\"\nLB \"Libanon\"\nLC \"Svatá Lucie\"\nLI \"Lichtenštejnsko\"\nLK \"Srí Lanka\"\nLR \"Libérie\"\nLS \"Lesotho\"\nLT_ \"Litva\"\nLU \"Lucembursko\"\nLV \"Lotyšsko\"\nLY \"Libye\"\nMA \"Maroko\"\nMC \"Monako\"\nMD \"Moldavsko\"\nME \"Černá Hora\"\nMF \"Svatý Martin (francouzská část)\"\nMG \"Madagaskar\"\nMH \"Marshallovy ostrovy\"\nMK \"Severní Makedonie\"\nML \"Mali\"\nMM \"Myanmar\"\nMN \"Mongolsko\"\nMO \"Macao\"\nMP \"Severní Mariany\"\nMQ \"Martinik\"\nMR \"Mauritánie\"\nMS \"Montserrat\"\nMT \"Malta\"\nMU \"Mauricius\"\nMV \"Maledivy\"\nMW \"Malawi\"\nMX \"Mexiko\"\nMY \"Malajsie\"\nMZ \"Mosambik\"\nNA \"Namibie\"\nNC \"Nová Kaledonie\"\nNE \"Niger\"\nNF \"Norfolk\"\nNG \"Nigérie\"\nNI \"Nikaragua\"\nNL \"Nizozemsko\"\nNO \"Norsko\"\nNP \"Nepál\"\nNR \"Nauru\"\nNU \"Niue\"\nNZ \"Nový Zéland\"\nOM \"Omán\"\nPA \"Panama\"\nPE \"Peru\"\nPF \"Francouzská Polynésie\"\nPG \"Papua Nová Guinea\"\nPH \"Filipíny\"\nPK \"Pákistán\"\nPL \"Polsko\"\nPM \"Saint Pierre a Miquelon\"\nPN \"Pitcairnovy ostrovy\"\nPR \"Portoriko\"\nPS \"Palestinská autonomie\"\nPT \"Portugalsko\"\nPW \"Palau\"\nPY \"Paraguay\"\nQA \"Katar\"\nRE \"Réunion\"\nRO \"Rumunsko\"\nRS \"Srbsko\"\nRU \"Rusko\"\nRW \"Rwanda\"\nSA \"Saúdská Arábie\"\nSB \"Šalomounovy ostrovy\"\nSC \"Seychely\"\nSD \"Súdán\"\nSE \"Švédsko\"\nSG \"Singapur\"\nSH \"Svatá Helena, Ascension a Tristan da Cunha\"\nSI \"Slovinsko\"\nSJ \"Špicberky a Jan Mayen\"\nSK \"Slovensko\"\nSL \"Sierra Leone\"\nSM \"San Marino\"\nSN \"Senegal\"\nSO \"Somálsko\"\nSR \"Surinam\"\nSS \"Jižní Súdán\"\nST \"Svatý Tomáš a Princův ostrov\"\nSV \"Salvador\"\nSX \"Svatý Martin (nizozemská část)\"\nSY \"Sýrie\"\nSZ \"Svazijsko\"\nTC \"Turks a Caicos\"\nTD \"Čad\"\nTF \"Francouzská jižní a antarktická území\"\nTG \"Togo\"\nTH \"Thajsko\"\nTJ \"Tádžikistán\"\nTK \"Tokelau\"\nTL \"Východní Timor\"\nTM \"Turkmenistán\"\nTN \"Tunisko\"\nTO \"Tonga\"\nTR \"Turecko\"\nTT \"Trinidad a Tobago\"\nTV \"Tuvalu\"\nTW \"Tchaj-wan\"\nTZ \"Tanzanie\"\nUA \"Ukrajina\"\nUG \"Uganda\"\nUM \"Menší odlehlé ostrovy USA\"\nUS \"Spojené státy americké\"\nUY \"Uruguay\"\nUZ \"Uzbekistán\"\nVA \"Vatikán\"\nVC \"Svatý Vincenc a Grenadiny\"\nVE \"Venezuela\"\nVG \"Britské Panenské ostrovy\"\nVI \"Americké Panenské ostrovy\"\nVN \"Vietnam\"\nVU \"Vanuatu\"\nWF \"Wallis a Futuna\"\nWS \"Samoa\"\nYE \"Jemen\"\nYT \"Mayotte\"\nZA \"Jihoafrická republika\"\nZM \"Zambie\"\nZW \"Zimbabwe\"\n```\n",
+                "type": "Iso3166.CountryCode -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Iso3166.Danish",
+        "comment": "\n@docs toName\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toName",
+                "comment": " Name for `CountryCode` in Danish.\n\n```\nAD \"Andorra\"\nAE \"Forenede Arabiske Emirater\"\nAF \"Afghanistan\"\nAG \"Antigua og Barbuda\"\nAI \"Anguilla\"\nAL \"Albanien\"\nAM \"Armenien\"\nAO \"Angola\"\nAQ \"Antarktika (Antarktis)\"\nAR \"Argentina\"\nAS \"Amerikansk Samoa\"\nAT \"Østrig\"\nAU \"Australien\"\nAW \"Aruba\"\nAX \"Ålandsøerne\"\nAZ \"Aserbajdsjan\"\nBA \"Bosnien-Hercegovina\"\nBB \"Barbados\"\nBD \"Bangladesh\"\nBE \"Belgien\"\nBF \"Burkina Faso\"\nBG \"Bulgarien\"\nBH \"Bahrain\"\nBI \"Burundi\"\nBJ \"Benin\"\nBL \"Saint Barthélemy\"\nBM \"Bermuda\"\nBN \"Brunei\"\nBO \"Bolivia\"\nBQ \"Nederlandske Antiller\"\nBR \"Brasilien\"\nBS \"Bahamas\"\nBT \"Bhutan\"\nBV \"Bouvetøen\"\nBW \"Botswana\"\nBY \"Hviderusland\"\nBZ \"Belize\"\nCA \"Canada\"\nCC \"Cocosøerne\"\nCD \"Demokratiske Republik Congo\"\nCF \"Centralafrikanske Republik\"\nCG \"Congo\"\nCH \"Schweiz\"\nCI \"Elfenbenskysten\"\nCK \"Cookøerne\"\nCL \"Chile\"\nCM \"Cameroun\"\nCN \"Kina\"\nCO \"Colombia\"\nCR \"Costa Rica\"\nCU \"Cuba\"\nCV \"Kap Verde\"\nCW \"Curaçao\"\nCX \"Juleøen\"\nCY \"Cypern\"\nCZ \"Tjekkiet\"\nDE \"Tyskland\"\nDJ \"Djibouti\"\nDK \"Danmark\"\nDM \"Dominica\"\nDO \"Dominikanske Republik\"\nDZ \"Algeriet\"\nEC \"Ecuador\"\nEE \"Estland\"\nEG \"Egypten\"\nEH \"Vestsahara\"\nER \"Eritrea\"\nES \"Spanien\"\nET \"Etiopien\"\nFI \"Finland\"\nFJ \"Fiji\"\nFK \"Falklandsøerne\"\nFM \"Mikronesien\"\nFO \"Færøerne\"\nFR \"Frankrig\"\nGA \"Gabon\"\nGB \"Storbritannien\"\nGD \"Grenada\"\nGE \"Georgien\"\nGF \"Fransk Guiana\"\nGG \"Guernsey\"\nGH \"Ghana\"\nGI \"Gibraltar\"\nGL \"Grønland\"\nGM \"Gambia\"\nGN \"Guinea\"\nGP \"Guadeloupe\"\nGQ \"Ækvatorialguinea\"\nGR \"Grækenland\"\nGS \"South Georgia og South Sandwich Islands\"\nGT_ \"Guatemala\"\nGU \"Guam\"\nGW \"Guinea-Bissau\"\nGY \"Guyana\"\nHK \"Hongkong\"\nHM \"Heard-øen og McDonald-øerne\"\nHN \"Honduras\"\nHR \"Kroatien\"\nHT \"Haiti\"\nHU \"Ungarn\"\nID \"Indonesien\"\nIE \"Irland\"\nIL \"Israel\"\nIM \"Isle of Man\"\nIN \"Indien\"\nIO \"British Indian Ocean Territory\"\nIQ \"Irak\"\nIR \"Iran\"\nIS \"Island\"\nIT \"Italien\"\nJE \"Jersey\"\nJM \"Jamaica\"\nJO \"Jordan\"\nJP \"Japan\"\nKE \"Kenya\"\nKG \"Kirgisistan\"\nKH \"Cambodja\"\nKI \"Kiribati\"\nKM \"Comorerne\"\nKN \"Saint Kitts og Nevis\"\nKP \"Nordkorea\"\nKR \"Sydkorea\"\nKW \"Kuwait\"\nKY \"Caymanøerne\"\nKZ \"Kasakhstan\"\nLA \"Laos\"\nLB \"Libanon\"\nLC \"Saint Lucia\"\nLI \"Liechtenstein\"\nLK \"Sri Lanka\"\nLR \"Liberia\"\nLS \"Lesotho\"\nLT_ \"Litauen\"\nLU \"Luxembourg\"\nLV \"Letland\"\nLY \"Libyen\"\nMA \"Marokko\"\nMC \"Monaco\"\nMD \"Moldova\"\nME \"Montenegro\"\nMF \"Saint Martin\"\nMG \"Madagaskar\"\nMH \"Marshalløerne\"\nMK \"Nordmakedonien\"\nML \"Mali\"\nMM \"Burma\"\nMN \"Mongoliet\"\nMO \"Macao\"\nMP \"Nordmarianerne\"\nMQ \"Martinique\"\nMR \"Mauretanien\"\nMS \"Montserrat\"\nMT \"Malta\"\nMU \"Mauritius\"\nMV \"Maldiverne\"\nMW \"Malawi\"\nMX \"Mexico\"\nMY \"Malaysia\"\nMZ \"Mozambique\"\nNA \"Namibia\"\nNC \"Ny Kaledonien\"\nNE \"Niger\"\nNF \"Norfolk Island\"\nNG \"Nigeria\"\nNI \"Nicaragua\"\nNL \"Holland\"\nNO \"Norge\"\nNP \"Nepal\"\nNR \"Nauru\"\nNU \"Niue\"\nNZ \"New Zealand\"\nOM \"Oman\"\nPA \"Panama\"\nPE \"Peru\"\nPF \"Fransk Polynesien\"\nPG \"Papua Ny Guinea\"\nPH \"Filippinerne\"\nPK \"Pakistan\"\nPL \"Polen\"\nPM \"Saint-Pierre og Miquelon\"\nPN \"Pitcairn\"\nPR \"Puerto Rico\"\nPS \"Palæstina\"\nPT \"Portugal\"\nPW \"Palau\"\nPY \"Paraguay\"\nQA \"Qatar\"\nRE \"Réunion\"\nRO \"Rumænien\"\nRS \"Serbien\"\nRU \"Rusland\"\nRW \"Rwanda\"\nSA \"Saudi-Arabien\"\nSB \"Salomonøerne\"\nSC \"Seychellerne\"\nSD \"Sudan\"\nSE \"Sverige\"\nSG \"Singapore\"\nSH \"Sankt Helena\"\nSI \"Slovenien\"\nSJ \"Svalbard og Jan Mayen (Norge)\"\nSK \"Slovakiet\"\nSL \"Sierra Leone\"\nSM \"San Marino\"\nSN \"Senegal\"\nSO \"Somalia\"\nSR \"Surinam\"\nSS \"Sydsudan\"\nST \"São Tomé og Príncipe\"\nSV \"El Salvador\"\nSX \"Sint Maarten\"\nSY \"Syrien\"\nSZ \"Swaziland\"\nTC \"Turks- og Caicosøerne\"\nTD \"Tchad\"\nTF \"Franske Sydterritorier\"\nTG \"Togo\"\nTH \"Thailand\"\nTJ \"Tadsjikistan\"\nTK \"Tokelau\"\nTL \"Østtimor\"\nTM \"Turkmenistan\"\nTN \"Tunesien\"\nTO \"Tonga\"\nTR \"Tyrkiet\"\nTT \"Trinidad og Tobago\"\nTV \"Tuvalu\"\nTW \"Taiwan (Republikken Kina)\"\nTZ \"Tanzania\"\nUA \"Ukraine\"\nUG \"Uganda\"\nUM \"USA's ydre småøer\"\nUS \"USA\"\nUY \"Uruguay\"\nUZ \"Usbekistan\"\nVA \"Vatikanstaten\"\nVC \"Saint Vincent og Grenadinerne\"\nVE \"Venezuela\"\nVG \"Britiske Jomfruøer\"\nVI \"Amerikanske Jomfruøer\"\nVN \"Vietnam\"\nVU \"Vanuatu\"\nWF \"Wallis og Futuna\"\nWS \"Samoa\"\nYE \"Yemen\"\nYT \"Mayotte\"\nZA \"Sydafrika\"\nZM \"Zambia\"\nZW \"Zimbabwe\"\n```\n",
+                "type": "Iso3166.CountryCode -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Iso3166.Dutch",
+        "comment": "\n@docs toName\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toName",
+                "comment": " Name for `CountryCode` in Dutch.\n\n```\nAD \"Andorra\"\nAE \"Verenigde Arabische Emiraten\"\nAF \"Afghanistan\"\nAG \"Antigua en Barbuda\"\nAI \"Anguilla\"\nAL \"Albanië\"\nAM \"Armenië\"\nAO \"Angola\"\nAQ \"Antarctica\"\nAR \"Argentinië\"\nAS \"Amerikaans-Samoa\"\nAT \"Oostenrijk\"\nAU \"Australië\"\nAW \"Aruba\"\nAX \"Åland\"\nAZ \"Azerbeidzjan\"\nBA \"Bosnië en Herzegovina\"\nBB \"Barbados\"\nBD \"Bangladesh\"\nBE \"België\"\nBF \"Burkina Faso\"\nBG \"Bulgarije\"\nBH \"Bahrein\"\nBI \"Burundi\"\nBJ \"Benin\"\nBL \"Saint-Barthélemy\"\nBM \"Bermuda\"\nBN \"Brunei\"\nBO \"Bolivia\"\nBQ \"Caribisch Nederland\"\nBR \"Brazilië\"\nBS \"Bahama's\"\nBT \"Bhutan\"\nBV \"Bouveteiland\"\nBW \"Botswana\"\nBY \"Wit-Rusland\"\nBZ \"Belize\"\nCA \"Canada\"\nCC \"Cocoseilanden\"\nCD \"Congo-Kinshasa\"\nCF \"Centraal-Afrikaanse Republiek\"\nCG \"Congo-Brazzaville\"\nCH \"Zwitserland\"\nCI \"Ivoorkust\"\nCK \"Cookeilanden\"\nCL \"Chili\"\nCM \"Kameroen\"\nCN \"China\"\nCO \"Colombia\"\nCR \"Costa Rica\"\nCU \"Cuba\"\nCV \"Kaapverdië\"\nCW \"Curaçao\"\nCX \"Christmaseiland\"\nCY \"Cyprus\"\nCZ \"Tsjechië\"\nDE \"Duitsland\"\nDJ \"Djibouti\"\nDK \"Denemarken\"\nDM \"Dominica\"\nDO \"Dominicaanse Republiek\"\nDZ \"Algerije\"\nEC \"Ecuador\"\nEE \"Estland\"\nEG \"Egypte\"\nEH \"Westelijke Sahara\"\nER \"Eritrea\"\nES \"Spanje\"\nET \"Ethiopië\"\nFI \"Finland\"\nFJ \"Fiji\"\nFK \"Falklandeilanden\"\nFM \"Micronesia\"\nFO \"Faeröer\"\nFR \"Frankrijk\"\nGA \"Gabon\"\nGB \"Verenigd Koninkrijk\"\nGD \"Grenada\"\nGE \"Georgië\"\nGF \"Frans-Guyana\"\nGG \"Guernsey\"\nGH \"Ghana\"\nGI \"Gibraltar\"\nGL \"Groenland\"\nGM \"Gambia\"\nGN \"Guinee\"\nGP \"Guadeloupe\"\nGQ \"Equatoriaal-Guinea\"\nGR \"Griekenland\"\nGS \"Zuid-Georgia en de Zuidelijke Sandwicheilanden\"\nGT_ \"Guatemala\"\nGU \"Guam\"\nGW \"Guinee-Bissau\"\nGY \"Guyana\"\nHK \"Hongkong\"\nHM \"Heard en McDonaldeilanden\"\nHN \"Honduras\"\nHR \"Kroatië\"\nHT \"Haïti\"\nHU \"Hongarije\"\nID \"Indonesië\"\nIE \"Ierland\"\nIL \"Israël\"\nIM \"Man\"\nIN \"India\"\nIO \"Brits Indische Oceaanterritorium\"\nIQ \"Irak\"\nIR \"Iran\"\nIS \"IJsland\"\nIT \"Italië\"\nJE \"Jersey\"\nJM \"Jamaica\"\nJO \"Jordanië\"\nJP \"Japan\"\nKE \"Kenia\"\nKG \"Kirgizië\"\nKH \"Cambodja\"\nKI \"Kiribati\"\nKM \"Comoren\"\nKN \"Saint Kitts en Nevis\"\nKP \"Noord-Korea\"\nKR \"Zuid-Korea\"\nKW \"Koeweit\"\nKY \"Kaaimaneilanden\"\nKZ \"Kazachstan\"\nLA \"Laos\"\nLB \"Libanon\"\nLC \"Saint Lucia\"\nLI \"Liechtenstein\"\nLK \"Sri Lanka\"\nLR \"Liberia\"\nLS \"Lesotho\"\nLT_ \"Litouwen\"\nLU \"Luxemburg\"\nLV \"Letland\"\nLY \"Libië\"\nMA \"Marokko\"\nMC \"Monaco\"\nMD \"Moldavië\"\nME \"Montenegro\"\nMF \"Sint-Maarten\"\nMG \"Madagaskar\"\nMH \"Marshalleilanden\"\nMK \"Noord-Macedonië\"\nML \"Mali\"\nMM \"Myanmar\"\nMN \"Mongolië\"\nMO \"Macau\"\nMP \"Noordelijke Marianen\"\nMQ \"Martinique\"\nMR \"Mauritanië\"\nMS \"Montserrat\"\nMT \"Malta\"\nMU \"Mauritius\"\nMV \"Maldiven\"\nMW \"Malawi\"\nMX \"Mexico\"\nMY \"Maleisië\"\nMZ \"Mozambique\"\nNA \"Namibië\"\nNC \"Nieuw-Caledonië\"\nNE \"Niger\"\nNF \"Norfolk\"\nNG \"Nigeria\"\nNI \"Nicaragua\"\nNL \"Nederland\"\nNO \"Noorwegen\"\nNP \"Nepal\"\nNR \"Nauru\"\nNU \"Niue\"\nNZ \"Nieuw-Zeeland\"\nOM \"Oman\"\nPA \"Panama\"\nPE \"Peru\"\nPF \"Frans-Polynesië\"\nPG \"Papoea-Nieuw-Guinea\"\nPH \"Filipijnen\"\nPK \"Pakistan\"\nPL \"Polen\"\nPM \"Saint-Pierre en Miquelon\"\nPN \"Pitcairneilanden\"\nPR \"Puerto Rico\"\nPS \"Palestina\"\nPT \"Portugal\"\nPW \"Palau\"\nPY \"Paraguay\"\nQA \"Qatar\"\nRE \"Réunion\"\nRO \"Roemenië\"\nRS \"Servië\"\nRU \"Rusland\"\nRW \"Rwanda\"\nSA \"Saoedi-Arabië\"\nSB \"Salomonseilanden\"\nSC \"Seychellen\"\nSD \"Soedan\"\nSE \"Zweden\"\nSG \"Singapore\"\nSH \"Sint-Helena, Ascension en Tristan da Cunha\"\nSI \"Slovenië\"\nSJ \"Spitsbergen en Jan Mayen\"\nSK \"Slowakije\"\nSL \"Sierra Leone\"\nSM \"San Marino\"\nSN \"Senegal\"\nSO \"Somalië\"\nSR \"Suriname\"\nSS \"Zuid-Soedan\"\nST \"Sao Tomé en Principe\"\nSV \"El Salvador\"\nSX \"Sint Maarten\"\nSY \"Syrië\"\nSZ \"Swaziland\"\nTC \"Turks- en Caicoseilanden\"\nTD \"Tsjaad\"\nTF \"Franse Zuidelijke en Antarctische Gebieden\"\nTG \"Togo\"\nTH \"Thailand\"\nTJ \"Tadzjikistan\"\nTK \"Tokelau\"\nTL \"Oost-Timor\"\nTM \"Turkmenistan\"\nTN \"Tunesië\"\nTO \"Tonga\"\nTR \"Turkije\"\nTT \"Trinidad en Tobago\"\nTV \"Tuvalu\"\nTW \"Taiwan\"\nTZ \"Tanzania\"\nUA \"Oekraïne\"\nUG \"Oeganda\"\nUM \"Kleine afgelegen eilanden van de Verenigde Staten\"\nUS \"Verenigde Staten\"\nUY \"Uruguay\"\nUZ \"Oezbekistan\"\nVA \"Vaticaanstad\"\nVC \"Saint Vincent en de Grenadines\"\nVE \"Venezuela\"\nVG \"Britse Maagdeneilanden\"\nVI \"Amerikaanse Maagdeneilanden\"\nVN \"Vietnam\"\nVU \"Vanuatu\"\nWF \"Wallis en Futuna\"\nWS \"Samoa\"\nYE \"Jemen\"\nYT \"Mayotte\"\nZA \"Zuid-Afrika\"\nZM \"Zambia\"\nZW \"Zimbabwe\"\n```\n",
+                "type": "Iso3166.CountryCode -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Iso3166.English",
+        "comment": "\n@docs toName\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toName",
+                "comment": " Name for `CountryCode` in English.\n\n```\nAD \"Andorra\"\nAE \"United Arab Emirates\"\nAF \"Afghanistan\"\nAG \"Antigua and Barbuda\"\nAI \"Anguilla\"\nAL \"Albania\"\nAM \"Armenia\"\nAO \"Angola\"\nAQ \"Antarctica\"\nAR \"Argentina\"\nAS \"American Samoa\"\nAT \"Austria\"\nAU \"Australia\"\nAW \"Aruba\"\nAX \"Åland Islands\"\nAZ \"Azerbaijan\"\nBA \"Bosnia and Herzegovina\"\nBB \"Barbados\"\nBD \"Bangladesh\"\nBE \"Belgium\"\nBF \"Burkina Faso\"\nBG \"Bulgaria\"\nBH \"Bahrain\"\nBI \"Burundi\"\nBJ \"Benin\"\nBL \"Saint Barthélemy\"\nBM \"Bermuda\"\nBN \"Brunei Darussalam\"\nBO \"Bolivia (Plurinational State of)\"\nBQ \"Bonaire, Sint Eustatius and Saba\"\nBR \"Brazil\"\nBS \"Bahamas\"\nBT \"Bhutan\"\nBV \"Bouvet Island\"\nBW \"Botswana\"\nBY \"Belarus\"\nBZ \"Belize\"\nCA \"Canada\"\nCC \"Cocos (Keeling) Islands\"\nCD \"Congo, Democratic Republic of the\"\nCF \"Central African Republic\"\nCG \"Congo\"\nCH \"Switzerland\"\nCI \"Côte d'Ivoire\"\nCK \"Cook Islands\"\nCL \"Chile\"\nCM \"Cameroon\"\nCN \"China\"\nCO \"Colombia\"\nCR \"Costa Rica\"\nCU \"Cuba\"\nCV \"Cabo Verde\"\nCW \"Curaçao\"\nCX \"Christmas Island\"\nCY \"Cyprus\"\nCZ \"Czechia\"\nDE \"Germany\"\nDJ \"Djibouti\"\nDK \"Denmark\"\nDM \"Dominica\"\nDO \"Dominican Republic\"\nDZ \"Algeria\"\nEC \"Ecuador\"\nEE \"Estonia\"\nEG \"Egypt\"\nEH \"Western Sahara\"\nER \"Eritrea\"\nES \"Spain\"\nET \"Ethiopia\"\nFI \"Finland\"\nFJ \"Fiji\"\nFK \"Falkland Islands (Malvinas)\"\nFM \"Micronesia (Federated States of)\"\nFO \"Faroe Islands\"\nFR \"France\"\nGA \"Gabon\"\nGB \"United Kingdom of Great Britain and Northern Ireland\"\nGD \"Grenada\"\nGE \"Georgia\"\nGF \"French Guiana\"\nGG \"Guernsey\"\nGH \"Ghana\"\nGI \"Gibraltar\"\nGL \"Greenland\"\nGM \"Gambia\"\nGN \"Guinea\"\nGP \"Guadeloupe\"\nGQ \"Equatorial Guinea\"\nGR \"Greece\"\nGS \"South Georgia and the South Sandwich Islands\"\nGT_ \"Guatemala\"\nGU \"Guam\"\nGW \"Guinea-Bissau\"\nGY \"Guyana\"\nHK \"Hong Kong\"\nHM \"Heard Island and McDonald Islands\"\nHN \"Honduras\"\nHR \"Croatia\"\nHT \"Haiti\"\nHU \"Hungary\"\nID \"Indonesia\"\nIE \"Ireland\"\nIL \"Israel\"\nIM \"Isle of Man\"\nIN \"India\"\nIO \"British Indian Ocean Territory\"\nIQ \"Iraq\"\nIR \"Iran (Islamic Republic of)\"\nIS \"Iceland\"\nIT \"Italy\"\nJE \"Jersey\"\nJM \"Jamaica\"\nJO \"Jordan\"\nJP \"Japan\"\nKE \"Kenya\"\nKG \"Kyrgyzstan\"\nKH \"Cambodia\"\nKI \"Kiribati\"\nKM \"Comoros\"\nKN \"Saint Kitts and Nevis\"\nKP \"Korea (Democratic People's Republic of)\"\nKR \"Korea, Republic of\"\nKW \"Kuwait\"\nKY \"Cayman Islands\"\nKZ \"Kazakhstan\"\nLA \"Lao People's Democratic Republic\"\nLB \"Lebanon\"\nLC \"Saint Lucia\"\nLI \"Liechtenstein\"\nLK \"Sri Lanka\"\nLR \"Liberia\"\nLS \"Lesotho\"\nLT_ \"Lithuania\"\nLU \"Luxembourg\"\nLV \"Latvia\"\nLY \"Libya\"\nMA \"Morocco\"\nMC \"Monaco\"\nMD \"Moldova, Republic of\"\nME \"Montenegro\"\nMF \"Saint Martin (French part)\"\nMG \"Madagascar\"\nMH \"Marshall Islands\"\nMK \"North Macedonia\"\nML \"Mali\"\nMM \"Myanmar\"\nMN \"Mongolia\"\nMO \"Macao\"\nMP \"Northern Mariana Islands\"\nMQ \"Martinique\"\nMR \"Mauritania\"\nMS \"Montserrat\"\nMT \"Malta\"\nMU \"Mauritius\"\nMV \"Maldives\"\nMW \"Malawi\"\nMX \"Mexico\"\nMY \"Malaysia\"\nMZ \"Mozambique\"\nNA \"Namibia\"\nNC \"New Caledonia\"\nNE \"Niger\"\nNF \"Norfolk Island\"\nNG \"Nigeria\"\nNI \"Nicaragua\"\nNL \"Netherlands\"\nNO \"Norway\"\nNP \"Nepal\"\nNR \"Nauru\"\nNU \"Niue\"\nNZ \"New Zealand\"\nOM \"Oman\"\nPA \"Panama\"\nPE \"Peru\"\nPF \"French Polynesia\"\nPG \"Papua New Guinea\"\nPH \"Philippines\"\nPK \"Pakistan\"\nPL \"Poland\"\nPM \"Saint Pierre and Miquelon\"\nPN \"Pitcairn\"\nPR \"Puerto Rico\"\nPS \"Palestine, State of\"\nPT \"Portugal\"\nPW \"Palau\"\nPY \"Paraguay\"\nQA \"Qatar\"\nRE \"Réunion\"\nRO \"Romania\"\nRS \"Serbia\"\nRU \"Russian Federation\"\nRW \"Rwanda\"\nSA \"Saudi Arabia\"\nSB \"Solomon Islands\"\nSC \"Seychelles\"\nSD \"Sudan\"\nSE \"Sweden\"\nSG \"Singapore\"\nSH \"Saint Helena, Ascension and Tristan da Cunha\"\nSI \"Slovenia\"\nSJ \"Svalbard and Jan Mayen\"\nSK \"Slovakia\"\nSL \"Sierra Leone\"\nSM \"San Marino\"\nSN \"Senegal\"\nSO \"Somalia\"\nSR \"Suriname\"\nSS \"South Sudan\"\nST \"Sao Tome and Principe\"\nSV \"El Salvador\"\nSX \"Sint Maarten (Dutch part)\"\nSY \"Syrian Arab Republic\"\nSZ \"Eswatini\"\nTC \"Turks and Caicos Islands\"\nTD \"Chad\"\nTF \"French Southern Territories\"\nTG \"Togo\"\nTH \"Thailand\"\nTJ \"Tajikistan\"\nTK \"Tokelau\"\nTL \"Timor-Leste\"\nTM \"Turkmenistan\"\nTN \"Tunisia\"\nTO \"Tonga\"\nTR \"Turkey\"\nTT \"Trinidad and Tobago\"\nTV \"Tuvalu\"\nTW \"Taiwan, Province of China\"\nTZ \"Tanzania, United Republic of\"\nUA \"Ukraine\"\nUG \"Uganda\"\nUM \"United States Minor Outlying Islands\"\nUS \"United States of America\"\nUY \"Uruguay\"\nUZ \"Uzbekistan\"\nVA \"Holy See\"\nVC \"Saint Vincent and the Grenadines\"\nVE \"Venezuela (Bolivarian Republic of)\"\nVG \"Virgin Islands (British)\"\nVI \"Virgin Islands (U.S.)\"\nVN \"Viet Nam\"\nVU \"Vanuatu\"\nWF \"Wallis and Futuna\"\nWS \"Samoa\"\nYE \"Yemen\"\nYT \"Mayotte\"\nZA \"South Africa\"\nZM \"Zambia\"\nZW \"Zimbabwe\"\n```\n",
+                "type": "Iso3166.CountryCode -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Iso3166.Estonian",
+        "comment": "\n@docs toName\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toName",
+                "comment": " Name for `CountryCode` in Estonian.\n\n```\nAD \"Andorra\"\nAE \"Araabia Ühendemiraadid\"\nAF \"Afganistan\"\nAG \"Antigua ja Barbuda\"\nAI \"Anguilla\"\nAL \"Albaania\"\nAM \"Armeenia\"\nAO \"Angola\"\nAQ \"Antarktis\"\nAR \"Argentina\"\nAS \"Ameerika Samoa\"\nAT \"Austria\"\nAU \"Austraalia\"\nAW \"Aruba\"\nAX \"Ahvenamaa\"\nAZ \"Aserbaidžaan\"\nBA \"Bosnia ja Hertsegoviina\"\nBB \"Barbados\"\nBD \"Bangladesh\"\nBE \"Belgia\"\nBF \"Burkina Faso\"\nBG \"Bulgaaria\"\nBH \"Bahrein\"\nBI \"Burundi\"\nBJ \"Benin\"\nBL \"Saint-Barthélemy\"\nBM \"Bermuda\"\nBN \"Brunei\"\nBO \"Boliivia\"\nBQ \"Bonaire, Sint Eustatius ja Saba\"\nBR \"Brasiilia\"\nBS \"Bahama\"\nBT \"Bhutan\"\nBV \"Bouvet\"\nBW \"Botswana\"\nBY \"Valgevene\"\nBZ \"Belize\"\nCA \"Kanada\"\nCC \"Kookossaared\"\nCD \"Kongo Demokraatlik Vabariik\"\nCF \"Kesk-Aafrika Vabariik\"\nCG \"Kongo Vabariik\"\nCH \"Šveits\"\nCI \"Elevandiluurannik\"\nCK \"Cooki saared\"\nCL \"Tšiili\"\nCM \"Kamerun\"\nCN \"Hiina\"\nCO \"Colombia\"\nCR \"Costa Rica\"\nCU \"Kuuba\"\nCV \"Roheneemesaared\"\nCW \"Curaçao\"\nCX \"Jõulusaar\"\nCY \"Küpros\"\nCZ \"Tšehhi\"\nDE \"Saksamaa\"\nDJ \"Djibouti\"\nDK \"Taani\"\nDM \"Dominica\"\nDO \"Dominikaani Vabariik\"\nDZ \"Alžeeria\"\nEC \"Ecuador\"\nEE \"Eesti\"\nEG \"Egiptus\"\nEH \"Lääne-Sahara\"\nER \"Eritrea\"\nES \"Hispaania\"\nET \"Etioopia\"\nFI \"Soome\"\nFJ \"Fidži\"\nFK \"Falklandi saared\"\nFM \"Mikroneesia Liiduriigid\"\nFO \"Fääri saared\"\nFR \"Prantsusmaa\"\nGA \"Gabon\"\nGB \"Suurbritannia\"\nGD \"Grenada\"\nGE \"Gruusia\"\nGF \"Prantsuse Guajaana\"\nGG \"Guernsey\"\nGH \"Ghana\"\nGI \"Gibraltar\"\nGL \"Gröönimaa\"\nGM \"Gambia\"\nGN \"Guinea\"\nGP \"Guadeloupe\"\nGQ \"Ekvatoriaal-Guinea\"\nGR \"Kreeka\"\nGS \"Lõuna-Georgia ja Lõuna-Sandwichi saared\"\nGT_ \"Guatemala\"\nGU \"Guam\"\nGW \"Guinea-Bissau\"\nGY \"Guyana\"\nHK \"Hongkong\"\nHM \"Heard ja McDonald\"\nHN \"Honduras\"\nHR \"Horvaatia\"\nHT \"Haiti\"\nHU \"Ungari\"\nID \"Indoneesia\"\nIE \"Iirimaa\"\nIL \"Iisrael\"\nIM \"Man\"\nIN \"India\"\nIO \"Briti India ookeani ala\"\nIQ \"Iraak\"\nIR \"Iraan\"\nIS \"Island\"\nIT \"Itaalia\"\nJE \"Jersey\"\nJM \"Jamaica\"\nJO \"Jordaania\"\nJP \"Jaapan\"\nKE \"Keenia\"\nKG \"Kõrgõzstan\"\nKH \"Kambodža\"\nKI \"Kiribati\"\nKM \"Komoorid\"\nKN \"Saint Kitts ja Nevis\"\nKP \"Põhja-Korea\"\nKR \"Lõuna-Korea\"\nKW \"Kuveit\"\nKY \"Kaimanisaared\"\nKZ \"Kasahstan\"\nLA \"Laos\"\nLB \"Liibanon\"\nLC \"Saint Lucia\"\nLI \"Liechtenstein\"\nLK \"Sri Lanka\"\nLR \"Libeeria\"\nLS \"Lesotho\"\nLT_ \"Leedu\"\nLU \"Luksemburg\"\nLV \"Läti\"\nLY \"Liibüa\"\nMA \"Maroko\"\nMC \"Monaco\"\nMD \"Moldova\"\nME \"Montenegro\"\nMF \"Saint-Martin\"\nMG \"Madagaskar\"\nMH \"Marshalli Saared\"\nMK \"Põhja-Makedoonia\"\nML \"Mali\"\nMM \"Birma\"\nMN \"Mongoolia\"\nMO \"Macau\"\nMP \"Põhja-Mariaanid\"\nMQ \"Martinique\"\nMR \"Mauritaania\"\nMS \"Montserrat\"\nMT \"Malta\"\nMU \"Mauritius\"\nMV \"Maldiivid\"\nMW \"Malawi\"\nMX \"Mehhiko\"\nMY \"Malaisia\"\nMZ \"Mosambiik\"\nNA \"Namiibia\"\nNC \"Uus-Kaledoonia\"\nNE \"Niger\"\nNF \"Norfolk\"\nNG \"Nigeeria\"\nNI \"Nicaragua\"\nNL \"Holland\"\nNO \"Norra\"\nNP \"Nepal\"\nNR \"Nauru\"\nNU \"Niue\"\nNZ \"Uus-Meremaa\"\nOM \"Omaan\"\nPA \"Panama\"\nPE \"Peruu\"\nPF \"Prantsuse Polüneesia\"\nPG \"Paapua Uus-Guinea\"\nPH \"Filipiinid\"\nPK \"Pakistan\"\nPL \"Poola\"\nPM \"Saint-Pierre ja Miquelon\"\nPN \"Pitcairn\"\nPR \"Puerto Rico\"\nPS \"Palestiina\"\nPT \"Portugal\"\nPW \"Belau\"\nPY \"Paraguay\"\nQA \"Katar\"\nRE \"Réunion\"\nRO \"Rumeenia\"\nRS \"Serbia\"\nRU \"Venemaa\"\nRW \"Rwanda\"\nSA \"Saudi Araabia\"\nSB \"Saalomoni Saared\"\nSC \"Seišellid\"\nSD \"Sudaan\"\nSE \"Rootsi\"\nSG \"Singapur\"\nSH \"Saint Helena\"\nSI \"Sloveenia\"\nSJ \"Svalbard ja Jan Mayen\"\nSK \"Slovakkia\"\nSL \"Sierra Leone\"\nSM \"San Marino\"\nSN \"Senegal\"\nSO \"Somaalia\"\nSR \"Suriname\"\nSS \"Lõuna-Sudaan\"\nST \"São Tomé ja Príncipe\"\nSV \"El Salvador\"\nSX \"Sint Maarten\"\nSY \"Süüria\"\nSZ \"Svaasimaa\"\nTC \"Turks ja Caicos\"\nTD \"Tšaad\"\nTF \"Prantsuse Lõunaalad\"\nTG \"Togo\"\nTH \"Tai\"\nTJ \"Tadžikistan\"\nTK \"Tokelau\"\nTL \"Ida-Timor\"\nTM \"Türkmenistan\"\nTN \"Tuneesia\"\nTO \"Tonga\"\nTR \"Türgi\"\nTT \"Trinidad ja Tobago\"\nTV \"Tuvalu\"\nTW \"Taiwan\"\nTZ \"Tansaania\"\nUA \"Ukraina\"\nUG \"Uganda\"\nUM \"Ühendriikide hajasaared\"\nUS \"Ameerika Ühendriigid\"\nUY \"Uruguay\"\nUZ \"Usbekistan\"\nVA \"Vatikan\"\nVC \"Saint Vincent ja Grenadiinid\"\nVE \"Venezuela\"\nVG \"Briti Neitsisaared\"\nVI \"USA Neitsisaared\"\nVN \"Vietnam\"\nVU \"Vanuatu\"\nWF \"Wallis ja Futuna\"\nWS \"Samoa\"\nYE \"Jeemen\"\nYT \"Mayotte\"\nZA \"Lõuna-Aafrika Vabariik\"\nZM \"Sambia\"\nZW \"Zimbabwe\"\n```\n",
+                "type": "Iso3166.CountryCode -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Iso3166.French",
+        "comment": "\n@docs toName\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toName",
+                "comment": " Name for `CountryCode` in French.\n\n```\nAD \"Andorre\"\nAE \"Émirats arabes unis\"\nAF \"Afghanistan\"\nAG \"Antigua-et-Barbuda\"\nAI \"Anguilla\"\nAL \"Albanie\"\nAM \"Arménie\"\nAO \"Angola\"\nAQ \"Antarctique\"\nAR \"Argentine\"\nAS \"Samoa américaines\"\nAT \"Autriche\"\nAU \"Australie\"\nAW \"Aruba\"\nAX \"Îles Åland\"\nAZ \"Azerbaïdjan\"\nBA \"Bosnie-Herzégovine\"\nBB \"Barbade\"\nBD \"Bangladesh\"\nBE \"Belgique\"\nBF \"Burkina Faso\"\nBG \"Bulgarie\"\nBH \"Bahreïn\"\nBI \"Burundi\"\nBJ \"Bénin\"\nBL \"Saint-Barthélemy\"\nBM \"Bermudes\"\nBN \"Brunei\"\nBO \"Bolivie\"\nBQ \"Pays-Bas caribéens\"\nBR \"Brésil\"\nBS \"Bahamas\"\nBT \"Bhoutan\"\nBV \"Île Bouvet\"\nBW \"Botswana\"\nBY \"Biélorussie\"\nBZ \"Belize\"\nCA \"Canada\"\nCC \"Îles Cocos\"\nCD \"République démocratique du Congo\"\nCF \"République centrafricaine\"\nCG \"République du Congo\"\nCH \"Suisse\"\nCI \"Côte d'Ivoire\"\nCK \"Îles Cook\"\nCL \"Chili\"\nCM \"Cameroun\"\nCN \"Chine\"\nCO \"Colombie\"\nCR \"Costa Rica\"\nCU \"Cuba\"\nCV \"Cap-Vert\"\nCW \"Curaçao\"\nCX \"Île Christmas\"\nCY \"Chypre (pays)\"\nCZ \"Tchéquie\"\nDE \"Allemagne\"\nDJ \"Djibouti\"\nDK \"Danemark\"\nDM \"Dominique\"\nDO \"République dominicaine\"\nDZ \"Algérie\"\nEC \"Équateur (pays)\"\nEE \"Estonie\"\nEG \"Égypte\"\nEH \"République arabe sahraouie démocratique\"\nER \"Érythrée\"\nES \"Espagne\"\nET \"Éthiopie\"\nFI \"Finlande\"\nFJ \"Fidji\"\nFK \"Malouines\"\nFM \"États fédérés de Micronésie (pays)\"\nFO \"Îles Féroé\"\nFR \"France\"\nGA \"Gabon\"\nGB \"Royaume-Uni\"\nGD \"Grenade (pays)\"\nGE \"Géorgie (pays)\"\nGF \"Guyane\"\nGG \"Guernesey\"\nGH \"Ghana\"\nGI \"Gibraltar\"\nGL \"Groenland\"\nGM \"Gambie\"\nGN \"Guinée\"\nGP \"Guadeloupe\"\nGQ \"Guinée équatoriale\"\nGR \"Grèce\"\nGS \"Géorgie du Sud-et-les îles Sandwich du Sud\"\nGT_ \"Guatemala\"\nGU \"Guam\"\nGW \"Guinée-Bissau\"\nGY \"Guyana\"\nHK \"Hong Kong\"\nHM \"Îles Heard-et-MacDonald\"\nHN \"Honduras\"\nHR \"Croatie\"\nHT \"Haïti\"\nHU \"Hongrie\"\nID \"Indonésie\"\nIE \"Irlande (pays)\"\nIL \"Israël\"\nIM \"Île de Man\"\nIN \"Inde\"\nIO \"Territoire britannique de l'océan Indien\"\nIQ \"Irak\"\nIR \"Iran\"\nIS \"Islande\"\nIT \"Italie\"\nJE \"Jersey\"\nJM \"Jamaïque\"\nJO \"Jordanie\"\nJP \"Japon\"\nKE \"Kenya\"\nKG \"Kirghizistan\"\nKH \"Cambodge\"\nKI \"Kiribati\"\nKM \"Comores (pays)\"\nKN \"Saint-Christophe-et-Niévès\"\nKP \"Corée du Nord\"\nKR \"Corée du Sud\"\nKW \"Koweït\"\nKY \"Îles Caïmans\"\nKZ \"Kazakhstan\"\nLA \"Laos\"\nLB \"Liban\"\nLC \"Sainte-Lucie\"\nLI \"Liechtenstein\"\nLK \"Sri Lanka\"\nLR \"Liberia\"\nLS \"Lesotho\"\nLT_ \"Lituanie\"\nLU \"Luxembourg (pays)\"\nLV \"Lettonie\"\nLY \"Libye\"\nMA \"Maroc\"\nMC \"Monaco\"\nMD \"Moldavie\"\nME \"Monténégro\"\nMF \"Saint-Martin\"\nMG \"Madagascar\"\nMH \"Îles Marshall (pays)\"\nMK \"Macédoine du Nord\"\nML \"Mali\"\nMM \"Birmanie\"\nMN \"Mongolie\"\nMO \"Macao\"\nMP \"Îles Mariannes du Nord\"\nMQ \"Martinique\"\nMR \"Mauritanie\"\nMS \"Montserrat\"\nMT \"Malte\"\nMU \"Maurice (pays)\"\nMV \"Maldives\"\nMW \"Malawi\"\nMX \"Mexique\"\nMY \"Malaisie\"\nMZ \"Mozambique\"\nNA \"Namibie\"\nNC \"Nouvelle-Calédonie\"\nNE \"Niger\"\nNF \"Île Norfolk\"\nNG \"Nigeria\"\nNI \"Nicaragua\"\nNL \"Pays-Bas\"\nNO \"Norvège\"\nNP \"Népal\"\nNR \"Nauru\"\nNU \"Niue\"\nNZ \"Nouvelle-Zélande\"\nOM \"Oman\"\nPA \"Panama\"\nPE \"Pérou\"\nPF \"Polynésie française\"\nPG \"Papouasie-Nouvelle-Guinée\"\nPH \"Philippines\"\nPK \"Pakistan\"\nPL \"Pologne\"\nPM \"Saint-Pierre-et-Miquelon\"\nPN \"Îles Pitcairn\"\nPR \"Porto Rico\"\nPS \"Palestine\"\nPT \"Portugal\"\nPW \"Palaos\"\nPY \"Paraguay\"\nQA \"Qatar\"\nRE \"La Réunion\"\nRO \"Roumanie\"\nRS \"Serbie\"\nRU \"Russie\"\nRW \"Rwanda\"\nSA \"Arabie saoudite\"\nSB \"Salomon\"\nSC \"Seychelles\"\nSD \"Soudan\"\nSE \"Suède\"\nSG \"Singapour\"\nSH \"Sainte-Hélène, Ascension et Tristan da Cunha\"\nSI \"Slovénie\"\nSJ \"Svalbard et ile Jan Mayen\"\nSK \"Slovaquie\"\nSL \"Sierra Leone\"\nSM \"Saint-Marin\"\nSN \"Sénégal\"\nSO \"Somalie\"\nSR \"Suriname\"\nSS \"Soudan du Sud\"\nST \"Sao Tomé-et-Principe\"\nSV \"Salvador\"\nSX \"Saint-Martin\"\nSY \"Syrie\"\nSZ \"Eswatini\"\nTC \"Îles Turques-et-Caïques\"\nTD \"Tchad\"\nTF \"Terres australes et antarctiques françaises\"\nTG \"Togo\"\nTH \"Thaïlande\"\nTJ \"Tadjikistan\"\nTK \"Tokelau\"\nTL \"Timor oriental\"\nTM \"Turkménistan\"\nTN \"Tunisie\"\nTO \"Tonga\"\nTR \"Turquie\"\nTT \"Trinité-et-Tobago\"\nTV \"Tuvalu\"\nTW \"Taïwan / (République de Chine (Taïwan))\"\nTZ \"Tanzanie\"\nUA \"Ukraine\"\nUG \"Ouganda\"\nUM \"Îles mineures éloignées des États-Unis\"\nUS \"États-Unis\"\nUY \"Uruguay\"\nUZ \"Ouzbékistan\"\nVA \"Saint-Siège (État de la Cité du Vatican)\"\nVC \"Saint-Vincent-et-les-Grenadines\"\nVE \"Venezuela\"\nVG \"Îles Vierges britanniques\"\nVI \"Îles Vierges des États-Unis\"\nVN \"Viêt Nam\"\nVU \"Vanuatu\"\nWF \"Wallis-et-Futuna\"\nWS \"Samoa\"\nYE \"Yémen\"\nYT \"Mayotte\"\nZA \"Afrique du Sud\"\nZM \"Zambie\"\nZW \"Zimbabwe\"\n```\n",
+                "type": "Iso3166.CountryCode -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Iso3166.German",
+        "comment": "\n@docs toName\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toName",
+                "comment": " Name for `CountryCode` in German.\n\n```\nAD \"Andorra\"\nAE \"Vereinigte Arabische Emirate\"\nAF \"Afghanistan\"\nAG \"Antigua und Barbuda\"\nAI \"Anguilla\"\nAL \"Albanien\"\nAM \"Armenien\"\nAO \"Angola\"\nAQ \"Antarktis (Sonderstatus durch Antarktisvertrag)\"\nAR \"Argentinien\"\nAS \"Amerikanisch-Samoa\"\nAT \"Österreich\"\nAU \"Australien\"\nAW \"Aruba\"\nAX \"Åland\"\nAZ \"Aserbaidschan\"\nBA \"Bosnien und Herzegowina\"\nBB \"Barbados\"\nBD \"Bangladesch\"\nBE \"Belgien\"\nBF \"Burkina Faso\"\nBG \"Bulgarien\"\nBH \"Bahrain\"\nBI \"Burundi\"\nBJ \"Benin\"\nBL \"Saint-Barthélemy\"\nBM \"Bermuda\"\nBN \"Brunei\"\nBO \"Bolivien\"\nBQ \"Bonaire, Saba, Sint Eustatius\"\nBR \"Brasilien\"\nBS \"Bahamas\"\nBT \"Bhutan\"\nBV \"Bouvetinsel\"\nBW \"Botswana\"\nBY \"Weißrussland\"\nBZ \"Belize\"\nCA \"Kanada\"\nCC \"Kokosinseln\"\nCD \"Kongo, Demokratische Republik\"\nCF \"Zentral­afrikanische Republik\"\nCG \"Kongo, Republik\"\nCH \"Schweiz\"\nCI \"Elfenbeinküste\"\nCK \"Cookinseln\"\nCL \"Chile\"\nCM \"Kamerun\"\nCN \"Volksrepublik China\"\nCO \"Kolumbien\"\nCR \"Costa Rica\"\nCU \"Kuba\"\nCV \"Kap Verde\"\nCW \"Curaçao\"\nCX \"Weihnachtsinsel\"\nCY \"Zypern\"\nCZ \"Tschechien\"\nDE \"Deutschland\"\nDJ \"Dschibuti\"\nDK \"Dänemark\"\nDM \"Dominica\"\nDO \"Dominikanische Republik\"\nDZ \"Algerien\"\nEC \"Ecuador\"\nEE \"Estland\"\nEG \"Ägypten\"\nEH \"Westsahara\"\nER \"Eritrea\"\nES \"Spanien\"\nET \"Äthiopien\"\nFI \"Finnland\"\nFJ \"Fidschi\"\nFK \"Falklandinseln\"\nFM \"Mikronesien\"\nFO \"Färöer\"\nFR \"Frankreich\"\nGA \"Gabun\"\nGB \"Vereinigtes Königreich\"\nGD \"Grenada\"\nGE \"Georgien\"\nGF \"Französisch-Guayana\"\nGG \"Guernsey (Kanalinsel)\"\nGH \"Ghana\"\nGI \"Gibraltar\"\nGL \"Grönland\"\nGM \"Gambia\"\nGN \"Guinea\"\nGP \"Guadeloupe\"\nGQ \"Äquatorialguinea\"\nGR \"Griechenland\"\nGS \"Südgeorgien und die Südlichen Sandwichinseln\"\nGT_ \"Guatemala\"\nGU \"Guam\"\nGW \"Guinea-Bissau\"\nGY \"Guyana\"\nHK \"Hongkong\"\nHM \"Heard und McDonaldinseln\"\nHN \"Honduras\"\nHR \"Kroatien\"\nHT \"Haiti\"\nHU \"Ungarn\"\nID \"Indonesien\"\nIE \"Irland\"\nIL \"Israel\"\nIM \"Insel Man\"\nIN \"Indien\"\nIO \"Britisches Territorium im Indischen Ozean\"\nIQ \"Irak\"\nIR \"Iran\"\nIS \"Island\"\nIT \"Italien\"\nJE \"Jersey (Kanalinsel)\"\nJM \"Jamaika\"\nJO \"Jordanien\"\nJP \"Japan\"\nKE \"Kenia\"\nKG \"Kirgisistan\"\nKH \"Kambodscha\"\nKI \"Kiribati\"\nKM \"Komoren\"\nKN \"St. Kitts und Nevis\"\nKP \"Korea, Nord\"\nKR \"Korea, Süd\"\nKW \"Kuwait\"\nKY \"Kaimaninseln\"\nKZ \"Kasachstan\"\nLA \"Laos\"\nLB \"Libanon\"\nLC \"St. Lucia\"\nLI \"Liechtenstein\"\nLK \"Sri Lanka\"\nLR \"Liberia\"\nLS \"Lesotho\"\nLT_ \"Litauen\"\nLU \"Luxemburg\"\nLV \"Lettland\"\nLY \"Libyen\"\nMA \"Marokko\"\nMC \"Monaco\"\nMD \"Moldau\"\nME \"Montenegro\"\nMF \"Saint-Martin (französischer Teil)\"\nMG \"Madagaskar\"\nMH \"Marshallinseln\"\nMK \"Nordmazedonien\"\nML \"Mali\"\nMM \"Myanmar\"\nMN \"Mongolei\"\nMO \"Macau\"\nMP \"Nördliche Marianen\"\nMQ \"Martinique\"\nMR \"Mauretanien\"\nMS \"Montserrat\"\nMT \"Malta\"\nMU \"Mauritius\"\nMV \"Malediven\"\nMW \"Malawi\"\nMX \"Mexiko\"\nMY \"Malaysia\"\nMZ \"Mosambik\"\nNA \"Namibia\"\nNC \"Neukaledonien\"\nNE \"Niger\"\nNF \"Norfolkinsel\"\nNG \"Nigeria\"\nNI \"Nicaragua\"\nNL \"Niederlande\"\nNO \"Norwegen\"\nNP \"Nepal\"\nNR \"Nauru\"\nNU \"Niue\"\nNZ \"Neuseeland\"\nOM \"Oman\"\nPA \"Panama\"\nPE \"Peru\"\nPF \"Französisch-Polynesien\"\nPG \"Papua-Neuguinea\"\nPH \"Philippinen\"\nPK \"Pakistan\"\nPL \"Polen\"\nPM \"Saint-Pierre und Miquelon\"\nPN \"Pitcairninseln\"\nPR \"Puerto Rico\"\nPS \"Palästina\"\nPT \"Portugal\"\nPW \"Palau\"\nPY \"Paraguay\"\nQA \"Katar\"\nRE \"Réunion\"\nRO \"Rumänien\"\nRS \"Serbien\"\nRU \"Russland\"\nRW \"Ruanda\"\nSA \"Saudi-Arabien\"\nSB \"Salomonen\"\nSC \"Seychellen\"\nSD \"Sudan\"\nSE \"Schweden\"\nSG \"Singapur\"\nSH \"St. Helena, Ascension und Tristan da Cunha\"\nSI \"Slowenien\"\nSJ \"Spitzbergen und Jan Mayen\"\nSK \"Slowakei\"\nSL \"Sierra Leone\"\nSM \"San Marino\"\nSN \"Senegal\"\nSO \"Somalia\"\nSR \"Suriname\"\nSS \"Südsudan\"\nST \"São Tomé und Príncipe\"\nSV \"El Salvador\"\nSX \"Sint Maarten\"\nSY \"Syrien\"\nSZ \"Swasiland\"\nTC \"Turks- und Caicosinseln\"\nTD \"Tschad\"\nTF \"Französische Süd- und Antarktisgebiete\"\nTG \"Togo\"\nTH \"Thailand\"\nTJ \"Tadschikistan\"\nTK \"Tokelau\"\nTL \"Osttimor\"\nTM \"Turkmenistan\"\nTN \"Tunesien\"\nTO \"Tonga\"\nTR \"Türkei\"\nTT \"Trinidad und Tobago\"\nTV \"Tuvalu\"\nTW \"Republik China\"\nTZ \"Tansania\"\nUA \"Ukraine\"\nUG \"Uganda\"\nUM \"United States Minor Outlying Islands\"\nUS \"Vereinigte Staaten\"\nUY \"Uruguay\"\nUZ \"Usbekistan\"\nVA \"Vatikanstadt\"\nVC \"St. Vincent und die Grenadinen\"\nVE \"Venezuela\"\nVG \"Britische Jungferninseln\"\nVI \"Amerikanische Jungferninseln\"\nVN \"Vietnam\"\nVU \"Vanuatu\"\nWF \"Wallis und Futuna\"\nWS \"Samoa\"\nYE \"Jemen\"\nYT \"Mayotte\"\nZA \"Südafrika\"\nZM \"Sambia\"\nZW \"Simbabwe\"\n```\n",
+                "type": "Iso3166.CountryCode -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Iso3166.Greek",
+        "comment": "\n@docs toName\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toName",
+                "comment": " Name for `CountryCode` in Greek.\n\n```\nAD \"Ανδόρρα\"\nAE \"Ηνωμένα Αραβικά Εμιράτα\"\nAF \"Αφγανιστάν\"\nAG \"Αντίγκουα και Μπαρμπούντα\"\nAI \"Ανγκουίλα\"\nAL \"Αλβανία\"\nAM \"Αρμενία\"\nAO \"Ανγκόλα\"\nAQ \"Ανταρκτική\"\nAR \"Αργεντινή\"\nAS \"Αμερικανική Σαμόα\"\nAT \"Αυστρία\"\nAU \"Αυστραλία\"\nAW \"Αρούμπα\"\nAX \"Ώλαντ\"\nAZ \"Αζερμπαϊτζάν\"\nBA \"Βοσνία-Ερζεγοβίνη\"\nBB \"Μπαρμπάντος\"\nBD \"Μπανγκλαντές\"\nBE \"Βέλγιο\"\nBF \"Μπουρκίνα Φάσο\"\nBG \"Βουλγαρία\"\nBH \"Μπαχρέιν\"\nBI \"Μπουρούντι\"\nBJ \"Μπενίν\"\nBL \"Άγιος Βαρθολομαίος\"\nBM \"Βερμούδες\"\nBN \"Μπρουνέι\"\nBO \"Βολιβία\"\nBQ \"Μποναίρ, Άγιος Ευστάθιος και Σάμπα\"\nBR \"Βραζιλία\"\nBS \"Μπαχάμες\"\nBT \"Μπουτάν\"\nBV \"Μπουβέ\"\nBW \"Μποτσουάνα\"\nBY \"Λευκορωσία\"\nBZ \"Μπελίζ\"\nCA \"Καναδάς\"\nCC \"Νησιά Κόκος (Keeling)\"\nCD \"Λαϊκή Δημοκρατία του Κογκό\"\nCF \"Κεντροαφρικανική Δημοκρατία\"\nCG \"Κογκό\"\nCH \"Ελβετία\"\nCI \"Ακτή Ελεφαντοστού\"\nCK \"Νήσοι Κουκ\"\nCL \"Χιλή\"\nCM \"Καμερούν\"\nCN \"Κίνα\"\nCO \"Κολομβία\"\nCR \"Κόστα Ρίκα\"\nCU \"Κούβα\"\nCV \"Πράσινο Ακρωτήρι\"\nCW \"Κουρασάο\"\nCX \"Νήσος των Χριστουγέννων\"\nCY \"Κύπρος\"\nCZ \"Τσεχία\"\nDE \"Γερμανία\"\nDJ \"Τζιμπουτί\"\nDK \"Δανία\"\nDM \"Δομινίκα\"\nDO \"Δομινικανή Δημοκρατία\"\nDZ \"Αλγερία\"\nEC \"Ισημερινός\"\nEE \"Εσθονία\"\nEG \"Αίγυπτος\"\nEH \"Δυτική Σαχάρα\"\nER \"Ερυθραία\"\nES \"Ισπανία\"\nET \"Αιθιοπία\"\nFI \"Φινλανδία\"\nFJ \"Φίτζι\"\nFK \"Νήσοι Φώκλαντ\"\nFM \"Ομόσπονδες Πολιτείες της Μικρονησίας\"\nFO \"Νήσοι Φερόες\"\nFR \"Γαλλία\"\nGA \"Γκαμπόν\"\nGB \"Ηνωμένο Βασίλειο\"\nGD \"Γρενάδα\"\nGE \"Γεωργία\"\nGF \"Γαλλική Γουιάνα\"\nGG \"Γκέρνσεϊ\"\nGH \"Γκάνα\"\nGI \"Γιβραλτάρ\"\nGL \"Γροιλανδία\"\nGM \"Γκάμπια\"\nGN \"Γουινέα\"\nGP \"Γουαδελούπη\"\nGQ \"Ισημερινή Γουινέα\"\nGR \"Ελλάδα\"\nGS \"Νήσοι Νότια Γεωργία και Νότιες Σάντουιτς\"\nGT_ \"Γουατεμάλα\"\nGU \"Γκουάμ\"\nGW \"Γουινέα-Μπισσάου\"\nGY \"Γουιάνα\"\nHK \"Χονγκ Κονγκ\"\nHM \"Νήσοι Χερντ και Μακντόναλντ\"\nHN \"Ονδούρα\"\nHR \"Κροατία\"\nHT \"Αϊτή\"\nHU \"Ουγγαρία\"\nID \"Ινδονησία\"\nIE \"Ιρλανδία\"\nIL \"Ισραήλ\"\nIM \"Νήσος Μαν\"\nIN \"Ινδία\"\nIO \"Βρετανικό Έδαφος Ινδικού Ωκεανού\"\nIQ \"Ιράκ\"\nIR \"Ιράν\"\nIS \"Ισλανδία\"\nIT \"Ιταλία\"\nJE \"Τζέρσεϊ\"\nJM \"Τζαμάικα\"\nJO \"Ιορδανία\"\nJP \"Ιαπωνία\"\nKE \"Κένυα\"\nKG \"Κιργιζία\"\nKH \"Καμπότζη\"\nKI \"Κιριμπάτι\"\nKM \"Κομόρες\"\nKN \"Άγιος Χριστόφορος και Νέβις\"\nKP \"Βόρεια Κορέα\"\nKR \"Νότια Κορέα\"\nKW \"Κουβέιτ\"\nKY \"Κέιμαν Νήσοι\"\nKZ \"Καζακστάν\"\nLA \"Λάος\"\nLB \"Λίβανος\"\nLC \"Αγία Λουκία\"\nLI \"Λίχτενσταϊν\"\nLK \"Σρι Λάνκα\"\nLR \"Λιβερία\"\nLS \"Λεσότο\"\nLT_ \"Λιθουανία\"\nLU \"Λουξεμβούργο\"\nLV \"Λεττονία\"\nLY \"Λιβύη\"\nMA \"Μαρόκο\"\nMC \"Μονακό\"\nMD \"Μολδαβία\"\nME \"Μαυροβούνιο\"\nMF \"Άγιος Μαρτίνος (Γαλλία)\"\nMG \"Μαδαγασκάρη\"\nMH \"Νήσοι Μάρσαλ\"\nMK \"Βόρεια Μακεδονία\"\nML \"Μάλι\"\nMM \"Μιανμάρ\"\nMN \"Μογγολία\"\nMO \"Μακάο\"\nMP \"Βόρειες Μαριάνες Νήσοι\"\nMQ \"Μαρτινίκα\"\nMR \"Μαυριτανία\"\nMS \"Μοντσερράτ\"\nMT \"Μάλτα\"\nMU \"Μαυρίκιος\"\nMV \"Μαλδίβες\"\nMW \"Μαλάουι\"\nMX \"Μεξικό\"\nMY \"Μαλαισία\"\nMZ \"Μοζαμβίκη\"\nNA \"Ναμίμπια\"\nNC \"Νέα Καληδονία\"\nNE \"Νίγηρας\"\nNF \"Νησί Νόρφολκ\"\nNG \"Νιγηρία\"\nNI \"Νικαράγουα\"\nNL \"Ολλανδία (Κάτω Χώρες)\"\nNO \"Νορβηγία\"\nNP \"Νεπάλ\"\nNR \"Ναουρού\"\nNU \"Νιούε\"\nNZ \"Νέα Ζηλανδία\"\nOM \"Ομάν\"\nPA \"Παναμάς\"\nPE \"Περού\"\nPF \"Γαλλική Πολυνησία\"\nPG \"Παπούα Νέα Γουινέα\"\nPH \"Φιλιππίνες\"\nPK \"Πακιστάν\"\nPL \"Πολωνία\"\nPM \"Σαιν Πιερ και Μικελόν\"\nPN \"Νησιά Πίτκερν\"\nPR \"Πουέρτο Ρίκο\"\nPS \"Δυτική Όχθη\"\nPT \"Πορτογαλία\"\nPW \"Παλάου\"\nPY \"Παραγουάη\"\nQA \"Κατάρ\"\nRE \"Ρεϊνιόν\"\nRO \"Ρουμανία\"\nRS \"Σερβία\"\nRU \"Ρωσία\"\nRW \"Ρουάντα\"\nSA \"Σαουδική Αραβία\"\nSB \"Νήσοι Σολομώντα\"\nSC \"Σεϋχέλλες\"\nSD \"Σουδάν\"\nSE \"Σουηδία\"\nSG \"Σιγκαπούρη\"\nSH \"Νήσος Αγίας Ελένης\"\nSI \"Σλοβενία\"\nSJ \"Σβάλμπαρντ\"\nSK \"Σλοβακία\"\nSL \"Σιέρα Λεόνε\"\nSM \"Άγιος Μαρίνος\"\nSN \"Σενεγάλη\"\nSO \"Σομαλία\"\nSR \"Σουρινάμ\"\nSS \"Νότιο Σουδάν\"\nST \"Σάο Τομέ και Πρίνσιπε\"\nSV \"Ελ Σαλβαδόρ\"\nSX \"Άγιος Μαρτίνος (Ολλανδία)\"\nSY \"Συρία\"\nSZ \"Εσουατίνι\"\nTC \"Τερκς και Κέικος\"\nTD \"Τσαντ\"\nTF \"Γαλλικά Νότια και Ανταρκτικά Εδάφη\"\nTG \"Τόγκο\"\nTH \"Ταϊλάνδη\"\nTJ \"Τατζικιστάν\"\nTK \"Τοκελάου\"\nTL \"Ανατολικό Τιμόρ\"\nTM \"Τουρκμενιστάν\"\nTN \"Τυνησία\"\nTO \"Τόγκα\"\nTR \"Τουρκία\"\nTT \"Τρινιντάντ και Τομπάγκο\"\nTV \"Τουβαλού\"\nTW \"Ταϊβάν\"\nTZ \"Τανζανία\"\nUA \"Ουκρανία\"\nUG \"Ουγκάντα\"\nUM \"Απομακρυσμένες Νησίδες των Ηνωμένων Πολιτειών\"\nUS \"Ηνωμένες Πολιτείες Αμερικής\"\nUY \"Ουρουγουάη\"\nUZ \"Ουζμπεκιστάν\"\nVA \"Βατικανό\"\nVC \"Άγιος Βικέντιος και Γρεναδίνες\"\nVE \"Βενεζουέλα\"\nVG \"Βρετανικές Παρθένοι Νήσοι\"\nVI \"Αμερικανικές Παρθένοι Νήσοι\"\nVN \"Βιετνάμ\"\nVU \"Βανουάτου\"\nWF \"Ουαλίς και Φουτουνά\"\nWS \"Σαμόα\"\nYE \"Υεμένη\"\nYT \"Μαγιότ\"\nZA \"Νότια Αφρική\"\nZM \"Ζάμπια\"\nZW \"Ζιμπάμπουε\"\n```\n",
+                "type": "Iso3166.CountryCode -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Iso3166.Hungarian",
+        "comment": "\n@docs toName\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toName",
+                "comment": " Name for `CountryCode` in Hungarian.\n\n```\nAD \"Andorra\"\nAE \"Egyesült Arab Emírségek\"\nAF \"Afganisztán\"\nAG \"Antigua és Barbuda\"\nAI \"Anguilla\"\nAL \"Albánia\"\nAM \"Örményország\"\nAO \"Angola\"\nAQ \"Antarktisz\"\nAR \"Argentína\"\nAS \"Amerikai Szamoa\"\nAT \"Ausztria\"\nAU \"Ausztrália\"\nAW \"Aruba\"\nAX \"Åland\"\nAZ \"Azerbajdzsán\"\nBA \"Bosznia-Hercegovina\"\nBB \"Barbados\"\nBD \"Banglades\"\nBE \"Belgium\"\nBF \"Burkina Faso\"\nBG \"Bulgária\"\nBH \"Bahrein\"\nBI \"Burundi\"\nBJ \"Benin\"\nBL \"Saint-Barthélemy\"\nBM \"Bermuda\"\nBN \"Brunei\"\nBO \"Bolívia\"\nBQ \"Karibi Hollandia (Bonaire, Saba, Sint Eustatius)\"\nBR \"Brazília\"\nBS \"Bahama-szigetek\"\nBT \"Bhután\"\nBV \"Bouvet-sziget\"\nBW \"Botswana\"\nBY \"Fehéroroszország\"\nBZ \"Belize\"\nCA \"Kanada\"\nCC \"Kókusz (Keeling)-szigetek\"\nCD \"Kongói Demokratikus Köztársaság (Zaire)\"\nCF \"Közép-Afrika\"\nCG \"Kongói Köztársaság (Kongó)\"\nCH \"Svájc\"\nCI \"Elefántcsontpart\"\nCK \"Cook-szigetek\"\nCL \"Chile\"\nCM \"Kamerun\"\nCN \"Kína\"\nCO \"Kolumbia\"\nCR \"Costa Rica\"\nCU \"Kuba\"\nCV \"Zöld-foki Köztársaság\"\nCW \"Curaçao\"\nCX \"Karácsony-sziget\"\nCY \"Ciprus\"\nCZ \"Csehország\"\nDE \"Németország\"\nDJ \"Dzsibuti\"\nDK \"Dánia\"\nDM \"Dominikai Közösség\"\nDO \"Dominikai Köztársaság\"\nDZ \"Algéria\"\nEC \"Ecuador\"\nEE \"Észtország\"\nEG \"Egyiptom\"\nEH \"Nyugat-Szahara\"\nER \"Eritrea\"\nES \"Spanyolország\"\nET \"Etiópia\"\nFI \"Finnország\"\nFJ \"Fidzsi\"\nFK \"Falkland-szigetek\"\nFM \"Mikronézia\"\nFO \"Feröer\"\nFR \"Franciaország\"\nGA \"Gabon\"\nGB \"Egyesült Királyság\"\nGD \"Grenada\"\nGE \"Grúzia\"\nGF \"Francia Guyana Francia Guyana\"\nGG \"Guernsey Bailiffség\"\nGH \"Ghána\"\nGI \"Gibraltár\"\nGL \"Grönland\"\nGM \"Gambia\"\nGN \"Guinea\"\nGP \"Guadeloupe\"\nGQ \"Egyenlítői-Guinea\"\nGR \"Görögország\"\nGS \"Déli-Georgia és Déli-Sandwich-szigetek\"\nGT_ \"Guatemala\"\nGU \"Guam\"\nGW \"Bissau-Guinea\"\nGY \"Guyana\"\nHK \"Hongkong\"\nHM \"Heard-sziget és McDonald-szigetek\"\nHN \"Honduras\"\nHR \"Horvátország\"\nHT \"Haiti\"\nHU \"Magyarország\"\nID \"Indonézia\"\nIE \"Írország\"\nIL \"Izrael\"\nIM \"Man\"\nIN \"India\"\nIO \"Brit Indiai-óceáni Terület\"\nIQ \"Irak\"\nIR \"Irán\"\nIS \"Izland\"\nIT \"Olaszország\"\nJE \"Jersey Bailiffség\"\nJM \"Jamaica\"\nJO \"Jordánia\"\nJP \"Japán\"\nKE \"Kenya\"\nKG \"Kirgizisztán\"\nKH \"Kambodzsa\"\nKI \"Kiribati\"\nKM \"Comore-szigetek\"\nKN \"Saint Kitts és Nevis\"\nKP \"Észak-Korea (Koreai NDK)\"\nKR \"Dél-Korea (Koreai Köztársaság)\"\nKW \"Kuvait\"\nKY \"Kajmán-szigetek\"\nKZ \"Kazahsztán\"\nLA \"Laosz\"\nLB \"Libanon\"\nLC \"Saint Lucia\"\nLI \"Liechtenstein\"\nLK \"Srí Lanka\"\nLR \"Libéria\"\nLS \"Lesotho\"\nLT_ \"Litvánia\"\nLU \"Luxemburg\"\nLV \"Lettország\"\nLY \"Líbia\"\nMA \"Marokkó\"\nMC \"Monaco\"\nMD \"Moldova\"\nME \"Montenegró\"\nMF \"Saint-Martin\"\nMG \"Madagaszkár\"\nMH \"Marshall-szigetek\"\nMK \"Észak-Macedónia\"\nML \"Mali\"\nMM \"Mianmar\"\nMN \"Mongólia\"\nMO \"Makaó\"\nMP \"Északi-Mariana-szigetek\"\nMQ \"Martinique\"\nMR \"Mauritánia\"\nMS \"Montserrat\"\nMT \"Málta\"\nMU \"Mauritius\"\nMV \"Maldív-szigetek\"\nMW \"Malawi\"\nMX \"Mexikó\"\nMY \"Malajzia\"\nMZ \"Mozambik\"\nNA \"Namíbia\"\nNC \"Új-Kaledónia\"\nNE \"Niger\"\nNF \"Norfolk-sziget\"\nNG \"Nigéria\"\nNI \"Nicaragua\"\nNL \"Hollandia\"\nNO \"Norvégia\"\nNP \"Nepál\"\nNR \"Nauru\"\nNU \"Niue\"\nNZ \"Új-Zéland\"\nOM \"Omán\"\nPA \"Panama\"\nPE \"Peru\"\nPF \"Francia Polinézia\"\nPG \"Pápua Új-Guinea\"\nPH \"Fülöp-szigetek\"\nPK \"Pakisztán\"\nPL \"Lengyelország\"\nPM \"Saint-Pierre és Miquelon\"\nPN \"Pitcairn-szigetek\"\nPR \"Puerto Rico\"\nPS \"Palesztina\"\nPT \"Portugália\"\nPW \"Palau\"\nPY \"Paraguay\"\nQA \"Katar\"\nRE \"Réunion\"\nRO \"Románia\"\nRS \"Szerbia\"\nRU \"Oroszország\"\nRW \"Ruanda\"\nSA \"Szaúd-Arábia\"\nSB \"Salamon-szigetek\"\nSC \"Seychelle-szigetek\"\nSD \"Szudán\"\nSE \"Svédország\"\nSG \"Szingapúr\"\nSH \"Szent Ilona\"\nSI \"Szlovénia\"\nSJ \"Spitzbergák és Jan Mayen-sziget\"\nSK \"Szlovákia\"\nSL \"Sierra Leone\"\nSM \"San Marino\"\nSN \"Szenegál\"\nSO \"Szomália\"\nSR \"Suriname\"\nSS \"Dél-Szudán\"\nST \"São Tomé és Príncipe\"\nSV \"Salvador\"\nSX \"Sint Maarten\"\nSY \"Szíria\"\nSZ \"Szváziföld\"\nTC \"Turks- és Caicos-szigetek\"\nTD \"Csád\"\nTF \"Francia déli és antarktiszi területek\"\nTG \"Togo\"\nTH \"Thaiföld\"\nTJ \"Tádzsikisztán\"\nTK \"Tokelau-szigetek\"\nTL \"Kelet-Timor\"\nTM \"Türkmenisztán\"\nTN \"Tunézia\"\nTO \"Tonga\"\nTR \"Törökország\"\nTT \"Trinidad és Tobago\"\nTV \"Tuvalu\"\nTW \"Tajvan\"\nTZ \"Tanzánia\"\nUA \"Ukrajna\"\nUG \"Uganda\"\nUM \"Amerikai Csendes-óceáni szigetek\"\nUS \"Amerikai Egyesült Államok\"\nUY \"Uruguay\"\nUZ \"Üzbegisztán\"\nVA \"Vatikán\"\nVC \"Saint Vincent és a Grenadine-szigetek\"\nVE \"Venezuela\"\nVG \"Brit Virgin-szigetek\"\nVI \"Amerikai Virgin-szigetek\"\nVN \"Vietnám\"\nVU \"Vanuatu\"\nWF \"Wallis és Futuna\"\nWS \"Szamoa\"\nYE \"Jemen\"\nYT \"Mayotte\"\nZA \"Dél-afrikai Köztársaság\"\nZM \"Zambia\"\nZW \"Zimbabwe\"\n```\n",
+                "type": "Iso3166.CountryCode -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Iso3166.Italian",
+        "comment": "\n@docs toName\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toName",
+                "comment": " Name for `CountryCode` in Italian.\n\n```\nAD \"Andorra\"\nAE \"Emirati Arabi Uniti\"\nAF \"Afghanistan\"\nAG \"Antigua e Barbuda\"\nAI \"Anguilla\"\nAL \"Albania\"\nAM \"Armenia\"\nAO \"Angola\"\nAQ \"Antartide\"\nAR \"Argentina\"\nAS \"Samoa Americane\"\nAT \"Austria\"\nAU \"Australia\"\nAW \"Aruba\"\nAX \"Isole Åland\"\nAZ \"Azerbaigian\"\nBA \"Bosnia ed Erzegovina\"\nBB \"Barbados\"\nBD \"Bangladesh\"\nBE \"Belgio\"\nBF \"Burkina Faso\"\nBG \"Bulgaria\"\nBH \"Bahrein\"\nBI \"Burundi\"\nBJ \"Benin\"\nBL \"Saint-Barthélemy\"\nBM \"Bermuda\"\nBN \"Brunei\"\nBO \"Bolivia\"\nBQ \"Isole BES\"\nBR \"Brasile\"\nBS \"Bahamas\"\nBT \"Bhutan\"\nBV \"Isola Bouvet\"\nBW \"Botswana\"\nBY \"Bielorussia\"\nBZ \"Belize\"\nCA \"Canada\"\nCC \"Isole Cocos (Keeling)\"\nCD \"RD del Congo\"\nCF \"Rep. Centrafricana\"\nCG \"Rep. del Congo\"\nCH \"Svizzera\"\nCI \"Costa d'Avorio\"\nCK \"Isole Cook\"\nCL \"Cile\"\nCM \"Camerun\"\nCN \"Cina\"\nCO \"Colombia\"\nCR \"Costa Rica\"\nCU \"Cuba\"\nCV \"Capo Verde\"\nCW \"Curaçao\"\nCX \"Isola di Natale\"\nCY \"Cipro\"\nCZ \"Rep. Ceca\"\nDE \"Germania\"\nDJ \"Gibuti\"\nDK \"Danimarca\"\nDM \"Dominica\"\nDO \"Rep. Dominicana\"\nDZ \"Algeria\"\nEC \"Ecuador\"\nEE \"Estonia\"\nEG \"Egitto\"\nEH \"Sahara Occidentale\"\nER \"Eritrea\"\nES \"Spagna\"\nET \"Etiopia\"\nFI \"Finlandia\"\nFJ \"Figi\"\nFK \"Isole Falkland\"\nFM \"Micronesia\"\nFO \"Fær Øer\"\nFR \"Francia\"\nGA \"Gabon\"\nGB \"Regno Unito\"\nGD \"Grenada\"\nGE \"Georgia\"\nGF \"Guyana francese\"\nGG \"Guernsey\"\nGH \"Ghana\"\nGI \"Gibilterra\"\nGL \"Groenlandia\"\nGM \"Gambia\"\nGN \"Guinea\"\nGP \"Guadalupa\"\nGQ \"Guinea Equatoriale\"\nGR \"Grecia\"\nGS \"Georgia del Sud e Isole Sandwich Australi\"\nGT_ \"Guatemala\"\nGU \"Guam\"\nGW \"Guinea-Bissau\"\nGY \"Guyana\"\nHK \"Hong Kong\"\nHM \"Isole Heard e McDonald\"\nHN \"Honduras\"\nHR \"Croazia\"\nHT \"Haiti\"\nHU \"Ungheria\"\nID \"Indonesia\"\nIE \"Irlanda\"\nIL \"Israele\"\nIM \"Isola di Man\"\nIN \"India\"\nIO \"Territorio britannico dell'Oceano Indiano\"\nIQ \"Iraq\"\nIR \"Iran\"\nIS \"Islanda\"\nIT \"Italia\"\nJE \"Jersey\"\nJM \"Giamaica\"\nJO \"Giordania\"\nJP \"Giappone\"\nKE \"Kenya\"\nKG \"Kirghizistan\"\nKH \"Cambogia\"\nKI \"Kiribati\"\nKM \"Comore\"\nKN \"Saint Kitts e Nevis\"\nKP \"Corea del Nord\"\nKR \"Corea del Sud\"\nKW \"Kuwait\"\nKY \"Isole Cayman\"\nKZ \"Kazakistan\"\nLA \"Laos\"\nLB \"Libano\"\nLC \"Saint Lucia\"\nLI \"Liechtenstein\"\nLK \"Sri Lanka\"\nLR \"Liberia\"\nLS \"Lesotho\"\nLT_ \"Lituania\"\nLU \"Lussemburgo\"\nLV \"Lettonia\"\nLY \"Libia\"\nMA \"Marocco\"\nMC \"Monaco\"\nMD \"Moldavia\"\nME \"Montenegro\"\nMF \"Saint-Martin\"\nMG \"Madagascar\"\nMH \"Isole Marshall\"\nMK \"Macedonia del Nord\"\nML \"Mali\"\nMM \"Birmania\"\nMN \"Mongolia\"\nMO \"Macao\"\nMP \"Isole Marianne Settentrionali\"\nMQ \"Martinica\"\nMR \"Mauritania\"\nMS \"Montserrat\"\nMT \"Malta\"\nMU \"Mauritius\"\nMV \"Maldive\"\nMW \"Malawi\"\nMX \"Messico\"\nMY \"Malaysia\"\nMZ \"Mozambico\"\nNA \"Namibia\"\nNC \"Nuova Caledonia\"\nNE \"Niger\"\nNF \"Isola Norfolk\"\nNG \"Nigeria\"\nNI \"Nicaragua\"\nNL \"Paesi Bassi\"\nNO \"Norvegia\"\nNP \"Nepal\"\nNR \"Nauru\"\nNU \"Niue\"\nNZ \"Nuova Zelanda\"\nOM \"Oman\"\nPA \"Panama\"\nPE \"Perù\"\nPF \"Polinesia francese\"\nPG \"Papua Nuova Guinea\"\nPH \"Filippine\"\nPK \"Pakistan\"\nPL \"Polonia\"\nPM \"Saint-Pierre e Miquelon\"\nPN \"Isole Pitcairn\"\nPR \"Porto Rico\"\nPS \"Palestina\"\nPT \"Portogallo\"\nPW \"Palau\"\nPY \"Paraguay\"\nQA \"Qatar\"\nRE \"Riunione\"\nRO \"Romania\"\nRS \"Serbia\"\nRU \"Russia\"\nRW \"Ruanda\"\nSA \"Arabia Saudita\"\nSB \"Isole Salomone\"\nSC \"Seychelles\"\nSD \"Sudan\"\nSE \"Svezia\"\nSG \"Singapore\"\nSH \"Sant'Elena, Ascensione e Tristan da Cunha\"\nSI \"Slovenia\"\nSJ \"Svalbard e Jan Mayen\"\nSK \"Slovacchia\"\nSL \"Sierra Leone\"\nSM \"San Marino\"\nSN \"Senegal\"\nSO \"Somalia\"\nSR \"Suriname\"\nSS \"Sudan del Sud\"\nST \"São Tomé e Príncipe\"\nSV \"El Salvador\"\nSX \"Sint Maarten\"\nSY \"Siria\"\nSZ \"Swaziland\"\nTC \"Turks e Caicos\"\nTD \"Ciad\"\nTF \"Terre australi e antartiche francesi\"\nTG \"Togo\"\nTH \"Thailandia\"\nTJ \"Tagikistan\"\nTK \"Tokelau\"\nTL \"Timor Est\"\nTM \"Turkmenistan\"\nTN \"Tunisia\"\nTO \"Tonga\"\nTR \"Turchia\"\nTT \"Trinidad e Tobago\"\nTV \"Tuvalu\"\nTW \"Taiwan\"\nTZ \"Tanzania\"\nUA \"Ucraina\"\nUG \"Uganda\"\nUM \"Isole minori esterne degli Stati Uniti\"\nUS \"Stati Uniti\"\nUY \"Uruguay\"\nUZ \"Uzbekistan\"\nVA \"Città del Vaticano\"\nVC \"Saint Vincent e Grenadine\"\nVE \"Venezuela\"\nVG \"Isole Vergini britanniche\"\nVI \"Isole Vergini americane\"\nVN \"Vietnam\"\nVU \"Vanuatu\"\nWF \"Wallis e Futuna\"\nWS \"Samoa\"\nYE \"Yemen\"\nYT \"Mayotte\"\nZA \"Sudafrica\"\nZM \"Zambia\"\nZW \"Zimbabwe\"\n```\n",
+                "type": "Iso3166.CountryCode -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Iso3166.Japanese",
+        "comment": "\n@docs toName\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toName",
+                "comment": " Name for `CountryCode` in Japanese.\n\n```\nAD \"アンドラ\"\nAE \"アラブ首長国連邦\"\nAF \"アフガニスタン\"\nAG \"アンティグア・バーブーダ\"\nAI \"アンギラ\"\nAL \"アルバニア\"\nAM \"アルメニア\"\nAO \"アンゴラ\"\nAQ \"南極\"\nAR \"アルゼンチン\"\nAS \"アメリカ領サモア\"\nAT \"オーストリア\"\nAU \"オーストラリア\"\nAW \"アルバ\"\nAX \"オーランド諸島\"\nAZ \"アゼルバイジャン\"\nBA \"ボスニア・ヘルツェゴビナ\"\nBB \"バルバドス\"\nBD \"バングラデシュ\"\nBE \"ベルギー\"\nBF \"ブルキナファソ\"\nBG \"ブルガリア\"\nBH \"バーレーン\"\nBI \"ブルンジ\"\nBJ \"ベナン\"\nBL \"サン・バルテルミー\"\nBM \"バミューダ\"\nBN \"ブルネイ・ダルサラーム\"\nBO \"ボリビア多民族国\"\nBQ \"ボネール、シント・ユースタティウスおよびサバ\"\nBR \"ブラジル\"\nBS \"バハマ\"\nBT \"ブータン\"\nBV \"ブーベ島\"\nBW \"ボツワナ\"\nBY \"ベラルーシ\"\nBZ \"ベリーズ\"\nCA \"カナダ\"\nCC \"ココス（キーリング）諸島\"\nCD \"コンゴ民主共和国\"\nCF \"中央アフリカ共和国\"\nCG \"コンゴ共和国\"\nCH \"スイス\"\nCI \"コートジボワール\"\nCK \"クック諸島\"\nCL \"チリ\"\nCM \"カメルーン\"\nCN \"中華人民共和国\"\nCO \"コロンビア\"\nCR \"コスタリカ\"\nCU \"キューバ\"\nCV \"カーボベルデ\"\nCW \"キュラソー\"\nCX \"クリスマス島\"\nCY \"キプロス\"\nCZ \"チェコ\"\nDE \"ドイツ\"\nDJ \"ジブチ\"\nDK \"デンマーク\"\nDM \"ドミニカ国\"\nDO \"ドミニカ共和国\"\nDZ \"アルジェリア\"\nEC \"エクアドル\"\nEE \"エストニア\"\nEG \"エジプト\"\nEH \"西サハラ\"\nER \"エリトリア\"\nES \"スペイン\"\nET \"エチオピア\"\nFI \"フィンランド\"\nFJ \"フィジー\"\nFK \"フォークランド（マルビナス）諸島\"\nFM \"ミクロネシア連邦\"\nFO \"フェロー諸島\"\nFR \"フランス\"\nGA \"ガボン\"\nGB \"イギリス\"\nGD \"グレナダ\"\nGE \"ジョージア\"\nGF \"フランス領ギアナ\"\nGG \"ガーンジー\"\nGH \"ガーナ\"\nGI \"ジブラルタル\"\nGL \"グリーンランド\"\nGM \"ガンビア\"\nGN \"ギニア\"\nGP \"グアドループ\"\nGQ \"赤道ギニア\"\nGR \"ギリシャ\"\nGS \"サウスジョージア・サウスサンドウィッチ諸島\"\nGT_ \"グアテマラ\"\nGU \"グアム\"\nGW \"ギニアビサウ\"\nGY \"ガイアナ\"\nHK \"香港\"\nHM \"ハード島とマクドナルド諸島\"\nHN \"ホンジュラス\"\nHR \"クロアチア\"\nHT \"ハイチ\"\nHU \"ハンガリー\"\nID \"インドネシア\"\nIE \"アイルランド\"\nIL \"イスラエル\"\nIM \"マン島\"\nIN \"インド\"\nIO \"イギリス領インド洋地域\"\nIQ \"イラク\"\nIR \"イラン・イスラム共和国\"\nIS \"アイスランド\"\nIT \"イタリア\"\nJE \"ジャージー\"\nJM \"ジャマイカ\"\nJO \"ヨルダン\"\nJP \"日本\"\nKE \"ケニア\"\nKG \"キルギス\"\nKH \"カンボジア\"\nKI \"キリバス\"\nKM \"コモロ\"\nKN \"セントクリストファー・ネイビス\"\nKP \"朝鮮民主主義人民共和国\"\nKR \"大韓民国\"\nKW \"クウェート\"\nKY \"ケイマン諸島\"\nKZ \"カザフスタン\"\nLA \"ラオス人民民主共和国\"\nLB \"レバノン\"\nLC \"セントルシア\"\nLI \"リヒテンシュタイン\"\nLK \"スリランカ\"\nLR \"リベリア\"\nLS \"レソト\"\nLT_ \"リトアニア\"\nLU \"ルクセンブルク\"\nLV \"ラトビア\"\nLY \"リビア\"\nMA \"モロッコ\"\nMC \"モナコ\"\nMD \"モルドバ共和国\"\nME \"モンテネグロ\"\nMF \"サン・マルタン（フランス領）\"\nMG \"マダガスカル\"\nMH \"マーシャル諸島\"\nMK \"北マケドニア\"\nML \"マリ\"\nMM \"ミャンマー\"\nMN \"モンゴル\"\nMO \"マカオ\"\nMP \"北マリアナ諸島\"\nMQ \"マルティニーク\"\nMR \"モーリタニア\"\nMS \"モントセラト\"\nMT \"マルタ\"\nMU \"モーリシャス\"\nMV \"モルディブ\"\nMW \"マラウイ\"\nMX \"メキシコ\"\nMY \"マレーシア\"\nMZ \"モザンビーク\"\nNA \"ナミビア\"\nNC \"ニューカレドニア\"\nNE \"ニジェール\"\nNF \"ノーフォーク島\"\nNG \"ナイジェリア\"\nNI \"ニカラグア\"\nNL \"オランダ\"\nNO \"ノルウェー\"\nNP \"ネパール\"\nNR \"ナウル\"\nNU \"ニウエ\"\nNZ \"ニュージーランド\"\nOM \"オマーン\"\nPA \"パナマ\"\nPE \"ペルー\"\nPF \"フランス領ポリネシア\"\nPG \"パプアニューギニア\"\nPH \"フィリピン\"\nPK \"パキスタン\"\nPL \"ポーランド\"\nPM \"サンピエール島・ミクロン島\"\nPN \"ピトケアン\"\nPR \"プエルトリコ\"\nPS \"パレスチナ\"\nPT \"ポルトガル\"\nPW \"パラオ\"\nPY \"パラグアイ\"\nQA \"カタール\"\nRE \"レユニオン\"\nRO \"ルーマニア\"\nRS \"セルビア\"\nRU \"ロシア連邦\"\nRW \"ルワンダ\"\nSA \"サウジアラビア\"\nSB \"ソロモン諸島\"\nSC \"セーシェル\"\nSD \"スーダン\"\nSE \"スウェーデン\"\nSG \"シンガポール\"\nSH \"セントヘレナ・アセンションおよびトリスタンダクーニャ\"\nSI \"スロベニア\"\nSJ \"スヴァールバル諸島およびヤンマイエン島\"\nSK \"スロバキア\"\nSL \"シエラレオネ\"\nSM \"サンマリノ\"\nSN \"セネガル\"\nSO \"ソマリア\"\nSR \"スリナム\"\nSS \"南スーダン\"\nST \"サントメ・プリンシペ\"\nSV \"エルサルバドル\"\nSX \"シント・マールテン（オランダ領）\"\nSY \"シリア・アラブ共和国\"\nSZ \"エスワティニ\"\nTC \"タークス・カイコス諸島\"\nTD \"チャド\"\nTF \"フランス領南方・南極地域\"\nTG \"トーゴ\"\nTH \"タイ\"\nTJ \"タジキスタン\"\nTK \"トケラウ\"\nTL \"東ティモール\"\nTM \"トルクメニスタン\"\nTN \"チュニジア\"\nTO \"トンガ\"\nTR \"トルコ\"\nTT \"トリニダード・トバゴ\"\nTV \"ツバル\"\nTW \"中国台湾省（中華民国）\"\nTZ \"タンザニア\"\nUA \"ウクライナ\"\nUG \"ウガンダ\"\nUM \"合衆国領有小離島\"\nUS \"アメリカ合衆国\"\nUY \"ウルグアイ\"\nUZ \"ウズベキスタン\"\nVA \"バチカン市国\"\nVC \"セントビンセントおよびグレナディーン諸島\"\nVE \"ベネズエラ・ボリバル共和国\"\nVG \"イギリス領ヴァージン諸島\"\nVI \"アメリカ領ヴァージン諸島\"\nVN \"ベトナム\"\nVU \"バヌアツ\"\nWF \"ウォリス・フツナ\"\nWS \"サモア\"\nYE \"イエメン\"\nYT \"マヨット\"\nZA \"南アフリカ\"\nZM \"ザンビア\"\nZW \"ジンバブエ\"\n```\n",
+                "type": "Iso3166.CountryCode -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Iso3166.Lithuanian",
+        "comment": "\n@docs toName\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toName",
+                "comment": " Name for `CountryCode` in Lithuanian.\n\n```\nAD \"Andora\"\nAE \"Jungtiniai Arabų Emyratai\"\nAF \"Afganistanas\"\nAG \"Antigva ir Barbuda\"\nAI \"Angilija\"\nAL \"Albanija\"\nAM \"Armėnija\"\nAO \"Angola\"\nAQ \"Antarktida\"\nAR \"Argentina\"\nAS \"Amerikos Samoa\"\nAT \"Austrija\"\nAU \"Australija\"\nAW \"Aruba\"\nAX \"Alandų salos\"\nAZ \"Azerbaidžanas\"\nBA \"Bosnija ir Hercegovina\"\nBB \"Barbadosas\"\nBD \"Bangladešas\"\nBE \"Belgija\"\nBF \"Burkina Faso\"\nBG \"Bulgarija\"\nBH \"Bahreinas\"\nBI \"Burundis\"\nBJ \"Beninas\"\nBL \"Šv. Bartolomėjaus sala\"\nBM \"Bermuda\"\nBN \"Brunėjus\"\nBO \"Bolivija\"\nBQ \"Boneras, Sint Eustatijus ir Saba (BES salos)\"\nBR \"Brazilija\"\nBS \"Bahamos\"\nBT \"Butanas\"\nBV \"Buvė sala\"\nBW \"Botsvana\"\nBY \"Baltarusija\"\nBZ \"Belizas\"\nCA \"Kanada\"\nCC \"Kokosų (Kilingo) Salos\"\nCD \"Kongo Demokratinė Respublika\"\nCF \"Centrinės Afrikos Respublika\"\nCG \"Kongo Respublika\"\nCH \"Šveicarija\"\nCI \"Dramblio Kaulo Krantas\"\nCK \"Kuko Salos\"\nCL \"Čilė\"\nCM \"Kamerūnas\"\nCN \"Kinija\"\nCO \"Kolumbija\"\nCR \"Kosta Rika\"\nCU \"Kuba\"\nCV \"Žaliasis Kyšulys\"\nCW \"Kiurasao\"\nCX \"Kalėdų sala\"\nCY \"Kipras\"\nCZ \"Čekija\"\nDE \"Vokietija\"\nDJ \"Džibutis\"\nDK \"Danija\"\nDM \"Dominika\"\nDO \"Dominikos Respublika\"\nDZ \"Alžyras\"\nEC \"Ekvadoras\"\nEE \"Estija\"\nEG \"Egiptas\"\nEH \"Vakarų Sahara\"\nER \"Eritrėja\"\nES \"Ispanija\"\nET \"Etiopija\"\nFI \"Suomija\"\nFJ \"Fidžis\"\nFK \"Folklando (Malvinų) Salos\"\nFM \"Mikronezija\"\nFO \"Farerų Salos\"\nFR \"Prancūzija\"\nGA \"Gabonas\"\nGB \"Jungtinė Karalystė\"\nGD \"Grenada\"\nGE \"Gruzija\"\nGF \"Prancūzijos Gviana\"\nGG \"Gernsis\"\nGH \"Gana\"\nGI \"Gibraltaras\"\nGL \"Grenlandija\"\nGM \"Gambija\"\nGN \"Gvinėja\"\nGP \"Gvadelupa\"\nGQ \"Pusiaujo Gvinėja\"\nGR \"Graikija\"\nGS \"Pietų Džordžijos ir Pietų Sandvičo Salos\"\nGT_ \"Gvatemala\"\nGU \"Guamas\"\nGW \"Bisau Gvinėja\"\nGY \"Gajana\"\nHK \"Honkongas\"\nHM \"Herdo ir Makdonaldo salos\"\nHN \"Hondūras\"\nHR \"Kroatija\"\nHT \"Haitis\"\nHU \"Vengrija\"\nID \"Indonezija\"\nIE \"Airija\"\nIL \"Izraelis\"\nIM \"Meno sala\"\nIN \"Indija\"\nIO \"Indijos Vandenyno Britų Sritis\"\nIQ \"Irakas\"\nIR \"Iranas\"\nIS \"Islandija\"\nIT \"Italija\"\nJE \"Džersis\"\nJM \"Jamaika\"\nJO \"Jordanija\"\nJP \"Japonija\"\nKE \"Kenija\"\nKG \"Kirgizija\"\nKH \"Kambodža\"\nKI \"Kiribatis\"\nKM \"Komorai\"\nKN \"Sent Kitsas ir Nevis\"\nKP \"Šiaurės Korėja\"\nKR \"Pietų Korėja\"\nKW \"Kuveitas\"\nKY \"Kaimanų salos\"\nKZ \"Kazachstanas\"\nLA \"Laosas\"\nLB \"Libanas\"\nLC \"Sent Lusija\"\nLI \"Lichtenšteinas\"\nLK \"Šri Lanka\"\nLR \"Liberija\"\nLS \"Lesotas\"\nLT_ \"Lietuva\"\nLU \"Liuksemburgas\"\nLV \"Latvija\"\nLY \"Libija\"\nMA \"Marokas\"\nMC \"Monakas\"\nMD \"Moldavija\"\nME \"Juodkalnija\"\nMF \"San Martenas\"\nMG \"Madagaskaras\"\nMH \"Maršalo salos\"\nMK \"Makedonija\"\nML \"Malis\"\nMM \"Mianmaras\"\nMN \"Mongolija\"\nMO \"Makao\"\nMP \"Marianos Šiaurinės Salos\"\nMQ \"Martinika\"\nMR \"Mauritanija\"\nMS \"Montseratas\"\nMT \"Malta\"\nMU \"Mauricijus\"\nMV \"Maldyvai\"\nMW \"Malavis\"\nMX \"Meksika\"\nMY \"Malaizija\"\nMZ \"Mozambikas\"\nNA \"Namibija\"\nNC \"Naujoji Kaledonija\"\nNE \"Nigeris\"\nNF \"Norfolko sala\"\nNG \"Nigerija\"\nNI \"Nikaragva\"\nNL \"Nyderlandai\"\nNO \"Norvegija\"\nNP \"Nepalas\"\nNR \"Nauru\"\nNU \"Niujė\"\nNZ \"Naujoji Zelandija\"\nOM \"Omanas\"\nPA \"Panama\"\nPE \"Peru\"\nPF \"Prancūzijos Polinezija\"\nPG \"Papua Naujoji Gvinėja\"\nPH \"Filipinai\"\nPK \"Pakistanas\"\nPL \"Lenkija\"\nPM \"Sen Pjeras ir Mikelonas\"\nPN \"Pitkernas\"\nPR \"Puerto Rikas\"\nPS \"Palestina\"\nPT \"Portugalija\"\nPW \"Palau\"\nPY \"Paragvajus\"\nQA \"Kataras\"\nRE \"Reunjonas\"\nRO \"Rumunija\"\nRS \"Serbija\"\nRU \"Rusija\"\nRW \"Ruanda\"\nSA \"Saudo Arabija\"\nSB \"Saliamono Salos\"\nSC \"Seišeliai\"\nSD \"Sudanas\"\nSE \"Švedija\"\nSG \"Singapūras\"\nSH \"Šv. Elenos, Dangun Žengimo, Tristanas da Kunja salos\"\nSI \"Slovėnija\"\nSJ \"Svalbardo ir Jan Majeno salos\"\nSK \"Slovakija\"\nSL \"Siera Leonė\"\nSM \"San Marinas\"\nSN \"Senegalas\"\nSO \"Somalis\"\nSR \"Surinamas\"\nSS \"Pietų Sudanas\"\nST \"San Tomė ir Prinsipė\"\nSV \"Salvadoras\"\nSX \"Sint Martenas\"\nSY \"Sirija\"\nSZ \"Svazilendas\"\nTC \"Terksas ir Kaikosas\"\nTD \"Čadas\"\nTF \"Prancūzijos Pietų Sritys\"\nTG \"Togas\"\nTH \"Tailandas\"\nTJ \"Tadžikija\"\nTK \"Tokelau\"\nTL \"Rytų Timoras\"\nTM \"Turkmėnija\"\nTN \"Tunisas\"\nTO \"Tonga\"\nTR \"Turkija\"\nTT \"Trinidadas ir Tobagas\"\nTV \"Tuvalu\"\nTW \"Taivanas\"\nTZ \"Tanzanija\"\nUA \"Ukraina\"\nUG \"Uganda\"\nUM \"JAV užjūrio mažosios salos\"\nUS \"Jungtinės Valstijos\"\nUY \"Urugvajus\"\nUZ \"Uzbekistanas\"\nVA \"Vatikanas\"\nVC \"Sent Vinsentas ir Grenadinai\"\nVE \"Venesuela\"\nVG \"Mergelių Salos (Didžioji Britanija)\"\nVI \"Mergelių Salos (JAV)\"\nVN \"Vietnamas\"\nVU \"Vanuatu\"\nWF \"Volisas ir Futūna\"\nWS \"Samoa\"\nYE \"Jemenas\"\nYT \"Majotas\"\nZA \"PAR\"\nZM \"Zambija\"\nZW \"Zimbabvė\"\n```\n",
+                "type": "Iso3166.CountryCode -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Iso3166.Norwegian",
+        "comment": "\n@docs toName\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toName",
+                "comment": " Name for `CountryCode` in Norwegian.\n\n```\nAD \"Andorra\"\nAE \"De forente arabiske emirater\"\nAF \"Afghanistan\"\nAG \"Antigua og Barbuda\"\nAI \"Anguilla\"\nAL \"Albania\"\nAM \"Armenia\"\nAO \"Angola\"\nAQ \"Antarktika\"\nAR \"Argentina\"\nAS \"Amerikansk Samoa\"\nAT \"Østerrike\"\nAU \"Australia\"\nAW \"Aruba\"\nAX \"Åland\"\nAZ \"Aserbajdsjan\"\nBA \"Bosnia-Hercegovina\"\nBB \"Barbados\"\nBD \"Bangladesh\"\nBE \"Belgia\"\nBF \"Burkina Faso\"\nBG \"Bulgaria\"\nBH \"Bahrain\"\nBI \"Burundi\"\nBJ \"Benin\"\nBL \"Saint-Barthélemy\"\nBM \"Bermuda\"\nBN \"Brunei\"\nBO \"Bolivia\"\nBQ \"Bonaire, Sint Eustatius og Saba\"\nBR \"Brasil\"\nBS \"Bahamas\"\nBT \"Bhutan\"\nBV \"Bouvetøya\"\nBW \"Botswana\"\nBY \"Hviterussland\"\nBZ \"Belize\"\nCA \"Canada\"\nCC \"Kokosøyene\"\nCD \"Kongo, Den demokratiske republikken\"\nCF \"Den sentralafrikanske republikk\"\nCG \"Kongo, Republikken\"\nCH \"Sveits\"\nCI \"Elfenbenskysten\"\nCK \"Cookøyene\"\nCL \"Chile\"\nCM \"Kamerun\"\nCN \"Kina\"\nCO \"Colombia\"\nCR \"Costa Rica\"\nCU \"Cuba\"\nCV \"Kapp Verde\"\nCW \"Curaçao\"\nCX \"Christmasøya\"\nCY \"Kypros\"\nCZ \"Tsjekkia\"\nDE \"Tyskland\"\nDJ \"Djibouti\"\nDK \"Danmark\"\nDM \"Dominica\"\nDO \"Den dominikanske republikk\"\nDZ \"Algerie\"\nEC \"Ecuador\"\nEE \"Estland\"\nEG \"Egypt\"\nEH \"Vest-Sahara\"\nER \"Eritrea\"\nES \"Spania\"\nET \"Etiopia\"\nFI \"Finland\"\nFJ \"Fiji\"\nFK \"Falklandsøyene\"\nFM \"Mikronesiaføderasjonen\"\nFO \"Færøyene\"\nFR \"Frankrike\"\nGA \"Gabon\"\nGB \"Storbritannia\"\nGD \"Grenada\"\nGE \"Georgia\"\nGF \"Fransk Guyana\"\nGG \"Guernsey\"\nGH \"Ghana\"\nGI \"Gibraltar\"\nGL \"Grønland\"\nGM \"Gambia\"\nGN \"Guinea\"\nGP \"Guadeloupe\"\nGQ \"Ekvatorial-Guinea\"\nGR \"Hellas\"\nGS \"Sør-Georgia og Sør-Sandwichøyene\"\nGT_ \"Guatemala\"\nGU \"Guam\"\nGW \"Guinea-Bissau\"\nGY \"Guyana\"\nHK \"Hongkong\"\nHM \"Heard- og McDonaldøyene\"\nHN \"Honduras\"\nHR \"Kroatia\"\nHT \"Haiti\"\nHU \"Ungarn\"\nID \"Indonesia\"\nIE \"Irland\"\nIL \"Israel\"\nIM \"Man\"\nIN \"India\"\nIO \"Det britiske territoriet i Indiahavet\"\nIQ \"Irak\"\nIR \"Iran\"\nIS \"Island\"\nIT \"Italia\"\nJE \"Jersey\"\nJM \"Jamaica\"\nJO \"Jordan\"\nJP \"Japan\"\nKE \"Kenya\"\nKG \"Kirgisistan\"\nKH \"Kambodsja\"\nKI \"Kiribati\"\nKM \"Komorene\"\nKN \"Saint Kitts og Nevis\"\nKP \"Nord-Korea\"\nKR \"Sør-Korea\"\nKW \"Kuwait\"\nKY \"Caymanøyene\"\nKZ \"Kasakhstan\"\nLA \"Laos\"\nLB \"Libanon\"\nLC \"Saint Lucia\"\nLI \"Liechtenstein\"\nLK \"Sri Lanka\"\nLR \"Liberia\"\nLS \"Lesotho\"\nLT_ \"Litauen\"\nLU \"Luxembourg\"\nLV \"Latvia\"\nLY \"Libya\"\nMA \"Marokko\"\nMC \"Monaco\"\nMD \"Moldova\"\nME \"Montenegro\"\nMF \"Saint-Martin\"\nMG \"Madagaskar\"\nMH \"Marshalløyene\"\nMK \"Makedonia, Republikken\"\nML \"Mali\"\nMM \"Myanmar\"\nMN \"Mongolia\"\nMO \"Macao\"\nMP \"Nord-Marianene\"\nMQ \"Martinique\"\nMR \"Mauritania\"\nMS \"Montserrat\"\nMT \"Malta\"\nMU \"Mauritius\"\nMV \"Maldivene\"\nMW \"Malawi\"\nMX \"Mexico\"\nMY \"Malaysia\"\nMZ \"Mosambik\"\nNA \"Namibia\"\nNC \"Ny-Caledonia\"\nNE \"Niger\"\nNF \"Norfolkøya\"\nNG \"Nigeria\"\nNI \"Nicaragua\"\nNL \"Nederland\"\nNO \"Norge\"\nNP \"Nepal\"\nNR \"Nauru\"\nNU \"Niue\"\nNZ \"New Zealand\"\nOM \"Oman\"\nPA \"Panama\"\nPE \"Peru\"\nPF \"Fransk Polynesia\"\nPG \"Papua Ny-Guinea\"\nPH \"Filippinene\"\nPK \"Pakistan\"\nPL \"Polen\"\nPM \"Saint-Pierre og Miquelon\"\nPN \"Pitcairnøyene\"\nPR \"Puerto Rico\"\nPS \"De palestinske territoriene\"\nPT \"Portugal\"\nPW \"Palau\"\nPY \"Paraguay\"\nQA \"Qatar\"\nRE \"Réunion\"\nRO \"Romania\"\nRS \"Serbia\"\nRU \"Russland\"\nRW \"Rwanda\"\nSA \"Saudi-Arabia\"\nSB \"Salomonøyene\"\nSC \"Seychellene\"\nSD \"Sudan\"\nSE \"Sverige\"\nSG \"Singapore\"\nSH \"St. Helena, Ascension og Tristan da Cunha\"\nSI \"Slovenia\"\nSJ \"Svalbard og Jan Mayen\"\nSK \"Slovakia\"\nSL \"Sierra Leone\"\nSM \"San Marino\"\nSN \"Senegal\"\nSO \"Somalia\"\nSR \"Surinam\"\nSS \"Sør-Sudan\"\nST \"São Tomé og Príncipe\"\nSV \"El Salvador\"\nSX \"Sint Maarten\"\nSY \"Syria\"\nSZ \"Eswatini\"\nTC \"Turks- og Caicosøyene\"\nTD \"Tsjad\"\nTF \"De franske sørterritorier\"\nTG \"Togo\"\nTH \"Thailand\"\nTJ \"Tadsjikistan\"\nTK \"Tokelau\"\nTL \"Øst-Timor\"\nTM \"Turkmenistan\"\nTN \"Tunisia\"\nTO \"Tonga\"\nTR \"Tyrkia\"\nTT \"Trinidad og Tobago\"\nTV \"Tuvalu\"\nTW \"Taiwan\"\nTZ \"Tanzania\"\nUA \"Ukraina\"\nUG \"Uganda\"\nUM \"USAs ytre småøyer\"\nUS \"USA\"\nUY \"Uruguay\"\nUZ \"Usbekistan\"\nVA \"Vatikanstaten\"\nVC \"Saint Vincent og Grenadinene\"\nVE \"Venezuela\"\nVG \"Jomfruøyene, De britiske\"\nVI \"Jomfruøyene, De amerikanske\"\nVN \"Vietnam\"\nVU \"Vanuatu\"\nWF \"Wallis og Futuna\"\nWS \"Samoa\"\nYE \"Jemen\"\nYT \"Mayotte\"\nZA \"Sør-Afrika\"\nZM \"Zambia\"\nZW \"Zimbabwe\"\n```\n",
+                "type": "Iso3166.CountryCode -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Iso3166.Polish",
+        "comment": "\n@docs toName\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toName",
+                "comment": " Name for `CountryCode` in Polish.\n\n```\nAD \"Andora\"\nAE \"Zjednoczone Emiraty Arabskie\"\nAF \"Afganistan\"\nAG \"Antigua i Barbuda\"\nAI \"Anguilla\"\nAL \"Albania\"\nAM \"Armenia\"\nAO \"Angola\"\nAQ \"Antarktyka\"\nAR \"Argentyna\"\nAS \"Samoa Amerykańskie\"\nAT \"Austria\"\nAU \"Australia\"\nAW \"Aruba\"\nAX \"Wyspy Alandzkie\"\nAZ \"Azerbejdżan\"\nBA \"Bośnia i Hercegowina\"\nBB \"Barbados\"\nBD \"Bangladesz\"\nBE \"Belgia\"\nBF \"Burkina Faso\"\nBG \"Bułgaria\"\nBH \"Bahrajn\"\nBI \"Burundi\"\nBJ \"Benin\"\nBL \"Saint-Barthélemy\"\nBM \"Bermudy\"\nBN \"Brunei\"\nBO \"Boliwia\"\nBQ \"Bonaire, Sint Eustatius i Saba\"\nBR \"Brazylia\"\nBS \"Bahamy\"\nBT \"Bhutan\"\nBV \"Wyspa Bouveta\"\nBW \"Botswana\"\nBY \"Białoruś\"\nBZ \"Belize\"\nCA \"Kanada\"\nCC \"Wyspy Kokosowe\"\nCD \"Demokratyczna Republika Konga\"\nCF \"Republika Środkowoafrykańska\"\nCG \"Kongo\"\nCH \"Szwajcaria\"\nCI \"Wybrzeże Kości Słoniowej\"\nCK \"Wyspy Cooka\"\nCL \"Chile\"\nCM \"Kamerun\"\nCN \"Chiny\"\nCO \"Kolumbia\"\nCR \"Kostaryka\"\nCU \"Kuba\"\nCV \"Republika Zielonego Przylądka\"\nCW \"Curaçao\"\nCX \"Wyspa Bożego Narodzenia\"\nCY \"Cypr\"\nCZ \"Czechy\"\nDE \"Niemcy\"\nDJ \"Dżibuti\"\nDK \"Dania\"\nDM \"Dominika\"\nDO \"Dominikana\"\nDZ \"Algieria\"\nEC \"Ekwador\"\nEE \"Estonia\"\nEG \"Egipt\"\nEH \"Sahara Zachodnia\"\nER \"Erytrea\"\nES \"Hiszpania\"\nET \"Etiopia\"\nFI \"Finlandia\"\nFJ \"Fidżi\"\nFK \"Falklandy\"\nFM \"Mikronezja\"\nFO \"Wyspy Owcze\"\nFR \"Francja\"\nGA \"Gabon\"\nGB \"Wielka Brytania\"\nGD \"Grenada\"\nGE \"Gruzja\"\nGF \"Gujana Francuska\"\nGG \"Guernsey\"\nGH \"Ghana\"\nGI \"Gibraltar\"\nGL \"Grenlandia\"\nGM \"Gambia\"\nGN \"Gwinea\"\nGP \"Gwadelupa\"\nGQ \"Gwinea Równikowa\"\nGR \"Grecja\"\nGS \"Georgia Południowa i Sandwich Południowy\"\nGT_ \"Gwatemala\"\nGU \"Guam\"\nGW \"Gwinea Bissau\"\nGY \"Gujana\"\nHK \"Hongkong\"\nHM \"Wyspy Heard i McDonalda\"\nHN \"Honduras\"\nHR \"Chorwacja\"\nHT \"Haiti\"\nHU \"Węgry\"\nID \"Indonezja\"\nIE \"Irlandia\"\nIL \"Izrael\"\nIM \"Wyspa Man\"\nIN \"Indie\"\nIO \"Brytyjskie Terytorium Oceanu Indyjskiego\"\nIQ \"Irak\"\nIR \"Iran\"\nIS \"Islandia\"\nIT \"Włochy\"\nJE \"Jersey\"\nJM \"Jamajka\"\nJO \"Jordania\"\nJP \"Japonia\"\nKE \"Kenia\"\nKG \"Kirgistan\"\nKH \"Kambodża\"\nKI \"Kiribati\"\nKM \"Komory\"\nKN \"Saint Kitts i Nevis\"\nKP \"Korea Północna\"\nKR \"Korea Południowa\"\nKW \"Kuwejt\"\nKY \"Kajmany\"\nKZ \"Kazachstan\"\nLA \"Laos\"\nLB \"Liban\"\nLC \"Saint Lucia\"\nLI \"Liechtenstein\"\nLK \"Sri Lanka\"\nLR \"Liberia\"\nLS \"Lesotho\"\nLT_ \"Litwa\"\nLU \"Luksemburg\"\nLV \"Łotwa\"\nLY \"Libia\"\nMA \"Maroko\"\nMC \"Monako\"\nMD \"Mołdawia\"\nME \"Czarnogóra\"\nMF \"Saint-Martin\"\nMG \"Madagaskar\"\nMH \"Wyspy Marshalla\"\nMK \"Macedonia Północna\"\nML \"Mali\"\nMM \"Mjanma\"\nMN \"Mongolia\"\nMO \"Makau\"\nMP \"Mariany Północne\"\nMQ \"Martynika\"\nMR \"Mauretania\"\nMS \"Montserrat\"\nMT \"Malta\"\nMU \"Mauritius\"\nMV \"Malediwy\"\nMW \"Malawi\"\nMX \"Meksyk\"\nMY \"Malezja\"\nMZ \"Mozambik\"\nNA \"Namibia\"\nNC \"Nowa Kaledonia\"\nNE \"Niger\"\nNF \"Norfolk\"\nNG \"Nigeria\"\nNI \"Nikaragua\"\nNL \"Holandia\"\nNO \"Norwegia\"\nNP \"Nepal\"\nNR \"Nauru\"\nNU \"Niue\"\nNZ \"Nowa Zelandia\"\nOM \"Oman\"\nPA \"Panama\"\nPE \"Peru\"\nPF \"Polinezja Francuska\"\nPG \"Papua-Nowa Gwinea\"\nPH \"Filipiny\"\nPK \"Pakistan\"\nPL \"Polska\"\nPM \"Saint-Pierre i Miquelon\"\nPN \"Pitcairn\"\nPR \"Portoryko\"\nPS \"Palestyna\"\nPT \"Portugalia\"\nPW \"Palau\"\nPY \"Paragwaj\"\nQA \"Katar\"\nRE \"Reunion\"\nRO \"Rumunia\"\nRS \"Serbia\"\nRU \"Rosja\"\nRW \"Rwanda\"\nSA \"Arabia Saudyjska\"\nSB \"Wyspy Salomona\"\nSC \"Seszele\"\nSD \"Sudan\"\nSE \"Szwecja\"\nSG \"Singapur\"\nSH \"Wyspa Świętej Heleny, Wyspa Wniebowstąpienia i Tristan da Cunha\"\nSI \"Słowenia\"\nSJ \"Svalbard i Jan Mayen\"\nSK \"Słowacja\"\nSL \"Sierra Leone\"\nSM \"San Marino\"\nSN \"Senegal\"\nSO \"Somalia\"\nSR \"Surinam\"\nSS \"Sudan Południowy\"\nST \"Wyspy Świętego Tomasza i Książęca\"\nSV \"Salwador\"\nSX \"Sint Maarten\"\nSY \"Syria\"\nSZ \"Eswatini\"\nTC \"Turks i Caicos\"\nTD \"Czad\"\nTF \"Francuskie Terytoria Południowe i Antarktyczne\"\nTG \"Togo\"\nTH \"Tajlandia\"\nTJ \"Tadżykistan\"\nTK \"Tokelau\"\nTL \"Timor Wschodni\"\nTM \"Turkmenistan\"\nTN \"Tunezja\"\nTO \"Tonga\"\nTR \"Turcja\"\nTT \"Trynidad i Tobago\"\nTV \"Tuvalu\"\nTW \"Tajwan\"\nTZ \"Tanzania\"\nUA \"Ukraina\"\nUG \"Uganda\"\nUM \"Dalekie Wyspy Mniejsze Stanów Zjednoczonych\"\nUS \"Stany Zjednoczone\"\nUY \"Urugwaj\"\nUZ \"Uzbekistan\"\nVA \"Watykan\"\nVC \"Saint Vincent i Grenadyny\"\nVE \"Wenezuela\"\nVG \"Brytyjskie Wyspy Dziewicze\"\nVI \"Wyspy Dziewicze Stanów Zjednoczonych\"\nVN \"Wietnam\"\nVU \"Vanuatu\"\nWF \"Wallis i Futuna\"\nWS \"Samoa\"\nYE \"Jemen\"\nYT \"Majotta\"\nZA \"Południowa Afryka\"\nZM \"Zambia\"\nZW \"Zimbabwe\"\n```\n",
+                "type": "Iso3166.CountryCode -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Iso3166.Portuguese",
+        "comment": "\n@docs toName\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toName",
+                "comment": " Name for `CountryCode` in Portuguese.\n\n```\nAD \"Andorra\"\nAE \"Emirados Árabes Unidos\"\nAF \"Afeganistão\"\nAG \"Antígua e Barbuda\"\nAI \"Anguilla\"\nAL \"Albânia\"\nAM \"Armênia\"\nAO \"Angola\"\nAQ \"Antártida\"\nAR \"Argentina\"\nAS \"Samoa Americana\"\nAT \"Áustria\"\nAU \"Austrália\"\nAW \"Aruba\"\nAX \"Ilhas Åland\"\nAZ \"Azerbaijão\"\nBA \"Bósnia e Herzegovina\"\nBB \"Barbados\"\nBD \"Bangladesh\"\nBE \"Bélgica\"\nBF \"Burkina Faso\"\nBG \"Bulgária\"\nBH \"Bahrein\"\nBI \"Burundi\"\nBJ \"Benim\"\nBL \"São Bartolomeu\"\nBM \"Bermudas\"\nBN \"Brunei\"\nBO \"Bolívia\"\nBQ \"Países Baixos Caribenhos\"\nBR \"Brasil\"\nBS \"Bahamas\"\nBT \"Butão\"\nBV \"Ilha Bouvet\"\nBW \"Botswana\"\nBY \"Bielorrússia\"\nBZ \"Belize\"\nCA \"Canadá\"\nCC \"Ilhas Cocos (Keeling)\"\nCD \"República Democrática do Congo\"\nCF \"República Centro-Africana\"\nCG \"República do Congo\"\nCH \"Suíça\"\nCI \"Costa do Marfim\"\nCK \"Ilhas Cook\"\nCL \"Chile\"\nCM \"Camarões\"\nCN \"China\"\nCO \"Colômbia\"\nCR \"Costa Rica\"\nCU \"Cuba\"\nCV \"Cabo Verde\"\nCW \"Curaçao\"\nCX \"Ilha do Natal\"\nCY \"Chipre\"\nCZ \"Chéquia\"\nDE \"Alemanha\"\nDJ \"Djibouti\"\nDK \"Dinamarca\"\nDM \"Dominica\"\nDO \"República Dominicana\"\nDZ \"Argélia\"\nEC \"Equador\"\nEE \"Estónia\"\nEG \"Egito\"\nEH \"Saara Ocidental\"\nER \"Eritreia\"\nES \"Espanha\"\nET \"Etiópia\"\nFI \"Finlândia\"\nFJ \"Fiji\"\nFK \"Ilhas Malvinas\"\nFM \"Estados Federados da Micronésia\"\nFO \"Ilhas Feroé\"\nFR \"França\"\nGA \"Gabão\"\nGB \"Reino Unido\"\nGD \"Granada\"\nGE \"Geórgia\"\nGF \"Guiana Francesa\"\nGG \"Guernsey\"\nGH \"Gana\"\nGI \"Gibraltar\"\nGL \"Gronelândia\"\nGM \"Gâmbia\"\nGN \"Guiné\"\nGP \"Guadalupe\"\nGQ \"Guiné Equatorial\"\nGR \"Grécia\"\nGS \"Ilhas Geórgia do Sul e Sandwich do Sul\"\nGT_ \"Guatemala\"\nGU \"Guam\"\nGW \"Guiné-Bissau\"\nGY \"Guiana\"\nHK \"Hong Kong\"\nHM \"Ilha Heard e Ilhas McDonald\"\nHN \"Honduras\"\nHR \"Croácia\"\nHT \"Haiti\"\nHU \"Hungria\"\nID \"Indonésia\"\nIE \"Irlanda\"\nIL \"Israel\"\nIM \"Ilha de Man\"\nIN \"Índia\"\nIO \"Território Britânico do Oceano Índico\"\nIQ \"Iraque\"\nIR \"Irão\"\nIS \"Islândia\"\nIT \"Itália\"\nJE \"Jersey\"\nJM \"Jamaica\"\nJO \"Jordânia\"\nJP \"Japão\"\nKE \"Quênia\"\nKG \"Quirguistão\"\nKH \"Camboja\"\nKI \"Kiribati\"\nKM \"Comores\"\nKN \"São Cristóvão e Névis\"\nKP \"Coreia do Norte\"\nKR \"Coreia do Sul\"\nKW \"Kuwait\"\nKY \"Ilhas Cayman\"\nKZ \"Cazaquistão\"\nLA \"Laos\"\nLB \"Líbano\"\nLC \"Santa Lúcia\"\nLI \"Liechtenstein\"\nLK \"Sri Lanka\"\nLR \"Libéria\"\nLS \"Lesoto\"\nLT_ \"Lituânia\"\nLU \"Luxemburgo\"\nLV \"Letônia\"\nLY \"Líbia\"\nMA \"Marrocos\"\nMC \"Mónaco\"\nMD \"Moldávia\"\nME \"Montenegro\"\nMF \"São Martinho\"\nMG \"Madagáscar\"\nMH \"Ilhas Marshall\"\nMK \"Macedônia do Norte\"\nML \"Mali\"\nMM \"Mianmar\"\nMN \"Mongólia\"\nMO \"Macau\"\nMP \"Marianas Setentrionais\"\nMQ \"Martinica\"\nMR \"Mauritânia\"\nMS \"Montserrat\"\nMT \"Malta\"\nMU \"Maurícia\"\nMV \"Maldivas\"\nMW \"Malawi\"\nMX \"México\"\nMY \"Malásia\"\nMZ \"Moçambique\"\nNA \"Namíbia\"\nNC \"Nova Caledônia\"\nNE \"Níger\"\nNF \"Ilha Norfolk\"\nNG \"Nigéria\"\nNI \"Nicarágua\"\nNL \"Países Baixos\"\nNO \"Noruega\"\nNP \"Nepal\"\nNR \"Nauru\"\nNU \"Niue\"\nNZ \"Nova Zelândia\"\nOM \"Omã\"\nPA \"Panamá\"\nPE \"Peru\"\nPF \"Polinésia Francesa\"\nPG \"Papua-Nova Guiné\"\nPH \"Filipinas\"\nPK \"Paquistão\"\nPL \"Polónia\"\nPM \"Saint-Pierre e Miquelon\"\nPN \"Pitcairn\"\nPR \"Porto Rico\"\nPS \"Palestina\"\nPT \"Portugal\"\nPW \"Palau\"\nPY \"Paraguai\"\nQA \"Catar\"\nRE \"Reunião\"\nRO \"Roménia\"\nRS \"Sérvia\"\nRU \"Rússia\"\nRW \"Ruanda\"\nSA \"Arábia Saudita\"\nSB \"Ilhas Salomão\"\nSC \"Seicheles\"\nSD \"Sudão\"\nSE \"Suécia\"\nSG \"Singapura\"\nSH \"Santa Helena, Ascensão e Tristão da Cunha\"\nSI \"Eslovênia\"\nSJ \"Svalbard e Jan Mayen\"\nSK \"Eslováquia\"\nSL \"Serra Leoa\"\nSM \"San Marino\"\nSN \"Senegal\"\nSO \"Somália\"\nSR \"Suriname\"\nSS \"Sudão do Sul\"\nST \"São Tomé e Príncipe\"\nSV \"El Salvador\"\nSX \"São Martinho\"\nSY \"Síria\"\nSZ \"Essuatíni\"\nTC \"Turks e Caicos\"\nTD \"Chade\"\nTF \"Terras Austrais e Antárticas Francesas\"\nTG \"Togo\"\nTH \"Tailândia\"\nTJ \"Tajiquistão\"\nTK \"Toquelau\"\nTL \"Timor-Leste\"\nTM \"Turquemenistão\"\nTN \"Tunísia\"\nTO \"Tonga\"\nTR \"Turquia\"\nTT \"Trinidad e Tobago\"\nTV \"Tuvalu\"\nTW \"Taiwan\"\nTZ \"Tanzânia\"\nUA \"Ucrânia\"\nUG \"Uganda\"\nUM \"Ilhas Menores Distantes dos Estados Unidos\"\nUS \"Estados Unidos\"\nUY \"Uruguai\"\nUZ \"Uzbequistão\"\nVA \"Vaticano\"\nVC \"São Vicente e Granadinas\"\nVE \"Venezuela\"\nVG \"Ilhas Virgens Britânicas\"\nVI \"Ilhas Virgens Americanas\"\nVN \"Vietnã\"\nVU \"Vanuatu\"\nWF \"Wallis e Futuna\"\nWS \"Samoa\"\nYE \"Iêmen\"\nYT \"Mayotte\"\nZA \"África do Sul\"\nZM \"Zâmbia\"\nZW \"Zimbabwe\"\n```\n",
+                "type": "Iso3166.CountryCode -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Iso3166.Romanian",
+        "comment": "\n@docs toName\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toName",
+                "comment": " Name for `CountryCode` in Romanian.\n\n```\nAD \"Andorra\"\nAE \"Emiratele Arabe Unite\"\nAF \"Afganistan\"\nAG \"Antigua și Barbuda\"\nAI \"Anguilla\"\nAL \"Albania\"\nAM \"Armenia\"\nAO \"Angola\"\nAQ \"Antarctica\"\nAR \"Argentina\"\nAS \"Samoa americană\"\nAT \"Austria\"\nAU \"Australia\"\nAW \"Aruba\"\nAX \"Insulele Åland\"\nAZ \"Azerbaidjan\"\nBA \"Bosnia și Herțegovina\"\nBB \"Barbados\"\nBD \"Bangladesh\"\nBE \"Belgia\"\nBF \"Burkina Faso\"\nBG \"Bulgaria\"\nBH \"Bahrain\"\nBI \"Burundi\"\nBJ \"Benin\"\nBL \"Saint Barthélemy\"\nBM \"Bermude\"\nBN \"Brunei\"\nBO \"Bolivia\"\nBQ \"Insulele Bonaire, Sint Eustatius și Saba\"\nBR \"Brazilia\"\nBS \"Bahamas\"\nBT \"Bhutan\"\nBV \"Insula Bouvet\"\nBW \"Botswana\"\nBY \"Belarus\"\nBZ \"Belize\"\nCA \"Canada\"\nCC \"Insulele Cocos\"\nCD \"Republica Democrată Congo\"\nCF \"Republica Centrafricană\"\nCG \"Congo\"\nCH \"Elveția\"\nCI \"Coasta de Fildeș\"\nCK \"Insulele Cook\"\nCL \"Chile\"\nCM \"Camerun\"\nCN \"Republica Populară Chineză\"\nCO \"Columbia\"\nCR \"Costa Rica\"\nCU \"Cuba\"\nCV \"Republica Capului Verde\"\nCW \"Curaçao\"\nCX \"Insula Crăciunului\"\nCY \"Cipru\"\nCZ \"Cehia\"\nDE \"Germania\"\nDJ \"Djibouti\"\nDK \"Danemarca\"\nDM \"Dominica\"\nDO \"Republica Dominicană\"\nDZ \"Algeria\"\nEC \"Ecuador\"\nEE \"Estonia\"\nEG \"Egipt\"\nEH \"Sahara Occidentală\"\nER \"Eritreea\"\nES \"Spania\"\nET \"Etiopia\"\nFI \"Finlanda\"\nFJ \"Fiji\"\nFK \"Insulele Falkland\"\nFM \"Micronezia\"\nFO \"Insulele Feroe\"\nFR \"Franța\"\nGA \"Gabon\"\nGB \"Regatul Unit\"\nGD \"Grenada\"\nGE \"Georgia\"\nGF \"Guiana Franceză\"\nGG \"Guernsey\"\nGH \"Ghana\"\nGI \"Gibraltar\"\nGL \"Groenlanda\"\nGM \"Gambia\"\nGN \"Guineea\"\nGP \"Guadelupa\"\nGQ \"Guineea Ecuatorială\"\nGR \"Grecia\"\nGS \"Georgia de Sud și Insulele Sandwich de Sud\"\nGT_ \"Guatemala\"\nGU \"Guam\"\nGW \"Guineea-Bissau\"\nGY \"Guyana\"\nHK \"Hong Kong\"\nHM \"Insula Heard și Insulele McDonald\"\nHN \"Honduras\"\nHR \"Croația\"\nHT \"Haiti\"\nHU \"Ungaria\"\nID \"Indonezia\"\nIE \"Republica Irlanda\"\nIL \"Israel\"\nIM \"Insula Man\"\nIN \"India\"\nIO \"Teritoriul Britanic din Oceanul Indian\"\nIQ \"Irak\"\nIR \"Iran\"\nIS \"Islanda\"\nIT \"Italia\"\nJE \"Insula Jersey\"\nJM \"Jamaica\"\nJO \"Iordania\"\nJP \"Japonia\"\nKE \"Kenya\"\nKG \"Kârgâzstan\"\nKH \"Cambodgia\"\nKI \"Kiribati\"\nKM \"Comore\"\nKN \"Sfântul Kitts și Nevis\"\nKP \"Coreea de Nord\"\nKR \"Coreea de Sud\"\nKW \"Kuweit\"\nKY \"Insulele Cayman\"\nKZ \"Kazahstan\"\nLA \"Laos\"\nLB \"Liban\"\nLC \"Sfânta Lucia\"\nLI \"Liechtenstein\"\nLK \"Sri Lanka\"\nLR \"Liberia\"\nLS \"Lesotho\"\nLT_ \"Lituania\"\nLU \"Luxemburg\"\nLV \"Letonia\"\nLY \"Libia\"\nMA \"Maroc\"\nMC \"Monaco\"\nMD \"Republica Moldova\"\nME \"Muntenegru\"\nMF \"Sint Maarten (partea franceză)\"\nMG \"Madagascar\"\nMH \"Insulele Marshall\"\nMK \"Republica Macedonia\"\nML \"Mali\"\nMM \"Myanmar\"\nMN \"Mongolia\"\nMO \"Macao\"\nMP \"Insulele Mariane de Nord\"\nMQ \"Martinica\"\nMR \"Mauritania\"\nMS \"Montserrat\"\nMT \"Malta\"\nMU \"Mauritius\"\nMV \"Maldive\"\nMW \"Malawi\"\nMX \"Mexic\"\nMY \"Malaezia\"\nMZ \"Mozambic\"\nNA \"Namibia\"\nNC \"Noua Caledonie\"\nNE \"Niger\"\nNF \"Insula Norfolk\"\nNG \"Nigeria\"\nNI \"Nicaragua\"\nNL \"Țările de Jos\"\nNO \"Norvegia\"\nNP \"Nepal\"\nNR \"Nauru\"\nNU \"Niue\"\nNZ \"Noua Zeelandă\"\nOM \"Oman\"\nPA \"Panama\"\nPE \"Peru\"\nPF \"Polinezia franceză\"\nPG \"Papua Noua Guinee\"\nPH \"Filipine\"\nPK \"Pakistan\"\nPL \"Polonia\"\nPM \"Sfântul Pierre și Miquelon\"\nPN \"Pitcairn\"\nPR \"Puerto Rico\"\nPS \"Teritoriile Palestiniene Ocupate\"\nPT \"Portugalia\"\nPW \"Palau\"\nPY \"Paraguay\"\nQA \"Qatar\"\nRE \"Réunion\"\nRO \"România\"\nRS \"Serbia\"\nRU \"Rusia\"\nRW \"Rwanda\"\nSA \"Arabia Saudită\"\nSB \"Insulele Solomon\"\nSC \"Seychelles\"\nSD \"Sudan\"\nSE \"Suedia\"\nSG \"Singapore\"\nSH \"Sfânta Elena\"\nSI \"Slovenia\"\nSJ \"Svalbard și Jan Mayen\"\nSK \"Slovacia\"\nSL \"Sierra Leone\"\nSM \"San Marino\"\nSN \"Senegal\"\nSO \"Somalia\"\nSR \"Surinam\"\nSS \"Sudanul de Sud\"\nST \"Sao Tome și Principe\"\nSV \"El Salvador\"\nSX \"Sint Maarten (partea olandeză)\"\nSY \"Siria\"\nSZ \"Swaziland\"\nTC \"Insulele Turks și Caicos\"\nTD \"Ciad\"\nTF \"Teritoriile australe și antarctice franceze\"\nTG \"Togo\"\nTH \"Thailanda\"\nTJ \"Tadjikistan\"\nTK \"Tokelau\"\nTL \"Timorul de Est\"\nTM \"Turkmenistan\"\nTN \"Tunisia\"\nTO \"Tonga\"\nTR \"Turcia\"\nTT \"Trinidad și Tobago\"\nTV \"Tuvalu\"\nTW \"Taiwan\"\nTZ \"Tanzania\"\nUA \"Ucraina\"\nUG \"Uganda\"\nUM \"United States Minor Outlying Islands\"\nUS \"Statele Unite ale Americii\"\nUY \"Uruguay\"\nUZ \"Uzbekistan\"\nVA \"Vatican\"\nVC \"Sfântul Vincent și Grenadine\"\nVE \"Venezuela\"\nVG \"Insulele Virgine Britanice\"\nVI \"Insulele Virgine Americane\"\nVN \"Vietnam\"\nVU \"Vanuatu\"\nWF \"Wallis și Futuna\"\nWS \"Samoa\"\nYE \"Yemen\"\nYT \"Mayotte\"\nZA \"Africa de Sud\"\nZM \"Zambia\"\nZW \"Zimbabwe\"\n```\n",
+                "type": "Iso3166.CountryCode -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Iso3166.Russian",
+        "comment": "\n@docs toName\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toName",
+                "comment": " Name for `CountryCode` in Russian.\n\n```\nAD \"Андорра\"\nAE \"ОАЭ\"\nAF \"Афганистан\"\nAG \"Антигуа и Барбуда\"\nAI \"Ангилья\"\nAL \"Албания\"\nAM \"Армения\"\nAO \"Ангола\"\nAQ \"Антарктика\"\nAR \"Аргентина\"\nAS \"Американское Самоа\"\nAT \"Австрия\"\nAU \"Австралия\"\nAW \"Аруба\"\nAX \"Аландские острова\"\nAZ \"Азербайджан\"\nBA \"Босния и Герцеговина\"\nBB \"Барбадос\"\nBD \"Бангладеш\"\nBE \"Бельгия\"\nBF \"Буркина-Фасо\"\nBG \"Болгария\"\nBH \"Бахрейн\"\nBI \"Бурунди\"\nBJ \"Бенин\"\nBL \"Сен-Бартелеми (Карибы)\"\nBM \"Бермуды\"\nBN \"Бруней\"\nBO \"Боливия\"\nBQ \"Бонэйр, Синт-Эстатиус и Саба\"\nBR \"Бразилия\"\nBS \"Багамские Острова\"\nBT \"Бутан\"\nBV \"Остров Буве\"\nBW \"Ботсвана\"\nBY \"Белоруссия\"\nBZ \"Белиз\"\nCA \"Канада\"\nCC \"Кокосовые острова\"\nCD \"ДР Конго\"\nCF \"ЦАР\"\nCG \"Республика Конго\"\nCH \"Швейцария\"\nCI \"Кот-д’Ивуар\"\nCK \"Острова Кука\"\nCL \"Чили\"\nCM \"Камерун\"\nCN \"Китай (Китайская Народная Республика)\"\nCO \"Колумбия\"\nCR \"Коста-Рика\"\nCU \"Куба\"\nCV \"Кабо-Верде\"\nCW \"Кюрасао\"\nCX \"Остров Рождества\"\nCY \"Кипр\"\nCZ \"Чехия\"\nDE \"Германия\"\nDJ \"Джибути\"\nDK \"Дания\"\nDM \"Доминика\"\nDO \"Доминиканская Республика\"\nDZ \"Алжир\"\nEC \"Эквадор\"\nEE \"Эстония\"\nEG \"Египет\"\nEH \"САДР\"\nER \"Эритрея\"\nES \"Испания\"\nET \"Эфиопия\"\nFI \"Финляндия\"\nFJ \"Фиджи\"\nFK \"Фолклендские острова\"\nFM \"Микронезия\"\nFO \"Фарерские острова\"\nFR \"Франция\"\nGA \"Габон\"\nGB \"Великобритания\"\nGD \"Гренада\"\nGE \"Грузия\"\nGF \"Гвиана\"\nGG \"Гернси\"\nGH \"Гана\"\nGI \"Гибралтар\"\nGL \"Гренландия\"\nGM \"Гамбия\"\nGN \"Гвинея\"\nGP \"Гваделупа\"\nGQ \"Экваториальная Гвинея\"\nGR \"Греция\"\nGS \"Южная Георгия и Южные Сандвичевы Острова\"\nGT_ \"Гватемала\"\nGU \"Гуам\"\nGW \"Гвинея-Бисау\"\nGY \"Гайана\"\nHK \"Гонконг\"\nHM \"Херд и Макдональд\"\nHN \"Гондурас\"\nHR \"Хорватия\"\nHT \"Гаити\"\nHU \"Венгрия\"\nID \"Индонезия\"\nIE \"Ирландия\"\nIL \"Израиль\"\nIM \"Остров Мэн\"\nIN \"Индия\"\nIO \"Британская территория в Индийском океане\"\nIQ \"Ирак\"\nIR \"Иран\"\nIS \"Исландия\"\nIT \"Италия\"\nJE \"Джерси\"\nJM \"Ямайка\"\nJO \"Иордания\"\nJP \"Япония\"\nKE \"Кения\"\nKG \"Киргизия\"\nKH \"Камбоджа\"\nKI \"Кирибати\"\nKM \"Коморы\"\nKN \"Сент-Китс и Невис\"\nKP \"КНДР (Корейская Народно-Демократическая Республика)\"\nKR \"Республика Корея\"\nKW \"Кувейт\"\nKY \"Острова Кайман\"\nKZ \"Казахстан\"\nLA \"Лаос\"\nLB \"Ливан\"\nLC \"Сент-Люсия\"\nLI \"Лихтенштейн\"\nLK \"Шри-Ланка\"\nLR \"Либерия\"\nLS \"Лесото\"\nLT_ \"Литва\"\nLU \"Люксембург\"\nLV \"Латвия\"\nLY \"Ливия\"\nMA \"Марокко\"\nMC \"Монако\"\nMD \"Молдавия\"\nME \"Черногория\"\nMF \"Сен-Мартен\"\nMG \"Мадагаскар\"\nMH \"Маршалловы Острова\"\nMK \"Северная Македония\"\nML \"Мали\"\nMM \"Мьянма\"\nMN \"Монголия\"\nMO \"Макао\"\nMP \"Северные Марианские Острова\"\nMQ \"Мартиника\"\nMR \"Мавритания\"\nMS \"Монтсеррат\"\nMT \"Мальта\"\nMU \"Маврикий\"\nMV \"Мальдивы\"\nMW \"Малави\"\nMX \"Мексика\"\nMY \"Малайзия\"\nMZ \"Мозамбик\"\nNA \"Намибия\"\nNC \"Новая Каледония\"\nNE \"Нигер\"\nNF \"Остров Норфолк\"\nNG \"Нигерия\"\nNI \"Никарагуа\"\nNL \"Нидерланды\"\nNO \"Норвегия\"\nNP \"Непал\"\nNR \"Науру\"\nNU \"Ниуэ\"\nNZ \"Новая Зеландия\"\nOM \"Оман\"\nPA \"Панама\"\nPE \"Перу\"\nPF \"Французская Полинезия\"\nPG \"Папуа — Новая Гвинея\"\nPH \"Филиппины\"\nPK \"Пакистан\"\nPL \"Польша\"\nPM \"Сен-Пьер и Микелон\"\nPN \"Острова Питкэрн\"\nPR \"Пуэрто-Рико\"\nPS \"Государство Палестина\"\nPT \"Португалия\"\nPW \"Палау\"\nPY \"Парагвай\"\nQA \"Катар\"\nRE \"Реюньон\"\nRO \"Румыния\"\nRS \"Сербия\"\nRU \"Россия\"\nRW \"Руанда\"\nSA \"Саудовская Аравия\"\nSB \"Соломоновы Острова\"\nSC \"Сейшельские Острова\"\nSD \"Судан\"\nSE \"Швеция\"\nSG \"Сингапур\"\nSH \"Острова Святой Елены, Вознесения и Тристан-да-Кунья\"\nSI \"Словения\"\nSJ \"Шпицберген и Ян-Майен\"\nSK \"Словакия\"\nSL \"Сьерра-Леоне\"\nSM \"Сан-Марино\"\nSN \"Сенегал\"\nSO \"Сомали\"\nSR \"Суринам\"\nSS \"Южный Судан\"\nST \"Сан-Томе и Принсипи\"\nSV \"Сальвадор\"\nSX \"Синт-Мартен\"\nSY \"Сирия\"\nSZ \"Эсватини\"\nTC \"Теркс и Кайкос\"\nTD \"Чад\"\nTF \"Французские Южные и Антарктические территории\"\nTG \"Того\"\nTH \"Таиланд\"\nTJ \"Таджикистан\"\nTK \"Токелау\"\nTL \"Восточный Тимор\"\nTM \"Туркмения\"\nTN \"Тунис\"\nTO \"Тонга\"\nTR \"Турция\"\nTT \"Тринидад и Тобаго\"\nTV \"Тувалу\"\nTW \"Китайская Республика\"\nTZ \"Танзания\"\nUA \"Украина\"\nUG \"Уганда\"\nUM \"Внешние малые острова США\"\nUS \"США\"\nUY \"Уругвай\"\nUZ \"Узбекистан\"\nVA \"Ватикан\"\nVC \"Сент-Винсент и Гренадины\"\nVE \"Венесуэла\"\nVG \"Виргинские Острова (Великобритания)\"\nVI \"Виргинские Острова (США)\"\nVN \"Вьетнам\"\nVU \"Вануату\"\nWF \"Уоллис и Футуна\"\nWS \"Самоа\"\nYE \"Йемен\"\nYT \"Майотта\"\nZA \"ЮАР\"\nZM \"Замбия\"\nZW \"Зимбабве\"\n```\n",
+                "type": "Iso3166.CountryCode -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Iso3166.Slovak",
+        "comment": "\n@docs toName\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toName",
+                "comment": " Name for `CountryCode` in Slovak.\n\n```\nAD \"Andorra\"\nAE \"Spojené arabské emiráty\"\nAF \"Afganistan\"\nAG \"Antigua a Barbuda\"\nAI \"Anguilla\"\nAL \"Albánsko\"\nAM \"Arménsko\"\nAO \"Angola\"\nAQ \"Antarktída\"\nAR \"Argentína\"\nAS \"Americká Samoa\"\nAT \"Rakúsko\"\nAU \"Austrália\"\nAW \"Aruba\"\nAX \"Alandy\"\nAZ \"Azerbajdžan\"\nBA \"Bosna a Hercegovina\"\nBB \"Barbados\"\nBD \"Bangladéš\"\nBE \"Belgicko\"\nBF \"Burkina\"\nBG \"Bulharsko\"\nBH \"Bahrajn\"\nBI \"Burundi\"\nBJ \"Benin\"\nBL \"Svätý Bartolomej\"\nBM \"Bermudy\"\nBN \"Brunej\"\nBO \"Bolívia\"\nBQ \"Bonaire, Svätý Eustach a Saba\"\nBR \"Brazília\"\nBS \"Bahamy\"\nBT \"Bhután\"\nBV \"Bouvetov ostrov\"\nBW \"Botswana\"\nBY \"Bielorusko\"\nBZ \"Belize\"\nCA \"Kanada\"\nCC \"Kokosové ostrovy\"\nCD \"Konžská demokratická republika\"\nCF \"Stredoafrická republika\"\nCG \"Kongo\"\nCH \"Švajčiarsko\"\nCI \"Pobrežie Slonoviny\"\nCK \"Cookove ostrovy\"\nCL \"Čile\"\nCM \"Kamerun\"\nCN \"Čína\"\nCO \"Kolumbia\"\nCR \"Kostarika\"\nCU \"Kuba\"\nCV \"Kapverdy\"\nCW \"Curaçao\"\nCX \"Vianočný ostrov\"\nCY \"Cyprus\"\nCZ \"Česko\"\nDE \"Nemecko\"\nDJ \"Džibutsko\"\nDK \"Dánsko\"\nDM \"Dominika\"\nDO \"Dominikánska republika\"\nDZ \"Alžírsko\"\nEC \"Ekvádor\"\nEE \"Estónsko\"\nEG \"Egypt\"\nEH \"Západná Sahara\"\nER \"Eritrea\"\nES \"Španielsko\"\nET \"Etiópia\"\nFI \"Fínsko\"\nFJ \"Fidži\"\nFK \"Falklandy\"\nFM \"Mikronézia\"\nFO \"Faerské ostrovy\"\nFR \"Francúzsko\"\nGA \"Gabon\"\nGB \"Spojené kráľovstvo\"\nGD \"Grenada\"\nGE \"Gruzínsko\"\nGF \"Francúzska Guyana\"\nGG \"Guernsey\"\nGH \"Ghana\"\nGI \"Gibraltár\"\nGL \"Grónsko\"\nGM \"Gambia\"\nGN \"Guinea\"\nGP \"Guadeloupe\"\nGQ \"Rovníková Guinea\"\nGR \"Grécko\"\nGS \"Južná Georgia a Južné Sandwichove ostrovy\"\nGT_ \"Guatemala\"\nGU \"Guam\"\nGW \"Guinea-Bissau\"\nGY \"Guyana\"\nHK \"Hongkong\"\nHM \"Heardov ostrov\"\nHN \"Honduras\"\nHR \"Chorvátsko\"\nHT \"Haiti\"\nHU \"Maďarsko\"\nID \"Indonézia\"\nIE \"Írsko\"\nIL \"Izrael\"\nIM \"Ostrov Man\"\nIN \"India\"\nIO \"Britské indickooceánske územie\"\nIQ \"Irak\"\nIR \"Irán\"\nIS \"Island\"\nIT \"Taliansko\"\nJE \"Jersey\"\nJM \"Jamajka\"\nJO \"Jordánsko\"\nJP \"Japonsko\"\nKE \"Keňa\"\nKG \"Kirgizsko\"\nKH \"Kambodža\"\nKI \"Kiribati\"\nKM \"Komory\"\nKN \"Svätý Krištof a Nevis\"\nKP \"Kórejská ľudovodemokratická republika\"\nKR \"Kórejská republika\"\nKW \"Kuvajt\"\nKY \"Kajmanie ostrovy\"\nKZ \"Kazachstan\"\nLA \"Laos\"\nLB \"Libanon\"\nLC \"Svätá Lucia\"\nLI \"Lichtenštajnsko\"\nLK \"Srí Lanka\"\nLR \"Libéria\"\nLS \"Lesotho\"\nLT_ \"Litva\"\nLU \"Luxembursko\"\nLV \"Lotyšsko\"\nLY \"Líbya\"\nMA \"Maroko\"\nMC \"Monako\"\nMD \"Moldavsko\"\nME \"Čierna Hora\"\nMF \"Saint-Martin\"\nMG \"Madagaskar\"\nMH \"Marshallove ostrovy\"\nMK \"Severné Macedónsko\"\nML \"Mali\"\nMM \"Mjanmarsko\"\nMN \"Mongolsko\"\nMO \"Macao\"\nMP \"Severné Mariány\"\nMQ \"Martinik\"\nMR \"Mauritánia\"\nMS \"Montserrat\"\nMT \"Malta\"\nMU \"Maurícius\"\nMV \"Maldivy\"\nMW \"Malawi\"\nMX \"Mexiko\"\nMY \"Malajzia\"\nMZ \"Mozambik\"\nNA \"Namíbia\"\nNC \"Nová Kaledónia\"\nNE \"Niger\"\nNF \"Norfolk\"\nNG \"Nigéria\"\nNI \"Nikaragua\"\nNL \"Holandsko\"\nNO \"Nórsko\"\nNP \"Nepál\"\nNR \"Nauru\"\nNU \"Niue\"\nNZ \"Nový Zéland\"\nOM \"Omán\"\nPA \"Panama\"\nPE \"Peru\"\nPF \"Francúzska Polynézia\"\nPG \"Papua-Nová Guinea\"\nPH \"Filipíny\"\nPK \"Pakistan\"\nPL \"Poľsko\"\nPM \"Saint Pierre a Miquelon\"\nPN \"Pitcairnove ostrovy\"\nPR \"Portoriko\"\nPS \"Palestína\"\nPT \"Portugalsko\"\nPW \"Palau\"\nPY \"Paraguaj\"\nQA \"Katar\"\nRE \"Réunion\"\nRO \"Rumunsko\"\nRS \"Srbsko\"\nRU \"Rusko\"\nRW \"Rwanda\"\nSA \"Saudská Arábia\"\nSB \"Šalamúnove ostrovy\"\nSC \"Seychely\"\nSD \"Sudán\"\nSE \"Švédsko\"\nSG \"Singapur\"\nSH \"Svätá Helena\"\nSI \"Slovinsko\"\nSJ \"Špicbergy a Jan Mayen\"\nSK \"Slovensko\"\nSL \"Sierra Leone\"\nSM \"San Maríno\"\nSN \"Senegal\"\nSO \"Somálsko\"\nSR \"Surinam\"\nSS \"Južný Sudán\"\nST \"Svätý Tomáš a Princov ostrov\"\nSV \"Salvádor\"\nSX \"Sint Maarten\"\nSY \"Sýria\"\nSZ \"Svazijsko\"\nTC \"Turks a Caicos\"\nTD \"Čad\"\nTF \"Francúzske južné územia\"\nTG \"Togo\"\nTH \"Thajsko\"\nTJ \"Tadžikistan\"\nTK \"Tokelau\"\nTL \"Východný Timor\"\nTM \"Turkménsko\"\nTN \"Tunisko\"\nTO \"Tonga\"\nTR \"Turecko\"\nTT \"Trinidad a Tobago\"\nTV \"Tuvalu\"\nTW \"Taiwan\"\nTZ \"Tanzánia\"\nUA \"Ukrajina\"\nUG \"Uganda\"\nUM \"Menšie odľahlé ostrovy USA\"\nUS \"Spojené štáty\"\nUY \"Uruguaj\"\nUZ \"Uzbekistan\"\nVA \"Vatikán\"\nVC \"Svätý Vincent a Grenadíny\"\nVE \"Venezuela\"\nVG \"Britské Panenské ostrovy\"\nVI \"Americké Panenské ostrovy\"\nVN \"Vietnam\"\nVU \"Vanuatu\"\nWF \"Wallis a Futuna\"\nWS \"Samoa\"\nYE \"Jemen\"\nYT \"Mayotte\"\nZA \"Južná Afrika\"\nZM \"Zambia\"\nZW \"Zimbabwe\"\n```\n",
+                "type": "Iso3166.CountryCode -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Iso3166.Spanish",
+        "comment": "\n@docs toName\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toName",
+                "comment": " Name for `CountryCode` in Spanish.\n\n```\nAD \"Andorra\"\nAE \"Emiratos Árabes Unidos\"\nAF \"Afganistán\"\nAG \"Antigua y Barbuda\"\nAI \"Anguila\"\nAL \"Albania\"\nAM \"Armenia\"\nAO \"Angola\"\nAQ \"Antártida\"\nAR \"Argentina\"\nAS \"Samoa Americana\"\nAT \"Austria\"\nAU \"Australia\"\nAW \"Aruba\"\nAX \"Åland\"\nAZ \"Azerbaiyán\"\nBA \"Bosnia y Herzegovina\"\nBB \"Barbados\"\nBD \"Bangladés\"\nBE \"Bélgica\"\nBF \"Burkina Faso\"\nBG \"Bulgaria\"\nBH \"Baréin\"\nBI \"Burundi\"\nBJ \"Benín\"\nBL \"San Bartolomé\"\nBM \"Bermudas\"\nBN \"Brunéi\"\nBO \"Bolivia\"\nBQ \"Bonaire, San Eustaquio y Saba\"\nBR \"Brasil\"\nBS \"Bahamas\"\nBT \"Bután\"\nBV \"Isla Bouvet\"\nBW \"Botsuana\"\nBY \"Bielorrusia\"\nBZ \"Belice\"\nCA \"Canadá\"\nCC \"Islas Cocos\"\nCD \"República Democrática del Congo\"\nCF \"República Centroafricana\"\nCG \"República del Congo\"\nCH \"Suiza\"\nCI \"Costa de Marfil\"\nCK \"Islas Cook\"\nCL \"Chile\"\nCM \"Camerún\"\nCN \"China\"\nCO \"Colombia\"\nCR \"Costa Rica\"\nCU \"Cuba\"\nCV \"Cabo Verde\"\nCW \"Curazao\"\nCX \"Isla de Navidad\"\nCY \"Chipre\"\nCZ \"República Checa\"\nDE \"Alemania\"\nDJ \"Yibuti\"\nDK \"Dinamarca\"\nDM \"Dominica\"\nDO \"República Dominicana\"\nDZ \"Argelia\"\nEC \"Ecuador\"\nEE \"Estonia\"\nEG \"Egipto\"\nEH \"República Árabe Saharaui Democrática\"\nER \"Eritrea\"\nES \"España\"\nET \"Etiopía\"\nFI \"Finlandia\"\nFJ \"Fiyi\"\nFK \"Islas Malvinas (Falkland)\"\nFM \"Micronesia\"\nFO \"Islas Feroe\"\nFR \"Francia\"\nGA \"Gabón\"\nGB \"Reino Unido\"\nGD \"Granada\"\nGE \"Georgia\"\nGF \"Guayana Francesa\"\nGG \"Guernsey\"\nGH \"Ghana\"\nGI \"Gibraltar\"\nGL \"Groenlandia\"\nGM \"Gambia\"\nGN \"Guinea\"\nGP \"Guadalupe\"\nGQ \"Guinea Ecuatorial\"\nGR \"Grecia\"\nGS \"Islas Georgias del Sur y Sandwich del Sur\"\nGT_ \"Guatemala\"\nGU \"Guam\"\nGW \"Guinea-Bisáu\"\nGY \"Guyana\"\nHK \"Hong Kong\"\nHM \"Islas Heard y McDonald\"\nHN \"Honduras\"\nHR \"Croacia\"\nHT \"Haití\"\nHU \"Hungría\"\nID \"Indonesia\"\nIE \"Irlanda\"\nIL \"Israel\"\nIM \"Isla de Man\"\nIN \"India\"\nIO \"Territorio Británico del Océano Índico\"\nIQ \"Irak\"\nIR \"Irán\"\nIS \"Islandia\"\nIT \"Italia\"\nJE \"Jersey\"\nJM \"Jamaica\"\nJO \"Jordania\"\nJP \"Japón\"\nKE \"Kenia\"\nKG \"Kirguistán\"\nKH \"Camboya\"\nKI \"Kiribati\"\nKM \"Comoras\"\nKN \"San Cristóbal y Nieves\"\nKP \"Corea del Norte\"\nKR \"Corea del Sur\"\nKW \"Kuwait\"\nKY \"Islas Caimán\"\nKZ \"Kazajistán\"\nLA \"Laos\"\nLB \"Líbano\"\nLC \"Santa Lucía\"\nLI \"Liechtenstein\"\nLK \"Sri Lanka\"\nLR \"Liberia\"\nLS \"Lesoto\"\nLT_ \"Lituania\"\nLU \"Luxemburgo\"\nLV \"Letonia\"\nLY \"Libia\"\nMA \"Marruecos\"\nMC \"Mónaco\"\nMD \"Moldavia\"\nME \"Montenegro\"\nMF \"San Martín\"\nMG \"Madagascar\"\nMH \"Islas Marshall\"\nMK \"Macedonia del Norte\"\nML \"Malí\"\nMM \"Birmania\"\nMN \"Mongolia\"\nMO \"Macao\"\nMP \"Islas Marianas del Norte\"\nMQ \"Martinica\"\nMR \"Mauritania\"\nMS \"Montserrat\"\nMT \"Malta\"\nMU \"Mauricio\"\nMV \"Maldivas\"\nMW \"Malaui\"\nMX \"México\"\nMY \"Malasia\"\nMZ \"Mozambique\"\nNA \"Namibia\"\nNC \"Nueva Caledonia\"\nNE \"Níger\"\nNF \"Isla Norfolk\"\nNG \"Nigeria\"\nNI \"Nicaragua\"\nNL \"Países Bajos\"\nNO \"Noruega\"\nNP \"Nepal\"\nNR \"Nauru\"\nNU \"Niue\"\nNZ \"Nueva Zelanda\"\nOM \"Omán\"\nPA \"Panamá\"\nPE \"Perú\"\nPF \"Polinesia Francesa\"\nPG \"Papúa Nueva Guinea\"\nPH \"Filipinas\"\nPK \"Pakistán\"\nPL \"Polonia\"\nPM \"San Pedro y Miquelón\"\nPN \"Islas Pitcairn\"\nPR \"Puerto Rico\"\nPS \"Palestina\"\nPT \"Portugal\"\nPW \"Palaos\"\nPY \"Paraguay\"\nQA \"Catar\"\nRE \"Reunión\"\nRO \"Rumania\"\nRS \"Serbia\"\nRU \"Rusia\"\nRW \"Ruanda\"\nSA \"Arabia Saudita\"\nSB \"Islas Salomón\"\nSC \"Seychelles\"\nSD \"Sudán\"\nSE \"Suecia\"\nSG \"Singapur\"\nSH \"Santa Elena, Ascensión y Tristán de Acuña\"\nSI \"Eslovenia\"\nSJ \"Svalbard y Jan Mayen\"\nSK \"Eslovaquia\"\nSL \"Sierra Leona\"\nSM \"San Marino\"\nSN \"Senegal\"\nSO \"Somalia\"\nSR \"Surinam\"\nSS \"Sudán del Sur\"\nST \"Santo Tomé y Príncipe\"\nSV \"El Salvador\"\nSX \"San Martín\"\nSY \"Siria\"\nSZ \"Suazilandia\"\nTC \"Islas Turcas y Caicos\"\nTD \"Chad\"\nTF \"Tierras Australes y Antárticas Francesas\"\nTG \"Togo\"\nTH \"Tailandia\"\nTJ \"Tayikistán\"\nTK \"Tokelau\"\nTL \"Timor Oriental\"\nTM \"Turkmenistán\"\nTN \"Túnez\"\nTO \"Tonga\"\nTR \"Turquía\"\nTT \"Trinidad y Tobago\"\nTV \"Tuvalu\"\nTW \"Taiwán (República de China)\"\nTZ \"Tanzania\"\nUA \"Ucrania\"\nUG \"Uganda\"\nUM \"Islas Ultramarinas Menores de los Estados Unidos\"\nUS \"Estados Unidos\"\nUY \"Uruguay\"\nUZ \"Uzbekistán\"\nVA \"Vaticano, Ciudad del\"\nVC \"San Vicente y las Granadinas\"\nVE \"Venezuela\"\nVG \"Islas Vírgenes Británicas\"\nVI \"Islas Vírgenes de los Estados Unidos\"\nVN \"Vietnam\"\nVU \"Vanuatu\"\nWF \"Wallis y Futuna\"\nWS \"Samoa\"\nYE \"Yemen\"\nYT \"Mayotte\"\nZA \"Sudáfrica\"\nZM \"Zambia\"\nZW \"Zimbabue\"\n```\n",
+                "type": "Iso3166.CountryCode -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Iso3166.Thai",
+        "comment": "\n@docs toName\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toName",
+                "comment": " Name for `CountryCode` in Thai.\n\n```\nAD \"อันดอร์รา\"\nAE \"สหรัฐอาหรับเอมิเรตส์\"\nAF \"อัฟกานิสถาน\"\nAG \"แอนติกาและบาร์บูดา\"\nAI \"แองกวิลลา\"\nAL \"แอลเบเนีย\"\nAM \"อาร์มีเนีย\"\nAO \"แองโกลา\"\nAQ \"แอนตาร์กติกา\"\nAR \"อาร์เจนตินา\"\nAS \"อเมริกันซามัว\"\nAT \"ออสเตรีย\"\nAU \"ออสเตรเลีย\"\nAW \"อารูบา\"\nAX \"หมู่เกาะโอลันด์\"\nAZ \"อาเซอร์ไบจาน\"\nBA \"บอสเนียและเฮอร์เซโกวีนา\"\nBB \"บาร์เบโดส\"\nBD \"บังกลาเทศ\"\nBE \"เบลเยียม\"\nBF \"บูร์กินาฟาโซ\"\nBG \"บัลแกเรีย\"\nBH \"บาห์เรน\"\nBI \"บุรุนดี\"\nBJ \"เบนิน\"\nBL \"แซ็ง-บาร์เตเลมี\"\nBM \"เบอร์มิวดา\"\nBN \"บรูไน\"\nBO \"โบลิเวีย\"\nBQ \"เนเธอร์แลนด์แอนทิลลีส\"\nBR \"บราซิล\"\nBS \"บาฮามาส\"\nBT \"ภูฏาน\"\nBV \"เกาะบูเว\"\nBW \"บอตสวานา\"\nBY \"เบลารุส\"\nBZ \"เบลีซ\"\nCA \"แคนาดา\"\nCC \"หมู่เกาะโคโคส\"\nCD \"สาธารณรัฐประชาธิปไตยคองโก\"\nCF \"สาธารณรัฐแอฟริกากลาง\"\nCG \"สาธารณรัฐคองโก\"\nCH \"สวิตเซอร์แลนด์\"\nCI \"โกตดิวัวร์\"\nCK \"หมู่เกาะคุก\"\nCL \"ชิลี\"\nCM \"แคเมอรูน\"\nCN \"จีน\"\nCO \"โคลอมเบีย\"\nCR \"คอสตาริกา\"\nCU \"คิวบา\"\nCV \"กาบูเวร์ดี\"\nCW \"กือราเซา\"\nCX \"เกาะคริสต์มาส\"\nCY \"ไซปรัส\"\nCZ \"เช็กเกีย\"\nDE \"เยอรมนี\"\nDJ \"จิบูตี\"\nDK \"เดนมาร์ก\"\nDM \"ดอมินีกา\"\nDO \"สาธารณรัฐโดมินิกัน\"\nDZ \"แอลจีเรีย\"\nEC \"เอกวาดอร์\"\nEE \"เอสโตเนีย\"\nEG \"อียิปต์\"\nEH \"เวสเทิร์นสะฮารา\"\nER \"เอริเทรีย\"\nES \"สเปน\"\nET \"เอธิโอเปีย\"\nFI \"ฟินแลนด์\"\nFJ \"ฟีจี\"\nFK \"หมู่เกาะฟอล์กแลนด์\"\nFM \"ไมโครนีเซีย\"\nFO \"หมู่เกาะแฟโร\"\nFR \"ฝรั่งเศส\"\nGA \"กาบอง\"\nGB \"สหราชอาณาจักร\"\nGD \"เกรเนดา\"\nGE \"จอร์เจีย\"\nGF \"เฟรนช์เกียนา\"\nGG \"เกิร์นซีย์\"\nGH \"กานา\"\nGI \"ยิบรอลตาร์\"\nGL \"กรีนแลนด์\"\nGM \"แกมเบีย\"\nGN \"กินี\"\nGP \"กัวเดอลุป\"\nGQ \"อิเควทอเรียลกินี\"\nGR \"กรีซ\"\nGS \"เกาะเซาท์จอร์เจียและหมู่เกาะเซาท์แซนด์วิช\"\nGT_ \"กัวเตมาลา\"\nGU \"กวม\"\nGW \"กินี-บิสเซา\"\nGY \"กายอานา\"\nHK \"ฮ่องกง\"\nHM \"เกาะเฮิร์ดและหมู่เกาะแมกดอนัลด์\"\nHN \"ฮอนดูรัส\"\nHR \"โครเอเชีย\"\nHT \"เฮติ\"\nHU \"ฮังการี\"\nID \"อินโดนีเซีย\"\nIE \"ไอร์แลนด์\"\nIL \"อิสราเอล\"\nIM \"ไอล์ออฟแมน\"\nIN \"อินเดีย\"\nIO \"บริติชอินเดียนโอเชียนเทร์ริทอรี\"\nIQ \"อิรัก\"\nIR \"อิหร่าน\"\nIS \"ไอซ์แลนด์\"\nIT \"อิตาลี\"\nJE \"เจอร์ซีย์\"\nJM \"จาเมกา\"\nJO \"จอร์แดน\"\nJP \"ญี่ปุ่น\"\nKE \"เคนยา\"\nKG \"คีร์กีซสถาน\"\nKH \"กัมพูชา\"\nKI \"คิริบาส\"\nKM \"คอโมโรส\"\nKN \"เซนต์คิตส์และเนวิส\"\nKP \"เกาหลีเหนือ\"\nKR \"เกาหลีใต้\"\nKW \"คูเวต\"\nKY \"หมู่เกาะเคย์แมน\"\nKZ \"คาซัคสถาน\"\nLA \"ลาว\"\nLB \"เลบานอน\"\nLC \"เซนต์ลูเชีย\"\nLI \"ลิกเตนสไตน์\"\nLK \"ศรีลังกา\"\nLR \"ไลบีเรีย\"\nLS \"เลโซโท\"\nLT_ \"ลิทัวเนีย\"\nLU \"ลักเซมเบิร์ก\"\nLV \"ลัตเวีย\"\nLY \"ลิเบีย\"\nMA \"โมร็อกโก\"\nMC \"โมนาโก\"\nMD \"มอลโดวา\"\nME \"มอนเตเนโกร\"\nMF \"แซงมาร์แตง\"\nMG \"มาดากัสการ์\"\nMH \"หมู่เกาะมาร์แชลล์\"\nMK \"นอร์ทมาซิโดเนีย\"\nML \"มาลี\"\nMM \"พม่า\"\nMN \"มองโกเลีย\"\nMO \"มาเก๊า\"\nMP \"หมู่เกาะนอร์เทิร์นมาเรียนา\"\nMQ \"มาร์ตีนิก\"\nMR \"มอริเตเนีย\"\nMS \"มอนต์เซอร์รัต\"\nMT \"มอลตา\"\nMU \"มอริเชียส\"\nMV \"มัลดีฟส์\"\nMW \"มาลาวี\"\nMX \"เม็กซิโก\"\nMY \"มาเลเซีย\"\nMZ \"โมซัมบิก\"\nNA \"นามิเบีย\"\nNC \"นิวแคลิโดเนีย\"\nNE \"ไนเจอร์\"\nNF \"เกาะนอร์ฟอล์ก\"\nNG \"ไนจีเรีย\"\nNI \"นิการากัว\"\nNL \"เนเธอร์แลนด์\"\nNO \"นอร์เวย์\"\nNP \"เนปาล\"\nNR \"นาอูรู\"\nNU \"นีวเว\"\nNZ \"นิวซีแลนด์\"\nOM \"โอมาน\"\nPA \"ปานามา\"\nPE \"เปรู\"\nPF \"เฟรนช์พอลินีเชีย\"\nPG \"ปาปัวนิวกินี\"\nPH \"ฟิลิปปินส์\"\nPK \"ปากีสถาน\"\nPL \"โปแลนด์\"\nPM \"แซงปีแยร์และมีเกอลง\"\nPN \"หมู่เกาะพิตแคร์น\"\nPR \"ปวยร์โตรีโก\"\nPS \"ปาเลสไตน์\"\nPT \"โปรตุเกส\"\nPW \"ปาเลา\"\nPY \"ปารากวัย\"\nQA \"กาตาร์\"\nRE \"เรอูว์นียง\"\nRO \"โรมาเนีย\"\nRS \"เซอร์เบีย\"\nRU \"รัสเซีย\"\nRW \"รวันดา\"\nSA \"ซาอุดีอาระเบีย\"\nSB \"หมู่เกาะโซโลมอน\"\nSC \"เซเชลส์\"\nSD \"ซูดาน\"\nSE \"สวีเดน\"\nSG \"สิงคโปร์\"\nSH \"เซนต์เฮเลนา\"\nSI \"สโลวีเนีย\"\nSJ \"‎สฟาลบาร์และยานไมเอน\"\nSK \"สโลวาเกีย\"\nSL \"เซียร์ราลีโอน\"\nSM \"ซานมารีโน\"\nSN \"เซเนกัล\"\nSO \"โซมาเลีย\"\nSR \"ซูรินาม\"\nSS \"เซาท์ซูดาน\"\nST \"เซาตูเมและปรินซีปี\"\nSV \"เอลซัลวาดอร์\"\nSX \"ซินต์มาร์เติน\"\nSY \"ซีเรีย\"\nSZ \"เอสวาตีนี\"\nTC \"หมู่เกาะเติกส์และเคคอส\"\nTD \"ชาด\"\nTF \"เฟรนช์เซาเทิร์นและแอนตาร์กติกแลนดส์\"\nTG \"โตโก\"\nTH \"ไทย\"\nTJ \"ทาจิกิสถาน\"\nTK \"โทเคอเลา\"\nTL \"ติมอร์-เลสเต\"\nTM \"เติร์กเมนิสถาน\"\nTN \"ตูนิเซีย\"\nTO \"ตองงา\"\nTR \"ตุรกี\"\nTT \"ตรินิแดดและโตเบโก\"\nTV \"ตูวาลู\"\nTW \"ไต้หวัน\"\nTZ \"แทนซาเนีย\"\nUA \"ยูเครน\"\nUG \"ยูกันดา\"\nUM \"เกาะเล็กรอบนอกของสหรัฐอเมริกา\"\nUS \"สหรัฐ\"\nUY \"อุรุกวัย\"\nUZ \"อุซเบกิสถาน\"\nVA \"นครรัฐวาติกัน\"\nVC \"เซนต์วินเซนต์และเกรนาดีนส์\"\nVE \"เวเนซุเอลา\"\nVG \"หมู่เกาะบริติชเวอร์จิน\"\nVI \"หมู่เกาะเวอร์จินของสหรัฐ\"\nVN \"เวียดนาม\"\nVU \"วานูอาตู\"\nWF \"วาลิสและฟูตูนา\"\nWS \"ซามัว\"\nYE \"เยเมน\"\nYT \"มายอต\"\nZA \"แอฟริกาใต้\"\nZM \"แซมเบีย\"\nZW \"ซิมบับเว\"\n```\n",
+                "type": "Iso3166.CountryCode -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Iso3166.Ukrainian",
+        "comment": "\n@docs toName\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toName",
+                "comment": " Name for `CountryCode` in Ukrainian.\n\n```\nAD \"Андорра\"\nAE \"ОАЕ\"\nAF \"Афганістан\"\nAG \"Антигуа і Барбуда\"\nAI \"Ангілья\"\nAL \"Албанія\"\nAM \"Вірменія\"\nAO \"Ангола\"\nAQ \"Антарктида\"\nAR \"Аргентина\"\nAS \"Американське Самоа\"\nAT \"Австрія\"\nAU \"Австралія\"\nAW \"Аруба\"\nAX \"Аландські острови\"\nAZ \"Азербайджан\"\nBA \"Боснія і Герцеговина\"\nBB \"Барбадос\"\nBD \"Бангладеш\"\nBE \"Бельгія\"\nBF \"Буркіна-Фасо\"\nBG \"Болгарія\"\nBH \"Бахрейн\"\nBI \"Бурунді\"\nBJ \"Бенін\"\nBL \"Сен-Бартельмі\"\nBM \"Бермудські Острови\"\nBN \"Бруней\"\nBO \"Болівія\"\nBQ \"Карибські Нідерланди\"\nBR \"Бразилія\"\nBS \"Багамські Острови\"\nBT \"Бутан\"\nBV \"Острів Буве\"\nBW \"Ботсвана\"\nBY \"Білорусь\"\nBZ \"Беліз\"\nCA \"Канада\"\nCC \"Кокосові острови\"\nCD \"ДР Конго\"\nCF \"Центральноафриканська Республіка\"\nCG \"Республіка Конго\"\nCH \"Швейцарія\"\nCI \"Кот-д'Івуар\"\nCK \"Острови Кука\"\nCL \"Чилі\"\nCM \"Камерун\"\nCN \"КНР\"\nCO \"Колумбія\"\nCR \"Коста-Рика\"\nCU \"Куба\"\nCV \"Кабо-Верде\"\nCW \"Кюрасао\"\nCX \"Острів Різдва\"\nCY \"Кіпр\"\nCZ \"Чехія\"\nDE \"Німеччина\"\nDJ \"Джибуті\"\nDK \"Данія\"\nDM \"Домініка\"\nDO \"Домініканська Республіка\"\nDZ \"Алжир\"\nEC \"Еквадор\"\nEE \"Естонія\"\nEG \"Єгипет\"\nEH \"Західна Сахара\"\nER \"Еритрея\"\nES \"Іспанія\"\nET \"Ефіопія\"\nFI \"Фінляндія\"\nFJ \"Фіджі\"\nFK \"Фолклендські Острови\"\nFM \"Федеративні Штати Мікронезії\"\nFO \"Фарерські острови\"\nFR \"Франція\"\nGA \"Габон\"\nGB \"Велика Британія\"\nGD \"Гренада\"\nGE \"Грузія\"\nGF \"Французька Гвіана\"\nGG \"Гернсі\"\nGH \"Гана\"\nGI \"Гібралтар\"\nGL \"Гренландія\"\nGM \"Гамбія\"\nGN \"Гвінея\"\nGP \"Гваделупа\"\nGQ \"Екваторіальна Гвінея\"\nGR \"Греція\"\nGS \"Південна Джорджія та Південні Сандвічеві Острови\"\nGT_ \"Гватемала\"\nGU \"Гуам\"\nGW \"Гвінея-Бісау\"\nGY \"Гаяна\"\nHK \"Гонконг\"\nHM \"Острів Херд і острови Макдональд\"\nHN \"Гондурас\"\nHR \"Хорватія\"\nHT \"Гаїті\"\nHU \"Угорщина\"\nID \"Індонезія\"\nIE \"Ірландія\"\nIL \"Ізраїль\"\nIM \"Острів Мен\"\nIN \"Індія\"\nIO \"Британська Територія в Індійському Океані\"\nIQ \"Ірак\"\nIR \"Іран\"\nIS \"Ісландія\"\nIT \"Італія\"\nJE \"Джерсі\"\nJM \"Ямайка\"\nJO \"Йорданія\"\nJP \"Японія\"\nKE \"Кенія\"\nKG \"Киргизстан\"\nKH \"Камбоджа\"\nKI \"Кірибаті\"\nKM \"Коморські Острови\"\nKN \"Сент-Кіттс і Невіс\"\nKP \"Північна Корея\"\nKR \"Південна Корея\"\nKW \"Кувейт\"\nKY \"Кайманові Острови\"\nKZ \"Казахстан\"\nLA \"Лаос\"\nLB \"Ліван\"\nLC \"Сент-Люсія\"\nLI \"Ліхтенштейн\"\nLK \"Шрі-Ланка\"\nLR \"Ліберія\"\nLS \"Лесото\"\nLT_ \"Литва\"\nLU \"Люксембург\"\nLV \"Латвія\"\nLY \"Лівія\"\nMA \"Марокко\"\nMC \"Монако\"\nMD \"Молдова\"\nME \"Чорногорія\"\nMF \"Сен-Мартен\"\nMG \"Мадагаскар\"\nMH \"Маршаллові Острови\"\nMK \"Північна Македонія\"\nML \"Малі\"\nMM \"М'янма\"\nMN \"Монголія\"\nMO \"Макао\"\nMP \"Північні Маріанські Острови\"\nMQ \"Мартиніка\"\nMR \"Мавританія\"\nMS \"Монтсеррат\"\nMT \"Мальта\"\nMU \"Маврикій\"\nMV \"Мальдіви\"\nMW \"Малаві\"\nMX \"Мексика\"\nMY \"Малайзія\"\nMZ \"Мозамбік\"\nNA \"Намібія\"\nNC \"Нова Каледонія\"\nNE \"Нігер\"\nNF \"Острів Норфолк\"\nNG \"Нігерія\"\nNI \"Нікарагуа\"\nNL \"Нідерланди\"\nNO \"Норвегія\"\nNP \"Непал\"\nNR \"Науру\"\nNU \"Ніуе\"\nNZ \"Нова Зеландія\"\nOM \"Оман\"\nPA \"Панама\"\nPE \"Перу\"\nPF \"Французька Полінезія\"\nPG \"Папуа Нова Гвінея\"\nPH \"Філіппіни\"\nPK \"Пакистан\"\nPL \"Польща\"\nPM \"Сен-П'єр і Мікелон\"\nPN \"Піткерн\"\nPR \"Пуерто-Рико\"\nPS \"Палестина\"\nPT \"Португалія\"\nPW \"Палау\"\nPY \"Парагвай\"\nQA \"Катар\"\nRE \"Реюньйон\"\nRO \"Румунія\"\nRS \"Сербія\"\nRU \"Росія\"\nRW \"Руанда\"\nSA \"Саудівська Аравія\"\nSB \"Соломонові Острови\"\nSC \"Сейшельські Острови\"\nSD \"Судан\"\nSE \"Швеція\"\nSG \"Сінгапур\"\nSH \"Острови Святої Єлени, Вознесіння і Тристан-да-Кунья\"\nSI \"Словенія\"\nSJ \"Свальбард і Ян-Маєн\"\nSK \"Словаччина\"\nSL \"Сьєрра-Леоне\"\nSM \"Сан-Марино\"\nSN \"Сенегал\"\nSO \"Сомалі\"\nSR \"Суринам\"\nSS \"Південний Судан\"\nST \"Сан-Томе і Принсіпі\"\nSV \"Сальвадор\"\nSX \"Сінт-Мартен\"\nSY \"Сирія\"\nSZ \"Есватіні\"\nTC \"Острови Теркс і Кайкос\"\nTD \"Чад\"\nTF \"Французькі Південні і Антарктичні Території\"\nTG \"Того\"\nTH \"Таїланд\"\nTJ \"Таджикистан\"\nTK \"Токелау\"\nTL \"Східний Тимор\"\nTM \"Туркменістан\"\nTN \"Туніс\"\nTO \"Тонга\"\nTR \"Туреччина\"\nTT \"Тринідад і Тобаго\"\nTV \"Тувалу\"\nTW \"Тайвань\"\nTZ \"Танзанія\"\nUA \"Україна\"\nUG \"Уганда\"\nUM \"Зовнішні малі острови США\"\nUS \"США\"\nUY \"Уругвай\"\nUZ \"Узбекистан\"\nVA \"Ватикан\"\nVC \"Сент-Вінсент і Гренадини\"\nVE \"Венесуела\"\nVG \"Британські Віргінські Острови\"\nVI \"Американські Віргінські Острови\"\nVN \"В'єтнам\"\nVU \"Вануату\"\nWF \"Волліс і Футуна\"\nWS \"Самоа\"\nYE \"Ємен\"\nYT \"Майотта\"\nZA \"ПАР\"\nZM \"Замбія\"\nZW \"Зімбабве\"\n```\n",
+                "type": "Iso3166.CountryCode -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

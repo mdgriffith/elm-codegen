@@ -1,0 +1,88 @@
+[
+    {
+        "name": "CKEditor",
+        "comment": "\n\n\n# HTML Element\n\n@docs view\n\n\n# Attributes\n\n@docs config, editor, content, targetId\n\n\n# Events\n\n@docs onChange\n\n\n# Helpers\n\n@docs isContentEmpty, trimContent\n\n\n# Config\n\n@docs Config, defaultConfig, withCustom, withLanguage, withPlugins, withPluginsRemoved, withToolbar\n\n",
+        "unions": [
+            {
+                "name": "Config",
+                "comment": " Configuration of CKEditor\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "config",
+                "comment": " Add the specified configuration to the editor.\nThis will reload the component\n\n    view\n        [ config (defaultConfig |> withLanguage \"fr\") ]\n        []\n\n",
+                "type": "CKEditor.Config -> Html.Attribute msg"
+            },
+            {
+                "name": "content",
+                "comment": " Sets the content of the editor\n\n_See [ckeditor5-webcomponent](https://github.com/FabienHenon/ckeditor5-webcomponent) for more information_\n\n",
+                "type": "String.String -> Html.Attribute msg"
+            },
+            {
+                "name": "defaultConfig",
+                "comment": " Default CKEditor config\n",
+                "type": "CKEditor.Config"
+            },
+            {
+                "name": "editor",
+                "comment": " Sets the registered editor build to use\n\n_See [ckeditor5-webcomponent](https://github.com/FabienHenon/ckeditor5-webcomponent) for more information_\n\n",
+                "type": "String.String -> Html.Attribute msg"
+            },
+            {
+                "name": "isContentEmpty",
+                "comment": " Check if the content you received from the editor is empty.\n\nSuch a check can be necessary because when you empty the editor the final data\nstill contains `<p>&nbsp;</p>`.\nThis function checks if the trimmed content is empty or is equal to `<p>&nbsp;</p>`\n\n",
+                "type": "String.String -> Basics.Bool"
+            },
+            {
+                "name": "onChange",
+                "comment": " Event fired when the CKEditor content changed. This event will not\nnecessarily fire on every single input action.\n\n    type Msg\n        = CKEditorChanged String\n\n    view\n        [ onChange CKEditorChanged ]\n        []\n\n",
+                "type": "(String.String -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "targetId",
+                "comment": " Sets the id of the element the editor will render for. (Itself by default)\n\n_See [ckeditor5-webcomponent](https://github.com/FabienHenon/ckeditor5-webcomponent) for more information_\n\n",
+                "type": "String.String -> Html.Attribute msg"
+            },
+            {
+                "name": "trimContent",
+                "comment": " Trim the content, removing white spaces at the beginning and the end of the data.\nIf the data is considered as empty (see [isContentEmpty](#isContentEmpty)) this function will\nreturn an empty string\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "view",
+                "comment": " Renders a CKEditor instance\n\n    view\n        [ config defaultConfig\n        , onCKEditorChange CKEditorChanged\n        ]\n        [ text \"Initial text\" ]\n\n",
+                "type": "List.List (Html.Attribute msg) -> List.List (Html.Html msg) -> Html.Html msg"
+            },
+            {
+                "name": "withCustom",
+                "comment": " Set any other configuration\n\n    defaultConfig\n        |> withCustom \"mediaEmbed\" mediaEmbedEncoder\n\n**The name must be a valid configuration property name**\n\n",
+                "type": "String.String -> Json.Encode.Value -> CKEditor.Config -> CKEditor.Config"
+            },
+            {
+                "name": "withLanguage",
+                "comment": " Set the language to use in the configuration\n\n    defaultConfig\n        |> withLanguage \"fr\"\n\nSee [reference](https://ckeditor.com/docs/ckeditor5/latest/api/module_core_editor_editorconfig-EditorConfig.html#member-language) for more information\n\n",
+                "type": "String.String -> CKEditor.Config -> CKEditor.Config"
+            },
+            {
+                "name": "withPlugins",
+                "comment": " Set the plugins to use in the configuration\n\n    defaultConfig\n        |> withPlugins [ \"Bold\", \"Italic\" ]\n\nSee [reference](https://ckeditor.com/docs/ckeditor5/latest/api/module_core_editor_editorconfig-EditorConfig.html#member-plugins) for more information\n\n",
+                "type": "List.List String.String -> CKEditor.Config -> CKEditor.Config"
+            },
+            {
+                "name": "withPluginsRemoved",
+                "comment": " Set the plugins that should not be loaded in the configuration\n\n    defaultConfig\n        |> withPluginsRemoved [ \"Bold\", \"Italic\" ]\n\nSee [reference](https://ckeditor.com/docs/ckeditor5/latest/api/module_core_editor_editorconfig-EditorConfig.html#member-removePlugins) for more information\n\n",
+                "type": "List.List String.String -> CKEditor.Config -> CKEditor.Config"
+            },
+            {
+                "name": "withToolbar",
+                "comment": " Set the toolbar to use in the configuration\n\n    defaultConfig\n        |> withToolbar [ \"bold\", \"italic\" ]\n\nSee [reference](https://ckeditor.com/docs/ckeditor5/latest/api/module_core_editor_editorconfig-EditorConfig.html#member-toolbar) for more information\n\n",
+                "type": "List.List String.String -> CKEditor.Config -> CKEditor.Config"
+            }
+        ],
+        "binops": []
+    }
+]

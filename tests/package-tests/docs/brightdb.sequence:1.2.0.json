@@ -1,0 +1,254 @@
+[
+    {
+        "name": "Sequence",
+        "comment": " A CRDT for sequential data (eg. lists of characters aka. text)\n\nImplementation took inspiration from from Nedelec et al. \"LSEQ: an adaptive structure for sequences in distributed collaborative editing\" (2013).\n\n\n# Definition\n\n@docs Sequence, Path, Entry, Value, TombValue, MVR, Operation, Op\n\n\n# Operations\n\n@docs alloc, createInsert, createRemove, apply\n\n\n# Sequence handling\n\n@docs empty, get, first, last, after, before, foldl, foldr\n\n\n# MVR handling\n\n@docs mvrToRecord, mvrToList, mvrFilterValues, mvrFoldl, mvrFoldr, mvrGet, mvrSize\n\n\n# Decoders\n\n@docs decodeOp, encodeOp\n\n\n# Paths\n\n@docs minPath, maxPath, path, comparePath, pathToString\n\n",
+        "unions": [
+            {
+                "name": "Entry",
+                "comment": " An entry in the sequence might be a single value (just one user applied an\noperation on it) or a multi-value registry (MVR) in case multiple users a\napplied operation at this path.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Single",
+                        [
+                            "String.String",
+                            "Sequence.Value a"
+                        ]
+                    ],
+                    [
+                        "Concurrent",
+                        [
+                            "Sequence.MVR a"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "MVR",
+                "comment": " A multi-value registry is a dictionary of user identifiers and Values.\nGet its contents with [`mvrToRecord`](#mvrToRecord).\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Operation",
+                "comment": " All data manipulation happens through `Operation`s. It either is an `Insert a` or `Remove`.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Insert",
+                        [
+                            "a"
+                        ]
+                    ],
+                    [
+                        "Remove",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Path",
+                "comment": " The unique identifier of a Entry's position in the sequence.\nIt consists of a list of positions, one for each layer in the data structure.\n\nEg. given this data structure:\n\n    [a|b|c|d]\n      |\n      [x|y]\n\n  - 'a' has path `[0]`\n  - 'c' has path `[2]`\n  - 'x' has path `[1,0]`\n\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Sequence",
+                "comment": " The data type itself. Takes a user-defined type as its value type.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            },
+            {
+                "name": "TombValue",
+                "comment": " If a remove operation is applied at a path which has a value, it's turned\ninto `Tomb (TombValue a)`. If the operation is applied on a free path it\nbecomes `TombUnknown`. If an insert operation is applied after this, it's\nturned into `TombValue a` finally. This way it does not matter in which order\ninsert and remove operation are applied.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "TombValue",
+                        [
+                            "a"
+                        ]
+                    ],
+                    [
+                        "TombUnknown",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Value",
+                "comment": " The actual value. After applying an Insert operation it is `Value a`, after\na Remove operation it is a `Tomb (TombValue a)`. So storage of removed values never gets\nfreed.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Value",
+                        [
+                            "a"
+                        ]
+                    ],
+                    [
+                        "Tomb",
+                        [
+                            "Sequence.TombValue a"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Op",
+                "comment": " The complete self-contained op(eration). `origin` is the identifier for the\ncreating user/instance. If the Entry at `path` already contains a MVR apply the\noperation at\n`target`'s value.\n",
+                "args": [
+                    "b"
+                ],
+                "type": "{ origin : String.String, target : String.String, path : Sequence.Path, op : Sequence.Operation b }"
+            }
+        ],
+        "values": [
+            {
+                "name": "after",
+                "comment": " Return the entry and its path after the given path in the sequence.\nReturns `Nothing` if there is none.\n",
+                "type": "Sequence.Path -> Sequence.Sequence a -> Maybe.Maybe ( Sequence.Path, Sequence.Entry a )"
+            },
+            {
+                "name": "alloc",
+                "comment": " Allocate a path given it's lower and upper bounds (non-inclusive).\n",
+                "type": "Sequence.Path -> Sequence.Path -> Sequence.Path"
+            },
+            {
+                "name": "apply",
+                "comment": " Apply multiple ops at once to a sequence. Returns the updated sequence and\nlist of successful operations (which actually changed something).\n",
+                "type": "List.List (Sequence.Op a) -> Sequence.Sequence a -> ( Sequence.Sequence a, List.List (Sequence.Op a) )"
+            },
+            {
+                "name": "before",
+                "comment": " Return the entry and its path before the given path in the sequence.\nReturns `Nothing` if there is none.\n",
+                "type": "Sequence.Path -> Sequence.Sequence a -> Maybe.Maybe ( Sequence.Path, Sequence.Entry a )"
+            },
+            {
+                "name": "comparePath",
+                "comment": " Compare Paths\n",
+                "type": "Sequence.Path -> Sequence.Path -> Basics.Order"
+            },
+            {
+                "name": "createInsert",
+                "comment": " Create an insert operation. Pass it the user identifier, a path and the\nvalue to insert.\n",
+                "type": "String.String -> Sequence.Path -> a -> Sequence.Op a"
+            },
+            {
+                "name": "createRemove",
+                "comment": " Create a remove operation. Pass it the removing user's identifier, the user\nidentifier of the removed value (ie. to target it in a MVR) and the path.\n",
+                "type": "String.String -> String.String -> Sequence.Path -> Sequence.Op a"
+            },
+            {
+                "name": "decodeOp",
+                "comment": " Decode an Op.\n",
+                "type": "Json.Decode.Decoder a -> Json.Decode.Decoder (Sequence.Op a)"
+            },
+            {
+                "name": "empty",
+                "comment": " An empty sequence.\n",
+                "type": "Sequence.Sequence a"
+            },
+            {
+                "name": "encodeOp",
+                "comment": " Encode an Op given a value specific encoder.\n",
+                "type": "(a -> Json.Encode.Value) -> Sequence.Op a -> Json.Encode.Value"
+            },
+            {
+                "name": "first",
+                "comment": " Return the first entry of the sequence and its path.\nIf the sequence is empty returns `Nothing`.\n",
+                "type": "Sequence.Sequence a -> Maybe.Maybe ( Sequence.Path, Sequence.Entry a )"
+            },
+            {
+                "name": "foldl",
+                "comment": " Fold a sequence from the left.\n",
+                "type": "(Sequence.Path -> Sequence.Entry a -> b -> b) -> b -> Sequence.Sequence a -> b"
+            },
+            {
+                "name": "foldr",
+                "comment": " Fold a sequence from the right.\n",
+                "type": "(Sequence.Path -> Sequence.Entry a -> b -> b) -> b -> Sequence.Sequence a -> b"
+            },
+            {
+                "name": "get",
+                "comment": " Lookup an entry at the given path.\n",
+                "type": "Sequence.Path -> Sequence.Sequence a -> Maybe.Maybe (Sequence.Entry a)"
+            },
+            {
+                "name": "last",
+                "comment": " Return the last entry of the sequence and its path.\nIf the sequence is empty returns `Nothing`.\n",
+                "type": "Sequence.Sequence a -> Maybe.Maybe ( Sequence.Path, Sequence.Entry a )"
+            },
+            {
+                "name": "maxPath",
+                "comment": " The greatest path possible\n",
+                "type": "Sequence.Path"
+            },
+            {
+                "name": "minPath",
+                "comment": " The lowest path possible\n",
+                "type": "Sequence.Path"
+            },
+            {
+                "name": "mvrFilterValues",
+                "comment": " Filter MVR for `Value`s.\n",
+                "type": "Sequence.MVR a -> List.List ( String.String, a )"
+            },
+            {
+                "name": "mvrFoldl",
+                "comment": " Fold an MVR from left.\n",
+                "type": "(String.String -> Sequence.Value a -> b -> b) -> b -> Sequence.MVR a -> b"
+            },
+            {
+                "name": "mvrFoldr",
+                "comment": " Fold an MVR from right.\n",
+                "type": "(String.String -> Sequence.Value a -> b -> b) -> b -> Sequence.MVR a -> b"
+            },
+            {
+                "name": "mvrGet",
+                "comment": " Get a value from an MVR given the origin.\n",
+                "type": "String.String -> Sequence.MVR a -> Maybe.Maybe (Sequence.Value a)"
+            },
+            {
+                "name": "mvrSize",
+                "comment": " Get the size of an MVR.\n",
+                "type": "Sequence.MVR a -> Basics.Int"
+            },
+            {
+                "name": "mvrToList",
+                "comment": " Convenience function to turn an MVR into a list of entries.\n",
+                "type": "Sequence.MVR a -> List.List ( String.String, Sequence.Value a )"
+            },
+            {
+                "name": "mvrToRecord",
+                "comment": " Inspect an MVR by turning it into a record of the first, the second and a list of more entries.\n",
+                "type": "Sequence.MVR a -> { first : ( String.String, Sequence.Value a ), second : ( String.String, Sequence.Value a ), more : List.List ( String.String, Sequence.Value a ) }"
+            },
+            {
+                "name": "path",
+                "comment": " Create a path (ie. a non-empty list) given its head and tail.\n",
+                "type": "Basics.Int -> List.List Basics.Int -> Sequence.Path"
+            },
+            {
+                "name": "pathToString",
+                "comment": " Turn a path into a string.\n",
+                "type": "Sequence.Path -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

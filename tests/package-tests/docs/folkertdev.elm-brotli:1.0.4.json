@@ -1,0 +1,16 @@
+[
+    {
+        "name": "Brotli",
+        "comment": " A [brotli](https://github.com/google/brotli) decoder in elm!\n\nBrotli is a compression algorithm much like the one zip archives use, but better: it is faster, more compact, and specifically geared towards web content and English text.\nThis package decodes `Bytes` sequences that are compressed with the brotli algorithm:\n\n    import Brotli\n    import Bytes exposing (Bytes)\n    import Bytes.Decode as Decode\n    import Bytes.Encode as Encode\n\n    bytes : List Int\n    bytes =\n        [ 27, 14, 0, 248, 37, 20, 82, 144, 66, 20, 169, 91, 100, 234, 20, 193 ]\n\n    buffer : Bytes\n    buffer =\n        bytes\n            |> List.map Encode.unsignedInt8\n            |> Encode.sequence\n            |> Encode.encode\n\n    result : Maybe String\n    result =\n        Brotli.decode buffer\n            |> Result.toMaybe\n            |> Maybe.andThen (\\v -> Decode.decode (Decode.string (Bytes.width v)) v)\n\n    --> Just \"this is a test\\n\"\n\n\n## Decode\n\n@docs decode\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decode",
+                "comment": " Decode a brotli-encoded bytes sequence\n\nIf you ever run into an error, that probably means you've hit a bug. If you can, please open an issue with the input that caused the issue.\n\n",
+                "type": "Bytes.Bytes -> Result.Result String.String Bytes.Bytes"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,491 @@
+[
+    {
+        "name": "Combine",
+        "comment": " This library provides facilities for parsing structured text data\ninto concrete Elm values.\n\n\n## API Reference\n\n  - [Core Types](#core-types)\n  - [Running Parsers](#running-parsers)\n  - [Constructing Parsers](#constructing-parsers)\n  - [Parsers](#parsers)\n  - [Combinators](#combinators)\n      - [Transforming Parsers](#transforming-parsers)\n      - [Chaining Parsers](#chaining-parsers)\n      - [Parser Combinators](#parser-combinators)\n      - [State Combinators](#state-combinators)\n\n\n## Core Types\n\n@docs Parser, InputStream, ParseLocation, ParseContext, ParseResult, ParseError, ParseOk\n\n\n## Running Parsers\n\n@docs parse, runParser\n\n\n## Constructing Parsers\n\n@docs primitive, app, lazy\n\n\n## Parsers\n\n@docs fail, succeed, string, regex, regexSub, regexWith, regexWithSub, end, whitespace, whitespace1\n\n\n## Combinators\n\n\n### Transforming Parsers\n\n@docs map, onsuccess, mapError, onerror\n\n\n### Chaining Parsers\n\n@docs andThen, andMap, sequence\n\n\n### Parser Combinators\n\n@docs lookAhead, while, or, choice, optional, maybe, many, many1, manyTill, many1Till, sepBy, sepBy1, sepEndBy, sepEndBy1, skip, skipMany, skipMany1, chainl, chainr, count, between, parens, braces, brackets, keep, ignore\n\n\n### State Combinators\n\n@docs withState, putState, modifyState, withLocation, withLine, withColumn, withSourceLine, currentLocation, currentSourceLine, currentLine, currentColumn, currentStream, modifyInput, modifyPosition\n\n",
+        "unions": [
+            {
+                "name": "Parser",
+                "comment": " The Parser type.\n\nAt their core, `Parser`s wrap functions from some `state` and an\n`InputStream` to a tuple representing the new `state`, the\nremaining `InputStream` and a `ParseResult res`.\n\n",
+                "args": [
+                    "state",
+                    "res"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "InputStream",
+                "comment": " The input stream over which `Parser`s operate.\n\n  - `data` is the initial input provided by the user\n  - `input` is the remainder after running a parse\n  - `position` is the starting position of `input` in `data` after a parse\n\n",
+                "args": [],
+                "type": "{ data : String.String, input : String.String, position : Basics.Int }"
+            },
+            {
+                "name": "ParseContext",
+                "comment": " A tuple representing the current parser state, the remaining input\nstream and the parse result. Don't worry about this type unless\nyou're writing your own `primitive` parsers.\n",
+                "args": [
+                    "state",
+                    "res"
+                ],
+                "type": "( state, Combine.InputStream, Combine.ParseResult res )"
+            },
+            {
+                "name": "ParseError",
+                "comment": " A tuple representing a failed parse. It contains the state after\nrunning the parser, the remaining input stream and a list of\nerror messages.\n",
+                "args": [
+                    "state"
+                ],
+                "type": "( state, Combine.InputStream, List.List String.String )"
+            },
+            {
+                "name": "ParseLocation",
+                "comment": " A record representing the current parse location in an InputStream.\n\n  - `source` the current line of source code\n  - `line` the current line number (starting at 1)\n  - `column` the current column (starting at 1)\n\n",
+                "args": [],
+                "type": "{ source : String.String, line : Basics.Int, column : Basics.Int }"
+            },
+            {
+                "name": "ParseOk",
+                "comment": " A tuple representing a successful parse. It contains the state\nafter running the parser, the remaining input stream and the\nresult.\n",
+                "args": [
+                    "state",
+                    "res"
+                ],
+                "type": "( state, Combine.InputStream, res )"
+            },
+            {
+                "name": "ParseResult",
+                "comment": " Running a `Parser` results in one of two states:\n\n  - `Ok res` when the parser has successfully parsed the input\n  - `Err messages` when the parser has failed with a list of error messages.\n\n",
+                "args": [
+                    "res"
+                ],
+                "type": "Result.Result (List.List String.String) res"
+            }
+        ],
+        "values": [
+            {
+                "name": "andMap",
+                "comment": " Sequence two parsers.\n\n    import Combine.Num exposing (int)\n\n    plus : Parser s String\n    plus = string \"+\"\n\n    sum : Parser s Int\n    sum =\n      int\n        |> map (+)\n        |> andMap (plus |> keep int)\n\n    parse sum \"1+2\"\n    -- Ok 3\n\n",
+                "type": "Combine.Parser s a -> Combine.Parser s (a -> b) -> Combine.Parser s b"
+            },
+            {
+                "name": "andThen",
+                "comment": " Sequence two parsers, passing the result of the first parser to a\nfunction that returns the second parser. The value of the second\nparser is returned on success.\n\n    import Combine.Num exposing (int)\n\n    choosy : Parser s String\n    choosy =\n      let\n        createParser n =\n          if n % 2 == 0 then\n            string \" is even\"\n          else\n            string \" is odd\"\n      in\n        int\n          |> andThen createParser\n\n    parse choosy \"1 is odd\"\n    -- Ok \" is odd\"\n\n    parse choosy \"2 is even\"\n    -- Ok \" is even\"\n\n    parse choosy \"1 is even\"\n    -- Err [\"expected \\\" is odd\\\"\"]\n\n",
+                "type": "(a -> Combine.Parser s b) -> Combine.Parser s a -> Combine.Parser s b"
+            },
+            {
+                "name": "app",
+                "comment": " Unwrap a parser so it can be applied to a state and an input\nstream. This function is useful if you want to construct your own\nparsers via `primitive`. If you're using this outside of the context\nof `primitive` then you might be doing something wrong so try asking\nfor help on the mailing list.\n\nHere's how you would implement a greedy version of `manyTill` using\n`primitive` and `app`:\n\n    manyTill : Parser s a -> Parser s x -> Parser s (List a)\n    manyTill p end =\n        let\n            accumulate acc state stream =\n                case app end state stream of\n                    ( rstate, rstream, Ok _ ) ->\n                        ( rstate, rstream, Ok (List.reverse acc) )\n\n                    _ ->\n                        case app p state stream of\n                            ( rstate, rstream, Ok res ) ->\n                                accumulate (res :: acc) rstate rstream\n\n                            ( estate, estream, Err ms ) ->\n                                ( estate, estream, Err ms )\n        in\n        primitive <| accumulate []\n\n",
+                "type": "Combine.Parser state res -> state -> Combine.InputStream -> Combine.ParseContext state res"
+            },
+            {
+                "name": "between",
+                "comment": " Parse something between two other parsers.\n\nThe parser\n\n    between (string \"(\") (string \")\") (string \"a\")\n\nis equivalent to the parser\n\n    string \"(\" |> keep (string \"a\") |> ignore (string \")\")\n\n",
+                "type": "Combine.Parser s l -> Combine.Parser s r -> Combine.Parser s a -> Combine.Parser s a"
+            },
+            {
+                "name": "braces",
+                "comment": " Parse something between braces `{}`.\n",
+                "type": "Combine.Parser s a -> Combine.Parser s a"
+            },
+            {
+                "name": "brackets",
+                "comment": " Parse something between square brackets `[]`.\n",
+                "type": "Combine.Parser s a -> Combine.Parser s a"
+            },
+            {
+                "name": "chainl",
+                "comment": " Parse one or more occurences of `p` separated by `op`, recursively\napply all functions returned by `op` to the values returned by `p`. See\nthe `examples/Calc.elm` file for an example.\n",
+                "type": "Combine.Parser s (a -> a -> a) -> Combine.Parser s a -> Combine.Parser s a"
+            },
+            {
+                "name": "chainr",
+                "comment": " Similar to `chainl` but functions of `op` are applied in\nright-associative order to the values of `p`. See the\n`examples/Python.elm` file for a usage example.\n",
+                "type": "Combine.Parser s (a -> a -> a) -> Combine.Parser s a -> Combine.Parser s a"
+            },
+            {
+                "name": "choice",
+                "comment": " Choose between a list of parsers.\n\n    parse (choice [string \"a\", string \"b\"]) \"a\"\n    -- Ok \"a\"\n\n    parse (choice [string \"a\", string \"b\"]) \"b\"\n    -- Ok \"b\"\n\n",
+                "type": "List.List (Combine.Parser s a) -> Combine.Parser s a"
+            },
+            {
+                "name": "count",
+                "comment": " Parse `n` occurences of `p`.\n",
+                "type": "Basics.Int -> Combine.Parser s a -> Combine.Parser s (List.List a)"
+            },
+            {
+                "name": "currentColumn",
+                "comment": " Get the current column in the input stream.\n",
+                "type": "Combine.InputStream -> Basics.Int"
+            },
+            {
+                "name": "currentLine",
+                "comment": " Get the current line in the input stream.\n",
+                "type": "Combine.InputStream -> Basics.Int"
+            },
+            {
+                "name": "currentLocation",
+                "comment": " Get the current `(line, column)` in the input stream.\n",
+                "type": "Combine.InputStream -> Combine.ParseLocation"
+            },
+            {
+                "name": "currentSourceLine",
+                "comment": " Get the current source line in the input stream.\n",
+                "type": "Combine.InputStream -> String.String"
+            },
+            {
+                "name": "currentStream",
+                "comment": " Get the current string stream. That might be useful for applying memorization.\n",
+                "type": "Combine.InputStream -> String.String"
+            },
+            {
+                "name": "end",
+                "comment": " Fail when the input is not empty.\n\n    parse end \"\"\n    -- Ok ()\n\n    parse end \"a\"\n    -- Err [\"expected end of input\"]\n\n",
+                "type": "Combine.Parser s ()"
+            },
+            {
+                "name": "fail",
+                "comment": " Fail without consuming any input.\n\n    parse (fail \"some error\") \"hello\"\n    -- Err [\"some error\"]\n\n",
+                "type": "String.String -> Combine.Parser s a"
+            },
+            {
+                "name": "ignore",
+                "comment": " Join two parsers, ignoring the result of the one on the left.\n\n    unprefix : Parser s String\n    unprefix =\n      string \">\"\n        |> ignore (while ((==) ' '))\n        |> ignore (while ((/=) ' '))\n\n    parse unprefix \"> a\"\n    -- Ok \"a\"\n\n",
+                "type": "Combine.Parser s x -> Combine.Parser s a -> Combine.Parser s a"
+            },
+            {
+                "name": "keep",
+                "comment": " Join two parsers, ignoring the result of the one on the right.\n\n    unsuffix : Parser s String\n    unsuffix =\n      regex \"[a-z]\"\n        |> keep (regex \"[!?]\")\n\n    parse unsuffix \"a!\"\n    -- Ok \"a\"\n\n",
+                "type": "Combine.Parser s a -> Combine.Parser s x -> Combine.Parser s a"
+            },
+            {
+                "name": "lazy",
+                "comment": " Unfortunatelly this is not a real lazy function anymore, since this\nfunctionality is not accessable anymore by ordinary developers. Use this\nfunction only to avoid \"bad-recursion\" errors or use the following example\nsnippet in your code to circumvent this problem:\n\n    recursion x =\n        \\() -> recursion x\n\n",
+                "type": "(() -> Combine.Parser s a) -> Combine.Parser s a"
+            },
+            {
+                "name": "lookAhead",
+                "comment": " Apply a parser without consuming any input on success.\n",
+                "type": "Combine.Parser s a -> Combine.Parser s a"
+            },
+            {
+                "name": "many",
+                "comment": " Apply a parser zero or more times and return a list of the results.\n\n    parse (many (string \"a\")) \"aaab\"\n    -- Ok [\"a\", \"a\", \"a\"]\n\n    parse (many (string \"a\")) \"bbbb\"\n    -- Ok []\n\n    parse (many (string \"a\")) \"\"\n    -- Ok []\n\n",
+                "type": "Combine.Parser s a -> Combine.Parser s (List.List a)"
+            },
+            {
+                "name": "many1",
+                "comment": " Parse at least one result.\n\n    parse (many1 (string \"a\")) \"a\"\n    -- Ok [\"a\"]\n\n    parse (many1 (string \"a\")) \"\"\n    -- Err [\"expected \\\"a\\\"\"]\n\n",
+                "type": "Combine.Parser s a -> Combine.Parser s (List.List a)"
+            },
+            {
+                "name": "many1Till",
+                "comment": " Apply the first parser one or more times until second parser\nsucceeds. On success, the list of the first parser's results is returned.\n\n    string \"<!--\" |> keep (many1Till anyChar (string \"-->\"))\n\n",
+                "type": "Combine.Parser s a -> Combine.Parser s end -> Combine.Parser s (List.List a)"
+            },
+            {
+                "name": "manyTill",
+                "comment": " Apply the first parser zero or more times until second parser\nsucceeds. On success, the list of the first parser's results is returned.\n\n    string \"<!--\" |> keep (manyTill anyChar (string \"-->\"))\n\n",
+                "type": "Combine.Parser s a -> Combine.Parser s end -> Combine.Parser s (List.List a)"
+            },
+            {
+                "name": "map",
+                "comment": " Transform the result of a parser.\n\n    let\n      parser =\n        string \"a\"\n          |> map String.toUpper\n    in\n      parse parser \"a\"\n      -- Ok \"A\"\n\n",
+                "type": "(a -> b) -> Combine.Parser s a -> Combine.Parser s b"
+            },
+            {
+                "name": "mapError",
+                "comment": " Transform the error of a parser.\n\n    let\n      parser =\n        string \"a\"\n          |> mapError (always [\"bad input\"])\n    in\n      parse parser b\n      -- Err [\"bad input\"]\n\n",
+                "type": "(List.List String.String -> List.List String.String) -> Combine.Parser s a -> Combine.Parser s a"
+            },
+            {
+                "name": "maybe",
+                "comment": " Wrap the return value into a `Maybe`. Returns `Nothing` on failure.\n\n    parse (maybe (string \"a\")) \"a\"\n    -- Ok (Just \"a\")\n\n    parse (maybe (string \"a\")) \"b\"\n    -- Ok Nothing\n\n",
+                "type": "Combine.Parser s a -> Combine.Parser s (Maybe.Maybe a)"
+            },
+            {
+                "name": "modifyInput",
+                "comment": " Modify the parser's InputStream input (String).\n",
+                "type": "(String.String -> String.String) -> Combine.Parser s ()"
+            },
+            {
+                "name": "modifyPosition",
+                "comment": " Modify the parser's InputStream position (Int).\n",
+                "type": "(Basics.Int -> Basics.Int) -> Combine.Parser s ()"
+            },
+            {
+                "name": "modifyState",
+                "comment": " Modify the parser's state.\n",
+                "type": "(s -> s) -> Combine.Parser s ()"
+            },
+            {
+                "name": "onerror",
+                "comment": " Variant of `mapError` that replaces the Parser's error with a List\nof a single string.\n\n    parse (string \"a\" |> onerror \"gimme an 'a'\") \"b\"\n    -- Err [\"gimme an 'a'\"]\n\n",
+                "type": "String.String -> Combine.Parser s a -> Combine.Parser s a"
+            },
+            {
+                "name": "onsuccess",
+                "comment": " Run a parser and return the value on the right on success.\n\n    parse (string \"true\" |> onsuccess True) \"true\"\n    -- Ok True\n\n    parse (string \"true\" |> onsuccess True) \"false\"\n    -- Err [\"expected \\\"true\\\"\"]\n\n",
+                "type": "a -> Combine.Parser s x -> Combine.Parser s a"
+            },
+            {
+                "name": "optional",
+                "comment": " Return a default value when the given parser fails.\n\n    letterA : Parser s String\n    letterA = optional \"a\" (string \"a\")\n\n    parse letterA \"a\"\n    -- Ok \"a\"\n\n    parse letterA \"b\"\n    -- Ok \"a\"\n\n",
+                "type": "a -> Combine.Parser s a -> Combine.Parser s a"
+            },
+            {
+                "name": "or",
+                "comment": " Choose between two parsers.\n\n    parse (or (string \"a\") (string \"b\")) \"a\"\n    -- Ok \"a\"\n\n    parse (or (string \"a\") (string \"b\")) \"b\"\n    -- Ok \"b\"\n\n    parse (or (string \"a\") (string \"b\")) \"c\"\n    -- Err [\"expected \\\"a\\\"\", \"expected \\\"b\\\"\"]\n\n",
+                "type": "Combine.Parser s a -> Combine.Parser s a -> Combine.Parser s a"
+            },
+            {
+                "name": "parens",
+                "comment": " Parse something between parentheses.\n",
+                "type": "Combine.Parser s a -> Combine.Parser s a"
+            },
+            {
+                "name": "parse",
+                "comment": " Parse a string. See `runParser` if your parser needs to manage\nsome internal state.\n\n    import Combine.Num exposing (int)\n    import String\n\n    parseAnInteger : String -> Result String Int\n    parseAnInteger input =\n      case parse int input of\n        Ok (_, stream, result) ->\n          Ok result\n\n        Err (_, stream, errors) ->\n          Err (String.join \" or \" errors)\n\n    parseAnInteger \"123\"\n    -- Ok 123\n\n    parseAnInteger \"abc\"\n    -- Err \"expected an integer\"\n\n",
+                "type": "Combine.Parser () res -> String.String -> Result.Result (Combine.ParseError ()) (Combine.ParseOk () res)"
+            },
+            {
+                "name": "primitive",
+                "comment": " Construct a new primitive Parser.\n\nIf you find yourself reaching for this function often consider opening\na [Github issue][issues] with the library to have your custom Parsers\nincluded in the standard distribution.\n\n[issues]: https://github.com/elm-community/parser-combinators/issues\n\n",
+                "type": "(state -> Combine.InputStream -> Combine.ParseContext state res) -> Combine.Parser state res"
+            },
+            {
+                "name": "putState",
+                "comment": " Replace the parser's state.\n",
+                "type": "s -> Combine.Parser s ()"
+            },
+            {
+                "name": "regex",
+                "comment": " Parse a Regex match.\n\nRegular expressions must match from the beginning of the input and their\nsubgroups are ignored. A `^` is added implicitly to the beginning of\nevery pattern unless one already exists.\n\n    parse (regex \"a+\") \"aaaaab\"\n    -- Ok \"aaaaa\"\n\n",
+                "type": "String.String -> Combine.Parser s String.String"
+            },
+            {
+                "name": "regexSub",
+                "comment": " Parse a Regex match.\n\nSame as regex, but returns also submatches as the second parameter in\nthe result tuple.\n\n    parse (regexSub \"a+\") \"aaaaab\"\n    -- Ok (\"aaaaa\", [])\n\n",
+                "type": "String.String -> Combine.Parser s ( String.String, List.List (Maybe.Maybe String.String) )"
+            },
+            {
+                "name": "regexWith",
+                "comment": " Parse a Regex match.\n\nSince, Regex now also has support for more parameters, this option was\nincluded into this package. Call `regexWith` with two additional parameters:\n`caseInsensitive` and `multiline`, which allow you to tweak your expression.\nThe rest is as follows. Regular expressions must match from the beginning\nof the input and their subgroups are ignored. A `^` is added implicitly to\nthe beginning of every pattern unless one already exists.\n\n    parse (regexWith True False \"a+\") \"aaaAAaAab\"\n    -- Ok \"aaaAAaAa\"\n\n",
+                "type": "Basics.Bool -> Basics.Bool -> String.String -> Combine.Parser s String.String"
+            },
+            {
+                "name": "regexWithSub",
+                "comment": " Parse a Regex match.\n\nSimilar to `regexWith`, but a tuple is returned, with a list of additional\nsubmatches.\nThe rest is as follows. Regular expressions must match from the beginning\nof the input and their subgroups are ignored. A `^` is added implicitly to\nthe beginning of every pattern unless one already exists.\n\n    parse (regexWithSub True False \"a+\") \"aaaAAaAab\"\n    -- Ok (\"aaaAAaAa\", [])\n\n",
+                "type": "Basics.Bool -> Basics.Bool -> String.String -> Combine.Parser s ( String.String, List.List (Maybe.Maybe String.String) )"
+            },
+            {
+                "name": "runParser",
+                "comment": " Parse a string while maintaining some internal state.\n\n    import Combine.Num exposing (int)\n    import String\n\n    type alias Output =\n      { count : Int\n      , integers : List Int\n      }\n\n    statefulInt : Parse Int Int\n    statefulInt =\n      -- Parse an int, then increment the state and return the parsed\n      -- int.  It's important that we try to parse the int _first_\n      -- since modifying the state will always succeed.\n      int |> ignore (modifyState ((+) 1))\n\n    ints : Parse Int (List Int)\n    ints =\n      sepBy (string \" \") statefulInt\n\n    parseIntegers : String -> Result String Output\n    parseIntegers input =\n      case runParser ints 0 input of\n        Ok (state, stream, ints) ->\n          Ok { count = state, integers = ints }\n\n        Err (state, stream, errors) ->\n          Err (String.join \" or \" errors)\n\n    parseIntegers \"\"\n    -- Ok { count = 0, integers = [] }\n\n    parseIntegers \"1 2 3 45\"\n    -- Ok { count = 4, integers = [1, 2, 3, 45] }\n\n    parseIntegers \"1 a 2\"\n    -- Ok { count = 1, integers = [1] }\n\n",
+                "type": "Combine.Parser state res -> state -> String.String -> Result.Result (Combine.ParseError state) (Combine.ParseOk state res)"
+            },
+            {
+                "name": "sepBy",
+                "comment": " Parser zero or more occurences of one parser separated by another.\n\n    parse (sepBy (string \",\") (string \"a\")) \"b\"\n    -- Ok []\n\n    parse (sepBy (string \",\") (string \"a\")) \"a,a,a\"\n    -- Ok [\"a\", \"a\", \"a\"]\n\n    parse (sepBy (string \",\") (string \"a\")) \"a,a,b\"\n    -- Ok [\"a\", \"a\"]\n\n",
+                "type": "Combine.Parser s x -> Combine.Parser s a -> Combine.Parser s (List.List a)"
+            },
+            {
+                "name": "sepBy1",
+                "comment": " Parse one or more occurences of one parser separated by another.\n",
+                "type": "Combine.Parser s x -> Combine.Parser s a -> Combine.Parser s (List.List a)"
+            },
+            {
+                "name": "sepEndBy",
+                "comment": " Parse zero or more occurences of one parser separated and\noptionally ended by another.\n\n    parse (sepEndBy (string \",\") (string \"a\")) \"a,a,a,\"\n    -- Ok [\"a\", \"a\", \"a\"]\n\n",
+                "type": "Combine.Parser s x -> Combine.Parser s a -> Combine.Parser s (List.List a)"
+            },
+            {
+                "name": "sepEndBy1",
+                "comment": " Parse one or more occurences of one parser separated and\noptionally ended by another.\n\n    parse (sepEndBy1 (string \",\") (string \"a\")) \"\"\n    -- Err [\"expected \\\"a\\\"\"]\n\n    parse (sepEndBy1 (string \",\") (string \"a\")) \"a\"\n    -- Ok [\"a\"]\n\n    parse (sepEndBy1 (string \",\") (string \"a\")) \"a,\"\n    -- Ok [\"a\"]\n\n",
+                "type": "Combine.Parser s x -> Combine.Parser s a -> Combine.Parser s (List.List a)"
+            },
+            {
+                "name": "sequence",
+                "comment": " Run a list of parsers in sequence, accumulating the results. The\nmain use case for this parser is when you want to combine a list of\nparsers into a single, top-level, parser. For most use cases, you'll\nwant to use one of the other combinators instead.\n\n    parse (sequence [string \"a\", string \"b\"]) \"ab\"\n    -- Ok [\"a\", \"b\"]\n\n    parse (sequence [string \"a\", string \"b\"]) \"ac\"\n    -- Err [\"expected \\\"b\\\"\"]\n\n",
+                "type": "List.List (Combine.Parser s a) -> Combine.Parser s (List.List a)"
+            },
+            {
+                "name": "skip",
+                "comment": " Apply a parser and skip its result.\n",
+                "type": "Combine.Parser s x -> Combine.Parser s ()"
+            },
+            {
+                "name": "skipMany",
+                "comment": " Apply a parser and skip its result many times.\n",
+                "type": "Combine.Parser s x -> Combine.Parser s ()"
+            },
+            {
+                "name": "skipMany1",
+                "comment": " Apply a parser and skip its result at least once.\n",
+                "type": "Combine.Parser s x -> Combine.Parser s ()"
+            },
+            {
+                "name": "string",
+                "comment": " Parse an exact string match.\n\n    parse (string \"hello\") \"hello world\"\n    -- Ok \"hello\"\n\n    parse (string \"hello\") \"goodbye\"\n    -- Err [\"expected \\\"hello\\\"\"]\n\n",
+                "type": "String.String -> Combine.Parser s String.String"
+            },
+            {
+                "name": "succeed",
+                "comment": " Return a value without consuming any input.\n\n    parse (succeed 1) \"a\"\n    -- Ok 1\n\n",
+                "type": "a -> Combine.Parser s a"
+            },
+            {
+                "name": "while",
+                "comment": " Consume input while the predicate matches.\n\n    parse (while ((/=) ' ')) \"test 123\"\n    -- Ok \"test\"\n\n",
+                "type": "(Char.Char -> Basics.Bool) -> Combine.Parser s String.String"
+            },
+            {
+                "name": "whitespace",
+                "comment": " Parse zero or more whitespace characters.\n\n    parse (whitespace |> keep (string \"hello\")) \"hello\"\n    -- Ok \"hello\"\n\n    parse (whitespace |> keep (string \"hello\")) \"   hello\"\n    -- Ok \"hello\"\n\n",
+                "type": "Combine.Parser s String.String"
+            },
+            {
+                "name": "whitespace1",
+                "comment": " Parse one or more whitespace characters.\n\n    parse (whitespace1 |> keep (string \"hello\")) \"hello\"\n     -- Err [\"whitespace\"]\n\n    parse (whitespace1 |> keep (string \"hello\")) \"   hello\"\n     -- Ok \"hello\"\n\n",
+                "type": "Combine.Parser s String.String"
+            },
+            {
+                "name": "withColumn",
+                "comment": " Get the current column and pipe it into a parser.\n",
+                "type": "(Basics.Int -> Combine.Parser s a) -> Combine.Parser s a"
+            },
+            {
+                "name": "withLine",
+                "comment": " Get the current line and pipe it into a parser.\n",
+                "type": "(Basics.Int -> Combine.Parser s a) -> Combine.Parser s a"
+            },
+            {
+                "name": "withLocation",
+                "comment": " Get the current position in the input stream and pipe it into a parser.\n",
+                "type": "(Combine.ParseLocation -> Combine.Parser s a) -> Combine.Parser s a"
+            },
+            {
+                "name": "withSourceLine",
+                "comment": " Get the current InputStream and pipe it into a parser,\nonly for debugging purposes ...\n",
+                "type": "(String.String -> Combine.Parser s a) -> Combine.Parser s a"
+            },
+            {
+                "name": "withState",
+                "comment": " Get the parser's state and pipe it into a parser.\n",
+                "type": "(s -> Combine.Parser s a) -> Combine.Parser s a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Combine.Char",
+        "comment": " This module contains `Char`-specific Parsers.\n\nAvoid using this module if performance is a concern. You can achieve\neverything that you can do with this module by using `Combine.regex`,\n`Combine.string` or `Combine.primitive` and, in general, those will be\nmuch faster.\n\n\n# Parsers\n\n@docs satisfy, char, anyChar, oneOf, noneOf, space, tab, newline, crlf, eol, lower, upper, digit, octDigit, hexDigit\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "anyChar",
+                "comment": " Parse any character.\n\n    parse anyChar \"a\" ==\n    -- Ok 'a'\n\n    parse anyChar \"\" ==\n    -- Err [\"expected any character\"]\n\n",
+                "type": "Combine.Parser s Char.Char"
+            },
+            {
+                "name": "char",
+                "comment": " Parse an exact character match.\n\n    parse (char 'a') \"a\" ==\n    -- Ok 'a'\n\n    parse (char 'a') \"b\" ==\n    -- Err [\"expected 'a'\"]\n\n",
+                "type": "Char.Char -> Combine.Parser s Char.Char"
+            },
+            {
+                "name": "crlf",
+                "comment": " Parse a `\\r\\n` sequence, returning a `\\n` character.\n",
+                "type": "Combine.Parser s Char.Char"
+            },
+            {
+                "name": "digit",
+                "comment": " Parse any base 10 digit.\n",
+                "type": "Combine.Parser s Char.Char"
+            },
+            {
+                "name": "eol",
+                "comment": " Parse an end of line character or sequence, returning a `\\n` character.\n",
+                "type": "Combine.Parser s Char.Char"
+            },
+            {
+                "name": "hexDigit",
+                "comment": " Parse any base 16 digit.\n",
+                "type": "Combine.Parser s Char.Char"
+            },
+            {
+                "name": "lower",
+                "comment": " Parse any lowercase character.\n",
+                "type": "Combine.Parser s Char.Char"
+            },
+            {
+                "name": "newline",
+                "comment": " Parse a `\\n` character.\n",
+                "type": "Combine.Parser s Char.Char"
+            },
+            {
+                "name": "noneOf",
+                "comment": " Parse a character that is not in the given list.\n\n    parse (noneOf ['a', 'b']) \"c\" ==\n    -- Ok 'c'\n\n    parse (noneOf ['a', 'b']) \"a\" ==\n    -- Err [\"expected none of ['a','b']\"]\n\n",
+                "type": "List.List Char.Char -> Combine.Parser s Char.Char"
+            },
+            {
+                "name": "octDigit",
+                "comment": " Parse any base 8 digit.\n",
+                "type": "Combine.Parser s Char.Char"
+            },
+            {
+                "name": "oneOf",
+                "comment": " Parse a character from the given list.\n\n    parse (oneOf ['a', 'b']) \"a\" ==\n    -- Ok 'a'\n\n    parse (oneOf ['a', 'b']) \"c\" ==\n    -- Err [\"expected one of ['a','b']\"]\n\n",
+                "type": "List.List Char.Char -> Combine.Parser s Char.Char"
+            },
+            {
+                "name": "satisfy",
+                "comment": " Parse a character matching the predicate.\n\n    parse (satisfy ((==) 'a')) \"a\" ==\n    -- Ok 'a'\n\n    parse (satisfy ((==) 'a')) \"b\" ==\n    -- Err [\"could not satisfy predicate\"]\n\n",
+                "type": "(Char.Char -> Basics.Bool) -> Combine.Parser s Char.Char"
+            },
+            {
+                "name": "space",
+                "comment": " Parse a space character.\n",
+                "type": "Combine.Parser s Char.Char"
+            },
+            {
+                "name": "tab",
+                "comment": " Parse a `\\t` character.\n",
+                "type": "Combine.Parser s Char.Char"
+            },
+            {
+                "name": "upper",
+                "comment": " Parse any uppercase character.\n",
+                "type": "Combine.Parser s Char.Char"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Combine.Num",
+        "comment": " This module contains Parsers specific to parsing numbers.\n\n\n# Parsers\n\n@docs sign, digit, int, float\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "digit",
+                "comment": " Parse a digit.\n",
+                "type": "Combine.Parser s Basics.Int"
+            },
+            {
+                "name": "float",
+                "comment": " Parse a float.\n",
+                "type": "Combine.Parser s Basics.Float"
+            },
+            {
+                "name": "int",
+                "comment": " Parse an integer.\n",
+                "type": "Combine.Parser s Basics.Int"
+            },
+            {
+                "name": "sign",
+                "comment": " Parse a numeric sign, returning `1` for positive numbers and `-1`\nfor negative numbers.\n",
+                "type": "Combine.Parser s Basics.Int"
+            }
+        ],
+        "binops": []
+    }
+]

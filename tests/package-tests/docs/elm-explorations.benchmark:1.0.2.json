@@ -1,0 +1,249 @@
+[
+    {
+        "name": "Benchmark",
+        "comment": " Benchmark Elm Programs\n\n@docs Benchmark\n\n\n# Creating and Organizing Benchmarks\n\n@docs benchmark, compare, scale, describe\n\n\n# Writing Runners\n\n@docs step, done\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Benchmark",
+                "comment": " Benchmarks that contain potential, in-progress, and completed runs.\n\nTo make these, try [`benchmark`](#benchmark), [`compare`](#compare),\nor [`scale`](#scale), and organize them with [`describe`](#describe).\n\n",
+                "args": [],
+                "type": "Benchmark.Benchmark.Benchmark"
+            }
+        ],
+        "values": [
+            {
+                "name": "benchmark",
+                "comment": " Benchmark a single function.\n\n    benchmark \"head\" (\\_ -> List.head [ 1 ])\n\nThe name here should be short and descriptive. Ideally, it should also\nuniquely identify a single benchmark among your whole suite.\n\nYour code is wrapped in an anonymous function, which we will call\nrepeatedly to measure speed. Note that this is slightly slower than\ncalling functions directly. This is OK! The point of this library is\nto _reliably_ measure execution speed. In this case, we get more\nconsistent results by calling them inside thunks like this.\n\nNow, a note about benchmark design: when you first write benchmarks,\nyou usually think something along the lines of \"I need to test the\nworst possible complexity!\" You should test this _eventually_, but\nit's a bad _first_ step.\n\nInstead, benchmark the smallest _real_ sample. If your typical use of\na data structure has 20 items, measure with 20 items. You'll get edge\ncases eventually, but it's better to get the basics right\nfirst. **Solve the problems you know are real** instead of inventing\nsituations you may never encounter.\n\nWhen you get the point where you _know_ you need to measure a bunch of\ndifferent sizes, we've got your back: that's what [`scale`](#scale) is\nfor.\n\n",
+                "type": "String.String -> (() -> a) -> Benchmark.Benchmark"
+            },
+            {
+                "name": "compare",
+                "comment": " Run two benchmarks head-to-head. This is useful when optimizing\ndata structures or other situations where you can make\napples-to-apples comparisons between different approaches.\n\nAs with [`benchmark`](#benchmark), the first argument is the name for\nthe comparison. The other string arguments are the names of the\nfunctions that follow them directly.\n\n    compare \"initialize\"\n        \"Hamt\"\n        (\\_ -> Array.HAMT.initialize 100 identity)\n        \"Core\"\n        (\\_ -> Array.initialize 100 identity)\n\nIn addition to the general advice in [`benchmark`](#benchmark), try as\nhard as possible to make the arguments the same. It wouldn't be a\nvalid comparison if, in the example above, we told `Array.HAMT` to use\n1,000 items instead of 100. In the cases where you can't get _exactly_\nthe same arguments, at least try to match output.\n\n",
+                "type": "String.String -> String.String -> (() -> a) -> String.String -> (() -> b) -> Benchmark.Benchmark"
+            },
+            {
+                "name": "describe",
+                "comment": " Group a number of benchmarks together. Grouping benchmarks using\n`describe` will never effect measurement, only organization.\n\nYou'll typically have at least one call to this in your benchmark\nprogram, at the top level:\n\n    describe \"your program\"\n        [{- your benchmarks here -}]\n\n",
+                "type": "String.String -> List.List Benchmark.Benchmark -> Benchmark.Benchmark"
+            },
+            {
+                "name": "done",
+                "comment": " find out if a Benchmark is finished. For progress information for\nreporting purposes, see `Benchmark.Status.progress`.\n\nThe default runner uses this function to find out if it should call\n`step` any more.\n\n",
+                "type": "Benchmark.Benchmark -> Basics.Bool"
+            },
+            {
+                "name": "scale",
+                "comment": " Specify scale benchmarks for a function. This is especially good\nfor measuring the performance of your data structures under\ndifferently sized workloads.\n\nBeware that large series can make very heavy benchmarks. Adjust your\nexpectations and measurements accordingly!\n\nFor example, this benchmark will see how long it takes to get a\ndictionary size, where the size is powers of 10 between 1 and 100,000:\n\n    dictOfSize : Int -> Dict Int ()\n    dictOfSize size =\n        List.range 0 size\n            |> List.map (\\a -> (\\a b -> ( a, b )) a ())\n            |> Dict.fromList\n\n    dictSize : Benchmark\n    dictSize =\n        List.range 0 5\n            -- tip: prepare your data structures _outside_ the\n            -- benchmark function. Here, we're measuring `Dict.size`\n            -- without interference from `dictOfSize` and the\n            -- functions that it uses.\n            |> List.map ((^) 10)\n            |> List.map (\\size -> ( size, dictOfSize size ))\n            -- now we have a list of structures, make benchmarks pass\n            -- them to `scale`!\n            |> List.map (\\( size, target ) -> ( toString size, \\_ -> Dict.size target ))\n            |> scale \"Dict.size\"\n\n**Note:** The API for this function is newer, and may change in the future than\nother functions. If you use it, please [open an\nissue](https://github.com/brianhicks/elm-benchmark/issues) with your\nuse case so we can know the right situations to optimize for in future\nreleases.\n\n",
+                "type": "String.String -> List.List ( String.String, () -> a ) -> Benchmark.Benchmark"
+            },
+            {
+                "name": "step",
+                "comment": " Step a benchmark forward to completion.\n\n**Warning:** `step` is only useful for writing runners. As a consumer\nof the `elm-benchmark` library, you'll probably never need it!\n\n...\n\nStill with me? OK, let's go.\n\nThis function \"advances\" a benchmark through a series of states\n(described below.) If the benchmark has no more work to do, this is a\nno-op. But you probably want to know about that so you can present\nresults to the user, so use [`done`](#done) to figure it out before\nyou call this.\n\nAt a high level, a runner just needs to receive benchmarks from the\nuser, iterate over them using this function, and convert them to\n`Report`s whenever it makes sense to you to do so. You shouldn't need\nto care _too much_ about the nuances of the internal benchmark state,\nbut a little knowledge is useful for making a really great user\nexperience, so read on.\n\n\n## The Life of a Benchmark\n\n         ┌─────────────┐\n         │    cold     │\n         │  benchmark  │\n         └─────────────┘\n                │\n                │  warm up JIT\n                ▼\n         ┌─────────────┐\n         │   unsized   │\n         │  benchmark  │\n         └─────────────┘\n                │\n                │  determine\n                │  sample size\n                ▼\n        ┌──────────────┐\n        │              │ ───┐\n        │    sized     │    │ collect\n        │  benchmark   │    │ another\n        │  (running)   │    │ sample\n        │              │ ◀──┘\n        └──────────────┘\n            │      │\n         ┌──┘      └──┐\n         │            │\n         ▼            ▼\n    ┌─────────┐  ┌─────────┐\n    │         │  │         │\n    │ success │  │ failure │\n    │         │  │         │\n    └─────────┘  └─────────┘\n\nWhen you get a [`Benchmark`](#Benchmark) from the user it won't have\nany idea how big the sample size should be. In fact, we can't know\nthis in advance because different functions will have different\nperformance characteristics on different machines and browsers and\nphases of the moon and so on and so forth.\n\nThis is difficult, but not hopeless! We can determine sample size\nautomatically by running the benchmark a few times to get a feel for\nhow it behaves in this particular environment. This becomes our first\nstep. (If you're curious about how exactly we do this, check the\n`Benchmark.LowLevel` documentation.)\n\nOnce we have the base sample size, we start collecting samples. We\nmultiply the base sample size to spread runs into a series of buckets.\nWe do this because running a benchmark twice _ought to_ take about\ntwice as long as running it once. Since this relationship is perfectly\nlinear, we can get a number of sample sizes, then create a trend from\nthem which will be resilient to outliers.\n\nThe final result takes the form of an error or a set of samples, their\nsizes, and a trend created from that data.\n\nAt this point, we're done! The results are presented to the user, and\nthey make optimizations and try again for ever higher runs per second.\n\n",
+                "type": "Benchmark.Benchmark -> Task.Task Basics.Never Benchmark.Benchmark"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Benchmark.LowLevel",
+        "comment": " Low Level Elm Benchmarking API\n\nThis API exposes the raw tasks necessary to create higher-level\nbenchmarking abstractions.\n\nAs a user, you're probably not going to need to use this library. Take\na look at `Benchmark` instead, it has the user-friendly primitives. If\nyou _do_ find yourself using this library often, please [open an issue\non\n`elm-benchmark`](https://github.com/BrianHicks/elm-benchmark/issues/new)\nand we'll find a way to make your use case friendlier.\n\n\n# Operations\n\n@docs Operation, operation\n\n\n## Measuring Operations\n\n@docs warmup, findSampleSize, sample, Error\n\n",
+        "unions": [
+            {
+                "name": "Error",
+                "comment": " Error states that can terminate a sampling run.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "StackOverflow",
+                        []
+                    ],
+                    [
+                        "UnknownError",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Operation",
+                "comment": " An operation to benchmark. Use [`operation`](#operation) to\nconstruct these.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "findSampleSize",
+                "comment": " Find an appropriate sample size for benchmarking. This should be\nmuch greater than the clock resolution (5µs in the browser) to make\nsure we get good data.\n\nWe do this by starting at sample size 1. If that doesn't pass our\nthreshold, we multiply by [the golden\nratio](https://en.wikipedia.org/wiki/Golden_ratio) and try again until\nwe get a large enough sample.\n\nIn addition, we want the sample size to be more-or-less the same\nacross runs, despite small differences in measured fit. We do this by\nrounding to the nearest order of magnitude. So, for example, if the\nsample size is 1,234 we round to 1,000. If it's 8,800, we round to\n9,000.\n\n",
+                "type": "Benchmark.LowLevel.Operation -> Task.Task Benchmark.LowLevel.Error Basics.Int"
+            },
+            {
+                "name": "operation",
+                "comment": " Make an `Operation`, given a function that runs the code you want\nto benchmark when given a unit (`()`.)\n",
+                "type": "(() -> a) -> Benchmark.LowLevel.Operation"
+            },
+            {
+                "name": "sample",
+                "comment": " Run a benchmark a number of times. The returned value is the total\ntime it took for the given number of runs.\n\nIn the browser, high-resolution timing data from these functions comes\nfrom the [Performance\nAPI](https://developer.mozilla.org/en-US/docs/Web/API/Performance) and\nis accurate to 5µs. If `performance.now` is unavailable, it will fall\nback to\n[Date](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date),\naccurate to 1ms.\n\n",
+                "type": "Basics.Int -> Benchmark.LowLevel.Operation -> Task.Task Benchmark.LowLevel.Error Basics.Float"
+            },
+            {
+                "name": "warmup",
+                "comment": " Warm up the JIT for a benchmarking run. You should call this\nbefore calling [`findSampleSize`](#findSampleSize) or trusting the\ntimes coming out of [`measure`](#measure).\n\nIf we don't warm up the JIT beforehand, it will slow down your\nbenchmark and result in inaccurate data. (By the way, [Mozilla has an\nexcellent\nexplanation](https://hacks.mozilla.org/2017/02/a-crash-course-in-just-in-time-jit-compilers/)\nof how this all works.)\n\n",
+                "type": "Benchmark.LowLevel.Operation -> Task.Task Benchmark.LowLevel.Error ()"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Benchmark.Reporting",
+        "comment": " Reporting for Benchmarks\n\n@docs Report, fromBenchmark\n\n",
+        "unions": [
+            {
+                "name": "Report",
+                "comment": " Reports are the public version of Benchmarks.\n\nEach tag of Report has a name and some other information about the\nstructure of a benchmarking run.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Single",
+                        [
+                            "String.String",
+                            "Benchmark.Status.Status"
+                        ]
+                    ],
+                    [
+                        "Series",
+                        [
+                            "String.String",
+                            "List.List ( String.String, Benchmark.Status.Status )"
+                        ]
+                    ],
+                    [
+                        "Group",
+                        [
+                            "String.String",
+                            "List.List Benchmark.Reporting.Report"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fromBenchmark",
+                "comment": " Get a report from a Benchmark.\n",
+                "type": "Benchmark.Benchmark.Benchmark -> Benchmark.Reporting.Report"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Benchmark.Runner",
+        "comment": " Browser Benchmark Runner\n\n@docs program, BenchmarkProgram\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "BenchmarkProgram",
+                "comment": " A handy type alias for values produced by [`program`](#program)\n",
+                "args": [],
+                "type": "Platform.Program () Benchmark.Runner.App.Model Benchmark.Runner.App.Msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "program",
+                "comment": " Create a runner program from a benchmark. For example:\n\n    main : BenchmarkProgram\n    main =\n        Runner.program <|\n            Benchmark.describe \"your benchmarks\"\n                [{- your benchmarks here -}]\n\nCompile this and visit the result in your browser to run the\nbenchmarks.\n\n",
+                "type": "Benchmark.Benchmark -> Benchmark.Runner.BenchmarkProgram"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Benchmark.Status",
+        "comment": " Report the status of a Benchmark.\n\n\n# Reporting\n\n@docs Status, progress\n\n@docs Error\n\n\n## Runtime Configuration\n\n@docs numBuckets, samplesPerBucket, bucketSpacingRatio\n\n",
+        "unions": [
+            {
+                "name": "Error",
+                "comment": " Ways a benchmark can fail, expressed as either at runtime (in\nwhich case we have a `LowLevel.Error`) or while analyzing data (in\nwhich case we have a `Trend.Math.Error`.)\n",
+                "args": [],
+                "cases": [
+                    [
+                        "MeasurementError",
+                        [
+                            "Benchmark.LowLevel.Error"
+                        ]
+                    ],
+                    [
+                        "AnalysisError",
+                        [
+                            "Trend.Math.Error"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Status",
+                "comment": " Indicate the status of a benchmark.\n\n  - `Cold`: We have not warmed up the JIT yet.\n\n  - `Unsized`: We have not yet determined the best sample size for\n    this benchmark.\n\n  - `Pending`: We are in the process of collecting sample data. We\n    will keep collecting sample data using the base sample size (first\n    argument) until we have enough samples (`numBuckets *\n    samplesPerBucket`.) We also store samples while in progress\n    (second argument.)\n\n  - `Failure`: We ran into an exception while collecting sample\n    data. The attached `Error` tells us what went wrong.\n\n  - `Success`: We finished collecting all our sample data (first\n    argument.) We've calculated a trend using this data (second\n    argument.)\n\nSee \"The Life of a Benchmark\" in the docs for `Benchmark` for an\nexplanation of how these fit together.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Cold",
+                        []
+                    ],
+                    [
+                        "Unsized",
+                        []
+                    ],
+                    [
+                        "Pending",
+                        [
+                            "Basics.Int",
+                            "Benchmark.Samples.Samples"
+                        ]
+                    ],
+                    [
+                        "Failure",
+                        [
+                            "Benchmark.Status.Error"
+                        ]
+                    ],
+                    [
+                        "Success",
+                        [
+                            "Benchmark.Samples.Samples",
+                            "Trend.Linear.Trend Trend.Linear.Quick"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "bucketSpacingRatio",
+                "comment": " How far apart should the sample size for each bucket be?\n",
+                "type": "Basics.Int"
+            },
+            {
+                "name": "numBuckets",
+                "comment": " How many buckets are samples spread out into?\n",
+                "type": "Basics.Int"
+            },
+            {
+                "name": "progress",
+                "comment": " How far along is this benchmark? This is a percentage, represented\nas a `Float` between `0` and `1`.\n",
+                "type": "Benchmark.Status.Status -> Basics.Float"
+            },
+            {
+                "name": "samplesPerBucket",
+                "comment": " How many samples will we take per bucket?\n",
+                "type": "Basics.Int"
+            }
+        ],
+        "binops": []
+    }
+]

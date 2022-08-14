@@ -1,0 +1,31 @@
+[
+    {
+        "name": "Emoji",
+        "comment": " This library is for conveniently supporting\n[emoji](http://unicode.org/emoji/charts/full-emoji-list.html) in Elm\napplications.\n\nThere is a high-level drop-in replacement for `Html.text` which has to make\nsome extra assumptions about the app, and customizable mapping over emojis.\n\n\n# The high level\n\n@docs text_\n\n\n# Customizable\n\n@docs textWith, replaceWithEmojiOne, replaceWithTwemoji\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "replaceWithEmojiOne",
+                "comment": " Turn an emoji unicode sequence into an `<img>` pointing at\n[EmojiOne](http://emojione.com/), with classes `elm-emoji-img` and `elm-emoji-one`.\n\n    text' : String -> Html a\n    text' =\n        textWith replaceWithEmojiOne >> span [ class \"elm-emoji\" ]\n\n",
+                "type": "List.List String.String -> Html.Html a"
+            },
+            {
+                "name": "replaceWithTwemoji",
+                "comment": " Convert an emoji unicode sequence into a\n[Twemoji](http://twitter.github.io/twemoji/) `<img>` tag. It will have CSS\nclasses `elm-emoji-img` and `elm-emoji-twem`.\n\n    text' : String -> Html a\n    text' body =\n        span [] (textWith replaceWithTwemoji body)\n\n",
+                "type": "List.List String.String -> Html.Html a"
+            },
+            {
+                "name": "textWith",
+                "comment": " Create a customized emoji converter. The function argument maps emoji\n(identified by the lowercase hex-encoded unicode code point sequence) to\nHtml nodes.\n\n    mapEmoji : List String -> Html a\n    mapEmoji codePoints =\n        text (\"(I'm code \" ++ (String.join \"-\" codePoints) ++ \")\")\n\n    div []\n        ( textWith mapEmoji \"here's a penguin:🐧\" )\n\n",
+                "type": "(List.List String.String -> Html.Html a) -> String.String -> List.List (Html.Html a)"
+            },
+            {
+                "name": "text_",
+                "comment": " Convert a String with unicode emoji characters into an Html element\ncontaining the text with `<img>` tags replacing the emojis.\n\nThis function produces a `<span class='elm-emoji'>` containing the text, replacing\nemojis with `<img class='elm-emoji-img elm-emoji-one'>` tags pointing to CDN-hosted\n[EmojiOne](http://emojione.com/).\n\n    div [] [ text' \"Live long and prosper 🖖\" ]\n\n",
+                "type": "String.String -> Html.Html a"
+            }
+        ],
+        "binops": []
+    }
+]

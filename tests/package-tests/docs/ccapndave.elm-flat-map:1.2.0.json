@@ -1,0 +1,104 @@
+[
+    {
+        "name": "List.FlatMap",
+        "comment": " This module implements the `flatMap` combinator for `List`. This allows you to call functions\nthat return a `List` with arguments that are also `List`s without having to worry about ending up\nwith a `List (List a)` return type.\n\n\n# FlatMaps\n\n@docs flatMap, flatMap2, flatMap3, flatMap4, flatMap5\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "flatMap",
+                "comment": " ",
+                "type": "(a -> List.List b) -> List.List a -> List.List b"
+            },
+            {
+                "name": "flatMap2",
+                "comment": " ",
+                "type": "(a -> b -> List.List c) -> List.List a -> List.List b -> List.List c"
+            },
+            {
+                "name": "flatMap3",
+                "comment": " ",
+                "type": "(a -> b -> c -> List.List d) -> List.List a -> List.List b -> List.List c -> List.List d"
+            },
+            {
+                "name": "flatMap4",
+                "comment": " ",
+                "type": "(a -> b -> c -> d -> List.List e) -> List.List a -> List.List b -> List.List c -> List.List d -> List.List e"
+            },
+            {
+                "name": "flatMap5",
+                "comment": " ",
+                "type": "(a -> b -> c -> d -> e -> List.List f) -> List.List a -> List.List b -> List.List c -> List.List d -> List.List e -> List.List f"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Maybe.FlatMap",
+        "comment": " This module implements the `flatMap` combinator for `Maybe`. This allows you to call functions\nthat return a `Maybe` with arguments that are also `Maybe`s without having to worry about ending up\nwith a `Maybe (Maybe a)` return type.\n\nFor example:\n\n    getHeadFromMaybeList : Maybe List -> Maybe a\n    getHeadFromMaybeList =\n        flatMap List.head\n\n\n# FlatMaps\n\n@docs flatMap, flatMap2, flatMap3, flatMap4, flatMap5\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "flatMap",
+                "comment": " ",
+                "type": "(a -> Maybe.Maybe b) -> Maybe.Maybe a -> Maybe.Maybe b"
+            },
+            {
+                "name": "flatMap2",
+                "comment": " ",
+                "type": "(a -> b -> Maybe.Maybe c) -> Maybe.Maybe a -> Maybe.Maybe b -> Maybe.Maybe c"
+            },
+            {
+                "name": "flatMap3",
+                "comment": " ",
+                "type": "(a -> b -> c -> Maybe.Maybe d) -> Maybe.Maybe a -> Maybe.Maybe b -> Maybe.Maybe c -> Maybe.Maybe d"
+            },
+            {
+                "name": "flatMap4",
+                "comment": " ",
+                "type": "(a -> b -> c -> d -> Maybe.Maybe e) -> Maybe.Maybe a -> Maybe.Maybe b -> Maybe.Maybe c -> Maybe.Maybe d -> Maybe.Maybe e"
+            },
+            {
+                "name": "flatMap5",
+                "comment": " ",
+                "type": "(a -> b -> c -> d -> e -> Maybe.Maybe f) -> Maybe.Maybe a -> Maybe.Maybe b -> Maybe.Maybe c -> Maybe.Maybe d -> Maybe.Maybe e -> Maybe.Maybe f"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Result.FlatMap",
+        "comment": " This module implements the `flatMap` combinator for `Result`. This allows you to call functions\nthat return a `Result` with arguments that are also `Result`s without having to worry about ending up\nwith a `Result (Result a)` return type.\n\nIn the event of an error only the first error is returned as there is no monoid in Elm and its\nannoying to have to pass in a concatenation function.\n\n\n# FlatMaps\n\n@docs flatMap, flatMap2, flatMap3, flatMap4, flatMap5\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "flatMap",
+                "comment": " ",
+                "type": "(a -> Result.Result x b) -> Result.Result x a -> Result.Result x b"
+            },
+            {
+                "name": "flatMap2",
+                "comment": " ",
+                "type": "(a -> b -> Result.Result x c) -> Result.Result x a -> Result.Result x b -> Result.Result x c"
+            },
+            {
+                "name": "flatMap3",
+                "comment": " ",
+                "type": "(a -> b -> c -> Result.Result x d) -> Result.Result x a -> Result.Result x b -> Result.Result x c -> Result.Result x d"
+            },
+            {
+                "name": "flatMap4",
+                "comment": " ",
+                "type": "(a -> b -> c -> d -> Result.Result x e) -> Result.Result x a -> Result.Result x b -> Result.Result x c -> Result.Result x d -> Result.Result x e"
+            },
+            {
+                "name": "flatMap5",
+                "comment": " ",
+                "type": "(a -> b -> c -> d -> e -> Result.Result x f) -> Result.Result x a -> Result.Result x b -> Result.Result x c -> Result.Result x d -> Result.Result x e -> Result.Result x f"
+            }
+        ],
+        "binops": []
+    }
+]

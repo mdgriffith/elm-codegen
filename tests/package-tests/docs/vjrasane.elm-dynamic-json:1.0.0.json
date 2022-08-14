@@ -1,0 +1,65 @@
+[
+    {
+        "name": "Json.Dynamic",
+        "comment": " Process dynamic JSON structures with simple utility functions\n\n\n# Convenience\n\n@docs Dynamic, dynamic, decoder, equals\n\n\n# Nested structures\n\n@docs at, index, filter, find\n\n\n# Resolving values\n\n@docs resolve, resolveAt\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Dynamic",
+                "comment": " Convenience alias for a dynamic JSON value\n",
+                "args": [
+                    "a"
+                ],
+                "type": "Result.Result Json.Decode.Error a"
+            }
+        ],
+        "values": [
+            {
+                "name": "at",
+                "comment": " Access a nested JSON value by field name path\n",
+                "type": "List.List String.String -> Json.Dynamic.Dynamic Json.Decode.Value -> Json.Dynamic.Dynamic Json.Decode.Value"
+            },
+            {
+                "name": "decoder",
+                "comment": " Decoder alias. You can use `Decode.value` directly instead.\n",
+                "type": "Json.Decode.Decoder Json.Decode.Value"
+            },
+            {
+                "name": "dynamic",
+                "comment": " Lift value to a dynamic value\n",
+                "type": "a -> Json.Dynamic.Dynamic a"
+            },
+            {
+                "name": "equals",
+                "comment": " Convenience function for comparing a dynamic value to a value\n",
+                "type": "a -> Json.Dynamic.Dynamic a -> Basics.Bool"
+            },
+            {
+                "name": "filter",
+                "comment": " Filters the list of JSON values by the given predicate\n",
+                "type": "(Json.Dynamic.Dynamic Json.Decode.Value -> Basics.Bool) -> Json.Dynamic.Dynamic Json.Decode.Value -> List.List (Json.Dynamic.Dynamic Json.Decode.Value)"
+            },
+            {
+                "name": "find",
+                "comment": " Finds a matching value from list of JSON values by the given predicate\n",
+                "type": "(Json.Dynamic.Dynamic Json.Decode.Value -> Basics.Bool) -> Json.Dynamic.Dynamic Json.Decode.Value -> Maybe.Maybe (Json.Dynamic.Dynamic Json.Decode.Value)"
+            },
+            {
+                "name": "index",
+                "comment": " Access a nested JSON value by array index\n",
+                "type": "Basics.Int -> Json.Dynamic.Dynamic Json.Decode.Value -> Json.Dynamic.Dynamic Json.Decode.Value"
+            },
+            {
+                "name": "resolve",
+                "comment": " Resolve the dynamic JSON value to a `Result Decode.Error a`, using the given `Decoder a` to decode it.\n",
+                "type": "Json.Decode.Decoder a -> Json.Dynamic.Dynamic Json.Decode.Value -> Json.Dynamic.Dynamic a"
+            },
+            {
+                "name": "resolveAt",
+                "comment": " Resolve nested dynamic JSON value by field name path to a `Result Decode.Error a`, using the given `Decoder a` to decode it.\n",
+                "type": "List.List String.String -> Json.Decode.Decoder a -> Json.Dynamic.Dynamic Json.Decode.Value -> Json.Dynamic.Dynamic a"
+            }
+        ],
+        "binops": []
+    }
+]

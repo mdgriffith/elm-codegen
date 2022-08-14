@@ -1,0 +1,32 @@
+[
+    {
+        "name": "PBKDF2",
+        "comment": "\n\n\n# Computing pbkdf2 digest\n\n@docs pbkdf2\n\n@docs Error\n\n",
+        "unions": [
+            {
+                "name": "Error",
+                "comment": " The error than can be returned\n",
+                "args": [],
+                "cases": [
+                    [
+                        "DerivedKeyTooLong",
+                        []
+                    ],
+                    [
+                        "DecodingError",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "pbkdf2",
+                "comment": " Computes the pbkdf2 digest\n",
+                "type": "( Bytes.Bytes -> Bytes.Bytes -> Bytes.Bytes, Basics.Int ) -> Bytes.Bytes -> Bytes.Bytes -> Basics.Int -> Basics.Int -> Result.Result PBKDF2.Error Bytes.Bytes"
+            }
+        ],
+        "binops": []
+    }
+]

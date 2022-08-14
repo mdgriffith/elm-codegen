@@ -1,0 +1,56 @@
+[
+    {
+        "name": "HTOC",
+        "comment": " This library facilitates editing of multi-level tables of contents and can be used,\n    as in the demo, to construct a drag-and-drop editor for such tables.\n\n\n\n## Types\n@docs Item, SimpleItem\n\n## API for drag-and-drop editor\n@docs  init, update, increment, decrement\n\n## Helpers for exporting computed information\n\nThese helpers are useful if a `List Item` must\nbe transformed to a `List SomeOtherKindOfItem`.\n\n@docs getLevel, getSectionNumber\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Item",
+                "comment": " The type for tables of content.\n\n",
+                "args": [],
+                "type": "{ levels : HTOC.Levels, title : String.String, id : HTOC.Id, sectionNumber : String.String }"
+            },
+            {
+                "name": "SimpleItem",
+                "comment": " This is the type of items that the `init` function\noperates on to produce a list of `Item`.  If the table\neditor must operate on a list of items from \"outside,\"\nthose items must have the fields `level`, `title`, and `id`.\n\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ a | level : Basics.Int, title : String.String, id : HTOC.Id }"
+            }
+        ],
+        "values": [
+            {
+                "name": "decrement",
+                "comment": " \n\nDecrement the level of the item in a list with given id.\n\n",
+                "type": "HTOC.Id -> List.List HTOC.Item -> List.List HTOC.Item"
+            },
+            {
+                "name": "getLevel",
+                "comment": "\n  Return the updated level of an item.\n",
+                "type": "HTOC.Item -> Basics.Int"
+            },
+            {
+                "name": "getSectionNumber",
+                "comment": "\n  Return the updated section number of an item.\n",
+                "type": "HTOC.Item -> String.String"
+            },
+            {
+                "name": "increment",
+                "comment": "\n\nIncrement the level of the item in a list with given id.\n\n",
+                "type": "HTOC.Id -> List.List HTOC.Item -> List.List HTOC.Item"
+            },
+            {
+                "name": "init",
+                "comment": "\n\nTransform a list of SimpleItems to a list of items.  The essential\npoint is to compute a levels field, which is used internally to ensure\nthat the TOC is well-formed.\n\n",
+                "type": "List.List (HTOC.SimpleItem a) -> List.List HTOC.Item"
+            },
+            {
+                "name": "update",
+                "comment": "\n\n Update the levels and section numbers of each item.  These\n change if the items or reordered or their levels are changed.\n The update function repairs lists that are not well-formed.\n\n",
+                "type": "List.List HTOC.Item -> List.List HTOC.Item"
+            }
+        ],
+        "binops": []
+    }
+]

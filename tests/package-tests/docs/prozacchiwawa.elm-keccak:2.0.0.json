@@ -1,0 +1,132 @@
+[
+    {
+        "name": "Keccak",
+        "comment": "\n\nImplementation by the [Keccak](http://keccak.noekeon.org/), [Keyak](http://keyak.noekeon.org/) and [Ketje](http://ketje.noekeon.org/) Teams, namely, Guido Bertoni,\nJoan Daemen, Michaël Peeters, Gilles Van Assche and Ronny Van Keer, hereby\ndenoted as \"the implementer\".\n\nFor more information, feedback or questions, please refer to our websites:\n\n\n\n\nTo the extent possible under law, the implementer has waived all copyright\nand related or neighboring rights to the source code in this file.\nhttp://creativecommons.org/publicdomain/zero/1.0/\n\nPorted to elm by Art Yerkes.\n\nethereum_keccak_256 is the hash function used in many places related to the\nethereum cryptocurrency.  It is different from sha3 in the padding used.\n\nElm 0.19 update by Coury Ditch\nhttps://github.com/cmditch\n\n# Functions\n@docs State, Config, fips202_sha3_224, fips202_sha3_256, fips202_sha3_384, fips202_sha3_512, ethereum_keccak_256, init, update, finish\n\nFor a replacement for the original version of this library,\n\n    -- Exposes fips_202_sha3_224 etc with int list inputs\n    import Keccak.Int as Keccak \n\nFor slightly better versions of the originals using [elm/bytes](https://package.elm-lang.org/packages/elm/bytes/latest/Bytes),\n\n    -- Exposes fips202_sha3_224 etc with Bytes\n    import Keccak.Bytes as Keccak\n    import Bytes.Encode as BEnc\n    import String\n    import Hex\n\n    hexify l = String.concat (List.map (Hex.toString >> String.padLeft 2 '0') l)\n\n    hexify (Keccak.ethereum_keccak_256 (BEnc.string \"baz(uint32,bool)\")) -- \"cdcd77c0992ec5bbfc459984220f8c45084cc24d9b6efed1fae540db8de801d2\"\n\nThis library exposes configurations named by their respective exports as well as\ngeneral hashing functions:\n\n    -- Initialize a hasher state.\n    init config\n    -- Add bytes to hash.\n    update bytes state\n    -- Return the hash value.\n    finish state\n\nThey can be used together like:\n\n    init ethereum_keccak_256 \n    |> update (BEnc.encode (BEnc.string \"1\"))\n    |> update (Benc.encode (Benc.string \"2\"))\n    |> finish\n\n",
+        "unions": [
+            {
+                "name": "Config",
+                "comment": " A configuration for a keccak hasher. ",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "State",
+                "comment": " The state of the keccak hasher. ",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "ethereum_keccak_256",
+                "comment": " Configuration for ethereum 256 bit hashes ",
+                "type": "Keccak.Config"
+            },
+            {
+                "name": "finish",
+                "comment": " Consume the given hash state and return a list of ints representing the hash. ",
+                "type": "Keccak.State -> List.List Basics.Int"
+            },
+            {
+                "name": "fips202_sha3_224",
+                "comment": " Configuration for SHA3-224 ",
+                "type": "Keccak.Config"
+            },
+            {
+                "name": "fips202_sha3_256",
+                "comment": " Configuration for SHA3-256 ",
+                "type": "Keccak.Config"
+            },
+            {
+                "name": "fips202_sha3_384",
+                "comment": " Configuration for SHA3-384 ",
+                "type": "Keccak.Config"
+            },
+            {
+                "name": "fips202_sha3_512",
+                "comment": " Configuration for SHA3-512 ",
+                "type": "Keccak.Config"
+            },
+            {
+                "name": "init",
+                "comment": " Prepare a keccak instance to do hashing with the given configuration. ",
+                "type": "Keccak.Config -> Keccak.State"
+            },
+            {
+                "name": "update",
+                "comment": " Include the given bytes in the hash. ",
+                "type": "Bytes.Bytes -> Keccak.State -> Keccak.State"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Keccak.Bytes",
+        "comment": "\n\nShortcut hash functions using elm/bytes.\n\n@docs fips202_sha3_224, fips202_sha3_256, fips202_sha3_384, fips202_sha3_512, ethereum_keccak_256\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "ethereum_keccak_256",
+                "comment": "\n  Compute the ethereum 256 bit hash of a Bytes value as a list of byte width integers.\n",
+                "type": "Bytes.Bytes -> List.List Basics.Int"
+            },
+            {
+                "name": "fips202_sha3_224",
+                "comment": "\n  Compute the sha3 224 of a Bytes value as a list of byte width integers.\n",
+                "type": "Bytes.Bytes -> List.List Basics.Int"
+            },
+            {
+                "name": "fips202_sha3_256",
+                "comment": "\n  Compute the sha3 256 of a Bytes value as a list of byte width integers.\n",
+                "type": "Bytes.Bytes -> List.List Basics.Int"
+            },
+            {
+                "name": "fips202_sha3_384",
+                "comment": "\n  Compute the sha3 384 of a Bytes value as a list of byte width integers.\n",
+                "type": "Bytes.Bytes -> List.List Basics.Int"
+            },
+            {
+                "name": "fips202_sha3_512",
+                "comment": "\n  Compute the sha3 512 of a Bytes value as a list of byte width integers.\n",
+                "type": "Bytes.Bytes -> List.List Basics.Int"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Keccak.Int",
+        "comment": "\n\nShortcut hash functions using lists of int, as with the original API.\n\n@docs fips202_sha3_224, fips202_sha3_256, fips202_sha3_384, fips202_sha3_512, ethereum_keccak_256\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "ethereum_keccak_256",
+                "comment": "\n  Compute the ethereum style 256-bit hash of a list of byte width integers (0-255)\n  as a list of byte width integers.\n",
+                "type": "List.List Basics.Int -> List.List Basics.Int"
+            },
+            {
+                "name": "fips202_sha3_224",
+                "comment": "\n  Compute the sha3 224 of a list of byte width integers (0-255) as a list of\n  byte width integers.\n",
+                "type": "List.List Basics.Int -> List.List Basics.Int"
+            },
+            {
+                "name": "fips202_sha3_256",
+                "comment": "\n  Compute the sha3 256 of a list of byte width integers (0-255) as a list of\n  byte width integers.\n",
+                "type": "List.List Basics.Int -> List.List Basics.Int"
+            },
+            {
+                "name": "fips202_sha3_384",
+                "comment": "\n  Compute the sha3 384 of a list of byte width integers (0-255) as a list of\n  byte width integers.\n",
+                "type": "List.List Basics.Int -> List.List Basics.Int"
+            },
+            {
+                "name": "fips202_sha3_512",
+                "comment": "\n  Compute the sha3 512 of a list of byte width integers (0-255) as a list of\n  byte width integers.\n",
+                "type": "List.List Basics.Int -> List.List Basics.Int"
+            }
+        ],
+        "binops": []
+    }
+]

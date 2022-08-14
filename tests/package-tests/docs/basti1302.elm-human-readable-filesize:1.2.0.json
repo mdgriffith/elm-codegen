@@ -1,0 +1,69 @@
+[
+    {
+        "name": "Filesize",
+        "comment": " This library converts a file size in bytes into a human readable string.\n\nExamples:\n\n    format 1234 == \"1.23 kB\"\n\n    format 238674052 == \"238.67 MB\"\n\n    format 543 == \"543 B\"\n\nYou can either use decimal units (also known as base 10 units, these are the\ndefault) or binary (also called base 2 or IEC units).\n\nSupported decimal units:\n\n  - 1 byte (B)\n  - 1 kilobyte (kB) = 1000 bytes\n  - 1 megabyte (MB) = 1000 kilobytes\n  - 1 gigabyte (GB) = 1000 megabytes\n  - 1 terabyte (TB) = 1000 gigabytes\n  - 1 petabyte (PB) = 1000 terabytes\n  - 1 exabyte (EB) = 1000 petabyte\n\nLarger decimal units (zettabyte (ZB), yottabyte (YB), ...) are not supported.\n\nSupported binary/IEC units:\n\n  - 1 byte (B)\n  - 1 kibibyte (KiB) = 1024 bytes\n  - 1 mebibyte (MiB) = 1024 kibibytes\n  - 1 gibibyte (GiB) = 1024 mebibytes\n  - 1 tebibyte (TiB) = 1024 gibibytes\n  - 1 pebibyte (PiB) = 1024 tebibyte\n\nLarger binary units (exbibyte (EiB), zebibyte (ZiB), yobibytej (YiB), ...)) are\nnot supported.\n\nFor decimal/base 10 units, the number of bytes is divided by 10^3 when going to\nthe next larger unit. For binary/base 2 units, the number of bytes is divided by\n2^10 (1024) each time. (For binary units also see\n<https://en.wikipedia.org/wiki/Kibibyte>.)\n\n\n## Usage\n\n@docs format, formatSplit, formatBase2, formatBase2Split, formatWith, formatWithSplit, defaultSettings, Settings, Units\n\n",
+        "unions": [
+            {
+                "name": "Units",
+                "comment": " The two possible unit types, either decimal/base 10 (kb, MB, GB, ...) or\nbinary/IEC/base 2 (KiB, MiB, GiB, ...), see above.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Base10",
+                        []
+                    ],
+                    [
+                        "Base2",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Settings",
+                "comment": " Use a settings record together with `formatWith` to customize the formatting\nprocess. The available options are:\n\n  - `units`: use either decimal or binary/IEC units (the default is to use decimal\n    units),\n  - `decimalPlaces`: the number of decimal places (digits after the decimal\n    separator, the default is 2) and\n  - `decimalSeparator`: the decimal separator to use (default \".\").\n\n",
+                "args": [],
+                "type": "{ units : Filesize.Units, decimalPlaces : Basics.Int, decimalSeparator : String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultSettings",
+                "comment": " The default settings. When using `formatWith`, it is recommended to obtain\na settings record with this function and modify the settings to your liking.\n",
+                "type": "Filesize.Settings"
+            },
+            {
+                "name": "format",
+                "comment": " Formats the given file size with the default settings.\n\nConvenience function for\n\n    let\n        ( size, unit ) =\n            formatWithSplit settings num\n    in\n    size ++ \" \" ++ unit\n\n",
+                "type": "Basics.Int -> String.String"
+            },
+            {
+                "name": "formatBase2",
+                "comment": " Formats the given file size with the binary/base2/IEC unit.\n",
+                "type": "Basics.Int -> String.String"
+            },
+            {
+                "name": "formatBase2Split",
+                "comment": " Formats the given file size with the binary/base2/IEC unit, returning the number and units separately, in a tuple.\n",
+                "type": "Basics.Int -> ( String.String, String.String )"
+            },
+            {
+                "name": "formatSplit",
+                "comment": " Formats the given file size with the default settings, returning the number and units separately, in a tuple.\n",
+                "type": "Basics.Int -> ( String.String, String.String )"
+            },
+            {
+                "name": "formatWith",
+                "comment": " Formats the given file size with the given settings.\n",
+                "type": "Filesize.Settings -> Basics.Int -> String.String"
+            },
+            {
+                "name": "formatWithSplit",
+                "comment": " Formats the given file size with the given settings, returning the number and units separately, in a tuple.\n",
+                "type": "Filesize.Settings -> Basics.Int -> ( String.String, String.String )"
+            }
+        ],
+        "binops": []
+    }
+]

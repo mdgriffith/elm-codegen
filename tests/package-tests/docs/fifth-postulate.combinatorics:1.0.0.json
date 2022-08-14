@@ -1,0 +1,16 @@
+[
+    {
+        "name": "Combinatorics",
+        "comment": " Combinatorics provides common primitives such as permutations and selections\n\n[_Combinatorics_](https://en.wikipedia.org/wiki/Combinatorics) is\n\n> an area of mathematics primarily concerned with counting, both as a means and\n> an end in obtaining results, and certain properties of finite structures. It is\n> closely related to many other areas of mathematics and has many applications\n> ranging from logic to statistical physics, from evolutionary biology to computer\n> science, etc.\n\n\n# Methods\n@docs permutationsOf ",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "permutationsOf",
+                "comment": " Creates a list of all permutations of the argument.\n\nA [permutation](https://en.wikipedia.org/wiki/Permutation) is\n\n> an ordered arrangement of elements. ",
+                "type": "List.List a -> List.List (List.List a)"
+            }
+        ],
+        "binops": []
+    }
+]

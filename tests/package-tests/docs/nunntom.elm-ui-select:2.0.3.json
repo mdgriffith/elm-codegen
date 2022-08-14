@@ -1,0 +1,393 @@
+[
+    {
+        "name": "Select",
+        "comment": " A select widget for elm-ui.\n\n\n# Type\n\n@docs Select, init\n\n\n# Set\n\n@docs setItems, setSelected, setInputValue, closeMenu\n\n\n# Get\n\n@docs toValue, toInputValue, toInputElementId, toMenuElementId\n\n\n# Check\n\n@docs isMenuOpen, isLoading, isRequestFailed\n\n\n# Update and Requests\n\n@docs Msg, update, updateWithRequest, Request, request, gotRequestResponse\n\n\n# Configure View\n\n@docs ViewConfig, view, withMenuAttributes, MenuPlacement, withMenuMaxHeight, withMenuMaxWidth, withNoMatchElement, withOptionElement, OptionState, withClearButton, ClearButton, clearButton, withFilter, withMenuAlwaysAbove, withMenuAlwaysBelow, withMenuPlacementAuto, withMenuPositionFixed, withClearInputValueOnBlur, withSelectExactMatchOnBlur\n\n\n# Element\n\n@docs toElement\n\n\n# Effect\n\n@docs Effect\n\n",
+        "unions": [
+            {
+                "name": "ClearButton",
+                "comment": " A button to clear the input\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "MenuPlacement",
+                "comment": " Will the menu appear above or below the input?\n",
+                "args": [],
+                "cases": [
+                    [
+                        "MenuAbove",
+                        []
+                    ],
+                    [
+                        "MenuBelow",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "OptionState",
+                "comment": " Option state for use with custom option element\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "ViewConfig",
+                "comment": " The View Configuration\n\n    view : Model -> Element Msg\n    view model =\n        Select.view []\n            { onChange = SelectMsg\n            , label = Input.labelAbove [] (text \"Choose a thing\")\n            , placeholder = Just (Input.placeholder [] (text \"Type to search\"))\n            , itemToString = .name\n            }\n            |> Select.toElement model.thingsSelect\n\n",
+                "args": [
+                    "a",
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Effect",
+                "comment": " For use with the [Effect pattern](https://sporto.github.io/elm-patterns/architecture/effects.html) and [elm-program-test](https://package.elm-lang.org/packages/avh4/elm-program-test/3.6.3/),\nsee [Select.Effect](Select-Effect).\n",
+                "args": [
+                    "effect",
+                    "msg"
+                ],
+                "type": "Internal.Effect.Effect effect msg"
+            },
+            {
+                "name": "Msg",
+                "comment": " The Msg type\n",
+                "args": [
+                    "a"
+                ],
+                "type": "Internal.Msg.Msg a"
+            },
+            {
+                "name": "Request",
+                "comment": " A Request. See [Select.Request](Select-Request) for configuration options.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "Internal.Request.Request (Platform.Cmd.Cmd (Select.Msg a))"
+            },
+            {
+                "name": "Select",
+                "comment": " The main Select type\n",
+                "args": [
+                    "a"
+                ],
+                "type": "Internal.Model.Model a"
+            }
+        ],
+        "values": [
+            {
+                "name": "clearButton",
+                "comment": " Create a clear button\n",
+                "type": "List.List (Element.Attribute msg) -> Element.Element msg -> Select.ClearButton msg"
+            },
+            {
+                "name": "closeMenu",
+                "comment": " Close the menu\n",
+                "type": "Select.Select a -> Select.Select a"
+            },
+            {
+                "name": "gotRequestResponse",
+                "comment": " Hook the request Cmd result back into update with this Msg. You need to pass in the string query (input value)\nthat was used for the request. This is used to match up the correct response to most recent request in case of race conditions.\n",
+                "type": "String.String -> Result.Result err (List.List a) -> Select.Msg a"
+            },
+            {
+                "name": "init",
+                "comment": " Initialise the Select. You must provide a unique id. The id will be used for getting DOM elements etc.\n",
+                "type": "String.String -> Select.Select a"
+            },
+            {
+                "name": "isLoading",
+                "comment": " Is there a request currently loading? Could be used to add loading styling.\n",
+                "type": "Select.Select a -> Basics.Bool"
+            },
+            {
+                "name": "isMenuOpen",
+                "comment": " Is the menu open?\n",
+                "type": "Select.Select a -> Basics.Bool"
+            },
+            {
+                "name": "isRequestFailed",
+                "comment": " Did a request fail?\n",
+                "type": "Select.Select a -> Basics.Bool"
+            },
+            {
+                "name": "request",
+                "comment": " Create a request. Provide a function that takes the input value and returns a Cmd.\nUpdate will return this Cmd when the user types in the input subject to a debounce delay\nand minimum number of characters which can be configured in the [Select.Request](Select-Request) module.\n",
+                "type": "(String.String -> Platform.Cmd.Cmd (Select.Msg a)) -> Select.Request a"
+            },
+            {
+                "name": "setInputValue",
+                "comment": " Set the input value\n",
+                "type": "String.String -> Select.Select a -> Select.Select a"
+            },
+            {
+                "name": "setItems",
+                "comment": " Set the list of items\n\nYou can do this on init:\n\n    init : List String -> ( Model, Cmd Msg )\n    init things =\n        ( { select =\n                Select.init \"thing-select\"\n                    |> Select.setItems things\n          }\n        , Cmd.none\n        )\n\nOr you can do it in your view if you prefer to keep your items in your own model.\n\n    view : Model -> Element Msg\n    view model =\n        Select.view []\n            { onChange = SelectMsg\n            , label = Input.labelAbove [] (text \"Choose a thing\")\n            , placeholder = Just (Input.placeholder [] (text \"Type to search\"))\n            , itemToString = identity\n            }\n            |> Select.toElement (Select.setItems model.things model.select)\n\n",
+                "type": "List.List a -> Select.Select a -> Select.Select a"
+            },
+            {
+                "name": "setSelected",
+                "comment": " Set the selected item\n",
+                "type": "Maybe.Maybe a -> Select.Select a -> Select.Select a"
+            },
+            {
+                "name": "toElement",
+                "comment": " Turn the ViewConfig into an Element.\n",
+                "type": "Select.Select a -> Select.ViewConfig a msg -> Element.Element msg"
+            },
+            {
+                "name": "toInputElementId",
+                "comment": " Get the id of the DOM input element. Useful in tests or to associate the provided label with the input\n",
+                "type": "Select.Select a -> String.String"
+            },
+            {
+                "name": "toInputValue",
+                "comment": " Get the value of the input\n",
+                "type": "Select.Select a -> String.String"
+            },
+            {
+                "name": "toMenuElementId",
+                "comment": " Get the id of the DOM menu container. Useful for testing\n",
+                "type": "Select.Select a -> String.String"
+            },
+            {
+                "name": "toValue",
+                "comment": " Get the selected item\n",
+                "type": "Select.Select a -> Maybe.Maybe a"
+            },
+            {
+                "name": "update",
+                "comment": " Update the Select\n\n    update : Msg -> Model -> ( Model, Cmd Msg )\n        update msg model =\n            case msg of\n                SelectMsg subMsg ->\n                    Select.update SelectMsg subMsg model.select\n                        |> Tuple.mapFirst (\\select -> { model | select = select })\n\n",
+                "type": "(Select.Msg a -> msg) -> Select.Msg a -> Select.Select a -> ( Select.Select a, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "updateWithRequest",
+                "comment": " Update with an HTTP request to retrieve matching remote results.\nNote that in order to avoid an elm/http dependency in this package, you will need to provide the request Cmd yourself.\n\n    update : Msg -> Model -> ( Model, Cmd Msg )\n    update msg model =\n        case msg of\n            Request SelectMsg subMsg ->\n                Select.updateWithRequest (Select.request fetchThings) SelectMsg subMsg model.select\n                    |> Tuple.mapFirst (\\select -> { model | select = select })\n\n    fetchThings : String -> Cmd (Select.Msg Thing)\n    fetchThings query =\n        Http.get\n            { url = \"https://awesome-thing.api/things?search=\" ++ query\n            , expect = Http.expectJson (Select.gotRequestResponse query) (Decode.list thingDecoder)\n            }\n\n",
+                "type": "Select.Request a -> (Select.Msg a -> msg) -> Select.Msg a -> Select.Select a -> ( Select.Select a, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "view",
+                "comment": " Initialise the default ViewConfig\n",
+                "type": "List.List (Element.Attribute msg) -> { onChange : Select.Msg a -> msg, itemToString : a -> String.String, label : Element.Input.Label msg, placeholder : Maybe.Maybe (Element.Input.Placeholder msg) } -> Select.ViewConfig a msg"
+            },
+            {
+                "name": "withClearButton",
+                "comment": " Add a button to clear the input. This element is positioned as Element.inFront.\n\n    Select.view []\n        { onChange = SelectMsg\n        , label = Input.labelAbove [] (Element.text \"Choose a thing\")\n        , placeholder = Just (Input.placeholder [] (Element.text \"Type to search\"))\n        , itemToString = .name\n        }\n        |> Select.withClearButton\n            (Just\n                (Select.clearButton\n                    [ Element.alignRight\n                    , Element.centerY\n                    , Element.moveLeft 12\n                    ]\n                    (Element.el [ Element.Region.description \"clear selection\" ] (Element.text \"❌\"))\n                )\n            )\n        |> Select.toElement model.select\n\n",
+                "type": "Maybe.Maybe (Select.ClearButton msg) -> Select.ViewConfig a msg -> Select.ViewConfig a msg"
+            },
+            {
+                "name": "withClearInputValueOnBlur",
+                "comment": " Should the input value be cleared when the input loses focus if nothing is selected?\n",
+                "type": "Basics.Bool -> Select.ViewConfig a msg -> Select.ViewConfig a msg"
+            },
+            {
+                "name": "withFilter",
+                "comment": " Customise the filtering of the menu based on input value. See [Select.Filter](Select-Filter). Default is startsWithThenContains.\n",
+                "type": "Maybe.Maybe (Select.Filter.Filter a) -> Select.ViewConfig a msg -> Select.ViewConfig a msg"
+            },
+            {
+                "name": "withMenuAlwaysAbove",
+                "comment": " Force the menu to always appear above the input. You may use this for example if you have issues with an input inside a scrollable transformed container.\n",
+                "type": "Select.ViewConfig a msg -> Select.ViewConfig a msg"
+            },
+            {
+                "name": "withMenuAlwaysBelow",
+                "comment": " Force the menu to always appear below the input. You may use this for example if you have issues with an input inside a scrollable transformed container.\nBy default the menu will try to detect whether there is more space above or below and appear there, preferring below.\n",
+                "type": "Select.ViewConfig a msg -> Select.ViewConfig a msg"
+            },
+            {
+                "name": "withMenuAttributes",
+                "comment": " Set arbitrary attributes for the menu element. You can call this multiple times and it will accumulate attributes.\nYou can define different attributes based on whether the menu appears above or below the input.\n\n    Select.view []\n        { onChange = SelectMsg\n        , label = Input.labelAbove [] (Element.text \"Choose a thing\")\n        , placeholder = Just (Input.placeholder [] (Element.text \"Type to search\"))\n        , itemToString = .name\n        }\n        |> Select.withMenuAttributes\n            (\\placement ->\n                [ Element.Font.size 16\n                , Element.Border.width 2\n                ]\n                    ++ (case placement of\n                            Select.MenuAbove ->\n                                [ Element.moveUp 10 ]\n\n                            Select.MenuBelow ->\n                                [ Element.moveDown 10 ]\n                       )\n            )\n        |> Select.toElement model.select\n\n",
+                "type": "(Select.MenuPlacement -> List.List (Element.Attribute msg)) -> Select.ViewConfig a msg -> Select.ViewConfig a msg"
+            },
+            {
+                "name": "withMenuMaxHeight",
+                "comment": " Set a maximum height for the menu\n",
+                "type": "Maybe.Maybe Basics.Int -> Select.ViewConfig a msg -> Select.ViewConfig a msg"
+            },
+            {
+                "name": "withMenuMaxWidth",
+                "comment": " Set a maximum width for the menu\n",
+                "type": "Maybe.Maybe Basics.Int -> Select.ViewConfig a msg -> Select.ViewConfig a msg"
+            },
+            {
+                "name": "withMenuPlacementAuto",
+                "comment": " Menu decides whether to appear above or below based on how much space is available. This is the default.\nYou'd only use this function if you're passing around a config and need to reset this option.\n",
+                "type": "Select.ViewConfig a msg -> Select.ViewConfig a msg"
+            },
+            {
+                "name": "withMenuPositionFixed",
+                "comment": " Use style: position fixed for the menu. This can be used if the select is inside a scrollable container to allow the menu to overflow the parent.\nNote that if any transforms (e.g. Element.moveUp/Element.moveLeft) are applied to the parent, this no longer works and the menu will be clipped.\nThis is due to [a feature of the current CSS spec](https://bugs.chromium.org/p/chromium/issues/detail?id=20574).\nAlso if the container or window is scrolled or resized without the input losing focus, the menu will appear detached from the input!\nTo overcome this you may want to listen to scroll and resize events on the parent and window and use [closeMenu](#closeMenu) to hide the menu.\n",
+                "type": "Basics.Bool -> Select.ViewConfig a msg -> Select.ViewConfig a msg"
+            },
+            {
+                "name": "withNoMatchElement",
+                "comment": " Provide your own element to show when there are no matches based on the filter and input value. This appears below the input.\n",
+                "type": "Element.Element msg -> Select.ViewConfig a msg -> Select.ViewConfig a msg"
+            },
+            {
+                "name": "withOptionElement",
+                "comment": " Provide your own element for the options in the menu, based on the current [state](#OptionState) of the option.\n\n    Select.view []\n        { onChange = SelectMsg\n        , label = Input.labelAbove [] (Element.text \"Choose a thing\")\n        , placeholder = Just (Input.placeholder [] (Element.text \"Type to search\"))\n        , itemToString = .name\n        }\n        |> Select.withOptionElement\n            (\\state item ->\n                Element.el\n                    [ Element.width Element.fill\n                    , Element.paddingXY 14 10\n                    , Background.color <|\n                        case optionState of\n                            Idle ->\n                                Element.rgb 1 1 1\n\n                            Highlighted ->\n                                Element.rgb 0.95 0.95 0.95\n\n                            Selected ->\n                                Element.rgba 0.64 0.83 0.97 0.8\n\n                            SelectedAndHighlighted ->\n                                Element.rgba 0.64 0.83 0.97 1\n                    ]\n                    (Element.text item.name)\n            )\n        |> Select.toElement model.select\n\n",
+                "type": "(Select.OptionState -> a -> Element.Element msg) -> Select.ViewConfig a msg -> Select.ViewConfig a msg"
+            },
+            {
+                "name": "withSelectExactMatchOnBlur",
+                "comment": " If nothing is selected, but the input value matches exactly one of the options (case insensitive),\nshould we select it automatically when the input loses focus?\n",
+                "type": "Basics.Bool -> Select.ViewConfig a msg -> Select.ViewConfig a msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Select.Effect",
+        "comment": " Update the Select by returning Effects instead of Cmds.\nThis module is designed to help testing with [elm-program-test](https://package.elm-lang.org/packages/avh4/elm-program-test/3.6.3/),\nallowing you to simulate the effects produced by the select and simulate input. If you are not doing this kind of testing,\nyou don't need this module.\n\n\n# Type\n\n@docs Effect\n\n\n# Update Effect\n\n@docs update, updateWithRequest, Request, request\n\n\n# Perform Effect\n\n@docs perform, performWithRequest\n\n\n# Simulating Effects\n\n@docs simulate, simulateWithRequest\n\n\n# Simulating Input\n\n@docs simulateClickOption, SimulateInputConfig\n\n\n# Mapping\n\n@docs map, mapEffect\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Effect",
+                "comment": " The Effect type\n",
+                "args": [
+                    "effect",
+                    "msg"
+                ],
+                "type": "Internal.Effect.Effect effect msg"
+            },
+            {
+                "name": "Request",
+                "comment": " A request that uses your Effect type\n",
+                "args": [
+                    "effect"
+                ],
+                "type": "Internal.Request.Request effect"
+            },
+            {
+                "name": "SimulateInputConfig",
+                "comment": " Config type alias used by simulateClickOption\n",
+                "args": [
+                    "single",
+                    "selector",
+                    "programTest"
+                ],
+                "type": "{ simulateDomEvent : (single -> single) -> ( String.String, Json.Encode.Value ) -> programTest -> programTest, find : List.List selector -> single -> single, attribute : Html.Attribute Basics.Never -> selector }"
+            }
+        ],
+        "values": [
+            {
+                "name": "map",
+                "comment": " Map Effect from one msg type to another\n",
+                "type": "(msg -> msg2) -> Select.Effect.Effect effect msg -> Select.Effect.Effect effect msg2"
+            },
+            {
+                "name": "mapEffect",
+                "comment": " Map Effect from one effect type to another\n",
+                "type": "(effect -> effect2) -> Select.Effect.Effect effect msg -> Select.Effect.Effect effect2 msg"
+            },
+            {
+                "name": "perform",
+                "comment": " Turn an Effect into a Cmd\n\n    performEffect : MyEffect -> Cmd Msg\n    performEffect effect =\n        case effect of\n            SelectEffect selectEffect ->\n                Select.Effect.perform selectEffect\n\n",
+                "type": "Select.Effect.Effect Basics.Never msg -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "performWithRequest",
+                "comment": " Perform the Effect with a request. You need to provide your own perform function to perform the provided request effect.\n\n    performEffect : MyEffect -> Cmd Msg\n    performEffect effect =\n        case effect of\n            SelectEffect selectEffect ->\n                Select.Effect.performWithRequest performEffect selectEffect\n\n            FetchThings query ->\n                fetchThings (Select.gotRequestResponse >> SelectMsg) query\n\n",
+                "type": "(effect -> Platform.Cmd.Cmd msg) -> Select.Effect.Effect effect msg -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "request",
+                "comment": " Create a request. Provide a function that takes the input value and returns an Effect (your app's own Effect type)\nthat can be used to perform an HTTP request. Update will use this Effect when the user types in the input subject to a debounce delay\nand minimum number of characters which can be configured in the [Request](Select-Request) module.\n",
+                "type": "(String.String -> effect) -> Select.Effect.Request effect"
+            },
+            {
+                "name": "simulate",
+                "comment": " Simulate the select effects. This is designed to work with [elm-program-test](https://package.elm-lang.org/packages/avh4/elm-program-test/3.6.3/), but since this package doesn't have it as a dependency,\nyou need to provide some of the functions to help with the simulation.\n\n    simulateEffect : MyEffect -> SimulatedEffect Msg\n    simulateEffect effect =\n        case effect of\n            SelectEffect selectEffect ->\n                Select.Effect.simulate\n                    Example.SelectMsg\n                    { perform = SimulatedTask.perform\n                    , batch = SimulatedCmd.batch\n                    , sleep = SimulatedProcess.sleep\n                    }\n                    selectEffect\n\n",
+                "type": "{ perform : (() -> msg) -> simulatedTask -> simulatedEffect, batch : List.List simulatedEffect -> simulatedEffect, sleep : Basics.Float -> simulatedTask } -> Select.Effect.Effect Basics.Never msg -> simulatedEffect"
+            },
+            {
+                "name": "simulateClickOption",
+                "comment": " Simulate clicking an option by the text label of the option. This is designed to help simulate input with elm-program-test.\nSince this package doesn't have elm-test or elm-program-test as dependencies,\nyou need to provide some of the functions from those packages here.\n\n    simulateConfig : Select.Effect.SimulateInputConfig (Single msg) Selector (ProgramTest model msg effect)\n    simulateConfig =\n        { simulateDomEvent = ProgramTest.simulateDomEvent\n        , find = Query.find\n        , attribute = Selector.attribute\n        }\n\n    selectTest : Test\n    selectTest =\n        Test.test \"Typing United and clicking United Kingdom option selects United Kingdom\" <|\n            \\() ->\n                ProgramTest.createElement\n                    { init = Example.init\n                    , update = Example.update\n                    , view = Example.view\n                    }\n                    |> ProgramTest.withSimulatedEffects simulateEffect\n                    |> ProgramTest.start ()\n                    |> ProgramTest.fillIn \"\" \"Choose a country\" \"United Kingdom\"\n                    |> Select.Effect.simulateClickOption simulateConfig model.select \"United Kingdom\"\n                    |> ProgramTest.expectViewHas [ Selector.text \"You chose United Kingdom\" ]\n\n",
+                "type": "Select.Effect.SimulateInputConfig single selector programTest -> String.String -> String.String -> programTest -> programTest"
+            },
+            {
+                "name": "simulateWithRequest",
+                "comment": " Simulate the select effects with a request. This is designed to work with [elm-program-test](https://package.elm-lang.org/packages/avh4/elm-program-test/3.6.3/), but since this package doesn't have it as a dependency,\nyou need to provide some of the functions to help with the simulation.\n\n    simulateEffect : MyEffect -> SimulatedEffect Msg\n    simulateEffect effect =\n        case effect of\n            SelectEffect selectEffect ->\n                Select.Effect.simulateWithRequest\n                    Example.SelectMsg\n                    { perform = SimulatedTask.perform\n                    , batch = SimulatedCmd.batch\n                    , sleep = SimulatedProcess.sleep\n                    }\n                    simulateEffect\n                    selectEffect\n\n            FetchThings query ->\n                SimulateHttp.get\n                    { url = \"https://awesome-thing.api/things?search=\" ++ query\n                    , expect = SimulateHttp.expectJson tagger (Decode.list thingDecoder)\n                    }\n\n",
+                "type": "{ perform : (() -> msg) -> simulatedTask -> simulatedEffect, batch : List.List simulatedEffect -> simulatedEffect, sleep : Basics.Float -> simulatedTask } -> (effect -> simulatedEffect) -> Select.Effect.Effect effect msg -> simulatedEffect"
+            },
+            {
+                "name": "update",
+                "comment": " Update the Select\n\n    type MyEffect\n        = SelectEffect (Select.Effect Never Msg)\n\n    update : Msg -> Model -> ( Model, MyEffect )\n    update msg model =\n        case msg of\n            SelectMsg subMsg ->\n                Select.Effect.update SelectMsg subMsg model.select\n                    |> Tuple.mapFirst (\\select -> { model | select = select })\n                    |> Tuple.mapSecond SelectEffect\n\n    performEffect : MyEffect -> Cmd Msg\n    performEffect effect =\n        case effect of\n            SelectEffect selectEffect ->\n                Select.Effect.perform selectEffect\n\n",
+                "type": "(Internal.Msg.Msg a -> msg) -> Internal.Msg.Msg a -> Select.Effect.Select a -> ( Select.Effect.Select a, Select.Effect.Effect Basics.Never msg )"
+            },
+            {
+                "name": "updateWithRequest",
+                "comment": " Update with an HTTP request to retrieve matching remote results.\nNote that in order to avoid an elm/http dependency in this package, you will need to provide the request Effect yourself.\n\n    type MyEffect\n        = SelectEffect (Select.Effect MyEffect Msg)\n        | FetchThings String\n\n    update : Msg -> Model -> ( Model, MyEffect )\n    update msg model =\n        case msg of\n            SelectMsg subMsg ->\n                Select.Effect.updateWithRequest (Select.request fetchThings) SelectMsg subMsg model.select\n                    |> Tuple.mapFirst (\\select -> { model | select = select })\n                    |> Tuple.mapSecond SelectEffect\n\n    performEffect : MyEffect -> Cmd Msg\n    performEffect effect =\n        case effect of\n            SelectEffect selectEffect ->\n                Select.Effect.performWithRequest performEffect selectEffect\n\n            FetchThings query ->\n                fetchThings (Select.gotRequestResponse query >> SelectMsg) query\n\n    fetchThings : (Result Http.Error (List thing) -> msg) -> String -> Cmd msg\n    fetchThings tagger query =\n        Http.get\n            { url = \"https://awesome-thing.api/things?search=\" ++ query\n            , expect = Http.expectJson tagger (Decode.list thingDecoder)\n            }\n\n",
+                "type": "Select.Effect.Request effect -> (Internal.Msg.Msg a -> msg) -> Internal.Msg.Msg a -> Select.Effect.Select a -> ( Select.Effect.Select a, Select.Effect.Effect effect msg )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Select.Filter",
+        "comment": " Filter the list of options based on the input value\n\n\n# Type\n\n@docs Filter\n\n\n# Filters\n\n@docs startsWith, contains, startsWithThenContains, custom, customWithSort\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Filter",
+                "comment": " A Filter\n",
+                "args": [
+                    "a"
+                ],
+                "type": "Internal.Filter.Filter a"
+            }
+        ],
+        "values": [
+            {
+                "name": "contains",
+                "comment": " Keep all options whose string value contains the input value (case insensitive).\n",
+                "type": "Select.Filter.Filter a"
+            },
+            {
+                "name": "custom",
+                "comment": " Create a simple custom filter. Keep all values that satisfy the test.\n",
+                "type": "(String.String -> a -> Basics.Bool) -> Select.Filter.Filter a"
+            },
+            {
+                "name": "customWithSort",
+                "comment": " Create a custom filter that sorts. Keep all values that return a maybe and sort in ascending order based on the score.\n",
+                "type": "(String.String -> a -> Maybe.Maybe Basics.Int) -> Select.Filter.Filter a"
+            },
+            {
+                "name": "startsWith",
+                "comment": " Keep all options whose string value starts with the input value (case insensitive).\n",
+                "type": "Select.Filter.Filter a"
+            },
+            {
+                "name": "startsWithThenContains",
+                "comment": " Keep all options whose string value starts with or contains the input value (case insensitive).\nThe items that start with the value appear at the top.\n",
+                "type": "Select.Filter.Filter a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Select.Request",
+        "comment": " You don't need to use this module unless you want to customise the request debounce delay and minimum character count to perform a request.\n\n    update : Msg -> Model -> ( Model, Cmd Msg )\n    update msg model =\n        case msg of\n            SelectMsg subMsg ->\n                Select.updateWithRequest\n                    (Select.request fetchThings\n                        |> Select.Request.withDelay 200\n                        |> Select.Request.withMinLength 4\n                    )\n                    SelectMsg\n                    subMsg\n                    model.select\n                    |> Tuple.mapFirst (\\select -> { model | select = select })\n\n\n# Request\n\n@docs withDelay, withMinLength\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "withDelay",
+                "comment": " For debouncing. How long should we wait after a user stops typing before sending a request?\n",
+                "type": "Basics.Float -> Internal.Request.Request effect -> Internal.Request.Request effect"
+            },
+            {
+                "name": "withMinLength",
+                "comment": " How many characters does a user need to type before a request is sent.\nIf this is too low you may get an unmanagable number of results!\n",
+                "type": "Basics.Int -> Internal.Request.Request effect -> Internal.Request.Request effect"
+            }
+        ],
+        "binops": []
+    }
+]

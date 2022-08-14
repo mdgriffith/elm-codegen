@@ -1,0 +1,65 @@
+[
+    {
+        "name": "List.Selection",
+        "comment": " This module exposes a list that has at most one selected item.\n\nThe invariants here:\n\n  - You can select _at most_ one item.\n  - You can't select an item that isn't part of the list.\n\nBut, these only hold if there are no duplicates in your list.\n\n\n## Converting\n\n@docs Selection, fromList, toList\n\n\n## Selecting\n\n@docs select, selectBy, deselect, selected\n\n\n## Transforming\n\n@docs map, mapSelected, filter\n\n",
+        "unions": [
+            {
+                "name": "Selection",
+                "comment": " A list of items, one of which _might_ be selected.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "deselect",
+                "comment": " Deselect any selected item. This is a no-op if nothing is selected in the\nfirst place.\n",
+                "type": "List.Selection.Selection a -> List.Selection.Selection a"
+            },
+            {
+                "name": "filter",
+                "comment": " Filter all items where predicate evaluates to false, preserving selected item\nwhen unfiltered.\n\n    fromList [1, 2, 3]\n        |> select 2\n        |> filter ((>) 2)\n        |> toList --> [1]\n\n",
+                "type": "(a -> Basics.Bool) -> List.Selection.Selection a -> List.Selection.Selection a"
+            },
+            {
+                "name": "fromList",
+                "comment": " Create a `Selection a` with nothing selected.\n",
+                "type": "List.List a -> List.Selection.Selection a"
+            },
+            {
+                "name": "map",
+                "comment": " Apply a function to all the items.\n\n    fromList [1, 2, 3]\n        |> map ((*) 2)\n        |> toList --> [2, 4, 6]\n\n",
+                "type": "(a -> b) -> List.Selection.Selection a -> List.Selection.Selection b"
+            },
+            {
+                "name": "mapSelected",
+                "comment": " Apply a function to all the items, treating the selected item\nspecially.\n\n    fromList [1, 2, 3]\n        |> select 2\n        |> mapSelected { selected = (*) 2, rest = identity }\n        |> toList --> [1, 4, 3]\n\n",
+                "type": "{ selected : a -> b, rest : a -> b } -> List.Selection.Selection a -> List.Selection.Selection b"
+            },
+            {
+                "name": "select",
+                "comment": " Mark an item as selected. This will select at most one item. Any previously\nselected item will be unselected.\n\n    fromList [\"Burrito\", \"Chicken Wrap\", \"Taco Salad\"]\n        |> select \"Burrito\"\n        |> selected --> Just \"Burrito\"\n\nAttempting to select an item that doesn't exist is a no-op.\n\n    fromList [\"Burrito\", \"Chicken Wrap\", \"Taco Salad\"]\n        |> select \"Doner Kebab\"\n        |> selected --> Nothing\n\n",
+                "type": "a -> List.Selection.Selection a -> List.Selection.Selection a"
+            },
+            {
+                "name": "selectBy",
+                "comment": " Mark an item as selected by specifying a function. This will select the\nfirst item for which the function returns `True`. Any previously selected item\nwill be unselected.\n\n    fromList [\"Burrito\", \"Chicken Wrap\", \"Taco Salad\"]\n        |> selectBy (String.startsWith \"B\")\n        |> selected --> Just \"Burrito\"\n\n",
+                "type": "(a -> Basics.Bool) -> List.Selection.Selection a -> List.Selection.Selection a"
+            },
+            {
+                "name": "selected",
+                "comment": " Get the selected item, which might not exist.\n\n    fromList [\"Burrito\", \"Chicken Wrap\", \"Taco Salad\"]\n        |> select \"Burrito\"\n        |> selected --> Just \"Burrito\"\n\n",
+                "type": "List.Selection.Selection a -> Maybe.Maybe a"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert a Selection list back to a regular list. This is useful\nfor creating view functions, for example. If you want a list that has\nthe selected item, use `mapSelected` like this:\n\n    [ 1, 2, 3 ]\n        |> fromList\n        |> select 2\n        |> mapSelected\n            { selected = (,) True\n            , rest = (,) False\n            }\n        |> toList\n        --> [ (False, 1), (True, 2), (False, 3) ]\n\n",
+                "type": "List.Selection.Selection a -> List.List a"
+            }
+        ],
+        "binops": []
+    }
+]

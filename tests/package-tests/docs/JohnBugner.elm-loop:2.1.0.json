@@ -1,0 +1,26 @@
+[
+    {
+        "name": "Loop",
+        "comment": " Repeatedly apply a function to a value.\n\n# Looping\n@docs for, while, whileJust\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "for",
+                "comment": " Repeatedly apply a function to a value `n` times.\n\n    Loop.for 3 ((+) 5) 2 == 17\n",
+                "type": "Basics.Int -> (a -> a) -> a -> a"
+            },
+            {
+                "name": "while",
+                "comment": " Repeatedly apply a function to a value while the value satisfies the test.\n\n    Loop.while (\\ n -> n < 15) ((+) 5) 2 == 17\n",
+                "type": "(a -> Basics.Bool) -> (a -> a) -> a -> a"
+            },
+            {
+                "name": "whileJust",
+                "comment": " Repeatedly apply a function to a value while the function returns 'Just'.\n\n    f : Int -> Maybe Int\n    f n =\n        if n < 15\n        then Just (n + 5)\n        else Nothing\n\n    Loop.whileJust f 2 == 17\n",
+                "type": "(a -> Maybe.Maybe a) -> a -> a"
+            }
+        ],
+        "binops": []
+    }
+]

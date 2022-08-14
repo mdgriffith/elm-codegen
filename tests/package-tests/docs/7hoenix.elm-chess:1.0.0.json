@@ -1,0 +1,223 @@
+[
+    {
+        "name": "Chess.Data.Board",
+        "comment": "\n\n@docs Board\n@docs Square\n@docs boardDecoder\n@docs toFen\n\n",
+        "unions": [
+            {
+                "name": "Square",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Empty",
+                        []
+                    ],
+                    [
+                        "Occupied",
+                        [
+                            "Chess.Data.Player.Player",
+                            "Chess.Data.Piece.Piece"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Board",
+                "comment": " ",
+                "args": [],
+                "type": "List.List (List.List Chess.Data.Board.Square)"
+            }
+        ],
+        "values": [
+            {
+                "name": "boardDecoder",
+                "comment": " ",
+                "type": "Json.Decode.Decoder Chess.Data.Board.Board"
+            },
+            {
+                "name": "toFen",
+                "comment": " ",
+                "type": "Chess.Data.Board.Board -> Chess.Data.Player.Player -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chess.Data.Piece",
+        "comment": "\n\n@docs Piece\n\n",
+        "unions": [
+            {
+                "name": "Piece",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Pawn",
+                        []
+                    ],
+                    [
+                        "Rook",
+                        []
+                    ],
+                    [
+                        "Knight",
+                        []
+                    ],
+                    [
+                        "Bishop",
+                        []
+                    ],
+                    [
+                        "Hand",
+                        []
+                    ],
+                    [
+                        "Monarch",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "Chess.Data.Player",
+        "comment": "\n\n@docs Player\n@docs player\n\n",
+        "unions": [
+            {
+                "name": "Player",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "White",
+                        []
+                    ],
+                    [
+                        "Black",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "player",
+                "comment": " ",
+                "type": "Json.Decode.Decoder Chess.Data.Player.Player"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chess.Data.Position",
+        "comment": "\n\n@docs Position\n@docs alongDiagonal\n@docs fromRowColumn\n@docs toRowColumn\n@docs fromString\n\n",
+        "unions": [
+            {
+                "name": "Position",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "alongDiagonal",
+                "comment": " ",
+                "type": "Chess.Data.Position.Position -> Basics.Bool"
+            },
+            {
+                "name": "fromRowColumn",
+                "comment": " ",
+                "type": "Basics.Int -> Basics.Int -> Chess.Data.Position.Position"
+            },
+            {
+                "name": "fromString",
+                "comment": " ",
+                "type": "String.String -> Maybe.Maybe Chess.Data.Position.Position"
+            },
+            {
+                "name": "toRowColumn",
+                "comment": " ",
+                "type": "Chess.Data.Position.Position -> ( Basics.Int, Basics.Int )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chess.View.Asset",
+        "comment": "\n\n@docs findSvg\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "findSvg",
+                "comment": " ",
+                "type": "Chess.Data.Player.Player -> Chess.Data.Piece.Piece -> List.List (Html.Attribute msg) -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chess.View.Board",
+        "comment": "\n\n@docs Config\n@docs greenBorder\n@docs lightGreenBorder\n@docs grid\n@docs noBorder\n@docs redBorder\n@docs viewSquare\n@docs yellowBorder\n@docs blueBorder\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " ",
+                "args": [],
+                "type": "{ each : String.String, between : String.String, borderSize : String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "blueBorder",
+                "comment": " ",
+                "type": "Chess.View.Board.Config -> List.List (Html.Attribute msg)"
+            },
+            {
+                "name": "greenBorder",
+                "comment": " ",
+                "type": "Chess.View.Board.Config -> List.List (Html.Attribute msg)"
+            },
+            {
+                "name": "grid",
+                "comment": " ",
+                "type": "Chess.View.Board.Config -> (Chess.Data.Position.Position -> a -> Html.Html msg) -> List.List (List.List a) -> Html.Html msg"
+            },
+            {
+                "name": "lightGreenBorder",
+                "comment": " ",
+                "type": "Chess.View.Board.Config -> List.List (Html.Attribute msg)"
+            },
+            {
+                "name": "noBorder",
+                "comment": " ",
+                "type": "Chess.View.Board.Config -> List.List (Html.Attribute msg)"
+            },
+            {
+                "name": "redBorder",
+                "comment": " ",
+                "type": "Chess.View.Board.Config -> List.List (Html.Attribute msg)"
+            },
+            {
+                "name": "viewSquare",
+                "comment": " ",
+                "type": "Chess.Data.Position.Position -> Chess.Data.Board.Square -> List.List (Html.Attribute msg) -> List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "yellowBorder",
+                "comment": " ",
+                "type": "Chess.View.Board.Config -> List.List (Html.Attribute msg)"
+            }
+        ],
+        "binops": []
+    }
+]

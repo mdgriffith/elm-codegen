@@ -1,0 +1,96 @@
+[
+    {
+        "name": "Extras.Core",
+        "comment": " General convenience functions.\n\n@docs byKey\n@docs flip\n@docs unless\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "byKey",
+                "comment": " Create a predicate that matches on a specific extracted value.\n\n    > let alice = { id = 1, name = \"Alice\" }\n    |     bob = { id = 2, name = \"Bob\" }\n    |     users =\n    | in List.filter (byKey .id 2) users\n    [{ id = 2, name = \"Bob\" }]\n\n",
+                "type": "(a -> b) -> b -> a -> Basics.Bool"
+            },
+            {
+                "name": "flip",
+                "comment": " Change the order of the arguments of a two argument function.\n\n    > flip (++) \"Hello\" \"World\"\n    \"WorldHello\" : String\n\n",
+                "type": "(a -> b -> c) -> b -> a -> c"
+            },
+            {
+                "name": "unless",
+                "comment": " Negated, functional if-then-else.\n\nChecks a condition and returns the respective value.\n\nAllows writing more natural conditional atttributes, elements, etc:\n\n    div [] [ unless isLoggedIn (text \"not logged in\") (a [] [ text \"logout\" ]) ]\n\n",
+                "type": "Basics.Bool -> a -> a -> a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Extras.Html",
+        "comment": " Convenience functions for working with `Html.Html`\n\n@docs nothing\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "nothing",
+                "comment": " Empty element.\n\nUseful if need to produce an HTML element that evaluates to nothing. Example:\n\n    let\n        optionalContent =\n            Just (div [] [ text \"hello \" ])\n    in\n    Maybe.withDefault nothing optionalContent\n\n",
+                "type": "Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Extras.Html.Attributes",
+        "comment": " Convenience functions for working with `Html.Attribute`.\n\n@docs none\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "none",
+                "comment": " Empty attribute.\n\nUseful if need to produce an HTML attribute that evaluates to nothing. Example:\n\n    div\n        [ if isHidden then\n            style [ \"display\", \"none\" ]\n\n          else\n            none\n        ]\n        [ text \"example\" ]\n\nThe name is no conincidence, but was chosen to not clash with `Extras.Html.nothing`.\n\n",
+                "type": "Html.Attribute msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Extras.List",
+        "comment": " Convenience functions for working with lists.\n\nThis module is intended to extend\n[List.Extra](https://package.elm-lang.org/packages/elm-community/list-extra/latest), which should be\nthe first place to look for extra functionality.\n\n@docs upsert\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "upsert",
+                "comment": " Update or insert one item in a list.\n\nSearches a list for the first matching element and replaces it. If no matches are found, appends the\nelement to the end of the rest.\n\n    upsert (byKey .id newUser.id) newUser users\n\nIf you find yourself using this function often, consider using a\n[Dict](https://package.elm-lang.org/packages/elm/core/latest/Dict) and\n[insert](https://package.elm-lang.org/packages/elm/core/latest/Dict#insert) instead.\n\n",
+                "type": "(a -> Basics.Bool) -> a -> List.List a -> List.List a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Extras.Svg",
+        "comment": " Convenience functions for working with `Svg.Svg`\n\n@docs nothing\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "nothing",
+                "comment": " Empty element.\n\nUseful if need to produce an SVG element that evaluates to nothing. Example:\n\n    let\n        optionalContent =\n            Just (g [] [ text \"hello \" ])\n    in\n    Maybe.withDefault nothing optionalContent\n\n",
+                "type": "Svg.Svg msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Extras.Svg.Attributes",
+        "comment": " Convenience functions for working with `Svg.Attribute`.\n\n@docs none\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "none",
+                "comment": " Empty attribute.\n\nUseful if need to produce an SVG attribute that evaluates to nothing. Example:\n\n    div\n        [ if isHidden then\n            style [ \"display\", \"none\" ]\n\n          else\n            none\n        ]\n        [ text \"example\" ]\n\nThe name is no conincidence, but was chosen to not clash with `Extras.Svg.nothing`.\n\n",
+                "type": "Svg.Attribute msg"
+            }
+        ],
+        "binops": []
+    }
+]

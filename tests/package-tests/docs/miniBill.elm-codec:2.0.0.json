@@ -1,0 +1,284 @@
+[
+    {
+        "name": "Codec",
+        "comment": " A `Codec a` contain a JSON `Decoder a` and the corresponding `a -> Value` encoder.\n\n\n# Definition\n\n@docs Codec, Value, Error\n\n\n# Decode\n\n@docs Decoder, decoder, decodeString, decodeValue\n\n\n# Encode\n\n@docs encoder, encodeToString, encodeToValue\n\n\n# Primitives\n\n@docs string, bool, int, float, char\n\n\n# Data Structures\n\n@docs maybe, list, array, dict, set, tuple, triple, result\n\n\n# Object Primitives\n\n@docs ObjectCodec, object, field, maybeField, nullableField, buildObject\n\n\n# Custom Types\n\n@docs CustomCodec, custom, variant0, variant1, variant2, variant3, variant4, variant5, variant6, variant7, variant8, buildCustom\n\n\n# Inconsistent structure\n\n@docs oneOf\n\n\n# Mapping\n\n@docs map\n\n\n# Fancy Codecs\n\n@docs succeed, recursive, fail, andThen, lazy, value, build, constant\n\n",
+        "unions": [
+            {
+                "name": "Codec",
+                "comment": " A value that knows how to encode and decode JSON values.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            },
+            {
+                "name": "CustomCodec",
+                "comment": " A partially built `Codec` for a custom type.\n",
+                "args": [
+                    "match",
+                    "v"
+                ],
+                "cases": []
+            },
+            {
+                "name": "ObjectCodec",
+                "comment": " A partially built `Codec` for an object.\n",
+                "args": [
+                    "a",
+                    "b"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Decoder",
+                "comment": " A value that knows how to decode JSON values.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "Json.Decode.Decoder a"
+            },
+            {
+                "name": "Error",
+                "comment": " A structured error describing exactly how the decoder failed. You can use\nthis to create more elaborate visualizations of a decoder problem. For example,\nyou could show the entire JSON object and show the part causing the failure in\nred.\n",
+                "args": [],
+                "type": "Json.Decode.Error"
+            },
+            {
+                "name": "Value",
+                "comment": " Represents a JavaScript value.\n",
+                "args": [],
+                "type": "Json.Encode.Value"
+            }
+        ],
+        "values": [
+            {
+                "name": "andThen",
+                "comment": " Create codecs that depend on previous results.\n",
+                "type": "(a -> Codec.Codec b) -> (b -> a) -> Codec.Codec a -> Codec.Codec b"
+            },
+            {
+                "name": "array",
+                "comment": " `Codec` between a JSON array and an Elm `Array`.\n",
+                "type": "Codec.Codec a -> Codec.Codec (Array.Array a)"
+            },
+            {
+                "name": "bool",
+                "comment": " `Codec` between a JSON boolean and an Elm `Bool`\n",
+                "type": "Codec.Codec Basics.Bool"
+            },
+            {
+                "name": "build",
+                "comment": " Build your own custom `Codec`.\nUseful if you have pre-existing `Decoder`s you need to use.\n",
+                "type": "(a -> Codec.Value) -> Codec.Decoder a -> Codec.Codec a"
+            },
+            {
+                "name": "buildCustom",
+                "comment": " Build a `Codec` for a fully specified custom type.\n",
+                "type": "Codec.CustomCodec (a -> Codec.Value) a -> Codec.Codec a"
+            },
+            {
+                "name": "buildObject",
+                "comment": " Create a `Codec` from a fully specified `ObjectCodec`.\n",
+                "type": "Codec.ObjectCodec a a -> Codec.Codec a"
+            },
+            {
+                "name": "char",
+                "comment": " `Codec` between a JSON string of length 1 and an Elm `Char`\n",
+                "type": "Codec.Codec Char.Char"
+            },
+            {
+                "name": "constant",
+                "comment": " Create a `Codec` that produces null as JSON and always decodes as the same value. Obsolete alias of `succeed`, will be removed in a future version.\n",
+                "type": "a -> Codec.Codec a"
+            },
+            {
+                "name": "custom",
+                "comment": " Starts building a `Codec` for a custom type.\n\nYou need to pass a pattern matching function, built like this:\n\n    type Semaphore\n        = Red Int String\n        | Yellow Float\n        | Green\n\n    semaphoreCodec : Codec Semaphore\n    semaphoreCodec =\n        Codec.custom\n            (\\red yellow green value ->\n                case value of\n                    Red i s ->\n                        red i s\n\n                    Yellow f ->\n                        yellow f\n\n                    Green ->\n                        green\n            )\n            |> Codec.variant2 \"Red\" Red Codec.int Codec.string\n            |> Codec.variant1 \"Yellow\" Yellow Codec.float\n            |> Codec.variant0 \"Green\" Green\n            |> Codec.buildCustom\n\n",
+                "type": "match -> Codec.CustomCodec match value"
+            },
+            {
+                "name": "decodeString",
+                "comment": " Parse the given string into a JSON value and then run the `Codec` on it.\nThis will fail if the string is not well-formed JSON or if the `Codec`\nfails for some reason.\n",
+                "type": "Codec.Codec a -> String.String -> Result.Result Codec.Error a"
+            },
+            {
+                "name": "decodeValue",
+                "comment": " Run a `Codec` to decode some JSON `Value`. You can send these JSON values\nthrough ports, so that is probably the main time you would use this function.\n",
+                "type": "Codec.Codec a -> Codec.Value -> Result.Result Codec.Error a"
+            },
+            {
+                "name": "decoder",
+                "comment": " Extracts the `Decoder` contained inside the `Codec`.\n",
+                "type": "Codec.Codec a -> Codec.Decoder a"
+            },
+            {
+                "name": "dict",
+                "comment": " `Codec` between a JSON object and an Elm `Dict`.\n",
+                "type": "Codec.Codec a -> Codec.Codec (Dict.Dict String.String a)"
+            },
+            {
+                "name": "encodeToString",
+                "comment": " Convert a value into a prettified JSON string. The first argument specifies\nthe amount of indentation in the result string.\n",
+                "type": "Basics.Int -> Codec.Codec a -> a -> String.String"
+            },
+            {
+                "name": "encodeToValue",
+                "comment": " Convert a value into a Javascript `Value`.\n",
+                "type": "Codec.Codec a -> a -> Codec.Value"
+            },
+            {
+                "name": "encoder",
+                "comment": " Extracts the encoding function contained inside the `Codec`.\n",
+                "type": "Codec.Codec a -> a -> Codec.Value"
+            },
+            {
+                "name": "fail",
+                "comment": " Ignore the JSON and make the decoder fail. This is handy when used with\n`oneOf` or `andThen` where you want to give a custom error message in some\ncase. The encoder will produce `null`.\n",
+                "type": "String.String -> Codec.Codec a"
+            },
+            {
+                "name": "field",
+                "comment": " Specify the name, getter and `Codec` for a field.\n\nThe name is only used as the field name in the resulting JSON, and has no impact on the Elm side.\n\n",
+                "type": "String.String -> (a -> f) -> Codec.Codec f -> Codec.ObjectCodec a (f -> b) -> Codec.ObjectCodec a b"
+            },
+            {
+                "name": "float",
+                "comment": " `Codec` between a JSON number and an Elm `Float`\n",
+                "type": "Codec.Codec Basics.Float"
+            },
+            {
+                "name": "int",
+                "comment": " `Codec` between a JSON number and an Elm `Int`\n",
+                "type": "Codec.Codec Basics.Int"
+            },
+            {
+                "name": "lazy",
+                "comment": " This is useful for recursive structures that are not easily modeled with `recursive`.\nHave a look at the Json.Decode docs for examples.\n",
+                "type": "(() -> Codec.Codec a) -> Codec.Codec a"
+            },
+            {
+                "name": "list",
+                "comment": " `Codec` between a JSON array and an Elm `List`.\n",
+                "type": "Codec.Codec a -> Codec.Codec (List.List a)"
+            },
+            {
+                "name": "map",
+                "comment": " Transform a `Codec`.\n",
+                "type": "(a -> b) -> (b -> a) -> Codec.Codec a -> Codec.Codec b"
+            },
+            {
+                "name": "maybe",
+                "comment": " Represents an optional value.\n",
+                "type": "Codec.Codec a -> Codec.Codec (Maybe.Maybe a)"
+            },
+            {
+                "name": "maybeField",
+                "comment": " Specify the name getter and `Codec` for an optional field.\n\nThis is particularly useful for evolving your `Codec`s.\n\nIf the field is not present in the input then it gets decoded to `Nothing`.\nIf the optional field's value is `Nothing` then the resulting object will not contain that field.\n\n",
+                "type": "String.String -> (a -> Maybe.Maybe f) -> Codec.Codec f -> Codec.ObjectCodec a (Maybe.Maybe f -> b) -> Codec.ObjectCodec a b"
+            },
+            {
+                "name": "nullableField",
+                "comment": " Specify the name getter and `Codec` for a required field, whose value can be `null`.\n\nIf the field is not present in the input then _the decoding fails_.\nIf the field's value is `Nothing` then the resulting object will contain the field with a `null` value.\n\nThis is a shorthand for a field having a codec built using `Codec.maybe`.\n\n",
+                "type": "String.String -> (a -> Maybe.Maybe f) -> Codec.Codec f -> Codec.ObjectCodec a (Maybe.Maybe f -> b) -> Codec.ObjectCodec a b"
+            },
+            {
+                "name": "object",
+                "comment": " Start creating a `Codec` for an object. You should pass the main constructor as argument.\nIf you don't have one (for example it's a simple type with no name), you should pass a function that given the field values builds an object.\n\nExample with constructor:\n\n    type alias Point =\n        { x : Float\n        , y : Float\n        }\n\n    pointCodec : Codec Point\n    pointCodec =\n        Codec.object Point\n            |> Codec.field \"x\" .x Codec.float\n            |> Codec.field \"y\" .y Codec.float\n            |> Codec.buildObject\n\nExample without constructor:\n\n    pointCodec : Codec { x : Int, y : Bool }\n    pointCodec =\n        Codec.object (\\x y -> { x = x, y = y })\n            |> Codec.field \"x\" .x Codec.int\n            |> Codec.field \"y\" .y Codec.bool\n            |> Codec.buildObject\n\n",
+                "type": "b -> Codec.ObjectCodec a b"
+            },
+            {
+                "name": "oneOf",
+                "comment": " Try a set of decoders (in order).\nThe first argument is used for encoding and decoding, the list of other codecs is used as a fallback while decoding.\n\nThis is particularly useful for backwards compatibility. You would pass the current codec as the first argument,\nand the old ones (eventually `map`ped) as a fallback list to use while decoding.\n\n",
+                "type": "Codec.Codec a -> List.List (Codec.Codec a) -> Codec.Codec a"
+            },
+            {
+                "name": "recursive",
+                "comment": " Create a `Codec` for a recursive data structure.\nThe argument to the function you need to pass is the fully formed `Codec`.\n",
+                "type": "(Codec.Codec a -> Codec.Codec a) -> Codec.Codec a"
+            },
+            {
+                "name": "result",
+                "comment": " `Codec` for `Result` values.\n",
+                "type": "Codec.Codec error -> Codec.Codec value -> Codec.Codec (Result.Result error value)"
+            },
+            {
+                "name": "set",
+                "comment": " `Codec` between a JSON array and an Elm `Set`.\n",
+                "type": "Codec.Codec comparable -> Codec.Codec (Set.Set comparable)"
+            },
+            {
+                "name": "string",
+                "comment": " `Codec` between a JSON string and an Elm `String`\n",
+                "type": "Codec.Codec String.String"
+            },
+            {
+                "name": "succeed",
+                "comment": " Create a `Codec` that produces null as JSON and always decodes as the same value.\n",
+                "type": "a -> Codec.Codec a"
+            },
+            {
+                "name": "triple",
+                "comment": " `Codec` between a JSON array of length 3 and an Elm triple.\n",
+                "type": "Codec.Codec a -> Codec.Codec b -> Codec.Codec c -> Codec.Codec ( a, b, c )"
+            },
+            {
+                "name": "tuple",
+                "comment": " `Codec` between a JSON array of length 2 and an Elm `Tuple`.\n",
+                "type": "Codec.Codec a -> Codec.Codec b -> Codec.Codec ( a, b )"
+            },
+            {
+                "name": "value",
+                "comment": " Create a `Codec` that doesn't transform the JSON value, just brings it to and from Elm as a `Value`.\n",
+                "type": "Codec.Codec Codec.Value"
+            },
+            {
+                "name": "variant0",
+                "comment": " Define a variant with 0 parameters for a custom type. The first argument is\n",
+                "type": "String.String -> v -> Codec.CustomCodec (Codec.Value -> a) v -> Codec.CustomCodec a v"
+            },
+            {
+                "name": "variant1",
+                "comment": " Define a variant with 1 parameters for a custom type.\n",
+                "type": "String.String -> (a -> v) -> Codec.Codec a -> Codec.CustomCodec ((a -> Codec.Value) -> b) v -> Codec.CustomCodec b v"
+            },
+            {
+                "name": "variant2",
+                "comment": " Define a variant with 2 parameters for a custom type.\n",
+                "type": "String.String -> (a -> b -> v) -> Codec.Codec a -> Codec.Codec b -> Codec.CustomCodec ((a -> b -> Codec.Value) -> c) v -> Codec.CustomCodec c v"
+            },
+            {
+                "name": "variant3",
+                "comment": " Define a variant with 3 parameters for a custom type.\n",
+                "type": "String.String -> (a -> b -> c -> v) -> Codec.Codec a -> Codec.Codec b -> Codec.Codec c -> Codec.CustomCodec ((a -> b -> c -> Codec.Value) -> partial) v -> Codec.CustomCodec partial v"
+            },
+            {
+                "name": "variant4",
+                "comment": " Define a variant with 4 parameters for a custom type.\n",
+                "type": "String.String -> (a -> b -> c -> d -> v) -> Codec.Codec a -> Codec.Codec b -> Codec.Codec c -> Codec.Codec d -> Codec.CustomCodec ((a -> b -> c -> d -> Codec.Value) -> partial) v -> Codec.CustomCodec partial v"
+            },
+            {
+                "name": "variant5",
+                "comment": " Define a variant with 5 parameters for a custom type.\n",
+                "type": "String.String -> (a -> b -> c -> d -> e -> v) -> Codec.Codec a -> Codec.Codec b -> Codec.Codec c -> Codec.Codec d -> Codec.Codec e -> Codec.CustomCodec ((a -> b -> c -> d -> e -> Codec.Value) -> partial) v -> Codec.CustomCodec partial v"
+            },
+            {
+                "name": "variant6",
+                "comment": " Define a variant with 6 parameters for a custom type.\n",
+                "type": "String.String -> (a -> b -> c -> d -> e -> f -> v) -> Codec.Codec a -> Codec.Codec b -> Codec.Codec c -> Codec.Codec d -> Codec.Codec e -> Codec.Codec f -> Codec.CustomCodec ((a -> b -> c -> d -> e -> f -> Codec.Value) -> partial) v -> Codec.CustomCodec partial v"
+            },
+            {
+                "name": "variant7",
+                "comment": " Define a variant with 7 parameters for a custom type.\n",
+                "type": "String.String -> (a -> b -> c -> d -> e -> f -> g -> v) -> Codec.Codec a -> Codec.Codec b -> Codec.Codec c -> Codec.Codec d -> Codec.Codec e -> Codec.Codec f -> Codec.Codec g -> Codec.CustomCodec ((a -> b -> c -> d -> e -> f -> g -> Codec.Value) -> partial) v -> Codec.CustomCodec partial v"
+            },
+            {
+                "name": "variant8",
+                "comment": " Define a variant with 8 parameters for a custom type.\n",
+                "type": "String.String -> (a -> b -> c -> d -> e -> f -> g -> h -> v) -> Codec.Codec a -> Codec.Codec b -> Codec.Codec c -> Codec.Codec d -> Codec.Codec e -> Codec.Codec f -> Codec.Codec g -> Codec.Codec h -> Codec.CustomCodec ((a -> b -> c -> d -> e -> f -> g -> h -> Codec.Value) -> partial) v -> Codec.CustomCodec partial v"
+            }
+        ],
+        "binops": []
+    }
+]

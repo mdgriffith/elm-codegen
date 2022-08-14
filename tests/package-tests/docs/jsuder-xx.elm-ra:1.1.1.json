@@ -1,0 +1,206 @@
+[
+    {
+        "name": "Ra",
+        "comment": " Ra supports Pointfree style in Elm by providing various combinators to work with Predicates, Relations, Math, Functions, and Flow Control.\n\n\n## Categories\n\n\n### Predicate Combinators\n\nPredicate combinators provide a huge readability win when you have named predicates.\n\n@docs allPass, anyPass, both, either, complement, false, true\n\n\n### Readable Chain and Composition Relations\n\nPartial application of the native relation operators is not intuitive or readable because the order is reversed from what one might expect.\nFor example, `((>=) 21)` does not return True for numbers that are greater than or equal to 21 but rather returns True for numbers less than\n21 because the 21 is applied on the left i.e. `n -> 21 >= n`.\n\nBy contrast, the `greaterThanEqualTo` function returns a test of numbers greater than or equal to the first number given. So `greaterThanEqualTo 21`\nis `n -> n >= 21`.\n\n@docs lessThan, lessThanEqualTo, greaterThan, greaterThanEqualTo, equals\n\n\n### Readable Chain and Composition Math\n\n@docs adding, subtracting, dividedByInt, dividedByFloat, multiplying, negated\n\n\n### Flow Control\n\n@docs ifElse, cond, condDefault, maybeWhen, when, unless, until\n\n\n### Function Combinators\n\n@docs converge, converge3, convergeList, curry, curry3, flip, fnContraMap, fnContraMap2, fnContraMap3, uncurry, uncurry3\n\n\n### Dict\n\n@docs isMemberOf\n\n\n### List\n\n@docs deduplicateConsecutiveItemsBy, partitionWhile\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "adding",
+                "comment": " A literate alias for addition that is nice for building functional pipelines by avoiding parenthesis.\n\n    [5, 10, 15, 20] |> List.map (adding 5)\n    -- [10, 15, 20, 25]\n\n",
+                "type": "number -> number -> number"
+            },
+            {
+                "name": "allPass",
+                "comment": " Takes a list of predicates and returns a predicate that returns true for a given list of arguments if every one of the provided predicates is satisfied by those arguments.\n\n    isAmazing : Person -> Bool\n    isAmazing = allPass [isKind, isCreative, isHardWorking]\n\n",
+                "type": "List.List (Ra.Predicate a) -> a -> Basics.Bool"
+            },
+            {
+                "name": "anyPass",
+                "comment": " Takes a list of predicates and returns a predicate that returns true for a given list of arguments if at least one of the provided predicates is satisfied by those arguments.\n\n    isOkay : Person -> Bool\n    isOkay = anyPass [isKind, isCreative, isHardWorking]\n\n",
+                "type": "List.List (Ra.Predicate a) -> a -> Basics.Bool"
+            },
+            {
+                "name": "both",
+                "comment": " Return a new predicate that is true if both of the two predicates return true.\nNote that this is short-circuited, meaning that the second predicate will not be invoked if the first returns false.\n",
+                "type": "Ra.Predicate a -> Ra.Predicate a -> a -> Basics.Bool"
+            },
+            {
+                "name": "complement",
+                "comment": " Invert (negate, complement) a predicate i.e if the predicate would have return True for some `a` it will now return False and vice versa.\n",
+                "type": "Ra.Predicate a -> Ra.Predicate a"
+            },
+            {
+                "name": "cond",
+                "comment": " Returns a function which encapsulates if/else, if/else, ... logic given a list of (predicate, transformer) tuples.\n\n  - The condition pairs are processed in order\n      - and returns the transformation of the first predicate that passes\n  - If no conditions pass then returns Nothing.\n\n",
+                "type": "List.List ( Ra.Predicate a, a -> b ) -> a -> Maybe.Maybe b"
+            },
+            {
+                "name": "condDefault",
+                "comment": " Same as `cond` but also provides a default option in the case that none of the conditions pass.\n",
+                "type": "List.List ( Ra.Predicate a, a -> b ) -> Ra.Thunk b -> a -> b"
+            },
+            {
+                "name": "converge",
+                "comment": " This function can best be explained with examples as it is unusually useful when building data pipelines but has a tricky type signature.\n\nPlease do NOT be afraid of the type signature!\n\nIf you would like a function that transforms a Person to a String of their first and last name.\n\n    converge\n        String.append\n        ( .firstName, .lastName >> String.append \" \" )\n\nOr perhaps you are building a data pipeline\n\n  - where at some stage you have a `List Widget`\n  - and you have a function `extraWidgets: List Widget -> List Widget`\n  - and you would like to like to end up with a new list of widgets that contains both the original widgets and the extra widgets.\n\nThen you might write\n\n    converge\n        List.append\n        (identity, extraWidgets)\n\n",
+                "type": "(first -> second -> output) -> ( input -> first, input -> second ) -> input -> output"
+            },
+            {
+                "name": "converge3",
+                "comment": " Converge for the case of a 3 argument function. See `converge` for examples.\n",
+                "type": "(first -> second -> third -> output) -> ( input -> first, input -> second, input -> third ) -> input -> output"
+            },
+            {
+                "name": "convergeList",
+                "comment": " As with converge, convergeList is best explained with an example\n\n    convergeList\n        (String.join \" \")\n        [ .firstName, .middleInitial, .lastName ]\n\nOr to be more complete\n\n    nonEmptyStrings : List String -> List String\n    nonEmptyStrings = List.filter (complement String.isEmpty)\n\n    fullName : Person -> String\n    fullName =\n        convergeList\n            (nonEmptyStrings >> String.join \" \")\n            [ .firstName, .middleInitial, .lastName ]\n\n",
+                "type": "(List.List a -> output) -> List.List (input -> a) -> input -> output"
+            },
+            {
+                "name": "curry",
+                "comment": " Converts a function from 2-tuple to normal curried function. This is mostly useful for reverting an uncurry.\n",
+                "type": "(( a, b ) -> c) -> a -> b -> c"
+            },
+            {
+                "name": "curry3",
+                "comment": " Converts a function from 3-tuple to normal curried function. This is mostly useful for reverting an uncurry.\n",
+                "type": "(( a, b, c ) -> d) -> a -> b -> c -> d"
+            },
+            {
+                "name": "deduplicateConsecutiveItemsBy",
+                "comment": " Deduplicate consecutive items in a list using a function to extract the element of interest.\n\n    deduplicateConsecutiveItemsBy identity [ 1, 1, 1, 2, 3, 3 ] -- [1, 2, 3]\n\n    deduplicateConsecutiveItemsBy\n        Tuple.second\n        [ (\"Betty\", 1), (\"Tom\", 1), (\"Jane\", 2)] -- [(\"Betty\", 1), (\"Jane\", 2)]\n\n",
+                "type": "(a -> b) -> List.List a -> List.List a"
+            },
+            {
+                "name": "dividedByFloat",
+                "comment": " Division designed for pipelines i.e. the divisor is the first argument.\n\n    [20, 25, 26.25] |> List (divideByFloat 2.5)\n    -- [8.0, 10.0, 10.5]\n\n",
+                "type": "Basics.Float -> Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "dividedByInt",
+                "comment": " Division designed for pipelines i.e. the divisor is the first argument.\n\n    [20, 32, 40] |> List (divideByInt 4)\n    -- [5, 8, 10]\n\n",
+                "type": "Basics.Int -> Basics.Int -> Basics.Int"
+            },
+            {
+                "name": "either",
+                "comment": " Return a new predicate that is true if either of the two predicates return true.\nNote that this is short-circuited, meaning that the second predicate will not be invoked if the first returns true.\n",
+                "type": "Ra.Predicate a -> Ra.Predicate a -> a -> Basics.Bool"
+            },
+            {
+                "name": "equals",
+                "comment": " A natural language alias for `==` that also helps to avoid parenthesis when writing point-free flows\n\n    employees\n    |> List.filter (.employmentType >> equals Contractor)\n\n",
+                "type": "a -> Ra.Predicate a"
+            },
+            {
+                "name": "false",
+                "comment": " A predicate that always returns false.\n",
+                "type": "Ra.Predicate a"
+            },
+            {
+                "name": "flip",
+                "comment": " Flip the first and second arguments of a function.\n\n  - This is an incredibly useful function when needing to change the application of an existing function.\n  - **WARNING** However, it can also destroy the literate reading of code if overused and it is easy to overuse.\n\nFor example, the first argument to Dict.get is the key and the second is the dictionary.\nWhat if we want to map over multiple keys? We would want to apply the dictionary first and get a function that accepts the key.\n\n    valuesForKeys : Dict comparable value -> List comparable -> List value\n    valuesForKeys =\n        flip Dict.get >> List.filterMap\n\nMore simply, consider the case of having a `(Dictionary k v)` of values but wanting to pass along a function `k -> Maybe v` to some provider\nso that the provider doesn't couple to the Dictionary? This would be a good idea to Reduce Coupling and honor the Principle of Least Privilege.\n\n    someInterestingProvider : (Int -> Widget) -> String -> Maybe Widget\n    someInterestingProvider = Debug.todo \"doesn't matter for the demonstration\"\n\n    someConsumer : List Widget -> String -> Maybe Widget\n    someConsumer widgets =\n        someInterestingProvider (flip Dict.get (indexBy .id widgets))\n\n",
+                "type": "(a -> b -> c) -> b -> a -> c"
+            },
+            {
+                "name": "fnContraMap",
+                "comment": " This is like `map` for functions but going the opposite direction (contra functor).\n\n  - map: (a -> b) -> F a -> F b\n  - contraMap: (a -> b) -> F b -> F a\n\nOKAY. So that it probably a little or a lot confusing. How would you use this? Any time yout have a parent/child relation and a function that\nwill transform the child and you want to get back a function that transforms the parent.\n\n    addressesCount : Person -> Int\n    addressesCount = fnContraMap .addresses List.length\n\n",
+                "type": "(a -> b) -> (b -> c) -> a -> c"
+            },
+            {
+                "name": "fnContraMap2",
+                "comment": " Best described with an example. Let's say you have a parent/child relation, a function of 2 arguments that applies to the child type\nand you would like to get back a function that works on the parent.\n\n    sameFavoriteColor : Person -> Person -> Bool\n    sameFavoriteColor = fnContraMap2 (.favorites >> .color) (==)\n\n",
+                "type": "(a -> b) -> (b -> b -> c) -> a -> a -> c"
+            },
+            {
+                "name": "fnContraMap3",
+                "comment": " Same as fnContraMap2 but for 3 argument functions.\n",
+                "type": "(a -> b) -> (b -> b -> b -> c) -> a -> a -> a -> c"
+            },
+            {
+                "name": "greaterThan",
+                "comment": " Designed for currying. Returns a predicate that tests if the value is greater than the first value given.\n\n    [5, 10, 11, 20] |> List.map (greaterThan 10)\n    -- [False, False, True, True]\n\n",
+                "type": "comparable -> comparable -> Basics.Bool"
+            },
+            {
+                "name": "greaterThanEqualTo",
+                "comment": " Designed for currying. Returns a predicate that tests if the value is greater than or equal to the first value given.\n\n    [5, 10, 11, 20]\n    |> List.map (greaterThanEqualTo 10) -- [False, True, True, True]\n\n",
+                "type": "comparable -> comparable -> Basics.Bool"
+            },
+            {
+                "name": "ifElse",
+                "comment": " Creates a function that will process either the whenTrue or the whenFalse function depending upon the result of the condition predicate.\n\n    ifElse\n        (.weightInLbs >> R.Relation.greaterThan 500)\n        (always \"Sorry. You cannot ride the coaster.\")\n        (.name >> String.append \"Enjoy your ride \")\n\n",
+                "type": "Ra.Predicate a -> (a -> b) -> (a -> b) -> a -> b"
+            },
+            {
+                "name": "isMemberOf",
+                "comment": " Dict.member with the arguments flipped in order to test the member of _many_ keys against a _single_ dictionary.\n\n    let\n        validPersonIds =\n            personIds\n            |> List.filter (isMemberOf idToPerson)\n    in\n    -- ...\n\n",
+                "type": "Dict.Dict comparable v -> comparable -> Basics.Bool"
+            },
+            {
+                "name": "lessThan",
+                "comment": " Designed for use in pipelines or currying. Returns a predicate that tests if the value is less than the first value given.\n\n    [5, 10, 11, 20] |> List.map (lessThan 10)\n    -- [True, False, False, False]\n\n",
+                "type": "comparable -> comparable -> Basics.Bool"
+            },
+            {
+                "name": "lessThanEqualTo",
+                "comment": " Designed for currying. Returns a predicate that tests if the value is less than or equal to the first value given.\n\n    [5, 10, 11, 20] |> List.map (lessThanEqualto 10)\n    -- [True, True, False, False]\n\n",
+                "type": "comparable -> comparable -> Basics.Bool"
+            },
+            {
+                "name": "maybeWhen",
+                "comment": " Tests the final argument against the predicate and if true then performs the transformation.\nThis is super helpful when combined with List.filterMap. For example, let's say you wanted the names of just the cool people\n\n    allThePeople\n    |> List.filterMap (maybeWhen .isCool .fullName)\n\n",
+                "type": "Ra.Predicate a -> (a -> b) -> a -> Maybe.Maybe b"
+            },
+            {
+                "name": "multiplying",
+                "comment": " A natural language alias for \\*.\n",
+                "type": "number -> number -> number"
+            },
+            {
+                "name": "negated",
+                "comment": " Negate the given number.\n",
+                "type": "number -> number"
+            },
+            {
+                "name": "partitionWhile",
+                "comment": " Returns all of the items in the list that pass the given predicate up until the first item that fails in the first position\nand the remaining items in the second.\n\n    partitionWhile (lessThanEqualTo 10) [1, 5, 10, 15, 10, 3]\n    -- ([1, 5, 10], [15, 10, 3])\n\n    partitionWhile (lessThanEqualTo 10) [11, 20, 30, 5, 3]\n    -- ([], [11, 20, 30, 5, 3])\n\n    partitionWhile (lessThanEqualTo 10) [1, 5, 10, 7]\n    -- ([1, 5, 10, 7], [])\n\n",
+                "type": "(a -> Basics.Bool) -> List.List a -> ( List.List a, List.List a )"
+            },
+            {
+                "name": "subtracting",
+                "comment": " Subtraction alias designed for pipelines i.e. the order is swapped such that the subtrahend is the first argument.\n\n    [20, 30, 40]\n    |> List.map (subtracting 6)\n    -- [14, 24, 34]\n\n",
+                "type": "number -> number -> number"
+            },
+            {
+                "name": "true",
+                "comment": " A predicate that always returns true.\n",
+                "type": "Ra.Predicate a"
+            },
+            {
+                "name": "uncurry",
+                "comment": " Converts a normal Elm function to a function that accepts a 2-tuple. This can be useful if the output of some function happens to be\na tuple or a functor (List, Maybe, Result, etc.) of a tuple.\n\n    sums : List (number, number) -> List number\n    sums = List.map (uncurry adding)\n\n    sum : Maybe (number, number) -> Maybe number\n    sum = Maybe.map (uncurry adding)\n\n",
+                "type": "(a -> b -> c) -> ( a, b ) -> c"
+            },
+            {
+                "name": "uncurry3",
+                "comment": " Converts a standard Elm function to a function that accepts a 3-tuple.\n",
+                "type": "(a -> b -> c -> d) -> ( a, b, c ) -> d"
+            },
+            {
+                "name": "unless",
+                "comment": " Tests the final argument by passing it to the given predicate function.\n\n  - If the predicate is not satisfied, the function will return the result of calling the whenFalseFn function with the same argument.\n  - If the predicate is satisfied, the argument is returned as is.\n\n",
+                "type": "Ra.Predicate a -> (a -> a) -> a -> a"
+            },
+            {
+                "name": "until",
+                "comment": " Takes a predicate, a transformation function, and an initial value, and returns a value of the same type as the initial value.\nIt does so by applying the transformation until the predicate is satisfied, at which point it returns the satisfactory value.\n",
+                "type": "Ra.Predicate a -> (a -> a) -> a -> a"
+            },
+            {
+                "name": "when",
+                "comment": " Tests the final argument by passing it to the given predicate function.\n\n  - If the predicate is satisfied, the function will return the result of calling the whenTrueFn function with the same argument.\n  - If the predicate is not satisfied, the argument is returned as is.\n\n",
+                "type": "Ra.Predicate a -> (a -> a) -> a -> a"
+            }
+        ],
+        "binops": []
+    }
+]

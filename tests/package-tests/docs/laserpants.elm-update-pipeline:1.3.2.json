@@ -1,0 +1,244 @@
+[
+    {
+        "name": "Update.Pipeline",
+        "comment": " Sequential composition of updates facilitated by the pipe operator.\n\n\n# Basics\n\n@docs save, map, addCmd, mapCmd, join, equals\n\n\n# Chaining Updates\n\nThese functions enable composition of updates by chaining together functions of the type `a -> ( b, Cmd msg )`.\n\n@docs andThen, sequence, when, kleisli\n\n\n# Applicative Interface\n\nThese functions address the need to map functions with more than one parameter over `( model, Cmd msg )` inputs.\n\n@docs map2, map3, map4, map5, map6, map7, andMap\n\n\n# Pointfree Helpers\n\n\n### A note about pointfree style and η-reduction\n\nThanks to currying, in Elm we can often omit function arguments:\n\n    f1 x = g x      <==>  f1 = g\n    f2 x = g (h x)  <==>  f2 = g << h\n\nMaking the arguments implicit in this way allows the programmer to think about the program more abstractly, and can (sometimes) lead to more readable program code.\n\n\n### Pointfree:\n\n    update : Msg -> Model -> ( Model, Cmd Msg )\n    update msg =\n        case msg of\n            ButtonClicked ->\n                setMessage \"The button was clicked!\"\n                    >> andThen haveCoffee\n\n\n### Pointful:\n\n    update msg model =\n        case msg of\n            ButtonClicked ->\n                model\n                    |> setMessage \"The button was clicked!\"\n                    |> andThen haveCoffee\n\n@docs using, with\n\n\n# Shortcuts\n\n@docs andAddCmd, andUsing, andWith, andThenIf\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "addCmd",
+                "comment": " Create a `( model, Cmd msg)` pair from the two arguments.\nThe implementation of this function is not very exciting — it is simply defined as `addCmd cmd model = ( model, cmd )` — but it can still be quite useful in idiomatic code.\nFor example, one could write\n\n    { model | power = 100 }\n        |> addCmd someCmd\n        |> andThen (setStatus Done)\n\n… instead of\n\n    ( { model | power = 100 }, someCmd )\n        |> andThen (setStatus Done)\n\nSee also [`andAddCmd`](#andAddCmd).\n\n",
+                "type": "Platform.Cmd.Cmd msg -> a -> ( a, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "andAddCmd",
+                "comment": " This function is a shortcut for `andThen <<`[`addCmd`](#addCmd).\n\n\n#### _Example use:_\n\n    model\n        |> save\n        |> andAddCmd someCmd\n\n",
+                "type": "Platform.Cmd.Cmd msg -> ( a, Platform.Cmd.Cmd msg ) -> ( a, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "andMap",
+                "comment": " Trying to map a function `(+) : number -> number -> number` over two `( model, Cmd msg)` inputs; first applying it to the first value\n\n    map (+) (save 4)\n\n… we end up with a result of type `( (number -> number), Cmd msg )`.\nTo apply the function inside this value to another `( number, Cmd msg )` value, we use this function in the following way:\n\n    map (+) (save 4) |> andMap (save 5)\n\nIn `elm repl`, we can verify that the result is what we expect:\n\n    > Tuple.first <| (map (+) (save 4) |> andMap (save 5))\n    9 : number\n\nThis pattern scales in a nice way to functions of any number of arguments.\n\nSee also [`map2`](#map2), [`map3`](#map3), etc. If not sooner, you’ll need this function when you want to `mapN` for _N > 7_.\n\n",
+                "type": "( a, Platform.Cmd.Cmd msg ) -> ( a -> b, Platform.Cmd.Cmd msg ) -> ( b, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "andThen",
+                "comment": " When used in conjunction with the pipe operator, this combinator extracts the model from a `( model, Cmd msg )` value and passes it as input to the next function in a pipeline.\nFor example;\n\n    model\n        |> setPower 100\n        |> andThen (setDone True)\n\nMonadic functions of type `a -> ( b, Cmd msg )` are the building blocks of a pipeline.\nFor instance, the type of `setPower` in the above example is `Int -> Model -> ( Model, Cmd Msg )`.\n\n",
+                "type": "(b -> ( a, Platform.Cmd.Cmd msg )) -> ( b, Platform.Cmd.Cmd msg ) -> ( a, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "andThenIf",
+                "comment": " This function is a shortcut for `\\cond -> andThen <<`[`when`](#when)`cond`.\n\n    model\n        |> save\n        |> andThenIf (power > 100) (setWarning Overflow)\n\n",
+                "type": "Basics.Bool -> (a -> ( a, Platform.Cmd.Cmd msg )) -> ( a, Platform.Cmd.Cmd msg ) -> ( a, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "andUsing",
+                "comment": " Shortcut for `andThen <<`[`using`](#using).\n",
+                "type": "(b -> b -> ( a, Platform.Cmd.Cmd msg )) -> ( b, Platform.Cmd.Cmd msg ) -> ( a, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "andWith",
+                "comment": " Shortcut for `\\view -> andThen <<`[`with`](#with)`view`.\n",
+                "type": "(b -> c) -> (c -> b -> ( a, Platform.Cmd.Cmd msg )) -> ( b, Platform.Cmd.Cmd msg ) -> ( a, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "equals",
+                "comment": " Compare the models of two `( model, Cmd msg)` values.\n\nNote that the presence of effects means that\n\n    > (save 9) == (map2 (^) (save 3) (save 2))\n    False : Bool\n\nThis function can be used for comparison when only the model is of interest:\n\n    > equals (save 9) (map2 (^) (save 3) (save 2))\n    True : Bool\n\n",
+                "type": "( a, Platform.Cmd.Cmd msg ) -> ( a, Platform.Cmd.Cmd msg ) -> Basics.Bool"
+            },
+            {
+                "name": "join",
+                "comment": " Remove one level of structure that results from composing functions of the form `a -> ( b, Cmd msg )`:\n\n    f : a -> ( b, Cmd msg )\n    g : b -> ( c, Cmd mgs )\n\n    map g << f : a -> ( ( c, Cmd msg ), Cmd msg )\n\nIt is useful to know that [`andThen`](#andThen) is defined as `\\f -> join << map f`.\n\n",
+                "type": "( ( a, Platform.Cmd.Cmd msg ), Platform.Cmd.Cmd msg ) -> ( a, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "kleisli",
+                "comment": " Right-to-left composition of two functions that return `( model, Cmd msg )` values, passing the first component of the first return value as input to the second function.\n\nThis is analogous to ordinary function composition in the following way:\n\n    (<<) : (b -> c) -> (a -> b) -> a -> c\n\n    kleisli : (b -> ( c, Cmd msg )) -> (a -> ( b, Cmd msg )) -> a -> ( c, Cmd msg )\n\n",
+                "type": "(b -> ( c, Platform.Cmd.Cmd msg )) -> (a -> ( b, Platform.Cmd.Cmd msg )) -> a -> ( c, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "map",
+                "comment": " Apply a function to the model (i.e. first component) of a `( model, Cmd msg )` pair.\nPartially applied, we can also think of this as taking a function `a -> b` and _lifting_ it into one of type `( a, Cmd msg ) -> ( b, Cmd msg )`.\n",
+                "type": "(a -> b) -> ( a, Platform.Cmd.Cmd msg ) -> ( b, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "map2",
+                "comment": " Combine two `( model, Cmd msg )` values by applying a function of two arguments\nto their respective models.\n",
+                "type": "(p -> q -> r) -> ( p, Platform.Cmd.Cmd msg ) -> ( q, Platform.Cmd.Cmd msg ) -> ( r, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "map3",
+                "comment": " Combine three `( model, Cmd msg )` values by applying a function of three arguments\nto their respective models.\n",
+                "type": "(p -> q -> r -> s) -> ( p, Platform.Cmd.Cmd msg ) -> ( q, Platform.Cmd.Cmd msg ) -> ( r, Platform.Cmd.Cmd msg ) -> ( s, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "map4",
+                "comment": " Combine four `( model, Cmd msg )` values by applying a function of four arguments\nto their respective models.\n",
+                "type": "(p -> q -> r -> s -> t) -> ( p, Platform.Cmd.Cmd msg ) -> ( q, Platform.Cmd.Cmd msg ) -> ( r, Platform.Cmd.Cmd msg ) -> ( s, Platform.Cmd.Cmd msg ) -> ( t, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "map5",
+                "comment": " Combine five `( model, Cmd msg )` values by applying a function of five arguments\nto their respective models.\n",
+                "type": "(p -> q -> r -> s -> t -> u) -> ( p, Platform.Cmd.Cmd msg ) -> ( q, Platform.Cmd.Cmd msg ) -> ( r, Platform.Cmd.Cmd msg ) -> ( s, Platform.Cmd.Cmd msg ) -> ( t, Platform.Cmd.Cmd msg ) -> ( u, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "map6",
+                "comment": " Combine six `( model, Cmd msg )` values by applying a function of six arguments\nto their respective models.\n",
+                "type": "(p -> q -> r -> s -> t -> u -> v) -> ( p, Platform.Cmd.Cmd msg ) -> ( q, Platform.Cmd.Cmd msg ) -> ( r, Platform.Cmd.Cmd msg ) -> ( s, Platform.Cmd.Cmd msg ) -> ( t, Platform.Cmd.Cmd msg ) -> ( u, Platform.Cmd.Cmd msg ) -> ( v, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "map7",
+                "comment": " Combine seven `( model, Cmd msg )` values by applying a function of seven arguments\nto their respective models.\n",
+                "type": "(p -> q -> r -> s -> t -> u -> v -> w) -> ( p, Platform.Cmd.Cmd msg ) -> ( q, Platform.Cmd.Cmd msg ) -> ( r, Platform.Cmd.Cmd msg ) -> ( s, Platform.Cmd.Cmd msg ) -> ( t, Platform.Cmd.Cmd msg ) -> ( u, Platform.Cmd.Cmd msg ) -> ( v, Platform.Cmd.Cmd msg ) -> ( w, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "mapCmd",
+                "comment": " Transform the message produced by the command inside a `( model, Cmd msg )` pair.\n",
+                "type": "(msg1 -> msg2) -> ( a, Platform.Cmd.Cmd msg1 ) -> ( a, Platform.Cmd.Cmd msg2 )"
+            },
+            {
+                "name": "save",
+                "comment": " Turn a `model` value into a `( model, Cmd msg )` pair without adding any commands.\n\n    save model =\n        ( model, Cmd.none )\n\n",
+                "type": "a -> ( a, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "sequence",
+                "comment": " Take a list of `a -> ( a, Cmd msg )` functions and run them sequentially, in a left-to-right manner, with the second argument as input.\n",
+                "type": "List.List (a -> ( a, Platform.Cmd.Cmd msg )) -> a -> ( a, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "using",
+                "comment": " This combinator is useful for writing code in pointfree style.\n\nConsider the following example:\n\n    gotoPage : Int -> Model -> ( Model, Cmd msg )\n    gotoPage = ...\n\n    nextPage model =\n        gotoPage (model.currentPage + 1) model\n\nUsing this helper, the above code can be refactored as\n\n    nextPage =\n        using (\\{ currentPage } -> gotoPage (currentPage + 1))\n\nSee also [`with`](#with), [`andUsing`](#andUsing).\n\n",
+                "type": "(a -> a -> b) -> a -> b"
+            },
+            {
+                "name": "when",
+                "comment": " Run an update if the given condition is `True`, otherwise do nothing.\nFor example;\n\n    model\n        |> when (power > 100) (setWarning Overflow)\n\nSee also [`andThenIf`](#andThenIf).\n\n",
+                "type": "Basics.Bool -> (a -> ( a, Platform.Cmd.Cmd msg )) -> a -> ( a, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "with",
+                "comment": " This combinator is useful for writing code in pointfree style.\n\nFor example, the following code;\n\n    model\n        |> updateSomething\n        |> andThen (\\newModel -> setCounterValue (newModel.counter + 1) newModel)\n\n… can be refactored as\n\n    model\n        |> updateSomething\n        |> andThen (with .counter (setCounterValue << (+) 1))\n\nSee also [`using`](#using), [`andWith`](#andWith).\n\n",
+                "type": "(a -> b) -> (b -> a -> c) -> a -> c"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Update.Pipeline.Extended",
+        "comment": " This module introduces a simple callback utility that allows information to be passed upwards in the model-update hierarchy.\nThe pattern is similar to event handling in object-oriented languages, in the sense that we can think of a nested model as an _event source_, and of the parent as a _listener_. The event listener is then able to respond to state changes by hooking into the event source via one or more _callbacks_ (event handlers).\n\n\n## Usage example:\n\nThe following example shows how to implement an update function with support for callbacks.\nScroll down for explanations of the indicated points in the code.\n\n    module Main exposing (..)\n\n    import Browser exposing (Document, document)\n    import Html exposing (Html, button, span, text)\n    import Html.Attributes as Attributes\n    import Html.Events exposing (onClick)\n    import Update.Pipeline exposing (..)\n    import Update.Pipeline.Extended exposing (..)\n\n    type FeatureMsg\n        = OnClick Bool\n\n    type alias Feature =\n        {}\n\n    initFeature : ( Feature, Cmd FeatureMsg )\n    initFeature =\n        save {}\n\n    {- #1 -}\n    updateFeature :\n        FeatureMsg\n        -> { onClick : Bool -> a }\n        -> Extended Feature a\n        -> ( Extended Feature a, Cmd FeatureMsg )\n    updateFeature msg { onClick } model =\n        case msg of\n            OnClick choice ->\n                {- #2 -}\n                model\n                    |> call (onClick choice)\n\n    viewFeature : Feature -> Html FeatureMsg\n    viewFeature _ =\n        span []\n            [ button\n                [ onClick (OnClick True) ]\n                [ text \"Yay\" ]\n            , button\n                [ onClick (OnClick False) ]\n                [ text \"Nay\" ]\n            ]\n\n    type Msg\n        = FeatureMsg FeatureMsg\n\n    type alias Model =\n        { feature : Feature\n        , clicked : Bool\n        , choice : Maybe Bool\n        }\n\n    insertAsFeatureIn : Model -> Feature -> ( Model, Cmd Msg )\n    insertAsFeatureIn model feature =\n        save { model | feature = feature }\n\n    {- #3 -}\n    inFeature : Run Model Feature Msg FeatureMsg a\n    inFeature =\n        runStack .feature insertAsFeatureIn FeatureMsg\n\n    init : () -> ( Model, Cmd Msg )\n    init () =\n        map3 Model\n            (mapCmd FeatureMsg initFeature)\n            (save False)\n            (save Nothing)\n\n    {- #4 -}\n    handleClick :\n        Bool\n        -> Model\n        -> ( Model, Cmd Msg )\n    handleClick choice model =\n        save\n            { model\n                | clicked = True\n                , choice = Just choice\n            }\n\n    update : Msg -> Model -> ( Model, Cmd Msg )\n    update msg model =\n        case msg of\n            FeatureMsg featureMsg ->\n                {- #5 -}\n                model\n                    |> inFeature\n                        (updateFeature featureMsg\n                            { onClick = handleClick }\n                        )\n\n    subscriptions : Model -> Sub Msg\n    subscriptions _ =\n        Sub.none\n\n    view : Model -> Document Msg\n    view { feature, clicked, choice } =\n        { title = \"\"\n        , body =\n            [ if clicked then\n                let\n                    choiceStr =\n                        case choice of\n                            Just True ->\n                                \"yay\"\n\n                            _ ->\n                                \"nay\"\n                in\n                text (\"You chose \" ++ choiceStr ++ \"!\")\n\n              else\n                Html.map FeatureMsg (viewFeature feature)\n            ]\n        }\n\n    main : Program () Model Msg\n    main =\n        document\n            { init = init\n            , update = update\n            , subscriptions = subscriptions\n            , view = view\n            }\n\n\n### Explanation:\n\n1.  The update function is atypical in the following ways:\n      - Instead of the usual\n\n            msg -> m -> ( m, Cmd msg )\n\n        … we change the type so that it ends with\n\n            Extended m a -> ( Extended m a, Cmd msg )\n\n      - The second argument is a record containing a callback\n\n            onClick : Bool -> a\n\n        In general, we can have any number of these functions. The type of a callback is always of the form\n\n            arg1 -> arg2 -> ... -> a\n\n2.  Using [`call`](#call), we add a function to the list of callbacks, which is eventually returned together with the model. Think of this simply as invoking the callback.\n\n3.  Partially applied, [`runStack`](#runStack) gives us a function that takes care of updating the nested `Feature` model in a way that also accommodates for the extra callback structure.\n    The actual type of the resulting function is slightly complicated, so we’ll typically use the [`Run`](#Run) alias to make things more readable.\n\n4.  The handler’s type has to match that of the callback.\n    The type parameter `a` is expanded to `m -> ( m, Cmd msg )`, where `m` is the type of the parent model.\n    So, in this example\n\n        Bool -> a\n\n    … becomes\n\n        Bool -> Model -> ( Model, Cmd Msg )\n\n5.  Finally, in the parent model’s update function, we use the `inFeature` helper (see #3) to update the nested model and apply the callbacks.\n\n\n# Types\n\n@docs Extended, Stack, Run\n\n\n# Callback Interface\n\n@docs call, sequenceCalls, runStack, runStackE, runStackExtended, extend, mapE, mapE2, mapE3\n\n@docs lift, lift2, lift3\n\n\n# Shortcuts\n\n@docs andCall, andLift\n\n\n# Pointfree Helpers\n\n@docs choosing\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Extended",
+                "comment": " An _extended_ model is a model paired with a list of _callbacks_ — functions that are applied to the parent model after an update.\n",
+                "args": [
+                    "m",
+                    "a"
+                ],
+                "type": "( m, List.List a )"
+            },
+            {
+                "name": "Run",
+                "comment": " An alias that helps making type signatures less verbose in client code.\nSee [`runStack`](#runStack) for an example of how to use this.\n",
+                "args": [
+                    "m",
+                    "m1",
+                    "msg",
+                    "msg1",
+                    "a"
+                ],
+                "type": "Update.Pipeline.Extended.Stack m m1 msg msg1 a -> m -> ( m, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "Stack",
+                "comment": " Represents an update where callbacks may be present.\n",
+                "args": [
+                    "m",
+                    "m1",
+                    "msg",
+                    "msg1",
+                    "a"
+                ],
+                "type": "Update.Pipeline.Extended.Extended m1 a -> ( Update.Pipeline.Extended.Extended m1 (m -> ( m, Platform.Cmd.Cmd msg )), Platform.Cmd.Cmd msg1 )"
+            }
+        ],
+        "values": [
+            {
+                "name": "andCall",
+                "comment": " Shortcut for `andThen <<`[`call`](#call).\n",
+                "type": "c -> ( Update.Pipeline.Extended.Extended a c, Platform.Cmd.Cmd msg ) -> ( Update.Pipeline.Extended.Extended a c, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "andLift",
+                "comment": " Shortcut for `andThen <<`[`lift`](#lift).\n",
+                "type": "(a -> ( b, Platform.Cmd.Cmd msg )) -> ( Update.Pipeline.Extended.Extended a c, Platform.Cmd.Cmd msg ) -> ( Update.Pipeline.Extended.Extended b c, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "call",
+                "comment": " Invoke a callback in an _extended_ update function. That is, one that returns an `( Extended a c, Cmd msg )` value, as opposed to the usual `( a, Cmd msg )` pair.\n\nSee also [`andCall`](#andCall).\n\n",
+                "type": "c -> Update.Pipeline.Extended.Extended a c -> ( Update.Pipeline.Extended.Extended a c, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "choosing",
+                "comment": " A version of [`using`](Update.Pipeline#using) that works with `Extended` values.\n",
+                "type": "(a -> Update.Pipeline.Extended.Extended a c -> b) -> Update.Pipeline.Extended.Extended a c -> b"
+            },
+            {
+                "name": "extend",
+                "comment": " Create an extended model without any callbacks.\n",
+                "type": "a -> Update.Pipeline.Extended.Extended a c"
+            },
+            {
+                "name": "lift",
+                "comment": " Take an _effectful_ update function `(a -> ( b, Cmd msg ))` and transform it into one that instead operates on `Extended a c` values and returns an `( Extended b c, Cmd msg )` pair.\n\n_Aside:_ This function behaves like `traverse` in the Traversable type class in Haskell, when we think of updates (`a -> ( b, Cmd msg )`) as monadic functions `a -> m b`.\n\nSee also [`andLift`](#andLift).\n\n",
+                "type": "(a -> ( b, Platform.Cmd.Cmd msg )) -> Update.Pipeline.Extended.Extended a c -> ( Update.Pipeline.Extended.Extended b c, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "lift2",
+                "comment": " A version of [`lift`](#lift) for functions of two arguments.\n",
+                "type": "(a -> b -> ( c, Platform.Cmd.Cmd msg )) -> Update.Pipeline.Extended.Extended a d -> Update.Pipeline.Extended.Extended b d -> ( Update.Pipeline.Extended.Extended c d, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "lift3",
+                "comment": " A version of [`lift`](#lift) for functions of three arguments.\n",
+                "type": "(a -> b -> c -> ( d, Platform.Cmd.Cmd msg )) -> Update.Pipeline.Extended.Extended a e -> Update.Pipeline.Extended.Extended b e -> Update.Pipeline.Extended.Extended c e -> ( Update.Pipeline.Extended.Extended d e, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "mapE",
+                "comment": " Map a function `a -> b` over an `Extended a *` model.\n",
+                "type": "(a -> b) -> Update.Pipeline.Extended.Extended a c -> Update.Pipeline.Extended.Extended b c"
+            },
+            {
+                "name": "mapE2",
+                "comment": " A version of [`mapE`](#mapE) that takes a function of two arguments as input.\n",
+                "type": "(a -> b -> c) -> Update.Pipeline.Extended.Extended a d -> Update.Pipeline.Extended.Extended b d -> Update.Pipeline.Extended.Extended c d"
+            },
+            {
+                "name": "mapE3",
+                "comment": " A version of [`mapE`](#mapE) that takes a function of three arguments as input.\n",
+                "type": "(a -> b -> c -> d) -> Update.Pipeline.Extended.Extended a e -> Update.Pipeline.Extended.Extended b e -> Update.Pipeline.Extended.Extended c e -> Update.Pipeline.Extended.Extended d e"
+            },
+            {
+                "name": "runStack",
+                "comment": " Some amount of glue code is required to update a nested model, and subsequently apply the resulting callbacks to the outer model.\n`runStack` takes care of those internals. Typically, it is partially applied with the first three arguments:\n\n  - The first argument is a function that _extracts_ the inner model from the outer.\n    This is usually just a property accessor, like `.inner` in the below example.\n\n```\ngetter : outer -> inner\n```\n\n  - The function in the second argument is used to _reinsert_ the inner model back into the outer (parent) model.\n\n```\nsetter : outer -> inner -> ( outer, Cmd msg )\n```\n\n  - The third argument is a constructor that takes a message of the inner model’s message type as input and creates one of the parent’s type.\n\n```\ntoMsg : msg1 -> msg\n```\n\n\n#### _Here is an example:_\n\n    updateInner :\n        InnerMsg\n        -> { onComplete : Message -> a\n           , onError : Error -> a\n           }\n        -> Extended InnerModel\n        -> ( Extended InnerModel, Cmd InnerMsg )\n    updateInner =\n        -- ...\n\n    type Msg\n        = InnerMsg InnerMsg\n\n    type alias Model =\n        { inner : InnerModel\n        }\n\n    inInner : Run Model InnerModel Msg InnerMsg a\n    inInner =\n        runStack\n            .inner\n            (\\m inner -> save { m | inner = inner })\n            InnerMsg\n\n    update : Msg -> Model -> ( Model, Cmd Msg )\n    update msg model =\n        case msg of\n            InnerMsg innerMsg ->\n                model\n                    |> inInner (updateInner innerMsg)\n\nSee also [`Run`](#Run), [`runStackExtended`](#runStackExtended).\n\n",
+                "type": "(a -> m1) -> (a -> m1 -> ( m, Platform.Cmd.Cmd msg )) -> (msg1 -> msg) -> Update.Pipeline.Extended.Stack m m1 msg msg1 b -> a -> ( m, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "runStackE",
+                "comment": " **DEPRECATED:** Use [`runStackExtended`](#runStackExtended) instead.\n",
+                "type": "(d -> m1) -> (d -> a -> ( b, Platform.Cmd.Cmd msg )) -> (msg1 -> msg) -> (Update.Pipeline.Extended.Extended m1 f -> ( Update.Pipeline.Extended.Extended a (Update.Pipeline.Extended.Extended b c -> ( Update.Pipeline.Extended.Extended b c, Platform.Cmd.Cmd msg )), Platform.Cmd.Cmd msg1 )) -> Update.Pipeline.Extended.Extended d c -> ( Update.Pipeline.Extended.Extended b c, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "runStackExtended",
+                "comment": " A version of [`runStack`](#runStack) that can be used when both the child’s and the parent’s update functions are of the extended type.\n\nHere is a modified version of the example from the documentation for `runStack`:\n\n    updateInner :\n        InnerMsg\n        -> { onComplete : Message -> a\n           , onError : Error -> a\n           }\n        -> Extended InnerModel\n        -> ( Extended InnerModel, Cmd InnerMsg )\n    updateInner =\n        -- ...\n\n    inInner : Run (Extended Model c) InnerModel Msg InnerMsg a\n    inInner =\n        runStackExtended\n            .inner\n            (\\m inner -> save { m | inner = inner })\n            InnerMsg\n\n    update :\n        Msg\n        -> Extended Model c\n        -> ( Extended Model c, Cmd Msg )\n    update msg model =\n        -- ...\n\n",
+                "type": "(d -> m1) -> (d -> a -> ( b, Platform.Cmd.Cmd msg )) -> (msg1 -> msg) -> (Update.Pipeline.Extended.Extended m1 f -> ( Update.Pipeline.Extended.Extended a (Update.Pipeline.Extended.Extended b c -> ( Update.Pipeline.Extended.Extended b c, Platform.Cmd.Cmd msg )), Platform.Cmd.Cmd msg1 )) -> Update.Pipeline.Extended.Extended d c -> ( Update.Pipeline.Extended.Extended b c, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "sequenceCalls",
+                "comment": " Compose and apply the list of functions (callbacks) accumulated by a nested update call.\nUsually it is not necessary to use this function directly in client code.\nInstead, see [`runStack`](#runStack).\n\nSee also [`sequence`](Update.Pipeline#sequence) in `Update.Pipeline`.\nThis function is identical to `uncurry (flip sequence)`.\n\n",
+                "type": "Update.Pipeline.Extended.Extended a (a -> ( a, Platform.Cmd.Cmd msg )) -> ( a, Platform.Cmd.Cmd msg )"
+            }
+        ],
+        "binops": []
+    }
+]

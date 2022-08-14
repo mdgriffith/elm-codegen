@@ -1,0 +1,53 @@
+[
+    {
+        "name": "Iris",
+        "comment": " The [Iris flower data set](https://en.wikipedia.org/wiki/Iris_flower_data_set) as an elm data structure.\n\nThis package exposes the iris data set as a list of records, for easy experimentation with various classification methods.\nThe source is [here](http://archive.ics.uci.edu/ml/datasets/Iris).\n\n@docs data\n@docs Iris\n\n\n## Species\n\n@docs Species, speciesToString\n\n\n## Helpers\n\n@docs averageIndividuals\n\n",
+        "unions": [
+            {
+                "name": "Species",
+                "comment": " The three different species of iris in this data set\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Setosa",
+                        []
+                    ],
+                    [
+                        "Versicolour",
+                        []
+                    ],
+                    [
+                        "Virginica",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Iris",
+                "comment": " An iris data point. Uses the `ianmackenzie/elm-units` [`Length`](https://package.elm-lang.org/packages/ianmackenzie/elm-units/latest/Length) type.\n",
+                "args": [],
+                "type": "{ sepal : { length : Length.Length, width : Length.Length }, petal : { length : Length.Length, width : Length.Length }, class : Iris.Species }"
+            }
+        ],
+        "values": [
+            {
+                "name": "averageIndividuals",
+                "comment": " The average individual (mean) of each class. Useful to get the error of your classification.\n",
+                "type": "{ setosa : Iris.Iris, versicolour : Iris.Iris, virginica : Iris.Iris }"
+            },
+            {
+                "name": "data",
+                "comment": " The data records\n",
+                "type": "List.List Iris.Iris"
+            },
+            {
+                "name": "speciesToString",
+                "comment": " Turn a species into a string\n\n    classToString Setosa\n        --> \"setosa\"\n\n",
+                "type": "Iris.Species -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,85 @@
+[
+    {
+        "name": "GLSL",
+        "comment": " This package helps to combine GLSL code snippets.\n\nThis package is build around functions of type `Generator -> Generator`.\nThey are all meant to be used in a pipeline (`|>`) or by composing them (`>>`).\n\n@docs Generator, emptyFragmentShader, emptyVertexShader\n\nShaders usually start by defining variables and functions\n\n    emptyFragmentShader\n        |> defineUniform \"vec3\" \"color\"\n        |> define glslCodeDefiningAFunction\n\n@docs GLSLType, defineAttribute, defineUniform, defineVarying, define\n\nThen you define the code for main using code snippets and possibly some more variables.\nVariables used here will be automatically declared in the genrated code.\n\n    code\n        |> (s \"vec4 c = vec4(color * \" >> uniform \"float\" \"colorScale\" >> \", 1.0);\")\n        |> s \"gl_FragColor = c;\"\n\n@docs s, attribute, uniform, varying\n\nThen you take a finished `Generator` and generate code from it:\n\n@docs generateGLSL, generateElm\n\n",
+        "unions": [
+            {
+                "name": "Generator",
+                "comment": " A type that describes a fragment shader\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "GLSLType",
+                "comment": " ",
+                "args": [],
+                "type": "String.String"
+            }
+        ],
+        "values": [
+            {
+                "name": "attribute",
+                "comment": " ",
+                "type": "GLSL.GLSLType -> String.String -> GLSL.Generator -> GLSL.Generator"
+            },
+            {
+                "name": "define",
+                "comment": " ",
+                "type": "String.String -> GLSL.Generator -> GLSL.Generator"
+            },
+            {
+                "name": "defineAttribute",
+                "comment": " ",
+                "type": "GLSL.GLSLType -> String.String -> GLSL.Generator -> GLSL.Generator"
+            },
+            {
+                "name": "defineUniform",
+                "comment": " ",
+                "type": "GLSL.GLSLType -> String.String -> GLSL.Generator -> GLSL.Generator"
+            },
+            {
+                "name": "defineVarying",
+                "comment": " ",
+                "type": "GLSL.GLSLType -> String.String -> GLSL.Generator -> GLSL.Generator"
+            },
+            {
+                "name": "emptyFragmentShader",
+                "comment": " This starts a fragment shader pipeline\n",
+                "type": "GLSL.Generator"
+            },
+            {
+                "name": "emptyVertexShader",
+                "comment": " Starts a vertex shader\n",
+                "type": "GLSL.Generator"
+            },
+            {
+                "name": "generateElm",
+                "comment": " Transform a generator into the finished elm code\n",
+                "type": "String.String -> GLSL.Generator -> String.String"
+            },
+            {
+                "name": "generateGLSL",
+                "comment": " Transform a generator into the finished GLSL code\n",
+                "type": "GLSL.Generator -> String.String"
+            },
+            {
+                "name": "s",
+                "comment": " Adds some lines of code to main\n",
+                "type": "String.String -> GLSL.Generator -> GLSL.Generator"
+            },
+            {
+                "name": "uniform",
+                "comment": " ",
+                "type": "GLSL.GLSLType -> String.String -> GLSL.Generator -> GLSL.Generator"
+            },
+            {
+                "name": "varying",
+                "comment": " ",
+                "type": "GLSL.GLSLType -> String.String -> GLSL.Generator -> GLSL.Generator"
+            }
+        ],
+        "binops": []
+    }
+]

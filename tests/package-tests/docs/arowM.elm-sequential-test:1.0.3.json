@@ -1,0 +1,45 @@
+[
+    {
+        "name": "Test.Sequence",
+        "comment": " Sequencial testing.\n\n@docs Sequence\n@docs run\n@docs describe\n@docs map\n@docs andThen\n@docs assert\n\n",
+        "unions": [
+            {
+                "name": "Sequence",
+                "comment": " ",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "andThen",
+                "comment": " ",
+                "type": "String.String -> (a -> Maybe.Maybe b) -> Test.Sequence.Sequence a -> Test.Sequence.Sequence b"
+            },
+            {
+                "name": "assert",
+                "comment": " ",
+                "type": "String.String -> (a -> Expect.Expectation) -> Test.Sequence.Sequence a -> Test.Sequence.Sequence a"
+            },
+            {
+                "name": "describe",
+                "comment": " ",
+                "type": "String.String -> Test.Sequence.Sequence ()"
+            },
+            {
+                "name": "map",
+                "comment": " ",
+                "type": "(a -> b) -> Test.Sequence.Sequence a -> Test.Sequence.Sequence b"
+            },
+            {
+                "name": "run",
+                "comment": " ",
+                "type": "Test.Sequence.Sequence a -> Test.Test"
+            }
+        ],
+        "binops": []
+    }
+]

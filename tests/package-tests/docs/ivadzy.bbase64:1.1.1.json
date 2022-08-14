@@ -1,0 +1,86 @@
+[
+    {
+        "name": "Base64.Decode",
+        "comment": " The Decode module enables you to decode Base64 strings into certain values.\n\n\n# Decoders\n\n@docs Decoder, string, bytes\n\n\n# Decoding\n\n@docs decode, map, Error\n\n",
+        "unions": [
+            {
+                "name": "Decoder",
+                "comment": " A decoder type that knows how to decode a Base64 string.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Error",
+                "comment": " Errors that can occur during a decoding:\n\n    Base64.Decode.decode Base64.Decode.string \"a===\" == Err ValidationError\n\n    Base64.Decode.decode Base64.Decode.string \"/Ng9\" == Err InvalidByteSequence\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "ValidationError",
+                        []
+                    ],
+                    [
+                        "InvalidByteSequence",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "bytes",
+                "comment": " Bytes `Decoder`.\n",
+                "type": "Base64.Decode.Decoder Bytes.Bytes"
+            },
+            {
+                "name": "decode",
+                "comment": " Turn a `Decoder` into a certain value.\n\nDecoding can fail, see `Error`.\n\n",
+                "type": "Base64.Decode.Decoder a -> String.String -> Result.Result Base64.Decode.Error a"
+            },
+            {
+                "name": "map",
+                "comment": " Transforms the value produced by a decoder.\n",
+                "type": "(a -> b) -> Base64.Decode.Decoder a -> Base64.Decode.Decoder b"
+            },
+            {
+                "name": "string",
+                "comment": " String `Decoder`.\n",
+                "type": "Base64.Decode.Decoder String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Base64.Encode",
+        "comment": " The Encode module enables you to encode strings and raw bytes.\n\n\n# Encoders\n\n@docs Encoder, string, bytes\n\n\n# Encoding\n\n@docs encode\n\n",
+        "unions": [
+            {
+                "name": "Encoder",
+                "comment": " A type that knows how to encode certain data into a\nBase64 string.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "bytes",
+                "comment": " Bytes `Encoder`.\n",
+                "type": "Bytes.Bytes -> Base64.Encode.Encoder"
+            },
+            {
+                "name": "encode",
+                "comment": " Turns an `Encoder` into a Base64 string.\n",
+                "type": "Base64.Encode.Encoder -> String.String"
+            },
+            {
+                "name": "string",
+                "comment": " String `Encoder`.\n",
+                "type": "String.String -> Base64.Encode.Encoder"
+            }
+        ],
+        "binops": []
+    }
+]

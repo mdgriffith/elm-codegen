@@ -1,0 +1,434 @@
+[
+    {
+        "name": "Lazy.LList",
+        "comment": " This module implements lazy construction of strict List.\nIt is not Lazy List implementation and it has different characteristics.\nIt's mostly intended for internal purposes of this library and is exposed\njust in case some additional user extensions will need it.\n\n\n# Types & Constructors\n\n@docs LList, empty, singleton, llist, fromList\n\n\n# Operations\n\n@docs cons, append\n\n\n# Query\n\n@docs isEmpty, toList, head, tail\n\n\n# Transformations\n\n@docs map, map2, filter, filterMap, reverse, sort, sortBy, sortWith, foldr, foldl, concat, andThen\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "LList",
+                "comment": " **`LList` uses lazy implementation and therefore can't be compared using `==`**\n",
+                "args": [
+                    "a"
+                ],
+                "type": "Lazy.Lazy (List.List a)"
+            }
+        ],
+        "values": [
+            {
+                "name": "andThen",
+                "comment": " Map `LList` construction over `LList`.\n\n    cons \"foo\" (cons \"bar\" <| singleton \"baz\")\n        |> andThen (\\a -> cons a <| singleton (a ++ \" fighter\" ))\n        |> toList\n    --> [ \"foo\", \"foo fighter\", \"bar\", \"bar fighter\", \"baz\", \"baz fighter\" ]\n\nThis function is performed lazily.\n\n",
+                "type": "(a -> Lazy.LList.LList b) -> Lazy.LList.LList a -> Lazy.LList.LList b"
+            },
+            {
+                "name": "append",
+                "comment": " Append `LList` to `LList`.\n\n    append (singleton \"foo\") (fromList [ \"bar\", \"baz\" ])\n        |> toList\n    --> [ \"foo\", \"bar\", \"baz\" ]\n\nThis function is performed lazily.\n\n",
+                "type": "Lazy.LList.LList a -> Lazy.LList.LList a -> Lazy.LList.LList a"
+            },
+            {
+                "name": "concat",
+                "comment": " Flatten `LList`.\n\n    fromList [ singleton \"foo\", cons \"bar\" <| singleton \"baz\" ]\n       |> concat\n       |> toList\n    --> [ \"foo\", \"bar\", \"baz\" ]\n\nThis function is performed lazily.\n\n",
+                "type": "Lazy.LList.LList (Lazy.LList.LList a) -> Lazy.LList.LList a"
+            },
+            {
+                "name": "cons",
+                "comment": " Add element to `LList`.\n\n    empty\n        |> cons \"bar\"\n        |> cons \"foo\"\n        |> toList\n    --> [ \"foo\", \"bar\" ]\n\nThis function is performed lazily.\n\n",
+                "type": "a -> Lazy.LList.LList a -> Lazy.LList.LList a"
+            },
+            {
+                "name": "empty",
+                "comment": " Initialize empty `LList`.\n\n    toList empty\n    --> []\n\n",
+                "type": "Lazy.LList.LList a"
+            },
+            {
+                "name": "filter",
+                "comment": " Filter `LList`.\n\n    (cons 1 <| cons 2 <| cons 3 empty)\n        |> filter ((<) 1)\n        |> toList\n    --> [ 2, 3 ]\n\nThis function is performed lazily.\n\n",
+                "type": "(a -> Basics.Bool) -> Lazy.LList.LList a -> Lazy.LList.LList a"
+            },
+            {
+                "name": "filterMap",
+                "comment": " Similar to `List.filterMap` but for `LList`.\n\n    (cons 1 <| cons 2 <| cons 3 empty)\n        |> filterMap (\\a -> if 1 < a then Just (2 * a) else Nothing)\n        |> toList\n    --> [ 4, 6 ]\n\nThis function is performed lazily.\n\n",
+                "type": "(a -> Maybe.Maybe b) -> Lazy.LList.LList a -> Lazy.LList.LList b"
+            },
+            {
+                "name": "foldl",
+                "comment": " Same as `List.foldl` but for `LLists`.\n\n    llist (List.range 0) 5\n        |> foldl (+) 0\n    --> 15\n\n    llist (List.range 0) 3\n        |> foldl (::) []\n    --> [ 3, 2, 1, 0 ]\n\nThis function forces evaluation.\n\n",
+                "type": "(a -> b -> b) -> b -> Lazy.LList.LList a -> b"
+            },
+            {
+                "name": "foldr",
+                "comment": " Same as `List.foldr` but for `LLists`.\n\n    llist (List.range 0) 5\n        |> foldr (+) 0\n    --> 15\n\n    llist (List.range 0) 3\n        |> foldr (::) []\n    --> [ 0, 1, 2, 3 ]\n\nThis function forces evaluation.\n\n",
+                "type": "(a -> b -> b) -> b -> Lazy.LList.LList a -> b"
+            },
+            {
+                "name": "fromList",
+                "comment": " Construct `LList` from `List`.\n\n    fromList [ \"foo\", \"bar\", \"baz\" ]\n        |> toList\n    --> [ \"foo\", \"bar\", \"baz\" ]\n\n",
+                "type": "List.List a -> Lazy.LList.LList a"
+            },
+            {
+                "name": "head",
+                "comment": " Get the first element from `LList`.\n\n    head empty\n    --> Nothing\n\n    llist (List.range 0) 2\n       |> head\n    --> Just 0\n\nThis function forces evaluation.\n\n",
+                "type": "Lazy.LList.LList a -> Maybe.Maybe a"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Check if `LList` is empty.\n\n    isEmpty empty\n    --> True\n\n    isEmpty (singleton \"foo\")\n    --> False\n\n    llist (List.filter <| \\a -> a > 10) [ 1, 2, 3 ]\n        |> isEmpty\n    --> True\n\nThis function forces evaluation.\n\n",
+                "type": "Lazy.LList.LList a -> Basics.Bool"
+            },
+            {
+                "name": "llist",
+                "comment": " Init `LList` using constructor.\n\n`LList` is initialized using a function from `a -> List b`.\nEvaluation of this function is lazy and happens in time when\nactual value is needed, not when constructor is called.\n\nFor instance you can use some `List` constructor:\n\n    llist (List.range 0) 5\n        |> toList\n    --> [ 0, 1, 2, 3, 4, 5 ]\n\nOr use any other function you need`List`:\n\n    llist (List.filter <| \\a -> modBy 2 a == 0) (List.range 0 10)\n        |> toList\n    --> [ 0, 2, 4, 6, 8, 10 ]\n\n",
+                "type": "(a -> List.List b) -> a -> Lazy.LList.LList b"
+            },
+            {
+                "name": "map",
+                "comment": " Map function over `LList`.\n\n    llist (List.range 0) 5\n        |> map ((*) 2)\n        |> toList\n    --> [ 0, 2, 4, 6, 8, 10 ]\n\nThis function is performed lazily.\n\n",
+                "type": "(a -> b) -> Lazy.LList.LList a -> Lazy.LList.LList b"
+            },
+            {
+                "name": "map2",
+                "comment": " Map a functions over two `LList`s.\n\n    llist (List.range 0) 5\n        |> map2 (+) (llist (List.range 0) 5)\n        |> toList\n    --> [ 0, 2, 4, 6, 8, 10 ]\n\nThis function is performed lazily.\n\n",
+                "type": "(a -> b -> c) -> Lazy.LList.LList a -> Lazy.LList.LList b -> Lazy.LList.LList c"
+            },
+            {
+                "name": "reverse",
+                "comment": " Reverse `LList`.\n\n    fromList [ 1, 2, 3 ]\n        |> reverse\n        |> toList\n    --> [ 3, 2, 1 ]\n\nThis function is performed lazily.\n\n",
+                "type": "Lazy.LList.LList a -> Lazy.LList.LList a"
+            },
+            {
+                "name": "singleton",
+                "comment": " Initialize singleton `LList`.\n\n    singleton \"foo\"\n        |> toList\n    --> [ \"foo\" ]\n\n",
+                "type": "a -> Lazy.LList.LList a"
+            },
+            {
+                "name": "sort",
+                "comment": " Sort by for `LList`.\n\n    fromList [ 3, 1, 2 ]\n        |> sort\n        |> toList\n    --> [ 1, 2, 3 ]\n\nThis function is performed lazily.\n\n",
+                "type": "Lazy.LList.LList comparable -> Lazy.LList.LList comparable"
+            },
+            {
+                "name": "sortBy",
+                "comment": " Sort by for `LList`.\n\n    fromList [ 3, 1, 2 ]\n        |> sortBy identity\n        |> toList\n    --> [ 1, 2, 3 ]\n\n    fromList [ { val = \"c\"} , { val = \"b\"}, { val = \"a\"} ]\n        |> sortBy .val\n        |> toList\n    -->  [ { val = \"a\"}, { val = \"b\"}, { val = \"c\"} ]\n\nThis function is performed lazily.\n\n",
+                "type": "(a -> comparable) -> Lazy.LList.LList a -> Lazy.LList.LList a"
+            },
+            {
+                "name": "sortWith",
+                "comment": " Sort with for `LList`\n\n    flippedComparison : comparable -> comparable -> Order\n    flippedComparison a b =\n        case Basics.compare a b of\n            LT -> GT\n            EQ -> EQ\n            GT -> LT\n\n    llist (List.range 1) 5\n        |> sortWith flippedComparison\n        |> toList\n    --> [ 5, 4, 3, 2, 1 ]\n\nThis function is performed lazily.\n\n",
+                "type": "(a -> a -> Basics.Order) -> Lazy.LList.LList a -> Lazy.LList.LList a"
+            },
+            {
+                "name": "tail",
+                "comment": " Get the first element from `LList`.\n\n    tail empty\n    --> Nothing\n\n    tail (singleton \"foo\")\n        |> Maybe.map toList\n    --> Just []\n\n    llist (List.range 0) 2\n        |> tail\n        |> Maybe.map toList\n    --> Just [ 1, 2 ]\n\nThis function forces evaluation.\n\n",
+                "type": "Lazy.LList.LList a -> Maybe.Maybe (Lazy.LList.LList a)"
+            },
+            {
+                "name": "toList",
+                "comment": " Build `List` from `LList`.\n\n    toList empty\n    --> []\n\n    toList <| llist (List.range 0) 2\n    --> [ 0, 1, 2 ]\n\nThis function forces evaluation.\n\n",
+                "type": "Lazy.LList.LList a -> List.List a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Lazy.Tree",
+        "comment": " This module implements Rose Tree data structure.\n\n> In computing, a multi-way tree or rose tree is a tree data structure\n> with a variable and unbounded number of branches per node.\n\nThis particular implementation uses lazy list construction (using `LList` module)\nto lazily evaluate levels of Tree.\n\n\n# Types & Constructor\n\n@docs Tree, Forest, singleton, build, fromList, fromKeyedList\n\n\n# Query\n\n@docs isEmpty, item, children, descendants\n\n\n# Modify\n\n@docs insert\n\n\n# Transforms\n\n@docs map, map2, filter, filterMap, sort, sortBy, sortWith, andMap, flatten, andThen, duplicate, extend\n\n\n# Forest\n\n@docs forestMap, forestMap2\n\n",
+        "unions": [
+            {
+                "name": "Tree",
+                "comment": " \\*\\* Be careful when comparing `Tree`s using `(==)`.\\*\\*\nDue to use of laziness `(==)` isn't reliable for comparing Trees.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Tree",
+                        [
+                            "a",
+                            "Lazy.Tree.Forest a"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Forest",
+                "comment": " \\*\\* Be careful when comparing `Forest`s using `(==)`.\\*\\*\nDue to use of laziness `(==)` isn't reliable for comparing Forests.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "Lazy.LList.LList (Lazy.Tree.Tree a)"
+            }
+        ],
+        "values": [
+            {
+                "name": "andMap",
+                "comment": " Chain map operations.\n\n    import Lazy.LList as LL\n    import Tuple\n\n    Tree Tuple.pair (LL.fromList [ singleton Tuple.pair, singleton Tuple.pair, singleton Tuple.pair ])\n        |> andMap (Tree 1 <| LL.fromList [ singleton 2, singleton 3, singleton 4 ])\n        |> andMap (Tree 5 <| LL.fromList [ singleton 6, singleton 7 ])\n        |> children\n    --> [ (2, 6), (3, 7) ]\n\n",
+                "type": "Lazy.Tree.Tree a -> Lazy.Tree.Tree (a -> b) -> Lazy.Tree.Tree b"
+            },
+            {
+                "name": "andThen",
+                "comment": " Map given function onto a `Tree` and flatten the result.\n\n    import Lazy.LList as LL\n\n    singleton \"foo\"\n        |> insert (singleton \"bar\")\n        |> insert (singleton \"baz\")\n        |> andThen (\\a -> Tree a <| LL.fromList [ singleton <| a ++ \" fighter\" ])\n        |> children\n    --> [ \"bar\", \"baz\", \"foo fighter\" ]\n\n",
+                "type": "(a -> Lazy.Tree.Tree b) -> Lazy.Tree.Tree a -> Lazy.Tree.Tree b"
+            },
+            {
+                "name": "build",
+                "comment": " Build `Tree` using custom constructor.\n\nThis can be for instance used to build `Tree` from other recursive data structure:\n\n    type Item = Item String (List Item)\n\n    getChildren (Item _ children) = children\n\n    Item \"foo\" [ Item \"bar\" [], Item \"baz\" []]\n        |> build getChildren\n        |> children\n    -> [ Item \"bar\" [], Item \"baz\" [] ]\n\nOr lookups to some other data structure.\n\n    import Dict exposing (Dict)\n\n    rootItem : String\n    rootItem = \"foo\"\n\n    childrenDict : Dict String (List String)\n    childrenDict = Dict.fromList [ (\"foo\", [ \"bar\", \"baz\" ]) ]\n\n    build (\\i -> Maybe.withDefault [] <| Dict.get i childrenDict) rootItem\n        |> children\n    --> [ \"bar\", \"baz\" ]\n\n",
+                "type": "(a -> List.List a) -> a -> Lazy.Tree.Tree a"
+            },
+            {
+                "name": "children",
+                "comment": " Obtain children items of `Tree`.\n\n    singleton \"foo\"\n        |> insert (singleton \"bar\")\n        |> insert (singleton \"baz\")\n        |> children\n    --> [ \"bar\", \"baz\" ]\n\n",
+                "type": "Lazy.Tree.Tree a -> List.List a"
+            },
+            {
+                "name": "descendants",
+                "comment": " Obtain descendants as `Forest` from the `Tree`.\n\n    import Lazy.LList as LL\n\n    singleton \"foo\"\n        |> insert (singleton \"bar\")\n        |> insert (singleton \"baz\")\n        |> descendants\n        |> LL.map item\n        |> LL.toList\n    --> [ \"bar\", \"baz\" ]\n\n    singleton \"foo\"\n        |> insert (singleton \"bar\" |> insert (singleton \"baz\"))\n        |> descendants\n        |> LL.map (children)\n        |> LL.toList\n    --> [ [ \"baz\" ] ]\n\n",
+                "type": "Lazy.Tree.Tree a -> Lazy.Tree.Forest a"
+            },
+            {
+                "name": "duplicate",
+                "comment": " Duplicates Tree (Comonad)\n",
+                "type": "Lazy.Tree.Tree a -> Lazy.Tree.Tree (Lazy.Tree.Tree a)"
+            },
+            {
+                "name": "extend",
+                "comment": " Extend tree (Comonad)\n",
+                "type": "(Lazy.Tree.Tree a -> b) -> Lazy.Tree.Tree a -> Lazy.Tree.Tree b"
+            },
+            {
+                "name": "filter",
+                "comment": " Filter `Tree` children by given function.\n\nThis function goes from children of root downwards.\nThis means that nodes that don't satisfy predicate\nare excluded and filter is never performed over their children\neven if on those it might pass.\n\n    import Lazy.LList as LL\n\n    Tree 1 (LL.fromList [ singleton 2, singleton 3, singleton 4 ])\n        |> filter ((>) 4)\n        |> children\n    --> [ 2, 3 ]\n\n    Tree 1 (LL.fromList [ insert (singleton 5) <| singleton 2, insert (singleton 6) <| singleton 3, singleton 4 ])\n        |> filter ((<) 2)\n        |> descendants\n        |> LL.map children\n        |> LL.toList\n    --> [ [ 6 ], [] ]\n\n",
+                "type": "(a -> Basics.Bool) -> Lazy.Tree.Tree a -> Lazy.Tree.Tree a"
+            },
+            {
+                "name": "filterMap",
+                "comment": " FilterMap on `Tree`. Works similarly to `List.filterMap` with the same properties as [filter](#filter).\nIn case of `filterMap` even root node has to satisfy predicate otherwise\n`Nothing` is returned.\n\n    import Lazy.LList as LL\n\n    Tree 1 (LL.fromList [ singleton 2, singleton 3, singleton 4 ])\n        |> filterMap (\\a -> if a < 4 then Just (a * 2) else Nothing)\n        |> Maybe.map children\n    --> Just [ 4, 6 ]\n\n    Tree 1 (LL.fromList [ singleton 2, singleton 3, singleton 4 ])\n        |> filterMap (\\a -> if a > 2 then Just (a * 2) else Nothing)\n        |> Maybe.map children\n    --> Nothing\n\n",
+                "type": "(a -> Maybe.Maybe b) -> Lazy.Tree.Tree a -> Maybe.Maybe (Lazy.Tree.Tree b)"
+            },
+            {
+                "name": "flatten",
+                "comment": " Flatten `Tree` of Trees.\n\n    singleton (singleton 1)\n        |> flatten\n        |> item\n    --> 1\n\n    import Lazy.LList as LL\n\n    Tree (Tree \"foo\" <| LL.fromList [ singleton \"bar\"]) (LL.fromList [ singleton <| singleton \"baz\" ])\n        |> flatten\n        |> children\n    --> [ \"baz\", \"bar\" ]\n\n",
+                "type": "Lazy.Tree.Tree (Lazy.Tree.Tree a) -> Lazy.Tree.Tree a"
+            },
+            {
+                "name": "forestMap",
+                "comment": " Map function over `Forest`.\n\n    import Lazy.LList as LL\n\n    [ 1, 2, 3 ]\n        |> fromList (\\m _ -> m == Nothing)\n        |> forestMap ((+) 1)\n        |> LL.map item\n        |> LL.toList\n    --> [ 2, 3, 4 ]\n\n",
+                "type": "(a -> b) -> Lazy.Tree.Forest a -> Lazy.Tree.Forest b"
+            },
+            {
+                "name": "forestMap2",
+                "comment": " Map function over two `Forest`s.\n\n    import Lazy.LList as LL\n\n    [ 1, 2, 3 ]\n        |> fromList (\\m _ -> m == Nothing)\n        |> forestMap2 (+) (fromList (\\m _ -> m == Nothing) [1, 2])\n        |> LL.map item\n        |> LL.toList\n    --> [ 2, 4 ]\n\n",
+                "type": "(a -> b -> c) -> Lazy.Tree.Forest a -> Lazy.Tree.Forest b -> Lazy.Tree.Forest c"
+            },
+            {
+                "name": "fromKeyedList",
+                "comment": " Construct `Forest` from a list of items that can be **uniquely identified** by comparable value.\n\nThis function can yield much better performance than more general [`fromList`](#fromList) alternative.\nBe aware that this function pushes **more work on initial construction of the Tree** at the benefit of\ndoing more optimal operations during evaluation of the Tree at later time.\n\n    import Lazy.LList as LL\n\n    [ { id = 1, parent = Nothing }\n    , { id = 2, parent = Nothing }\n    , { id = 3, parent = Just 1 }\n    ]\n        |> fromKeyedList .id (Maybe.withDefault [] << Maybe.map List.singleton << .parent)\n        |> LL.map (.id << item)\n        |> LL.toList\n    --> [ 1, 2 ]\n\n    [ { id = 1, parent = Nothing }\n    , { id = 2, parent = Nothing }\n    , { id = 3, parent = Just 1 }\n    , { id = 4, parent = Just 1 }\n    , { id = 5, parent = Just 2 }\n    ]\n        |> fromList (\\p i -> Maybe.map .id p == i.parent)\n        |> LL.andThen descendants\n        |> LL.map (.id << item)\n        |> LL.toList\n    --> [ 3, 4, 5 ]\n\n",
+                "type": "(a -> comparable) -> (a -> List.List comparable) -> List.List a -> Lazy.Tree.Forest a"
+            },
+            {
+                "name": "fromList",
+                "comment": " Construct `Forest` from a list.\n\n    import Lazy.LList as LL\n\n    [ { id = 1, parent = Nothing }\n    , { id = 2, parent = Nothing }\n    , { id = 3, parent = Just 1 }\n    ]\n        |> fromList (\\p i -> Maybe.map .id p == i.parent)\n        |> LL.map (.id << item)\n        |> LL.toList\n    --> [ 1, 2 ]\n\n    [ { id = 1, parent = Nothing }\n    , { id = 2, parent = Nothing }\n    , { id = 3, parent = Just 1 }\n    , { id = 4, parent = Just 1 }\n    , { id = 5, parent = Just 2 }\n    ]\n        |> fromList (\\p i -> Maybe.map .id p == i.parent)\n        |> LL.andThen descendants\n        |> LL.map (.id << item)\n        |> LL.toList\n    --> [ 3, 4, 5 ]\n\n",
+                "type": "(Maybe.Maybe a -> a -> Basics.Bool) -> List.List a -> Lazy.Tree.Forest a"
+            },
+            {
+                "name": "insert",
+                "comment": " Insert one `Tree` as children another.\n\n    singleton 1\n        |> insert (singleton 2)\n        |> insert (singleton 3)\n        |> children\n    --> [ 2, 3 ]\n\n    singleton 1\n        |> insert (singleton 2)\n        |> item\n    --> 1\n\n",
+                "type": "Lazy.Tree.Tree a -> Lazy.Tree.Tree a -> Lazy.Tree.Tree a"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Check if `Tree` doesn't have any child.\n\n    singleton \"foo\"\n        |> isEmpty\n    --> True\n\n    singleton \"foo\"\n        |> insert (singleton \"bar\")\n        |> isEmpty\n    --> False\n\n",
+                "type": "Lazy.Tree.Tree a -> Basics.Bool"
+            },
+            {
+                "name": "item",
+                "comment": " Obtain item from `Tree`.\n\n    singleton \"foo\"\n        |> item\n        |> \"foo\"\n\n",
+                "type": "Lazy.Tree.Tree a -> a"
+            },
+            {
+                "name": "map",
+                "comment": " Map function over `Tree`.\n\n    singleton 1\n        |> map ((+) 1)\n        |> item\n    --> 2\n\n    singleton 1\n        |> insert (singleton 2)\n        |> insert (singleton 3)\n        |> map ((*) 2)\n        |> children\n    --> [ 4, 6 ]\n\n",
+                "type": "(a -> b) -> Lazy.Tree.Tree a -> Lazy.Tree.Tree b"
+            },
+            {
+                "name": "map2",
+                "comment": " Map function over two `Tree`s\n\n    map2 (+) (singleton 1) (singleton 5)\n        |> item\n    --> 6\n\n    import Lazy.LList as LL\n\n    Tree 1 (LL.fromList [ singleton 2, singleton 3, singleton 4 ])\n        |> map2 (+) (Tree 5 <| LL.fromList [ singleton 6, singleton 7 ])\n        |> children\n    --> [ 8, 10 ]\n\n",
+                "type": "(a -> b -> c) -> Lazy.Tree.Tree a -> Lazy.Tree.Tree b -> Lazy.Tree.Tree c"
+            },
+            {
+                "name": "singleton",
+                "comment": " Puts value in minimal `Tree` context\n\n    singleton \"foo\"\n        |> item\n    --> \"foo\"\n\n",
+                "type": "a -> Lazy.Tree.Tree a"
+            },
+            {
+                "name": "sort",
+                "comment": " Sort `Tree`.\n\n    singleton 10\n        |> insert (singleton 5)\n        |> insert (singleton 2)\n        |> sort\n        |> children\n    --> [ 2, 5 ]\n\nit applies to all levels:\n\n    import Lazy.LList as LL\n\n    singleton 10\n        |> insert (Tree 20 <| LL.llist (List.reverse << List.map singleton << List.range 1) 5)\n        |> sort\n        |> descendants\n        |> LL.map children\n        |> LL.toList\n    --> [ [ 1, 2, 3, 4, 5 ] ]\n\n",
+                "type": "Lazy.Tree.Tree comparable -> Lazy.Tree.Tree comparable"
+            },
+            {
+                "name": "sortBy",
+                "comment": " Sort `Tree` by a function.\n\n    singleton { val = 10 }\n       |> insert (singleton { val = 7 })\n       |> insert (singleton { val = 3 })\n       |> sortBy .val\n       |> children\n    --> [ { val = 3 }, { val = 7 } ]\n\nit applies to all levels:\n\n    import Lazy.LList as LL\n\n    singleton { a = 10 }\n        |> insert (Tree { a = 20 } <| LL.llist (List.reverse << List.map (\\v -> singleton { a = v }) << List.range 1) 3)\n        |> sortBy .a\n        |> descendants\n        |> LL.map children\n        |> LL.toList\n    --> [ [ { a = 1 }, { a = 2 }, { a = 3 } ] ]\n\n",
+                "type": "(a -> comparable) -> Lazy.Tree.Tree a -> Lazy.Tree.Tree a"
+            },
+            {
+                "name": "sortWith",
+                "comment": " Sort `Tree` using custom Ordering function\n\n    flippedComparison : comparable -> comparable -> Order\n    flippedComparison a b =\n        case Basics.compare a b of\n            LT -> GT\n            EQ -> EQ\n            GT -> LT\n\n    singleton 10\n        |> insert (singleton 2)\n        |> insert (singleton 5)\n        |> sortWith flippedComparison\n        |> children\n    --> [ 5, 2 ]\n\n",
+                "type": "(a -> a -> Basics.Order) -> Lazy.Tree.Tree a -> Lazy.Tree.Tree a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Lazy.Tree.Zipper",
+        "comment": " Zipper implementation for `Lazy.Tree`.\n\n> A zipper is a technique of representing an aggregate data structure so that it is convenient\n> for writing programs that traverse the structure arbitrarily and update its contents,\n> especially in purely functional programming languages.\n\n`Zipper` is a secret sauce that gives `Tree` real power.\nIt provides an easy way to query and modify the `Tree` in a clever and very flexible way.\n\nTypes within this module are exposed type aliases to make it easy to extend the default functionality of `Zipper`.\n\n\n# Types\n\n@docs Breadcrumb, Zipper, fromTree\n\n\n# Query\n\n@docs current, children, isRoot, isEmpty, attempt, getTree\n\n\n# Operations\n\n@docs insert, delete, update, updateItem, setTree, open, getPath, openPath, openAll, attemptOpenPath, up, upwards, root\n\n\n# Transformations\n\n@docs map, filter\n\n\n# Breadcrumbs\n\n@docs breadcrumbs, indexedBreadcrumbs\n\n",
+        "unions": [
+            {
+                "name": "Breadcrumb",
+                "comment": " \\*\\* Be careful when comparing `Breadcrumb`s using `(==)`.\\*\\*\nDue to use of laziness `(==)` isn't reliable for comparing Breadcrumbs.\n\nBreadcrumbs are private type not meant to be manipulated directly.\nHowever it's possible to extract breadcrumbs from `Zipper` in transformed\nformat using `breadcrumbs` and `indexedBreadcrumbs` functions which are meant for public use.\n\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Zipper",
+                "comment": " ",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Zipper",
+                        [
+                            "Lazy.Tree.Tree a",
+                            "List.List (Lazy.Tree.Zipper.Breadcrumb a)"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "attempt",
+                "comment": " Attempt to perform action over zipper and return original `Zipper` in cases where this action returns `Nothing`.\n\n    import Lazy.Tree as T\n\n    T.singleton \"foo\"\n        |> fromTree\n        |> attempt delete\n        |> current\n    --> \"foo\"\n\n    T.singleton \"foo\"\n        |> fromTree\n        |> insert (T.singleton \"bar\")\n        |> attempt (open ((==) \"foo\"))\n        |> attempt delete\n        |> current\n    --> \"foo\"\n\n",
+                "type": "(Lazy.Tree.Zipper.Zipper a -> Maybe.Maybe (Lazy.Tree.Zipper.Zipper a)) -> Lazy.Tree.Zipper.Zipper a -> Lazy.Tree.Zipper.Zipper a"
+            },
+            {
+                "name": "attemptOpenPath",
+                "comment": " Similar to [`openPath`](#openPath) but ignore failed steps.\n\n    import Lazy.Tree as T\n\n    T.singleton \"foo\"\n        |> fromTree\n        |> insert (T.singleton \"bar\")\n        |> attemptOpenPath (==) [ \"not-here\", \"bar\" ]\n        |> current\n    --> \"bar\"\n\n    T.singleton \"foo\"\n        |> fromTree\n        |> attemptOpenPath (==) [ \"baz\" ]\n        |> current\n    --> \"foo\"\n\n    T.singleton \"foo\"\n        |> fromTree\n        |> insert (T.singleton \"bar\" |> T.insert (T.singleton \"baz\"))\n        |> attemptOpenPath (==) [ \"not-here\", \"bar\", \"missing\", \"baz\" ]\n        |> current\n    --> \"baz\"\n\n",
+                "type": "(b -> a -> Basics.Bool) -> List.List b -> Lazy.Tree.Zipper.Zipper a -> Lazy.Tree.Zipper.Zipper a"
+            },
+            {
+                "name": "breadcrumbs",
+                "comment": " Get `List` of `Breadcrumb`s .\n\n    import Lazy.Tree as T\n\n    T.singleton \"foo\"\n        |> fromTree\n        |> insert (T.singleton \"bar\" |> T.insert (T.singleton \"baz\"))\n        |> attemptOpenPath (==) [ \"bar\", \"baz\" ]\n        |> breadcrumbs\n    --> [ \"bar\", \"foo\" ]\n\n",
+                "type": "Lazy.Tree.Zipper.Zipper a -> List.List a"
+            },
+            {
+                "name": "children",
+                "comment": " Get children of current `Tree`.\n\n    import Lazy.Tree as T\n\n    T.singleton \"foo\"\n        |> fromTree\n        |> insert (T.singleton \"bar\")\n        |> children\n    --> [ \"bar\" ]\n\n",
+                "type": "Lazy.Tree.Zipper.Zipper a -> List.List a"
+            },
+            {
+                "name": "current",
+                "comment": " Get the root item of the current `Tree`.\n\n    import Lazy.Tree as T\n\n    T.singleton \"foo\"\n        |> fromTree\n        |> insert (T.singleton \"bar\")\n        |> current\n    --> \"foo\"\n\n",
+                "type": "Lazy.Tree.Zipper.Zipper a -> a"
+            },
+            {
+                "name": "delete",
+                "comment": " Delete current `Tree` from `Zipper`.\n\nReturns Nothing if root node is removed.\n\n    import Lazy.Tree as T\n\n    T.singleton \"foo\"\n        |> fromTree\n        |> delete\n    --> Nothing\n\n    T.singleton \"foo\"\n        |> fromTree\n        |> insert (T.singleton \"bar\")\n        |> open (always True)\n        |> Maybe.andThen delete\n        |> Maybe.map current\n    --> Just \"foo\"\n\n",
+                "type": "Lazy.Tree.Zipper.Zipper a -> Maybe.Maybe (Lazy.Tree.Zipper.Zipper a)"
+            },
+            {
+                "name": "filter",
+                "comment": " Performs filter on current `Tree` in `Zipper`. See `Tree.filter` for more information.\n\n    import Lazy.LList as LL\n    import Lazy.Tree as T\n\n    T.Tree 1 (LL.fromList [ T.singleton 2, T.singleton 3, T.singleton 4 ])\n        |> fromTree\n        |> filter ((>) 4)\n        |> children\n    --> [ 2, 3 ]\n\n    T.Tree 1 (LL.fromList [ T.singleton 2, T.singleton 3, T.singleton 4 ])\n        |> fromTree\n        |> attempt (open ((==) 1))\n        |> filter ((<) 2)\n        |> root\n        |> children\n    --> [ 3, 4 ]\n\n    T.Tree 1 (LL.fromList [ T.insert (T.singleton 5) <| T.singleton 2, T.insert (T.singleton 6) <| T.singleton 3, T.singleton 4 ])\n        |> fromTree\n        |> attempt (open ((==) 1))\n        |> filter ((<) 2)\n        |> getTree\n        |> T.descendants\n        |> LL.andThen (LL.map T.item << T.descendants)\n        |> LL.toList\n    --> [ 6 ]\n\n",
+                "type": "(a -> Basics.Bool) -> Lazy.Tree.Zipper.Zipper a -> Lazy.Tree.Zipper.Zipper a"
+            },
+            {
+                "name": "fromTree",
+                "comment": " Init `Zipper` for `Tree`.\n\n    import Lazy.Tree as T\n\n    T.singleton \"foo\"\n        |> fromTree\n        |> current\n    --> \"foo\"\n\n",
+                "type": "Lazy.Tree.Tree a -> Lazy.Tree.Zipper.Zipper a"
+            },
+            {
+                "name": "getPath",
+                "comment": " Use given function to convert current breadcrumb path to a list\n\nResulting list of breadcrumbs contains currently focused item as well.\n\n    import Lazy.Tree as T\n\n    T.singleton \"foo\"\n        |> fromTree\n        |> insert (T.singleton \"bar\")\n        |> attemptOpenPath (==) [ \"bar\" ]\n        |> getPath identity\n    --> [ \"foo\", \"bar\" ]\n\n    T.singleton \"foo\"\n        |> fromTree\n        |> insert (T.singleton \"bar\" |> T.insert (T.singleton \"baz\") )\n        |> attemptOpenPath (==) [ \"bar\", \"baz\" ]\n        |> getPath identity\n    --> [ \"foo\", \"bar\", \"baz\" ]\n\n",
+                "type": "(a -> b) -> Lazy.Tree.Zipper.Zipper a -> List.List b"
+            },
+            {
+                "name": "getTree",
+                "comment": " Extract current `Tree` from a `Zipper`.\n\nuseful in case where you don't want to use pattern matching\n\n    import Lazy.Tree as T\n\n    T.singleton \"foo\"\n        |> fromTree\n        |> getTree\n        |> T.item\n    --> \"foo\"\n\n",
+                "type": "Lazy.Tree.Zipper.Zipper a -> Lazy.Tree.Tree a"
+            },
+            {
+                "name": "indexedBreadcrumbs",
+                "comment": " Get `Breadcrumb`s as indexed `List`.\n\n    import Lazy.Tree as T\n\n    T.singleton \"foo\"\n        |> fromTree\n        |> insert (T.singleton \"bar\" |> T.insert (T.singleton \"baz\"))\n        |> attemptOpenPath (==) [ \"bar\", \"baz\" ]\n        |> indexedBreadcrumbs\n    --> [ ( 1, \"bar\" ), ( 2, \"foo\" )]\n\n",
+                "type": "Lazy.Tree.Zipper.Zipper a -> List.List ( Basics.Int, a )"
+            },
+            {
+                "name": "insert",
+                "comment": " Insert sub `Tree` into current `Tree` in `Zipper`.\n\n    import Lazy.Tree as T\n\n    T.singleton \"foo\"\n        |> fromTree\n        |> insert (T.singleton \"bar\")\n        |> insert (T.singleton \"baz\")\n        |> children\n    --> [ \"bar\", \"baz\" ]\n\n",
+                "type": "Lazy.Tree.Tree a -> Lazy.Tree.Zipper.Zipper a -> Lazy.Tree.Zipper.Zipper a"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Check if current `Tree` in `Zipper` is empty.\n\n    import Lazy.Tree as T\n\n    T.singleton \"foo\"\n        |> fromTree\n        |> isEmpty\n    --> True\n\n    T.singleton \"foo\"\n        |> fromTree\n        |> insert (T.singleton \"bar\")\n        |> isEmpty\n    --> False\n\n",
+                "type": "Lazy.Tree.Zipper.Zipper a -> Basics.Bool"
+            },
+            {
+                "name": "isRoot",
+                "comment": " Check if `Zipper` is focused on the root `Tree`.\n\n    import Lazy.Tree as T\n\n    T.singleton \"foo\"\n       |> fromTree\n       |> isRoot\n    --> True\n\n",
+                "type": "Lazy.Tree.Zipper.Zipper a -> Basics.Bool"
+            },
+            {
+                "name": "map",
+                "comment": " Map function over `Zipper`.\n\n    import Lazy.Tree as T\n\n    T.singleton 1\n        |> fromTree\n        |> map ((+) 1)\n        |> current\n    --> 2\n\n",
+                "type": "(a -> b) -> Lazy.Tree.Zipper.Zipper a -> Lazy.Tree.Zipper.Zipper b"
+            },
+            {
+                "name": "open",
+                "comment": " Open the first child that satisfies given condition.\nIf there is no child satisfying the condition, returns Nothing.\n\n    import Lazy.Tree as T\n\n    T.singleton \"foo\"\n        |> fromTree\n        |> insert (T.singleton \"bar\")\n        |> open ((==) \"bar\")\n        |> Maybe.map current\n    --> Just \"bar\"\n\n    T.singleton \"foo\"\n        |> fromTree\n        |> insert (T.singleton \"bar\" |> T.insert (T.singleton \"baz\") )\n        |> attempt (open ((==) \"bar\"))\n        |> attempt (open ((==) \"baz\"))\n        |> current\n    --> \"baz\"\n\n    T.singleton \"foo\"\n        |> fromTree\n        |> open (always True)\n    --> Nothing\n\n",
+                "type": "(a -> Basics.Bool) -> Lazy.Tree.Zipper.Zipper a -> Maybe.Maybe (Lazy.Tree.Zipper.Zipper a)"
+            },
+            {
+                "name": "openAll",
+                "comment": " Get `List` of `Zipper`s for all children of current `Zipper`\n\n    import Lazy.Tree as T\n\n    T.singleton \"foo\"\n        |> fromTree\n        |> insert (T.singleton \"bar\")\n        |> insert (T.singleton \"baz\")\n        |> openAll\n        |> List.map current\n    --> [ \"bar\", \"baz\" ]\n\n",
+                "type": "Lazy.Tree.Zipper.Zipper a -> List.List (Lazy.Tree.Zipper.Zipper a)"
+            },
+            {
+                "name": "openPath",
+                "comment": " Open multiple levels reducing list by given function.\n\n    import Lazy.Tree as T\n\n    T.singleton \"foo\"\n        |> fromTree\n        |> insert (T.singleton \"bar\" |> T.insert (T.singleton \"baz\") )\n        |> openPath (==) [ \"bar\", \"baz\" ]\n        |> Result.map current\n    --> Ok \"baz\"\n\n    T.singleton \"foo\"\n        |> fromTree\n        |> insert (T.singleton \"bar\")\n        |> openPath (==) [ \"not-here\", \"baz\" ]\n        |> Result.map current\n    --> Err \"Can't resolve open\"\n\n",
+                "type": "(b -> a -> Basics.Bool) -> List.List b -> Lazy.Tree.Zipper.Zipper a -> Result.Result String.String (Lazy.Tree.Zipper.Zipper a)"
+            },
+            {
+                "name": "root",
+                "comment": " Navigate back to the root `Tree`.\n\n    import Lazy.Tree as T\n\n    T.singleton \"foo\"\n        |> fromTree\n        |> insert (T.singleton \"bar\" |> T.insert (T.singleton \"baz\") )\n        |> open ((==) \"bar\")\n        |> Maybe.andThen (open ((==) \"baz\"))\n        |> Maybe.map root\n        |> Maybe.map current\n    --> Just \"foo\"\n\n    T.singleton \"foo\"\n        |> fromTree\n        |> root\n        |> current\n    --> \"foo\"\n\n",
+                "type": "Lazy.Tree.Zipper.Zipper a -> Lazy.Tree.Zipper.Zipper a"
+            },
+            {
+                "name": "setTree",
+                "comment": " Replace current `Tree` with new one.\n\n    import Lazy.Tree as T\n\n    T.singleton \"foo\"\n        |> fromTree\n        |> setTree (T.singleton \"bar\")\n        |> current\n    --> \"bar\"\n\n",
+                "type": "Lazy.Tree.Tree a -> Lazy.Tree.Zipper.Zipper a -> Lazy.Tree.Zipper.Zipper a"
+            },
+            {
+                "name": "up",
+                "comment": " Return back to parent of current `Tree` in given `Zipper`.\n\n    import Lazy.Tree as T\n\n    T.singleton \"foo\"\n        |> fromTree\n        |> insert (T.singleton \"bar\")\n        |> open ((==) \"bar\")\n        |> Maybe.andThen up\n        |> Maybe.map current\n    --> Just \"foo\"\n\n    T.singleton \"baz\"\n        |> fromTree\n        |> up\n    --> Nothing\n\n",
+                "type": "Lazy.Tree.Zipper.Zipper a -> Maybe.Maybe (Lazy.Tree.Zipper.Zipper a)"
+            },
+            {
+                "name": "update",
+                "comment": " Update current `Tree` using given function.\n\n    import Lazy.Tree as T\n\n    T.singleton \"foo\"\n        |> fromTree\n        |> update (T.map (\\a -> a ++ \" fighter\"))\n        |> current\n    --> \"foo fighter\"\n\n",
+                "type": "(Lazy.Tree.Tree a -> Lazy.Tree.Tree a) -> Lazy.Tree.Zipper.Zipper a -> Lazy.Tree.Zipper.Zipper a"
+            },
+            {
+                "name": "updateItem",
+                "comment": " Update the root item of the current `Tree` using given function.\n\n    import Lazy.Tree as T\n\n    T.singleton \"foo\"\n        |> fromTree\n        |> updateItem (\\i -> i ++ \" fighter\")\n        |> current\n    --> \"foo fighter\"\n\n",
+                "type": "(a -> a) -> Lazy.Tree.Zipper.Zipper a -> Lazy.Tree.Zipper.Zipper a"
+            },
+            {
+                "name": "upwards",
+                "comment": " Perform [`up`](#up) n times.\n\n    import Lazy.Tree as T\n\n    T.singleton \"foo\"\n        |> fromTree\n        |> insert (T.singleton \"bar\" |> T.insert (T.singleton \"baz\") )\n        |> open ((==) \"bar\")\n        |> Maybe.andThen (open ((==) \"baz\"))\n        |> Maybe.andThen (upwards 2)\n        |> Maybe.map current\n    --> Just \"foo\"\n\nReturns given `Zipper` return if `0` is passed:\n\n    T.singleton \"foo\"\n       |> fromTree\n       |> upwards 0\n       |> Maybe.map current\n    --> Just \"foo\"\n\nReturn `Nothing` if there are not enough ancestors in `Zipper`:\n\n    T.singleton 4\n        |> fromTree\n        |> upwards 1\n    --> Nothing\n\nReturn `Nothing` if negative integer is passed:\n\n    T.singleton 4\n        |> fromTree\n        |> upwards -1\n    --> Nothing\n\n",
+                "type": "Basics.Int -> Lazy.Tree.Zipper.Zipper a -> Maybe.Maybe (Lazy.Tree.Zipper.Zipper a)"
+            }
+        ],
+        "binops": []
+    }
+]

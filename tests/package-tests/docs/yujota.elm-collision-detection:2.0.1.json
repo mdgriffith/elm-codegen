@@ -1,0 +1,111 @@
+[
+    {
+        "name": "CollisionDetection2d",
+        "comment": " Collision detection library for 2D objects.\n\n\n# Containers\n\n@docs Container\n\n\n# Constraints\n\n@docs Constraint\n\n\n# Data Structures\n\n@docs DataStructure, default, fixedDepthTree, merelyDict\n\n\n# Constructors\n\n@docs empty, fromDict\n\n\n# Collision detection\n\n@docs detect, mapWithDetection\n\n\n# Query\n\n@docs get, insert, remove, size\n\n\n# Transform\n\n@docs toDict, map, foldl, foldr\n\n",
+        "unions": [
+            {
+                "name": "Container",
+                "comment": " Representation of a container that stores multiple triads of a key, object, and objects' bounding box.\nThe type of key must be comparable.\n",
+                "args": [
+                    "comparable",
+                    "object"
+                ],
+                "cases": []
+            },
+            {
+                "name": "DataStructure",
+                "comment": " Represents data structure used for space partitioning.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Constraint",
+                "comment": " These parameters are used to evaluate which area an object belongs to.\nFor example, if you want to handle circular object `{ x: Float, y: Float, r: Float }` on a canvas 640x480,\n`Constraints` would be as shown:\n\n    { range = { minX = 0, minY = 0, maxX = 639, maxY = 479 }\n    , boundingBox = \\c -> { minX = c.x - c.r, minY = c.y - c.r, maxX = c.x + c.r, maxY = c.y + c.r }\n    , isCollided = \\c0 c1 -> getLength ( c0.x, c0.y ) ( c1.x, c1.y ) |> lessThan (c0.r + c1.r)\n    }\n\n",
+                "args": [
+                    "object"
+                ],
+                "type": "{ range : { minX : Basics.Float, maxX : Basics.Float, minY : Basics.Float, maxY : Basics.Float }, boundingBox : object -> { minX : Basics.Float, maxX : Basics.Float, minY : Basics.Float, maxY : Basics.Float }, isCollided : object -> object -> Basics.Bool }"
+            }
+        ],
+        "values": [
+            {
+                "name": "default",
+                "comment": " Default data structure.\n",
+                "type": "CollisionDetection2d.DataStructure"
+            },
+            {
+                "name": "detect",
+                "comment": " Detect collisions.\n",
+                "type": "CollisionDetection2d.Container comparable object -> Dict.Dict comparable { object : object, collidedWith : List.List ( comparable, object ) }"
+            },
+            {
+                "name": "empty",
+                "comment": " Create an empty container.\n",
+                "type": "CollisionDetection2d.DataStructure -> CollisionDetection2d.Constraint object -> CollisionDetection2d.Container comparable object"
+            },
+            {
+                "name": "fixedDepthTree",
+                "comment": " Use quadtree as a data structure. Tree-depth is fixed from start to end.\n",
+                "type": "{ depth : Basics.Int } -> CollisionDetection2d.DataStructure"
+            },
+            {
+                "name": "foldl",
+                "comment": " Foldl. It is equivalent to `toDict |> Dict.foldl`\n",
+                "type": "(comparable -> object -> a -> a) -> a -> CollisionDetection2d.Container comparable object -> a"
+            },
+            {
+                "name": "foldr",
+                "comment": " Foldr. It is equivalent to `toDict |> Dict.foldr`\n",
+                "type": "(comparable -> object -> a -> a) -> a -> CollisionDetection2d.Container comparable object -> a"
+            },
+            {
+                "name": "fromDict",
+                "comment": " Convert a dictionary into a container.\n",
+                "type": "CollisionDetection2d.DataStructure -> CollisionDetection2d.Constraint object -> Dict.Dict comparable object -> CollisionDetection2d.Container comparable object"
+            },
+            {
+                "name": "get",
+                "comment": " Get an object from a container if it exists.\n",
+                "type": "comparable -> CollisionDetection2d.Container comparable object -> Maybe.Maybe object"
+            },
+            {
+                "name": "insert",
+                "comment": " Insert key and object to a container.\n",
+                "type": "comparable -> object -> CollisionDetection2d.Container comparable object -> CollisionDetection2d.Container comparable object"
+            },
+            {
+                "name": "map",
+                "comment": " Apply functions to all objects in a container.\n",
+                "type": "(comparable -> object -> object) -> CollisionDetection2d.Container comparable object -> CollisionDetection2d.Container comparable object"
+            },
+            {
+                "name": "mapWithDetection",
+                "comment": " Map with collision results.\nFor example, if you want to swap a color of object with the one of collided, the code would be as shown.\n\n    swapColor : List ( key, obj ) -> key -> obj -> obj\n    swapColor collidedObjs key obj =\n        collidedObjs |> List.head |> Maybe.map (\\cObj -> { obj | color = cObj }) |> Maybe.withDefault obj\n\n    swapped =\n        mapWithDetection swapColor container\n\n",
+                "type": "(List.List ( comparable, object ) -> comparable -> object -> object) -> CollisionDetection2d.Container comparable object -> CollisionDetection2d.Container comparable object"
+            },
+            {
+                "name": "merelyDict",
+                "comment": " Use `Dict` as a data structure.\n",
+                "type": "CollisionDetection2d.DataStructure"
+            },
+            {
+                "name": "remove",
+                "comment": " Remove an object from a container.\n",
+                "type": "comparable -> CollisionDetection2d.Container comparable object -> CollisionDetection2d.Container comparable object"
+            },
+            {
+                "name": "size",
+                "comment": " Returns number of objects a container stores.\n",
+                "type": "CollisionDetection2d.Container comparable object -> Basics.Int"
+            },
+            {
+                "name": "toDict",
+                "comment": " Convert a container to a `Dict`\n",
+                "type": "CollisionDetection2d.Container comparable object -> Dict.Dict comparable object"
+            }
+        ],
+        "binops": []
+    }
+]

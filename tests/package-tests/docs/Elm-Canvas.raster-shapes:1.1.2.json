@@ -1,0 +1,54 @@
+[
+    {
+        "name": "RasterShapes",
+        "comment": " \n\n# Basics\n\n@docs Position, Size\n\n# Shape calculators\n@docs line, bezier, rectangle, rectangle2, ellipse, circle\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Position",
+                "comment": " `Position` is our basic type for representing the position in a grid. ",
+                "args": [],
+                "type": "{ x : Basics.Int, y : Basics.Int }"
+            },
+            {
+                "name": "Size",
+                "comment": " We use `Size` to store width and height value.\n",
+                "args": [],
+                "type": "{ width : Basics.Int, height : Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "bezier",
+                "comment": " To make a curved line, try this function called `bezier`, named after [the bezier curve](https://en.wikipedia.org/wiki/B%C3%A9zier_curve). It works by approximation, drawing many small straight lines along a curved path. Its first parameter, an `Int`, is the resolution of the curve (resolution=1 will be just a straight line, and higher values will compute a more perfect curve). The remaining parameters are `Position`. The first and last `Position` refer to the starting and ending points of the curve. The middle two are control points, which are where the curve will curve towards from each end point.\n\n    squiggle : Int -> List Position\n    squiggle i =\n        Raster (i // 2)\n            (Position 0 0)\n            (Position i 0)\n            (Position 0 i)\n            (Position i i)\n\n",
+                "type": "Basics.Int -> RasterShapes.Position -> RasterShapes.Position -> RasterShapes.Position -> RasterShapes.Position -> List.List RasterShapes.Position"
+            },
+            {
+                "name": "circle",
+                "comment": " To get a list of `Position` along the edge of a circle of diameter `Int`, use `circle`.\n\n    dot : Position -> List Position\n    dot =\n        circle 1\n\n",
+                "type": "Basics.Int -> RasterShapes.Position -> List.List RasterShapes.Position"
+            },
+            {
+                "name": "ellipse",
+                "comment": " To get a list of `Position` along the edge of a ellipse of dimensions `Size`, use `ellipse`.\n\n    circle : Int -> Position -> List Position\n    circle diameter point =\n        ellipse (Size diameter diameter) point\n",
+                "type": "RasterShapes.Size -> RasterShapes.Position -> List.List RasterShapes.Position"
+            },
+            {
+                "name": "line",
+                "comment": " Given a starting and ending `Position`, this function will give you every `Position` along that line.\n\n    (line (Position 0 0) (Position 3 2)) ==\n        [ Position 3 2\n        , Position 2 1\n        , Position 1 1\n        , Position 0 0\n        ]\n",
+                "type": "RasterShapes.Position -> RasterShapes.Position -> List.List RasterShapes.Position"
+            },
+            {
+                "name": "rectangle",
+                "comment": " To get a list of `Position` along the edge of a rectangle, use `rectangle`.\n\n    rectangle (Size 10 7) (Position 1 1) ==\n        [ line (Position 1 1) (Position 10 1)\n        , line (Position 1 1) (Position 1 7)\n        , line (Position 11 8) (Position 1 8)\n        , line (Position 11 8) (Position 11 1)\n        ]\n",
+                "type": "RasterShapes.Size -> RasterShapes.Position -> List.List RasterShapes.Position"
+            },
+            {
+                "name": "rectangle2",
+                "comment": " `Rectangle2` is just like `Rectangle`, except it takes two positions as parameters rather than a position and a size\n",
+                "type": "RasterShapes.Position -> RasterShapes.Position -> List.List RasterShapes.Position"
+            }
+        ],
+        "binops": []
+    }
+]

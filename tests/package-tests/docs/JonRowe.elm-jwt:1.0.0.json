@@ -1,0 +1,89 @@
+[
+    {
+        "name": "Jwt",
+        "comment": " Helper functions for working with Jwt tokens and authenticated CRUD APIs.\n\nThis package provides functions for reading tokens, and for using them to make\nauthenticated Http requests.\n\n\n# Token reading\n\n@docs decodeToken, tokenDecoder, isExpired, checkTokenExpiry\n\n\n# Error handlers\n\n@docs JwtError\n\n",
+        "unions": [
+            {
+                "name": "JwtError",
+                "comment": " The following errors are modeled\n\n  - 401 (Unauthorized), due either to token expiry or e.g. inadequate permissions\n  - token (non-)expiry information\n  - issues with processing (e.g. base 64 decoding) the token\n  - problems decoding the json data within the content of the token\n  - Any Http.Error, other than a 401\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Unauthorized",
+                        []
+                    ],
+                    [
+                        "TokenExpired",
+                        []
+                    ],
+                    [
+                        "TokenNotExpired",
+                        []
+                    ],
+                    [
+                        "TokenProcessingError",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "TokenDecodeError",
+                        [
+                            "Json.Decode.Error"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "checkTokenExpiry",
+                "comment": " Checks a token for Expiry. Returns expiry or any errors that occurred in decoding.\n",
+                "type": "String.String -> Task.Task Basics.Never Jwt.JwtError"
+            },
+            {
+                "name": "decodeToken",
+                "comment": " decodeToken parses the token, checking that it meets the Jwt standards.\n\n    decodeToken dec token\n\nIn the event of success, `decodeToken` returns an Elm record structure using the JSON Decoder.\n\n",
+                "type": "Json.Decode.Decoder a -> String.String -> Result.Result Jwt.JwtError a"
+            },
+            {
+                "name": "isExpired",
+                "comment": " Checks whether a token has expired, and returns True or False, or\nany error that occurred while decoding the token.\n",
+                "type": "Time.Posix -> String.String -> Result.Result Jwt.JwtError Basics.Bool"
+            },
+            {
+                "name": "tokenDecoder",
+                "comment": " All the token parsing goodness in the form of a Json Decoder\n\n    -- decode token from Firebase\n    let firebaseToken =\n            decodeString (tokenDecoder Jwt.Decoders.firebase) tokenString\n\n",
+                "type": "Json.Decode.Decoder a -> Json.Decode.Decoder a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Jwt.Decoders",
+        "comment": " Helper functions for working with Jwt tokens and authenticated CRUD APIs.\n\nThis package provides functions for reading tokens, and for using them to make\nauthenticated Http requests.\n\n\n# Decoders for popular Jwt tokens\n\n@docs JwtToken, firebase, phoenixGuardian\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "JwtToken",
+                "comment": " Generic constructor for commonly found fields in a Jwt token\n",
+                "args": [],
+                "type": "{ iat : Basics.Int, exp : Basics.Int, userId : Maybe.Maybe String.String, email : Maybe.Maybe String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "firebase",
+                "comment": " Decoder for Firebase Jwt\n",
+                "type": "Json.Decode.Decoder Jwt.Decoders.JwtToken"
+            },
+            {
+                "name": "phoenixGuardian",
+                "comment": " Decoder for Guardian\n<https://github.com/ueberauth/guardian>\n",
+                "type": "Json.Decode.Decoder Jwt.Decoders.JwtToken"
+            }
+        ],
+        "binops": []
+    }
+]

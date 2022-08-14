@@ -1,0 +1,77 @@
+[
+    {
+        "name": "Criteria",
+        "comment": " This package help you create a hierarchy of \"filters\"\ncontained in a dropdown\n\nHave a look at a live [example] and its [code]\n\n[example]: https://dwyl.github.io/elm-criteria/example.html\n[code]: https://github.com/dwyl/elm-criteria/blob/master/examples/Example.elm\n\n\n# View\n\n@docs view\n\n\n# Config\n\n@docs Config, config\n\n\n# State\n\n@docs State, init\n\n\n# Customise\n\n@docs customConfig, defaultCustomisations\n\n\n# Helpers\n\n@docs selectedIdFilters\n@docs unselectFilter\n@docs openFilters\n@docs closeFilters\n@docs isOpen\n\n",
+        "unions": [
+            {
+                "name": "Config",
+                "comment": " Configuration for displaying the hierarchy of filters\n",
+                "args": [
+                    "msg",
+                    "filter"
+                ],
+                "cases": []
+            },
+            {
+                "name": "State",
+                "comment": " Define if the hierarchy of filters is open\nthe set of the selected filters\nthe set of filters where the sub-filters are displayed\nState False Set.empty\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "closeFilters",
+                "comment": " Set the open state value to False\n",
+                "type": "Criteria.State -> Criteria.State"
+            },
+            {
+                "name": "config",
+                "comment": " Create the configuation to pass in your view.\n\n  - `title` &mdash; A string displayed for the button text\n  - `toMsg` &mdash; The message which is responsible for updating the `Criteria.State` in your model\n  - `toId` &mdash; A function taking a filter and returning a unique string which represent the filter\n  - `tostring` &mdash; A function taking a filter and returning a string which will be used as label in the hierarchy\n  - `getSubFilters` &mdash; A fuction taking a filter and returning the a list of its sub-filters\n\n",
+                "type": "{ title : String.String, toMsg : Criteria.State -> msg, toId : filter -> Criteria.FilterId, toString : filter -> String.String, getSubFilters : filter -> List.List filter } -> Criteria.Config msg filter"
+            },
+            {
+                "name": "customConfig",
+                "comment": " Create a customised configuation.\nThis function is similat to `config`.\nIt takes one more value `customisations` which defined\nhow to customise the element of the module\n",
+                "type": "{ title : String.String, toMsg : Criteria.State -> msg, toId : filter -> Criteria.FilterId, toString : filter -> String.String, getSubFilters : filter -> List.List filter, customisations : Criteria.Customisations filter msg } -> Criteria.Config msg filter"
+            },
+            {
+                "name": "defaultCustomisations",
+                "comment": " the `defaultCustomisations` function provide the default attribute values\nfor elm-criteria. These values can be resetted with the function\n`customConfig`\n",
+                "type": "Criteria.Customisations filter msg"
+            },
+            {
+                "name": "init",
+                "comment": " Initialise the state, ie filters are hidden and filters are selected based\non the list of ids passed as first argument to the `init` function\n\n    import Criteria\n\n    Criteria.init [\"idFilter1\", \"idFilter5\"]\n\n",
+                "type": "List.List Criteria.FilterId -> Criteria.State"
+            },
+            {
+                "name": "isOpen",
+                "comment": " Return the open state value\n",
+                "type": "Criteria.State -> Basics.Bool"
+            },
+            {
+                "name": "openFilters",
+                "comment": " Set the open state value to True\n",
+                "type": "Criteria.State -> Criteria.State"
+            },
+            {
+                "name": "selectedIdFilters",
+                "comment": " Return the set of the selected filters' id\n",
+                "type": "Criteria.State -> Set.Set Criteria.FilterId"
+            },
+            {
+                "name": "unselectFilter",
+                "comment": " Unselect a filter\n",
+                "type": "Criteria.FilterId -> Criteria.State -> Criteria.State"
+            },
+            {
+                "name": "view",
+                "comment": " The view function which take the configuration the state and a list of filters\n",
+                "type": "Criteria.Config msg filter -> Criteria.State -> List.List filter -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

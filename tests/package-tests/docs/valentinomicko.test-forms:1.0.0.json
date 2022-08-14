@@ -1,0 +1,142 @@
+[
+    {
+        "name": "Forms",
+        "comment": " This library fills a bunch of important niches in Elm. A `Maybe` can help\r\nyou with optional arguments, error handling, and records with optional fields.\r\n    # Definition\r\n    @docs FormsModel\r\n    \r\n    # Definition\r\n    @docs validateEmpty\r\n    \r\n    # Definition\r\n    @docs validateEmail\r\n    \r\n    # Definition\r\n    @docs initFormOperations_\r\n    \r\n    # Definition\r\n    @docs FormsOperation(..)\r\n    \r\n    # Definition\r\n    @docs initialFormsModel_\r\n    \r\n    # Definition\r\n    @docs updateFormsSubmodel_\r\n    \r\n    # Definition\r\n    @docs isFormPassed\r\n    \r\n    # Definition\r\n    @docs isFieldErrorState\r\n    \r\n    # Definition\r\n    @docs fieldNameErrorClassList\r\n    \r\n    # Definition\r\n    @docs getFieldFromForm\r\n    \r\n    # Definition\r\n    @docs validateFormInModel\r\n    \r\n    # Definition\r\n    @docs validateZeroUuid\r\n    \r\n    \r\n    # Definition\r\n    @docs validateEmailNonEmpty\r\n",
+        "unions": [
+            {
+                "name": "FormsOperation",
+                "comment": "\r\n    lala\r\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "MaybeAddError",
+                        [
+                            "{ fieldName : a, fieldValue : String.String, fieldValidator : String.String -> Basics.Bool }"
+                        ]
+                    ],
+                    [
+                        "AddErrorWithoutValidation",
+                        [
+                            "a"
+                        ]
+                    ],
+                    [
+                        "RemoveErrorWithoutValidation",
+                        [
+                            "a"
+                        ]
+                    ],
+                    [
+                        "ValidateForm",
+                        [
+                            "List.List { fieldName : a, fieldValue : String.String, fieldValidator : String.String -> Basics.Bool }"
+                        ]
+                    ],
+                    [
+                        "SetIsFormSubmittedFirstTime",
+                        [
+                            "Basics.Bool"
+                        ]
+                    ],
+                    [
+                        "SetFocusedField",
+                        [
+                            "Maybe.Maybe a"
+                        ]
+                    ],
+                    [
+                        "AddServerError",
+                        [
+                            "List.List a"
+                        ]
+                    ],
+                    [
+                        "RemoveServerError",
+                        [
+                            "a"
+                        ]
+                    ],
+                    [
+                        "ClearServerErrors",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "FormsModel",
+                "comment": "\r\n    lala\r\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ fieldErrors : List.List a, serverErrors : List.List (List.List a), isFormSubmittedFirstTime : Basics.Bool, focusedField : Maybe.Maybe a }"
+            }
+        ],
+        "values": [
+            {
+                "name": "fieldNameErrorClassList",
+                "comment": "\r\n    lala\r\n",
+                "type": "List.List a -> List.List (List.List a) -> a -> Html.Attribute msg"
+            },
+            {
+                "name": "getFieldFromForm",
+                "comment": "\r\n    lala\r\n",
+                "type": "List.List { fieldName : a, fieldValue : String.String, fieldValidator : String.String -> Basics.Bool } -> a -> Maybe.Maybe { fieldName : a, fieldValue : String.String, fieldValidator : String.String -> Basics.Bool }"
+            },
+            {
+                "name": "initFormOperations_",
+                "comment": "\r\n    lala\r\n",
+                "type": "Forms.Update a b msg -> (Forms.FormsOperation b -> msg) -> Forms.ModelWihForms a b -> Forms.FormsOperation b -> ( Forms.ModelWihForms a b, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "initialFormsModel_",
+                "comment": "\r\n    lala\r\n",
+                "type": "Forms.FormsModel a"
+            },
+            {
+                "name": "isFieldErrorState",
+                "comment": "\r\n    lala\r\n",
+                "type": "List.List a -> List.List (List.List a) -> a -> Basics.Bool"
+            },
+            {
+                "name": "isFormPassed",
+                "comment": "\r\n    lala\r\n",
+                "type": "Forms.FormsModel a -> List.List { fieldName : a, fieldValue : String.String, fieldValidator : String.String -> Basics.Bool } -> Basics.Bool"
+            },
+            {
+                "name": "updateFormsSubmodel_",
+                "comment": "\r\n    lala\r\n",
+                "type": "Forms.ModelWihForms a b -> Forms.FormsModel b -> Forms.ModelWihForms a b"
+            },
+            {
+                "name": "validateEmail",
+                "comment": "\r\n    lala\r\n",
+                "type": "String.String -> Basics.Bool"
+            },
+            {
+                "name": "validateEmailNonEmpty",
+                "comment": "\r\n    lala\r\n",
+                "type": "String.String -> Basics.Bool"
+            },
+            {
+                "name": "validateEmpty",
+                "comment": "\r\n    lala\r\n",
+                "type": "String.String -> Basics.Bool"
+            },
+            {
+                "name": "validateFormInModel",
+                "comment": "\r\n    lala\r\n",
+                "type": "Forms.ModelWihForms a b -> Forms.FormsModel b -> List.List { fieldName : b, fieldValue : String.String, fieldValidator : String.String -> Basics.Bool } -> Forms.ModelWihForms a b"
+            },
+            {
+                "name": "validateZeroUuid",
+                "comment": "\r\n    lala\r\n",
+                "type": "String.String -> Basics.Bool"
+            }
+        ],
+        "binops": []
+    }
+]

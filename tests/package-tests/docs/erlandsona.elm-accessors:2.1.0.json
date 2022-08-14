@@ -1,0 +1,263 @@
+[
+    {
+        "name": "Accessors",
+        "comment": " Relations are interfaces to document the relation between two data\nstructures. For convenience, we'll call the containing structure `super`, and\nthe contained structure `sub`. What a `Relation` claims is that a `super` is\nreferencing a `sub` in some way.\n\nRelations are the building blocks of accessors. An accessor is a function that\nexpects a `Relation` and builds a new relation with it. Accessors are\ncomposable, which means you can build a chain of relations to manipulate nested\nstructures without handling the packing and the unpacking.\n\n\n# Relation\n\n@docs Relation, Accessor, Lens, Lens_, Setable\n\n\n# Action functions\n\nAction functions are functions that take an accessor and let you perform a\nspecific action on data using that accessor.\n\n@docs get, set, over, name, is\n\n\n# Common accessors\n\n@docs try, def, or, ok, err\n@docs values, keyed, key\n@docs each, eachIdx, at\n@docs every, everyIdx, ix\n@docs fst, snd\n\n\n# Build your own accessors\n\nAccessors are built using these functions:\n\n@docs makeOneToOne, makeOneToN\n@docs makeOneToOne_, makeOneToN_\n\n",
+        "unions": [
+            {
+                "name": "Relation",
+                "comment": " A `Relation super sub wrap` is a type describing how to interact with a\n`sub` data when given a `super` data.\n\nThe `wrap` exists because some types can't ensure that `get` will return a\n`sub`. For instance, `Maybe sub` may not actually contain a `sub`. Therefore,\n`get` returns a `wrap` which, in that example, will be `Maybe sub`\n\nImplementation: A relation is a banal record storing a `get` function and an\n`over` function.\n\n",
+                "args": [
+                    "structure",
+                    "attribute",
+                    "wrap"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Accessor",
+                "comment": " The most general version of this type that everything else specializes\n",
+                "args": [
+                    "dataBefore",
+                    "dataAfter",
+                    "attrBefore",
+                    "attrAfter",
+                    "reachable"
+                ],
+                "type": "Accessors.Relation attrBefore reachable attrAfter -> Accessors.Relation dataBefore reachable dataAfter"
+            },
+            {
+                "name": "Lens",
+                "comment": " This is an approximation of Van Laarhoven encoded Lenses which enable the\nthe callers to use regular function composition to build more complex nested\nupdates of more complicated types.\n\nBut the original \"Lens\" type looked more like:\n\n    type alias Lens structure attribute =\n        { get : structure -> attribute\n        , set : structure -> attribute -> structure\n        }\n\nunfortunately these can't be composed without\ndefining custom `composeLens`, `composeIso`, `composePrism`, style functions.\n\nwhereas with this approach we're able to make use of Elm's built in `<<` operator\nto get/set/over deeply nested data.\n\n",
+                "args": [
+                    "structure",
+                    "transformed",
+                    "attribute",
+                    "built"
+                ],
+                "type": "Accessors.Relation attribute built transformed -> Accessors.Relation structure built transformed"
+            },
+            {
+                "name": "Lens_",
+                "comment": " Simplified version of Lens but seems to break type inference for more complicated compositions.\n",
+                "args": [
+                    "structure",
+                    "attribute"
+                ],
+                "type": "Accessors.Lens structure attribute attribute attribute"
+            },
+            {
+                "name": "Setable",
+                "comment": " Type of a composition of accessors that `set` can be called with.\n",
+                "args": [
+                    "structure",
+                    "transformed",
+                    "attribute",
+                    "built"
+                ],
+                "type": "Accessors.Relation attribute attribute built -> Accessors.Relation structure attribute transformed"
+            }
+        ],
+        "values": [
+            {
+                "name": "at",
+                "comment": " at: Structure Preserving accessor over List members.\n\n    import Accessors exposing (..)\n    import Lens as L\n\n    list : List { bar : String }\n    list = [{ bar = \"Stuff\" }, { bar =  \"Things\" }, { bar = \"Woot\" }]\n\n    get (at 1) list\n    --> Just { bar = \"Things\" }\n\n    get (at 9000) list\n    --> Nothing\n\n    get (at 0 << L.bar) list\n    --> Just \"Stuff\"\n\n    set (at 0 << L.bar) \"Whatever\" list\n    --> [{ bar = \"Whatever\" }, { bar =  \"Things\" }, { bar = \"Woot\" }]\n\n    set (at 9000 << L.bar) \"Whatever\" list\n    --> list\n\n",
+                "type": "Basics.Int -> Accessors.Relation v reachable wrap -> Accessors.Relation (List.List v) reachable (Maybe.Maybe wrap)"
+            },
+            {
+                "name": "def",
+                "comment": " This accessor combinator lets you provide a default value for otherwise failable compositions\n\n    import Dict exposing (Dict)\n    import Lens as L\n\n    dict : Dict String {bar : Int}\n    dict =\n        Dict.fromList [(\"foo\", {bar = 2})]\n\n    get (key \"foo\" << def {bar = 0}) dict\n    --> {bar = 2}\n\n    get (key \"baz\" << def {bar = 0}) dict\n    --> {bar = 0}\n\n    -- NOTE: The following do not compile :thinking:\n    --get (key \"foo\" << try << L.bar << def 0) dict\n    ----> 2\n\n    --get (key \"baz\" << try << L.bar << def 0) dict\n    ----> 0\n\n",
+                "type": "attribute -> Accessors.Relation attribute reachable wrap -> Accessors.Relation (Maybe.Maybe attribute) reachable wrap"
+            },
+            {
+                "name": "each",
+                "comment": " This accessor combinator lets you access values inside List.\n\n    import Accessors exposing (..)\n    import Lens as L\n\n    listRecord : {foo : List {bar : Int}}\n    listRecord = { foo = [ {bar = 2}\n                         , {bar = 3}\n                         , {bar = 4}\n                         ]\n                 }\n\n    get (L.foo << each << L.bar) listRecord\n    --> [2, 3, 4]\n\n    over (L.foo << each << L.bar) ((+) 1) listRecord\n    --> {foo = [{bar = 3}, {bar = 4}, {bar = 5}]}\n\n",
+                "type": "Accessors.Relation attribute built transformed -> Accessors.Relation (List.List attribute) built (List.List transformed)"
+            },
+            {
+                "name": "eachIdx",
+                "comment": " This accessor lets you traverse a list including the index of each element\n\n    import Accessors exposing (..)\n    import Lens as L\n\n    listRecord : {foo : List {bar : Int}}\n    listRecord = { foo = [ {bar = 2}\n                         , {bar = 3}\n                         , {bar = 4}\n                         ]\n                 }\n\n    multiplyIfGTOne : (Int, { bar : Int }) -> (Int, { bar : Int })\n    multiplyIfGTOne ( idx, ({ bar } as rec) ) =\n        if idx > 0 then\n            ( idx, { bar = bar * 10 } )\n        else\n            (idx, rec)\n\n\n    get (L.foo << eachIdx) listRecord\n    --> [(0, {bar = 2}), (1, {bar = 3}), (2, {bar = 4})]\n\n    over (L.foo << eachIdx) multiplyIfGTOne listRecord\n    --> {foo = [{bar = 2}, {bar = 30}, {bar = 40}]}\n\n    get (L.foo << eachIdx << snd << L.bar) listRecord\n    --> [2, 3, 4]\n\n    over (L.foo << eachIdx << snd << L.bar) ((+) 1) listRecord\n    --> {foo = [{bar = 3}, {bar = 4}, {bar = 5}]}\n\n",
+                "type": "Accessors.Relation ( Basics.Int, attribute ) reachable built -> Accessors.Relation (List.List attribute) reachable (List.List built)"
+            },
+            {
+                "name": "err",
+                "comment": " This accessor lets you access values inside the Err variant of a Result.\n\n    import Accessors exposing (..)\n    import Lens as L\n\n    maybeRecord : { foo : Result String { bar : Int }, qux : Result String { bar : Int } }\n    maybeRecord = { foo = Ok { bar = 2 }\n                  , qux = Err \"Not an Int\"\n                  }\n\n    get (L.foo << err) maybeRecord\n    --> Nothing\n\n    get (L.qux << err) maybeRecord\n    --> Just \"Not an Int\"\n\n    over (L.foo << err) String.toUpper maybeRecord\n    --> { foo = Ok { bar = 2 }, qux = Err \"Not an Int\" }\n\n    over (L.qux << err) String.toUpper maybeRecord\n    --> { foo = Ok { bar = 2 }, qux = Err \"NOT AN INT\" }\n\n",
+                "type": "Accessors.Relation attribute built transformed -> Accessors.Relation (Result.Result attribute x) built (Maybe.Maybe transformed)"
+            },
+            {
+                "name": "every",
+                "comment": " This accessor combinator lets you access values inside Array.\n\n    import Array exposing (Array)\n    import Accessors exposing (..)\n    import Lens as L\n\n    arrayRecord : {foo : Array {bar : Int}}\n    arrayRecord =\n        { foo =\n            Array.fromList [{ bar = 2 }, { bar = 3 }, {bar = 4}]\n        }\n\n    get (L.foo << every << L.bar) arrayRecord\n    --> Array.fromList [2, 3, 4]\n\n    over (L.foo << every << L.bar) ((+) 1) arrayRecord\n    --> {foo = Array.fromList [{bar = 3}, {bar = 4}, {bar = 5}]}\n\n",
+                "type": "Accessors.Relation attribute built transformed -> Accessors.Relation (Array.Array attribute) built (Array.Array transformed)"
+            },
+            {
+                "name": "everyIdx",
+                "comment": " This accessor lets you traverse a list including the index of each element\n\n    import Accessors exposing (..)\n    import Lens as L\n    import Array exposing (Array)\n\n    arrayRecord : { foo : Array { bar : Int } }\n    arrayRecord = { foo = [ {bar = 2}\n                          , {bar = 3}\n                          , {bar = 4}\n                          ] |> Array.fromList\n                  }\n\n    multiplyIfGTOne : (Int, { bar : Int }) -> (Int, { bar : Int })\n    multiplyIfGTOne ( idx, ({ bar } as rec) ) =\n        if idx > 0 then\n            ( idx, { bar = bar * 10 } )\n        else\n            (idx, rec)\n\n\n    get (L.foo << everyIdx) arrayRecord\n    --> [(0, {bar = 2}), (1, {bar = 3}), (2, {bar = 4})] |> Array.fromList\n\n    over (L.foo << everyIdx) multiplyIfGTOne arrayRecord\n    --> {foo = [{bar = 2}, {bar = 30}, {bar = 40}] |> Array.fromList}\n\n    get (L.foo << everyIdx << snd << L.bar) arrayRecord\n    --> [2, 3, 4] |> Array.fromList\n\n    over (L.foo << everyIdx << snd << L.bar) ((+) 1) arrayRecord\n    --> {foo = [{bar = 3}, {bar = 4}, {bar = 5}] |> Array.fromList}\n\n",
+                "type": "Accessors.Relation ( Basics.Int, attribute ) reachable built -> Accessors.Relation (Array.Array attribute) reachable (Array.Array built)"
+            },
+            {
+                "name": "fst",
+                "comment": " Lens over the first component of a Tuple\n\n    import Accessors exposing (..)\n\n    charging : (String, Int)\n    charging = (\"It's over\", 1)\n\n    get fst charging\n    --> \"It's over\"\n\n    set fst \"It's over\" charging\n    --> (\"It's over\", 1)\n\n    over fst (\\s -> String.toUpper s ++ \"!!!\") charging\n    --> (\"IT'S OVER!!!\", 1)\n\n",
+                "type": "Accessors.Relation sub reachable wrap -> Accessors.Relation ( sub, x ) reachable wrap"
+            },
+            {
+                "name": "get",
+                "comment": " The get function takes:\n\n  - An accessor,\n  - A datastructure with type `super`\n    and returns the value accessed by that combinator.\n\n```\nget (foo << bar) myRecord\n```\n\n",
+                "type": "(Accessors.Relation attribute built attribute -> Accessors.Relation structure reachable transformed) -> structure -> transformed"
+            },
+            {
+                "name": "is",
+                "comment": " Used with a Prism, think of `!!` boolean coercion in Javascript except type safe.\n\n    Just 1234\n        |> is try\n    --> True\n\n    Nothing\n        |> is try\n    --> False\n\n    [\"Stuff\", \"things\"]\n        |> is (at 2)\n    --> False\n\n    [\"Stuff\", \"things\"]\n        |> is (at 0)\n    --> True\n\n",
+                "type": "(Accessors.Relation attribute built attribute -> Accessors.Relation structure reachable (Maybe.Maybe transformed)) -> structure -> Basics.Bool"
+            },
+            {
+                "name": "ix",
+                "comment": " This accessor combinator lets you access Array indices.\n\nIn terms of accessors, think of Dicts as records where each field is a Maybe.\n\n    import Array exposing (Array)\n    import Accessors exposing (..)\n    import Lens as L\n\n    arr : Array { bar : String }\n    arr = Array.fromList [{ bar = \"Stuff\" }, { bar =  \"Things\" }, { bar = \"Woot\" }]\n\n    get (ix 1) arr\n    --> Just { bar = \"Things\" }\n\n    get (ix 9000) arr\n    --> Nothing\n\n    get (ix 0 << L.bar) arr\n    --> Just \"Stuff\"\n\n    set (ix 0 << L.bar) \"Whatever\" arr\n    --> Array.fromList [{ bar = \"Whatever\" }, { bar =  \"Things\" }, { bar = \"Woot\" }]\n\n    set (ix 9000 << L.bar) \"Whatever\" arr\n    --> arr\n\n",
+                "type": "Basics.Int -> Accessors.Relation v reachable wrap -> Accessors.Relation (Array.Array v) reachable (Maybe.Maybe wrap)"
+            },
+            {
+                "name": "key",
+                "comment": " key: NON-structure preserving accessor over Dict's\n\nIn terms of accessors, think of Dicts as records where each field is a Maybe.\n\n    import Dict exposing (Dict)\n    import Accessors exposing (..)\n    import Lens as L\n\n    dict : Dict String {bar : Int}\n    dict = Dict.fromList [(\"foo\", {bar = 2})]\n\n    get (key \"foo\") dict\n    --> Just {bar = 2}\n\n    get (key \"baz\") dict\n    --> Nothing\n\n    get (key \"foo\" << try << L.bar) dict\n    --> Just 2\n\n    set (key \"foo\") Nothing dict\n    --> Dict.remove \"foo\" dict\n\n    set (key \"baz\" << try << L.bar) 3 dict\n    --> dict\n\n",
+                "type": "String.String -> Accessors.Relation (Maybe.Maybe attribute) reachable wrap -> Accessors.Relation (Dict.Dict String.String attribute) reachable wrap"
+            },
+            {
+                "name": "keyed",
+                "comment": " keyed: This accessor lets you traverse a Dict including the index of each element\n\n    import Accessors exposing (..)\n    import Lens as L\n    import Dict exposing (Dict)\n\n    dictRecord : {foo : Dict String {bar : Int}}\n    dictRecord = { foo = [ (\"a\", { bar = 2 })\n                         , (\"b\", { bar = 3 })\n                         , (\"c\", { bar = 4 })\n                         ] |> Dict.fromList\n                 }\n\n    multiplyIfA : (String, { bar : Int }) -> (String, { bar : Int })\n    multiplyIfA ( key, ({ bar } as rec) ) =\n        if key == \"a\" then\n            ( key, { bar = bar * 10 } )\n        else\n            (key, rec)\n\n\n    get (L.foo << keyed) dictRecord\n    --> [(\"a\", (\"a\", {bar = 2})), (\"b\", (\"b\", {bar = 3})), (\"c\", (\"c\", {bar = 4}))] |> Dict.fromList\n\n    over (L.foo << keyed) multiplyIfA dictRecord\n    --> {foo = [(\"a\", {bar = 20}), (\"b\", {bar = 3}), (\"c\", {bar = 4})] |> Dict.fromList}\n\n    get (L.foo << keyed << snd << L.bar) dictRecord\n    --> [(\"a\", 2), (\"b\", 3), (\"c\", 4)] |> Dict.fromList\n\n    over (L.foo << keyed << snd << L.bar) ((+) 1) dictRecord\n    --> {foo = [(\"a\", {bar = 3}), (\"b\", {bar = 4}), (\"c\", {bar = 5})] |> Dict.fromList}\n\n",
+                "type": "Accessors.Relation ( comparable, attribute ) reachable built -> Accessors.Relation (Dict.Dict comparable attribute) reachable (Dict.Dict comparable built)"
+            },
+            {
+                "name": "makeOneToN",
+                "comment": " This function lets you build an accessor for containers that have\na 1:N relation with what they contain, such as `List` (0-N cardinality) or\n`Maybe` (0-1). E.g.:\n\n    each : Relation elem sub wrap -> Relation (List elem) sub (List wrap)\n    each =\n        makeOneToN\n            List.map\n            List.map\n\nn.b. implementing those is usually considerably simpler than the type suggests.\n\n",
+                "type": "((attribute -> built) -> structure -> transformed) -> ((attribute -> attribute) -> structure -> structure) -> Accessors.Relation attribute reachable built -> Accessors.Relation structure reachable transformed"
+            },
+            {
+                "name": "makeOneToN_",
+                "comment": " This exposes a description field that's necessary for use with the name function\nfor getting unique names out of compositions of accessors. This is useful when you\nwant type safe keys for a Dictionary but you still want to use elm/core implementation.\n\n    each : Relation elem sub wrap -> Relation (List elem) sub (List wrap)\n    each =\n        makeOneToN_ \"[]\"\n            List.map\n            List.map\n\n",
+                "type": "String.String -> ((attribute -> built) -> structure -> transformed) -> ((attribute -> attribute) -> structure -> structure) -> Accessors.Relation attribute reachable built -> Accessors.Relation structure reachable transformed"
+            },
+            {
+                "name": "makeOneToOne",
+                "comment": " This function lets you build an accessor for containers that have\na 1:1 relation with what they contain, such as a record and one of its fields:\n\n    foo : Relation field sub wrap -> Relation { rec | foo : field } sub wrap\n    foo =\n        makeOneToOne\n            .foo\n            (\\change rec -> { rec | foo = change rec.foo })\n\n",
+                "type": "(structure -> attribute) -> ((attribute -> attribute) -> structure -> structure) -> Accessors.Relation attribute reachable wrap -> Accessors.Relation structure reachable wrap"
+            },
+            {
+                "name": "makeOneToOne_",
+                "comment": " This exposes a description field that's necessary for use with the name function\nfor getting unique names out of compositions of accessors. This is useful when you\nwant type safe keys for a Dictionary but you still want to use elm/core implementation.\n\n    foo : Relation field sub wrap -> Relation { rec | foo : field } sub wrap\n    foo =\n        makeOneToOne_\n            \".foo\"\n            .foo\n            (\\change rec -> { rec | foo = change rec.foo })\n\n",
+                "type": "String.String -> (structure -> attribute) -> ((attribute -> attribute) -> structure -> structure) -> Accessors.Relation attribute reachable wrap -> Accessors.Relation structure reachable wrap"
+            },
+            {
+                "name": "name",
+                "comment": " This function gives the name of the function as a string...\n",
+                "type": "Accessors.Accessor a b c d e -> String.String"
+            },
+            {
+                "name": "ok",
+                "comment": " This accessor lets you access values inside the Ok variant of a Result.\n\n    import Accessors exposing (..)\n    import Lens as L\n\n    maybeRecord : { foo : Result String { bar : Int }, qux : Result String { bar : Int } }\n    maybeRecord = { foo = Ok { bar = 2 }\n                  , qux = Err \"Not an Int\"\n                  }\n\n    get (L.foo << ok << L.bar) maybeRecord\n    --> Just 2\n\n    get (L.qux << ok << L.bar) maybeRecord\n    --> Nothing\n\n    over (L.foo << ok << L.bar) ((+) 1) maybeRecord\n    --> { foo = Ok { bar = 3 }, qux = Err \"Not an Int\" }\n\n    over (L.qux << ok << L.bar) ((+) 1) maybeRecord\n    --> { foo = Ok { bar = 2 }, qux = Err \"Not an Int\" }\n\n",
+                "type": "Accessors.Relation attribute built transformed -> Accessors.Relation (Result.Result x attribute) built (Maybe.Maybe transformed)"
+            },
+            {
+                "name": "or",
+                "comment": " This accessor combinator lets you provide a default value for otherwise failable compositions\n\n    import Dict exposing (Dict)\n    import Lens as L\n\n    dict : Dict String {bar : Int}\n    dict =\n        Dict.fromList [(\"foo\", {bar = 2})]\n\n    -- NOTE: Use `def` for this.\n    --get (key \"foo\" << or {bar = 0}) dict\n    ----> {bar = 2}\n\n    --get (key \"baz\" << or {bar = 0}) dict\n    ----> {bar = 0}\n\n    get ((key \"foo\" << try << L.bar) |> or 0) dict\n    --> 2\n\n    get ((key \"baz\" << try << L.bar) |> or 0) dict\n    --> 0\n\n",
+                "type": "attribute -> (Accessors.Relation attribute attribute attribute -> Accessors.Relation structure attribute (Maybe.Maybe attribute)) -> Accessors.Relation attribute other attribute -> Accessors.Relation structure other attribute"
+            },
+            {
+                "name": "over",
+                "comment": " The over function takes:\n\n  - An accessor,\n  - A function `(sub -> sub)`,\n  - A datastructure with type `super`\n    and it returns the data structure, with the accessible field changed by applying\n    the function to the existing value.\n\n```\nover (foo << qux) ((+) 1) myRecord\n```\n\n",
+                "type": "(Accessors.Relation attribute attribute built -> Accessors.Relation structure attribute transformed) -> (attribute -> attribute) -> structure -> structure"
+            },
+            {
+                "name": "set",
+                "comment": " The set function takes:\n\n  - An accessor,\n  - A value of the type `sub`,\n  - A datastructure with type `super`\n    and it returns the data structure, with the accessible field changed to be\n    the set value.\n\n```\nset (foo << bar) \"Hi!\" myRecord\n```\n\n",
+                "type": "Accessors.Setable structure transformed attribute built -> attribute -> structure -> structure"
+            },
+            {
+                "name": "snd",
+                "comment": "\n\n    import Accessors exposing (..)\n\n    meh : (String, Int)\n    meh = (\"It's over\", 1)\n\n    get snd meh\n    --> 1\n\n    set snd 1125 meh\n    --> (\"It's over\", 1125)\n\n    meh\n        |> set snd 1125\n        |> over fst (\\s -> String.toUpper s ++ \"!!!\")\n        |> over snd ((*) 8)\n    --> (\"IT'S OVER!!!\", 9000)\n\n",
+                "type": "Accessors.Relation sub reachable wrap -> Accessors.Relation ( x, sub ) reachable wrap"
+            },
+            {
+                "name": "try",
+                "comment": " This accessor combinator lets you access values inside Maybe.\n\n    import Accessors exposing (..)\n    import Lens as L\n\n    maybeRecord : { foo : Maybe { bar : Int }, qux : Maybe { bar : Int } }\n    maybeRecord = { foo = Just { bar = 2 }\n                  , qux = Nothing\n                  }\n\n    get (L.foo << try << L.bar) maybeRecord\n    --> Just 2\n\n    get (L.qux << try << L.bar) maybeRecord\n    --> Nothing\n\n    over (L.foo << try << L.bar) ((+) 1) maybeRecord\n    --> {foo = Just {bar = 3}, qux = Nothing}\n\n    over (L.qux << try << L.bar) ((+) 1) maybeRecord\n    --> {foo = Just {bar = 2}, qux = Nothing}\n\n",
+                "type": "Accessors.Relation attribute built transformed -> Accessors.Relation (Maybe.Maybe attribute) built (Maybe.Maybe transformed)"
+            },
+            {
+                "name": "values",
+                "comment": " values: This accessor lets you traverse a Dict including the index of each element\n\n    import Accessors exposing (..)\n    import Lens as L\n    import Dict exposing (Dict)\n\n    dictRecord : {foo : Dict String {bar : Int}}\n    dictRecord = { foo = [ (\"a\", { bar = 2 })\n                         , (\"b\", { bar = 3 })\n                         , (\"c\", { bar = 4 })\n                         ] |> Dict.fromList\n                 }\n\n    get (L.foo << values) dictRecord\n    --> [(\"a\", {bar = 2}), (\"b\", {bar = 3}), (\"c\", {bar = 4})] |> Dict.fromList\n\n    over (L.foo << values << L.bar) ((*) 10) dictRecord\n    --> {foo = [(\"a\", {bar = 20}), (\"b\", {bar = 30}), (\"c\", {bar = 40})] |> Dict.fromList}\n\n    get (L.foo << values << L.bar) dictRecord\n    --> [(\"a\", 2), (\"b\", 3), (\"c\", 4)] |> Dict.fromList\n\n    over (L.foo << values << L.bar) ((+) 1) dictRecord\n    --> {foo = [(\"a\", {bar = 3}), (\"b\", {bar = 4}), (\"c\", {bar = 5})] |> Dict.fromList}\n\n",
+                "type": "Accessors.Relation attribute reachable built -> Accessors.Relation (Dict.Dict comparable attribute) reachable (Dict.Dict comparable built)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Accessors.Lazy",
+        "comment": " Lazy versions of set, over.\n\nThese actions check that the old and the new version are different before writing.\nThey are useful when used together with `Html.lazy`, because it uses reference\nequality for complex structures. Therefore, using lazy `set` and `over` will\nnot prevent `Html.lazy` from doing its work.\n\nget is also reexported for convenience.\n\n@docs get, set, over\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "get",
+                "comment": " The get function takes:\n\n  - An accessor,\n  - A datastructure with type `super`\n    and returns the value accessed by that combinator.\n\n```\nget (foo << bar) myRecord\n```\n\n",
+                "type": "(Accessors.Relation sub sub sub -> Accessors.Relation super sub wrap) -> super -> wrap"
+            },
+            {
+                "name": "over",
+                "comment": " The over function takes:\n\n  - An accessor,\n  - A function `(sub -> sub)`,\n  - A datastructure with type `super`\n    and it returns the data structure, with the accessible field changed by applying\n    the function to the existing value.\n    The structure is changed only if the new field is different from the old one.\n\n```\nover (foo << qux) ((+) 1) myRecord\n```\n\n",
+                "type": "(Accessors.Relation sub sub sub -> Accessors.Relation super sub wrap) -> (sub -> sub) -> super -> super"
+            },
+            {
+                "name": "set",
+                "comment": " The set function takes:\n\n  - An accessor,\n  - A value of the type `sub`,\n  - A datastructure with type `super`\n    and it returns the data structure, with the accessible field changed to the set value.\n    The structure is changed only if the new field is different from the old one.\n\n```\nset (foo << bar) \"Hi!\" myRecord\n```\n\n",
+                "type": "(Accessors.Relation sub sub sub -> Accessors.Relation super sub wrap) -> sub -> super -> super"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Accessors.Library",
+        "comment": " This library contains common accessors.\n\n@docs onEach, try, dictEntry\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "dictEntry",
+                "comment": " Re-Exported from Accessors for backwards compatibility\n",
+                "type": "comparable -> Accessors.Relation (Maybe.Maybe v) reachable wrap -> Accessors.Relation (Dict.Dict comparable v) reachable wrap"
+            },
+            {
+                "name": "onEach",
+                "comment": " Re-Exported from Accessors for backwards compatibility\n",
+                "type": "Accessors.Relation attribute built transformed -> Accessors.Relation (List.List attribute) built (List.List transformed)"
+            },
+            {
+                "name": "try",
+                "comment": " Re-Exported from Accessors for backwards compatibility\n",
+                "type": "Accessors.Relation attribute built transformed -> Accessors.Relation (Maybe.Maybe attribute) built (Maybe.Maybe transformed)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Accessors.SelectList",
+        "comment": " This module exposes some helpers for \"miyamoen/select-list\"\n\n@docs each, eachIdx, selected\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "each",
+                "comment": " This accessor combinator lets you access values inside List.\n\n    import Accessors exposing (..)\n    import Accessors.SelectList as SL\n    import Lens as L\n    import SelectList exposing (SelectList)\n\n    listRecord : { foo : SelectList { bar : Int } }\n    listRecord =\n        { foo = SelectList.fromLists [{ bar = 1 }] { bar = 2 } [{ bar = 3 }, { bar = 4 }]\n        }\n\n    get (L.foo << SL.each << L.bar) listRecord\n    --> SelectList.fromLists [1] 2 [3, 4]\n\n    over (L.foo << SL.each << L.bar) ((+) 1) listRecord\n    --> { foo = SelectList.fromLists [{ bar = 2 }] { bar = 3 } [{ bar = 4 }, { bar = 5 }] }\n\n",
+                "type": "Accessors.Relation attribute built transformed -> Accessors.Relation (SelectList.SelectList attribute) built (SelectList.SelectList transformed)"
+            },
+            {
+                "name": "eachIdx",
+                "comment": " This accessor lets you traverse a list including the index of each element\n\n    import Accessors exposing (..)\n    import Accessors.SelectList as SL\n    import Lens as L\n    import SelectList exposing (SelectList)\n\n    listRecord : { foo : SelectList { bar : Int } }\n    listRecord =\n        { foo = SelectList.fromLists [{ bar = 1 }] { bar = 2 } [{ bar = 3 }, { bar = 4 }]\n        }\n\n    multiplyIfGTOne : (Int, { bar : Int }) -> (Int, { bar : Int })\n    multiplyIfGTOne ( idx, ({ bar } as rec) ) =\n        if idx > 0 then\n            ( idx, { bar = bar * 10 } )\n        else\n            (idx, rec)\n\n\n    get (L.foo << SL.eachIdx) listRecord\n    --> SelectList.fromLists [(0, {bar = 1})] (1, {bar = 2}) [(2, {bar = 3}), (3, {bar = 4})]\n\n    over (L.foo << SL.eachIdx) multiplyIfGTOne listRecord\n    --> { foo = SelectList.fromLists [{ bar = 1 }] { bar = 20 } [{ bar = 30 }, { bar = 40 }] }\n\n    get (L.foo << SL.eachIdx << snd << L.bar) listRecord\n    --> SelectList.fromLists [1] 2 [3, 4]\n\n    over (L.foo << SL.eachIdx << snd << L.bar) ((+) 1) listRecord\n    --> {foo = SelectList.fromLists [{bar = 2}] {bar = 3} [{bar = 4}, {bar = 5}]}\n\n",
+                "type": "Accessors.Relation ( Basics.Int, attribute ) reachable built -> Accessors.Relation (SelectList.SelectList attribute) reachable (SelectList.SelectList built)"
+            },
+            {
+                "name": "selected",
+                "comment": " This accessor lets you traverse a list including the index of each element\n\n    import Accessors exposing (..)\n    import Accessors.SelectList as SL\n    import Lens as L\n    import SelectList exposing (SelectList)\n\n    listRecord : { foo : SelectList { bar : Int } }\n    listRecord =\n        { foo = SelectList.fromLists [{ bar = 1 }] { bar = 2 } [{ bar = 3 }, { bar = 4 }]\n        }\n\n    multiplyIfGTOne : (Int, { bar : Int }) -> (Int, { bar : Int })\n    multiplyIfGTOne ( idx, ({ bar } as rec) ) =\n        if idx > 0 then\n            ( idx, { bar = bar * 10 } )\n        else\n            (idx, rec)\n\n    get (L.foo << SL.selected << L.bar) listRecord\n    --> 2\n\n    set (L.foo << SL.selected << L.bar) 37 listRecord\n    --> { foo = SelectList.fromLists [{ bar = 1 }] { bar = 37 } [{ bar = 3 }, { bar = 4 }] }\n\n    over (L.foo << SL.selected << L.bar) ((*) 10) listRecord\n    --> { foo = SelectList.fromLists [{ bar = 1 }] { bar = 20 } [{ bar = 3 }, { bar = 4 }] }\n\n",
+                "type": "Accessors.Relation attribute reachable built -> Accessors.Relation (SelectList.SelectList attribute) reachable built"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,36 @@
+[
+    {
+        "name": "String.Normalize",
+        "comment": " Normalize string in different formats\n\n\n# Normalize formats\n\n@docs url, slug, filename, path\n\n\n# Utilities\n\n@docs removeDiacritics\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "filename",
+                "comment": " `filename` is similar to `slug` but will use underscores\ninstead of hypens, it will also preserve the file extension. The file\nextension will be lowercased.\n\n    filename \"J'aime les fruits/et les amours .MP3\"\n        -->\n        \"j_aime_les_fruits_et_les_amours.mp3\"\n\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "path",
+                "comment": " `path` is similar to `filename` but will preserve slash.\n\n    path \"J'aime les fruits/et les amours .MP3\"\n        -->\n        \"j_aime_les_fruits/et_les_amours.mp3\"\n\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "removeDiacritics",
+                "comment": " `removeDiacritics` removes diactritics, it will expand\nknown ligatures, thus changing the string glyph length.\nAll non latin characters are untouched.\n\n    removeDiacritics \"La liberté commence où l'ignorance finit.\"\n\n\n    --> \"La liberte commence ou l'ignorance finit.\"\n    removeDiacritics \"é()/& abc\" --> \"e()/& abc\"\n\n    removeDiacritics \"こんにちは\" --> \"こんにちは\"\n\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "slug",
+                "comment": " `slug` will remove all diacritics and punctuation, lowercase the string,\ncollapse spaces and replace them with hyphens. Trailing and leading hyphens\nwill be removed.\n\n    slug \"Écoute la vie!\" -> \"ecoute-la-vie\"\n    slug \"(this is not interesting!)\" -> \"this-is-not-interesting\"\n    slug \"é()/& abc  -\" --> \"e-abc\"\n\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "url",
+                "comment": " `url` is similar to `slug` but will preserve slashes.\n\n    url \"J'aime les fruits/et les amours\" --> \"j-aime-les-fruits/et-les-amours\"\n\n",
+                "type": "String.String -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

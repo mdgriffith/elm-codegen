@@ -1,0 +1,41 @@
+[
+    {
+        "name": "Update.Extra",
+        "comment": " Convenience functions for working with updates in Elm\n\n@docs andThen\n@docs filter\n@docs updateModel\n@docs addCmd\n@docs mapCmd\n@docs sequence\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "addCmd",
+                "comment": " Allows you to attach a Cmd to an update pipeline.\n\nFor example:\n\n    update msg model =\n        ( model, Cmd.none )\n            |> andThen update AMessage\n            |> addCmd doSomethingWithASideEffect\n\n",
+                "type": "Platform.Cmd.Cmd msg -> ( model, Platform.Cmd.Cmd msg ) -> ( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "andThen",
+                "comment": " Allows update call composition. Can be used with the pipeline operator (|>)\nto chain updates.\n\nFor example:\n\n    update msg model =\n      ( model, Cmd.none )\n        |> andThen update SomeMessage\n        |> andThen update SomeOtherMessage\n        |> andThen update (MessageWithArguments \"Hello\")\n        ...\n\n",
+                "type": "(msg -> model -> ( model, Platform.Cmd.Cmd a )) -> msg -> ( model, Platform.Cmd.Cmd a ) -> ( model, Platform.Cmd.Cmd a )"
+            },
+            {
+                "name": "filter",
+                "comment": " Allows you to conditionally trigger updates based on a predicate. Can be\nused with the pipeline operator.\n\nFor example:\n\n    update msg model =\n        case msg of\n            SomeMessage i ->\n                ( model, Cmd.none )\n                    |> filter (i > 10)\n                        (andThen update BiggerThanTen\n                            >> andThen update AnotherMessage\n                            >> andThen update EvenMoreMessages\n                        )\n                    |> andThen (update AlwaysTriggeredAfterPredicate)\n\nIf you want use to the pipeline operator in the nested pipeline, consider a\nlambda:\n\n    |> filter (i > 10)\n      ( \\state -> state\n          |> andThen update BiggerThanTen\n          |> andThen update AnotherMessage\n          |> andThen update EvenMoreMessages\n      )\n    |> andThen (update AlwaysTriggeredAfterPredicate)\n\n",
+                "type": "Basics.Bool -> (( model, Platform.Cmd.Cmd msg ) -> ( model, Platform.Cmd.Cmd msg )) -> ( model, Platform.Cmd.Cmd msg ) -> ( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "mapCmd",
+                "comment": " Map over the Cmd in an update pipeline\n",
+                "type": "(msg -> msg_) -> ( model, Platform.Cmd.Cmd msg ) -> ( model, Platform.Cmd.Cmd msg_ )"
+            },
+            {
+                "name": "sequence",
+                "comment": " Allows you to attach multiple messages to an update at once.\n\nFor example:\n\n    update msg model =\n        ( model, Cmd.none )\n            |> sequence update\n                [ AMessage\n                , AnotherMessage\n                , AThirdMessage\n                ]\n\n",
+                "type": "(msg -> model -> ( model, Platform.Cmd.Cmd a )) -> List.List msg -> ( model, Platform.Cmd.Cmd a ) -> ( model, Platform.Cmd.Cmd a )"
+            },
+            {
+                "name": "updateModel",
+                "comment": " Allows you to update the model in an update pipeline.\n\nFor example\n\n    update msg model = model ! []\n      |> updateModel \\model -> { model | a = 1 }\n      |> updateModel \\model -> { model | b = 2 }\n\n",
+                "type": "(model -> model) -> ( model, Platform.Cmd.Cmd msg ) -> ( model, Platform.Cmd.Cmd msg )"
+            }
+        ],
+        "binops": []
+    }
+]

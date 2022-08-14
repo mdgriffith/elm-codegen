@@ -1,0 +1,368 @@
+[
+    {
+        "name": "Text",
+        "comment": "\n\n@docs Text, textEnd, toString, A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z, a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z\n\n",
+        "unions": [
+            {
+                "name": "A",
+                "comment": " The letter \"A\"\n",
+                "args": [
+                    "v"
+                ],
+                "cases": []
+            },
+            {
+                "name": "B",
+                "comment": " The letter \"B\"\n",
+                "args": [
+                    "v"
+                ],
+                "cases": []
+            },
+            {
+                "name": "C",
+                "comment": " The letter \"C\"\n",
+                "args": [
+                    "v"
+                ],
+                "cases": []
+            },
+            {
+                "name": "D",
+                "comment": " The letter \"D\"\n",
+                "args": [
+                    "v"
+                ],
+                "cases": []
+            },
+            {
+                "name": "E",
+                "comment": " The letter \"E\"\n",
+                "args": [
+                    "v"
+                ],
+                "cases": []
+            },
+            {
+                "name": "F",
+                "comment": " The letter \"F\"\n",
+                "args": [
+                    "v"
+                ],
+                "cases": []
+            },
+            {
+                "name": "G",
+                "comment": " The letter \"G\"\n",
+                "args": [
+                    "v"
+                ],
+                "cases": []
+            },
+            {
+                "name": "H",
+                "comment": " The letter \"H\"\n",
+                "args": [
+                    "v"
+                ],
+                "cases": []
+            },
+            {
+                "name": "I",
+                "comment": " The letter \"I\"\n",
+                "args": [
+                    "v"
+                ],
+                "cases": []
+            },
+            {
+                "name": "J",
+                "comment": " The letter \"J\"\n",
+                "args": [
+                    "v"
+                ],
+                "cases": []
+            },
+            {
+                "name": "K",
+                "comment": " The letter \"K\"\n",
+                "args": [
+                    "v"
+                ],
+                "cases": []
+            },
+            {
+                "name": "L",
+                "comment": " The letter \"L\"\n",
+                "args": [
+                    "v"
+                ],
+                "cases": []
+            },
+            {
+                "name": "M",
+                "comment": " The letter \"M\"\n",
+                "args": [
+                    "v"
+                ],
+                "cases": []
+            },
+            {
+                "name": "N",
+                "comment": " The letter \"N\"\n",
+                "args": [
+                    "v"
+                ],
+                "cases": []
+            },
+            {
+                "name": "O",
+                "comment": " The letter \"O\"\n",
+                "args": [
+                    "v"
+                ],
+                "cases": []
+            },
+            {
+                "name": "P",
+                "comment": " The letter \"P\"\n",
+                "args": [
+                    "v"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Q",
+                "comment": " The letter \"Q\"\n",
+                "args": [
+                    "v"
+                ],
+                "cases": []
+            },
+            {
+                "name": "R",
+                "comment": " The letter \"R\"\n",
+                "args": [
+                    "v"
+                ],
+                "cases": []
+            },
+            {
+                "name": "S",
+                "comment": " The letter \"S\"\n",
+                "args": [
+                    "v"
+                ],
+                "cases": []
+            },
+            {
+                "name": "T",
+                "comment": " The letter \"T\"\n",
+                "args": [
+                    "v"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Text",
+                "comment": " Text, with human readable letter content `v`.\n\n    hello : Text (H (E (L (L (O ())))))\n    hello =\n        h (e (l (l (o textEnd))))\n\n",
+                "args": [
+                    "v"
+                ],
+                "cases": []
+            },
+            {
+                "name": "U",
+                "comment": " The letter \"U\"\n",
+                "args": [
+                    "v"
+                ],
+                "cases": []
+            },
+            {
+                "name": "V",
+                "comment": " The letter \"V\"\n",
+                "args": [
+                    "v"
+                ],
+                "cases": []
+            },
+            {
+                "name": "W",
+                "comment": " The letter \"W\"\n",
+                "args": [
+                    "v"
+                ],
+                "cases": []
+            },
+            {
+                "name": "X",
+                "comment": " The letter \"X\"\n",
+                "args": [
+                    "v"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Y",
+                "comment": " The letter \"Y\"\n",
+                "args": [
+                    "v"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Z",
+                "comment": " The letter \"Z\"\n",
+                "args": [
+                    "v"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "a",
+                "comment": " The letter \"A\"\n",
+                "type": "Text.Text v -> Text.Text (Text.A v)"
+            },
+            {
+                "name": "b",
+                "comment": " The letter \"B\"\n",
+                "type": "Text.Text v -> Text.Text (Text.B v)"
+            },
+            {
+                "name": "c",
+                "comment": " The letter \"C\"\n",
+                "type": "Text.Text v -> Text.Text (Text.C v)"
+            },
+            {
+                "name": "d",
+                "comment": " The letter \"D\"\n",
+                "type": "Text.Text v -> Text.Text (Text.D v)"
+            },
+            {
+                "name": "e",
+                "comment": " The letter \"E\"\n",
+                "type": "Text.Text v -> Text.Text (Text.E v)"
+            },
+            {
+                "name": "f",
+                "comment": " The letter \"F\"\n",
+                "type": "Text.Text v -> Text.Text (Text.F v)"
+            },
+            {
+                "name": "g",
+                "comment": " The letter \"G\"\n",
+                "type": "Text.Text v -> Text.Text (Text.G v)"
+            },
+            {
+                "name": "h",
+                "comment": " The letter \"H\"\n",
+                "type": "Text.Text v -> Text.Text (Text.H v)"
+            },
+            {
+                "name": "i",
+                "comment": " The letter \"I\"\n",
+                "type": "Text.Text v -> Text.Text (Text.I v)"
+            },
+            {
+                "name": "j",
+                "comment": " The letter \"J\"\n",
+                "type": "Text.Text v -> Text.Text (Text.J v)"
+            },
+            {
+                "name": "k",
+                "comment": " The letter \"K\"\n",
+                "type": "Text.Text v -> Text.Text (Text.K v)"
+            },
+            {
+                "name": "l",
+                "comment": " The letter \"L\"\n",
+                "type": "Text.Text v -> Text.Text (Text.L v)"
+            },
+            {
+                "name": "m",
+                "comment": " The letter \"M\"\n",
+                "type": "Text.Text v -> Text.Text (Text.M v)"
+            },
+            {
+                "name": "n",
+                "comment": " The letter \"N\"\n",
+                "type": "Text.Text v -> Text.Text (Text.N v)"
+            },
+            {
+                "name": "o",
+                "comment": " The letter \"O\"\n",
+                "type": "Text.Text v -> Text.Text (Text.O v)"
+            },
+            {
+                "name": "p",
+                "comment": " The letter \"P\"\n",
+                "type": "Text.Text v -> Text.Text (Text.P v)"
+            },
+            {
+                "name": "q",
+                "comment": " The letter \"Q\"\n",
+                "type": "Text.Text v -> Text.Text (Text.Q v)"
+            },
+            {
+                "name": "r",
+                "comment": " The letter \"R\"\n",
+                "type": "Text.Text v -> Text.Text (Text.R v)"
+            },
+            {
+                "name": "s",
+                "comment": " The letter \"S\"\n",
+                "type": "Text.Text v -> Text.Text (Text.S v)"
+            },
+            {
+                "name": "t",
+                "comment": " The letter \"T\"\n",
+                "type": "Text.Text v -> Text.Text (Text.T v)"
+            },
+            {
+                "name": "textEnd",
+                "comment": " The end of a `Text`\n",
+                "type": "Text.Text ()"
+            },
+            {
+                "name": "toString",
+                "comment": " Turn a `Text` into a `String`\n\n    Text.toString (h (e (l (l (o textEnd))))) == \"HELLO\"\n\n",
+                "type": "Text.Text v -> String.String"
+            },
+            {
+                "name": "u",
+                "comment": " The letter \"U\"\n",
+                "type": "Text.Text v -> Text.Text (Text.U v)"
+            },
+            {
+                "name": "v",
+                "comment": " The letter \"V\"\n",
+                "type": "Text.Text v -> Text.Text (Text.V v)"
+            },
+            {
+                "name": "w",
+                "comment": " The letter \"W\"\n",
+                "type": "Text.Text v -> Text.Text (Text.W v)"
+            },
+            {
+                "name": "x",
+                "comment": " The letter \"X\"\n",
+                "type": "Text.Text v -> Text.Text (Text.X v)"
+            },
+            {
+                "name": "y",
+                "comment": " The letter \"Y\"\n",
+                "type": "Text.Text v -> Text.Text (Text.Y v)"
+            },
+            {
+                "name": "z",
+                "comment": " The letter \"Z\"\n",
+                "type": "Text.Text v -> Text.Text (Text.Z v)"
+            }
+        ],
+        "binops": []
+    }
+]

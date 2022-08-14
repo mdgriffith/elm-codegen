@@ -1,0 +1,233 @@
+[
+    {
+        "name": "Logic.Component",
+        "comment": " **Component**: the raw data for one aspect of the object, and how it interacts with the world. \"Labels the Entity as possessing this particular aspect\".\n\nExample:\n\n    type alias Velocity =\n        { x : Float, y : Float }\n\n    spec : Component.Spec Velocity { world | v : Component.Set Velocity }\n    spec =\n        Component.Spec .v (\\comps world -> { world | v = comps })\n\n    empty : Component.Set Velocity\n    empty =\n        Component.empty\n\n@docs Set, Spec, empty\n\n\n# Manipulations\n\n@docs set, spawn, remove\n@docs get, get2, update\n@docs map, filterMap\n\n\n# List\n\n@docs fromList, toList\n\n\n# Dict\n\n@docs fromDict, toDict\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Set",
+                "comment": " Component storage, the main building block of the world\n",
+                "args": [
+                    "comp"
+                ],
+                "type": "Array.Array (Maybe.Maybe comp)"
+            },
+            {
+                "name": "Spec",
+                "comment": " Component specification, how to get `Component.Set` from the world and set back into the world (mainly used by Systems)\n",
+                "args": [
+                    "comp",
+                    "world"
+                ],
+                "type": "{ get : world -> Logic.Component.Set comp, set : Logic.Component.Set comp -> world -> world }"
+            }
+        ],
+        "values": [
+            {
+                "name": "empty",
+                "comment": " Create an empty `Component.Set` - mostly used to init component sets in the world.\n",
+                "type": "Logic.Component.Set comp"
+            },
+            {
+                "name": "filterMap",
+                "comment": " Filter out certain components.\n",
+                "type": "(comp -> Maybe.Maybe comp) -> Logic.Component.Set comp -> Logic.Component.Set comp"
+            },
+            {
+                "name": "fromDict",
+                "comment": " Create a `Component.Set` from a dictionary.\n\n**Note**: Useful for data serialization.\n\n",
+                "type": "Dict.Dict Logic.Component.EntityID a -> Logic.Component.Set a"
+            },
+            {
+                "name": "fromList",
+                "comment": " Create a `Component.Set` from a `List`.\n\n**Note**: Useful for data serialization.\n\n",
+                "type": "List.List ( Logic.Component.EntityID, a ) -> Logic.Component.Set a"
+            },
+            {
+                "name": "get",
+                "comment": " Get component for `EntityId`.\n",
+                "type": "Logic.Component.EntityID -> Logic.Component.Set comp -> Maybe.Maybe comp"
+            },
+            {
+                "name": "get2",
+                "comment": " Get components Tuple for `EntityId`.\n",
+                "type": "Logic.Component.EntityID -> Logic.Component.Set comp -> Logic.Component.Set comp2 -> Maybe.Maybe ( comp, comp2 )"
+            },
+            {
+                "name": "map",
+                "comment": " Apply a function on every component in a `Component.Set`.\n\n    map sqrt (fromList [ ( 0, 1 ), ( 1, 4 ), ( 2, 9 ) ])\n        |> (==) fromList [ ( 0, 1 ), ( 1, 2 ), ( 2, 3 ) ]\n\n",
+                "type": "(comp -> comp) -> Logic.Component.Set comp -> Logic.Component.Set comp"
+            },
+            {
+                "name": "remove",
+                "comment": " Remove component from `Component.Set` by `EntityID`, or return unchanged if component not in `Set`.\n",
+                "type": "Logic.Component.EntityID -> Logic.Component.Set a -> Logic.Component.Set a"
+            },
+            {
+                "name": "set",
+                "comment": " Set the component at a particular index. Returns an updated `Component.Set`. If the index is out of range, the `Component.Set` is unaltered.\n\n    test =\n        -- Nothing\n        empty |> set 5 10 |> get 5\n\n",
+                "type": "Logic.Component.EntityID -> a -> Logic.Component.Set a -> Logic.Component.Set a"
+            },
+            {
+                "name": "spawn",
+                "comment": " Safe way to create a component, same as `set`, only if an index is out of range `Component.Set` will be stretched.\n\n    test =\n        -- Just 5\n        empty |> spawn 5 10 |> get 5\n\n",
+                "type": "Logic.Component.EntityID -> a -> Logic.Component.Set a -> Logic.Component.Set a"
+            },
+            {
+                "name": "toDict",
+                "comment": " Create a dictionary from a `Component.Set`.\n\n**Note**: Useful for data deserialization.\n\n",
+                "type": "Logic.Component.Set a -> Dict.Dict Logic.Component.EntityID a"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert a `Component.Set` into an association list of id-component pairs, sorted by id.\n\n**Note**: Useful for data deserialization.\n\n",
+                "type": "Logic.Component.Set a -> List.List ( Logic.Component.EntityID, a )"
+            },
+            {
+                "name": "update",
+                "comment": " Update Component by `EntityID`.\n",
+                "type": "Logic.Component.EntityID -> (comp -> comp) -> Logic.Component.Set comp -> Logic.Component.Set comp"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Logic.Entity",
+        "comment": " **Entity**: The entity is a general-purpose object. It only consists of a unique ID. They \"tag every coarse game object as a separate item\".\nExample:\n\n    Entity.create id world\n        |> Entity.with ( positionSpec, positionComponent )\n        |> Entity.with ( velocitySpec, velocityComponent )\n\n@docs EntityID, create, with, remove\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "EntityID",
+                "comment": " ",
+                "args": [],
+                "type": "Basics.Int"
+            }
+        ],
+        "values": [
+            {
+                "name": "create",
+                "comment": " Start point for spawning `Entity`\n\n    Entity.create id world\n        |> Entity.with ( positionSpec, positionComponent )\n        |> Entity.with ( velocitySpec, velocityComponent )\n\n",
+                "type": "Logic.Entity.EntityID -> world -> ( Logic.Entity.EntityID, world )"
+            },
+            {
+                "name": "remove",
+                "comment": " Way to create `Entity` destruction functions, should pipe in all possible component specs.\nIt also can be used to just disable (remove) some components from an entity.\n\n    remove =\n        Entity.remove positionSpec\n            >> Entity.remove velocitySpec\n\n    newWorld =\n        remove ( id, world )\n\n",
+                "type": "Logic.Component.Spec comp world -> ( Logic.Entity.EntityID, world ) -> ( Logic.Entity.EntityID, world )"
+            },
+            {
+                "name": "with",
+                "comment": " Set component to spawn with a new entity\n\n    Entity.create ( id, world )\n        |> Entity.with ( positionSpec, positionComponent )\n        |> Entity.with ( velocitySpec, velocityComponent )\n\n",
+                "type": "( Logic.Component.Spec comp world, comp ) -> ( Logic.Entity.EntityID, world ) -> ( Logic.Entity.EntityID, world )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Logic.System",
+        "comment": " **System**: main logic driver, that is used to stepping on each game-loop and update `World`\n\n@docs System\n@docs update, step, step2, step3, step4, step5\n\n@docs foldl, foldl2, foldl3, foldl4, foldl5\n@docs indexedFoldl, indexedFoldl2, indexedFoldl3, indexedFoldl4, indexedFoldl5\n\n\n# Util\n\n@docs applyIf, applyMaybe\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "System",
+                "comment": " ",
+                "args": [
+                    "world"
+                ],
+                "type": "world -> world"
+            }
+        ],
+        "values": [
+            {
+                "name": "applyIf",
+                "comment": " Just nice helper function to pipe into systems\n\n    update msg world =\n        world\n            |> system1\n            |> applyIf (msg === KeyUp \"a\") systemMoveLeft\n            |> system2\n\n",
+                "type": "Basics.Bool -> (a -> a) -> a -> a"
+            },
+            {
+                "name": "applyMaybe",
+                "comment": " Same as [`applyIf`](#applyIf), but works with `Maybe`\n\n    update msg world =\n        world\n            |> system1\n            |> applyMaybe (decode saveDecoder msg) loadGame\n            |> system2\n\n",
+                "type": "Maybe.Maybe a -> (a -> c -> c) -> c -> c"
+            },
+            {
+                "name": "foldl",
+                "comment": " Reduce a `Component.Set` from the left.\n\nExample count how much enemies left in the world:\n\n    enemySet =\n        enemySpec.get world\n\n    count =\n        foldl (\\_ -> (+) 1) enemySet 0\n\n",
+                "type": "(comp1 -> acc -> acc) -> Logic.Component.Set comp1 -> acc -> acc"
+            },
+            {
+                "name": "foldl2",
+                "comment": " Step over all entities that have both components and reduce an `Component.Set`s from the left.\n",
+                "type": "(comp1 -> comp2 -> acc -> acc) -> Logic.Component.Set comp1 -> Logic.Component.Set comp2 -> acc -> acc"
+            },
+            {
+                "name": "foldl3",
+                "comment": " Same as [`foldl2`](#foldl2) only with 3 components\n",
+                "type": "(comp1 -> comp2 -> comp3 -> acc -> acc) -> Logic.Component.Set comp1 -> Logic.Component.Set comp2 -> Logic.Component.Set comp3 -> acc -> acc"
+            },
+            {
+                "name": "foldl4",
+                "comment": " Same as [`foldl2`](#foldl2) only with 4 components\n",
+                "type": "(comp1 -> comp2 -> comp3 -> comp4 -> acc -> acc) -> Logic.Component.Set comp1 -> Logic.Component.Set comp2 -> Logic.Component.Set comp3 -> Logic.Component.Set comp4 -> acc -> acc"
+            },
+            {
+                "name": "foldl5",
+                "comment": " Same as [`foldl2`](#foldl2) only with 5 components\n",
+                "type": "(comp1 -> comp2 -> comp3 -> comp4 -> acc -> acc) -> Logic.Component.Set comp1 -> Logic.Component.Set comp2 -> Logic.Component.Set comp3 -> Logic.Component.Set comp4 -> acc -> acc"
+            },
+            {
+                "name": "indexedFoldl",
+                "comment": " Variant of `foldl` that passes the index of the current element to the step function.\n\n`indexedFoldl` is to `foldl` as `List.indexedMap` is to `List.map`.\n\n",
+                "type": "(Logic.Entity.EntityID -> comp1 -> acc -> acc) -> Logic.Component.Set comp1 -> acc -> acc"
+            },
+            {
+                "name": "indexedFoldl2",
+                "comment": " ",
+                "type": "(Logic.Entity.EntityID -> comp1 -> comp2 -> acc -> acc) -> Logic.Component.Set comp1 -> Logic.Component.Set comp2 -> acc -> acc"
+            },
+            {
+                "name": "indexedFoldl3",
+                "comment": " Same as [`indexedFoldl2`](#indexedFoldl2) only with 3 components\n",
+                "type": "(Logic.Entity.EntityID -> comp1 -> comp2 -> comp3 -> acc -> acc) -> Logic.Component.Set comp1 -> Logic.Component.Set comp2 -> Logic.Component.Set comp3 -> acc -> acc"
+            },
+            {
+                "name": "indexedFoldl4",
+                "comment": " Same as [`indexedFoldl2`](#indexedFoldl2) only with 4 components\n",
+                "type": "(Logic.Entity.EntityID -> comp1 -> comp2 -> comp3 -> comp4 -> acc -> acc) -> Logic.Component.Set comp1 -> Logic.Component.Set comp2 -> Logic.Component.Set comp3 -> Logic.Component.Set comp4 -> acc -> acc"
+            },
+            {
+                "name": "indexedFoldl5",
+                "comment": " Same as [`indexedFoldl2`](#indexedFoldl2) only with 5 components\n",
+                "type": "(Logic.Entity.EntityID -> comp1 -> comp2 -> comp3 -> comp4 -> comp5 -> acc -> acc) -> Logic.Component.Set comp1 -> Logic.Component.Set comp2 -> Logic.Component.Set comp3 -> Logic.Component.Set comp4 -> Logic.Component.Set comp5 -> acc -> acc"
+            },
+            {
+                "name": "step",
+                "comment": " Single component mapping, Same as`List.map` - only for `Component.Set` inside `World`\n\n    gravitySystem =\n        Logic.System.step (Vec2.add gravity) accelerationSpec\n\n",
+                "type": "(comp -> comp) -> Logic.Component.Spec comp world -> world -> world"
+            },
+            {
+                "name": "step2",
+                "comment": " Step over all entities that have both components.\n\nExample:\n\n    system =\n        Logic.System.step2\n            (\\( v, _ ) ( p, setP ) -> setP (Vec2.add v p))\n            velocitySpec\n            positionSpec\n\n",
+                "type": "(( a, a -> Logic.System.System (Logic.System.Acc2 a b) ) -> ( b, b -> Logic.System.System (Logic.System.Acc2 a b) ) -> Logic.System.System (Logic.System.Acc2 a b)) -> Logic.Component.Spec a world -> Logic.Component.Spec b world -> world -> world"
+            },
+            {
+                "name": "step3",
+                "comment": " Same as [`step2`](#step2) only with 3 components\n",
+                "type": "(( a, a -> Logic.System.System (Logic.System.Acc3 a b c) ) -> ( b, b -> Logic.System.System (Logic.System.Acc3 a b c) ) -> ( c, c -> Logic.System.System (Logic.System.Acc3 a b c) ) -> Logic.System.System (Logic.System.Acc3 a b c)) -> Logic.Component.Spec a world -> Logic.Component.Spec b world -> Logic.Component.Spec c world -> world -> world"
+            },
+            {
+                "name": "step4",
+                "comment": " Same as [`step2`](#step2) only with 4 components\n",
+                "type": "(( a, a -> Logic.System.System (Logic.System.Acc4 a b c d) ) -> ( b, b -> Logic.System.System (Logic.System.Acc4 a b c d) ) -> ( c, c -> Logic.System.System (Logic.System.Acc4 a b c d) ) -> ( d, d -> Logic.System.System (Logic.System.Acc4 a b c d) ) -> Logic.System.System (Logic.System.Acc4 a b c d)) -> Logic.Component.Spec a world -> Logic.Component.Spec b world -> Logic.Component.Spec c world -> Logic.Component.Spec d world -> world -> world"
+            },
+            {
+                "name": "step5",
+                "comment": " Same as [`step2`](#step2) only with 5 components\n",
+                "type": "(( a, a -> Logic.System.System (Logic.System.Acc5 a b c d e) ) -> ( b, b -> Logic.System.System (Logic.System.Acc5 a b c d e) ) -> ( c, c -> Logic.System.System (Logic.System.Acc5 a b c d e) ) -> ( d, d -> Logic.System.System (Logic.System.Acc5 a b c d e) ) -> ( e, e -> Logic.System.System (Logic.System.Acc5 a b c d e) ) -> Logic.System.System (Logic.System.Acc5 a b c d e)) -> Logic.Component.Spec a world -> Logic.Component.Spec b world -> Logic.Component.Spec c world -> Logic.Component.Spec d world -> Logic.Component.Spec e world -> world -> world"
+            },
+            {
+                "name": "update",
+                "comment": " Update whole `Component.Set`\n",
+                "type": "Logic.Component.Spec comp world -> (Logic.Component.Set comp -> Logic.Component.Set comp) -> world -> world"
+            }
+        ],
+        "binops": []
+    }
+]

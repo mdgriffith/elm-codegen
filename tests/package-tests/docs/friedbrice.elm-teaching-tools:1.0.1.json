@@ -1,0 +1,824 @@
+[
+    {
+        "name": "ElmTeachingTools.Labs.Introduction",
+        "comment": " Some exercises to get you familiar with programming in Elm.\n\n@docs runIntroduction\n\n@docs Exercises\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Exercises",
+                "comment": " This lab consists of six exercises to help you get started learning\nthe basics of Elm and how to use it to write interactive web programs.\n\n  - `ex0_sayHello : String -> String`\n    Give someone a nice, name-appropriate greeting.\n    If their name ends with \"y\", give them a friendly \"Hey, <name>!\".\n    If their name doesn't end with \"y\", give a more formal \"Hello, <name>.\".\n    If they leave their name blank, kindly ask \"Hello, who's there?\".\n\n  - `ex1_countVowels : String -> Int`\n    Count the number of vowels in the input.\n    For the purposes of this exercise, the letters \"a\", \"e\", \"i\", \"o\",\n    and \"u\" are considered vowels.\n    (Upper-case versions are also vowels!)\n\n  - `ex2_toCamelCase : String -> String`\n    Convert a sentence to camelCase.\n    Capitalize the first letter of each word except the first,\n    make sure all other letters are lower case,\n    and remove all spaces.\n\n  - `ex3_diffList : List Int -> Maybe (List Int)`\n    Given a list of positive integers,\n    compute the list of differences between successive terms.\n    Notice, this list will be one shorter than that starting list.\n    If the user gives only one integer, return an empty list.\n    If the user gives empty input, return `Nothing`\".\n\n  - `ex4_partialSums : List Int -> List Int`\n    Given a list of positive integers,\n    compute the list of partial sums, starting with 0.\n    Notice your list will be one longer than the input list.\n    If the user gives empty input, return the list `[0]`.\n\n  - `ex5_simpleCalc : String -> String`\n    Make a calculator capable of addition and multiplication of integers.\n    Follow the ordinary order of operations, multiplication then addition.\n    A `-` sign will always mean \"negative\" and never mean subtraction.\n    If the input has any characters other than digits, `*`, `+`, and `-`,\n    return the string, \"Sorry, bad input!\".\n\n",
+                "args": [],
+                "type": "{ ex0_sayHello : String.String -> String.String, ex1_countVowels : String.String -> Basics.Int, ex2_toCamelCase : String.String -> String.String, ex3_diffList : List.List Basics.Int -> Maybe.Maybe (List.List Basics.Int), ex4_partialSums : List.List Basics.Int -> List.List Basics.Int, ex5_simpleCalc : String.String -> String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "runIntroduction",
+                "comment": " To complete this lab, import this library in your own file,\ncreate an appropriate `Exercises` value, and use your `Exercises` value\nwith `runIntroduction`.\n\n    module Main exposing (main)\n\n    import ElmTeachingTools.Labs.Introduction exposing (..)\n\n    myExercises : Exercises\n    myExercises =\n        { -- your code here\n        }\n\n    main =\n        runIntroduction myExercises\n\n",
+                "type": "ElmTeachingTools.Labs.Introduction.Exercises -> Platform.Program () ElmTeachingTools.Labs.Introduction.Model ElmTeachingTools.Labs.Introduction.Message"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ElmTeachingTools.Labs.Life",
+        "comment": " Conway's Game of Life.\n\nFor details, see the Wikipedia article,\n<https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life>.\n\n\n# Basics\n\n@docs Cell, CellStatus, Board\n\n\n# Rules\n\n@docs LifeRules\n\n\n# Running\n\n@docs runLife\n\n",
+        "unions": [
+            {
+                "name": "CellStatus",
+                "comment": " A cell is either `Alive` or `Dead`.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Dead",
+                        []
+                    ],
+                    [
+                        "Alive",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Board",
+                "comment": " Conceptually, a board is an infinite grid of cells, each of which\nis either alive or dead.\n\nWe model this concept in our program using a **function**. Specifically,\na function that outputs a `CellStatus` when you input a `Cell`.\n\nIf you have a `Board` and `Cell`, you can find the status of that\n`Cell` by plugging it into the `Board`.\n\nIf you need to create a board, you do so by writing a function whose\nvariable is a `Cell` and that returns a `CellStatus`.\n\n",
+                "args": [],
+                "type": "ElmTeachingTools.Labs.Life.Cell -> ElmTeachingTools.Labs.Life.CellStatus"
+            },
+            {
+                "name": "Cell",
+                "comment": " A cell is a position in an infinite grid.\n",
+                "args": [],
+                "type": "( Basics.Int, Basics.Int )"
+            },
+            {
+                "name": "LifeRules",
+                "comment": " The rules we need to describe in order to make a working _Life_ game\ncan be modeled by these three functions:\n\n  - `nextStatus : Int -> CellStatus -> CellStatus`\n    Given the number of living neighbors and the current cell status, what\n    should the cell's next status be? Use the rules listed in the Wikipedia\n    article to write this function.\n\n  - `livingNeighbors : Board -> Cell -> Int`\n    Given the current board and a cell, how many living neighbors does that\n    cell have? You'll need a tiny bit of geometry to write this function.\n\n  - `nextBoard : Board -> Board`\n    Given the current board, what should the next board be? You should use\n    your `livingNeighbors` and `nextStatus` functions to write this function.\n\n",
+                "args": [],
+                "type": "{ nextStatus : Basics.Int -> ElmTeachingTools.Labs.Life.CellStatus -> ElmTeachingTools.Labs.Life.CellStatus, livingNeighbors : ElmTeachingTools.Labs.Life.Board -> ElmTeachingTools.Labs.Life.Cell -> Basics.Int, nextBoard : ElmTeachingTools.Labs.Life.Board -> ElmTeachingTools.Labs.Life.Board }"
+            }
+        ],
+        "values": [
+            {
+                "name": "runLife",
+                "comment": " To complete this lab, import this library into your own Elm file,\ncreate an appropriate `LifeRules` record, and use it in `runLife`.\n\n    module Main exposing (main)\n\n    import ElmTeachingTools.Labs.Life exposing (..)\n\n    myLifeRules : LifeRules\n    myLifeRules =\n        { -- your code here\n        }\n\n    main =\n        runLife myLifeRules\n\n",
+                "type": "ElmTeachingTools.Labs.Life.LifeRules -> ElmTeachingTools.Lib.Game.Game ElmTeachingTools.Labs.Life.State ElmTeachingTools.Labs.Life.Event"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ElmTeachingTools.Lib.Color",
+        "comment": " A library with some stock colors so that you don't have to remember\ntheir Hex values.\n\n\n# Basic API\n\n@docs Color, hexValue\n\n\n# Predefined Colors\n\n@docs white\n@docs silver\n@docs gray\n@docs black\n@docs red\n@docs maroon\n@docs yellow\n@docs olive\n@docs lime\n@docs green\n@docs aqua\n@docs teal\n@docs blue\n@docs navy\n@docs fuchsia\n@docs purple\n\n",
+        "unions": [
+            {
+                "name": "Color",
+                "comment": " A color in RGB hex notation.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Color",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "aqua",
+                "comment": " ",
+                "type": "ElmTeachingTools.Lib.Color.Color"
+            },
+            {
+                "name": "black",
+                "comment": " ",
+                "type": "ElmTeachingTools.Lib.Color.Color"
+            },
+            {
+                "name": "blue",
+                "comment": " ",
+                "type": "ElmTeachingTools.Lib.Color.Color"
+            },
+            {
+                "name": "fuchsia",
+                "comment": " ",
+                "type": "ElmTeachingTools.Lib.Color.Color"
+            },
+            {
+                "name": "gray",
+                "comment": " ",
+                "type": "ElmTeachingTools.Lib.Color.Color"
+            },
+            {
+                "name": "green",
+                "comment": " ",
+                "type": "ElmTeachingTools.Lib.Color.Color"
+            },
+            {
+                "name": "hexValue",
+                "comment": " Get the RGB hex notation of a `Color`.\n\n    --| Example\n    hexValue (Color \"#c0c0c0\")\n    --> \"#c0c0c0\"\n\n",
+                "type": "ElmTeachingTools.Lib.Color.Color -> String.String"
+            },
+            {
+                "name": "lime",
+                "comment": " ",
+                "type": "ElmTeachingTools.Lib.Color.Color"
+            },
+            {
+                "name": "maroon",
+                "comment": " ",
+                "type": "ElmTeachingTools.Lib.Color.Color"
+            },
+            {
+                "name": "navy",
+                "comment": " ",
+                "type": "ElmTeachingTools.Lib.Color.Color"
+            },
+            {
+                "name": "olive",
+                "comment": " ",
+                "type": "ElmTeachingTools.Lib.Color.Color"
+            },
+            {
+                "name": "purple",
+                "comment": " ",
+                "type": "ElmTeachingTools.Lib.Color.Color"
+            },
+            {
+                "name": "red",
+                "comment": " ",
+                "type": "ElmTeachingTools.Lib.Color.Color"
+            },
+            {
+                "name": "silver",
+                "comment": " ",
+                "type": "ElmTeachingTools.Lib.Color.Color"
+            },
+            {
+                "name": "teal",
+                "comment": " ",
+                "type": "ElmTeachingTools.Lib.Color.Color"
+            },
+            {
+                "name": "white",
+                "comment": " ",
+                "type": "ElmTeachingTools.Lib.Color.Color"
+            },
+            {
+                "name": "yellow",
+                "comment": " ",
+                "type": "ElmTeachingTools.Lib.Color.Color"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ElmTeachingTools.Lib.Game",
+        "comment": " A library with a small scaffolding for creating simple games.\n\n\n# Creating games\n\n@docs Game, game\n\n\n# Game events\n\n@docs Timestamp, GameEvent\n\n",
+        "unions": [
+            {
+                "name": "GameEvent",
+                "comment": " Events that your game can respond to.\n\nA `ClockTick` event occurs about 60 times per second and carries the\ncurrent timestamp.\n\nA `Keyboard` event occurs whenever a key is pushed down or released\n(see `Lib.Keyboard`).\n\nA `Custom` event can be triggered by the `onClick` property of a\n`Graphic` element (see `Lib.Graphics`).\n\n",
+                "args": [
+                    "e"
+                ],
+                "cases": [
+                    [
+                        "ClockTick",
+                        [
+                            "ElmTeachingTools.Lib.Game.Timestamp"
+                        ]
+                    ],
+                    [
+                        "Keyboard",
+                        [
+                            "ElmTeachingTools.Lib.Keyboard.KeyEvent"
+                        ]
+                    ],
+                    [
+                        "Custom",
+                        [
+                            "e"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Game",
+                "comment": " A simple game, with state type `s` and event type `e`.\n",
+                "args": [
+                    "s",
+                    "e"
+                ],
+                "type": "Platform.Program () s (ElmTeachingTools.Lib.Game.GameEvent e)"
+            },
+            {
+                "name": "Timestamp",
+                "comment": " The number of milliseconds since Midnight UTC Jan 1 1970.\n\n**Note:** You can tell how much time has elapsed in your game by\nsaving the start time in your game state and then subtracting later on.\n\n",
+                "args": [],
+                "type": "Basics.Int"
+            }
+        ],
+        "values": [
+            {
+                "name": "game",
+                "comment": " Create a game.\n\nThis follows the _State Machine_ program architecture. We must provide:\n\n1.  A type `s` of possible program states,\n2.  A type `e` of possible custom events,\n3.  A starting state `init : s`,\n4.  A transition function `update : GameEvent e -> s -> s`, and\n5.  A view function `view : s -> Screen e`\n\nThis framework comes with some built-in events. Specifically,\n`GameEvent` can be a `ClockTick` event, a `Keyboard` event,\nor it can be a `Custom` event with type `e`.\n\n",
+                "type": "{ init : s, update : ElmTeachingTools.Lib.Game.GameEvent e -> s -> s, view : s -> ElmTeachingTools.Lib.Graphics.Screen e } -> ElmTeachingTools.Lib.Game.Game s e"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ElmTeachingTools.Lib.Graphics",
+        "comment": " A library with functions for putting graphics on the screen.\n\n\n# Graphical elements\n\n@docs Graphic, rectangle, circle, line, curve\n\n\n# Screen\n\n@docs Screen, screen\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Graphic",
+                "comment": " A \"scaled vector graphic\" that can generate events of type `e` and\ncan be drawn on a `Screen`.\n",
+                "args": [
+                    "e"
+                ],
+                "type": "Svg.Svg e"
+            },
+            {
+                "name": "Screen",
+                "comment": " A web page consisting of a screen that can generate events of type\n`e` and onto which `Graphic`s can be drawn.\n",
+                "args": [
+                    "e"
+                ],
+                "type": "Browser.Document e"
+            }
+        ],
+        "values": [
+            {
+                "name": "circle",
+                "comment": " ",
+                "type": "{ center : ( Basics.Float, Basics.Float ), radius : Basics.Float, border : Maybe.Maybe ( Basics.Float, ElmTeachingTools.Lib.Color.Color ), fill : Maybe.Maybe ElmTeachingTools.Lib.Color.Color, onClick : Maybe.Maybe e } -> ElmTeachingTools.Lib.Graphics.Graphic e"
+            },
+            {
+                "name": "curve",
+                "comment": " ",
+                "type": "{ start : ( Basics.Float, Basics.Float ), end : ( Basics.Float, Basics.Float ), control : ( Basics.Float, Basics.Float ), border : ( Basics.Float, ElmTeachingTools.Lib.Color.Color ), onClick : Maybe.Maybe e } -> ElmTeachingTools.Lib.Graphics.Graphic e"
+            },
+            {
+                "name": "line",
+                "comment": " ",
+                "type": "{ start : ( Basics.Float, Basics.Float ), end : ( Basics.Float, Basics.Float ), border : ( Basics.Float, ElmTeachingTools.Lib.Color.Color ), onClick : Maybe.Maybe e } -> ElmTeachingTools.Lib.Graphics.Graphic e"
+            },
+            {
+                "name": "rectangle",
+                "comment": " ",
+                "type": "{ topLeft : ( Basics.Float, Basics.Float ), width : Basics.Float, height : Basics.Float, radius : Basics.Float, border : Maybe.Maybe ( Basics.Float, ElmTeachingTools.Lib.Color.Color ), fill : Maybe.Maybe ElmTeachingTools.Lib.Color.Color, onClick : Maybe.Maybe e } -> ElmTeachingTools.Lib.Graphics.Graphic e"
+            },
+            {
+                "name": "screen",
+                "comment": " Create a `Screen`.\n",
+                "type": "{ title : String.String, widthPx : Basics.Int, heightPx : Basics.Int, xMax : Basics.Float, yMax : Basics.Float, children : List.List (ElmTeachingTools.Lib.Graphics.Graphic e) } -> ElmTeachingTools.Lib.Graphics.Screen e"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ElmTeachingTools.Lib.Keyboard",
+        "comment": " A library for detecting key presses and releases.\n\n@docs KeyEvent, Key, keyEvents\n\n",
+        "unions": [
+            {
+                "name": "Key",
+                "comment": " A `Key` represents a physical key on the keyboard, not a character.\nIn particular, a `Key` does not distinguish between lower case and upper\ncase.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Key_Escape",
+                        []
+                    ],
+                    [
+                        "Key_F1",
+                        []
+                    ],
+                    [
+                        "Key_F2",
+                        []
+                    ],
+                    [
+                        "Key_F3",
+                        []
+                    ],
+                    [
+                        "Key_F4",
+                        []
+                    ],
+                    [
+                        "Key_F5",
+                        []
+                    ],
+                    [
+                        "Key_F6",
+                        []
+                    ],
+                    [
+                        "Key_F7",
+                        []
+                    ],
+                    [
+                        "Key_F8",
+                        []
+                    ],
+                    [
+                        "Key_F9",
+                        []
+                    ],
+                    [
+                        "Key_F10",
+                        []
+                    ],
+                    [
+                        "Key_F11",
+                        []
+                    ],
+                    [
+                        "Key_F12",
+                        []
+                    ],
+                    [
+                        "Key_Insert",
+                        []
+                    ],
+                    [
+                        "Key_Delete",
+                        []
+                    ],
+                    [
+                        "Key_Home",
+                        []
+                    ],
+                    [
+                        "Key_End",
+                        []
+                    ],
+                    [
+                        "Key_PageUp",
+                        []
+                    ],
+                    [
+                        "Key_PageDown",
+                        []
+                    ],
+                    [
+                        "Key_UpArrow",
+                        []
+                    ],
+                    [
+                        "Key_LeftArrow",
+                        []
+                    ],
+                    [
+                        "Key_DownArrow",
+                        []
+                    ],
+                    [
+                        "Key_RightArrow",
+                        []
+                    ],
+                    [
+                        "Key_Tab",
+                        []
+                    ],
+                    [
+                        "Key_CapsLock",
+                        []
+                    ],
+                    [
+                        "Key_Shift",
+                        []
+                    ],
+                    [
+                        "Key_Control",
+                        []
+                    ],
+                    [
+                        "Key_Alt",
+                        []
+                    ],
+                    [
+                        "Key_Backspace",
+                        []
+                    ],
+                    [
+                        "Key_Enter",
+                        []
+                    ],
+                    [
+                        "Key_Space",
+                        []
+                    ],
+                    [
+                        "Key_Backtick",
+                        []
+                    ],
+                    [
+                        "Key_Hyphen",
+                        []
+                    ],
+                    [
+                        "Key_Equals",
+                        []
+                    ],
+                    [
+                        "Key_LeftBracket",
+                        []
+                    ],
+                    [
+                        "Key_RightBracket",
+                        []
+                    ],
+                    [
+                        "Key_Backslash",
+                        []
+                    ],
+                    [
+                        "Key_Semicolon",
+                        []
+                    ],
+                    [
+                        "Key_Apostrophe",
+                        []
+                    ],
+                    [
+                        "Key_Comma",
+                        []
+                    ],
+                    [
+                        "Key_Period",
+                        []
+                    ],
+                    [
+                        "Key_Slash",
+                        []
+                    ],
+                    [
+                        "Key_1",
+                        []
+                    ],
+                    [
+                        "Key_2",
+                        []
+                    ],
+                    [
+                        "Key_3",
+                        []
+                    ],
+                    [
+                        "Key_4",
+                        []
+                    ],
+                    [
+                        "Key_5",
+                        []
+                    ],
+                    [
+                        "Key_6",
+                        []
+                    ],
+                    [
+                        "Key_7",
+                        []
+                    ],
+                    [
+                        "Key_8",
+                        []
+                    ],
+                    [
+                        "Key_9",
+                        []
+                    ],
+                    [
+                        "Key_0",
+                        []
+                    ],
+                    [
+                        "Key_Q",
+                        []
+                    ],
+                    [
+                        "Key_W",
+                        []
+                    ],
+                    [
+                        "Key_E",
+                        []
+                    ],
+                    [
+                        "Key_R",
+                        []
+                    ],
+                    [
+                        "Key_T",
+                        []
+                    ],
+                    [
+                        "Key_Y",
+                        []
+                    ],
+                    [
+                        "Key_U",
+                        []
+                    ],
+                    [
+                        "Key_I",
+                        []
+                    ],
+                    [
+                        "Key_O",
+                        []
+                    ],
+                    [
+                        "Key_P",
+                        []
+                    ],
+                    [
+                        "Key_A",
+                        []
+                    ],
+                    [
+                        "Key_S",
+                        []
+                    ],
+                    [
+                        "Key_D",
+                        []
+                    ],
+                    [
+                        "Key_F",
+                        []
+                    ],
+                    [
+                        "Key_G",
+                        []
+                    ],
+                    [
+                        "Key_H",
+                        []
+                    ],
+                    [
+                        "Key_J",
+                        []
+                    ],
+                    [
+                        "Key_K",
+                        []
+                    ],
+                    [
+                        "Key_L",
+                        []
+                    ],
+                    [
+                        "Key_Z",
+                        []
+                    ],
+                    [
+                        "Key_X",
+                        []
+                    ],
+                    [
+                        "Key_C",
+                        []
+                    ],
+                    [
+                        "Key_V",
+                        []
+                    ],
+                    [
+                        "Key_B",
+                        []
+                    ],
+                    [
+                        "Key_N",
+                        []
+                    ],
+                    [
+                        "Key_M",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "KeyEvent",
+                "comment": " An event that triggers whenever a key is pressed down or released.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "KeyDown",
+                        [
+                            "ElmTeachingTools.Lib.Keyboard.Key"
+                        ]
+                    ],
+                    [
+                        "KeyUp",
+                        [
+                            "ElmTeachingTools.Lib.Keyboard.Key"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "keyEvents",
+                "comment": " Subscribe to keyboard events.\n",
+                "type": "Platform.Sub.Sub ElmTeachingTools.Lib.Keyboard.KeyEvent"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ElmTeachingTools.Lib.List",
+        "comment": " Extra functions to make working with lists easier.\n\n\n# Create lists\n\n@docs iterate, unfold, fromMaybe\n\n\n# Transform lists\n\n@docs dropWhile, takeWhile, filterMaybes\n\n\n# Combine lists\n\n@docs zip, cross, join\n\n\n# Use lists\n\n@docs inc, dec, find, mapReduce, groupBy\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "cross",
+                "comment": " Create the list of all possible pairs from two other lists.\n\n    --| Example.\n    cross [ 1, 2, 3 ] [ 'a', 'b' ]\n    --> [(1, 'a'), (1, 'b'), (2, 'a'), (2, 'b'), (3, 'a'), (3, 'b')]\n\n",
+                "type": "List.List a -> List.List b -> List.List ( a, b )"
+            },
+            {
+                "name": "dec",
+                "comment": " Select the list element preceeding the value you provided, if one exists.\n\n    --| Go back to the previous element of the list.\n    dec [ \"do\", \"re\", \"mi\" ] \"re\"\n    --> Just \"do\"\n\n    --| Fails when the element does not appear in the list.\n    dec [ \"do\", \"mi\", \"so\" ] \"re\"\n    --> Nothing\n\n    --| Fails when the element appears at the beginning of the list.\n    dec [ \"do\", \"re\", \"mi\" ] \"do\"\n    --> Nothing\n\n    --| Fails when the list is empty.\n    dec [] \"do\"\n    --> Nothing\n\n",
+                "type": "List.List a -> a -> Maybe.Maybe a"
+            },
+            {
+                "name": "dropWhile",
+                "comment": " Drop elements from the front of a list until the supplied callback is false.\n\n    --| Example.\n    dropWhile (\\x -> x < 5) [ 1, 2, 3, 4, 5, 3 ]\n    --> [5, 3]\n\n",
+                "type": "(a -> Basics.Bool) -> List.List a -> List.List a"
+            },
+            {
+                "name": "filterMaybes",
+                "comment": " Filter `Nothing`s out of a list of `Maybe`s, unwrappig the `Just`s.\n\n    --| Example.\n    filterMaybes [ Just 1, Just 2, Nothing, Just 4 ]\n    --> [1, 2, 4]\n\n",
+                "type": "List.List (Maybe.Maybe a) -> List.List a"
+            },
+            {
+                "name": "find",
+                "comment": " Find the first element of the list that satisfies the predicate, or\nan empty maybe if no list elements satisfy the predicate.\n\n    --| Finds first list element that matches.\n    find even [ 3, 5, 4, 1, 2 ]\n    --> Just 4\n\n    --| Fails if no list element matches.\n    find even [ 3, 5, 5, 1, 7 ]\n    --> Nothing\n\n    --| Fails on empty list.\n    find even []\n    --> Nothing\n\n",
+                "type": "(a -> Basics.Bool) -> List.List a -> Maybe.Maybe a"
+            },
+            {
+                "name": "fromMaybe",
+                "comment": " Create either a singleton list or an empty list from a `Maybe`.\n\n    --| Empty maybe yields empty list.\n    fromMaybe Nothing\n    --> []\n\n    --| Populated maybe yields singleton list.\n    fromMaybe (Just 5)\n    --> [5]\n\n",
+                "type": "Maybe.Maybe a -> List.List a"
+            },
+            {
+                "name": "groupBy",
+                "comment": " Provide a key function to partition a list into sublists by key.\n\n    --| Example.\n    groupBy String.length [\"hello\", \"in\", \"TV\", \"land\"]\n    --> fromList [(2,[\"in\",\"TV\"]),(4,[\"land\"]),(5,[\"hello\"])]\n\n",
+                "type": "(a -> comparable) -> List.List a -> Dict.Dict comparable (List.List a)"
+            },
+            {
+                "name": "inc",
+                "comment": " Select the list element following the value you provided, if one exists.\n\n    --| Advance to next element of the list.\n    inc [ \"do\", \"re\", \"mi\" ] \"re\"\n    --> Just \"mi\"\n\n    --| Fails when the element does not appear in the list.\n    inc [ \"do\", \"mi\", \"so\" ] \"re\"\n    --> Nothing\n\n    --| Fails when the element appears only at the end of the list.\n    inc [ \"do\", \"re\", \"mi\" ] \"mi\"\n    --> Nothing\n\n    --| Fails when the list is empty.\n    inc [] \"mi\"\n    --> Nothing\n\n",
+                "type": "List.List a -> a -> Maybe.Maybe a"
+            },
+            {
+                "name": "iterate",
+                "comment": " Create a list by repeatedly applying a function, stopping when the\nfunction returns `Nothing`.\n\n**Warning:** This function can cause an infinite loop (or, more likely,\na \"Maximum call stack size exceeded\" error).\n\n    --| Example.\n    iterate\n        (\\x ->\n            if x == 3 then\n                Nothing\n\n            else\n                Just (x + 1)\n        )\n        0\n    --> [1, 2, 3]\n\n",
+                "type": "(a -> Maybe.Maybe a) -> a -> List.List a"
+            },
+            {
+                "name": "join",
+                "comment": " Create the list of all pairs that satisfy a condition.\n\n    --| Example.\n    join (\\x y -> even (x + y)) [1, 2, 3] [4, 5, 6]\n    --> [(1, 5), (2, 4), (2, 6), (3, 5)]\n\n",
+                "type": "(a -> b -> Basics.Bool) -> List.List a -> List.List b -> List.List ( a, b )"
+            },
+            {
+                "name": "mapReduce",
+                "comment": " Provide a combining operation, a neutral element, and a mapping\nfunction. Maps the mapping function over a list while reducing the\nresults using the combining function.\n\n    --| Example.\n    mapReduce (+) 0 String.length [\"hello\", \"in\", \"TV\", \"land\"]\n    --> 13\n\n    --| Can simulate `List.sum`.\n    mapReduce (+) 0 identity [3, 4, -2, 1]\n    --> 6\n\n    --| More general than `String.concat`.\n    mapReduce (++) \"\" String.fromInt [3, 4, 5, 23]\n    --> \"34523\"\n\n    --| Returns neutral element on empty list.\n    mapReduce (++) \"\" String.fromInt []\n    --> \"\"\n\n",
+                "type": "(b -> b -> b) -> b -> (a -> b) -> List.List a -> b"
+            },
+            {
+                "name": "takeWhile",
+                "comment": " Take elements from the front of a list until the supplied callback is false.\n\n    --| Example.\n    takeWhile (\\x -> x < 5) [ 1, 2, 3, 4, 5, 3 ]\n    --> [1, 2, 3, 4]\n\n",
+                "type": "(a -> Basics.Bool) -> List.List a -> List.List a"
+            },
+            {
+                "name": "unfold",
+                "comment": " A more general version of `iterate`. Create a list by repeatedly\napplying a function, stopping when the function return `Nothing`.\n\n**Warning:** This function can cause an infinite loop (or, more likely,\na \"Maximum call stack size exceeded\" error).\n\n    --| Example.\n    unfold String.uncons \"slowly\"\n    --> ['s', 'l', 'o', 'w', 'l', 'y']\n\n    --| Can simulate `iterate`.\n    unfold\n        (\\x ->\n            if x == 3 then\n                Nothing\n\n            else\n                Just (x + 1, x + 1)\n        )\n        0\n    --> [1, 2, 3]\n\n    --| More general than `iterate`.\n    unfold\n        (\\x ->\n            if x == 3 then\n                Nothing\n\n            else\n                Just (x^2, x + 1)\n        )\n        0\n    --> [0, 1, 4]\n\n",
+                "type": "(b -> Maybe.Maybe ( a, b )) -> b -> List.List a"
+            },
+            {
+                "name": "zip",
+                "comment": " Create a list of pairs by lining two lists up.\nIf one list is longer, the extra elements are dropped.\n\n    --| Example.\n    zip [ 1, 2, 3 ] [ \"a\", \"b\", \"c\", \"d\" ]\n    --> [(1, \"a\"), (2, \"b\"), (3, \"c\")]\n\n",
+                "type": "List.List a -> List.List b -> List.List ( a, b )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ElmTeachingTools.Lib.Maybe",
+        "comment": " Extra functions to make working with maybes easier.\n\n\n# Create maybes\n\n@docs assert, filtered\n\n\n# Use maybes\n\n@docs cases\n\n\n# Transform maybes\n\n@docs compose, paired, orElse, filter, traverse, sequence\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "assert",
+                "comment": " Keep a value if a condition is met.\n\n    --| Turns `True` into a `Just` value.\n    assert True 5\n    --> Just 5\n\n    --| Turns `False` into `Nothing`\n    assert False 5\n    --> Nothing\n\n",
+                "type": "Basics.Bool -> a -> Maybe.Maybe a"
+            },
+            {
+                "name": "cases",
+                "comment": " Consume a maybe value by providing a callback to run if the value is\npresent and a fallback value in case it is not. Conceptually similar to\npattern matching, but in the form of a function.\n\n    --| `Nothing` uses the fallback.\n    Nothing |> cases \"nope\" String.fromInt\n    --> \"nope\"\n\n    --| A `Just` value uses the callback.\n    Just 3 |> cases \"nope\" String.fromInt\n    --> \"3\"\n\n",
+                "type": "b -> (a -> b) -> Maybe.Maybe a -> b"
+            },
+            {
+                "name": "compose",
+                "comment": " Chain two functions that produce `Maybe`s together.\n\n    --| Succeeds when both functions succeed.\n    compose (filtered even) String.toInt \"46\"\n    --> Just 46\n\n    --| Fails when second function applied fails.\n    compose (filtered even) String.toInt \"47\"\n    --> Nothing\n\n    --| Fails when first function applied fails.\n    compose (filtered even) String.toInt \"nope\"\n    --> Nothing\n\n",
+                "type": "(b -> Maybe.Maybe c) -> (a -> Maybe.Maybe b) -> a -> Maybe.Maybe c"
+            },
+            {
+                "name": "filter",
+                "comment": " Keep a maybe value if it satisfies the predicate.\n\n    --| Fails on `Nothing`.\n    filter (\\x -> modBy 2 x == 0) Nothing\n    --> Nothing\n\n    --| Succeeds on `Just` values that pass the predicate.\n    filter (\\x -> modBy 2 x == 0) (Just 4)\n    --> Just 4\n\n    --| Fails on `Just` values that fail the predicate.\n    filter (\\x -> modBy 2 x == 0) (Just 3)\n    --> Nothing\n\n",
+                "type": "(a -> Basics.Bool) -> Maybe.Maybe a -> Maybe.Maybe a"
+            },
+            {
+                "name": "filtered",
+                "comment": " Keep a value if it passes a predicate.\n\nI like to think of this function as converting a predicate\n`a -> Bool` into a more informative function `a -> Maybe a`.\n\n    --| Rejects values that fail the predicate.\n    filtered even 5\n    --> Nothing\n\n    --| Keeps values that pass the predicate.\n    filtered even 6\n    --> Just 6\n\n",
+                "type": "(a -> Basics.Bool) -> a -> Maybe.Maybe a"
+            },
+            {
+                "name": "orElse",
+                "comment": " Replace a maybe with a fallback in case it is empty.\n\n**Note:** `orElse Nothing` is a no-op.\n\n    --| Keeps first `Just` value.\n    Just 5 |> orElse (Just 3)\n    --> Just 5\n\n    --| Uses fallback when first value is `Nothing`.\n    Nothing |> orElse (Just 3)\n    --> Just 3\n\n    --| No-op on `Just` values.\n    Just 3 |> orElse Nothing\n    --> Just 3\n\n    --| No-op on `Nothing`.\n    Nothing |> orElse Nothing\n    --> Nothing\n\n",
+                "type": "Maybe.Maybe a -> Maybe.Maybe a -> Maybe.Maybe a"
+            },
+            {
+                "name": "paired",
+                "comment": " Create a pair from two `Maybe`s, giving `Nothing` if either is `Nothing`.\n\n    --| Fails when second argument is `Nothing`.\n    paired (Just 4) Nothing\n    --> Nothing\n\n    --| Fails when first argument is `Nothing`.\n    paired Nothing (Just 5)\n    --> Nothing\n\n    --| Succeeds when both arguments are `Just` values.\n    paired (Just 4) (Just 5)\n    --> Just (4, 5)\n\n",
+                "type": "Maybe.Maybe a -> Maybe.Maybe b -> Maybe.Maybe ( a, b )"
+            },
+            {
+                "name": "sequence",
+                "comment": " Convert a list of `Maybe`s into a `Maybe` list. The result is\n`Nothing` when at least one of the list elements is `Nothing`.\n\n    --| Succeeds on empty list.\n    sequence []\n    --> Just []\n\n    --| Succeeds when all list elements are `Just` values.\n    sequence [Just 2, Just 3, Just 4]\n    --> Just [2, 3, 4]\n\n    --| Fails when any list element is `Nothing`.\n    sequence [Just 2, Nothing, Just 4]\n    --> Nothing\n\n",
+                "type": "List.List (Maybe.Maybe a) -> Maybe.Maybe (List.List a)"
+            },
+            {
+                "name": "traverse",
+                "comment": " Map a function that returns `Maybe`s over a list. The result is\n`Nothing` when the mapping function returns `Nothing` on at least one\nlist element.\n\n    --| Succeeds on empty list.\n    traverse String.toInt []\n    --> Just []\n\n    --| Succeeds when all list elements succeed.\n    traverse String.toInt [\"2\", \"3\", \"4\"]\n    --> Just [2, 3, 4]\n\n    --| Fails when any list element fails.\n    traverse String.toInt [\"2\", \"lolwut\", \"4\"]\n    --> Nothing\n\n",
+                "type": "(a -> Maybe.Maybe b) -> List.List a -> Maybe.Maybe (List.List b)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ElmTeachingTools.Lib.Memoize",
+        "comment": " Optimize program performance by converting a heavily-used function\ninto a data structure.\n\n@docs MemoizeStrategy, memoize\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "MemoizeStrategy",
+                "comment": " A strategy for turning a function into data structure.\n\n**Note:** You should define any `MemoizeStrategy`s at the top-level of\na file so that you're guaranteed to neven recompute the domain.\n\n",
+                "args": [
+                    "c",
+                    "x",
+                    "y"
+                ],
+                "type": "{ toKey : x -> c, fromKey : c -> x, domain : List.List x, default : y }"
+            }
+        ],
+        "values": [
+            {
+                "name": "memoize",
+                "comment": " Converts a function into a data structure, and outputs a new\nfunction that uses that data structure instead of the old function.\nSometimes useful for enhancing program performance.\n\n**Note:** The new function will agree with the old function only on\nthe domain provided in the `MemoizeStrategy`. Outside of that domain,\nthe new function will return the `default` provided in the `MemoizeStrategy`.\n\n",
+                "type": "ElmTeachingTools.Lib.Memoize.MemoizeStrategy comparable x y -> (x -> y) -> x -> y"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ElmTeachingTools.Lib.String",
+        "comment": " Extra functions to make working with strings easier.\n\n@docs toInts, fromInts, format\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "format",
+                "comment": " Format a list into a string.\n\n    --| Example.\n    format { prefix = \"<\", infix = \":\", suffix = \">\" } String.fromInt [3,4,5]\n    --> \"<3:4:5>\"\n\n",
+                "type": "{ prefix : String.String, infix : String.String, suffix : String.String } -> (a -> String.String) -> List.List a -> String.String"
+            },
+            {
+                "name": "fromInts",
+                "comment": " Print a comma-separated list of ints.\n\n    --| Example.\n    fromInts [2, 3, 4, -1]\n    --> \"2,3,4,-1\"\n\n",
+                "type": "List.List Basics.Int -> String.String"
+            },
+            {
+                "name": "toInts",
+                "comment": " Parse a comma-separated list of ints.\n\n    --| Example.\n    toInts \"2,3,4,-1\"\n    --> Just [2, 3, 4, -1]\n\n    --| Entire parse fails if parsing any element fails.\n    toInts \"2,3,lolwut,-1\"\n    --> Nothing\n\n",
+                "type": "String.String -> Maybe.Maybe (List.List Basics.Int)"
+            }
+        ],
+        "binops": []
+    }
+]

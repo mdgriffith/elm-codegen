@@ -1,0 +1,26 @@
+[
+    {
+        "name": "SmsLength",
+        "comment": " SmsLength\n\nUtilities arround SMS messages and their length with regards to the necessary encoding.\n\n\n# How many chars are used, how much chars do I have by SMS?\n\n@docs charsUsed, charsInSms\n\n\n# How many SMS do I need?\n\n@docs numberOfSms\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "charsInSms",
+                "comment": " Tell the number of chars per SMS with regards to the mandatory message encoding\n\n  - Handle the GSM Charset\n  - Handle the GSM extended charset (a character counts for two 7-bit chars)\n  - Handle the UCS-2 charset (all characters counts for 2 bytes)\n\nA SMS is allowed for 140 bytes, multipart SMS needs a 7 bytes header to be linked to each other's.\n\n",
+                "type": "String.String -> Basics.Int"
+            },
+            {
+                "name": "charsUsed",
+                "comment": " Tell the number of chars in a string\n\n  - Handle the GSM Charset\n  - Handle the GSM extended charset (a character counts for two 7-bit chars)\n  - Handle the UCS-2 charset (all characters counts for 2 bytes)\n\nA SMS is allowed for 140 bytes, multipart SMS needs a 7 bytes header to be linked to each other's.\n\n",
+                "type": "String.String -> Basics.Int"
+            },
+            {
+                "name": "numberOfSms",
+                "comment": " Tell the number of SMS messages mandatory with regards to the current message string and encoding\n",
+                "type": "String.String -> Basics.Int"
+            }
+        ],
+        "binops": []
+    }
+]

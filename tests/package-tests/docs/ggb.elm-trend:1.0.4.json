@@ -1,0 +1,40 @@
+[
+    {
+        "name": "Linear",
+        "comment": " Contains functions to create a linear forecast, i. e. a simple trend line.\n\n@docs regression, forecast\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "forecast",
+                "comment": " Creates a list of tuples with forecasted values. The first parameter indicates how many values.\n\nPlease note that this function expects to get a sorted list of points. It will create a range based on the last point. \n\n    vals = [(0, 0), (0.5, 0.25), (1, 0.5), (3, 1.5)]\n    \n    forecast 3 vals == [(4, 2), (5, 2.5), (6, 3)]\n",
+                "type": "Basics.Int -> List.List ( Basics.Float, Basics.Float ) -> List.List ( Basics.Float, Basics.Float )"
+            },
+            {
+                "name": "regression",
+                "comment": " Expects a list of Float-tuples, where the first element is the x- and the second element is the y-coordinate of a point. It returns a linear function, that gets a Float and emits new values.\n\n    vals = [(0, 0), (1, 0.5), (2, 1), (3, 1.5)]\n    regressionFunction = regression vals\n\n    regressionFunction 4 == 2\n",
+                "type": "List.List ( Basics.Float, Basics.Float ) -> Basics.Float -> Basics.Float"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Seasonal",
+        "comment": " Contains functions to create a seasonal forecast based on the Holt-Winters method for seasonal forecasting.\n\n@docs forecast, forecastWith\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "forecast",
+                "comment": " Creates a forecast with default parameters (alpha = 0.5, beta = 0.4, gamma = 0.6, number of forecasted values = length of period). You only need to specify the length of a season (number of values per season). \n",
+                "type": "Basics.Int -> List.List Basics.Float -> Maybe.Maybe (List.List Basics.Float)"
+            },
+            {
+                "name": "forecastWith",
+                "comment": " Creates a seasonal forecast. Set the following parameters:\n\n* alpha: overall smoothing parameter (between 0 and 1)\n* beta: seasonal smoothing parameter (between 0 and 1)\n* gamma: trend smoothing parameter (between 0 and 1)\n* m: number of values to forecast (between 0 and period)\n* period: values per season (length of period) in the historical data\n* data: list of float values with historical data\n",
+                "type": "Basics.Float -> Basics.Float -> Basics.Float -> Basics.Int -> Basics.Int -> List.List Basics.Float -> Maybe.Maybe (List.List Basics.Float)"
+            }
+        ],
+        "binops": []
+    }
+]

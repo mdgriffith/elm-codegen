@@ -1,0 +1,157 @@
+[
+    {
+        "name": "ZoomPlot",
+        "comment": "\n\n\n# Storing the plot state in your model\n\n@docs State\n@docs init\n\n\n# Including `Plot.Msg` in your `Msg`\n\n@docs Msg\n\n\n# Updating your plot state\n\n@docs update\n\n\n# Drawing your line chart\n\n@docs points\n@docs draw\n@docs drawHtml\n\n\n# Customizing your plot\n\nCustomization is done by mutating the `Config` output from `Plot.points` and `Plot.custom` before it is inserted into `draw`.\n\n@docs Config\n\nLet's say that you want to customize your configuration to show legends for your different lines and also extend the right margin so that the legends don't get cut off.\n\nThen you'll have to pipe in suitable customizers before your `draw` like this:\n\n    Plot.points\n        { toMsg = ToPlot\n        , data = myPoints\n        }\n        |> Plot.showLegends True\n        |> Plot.marginRight 70\n        |> Plot.drawHtml model.plotState\n\n\n# Customizers:\n\n@docs width\n@docs height\n@docs xAxisLabel\n@docs yAxisLabel\n@docs showLegends\n@docs numberFormat\n@docs xIsTime\n@docs timezone\n@docs language\n@docs labelFunc\n\n\n## Margin customizers\n\nSize in pixels of the different margins around the actual plot. This is real estate that may or may not be needed by tick labels, legends and axis labels.\n\n@docs marginLeft\n@docs marginRight\n@docs marginTop\n@docs marginBottom\n\n\n## Axis label offset customizers\n\nAmount in pixels for moving around the axis labels.\n\nPositive y adjusts upwards contrary to Svg standard.\n\n@docs xAxisLabelOffsetX\n@docs xAxisLabelOffsetY\n@docs yAxisLabelOffsetX\n@docs yAxisLabelOffsetY\n\n\n# Plotting custom types\n\nWhat if your data isn't in the form of `{ x : Float, y : Float}`?\n\nThen you will need:\n\n@docs custom\n\n\n## _Note:_\n\nThis package uses the fork [peterszerzo/line-charts](https://package.elm-lang.org/packages/peterszerzo/line-charts/latest) since it contains necessary updates to terezka's great original package.\n\nI advise you to do the same (at least in projects using elm-zoom-plot).\n\n",
+        "unions": [
+            {
+                "name": "Config",
+                "comment": " ",
+                "args": [
+                    "data",
+                    "msg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Msg",
+                "comment": " Include it within a constructor for easy pattern matching in your update function:\n\n    type Msg\n        = MyPlotMsg (Plot.Msg Point)\n        | NoOp\n\nor if you need routing for several plots:\n\n    type MyPlot\n        = Plot1\n        | Plot2\n\n    type Msg\n        = ToPlot MyPlot (Plot.Msg Point)\n\n",
+                "args": [
+                    "data"
+                ],
+                "cases": []
+            },
+            {
+                "name": "State",
+                "comment": " You need to store the internal state of the plot in your model.\n\nIt can be as simple as:\n\n    import ZoomPlot as Plot\n\n    type alias Model =\n        { plotState : Plot.State Point }\n\nor if you have multiple plots on your page:\n\n    type alias Model =\n        { plot1 : Plot.State Point\n        , plot2 : Plot.State Point\n        , plot3 : Plot.State Point\n        }\n\n",
+                "args": [
+                    "data"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "custom",
+                "comment": " Let's say that your data is a list of this type:\n\n    import Time\n\n    type alias ExampleType =\n        { time : Time.Posix\n        , thrust : Float\n        , altitude : Float\n        , latestBufferLine : String\n        , errorLog : Maybe String\n        }\n\nIf you want to plot data like this you can't use `Plot.points`, because it only works with data of type `List Point`.\n\nInstead you can use `Plot.custom` like this:\n\n    import LineChart\n    import LineChart.Dots as Dots\n    import LineChart.Colors as Colors\n\n    Plot.custom\n        { lines =\n            [ LineChart.line\n                Colors.blue\n                Dots.circle\n                \"rocket 1\"\n                listOfExampleType1\n            , LineChart.line\n                Colors.purple\n                Dots.square\n                \"rocket 2\"\n                listOfExampleType2\n\n            ]\n        , toMsg = ToPlot\n        , xAcc = .time >> posixToMillis >> toFloat\n        , yAcc = .thrust\n        , pointDecoder = myPointDecoder\n        }\n\nThe inputs `xAcc` and `yAcc` are whatever functions that will turn your type into floats to be plotted on the line chart.\n\nMost often they are just getters plus whatever functions are needed to convert their values into floats.\n\nYou may also have noticed the `myPointDecoder` above.\n\nThe internals of the package needs a way to convert Point back to your type.\n\nYou basically have to write a function that puts the coordinates of a `Point` into an \"empty\" instance of your type:\n\n    myPointDecoder : Point -> ExampleType\n    myPointDecoder { x, y } =\n        let\n            xTime =\n                x |> round |> millisToPosix\n        in\n        ExampleType xTime y 0 \"\" Nothing\n\n",
+                "type": "{ lines : List.List (LineChart.Series data), toMsg : ZoomPlot.Msg data -> msg, xAcc : data -> Basics.Float, yAcc : data -> Basics.Float, pointDecoder : LineChart.Coordinate.Point -> data } -> ZoomPlot.Config data msg"
+            },
+            {
+                "name": "draw",
+                "comment": " Use this function to place your line chart within your view.\n\n    import Element\n\n    view model =\n        Element.layout\n            [ Element.padding 20 ]\n            (Plot.points\n                { toMsg = ToPlot\n                , data = myPoints\n                }\n                |> Plot.draw model.plotState\n            )\n\n",
+                "type": "ZoomPlot.State data -> ZoomPlot.Config data msg -> Element.Element msg"
+            },
+            {
+                "name": "drawHtml",
+                "comment": " If you, for some reason, are not using [mdgriffith/elm-ui](https://package.elm-lang.org/packages/mdgriffith/elm-ui/latest) you can use this draw function instead which outputs regular `Html msg`.\n",
+                "type": "ZoomPlot.State data -> ZoomPlot.Config data msg -> Html.Html msg"
+            },
+            {
+                "name": "height",
+                "comment": " Set the plot height in pixels.\n",
+                "type": "Basics.Float -> ZoomPlot.Config data msg -> ZoomPlot.Config data msg"
+            },
+            {
+                "name": "init",
+                "comment": " All plots have the same initial state regardless of individual configuration.\n\n    init : Model\n    init =\n        { plot1 = Plot.init\n        , plot2 = Plot.init\n        , plot3 = Plot.init\n        }\n\n",
+                "type": "ZoomPlot.State data"
+            },
+            {
+                "name": "labelFunc",
+                "comment": " Set extra hover label row. Hoverlabels for the x and y coordinates are always on, but if you want to add something extra on a row above them you use this.\n\nYou can for example just use a string field from your data type:\n\n        myPlotConfig\n        |> Plot.labelFunc .rocketInventorName\n        |> Plot.draw model.myPlot\n\nDefault is `\\_ -> \"\"`\n\n",
+                "type": "(data -> String.String) -> ZoomPlot.Config data msg -> ZoomPlot.Config data msg"
+            },
+            {
+                "name": "language",
+                "comment": " Set what language dates on the time axis will be in.\n\nOnly matters when `Plot.xIsTime True`.\n\n        import DateFormat.Language\n\n        myPlotConfig\n        |> Plot.language DateFormat.Language.swedish\n        |> Plot.draw model.myPlot\n\nDefault is `DateFormat.Language.english`.\n\n",
+                "type": "DateFormat.Language.Language -> ZoomPlot.Config data msg -> ZoomPlot.Config data msg"
+            },
+            {
+                "name": "marginBottom",
+                "comment": " Default is `30`\n",
+                "type": "Basics.Float -> ZoomPlot.Config data msg -> ZoomPlot.Config data msg"
+            },
+            {
+                "name": "marginLeft",
+                "comment": " Default is `60`\n",
+                "type": "Basics.Float -> ZoomPlot.Config data msg -> ZoomPlot.Config data msg"
+            },
+            {
+                "name": "marginRight",
+                "comment": " Default is `30`\n",
+                "type": "Basics.Float -> ZoomPlot.Config data msg -> ZoomPlot.Config data msg"
+            },
+            {
+                "name": "marginTop",
+                "comment": " Default is `20`\n",
+                "type": "Basics.Float -> ZoomPlot.Config data msg -> ZoomPlot.Config data msg"
+            },
+            {
+                "name": "numberFormat",
+                "comment": " Set the function which turns floats to strings for the axis labels (on non-time axes).\n\n        import FormatNumber\n        import FormatNumber.Locales\n\n        myPlotConfig\n        |> Plot.numberFormat\n            (\\float ->\n              FormatNumber.format\n                FormatNumber.Locales.frenchLocale\n                float\n            )\n        |> Plot.draw model.myPlot\n\nDefault is:\n\n        defaultFormat : Float -> String\n        defaultFormat number =\n            FormatNumber.format\n                FormatNumber.Locales.usLocale\n                number\n\n",
+                "type": "(Basics.Float -> String.String) -> ZoomPlot.Config data msg -> ZoomPlot.Config data msg"
+            },
+            {
+                "name": "points",
+                "comment": " Use this configuration as a starting point when your data is just a `List Point`.\n\n    type alias Point =\n        { x : Float, y : Float }\n\n    myPoints =\n        [ Point 11 120\n        , Point 12 121\n        , Point 13 120.5\n        ]\n\n    Plot.points\n        { toMsg = ToPlot\n        , data = myPoints\n        }\n        |> Plot.drawHtml model.plotState\n\n",
+                "type": "{ toMsg : ZoomPlot.Msg LineChart.Coordinate.Point -> msg, data : List.List LineChart.Coordinate.Point } -> ZoomPlot.Config LineChart.Coordinate.Point msg"
+            },
+            {
+                "name": "showLegends",
+                "comment": " Set whether legends for your plot lines should be drawn or not. If you turn this on you most likely also need to adjust `marginRight` for them to not get cut off.\n\nDefault is `False`.\n\n",
+                "type": "Basics.Bool -> ZoomPlot.Config data msg -> ZoomPlot.Config data msg"
+            },
+            {
+                "name": "timezone",
+                "comment": " Set which timezone your `Time.Posix` values should be converted into for your time axis tick labels.\n\nOnly matters when `Plot.xIsTime True`.\n\ndefault is `Time.utc`.\n\n",
+                "type": "Time.Zone -> ZoomPlot.Config data msg -> ZoomPlot.Config data msg"
+            },
+            {
+                "name": "update",
+                "comment": " Naturally you need to handle the plot messages in your update function. This is what `Plot.update` is for.\n\n    update : Msg -> Model -> Model\n    update msg model =\n        case msg of\n            ToPlot plotMsg ->\n                { model\n                    | plotState =\n                        Plot.update\n                            plotMsg\n                            model.plotState\n                }\n\nIf you need routing to update multiple plots:\n\n    case msg of\n        ToPlot Plot1 plotMsg ->\n            { model\n                | plot1 =\n                    Plot.update\n                        plotMsg\n                        model.plot1\n            }\n\n        ToPlot Plot2 plotMsg ->\n            { model\n                | plot2 =\n                    Plot.update\n                        plotMsg\n                        model.plot2\n            }\n\n",
+                "type": "ZoomPlot.Msg data -> ZoomPlot.State data -> ZoomPlot.State data"
+            },
+            {
+                "name": "width",
+                "comment": " Set the plot width in pixels.\n",
+                "type": "Basics.Float -> ZoomPlot.Config data msg -> ZoomPlot.Config data msg"
+            },
+            {
+                "name": "xAxisLabel",
+                "comment": " Set a string for labeling of the x-axis. Adjustment of margins and label offsets could be required to get the desired result.\n\nDefault is `\"\"`\n\n",
+                "type": "String.String -> ZoomPlot.Config data msg -> ZoomPlot.Config data msg"
+            },
+            {
+                "name": "xAxisLabelOffsetX",
+                "comment": " Default is `0`\n",
+                "type": "Basics.Float -> ZoomPlot.Config data msg -> ZoomPlot.Config data msg"
+            },
+            {
+                "name": "xAxisLabelOffsetY",
+                "comment": " Default is `0`\n",
+                "type": "Basics.Float -> ZoomPlot.Config data msg -> ZoomPlot.Config data msg"
+            },
+            {
+                "name": "xIsTime",
+                "comment": " Set whether the x-axis should display its values as time or not.\n\nDefault is `False`.\n\n",
+                "type": "Basics.Bool -> ZoomPlot.Config data msg -> ZoomPlot.Config data msg"
+            },
+            {
+                "name": "yAxisLabel",
+                "comment": " Set a string for labeling of the y-axis. Adjustment of margins and label offsets could be required to get the desired result.\n\nDefault is `\"\"`\n\n",
+                "type": "String.String -> ZoomPlot.Config data msg -> ZoomPlot.Config data msg"
+            },
+            {
+                "name": "yAxisLabelOffsetX",
+                "comment": " Default is `0`\n",
+                "type": "Basics.Float -> ZoomPlot.Config data msg -> ZoomPlot.Config data msg"
+            },
+            {
+                "name": "yAxisLabelOffsetY",
+                "comment": " Default is `0`\n",
+                "type": "Basics.Float -> ZoomPlot.Config data msg -> ZoomPlot.Config data msg"
+            }
+        ],
+        "binops": []
+    }
+]

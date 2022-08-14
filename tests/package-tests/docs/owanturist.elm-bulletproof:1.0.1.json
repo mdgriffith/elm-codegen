@@ -1,0 +1,183 @@
+[
+    {
+        "name": "Bulletproof",
+        "comment": " Basic API to create and organize static stories.\n\n\n# Tell a story\n\n@docs Story, story, folder, todo, label\n\n\n# Render a component into a story\n\n@docs Renderer, fromHtml, fromElmCss, fromElmUI\n\n\n# Run a programm\n\n@docs Program, program\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Program",
+                "comment": " Specific Bulletproof program to return as main.\n",
+                "args": [],
+                "type": "Main.Program"
+            },
+            {
+                "name": "Renderer",
+                "comment": " Specific custom type incapsulates work with generic messages of components.\n",
+                "args": [],
+                "type": "Renderer.Renderer"
+            },
+            {
+                "name": "Story",
+                "comment": " Bulletproof is made of stories.\nStories helps you to organize UI components and describe different states.\n",
+                "args": [],
+                "type": "Story.Story Error.Reason Bulletproof.Renderer"
+            }
+        ],
+        "values": [
+            {
+                "name": "folder",
+                "comment": " Folder organizes your stories.\nA folder might includes stories, todos, labels and other folders\n\n    someFolder : Bulletproof.Story\n    someFolder =\n        Bulletproof.folder \"Button\"\n            [ Bulletproof.story \"default\"\n                (button\n                    []\n                    [ text \"Button Label\" ]\n                )\n                |> Bulletproof.fromHtml\n\n            --\n            , Bulletproof.story \"disabled\"\n                (button\n                    [ disabled True ]\n                    [ text \"Button Label\" ]\n                )\n                |> Bulletproof.fromHtml\n            ]\n\n",
+                "type": "String.String -> List.List Bulletproof.Story -> Bulletproof.Story"
+            },
+            {
+                "name": "fromElmCss",
+                "comment": " Allows your `Html.Styled` component to be rendered in Bulletproof.\n\n> **Note:** In case of `elm-css` compatibility issues\n> please convert `Html.Styled` to plain `Html` and use `fromHtml` then.\n\n",
+                "type": "Html.Styled.Html msg -> Bulletproof.Renderer"
+            },
+            {
+                "name": "fromElmUI",
+                "comment": " Allows your `Element` component to be rendered in Bulletproof.\n\n> **Note:** In case of `elm-ui` compatibility issues\n> please convert `Element` to plain `Html` and use `fromHtml` then.\n\n",
+                "type": "List.List Element.Option -> List.List (Element.Attribute msg) -> Element.Element msg -> Bulletproof.Renderer"
+            },
+            {
+                "name": "fromHtml",
+                "comment": " Allows your `Html` component to be rendered in Bulletproof.\n",
+                "type": "Html.Html msg -> Bulletproof.Renderer"
+            },
+            {
+                "name": "label",
+                "comment": " Labels helps to visually split stories by blocks. Does not affect on story path.\n",
+                "type": "String.String -> Bulletproof.Story"
+            },
+            {
+                "name": "program",
+                "comment": " Program to represent your stories.\n\n> **Note:** To run a program you have to pass port to work with localStorage.\n> I'm sorry you have to do so but it's not forever.\n\n",
+                "type": "(String.String -> Platform.Cmd.Cmd msg) -> List.List Bulletproof.Story -> Bulletproof.Program"
+            },
+            {
+                "name": "story",
+                "comment": " Story represents a component according inputs.\nTo dynamically change the inputs please take a look into knobs.\n\n    staticStory : Bulletproof.Story\n    staticStory =\n        Bulletproof.story \"Simple static story\"\n            (button\n                []\n                [ text \"Funny Button\" ]\n                |> Bulletproof.fromHtml\n            )\n\n",
+                "type": "String.String -> view -> Story.Story Error.Reason view"
+            },
+            {
+                "name": "todo",
+                "comment": " Each todo is a story which has not started yet...\nHelps to remember components' states you want to make as a story.\n\n    newComponent : Bulletproof.Story\n    newComponent =\n        Bulletproof.folder \"New component even without a name\"\n            [ Bulletproof.todo \"disabled\"\n            , Bulletproof.todo \"loading\"\n            , Bulletproof.todo \"failed\"\n            ]\n\n",
+                "type": "String.String -> Bulletproof.Story"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Bulletproof.Knob",
+        "comment": " Whant to add some dynamics to your stories?\n\n\n# Primitives\n\n@docs bool, string\n@docs Property, min, max, step, range, int, float\n\n\n# Customs\n\n@docs radio, select\n\n\n# Composites\n\n@docs Color, color\n@docs Date, date\n@docs Time, time\n@docs File, files\n\n",
+        "unions": [
+            {
+                "name": "Property",
+                "comment": " Specific property to configurate numeric knobs.\n",
+                "args": [
+                    "num"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Color",
+                "comment": " Simple shape contains both hex and rgb components.\n",
+                "args": [],
+                "type": "{ hex : String.String, red : Basics.Int, green : Basics.Int, blue : Basics.Int, r : Basics.Int, g : Basics.Int, b : Basics.Int }"
+            },
+            {
+                "name": "Date",
+                "comment": " Simple shape contains year, month, day and `Time.Posix` values.\n",
+                "args": [],
+                "type": "{ posix : Time.Posix, year : Basics.Int, month : Basics.Int, day : Basics.Int }"
+            },
+            {
+                "name": "File",
+                "comment": " Alias for Elm `File` representation.\n",
+                "args": [],
+                "type": "File.File"
+            },
+            {
+                "name": "Time",
+                "comment": " Simple shape contains hours and minutes\n",
+                "args": [],
+                "type": "{ hours : Basics.Int, minutes : Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "bool",
+                "comment": " Knob of a `Bool` value.\n\n    storyButton : Bulletproof.Story\n    storyButton =\n        Bulletproof.story \"Button\"\n            (\\bool ->\n                button\n                    [ disabled bool ]\n                    [ text \"Sign In\" ]\n                    |> Bulletproof.fromHtml\n            )\n            |> Bulletproof.Knob.bool \"disabled\" True\n\n",
+                "type": "String.String -> Basics.Bool -> Bulletproof.Knob.Story (Basics.Bool -> a) -> Bulletproof.Knob.Story a"
+            },
+            {
+                "name": "color",
+                "comment": " Knob of a `Color` value.\n\n    storyButton : Bulletproof.Story\n    storyButton =\n        Bulletproof.story \"Button\"\n            (\\bgcolor ->\n                button\n                    [ style \"background\" bgcolor.hex ]\n                    [ text \"Sign In\" ]\n                    |> Bulletproof.fromHtml\n            )\n            |> Bulletproof.Knob.color \"Background\" \"#444\"\n\n",
+                "type": "String.String -> String.String -> Bulletproof.Knob.Story (Bulletproof.Knob.Color -> a) -> Bulletproof.Knob.Story a"
+            },
+            {
+                "name": "date",
+                "comment": " Knob of a `Date` value.\n\n    storyToday : Bulletproof.Story\n    storyToday =\n        Bulletproof.story \"Today\"\n            (\\date ->\n                div\n                    []\n                    [ text \"Today is: \"\n                    , text (String.fromInt date.day ++ \" / \")\n                    , text (String.fromInt date.month ++ \" / \")\n                    , text (String.fromInt date.year)\n                    ]\n                    |> Bulletproof.fromHtml\n            )\n            |> Bulletproof.Knob.date \"Date\" \"31-12-1999\"\n\n",
+                "type": "String.String -> String.String -> Bulletproof.Knob.Story (Bulletproof.Knob.Date -> a) -> Bulletproof.Knob.Story a"
+            },
+            {
+                "name": "files",
+                "comment": " Knob of a `List File` value.\n\n    storyCountFiles : Bulletproof.Story\n    storyCountFiles =\n        Bulletproof.story \"Count Files\"\n            (\\files ->\n                text (String.fromInt (List.length files) ++ \" files are ready to upload\")\n                    |> Bulletproof.fromHtml\n            )\n            |> Bulletproof.Knob.files \"Files\"\n\n",
+                "type": "String.String -> Bulletproof.Knob.Story (List.List Bulletproof.Knob.File -> a) -> Bulletproof.Knob.Story a"
+            },
+            {
+                "name": "float",
+                "comment": " Knob of a `Float` value.\n\n    storyInput : Bulletproof.Story\n    storyInput =\n        Bulletproof.story \"Input\"\n            (\\float ->\n                input\n                    [ style \"width\" (pct float)\n                    ]\n                    []\n                    |> Bulletproof.fromHtml\n            )\n            |> Bulletproof.Knob.float \"Width\" 0.5 []\n\n",
+                "type": "String.String -> Basics.Float -> List.List (Bulletproof.Knob.Property Basics.Float) -> Bulletproof.Knob.Story (Basics.Float -> a) -> Bulletproof.Knob.Story a"
+            },
+            {
+                "name": "int",
+                "comment": " Knob of a `Int` value.\n\n    storyInput : Bulletproof.Story\n    storyInput =\n        Bulletproof.story \"Input\"\n            (\\int ->\n                input\n                    [ size int\n                    ]\n                    []\n                    |> Bulletproof.fromHtml\n            )\n            |> Bulletproof.Knob.int \"Size\" 10 []\n\n",
+                "type": "String.String -> Basics.Int -> List.List (Bulletproof.Knob.Property Basics.Int) -> Bulletproof.Knob.Story (Basics.Int -> a) -> Bulletproof.Knob.Story a"
+            },
+            {
+                "name": "max",
+                "comment": " Set maximum value for numeric knobs.\n\n> **Note:** Defaults for `int` and `float` ranges are `100` and `1` respectively.\n\n    storyInput : Bulletproof.Story\n    storyInput =\n        Bulletproof.story \"Input\"\n            (\\int float ->\n                input\n                    [ size int\n                    , style \"width\" (pct float)\n                    ]\n                    []\n                    |> Bulletproof.fromHtml\n            )\n            |> Bulletproof.Knob.int \"Size\"\n                200\n                [ Bulletproof.Knob.max 1000\n                ]\n            |> Bulletproof.Knob.float \"Width\"\n                0.5\n                [ Bulletproof.Knob.max 0.75\n                ]\n\n",
+                "type": "number -> Bulletproof.Knob.Property number"
+            },
+            {
+                "name": "min",
+                "comment": " Set minimum value for numeric knobs.\n\n> **Note:** Default for `int` and `float` ranges is `0`\n\n    storyInput : Bulletproof.Story\n    storyInput =\n        Bulletproof.story \"Input\"\n            (\\int float ->\n                input\n                    [ size int\n                    , style \"width\" (pct float)\n                    ]\n                    []\n                    |> Bulletproof.fromHtml\n            )\n            |> Bulletproof.Knob.int \"Size\"\n                200\n                [ Bulletproof.Knob.min 100\n                ]\n            |> Bulletproof.Knob.float \"Width\"\n                0.5\n                [ Bulletproof.Knob.min 0.25\n                ]\n\n",
+                "type": "number -> Bulletproof.Knob.Property number"
+            },
+            {
+                "name": "radio",
+                "comment": " Knob of a custom value represented as radio group.\nThe first option is selected by default.\n\n    storyInput : Bulletproof.Story\n    storyInput =\n        Bulletproof.story \"Input\"\n            (\\inputType ->\n                input\n                    [ type_ (Maybe.withDefault \"text\" inputType)\n                    ]\n                    []\n                    |> Bulletproof.fromHtml\n            )\n            |> Bulletproof.Knob.radio \"Type\"\n                [ ( \"none\", Nothing )\n                , ( \"email\", Just \"email\" )\n                , ( \"password\", Just \"password\" )\n                ]\n\n",
+                "type": "String.String -> List.List ( String.String, option ) -> Bulletproof.Knob.Story (option -> a) -> Bulletproof.Knob.Story a"
+            },
+            {
+                "name": "range",
+                "comment": " Represent numeric knob as range but not input.\n\n    storyInput : Bulletproof.Story\n    storyInput =\n        Bulletproof.story \"Input\"\n            (\\int float ->\n                input\n                    [ size int\n                    , style \"width\" (pct float)\n                    ]\n                    []\n                    |> Bulletproof.fromHtml\n            )\n            |> Bulletproof.Knob.int \"Size\"\n                10\n                [ Bulletproof.Knob.range\n                ]\n            |> Bulletproof.Knob.float \"Width\"\n                0.5\n                [ Bulletproof.Knob.range\n                ]\n\n",
+                "type": "Bulletproof.Knob.Property num"
+            },
+            {
+                "name": "select",
+                "comment": " Knob of a custom value represented as select element.\nThe first option is selected by default.\n\n    storyInput : Bulletproof.Story\n    storyInput =\n        Bulletproof.story \"Input\"\n            (\\inputType ->\n                input\n                    [ type_ (Maybe.withDefault \"text\" inputType)\n                    ]\n                    []\n                    |> Bulletproof.fromHtml\n            )\n            |> Bulletproof.Knob.select \"Type\"\n                [ ( \"none\", Nothing )\n                , ( \"email\", Just \"email\" )\n                , ( \"password\", Just \"password\" )\n                ]\n\n",
+                "type": "String.String -> List.List ( String.String, option ) -> Bulletproof.Knob.Story (option -> a) -> Bulletproof.Knob.Story a"
+            },
+            {
+                "name": "step",
+                "comment": " Set step for numeric knobs.\n\n> **Note:** Defaults for `int` and `float` ranges are `1` and `0.01` respectively.\n\n    storyInput : Bulletproof.Story\n    storyInput =\n        Bulletproof.story \"Input\"\n            (\\int float ->\n                input\n                    [ size int\n                    , style \"width\" (pct float)\n                    ]\n                    []\n                    |> Bulletproof.fromHtml\n            )\n            |> Bulletproof.Knob.int \"Size\"\n                200\n                [ Bulletproof.Knob.step 100\n                ]\n            |> Bulletproof.Knob.float \"Width\"\n                0.5\n                [ Bulletproof.Knob.step 0.1\n                ]\n\n",
+                "type": "number -> Bulletproof.Knob.Property number"
+            },
+            {
+                "name": "string",
+                "comment": " Knob of a `String` value.\n\n    storyButton : Bulletproof.Story\n    storyButton =\n        Bulletproof.story \"Button\"\n            (\\title ->\n                button\n                    []\n                    [ text title ]\n                    |> Bulletproof.fromHtml\n            )\n            |> Bulletproof.Knob.string \"Title\" \"Sign In\"\n\n",
+                "type": "String.String -> String.String -> Bulletproof.Knob.Story (String.String -> a) -> Bulletproof.Knob.Story a"
+            },
+            {
+                "name": "time",
+                "comment": " Knob of a `Time` value.\n\n    storyNow : Bulletproof.Story\n    storyNow =\n        Bulletproof.story \"Now\"\n            (\\time ->\n                div\n                    []\n                    [ text (\"Minutes: \" ++ String.fromInt time.minutes)\n                    , text \" | \"\n                    , text (\"Hours: \" String.fromInt time.hours)\n                    ]\n                    |> Bulletproof.fromHtml\n            )\n            |> Bulletproof.Knob.time \"Time\" \"14:01\"\n\n",
+                "type": "String.String -> String.String -> Bulletproof.Knob.Story (Bulletproof.Knob.Time -> a) -> Bulletproof.Knob.Story a"
+            }
+        ],
+        "binops": []
+    }
+]

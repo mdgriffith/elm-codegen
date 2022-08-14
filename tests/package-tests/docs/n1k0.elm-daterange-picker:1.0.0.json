@@ -1,0 +1,177 @@
+[
+    {
+        "name": "DateRangePicker",
+        "comment": " A date range picker widget.\n\n    import Browser\n    import DateRangePicker as Picker\n    import Html exposing (Html, text)\n\n    type alias Model =\n        { picker : Picker.State }\n\n    type Msg\n        = PickerChanged Picker.State\n\n    init : () -> ( Model, Cmd Msg )\n    init _ =\n        let\n            picker =\n                Picker.init Picker.defaultConfig Nothing\n        in\n        ( { picker = picker }\n        , Picker.now PickerChanged picker\n        )\n\n    update : Msg -> Model -> ( Model, Cmd Msg )\n    update msg model =\n        case msg of\n            PickerChanged state ->\n                ( { model | picker = state }, Cmd.none )\n\n    view : Model -> Html Msg\n    view model =\n        Picker.view PickerChanged model.picker\n\n    main =\n        Browser.element\n            { init = init\n            , update = update\n            , view = view\n            , subscriptions = .picker >> Picker.subscriptions PickerChanged\n            }\n\n\n# Configuration\n\n@docs Config, defaultConfig, configure, reconfigure\n\n\n# Translations\n\n@docs Translations\n\n\n# State\n\n@docs State, init, now, nowTask, getRange, setRange, setToday, disable, isDisabled, open, isOpened\n\n\n# View\n\n@docs view\n\n\n# Subscriptions\n\n@docs subscriptions\n\n",
+        "unions": [
+            {
+                "name": "State",
+                "comment": " DateRangePicker state.\n\nUse helpers to set or retrieve values out of it.\n\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " DateRangePicker configuration:\n\n  - `allowFuture`: Allow picking a range in the future\n  - `applyRangeImmediately`: Apply predefined range immediately when clicked\n  - `class`: CSS class name(s) to add to the component root element.\n  - `inputClass`: CSS class name(s) to add to the component text input.\n  - `monthFormatter`: How to format a [`Time.Month`](https://package.elm-lang.org/packages/elm/time/latest/Time#weeks-and-months)\n  - `noRangeCaption`: The String to render when no range is set\n  - `predefinedRanges`: Generates custom predefined ranges.\n  - `sticky`: Make the picker always opened\n  - `translations` : Allow provide translations\n  - `weekdayFormatter`: How to format a [`Time.Weekday`](https://package.elm-lang.org/packages/elm/time/latest/Time#weeks-and-months)\n  - `weeksStartOn`: The [`Time.Weekday`](https://package.elm-lang.org/packages/elm/time/latest/Time#weeks-and-months) weeks start on (eg. `Time.Mon` or `Time.Sun`)\n  - `zone`: A user [`Time.Zone`](https://package.elm-lang.org/packages/elm/time/latest/Time#Zone) to compute relative datetimes against (default: `Time.utc`)\n\n",
+                "args": [],
+                "type": "{ allowFuture : Basics.Bool, applyRangeImmediately : Basics.Bool, class : String.String, inputClass : String.String, monthFormatter : Time.Month -> String.String, noRangeCaption : String.String, predefinedRanges : Time.Zone -> Time.Posix -> List.List ( String.String, DateRangePicker.Range.Range ), sticky : Basics.Bool, translations : DateRangePicker.Translations, weekdayFormatter : Time.Weekday -> String.String, weeksStartOn : Time.Weekday, zone : Time.Zone }"
+            },
+            {
+                "name": "Translations",
+                "comment": " Translations configuration. Basically a record defining the following `String` attributes:\n\n  - `close`: Button, which will close daterange-picker\n  - `clear`: Button, which will clear input string\n  - `apply`: Button, which will set new daterange\n  - `pickStart`: Hint at the bottom of calendar, before user pick the first date\n  - `pickEnd`: Hint at the bottom of calendar, after user pick the first date\n\n",
+                "args": [],
+                "type": "DateRangePicker.Calendar.Translations"
+            }
+        ],
+        "values": [
+            {
+                "name": "configure",
+                "comment": " Helper to selectively alter [`defaultConfig`](#defaultConfig):\n\n    configure (\\default -> { default | weeksStartOn = Time.Sun })\n        |> init Nothing\n\n",
+                "type": "(DateRangePicker.Config -> DateRangePicker.Config) -> DateRangePicker.Config"
+            },
+            {
+                "name": "defaultConfig",
+                "comment": " A [`Config`](#Config) featuring the following default values:\n\n  - `allowFuture`: `True`\n  - `applyRangeImmediately`: `True`\n  - `class`: `\"\"`\n  - `inputClass`: `\"\"`\n  - `monthFormatter`: Converts month names to their 3 chars English equivalent: `Jan`, `Feb`, etc.\n  - `noRangeCaption`: `\"N/A\"`\n  - `predefinedRanges`: `\"Today\"`, `\"Yesterday\"`, `\"Last 7 days\"`, `\"Last 30 days\"`, `\"This month\"` and `\"Last month\"`\n  - `sticky`: `False`\n  - `translations`: `{ close: \"Close\", clear: \"Clear\", apply: \"Apply\", pickStart: \"Hint: pick a start date\", pickEnd: \"Hint: pick an end date\" }`\n  - `weekdayFormatter`: Converts weekday names to their 2 chars English equivalent: `Mo`, `Tu`, etc.\n  - `weeksStartOn`: `Time.Mon` (weeks start on Monday)\n\n",
+                "type": "DateRangePicker.Config"
+            },
+            {
+                "name": "disable",
+                "comment": " Disable or enable a date range picker [`State`](#State).\n",
+                "type": "Basics.Bool -> DateRangePicker.State -> DateRangePicker.State"
+            },
+            {
+                "name": "getRange",
+                "comment": " Get the current [`Range`](./DateRangePicker-Range#Range) from a [`State`](#State), if any.\n",
+                "type": "DateRangePicker.State -> Maybe.Maybe DateRangePicker.Range.Range"
+            },
+            {
+                "name": "init",
+                "comment": " Initializes a State from a [`Config`](#Config) and an initial\n[`Range`](./DateRangePicker-Range#Range).\n\nNote: this will position the calendar at Unix Epoch (Jan, 1st 1970 UTC). To\nposition it at today's date, look at [`now`](#now) and [`nowTask`](#nowTask).\n\n",
+                "type": "DateRangePicker.Config -> Maybe.Maybe DateRangePicker.Range.Range -> DateRangePicker.State"
+            },
+            {
+                "name": "isDisabled",
+                "comment": " Checks if the date range picker [`State`](#State) is currently disabled.\n",
+                "type": "DateRangePicker.State -> Basics.Bool"
+            },
+            {
+                "name": "isOpened",
+                "comment": " Checks if the date range picker [`State`](#State) is currently opened.\n\nNote: always returns `True` when the `sticky` config option is enabled.\n\n",
+                "type": "DateRangePicker.State -> Basics.Bool"
+            },
+            {
+                "name": "now",
+                "comment": " A command for positioning a [`State`](#State) at today's date.\n",
+                "type": "(DateRangePicker.State -> msg) -> DateRangePicker.State -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "nowTask",
+                "comment": " A Task for initializing a [`State`](#State) with an initial\n[`Range`](./DateRangePicker-Range#Range) at today's date.\n",
+                "type": "DateRangePicker.Config -> Maybe.Maybe DateRangePicker.Range.Range -> Task.Task Basics.Never DateRangePicker.State"
+            },
+            {
+                "name": "open",
+                "comment": " Open or close a date range picker [`State`](#State).\n\nNote: inoperant when the `sticky` option is `True`.\n\n",
+                "type": "Basics.Bool -> DateRangePicker.State -> DateRangePicker.State"
+            },
+            {
+                "name": "reconfigure",
+                "comment": " Reconfigure a date range picker [`State`](#State).\n\n    state |> reconfigure (\\current -> { current | weeksStartOn = Time.Sun })\n\n",
+                "type": "(DateRangePicker.Config -> DateRangePicker.Config) -> DateRangePicker.State -> DateRangePicker.State"
+            },
+            {
+                "name": "setRange",
+                "comment": " Assign a selected [`Range`](./DateRangePicker-Range#Range) to the DateRangePicker.\n",
+                "type": "Maybe.Maybe DateRangePicker.Range.Range -> DateRangePicker.State -> DateRangePicker.State"
+            },
+            {
+                "name": "setToday",
+                "comment": " Positions a date range picker [`State`](#State) to current date.\n",
+                "type": "Time.Posix -> DateRangePicker.State -> DateRangePicker.State"
+            },
+            {
+                "name": "subscriptions",
+                "comment": " DateRangePicker subscriptions. They're useful if you want an opened date range picker\npanel to be closed when clicking outside of it.\n",
+                "type": "(DateRangePicker.State -> msg) -> DateRangePicker.State -> Platform.Sub.Sub msg"
+            },
+            {
+                "name": "view",
+                "comment": " The main DateRangePicker view.\n\nThe first argument is tipycally one of your application `Msg`, which will receive\na new [`State`](#State) each time it's changed:\n\n    import DateRangePicker as Picker\n\n    type alias Model =\n        { picker : Picker.State }\n\n    type Msg\n        = PickerChanged Picker.State\n\n    update : Msg -> Model -> ( Model, Cmd Msg )\n    update msg model =\n        case msg of\n            PickerChanged state ->\n                { model | picker = state }\n\n    view : Model -> Html Msg\n    view model =\n        Picker.view PickerChanged model.picker\n\n",
+                "type": "(DateRangePicker.State -> msg) -> DateRangePicker.State -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "DateRangePicker.Range",
+        "comment": " Date range management.\n\n\n# Range\n\n@docs Range, create, beginsAt, endsAt\n\n\n# Helpers\n\n@docs between, days, format\n\n\n# Conversion\n\n@docs decode, encode, fromString, toString, toTuple\n\n",
+        "unions": [
+            {
+                "name": "Range",
+                "comment": " A time range between two\n[`Time.Posix`](https://package.elm-lang.org/packages/elm/time/latest/Time#Posix).\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "beginsAt",
+                "comment": " Retrieves the Posix the [`Range`](#Range) begins at.\n",
+                "type": "DateRangePicker.Range.Range -> Time.Posix"
+            },
+            {
+                "name": "between",
+                "comment": " Checks if a [`Time.Posix`](https://package.elm-lang.org/packages/elm/time/latest/TimePosix)\nis comprised within a [`Range`](#Range).\n",
+                "type": "Time.Posix -> DateRangePicker.Range.Range -> Basics.Bool"
+            },
+            {
+                "name": "create",
+                "comment": " Creates a [`Range`](#Range) from two Posix timestamps.\n\nNote: `Posix` args order is not important as it's internally managed.\n\n",
+                "type": "Time.Zone -> Time.Posix -> Time.Posix -> DateRangePicker.Range.Range"
+            },
+            {
+                "name": "days",
+                "comment": " Computes the number of days in a [`Range`](#Range), floored.\n",
+                "type": "DateRangePicker.Range.Range -> Basics.Int"
+            },
+            {
+                "name": "decode",
+                "comment": " Decodes a [`Range`](#Range) from JSON.\n",
+                "type": "Json.Decode.Decoder DateRangePicker.Range.Range"
+            },
+            {
+                "name": "encode",
+                "comment": " Encodes a [`Range`](#Range) to JSON.\n",
+                "type": "DateRangePicker.Range.Range -> Json.Encode.Value"
+            },
+            {
+                "name": "endsAt",
+                "comment": " Retrieves the Posix the [`Range`](#Range) ends at.\n",
+                "type": "DateRangePicker.Range.Range -> Time.Posix"
+            },
+            {
+                "name": "format",
+                "comment": " Formats a [`Range`](#Range) in simple fashion.\n",
+                "type": "Time.Zone -> DateRangePicker.Range.Range -> String.String"
+            },
+            {
+                "name": "fromString",
+                "comment": " Extract a [`Range`](#Range) from a String, where the two Posix timestamps are\nencoded as UTC to Iso8601 format and joined with a `;` character.\n",
+                "type": "String.String -> Maybe.Maybe DateRangePicker.Range.Range"
+            },
+            {
+                "name": "toString",
+                "comment": " Turns a [`Range`](#Range) into a String, where the two Posix timestamps are\nencoded as UTC to Iso8601 format and joined with a `;` character.\n",
+                "type": "DateRangePicker.Range.Range -> String.String"
+            },
+            {
+                "name": "toTuple",
+                "comment": " Converts a [`Range`](#Range) into a Tuple.\n",
+                "type": "DateRangePicker.Range.Range -> ( Time.Posix, Time.Posix )"
+            }
+        ],
+        "binops": []
+    }
+]

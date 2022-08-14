@@ -1,0 +1,21 @@
+[
+    {
+        "name": "Inflect",
+        "comment": " String pluralization and singularization\n\n@docs toPlural, toSingular\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toPlural",
+                "comment": " Convert word to plural form.\n\n    toPlural \"potato\" == \"potatoes\"\n\n    toPlural \"cat\" == \"cats\"\n\n    toPlural \"The Illustrated Man\" == \"The Illustrated Men\"\n\n    toPlural \"SHOUT\" == \"SHOUTS\"\n\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "toSingular",
+                "comment": " Convert word to singlular form.\n\n    toSingular \"potatoes\" == \"potato\"\n\n    toSingular \"cats\" == \"cat\"\n\n    toSingular \"The Illustrated Men\" == \"The Illustrated Man\"\n\n    toSingular \"SHOUTS\" == \"SHOUT\"\n\n",
+                "type": "String.String -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

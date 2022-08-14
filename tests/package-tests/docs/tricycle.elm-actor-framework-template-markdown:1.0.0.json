@@ -1,0 +1,45 @@
+[
+    {
+        "name": "Framework.Template.Markdown",
+        "comment": "\n\n@docs MarkdownTemplate\n\n\n# Creation\n\n@docs blank, parse, fromNodes\n\n\n# Rendering\n\n@docs toNodes\n\n\n# Utility\n\n@docs getActorsToSpawn\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "MarkdownTemplate",
+                "comment": " Your parsed template that originated from a string containing valid Html\n",
+                "args": [
+                    "appActors"
+                ],
+                "type": "Framework.Template.Markdown.Internal.MarkdownTemplate.MarkdownTemplate appActors"
+            }
+        ],
+        "values": [
+            {
+                "name": "blank",
+                "comment": " An empty, blank MarkdownTemplate\n",
+                "type": "Framework.Template.Markdown.MarkdownTemplate appActors"
+            },
+            {
+                "name": "fromNodes",
+                "comment": " Turn a list of Nodes into an MarkdownTemplate\n\nThis could be useful for when you use your own Html Parser.\n\n",
+                "type": "List.List (Framework.Template.Node appActors) -> Framework.Template.Markdown.MarkdownTemplate appActors"
+            },
+            {
+                "name": "getActorsToSpawn",
+                "comment": " Get the actor, reference and original complete node from a template that\nare meant to be spawned.\n\nThe String is a reference that can be used on the render function in combination\nwith a Pid to render the Actors output.\n\n",
+                "type": "Framework.Template.Markdown.MarkdownTemplate appActors -> List.List { actor : appActors, reference : String.String, actorElement : Framework.Template.ActorElement appActors }"
+            },
+            {
+                "name": "parse",
+                "comment": " Parse a string containing valid Html into an MarkdownTemplate\n\nAdd Components to replace Html Elements with your Actors based on their\nnodeNames. (e.g. `<my-actor></my-actor>`)\n\n",
+                "type": "Framework.Template.Components.Components appActors -> String.String -> Result.Result String.String (Framework.Template.Markdown.MarkdownTemplate appActors)"
+            },
+            {
+                "name": "toNodes",
+                "comment": " Turn a MarkdownTemplate into a list of Nodes\n\nThis could be useful for when you want to write or use another method of\nrendering the template in question.\n\n",
+                "type": "Framework.Template.Markdown.MarkdownTemplate appActors -> List.List (Framework.Template.Node appActors)"
+            }
+        ],
+        "binops": []
+    }
+]

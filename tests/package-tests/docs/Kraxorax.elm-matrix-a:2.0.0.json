@@ -1,0 +1,133 @@
+[
+    {
+        "name": "Matrix",
+        "comment": " Matrix (a) datastructure of certain width and height,\ncontaining elements of type (a) on x and y indexes.\n\nExposes Matrix creation, traversal, and some manipulation functions.\n\n\n# Definition\n\nMatrix \n\n@docs Matrix\n\n\n# Creation\n\nUse `repeat` and `generate` to create your matrices.\n\n@docs repeat\n\n@docs generate\n\n\n# Traversal\n\nThese are just standard traversal functions.\n\n@docs map\n\n@docs indexedMap\n\n@docs foldr\n\n@docs foldl\n\n\n# Manipulation\n\n@docs concatHorizontal\n\n@docs concatVertical\n\n\n# Utility\n\n@docs width\n\n@docs height\n\n@docs get\n\n@docs getRow\n\n@docs getColumn\n\n@docs set\n\n@docs toArray\n\n",
+        "unions": [
+            {
+                "name": "Matrix",
+                "comment": " A type representing a matrix. Internally, a matrix is just nested array \nwith a constraint that all sub-arrays must be of same length\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "concatHorizontal",
+                "comment": " Concatinates two matrices horizontally.\nWill return Result Err if matrices are not of same height.\n\n    matrixOne = repeat 2 2 1\n    -- 1 1\n    -- 1 1\n    matrixTwo = repeat 2 2 2\n    -- 2 2\n    -- 2 2\n    concatHorizontal matrixOne matrixTwo\n    -- 1 1 2 2\n    -- 1 1 2 2\n\n",
+                "type": "Matrix.Matrix a -> Matrix.Matrix a -> Result.Result String.String (Matrix.Matrix a)"
+            },
+            {
+                "name": "concatVertical",
+                "comment": " Concatinates two matrices vertically.\nWill return Result Err if matrices are not of same width.\n\n    matrixOne = repeat 2 2 1\n    -- 1 1\n    -- 1 1\n    matrixTwo = repeat 2 2 2\n    -- 2 2\n    -- 2 2\n    concatVertical matrixOne matrixTwo\n    -- 1 1\n    -- 1 1\n    -- 2 2\n    -- 2 2\n\n",
+                "type": "Matrix.Matrix a -> Matrix.Matrix a -> Result.Result String.String (Matrix.Matrix a)"
+            },
+            {
+                "name": "foldl",
+                "comment": " Folding left\n\n    myMatrix = generate 4 4 (\\x y -> (String.fromInt x) ++ (String.fromInt y))\n    --  \"00\"    \"10\"    \"20\"    \"30\"\n    --  \"01\"    \"11\"    \"21\"    \"31\"\n    --  \"02\"    \"12\"    \"22\"    \"32\"\n    --  \"03\"    \"13\"    \"23\"    \"33\"\n    foldl (++) \"\" myMatrix\n    --  \"33231303322212023121110130201000\"\n\n",
+                "type": "(a -> b -> b) -> b -> Matrix.Matrix a -> b"
+            },
+            {
+                "name": "foldr",
+                "comment": " Folding right\n\n    myMatrix = generate 4 4 (\\x y -> (String.fromInt x) ++ (String.fromInt y))\n    --  \"00\"    \"10\"    \"20\"    \"30\"\n    --  \"01\"    \"11\"    \"21\"    \"31\"\n    --  \"02\"    \"12\"    \"22\"    \"32\"\n    --  \"03\"    \"13\"    \"23\"    \"33\"\n    foldr (++) \"\" myMatrix\n    --  \"00102030011121310212223203132333\"\n\n",
+                "type": "(a -> b -> b) -> b -> Matrix.Matrix a -> b"
+            },
+            {
+                "name": "generate",
+                "comment": " Creates Matrix of given width and height by calling a generator function.\n\nCall `generate` with width and height, and a _generator function_ `: Int -> Int -> a`.\nGenerator function will be called for every element of matrix and will receive `x` and `y` of that element as params to return a value to be put into matrix.\n\n\n    generate : Int -> Int -> (Int -> Int -> a) -> Matrix a\n\n    multiplicationTable =\n        generate 10 10 (\\x y -> (x + 1) * (y + 1))\n\n    --  1   2   3   4   5   6   7   8   9   10\n    --  2   4   6   8   10  12  14  16  18  20\n    --  3   6   9   12  15  18  21  24  27  30\n    --  4   8   12  16  20  24  28  32  36  40\n    --  5   10  15  20  25  30  35  40  45  50\n    --  6   12  18  24  30  36  42  48  54  60\n    --  7   14  21  28  35  42  49  56  63  70\n    --  8   16  24  32  40  48  56  64  72  80\n    --  9   18  27  36  45  54  63  72  81  90\n    --  10  20  30  40  50  60  70  80  90  100\n\n",
+                "type": "Basics.Int -> Basics.Int -> (Basics.Int -> Basics.Int -> a) -> Matrix.Matrix a"
+            },
+            {
+                "name": "get",
+                "comment": " Returns element at given x and y from matrix.\nNothing of indexes are out of bounds.\n\n    myMatrix = generate 4 4 (\\x y -> (String.fromInt x) ++ (String.fromInt y))\n    --  \"00\"    \"10\"    \"20\"    \"30\"\n    --  \"01\"    \"11\"    \"21\"    \"31\"\n    --  \"02\"    \"12\"    \"22\"    \"32\"\n    --  \"03\"    \"13\"    \"23\"    \"33\"\n    get 1 2 myMatrix\n    -- \"12\"\n\n",
+                "type": "Basics.Int -> Basics.Int -> Matrix.Matrix a -> Result.Result String.String a"
+            },
+            {
+                "name": "getColumn",
+                "comment": " Returns a column at given index as an array.\nResult Err if index is out of bounds.\n\n    myMatrix =\n        generate 4 4 (\\x y -> String.fromInt x ++ String.fromInt y)\n\n    --  \"00\"    \"10\"    \"20\"    \"30\"\n    --  \"01\"    \"11\"    \"21\"    \"31\"\n    --  \"02\"    \"12\"    \"22\"    \"32\"\n    --  \"03\"    \"13\"    \"23\"    \"33\"\n    getColumn 1 myMatrix\n    --  Array.fromList [\"10\", \"11\", \"12\", \"13\"]\n\n",
+                "type": "Basics.Int -> Matrix.Matrix a -> Result.Result String.String (Array.Array a)"
+            },
+            {
+                "name": "getRow",
+                "comment": " Returns a row at given index as a list.\nResult Err if index is out of bounds.\n\n    myMatrix = generate 4 4 (\\x y -> (String.fromInt x) ++ (String.fromInt y))\n    --  \"00\"    \"10\"    \"20\"    \"30\"\n    --  \"01\"    \"11\"    \"21\"    \"31\"\n    --  \"02\"    \"12\"    \"22\"    \"32\"\n    --  \"03\"    \"13\"    \"23\"    \"33\"\n    getRow 1 myMatrix\n    --  Array.fromList [\"01\",\"11\",\"21\",\"31\"]\n\n",
+                "type": "Basics.Int -> Matrix.Matrix a -> Result.Result String.String (Array.Array a)"
+            },
+            {
+                "name": "height",
+                "comment": " Returns height of given Matrix\n\n    myMatrix = repeat 2 3 0\n    -- 0 0\n    -- 0 0\n    -- 0 0\n    height myMatrix\n    -- 3\n\n",
+                "type": "Matrix.Matrix a -> Basics.Int"
+            },
+            {
+                "name": "indexedMap",
+                "comment": " indexedMap will call your function with `x`, `y` and `a` as params\n\n    myMatrix = repeat 3 3 2\n    -- 2 2 2\n    -- 2 2 2\n    -- 2 2 2\n    indexedMap (\\x y element ->\n        (x + y) * element |> String.fromInt)\n        myMatrix\n    --  \"0\" \"2\" \"4\"\n    --  \"2\" \"4\" \"6\"\n    --  \"4\" \"6\" \"8\"\n\n",
+                "type": "(Basics.Int -> Basics.Int -> a -> b) -> Matrix.Matrix a -> Matrix.Matrix b"
+            },
+            {
+                "name": "map",
+                "comment": " Jup, it's a map\n\n    myMatrix = repeat 3 3 0\n    -- 0 0 0\n    -- 0 0 0\n    -- 0 0 0\n    map (String.fromInt) myMatrix\n    --  \"0\" \"0\" \"0\"\n    --  \"0\" \"0\" \"0\"\n    --  \"0\" \"0\" \"0\"\n\n",
+                "type": "(a -> b) -> Matrix.Matrix a -> Matrix.Matrix b"
+            },
+            {
+                "name": "repeat",
+                "comment": " Creates Matrix of given width and height\nby repeating single given value.\n\nCall `repeat` with width and height, and a value to be repeated.\n\n\n    myFourByThreeMatrixOfZeros =\n        repeat 4 3 0\n\n    -- 0 0 0 0\n    -- 0 0 0 0\n    -- 0 0 0 0\n\n",
+                "type": "Basics.Int -> Basics.Int -> a -> Matrix.Matrix a"
+            },
+            {
+                "name": "set",
+                "comment": " Set the element at a particular index. Returns an updated array. \nIf the index is out of range, the matrix is unaltered.\n\n    myMatrix =\n        generate 4 4 (\\x y -> String.fromInt x ++ String.fromInt y)\n            |> set 1 2 \"**\"\n\n    --  \"00\"    \"10\"    \"20\"    \"30\"\n    --  \"01\"    \"11\"    \"21\"    \"31\"\n    --  \"02\"    \"**\"    \"22\"    \"32\"\n    --  \"03\"    \"13\"    \"23\"    \"33\"\n\n",
+                "type": "Basics.Int -> Basics.Int -> a -> Matrix.Matrix a -> Matrix.Matrix a"
+            },
+            {
+                "name": "toArray",
+                "comment": " Returns all elements of matrix in a single array.\n\n    myMatrix =\n        generate 4 4 (\\x y -> String.fromInt x ++ String.fromInt y)\n\n    --  \"00\"    \"10\"    \"20\"    \"30\"\n    --  \"01\"    \"11\"    \"21\"    \"31\"\n    --  \"02\"    \"12\"    \"22\"    \"32\"\n    --  \"03\"    \"13\"    \"23\"    \"33\"\n    toArray myMatrix\n    --  Array.fromList [\"00\", \"10\", \"20\", \"30\", \"01\", \"11\", \"21\", \"31\", \"02\", \"12\", \"22\", \"32\", \"03\", \"13\", \"23\", \"33\"]\n\n",
+                "type": "Matrix.Matrix a -> Array.Array a"
+            },
+            {
+                "name": "width",
+                "comment": " Returns width of given Matrix\n\n    myMatrix = repeat 2 3 0\n    -- 0 0\n    -- 0 0\n    -- 0 0\n    width myMatrix\n    -- 2\n\n",
+                "type": "Matrix.Matrix a -> Basics.Int"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Neighbours",
+        "comment": " Module for getting neighbouring fields of some (x, y).\nWorks with a few different matrix topologies.\nTopology specifies how neighbours are found across matrix edges.\n\n@docs MatrixTopology\n\n@docs neighbours\n\n",
+        "unions": [
+            {
+                "name": "MatrixTopology",
+                "comment": " Possible topologies\n\n    If we mark (0, 0) spot with X in 4x4 Matrix, N marks\n    neighbours on given topology.\n\n                            Strip           Strip\n    Plane:      Torus:      horizontal:     vertical:\n\n    X N - -     X N - N     X N - N         X N - -\n    N N - -     N N - N     N N - N         N N - -\n    - - - -     - - - -     - - - -         - - - -\n    - - - -     N N - N     - - - -         N N - -\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Plane",
+                        []
+                    ],
+                    [
+                        "Torus",
+                        []
+                    ],
+                    [
+                        "StripHorizontal",
+                        []
+                    ],
+                    [
+                        "StripVertical",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "neighbours",
+                "comment": " Given a topology and (x, y) returns array of\nneighbours from given matrix.\n\n    myMatrix = generate 4 4 (\\x y -> (String.fromInt x) ++ (String.fromInt y))\n    --  \"00\"    \"10\"    \"20\"    \"30\"\n    --  \"01\"    \"11\"    \"21\"    \"31\"\n    --  \"02\"    \"12\"    \"22\"    \"32\"\n    --  \"03\"    \"13\"    \"23\"    \"33\"\n\n    neighbours Plane 0 0 myMatix\n    -- Array.fromList [\"01\",\"11\",\"10\"]\n\n    neighbours Torus 0 0 myMatix\n    -- Array.fromList [\"33\",\"03\",\"13\",\"31\",\"01\",\"11\",\"10\",\"30\"]\n\n    neighbours stripHorizontal 0 0 myMatrix\n    -- Array.fromList [\"31\",\"01\",\"11\",\"10\",\"30\"]\n\n    neighbours StripVertical 0 0 myMatix\n    -- Array.fromList [\"03\",\"13\",\"01\",\"11\",\"10\"]\n\n",
+                "type": "Neighbours.MatrixTopology -> Basics.Int -> Basics.Int -> Matrix.Matrix a -> Array.Array a"
+            }
+        ],
+        "binops": []
+    }
+]

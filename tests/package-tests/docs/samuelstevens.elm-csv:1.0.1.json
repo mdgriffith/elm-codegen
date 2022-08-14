@@ -1,0 +1,21 @@
+[
+    {
+        "name": "Csv",
+        "comment": " Parse CSV files according to RFC 4180.\n\n\n# Parsing\n\n@docs parseRows\n\n\n# Generating\n\n@docs escapeRows\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "escapeRows",
+                "comment": " Escape a list of CSV rows and produce a single string (that can be written to a file)\n\n    escapeRows [ [ \"start\" ], [ \"\\\"end\\\"\" ] ] --> \"start\\n\\\"\\\"\\\"end\\\"\\\"\\\"\"\n\n",
+                "type": "List.List (List.List String.String) -> String.String"
+            },
+            {
+                "name": "parseRows",
+                "comment": " Parse a string reprenting the contents of a CSV file. If the string is invalid CSV, returns Err with the CSV that was already parsed when the error was encountered.\n\n    parseRows \"hello,world\\n- a programmer\" --> Ok [ [ \"hello\", \"world\" ], [\"- a programmer\"] ]\n\n",
+                "type": "String.String -> Result.Result String.String (List.List (List.List String.String))"
+            }
+        ],
+        "binops": []
+    }
+]

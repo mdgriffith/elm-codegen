@@ -1,0 +1,117 @@
+[
+    {
+        "name": "Pack",
+        "comment": "\n\n\n### Efficiently pack 2D boxes together.\n\nNote that this package uses [`Quantity`](https://package.elm-lang.org/packages/ianmackenzie/elm-units/latest/Quantity) instead of raw `Int`s and `Float`s.\nYou'll need to install [`ianmackenzie/elm-units`](https://package.elm-lang.org/packages/ianmackenzie/elm-units/latest/) to get started.\n\n\n# Generic packing\n\nFunctions for packing boxes together. Scroll down to the Image Packing section if you want to work specifically with images.\n\n@docs pack, defaultConfig, Box, Config, PackedBoxes, PackedBox\n\n\n# Image packing\n\nSuppose you have a lot of images and you want to load them in as a single image to reduce HTTP requests or simplify texture management in WebGL.\nWith these functions you can generate a texture atlas (also called a sprite sheet) to pack all the images together.\n\n@docs textureAtlas, ImageBox, TextureAtlas\n\n\n# Serialization\n\nIf you want to save your packed boxes/images and then later load them into your app, these functions (when used with [`elm-serialize`](https://package.elm-lang.org/packages/MartinSStewart/elm-serialize/latest/)) should help.\n\n@docs textureAtlasCodec, TextureAtlasCodecError, packedBoxesCodec, packedBoxesCodecFloat\n\n",
+        "unions": [
+            {
+                "name": "TextureAtlasCodecError",
+                "comment": " These are possible errors we can get when decoding with `textureAtlasCodec`.\n\n  - `FailedToParseImage`: The image we encoded is corrupted.\n  - `PackedBoxDataError`: The extra data in `PackedBoxes` is invalid in some way.\n\n",
+                "args": [
+                    "e"
+                ],
+                "cases": [
+                    [
+                        "FailedToParseImage",
+                        []
+                    ],
+                    [
+                        "PackedBoxDataError",
+                        [
+                            "e"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Box",
+                "comment": " A box we want to pack and its accompanying data. Use this with [`pack`](#pack).\n",
+                "args": [
+                    "number",
+                    "units",
+                    "a"
+                ],
+                "type": "{ width : Quantity.Quantity number units, height : Quantity.Quantity number units, data : a }"
+            },
+            {
+                "name": "Config",
+                "comment": "\n\n  - `powerOfTwoSize` sets if the width and height of the container should grow to a power of two size.\n    Sometimes this is needed when creating texture atlases.\n  - `spacing` sets the minimum separation between boxes.\n\n",
+                "args": [
+                    "number",
+                    "units"
+                ],
+                "type": "{ spacing : Quantity.Quantity number units, powerOfTwoSize : Basics.Bool }"
+            },
+            {
+                "name": "ImageBox",
+                "comment": " An image we want to pack and its accompanying data. Use this with [`textureAtlas`](#textureAtlas).\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ image : Image.Image, data : a }"
+            },
+            {
+                "name": "PackedBox",
+                "comment": " A box, now packed into a larger rectangle.\nThe width and height of these boxes will be positive even if the corresponding `Box` had a negative width or height.\n",
+                "args": [
+                    "number",
+                    "units",
+                    "a"
+                ],
+                "type": "{ x : Quantity.Quantity number units, y : Quantity.Quantity number units, width : Quantity.Quantity number units, height : Quantity.Quantity number units, data : a }"
+            },
+            {
+                "name": "PackedBoxes",
+                "comment": " All of the boxes we've packed together and how large the containing region is.\n",
+                "args": [
+                    "number",
+                    "units",
+                    "a"
+                ],
+                "type": "{ width : Quantity.Quantity number units, height : Quantity.Quantity number units, boxes : List.List (Pack.PackedBox number units a) }"
+            },
+            {
+                "name": "TextureAtlas",
+                "comment": " A texture atlas image and accompanying data.\nNote that [`Image`](https://package.elm-lang.org/packages/justgook/elm-image/latest/Image#Image) may contain functions.\n[Don't store this data structure in you model](https://discourse.elm-lang.org/t/implications-of-storing-functions-in-model-or-msg-type/5472).\nInstead convert `Image` into a [string](https://package.elm-lang.org/packages/justgook/elm-image/latest/Image#toPngUrl) or [bytes](https://package.elm-lang.org/packages/justgook/elm-image/latest/Image#toPng) and store that.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ packedBoxes : Pack.PackedBoxes Basics.Int Pixels.Pixels a, atlas : Image.Image }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultConfig",
+                "comment": " Default configuration for packing boxes. Zero spacing and no growing the container width and height to a power of two.\n",
+                "type": "Pack.Config number units"
+            },
+            {
+                "name": "pack",
+                "comment": " Pack generic boxes together.\n",
+                "type": "Pack.Config number units -> List.List (Pack.Box number units a) -> Pack.PackedBoxes number units a"
+            },
+            {
+                "name": "packedBoxesCodec",
+                "comment": " A codec for [`PackedBoxes`](#PackedBoxes) when dealing with integer values.\n",
+                "type": "Serialize.Codec e a -> Serialize.Codec e (Pack.PackedBoxes Basics.Int units a)"
+            },
+            {
+                "name": "packedBoxesCodecFloat",
+                "comment": " A codec for [`PackedBoxes`](#PackedBoxes) when dealing with floating point values.\n",
+                "type": "Serialize.Codec e a -> Serialize.Codec e (Pack.PackedBoxes Basics.Float units a)"
+            },
+            {
+                "name": "textureAtlas",
+                "comment": " Pack images together to create a single texture atlas image.\n\nNote that this is a slow process.\nEven for a small texture atlas (256x256 pixels) it can take a couple seconds and for large images it's probably not a good idea to try.\nIf you need something fast then it's probably a better idea to just use [`pack`](#pack) and then draw the texture atlas using an HTML5 canvas or something.\n\n",
+                "type": "Pack.Config Basics.Int Pixels.Pixels -> List.List (Pack.ImageBox a) -> Pack.TextureAtlas a"
+            },
+            {
+                "name": "textureAtlasCodec",
+                "comment": " A codec for [`TextureAtlas`](#TextureAtlas).\n",
+                "type": "Serialize.Codec e a -> Serialize.Codec (Pack.TextureAtlasCodecError e) (Pack.TextureAtlas a)"
+            }
+        ],
+        "binops": []
+    }
+]

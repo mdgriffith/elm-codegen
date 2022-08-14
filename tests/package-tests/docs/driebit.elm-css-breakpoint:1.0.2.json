@@ -1,0 +1,36 @@
+[
+    {
+        "name": "Css.Breakpoint",
+        "comment": " _All breakpoints use `min-width` and match `all` media types._\n\n@docs tiny\n@docs small\n@docs medium\n@docs large\n@docs huge\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "huge",
+                "comment": "\n\n    @media (min-width: 1660px)\n\n",
+                "type": "List.List Css.Style -> Css.Style"
+            },
+            {
+                "name": "large",
+                "comment": "\n\n    @media (min-width: 1280px)\n\n",
+                "type": "List.List Css.Style -> Css.Style"
+            },
+            {
+                "name": "medium",
+                "comment": "\n\n    @media (min-width: 1024px)\n\n",
+                "type": "List.List Css.Style -> Css.Style"
+            },
+            {
+                "name": "small",
+                "comment": "\n\n    @media (min-width: 768px)\n\n",
+                "type": "List.List Css.Style -> Css.Style"
+            },
+            {
+                "name": "tiny",
+                "comment": "\n\n    @media (min-width: 480px)\n\n",
+                "type": "List.List Css.Style -> Css.Style"
+            }
+        ],
+        "binops": []
+    }
+]

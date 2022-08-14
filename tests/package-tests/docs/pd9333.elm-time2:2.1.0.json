@@ -1,0 +1,109 @@
+[
+    {
+        "name": "Time2",
+        "comment": " This package allows us to transfer time zone through the wire easily and tries to observe daylight saving time.\n\n\n# Time\n\n@docs epoch\n\n\n## Parts\n\n@docs Parts, toParts, fromParts, withYear, withMonth, withDay, withHour, withMinute, withSecond, withMillis\n\n\n# Time Zones\n\n@docs Zone, getZoneName, customZone, utc, encodeZone, decoderOfZone\n\n\n## compatibility with `elm/time`\n\n@docs toElmTimeZone, toStandardZone\n\n",
+        "unions": [
+            {
+                "name": "Parts",
+                "comment": " Keep track of each part of time. Use [`toParts`](#toParts) to create parts from posix time.\n\n    import Iso8601\n    import Time\n\n    epoch\n        |> toParts utc\n        |> withYear 2022\n        |> withMonth Time.Jul\n        |> withDay 22\n        |> withHour 14\n        |> withMinute 32\n        |> withSecond 17\n        |> withMillis 678\n        |> fromParts utc\n        |> Ok\n    --> Iso8601.toTime \"2022-07-22T14:32:17.678Z\"\n\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Zone",
+                "comment": " A zone is a list of eras sorted by descending order of the starting point of each era.\n\nNote that we don't expose the variants because we don't want to bump major version of the package too often. Use\n[`customZone`](#customZone) if we want to create a zone manually. Or create a decoder to decode the value encoded by\n[`encodeZone`](#encodeZone) if we want to get the raw data, we'll try to keep [`encodeZone`](#encodeZone) backward\ncompatible.\n\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "customZone",
+                "comment": " Create a zone with `name`, `eras` and `offsetOfEarliestEra`.\n",
+                "type": "String.String -> List.List { start : Basics.Int, offset : Basics.Int } -> Basics.Int -> Time2.Zone"
+            },
+            {
+                "name": "decoderOfZone",
+                "comment": " Decode `Json.Encode.Value` back to [`Zone`](#Zone).\n",
+                "type": "Json.Decode.Decoder Time2.Zone"
+            },
+            {
+                "name": "encodeZone",
+                "comment": " Encode [`Zone`](#Zone) so we can send it through wire.\n\n    import Json.Decode\n\n    zone : Zone\n    zone =\n        customZone \"Zone/Name\"\n            [ { start = 20, offset = 60 }\n            , { start = 10, offset = -120 }\n            ]\n            30\n\n    zone\n        |> encodeZone\n        |> Json.Decode.decodeValue decoderOfZone\n    --> Ok zone\n\n",
+                "type": "Time2.Zone -> Json.Encode.Value"
+            },
+            {
+                "name": "epoch",
+                "comment": " _Unix epoch_\n",
+                "type": "Time.Posix"
+            },
+            {
+                "name": "fromParts",
+                "comment": " Convert [`Parts`](#Parts) back to posix time.\n\n    import Iso8601\n    import Time\n\n\n    -- Extract several eras from America/New_York for testing\n    -- summer : 2022-03-13T02:00:00-05:00 -> 2022-03-13T03:00:00-04:00\n    -- winter : 2022-11-06T02:00:00-04:00 -> 2022-11-06T01:00:00-05:00\n    newYork : Zone\n    newYork =\n        customZone \"\"\n            [ { start = 27976740, offset = -240 } -- 2023-03-12T03:00:00-04:00\n            , { start = 27795240, offset = -300 } -- 2022-11-06T01:00:00-05:00\n            , { start = 27452580, offset = -240 } -- 2022-03-13T03:00:00-04:00\n            , { start = 27271080, offset = -300 } -- 2021-11-07T01:00:00-05:00\n            ]\n            -300\n\n    -- Extract several eras from Europe/Paris for testing\n    -- summer : 2022-03-27T02:00:00+01:00 -> 2022-03-27T03:00:00+02:00\n    -- winter : 2022-10-30T03:00:00+02:00 -> 2022-10-30T02:00:00+01:00\n    paris : Time2.Zone\n    paris =\n        customZone \"\"\n            [ { start = 27996540, offset = 120 } -- 2023-03-26T03:00:00+02:00\n            , { start = 27784860, offset = 60 } -- 2022-10-30T02:00:00+01:00\n            , { start = 27472380, offset = 120 } -- 2022-03-27T03:00:00+02:00\n            , { start = 27260700, offset = 60 } -- 2021-10-31T02:00:00+01:00\n            ]\n            60\n\n    epoch\n        |> toParts newYork\n        |> withYear 2022\n        |> withMonth Time.Mar\n        |> withDay 13\n        |> withHour 1\n        |> withMinute 59\n        |> withSecond 59\n        |> fromParts newYork\n        |> Ok\n    --> Iso8601.toTime \"2022-03-13T01:59:59-05:00\"\n\n    epoch\n        |> toParts newYork\n        |> withYear 2022\n        |> withMonth Time.Mar\n        |> withDay 13\n        |> withHour 2\n        |> fromParts newYork\n        |> Ok\n    --> Iso8601.toTime \"2022-03-13T03:00:00-04:00\"\n\n    epoch\n        |> toParts newYork\n        |> withYear 2022\n        |> withMonth Time.Mar\n        |> withDay 13\n        |> withHour 3\n        |> fromParts newYork\n        |> Ok\n    --> Iso8601.toTime \"2022-03-13T03:00:00-04:00\"\n\n    -- `fromParts` gives the second 01:59:59\n    epoch\n        |> toParts newYork\n        |> withYear 2022\n        |> withMonth Time.Nov\n        |> withDay 6\n        |> withHour 1\n        |> withMinute 59\n        |> withSecond 59\n        |> fromParts newYork\n        |> Ok\n    --> Iso8601.toTime \"2022-11-06T01:59:59-05:00\"\n\n    -- `fromParts` gives the second 2022-11-06T02:00:00\n    epoch\n        |> toParts newYork\n        |> withYear 2022\n        |> withMonth Time.Nov\n        |> withDay 6\n        |> withHour 2\n        |> fromParts newYork\n        |> Ok\n    --> Iso8601.toTime \"2022-11-06T02:00:00-05:00\"\n\n    epoch\n        |> toParts paris\n        |> withYear 2022\n        |> withMonth Time.Mar\n        |> withDay 27\n        |> withHour 1\n        |> withMinute 59\n        |> withSecond 59\n        |> fromParts paris\n        |> Ok\n    --> Iso8601.toTime \"2022-03-27T01:59:59+01:00\"\n\n    epoch\n        |> toParts paris\n        |> withYear 2022\n        |> withMonth Time.Mar\n        |> withDay 27\n        |> withHour 2\n        |> fromParts paris\n        |> Ok\n    --> Iso8601.toTime \"2022-03-27T03:00:00+02:00\"\n\n    epoch\n        |> toParts paris\n        |> withYear 2022\n        |> withMonth Time.Mar\n        |> withDay 27\n        |> withHour 3\n        |> fromParts paris\n        |> Ok\n    --> Iso8601.toTime \"2022-03-27T03:00:00+02:00\"\n\n    -- `fromParts` gives the second 2022-10-30T02:59:59\n    epoch\n        |> toParts paris\n        |> withYear 2022\n        |> withMonth Time.Oct\n        |> withDay 30\n        |> withHour 2\n        |> withMinute 59\n        |> withSecond 59\n        |> fromParts paris\n        |> Ok\n    --> Iso8601.toTime \"2022-10-30T02:59:59+01:00\"\n\n    -- `fromParts` gives the second 2022-10-30T03:00:00\n    epoch\n        |> toParts paris\n        |> withYear 2022\n        |> withMonth Time.Oct\n        |> withDay 30\n        |> withHour 3\n        |> fromParts paris\n        |> Ok\n    --> Iso8601.toTime \"2022-10-30T03:00:00+01:00\"\n\n",
+                "type": "Time2.Zone -> Time2.Parts -> Time.Posix"
+            },
+            {
+                "name": "getZoneName",
+                "comment": " Get the name of a zone.\n\n    getZoneName utc\n    --> \"Etc/UTC\"\n\n",
+                "type": "Time2.Zone -> String.String"
+            },
+            {
+                "name": "toElmTimeZone",
+                "comment": " This function converts [`Time2.Zone`](#Zone) to [`Time.Zone`][elmTimeZone].\n\n[elmTimeZone]: /packages/elm/time/latest/Time#Zone\n\n    import Time\n\n    start : Int\n    start =\n        61\n\n    zone : Time.Zone\n    zone =\n        customZone \"\" [ { start = start, offset = 120 } ] 0\n            |> toElmTimeZone\n\n    Time.millisToPosix (start * 60 * 1000)\n        |> Time.toHour zone\n    --> 3 -- This will be 1 once https://github.com/elm/time/issues/7 is fixed, we then need to fix our implementation\n\n",
+                "type": "Time2.Zone -> Time.Zone"
+            },
+            {
+                "name": "toParts",
+                "comment": " Convert posix time to [`Parts`](#Parts).\n",
+                "type": "Time2.Zone -> Time.Posix -> Time2.Parts"
+            },
+            {
+                "name": "toStandardZone",
+                "comment": " Deprecated, please use [`toElmTimeZone`](#toElmTimeZone) as that name is less misleading.\n",
+                "type": "Time2.Zone -> Time.Zone"
+            },
+            {
+                "name": "utc",
+                "comment": " utc\n",
+                "type": "Time2.Zone"
+            },
+            {
+                "name": "withDay",
+                "comment": " Set day of [`Parts`](#Parts).\n",
+                "type": "Basics.Int -> Time2.Parts -> Time2.Parts"
+            },
+            {
+                "name": "withHour",
+                "comment": " Set hour of [`Parts`](#Parts).\n",
+                "type": "Basics.Int -> Time2.Parts -> Time2.Parts"
+            },
+            {
+                "name": "withMillis",
+                "comment": " Set millis of [`Parts`](#Parts).\n",
+                "type": "Basics.Int -> Time2.Parts -> Time2.Parts"
+            },
+            {
+                "name": "withMinute",
+                "comment": " Set minute of [`Parts`](#Parts).\n",
+                "type": "Basics.Int -> Time2.Parts -> Time2.Parts"
+            },
+            {
+                "name": "withMonth",
+                "comment": " Set month of [`Parts`](#Parts).\n",
+                "type": "Time.Month -> Time2.Parts -> Time2.Parts"
+            },
+            {
+                "name": "withSecond",
+                "comment": " Set second of [`Parts`](#Parts).\n",
+                "type": "Basics.Int -> Time2.Parts -> Time2.Parts"
+            },
+            {
+                "name": "withYear",
+                "comment": " Set year of [`Parts`](#Parts).\n",
+                "type": "Basics.Int -> Time2.Parts -> Time2.Parts"
+            }
+        ],
+        "binops": []
+    }
+]

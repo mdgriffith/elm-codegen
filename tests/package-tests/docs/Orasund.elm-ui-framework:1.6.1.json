@@ -1,0 +1,392 @@
+[
+    {
+        "name": "Framework",
+        "comment": " This module includes the basic building bocks.\nMaybe start by copying the follow code into your project:\n\n```\nview : Html msg\nview =\n    Framework.layout [] <|\n        Element.el Framework.container <|\n            Element.text \"the first element should be a container.\"\n```\n\n@docs responsiveLayout, layout, container, layoutOptions, layoutAttributes\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "container",
+                "comment": " The container should be the outer most element.\nIt centers the content and sets the background to white.\n",
+                "type": "List.List (Element.Attribute msg)"
+            },
+            {
+                "name": "layout",
+                "comment": " A replacement of `Element.layout` adding both the `Framework.layoutOptions` and the Framework.layoutAttributes.\n",
+                "type": "List.List (Element.Attribute msg) -> Element.Element msg -> Html.Html msg"
+            },
+            {
+                "name": "layoutAttributes",
+                "comment": " The default Attributes. Check the source code if you want to know more.\n",
+                "type": "List.List (Element.Attribute msg)"
+            },
+            {
+                "name": "layoutOptions",
+                "comment": " The default layoutOptions. Check the source code if you want to know more.\n",
+                "type": "List.List Element.Option"
+            },
+            {
+                "name": "responsiveLayout",
+                "comment": " same as `layout`, but also includes the following meta tag:\n\n```\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n```\n\nThis will ensure that phones will render the page responsively. Without this,\na typical phone will set its internal \"screen width\" to 1000px and will then\nmanually scale the page to fit the screen.\n\n",
+                "type": "List.List (Element.Attribute msg) -> Element.Element msg -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Framework.Button",
+        "comment": " This module contains attributes to style buttons.\n\n```\nInput.button (Button.simple ++ Color.primary) <|\n    { onPress = Nothing\n    , label = Element.text \"Button.simple ++ Color.primary\"\n    }\n```\n\nThe attribute can only be used on `Input.button` but it may be with additional attibutes from this package.\n\n@docs simple, fill\n\n\n## DEPRECATED\n\n@docs groupLeft, groupCenter, groupRight, groupTop, groupBottom\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fill",
+                "comment": " A Button that fills the avaliable area. Check the source code for more information.\n",
+                "type": "List.List (Element.Attribute msg)"
+            },
+            {
+                "name": "groupBottom",
+                "comment": " DEPRECATED. Use (Button.simple ++ Group.top) instead\n",
+                "type": "List.List (Element.Attribute msg)"
+            },
+            {
+                "name": "groupCenter",
+                "comment": " DEPRECATED. Use (Button.simple ++ Group.top) instead\n",
+                "type": "List.List (Element.Attribute msg)"
+            },
+            {
+                "name": "groupLeft",
+                "comment": " DEPRECATED. Use (Button.simple ++ Group.left) instead\n",
+                "type": "List.List (Element.Attribute msg)"
+            },
+            {
+                "name": "groupRight",
+                "comment": " DEPRECATED. Use (Button.simple ++ Group.right) instead\n",
+                "type": "List.List (Element.Attribute msg)"
+            },
+            {
+                "name": "groupTop",
+                "comment": " DEPRECATED. Use (Button.simple ++ Group.top) instead\n",
+                "type": "List.List (Element.Attribute msg)"
+            },
+            {
+                "name": "simple",
+                "comment": " A simple Button styling. Check the source-code for more information.\n",
+                "type": "List.List (Element.Attribute msg)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Framework.Card",
+        "comment": " The Card attributes can be used almost anywere in the elm-ui elements.\n\nHere are some examples:\n\n```\nElement.column (Card.simple ++ Grid.simple) <|\n    [ Element.text <| \"adds a border around the column\"\n    ]\n```\n\n```\nElement.el Card.small <|\n    Element.text \"a basic card\"\n```\n\n```\nInput.button (Button.simple ++ Card.large) <|\n    { onPress = Nothing\n    , label = Element.text \"a clickable card\"\n    }\n```\n\n@docs simple, small, large, fill\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fill",
+                "comment": " A card filling all the avaiable space.\nCheck the source-code for more information.\n",
+                "type": "List.List (Element.Attribute msg)"
+            },
+            {
+                "name": "large",
+                "comment": " A 480px wide card.\nCheck the source-code for more information.\n",
+                "type": "List.List (Element.Attribute msg)"
+            },
+            {
+                "name": "simple",
+                "comment": " A basic card.\nCheck the source-code for more information.\n",
+                "type": "List.List (Element.Attribute msg)"
+            },
+            {
+                "name": "small",
+                "comment": " A 240px wide card.\nCheck the source-code for more information.\n",
+                "type": "List.List (Element.Attribute msg)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Framework.Color",
+        "comment": " This module contains the colors used in the framework.\n\n@docs cyan, green, lighterGrey, lightGrey, grey, darkGrey, darkerGrey, red, turquoise, yellow\n\nSome colors also have a Attribute that can be used nearly everywhere.\n\n@docs simple, white, black, danger, light, dark, disabled, info, primary, success, warning\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "black",
+                "comment": " ",
+                "type": "Element.Color"
+            },
+            {
+                "name": "cyan",
+                "comment": " ",
+                "type": "Element.Color"
+            },
+            {
+                "name": "danger",
+                "comment": " ",
+                "type": "List.List (Element.Attribute msg)"
+            },
+            {
+                "name": "dark",
+                "comment": " ",
+                "type": "List.List (Element.Attribute msg)"
+            },
+            {
+                "name": "darkGrey",
+                "comment": " ",
+                "type": "Element.Color"
+            },
+            {
+                "name": "darkerGrey",
+                "comment": " ",
+                "type": "Element.Color"
+            },
+            {
+                "name": "disabled",
+                "comment": " ",
+                "type": "List.List (Element.Attribute msg)"
+            },
+            {
+                "name": "green",
+                "comment": " ",
+                "type": "Element.Color"
+            },
+            {
+                "name": "grey",
+                "comment": " ",
+                "type": "Element.Color"
+            },
+            {
+                "name": "info",
+                "comment": " ",
+                "type": "List.List (Element.Attribute msg)"
+            },
+            {
+                "name": "light",
+                "comment": " ",
+                "type": "List.List (Element.Attribute msg)"
+            },
+            {
+                "name": "lightGrey",
+                "comment": " ",
+                "type": "Element.Color"
+            },
+            {
+                "name": "lighterGrey",
+                "comment": " ",
+                "type": "Element.Color"
+            },
+            {
+                "name": "primary",
+                "comment": " ",
+                "type": "List.List (Element.Attribute msg)"
+            },
+            {
+                "name": "red",
+                "comment": " ",
+                "type": "Element.Color"
+            },
+            {
+                "name": "simple",
+                "comment": " ",
+                "type": "List.List (Element.Attribute msg)"
+            },
+            {
+                "name": "success",
+                "comment": " ",
+                "type": "List.List (Element.Attribute msg)"
+            },
+            {
+                "name": "turquoise",
+                "comment": " ",
+                "type": "Element.Color"
+            },
+            {
+                "name": "warning",
+                "comment": " ",
+                "type": "List.List (Element.Attribute msg)"
+            },
+            {
+                "name": "white",
+                "comment": " ",
+                "type": "Element.Color"
+            },
+            {
+                "name": "yellow",
+                "comment": " ",
+                "type": "Element.Color"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Framework.Grid",
+        "comment": " This module include the basic attributes for columns and rows and two variants.\nAny of these Attributes can be used for columns and rows.\n\n```\nElement.row Grid.spacedEvenly <|\n    [ Element.text \"left item\"\n    , Element.text \"center item\"\n    , Element.text \"right item\"\n    ]\n```\n\n@docs simple, compact, spaceEvenly, section\n\n\n## DEPRECATED\n\n@docs spacedEvenly\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "compact",
+                "comment": " the simple styling but without the spacing.\nCheck the source-code for more information.\n",
+                "type": "List.List (Element.Attribute msg)"
+            },
+            {
+                "name": "section",
+                "comment": " The simple attributes but with a horizontal line at the top\nCheck the source-code for more information.\n",
+                "type": "List.List (Element.Attribute msg)"
+            },
+            {
+                "name": "simple",
+                "comment": " The basic attributes for columns and rows.\nCheck the source-code for more information.\n",
+                "type": "List.List (Element.Attribute msg)"
+            },
+            {
+                "name": "spaceEvenly",
+                "comment": " The simple attibutes but with evenly spaced elements.\nCheck the source-code for more information.\n",
+                "type": "List.List (Element.Attribute msg)"
+            },
+            {
+                "name": "spacedEvenly",
+                "comment": " DEPRECATED. Use spaceEvenly instead\n",
+                "type": "List.List (Element.Attribute msg)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Framework.Group",
+        "comment": " This module contains different attributes for grouping things together\n\n@docs left, center, right, top, bottom\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "bottom",
+                "comment": " Bottom of a group wrapped in `Grid.compact`\n",
+                "type": "List.List (Element.Attribute msg)"
+            },
+            {
+                "name": "center",
+                "comment": " Center of a group wrapped in `Grid.compact`\n",
+                "type": "List.List (Element.Attribute msg)"
+            },
+            {
+                "name": "left",
+                "comment": " Left of a group wrapped in `Grid.compact`\n",
+                "type": "List.List (Element.Attribute msg)"
+            },
+            {
+                "name": "right",
+                "comment": " Right of a group wrapped in `Grid.compact`\n",
+                "type": "List.List (Element.Attribute msg)"
+            },
+            {
+                "name": "top",
+                "comment": " Top of a group wrapped in `Grid.compact`\n",
+                "type": "List.List (Element.Attribute msg)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Framework.Heading",
+        "comment": " Styling for heading\n\n```\nElement.el Heading.h1 <| Element.text \"Only Element.el may be styled as a heading\"\n```\n\n@docs h1, h2, h3, h4, h5, h6\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "h1",
+                "comment": " ",
+                "type": "List.List (Element.Attribute msg)"
+            },
+            {
+                "name": "h2",
+                "comment": " ",
+                "type": "List.List (Element.Attribute msg)"
+            },
+            {
+                "name": "h3",
+                "comment": " ",
+                "type": "List.List (Element.Attribute msg)"
+            },
+            {
+                "name": "h4",
+                "comment": " ",
+                "type": "List.List (Element.Attribute msg)"
+            },
+            {
+                "name": "h5",
+                "comment": " ",
+                "type": "List.List (Element.Attribute msg)"
+            },
+            {
+                "name": "h6",
+                "comment": " ",
+                "type": "List.List (Element.Attribute msg)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Framework.Input",
+        "comment": " This module exposes simple attibutes for Inputs (beside Buttons) and\nstyling for labels.\n\n```\nInput.text Input.simple\n    { onChange = always ()\n    , text = \"Input.simple\"\n    , placeholder = Nothing\n    , label = Input.labelLeft Input.label <| Element.text \"Input.label\"\n    }\n```\n\n@docs simple, label\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "label",
+                "comment": " ",
+                "type": "List.List (Element.Attribute msg)"
+            },
+            {
+                "name": "simple",
+                "comment": " ",
+                "type": "List.List (Element.Attribute msg)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Framework.Slider",
+        "comment": " This module exposes simple attibutes for sliders and\nstyling for the thumb.\n\n```\nInput.slider Slider.simple\n    { onChange = ChangedSlider\n    , label = Input.labelLeft Input.label <| Element.text \"Slider.simple\"\n    , min = 0\n    , max = 100\n    , value = 42\n    , thumb = Input.thumb Slider.thumb\n    , step = Nothing\n    }\n```\n\n@docs simple, withSteps, thumb\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "simple",
+                "comment": " A simple slider\n",
+                "type": "List.List (Element.Attribute msg)"
+            },
+            {
+                "name": "thumb",
+                "comment": " The styling for a round thumb\n",
+                "type": "List.List (Element.Attribute Basics.Never)"
+            },
+            {
+                "name": "withSteps",
+                "comment": " A slider for integers.\nthe first argument denotes the amount of possible values (max - min)\n",
+                "type": "Basics.Int -> List.List (Element.Attribute msg)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Framework.Tag",
+        "comment": " A Tag is a inline highlight of a text.\n\n@docs simple, slim\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "simple",
+                "comment": " A basic Tag.\nCheck the source-code for more information.\n",
+                "type": "List.List (Element.Attribute msg)"
+            },
+            {
+                "name": "slim",
+                "comment": " A slim Tag.\nCheck the source-code for more information.\n",
+                "type": "List.List (Element.Attribute msg)"
+            }
+        ],
+        "binops": []
+    }
+]

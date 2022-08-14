@@ -1,0 +1,41 @@
+[
+    {
+        "name": "Http.Tasks",
+        "comment": " Convenience functions for working with HTTP requests as Tasks.\n\n\n# Requests\n\n@docs get, post\n\n\n# Resolvers\n\n@docs resolveString, resolveJson, resolveWhatever, customResolver\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "customResolver",
+                "comment": " Use your own body parsing function to build a resolver.\n",
+                "type": "(String.String -> Result.Result String.String a) -> Http.Resolver Http.Error a"
+            },
+            {
+                "name": "get",
+                "comment": " Create a `GET` request.\n\nYou can use functions like [`resolveString`](#resolveString) and\n[`resolveJson`](#resolveJson) to interpret the response in different ways.\n\n",
+                "type": "{ url : String.String, resolver : Http.Resolver x a } -> Task.Task x a"
+            },
+            {
+                "name": "post",
+                "comment": " Create a `POST` request.\n",
+                "type": "{ url : String.String, resolver : Http.Resolver x a, body : Http.Body } -> Task.Task x a"
+            },
+            {
+                "name": "resolveJson",
+                "comment": " Expect the response body to be JSON. Returns a `BadBody` error when JSON decoding fails.\n",
+                "type": "Json.Decode.Decoder a -> Http.Resolver Http.Error a"
+            },
+            {
+                "name": "resolveString",
+                "comment": " Expect the response body to be a `String`.\n",
+                "type": "Http.Resolver Http.Error String.String"
+            },
+            {
+                "name": "resolveWhatever",
+                "comment": " Expect the response body to be anything, and the ignore it.\n",
+                "type": "Http.Resolver Http.Error ()"
+            }
+        ],
+        "binops": []
+    }
+]

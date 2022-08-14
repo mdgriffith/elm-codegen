@@ -1,0 +1,4635 @@
+[
+    {
+        "name": "Bulma.Classes",
+        "comment": " A module containing all [Bulma](https://bulma.io) classes at top\nlevel, putting the burden of not making typos on the compiler.\n\nExample usage:\n\n    import Bulma.Classes as Bulma\n\n    view =\n        Html.div\n            [ Html.Attributes.class Bulma.columns ]\n            [ Html.div\n                [ Html.Attributes.class Bulma.column ]\n                [ Html.text \"column 1\" ]\n            , Html.div\n                [ Html.Attributes.class Bulma.column ]\n                [ Html.text \"column 2\" ]\n            ]\n\n\n# Classes\n\n@docs areLarge\n@docs areMedium\n@docs areSmall\n@docs block\n@docs box\n@docs breadcrumb\n@docs button\n@docs buttons\n@docs card\n@docs cardContent\n@docs cardFooter\n@docs cardFooterItem\n@docs cardHeader\n@docs cardHeaderIcon\n@docs cardHeaderTitle\n@docs cardImage\n@docs checkbox\n@docs column\n@docs columns\n@docs container\n@docs content\n@docs control\n@docs delete\n@docs dropdown\n@docs dropdownContent\n@docs dropdownDivider\n@docs dropdownItem\n@docs dropdownMenu\n@docs fa\n@docs field\n@docs fieldBody\n@docs fieldLabel\n@docs file\n@docs fileCta\n@docs fileIcon\n@docs fileInput\n@docs fileLabel\n@docs fileName\n@docs footer\n@docs hasAddons\n@docs hasAddonsCentered\n@docs hasAddonsFullwidth\n@docs hasAddonsRight\n@docs hasArrowSeparator\n@docs hasBackgroundBlack\n@docs hasBackgroundBlackBis\n@docs hasBackgroundBlackTer\n@docs hasBackgroundDanger\n@docs hasBackgroundDangerDark\n@docs hasBackgroundDangerLight\n@docs hasBackgroundDark\n@docs hasBackgroundGrey\n@docs hasBackgroundGreyDark\n@docs hasBackgroundGreyDarker\n@docs hasBackgroundGreyLight\n@docs hasBackgroundGreyLighter\n@docs hasBackgroundInfo\n@docs hasBackgroundInfoDark\n@docs hasBackgroundInfoLight\n@docs hasBackgroundLight\n@docs hasBackgroundLink\n@docs hasBackgroundLinkDark\n@docs hasBackgroundLinkLight\n@docs hasBackgroundPrimary\n@docs hasBackgroundPrimaryDark\n@docs hasBackgroundPrimaryLight\n@docs hasBackgroundSuccess\n@docs hasBackgroundSuccessDark\n@docs hasBackgroundSuccessLight\n@docs hasBackgroundWarning\n@docs hasBackgroundWarningDark\n@docs hasBackgroundWarningLight\n@docs hasBackgroundWhite\n@docs hasBackgroundWhiteBis\n@docs hasBackgroundWhiteTer\n@docs hasBulletSeparator\n@docs hasDotSeparator\n@docs hasDropdown\n@docs hasDropdownUp\n@docs hasFixedSize\n@docs hasIconsLeft\n@docs hasIconsRight\n@docs hasName\n@docs hasNavbarFixedBottom\n@docs hasNavbarFixedBottomDesktop\n@docs hasNavbarFixedBottomTouch\n@docs hasNavbarFixedTop\n@docs hasNavbarFixedTopDesktop\n@docs hasNavbarFixedTopTouch\n@docs hasRatio\n@docs hasShadow\n@docs hasSpacedNavbarFixedBottom\n@docs hasSpacedNavbarFixedTop\n@docs hasSucceedsSeparator\n@docs hasTextBlack\n@docs hasTextBlackBis\n@docs hasTextBlackTer\n@docs hasTextCentered\n@docs hasTextCenteredDesktop\n@docs hasTextCenteredDesktopOnly\n@docs hasTextCenteredFullhd\n@docs hasTextCenteredMobile\n@docs hasTextCenteredTablet\n@docs hasTextCenteredTabletOnly\n@docs hasTextCenteredTouch\n@docs hasTextCenteredWidescreen\n@docs hasTextCenteredWidescreenOnly\n@docs hasTextDanger\n@docs hasTextDangerDark\n@docs hasTextDangerLight\n@docs hasTextDark\n@docs hasTextGrey\n@docs hasTextGreyDark\n@docs hasTextGreyDarker\n@docs hasTextGreyLight\n@docs hasTextGreyLighter\n@docs hasTextInfo\n@docs hasTextInfoDark\n@docs hasTextInfoLight\n@docs hasTextJustified\n@docs hasTextJustifiedDesktop\n@docs hasTextJustifiedDesktopOnly\n@docs hasTextJustifiedFullhd\n@docs hasTextJustifiedMobile\n@docs hasTextJustifiedTablet\n@docs hasTextJustifiedTabletOnly\n@docs hasTextJustifiedTouch\n@docs hasTextJustifiedWidescreen\n@docs hasTextJustifiedWidescreenOnly\n@docs hasTextLeft\n@docs hasTextLeftDesktop\n@docs hasTextLeftDesktopOnly\n@docs hasTextLeftFullhd\n@docs hasTextLeftMobile\n@docs hasTextLeftTablet\n@docs hasTextLeftTabletOnly\n@docs hasTextLeftTouch\n@docs hasTextLeftWidescreen\n@docs hasTextLeftWidescreenOnly\n@docs hasTextLight\n@docs hasTextLink\n@docs hasTextLinkDark\n@docs hasTextLinkLight\n@docs hasTextPrimary\n@docs hasTextPrimaryDark\n@docs hasTextPrimaryLight\n@docs hasTextRight\n@docs hasTextRightDesktop\n@docs hasTextRightDesktopOnly\n@docs hasTextRightFullhd\n@docs hasTextRightMobile\n@docs hasTextRightTablet\n@docs hasTextRightTabletOnly\n@docs hasTextRightTouch\n@docs hasTextRightWidescreen\n@docs hasTextRightWidescreenOnly\n@docs hasTextSuccess\n@docs hasTextSuccessDark\n@docs hasTextSuccessLight\n@docs hasTextWarning\n@docs hasTextWarningDark\n@docs hasTextWarningLight\n@docs hasTextWeightBold\n@docs hasTextWeightLight\n@docs hasTextWeightMedium\n@docs hasTextWeightNormal\n@docs hasTextWeightSemibold\n@docs hasTextWhite\n@docs hasTextWhiteBis\n@docs hasTextWhiteTer\n@docs heading\n@docs help\n@docs hero\n@docs heroBody\n@docs heroButtons\n@docs heroFoot\n@docs heroHead\n@docs heroVideo\n@docs highlight\n@docs icon\n@docs image\n@docs input\n@docs is0\n@docs is0Desktop\n@docs is0DesktopOnly\n@docs is0Fullhd\n@docs is0Mobile\n@docs is0Tablet\n@docs is0TabletOnly\n@docs is0Touch\n@docs is0Widescreen\n@docs is0WidescreenOnly\n@docs is1\n@docs is1Desktop\n@docs is1DesktopOnly\n@docs is1Fullhd\n@docs is1Mobile\n@docs is1Tablet\n@docs is1TabletOnly\n@docs is1Touch\n@docs is1Widescreen\n@docs is1WidescreenOnly\n@docs is10\n@docs is10Desktop\n@docs is10Fullhd\n@docs is10Mobile\n@docs is10Tablet\n@docs is10Touch\n@docs is10Widescreen\n@docs is11\n@docs is11Desktop\n@docs is11Fullhd\n@docs is11Mobile\n@docs is11Tablet\n@docs is11Touch\n@docs is11Widescreen\n@docs is12\n@docs is12Desktop\n@docs is12Fullhd\n@docs is12Mobile\n@docs is12Tablet\n@docs is12Touch\n@docs is12Widescreen\n@docs is128x128\n@docs is16by9\n@docs is16x16\n@docs is1by1\n@docs is1by2\n@docs is1by3\n@docs is2\n@docs is2Desktop\n@docs is2DesktopOnly\n@docs is2Fullhd\n@docs is2Mobile\n@docs is2Tablet\n@docs is2TabletOnly\n@docs is2Touch\n@docs is2Widescreen\n@docs is2WidescreenOnly\n@docs is24x24\n@docs is2by1\n@docs is2by3\n@docs is3\n@docs is3Desktop\n@docs is3DesktopOnly\n@docs is3Fullhd\n@docs is3Mobile\n@docs is3Tablet\n@docs is3TabletOnly\n@docs is3Touch\n@docs is3Widescreen\n@docs is3WidescreenOnly\n@docs is32x32\n@docs is3by1\n@docs is3by2\n@docs is3by4\n@docs is3by5\n@docs is4\n@docs is4Desktop\n@docs is4DesktopOnly\n@docs is4Fullhd\n@docs is4Mobile\n@docs is4Tablet\n@docs is4TabletOnly\n@docs is4Touch\n@docs is4Widescreen\n@docs is4WidescreenOnly\n@docs is48x48\n@docs is4by3\n@docs is4by5\n@docs is5\n@docs is5Desktop\n@docs is5DesktopOnly\n@docs is5Fullhd\n@docs is5Mobile\n@docs is5Tablet\n@docs is5TabletOnly\n@docs is5Touch\n@docs is5Widescreen\n@docs is5WidescreenOnly\n@docs is5by3\n@docs is5by4\n@docs is6\n@docs is6Desktop\n@docs is6DesktopOnly\n@docs is6Fullhd\n@docs is6Mobile\n@docs is6Tablet\n@docs is6TabletOnly\n@docs is6Touch\n@docs is6Widescreen\n@docs is6WidescreenOnly\n@docs is64x64\n@docs is7\n@docs is7Desktop\n@docs is7DesktopOnly\n@docs is7Fullhd\n@docs is7Mobile\n@docs is7Tablet\n@docs is7TabletOnly\n@docs is7Touch\n@docs is7Widescreen\n@docs is7WidescreenOnly\n@docs is8\n@docs is8Desktop\n@docs is8DesktopOnly\n@docs is8Fullhd\n@docs is8Mobile\n@docs is8Tablet\n@docs is8TabletOnly\n@docs is8Touch\n@docs is8Widescreen\n@docs is8WidescreenOnly\n@docs is9\n@docs is9Desktop\n@docs is9Fullhd\n@docs is9Mobile\n@docs is9Tablet\n@docs is9Touch\n@docs is9Widescreen\n@docs is96x96\n@docs is9by16\n@docs isActive\n@docs isAncestor\n@docs isArrowless\n@docs isBlack\n@docs isBlock\n@docs isBlockDesktop\n@docs isBlockDesktopOnly\n@docs isBlockFullhd\n@docs isBlockMobile\n@docs isBlockTablet\n@docs isBlockTabletOnly\n@docs isBlockTouch\n@docs isBlockWidescreen\n@docs isBlockWidescreenOnly\n@docs isBold\n@docs isBordered\n@docs isBoxed\n@docs isCapitalized\n@docs isCenter\n@docs isCentered\n@docs isChild\n@docs isClearfix\n@docs isClipped\n@docs isCurrent\n@docs isDanger\n@docs isDark\n@docs isDelete\n@docs isDesktop\n@docs isDisabled\n@docs isEmpty\n@docs isExpanded\n@docs isFamilyCode\n@docs isFamilyMonospace\n@docs isFamilyPrimary\n@docs isFamilySansSerif\n@docs isFamilySecondary\n@docs isFixedBottom\n@docs isFixedBottomDesktop\n@docs isFixedBottomTouch\n@docs isFixedTop\n@docs isFixedTopDesktop\n@docs isFixedTopTouch\n@docs isFlex\n@docs isFlexDesktop\n@docs isFlexDesktopOnly\n@docs isFlexFullhd\n@docs isFlexMobile\n@docs isFlexTablet\n@docs isFlexTabletOnly\n@docs isFlexTouch\n@docs isFlexWidescreen\n@docs isFlexWidescreenOnly\n@docs isFlexible\n@docs isFluid\n@docs isFocused\n@docs isFourFifths\n@docs isFourFifthsDesktop\n@docs isFourFifthsFullhd\n@docs isFourFifthsMobile\n@docs isFourFifthsTablet\n@docs isFourFifthsTouch\n@docs isFourFifthsWidescreen\n@docs isFull\n@docs isFullDesktop\n@docs isFullFullhd\n@docs isFullMobile\n@docs isFullTablet\n@docs isFullTouch\n@docs isFullWidescreen\n@docs isFullhd\n@docs isFullheight\n@docs isFullheightWithNavbar\n@docs isFullwidth\n@docs isGapless\n@docs isGrouped\n@docs isGroupedCentered\n@docs isGroupedMultiline\n@docs isGroupedRight\n@docs isHalf\n@docs isHalfDesktop\n@docs isHalfFullhd\n@docs isHalfMobile\n@docs isHalfTablet\n@docs isHalfTouch\n@docs isHalfWidescreen\n@docs isHalfheight\n@docs isHidden\n@docs isHiddenDesktop\n@docs isHiddenDesktopOnly\n@docs isHiddenFullhd\n@docs isHiddenMobile\n@docs isHiddenTablet\n@docs isHiddenTabletOnly\n@docs isHiddenTouch\n@docs isHiddenWidescreen\n@docs isHiddenWidescreenOnly\n@docs isHorizontal\n@docs isHoverable\n@docs isHovered\n@docs isInfo\n@docs isInline\n@docs isInlineBlock\n@docs isInlineBlockDesktop\n@docs isInlineBlockDesktopOnly\n@docs isInlineBlockFullhd\n@docs isInlineBlockMobile\n@docs isInlineBlockTablet\n@docs isInlineBlockTabletOnly\n@docs isInlineBlockTouch\n@docs isInlineBlockWidescreen\n@docs isInlineBlockWidescreenOnly\n@docs isInlineDesktop\n@docs isInlineDesktopOnly\n@docs isInlineFlex\n@docs isInlineFlexDesktop\n@docs isInlineFlexDesktopOnly\n@docs isInlineFlexFullhd\n@docs isInlineFlexMobile\n@docs isInlineFlexTablet\n@docs isInlineFlexTabletOnly\n@docs isInlineFlexTouch\n@docs isInlineFlexWidescreen\n@docs isInlineFlexWidescreenOnly\n@docs isInlineFullhd\n@docs isInlineMobile\n@docs isInlineTablet\n@docs isInlineTabletOnly\n@docs isInlineTouch\n@docs isInlineWidescreen\n@docs isInlineWidescreenOnly\n@docs isInverted\n@docs isInvisible\n@docs isInvisibleDesktop\n@docs isInvisibleDesktopOnly\n@docs isInvisibleFullhd\n@docs isInvisibleMobile\n@docs isInvisibleTablet\n@docs isInvisibleTabletOnly\n@docs isInvisibleTouch\n@docs isInvisibleWidescreen\n@docs isInvisibleWidescreenOnly\n@docs isItalic\n@docs isLarge\n@docs isLeft\n@docs isLight\n@docs isLink\n@docs isLoading\n@docs isLowerAlpha\n@docs isLowerRoman\n@docs isLowercase\n@docs isMarginless\n@docs isMedium\n@docs isMobile\n@docs isMultiline\n@docs isMultiple\n@docs isNarrow\n@docs isNarrowDesktop\n@docs isNarrowFullhd\n@docs isNarrowMobile\n@docs isNarrowTablet\n@docs isNarrowTouch\n@docs isNarrowWidescreen\n@docs isNormal\n@docs isOffset0\n@docs isOffset0Desktop\n@docs isOffset0Fullhd\n@docs isOffset0Mobile\n@docs isOffset0Tablet\n@docs isOffset0Touch\n@docs isOffset0Widescreen\n@docs isOffset1\n@docs isOffset1Desktop\n@docs isOffset1Fullhd\n@docs isOffset1Mobile\n@docs isOffset1Tablet\n@docs isOffset1Touch\n@docs isOffset1Widescreen\n@docs isOffset10\n@docs isOffset10Desktop\n@docs isOffset10Fullhd\n@docs isOffset10Mobile\n@docs isOffset10Tablet\n@docs isOffset10Touch\n@docs isOffset10Widescreen\n@docs isOffset11\n@docs isOffset11Desktop\n@docs isOffset11Fullhd\n@docs isOffset11Mobile\n@docs isOffset11Tablet\n@docs isOffset11Touch\n@docs isOffset11Widescreen\n@docs isOffset12\n@docs isOffset12Desktop\n@docs isOffset12Fullhd\n@docs isOffset12Mobile\n@docs isOffset12Tablet\n@docs isOffset12Touch\n@docs isOffset12Widescreen\n@docs isOffset2\n@docs isOffset2Desktop\n@docs isOffset2Fullhd\n@docs isOffset2Mobile\n@docs isOffset2Tablet\n@docs isOffset2Touch\n@docs isOffset2Widescreen\n@docs isOffset3\n@docs isOffset3Desktop\n@docs isOffset3Fullhd\n@docs isOffset3Mobile\n@docs isOffset3Tablet\n@docs isOffset3Touch\n@docs isOffset3Widescreen\n@docs isOffset4\n@docs isOffset4Desktop\n@docs isOffset4Fullhd\n@docs isOffset4Mobile\n@docs isOffset4Tablet\n@docs isOffset4Touch\n@docs isOffset4Widescreen\n@docs isOffset5\n@docs isOffset5Desktop\n@docs isOffset5Fullhd\n@docs isOffset5Mobile\n@docs isOffset5Tablet\n@docs isOffset5Touch\n@docs isOffset5Widescreen\n@docs isOffset6\n@docs isOffset6Desktop\n@docs isOffset6Fullhd\n@docs isOffset6Mobile\n@docs isOffset6Tablet\n@docs isOffset6Touch\n@docs isOffset6Widescreen\n@docs isOffset7\n@docs isOffset7Desktop\n@docs isOffset7Fullhd\n@docs isOffset7Mobile\n@docs isOffset7Tablet\n@docs isOffset7Touch\n@docs isOffset7Widescreen\n@docs isOffset8\n@docs isOffset8Desktop\n@docs isOffset8Fullhd\n@docs isOffset8Mobile\n@docs isOffset8Tablet\n@docs isOffset8Touch\n@docs isOffset8Widescreen\n@docs isOffset9\n@docs isOffset9Desktop\n@docs isOffset9Fullhd\n@docs isOffset9Mobile\n@docs isOffset9Tablet\n@docs isOffset9Touch\n@docs isOffset9Widescreen\n@docs isOffsetFourFifths\n@docs isOffsetFourFifthsDesktop\n@docs isOffsetFourFifthsFullhd\n@docs isOffsetFourFifthsMobile\n@docs isOffsetFourFifthsTablet\n@docs isOffsetFourFifthsTouch\n@docs isOffsetFourFifthsWidescreen\n@docs isOffsetHalf\n@docs isOffsetHalfDesktop\n@docs isOffsetHalfFullhd\n@docs isOffsetHalfMobile\n@docs isOffsetHalfTablet\n@docs isOffsetHalfTouch\n@docs isOffsetHalfWidescreen\n@docs isOffsetOneFifth\n@docs isOffsetOneFifthDesktop\n@docs isOffsetOneFifthFullhd\n@docs isOffsetOneFifthMobile\n@docs isOffsetOneFifthTablet\n@docs isOffsetOneFifthTouch\n@docs isOffsetOneFifthWidescreen\n@docs isOffsetOneQuarter\n@docs isOffsetOneQuarterDesktop\n@docs isOffsetOneQuarterFullhd\n@docs isOffsetOneQuarterMobile\n@docs isOffsetOneQuarterTablet\n@docs isOffsetOneQuarterTouch\n@docs isOffsetOneQuarterWidescreen\n@docs isOffsetOneThird\n@docs isOffsetOneThirdDesktop\n@docs isOffsetOneThirdFullhd\n@docs isOffsetOneThirdMobile\n@docs isOffsetOneThirdTablet\n@docs isOffsetOneThirdTouch\n@docs isOffsetOneThirdWidescreen\n@docs isOffsetThreeFifths\n@docs isOffsetThreeFifthsDesktop\n@docs isOffsetThreeFifthsFullhd\n@docs isOffsetThreeFifthsMobile\n@docs isOffsetThreeFifthsTablet\n@docs isOffsetThreeFifthsTouch\n@docs isOffsetThreeFifthsWidescreen\n@docs isOffsetThreeQuarters\n@docs isOffsetThreeQuartersDesktop\n@docs isOffsetThreeQuartersFullhd\n@docs isOffsetThreeQuartersMobile\n@docs isOffsetThreeQuartersTablet\n@docs isOffsetThreeQuartersTouch\n@docs isOffsetThreeQuartersWidescreen\n@docs isOffsetTwoFifths\n@docs isOffsetTwoFifthsDesktop\n@docs isOffsetTwoFifthsFullhd\n@docs isOffsetTwoFifthsMobile\n@docs isOffsetTwoFifthsTablet\n@docs isOffsetTwoFifthsTouch\n@docs isOffsetTwoFifthsWidescreen\n@docs isOffsetTwoThirds\n@docs isOffsetTwoThirdsDesktop\n@docs isOffsetTwoThirdsFullhd\n@docs isOffsetTwoThirdsMobile\n@docs isOffsetTwoThirdsTablet\n@docs isOffsetTwoThirdsTouch\n@docs isOffsetTwoThirdsWidescreen\n@docs isOneFifth\n@docs isOneFifthDesktop\n@docs isOneFifthFullhd\n@docs isOneFifthMobile\n@docs isOneFifthTablet\n@docs isOneFifthTouch\n@docs isOneFifthWidescreen\n@docs isOneQuarter\n@docs isOneQuarterDesktop\n@docs isOneQuarterFullhd\n@docs isOneQuarterMobile\n@docs isOneQuarterTablet\n@docs isOneQuarterTouch\n@docs isOneQuarterWidescreen\n@docs isOneThird\n@docs isOneThirdDesktop\n@docs isOneThirdFullhd\n@docs isOneThirdMobile\n@docs isOneThirdTablet\n@docs isOneThirdTouch\n@docs isOneThirdWidescreen\n@docs isOutlined\n@docs isOverlay\n@docs isPaddingless\n@docs isParent\n@docs isPrimary\n@docs isPulledLeft\n@docs isPulledRight\n@docs isRadiusless\n@docs isRelative\n@docs isRight\n@docs isRounded\n@docs isSelected\n@docs isShadowless\n@docs isSize1\n@docs isSize1Desktop\n@docs isSize1Fullhd\n@docs isSize1Mobile\n@docs isSize1Tablet\n@docs isSize1Touch\n@docs isSize1Widescreen\n@docs isSize2\n@docs isSize2Desktop\n@docs isSize2Fullhd\n@docs isSize2Mobile\n@docs isSize2Tablet\n@docs isSize2Touch\n@docs isSize2Widescreen\n@docs isSize3\n@docs isSize3Desktop\n@docs isSize3Fullhd\n@docs isSize3Mobile\n@docs isSize3Tablet\n@docs isSize3Touch\n@docs isSize3Widescreen\n@docs isSize4\n@docs isSize4Desktop\n@docs isSize4Fullhd\n@docs isSize4Mobile\n@docs isSize4Tablet\n@docs isSize4Touch\n@docs isSize4Widescreen\n@docs isSize5\n@docs isSize5Desktop\n@docs isSize5Fullhd\n@docs isSize5Mobile\n@docs isSize5Tablet\n@docs isSize5Touch\n@docs isSize5Widescreen\n@docs isSize6\n@docs isSize6Desktop\n@docs isSize6Fullhd\n@docs isSize6Mobile\n@docs isSize6Tablet\n@docs isSize6Touch\n@docs isSize6Widescreen\n@docs isSize7\n@docs isSize7Desktop\n@docs isSize7Fullhd\n@docs isSize7Mobile\n@docs isSize7Tablet\n@docs isSize7Touch\n@docs isSize7Widescreen\n@docs isSmall\n@docs isSpaced\n@docs isSquare\n@docs isSrOnly\n@docs isStatic\n@docs isStriped\n@docs isSuccess\n@docs isTab\n@docs isText\n@docs isThreeFifths\n@docs isThreeFifthsDesktop\n@docs isThreeFifthsFullhd\n@docs isThreeFifthsMobile\n@docs isThreeFifthsTablet\n@docs isThreeFifthsTouch\n@docs isThreeFifthsWidescreen\n@docs isThreeQuarters\n@docs isThreeQuartersDesktop\n@docs isThreeQuartersFullhd\n@docs isThreeQuartersMobile\n@docs isThreeQuartersTablet\n@docs isThreeQuartersTouch\n@docs isThreeQuartersWidescreen\n@docs isToggle\n@docs isToggleRounded\n@docs isTransparent\n@docs isTwoFifths\n@docs isTwoFifthsDesktop\n@docs isTwoFifthsFullhd\n@docs isTwoFifthsMobile\n@docs isTwoFifthsTablet\n@docs isTwoFifthsTouch\n@docs isTwoFifthsWidescreen\n@docs isTwoThirds\n@docs isTwoThirdsDesktop\n@docs isTwoThirdsFullhd\n@docs isTwoThirdsMobile\n@docs isTwoThirdsTablet\n@docs isTwoThirdsTouch\n@docs isTwoThirdsWidescreen\n@docs isUnselectable\n@docs isUp\n@docs isUpperAlpha\n@docs isUpperRoman\n@docs isUppercase\n@docs isVariable\n@docs isVcentered\n@docs isVertical\n@docs isWarning\n@docs isWhite\n@docs isWidescreen\n@docs isWrapped\n@docs label\n@docs level\n@docs levelItem\n@docs levelLeft\n@docs levelRight\n@docs loader\n@docs mb0\n@docs mb1\n@docs mb2\n@docs mb3\n@docs mb4\n@docs mb5\n@docs mb6\n@docs media\n@docs mediaContent\n@docs mediaLeft\n@docs mediaRight\n@docs menu\n@docs menuLabel\n@docs menuList\n@docs message\n@docs messageBody\n@docs messageHeader\n@docs ml0\n@docs ml1\n@docs ml2\n@docs ml3\n@docs ml4\n@docs ml5\n@docs ml6\n@docs modal\n@docs modalBackground\n@docs modalCard\n@docs modalCardBody\n@docs modalCardFoot\n@docs modalCardHead\n@docs modalCardTitle\n@docs modalClose\n@docs modalContent\n@docs mr0\n@docs mr1\n@docs mr2\n@docs mr3\n@docs mr4\n@docs mr5\n@docs mr6\n@docs mt0\n@docs mt1\n@docs mt2\n@docs mt3\n@docs mt4\n@docs mt5\n@docs mt6\n@docs mx0\n@docs mx1\n@docs mx2\n@docs mx3\n@docs mx4\n@docs mx5\n@docs mx6\n@docs my0\n@docs my1\n@docs my2\n@docs my3\n@docs my4\n@docs my5\n@docs my6\n@docs navbar\n@docs navbarBrand\n@docs navbarBurger\n@docs navbarContent\n@docs navbarDivider\n@docs navbarDropdown\n@docs navbarEnd\n@docs navbarItem\n@docs navbarLink\n@docs navbarMenu\n@docs navbarStart\n@docs navbarTabs\n@docs notification\n@docs number\n@docs pagination\n@docs paginationEllipsis\n@docs paginationLink\n@docs paginationList\n@docs paginationNext\n@docs paginationPrevious\n@docs panel\n@docs panelBlock\n@docs panelHeading\n@docs panelIcon\n@docs panelList\n@docs panelTabs\n@docs pb0\n@docs pb1\n@docs pb2\n@docs pb3\n@docs pb4\n@docs pb5\n@docs pb6\n@docs pl0\n@docs pl1\n@docs pl2\n@docs pl3\n@docs pl4\n@docs pl5\n@docs pl6\n@docs pr0\n@docs pr1\n@docs pr2\n@docs pr3\n@docs pr4\n@docs pr5\n@docs pr6\n@docs progress\n@docs pt0\n@docs pt1\n@docs pt2\n@docs pt3\n@docs pt4\n@docs pt5\n@docs pt6\n@docs px0\n@docs px1\n@docs px2\n@docs px3\n@docs px4\n@docs px5\n@docs px6\n@docs py0\n@docs py1\n@docs py2\n@docs py3\n@docs py4\n@docs py5\n@docs py6\n@docs radio\n@docs section\n@docs select\n@docs subtitle\n@docs table\n@docs tableContainer\n@docs tabs\n@docs tag\n@docs tags\n@docs textarea\n@docs tile\n@docs title\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "areLarge",
+                "comment": " `areLarge == \"are-large\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "areMedium",
+                "comment": " `areMedium == \"are-medium\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "areSmall",
+                "comment": " `areSmall == \"are-small\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "block",
+                "comment": " `block == \"block\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "box",
+                "comment": " `box == \"box\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "breadcrumb",
+                "comment": " `breadcrumb == \"breadcrumb\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "button",
+                "comment": " `button == \"button\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "buttons",
+                "comment": " `buttons == \"buttons\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "card",
+                "comment": " `card == \"card\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "cardContent",
+                "comment": " `cardContent == \"card-content\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "cardFooter",
+                "comment": " `cardFooter == \"card-footer\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "cardFooterItem",
+                "comment": " `cardFooterItem == \"card-footer-item\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "cardHeader",
+                "comment": " `cardHeader == \"card-header\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "cardHeaderIcon",
+                "comment": " `cardHeaderIcon == \"card-header-icon\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "cardHeaderTitle",
+                "comment": " `cardHeaderTitle == \"card-header-title\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "cardImage",
+                "comment": " `cardImage == \"card-image\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "checkbox",
+                "comment": " `checkbox == \"checkbox\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "column",
+                "comment": " `column == \"column\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "columns",
+                "comment": " `columns == \"columns\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "container",
+                "comment": " `container == \"container\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "content",
+                "comment": " `content == \"content\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "control",
+                "comment": " `control == \"control\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "delete",
+                "comment": " `delete == \"delete\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "dropdown",
+                "comment": " `dropdown == \"dropdown\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "dropdownContent",
+                "comment": " `dropdownContent == \"dropdown-content\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "dropdownDivider",
+                "comment": " `dropdownDivider == \"dropdown-divider\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "dropdownItem",
+                "comment": " `dropdownItem == \"dropdown-item\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "dropdownMenu",
+                "comment": " `dropdownMenu == \"dropdown-menu\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "fa",
+                "comment": " `fa == \"fa\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "field",
+                "comment": " `field == \"field\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "fieldBody",
+                "comment": " `fieldBody == \"field-body\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "fieldLabel",
+                "comment": " `fieldLabel == \"field-label\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "file",
+                "comment": " `file == \"file\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "fileCta",
+                "comment": " `fileCta == \"file-cta\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "fileIcon",
+                "comment": " `fileIcon == \"file-icon\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "fileInput",
+                "comment": " `fileInput == \"file-input\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "fileLabel",
+                "comment": " `fileLabel == \"file-label\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "fileName",
+                "comment": " `fileName == \"file-name\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "footer",
+                "comment": " `footer == \"footer\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasAddons",
+                "comment": " `hasAddons == \"has-addons\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasAddonsCentered",
+                "comment": " `hasAddonsCentered == \"has-addons-centered\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasAddonsFullwidth",
+                "comment": " `hasAddonsFullwidth == \"has-addons-fullwidth\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasAddonsRight",
+                "comment": " `hasAddonsRight == \"has-addons-right\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasArrowSeparator",
+                "comment": " `hasArrowSeparator == \"has-arrow-separator\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasBackgroundBlack",
+                "comment": " `hasBackgroundBlack == \"has-background-black\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasBackgroundBlackBis",
+                "comment": " `hasBackgroundBlackBis == \"has-background-black-bis\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasBackgroundBlackTer",
+                "comment": " `hasBackgroundBlackTer == \"has-background-black-ter\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasBackgroundDanger",
+                "comment": " `hasBackgroundDanger == \"has-background-danger\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasBackgroundDangerDark",
+                "comment": " `hasBackgroundDangerDark == \"has-background-danger-dark\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasBackgroundDangerLight",
+                "comment": " `hasBackgroundDangerLight == \"has-background-danger-light\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasBackgroundDark",
+                "comment": " `hasBackgroundDark == \"has-background-dark\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasBackgroundGrey",
+                "comment": " `hasBackgroundGrey == \"has-background-grey\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasBackgroundGreyDark",
+                "comment": " `hasBackgroundGreyDark == \"has-background-grey-dark\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasBackgroundGreyDarker",
+                "comment": " `hasBackgroundGreyDarker == \"has-background-grey-darker\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasBackgroundGreyLight",
+                "comment": " `hasBackgroundGreyLight == \"has-background-grey-light\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasBackgroundGreyLighter",
+                "comment": " `hasBackgroundGreyLighter == \"has-background-grey-lighter\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasBackgroundInfo",
+                "comment": " `hasBackgroundInfo == \"has-background-info\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasBackgroundInfoDark",
+                "comment": " `hasBackgroundInfoDark == \"has-background-info-dark\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasBackgroundInfoLight",
+                "comment": " `hasBackgroundInfoLight == \"has-background-info-light\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasBackgroundLight",
+                "comment": " `hasBackgroundLight == \"has-background-light\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasBackgroundLink",
+                "comment": " `hasBackgroundLink == \"has-background-link\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasBackgroundLinkDark",
+                "comment": " `hasBackgroundLinkDark == \"has-background-link-dark\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasBackgroundLinkLight",
+                "comment": " `hasBackgroundLinkLight == \"has-background-link-light\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasBackgroundPrimary",
+                "comment": " `hasBackgroundPrimary == \"has-background-primary\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasBackgroundPrimaryDark",
+                "comment": " `hasBackgroundPrimaryDark == \"has-background-primary-dark\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasBackgroundPrimaryLight",
+                "comment": " `hasBackgroundPrimaryLight == \"has-background-primary-light\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasBackgroundSuccess",
+                "comment": " `hasBackgroundSuccess == \"has-background-success\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasBackgroundSuccessDark",
+                "comment": " `hasBackgroundSuccessDark == \"has-background-success-dark\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasBackgroundSuccessLight",
+                "comment": " `hasBackgroundSuccessLight == \"has-background-success-light\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasBackgroundWarning",
+                "comment": " `hasBackgroundWarning == \"has-background-warning\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasBackgroundWarningDark",
+                "comment": " `hasBackgroundWarningDark == \"has-background-warning-dark\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasBackgroundWarningLight",
+                "comment": " `hasBackgroundWarningLight == \"has-background-warning-light\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasBackgroundWhite",
+                "comment": " `hasBackgroundWhite == \"has-background-white\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasBackgroundWhiteBis",
+                "comment": " `hasBackgroundWhiteBis == \"has-background-white-bis\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasBackgroundWhiteTer",
+                "comment": " `hasBackgroundWhiteTer == \"has-background-white-ter\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasBulletSeparator",
+                "comment": " `hasBulletSeparator == \"has-bullet-separator\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasDotSeparator",
+                "comment": " `hasDotSeparator == \"has-dot-separator\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasDropdown",
+                "comment": " `hasDropdown == \"has-dropdown\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasDropdownUp",
+                "comment": " `hasDropdownUp == \"has-dropdown-up\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasFixedSize",
+                "comment": " `hasFixedSize == \"has-fixed-size\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasIconsLeft",
+                "comment": " `hasIconsLeft == \"has-icons-left\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasIconsRight",
+                "comment": " `hasIconsRight == \"has-icons-right\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasName",
+                "comment": " `hasName == \"has-name\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasNavbarFixedBottom",
+                "comment": " `hasNavbarFixedBottom == \"has-navbar-fixed-bottom\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasNavbarFixedBottomDesktop",
+                "comment": " `hasNavbarFixedBottomDesktop == \"has-navbar-fixed-bottom-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasNavbarFixedBottomTouch",
+                "comment": " `hasNavbarFixedBottomTouch == \"has-navbar-fixed-bottom-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasNavbarFixedTop",
+                "comment": " `hasNavbarFixedTop == \"has-navbar-fixed-top\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasNavbarFixedTopDesktop",
+                "comment": " `hasNavbarFixedTopDesktop == \"has-navbar-fixed-top-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasNavbarFixedTopTouch",
+                "comment": " `hasNavbarFixedTopTouch == \"has-navbar-fixed-top-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasRatio",
+                "comment": " `hasRatio == \"has-ratio\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasShadow",
+                "comment": " `hasShadow == \"has-shadow\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasSpacedNavbarFixedBottom",
+                "comment": " `hasSpacedNavbarFixedBottom == \"has-spaced-navbar-fixed-bottom\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasSpacedNavbarFixedTop",
+                "comment": " `hasSpacedNavbarFixedTop == \"has-spaced-navbar-fixed-top\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasSucceedsSeparator",
+                "comment": " `hasSucceedsSeparator == \"has-succeeds-separator\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextBlack",
+                "comment": " `hasTextBlack == \"has-text-black\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextBlackBis",
+                "comment": " `hasTextBlackBis == \"has-text-black-bis\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextBlackTer",
+                "comment": " `hasTextBlackTer == \"has-text-black-ter\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextCentered",
+                "comment": " `hasTextCentered == \"has-text-centered\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextCenteredDesktop",
+                "comment": " `hasTextCenteredDesktop == \"has-text-centered-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextCenteredDesktopOnly",
+                "comment": " `hasTextCenteredDesktopOnly == \"has-text-centered-desktop-only\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextCenteredFullhd",
+                "comment": " `hasTextCenteredFullhd == \"has-text-centered-fullhd\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextCenteredMobile",
+                "comment": " `hasTextCenteredMobile == \"has-text-centered-mobile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextCenteredTablet",
+                "comment": " `hasTextCenteredTablet == \"has-text-centered-tablet\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextCenteredTabletOnly",
+                "comment": " `hasTextCenteredTabletOnly == \"has-text-centered-tablet-only\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextCenteredTouch",
+                "comment": " `hasTextCenteredTouch == \"has-text-centered-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextCenteredWidescreen",
+                "comment": " `hasTextCenteredWidescreen == \"has-text-centered-widescreen\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextCenteredWidescreenOnly",
+                "comment": " `hasTextCenteredWidescreenOnly == \"has-text-centered-widescreen-only\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextDanger",
+                "comment": " `hasTextDanger == \"has-text-danger\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextDangerDark",
+                "comment": " `hasTextDangerDark == \"has-text-danger-dark\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextDangerLight",
+                "comment": " `hasTextDangerLight == \"has-text-danger-light\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextDark",
+                "comment": " `hasTextDark == \"has-text-dark\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextGrey",
+                "comment": " `hasTextGrey == \"has-text-grey\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextGreyDark",
+                "comment": " `hasTextGreyDark == \"has-text-grey-dark\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextGreyDarker",
+                "comment": " `hasTextGreyDarker == \"has-text-grey-darker\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextGreyLight",
+                "comment": " `hasTextGreyLight == \"has-text-grey-light\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextGreyLighter",
+                "comment": " `hasTextGreyLighter == \"has-text-grey-lighter\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextInfo",
+                "comment": " `hasTextInfo == \"has-text-info\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextInfoDark",
+                "comment": " `hasTextInfoDark == \"has-text-info-dark\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextInfoLight",
+                "comment": " `hasTextInfoLight == \"has-text-info-light\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextJustified",
+                "comment": " `hasTextJustified == \"has-text-justified\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextJustifiedDesktop",
+                "comment": " `hasTextJustifiedDesktop == \"has-text-justified-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextJustifiedDesktopOnly",
+                "comment": " `hasTextJustifiedDesktopOnly == \"has-text-justified-desktop-only\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextJustifiedFullhd",
+                "comment": " `hasTextJustifiedFullhd == \"has-text-justified-fullhd\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextJustifiedMobile",
+                "comment": " `hasTextJustifiedMobile == \"has-text-justified-mobile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextJustifiedTablet",
+                "comment": " `hasTextJustifiedTablet == \"has-text-justified-tablet\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextJustifiedTabletOnly",
+                "comment": " `hasTextJustifiedTabletOnly == \"has-text-justified-tablet-only\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextJustifiedTouch",
+                "comment": " `hasTextJustifiedTouch == \"has-text-justified-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextJustifiedWidescreen",
+                "comment": " `hasTextJustifiedWidescreen == \"has-text-justified-widescreen\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextJustifiedWidescreenOnly",
+                "comment": " `hasTextJustifiedWidescreenOnly == \"has-text-justified-widescreen-only\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextLeft",
+                "comment": " `hasTextLeft == \"has-text-left\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextLeftDesktop",
+                "comment": " `hasTextLeftDesktop == \"has-text-left-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextLeftDesktopOnly",
+                "comment": " `hasTextLeftDesktopOnly == \"has-text-left-desktop-only\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextLeftFullhd",
+                "comment": " `hasTextLeftFullhd == \"has-text-left-fullhd\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextLeftMobile",
+                "comment": " `hasTextLeftMobile == \"has-text-left-mobile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextLeftTablet",
+                "comment": " `hasTextLeftTablet == \"has-text-left-tablet\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextLeftTabletOnly",
+                "comment": " `hasTextLeftTabletOnly == \"has-text-left-tablet-only\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextLeftTouch",
+                "comment": " `hasTextLeftTouch == \"has-text-left-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextLeftWidescreen",
+                "comment": " `hasTextLeftWidescreen == \"has-text-left-widescreen\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextLeftWidescreenOnly",
+                "comment": " `hasTextLeftWidescreenOnly == \"has-text-left-widescreen-only\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextLight",
+                "comment": " `hasTextLight == \"has-text-light\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextLink",
+                "comment": " `hasTextLink == \"has-text-link\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextLinkDark",
+                "comment": " `hasTextLinkDark == \"has-text-link-dark\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextLinkLight",
+                "comment": " `hasTextLinkLight == \"has-text-link-light\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextPrimary",
+                "comment": " `hasTextPrimary == \"has-text-primary\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextPrimaryDark",
+                "comment": " `hasTextPrimaryDark == \"has-text-primary-dark\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextPrimaryLight",
+                "comment": " `hasTextPrimaryLight == \"has-text-primary-light\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextRight",
+                "comment": " `hasTextRight == \"has-text-right\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextRightDesktop",
+                "comment": " `hasTextRightDesktop == \"has-text-right-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextRightDesktopOnly",
+                "comment": " `hasTextRightDesktopOnly == \"has-text-right-desktop-only\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextRightFullhd",
+                "comment": " `hasTextRightFullhd == \"has-text-right-fullhd\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextRightMobile",
+                "comment": " `hasTextRightMobile == \"has-text-right-mobile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextRightTablet",
+                "comment": " `hasTextRightTablet == \"has-text-right-tablet\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextRightTabletOnly",
+                "comment": " `hasTextRightTabletOnly == \"has-text-right-tablet-only\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextRightTouch",
+                "comment": " `hasTextRightTouch == \"has-text-right-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextRightWidescreen",
+                "comment": " `hasTextRightWidescreen == \"has-text-right-widescreen\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextRightWidescreenOnly",
+                "comment": " `hasTextRightWidescreenOnly == \"has-text-right-widescreen-only\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextSuccess",
+                "comment": " `hasTextSuccess == \"has-text-success\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextSuccessDark",
+                "comment": " `hasTextSuccessDark == \"has-text-success-dark\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextSuccessLight",
+                "comment": " `hasTextSuccessLight == \"has-text-success-light\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextWarning",
+                "comment": " `hasTextWarning == \"has-text-warning\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextWarningDark",
+                "comment": " `hasTextWarningDark == \"has-text-warning-dark\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextWarningLight",
+                "comment": " `hasTextWarningLight == \"has-text-warning-light\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextWeightBold",
+                "comment": " `hasTextWeightBold == \"has-text-weight-bold\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextWeightLight",
+                "comment": " `hasTextWeightLight == \"has-text-weight-light\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextWeightMedium",
+                "comment": " `hasTextWeightMedium == \"has-text-weight-medium\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextWeightNormal",
+                "comment": " `hasTextWeightNormal == \"has-text-weight-normal\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextWeightSemibold",
+                "comment": " `hasTextWeightSemibold == \"has-text-weight-semibold\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextWhite",
+                "comment": " `hasTextWhite == \"has-text-white\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextWhiteBis",
+                "comment": " `hasTextWhiteBis == \"has-text-white-bis\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hasTextWhiteTer",
+                "comment": " `hasTextWhiteTer == \"has-text-white-ter\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "heading",
+                "comment": " `heading == \"heading\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "help",
+                "comment": " `help == \"help\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "hero",
+                "comment": " `hero == \"hero\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "heroBody",
+                "comment": " `heroBody == \"hero-body\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "heroButtons",
+                "comment": " `heroButtons == \"hero-buttons\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "heroFoot",
+                "comment": " `heroFoot == \"hero-foot\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "heroHead",
+                "comment": " `heroHead == \"hero-head\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "heroVideo",
+                "comment": " `heroVideo == \"hero-video\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "highlight",
+                "comment": " `highlight == \"highlight\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "icon",
+                "comment": " `icon == \"icon\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "image",
+                "comment": " `image == \"image\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "input",
+                "comment": " `input == \"input\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is0",
+                "comment": " `is0 == \"is-0\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is0Desktop",
+                "comment": " `is0Desktop == \"is-0-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is0DesktopOnly",
+                "comment": " `is0DesktopOnly == \"is-0-desktop-only\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is0Fullhd",
+                "comment": " `is0Fullhd == \"is-0-fullhd\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is0Mobile",
+                "comment": " `is0Mobile == \"is-0-mobile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is0Tablet",
+                "comment": " `is0Tablet == \"is-0-tablet\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is0TabletOnly",
+                "comment": " `is0TabletOnly == \"is-0-tablet-only\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is0Touch",
+                "comment": " `is0Touch == \"is-0-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is0Widescreen",
+                "comment": " `is0Widescreen == \"is-0-widescreen\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is0WidescreenOnly",
+                "comment": " `is0WidescreenOnly == \"is-0-widescreen-only\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is1",
+                "comment": " `is1 == \"is-1\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is10",
+                "comment": " `is10 == \"is-10\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is10Desktop",
+                "comment": " `is10Desktop == \"is-10-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is10Fullhd",
+                "comment": " `is10Fullhd == \"is-10-fullhd\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is10Mobile",
+                "comment": " `is10Mobile == \"is-10-mobile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is10Tablet",
+                "comment": " `is10Tablet == \"is-10-tablet\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is10Touch",
+                "comment": " `is10Touch == \"is-10-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is10Widescreen",
+                "comment": " `is10Widescreen == \"is-10-widescreen\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is11",
+                "comment": " `is11 == \"is-11\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is11Desktop",
+                "comment": " `is11Desktop == \"is-11-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is11Fullhd",
+                "comment": " `is11Fullhd == \"is-11-fullhd\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is11Mobile",
+                "comment": " `is11Mobile == \"is-11-mobile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is11Tablet",
+                "comment": " `is11Tablet == \"is-11-tablet\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is11Touch",
+                "comment": " `is11Touch == \"is-11-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is11Widescreen",
+                "comment": " `is11Widescreen == \"is-11-widescreen\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is12",
+                "comment": " `is12 == \"is-12\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is128x128",
+                "comment": " `is128x128 == \"is-128x128\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is12Desktop",
+                "comment": " `is12Desktop == \"is-12-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is12Fullhd",
+                "comment": " `is12Fullhd == \"is-12-fullhd\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is12Mobile",
+                "comment": " `is12Mobile == \"is-12-mobile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is12Tablet",
+                "comment": " `is12Tablet == \"is-12-tablet\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is12Touch",
+                "comment": " `is12Touch == \"is-12-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is12Widescreen",
+                "comment": " `is12Widescreen == \"is-12-widescreen\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is16by9",
+                "comment": " `is16by9 == \"is-16by9\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is16x16",
+                "comment": " `is16x16 == \"is-16x16\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is1Desktop",
+                "comment": " `is1Desktop == \"is-1-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is1DesktopOnly",
+                "comment": " `is1DesktopOnly == \"is-1-desktop-only\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is1Fullhd",
+                "comment": " `is1Fullhd == \"is-1-fullhd\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is1Mobile",
+                "comment": " `is1Mobile == \"is-1-mobile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is1Tablet",
+                "comment": " `is1Tablet == \"is-1-tablet\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is1TabletOnly",
+                "comment": " `is1TabletOnly == \"is-1-tablet-only\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is1Touch",
+                "comment": " `is1Touch == \"is-1-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is1Widescreen",
+                "comment": " `is1Widescreen == \"is-1-widescreen\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is1WidescreenOnly",
+                "comment": " `is1WidescreenOnly == \"is-1-widescreen-only\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is1by1",
+                "comment": " `is1by1 == \"is-1by1\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is1by2",
+                "comment": " `is1by2 == \"is-1by2\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is1by3",
+                "comment": " `is1by3 == \"is-1by3\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is2",
+                "comment": " `is2 == \"is-2\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is24x24",
+                "comment": " `is24x24 == \"is-24x24\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is2Desktop",
+                "comment": " `is2Desktop == \"is-2-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is2DesktopOnly",
+                "comment": " `is2DesktopOnly == \"is-2-desktop-only\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is2Fullhd",
+                "comment": " `is2Fullhd == \"is-2-fullhd\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is2Mobile",
+                "comment": " `is2Mobile == \"is-2-mobile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is2Tablet",
+                "comment": " `is2Tablet == \"is-2-tablet\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is2TabletOnly",
+                "comment": " `is2TabletOnly == \"is-2-tablet-only\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is2Touch",
+                "comment": " `is2Touch == \"is-2-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is2Widescreen",
+                "comment": " `is2Widescreen == \"is-2-widescreen\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is2WidescreenOnly",
+                "comment": " `is2WidescreenOnly == \"is-2-widescreen-only\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is2by1",
+                "comment": " `is2by1 == \"is-2by1\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is2by3",
+                "comment": " `is2by3 == \"is-2by3\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is3",
+                "comment": " `is3 == \"is-3\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is32x32",
+                "comment": " `is32x32 == \"is-32x32\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is3Desktop",
+                "comment": " `is3Desktop == \"is-3-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is3DesktopOnly",
+                "comment": " `is3DesktopOnly == \"is-3-desktop-only\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is3Fullhd",
+                "comment": " `is3Fullhd == \"is-3-fullhd\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is3Mobile",
+                "comment": " `is3Mobile == \"is-3-mobile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is3Tablet",
+                "comment": " `is3Tablet == \"is-3-tablet\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is3TabletOnly",
+                "comment": " `is3TabletOnly == \"is-3-tablet-only\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is3Touch",
+                "comment": " `is3Touch == \"is-3-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is3Widescreen",
+                "comment": " `is3Widescreen == \"is-3-widescreen\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is3WidescreenOnly",
+                "comment": " `is3WidescreenOnly == \"is-3-widescreen-only\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is3by1",
+                "comment": " `is3by1 == \"is-3by1\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is3by2",
+                "comment": " `is3by2 == \"is-3by2\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is3by4",
+                "comment": " `is3by4 == \"is-3by4\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is3by5",
+                "comment": " `is3by5 == \"is-3by5\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is4",
+                "comment": " `is4 == \"is-4\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is48x48",
+                "comment": " `is48x48 == \"is-48x48\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is4Desktop",
+                "comment": " `is4Desktop == \"is-4-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is4DesktopOnly",
+                "comment": " `is4DesktopOnly == \"is-4-desktop-only\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is4Fullhd",
+                "comment": " `is4Fullhd == \"is-4-fullhd\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is4Mobile",
+                "comment": " `is4Mobile == \"is-4-mobile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is4Tablet",
+                "comment": " `is4Tablet == \"is-4-tablet\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is4TabletOnly",
+                "comment": " `is4TabletOnly == \"is-4-tablet-only\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is4Touch",
+                "comment": " `is4Touch == \"is-4-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is4Widescreen",
+                "comment": " `is4Widescreen == \"is-4-widescreen\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is4WidescreenOnly",
+                "comment": " `is4WidescreenOnly == \"is-4-widescreen-only\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is4by3",
+                "comment": " `is4by3 == \"is-4by3\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is4by5",
+                "comment": " `is4by5 == \"is-4by5\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is5",
+                "comment": " `is5 == \"is-5\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is5Desktop",
+                "comment": " `is5Desktop == \"is-5-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is5DesktopOnly",
+                "comment": " `is5DesktopOnly == \"is-5-desktop-only\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is5Fullhd",
+                "comment": " `is5Fullhd == \"is-5-fullhd\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is5Mobile",
+                "comment": " `is5Mobile == \"is-5-mobile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is5Tablet",
+                "comment": " `is5Tablet == \"is-5-tablet\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is5TabletOnly",
+                "comment": " `is5TabletOnly == \"is-5-tablet-only\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is5Touch",
+                "comment": " `is5Touch == \"is-5-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is5Widescreen",
+                "comment": " `is5Widescreen == \"is-5-widescreen\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is5WidescreenOnly",
+                "comment": " `is5WidescreenOnly == \"is-5-widescreen-only\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is5by3",
+                "comment": " `is5by3 == \"is-5by3\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is5by4",
+                "comment": " `is5by4 == \"is-5by4\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is6",
+                "comment": " `is6 == \"is-6\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is64x64",
+                "comment": " `is64x64 == \"is-64x64\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is6Desktop",
+                "comment": " `is6Desktop == \"is-6-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is6DesktopOnly",
+                "comment": " `is6DesktopOnly == \"is-6-desktop-only\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is6Fullhd",
+                "comment": " `is6Fullhd == \"is-6-fullhd\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is6Mobile",
+                "comment": " `is6Mobile == \"is-6-mobile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is6Tablet",
+                "comment": " `is6Tablet == \"is-6-tablet\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is6TabletOnly",
+                "comment": " `is6TabletOnly == \"is-6-tablet-only\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is6Touch",
+                "comment": " `is6Touch == \"is-6-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is6Widescreen",
+                "comment": " `is6Widescreen == \"is-6-widescreen\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is6WidescreenOnly",
+                "comment": " `is6WidescreenOnly == \"is-6-widescreen-only\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is7",
+                "comment": " `is7 == \"is-7\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is7Desktop",
+                "comment": " `is7Desktop == \"is-7-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is7DesktopOnly",
+                "comment": " `is7DesktopOnly == \"is-7-desktop-only\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is7Fullhd",
+                "comment": " `is7Fullhd == \"is-7-fullhd\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is7Mobile",
+                "comment": " `is7Mobile == \"is-7-mobile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is7Tablet",
+                "comment": " `is7Tablet == \"is-7-tablet\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is7TabletOnly",
+                "comment": " `is7TabletOnly == \"is-7-tablet-only\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is7Touch",
+                "comment": " `is7Touch == \"is-7-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is7Widescreen",
+                "comment": " `is7Widescreen == \"is-7-widescreen\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is7WidescreenOnly",
+                "comment": " `is7WidescreenOnly == \"is-7-widescreen-only\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is8",
+                "comment": " `is8 == \"is-8\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is8Desktop",
+                "comment": " `is8Desktop == \"is-8-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is8DesktopOnly",
+                "comment": " `is8DesktopOnly == \"is-8-desktop-only\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is8Fullhd",
+                "comment": " `is8Fullhd == \"is-8-fullhd\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is8Mobile",
+                "comment": " `is8Mobile == \"is-8-mobile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is8Tablet",
+                "comment": " `is8Tablet == \"is-8-tablet\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is8TabletOnly",
+                "comment": " `is8TabletOnly == \"is-8-tablet-only\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is8Touch",
+                "comment": " `is8Touch == \"is-8-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is8Widescreen",
+                "comment": " `is8Widescreen == \"is-8-widescreen\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is8WidescreenOnly",
+                "comment": " `is8WidescreenOnly == \"is-8-widescreen-only\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is9",
+                "comment": " `is9 == \"is-9\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is96x96",
+                "comment": " `is96x96 == \"is-96x96\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is9Desktop",
+                "comment": " `is9Desktop == \"is-9-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is9Fullhd",
+                "comment": " `is9Fullhd == \"is-9-fullhd\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is9Mobile",
+                "comment": " `is9Mobile == \"is-9-mobile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is9Tablet",
+                "comment": " `is9Tablet == \"is-9-tablet\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is9Touch",
+                "comment": " `is9Touch == \"is-9-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is9Widescreen",
+                "comment": " `is9Widescreen == \"is-9-widescreen\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "is9by16",
+                "comment": " `is9by16 == \"is-9by16\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isActive",
+                "comment": " `isActive == \"is-active\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isAncestor",
+                "comment": " `isAncestor == \"is-ancestor\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isArrowless",
+                "comment": " `isArrowless == \"is-arrowless\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isBlack",
+                "comment": " `isBlack == \"is-black\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isBlock",
+                "comment": " `isBlock == \"is-block\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isBlockDesktop",
+                "comment": " `isBlockDesktop == \"is-block-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isBlockDesktopOnly",
+                "comment": " `isBlockDesktopOnly == \"is-block-desktop-only\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isBlockFullhd",
+                "comment": " `isBlockFullhd == \"is-block-fullhd\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isBlockMobile",
+                "comment": " `isBlockMobile == \"is-block-mobile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isBlockTablet",
+                "comment": " `isBlockTablet == \"is-block-tablet\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isBlockTabletOnly",
+                "comment": " `isBlockTabletOnly == \"is-block-tablet-only\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isBlockTouch",
+                "comment": " `isBlockTouch == \"is-block-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isBlockWidescreen",
+                "comment": " `isBlockWidescreen == \"is-block-widescreen\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isBlockWidescreenOnly",
+                "comment": " `isBlockWidescreenOnly == \"is-block-widescreen-only\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isBold",
+                "comment": " `isBold == \"is-bold\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isBordered",
+                "comment": " `isBordered == \"is-bordered\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isBoxed",
+                "comment": " `isBoxed == \"is-boxed\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isCapitalized",
+                "comment": " `isCapitalized == \"is-capitalized\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isCenter",
+                "comment": " `isCenter == \"is-center\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isCentered",
+                "comment": " `isCentered == \"is-centered\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isChild",
+                "comment": " `isChild == \"is-child\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isClearfix",
+                "comment": " `isClearfix == \"is-clearfix\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isClipped",
+                "comment": " `isClipped == \"is-clipped\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isCurrent",
+                "comment": " `isCurrent == \"is-current\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isDanger",
+                "comment": " `isDanger == \"is-danger\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isDark",
+                "comment": " `isDark == \"is-dark\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isDelete",
+                "comment": " `isDelete == \"is-delete\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isDesktop",
+                "comment": " `isDesktop == \"is-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isDisabled",
+                "comment": " `isDisabled == \"is-disabled\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " `isEmpty == \"is-empty\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isExpanded",
+                "comment": " `isExpanded == \"is-expanded\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isFamilyCode",
+                "comment": " `isFamilyCode == \"is-family-code\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isFamilyMonospace",
+                "comment": " `isFamilyMonospace == \"is-family-monospace\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isFamilyPrimary",
+                "comment": " `isFamilyPrimary == \"is-family-primary\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isFamilySansSerif",
+                "comment": " `isFamilySansSerif == \"is-family-sans-serif\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isFamilySecondary",
+                "comment": " `isFamilySecondary == \"is-family-secondary\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isFixedBottom",
+                "comment": " `isFixedBottom == \"is-fixed-bottom\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isFixedBottomDesktop",
+                "comment": " `isFixedBottomDesktop == \"is-fixed-bottom-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isFixedBottomTouch",
+                "comment": " `isFixedBottomTouch == \"is-fixed-bottom-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isFixedTop",
+                "comment": " `isFixedTop == \"is-fixed-top\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isFixedTopDesktop",
+                "comment": " `isFixedTopDesktop == \"is-fixed-top-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isFixedTopTouch",
+                "comment": " `isFixedTopTouch == \"is-fixed-top-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isFlex",
+                "comment": " `isFlex == \"is-flex\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isFlexDesktop",
+                "comment": " `isFlexDesktop == \"is-flex-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isFlexDesktopOnly",
+                "comment": " `isFlexDesktopOnly == \"is-flex-desktop-only\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isFlexFullhd",
+                "comment": " `isFlexFullhd == \"is-flex-fullhd\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isFlexMobile",
+                "comment": " `isFlexMobile == \"is-flex-mobile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isFlexTablet",
+                "comment": " `isFlexTablet == \"is-flex-tablet\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isFlexTabletOnly",
+                "comment": " `isFlexTabletOnly == \"is-flex-tablet-only\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isFlexTouch",
+                "comment": " `isFlexTouch == \"is-flex-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isFlexWidescreen",
+                "comment": " `isFlexWidescreen == \"is-flex-widescreen\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isFlexWidescreenOnly",
+                "comment": " `isFlexWidescreenOnly == \"is-flex-widescreen-only\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isFlexible",
+                "comment": " `isFlexible == \"is-flexible\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isFluid",
+                "comment": " `isFluid == \"is-fluid\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isFocused",
+                "comment": " `isFocused == \"is-focused\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isFourFifths",
+                "comment": " `isFourFifths == \"is-four-fifths\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isFourFifthsDesktop",
+                "comment": " `isFourFifthsDesktop == \"is-four-fifths-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isFourFifthsFullhd",
+                "comment": " `isFourFifthsFullhd == \"is-four-fifths-fullhd\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isFourFifthsMobile",
+                "comment": " `isFourFifthsMobile == \"is-four-fifths-mobile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isFourFifthsTablet",
+                "comment": " `isFourFifthsTablet == \"is-four-fifths-tablet\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isFourFifthsTouch",
+                "comment": " `isFourFifthsTouch == \"is-four-fifths-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isFourFifthsWidescreen",
+                "comment": " `isFourFifthsWidescreen == \"is-four-fifths-widescreen\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isFull",
+                "comment": " `isFull == \"is-full\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isFullDesktop",
+                "comment": " `isFullDesktop == \"is-full-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isFullFullhd",
+                "comment": " `isFullFullhd == \"is-full-fullhd\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isFullMobile",
+                "comment": " `isFullMobile == \"is-full-mobile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isFullTablet",
+                "comment": " `isFullTablet == \"is-full-tablet\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isFullTouch",
+                "comment": " `isFullTouch == \"is-full-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isFullWidescreen",
+                "comment": " `isFullWidescreen == \"is-full-widescreen\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isFullhd",
+                "comment": " `isFullhd == \"is-fullhd\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isFullheight",
+                "comment": " `isFullheight == \"is-fullheight\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isFullheightWithNavbar",
+                "comment": " `isFullheightWithNavbar == \"is-fullheight-with-navbar\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isFullwidth",
+                "comment": " `isFullwidth == \"is-fullwidth\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isGapless",
+                "comment": " `isGapless == \"is-gapless\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isGrouped",
+                "comment": " `isGrouped == \"is-grouped\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isGroupedCentered",
+                "comment": " `isGroupedCentered == \"is-grouped-centered\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isGroupedMultiline",
+                "comment": " `isGroupedMultiline == \"is-grouped-multiline\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isGroupedRight",
+                "comment": " `isGroupedRight == \"is-grouped-right\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isHalf",
+                "comment": " `isHalf == \"is-half\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isHalfDesktop",
+                "comment": " `isHalfDesktop == \"is-half-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isHalfFullhd",
+                "comment": " `isHalfFullhd == \"is-half-fullhd\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isHalfMobile",
+                "comment": " `isHalfMobile == \"is-half-mobile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isHalfTablet",
+                "comment": " `isHalfTablet == \"is-half-tablet\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isHalfTouch",
+                "comment": " `isHalfTouch == \"is-half-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isHalfWidescreen",
+                "comment": " `isHalfWidescreen == \"is-half-widescreen\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isHalfheight",
+                "comment": " `isHalfheight == \"is-halfheight\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isHidden",
+                "comment": " `isHidden == \"is-hidden\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isHiddenDesktop",
+                "comment": " `isHiddenDesktop == \"is-hidden-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isHiddenDesktopOnly",
+                "comment": " `isHiddenDesktopOnly == \"is-hidden-desktop-only\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isHiddenFullhd",
+                "comment": " `isHiddenFullhd == \"is-hidden-fullhd\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isHiddenMobile",
+                "comment": " `isHiddenMobile == \"is-hidden-mobile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isHiddenTablet",
+                "comment": " `isHiddenTablet == \"is-hidden-tablet\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isHiddenTabletOnly",
+                "comment": " `isHiddenTabletOnly == \"is-hidden-tablet-only\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isHiddenTouch",
+                "comment": " `isHiddenTouch == \"is-hidden-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isHiddenWidescreen",
+                "comment": " `isHiddenWidescreen == \"is-hidden-widescreen\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isHiddenWidescreenOnly",
+                "comment": " `isHiddenWidescreenOnly == \"is-hidden-widescreen-only\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isHorizontal",
+                "comment": " `isHorizontal == \"is-horizontal\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isHoverable",
+                "comment": " `isHoverable == \"is-hoverable\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isHovered",
+                "comment": " `isHovered == \"is-hovered\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isInfo",
+                "comment": " `isInfo == \"is-info\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isInline",
+                "comment": " `isInline == \"is-inline\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isInlineBlock",
+                "comment": " `isInlineBlock == \"is-inline-block\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isInlineBlockDesktop",
+                "comment": " `isInlineBlockDesktop == \"is-inline-block-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isInlineBlockDesktopOnly",
+                "comment": " `isInlineBlockDesktopOnly == \"is-inline-block-desktop-only\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isInlineBlockFullhd",
+                "comment": " `isInlineBlockFullhd == \"is-inline-block-fullhd\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isInlineBlockMobile",
+                "comment": " `isInlineBlockMobile == \"is-inline-block-mobile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isInlineBlockTablet",
+                "comment": " `isInlineBlockTablet == \"is-inline-block-tablet\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isInlineBlockTabletOnly",
+                "comment": " `isInlineBlockTabletOnly == \"is-inline-block-tablet-only\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isInlineBlockTouch",
+                "comment": " `isInlineBlockTouch == \"is-inline-block-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isInlineBlockWidescreen",
+                "comment": " `isInlineBlockWidescreen == \"is-inline-block-widescreen\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isInlineBlockWidescreenOnly",
+                "comment": " `isInlineBlockWidescreenOnly == \"is-inline-block-widescreen-only\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isInlineDesktop",
+                "comment": " `isInlineDesktop == \"is-inline-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isInlineDesktopOnly",
+                "comment": " `isInlineDesktopOnly == \"is-inline-desktop-only\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isInlineFlex",
+                "comment": " `isInlineFlex == \"is-inline-flex\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isInlineFlexDesktop",
+                "comment": " `isInlineFlexDesktop == \"is-inline-flex-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isInlineFlexDesktopOnly",
+                "comment": " `isInlineFlexDesktopOnly == \"is-inline-flex-desktop-only\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isInlineFlexFullhd",
+                "comment": " `isInlineFlexFullhd == \"is-inline-flex-fullhd\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isInlineFlexMobile",
+                "comment": " `isInlineFlexMobile == \"is-inline-flex-mobile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isInlineFlexTablet",
+                "comment": " `isInlineFlexTablet == \"is-inline-flex-tablet\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isInlineFlexTabletOnly",
+                "comment": " `isInlineFlexTabletOnly == \"is-inline-flex-tablet-only\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isInlineFlexTouch",
+                "comment": " `isInlineFlexTouch == \"is-inline-flex-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isInlineFlexWidescreen",
+                "comment": " `isInlineFlexWidescreen == \"is-inline-flex-widescreen\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isInlineFlexWidescreenOnly",
+                "comment": " `isInlineFlexWidescreenOnly == \"is-inline-flex-widescreen-only\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isInlineFullhd",
+                "comment": " `isInlineFullhd == \"is-inline-fullhd\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isInlineMobile",
+                "comment": " `isInlineMobile == \"is-inline-mobile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isInlineTablet",
+                "comment": " `isInlineTablet == \"is-inline-tablet\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isInlineTabletOnly",
+                "comment": " `isInlineTabletOnly == \"is-inline-tablet-only\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isInlineTouch",
+                "comment": " `isInlineTouch == \"is-inline-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isInlineWidescreen",
+                "comment": " `isInlineWidescreen == \"is-inline-widescreen\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isInlineWidescreenOnly",
+                "comment": " `isInlineWidescreenOnly == \"is-inline-widescreen-only\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isInverted",
+                "comment": " `isInverted == \"is-inverted\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isInvisible",
+                "comment": " `isInvisible == \"is-invisible\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isInvisibleDesktop",
+                "comment": " `isInvisibleDesktop == \"is-invisible-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isInvisibleDesktopOnly",
+                "comment": " `isInvisibleDesktopOnly == \"is-invisible-desktop-only\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isInvisibleFullhd",
+                "comment": " `isInvisibleFullhd == \"is-invisible-fullhd\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isInvisibleMobile",
+                "comment": " `isInvisibleMobile == \"is-invisible-mobile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isInvisibleTablet",
+                "comment": " `isInvisibleTablet == \"is-invisible-tablet\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isInvisibleTabletOnly",
+                "comment": " `isInvisibleTabletOnly == \"is-invisible-tablet-only\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isInvisibleTouch",
+                "comment": " `isInvisibleTouch == \"is-invisible-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isInvisibleWidescreen",
+                "comment": " `isInvisibleWidescreen == \"is-invisible-widescreen\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isInvisibleWidescreenOnly",
+                "comment": " `isInvisibleWidescreenOnly == \"is-invisible-widescreen-only\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isItalic",
+                "comment": " `isItalic == \"is-italic\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isLarge",
+                "comment": " `isLarge == \"is-large\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isLeft",
+                "comment": " `isLeft == \"is-left\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isLight",
+                "comment": " `isLight == \"is-light\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isLink",
+                "comment": " `isLink == \"is-link\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isLoading",
+                "comment": " `isLoading == \"is-loading\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isLowerAlpha",
+                "comment": " `isLowerAlpha == \"is-lower-alpha\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isLowerRoman",
+                "comment": " `isLowerRoman == \"is-lower-roman\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isLowercase",
+                "comment": " `isLowercase == \"is-lowercase\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isMarginless",
+                "comment": " `isMarginless == \"is-marginless\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isMedium",
+                "comment": " `isMedium == \"is-medium\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isMobile",
+                "comment": " `isMobile == \"is-mobile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isMultiline",
+                "comment": " `isMultiline == \"is-multiline\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isMultiple",
+                "comment": " `isMultiple == \"is-multiple\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isNarrow",
+                "comment": " `isNarrow == \"is-narrow\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isNarrowDesktop",
+                "comment": " `isNarrowDesktop == \"is-narrow-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isNarrowFullhd",
+                "comment": " `isNarrowFullhd == \"is-narrow-fullhd\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isNarrowMobile",
+                "comment": " `isNarrowMobile == \"is-narrow-mobile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isNarrowTablet",
+                "comment": " `isNarrowTablet == \"is-narrow-tablet\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isNarrowTouch",
+                "comment": " `isNarrowTouch == \"is-narrow-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isNarrowWidescreen",
+                "comment": " `isNarrowWidescreen == \"is-narrow-widescreen\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isNormal",
+                "comment": " `isNormal == \"is-normal\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset0",
+                "comment": " `isOffset0 == \"is-offset-0\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset0Desktop",
+                "comment": " `isOffset0Desktop == \"is-offset-0-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset0Fullhd",
+                "comment": " `isOffset0Fullhd == \"is-offset-0-fullhd\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset0Mobile",
+                "comment": " `isOffset0Mobile == \"is-offset-0-mobile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset0Tablet",
+                "comment": " `isOffset0Tablet == \"is-offset-0-tablet\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset0Touch",
+                "comment": " `isOffset0Touch == \"is-offset-0-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset0Widescreen",
+                "comment": " `isOffset0Widescreen == \"is-offset-0-widescreen\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset1",
+                "comment": " `isOffset1 == \"is-offset-1\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset10",
+                "comment": " `isOffset10 == \"is-offset-10\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset10Desktop",
+                "comment": " `isOffset10Desktop == \"is-offset-10-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset10Fullhd",
+                "comment": " `isOffset10Fullhd == \"is-offset-10-fullhd\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset10Mobile",
+                "comment": " `isOffset10Mobile == \"is-offset-10-mobile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset10Tablet",
+                "comment": " `isOffset10Tablet == \"is-offset-10-tablet\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset10Touch",
+                "comment": " `isOffset10Touch == \"is-offset-10-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset10Widescreen",
+                "comment": " `isOffset10Widescreen == \"is-offset-10-widescreen\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset11",
+                "comment": " `isOffset11 == \"is-offset-11\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset11Desktop",
+                "comment": " `isOffset11Desktop == \"is-offset-11-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset11Fullhd",
+                "comment": " `isOffset11Fullhd == \"is-offset-11-fullhd\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset11Mobile",
+                "comment": " `isOffset11Mobile == \"is-offset-11-mobile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset11Tablet",
+                "comment": " `isOffset11Tablet == \"is-offset-11-tablet\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset11Touch",
+                "comment": " `isOffset11Touch == \"is-offset-11-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset11Widescreen",
+                "comment": " `isOffset11Widescreen == \"is-offset-11-widescreen\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset12",
+                "comment": " `isOffset12 == \"is-offset-12\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset12Desktop",
+                "comment": " `isOffset12Desktop == \"is-offset-12-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset12Fullhd",
+                "comment": " `isOffset12Fullhd == \"is-offset-12-fullhd\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset12Mobile",
+                "comment": " `isOffset12Mobile == \"is-offset-12-mobile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset12Tablet",
+                "comment": " `isOffset12Tablet == \"is-offset-12-tablet\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset12Touch",
+                "comment": " `isOffset12Touch == \"is-offset-12-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset12Widescreen",
+                "comment": " `isOffset12Widescreen == \"is-offset-12-widescreen\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset1Desktop",
+                "comment": " `isOffset1Desktop == \"is-offset-1-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset1Fullhd",
+                "comment": " `isOffset1Fullhd == \"is-offset-1-fullhd\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset1Mobile",
+                "comment": " `isOffset1Mobile == \"is-offset-1-mobile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset1Tablet",
+                "comment": " `isOffset1Tablet == \"is-offset-1-tablet\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset1Touch",
+                "comment": " `isOffset1Touch == \"is-offset-1-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset1Widescreen",
+                "comment": " `isOffset1Widescreen == \"is-offset-1-widescreen\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset2",
+                "comment": " `isOffset2 == \"is-offset-2\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset2Desktop",
+                "comment": " `isOffset2Desktop == \"is-offset-2-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset2Fullhd",
+                "comment": " `isOffset2Fullhd == \"is-offset-2-fullhd\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset2Mobile",
+                "comment": " `isOffset2Mobile == \"is-offset-2-mobile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset2Tablet",
+                "comment": " `isOffset2Tablet == \"is-offset-2-tablet\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset2Touch",
+                "comment": " `isOffset2Touch == \"is-offset-2-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset2Widescreen",
+                "comment": " `isOffset2Widescreen == \"is-offset-2-widescreen\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset3",
+                "comment": " `isOffset3 == \"is-offset-3\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset3Desktop",
+                "comment": " `isOffset3Desktop == \"is-offset-3-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset3Fullhd",
+                "comment": " `isOffset3Fullhd == \"is-offset-3-fullhd\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset3Mobile",
+                "comment": " `isOffset3Mobile == \"is-offset-3-mobile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset3Tablet",
+                "comment": " `isOffset3Tablet == \"is-offset-3-tablet\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset3Touch",
+                "comment": " `isOffset3Touch == \"is-offset-3-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset3Widescreen",
+                "comment": " `isOffset3Widescreen == \"is-offset-3-widescreen\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset4",
+                "comment": " `isOffset4 == \"is-offset-4\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset4Desktop",
+                "comment": " `isOffset4Desktop == \"is-offset-4-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset4Fullhd",
+                "comment": " `isOffset4Fullhd == \"is-offset-4-fullhd\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset4Mobile",
+                "comment": " `isOffset4Mobile == \"is-offset-4-mobile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset4Tablet",
+                "comment": " `isOffset4Tablet == \"is-offset-4-tablet\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset4Touch",
+                "comment": " `isOffset4Touch == \"is-offset-4-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset4Widescreen",
+                "comment": " `isOffset4Widescreen == \"is-offset-4-widescreen\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset5",
+                "comment": " `isOffset5 == \"is-offset-5\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset5Desktop",
+                "comment": " `isOffset5Desktop == \"is-offset-5-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset5Fullhd",
+                "comment": " `isOffset5Fullhd == \"is-offset-5-fullhd\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset5Mobile",
+                "comment": " `isOffset5Mobile == \"is-offset-5-mobile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset5Tablet",
+                "comment": " `isOffset5Tablet == \"is-offset-5-tablet\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset5Touch",
+                "comment": " `isOffset5Touch == \"is-offset-5-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset5Widescreen",
+                "comment": " `isOffset5Widescreen == \"is-offset-5-widescreen\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset6",
+                "comment": " `isOffset6 == \"is-offset-6\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset6Desktop",
+                "comment": " `isOffset6Desktop == \"is-offset-6-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset6Fullhd",
+                "comment": " `isOffset6Fullhd == \"is-offset-6-fullhd\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset6Mobile",
+                "comment": " `isOffset6Mobile == \"is-offset-6-mobile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset6Tablet",
+                "comment": " `isOffset6Tablet == \"is-offset-6-tablet\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset6Touch",
+                "comment": " `isOffset6Touch == \"is-offset-6-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset6Widescreen",
+                "comment": " `isOffset6Widescreen == \"is-offset-6-widescreen\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset7",
+                "comment": " `isOffset7 == \"is-offset-7\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset7Desktop",
+                "comment": " `isOffset7Desktop == \"is-offset-7-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset7Fullhd",
+                "comment": " `isOffset7Fullhd == \"is-offset-7-fullhd\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset7Mobile",
+                "comment": " `isOffset7Mobile == \"is-offset-7-mobile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset7Tablet",
+                "comment": " `isOffset7Tablet == \"is-offset-7-tablet\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset7Touch",
+                "comment": " `isOffset7Touch == \"is-offset-7-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset7Widescreen",
+                "comment": " `isOffset7Widescreen == \"is-offset-7-widescreen\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset8",
+                "comment": " `isOffset8 == \"is-offset-8\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset8Desktop",
+                "comment": " `isOffset8Desktop == \"is-offset-8-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset8Fullhd",
+                "comment": " `isOffset8Fullhd == \"is-offset-8-fullhd\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset8Mobile",
+                "comment": " `isOffset8Mobile == \"is-offset-8-mobile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset8Tablet",
+                "comment": " `isOffset8Tablet == \"is-offset-8-tablet\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset8Touch",
+                "comment": " `isOffset8Touch == \"is-offset-8-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset8Widescreen",
+                "comment": " `isOffset8Widescreen == \"is-offset-8-widescreen\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset9",
+                "comment": " `isOffset9 == \"is-offset-9\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset9Desktop",
+                "comment": " `isOffset9Desktop == \"is-offset-9-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset9Fullhd",
+                "comment": " `isOffset9Fullhd == \"is-offset-9-fullhd\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset9Mobile",
+                "comment": " `isOffset9Mobile == \"is-offset-9-mobile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset9Tablet",
+                "comment": " `isOffset9Tablet == \"is-offset-9-tablet\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset9Touch",
+                "comment": " `isOffset9Touch == \"is-offset-9-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffset9Widescreen",
+                "comment": " `isOffset9Widescreen == \"is-offset-9-widescreen\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffsetFourFifths",
+                "comment": " `isOffsetFourFifths == \"is-offset-four-fifths\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffsetFourFifthsDesktop",
+                "comment": " `isOffsetFourFifthsDesktop == \"is-offset-four-fifths-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffsetFourFifthsFullhd",
+                "comment": " `isOffsetFourFifthsFullhd == \"is-offset-four-fifths-fullhd\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffsetFourFifthsMobile",
+                "comment": " `isOffsetFourFifthsMobile == \"is-offset-four-fifths-mobile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffsetFourFifthsTablet",
+                "comment": " `isOffsetFourFifthsTablet == \"is-offset-four-fifths-tablet\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffsetFourFifthsTouch",
+                "comment": " `isOffsetFourFifthsTouch == \"is-offset-four-fifths-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffsetFourFifthsWidescreen",
+                "comment": " `isOffsetFourFifthsWidescreen == \"is-offset-four-fifths-widescreen\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffsetHalf",
+                "comment": " `isOffsetHalf == \"is-offset-half\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffsetHalfDesktop",
+                "comment": " `isOffsetHalfDesktop == \"is-offset-half-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffsetHalfFullhd",
+                "comment": " `isOffsetHalfFullhd == \"is-offset-half-fullhd\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffsetHalfMobile",
+                "comment": " `isOffsetHalfMobile == \"is-offset-half-mobile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffsetHalfTablet",
+                "comment": " `isOffsetHalfTablet == \"is-offset-half-tablet\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffsetHalfTouch",
+                "comment": " `isOffsetHalfTouch == \"is-offset-half-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffsetHalfWidescreen",
+                "comment": " `isOffsetHalfWidescreen == \"is-offset-half-widescreen\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffsetOneFifth",
+                "comment": " `isOffsetOneFifth == \"is-offset-one-fifth\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffsetOneFifthDesktop",
+                "comment": " `isOffsetOneFifthDesktop == \"is-offset-one-fifth-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffsetOneFifthFullhd",
+                "comment": " `isOffsetOneFifthFullhd == \"is-offset-one-fifth-fullhd\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffsetOneFifthMobile",
+                "comment": " `isOffsetOneFifthMobile == \"is-offset-one-fifth-mobile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffsetOneFifthTablet",
+                "comment": " `isOffsetOneFifthTablet == \"is-offset-one-fifth-tablet\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffsetOneFifthTouch",
+                "comment": " `isOffsetOneFifthTouch == \"is-offset-one-fifth-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffsetOneFifthWidescreen",
+                "comment": " `isOffsetOneFifthWidescreen == \"is-offset-one-fifth-widescreen\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffsetOneQuarter",
+                "comment": " `isOffsetOneQuarter == \"is-offset-one-quarter\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffsetOneQuarterDesktop",
+                "comment": " `isOffsetOneQuarterDesktop == \"is-offset-one-quarter-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffsetOneQuarterFullhd",
+                "comment": " `isOffsetOneQuarterFullhd == \"is-offset-one-quarter-fullhd\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffsetOneQuarterMobile",
+                "comment": " `isOffsetOneQuarterMobile == \"is-offset-one-quarter-mobile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffsetOneQuarterTablet",
+                "comment": " `isOffsetOneQuarterTablet == \"is-offset-one-quarter-tablet\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffsetOneQuarterTouch",
+                "comment": " `isOffsetOneQuarterTouch == \"is-offset-one-quarter-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffsetOneQuarterWidescreen",
+                "comment": " `isOffsetOneQuarterWidescreen == \"is-offset-one-quarter-widescreen\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffsetOneThird",
+                "comment": " `isOffsetOneThird == \"is-offset-one-third\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffsetOneThirdDesktop",
+                "comment": " `isOffsetOneThirdDesktop == \"is-offset-one-third-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffsetOneThirdFullhd",
+                "comment": " `isOffsetOneThirdFullhd == \"is-offset-one-third-fullhd\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffsetOneThirdMobile",
+                "comment": " `isOffsetOneThirdMobile == \"is-offset-one-third-mobile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffsetOneThirdTablet",
+                "comment": " `isOffsetOneThirdTablet == \"is-offset-one-third-tablet\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffsetOneThirdTouch",
+                "comment": " `isOffsetOneThirdTouch == \"is-offset-one-third-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffsetOneThirdWidescreen",
+                "comment": " `isOffsetOneThirdWidescreen == \"is-offset-one-third-widescreen\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffsetThreeFifths",
+                "comment": " `isOffsetThreeFifths == \"is-offset-three-fifths\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffsetThreeFifthsDesktop",
+                "comment": " `isOffsetThreeFifthsDesktop == \"is-offset-three-fifths-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffsetThreeFifthsFullhd",
+                "comment": " `isOffsetThreeFifthsFullhd == \"is-offset-three-fifths-fullhd\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffsetThreeFifthsMobile",
+                "comment": " `isOffsetThreeFifthsMobile == \"is-offset-three-fifths-mobile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffsetThreeFifthsTablet",
+                "comment": " `isOffsetThreeFifthsTablet == \"is-offset-three-fifths-tablet\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffsetThreeFifthsTouch",
+                "comment": " `isOffsetThreeFifthsTouch == \"is-offset-three-fifths-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffsetThreeFifthsWidescreen",
+                "comment": " `isOffsetThreeFifthsWidescreen == \"is-offset-three-fifths-widescreen\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffsetThreeQuarters",
+                "comment": " `isOffsetThreeQuarters == \"is-offset-three-quarters\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffsetThreeQuartersDesktop",
+                "comment": " `isOffsetThreeQuartersDesktop == \"is-offset-three-quarters-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffsetThreeQuartersFullhd",
+                "comment": " `isOffsetThreeQuartersFullhd == \"is-offset-three-quarters-fullhd\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffsetThreeQuartersMobile",
+                "comment": " `isOffsetThreeQuartersMobile == \"is-offset-three-quarters-mobile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffsetThreeQuartersTablet",
+                "comment": " `isOffsetThreeQuartersTablet == \"is-offset-three-quarters-tablet\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffsetThreeQuartersTouch",
+                "comment": " `isOffsetThreeQuartersTouch == \"is-offset-three-quarters-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffsetThreeQuartersWidescreen",
+                "comment": " `isOffsetThreeQuartersWidescreen == \"is-offset-three-quarters-widescreen\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffsetTwoFifths",
+                "comment": " `isOffsetTwoFifths == \"is-offset-two-fifths\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffsetTwoFifthsDesktop",
+                "comment": " `isOffsetTwoFifthsDesktop == \"is-offset-two-fifths-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffsetTwoFifthsFullhd",
+                "comment": " `isOffsetTwoFifthsFullhd == \"is-offset-two-fifths-fullhd\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffsetTwoFifthsMobile",
+                "comment": " `isOffsetTwoFifthsMobile == \"is-offset-two-fifths-mobile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffsetTwoFifthsTablet",
+                "comment": " `isOffsetTwoFifthsTablet == \"is-offset-two-fifths-tablet\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffsetTwoFifthsTouch",
+                "comment": " `isOffsetTwoFifthsTouch == \"is-offset-two-fifths-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffsetTwoFifthsWidescreen",
+                "comment": " `isOffsetTwoFifthsWidescreen == \"is-offset-two-fifths-widescreen\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffsetTwoThirds",
+                "comment": " `isOffsetTwoThirds == \"is-offset-two-thirds\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffsetTwoThirdsDesktop",
+                "comment": " `isOffsetTwoThirdsDesktop == \"is-offset-two-thirds-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffsetTwoThirdsFullhd",
+                "comment": " `isOffsetTwoThirdsFullhd == \"is-offset-two-thirds-fullhd\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffsetTwoThirdsMobile",
+                "comment": " `isOffsetTwoThirdsMobile == \"is-offset-two-thirds-mobile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffsetTwoThirdsTablet",
+                "comment": " `isOffsetTwoThirdsTablet == \"is-offset-two-thirds-tablet\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffsetTwoThirdsTouch",
+                "comment": " `isOffsetTwoThirdsTouch == \"is-offset-two-thirds-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOffsetTwoThirdsWidescreen",
+                "comment": " `isOffsetTwoThirdsWidescreen == \"is-offset-two-thirds-widescreen\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOneFifth",
+                "comment": " `isOneFifth == \"is-one-fifth\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOneFifthDesktop",
+                "comment": " `isOneFifthDesktop == \"is-one-fifth-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOneFifthFullhd",
+                "comment": " `isOneFifthFullhd == \"is-one-fifth-fullhd\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOneFifthMobile",
+                "comment": " `isOneFifthMobile == \"is-one-fifth-mobile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOneFifthTablet",
+                "comment": " `isOneFifthTablet == \"is-one-fifth-tablet\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOneFifthTouch",
+                "comment": " `isOneFifthTouch == \"is-one-fifth-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOneFifthWidescreen",
+                "comment": " `isOneFifthWidescreen == \"is-one-fifth-widescreen\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOneQuarter",
+                "comment": " `isOneQuarter == \"is-one-quarter\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOneQuarterDesktop",
+                "comment": " `isOneQuarterDesktop == \"is-one-quarter-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOneQuarterFullhd",
+                "comment": " `isOneQuarterFullhd == \"is-one-quarter-fullhd\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOneQuarterMobile",
+                "comment": " `isOneQuarterMobile == \"is-one-quarter-mobile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOneQuarterTablet",
+                "comment": " `isOneQuarterTablet == \"is-one-quarter-tablet\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOneQuarterTouch",
+                "comment": " `isOneQuarterTouch == \"is-one-quarter-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOneQuarterWidescreen",
+                "comment": " `isOneQuarterWidescreen == \"is-one-quarter-widescreen\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOneThird",
+                "comment": " `isOneThird == \"is-one-third\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOneThirdDesktop",
+                "comment": " `isOneThirdDesktop == \"is-one-third-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOneThirdFullhd",
+                "comment": " `isOneThirdFullhd == \"is-one-third-fullhd\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOneThirdMobile",
+                "comment": " `isOneThirdMobile == \"is-one-third-mobile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOneThirdTablet",
+                "comment": " `isOneThirdTablet == \"is-one-third-tablet\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOneThirdTouch",
+                "comment": " `isOneThirdTouch == \"is-one-third-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOneThirdWidescreen",
+                "comment": " `isOneThirdWidescreen == \"is-one-third-widescreen\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOutlined",
+                "comment": " `isOutlined == \"is-outlined\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isOverlay",
+                "comment": " `isOverlay == \"is-overlay\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isPaddingless",
+                "comment": " `isPaddingless == \"is-paddingless\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isParent",
+                "comment": " `isParent == \"is-parent\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isPrimary",
+                "comment": " `isPrimary == \"is-primary\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isPulledLeft",
+                "comment": " `isPulledLeft == \"is-pulled-left\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isPulledRight",
+                "comment": " `isPulledRight == \"is-pulled-right\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isRadiusless",
+                "comment": " `isRadiusless == \"is-radiusless\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isRelative",
+                "comment": " `isRelative == \"is-relative\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isRight",
+                "comment": " `isRight == \"is-right\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isRounded",
+                "comment": " `isRounded == \"is-rounded\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isSelected",
+                "comment": " `isSelected == \"is-selected\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isShadowless",
+                "comment": " `isShadowless == \"is-shadowless\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isSize1",
+                "comment": " `isSize1 == \"is-size-1\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isSize1Desktop",
+                "comment": " `isSize1Desktop == \"is-size-1-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isSize1Fullhd",
+                "comment": " `isSize1Fullhd == \"is-size-1-fullhd\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isSize1Mobile",
+                "comment": " `isSize1Mobile == \"is-size-1-mobile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isSize1Tablet",
+                "comment": " `isSize1Tablet == \"is-size-1-tablet\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isSize1Touch",
+                "comment": " `isSize1Touch == \"is-size-1-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isSize1Widescreen",
+                "comment": " `isSize1Widescreen == \"is-size-1-widescreen\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isSize2",
+                "comment": " `isSize2 == \"is-size-2\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isSize2Desktop",
+                "comment": " `isSize2Desktop == \"is-size-2-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isSize2Fullhd",
+                "comment": " `isSize2Fullhd == \"is-size-2-fullhd\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isSize2Mobile",
+                "comment": " `isSize2Mobile == \"is-size-2-mobile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isSize2Tablet",
+                "comment": " `isSize2Tablet == \"is-size-2-tablet\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isSize2Touch",
+                "comment": " `isSize2Touch == \"is-size-2-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isSize2Widescreen",
+                "comment": " `isSize2Widescreen == \"is-size-2-widescreen\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isSize3",
+                "comment": " `isSize3 == \"is-size-3\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isSize3Desktop",
+                "comment": " `isSize3Desktop == \"is-size-3-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isSize3Fullhd",
+                "comment": " `isSize3Fullhd == \"is-size-3-fullhd\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isSize3Mobile",
+                "comment": " `isSize3Mobile == \"is-size-3-mobile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isSize3Tablet",
+                "comment": " `isSize3Tablet == \"is-size-3-tablet\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isSize3Touch",
+                "comment": " `isSize3Touch == \"is-size-3-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isSize3Widescreen",
+                "comment": " `isSize3Widescreen == \"is-size-3-widescreen\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isSize4",
+                "comment": " `isSize4 == \"is-size-4\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isSize4Desktop",
+                "comment": " `isSize4Desktop == \"is-size-4-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isSize4Fullhd",
+                "comment": " `isSize4Fullhd == \"is-size-4-fullhd\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isSize4Mobile",
+                "comment": " `isSize4Mobile == \"is-size-4-mobile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isSize4Tablet",
+                "comment": " `isSize4Tablet == \"is-size-4-tablet\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isSize4Touch",
+                "comment": " `isSize4Touch == \"is-size-4-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isSize4Widescreen",
+                "comment": " `isSize4Widescreen == \"is-size-4-widescreen\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isSize5",
+                "comment": " `isSize5 == \"is-size-5\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isSize5Desktop",
+                "comment": " `isSize5Desktop == \"is-size-5-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isSize5Fullhd",
+                "comment": " `isSize5Fullhd == \"is-size-5-fullhd\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isSize5Mobile",
+                "comment": " `isSize5Mobile == \"is-size-5-mobile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isSize5Tablet",
+                "comment": " `isSize5Tablet == \"is-size-5-tablet\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isSize5Touch",
+                "comment": " `isSize5Touch == \"is-size-5-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isSize5Widescreen",
+                "comment": " `isSize5Widescreen == \"is-size-5-widescreen\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isSize6",
+                "comment": " `isSize6 == \"is-size-6\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isSize6Desktop",
+                "comment": " `isSize6Desktop == \"is-size-6-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isSize6Fullhd",
+                "comment": " `isSize6Fullhd == \"is-size-6-fullhd\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isSize6Mobile",
+                "comment": " `isSize6Mobile == \"is-size-6-mobile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isSize6Tablet",
+                "comment": " `isSize6Tablet == \"is-size-6-tablet\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isSize6Touch",
+                "comment": " `isSize6Touch == \"is-size-6-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isSize6Widescreen",
+                "comment": " `isSize6Widescreen == \"is-size-6-widescreen\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isSize7",
+                "comment": " `isSize7 == \"is-size-7\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isSize7Desktop",
+                "comment": " `isSize7Desktop == \"is-size-7-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isSize7Fullhd",
+                "comment": " `isSize7Fullhd == \"is-size-7-fullhd\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isSize7Mobile",
+                "comment": " `isSize7Mobile == \"is-size-7-mobile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isSize7Tablet",
+                "comment": " `isSize7Tablet == \"is-size-7-tablet\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isSize7Touch",
+                "comment": " `isSize7Touch == \"is-size-7-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isSize7Widescreen",
+                "comment": " `isSize7Widescreen == \"is-size-7-widescreen\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isSmall",
+                "comment": " `isSmall == \"is-small\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isSpaced",
+                "comment": " `isSpaced == \"is-spaced\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isSquare",
+                "comment": " `isSquare == \"is-square\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isSrOnly",
+                "comment": " `isSrOnly == \"is-sr-only\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isStatic",
+                "comment": " `isStatic == \"is-static\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isStriped",
+                "comment": " `isStriped == \"is-striped\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isSuccess",
+                "comment": " `isSuccess == \"is-success\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isTab",
+                "comment": " `isTab == \"is-tab\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isText",
+                "comment": " `isText == \"is-text\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isThreeFifths",
+                "comment": " `isThreeFifths == \"is-three-fifths\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isThreeFifthsDesktop",
+                "comment": " `isThreeFifthsDesktop == \"is-three-fifths-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isThreeFifthsFullhd",
+                "comment": " `isThreeFifthsFullhd == \"is-three-fifths-fullhd\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isThreeFifthsMobile",
+                "comment": " `isThreeFifthsMobile == \"is-three-fifths-mobile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isThreeFifthsTablet",
+                "comment": " `isThreeFifthsTablet == \"is-three-fifths-tablet\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isThreeFifthsTouch",
+                "comment": " `isThreeFifthsTouch == \"is-three-fifths-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isThreeFifthsWidescreen",
+                "comment": " `isThreeFifthsWidescreen == \"is-three-fifths-widescreen\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isThreeQuarters",
+                "comment": " `isThreeQuarters == \"is-three-quarters\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isThreeQuartersDesktop",
+                "comment": " `isThreeQuartersDesktop == \"is-three-quarters-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isThreeQuartersFullhd",
+                "comment": " `isThreeQuartersFullhd == \"is-three-quarters-fullhd\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isThreeQuartersMobile",
+                "comment": " `isThreeQuartersMobile == \"is-three-quarters-mobile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isThreeQuartersTablet",
+                "comment": " `isThreeQuartersTablet == \"is-three-quarters-tablet\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isThreeQuartersTouch",
+                "comment": " `isThreeQuartersTouch == \"is-three-quarters-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isThreeQuartersWidescreen",
+                "comment": " `isThreeQuartersWidescreen == \"is-three-quarters-widescreen\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isToggle",
+                "comment": " `isToggle == \"is-toggle\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isToggleRounded",
+                "comment": " `isToggleRounded == \"is-toggle-rounded\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isTransparent",
+                "comment": " `isTransparent == \"is-transparent\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isTwoFifths",
+                "comment": " `isTwoFifths == \"is-two-fifths\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isTwoFifthsDesktop",
+                "comment": " `isTwoFifthsDesktop == \"is-two-fifths-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isTwoFifthsFullhd",
+                "comment": " `isTwoFifthsFullhd == \"is-two-fifths-fullhd\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isTwoFifthsMobile",
+                "comment": " `isTwoFifthsMobile == \"is-two-fifths-mobile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isTwoFifthsTablet",
+                "comment": " `isTwoFifthsTablet == \"is-two-fifths-tablet\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isTwoFifthsTouch",
+                "comment": " `isTwoFifthsTouch == \"is-two-fifths-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isTwoFifthsWidescreen",
+                "comment": " `isTwoFifthsWidescreen == \"is-two-fifths-widescreen\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isTwoThirds",
+                "comment": " `isTwoThirds == \"is-two-thirds\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isTwoThirdsDesktop",
+                "comment": " `isTwoThirdsDesktop == \"is-two-thirds-desktop\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isTwoThirdsFullhd",
+                "comment": " `isTwoThirdsFullhd == \"is-two-thirds-fullhd\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isTwoThirdsMobile",
+                "comment": " `isTwoThirdsMobile == \"is-two-thirds-mobile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isTwoThirdsTablet",
+                "comment": " `isTwoThirdsTablet == \"is-two-thirds-tablet\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isTwoThirdsTouch",
+                "comment": " `isTwoThirdsTouch == \"is-two-thirds-touch\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isTwoThirdsWidescreen",
+                "comment": " `isTwoThirdsWidescreen == \"is-two-thirds-widescreen\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isUnselectable",
+                "comment": " `isUnselectable == \"is-unselectable\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isUp",
+                "comment": " `isUp == \"is-up\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isUpperAlpha",
+                "comment": " `isUpperAlpha == \"is-upper-alpha\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isUpperRoman",
+                "comment": " `isUpperRoman == \"is-upper-roman\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isUppercase",
+                "comment": " `isUppercase == \"is-uppercase\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isVariable",
+                "comment": " `isVariable == \"is-variable\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isVcentered",
+                "comment": " `isVcentered == \"is-vcentered\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isVertical",
+                "comment": " `isVertical == \"is-vertical\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isWarning",
+                "comment": " `isWarning == \"is-warning\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isWhite",
+                "comment": " `isWhite == \"is-white\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isWidescreen",
+                "comment": " `isWidescreen == \"is-widescreen\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "isWrapped",
+                "comment": " `isWrapped == \"is-wrapped\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "label",
+                "comment": " `label == \"label\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "level",
+                "comment": " `level == \"level\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "levelItem",
+                "comment": " `levelItem == \"level-item\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "levelLeft",
+                "comment": " `levelLeft == \"level-left\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "levelRight",
+                "comment": " `levelRight == \"level-right\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "loader",
+                "comment": " `loader == \"loader\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "mb0",
+                "comment": " `mb0 == \"mb-0\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "mb1",
+                "comment": " `mb1 == \"mb-1\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "mb2",
+                "comment": " `mb2 == \"mb-2\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "mb3",
+                "comment": " `mb3 == \"mb-3\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "mb4",
+                "comment": " `mb4 == \"mb-4\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "mb5",
+                "comment": " `mb5 == \"mb-5\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "mb6",
+                "comment": " `mb6 == \"mb-6\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "media",
+                "comment": " `media == \"media\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "mediaContent",
+                "comment": " `mediaContent == \"media-content\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "mediaLeft",
+                "comment": " `mediaLeft == \"media-left\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "mediaRight",
+                "comment": " `mediaRight == \"media-right\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "menu",
+                "comment": " `menu == \"menu\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "menuLabel",
+                "comment": " `menuLabel == \"menu-label\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "menuList",
+                "comment": " `menuList == \"menu-list\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "message",
+                "comment": " `message == \"message\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "messageBody",
+                "comment": " `messageBody == \"message-body\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "messageHeader",
+                "comment": " `messageHeader == \"message-header\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "ml0",
+                "comment": " `ml0 == \"ml-0\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "ml1",
+                "comment": " `ml1 == \"ml-1\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "ml2",
+                "comment": " `ml2 == \"ml-2\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "ml3",
+                "comment": " `ml3 == \"ml-3\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "ml4",
+                "comment": " `ml4 == \"ml-4\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "ml5",
+                "comment": " `ml5 == \"ml-5\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "ml6",
+                "comment": " `ml6 == \"ml-6\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "modal",
+                "comment": " `modal == \"modal\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "modalBackground",
+                "comment": " `modalBackground == \"modal-background\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "modalCard",
+                "comment": " `modalCard == \"modal-card\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "modalCardBody",
+                "comment": " `modalCardBody == \"modal-card-body\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "modalCardFoot",
+                "comment": " `modalCardFoot == \"modal-card-foot\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "modalCardHead",
+                "comment": " `modalCardHead == \"modal-card-head\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "modalCardTitle",
+                "comment": " `modalCardTitle == \"modal-card-title\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "modalClose",
+                "comment": " `modalClose == \"modal-close\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "modalContent",
+                "comment": " `modalContent == \"modal-content\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "mr0",
+                "comment": " `mr0 == \"mr-0\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "mr1",
+                "comment": " `mr1 == \"mr-1\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "mr2",
+                "comment": " `mr2 == \"mr-2\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "mr3",
+                "comment": " `mr3 == \"mr-3\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "mr4",
+                "comment": " `mr4 == \"mr-4\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "mr5",
+                "comment": " `mr5 == \"mr-5\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "mr6",
+                "comment": " `mr6 == \"mr-6\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "mt0",
+                "comment": " `mt0 == \"mt-0\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "mt1",
+                "comment": " `mt1 == \"mt-1\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "mt2",
+                "comment": " `mt2 == \"mt-2\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "mt3",
+                "comment": " `mt3 == \"mt-3\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "mt4",
+                "comment": " `mt4 == \"mt-4\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "mt5",
+                "comment": " `mt5 == \"mt-5\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "mt6",
+                "comment": " `mt6 == \"mt-6\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "mx0",
+                "comment": " `mx0 == \"mx-0\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "mx1",
+                "comment": " `mx1 == \"mx-1\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "mx2",
+                "comment": " `mx2 == \"mx-2\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "mx3",
+                "comment": " `mx3 == \"mx-3\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "mx4",
+                "comment": " `mx4 == \"mx-4\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "mx5",
+                "comment": " `mx5 == \"mx-5\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "mx6",
+                "comment": " `mx6 == \"mx-6\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "my0",
+                "comment": " `my0 == \"my-0\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "my1",
+                "comment": " `my1 == \"my-1\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "my2",
+                "comment": " `my2 == \"my-2\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "my3",
+                "comment": " `my3 == \"my-3\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "my4",
+                "comment": " `my4 == \"my-4\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "my5",
+                "comment": " `my5 == \"my-5\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "my6",
+                "comment": " `my6 == \"my-6\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "navbar",
+                "comment": " `navbar == \"navbar\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "navbarBrand",
+                "comment": " `navbarBrand == \"navbar-brand\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "navbarBurger",
+                "comment": " `navbarBurger == \"navbar-burger\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "navbarContent",
+                "comment": " `navbarContent == \"navbar-content\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "navbarDivider",
+                "comment": " `navbarDivider == \"navbar-divider\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "navbarDropdown",
+                "comment": " `navbarDropdown == \"navbar-dropdown\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "navbarEnd",
+                "comment": " `navbarEnd == \"navbar-end\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "navbarItem",
+                "comment": " `navbarItem == \"navbar-item\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "navbarLink",
+                "comment": " `navbarLink == \"navbar-link\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "navbarMenu",
+                "comment": " `navbarMenu == \"navbar-menu\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "navbarStart",
+                "comment": " `navbarStart == \"navbar-start\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "navbarTabs",
+                "comment": " `navbarTabs == \"navbar-tabs\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "notification",
+                "comment": " `notification == \"notification\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "number",
+                "comment": " `number == \"number\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "pagination",
+                "comment": " `pagination == \"pagination\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "paginationEllipsis",
+                "comment": " `paginationEllipsis == \"pagination-ellipsis\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "paginationLink",
+                "comment": " `paginationLink == \"pagination-link\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "paginationList",
+                "comment": " `paginationList == \"pagination-list\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "paginationNext",
+                "comment": " `paginationNext == \"pagination-next\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "paginationPrevious",
+                "comment": " `paginationPrevious == \"pagination-previous\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "panel",
+                "comment": " `panel == \"panel\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "panelBlock",
+                "comment": " `panelBlock == \"panel-block\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "panelHeading",
+                "comment": " `panelHeading == \"panel-heading\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "panelIcon",
+                "comment": " `panelIcon == \"panel-icon\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "panelList",
+                "comment": " `panelList == \"panel-list\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "panelTabs",
+                "comment": " `panelTabs == \"panel-tabs\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "pb0",
+                "comment": " `pb0 == \"pb-0\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "pb1",
+                "comment": " `pb1 == \"pb-1\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "pb2",
+                "comment": " `pb2 == \"pb-2\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "pb3",
+                "comment": " `pb3 == \"pb-3\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "pb4",
+                "comment": " `pb4 == \"pb-4\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "pb5",
+                "comment": " `pb5 == \"pb-5\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "pb6",
+                "comment": " `pb6 == \"pb-6\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "pl0",
+                "comment": " `pl0 == \"pl-0\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "pl1",
+                "comment": " `pl1 == \"pl-1\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "pl2",
+                "comment": " `pl2 == \"pl-2\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "pl3",
+                "comment": " `pl3 == \"pl-3\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "pl4",
+                "comment": " `pl4 == \"pl-4\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "pl5",
+                "comment": " `pl5 == \"pl-5\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "pl6",
+                "comment": " `pl6 == \"pl-6\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "pr0",
+                "comment": " `pr0 == \"pr-0\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "pr1",
+                "comment": " `pr1 == \"pr-1\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "pr2",
+                "comment": " `pr2 == \"pr-2\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "pr3",
+                "comment": " `pr3 == \"pr-3\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "pr4",
+                "comment": " `pr4 == \"pr-4\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "pr5",
+                "comment": " `pr5 == \"pr-5\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "pr6",
+                "comment": " `pr6 == \"pr-6\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "progress",
+                "comment": " `progress == \"progress\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "pt0",
+                "comment": " `pt0 == \"pt-0\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "pt1",
+                "comment": " `pt1 == \"pt-1\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "pt2",
+                "comment": " `pt2 == \"pt-2\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "pt3",
+                "comment": " `pt3 == \"pt-3\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "pt4",
+                "comment": " `pt4 == \"pt-4\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "pt5",
+                "comment": " `pt5 == \"pt-5\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "pt6",
+                "comment": " `pt6 == \"pt-6\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "px0",
+                "comment": " `px0 == \"px-0\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "px1",
+                "comment": " `px1 == \"px-1\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "px2",
+                "comment": " `px2 == \"px-2\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "px3",
+                "comment": " `px3 == \"px-3\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "px4",
+                "comment": " `px4 == \"px-4\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "px5",
+                "comment": " `px5 == \"px-5\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "px6",
+                "comment": " `px6 == \"px-6\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "py0",
+                "comment": " `py0 == \"py-0\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "py1",
+                "comment": " `py1 == \"py-1\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "py2",
+                "comment": " `py2 == \"py-2\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "py3",
+                "comment": " `py3 == \"py-3\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "py4",
+                "comment": " `py4 == \"py-4\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "py5",
+                "comment": " `py5 == \"py-5\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "py6",
+                "comment": " `py6 == \"py-6\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "radio",
+                "comment": " `radio == \"radio\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "section",
+                "comment": " `section == \"section\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "select",
+                "comment": " `select == \"select\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "subtitle",
+                "comment": " `subtitle == \"subtitle\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "table",
+                "comment": " `table == \"table\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "tableContainer",
+                "comment": " `tableContainer == \"table-container\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "tabs",
+                "comment": " `tabs == \"tabs\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "tag",
+                "comment": " `tag == \"tag\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "tags",
+                "comment": " `tags == \"tags\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "textarea",
+                "comment": " `textarea == \"textarea\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "tile",
+                "comment": " `tile == \"tile\"`\n",
+                "type": "String.String"
+            },
+            {
+                "name": "title",
+                "comment": " `title == \"title\"`\n",
+                "type": "String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Bulma.Helpers",
+        "comment": " Some helpers that make using Bulma.Classes easier\n\n\n# Helpers\n\n@docs classList\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "classList",
+                "comment": " Takes a list of classes returns an appropriate `Html.Attribute`\nIf you need to conditionally add classes, use [`Html.Attributes.classList`](http://package.elm-lang.org/packages/elm-lang/html/2.0.0/Html-Attributes#classList)\ninstead.\n\n    Html.button\n        [ classList\n            [ \"some-class\"\n            , Bulma.button\n            , Bulma.isSecondary\n            , \"some-other-class-for-some-reason\"\n            ]\n        ]\n        []\n\n",
+                "type": "List.List String.String -> Html.Attribute msg"
+            }
+        ],
+        "binops": []
+    }
+]

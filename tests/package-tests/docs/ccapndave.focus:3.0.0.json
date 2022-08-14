@@ -1,0 +1,46 @@
+[
+    {
+        "name": "Focus",
+        "comment": " Our goal is to update a field deep inside some nested records. For example,\nif we want to add one to `object.physics.velocity.x` or set it to zero, we would\nbe writing code like this:\n\n    update (physics => velocity => x) (\\x -> x + 1) object\n\n    set (physics => velocity => x) 0 object\n\nThis means you could avoid writing record update syntax which would be messier.\n\n**Warning!** It is possible that the concept of a `Focus` is harmful to code\nquality in that it can help you to be lax with abstraction boundaries.\n\nBy making it easy to look deep inside of data structures, it encourages you to\nstop thinking about how to make these substructures modular, perhaps leading\nto messier architecture _and_ some extra conceptual complexity. It may also\nmake your code slower by encouraging you to take many passes over data,\ncreating lots of intermediate data structures for no particular reason.\n_Use with these risk in mind!_\n\n\n# Focus\n\n@docs Focus\n\n\n# Get, Set, Update\n\n@docs get, set, update\n\n\n# Compose Foci\n\n@docs compose\n\n\n# Create your own Focus\n\n@docs create\n\n",
+        "unions": [
+            {
+                "name": "Focus",
+                "comment": " A `Focus` lets you focus on a small part of some larger data structure.\nMaybe this means a certain field in a record or a certain element in an array.\nThe focus then lets you `get`, `set`, and `update` this small part of a big\nvalue.\n",
+                "args": [
+                    "big",
+                    "small"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "compose",
+                "comment": " The power of this library comes from the fact that you can compose many\nfoci. This means we can update a field deep inside some nested records. For\nexample, perhaps we want to add one to `object.physics.velocity.x` or set it to\nzero.\n\n    physics  : Focus { record | physics  : a } a\n    velocity : Focus { record | velocity : a } a\n    x        : Focus { record | x        : a } a\n    y        : Focus { record | y        : a } a\n\n    update (physics => velocity => x) (\\x -> x + 1) object\n\n    set (physics => velocity => x) 0 object\n\nThis would be a lot messier with typical record update syntax! This is what\nmakes this library worthwhile, but also what makes it dangerous. You will be\ndoing a lot of silly work if you start writing code like this:\n\n    object\n        |> set (physics => velocity => x) 0\n        |> set (physics => velocity => y) 0\n\nIt is pretty, but you pay for it in performance because you take two passes\nover `object` instead of one. It may be best to do the last step with typical\nrecord updates so that this can be done in one pass.\n\n",
+                "type": "Focus.Focus big medium -> Focus.Focus medium small -> Focus.Focus big small"
+            },
+            {
+                "name": "create",
+                "comment": " A `Focus` is a value. It describes a strategy for getting and updating\nthings. This function lets you define a `Focus` yourself by providing a `get`\nfunction and an `update` function.\n",
+                "type": "(big -> small) -> ((small -> small) -> big -> big) -> Focus.Focus big small"
+            },
+            {
+                "name": "get",
+                "comment": " Get a small part of a big thing.\n\n    x : Focus { record | x:a } a\n\n    get x { x=3, y=4 } == 3\n\nSeems sort of silly given that you can just say `.x` to do the same thing. It\nwill become much more useful when we can begin to compose foci, so keep reading!\n\n",
+                "type": "Focus.Focus big small -> big -> small"
+            },
+            {
+                "name": "set",
+                "comment": " Set a small part of a big thing.\n\n    x : Focus { record | x:a } a\n\n    set x 42 { x=3, y=4 } == { x=42, y=4 }\n\n",
+                "type": "Focus.Focus big small -> small -> big -> big"
+            },
+            {
+                "name": "update",
+                "comment": " Update a small part of a big thing.\n\n    x : Focus { record | x:a } a\n\n    update x sqrt { x=9, y=10 } == { x=3, y=10 }\n\nThis lets us chain updates without any special record syntax:\n\n    x : Focus { record | x:a } a\n    y : Focus { record | y:a } a\n\n    point\n      |> update x sqrt\n      |> update y sqrt\n\nThe downside of this approach is that this means we take two passes over the\nrecord, whereas normal record syntax would only have required one. It may be\nbest to use a mix `Focus` and typical record updates to minimize traversals.\n\n",
+                "type": "Focus.Focus big small -> (small -> small) -> big -> big"
+            }
+        ],
+        "binops": []
+    }
+]

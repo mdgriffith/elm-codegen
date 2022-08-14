@@ -1,0 +1,101 @@
+[
+    {
+        "name": "Swipe",
+        "comment": " Early stages of gesture recognition for touch-events.\n\nThis is intended to be used in qualified form.\n\n\n# Hooking it up\n\nIn your model:\n\n    { gesture = Swipe.Gesture }\n\nIn your init:\n\n    { gesture = Swipe.blanco }\n\nIn your Msg:\n\n    type Msg\n        = Swipe Swipe.Event\n        | SwipeEnd Swipe.Event\n\nIn your view:\n\n    Html.div\n        [ Swipe.onStart Swipe\n        , Swipe.onMove Swipe\n        , Swipe.onEnd SwipeEnd\n        ]\n        [ Html.text \"Swipe me!\" ]\n\nIn your update:\n\n    Swipe touch ->\n        { model | gesture = Swipe.record touch model.gesture }\n\n    SwipeEnd touch ->\n        let\n            gesture : Swipe.Gesture\n            gesture =\n                Swipe.record touch model.gesture\n\n            -- use inspection functions like `isTap` and `isLeftSwipe`\n        in\n        { model | gesture = Swipe.blanco }\n\n\n# Events stuff\n\n@docs onMove, onEnd, onStart, onEndWithOptions\n\n\n# Keep some state around\n\n@docs Gesture, Event, blanco, record\n\n\n# Get yourself some info\n\n@docs Position, locate, deltaX, deltaY, isTap, isUpSwipe, isDownSwipe, isLeftSwipe, isRightSwipe\n\n",
+        "unions": [
+            {
+                "name": "Event",
+                "comment": " A single `Swipe.Event`. Gestures are made up of these, internally.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Gesture",
+                "comment": " A `Gesture`! You'll want to keep one of these around in your model and\nupdate it whenever applicable.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Position",
+                "comment": " A position, similar to the one in the `elm-lang/mouse` package.\n",
+                "args": [],
+                "type": "{ x : Basics.Float, y : Basics.Float }"
+            }
+        ],
+        "values": [
+            {
+                "name": "blanco",
+                "comment": " Get yourself a blanco gesture, as if no touches have happened at all.\n\nAfter a touchend event, you'll probably want to reset to this, too.\n\n",
+                "type": "Swipe.Gesture"
+            },
+            {
+                "name": "deltaX",
+                "comment": " For a finished move, checks how much you move horizontally, from start to\nfinish.\n",
+                "type": "Swipe.Gesture -> Maybe.Maybe Basics.Float"
+            },
+            {
+                "name": "deltaY",
+                "comment": " For a finished move, checks how much you move vertically, from start to\nfinish.\n",
+                "type": "Swipe.Gesture -> Maybe.Maybe Basics.Float"
+            },
+            {
+                "name": "isDownSwipe",
+                "comment": " Is this gesture finished and did we move more than `sensitivity`\n(difference between `touchstart` and `touchend` in px) to the bottom?\n",
+                "type": "Basics.Float -> Swipe.Gesture -> Basics.Bool"
+            },
+            {
+                "name": "isLeftSwipe",
+                "comment": " Is this gesture finished and did we move more than `sensitivity`\n(difference between `touchstart` and `touchend` in px) to the left?\n",
+                "type": "Basics.Float -> Swipe.Gesture -> Basics.Bool"
+            },
+            {
+                "name": "isRightSwipe",
+                "comment": " Is this gesture finished and did we move more than `sensitivity`\n(difference between `touchstart` and `touchend` in px) to the right?\n",
+                "type": "Basics.Float -> Swipe.Gesture -> Basics.Bool"
+            },
+            {
+                "name": "isTap",
+                "comment": " Checks if a given gesture is actually a (single) tap\n",
+                "type": "Swipe.Gesture -> Basics.Bool"
+            },
+            {
+                "name": "isUpSwipe",
+                "comment": " Is this gesture finished and did we move more than `sensitivity`\n(difference between `touchstart` and `touchend` in px) to the top?\n",
+                "type": "Basics.Float -> Swipe.Gesture -> Basics.Bool"
+            },
+            {
+                "name": "locate",
+                "comment": " Useful if you want to know the current position during a stream of events.\n",
+                "type": "Swipe.Event -> Swipe.Position"
+            },
+            {
+                "name": "onEnd",
+                "comment": " Record the end of a touch gesture.\n\n**Note**: This sets `preventDefault = True` to avoid double events from occuring\nwhen the same DOM node also has an `onClick` attribute. Using `preventDefault`\nmeans that if a `touchend` event happens, the `onClick` handler won't fire.\n\nIf you have a case where you need to support a regular `onClick` event nested in\na node that has `onEnd` on it (for example; a container with swipe support,\nwhich contains a button from an external package), please see `onEndWithOptions`.\n\n",
+                "type": "(Swipe.Event -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "onEndWithOptions",
+                "comment": " Record the end of a touch gesture with options.\n",
+                "type": "{ stopPropagation : Basics.Bool, preventDefault : Basics.Bool } -> (Swipe.Event -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "onMove",
+                "comment": " Record an ongoing touch gesture.\n",
+                "type": "(Swipe.Event -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "onStart",
+                "comment": " Record the start of a touch gesture.\n",
+                "type": "(Swipe.Event -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "record",
+                "comment": " Our cute little `update`-like function!\n",
+                "type": "Swipe.Event -> Swipe.Gesture -> Swipe.Gesture"
+            }
+        ],
+        "binops": []
+    }
+]

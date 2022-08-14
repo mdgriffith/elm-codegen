@@ -1,0 +1,98 @@
+[
+    {
+        "name": "TimeUtil",
+        "comment": " Utilities we use to format times / dates wraps Time.Extra and other funzies.\n\n@docs DateFormat\n@docs dateTimeFormat\n@docs defaultDateFormat\n@docs difference\n@docs encodePosix\n@docs format\n@docs formatDate\n@docs formatDate_\n@docs isSameDay\n@docs localToUtc\n@docs posixDecoder\n@docs setNoon\n@docs shortDateFormat\n@docs shortTimeFormat\n@docs stringFormatToStrftimeFormats\n@docs timeAttrFormat\n@docs utcToLocal\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "DateFormat",
+                "comment": " ",
+                "args": [],
+                "type": "{ date : String.String, time : String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "dateTimeFormat",
+                "comment": " ",
+                "type": "Time.Zone -> Time.Posix -> String.String"
+            },
+            {
+                "name": "defaultDateFormat",
+                "comment": " ",
+                "type": "TimeUtil.DateFormat"
+            },
+            {
+                "name": "difference",
+                "comment": " ",
+                "type": "Time.Posix -> Time.Posix -> Basics.Int"
+            },
+            {
+                "name": "encodePosix",
+                "comment": " ",
+                "type": "Time.Posix -> Json.Encode.Value"
+            },
+            {
+                "name": "format",
+                "comment": " ",
+                "type": "Time.Zone -> Time.Posix -> String.String"
+            },
+            {
+                "name": "formatDate",
+                "comment": " ",
+                "type": "Time.Posix -> String.String"
+            },
+            {
+                "name": "formatDate_",
+                "comment": " ",
+                "type": "Time.Zone -> Time.Posix -> String.String"
+            },
+            {
+                "name": "isSameDay",
+                "comment": " ",
+                "type": "Time.Zone -> Time.Posix -> Time.Posix -> Basics.Bool"
+            },
+            {
+                "name": "localToUtc",
+                "comment": " ",
+                "type": "Time.Zone -> Time.Posix -> Time.Posix"
+            },
+            {
+                "name": "posixDecoder",
+                "comment": " ",
+                "type": "Json.Decode.Decoder Time.Posix"
+            },
+            {
+                "name": "setNoon",
+                "comment": " ",
+                "type": "Time.Zone -> Time.Posix -> Time.Posix"
+            },
+            {
+                "name": "shortDateFormat",
+                "comment": " ",
+                "type": "Time.Zone -> Time.Posix -> String.String"
+            },
+            {
+                "name": "shortTimeFormat",
+                "comment": " ",
+                "type": "Time.Zone -> Time.Posix -> String.String"
+            },
+            {
+                "name": "stringFormatToStrftimeFormats",
+                "comment": " ",
+                "type": "Maybe.Maybe String.String -> TimeUtil.DateFormat"
+            },
+            {
+                "name": "timeAttrFormat",
+                "comment": " ",
+                "type": "Time.Zone -> Time.Posix -> String.String"
+            },
+            {
+                "name": "utcToLocal",
+                "comment": " ",
+                "type": "Time.Zone -> Time.Posix -> Time.Posix"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,3170 @@
+[
+    {
+        "name": "AWS.Ecr",
+        "comment": "\n\n\n## Amazon Elastic Container Registry\n\nAmazon Elastic Container Registry (Amazon ECR) is a managed Docker registry service. Customers can use the familiar Docker CLI to push, pull, and manage images. Amazon ECR provides a secure, scalable, and reliable registry. Amazon ECR supports private Docker repositories with resource-based permissions using IAM so that specific users or Amazon EC2 instances can access repositories and images. Developers can use the Docker CLI to author and manage images.\n\n\n# Service definition.\n\n@docs service\n\n\n# Service endpoints.\n\n@docs batchCheckLayerAvailability, batchDeleteImage, batchGetImage, completeLayerUpload, createRepository, deleteLifecyclePolicy\n@docs deleteRepository, deleteRepositoryPolicy, describeImages, describeRepositories, getAuthorizationToken, getDownloadUrlForLayer\n@docs getLifecyclePolicy, getLifecyclePolicyPreview, getRepositoryPolicy, initiateLayerUpload, listImages, listTagsForResource, putImage\n@docs putImageTagMutability, putLifecyclePolicy, setRepositoryPolicy, startLifecyclePolicyPreview, tagResource, untagResource\n@docs uploadLayerPart\n\n\n# API data model.\n\n@docs AuthorizationData, AuthorizationDataList, BatchCheckLayerAvailabilityRequest, BatchCheckLayerAvailabilityResponse\n@docs BatchDeleteImageRequest, BatchDeleteImageResponse, BatchGetImageRequest, BatchGetImageResponse, BatchedOperationLayerDigestList\n@docs CompleteLayerUploadRequest, CompleteLayerUploadResponse, CreateRepositoryRequest, CreateRepositoryResponse\n@docs DeleteLifecyclePolicyRequest, DeleteLifecyclePolicyResponse, DeleteRepositoryPolicyRequest, DeleteRepositoryPolicyResponse\n@docs DeleteRepositoryRequest, DeleteRepositoryResponse, DescribeImagesFilter, DescribeImagesRequest, DescribeImagesResponse\n@docs DescribeRepositoriesRequest, DescribeRepositoriesResponse, GetAuthorizationTokenRegistryIdList, GetAuthorizationTokenRequest\n@docs GetAuthorizationTokenResponse, GetDownloadUrlForLayerRequest, GetDownloadUrlForLayerResponse, GetLifecyclePolicyPreviewRequest\n@docs GetLifecyclePolicyPreviewResponse, GetLifecyclePolicyRequest, GetLifecyclePolicyResponse, GetRepositoryPolicyRequest\n@docs GetRepositoryPolicyResponse, Image, ImageActionType, ImageDetail, ImageDetailList, ImageFailure, ImageFailureCode, ImageFailureList\n@docs ImageIdentifier, ImageIdentifierList, ImageList, ImageTagList, ImageTagMutability, InitiateLayerUploadRequest\n@docs InitiateLayerUploadResponse, Layer, LayerAvailability, LayerDigestList, LayerFailure, LayerFailureCode, LayerFailureList, LayerList\n@docs LifecyclePolicyPreviewFilter, LifecyclePolicyPreviewResult, LifecyclePolicyPreviewResultList, LifecyclePolicyPreviewStatus\n@docs LifecyclePolicyPreviewSummary, LifecyclePolicyRuleAction, ListImagesFilter, ListImagesRequest, ListImagesResponse\n@docs ListTagsForResourceRequest, ListTagsForResourceResponse, MediaTypeList, PutImageRequest, PutImageResponse\n@docs PutImageTagMutabilityRequest, PutImageTagMutabilityResponse, PutLifecyclePolicyRequest, PutLifecyclePolicyResponse, Repository\n@docs RepositoryList, RepositoryNameList, SetRepositoryPolicyRequest, SetRepositoryPolicyResponse, StartLifecyclePolicyPreviewRequest\n@docs StartLifecyclePolicyPreviewResponse, Tag, TagKeyList, TagList, TagResourceRequest, TagResourceResponse, TagStatus\n@docs UntagResourceRequest, UntagResourceResponse, UploadLayerPartRequest, UploadLayerPartResponse, imageActionType, imageFailureCode\n@docs imageTagMutability, layerAvailability, layerFailureCode, lifecyclePolicyPreviewStatus, tagStatus\n\n",
+        "unions": [
+            {
+                "name": "ImageActionType",
+                "comment": " The ImageActionType data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "ImageActionTypeExpire",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "ImageFailureCode",
+                "comment": " The ImageFailureCode data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "ImageFailureCodeInvalidImageDigest",
+                        []
+                    ],
+                    [
+                        "ImageFailureCodeInvalidImageTag",
+                        []
+                    ],
+                    [
+                        "ImageFailureCodeImageTagDoesNotMatchDigest",
+                        []
+                    ],
+                    [
+                        "ImageFailureCodeImageNotFound",
+                        []
+                    ],
+                    [
+                        "ImageFailureCodeMissingDigestAndTag",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "ImageTagMutability",
+                "comment": " The ImageTagMutability data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "ImageTagMutabilityMutable",
+                        []
+                    ],
+                    [
+                        "ImageTagMutabilityImmutable",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "LayerAvailability",
+                "comment": " The LayerAvailability data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "LayerAvailabilityAvailable",
+                        []
+                    ],
+                    [
+                        "LayerAvailabilityUnavailable",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "LayerFailureCode",
+                "comment": " The LayerFailureCode data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "LayerFailureCodeInvalidLayerDigest",
+                        []
+                    ],
+                    [
+                        "LayerFailureCodeMissingLayerDigest",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "LifecyclePolicyPreviewStatus",
+                "comment": " The LifecyclePolicyPreviewStatus data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "LifecyclePolicyPreviewStatusInProgress",
+                        []
+                    ],
+                    [
+                        "LifecyclePolicyPreviewStatusComplete",
+                        []
+                    ],
+                    [
+                        "LifecyclePolicyPreviewStatusExpired",
+                        []
+                    ],
+                    [
+                        "LifecyclePolicyPreviewStatusFailed",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "TagStatus",
+                "comment": " The TagStatus data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "TagStatusTagged",
+                        []
+                    ],
+                    [
+                        "TagStatusUntagged",
+                        []
+                    ],
+                    [
+                        "TagStatusAny",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "AuthorizationData",
+                "comment": " The AuthorizationData data model.\n",
+                "args": [],
+                "type": "{ authorizationToken : Maybe.Maybe String.String, expiresAt : Maybe.Maybe String.String, proxyEndpoint : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "AuthorizationDataList",
+                "comment": " The AuthorizationDataList data model.\n",
+                "args": [],
+                "type": "List.List AWS.Ecr.AuthorizationData"
+            },
+            {
+                "name": "BatchCheckLayerAvailabilityRequest",
+                "comment": " The BatchCheckLayerAvailabilityRequest data model.\n",
+                "args": [],
+                "type": "{ layerDigests : AWS.Ecr.BatchedOperationLayerDigestList, registryId : Maybe.Maybe String.String, repositoryName : String.String }"
+            },
+            {
+                "name": "BatchCheckLayerAvailabilityResponse",
+                "comment": " The BatchCheckLayerAvailabilityResponse data model.\n",
+                "args": [],
+                "type": "{ failures : Maybe.Maybe AWS.Ecr.LayerFailureList, layers : Maybe.Maybe AWS.Ecr.LayerList }"
+            },
+            {
+                "name": "BatchDeleteImageRequest",
+                "comment": " The BatchDeleteImageRequest data model.\n",
+                "args": [],
+                "type": "{ imageIds : AWS.Ecr.ImageIdentifierList, registryId : Maybe.Maybe String.String, repositoryName : String.String }"
+            },
+            {
+                "name": "BatchDeleteImageResponse",
+                "comment": " The BatchDeleteImageResponse data model.\n",
+                "args": [],
+                "type": "{ failures : Maybe.Maybe AWS.Ecr.ImageFailureList, imageIds : Maybe.Maybe AWS.Ecr.ImageIdentifierList }"
+            },
+            {
+                "name": "BatchGetImageRequest",
+                "comment": " The BatchGetImageRequest data model.\n",
+                "args": [],
+                "type": "{ acceptedMediaTypes : Maybe.Maybe AWS.Ecr.MediaTypeList, imageIds : AWS.Ecr.ImageIdentifierList, registryId : Maybe.Maybe String.String, repositoryName : String.String }"
+            },
+            {
+                "name": "BatchGetImageResponse",
+                "comment": " The BatchGetImageResponse data model.\n",
+                "args": [],
+                "type": "{ failures : Maybe.Maybe AWS.Ecr.ImageFailureList, images : Maybe.Maybe AWS.Ecr.ImageList }"
+            },
+            {
+                "name": "BatchedOperationLayerDigestList",
+                "comment": " The BatchedOperationLayerDigestList data model.\n",
+                "args": [],
+                "type": "List.List String.String"
+            },
+            {
+                "name": "CompleteLayerUploadRequest",
+                "comment": " The CompleteLayerUploadRequest data model.\n",
+                "args": [],
+                "type": "{ layerDigests : AWS.Ecr.LayerDigestList, registryId : Maybe.Maybe String.String, repositoryName : String.String, uploadId : String.String }"
+            },
+            {
+                "name": "CompleteLayerUploadResponse",
+                "comment": " The CompleteLayerUploadResponse data model.\n",
+                "args": [],
+                "type": "{ layerDigest : Maybe.Maybe String.String, registryId : Maybe.Maybe String.String, repositoryName : Maybe.Maybe String.String, uploadId : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "CreateRepositoryRequest",
+                "comment": " The CreateRepositoryRequest data model.\n",
+                "args": [],
+                "type": "{ imageTagMutability : Maybe.Maybe AWS.Ecr.ImageTagMutability, repositoryName : String.String, tags : Maybe.Maybe AWS.Ecr.TagList }"
+            },
+            {
+                "name": "CreateRepositoryResponse",
+                "comment": " The CreateRepositoryResponse data model.\n",
+                "args": [],
+                "type": "{ repository : Maybe.Maybe AWS.Ecr.Repository }"
+            },
+            {
+                "name": "DeleteLifecyclePolicyRequest",
+                "comment": " The DeleteLifecyclePolicyRequest data model.\n",
+                "args": [],
+                "type": "{ registryId : Maybe.Maybe String.String, repositoryName : String.String }"
+            },
+            {
+                "name": "DeleteLifecyclePolicyResponse",
+                "comment": " The DeleteLifecyclePolicyResponse data model.\n",
+                "args": [],
+                "type": "{ lastEvaluatedAt : Maybe.Maybe String.String, lifecyclePolicyText : Maybe.Maybe String.String, registryId : Maybe.Maybe String.String, repositoryName : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "DeleteRepositoryPolicyRequest",
+                "comment": " The DeleteRepositoryPolicyRequest data model.\n",
+                "args": [],
+                "type": "{ registryId : Maybe.Maybe String.String, repositoryName : String.String }"
+            },
+            {
+                "name": "DeleteRepositoryPolicyResponse",
+                "comment": " The DeleteRepositoryPolicyResponse data model.\n",
+                "args": [],
+                "type": "{ policyText : Maybe.Maybe String.String, registryId : Maybe.Maybe String.String, repositoryName : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "DeleteRepositoryRequest",
+                "comment": " The DeleteRepositoryRequest data model.\n",
+                "args": [],
+                "type": "{ force : Maybe.Maybe Basics.Bool, registryId : Maybe.Maybe String.String, repositoryName : String.String }"
+            },
+            {
+                "name": "DeleteRepositoryResponse",
+                "comment": " The DeleteRepositoryResponse data model.\n",
+                "args": [],
+                "type": "{ repository : Maybe.Maybe AWS.Ecr.Repository }"
+            },
+            {
+                "name": "DescribeImagesFilter",
+                "comment": " The DescribeImagesFilter data model.\n",
+                "args": [],
+                "type": "{ tagStatus : Maybe.Maybe AWS.Ecr.TagStatus }"
+            },
+            {
+                "name": "DescribeImagesRequest",
+                "comment": " The DescribeImagesRequest data model.\n",
+                "args": [],
+                "type": "{ filter : Maybe.Maybe AWS.Ecr.DescribeImagesFilter, imageIds : Maybe.Maybe AWS.Ecr.ImageIdentifierList, maxResults : Maybe.Maybe Basics.Int, nextToken : Maybe.Maybe String.String, registryId : Maybe.Maybe String.String, repositoryName : String.String }"
+            },
+            {
+                "name": "DescribeImagesResponse",
+                "comment": " The DescribeImagesResponse data model.\n",
+                "args": [],
+                "type": "{ imageDetails : Maybe.Maybe AWS.Ecr.ImageDetailList, nextToken : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "DescribeRepositoriesRequest",
+                "comment": " The DescribeRepositoriesRequest data model.\n",
+                "args": [],
+                "type": "{ maxResults : Maybe.Maybe Basics.Int, nextToken : Maybe.Maybe String.String, registryId : Maybe.Maybe String.String, repositoryNames : Maybe.Maybe AWS.Ecr.RepositoryNameList }"
+            },
+            {
+                "name": "DescribeRepositoriesResponse",
+                "comment": " The DescribeRepositoriesResponse data model.\n",
+                "args": [],
+                "type": "{ nextToken : Maybe.Maybe String.String, repositories : Maybe.Maybe AWS.Ecr.RepositoryList }"
+            },
+            {
+                "name": "GetAuthorizationTokenRegistryIdList",
+                "comment": " The GetAuthorizationTokenRegistryIdList data model.\n",
+                "args": [],
+                "type": "List.List String.String"
+            },
+            {
+                "name": "GetAuthorizationTokenRequest",
+                "comment": " The GetAuthorizationTokenRequest data model.\n",
+                "args": [],
+                "type": "{ registryIds : Maybe.Maybe AWS.Ecr.GetAuthorizationTokenRegistryIdList }"
+            },
+            {
+                "name": "GetAuthorizationTokenResponse",
+                "comment": " The GetAuthorizationTokenResponse data model.\n",
+                "args": [],
+                "type": "{ authorizationData : Maybe.Maybe AWS.Ecr.AuthorizationDataList }"
+            },
+            {
+                "name": "GetDownloadUrlForLayerRequest",
+                "comment": " The GetDownloadUrlForLayerRequest data model.\n",
+                "args": [],
+                "type": "{ layerDigest : String.String, registryId : Maybe.Maybe String.String, repositoryName : String.String }"
+            },
+            {
+                "name": "GetDownloadUrlForLayerResponse",
+                "comment": " The GetDownloadUrlForLayerResponse data model.\n",
+                "args": [],
+                "type": "{ downloadUrl : Maybe.Maybe String.String, layerDigest : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "GetLifecyclePolicyPreviewRequest",
+                "comment": " The GetLifecyclePolicyPreviewRequest data model.\n",
+                "args": [],
+                "type": "{ filter : Maybe.Maybe AWS.Ecr.LifecyclePolicyPreviewFilter, imageIds : Maybe.Maybe AWS.Ecr.ImageIdentifierList, maxResults : Maybe.Maybe Basics.Int, nextToken : Maybe.Maybe String.String, registryId : Maybe.Maybe String.String, repositoryName : String.String }"
+            },
+            {
+                "name": "GetLifecyclePolicyPreviewResponse",
+                "comment": " The GetLifecyclePolicyPreviewResponse data model.\n",
+                "args": [],
+                "type": "{ lifecyclePolicyText : Maybe.Maybe String.String, nextToken : Maybe.Maybe String.String, previewResults : Maybe.Maybe AWS.Ecr.LifecyclePolicyPreviewResultList, registryId : Maybe.Maybe String.String, repositoryName : Maybe.Maybe String.String, status : Maybe.Maybe AWS.Ecr.LifecyclePolicyPreviewStatus, summary : Maybe.Maybe AWS.Ecr.LifecyclePolicyPreviewSummary }"
+            },
+            {
+                "name": "GetLifecyclePolicyRequest",
+                "comment": " The GetLifecyclePolicyRequest data model.\n",
+                "args": [],
+                "type": "{ registryId : Maybe.Maybe String.String, repositoryName : String.String }"
+            },
+            {
+                "name": "GetLifecyclePolicyResponse",
+                "comment": " The GetLifecyclePolicyResponse data model.\n",
+                "args": [],
+                "type": "{ lastEvaluatedAt : Maybe.Maybe String.String, lifecyclePolicyText : Maybe.Maybe String.String, registryId : Maybe.Maybe String.String, repositoryName : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "GetRepositoryPolicyRequest",
+                "comment": " The GetRepositoryPolicyRequest data model.\n",
+                "args": [],
+                "type": "{ registryId : Maybe.Maybe String.String, repositoryName : String.String }"
+            },
+            {
+                "name": "GetRepositoryPolicyResponse",
+                "comment": " The GetRepositoryPolicyResponse data model.\n",
+                "args": [],
+                "type": "{ policyText : Maybe.Maybe String.String, registryId : Maybe.Maybe String.String, repositoryName : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "Image",
+                "comment": " The Image data model.\n",
+                "args": [],
+                "type": "{ imageId : Maybe.Maybe AWS.Ecr.ImageIdentifier, imageManifest : Maybe.Maybe String.String, registryId : Maybe.Maybe String.String, repositoryName : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "ImageDetail",
+                "comment": " The ImageDetail data model.\n",
+                "args": [],
+                "type": "{ imageDigest : Maybe.Maybe String.String, imagePushedAt : Maybe.Maybe String.String, imageSizeInBytes : Maybe.Maybe Basics.Int, imageTags : Maybe.Maybe AWS.Ecr.ImageTagList, registryId : Maybe.Maybe String.String, repositoryName : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "ImageDetailList",
+                "comment": " The ImageDetailList data model.\n",
+                "args": [],
+                "type": "List.List AWS.Ecr.ImageDetail"
+            },
+            {
+                "name": "ImageFailure",
+                "comment": " The ImageFailure data model.\n",
+                "args": [],
+                "type": "{ failureCode : Maybe.Maybe AWS.Ecr.ImageFailureCode, failureReason : Maybe.Maybe String.String, imageId : Maybe.Maybe AWS.Ecr.ImageIdentifier }"
+            },
+            {
+                "name": "ImageFailureList",
+                "comment": " The ImageFailureList data model.\n",
+                "args": [],
+                "type": "List.List AWS.Ecr.ImageFailure"
+            },
+            {
+                "name": "ImageIdentifier",
+                "comment": " The ImageIdentifier data model.\n",
+                "args": [],
+                "type": "{ imageDigest : Maybe.Maybe String.String, imageTag : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "ImageIdentifierList",
+                "comment": " The ImageIdentifierList data model.\n",
+                "args": [],
+                "type": "List.List AWS.Ecr.ImageIdentifier"
+            },
+            {
+                "name": "ImageList",
+                "comment": " The ImageList data model.\n",
+                "args": [],
+                "type": "List.List AWS.Ecr.Image"
+            },
+            {
+                "name": "ImageTagList",
+                "comment": " The ImageTagList data model.\n",
+                "args": [],
+                "type": "List.List String.String"
+            },
+            {
+                "name": "InitiateLayerUploadRequest",
+                "comment": " The InitiateLayerUploadRequest data model.\n",
+                "args": [],
+                "type": "{ registryId : Maybe.Maybe String.String, repositoryName : String.String }"
+            },
+            {
+                "name": "InitiateLayerUploadResponse",
+                "comment": " The InitiateLayerUploadResponse data model.\n",
+                "args": [],
+                "type": "{ partSize : Maybe.Maybe Basics.Int, uploadId : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "Layer",
+                "comment": " The Layer data model.\n",
+                "args": [],
+                "type": "{ layerAvailability : Maybe.Maybe AWS.Ecr.LayerAvailability, layerDigest : Maybe.Maybe String.String, layerSize : Maybe.Maybe Basics.Int, mediaType : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "LayerDigestList",
+                "comment": " The LayerDigestList data model.\n",
+                "args": [],
+                "type": "List.List String.String"
+            },
+            {
+                "name": "LayerFailure",
+                "comment": " The LayerFailure data model.\n",
+                "args": [],
+                "type": "{ failureCode : Maybe.Maybe AWS.Ecr.LayerFailureCode, failureReason : Maybe.Maybe String.String, layerDigest : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "LayerFailureList",
+                "comment": " The LayerFailureList data model.\n",
+                "args": [],
+                "type": "List.List AWS.Ecr.LayerFailure"
+            },
+            {
+                "name": "LayerList",
+                "comment": " The LayerList data model.\n",
+                "args": [],
+                "type": "List.List AWS.Ecr.Layer"
+            },
+            {
+                "name": "LifecyclePolicyPreviewFilter",
+                "comment": " The LifecyclePolicyPreviewFilter data model.\n",
+                "args": [],
+                "type": "{ tagStatus : Maybe.Maybe AWS.Ecr.TagStatus }"
+            },
+            {
+                "name": "LifecyclePolicyPreviewResult",
+                "comment": " The LifecyclePolicyPreviewResult data model.\n",
+                "args": [],
+                "type": "{ action : Maybe.Maybe AWS.Ecr.LifecyclePolicyRuleAction, appliedRulePriority : Maybe.Maybe Basics.Int, imageDigest : Maybe.Maybe String.String, imagePushedAt : Maybe.Maybe String.String, imageTags : Maybe.Maybe AWS.Ecr.ImageTagList }"
+            },
+            {
+                "name": "LifecyclePolicyPreviewResultList",
+                "comment": " The LifecyclePolicyPreviewResultList data model.\n",
+                "args": [],
+                "type": "List.List AWS.Ecr.LifecyclePolicyPreviewResult"
+            },
+            {
+                "name": "LifecyclePolicyPreviewSummary",
+                "comment": " The LifecyclePolicyPreviewSummary data model.\n",
+                "args": [],
+                "type": "{ expiringImageTotalCount : Maybe.Maybe Basics.Int }"
+            },
+            {
+                "name": "LifecyclePolicyRuleAction",
+                "comment": " The LifecyclePolicyRuleAction data model.\n",
+                "args": [],
+                "type": "{ type_ : Maybe.Maybe AWS.Ecr.ImageActionType }"
+            },
+            {
+                "name": "ListImagesFilter",
+                "comment": " The ListImagesFilter data model.\n",
+                "args": [],
+                "type": "{ tagStatus : Maybe.Maybe AWS.Ecr.TagStatus }"
+            },
+            {
+                "name": "ListImagesRequest",
+                "comment": " The ListImagesRequest data model.\n",
+                "args": [],
+                "type": "{ filter : Maybe.Maybe AWS.Ecr.ListImagesFilter, maxResults : Maybe.Maybe Basics.Int, nextToken : Maybe.Maybe String.String, registryId : Maybe.Maybe String.String, repositoryName : String.String }"
+            },
+            {
+                "name": "ListImagesResponse",
+                "comment": " The ListImagesResponse data model.\n",
+                "args": [],
+                "type": "{ imageIds : Maybe.Maybe AWS.Ecr.ImageIdentifierList, nextToken : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "ListTagsForResourceRequest",
+                "comment": " The ListTagsForResourceRequest data model.\n",
+                "args": [],
+                "type": "{ resourceArn : String.String }"
+            },
+            {
+                "name": "ListTagsForResourceResponse",
+                "comment": " The ListTagsForResourceResponse data model.\n",
+                "args": [],
+                "type": "{ tags : Maybe.Maybe AWS.Ecr.TagList }"
+            },
+            {
+                "name": "MediaTypeList",
+                "comment": " The MediaTypeList data model.\n",
+                "args": [],
+                "type": "List.List String.String"
+            },
+            {
+                "name": "PutImageRequest",
+                "comment": " The PutImageRequest data model.\n",
+                "args": [],
+                "type": "{ imageManifest : String.String, imageTag : Maybe.Maybe String.String, registryId : Maybe.Maybe String.String, repositoryName : String.String }"
+            },
+            {
+                "name": "PutImageResponse",
+                "comment": " The PutImageResponse data model.\n",
+                "args": [],
+                "type": "{ image : Maybe.Maybe AWS.Ecr.Image }"
+            },
+            {
+                "name": "PutImageTagMutabilityRequest",
+                "comment": " The PutImageTagMutabilityRequest data model.\n",
+                "args": [],
+                "type": "{ imageTagMutability : AWS.Ecr.ImageTagMutability, registryId : Maybe.Maybe String.String, repositoryName : String.String }"
+            },
+            {
+                "name": "PutImageTagMutabilityResponse",
+                "comment": " The PutImageTagMutabilityResponse data model.\n",
+                "args": [],
+                "type": "{ imageTagMutability : Maybe.Maybe AWS.Ecr.ImageTagMutability, registryId : Maybe.Maybe String.String, repositoryName : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "PutLifecyclePolicyRequest",
+                "comment": " The PutLifecyclePolicyRequest data model.\n",
+                "args": [],
+                "type": "{ lifecyclePolicyText : String.String, registryId : Maybe.Maybe String.String, repositoryName : String.String }"
+            },
+            {
+                "name": "PutLifecyclePolicyResponse",
+                "comment": " The PutLifecyclePolicyResponse data model.\n",
+                "args": [],
+                "type": "{ lifecyclePolicyText : Maybe.Maybe String.String, registryId : Maybe.Maybe String.String, repositoryName : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "Repository",
+                "comment": " The Repository data model.\n",
+                "args": [],
+                "type": "{ createdAt : Maybe.Maybe String.String, imageTagMutability : Maybe.Maybe AWS.Ecr.ImageTagMutability, registryId : Maybe.Maybe String.String, repositoryArn : Maybe.Maybe String.String, repositoryName : Maybe.Maybe String.String, repositoryUri : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "RepositoryList",
+                "comment": " The RepositoryList data model.\n",
+                "args": [],
+                "type": "List.List AWS.Ecr.Repository"
+            },
+            {
+                "name": "RepositoryNameList",
+                "comment": " The RepositoryNameList data model.\n",
+                "args": [],
+                "type": "List.List String.String"
+            },
+            {
+                "name": "SetRepositoryPolicyRequest",
+                "comment": " The SetRepositoryPolicyRequest data model.\n",
+                "args": [],
+                "type": "{ force : Maybe.Maybe Basics.Bool, policyText : String.String, registryId : Maybe.Maybe String.String, repositoryName : String.String }"
+            },
+            {
+                "name": "SetRepositoryPolicyResponse",
+                "comment": " The SetRepositoryPolicyResponse data model.\n",
+                "args": [],
+                "type": "{ policyText : Maybe.Maybe String.String, registryId : Maybe.Maybe String.String, repositoryName : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "StartLifecyclePolicyPreviewRequest",
+                "comment": " The StartLifecyclePolicyPreviewRequest data model.\n",
+                "args": [],
+                "type": "{ lifecyclePolicyText : Maybe.Maybe String.String, registryId : Maybe.Maybe String.String, repositoryName : String.String }"
+            },
+            {
+                "name": "StartLifecyclePolicyPreviewResponse",
+                "comment": " The StartLifecyclePolicyPreviewResponse data model.\n",
+                "args": [],
+                "type": "{ lifecyclePolicyText : Maybe.Maybe String.String, registryId : Maybe.Maybe String.String, repositoryName : Maybe.Maybe String.String, status : Maybe.Maybe AWS.Ecr.LifecyclePolicyPreviewStatus }"
+            },
+            {
+                "name": "Tag",
+                "comment": " The Tag data model.\n",
+                "args": [],
+                "type": "{ key : Maybe.Maybe String.String, value : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "TagKeyList",
+                "comment": " The TagKeyList data model.\n",
+                "args": [],
+                "type": "List.List String.String"
+            },
+            {
+                "name": "TagList",
+                "comment": " The TagList data model.\n",
+                "args": [],
+                "type": "List.List AWS.Ecr.Tag"
+            },
+            {
+                "name": "TagResourceRequest",
+                "comment": " The TagResourceRequest data model.\n",
+                "args": [],
+                "type": "{ resourceArn : String.String, tags : AWS.Ecr.TagList }"
+            },
+            {
+                "name": "TagResourceResponse",
+                "comment": " The TagResourceResponse data model.\n",
+                "args": [],
+                "type": "{}"
+            },
+            {
+                "name": "UntagResourceRequest",
+                "comment": " The UntagResourceRequest data model.\n",
+                "args": [],
+                "type": "{ resourceArn : String.String, tagKeys : AWS.Ecr.TagKeyList }"
+            },
+            {
+                "name": "UntagResourceResponse",
+                "comment": " The UntagResourceResponse data model.\n",
+                "args": [],
+                "type": "{}"
+            },
+            {
+                "name": "UploadLayerPartRequest",
+                "comment": " The UploadLayerPartRequest data model.\n",
+                "args": [],
+                "type": "{ layerPartBlob : String.String, partFirstByte : Basics.Int, partLastByte : Basics.Int, registryId : Maybe.Maybe String.String, repositoryName : String.String, uploadId : String.String }"
+            },
+            {
+                "name": "UploadLayerPartResponse",
+                "comment": " The UploadLayerPartResponse data model.\n",
+                "args": [],
+                "type": "{ lastByteReceived : Maybe.Maybe Basics.Int, registryId : Maybe.Maybe String.String, repositoryName : Maybe.Maybe String.String, uploadId : Maybe.Maybe String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "batchCheckLayerAvailability",
+                "comment": " Check the availability of multiple image layers in a specified registry and repository.\n\nThis operation is used by the Amazon ECR proxy, and it is not intended for general use by customers for pulling and pushing images. In most cases, you should use the `docker` CLI to pull, tag, and push images.\n\n",
+                "type": "AWS.Ecr.BatchCheckLayerAvailabilityRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecr.BatchCheckLayerAvailabilityResponse"
+            },
+            {
+                "name": "batchDeleteImage",
+                "comment": " Deletes a list of specified images within a specified repository. Images are specified with either `imageTag` or `imageDigest`.\n\nYou can remove a tag from an image by specifying the image's tag in your request. When you remove the last tag from an image, the image is deleted from your repository.\n\nYou can completely delete an image (and all of its tags) by specifying the image's digest in your request.\n\n",
+                "type": "AWS.Ecr.BatchDeleteImageRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecr.BatchDeleteImageResponse"
+            },
+            {
+                "name": "batchGetImage",
+                "comment": " Gets detailed information for specified images within a specified repository. Images are specified with either `imageTag` or `imageDigest`.\n",
+                "type": "AWS.Ecr.BatchGetImageRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecr.BatchGetImageResponse"
+            },
+            {
+                "name": "completeLayerUpload",
+                "comment": " Informs Amazon ECR that the image layer upload has completed for a specified registry, repository name, and upload ID. You can optionally provide a `sha256` digest of the image layer for data validation purposes.\n\nThis operation is used by the Amazon ECR proxy, and it is not intended for general use by customers for pulling and pushing images. In most cases, you should use the `docker` CLI to pull, tag, and push images.\n\n",
+                "type": "AWS.Ecr.CompleteLayerUploadRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecr.CompleteLayerUploadResponse"
+            },
+            {
+                "name": "createRepository",
+                "comment": " Creates an image repository.\n",
+                "type": "AWS.Ecr.CreateRepositoryRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecr.CreateRepositoryResponse"
+            },
+            {
+                "name": "deleteLifecyclePolicy",
+                "comment": " Deletes the specified lifecycle policy.\n",
+                "type": "AWS.Ecr.DeleteLifecyclePolicyRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecr.DeleteLifecyclePolicyResponse"
+            },
+            {
+                "name": "deleteRepository",
+                "comment": " Deletes an existing image repository. If a repository contains images, you must use the `force` option to delete it.\n",
+                "type": "AWS.Ecr.DeleteRepositoryRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecr.DeleteRepositoryResponse"
+            },
+            {
+                "name": "deleteRepositoryPolicy",
+                "comment": " Deletes the repository policy from a specified repository.\n",
+                "type": "AWS.Ecr.DeleteRepositoryPolicyRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecr.DeleteRepositoryPolicyResponse"
+            },
+            {
+                "name": "describeImages",
+                "comment": " Returns metadata about the images in a repository, including image size, image tags, and creation date.\n\nBeginning with Docker version 1.9, the Docker client compresses image layers before pushing them to a V2 Docker registry. The output of the `docker images` command shows the uncompressed image size, so it may return a larger image size than the image sizes returned by `DescribeImages`.\n\n",
+                "type": "AWS.Ecr.DescribeImagesRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecr.DescribeImagesResponse"
+            },
+            {
+                "name": "describeRepositories",
+                "comment": " Describes image repositories in a registry.\n",
+                "type": "AWS.Ecr.DescribeRepositoriesRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecr.DescribeRepositoriesResponse"
+            },
+            {
+                "name": "getAuthorizationToken",
+                "comment": " Retrieves a token that is valid for a specified registry for 12 hours. This command allows you to use the `docker` CLI to push and pull images with Amazon ECR. If you do not specify a registry, the default registry is assumed.\n\nThe `authorizationToken` returned for each registry specified is a base64 encoded string that can be decoded and used in a `docker login` command to authenticate to a registry. The AWS CLI offers an `aws ecr get-login` command that simplifies the login process.\n\n",
+                "type": "AWS.Ecr.GetAuthorizationTokenRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecr.GetAuthorizationTokenResponse"
+            },
+            {
+                "name": "getDownloadUrlForLayer",
+                "comment": " Retrieves the pre-signed Amazon S3 download URL corresponding to an image layer. You can only get URLs for image layers that are referenced in an image.\n\nThis operation is used by the Amazon ECR proxy, and it is not intended for general use by customers for pulling and pushing images. In most cases, you should use the `docker` CLI to pull, tag, and push images.\n\n",
+                "type": "AWS.Ecr.GetDownloadUrlForLayerRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecr.GetDownloadUrlForLayerResponse"
+            },
+            {
+                "name": "getLifecyclePolicy",
+                "comment": " Retrieves the specified lifecycle policy.\n",
+                "type": "AWS.Ecr.GetLifecyclePolicyRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecr.GetLifecyclePolicyResponse"
+            },
+            {
+                "name": "getLifecyclePolicyPreview",
+                "comment": " Retrieves the results of the specified lifecycle policy preview request.\n",
+                "type": "AWS.Ecr.GetLifecyclePolicyPreviewRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecr.GetLifecyclePolicyPreviewResponse"
+            },
+            {
+                "name": "getRepositoryPolicy",
+                "comment": " Retrieves the repository policy for a specified repository.\n",
+                "type": "AWS.Ecr.GetRepositoryPolicyRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecr.GetRepositoryPolicyResponse"
+            },
+            {
+                "name": "imageActionType",
+                "comment": " The ImageActionType data model.\n",
+                "type": "Enum.Enum AWS.Ecr.ImageActionType"
+            },
+            {
+                "name": "imageFailureCode",
+                "comment": " The ImageFailureCode data model.\n",
+                "type": "Enum.Enum AWS.Ecr.ImageFailureCode"
+            },
+            {
+                "name": "imageTagMutability",
+                "comment": " The ImageTagMutability data model.\n",
+                "type": "Enum.Enum AWS.Ecr.ImageTagMutability"
+            },
+            {
+                "name": "initiateLayerUpload",
+                "comment": " Notify Amazon ECR that you intend to upload an image layer.\n\nThis operation is used by the Amazon ECR proxy, and it is not intended for general use by customers for pulling and pushing images. In most cases, you should use the `docker` CLI to pull, tag, and push images.\n\n",
+                "type": "AWS.Ecr.InitiateLayerUploadRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecr.InitiateLayerUploadResponse"
+            },
+            {
+                "name": "layerAvailability",
+                "comment": " The LayerAvailability data model.\n",
+                "type": "Enum.Enum AWS.Ecr.LayerAvailability"
+            },
+            {
+                "name": "layerFailureCode",
+                "comment": " The LayerFailureCode data model.\n",
+                "type": "Enum.Enum AWS.Ecr.LayerFailureCode"
+            },
+            {
+                "name": "lifecyclePolicyPreviewStatus",
+                "comment": " The LifecyclePolicyPreviewStatus data model.\n",
+                "type": "Enum.Enum AWS.Ecr.LifecyclePolicyPreviewStatus"
+            },
+            {
+                "name": "listImages",
+                "comment": " Lists all the image IDs for a given repository.\n\nYou can filter images based on whether or not they are tagged by setting the `tagStatus` parameter to `TAGGED` or `UNTAGGED`. For example, you can filter your results to return only `UNTAGGED` images and then pipe that result to a `BatchDeleteImage` operation to delete them. Or, you can filter your results to return only `TAGGED` images to list all of the tags in your repository.\n\n",
+                "type": "AWS.Ecr.ListImagesRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecr.ListImagesResponse"
+            },
+            {
+                "name": "listTagsForResource",
+                "comment": " List the tags for an Amazon ECR resource.\n",
+                "type": "AWS.Ecr.ListTagsForResourceRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecr.ListTagsForResourceResponse"
+            },
+            {
+                "name": "putImage",
+                "comment": " Creates or updates the image manifest and tags associated with an image.\n\nThis operation is used by the Amazon ECR proxy, and it is not intended for general use by customers for pulling and pushing images. In most cases, you should use the `docker` CLI to pull, tag, and push images.\n\n",
+                "type": "AWS.Ecr.PutImageRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecr.PutImageResponse"
+            },
+            {
+                "name": "putImageTagMutability",
+                "comment": " Updates the image tag mutability settings for a repository.\n",
+                "type": "AWS.Ecr.PutImageTagMutabilityRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecr.PutImageTagMutabilityResponse"
+            },
+            {
+                "name": "putLifecyclePolicy",
+                "comment": " Creates or updates a lifecycle policy. For information about lifecycle policy syntax, see `Lifecycle Policy Template`.\n",
+                "type": "AWS.Ecr.PutLifecyclePolicyRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecr.PutLifecyclePolicyResponse"
+            },
+            {
+                "name": "service",
+                "comment": " Configuration for this service.\n",
+                "type": "AWS.Config.Region -> AWS.Service.Service"
+            },
+            {
+                "name": "setRepositoryPolicy",
+                "comment": " Applies a repository policy on a specified repository to control access permissions. For more information, see `Amazon ECR Repository Policies` in the Amazon Elastic Container Registry User Guide.\n",
+                "type": "AWS.Ecr.SetRepositoryPolicyRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecr.SetRepositoryPolicyResponse"
+            },
+            {
+                "name": "startLifecyclePolicyPreview",
+                "comment": " Starts a preview of the specified lifecycle policy. This allows you to see the results before creating the lifecycle policy.\n",
+                "type": "AWS.Ecr.StartLifecyclePolicyPreviewRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecr.StartLifecyclePolicyPreviewResponse"
+            },
+            {
+                "name": "tagResource",
+                "comment": " Adds specified tags to a resource with the specified ARN. Existing tags on a resource are not changed if they are not specified in the request parameters.\n",
+                "type": "AWS.Ecr.TagResourceRequest -> AWS.Http.Request AWS.Http.AWSAppError ()"
+            },
+            {
+                "name": "tagStatus",
+                "comment": " The TagStatus data model.\n",
+                "type": "Enum.Enum AWS.Ecr.TagStatus"
+            },
+            {
+                "name": "untagResource",
+                "comment": " Deletes specified tags from a resource.\n",
+                "type": "AWS.Ecr.UntagResourceRequest -> AWS.Http.Request AWS.Http.AWSAppError ()"
+            },
+            {
+                "name": "uploadLayerPart",
+                "comment": " Uploads an image layer part to Amazon ECR.\n\nThis operation is used by the Amazon ECR proxy, and it is not intended for general use by customers for pulling and pushing images. In most cases, you should use the `docker` CLI to pull, tag, and push images.\n\n",
+                "type": "AWS.Ecr.UploadLayerPartRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecr.UploadLayerPartResponse"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "AWS.Ecs",
+        "comment": "\n\n\n## Amazon Elastic Container Service\n\nAmazon Elastic Container Service (Amazon ECS) is a highly scalable, fast, container management service that makes it easy to run, stop, and manage Docker containers on a cluster. You can host your cluster on a serverless infrastructure that is managed by Amazon ECS by launching your services or tasks using the Fargate launch type. For more control, you can host your tasks on a cluster of Amazon Elastic Compute Cloud (Amazon EC2) instances that you manage by using the EC2 launch type. For more information about launch types, see `Amazon ECS Launch Types`.\n\nAmazon ECS lets you launch and stop container-based applications with simple API calls, allows you to get the state of your cluster from a centralized service, and gives you access to many familiar Amazon EC2 features.\n\nYou can use Amazon ECS to schedule the placement of containers across your cluster based on your resource needs, isolation policies, and availability requirements. Amazon ECS eliminates the need for you to operate your own cluster management and configuration management systems or worry about scaling your management infrastructure.\n\n\n# Service definition.\n\n@docs service\n\n\n# Service endpoints.\n\n@docs createCluster, createService, createTaskSet, deleteAccountSetting, deleteAttributes, deleteCluster, deleteService, deleteTaskSet\n@docs deregisterContainerInstance, deregisterTaskDefinition, describeClusters, describeContainerInstances, describeServices\n@docs describeTaskDefinition, describeTaskSets, describeTasks, discoverPollEndpoint, listAccountSettings, listAttributes, listClusters\n@docs listContainerInstances, listServices, listTagsForResource, listTaskDefinitionFamilies, listTaskDefinitions, listTasks\n@docs putAccountSetting, putAccountSettingDefault, putAttributes, registerContainerInstance, registerTaskDefinition, runTask, startTask\n@docs stopTask, submitAttachmentStateChanges, submitContainerStateChange, submitTaskStateChange, tagResource, untagResource\n@docs updateContainerAgent, updateContainerInstancesState, updateService, updateServicePrimaryTaskSet, updateTaskSet\n\n\n# API data model.\n\n@docs AgentUpdateStatus, AssignPublicIp, Attachment, AttachmentDetails, AttachmentStateChange, AttachmentStateChanges, Attachments\n@docs Attribute, Attributes, AwsVpcConfiguration, Cluster, ClusterField, ClusterFieldList, ClusterSetting, ClusterSettingName, ClusterSettings\n@docs Clusters, Compatibility, CompatibilityList, Connectivity, Container, ContainerCondition, ContainerDefinition, ContainerDefinitions\n@docs ContainerDependencies, ContainerDependency, ContainerInstance, ContainerInstanceField, ContainerInstanceFieldList\n@docs ContainerInstanceStatus, ContainerInstances, ContainerOverride, ContainerOverrides, ContainerStateChange, ContainerStateChanges\n@docs Containers, CreateClusterRequest, CreateClusterResponse, CreateServiceRequest, CreateServiceResponse, CreateTaskSetRequest\n@docs CreateTaskSetResponse, DeleteAccountSettingRequest, DeleteAccountSettingResponse, DeleteAttributesRequest\n@docs DeleteAttributesResponse, DeleteClusterRequest, DeleteClusterResponse, DeleteServiceRequest, DeleteServiceResponse\n@docs DeleteTaskSetRequest, DeleteTaskSetResponse, Deployment, DeploymentConfiguration, DeploymentController, DeploymentControllerType\n@docs Deployments, DeregisterContainerInstanceRequest, DeregisterContainerInstanceResponse, DeregisterTaskDefinitionRequest\n@docs DeregisterTaskDefinitionResponse, DescribeClustersRequest, DescribeClustersResponse, DescribeContainerInstancesRequest\n@docs DescribeContainerInstancesResponse, DescribeServicesRequest, DescribeServicesResponse, DescribeTaskDefinitionRequest\n@docs DescribeTaskDefinitionResponse, DescribeTaskSetsRequest, DescribeTaskSetsResponse, DescribeTasksRequest, DescribeTasksResponse\n@docs DesiredStatus, Device, DeviceCgroupPermission, DeviceCgroupPermissions, DevicesList, DiscoverPollEndpointRequest\n@docs DiscoverPollEndpointResponse, DockerLabelsMap, DockerVolumeConfiguration, EnvironmentVariables, Failure, Failures, GpuIds, HealthCheck\n@docs HealthStatus, HostEntry, HostEntryList, HostVolumeProperties, IpcMode, KernelCapabilities, KeyValuePair, LaunchType, LinuxParameters\n@docs ListAccountSettingsRequest, ListAccountSettingsResponse, ListAttributesRequest, ListAttributesResponse, ListClustersRequest\n@docs ListClustersResponse, ListContainerInstancesRequest, ListContainerInstancesResponse, ListServicesRequest, ListServicesResponse\n@docs ListTagsForResourceRequest, ListTagsForResourceResponse, ListTaskDefinitionFamiliesRequest, ListTaskDefinitionFamiliesResponse\n@docs ListTaskDefinitionsRequest, ListTaskDefinitionsResponse, ListTasksRequest, ListTasksResponse, LoadBalancer, LoadBalancers\n@docs LogConfiguration, LogConfigurationOptionsMap, LogDriver, MountPoint, MountPointList, NetworkBinding, NetworkBindings\n@docs NetworkConfiguration, NetworkInterface, NetworkInterfaces, NetworkMode, PidMode, PlacementConstraint, PlacementConstraintType\n@docs PlacementConstraints, PlacementStrategies, PlacementStrategy, PlacementStrategyType, PlatformDevice, PlatformDeviceType\n@docs PlatformDevices, PortMapping, PortMappingList, PropagateTags, ProxyConfiguration, ProxyConfigurationProperties\n@docs ProxyConfigurationType, PutAccountSettingDefaultRequest, PutAccountSettingDefaultResponse, PutAccountSettingRequest\n@docs PutAccountSettingResponse, PutAttributesRequest, PutAttributesResponse, RegisterContainerInstanceRequest\n@docs RegisterContainerInstanceResponse, RegisterTaskDefinitionRequest, RegisterTaskDefinitionResponse, RepositoryCredentials\n@docs RequiresAttributes, Resource, ResourceRequirement, ResourceRequirements, ResourceType, Resources, RunTaskRequest, RunTaskResponse, Scale\n@docs ScaleUnit, SchedulingStrategy, Scope, Secret, SecretList, Service, ServiceEvent, ServiceEvents, ServiceField, ServiceFieldList\n@docs ServiceRegistries, ServiceRegistry, Services, Setting, SettingName, Settings, SortOrder, StabilityStatus, StartTaskRequest\n@docs StartTaskResponse, Statistics, StopTaskRequest, StopTaskResponse, StringList, StringMap, SubmitAttachmentStateChangesRequest\n@docs SubmitAttachmentStateChangesResponse, SubmitContainerStateChangeRequest, SubmitContainerStateChangeResponse\n@docs SubmitTaskStateChangeRequest, SubmitTaskStateChangeResponse, SystemControl, SystemControls, Tag, TagKeys, TagResourceRequest\n@docs TagResourceResponse, Tags, TargetType, Task, TaskDefinition, TaskDefinitionFamilyStatus, TaskDefinitionField, TaskDefinitionFieldList\n@docs TaskDefinitionPlacementConstraint, TaskDefinitionPlacementConstraintType, TaskDefinitionPlacementConstraints\n@docs TaskDefinitionStatus, TaskField, TaskFieldList, TaskOverride, TaskSet, TaskSets, TaskStopCode, Tasks, Tmpfs, TmpfsList, TransportProtocol\n@docs Ulimit, UlimitList, UlimitName, UntagResourceRequest, UntagResourceResponse, UpdateContainerAgentRequest\n@docs UpdateContainerAgentResponse, UpdateContainerInstancesStateRequest, UpdateContainerInstancesStateResponse\n@docs UpdateServicePrimaryTaskSetRequest, UpdateServicePrimaryTaskSetResponse, UpdateServiceRequest, UpdateServiceResponse\n@docs UpdateTaskSetRequest, UpdateTaskSetResponse, VersionInfo, Volume, VolumeFrom, VolumeFromList, VolumeList, agentUpdateStatus\n@docs assignPublicIp, clusterField, clusterSettingName, compatibility, connectivity, containerCondition, containerInstanceField\n@docs containerInstanceStatus, deploymentControllerType, desiredStatus, deviceCgroupPermission, healthStatus, ipcMode, launchType, logDriver\n@docs networkMode, pidMode, placementConstraintType, placementStrategyType, platformDeviceType, propagateTags, proxyConfigurationType\n@docs resourceType, scaleUnit, schedulingStrategy, scope, serviceField, settingName, sortOrder, stabilityStatus, targetType\n@docs taskDefinitionFamilyStatus, taskDefinitionField, taskDefinitionPlacementConstraintType, taskDefinitionStatus, taskField\n@docs taskStopCode, transportProtocol, ulimitName\n\n",
+        "unions": [
+            {
+                "name": "AgentUpdateStatus",
+                "comment": " The AgentUpdateStatus data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "AgentUpdateStatusPending",
+                        []
+                    ],
+                    [
+                        "AgentUpdateStatusStaging",
+                        []
+                    ],
+                    [
+                        "AgentUpdateStatusStaged",
+                        []
+                    ],
+                    [
+                        "AgentUpdateStatusUpdating",
+                        []
+                    ],
+                    [
+                        "AgentUpdateStatusUpdated",
+                        []
+                    ],
+                    [
+                        "AgentUpdateStatusFailed",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "AssignPublicIp",
+                "comment": " The AssignPublicIp data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "AssignPublicIpEnabled",
+                        []
+                    ],
+                    [
+                        "AssignPublicIpDisabled",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "ClusterField",
+                "comment": " The ClusterField data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "ClusterFieldStatistics",
+                        []
+                    ],
+                    [
+                        "ClusterFieldTags",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "ClusterSettingName",
+                "comment": " The ClusterSettingName data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "ClusterSettingNameContainerInsights",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Compatibility",
+                "comment": " The Compatibility data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "CompatibilityEc2",
+                        []
+                    ],
+                    [
+                        "CompatibilityFargate",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Connectivity",
+                "comment": " The Connectivity data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "ConnectivityConnected",
+                        []
+                    ],
+                    [
+                        "ConnectivityDisconnected",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "ContainerCondition",
+                "comment": " The ContainerCondition data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "ContainerConditionStart",
+                        []
+                    ],
+                    [
+                        "ContainerConditionComplete",
+                        []
+                    ],
+                    [
+                        "ContainerConditionSuccess",
+                        []
+                    ],
+                    [
+                        "ContainerConditionHealthy",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "ContainerInstanceField",
+                "comment": " The ContainerInstanceField data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "ContainerInstanceFieldTags",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "ContainerInstanceStatus",
+                "comment": " The ContainerInstanceStatus data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "ContainerInstanceStatusActive",
+                        []
+                    ],
+                    [
+                        "ContainerInstanceStatusDraining",
+                        []
+                    ],
+                    [
+                        "ContainerInstanceStatusRegistering",
+                        []
+                    ],
+                    [
+                        "ContainerInstanceStatusDeregistering",
+                        []
+                    ],
+                    [
+                        "ContainerInstanceStatusRegistrationFailed",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "DeploymentControllerType",
+                "comment": " The DeploymentControllerType data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "DeploymentControllerTypeEcs",
+                        []
+                    ],
+                    [
+                        "DeploymentControllerTypeCodeDeploy",
+                        []
+                    ],
+                    [
+                        "DeploymentControllerTypeExternal",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "DesiredStatus",
+                "comment": " The DesiredStatus data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "DesiredStatusRunning",
+                        []
+                    ],
+                    [
+                        "DesiredStatusPending",
+                        []
+                    ],
+                    [
+                        "DesiredStatusStopped",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "DeviceCgroupPermission",
+                "comment": " The DeviceCgroupPermission data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "DeviceCgroupPermissionRead",
+                        []
+                    ],
+                    [
+                        "DeviceCgroupPermissionWrite",
+                        []
+                    ],
+                    [
+                        "DeviceCgroupPermissionMknod",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "HealthStatus",
+                "comment": " The HealthStatus data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "HealthStatusHealthy",
+                        []
+                    ],
+                    [
+                        "HealthStatusUnhealthy",
+                        []
+                    ],
+                    [
+                        "HealthStatusUnknown",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "IpcMode",
+                "comment": " The IpcMode data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "IpcModeHost",
+                        []
+                    ],
+                    [
+                        "IpcModeTask",
+                        []
+                    ],
+                    [
+                        "IpcModeNone",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "LaunchType",
+                "comment": " The LaunchType data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "LaunchTypeEc2",
+                        []
+                    ],
+                    [
+                        "LaunchTypeFargate",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "LogDriver",
+                "comment": " The LogDriver data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "LogDriverJsonFile",
+                        []
+                    ],
+                    [
+                        "LogDriverSyslog",
+                        []
+                    ],
+                    [
+                        "LogDriverJournald",
+                        []
+                    ],
+                    [
+                        "LogDriverGelf",
+                        []
+                    ],
+                    [
+                        "LogDriverFluentd",
+                        []
+                    ],
+                    [
+                        "LogDriverAwslogs",
+                        []
+                    ],
+                    [
+                        "LogDriverSplunk",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "NetworkMode",
+                "comment": " The NetworkMode data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NetworkModeBridge",
+                        []
+                    ],
+                    [
+                        "NetworkModeHost",
+                        []
+                    ],
+                    [
+                        "NetworkModeAwsvpc",
+                        []
+                    ],
+                    [
+                        "NetworkModeNone",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "PidMode",
+                "comment": " The PidMode data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "PidModeHost",
+                        []
+                    ],
+                    [
+                        "PidModeTask",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "PlacementConstraintType",
+                "comment": " The PlacementConstraintType data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "PlacementConstraintTypeDistinctInstance",
+                        []
+                    ],
+                    [
+                        "PlacementConstraintTypeMemberOf",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "PlacementStrategyType",
+                "comment": " The PlacementStrategyType data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "PlacementStrategyTypeRandom",
+                        []
+                    ],
+                    [
+                        "PlacementStrategyTypeSpread",
+                        []
+                    ],
+                    [
+                        "PlacementStrategyTypeBinpack",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "PlatformDeviceType",
+                "comment": " The PlatformDeviceType data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "PlatformDeviceTypeGpu",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "PropagateTags",
+                "comment": " The PropagateTags data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "PropagateTagsTaskDefinition",
+                        []
+                    ],
+                    [
+                        "PropagateTagsService",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "ProxyConfigurationType",
+                "comment": " The ProxyConfigurationType data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "ProxyConfigurationTypeAppmesh",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "ResourceType",
+                "comment": " The ResourceType data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "ResourceTypeGpu",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "ScaleUnit",
+                "comment": " The ScaleUnit data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "ScaleUnitPercent",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "SchedulingStrategy",
+                "comment": " The SchedulingStrategy data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "SchedulingStrategyReplica",
+                        []
+                    ],
+                    [
+                        "SchedulingStrategyDaemon",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Scope",
+                "comment": " The Scope data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "ScopeTask",
+                        []
+                    ],
+                    [
+                        "ScopeShared",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "ServiceField",
+                "comment": " The ServiceField data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "ServiceFieldTags",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "SettingName",
+                "comment": " The SettingName data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "SettingNameServiceLongArnFormat",
+                        []
+                    ],
+                    [
+                        "SettingNameTaskLongArnFormat",
+                        []
+                    ],
+                    [
+                        "SettingNameContainerInstanceLongArnFormat",
+                        []
+                    ],
+                    [
+                        "SettingNameAwsvpcTrunking",
+                        []
+                    ],
+                    [
+                        "SettingNameContainerInsights",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "SortOrder",
+                "comment": " The SortOrder data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "SortOrderAsc",
+                        []
+                    ],
+                    [
+                        "SortOrderDesc",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "StabilityStatus",
+                "comment": " The StabilityStatus data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "StabilityStatusSteadyState",
+                        []
+                    ],
+                    [
+                        "StabilityStatusStabilizing",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "TargetType",
+                "comment": " The TargetType data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "TargetTypeContainerInstance",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "TaskDefinitionFamilyStatus",
+                "comment": " The TaskDefinitionFamilyStatus data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "TaskDefinitionFamilyStatusActive",
+                        []
+                    ],
+                    [
+                        "TaskDefinitionFamilyStatusInactive",
+                        []
+                    ],
+                    [
+                        "TaskDefinitionFamilyStatusAll",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "TaskDefinitionField",
+                "comment": " The TaskDefinitionField data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "TaskDefinitionFieldTags",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "TaskDefinitionPlacementConstraintType",
+                "comment": " The TaskDefinitionPlacementConstraintType data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "TaskDefinitionPlacementConstraintTypeMemberOf",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "TaskDefinitionStatus",
+                "comment": " The TaskDefinitionStatus data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "TaskDefinitionStatusActive",
+                        []
+                    ],
+                    [
+                        "TaskDefinitionStatusInactive",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "TaskField",
+                "comment": " The TaskField data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "TaskFieldTags",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "TaskStopCode",
+                "comment": " The TaskStopCode data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "TaskStopCodeTaskFailedToStart",
+                        []
+                    ],
+                    [
+                        "TaskStopCodeEssentialContainerExited",
+                        []
+                    ],
+                    [
+                        "TaskStopCodeUserInitiated",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "TransportProtocol",
+                "comment": " The TransportProtocol data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "TransportProtocolTcp",
+                        []
+                    ],
+                    [
+                        "TransportProtocolUdp",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "UlimitName",
+                "comment": " The UlimitName data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "UlimitNameCore",
+                        []
+                    ],
+                    [
+                        "UlimitNameCpu",
+                        []
+                    ],
+                    [
+                        "UlimitNameData",
+                        []
+                    ],
+                    [
+                        "UlimitNameFsize",
+                        []
+                    ],
+                    [
+                        "UlimitNameLocks",
+                        []
+                    ],
+                    [
+                        "UlimitNameMemlock",
+                        []
+                    ],
+                    [
+                        "UlimitNameMsgqueue",
+                        []
+                    ],
+                    [
+                        "UlimitNameNice",
+                        []
+                    ],
+                    [
+                        "UlimitNameNofile",
+                        []
+                    ],
+                    [
+                        "UlimitNameNproc",
+                        []
+                    ],
+                    [
+                        "UlimitNameRss",
+                        []
+                    ],
+                    [
+                        "UlimitNameRtprio",
+                        []
+                    ],
+                    [
+                        "UlimitNameRttime",
+                        []
+                    ],
+                    [
+                        "UlimitNameSigpending",
+                        []
+                    ],
+                    [
+                        "UlimitNameStack",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Attachment",
+                "comment": " The Attachment data model.\n",
+                "args": [],
+                "type": "{ details : Maybe.Maybe AWS.Ecs.AttachmentDetails, id : Maybe.Maybe String.String, status : Maybe.Maybe String.String, type_ : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "AttachmentDetails",
+                "comment": " The AttachmentDetails data model.\n",
+                "args": [],
+                "type": "List.List AWS.Ecs.KeyValuePair"
+            },
+            {
+                "name": "AttachmentStateChange",
+                "comment": " The AttachmentStateChange data model.\n",
+                "args": [],
+                "type": "{ attachmentArn : String.String, status : String.String }"
+            },
+            {
+                "name": "AttachmentStateChanges",
+                "comment": " The AttachmentStateChanges data model.\n",
+                "args": [],
+                "type": "List.List AWS.Ecs.AttachmentStateChange"
+            },
+            {
+                "name": "Attachments",
+                "comment": " The Attachments data model.\n",
+                "args": [],
+                "type": "List.List AWS.Ecs.Attachment"
+            },
+            {
+                "name": "Attribute",
+                "comment": " The Attribute data model.\n",
+                "args": [],
+                "type": "{ name : String.String, targetId : Maybe.Maybe String.String, targetType : Maybe.Maybe AWS.Ecs.TargetType, value : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "Attributes",
+                "comment": " The Attributes data model.\n",
+                "args": [],
+                "type": "List.List AWS.Ecs.Attribute"
+            },
+            {
+                "name": "AwsVpcConfiguration",
+                "comment": " The AwsVpcConfiguration data model.\n",
+                "args": [],
+                "type": "{ assignPublicIp : Maybe.Maybe AWS.Ecs.AssignPublicIp, securityGroups : Maybe.Maybe AWS.Ecs.StringList, subnets : AWS.Ecs.StringList }"
+            },
+            {
+                "name": "Cluster",
+                "comment": " The Cluster data model.\n",
+                "args": [],
+                "type": "{ activeServicesCount : Maybe.Maybe Basics.Int, clusterArn : Maybe.Maybe String.String, clusterName : Maybe.Maybe String.String, pendingTasksCount : Maybe.Maybe Basics.Int, registeredContainerInstancesCount : Maybe.Maybe Basics.Int, runningTasksCount : Maybe.Maybe Basics.Int, settings : Maybe.Maybe AWS.Ecs.ClusterSettings, statistics : Maybe.Maybe AWS.Ecs.Statistics, status : Maybe.Maybe String.String, tags : Maybe.Maybe AWS.Ecs.Tags }"
+            },
+            {
+                "name": "ClusterFieldList",
+                "comment": " The ClusterFieldList data model.\n",
+                "args": [],
+                "type": "List.List AWS.Ecs.ClusterField"
+            },
+            {
+                "name": "ClusterSetting",
+                "comment": " The ClusterSetting data model.\n",
+                "args": [],
+                "type": "{ name : Maybe.Maybe AWS.Ecs.ClusterSettingName, value : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "ClusterSettings",
+                "comment": " The ClusterSettings data model.\n",
+                "args": [],
+                "type": "List.List AWS.Ecs.ClusterSetting"
+            },
+            {
+                "name": "Clusters",
+                "comment": " The Clusters data model.\n",
+                "args": [],
+                "type": "List.List AWS.Ecs.Cluster"
+            },
+            {
+                "name": "CompatibilityList",
+                "comment": " The CompatibilityList data model.\n",
+                "args": [],
+                "type": "List.List AWS.Ecs.Compatibility"
+            },
+            {
+                "name": "Container",
+                "comment": " The Container data model.\n",
+                "args": [],
+                "type": "{ containerArn : Maybe.Maybe String.String, cpu : Maybe.Maybe String.String, exitCode : Maybe.Maybe Basics.Int, gpuIds : Maybe.Maybe AWS.Ecs.GpuIds, healthStatus : Maybe.Maybe AWS.Ecs.HealthStatus, lastStatus : Maybe.Maybe String.String, memory : Maybe.Maybe String.String, memoryReservation : Maybe.Maybe String.String, name : Maybe.Maybe String.String, networkBindings : Maybe.Maybe AWS.Ecs.NetworkBindings, networkInterfaces : Maybe.Maybe AWS.Ecs.NetworkInterfaces, reason : Maybe.Maybe String.String, taskArn : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "ContainerDefinition",
+                "comment": " The ContainerDefinition data model.\n",
+                "args": [],
+                "type": "{ command : Maybe.Maybe AWS.Ecs.StringList, cpu : Maybe.Maybe Basics.Int, dependsOn : Maybe.Maybe AWS.Ecs.ContainerDependencies, disableNetworking : Maybe.Maybe Basics.Bool, dnsSearchDomains : Maybe.Maybe AWS.Ecs.StringList, dnsServers : Maybe.Maybe AWS.Ecs.StringList, dockerLabels : Maybe.Maybe AWS.Ecs.DockerLabelsMap, dockerSecurityOptions : Maybe.Maybe AWS.Ecs.StringList, entryPoint : Maybe.Maybe AWS.Ecs.StringList, environment : Maybe.Maybe AWS.Ecs.EnvironmentVariables, essential : Maybe.Maybe Basics.Bool, extraHosts : Maybe.Maybe AWS.Ecs.HostEntryList, healthCheck : Maybe.Maybe AWS.Ecs.HealthCheck, hostname : Maybe.Maybe String.String, image : Maybe.Maybe String.String, interactive : Maybe.Maybe Basics.Bool, links : Maybe.Maybe AWS.Ecs.StringList, linuxParameters : Maybe.Maybe AWS.Ecs.LinuxParameters, logConfiguration : Maybe.Maybe AWS.Ecs.LogConfiguration, memory : Maybe.Maybe Basics.Int, memoryReservation : Maybe.Maybe Basics.Int, mountPoints : Maybe.Maybe AWS.Ecs.MountPointList, name : Maybe.Maybe String.String, portMappings : Maybe.Maybe AWS.Ecs.PortMappingList, privileged : Maybe.Maybe Basics.Bool, pseudoTerminal : Maybe.Maybe Basics.Bool, readonlyRootFilesystem : Maybe.Maybe Basics.Bool, repositoryCredentials : Maybe.Maybe AWS.Ecs.RepositoryCredentials, resourceRequirements : Maybe.Maybe AWS.Ecs.ResourceRequirements, secrets : Maybe.Maybe AWS.Ecs.SecretList, startTimeout : Maybe.Maybe Basics.Int, stopTimeout : Maybe.Maybe Basics.Int, systemControls : Maybe.Maybe AWS.Ecs.SystemControls, ulimits : Maybe.Maybe AWS.Ecs.UlimitList, user : Maybe.Maybe String.String, volumesFrom : Maybe.Maybe AWS.Ecs.VolumeFromList, workingDirectory : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "ContainerDefinitions",
+                "comment": " The ContainerDefinitions data model.\n",
+                "args": [],
+                "type": "List.List AWS.Ecs.ContainerDefinition"
+            },
+            {
+                "name": "ContainerDependencies",
+                "comment": " The ContainerDependencies data model.\n",
+                "args": [],
+                "type": "List.List AWS.Ecs.ContainerDependency"
+            },
+            {
+                "name": "ContainerDependency",
+                "comment": " The ContainerDependency data model.\n",
+                "args": [],
+                "type": "{ condition : AWS.Ecs.ContainerCondition, containerName : String.String }"
+            },
+            {
+                "name": "ContainerInstance",
+                "comment": " The ContainerInstance data model.\n",
+                "args": [],
+                "type": "{ agentConnected : Maybe.Maybe Basics.Bool, agentUpdateStatus : Maybe.Maybe AWS.Ecs.AgentUpdateStatus, attachments : Maybe.Maybe AWS.Ecs.Attachments, attributes : Maybe.Maybe AWS.Ecs.Attributes, containerInstanceArn : Maybe.Maybe String.String, ec2InstanceId : Maybe.Maybe String.String, pendingTasksCount : Maybe.Maybe Basics.Int, registeredAt : Maybe.Maybe String.String, registeredResources : Maybe.Maybe AWS.Ecs.Resources, remainingResources : Maybe.Maybe AWS.Ecs.Resources, runningTasksCount : Maybe.Maybe Basics.Int, status : Maybe.Maybe String.String, statusReason : Maybe.Maybe String.String, tags : Maybe.Maybe AWS.Ecs.Tags, version : Maybe.Maybe Basics.Int, versionInfo : Maybe.Maybe AWS.Ecs.VersionInfo }"
+            },
+            {
+                "name": "ContainerInstanceFieldList",
+                "comment": " The ContainerInstanceFieldList data model.\n",
+                "args": [],
+                "type": "List.List AWS.Ecs.ContainerInstanceField"
+            },
+            {
+                "name": "ContainerInstances",
+                "comment": " The ContainerInstances data model.\n",
+                "args": [],
+                "type": "List.List AWS.Ecs.ContainerInstance"
+            },
+            {
+                "name": "ContainerOverride",
+                "comment": " The ContainerOverride data model.\n",
+                "args": [],
+                "type": "{ command : Maybe.Maybe AWS.Ecs.StringList, cpu : Maybe.Maybe Basics.Int, environment : Maybe.Maybe AWS.Ecs.EnvironmentVariables, memory : Maybe.Maybe Basics.Int, memoryReservation : Maybe.Maybe Basics.Int, name : Maybe.Maybe String.String, resourceRequirements : Maybe.Maybe AWS.Ecs.ResourceRequirements }"
+            },
+            {
+                "name": "ContainerOverrides",
+                "comment": " The ContainerOverrides data model.\n",
+                "args": [],
+                "type": "List.List AWS.Ecs.ContainerOverride"
+            },
+            {
+                "name": "ContainerStateChange",
+                "comment": " The ContainerStateChange data model.\n",
+                "args": [],
+                "type": "{ containerName : Maybe.Maybe String.String, exitCode : Maybe.Maybe Basics.Int, networkBindings : Maybe.Maybe AWS.Ecs.NetworkBindings, reason : Maybe.Maybe String.String, status : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "ContainerStateChanges",
+                "comment": " The ContainerStateChanges data model.\n",
+                "args": [],
+                "type": "List.List AWS.Ecs.ContainerStateChange"
+            },
+            {
+                "name": "Containers",
+                "comment": " The Containers data model.\n",
+                "args": [],
+                "type": "List.List AWS.Ecs.Container"
+            },
+            {
+                "name": "CreateClusterRequest",
+                "comment": " The CreateClusterRequest data model.\n",
+                "args": [],
+                "type": "{ clusterName : Maybe.Maybe String.String, settings : Maybe.Maybe AWS.Ecs.ClusterSettings, tags : Maybe.Maybe AWS.Ecs.Tags }"
+            },
+            {
+                "name": "CreateClusterResponse",
+                "comment": " The CreateClusterResponse data model.\n",
+                "args": [],
+                "type": "{ cluster : Maybe.Maybe AWS.Ecs.Cluster }"
+            },
+            {
+                "name": "CreateServiceRequest",
+                "comment": " The CreateServiceRequest data model.\n",
+                "args": [],
+                "type": "{ clientToken : Maybe.Maybe String.String, cluster : Maybe.Maybe String.String, deploymentConfiguration : Maybe.Maybe AWS.Ecs.DeploymentConfiguration, deploymentController : Maybe.Maybe AWS.Ecs.DeploymentController, desiredCount : Maybe.Maybe Basics.Int, enableEcsmanagedTags : Maybe.Maybe Basics.Bool, healthCheckGracePeriodSeconds : Maybe.Maybe Basics.Int, launchType : Maybe.Maybe AWS.Ecs.LaunchType, loadBalancers : Maybe.Maybe AWS.Ecs.LoadBalancers, networkConfiguration : Maybe.Maybe AWS.Ecs.NetworkConfiguration, placementConstraints : Maybe.Maybe AWS.Ecs.PlacementConstraints, placementStrategy : Maybe.Maybe AWS.Ecs.PlacementStrategies, platformVersion : Maybe.Maybe String.String, propagateTags : Maybe.Maybe AWS.Ecs.PropagateTags, role : Maybe.Maybe String.String, schedulingStrategy : Maybe.Maybe AWS.Ecs.SchedulingStrategy, serviceName : String.String, serviceRegistries : Maybe.Maybe AWS.Ecs.ServiceRegistries, tags : Maybe.Maybe AWS.Ecs.Tags, taskDefinition : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "CreateServiceResponse",
+                "comment": " The CreateServiceResponse data model.\n",
+                "args": [],
+                "type": "{ service : Maybe.Maybe AWS.Ecs.Service }"
+            },
+            {
+                "name": "CreateTaskSetRequest",
+                "comment": " The CreateTaskSetRequest data model.\n",
+                "args": [],
+                "type": "{ clientToken : Maybe.Maybe String.String, cluster : String.String, externalId : Maybe.Maybe String.String, launchType : Maybe.Maybe AWS.Ecs.LaunchType, loadBalancers : Maybe.Maybe AWS.Ecs.LoadBalancers, networkConfiguration : Maybe.Maybe AWS.Ecs.NetworkConfiguration, platformVersion : Maybe.Maybe String.String, scale : Maybe.Maybe AWS.Ecs.Scale, service : String.String, serviceRegistries : Maybe.Maybe AWS.Ecs.ServiceRegistries, taskDefinition : String.String }"
+            },
+            {
+                "name": "CreateTaskSetResponse",
+                "comment": " The CreateTaskSetResponse data model.\n",
+                "args": [],
+                "type": "{ taskSet : Maybe.Maybe AWS.Ecs.TaskSet }"
+            },
+            {
+                "name": "DeleteAccountSettingRequest",
+                "comment": " The DeleteAccountSettingRequest data model.\n",
+                "args": [],
+                "type": "{ name : AWS.Ecs.SettingName, principalArn : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "DeleteAccountSettingResponse",
+                "comment": " The DeleteAccountSettingResponse data model.\n",
+                "args": [],
+                "type": "{ setting : Maybe.Maybe AWS.Ecs.Setting }"
+            },
+            {
+                "name": "DeleteAttributesRequest",
+                "comment": " The DeleteAttributesRequest data model.\n",
+                "args": [],
+                "type": "{ attributes : AWS.Ecs.Attributes, cluster : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "DeleteAttributesResponse",
+                "comment": " The DeleteAttributesResponse data model.\n",
+                "args": [],
+                "type": "{ attributes : Maybe.Maybe AWS.Ecs.Attributes }"
+            },
+            {
+                "name": "DeleteClusterRequest",
+                "comment": " The DeleteClusterRequest data model.\n",
+                "args": [],
+                "type": "{ cluster : String.String }"
+            },
+            {
+                "name": "DeleteClusterResponse",
+                "comment": " The DeleteClusterResponse data model.\n",
+                "args": [],
+                "type": "{ cluster : Maybe.Maybe AWS.Ecs.Cluster }"
+            },
+            {
+                "name": "DeleteServiceRequest",
+                "comment": " The DeleteServiceRequest data model.\n",
+                "args": [],
+                "type": "{ cluster : Maybe.Maybe String.String, force : Maybe.Maybe Basics.Bool, service : String.String }"
+            },
+            {
+                "name": "DeleteServiceResponse",
+                "comment": " The DeleteServiceResponse data model.\n",
+                "args": [],
+                "type": "{ service : Maybe.Maybe AWS.Ecs.Service }"
+            },
+            {
+                "name": "DeleteTaskSetRequest",
+                "comment": " The DeleteTaskSetRequest data model.\n",
+                "args": [],
+                "type": "{ cluster : String.String, force : Maybe.Maybe Basics.Bool, service : String.String, taskSet : String.String }"
+            },
+            {
+                "name": "DeleteTaskSetResponse",
+                "comment": " The DeleteTaskSetResponse data model.\n",
+                "args": [],
+                "type": "{ taskSet : Maybe.Maybe AWS.Ecs.TaskSet }"
+            },
+            {
+                "name": "Deployment",
+                "comment": " The Deployment data model.\n",
+                "args": [],
+                "type": "{ createdAt : Maybe.Maybe String.String, desiredCount : Maybe.Maybe Basics.Int, id : Maybe.Maybe String.String, launchType : Maybe.Maybe AWS.Ecs.LaunchType, networkConfiguration : Maybe.Maybe AWS.Ecs.NetworkConfiguration, pendingCount : Maybe.Maybe Basics.Int, platformVersion : Maybe.Maybe String.String, runningCount : Maybe.Maybe Basics.Int, status : Maybe.Maybe String.String, taskDefinition : Maybe.Maybe String.String, updatedAt : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "DeploymentConfiguration",
+                "comment": " The DeploymentConfiguration data model.\n",
+                "args": [],
+                "type": "{ maximumPercent : Maybe.Maybe Basics.Int, minimumHealthyPercent : Maybe.Maybe Basics.Int }"
+            },
+            {
+                "name": "DeploymentController",
+                "comment": " The DeploymentController data model.\n",
+                "args": [],
+                "type": "{ type_ : AWS.Ecs.DeploymentControllerType }"
+            },
+            {
+                "name": "Deployments",
+                "comment": " The Deployments data model.\n",
+                "args": [],
+                "type": "List.List AWS.Ecs.Deployment"
+            },
+            {
+                "name": "DeregisterContainerInstanceRequest",
+                "comment": " The DeregisterContainerInstanceRequest data model.\n",
+                "args": [],
+                "type": "{ cluster : Maybe.Maybe String.String, containerInstance : String.String, force : Maybe.Maybe Basics.Bool }"
+            },
+            {
+                "name": "DeregisterContainerInstanceResponse",
+                "comment": " The DeregisterContainerInstanceResponse data model.\n",
+                "args": [],
+                "type": "{ containerInstance : Maybe.Maybe AWS.Ecs.ContainerInstance }"
+            },
+            {
+                "name": "DeregisterTaskDefinitionRequest",
+                "comment": " The DeregisterTaskDefinitionRequest data model.\n",
+                "args": [],
+                "type": "{ taskDefinition : String.String }"
+            },
+            {
+                "name": "DeregisterTaskDefinitionResponse",
+                "comment": " The DeregisterTaskDefinitionResponse data model.\n",
+                "args": [],
+                "type": "{ taskDefinition : Maybe.Maybe AWS.Ecs.TaskDefinition }"
+            },
+            {
+                "name": "DescribeClustersRequest",
+                "comment": " The DescribeClustersRequest data model.\n",
+                "args": [],
+                "type": "{ clusters : Maybe.Maybe AWS.Ecs.StringList, include : Maybe.Maybe AWS.Ecs.ClusterFieldList }"
+            },
+            {
+                "name": "DescribeClustersResponse",
+                "comment": " The DescribeClustersResponse data model.\n",
+                "args": [],
+                "type": "{ clusters : Maybe.Maybe AWS.Ecs.Clusters, failures : Maybe.Maybe AWS.Ecs.Failures }"
+            },
+            {
+                "name": "DescribeContainerInstancesRequest",
+                "comment": " The DescribeContainerInstancesRequest data model.\n",
+                "args": [],
+                "type": "{ cluster : Maybe.Maybe String.String, containerInstances : AWS.Ecs.StringList, include : Maybe.Maybe AWS.Ecs.ContainerInstanceFieldList }"
+            },
+            {
+                "name": "DescribeContainerInstancesResponse",
+                "comment": " The DescribeContainerInstancesResponse data model.\n",
+                "args": [],
+                "type": "{ containerInstances : Maybe.Maybe AWS.Ecs.ContainerInstances, failures : Maybe.Maybe AWS.Ecs.Failures }"
+            },
+            {
+                "name": "DescribeServicesRequest",
+                "comment": " The DescribeServicesRequest data model.\n",
+                "args": [],
+                "type": "{ cluster : Maybe.Maybe String.String, include : Maybe.Maybe AWS.Ecs.ServiceFieldList, services : AWS.Ecs.StringList }"
+            },
+            {
+                "name": "DescribeServicesResponse",
+                "comment": " The DescribeServicesResponse data model.\n",
+                "args": [],
+                "type": "{ failures : Maybe.Maybe AWS.Ecs.Failures, services : Maybe.Maybe AWS.Ecs.Services }"
+            },
+            {
+                "name": "DescribeTaskDefinitionRequest",
+                "comment": " The DescribeTaskDefinitionRequest data model.\n",
+                "args": [],
+                "type": "{ include : Maybe.Maybe AWS.Ecs.TaskDefinitionFieldList, taskDefinition : String.String }"
+            },
+            {
+                "name": "DescribeTaskDefinitionResponse",
+                "comment": " The DescribeTaskDefinitionResponse data model.\n",
+                "args": [],
+                "type": "{ tags : Maybe.Maybe AWS.Ecs.Tags, taskDefinition : Maybe.Maybe AWS.Ecs.TaskDefinition }"
+            },
+            {
+                "name": "DescribeTaskSetsRequest",
+                "comment": " The DescribeTaskSetsRequest data model.\n",
+                "args": [],
+                "type": "{ cluster : String.String, service : String.String, taskSets : Maybe.Maybe AWS.Ecs.StringList }"
+            },
+            {
+                "name": "DescribeTaskSetsResponse",
+                "comment": " The DescribeTaskSetsResponse data model.\n",
+                "args": [],
+                "type": "{ failures : Maybe.Maybe AWS.Ecs.Failures, taskSets : Maybe.Maybe AWS.Ecs.TaskSets }"
+            },
+            {
+                "name": "DescribeTasksRequest",
+                "comment": " The DescribeTasksRequest data model.\n",
+                "args": [],
+                "type": "{ cluster : Maybe.Maybe String.String, include : Maybe.Maybe AWS.Ecs.TaskFieldList, tasks : AWS.Ecs.StringList }"
+            },
+            {
+                "name": "DescribeTasksResponse",
+                "comment": " The DescribeTasksResponse data model.\n",
+                "args": [],
+                "type": "{ failures : Maybe.Maybe AWS.Ecs.Failures, tasks : Maybe.Maybe AWS.Ecs.Tasks }"
+            },
+            {
+                "name": "Device",
+                "comment": " The Device data model.\n",
+                "args": [],
+                "type": "{ containerPath : Maybe.Maybe String.String, hostPath : String.String, permissions : Maybe.Maybe AWS.Ecs.DeviceCgroupPermissions }"
+            },
+            {
+                "name": "DeviceCgroupPermissions",
+                "comment": " The DeviceCgroupPermissions data model.\n",
+                "args": [],
+                "type": "List.List AWS.Ecs.DeviceCgroupPermission"
+            },
+            {
+                "name": "DevicesList",
+                "comment": " The DevicesList data model.\n",
+                "args": [],
+                "type": "List.List AWS.Ecs.Device"
+            },
+            {
+                "name": "DiscoverPollEndpointRequest",
+                "comment": " The DiscoverPollEndpointRequest data model.\n",
+                "args": [],
+                "type": "{ cluster : Maybe.Maybe String.String, containerInstance : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "DiscoverPollEndpointResponse",
+                "comment": " The DiscoverPollEndpointResponse data model.\n",
+                "args": [],
+                "type": "{ endpoint : Maybe.Maybe String.String, telemetryEndpoint : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "DockerLabelsMap",
+                "comment": " The DockerLabelsMap data model.\n",
+                "args": [],
+                "type": "Dict.Dict String.String String.String"
+            },
+            {
+                "name": "DockerVolumeConfiguration",
+                "comment": " The DockerVolumeConfiguration data model.\n",
+                "args": [],
+                "type": "{ autoprovision : Maybe.Maybe Basics.Bool, driver : Maybe.Maybe String.String, driverOpts : Maybe.Maybe AWS.Ecs.StringMap, labels : Maybe.Maybe AWS.Ecs.StringMap, scope : Maybe.Maybe AWS.Ecs.Scope }"
+            },
+            {
+                "name": "EnvironmentVariables",
+                "comment": " The EnvironmentVariables data model.\n",
+                "args": [],
+                "type": "List.List AWS.Ecs.KeyValuePair"
+            },
+            {
+                "name": "Failure",
+                "comment": " The Failure data model.\n",
+                "args": [],
+                "type": "{ arn : Maybe.Maybe String.String, reason : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "Failures",
+                "comment": " The Failures data model.\n",
+                "args": [],
+                "type": "List.List AWS.Ecs.Failure"
+            },
+            {
+                "name": "GpuIds",
+                "comment": " The GpuIds data model.\n",
+                "args": [],
+                "type": "List.List String.String"
+            },
+            {
+                "name": "HealthCheck",
+                "comment": " The HealthCheck data model.\n",
+                "args": [],
+                "type": "{ command : AWS.Ecs.StringList, interval : Maybe.Maybe Basics.Int, retries : Maybe.Maybe Basics.Int, startPeriod : Maybe.Maybe Basics.Int, timeout : Maybe.Maybe Basics.Int }"
+            },
+            {
+                "name": "HostEntry",
+                "comment": " The HostEntry data model.\n",
+                "args": [],
+                "type": "{ hostname : String.String, ipAddress : String.String }"
+            },
+            {
+                "name": "HostEntryList",
+                "comment": " The HostEntryList data model.\n",
+                "args": [],
+                "type": "List.List AWS.Ecs.HostEntry"
+            },
+            {
+                "name": "HostVolumeProperties",
+                "comment": " The HostVolumeProperties data model.\n",
+                "args": [],
+                "type": "{ sourcePath : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "KernelCapabilities",
+                "comment": " The KernelCapabilities data model.\n",
+                "args": [],
+                "type": "{ add : Maybe.Maybe AWS.Ecs.StringList, drop : Maybe.Maybe AWS.Ecs.StringList }"
+            },
+            {
+                "name": "KeyValuePair",
+                "comment": " The KeyValuePair data model.\n",
+                "args": [],
+                "type": "{ name : Maybe.Maybe String.String, value : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "LinuxParameters",
+                "comment": " The LinuxParameters data model.\n",
+                "args": [],
+                "type": "{ capabilities : Maybe.Maybe AWS.Ecs.KernelCapabilities, devices : Maybe.Maybe AWS.Ecs.DevicesList, initProcessEnabled : Maybe.Maybe Basics.Bool, sharedMemorySize : Maybe.Maybe Basics.Int, tmpfs : Maybe.Maybe AWS.Ecs.TmpfsList }"
+            },
+            {
+                "name": "ListAccountSettingsRequest",
+                "comment": " The ListAccountSettingsRequest data model.\n",
+                "args": [],
+                "type": "{ effectiveSettings : Maybe.Maybe Basics.Bool, maxResults : Maybe.Maybe Basics.Int, name : Maybe.Maybe AWS.Ecs.SettingName, nextToken : Maybe.Maybe String.String, principalArn : Maybe.Maybe String.String, value : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "ListAccountSettingsResponse",
+                "comment": " The ListAccountSettingsResponse data model.\n",
+                "args": [],
+                "type": "{ nextToken : Maybe.Maybe String.String, settings : Maybe.Maybe AWS.Ecs.Settings }"
+            },
+            {
+                "name": "ListAttributesRequest",
+                "comment": " The ListAttributesRequest data model.\n",
+                "args": [],
+                "type": "{ attributeName : Maybe.Maybe String.String, attributeValue : Maybe.Maybe String.String, cluster : Maybe.Maybe String.String, maxResults : Maybe.Maybe Basics.Int, nextToken : Maybe.Maybe String.String, targetType : AWS.Ecs.TargetType }"
+            },
+            {
+                "name": "ListAttributesResponse",
+                "comment": " The ListAttributesResponse data model.\n",
+                "args": [],
+                "type": "{ attributes : Maybe.Maybe AWS.Ecs.Attributes, nextToken : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "ListClustersRequest",
+                "comment": " The ListClustersRequest data model.\n",
+                "args": [],
+                "type": "{ maxResults : Maybe.Maybe Basics.Int, nextToken : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "ListClustersResponse",
+                "comment": " The ListClustersResponse data model.\n",
+                "args": [],
+                "type": "{ clusterArns : Maybe.Maybe AWS.Ecs.StringList, nextToken : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "ListContainerInstancesRequest",
+                "comment": " The ListContainerInstancesRequest data model.\n",
+                "args": [],
+                "type": "{ cluster : Maybe.Maybe String.String, filter : Maybe.Maybe String.String, maxResults : Maybe.Maybe Basics.Int, nextToken : Maybe.Maybe String.String, status : Maybe.Maybe AWS.Ecs.ContainerInstanceStatus }"
+            },
+            {
+                "name": "ListContainerInstancesResponse",
+                "comment": " The ListContainerInstancesResponse data model.\n",
+                "args": [],
+                "type": "{ containerInstanceArns : Maybe.Maybe AWS.Ecs.StringList, nextToken : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "ListServicesRequest",
+                "comment": " The ListServicesRequest data model.\n",
+                "args": [],
+                "type": "{ cluster : Maybe.Maybe String.String, launchType : Maybe.Maybe AWS.Ecs.LaunchType, maxResults : Maybe.Maybe Basics.Int, nextToken : Maybe.Maybe String.String, schedulingStrategy : Maybe.Maybe AWS.Ecs.SchedulingStrategy }"
+            },
+            {
+                "name": "ListServicesResponse",
+                "comment": " The ListServicesResponse data model.\n",
+                "args": [],
+                "type": "{ nextToken : Maybe.Maybe String.String, serviceArns : Maybe.Maybe AWS.Ecs.StringList }"
+            },
+            {
+                "name": "ListTagsForResourceRequest",
+                "comment": " The ListTagsForResourceRequest data model.\n",
+                "args": [],
+                "type": "{ resourceArn : String.String }"
+            },
+            {
+                "name": "ListTagsForResourceResponse",
+                "comment": " The ListTagsForResourceResponse data model.\n",
+                "args": [],
+                "type": "{ tags : Maybe.Maybe AWS.Ecs.Tags }"
+            },
+            {
+                "name": "ListTaskDefinitionFamiliesRequest",
+                "comment": " The ListTaskDefinitionFamiliesRequest data model.\n",
+                "args": [],
+                "type": "{ familyPrefix : Maybe.Maybe String.String, maxResults : Maybe.Maybe Basics.Int, nextToken : Maybe.Maybe String.String, status : Maybe.Maybe AWS.Ecs.TaskDefinitionFamilyStatus }"
+            },
+            {
+                "name": "ListTaskDefinitionFamiliesResponse",
+                "comment": " The ListTaskDefinitionFamiliesResponse data model.\n",
+                "args": [],
+                "type": "{ families : Maybe.Maybe AWS.Ecs.StringList, nextToken : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "ListTaskDefinitionsRequest",
+                "comment": " The ListTaskDefinitionsRequest data model.\n",
+                "args": [],
+                "type": "{ familyPrefix : Maybe.Maybe String.String, maxResults : Maybe.Maybe Basics.Int, nextToken : Maybe.Maybe String.String, sort : Maybe.Maybe AWS.Ecs.SortOrder, status : Maybe.Maybe AWS.Ecs.TaskDefinitionStatus }"
+            },
+            {
+                "name": "ListTaskDefinitionsResponse",
+                "comment": " The ListTaskDefinitionsResponse data model.\n",
+                "args": [],
+                "type": "{ nextToken : Maybe.Maybe String.String, taskDefinitionArns : Maybe.Maybe AWS.Ecs.StringList }"
+            },
+            {
+                "name": "ListTasksRequest",
+                "comment": " The ListTasksRequest data model.\n",
+                "args": [],
+                "type": "{ cluster : Maybe.Maybe String.String, containerInstance : Maybe.Maybe String.String, desiredStatus : Maybe.Maybe AWS.Ecs.DesiredStatus, family : Maybe.Maybe String.String, launchType : Maybe.Maybe AWS.Ecs.LaunchType, maxResults : Maybe.Maybe Basics.Int, nextToken : Maybe.Maybe String.String, serviceName : Maybe.Maybe String.String, startedBy : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "ListTasksResponse",
+                "comment": " The ListTasksResponse data model.\n",
+                "args": [],
+                "type": "{ nextToken : Maybe.Maybe String.String, taskArns : Maybe.Maybe AWS.Ecs.StringList }"
+            },
+            {
+                "name": "LoadBalancer",
+                "comment": " The LoadBalancer data model.\n",
+                "args": [],
+                "type": "{ containerName : Maybe.Maybe String.String, containerPort : Maybe.Maybe Basics.Int, loadBalancerName : Maybe.Maybe String.String, targetGroupArn : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "LoadBalancers",
+                "comment": " The LoadBalancers data model.\n",
+                "args": [],
+                "type": "List.List AWS.Ecs.LoadBalancer"
+            },
+            {
+                "name": "LogConfiguration",
+                "comment": " The LogConfiguration data model.\n",
+                "args": [],
+                "type": "{ logDriver : AWS.Ecs.LogDriver, options : Maybe.Maybe AWS.Ecs.LogConfigurationOptionsMap, secretOptions : Maybe.Maybe AWS.Ecs.SecretList }"
+            },
+            {
+                "name": "LogConfigurationOptionsMap",
+                "comment": " The LogConfigurationOptionsMap data model.\n",
+                "args": [],
+                "type": "Dict.Dict String.String String.String"
+            },
+            {
+                "name": "MountPoint",
+                "comment": " The MountPoint data model.\n",
+                "args": [],
+                "type": "{ containerPath : Maybe.Maybe String.String, readOnly : Maybe.Maybe Basics.Bool, sourceVolume : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "MountPointList",
+                "comment": " The MountPointList data model.\n",
+                "args": [],
+                "type": "List.List AWS.Ecs.MountPoint"
+            },
+            {
+                "name": "NetworkBinding",
+                "comment": " The NetworkBinding data model.\n",
+                "args": [],
+                "type": "{ bindIp : Maybe.Maybe String.String, containerPort : Maybe.Maybe Basics.Int, hostPort : Maybe.Maybe Basics.Int, protocol : Maybe.Maybe AWS.Ecs.TransportProtocol }"
+            },
+            {
+                "name": "NetworkBindings",
+                "comment": " The NetworkBindings data model.\n",
+                "args": [],
+                "type": "List.List AWS.Ecs.NetworkBinding"
+            },
+            {
+                "name": "NetworkConfiguration",
+                "comment": " The NetworkConfiguration data model.\n",
+                "args": [],
+                "type": "{ awsvpcConfiguration : Maybe.Maybe AWS.Ecs.AwsVpcConfiguration }"
+            },
+            {
+                "name": "NetworkInterface",
+                "comment": " The NetworkInterface data model.\n",
+                "args": [],
+                "type": "{ attachmentId : Maybe.Maybe String.String, ipv6Address : Maybe.Maybe String.String, privateIpv4Address : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "NetworkInterfaces",
+                "comment": " The NetworkInterfaces data model.\n",
+                "args": [],
+                "type": "List.List AWS.Ecs.NetworkInterface"
+            },
+            {
+                "name": "PlacementConstraint",
+                "comment": " The PlacementConstraint data model.\n",
+                "args": [],
+                "type": "{ expression : Maybe.Maybe String.String, type_ : Maybe.Maybe AWS.Ecs.PlacementConstraintType }"
+            },
+            {
+                "name": "PlacementConstraints",
+                "comment": " The PlacementConstraints data model.\n",
+                "args": [],
+                "type": "List.List AWS.Ecs.PlacementConstraint"
+            },
+            {
+                "name": "PlacementStrategies",
+                "comment": " The PlacementStrategies data model.\n",
+                "args": [],
+                "type": "List.List AWS.Ecs.PlacementStrategy"
+            },
+            {
+                "name": "PlacementStrategy",
+                "comment": " The PlacementStrategy data model.\n",
+                "args": [],
+                "type": "{ field : Maybe.Maybe String.String, type_ : Maybe.Maybe AWS.Ecs.PlacementStrategyType }"
+            },
+            {
+                "name": "PlatformDevice",
+                "comment": " The PlatformDevice data model.\n",
+                "args": [],
+                "type": "{ id : String.String, type_ : AWS.Ecs.PlatformDeviceType }"
+            },
+            {
+                "name": "PlatformDevices",
+                "comment": " The PlatformDevices data model.\n",
+                "args": [],
+                "type": "List.List AWS.Ecs.PlatformDevice"
+            },
+            {
+                "name": "PortMapping",
+                "comment": " The PortMapping data model.\n",
+                "args": [],
+                "type": "{ containerPort : Maybe.Maybe Basics.Int, hostPort : Maybe.Maybe Basics.Int, protocol : Maybe.Maybe AWS.Ecs.TransportProtocol }"
+            },
+            {
+                "name": "PortMappingList",
+                "comment": " The PortMappingList data model.\n",
+                "args": [],
+                "type": "List.List AWS.Ecs.PortMapping"
+            },
+            {
+                "name": "ProxyConfiguration",
+                "comment": " The ProxyConfiguration data model.\n",
+                "args": [],
+                "type": "{ containerName : String.String, properties : Maybe.Maybe AWS.Ecs.ProxyConfigurationProperties, type_ : Maybe.Maybe AWS.Ecs.ProxyConfigurationType }"
+            },
+            {
+                "name": "ProxyConfigurationProperties",
+                "comment": " The ProxyConfigurationProperties data model.\n",
+                "args": [],
+                "type": "List.List AWS.Ecs.KeyValuePair"
+            },
+            {
+                "name": "PutAccountSettingDefaultRequest",
+                "comment": " The PutAccountSettingDefaultRequest data model.\n",
+                "args": [],
+                "type": "{ name : AWS.Ecs.SettingName, value : String.String }"
+            },
+            {
+                "name": "PutAccountSettingDefaultResponse",
+                "comment": " The PutAccountSettingDefaultResponse data model.\n",
+                "args": [],
+                "type": "{ setting : Maybe.Maybe AWS.Ecs.Setting }"
+            },
+            {
+                "name": "PutAccountSettingRequest",
+                "comment": " The PutAccountSettingRequest data model.\n",
+                "args": [],
+                "type": "{ name : AWS.Ecs.SettingName, principalArn : Maybe.Maybe String.String, value : String.String }"
+            },
+            {
+                "name": "PutAccountSettingResponse",
+                "comment": " The PutAccountSettingResponse data model.\n",
+                "args": [],
+                "type": "{ setting : Maybe.Maybe AWS.Ecs.Setting }"
+            },
+            {
+                "name": "PutAttributesRequest",
+                "comment": " The PutAttributesRequest data model.\n",
+                "args": [],
+                "type": "{ attributes : AWS.Ecs.Attributes, cluster : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "PutAttributesResponse",
+                "comment": " The PutAttributesResponse data model.\n",
+                "args": [],
+                "type": "{ attributes : Maybe.Maybe AWS.Ecs.Attributes }"
+            },
+            {
+                "name": "RegisterContainerInstanceRequest",
+                "comment": " The RegisterContainerInstanceRequest data model.\n",
+                "args": [],
+                "type": "{ attributes : Maybe.Maybe AWS.Ecs.Attributes, cluster : Maybe.Maybe String.String, containerInstanceArn : Maybe.Maybe String.String, instanceIdentityDocument : Maybe.Maybe String.String, instanceIdentityDocumentSignature : Maybe.Maybe String.String, platformDevices : Maybe.Maybe AWS.Ecs.PlatformDevices, tags : Maybe.Maybe AWS.Ecs.Tags, totalResources : Maybe.Maybe AWS.Ecs.Resources, versionInfo : Maybe.Maybe AWS.Ecs.VersionInfo }"
+            },
+            {
+                "name": "RegisterContainerInstanceResponse",
+                "comment": " The RegisterContainerInstanceResponse data model.\n",
+                "args": [],
+                "type": "{ containerInstance : Maybe.Maybe AWS.Ecs.ContainerInstance }"
+            },
+            {
+                "name": "RegisterTaskDefinitionRequest",
+                "comment": " The RegisterTaskDefinitionRequest data model.\n",
+                "args": [],
+                "type": "{ containerDefinitions : AWS.Ecs.ContainerDefinitions, cpu : Maybe.Maybe String.String, executionRoleArn : Maybe.Maybe String.String, family : String.String, ipcMode : Maybe.Maybe AWS.Ecs.IpcMode, memory : Maybe.Maybe String.String, networkMode : Maybe.Maybe AWS.Ecs.NetworkMode, pidMode : Maybe.Maybe AWS.Ecs.PidMode, placementConstraints : Maybe.Maybe AWS.Ecs.TaskDefinitionPlacementConstraints, proxyConfiguration : Maybe.Maybe AWS.Ecs.ProxyConfiguration, requiresCompatibilities : Maybe.Maybe AWS.Ecs.CompatibilityList, tags : Maybe.Maybe AWS.Ecs.Tags, taskRoleArn : Maybe.Maybe String.String, volumes : Maybe.Maybe AWS.Ecs.VolumeList }"
+            },
+            {
+                "name": "RegisterTaskDefinitionResponse",
+                "comment": " The RegisterTaskDefinitionResponse data model.\n",
+                "args": [],
+                "type": "{ tags : Maybe.Maybe AWS.Ecs.Tags, taskDefinition : Maybe.Maybe AWS.Ecs.TaskDefinition }"
+            },
+            {
+                "name": "RepositoryCredentials",
+                "comment": " The RepositoryCredentials data model.\n",
+                "args": [],
+                "type": "{ credentialsParameter : String.String }"
+            },
+            {
+                "name": "RequiresAttributes",
+                "comment": " The RequiresAttributes data model.\n",
+                "args": [],
+                "type": "List.List AWS.Ecs.Attribute"
+            },
+            {
+                "name": "Resource",
+                "comment": " The Resource data model.\n",
+                "args": [],
+                "type": "{ doubleValue : Maybe.Maybe Basics.Float, integerValue : Maybe.Maybe Basics.Int, longValue : Maybe.Maybe Basics.Int, name : Maybe.Maybe String.String, stringSetValue : Maybe.Maybe AWS.Ecs.StringList, type_ : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "ResourceRequirement",
+                "comment": " The ResourceRequirement data model.\n",
+                "args": [],
+                "type": "{ type_ : AWS.Ecs.ResourceType, value : String.String }"
+            },
+            {
+                "name": "ResourceRequirements",
+                "comment": " The ResourceRequirements data model.\n",
+                "args": [],
+                "type": "List.List AWS.Ecs.ResourceRequirement"
+            },
+            {
+                "name": "Resources",
+                "comment": " The Resources data model.\n",
+                "args": [],
+                "type": "List.List AWS.Ecs.Resource"
+            },
+            {
+                "name": "RunTaskRequest",
+                "comment": " The RunTaskRequest data model.\n",
+                "args": [],
+                "type": "{ cluster : Maybe.Maybe String.String, count : Maybe.Maybe Basics.Int, enableEcsmanagedTags : Maybe.Maybe Basics.Bool, group : Maybe.Maybe String.String, launchType : Maybe.Maybe AWS.Ecs.LaunchType, networkConfiguration : Maybe.Maybe AWS.Ecs.NetworkConfiguration, overrides : Maybe.Maybe AWS.Ecs.TaskOverride, placementConstraints : Maybe.Maybe AWS.Ecs.PlacementConstraints, placementStrategy : Maybe.Maybe AWS.Ecs.PlacementStrategies, platformVersion : Maybe.Maybe String.String, propagateTags : Maybe.Maybe AWS.Ecs.PropagateTags, startedBy : Maybe.Maybe String.String, tags : Maybe.Maybe AWS.Ecs.Tags, taskDefinition : String.String }"
+            },
+            {
+                "name": "RunTaskResponse",
+                "comment": " The RunTaskResponse data model.\n",
+                "args": [],
+                "type": "{ failures : Maybe.Maybe AWS.Ecs.Failures, tasks : Maybe.Maybe AWS.Ecs.Tasks }"
+            },
+            {
+                "name": "Scale",
+                "comment": " The Scale data model.\n",
+                "args": [],
+                "type": "{ unit : Maybe.Maybe AWS.Ecs.ScaleUnit, value : Maybe.Maybe Basics.Float }"
+            },
+            {
+                "name": "Secret",
+                "comment": " The Secret data model.\n",
+                "args": [],
+                "type": "{ name : String.String, valueFrom : String.String }"
+            },
+            {
+                "name": "SecretList",
+                "comment": " The SecretList data model.\n",
+                "args": [],
+                "type": "List.List AWS.Ecs.Secret"
+            },
+            {
+                "name": "Service",
+                "comment": " The Service data model.\n",
+                "args": [],
+                "type": "{ clusterArn : Maybe.Maybe String.String, createdAt : Maybe.Maybe String.String, createdBy : Maybe.Maybe String.String, deploymentConfiguration : Maybe.Maybe AWS.Ecs.DeploymentConfiguration, deploymentController : Maybe.Maybe AWS.Ecs.DeploymentController, deployments : Maybe.Maybe AWS.Ecs.Deployments, desiredCount : Maybe.Maybe Basics.Int, enableEcsmanagedTags : Maybe.Maybe Basics.Bool, events : Maybe.Maybe AWS.Ecs.ServiceEvents, healthCheckGracePeriodSeconds : Maybe.Maybe Basics.Int, launchType : Maybe.Maybe AWS.Ecs.LaunchType, loadBalancers : Maybe.Maybe AWS.Ecs.LoadBalancers, networkConfiguration : Maybe.Maybe AWS.Ecs.NetworkConfiguration, pendingCount : Maybe.Maybe Basics.Int, placementConstraints : Maybe.Maybe AWS.Ecs.PlacementConstraints, placementStrategy : Maybe.Maybe AWS.Ecs.PlacementStrategies, platformVersion : Maybe.Maybe String.String, propagateTags : Maybe.Maybe AWS.Ecs.PropagateTags, roleArn : Maybe.Maybe String.String, runningCount : Maybe.Maybe Basics.Int, schedulingStrategy : Maybe.Maybe AWS.Ecs.SchedulingStrategy, serviceArn : Maybe.Maybe String.String, serviceName : Maybe.Maybe String.String, serviceRegistries : Maybe.Maybe AWS.Ecs.ServiceRegistries, status : Maybe.Maybe String.String, tags : Maybe.Maybe AWS.Ecs.Tags, taskDefinition : Maybe.Maybe String.String, taskSets : Maybe.Maybe AWS.Ecs.TaskSets }"
+            },
+            {
+                "name": "ServiceEvent",
+                "comment": " The ServiceEvent data model.\n",
+                "args": [],
+                "type": "{ createdAt : Maybe.Maybe String.String, id : Maybe.Maybe String.String, message : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "ServiceEvents",
+                "comment": " The ServiceEvents data model.\n",
+                "args": [],
+                "type": "List.List AWS.Ecs.ServiceEvent"
+            },
+            {
+                "name": "ServiceFieldList",
+                "comment": " The ServiceFieldList data model.\n",
+                "args": [],
+                "type": "List.List AWS.Ecs.ServiceField"
+            },
+            {
+                "name": "ServiceRegistries",
+                "comment": " The ServiceRegistries data model.\n",
+                "args": [],
+                "type": "List.List AWS.Ecs.ServiceRegistry"
+            },
+            {
+                "name": "ServiceRegistry",
+                "comment": " The ServiceRegistry data model.\n",
+                "args": [],
+                "type": "{ containerName : Maybe.Maybe String.String, containerPort : Maybe.Maybe Basics.Int, port_ : Maybe.Maybe Basics.Int, registryArn : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "Services",
+                "comment": " The Services data model.\n",
+                "args": [],
+                "type": "List.List AWS.Ecs.Service"
+            },
+            {
+                "name": "Setting",
+                "comment": " The Setting data model.\n",
+                "args": [],
+                "type": "{ name : Maybe.Maybe AWS.Ecs.SettingName, principalArn : Maybe.Maybe String.String, value : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "Settings",
+                "comment": " The Settings data model.\n",
+                "args": [],
+                "type": "List.List AWS.Ecs.Setting"
+            },
+            {
+                "name": "StartTaskRequest",
+                "comment": " The StartTaskRequest data model.\n",
+                "args": [],
+                "type": "{ cluster : Maybe.Maybe String.String, containerInstances : AWS.Ecs.StringList, enableEcsmanagedTags : Maybe.Maybe Basics.Bool, group : Maybe.Maybe String.String, networkConfiguration : Maybe.Maybe AWS.Ecs.NetworkConfiguration, overrides : Maybe.Maybe AWS.Ecs.TaskOverride, propagateTags : Maybe.Maybe AWS.Ecs.PropagateTags, startedBy : Maybe.Maybe String.String, tags : Maybe.Maybe AWS.Ecs.Tags, taskDefinition : String.String }"
+            },
+            {
+                "name": "StartTaskResponse",
+                "comment": " The StartTaskResponse data model.\n",
+                "args": [],
+                "type": "{ failures : Maybe.Maybe AWS.Ecs.Failures, tasks : Maybe.Maybe AWS.Ecs.Tasks }"
+            },
+            {
+                "name": "Statistics",
+                "comment": " The Statistics data model.\n",
+                "args": [],
+                "type": "List.List AWS.Ecs.KeyValuePair"
+            },
+            {
+                "name": "StopTaskRequest",
+                "comment": " The StopTaskRequest data model.\n",
+                "args": [],
+                "type": "{ cluster : Maybe.Maybe String.String, reason : Maybe.Maybe String.String, task : String.String }"
+            },
+            {
+                "name": "StopTaskResponse",
+                "comment": " The StopTaskResponse data model.\n",
+                "args": [],
+                "type": "{ task : Maybe.Maybe AWS.Ecs.Task }"
+            },
+            {
+                "name": "StringList",
+                "comment": " The StringList data model.\n",
+                "args": [],
+                "type": "List.List String.String"
+            },
+            {
+                "name": "StringMap",
+                "comment": " The StringMap data model.\n",
+                "args": [],
+                "type": "Dict.Dict String.String String.String"
+            },
+            {
+                "name": "SubmitAttachmentStateChangesRequest",
+                "comment": " The SubmitAttachmentStateChangesRequest data model.\n",
+                "args": [],
+                "type": "{ attachments : AWS.Ecs.AttachmentStateChanges, cluster : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "SubmitAttachmentStateChangesResponse",
+                "comment": " The SubmitAttachmentStateChangesResponse data model.\n",
+                "args": [],
+                "type": "{ acknowledgment : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "SubmitContainerStateChangeRequest",
+                "comment": " The SubmitContainerStateChangeRequest data model.\n",
+                "args": [],
+                "type": "{ cluster : Maybe.Maybe String.String, containerName : Maybe.Maybe String.String, exitCode : Maybe.Maybe Basics.Int, networkBindings : Maybe.Maybe AWS.Ecs.NetworkBindings, reason : Maybe.Maybe String.String, status : Maybe.Maybe String.String, task : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "SubmitContainerStateChangeResponse",
+                "comment": " The SubmitContainerStateChangeResponse data model.\n",
+                "args": [],
+                "type": "{ acknowledgment : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "SubmitTaskStateChangeRequest",
+                "comment": " The SubmitTaskStateChangeRequest data model.\n",
+                "args": [],
+                "type": "{ attachments : Maybe.Maybe AWS.Ecs.AttachmentStateChanges, cluster : Maybe.Maybe String.String, containers : Maybe.Maybe AWS.Ecs.ContainerStateChanges, executionStoppedAt : Maybe.Maybe String.String, pullStartedAt : Maybe.Maybe String.String, pullStoppedAt : Maybe.Maybe String.String, reason : Maybe.Maybe String.String, status : Maybe.Maybe String.String, task : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "SubmitTaskStateChangeResponse",
+                "comment": " The SubmitTaskStateChangeResponse data model.\n",
+                "args": [],
+                "type": "{ acknowledgment : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "SystemControl",
+                "comment": " The SystemControl data model.\n",
+                "args": [],
+                "type": "{ namespace : Maybe.Maybe String.String, value : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "SystemControls",
+                "comment": " The SystemControls data model.\n",
+                "args": [],
+                "type": "List.List AWS.Ecs.SystemControl"
+            },
+            {
+                "name": "Tag",
+                "comment": " The Tag data model.\n",
+                "args": [],
+                "type": "{ key : Maybe.Maybe String.String, value : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "TagKeys",
+                "comment": " The TagKeys data model.\n",
+                "args": [],
+                "type": "List.List String.String"
+            },
+            {
+                "name": "TagResourceRequest",
+                "comment": " The TagResourceRequest data model.\n",
+                "args": [],
+                "type": "{ resourceArn : String.String, tags : AWS.Ecs.Tags }"
+            },
+            {
+                "name": "TagResourceResponse",
+                "comment": " The TagResourceResponse data model.\n",
+                "args": [],
+                "type": "{}"
+            },
+            {
+                "name": "Tags",
+                "comment": " The Tags data model.\n",
+                "args": [],
+                "type": "List.List AWS.Ecs.Tag"
+            },
+            {
+                "name": "Task",
+                "comment": " The Task data model.\n",
+                "args": [],
+                "type": "{ attachments : Maybe.Maybe AWS.Ecs.Attachments, clusterArn : Maybe.Maybe String.String, connectivity : Maybe.Maybe AWS.Ecs.Connectivity, connectivityAt : Maybe.Maybe String.String, containerInstanceArn : Maybe.Maybe String.String, containers : Maybe.Maybe AWS.Ecs.Containers, cpu : Maybe.Maybe String.String, createdAt : Maybe.Maybe String.String, desiredStatus : Maybe.Maybe String.String, executionStoppedAt : Maybe.Maybe String.String, group : Maybe.Maybe String.String, healthStatus : Maybe.Maybe AWS.Ecs.HealthStatus, lastStatus : Maybe.Maybe String.String, launchType : Maybe.Maybe AWS.Ecs.LaunchType, memory : Maybe.Maybe String.String, overrides : Maybe.Maybe AWS.Ecs.TaskOverride, platformVersion : Maybe.Maybe String.String, pullStartedAt : Maybe.Maybe String.String, pullStoppedAt : Maybe.Maybe String.String, startedAt : Maybe.Maybe String.String, startedBy : Maybe.Maybe String.String, stopCode : Maybe.Maybe AWS.Ecs.TaskStopCode, stoppedAt : Maybe.Maybe String.String, stoppedReason : Maybe.Maybe String.String, stoppingAt : Maybe.Maybe String.String, tags : Maybe.Maybe AWS.Ecs.Tags, taskArn : Maybe.Maybe String.String, taskDefinitionArn : Maybe.Maybe String.String, version : Maybe.Maybe Basics.Int }"
+            },
+            {
+                "name": "TaskDefinition",
+                "comment": " The TaskDefinition data model.\n",
+                "args": [],
+                "type": "{ compatibilities : Maybe.Maybe AWS.Ecs.CompatibilityList, containerDefinitions : Maybe.Maybe AWS.Ecs.ContainerDefinitions, cpu : Maybe.Maybe String.String, executionRoleArn : Maybe.Maybe String.String, family : Maybe.Maybe String.String, ipcMode : Maybe.Maybe AWS.Ecs.IpcMode, memory : Maybe.Maybe String.String, networkMode : Maybe.Maybe AWS.Ecs.NetworkMode, pidMode : Maybe.Maybe AWS.Ecs.PidMode, placementConstraints : Maybe.Maybe AWS.Ecs.TaskDefinitionPlacementConstraints, proxyConfiguration : Maybe.Maybe AWS.Ecs.ProxyConfiguration, requiresAttributes : Maybe.Maybe AWS.Ecs.RequiresAttributes, requiresCompatibilities : Maybe.Maybe AWS.Ecs.CompatibilityList, revision : Maybe.Maybe Basics.Int, status : Maybe.Maybe AWS.Ecs.TaskDefinitionStatus, taskDefinitionArn : Maybe.Maybe String.String, taskRoleArn : Maybe.Maybe String.String, volumes : Maybe.Maybe AWS.Ecs.VolumeList }"
+            },
+            {
+                "name": "TaskDefinitionFieldList",
+                "comment": " The TaskDefinitionFieldList data model.\n",
+                "args": [],
+                "type": "List.List AWS.Ecs.TaskDefinitionField"
+            },
+            {
+                "name": "TaskDefinitionPlacementConstraint",
+                "comment": " The TaskDefinitionPlacementConstraint data model.\n",
+                "args": [],
+                "type": "{ expression : Maybe.Maybe String.String, type_ : Maybe.Maybe AWS.Ecs.TaskDefinitionPlacementConstraintType }"
+            },
+            {
+                "name": "TaskDefinitionPlacementConstraints",
+                "comment": " The TaskDefinitionPlacementConstraints data model.\n",
+                "args": [],
+                "type": "List.List AWS.Ecs.TaskDefinitionPlacementConstraint"
+            },
+            {
+                "name": "TaskFieldList",
+                "comment": " The TaskFieldList data model.\n",
+                "args": [],
+                "type": "List.List AWS.Ecs.TaskField"
+            },
+            {
+                "name": "TaskOverride",
+                "comment": " The TaskOverride data model.\n",
+                "args": [],
+                "type": "{ containerOverrides : Maybe.Maybe AWS.Ecs.ContainerOverrides, executionRoleArn : Maybe.Maybe String.String, taskRoleArn : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "TaskSet",
+                "comment": " The TaskSet data model.\n",
+                "args": [],
+                "type": "{ clusterArn : Maybe.Maybe String.String, computedDesiredCount : Maybe.Maybe Basics.Int, createdAt : Maybe.Maybe String.String, externalId : Maybe.Maybe String.String, id : Maybe.Maybe String.String, launchType : Maybe.Maybe AWS.Ecs.LaunchType, loadBalancers : Maybe.Maybe AWS.Ecs.LoadBalancers, networkConfiguration : Maybe.Maybe AWS.Ecs.NetworkConfiguration, pendingCount : Maybe.Maybe Basics.Int, platformVersion : Maybe.Maybe String.String, runningCount : Maybe.Maybe Basics.Int, scale : Maybe.Maybe AWS.Ecs.Scale, serviceArn : Maybe.Maybe String.String, serviceRegistries : Maybe.Maybe AWS.Ecs.ServiceRegistries, stabilityStatus : Maybe.Maybe AWS.Ecs.StabilityStatus, stabilityStatusAt : Maybe.Maybe String.String, startedBy : Maybe.Maybe String.String, status : Maybe.Maybe String.String, taskDefinition : Maybe.Maybe String.String, taskSetArn : Maybe.Maybe String.String, updatedAt : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "TaskSets",
+                "comment": " The TaskSets data model.\n",
+                "args": [],
+                "type": "List.List AWS.Ecs.TaskSet"
+            },
+            {
+                "name": "Tasks",
+                "comment": " The Tasks data model.\n",
+                "args": [],
+                "type": "List.List AWS.Ecs.Task"
+            },
+            {
+                "name": "Tmpfs",
+                "comment": " The Tmpfs data model.\n",
+                "args": [],
+                "type": "{ containerPath : String.String, mountOptions : Maybe.Maybe AWS.Ecs.StringList, size : Basics.Int }"
+            },
+            {
+                "name": "TmpfsList",
+                "comment": " The TmpfsList data model.\n",
+                "args": [],
+                "type": "List.List AWS.Ecs.Tmpfs"
+            },
+            {
+                "name": "Ulimit",
+                "comment": " The Ulimit data model.\n",
+                "args": [],
+                "type": "{ hardLimit : Basics.Int, name : AWS.Ecs.UlimitName, softLimit : Basics.Int }"
+            },
+            {
+                "name": "UlimitList",
+                "comment": " The UlimitList data model.\n",
+                "args": [],
+                "type": "List.List AWS.Ecs.Ulimit"
+            },
+            {
+                "name": "UntagResourceRequest",
+                "comment": " The UntagResourceRequest data model.\n",
+                "args": [],
+                "type": "{ resourceArn : String.String, tagKeys : AWS.Ecs.TagKeys }"
+            },
+            {
+                "name": "UntagResourceResponse",
+                "comment": " The UntagResourceResponse data model.\n",
+                "args": [],
+                "type": "{}"
+            },
+            {
+                "name": "UpdateContainerAgentRequest",
+                "comment": " The UpdateContainerAgentRequest data model.\n",
+                "args": [],
+                "type": "{ cluster : Maybe.Maybe String.String, containerInstance : String.String }"
+            },
+            {
+                "name": "UpdateContainerAgentResponse",
+                "comment": " The UpdateContainerAgentResponse data model.\n",
+                "args": [],
+                "type": "{ containerInstance : Maybe.Maybe AWS.Ecs.ContainerInstance }"
+            },
+            {
+                "name": "UpdateContainerInstancesStateRequest",
+                "comment": " The UpdateContainerInstancesStateRequest data model.\n",
+                "args": [],
+                "type": "{ cluster : Maybe.Maybe String.String, containerInstances : AWS.Ecs.StringList, status : AWS.Ecs.ContainerInstanceStatus }"
+            },
+            {
+                "name": "UpdateContainerInstancesStateResponse",
+                "comment": " The UpdateContainerInstancesStateResponse data model.\n",
+                "args": [],
+                "type": "{ containerInstances : Maybe.Maybe AWS.Ecs.ContainerInstances, failures : Maybe.Maybe AWS.Ecs.Failures }"
+            },
+            {
+                "name": "UpdateServicePrimaryTaskSetRequest",
+                "comment": " The UpdateServicePrimaryTaskSetRequest data model.\n",
+                "args": [],
+                "type": "{ cluster : String.String, primaryTaskSet : String.String, service : String.String }"
+            },
+            {
+                "name": "UpdateServicePrimaryTaskSetResponse",
+                "comment": " The UpdateServicePrimaryTaskSetResponse data model.\n",
+                "args": [],
+                "type": "{ taskSet : Maybe.Maybe AWS.Ecs.TaskSet }"
+            },
+            {
+                "name": "UpdateServiceRequest",
+                "comment": " The UpdateServiceRequest data model.\n",
+                "args": [],
+                "type": "{ cluster : Maybe.Maybe String.String, deploymentConfiguration : Maybe.Maybe AWS.Ecs.DeploymentConfiguration, desiredCount : Maybe.Maybe Basics.Int, forceNewDeployment : Maybe.Maybe Basics.Bool, healthCheckGracePeriodSeconds : Maybe.Maybe Basics.Int, networkConfiguration : Maybe.Maybe AWS.Ecs.NetworkConfiguration, platformVersion : Maybe.Maybe String.String, service : String.String, taskDefinition : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "UpdateServiceResponse",
+                "comment": " The UpdateServiceResponse data model.\n",
+                "args": [],
+                "type": "{ service : Maybe.Maybe AWS.Ecs.Service }"
+            },
+            {
+                "name": "UpdateTaskSetRequest",
+                "comment": " The UpdateTaskSetRequest data model.\n",
+                "args": [],
+                "type": "{ cluster : String.String, scale : AWS.Ecs.Scale, service : String.String, taskSet : String.String }"
+            },
+            {
+                "name": "UpdateTaskSetResponse",
+                "comment": " The UpdateTaskSetResponse data model.\n",
+                "args": [],
+                "type": "{ taskSet : Maybe.Maybe AWS.Ecs.TaskSet }"
+            },
+            {
+                "name": "VersionInfo",
+                "comment": " The VersionInfo data model.\n",
+                "args": [],
+                "type": "{ agentHash : Maybe.Maybe String.String, agentVersion : Maybe.Maybe String.String, dockerVersion : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "Volume",
+                "comment": " The Volume data model.\n",
+                "args": [],
+                "type": "{ dockerVolumeConfiguration : Maybe.Maybe AWS.Ecs.DockerVolumeConfiguration, host : Maybe.Maybe AWS.Ecs.HostVolumeProperties, name : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "VolumeFrom",
+                "comment": " The VolumeFrom data model.\n",
+                "args": [],
+                "type": "{ readOnly : Maybe.Maybe Basics.Bool, sourceContainer : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "VolumeFromList",
+                "comment": " The VolumeFromList data model.\n",
+                "args": [],
+                "type": "List.List AWS.Ecs.VolumeFrom"
+            },
+            {
+                "name": "VolumeList",
+                "comment": " The VolumeList data model.\n",
+                "args": [],
+                "type": "List.List AWS.Ecs.Volume"
+            }
+        ],
+        "values": [
+            {
+                "name": "agentUpdateStatus",
+                "comment": " The AgentUpdateStatus data model.\n",
+                "type": "Enum.Enum AWS.Ecs.AgentUpdateStatus"
+            },
+            {
+                "name": "assignPublicIp",
+                "comment": " The AssignPublicIp data model.\n",
+                "type": "Enum.Enum AWS.Ecs.AssignPublicIp"
+            },
+            {
+                "name": "clusterField",
+                "comment": " The ClusterField data model.\n",
+                "type": "Enum.Enum AWS.Ecs.ClusterField"
+            },
+            {
+                "name": "clusterSettingName",
+                "comment": " The ClusterSettingName data model.\n",
+                "type": "Enum.Enum AWS.Ecs.ClusterSettingName"
+            },
+            {
+                "name": "compatibility",
+                "comment": " The Compatibility data model.\n",
+                "type": "Enum.Enum AWS.Ecs.Compatibility"
+            },
+            {
+                "name": "connectivity",
+                "comment": " The Connectivity data model.\n",
+                "type": "Enum.Enum AWS.Ecs.Connectivity"
+            },
+            {
+                "name": "containerCondition",
+                "comment": " The ContainerCondition data model.\n",
+                "type": "Enum.Enum AWS.Ecs.ContainerCondition"
+            },
+            {
+                "name": "containerInstanceField",
+                "comment": " The ContainerInstanceField data model.\n",
+                "type": "Enum.Enum AWS.Ecs.ContainerInstanceField"
+            },
+            {
+                "name": "containerInstanceStatus",
+                "comment": " The ContainerInstanceStatus data model.\n",
+                "type": "Enum.Enum AWS.Ecs.ContainerInstanceStatus"
+            },
+            {
+                "name": "createCluster",
+                "comment": " Creates a new Amazon ECS cluster. By default, your account receives a `default` cluster when you launch your first container instance. However, you can create your own cluster with a unique name with the `CreateCluster` action.\n\nWhen you call the `CreateCluster` API operation, Amazon ECS attempts to create the service-linked role for your account so that required resources in other AWS services can be managed on your behalf. However, if the IAM user that makes the call does not have permissions to create the service-linked role, it is not created. For more information, see `Using Service-Linked Roles for Amazon ECS` in the Amazon Elastic Container Service Developer Guide.\n\n",
+                "type": "AWS.Ecs.CreateClusterRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecs.CreateClusterResponse"
+            },
+            {
+                "name": "createService",
+                "comment": " Runs and maintains a desired number of tasks from a specified task definition. If the number of tasks running in a service drops below the `desiredCount`, Amazon ECS spawns another copy of the task in the specified cluster. To update an existing service, see `UpdateService`.\n\nIn addition to maintaining the desired count of tasks in your service, you can optionally run your service behind a load balancer. The load balancer distributes traffic across the tasks that are associated with the service. For more information, see `Service Load Balancing` in the Amazon Elastic Container Service Developer Guide.\n\nTasks for services that do not use a load balancer are considered healthy if they're in the `RUNNING` state. Tasks for services that do use a load balancer are considered healthy if they're in the `RUNNING` state and the container instance that they're hosted on is reported as healthy by the load balancer.\n\nThere are two service scheduler strategies available:\n\n  -     `REPLICA` - The replica scheduling strategy places and maintains the desired number of tasks across your cluster. By default, the service scheduler spreads tasks across Availability Zones. You can use task placement strategies and constraints to customize task placement decisions. For more information, see `Service Scheduler Concepts` in the Amazon Elastic Container Service Developer Guide.    `DAEMON` - The daemon scheduling strategy deploys exactly one task on each active container instance that meets all of the task placement constraints that you specify in your cluster. When using this strategy, you don't need to specify a desired number of tasks, a task placement strategy, or use Service Auto Scaling policies. For more information, see `Service Scheduler Concepts` in the Amazon Elastic Container Service Developer Guide.\n\nYou can optionally specify a deployment configuration for your service. The deployment is triggered by changing properties, such as the task definition or the desired count of a service, with an `UpdateService` operation. The default value for a replica service for `minimumHealthyPercent` is 100%. The default value for a daemon service for `minimumHealthyPercent` is 0%.\n\nIf a service is using the `ECS` deployment controller, the minimum healthy percent represents a lower limit on the number of tasks in a service that must remain in the `RUNNING` state during a deployment, as a percentage of the desired number of tasks (rounded up to the nearest integer), and while any container instances are in the `DRAINING` state if the service contains tasks using the EC2 launch type. This parameter enables you to deploy without using additional cluster capacity. For example, if your service has a desired number of four tasks and a minimum healthy percent of 50%, the scheduler might stop two existing tasks to free up cluster capacity before starting two new tasks. Tasks for services that do not use a load balancer are considered healthy if they're in the `RUNNING` state. Tasks for services that do use a load balancer are considered healthy if they're in the `RUNNING` state and they're reported as healthy by the load balancer. The default value for minimum healthy percent is 100%.\n\nIf a service is using the `ECS` deployment controller, the maximum percent parameter represents an upper limit on the number of tasks in a service that are allowed in the `RUNNING` or `PENDING` state during a deployment, as a percentage of the desired number of tasks (rounded down to the nearest integer), and while any container instances are in the `DRAINING` state if the service contains tasks using the EC2 launch type. This parameter enables you to define the deployment batch size. For example, if your service has a desired number of four tasks and a maximum percent value of 200%, the scheduler may start four new tasks before stopping the four older tasks (provided that the cluster resources required to do this are available). The default value for maximum percent is 200%.\n\nIf a service is using either the `CODE_DEPLOY` or `EXTERNAL` deployment controller types and tasks that use the EC2 launch type, the minimum healthy percent and maximum percent values are used only to define the lower and upper limit on the number of the tasks in the service that remain in the `RUNNING` state while the container instances are in the `DRAINING` state. If the tasks in the service use the Fargate launch type, the minimum healthy percent and maximum percent values aren't used, although they're currently visible when describing your service.\n\nWhen creating a service that uses the `EXTERNAL` deployment controller, you can specify only parameters that aren't controlled at the task set level. The only required parameter is the service name. You control your services using the `CreateTaskSet` operation. For more information, see `Amazon ECS Deployment Types` in the Amazon Elastic Container Service Developer Guide.\n\nWhen the service scheduler launches new tasks, it determines task placement in your cluster using the following logic:\n\n  - Determine which of the container instances in your cluster can support your service's task definition (for example, they have the required CPU, memory, ports, and container instance attributes). By default, the service scheduler attempts to balance tasks across Availability Zones in this manner (although you can choose a different placement strategy) with the `placementStrategy` parameter): Sort the valid container instances, giving priority to instances that have the fewest number of running tasks for this service in their respective Availability Zone. For example, if zone A has one running service task and zones B and C each have zero, valid container instances in either zone B or C are considered optimal for placement. Place the new service task on a valid container instance in an optimal Availability Zone (based on the previous steps), favoring container instances with the fewest number of running tasks for this service.\n\n",
+                "type": "AWS.Ecs.CreateServiceRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecs.CreateServiceResponse"
+            },
+            {
+                "name": "createTaskSet",
+                "comment": " Create a task set in the specified cluster and service. This is used when a service uses the `EXTERNAL` deployment controller type. For more information, see `Amazon ECS Deployment Types` in the Amazon Elastic Container Service Developer Guide.\n",
+                "type": "AWS.Ecs.CreateTaskSetRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecs.CreateTaskSetResponse"
+            },
+            {
+                "name": "deleteAccountSetting",
+                "comment": " Disables an account setting for a specified IAM user, IAM role, or the root user for an account.\n",
+                "type": "AWS.Ecs.DeleteAccountSettingRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecs.DeleteAccountSettingResponse"
+            },
+            {
+                "name": "deleteAttributes",
+                "comment": " Deletes one or more custom attributes from an Amazon ECS resource.\n",
+                "type": "AWS.Ecs.DeleteAttributesRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecs.DeleteAttributesResponse"
+            },
+            {
+                "name": "deleteCluster",
+                "comment": " Deletes the specified cluster. You must deregister all container instances from this cluster before you may delete it. You can list the container instances in a cluster with `ListContainerInstances` and deregister them with `DeregisterContainerInstance`.\n",
+                "type": "AWS.Ecs.DeleteClusterRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecs.DeleteClusterResponse"
+            },
+            {
+                "name": "deleteService",
+                "comment": " Deletes a specified service within a cluster. You can delete a service if you have no running tasks in it and the desired task count is zero. If the service is actively maintaining tasks, you cannot delete it, and you must update the service to a desired task count of zero. For more information, see `UpdateService`.\n\nWhen you delete a service, if there are still running tasks that require cleanup, the service status moves from `ACTIVE` to `DRAINING`, and the service is no longer visible in the console or in the `ListServices` API operation. After the tasks have stopped, then the service status moves from `DRAINING` to `INACTIVE`. Services in the `DRAINING` or `INACTIVE` status can still be viewed with the `DescribeServices` API operation. However, in the future, `INACTIVE` services may be cleaned up and purged from Amazon ECS record keeping, and `DescribeServices` calls on those services return a `ServiceNotFoundException` error.\n\nIf you attempt to create a new service with the same name as an existing service in either `ACTIVE` or `DRAINING` status, you receive an error.\n\n",
+                "type": "AWS.Ecs.DeleteServiceRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecs.DeleteServiceResponse"
+            },
+            {
+                "name": "deleteTaskSet",
+                "comment": " Deletes a specified task set within a service. This is used when a service uses the `EXTERNAL` deployment controller type. For more information, see `Amazon ECS Deployment Types` in the Amazon Elastic Container Service Developer Guide.\n",
+                "type": "AWS.Ecs.DeleteTaskSetRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecs.DeleteTaskSetResponse"
+            },
+            {
+                "name": "deploymentControllerType",
+                "comment": " The DeploymentControllerType data model.\n",
+                "type": "Enum.Enum AWS.Ecs.DeploymentControllerType"
+            },
+            {
+                "name": "deregisterContainerInstance",
+                "comment": " Deregisters an Amazon ECS container instance from the specified cluster. This instance is no longer available to run tasks.\n\nIf you intend to use the container instance for some other purpose after deregistration, you should stop all of the tasks running on the container instance before deregistration. That prevents any orphaned tasks from consuming resources.\n\nDeregistering a container instance removes the instance from a cluster, but it does not terminate the EC2 instance. If you are finished using the instance, be sure to terminate it in the Amazon EC2 console to stop billing.\n\nIf you terminate a running container instance, Amazon ECS automatically deregisters the instance from your cluster (stopped container instances or instances with disconnected agents are not automatically deregistered when terminated).\n\n",
+                "type": "AWS.Ecs.DeregisterContainerInstanceRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecs.DeregisterContainerInstanceResponse"
+            },
+            {
+                "name": "deregisterTaskDefinition",
+                "comment": " Deregisters the specified task definition by family and revision. Upon deregistration, the task definition is marked as `INACTIVE`. Existing tasks and services that reference an `INACTIVE` task definition continue to run without disruption. Existing services that reference an `INACTIVE` task definition can still scale up or down by modifying the service's desired count.\n\nYou cannot use an `INACTIVE` task definition to run new tasks or create new services, and you cannot update an existing service to reference an `INACTIVE` task definition. However, there may be up to a 10-minute window following deregistration where these restrictions have not yet taken effect.\n\nAt this time, `INACTIVE` task definitions remain discoverable in your account indefinitely. However, this behavior is subject to change in the future, so you should not rely on `INACTIVE` task definitions persisting beyond the lifecycle of any associated tasks and services.\n\n",
+                "type": "AWS.Ecs.DeregisterTaskDefinitionRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecs.DeregisterTaskDefinitionResponse"
+            },
+            {
+                "name": "describeClusters",
+                "comment": " Describes one or more of your clusters.\n",
+                "type": "AWS.Ecs.DescribeClustersRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecs.DescribeClustersResponse"
+            },
+            {
+                "name": "describeContainerInstances",
+                "comment": " Describes Amazon Elastic Container Service container instances. Returns metadata about registered and remaining resources on each container instance requested.\n",
+                "type": "AWS.Ecs.DescribeContainerInstancesRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecs.DescribeContainerInstancesResponse"
+            },
+            {
+                "name": "describeServices",
+                "comment": " Describes the specified services running in your cluster.\n",
+                "type": "AWS.Ecs.DescribeServicesRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecs.DescribeServicesResponse"
+            },
+            {
+                "name": "describeTaskDefinition",
+                "comment": " Describes a task definition. You can specify a `family` and `revision` to find information about a specific task definition, or you can simply specify the family to find the latest `ACTIVE` revision in that family.\n\nYou can only describe `INACTIVE` task definitions while an active task or service references them.\n\n",
+                "type": "AWS.Ecs.DescribeTaskDefinitionRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecs.DescribeTaskDefinitionResponse"
+            },
+            {
+                "name": "describeTaskSets",
+                "comment": " Describes the task sets in the specified cluster and service. This is used when a service uses the `EXTERNAL` deployment controller type. For more information, see `Amazon ECS Deployment Types` in the Amazon Elastic Container Service Developer Guide.\n",
+                "type": "AWS.Ecs.DescribeTaskSetsRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecs.DescribeTaskSetsResponse"
+            },
+            {
+                "name": "describeTasks",
+                "comment": " Describes a specified task or tasks.\n",
+                "type": "AWS.Ecs.DescribeTasksRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecs.DescribeTasksResponse"
+            },
+            {
+                "name": "desiredStatus",
+                "comment": " The DesiredStatus data model.\n",
+                "type": "Enum.Enum AWS.Ecs.DesiredStatus"
+            },
+            {
+                "name": "deviceCgroupPermission",
+                "comment": " The DeviceCgroupPermission data model.\n",
+                "type": "Enum.Enum AWS.Ecs.DeviceCgroupPermission"
+            },
+            {
+                "name": "discoverPollEndpoint",
+                "comment": " This action is only used by the Amazon ECS agent, and it is not intended for use outside of the agent.\n\nReturns an endpoint for the Amazon ECS agent to poll for updates.\n\n",
+                "type": "AWS.Ecs.DiscoverPollEndpointRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecs.DiscoverPollEndpointResponse"
+            },
+            {
+                "name": "healthStatus",
+                "comment": " The HealthStatus data model.\n",
+                "type": "Enum.Enum AWS.Ecs.HealthStatus"
+            },
+            {
+                "name": "ipcMode",
+                "comment": " The IpcMode data model.\n",
+                "type": "Enum.Enum AWS.Ecs.IpcMode"
+            },
+            {
+                "name": "launchType",
+                "comment": " The LaunchType data model.\n",
+                "type": "Enum.Enum AWS.Ecs.LaunchType"
+            },
+            {
+                "name": "listAccountSettings",
+                "comment": " Lists the account settings for a specified principal.\n",
+                "type": "AWS.Ecs.ListAccountSettingsRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecs.ListAccountSettingsResponse"
+            },
+            {
+                "name": "listAttributes",
+                "comment": " Lists the attributes for Amazon ECS resources within a specified target type and cluster. When you specify a target type and cluster, `ListAttributes` returns a list of attribute objects, one for each attribute on each resource. You can filter the list of results to a single attribute name to only return results that have that name. You can also filter the results by attribute name and value, for example, to see which container instances in a cluster are running a Linux AMI (`ecs.os-type=linux`).\n",
+                "type": "AWS.Ecs.ListAttributesRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecs.ListAttributesResponse"
+            },
+            {
+                "name": "listClusters",
+                "comment": " Returns a list of existing clusters.\n",
+                "type": "AWS.Ecs.ListClustersRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecs.ListClustersResponse"
+            },
+            {
+                "name": "listContainerInstances",
+                "comment": " Returns a list of container instances in a specified cluster. You can filter the results of a `ListContainerInstances` operation with cluster query language statements inside the `filter` parameter. For more information, see `Cluster Query Language` in the Amazon Elastic Container Service Developer Guide.\n",
+                "type": "AWS.Ecs.ListContainerInstancesRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecs.ListContainerInstancesResponse"
+            },
+            {
+                "name": "listServices",
+                "comment": " Lists the services that are running in a specified cluster.\n",
+                "type": "AWS.Ecs.ListServicesRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecs.ListServicesResponse"
+            },
+            {
+                "name": "listTagsForResource",
+                "comment": " List the tags for an Amazon ECS resource.\n",
+                "type": "AWS.Ecs.ListTagsForResourceRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecs.ListTagsForResourceResponse"
+            },
+            {
+                "name": "listTaskDefinitionFamilies",
+                "comment": " Returns a list of task definition families that are registered to your account (which may include task definition families that no longer have any `ACTIVE` task definition revisions).\n\nYou can filter out task definition families that do not contain any `ACTIVE` task definition revisions by setting the `status` parameter to `ACTIVE`. You can also filter the results with the `familyPrefix` parameter.\n\n",
+                "type": "AWS.Ecs.ListTaskDefinitionFamiliesRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecs.ListTaskDefinitionFamiliesResponse"
+            },
+            {
+                "name": "listTaskDefinitions",
+                "comment": " Returns a list of task definitions that are registered to your account. You can filter the results by family name with the `familyPrefix` parameter or by status with the `status` parameter.\n",
+                "type": "AWS.Ecs.ListTaskDefinitionsRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecs.ListTaskDefinitionsResponse"
+            },
+            {
+                "name": "listTasks",
+                "comment": " Returns a list of tasks for a specified cluster. You can filter the results by family name, by a particular container instance, or by the desired status of the task with the `family`, `containerInstance`, and `desiredStatus` parameters.\n\nRecently stopped tasks might appear in the returned results. Currently, stopped tasks appear in the returned results for at least one hour.\n\n",
+                "type": "AWS.Ecs.ListTasksRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecs.ListTasksResponse"
+            },
+            {
+                "name": "logDriver",
+                "comment": " The LogDriver data model.\n",
+                "type": "Enum.Enum AWS.Ecs.LogDriver"
+            },
+            {
+                "name": "networkMode",
+                "comment": " The NetworkMode data model.\n",
+                "type": "Enum.Enum AWS.Ecs.NetworkMode"
+            },
+            {
+                "name": "pidMode",
+                "comment": " The PidMode data model.\n",
+                "type": "Enum.Enum AWS.Ecs.PidMode"
+            },
+            {
+                "name": "placementConstraintType",
+                "comment": " The PlacementConstraintType data model.\n",
+                "type": "Enum.Enum AWS.Ecs.PlacementConstraintType"
+            },
+            {
+                "name": "placementStrategyType",
+                "comment": " The PlacementStrategyType data model.\n",
+                "type": "Enum.Enum AWS.Ecs.PlacementStrategyType"
+            },
+            {
+                "name": "platformDeviceType",
+                "comment": " The PlatformDeviceType data model.\n",
+                "type": "Enum.Enum AWS.Ecs.PlatformDeviceType"
+            },
+            {
+                "name": "propagateTags",
+                "comment": " The PropagateTags data model.\n",
+                "type": "Enum.Enum AWS.Ecs.PropagateTags"
+            },
+            {
+                "name": "proxyConfigurationType",
+                "comment": " The ProxyConfigurationType data model.\n",
+                "type": "Enum.Enum AWS.Ecs.ProxyConfigurationType"
+            },
+            {
+                "name": "putAccountSetting",
+                "comment": " Modifies an account setting. If you change the account setting for the root user, the default settings for all of the IAM users and roles for which no individual account setting has been specified are reset. For more information, see `Account Settings` in the Amazon Elastic Container Service Developer Guide.\n\nWhen `serviceLongArnFormat`, `taskLongArnFormat`, or `containerInstanceLongArnFormat` are specified, the Amazon Resource Name (ARN) and resource ID format of the resource type for a specified IAM user, IAM role, or the root user for an account is affected. The opt-in and opt-out account setting must be set for each Amazon ECS resource separately. The ARN and resource ID format of a resource will be defined by the opt-in status of the IAM user or role that created the resource. You must enable this setting to use Amazon ECS features such as resource tagging.\n\nWhen `awsvpcTrunking` is specified, the elastic network interface (ENI) limit for any new container instances that support the feature is changed. If `awsvpcTrunking` is enabled, any new container instances that support the feature are launched have the increased ENI limits available to them. For more information, see `Elastic Network Interface Trunking` in the Amazon Elastic Container Service Developer Guide.\n\nWhen `containerInsights` is specified, the default setting indicating whether CloudWatch Container Insights is enabled for your clusters is changed. If `containerInsights` is enabled, any new clusters that are created will have Container Insights enabled unless you disable it during cluster creation. For more information, see `CloudWatch Container Insights` in the Amazon Elastic Container Service Developer Guide.\n\n",
+                "type": "AWS.Ecs.PutAccountSettingRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecs.PutAccountSettingResponse"
+            },
+            {
+                "name": "putAccountSettingDefault",
+                "comment": " Modifies an account setting for all IAM users on an account for whom no individual account setting has been specified.\n",
+                "type": "AWS.Ecs.PutAccountSettingDefaultRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecs.PutAccountSettingDefaultResponse"
+            },
+            {
+                "name": "putAttributes",
+                "comment": " Create or update an attribute on an Amazon ECS resource. If the attribute does not exist, it is created. If the attribute exists, its value is replaced with the specified value. To delete an attribute, use `DeleteAttributes`. For more information, see `Attributes` in the Amazon Elastic Container Service Developer Guide.\n",
+                "type": "AWS.Ecs.PutAttributesRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecs.PutAttributesResponse"
+            },
+            {
+                "name": "registerContainerInstance",
+                "comment": " This action is only used by the Amazon ECS agent, and it is not intended for use outside of the agent.\n\nRegisters an EC2 instance into the specified cluster. This instance becomes available to place containers on.\n\n",
+                "type": "AWS.Ecs.RegisterContainerInstanceRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecs.RegisterContainerInstanceResponse"
+            },
+            {
+                "name": "registerTaskDefinition",
+                "comment": " Registers a new task definition from the supplied `family` and `containerDefinitions`. Optionally, you can add data volumes to your containers with the `volumes` parameter. For more information about task definition parameters and defaults, see `Amazon ECS Task Definitions` in the Amazon Elastic Container Service Developer Guide.\n\nYou can specify an IAM role for your task with the `taskRoleArn` parameter. When you specify an IAM role for a task, its containers can then use the latest versions of the AWS CLI or SDKs to make API requests to the AWS services that are specified in the IAM policy associated with the role. For more information, see `IAM Roles for Tasks` in the Amazon Elastic Container Service Developer Guide.\n\nYou can specify a Docker networking mode for the containers in your task definition with the `networkMode` parameter. The available network modes correspond to those described in `Network settings` in the Docker run reference. If you specify the `awsvpc` network mode, the task is allocated an elastic network interface, and you must specify a `NetworkConfiguration` when you create a service or run a task with the task definition. For more information, see `Task Networking` in the Amazon Elastic Container Service Developer Guide.\n\n",
+                "type": "AWS.Ecs.RegisterTaskDefinitionRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecs.RegisterTaskDefinitionResponse"
+            },
+            {
+                "name": "resourceType",
+                "comment": " The ResourceType data model.\n",
+                "type": "Enum.Enum AWS.Ecs.ResourceType"
+            },
+            {
+                "name": "runTask",
+                "comment": " Starts a new task using the specified task definition.\n\nYou can allow Amazon ECS to place tasks for you, or you can customize how Amazon ECS places tasks using placement constraints and placement strategies. For more information, see `Scheduling Tasks` in the Amazon Elastic Container Service Developer Guide.\n\nAlternatively, you can use `StartTask` to use your own scheduler or place tasks manually on specific container instances.\n\nThe Amazon ECS API follows an eventual consistency model, due to the distributed nature of the system supporting the API. This means that the result of an API command you run that affects your Amazon ECS resources might not be immediately visible to all subsequent commands you run. Keep this in mind when you carry out an API command that immediately follows a previous API command.\n\nTo manage eventual consistency, you can do the following:\n\n  - Confirm the state of the resource before you run a command to modify it. Run the DescribeTasks command using an exponential backoff algorithm to ensure that you allow enough time for the previous command to propagate through the system. To do this, run the DescribeTasks command repeatedly, starting with a couple of seconds of wait time and increasing gradually up to five minutes of wait time. Add wait time between subsequent commands, even if the DescribeTasks command returns an accurate response. Apply an exponential backoff algorithm starting with a couple of seconds of wait time, and increase gradually up to about five minutes of wait time.\n\n",
+                "type": "AWS.Ecs.RunTaskRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecs.RunTaskResponse"
+            },
+            {
+                "name": "scaleUnit",
+                "comment": " The ScaleUnit data model.\n",
+                "type": "Enum.Enum AWS.Ecs.ScaleUnit"
+            },
+            {
+                "name": "schedulingStrategy",
+                "comment": " The SchedulingStrategy data model.\n",
+                "type": "Enum.Enum AWS.Ecs.SchedulingStrategy"
+            },
+            {
+                "name": "scope",
+                "comment": " The Scope data model.\n",
+                "type": "Enum.Enum AWS.Ecs.Scope"
+            },
+            {
+                "name": "service",
+                "comment": " Configuration for this service.\n",
+                "type": "AWS.Config.Region -> AWS.Service.Service"
+            },
+            {
+                "name": "serviceField",
+                "comment": " The ServiceField data model.\n",
+                "type": "Enum.Enum AWS.Ecs.ServiceField"
+            },
+            {
+                "name": "settingName",
+                "comment": " The SettingName data model.\n",
+                "type": "Enum.Enum AWS.Ecs.SettingName"
+            },
+            {
+                "name": "sortOrder",
+                "comment": " The SortOrder data model.\n",
+                "type": "Enum.Enum AWS.Ecs.SortOrder"
+            },
+            {
+                "name": "stabilityStatus",
+                "comment": " The StabilityStatus data model.\n",
+                "type": "Enum.Enum AWS.Ecs.StabilityStatus"
+            },
+            {
+                "name": "startTask",
+                "comment": " Starts a new task from the specified task definition on the specified container instance or instances.\n\nAlternatively, you can use `RunTask` to place tasks for you. For more information, see `Scheduling Tasks` in the Amazon Elastic Container Service Developer Guide.\n\n",
+                "type": "AWS.Ecs.StartTaskRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecs.StartTaskResponse"
+            },
+            {
+                "name": "stopTask",
+                "comment": " Stops a running task. Any tags associated with the task will be deleted.\n\nWhen `StopTask` is called on a task, the equivalent of `docker stop` is issued to the containers running in the task. This results in a `SIGTERM` value and a default 30-second timeout, after which the `SIGKILL` value is sent and the containers are forcibly stopped. If the container handles the `SIGTERM` value gracefully and exits within 30 seconds from receiving it, no `SIGKILL` value is sent.\n\nThe default 30-second timeout can be configured on the Amazon ECS container agent with the `ECS_CONTAINER_STOP_TIMEOUT` variable. For more information, see `Amazon ECS Container Agent Configuration` in the Amazon Elastic Container Service Developer Guide.\n\n",
+                "type": "AWS.Ecs.StopTaskRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecs.StopTaskResponse"
+            },
+            {
+                "name": "submitAttachmentStateChanges",
+                "comment": " This action is only used by the Amazon ECS agent, and it is not intended for use outside of the agent.\n\nSent to acknowledge that an attachment changed states.\n\n",
+                "type": "AWS.Ecs.SubmitAttachmentStateChangesRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecs.SubmitAttachmentStateChangesResponse"
+            },
+            {
+                "name": "submitContainerStateChange",
+                "comment": " This action is only used by the Amazon ECS agent, and it is not intended for use outside of the agent.\n\nSent to acknowledge that a container changed states.\n\n",
+                "type": "AWS.Ecs.SubmitContainerStateChangeRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecs.SubmitContainerStateChangeResponse"
+            },
+            {
+                "name": "submitTaskStateChange",
+                "comment": " This action is only used by the Amazon ECS agent, and it is not intended for use outside of the agent.\n\nSent to acknowledge that a task changed states.\n\n",
+                "type": "AWS.Ecs.SubmitTaskStateChangeRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecs.SubmitTaskStateChangeResponse"
+            },
+            {
+                "name": "tagResource",
+                "comment": " Associates the specified tags to a resource with the specified `resourceArn`. If existing tags on a resource are not specified in the request parameters, they are not changed. When a resource is deleted, the tags associated with that resource are deleted as well.\n",
+                "type": "AWS.Ecs.TagResourceRequest -> AWS.Http.Request AWS.Http.AWSAppError ()"
+            },
+            {
+                "name": "targetType",
+                "comment": " The TargetType data model.\n",
+                "type": "Enum.Enum AWS.Ecs.TargetType"
+            },
+            {
+                "name": "taskDefinitionFamilyStatus",
+                "comment": " The TaskDefinitionFamilyStatus data model.\n",
+                "type": "Enum.Enum AWS.Ecs.TaskDefinitionFamilyStatus"
+            },
+            {
+                "name": "taskDefinitionField",
+                "comment": " The TaskDefinitionField data model.\n",
+                "type": "Enum.Enum AWS.Ecs.TaskDefinitionField"
+            },
+            {
+                "name": "taskDefinitionPlacementConstraintType",
+                "comment": " The TaskDefinitionPlacementConstraintType data model.\n",
+                "type": "Enum.Enum AWS.Ecs.TaskDefinitionPlacementConstraintType"
+            },
+            {
+                "name": "taskDefinitionStatus",
+                "comment": " The TaskDefinitionStatus data model.\n",
+                "type": "Enum.Enum AWS.Ecs.TaskDefinitionStatus"
+            },
+            {
+                "name": "taskField",
+                "comment": " The TaskField data model.\n",
+                "type": "Enum.Enum AWS.Ecs.TaskField"
+            },
+            {
+                "name": "taskStopCode",
+                "comment": " The TaskStopCode data model.\n",
+                "type": "Enum.Enum AWS.Ecs.TaskStopCode"
+            },
+            {
+                "name": "transportProtocol",
+                "comment": " The TransportProtocol data model.\n",
+                "type": "Enum.Enum AWS.Ecs.TransportProtocol"
+            },
+            {
+                "name": "ulimitName",
+                "comment": " The UlimitName data model.\n",
+                "type": "Enum.Enum AWS.Ecs.UlimitName"
+            },
+            {
+                "name": "untagResource",
+                "comment": " Deletes specified tags from a resource.\n",
+                "type": "AWS.Ecs.UntagResourceRequest -> AWS.Http.Request AWS.Http.AWSAppError ()"
+            },
+            {
+                "name": "updateContainerAgent",
+                "comment": " Updates the Amazon ECS container agent on a specified container instance. Updating the Amazon ECS container agent does not interrupt running tasks or services on the container instance. The process for updating the agent differs depending on whether your container instance was launched with the Amazon ECS-optimized AMI or another operating system.\n\n`UpdateContainerAgent` requires the Amazon ECS-optimized AMI or Amazon Linux with the `ecs-init` service installed and running. For help updating the Amazon ECS container agent on other operating systems, see `Manually Updating the Amazon ECS Container Agent` in the Amazon Elastic Container Service Developer Guide.\n\n",
+                "type": "AWS.Ecs.UpdateContainerAgentRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecs.UpdateContainerAgentResponse"
+            },
+            {
+                "name": "updateContainerInstancesState",
+                "comment": " Modifies the status of an Amazon ECS container instance.\n\nOnce a container instance has reached an `ACTIVE` state, you can change the status of a container instance to `DRAINING` to manually remove an instance from a cluster, for example to perform system updates, update the Docker daemon, or scale down the cluster size.\n\nA container instance cannot be changed to `DRAINING` until it has reached an `ACTIVE` status. If the instance is in any other status, an error will be received.\n\nWhen you set a container instance to `DRAINING`, Amazon ECS prevents new tasks from being scheduled for placement on the container instance and replacement service tasks are started on other container instances in the cluster if the resources are available. Service tasks on the container instance that are in the `PENDING` state are stopped immediately.\n\nService tasks on the container instance that are in the `RUNNING` state are stopped and replaced according to the service's deployment configuration parameters, `minimumHealthyPercent` and `maximumPercent`. You can change the deployment configuration of your service using `UpdateService`.\n\n  - If `minimumHealthyPercent` is below 100%, the scheduler can ignore `desiredCount` temporarily during task replacement. For example, `desiredCount` is four tasks, a minimum of 50% allows the scheduler to stop two existing tasks before starting two new tasks. If the minimum is 100%, the service scheduler can't remove existing tasks until the replacement tasks are considered healthy. Tasks for services that do not use a load balancer are considered healthy if they are in the `RUNNING` state. Tasks for services that use a load balancer are considered healthy if they are in the `RUNNING` state and the container instance they are hosted on is reported as healthy by the load balancer. The `maximumPercent` parameter represents an upper limit on the number of running tasks during task replacement, which enables you to define the replacement batch size. For example, if `desiredCount` is four tasks, a maximum of 200% starts four new tasks before stopping the four tasks to be drained, provided that the cluster resources required to do this are available. If the maximum is 100%, then replacement tasks can't start until the draining tasks have stopped.\n\nAny `PENDING` or `RUNNING` tasks that do not belong to a service are not affected. You must wait for them to finish or stop them manually.\n\nA container instance has completed draining when it has no more `RUNNING` tasks. You can verify this using `ListTasks`.\n\nWhen a container instance has been drained, you can set a container instance to `ACTIVE` status and once it has reached that status the Amazon ECS scheduler can begin scheduling tasks on the instance again.\n\n",
+                "type": "AWS.Ecs.UpdateContainerInstancesStateRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecs.UpdateContainerInstancesStateResponse"
+            },
+            {
+                "name": "updateService",
+                "comment": " Modifies the parameters of a service.\n\nFor services using the rolling update (`ECS`) deployment controller, the desired count, deployment configuration, network configuration, or task definition used can be updated.\n\nFor services using the blue/green (`CODE_DEPLOY`) deployment controller, only the desired count, deployment configuration, and health check grace period can be updated using this API. If the network configuration, platform version, or task definition need to be updated, a new AWS CodeDeploy deployment should be created. For more information, see `CreateDeployment` in the AWS CodeDeploy API Reference.\n\nFor services using an external deployment controller, you can update only the desired count and health check grace period using this API. If the launch type, load balancer, network configuration, platform version, or task definition need to be updated, you should create a new task set. For more information, see `CreateTaskSet`.\n\nYou can add to or subtract from the number of instantiations of a task definition in a service by specifying the cluster that the service is running in and a new `desiredCount` parameter.\n\nIf you have updated the Docker image of your application, you can create a new task definition with that image and deploy it to your service. The service scheduler uses the minimum healthy percent and maximum percent parameters (in the service's deployment configuration) to determine the deployment strategy.\n\nIf your updated Docker image uses the same tag as what is in the existing task definition for your service (for example, `my_image:latest`), you do not need to create a new revision of your task definition. You can update the service using the `forceNewDeployment` option. The new tasks launched by the deployment pull the current image/tag combination from your repository when they start.\n\nYou can also update the deployment configuration of a service. When a deployment is triggered by updating the task definition of a service, the service scheduler uses the deployment configuration parameters, `minimumHealthyPercent` and `maximumPercent`, to determine the deployment strategy.\n\n  - If `minimumHealthyPercent` is below 100%, the scheduler can ignore `desiredCount` temporarily during a deployment. For example, if `desiredCount` is four tasks, a minimum of 50% allows the scheduler to stop two existing tasks before starting two new tasks. Tasks for services that do not use a load balancer are considered healthy if they are in the `RUNNING` state. Tasks for services that use a load balancer are considered healthy if they are in the `RUNNING` state and the container instance they are hosted on is reported as healthy by the load balancer. The `maximumPercent` parameter represents an upper limit on the number of running tasks during a deployment, which enables you to define the deployment batch size. For example, if `desiredCount` is four tasks, a maximum of 200% starts four new tasks before stopping the four older tasks (provided that the cluster resources required to do this are available).\n\nWhen `UpdateService` stops a task during a deployment, the equivalent of `docker stop` is issued to the containers running in the task. This results in a `SIGTERM` and a 30-second timeout, after which `SIGKILL` is sent and the containers are forcibly stopped. If the container handles the `SIGTERM` gracefully and exits within 30 seconds from receiving it, no `SIGKILL` is sent.\n\nWhen the service scheduler launches new tasks, it determines task placement in your cluster with the following logic:\n\n  - Determine which of the container instances in your cluster can support your service's task definition (for example, they have the required CPU, memory, ports, and container instance attributes). By default, the service scheduler attempts to balance tasks across Availability Zones in this manner (although you can choose a different placement strategy): Sort the valid container instances by the fewest number of running tasks for this service in the same Availability Zone as the instance. For example, if zone A has one running service task and zones B and C each have zero, valid container instances in either zone B or C are considered optimal for placement. Place the new service task on a valid container instance in an optimal Availability Zone (based on the previous steps), favoring container instances with the fewest number of running tasks for this service.\n\nWhen the service scheduler stops running tasks, it attempts to maintain balance across the Availability Zones in your cluster using the following logic:\n\n  - Sort the container instances by the largest number of running tasks for this service in the same Availability Zone as the instance. For example, if zone A has one running service task and zones B and C each have two, container instances in either zone B or C are considered optimal for termination. Stop the task on a container instance in an optimal Availability Zone (based on the previous steps), favoring container instances with the largest number of running tasks for this service.\n\n",
+                "type": "AWS.Ecs.UpdateServiceRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecs.UpdateServiceResponse"
+            },
+            {
+                "name": "updateServicePrimaryTaskSet",
+                "comment": " Modifies which task set in a service is the primary task set. Any parameters that are updated on the primary task set in a service will transition to the service. This is used when a service uses the `EXTERNAL` deployment controller type. For more information, see `Amazon ECS Deployment Types` in the Amazon Elastic Container Service Developer Guide.\n",
+                "type": "AWS.Ecs.UpdateServicePrimaryTaskSetRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecs.UpdateServicePrimaryTaskSetResponse"
+            },
+            {
+                "name": "updateTaskSet",
+                "comment": " Modifies a task set. This is used when a service uses the `EXTERNAL` deployment controller type. For more information, see `Amazon ECS Deployment Types` in the Amazon Elastic Container Service Developer Guide.\n",
+                "type": "AWS.Ecs.UpdateTaskSetRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Ecs.UpdateTaskSetResponse"
+            }
+        ],
+        "binops": []
+    }
+]

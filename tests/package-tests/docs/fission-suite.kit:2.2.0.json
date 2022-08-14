@@ -1,0 +1,133 @@
+[
+    {
+        "name": "Kit",
+        "comment": "\n\n\n# 🎨\n\n@docs colors, primaryColor, secondaryColor, hsl, rgb\n\n\n# Fonts\n\n@docs fonts\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "colors",
+                "comment": " ",
+                "type": "{ pink : Color.Color, pink_tint : Color.Color, pink_shade : Color.Color, purple : Color.Color, purple_tint : Color.Color, purple_shade : Color.Color, yellow : Color.Color, base_25 : Color.Color, base_50 : Color.Color, base_100 : Color.Color, base_200 : Color.Color, base_300 : Color.Color, base_400 : Color.Color, base_500 : Color.Color, base_600 : Color.Color, base_700 : Color.Color, base_800 : Color.Color, base_900 : Color.Color, base_950 : Color.Color, marker_yellow : Color.Color, marker_yellow_tint : Color.Color, marker_yellow_shade : Color.Color, black : Color.Color, green : Color.Color, red : Color.Color, white : Color.Color }"
+            },
+            {
+                "name": "fonts",
+                "comment": " ",
+                "type": "{ body : String.String, display : String.String, mono : String.String }"
+            },
+            {
+                "name": "hsl",
+                "comment": " HSL color function.\n\nWhich takes the parameters `h`, `s` and `l`.\nWhere `h` is max 360 (degrees), `s` max 100 (pct) and `l` max 100 (pct) as well.\nSo given the CSS statement `hsl(232.7, 20.3%, 12%)`, you'd say:\n\n    hsl 232.7 20.3 12\n\n",
+                "type": "Basics.Float -> Basics.Float -> Basics.Float -> Color.Color"
+            },
+            {
+                "name": "primaryColor",
+                "comment": " ",
+                "type": "Color.Color"
+            },
+            {
+                "name": "rgb",
+                "comment": " RGB color function.\n\nWhich takes the parameters `r`, `g` and `b`.\nEach of which have a maximum value of 255.\nEquivalent to the standard CSS rgb usage.\n\n    rgb 255 255 255\n\n",
+                "type": "Basics.Int -> Basics.Int -> Basics.Int -> Color.Color"
+            },
+            {
+                "name": "secondaryColor",
+                "comment": " ",
+                "type": "Color.Color"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Kit.Chunky",
+        "comment": "\n\n@docs chunk\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "chunk",
+                "comment": " Function for easier styling using classes.\n\n    chunk\n        Html.a\n        [ \"underline\", \"text-blue\" ]\n        [ href \"\" ]\n        [ Html.text \"\" ]\n\nIs the same as:\n\n    Html.a\n        [ class \"underline text-blue\", href \"\" ]\n        [ Html.text \"\" ]\n\n",
+                "type": "(List.List (Html.Attribute msg) -> List.List (Html.Html msg) -> Html.Html msg) -> List.List String.String -> List.List (Html.Attribute msg) -> List.List (Html.Html msg) -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Kit.Components",
+        "comment": "\n\n\n# Generic\n\n@docs ButtonSize, button, buttonLink, buttonWithElement\n\n\n# Loading\n\n@docs loadingAnimation, loadingIndicator, loadingScreen\n\n\n# Other\n\n@docs appName, fissionIcon, signIn\n\n",
+        "unions": [
+            {
+                "name": "ButtonSize",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "ExtraSmall",
+                        []
+                    ],
+                    [
+                        "Small",
+                        []
+                    ],
+                    [
+                        "Normal",
+                        []
+                    ],
+                    [
+                        "Tag",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "appName",
+                "comment": " ",
+                "type": "{ large : Basics.Bool } -> List.List (Html.Attribute msg) -> String.String -> Html.Html msg"
+            },
+            {
+                "name": "button",
+                "comment": " ",
+                "type": "Kit.Components.ButtonSize -> List.List (Html.Attribute msg) -> List.List (Html.Html msg) -> Html.Html msg"
+            },
+            {
+                "name": "buttonLink",
+                "comment": " ",
+                "type": "Kit.Components.ButtonSize -> List.List (Html.Attribute msg) -> List.List (Html.Html msg) -> Html.Html msg"
+            },
+            {
+                "name": "buttonWithElement",
+                "comment": " ",
+                "type": "(List.List (Html.Attribute msg) -> List.List (Html.Html msg) -> Html.Html msg) -> Kit.Components.ButtonSize -> List.List (Html.Attribute msg) -> List.List (Html.Html msg) -> Html.Html msg"
+            },
+            {
+                "name": "fissionIcon",
+                "comment": " ",
+                "type": "{ size : Basics.Float } -> Svg.Svg msg"
+            },
+            {
+                "name": "loadingAnimation",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "loadingIndicator",
+                "comment": " ",
+                "type": "String.String -> Html.Html msg"
+            },
+            {
+                "name": "loadingScreen",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> List.List (Html.Html msg) -> Html.Html msg"
+            },
+            {
+                "name": "signIn",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

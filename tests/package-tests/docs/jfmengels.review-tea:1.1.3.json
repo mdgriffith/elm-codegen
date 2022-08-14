@@ -1,0 +1,44 @@
+[
+    {
+        "name": "NoMissingSubscriptionsCall",
+        "comment": "\n\n@docs rule\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": " Reports likely missing calls to a `subscriptions` function.\n\n    config =\n        [ NoMissingSubscriptionsCall.rule\n        ]\n\n\n## Fail\n\n    import SomeModule\n\n    update msg model =\n        case msg of\n            UsedMsg subMsg ->\n                SomeModule.update subMsg model.used\n\n    subscriptions model =\n        -- We used `SomeModule.update` but not `SomeModule.subscriptions`\n        Sub.none\n\nThis won't fail if `SomeModule` does not define a `subscriptions` function.\n\n\n## Success\n\n    import SomeModule\n\n    update msg model =\n        case msg of\n            UsedMsg subMsg ->\n                SomeModule.update subMsg model.used\n\n    subscriptions model =\n        SomeModule.subscriptions\n\n",
+                "type": "Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "NoRecursiveUpdate",
+        "comment": "\n\n@docs rule\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": " Reports when the `update` function calls itself.\n\nThis is often done in order to have one message (A) trigger (all or some of) the same\nmodel updates and commands as another message (B).\n\n    update msg model =\n        case msg of\n            Foo ->\n                { model | foo = True }\n\n            Bar ->\n                update Foo { model | bar = True }\n\nThis is advised against, because if the way that message B is handled changes,\nthat will implicitly change how message A is handled in ways that may not have\nbeen foreseen.\n\nA better solution is to move the common handling into a different function and\nhave it called in the handling of both messages.\n\n    update msg model =\n        case msg of\n            Foo ->\n                commonOperationOnModel model\n\n            Bar ->\n                commonOperationOnModel { model | bar = True }\n\n    commonOperationOnModel model =\n        { model | foo = True }\n\nCalls to other modules' `update` function are allowed.\n\nTo add the rule to your configuration:\n\n    config =\n        [ NoRecursiveUpdate.rule\n        ]\n\n",
+                "type": "Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "NoUselessSubscriptions",
+        "comment": "\n\n@docs rule\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": " Reports `subscriptions` functions that never return a subscription.\n\nIn my opinion, this is often a sign of premature architectural work, where you\nset up an `init`, `view`, `update` and `subscriptions` functions. I think\nit is better to define them as they are needed, to avoid adding upfront complexity\nthat turn out to be unnecessary later.\n\n    config =\n        [ NoUselessSubscriptions.rule\n        ]\n\n\n## Fail\n\n    subscriptions : Model -> Sub Msg\n    subscriptions model =\n        Sub.none\n\n\n## Success\n\n    main =\n        Browser.element\n            { init = init\n            , update = update\n            , subscriptions = \\_ -> Sub.none\n            , view = view\n            }\n\n",
+                "type": "Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    }
+]

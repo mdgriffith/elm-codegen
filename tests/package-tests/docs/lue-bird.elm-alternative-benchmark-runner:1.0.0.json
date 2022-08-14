@@ -1,0 +1,187 @@
+[
+    {
+        "name": "Benchmark.Alternative",
+        "comment": " More ways to produce `Benchmark`s.\n\n@docs rank\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rank",
+                "comment": " Run multiple benchmarks and compare them.\nThis is useful when optimizing data structures or\nother situations where you can make\napples-to-apples comparisons between different approaches.\n\n    rank \"initialize\"\n        (\\f -> f 100 identity)\n        [ ( \"optimized\", Array.Optimized.initialize )\n        , ( \"core\", Array.initialize )\n        ]\n\nWith the first argument you specify how you run the functions in the list.\n\n",
+                "type": "String.String -> (f -> result_) -> List.List ( String.String, f ) -> Benchmark.Benchmark"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Benchmark.Runner.Alternative",
+        "comment": " Run benchmarks in the browser.\n\n`import Benchmark.Runner.Alternative as BenchmarkRunner`.\n\n@docs Program, program\n\n\n## options\n\n@docs programWith, Options, defaultOptions, Theme, darkTheme, lightTheme\n\n\n## to write your own runner\n\n@docs progressBenchmark\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Options",
+                "comment": " Options to start the [`BenchmarkProgram`](Benchmark.Runner.Alternative#BenchmarkProgram) with:\n\n\n#### `theme`\n\n[`Theme`](#Theme).\n\n",
+                "args": [],
+                "type": "{ theme : Benchmark.Runner.Alternative.Theme }"
+            },
+            {
+                "name": "Program",
+                "comment": " A benchmark runner program. See [`program`](#program) for how to create one.\n",
+                "args": [],
+                "type": "Platform.Program () Benchmark.Runner.Alternative.Model Benchmark.Runner.Alternative.Msg"
+            },
+            {
+                "name": "Theme",
+                "comment": " Color theme.\nDefaults are [`darkTheme`](#darkTheme) and [`lightTheme`](#lightTheme).\n",
+                "args": [],
+                "type": "{ background : Color.Color, foreground : Color.Color }"
+            }
+        ],
+        "values": [
+            {
+                "name": "darkTheme",
+                "comment": " White stuff on a black background.\n",
+                "type": "Benchmark.Runner.Alternative.Theme"
+            },
+            {
+                "name": "defaultOptions",
+                "comment": " `{ theme = darkTheme }` and default rendering.\n",
+                "type": "Benchmark.Runner.Alternative.Options"
+            },
+            {
+                "name": "lightTheme",
+                "comment": " Black stuff on a white background.\n",
+                "type": "Benchmark.Runner.Alternative.Theme"
+            },
+            {
+                "name": "program",
+                "comment": " Run benchmarks with [`defaultOptions`](#defaultOptions).\n\n    main =\n        BenchmarkRunner.program suite\n\n",
+                "type": "Benchmark.Benchmark -> Benchmark.Runner.Alternative.Program"
+            },
+            {
+                "name": "programWith",
+                "comment": " Run benchmarks with custom [`Options`](#Options).\n\n    main =\n        programWith { defaultOptions | theme = Light }\n\n",
+                "type": "Benchmark.Runner.Alternative.Options -> Benchmark.Benchmark -> Benchmark.Runner.Alternative.Program"
+            },
+            {
+                "name": "progressBenchmark",
+                "comment": " `Benchmark.step` if the benchmark still hasn't received all results.\n",
+                "type": "Benchmark.Benchmark -> Platform.Cmd.Cmd Benchmark.Runner.Alternative.Msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Benchmark.Status.Alternative",
+        "comment": " Alternative way of representing the status of a benchmark.\n\n@docs fromReport, fromBenchmark\n\nInstead of\n\n    type Status\n        = Cold\n        | Unsized\n        | Pending Int Samples\n        | Failure Error\n        | Success Samples (Trend Quick)\n\nthe status is\n\n@docs Status\n\n\n## when `Running`\n\n@docs Running\n\n\n## when `Finished`\n\n@docs Result\n\n\n### utils\n\n@docs runsPerSecond, results\n\n\n## structure\n\n@docs Structure, StructureKind\n\n",
+        "unions": [
+            {
+                "name": "Running",
+                "comment": " Status of a running benchmark.\n\n  - `WarmingJit`: We have not warmed up the JIT yet.\n  - `FindingSampleSize`: We have not yet determined the best sample size for this benchmark.\n  - `CollectingSamples`: We are in the process of collecting sample data. We will keep collecting sample data until we have enough samples. The argument (between 0 and 1) shows the progress.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "WarmingJit",
+                        []
+                    ],
+                    [
+                        "FindingSampleSize",
+                        []
+                    ],
+                    [
+                        "CollectingSamples",
+                        [
+                            "Basics.Float"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Status",
+                "comment": " State of a benchmark: `Finished` or still `Running`.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Running",
+                        [
+                            "Benchmark.Status.Alternative.Running",
+                            "Benchmark.Status.Alternative.Structure {}"
+                        ]
+                    ],
+                    [
+                        "Finished",
+                        [
+                            "Benchmark.Status.Alternative.Structure { result : Benchmark.Status.Alternative.Result }"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "StructureKind",
+                "comment": " The structure type of a specific `Benchmark`.\n\n  - `Single`: `Benchmark.benchmark`\n  - `Series`: `Benchmark.compare`, `Benchmark.scale`, [`Benchmark.Alternative.rank`](Benchmark-Alternative#rank)\n  - `Group`: `Benchmark.describe`\n\n–\n\n  - when running: `StructureKind {}`\n  - when finished: `StructureKind { result : Result }`, see [`Result`](#Result)\n\n",
+                "args": [
+                    "status"
+                ],
+                "cases": [
+                    [
+                        "Single",
+                        [
+                            "status"
+                        ]
+                    ],
+                    [
+                        "Group",
+                        [
+                            "List.List (Benchmark.Status.Alternative.Structure status)"
+                        ]
+                    ],
+                    [
+                        "Series",
+                        [
+                            "List.List { status | name : String.String }"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Result",
+                "comment": " Information about a finished benchmark.\n\n  - `Ok`: We finished collecting all our sample data and calculated a trend using this data.\n  - `Err`: We ran into an exception while collecting sample data. The attached [`Error`](https://package.elm-lang.org/packages/elm-explorations/benchmark/latest/Benchmark-Status#Error) tells us what went wrong.\n\n",
+                "args": [],
+                "type": "Result.Result Benchmark.Status.Error (Trend.Linear.Trend Trend.Linear.Quick)"
+            },
+            {
+                "name": "Structure",
+                "comment": " The name and structure of a specific `Benchmark`.\n\n  - when running: `Structure {}`\n  - when finished: `Structure { result : Result }`, see [`Result`](#Result)\n\n",
+                "args": [
+                    "status"
+                ],
+                "type": "{ name : String.String, structureKind : Benchmark.Status.Alternative.StructureKind status }"
+            }
+        ],
+        "values": [
+            {
+                "name": "fromBenchmark",
+                "comment": " Report the [`Status`](#Status) of a benchmark. Short for\n\n    benchmark\n        |> Report.fromBenchmark\n        |> Benchmark.Status.Alternative.fromReport\n\n",
+                "type": "Benchmark.Benchmark -> Benchmark.Status.Alternative.Status"
+            },
+            {
+                "name": "fromReport",
+                "comment": " Convert a `Benchmark.Reporting.Report` to a [`Benchmark.Status.Alternative.Status`](#Status).\n",
+                "type": "Benchmark.Reporting.Report -> Benchmark.Status.Alternative.Status"
+            },
+            {
+                "name": "results",
+                "comment": " Collect all results.\n\n    lowestGoodnessOfFit =\n        results\n            >> List.filterMap Result.toMaybe\n            >> List.map Trend.goodnessOfFit\n            >> List.minimum\n            >> Maybe.withDefault 1\n\n    errors =\n        results\n            >> List.filterMap\n                (\\result ->\n                    case result of\n                        Err err ->\n                            Just err\n\n                        Ok _ ->\n                            Nothing\n                )\n\n",
+                "type": "Benchmark.Status.Alternative.Structure { result : Benchmark.Status.Alternative.Result } -> List.List Benchmark.Status.Alternative.Result"
+            },
+            {
+                "name": "runsPerSecond",
+                "comment": " Predict the amount of runs / 1 second.\n",
+                "type": "Trend.Linear.Trend a_ -> Basics.Float"
+            }
+        ],
+        "binops": []
+    }
+]

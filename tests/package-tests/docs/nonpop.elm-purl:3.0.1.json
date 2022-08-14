@@ -1,0 +1,130 @@
+[
+    {
+        "name": "Purl",
+        "comment": " A tiny library for building parameterized URLs. It is intended to be used\nwith records to give the parameters names and therefore reducing errors.\n\n    userUrl : Url { id : Int, show : Bool }\n    userUrl =\n        root |> hash |> s \"users\" |> int .id |> boolQuery \"show\" .show\n\n    userUrl |> toString { id = 42, show = True }\n        --> \"/#/users/42?show=true\"\n\n\n# Types\n\n@docs Url\n\n\n# Builders\n\n@docs root, s, maybeS, hash, customRoot\n@docs int, string, bool, custom\n@docs maybeInt, maybeString, maybeBool, maybeCustom\n@docs intQuery, stringQuery, boolQuery, customQuery\n@docs maybeIntQuery, maybeStringQuery, maybeBoolQuery, maybeCustomQuery\n\n\n# Presenting\n\n@docs toString\n\n",
+        "unions": [
+            {
+                "name": "Url",
+                "comment": " A URL parameterized over the type `a`, which is typically a record containing\na field for each variable segment and query parameter.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "bool",
+                "comment": " Append a boolean segment.\n\n    root\n        |> bool .show\n        |> toString { show = True }\n        --> \"/true\"\n\n",
+                "type": "(a -> Basics.Bool) -> Purl.Url a -> Purl.Url a"
+            },
+            {
+                "name": "boolQuery",
+                "comment": " Append a boolean query value.\n\n    root\n        |> boolQuery \"show\" .show\n        |> toString { show = True }\n        --> \"/?show=true\"\n\n",
+                "type": "String.String -> (a -> Basics.Bool) -> Purl.Url a -> Purl.Url a"
+            },
+            {
+                "name": "custom",
+                "comment": " Append a custom segment.\n\n    root\n        |> custom (.ids >> List.map String.fromInt >> String.join \";\")\n        |> toString { ids = [1, 2, 3] }\n        --> \"/1%3B2%3B3\"\n\n",
+                "type": "(a -> String.String) -> Purl.Url a -> Purl.Url a"
+            },
+            {
+                "name": "customQuery",
+                "comment": " Append a custom query value.\n\n    root\n        |> customQuery \"ids\" (.ids >> List.map String.fromInt >> String.join \";\")\n        |> toString { ids = [1, 2, 3] }\n        --> \"/?ids=1%3B2%3B3\"\n\n",
+                "type": "String.String -> (a -> String.String) -> Purl.Url a -> Purl.Url a"
+            },
+            {
+                "name": "customRoot",
+                "comment": " A custom root URL.\n\n    customRoot \"http://example.com:8080/\"\n        |> toString () --> \"http://example.com:8080/\"\n\nIf the string has no trailing slash, one is added:\n\n    customRoot \"http://example.com:8080\"\n        |> toString () --> \"http://example.com:8080/\"\n\n",
+                "type": "String.String -> Purl.Url a"
+            },
+            {
+                "name": "hash",
+                "comment": " Append a hash segment.\n\n    root\n        |> s \"base\"\n        |> hash\n        |> s \"page\"\n        |> toString {}\n        --> \"/base/#/page\"\n\nNOTE: Only the first hash is unencoded:\n\n    root |> hash |> hash |> toString {} --> \"/#/%23\"\n\n",
+                "type": "Purl.Url a -> Purl.Url a"
+            },
+            {
+                "name": "int",
+                "comment": " Append an integer segment.\n\n    root\n        |> s \"users\"\n        |> int .id\n        |> toString { id = 42 }\n        --> \"/users/42\"\n\n",
+                "type": "(a -> Basics.Int) -> Purl.Url a -> Purl.Url a"
+            },
+            {
+                "name": "intQuery",
+                "comment": " Append an integer query value.\n\n    root\n        |> s \"users\"\n        |> intQuery \"id\" .id\n        |> toString { id = 42 }\n        --> \"/users?id=42\"\n\n",
+                "type": "String.String -> (a -> Basics.Int) -> Purl.Url a -> Purl.Url a"
+            },
+            {
+                "name": "maybeBool",
+                "comment": " Append a boolean segment with a Maybe value; it is omitted when the\nvalue is Nothing.\n\n    url : Url { show : Maybe Bool }\n    url =\n        root\n            |> maybeBool .show\n\n    toString { show = Just True } url --> \"/true\"\n    toString { show = Nothing } url --> \"/\"\n\n",
+                "type": "(a -> Maybe.Maybe Basics.Bool) -> Purl.Url a -> Purl.Url a"
+            },
+            {
+                "name": "maybeBoolQuery",
+                "comment": " Append a boolean query value with a Maybe value; it is omitted when the\nvalue is Nothing.\n\n    url : Url { show : Maybe Bool }\n    url =\n        root\n            |> maybeBoolQuery \"show\" .show\n\n    toString { show = Just True } url --> \"/?show=true\"\n    toString { show = Nothing } url --> \"/\"\n\n",
+                "type": "String.String -> (a -> Maybe.Maybe Basics.Bool) -> Purl.Url a -> Purl.Url a"
+            },
+            {
+                "name": "maybeCustom",
+                "comment": " Append a custom segment with a Maybe value; it is omitted when the value is\nNothing.\n\n    url : Url { ids : Maybe (List Int) }\n    url =\n        root\n            |> maybeCustom (.ids >> Maybe.map (List.map String.fromInt >> String.join \";\"))\n\n    url |> toString { ids = Just [ 1, 2, 3 ] } --> \"/1%3B2%3B3\"\n    url |> toString { ids = Nothing } --> \"/\"\n\n",
+                "type": "(a -> Maybe.Maybe String.String) -> Purl.Url a -> Purl.Url a"
+            },
+            {
+                "name": "maybeCustomQuery",
+                "comment": " Append a custom query value with a Maybe value; it is omitted when the value is\nNothing.\n\n    url : Url { ids : Maybe (List Int) }\n    url =\n        root\n            |> maybeCustomQuery \"ids\" (.ids >> Maybe.map (List.map String.fromInt >> String.join \";\"))\n\n    url |> toString { ids = Just [ 1, 2, 3 ] } --> \"/?ids=1%3B2%3B3\"\n    url |> toString { ids = Nothing } --> \"/\"\n\n",
+                "type": "String.String -> (a -> Maybe.Maybe String.String) -> Purl.Url a -> Purl.Url a"
+            },
+            {
+                "name": "maybeInt",
+                "comment": " Append an integer segment with a Maybe value; it is omitted\nwhen the value is Nothing.\n\n    url : Url { id : Maybe Int }\n    url =\n        root\n            |> s \"users\"\n            |> maybeInt .id\n            |> s \"images\"\n\n    toString { id = Just 42 } url --> \"/users/42/images\"\n    toString { id = Nothing } url --> \"/users/images\"\n\n",
+                "type": "(a -> Maybe.Maybe Basics.Int) -> Purl.Url a -> Purl.Url a"
+            },
+            {
+                "name": "maybeIntQuery",
+                "comment": " Append an integer query value with a Maybe value; it is omitted\nwhen the value is Nothing.\n\n    url : Url { id : Maybe Int }\n    url =\n        root\n            |> s \"users\"\n            |> s \"images\"\n            |> maybeIntQuery \"id\" .id\n\n    toString { id = Just 42 } url --> \"/users/images?id=42\"\n    toString { id = Nothing } url --> \"/users/images\"\n\n",
+                "type": "String.String -> (a -> Maybe.Maybe Basics.Int) -> Purl.Url a -> Purl.Url a"
+            },
+            {
+                "name": "maybeS",
+                "comment": " Append an unparameterized (static) segment with a Maybe value; it is omitted when the\nvalue is Nothing.\n\n    root\n        |> maybeS (Just \"users\")\n        |> maybeS Nothing\n        |> maybeS (Just \"1\")\n        |> toString ()\n        --> \"/users/1\"\n\n",
+                "type": "Maybe.Maybe String.String -> Purl.Url a -> Purl.Url a"
+            },
+            {
+                "name": "maybeString",
+                "comment": " Append a string segment with a Maybe value; it is omitted when the value\nis Nothing.\n\n    url : Url { word : Maybe String }\n    url =\n        root\n            |> s \"say\"\n            |> maybeString .word\n            |> s \"world\"\n\n    toString { word = Just \"Hello\" } url --> \"/say/Hello/world\"\n    toString { word = Nothing } url --> \"/say/world\"\n\n",
+                "type": "(a -> Maybe.Maybe String.String) -> Purl.Url a -> Purl.Url a"
+            },
+            {
+                "name": "maybeStringQuery",
+                "comment": " Append a string query value with a Maybe value; it is omitted when the value\nis Nothing.\n\n    url : Url { word : Maybe String }\n    url =\n        root\n            |> s \"say\"\n            |> maybeStringQuery \"word\" .word\n\n    toString { word = Just \"Hello\" } url --> \"/say?word=Hello\"\n    toString { word = Nothing } url --> \"/say\"\n\n",
+                "type": "String.String -> (a -> Maybe.Maybe String.String) -> Purl.Url a -> Purl.Url a"
+            },
+            {
+                "name": "root",
+                "comment": " The root URL.\n\n    root |> toString () --> \"/\"\n\n",
+                "type": "Purl.Url a"
+            },
+            {
+                "name": "s",
+                "comment": " Append an unparameterized (static) segment.\n\n    root |> s \"users\" |> toString () --> \"/users\"\n\n",
+                "type": "String.String -> Purl.Url a -> Purl.Url a"
+            },
+            {
+                "name": "string",
+                "comment": " Append a string segment.\n\n    root\n        |> s \"say\"\n        |> string .word\n        |> toString { word = \"Hello\" }\n        --> \"/say/Hello\"\n\n",
+                "type": "(a -> String.String) -> Purl.Url a -> Purl.Url a"
+            },
+            {
+                "name": "stringQuery",
+                "comment": " Append a string query value.\n\n    root\n        |> s \"say\"\n        |> stringQuery \"word\" .word\n        |> toString { word = \"Hello\" }\n        --> \"/say?word=Hello\"\n\n",
+                "type": "String.String -> (a -> String.String) -> Purl.Url a -> Purl.Url a"
+            },
+            {
+                "name": "toString",
+                "comment": " Give a string representation of the URL, given a value for the parameter.\n",
+                "type": "a -> Purl.Url a -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

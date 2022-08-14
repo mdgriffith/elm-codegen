@@ -1,0 +1,153 @@
+[
+    {
+        "name": "DateTimePicker",
+        "comment": "\n\n\n# This is a heavily-modified version of <https://github.com/abadi199/datetimepicker/blob/master/src/DateTimePicker/Svg.elm>\n\n@docs DateTime, dateTime\n\n\n# View\n\n@docs datePickerWithConfig, dateTimePickerWithConfig, timePickerWithConfig\n\n\n# Initial\n\n@docs initialStateWithToday\n\n\n# Internal State\n\n@docs State\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "DateTime",
+                "comment": " The representation of a date and time in the picker\n",
+                "args": [],
+                "type": "DateTimePicker.DateTime.DateTime"
+            },
+            {
+                "name": "State",
+                "comment": " The state of the date time picker (for Internal Use)\n",
+                "args": [],
+                "type": "DateTimePicker.Internal.InternalState"
+            }
+        ],
+        "values": [
+            {
+                "name": "datePickerWithConfig",
+                "comment": " Date Picker view function with custom configuration.\n\nExample:\ntype alias Model = { datePickerState : DateTimePicker.State, value : Maybe DateTime.DateTime }\n\n    type Msg\n        = DatePickerChanged DateTimePicker.State (Maybe DateTime.DateTime)\n\n    customConfig =\n        let\n            default =\n                DateTimePicker.defaultConfig DatePickerChanged\n        in\n        { default | firstDayOfWeek = Date.Mon }\n\n    view =\n        DateTimePicker.datePickerWithConfig \"Date and Time Picker\"\n            customConfig\n            DateTimePicker.defaultDatePickerConfig\n            [ class \"my-datepicker\" ]\n            model.datePickerState\n            model.value\n\n",
+                "type": "String.String -> DateTimePicker.Config.Config DateTimePicker.Config.DatePickerConfig msg -> List.List (Nri.Ui.TextInput.V7.Attribute String.String msg) -> DateTimePicker.State -> Maybe.Maybe DateTimePicker.DateTime.DateTime -> Html.Styled.Html msg"
+            },
+            {
+                "name": "dateTime",
+                "comment": " Construct a DateTime\n",
+                "type": "Basics.Int -> Time.Month -> Basics.Int -> Basics.Int -> Basics.Int -> DateTimePicker.DateTime.DateTime"
+            },
+            {
+                "name": "dateTimePickerWithConfig",
+                "comment": " Date and Time Picker view with custom configuration\nExample:\ntype alias Model = { dateTimePickerState : DateTimePicker.State, value : Maybe DateTime.DateTime }\n\n    type Msg\n        = DatePickerChanged DateTimePicker.State (Maybe DateTime.DateTime)\n\n    customConfig =\n        let\n            default =\n                DateTimePicker.defaultDateTimePickerConfig DatePickerChanged\n        in\n        { default | firstDayOfWeek = Date.Mon }\n\n    view =\n        DateTimePicker.dateTimePickerWithConfig \"Date and Time Picker\"\n            customConfig\n            [ class \"my-datetimepicker\" ]\n            model.dateTimePickerState\n            model.value\n\n",
+                "type": "String.String -> DateTimePicker.Config.Config DateTimePicker.Config.DatePickerConfig msg -> List.List (Nri.Ui.TextInput.V7.Attribute String.String msg) -> DateTimePicker.State -> Maybe.Maybe DateTimePicker.DateTime.DateTime -> Html.Styled.Html msg"
+            },
+            {
+                "name": "initialStateWithToday",
+                "comment": " Initial state of the DatePicker with today Date\n",
+                "type": "DateTimePicker.DateTime.DateTime -> DateTimePicker.State"
+            },
+            {
+                "name": "timePickerWithConfig",
+                "comment": " Time Picker view with custom configuration\nExample:\ntype alias Model = { timePickerState : DateTimePicker.State, value : Maybe DateTime.DateTime }\n\n    type Msg\n        = TimePickerChanged DateTimePicker.State (Maybe DateTime.DateTime)\n\n    customConfig =\n        DateTimePicker.defaultTimePickerConfig TimePickerChanged\n\n    view =\n        DateTimePicker.timePickerWithConfig \"Time picker\"\n            customConfig\n            [ class \"my-datetimepicker\" ]\n            model.timePickerState\n            model.value\n\n",
+                "type": "String.String -> DateTimePicker.Config.Config {} msg -> List.List (Nri.Ui.TextInput.V7.Attribute String.String msg) -> DateTimePicker.State -> Maybe.Maybe DateTimePicker.DateTime.DateTime -> Html.Styled.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "DateTimePicker.Config",
+        "comment": "\n\n\n# THIS IS A HEAVILY MODIFIED FORK OF <https://github.com/abadi199/datetimepicker>\n\n\n# Configuration\n\n@docs Config, DatePickerConfig, NameOfDays, Type\n\n\n# Default Configuration\n\n@docs defaultDatePickerConfig, defaultTimePickerConfig, defaultDateTimePickerConfig, defaultDateFromInput, defaultTimeFromInput, defaultDateTimeFromInput, defaultDateTimeToInput, defaultDateToInput, defaultTimeToInput\n\n",
+        "unions": [
+            {
+                "name": "Type",
+                "comment": " The type of picker (for Internal Use)\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": [
+                    [
+                        "DateType",
+                        [
+                            "DateTimePicker.Config.Config DateTimePicker.Config.DatePickerConfig msg"
+                        ]
+                    ],
+                    [
+                        "DateTimeType",
+                        [
+                            "DateTimePicker.Config.Config DateTimePicker.Config.DatePickerConfig msg"
+                        ]
+                    ],
+                    [
+                        "TimeType",
+                        [
+                            "DateTimePicker.Config.Config {} msg"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " Configuration\n\n  - `onChange` is the message for when the selected value and internal `State` in the date picker has changed.\n  - `parseInput` accepts a user string from the input element and attempts to convert it to a DateTime\n\n",
+                "args": [
+                    "otherConfig",
+                    "msg"
+                ],
+                "type": "{ otherConfig | onChange : DateTimePicker.Config.State -> Maybe.Maybe DateTimePicker.DateTime.DateTime -> msg, usePicker : Basics.Bool, attributes : List.List (Html.Styled.Attribute msg), fromInput : String.String -> Maybe.Maybe DateTimePicker.DateTime.DateTime, toInput : DateTimePicker.DateTime.DateTime -> String.String }"
+            },
+            {
+                "name": "DatePickerConfig",
+                "comment": " Configuration for the DatePicker\n\n  - `nameOfDays` is the configuration for name of days in a week.\n  - `firstDayOfWeek` is the first day of the week.\n  - `allowYearNavigation` show/hide year navigation button.\n  - `earliestDate` if given, dates before this cannot be selected\n\n",
+                "args": [],
+                "type": "{ nameOfDays : DateTimePicker.Config.NameOfDays, firstDayOfWeek : Time.Weekday, allowYearNavigation : Basics.Bool, earliestDate : Maybe.Maybe DateTimePicker.DateTime.DateTime }"
+            },
+            {
+                "name": "NameOfDays",
+                "comment": " Configuration for name of days in a week.\n\nThis will be displayed as the calendar's header.\nDefault:\n\n  - sunday = \"Su\"\n  - monday = \"Mo\"\n  - tuesday = \"Tu\"\n  - wednesday = \"We\"\n  - thursday = \"Th\"\n  - friday = \"Fr\"\n  - saturday = \"Sa\"\n\n",
+                "args": [],
+                "type": "{ sunday : String.String, monday : String.String, tuesday : String.String, wednesday : String.String, thursday : String.String, friday : String.String, saturday : String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultDateFromInput",
+                "comment": " Default date parser\n",
+                "type": "String.String -> Maybe.Maybe DateTimePicker.DateTime.DateTime"
+            },
+            {
+                "name": "defaultDatePickerConfig",
+                "comment": " Default configuration for DatePicker\n\n  - `onChange` No Default\n  - `nameOfDays` see `NameOfDays` for the default values.\n  - `firstDayOfWeek` Default: Sunday.\n  - `allowYearNavigation` Default : True\n  - `earliestDate` Default : Nothing\n\n",
+                "type": "(DateTimePicker.Config.State -> Maybe.Maybe DateTimePicker.DateTime.DateTime -> msg) -> DateTimePicker.Config.Config DateTimePicker.Config.DatePickerConfig msg"
+            },
+            {
+                "name": "defaultDateTimeFromInput",
+                "comment": " Default date and time parser\n",
+                "type": "String.String -> Maybe.Maybe DateTimePicker.DateTime.DateTime"
+            },
+            {
+                "name": "defaultDateTimePickerConfig",
+                "comment": " Default configuration for DateTimePicker\n\n  - `onChange` No Default\n  - `dateFormatter` Default: `\"%m/%d/%Y\"`\n  - `dateTimeFormatter` Default: `\"%m/%d/%Y %I:%M %p\"`\n  - `nameOfDays` see `NameOfDays` for the default values.\n  - `firstDayOfWeek` Default: Sunday.\n  - `titleFormatter` Default: `\"%B %Y\"`\n  - `fullDateFormatter` Default: `\"%A, %B %d, %Y\"`\n  - `timeFormatter` Default: `\"%I:%M %p\"`\n  - `allowYearNavigation` Default : True\n  - `earliestDate` Default : Nothing\n\n",
+                "type": "(DateTimePicker.Config.State -> Maybe.Maybe DateTimePicker.DateTime.DateTime -> msg) -> DateTimePicker.Config.Config DateTimePicker.Config.DatePickerConfig msg"
+            },
+            {
+                "name": "defaultDateTimeToInput",
+                "comment": " Default date and time printer\n",
+                "type": "DateTimePicker.DateTime.DateTime -> String.String"
+            },
+            {
+                "name": "defaultDateToInput",
+                "comment": " Default date printer\n",
+                "type": "DateTimePicker.DateTime.DateTime -> String.String"
+            },
+            {
+                "name": "defaultTimeFromInput",
+                "comment": " Default time parser\n",
+                "type": "String.String -> Maybe.Maybe DateTimePicker.DateTime.DateTime"
+            },
+            {
+                "name": "defaultTimePickerConfig",
+                "comment": " Default configuration for TimePicker\n\n  - `onChange` No Default\n  - `dateFormatter` Default: `\"%m/%d/%Y\"`\n  - `dateTimeFormatter` Default: `\"%m/%d/%Y %I:%M %p\"`\n  - `timeFormatter` Default: `\"%I:%M %p\"`\n\n",
+                "type": "(DateTimePicker.Config.State -> Maybe.Maybe DateTimePicker.DateTime.DateTime -> msg) -> DateTimePicker.Config.Config {} msg"
+            },
+            {
+                "name": "defaultTimeToInput",
+                "comment": " Default time printer\n",
+                "type": "DateTimePicker.DateTime.DateTime -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

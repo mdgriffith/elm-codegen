@@ -1,0 +1,189 @@
+[
+    {
+        "name": "Requested",
+        "comment": " The Requested type and associated functions.\n\nThe Requested type is an opinionated paradigm for managing\nasynchronous, fallible operations, particularly those which can happen\nseveral times.\n\nThe README gives a good overview. This module houses the Requested\ntype itself and the functions you probably need to use it.\n\n@docs Requested\n@docs fromTracker, fromSuccess, fromFailure\n@docs mapSuccess, mapFailure, mapTracker\n@docs isOutstanding\n@docs withResponse\n@docs refresh\n@docs getSuccess, getFailure\n@docs fromResult\n\n",
+        "unions": [
+            {
+                "name": "Requested",
+                "comment": " The Requested type.\n\nA `Requested t e a` has at least one of:\n\n  - an outstanding request, i.e. \"loading\"\n  - a failed response\n  - a successful response\n\n\"At least one\" indicates that some previous results are retained:\n\n  - an outstanding request retains both the last failure and the last\n    success\n  - a failure retains the last success\n\nThe type t represents a \"tracker\" which is used to identify\nrequests. You are required to provide a comparison function to order\ntrackers. We keep the tracker for each response so that we can handle\nout-of-order responses.\n\nThe constructors are:\n\n  - `Succeeded`: The latest response was successful. We also keep the\n    tracker that produced this successful response, which lets us\n    identify newer responses (should we transition to `Failed` or\n    `Outstanding`). Additionally, you may find that you want to use\n    the tracker to identify the current state in some way.\n\n  - `Failed`: The latest response was a failure. We also keep the last\n    success. If successes come in that are newer than that success, we\n    will update it. Failures should not come in that are newer than\n    the last failure because if there were newer requests, we should\n    be in `Outstanding`.\n\n  - `Outstanding`: A request has been issued to which we have not\n    received the response yet. That request should always be the\n    newest request made for this `Requested`. If we are not in this\n    state, then it should be impossible to receive a response later\n    than what we have.\n\n    Responses for other requests will be used, if necessary,\n    to update the previous failure and previous success states, but we\n    will remain \"waiting\" until we get the response corresponding to\n    our current request.\n\n",
+                "args": [
+                    "t",
+                    "e",
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Succeeded",
+                        [
+                            "( t, a )"
+                        ]
+                    ],
+                    [
+                        "Failed",
+                        [
+                            "( t, e )",
+                            "Maybe.Maybe ( t, a )"
+                        ]
+                    ],
+                    [
+                        "Outstanding",
+                        [
+                            "t",
+                            "Maybe.Maybe ( t, e )",
+                            "Maybe.Maybe ( t, a )"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fromFailure",
+                "comment": " Utility function to construct a Requested when you already have a\nfailure.\n\nThis lets you make lemonade, even when life gives you lemons.\n\nThis function is provided for completeness, but generally isn't that\nuseful.\n\n",
+                "type": "t -> e -> Requested.Requested t e a"
+            },
+            {
+                "name": "fromResult",
+                "comment": " Utility function to create a Requested given a Result.\n\nThis is provided for completeness.\n\n",
+                "type": "t -> Result.Result e a -> Requested.Requested t e a"
+            },
+            {
+                "name": "fromSuccess",
+                "comment": " Utility function to construct a Requested when you already have\nthe data it would fetch.\n",
+                "type": "t -> a -> Requested.Requested t e a"
+            },
+            {
+                "name": "fromTracker",
+                "comment": " Construct a Requested from an initial request.\n\nThis is the most common way of creating a Requested.\n\n",
+                "type": "t -> Requested.Requested t e a"
+            },
+            {
+                "name": "getFailure",
+                "comment": " Get the previous failure from the Requested, if any.\n\nThis is a utility function which may be useful in writing views.\n\n",
+                "type": "Requested.Requested t e a -> Maybe.Maybe ( t, e )"
+            },
+            {
+                "name": "getSuccess",
+                "comment": " Get the previous success from the Requested, if any.\n\nThis is a utility function which may be useful in writing views.\n\n",
+                "type": "Requested.Requested t e a -> Maybe.Maybe ( t, a )"
+            },
+            {
+                "name": "isOutstanding",
+                "comment": " Check if a Requested is waiting for a request to complete.\n\nThis might be useful when choosing to display a \"Loading...\" state in\nyour view.\n\n",
+                "type": "Requested.Requested t e a -> Basics.Bool"
+            },
+            {
+                "name": "mapFailure",
+                "comment": " Transform the failure values in the Requested, if any.\n",
+                "type": "(e1 -> e2) -> Requested.Requested t e1 a -> Requested.Requested t e2 a"
+            },
+            {
+                "name": "mapSuccess",
+                "comment": " Transform the success values in the Requested, if any.\n",
+                "type": "(a1 -> a2) -> Requested.Requested t e a1 -> Requested.Requested t e a2"
+            },
+            {
+                "name": "mapTracker",
+                "comment": " Transform the trackers in the Requested.\n",
+                "type": "(t1 -> t2) -> Requested.Requested t1 e a -> Requested.Requested t2 e a"
+            },
+            {
+                "name": "refresh",
+                "comment": " Update this Requested to reflect that we are making a new request.\n",
+                "type": "t -> Requested.Requested t e a -> Requested.Requested t e a"
+            },
+            {
+                "name": "withResponse",
+                "comment": " Update the Requested with data that came in from the request given\nby the tracker.\n\nIf this Requested is waiting for a request, and this request matches\nthe given tracker, then produce a new non-waiting Requested.\n\nIf this Requested is waiting for a _different_ request, the provided\ndata probably represents a response from an older request. Update the\nRequested to use this data (if necessary), but remain in a \"waiting\" state.\n\nOtherwise, the Requested is not waiting for a request. Because\nrequests are ordered, and we aren't in Outstanding, the response must\nbe older than what we have, so we will remain in whatever state we are\nin (Failed or Succeeded). If we are in Failed, it's possible that this\nis a newer success than our \"last success\", so update that.\n\nN.B. This function is pretty strict about responses being ordered and\nbeing in Outstanding if you have made a new request. We don't check if\na response is newer \"just in case\" or anything like that because that\nwould hide bugs. Instead, if your ordering function is screwed up\nsomehow, or you forgot to call `refresh`, some updates will be\nsilently ignored.\n\nFIXME: some use cases might not want to incorporate data from old\nrequests. Provide another function for them.\n\n",
+                "type": "(t -> t -> Basics.Order) -> t -> Result.Result e a -> Requested.Requested t e a -> Requested.Requested t e a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Requested.Maybe",
+        "comment": " Pre-composed functions for Maybe Requested.\n\nThis module provides the same API as the Requested module, but for\nsituations where requests haven't necessarily happened yet. For\nexample, maybe you're changing from a page where a confirmation code\nis taken from the URL, to one where it comes from user input in a\nform.\n\nMost functions here serve the same purpose as the corresponding ones\nin Requested, which see.\n\n@docs notRequested\n@docs Requested\n@docs fromTracker, fromSuccess, fromFailure\n@docs mapSuccess, mapFailure, mapTracker\n@docs isOutstanding\n@docs withResponse\n@docs refresh\n@docs getSuccess, getFailure\n@docs fromResult\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Requested",
+                "comment": " An alias for a Maybe Requested.\n",
+                "args": [
+                    "t",
+                    "e",
+                    "a"
+                ],
+                "type": "Maybe.Maybe (Requested.Requested t e a)"
+            }
+        ],
+        "values": [
+            {
+                "name": "fromFailure",
+                "comment": " Like Requested.fromFailure, but for a Maybe Requested.\n",
+                "type": "t -> e -> Requested.Maybe.Requested t e a"
+            },
+            {
+                "name": "fromResult",
+                "comment": " Like Requested.fromResult, but for a Maybe Requested.\n",
+                "type": "t -> Result.Result e a -> Requested.Maybe.Requested t e a"
+            },
+            {
+                "name": "fromSuccess",
+                "comment": " Like Requested.fromSuccess, but for a Maybe Requested.\n",
+                "type": "t -> a -> Requested.Maybe.Requested t e a"
+            },
+            {
+                "name": "fromTracker",
+                "comment": " Like Requested.fromTracker, but for a Maybe Requested.\n",
+                "type": "t -> Requested.Maybe.Requested t e a"
+            },
+            {
+                "name": "getFailure",
+                "comment": " Like Requested.getFailure, but for a Maybe Requested.\n",
+                "type": "Requested.Maybe.Requested t e a -> Maybe.Maybe ( t, e )"
+            },
+            {
+                "name": "getSuccess",
+                "comment": " Like Requested.getSuccess, but for a Maybe Requested.\n",
+                "type": "Requested.Maybe.Requested t e a -> Maybe.Maybe ( t, a )"
+            },
+            {
+                "name": "isOutstanding",
+                "comment": " Like Requested.isOutstanding, but for a Maybe Requested.\n",
+                "type": "Requested.Maybe.Requested t e a -> Basics.Bool"
+            },
+            {
+                "name": "mapFailure",
+                "comment": " Like Requested.mapFailure, but for a Maybe Requested.\n",
+                "type": "(e1 -> e2) -> Requested.Maybe.Requested t e1 a -> Requested.Maybe.Requested t e2 a"
+            },
+            {
+                "name": "mapSuccess",
+                "comment": " Like Requested.mapSuccess, but for a Maybe Requested.\n",
+                "type": "(a1 -> a2) -> Requested.Maybe.Requested t e a1 -> Requested.Maybe.Requested t e a2"
+            },
+            {
+                "name": "mapTracker",
+                "comment": " Like Requested.mapTracker, but for a Maybe Requested.\n",
+                "type": "(t1 -> t2) -> Requested.Maybe.Requested t1 e a -> Requested.Maybe.Requested t2 e a"
+            },
+            {
+                "name": "notRequested",
+                "comment": " A convenience to create a Maybe Requested.\n",
+                "type": "Requested.Maybe.Requested t e a"
+            },
+            {
+                "name": "refresh",
+                "comment": " Like Requested.refresh, but for a Maybe Requested.\n",
+                "type": "t -> Requested.Maybe.Requested t e a -> Requested.Maybe.Requested t e a"
+            },
+            {
+                "name": "withResponse",
+                "comment": " Like Requested.withResponse, but for a Maybe Requested.\n",
+                "type": "(t -> t -> Basics.Order) -> t -> Result.Result e a -> Requested.Maybe.Requested t e a -> Requested.Maybe.Requested t e a"
+            }
+        ],
+        "binops": []
+    }
+]

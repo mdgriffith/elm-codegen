@@ -1,0 +1,560 @@
+[
+    {
+        "name": "Geometry.Expect",
+        "comment": " This module contains functions that construct [`Expectation`](https://package.elm-lang.org/packages/elm-explorations/test/latest/Expect)s\nfor `elm-geometry` types. In general, all expectations use an\nabsolute-or-relative tolerance of 1e-12; for example,\n\n    actualPoint |> Expect.point2d expectedPoint\n\nwill pass if the distance from `actualPoint` to `expectedPoint` is less than\n1e-12 meters _or_ if it is less than 1e-12 times the distance of `actualPoint`\nfrom the origin (so that a larger absolute tolerance is used for points far from\nthe origin).\n\nThis module has been designed so that in most cases you can use\n\n    import Geometry.Expect as Expect\n\nto 'merge' it with the `Expect` module from `elm-explorations/test`, without\nrunning into any naming conflicts; examples in this module assume the module has\nbeen imported this way.\n\n\n# Generic helpers\n\n@docs exactly, just\n\n\n# `Quantity` equality\n\n@docs quantity, quantityWithin, angle, angleWithin\n\n\n# `Quantity` comparison\n\nThese functions all behave just like [the corresponding ones in\n`elm-explorations/test`](https://package.elm-lang.org/packages/elm-explorations/test/latest/Expect#numeric-comparisons).\nUnlike most other functions in this module, they do _not_ implicitly include a\ntolerance.\n\n@docs quantityAtLeast, quantityAtMost, quantityGreaterThan, quantityLessThan\n\n\n# Points\n\n@docs point2d, point2dWithin, point2dContainedIn, point3d, point3dWithin, point3dContainedIn\n\n\n# Vectors\n\n@docs vector2d, vector2dWithin, vector3d, vector3dWithin\n\n\n# Directions\n\n@docs direction2d, direction2dWithin, direction2dPerpendicularTo, direction3d, direction3dWithin, direction3dPerpendicularTo\n\n\n# Bounding boxes\n\n@docs boundingBox2d, boundingBox2dWithin, boundingBox3d, boundingBox3dWithin\n\n\n# Simple geometry\n\n@docs lineSegment2d, lineSegment2dWithin, lineSegment3d, lineSegment3dWithin, triangle2d, triangle2dWithin, triangle3d, triangle3dWithin, polyline2d, polyline2dWithin, polyline3d, polyline3dWithin, polygon2d, polygon2dWithin\n\n\n# Complex geometry\n\n@docs arc2d, arc3d, circle2d, circle3d, cubicSpline2d, cubicSpline3d, cylinder3d, quadraticSpline2d, quadraticSpline3d, sphere3d\n\n\n# Datums\n\n@docs axis2d, axis3d, frame2d, frame3d, plane3d, sketchPlane3d\n\n\n# Advanced\n\nThese functions check for things like \"directions have length 1\", \"bounding box\nmin and max values are in the correct order\", and \"frame basis directions are\nmutually perpendicular\". Since these properties are generally guaranteed by\n`elm-geometry`, it should only be necessary to use these expectation functions\nif you have some low-level code that calls functions such as\n`Direction2d.unsafe` or `Frame3d.unsafe`.\n\n@docs validDirection2d, validDirection3d, validBoundingBox2d, validBoundingBox3d, validFrame2d, validFrame3d, validSketchPlane3d\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "angle",
+                "comment": " Check that one `Angle` is approximately equal to another.\n\nNote that this will consider angles in the geometric sense, not the numerical\nsense; 0 degrees, 360 degrees, 720 degrees and -360 degrees are all considered\nto be equal. However, since `Angle` values are also `Quantity` values, you can\nuse `Expect.quantity` if you _do_ want a pure numerical comparison.\n\n",
+                "type": "Angle.Angle -> Angle.Angle -> Expect.Expectation"
+            },
+            {
+                "name": "angleWithin",
+                "comment": " Check if two angles are equal within a given tolerance. Note that as with\n`angle`, this will properly handle angles that 'wrap around':\n\n    -- Passes because geometrically speaking, there's only\n    -- a 4 degree difference between 358 degrees and 2\n    -- degrees:\n    Angle.degrees 358\n        |> Expect.angleWithin (Angle.degrees 5)\n            (Angle.degrees 2)\n\n",
+                "type": "Angle.Angle -> Angle.Angle -> Angle.Angle -> Expect.Expectation"
+            },
+            {
+                "name": "arc2d",
+                "comment": " Check that two `Arc2d` values are approximately equal (have the same\nstart point, end point and swept angle).\n",
+                "type": "Arc2d.Arc2d units coordinates -> Arc2d.Arc2d units coordinates -> Expect.Expectation"
+            },
+            {
+                "name": "arc3d",
+                "comment": " Check that two `Arc3d` values are approximately equal (have the same\nstart point, end point, swept angle and axial direction).\n",
+                "type": "Arc3d.Arc3d units coordinates -> Arc3d.Arc3d units coordinates -> Expect.Expectation"
+            },
+            {
+                "name": "axis2d",
+                "comment": " Check that two `Axis2d` values are approximately equal (have the same\norigin point and direction).\n",
+                "type": "Axis2d.Axis2d units coordinates -> Axis2d.Axis2d units coordinates -> Expect.Expectation"
+            },
+            {
+                "name": "axis3d",
+                "comment": " Check that two `Axis3d` values are approximately equal (have the same\norigin point and direction).\n",
+                "type": "Axis3d.Axis3d units coordinates -> Axis3d.Axis3d units coordinates -> Expect.Expectation"
+            },
+            {
+                "name": "boundingBox2d",
+                "comment": " Check that two `BoundingBox2d` values are approximately equal (have the same\nmin/max values).\n",
+                "type": "BoundingBox2d.BoundingBox2d units coordinates -> BoundingBox2d.BoundingBox2d units coordinates -> Expect.Expectation"
+            },
+            {
+                "name": "boundingBox2dWithin",
+                "comment": " Check that two `BoundingBox2d` values are equal within the given tolerance\n(every min/max value of the first box is equal, to within the given tolerance,\nof the corresponding min/max value of the second box).\n",
+                "type": "Quantity.Quantity Basics.Float units -> BoundingBox2d.BoundingBox2d units coordinates -> BoundingBox2d.BoundingBox2d units coordinates -> Expect.Expectation"
+            },
+            {
+                "name": "boundingBox3d",
+                "comment": " Check that two `BoundingBox3d` values are approximately equal (have the same\nmin/max values).\n",
+                "type": "BoundingBox3d.BoundingBox3d units coordinates -> BoundingBox3d.BoundingBox3d units coordinates -> Expect.Expectation"
+            },
+            {
+                "name": "boundingBox3dWithin",
+                "comment": " Check that two `BoundingBox3d` values are equal within the given tolerance\n(every min/max value of the first box is equal, to within the given tolerance,\nof the corresponding min/max value of the second box).\n",
+                "type": "Quantity.Quantity Basics.Float units -> BoundingBox3d.BoundingBox3d units coordinates -> BoundingBox3d.BoundingBox3d units coordinates -> Expect.Expectation"
+            },
+            {
+                "name": "circle2d",
+                "comment": " Check that two `Circle2d` values are approximately equal (have the same\ncenter point and radius).\n",
+                "type": "Circle2d.Circle2d units coordinates -> Circle2d.Circle2d units coordinates -> Expect.Expectation"
+            },
+            {
+                "name": "circle3d",
+                "comment": " Check that two `Circle3d` values are approximately equal (have the same\ncenter point, axial direction and radius).\n",
+                "type": "Circle3d.Circle3d units coordinates -> Circle3d.Circle3d units coordinates -> Expect.Expectation"
+            },
+            {
+                "name": "cubicSpline2d",
+                "comment": " Check that two `CubicSpline2d` values are approximately equal (have the\nsame control points).\n",
+                "type": "CubicSpline2d.CubicSpline2d units coordinates -> CubicSpline2d.CubicSpline2d units coordinates -> Expect.Expectation"
+            },
+            {
+                "name": "cubicSpline3d",
+                "comment": " Check that two `CubicSpline3d` values are approximately equal (have the\nsame control points).\n",
+                "type": "CubicSpline3d.CubicSpline3d units coordinates -> CubicSpline3d.CubicSpline3d units coordinates -> Expect.Expectation"
+            },
+            {
+                "name": "cylinder3d",
+                "comment": " Check that two `Cylinder3d` values are approximately equal (have the same\ncenter point, axial direction, radius and length).\n",
+                "type": "Cylinder3d.Cylinder3d units coordinates -> Cylinder3d.Cylinder3d units coordinates -> Expect.Expectation"
+            },
+            {
+                "name": "direction2d",
+                "comment": " Check that two `Direction2d` values are approximately equal.\n",
+                "type": "Direction2d.Direction2d coordinates -> Direction2d.Direction2d coordinates -> Expect.Expectation"
+            },
+            {
+                "name": "direction2dPerpendicularTo",
+                "comment": " Check that one `Direction2d` is approximately perpendicular to another.\n",
+                "type": "Direction2d.Direction2d coordinates -> Direction2d.Direction2d coordinates -> Expect.Expectation"
+            },
+            {
+                "name": "direction2dWithin",
+                "comment": " Check that two `Direction2d` values are equal to within the given angular\ntolerance.\n",
+                "type": "Angle.Angle -> Direction2d.Direction2d coordinates -> Direction2d.Direction2d coordinates -> Expect.Expectation"
+            },
+            {
+                "name": "direction3d",
+                "comment": " Check that two `Direction3d` values are approximately equal.\n",
+                "type": "Direction3d.Direction3d coordinates -> Direction3d.Direction3d coordinates -> Expect.Expectation"
+            },
+            {
+                "name": "direction3dPerpendicularTo",
+                "comment": " Check that one `Direction3d` is approximately perpendicular to another.\n",
+                "type": "Direction3d.Direction3d coordinates -> Direction3d.Direction3d coordinates -> Expect.Expectation"
+            },
+            {
+                "name": "direction3dWithin",
+                "comment": " Check that two `Direction3d` values are equal to within the given angular\ntolerance.\n",
+                "type": "Angle.Angle -> Direction3d.Direction3d coordinates -> Direction3d.Direction3d coordinates -> Expect.Expectation"
+            },
+            {
+                "name": "exactly",
+                "comment": " Check if one `Float` value is _exactly_ equal to another.\n\nNote that this is usually only desirable in low-level numeric code and most\ntests should use [`Expect.float`](#float).\n\n",
+                "type": "Basics.Float -> Basics.Float -> Expect.Expectation"
+            },
+            {
+                "name": "frame2d",
+                "comment": " Check that two `Frame2d` values are approximately equal (have the same\norigin point and X/Y directions).\n",
+                "type": "Frame2d.Frame2d units coordinates defines -> Frame2d.Frame2d units coordinates defines -> Expect.Expectation"
+            },
+            {
+                "name": "frame3d",
+                "comment": " Check that two `Frame3d` values are approximately equal (have the same\norigin point and X/Y/Z directions).\n",
+                "type": "Frame3d.Frame3d units coordinates defines -> Frame3d.Frame3d units coordinates defines -> Expect.Expectation"
+            },
+            {
+                "name": "just",
+                "comment": " Check if a `Maybe` value is of the form `Just x` and `x` satisfies the given\nexpectation function. For example, since `Vector2d.direction` returns a `Maybe\nDirection2d`, you might test it like\n\n    Vector2d.meters 2 2\n        |> Vector2d.direction\n        |> Expect.just\n            (Expect.direction2d (Direction2d.degrees 45))\n\nNote that if you want to verify that a function returns `Nothing`, you can\nsimply use [`Expect.equal`](https://package.elm-lang.org/packages/elm-explorations/test/latest/Expect#equal):\n\n    Vector2d.meters 0 0\n        |> Vector2d.direction\n        |> Expect.equal Nothing\n\n",
+                "type": "(actual -> Expect.Expectation) -> Maybe.Maybe actual -> Expect.Expectation"
+            },
+            {
+                "name": "lineSegment2d",
+                "comment": " Check that two `LineSegment2d` values are approximately equal (have the same\nendpoints).\n",
+                "type": "LineSegment2d.LineSegment2d units coordinates -> LineSegment2d.LineSegment2d units coordinates -> Expect.Expectation"
+            },
+            {
+                "name": "lineSegment2dWithin",
+                "comment": " Check that two `LineSegment2d` values are equal within the given tolerance\n(the endpoints of one are equal to the endpoints of the other, within the given\ntolerance).\n",
+                "type": "Quantity.Quantity Basics.Float units -> LineSegment2d.LineSegment2d units coordinates -> LineSegment2d.LineSegment2d units coordinates -> Expect.Expectation"
+            },
+            {
+                "name": "lineSegment3d",
+                "comment": " Check that two `LineSegment3d` values are approximately equal (have the same\nendpoints).\n",
+                "type": "LineSegment3d.LineSegment3d units coordinates -> LineSegment3d.LineSegment3d units coordinates -> Expect.Expectation"
+            },
+            {
+                "name": "lineSegment3dWithin",
+                "comment": " Check that two `LineSegment3d` values are equal within the given tolerance\n(the endpoints of one are equal to the endpoints of the other, within the given\ntolerance).\n",
+                "type": "Quantity.Quantity Basics.Float units -> LineSegment3d.LineSegment3d units coordinates -> LineSegment3d.LineSegment3d units coordinates -> Expect.Expectation"
+            },
+            {
+                "name": "plane3d",
+                "comment": " Check that two `Plane3d` values are approximately equal (have the same\norigin point and normal direction).\n",
+                "type": "Plane3d.Plane3d units coordinates -> Plane3d.Plane3d units coordinates -> Expect.Expectation"
+            },
+            {
+                "name": "point2d",
+                "comment": " Check that two `Point2d` values are approximately equal.\n",
+                "type": "Point2d.Point2d units coordinates -> Point2d.Point2d units coordinates -> Expect.Expectation"
+            },
+            {
+                "name": "point2dContainedIn",
+                "comment": " Check that a `Point2d` is approximately contained in a given\n`BoundingBox2d`.\n",
+                "type": "BoundingBox2d.BoundingBox2d units coordinates -> Point2d.Point2d units coordinates -> Expect.Expectation"
+            },
+            {
+                "name": "point2dWithin",
+                "comment": " Check that two `Point2d` values are equal to within the given tolerance\n(the distance between the two points is less than that tolerance).\n",
+                "type": "Quantity.Quantity Basics.Float units -> Point2d.Point2d units coordinates -> Point2d.Point2d units coordinates -> Expect.Expectation"
+            },
+            {
+                "name": "point3d",
+                "comment": " Check that two `Point3d` values are approximately equal.\n",
+                "type": "Point3d.Point3d units coordinates -> Point3d.Point3d units coordinates -> Expect.Expectation"
+            },
+            {
+                "name": "point3dContainedIn",
+                "comment": " Check that a `Point3d` is approximately contained in a given\n`BoundingBox3d`.\n",
+                "type": "BoundingBox3d.BoundingBox3d units coordinates -> Point3d.Point3d units coordinates -> Expect.Expectation"
+            },
+            {
+                "name": "point3dWithin",
+                "comment": " Check that two `Point3d` values are equal to within the given tolerance\n(the distance between the two points is less than that tolerance).\n",
+                "type": "Quantity.Quantity Basics.Float units -> Point3d.Point3d units coordinates -> Point3d.Point3d units coordinates -> Expect.Expectation"
+            },
+            {
+                "name": "polygon2d",
+                "comment": " Check that two `Polygon2d` values are approximately equal (have the same\nvertices).\n",
+                "type": "Polygon2d.Polygon2d units coordinates -> Polygon2d.Polygon2d units coordinates -> Expect.Expectation"
+            },
+            {
+                "name": "polygon2dWithin",
+                "comment": " Check that two `Polygon2d` values are equal within the given tolerance (have\nthe same number of vertices, and each vertex of the first polygon is equal to\nthe corresponding vertex of the second polygon within the given tolerance).\n",
+                "type": "Quantity.Quantity Basics.Float units -> Polygon2d.Polygon2d units coordinates -> Polygon2d.Polygon2d units coordinates -> Expect.Expectation"
+            },
+            {
+                "name": "polyline2d",
+                "comment": " Check that two `Polyline2d` values are approximately equal (have the same\nvertices).\n",
+                "type": "Polyline2d.Polyline2d units coordinates -> Polyline2d.Polyline2d units coordinates -> Expect.Expectation"
+            },
+            {
+                "name": "polyline2dWithin",
+                "comment": " Check that two `Polyline2d` values are equal within the given tolerance\n(have the same number of vertices, and each vertex of the first polyline is\nequal to the corresponding vertex of the second polyline within the given\ntolerance).\n",
+                "type": "Quantity.Quantity Basics.Float units -> Polyline2d.Polyline2d units coordinates -> Polyline2d.Polyline2d units coordinates -> Expect.Expectation"
+            },
+            {
+                "name": "polyline3d",
+                "comment": " Check that two `Polyline3d` values are approximately equal (have the same\nvertices).\n",
+                "type": "Polyline3d.Polyline3d units coordinates -> Polyline3d.Polyline3d units coordinates -> Expect.Expectation"
+            },
+            {
+                "name": "polyline3dWithin",
+                "comment": " Check that two `Polyline3d` values are equal within the given tolerance\n(have the same number of vertices, and each vertex of the first polyline is\nequal to the corresponding vertex of the second polyline within the given\ntolerance).\n",
+                "type": "Quantity.Quantity Basics.Float units -> Polyline3d.Polyline3d units coordinates -> Polyline3d.Polyline3d units coordinates -> Expect.Expectation"
+            },
+            {
+                "name": "quadraticSpline2d",
+                "comment": " Check that two `QuadraticSpline2d` values are approximately equal (have the\nsame control points).\n",
+                "type": "QuadraticSpline2d.QuadraticSpline2d units coordinates -> QuadraticSpline2d.QuadraticSpline2d units coordinates -> Expect.Expectation"
+            },
+            {
+                "name": "quadraticSpline3d",
+                "comment": " Check that two `QuadraticSpline3d` values are approximately equal (have the\nsame control points).\n",
+                "type": "QuadraticSpline3d.QuadraticSpline3d units coordinates -> QuadraticSpline3d.QuadraticSpline3d units coordinates -> Expect.Expectation"
+            },
+            {
+                "name": "quantity",
+                "comment": " Check that one [`Quantity`](https://package.elm-lang.org/packages/ianmackenzie/elm-units/latest/Quantity)\nvalue is approximately equal to another.\n",
+                "type": "Quantity.Quantity Basics.Float units -> Quantity.Quantity Basics.Float units -> Expect.Expectation"
+            },
+            {
+                "name": "quantityAtLeast",
+                "comment": " ",
+                "type": "Quantity.Quantity Basics.Float units -> Quantity.Quantity Basics.Float units -> Expect.Expectation"
+            },
+            {
+                "name": "quantityAtMost",
+                "comment": " ",
+                "type": "Quantity.Quantity Basics.Float units -> Quantity.Quantity Basics.Float units -> Expect.Expectation"
+            },
+            {
+                "name": "quantityGreaterThan",
+                "comment": " ",
+                "type": "Quantity.Quantity Basics.Float units -> Quantity.Quantity Basics.Float units -> Expect.Expectation"
+            },
+            {
+                "name": "quantityLessThan",
+                "comment": " ",
+                "type": "Quantity.Quantity Basics.Float units -> Quantity.Quantity Basics.Float units -> Expect.Expectation"
+            },
+            {
+                "name": "quantityWithin",
+                "comment": " Check that some `Quantity` value is equal to another within a specified\nabsolute tolerance:\n\n    actualValue\n        |> Expect.quantityWithin givenTolerance\n            expectedValue\n\n    -- Passes:\n    Length.meters 1.05\n        |> Expect.quantityWithin (Length.centimeters 10)\n            (Length.meters 1)\n\n    -- Fails:\n    Length.meters 1.05\n        |> Expect.quantityWithin (Length.centimeters 1)\n            (Length.meters 1)\n\n",
+                "type": "Quantity.Quantity Basics.Float units -> Quantity.Quantity Basics.Float units -> Quantity.Quantity Basics.Float units -> Expect.Expectation"
+            },
+            {
+                "name": "sketchPlane3d",
+                "comment": " Check that two `SketchPlane3d` values are approximately equal (have the same\norigin point and X/Y directions).\n",
+                "type": "SketchPlane3d.SketchPlane3d units coordinates defines -> SketchPlane3d.SketchPlane3d units coordinates defines -> Expect.Expectation"
+            },
+            {
+                "name": "sphere3d",
+                "comment": " Check that two `Sphere3d` values are approximately equal (have the same\ncenter point and radius).\n",
+                "type": "Sphere3d.Sphere3d units coordinates -> Sphere3d.Sphere3d units coordinates -> Expect.Expectation"
+            },
+            {
+                "name": "triangle2d",
+                "comment": " Check that two `Triangle2d` values are approximately equal (have the same\nvertices).\n",
+                "type": "Triangle2d.Triangle2d units coordinates -> Triangle2d.Triangle2d units coordinates -> Expect.Expectation"
+            },
+            {
+                "name": "triangle2dWithin",
+                "comment": " Check that two `Triangle2d` values are equal within the given tolerance\n(each vertex of the first triangle is equal to the corresponding vertex of the\nsecond triangle, within the given tolerance).\n",
+                "type": "Quantity.Quantity Basics.Float units -> Triangle2d.Triangle2d units coordinates -> Triangle2d.Triangle2d units coordinates -> Expect.Expectation"
+            },
+            {
+                "name": "triangle3d",
+                "comment": " Check that two `Triangle3d` values are approximately equal (have the same\nvertices).\n",
+                "type": "Triangle3d.Triangle3d units coordinates -> Triangle3d.Triangle3d units coordinates -> Expect.Expectation"
+            },
+            {
+                "name": "triangle3dWithin",
+                "comment": " Check that two `Triangle3d` values are equal within the given tolerance\n(each vertex of the first triangle is equal to the corresponding vertex of the\nsecond triangle, within the given tolerance).\n",
+                "type": "Quantity.Quantity Basics.Float units -> Triangle3d.Triangle3d units coordinates -> Triangle3d.Triangle3d units coordinates -> Expect.Expectation"
+            },
+            {
+                "name": "validBoundingBox2d",
+                "comment": " ",
+                "type": "BoundingBox2d.BoundingBox2d units coordinates -> Expect.Expectation"
+            },
+            {
+                "name": "validBoundingBox3d",
+                "comment": " ",
+                "type": "BoundingBox3d.BoundingBox3d units coordinates -> Expect.Expectation"
+            },
+            {
+                "name": "validDirection2d",
+                "comment": " ",
+                "type": "Direction2d.Direction2d coordinates -> Expect.Expectation"
+            },
+            {
+                "name": "validDirection3d",
+                "comment": " ",
+                "type": "Direction3d.Direction3d coordinates -> Expect.Expectation"
+            },
+            {
+                "name": "validFrame2d",
+                "comment": " ",
+                "type": "Frame2d.Frame2d units coordinates defines -> Expect.Expectation"
+            },
+            {
+                "name": "validFrame3d",
+                "comment": " ",
+                "type": "Frame3d.Frame3d units coordinates defines -> Expect.Expectation"
+            },
+            {
+                "name": "validSketchPlane3d",
+                "comment": " ",
+                "type": "SketchPlane3d.SketchPlane3d units coordinates defines -> Expect.Expectation"
+            },
+            {
+                "name": "vector2d",
+                "comment": " Check that two `Vector2d` values are approximately equal.\n",
+                "type": "Vector2d.Vector2d units coordinates -> Vector2d.Vector2d units coordinates -> Expect.Expectation"
+            },
+            {
+                "name": "vector2dWithin",
+                "comment": " Check that two `Vector2d` values are equal to within the given tolerance\n(the difference between the two vectors has magnitude less than that tolerance).\n",
+                "type": "Quantity.Quantity Basics.Float units -> Vector2d.Vector2d units coordinates -> Vector2d.Vector2d units coordinates -> Expect.Expectation"
+            },
+            {
+                "name": "vector3d",
+                "comment": " Check that two `Vector3d` values are approximately equal.\n",
+                "type": "Vector3d.Vector3d units coordinates -> Vector3d.Vector3d units coordinates -> Expect.Expectation"
+            },
+            {
+                "name": "vector3dWithin",
+                "comment": " Check that two `Vector3d` values are equal to within the given tolerance\n(the difference between the two vectors has magnitude less than that tolerance).\n",
+                "type": "Quantity.Quantity Basics.Float units -> Vector3d.Vector3d units coordinates -> Vector3d.Vector3d units coordinates -> Expect.Expectation"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Geometry.Fuzz",
+        "comment": " A collection of [`Fuzzer`](https://package.elm-lang.org/packages/elm-explorations/test/latest/Fuzz)s\nfor [`elm-geometry`](https://package.elm-lang.org/packages/ianmackenzie/elm-geometry/latest/)\nvalues.\n\nThese fuzzers generally generate values in the range -10 to +10 meters. For\nexample, `point2d` will generate a point with coordinate values in this range\nand `sphere3d` will generate a sphere with a center point that has coordinates\nin this range, and a radius also in this range (although note that this means\npoints on the _surface_ of the sphere may have coordinates outside this range).\n\nThis module has been designed so that in most cases you can use\n\n    import Geometry.Fuzz as Fuzz\n\nto 'merge' it with the `Fuzz` module from `elm-explorations/test`, without\nrunning into any naming conflicts.\n\n\n# `Float` values\n\n@docs scale, parameterValue\n\n\n# `Quantity` values\n\n@docs length, positiveLength, angle, quantityRange\n\n\n# Primitives\n\n@docs point2d, point3d, vector2d, vector3d, direction2d, direction3d, boundingBox2d, boundingBox3d\n\n\n# Datums\n\n@docs axis2d, axis3d, frame2d, frame3d, plane3d, sketchPlane3d\n\n\n# Simple geometry\n\n@docs lineSegment2d, lineSegment3d, triangle2d, triangle3d, rectangle2d, block3d, polyline2d, polyline3d, polygon2d\n\n\n# Complex geometry\n\n@docs arc2d, arc3d, circle2d, circle3d, cubicSpline2d, cubicSpline3d, cylinder3d, ellipse2d, ellipticalArc2d, quadraticSpline2d, quadraticSpline3d, sphere3d\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "angle",
+                "comment": " Generate a random angle in the range -360 to +360 degrees.\n",
+                "type": "Fuzz.Fuzzer Angle.Angle"
+            },
+            {
+                "name": "arc2d",
+                "comment": " Generate a random `Arc2d`.\n",
+                "type": "Fuzz.Fuzzer (Arc2d.Arc2d Length.Meters coordinates)"
+            },
+            {
+                "name": "arc3d",
+                "comment": " Generate a random `Arc3d`.\n",
+                "type": "Fuzz.Fuzzer (Arc3d.Arc3d Length.Meters coordinates)"
+            },
+            {
+                "name": "axis2d",
+                "comment": " Generate a random `Axis2d`.\n",
+                "type": "Fuzz.Fuzzer (Axis2d.Axis2d Length.Meters coordinates)"
+            },
+            {
+                "name": "axis3d",
+                "comment": " Generate a random `Axis3d`.\n",
+                "type": "Fuzz.Fuzzer (Axis3d.Axis3d Length.Meters coordinates)"
+            },
+            {
+                "name": "block3d",
+                "comment": " Generate a random `Block3d`.\n",
+                "type": "Fuzz.Fuzzer (Block3d.Block3d Length.Meters coordinates)"
+            },
+            {
+                "name": "boundingBox2d",
+                "comment": " Generate a random `BoundingBox2d`.\n",
+                "type": "Fuzz.Fuzzer (BoundingBox2d.BoundingBox2d Length.Meters coordinates)"
+            },
+            {
+                "name": "boundingBox3d",
+                "comment": " Generate a random `BoundingBox3d`.\n",
+                "type": "Fuzz.Fuzzer (BoundingBox3d.BoundingBox3d Length.Meters coordinates)"
+            },
+            {
+                "name": "circle2d",
+                "comment": " Generate a random `Circle2d`.\n",
+                "type": "Fuzz.Fuzzer (Circle2d.Circle2d Length.Meters coordinates)"
+            },
+            {
+                "name": "circle3d",
+                "comment": " Generate a random `Circle3d`.\n",
+                "type": "Fuzz.Fuzzer (Circle3d.Circle3d Length.Meters coordinates)"
+            },
+            {
+                "name": "cubicSpline2d",
+                "comment": " Generate a random `CubicSpline2d`.\n",
+                "type": "Fuzz.Fuzzer (CubicSpline2d.CubicSpline2d Length.Meters coordinates)"
+            },
+            {
+                "name": "cubicSpline3d",
+                "comment": " Generate a random `CubicSpline3d`.\n",
+                "type": "Fuzz.Fuzzer (CubicSpline3d.CubicSpline3d Length.Meters coordinates)"
+            },
+            {
+                "name": "cylinder3d",
+                "comment": " Generate a random `Cylinder3d`.\n",
+                "type": "Fuzz.Fuzzer (Cylinder3d.Cylinder3d Length.Meters coordinates)"
+            },
+            {
+                "name": "direction2d",
+                "comment": " Generate a random `Direction2d`.\n",
+                "type": "Fuzz.Fuzzer (Direction2d.Direction2d coordinates)"
+            },
+            {
+                "name": "direction3d",
+                "comment": " Generate a random `Direction3d`.\n",
+                "type": "Fuzz.Fuzzer (Direction3d.Direction3d coordinates)"
+            },
+            {
+                "name": "ellipse2d",
+                "comment": " Generate a random `Ellipse2d`.\n",
+                "type": "Fuzz.Fuzzer (Ellipse2d.Ellipse2d Length.Meters coordinates)"
+            },
+            {
+                "name": "ellipticalArc2d",
+                "comment": " Generate a random `EllipticalArc2d`.\n",
+                "type": "Fuzz.Fuzzer (EllipticalArc2d.EllipticalArc2d Length.Meters coordinates)"
+            },
+            {
+                "name": "frame2d",
+                "comment": " Generate a random `Frame2d`. Note that the generated frame may be [either\nleft-handed or right-handed](https://en.wikipedia.org/wiki/Cartesian_coordinate_system#Orientation_and_handedness).\n",
+                "type": "Fuzz.Fuzzer (Frame2d.Frame2d Length.Meters coordinates { defines : localCoordinates })"
+            },
+            {
+                "name": "frame3d",
+                "comment": " Generate a random `Frame3d`. Note that the generated frame may be [either\nleft-handed or right-handed](https://en.wikipedia.org/wiki/Cartesian_coordinate_system#Orientation_and_handedness).\n",
+                "type": "Fuzz.Fuzzer (Frame3d.Frame3d Length.Meters coordinates { defines : localCoordinates })"
+            },
+            {
+                "name": "length",
+                "comment": " Generate a random `Length` in the range -10 to +10 meters.\n",
+                "type": "Fuzz.Fuzzer Length.Length"
+            },
+            {
+                "name": "lineSegment2d",
+                "comment": " Generate a random `LineSegment2d`.\n",
+                "type": "Fuzz.Fuzzer (LineSegment2d.LineSegment2d Length.Meters coordinates)"
+            },
+            {
+                "name": "lineSegment3d",
+                "comment": " Generate a random `LineSegment3d`.\n",
+                "type": "Fuzz.Fuzzer (LineSegment3d.LineSegment3d Length.Meters coordinates)"
+            },
+            {
+                "name": "parameterValue",
+                "comment": " Generate a random `Float` value in the range 0 to 1.\n",
+                "type": "Fuzz.Fuzzer Basics.Float"
+            },
+            {
+                "name": "plane3d",
+                "comment": " Generate a random `Plane3d`.\n",
+                "type": "Fuzz.Fuzzer (Plane3d.Plane3d Length.Meters coordinates)"
+            },
+            {
+                "name": "point2d",
+                "comment": " Generate a random `Point2d`.\n",
+                "type": "Fuzz.Fuzzer (Point2d.Point2d Length.Meters coordinates)"
+            },
+            {
+                "name": "point3d",
+                "comment": " Generate a random `Point3d`.\n",
+                "type": "Fuzz.Fuzzer (Point3d.Point3d Length.Meters coordinates)"
+            },
+            {
+                "name": "polygon2d",
+                "comment": " Generate a random `Polygon2d`. The polygon will be one of a few general\nforms, but with randomized vertex positions:\n\n  - Square\n  - Square with hole\n  - Square with two holes\n  - Square with two interlocking holes\n  - Circle with hole\n  - L shape\n\n",
+                "type": "Fuzz.Fuzzer (Polygon2d.Polygon2d Length.Meters coordinates)"
+            },
+            {
+                "name": "polyline2d",
+                "comment": " Generate a random `Polyline2d`.\n",
+                "type": "Fuzz.Fuzzer (Polyline2d.Polyline2d Length.Meters coordinates)"
+            },
+            {
+                "name": "polyline3d",
+                "comment": " Generate a random `Polyline3d`.\n",
+                "type": "Fuzz.Fuzzer (Polyline3d.Polyline3d Length.Meters coordinates)"
+            },
+            {
+                "name": "positiveLength",
+                "comment": " Generate a random positive length in the range 0 to 10 meters.\n",
+                "type": "Fuzz.Fuzzer Length.Length"
+            },
+            {
+                "name": "quadraticSpline2d",
+                "comment": " Generate a random `QuadraticSpline2d`.\n",
+                "type": "Fuzz.Fuzzer (QuadraticSpline2d.QuadraticSpline2d Length.Meters coordinates)"
+            },
+            {
+                "name": "quadraticSpline3d",
+                "comment": " Generate a random `QuadraticSpline3d`.\n",
+                "type": "Fuzz.Fuzzer (QuadraticSpline3d.QuadraticSpline3d Length.Meters coordinates)"
+            },
+            {
+                "name": "quantityRange",
+                "comment": " Generate a random `Quantity` between the two given values.\n",
+                "type": "Quantity.Quantity Basics.Float units -> Quantity.Quantity Basics.Float units -> Fuzz.Fuzzer (Quantity.Quantity Basics.Float units)"
+            },
+            {
+                "name": "rectangle2d",
+                "comment": " Generate a random `Rectangle2d`.\n",
+                "type": "Fuzz.Fuzzer (Rectangle2d.Rectangle2d Length.Meters coordinates)"
+            },
+            {
+                "name": "scale",
+                "comment": " Generate a random `Float` scaling factor in the range -10 to +10.\n",
+                "type": "Fuzz.Fuzzer Basics.Float"
+            },
+            {
+                "name": "sketchPlane3d",
+                "comment": " Generate a random `SketchPlane3d`.\n",
+                "type": "Fuzz.Fuzzer (SketchPlane3d.SketchPlane3d Length.Meters coordinates { defines : sketchCoordinates })"
+            },
+            {
+                "name": "sphere3d",
+                "comment": " Generate a random `Sphere3d`.\n",
+                "type": "Fuzz.Fuzzer (Sphere3d.Sphere3d Length.Meters coordinates)"
+            },
+            {
+                "name": "triangle2d",
+                "comment": " Generate a random `Triangle2d`. Note that the triangle's vertices may be in\neither clockwise or counterclockwise order.\n",
+                "type": "Fuzz.Fuzzer (Triangle2d.Triangle2d Length.Meters coordinates)"
+            },
+            {
+                "name": "triangle3d",
+                "comment": " Generate a random `Triangle3d`.\n",
+                "type": "Fuzz.Fuzzer (Triangle3d.Triangle3d Length.Meters coordinates)"
+            },
+            {
+                "name": "vector2d",
+                "comment": " Generate a random `Vector2d`.\n",
+                "type": "Fuzz.Fuzzer (Vector2d.Vector2d Length.Meters coordinates)"
+            },
+            {
+                "name": "vector3d",
+                "comment": " Generate a random `Vector3d`.\n",
+                "type": "Fuzz.Fuzzer (Vector3d.Vector3d Length.Meters coordinates)"
+            }
+        ],
+        "binops": []
+    }
+]

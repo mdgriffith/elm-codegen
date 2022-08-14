@@ -1,0 +1,88 @@
+[
+    {
+        "name": "Auth",
+        "comment": " Manages the state of the authentication process, and provides an API\nto request authentication operations.\n\n@docs Config, Credentials, Status\n@docs login, refresh, logout, unauthed\n@docs Model, Msg, init, update\n\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " Describes the events this controller responds to.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Status",
+                "comment": " Auth states of interest to the consumer.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Failed",
+                        []
+                    ],
+                    [
+                        "LoggedOut",
+                        []
+                    ],
+                    [
+                        "LoggedIn",
+                        [
+                            "{ scopes : List.List String.String, subject : String.String }"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " The configuration specifying the API root to authenticate against.\n",
+                "args": [],
+                "type": "{ authApiRoot : String.String }"
+            },
+            {
+                "name": "Credentials",
+                "comment": " Username and password based login credentials.\n",
+                "args": [],
+                "type": "{ username : String.String, password : String.String }"
+            },
+            {
+                "name": "Model",
+                "comment": " The complete state of this auth module. The 'innerModel' is opaque and holds\nthe private state. The 'state' provides the state as visible to the consumer of\nthis module.\n",
+                "args": [],
+                "type": "{ authApiRoot : String.String, innerModel : Auth.Private }"
+            }
+        ],
+        "values": [
+            {
+                "name": "init",
+                "comment": " The initial unauthed state.\n",
+                "type": "Auth.Config -> Auth.Model"
+            },
+            {
+                "name": "login",
+                "comment": " Requests that a login be performed.\n",
+                "type": "Auth.Credentials -> Platform.Cmd.Cmd Auth.Msg"
+            },
+            {
+                "name": "logout",
+                "comment": " Requests that a logout (including notifying the server of the logout) be\nperformed.\n",
+                "type": "Platform.Cmd.Cmd Auth.Msg"
+            },
+            {
+                "name": "refresh",
+                "comment": " Requests that an attempt be made to refresh the auth token from the refresh\ntoken.\n",
+                "type": "Platform.Cmd.Cmd Auth.Msg"
+            },
+            {
+                "name": "unauthed",
+                "comment": " Requests that the auth state be cleared to the LoggedOut state. Usually in\nresponse to receiving a 401 or 403 error from a server.\n",
+                "type": "Platform.Cmd.Cmd Auth.Msg"
+            },
+            {
+                "name": "update",
+                "comment": " Updates the model from Auth commands.\n",
+                "type": "Auth.Msg -> Auth.Model -> ( Auth.Model, Platform.Cmd.Cmd Auth.Msg, Maybe.Maybe Auth.Status )"
+            }
+        ],
+        "binops": []
+    }
+]

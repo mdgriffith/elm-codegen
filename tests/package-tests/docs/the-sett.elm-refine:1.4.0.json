@@ -1,0 +1,461 @@
+[
+    {
+        "name": "Dict.Enum",
+        "comment": " A Dict over any keys with a mapping to Strings.\n\n\n# Data structure\n\n@docs Dict\n\n\n# Build\n\n@docs empty, singleton, insert, update, remove\n\n\n# Query\n\n@docs isEmpty, member, get, size\n\n\n# Lists\n\n@docs keys, values, toList, fromList\n\n\n# Transform\n\n@docs map, foldl, foldr, filter, partition\n\n\n# Combine\n\n@docs union, intersect, diff, merge\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Dict",
+                "comment": " Dictionary over any keys with a function to map those keys to strings.\n",
+                "args": [
+                    "k",
+                    "v"
+                ],
+                "type": "Dict.Refined.Dict String.String k v"
+            }
+        ],
+        "values": [
+            {
+                "name": "diff",
+                "comment": " Keep a key-value pair when its key does not appear in the second dict.\n",
+                "type": "Dict.Enum.Dict k v -> Dict.Enum.Dict k v -> Dict.Enum.Dict k v"
+            },
+            {
+                "name": "empty",
+                "comment": " Create an empty dictionary by suppling function used for comparing keys.\n",
+                "type": "(k -> String.String) -> Dict.Enum.Dict k v"
+            },
+            {
+                "name": "filter",
+                "comment": " Keep only the key-value pairs that pass the given test.\n",
+                "type": "(k -> v -> Basics.Bool) -> Dict.Enum.Dict k v -> Dict.Enum.Dict k v"
+            },
+            {
+                "name": "foldl",
+                "comment": " Fold over the key-value pairs in a dict from lowest key to highest key.\n",
+                "type": "(k -> v -> b -> b) -> b -> Dict.Enum.Dict k v -> b"
+            },
+            {
+                "name": "foldr",
+                "comment": " Fold over the key-value pairs in a dict from highest key to lowest key.\n",
+                "type": "(k -> v -> b -> b) -> b -> Dict.Enum.Dict k v -> b"
+            },
+            {
+                "name": "fromList",
+                "comment": " Convert an association list into a dict.\n",
+                "type": "(k -> String.String) -> List.List ( k, v ) -> Dict.Enum.Dict k v"
+            },
+            {
+                "name": "get",
+                "comment": " Get the value associated with a key. If the key is not found, return\n`Nothing`.\n",
+                "type": "k -> Dict.Enum.Dict k v -> Maybe.Maybe v"
+            },
+            {
+                "name": "insert",
+                "comment": " Insert a key-value pair into a dict. Replaces value when there is\na collision.\n",
+                "type": "k -> v -> Dict.Enum.Dict k v -> Dict.Enum.Dict k v"
+            },
+            {
+                "name": "intersect",
+                "comment": " Keep a key-value pair when its key appears in the second dict. Preference is\ngiven to values in the first dictionary.\n",
+                "type": "Dict.Enum.Dict k v -> Dict.Enum.Dict k v -> Dict.Enum.Dict k v"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Determine if a dict is empty.\n\n    `isEmpty empty == True`\n\n",
+                "type": "Dict.Enum.Dict k v -> Basics.Bool"
+            },
+            {
+                "name": "keys",
+                "comment": " Get all of the keys in a dict, sorted from lowest to highest.\n",
+                "type": "Dict.Enum.Dict k v -> List.List k"
+            },
+            {
+                "name": "map",
+                "comment": " Apply a function to all values in a dict.\n",
+                "type": "(k -> a -> b) -> Dict.Enum.Dict k a -> Dict.Enum.Dict k b"
+            },
+            {
+                "name": "member",
+                "comment": " Determine if a whole key is in a dict.\n",
+                "type": "k -> Dict.Enum.Dict k v -> Basics.Bool"
+            },
+            {
+                "name": "merge",
+                "comment": " The most general way of combining two dicts. You provide three accumulators\nfor when a given key appears:\n\n1.  Only in the left dict.\n2.  In both dicts.\n3.  Only in the right dict.\n\nYou then traverse all the keys from lowest to highest, building up whatever you\nwant.\n\n",
+                "type": "(k -> a -> result -> result) -> (k -> a -> b -> result -> result) -> (k -> b -> result -> result) -> Dict.Enum.Dict k a -> Dict.Enum.Dict k b -> result -> result"
+            },
+            {
+                "name": "partition",
+                "comment": " Partition a dict according to some test. The first dict contains all\nkey-value pairs which passed the test, and the second contains the pairs that\ndid not.\n",
+                "type": "(k -> v -> Basics.Bool) -> Dict.Enum.Dict k v -> ( Dict.Enum.Dict k v, Dict.Enum.Dict k v )"
+            },
+            {
+                "name": "remove",
+                "comment": " Remove a key-value pair from a dict. If the key is not found,\nno changes are made.\n",
+                "type": "k -> Dict.Enum.Dict k v -> Dict.Enum.Dict k v"
+            },
+            {
+                "name": "singleton",
+                "comment": " Create a dictionary with one key-value pair.\n",
+                "type": "(k -> String.String) -> k -> v -> Dict.Enum.Dict k v"
+            },
+            {
+                "name": "size",
+                "comment": " Determine the number of key-value pairs in the dict.\n",
+                "type": "Dict.Enum.Dict k v -> Basics.Int"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert a dict into an association list of key-value pairs, sorted by keys.\n",
+                "type": "Dict.Enum.Dict k v -> List.List ( k, v )"
+            },
+            {
+                "name": "union",
+                "comment": " Combine two dicts. If there is a collision, preference is given to the first\ndict.\n",
+                "type": "Dict.Enum.Dict k v -> Dict.Enum.Dict k v -> Dict.Enum.Dict k v"
+            },
+            {
+                "name": "update",
+                "comment": " Update the value of a dict for a specific key with a given function.\n",
+                "type": "k -> (Maybe.Maybe v -> Maybe.Maybe v) -> Dict.Enum.Dict k v -> Dict.Enum.Dict k v"
+            },
+            {
+                "name": "values",
+                "comment": " Get all of the values in a dict, in the order of their keys.\n",
+                "type": "Dict.Enum.Dict k v -> List.List v"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Dict.Refined",
+        "comment": " A Dict over any keys with a mapping to comparable.\n\n\n# Data structure\n\n@docs Dict\n\n\n# Build\n\n@docs empty, singleton, insert, update, remove\n\n\n# Query\n\n@docs isEmpty, member, get, size\n\n\n# Lists\n\n@docs keys, values, toList, fromList\n\n\n# Transform\n\n@docs map, foldl, foldr, filter, partition\n\n\n# Combine\n\n@docs union, intersect, diff, merge\n\n",
+        "unions": [
+            {
+                "name": "Dict",
+                "comment": " Dictionary over any keys with a function to map keys to comparable.\n",
+                "args": [
+                    "comparable",
+                    "k",
+                    "v"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "diff",
+                "comment": " Keep a key-value pair when its key does not appear in the second dict.\n",
+                "type": "Dict.Refined.Dict comparable k v -> Dict.Refined.Dict comparable k v -> Dict.Refined.Dict comparable k v"
+            },
+            {
+                "name": "empty",
+                "comment": " Create an empty dictionary by suppling function used for comparing keys.\n",
+                "type": "(k -> comparable) -> Dict.Refined.Dict comparable k v"
+            },
+            {
+                "name": "filter",
+                "comment": " Keep only the key-value pairs that pass the given test.\n",
+                "type": "(k -> v -> Basics.Bool) -> Dict.Refined.Dict comparable k v -> Dict.Refined.Dict comparable k v"
+            },
+            {
+                "name": "foldl",
+                "comment": " Fold over the key-value pairs in a dict from lowest key to highest key.\n",
+                "type": "(k -> v -> b -> b) -> b -> Dict.Refined.Dict comparable k v -> b"
+            },
+            {
+                "name": "foldr",
+                "comment": " Fold over the key-value pairs in a dict from highest key to lowest key.\n",
+                "type": "(k -> v -> b -> b) -> b -> Dict.Refined.Dict comparable k v -> b"
+            },
+            {
+                "name": "fromList",
+                "comment": " Convert an association list into a dict.\n",
+                "type": "(k -> comparable) -> List.List ( k, v ) -> Dict.Refined.Dict comparable k v"
+            },
+            {
+                "name": "get",
+                "comment": " Get the value associated with a key. If the key is not found, return\n`Nothing`.\n",
+                "type": "k -> Dict.Refined.Dict comparable k v -> Maybe.Maybe v"
+            },
+            {
+                "name": "insert",
+                "comment": " Insert a key-value pair into a dict. Replaces value when there is\na collision.\n",
+                "type": "k -> v -> Dict.Refined.Dict comparable k v -> Dict.Refined.Dict comparable k v"
+            },
+            {
+                "name": "intersect",
+                "comment": " Keep a key-value pair when its key appears in the second dict. Preference is\ngiven to values in the first dictionary.\n",
+                "type": "Dict.Refined.Dict comparable k v -> Dict.Refined.Dict comparable k v -> Dict.Refined.Dict comparable k v"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Determine if a dict is empty.\n\n    `isEmpty empty == True`\n\n",
+                "type": "Dict.Refined.Dict comparable k v -> Basics.Bool"
+            },
+            {
+                "name": "keys",
+                "comment": " Get all of the keys in a dict, sorted from lowest to highest.\n",
+                "type": "Dict.Refined.Dict comparable k v -> List.List k"
+            },
+            {
+                "name": "map",
+                "comment": " Apply a function to all values in a dict.\n",
+                "type": "(k -> a -> b) -> Dict.Refined.Dict comparable k a -> Dict.Refined.Dict comparable k b"
+            },
+            {
+                "name": "member",
+                "comment": " Determine if a whole key is in a dict.\n",
+                "type": "k -> Dict.Refined.Dict comparable k v -> Basics.Bool"
+            },
+            {
+                "name": "merge",
+                "comment": " The most general way of combining two dicts. You provide three accumulators\nfor when a given key appears:\n\n1.  Only in the left dict.\n2.  In both dicts.\n3.  Only in the right dict.\n\nYou then traverse all the keys from lowest to highest, building up whatever you\nwant.\n\n",
+                "type": "(k -> a -> result -> result) -> (k -> a -> b -> result -> result) -> (k -> b -> result -> result) -> Dict.Refined.Dict comparable k a -> Dict.Refined.Dict comparable k b -> result -> result"
+            },
+            {
+                "name": "partition",
+                "comment": " Partition a dict according to some test. The first dict contains all\nkey-value pairs which passed the test, and the second contains the pairs that\ndid not.\n",
+                "type": "(k -> v -> Basics.Bool) -> Dict.Refined.Dict comparable k v -> ( Dict.Refined.Dict comparable k v, Dict.Refined.Dict comparable k v )"
+            },
+            {
+                "name": "remove",
+                "comment": " Remove a key-value pair from a dict. If the key is not found,\nno changes are made.\n",
+                "type": "k -> Dict.Refined.Dict comparable k v -> Dict.Refined.Dict comparable k v"
+            },
+            {
+                "name": "singleton",
+                "comment": " Create a dictionary with one key-value pair.\n",
+                "type": "(k -> comparable) -> k -> v -> Dict.Refined.Dict comparable k v"
+            },
+            {
+                "name": "size",
+                "comment": " Determine the number of key-value pairs in the dict.\n",
+                "type": "Dict.Refined.Dict comparable k v -> Basics.Int"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert a dict into an association list of key-value pairs, sorted by keys.\n",
+                "type": "Dict.Refined.Dict comparable k v -> List.List ( k, v )"
+            },
+            {
+                "name": "union",
+                "comment": " Combine two dicts. If there is a collision, preference is given to the first\ndict.\n",
+                "type": "Dict.Refined.Dict comparable k v -> Dict.Refined.Dict comparable k v -> Dict.Refined.Dict comparable k v"
+            },
+            {
+                "name": "update",
+                "comment": " Update the value of a dict for a specific key with a given function.\n",
+                "type": "k -> (Maybe.Maybe v -> Maybe.Maybe v) -> Dict.Refined.Dict comparable k v -> Dict.Refined.Dict comparable k v"
+            },
+            {
+                "name": "values",
+                "comment": " Get all of the values in a dict, in the order of their keys.\n",
+                "type": "Dict.Refined.Dict comparable k v -> List.List v"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Enum",
+        "comment": " Enum provides support for various different ways of defining an enum in Elm.\n\n\n# Definition of Enums and functions to create them.\n\n@docs Enum\n@docs define, build\n\n\n# Helper functions for working with Enums.\n\n@docs decoder, encoder, toString\n\n\n# Dicts over enum keys.\n\n@docs emptyDict, singletonDict, dictDecoder, dictEncoder, stringDict\n\n",
+        "unions": [
+            {
+                "name": "Enum",
+                "comment": " An enum is a list of possible values and a function for turning an instance\nof one into a string.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "build",
+                "comment": " Looks up an instance of an enum from its string representation.\n",
+                "type": "Enum.Enum a -> String.String -> Maybe.Maybe a"
+            },
+            {
+                "name": "decoder",
+                "comment": " JSON Decoder for an enum\n",
+                "type": "Enum.Enum a -> Json.Decode.Decoder a"
+            },
+            {
+                "name": "define",
+                "comment": " Creates an enum definition from a list of possible values and a definition opf\nthe `toString` function.\n",
+                "type": "List.List a -> (a -> String.String) -> Enum.Enum a"
+            },
+            {
+                "name": "dictDecoder",
+                "comment": " Creates a decoder for dictionaries with enum values as keys.\n",
+                "type": "Enum.Enum k -> Json.Decode.Decoder v -> Json.Decode.Decoder (Dict.Enum.Dict k v)"
+            },
+            {
+                "name": "dictEncoder",
+                "comment": " Creates an encoder for dictionaries with enum values as keys.\n",
+                "type": "Enum.Enum k -> (v -> Json.Encode.Value) -> Dict.Enum.Dict k v -> Json.Encode.Value"
+            },
+            {
+                "name": "emptyDict",
+                "comment": " Creates an empty dict with an `Enum` key.\n",
+                "type": "Enum.Enum k -> Dict.Enum.Dict k v"
+            },
+            {
+                "name": "encoder",
+                "comment": " JSON Encoder for an enum.\n",
+                "type": "Enum.Enum a -> a -> Json.Encode.Value"
+            },
+            {
+                "name": "singletonDict",
+                "comment": " Creates a dict with a single entry with an `Enum` key.\n",
+                "type": "Enum.Enum k -> k -> v -> Dict.Enum.Dict k v"
+            },
+            {
+                "name": "stringDict",
+                "comment": " Turns a Dict with enum keys, into a normal Dict with the enum keys as strings.\n",
+                "type": "Enum.Enum k -> (v -> a) -> Dict.Enum.Dict k v -> Dict.Dict String.String a"
+            },
+            {
+                "name": "toString",
+                "comment": " Turns an instance of an enum into a string.\n",
+                "type": "Enum.Enum a -> a -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Refined",
+        "comment": " Refined provides support for common ways of creating refined types in Elm.\nA refined type is a basic type like Int or String, that has a constructor which\nensures that it can only take on certain values. The basic type is wrapped in a\ncustom type which is made opaque - so that only instances of it with the allowable\nvalues can ever be created.\n\n\n# Definition of Refined types and functions to create them.\n\n@docs Refined\n@docs define, build, errorToString\n\n\n# Helper functions for working with refined types.\n\n@docs decoder, encoder, unbox\n\n\n# Dicts over refined keys.\n\n@docs emptyDict, singletonDict, dictDecoder, dictEncoder, unboxedDict\n\n\n# Functions for building refined integers.\n\n@docs IntError, intErrorToString, gt, gte, lt, lte\n\n\n# Functions for building refined strings.\n\n@docs StringError, stringErrorToString, minLength, maxLength, regexMatch\n\n",
+        "unions": [
+            {
+                "name": "IntError",
+                "comment": " Describes the possible errors that can occur when creating a refined integer.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Refined",
+                "comment": " Refined types.\n\n`i` is the underlying basic type.\n`a` is the refined custom type that will be created\nfrom it.\n`e` is the type or errors that the constructor can return when invalid inputs\nare given.\n\n",
+                "args": [
+                    "i",
+                    "a",
+                    "e"
+                ],
+                "cases": []
+            },
+            {
+                "name": "StringError",
+                "comment": " Describes the possible errors that can occur when creating a refined string.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "build",
+                "comment": " Builds an instance of a refined type from its input type.\n",
+                "type": "Refined.Refined i a e -> i -> Result.Result e a"
+            },
+            {
+                "name": "decoder",
+                "comment": " JSON decoder for a refined type.\n",
+                "type": "Refined.Refined i a e -> Json.Decode.Decoder a"
+            },
+            {
+                "name": "define",
+                "comment": " Creates a refined type from the input guard function, decoder on the underlying basic type,\nencoder on the underlying basic type, the error to string function, and the unboxing function\nthat extracts the underlying basic type.\n",
+                "type": "(i -> Result.Result e a) -> Json.Decode.Decoder i -> (i -> Json.Encode.Value) -> (e -> String.String) -> (a -> i) -> Refined.Refined i a e"
+            },
+            {
+                "name": "dictDecoder",
+                "comment": " Creates a decoder for dictionaries with refined values as keys.\n",
+                "type": "Refined.Refined comparable k e -> Json.Decode.Decoder v -> Json.Decode.Decoder (Dict.Refined.Dict comparable k v)"
+            },
+            {
+                "name": "dictEncoder",
+                "comment": " Creates an encoder for dictionaries with refined values as keys.\n",
+                "type": "Refined.Refined comparable k e -> (v -> Json.Encode.Value) -> Dict.Refined.Dict comparable k v -> Json.Encode.Value"
+            },
+            {
+                "name": "emptyDict",
+                "comment": " Creates an empty dict with a `Refined` key.\n",
+                "type": "Refined.Refined comparable k e -> Dict.Refined.Dict comparable k v"
+            },
+            {
+                "name": "encoder",
+                "comment": " JSON encoder for a refined type.\n",
+                "type": "Refined.Refined i a e -> a -> Json.Encode.Value"
+            },
+            {
+                "name": "errorToString",
+                "comment": " Prints the error messages resulting from failing to create an instance of a refined type.\n",
+                "type": "Refined.Refined i a e -> e -> String.String"
+            },
+            {
+                "name": "gt",
+                "comment": " Guard function for creating an integer that must be greater than a given value.\n",
+                "type": "Basics.Int -> Basics.Int -> Result.Result Refined.IntError Basics.Int"
+            },
+            {
+                "name": "gte",
+                "comment": " Guard function for creating an integer that must be greater than or equal to\na given value.\n",
+                "type": "Basics.Int -> Basics.Int -> Result.Result Refined.IntError Basics.Int"
+            },
+            {
+                "name": "intErrorToString",
+                "comment": " Translates integer errors to descriptive strings.\n",
+                "type": "Refined.IntError -> String.String"
+            },
+            {
+                "name": "lt",
+                "comment": " Guard function for creating an integer that must be less than a given value.\n",
+                "type": "Basics.Int -> Basics.Int -> Result.Result Refined.IntError Basics.Int"
+            },
+            {
+                "name": "lte",
+                "comment": " Guard function for creating an integer that must be less than or equal to\na given value.\n",
+                "type": "Basics.Int -> Basics.Int -> Result.Result Refined.IntError Basics.Int"
+            },
+            {
+                "name": "maxLength",
+                "comment": " Guard function for creating a string that must have a given maximum length.\n",
+                "type": "Basics.Int -> String.String -> Result.Result Refined.StringError String.String"
+            },
+            {
+                "name": "minLength",
+                "comment": " Guard function for creating a string that must have a given minimum length.\n",
+                "type": "Basics.Int -> String.String -> Result.Result Refined.StringError String.String"
+            },
+            {
+                "name": "regexMatch",
+                "comment": " Guard function for creating a string that must match a given regular expression.\n",
+                "type": "String.String -> String.String -> Result.Result Refined.StringError String.String"
+            },
+            {
+                "name": "singletonDict",
+                "comment": " Creates a dict with a single entry with a `Refined` key.\n",
+                "type": "Refined.Refined comparable k e -> k -> v -> Dict.Refined.Dict comparable k v"
+            },
+            {
+                "name": "stringErrorToString",
+                "comment": " Translates string errors to descriptive strings.\n",
+                "type": "Refined.StringError -> String.String"
+            },
+            {
+                "name": "unbox",
+                "comment": " Unboxes an instance of a refined type.\n",
+                "type": "Refined.Refined i a e -> a -> i"
+            },
+            {
+                "name": "unboxedDict",
+                "comment": " Turns a Dict with refined keys, into a normal Dict with the refined keys unboxed to their underlying type.\n",
+                "type": "Refined.Refined comparable k e -> (v -> a) -> Dict.Refined.Dict comparable k v -> Dict.Dict comparable a"
+            }
+        ],
+        "binops": []
+    }
+]

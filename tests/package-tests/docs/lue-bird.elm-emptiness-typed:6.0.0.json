@@ -1,0 +1,428 @@
+[
+    {
+        "name": "Emptiable",
+        "comment": " 📦 A `Maybe` value that can be made non-empty depending on what we know – an \"emptiable-able\" value\n\n\n#### in arguments\n\n    import Stack exposing (Stacked)\n\n    fill : Emptiable fill Never -> fill\n\n    top : Emptiable (Stacked element) Never -> element\n\n\n#### in type declarations\n\n    import Emptiable exposing (Emptiable)\n    import Stack exposing (Stacked)\n\n    type alias Model =\n        WithoutConstructorFunction\n            { searchKeyWords : Emptiable (Stacked String) Never\n            }\n\nwhere [`RecordWithoutConstructorFunction`](https://dark.elm.dmy.fr/packages/lue-bird/elm-no-record-type-alias-constructor-function/latest/)\nstops the compiler from creating a constructor function for `Model`.\n\n@docs Emptiable\n\n\n## create\n\n@docs empty, filled, fromMaybe\n\n\n## transform\n\n@docs fillMap, fillMapFlat\n@docs fillAnd\n@docs flatten\n@docs fill, fillElseOnEmpty\n@docs toMaybe\n\n\n## type-level\n\n@docs emptyAdapt\n\n",
+        "unions": [
+            {
+                "name": "Emptiable",
+                "comment": " 📦 Like `Maybe`, but able to know at type-level whether `Empty` is a possibility.\n\n    import Emptiable exposing (Emptiable, filled, fill)\n\n    [ filled 1, filled 7 ]\n        --: List (Emptiable number_ never_)\n        |> List.map fill\n    --> [ 1, 7 ]\n\n[`Emptiable`](#Emptiable) by itself probably won't be that useful,\nbut it can make data structures type-safely non-emptiable:\n\n    import Emptiable exposing (fillMap)\n\n    top : Emptiable (Stacked element) Never -> element\n\n    fillMap Dict.NonEmpty.head\n    --: Emptiable (NonEmptyDict comparable v) possiblyOrNever\n    --: -> Emptiable ( comparable, v ) possiblyOrNever\n\nGo take a look at all the data structures in this package.\n\n",
+                "args": [
+                    "fill",
+                    "possiblyOrNever"
+                ],
+                "cases": [
+                    [
+                        "Empty",
+                        [
+                            "possiblyOrNever"
+                        ]
+                    ],
+                    [
+                        "Filled",
+                        [
+                            "fill"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "empty",
+                "comment": " Insert joke about life here.\n\n    Emptiable.empty\n        |> Emptiable.fillMap (\\x -> x / 0)\n    --> Emptiable.empty\n\n",
+                "type": "Emptiable.Emptiable filling_ Possibly.Possibly"
+            },
+            {
+                "name": "emptyAdapt",
+                "comment": " Change the `possiblyOrNever` type.\n\n\n#### Returning a type declaration value or argument that is `Empty Possibly`\n\nAn `Empty possiblyOrNever` can't be used as `Empty Possibly`\n\n    import Emptiable\n    import Possibly exposing (Possibly)\n    import Stack exposing (Stacked)\n\n    type alias Log =\n        Empty Possibly (Stacked String)\n\n    fromStack : Emptiable (Stacked String) possiblyOrNever_ -> Log\n    fromStack stackFilled =\n        stackFilled\n            --: `possiblyOrNever_` but we need `Possibly`\n            |> Emptiable.emptyAdapt (always Possible)\n\n\n#### An argument or a type declaration value is `Never`\n\nThe `Never` can't be unified with `Possibly` or a type variable\n\n    import Emptiable\n    import Stack exposing (Stacked)\n\n    theShorter :\n        Emptiable (Stacked element) Never\n        -> Emptiable (Stacked element) possiblyOrNever\n        -> Emptiable (Stacked element) possiblyOrNever\n    theShorter aStack bStack =\n        if Stack.length bStack > Stack.length aStack then\n            bStack\n\n        else\n            aStack\n                --: `Never` but we need `possiblyOrNever`\n                |> Emptiable.emptyAdapt never\n\nmakes both branches return `possiblyOrNever`.\n\n",
+                "type": "(possiblyOrNever -> adaptedPossiblyOrNever) -> Emptiable.Emptiable fill possiblyOrNever -> Emptiable.Emptiable fill adaptedPossiblyOrNever"
+            },
+            {
+                "name": "fill",
+                "comment": " Safely extract the [`filled`](#filled) content from a `Emptiable fill Never`.\n\n    import Emptiable exposing (filled)\n\n    filled (filled (filled \"Bami\"))\n        |> Emptiable.fill\n        |> Emptiable.fill\n        |> Emptiable.fill\n    --> \"Bami\"\n\n    first : Empty ( first, others_ ) Never -> first\n    first =\n        Emptiable.fill >> Tuple.first\n\n",
+                "type": "Emptiable.Emptiable fill Basics.Never -> fill"
+            },
+            {
+                "name": "fillAnd",
+                "comment": " If the incoming food and the given argument are\n[`filled`](#filled), give a [`filled`](#filled) tuple of both [`fill`](#fill)s back.\n\nIf any is [`empty`](#empty), give a [`Emptiable.empty`](#empty) back.\n\n[`fillAnd`](#fillAnd) comes in handy when **multiple arguments** need to be [`filled`](#filled):\n\n    import Emptiable exposing (filled, fillMap, fillAnd)\n\n    filled 3\n        |> fillAnd (filled 4)\n        |> fillAnd (filled 5)\n        |> fillMap (\\( ( a0, a1 ), a2 ) -> a0^a1 - a2^2)\n    --> filled 56\n\n",
+                "type": "Emptiable.Emptiable anotherFill possiblyOrNever -> Emptiable.Emptiable fill possiblyOrNever -> Emptiable.Emptiable ( fill, anotherFill ) possiblyOrNever"
+            },
+            {
+                "name": "fillElseOnEmpty",
+                "comment": " Lazily use a fallback value if the [`Emptiable`](#Emptiable) is [`empty`](#empty).\n\n    import Possibly exposing (Possibly(..))\n    import Emptiable exposing (Emptiable(..), fillElseOnEmpty)\n    import Dict\n\n    Dict.empty\n        |> Dict.get \"Hannah\"\n        |> Emptiable.fromMaybe\n        |> fillElseOnEmpty (\\_ -> \"unknown\")\n    --> \"unknown\"\n\n    fill =\n        fillElseOnEmpty never\n\n    fatten =\n        fillElseOnEmpty\n\n",
+                "type": "(possiblyOrNever -> fill) -> Emptiable.Emptiable fill possiblyOrNever -> fill"
+            },
+            {
+                "name": "fillMap",
+                "comment": " If the [`Emptiable`](#Emptiable) is [`filled`](#filled), change it based on its current [`fill`](#fill):\n\n    import Emptiable exposing (filled, fillMap)\n\n    filled -3 |> fillMap abs\n    --> filled 3\n\n    Emptiable.empty |> fillMap abs\n    --> Emptiable.empty\n\n",
+                "type": "(fill -> fillMapped) -> Emptiable.Emptiable fill possiblyOrNever -> Emptiable.Emptiable fillMapped possiblyOrNever"
+            },
+            {
+                "name": "fillMapFlat",
+                "comment": " Chain together operations that may return [`empty`](#empty).\nIt's like calling [`fillMap`](#fillMap)`|>`[`flatten`](#flatten):\n\nIf the argument is `Never` empty,\na given function takes its [`fill`](#fill)\nand returns a new possibly [`empty`](#empty) value.\n\nSome call it\n[`andThen`](https://package.elm-lang.org/packages/elm/core/latest/Maybe#andThen)\nor [`flatMap`](https://package.elm-lang.org/packages/ccapndave/elm-flat-map/1.2.0/Maybe-FlatMap#flatMap).\n\n    import Emptiable exposing (Emptiable, fillMapFlat)\n\n    emptiableString\n        |> fillMapFlat parse\n        |> fillMapFlat extraValidation\n\n    parse : ( Char, String ) -> Emptiable Parsed Possibly\n    extraValidation : Parsed -> Emptiable Parsed Possibly\n\nFor any number of arguments:\n[`fillAnd`](#fillAnd)`... |> ... |>`[`fillMapFlat`](#fillMapFlat):\n\n    import Emptiable exposing (filled, fillMapFlat, fillAnd)\n\n    (filled 3)\n        |> fillAnd (filled 4)\n        |> fillAnd (filled 5)\n        |> fillMapFlat\n            (\\( ( a, b ), c ) -> filled ( a, b, c ))\n    --> filled ( 3, 4, 5 )\n\n",
+                "type": "(fill -> Emptiable.Emptiable fillIfBothFilled possiblyOrNever) -> Emptiable.Emptiable fill possiblyOrNever -> Emptiable.Emptiable fillIfBothFilled possiblyOrNever"
+            },
+            {
+                "name": "filled",
+                "comment": " [`Emptiable`](#Emptiable) that certainly exists, allowing type-safe extraction.\n\n    import Emptiable exposing (filled, fill)\n\n    filled \"Bami\" |> fill\n    --> \"Bami\"\n\n",
+                "type": "fill -> Emptiable.Emptiable fill never_"
+            },
+            {
+                "name": "flatten",
+                "comment": " In a nestable [`Emptiable`](#Emptiable):\nOnly keep it [`filled`](#filled) if the inner [`Emptiable`](#Emptiable) is [`filled`](#filled).\n\nSome call it [`join`](https://package.elm-lang.org/packages/elm-community/maybe-extra/latest/Maybe-Extra#join).\n\n    import Emptiable exposing (filled)\n\n    filled (filled 1) |> Emptiable.flatten\n    --> filled 1\n\n    filled Emptiable.empty |> Emptiable.flatten\n    --> Emptiable.empty\n\n    Emptiable.empty |> Emptiable.flatten\n    --> Emptiable.empty\n\n",
+                "type": "Emptiable.Emptiable (Emptiable.Emptiable fill possiblyOrNever) possiblyOrNever -> Emptiable.Emptiable fill possiblyOrNever"
+            },
+            {
+                "name": "fromMaybe",
+                "comment": " Convert a `Maybe` to an [`Emptiable`](#Emptiable) `Possibly`.\n\nTo _create_ new [`Emptiable`](#Emptiable)s, use [`filled`](#filled) and [`empty`](#empty) instead!\n\n",
+                "type": "Maybe.Maybe value -> Emptiable.Emptiable value Possibly.Possibly"
+            },
+            {
+                "name": "toMaybe",
+                "comment": " Convert to a `Maybe`.\n\nDon't try to use this prematurely.\nKeeping type information as long as possible is always a win.\n\n",
+                "type": "Emptiable.Emptiable fill possiblyOrNever_ -> Maybe.Maybe fill"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Scroll",
+        "comment": " 📜 Items rolled up on both sides of a focus\n\n→ good fit for dynamic choice selection: tabs, playlist, timeline...\n\n[`Scroll`](#Scroll) can even focus a gap [`Down` or `Up`](https://dark.elm.dmy.fr/packages/lue-bird/elm-linear-direction/latest/) from every item.\n\nNot what you were looking for? Check out [alternatives](#alternatives).\n\n@docs Scroll, FocusGap\n\n\n## position\n\n@docs Location, nearest\n\n\n## create\n\n@docs empty, only\n\n\n## scan\n\n@docs focusItem, focus\n@docs side\n@docs length\n\n\n## move the focus\n\n@docs to, toGap\n@docs toEnd, toEndGap\n@docs toWhere\n@docs focusDrag\n\n\n## transform\n\n@docs focusItemTry\n@docs map, focusSidesMap\n@docs foldFrom, fold\n@docs toStack, toList\n\n\n### alter\n\n@docs mirror\n@docs focusAlter, sideAlter\n\n\n## type-level\n\n@docs focusGapAdapt\n\n\n## alternatives\n\n  - [zwilias/elm-holey-zipper](https://package.elm-lang.org/packages/zwilias/elm-holey-zipper/latest).\n    unsafe; a bit cluttered; no `map (Location -> ...)`, `focusDrag`, `toNonEmptyList`, `sideAlter` (so no squeezing in multiple items, ...)\n  - [turboMaCk/non-empty-list-alias: `List.NonEmpty.Zipper`](https://dark.elm.dmy.fr/packages/turboMaCk/non-empty-list-alias/latest/List-NonEmpty-Zipper)\n    complete; cluttered (for example `update` & `map`); some unintuitive names\n  - [miyamoen/select-list](https://dark.elm.dmy.fr/packages/miyamoen/select-list/latest/SelectList)\n    complete; a bit cluttered; no `focusWhere`\n  - [yotamDvir/elm-pivot](https://dark.elm.dmy.fr/packages/yotamDvir/elm-pivot/latest/)\n    complete; cluttered; no `map (Location -> ...)`\n  - [STTR13/ziplist](https://dark.elm.dmy.fr/packages/STTR13/ziplist/latest/)\n    navigation works; a bit cluttered; no `map (Location -> ...)`, `sideAlter` (so no squeezing in multiple items, ...)\n  - [wernerdegroot/listzipper](https://dark.elm.dmy.fr/packages/wernerdegroot/listzipper/latest/List-Zipper)\n    navigation works; no `focusDrag`, `map (Location -> ...)`, `toNonEmptyList`\n  - [alexanderkiel/list-selection](https://dark.elm.dmy.fr/packages/alexanderkiel/list-selection/latest/List-Selection)\n    & [NoRedInk/list-selection](https://dark.elm.dmy.fr/packages/NoRedInk/list-selection/latest/List-Selection)\n    very incomplete, impossible to extract focused item safely; no navigation, insertion, `side`, ...\n  - [jjant/elm-comonad-zipper](https://dark.elm.dmy.fr/packages/jjant/elm-comonad-zipper/latest/)\n    incomplete; no `focusDrag`, `toNonEmptyList`, `sideAlter` (so no squeezing in multiple items, ...)\n  - [guid75/ziplist](https://dark.elm.dmy.fr/packages/guid75/ziplist/latest/)\n    extremely incomplete\n  - [arowM/elm-reference: `Reference.List`](https://dark.elm.dmy.fr/packages/arowM/elm-reference/latest/Reference-List)\n    only `overList`, sides impossible to access & alter\n\n",
+        "unions": [
+            {
+                "name": "FocusGap",
+                "comment": " A word in every [`Scroll`](#Scroll) type:\n\n  - `🍍 🍓 <🍊> 🍉 🍇`: `Scroll ... FocusGap Never`\n\n  - `🍍 🍓 <?> 🍉 🍇`: `Scroll ...` [`Possibly`](https://dark.elm.dmy.fr/packages/lue-bird/elm-allowable-state/latest/Possibly) `FocusGap`\n\n    `<?>` means both are possible:\n\n      - `🍍 🍓 <> 🍉 🍇`: a gap between items ... Heh.\n      - `🍍 🍓 <🍊> 🍉 🍇`\n\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Location",
+                "comment": " Position in a [`Scroll`](#Scroll) relative to its focus.\n\n    import Linear exposing (DirectionLinear(..))\n    import Emptiable exposing (Emptiable, filled, fillMap, fillMapFlat)\n    import Stack exposing (topDown)\n\n    Scroll.only 0\n        |> Scroll.sideAlter\n            ( Up, \\_ -> topDown 1 [ 2, 3 ] )\n        |> Scroll.to (Scroll.AtSide Up 2)\n        |> fillMap Scroll.focusItem\n    --> filled 3\n    --: Emptiable (Stacked number_) Possibly\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "AtSide",
+                        [
+                            "Linear.DirectionLinear",
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "AtFocus",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Scroll",
+                "comment": " 📜 Items rolled up on both sides of a focus\n\n→ good fit for dynamic choice selection: tabs, playlist, ...\n\n`Scroll` can even focus a gap `Down` and `Up` every item:\n\n  - `🍍 🍓 <🍊> 🍉 🍇`: `Scroll ... FocusGap Never`\n\n  - `🍍 🍓 <?> 🍉 🍇`: `Scroll ...` [`Possibly`](https://dark.elm.dmy.fr/packages/lue-bird/elm-allowable-state/latest/Possibly) `FocusGap`\n\n    `<?>` means both are possible:\n\n      - `🍍 🍓 <> 🍉 🍇`: a gap between items ... Heh.\n      - `🍍 🍓 <🍊> 🍉 🍇`\n\n\n#### in arguments\n\n    empty : Scroll item_ FocusGap Possibly\n\n\n#### in types\n\n    type alias Model =\n        RecordWithoutConstructorFunction\n            { choice : Scroll Option FocusGap Never\n            }\n\nwhere [`RecordWithoutConstructorFunction`](https://dark.elm.dmy.fr/packages/lue-bird/elm-no-record-type-alias-constructor-function/latest/)\nstops the compiler from creating a constructor function for `Model`.\n\n",
+                "args": [
+                    "item",
+                    "focusedOnGapTag",
+                    "possiblyOrNever"
+                ],
+                "cases": [
+                    [
+                        "BeforeFocusAfter",
+                        [
+                            "Emptiable.Emptiable (Stack.Stacked item) Possibly.Possibly",
+                            "Emptiable.Emptiable item possiblyOrNever",
+                            "Emptiable.Emptiable (Stack.Stacked item) Possibly.Possibly"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "empty",
+                "comment": " An empty `Scroll` on a gap\nwith nothing before and after it.\nIt's the loneliest of all [`Scroll`](#Scroll)s.\n\n```monospace\n<>\n```\n\n    import Emptiable\n\n    Scroll.empty |> Scroll.toStack\n    --> Emptiable.empty\n\n",
+                "type": "Scroll.Scroll item_ Scroll.FocusGap Possibly.Possibly"
+            },
+            {
+                "name": "focus",
+                "comment": " The focused item or gap.\n\n```monospace\n🍍 🍓 <🍊> 🍉 🍇  ->  🍊\n🍍 🍓 <> 🍉 🍇  ->  _\n```\n\n    import Emptiable exposing (filled, fill)\n\n    Scroll.empty |> Scroll.focus\n    --> Emptiable.empty\n\n    Scroll.only \"hi there\" |> Scroll.focus |> fill\n    --> \"hi there\"\n\n[`focusItem`](#focusItem) is short for `focus |> fill`.\n\n",
+                "type": "Scroll.Scroll item Scroll.FocusGap possiblyOrNever -> Emptiable.Emptiable item possiblyOrNever"
+            },
+            {
+                "name": "focusAlter",
+                "comment": " Alter the focus – [item or gap](Emptiable) – based on its current value.\n\n\n#### `Scroll.focusAlter (\\_ -> 🍊 |> filled)`\n\n```monospace\n🍊  ->  🍓 <?> 🍉  ->  🍓 <🍊> 🍉\n```\n\n    import Linear exposing (DirectionLinear(..))\n    import Emptiable exposing (filled, fillMap)\n    import Stack exposing (topDown, onTopLay)\n\n    Scroll.empty\n            -- <>\n        |> Scroll.sideAlter\n            ( Down, onTopLay \"🍓\" )\n            -- \"🍓\" <>\n        |> Scroll.sideAlter\n            ( Up, onTopLay \"🍉\" )\n            -- \"🍓\" <> \"🍉\"\n        |> Scroll.focusAlter (\\_ -> \"🍊\" |> filled)\n            -- \"🍓\" <\"🍊\"> \"🍉\"\n        |> Scroll.toStack\n    --> topDown \"🍓\" [ \"🍊\", \"🍉\" ]\n\n\n#### `Scroll.focusAlter (\\_ -> Emptiable.empty)`\n\n```monospace\n🍓 <?> 🍉  ->  🍓 <> 🍉\n```\n\n    import Linear exposing (DirectionLinear(..))\n    import Emptiable exposing (filled, fillMap)\n    import Stack exposing (topDown)\n\n    Scroll.only \"hello\"\n        |> Scroll.sideAlter\n            ( Up, \\_ -> topDown \"scrollable\" [ \"world\" ] )\n        |> Scroll.to (Up |> Scroll.nearest)\n        |> fillMap (Scroll.focusAlter (\\_ -> Emptiable.empty))\n        |> fillMap Scroll.toList\n    --> filled [ \"hello\", \"world\" ]\n\n\n#### `Scroll.focusAlter (?🍒 -> ?🍊)`\n\n```monospace\n(?🍒 -> ?🍊)  ->  🍓 <?🍒> 🍉  ->  🍓 <?🍊> 🍉\n```\n\n    import Linear exposing (DirectionLinear(..))\n    import Emptiable exposing (filled, fillMap)\n    import Stack exposing (topDown, onTopLay)\n\n    Scroll.empty\n            -- <>\n        |> Scroll.sideAlter\n            ( Down, onTopLay \"🍓\" )\n            -- \"🍓\" <>\n        |> Scroll.sideAlter\n            ( Up, onTopLay \"🍉\" )\n            -- \"🍓\" <> \"🍉\"\n        |> Scroll.focusAlter\n            (\\_ -> filled \"🍊\")\n            -- \"🍓\" <\"🍊\"> \"🍉\"\n        |> Scroll.toStack\n    --> topDown \"🍓\" [ \"🍊\", \"🍉\" ]\n\n    Scroll.only \"first\"\n        |> Scroll.sideAlter\n            ( Down, \\_ -> Stack.only \"zeroth\" )\n        |> Scroll.sideAlter\n            ( Up, \\_ -> topDown \"second\" [ \"third\" ] )\n        |> Scroll.focusAlter (fillMap String.toUpper)\n        |> Scroll.toStack\n    --> topDown \"zeroth\" [ \"FIRST\", \"second\", \"third\" ]\n\n",
+                "type": "(Emptiable.Emptiable item possiblyOrNever -> Emptiable.Emptiable item possiblyOrNeverAltered) -> Scroll.Scroll item Scroll.FocusGap possiblyOrNever -> Scroll.Scroll item Scroll.FocusGap possiblyOrNeverAltered"
+            },
+            {
+                "name": "focusDrag",
+                "comment": " Try to move the focus to the nearest item [`Down|Up`](https://dark.elm.dmy.fr/packages/lue-bird/elm-linear-direction/latest/).\n\n`Down`\n\n```monospace\n🍊 🍉 <🍓> 🍇  ->  🍊 <🍓> 🍉 🍇\n🍊 🍉 <> 🍇  ->  🍊 <> 🍉 🍇\n```\n\n`Up`\n\n```monospace\n🍊 <🍓> 🍉 🍇  ->  🍊 🍉 <🍓> 🍇\n🍊 <> 🍉 🍇  ->  🍊 🍉 <> 🍇\n```\n\n    import Linear exposing (DirectionLinear(..))\n    import Emptiable exposing (Emptiable, fillMapFlat)\n    import Scroll exposing (Scroll, FocusGap)\n\n    Scroll.only 0\n        |> Scroll.sideAlter\n            ( Down, \\_ -> topDown 1 [ 2, 3 ] )\n        |> Scroll.focusDrag Down\n        |> fillMapFlat Scroll.toStack\n    --> topDown 3 [ 2, 0, 1 ]\n    --: Emptiable (Stacked number_) Possibly\n\n    Scroll.only 0\n        |> Scroll.sideAlter\n            ( Up, \\_ -> topDown 1 [ 2, 3 ] )\n        |> Scroll.focusDrag Up\n        |> fillMapFlat Scroll.toStack\n    --> topDown 1 [ 0, 2, 3 ]\n    --: Emptiable (Stacked number_) Possibly\n\nIf there is no nearest item, the result is [`empty`](Emptiable#empty).\n\n    import Linear exposing (DirectionLinear(..))\n    import Emptiable\n    import Stack exposing (topDown)\n\n    Scroll.only 0\n        |> Scroll.sideAlter\n            ( Up, \\_ -> topDown 1 [ 2, 3 ] )\n        |> Scroll.focusDrag Down\n    --> Emptiable.empty\n\n    Scroll.only 0\n        |> Scroll.sideAlter\n            ( Down, \\_ -> topDown 1 [ 2, 3 ] )\n        |> Scroll.focusDrag Up\n    --> Emptiable.empty\n\n",
+                "type": "Linear.DirectionLinear -> Scroll.Scroll item Scroll.FocusGap possiblyOrNever -> Emptiable.Emptiable (Scroll.Scroll item Scroll.FocusGap possiblyOrNever) Possibly.Possibly"
+            },
+            {
+                "name": "focusGapAdapt",
+                "comment": " Change the `possiblyOrNever` type\n\n  - A `Scroll ... FocusGap possiblyOrNever`\n    can't be used as a `Scroll ... Possibly`?\n\n        import Possibly exposing (Possibly(..))\n\n        Scroll.focusGapAdapt (always Possible)\n\n  - A `Scroll ... FocusGap Never`\n    can't be unified with `Scroll ... Possibly` or `FocusGap possiblyOrNever`?\n\n        Scroll.focusGapAdapt never\n\nPlease read more at [`Emptiable.emptyAdapt`](Emptiable#emptyAdapt).\n\n",
+                "type": "(possiblyOrNever -> adaptedPossiblyOrNever) -> Scroll.Scroll item Scroll.FocusGap possiblyOrNever -> Scroll.Scroll item Scroll.FocusGap adaptedPossiblyOrNever"
+            },
+            {
+                "name": "focusItem",
+                "comment": " The focused item.\n\n```monospace\n🍍 🍓 <🍊> 🍉 🍇  ->  🍊\n```\n\n    import Stack exposing (topDown)\n    import Linear exposing (DirectionLinear(..))\n\n    Scroll.only \"hi there\" |> Scroll.focusItem\n    --> \"hi there\"\n\n    Scroll.only 1\n        |> Scroll.sideAlter\n            ( Up, \\_ -> topDown 2 [ 3, 4 ] )\n        |> Scroll.toEnd Up\n        |> Scroll.focusItem\n    --> 4\n\n",
+                "type": "Scroll.Scroll item Scroll.FocusGap Basics.Never -> item"
+            },
+            {
+                "name": "focusItemTry",
+                "comment": " [`Emptiable.empty`](Emptiable#empty) if the current focussed thing is a gap,\n[`Emptiable.filled`](Emptiable#filled) if it's an item.\n\n    import Emptiable\n    import Stack exposing (topDown)\n    import Linear exposing (DirectionLinear(..))\n\n    Scroll.only 3\n        |> Scroll.sideAlter\n            ( Up, \\_ -> topDown 2 [ 1 ] )\n        |> Scroll.toGap Up\n        |> Scroll.focusItemTry\n    --> Emptiable.empty\n\n",
+                "type": "Scroll.Scroll item Scroll.FocusGap possiblyOrNever -> Emptiable.Emptiable (Scroll.Scroll item Scroll.FocusGap never_) possiblyOrNever"
+            },
+            {
+                "name": "focusSidesMap",
+                "comment": " Change the [`focus`](#focus),\nthe [`side`](#side)s `Down` and `Up`\nusing different functions.\n\n    import Linear exposing (DirectionLinear(..))\n    import Emptiable exposing (filled, fillMap)\n    import Stack exposing (topDown)\n\n    Scroll.only \"first\"\n        |> Scroll.sideAlter\n            ( Up, \\_ -> Stack.only \"second\" )\n        |> Scroll.toGap Up\n        |> Scroll.focusAlter (\\_ -> filled \"one-and-a-halfth\")\n        |> Scroll.focusSidesMap\n            { side =\n                \\side ->\n                    Stack.map\n                        (\\_ item ->\n                            String.concat\n                                [ side |> sideToString, \": \", item ]\n                        )\n            , focus =\n                fillMap (\\item -> \"focused item: \" ++ item)\n            }\n        |> Scroll.toStack\n    --→\n    topDown\n        \"before: first\"\n        [ \"focused item: one-and-a-halfth\"\n        , \"after: second\"\n        ]\n\n    sideToString =\n        \\side ->\n            case side of\n                Down ->\n                    \"before\"\n\n                Up ->\n                    \"after\"\n\n[`map`](#map) transforms every item.\n\n",
+                "type": "{ focus : Emptiable.Emptiable item possiblyOrNever -> Emptiable.Emptiable mappedItem possiblyOrNeverMapped, side : Linear.DirectionLinear -> Emptiable.Emptiable (Stack.Stacked item) Possibly.Possibly -> Emptiable.Emptiable (Stack.Stacked mappedItem) possiblyOrNeverMappedBefore_ } -> Scroll.Scroll item Scroll.FocusGap possiblyOrNever -> Scroll.Scroll mappedItem Scroll.FocusGap possiblyOrNeverMapped"
+            },
+            {
+                "name": "fold",
+                "comment": " Fold in a [direction](https://package.elm-lang.org/packages/lue-bird/elm-linear-direction/latest/)\nfrom the first item [`Up|Down`](https://package.elm-lang.org/packages/lue-bird/elm-linear-direction/latest/)\nas the initial accumulation value.\n\n    import Linear exposing (DirectionLinear(..))\n    import Stack exposing (topDown)\n\n    Scroll.only 234\n        |> Scroll.sideAlter\n            ( Up, \\_ -> topDown 345 [ 543 ] )\n        |> Scroll.fold Up max\n    --> 543\n\n",
+                "type": "Linear.DirectionLinear -> (item -> item -> item) -> Scroll.Scroll item Scroll.FocusGap Basics.Never -> item"
+            },
+            {
+                "name": "foldFrom",
+                "comment": " Reduce in a [direction](https://package.elm-lang.org/packages/lue-bird/elm-linear-direction/latest/).\n\n    import Linear exposing (DirectionLinear(..))\n    import Stack exposing (topDown)\n\n    Scroll.only 'e'\n        |> Scroll.sideAlter\n            ( Down, \\_ -> topDown 'v' [ 'i', 'l' ] )\n        |> Scroll.foldFrom \"\" Down String.cons\n    --> \"live\"\n\n    Scroll.only 'e'\n        |> Scroll.sideAlter\n            ( Down, \\_ -> topDown 'v' [ 'i', 'l' ] )\n        |> Scroll.foldFrom \"\" Up String.cons\n    --> \"evil\"\n\n",
+                "type": "accumulationValue -> Linear.DirectionLinear -> (item -> accumulationValue -> accumulationValue) -> Scroll.Scroll item Scroll.FocusGap Basics.Never -> accumulationValue"
+            },
+            {
+                "name": "length",
+                "comment": " Counting all contained items.\n\n    import Stack exposing (topDown)\n    import Linear exposing (DirectionLinear(..))\n\n    Scroll.only 0\n        |> Scroll.sideAlter\n            ( Down, \\_ -> topDown -1 [ -2 ] )\n        |> Scroll.sideAlter\n            ( Up, \\_ -> topDown 1 [ 2, 3 ] )\n        |> Scroll.length\n    --> 6\n\n    Scroll.empty\n        |> Scroll.sideAlter\n            ( Down, \\_ -> topDown -1 [ -2 ] )\n        |> Scroll.sideAlter\n            ( Up, \\_ -> topDown 1 [ 2, 3 ] )\n        |> Scroll.length\n    --> 5\n\n",
+                "type": "Scroll.Scroll item_ Scroll.FocusGap possiblyOrNever_ -> Basics.Int"
+            },
+            {
+                "name": "map",
+                "comment": " Change every item based on its current value.\n\n    import Linear exposing (DirectionLinear(..))\n    import Stack exposing (topDown)\n\n    Scroll.only \"first\"\n        |> Scroll.sideAlter\n            ( Down, \\_ -> Stack.only \"zeroth\" )\n        |> Scroll.sideAlter\n            ( Up, \\_ -> topDown \"second\" [ \"third\" ] )\n        |> Scroll.map (\\_ -> String.toUpper)\n        |> Scroll.toStack\n    --> topDown \"ZEROTH\" [ \"FIRST\", \"SECOND\", \"THIRD\" ]\n\n[`focusSidesMap`](#focusSidesMap) allows changing the individual parts separately.\n\n",
+                "type": "(Scroll.Location -> item -> mappedItem) -> Scroll.Scroll item Scroll.FocusGap possiblyOrNever -> Scroll.Scroll mappedItem Scroll.FocusGap possiblyOrNever"
+            },
+            {
+                "name": "mirror",
+                "comment": " Swap the [stack](Stack) on the [`side Down`](#side) the [`focus`](#focus)\nwith the [stack](Stack) on the [`side Up`](#side).\n\n```monospace\n🍓 <🍊> 🍉 🍇  <->  🍇 🍉 <🍊> 🍓\n```\n\n    import Linear exposing (DirectionLinear(..))\n    import Stack exposing (topDown)\n\n    Scroll.only 1\n        |> Scroll.sideAlter\n            ( Up, \\_ -> topDown 2 [ 3, 4 ] )\n        |> Scroll.sideAlter\n            ( Down, \\_ -> topDown 4 [ 3, 2 ] )\n\nIn contrast to `List` or [stack](Stack), this can be done in `O(1)` time.\n\n",
+                "type": "Scroll.Scroll item Scroll.FocusGap possiblyOrNever -> Scroll.Scroll item Scroll.FocusGap possiblyOrNever"
+            },
+            {
+                "name": "nearest",
+                "comment": " The [`Location`](#Location) directly [`Down`|`Up`](https://dark.elm.dmy.fr/packages/lue-bird/elm-linear-direction/latest/) the focus.\n\n    import Emptiable exposing (Emptiable, filled, fillMap)\n    import Stack exposing (onTopLay, topDown)\n    import Scroll exposing (Scroll, FocusGap)\n    import Linear exposing (DirectionLinear(..))\n\n    Scroll.only \"hello\"\n        |> Scroll.sideAlter\n            ( Up, \\_ -> topDown \"scrollable\" [ \"world\" ] )\n        |> Scroll.toEnd Up\n        |> Scroll.to (Down |> Scroll.nearest)\n        |> fillMap Scroll.focusItem\n    --> filled \"scrollable\"\n    --: Emptiable (Scroll String FocusGap Never) Possibly\n\n    Scroll.empty\n        |> Scroll.sideAlter\n            ( Down, \\_ -> topDown \"world\" [ \"scrollable\" ] )\n        |> Scroll.to (Down |> Scroll.nearest)\n    --> Scroll.only \"world\"\n    -->     |> Scroll.sideAlter\n    -->         ( Down, \\_ -> Stack.only \"scrollable\" )\n    -->     |> filled\n    --: Emptiable (Scroll String FocusGap Never) Possibly\n\n    Scroll.empty\n        |> Scroll.sideAlter\n            ( Up, onTopLay \"foo\" )\n        |> Scroll.to (Up |> Scroll.nearest)\n    --> filled (Scroll.only \"foo\")\n    --: Emptiable (Scroll String FocusGap Never) Possibly\n\n    nearest =\n        \\side ->\n            Scroll.AtSide side 0\n\n",
+                "type": "Linear.DirectionLinear -> Scroll.Location"
+            },
+            {
+                "name": "only",
+                "comment": " A `Scroll` with a single focussed item in it,\nnothing `Down` and `Up` it.\n\n```monospace\n🍊  ->  <🍊>\n```\n\n    import Stack\n\n    Scroll.only \"wat\" |> Scroll.focusItem\n    --> \"wat\"\n\n    Scroll.only \"wat\" |> Scroll.toStack\n    --> Stack.only \"wat\"\n\n",
+                "type": "element -> Scroll.Scroll element Scroll.FocusGap never_"
+            },
+            {
+                "name": "side",
+                "comment": " The [`Stack`](Stack) to one [side](https://dark.elm.dmy.fr/packages/lue-bird/elm-linear-direction/latest/) of the focus.\n\n`Down`\n\n```monospace\n🍍←🍓) <🍊> 🍉 🍇\n```\n\n`Up`\n\n```monospace\n🍍 🍓 <🍊> (🍉→🍇\n```\n\n    import Emptiable exposing (Emptiable, fillMapFlat)\n    import Stack exposing (Stacked, topDown)\n    import Linear exposing (DirectionLinear(..))\n\n    Scroll.only 0\n        |> Scroll.sideAlter\n            ( Up, \\_ -> topDown 1 [ 2, 3 ] )\n        |> Scroll.to (Up |> Scroll.nearest)\n        |> fillMapFlat (Scroll.to (Up |> Scroll.nearest))\n        |> fillMapFlat (Scroll.side Down)\n    --> topDown 1 [ 0 ]\n    --: Emptiable (Stacked number_) Possibly\n\n    Scroll.only 0\n        |> Scroll.sideAlter\n            ( Up, \\_ -> topDown 1 [ 2, 3 ] )\n        |> Scroll.to (Up |> Scroll.nearest)\n        |> fillMapFlat (Scroll.side Up)\n    --> topDown 2 [ 3 ]\n    --: Emptiable (Stacked number_) Possibly\n\n",
+                "type": "Linear.DirectionLinear -> Scroll.Scroll item Scroll.FocusGap possiblyOrNever_ -> Emptiable.Emptiable (Stack.Stacked item) Possibly.Possibly"
+            },
+            {
+                "name": "sideAlter",
+                "comment": " Look [`Down|Up`](https://dark.elm.dmy.fr/packages/lue-bird/elm-linear-direction/latest/) the [`focus`](#focus) and operate directly an the [`Stack`](Stack) you see.\n\n\n#### `sideAlter ( DirectionLinear, \\_ -> 🍒🍋 )`\n\n`Down`\n\n```monospace\n🍓 <🍊> 🍉\n      ↓\n🍋 🍒 <🍊> 🍉\n```\n\n`Up`\n\n```monospace\n🍍 🍓 <🍊> 🍉\n      ↓\n🍍 🍓 <🍊> 🍒 🍋\n```\n\n    import Linear exposing (DirectionLinear(..))\n    import Emptiable\n    import Stack exposing (topDown)\n\n    Scroll.only \"selectoo\"\n        |> Scroll.sideAlter\n            ( Down, \\_ -> topDown \"earlee\" [ \"agua\", \"enutai\" ] )\n        |> Scroll.sideAlter\n            ( Up, \\_ -> topDown \"orangloo\" [ \"iquipy\", \"oice\" ] )\n        |> Scroll.sideAlter\n            ( Up, \\_ -> Emptiable.empty )\n        |> Scroll.toStack\n    --> topDown \"enutai\" [ \"agua\", \"earlee\", \"selectoo\" ]\n\n\n#### `sideAlter ( DirectionLinear, Stack.map ... )`\n\n    import Linear exposing (DirectionLinear(..))\n    import Stack exposing (topDown)\n\n    Scroll.only \"second\"\n        |> Scroll.sideAlter\n            ( Down, \\_ -> topDown \"first\" [ \"zeroth\" ] )\n        |> Scroll.sideAlter\n            ( Down, Stack.map (\\_ -> String.toUpper) )\n        |> Scroll.toStack\n    --> topDown \"ZEROTH\" [ \"FIRST\", \"second\" ]\n\n    Scroll.only \"zeroth\"\n        |> Scroll.sideAlter\n            ( Up, \\_ -> topDown \"first\" [ \"second\" ] )\n        |> Scroll.sideAlter\n            ( Up, Stack.map (\\_ -> String.toUpper) )\n        |> Scroll.toStack\n    --> topDown \"zeroth\" [ \"FIRST\", \"SECOND\" ]\n\nLook to one [side](https://dark.elm.dmy.fr/packages/lue-bird/elm-linear-direction/latest/) from the focus\nand slide items in directly at the nearest location.\n\n\n#### `sideAlter ( DirectionLinear, Stack.onTopGlue/onTopStack 🍒🍋 )`\n\n`Down`\n\n```monospace\n      🍒🍋\n🍍 🍓 \\↓/ <🍊> 🍉\n```\n\n`Up`\n\n```monospace\n        🍒🍋\n🍓 <🍊> \\↓/ 🍉 🍇\n```\n\n    import Linear exposing (DirectionLinear(..))\n    import Stack exposing (topDown)\n\n    Scroll.only 0\n        |> Scroll.sideAlter\n            ( Down, Stack.onTopGlue [ -4, -5 ] )\n        |> Scroll.sideAlter\n            ( Down, Stack.onTopStack (topDown -1 [ -2, -3 ]) )\n        |> Scroll.toStack\n    --> topDown -5 [ -4, -3, -2, -1, 0 ]\n\n    Scroll.only 0\n        |> Scroll.sideAlter\n            ( Up, Stack.onTopGlue [ 4, 5 ] )\n        |> Scroll.sideAlter\n            ( Up, Stack.onTopStack (topDown 1 [ 2, 3 ]) )\n        |> Scroll.toStack\n    --> topDown 0 [ 1, 2, 3, 4, 5 ]\n\n\n#### `Scroll.sideAlter ( DirectionLinear, \\side -> 🍒🍋 |> onTopStack side )`\n\n`Down`\n\n```monospace\n🍋🍒\n \\↓ 🍍 🍓 <🍊> 🍉\n```\n\n`Up`\n\n```monospace\n              🍒🍋\n🍓 <🍊> 🍉 🍇 ↓/\n```\n\n    import Linear exposing (DirectionLinear(..))\n    import Stack exposing (topDown, onTopStack)\n\n    Scroll.only 1\n        |> Scroll.sideAlter\n            ( Up, \\after -> topDown 2 [ 3, 4 ] |> onTopStack after )\n        |> Scroll.toEnd Up\n        |> Scroll.sideAlter\n            ( Down, \\before -> topDown 7 [ 6, 5 ] |> onTopStack before )\n        |> Scroll.toStack\n    --> topDown 5 [ 6, 7, 1, 2, 3, 4 ]\n\n    Scroll.only 123\n        |> Scroll.sideAlter\n            ( Up, \\after -> Stack.only 456 |> onTopStack after )\n        |> Scroll.sideAlter\n            ( Up, \\after -> topDown 789 [ 0 ] |> onTopStack after )\n        |> Scroll.toStack\n    --> topDown 123 [ 456, 789, 0 ]\n\n\n#### `sideAlter ( DirectionLinear,`[`Stack.onTopLay`](Stack#onTopLay) `... )`\n\n`Down`\n\n```monospace\n      🍒\n🍍 🍓 ↓ <🍊> 🍉\n```\n\n\n#### `Up`\n\n```monospace\n        🍒\n🍓 <🍊> ↓ 🍉 🍇\n```\n\n    import Linear exposing (DirectionLinear(..))\n    import Stack exposing (topDown, onTopLay)\n\n    Scroll.only 123\n        |> Scroll.sideAlter\n            ( Down, onTopLay 456 )\n        |> Scroll.toStack\n    --> topDown 456 [ 123 ]\n\n    Scroll.only 123\n        |> Scroll.sideAlter\n            ( Up, \\_ -> Stack.only 789 )\n        |> Scroll.sideAlter\n            ( Up, onTopLay 456 )\n        |> Scroll.toStack\n    --> topDown 123 [ 456, 789 ]\n\n",
+                "type": "( Linear.DirectionLinear, Emptiable.Emptiable (Stack.Stacked item) Possibly.Possibly -> Emptiable.Emptiable (Stack.Stacked item) possiblyOrNever_ ) -> Scroll.Scroll item Scroll.FocusGap possiblyOrNever -> Scroll.Scroll item Scroll.FocusGap possiblyOrNever"
+            },
+            {
+                "name": "to",
+                "comment": " Try to move the [`focus`](#focus) to the item at a given [`Scroll.Location`](#Location).\n\n\n#### `Scroll.to (Down |> Scroll.nearest)`\n\n```monospace\n🍊 <🍉> 🍇  ->  <🍊> 🍉 🍇\n```\n\n    import Linear exposing (DirectionLinear(..))\n    import Emptiable exposing (Emptiable, filled, fillMap)\n    import Scroll exposing (Scroll, FocusGap)\n\n    Scroll.empty |> Scroll.to (Down |> Scroll.nearest)\n    --> Emptiable.empty\n\n    Scroll.only \"hello\"\n        |> Scroll.sideAlter\n            ( Up, \\_ -> topDown \"scrollable\" [ \"world\" ] )\n        |> Scroll.toEnd Up\n        |> Scroll.to (Down |> Scroll.nearest)\n        |> fillMap Scroll.focusItem\n    --> filled \"scrollable\"\n    --: Emptiable (Scroll String FocusGap Never) Possibly\n\nThis also works from within gaps:\n\n```monospace\n🍊 🍉 <> 🍇  ->  🍊 <🍉> 🍇\n```\n\n    import Linear exposing (DirectionLinear(..))\n    import Emptiable exposing (Emptiable, filled)\n    import Stack exposing (onTopLay)\n    import Scroll exposing (Scroll, FocusGap)\n\n    Scroll.empty\n        |> Scroll.sideAlter\n            ( Down, onTopLay \"foo\" )\n        |> Scroll.to (Down |> Scroll.nearest)\n    --> filled (Scroll.only \"foo\")\n    --: Emptiable (Scroll String FocusGap Never) Possibly\n\n\n#### `Scroll.to (Up |> Scroll.nearest)`\n\n```monospace\n<🍊> 🍉 🍇  ->  🍊 <🍉> 🍇\n```\n\n    import Linear exposing (DirectionLinear(..))\n    import Emptiable exposing (Emptiable, filled, fillMap)\n    import Scroll exposing (Scroll, FocusGap)\n\n    Scroll.only 0\n        |> Scroll.sideAlter\n            ( Up, \\_ -> topDown 1 [ 2, 3 ] )\n        |> Scroll.to (Up |> Scroll.nearest)\n        |> fillMap Scroll.focusItem\n    --> filled 1\n    --: Emptiable number_ Possibly\n\nThis also works from within gaps:\n\n```monospace\n🍊 <> 🍉 🍇  ->  🍊 <🍉> 🍇\n```\n\n    import Linear exposing (DirectionLinear(..))\n    import Emptiable exposing (Emptiable, filled)\n    import Stack exposing (onTopLay)\n    import Scroll exposing (Scroll, FocusGap)\n\n    Scroll.empty\n        |> Scroll.sideAlter\n            ( Up, \\_ -> Stack.only \"foo\" )\n        |> Scroll.to (Up |> Scroll.nearest)\n    --> filled (Scroll.only \"foo\")\n    --: Emptiable (Scroll String FocusGap Never) Possibly\n\nIf there is no next item, the result is [`empty`](Emptiable#empty).\n\n    import Linear exposing (DirectionLinear(..))\n    import Emptiable\n    import Stack exposing (topDown)\n\n    Scroll.empty |> Scroll.to (Up |> Scroll.nearest)\n    --> Emptiable.empty\n\n    Scroll.only 0\n        |> Scroll.sideAlter\n            ( Up, \\_ -> topDown 1 [ 2, 3 ] )\n        |> Scroll.toEnd Up\n        |> Scroll.to (Up |> Scroll.nearest)\n    --> Emptiable.empty\n\n\n#### `Scroll.to Location`\n\n    import Element as Ui\n    import Element.Input as UIn\n    import Emptiable exposing (fillMap)\n    import RecordWithoutConstructorFunction exposing (RecordWithoutConstructorFunction)\n    import Scroll exposing (FocusGap, Scroll)\n    import Stack\n\n    type alias Model =\n        RecordWithoutConstructorFunction\n            { numbers : Scroll Int FocusGap Never\n            }\n\n    type Event\n        = NumberClicked Scroll.Location\n\n    update : Event -> Model -> ( Model, Cmd Event )\n    update event model =\n        case event of\n            NumberClicked location ->\n                ( { model\n                    | numbers =\n                        model.numbers\n                            |> Scroll.to location\n                            |> Emptiable.fillElseOnEmpty (\\_ -> model.numbers)\n                            |> Scroll.focusAlter (fillMap (\\n -> n + 1))\n                  }\n                , Cmd.none\n                )\n\n    interface : Model -> Ui.Element Event\n    interface =\n        \\{ numbers } ->\n            numbers\n                |> Scroll.map numberInterface\n                |> Scroll.toList\n                |> Ui.column []\n\n    numberInterface :\n        Scroll.Location\n        -> Int\n        -> Ui.Element Event\n    numberInterface location =\n        \\number ->\n            UIn.button []\n                { onPress = NumberClicked location |> Just\n                , label =\n                    number\n                        |> String.fromInt\n                        |> Ui.text\n                }\n\nThe same _functionality_ is often provided as `duplicate : Scroll item ... -> Scroll (Scroll item) ...`\n\n  - [turboMaCk/non-empty-list-alias: `List.NonEmpty.Zipper.duplicate`](https://package.elm-lang.org/packages/turboMaCk/non-empty-list-alias/latest/List-NonEmpty-Zipper#duplicate)\n  - [miyamoen/select-list: `SelectList.selectedMap`](https://dark.elm.dmy.fr/packages/miyamoen/select-list/latest/SelectList#selectedMap)\n  - [jjant/elm-comonad-zipper: `Zipper.duplicate`](https://package.elm-lang.org/packages/jjant/elm-comonad-zipper/latest/Zipper#duplicate)\n  - [arowM/elm-reference: `Reference.List.unwrap`](https://dark.elm.dmy.fr/packages/arowM/elm-reference/latest/Reference-List#unwrap)\n\nSaving a [`Scroll`](#Scroll) with every item becomes expensive for long [`Scroll`](#Scroll)s, though!\n\n",
+                "type": "Scroll.Location -> Scroll.Scroll item Scroll.FocusGap possiblyOrNever_ -> Emptiable.Emptiable (Scroll.Scroll item Scroll.FocusGap never_) Possibly.Possibly"
+            },
+            {
+                "name": "toEnd",
+                "comment": " Focus the furthest item [`Down/Up`](https://dark.elm.dmy.fr/packages/lue-bird/elm-linear-direction/latest/) the focus.\n\n`Down`\n\n```monospace\n🍍 🍓 <🍊> 🍉  ->  <🍍> 🍓 🍊 🍉\n```\n\n`Up`\n\n```monospace\n🍓 <🍊> 🍉 🍇  ->  🍓 🍊 🍉 <🍇>\n```\n\n    import Linear exposing (DirectionLinear(..))\n    import Emptiable exposing (Emptiable)\n    import Stack exposing (Stacked, topDown)\n\n    Scroll.only 1\n        |> Scroll.sideAlter\n            ( Up, \\_ -> topDown 2 [ 3, 4 ] )\n        |> Scroll.sideAlter\n            ( Down, \\_ -> topDown 4 [ 3, 2 ] )\n        |> Scroll.toEnd Down\n        |> Scroll.focusItem\n    --> 2\n\n    Scroll.only 1\n        |> Scroll.sideAlter\n            ( Up, \\_ -> topDown 2 [ 3, 4 ] )\n        |> Scroll.toEnd Up\n        |> Scroll.focusItem\n    --> 4\n\n    Scroll.only 1\n        |> Scroll.sideAlter\n            ( Up, \\_ -> topDown 2 [ 3, 4 ] )\n        |> Scroll.toEnd Up\n        |> Scroll.side Down\n    --> topDown 3 [ 2, 1 ]\n    --: Emptiable (Stacked number_) Possibly\n\n",
+                "type": "Linear.DirectionLinear -> Scroll.Scroll item Scroll.FocusGap possiblyOrNever -> Scroll.Scroll item Scroll.FocusGap possiblyOrNever"
+            },
+            {
+                "name": "toEndGap",
+                "comment": " Focus the gap beyond the furthest item [`Down|Up`](https://dark.elm.dmy.fr/packages/lue-bird/elm-linear-direction/latest/).\nRemember that gaps surround everything!\n\n`Down`\n\n```monospace\n🍍 🍓 <🍊> 🍉  ->  <> 🍍 🍓 🍊 🍉\n```\n\n`Up`\n\n```monospace\n🍓 <🍊> 🍉  ->  🍓 🍊 🍉 <>\n```\n\n    import Linear exposing (DirectionLinear(..))\n    import Emptiable exposing (filled)\n    import Stack exposing (topDown)\n\n    Scroll.only 1\n            -- <1>\n        |> Scroll.sideAlter\n            ( Up, \\_ -> topDown 3 [ 4 ] )\n            -- <1> 3 4\n        |> Scroll.toGap Up\n            -- 1 <> 3 4\n        |> Scroll.focusAlter (\\_ -> filled 2)\n            -- 1 <2> 3 4\n        |> Scroll.toEndGap Down\n            -- <> 1 2 3 4\n        |> Scroll.focusAlter (\\_ -> filled 0)\n            -- <0> 1 2 3 4\n        |> Scroll.toStack\n    --> topDown 0 [ 1, 2, 3, 4 ]\n\n    Scroll.only 1\n            -- <1>\n        |> Scroll.sideAlter\n            ( Up, \\_ -> topDown 2 [ 3 ] )\n            -- <1> 2 3\n        |> Scroll.toEndGap Up\n            -- 1 2 3 <>\n        |> Scroll.focusAlter (\\_ -> filled 4)\n            -- 1 2 3 <4>\n        |> Scroll.toStack\n    --> topDown 1 [ 2, 3, 4 ]\n\n",
+                "type": "Linear.DirectionLinear -> Scroll.Scroll item Scroll.FocusGap possiblyOrNever_ -> Scroll.Scroll item Scroll.FocusGap Possibly.Possibly"
+            },
+            {
+                "name": "toGap",
+                "comment": " Move the focus to the gap directly [`Down|Up`](https://dark.elm.dmy.fr/packages/lue-bird/elm-linear-direction/latest/).\nFeel free to [plug](#focusAlter) that gap right up!\n\n\n#### `Scroll.toGap Down`\n\n```monospace\n🍍 <🍊> 🍉  ->  🍍 <> 🍊 🍉\n```\n\n    import Linear exposing (DirectionLinear(..))\n    import Emptiable exposing (filled)\n    import Stack exposing (topDown)\n\n    Scroll.only \"world\"\n        |> Scroll.toGap Down\n        |> Scroll.focusAlter (\\_ -> \"hello\" |> filled)\n        |> Scroll.toStack\n    --> topDown \"hello\" [ \"world\" ]\n\n\n#### `Scroll.toGap Up`\n\n```monospace\n🍍 <🍊> 🍉  ->  🍍 🍊 <> 🍉\n```\n\n    import Linear exposing (DirectionLinear(..))\n    import Emptiable exposing (filled)\n    import Stack exposing (topDown)\n\n    Scroll.only \"hello\"\n        |> Scroll.sideAlter\n            ( Up, \\_ -> Stack.only \"world\" )\n        |> Scroll.toGap Up\n        |> Scroll.focusAlter (\\_ -> filled \"scrollable\")\n        |> Scroll.toStack\n    --> topDown \"hello\" [ \"scrollable\", \"world\" ]\n\n",
+                "type": "Linear.DirectionLinear -> Scroll.Scroll item Scroll.FocusGap Basics.Never -> Scroll.Scroll item Scroll.FocusGap Possibly.Possibly"
+            },
+            {
+                "name": "toList",
+                "comment": " Converts it to a `List`, rolled out to both ends:\n\n    import Linear exposing (DirectionLinear(..))\n    import Stack\n\n    Scroll.only 456\n        |> Scroll.sideAlter\n            ( Down, \\_ -> Stack.only 123 )\n        |> Scroll.sideAlter\n            ( Up, \\_ -> Stack.only 789 )\n        |> Scroll.toList\n    --> [ 123, 456, 789 ]\n\nOnly use this if you need a list in the end.\nOtherwise, use [`toStack`](#toStack) to preserve some information about its length.\n\n",
+                "type": "Scroll.Scroll item Scroll.FocusGap possiblyOrNever_ -> List.List item"
+            },
+            {
+                "name": "toStack",
+                "comment": " Roll out the `Scroll` to both ends into a [`Stack`](Stack):\n\n    import Linear exposing (DirectionLinear(..))\n    import Emptiable exposing (filled)\n    import Stack exposing (topDown)\n\n    Scroll.empty\n        |> Scroll.toStack\n    --> Emptiable.empty\n\n    Scroll.only 123\n        |> Scroll.sideAlter\n            ( Up, \\_ -> Stack.only 789 )\n        |> Scroll.toGap Up\n        |> Scroll.focusAlter (\\_-> filled 456)\n        |> Scroll.toStack\n    --> topDown 123 [ 456, 789 ]\n\nthe type information gets carried over, so\n\n    Never Scroll.FocusGap -> Stacked Never\n    Possibly Scroll.FocusGap -> Stacked Possibly\n\n",
+                "type": "Scroll.Scroll item Scroll.FocusGap possiblyOrNever -> Emptiable.Emptiable (Stack.Stacked item) possiblyOrNever"
+            },
+            {
+                "name": "toWhere",
+                "comment": " Move the focus to the nearest item [`Down|Up`](https://dark.elm.dmy.fr/packages/lue-bird/elm-linear-direction/latest/) that matches a predicate.\nIf no such item was found return with [`Emptiable.empty`](Emptiable#empty).\n\n    import Linear exposing (DirectionLinear(..))\n    import Emptiable exposing (filled, fillMap)\n    import Stack exposing (topDown)\n    import Linear exposing (DirectionLinear(..))\n\n    Scroll.only 4\n        |> Scroll.sideAlter\n            ( Down, \\_ -> topDown 2 [ -1, 0, 3 ] )\n        |> Scroll.toWhere ( Down, \\_ item -> item < 0 )\n        |> Emptiable.fillMap Scroll.focusItem\n    --> filled -1\n\n    Scroll.only 4\n        |> Scroll.sideAlter\n            ( Up, \\_ -> topDown 2 [ -1, 0, 3 ] )\n        |> Scroll.toWhere ( Up, \\_ item -> item < 0 )\n        |> fillMap focusItem\n    --> filled -1\n\n    Scroll.only -4\n        |> Scroll.sideAlter\n            ( Up, \\_ -> topDown 2 [ -1, 0, 3 ] )\n        |> Scroll.toWhere ( Up, \\_ item -> item < 0 )\n        |> fillMap focusItem\n    --> filled -4\n\n",
+                "type": "( Linear.DirectionLinear, { index : Basics.Int } -> item -> Basics.Bool ) -> Scroll.Scroll item Scroll.FocusGap possiblyOrNever_ -> Emptiable.Emptiable (Scroll.Scroll item Scroll.FocusGap never_) Possibly.Possibly"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Stack",
+        "comment": " 📚 An **emptiable or non-empty** structure where [`top`](#top), [`topRemove`](#topRemove), [`onTopLay`](#onTopLay) [`topMap`](#topMap) are `O(n)`.\n\n@docs Stacked, StackTopBelow\n\n\n## create\n\n[`Emptiable.empty`](Emptiable#empty) to create an `Empty Possibly` stack.\n\n@docs only, topDown, fromTopDown, fromList, fromText\n\n\n## scan\n\n@docs top\n@docs length, indexLast\n\n[`topRemove`](#topRemove) brings out everything below the [`top`](#top).\n\n\n## alter\n\n@docs onTopLay, topRemove\n@docs reverse\n\n\n### filter\n\n@docs fills\n\n\n### glue\n\n@docs onTopGlue, onTopStack, onTopStackAdapt\n@docs flatten\n\n\n## transform\n\n@docs map, and, topMap, belowTopMap\n@docs foldFrom, fold, sum\n@docs toTopDown, toList, toText\n\n",
+        "unions": [
+            {
+                "name": "StackTopBelow",
+                "comment": " [`Stacked`](#Stacked) with a different type for the top element:\n\n    top : Emptiable (StackTopBelow top belowTopElement_) Never -> top\n\nit's the result of:\n\n  - [`only`](#only)\n  - [`topDown`](#topDown)\n  - [`fromTopDown`](#fromTopDown)\n  - [`onTopLay`](#onTopLay)\n  - [`topMap`](#topMap)\n\n",
+                "args": [
+                    "topElement",
+                    "belowTopElement"
+                ],
+                "cases": [
+                    [
+                        "TopDown",
+                        [
+                            "topElement",
+                            "List.List belowTopElement"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Stacked",
+                "comment": " The representation of a non-empty stack on the `Filled` case.\n[`top`](#top), [`topRemove`](#topRemove), [`onTopLay`](#onTopLay) [`topMap`](#topMap) are `O(n)`\n\n\n#### in arguments\n\n[`Emptiable`](Emptiable) `(StackFilled ...) Never` → `stack` is non-empty:\n\n    top : Emptiable (Stacked element) Never -> element\n\n\n#### in results\n\n[`Emptiable`](Emptiable) `(StackFilled ...)`[`Possibly`](https://dark.elm.dmy.fr/packages/lue-bird/elm-allowable-state/latest/Possibly) `Empty` → stack could be empty\n\n    fromList : List element -> Emptiable (Stacked element) Possibly\n\nWe can treat it like any [`Emptiable`](Emptiable):\n\n    import Emptiable exposing (Emptiable(..), filled, fillMap)\n    import Possibly exposing (Possibly)\n    import Stack exposing (Stacked, top, onTopLay)\n\n    Emptiable.empty |> onTopLay \"cherry\" -- works\n\n    toList : Empty possiblyOrNever_ (Stacked element) -> List element\n    toList =\n        \\stack ->\n            case stack of\n                Filled (Stack.TopDown top_ down) ->\n                    top_ :: down\n\n                Empty _ ->\n                    []\n\n    [ \"hi\", \"there\" ] -- comes in as an argument\n        |> Stack.fromList\n        |> fillMap (filled >> top)\n    --: Emptiable String Possibly\n\nMost operations also allow a different type for the top element → see [`StackTopBelow`](#StackTopBelow)\n\n",
+                "args": [
+                    "element"
+                ],
+                "type": "Stack.StackTopBelow element element"
+            }
+        ],
+        "values": [
+            {
+                "name": "and",
+                "comment": " Combine its elements with elements of a given stack at the same location.\nIf one stack is longer, the extra elements are dropped.\n\n    import Stack exposing (topDown)\n\n    topDown \"alice\" [ \"bob\", \"chuck\" ]\n        |> Stack.and (topDown 2 [ 5, 7, 8 ])\n    --> topDown ( \"alice\", 2 ) [ ( \"bob\", 5 ), ( \"chuck\", 7 ) ]\n\n    topDown 4 [ 5, 6 ]\n        |> Stack.and (topDown 1 [ 2, 3 ])\n        |> Stack.map (\\_ ( n0, n1 ) -> n0 + n1)\n    --> topDown 5 [ 7, 9 ]\n\n",
+                "type": "Emptiable.Emptiable (Stack.Stacked anotherElement) possiblyOrNever -> Emptiable.Emptiable (Stack.Stacked element) possiblyOrNever -> Emptiable.Emptiable (Stack.Stacked ( element, anotherElement )) possiblyOrNever"
+            },
+            {
+                "name": "belowTopMap",
+                "comment": " Change every element below its [`top`](#top)\nbased on their `{ index }` in the whole stack and their current value.\nTheir type is allowed to change.\n\n    import Stack exposing (topDown, belowTopMap)\n\n    topDown 1 [ 4, 9 ]\n        |> belowTopMap (\\_ -> negate)\n    --> topDown 1 [ -4, -9 ]\n\n",
+                "type": "({ index : Basics.Int } -> belowElement -> belowElementMapped) -> Emptiable.Emptiable (Stack.StackTopBelow top belowElement) possiblyOrNever -> Emptiable.Emptiable (Stack.StackTopBelow top belowElementMapped) possiblyOrNever"
+            },
+            {
+                "name": "fills",
+                "comment": " Keep all [`filled`](Emptiable#filled) elements\nand drop all [`empty`](Emptiable#empty) elements.\n\n    import Emptiable exposing (filled)\n    import Stack exposing (topDown)\n\n    topDown Emptiable.empty [ Emptiable.empty ]\n        |> Stack.fills\n    --> Emptiable.empty\n\n    topDown (filled 1) [ Emptiable.empty, filled 3 ]\n        |> Stack.fills\n    --> topDown 1 [ 3 ]\n\nAs you can see, if only the top is [`fill`](Emptiable#fill) a value, the result is non-empty.\n\n",
+                "type": "Emptiable.Emptiable (Stack.StackTopBelow (Emptiable.Emptiable topContent possiblyOrNever) (Emptiable.Emptiable belowElementContent belowPossiblyOrNever_)) possiblyOrNever -> Emptiable.Emptiable (Stack.StackTopBelow topContent belowElementContent) possiblyOrNever"
+            },
+            {
+                "name": "flatten",
+                "comment": " Glue together a bunch of stacks.\n\n    import Emptiable\n    import Stack exposing (topDown)\n\n    topDown\n        (topDown 0 [ 1 ])\n        [ topDown 10 [ 11 ]\n        , Emptiable.empty\n        , topDown 20 [ 21, 22 ]\n        ]\n        |> Stack.flatten\n    --> topDown 0 [ 1, 10, 11, 20, 21, 22 ]\n\nFor this to return a non-empty stack, there must be a non-empty [`top`](#top) stack.\n\n",
+                "type": "Emptiable.Emptiable (Stack.StackTopBelow (Emptiable.Emptiable (Stack.Stacked element) possiblyOrNever) (Emptiable.Emptiable (Stack.Stacked element) belowTopListsPossiblyOrNever_)) possiblyOrNever -> Emptiable.Emptiable (Stack.Stacked element) possiblyOrNever"
+            },
+            {
+                "name": "fold",
+                "comment": " Fold from the [`top`](#top) as the initial accumulation value.\n\n    import Linear exposing (DirectionLinear(..))\n    import Stack exposing (topDown)\n\n    topDown 234 [ 345, 543 ]\n        |> Stack.fold Up max\n    --> 543\n\nBe aware:\n\n  - `Down` = indexes decreasing, not: from the [`top`](#top) down\n  - `Up` = indexes increasing, not: from the bottom up\n\n",
+                "type": "Linear.DirectionLinear -> (element -> element -> element) -> Emptiable.Emptiable (Stack.Stacked element) Basics.Never -> element"
+            },
+            {
+                "name": "foldFrom",
+                "comment": " Reduce in a [direction](https://package.elm-lang.org/packages/lue-bird/elm-linear-direction/latest/).\n\n    import Linear exposing (DirectionLinear(..))\n    import Stack exposing (topDown)\n\n    topDown 'l' [ 'i', 'v', 'e' ]\n        |> Stack.foldFrom \"\" Down String.cons\n    --> \"live\"\n\n    topDown 'l' [ 'i', 'v', 'e' ]\n        |> Stack.foldFrom \"\" Up String.cons\n    --> \"evil\"\n\nBe aware:\n\n  - `Down` = indexes decreasing, not: from the [`top`](#top) down\n  - `Up` = indexes increasing, not: from the bottom up\n\n",
+                "type": "accumulationValue -> Linear.DirectionLinear -> (element -> accumulationValue -> accumulationValue) -> Emptiable.Emptiable (Stack.Stacked element) possiblyOrNever_ -> accumulationValue"
+            },
+            {
+                "name": "fromList",
+                "comment": " Convert a `List element` to a `Empty Possibly (Stacked element)`.\nThe `List`s `head` becomes [`top`](#top), its `tail` is shoved down below.\n\n    import Possibly exposing (Possibly)\n    import Emptiable\n    import Stack exposing (topDown)\n\n    [] |> Stack.fromList\n    --> Emptiable.empty\n\n    [ \"hello\", \"emptiness\" ] |> Stack.fromList\n    --> topDown \"hello\" [ \"emptiness\" ]\n    --: Empty Possibly (Stacked String)\n\nWhen constructing from known elements, always prefer\n\n    import Stack exposing (topDown)\n\n    topDown \"hello\" [ \"emptiness\" ]\n\n",
+                "type": "List.List element -> Emptiable.Emptiable (Stack.Stacked element) Possibly.Possibly"
+            },
+            {
+                "name": "fromText",
+                "comment": " Convert a `String` to a `Emptiable (Stacked Char) Possibly`.\nThe `String`s head becomes [`top`](#top), its tail is shoved down below.\n\n    import Possibly exposing (Possibly)\n    import Emptiable\n    import Stack exposing (topDown)\n\n    \"\" |> Stack.fromText\n    --> Emptiable.empty\n\n    \"hello\" |> Stack.fromText\n    --> topDown 'h' [ 'e', 'l', 'l', 'o' ]\n    --: Emptiable (Stacked Char) Possibly\n\nWhen constructing from known elements, always prefer\n\n    import Stack exposing (topDown)\n\n    onTopLay 'h' (\"ello\" |> Stack.fromText)\n\n",
+                "type": "String.String -> Emptiable.Emptiable (Stack.Stacked Char.Char) Possibly.Possibly"
+            },
+            {
+                "name": "fromTopDown",
+                "comment": " Take a tuple `( top, List belowElement )`\nfrom another source like [turboMaCk/non-empty-list-alias](https://dark.elm.dmy.fr/packages/turboMaCk/non-empty-list-alias/latest/List-NonEmpty#NonEmpty)\nand convert it to an `Emptiable (StackTopBelow top belowElement) never_`\n\nUse [`topDown`](#topDown) if you don't already have a tuple to convert from.\n\n",
+                "type": "( top, List.List belowElement ) -> Emptiable.Emptiable (Stack.StackTopBelow top belowElement) never_"
+            },
+            {
+                "name": "indexLast",
+                "comment": " The position of the element at the bottom.\n\n    import Stack exposing (onTopLay)\n\n    Stack.only 3\n        |> onTopLay 2\n        |> Stack.indexLast\n    --> 1\n\n",
+                "type": "Emptiable.Emptiable (Stack.StackTopBelow top_ belowElement_) Basics.Never -> Basics.Int"
+            },
+            {
+                "name": "length",
+                "comment": " How many element there are.\n\n    import Stack exposing (onTopLay)\n\n    Stack.only 3\n        |> onTopLay 2\n        |> Stack.length\n    --> 2\n\n",
+                "type": "Emptiable.Emptiable (Stack.StackTopBelow top_ belowElement_) possiblyOrNever_ -> Basics.Int"
+            },
+            {
+                "name": "map",
+                "comment": " Change every element based on its current value and `{ index }`.\n\n    import Stack exposing (topDown)\n\n    topDown 1 [ 4, 9 ]\n        |> Stack.map (\\_ -> negate)\n    --> topDown -1 [ -4, -9 ]\n\n    topDown 1 [ 2, 3, 4 ]\n        |> Stack.map (\\{ index } n -> index * n)\n    --> topDown 0 [ 2, 6, 12 ]\n\n",
+                "type": "({ index : Basics.Int } -> element -> elementMapped) -> Emptiable.Emptiable (Stack.Stacked element) possiblyOrNever -> Emptiable.Emptiable (Stack.Stacked elementMapped) possiblyOrNever"
+            },
+            {
+                "name": "onTopGlue",
+                "comment": " Put the elements of a `List` on [`top`](#top).\n\n    import Stack exposing (topDown, onTopStack)\n\n    topDown 1 [ 2 ]\n        |> Stack.onTopGlue [ -1, 0 ]\n    --> topDown -1 [ 0, 1, 2 ]\n\n`onTopGlue` only when the piped stack food is already `... Never`.\nGlue a stack on top with\n\n  - [`onTopStack`](#onTopStack) takes on the `possiblyOrNever` type of the piped food\n  - [`onTopStackAdapt`](#onTopStackAdapt) takes on the **`possiblyOrNever` type of the argument**\n\n",
+                "type": "List.List element -> Emptiable.Emptiable (Stack.Stacked element) possiblyOrNever -> Emptiable.Emptiable (Stack.Stacked element) possiblyOrNever"
+            },
+            {
+                "name": "onTopLay",
+                "comment": " Add an element to the front.\n\n    import Emptiable\n    import Stack exposing (topDown, onTopLay)\n\n    topDown 2 [ 3 ] |> onTopLay 1\n    --> topDown 1 [ 2, 3 ]\n\n    Emptiable.empty |> onTopLay 1\n    --> Stack.only 1\n\n",
+                "type": "newTop -> Emptiable.Emptiable (Stack.Stacked belowElement) possiblyOrNever_ -> Emptiable.Emptiable (Stack.StackTopBelow newTop belowElement) never_"
+            },
+            {
+                "name": "onTopStack",
+                "comment": " Glue the elements of a stack to the end of the stack.\n\n    import Stack exposing (topDown, onTopStack)\n\n    topDown 1 [ 2 ]\n        |> onTopStack (topDown -1 [ 0 ])\n    --> topDown -1 [ 0, 1, 2 ]\n\n  - [`onTopStack`](#onTopStack) takes on the `possiblyOrNever` type of the piped food\n  - [`onTopStackAdapt`](#onTopStackAdapt) takes on the `possiblyOrNever` type of the argument\n\n",
+                "type": "Emptiable.Emptiable (Stack.Stacked element) possiblyOrNeverAppended_ -> Emptiable.Emptiable (Stack.Stacked element) possiblyOrNever -> Emptiable.Emptiable (Stack.Stacked element) possiblyOrNever"
+            },
+            {
+                "name": "onTopStackAdapt",
+                "comment": " Glue the elements of a `... Empty possiblyOrNever`/`Never` [`Stack`](#Stacked) to the [`top`](#top) of this [`Stack`](Stack).\n\n    import Emptiable\n    import Stack exposing (topDown, onTopStack, onTopStackAdapt)\n\n    Emptiable.empty\n        |> onTopStackAdapt (topDown 1 [ 2 ])\n        |> onTopStack (topDown -2 [ -1, 0 ])\n    --> topDown -2 [ -1, 0, 1, 2 ]\n\n  - [`onTopStack`](#onTopStack) takes on the `possiblyOrNever` type of the piped food\n  - [`onTopStackAdapt`](#onTopStackAdapt) takes on the `possiblyOrNever` type of the argument\n\n",
+                "type": "Emptiable.Emptiable (Stack.Stacked element) possiblyOrNever -> Emptiable.Emptiable (Stack.Stacked element) possiblyOrNeverIn_ -> Emptiable.Emptiable (Stack.Stacked element) possiblyOrNever"
+            },
+            {
+                "name": "only",
+                "comment": " A stack with just 1 single element.\n\n    import Emptiable\n    import Stack exposing (onTopLay)\n\n    Stack.only \":)\"\n    --> Emptiable.empty |> onTopLay \":)\"\n\n",
+                "type": "top -> Emptiable.Emptiable (Stack.StackTopBelow top belowTopElement_) never_"
+            },
+            {
+                "name": "reverse",
+                "comment": " Flip the order of the elements.\n\n    import Stack exposing (topDown)\n\n    topDown \"l\" [ \"i\", \"v\", \"e\" ]\n        |> Stack.reverse\n    --> topDown \"e\" [ \"v\", \"i\", \"l\" ]\n\n",
+                "type": "Emptiable.Emptiable (Stack.Stacked element) possiblyOrNever -> Emptiable.Emptiable (Stack.Stacked element) possiblyOrNever"
+            },
+            {
+                "name": "sum",
+                "comment": " ∑ Total every element number.\n\n    import Emptiable\n\n    topDown 1 [ 2, 3 ] |> Stack.sum\n    --> 6\n\n    topDown 1 (List.repeat 5 1) |> Stack.sum\n    --> 6\n\n    Emptiable.empty |> Stack.sum\n    --> 0\n\n",
+                "type": "Emptiable.Emptiable (Stack.Stacked number) possiblyOrNever_ -> number"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert it to a `List`.\n\n    import Stack exposing (topDown)\n\n    topDown 1 [ 7 ] |> Stack.toList\n    --> [ 1, 7 ]\n\nDon't try to use this prematurely.\nKeeping type information as long as possible is always a win.\n\n",
+                "type": "Emptiable.Emptiable (Stack.Stacked element) possiblyOrNever_ -> List.List element"
+            },
+            {
+                "name": "toText",
+                "comment": " Convert it to a `String`.\n\n    import Stack exposing (topDown)\n\n    topDown 'H' [ 'i' ] |> Stack.toText\n    --> \"Hi\"\n\nDon't try to use this prematurely.\nKeeping type information as long as possible is always a win.\n\n",
+                "type": "Emptiable.Emptiable (Stack.Stacked Char.Char) possiblyOrNever_ -> String.String"
+            },
+            {
+                "name": "toTopDown",
+                "comment": " Convert to a non-empty list tuple `( top, List belowElement )`\nto be used by another library.\n\n    import Stack exposing (topDown, toTopDown)\n\n    topDown \"hi\" [ \"there\", \"👋\" ]\n        |> toTopDown\n    --> ( \"hi\", [ \"there\", \"👋\" ] )\n\nDon't use [`toTopDown`](#toTopDown) to destructure a stack.\nInstead: [`Stack.top`](Stack#top), [`Stack.topRemove`](#topRemove)\n\n",
+                "type": "Emptiable.Emptiable (Stack.StackTopBelow top belowElement) Basics.Never -> ( top, List.List belowElement )"
+            },
+            {
+                "name": "top",
+                "comment": " The first value.\n\n    import Stack exposing (top, onTopLay)\n\n    Stack.only 3\n        |> onTopLay 2\n        |> top\n    --> 2\n\n",
+                "type": "Emptiable.Emptiable (Stack.StackTopBelow top belowTop_) Basics.Never -> top"
+            },
+            {
+                "name": "topDown",
+                "comment": " A stack from a top element and a `List` of elements below going down.\n",
+                "type": "top -> List.List belowElement -> Emptiable.Emptiable (Stack.StackTopBelow top belowElement) never_"
+            },
+            {
+                "name": "topMap",
+                "comment": " Change the [`top`](#top) element based on its current value.\nIts type is allowed to change.\n\n    import Stack exposing (topDown, topMap)\n\n    topDown 1 [ 4, 9 ] |> topMap negate\n    --> topDown -1 [ 4, 9 ]\n\n",
+                "type": "(top -> topMapped) -> Emptiable.Emptiable (Stack.StackTopBelow top belowElement) possiblyOrNever -> Emptiable.Emptiable (Stack.StackTopBelow topMapped belowElement) possiblyOrNever"
+            },
+            {
+                "name": "topRemove",
+                "comment": " Everything after the first value.\n\n    import Stack exposing (topDown, onTopLay, onTopStack, topRemove)\n\n    Stack.only 2\n        |> onTopLay 3\n        |> onTopStack (topDown 1 [ 0 ])\n        |> topRemove\n    --> topDown 0 [ 3, 2 ]\n    --: Emptiable (Stacked number_) Possibly\n\n",
+                "type": "Emptiable.Emptiable (Stack.StackTopBelow top_ belowElement) Basics.Never -> Emptiable.Emptiable (Stack.Stacked belowElement) Possibly.Possibly"
+            }
+        ],
+        "binops": []
+    }
+]

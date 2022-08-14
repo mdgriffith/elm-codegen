@@ -1,0 +1,199 @@
+[
+    {
+        "name": "Ghost",
+        "comment": " This module contains all functions to access any kind of ghost related\nresource, these are `Config`,\n`Author`s, `Error`s, `Mata`, `Post`s, `Settings`s, `Tag`s.\n\nSee <https://docs.ghost.org/api/content/#resources>\n\n@docs Author, Config, Error, Meta, Post, Settings, Tag\n\n@docs authors, authorsById, authorsBySlug, config, errorToString, pages, pagesById, pagesBySlug, posts, postsById, postsBySlug, settings, tags, tagsById, tagsBySlug\n\n",
+        "unions": [
+            {
+                "name": "Error",
+                "comment": " A Ghost Error is a combined type of `GhostError` and `HttpError`.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "GhostError",
+                        [
+                            "List.List Ghost.Error.Error"
+                        ]
+                    ],
+                    [
+                        "HttpError",
+                        [
+                            "Http.Error"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Author",
+                "comment": " A record for all author related information.\n",
+                "args": [],
+                "type": "Ghost.Author.Author"
+            },
+            {
+                "name": "Config",
+                "comment": " A record for the basic ghost configuration:\n\n    Config url key \"v2\"\n\nThe version currently is always \"v2\", which might change later. The key to\naccess the api has to be generated as described in:\n\n<https://docs.ghost.org/api/content/#key>\n\n",
+                "args": [],
+                "type": "{ url : String.String, key : String.String, version : String.String }"
+            },
+            {
+                "name": "Meta",
+                "comment": " `Meta` information are part of every HTTP response, except for `settings`\nand contain pagination related information:\n\n<https://docs.ghost.org/api/content/#pagination>\n\n",
+                "args": [],
+                "type": "Ghost.Meta.Meta"
+            },
+            {
+                "name": "Post",
+                "comment": " A record for all post related information.\n",
+                "args": [],
+                "type": "Ghost.Post.Post"
+            },
+            {
+                "name": "Settings",
+                "comment": " A record for all setting related information.\n",
+                "args": [],
+                "type": "Ghost.Settings.Settings"
+            },
+            {
+                "name": "Tag",
+                "comment": " A record for all tag related information.\n",
+                "args": [],
+                "type": "Ghost.Tag.Tag"
+            }
+        ],
+        "values": [
+            {
+                "name": "authors",
+                "comment": " Request authors from the ghost api, see <https://docs.ghost.org/api/content/#authors>\n\n    Params.empty\n    |> ...\n    |> authors (Config url key \"v2\") GotAuthors\n\n",
+                "type": "Ghost.Config -> (Result.Result Ghost.Error ( List.List Ghost.Author, Ghost.Meta ) -> msg) -> Ghost.Params.Params -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "authorsById",
+                "comment": " Request authors from the ghost api, see <https://docs.ghost.org/api/content/#authors>\n\n    Params.empty\n    |> ...\n    |> authorsById id (Config url key \"v2\") GotAuthors\n\n",
+                "type": "String.String -> Ghost.Config -> (Result.Result Ghost.Error (List.List Ghost.Author) -> msg) -> Ghost.Params.Params -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "authorsBySlug",
+                "comment": " Request authors from the ghost api, see <https://docs.ghost.org/api/content/#authors>\n\n    Params.empty\n    |> ...\n    |> authorsBySlug id (Config url key \"v2\") GotAuthors\n\n",
+                "type": "String.String -> Ghost.Config -> (Result.Result Ghost.Error (List.List Ghost.Author) -> msg) -> Ghost.Params.Params -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "config",
+                "comment": " A clean way of initializing the basic configuration settings, that takes\ncare of the url-ending.\n",
+                "type": "String.String -> String.String -> String.String -> Ghost.Config"
+            },
+            {
+                "name": "errorToString",
+                "comment": " Pass in a `Ghost.Error` and it will return a string of wheater it is\na `HttpError` or a ghost related Error.\n",
+                "type": "Ghost.Error -> String.String"
+            },
+            {
+                "name": "pages",
+                "comment": " Request pages from the ghost api, see <https://docs.ghost.org/api/content/#pages>\n\n    Params.empty\n    |> ...\n    |> pages (Config url key \"v2\") GotPages\n\n",
+                "type": "Ghost.Config -> (Result.Result Ghost.Error ( List.List Ghost.Post, Ghost.Meta ) -> msg) -> Ghost.Params.Params -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "pagesById",
+                "comment": " Request pages from the ghost api, see <https://docs.ghost.org/api/content/#pages>\n\n    Params.empty\n    |> ...\n    |> pagesById id (Config url key \"v2\") GotPages\n\n",
+                "type": "String.String -> Ghost.Config -> (Result.Result Ghost.Error (List.List Ghost.Post) -> msg) -> Ghost.Params.Params -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "pagesBySlug",
+                "comment": " Request pages from the ghost api, see <https://docs.ghost.org/api/content/#pages>\n\n    Params.empty\n    |> ...\n    |> pagesBySlug id (Config url key \"v2\") GotPages\n\n",
+                "type": "String.String -> Ghost.Config -> (Result.Result Ghost.Error (List.List Ghost.Post) -> msg) -> Ghost.Params.Params -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "posts",
+                "comment": " Request posts from the ghost api, see <https://docs.ghost.org/api/content/#posts>\n\n    Params.empty\n    |> ...\n    |> posts (Config url key \"v2\") GotPosts\n\n",
+                "type": "Ghost.Config -> (Result.Result Ghost.Error ( List.List Ghost.Post, Ghost.Meta ) -> msg) -> Ghost.Params.Params -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "postsById",
+                "comment": " Request posts from the ghost api, see <https://docs.ghost.org/api/content/#posts>\n\n    Params.empty\n    |> ...\n    |> postsById id (Config url key \"v2\") GotPosts\n\n",
+                "type": "String.String -> Ghost.Config -> (Result.Result Ghost.Error (List.List Ghost.Post) -> msg) -> Ghost.Params.Params -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "postsBySlug",
+                "comment": " Request posts from the ghost api, see <https://docs.ghost.org/api/content/#posts>\n\n    Params.empty\n    |> ...\n    |> postsBySlug id (Config url key \"v2\") GotPosts\n\n",
+                "type": "String.String -> Ghost.Config -> (Result.Result Ghost.Error (List.List Ghost.Post) -> msg) -> Ghost.Params.Params -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "settings",
+                "comment": " Request tags from the ghost api, see <https://docs.ghost.org/api/content/#settings>\n\n    Params.empty\n    |> ...\n    |> tagsBySlug id (Config url key \"v2\") GotSettings\n\nIn contrast to all other requests, you will receive a single record.\n\n",
+                "type": "Ghost.Config -> (Result.Result Ghost.Error Ghost.Settings -> msg) -> Ghost.Params.Params -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "tags",
+                "comment": " Request tags from the ghost api, see <https://docs.ghost.org/api/content/#tags>\n\n    Params.empty\n    |> Params.fields ...\n    |> ...\n    |> tags (Config url key \"v2\") GotTags\n\n",
+                "type": "Ghost.Config -> (Result.Result Ghost.Error ( List.List Ghost.Tag, Ghost.Meta ) -> msg) -> Ghost.Params.Params -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "tagsById",
+                "comment": " Request tags from the ghost api, see <https://docs.ghost.org/api/content/#tags>\n\n    Params.empty\n    |> Params.fields ...\n    |> ...\n    |> tagsById id (Config url key \"v2\") GotTags\n\n",
+                "type": "String.String -> Ghost.Config -> (Result.Result Ghost.Error (List.List Ghost.Tag) -> msg) -> Ghost.Params.Params -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "tagsBySlug",
+                "comment": " Request tags from the ghost api, see <https://docs.ghost.org/api/content/#tags>\n\n    Params.empty\n    |> Params.fields ...\n    |> ...\n    |> tagsBySlug id (Config url key \"v2\") GotTags\n\n",
+                "type": "String.String -> Ghost.Config -> (Result.Result Ghost.Error (List.List Ghost.Tag) -> msg) -> Ghost.Params.Params -> Platform.Cmd.Cmd msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Ghost.Params",
+        "comment": " This module is used for any kind of configuration that is associated with\nrequests, such as limiting the number of results, filtering, order, etc..\n\nSee <https://docs.ghost.org/api/content/> for further information on all settings.\n\n@docs empty, fields, filter, include, limit, order, page, toString\n\n@docs Params\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Params",
+                "comment": " A basic record for all ghost related fine tune settings.\n",
+                "args": [],
+                "type": "{ include : Maybe.Maybe String.String, fields : Maybe.Maybe String.String, filter : Maybe.Maybe String.String, limit : Maybe.Maybe String.String, order : Maybe.Maybe String.String, page : Maybe.Maybe String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "empty",
+                "comment": " Initialise an empty Parameter record. This is a shortcut for:\n\n    Params Nothing Nothing Nothing Nothing Nothing Nothing\n\n",
+                "type": "Ghost.Params.Params"
+            },
+            {
+                "name": "fields",
+                "comment": " `fields` takes in a string of comma-separated fields, that will be returned\nby ghost. Since it allows to filter any kind of field, such as \"id\", \"title\",\n\"url\", \"authors\", etc. all ghost types are defined as Maybe types.\n\n    Params.empty\n    |> Params.fields \"url,id\" -- everything else is dissmissed\n    |> ...\n\nSee: <https://docs.ghost.org/api/content/#fields>\n\n",
+                "type": "String.String -> Ghost.Params.Params -> Ghost.Params.Params"
+            },
+            {
+                "name": "filter",
+                "comment": " Takes in a string of comma-separated filters, to fine tune the response.\n\n    Params.empty\n    |> Params.filter \"featured:true,tag:getting-started\"\n    |> ...\n\nSee: <https://docs.ghost.org/api/content/#filter>\n\n",
+                "type": "String.String -> Ghost.Params.Params -> Ghost.Params.Params"
+            },
+            {
+                "name": "include",
+                "comment": " `include` takes a string of comma-separated parameters, such as:\n\n    * Posts & Pages: authors, tags\n    * Authors: count.posts\n    * Tags: count.posts\n\n    Params.empty\n    |> Params.include \"authors,count.posts\"\n    |> ...\n\nwhich allow to fine tune the returned result.\n\nSee: <https://docs.ghost.org/api/content/#include>\n\n",
+                "type": "String.String -> Ghost.Params.Params -> Ghost.Params.Params"
+            },
+            {
+                "name": "limit",
+                "comment": " Limit the number of records returned, the default value is 15, the nagative\nvalue -1 will return all results.\n\n    Params.empty\n    |> Params.limit 2\n    |> ...\n\nSee: <https://docs.ghost.org/api/content/#limit>\n\n",
+                "type": "Basics.Int -> Ghost.Params.Params -> Ghost.Params.Params"
+            },
+            {
+                "name": "order",
+                "comment": " Define the sort order:\n\n    Params.empty\n    |> Params.order \"published_at DESC\"\n    |> ...\n\nSee: <https://docs.ghost.org/api/content/#order>\n\n",
+                "type": "String.String -> Ghost.Params.Params -> Ghost.Params.Params"
+            },
+            {
+                "name": "page",
+                "comment": " By default, the first 15 records are returned.\n\n    Params.empty\n    |> Params.limit 2\n    |> Params.page 2\n    |> ...\n\nSee: <https://docs.ghost.org/api/content/#order>\n\n",
+                "type": "Basics.Int -> Ghost.Params.Params -> Ghost.Params.Params"
+            },
+            {
+                "name": "toString",
+                "comment": " Used internally only, to generate a string from all parameters.\n",
+                "type": "Ghost.Params.Params -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

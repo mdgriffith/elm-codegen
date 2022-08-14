@@ -1,0 +1,858 @@
+[
+    {
+        "name": "GenUI",
+        "comment": " The core definition of the UI.\n\n\n# Core\n\n@docs GenUI, version\n\n\n# Property\n\n@docs PropertyRec, Property, root, ghost, Path, IndexPath, get\n\n\n# Concrete property definitions\n\n@docs Def, IntDef, FloatDef, XYDef, ToggleDef, ColorDef, TextualDef, ActionDef, GradientDef, ProgressDef, ZoomDef, SelectDef, NestDef\n\n\n# Folding\n\n@docs fold, foldWithParent, foldWithPath, foldWithIndexPath, foldWithPaths\n\n\n# Find & Update\n\n@docs find, findByIndices, update, updateAt\n\n\n# Helpers\n\n@docs withPath, withIndices, defToString\n\n\n# Subtypes\n\n@docs Face, Unit, CellShape, SelectKind, SelectItem, Icon, Form, Theme, Url, Page, Pages, Panel, Cells, ZoomKind\n\n# Mapping\n@docs map, mapProperty, mapDef\n\n",
+        "unions": [
+            {
+                "name": "Def",
+                "comment": " ",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Ghost",
+                        []
+                    ],
+                    [
+                        "NumInt",
+                        [
+                            "GenUI.IntDef"
+                        ]
+                    ],
+                    [
+                        "NumFloat",
+                        [
+                            "GenUI.FloatDef"
+                        ]
+                    ],
+                    [
+                        "XY",
+                        [
+                            "GenUI.XYDef"
+                        ]
+                    ],
+                    [
+                        "Toggle",
+                        [
+                            "GenUI.ToggleDef"
+                        ]
+                    ],
+                    [
+                        "Color",
+                        [
+                            "GenUI.ColorDef"
+                        ]
+                    ],
+                    [
+                        "Textual",
+                        [
+                            "GenUI.TextualDef"
+                        ]
+                    ],
+                    [
+                        "Action",
+                        [
+                            "GenUI.ActionDef"
+                        ]
+                    ],
+                    [
+                        "Select",
+                        [
+                            "GenUI.SelectDef"
+                        ]
+                    ],
+                    [
+                        "Nest",
+                        [
+                            "GenUI.NestDef a"
+                        ]
+                    ],
+                    [
+                        "Gradient",
+                        [
+                            "GenUI.GradientDef"
+                        ]
+                    ],
+                    [
+                        "Progress",
+                        [
+                            "GenUI.ProgressDef"
+                        ]
+                    ],
+                    [
+                        "Zoom",
+                        [
+                            "GenUI.ZoomDef"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Face",
+                "comment": " The face of the UI cell, used for Tron UI.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Empty",
+                        []
+                    ],
+                    [
+                        "OfColor",
+                        [
+                            "GenUI.Color.Color"
+                        ]
+                    ],
+                    [
+                        "OfIcon",
+                        [
+                            "List.List GenUI.Icon"
+                        ]
+                    ],
+                    [
+                        "Title",
+                        []
+                    ],
+                    [
+                        "ExpandCollapse",
+                        []
+                    ],
+                    [
+                        "Focus",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Form",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Expanded",
+                        []
+                    ],
+                    [
+                        "Collapsed",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Page",
+                "comment": " Which page should be selected on the panel, if there's paging enabled ",
+                "args": [],
+                "cases": [
+                    [
+                        "First",
+                        []
+                    ],
+                    [
+                        "Last",
+                        []
+                    ],
+                    [
+                        "ByCurrent",
+                        []
+                    ],
+                    [
+                        "Page",
+                        [
+                            "Basics.Int"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Pages",
+                "comment": " How to distribute items over pages:\n\n* `Single` page to fit them into page no matter what;\n* `Distribute` is for custom distribution using `maxInRow` and `maxInColumn` (both in Cells, integer number);\n* `Auto` to use the default paging algorithm == `Distribute { maxInRow = 3, maxInColumn = 3 }`;\n* `Exact` for the exact number of pages and skipping the items that don't fit or having blank pages if they do;\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Auto",
+                        []
+                    ],
+                    [
+                        "Single",
+                        []
+                    ],
+                    [
+                        "Distribute",
+                        [
+                            "{ maxInColumn : GenUI.Cells, maxInRow : GenUI.Cells }"
+                        ]
+                    ],
+                    [
+                        "Exact",
+                        [
+                            "Basics.Int"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "SelectKind",
+                "comment": " How the select switch looks and acts, used for Tron UI.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Choice",
+                        [
+                            "GenUI.Panel"
+                        ]
+                    ],
+                    [
+                        "Knob",
+                        []
+                    ],
+                    [
+                        "Switch",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Theme",
+                "comment": " Icon theme: Light or Dark\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Dark",
+                        []
+                    ],
+                    [
+                        "Light",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Unit",
+                "comment": " How much space takes the control in the Tron units ",
+                "args": [],
+                "cases": [
+                    [
+                        "Half",
+                        []
+                    ],
+                    [
+                        "One",
+                        []
+                    ],
+                    [
+                        "OneAndAHalf",
+                        []
+                    ],
+                    [
+                        "Two",
+                        []
+                    ],
+                    [
+                        "Three",
+                        []
+                    ],
+                    [
+                        "Custom",
+                        [
+                            "Basics.Float"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Url",
+                "comment": " Icon URL: Remote or local\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Local",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Remote",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "ZoomKind",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "PlusMinus",
+                        []
+                    ],
+                    [
+                        "Steps",
+                        [
+                            "List.List Basics.Float"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "ActionDef",
+                "comment": " ",
+                "args": [],
+                "type": "{ face : GenUI.Face }"
+            },
+            {
+                "name": "CellShape",
+                "comment": " How many space takes the cell itself, used for Tron UI.\n",
+                "args": [],
+                "type": "{ horz : GenUI.Unit, vert : GenUI.Unit }"
+            },
+            {
+                "name": "Cells",
+                "comment": " The number of cells as the dimension of the panel ",
+                "args": [],
+                "type": "Basics.Int"
+            },
+            {
+                "name": "ColorDef",
+                "comment": " ",
+                "args": [],
+                "type": "{ current : GenUI.Color.Color }"
+            },
+            {
+                "name": "FloatDef",
+                "comment": " ",
+                "args": [],
+                "type": "{ min : Basics.Float, max : Basics.Float, step : Basics.Float, current : Basics.Float }"
+            },
+            {
+                "name": "GenUI",
+                "comment": " ",
+                "args": [
+                    "a"
+                ],
+                "type": "{ version : String.String, root : List.List (GenUI.Property a) }"
+            },
+            {
+                "name": "GradientDef",
+                "comment": " ",
+                "args": [],
+                "type": "{ current : GenUI.Gradient.Gradient, presets : List.List GenUI.Color.Color }"
+            },
+            {
+                "name": "Icon",
+                "comment": " Icon: its theme and URL\n",
+                "args": [],
+                "type": "{ theme : GenUI.Theme, url : GenUI.Url }"
+            },
+            {
+                "name": "IndexPath",
+                "comment": " A path to the property in the tree. So, all the first-level properties have the path of `[0]`.\nThe second property that lies in the folder at index `3` has a path `[0, 3, 1]`.\n",
+                "args": [],
+                "type": "List.List Basics.Int"
+            },
+            {
+                "name": "IntDef",
+                "comment": " ",
+                "args": [],
+                "type": "{ min : Basics.Int, max : Basics.Int, step : Basics.Int, current : Basics.Int }"
+            },
+            {
+                "name": "NestDef",
+                "comment": " ",
+                "args": [
+                    "a"
+                ],
+                "type": "{ children : List.List (GenUI.Property a), nestAt : Maybe.Maybe String.String, panel : GenUI.Panel }"
+            },
+            {
+                "name": "Panel",
+                "comment": " ",
+                "args": [],
+                "type": "{ form : GenUI.Form, button : GenUI.Face, allOf : Maybe.Maybe GenUI.CellShape, page : GenUI.Page, pages : GenUI.Pages }"
+            },
+            {
+                "name": "Path",
+                "comment": " A path to the property in the tree. So, all the first-level properties have the path of `[0]`.\nThe second property that lies in the folder at index `3` has a path `[0, 3, 1]`.\n",
+                "args": [],
+                "type": "List.List String.String"
+            },
+            {
+                "name": "ProgressDef",
+                "comment": " ",
+                "args": [],
+                "type": "{ api : GenUI.Url }"
+            },
+            {
+                "name": "Property",
+                "comment": " ",
+                "args": [
+                    "a"
+                ],
+                "type": "( GenUI.PropertyRec a, a )"
+            },
+            {
+                "name": "PropertyRec",
+                "comment": " ",
+                "args": [
+                    "a"
+                ],
+                "type": "{ def : GenUI.Def a, name : String.String, property : Maybe.Maybe String.String, live : Basics.Bool, shape : Maybe.Maybe GenUI.CellShape, triggerOn : Maybe.Maybe GenUI.Path, statePath : Maybe.Maybe GenUI.Path }"
+            },
+            {
+                "name": "SelectDef",
+                "comment": " ",
+                "args": [],
+                "type": "{ current : String.String, values : List.List GenUI.SelectItem, nestAt : Maybe.Maybe String.String, kind : GenUI.SelectKind }"
+            },
+            {
+                "name": "SelectItem",
+                "comment": " The item in the select box, a.k.a. `option`. `value` can be different from `name`, so if `name` exists, `name` should be shown to the user, but the `value` should be sent\n",
+                "args": [],
+                "type": "{ value : String.String, face : GenUI.Face, name : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "TextualDef",
+                "comment": " ",
+                "args": [],
+                "type": "{ current : String.String }"
+            },
+            {
+                "name": "ToggleDef",
+                "comment": " ",
+                "args": [],
+                "type": "{ current : Basics.Bool }"
+            },
+            {
+                "name": "XYDef",
+                "comment": " ",
+                "args": [],
+                "type": "{ x : GenUI.FloatDef, y : GenUI.FloatDef }"
+            },
+            {
+                "name": "ZoomDef",
+                "comment": " ",
+                "args": [],
+                "type": "{ current : Basics.Float, kind : GenUI.ZoomKind }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defToString",
+                "comment": " Convert kind of the property to string, i.e. returns \"int\" for integer control and \"xy\" for XY control.\n",
+                "type": "GenUI.Def a -> String.String"
+            },
+            {
+                "name": "find",
+                "comment": " Find property by property-based path. Traverses/folds the tree, so could be slow for a complex structure\n",
+                "type": "GenUI.Path -> GenUI.GenUI a -> Maybe.Maybe (GenUI.Property a)"
+            },
+            {
+                "name": "findByIndices",
+                "comment": " Find property by index-based path. Traverses/folds the tree, so could be slow for a complex structure\n",
+                "type": "GenUI.Path -> GenUI.GenUI a -> Maybe.Maybe (GenUI.Property a)"
+            },
+            {
+                "name": "fold",
+                "comment": " Fold the interface structure from top to bottom.\n",
+                "type": "(GenUI.Property a -> x -> x) -> x -> GenUI.GenUI a -> x"
+            },
+            {
+                "name": "foldWithIndexPath",
+                "comment": " Fold the interface structure from top to bottom. The function gets path and the parent property and the second argument and the third one is the property being folded itself.\n",
+                "type": "(GenUI.IndexPath -> Maybe.Maybe (GenUI.Property a) -> GenUI.Property a -> x -> x) -> x -> GenUI.GenUI a -> x"
+            },
+            {
+                "name": "foldWithParent",
+                "comment": " Fold the interface structure from top to bottom. The first argument is the parent property and the second one is the property being folded itselfs.\n",
+                "type": "(Maybe.Maybe (GenUI.Property a) -> GenUI.Property a -> x -> x) -> x -> GenUI.GenUI a -> x"
+            },
+            {
+                "name": "foldWithPath",
+                "comment": " Fold the interface structure from top to bottom. The function gets property-path and the parent property and the second argument and the third one is the property being folded itself.\n",
+                "type": "(GenUI.Path -> Maybe.Maybe (GenUI.Property a) -> GenUI.Property a -> x -> x) -> x -> GenUI.GenUI a -> x"
+            },
+            {
+                "name": "foldWithPaths",
+                "comment": " Fold the interface structure from top to bottom. The function gets index-path, property-name-path and the parent property and the second argument and the third one is the property being folded itself.\n",
+                "type": "(( GenUI.IndexPath, GenUI.Path ) -> Maybe.Maybe (GenUI.Property a) -> GenUI.Property a -> x -> x) -> x -> GenUI.GenUI a -> x"
+            },
+            {
+                "name": "get",
+                "comment": " Get value of the property ",
+                "type": "GenUI.Property a -> a"
+            },
+            {
+                "name": "ghost",
+                "comment": " Create ghost with given name ",
+                "type": "String.String -> a -> GenUI.Property a"
+            },
+            {
+                "name": "map",
+                "comment": " ",
+                "type": "(a -> b) -> GenUI.GenUI a -> GenUI.GenUI b"
+            },
+            {
+                "name": "mapDef",
+                "comment": " ",
+                "type": "(a -> b) -> GenUI.Def a -> GenUI.Def b"
+            },
+            {
+                "name": "mapProperty",
+                "comment": " ",
+                "type": "(a -> b) -> GenUI.Property a -> GenUI.Property b"
+            },
+            {
+                "name": "root",
+                "comment": " Truly optional to use. If you want to attach the controls to some common parrent, this is the way to do it.\nDon't use it anywhere in the tree except as in the root.\n",
+                "type": "a -> GenUI.Property a"
+            },
+            {
+                "name": "update",
+                "comment": " Update every property in the tree by applying the given function to it. If the function returns `Nothing`, the property is removed, even if it's a nesting.\n",
+                "type": "(( GenUI.IndexPath, GenUI.Path ) -> GenUI.Property a -> Maybe.Maybe (GenUI.Property b)) -> GenUI.GenUI a -> GenUI.GenUI b"
+            },
+            {
+                "name": "updateAt",
+                "comment": " Find property by property-based path and update it with given function.\nThe function gets `Nothing` if the property wasn't found at path.\nTraverses/folds the tree, so could be slow for a complex structure\n",
+                "type": "GenUI.Path -> (GenUI.Property a -> Maybe.Maybe (GenUI.Property a)) -> GenUI.GenUI a -> GenUI.GenUI a"
+            },
+            {
+                "name": "version",
+                "comment": " Current version, to be accessible from code.\n",
+                "type": "String.String"
+            },
+            {
+                "name": "withIndices",
+                "comment": " Add unique numeric index to every property / control.\n",
+                "type": "GenUI.GenUI a -> GenUI.GenUI ( Basics.Int, a )"
+            },
+            {
+                "name": "withPath",
+                "comment": " Add path information to every property ",
+                "type": "GenUI.GenUI a -> GenUI.GenUI ( ( GenUI.IndexPath, GenUI.Path ), a )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "GenUI.Color",
+        "comment": " Color that can be stored in RGBA, HSLA or Hex.\n\n@docs Color\n\n# Conversion to/from string\n\n@docs toString, fromString, ParseError, errorToString\n",
+        "unions": [
+            {
+                "name": "Color",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Rgba",
+                        [
+                            "{ red : Basics.Float, green : Basics.Float, blue : Basics.Float, alpha : Basics.Float }"
+                        ]
+                    ],
+                    [
+                        "Hsla",
+                        [
+                            "{ hue : Basics.Float, saturation : Basics.Float, lightness : Basics.Float, alpha : Basics.Float }"
+                        ]
+                    ],
+                    [
+                        "Hex",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "ParseError",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "errorToString",
+                "comment": " ",
+                "type": "GenUI.Color.ParseError -> String.String"
+            },
+            {
+                "name": "fromString",
+                "comment": " ",
+                "type": "String.String -> Result.Result GenUI.Color.ParseError GenUI.Color.Color"
+            },
+            {
+                "name": "toString",
+                "comment": " ",
+                "type": "GenUI.Color.Color -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "GenUI.Descriptive.Encode",
+        "comment": " Converting to Descriptive representation.\n\n@docs Descriptive, encode, toString\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Descriptive",
+                "comment": " ",
+                "args": [],
+                "type": "Util.Indent.Indented"
+            }
+        ],
+        "values": [
+            {
+                "name": "encode",
+                "comment": " Encode UI to descriptive representation.\n",
+                "type": "GenUI.GenUI a -> GenUI.Descriptive.Encode.Descriptive"
+            },
+            {
+                "name": "toString",
+                "comment": " Convert descriptive representation to string.\n",
+                "type": "GenUI.Descriptive.Encode.Descriptive -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "GenUI.Gradient",
+        "comment": " Gradient. The linear one and two-dimensional one.\n\n@docs Gradient, Stop, Stop2D\n\n# Conversion to/from string\n\n@docs toString, fromString, ParseError, errorToString\n",
+        "unions": [
+            {
+                "name": "Gradient",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Linear",
+                        [
+                            "List.List GenUI.Gradient.Stop"
+                        ]
+                    ],
+                    [
+                        "TwoDimensional",
+                        [
+                            "List.List GenUI.Gradient.Stop2D"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "ParseError",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Stop",
+                "comment": " ",
+                "args": [],
+                "type": "{ color : GenUI.Color.Color, position : Basics.Float }"
+            },
+            {
+                "name": "Stop2D",
+                "comment": " ",
+                "args": [],
+                "type": "{ color : GenUI.Color.Color, position : { x : Basics.Float, y : Basics.Float } }"
+            }
+        ],
+        "values": [
+            {
+                "name": "errorToString",
+                "comment": " ",
+                "type": "GenUI.Gradient.ParseError -> String.String"
+            },
+            {
+                "name": "fromString",
+                "comment": " ",
+                "type": "String.String -> Result.Result GenUI.Gradient.ParseError GenUI.Gradient.Gradient"
+            },
+            {
+                "name": "toString",
+                "comment": " ",
+                "type": "GenUI.Gradient.Gradient -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "GenUI.Json.Decode",
+        "comment": " Decoding from JSON\n\n@docs decode, decode_\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decode",
+                "comment": " JSON Decoder ",
+                "type": "Json.Decode.Decoder (GenUI.GenUI ())"
+            },
+            {
+                "name": "decode_",
+                "comment": " JSON Decoder for the cases when value was included in data at the `_value_` field (see `Json.Encode.encode_`) ",
+                "type": "Json.Decode.Decoder a -> Json.Decode.Decoder (GenUI.GenUI (Maybe.Maybe a))"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "GenUI.Json.Encode",
+        "comment": " Encoding to JSON\n\n@docs encode, encode_\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "encode",
+                "comment": " JSON encoder ",
+                "type": "GenUI.GenUI () -> Json.Encode.Value"
+            },
+            {
+                "name": "encode_",
+                "comment": " JSON encoder that includes value in the `value` field ",
+                "type": "(a -> Json.Encode.Value) -> GenUI.GenUI a -> Json.Encode.Value"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "GenUI.Json.LoadValues",
+        "comment": " @docs loadValues\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "loadValues",
+                "comment": " Load values from the `Json.Decode.Value` and apply them to the given UI.\n\nExample of the JSON values definition:\n\n```json\n{\n    \"product\": \"RubyMine\",\n    \"resolution\": \"1920x1080\",\n    \"resolutionFactor\": 1,\n    \"scale\": 2.0,\n    \"rotation\": 20,\n    \"offsetX\": 0,\n    \"offsetY\": 0,\n    \"callGradientTool\": \"[[action]]\",\n    \"neuro\": {\n        \"seed\": 5,\n        \"depth\": 5,\n        \"width\": 5,\n        \"variance\": 2000,\n        \"mode\": \"fan_in\",\n        \"distribution\": \"truncated_normal\",\n        \"architecture\": \"densenet\",\n        \"activation\": \"sigmoid\",\n        \"outActivation\": \"sigmoid\",\n        \"fMode\": \"disabled\"\n    },\n    \"evolve\": {\n        \"alpha\": 0.5,\n        \"beta\": 0.5,\n        \"gamma\": 0.5\n    },\n    \"mutation\": {\n        \"randomMid\": \"[[action]]\",\n        \"randomMax\": \"[[action]]\"\n    },\n    \"lab\": {\n        \"flatColors\": false,\n        \"flatLinesNum\": 5,\n        \"ditherStrength\": 0\n    },\n    \"logoShown\": true,\n    \"undo\": \"[[action]]\",\n    \"save\": \"[[action]]\",\n    \"export_\": \"[[action]]\",\n    \"video\": {\n        \"animFunc\": \"Random spline animation\",\n        \"videoFps\": \"60\",\n        \"videoLength\": \"30\",\n        \"maskFilename\": \"\",\n        \"videoInvertMask\": false,\n        \"videoCodec\": \"h264_8bit\",\n        \"videoIntensity\": 3,\n        \"requestVideo\": \"[[action]]\"\n    }\n}\n```\n\nLoads values using `Json.Decode.at` knowing the paths from given UI and skipping the values if they are failed to parse.\n\n ",
+                "type": "Json.Decode.Value -> GenUI.GenUI a -> GenUI.GenUI a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "GenUI.Json.ToValues",
+        "comment": " @docs toValues\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toValues",
+                "comment": " Extracts current values from the given UI definition as JSON. See the example in `loadValues`. ",
+                "type": "GenUI.GenUI a -> Json.Encode.Value"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "GenUI.ToGraph",
+        "comment": " Converting to Graph.\n\n@docs Node, Edge, toGraph, nodeToString, edgeToString\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Edge",
+                "comment": " Edge holds both the parent and its child ",
+                "args": [
+                    "a"
+                ],
+                "type": "{ parent : GenUI.Property a, child : GenUI.Property a }"
+            },
+            {
+                "name": "Node",
+                "comment": " Node is just G.Property ",
+                "args": [
+                    "a"
+                ],
+                "type": "GenUI.Property a"
+            }
+        ],
+        "values": [
+            {
+                "name": "edgeToString",
+                "comment": " The short representation of the edge. ",
+                "type": "GenUI.ToGraph.Edge a -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "nodeToString",
+                "comment": " The short representation of the property. ",
+                "type": "GenUI.ToGraph.Node a -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "toGraph",
+                "comment": " Convert GenUI structure to Graph where nodes represent controls and folders and edges connect inner controls to their folders.\n\nIDs for nodes are given using `GenUI.withIndices` (incremental and not bound to the deepness level). The root node has the ID of -1.\n\nThe root node is created to hold properties that are on the top level. The first argument is the value for this root node.\n",
+                "type": "a -> GenUI.GenUI a -> Graph.Graph (GenUI.ToGraph.Node a) (GenUI.ToGraph.Edge a)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "GenUI.Yaml.Decode",
+        "comment": " Decoding from YAML\n\n@docs decode, decode_\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decode",
+                "comment": " YAML Decoder ",
+                "type": "Yaml.Decode.Decoder (GenUI.GenUI ())"
+            },
+            {
+                "name": "decode_",
+                "comment": " YAML Decoder for the cases when value was included in data at the `_value_` field (see `Yaml.Encode.encode_`) ",
+                "type": "Yaml.Decode.Decoder a -> Yaml.Decode.Decoder (GenUI.GenUI (Maybe.Maybe a))"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "GenUI.Yaml.Encode",
+        "comment": " Encoding to YAML\n\n@docs encode, encode_\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "encode",
+                "comment": " YAML encoder ",
+                "type": "GenUI.GenUI () -> Yaml.Encode.Encoder"
+            },
+            {
+                "name": "encode_",
+                "comment": " YAML encoder that includes value in the `_value_` field ",
+                "type": "(a -> Yaml.Encode.Encoder) -> GenUI.GenUI a -> Yaml.Encode.Encoder"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "GenUI.Yaml.LoadValues",
+        "comment": " @docs loadValues\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "loadValues",
+                "comment": " Load values from the `Yaml.Decode.Value` and apply them to the given UI.\n\nExample of the YAML values definition:\n\n```yaml\nproduct: RubyMine\nresolution: 1920x1080\nresolutionFactor: 1\nscale: 2\nrotation: 20\noffsetX: 13\noffsetY: 14\ncallGradientTool: [[action]]\nneuro:\n    seed: 5\n    depth: 5\n    width: 5\n    variance: 2000\n    mode: fan_in\n    distribution: truncated_normal\n    architecture: densenet\n    activation: sigmoid\n    outActivation: sigmoid\n    fMode: disabled\nevolve:\n    alpha: 0.5\n    beta: 0.5\n    gamma: 1.0\nmutation:\n    randomMid: [[action]]\n    randomMax: [[action]]\nlab:\n    flatColors: true\n    flatLinesNum: 5\n    ditherStrength: 0\nlogoShown: true\nundo: [[action]]\nsave: [[action]]\nexport_: [[action]]\nvideo:\n    animFunc: Random spline animation\n    videoFps: 60\n    videoLength: 30\n    maskFilename:\n    videoInvertMask: false\n    videoCodec: h264_8bit\n    videoIntensity: 3\n    requestVideo: [[action]]\n```\n\nLoads values using `Yaml.Decode.at` knowing the paths from given UI and skipping the values if they are failed to parse.\n\n ",
+                "type": "Yaml.Decode.Value -> GenUI.GenUI a -> GenUI.GenUI a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "GenUI.Yaml.ToValues",
+        "comment": " @docs toValues\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toValues",
+                "comment": " Extracts current values from the given UI definition as YAML. See the example of such in `loadValues`. ",
+                "type": "GenUI.GenUI a -> Yaml.Encode.Encoder"
+            }
+        ],
+        "binops": []
+    }
+]

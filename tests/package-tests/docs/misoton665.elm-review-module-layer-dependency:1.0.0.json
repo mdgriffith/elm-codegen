@@ -1,0 +1,47 @@
+[
+    {
+        "name": "NoViolationOfModuleLayerDependency",
+        "comment": " If you defined a layer dependency rule like `A <- B`, elm-review-module-layer-dependency will detect an error with below importing.\n   ```elm\n   module A\n\n   import B.Data\n   ```\n\n   Module A depends on module B (`A -> B`) is a violation of defined rule.\n\n# Rule\n@docs rule\n\n# Type\n@docs ModuleLayer, ModuleLayerDependency\n",
+        "unions": [
+            {
+                "name": "ModuleLayer",
+                "comment": " Provide module name to define rule.\n## Example\n\nA module `Aaa.Bbb.Ccc` define as ModuleLayer.\n    ModuleLayer\n        [ [ \"Aaa\", \"Bbb\", \"Ccc\" ]\n        ]\n",
+                "args": [],
+                "cases": [
+                    [
+                        "ModuleLayer",
+                        [
+                            "List.List NoViolationOfModuleLayerDependency.ModuleName"
+                        ]
+                    ],
+                    [
+                        "DefaultLayer",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "ModuleLayerDependency",
+                "comment": " Provide layer to define rule.\n## Example\n\nDefine ModuleLayerDependency use `firstLayer: ModuleLayer` and `secondLayer: ModuleLayer`.\n    [ firstLayer\n    , secondLayer\n    ]\n\nIt means dependency like `firstLayer <- secondLayer`.\nIf imported secondLayer module in firstLayer, elm-review will detect an error.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "ModuleLayerDependency",
+                        [
+                            "List.List NoViolationOfModuleLayerDependency.ModuleLayer"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": "\n## Example configuration\n    config : List Rule\n    config =\n        [ NoViolationOfModuleLayerDependency.rule moduleLayerRule\n        ]\n\n\n    moduleLayerRule : ModuleLayerDependency\n    moduleLayerRule =\n        ModuleLayerDependency\n            [ infraLayer\n            , applicationLayer\n            , DefaultLayer\n            , adapterLayer\n            ]\n\n\n    adapterLayer : ModuleLayer\n    adapterLayer =\n        ModuleLayer\n            [ [ \"Adapter\" ]\n            , [ \"Main\" ]\n            ]\n\n\n    applicationLayer : ModuleLayer\n    applicationLayer =\n        ModuleLayer\n            [ [ \"Application\" ]\n            ]\n\n\n    infraLayer : ModuleLayer\n    infraLayer =\n        ModuleLayer\n            [ [ \"Infra\" ]\n            ]\n",
+                "type": "NoViolationOfModuleLayerDependency.ModuleLayerDependency -> Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    }
+]

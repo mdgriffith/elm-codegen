@@ -1,0 +1,251 @@
+[
+    {
+        "name": "Iter",
+        "comment": " Iterator interface inspired on Python's iterator protocol.\n\n\n# Important types\n\n@docs Iter, Next, Count\n\n\n# Iterator protocol\n\n@docs next, step, iterator\n\n\n# Creating new iterators\n\n\n## Numeric sequences\n\n@docs numbers, numbersFrom, numbersBy, countTo, range, linspace, stepsFrom\n\n\n## Other iterators\n\n@docs repeat, repeatN, cycle, power, powerN, empty, singleton, indexed\n\n\n# Transformations\n\n\n## Sub-iterators\n\n@docs filter, take, drop, takeWithDefault, takeWhile\n\n\n## Mapping\n\n@docs map, map2\n\n\n## Zipping\n\n@docs zip, enumerate\n\n\n## Building iterators from sub-iterators\n\n@docs concat, intersperse\n\n\n## Conversion to/from lists and other data structures\n\n@docs toList, fromList\n\n\n# Reductions and folds\n\n@docs reduce, accumulate, sum, all, any, maximum, minimum\n\n\n# Retrieving iterators\n\n@docs nth, last, lastWithDefault\n\n",
+        "unions": [
+            {
+                "name": "Iter",
+                "comment": " Base iterator type\n",
+                "args": [
+                    "a",
+                    "b"
+                ],
+                "cases": [
+                    [
+                        "It",
+                        [
+                            "{ state : b, next : Iter.Next a b }"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Count",
+                "comment": " A state with a auxiliary numeric counter\n",
+                "args": [
+                    "a"
+                ],
+                "type": "( Basics.Int, a )"
+            },
+            {
+                "name": "Next",
+                "comment": " A function that maybe compute the next element of an iterator\n",
+                "args": [
+                    "a",
+                    "b"
+                ],
+                "type": "b -> Maybe.Maybe ( b, a )"
+            }
+        ],
+        "values": [
+            {
+                "name": "accumulate",
+                "comment": " Accumulative reduce: return an iterator over partial reductions of the\ninput iterator.\n",
+                "type": "(a -> b -> b) -> b -> Iter.Iter a s -> Iter.Iter b ( s, b )"
+            },
+            {
+                "name": "all",
+                "comment": " Return true if all elements of iterator satisfy the given predicate\n",
+                "type": "(a -> Basics.Bool) -> Iter.Iter a b -> Basics.Bool"
+            },
+            {
+                "name": "any",
+                "comment": " Return true if any element of iterator satisfy the given predicate\n",
+                "type": "(a -> Basics.Bool) -> Iter.Iter a b -> Basics.Bool"
+            },
+            {
+                "name": "concat",
+                "comment": " Concatenate two iterators together:\n\n    concat itA itB -->  a0, a1, ..., aN, b0, b1, ..., bN\n\n",
+                "type": "Iter.Iter a b -> Iter.Iter a c -> Iter.Iter a (Iter.Toggle b c)"
+            },
+            {
+                "name": "countTo",
+                "comment": " Count from 0 to n:\n\n    countTo 5 --> 0, 1, 2, 3, 4, 5\n\n",
+                "type": "Basics.Int -> Iter.Iter Basics.Int Basics.Int"
+            },
+            {
+                "name": "cycle",
+                "comment": " Infinite iterator that cycles among members of input list:\n\n    cycle [ 1, 2, 3 ] -->  1, 2, 3, 1, 2, 3, 1, 2, ...\n\n",
+                "type": "List.List a -> Iter.Iter a (List.List a)"
+            },
+            {
+                "name": "drop",
+                "comment": " Drop the `n` first elements of iterator.\n",
+                "type": "Basics.Int -> Iter.Iter a b -> Iter.Iter a b"
+            },
+            {
+                "name": "empty",
+                "comment": " Empty (exausted) iterator:\n\n    next empty iter === Nothing\n\n",
+                "type": "Iter.Iter a b -> Iter.Iter a b"
+            },
+            {
+                "name": "enumerate",
+                "comment": " Enumerate iterator counting from `a`:\n\n    enumerate n it --> (n, x0), (n + 1, x1), (n + 2, x2), ...\n\n",
+                "type": "Basics.Int -> Iter.Iter a b -> Iter.Iter (Iter.Count a) (Iter.Count b)"
+            },
+            {
+                "name": "filter",
+                "comment": " Return an iterator that only yields elements that agree with predicate.\n",
+                "type": "(a -> Basics.Bool) -> Iter.Iter a b -> Iter.Iter a b"
+            },
+            {
+                "name": "fromList",
+                "comment": " Convert list to iterator:\n\n    fromList [ a, b, c ] -->  a, b, c\n\n",
+                "type": "List.List a -> Iter.Iter a (List.List a)"
+            },
+            {
+                "name": "indexed",
+                "comment": " Construct iterator from index function that takes an integer and return\nthe value of the corresponding position.\n\n    indexed f -->  f(0), f(1), f(2), ...\n\n",
+                "type": "(Basics.Int -> a) -> Iter.Iter a Basics.Int"
+            },
+            {
+                "name": "intersperse",
+                "comment": " Interspace each element of iterator with the value of `x`:\n\n    interspace a it --> x0, a, x1, a, x2, a, ..., xN\n\n",
+                "type": "a -> Iter.Iter a b -> Iter.Iter a (Iter.Toggle b b)"
+            },
+            {
+                "name": "iterator",
+                "comment": " Create a new iterator from a next function and an initial state.\n\nThe next function is called successfuly to advance the iterator and produce new\nvalues\n\n",
+                "type": "Iter.Next a b -> b -> Iter.Iter a b"
+            },
+            {
+                "name": "last",
+                "comment": " Return the last element of iterator.\n",
+                "type": "Iter.Iter a b -> Maybe.Maybe a"
+            },
+            {
+                "name": "lastWithDefault",
+                "comment": " Return the last element of or `x` if iterator is empty.\n",
+                "type": "a -> Iter.Iter a b -> a"
+            },
+            {
+                "name": "linspace",
+                "comment": " Create `n` numbers from `a` to `b`:\n\n    linspace 0 5 5 --> 0.0, 1.25, 2.5, 3.75, 5.0\n\n",
+                "type": "Basics.Float -> Basics.Float -> Basics.Int -> Iter.Iter Basics.Float Basics.Float"
+            },
+            {
+                "name": "map",
+                "comment": " Creates a new iterator that maps `f` into each element of the iterator.\n",
+                "type": "(a -> b) -> Iter.Iter a st -> Iter.Iter b st"
+            },
+            {
+                "name": "map2",
+                "comment": " Creates a new iterator that maps `f` successively into elements of iterA and\niterB.\n",
+                "type": "(a -> b -> c) -> Iter.Iter a st -> Iter.Iter b st_ -> Iter.Iter c ( st, st_ )"
+            },
+            {
+                "name": "maximum",
+                "comment": " Return Just the largest element of iterator or Nothing if iterator is empty.\n",
+                "type": "Iter.Iter comparable b -> Maybe.Maybe comparable"
+            },
+            {
+                "name": "minimum",
+                "comment": " Return Just the lowest element of iterator or Nothing if iterator is empty.\n",
+                "type": "Iter.Iter comparable b -> Maybe.Maybe comparable"
+            },
+            {
+                "name": "next",
+                "comment": " Return Just the next value if iterator is not exausted or Nothing otherwise:\n\n    next numbers === Just 0\n\n    next empty === Nothing\n\n",
+                "type": "Iter.Iter a b -> Maybe.Maybe a"
+            },
+            {
+                "name": "nth",
+                "comment": " Return the n-th element of iterator.\n",
+                "type": "Basics.Int -> Iter.Iter a b -> Maybe.Maybe a"
+            },
+            {
+                "name": "numbers",
+                "comment": " Infinite iterator over the sequence of all natural numbers\n",
+                "type": "Iter.Iter number number"
+            },
+            {
+                "name": "numbersBy",
+                "comment": " Infinite iterator over the sequence of all numbers starting with `a`\nincrements of `delta`.\n",
+                "type": "number -> number -> Iter.Iter number number"
+            },
+            {
+                "name": "numbersFrom",
+                "comment": " Infinite iterator over the sequence of all numbers starting with `a` with\nincrements of 1.\n",
+                "type": "number -> Iter.Iter number number"
+            },
+            {
+                "name": "power",
+                "comment": " Successively apply function to initial argument:\n\n    power f x -->  x, f x, f (f x), f (f (f x)), ...\n\n",
+                "type": "(a -> a) -> a -> Iter.Iter a a"
+            },
+            {
+                "name": "powerN",
+                "comment": " Successively apply function to initial argument. Repeat `n` times.\n\n    power 2 f x -->  x, f x, f(f x)\n\n",
+                "type": "Basics.Int -> (a -> a) -> a -> Iter.Iter a (Iter.Count a)"
+            },
+            {
+                "name": "range",
+                "comment": " Iterate from `a` to `b` (inclusive):\n\n    range 1 3 --> 1, 2, 3\n\n",
+                "type": "number -> number -> Iter.Iter number number"
+            },
+            {
+                "name": "reduce",
+                "comment": " Reduce iterator using a left fold\n",
+                "type": "(a -> b -> b) -> b -> Iter.Iter a s -> b"
+            },
+            {
+                "name": "repeat",
+                "comment": " Make infinite repetitions of `a`:\n\n    repeat \"foo\" -->  \"foo\", \"foo\", \"foo\", ...\n\n",
+                "type": "a -> Iter.Iter a ()"
+            },
+            {
+                "name": "repeatN",
+                "comment": " Make `n` repetitions of `a`:\n\n    repeatN 3 \"foo\" -->  \"foo\", \"foo\", \"foo\"\n\n",
+                "type": "Basics.Int -> a -> Iter.Iter a Basics.Int"
+            },
+            {
+                "name": "singleton",
+                "comment": " Creates an iterator with a single value\n\n    singleton a -->  a\n\n",
+                "type": "a -> Iter.Iter a (Maybe.Maybe a)"
+            },
+            {
+                "name": "step",
+                "comment": " Advance iterator by one and return a tuple of ( iterator, value ):\n\n    (it, _) = step numbers\n    next it === Just 1\n\n",
+                "type": "Iter.Iter a b -> ( Iter.Iter a b, Maybe.Maybe a )"
+            },
+            {
+                "name": "stepsFrom",
+                "comment": " Make `n` steps of `delta` starting from `a`\n\n    stepsFrom 0 0.5 4 -->  0.0, 0.5, 1.0, 1.5\n\nThis function is the basis for implementing `countTo`, `range` and `linspace`.\n\n",
+                "type": "number -> number -> number -> Iter.Iter number number"
+            },
+            {
+                "name": "sum",
+                "comment": " Sum all elements of iterator\n",
+                "type": "Iter.Iter number a -> number"
+            },
+            {
+                "name": "take",
+                "comment": " Limit the iterator to `n` elements.\n",
+                "type": "Basics.Int -> Iter.Iter a b -> Iter.Iter a (Iter.Count b)"
+            },
+            {
+                "name": "takeWhile",
+                "comment": " Take elements of iterator while predicate is True.\n",
+                "type": "(a -> Basics.Bool) -> Iter.Iter a b -> Iter.Iter a b"
+            },
+            {
+                "name": "takeWithDefault",
+                "comment": " Limit the iterator to `n` elements. If the original iterator has less than\n`n` elements, fill the iterator with copies of `a`.\n",
+                "type": "a -> Basics.Int -> Iter.Iter a b -> Iter.Iter a (Iter.Count b)"
+            },
+            {
+                "name": "toList",
+                "comment": " Extract list from iterator:\n\n    toList it  ===  [ x0, x1, x2, ..., xN ]\n\nWARNING: This function should obviously never be used on infinite iterators.\n\n",
+                "type": "Iter.Iter a b -> List.List a"
+            },
+            {
+                "name": "zip",
+                "comment": " Zip two iterators (i.e., iterate over the tuples of (a, b) taken from\niterA and iterB respectively.\n\n    zip itA itB -->  ( a0, b0 ), ( a1, b1 ), ...\n\n",
+                "type": "Iter.Iter a b -> Iter.Iter c d -> Iter.Iter ( a, c ) ( b, d )"
+            }
+        ],
+        "binops": []
+    }
+]

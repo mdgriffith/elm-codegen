@@ -1,0 +1,191 @@
+[
+    {
+        "name": "Geometry.Serialize",
+        "comment": "\n\n\n# Codecs\n\n@docs arc2d, axis2d, axis3d, block3d, boundingBox2d, boundingBox3d, circle2d, circle3d, cone3d, cubicSpline2d, cubicSpline3d, cylinder3d, direction2d, direction3d, ellipse2d, ellipticalArc2d, frame2d, frame3d, lineSegment2d, lineSegment3d, plane3d, point2d, point3d, polygon2d, polyline2d, polyline3d, quadraticSpline2d, quadraticSpline3d, rectangle2d, rectangle3d, sketchPlane3d, sphere3d, triangle2d, triangle3d, vector2d, vector3d\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "arc2d",
+                "comment": " Codec for [Arc2d](https://package.elm-lang.org/packages/ianmackenzie/elm-geometry/latest/Arc2d)\n\n**Warning:** Due to rounding errors, the Arc2d you get after decoding will be slightly different from what you encoded.\n\n",
+                "type": "Serialize.Codec e (Arc2d.Arc2d units coordinates)"
+            },
+            {
+                "name": "axis2d",
+                "comment": " Codec for [Axis2d](https://package.elm-lang.org/packages/ianmackenzie/elm-geometry/latest/Axis2d)\n",
+                "type": "Serialize.Codec e (Axis2d.Axis2d units coordinates)"
+            },
+            {
+                "name": "axis3d",
+                "comment": " Codec for [Axis3d](https://package.elm-lang.org/packages/ianmackenzie/elm-geometry/latest/Axis3d)\n",
+                "type": "Serialize.Codec e (Axis3d.Axis3d units coordinates)"
+            },
+            {
+                "name": "block3d",
+                "comment": " Codec for [Block3d](https://package.elm-lang.org/packages/ianmackenzie/elm-geometry/latest/Block3d)\n",
+                "type": "Serialize.Codec e (Block3d.Block3d units coordinates)"
+            },
+            {
+                "name": "boundingBox2d",
+                "comment": " Codec for [BoundingBox2d](https://package.elm-lang.org/packages/ianmackenzie/elm-geometry/latest/BoundingBox2d)\n",
+                "type": "Serialize.Codec e (BoundingBox2d.BoundingBox2d units coordinates)"
+            },
+            {
+                "name": "boundingBox3d",
+                "comment": " Codec for [BoundingBox3d](https://package.elm-lang.org/packages/ianmackenzie/elm-geometry/latest/BoundingBox3d)\n",
+                "type": "Serialize.Codec e (BoundingBox3d.BoundingBox3d units coordinates)"
+            },
+            {
+                "name": "circle2d",
+                "comment": " Codec for [Circle2d](https://package.elm-lang.org/packages/ianmackenzie/elm-geometry/latest/Circle2d)\n",
+                "type": "Serialize.Codec e (Circle2d.Circle2d units coordinates)"
+            },
+            {
+                "name": "circle3d",
+                "comment": " Codec for [Circle3d](https://package.elm-lang.org/packages/ianmackenzie/elm-geometry/latest/Circle3d)\n",
+                "type": "Serialize.Codec e (Circle3d.Circle3d units coordinates)"
+            },
+            {
+                "name": "cone3d",
+                "comment": " Codec for [Cone3d](https://package.elm-lang.org/packages/ianmackenzie/elm-geometry/latest/Cone3d)\n",
+                "type": "Serialize.Codec e (Cone3d.Cone3d units coordinates)"
+            },
+            {
+                "name": "cubicSpline2d",
+                "comment": " Codec for [CubicSpline2d](https://package.elm-lang.org/packages/ianmackenzie/elm-geometry/latest/CubicSpline2d)\n",
+                "type": "Serialize.Codec e (CubicSpline2d.CubicSpline2d units coordinates)"
+            },
+            {
+                "name": "cubicSpline3d",
+                "comment": " Codec for [CubicSpline3d](https://package.elm-lang.org/packages/ianmackenzie/elm-geometry/latest/CubicSpline3d)\n",
+                "type": "Serialize.Codec e (CubicSpline3d.CubicSpline3d units coordinates)"
+            },
+            {
+                "name": "cylinder3d",
+                "comment": " Codec for [Cylinder3d](https://package.elm-lang.org/packages/ianmackenzie/elm-geometry/latest/Cylinder3d)\n",
+                "type": "Serialize.Codec e (Cylinder3d.Cylinder3d units coordinates)"
+            },
+            {
+                "name": "direction2d",
+                "comment": " Codec for [Direction2d](https://package.elm-lang.org/packages/ianmackenzie/elm-geometry/latest/Direction2d)\n",
+                "type": "Serialize.Codec e (Direction2d.Direction2d coordinates)"
+            },
+            {
+                "name": "direction3d",
+                "comment": " Codec for [Direction3d](https://package.elm-lang.org/packages/ianmackenzie/elm-geometry/latest/Direction3d)\n",
+                "type": "Serialize.Codec e (Direction3d.Direction3d coordinates)"
+            },
+            {
+                "name": "ellipse2d",
+                "comment": " Codec for [Ellipse2d](https://package.elm-lang.org/packages/ianmackenzie/elm-geometry/latest/Ellipse2d)\n",
+                "type": "Serialize.Codec e (Ellipse2d.Ellipse2d units coordinates)"
+            },
+            {
+                "name": "ellipticalArc2d",
+                "comment": " Codec for [EllipticalArc2d](https://package.elm-lang.org/packages/ianmackenzie/elm-geometry/latest/EllipticalArc2d)\n",
+                "type": "Serialize.Codec e (EllipticalArc2d.EllipticalArc2d units coordinates)"
+            },
+            {
+                "name": "frame2d",
+                "comment": " Codec for [Frame2d](https://package.elm-lang.org/packages/ianmackenzie/elm-geometry/latest/Frame2d)\n",
+                "type": "Serialize.Codec e (Frame2d.Frame2d units coordinates defines)"
+            },
+            {
+                "name": "frame3d",
+                "comment": " Codec for [Frame3d](https://package.elm-lang.org/packages/ianmackenzie/elm-geometry/latest/Frame3d)\n",
+                "type": "Serialize.Codec e (Frame3d.Frame3d units coordinates defines)"
+            },
+            {
+                "name": "lineSegment2d",
+                "comment": " Codec for [LineSegment2d](https://package.elm-lang.org/packages/ianmackenzie/elm-geometry/latest/LineSegment2d)\n",
+                "type": "Serialize.Codec e (LineSegment2d.LineSegment2d units coordinates)"
+            },
+            {
+                "name": "lineSegment3d",
+                "comment": " Codec for [LineSegment3d](https://package.elm-lang.org/packages/ianmackenzie/elm-geometry/latest/LineSegment3d)\n",
+                "type": "Serialize.Codec e (LineSegment3d.LineSegment3d units coordinates)"
+            },
+            {
+                "name": "plane3d",
+                "comment": " Codec for [Plane3d](https://package.elm-lang.org/packages/ianmackenzie/elm-geometry/latest/Plane3d)\n",
+                "type": "Serialize.Codec e (Plane3d.Plane3d units coordinates)"
+            },
+            {
+                "name": "point2d",
+                "comment": " Codec for [Point2d](https://package.elm-lang.org/packages/ianmackenzie/elm-geometry/latest/Point2d)\n",
+                "type": "Serialize.Codec e (Point2d.Point2d units coordinates)"
+            },
+            {
+                "name": "point3d",
+                "comment": " Codec for [Point3d](https://package.elm-lang.org/packages/ianmackenzie/elm-geometry/latest/Point3d)\n",
+                "type": "Serialize.Codec e (Point3d.Point3d units coordinates)"
+            },
+            {
+                "name": "polygon2d",
+                "comment": " Codec for [Polygon2d](https://package.elm-lang.org/packages/ianmackenzie/elm-geometry/latest/Polygon2d)\n",
+                "type": "Serialize.Codec e (Polygon2d.Polygon2d units coordinates)"
+            },
+            {
+                "name": "polyline2d",
+                "comment": " Codec for [Polyline2d](https://package.elm-lang.org/packages/ianmackenzie/elm-geometry/latest/Polyline2d)\n",
+                "type": "Serialize.Codec e (Polyline2d.Polyline2d units coordinates)"
+            },
+            {
+                "name": "polyline3d",
+                "comment": " Codec for [Polyline3d](https://package.elm-lang.org/packages/ianmackenzie/elm-geometry/latest/Polyline3d)\n",
+                "type": "Serialize.Codec e (Polyline3d.Polyline3d units coordinates)"
+            },
+            {
+                "name": "quadraticSpline2d",
+                "comment": " Codec for [QuadraticSpline2d](https://package.elm-lang.org/packages/ianmackenzie/elm-geometry/latest/QuadraticSpline2d)\n",
+                "type": "Serialize.Codec e (QuadraticSpline2d.QuadraticSpline2d units coordinates)"
+            },
+            {
+                "name": "quadraticSpline3d",
+                "comment": " Codec for [QuadraticSpline3d](https://package.elm-lang.org/packages/ianmackenzie/elm-geometry/latest/QuadraticSpline3d)\n",
+                "type": "Serialize.Codec e (QuadraticSpline3d.QuadraticSpline3d units coordinates)"
+            },
+            {
+                "name": "rectangle2d",
+                "comment": " Codec for [Rectangle2d](https://package.elm-lang.org/packages/ianmackenzie/elm-geometry/latest/Rectangle2d)\n",
+                "type": "Serialize.Codec e (Rectangle2d.Rectangle2d units coordinates)"
+            },
+            {
+                "name": "rectangle3d",
+                "comment": " Codec for [Rectangle3d](https://package.elm-lang.org/packages/ianmackenzie/elm-geometry/latest/Rectangle3d)\n",
+                "type": "Serialize.Codec e (Rectangle3d.Rectangle3d units coordinates)"
+            },
+            {
+                "name": "sketchPlane3d",
+                "comment": " Codec for [SketchPlane3d](https://package.elm-lang.org/packages/ianmackenzie/elm-geometry/latest/SketchPlane3d)\n",
+                "type": "Serialize.Codec e (SketchPlane3d.SketchPlane3d units coordinates defines)"
+            },
+            {
+                "name": "sphere3d",
+                "comment": " Codec for [Sphere3d](https://package.elm-lang.org/packages/ianmackenzie/elm-geometry/latest/Sphere3d)\n",
+                "type": "Serialize.Codec e (Sphere3d.Sphere3d units coordinates)"
+            },
+            {
+                "name": "triangle2d",
+                "comment": " Codec for [Triangle2d](https://package.elm-lang.org/packages/ianmackenzie/elm-geometry/latest/Triangle2d)\n",
+                "type": "Serialize.Codec e (Triangle2d.Triangle2d units coordinates)"
+            },
+            {
+                "name": "triangle3d",
+                "comment": " Codec for [Triangle3d](https://package.elm-lang.org/packages/ianmackenzie/elm-geometry/latest/Triangle3d)\n",
+                "type": "Serialize.Codec e (Triangle3d.Triangle3d units coordinates)"
+            },
+            {
+                "name": "vector2d",
+                "comment": " Codec for [Vector2d](https://package.elm-lang.org/packages/ianmackenzie/elm-geometry/latest/Vector2d)\n",
+                "type": "Serialize.Codec e (Vector2d.Vector2d units coordinates)"
+            },
+            {
+                "name": "vector3d",
+                "comment": " Codec for [Vector3d](https://package.elm-lang.org/packages/ianmackenzie/elm-geometry/latest/Vector3d)\n",
+                "type": "Serialize.Codec e (Vector3d.Vector3d units coordinates)"
+            }
+        ],
+        "binops": []
+    }
+]

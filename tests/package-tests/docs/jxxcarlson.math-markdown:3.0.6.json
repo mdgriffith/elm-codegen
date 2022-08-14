@@ -1,0 +1,44 @@
+[
+    {
+        "name": "MMDiffer",
+        "comment": " This module is used to speed up parsing-rendering by\ncomparing the old and new lists of paragraphs, noting the changes,\nthen parsing and rendering the changed paragraphs.\n\n@docs EditRecord, createRecord, update\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "EditRecord",
+                "comment": " An EditRecord records a list of (logical) newParagraphs\ncorrespoing to the text to be rendered as well as corresponding\nlist of rendered parapgraphs. We need to reveiw this strucure.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ paragraphs : List.List String.String, renderedParagraphs : List.List a, idList : List.List String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "createRecord",
+                "comment": " createRecord: Create an edit record by (1)\nbreaking the text in to pargraphs, (2) applying\nthe transformer to each string in the resulting\nlist of strings.\n",
+                "type": "(String.String -> Html.Html a) -> String.String -> MMDiffer.EditRecord (Html.Html a)"
+            },
+            {
+                "name": "update",
+                "comment": " The update function takes an EditRecord and a string, the \"text\",\nbreaks the text into a list of logical paragraphs, diffs it with the list\nof paragraphs held by the EditRecord, uses `differentialRender` to\nrender the changed paragraphs while copying the unchanged rendered paragraphsto\nprodduce an updated list of rendered paragraphs. The 'differentialRender'\naccomplishes this using the transformer. The seed is used to produces\na differential idList. This last step is perhaps unnecessary. To investigate.\n(This was part of an optimization scheme.)\n",
+                "type": "Basics.Int -> (String.String -> a) -> MMDiffer.EditRecord a -> String.String -> MMDiffer.EditRecord a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "MMarkdown",
+        "comment": " MMarkdown is an experimental package for rendering\nMarkdown that contains mathematical text. It uses MathJax\nfor the math text. See `index.html` in `./app-math`\nfor the needed MathJax setup.\n\nAt the present time, the version of Markdown is limited,\nalbeit serviceable. See the demo at https://markdown.minilatex.app/ .\n\n@docs toHtml\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toHtml",
+                "comment": " MMarkdown.toHtml renders a string of Markdown text to Html\n",
+                "type": "List.List (Html.Attribute msg) -> String.String -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

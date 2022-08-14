@@ -1,0 +1,81 @@
+[
+    {
+        "name": "Accordion",
+        "comment": " # Basic Usage\n\n    import Accordion\n\n    type alias Model =\n        Bool\n\n    type Msg\n        = HeadClicked\n\n    view model =\n        Accordion.accordion\n            (Accordion.head\n                [ onClick HeadClicked ]\n                headChildren\n            )\n            (Accordion.body\n                []\n                bodyChildren\n            )\n            model\n\n    uodate msg model =\n        case msg of\n            HeadClicked ->\n                ( not model\n                , Cmd.none\n                )\n\n\n# Accodion\n\n@docs accordion\n\n\n# Accordion head\n\n@docs Head, head\n\n\n# Accordion body\n\n@docs Body, body\n\n\n# List of Accordions\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Body",
+                "comment": " Accordion body type\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "Accordion.Internal.Body msg"
+            },
+            {
+                "name": "Head",
+                "comment": " Accordion head type\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "Accordion.Internal.Head msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "accordion",
+                "comment": " Accordion view function\n\n  - `attributes` List of attributes\n  - `head` An accordion head element\n  - `body` An accordion body element\n  - `open` Specify whether a dailog is open\n\n",
+                "type": "List.List (Html.Attribute msg) -> Accordion.Head msg -> Accordion.Body msg -> Basics.Bool -> Html.Html msg"
+            },
+            {
+                "name": "body",
+                "comment": " Accordion body constructor\n\n  - `attributes` List of attributes\n  - `children` List of child elements\n\n",
+                "type": "List.List (Html.Attribute msg) -> List.List (Html.Html msg) -> Accordion.Body msg"
+            },
+            {
+                "name": "head",
+                "comment": " Accordion head constructor\n\n  - `attributes` List of attributes\n  - `children` List of child elements\n\n",
+                "type": "List.List (Html.Attribute msg) -> List.List (Html.Html msg) -> Accordion.Head msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Accordion.List",
+        "comment": " The status of multiple accordions can be managed collectively and linked.\n# Basic usage\n    import Accordion\n    import Accordion.List as AccordionList\n\n    type alias model =\n        { multiOpen : Bool\n        , status : AccordionList.Status String\n        }\n\n    type Msg\n        = Toggled\n        | UpdateAccordion String\n\n    update msg model =\n        case msg of\n            Toggled ->\n                ({ model\n                    | multiOpen = not model.multiOpen\n                    , status =\n                        if model.multiOpen then\n                            AccordionList.singleOpen Nothing\n                        else\n                            AccordionList.multiOpen []\n                 }\n                , Cmd.none\n                )\n\n            UpdateStatus id_ ->\n                ( { model | AccordionList.uodate id_ model.status }\n                , Cmd.none\n                )\n\n    view model =\n        let\n            id_ index_ =\n                \"example-accordion-\" ++ String.fromInt index_\n\n            accordion_ index_ =\n                Accordion.accordion [ id (id_ index_) ]\n                    ( Accordion.head\n                        [ onClick (UpdateStatus <| id_ index_) ]\n                        headChildren\n                    )\n                    ( Accordion.body [] bodyChildren )\n                    ( AccordionList.isOpen (id_ index_) model.status )\n        in\n        Html.div []\n            List.map accordion_ <|\n                List.range 1 5\n\n\n# Status\n@docs Status, multiOpen, singleOpen\n\n# Update Status\n@docs update\n\n# Check status\n@docs isOpen\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Status",
+                "comment": " Multiple accordions status type\n\n",
+                "args": [
+                    "comparable"
+                ],
+                "type": "Accordion.Internal.Status comparable"
+            }
+        ],
+        "values": [
+            {
+                "name": "isOpen",
+                "comment": " Check value status if it is open.\n",
+                "type": "comparable -> Accordion.List.Status comparable -> Basics.Bool"
+            },
+            {
+                "name": "multiOpen",
+                "comment": " Initialize multiple open Status.\n\n- `values` List of values associated with open accordions(e.g. List of `id`).\n",
+                "type": "List.List comparable -> Accordion.List.Status comparable"
+            },
+            {
+                "name": "singleOpen",
+                "comment": " Initialize single open Status.\n\n- `value` A value of associated with open accoedion(e.g. `id`).\n",
+                "type": "Maybe.Maybe comparable -> Accordion.List.Status comparable"
+            },
+            {
+                "name": "update",
+                "comment": " Toggle the state of the argument value.\n",
+                "type": "comparable -> Accordion.List.Status comparable -> Accordion.List.Status comparable"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,341 @@
+[
+    {
+        "name": "Croppie",
+        "comment": "\n\n# Datas\n\nTo execute the instance method of Croppie, send Data via port as shown below.\n\n    port croppie : Croppie.Data -> Cmd msg\n\n    view =\n        Croppie.croppie [] [ id \"example\" ]\n\n    get =\n        croppie <|\n            Croppie.get \"example\"\n\n    bind =\n        croppie <|\n            Croppie.bind \"example\" bindOptions\n\n    result =\n        croppie <|\n            Croppie.result \"example\" resultOptions\n\n    rotate =\n        croppie <|\n            Croppie.rotate \"example\" degrees\n\n    setZoom =\n        croppie <|\n            Croppie.setZoom \"example\" value\n\n@docs get, bind, result, rotate, setZoom\n@docs Data\n\n# Croppie\n@docs croppie\n\n# Options\n@docs Option, BindOption, ResultOption\n\n# CropData\n@docs CropData\n\n# Result of Cropped image\n@docs Result\n\n",
+        "unions": [
+            {
+                "name": "Result",
+                "comment": " The result of cropping the image.\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": [
+                    [
+                        "Base64",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Canvas",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Html",
+                        [
+                            "Html.Html msg"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "BindOption",
+                "comment": " Option of bind an image\n\nLearn more in the [Croppie.BindOptions](/packages/hallelujahdrive/elm-croppie/latest/Croppie-BindOptions) module.\n",
+                "args": [],
+                "type": "Croppie.Internal.BindOption"
+            },
+            {
+                "name": "CropData",
+                "comment": " The crop points and the zoom of the image.\n",
+                "args": [],
+                "type": "{ orientation : Basics.Int, points : List.List Basics.Int, zoom : Basics.Float }"
+            },
+            {
+                "name": "Data",
+                "comment": " Data to communicate via port\n",
+                "args": [],
+                "type": "Croppie.Internal.Data"
+            },
+            {
+                "name": "Option",
+                "comment": " Option of Croppie\n\nLearn more in the [Croppie.Options](/packages/hallelujahdrive/elm-croppie/latest/Croppie-Options) module.\n",
+                "args": [],
+                "type": "Croppie.Internal.Option"
+            },
+            {
+                "name": "ResultOption",
+                "comment": " Option of to get the resulting crop of image\n\n Learn more in the [Croppie.ResultOptions](/packages/hallelujahdrive/elm-croppie/latest/Croppie-ResultOptions) module.\n",
+                "args": [],
+                "type": "Croppie.Internal.ResultOption"
+            }
+        ],
+        "values": [
+            {
+                "name": "bind",
+                "comment": " Bind an image to the croppie.\n\n- `id ` id of the target Croppie element\n- `bindOptions` List of bind options \n(see [Croppie.BindOptions](/packages/hallelujahdrive/elm-croppie/latest/Croppie-BindOptions)).\n\n\n",
+                "type": "String.String -> List.List Croppie.BindOption -> Croppie.Data"
+            },
+            {
+                "name": "croppie",
+                "comment": " Croppie view function. \n\n",
+                "type": "List.List Croppie.Option -> List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "get",
+                "comment": " Get the crop points, and the zoom of the image.\n\nThe return value can be received with [Croppie.Events.onGet](/packages/hallelujahdrive/elm-croppie/latest/Croppie-Events#onGet)\n\n- `id ` id of the target Croppie element\n\n",
+                "type": "String.String -> Croppie.Data"
+            },
+            {
+                "name": "result",
+                "comment": " Get the resulting crop of the image.\n\nThe return value can be received with [Croppie.Events.onResult](/packages/hallelujahdrive/elm-croppie/latest/Croppie-Events#onResult).\n\n- `id ` id of the target Croppie element\n- `resultOptions` List of result options. \nSee [Croppie.ResultOptions](/packages/hallelujahdrive/elm-croppie/latest/Croppie-ResultOptions) for list of options\n\n",
+                "type": "String.String -> List.List Croppie.ResultOption -> Croppie.Data"
+            },
+            {
+                "name": "rotate",
+                "comment": " Rotate the image by a specified degree amount. \nOnly works with `enableOrientation` option enabled \n(see [Croppie.Options.enableOrientation](/packages/hallelujahdrive/elm-croppie/latest/Croppie-Options#enableOrientation)).\n\n- `id ` id of the target Croppie element\n- `degrees` rotation angle\n\n    Valid Values: `90, 180, 270, -90, -180, -270`\n\n",
+                "type": "String.String -> Basics.Int -> Croppie.Data"
+            },
+            {
+                "name": "setZoom",
+                "comment": " Set the zoom of a Croppie instance. \nThe value passed in is still restricted to the min/max set by Croppie.\n\n- `id ` id of the target Croppie element\n- `value` a floating point to scale the image within the croppie. \nMust be between a min and max value set by croppie.\n\n",
+                "type": "String.String -> Basics.Float -> Croppie.Data"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Croppie.BindOptions",
+        "comment": " Options of binding an image.\n\nSee [Croppie.bind](/packages/hallelujahdrive/elm-croppie/latest/Croppie#bind) for usage.\n\n# Bind Options\n@docs url\n@docs points\n@docs zoom\n@docs orientation\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "orientation",
+                "comment": "  Custom orientation, applied after exif orientation (if enabled). \nOnly works with enableOrientation option enabled \n(see [Croppie.Options.enableOrientation](/packages/hallelujahdrive/elm-croppie/latest/Croppie-Options#enableOrientation)).\n\nValid options are:\n\n`1` unchanged\n\n`2` flipped horizontally\n\n`3` rotated 180 degrees\n\n`4` flipped vertically\n\n`5` flipped hozirontally. then rotated left by 90 degrees\n\n`6` rotated clockwise by 90 degrees\n\n`7` flipped horizontally, then rotated right by 90 degrees\n\n`8` rotated counter-clockwise by 90 degrees\n\n",
+                "type": "Basics.Int -> Croppie.BindOption"
+            },
+            {
+                "name": "points",
+                "comment": " Array of points that translate into `[topLeftX, topLeftY, bottomRightX, bottomRightY]`\n",
+                "type": "List.List Basics.Int -> Croppie.BindOption"
+            },
+            {
+                "name": "url",
+                "comment": " Url to image\n",
+                "type": "String.String -> Croppie.BindOption"
+            },
+            {
+                "name": "zoom",
+                "comment": " Apply zoom after image has been bound\n",
+                "type": "Basics.Float -> Croppie.BindOption"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Croppie.Events",
+        "comment": "\n    type alias Model =\n        { cropData : CropData\n        , result : String\n        }\n\n    type Msg\n        = GotCropData CropData\n        | GotResult String\n\n    view =\n        Croppie.croppie\n            []\n            [ id \"events-example\"\n            , onUpdate GotCropData\n            , onGet GotCropData\n            , onResult GotResult\n            ]\n    \n    update msg model =\n        case msg of\n            GotCropData cropData ->\n                ( { model | cropData = cropData }\n                , Cmd.none\n                )\n            GorResult url ->\n                ( { model | result = url }\n                , Cmd.none\n                )    \n\n# Events\n@docs onUpdate\n\n# Receive function callbacks\n@docs onGet\n@docs onResult\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "onGet",
+                "comment": " Receive get callbacks\n",
+                "type": "(Croppie.CropData -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "onResult",
+                "comment": " Receive result callbacks\n",
+                "type": "(Croppie.Result msg -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "onUpdate",
+                "comment": " Detect update evnents. Update events trigged when a drag or zoom occurs\n",
+                "type": "(Croppie.CropData -> msg) -> Html.Attribute msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Croppie.Options",
+        "comment": " Options to inirialize Croppie\n\nSee [Croppie.croppie](/packages/hallelujahdrive/elm-croppie/latest/Croppie#croppie) for usage.\n\n# Boundary\n@docs boundary\n\n# Custom Class\n@docs customClass\n\n# Exif\n@docs enableExif\n\n# Orientation\n@docs enableOrientation\n\n# Resize\n@docs enableResize\n\n# Zoom\n@docs enableZoom\n\n# Enforce Boundary\n@docs enforceBoundary\n\n# Mouse wheel zoom\n@docs mouseWheelZoom, MouseWheelZoom\n\n# Show Zoomer\n@docs showZoomer\n\n# Viewport\n@docs viewport, CropType\n",
+        "unions": [
+            {
+                "name": "CropType",
+                "comment": " Viewport shape\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Circle",
+                        []
+                    ],
+                    [
+                        "Square",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "MouseWheelZoom",
+                "comment": " Mouse wheel zoom type\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Enabled",
+                        []
+                    ],
+                    [
+                        "Disabled",
+                        []
+                    ],
+                    [
+                        "Ctrl",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "boundary",
+                "comment": " The outer container of the cropper\n\nDefault: `will default to the size of the container`\n",
+                "type": "{ width : Basics.Int, height : Basics.Int } -> Croppie.Internal.Option"
+            },
+            {
+                "name": "customClass",
+                "comment": " A class of your choosing to add to the container to add custom styles to your croppie\n",
+                "type": "String.String -> Croppie.Internal.Option"
+            },
+            {
+                "name": "enableExif",
+                "comment": " Enable exif orientation reading. Tells Croppie to read exif orientation from the image data and orient the image correctly before rendering to the page.\nRequires [exif.js](https://github.com/exif-js/exif-js)\n",
+                "type": "Basics.Bool -> Croppie.Internal.Option"
+            },
+            {
+                "name": "enableOrientation",
+                "comment": " Enable or disable support for specifying a custom orientation when binding images (See `Croppie.bind`)\n",
+                "type": "Basics.Bool -> Croppie.Internal.Option"
+            },
+            {
+                "name": "enableResize",
+                "comment": " Enable or disable support for resizing the viewport area.\n",
+                "type": "Basics.Bool -> Croppie.Internal.Option"
+            },
+            {
+                "name": "enableZoom",
+                "comment": " Enable zooming functionality. If set to false - scrolling and pinching would not zoom.\n",
+                "type": "Basics.Bool -> Croppie.Internal.Option"
+            },
+            {
+                "name": "enforceBoundary",
+                "comment": " Restricts zoom so image cannot be smaller than viewport\n",
+                "type": "Basics.Bool -> Croppie.Internal.Option"
+            },
+            {
+                "name": "mouseWheelZoom",
+                "comment": " Enable or disable the ability to use the mouse wheel to zoom in and out on a croppie instance. \nIf `Ctrl` is passed mouse wheel will only work while control keyboard is pressed\n",
+                "type": "Croppie.Options.MouseWheelZoom -> Croppie.Internal.Option"
+            },
+            {
+                "name": "showZoomer",
+                "comment": " Hide or Show the zoom slider\n",
+                "type": "Basics.Bool -> Croppie.Internal.Option"
+            },
+            {
+                "name": "viewport",
+                "comment": " The inner container of the croppie, The visible part of the image\n\nDefault: `{ width = 100, height = 100, type_ = Square }`\n",
+                "type": "{ width : Basics.Int, height : Basics.Int, type_ : Croppie.Options.CropType } -> Croppie.Internal.Option"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Croppie.ResultOptions",
+        "comment": " Options of Result\n\nSee [Croppie.result](/packages/hallelujahdrive/elm-croppie/latest/Croppie#result) for usage.\n\n# Type\n@docs type_, Type\n\n# Size\n@docs size, Size\n\n# Format\n@docs format, Format\n\n# Quarity\n@docs quality\n\n# Circle\n@docs circle\n\n",
+        "unions": [
+            {
+                "name": "Format",
+                "comment": " Type of result format\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Jpeg",
+                        []
+                    ],
+                    [
+                        "Png",
+                        []
+                    ],
+                    [
+                        "Webp",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Size",
+                "comment": " Size type\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Viewport",
+                        []
+                    ],
+                    [
+                        "Original",
+                        []
+                    ],
+                    [
+                        "Custom",
+                        [
+                            "{ width : Maybe.Maybe Basics.Int, height : Maybe.Maybe Basics.Int }"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Type",
+                "comment": " Type of result type\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Base64",
+                        []
+                    ],
+                    [
+                        "Canvas",
+                        []
+                    ],
+                    [
+                        "Html",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "circle",
+                "comment": " Force the result to be cropped into a circle.\n",
+                "type": "Basics.Bool -> Croppie.ResultOption"
+            },
+            {
+                "name": "format",
+                "comment": " Indicating the image format. \n\nIf you do not specify a format, the default is `Png`\n",
+                "type": "Croppie.ResultOptions.Format -> Croppie.ResultOption"
+            },
+            {
+                "name": "quality",
+                "comment": " Number between `0` and `1` indicating image quarity.\n",
+                "type": "Basics.Float -> Croppie.ResultOption"
+            },
+            {
+                "name": "size",
+                "comment": " The size of the cropped image defaults to `Viewport`\n",
+                "type": "Croppie.ResultOptions.Size -> Croppie.ResultOption"
+            },
+            {
+                "name": "type_",
+                "comment": " The type of result to return defaults to `Canvas`\n",
+                "type": "Croppie.ResultOptions.Type -> Croppie.ResultOption"
+            }
+        ],
+        "binops": []
+    }
+]

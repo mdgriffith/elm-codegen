@@ -1,0 +1,1415 @@
+[
+    {
+        "name": "ColumnVector",
+        "comment": " A module for Column Vectors\n\n\n# Types\n\n@docs ColumnVector\n\n\n# Unitary Operations\n\n@docs sum\n@docs scalarMultiplication\n@docs conjugate\n@docs lengthReal\n@docs lengthComplex\n@docs normaliseReal\n@docs normaliseComplex\n\n\n# Binary Operations\n\n@docs add\n@docs dotProduct\n@docs distanceReal\n@docs distanceComplex\n\n\n# ColumnVector Properties\n\n@docs dimension\n\n\n# Semigroup, Functor, Applicative, Monad, Foldable\n\n@docs empty\n@docs map\n@docs foldl\n\n\n# Equality\n\n@docs equal\n\n\n# Manipulation\n\n@docs getAt\n@docs setAt\n\n",
+        "unions": [
+            {
+                "name": "ColumnVector",
+                "comment": " Column Vector\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "ColumnVector",
+                        [
+                            "Vector.Vector a"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "add",
+                "comment": " Add two ColumnVectors\n",
+                "type": "Field.Field a -> ColumnVector.ColumnVector a -> ColumnVector.ColumnVector a -> ColumnVector.ColumnVector a"
+            },
+            {
+                "name": "conjugate",
+                "comment": " Take the complex conjugate of a Complex Numbered ColumnVector\n",
+                "type": "ColumnVector.ColumnVector (ComplexNumbers.ComplexNumber number) -> ColumnVector.ColumnVector (ComplexNumbers.ComplexNumber number)"
+            },
+            {
+                "name": "dimension",
+                "comment": " Count of number of elements in a Ket\n",
+                "type": "ColumnVector.ColumnVector a -> Basics.Int"
+            },
+            {
+                "name": "distanceComplex",
+                "comment": " Calculate distance between two vectors\n",
+                "type": "ColumnVector.ColumnVector (ComplexNumbers.ComplexNumber Basics.Float) -> ColumnVector.ColumnVector (ComplexNumbers.ComplexNumber Basics.Float) -> Real.Real Basics.Float"
+            },
+            {
+                "name": "distanceReal",
+                "comment": " Calculate distance between two vectors\n",
+                "type": "ColumnVector.ColumnVector (Real.Real Basics.Float) -> ColumnVector.ColumnVector (Real.Real Basics.Float) -> Real.Real Basics.Float"
+            },
+            {
+                "name": "dotProduct",
+                "comment": " Calculate the dot product of two Vectors\n",
+                "type": "Field.Field a -> ColumnVector.ColumnVector a -> ColumnVector.ColumnVector a -> a"
+            },
+            {
+                "name": "empty",
+                "comment": " Monoid empty for Vector\n",
+                "type": "ColumnVector.ColumnVector a"
+            },
+            {
+                "name": "equal",
+                "comment": " `Equal` type for `Vector`.\n",
+                "type": "(a -> a -> Basics.Bool) -> Typeclasses.Classes.Equality.Equality (ColumnVector.ColumnVector a)"
+            },
+            {
+                "name": "foldl",
+                "comment": " Left fold over a RowVector\n",
+                "type": "(a -> b -> b) -> b -> ColumnVector.ColumnVector a -> b"
+            },
+            {
+                "name": "getAt",
+                "comment": " Get the value in a Column Vector at the specified index\n",
+                "type": "Basics.Int -> ColumnVector.ColumnVector a -> Maybe.Maybe a"
+            },
+            {
+                "name": "lengthComplex",
+                "comment": " Calculate the length of a Complex valued Vector\n",
+                "type": "ColumnVector.ColumnVector (ComplexNumbers.ComplexNumber Basics.Float) -> Real.Real Basics.Float"
+            },
+            {
+                "name": "lengthReal",
+                "comment": " Calculate the length of a Real valued Vector\n",
+                "type": "ColumnVector.ColumnVector (Real.Real Basics.Float) -> Real.Real Basics.Float"
+            },
+            {
+                "name": "map",
+                "comment": " map over a RowVector\n",
+                "type": "(a -> b) -> ColumnVector.ColumnVector a -> ColumnVector.ColumnVector b"
+            },
+            {
+                "name": "normaliseComplex",
+                "comment": " Adjust a complex valued column vector so that its length is exactly one\n",
+                "type": "ColumnVector.ColumnVector (ComplexNumbers.ComplexNumber Basics.Float) -> ColumnVector.ColumnVector (ComplexNumbers.ComplexNumber Basics.Float)"
+            },
+            {
+                "name": "normaliseReal",
+                "comment": " Adjust a real valued column vector so that its length is exactly one\n",
+                "type": "ColumnVector.ColumnVector (Real.Real Basics.Float) -> ColumnVector.ColumnVector (Real.Real Basics.Float)"
+            },
+            {
+                "name": "scalarMultiplication",
+                "comment": " Scalar multiplication over a ColumnVector\n",
+                "type": "Field.Field a -> a -> ColumnVector.ColumnVector a -> ColumnVector.ColumnVector a"
+            },
+            {
+                "name": "setAt",
+                "comment": " Set the value in a Column Vector at the specified index\n",
+                "type": "Basics.Int -> a -> ColumnVector.ColumnVector a -> ColumnVector.ColumnVector a"
+            },
+            {
+                "name": "sum",
+                "comment": " Calculate the sum of a Vector\n",
+                "type": "Monoid.Monoid a -> ColumnVector.ColumnVector a -> a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "DoublyStochasticMatrix",
+        "comment": " A module for Doubly Stochastic Matrix\n\n\n# Types\n\n@docs DoublyStochasticMatrix\n\n\n# Matrix Predicates and Properties\n\n@docs isDoublyStochastic\n\n\n# Binary Operations\n\n@docs multiply\n@docs multiplyIfCan\n\n\n# Manipulation\n\n@docs setAt\n\n",
+        "unions": [
+            {
+                "name": "DoublyStochasticMatrix",
+                "comment": " Doubly Stochastic Matrix type\n",
+                "args": [],
+                "cases": [
+                    [
+                        "DoublyStochasticMatrix",
+                        [
+                            "SquareMatrix.SquareMatrix (Real.Real Basics.Float)"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "isDoublyStochastic",
+                "comment": " Predicate if matrix is doubly stochastic\n",
+                "type": "SquareMatrix.SquareMatrix (Real.Real Basics.Float) -> Result.Result String.String (SquareMatrix.SquareMatrix (Real.Real Basics.Float))"
+            },
+            {
+                "name": "multiply",
+                "comment": " Square Matrix Square Matrix multiplication\n",
+                "type": "DoublyStochasticMatrix.DoublyStochasticMatrix -> DoublyStochasticMatrix.DoublyStochasticMatrix -> DoublyStochasticMatrix.DoublyStochasticMatrix"
+            },
+            {
+                "name": "multiplyIfCan",
+                "comment": " Doubly Stochastic Matrixx Doubly Stochastic Matrix multiplication\n",
+                "type": "DoublyStochasticMatrix.DoublyStochasticMatrix -> DoublyStochasticMatrix.DoublyStochasticMatrix -> Result.Result String.String DoublyStochasticMatrix.DoublyStochasticMatrix"
+            },
+            {
+                "name": "setAt",
+                "comment": " Set the value in a Doubly Stochastic Matrix at the specified row and column\n",
+                "type": "( Basics.Int, Basics.Int ) -> Real.Real Basics.Float -> DoublyStochasticMatrix.DoublyStochasticMatrix -> DoublyStochasticMatrix.DoublyStochasticMatrix"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "HermitianMatrix",
+        "comment": " A module for Hermitian Matrix\n\n\n# Types\n\n@docs HermitianMatrix\n\n\n# Matrix Predicates and Properties\n\n@docs isHermitian\n@docs dimension\n\n\n# Unitary Operations\n\n@docs identity\n@docs scalarMultiplication\n\n\n# Binary Operations\n\n@docs multiplyIfCan\n@docs multiplyMatrixVector\n@docs subtract\n\n\n# Manipulation\n\n@docs getAt\n@docs setAt\n\n",
+        "unions": [
+            {
+                "name": "HermitianMatrix",
+                "comment": " Hermitian Matrix type\n",
+                "args": [
+                    "number"
+                ],
+                "cases": [
+                    [
+                        "HermitianMatrix",
+                        [
+                            "SymmetricMatrix.SymmetricMatrix (ComplexNumbers.ComplexNumber number)"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "dimension",
+                "comment": " Dimension of the matrix\n",
+                "type": "HermitianMatrix.HermitianMatrix number -> Basics.Int"
+            },
+            {
+                "name": "getAt",
+                "comment": " Get the value in a matrix at the specified row and column\n",
+                "type": "( Basics.Int, Basics.Int ) -> HermitianMatrix.HermitianMatrix number -> Maybe.Maybe (ComplexNumbers.ComplexNumber number)"
+            },
+            {
+                "name": "identity",
+                "comment": " Create Square Identity Matrix with n dimension with Complex Numbers\n",
+                "type": "Basics.Int -> HermitianMatrix.HermitianMatrix Basics.Float"
+            },
+            {
+                "name": "isHermitian",
+                "comment": " Predicate to determine if Matrix is Hermitian\n",
+                "type": "SymmetricMatrix.SymmetricMatrix (ComplexNumbers.ComplexNumber number) -> Result.Result String.String (SymmetricMatrix.SymmetricMatrix (ComplexNumbers.ComplexNumber number))"
+            },
+            {
+                "name": "multiplyIfCan",
+                "comment": " Hermitian Matrix Hermitian Matrix multiplication\n",
+                "type": "HermitianMatrix.HermitianMatrix Basics.Float -> HermitianMatrix.HermitianMatrix Basics.Float -> Result.Result String.String (HermitianMatrix.HermitianMatrix Basics.Float)"
+            },
+            {
+                "name": "multiplyMatrixVector",
+                "comment": " Multiply a ColumnVector by a Hermitian Matrix\n",
+                "type": "HermitianMatrix.HermitianMatrix Basics.Float -> ColumnVector.ColumnVector (ComplexNumbers.ComplexNumber Basics.Float) -> Result.Result String.String (ColumnVector.ColumnVector (ComplexNumbers.ComplexNumber Basics.Float))"
+            },
+            {
+                "name": "scalarMultiplication",
+                "comment": " Scalar multiplication over a Hermitian Matrix\n",
+                "type": "ComplexNumbers.ComplexNumber Basics.Float -> HermitianMatrix.HermitianMatrix Basics.Float -> HermitianMatrix.HermitianMatrix Basics.Float"
+            },
+            {
+                "name": "setAt",
+                "comment": " Set the value in a Hermitian Matrix at the specified row and column\n",
+                "type": "( Basics.Int, Basics.Int ) -> ComplexNumbers.ComplexNumber number -> HermitianMatrix.HermitianMatrix number -> HermitianMatrix.HermitianMatrix number"
+            },
+            {
+                "name": "subtract",
+                "comment": " Subtract two Hermitian Matrices\n",
+                "type": "HermitianMatrix.HermitianMatrix Basics.Float -> HermitianMatrix.HermitianMatrix Basics.Float -> HermitianMatrix.HermitianMatrix Basics.Float"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "InvertableMatrix",
+        "comment": " A module for Invertable Matrix\n\n\n# Types\n\n@docs InvertableMatrix\n\n\n# Values\n\n@docs empty\n\n\n# Constructors\n\n@docs identity\n\n\n# Matrix Predicates and Properties\n\n@docs determinant\n@docs dimension\n@docs isInvertable\n\n\n# Unitary Operations\n\n@docs scalarMultiplication\n\n\n# Binary Operations\n\n@docs invert\n@docs add\n@docs multiply\n@docs multiplyIfCan\n@docs multiplyMatrixVector\n\n\n# Manipulation\n\n@docs getAt\n@docs setAt\n\n\n# Equality\n\n@docs equal\n@docs equalImplementation\n\n@docs projXOntoSubspace\n\n",
+        "unions": [
+            {
+                "name": "InvertableMatrix",
+                "comment": " Invertable Matrix type\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "InvertableMatrix",
+                        [
+                            "NormalMatrix.NormalMatrix a"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "add",
+                "comment": " Add two InvertableMatrix together\n",
+                "type": "Field.Field a -> InvertableMatrix.InvertableMatrix a -> InvertableMatrix.InvertableMatrix a -> InvertableMatrix.InvertableMatrix a"
+            },
+            {
+                "name": "determinant",
+                "comment": " Try to calculate the determinant\n",
+                "type": "RowVector.VectorSpace a -> InvertableMatrix.InvertableMatrix a -> Result.Result String.String a"
+            },
+            {
+                "name": "dimension",
+                "comment": " Dimension of the matrix\n",
+                "type": "InvertableMatrix.InvertableMatrix a -> Basics.Int"
+            },
+            {
+                "name": "empty",
+                "comment": " Monoid empty for InvertableMatrix\n",
+                "type": "InvertableMatrix.InvertableMatrix a"
+            },
+            {
+                "name": "equal",
+                "comment": " Compare two matricies using comparator\n",
+                "type": "(a -> a -> Basics.Bool) -> Typeclasses.Classes.Equality.Equality (InvertableMatrix.InvertableMatrix a)"
+            },
+            {
+                "name": "equalImplementation",
+                "comment": " Compare two Matrices for equality\n",
+                "type": "(a -> a -> Basics.Bool) -> InvertableMatrix.InvertableMatrix a -> InvertableMatrix.InvertableMatrix a -> Basics.Bool"
+            },
+            {
+                "name": "getAt",
+                "comment": " Get the value in a matrix at the specified row and column\n",
+                "type": "( Basics.Int, Basics.Int ) -> InvertableMatrix.InvertableMatrix a -> Maybe.Maybe a"
+            },
+            {
+                "name": "identity",
+                "comment": " Create Square Identity Matrix with n dimension\n",
+                "type": "Field.Field a -> Basics.Int -> InvertableMatrix.InvertableMatrix a"
+            },
+            {
+                "name": "invert",
+                "comment": " Try to calculate the inverse of a matrix\n",
+                "type": "RowVector.InnerProductSpace a -> InvertableMatrix.InvertableMatrix a -> Result.Result String.String (InvertableMatrix.InvertableMatrix a)"
+            },
+            {
+                "name": "isInvertable",
+                "comment": " Determine whether a matirx is invertable\n",
+                "type": "RowVector.InnerProductSpace a -> NormalMatrix.NormalMatrix a -> Result.Result String.String (NormalMatrix.NormalMatrix a)"
+            },
+            {
+                "name": "multiply",
+                "comment": " Square Matrix Square Matrix multiplication\n",
+                "type": "RowVector.InnerProductSpace a -> InvertableMatrix.InvertableMatrix a -> InvertableMatrix.InvertableMatrix a -> InvertableMatrix.InvertableMatrix a"
+            },
+            {
+                "name": "multiplyIfCan",
+                "comment": " Invertable Matrix Invertable Matrix multiplication\n",
+                "type": "RowVector.InnerProductSpace a -> InvertableMatrix.InvertableMatrix a -> InvertableMatrix.InvertableMatrix a -> Result.Result String.String (InvertableMatrix.InvertableMatrix a)"
+            },
+            {
+                "name": "multiplyMatrixVector",
+                "comment": " Multiply a ColumnVector by a Matrix\n",
+                "type": "RowVector.InnerProductSpace a -> InvertableMatrix.InvertableMatrix a -> ColumnVector.ColumnVector a -> Result.Result String.String (ColumnVector.ColumnVector a)"
+            },
+            {
+                "name": "projXOntoSubspace",
+                "comment": " Calculate the projection of a vector onto a subspace given by a list of basis vectors as column vectors\n",
+                "type": "RowVector.InnerProductSpace a -> List.List (ColumnVector.ColumnVector a) -> ColumnVector.ColumnVector a -> Result.Result String.String (ColumnVector.ColumnVector a)"
+            },
+            {
+                "name": "scalarMultiplication",
+                "comment": " Scalar multiplication over an InvertableMatrix Matrix\n",
+                "type": "Field.Field a -> a -> InvertableMatrix.InvertableMatrix a -> InvertableMatrix.InvertableMatrix a"
+            },
+            {
+                "name": "setAt",
+                "comment": " Set the value in a Normal Matrix at the specified row and column\n",
+                "type": "( Basics.Int, Basics.Int ) -> a -> InvertableMatrix.InvertableMatrix a -> InvertableMatrix.InvertableMatrix a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Matrix",
+        "comment": " A module for Matrix\n\n\n# Types\n\n@docs Matrix\n@docs Solution\n@docs Consistancy\n@docs VectorDimension\n@docs MatrixSpace\n\n\n# Values\n\n@docs identity\n@docs zeros\n\n\n# Constructors\n\n@docs createMatrixFromColumnVectors\n\n\n# Unitary Operations\n\n@docs scalarMultiplication\n@docs transpose\n@docs conjugate\n@docs adjoint\n@docs subMatrix\n@docs nullSpace\n@docs leftNullSpace\n@docs getDiagonal\n@docs getDiagonalProduct\n@docs rank\n\n\n# Binary Operations\n\n@docs add\n@docs subtract\n@docs multiplyMatrixVector\n@docs multiply\n@docs multiplyIfCan\n@docs tensorProduct\n@docs commuter\n\n\n# Matrix Predicates and Properties\n\n@docs areBasis\n@docs areLinearlyIndependent\n@docs doesSetSpanSpace\n@docs mDimension\n@docs nDimension\n@docs areRowEquivalent\n@docs all\n@docs isOneToOne\n@docs isOnto\n\n\n# Semigroup, Monoid, Group, Ring, Field, VectorSpace instances\n\n@docs realAdditionSemigroup\n@docs complexAdditionSemigroup\n@docs realAdditionCommutativeSemigroup\n@docs complexAdditionCommutativeSemigroup\n@docs realAdditionCommutativeMonoid\n@docs complexAdditionCommutativeMonoid\n@docs realMatrixAlgebra\n@docs complexMatrixAlgebra\n@docs realAdditionGroup\n@docs complexAdditionGroup\n@docs realAdditionAbelianGroup\n@docs complexAdditionAbelianGroup\n@docs realMatrixSpace\n@docs complexMatrixSpace\n\n\n# Monoid, Functor, Applicative, Monad, Foldable functions\n\n@docs empty\n@docs concatHorizontal\n@docs concatVertical\n@docs appendHorizontal\n@docs map\n@docs pure\n@docs andMap\n@docs andThen\n@docs map2\n@docs foldl\n\n\n# Equality\n\n@docs equal\n@docs equalImplementation\n\n\n# Matrix Forms\n\n@docs upperTriangle\n@docs gaussianReduce\n@docs jordanReduce\n@docs gaussJordan\n\n\n# Solving\n\n@docs solve\n\n\n# Manipulation\n\n@docs getAt\n@docs setAt\n@docs printRealMatrix\n@docs printComplexMatrix\n@docs readRealMatrix\n@docs readComplexMatrix\n\n",
+        "unions": [
+            {
+                "name": "Consistancy",
+                "comment": " Type to represent result of Gauss-Jordan reduction\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Consistant",
+                        [
+                            "Matrix.Solution a"
+                        ]
+                    ],
+                    [
+                        "Inconsistant",
+                        [
+                            "String.String",
+                            "Matrix.Solution a"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Matrix",
+                "comment": " Matrix type\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Matrix",
+                        [
+                            "List.List (RowVector.RowVector a)"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Solution",
+                "comment": " Type to represent result of Gauss-Jordan reduction if system is consistant\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "UniqueSolution",
+                        [
+                            "ColumnVector.ColumnVector a"
+                        ]
+                    ],
+                    [
+                        "InfiniteSolutions",
+                        [
+                            "{ nullity : Basics.Int, rank : Basics.Int }"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "VectorDimension",
+                "comment": " Type to represent vector space such as R, R2, R3\n",
+                "args": [],
+                "cases": [
+                    [
+                        "VectorDimension",
+                        [
+                            "Basics.Int"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "MatrixSpace",
+                "comment": " Type to represent a Vector Space\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ abelianGroup : AbelianGroup.AbelianGroup (Matrix.Matrix a), matrixScalarMultiplication : a -> Matrix.Matrix a -> Matrix.Matrix a }"
+            }
+        ],
+        "values": [
+            {
+                "name": "add",
+                "comment": " Add two Matrices together\n",
+                "type": "Field.Field a -> Matrix.Matrix a -> Matrix.Matrix a -> Matrix.Matrix a"
+            },
+            {
+                "name": "adjoint",
+                "comment": " Perform the adjoint operation on a Complex Numbered Matrix\n",
+                "type": "Matrix.Matrix (ComplexNumbers.ComplexNumber number) -> Matrix.Matrix (ComplexNumbers.ComplexNumber number)"
+            },
+            {
+                "name": "all",
+                "comment": " Predicate to determine if all values in the matric satisfy the given predicate\n",
+                "type": "(a -> Basics.Bool) -> Matrix.Matrix a -> Basics.Bool"
+            },
+            {
+                "name": "andMap",
+                "comment": " Apply for Matrix\n",
+                "type": "Matrix.Matrix a -> Matrix.Matrix (a -> b) -> Matrix.Matrix b"
+            },
+            {
+                "name": "andThen",
+                "comment": " Monad bind for Matrix\n",
+                "type": "(a -> Matrix.Matrix b) -> Matrix.Matrix a -> Matrix.Matrix b"
+            },
+            {
+                "name": "appendHorizontal",
+                "comment": " Append Matricies together horizontally\n",
+                "type": "Matrix.Matrix a -> Matrix.Matrix a -> Matrix.Matrix a"
+            },
+            {
+                "name": "areBasis",
+                "comment": " Determine whether list of vectors are a basis for a space\n",
+                "type": "RowVector.InnerProductSpace a -> Matrix.VectorDimension -> List.List (ColumnVector.ColumnVector a) -> Basics.Bool"
+            },
+            {
+                "name": "areLinearlyIndependent",
+                "comment": " Predicate to determine if a list of Vectors are linearly independent\n",
+                "type": "RowVector.InnerProductSpace a -> List.List (ColumnVector.ColumnVector a) -> Basics.Bool"
+            },
+            {
+                "name": "areRowEquivalent",
+                "comment": " Predicate to determine if two matricies are row equivalent\n",
+                "type": "RowVector.VectorSpace a -> Matrix.Matrix a -> Matrix.Matrix a -> Basics.Bool"
+            },
+            {
+                "name": "commuter",
+                "comment": " Calculate the commuter of two Hermitian Matricies\n",
+                "type": "RowVector.InnerProductSpace a -> Matrix.Matrix a -> Matrix.Matrix a -> Result.Result String.String (Matrix.Matrix a)"
+            },
+            {
+                "name": "complexAdditionAbelianGroup",
+                "comment": " Abelian Group instance for Matrix under the addition operation with complex values.\n",
+                "type": "AbelianGroup.AbelianGroup (Matrix.Matrix (ComplexNumbers.ComplexNumber Basics.Float))"
+            },
+            {
+                "name": "complexAdditionCommutativeMonoid",
+                "comment": " Commutative Monoid instance for Matrix under the addition operation with complex values.\n",
+                "type": "CommutativeMonoid.CommutativeMonoid (Matrix.Matrix (ComplexNumbers.ComplexNumber Basics.Float))"
+            },
+            {
+                "name": "complexAdditionCommutativeSemigroup",
+                "comment": " Commutative Semigroup instance for Matrix under the addition operation with complex values.\n",
+                "type": "CommutativeSemigroup.CommutativeSemigroup (Matrix.Matrix (ComplexNumbers.ComplexNumber Basics.Float))"
+            },
+            {
+                "name": "complexAdditionGroup",
+                "comment": " Group instance for Matrix under the addition operation with complex values.\n",
+                "type": "Group.Group (Matrix.Matrix (ComplexNumbers.ComplexNumber Basics.Float))"
+            },
+            {
+                "name": "complexAdditionSemigroup",
+                "comment": " Semigroup instance for Matrix under the addition operation with complex values.\n",
+                "type": "Semigroup.Semigroup (Matrix.Matrix (ComplexNumbers.ComplexNumber Basics.Float))"
+            },
+            {
+                "name": "complexMatrixAlgebra",
+                "comment": " Complex Numbered Matrix Algebra\n",
+                "type": "Matrix.MatrixAlgebra (ComplexNumbers.ComplexNumber Basics.Float)"
+            },
+            {
+                "name": "complexMatrixSpace",
+                "comment": " Complex Numbered Vector Space for Matrix\n",
+                "type": "Matrix.MatrixSpace (ComplexNumbers.ComplexNumber Basics.Float)"
+            },
+            {
+                "name": "concatHorizontal",
+                "comment": " Monoidally append Matricies together horizontally\n",
+                "type": "Typeclasses.Classes.Monoid.Monoid (Matrix.Matrix a)"
+            },
+            {
+                "name": "concatVertical",
+                "comment": " Monoidally append Matricies together vertically\n",
+                "type": "Typeclasses.Classes.Monoid.Monoid (Matrix.Matrix a)"
+            },
+            {
+                "name": "conjugate",
+                "comment": " Take the complex conjugate of a Complex Numbered Matrix\n",
+                "type": "Matrix.Matrix (ComplexNumbers.ComplexNumber number) -> Matrix.Matrix (ComplexNumbers.ComplexNumber number)"
+            },
+            {
+                "name": "createMatrixFromColumnVectors",
+                "comment": " Create a Matrix from a list of Column Vectors\n",
+                "type": "List.List (ColumnVector.ColumnVector a) -> Matrix.Matrix a"
+            },
+            {
+                "name": "doesSetSpanSpace",
+                "comment": " Determine whether list of vectors spans a space\n",
+                "type": "RowVector.VectorSpace a -> Matrix.VectorDimension -> List.List (ColumnVector.ColumnVector a) -> Result.Result String.String Basics.Bool"
+            },
+            {
+                "name": "empty",
+                "comment": " Monoid empty for Matrix\n",
+                "type": "Matrix.Matrix a"
+            },
+            {
+                "name": "equal",
+                "comment": " `Equal` type for `Matrix`.\n",
+                "type": "(a -> a -> Basics.Bool) -> Typeclasses.Classes.Equality.Equality (Matrix.Matrix a)"
+            },
+            {
+                "name": "equalImplementation",
+                "comment": " Compare two Matrices for equality\n",
+                "type": "(a -> a -> Basics.Bool) -> Matrix.Matrix a -> Matrix.Matrix a -> Basics.Bool"
+            },
+            {
+                "name": "foldl",
+                "comment": " Left fold over a Matrix\n",
+                "type": "(a -> b -> b) -> b -> Matrix.Matrix a -> b"
+            },
+            {
+                "name": "gaussJordan",
+                "comment": " Function composition of Gaussian Elimination and Jordan Elimination\n",
+                "type": "RowVector.VectorSpace a -> Matrix.Matrix a -> Matrix.Matrix a"
+            },
+            {
+                "name": "gaussianReduce",
+                "comment": " Gaussian Elimination\n",
+                "type": "RowVector.VectorSpace a -> Matrix.Matrix a -> Matrix.Matrix a"
+            },
+            {
+                "name": "getAt",
+                "comment": " Get the value in a matrix at the specified row and column\n",
+                "type": "( Basics.Int, Basics.Int ) -> Matrix.Matrix a -> Maybe.Maybe a"
+            },
+            {
+                "name": "getDiagonal",
+                "comment": " Get the diagonal of a Matrix\n",
+                "type": "Matrix.Matrix a -> Maybe.Maybe (List.List a)"
+            },
+            {
+                "name": "getDiagonalProduct",
+                "comment": " Get the Product of the diagonal of a Matrix\n",
+                "type": "Field.Field a -> Matrix.Matrix a -> Maybe.Maybe a"
+            },
+            {
+                "name": "identity",
+                "comment": " Create Identity Matrix with n dimension\n",
+                "type": "Field.Field a -> Basics.Int -> Matrix.Matrix a"
+            },
+            {
+                "name": "isOneToOne",
+                "comment": " Determine whether a matirx is one to one\n",
+                "type": "RowVector.InnerProductSpace a -> Matrix.Matrix a -> Result.Result String.String (Matrix.Matrix a)"
+            },
+            {
+                "name": "isOnto",
+                "comment": " Determine whether a matirx is onto\n",
+                "type": "RowVector.InnerProductSpace a -> Matrix.Matrix a -> Result.Result String.String (Matrix.Matrix a)"
+            },
+            {
+                "name": "jordanReduce",
+                "comment": " Internal function for Jordan Elimination\n",
+                "type": "RowVector.VectorSpace a -> Matrix.Matrix a -> Matrix.Matrix a"
+            },
+            {
+                "name": "leftNullSpace",
+                "comment": " Calculate the left nullspace of a Matrix\n",
+                "type": "Typeclasses.Classes.Equality.Equality a -> RowVector.InnerProductSpace a -> Matrix.Matrix a -> Matrix.Consistancy a"
+            },
+            {
+                "name": "mDimension",
+                "comment": " Number of rows in Matrix\n",
+                "type": "Matrix.Matrix a -> Basics.Int"
+            },
+            {
+                "name": "map",
+                "comment": " Map over a Matrix\n",
+                "type": "(a -> b) -> Matrix.Matrix a -> Matrix.Matrix b"
+            },
+            {
+                "name": "map2",
+                "comment": " Lift a binary function to work on Matrix\n",
+                "type": "(a -> b -> c) -> Matrix.Matrix a -> Matrix.Matrix b -> Matrix.Matrix c"
+            },
+            {
+                "name": "multiply",
+                "comment": " Matrix Matrix multiplication\n",
+                "type": "RowVector.InnerProductSpace a -> Matrix.Matrix a -> Matrix.Matrix a -> Matrix.Matrix a"
+            },
+            {
+                "name": "multiplyIfCan",
+                "comment": " Matrix Matrix multiplication\n",
+                "type": "RowVector.InnerProductSpace a -> Matrix.Matrix a -> Matrix.Matrix a -> Result.Result String.String (Matrix.Matrix a)"
+            },
+            {
+                "name": "multiplyMatrixVector",
+                "comment": " Multiply a Vector by a Matrix\n",
+                "type": "RowVector.InnerProductSpace a -> Matrix.Matrix a -> ColumnVector.ColumnVector a -> Result.Result String.String (ColumnVector.ColumnVector a)"
+            },
+            {
+                "name": "nDimension",
+                "comment": " Number of columns in Matrix\n",
+                "type": "Matrix.Matrix a -> Basics.Int"
+            },
+            {
+                "name": "nullSpace",
+                "comment": " Calculate the null space of a matrix\n",
+                "type": "Typeclasses.Classes.Equality.Equality a -> RowVector.InnerProductSpace a -> Matrix.Matrix a -> Matrix.Consistancy a"
+            },
+            {
+                "name": "printComplexMatrix",
+                "comment": " Print a Complex matrix to a string\n",
+                "type": "Matrix.Matrix (ComplexNumbers.ComplexNumber Basics.Float) -> String.String"
+            },
+            {
+                "name": "printRealMatrix",
+                "comment": " Print a Real matrix to a string\n",
+                "type": "Matrix.Matrix (Real.Real Basics.Float) -> String.String"
+            },
+            {
+                "name": "pure",
+                "comment": " Applicative pure for Matrix\n",
+                "type": "a -> Matrix.Matrix a"
+            },
+            {
+                "name": "rank",
+                "comment": " Calculate the rank of a Matrix\n",
+                "type": "RowVector.InnerProductSpace a -> Matrix.Matrix a -> Basics.Int"
+            },
+            {
+                "name": "readComplexMatrix",
+                "comment": " Try to read a string into a Matrix\n",
+                "type": "String.String -> Result.Result (List.List Parser.DeadEnd) (Matrix.Matrix (ComplexNumbers.ComplexNumber Basics.Float))"
+            },
+            {
+                "name": "readRealMatrix",
+                "comment": " Try to read a string into a Matrix\n",
+                "type": "String.String -> Result.Result (List.List Parser.DeadEnd) (Matrix.Matrix (Real.Real Basics.Float))"
+            },
+            {
+                "name": "realAdditionAbelianGroup",
+                "comment": " Abelian Group instance for Matrix under the addition operation with real values.\n",
+                "type": "AbelianGroup.AbelianGroup (Matrix.Matrix (Real.Real Basics.Float))"
+            },
+            {
+                "name": "realAdditionCommutativeMonoid",
+                "comment": " Commutative Monoid instance for Matrix under the addition operation with real values.\n",
+                "type": "CommutativeMonoid.CommutativeMonoid (Matrix.Matrix (Real.Real Basics.Float))"
+            },
+            {
+                "name": "realAdditionCommutativeSemigroup",
+                "comment": " Commutative Semigroup instance for Matrix under the addition operation with real values.\n",
+                "type": "CommutativeSemigroup.CommutativeSemigroup (Matrix.Matrix (Real.Real Basics.Float))"
+            },
+            {
+                "name": "realAdditionGroup",
+                "comment": " Group instance for Matrix under the addition operation with real values.\n",
+                "type": "Group.Group (Matrix.Matrix (Real.Real Basics.Float))"
+            },
+            {
+                "name": "realAdditionSemigroup",
+                "comment": " Semigroup instance for Matrix under the addition operation with real values.\n",
+                "type": "Semigroup.Semigroup (Matrix.Matrix (Real.Real Basics.Float))"
+            },
+            {
+                "name": "realMatrixAlgebra",
+                "comment": " Real Numbered Matrix Algebra\n",
+                "type": "Matrix.MatrixAlgebra (Real.Real Basics.Float)"
+            },
+            {
+                "name": "realMatrixSpace",
+                "comment": " Real Numbered Vector Space for Matrix\n",
+                "type": "Matrix.MatrixSpace (Real.Real Basics.Float)"
+            },
+            {
+                "name": "scalarMultiplication",
+                "comment": " Scalar multiplication over a Matrix\n",
+                "type": "Field.Field a -> a -> Matrix.Matrix a -> Matrix.Matrix a"
+            },
+            {
+                "name": "setAt",
+                "comment": " Set the value in a Matrix at the specified row and column\n",
+                "type": "( Basics.Int, Basics.Int ) -> a -> Matrix.Matrix a -> Matrix.Matrix a"
+            },
+            {
+                "name": "solve",
+                "comment": " Solve a system of linear equations using Gauss-Jordan elimination with explict column vector of constants\n",
+                "type": "Typeclasses.Classes.Equality.Equality a -> RowVector.InnerProductSpace a -> Matrix.Matrix a -> ColumnVector.ColumnVector a -> Matrix.Consistancy a"
+            },
+            {
+                "name": "subMatrix",
+                "comment": " Calculate the submatrix given a starting and ending row and column index\n",
+                "type": "Basics.Int -> Basics.Int -> Basics.Int -> Basics.Int -> Matrix.Matrix a -> Matrix.Matrix a"
+            },
+            {
+                "name": "subtract",
+                "comment": " Subtract two Matrices\n",
+                "type": "Field.Field a -> Matrix.Matrix a -> Matrix.Matrix a -> Matrix.Matrix a"
+            },
+            {
+                "name": "tensorProduct",
+                "comment": " Calculate the tensor product of two Matricies\n",
+                "type": "Field.Field a -> Matrix.Matrix a -> Matrix.Matrix a -> Matrix.Matrix a"
+            },
+            {
+                "name": "transpose",
+                "comment": " Transpose a Matrix\n",
+                "type": "Matrix.Matrix a -> Matrix.Matrix a"
+            },
+            {
+                "name": "upperTriangle",
+                "comment": " Put a matrix into Upper Triangular Form\n",
+                "type": "RowVector.VectorSpace a -> Matrix.Matrix a -> Matrix.Matrix a"
+            },
+            {
+                "name": "zeros",
+                "comment": " Create Matrix with m x n dimension filled with zeros\n",
+                "type": "Field.Field a -> Basics.Int -> Basics.Int -> Matrix.Matrix a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "NormalMatrix",
+        "comment": " A module for Normal Matrix\n\n\n# Types\n\n@docs NormalMatrix\n\n\n# Values\n\n@docs empty\n\n\n# Constructors\n\n@docs createMatrixFromColumnVectors\n@docs identity\n\n\n# Matrix Predicates and Properties\n\n@docs dimension\n@docs isNormal\n@docs getDiagonalProduct\n@docs subMatrix\n@docs transpose\n\n\n# Unitary Operations\n\n@docs scalarMultiplication\n@docs adjoint\n\n\n# Binary Operations\n\n@docs add\n@docs multiply\n@docs multiplyIfCan\n@docs multiplyMatrixVector\n@docs subtract\n\n\n# Manipulation\n\n@docs getAt\n@docs setAt\n\n\n# Monoid\n\n@docs appendHorizontal\n\n\n# Equality\n\n@docs equal\n@docs equalImplementation\n\n\n# Matrix Forms\n\n@docs gaussJordan\n@docs upperTriangle\n\n",
+        "unions": [
+            {
+                "name": "NormalMatrix",
+                "comment": " Symmetric Matrix type\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "NormalMatrix",
+                        [
+                            "SquareMatrix.SquareMatrix a"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "add",
+                "comment": " Add two NormalMatrix together\n",
+                "type": "Field.Field a -> NormalMatrix.NormalMatrix a -> NormalMatrix.NormalMatrix a -> NormalMatrix.NormalMatrix a"
+            },
+            {
+                "name": "adjoint",
+                "comment": " Perform the adjoint operation on a Complex Numbered Matrix\n",
+                "type": "NormalMatrix.NormalMatrix (ComplexNumbers.ComplexNumber number) -> NormalMatrix.NormalMatrix (ComplexNumbers.ComplexNumber number)"
+            },
+            {
+                "name": "appendHorizontal",
+                "comment": " Append Matricies together horizontally\n",
+                "type": "NormalMatrix.NormalMatrix a -> NormalMatrix.NormalMatrix a -> NormalMatrix.NormalMatrix a"
+            },
+            {
+                "name": "createMatrixFromColumnVectors",
+                "comment": " Create a Matrix from a list of Column Vectors\n",
+                "type": "List.List (ColumnVector.ColumnVector a) -> NormalMatrix.NormalMatrix a"
+            },
+            {
+                "name": "dimension",
+                "comment": " Dimension of the matrix\n",
+                "type": "NormalMatrix.NormalMatrix a -> Basics.Int"
+            },
+            {
+                "name": "empty",
+                "comment": " Monoid empty for NormalMatrix\n",
+                "type": "NormalMatrix.NormalMatrix a"
+            },
+            {
+                "name": "equal",
+                "comment": " Compare two matricies using comparator\n",
+                "type": "(a -> a -> Basics.Bool) -> Typeclasses.Classes.Equality.Equality (NormalMatrix.NormalMatrix a)"
+            },
+            {
+                "name": "equalImplementation",
+                "comment": " Compare two Matrices for equality\n",
+                "type": "(a -> a -> Basics.Bool) -> NormalMatrix.NormalMatrix a -> NormalMatrix.NormalMatrix a -> Basics.Bool"
+            },
+            {
+                "name": "gaussJordan",
+                "comment": " Function composition of Gaussian Elimination and Jordan Elimination\n",
+                "type": "RowVector.VectorSpace a -> NormalMatrix.NormalMatrix a -> NormalMatrix.NormalMatrix a"
+            },
+            {
+                "name": "getAt",
+                "comment": " Get the value in a matrix at the specified row and column\n",
+                "type": "( Basics.Int, Basics.Int ) -> NormalMatrix.NormalMatrix a -> Maybe.Maybe a"
+            },
+            {
+                "name": "getDiagonalProduct",
+                "comment": " Get the Product of the diagonal of a Matrix\n",
+                "type": "Field.Field a -> NormalMatrix.NormalMatrix a -> Maybe.Maybe a"
+            },
+            {
+                "name": "identity",
+                "comment": " Create Square Identity Matrix with n dimension\n",
+                "type": "Field.Field a -> Basics.Int -> NormalMatrix.NormalMatrix a"
+            },
+            {
+                "name": "isNormal",
+                "comment": " Predicate to determine if Matrix is normal\n",
+                "type": "RowVector.InnerProductSpace a -> SquareMatrix.SquareMatrix a -> Result.Result String.String (SquareMatrix.SquareMatrix a)"
+            },
+            {
+                "name": "multiply",
+                "comment": " Square Matrix Square Matrix multiplication\n",
+                "type": "RowVector.InnerProductSpace a -> NormalMatrix.NormalMatrix a -> NormalMatrix.NormalMatrix a -> NormalMatrix.NormalMatrix a"
+            },
+            {
+                "name": "multiplyIfCan",
+                "comment": " Square Matrix Square Matrix multiplication\n",
+                "type": "RowVector.InnerProductSpace a -> NormalMatrix.NormalMatrix a -> NormalMatrix.NormalMatrix a -> Result.Result String.String (NormalMatrix.NormalMatrix a)"
+            },
+            {
+                "name": "multiplyMatrixVector",
+                "comment": " Multiply a ColumnVector by a Matrix\n",
+                "type": "RowVector.InnerProductSpace a -> NormalMatrix.NormalMatrix a -> ColumnVector.ColumnVector a -> Result.Result String.String (ColumnVector.ColumnVector a)"
+            },
+            {
+                "name": "scalarMultiplication",
+                "comment": " Scalar multiplication over a Square Matrix\n",
+                "type": "Field.Field a -> a -> NormalMatrix.NormalMatrix a -> NormalMatrix.NormalMatrix a"
+            },
+            {
+                "name": "setAt",
+                "comment": " Set the value in a Normal Matrix at the specified row and column\n",
+                "type": "( Basics.Int, Basics.Int ) -> a -> NormalMatrix.NormalMatrix a -> NormalMatrix.NormalMatrix a"
+            },
+            {
+                "name": "subMatrix",
+                "comment": " Calculate the submatrix given a starting and ending row and column index\n",
+                "type": "Basics.Int -> Basics.Int -> Basics.Int -> Basics.Int -> NormalMatrix.NormalMatrix a -> NormalMatrix.NormalMatrix a"
+            },
+            {
+                "name": "subtract",
+                "comment": " Subtract two Square Matrices\n",
+                "type": "Field.Field a -> NormalMatrix.NormalMatrix a -> NormalMatrix.NormalMatrix a -> NormalMatrix.NormalMatrix a"
+            },
+            {
+                "name": "transpose",
+                "comment": " Transpose a Matrix\n",
+                "type": "NormalMatrix.NormalMatrix a -> NormalMatrix.NormalMatrix a"
+            },
+            {
+                "name": "upperTriangle",
+                "comment": " Put a matrix into Upper Triangular Form\n",
+                "type": "RowVector.VectorSpace a -> NormalMatrix.NormalMatrix a -> NormalMatrix.NormalMatrix a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "RowVector",
+        "comment": " A module for Row Vector\n\n\n# Types\n\n@docs RowVector\n@docs VectorSpace\n@docs InnerProductSpace\n\n\n# Unitary Operations\n\n@docs scalarMultiplication\n@docs sum\n\n\n# RowVector Predicates and Properties\n\n@docs dimension\n@docs all\n@docs count\n\n\n# SemiGroup, Monoid, Group, Ring, Field instances\n\n@docs realVectorSpace\n@docs complexVectorSpace\n@docs realInnerProductSpace\n@docs complexInnerProductSpace\n\n\n# Monoid, Functor, Applicative, Monad, Foldable\n\n@docs empty\n@docs append\n@docs pure\n@docs map\n@docs map2\n@docs foldl\n\n\n# Manipulation\n\n@docs findIndex\n@docs getAt\n@docs setAt\n@docs parseRowVector\n@docs printRealRowVectorList\n@docs printComplexRowVectorList\n\n",
+        "unions": [
+            {
+                "name": "RowVector",
+                "comment": " Row Vector\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "RowVector",
+                        [
+                            "Vector.Vector a"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "InnerProductSpace",
+                "comment": " Type to represent an Inner Product Space\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ vectorSpace : RowVector.VectorSpace a, innerProduct : RowVector.RowVector a -> RowVector.RowVector a -> a, length : RowVector.RowVector a -> Real.Real Basics.Float, distance : RowVector.RowVector a -> RowVector.RowVector a -> Real.Real Basics.Float }"
+            },
+            {
+                "name": "VectorSpace",
+                "comment": " Type to represent a Vector Space\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ abelianGroup : AbelianGroup.AbelianGroup (RowVector.RowVector a), vectorScalarMultiplication : a -> RowVector.RowVector a -> RowVector.RowVector a, field : Field.Field a }"
+            }
+        ],
+        "values": [
+            {
+                "name": "all",
+                "comment": " Predicate to determine if all values in the RowVector satisfy the given predicate\n",
+                "type": "(a -> Basics.Bool) -> RowVector.RowVector a -> Basics.Bool"
+            },
+            {
+                "name": "append",
+                "comment": " Append Vectors together\n",
+                "type": "RowVector.RowVector a -> RowVector.RowVector a -> RowVector.RowVector a"
+            },
+            {
+                "name": "complexInnerProductSpace",
+                "comment": " Complex Numbered Inner Product Space\n",
+                "type": "RowVector.InnerProductSpace (ComplexNumbers.ComplexNumber Basics.Float)"
+            },
+            {
+                "name": "complexVectorSpace",
+                "comment": " Complex Numbered Vector Space\n",
+                "type": "RowVector.VectorSpace (ComplexNumbers.ComplexNumber Basics.Float)"
+            },
+            {
+                "name": "count",
+                "comment": " Count the number of elements in a RowVector that satisfy the given condition\n",
+                "type": "(a -> Basics.Bool) -> RowVector.RowVector a -> Basics.Int"
+            },
+            {
+                "name": "dimension",
+                "comment": " Count of number of elements in a vector\n",
+                "type": "RowVector.RowVector a -> Basics.Int"
+            },
+            {
+                "name": "empty",
+                "comment": " Monoid empty for RowVector\n",
+                "type": "RowVector.RowVector a"
+            },
+            {
+                "name": "findIndex",
+                "comment": " Find index of a value in a Vector\n",
+                "type": "(a -> Basics.Bool) -> RowVector.RowVector a -> Maybe.Maybe Basics.Int"
+            },
+            {
+                "name": "foldl",
+                "comment": " Left fold over a RowVector\n",
+                "type": "(a -> b -> b) -> b -> RowVector.RowVector a -> b"
+            },
+            {
+                "name": "getAt",
+                "comment": " Get the value in a Vector at the specified index\n",
+                "type": "Basics.Int -> RowVector.RowVector a -> Maybe.Maybe a"
+            },
+            {
+                "name": "map",
+                "comment": " map over a RowVector\n",
+                "type": "(a -> b) -> RowVector.RowVector a -> RowVector.RowVector b"
+            },
+            {
+                "name": "map2",
+                "comment": " map2 over a RowVector\n",
+                "type": "(a -> b -> c) -> RowVector.RowVector a -> RowVector.RowVector b -> RowVector.RowVector c"
+            },
+            {
+                "name": "parseRowVector",
+                "comment": " Parse a RowVector\n",
+                "type": "Parser.Parser a -> Parser.Parser (RowVector.RowVector a)"
+            },
+            {
+                "name": "printComplexRowVectorList",
+                "comment": " Print a Complex RowVector List to a string\n",
+                "type": "List.List (RowVector.RowVector (ComplexNumbers.ComplexNumber Basics.Float)) -> String.String"
+            },
+            {
+                "name": "printRealRowVectorList",
+                "comment": " Print a Real RowVector List to a string\n",
+                "type": "List.List (RowVector.RowVector (Real.Real Basics.Float)) -> String.String"
+            },
+            {
+                "name": "pure",
+                "comment": " Place a value in minimal RowVector context\n",
+                "type": "a -> RowVector.RowVector a"
+            },
+            {
+                "name": "realInnerProductSpace",
+                "comment": " Real Numbered Inner Product Space\n",
+                "type": "RowVector.InnerProductSpace (Real.Real Basics.Float)"
+            },
+            {
+                "name": "realVectorSpace",
+                "comment": " Real Numbered Vector Space\n",
+                "type": "RowVector.VectorSpace (Real.Real Basics.Float)"
+            },
+            {
+                "name": "scalarMultiplication",
+                "comment": " Scalar multiplication over a RowVector\n",
+                "type": "Field.Field a -> a -> RowVector.RowVector a -> RowVector.RowVector a"
+            },
+            {
+                "name": "setAt",
+                "comment": " Set the value in a Vector at the specified index\n",
+                "type": "Basics.Int -> a -> RowVector.RowVector a -> RowVector.RowVector a"
+            },
+            {
+                "name": "sum",
+                "comment": " Calculate the sum of a RowVector\n",
+                "type": "Monoid.Monoid a -> RowVector.RowVector a -> a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "SquareMatrix",
+        "comment": " A module for Square Matrix\n\n\n# Types\n\n@docs SquareMatrix\n@docs InnerProductSpace\n\n\n# Values\n\n@docs zeroSquareMatrix\n@docs realMatrixInnerProductSpace\n@docs complexMatrixInnerProductSpace\n@docs empty\n\n\n# Constructors\n\n@docs createMatrixFromColumnVectors\n@docs identity\n\n\n# Matrix Predicates and Properties\n\n@docs dimension\n@docs isSquare\n@docs normReal\n@docs normComplex\n@docs distanceReal\n@docs isRightStochastic\n@docs isLeftStochastic\n@docs getDiagonalProduct\n@docs subMatrix\n@docs transpose\n@docs all\n\n\n# Unitary Operations\n\n@docs scalarMultiplication\n@docs adjoint\n@docs map\n\n\n# Binary Operations\n\n@docs dotProduct\n@docs multiply\n@docs multiplyIfCan\n@docs multiplyMatrixVector\n@docs add\n@docs subtract\n\n\n# Manipulation\n\n@docs getAt\n@docs setAt\n\n\n# Monoid\n\n@docs appendHorizontal\n\n\n# Equality\n\n@docs equal\n@docs equalImplementation\n\n\n# Matrix Forms\n\n@docs gaussJordan\n@docs upperTriangle\n\n",
+        "unions": [
+            {
+                "name": "SquareMatrix",
+                "comment": " Square Matrix type\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "SquareMatrix",
+                        [
+                            "Matrix.Matrix a"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "InnerProductSpace",
+                "comment": " Type to represent an Inner Product Space\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ matrixSpace : Matrix.MatrixSpace a, innerProduct : SquareMatrix.SquareMatrix a -> SquareMatrix.SquareMatrix a -> Result.Result String.String a, norm : SquareMatrix.SquareMatrix a -> Result.Result String.String (Real.Real Basics.Float), distance : SquareMatrix.SquareMatrix a -> SquareMatrix.SquareMatrix a -> Result.Result String.String (Real.Real Basics.Float) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "add",
+                "comment": " Add two Square Matrices together\n",
+                "type": "Field.Field a -> SquareMatrix.SquareMatrix a -> SquareMatrix.SquareMatrix a -> SquareMatrix.SquareMatrix a"
+            },
+            {
+                "name": "adjoint",
+                "comment": " Perform the adjoint operation on a Complex Numbered Matrix\n",
+                "type": "SquareMatrix.SquareMatrix (ComplexNumbers.ComplexNumber number) -> SquareMatrix.SquareMatrix (ComplexNumbers.ComplexNumber number)"
+            },
+            {
+                "name": "all",
+                "comment": " Predicate to determine if all values in the matric satisfy the given predicate\n",
+                "type": "(a -> Basics.Bool) -> SquareMatrix.SquareMatrix a -> Basics.Bool"
+            },
+            {
+                "name": "appendHorizontal",
+                "comment": " Append Matricies together horizontally\n",
+                "type": "SquareMatrix.SquareMatrix a -> SquareMatrix.SquareMatrix a -> SquareMatrix.SquareMatrix a"
+            },
+            {
+                "name": "complexMatrixInnerProductSpace",
+                "comment": " Complex Numbered Inner Product Space for Matrix\n",
+                "type": "SquareMatrix.InnerProductSpace (ComplexNumbers.ComplexNumber Basics.Float)"
+            },
+            {
+                "name": "createMatrixFromColumnVectors",
+                "comment": " Create a Matrix from a list of Column Vectors\n",
+                "type": "List.List (ColumnVector.ColumnVector a) -> SquareMatrix.SquareMatrix a"
+            },
+            {
+                "name": "dimension",
+                "comment": " Dimension of the matrix\n",
+                "type": "SquareMatrix.SquareMatrix a -> Basics.Int"
+            },
+            {
+                "name": "distanceReal",
+                "comment": " Calculate distance between two vectors\n",
+                "type": "SquareMatrix.SquareMatrix (Real.Real Basics.Float) -> SquareMatrix.SquareMatrix (Real.Real Basics.Float) -> Result.Result String.String (Real.Real Basics.Float)"
+            },
+            {
+                "name": "dotProduct",
+                "comment": " Calculate the dot product of two Matricies\n",
+                "type": "RowVector.InnerProductSpace a -> SquareMatrix.SquareMatrix a -> SquareMatrix.SquareMatrix a -> Result.Result String.String a"
+            },
+            {
+                "name": "empty",
+                "comment": " Monoid empty for SquareMatrix\n",
+                "type": "SquareMatrix.SquareMatrix a"
+            },
+            {
+                "name": "equal",
+                "comment": " Compare two matricies using comparator\n",
+                "type": "(a -> a -> Basics.Bool) -> Typeclasses.Classes.Equality.Equality (SquareMatrix.SquareMatrix a)"
+            },
+            {
+                "name": "equalImplementation",
+                "comment": " Compare two Matrices for equality\n",
+                "type": "(a -> a -> Basics.Bool) -> SquareMatrix.SquareMatrix a -> SquareMatrix.SquareMatrix a -> Basics.Bool"
+            },
+            {
+                "name": "gaussJordan",
+                "comment": " Function composition of Gaussian Elimination and Jordan Elimination\n",
+                "type": "RowVector.VectorSpace a -> SquareMatrix.SquareMatrix a -> SquareMatrix.SquareMatrix a"
+            },
+            {
+                "name": "getAt",
+                "comment": " Get the value in a matrix at the specified row and column\n",
+                "type": "( Basics.Int, Basics.Int ) -> SquareMatrix.SquareMatrix a -> Maybe.Maybe a"
+            },
+            {
+                "name": "getDiagonalProduct",
+                "comment": " Get the Product of the diagonal of a Matrix\n",
+                "type": "Field.Field a -> SquareMatrix.SquareMatrix a -> Maybe.Maybe a"
+            },
+            {
+                "name": "identity",
+                "comment": " Create Square Identity Matrix with n dimension\n",
+                "type": "Field.Field a -> Basics.Int -> SquareMatrix.SquareMatrix a"
+            },
+            {
+                "name": "isLeftStochastic",
+                "comment": " Predicate if matrix is left stochastic\n",
+                "type": "SquareMatrix.SquareMatrix (Real.Real Basics.Float) -> Result.Result String.String (SquareMatrix.SquareMatrix (Real.Real Basics.Float))"
+            },
+            {
+                "name": "isRightStochastic",
+                "comment": " Predicate if matrix is right stochastic\n",
+                "type": "SquareMatrix.SquareMatrix (Real.Real Basics.Float) -> Result.Result String.String (SquareMatrix.SquareMatrix (Real.Real Basics.Float))"
+            },
+            {
+                "name": "isSquare",
+                "comment": " Determine whether a matirx is square\n",
+                "type": "Matrix.Matrix a -> Result.Result String.String (Matrix.Matrix a)"
+            },
+            {
+                "name": "map",
+                "comment": " Map over a Matrix\n",
+                "type": "(a -> b) -> SquareMatrix.SquareMatrix a -> SquareMatrix.SquareMatrix b"
+            },
+            {
+                "name": "multiply",
+                "comment": " Square Matrix Square Matrix multiplication\n",
+                "type": "RowVector.InnerProductSpace a -> SquareMatrix.SquareMatrix a -> SquareMatrix.SquareMatrix a -> SquareMatrix.SquareMatrix a"
+            },
+            {
+                "name": "multiplyIfCan",
+                "comment": " Square Matrix Square Matrix multiplication\n",
+                "type": "RowVector.InnerProductSpace a -> SquareMatrix.SquareMatrix a -> SquareMatrix.SquareMatrix a -> Result.Result String.String (SquareMatrix.SquareMatrix a)"
+            },
+            {
+                "name": "multiplyMatrixVector",
+                "comment": " Multiply a ColumnVector by a Matrix\n",
+                "type": "RowVector.InnerProductSpace a -> SquareMatrix.SquareMatrix a -> ColumnVector.ColumnVector a -> Result.Result String.String (ColumnVector.ColumnVector a)"
+            },
+            {
+                "name": "normComplex",
+                "comment": " Calculate the norm of a Matrix\n",
+                "type": "SquareMatrix.SquareMatrix (ComplexNumbers.ComplexNumber Basics.Float) -> Result.Result String.String (Real.Real Basics.Float)"
+            },
+            {
+                "name": "normReal",
+                "comment": " Calculate the norm of a Matrix\n",
+                "type": "SquareMatrix.SquareMatrix (Real.Real Basics.Float) -> Result.Result String.String (Real.Real Basics.Float)"
+            },
+            {
+                "name": "realMatrixInnerProductSpace",
+                "comment": " Real Numbered Inner Product Space for Matrix\n",
+                "type": "SquareMatrix.InnerProductSpace (Real.Real Basics.Float)"
+            },
+            {
+                "name": "scalarMultiplication",
+                "comment": " Scalar multiplication over a Square Matrix\n",
+                "type": "Field.Field a -> a -> SquareMatrix.SquareMatrix a -> SquareMatrix.SquareMatrix a"
+            },
+            {
+                "name": "setAt",
+                "comment": " Set the value in a Square Matrix at the specified row and column\n",
+                "type": "( Basics.Int, Basics.Int ) -> a -> SquareMatrix.SquareMatrix a -> SquareMatrix.SquareMatrix a"
+            },
+            {
+                "name": "subMatrix",
+                "comment": " Calculate the submatrix given a starting and ending row and column index\n",
+                "type": "Basics.Int -> Basics.Int -> Basics.Int -> Basics.Int -> SquareMatrix.SquareMatrix a -> SquareMatrix.SquareMatrix a"
+            },
+            {
+                "name": "subtract",
+                "comment": " Subtract two Square Matrices\n",
+                "type": "Field.Field a -> SquareMatrix.SquareMatrix a -> SquareMatrix.SquareMatrix a -> SquareMatrix.SquareMatrix a"
+            },
+            {
+                "name": "transpose",
+                "comment": " Transpose a Matrix\n",
+                "type": "SquareMatrix.SquareMatrix a -> SquareMatrix.SquareMatrix a"
+            },
+            {
+                "name": "upperTriangle",
+                "comment": " Put a matrix into Upper Triangular Form\n",
+                "type": "RowVector.VectorSpace a -> SquareMatrix.SquareMatrix a -> SquareMatrix.SquareMatrix a"
+            },
+            {
+                "name": "zeroSquareMatrix",
+                "comment": " Create square Matrix with n dimension filled with zeros\n",
+                "type": "Field.Field a -> Basics.Int -> SquareMatrix.SquareMatrix a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "SymmetricMatrix",
+        "comment": " A module for Symmetric Matrix\n\n\n# Types\n\n@docs SymmetricMatrix\n\n\n# Constructors\n\n@docs identity\n\n\n# Matrix Predicates and Properties\n\n@docs dimension\n@docs isSymmetric\n\n\n# Unitary Operations\n\n@docs scalarMultiplication\n@docs adjoint\n\n\n# Binary Operations\n\n@docs multiplyIfCan\n@docs multiplyMatrixVector\n@docs subtract\n\n\n# Manipulation\n\n@docs getAt\n@docs setAt\n\n",
+        "unions": [
+            {
+                "name": "SymmetricMatrix",
+                "comment": " Symmetric Matrix type\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "SymmetricMatrix",
+                        [
+                            "NormalMatrix.NormalMatrix a"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "adjoint",
+                "comment": " Perform the adjoint operation on a Complex Numbered Matrix\n",
+                "type": "SymmetricMatrix.SymmetricMatrix (ComplexNumbers.ComplexNumber number) -> SymmetricMatrix.SymmetricMatrix (ComplexNumbers.ComplexNumber number)"
+            },
+            {
+                "name": "dimension",
+                "comment": " Dimension of the matrix\n",
+                "type": "SymmetricMatrix.SymmetricMatrix a -> Basics.Int"
+            },
+            {
+                "name": "getAt",
+                "comment": " Get the value in a matrix at the specified row and column\n",
+                "type": "( Basics.Int, Basics.Int ) -> SymmetricMatrix.SymmetricMatrix a -> Maybe.Maybe a"
+            },
+            {
+                "name": "identity",
+                "comment": " Create Square Identity Matrix with n dimension\n",
+                "type": "Field.Field a -> Basics.Int -> SymmetricMatrix.SymmetricMatrix a"
+            },
+            {
+                "name": "isSymmetric",
+                "comment": " Predicate to determine if Matrix is symmetric\n",
+                "type": "NormalMatrix.NormalMatrix a -> Result.Result String.String (NormalMatrix.NormalMatrix a)"
+            },
+            {
+                "name": "multiplyIfCan",
+                "comment": " Square Matrix Square Matrix multiplication\n",
+                "type": "RowVector.InnerProductSpace a -> SymmetricMatrix.SymmetricMatrix a -> SymmetricMatrix.SymmetricMatrix a -> Result.Result String.String (SymmetricMatrix.SymmetricMatrix a)"
+            },
+            {
+                "name": "multiplyMatrixVector",
+                "comment": " Multiply a ColumnVector by a Matrix\n",
+                "type": "RowVector.InnerProductSpace a -> SymmetricMatrix.SymmetricMatrix a -> ColumnVector.ColumnVector a -> Result.Result String.String (ColumnVector.ColumnVector a)"
+            },
+            {
+                "name": "scalarMultiplication",
+                "comment": " Scalar multiplication over a Square Matrix\n",
+                "type": "Field.Field a -> a -> SymmetricMatrix.SymmetricMatrix a -> SymmetricMatrix.SymmetricMatrix a"
+            },
+            {
+                "name": "setAt",
+                "comment": " Set the value in a Symmetric Matrix at the specified row and column\n",
+                "type": "( Basics.Int, Basics.Int ) -> a -> SymmetricMatrix.SymmetricMatrix a -> SymmetricMatrix.SymmetricMatrix a"
+            },
+            {
+                "name": "subtract",
+                "comment": " Subtract two Square Matrices\n",
+                "type": "Field.Field a -> SymmetricMatrix.SymmetricMatrix a -> SymmetricMatrix.SymmetricMatrix a -> SymmetricMatrix.SymmetricMatrix a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "UnitaryMatrix",
+        "comment": " A module for Unitary Matrix\n\n\n# Types\n\n@docs UnitaryMatrix\n\n\n# Values\n\n@docs empty\n\n\n# Constructors\n\n@docs identity\n\n\n# Matrix Predicates and Properties\n\n@docs isUnitary\n@docs dimension\n\n\n# Unitary Operations\n\n@docs scalarMultiplication\n\n\n# Binary Operations\n\n@docs multiply\n@docs multiplyIfCan\n@docs multiplyMatrixVector\n\n\n# Manipulation\n\n@docs getAt\n@docs setAt\n\n\n# Equality\n\n@docs equal\n\n",
+        "unions": [
+            {
+                "name": "UnitaryMatrix",
+                "comment": " Unitary Matrix type\n",
+                "args": [
+                    "number"
+                ],
+                "cases": [
+                    [
+                        "UnitaryMatrix",
+                        [
+                            "InvertableMatrix.InvertableMatrix (ComplexNumbers.ComplexNumber number)"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "dimension",
+                "comment": " Dimension of the matrix\n",
+                "type": "UnitaryMatrix.UnitaryMatrix number -> Basics.Int"
+            },
+            {
+                "name": "empty",
+                "comment": " Monoid empty for UnitaryMatrix\n",
+                "type": "UnitaryMatrix.UnitaryMatrix Basics.Float"
+            },
+            {
+                "name": "equal",
+                "comment": " Compare two matricies using comparator\n",
+                "type": "Typeclasses.Classes.Equality.Equality (UnitaryMatrix.UnitaryMatrix Basics.Float)"
+            },
+            {
+                "name": "getAt",
+                "comment": " Get the value in a matrix at the specified row and column\n",
+                "type": "( Basics.Int, Basics.Int ) -> UnitaryMatrix.UnitaryMatrix number -> Maybe.Maybe (ComplexNumbers.ComplexNumber number)"
+            },
+            {
+                "name": "identity",
+                "comment": " Create Square Identity Matrix with n dimension\n",
+                "type": "Basics.Int -> UnitaryMatrix.UnitaryMatrix Basics.Float"
+            },
+            {
+                "name": "isUnitary",
+                "comment": " Determine whether a matirx is unitary\n",
+                "type": "InvertableMatrix.InvertableMatrix (ComplexNumbers.ComplexNumber Basics.Float) -> Result.Result String.String (InvertableMatrix.InvertableMatrix (ComplexNumbers.ComplexNumber Basics.Float))"
+            },
+            {
+                "name": "multiply",
+                "comment": " Square Matrix Square Matrix multiplication\n",
+                "type": "UnitaryMatrix.UnitaryMatrix Basics.Float -> UnitaryMatrix.UnitaryMatrix Basics.Float -> UnitaryMatrix.UnitaryMatrix Basics.Float"
+            },
+            {
+                "name": "multiplyIfCan",
+                "comment": " Unitary Matrix Unitary Matrix multiplication\n",
+                "type": "UnitaryMatrix.UnitaryMatrix Basics.Float -> UnitaryMatrix.UnitaryMatrix Basics.Float -> Result.Result String.String (UnitaryMatrix.UnitaryMatrix Basics.Float)"
+            },
+            {
+                "name": "multiplyMatrixVector",
+                "comment": " Multiply a ColumnVector by a Unitary Matrix\n",
+                "type": "UnitaryMatrix.UnitaryMatrix Basics.Float -> ColumnVector.ColumnVector (ComplexNumbers.ComplexNumber Basics.Float) -> Result.Result String.String (ColumnVector.ColumnVector (ComplexNumbers.ComplexNumber Basics.Float))"
+            },
+            {
+                "name": "scalarMultiplication",
+                "comment": " Scalar multiplication over an InvertableMatrix Matrix\n",
+                "type": "ComplexNumbers.ComplexNumber Basics.Float -> UnitaryMatrix.UnitaryMatrix Basics.Float -> UnitaryMatrix.UnitaryMatrix Basics.Float"
+            },
+            {
+                "name": "setAt",
+                "comment": " Set the value in a Normal Matrix at the specified row and column\n",
+                "type": "( Basics.Int, Basics.Int ) -> ComplexNumbers.ComplexNumber number -> UnitaryMatrix.UnitaryMatrix number -> UnitaryMatrix.UnitaryMatrix number"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Vector",
+        "comment": " A module for Vector\n\n\n# Types\n\n@docs Vector\n\n",
+        "unions": [
+            {
+                "name": "Vector",
+                "comment": " Vector type\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Vector",
+                        [
+                            "List.List a"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [],
+        "binops": []
+    }
+]

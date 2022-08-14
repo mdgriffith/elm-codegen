@@ -1,0 +1,28 @@
+[
+    {
+        "name": "MogeeFont",
+        "comment": " This module exports a font that may be rendered with [WebGL](http://package.elm-lang.org/packages/elm-community/webgl/latest).\nCheck [the example](https://github.com/kuzminadya/mogeefont/blob/master/specimen/Main.elm).\n\n@docs Letter, text, spriteSrc\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Letter",
+                "comment": " Specifies information about the letter:\n\n  - width, height - dimensions on the texture\n  - textureX, textureY - offset on the texture\n  - x, y - coordinates in the printed text\n\n",
+                "args": [],
+                "type": "{ width : Basics.Float, height : Basics.Float, textureX : Basics.Float, textureY : Basics.Float, x : Basics.Float, y : Basics.Float }"
+            }
+        ],
+        "values": [
+            {
+                "name": "spriteSrc",
+                "comment": " A black and white sprite containing all glyphs in the base64 data uri format.\nCan be loaded just as any remote url with [Texture.load](http://package.elm-lang.org/packages/elm-community/webgl/latest/WebGL-Texture#load).\n",
+                "type": "String.String"
+            },
+            {
+                "name": "text",
+                "comment": " A function to print the text, that takes:\n\n  - addLetter - function to print a letter\n  - string - text to be printed\n\n`addLetter` can for example return two triangles for each letter,\nto construct a [WebGL](http://package.elm-lang.org/packages/elm-community/webgl/latest) mesh\n\n",
+                "type": "(MogeeFont.Letter -> List.List a) -> String.String -> List.List a"
+            }
+        ],
+        "binops": []
+    }
+]

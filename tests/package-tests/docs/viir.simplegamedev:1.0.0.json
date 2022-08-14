@@ -1,0 +1,56 @@
+[
+    {
+        "name": "Simplegamedev20190510",
+        "comment": " This library helps you get implement your video game as simple as possible.\r\n\r\n\r\n# Composing the App\r\n\r\n@docs composeSimpleGame, SimpleGame, SimpleGameComposition, KeyboardEvent\r\n\r\n\r\n# Common Helpers\r\n\r\nFollowing are generic helper functions which are not specific to one particular game.\r\n\r\n@docs listRemoveSet, listDictGet, svgRectFrom_Fill_Left_Top_Width_Height\r\n\r\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "KeyboardEvent",
+                "comment": " This type describes the keyboard events as used in the functions `updateOnKeyDown` and `updateOnKeyUp`.\r\nUse as follows:\r\n\r\n    updateOnKeyDown : KeyboardEvent -> GameState -> GameState\r\n    updateOnKeyDown =\r\n    ...\r\n\r\n",
+                "args": [],
+                "type": "Keyboard.Event.KeyboardEvent"
+            },
+            {
+                "name": "SimpleGame",
+                "comment": " This type helps you write a type annotation for the function describing the composition of your game:\r\n\r\n    game : SimpleGame GameState ()\r\n    game =\r\n    ....\r\n\r\n",
+                "args": [
+                    "appState",
+                    "eventFromHtml"
+                ],
+                "type": "Platform.Program () appState (Simplegamedev20190510.SimpleGameWithKeyboardInputAndFixedUpdateIntervalEvent eventFromHtml)"
+            },
+            {
+                "name": "SimpleGameComposition",
+                "comment": " Describes how your game app is composed of functions that describe how to handle the different kinds of events like for example, pressing or releasing key.\r\n",
+                "args": [
+                    "appState",
+                    "eventFromHtml"
+                ],
+                "type": "{ updateIntervalInMilliseconds : Basics.Int, updatePerInterval : appState -> appState, updateOnKeyDown : Keyboard.Event.KeyboardEvent -> appState -> appState, updateOnKeyUp : Keyboard.Event.KeyboardEvent -> appState -> appState, renderToHtml : appState -> Html.Html eventFromHtml, updateForEventFromHtml : eventFromHtml -> appState -> appState, initialState : appState }"
+            }
+        ],
+        "values": [
+            {
+                "name": "composeSimpleGame",
+                "comment": " Use this function to describe how your game is composed of the specific functions in your project.\r\nFollowing is an example:\r\n\r\n    game : SimpleGame GameState ()\r\n    game =\r\n        composeSimpleGame\r\n            { updateIntervalInMilliseconds = 125\r\n            , updatePerInterval = updatePerInterval\r\n            , updateOnKeyDown = updateOnKeyDown\r\n            , updateOnKeyUp = updateOnKeyUp\r\n            , renderToHtml = renderToHtml\r\n            , initialState = initialGameState\r\n            , updateForEventFromHtml = updateForEventFromHtml\r\n            }\r\n\r\n",
+                "type": "Simplegamedev20190510.SimpleGameComposition appState eventFromHtml -> Platform.Program () appState (Simplegamedev20190510.SimpleGameWithKeyboardInputAndFixedUpdateIntervalEvent eventFromHtml)"
+            },
+            {
+                "name": "listDictGet",
+                "comment": " Get the value matching the given key out of a dictionary.\r\n",
+                "type": "key -> List.List ( key, value ) -> Maybe.Maybe value"
+            },
+            {
+                "name": "listRemoveSet",
+                "comment": " Remove a set of values from a list\r\n",
+                "type": "List.List a -> List.List a -> List.List a"
+            },
+            {
+                "name": "svgRectFrom_Fill_Left_Top_Width_Height",
+                "comment": " Generate the HTML code for a SVG rectangle. This only works when placed in an SVG element.\r\nThe follow example shows how to create a red rectangle with the upper left corner at coordinates 10|10, a width of 7 and a height of 4 :\r\n\r\n    svgRectFrom_Fill_Left_Top_Width_Height \"red\" ( 10, 10 ) ( 7, 4 )\r\n\r\n",
+                "type": "String.String -> ( Basics.Int, Basics.Int ) -> ( Basics.Int, Basics.Int ) -> Svg.Svg a"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,1066 @@
+[
+    {
+        "name": "Perfimmo.Cmd.ActionToCmd",
+        "comment": " Launch action in one line\n\n@docs msgToElmCmd\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "msgToElmCmd",
+                "comment": "  Launch action in one line\n",
+                "type": "a -> Platform.Cmd.Cmd a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Perfimmo.Collection.List",
+        "comment": " Utils function on list\n\n@docs insertAt, splitIf, flatten, collectFirst, tail\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "collectFirst",
+                "comment": " collectFirst\n",
+                "type": "(a -> Maybe.Maybe b) -> List.List a -> Maybe.Maybe b"
+            },
+            {
+                "name": "flatten",
+                "comment": " flatten\n",
+                "type": "List.List (List.List b) -> List.List b"
+            },
+            {
+                "name": "insertAt",
+                "comment": " insertAt\n",
+                "type": "Basics.Int -> a -> List.List a -> List.List a"
+            },
+            {
+                "name": "splitIf",
+                "comment": " splitIf\n",
+                "type": "(a -> Basics.Bool) -> List.List a -> List.List (List.List a)"
+            },
+            {
+                "name": "tail",
+                "comment": " tail\n    an iq tail with 'Maybe List a' is so bad\n",
+                "type": "List.List a -> List.List a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Perfimmo.Collection.NonEmptyList",
+        "comment": " NonEmptyList\n\n@docs NEL, nel\n\n@docs repeat, updateAt, decodeNEL, appendList, prependList\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "NEL",
+                "comment": " NEL\n",
+                "args": [
+                    "a"
+                ],
+                "type": "List.Nonempty.Nonempty a"
+            }
+        ],
+        "values": [
+            {
+                "name": "appendList",
+                "comment": " appendList\n",
+                "type": "Perfimmo.Collection.NonEmptyList.NEL a -> List.List a -> Perfimmo.Collection.NonEmptyList.NEL a"
+            },
+            {
+                "name": "decodeNEL",
+                "comment": " decodeNEL\n",
+                "type": "Json.Decode.Decoder a -> Json.Decode.Decoder (List.Nonempty.Nonempty a)"
+            },
+            {
+                "name": "nel",
+                "comment": " nel\n",
+                "type": "a -> List.List a -> List.Nonempty.Nonempty a"
+            },
+            {
+                "name": "prependList",
+                "comment": " prependList\n",
+                "type": "List.List a -> Perfimmo.Collection.NonEmptyList.NEL a -> Perfimmo.Collection.NonEmptyList.NEL a"
+            },
+            {
+                "name": "repeat",
+                "comment": " repeat\n",
+                "type": "Basics.Int -> a -> Perfimmo.Collection.NonEmptyList.NEL a"
+            },
+            {
+                "name": "updateAt",
+                "comment": " updateAt\n",
+                "type": "Basics.Int -> (a -> a) -> List.Nonempty.Nonempty a -> List.Nonempty.Nonempty a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Perfimmo.Collection.NonEmptyListDecoder",
+        "comment": " NonEmptyListDecoder\n\n@docs  nelJsonDecoder\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "nelJsonDecoder",
+                "comment": " nelJsonDecoder\n",
+                "type": "Json.Decode.Decoder a -> Json.Decode.Decoder (Perfimmo.Collection.NonEmptyList.NEL a)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Perfimmo.Data.OfficialDataRef",
+        "comment": " liste de données utiles\n\n@docs  paysTuples, fromCodeToPays, fromPaysToCode, formeJuridiquesTuples, fromCodeToFormeJuridique, fromForceJuridiqueToCode\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "formeJuridiquesTuples",
+                "comment": " Liste INSEE des formes juridiques\n\n    https://www.insee.fr/fr/information/2028129\n\n    [ (\"0000\", \"Organisme de placement collectif en ...\")\n    , (\"1000\", \"Entrepreneur individuel\")\n    , (\"2110\", \"Indivision entre personnes physiques\")\n    ...\n    ]\n",
+                "type": "List.List ( String.String, String.String )"
+            },
+            {
+                "name": "fromCodeToFormeJuridique",
+                "comment": "\n    fromCodeToFormeJuridique \"2110\"\n        == Just \"Indivision entre personnes physiques\"\n",
+                "type": "String.String -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "fromCodeToPays",
+                "comment": "\n    fromCodeToPays \"US\" == Just \"États-Unis\"\n",
+                "type": "String.String -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "fromForceJuridiqueToCode",
+                "comment": "\n    fromForceJuridiqueToCode \"Indivision entre personnes physiques\"\n        == Just \"2110\"\n",
+                "type": "String.String -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "fromPaysToCode",
+                "comment": "\n    fromPaysToCode \"États-Unis\" == Just \"US\"\n",
+                "type": "String.String -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "paysTuples",
+                "comment": " Liste des pays en français\n\n    [ (\"AF\", \"Afghanistan\")\n    , (\"ZA\", \"Afrique du Sud\")\n    , (\"AL\", \"Albanie\")\n    , (\"DZ\", \"Algérie\")\n    ...\n    , (\"US\", \"États-Unis\")\n    ...\n    , (\"FR\", \"France\")\n    ]\n",
+                "type": "List.List ( String.String, String.String )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Perfimmo.Form.FormField.Common",
+        "comment": " Common\n\n@docs  FormFieldInfo\n\n@docs formFieldComparable\n",
+        "unions": [
+            {
+                "name": "FormFieldInfo",
+                "comment": " FormFieldInfo\n",
+                "args": [],
+                "cases": [
+                    [
+                        "FieldIsMandatory",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "formFieldComparable",
+                "comment": " formFieldComparable\n",
+                "type": "Perfimmo.Form.FormField.Common.FormFieldInfo -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Perfimmo.Form.FormField.FormDatalist",
+        "comment": " Entité représentant une datalist dans un formulaire\n    marche avec la fonction datalistForm. La spécificité de la datalist c'est qu'elle retourne la valeur affichée\n    alors qu'un select retourne l'identifiant associé à la valeur.\n\n@docs FormDatalist, ValueState\n\n@docs init\n\n@docs setValue, setValueFromS\n\n@docs getValue, getSelectValues, getStringValue\n\n@docs addInfo, removeInfo, getInfos\n",
+        "unions": [
+            {
+                "name": "FormDatalist",
+                "comment": " FormDatalist\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            },
+            {
+                "name": "ValueState",
+                "comment": "\nindique le statut de la saisie :\n- ChosenItem ->  j'ai cliqué sur une valeur de la liste déroulante\n- InputSearch -> je suis en train de tapé ma recherche pour trouver la bonne valeur\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "ChosenItem",
+                        [
+                            "a"
+                        ]
+                    ],
+                    [
+                        "InputSearch",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "addInfo",
+                "comment": " addInfo\n",
+                "type": "Perfimmo.Form.FormField.Common.FormFieldInfo -> Perfimmo.Form.FormField.FormDatalist.FormDatalist a -> Perfimmo.Form.FormField.FormDatalist.FormDatalist a"
+            },
+            {
+                "name": "getInfos",
+                "comment": " getInfos\n",
+                "type": "Perfimmo.Form.FormField.FormDatalist.FormDatalist a -> List.List Perfimmo.Form.FormField.Common.FormFieldInfo"
+            },
+            {
+                "name": "getSelectValues",
+                "comment": " getSelectValues\n",
+                "type": "Perfimmo.Form.FormField.FormDatalist.FormDatalist a -> ( Maybe.Maybe (Perfimmo.Form.FormField.FormDatalist.ValueState String.String), List.List String.String )"
+            },
+            {
+                "name": "getStringValue",
+                "comment": " getStringValue\n",
+                "type": "Perfimmo.Form.FormField.FormDatalist.FormDatalist a -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "getValue",
+                "comment": " getValue\n",
+                "type": "Perfimmo.Form.FormField.FormDatalist.FormDatalist a -> Maybe.Maybe (Perfimmo.Form.FormField.FormDatalist.ValueState a)"
+            },
+            {
+                "name": "init",
+                "comment": " init\n",
+                "type": "List.List String.String -> List.List Perfimmo.Form.FormField.Common.FormFieldInfo -> Perfimmo.Form.FormField.FormSelect.FromStringBuilder a -> Perfimmo.Form.FormField.FormSelect.ToString a -> Perfimmo.Form.FormField.FormDatalist.FormDatalist a"
+            },
+            {
+                "name": "removeInfo",
+                "comment": " removeInfo\n",
+                "type": "Perfimmo.Form.FormField.Common.FormFieldInfo -> Perfimmo.Form.FormField.FormDatalist.FormDatalist a -> Perfimmo.Form.FormField.FormDatalist.FormDatalist a"
+            },
+            {
+                "name": "setValue",
+                "comment": " setValue\n",
+                "type": "a -> Perfimmo.Form.FormField.FormDatalist.FormDatalist a -> Perfimmo.Form.FormField.FormDatalist.FormDatalist a"
+            },
+            {
+                "name": "setValueFromS",
+                "comment": " setValueFromS\n",
+                "type": "String.String -> Perfimmo.Form.FormField.FormDatalist.FormDatalist a -> Perfimmo.Form.FormField.FormDatalist.FormDatalist a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Perfimmo.Form.FormField.FormDate",
+        "comment": " Utilitaire a FormField pour Date\n\n@docs init, empty, setValue, setRawDate\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "empty",
+                "comment": " empty\n",
+                "type": "Perfimmo.Form.FormField.FormField.FormField Date.Date"
+            },
+            {
+                "name": "init",
+                "comment": " init\n",
+                "type": "Maybe.Maybe Date.Date -> List.List Perfimmo.Form.FormField.Common.FormFieldInfo -> Perfimmo.Form.FormField.FormField.FormField Date.Date"
+            },
+            {
+                "name": "setRawDate",
+                "comment": " setRawDate\n",
+                "type": "String.String -> Perfimmo.Form.FormField.FormField.FormField Date.Date -> Perfimmo.Form.FormField.FormField.FormField Date.Date"
+            },
+            {
+                "name": "setValue",
+                "comment": " setValue\n",
+                "type": "Date.Date -> Perfimmo.Form.FormField.FormField.FormField Date.Date -> Perfimmo.Form.FormField.FormField.FormField Date.Date"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Perfimmo.Form.FormField.FormField",
+        "comment": " type de base d'un champ de formulaire (String, Date, ...)\n\n@docs FormField\n\n@docs init, empty\n\n@docs setValue, setValueFromS, getValue\n\n@docs addInfo, removeInfo, getInfos\n",
+        "unions": [
+            {
+                "name": "FormField",
+                "comment": " FormField\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "addInfo",
+                "comment": " addInfo\n",
+                "type": "Perfimmo.Form.FormField.Common.FormFieldInfo -> Perfimmo.Form.FormField.FormField.FormField a -> Perfimmo.Form.FormField.FormField.FormField a"
+            },
+            {
+                "name": "empty",
+                "comment": " empty\n",
+                "type": "Perfimmo.Form.FormField.FormField.FormField a"
+            },
+            {
+                "name": "getInfos",
+                "comment": " getInfos\n",
+                "type": "Perfimmo.Form.FormField.FormField.FormField a -> List.List Perfimmo.Form.FormField.Common.FormFieldInfo"
+            },
+            {
+                "name": "getValue",
+                "comment": " getValue\n",
+                "type": "Perfimmo.Form.FormField.FormField.FormField a -> Maybe.Maybe a"
+            },
+            {
+                "name": "init",
+                "comment": " init\n",
+                "type": "Maybe.Maybe a -> List.List Perfimmo.Form.FormField.Common.FormFieldInfo -> Perfimmo.Form.FormField.FormField.FormField a"
+            },
+            {
+                "name": "removeInfo",
+                "comment": " removeInfo\n",
+                "type": "Perfimmo.Form.FormField.Common.FormFieldInfo -> Perfimmo.Form.FormField.FormField.FormField a -> Perfimmo.Form.FormField.FormField.FormField a"
+            },
+            {
+                "name": "setValue",
+                "comment": " setValue\n",
+                "type": "a -> Perfimmo.Form.FormField.FormField.FormField a -> Perfimmo.Form.FormField.FormField.FormField a"
+            },
+            {
+                "name": "setValueFromS",
+                "comment": " setValueForS\n",
+                "type": "String.String -> Perfimmo.Form.FormField.FormField.FormField String.String -> Perfimmo.Form.FormField.FormField.FormField String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Perfimmo.Form.FormField.FormFloat",
+        "comment": "\ntype représentant un Float sous forme de string\npour gérer l'affichage ergonomique sur le formulaire\n\n@docs FormFloat\n\n@docs init, empty\n\n@docs setValue, setValueFromS, toString, toFloat\n\n@docs addInfo, removeInfo, getInfos\n\n@docs add\n",
+        "unions": [
+            {
+                "name": "FormFloat",
+                "comment": " FormFloat\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "add",
+                "comment": " add\n",
+                "type": "Perfimmo.Form.FormField.FormFloat.FormFloat -> Perfimmo.Form.FormField.FormFloat.FormFloat -> Perfimmo.Form.FormField.FormFloat.FormFloat"
+            },
+            {
+                "name": "addInfo",
+                "comment": " addInfo\n",
+                "type": "Perfimmo.Form.FormField.Common.FormFieldInfo -> Perfimmo.Form.FormField.FormFloat.FormFloat -> Perfimmo.Form.FormField.FormFloat.FormFloat"
+            },
+            {
+                "name": "empty",
+                "comment": " empty\n",
+                "type": "Perfimmo.Form.FormField.FormFloat.FormFloat"
+            },
+            {
+                "name": "getInfos",
+                "comment": " getInfos\n",
+                "type": "Perfimmo.Form.FormField.FormFloat.FormFloat -> List.List Perfimmo.Form.FormField.Common.FormFieldInfo"
+            },
+            {
+                "name": "init",
+                "comment": " init\n",
+                "type": "List.List Perfimmo.Form.FormField.Common.FormFieldInfo -> Perfimmo.Form.FormField.FormFloat.FormFloat"
+            },
+            {
+                "name": "removeInfo",
+                "comment": " removeInfo\n",
+                "type": "Perfimmo.Form.FormField.Common.FormFieldInfo -> Perfimmo.Form.FormField.FormFloat.FormFloat -> Perfimmo.Form.FormField.FormFloat.FormFloat"
+            },
+            {
+                "name": "setValue",
+                "comment": " setValue\n",
+                "type": "Basics.Float -> Perfimmo.Form.FormField.FormFloat.FormFloat -> Perfimmo.Form.FormField.FormFloat.FormFloat"
+            },
+            {
+                "name": "setValueFromS",
+                "comment": " setValueFromS\n",
+                "type": "String.String -> Perfimmo.Form.FormField.FormFloat.FormFloat -> Perfimmo.Form.FormField.FormFloat.FormFloat"
+            },
+            {
+                "name": "toFloat",
+                "comment": " toFloat\n",
+                "type": "Perfimmo.Form.FormField.FormFloat.FormFloat -> Maybe.Maybe Basics.Float"
+            },
+            {
+                "name": "toString",
+                "comment": " toString\n",
+                "type": "Perfimmo.Form.FormField.FormFloat.FormFloat -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Perfimmo.Form.FormField.FormInt",
+        "comment": "\ntype représentant un Int sous forme de string\npour gérer l'affichage ergonomique sur le formulaire\n\n@docs FormInt\n\n@docs init, empty\n\n@docs setValue, setValueFromS, toString, toInt\n\n@docs getInfos\n",
+        "unions": [
+            {
+                "name": "FormInt",
+                "comment": " FormInt\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "empty",
+                "comment": " empty\n",
+                "type": "Perfimmo.Form.FormField.FormInt.FormInt"
+            },
+            {
+                "name": "getInfos",
+                "comment": " getInfos\n",
+                "type": "Perfimmo.Form.FormField.FormInt.FormInt -> List.List Perfimmo.Form.FormField.Common.FormFieldInfo"
+            },
+            {
+                "name": "init",
+                "comment": " init\n",
+                "type": "List.List Perfimmo.Form.FormField.Common.FormFieldInfo -> Perfimmo.Form.FormField.FormInt.FormInt"
+            },
+            {
+                "name": "setValue",
+                "comment": " setValue\n",
+                "type": "Basics.Int -> Perfimmo.Form.FormField.FormInt.FormInt -> Perfimmo.Form.FormField.FormInt.FormInt"
+            },
+            {
+                "name": "setValueFromS",
+                "comment": " setValueFromS\n",
+                "type": "String.String -> Perfimmo.Form.FormField.FormInt.FormInt -> Perfimmo.Form.FormField.FormInt.FormInt"
+            },
+            {
+                "name": "toInt",
+                "comment": " toInt\n",
+                "type": "Perfimmo.Form.FormField.FormInt.FormInt -> Maybe.Maybe Basics.Int"
+            },
+            {
+                "name": "toString",
+                "comment": " toString\n",
+                "type": "Perfimmo.Form.FormField.FormInt.FormInt -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Perfimmo.Form.FormField.FormPourcent",
+        "comment": "\ntype représentant un Pourcentage sous forme de string\npour gérer l'affichage ergonomique sur le formulaire\n\n@docs FormPourcent\n\n@docs init, empty\n\n@docs setValue, setValueFromS, toString, toFloat\n\n@docs addInfo, removeInfo, getInfos\n\n",
+        "unions": [
+            {
+                "name": "FormPourcent",
+                "comment": " FormPourcent\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "addInfo",
+                "comment": " addInfo\n",
+                "type": "Perfimmo.Form.FormField.Common.FormFieldInfo -> Perfimmo.Form.FormField.FormPourcent.FormPourcent -> Perfimmo.Form.FormField.FormPourcent.FormPourcent"
+            },
+            {
+                "name": "empty",
+                "comment": " empty\n",
+                "type": "Perfimmo.Form.FormField.FormPourcent.FormPourcent"
+            },
+            {
+                "name": "getInfos",
+                "comment": " getInfos\n",
+                "type": "Perfimmo.Form.FormField.FormPourcent.FormPourcent -> List.List Perfimmo.Form.FormField.Common.FormFieldInfo"
+            },
+            {
+                "name": "init",
+                "comment": " init\n",
+                "type": "List.List Perfimmo.Form.FormField.Common.FormFieldInfo -> Perfimmo.Form.FormField.FormPourcent.FormPourcent"
+            },
+            {
+                "name": "removeInfo",
+                "comment": " removeInfo\n",
+                "type": "Perfimmo.Form.FormField.Common.FormFieldInfo -> Perfimmo.Form.FormField.FormPourcent.FormPourcent -> Perfimmo.Form.FormField.FormPourcent.FormPourcent"
+            },
+            {
+                "name": "setValue",
+                "comment": " setValue\n",
+                "type": "Basics.Float -> Perfimmo.Form.FormField.FormPourcent.FormPourcent -> Perfimmo.Form.FormField.FormPourcent.FormPourcent"
+            },
+            {
+                "name": "setValueFromS",
+                "comment": " setValueFromS\n",
+                "type": "String.String -> Perfimmo.Form.FormField.FormPourcent.FormPourcent -> Perfimmo.Form.FormField.FormPourcent.FormPourcent"
+            },
+            {
+                "name": "toFloat",
+                "comment": " toFloat\n",
+                "type": "Perfimmo.Form.FormField.FormPourcent.FormPourcent -> Maybe.Maybe Basics.Float"
+            },
+            {
+                "name": "toString",
+                "comment": " toString\n",
+                "type": "Perfimmo.Form.FormField.FormPourcent.FormPourcent -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Perfimmo.Form.FormField.FormSelect",
+        "comment": " FormSelect\n\n@docs FormSelect, AvailableValues, FromStringBuilder, ToString\n\n@docs init\n\n@docs setValue, setValues, setValueFromS, getSelectValues, getValue, getStringValue\n\n@docs addInfo, removeInfo, getInfos\n",
+        "unions": [
+            {
+                "name": "FormSelect",
+                "comment": " FormSelect\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "AvailableValues",
+                "comment": " AvailableValues\n",
+                "args": [],
+                "type": "List.List ( String.String, String.String )"
+            },
+            {
+                "name": "FromStringBuilder",
+                "comment": " FromStringBuilder\n",
+                "args": [
+                    "a"
+                ],
+                "type": "String.String -> Maybe.Maybe a"
+            },
+            {
+                "name": "ToString",
+                "comment": " ToString\n",
+                "args": [
+                    "a"
+                ],
+                "type": "a -> String.String"
+            }
+        ],
+        "values": [
+            {
+                "name": "addInfo",
+                "comment": " addInfo\n",
+                "type": "Perfimmo.Form.FormField.Common.FormFieldInfo -> Perfimmo.Form.FormField.FormSelect.FormSelect a -> Perfimmo.Form.FormField.FormSelect.FormSelect a"
+            },
+            {
+                "name": "getInfos",
+                "comment": " getInfos\n",
+                "type": "Perfimmo.Form.FormField.FormSelect.FormSelect a -> List.List Perfimmo.Form.FormField.Common.FormFieldInfo"
+            },
+            {
+                "name": "getSelectValues",
+                "comment": " getSelectValues\n",
+                "type": "Perfimmo.Form.FormField.FormSelect.FormSelect a -> ( Maybe.Maybe String.String, List.List ( String.String, String.String ) )"
+            },
+            {
+                "name": "getStringValue",
+                "comment": " getStringValue\n",
+                "type": "Perfimmo.Form.FormField.FormSelect.FormSelect a -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "getValue",
+                "comment": " getValue\n",
+                "type": "Perfimmo.Form.FormField.FormSelect.FormSelect a -> Maybe.Maybe a"
+            },
+            {
+                "name": "init",
+                "comment": " init\n",
+                "type": "Perfimmo.Form.FormField.FormSelect.AvailableValues -> List.List Perfimmo.Form.FormField.Common.FormFieldInfo -> Perfimmo.Form.FormField.FormSelect.FromStringBuilder a -> Perfimmo.Form.FormField.FormSelect.ToString a -> Perfimmo.Form.FormField.FormSelect.FormSelect a"
+            },
+            {
+                "name": "removeInfo",
+                "comment": " removeInfo\n",
+                "type": "Perfimmo.Form.FormField.Common.FormFieldInfo -> Perfimmo.Form.FormField.FormSelect.FormSelect a -> Perfimmo.Form.FormField.FormSelect.FormSelect a"
+            },
+            {
+                "name": "setValue",
+                "comment": " setValue\n",
+                "type": "a -> Perfimmo.Form.FormField.FormSelect.FormSelect a -> Perfimmo.Form.FormField.FormSelect.FormSelect a"
+            },
+            {
+                "name": "setValueFromS",
+                "comment": " setValueFromS\n",
+                "type": "String.String -> Perfimmo.Form.FormField.FormSelect.FormSelect a -> Perfimmo.Form.FormField.FormSelect.FormSelect a"
+            },
+            {
+                "name": "setValues",
+                "comment": " setValues\n",
+                "type": "Perfimmo.Form.FormField.FormSelect.AvailableValues -> Perfimmo.Form.FormField.FormSelect.FormSelect a -> Perfimmo.Form.FormField.FormSelect.FormSelect a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Perfimmo.Html.Dom",
+        "comment": " Handle event propagation\n\n@docs onClick_stopProp\n\n@docs selectView, buildOptions, buildFilterOptions\n\n@docs selectViewOptions\n\n@docs datalistView, datalistViewWithOptions\n\n@docs clearableSelect, clearableSelectOptions\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "buildFilterOptions",
+                "comment": " buildFilterOptions\n",
+                "type": "Maybe.Maybe String.String -> List.List ( String.String, String.String ) -> List.List (Html.Styled.Html msg)"
+            },
+            {
+                "name": "buildOptions",
+                "comment": " buildOptions\n",
+                "type": "Maybe.Maybe String.String -> List.List ( String.String, String.String ) -> List.List (Html.Styled.Html msg)"
+            },
+            {
+                "name": "clearableSelect",
+                "comment": " clearableSelect\n",
+                "type": "(String.String -> msg) -> List.List (Html.Styled.Html msg) -> Html.Styled.Html msg"
+            },
+            {
+                "name": "clearableSelectOptions",
+                "comment": " clearableSelectOptions\n",
+                "type": "(String.String -> msg) -> Maybe.Maybe String.String -> List.List ( String.String, String.String ) -> Html.Styled.Html msg"
+            },
+            {
+                "name": "datalistView",
+                "comment": " datalistView\n\nCurrent value is handle natively by DOM so it is avoided to be provided\n\n",
+                "type": "(String.String -> msg) -> String.String -> List.List String.String -> Html.Styled.Html msg"
+            },
+            {
+                "name": "datalistViewWithOptions",
+                "comment": " datalistViewWithOptions\n\nAttributes are for input\n\n",
+                "type": "(String.String -> msg) -> String.String -> List.List (Html.Styled.Attribute msg) -> List.List String.String -> Html.Styled.Html msg"
+            },
+            {
+                "name": "onClick_stopProp",
+                "comment": " onClick_stopProp\n",
+                "type": "msg -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "selectView",
+                "comment": " selectView\n",
+                "type": "(String.String -> msg) -> List.List (Html.Styled.Html msg) -> Html.Styled.Html msg"
+            },
+            {
+                "name": "selectViewOptions",
+                "comment": " selectViewOptions\n",
+                "type": "(String.String -> msg) -> Maybe.Maybe String.String -> List.List ( String.String, String.String ) -> Html.Styled.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Perfimmo.Http.Headers",
+        "comment": " Headers\n\n@docs ContentRange, fieldFromContentRangeHeader\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "ContentRange",
+                "comment": " ContentRange\n",
+                "args": [],
+                "type": "{ total : Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "fieldFromContentRangeHeader",
+                "comment": " fieldFromContentRangeHeader\n",
+                "type": "(Perfimmo.Http.Headers.ContentRange -> Basics.Int) -> Http.Metadata -> Basics.Int"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Perfimmo.Http.HttpRequest",
+        "comment": " HttpRequest\n\n# Types\n@docs Request, BodyResponse, HttpError, HttpResult, ResponseDecoder\n\n# Functions\n@docs withAuthReq, request, authRequest, withAuthReqWithHeaders\n\n# Helper\n@docs printHttpError\n\n# Expect\n@docs expectJsonResponse, expectWhateverResponse, expectJsonResponse2, expectWhateverOkResult\n\n# Transformations\n@docs bool2Uri\n\n",
+        "unions": [
+            {
+                "name": "BodyResponse",
+                "comment": " BodyResponse\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "BodyResponse",
+                        [
+                            "Http.Metadata",
+                            "a"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "HttpError",
+                "comment": " HttpError\n",
+                "args": [
+                    "e"
+                ],
+                "cases": [
+                    [
+                        "TechnicalError",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "DomainError",
+                        [
+                            "Perfimmo.Http.HttpRequest.BodyResponse e"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Request",
+                "comment": " Request\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Get",
+                        [
+                            "String.String",
+                            "Http.Expect a"
+                        ]
+                    ],
+                    [
+                        "Delete",
+                        [
+                            "String.String",
+                            "Http.Expect a"
+                        ]
+                    ],
+                    [
+                        "Post",
+                        [
+                            "String.String",
+                            "Http.Body",
+                            "Http.Expect a"
+                        ]
+                    ],
+                    [
+                        "Put",
+                        [
+                            "String.String",
+                            "Http.Body",
+                            "Http.Expect a"
+                        ]
+                    ],
+                    [
+                        "Patch",
+                        [
+                            "String.String",
+                            "Http.Body",
+                            "Http.Expect a"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "HttpResult",
+                "comment": " HttpResult\n",
+                "args": [
+                    "e",
+                    "a"
+                ],
+                "type": "Result.Result (Perfimmo.Http.HttpRequest.HttpError e) (Perfimmo.Http.HttpRequest.BodyResponse a)"
+            },
+            {
+                "name": "ResponseDecoder",
+                "comment": " ResponseDecoder\n",
+                "args": [
+                    "e",
+                    "a"
+                ],
+                "type": "{ koDecoder : Json.Decode.Decoder e, okDecoder : Json.Decode.Decoder a }"
+            }
+        ],
+        "values": [
+            {
+                "name": "authRequest",
+                "comment": " authRequest\n",
+                "type": "Perfimmo.Http.RestNavigationLink.RestNavigationLink -> Http.Body -> Http.Expect a -> Platform.Cmd.Cmd a"
+            },
+            {
+                "name": "bool2Uri",
+                "comment": " bool2Uri\n",
+                "type": "Basics.Bool -> String.String"
+            },
+            {
+                "name": "expectJsonResponse",
+                "comment": " expectJsonResponse\n",
+                "type": "(Result.Result Http.Error ( Http.Metadata, a ) -> msg) -> Json.Decode.Decoder a -> Http.Expect msg"
+            },
+            {
+                "name": "expectJsonResponse2",
+                "comment": "expectJsonResponse2\n",
+                "type": "(Perfimmo.Http.HttpRequest.HttpResult e a -> msg) -> Perfimmo.Http.HttpRequest.ResponseDecoder e a -> Http.Expect msg"
+            },
+            {
+                "name": "expectWhateverOkResult",
+                "comment": " expectWhateverOkResult\n",
+                "type": "(Perfimmo.Http.HttpRequest.HttpResult e () -> msg) -> Json.Decode.Decoder e -> Http.Expect msg"
+            },
+            {
+                "name": "expectWhateverResponse",
+                "comment": " expectWhateverResponse\n",
+                "type": "(Result.Result Http.Error Http.Metadata -> msg) -> Http.Expect msg"
+            },
+            {
+                "name": "printHttpError",
+                "comment": " printHttpError\n",
+                "type": "Http.Error -> String.String"
+            },
+            {
+                "name": "request",
+                "comment": " request\n",
+                "type": "Perfimmo.Http.RestNavigationLink.RestNavigationLink -> Http.Body -> Http.Expect a -> Perfimmo.Http.HttpRequest.Request a"
+            },
+            {
+                "name": "withAuthReq",
+                "comment": " withAuthReq\n",
+                "type": "Perfimmo.Http.HttpRequest.Request a -> Platform.Cmd.Cmd a"
+            },
+            {
+                "name": "withAuthReqWithHeaders",
+                "comment": " withAuthReqWithHeaders\n",
+                "type": "List.List Http.Header -> Perfimmo.Http.HttpRequest.Request a -> Platform.Cmd.Cmd a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Perfimmo.Http.NavigationLinkUtils",
+        "comment": " NavigationLinkUtils\n\n@docs findNavLink\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "findNavLink",
+                "comment": " findNavLink\n",
+                "type": "String.String -> List.List Perfimmo.Http.RestNavigationLink.RestNavigationLink -> Maybe.Maybe Perfimmo.Http.RestNavigationLink.RestNavigationLink"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Perfimmo.Http.RestAPIUtils",
+        "comment": " RestAPIUtils\n\n@docs  SeqAPIResult, CRUDResult, seqAPIResultJsonDecoder, crudResultJsonDecoder\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "CRUDResult",
+                "comment": " CRUDResult\n",
+                "args": [],
+                "type": "{ uid : String.String }"
+            },
+            {
+                "name": "SeqAPIResult",
+                "comment": " SeqAPIResult\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ result : List.List a, links : List.List Perfimmo.Http.RestNavigationLink.RestNavigationLink }"
+            }
+        ],
+        "values": [
+            {
+                "name": "crudResultJsonDecoder",
+                "comment": " crudResultJsonDecoder\n",
+                "type": "Json.Decode.Decoder Perfimmo.Http.RestAPIUtils.CRUDResult"
+            },
+            {
+                "name": "seqAPIResultJsonDecoder",
+                "comment": " seqAPIResultJsonDecoder\n",
+                "type": "Json.Decode.Decoder a -> Json.Decode.Decoder (Perfimmo.Http.RestAPIUtils.SeqAPIResult a)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Perfimmo.Http.RestNavigationLink",
+        "comment": " RestNavigationLink\n\n@docs  RestNavigationLink, setHref, setQueryParams, HttpVerb\n",
+        "unions": [
+            {
+                "name": "HttpVerb",
+                "comment": " HttpVerb\n",
+                "args": [],
+                "cases": [
+                    [
+                        "GET",
+                        []
+                    ],
+                    [
+                        "POST",
+                        []
+                    ],
+                    [
+                        "PATCH",
+                        []
+                    ],
+                    [
+                        "DELETE",
+                        []
+                    ],
+                    [
+                        "PUT",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "RestNavigationLink",
+                "comment": " RestNavigationLink\n",
+                "args": [],
+                "type": "{ rel : String.String, href : String.String, method : Perfimmo.Http.RestNavigationLink.HttpVerb }"
+            }
+        ],
+        "values": [
+            {
+                "name": "setHref",
+                "comment": " setHref\n",
+                "type": "Perfimmo.Http.RestNavigationLink.RestNavigationLink -> String.String -> Perfimmo.Http.RestNavigationLink.RestNavigationLink"
+            },
+            {
+                "name": "setQueryParams",
+                "comment": " setQueryParams\n",
+                "type": "Perfimmo.Http.RestNavigationLink.RestNavigationLink -> Perfimmo.Collection.NonEmptyList.NEL ( String.String, String.String ) -> Perfimmo.Http.RestNavigationLink.RestNavigationLink"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Perfimmo.Http.RestNavigationLinkDecoder",
+        "comment": " RestNavigationLinkDecoder\n\n@docs restNavigationLinksDecoder, restNavigationLinkDecoder\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "restNavigationLinkDecoder",
+                "comment": " restNavigationLinkDecoder\n",
+                "type": "Json.Decode.Decoder Perfimmo.Http.RestNavigationLink.RestNavigationLink"
+            },
+            {
+                "name": "restNavigationLinksDecoder",
+                "comment": " restNavigationLinksDecoder\n",
+                "type": "Json.Decode.Decoder (List.List Perfimmo.Http.RestNavigationLink.RestNavigationLink)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Perfimmo.Json.Decoder",
+        "comment": " Decoder\n\n@docs subDecoderByType\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "subDecoderByType",
+                "comment": " subDecoderByType\n",
+                "type": "String.String -> (String.String -> Json.Decode.Decoder b) -> Json.Decode.Decoder b"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Perfimmo.Json.Json",
+        "comment": " Json\n\n@docs cleanJson\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "cleanJson",
+                "comment": " cleanJson\n",
+                "type": "Json.Value.JsonValue -> Json.Value.JsonValue"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Perfimmo.Primitive.BoolUtils",
+        "comment": " BoolUtils\n\n@docs bool2StringFr\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "bool2StringFr",
+                "comment": " bool2StringFr\n",
+                "type": "Basics.Bool -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Perfimmo.Primitive.CharUtils",
+        "comment": " CharUtils\n\n@docs greaterChar, lowerChar, greaterOrEqChar, lowerOrEqChar\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "greaterChar",
+                "comment": " greaterChar\n",
+                "type": "String.String"
+            },
+            {
+                "name": "greaterOrEqChar",
+                "comment": " greaterOrEqChar\n",
+                "type": "String.String"
+            },
+            {
+                "name": "lowerChar",
+                "comment": " lowerChar\n",
+                "type": "String.String"
+            },
+            {
+                "name": "lowerOrEqChar",
+                "comment": " lowerOrEqChar\n",
+                "type": "String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Perfimmo.Primitive.ExtendString",
+        "comment": " ExtendString\n\n@docs maybeStringToMaybeNonEmptyString, stringToNonEmptyString\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "maybeStringToMaybeNonEmptyString",
+                "comment": " maybeStringToMaybeNonEmptyString\n",
+                "type": "Maybe.Maybe String.String -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "stringToNonEmptyString",
+                "comment": " stringToNonEmptyString\n",
+                "type": "String.String -> Maybe.Maybe String.String"
+            }
+        ],
+        "binops": []
+    }
+]

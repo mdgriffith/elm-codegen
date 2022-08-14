@@ -1,0 +1,773 @@
+[
+    {
+        "name": "Css.Systems.Colors",
+        "comment": " Tailwind color system\n\n[cedricsoulas.com/elm/css/systems#colors](https://cedricsoulas.com/elm/css/systems#colors)\n\n![Color system](https://github.com/cedricss/elm-css-systems/raw/master/img/colors.png)\n\n@docs black, blue100, blue200, blue300, blue400, blue500, blue600, blue700, blue800, blue900, gray100, gray200, gray300, gray400, gray500, gray600, gray700, gray800, gray900, green100, green200, green300, green400, green500, green600, green700, green800, green900, indigo100, indigo200, indigo300, indigo400, indigo500, indigo600, indigo700, indigo800, indigo900, orange100, orange200, orange300, orange400, orange500, orange600, orange700, orange800, orange900, pink100, pink200, pink300, pink400, pink500, pink600, pink700, pink800, pink900, purple100, purple200, purple300, purple400, purple500, purple600, purple700, purple800, purple900, red100, red200, red300, red400, red500, red600, red700, red800, red900, teal100, teal200, teal300, teal400, teal500, teal600, teal700, teal800, teal900, white, yellow100, yellow200, yellow300, yellow400, yellow500, yellow600, yellow700, yellow800, yellow900\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "black",
+                "comment": "\n\n    hex \"000\"\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "blue100",
+                "comment": "\n\n    hex \"ebf8ff\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "blue200",
+                "comment": "\n\n    hex \"bee3f8\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "blue300",
+                "comment": "\n\n    hex \"90cdf4\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "blue400",
+                "comment": "\n\n    hex \"63b3ed\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "blue500",
+                "comment": "\n\n    hex \"4299e1\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "blue600",
+                "comment": "\n\n    hex \"3182ce\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "blue700",
+                "comment": "\n\n    hex \"2b6cb0\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "blue800",
+                "comment": "\n\n    hex \"2c5282\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "blue900",
+                "comment": "\n\n    hex \"2a4365\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "gray100",
+                "comment": "\n\n    hex \"f7fafc\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "gray200",
+                "comment": "\n\n    hex \"edf2f7\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "gray300",
+                "comment": "\n\n    hex \"e2e8f0\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "gray400",
+                "comment": "\n\n    hex \"cbd5e0\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "gray500",
+                "comment": "\n\n    hex \"a0aec0\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "gray600",
+                "comment": "\n\n    hex \"718096\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "gray700",
+                "comment": "\n\n    hex \"4a5568\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "gray800",
+                "comment": "\n\n    hex \"2d3748\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "gray900",
+                "comment": "\n\n    hex \"1a202c\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "green100",
+                "comment": "\n\n    hex \"f0fff4\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "green200",
+                "comment": "\n\n    hex \"c6f6d5\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "green300",
+                "comment": "\n\n    hex \"9ae6b4\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "green400",
+                "comment": "\n\n    hex \"68d391\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "green500",
+                "comment": "\n\n    hex \"48bb78\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "green600",
+                "comment": "\n\n    hex \"38a169\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "green700",
+                "comment": "\n\n    hex \"2f855a\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "green800",
+                "comment": "\n\n    hex \"276749\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "green900",
+                "comment": "\n\n    hex \"22543d\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "indigo100",
+                "comment": "\n\n    hex \"ebf4ff\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "indigo200",
+                "comment": "\n\n    hex \"c3dafe\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "indigo300",
+                "comment": "\n\n    hex \"a3bffa\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "indigo400",
+                "comment": "\n\n    hex \"7f9cf5\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "indigo500",
+                "comment": "\n\n    hex \"667eea\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "indigo600",
+                "comment": "\n\n    hex \"5a67d8\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "indigo700",
+                "comment": "\n\n    hex \"4c51bf\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "indigo800",
+                "comment": "\n\n    hex \"434190\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "indigo900",
+                "comment": "\n\n    hex \"3c366b\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "orange100",
+                "comment": "\n\n    hex \"fffaf0\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "orange200",
+                "comment": "\n\n    hex \"feebc8\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "orange300",
+                "comment": "\n\n    hex \"fbd38d\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "orange400",
+                "comment": "\n\n    hex \"f6ad55\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "orange500",
+                "comment": "\n\n    hex \"ed8936\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "orange600",
+                "comment": "\n\n    hex \"dd6b20\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "orange700",
+                "comment": "\n\n    hex \"c05621\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "orange800",
+                "comment": "\n\n    hex \"9c4221\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "orange900",
+                "comment": "\n\n    hex \"7b341e\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "pink100",
+                "comment": "\n\n    hex \"fff5f7\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "pink200",
+                "comment": "\n\n    hex \"fed7e2\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "pink300",
+                "comment": "\n\n    hex \"fbb6ce\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "pink400",
+                "comment": "\n\n    hex \"f687b3\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "pink500",
+                "comment": "\n\n    hex \"ed64a6\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "pink600",
+                "comment": "\n\n    hex \"d53f8c\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "pink700",
+                "comment": "\n\n    hex \"b83280\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "pink800",
+                "comment": "\n\n    hex \"97266d\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "pink900",
+                "comment": "\n\n    hex \"702459\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "purple100",
+                "comment": "\n\n    hex \"faf5ff\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "purple200",
+                "comment": "\n\n    hex \"e9d8fd\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "purple300",
+                "comment": "\n\n    hex \"d6bcfa\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "purple400",
+                "comment": "\n\n    hex \"b794f4\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "purple500",
+                "comment": "\n\n    hex \"9f7aea\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "purple600",
+                "comment": "\n\n    hex \"805ad5\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "purple700",
+                "comment": "\n\n    hex \"6b46c1\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "purple800",
+                "comment": "\n\n    hex \"553c9a\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "purple900",
+                "comment": "\n\n    hex \"44337a\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "red100",
+                "comment": "\n\n    hex \"fff5f5\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "red200",
+                "comment": "\n\n    hex \"fed7d7\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "red300",
+                "comment": "\n\n    hex \"feb2b2\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "red400",
+                "comment": "\n\n    hex \"fc8181\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "red500",
+                "comment": "\n\n    hex \"f56565\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "red600",
+                "comment": "\n\n    hex \"e53e3e\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "red700",
+                "comment": "\n\n    hex \"c53030\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "red800",
+                "comment": "\n\n    hex \"9b2c2c\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "red900",
+                "comment": "\n\n    hex \"742a2a\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "teal100",
+                "comment": "\n\n    hex \"e6fffa\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "teal200",
+                "comment": "\n\n    hex \"b2f5ea\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "teal300",
+                "comment": "\n\n    hex \"81e6d9\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "teal400",
+                "comment": "\n\n    hex \"4fd1c5\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "teal500",
+                "comment": "\n\n    hex \"38b2ac\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "teal600",
+                "comment": "\n\n    hex \"319795\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "teal700",
+                "comment": "\n\n    hex \"2c7a7b\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "teal800",
+                "comment": "\n\n    hex \"285e61\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "teal900",
+                "comment": "\n\n    hex \"234e52\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "white",
+                "comment": "\n\n    hex \"fff\"\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "yellow100",
+                "comment": "\n\n    hex \"fffff0\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "yellow200",
+                "comment": "\n\n    hex \"fefcbf\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "yellow300",
+                "comment": "\n\n    hex \"faf089\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "yellow400",
+                "comment": "\n\n    hex \"f6e05e\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "yellow500",
+                "comment": "\n\n    hex \"ecc94b\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "yellow600",
+                "comment": "\n\n    hex \"d69e2e\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "yellow700",
+                "comment": "\n\n    hex \"b7791f\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "yellow800",
+                "comment": "\n\n    hex \"975a16\n\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "yellow900",
+                "comment": "\n\n    hex \"744210\n\n",
+                "type": "Css.Color"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Css.Systems.Spacing",
+        "comment": "\n\n\n# Spacing and sizing system\n\nUse space values to set padding, margin, width and height to UI elements:\n\n    element =\n        div\n            [ css\n                [ marginTop space8\n                , padding space2\n                , width space32\n                ]\n            ]\n\n![Spacing systems](https://github.com/cedricss/elm-css-systems/raw/master/img/spacing.png)\n\nUse fluid and size values to set width, height, maxWidth and maxHeight of layout blocks:\n\n    view =\n        div\n            [ css\n                [ displayFlex\n                , flexWrap wrap\n                , maxHeight size3XL\n                , width (fluid 2 3)\n                ]\n            ]\n\n\n# Spacing\n\n@docs space0, space1, space2, space3, space4, space5, space6, space8, space10, space12, space16, space20, space24, space32, space40, space48, space56, space64\n\n\n# Sizing\n\n@docs fluid, sizeXS, sizeSM, sizeMD, sizeLG, sizeXL, size2XL, size3XL, size4XL, size5XL, size6XL, sizeFull\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fluid",
+                "comment": " Return a portion of 100%\n\n`fluid 2 3` is equivalent to `pct (100 * (2/3))` (33.33333%)\n\n    el\n        [ css\n            [ height (fluid 2 3)\n            , width (fluid 1 2)\n            ]\n        ]\n        []\n\n",
+                "type": "Basics.Float -> Basics.Float -> Css.Pct"
+            },
+            {
+                "name": "size2XL",
+                "comment": "\n\n    rem 42\n\n",
+                "type": "Css.Rem"
+            },
+            {
+                "name": "size3XL",
+                "comment": "\n\n    rem 48\n\n",
+                "type": "Css.Rem"
+            },
+            {
+                "name": "size4XL",
+                "comment": "\n\n    rem 56\n\n",
+                "type": "Css.Rem"
+            },
+            {
+                "name": "size5XL",
+                "comment": "\n\n    rem 64\n\n",
+                "type": "Css.Rem"
+            },
+            {
+                "name": "size6XL",
+                "comment": "\n\n    rem 72\n\n",
+                "type": "Css.Rem"
+            },
+            {
+                "name": "sizeFull",
+                "comment": "\n\n    pct 100\n\n",
+                "type": "Css.Pct"
+            },
+            {
+                "name": "sizeLG",
+                "comment": "\n\n    rem 32\n\n",
+                "type": "Css.Rem"
+            },
+            {
+                "name": "sizeMD",
+                "comment": "\n\n    rem 28\n\n",
+                "type": "Css.Rem"
+            },
+            {
+                "name": "sizeSM",
+                "comment": "\n\n    rem 24\n\n",
+                "type": "Css.Rem"
+            },
+            {
+                "name": "sizeXL",
+                "comment": "\n\n    rem 36\n\n",
+                "type": "Css.Rem"
+            },
+            {
+                "name": "sizeXS",
+                "comment": "\n\n    rem 20\n\n",
+                "type": "Css.Rem"
+            },
+            {
+                "name": "space0",
+                "comment": "\n\n    px 0\n\n",
+                "type": "Css.Px"
+            },
+            {
+                "name": "space1",
+                "comment": "\n\n    rem 0.25\n\n",
+                "type": "Css.Rem"
+            },
+            {
+                "name": "space10",
+                "comment": "\n\n    rem 2.5\n\n",
+                "type": "Css.Rem"
+            },
+            {
+                "name": "space12",
+                "comment": "\n\n    rem 3\n\n",
+                "type": "Css.Rem"
+            },
+            {
+                "name": "space16",
+                "comment": "\n\n    rem 4\n\n",
+                "type": "Css.Rem"
+            },
+            {
+                "name": "space2",
+                "comment": "\n\n    rem 0.5\n\n",
+                "type": "Css.Rem"
+            },
+            {
+                "name": "space20",
+                "comment": "\n\n    rem 5\n\n",
+                "type": "Css.Rem"
+            },
+            {
+                "name": "space24",
+                "comment": "\n\n    rem 6\n\n",
+                "type": "Css.Rem"
+            },
+            {
+                "name": "space3",
+                "comment": "\n\n    rem 0.75\n\n",
+                "type": "Css.Rem"
+            },
+            {
+                "name": "space32",
+                "comment": "\n\n    rem 8\n\n",
+                "type": "Css.Rem"
+            },
+            {
+                "name": "space4",
+                "comment": "\n\n    rem 1\n\n",
+                "type": "Css.Rem"
+            },
+            {
+                "name": "space40",
+                "comment": "\n\n    rem 10\n\n",
+                "type": "Css.Rem"
+            },
+            {
+                "name": "space48",
+                "comment": "\n\n    rem 12\n\n",
+                "type": "Css.Rem"
+            },
+            {
+                "name": "space5",
+                "comment": "\n\n    rem 1.25\n\n",
+                "type": "Css.Rem"
+            },
+            {
+                "name": "space56",
+                "comment": "\n\n    rem 14\n\n",
+                "type": "Css.Rem"
+            },
+            {
+                "name": "space6",
+                "comment": "\n\n    rem 1.5\n\n",
+                "type": "Css.Rem"
+            },
+            {
+                "name": "space64",
+                "comment": "\n\n    rem 16\n\n",
+                "type": "Css.Rem"
+            },
+            {
+                "name": "space8",
+                "comment": "\n\n    rem 2\n\n",
+                "type": "Css.Rem"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Css.Systems.Text",
+        "comment": "\n\n\n# Text utilties\n\n@docs textTruncate\n\n\n# Font size system\n\n[cedricsoulas.com/elm/css/systems#text](https://cedricsoulas.com/elm/css/systems#text)\n\n@docs textXS, textSM, textBase, textLG, textXL, text2XL, text3XL, text4XL, text5XL, text6XL\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "text2XL",
+                "comment": "\n\n    fontSize (rem 1.5)\n\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "text3XL",
+                "comment": "\n\n    fontSize (rem 1.875)\n\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "text4XL",
+                "comment": "\n\n    fontSize (rem 2.25)\n\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "text5XL",
+                "comment": "\n\n    fontSize (rem 3)\n\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "text6XL",
+                "comment": "\n\n    fontSize (rem 4)\n\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "textBase",
+                "comment": "\n\n    fontSize rem\n\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "textLG",
+                "comment": "\n\n    fontSize rem\n\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "textSM",
+                "comment": "\n\n    fontSize (rem 0.875)\n\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "textTruncate",
+                "comment": " Truncate text with an ellipsis (…)\n\n    truncate =\n        Css.batch\n            [ textOverflow ellipsis\n            , whiteSpace noWrap\n            , overflow hidden\n            ]\n\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "textXL",
+                "comment": "\n\n    fontSize (rem 1.25)\n\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "textXS",
+                "comment": "\n\n    fontSize (rem 0.75)\n\n",
+                "type": "Css.Style"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Css.Systems.Utilities",
+        "comment": "\n\n\n# Padding and margin utilities\n\n@docs paddingX, paddingY, marginX, marginY, negative\n\n\n# Flex items\n\nControl how flex items grow and shrink.\n\n@docs flexInitial, flexIgnoreInitialSize, flexAuto, flexNone\n\n\n# Align items\n\nControl how flex items are positioned.\n\n@docs itemsStretch, itemsStart, itemsCenter, itemsEnd, itemsBaseline\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "flexAuto",
+                "comment": " The flex item can grow and shrink, **taking into account its initial size**.\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "flexIgnoreInitialSize",
+                "comment": " The flex item can grow and shrink, **ignoring its initial size**.\n\n    flexIgnoreInitialSize =\n        flex3 (int 1) (int 1) (pct 0)\n\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "flexInitial",
+                "comment": " The flex item can grow but not shrink, **taking into account its initial size**.\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "flexNone",
+                "comment": " Prevent a flex item to grow and shrink.\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "itemsBaseline",
+                "comment": "\n\n    alignItems baseline\n\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "itemsCenter",
+                "comment": "\n\n    alignItems center\n\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "itemsEnd",
+                "comment": "\n\n    alignItems flexEnd\n\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "itemsStart",
+                "comment": "\n\n    alignItems flexStart\n\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "itemsStretch",
+                "comment": "\n\n    alignItems stretch\n\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "marginX",
+                "comment": " Set horizontal margin.\n\n    marginX auto\n\n    marginX space4\n\n",
+                "type": "Css.LengthOrAuto compatible -> Css.Style"
+            },
+            {
+                "name": "marginY",
+                "comment": " Set vertical margin.\n",
+                "type": "Css.LengthOrAuto compatible -> Css.Style"
+            },
+            {
+                "name": "negative",
+                "comment": " Negates the value provided\n\n    marginX (negative space4)\n\n",
+                "type": "Css.Length compatible units -> Css.Length compatible units"
+            },
+            {
+                "name": "paddingX",
+                "comment": " Set horizontal padding.\n",
+                "type": "Css.Length compatible units -> Css.Style"
+            },
+            {
+                "name": "paddingY",
+                "comment": " Set vertical padding.\n",
+                "type": "Css.Length compatible units -> Css.Style"
+            }
+        ],
+        "binops": []
+    }
+]

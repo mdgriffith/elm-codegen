@@ -1,0 +1,126 @@
+[
+    {
+        "name": "GenericDict",
+        "comment": "\n\n@docs Dict\n\n\n# Build\n\n@docs empty, singleton, insert, update, remove\n\n\n# Query\n\n@docs isEmpty, member, get, size\n\n\n# Lists\n\n@docs keys, values, toList, fromList\n\n\n# Transform\n\n@docs map, fold, filter, partition\n\n\n# Combine\n\n@docs union, intersect, diff, merge\n\n",
+        "unions": [
+            {
+                "name": "Dict",
+                "comment": " A dictionary of keys and values. Keys can be any type.\n",
+                "args": [
+                    "k",
+                    "v"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "diff",
+                "comment": " Keep a key-value pair when its key does not appear in the second dictionary.\n",
+                "type": "GenericDict.Dict k v -> GenericDict.Dict k v -> GenericDict.Dict k v"
+            },
+            {
+                "name": "empty",
+                "comment": " Create an empty dictionary.\n",
+                "type": "GenericDict.Dict k v"
+            },
+            {
+                "name": "filter",
+                "comment": " Keep only the key-value pairs that pass the given test.\n",
+                "type": "(k -> v -> Basics.Bool) -> GenericDict.Dict k v -> GenericDict.Dict k v"
+            },
+            {
+                "name": "fold",
+                "comment": " Fold over the key-value pairs in a dictionary.\n",
+                "type": "(k -> v -> b -> b) -> b -> GenericDict.Dict k v -> b"
+            },
+            {
+                "name": "fromList",
+                "comment": " Convert an association list into a dictionary.\n",
+                "type": "(k -> String.String) -> List.List ( k, v ) -> GenericDict.Dict k v"
+            },
+            {
+                "name": "get",
+                "comment": " Get the value associated with a key. Returns `Nothing` if the key is not found.\n",
+                "type": "(k -> String.String) -> k -> GenericDict.Dict k v -> Maybe.Maybe v"
+            },
+            {
+                "name": "insert",
+                "comment": " Insert a key-value pair into a dictionary. Replaces value when there is a collision.\n",
+                "type": "(k -> String.String) -> k -> v -> GenericDict.Dict k v -> GenericDict.Dict k v"
+            },
+            {
+                "name": "intersect",
+                "comment": " Keep a key-value pair when its key appears in the second dictionary.\nPreference is given to values in the first dictionary.\n",
+                "type": "GenericDict.Dict k v -> GenericDict.Dict k v -> GenericDict.Dict k v"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Determine if a dictionary is empty.\n",
+                "type": "GenericDict.Dict k v -> Basics.Bool"
+            },
+            {
+                "name": "keys",
+                "comment": " Get all of the keys in a dictionary.\n",
+                "type": "GenericDict.Dict k v -> List.List k"
+            },
+            {
+                "name": "map",
+                "comment": " Apply a function to all values in a dictionary.\n",
+                "type": "(k -> a -> b) -> GenericDict.Dict k a -> GenericDict.Dict k b"
+            },
+            {
+                "name": "member",
+                "comment": " Determine if a key is in a dictionary.\n",
+                "type": "(k -> String.String) -> k -> GenericDict.Dict k v -> Basics.Bool"
+            },
+            {
+                "name": "merge",
+                "comment": " The most general way of combining two dictionaries. You provide three\naccumulators for when a given key appears:\n\n1.  Only in the left dictionary.\n2.  In both dictionaries.\n3.  Only in the right dictionary.\n\nYou then traverse all the keys from lowest to highest, building up whatever you want.\n\n",
+                "type": "(k -> a -> result -> result) -> (k -> a -> b -> result -> result) -> (k -> b -> result -> result) -> GenericDict.Dict k a -> GenericDict.Dict k b -> result -> result"
+            },
+            {
+                "name": "partition",
+                "comment": " Partition a dictionary according to some test. The first dictionary contains all\nkey-value pairs which passed the test, and the second contains the pairs that did not.\n",
+                "type": "(k -> v -> Basics.Bool) -> GenericDict.Dict k v -> ( GenericDict.Dict k v, GenericDict.Dict k v )"
+            },
+            {
+                "name": "remove",
+                "comment": " Remove a key-value pair from a dictionary. If the key is not found, no changes are made.\n",
+                "type": "(k -> String.String) -> k -> GenericDict.Dict k v -> GenericDict.Dict k v"
+            },
+            {
+                "name": "singleton",
+                "comment": " Create a dictionary with one key-value pair.\n",
+                "type": "(k -> String.String) -> k -> v -> GenericDict.Dict k v"
+            },
+            {
+                "name": "size",
+                "comment": " Determine the number of key-value pairs in the dictionary.\n",
+                "type": "GenericDict.Dict k v -> Basics.Int"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert a dictionary into an association list of key-value pairs.\n",
+                "type": "GenericDict.Dict k v -> List.List ( k, v )"
+            },
+            {
+                "name": "union",
+                "comment": " Combine two dictionaries.\nIf there is a collision, preference is given to the first dictionary.\n",
+                "type": "GenericDict.Dict k v -> GenericDict.Dict k v -> GenericDict.Dict k v"
+            },
+            {
+                "name": "update",
+                "comment": " Update the value of a dictionary for a specific key with a given function.\n",
+                "type": "(k -> String.String) -> k -> (Maybe.Maybe v -> Maybe.Maybe v) -> GenericDict.Dict k v -> GenericDict.Dict k v"
+            },
+            {
+                "name": "values",
+                "comment": " Get all of the values in a dictionary.\n",
+                "type": "GenericDict.Dict k v -> List.List v"
+            }
+        ],
+        "binops": []
+    }
+]

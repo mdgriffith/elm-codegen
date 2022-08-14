@@ -1,0 +1,52 @@
+[
+    {
+        "name": "LoadingState",
+        "comment": " Track the loading state of an external resource. Ideal for network requests.\n\n\n# Types\n\n@docs LoadingState\n\n\n# Functions\n\n@docs unwrap, map\n\n",
+        "unions": [
+            {
+                "name": "LoadingState",
+                "comment": " Represents a loading state.\n",
+                "args": [
+                    "err",
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "NotLoading",
+                        []
+                    ],
+                    [
+                        "Loading",
+                        []
+                    ],
+                    [
+                        "Loaded",
+                        [
+                            "a"
+                        ]
+                    ],
+                    [
+                        "Failed",
+                        [
+                            "err"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "map",
+                "comment": " Enables working with loaded data.\n",
+                "type": "LoadingState.LoadingState err a -> (a -> a) -> LoadingState.LoadingState err a"
+            },
+            {
+                "name": "unwrap",
+                "comment": " Unwraps a loaded value. Not recommended.\n",
+                "type": "LoadingState.LoadingState err a -> Maybe.Maybe a"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,398 @@
+[
+    {
+        "name": "MortyAPI.Commands",
+        "comment": " Provides commands and command parameters for making API calls.\n\n@docs ApproachParameters\n@docs CurrentUserParameters\n@docs KanbanLanesForTeamParameters\n@docs KanbanLanesForUserParameters\n@docs TasksParameters\n@docs TaskParameters\n@docs TeamsParameters\n\n@docs getCurrentUserCommand\n@docs getKanbanLanesForTeam\n@docs getKanbanLanesForUser\n@docs getTaskCommand\n@docs getTasksCommand\n@docs getTeams\n@docs postTaskApproachCommand\n@docs putTaskUpdateCommand\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "ApproachParameters",
+                "comment": " Parameters required to POST a new Task Approach\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ mortyApiToken : String.String, mortyHost : String.String, msgType : RemoteData.WebData MortyAPI.Types.TaskApproach -> a }"
+            },
+            {
+                "name": "CurrentUserParameters",
+                "comment": " Parameters required to retrieve the current user\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ mortyApiToken : String.String, mortyHost : String.String, msgType : RemoteData.WebData MortyAPI.Types.User -> a }"
+            },
+            {
+                "name": "KanbanLanesForTeamParameters",
+                "comment": " Parameters required to retrieve the kanban board for a full team\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ mortyApiToken : String.String, mortyHost : String.String, teamId : Basics.Int, msgType : RemoteData.WebData MortyAPI.Types.KanbanLanesSuccessResponse -> a }"
+            },
+            {
+                "name": "KanbanLanesForUserParameters",
+                "comment": " Parameters required to retrieve the kanban board for a single user\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ mortyApiToken : String.String, mortyHost : String.String, userId : Basics.Int, msgType : RemoteData.WebData MortyAPI.Types.KanbanLanesSuccessResponse -> a }"
+            },
+            {
+                "name": "TaskParameters",
+                "comment": " Parameters required to retrieve a task\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ mortyApiToken : String.String, mortyHost : String.String, taskId : Basics.Int, msgType : RemoteData.WebData MortyAPI.Types.Task -> a }"
+            },
+            {
+                "name": "TasksParameters",
+                "comment": " Parameters required to retrieve task matching owner and scope\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ mortyApiToken : String.String, mortyHost : String.String, ownerType : Maybe.Maybe String.String, ownerId : Maybe.Maybe Basics.Int, taskScope : Maybe.Maybe String.String, taskScopeParam : Maybe.Maybe String.String, msgType : RemoteData.WebData (List.List MortyAPI.Types.Task) -> a }"
+            },
+            {
+                "name": "TeamsParameters",
+                "comment": " Parameters required to retrieve a list of teams\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ mortyApiToken : String.String, mortyHost : String.String, msgType : RemoteData.WebData MortyAPI.Types.TeamsSuccessResponse -> a }"
+            }
+        ],
+        "values": [
+            {
+                "name": "getCurrentUserCommand",
+                "comment": " Gets the current user from the API\n",
+                "type": "MortyAPI.Commands.CurrentUserParameters a -> Platform.Cmd.Cmd a"
+            },
+            {
+                "name": "getKanbanLanesForTeam",
+                "comment": " Retrieves all kanban lanes for a team\n",
+                "type": "MortyAPI.Commands.KanbanLanesForTeamParameters a -> Platform.Cmd.Cmd a"
+            },
+            {
+                "name": "getKanbanLanesForUser",
+                "comment": " Retrieves all kanban lanes for a user\n",
+                "type": "MortyAPI.Commands.KanbanLanesForUserParameters a -> Platform.Cmd.Cmd a"
+            },
+            {
+                "name": "getTaskCommand",
+                "comment": " Gets a task from the API\n",
+                "type": "MortyAPI.Commands.TaskParameters a -> Platform.Cmd.Cmd a"
+            },
+            {
+                "name": "getTasksCommand",
+                "comment": " Gets a list of tasks matching the filter criteria from the API\n",
+                "type": "MortyAPI.Commands.TasksParameters a -> Platform.Cmd.Cmd a"
+            },
+            {
+                "name": "getTeams",
+                "comment": " Retrieves all teams and their members\n",
+                "type": "MortyAPI.Commands.TeamsParameters a -> Platform.Cmd.Cmd a"
+            },
+            {
+                "name": "postTaskApproachCommand",
+                "comment": " POSTs a new task approach to the API\n",
+                "type": "MortyAPI.Commands.ApproachParameters a -> MortyAPI.Types.TaskApproach -> Platform.Cmd.Cmd a"
+            },
+            {
+                "name": "putTaskUpdateCommand",
+                "comment": " Updates the properties of a task using a PUT call to the API\n",
+                "type": "MortyAPI.Commands.TaskParameters a -> MortyAPI.Types.Task -> Platform.Cmd.Cmd a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "MortyAPI.Decoders",
+        "comment": " Provides decoders for converting JSON responses into record types published by MortyAPI.Types.\n\n@docs decodeApproach\n@docs decodeKanbanLanesSuccessResponse\n@docs decodeTask\n@docs decodeTeamsSuccessResponse\n@docs decodeUser\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decodeApproach",
+                "comment": " Provides a decoder for JSON -> MortyAPI.Types.TaskApproach\n",
+                "type": "Json.Decode.Decoder MortyAPI.Types.TaskApproach"
+            },
+            {
+                "name": "decodeKanbanLanesSuccessResponse",
+                "comment": " Provides a decoder for JSON -> MortyAPI.Types.KanbanLanesSuccessResponse\n",
+                "type": "Json.Decode.Decoder MortyAPI.Types.KanbanLanesSuccessResponse"
+            },
+            {
+                "name": "decodeTask",
+                "comment": " Provides a decoder for JSON -> MortyAPI.Types.Task\n",
+                "type": "Json.Decode.Decoder MortyAPI.Types.Task"
+            },
+            {
+                "name": "decodeTeamsSuccessResponse",
+                "comment": " Provides a decoder for JSON -> MortyAPI.Types.TeamsSuccessResponse\n",
+                "type": "Json.Decode.Decoder MortyAPI.Types.TeamsSuccessResponse"
+            },
+            {
+                "name": "decodeUser",
+                "comment": " Provides a decoder for JSON -> MortyAPI.Types.User\n",
+                "type": "Json.Decode.Decoder MortyAPI.Types.User"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "MortyAPI.Encoders",
+        "comment": " Provides encoders for converting record types published by MortyAPI.Types into JSON responses.\n\n@docs encodeApproach\n@docs encodeTask\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "encodeApproach",
+                "comment": " Encode MortyAPI.Types.TaskApproach into JSON.\n",
+                "type": "MortyAPI.Types.TaskApproach -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeTask",
+                "comment": " Encode MortyAPI.Types.Task into JSON.\n",
+                "type": "MortyAPI.Types.Task -> Json.Encode.Value"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "MortyAPI.TestFactories",
+        "comment": " Provides factory methods for testing purposes.\n\n@docs firstTask\n@docs secondTask\n@docs thirdTask\n@docs fourthTask\n@docs fifthTask\n@docs sixthTask\n@docs firstUser\n@docs secondUser\n@docs kanbanLanesSuccessResponse\n@docs teamsSuccessResponse\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fifthTask",
+                "comment": " A dummy feature task\n",
+                "type": "MortyAPI.Types.KanbanTask"
+            },
+            {
+                "name": "firstTask",
+                "comment": " A dummy feature task\n",
+                "type": "MortyAPI.Types.KanbanTask"
+            },
+            {
+                "name": "firstUser",
+                "comment": " A dummy user\n",
+                "type": "MortyAPI.Types.KanbanUser"
+            },
+            {
+                "name": "fourthTask",
+                "comment": " A dummy feature task\n",
+                "type": "MortyAPI.Types.KanbanTask"
+            },
+            {
+                "name": "kanbanLanesSuccessResponse",
+                "comment": " A dummy full Kanban lanes response from the API\n",
+                "type": "MortyAPI.Types.KanbanLanesSuccessResponse"
+            },
+            {
+                "name": "secondTask",
+                "comment": " A dummy chore task\n",
+                "type": "MortyAPI.Types.KanbanTask"
+            },
+            {
+                "name": "secondUser",
+                "comment": " A dummy user\n",
+                "type": "MortyAPI.Types.KanbanUser"
+            },
+            {
+                "name": "sixthTask",
+                "comment": " A dummy feature task\n",
+                "type": "MortyAPI.Types.KanbanTask"
+            },
+            {
+                "name": "teamsSuccessResponse",
+                "comment": " A dummy full Teams response from the API\n",
+                "type": "MortyAPI.Types.TeamsSuccessResponse"
+            },
+            {
+                "name": "thirdTask",
+                "comment": " A dummy feature task\n",
+                "type": "MortyAPI.Types.KanbanTask"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "MortyAPI.Types",
+        "comment": " This library provides all the models you'll get back from the MortyAPI.\n\n\n# Definition\n\n@docs KanbanLane\n@docs KanbanLanes\n@docs KanbanLanesData\n@docs KanbanLanesSuccessResponse\n@docs KanbanStage\n@docs KanbanStageStatus\n@docs KanbanStageStatusFields\n@docs KanbanTask\n@docs KanbanTaskPriority\n@docs KanbanTaskType\n@docs KanbanUser\n@docs Task\n@docs TaskApproach\n@docs Team\n@docs TeamMember\n@docs TeamsData\n@docs TeamsSuccessResponse\n@docs User\n\n",
+        "unions": [
+            {
+                "name": "KanbanStageStatus",
+                "comment": " The possible statuses a `KanbanStage` can have.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Ok",
+                        []
+                    ],
+                    [
+                        "Problem",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "KanbanTaskPriority",
+                "comment": " The different task priorities with unique display properties\n",
+                "args": [],
+                "cases": [
+                    [
+                        "HighestPriority",
+                        []
+                    ],
+                    [
+                        "SecondHighestPriority",
+                        []
+                    ],
+                    [
+                        "ThirdHighestPriority",
+                        []
+                    ],
+                    [
+                        "LowerPriority",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "KanbanTaskType",
+                "comment": " The different types a kanban task can be.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Feature",
+                        []
+                    ],
+                    [
+                        "Bug",
+                        []
+                    ],
+                    [
+                        "Chore",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "KanbanLane",
+                "comment": " A Kanban lane - effectively the lane representing a single user.\nReturned as part of the `KanbanLanes` record.\n",
+                "args": [],
+                "type": "{ acceptedStage : MortyAPI.Types.KanbanStage, deliveredStage : MortyAPI.Types.KanbanStage, inProgressStage : MortyAPI.Types.KanbanStage, metaStage : MortyAPI.Types.KanbanStage, toDoStage : MortyAPI.Types.KanbanStage, toEstimateStage : MortyAPI.Types.KanbanStage, user : MortyAPI.Types.KanbanUser }"
+            },
+            {
+                "name": "KanbanLanes",
+                "comment": " The whole Kanban board.\n",
+                "args": [],
+                "type": "{ label : String.String, kanbanLanes : List.List MortyAPI.Types.KanbanLane }"
+            },
+            {
+                "name": "KanbanLanesData",
+                "comment": " The \"data\" content of the JSON API compliant response.\n",
+                "args": [],
+                "type": "{ attributes : MortyAPI.Types.KanbanLanes, id : String.String, dataType : String.String }"
+            },
+            {
+                "name": "KanbanLanesSuccessResponse",
+                "comment": " The full JSON compliant response.\n",
+                "args": [],
+                "type": "{ data : MortyAPI.Types.KanbanLanesData }"
+            },
+            {
+                "name": "KanbanStage",
+                "comment": " A stage in the Kanban board - meta, to estimate, to do, in progress, delivered and accepted are\nall instances of this.\n",
+                "args": [],
+                "type": "{ status : MortyAPI.Types.KanbanStageStatus, tasks : List.List MortyAPI.Types.KanbanTask }"
+            },
+            {
+                "name": "KanbanStageStatusFields",
+                "comment": " The raw fields from the API, just for decoding purposes.\n",
+                "args": [],
+                "type": "{ status : String.String, message : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "KanbanTask",
+                "comment": " A task with only the properties required to render the Kanban board.\n",
+                "args": [],
+                "type": "{ daysSinceLastChanged : Basics.Int, description : String.String, estimate : Maybe.Maybe Basics.Int, mortyUrl : String.String, pivotalUrl : String.String, priority : MortyAPI.Types.KanbanTaskPriority, requestedBy : Maybe.Maybe String.String, taskType : MortyAPI.Types.KanbanTaskType }"
+            },
+            {
+                "name": "KanbanUser",
+                "comment": " A Kanban board user, represented by a lane.\n",
+                "args": [],
+                "type": "{ email : String.String, fullName : String.String }"
+            },
+            {
+                "name": "Task",
+                "comment": " The record type returned by asking Morty for a Task via `MortyAPI.Commands.getTasksCommand` or\n`MortyAPI.Commands.getTaskCommand`.\n",
+                "args": [],
+                "type": "{ id : Basics.Int, title : String.String, description : String.String, taskType : String.String, externalIdentifier : String.String, status : String.String, secondsSinceStatusChanged : Basics.Int, ownedBy : Maybe.Maybe MortyAPI.Types.User, requestedBy : Maybe.Maybe String.String, taskApproaches : List.List MortyAPI.Types.TaskApproach, predictionGroupId : Maybe.Maybe Basics.Int, predictionJudgementAt : Maybe.Maybe String.String, midLevelHourEstimate : Maybe.Maybe Basics.Int }"
+            },
+            {
+                "name": "TaskApproach",
+                "comment": " The Approach to a task. Used to create a new approach or return\na list of existing approaches when you retrieve a task.\n",
+                "args": [],
+                "type": "{ id : Basics.Int, taskId : Basics.Int, user : MortyAPI.Types.User, description : String.String, myHours : Maybe.Maybe Basics.Float, seniorHours : Maybe.Maybe Basics.Float, midLevelHours : Maybe.Maybe Basics.Float, juniorHours : Maybe.Maybe Basics.Float }"
+            },
+            {
+                "name": "Team",
+                "comment": " The record type returned by asking Morty for Teams via `MortyAPI.Commands.getTeamsCommand`\n",
+                "args": [],
+                "type": "{ id : Basics.Int, identifier : Maybe.Maybe String.String, name : String.String, members : List.List MortyAPI.Types.TeamMember }"
+            },
+            {
+                "name": "TeamMember",
+                "comment": " The record type returned by asking Morty for Teams via `MortyAPI.Commands.getTeamsCommand` and\nrepresenting the team members in the team\n",
+                "args": [],
+                "type": "{ id : Basics.Int, fullName : String.String, email : String.String, seniority : String.String }"
+            },
+            {
+                "name": "TeamsData",
+                "comment": " The \"data\" content of the JSON API compliant response.\n",
+                "args": [],
+                "type": "{ attributes : List.List MortyAPI.Types.Team }"
+            },
+            {
+                "name": "TeamsSuccessResponse",
+                "comment": " The full JSON compliant response.\n",
+                "args": [],
+                "type": "{ data : MortyAPI.Types.TeamsData }"
+            },
+            {
+                "name": "User",
+                "comment": " The record type returned by asking Morty for the current user via\n`MortyAPI.Commands.getUserCommand`. It is also how the user is represented in the `Task` record.\n",
+                "args": [],
+                "type": "{ id : Basics.Int, fullName : String.String, email : String.String, seniority : String.String, predictionBookApiToken : Maybe.Maybe String.String }"
+            }
+        ],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "MortyAPI.Utilities",
+        "comment": " Provides utility functions for MortyAPI.Types.\n\n@docs kanbanLaneStageList\n@docs allKanbanLanesProblems\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "allKanbanLanesProblems",
+                "comment": " Returns a list of problem message strings from the entire board.\n",
+                "type": "MortyAPI.Types.KanbanLanes -> List.List String.String"
+            },
+            {
+                "name": "kanbanLaneStageList",
+                "comment": " Returns a list of stages from a lane\n",
+                "type": "MortyAPI.Types.KanbanLane -> List.List MortyAPI.Types.KanbanStage"
+            }
+        ],
+        "binops": []
+    }
+]

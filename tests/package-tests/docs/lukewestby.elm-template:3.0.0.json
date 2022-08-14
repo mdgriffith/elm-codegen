@@ -1,0 +1,40 @@
+[
+    {
+        "name": "Template",
+        "comment": " Type-safe string templating\n\n\n# types\n\n@docs Template\n\n\n# construction\n\n@docs template, withValue, withString\n\n\n# rendering\n\n@docs render\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Template",
+                "comment": " A list of the components of a template\n",
+                "args": [
+                    "a"
+                ],
+                "type": "List.List (Template.Component a)"
+            }
+        ],
+        "values": [
+            {
+                "name": "render",
+                "comment": " Walks through a template's components and renders them to a single string\n\n    template \"my string \"\n        |> withValue .hello\n        |> withString \" another string\"\n        |> render { hello = \"world\" }\n\n",
+                "type": "record -> Template.Template record -> String.String"
+            },
+            {
+                "name": "template",
+                "comment": " Create an initial template starting with the given string\n\n    template \"my string \"\n\n",
+                "type": "String.String -> Template.Template record"
+            },
+            {
+                "name": "withString",
+                "comment": " Attach a string to a template\n\n    template \"my string \"\n        |> withValue .hello\n        |> withString \" another string\"\n\n",
+                "type": "String.String -> Template.Template record -> Template.Template record"
+            },
+            {
+                "name": "withValue",
+                "comment": " Attach a record accessor to a template\n\n    template \"my string \"\n        |> withValue .hello\n\n",
+                "type": "(record -> String.String) -> Template.Template record -> Template.Template record"
+            }
+        ],
+        "binops": []
+    }
+]

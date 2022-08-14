@@ -1,0 +1,16 @@
+[
+    {
+        "name": "NoSimpleLetBody",
+        "comment": "\n\n@docs rule\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": " Reports when a let expression's body is a simple reference to a value declared in the let expression.\n\n🔧 Running with `--fix` will automatically remove most of the reported errors.\n\n    config =\n        [ NoSimpleLetBody.rule\n        ]\n\nThe reasoning is that it is not necessary to assign a name to the result of a let expression,\nsince they are redundant with the value or function containing the expression.\n\nIf it feels necessary to give a name anyway because it helps clarify the context, then it might be a sign that the computation of that value should be extracted to a function.\n\nLet expressions will be reported regardless of whether they're at the root of a function or deeply nested.\n\n\n## Fail\n\n    a =\n        let\n            b =\n                1\n\n            c =\n                b + 1\n        in\n        c\n\n\n## Success\n\nAnything that is not simply a reference to a value declared in the let expression is okay.\n\n    a =\n        let\n            b =\n                1\n        in\n        b + 1\n\nThe rule will not report when the referenced value was destructured in the let expression.\n\n    first tuple =\n        let\n            ( value, _ ) =\n                tuple\n        in\n        value\n\n\n## When (not) to enable this rule\n\nThis rule resolves a minor style issue, and may not be worth enforcing depending on how strongly you feel about this issue.\n\n\n## Try it out\n\nYou can try this rule out by running the following command:\n\n```bash\nelm-review --template jfmengels/elm-review-code-style/example --rules NoSimpleLetBody\n```\n\n",
+                "type": "Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    }
+]

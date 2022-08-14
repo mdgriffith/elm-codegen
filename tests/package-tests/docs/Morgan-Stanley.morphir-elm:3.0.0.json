@@ -1,0 +1,1549 @@
+[
+    {
+        "name": "Morphir.Elm.Frontend",
+        "comment": " The Elm frontend turns Elm source code into Morphir IR.\n\n\n# Entry points\n\n@docs packageDefinitionFromSource, mapDeclarationsToType\n\n\n# Utilities\n\n@docs ContentLocation, ContentRange, Error, Errors, PackageInfo, SourceFile, SourceLocation\n\n",
+        "unions": [
+            {
+                "name": "Error",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "ParseError",
+                        [
+                            "String.String",
+                            "List.List Parser.DeadEnd"
+                        ]
+                    ],
+                    [
+                        "CyclicModules",
+                        [
+                            "Morphir.Graph.Graph () (List.List String.String)"
+                        ]
+                    ],
+                    [
+                        "ResolveError",
+                        [
+                            "Morphir.Elm.Frontend.SourceLocation",
+                            "Morphir.Elm.Frontend.Resolve.Error"
+                        ]
+                    ],
+                    [
+                        "EmptyApply",
+                        [
+                            "Morphir.Elm.Frontend.SourceLocation"
+                        ]
+                    ],
+                    [
+                        "NotSupported",
+                        [
+                            "Morphir.Elm.Frontend.SourceLocation",
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "DuplicateNameInPattern",
+                        [
+                            "Morphir.IR.Name.Name",
+                            "Morphir.Elm.Frontend.SourceLocation",
+                            "Morphir.Elm.Frontend.SourceLocation"
+                        ]
+                    ],
+                    [
+                        "VariableShadowing",
+                        [
+                            "Morphir.IR.Name.Name",
+                            "Morphir.Elm.Frontend.SourceLocation",
+                            "Morphir.Elm.Frontend.SourceLocation"
+                        ]
+                    ],
+                    [
+                        "MissingTypeSignature",
+                        [
+                            "Morphir.Elm.Frontend.SourceLocation"
+                        ]
+                    ],
+                    [
+                        "RecordPatternNotSupported",
+                        [
+                            "Morphir.Elm.Frontend.SourceLocation"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "ContentLocation",
+                "comment": " ",
+                "args": [],
+                "type": "{ row : Basics.Int, column : Basics.Int }"
+            },
+            {
+                "name": "ContentRange",
+                "comment": " ",
+                "args": [],
+                "type": "{ start : Morphir.Elm.Frontend.ContentLocation, end : Morphir.Elm.Frontend.ContentLocation }"
+            },
+            {
+                "name": "Errors",
+                "comment": " ",
+                "args": [],
+                "type": "List.List Morphir.Elm.Frontend.Error"
+            },
+            {
+                "name": "PackageInfo",
+                "comment": " ",
+                "args": [],
+                "type": "{ name : Morphir.IR.Path.Path, exposedModules : Set.Set Morphir.IR.Path.Path }"
+            },
+            {
+                "name": "SourceFile",
+                "comment": " ",
+                "args": [],
+                "type": "{ path : String.String, content : String.String }"
+            },
+            {
+                "name": "SourceLocation",
+                "comment": " ",
+                "args": [],
+                "type": "{ source : Morphir.Elm.Frontend.SourceFile, range : Morphir.Elm.Frontend.ContentRange }"
+            }
+        ],
+        "values": [
+            {
+                "name": "mapDeclarationsToType",
+                "comment": " Function that turns `elm-syntax` declarations to Morphir IR types.\n",
+                "type": "Morphir.Elm.Frontend.SourceFile -> Elm.Syntax.Exposing.Exposing -> List.List Elm.Syntax.Declaration.Declaration -> Result.Result Morphir.Elm.Frontend.Errors (List.List ( Morphir.IR.Name.Name, Morphir.IR.AccessControlled.AccessControlled (Morphir.IR.Documented.Documented (Morphir.IR.Type.Definition Morphir.Elm.Frontend.SourceLocation)) ))"
+            },
+            {
+                "name": "packageDefinitionFromSource",
+                "comment": " Function that takes some package info and a list of sources and returns Morphir IR or errors.\n",
+                "type": "Morphir.Elm.Frontend.PackageInfo -> List.List Morphir.Elm.Frontend.SourceFile -> Result.Result Morphir.Elm.Frontend.Errors (Morphir.IR.Package.Definition Morphir.Elm.Frontend.SourceLocation)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Morphir.IR.AccessControlled",
+        "comment": " Module to manage access to a node in the IR. This is only used to declare access levels\nnot to enforce them. Enforcement can be done through the helper functions\n[withPublicAccess](#withPublicAccess) and [withPrivateAccess](#withPrivateAccess) but it's\nup to the consumer of the API to call the righ function.\n\n@docs AccessControlled, Access\n\n\n# Creation\n\n@docs public, private\n\n\n# Query\n\n@docs withPublicAccess, withPrivateAccess\n\n\n# Transform\n\n@docs map\n\n",
+        "unions": [
+            {
+                "name": "Access",
+                "comment": " Public or private access.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Public",
+                        []
+                    ],
+                    [
+                        "Private",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "AccessControlled",
+                "comment": " Type that represents different access levels.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ access : Morphir.IR.AccessControlled.Access, value : a }"
+            }
+        ],
+        "values": [
+            {
+                "name": "map",
+                "comment": " Apply a function to the access controlled value but keep the access unchanged.\n",
+                "type": "(a -> b) -> Morphir.IR.AccessControlled.AccessControlled a -> Morphir.IR.AccessControlled.AccessControlled b"
+            },
+            {
+                "name": "private",
+                "comment": " Mark a node as private access. Only actors with private access level can see.\n",
+                "type": "a -> Morphir.IR.AccessControlled.AccessControlled a"
+            },
+            {
+                "name": "public",
+                "comment": " Mark a node as public access. Actors with both public and private access are allowed to see.\n",
+                "type": "a -> Morphir.IR.AccessControlled.AccessControlled a"
+            },
+            {
+                "name": "withPrivateAccess",
+                "comment": " Get the value with private access level. Will always return the value.\n\n    withPrivateAccess (public 13) -- 13\n\n    withPrivateAccess (private 13) -- 13\n\n",
+                "type": "Morphir.IR.AccessControlled.AccessControlled a -> a"
+            },
+            {
+                "name": "withPublicAccess",
+                "comment": " Get the value with public access level. Will return `Nothing` if the value is private.\n\n    withPublicAccess (public 13) -- Just 13\n\n    withPublicAccess (private 13) -- Nothing\n\n",
+                "type": "Morphir.IR.AccessControlled.AccessControlled a -> Maybe.Maybe a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Morphir.IR.FQName",
+        "comment": " Module to work with fully-qualified names. A qualified name is a combination of a package path, a module path and a local name.\n\n@docs FQName, fQName, fromQName, getPackagePath, getModulePath, getLocalName\n\n",
+        "unions": [
+            {
+                "name": "FQName",
+                "comment": " Type that represents a fully-qualified name.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "FQName",
+                        [
+                            "Morphir.IR.Path.Path",
+                            "Morphir.IR.Path.Path",
+                            "Morphir.IR.Name.Name"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fQName",
+                "comment": " Create a fully-qualified name.\n",
+                "type": "Morphir.IR.Path.Path -> Morphir.IR.Path.Path -> Morphir.IR.Name.Name -> Morphir.IR.FQName.FQName"
+            },
+            {
+                "name": "fromQName",
+                "comment": " Create a fully-qualified from a qualified name.\n",
+                "type": "Morphir.IR.Path.Path -> Morphir.IR.QName.QName -> Morphir.IR.FQName.FQName"
+            },
+            {
+                "name": "getLocalName",
+                "comment": " Get the local name part of a fully-qualified name.\n",
+                "type": "Morphir.IR.FQName.FQName -> Morphir.IR.Name.Name"
+            },
+            {
+                "name": "getModulePath",
+                "comment": " Get the module path part of a fully-qualified name.\n",
+                "type": "Morphir.IR.FQName.FQName -> Morphir.IR.Path.Path"
+            },
+            {
+                "name": "getPackagePath",
+                "comment": " Get the package path part of a fully-qualified name.\n",
+                "type": "Morphir.IR.FQName.FQName -> Morphir.IR.Path.Path"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Morphir.IR.Module",
+        "comment": " Modules are groups of types and values that belong together.\n\n@docs Specification, Definition\n@docs ModulePath, definitionToSpecification, eraseSpecificationAttributes, mapDefinitionAttributes, mapSpecificationAttributes\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Definition",
+                "comment": " Type that represents a module definition. It includes types and values.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ types : Dict.Dict Morphir.IR.Name.Name (Morphir.IR.AccessControlled.AccessControlled (Morphir.IR.Documented.Documented (Morphir.IR.Type.Definition a))), values : Dict.Dict Morphir.IR.Name.Name (Morphir.IR.AccessControlled.AccessControlled (Morphir.IR.Value.Definition a)) }"
+            },
+            {
+                "name": "ModulePath",
+                "comment": " ",
+                "args": [],
+                "type": "Morphir.IR.Path.Path"
+            },
+            {
+                "name": "Specification",
+                "comment": " Type that represents a module specification.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ types : Dict.Dict Morphir.IR.Name.Name (Morphir.IR.Documented.Documented (Morphir.IR.Type.Specification a)), values : Dict.Dict Morphir.IR.Name.Name (Morphir.IR.Value.Specification a) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "definitionToSpecification",
+                "comment": " ",
+                "type": "Morphir.IR.Module.Definition a -> Morphir.IR.Module.Specification a"
+            },
+            {
+                "name": "eraseSpecificationAttributes",
+                "comment": " ",
+                "type": "Morphir.IR.Module.Specification a -> Morphir.IR.Module.Specification ()"
+            },
+            {
+                "name": "mapDefinitionAttributes",
+                "comment": " ",
+                "type": "(a -> b) -> Morphir.IR.Module.Definition a -> Morphir.IR.Module.Definition b"
+            },
+            {
+                "name": "mapSpecificationAttributes",
+                "comment": " ",
+                "type": "(a -> b) -> Morphir.IR.Module.Specification a -> Morphir.IR.Module.Specification b"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Morphir.IR.Name",
+        "comment": " `Name` is an abstraction of human-readable identifiers made up of words. This abstraction\nallows us to use the same identifiers across various naming conventions used by the different\nfrontend and backend languages Morphir integrates with.\n\n    name = fromList [ \"value\", \"in\", \"u\", \"s\", \"d\" ]\n\n    toTitleCase name --> \"ValueInUSD\"\n    toCamelCase name --> \"valueInUSD\"\n    toSnakeCase name --> \"value_in_USD\"\n\n\n## Abbreviations\n\nWe frequently use abbreviations in a business context to be more concise.\nFrom a naming perspective abbreviations are challanging because they are not real words and\nbehave slightly differently. In this module we treat abbreviations as a list of single-letter\nwords. This approach fits nicely into camel and title case naming conventions but when using\nsnake-case the direct translation would look unnatural:\n\n    toSnakeCase name -- \"value_in_u_s_d\" ?\n\nTo resolve this and help creating human-readable strings we added functionality to turn\nabbreviations into upper-case words. We treat any series of single letter words as an\nabbreviation:\n\n    toSnakeCase name --> \"value_in_USD\"\n\n@docs Name, fromList, toList\n\n\n# String conversion\n\n@docs fromString, toTitleCase, toCamelCase, toSnakeCase, toHumanWords\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Name",
+                "comment": " Type that represents a name that is made up of words.\n",
+                "args": [],
+                "type": "List.List String.String"
+            }
+        ],
+        "values": [
+            {
+                "name": "fromList",
+                "comment": " Convert a list of strings into a name.\n",
+                "type": "List.List String.String -> Morphir.IR.Name.Name"
+            },
+            {
+                "name": "fromString",
+                "comment": " Translate a string into a name by splitting it into words. The algorithm is designed\nto work with most well-known naming conventions or mix of them. The general rule is that\nconsecutive letters and numbers are treated as words, upper-case letters and non-alphanumeric\ncharacters start a new word.\n\n    fromString \"fooBar_baz 123\"\n    --> Name.fromList [ \"foo\", \"bar\", \"baz\", \"123\" ]\n\n    fromString \"valueInUSD\"\n    --> Name.fromList [ \"value\", \"in\", \"u\", \"s\", \"d\" ]\n\n    fromString \"ValueInUSD\"\n    --> Name.fromList [ \"value\", \"in\", \"u\", \"s\", \"d\" ]\n\n    fromString \"value_in_USD\"\n    --> Name.fromList [ \"value\", \"in\", \"u\", \"s\", \"d\" ]\n\n    fromString \"_-%\"\n    --> Name.fromList []\n\n",
+                "type": "String.String -> Morphir.IR.Name.Name"
+            },
+            {
+                "name": "toCamelCase",
+                "comment": " Turns a name into a camel-case string.\n\n    toCamelCase (fromList [ \"foo\", \"bar\", \"baz\", \"123\" ])\n    --> \"fooBarBaz123\"\n\n    toCamelCase (fromList [ \"value\", \"in\", \"u\", \"s\", \"d\" ])\n    --> \"valueInUSD\"\n\n",
+                "type": "Morphir.IR.Name.Name -> String.String"
+            },
+            {
+                "name": "toHumanWords",
+                "comment": " Turns a name into a list of human-readable strings. The only difference\ncompared to [`toList`](#toList) is how it handles abbreviations. They will\nbe turned into a single upper-case word instead of separate single-character\nwords.\n\n    toHumanWords (fromList [ \"value\", \"in\", \"u\", \"s\", \"d\" ])\n    --> [ \"value\", \"in\", \"USD\" ]\n\n",
+                "type": "Morphir.IR.Name.Name -> List.List String.String"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert a name to a list of strings.\n",
+                "type": "Morphir.IR.Name.Name -> List.List String.String"
+            },
+            {
+                "name": "toSnakeCase",
+                "comment": " Turns a name into a snake-case string.\n\n    toSnakeCase (fromList [ \"foo\", \"bar\", \"baz\", \"123\" ])\n    --> \"foo_bar_baz_123\"\n\n    toSnakeCase (fromList [ \"value\", \"in\", \"u\", \"s\", \"d\" ])\n    --> \"value_in_USD\"\n\n",
+                "type": "Morphir.IR.Name.Name -> String.String"
+            },
+            {
+                "name": "toTitleCase",
+                "comment": " Turns a name into a title-case string.\n\n    toTitleCase (fromList [ \"foo\", \"bar\", \"baz\", \"123\" ])\n    --> \"FooBarBaz123\"\n\n    toTitleCase (fromList [ \"value\", \"in\", \"u\", \"s\", \"d\" ])\n    --> \"ValueInUSD\"\n\n",
+                "type": "Morphir.IR.Name.Name -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Morphir.IR.Package",
+        "comment": " Tools to work with packages.\n\n@docs Distribution\n\n@docs Specification\n\n@docs Definition, emptyDefinition\n\n@docs PackagePath, definitionToSpecification, eraseDefinitionAttributes, eraseSpecificationAttributes\n\n",
+        "unions": [
+            {
+                "name": "Distribution",
+                "comment": " Type that represents a package distribution. A distribution contains all the necessary information to consume a\npackage.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Library",
+                        [
+                            "Morphir.IR.Package.PackagePath",
+                            "Morphir.IR.Package.Definition ()"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Definition",
+                "comment": " Type that represents a package definition.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ dependencies : Dict.Dict Morphir.IR.Package.PackagePath (Morphir.IR.Package.Specification a), modules : Dict.Dict Morphir.IR.Module.ModulePath (Morphir.IR.AccessControlled.AccessControlled (Morphir.IR.Module.Definition a)) }"
+            },
+            {
+                "name": "PackagePath",
+                "comment": " ",
+                "args": [],
+                "type": "Morphir.IR.Path.Path"
+            },
+            {
+                "name": "Specification",
+                "comment": " Type that represents a package specification.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ modules : Dict.Dict Morphir.IR.Module.ModulePath (Morphir.IR.Module.Specification a) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "definitionToSpecification",
+                "comment": " ",
+                "type": "Morphir.IR.Package.Definition a -> Morphir.IR.Package.Specification a"
+            },
+            {
+                "name": "emptyDefinition",
+                "comment": " An empty package definition.\n",
+                "type": "Morphir.IR.Package.Definition a"
+            },
+            {
+                "name": "eraseDefinitionAttributes",
+                "comment": " ",
+                "type": "Morphir.IR.Package.Definition a -> Morphir.IR.Package.Definition ()"
+            },
+            {
+                "name": "eraseSpecificationAttributes",
+                "comment": " ",
+                "type": "Morphir.IR.Package.Specification a -> Morphir.IR.Package.Specification ()"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Morphir.IR.Path",
+        "comment": " `Path` is a list of names that represents a path in the tree. It's used at various\nplaces in the IR to identify types and values.\n\n@docs Path, fromList, toList\n\n\n# String conversion\n\n@docs fromString, toString\n\n\n# Utilities\n\n@docs isPrefixOf\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Path",
+                "comment": " Type that represents a path as a list of names.\n",
+                "args": [],
+                "type": "List.List Morphir.IR.Name.Name"
+            }
+        ],
+        "values": [
+            {
+                "name": "fromList",
+                "comment": " Converts a list of names to a path.\n",
+                "type": "List.List Morphir.IR.Name.Name -> Morphir.IR.Path.Path"
+            },
+            {
+                "name": "fromString",
+                "comment": " Translates a string into a path by splitting it into names along special characters.\nThe algorithm will treat any non-word charaters that are not spaces as a path separator.\n\n    fromString \"fooBar.Baz\"\n    --> Path.fromList\n    -->     [ Name.fromList [ \"foo\", \"bar\" ]\n    -->     , Name.fromList [ \"baz\" ]\n    -->     ]\n\n    fromString \"foo bar/baz\"\n    --> Path.fromList\n    -->     [ Name.fromList [ \"foo\", \"bar\" ]\n    -->     , Name.fromList [ \"baz\" ]\n    -->     ]\n\n",
+                "type": "String.String -> Morphir.IR.Path.Path"
+            },
+            {
+                "name": "isPrefixOf",
+                "comment": " Checks if a path is a prefix of another.\n\n    isPrefixOf [ [ \"foo\" ], [ \"bar\" ] ] [ [ \"foo\" ] ] == True\n\n    isPrefixOf [ [ \"foo\" ] ] [ [ \"foo\" ], [ \"bar\" ] ] == False\n\n    isPrefixOf [ [ \"foo\" ], [ \"bar\" ] ] [ [ \"foo\" ], [ \"bar\" ] ] == True\n\n",
+                "type": "Morphir.IR.Path.Path -> Morphir.IR.Path.Path -> Basics.Bool"
+            },
+            {
+                "name": "toList",
+                "comment": " Converts a path to a list of names.\n",
+                "type": "Morphir.IR.Path.Path -> List.List Morphir.IR.Name.Name"
+            },
+            {
+                "name": "toString",
+                "comment": " Turn a path into a string using the specified naming convention and separator.\n\n    path =\n        Path.fromList\n            [ Name.fromList [ \"foo\", \"bar\" ]\n            , Name.fromList [ \"baz\" ]\n            ]\n\n    toString Name.toTitleCase \".\" path\n    --> \"FooBar.Baz\"\n\n    toString Name.toSnakeCase \"/\" path\n    --> \"foo_bar/baz\"\n\n",
+                "type": "(Morphir.IR.Name.Name -> String.String) -> String.String -> Morphir.IR.Path.Path -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Morphir.IR.QName",
+        "comment": " Module to work with qualified names. A qualified name is a combination of a module path and a local name.\n\n@docs QName, toTuple, getModulePath, getLocalName\n\n\n# Creation\n\n@docs fromName, fromTuple\n\n\n# String conversion\n\n@docs toString\n\n",
+        "unions": [
+            {
+                "name": "QName",
+                "comment": " Type that represents a qualified name.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "QName",
+                        [
+                            "Morphir.IR.Path.Path",
+                            "Morphir.IR.Name.Name"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fromName",
+                "comment": " Creates a qualified name.\n",
+                "type": "Morphir.IR.Path.Path -> Morphir.IR.Name.Name -> Morphir.IR.QName.QName"
+            },
+            {
+                "name": "fromTuple",
+                "comment": " Turn a tuple into a qualified name.\n",
+                "type": "( Morphir.IR.Path.Path, Morphir.IR.Name.Name ) -> Morphir.IR.QName.QName"
+            },
+            {
+                "name": "getLocalName",
+                "comment": " Get the local name part of a qualified name.\n",
+                "type": "Morphir.IR.QName.QName -> Morphir.IR.Name.Name"
+            },
+            {
+                "name": "getModulePath",
+                "comment": " Get the module path part of a qualified name.\n",
+                "type": "Morphir.IR.QName.QName -> Morphir.IR.Path.Path"
+            },
+            {
+                "name": "toString",
+                "comment": " Turn a qualified name into a string using the specified\npath and name conventions.\n\n    qname =\n        QName.fromTuple\n            (Path.fromList\n                [ Name.fromList [ \"foo\", \"bar\" ]\n                , Name.fromList [ \"baz\" ]\n                ]\n            , Name.fromList [ \"a\", \"name\" ]\n            )\n\n    toString Name.toTitleCase Name.toCamelCase \".\" qname\n    --> \"FooBar.Baz.aName\"\n\n    toString Name.toSnakeCase Name.toSnakeCase \"/\" qname\n    --> \"foo_bar/baz/a_name\"\n\n",
+                "type": "(Morphir.IR.Name.Name -> String.String) -> (Morphir.IR.Name.Name -> String.String) -> String.String -> Morphir.IR.QName.QName -> String.String"
+            },
+            {
+                "name": "toTuple",
+                "comment": " Turn a qualified name into a tuple.\n",
+                "type": "Morphir.IR.QName.QName -> ( Morphir.IR.Path.Path, Morphir.IR.Name.Name )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Morphir.IR.Type",
+        "comment": " This module contains the building blocks of types in the Morphir IR.\n\n\n# Type Expression\n\n@docs Type\n\n\n## Creation\n\n@docs variable, reference, tuple, record, extensibleRecord, function, unit\n\n\n# Record Field\n\n@docs Field, mapFieldName, mapFieldType\n\n\n# Specification\n\n@docs Specification, typeAliasSpecification, opaqueTypeSpecification, customTypeSpecification\n\n\n# Definition\n\n@docs Definition, typeAliasDefinition, customTypeDefinition, definitionToSpecification\n\n\n# Constructors\n\n@docs Constructors, Constructor\n\n\n# Mapping\n\n@docs mapTypeAttributes, mapSpecificationAttributes, mapDefinitionAttributes, mapDefinition, eraseAttributes\n\n",
+        "unions": [
+            {
+                "name": "Constructor",
+                "comment": " ",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Constructor",
+                        [
+                            "Morphir.IR.Name.Name",
+                            "List.List ( Morphir.IR.Name.Name, Morphir.IR.Type.Type a )"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Definition",
+                "comment": " This syntax represents a type definition. For example:\n\n  - `type alias Foo a = {bar : Maybe a, qux : Int}`\n  - `type MyList a = End | Cons a (MyList a)`\n\nIn the definition, the `List Name` refers to type parameters on the LHS\nand `Type extra` refers to the RHS\n\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "TypeAliasDefinition",
+                        [
+                            "List.List Morphir.IR.Name.Name",
+                            "Morphir.IR.Type.Type a"
+                        ]
+                    ],
+                    [
+                        "CustomTypeDefinition",
+                        [
+                            "List.List Morphir.IR.Name.Name",
+                            "Morphir.IR.AccessControlled.AccessControlled (Morphir.IR.Type.Constructors a)"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Specification",
+                "comment": " ",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "TypeAliasSpecification",
+                        [
+                            "List.List Morphir.IR.Name.Name",
+                            "Morphir.IR.Type.Type a"
+                        ]
+                    ],
+                    [
+                        "OpaqueTypeSpecification",
+                        [
+                            "List.List Morphir.IR.Name.Name"
+                        ]
+                    ],
+                    [
+                        "CustomTypeSpecification",
+                        [
+                            "List.List Morphir.IR.Name.Name",
+                            "Morphir.IR.Type.Constructors a"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Type",
+                "comment": " An opaque representation of a type. Check out the docs for each building blocks\nfor more details:\n\n  - type variable: [creation](#variable), [matching](#matchVariable)\n  - type reference: [creation](#reference), [matching](#matchReference)\n  - tuple type: [creation](#tuple), [matching](#matchTuple)\n  - record type: [creation](#record), [matching](#matchRecord)\n  - extensible record type: [creation](#extensibleRecord), [matching](#matchExtensibleRecord)\n  - function type: [creation](#function), [matching](#matchFunction)\n  - unit type: [creation](#unit), [matching](#matchUnit)\n\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Variable",
+                        [
+                            "a",
+                            "Morphir.IR.Name.Name"
+                        ]
+                    ],
+                    [
+                        "Reference",
+                        [
+                            "a",
+                            "Morphir.IR.FQName.FQName",
+                            "List.List (Morphir.IR.Type.Type a)"
+                        ]
+                    ],
+                    [
+                        "Tuple",
+                        [
+                            "a",
+                            "List.List (Morphir.IR.Type.Type a)"
+                        ]
+                    ],
+                    [
+                        "Record",
+                        [
+                            "a",
+                            "List.List (Morphir.IR.Type.Field a)"
+                        ]
+                    ],
+                    [
+                        "ExtensibleRecord",
+                        [
+                            "a",
+                            "Morphir.IR.Name.Name",
+                            "List.List (Morphir.IR.Type.Field a)"
+                        ]
+                    ],
+                    [
+                        "Function",
+                        [
+                            "a",
+                            "Morphir.IR.Type.Type a",
+                            "Morphir.IR.Type.Type a"
+                        ]
+                    ],
+                    [
+                        "Unit",
+                        [
+                            "a"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Constructors",
+                "comment": " ",
+                "args": [
+                    "a"
+                ],
+                "type": "List.List (Morphir.IR.Type.Constructor a)"
+            },
+            {
+                "name": "Field",
+                "comment": " An opaque representation of a field. It's made up of a name and a type.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ name : Morphir.IR.Name.Name, tpe : Morphir.IR.Type.Type a }"
+            }
+        ],
+        "values": [
+            {
+                "name": "customTypeDefinition",
+                "comment": " ",
+                "type": "List.List Morphir.IR.Name.Name -> Morphir.IR.AccessControlled.AccessControlled (Morphir.IR.Type.Constructors a) -> Morphir.IR.Type.Definition a"
+            },
+            {
+                "name": "customTypeSpecification",
+                "comment": " ",
+                "type": "List.List Morphir.IR.Name.Name -> Morphir.IR.Type.Constructors a -> Morphir.IR.Type.Specification a"
+            },
+            {
+                "name": "definitionToSpecification",
+                "comment": " ",
+                "type": "Morphir.IR.Type.Definition a -> Morphir.IR.Type.Specification a"
+            },
+            {
+                "name": "eraseAttributes",
+                "comment": " ",
+                "type": "Morphir.IR.Type.Definition a -> Morphir.IR.Type.Definition ()"
+            },
+            {
+                "name": "extensibleRecord",
+                "comment": " Creates an extensible record type.\n\n    toIR { e | foo = Int }\n        == extensibleRecord (variable [ \"e\" ])\n            [ field [ \"foo\" ] intType\n            ]\n\n    toIR { f | foo = Int, bar = Bool }\n        == extensibleRecord (variable [ \"f\" ])\n            [ field [ \"foo\" ] intType\n            , field [ \"bar\" ] boolType\n            ]\n\n",
+                "type": "a -> Morphir.IR.Name.Name -> List.List (Morphir.IR.Type.Field a) -> Morphir.IR.Type.Type a"
+            },
+            {
+                "name": "function",
+                "comment": " Creates a function type. Use currying to create functions with more than one argument.\n\n    toIR (Int -> Bool) ==\n        function\n            SDK.Basics.intType\n            SDK.Basics.boolType\n\n    toIR (Int -> Bool -> Char) ==\n        function\n            intType\n            (function\n                SDK.Basics.boolType\n                SDK.Basics.charType\n            )\n\n",
+                "type": "a -> Morphir.IR.Type.Type a -> Morphir.IR.Type.Type a -> Morphir.IR.Type.Type a"
+            },
+            {
+                "name": "mapDefinition",
+                "comment": " ",
+                "type": "(Morphir.IR.Type.Type a -> Result.Result e (Morphir.IR.Type.Type b)) -> Morphir.IR.Type.Definition a -> Result.Result (List.List e) (Morphir.IR.Type.Definition b)"
+            },
+            {
+                "name": "mapDefinitionAttributes",
+                "comment": " ",
+                "type": "(a -> b) -> Morphir.IR.Type.Definition a -> Morphir.IR.Type.Definition b"
+            },
+            {
+                "name": "mapFieldName",
+                "comment": " Map the name of the field to get a new field.\n",
+                "type": "(Morphir.IR.Name.Name -> Morphir.IR.Name.Name) -> Morphir.IR.Type.Field a -> Morphir.IR.Type.Field a"
+            },
+            {
+                "name": "mapFieldType",
+                "comment": " Map the type of the field to get a new field.\n",
+                "type": "(Morphir.IR.Type.Type a -> Morphir.IR.Type.Type b) -> Morphir.IR.Type.Field a -> Morphir.IR.Type.Field b"
+            },
+            {
+                "name": "mapSpecificationAttributes",
+                "comment": " ",
+                "type": "(a -> b) -> Morphir.IR.Type.Specification a -> Morphir.IR.Type.Specification b"
+            },
+            {
+                "name": "mapTypeAttributes",
+                "comment": " ",
+                "type": "(a -> b) -> Morphir.IR.Type.Type a -> Morphir.IR.Type.Type b"
+            },
+            {
+                "name": "opaqueTypeSpecification",
+                "comment": " ",
+                "type": "List.List Morphir.IR.Name.Name -> Morphir.IR.Type.Specification a"
+            },
+            {
+                "name": "record",
+                "comment": " Creates a record type.\n\n    toIR {} == record []\n\n    toIR { foo = Int }\n        == record\n            [ field [ \"foo\" ] SDK.Basics.intType\n            ]\n\n    toIR { foo = Int, bar = Bool }\n        == record\n            [ field [ \"foo\" ] SDK.Basics.intType\n            , field [ \"bar\" ] SDK.Basics.boolType\n            ]\n\n",
+                "type": "a -> List.List (Morphir.IR.Type.Field a) -> Morphir.IR.Type.Type a"
+            },
+            {
+                "name": "reference",
+                "comment": " Creates a fully-qualified reference to a type.\n\n    toIR (List Int)\n        == reference SDK.List.listType [ intType ]\n\n    toIR Foo.Bar\n        == reference\n            ( [ [ \"my\" ], [ \"lib\" ] ], [ [ \"foo\" ] ], [ \"bar\" ] )\n            []\n\n",
+                "type": "a -> Morphir.IR.FQName.FQName -> List.List (Morphir.IR.Type.Type a) -> Morphir.IR.Type.Type a"
+            },
+            {
+                "name": "tuple",
+                "comment": " Creates a tuple type.\n\n    toIR ( Int, Bool )\n        == tuple [ basic intType, basic boolType ]\n\n",
+                "type": "a -> List.List (Morphir.IR.Type.Type a) -> Morphir.IR.Type.Type a"
+            },
+            {
+                "name": "typeAliasDefinition",
+                "comment": " ",
+                "type": "List.List Morphir.IR.Name.Name -> Morphir.IR.Type.Type a -> Morphir.IR.Type.Definition a"
+            },
+            {
+                "name": "typeAliasSpecification",
+                "comment": " ",
+                "type": "List.List Morphir.IR.Name.Name -> Morphir.IR.Type.Type a -> Morphir.IR.Type.Specification a"
+            },
+            {
+                "name": "unit",
+                "comment": " Creates a unit type.\n\n    toIR () == unit\n\n",
+                "type": "a -> Morphir.IR.Type.Type a"
+            },
+            {
+                "name": "variable",
+                "comment": " Creates a type variable.\n\n    toIR a == variable [ \"a\" ] ()\n\n    toIR fooBar == variable [ \"foo\", \"bar\" ] ()\n\n",
+                "type": "a -> Morphir.IR.Name.Name -> Morphir.IR.Type.Type a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Morphir.IR.Value",
+        "comment": " This module contains the building blocks of values in the Morphir IR.\n\n\n# Value\n\nValue is the top level building block for data and logic. See the constructor functions below for details on each node type.\n\n@docs Value, literal, constructor, apply, field, fieldFunction, lambda, letDef, letDestruct, letRec, list, record, reference\n@docs tuple, variable, ifThenElse, patternMatch, update, unit\n@docs mapValueAttributes\n\n\n# Pattern\n\nPatterns are used in multiple ways in the IR: they can take apart a structured value into smaller pieces (destructure) and they\ncan also filter values. The combination of these two features creates a very powerful method tool that can be used in two ways:\ndestructuring and pattern-matching. Pattern-matching is a combination of destructuring, filtering and branching.\n\n@docs Pattern, wildcardPattern, asPattern, tuplePattern, constructorPattern, emptyListPattern, headTailPattern, literalPattern\n\n\n# Specification\n\nThe specification of what the value or function\nis without the actual data or logic behind it.\n\n@docs Specification, mapSpecificationAttributes\n\n\n# Definition\n\nA definition is the actual data or logic as opposed to a specification\nwhich is just the specification of those. Value definitions can be typed or untyped. Exposed values have to be typed.\n\n@docs Definition, mapDefinition, mapDefinitionAttributes\n\n\n# Utilities\n\n@docs uncurryApply\n\n",
+        "unions": [
+            {
+                "name": "Pattern",
+                "comment": " Type that represents a pattern.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "WildcardPattern",
+                        [
+                            "a"
+                        ]
+                    ],
+                    [
+                        "AsPattern",
+                        [
+                            "a",
+                            "Morphir.IR.Value.Pattern a",
+                            "Morphir.IR.Name.Name"
+                        ]
+                    ],
+                    [
+                        "TuplePattern",
+                        [
+                            "a",
+                            "List.List (Morphir.IR.Value.Pattern a)"
+                        ]
+                    ],
+                    [
+                        "ConstructorPattern",
+                        [
+                            "a",
+                            "Morphir.IR.FQName.FQName",
+                            "List.List (Morphir.IR.Value.Pattern a)"
+                        ]
+                    ],
+                    [
+                        "EmptyListPattern",
+                        [
+                            "a"
+                        ]
+                    ],
+                    [
+                        "HeadTailPattern",
+                        [
+                            "a",
+                            "Morphir.IR.Value.Pattern a",
+                            "Morphir.IR.Value.Pattern a"
+                        ]
+                    ],
+                    [
+                        "LiteralPattern",
+                        [
+                            "a",
+                            "Morphir.IR.Literal.Literal"
+                        ]
+                    ],
+                    [
+                        "UnitPattern",
+                        [
+                            "a"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Value",
+                "comment": " Type that represents a value.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Literal",
+                        [
+                            "a",
+                            "Morphir.IR.Literal.Literal"
+                        ]
+                    ],
+                    [
+                        "Constructor",
+                        [
+                            "a",
+                            "Morphir.IR.FQName.FQName"
+                        ]
+                    ],
+                    [
+                        "Tuple",
+                        [
+                            "a",
+                            "List.List (Morphir.IR.Value.Value a)"
+                        ]
+                    ],
+                    [
+                        "List",
+                        [
+                            "a",
+                            "List.List (Morphir.IR.Value.Value a)"
+                        ]
+                    ],
+                    [
+                        "Record",
+                        [
+                            "a",
+                            "List.List ( Morphir.IR.Name.Name, Morphir.IR.Value.Value a )"
+                        ]
+                    ],
+                    [
+                        "Variable",
+                        [
+                            "a",
+                            "Morphir.IR.Name.Name"
+                        ]
+                    ],
+                    [
+                        "Reference",
+                        [
+                            "a",
+                            "Morphir.IR.FQName.FQName"
+                        ]
+                    ],
+                    [
+                        "Field",
+                        [
+                            "a",
+                            "Morphir.IR.Value.Value a",
+                            "Morphir.IR.Name.Name"
+                        ]
+                    ],
+                    [
+                        "FieldFunction",
+                        [
+                            "a",
+                            "Morphir.IR.Name.Name"
+                        ]
+                    ],
+                    [
+                        "Apply",
+                        [
+                            "a",
+                            "Morphir.IR.Value.Value a",
+                            "Morphir.IR.Value.Value a"
+                        ]
+                    ],
+                    [
+                        "Lambda",
+                        [
+                            "a",
+                            "Morphir.IR.Value.Pattern a",
+                            "Morphir.IR.Value.Value a"
+                        ]
+                    ],
+                    [
+                        "LetDefinition",
+                        [
+                            "a",
+                            "Morphir.IR.Name.Name",
+                            "Morphir.IR.Value.Definition a",
+                            "Morphir.IR.Value.Value a"
+                        ]
+                    ],
+                    [
+                        "LetRecursion",
+                        [
+                            "a",
+                            "Dict.Dict Morphir.IR.Name.Name (Morphir.IR.Value.Definition a)",
+                            "Morphir.IR.Value.Value a"
+                        ]
+                    ],
+                    [
+                        "Destructure",
+                        [
+                            "a",
+                            "Morphir.IR.Value.Pattern a",
+                            "Morphir.IR.Value.Value a",
+                            "Morphir.IR.Value.Value a"
+                        ]
+                    ],
+                    [
+                        "IfThenElse",
+                        [
+                            "a",
+                            "Morphir.IR.Value.Value a",
+                            "Morphir.IR.Value.Value a",
+                            "Morphir.IR.Value.Value a"
+                        ]
+                    ],
+                    [
+                        "PatternMatch",
+                        [
+                            "a",
+                            "Morphir.IR.Value.Value a",
+                            "List.List ( Morphir.IR.Value.Pattern a, Morphir.IR.Value.Value a )"
+                        ]
+                    ],
+                    [
+                        "UpdateRecord",
+                        [
+                            "a",
+                            "Morphir.IR.Value.Value a",
+                            "List.List ( Morphir.IR.Name.Name, Morphir.IR.Value.Value a )"
+                        ]
+                    ],
+                    [
+                        "Unit",
+                        [
+                            "a"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Definition",
+                "comment": " Type that represents a value or function definition. A definition is the actual data or logic as opposed to a specification\nwhich is just the specification of those. Value definitions can be typed or untyped. Exposed values have to be typed.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ inputTypes : List.List ( Morphir.IR.Name.Name, a, Morphir.IR.Type.Type a ), outputType : Morphir.IR.Type.Type a, body : Morphir.IR.Value.Value a }"
+            },
+            {
+                "name": "Specification",
+                "comment": " Type that represents a value or function specification. The specification of what the value or function\nis without the actual data or logic behind it.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ inputs : List.List ( Morphir.IR.Name.Name, Morphir.IR.Type.Type a ), output : Morphir.IR.Type.Type a }"
+            }
+        ],
+        "values": [
+            {
+                "name": "apply",
+                "comment": " Represents a function invocation. We use currying to represent function invocations with multiple arguments.\n\n**Note**: Operators are mapped to well-known function names.\n\n    not True -- Apply (Reference ( ..., [ [ \"basics\" ] ], [ \"not\" ])) (Literal (BoolLiteral True))\n\n    True || False -- Apply (Apply (Reference ( ..., [ [ \"basics\" ] ], [ \"and\" ]))) (Literal (BoolLiteral True)) (Literal (BoolLiteral True))\n\n",
+                "type": "a -> Morphir.IR.Value.Value a -> Morphir.IR.Value.Value a -> Morphir.IR.Value.Value a"
+            },
+            {
+                "name": "asPattern",
+                "comment": " Assigns a variable name to a pattern.\n\n    _ as foo -- AsPattern WildcardPattern [\"foo\"]\n\n    foo -- AsPattern WildcardPattern [\"foo\"]\n\n    [] as foo -- AsPattern EmptyListPattern [\"foo\"]\n\n",
+                "type": "a -> Morphir.IR.Value.Pattern a -> Morphir.IR.Name.Name -> Morphir.IR.Value.Pattern a"
+            },
+            {
+                "name": "constructor",
+                "comment": " A reference to a constructor of a custom type.\n\n    Nothing -- Constructor ( ..., [ [ \"maybe\" ] ], [ \"nothing\" ] )\n\n    Foo.Bar -- Constructor ( ..., [ [ \"foo\" ] ], [ \"bar\" ] )\n\n",
+                "type": "a -> Morphir.IR.FQName.FQName -> Morphir.IR.Value.Value a"
+            },
+            {
+                "name": "constructorPattern",
+                "comment": " Matches on a custom type's constructor.\n\n**Note**: When the custom type has a single constructor this can be used for destructuring.\nWhen there are multiple constructors it also does filtering so it cannot be used in a\n[`LetDestruct`](#letDestruct) but it can be used in a [pattern-match](#patternMatch).\n\n    Just _ -- ConstructorPattern ( ..., [[\"maybe\"]], [\"just\"]) [ WildcardPattern ]\n\n",
+                "type": "a -> Morphir.IR.FQName.FQName -> List.List (Morphir.IR.Value.Pattern a) -> Morphir.IR.Value.Pattern a"
+            },
+            {
+                "name": "emptyListPattern",
+                "comment": " Matches an empty list. Can be used standalon but frequently used as a terminal pattern\nin a [`HeadTailPattern`](#headTailPattern).\n\n    [] -- EmptyListPattern\n\n    [ _ ]\n    -- HeadTailPattern\n    --     WildcardPattern\n    --     EmptyListPattern\n\n",
+                "type": "a -> Morphir.IR.Value.Pattern a"
+            },
+            {
+                "name": "field",
+                "comment": " Extracts the value of a record's field.\n\n    a.foo -- Field (Variable [ \"a\" ]) [ \"foo\" ]\n\n",
+                "type": "a -> Morphir.IR.Value.Value a -> Morphir.IR.Name.Name -> Morphir.IR.Value.Value a"
+            },
+            {
+                "name": "fieldFunction",
+                "comment": " Represents a function that extract a field from a record value passed to it.\n\n    .foo -- FieldFunction [ \"foo\" ]\n\n",
+                "type": "a -> Morphir.IR.Name.Name -> Morphir.IR.Value.Value a"
+            },
+            {
+                "name": "headTailPattern",
+                "comment": " Matches the head and the tail of a list. It can be used to match lists of at least N items\nby nesting this pattern N times and terminating with [`EmptyListPattern`](#emptyListPattern).\n\n    [ a ]\n    -- HeadTailPattern\n    --     (AsPattern WildcardPattern [\"a\"])\n    --     EmptyListPattern\n\n    a :: b\n    -- HeadTailPattern\n    --     (AsPattern WildcardPattern [\"a\"])\n    --     (AsPattern WildcardPattern [\"b\"])\n\n    [ a, b ]\n    -- HeadTailPattern\n    --     (AsPattern WildcardPattern [\"a\"])\n    --     (HeadTailPattern\n    --         (AsPattern WildcardPattern [\"b\"])\n    --         EmptyListPattern\n    --     )\n\n",
+                "type": "a -> Morphir.IR.Value.Pattern a -> Morphir.IR.Value.Pattern a -> Morphir.IR.Value.Pattern a"
+            },
+            {
+                "name": "ifThenElse",
+                "comment": " Represents and if/then/else expression.\n\n    if a then\n        b\n    else\n        c\n    -- IfThenElse (Variable [\"a\"])\n    --     (Variable [\"b\"])\n    --     (Variable [\"c\"])\n\n",
+                "type": "a -> Morphir.IR.Value.Value a -> Morphir.IR.Value.Value a -> Morphir.IR.Value.Value a -> Morphir.IR.Value.Value a"
+            },
+            {
+                "name": "lambda",
+                "comment": " Represents a lambda abstraction.\n\n**Note**:\n\n  - We use currying to represent lambda abstractions with multiple arguments.\n  - Arguments are not just names, they are patterns.\n\n```\n\\a -> a -- Lambda (AsPattern WildcardPattern [ \"a\" ]) (Variable [ \"a\" ])\n\n\\a b -> a -- Lambda (AsPattern WildcardPattern [ \"a\" ]) (Lambda (AsPattern WildcardPattern [ \"b\" ]) (Variable [ \"a\" ]))\n```\n\n",
+                "type": "a -> Morphir.IR.Value.Pattern a -> Morphir.IR.Value.Value a -> Morphir.IR.Value.Value a"
+            },
+            {
+                "name": "letDef",
+                "comment": " Represents a let expression that assigns a value (and optionally type) to a name.\n\n**Note**: We use currying to represent let expressions with multiple name bindings.\n\n    let\n        a =\n            b\n    in\n    a\n    -- LetDef [ \"a\" ]\n    --     (UntypedDefinition [] (Variable [ \"b\" ]))\n    --     (Variable [ \"a\" ])\n\n    let\n        a : Bool\n        a =\n            b\n\n        c x =\n            a\n    in\n    c\n    -- LetDef [ \"a\" ]\n    --     (TypedDefinition (Basic BoolType) [] (Variable [ \"b\" ]))\n    --     (LetDef [ \"c\" ]\n    --         (UntypedDefinition [ [ \"x\" ] ] (Variable [ \"a\" ]))\n    --         (Variable [ \"c\" ])\n    --     )\n\n",
+                "type": "a -> Morphir.IR.Name.Name -> Morphir.IR.Value.Definition a -> Morphir.IR.Value.Value a -> Morphir.IR.Value.Value a"
+            },
+            {
+                "name": "letDestruct",
+                "comment": " Represents a let expression that extracts values using a pattern.\n\n    let\n        ( a, b ) =\n            c\n    in\n    a\n    -- LetDestruct\n    --     (TuplePattern [ AsPattern WildcardPattern [\"a\"], AsPattern WildcardPattern [\"b\"] ])\n    --     (Variable [\"a\"])\n\n",
+                "type": "a -> Morphir.IR.Value.Pattern a -> Morphir.IR.Value.Value a -> Morphir.IR.Value.Value a -> Morphir.IR.Value.Value a"
+            },
+            {
+                "name": "letRec",
+                "comment": " Represents a let expression with one or many recursive definitions.\n\n    let\n        a =\n            b\n\n        b =\n            a\n    in\n    a\n    -- LetRec\n    --     [ ( [ \"a\" ], UntypedDefinition [] (Variable [ \"b\" ]) )\n    --     , ( [ \"b\" ], UntypedDefinition [] (Variable [ \"a\" ]) )\n    --     ]\n    --     (Variable [ \"a\" ])\n\n",
+                "type": "a -> Dict.Dict Morphir.IR.Name.Name (Morphir.IR.Value.Definition a) -> Morphir.IR.Value.Value a -> Morphir.IR.Value.Value a"
+            },
+            {
+                "name": "list",
+                "comment": " A [list] represents an ordered list of values where every value has to be of the same type.\n\n    [ 1, 3, 5 ] -- List [ Literal (IntLiteral 1), Literal (IntLiteral 3), Literal (IntLiteral 5) ]\n\n    [] -- List []\n\n[list]: https://en.wikipedia.org/wiki/List_(abstract_data_type)\n\n",
+                "type": "a -> List.List (Morphir.IR.Value.Value a) -> Morphir.IR.Value.Value a"
+            },
+            {
+                "name": "literal",
+                "comment": " A [literal][lit] represents a fixed value in the IR. We only allow values of basic types: bool, char, string, int, float.\n\n    True -- Literal (BoolLiteral True)\n\n    'a' -- Literal (CharLiteral 'a')\n\n    \"foo\" -- Literal (StringLiteral \"foo\")\n\n    13 -- Literal (IntLiteral 13)\n\n    15.4 -- Literal (FloatLiteral 15.4)\n\n[lit]: https://en.wikipedia.org/wiki/Literal_(computer_programming)\n\n",
+                "type": "a -> Morphir.IR.Literal.Literal -> Morphir.IR.Value.Value a"
+            },
+            {
+                "name": "literalPattern",
+                "comment": " Matches a specific literal value. This pattern can only be used in a [pattern-match](#patternMatch)\nsince it always filters.\n\n    True -- LiteralPattern (BoolLiteral True)\n\n    'a' -- LiteralPattern (CharLiteral 'a')\n\n    \"foo\" -- LiteralPattern (StringLiteral \"foo\")\n\n    13 -- LiteralPattern (IntLiteral 13)\n\n    15.4 -- LiteralPattern (FloatLiteral 15.4)\n\n",
+                "type": "a -> Morphir.IR.Literal.Literal -> Morphir.IR.Value.Pattern a"
+            },
+            {
+                "name": "mapDefinition",
+                "comment": " ",
+                "type": "(Morphir.IR.Type.Type a -> Result.Result e (Morphir.IR.Type.Type a)) -> (Morphir.IR.Value.Value a -> Result.Result e (Morphir.IR.Value.Value a)) -> Morphir.IR.Value.Definition a -> Result.Result (List.List e) (Morphir.IR.Value.Definition a)"
+            },
+            {
+                "name": "mapDefinitionAttributes",
+                "comment": " ",
+                "type": "(a -> b) -> Morphir.IR.Value.Definition a -> Morphir.IR.Value.Definition b"
+            },
+            {
+                "name": "mapSpecificationAttributes",
+                "comment": " ",
+                "type": "(a -> b) -> Morphir.IR.Value.Specification a -> Morphir.IR.Value.Specification b"
+            },
+            {
+                "name": "mapValueAttributes",
+                "comment": " ",
+                "type": "(a -> b) -> Morphir.IR.Value.Value a -> Morphir.IR.Value.Value b"
+            },
+            {
+                "name": "patternMatch",
+                "comment": " Represents a pattern-match.\n\n    case a of\n        1 ->\n            \"yea\"\n\n        _ ->\n            \"nay\"\n    -- PatternMatch (Variable [\"a\"])\n    --     [ ( LiteralPattern (IntLiteral 1), Literal (StringLiteral \"yea\") )\n    --     , ( WildcardPattern, Literal (StringLiteral \"nay\") )\n    --     ]\n\n",
+                "type": "a -> Morphir.IR.Value.Value a -> List.List ( Morphir.IR.Value.Pattern a, Morphir.IR.Value.Value a ) -> Morphir.IR.Value.Value a"
+            },
+            {
+                "name": "record",
+                "comment": " A [record] represents a list of fields where each field has a name and a value.\n\n    { foo = \"bar\" } -- Record [ ( [ \"foo\" ], Literal (StringLiteral \"bar\") ) ]\n\n    { foo = \"bar\", baz = 1 } -- Record [ ( [ \"foo\" ], Literal (StringLiteral \"bar\") ), ( [ \"baz\" ], Literal (IntLiteral 1) ) ]\n\n    {} -- Record []\n\n[record]: https://en.wikipedia.org/wiki/Record_(computer_science)\n\n",
+                "type": "a -> List.List ( Morphir.IR.Name.Name, Morphir.IR.Value.Value a ) -> Morphir.IR.Value.Value a"
+            },
+            {
+                "name": "reference",
+                "comment": " A reference that refers to a function or a value with its fully-qualified name.\n\n    List.map -- Reference ( [ ..., [ [ \"list\" ] ], [ \"map\" ] )\n\n",
+                "type": "a -> Morphir.IR.FQName.FQName -> Morphir.IR.Value.Value a"
+            },
+            {
+                "name": "tuple",
+                "comment": " A [tuple] represents an ordered list of values where each value can be of a different type.\n\n**Note**: Tuples with zero values are considered to be the special value [`Unit`](#unit)\n\n    ( 1, True ) -- Tuple [ Literal (IntLiteral 1), Literal (BoolLiteral True) ]\n\n    ( \"foo\", True, 3 ) -- Tuple [ Literal (StringLiteral \"foo\"), Literal (BoolLiteral True), Literal (IntLiteral 3) ]\n\n    () -- Unit\n\n[tuple]: https://en.wikipedia.org/wiki/Tuple\n\n",
+                "type": "a -> List.List (Morphir.IR.Value.Value a) -> Morphir.IR.Value.Value a"
+            },
+            {
+                "name": "tuplePattern",
+                "comment": " Destructures a tuple using a pattern for every element.\n\n    ( _, foo ) -- TuplePattern [ WildcardPattern, AsPattern WildcardPattern [\"foo\"] ]\n\n",
+                "type": "a -> List.List (Morphir.IR.Value.Pattern a) -> Morphir.IR.Value.Pattern a"
+            },
+            {
+                "name": "uncurryApply",
+                "comment": " Extract the argument list from a curried apply tree. It takes the two arguments of an apply and returns a tuple of\nthe function and a list of arguments.\n\n    uncurryApply (Apply () f a) b == ( f, [ a, b ] )\n\n",
+                "type": "Morphir.IR.Value.Value a -> Morphir.IR.Value.Value a -> ( Morphir.IR.Value.Value a, List.List (Morphir.IR.Value.Value a) )"
+            },
+            {
+                "name": "unit",
+                "comment": " Represents the unit value.\n\n    () -- Unit\n\n",
+                "type": "a -> Morphir.IR.Value.Value a"
+            },
+            {
+                "name": "update",
+                "comment": " Update one or many fields of a record value.\n\n    { a | foo = 1 } -- Update (Variable [\"a\"]) [ ( [\"foo\"], Literal (IntLiteral 1) ) ]\n\n",
+                "type": "a -> Morphir.IR.Value.Value a -> List.List ( Morphir.IR.Name.Name, Morphir.IR.Value.Value a ) -> Morphir.IR.Value.Value a"
+            },
+            {
+                "name": "variable",
+                "comment": " A [variable] represents a reference to a named value in the scope.\n\n    a -- Variable [ \"a\" ]\n\n    fooBar15 -- Variable [ \"foo\", \"bar\", \"15\" ]\n\n[variable]: https://en.wikipedia.org/wiki/Variable_(computer_science)\n\n",
+                "type": "a -> Morphir.IR.Name.Name -> Morphir.IR.Value.Value a"
+            },
+            {
+                "name": "wildcardPattern",
+                "comment": " Matches any value and ignores it (assigns no variable name).\n\n    _ -- WildcardPattern\n\n",
+                "type": "a -> Morphir.IR.Value.Pattern a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Morphir.SDK.Key",
+        "comment": " Helpers to work with composite keys.\n\n\n# Motivation\n\nIt is difficult to work with composite keys in Elm due to various limitations:\n\n  - Keys should be comparable. Record and union types are not comparable in Elm. We can only use Tuples to represent them.\n  - Tuples are limited at 3 elements. Real-world composite keys can easily have more elements than that.\n  - Unit is not comparable. This makes it impossible to pass in a zero element key where comparable keys are required.\n\nThis library resolves those issues by introducing type aliases for keys of various element sizes. All these types are\ncomparable and they all have utility functions to compose them. Here's an example:\n\n    type alias MyEntity =\n        { foo : String\n        , bar : Int\n        , baz : Float\n        }\n\n    -- myKey : Key3 Int String Float\n    myKey =\n        key3 .bar .foo .baz\n\n**Note:** This file was generated using Elm code that is included as a comment at the end of the source code for this\nmodule. You can use that code to extend this module without too much manual work.\n\n\n# Composing Keys\n\n@docs noKey, key0, key2, key3, key4, key5, key6, key7, key8, key9, key10, key11, key12, key13, key14, key15, key16\n\n\n# Key Types\n\n@docs Key0, Key2, Key3, Key4, Key5, Key6, Key7, Key8, Key9, Key10, Key11, Key12, Key13, Key14, Key15, Key16\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Key0",
+                "comment": " Type that represents a zero element key. The ideal representation would be `()` but `Unit` is not comparable in Elm.\nSo we use `Int` to retain comparable semantics but only `0` should be used as a value.\n`key0` and `noKey` can be used to create a `Key0` value.\n",
+                "args": [],
+                "type": "Basics.Int"
+            },
+            {
+                "name": "Key10",
+                "comment": " Type that represents a composite key with 10 elements.\n",
+                "args": [
+                    "k1",
+                    "k2",
+                    "k3",
+                    "k4",
+                    "k5",
+                    "k6",
+                    "k7",
+                    "k8",
+                    "k9",
+                    "k10"
+                ],
+                "type": "( k1, k2, ( k3, k4, ( k5, k6, ( k7, k8, ( k9, k10 ) ) ) ) )"
+            },
+            {
+                "name": "Key11",
+                "comment": " Type that represents a composite key with 11 elements.\n",
+                "args": [
+                    "k1",
+                    "k2",
+                    "k3",
+                    "k4",
+                    "k5",
+                    "k6",
+                    "k7",
+                    "k8",
+                    "k9",
+                    "k10",
+                    "k11"
+                ],
+                "type": "( k1, k2, ( k3, k4, ( k5, k6, ( k7, k8, ( k9, k10, k11 ) ) ) ) )"
+            },
+            {
+                "name": "Key12",
+                "comment": " Type that represents a composite key with 12 elements.\n",
+                "args": [
+                    "k1",
+                    "k2",
+                    "k3",
+                    "k4",
+                    "k5",
+                    "k6",
+                    "k7",
+                    "k8",
+                    "k9",
+                    "k10",
+                    "k11",
+                    "k12"
+                ],
+                "type": "( k1, k2, ( k3, k4, ( k5, k6, ( k7, k8, ( k9, k10, ( k11, k12 ) ) ) ) ) )"
+            },
+            {
+                "name": "Key13",
+                "comment": " Type that represents a composite key with 13 elements.\n",
+                "args": [
+                    "k1",
+                    "k2",
+                    "k3",
+                    "k4",
+                    "k5",
+                    "k6",
+                    "k7",
+                    "k8",
+                    "k9",
+                    "k10",
+                    "k11",
+                    "k12",
+                    "k13"
+                ],
+                "type": "( k1, k2, ( k3, k4, ( k5, k6, ( k7, k8, ( k9, k10, ( k11, k12, k13 ) ) ) ) ) )"
+            },
+            {
+                "name": "Key14",
+                "comment": " Type that represents a composite key with 14 elements.\n",
+                "args": [
+                    "k1",
+                    "k2",
+                    "k3",
+                    "k4",
+                    "k5",
+                    "k6",
+                    "k7",
+                    "k8",
+                    "k9",
+                    "k10",
+                    "k11",
+                    "k12",
+                    "k13",
+                    "k14"
+                ],
+                "type": "( k1, k2, ( k3, k4, ( k5, k6, ( k7, k8, ( k9, k10, ( k11, k12, ( k13, k14 ) ) ) ) ) ) )"
+            },
+            {
+                "name": "Key15",
+                "comment": " Type that represents a composite key with 15 elements.\n",
+                "args": [
+                    "k1",
+                    "k2",
+                    "k3",
+                    "k4",
+                    "k5",
+                    "k6",
+                    "k7",
+                    "k8",
+                    "k9",
+                    "k10",
+                    "k11",
+                    "k12",
+                    "k13",
+                    "k14",
+                    "k15"
+                ],
+                "type": "( k1, k2, ( k3, k4, ( k5, k6, ( k7, k8, ( k9, k10, ( k11, k12, ( k13, k14, k15 ) ) ) ) ) ) )"
+            },
+            {
+                "name": "Key16",
+                "comment": " Type that represents a composite key with 16 elements.\n",
+                "args": [
+                    "k1",
+                    "k2",
+                    "k3",
+                    "k4",
+                    "k5",
+                    "k6",
+                    "k7",
+                    "k8",
+                    "k9",
+                    "k10",
+                    "k11",
+                    "k12",
+                    "k13",
+                    "k14",
+                    "k15",
+                    "k16"
+                ],
+                "type": "( k1, k2, ( k3, k4, ( k5, k6, ( k7, k8, ( k9, k10, ( k11, k12, ( k13, k14, ( k15, k16 ) ) ) ) ) ) ) )"
+            },
+            {
+                "name": "Key2",
+                "comment": " Type that represents a composite key with 2 elements.\n",
+                "args": [
+                    "k1",
+                    "k2"
+                ],
+                "type": "( k1, k2 )"
+            },
+            {
+                "name": "Key3",
+                "comment": " Type that represents a composite key with 3 elements.\n",
+                "args": [
+                    "k1",
+                    "k2",
+                    "k3"
+                ],
+                "type": "( k1, k2, k3 )"
+            },
+            {
+                "name": "Key4",
+                "comment": " Type that represents a composite key with 4 elements.\n",
+                "args": [
+                    "k1",
+                    "k2",
+                    "k3",
+                    "k4"
+                ],
+                "type": "( k1, k2, ( k3, k4 ) )"
+            },
+            {
+                "name": "Key5",
+                "comment": " Type that represents a composite key with 5 elements.\n",
+                "args": [
+                    "k1",
+                    "k2",
+                    "k3",
+                    "k4",
+                    "k5"
+                ],
+                "type": "( k1, k2, ( k3, k4, k5 ) )"
+            },
+            {
+                "name": "Key6",
+                "comment": " Type that represents a composite key with 6 elements.\n",
+                "args": [
+                    "k1",
+                    "k2",
+                    "k3",
+                    "k4",
+                    "k5",
+                    "k6"
+                ],
+                "type": "( k1, k2, ( k3, k4, ( k5, k6 ) ) )"
+            },
+            {
+                "name": "Key7",
+                "comment": " Type that represents a composite key with 7 elements.\n",
+                "args": [
+                    "k1",
+                    "k2",
+                    "k3",
+                    "k4",
+                    "k5",
+                    "k6",
+                    "k7"
+                ],
+                "type": "( k1, k2, ( k3, k4, ( k5, k6, k7 ) ) )"
+            },
+            {
+                "name": "Key8",
+                "comment": " Type that represents a composite key with 8 elements.\n",
+                "args": [
+                    "k1",
+                    "k2",
+                    "k3",
+                    "k4",
+                    "k5",
+                    "k6",
+                    "k7",
+                    "k8"
+                ],
+                "type": "( k1, k2, ( k3, k4, ( k5, k6, ( k7, k8 ) ) ) )"
+            },
+            {
+                "name": "Key9",
+                "comment": " Type that represents a composite key with 9 elements.\n",
+                "args": [
+                    "k1",
+                    "k2",
+                    "k3",
+                    "k4",
+                    "k5",
+                    "k6",
+                    "k7",
+                    "k8",
+                    "k9"
+                ],
+                "type": "( k1, k2, ( k3, k4, ( k5, k6, ( k7, k8, k9 ) ) ) )"
+            }
+        ],
+        "values": [
+            {
+                "name": "key0",
+                "comment": " Creates a key with zero elements.\n",
+                "type": "Morphir.SDK.Key.Key0"
+            },
+            {
+                "name": "key10",
+                "comment": " Create a composite key with 10 elements.\n",
+                "type": "(a -> comparable1) -> (a -> comparable2) -> (a -> comparable3) -> (a -> comparable4) -> (a -> comparable5) -> (a -> comparable6) -> (a -> comparable7) -> (a -> comparable8) -> (a -> comparable9) -> (a -> comparable10) -> a -> Morphir.SDK.Key.Key10 comparable1 comparable2 comparable3 comparable4 comparable5 comparable6 comparable7 comparable8 comparable9 comparable10"
+            },
+            {
+                "name": "key11",
+                "comment": " Create a composite key with 11 elements.\n",
+                "type": "(a -> comparable1) -> (a -> comparable2) -> (a -> comparable3) -> (a -> comparable4) -> (a -> comparable5) -> (a -> comparable6) -> (a -> comparable7) -> (a -> comparable8) -> (a -> comparable9) -> (a -> comparable10) -> (a -> comparable11) -> a -> Morphir.SDK.Key.Key11 comparable1 comparable2 comparable3 comparable4 comparable5 comparable6 comparable7 comparable8 comparable9 comparable10 comparable11"
+            },
+            {
+                "name": "key12",
+                "comment": " Create a composite key with 12 elements.\n",
+                "type": "(a -> comparable1) -> (a -> comparable2) -> (a -> comparable3) -> (a -> comparable4) -> (a -> comparable5) -> (a -> comparable6) -> (a -> comparable7) -> (a -> comparable8) -> (a -> comparable9) -> (a -> comparable10) -> (a -> comparable11) -> (a -> comparable12) -> a -> Morphir.SDK.Key.Key12 comparable1 comparable2 comparable3 comparable4 comparable5 comparable6 comparable7 comparable8 comparable9 comparable10 comparable11 comparable12"
+            },
+            {
+                "name": "key13",
+                "comment": " Create a composite key with 13 elements.\n",
+                "type": "(a -> comparable1) -> (a -> comparable2) -> (a -> comparable3) -> (a -> comparable4) -> (a -> comparable5) -> (a -> comparable6) -> (a -> comparable7) -> (a -> comparable8) -> (a -> comparable9) -> (a -> comparable10) -> (a -> comparable11) -> (a -> comparable12) -> (a -> comparable13) -> a -> Morphir.SDK.Key.Key13 comparable1 comparable2 comparable3 comparable4 comparable5 comparable6 comparable7 comparable8 comparable9 comparable10 comparable11 comparable12 comparable13"
+            },
+            {
+                "name": "key14",
+                "comment": " Create a composite key with 14 elements.\n",
+                "type": "(a -> comparable1) -> (a -> comparable2) -> (a -> comparable3) -> (a -> comparable4) -> (a -> comparable5) -> (a -> comparable6) -> (a -> comparable7) -> (a -> comparable8) -> (a -> comparable9) -> (a -> comparable10) -> (a -> comparable11) -> (a -> comparable12) -> (a -> comparable13) -> (a -> comparable14) -> a -> Morphir.SDK.Key.Key14 comparable1 comparable2 comparable3 comparable4 comparable5 comparable6 comparable7 comparable8 comparable9 comparable10 comparable11 comparable12 comparable13 comparable14"
+            },
+            {
+                "name": "key15",
+                "comment": " Create a composite key with 15 elements.\n",
+                "type": "(a -> comparable1) -> (a -> comparable2) -> (a -> comparable3) -> (a -> comparable4) -> (a -> comparable5) -> (a -> comparable6) -> (a -> comparable7) -> (a -> comparable8) -> (a -> comparable9) -> (a -> comparable10) -> (a -> comparable11) -> (a -> comparable12) -> (a -> comparable13) -> (a -> comparable14) -> (a -> comparable15) -> a -> Morphir.SDK.Key.Key15 comparable1 comparable2 comparable3 comparable4 comparable5 comparable6 comparable7 comparable8 comparable9 comparable10 comparable11 comparable12 comparable13 comparable14 comparable15"
+            },
+            {
+                "name": "key16",
+                "comment": " Create a composite key with 16 elements.\n",
+                "type": "(a -> comparable1) -> (a -> comparable2) -> (a -> comparable3) -> (a -> comparable4) -> (a -> comparable5) -> (a -> comparable6) -> (a -> comparable7) -> (a -> comparable8) -> (a -> comparable9) -> (a -> comparable10) -> (a -> comparable11) -> (a -> comparable12) -> (a -> comparable13) -> (a -> comparable14) -> (a -> comparable15) -> (a -> comparable16) -> a -> Morphir.SDK.Key.Key16 comparable1 comparable2 comparable3 comparable4 comparable5 comparable6 comparable7 comparable8 comparable9 comparable10 comparable11 comparable12 comparable13 comparable14 comparable15 comparable16"
+            },
+            {
+                "name": "key2",
+                "comment": " Create a composite key with 2 elements.\n",
+                "type": "(a -> comparable1) -> (a -> comparable2) -> a -> Morphir.SDK.Key.Key2 comparable1 comparable2"
+            },
+            {
+                "name": "key3",
+                "comment": " Create a composite key with 3 elements.\n",
+                "type": "(a -> comparable1) -> (a -> comparable2) -> (a -> comparable3) -> a -> Morphir.SDK.Key.Key3 comparable1 comparable2 comparable3"
+            },
+            {
+                "name": "key4",
+                "comment": " Create a composite key with 4 elements.\n",
+                "type": "(a -> comparable1) -> (a -> comparable2) -> (a -> comparable3) -> (a -> comparable4) -> a -> Morphir.SDK.Key.Key4 comparable1 comparable2 comparable3 comparable4"
+            },
+            {
+                "name": "key5",
+                "comment": " Create a composite key with 5 elements.\n",
+                "type": "(a -> comparable1) -> (a -> comparable2) -> (a -> comparable3) -> (a -> comparable4) -> (a -> comparable5) -> a -> Morphir.SDK.Key.Key5 comparable1 comparable2 comparable3 comparable4 comparable5"
+            },
+            {
+                "name": "key6",
+                "comment": " Create a composite key with 6 elements.\n",
+                "type": "(a -> comparable1) -> (a -> comparable2) -> (a -> comparable3) -> (a -> comparable4) -> (a -> comparable5) -> (a -> comparable6) -> a -> Morphir.SDK.Key.Key6 comparable1 comparable2 comparable3 comparable4 comparable5 comparable6"
+            },
+            {
+                "name": "key7",
+                "comment": " Create a composite key with 7 elements.\n",
+                "type": "(a -> comparable1) -> (a -> comparable2) -> (a -> comparable3) -> (a -> comparable4) -> (a -> comparable5) -> (a -> comparable6) -> (a -> comparable7) -> a -> Morphir.SDK.Key.Key7 comparable1 comparable2 comparable3 comparable4 comparable5 comparable6 comparable7"
+            },
+            {
+                "name": "key8",
+                "comment": " Create a composite key with 8 elements.\n",
+                "type": "(a -> comparable1) -> (a -> comparable2) -> (a -> comparable3) -> (a -> comparable4) -> (a -> comparable5) -> (a -> comparable6) -> (a -> comparable7) -> (a -> comparable8) -> a -> Morphir.SDK.Key.Key8 comparable1 comparable2 comparable3 comparable4 comparable5 comparable6 comparable7 comparable8"
+            },
+            {
+                "name": "key9",
+                "comment": " Create a composite key with 9 elements.\n",
+                "type": "(a -> comparable1) -> (a -> comparable2) -> (a -> comparable3) -> (a -> comparable4) -> (a -> comparable5) -> (a -> comparable6) -> (a -> comparable7) -> (a -> comparable8) -> (a -> comparable9) -> a -> Morphir.SDK.Key.Key9 comparable1 comparable2 comparable3 comparable4 comparable5 comparable6 comparable7 comparable8 comparable9"
+            },
+            {
+                "name": "noKey",
+                "comment": " Creates a key with zero elements.\n",
+                "type": "Morphir.SDK.Key.Key0"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Morphir.SDK.Rule",
+        "comment": " This module supports defining business logic as a set of rules. You can think of it as a functional rules engine.\nThe logic is built up of rules that are composed into rule sets. In traditional rules engines these rule sets can be\nexecuted in a variety of ways that can yield different results. Morphir prefers predictability over flexibility so we\nonly support sequential execution. While this might sound limiting it greatly improves readability and enforces modelers\nto break up large rule sets into smaller targeted ones.\n\n@docs Rule\n\n@docs chain\n\n@docs any, is, anyOf, noneOf\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Rule",
+                "comment": " Type that represents a single rule. A rule is a function that is only applicable on certain inputs. In other words\nit's a partial-function. Since Elm/Morphir only supports total functions it is represented as a function that returns\nan optional value. When the function is applicable it will return `Just b` otherwise `Nothing`.\n",
+                "args": [
+                    "a",
+                    "b"
+                ],
+                "type": "a -> Maybe.Maybe b"
+            }
+        ],
+        "values": [
+            {
+                "name": "any",
+                "comment": " Simply returns true for any input. Use as a wildcard in a decision table.\n",
+                "type": "a -> Basics.Bool"
+            },
+            {
+                "name": "anyOf",
+                "comment": " Returns `True` only if the second argument can be found in the list specified in the first argument. Use in a\ndecision table to match when a value is in a predefined set.\n",
+                "type": "List.List a -> a -> Basics.Bool"
+            },
+            {
+                "name": "chain",
+                "comment": " Chain a list of rules into a single rule. Rules are evaluated sequentially in the order they were supplied and\nthe first rule that matches will be applied.\n\n    myChain =\n        chain\n            [ \\a -> Nothing -- A rule that never matches\n            , \\a -> Just a -- A rule that always matches and returns the original value\n            ]\n\n    myChain 42 == Just 42\n\n",
+                "type": "List.List (Morphir.SDK.Rule.Rule a b) -> a -> Maybe.Maybe b"
+            },
+            {
+                "name": "is",
+                "comment": " Returns `True` only if the second argument is equal to the first. Use in a decision table for exact match.\n",
+                "type": "a -> a -> Basics.Bool"
+            },
+            {
+                "name": "noneOf",
+                "comment": " Returns `True` only if the second argument cannot be found in the list specified in the first argument. Use in a\ndecision table to match when a value is not in a predefined set.\n",
+                "type": "List.List a -> a -> Basics.Bool"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Morphir.SDK.StatefulApp",
+        "comment": " Utilities for modeling stateful applications.\n\n@docs StatefulApp\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "StatefulApp",
+                "comment": " Type that represents a stateful application.\n",
+                "args": [
+                    "k",
+                    "c",
+                    "s",
+                    "e"
+                ],
+                "type": "{ businessLogic : k -> Maybe.Maybe s -> c -> ( k, Maybe.Maybe s, e ) }"
+            }
+        ],
+        "values": [],
+        "binops": []
+    }
+]

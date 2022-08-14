@@ -1,0 +1,36 @@
+[
+    {
+        "name": "Iso3166",
+        "comment": " A collection of [ISO 3166-1](https://en.wikipedia.org/wiki/ISO_3166-1)\nbased data about countries. This library is intented to be used a\n\n\n# Raw Data\n\n@docs iso3166Codes, countryNames, dialCodes\n\n\n# Css\n\n@docs flagImageData, flagPositions\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "countryNames",
+                "comment": " Dict of country names (with local language name in parenthesis)\n",
+                "type": "Dict.Dict String.String String.String"
+            },
+            {
+                "name": "dialCodes",
+                "comment": " Dict of internaltional phone calling dial codes\n",
+                "type": "Dict.Dict String.String String.String"
+            },
+            {
+                "name": "flagImageData",
+                "comment": " CSS url encoded sprite sheet\n",
+                "type": "String.String"
+            },
+            {
+                "name": "flagPositions",
+                "comment": " Dict of locations for a country's flag in the included sprite sheet\n",
+                "type": "Dict.Dict String.String ( Basics.Float, Basics.Float )"
+            },
+            {
+                "name": "iso3166Codes",
+                "comment": " List of ISO-3166 Alpha-2 Codes\n",
+                "type": "List.List String.String"
+            }
+        ],
+        "binops": []
+    }
+]

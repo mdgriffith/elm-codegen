@@ -1,0 +1,98 @@
+[
+    {
+        "name": "Getto.Http.Header.Decode",
+        "comment": " decode http header\n\n    type alias Header =\n      { etag : String\n      , max  : Int\n      }\n\n    headers |> HeaderDecode.decode\n      ( HeaderDecode.map2 Header\n        ( HeaderDecode.at \"etag\"         HeaderDecode.string )\n        ( HeaderDecode.at \"x-paging-max\" HeaderDecode.int )\n      )\n\n# Definition\n@docs Value, Error, Decoder\n\n# Decoder\n@docs string, int, maybe, at, succeed, fail\n\n# Decode\n@docs decode\n\n# Helper\n@docs map, map2, map3, map4, map5\n\n# Error\n@docs errorToString\n ",
+        "unions": [
+            {
+                "name": "Error",
+                "comment": " decode error\n ",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Decoder",
+                "comment": " decoder\n ",
+                "args": [
+                    "a"
+                ],
+                "type": "Getto.Http.Header.Decode.Value -> Result.Result Getto.Http.Header.Decode.DecodeError a"
+            },
+            {
+                "name": "Value",
+                "comment": " http headers\n ",
+                "args": [],
+                "type": "Dict.Dict String.String String.String"
+            }
+        ],
+        "values": [
+            {
+                "name": "at",
+                "comment": " at decoder\n ",
+                "type": "String.String -> Getto.Http.Header.Decode.EntryDecoder a -> Getto.Http.Header.Decode.Decoder a"
+            },
+            {
+                "name": "decode",
+                "comment": " decode headers\n ",
+                "type": "Getto.Http.Header.Decode.Decoder a -> Getto.Http.Header.Decode.Value -> Result.Result Getto.Http.Header.Decode.Error a"
+            },
+            {
+                "name": "errorToString",
+                "comment": " convert error to string\n ",
+                "type": "Getto.Http.Header.Decode.Error -> String.String"
+            },
+            {
+                "name": "fail",
+                "comment": " always fail decoder\n ",
+                "type": "String.String -> Getto.Http.Header.Decode.Decoder a"
+            },
+            {
+                "name": "int",
+                "comment": " int decoder\n ",
+                "type": "Getto.Http.Header.Decode.EntryDecoder Basics.Int"
+            },
+            {
+                "name": "map",
+                "comment": " map decode result\n\n    headers |> HeaderDecode.decode\n      ( HeaderDecode.map Header\n        ( HeaderDecode.at \"etag\" HeaderDecode.string )\n      )\n ",
+                "type": "(a -> b) -> Getto.Http.Header.Decode.Decoder a -> Getto.Http.Header.Decode.Value -> Result.Result Getto.Http.Header.Decode.DecodeError b"
+            },
+            {
+                "name": "map2",
+                "comment": " map decode result with 2 args\n\n    headers |> HeaderDecode.decode\n      ( HeaderDecode.map2 Header\n        ( HeaderDecode.at \"etag\"         HeaderDecode.string )\n        ( HeaderDecode.at \"x-paging-max\" HeaderDecode.int )\n      )\n ",
+                "type": "(a -> b -> c) -> Getto.Http.Header.Decode.Decoder a -> Getto.Http.Header.Decode.Decoder b -> Getto.Http.Header.Decode.Value -> Result.Result Getto.Http.Header.Decode.DecodeError c"
+            },
+            {
+                "name": "map3",
+                "comment": " map decode result with 3 args\n ",
+                "type": "(a -> b -> c -> d) -> Getto.Http.Header.Decode.Decoder a -> Getto.Http.Header.Decode.Decoder b -> Getto.Http.Header.Decode.Decoder c -> Getto.Http.Header.Decode.Value -> Result.Result Getto.Http.Header.Decode.DecodeError d"
+            },
+            {
+                "name": "map4",
+                "comment": " map decode result with 4 args\n ",
+                "type": "(a -> b -> c -> d -> e) -> Getto.Http.Header.Decode.Decoder a -> Getto.Http.Header.Decode.Decoder b -> Getto.Http.Header.Decode.Decoder c -> Getto.Http.Header.Decode.Decoder d -> Getto.Http.Header.Decode.Value -> Result.Result Getto.Http.Header.Decode.DecodeError e"
+            },
+            {
+                "name": "map5",
+                "comment": " map decode result with 5 args\n ",
+                "type": "(a -> b -> c -> d -> e -> f) -> Getto.Http.Header.Decode.Decoder a -> Getto.Http.Header.Decode.Decoder b -> Getto.Http.Header.Decode.Decoder c -> Getto.Http.Header.Decode.Decoder d -> Getto.Http.Header.Decode.Decoder e -> Getto.Http.Header.Decode.Value -> Result.Result Getto.Http.Header.Decode.DecodeError f"
+            },
+            {
+                "name": "maybe",
+                "comment": " maybe decoder\n ",
+                "type": "Getto.Http.Header.Decode.EntryDecoder a -> Maybe.Maybe String.String -> Result.Result Getto.Http.Header.Decode.DecodeError (Maybe.Maybe a)"
+            },
+            {
+                "name": "string",
+                "comment": " string decoder\n ",
+                "type": "Getto.Http.Header.Decode.EntryDecoder String.String"
+            },
+            {
+                "name": "succeed",
+                "comment": " always success decoder\n ",
+                "type": "a -> Getto.Http.Header.Decode.Decoder a"
+            }
+        ],
+        "binops": []
+    }
+]

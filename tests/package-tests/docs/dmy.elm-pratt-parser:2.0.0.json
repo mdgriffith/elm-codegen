@@ -1,0 +1,120 @@
+[
+    {
+        "name": "Pratt",
+        "comment": "\n\n  - **Expression parser**: [`expression`](#expression)\n  - **Configuration helpers**: [`subExpression`](#subExpression)\n      - **oneOf** helpers: [`literal`](#literal) [`constant`](#constant)\n        [`prefix`](#prefix)\n      - **andThenOneOf** helpers: [`infixLeft`](#infixLeft)\n        [`infixRight`](#infixRight) [`postfix`](#postfix)\n\n\n# Expression parser\n\n@docs Config, expression\n\n\n# Configuration helpers\n\n@docs subExpression\n\n\n## **oneOf** helpers\n\n@docs literal, constant, prefix\n\n\n## **andThenOneOf** helpers\n\n@docs infixLeft, infixRight, postfix\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " An opaque type based on\n[`Pratt.Advanced.Config`](Pratt.Advanced#Config) holding the parser\nconfiguration.\n",
+                "args": [
+                    "expr"
+                ],
+                "type": "Pratt.Advanced.Config Basics.Never Parser.Problem expr"
+            }
+        ],
+        "values": [
+            {
+                "name": "constant",
+                "comment": " Build a parser for a _constant_.\n\nThe `Config` argument is passed automatically by the parser.\n\n    import Parser exposing (Parser, keyword, run)\n    import Pratt exposing (constant)\n\n    expression : Parser Float\n    expression =\n        Pratt.expression\n            { oneOf = [ constant (keyword \"pi\") pi ]\n            , andThenOneOf = []\n            , spaces = Parser.spaces\n            }\n\n\n    run expression \"pi\" --> Ok pi\n\n",
+                "type": "Parser.Parser () -> expr -> Pratt.Config expr -> Parser.Parser expr"
+            },
+            {
+                "name": "expression",
+                "comment": " Build a parser based on the given configuration that can\nbe combined with other\n[`elm/parser`](https://package.elm-lang.org/packages/elm/parser/1.1.0/Parser)\nparsers.\n\nThe top level expression is parsed with a _precedence_ of `0`,\nsee [`subExpression`](#subExpression).\n\n**`oneOf`:**\n\n> A list of parsers used at the start of an expression (or sub-expression),\n> or after an operator.\n> They will be tried successively by the parser using\n> [`Parser.oneOf`](https://package.elm-lang.org/packages/elm/parser/1.1.0/Parser#oneOf)\n> with the current parser `Config` passed as their argument.\n\n> Examples: parsers for _literals_, _constants_, _prefix_ expressions or a\n> sub-expression between parentheses.\n\n> At least one of them is required and one must succeed, else the whole\n> expression parser would not be able to parse an `expr`.\n\n**`andThenOneOf`:**\n\n> A list of parsers using the result of a previous parser.\n> They need to provide their `Int` precedence as only the ones that have a\n> _precedence_ above the current one (`0` by default) will be tried by the\n> parser using `Parser.oneOf`, with the parser `Config` and the current _left_\n> expression (the expression returned by the previous parser) arguments.\n\n> Examples: parsers for _prefix_ and _postfix_ expressions.\n\n**`spaces`:**\n\n> A parser called before and after each previously configured parser, typically\n> used to consume whitespaces.\n\n> If a more specific behavior is needed, this parser can be ignored by using\n> `succeed ()` and a custom behavior added inside `oneOf` and `andThenOneOf` parsers.\n\n**Notes:**\n\n  - All configured parsers except the `spaces` one are parameterized by a\n    [`Config`](#Config) to be able to call [`subExpression`](#subExpression),\n    which is the main building block for configuration helpers. This `Config`\n    will be automatically passed by the parser.\n  - The parser will not use\n    [`Parser.backtrackable`](https://package.elm-lang.org/packages/elm/parser/1.1.0/Parser#backtrackable),\n    so it is up to you to correctly setup your parsers to avoid having failed\n    parsers consuming characters.\n\nFor example, a basic calculator could be configured like this:\n\n    import Parser exposing ((|.), (|=), Parser, end, float, keyword, run, succeed, symbol)\n    import Pratt exposing (infixLeft, infixRight, literal, prefix)\n\n    mathExpression : Parser Float\n    mathExpression =\n        Pratt.expression\n            { oneOf =\n                [ literal float\n                , prefix 3 (symbol \"-\") negate\n                , parenthesizedExpression\n                ]\n            , andThenOneOf =\n                [ infixLeft 1 (symbol \"+\") (+)\n                , infixLeft 1 (symbol \"-\") (-)\n                , infixLeft 2 (symbol \"*\") (*)\n                , infixLeft 2 (symbol \"/\") (/)\n                , infixRight 4 (symbol \"^\") (^)\n                ]\n            , spaces = Parser.spaces\n            }\n\n    parenthesizedExpression : Config Float -> Parser Float\n    parenthesizedExpression config =\n        succeed identity\n            |. symbol \"(\"\n            |= subExpression 0 config\n            |. symbol \")\"\n\n    parser : Parser Float\n    parser =\n        succeed identity\n            |= mathExpression\n            |. end\n\n\n    run parser \"-1*3--5+4/2^2\" --> Ok ((-1*3)-(-5)+(4/(2^2)))\n    run parser \"-1*3--5+4/2^2\" --> Ok 3\n    run parser \"((-1*3) - (-5) + (4 / (2^2)))\" --> Ok 3\n\n",
+                "type": "{ oneOf : List.List (Pratt.Config expr -> Parser.Parser expr), andThenOneOf : List.List (Pratt.Config expr -> ( Basics.Int, expr -> Parser.Parser expr )), spaces : Parser.Parser () } -> Parser.Parser expr"
+            },
+            {
+                "name": "infixLeft",
+                "comment": " Build a parser for an _infix_ expression with a left-associative operator\nand a given _precedence_.\n\nThe `Config` argument is passed automatically by the parser.\n\n    import Parser exposing (Parser, float, run, symbol)\n    import Pratt exposing (literal, prefix)\n\n    expression : Parser Float\n    expression =\n        Pratt.expression\n            { oneOf = [ literal float ]\n            , andThenOneOf =\n                [ infixLeft 1 (symbol \"+\") (+)\n                , infixLeft 1 (symbol \"-\") (-)\n                , infixLeft 2 (symbol \"*\") (*)\n                , infixLeft 2 (symbol \"/\") (/)\n                ]\n            , spaces = Parser.spaces\n            }\n\n\n    run expression \"5+4-3*2/1\" --> Ok (5+4-(3*2/1))\n    run expression \"5+4-3*2/1\" --> Ok 3\n\n",
+                "type": "Basics.Int -> Parser.Parser () -> (expr -> expr -> expr) -> Pratt.Config expr -> ( Basics.Int, expr -> Parser.Parser expr )"
+            },
+            {
+                "name": "infixRight",
+                "comment": " Build a parser for an _infix_ expression with a right-associative operator\nand a given _precedence_.\n\nThe `Config` argument is passed automatically by the parser.\n\n    import Parser exposing (Parser, float, run, symbol)\n    import Pratt exposing (literal, infixRight)\n\n    expression : Parser Float\n    expression =\n        Pratt.expression\n            { oneOf = [ literal float ]\n            , andThenOneOf = [ infixRight 4 (symbol \"^\") (^) ]\n            , spaces = Parser.spaces\n            }\n\n\n    run expression \"2^2^3\" --> Ok (2^(2^3))\n    run expression \"2^2^3\" --> Ok 256\n\n**Note:** As usual in Pratt parsers, right-associativity is achieved by parsing the right\nexpression with the _precedence_ of the infix operator minus 1.\n\n",
+                "type": "Basics.Int -> Parser.Parser () -> (expr -> expr -> expr) -> Pratt.Config expr -> ( Basics.Int, expr -> Parser.Parser expr )"
+            },
+            {
+                "name": "literal",
+                "comment": " Build a parser for a _literal_.\n\nThe `Config` argument is passed automatically by the parser.\n\n    import Parser exposing (Parser, number, run)\n    import Pratt exposing (literal)\n\n    type Expr\n        = Int Int\n        | Float Float\n\n    digits : Parser Expr\n    digits =\n        number\n            { int = Just Int\n            , hex = Just Int\n            , octal = Nothing\n            , binary = Nothing\n            , float = Just Float\n            }\n\n    expression : Parser Expr\n    expression =\n        Pratt.expression\n            { oneOf = [ literal digits ]\n            , andThenOneOf = []\n            , spaces = Parser.spaces\n            }\n\n\n    run expression  \"1234\" --> Ok (Int 1234)\n    run expression  \"0x1b\" --> Ok (Int 27)\n    run expression  \"3.14159\" --> Ok (Float 3.14159)\n\n**Note:** if you want to be able to handle expressions like `3---4 == 3-(-(-4))`,\nyou could have a negation _prefix_ parser like `prefix 3 (-) Neg` declared\nbefore the `literal digits` and let `digits` only handle positive numbers.\n\n",
+                "type": "Parser.Parser expr -> Pratt.Config expr -> Parser.Parser expr"
+            },
+            {
+                "name": "postfix",
+                "comment": " Build a parser for a _postfix_ expression with a given _precedence_.\n\nThe `Config` argument is passed automatically by the parser.\n\n    import Parser exposing (Parser, float, run, symbol)\n    import Pratt exposing (literal, postfix)\n\n    expression : Parser Float\n    expression =\n        Pratt.expression\n            { oneOf = [ literal float ]\n            , andThenOneOf = [ postfix 6 (symbol \"°\") degrees ]\n            , spaces = Parser.spaces\n            }\n\n\n    run expression \"180°\" --> Ok pi\n    run expression \"360°\" --> Ok (2*pi)\n\n",
+                "type": "Basics.Int -> Parser.Parser () -> (expr -> expr) -> Pratt.Config expr -> ( Basics.Int, expr -> Parser.Parser expr )"
+            },
+            {
+                "name": "prefix",
+                "comment": " Build a parser for a _prefix_ expression with a given _precedence_.\n\nThe `Config` argument is passed automatically by the parser.\n\n    import Parser exposing (Parser, int, run, symbol)\n    import Pratt exposing (literal, prefix)\n\n    expression : Parser Int\n    expression =\n        Pratt.expression\n            { oneOf =\n                [ literal int\n                , prefix 3 (symbol \"-\") negate\n                , prefix 3 (symbol \"+\") identity\n                ]\n            , andThenOneOf = []\n            , spaces = Parser.spaces\n            }\n\n\n    run expression \"-1\" --> Ok -1\n    run expression \"--1\" --> Ok 1\n    run expression \"+1\" --> Ok 1\n    run expression \"+-+-1\" --> Ok 1\n\n`prefix` can also be used to build more complex helpers, for example:\n\n    type Expr\n        = IfThenElse Expr Expr Expr\n\n    ifThenElse : Config Expr -> Parser Expr\n    ifThenElse config =\n        succeed IfThenElse\n            |= prefix 0 (keyword \"if\") identity config\n            |= prefix 0 (keyword \"then\") identity config\n            |= prefix 0 (keyword \"else\") identity config\n\n",
+                "type": "Basics.Int -> Parser.Parser () -> (expr -> expr) -> Pratt.Config expr -> Parser.Parser expr"
+            },
+            {
+                "name": "subExpression",
+                "comment": " Build an expression parser based on the _precedence_ and\nconfiguration arguments.\n\nThis is the core function of the parser.\nThe [`expression`](#expression) function is actually implemented using\n`subExpression` with a _precedence_ of `0`.\n\n`subExpression` is used to make configuration helpers.\n\nFor example [`prefix`](#prefix) can be implemented like this:\n\n    prefix : Int -> Parser () -> (expr -> expr) -> Config expr -> Parser expr\n    prefix precedence operator apply config =\n        succeed apply\n            |. operator\n            |= subExpression precedence config\n\nA parser for sub-expressions between parentheses like this:\n\n    parenthesizedExpression : Config Expr -> Parser Expr\n    parenthesizedExpression config =\n        succeed identity\n            |. symbol \"(\"\n            |= subExpression 0 config\n            |. symbol \")\"\n\n**Algorithm**:\n\n`subExpression` uses the following algorithm:\n\n1.  Use the `Int` _precedence_ argument as the current precedence.\n2.  Run the `spaces` parser.\n3.  Try configured `oneOf` parsers successively in order using\n    [`Parser.oneOf`](https://package.elm-lang.org/packages/elm/parser/1.1.0/Parser#oneOf)\n    until one is chosen (i.e. until one of them starts chomping characters).\n    This parser may call `subExpression` recursively with different\n    _precedence_ values.\n    If no parser succeeds, the whole parser fails, else the expression parsed is\n    used as the _left_ expression in the next steps.\n4.  Loop\n      - Run the configured `spaces` parser.\n      - Filter `andThenOneOf` parsers, keeping only those that have a\n        _precedence_ above the current one, then try them successively using\n        `Parser.oneOf` with the _left_ expression argument until one is chosen.\n        This parser may also call\n        `subExpression` recursively with different _precedence_ values.\n      - If no parser succeeds, return the _left_ expression.\n        Else, loop from 4. using the expression just parsed as the new _left_\n        expression.\n\n",
+                "type": "Basics.Int -> Pratt.Config expr -> Parser.Parser expr"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Pratt.Advanced",
+        "comment": " `Pratt.Advanced` provides the same API as [`Pratt`](Pratt),\nbut for [`Parser.Advanced`](https://package.elm-lang.org/packages/elm/parser/1.1.0/Parser-Advanced). This allows to have custom `context` and `problem` types to improve error messages.\n\n\n# Expression parser\n\n@docs Config, expression\n\n\n# Configuration helpers\n\n@docs subExpression\n\n\n## **oneOf** helpers\n\n@docs literal, constant, prefix\n\n\n## **andThenOneOf** helpers\n\n@docs infixLeft, infixRight, postfix\n\n",
+        "unions": [
+            {
+                "name": "Config",
+                "comment": " An opaque type holding the parser configuration.\n",
+                "args": [
+                    "c",
+                    "x",
+                    "e"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "constant",
+                "comment": " Just like [`Pratt.constant`](Pratt#constant).\n",
+                "type": "Parser.Advanced.Parser c x () -> e -> Pratt.Advanced.Config c x e -> Parser.Advanced.Parser c x e"
+            },
+            {
+                "name": "expression",
+                "comment": " Just like [`Pratt.expression`](Pratt#expression).\n",
+                "type": "{ oneOf : List.List (Pratt.Advanced.Config c x e -> Parser.Advanced.Parser c x e), andThenOneOf : List.List (Pratt.Advanced.Config c x e -> ( Basics.Int, e -> Parser.Advanced.Parser c x e )), spaces : Parser.Advanced.Parser c x () } -> Parser.Advanced.Parser c x e"
+            },
+            {
+                "name": "infixLeft",
+                "comment": " Just like [`Pratt.infixLeft`](Pratt#infixLeft).\n",
+                "type": "Basics.Int -> Parser.Advanced.Parser c x () -> (e -> e -> e) -> Pratt.Advanced.Config c x e -> ( Basics.Int, e -> Parser.Advanced.Parser c x e )"
+            },
+            {
+                "name": "infixRight",
+                "comment": " Just like [`Pratt.infixRight`](Pratt#infixRight).\n",
+                "type": "Basics.Int -> Parser.Advanced.Parser c x () -> (e -> e -> e) -> Pratt.Advanced.Config c x e -> ( Basics.Int, e -> Parser.Advanced.Parser c x e )"
+            },
+            {
+                "name": "literal",
+                "comment": " Just like [`Pratt.literal`](Pratt#literal).\n",
+                "type": "Parser.Advanced.Parser c x e -> Pratt.Advanced.Config c x e -> Parser.Advanced.Parser c x e"
+            },
+            {
+                "name": "postfix",
+                "comment": " Just like [`Pratt.postfix`](Pratt#postfix).\n",
+                "type": "Basics.Int -> Parser.Advanced.Parser c x () -> (e -> e) -> Pratt.Advanced.Config c x e -> ( Basics.Int, e -> Parser.Advanced.Parser c x e )"
+            },
+            {
+                "name": "prefix",
+                "comment": " Just like [`Pratt.prefix`](Pratt#prefix).\n",
+                "type": "Basics.Int -> Parser.Advanced.Parser c x () -> (e -> e) -> Pratt.Advanced.Config c x e -> Parser.Advanced.Parser c x e"
+            },
+            {
+                "name": "subExpression",
+                "comment": " Just like [`Pratt.subExpression`](Pratt#subExpression).\n",
+                "type": "Basics.Int -> Pratt.Advanced.Config c x e -> Parser.Advanced.Parser c x e"
+            }
+        ],
+        "binops": []
+    }
+]

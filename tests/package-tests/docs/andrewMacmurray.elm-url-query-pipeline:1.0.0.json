@@ -1,0 +1,41 @@
+[
+    {
+        "name": "Url.Query.Pipeline",
+        "comment": " Combine [elm/url](https://package.elm-lang.org/packages/elm/url/latest/Url-Parser-Query) Url Query param\nparsers using a pipeline style -\nthink [elm-json-decode-pipeline](https://package.elm-lang.org/packages/NoRedInk/elm-json-decode-pipeline/latest/) but\nfor Url Query params:\n\n    import Url exposing (Url)\n    import Url.Parser as Parser exposing ((<?>), s, top)\n    import Url.Parser.Query as Query\n    import Url.Query.Pipeline as Pipeline\n\n    type Route\n        = Home (Maybe MyQuery)\n        | AnotherRoute\n\n    type alias MyQuery =\n        { one : String\n        , two : Maybe String\n        , three : List Int\n        }\n\n    query : Query.Parser (Maybe MyQuery)\n    query =\n        Pipeline.succeed MyQuery\n            |> Pipeline.required (Query.string \"one\")\n            |> Pipeline.optional (Query.string \"two\")\n            |> Pipeline.with (Query.custom \"three\" (List.filterMap String.toInt))\n\n    routes : Parser.Parser (Route -> a) a\n    routes =\n        Parser.oneOf\n            [ Parser.map Home (top <?> query)\n            , Parser.map AnotherRoute (s \"another-route\")\n            ]\n\n    fromString : String -> Maybe Route\n    fromString =\n        Url.fromString >> Maybe.andThen (Parser.parse routes)\n\nSome examples from above:\n\n    fromString \"http://example/another-route\" == Just AnotherRoute\n\n    fromString \"http://example?one=hello&two=world&three=1&three=2\"\n        == Just\n            (Home\n                (Just\n                    { one = \"hello\"\n                    , two = Just \"world\"\n                    , three = [ 1, 2 ]\n                    }\n                )\n            )\n\n    -- required param \"one\" is missing\n    fromString \"http://example?two=world&three=1\"\n        == Just (Home Nothing)\n\nThe examples below use the function `parse`\n\n    parse : Query.Parser (Maybe MyQuery) -> String -> Maybe MyQuery\n\n\n# Start a Pipeline\n\n@docs succeed\n\n\n# Build a Pipeline\n\n@docs required, optional, with, withDefault, hardcoded\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "hardcoded",
+                "comment": " Apply a hardcoded value\n\n    type alias MyQuery =\n        { one : String\n        , two : Int\n        }\n\n    myQuery : Query.Parser (Maybe MyQuery)\n    myQuery =\n        Pipeline.succeed MyQuery\n            |> Pipeline.required (Query.string \"one\")\n            |> Pipeline.hardcoded 42\n\nExamples:\n\n    parse myQuery \"one=one\"\n        == Just { one = \"one\", two = 42 }\n\n",
+                "type": "a -> Url.Parser.Query.Parser (Maybe.Maybe (a -> b)) -> Url.Parser.Query.Parser (Maybe.Maybe b)"
+            },
+            {
+                "name": "optional",
+                "comment": " Combine a parser that returns a `Maybe value`\n\n    type alias MyQuery =\n        { one : Maybe String\n        , two : Maybe String\n        }\n\n    myQuery : Query.Parser (Maybe MyQuery)\n    myQuery =\n        Pipeline.succeed MyQuery\n            |> Pipeline.optional (Query.string \"one\")\n            |> Pipeline.optional (Query.string \"two\")\n\nExamples:\n\n    parse myQuery \"one=one\"\n        == Just { one = Just \"one\", two = Nothing }\n\n    parse myQuery \"two=two\"\n        == Just { one = Nothing \"one\", two = Just \"two\" }\n\n    parse myQuery \"\"\n        == Just { one = Nothing, two = Nothing }\n\n",
+                "type": "Url.Parser.Query.Parser (Maybe.Maybe a) -> Url.Parser.Query.Parser (Maybe.Maybe (Maybe.Maybe a -> b)) -> Url.Parser.Query.Parser (Maybe.Maybe b)"
+            },
+            {
+                "name": "required",
+                "comment": " Combine a parser that must not be `Nothing`, if the parser returns `Nothing` the whole pipeline will return `Nothing`\n\n    type alias MyQuery =\n        { one : String\n        , two : Maybe String\n        }\n\n    myQuery : Query.Parser (Maybe MyQuery)\n    myQuery =\n        Pipeline.succeed MyQuery\n            |> Pipeline.required (Query.string \"one\")\n            |> Pipeline.optional (Query.string \"two\")\n\nExamples:\n\n    parse myQuery \"one=one&two=two\"\n        == Just { one = \"one\", two = Just \"two\" }\n\n    parse myQuery \"one=one\"\n        == Just { one = \"one\", two = Nothing }\n\n    -- missing required param\n    parse myQuery \"two=two\"\n        == Nothing\n\n",
+                "type": "Url.Parser.Query.Parser (Maybe.Maybe a) -> Url.Parser.Query.Parser (Maybe.Maybe (a -> b)) -> Url.Parser.Query.Parser (Maybe.Maybe b)"
+            },
+            {
+                "name": "succeed",
+                "comment": " Start off a pipeline\n\n    type alias MyQuery =\n        { one : String\n        , two : Maybe String\n        , three : Int\n        }\n\n    myQuery : Query.Parser (Maybe MyQuery)\n    myQuery =\n        Pipeline.succeed MyQuery\n            |> Pipeline.required (Query.string \"one\")\n            |> Pipeline.optional (Query.string \"two\")\n            |> Pipeline.required (Query.int \"three\")\n\nExamples:\n\n    parse myQuery \"one=one&two=two&three=3\"\n        == Just\n            { one = \"one\"\n            , two = Just \"two\"\n            , three = 3\n            }\n\n    parse myQuery \"one=one&three=3\"\n        == Just\n            { one = \"one\"\n            , two = Nothing\n            , three = 3\n            }\n\n",
+                "type": "a -> Url.Parser.Query.Parser (Maybe.Maybe a)"
+            },
+            {
+                "name": "with",
+                "comment": " Combine any parser as is: useful for Lists or Custom Types\n\n    type alias MyQuery =\n        { one : List String\n        , two : Fruit\n        }\n\n    type Fruit\n        = Apple\n        | Pear\n\n    myQuery : Query.Parser (Maybe MyQuery)\n    myQuery =\n        Pipeline.succeed MyQuery\n            |> Pipeline.with (Query.custom \"one\" identity)\n            |> Pipeline.with (Query.enum \"two\" fruitOptions |> Query.map (Maybe.withDefault Apple))\n\nExamples:\n\n    parse myQuery \"one=a&one=b&two=pear\"\n        == Just { one = [ \"a\", \"b\" ], two = Pear }\n\n    parse myQuery \"two=apple\"\n        == Just { one = [], two = Apple }\n\n",
+                "type": "Url.Parser.Query.Parser a -> Url.Parser.Query.Parser (Maybe.Maybe (a -> b)) -> Url.Parser.Query.Parser (Maybe.Maybe b)"
+            },
+            {
+                "name": "withDefault",
+                "comment": " Apply a default value for a parser containing a Maybe\n\n    type alias MyQuery =\n        { one : String\n        , two : Fruit\n        }\n\n    type Fruit\n        = Apple\n        | Pear\n\n    myQuery : Query.Parser (Maybe MyQuery)\n    myQuery =\n        Pipeline.succeed MyQuery\n            |> Pipeline.required (Query.string \"one\")\n            |> Pipeline.withDefault (Query.enum \"two\" fruitOptions) Apple\n\nExamples:\n\n    parse myQuery \"one=one&two=pear\"\n        == Just { one = \"one\", two = Pear }\n\n    parse myQuery \"one=one\"\n        == Just { one = \"one\", two = Apple }\n\n",
+                "type": "Url.Parser.Query.Parser (Maybe.Maybe a) -> a -> Url.Parser.Query.Parser (Maybe.Maybe (a -> b)) -> Url.Parser.Query.Parser (Maybe.Maybe b)"
+            }
+        ],
+        "binops": []
+    }
+]

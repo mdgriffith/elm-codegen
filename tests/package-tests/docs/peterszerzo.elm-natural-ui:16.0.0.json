@@ -1,0 +1,920 @@
+[
+    {
+        "name": "NaturalUi",
+        "comment": " Opinionated design system with a friendly API. [Demo.](https://peterszerzo.github.io/elm-natural-ui)\n\n\n# Simple nodes\n\n@docs authScreen, sidebar, avatar, layout, status, urlBar, button, header, footer, card, pageHeader, input, checkbox, searchBar, form, modal, loader, select, link, formPack, switch, notification, chipElement, customLink, tile\n\n\n# Counter\n\n@docs counter, CounterData, CounterState, initCounter\n\n\n# DatePicker\n\n@docs datePicker, DatePickerData, DatePickerState, initDatePicker\n\n\n# Slider\n\n@docs slider, SliderData, SliderState, initSlider\n\n\n# Steps\n\n@docs steps, StepsData\n\n\n# Toggle\n\n@docs toggle, ToggleData\n\n\n# Dropdown\n\n@docs dropdown, DropdownData\n\n\n# Tabs\n\n@docs tabs, TabsData, TabsState, initTabs\n\n\n# Table\n\n@docs table, TableData, TableState, initTable, tableSearch, setTableSearch\n\n\n# ListEditor\n\n@docs listEditor, ListEditorData, ListEditorState, initListEditor\n\n\n# Attributes\n\n@docs title, oversized, body, popup, controls, help, state, data, toMsg, toClipboard, toStatefulMsg, toStatefulMsgWithFocus, toAsyncStatefulMsg, success, warning, onDarkBackground, error, enabled, placeholder, icon, id, label, onClick, onClose, onSuggestion, suggestions, url, discrete, options, optionIcon, loading, css, type_, required, onFocus, onBlur, onSubmit, onListEditorWordClick, searchable, appendReverse, keepAtLeastOne, currentPath, links\n\n\n# Icons\n\n@docs plus, plusInCircle, barbell, webhook, checkmarkInCircle, variable, slot, duplicate, trash, target, channels, pen, gear, tree, chip, bot, chevronLeft, chevronRight, chevronUp, chevronDown, search, close, questionInCircle, chart, logout, person, hammer, slack, skype, facebookMessenger, amazonEcho\n\n\n# Styles\n\n@docs globalStyles\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "CounterData",
+                "comment": " Counter data\n",
+                "args": [],
+                "type": "NaturalUi.Counter.Data"
+            },
+            {
+                "name": "CounterState",
+                "comment": " Counter state\n",
+                "args": [],
+                "type": "NaturalUi.Counter.State"
+            },
+            {
+                "name": "DatePickerData",
+                "comment": " DatePicker data\n",
+                "args": [],
+                "type": "NaturalUi.DatePicker.Data"
+            },
+            {
+                "name": "DatePickerState",
+                "comment": " DatePicker state\n",
+                "args": [],
+                "type": "NaturalUi.DatePicker.State"
+            },
+            {
+                "name": "DropdownData",
+                "comment": " DropdownData\n",
+                "args": [],
+                "type": "NaturalUi.Dropdown.Data"
+            },
+            {
+                "name": "ListEditorData",
+                "comment": " ListEditor data\n",
+                "args": [],
+                "type": "NaturalUi.ListEditor.Data"
+            },
+            {
+                "name": "ListEditorState",
+                "comment": " ListEditor state\n",
+                "args": [],
+                "type": "NaturalUi.ListEditor.State"
+            },
+            {
+                "name": "SliderData",
+                "comment": " Slider data\n",
+                "args": [],
+                "type": "NaturalUi.Slider.Data"
+            },
+            {
+                "name": "SliderState",
+                "comment": " Slider state\n",
+                "args": [],
+                "type": "NaturalUi.Slider.State"
+            },
+            {
+                "name": "StepsData",
+                "comment": " StepsData\n",
+                "args": [],
+                "type": "NaturalUi.Steps.Data"
+            },
+            {
+                "name": "TableData",
+                "comment": " Table data\n",
+                "args": [
+                    "record",
+                    "msg"
+                ],
+                "type": "NaturalUi.Table.Data record msg"
+            },
+            {
+                "name": "TableState",
+                "comment": " Table state\n",
+                "args": [],
+                "type": "NaturalUi.Table.State"
+            },
+            {
+                "name": "TabsData",
+                "comment": " Tabs data\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "NaturalUi.Tabs.Data msg"
+            },
+            {
+                "name": "TabsState",
+                "comment": " Tabs state\n",
+                "args": [],
+                "type": "NaturalUi.Tabs.State"
+            },
+            {
+                "name": "ToggleData",
+                "comment": " ToggleData\n",
+                "args": [],
+                "type": "NaturalUi.Toggle.Data"
+            }
+        ],
+        "values": [
+            {
+                "name": "amazonEcho",
+                "comment": " Facebook messenger icon\n",
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "appendReverse",
+                "comment": " Makes list editing components append new items in the reverse order\n",
+                "type": "Internal.LowLevel.Setting state data msg"
+            },
+            {
+                "name": "authScreen",
+                "comment": " AuthScreen element\n",
+                "type": "Internal.LowLevel.CustomNode Basics.Never Basics.Never msg"
+            },
+            {
+                "name": "avatar",
+                "comment": " Avatar element\n",
+                "type": "Internal.LowLevel.CustomNode Basics.Never (NaturalUi.Avatar.Data msg) msg"
+            },
+            {
+                "name": "barbell",
+                "comment": " Barbell icon\n",
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "body",
+                "comment": " Content body attribute\n",
+                "type": "String.String -> Internal.LowLevel.Setting state data msg"
+            },
+            {
+                "name": "bot",
+                "comment": " Tree icon\n",
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "button",
+                "comment": " Button element\n",
+                "type": "Internal.LowLevel.CustomNode Basics.Never Basics.Never msg"
+            },
+            {
+                "name": "card",
+                "comment": " Card element\n",
+                "type": "Internal.LowLevel.CustomNode Basics.Never Basics.Never msg"
+            },
+            {
+                "name": "channels",
+                "comment": " Channels icon\n",
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "chart",
+                "comment": " Chart icon\n",
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "checkbox",
+                "comment": " Checkbox element\n",
+                "type": "Internal.LowLevel.CustomNode Basics.Never (List.List String.String) msg"
+            },
+            {
+                "name": "checkmarkInCircle",
+                "comment": " Checkmark icon\n",
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "chevronDown",
+                "comment": " ChevronDown icon\n",
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "chevronLeft",
+                "comment": " ChevronLeft icon\n",
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "chevronRight",
+                "comment": " ChevronRight icon\n",
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "chevronUp",
+                "comment": " ChevronUp icon\n",
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "chip",
+                "comment": " Chip icon\n",
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "chipElement",
+                "comment": " Chip element\n",
+                "type": "Internal.LowLevel.CustomNode Basics.Never Basics.Never msg"
+            },
+            {
+                "name": "close",
+                "comment": " Close icon\n",
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "controls",
+                "comment": " Makes list editing components append new items in the reverse order\n",
+                "type": "List.List (Html.Styled.Html msg) -> Internal.LowLevel.Setting state data msg"
+            },
+            {
+                "name": "counter",
+                "comment": " Counter element\n",
+                "type": "Internal.LowLevel.CustomNode NaturalUi.Counter.State Basics.Int msg"
+            },
+            {
+                "name": "css",
+                "comment": " `elm-css` styles\n",
+                "type": "List.List Css.Style -> Internal.LowLevel.Setting state data msg"
+            },
+            {
+                "name": "currentPath",
+                "comment": " The current path\n",
+                "type": "String.String -> Internal.LowLevel.Setting state data msg"
+            },
+            {
+                "name": "customLink",
+                "comment": " Counter element\n",
+                "type": "Internal.LowLevel.CustomNode Basics.Never Basics.Never msg"
+            },
+            {
+                "name": "data",
+                "comment": " View data 'owned' by the outside application. Of course, all state is owned by the outside app, but contrary to [state](#state), this holds core application data that may reach servers later.\n",
+                "type": "data -> Internal.LowLevel.Setting state data msg"
+            },
+            {
+                "name": "datePicker",
+                "comment": " DatePicker element\n",
+                "type": "Internal.LowLevel.CustomNode NaturalUi.DatePicker.State NaturalUi.DatePicker.Data msg"
+            },
+            {
+                "name": "discrete",
+                "comment": " Discrete theme\n",
+                "type": "Internal.LowLevel.Setting state data msg"
+            },
+            {
+                "name": "dropdown",
+                "comment": " Dropdown element\n",
+                "type": "Internal.LowLevel.CustomNode Basics.Never NaturalUi.Dropdown.Data msg"
+            },
+            {
+                "name": "duplicate",
+                "comment": " Duplicate icon\n",
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "enabled",
+                "comment": " Enabled state\n",
+                "type": "Basics.Bool -> Internal.LowLevel.Setting state data msg"
+            },
+            {
+                "name": "error",
+                "comment": " Error theme\n",
+                "type": "Internal.LowLevel.Setting state data msg"
+            },
+            {
+                "name": "facebookMessenger",
+                "comment": " Facebook messenger icon\n",
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "footer",
+                "comment": " Footer element\n",
+                "type": "Internal.LowLevel.CustomNode Basics.Never Basics.Never msg"
+            },
+            {
+                "name": "form",
+                "comment": " Form element\n",
+                "type": "Internal.LowLevel.CustomNode Basics.Never Basics.Never msg"
+            },
+            {
+                "name": "formPack",
+                "comment": " FormPack element\n",
+                "type": "Internal.LowLevel.CustomNode Basics.Never Basics.Never msg"
+            },
+            {
+                "name": "gear",
+                "comment": " Gear icon\n",
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "globalStyles",
+                "comment": " Global setup styles\n",
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "hammer",
+                "comment": " Hammer icon\n",
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "header",
+                "comment": " Header element\n",
+                "type": "Internal.LowLevel.CustomNode Basics.Never Basics.Never msg"
+            },
+            {
+                "name": "help",
+                "comment": " Help text\n",
+                "type": "String.String -> Internal.LowLevel.Setting state data msg"
+            },
+            {
+                "name": "icon",
+                "comment": " SVG icon\n",
+                "type": "Html.Styled.Html msg -> Internal.LowLevel.Setting state data msg"
+            },
+            {
+                "name": "id",
+                "comment": " Id\n",
+                "type": "String.String -> Internal.LowLevel.Setting state data msg"
+            },
+            {
+                "name": "initCounter",
+                "comment": " Init counter state\n",
+                "type": "NaturalUi.CounterState"
+            },
+            {
+                "name": "initDatePicker",
+                "comment": " Init DatePicker state\n",
+                "type": "NaturalUi.DatePickerState"
+            },
+            {
+                "name": "initListEditor",
+                "comment": " Init ListEditor state\n",
+                "type": "NaturalUi.ListEditorState"
+            },
+            {
+                "name": "initSlider",
+                "comment": " Init Slider state\n",
+                "type": "NaturalUi.SliderState"
+            },
+            {
+                "name": "initTable",
+                "comment": " Init Table state\n",
+                "type": "NaturalUi.TableState"
+            },
+            {
+                "name": "initTabs",
+                "comment": " Init Tabs state\n",
+                "type": "NaturalUi.TabsState"
+            },
+            {
+                "name": "input",
+                "comment": " Input element\n",
+                "type": "Internal.LowLevel.CustomNode Basics.Int String.String msg"
+            },
+            {
+                "name": "keepAtLeastOne",
+                "comment": " Keep at least one item when editing\n",
+                "type": "Internal.LowLevel.Setting state data msg"
+            },
+            {
+                "name": "label",
+                "comment": " Labels, used for forms and sections\n",
+                "type": "String.String -> Internal.LowLevel.Setting state data msg"
+            },
+            {
+                "name": "layout",
+                "comment": " Layout element\n",
+                "type": "Internal.LowLevel.CustomNode Basics.Never Basics.Never msg"
+            },
+            {
+                "name": "link",
+                "comment": " Link element\n",
+                "type": "Internal.LowLevel.CustomNode Basics.Never Basics.Never msg"
+            },
+            {
+                "name": "links",
+                "comment": " Links\n",
+                "type": "List.List { path : String.String, label : String.String, icon : Maybe.Maybe (Html.Styled.Html msg) } -> Internal.LowLevel.Setting state data msg"
+            },
+            {
+                "name": "listEditor",
+                "comment": " ListEditor element\n",
+                "type": "Internal.LowLevel.CustomNode NaturalUi.ListEditor.State NaturalUi.ListEditor.Data msg"
+            },
+            {
+                "name": "loader",
+                "comment": " Loader element\n",
+                "type": "Internal.LowLevel.CustomNode Basics.Never Basics.Never msg"
+            },
+            {
+                "name": "loading",
+                "comment": " Specifies whether the UI element is in a loading state\n",
+                "type": "Basics.Bool -> Internal.LowLevel.Setting state data msg"
+            },
+            {
+                "name": "logout",
+                "comment": " Logout icon\n",
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "modal",
+                "comment": " Modal element\n",
+                "type": "Internal.LowLevel.CustomNode Basics.Never Basics.Never msg"
+            },
+            {
+                "name": "notification",
+                "comment": " Notification element\n",
+                "type": "Internal.LowLevel.CustomNode Basics.Never Basics.Never msg"
+            },
+            {
+                "name": "onBlur",
+                "comment": " Blur handler\n",
+                "type": "msg -> Internal.LowLevel.Setting state data msg"
+            },
+            {
+                "name": "onClick",
+                "comment": " Click handler\n",
+                "type": "msg -> Internal.LowLevel.Setting state data msg"
+            },
+            {
+                "name": "onClose",
+                "comment": " Close handler\n",
+                "type": "msg -> Internal.LowLevel.Setting state data msg"
+            },
+            {
+                "name": "onDarkBackground",
+                "comment": " Set theme to work on dark background\n",
+                "type": "Internal.LowLevel.Setting state data msg"
+            },
+            {
+                "name": "onFocus",
+                "comment": " Focus handler\n",
+                "type": "msg -> Internal.LowLevel.Setting state data msg"
+            },
+            {
+                "name": "onListEditorWordClick",
+                "comment": " Click handler on a word in a list editor\n",
+                "type": "(Basics.Int -> Basics.Int -> msg) -> Internal.LowLevel.Setting state data msg"
+            },
+            {
+                "name": "onSubmit",
+                "comment": " Submit handler\n",
+                "type": "msg -> Internal.LowLevel.Setting state data msg"
+            },
+            {
+                "name": "onSuggestion",
+                "comment": " Handler for when the user accepts a suggestion\n",
+                "type": "(String.String -> msg) -> Internal.LowLevel.Setting state data msg"
+            },
+            {
+                "name": "optionIcon",
+                "comment": " An optional icon for choices\n",
+                "type": "(String.String -> Html.Styled.Html msg) -> Internal.LowLevel.Setting state data msg"
+            },
+            {
+                "name": "options",
+                "comment": " List of options, e.g. for select\n",
+                "type": "List.List String.String -> Internal.LowLevel.Setting state data msg"
+            },
+            {
+                "name": "oversized",
+                "comment": " Oversized\n",
+                "type": "Internal.LowLevel.Setting state data msg"
+            },
+            {
+                "name": "pageHeader",
+                "comment": " Page header element\n",
+                "type": "Internal.LowLevel.CustomNode Basics.Never Basics.Never msg"
+            },
+            {
+                "name": "pen",
+                "comment": " Pen icon\n",
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "person",
+                "comment": " Person icon\n",
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "placeholder",
+                "comment": " Placeholder\n",
+                "type": "String.String -> Internal.LowLevel.Setting state data msg"
+            },
+            {
+                "name": "plus",
+                "comment": " Plus icon\n",
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "plusInCircle",
+                "comment": " PlusInCircle icon\n",
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "popup",
+                "comment": " Popup attribute - specify children that go into a popup belonging to the element.\n",
+                "type": "List.List (Html.Styled.Html msg) -> Internal.LowLevel.Setting state data msg"
+            },
+            {
+                "name": "questionInCircle",
+                "comment": " QuestionInCircle icon\n",
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "required",
+                "comment": " Required\n",
+                "type": "Internal.LowLevel.Setting state data msg"
+            },
+            {
+                "name": "search",
+                "comment": " Search icon\n",
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "searchBar",
+                "comment": " SearchBar element\n",
+                "type": "Internal.LowLevel.CustomNode Basics.Never String.String msg"
+            },
+            {
+                "name": "searchable",
+                "comment": " Set searchability, toggling the search bar displays in e.g. tables\n",
+                "type": "Basics.Bool -> Internal.LowLevel.Setting state data msg"
+            },
+            {
+                "name": "select",
+                "comment": " Select element\n",
+                "type": "Internal.LowLevel.CustomNode Basics.Never (Maybe.Maybe String.String) msg"
+            },
+            {
+                "name": "setTableSearch",
+                "comment": " Set table search state\n",
+                "type": "String.String -> NaturalUi.TableState -> NaturalUi.TableState"
+            },
+            {
+                "name": "sidebar",
+                "comment": " Sidebar element\n",
+                "type": "Internal.LowLevel.CustomNode Basics.Never Basics.Never msg"
+            },
+            {
+                "name": "skype",
+                "comment": " Skype icon\n",
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "slack",
+                "comment": " Slack icon\n",
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "slider",
+                "comment": " Slider element\n",
+                "type": "Internal.LowLevel.CustomNode NaturalUi.Slider.State NaturalUi.Slider.Data msg"
+            },
+            {
+                "name": "slot",
+                "comment": " Slot icon\n",
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "state",
+                "comment": " Internal UI widget state, see <http://package.elm-lang.org/packages/evancz/elm-sortable-table/1.0.1/Table#view>\n",
+                "type": "state -> Internal.LowLevel.Setting state data msg"
+            },
+            {
+                "name": "status",
+                "comment": " Status element\n",
+                "type": "Internal.LowLevel.CustomNode Basics.Never Basics.Never msg"
+            },
+            {
+                "name": "steps",
+                "comment": " Card element\n",
+                "type": "Internal.LowLevel.CustomNode Basics.Never NaturalUi.Steps.Data msg"
+            },
+            {
+                "name": "success",
+                "comment": " Success theme\n",
+                "type": "Internal.LowLevel.Setting state data msg"
+            },
+            {
+                "name": "suggestions",
+                "comment": " Suggestions for words that autocomplete should recognize\n",
+                "type": "List.List String.String -> Internal.LowLevel.Setting state data msg"
+            },
+            {
+                "name": "switch",
+                "comment": " SearchBar element\n",
+                "type": "Internal.LowLevel.CustomNode Basics.Never Basics.Bool msg"
+            },
+            {
+                "name": "table",
+                "comment": " Smart table\n",
+                "type": "Internal.LowLevel.CustomNode NaturalUi.Table.State (NaturalUi.Table.Data record msg) msg"
+            },
+            {
+                "name": "tableSearch",
+                "comment": " Extract search from table state\n",
+                "type": "NaturalUi.TableState -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "tabs",
+                "comment": " Tabs element\n",
+                "type": "Internal.LowLevel.CustomNode NaturalUi.Tabs.State (NaturalUi.Tabs.Data msg) msg"
+            },
+            {
+                "name": "target",
+                "comment": " Target icon\n",
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "tile",
+                "comment": " Tile element\n",
+                "type": "Internal.LowLevel.CustomNode Basics.Never Basics.Never msg"
+            },
+            {
+                "name": "title",
+                "comment": " Title attribute\n",
+                "type": "String.String -> Internal.LowLevel.Setting state data msg"
+            },
+            {
+                "name": "toAsyncStatefulMsg",
+                "comment": " A'la [elm-sortable-table](http://package.elm-lang.org/packages/evancz/elm-sortable-table/1.0.1/Table#view), this is how components communicate to the outside application. The slight modification is that components always pass back both their new internal state and the new data through this method.\n",
+                "type": "((state -> data -> ( state, data )) -> msg) -> Internal.LowLevel.Setting state data msg"
+            },
+            {
+                "name": "toClipboard",
+                "comment": " Message handler for copying the contents of an input field to clipboard\n",
+                "type": "(String.String -> msg) -> Internal.LowLevel.Setting state data msg"
+            },
+            {
+                "name": "toMsg",
+                "comment": " A'la [elm-sortable-table](http://package.elm-lang.org/packages/evancz/elm-sortable-table/1.0.1/Table#view), this is how components communicate to the outside application. The slight modification is that components always pass back both their new internal state and the new data through this method.\n",
+                "type": "(data -> msg) -> Internal.LowLevel.Setting state data msg"
+            },
+            {
+                "name": "toStatefulMsg",
+                "comment": " A'la [elm-sortable-table](http://package.elm-lang.org/packages/evancz/elm-sortable-table/1.0.1/Table#view), this is how components communicate to the outside application. The slight modification is that components always pass back both their new internal state and the new data through this method.\n",
+                "type": "(state -> data -> msg) -> Internal.LowLevel.Setting state data msg"
+            },
+            {
+                "name": "toStatefulMsgWithFocus",
+                "comment": " A'la [elm-sortable-table](http://package.elm-lang.org/packages/evancz/elm-sortable-table/1.0.1/Table#view), this is how components communicate to the outside application. The slight modification is that components always pass back both their new internal state and the new data through this method.\n",
+                "type": "(Maybe.Maybe String.String -> state -> data -> msg) -> Internal.LowLevel.Setting state data msg"
+            },
+            {
+                "name": "toggle",
+                "comment": " Toggle element\n",
+                "type": "Internal.LowLevel.CustomNode Basics.Never String.String msg"
+            },
+            {
+                "name": "trash",
+                "comment": " Trash icon\n",
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "tree",
+                "comment": " Tree icon\n",
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "type_",
+                "comment": " HTML type attribute for buttons and input fields.\n",
+                "type": "String.String -> Internal.LowLevel.Setting state data msg"
+            },
+            {
+                "name": "url",
+                "comment": " Url for links and help sections\n",
+                "type": "String.String -> Internal.LowLevel.Setting state data msg"
+            },
+            {
+                "name": "urlBar",
+                "comment": " Url bar element\n",
+                "type": "Internal.LowLevel.CustomNode Basics.Never String.String msg"
+            },
+            {
+                "name": "variable",
+                "comment": " Variable icon\n",
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "warning",
+                "comment": " Warning theme\n",
+                "type": "Internal.LowLevel.Setting state data msg"
+            },
+            {
+                "name": "webhook",
+                "comment": " Webhooks icon\n",
+                "type": "Html.Styled.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "NaturalUi.Constants",
+        "comment": " Styling constants\n\n\n# Sizes\n\n@docs headerHeight, headerBarWidth, footerHeight, sidebarWidth\n\n\n# Colors\n\n@docs black, darkGray, lighterGray, lightGray, gray, orange, green, lighterOrange, lightOrange, red, lighterRed, lightRed, dark, darker, white, faintBlue, darkBlue, blue, lightBlue, lighterBlue, faintGray\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "black",
+                "comment": " Black color\n",
+                "type": "String.String"
+            },
+            {
+                "name": "blue",
+                "comment": " Blue color\n",
+                "type": "String.String"
+            },
+            {
+                "name": "dark",
+                "comment": " Dark color\n",
+                "type": "String.String"
+            },
+            {
+                "name": "darkBlue",
+                "comment": " Dark text\n",
+                "type": "String.String"
+            },
+            {
+                "name": "darkGray",
+                "comment": " Dark gray color\n",
+                "type": "String.String"
+            },
+            {
+                "name": "darker",
+                "comment": " Darker\n",
+                "type": "String.String"
+            },
+            {
+                "name": "faintBlue",
+                "comment": " Faint blue color\n",
+                "type": "String.String"
+            },
+            {
+                "name": "faintGray",
+                "comment": " Faint gray color\n",
+                "type": "String.String"
+            },
+            {
+                "name": "footerHeight",
+                "comment": " Footer height\n",
+                "type": "Basics.Float"
+            },
+            {
+                "name": "gray",
+                "comment": " Gray color\n",
+                "type": "String.String"
+            },
+            {
+                "name": "green",
+                "comment": " Green color\n",
+                "type": "String.String"
+            },
+            {
+                "name": "headerBarWidth",
+                "comment": " Width of the header bar (matches avatar and dropdown)\n",
+                "type": "Basics.Float"
+            },
+            {
+                "name": "headerHeight",
+                "comment": " Header height\n",
+                "type": "Basics.Float"
+            },
+            {
+                "name": "lightBlue",
+                "comment": " Light blue color\n",
+                "type": "String.String"
+            },
+            {
+                "name": "lightGray",
+                "comment": " Light gray color\n",
+                "type": "String.String"
+            },
+            {
+                "name": "lightOrange",
+                "comment": " Light orange color\n",
+                "type": "String.String"
+            },
+            {
+                "name": "lightRed",
+                "comment": " Light red color\n",
+                "type": "String.String"
+            },
+            {
+                "name": "lighterBlue",
+                "comment": " Slightly lighter blue color\n",
+                "type": "String.String"
+            },
+            {
+                "name": "lighterGray",
+                "comment": " Light gray color\n",
+                "type": "String.String"
+            },
+            {
+                "name": "lighterOrange",
+                "comment": " Lighter orange color\n",
+                "type": "String.String"
+            },
+            {
+                "name": "lighterRed",
+                "comment": " Lighter red color\n",
+                "type": "String.String"
+            },
+            {
+                "name": "orange",
+                "comment": " Orange color\n",
+                "type": "String.String"
+            },
+            {
+                "name": "red",
+                "comment": " Red color\n",
+                "type": "String.String"
+            },
+            {
+                "name": "sidebarWidth",
+                "comment": " DEPRECATED Sidebar width\n",
+                "type": "Basics.Float"
+            },
+            {
+                "name": "white",
+                "comment": " White color\n",
+                "type": "String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "NaturalUi.Mixins",
+        "comment": " Style mixins\n\n\n# Typography\n\n@docs title, strongTitle, heading, strongHeading, body, strongBody, label, small, monospaceFont\n\n\n# Z-indices\n\n@docs lowZIndex, regularZIndex, higherZIndex, popupZIndex, almightyZIndex\n\n\n# Miscellaneous skin styles\n\n@docs standardBorderRadius, standardBoxShadow, inputFocus\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "almightyZIndex",
+                "comment": " Almighty z-index\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "body",
+                "comment": " Regular body type\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "heading",
+                "comment": " Heading type\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "higherZIndex",
+                "comment": " Higher z-index\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "inputFocus",
+                "comment": " Focused input style\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "label",
+                "comment": " Label\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "lowZIndex",
+                "comment": " Low z-index\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "monospaceFont",
+                "comment": " Sets a monospace font\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "popupZIndex",
+                "comment": " Popup z-index\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "regularZIndex",
+                "comment": " Regular z-index\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "small",
+                "comment": " Small type\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "standardBorderRadius",
+                "comment": " Standard border radius\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "standardBoxShadow",
+                "comment": " Standard box shadow\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "strongBody",
+                "comment": " Regular bolder body type\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "strongHeading",
+                "comment": " Heading type\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "strongTitle",
+                "comment": " Strong title type\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "title",
+                "comment": " Title type\n",
+                "type": "Css.Style"
+            }
+        ],
+        "binops": []
+    }
+]

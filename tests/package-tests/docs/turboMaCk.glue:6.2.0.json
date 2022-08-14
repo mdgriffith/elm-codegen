@@ -1,0 +1,194 @@
+[
+    {
+        "name": "Glue",
+        "comment": " Composing Elm applications from smaller isolated parts (modules).\nYou can think of this as a lightweight abstraction built around `(model, Cmd msg)` and\n`(model, Sub msg)` pairs, composing `init`, `update`, `view` and `subscribe` using\n[`Cmd.map`](https://package.elm-lang.org/packages/elm/core/latest/Platform-Cmd#map),\n[`Sub.map`](https://package.elm-lang.org/packages/elm/core/latest/Platform-Sub#map)\nand [`Html.map`](https://package.elm-lang.org/packages/elm/html/latest/Html#map).\n\nIt's recommended to avoid usage of pattern with stateful modules unless there is\nclear benefit to choose it. In cases where one would like to use `Cmd.map`\npattern anyway though, Glue can be used to avoid repeatable patterns for mapping\nthe `msg` types and updating models.\n\n\n# Data type\n\n@docs Glue\n\n\n# Constructors\n\n@docs simple, poly, glue\n\n\n# Init\n\nDesigned for chaining initialization of child modules from parent `init` function.\n\n@docs init\n\n\n# Updates\n\n@docs update, updateModel, updateWith, updateModelWith, trigger\n\n\n# Subscriptions\n\n@docs subscriptions, subscriptionsWhen\n\n\n# View\n\n@docs view, viewSimple\n\n\n# Other\n\n@docs id, combine, map\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Glue",
+                "comment": " `Glue` describes an interface between the parent and child module.\n\nYou can create `Glue` with the [`simple`](#simple), [`poly`](#poly) or [`glue`](#glue) function constructors.\nEvery glue layer is parametrized over:\n\n  - `model` is `Model` of parent\n  - `subModel` is `Model` of child\n  - `msg` is `Msg` of parent\n  - `subMsg` is `Msg` of child\n\n",
+                "args": [
+                    "model",
+                    "subModel",
+                    "msg",
+                    "subMsg"
+                ],
+                "type": "Glue.Internal.Glue model subModel msg subMsg"
+            }
+        ],
+        "values": [
+            {
+                "name": "combine",
+                "comment": " Combine two glues into a single glue.\n",
+                "type": "Glue.Glue model subModel1 msg subMsg1 -> Glue.Glue subModel1 subModel2 subMsg1 subMsg2 -> Glue.Glue model subModel2 msg subMsg2"
+            },
+            {
+                "name": "glue",
+                "comment": " General [`Glue`](#Glue) constructor.\n",
+                "type": "{ msg : subMsg -> msg, get : model -> subModel, set : subModel -> model -> model } -> Glue.Glue model subModel msg subMsg"
+            },
+            {
+                "name": "id",
+                "comment": " Identity Glue.\n\nThis can be for instance used for chaining updates\nof model.\n\n    chainUpdates model =\n        ( model, Cmd.none )\n            |> Glue.updateWith Glue.id f\n            |> Glue.updateWith Glue.id g\n\n",
+                "type": "Glue.Glue model model msg msg"
+            },
+            {
+                "name": "init",
+                "comment": " Initialize child module in parent.\n\n    type alias Model =\n        { message : String\n        , firstCounterModel : Counter.Model\n        , secondCounterModel : Counter.Model\n        }\n\n    init : ( Model, Cmd msg )\n    init =\n        ( Model \"\", Cmd.none )\n            |> Glue.init firstCounter Counter.init\n            |> Glue.init secondCounter Counter.init\n\n",
+                "type": "Glue.Glue model subModel msg subMsg -> ( subModel, Platform.Cmd.Cmd subMsg ) -> ( subModel -> a, Platform.Cmd.Cmd msg ) -> ( a, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "map",
+                "comment": " A tiny abstraction over [`Cmd.map`](https://package.elm-lang.org/packages/elm/core/latest/Platform-Cmd#map)\npacked in `(model, Cmd msg)`.\n",
+                "type": "(subMsg -> msg) -> ( subModel, Platform.Cmd.Cmd subMsg ) -> ( subModel, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "poly",
+                "comment": " A specialized [`Glue`](#Glue) constructor. Useful when the module's API has\ngeneric `msg` type and maps Cmds etc. internally.\n\nThis constructor will do nothing to the child `msg`s.\n\n",
+                "type": "{ get : model -> subModel, set : subModel -> model -> model } -> Glue.Glue model subModel msg msg"
+            },
+            {
+                "name": "simple",
+                "comment": " Simple [`Glue`](#Glue) constructor for modules that don't produce Cmds.\n\n**Note that with this constructor you won't be able to use some functions\nprovided within this library.**\n\n",
+                "type": "{ get : model -> subModel, set : subModel -> model -> model } -> Glue.Glue model subModel Basics.Never Basics.Never"
+            },
+            {
+                "name": "subscriptions",
+                "comment": " Subscribe to the `subscriptions` defined in the child module.\n\n    subscriptions : Model -> Sub Msg\n    subscriptions =\n        (\\model -> Mouse.clicks Clicked)\n            |> Glue.subscriptions foo Foo.subscriptions\n            |> Glue.subscriptions bar Bar.subscriptions\n\n",
+                "type": "Glue.Glue model subModel msg subMsg -> (subModel -> Platform.Sub.Sub subMsg) -> (model -> Platform.Sub.Sub msg) -> model -> Platform.Sub.Sub msg"
+            },
+            {
+                "name": "subscriptionsWhen",
+                "comment": " Subscribe to child's `subscriptions` based on some condition in the parent module.\n\n    type alias Model =\n        { useCounter : Bool\n        , counterModel : Counter.Model\n        }\n\n    subscriptions : Model -> Sub Msg\n    subscriptions =\n        (\\_ -> Mouse.clicks Clicked)\n            |> Glue.subscriptionsWhen .useCounter counter Counter.subscriptions\n\n",
+                "type": "(model -> Basics.Bool) -> Glue.Glue model subModel msg subMsg -> (subModel -> Platform.Sub.Sub subMsg) -> (model -> Platform.Sub.Sub msg) -> model -> Platform.Sub.Sub msg"
+            },
+            {
+                "name": "trigger",
+                "comment": " Trigger Cmd in child's function\n_Commands are async. Therefore trigger doesn't make any update directly.\nUse [`updateModel`](#updateModel) over `trigger` when you can._\n\n    -- Child module\n    triggerEmit : Counter.Model -> Cmd Counter.Msg\n    triggerEmit model ->\n        Task.perform identity <| Task.succeed <| Counter.Emit model\n\n    -- Parent module\n    update : Msg -> Model -> ( Model, Cmd Msg )\n    update msg model =\n        case msg of\n            IncrementCounter ->\n                ( model, Cmd.none )\n                    |> Glue.trigger counter triggerIncrement\n\n",
+                "type": "Glue.Glue model subModel msg subMsg -> (subModel -> Platform.Cmd.Cmd subMsg) -> ( model, Platform.Cmd.Cmd msg ) -> ( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "update",
+                "comment": " Call the child module `update` function with a given message. Useful for\nnesting update calls. This function expects the child `update` to work with `Cmd`s.\n\n    -- Child module\n    updateCounter : Counter.Msg -> Counter.Model -> ( Counter.Model, Cmd Counter.Msg )\n    updateCounter msg model =\n        case msg of\n            Increment ->\n                ( model + 1, Cmd.none )\n\n    -- Parent module\n    update : Msg -> Model -> ( Model, Cmd Msg )\n    update msg model =\n        case msg of\n            CounterMsg counterMsg ->\n                ( { model | message = \"Counter has changed\" }, Cmd.none )\n                    |> Glue.update counter updateCounter counterMsg\n\n",
+                "type": "Glue.Glue model subModel msg subMsg -> (a -> subModel -> ( subModel, Platform.Cmd.Cmd subMsg )) -> a -> ( model, Platform.Cmd.Cmd msg ) -> ( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "updateModel",
+                "comment": " Call the child module `update` function with a given message. This function\nexpects the child `update` to _not_ work with `Cmd`s.\n\nNote you can use different functions than the child's main `update`. For example\nthe child module might have an `updateForRouteChange` function specialized\nfor a specific parent module situation - you can plug it in here too!\n\n    -- Child module\n    updateCounter : Counter.Msg -> Counter.Model -> Counter.Model\n    updateCounter msg model =\n        case msg of\n            Increment ->\n                model + 1\n\n    -- Parent module\n    update : Msg -> Model -> Model\n    update msg model =\n        case msg of\n            CounterMsg counterMsg ->\n                Glue.updateModel counter updateCounter counterMsg model\n\n",
+                "type": "Glue.Glue model subModel msg subMsg -> (a -> subModel -> subModel) -> a -> model -> model"
+            },
+            {
+                "name": "updateModelWith",
+                "comment": " Updates the child module with a function other than `update`. This function\nexpects the child function to _not_ work with `Cmd`s.\n\n    increment : Counter.Model -> Counter.Model\n    increment model =\n        model + 1\n\n    update : Msg -> Model -> ( Model, Cmd Msg )\n    update msg model =\n        case msg of\n            IncrementCounter ->\n                ( model\n                    |> Glue.updateModelWith counter increment\n                , Cmd.none\n                )\n\n",
+                "type": "Glue.Glue model subModel msg subMsg -> (subModel -> subModel) -> model -> model"
+            },
+            {
+                "name": "updateWith",
+                "comment": " Updates the child module with a function other than `update`. This function\nexpects the child function to work with `Cmd`s.\n\n    increment : Counter.Model -> ( Counter.Model, Cmd Counter.Msg )\n    increment model =\n        ( model + 1, Cmd.none )\n\n    update : Msg -> Model -> ( Model, Cmd Msg )\n    update msg model =\n        case msg of\n            IncrementCounter ->\n                ( model, Cmd.none )\n                    |> Glue.updateWith counter increment\n\n",
+                "type": "Glue.Glue model subModel msg subMsg -> (subModel -> ( subModel, Platform.Cmd.Cmd subMsg )) -> ( model, Platform.Cmd.Cmd msg ) -> ( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "view",
+                "comment": " Render child module's view.\n\n    view : Model -> Html msg\n    view model =\n        Html.div []\n            [ Html.text model.message\n            , Glue.view counter Counter.view model\n            ]\n\n",
+                "type": "Glue.Glue model subModel msg subMsg -> (subModel -> Html.Html subMsg) -> model -> Html.Html msg"
+            },
+            {
+                "name": "viewSimple",
+                "comment": " View the `Glue` constructed with the [`simple`](#simple) constructor.\n\nBecause the `Msg` is not part of the Glue definition (`Never` type) it needs\nto be passed in as a argument.\n\n",
+                "type": "Glue.Glue model subModel Basics.Never Basics.Never -> (subModel -> Html.Html subMsg) -> (subMsg -> msg) -> model -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Glue.Lazy",
+        "comment": " In some cases, it makes sense to postpone initialization\nof some module.\n\nSuch part of state can expressed using `Maybe` type like\n\n    type alias Model\n        { about : About.Model\n        , userSettings : Maybe UserSettings.Model\n        }\n\nor for instance using sum type like\n\n    type Model\n        = About About.Model\n        | UserSettings UserSettings.Model\n\nIn such cases though, the programmer is responsible for manually initializing\nthe module at the right time.\n\n@docs LazyGlue\n\n\n## Initialization\n\n@docs initLater, initNow, forceInit, forceInitModel, ensure, ensureModel\n\n\n## Updates\n\n@docs update, updateModel, updateWith, updateModelWith, trigger\n\n\n## Subscriptions\n\n@docs subscriptions, subscriptionsWhen\n\n\n## View\n\n@docs view\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "LazyGlue",
+                "comment": " ",
+                "args": [
+                    "model",
+                    "subModel",
+                    "msg",
+                    "subMsg"
+                ],
+                "type": "Glue.Internal.Glue model (Maybe.Maybe subModel) msg subMsg"
+            }
+        ],
+        "values": [
+            {
+                "name": "ensure",
+                "comment": " Initialize model only when state doesn't already exist (`Nothing` is current value)\n",
+                "type": "Glue.Lazy.LazyGlue model subModel msg subMsg -> (() -> ( subModel, Platform.Cmd.Cmd subMsg )) -> ( model, Platform.Cmd.Cmd msg ) -> ( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "ensureModel",
+                "comment": " Initialize model only when state doesn't already exist (`Nothing` is current value)\n",
+                "type": "Glue.Lazy.LazyGlue model subModel msg subMsg -> (() -> subModel) -> model -> model"
+            },
+            {
+                "name": "forceInit",
+                "comment": " Force intialization of module. If model state already exists in the form of `Just model`\nthis value is overwrite nontherless\n",
+                "type": "Glue.Lazy.LazyGlue model subModel msg subMsg -> ( subModel, Platform.Cmd.Cmd subMsg ) -> ( model, Platform.Cmd.Cmd msg ) -> ( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "forceInitModel",
+                "comment": " Force intialization of module. If model state already exists in the form of `Just model`\nthis value is overwrite nontherless\n",
+                "type": "Glue.Lazy.LazyGlue model subModel msg subMsg -> subModel -> model -> model"
+            },
+            {
+                "name": "initLater",
+                "comment": " Compatible with Glue.init style initialization but assigns `Nothing` to the part of model that\nshould be initalized later. This function is useful in cases using record with maybes.\n",
+                "type": "Glue.Lazy.LazyGlue model subModel msg subMsg -> ( Maybe.Maybe subModel -> a, Platform.Cmd.Cmd msg ) -> ( a, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "initNow",
+                "comment": " Similar to [`initLater`](#initLater) but for cases when\nyou need to initialize with `Just model` right away in init function.\n",
+                "type": "Glue.Lazy.LazyGlue model subModel msg subMsg -> ( subModel, Platform.Cmd.Cmd subMsg ) -> ( Maybe.Maybe subModel -> a, Platform.Cmd.Cmd msg ) -> ( a, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "subscriptions",
+                "comment": " Like `Glue.subscriptions` but for `LazyGlue` variant.\nUpdate is called only when there model is already initialized.\n",
+                "type": "Glue.Lazy.LazyGlue model subModel msg subMsg -> (subModel -> Platform.Sub.Sub subMsg) -> (model -> Platform.Sub.Sub msg) -> model -> Platform.Sub.Sub msg"
+            },
+            {
+                "name": "subscriptionsWhen",
+                "comment": " Like `Glue.subscriptionsWhen` but for `LazyGlue` variant.\nUpdate is called only when there model is already initialized.\n",
+                "type": "(model -> Basics.Bool) -> Glue.Lazy.LazyGlue model subModel msg subMsg -> (subModel -> Platform.Sub.Sub subMsg) -> (model -> Platform.Sub.Sub msg) -> model -> Platform.Sub.Sub msg"
+            },
+            {
+                "name": "trigger",
+                "comment": " Like `Glue.triger` but for `LazyGlue` variant.\nUpdate is called only when there model is already initialized.\nIn cases where update should be forcing intialization use this in\nconjuction with [`ensure`](#ensure)\n",
+                "type": "Glue.Lazy.LazyGlue model subModel msg subMsg -> (subModel -> Platform.Cmd.Cmd subMsg) -> ( model, Platform.Cmd.Cmd msg ) -> ( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "update",
+                "comment": " Like `Glue.update` but for `LazyGlue` variant.\nUpdate is called only when there model is already initialized.\nIn cases where update should be forcing intialization use this in\nconjuction with [`ensure`](#ensure)\n",
+                "type": "Glue.Lazy.LazyGlue model subModel msg subMsg -> (a -> subModel -> ( subModel, Platform.Cmd.Cmd subMsg )) -> a -> ( model, Platform.Cmd.Cmd msg ) -> ( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "updateModel",
+                "comment": " Like `Glue.updateModel` but for `LazyGlue` variant.\nUpdate is called only when there model is already initialized.\nIn cases where update should be forcing intialization use this in\nconjuction with [`ensureModel`](#ensureModel)\n",
+                "type": "Glue.Lazy.LazyGlue model subModel msg subMsg -> (a -> subModel -> subModel) -> a -> model -> model"
+            },
+            {
+                "name": "updateModelWith",
+                "comment": " Like `Glue.updateModelWith` but for `LazyGlue` variant.\nUpdate is called only when there model is already initialized.\nIn cases where update should be forcing intialization use this in\nconjuction with [`ensureModel`](#ensureModel)\n",
+                "type": "Glue.Lazy.LazyGlue model subModel msg subMsg -> (subModel -> subModel) -> model -> model"
+            },
+            {
+                "name": "updateWith",
+                "comment": " Like `Glue.updateWith` but for `LazyGlue` variant.\nUpdate is called only when there model is already initialized.\nIn cases where update should be forcing intialization use this in\nconjuction with [`ensure`](#ensure)\n",
+                "type": "Glue.Lazy.LazyGlue model subModel msg subMsg -> (subModel -> ( subModel, Platform.Cmd.Cmd subMsg )) -> ( model, Platform.Cmd.Cmd msg ) -> ( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "view",
+                "comment": " Similar to `Glue.view` but forces user to handle `Nothing` case\nbecause API of this module can't really guarantee view won't be called\nwith uninitialized Model.\n",
+                "type": "Glue.Lazy.LazyGlue model subModel msg subMsg -> (subModel -> Html.Html subMsg) -> model -> Maybe.Maybe (Html.Html msg)"
+            }
+        ],
+        "binops": []
+    }
+]

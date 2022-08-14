@@ -1,0 +1,66 @@
+[
+    {
+        "name": "DnD",
+        "comment": " This library allows you to build great UI with drag-and-drop simple.\nIt is abstracting you from mouse events and other low-level staff.\nYou can operate high-level things such as draggable and droppable areas.\n\nThe idea of package API is you should be able to wrap elements with `draggable dragMeta` to add an ability to drag it.\nThe dragged object will get some meta information via `dragMeta` argument.\nAlso, you could wrap another element with `droppable dropMeta`,\nso if you drop element over that element, the message `YourOnDropMessage dropMeta dragMeta` will be fired.\n\nYou can find simple examples [here](https://github.com/ir4y/elm-dnd/tree/master/example/src).\nFor more complex example check [Chess Board](https://github.com/ir4y/elm-chess).\n\n\n# Draggable types and its constructor\n\n@docs DraggableInit, Draggable, init\n\n\n# Helpers to get information about draggable and droppable object\n\n@docs getDropMeta, getDragMeta\n\n\n# Message type\n\n@docs Msg\n\n\n# Update function\n\n@docs update\n\n\n# View helper\n\n@docs dragged\n\n",
+        "unions": [
+            {
+                "name": "Draggable",
+                "comment": " Type of Draggable object.\nIt is parametrized by types of dragMeta and dropMeta.\nYou should place it inside your Model.\n\n    type alias Model =\n        { draggable : DnD.Draggable Int Int\n        , count : Int\n        }\n\n",
+                "args": [
+                    "dropMeta",
+                    "dragMeta"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Msg",
+                "comment": " Inner messages, you should pass them to DnD.update at your update function.\n\n    type Msg\n        = Dropped Int\n        | DnDMsg (DnD.Msg Int Int)\n\n",
+                "args": [
+                    "dropMeta",
+                    "dragMeta"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "DraggableInit",
+                "comment": " The type of init function result.\nSee `init` for more information.\n",
+                "args": [
+                    "dropMeta",
+                    "dragMeta",
+                    "m"
+                ],
+                "type": "{ model : DnD.Draggable dropMeta dragMeta, subscriptions : DnD.Draggable dropMeta dragMeta -> Platform.Sub.Sub m, draggable : dragMeta -> List.List (Html.Attribute m) -> List.List (Html.Html m) -> Html.Html m, droppable : dropMeta -> List.List (Html.Attribute m) -> List.List (Html.Html m) -> Html.Html m }"
+            }
+        ],
+        "values": [
+            {
+                "name": "dragged",
+                "comment": " View helper for a draggable object, it draws HTML of dragged object under your mouse in process of drag.\n\n    box : Int -> Html Msg\n    dragged item =\n        p [] [ text item.text]\n\n    DnD.dragged\n      model.draggable\n      box\n\n",
+                "type": "DnD.Draggable dropMeta dragMeta -> (dragMeta -> Html.Html m) -> Html.Html m"
+            },
+            {
+                "name": "getDragMeta",
+                "comment": " Helper that allow you to get meta information from a current draggable object.\nYou can use it to remove draggable object from the list\n\n    elements =\n        model.elements\n            |> List.filter\n                (\\e ->\n                    model.draggable\n                        |> getDragMeta\n                        |> Maybe.map (\\meta -> meta.id /= e.id)\n                )\n\n",
+                "type": "DnD.Draggable dropMeta dragMeta -> Maybe.Maybe dragMeta"
+            },
+            {
+                "name": "getDropMeta",
+                "comment": " Helper that return you a dropMeta that will be used\nif an object will be dropped at the current area.\nIt is useful to check is it area allow you to drop an object and highlight it for example.\n\n    dnd.droppable meta\n        [style\n           \"background-color\"\n               case DnD.getDropMeta model.draggable of\n                   Just _ ->\n                       \"cyan\"\n\n                   _ ->\n                       \"white\"\n        ]\n        []\n\n",
+                "type": "DnD.Draggable dropMeta dragMeta -> Maybe.Maybe dropMeta"
+            },
+            {
+                "name": "init",
+                "comment": " Initialize Draggable state and function\nThis helper returns initModel, subscription, draggable and droppable functions\nfor your message wrapper.\n\n    type Msg\n        = NoOp\n        ..\n        | Dropped Int Int\n        | DnDMsg (DnD.Msg Int Int)\n\n\n    dnd = DnD.init DnDMsg Dropped\n    type alias Model =\n        { ...\n        , draggable = dnd.model\n        }\n\nSubscriptions alow you to get drop event.\n\n    subscriptions : Model -> Sub Msg\n    subscriptions model =\n        dnd.subscriptions model.draggable\n\nView wrapper for draggable object, you could drag object wrapped by this helper\n\n    draggable :\n        List (Html.Attribute Msg)\n        -> List (Html Msg)\n        -> Html Msg\n    draggable =\n        dnd.draggable dragMeta\n\nView helper for the droppable area, you could drop object to this area,\nafter that, your `Dropped meta` message will be sended.\n\n    droppable :\n        List (Html.Attribute Msg)\n        -> List (Html Msg)\n        -> Html Msg\n    droppable =\n        dnd.droppable dropMeta\n\n",
+                "type": "(DnD.Msg dropMeta dragMeta -> m) -> (dropMeta -> dragMeta -> m) -> DnD.DraggableInit dropMeta dragMeta m"
+            },
+            {
+                "name": "update",
+                "comment": " Update function handle all low-level staff\n\n    update : Msg -> Model -> Model\n    update msg model =\n        case msg of\n            Dropped item ->\n                { model | count = item + 1 }\n\n            DnDMsg msg ->\n                { model\n                    | draggable =\n                        DnD.update msg model.draggable\n                }\n\n",
+                "type": "DnD.Msg dropMeta dragMeta -> DnD.Draggable dropMeta dragMeta -> DnD.Draggable dropMeta dragMeta"
+            }
+        ],
+        "binops": []
+    }
+]

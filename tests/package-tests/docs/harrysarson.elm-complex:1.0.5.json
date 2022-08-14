@@ -1,0 +1,128 @@
+[
+    {
+        "name": "Complex",
+        "comment": " A library for complex calculations.\n\n\n## Type\n\n@docs Complex\n\n\n## Build\n\n@docs complex, polar, real, imaginary\n\n\n## Special Values\n\n@docs nan, infinity, zero, unity\n\n\n## Checks\n\n@docs isInfinite, isNan\n\n\n## Operations\n\n@docs add, subtract, multiply, divide, pow, exp, log, conjugate\n\n\n## Conversions\n\n@docs toCartesian, toPolar, toString, fromString\n\n\n# Riemann Sphere\n\nThe [Riemann sphere](https://plus.maths.org/content/maths-minute-riemann-sphere) is a way of extending the\ncomplex plane to allow infinite values. All functions in this libary handle infinite values consistantly\nwith [Wolfram Alpha's](https://www.wolframalpha.com/) `ComplexInfinity`.\n\n\n# Internal Representation\n\nComplex numbers are represented as a Union Type:\n\n    type Complex\n        = Complex\n            { re : Float\n            , im : Float\n            }\n        | ComplexNan\n        | ComplexInfinity\n\nA complex number will either be finite (`Complex`), NaN or Infinite.\nIt _should_ be impossible to create a complex number which is finite but has NaN or Infinite components.\nIf you manage to create one please file an issue.\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Complex",
+                "comment": " A complex number. See [Internal Representation](#internal-representation) for more details.\n",
+                "args": [],
+                "type": "Internal.Complex.Complex"
+            }
+        ],
+        "values": [
+            {
+                "name": "add",
+                "comment": " Add two complex numbers.\n\n    add (complex 4 1) (complex 1 -7) == complex 5 -6\n\n",
+                "type": "Complex.Complex -> Complex.Complex -> Complex.Complex"
+            },
+            {
+                "name": "complex",
+                "comment": " Construct a complex number from real and imaginary parts.\n",
+                "type": "Basics.Float -> Basics.Float -> Complex.Complex"
+            },
+            {
+                "name": "conjugate",
+                "comment": " Compute the conjugate of a complex number\n\n    conjugate (complex 6 8) == complex 6 -8\n\n",
+                "type": "Complex.Complex -> Complex.Complex"
+            },
+            {
+                "name": "divide",
+                "comment": " Divide the first argument (lhs) by the (rhs).\n\n    multiply (complex -12 4.5) (complex 3 0) == complex -4 1.5\n\n",
+                "type": "Complex.Complex -> Complex.Complex -> Complex.Complex"
+            },
+            {
+                "name": "exp",
+                "comment": " Raise a complex number to the power of e.\n\n    exp (imaginary pi) == real -1 -- allowing for floating point rounding errors .\n\n",
+                "type": "Complex.Complex -> Complex.Complex"
+            },
+            {
+                "name": "fromString",
+                "comment": " Create a complex number from a string.\n\nStrings must consist of\n\n  - optionally: a float possibly including a sign\n  - zero or one of\n      - the character `'i'`.\n      - a sign followed by the character `'i'`\n      - a sign followed by another float followed by the character `'i'`.\n\nWhitespace is allowed anywhere between the real part and imaginary parts and between the imaginary\npart and the character `'i'`.\n\n    fromString \"4 + 6i\" == Just (complex 4 6)\n\n",
+                "type": "String.String -> Maybe.Maybe Complex.Complex"
+            },
+            {
+                "name": "imaginary",
+                "comment": " Construct an imaginary number.\n",
+                "type": "Basics.Float -> Complex.Complex"
+            },
+            {
+                "name": "infinity",
+                "comment": " Complex infinity.\nInfinity is 'very near' large complex numbers defined on the [Riemann sphere.](https://www.wikiwand.com/en/Riemann_sphere)\n\n    infinity == divide (complex 1 0) (complex 0 0)\n\n",
+                "type": "Complex.Complex"
+            },
+            {
+                "name": "isInfinite",
+                "comment": " Test if a complex number is infinite.\n\n    isInfinite infinity == True\n\n    isInfinite nan == False\n\n    isInfinite (complex 1 6) == False\n\n**Note:** you can also use `c == infinity` to test for infinity values.\n\n",
+                "type": "Complex.Complex -> Basics.Bool"
+            },
+            {
+                "name": "isNan",
+                "comment": " Test if a complex number is not a number.\n\n    isNan nan == True\n\n    isNan infinity == False\n\n    isNan (complex 1 6) == False\n\n**Note:** you _could_ use `c == nan` to check for NaN values but it is\nnot recommended as this behavour is different to that of floats (as `0/0 /= 0/0`).\n\n",
+                "type": "Complex.Complex -> Basics.Bool"
+            },
+            {
+                "name": "log",
+                "comment": " Compute natural logarithm of a complex number.\n\n    log (real -10) == complex 2.302585 pi -- allowing for floating point rounding errors.\n\n",
+                "type": "Complex.Complex -> Complex.Complex"
+            },
+            {
+                "name": "multiply",
+                "comment": " Multiply two complex numbers.\n\n    multiply (complex 0 4) (complex 1 2) == complex -8 4\n\n",
+                "type": "Complex.Complex -> Complex.Complex -> Complex.Complex"
+            },
+            {
+                "name": "nan",
+                "comment": " A complex \"not a number\" value.\n\n    nan == divide (complex 0 0) (complex 0 0)\n\n",
+                "type": "Complex.Complex"
+            },
+            {
+                "name": "polar",
+                "comment": " Construct a complex number from magnitude and angle.\n",
+                "type": "Basics.Float -> Basics.Float -> Complex.Complex"
+            },
+            {
+                "name": "pow",
+                "comment": " Raise the first argument (lhs) to the power of the second (rhs).\n\n    pow (imaginary 2) (real 4) == real 16\n\n",
+                "type": "Complex.Complex -> Complex.Complex -> Complex.Complex"
+            },
+            {
+                "name": "real",
+                "comment": " Construct a real number.\n",
+                "type": "Basics.Float -> Complex.Complex"
+            },
+            {
+                "name": "subtract",
+                "comment": " Subtract the second argument (rhs) from the first (lhs).\n\n    subtract (complex 8 2) (complex 2 3) == complex 6 -1\n\n",
+                "type": "Complex.Complex -> Complex.Complex -> Complex.Complex"
+            },
+            {
+                "name": "toCartesian",
+                "comment": " Get real and imaginary parts of a complex number.\n\n    toCartesian (complex 4 7) == { re = 4, im = 7 }\n\n    toCartesian (divide (real 1) (real 0)) == { re = 1 / 0, im = 1 / 0 }\n\n",
+                "type": "Complex.Complex -> { re : Basics.Float, im : Basics.Float }"
+            },
+            {
+                "name": "toPolar",
+                "comment": " Get absolute value and argument of a complex number.\n\n    toPolar (complex 4 7) == { abs = 8.0622577, arg = 0.5191461 } -- allowing for floating point rounding errors.\n\n    toPolar (divide (real 1) (real 0)) == { abs = 1 / 0, arg = 0 / 0 }\n\n",
+                "type": "Complex.Complex -> { abs : Basics.Float, arg : Basics.Float }"
+            },
+            {
+                "name": "toString",
+                "comment": " Convert to string.\n\n    toString (complex 5 1) == \"5+i\"\n\n",
+                "type": "Complex.Complex -> String.String"
+            },
+            {
+                "name": "unity",
+                "comment": " One as a complex number.\n\n    unity == complex 1 0\n\n",
+                "type": "Complex.Complex"
+            },
+            {
+                "name": "zero",
+                "comment": " Zero as a complex number.\n\n    zero == complex 0 0\n\n",
+                "type": "Complex.Complex"
+            }
+        ],
+        "binops": []
+    }
+]

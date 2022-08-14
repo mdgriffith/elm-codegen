@@ -1,0 +1,39 @@
+[
+    {
+        "name": "Calendar",
+        "comment": " A \"sorta-port\" of the Unix `cal` command to Elm. Outputs a \"calendar grid\" data structure that is very useful for\ncreating datepickers, planners, and other UI widgets that are based around calendar months.\n\n\n# Main functionality\n\n@docs fromDate, fromTime\n\n\n# Definitions\n\n@docs CalendarDate\n\n\n# Configuration\n\n@docs Config\n\n\n# Silly stuff\n\n@docs print\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "CalendarDate",
+                "comment": " The data structure used to represent individual \"squares\" on the calendar.\nA placeholder date will have a `dayDisplay` value of `\"  \"` and it's `.date` will be the\nmonth for which that week overflows from/into.\n",
+                "args": [],
+                "type": "{ dayDisplay : String.String, weekdayNumber : Basics.Int, date : Date.Date }"
+            },
+            {
+                "name": "Config",
+                "comment": " Optional configuration for the `fromTime` and `fromDate` functions. Can be\nused to configure the starting weekday number for each \"Week row\" of the calendar output.\nUtilizes the \"Weekday\" type from elm/time\n\n    import Calendar exposing (fromTime)\n    import Time exposing (Posix, millisToPosix, utc, Weekday(..))\n\n    july14th2020 =\n        millisToPosix 1594725024442\n\n    startOnMonday =\n        fromTime\n            (Just { startWeekday = Mon })\n            utc\n            july14th2020\n\n",
+                "args": [],
+                "type": "{ startWeekday : Time.Weekday }"
+            }
+        ],
+        "values": [
+            {
+                "name": "fromDate",
+                "comment": " A version of the `fromTime` function that accepts a\n[Date](https://package.elm-lang.org/packages/justinmimbs/date/latest/Date#Date).\n\n    import Calendar exposing (fromDate)\n    import Date exposing (fromCalendarDate)\n    import Time exposing (Month(..))\n\n    july14th2020 =\n        fromCalendarDate 2020 Jul 14\n\n    july14th2020calendar =\n        fromDate Nothing july14th2020\n\n",
+                "type": "Maybe.Maybe Calendar.Config -> Date.Date -> List.List (List.List Calendar.CalendarDate)"
+            },
+            {
+                "name": "fromTime",
+                "comment": " Outputs a calendar using a [Posix time](https://package.elm-lang.org/packages/elm/time/latest/Time#Posix).\nA calendar is a List representing a Month, with each item being a List of\n[Dates](https://package.elm-lang.org/packages/justinmimbs/date/latest/Date#Date) representing individual weeks.\nEach week is always 7 day exactly, padded with dates from the previous or next month if that span of week dates\noverlaps with another month. This padding is useful for creating most traditional calendar displays.\n\n    import Calendar exposing (fromTime)\n    import Time exposing (Posix, millisToPosix, utc)\n\n    july14th2020 =\n        millisToPosix 1594725024442\n\n    july14th2020calendar =\n        fromTime Nothing utc july14th2020\n\n",
+                "type": "Maybe.Maybe Calendar.Config -> Time.Zone -> Time.Posix -> List.List (List.List Calendar.CalendarDate)"
+            },
+            {
+                "name": "print",
+                "comment": " Prints out a string representation of the calendar.\nFor example, July 2020 (starting on Sunday):\n\n              1  2  3  4\n     5  6  7  8  9 10 11\n    12 13 14 15 16 17 18\n    19 20 21 22 23 24 25\n    26 27 28 29 30 31\n\nThis really isn't useful for anything but it felt obligatory to\ninclude given the source of inspiration for this package.\n\n",
+                "type": "List.List (List.List Calendar.CalendarDate) -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

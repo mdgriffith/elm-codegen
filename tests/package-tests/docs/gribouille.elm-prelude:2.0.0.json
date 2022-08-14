@@ -1,0 +1,138 @@
+[
+    {
+        "name": "Prelude",
+        "comment": " Extra standard functions.\n\n@docs const, uncurry3, curry3, iff\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "const",
+                "comment": " Unary function which evaluates to `x` for all inputs.\n",
+                "type": "a -> b -> a"
+            },
+            {
+                "name": "curry3",
+                "comment": " Converts an uncurried function with 3 parameters to a curried function.\n",
+                "type": "(( a, b, c ) -> d) -> a -> b -> c -> d"
+            },
+            {
+                "name": "iff",
+                "comment": " Short if statement.\n",
+                "type": "Basics.Bool -> a -> a -> a"
+            },
+            {
+                "name": "uncurry3",
+                "comment": " Converts a curried function with 3 parameters to a function on pairs.\n",
+                "type": "(a -> b -> c -> d) -> ( a, b, c ) -> d"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Prelude.Maybe",
+        "comment": " Extra Maybe functions.\n\n@docs maybe, mapMaybe, catMaybes, isJust, isNothing\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "catMaybes",
+                "comment": " Takes a list of `Maybe` and returns a list of all the `Just` values.\n",
+                "type": "List.List (Maybe.Maybe a) -> List.List a"
+            },
+            {
+                "name": "isJust",
+                "comment": " Returns `True` if its argument is of the form `Just _`\n",
+                "type": "Maybe.Maybe a -> Basics.Bool"
+            },
+            {
+                "name": "isNothing",
+                "comment": " Returns `True` if its argument is `Nothing`\n",
+                "type": "Maybe.Maybe a -> Basics.Bool"
+            },
+            {
+                "name": "mapMaybe",
+                "comment": " Version of map which throw out elements.\n",
+                "type": "(a -> Maybe.Maybe b) -> List.List a -> List.List b"
+            },
+            {
+                "name": "maybe",
+                "comment": " Takes a default value, a function, and a `Maybe` value. If the `Maybe` value\nis `Nothing`, the function returns the default value. Otherwise, it applies the\nfunction to the value inside the `Just` and returns the result.\n",
+                "type": "b -> (a -> b) -> Maybe.Maybe a -> b"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Prelude.Result",
+        "comment": " Extra Result functions.\n\n@docs result, isOk, isErr, resultFlip, resultValues, resultErrors\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "isErr",
+                "comment": " True if the `Result` is an `Err` value.\n",
+                "type": "Result.Result a b -> Basics.Bool"
+            },
+            {
+                "name": "isOk",
+                "comment": " True if the `Result` is an `Ok` value.\n",
+                "type": "Result.Result a b -> Basics.Bool"
+            },
+            {
+                "name": "result",
+                "comment": " Case analysis for the `Result` type. If the value is `Err a`, apply the first\nfunction to `a`; if it is `Ok b`, apply the second function to `b`.\n",
+                "type": "(a -> c) -> (b -> c) -> Result.Result a b -> c"
+            },
+            {
+                "name": "resultErrors",
+                "comment": " Extracts from a list of `Result` all the `Ok` elements.\n",
+                "type": "List.List (Result.Result a b) -> List.List a"
+            },
+            {
+                "name": "resultFlip",
+                "comment": " Flip the `Err` and `Ok` values.\n",
+                "type": "Result.Result a b -> Result.Result b a"
+            },
+            {
+                "name": "resultValues",
+                "comment": " Extracts from a list of `Result` all the `Err` elements.\n",
+                "type": "List.List (Result.Result a b) -> List.List b"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Prelude.Tuple",
+        "comment": " Extra Tuple functions.\n\n@docs fst, snd, fst3, snd3, thd3\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fst",
+                "comment": " Alias of `Tuple.first`\n",
+                "type": "( a1, a2 ) -> a1"
+            },
+            {
+                "name": "fst3",
+                "comment": " Extract the first component of a triplet.\n",
+                "type": "( a1, a2, a3 ) -> a1"
+            },
+            {
+                "name": "snd",
+                "comment": " Alias of `Tuple.second`.\n",
+                "type": "( a1, a2 ) -> a2"
+            },
+            {
+                "name": "snd3",
+                "comment": " Extract the second component of a triplet.\n",
+                "type": "( a1, a2, a3 ) -> a2"
+            },
+            {
+                "name": "thd3",
+                "comment": " Extract the third component of a triplet.\n",
+                "type": "( a1, a2, a3 ) -> a3"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,89 @@
+[
+    {
+        "name": "String.UTF16",
+        "comment": " For some reason want to reason about strings as if they were UTF-16\nsequences?\n\nTechnically, that's what they are, but Elm allows treating them as Unicode\ncodepoints, which is super-convenient. Occasionally, however, you may find\nyourself in need of some old fashioned UTF-16 bytes, so here you go!\n\n@docs length, toBytes, toString, foldl\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "foldl",
+                "comment": " ",
+                "type": "(Basics.Int -> acc -> acc) -> acc -> String.String -> acc"
+            },
+            {
+                "name": "length",
+                "comment": " Count the number of UTF-16 bytes in a `String`.\n\nNote that this should always equal `String.length` in Elm.\n\n",
+                "type": "String.String -> Basics.Int"
+            },
+            {
+                "name": "toBytes",
+                "comment": " Turn a `String` into a list of UTF-16 bytes.\n",
+                "type": "String.String -> List.List Basics.Int"
+            },
+            {
+                "name": "toString",
+                "comment": " Turn a list of UTF-16 bytes into a `String`.\n",
+                "type": "List.List Basics.Int -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "String.UTF32",
+        "comment": " Need to work in unicode codepoints? Tired of UTF-8's silliness? You came to\nthe right place!\n\n@docs length, toBytes, toString, foldl\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "foldl",
+                "comment": " Fold over a string, left to right, accumulating unicode codepoints.\n",
+                "type": "(Basics.Int -> a -> a) -> a -> String.String -> a"
+            },
+            {
+                "name": "length",
+                "comment": " Calculates the number UTF-32 characters in a `String`.\n\n    import String.UTF32 as UTF32\n\n    String.length \"💩\"\n    --> 2\n\n    UTF32.length \"💩\"\n    --> 1\n\n",
+                "type": "String.String -> Basics.Int"
+            },
+            {
+                "name": "toBytes",
+                "comment": " Converts a String to a list of unicode codepoints. The inverse of `toString`\n\n    import String.UTF32 as UTF32\n\n    UTF32.toBytes \"hello\"\n    --> [ 0x68, 0x65, 0x6C, 0x6C, 0x6F ]\n\n    UTF32.toBytes \"💩\"\n    --> [ 0x0001F4A9 ]\n\n",
+                "type": "String.String -> List.List Basics.Int"
+            },
+            {
+                "name": "toString",
+                "comment": " Build a `String` from a list of unicode codepoints.\n\n    import String.UTF32 as UTF32\n\n    UTF32.toString [ 0x68, 0x65, 0x6C, 0x6C, 0x6F ]\n    --> \"hello\"\n\n    UTF32.toString [ 0x0001F4A9 ]\n    --> \"💩\"\n\n",
+                "type": "List.List Basics.Int -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "String.UTF8",
+        "comment": " Need UTF-8 bytes for your algorithm? Don't want to waste time investigating\nhow to go back and forth between UTF-32 and UTF-8? I hear ya.\n\n@docs length, toBytes, toString, foldl\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "foldl",
+                "comment": " Fold over a string, left to right, accumulating UTF-8 bytes along the way.\n",
+                "type": "(Basics.Int -> a -> a) -> a -> String.String -> a"
+            },
+            {
+                "name": "length",
+                "comment": " Number of UTF-8 codepoints in a string.\n\n    import String.UTF8 as UTF8\n\n    UTF8.length \"a\"\n    --> 1\n\n    UTF8.length \"à\"\n    --> 2\n\n    UTF8.length \"✓\"\n    --> 3\n\n    UTF8.length \"💩\"\n    --> 4\n\n",
+                "type": "String.String -> Basics.Int"
+            },
+            {
+                "name": "toBytes",
+                "comment": " Convert a `String` to a sequence of UTF-8 bytes. The inverse of `toString`.\n\n    import String.UTF8 as UTF8\n\n    UTF8.toBytes \"✓ a-ok\"\n    --> [ 0xe2, 0x9c, 0x93, 0x20, 0x61, 0x2D, 0x6F, 0x6B ]\n\n",
+                "type": "String.String -> List.List Basics.Int"
+            },
+            {
+                "name": "toString",
+                "comment": " Convert a sequence of UTF-8 bytes to an Elm `String`.\n\n    import String.UTF8 as UTF8\n\n    UTF8.toString [ 0x68, 0x65, 0x6C, 0x6C, 0x6F ]\n    --> Ok \"hello\"\n\n    UTF8.toString [ 0xF0, 0x9F, 0x92, 0xA9 ]\n    --> Ok \"💩\"\n\nIf the input is not a valid UTF-8 sequence, you'll receive an error.\n\n    UTF8.toString [ 0xF0]\n    --> Err \"invalid UTF-8 sequence\"\n\n",
+                "type": "List.List Basics.Int -> Result.Result String.String String.String"
+            }
+        ],
+        "binops": []
+    }
+]

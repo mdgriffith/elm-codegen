@@ -1,0 +1,141 @@
+[
+    {
+        "name": "TypedTime",
+        "comment": "\n\nThis library provides functions for working with typed time.\nFor example,\n\n    equal (seconds 60) (minutes 1)\n    --> True\n\n    add (hours 1) (minutes 20) |> toString Minutes\n    --> \"01:20\"\n\n    add (hours 1) (minutes 20) |> toString Seconds\n    --> \"01:20:00\"\n\n## Types\n\n@docs TypedTime, Unit\n\n## Constructors\n\n@docs hours, minutes, seconds, milliseconds, zero\n\n\n## Comparison\n\n@docs equal, gt, gte, lt, lte\n\n## Operators\n\n@docs common, multiply, divide, add, sub, sum, ratio\n\n## Conversion\n\n@docs toSeconds, toString, fromString\n\n\n",
+        "unions": [
+            {
+                "name": "TypedTime",
+                "comment": "\n\nThe data type for the package\n\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Unit",
+                "comment": "\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Milliseconds",
+                        []
+                    ],
+                    [
+                        "Seconds",
+                        []
+                    ],
+                    [
+                        "Minutes",
+                        []
+                    ],
+                    [
+                        "Hours",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "add",
+                "comment": "\n\n    equal (add (seconds 60) (minutes 1)) (minutes 2)\n    --> True\n\n",
+                "type": "TypedTime.TypedTime -> TypedTime.TypedTime -> TypedTime.TypedTime"
+            },
+            {
+                "name": "common",
+                "comment": "\n\n    common Seconds Minutes\n    --> Seconds\n\n",
+                "type": "TypedTime.Unit -> TypedTime.Unit -> TypedTime.Unit"
+            },
+            {
+                "name": "divide",
+                "comment": "\n\n    equal (divide 0.5 (minutes 1)) (seconds 120)\n    --> True\n\n",
+                "type": "Basics.Float -> TypedTime.TypedTime -> TypedTime.TypedTime"
+            },
+            {
+                "name": "equal",
+                "comment": "\n\n    equal (milliseconds 1000) (seconds 1)\n    --> True\n\n     equal (hours 1) (minutes 60)\n     --> True\n\n     equal (minutes 1) (seconds 60)\n     --> True\n\n ",
+                "type": "TypedTime.TypedTime -> TypedTime.TypedTime -> Basics.Bool"
+            },
+            {
+                "name": "fromString",
+                "comment": "\n\n    fromString Milliseconds \"123\"\n    --> Just (milliseconds 123)\n\n    fromString Seconds \"23\"\n    --> Just  (seconds 23)\n\n    fromString Seconds \"2.17\"\n    --> Just  (seconds 2.17)\n\n    fromString Seconds \"4:23\"\n    --> Just (add (minutes 4) (seconds 23))\n\n    fromString Seconds \"04:03\"\n    --> Just (add (minutes 4) (seconds 3))\n\n    fromString Minutes \"04:03\"\n    --> Just (add (hours 4) (minutes 3))\n\n    fromString Minutes \"4.7\"\n    --> Just (minutes 4.7)\n\n ",
+                "type": "TypedTime.Unit -> String.String -> Maybe.Maybe TypedTime.TypedTime"
+            },
+            {
+                "name": "gt",
+                "comment": "\n\n    Greater than:\n\n    gt (seconds 1.0001) (seconds 1)\n    --> True\n\n\n ",
+                "type": "TypedTime.TypedTime -> TypedTime.TypedTime -> Basics.Bool"
+            },
+            {
+                "name": "gte",
+                "comment": "\n\n    Greater than or equal to:\n\n    gte (seconds 1) (seconds 1)\n    --> True\n\n    gte (seconds 1.001) (seconds 1)\n    --> True\n\n ",
+                "type": "TypedTime.TypedTime -> TypedTime.TypedTime -> Basics.Bool"
+            },
+            {
+                "name": "hours",
+                "comment": "\n\n    hours 1.5 |> toString Minutes\n    --> \"01:30\"\n\n ",
+                "type": "Basics.Float -> TypedTime.TypedTime"
+            },
+            {
+                "name": "lt",
+                "comment": "\n\n    Les than:\n\n    lt (seconds 1) (seconds 1.001)\n    --> True\n\n\n ",
+                "type": "TypedTime.TypedTime -> TypedTime.TypedTime -> Basics.Bool"
+            },
+            {
+                "name": "lte",
+                "comment": "\n    Less than or equal to:\n\n    lte (seconds 1) (seconds 1)\n    --> True\n\n    lte (seconds 1) (seconds 1.001)\n    --> True\n\n ",
+                "type": "TypedTime.TypedTime -> TypedTime.TypedTime -> Basics.Bool"
+            },
+            {
+                "name": "milliseconds",
+                "comment": "\n\n    milliseconds 1000  |> toString Seconds\n    --> \"00:00:01\"\n\n\n",
+                "type": "Basics.Float -> TypedTime.TypedTime"
+            },
+            {
+                "name": "minutes",
+                "comment": "\n\n    minutes 14.5 |> toString Seconds\n    --> \"00:14:30\"\n\n\n ",
+                "type": "Basics.Float -> TypedTime.TypedTime"
+            },
+            {
+                "name": "multiply",
+                "comment": "\n\n    equal (multiply 0.5 (minutes 1)) (seconds 30)\n    --> True\n\n",
+                "type": "Basics.Float -> TypedTime.TypedTime -> TypedTime.TypedTime"
+            },
+            {
+                "name": "ratio",
+                "comment": "\n\n    abs ((ratio (minutes 1) (seconds 60)) - 1.0) < 0.000001\n    --> True\n\n\n",
+                "type": "TypedTime.TypedTime -> TypedTime.TypedTime -> Basics.Float"
+            },
+            {
+                "name": "seconds",
+                "comment": "\n\n    seconds 44 |> toString Seconds\n    --> \"00:00:44\"\n\n\n",
+                "type": "Basics.Float -> TypedTime.TypedTime"
+            },
+            {
+                "name": "sub",
+                "comment": "\n\n    equal (sub (seconds 120) (minutes 1)) (minutes 1)\n    --> True\n\n\n",
+                "type": "TypedTime.TypedTime -> TypedTime.TypedTime -> TypedTime.TypedTime"
+            },
+            {
+                "name": "sum",
+                "comment": "\n\n    equal (sum [seconds 30, minutes 1]) (milliseconds 90000)\n    --> True\n\n    equal (sum [seconds 30, minutes 1]) (minutes 1.5)\n    --> True\n\n",
+                "type": "List.List TypedTime.TypedTime -> TypedTime.TypedTime"
+            },
+            {
+                "name": "toSeconds",
+                "comment": "\n\n    abs( (toSeconds (seconds 1)) - 1.0) < 0.00001\n    --> True\n\n    abs( (toSeconds (minutes 1)) - 60.0) < 0.00001\n    --> True\n\n ",
+                "type": "TypedTime.TypedTime -> Basics.Float"
+            },
+            {
+                "name": "toString",
+                "comment": "\n\n    toString Seconds (minutes 30)\n    --> \"00:30:00\"\n\n    toString Seconds (hours 0.5)\n    --> \"00:30:00\"\n\n    toString Minutes (hours 0.5)\n    --> \"00:30\"\n\n ",
+                "type": "TypedTime.Unit -> TypedTime.TypedTime -> String.String"
+            },
+            {
+                "name": "zero",
+                "comment": "\n\n    The zero element for TypedTime.\n\n",
+                "type": "TypedTime.TypedTime"
+            }
+        ],
+        "binops": []
+    }
+]

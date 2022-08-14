@@ -1,0 +1,850 @@
+[
+    {
+        "name": "Collage",
+        "comment": " The collage module is here to help you create freeform graphics.\nYou can style all sorts of forms including shapes, paths, text, and images,\nand then shift, rotate, scale, and group them.\n\n\n### Contents\n\n  - [Basics](#basics)\n      - [Transforming collages](#transforming-collages)\n      - [Grouping collages](#grouping-collages)\n  - [Shapes](#shapes)\n      - [Drawing shapes](#drawing-shapes)\n      - [Turning shapes into collages](#turning-shapes-into-collages)\n  - [Paths](#paths)\n      - [Drawing paths](#drawing-paths)\n      - [Turning paths into collages or shapes](#turning-paths-into-collages-or-shapes)\n  - [Text](#text)\n  - [Images and Html](#images-and-html)\n  - [Styling](#styling)\n      - [Fill styles](#fill-styles)\n      - [Line styles](#line-styles)\n          - [Line dashing](#line-dashing)\n          - [Line thickness](#line-thickness)\n          - [Line caps and joins](#line-caps-and-joins)\n\n\n### Coordinate system\n\nCollages use the same coordinate system you might see in an algebra or physics problem.\nThe origin (0,0) is **at the center** of the collage, not the top left corner as in some other graphics libraries.\nFurthermore, the **y-axis points up**: so moving a collage 10 units in the y-axis will move it up on screen.\nThis is intentional.\nThe goal is to provide an elegant interface which is abstracted as much as possible from implementation details.\n\n\n### Creating graphics\n\nTo create a graphic you start with creating some form: a _shape_, a _path_ or a chunk of _text_.\nAfter creating a form, you can _style_ it.\nIt depends on the kind of form you created how you can style it.\nA shape, for example, can be filled with a uniform color,\noutlined with a dotted line,\nor both.\nA path only can be traced with a line style\nand a piece of text can be made monospaced, bold, italic, underlined etc.\nYou can think of a form as some kind of _stencil_,\ndipping it in different colors of ink and stamp it onto the screen once or multiple times.\n\nStyling a form will turn it into a _collage_.\nCollages are the most powerful object of this library.\nThey cannot be styled anymore,\nbut they can be shifted, rotated, scaled, made partially transparent, and grouped into a new collage.\nYeah, you read that correctly:\nyou can group multiple collages into a new one,\nwhich you can shift, rotate, scale, and group again!\n\nSo remember:\nbefore you can transform your drawing,\nyou have to style it (i.e. turn it into a _collage_),\nonly after styling you can shift, rotate, scale, etc.\nIncluding an external image or a piece of raw Html also belongs to the possibilities.\nAnd of course they can be shifted, rotated, scaled, ...\nOk, you get the grip!\n\n\n### Summary\n\n    Shape          Path         Text            Image       Html\n\n    - polygon      - line       - fromString\n    - ngon         - segment                      |           |\n    - triangle     - path         |               |           |\n    - rectangle                   |               |           |\n    - square         |            |               |           |\n    - oval           |            |               |           |\n    - circle         |            |               |           |\n      |              |            |               |           |\n    filled         traced       rendered        image       html\n    outlined         |            |               |           |\n    styled           |            |               |           |\n      |              |            |               |           |\n      +––––––––––––––+––––––––––––+–––––––––––––––+–––––––––––+\n                                  |\n                                  |\n                                  ˅\n\n                               Collage  ˂––+\n                                           |\n                               - shift     |\n                               - scale     |\n                               - rotate    |\n                               - opacity   |\n                               - group     |\n                                 |         |\n                                 +–––––––––+\n\n\n# Basics\n\n@docs Point, opposite, Collage\n\n\n## Transforming collages\n\n@docs shift, shiftX, shiftY, scale, scaleX, scaleY, rotate, opacity\n\n\n## Grouping collages\n\n@docs group\n\n\n# Shapes\n\n\n## Drawing shapes\n\n@docs Shape, rectangle, square, roundedRectangle, roundedSquare, ellipse, circle, polygon, ngon, triangle\n\n\n## Turning shapes into collages\n\n@docs filled, outlined, styled\n\n\n# Paths\n\n_Please fill in an issue if you want support for curves and arcs (aka Bézier paths).\nI like to know if people want this before implementing it._\n\n\n## Drawing paths\n\n@docs Path, line, segment, path\n\n\n## Turning paths into collages or shapes\n\n@docs traced, close\n\n\n# Text\n\nTo create and style text, take a look at the Collage.Text module.\n\n@docs rendered\n\n\n# Images and Html\n\n@docs image, html\n\n\n# Styling\n\nThere are three kinds of styles:\n\n  - Fill styles\n  - Line styles\n  - Text styles\n\nFill styles are used to fill a shape\nor color a line.\nTherefore, line styles contain a fill style.\nLine styles can be used to trace paths\nor outline shapes.\nText styles are defined in the Collage.Text module,\nyou can read all about them there.\n\n@docs Style\n\n\n## Fill styles\n\nFor now, we have only uniform fillings and a transparent filling.\n\n_Please fill in an issue if you want support for gradients and patterns.\nI like to know if people want this before implementing it._\n\n@docs FillStyle, transparent, uniform\n\n\n## Line styles\n\n@docs LineStyle, invisible, defaultLineStyle\n\n\n### Line dashing\n\n@docs solid, broken, dot, dash, longdash, dashdot\n\n\n### Line thickness\n\nWe provide some sensible defaults for line thickness.\nThey are bluntly stolen from TikZ.\n\n@docs ultrathin, verythin, thin, semithick, thick, verythick, ultrathick\n\n\n### Line caps and joins\n\n@docs LineCap, LineJoin\n\n",
+        "unions": [
+            {
+                "name": "LineCap",
+                "comment": " The shape of the end of a line.\n\n`Flat` capped lines have no endings,\n`Padded` capped lines have flat endings that extend slightly past the end of the line,\nand `Round` capped lines have hemispherical endings.\n\nIn TikZ and Css these options are called butt, rect, and round.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Flat",
+                        []
+                    ],
+                    [
+                        "Round",
+                        []
+                    ],
+                    [
+                        "Padded",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "LineJoin",
+                "comment": " The shape of the “joints” of a line, where each line segment meets.\n\nIn TikZ and Css these options have the nondescriptive names round, miter, and bevel.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Smooth",
+                        []
+                    ],
+                    [
+                        "Sharp",
+                        []
+                    ],
+                    [
+                        "Clipped",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Collage",
+                "comment": " An opaque type representing any styled form or group of forms that can be shifted, rotated, scaled, etc.\nA collage could be a red circle, a dotted line, a chunk of text, or an arbitrary Html element.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "Collage.Core.Collage Collage.Core.FillStyle Collage.LineStyle Collage.Text.Style msg"
+            },
+            {
+                "name": "FillStyle",
+                "comment": " Describes the fill of a shape or line.\n\nFor now, it can only be a uniform color or no fill at all.\n\n",
+                "args": [],
+                "type": "Collage.Core.FillStyle"
+            },
+            {
+                "name": "LineStyle",
+                "comment": " All of the attributes of a line style.\n\nThis lets you build up a line style however you want.\nYou can also update existing line styles with record updates.\n\nTo define a red, dashed line style with a thickness of 5px:\n\n    { color = rgb255 255 20 20\n    , thickness = 5\n    , cap = Flat\n    , join = Sharp\n    , dashing = [ 8, 4 ]\n    , dashOffset = 0\n    }\n\n",
+                "args": [],
+                "type": "{ fill : Collage.FillStyle, thickness : Basics.Float, cap : Collage.LineCap, join : Collage.LineJoin, dashPattern : List.List ( Basics.Int, Basics.Int ), dashPhase : Basics.Int }"
+            },
+            {
+                "name": "Path",
+                "comment": " A 2D line or curve that can be traced.\n\nPaths only describe the shape of the line.\nPosition, color, thickness, etc. are all specified later.\nPaths can **only be traced** by a line style,\nnot filled.\nIf you like to fill a path,\nyou have to _close_ it.\nThis will turn a path it into a shape,\nwhich can be filled and outlined.\n\n",
+                "args": [],
+                "type": "Collage.Core.Path"
+            },
+            {
+                "name": "Point",
+                "comment": " A 2-tuple of `Float`s representing a 2D point. `(0,0)` represents\na point in the center of the canvas.\n",
+                "args": [],
+                "type": "( Basics.Float, Basics.Float )"
+            },
+            {
+                "name": "Shape",
+                "comment": " Any kind of shape that can be filled and/or outlined.\n\nShapes only describe the dimensions of the figure.\nPosition, color, thickness, etc. are all specified later.\n\n",
+                "args": [],
+                "type": "Collage.Core.Shape"
+            },
+            {
+                "name": "Style",
+                "comment": " Convenience shorthand for styling.\n",
+                "args": [],
+                "type": "( Collage.FillStyle, Collage.LineStyle )"
+            }
+        ],
+        "values": [
+            {
+                "name": "broken",
+                "comment": " A custom line defined by a list of `(on, off)` dash length:\n\n    broken [ ( 10, 5 ) ] -- a line that with dashes 10 long and spaces 5 long\n\n    broken [ ( 10, 5 ), ( 20, 5 ) ] -- on for 10, off 5, on 20, off 5\n\n",
+                "type": "List.List ( Basics.Int, Basics.Int ) -> Basics.Float -> Collage.FillStyle -> Collage.LineStyle"
+            },
+            {
+                "name": "circle",
+                "comment": " A circle of given radius.\n\nAs with a square, using `circle` is the same as using `ellipse` with the same x and y radii:\n\n    circle radius == ellipse radius radius\n\n",
+                "type": "Basics.Float -> Collage.Shape"
+            },
+            {
+                "name": "close",
+                "comment": " Close a path so that it also can be filled.\n\n**Note:**\nDoes not draw a line from start to end point for you.\nIf you really want this, you have two options:\n\n1.  Draw it yourself\n2.  Use a polygon\n\n",
+                "type": "Collage.Path -> Collage.Shape"
+            },
+            {
+                "name": "dash",
+                "comment": " A dashed line type with the given thickness.\n\nCalculates the length of the dashes based on the given line thickness.\n\n",
+                "type": "Basics.Float -> Collage.FillStyle -> Collage.LineStyle"
+            },
+            {
+                "name": "dashdot",
+                "comment": " A dashed line type with the given thickness, including alternating dots and dashes.\n\nCalculates the length of the dashes based on the given line thickness.\n\n",
+                "type": "Basics.Float -> Collage.FillStyle -> Collage.LineStyle"
+            },
+            {
+                "name": "defaultLineStyle",
+                "comment": " The default line style, which is solid black with flat caps and sharp joints.\n\nYou can use record updates to build the line style you want.\nFor example, to make a thicker line, you could say:\n\n    { defaultLineStyle | thickness = verythick }\n\n",
+                "type": "Collage.LineStyle"
+            },
+            {
+                "name": "dot",
+                "comment": " A dotted line type with the given thickness.\n\nCalculates the length of the dots based on the given line thickness.\n\n",
+                "type": "Basics.Float -> Collage.FillStyle -> Collage.LineStyle"
+            },
+            {
+                "name": "ellipse",
+                "comment": " An ellipse with given horizontal and vertical radii.\n\n  - Note:\n    the function `oval` in the original library acts a little bit different.\n    It draws an oval of given width and height,\n    so\n\n        oval w h == ellipse (w / 2) (h / 2)\n\n",
+                "type": "Basics.Float -> Basics.Float -> Collage.Shape"
+            },
+            {
+                "name": "filled",
+                "comment": " Adds a fills to a shape, turning it into a collage.\n\nThe argument specifies the style of the fill.\nThe **outline is left invisible**.\nTo draw a red circle of radius 50 you say:\n\n    circle 50\n      |> filled (uniform red)\n\nSee below for possible fill styles.\n\n",
+                "type": "Collage.FillStyle -> Collage.Shape -> Collage.Collage msg"
+            },
+            {
+                "name": "group",
+                "comment": " Take a list of collages and combine them into a single collage,\nwhich again can be shifted, rotated, scaled, etc.\n\n    group [ drawing1, drawing2, drawing3 ]\n      |> scale 3\n      |> rotate (degrees 90)\n\n",
+                "type": "List.List (Collage.Collage msg) -> Collage.Collage msg"
+            },
+            {
+                "name": "html",
+                "comment": " Create a collage from an arbitrary Html element.\n\nThe resulting collage is subject to all of the regular transformations.\n\n",
+                "type": "( Basics.Float, Basics.Float ) -> Html.Html msg -> Collage.Collage msg"
+            },
+            {
+                "name": "image",
+                "comment": " Create an image given a width, height, and image source.\n\n    image 100 100 \"elm-logo.jpg\"\n\n",
+                "type": "( Basics.Float, Basics.Float ) -> String.String -> Collage.Collage msg"
+            },
+            {
+                "name": "invisible",
+                "comment": " Invisible line.\n",
+                "type": "Collage.LineStyle"
+            },
+            {
+                "name": "line",
+                "comment": " Draw a horizontal line with a given length.\n\nThe origin of the line will be `(0,0)`.\nHere is a thick dotted yellow horizontal line of length 20:\n\n    line 20\n      |> traced (dot thick (uniform yellow))\n\n",
+                "type": "Basics.Float -> Collage.Path"
+            },
+            {
+                "name": "longdash",
+                "comment": " A dashed line type with the given thickness, where the dashes are longer than normal.\n\nCalculates the length of the dashes based on the given line thickness.\n\n",
+                "type": "Basics.Float -> Collage.FillStyle -> Collage.LineStyle"
+            },
+            {
+                "name": "ngon",
+                "comment": " A regular polygon with _n_ sides.\nThe first argument specifies the number of sides and the second is the radius.\n\nSome ngon's with radius 50:\n\n    ngon 3 50 -- triangle\n\n    ngon 5 50 -- pentagon\n\n    ngon 8 50 -- octogon\n\n",
+                "type": "Basics.Int -> Basics.Float -> Collage.Shape"
+            },
+            {
+                "name": "opacity",
+                "comment": " Set the opacity of a collage.\n\nThe default is 1, and 0 is totally transparent.\n\n",
+                "type": "Basics.Float -> Collage.Collage msg -> Collage.Collage msg"
+            },
+            {
+                "name": "opposite",
+                "comment": " Calculate the point at the opposite side of the origin.\n\nSimply negates the coordinates:\n\n    opposite ( x, y ) =\n      ( -x, -y )\n\n",
+                "type": "Collage.Point -> Collage.Point"
+            },
+            {
+                "name": "outlined",
+                "comment": " Adds an outline to a shape, turning it into a collage.\n\nThe arguments specify the style of the outline.\nThe **fill is left transparent**.\nTo draw a square with edge length 30 with a thin black dashed outline you say:\n\n    square 30\n      |> outlined (dot thin (uniform black))\n\nSee below for the possible line styles.\n\n",
+                "type": "Collage.LineStyle -> Collage.Shape -> Collage.Collage msg"
+            },
+            {
+                "name": "path",
+                "comment": " Create a path that follows a sequence of points.\n\nIt can be thought of as drawing a “connect-the-dots” line through a list of points.\n\n",
+                "type": "List.List Collage.Point -> Collage.Path"
+            },
+            {
+                "name": "polygon",
+                "comment": " Create an arbitrary polygon by specifying its corners in order.\n\n`polygon` will automatically close all shapes,\nso the given list of points does not need to start and end with the same position.\n\n  - Note:\n    Be sure the origin of your polygon is at the right position if you like to automatically position collages.\n    E.g. use `center` or `align topLeft` from the Collage.Layout module to fix this.\n\n",
+                "type": "List.List Collage.Point -> Collage.Shape"
+            },
+            {
+                "name": "rectangle",
+                "comment": " A rectangle of given width and height.\n",
+                "type": "Basics.Float -> Basics.Float -> Collage.Shape"
+            },
+            {
+                "name": "rendered",
+                "comment": " Render a chunk of styled text and turn it into a collage.\n\n    Text.fromString \"Hello Collage!\"\n      |> Text.shape Text.Italic\n      |> Text.size huge\n      |> rendered\n\nSee the Collage.Text module for all the possibilities to create and style text.\n\n",
+                "type": "Collage.Text.Text -> Collage.Collage msg"
+            },
+            {
+                "name": "rotate",
+                "comment": " Rotate a collage by a given angle.\n\nRotate takes standard Elm angles,\nwhich are **radians**,\nand turns things **counterclockwise**.\nSo to turn `collage` 30&deg; to the left you would say:\n\n    collage\n      |> rotate (degrees 30)\n\n",
+                "type": "Basics.Float -> Collage.Collage msg -> Collage.Collage msg"
+            },
+            {
+                "name": "roundedRectangle",
+                "comment": " A rectangle with rounded corners.\n\nFirst two arguments are for the width and height of the rectangle,\nlast is the radius of the corners.\n\n",
+                "type": "Basics.Float -> Basics.Float -> Basics.Float -> Collage.Shape"
+            },
+            {
+                "name": "roundedSquare",
+                "comment": " A square with rounded corners.\n\nOf course this is equal to using `roundedRectangle` with the same width and height:\n\n    roundedSquare size == roundedRectangle size size\n\n",
+                "type": "Basics.Float -> Basics.Float -> Collage.Shape"
+            },
+            {
+                "name": "scale",
+                "comment": " Scale a collage by a given factor.\n\nScaling by 2 doubles both dimensions and quadruples the area.\n\n",
+                "type": "Basics.Float -> Collage.Collage msg -> Collage.Collage msg"
+            },
+            {
+                "name": "scaleX",
+                "comment": " Scale a collage horizontally (in its local space) by a given factor.\n\nScaling by 2 doubles the width and doubles the area.\n\n",
+                "type": "Basics.Float -> Collage.Collage msg -> Collage.Collage msg"
+            },
+            {
+                "name": "scaleY",
+                "comment": " Scale a collage vertically (in its local space) by a given factor.\n\nScaling by 2 doubles the height and doubles the area.\n\n",
+                "type": "Basics.Float -> Collage.Collage msg -> Collage.Collage msg"
+            },
+            {
+                "name": "segment",
+                "comment": " Create a path along a given line segment.\nTakes the start and end points of the segment as arguments.\n\nTo draw a sloped blue line from (0,5) to (5,0) you say:\n\n    segment ( 0, 5 ) ( 5, 0 )\n      |> traced (uniform blue)\n\n  - Note:\n    If you like to automatically position lines,\n    be sure the origin is at the right position.\n    E.g. use `center` or `align topLeft` from Collage.Layout.\n    Most of the time using the `line` function above and rotating or shifting it makes things more clear.\n\n",
+                "type": "Collage.Point -> Collage.Point -> Collage.Path"
+            },
+            {
+                "name": "semithick",
+                "comment": " 3 px\n",
+                "type": "Basics.Float"
+            },
+            {
+                "name": "shift",
+                "comment": " Shift a collage by the given amount (x,y) within its local space.\n\nThis is a relative translation,\nso\n\n    collage\n      |> shift ( 5, 10 )\n\nwould shift `collage` five pixels to the right and ten pixels up.\n\nNote that this influences the way collages are composed with the Collage.Layout module,\nsince collages are always composed with respect to their local origins.\nShifting a collage with `(5,10)` is equivalent to moving its local origin with `(-5,-10)`.\n\n",
+                "type": "( Basics.Float, Basics.Float ) -> Collage.Collage msg -> Collage.Collage msg"
+            },
+            {
+                "name": "shiftX",
+                "comment": " Shift a collage by the given amount on the X axis within its local space.\n",
+                "type": "Basics.Float -> Collage.Collage msg -> Collage.Collage msg"
+            },
+            {
+                "name": "shiftY",
+                "comment": " Shift a collage by the given amount on the Y axis within its local space.\n",
+                "type": "Basics.Float -> Collage.Collage msg -> Collage.Collage msg"
+            },
+            {
+                "name": "solid",
+                "comment": " A line style representing a solid line of given thickness and color.\n",
+                "type": "Basics.Float -> Collage.FillStyle -> Collage.LineStyle"
+            },
+            {
+                "name": "square",
+                "comment": " A square of given size.\n\nOf course this is equal to using `rectangle` with the same width and height:\n\n    square size == rectangle size size\n\n",
+                "type": "Basics.Float -> Collage.Shape"
+            },
+            {
+                "name": "styled",
+                "comment": " Adds a fill and an outline to a shape, turning it into a collage.\n\nThe tuple argument contains a fill style and a line style.\nTo draw a thick black outlined green triangle with base 30 you say:\n\n    triangle 30\n      |> styled\n          ( uniform green\n          , solid thick (uniform black)\n          )\n\nThe tuple form helps in defining your own reusable styles.\nFor example, if you want more of you shapes to have a thick black outline,\nyou could rewrite above example to:\n\n    thickOutlinedAndFilled fillColor =\n      ( uniform fillColor, solid thick (uniform black) )\n\n    triangle 30\n      |> styled (thickOutlinedAndFilled green)\n\nSee below for all possible fill and line styles.\n\n",
+                "type": "( Collage.FillStyle, Collage.LineStyle ) -> Collage.Shape -> Collage.Collage msg"
+            },
+            {
+                "name": "thick",
+                "comment": " 4 px\n",
+                "type": "Basics.Float"
+            },
+            {
+                "name": "thin",
+                "comment": " 2 px\n",
+                "type": "Basics.Float"
+            },
+            {
+                "name": "traced",
+                "comment": " Trace a path with a given line style.\n\nHere is a red zig-zag:\n\n    path [ ( 0, 5 ), ( 5, 0 ), ( 5, 5 ) ]\n      |> traced (solid thin (uniform red))\n\nPaths can only be traced.\nIf you like to fill a path,\nyou have to turn it into a shape by _closing_ it first.\n\n",
+                "type": "Collage.LineStyle -> Collage.Path -> Collage.Collage msg"
+            },
+            {
+                "name": "transparent",
+                "comment": " Transparent fill.\n",
+                "type": "Collage.FillStyle"
+            },
+            {
+                "name": "triangle",
+                "comment": " An equilateral triangle pointing upwards with given base.\n\nNote the difference between using `triangle` and `ngon 3`.\nBoth produce a triangle pointing upwards with its origin in the center,\nhowever:\n\n  - `triangle base` gives us a triangle\n    with three equal sides of length `base`\n    and a distance from each corner to the center of `sqrt 7 / 4 * base`.\n  - `ngon 3 radius` gives us a similar triangle\n    but with three equal sides of length `4 / sqrt 7 * radius`\n    and a radius of `radius`.\n\n",
+                "type": "Basics.Float -> Collage.Shape"
+            },
+            {
+                "name": "ultrathick",
+                "comment": " 8 px\n",
+                "type": "Basics.Float"
+            },
+            {
+                "name": "ultrathin",
+                "comment": " 0.5 px\n",
+                "type": "Basics.Float"
+            },
+            {
+                "name": "uniform",
+                "comment": " Uniform color fill.\n",
+                "type": "Color.Color -> Collage.FillStyle"
+            },
+            {
+                "name": "verythick",
+                "comment": " 6 px\n",
+                "type": "Basics.Float"
+            },
+            {
+                "name": "verythin",
+                "comment": " 1 px\n",
+                "type": "Basics.Float"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Collage.Events",
+        "comment": " Use this module to make your graphics interactive.\nIt is as easy as you think it is.\n\n    collage\n      |> onClick Clicked\n\nWill send the message `Clicked` to your update function where you can handle it.\nYou will probably need some way to identify your objects to keep track of _which_ object the user clicked on:\n\n    drawing.collage\n      |> onClick (ClickedOn drawing.id)\n\nwhere `drawing : { r | collage : Collage, id : Id }`\n\n\n### Contents\n\n  - [Mouse events](#mouse-events)\n  - [Focus events](#focus-events)\n  - [Custom events](#custom-events)\n\n\n# Mouse events\n\n@docs onClick, onDoubleClick, onMouseDown, onMouseUp, onMouseMove, onMouseEnter, onMouseLeave, onMouseOver, onMouseOut\n\n\n# Focus events\n\n@docs onFocusIn, onFocusOut\n\n\n# Custom events\n\n@docs on\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "on",
+                "comment": " Adds a custom event handler to a collage.\n\nThe first argument specifies the event name\n(as you would give it to JavaScript's `addEventListener`).\nThe second argument will be used to decode the Json response from the event listener.\nIf the decoder succeeds,\nthe resulting message will be passed along to your `update` function.\n\n    onClick : msg -> Collage msg -> Collage msg\n    onClick msg =\n      on \"click\" (Json.succeed msg)\n\n",
+                "type": "String.String -> Json.Decode.Decoder msg -> Collage.Collage msg -> Collage.Collage msg"
+            },
+            {
+                "name": "onClick",
+                "comment": " ",
+                "type": "msg -> Collage.Collage msg -> Collage.Collage msg"
+            },
+            {
+                "name": "onDoubleClick",
+                "comment": " ",
+                "type": "msg -> Collage.Collage msg -> Collage.Collage msg"
+            },
+            {
+                "name": "onFocusIn",
+                "comment": " ",
+                "type": "msg -> Collage.Collage msg -> Collage.Collage msg"
+            },
+            {
+                "name": "onFocusOut",
+                "comment": " ",
+                "type": "msg -> Collage.Collage msg -> Collage.Collage msg"
+            },
+            {
+                "name": "onMouseDown",
+                "comment": " ",
+                "type": "(Collage.Point -> msg) -> Collage.Collage msg -> Collage.Collage msg"
+            },
+            {
+                "name": "onMouseEnter",
+                "comment": " ",
+                "type": "(Collage.Point -> msg) -> Collage.Collage msg -> Collage.Collage msg"
+            },
+            {
+                "name": "onMouseLeave",
+                "comment": " ",
+                "type": "(Collage.Point -> msg) -> Collage.Collage msg -> Collage.Collage msg"
+            },
+            {
+                "name": "onMouseMove",
+                "comment": " ",
+                "type": "(Collage.Point -> msg) -> Collage.Collage msg -> Collage.Collage msg"
+            },
+            {
+                "name": "onMouseOut",
+                "comment": " ",
+                "type": "(Collage.Point -> msg) -> Collage.Collage msg -> Collage.Collage msg"
+            },
+            {
+                "name": "onMouseOver",
+                "comment": " ",
+                "type": "(Collage.Point -> msg) -> Collage.Collage msg -> Collage.Collage msg"
+            },
+            {
+                "name": "onMouseUp",
+                "comment": " ",
+                "type": "(Collage.Point -> msg) -> Collage.Collage msg -> Collage.Collage msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Collage.Layout",
+        "comment": " With this module, you can compose collages in a more automatic way.\nInstead of shifting collages manually,\nthis module figures out the dimensions of each part of your drawing\nand places them seamlessly next to each other, above each other or on top of each other.\nThis is all possible by keeping track of the _envelope_ or _bounding box_ of each collage.\n\nCollages are positioned relative to their _internal origin_.\nBy default, a collage's internal origin lays in its exact center.\nBy _shifting_ a collage, we change its internal origin\nand the way it composes with other collages.\nAnother method to change the origin is by using _alignments_.\n\nAll these ideas are based on the [Diagrams library](https://archives.haskell.org/projects.haskell.org/diagrams/) for Haskell\nand the [Scalable Graphics library](https://dl.acm.org/citation.cfm?id=2746329) for Clean.\nYou can regard this module as a simplified version of above libraries.\n\n\n### Contents\n\n  - [Envelopes](#envelopes)\n  - [Layouting](#layouting)\n  - [Spacers](#spacers)\n  - [Aligning](#aligning)\n      - [Anchors](#anchors)\n  - [Naming](#naming)\n  - [Debugging](#debugging)\n\n\n# Envelopes\n\nAn _envelope_ defines the bounding box of a collage.\nIt is similar to a _bounding box_.\n[Envelopes](https://archives.haskell.org/projects.haskell.org/diagrams/doc/manual.html#envelopes-and-local-vector-spaces)\ncan become quite complex when we calculate them in all possible directions.\nHere, we restrict ourselves to four: up, down, right and left.\n\nEnvelopes answer the question:\n“If I want to put my collage in a rectangular envelope,\nwhat are the distances from its local origin to the envelope edges?”\n\n@docs envelope, Direction, facing, distances, Distances, width, height\n\n\n# Layouting\n\nCollages can be composed in three ways:\n\n  - horizontally, or next to each other\n  - vertically, or above each other\n  - on the \"out of page\" axis, or stacked on top of each other\n\nA more advanced way of combining collages is by _imposition_:\nplacing one collage on top of a background and forgetting about the dimensions of the foreground.\nAll ways of combining are expressed used one basic placing function,\nwhich you can use in some extreme cases where you need to place a collage but not combine it with others.\n\n@docs horizontal, vertical, stack, impose, beside, place\n\n\n# Spacers\n\nWhat is placing collages without being able to space them accordingly?\nThese two collages are invisible and only take up some space.\n(Or they even don't...)\n\n@docs spacer, empty\n\n\n# Aligning\n\n@docs align, at, center\n\n\n## Anchors\n\n@docs Anchor, top, topRight, right, bottomRight, bottom, bottomLeft, left, topLeft, base\n\n\n# Naming\n\n**Warning!**\n\n  - This part of the library is **highly experimental**.\n    Your mileage may vary.\n  - Giving multiple names to the _same_ collage will overwrite the old one.\n  - The library _will not_ prevent you from using the same name twice for _different_ collages.\n    You are yourself responsible for not using duplicate names!\n\n@docs name, locate, connect, names\n\n\n# Debugging\n\nThese two functions can aid in discovering how collages are composed.\n\n@docs showOrigin, showEnvelope, debug\n\n\n# Possible extensions\n\nWe can imagine some possible extensions which could aid in designing composable drawings:\n\n  - way to add padding\n  - add `baseX`, and `baseY` (`horizontalBase` and `vertialBase`)?\n  - and add `centerX`, and `centerY` too?\n  - ...\n\n",
+        "unions": [
+            {
+                "name": "Direction",
+                "comment": " The four different directions in which we can calculate an envelope.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Up",
+                        []
+                    ],
+                    [
+                        "Down",
+                        []
+                    ],
+                    [
+                        "Right",
+                        []
+                    ],
+                    [
+                        "Left",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Anchor",
+                "comment": " Anchors are functions which calculate a point relative to the origin of a given collage.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "Collage.Collage msg -> Collage.Point"
+            },
+            {
+                "name": "Distances",
+                "comment": " Type alias collecting envelope distances in all four directions.\n",
+                "args": [],
+                "type": "{ toTop : Basics.Float, toBottom : Basics.Float, toRight : Basics.Float, toLeft : Basics.Float }"
+            }
+        ],
+        "values": [
+            {
+                "name": "align",
+                "comment": " Shift a collage such that the origin is on the given anchor.\n\nUse this, for example, when you like to align some collages to the top:\n\n    [a, b, c]\n        |> List.map (align top)\n        |> horizontal\n\n        +–(X)–+––––X––––+–X–+\n        |  a  |    b    | c |\n        |     +–––––––––+   |\n        +–––––+         |   |\n                        +–––+\n\nAnchors are created by the functions from the section below.\n\n",
+                "type": "Collage.Layout.Anchor msg -> Collage.Collage msg -> Collage.Collage msg"
+            },
+            {
+                "name": "at",
+                "comment": " Stack a collage on top of a specified anchor of a host.\n\nMakes placing objects on a collage a lot easier:\n\n    collage\n        |> at bottom dot\n        |> at upperRight dot\n\n        +–––––––––0\n        | collage |\n        +––––0––––+\n\ninstead of:\n\n    stack\n      [ dot\n      , align upperRight <|\n          stack\n            [ dot\n            , align bottom collage\n            ]\n      ]\n\nThis does not change the origin of `collage`.\n\n",
+                "type": "Collage.Layout.Anchor msg -> Collage.Collage msg -> Collage.Collage msg -> Collage.Collage msg"
+            },
+            {
+                "name": "base",
+                "comment": "\n\n        +–––+\n        |(X)|\n        +–––+\n\n",
+                "type": "Collage.Collage msg -> Collage.Point"
+            },
+            {
+                "name": "beside",
+                "comment": " Place a collage _beside_ another one in the given direction and combine them into a new one.\n\nMost of the time it is way nicer to use `horizontal` or `vertical` to express your layout,\nbut `beside dir` can come into hand as a curried function.\n\nThe new origin will be the origin of the first argument.\n\n  - Note: `beside dir` forms a monoid with `empty` for every `dir`.\n  - Note: same as `beside` in Diagrams.\n\n",
+                "type": "Collage.Layout.Direction -> Collage.Collage msg -> Collage.Collage msg -> Collage.Collage msg"
+            },
+            {
+                "name": "bottom",
+                "comment": "\n\n        +–––+\n        |   |\n        +(X)+\n\n",
+                "type": "Collage.Collage msg -> Collage.Point"
+            },
+            {
+                "name": "bottomLeft",
+                "comment": "\n\n        +–––+\n        |   |\n       (X)––+\n\n",
+                "type": "Collage.Collage msg -> Collage.Point"
+            },
+            {
+                "name": "bottomRight",
+                "comment": "\n\n        +–––+\n        |   |\n        +––(X)\n\n",
+                "type": "Collage.Collage msg -> Collage.Point"
+            },
+            {
+                "name": "center",
+                "comment": " Shift a collage such that the envelope in all directions is equal.\n\nThis is the same as aligning on the base anchor:\n\n    center collage == align base collage\n\n",
+                "type": "Collage.Collage msg -> Collage.Collage msg"
+            },
+            {
+                "name": "connect",
+                "comment": " Connect a list of points which are located inside a collage.\n\nFor named parts that could not be found,\nthe result will be _ignored_.\n\n",
+                "type": "List.List ( String.String, Collage.Layout.Anchor msg ) -> Collage.LineStyle -> Collage.Collage msg -> Collage.Collage msg"
+            },
+            {
+                "name": "debug",
+                "comment": " Show both the envelope and the origin of a collage.\n",
+                "type": "Collage.Collage msg -> Collage.Collage msg"
+            },
+            {
+                "name": "distances",
+                "comment": " Calculate the envelope in all four directions at once.\n\nThe result is a `Distances` record with `toTop`, `toBottom`, `toLeft`, and `toRight` fields.\nUse this function if you need envelopes in multiple directions at the same time.\n\n    { toTop, toBottom } = distances collage\n    ...use up and down...\n\n",
+                "type": "Collage.Collage msg -> Collage.Layout.Distances"
+            },
+            {
+                "name": "empty",
+                "comment": " A collage that takes up no space. Good for things that appear conditionally:\n\n    horizontal [ a, if showMore then b else empty ]\n\n        +–––+– – – – – –+\n        |(a)|  maybe b? |\n        +–––+– – – – – –+\n\n  - Note: this is the identity element of the monoid on collages.\n\n",
+                "type": "Collage.Collage msg"
+            },
+            {
+                "name": "envelope",
+                "comment": " Calculate the envelope of a collage relative to its internal origin.\n\nThe figure below illustrates the four distances that can be calculated.\nWe represent the origin with `(X)`.\nWhen calling, for example, `envelope Up`,\nwe calculate the distance from `(X)` to the upper edge of the rectangle.\n\n        +–––––––––––––––+\n        |       ˄       |\n        |    Up |       |\n        |       | Right |\n        | ˂––––(X)––––˃ |\n        |  Left |       |\n        |       | Down  |\n        |       ˅       |\n        +–––––––––––––––+\n\nThe same holds for the other three directions.\n\n",
+                "type": "Collage.Layout.Direction -> Collage.Collage msg -> Basics.Float"
+            },
+            {
+                "name": "facing",
+                "comment": " Calculate the facing direction.\n\n    Up <-> Down\n\n    Left <-> Right\n\n",
+                "type": "Collage.Layout.Direction -> Collage.Layout.Direction"
+            },
+            {
+                "name": "height",
+                "comment": " Calculates the height of a collage.\n\nThe height is equivalent to the envelopes in the up and down directions:\n\n    height collage == envelope Up collage + envelope Down collage\n\n",
+                "type": "Collage.Collage msg -> Basics.Float"
+            },
+            {
+                "name": "horizontal",
+                "comment": " Place a list of collages next to each other,\nsuch that their origins are along a horizontal line.\nThe first element in the list will be on the left, the last on the right.\n\n    horizontal [a, b, c]\n\n        +–––+–––+–––+\n        |(a)| b | c |\n        +–––+–––+–––+\n\nThe new origin will be the origin of the first element in the list.\n\n  - Note: this is called `hcat` in Diagrams.\n\n",
+                "type": "List.List (Collage.Collage msg) -> Collage.Collage msg"
+            },
+            {
+                "name": "impose",
+                "comment": " Impose a collage on a background.\n\nThe call\n\n    impose fore back\n\nstacks `fore` on `back`.\nThe envelope of `fore` will be \"forgotten\"\nand `back` will be used to calculate the envelope of the resulting collage.\n\n        +–––––––––––+\n        |(b)+–––+   |\n        |   | a |   | <-- new envelope\n        |   +–––+   |\n        +–––––––––––+\n\nObviously, this also works with the background having a smaller envelope than the foreground.\n\nThe new origin will be the origin of the background.\n\n",
+                "type": "Collage.Collage msg -> Collage.Collage msg -> Collage.Collage msg"
+            },
+            {
+                "name": "left",
+                "comment": "\n\n        +–––+\n       (X)  |\n        +–––+\n\n",
+                "type": "Collage.Collage msg -> Collage.Point"
+            },
+            {
+                "name": "locate",
+                "comment": " Locate a named part of a collage and calculate the coordinates using the given anchor in the new coordinate system.\n\nFirst be sure to give a name to a sub collage using `name`,\nonly after that you can retrieve the collage using this function.\nWell, you cannot retrieve the whole collage,\nbut a point calculated _relative to its internal origin_ using an anchor.\nThis point is then subjected to the samen transformations as all the groups above it.\n\nWhen a collage part could not be found,\nwe display a message on the console for your convenience.\n\n",
+                "type": "String.String -> Collage.Layout.Anchor msg -> Collage.Collage msg -> Maybe.Maybe Collage.Point"
+            },
+            {
+                "name": "name",
+                "comment": " Give a name to (a part of) a collage in order to locate it after composition.\n",
+                "type": "String.String -> Collage.Collage msg -> Collage.Collage msg"
+            },
+            {
+                "name": "names",
+                "comment": " Return a dictionary with all named parts of given collage.\n",
+                "type": "Collage.Collage msg -> Dict.Dict String.String (Collage.Collage msg)"
+            },
+            {
+                "name": "place",
+                "comment": " Shift a collage in a direction to precisely that position where it would touch the first one,\nwithout composing them.\n\nUse this to position a collage next to another collage without actually composing them.\n\n  - Note: called `juxtapose` in Diagrams.\n\n",
+                "type": "Collage.Layout.Direction -> Collage.Collage msg -> Collage.Collage msg -> Collage.Collage msg"
+            },
+            {
+                "name": "right",
+                "comment": "\n\n        +–––+\n        |  (X)\n        +–––+\n\n",
+                "type": "Collage.Collage msg -> Collage.Point"
+            },
+            {
+                "name": "showEnvelope",
+                "comment": " Draw a red dotted box around the collage representing the envelope.\n",
+                "type": "Collage.Collage msg -> Collage.Collage msg"
+            },
+            {
+                "name": "showOrigin",
+                "comment": " Draw a red dot at the local origin of the collage.\n",
+                "type": "Collage.Collage msg -> Collage.Collage msg"
+            },
+            {
+                "name": "spacer",
+                "comment": " Create an empty collage of given width and height.\n\nThis is useful for getting your spacing right and for making borders.\n\n    hspace = spacer 10 0\n\n    horizontal <| List.intersperse hspace [a, b, c]\n\n        +–––+ +–––+ +–––+\n        | a | | b | | c |\n        +–––+ +–––+ +–––+\n\n",
+                "type": "Basics.Float -> Basics.Float -> Collage.Collage msg"
+            },
+            {
+                "name": "stack",
+                "comment": " Place a list of collages on top of each other, with their origin points stacked on the \"out of page\" axis.\n\nThe first collage in the list is on top.\nThis actually is the same as the `group` operation in the Collage module.\n\n    stack [a, b, c]\n\n        +–––+\n        |(a)|\n        +–––+\n\n(Yes, `b` and `c` are somewhere below `a`...)\n\nThe new origin will be the origin of the first element in the list.\n\n  - Note: this is called `concat` in Diagrams.\n\n  - Note: when we create an operator `(<>)` like\n\n        (<>) a b =\n          stack [ a, b ]\n\n    then `(<>)` forms a monoid together with `empty`.\n    `(<>)` is called `atop` in Diagrams.\n\n",
+                "type": "List.List (Collage.Collage msg) -> Collage.Collage msg"
+            },
+            {
+                "name": "top",
+                "comment": "\n\n        +(X)+\n        |   |\n        +–––+\n\n",
+                "type": "Collage.Collage msg -> Collage.Point"
+            },
+            {
+                "name": "topLeft",
+                "comment": "\n\n       (X)––+\n        |   |\n        +–––+\n\n",
+                "type": "Collage.Collage msg -> Collage.Point"
+            },
+            {
+                "name": "topRight",
+                "comment": "\n\n        +––(X)\n        |   |\n        +–––+\n\n",
+                "type": "Collage.Collage msg -> Collage.Point"
+            },
+            {
+                "name": "vertical",
+                "comment": " Place a list of collages next to each other,\nsuch that their origins are along a vertical line.\nThe first element in the list will be on the top, the last on the bottom.\n\n    vertical [a, b, c]\n\n        +–––+\n        |(a)|\n        +–––+\n        | b |\n        +–––+\n        | c |\n        +–––+\n\nThe new origin will be the origin of the first element in the list.\n\n  - Note: this is called `vcat` in Diagrams.\n\n",
+                "type": "List.List (Collage.Collage msg) -> Collage.Collage msg"
+            },
+            {
+                "name": "width",
+                "comment": " Calculates the width of a collage.\n\nThe width is equivalent to the envelopes in the left and right directions:\n\n    width collage == envelope Left collage + envelope Right collage\n\n",
+                "type": "Collage.Collage msg -> Basics.Float"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Collage.Render",
+        "comment": " Technically, it should be possible to use different backends to render a collage,\nbut we only provide a Svg backend here.\n\n@docs svg, svgBox, svgExplicit\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "svg",
+                "comment": " Take a collage and render it to Html using Svg.\n\nIt uses the automatically calculated envelope from the Collage.Layout module as the view box.\n\n",
+                "type": "Collage.Collage msg -> Html.Html msg"
+            },
+            {
+                "name": "svgBox",
+                "comment": " Render a collage as Svg in a view box of given width and height,\nand the origin in the center.\n\n_Maybe this will be removed from the next major version.\nPlease open an issue if you want to keep this._\n\n",
+                "type": "( Basics.Float, Basics.Float ) -> Collage.Collage msg -> Html.Html msg"
+            },
+            {
+                "name": "svgExplicit",
+                "comment": " Take a collage and render it to Html using Svg\nexplicitly specifying the HTML attributes of the element.\n",
+                "type": "List.List (Svg.Attribute msg) -> Collage.Collage msg -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Collage.Text",
+        "comment": " A library for styling and displaying text.\n\nWhile the String library focuses on representing and manipulating strings of characters,\nthe Text library focuses on how those strings should look on screen.\nIt lets you make text bold or italic, set the typeface, set the text size, etc.\n\nBe aware that this module is intended for **small chunks of text** on **one line**.\nUsing a newline character in a text chunk will simply have no effect.\nAlignment and placement should be done using the Collage or Layout modules.\n\nTo add some text to your collages,\nfollow the next steps:\n\n1.  Create some text chunk with `fromString`.\n2.  Style it using the functions in this module.\n3.  Make a collage out of it, i.e. render it using `Collage.rendered`.\n    From this point, you cannot style your text any more.\n    What you _can_ do however is...\n4.  Transform the collage using the functions in the Collage module:\n    shift it, rotate it, scale it etc.\n    Or use the placement functions in Collage.Layout.\n\nSo the most important thing to remember is that after you have turned your text into a collage,\nyou cannot style it anymore!\n\n**Note:**\nFunction and type names in this module clash with those from Collage and Collage.Layout.\nBest way to use is a qualified import like:\n\n    import Collage.Text as Text exposing (Text, fromString)\n\n\n### Contents\n\n  - [Basics](#basics)\n  - [Creating text](#creating-text)\n  - [Styling text](#styling-text)\n      - [Typeface and color](#typeface-and-color)\n      - [Size](#size)\n      - [Shape and weight](#shape-and-weight)\n      - [Decorations](#decorations)\n      - [Creating styles](#creating-styles)\n  - [Measuring text](#measuring-text)\n\n\n# Basics\n\n@docs Text\n\n\n# Creating text\n\n@docs fromString, empty\n\n\n# Styling text\n\n\n## Typeface and color\n\n@docs Typeface, typeface, color\n\n\n## Size\n\nThe predefined font sizes below are spaced `sqrt (sqrt 2)` of each other.\nwhich gives a balanced view.\nThis idea is bluntly stolen from LaTeX,\nwhich does something quite similar.\nOff course, you can always specify your own font size explicitly.\n\n@docs size, tiny, small, normal, large, huge, enormous\n\n\n## Shape and weight\n\n@docs Shape, shape, Weight, weight\n\n\n## Decorations\n\n@docs Line, line\n\n\n## Creating styles\n\n@docs Style, style, defaultStyle\n\n\n# Measuring text\n\n@docs width, height\n\n",
+        "unions": [
+            {
+                "name": "Line",
+                "comment": " Styles for lines on or over some text.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "None",
+                        []
+                    ],
+                    [
+                        "Under",
+                        []
+                    ],
+                    [
+                        "Over",
+                        []
+                    ],
+                    [
+                        "Through",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Shape",
+                "comment": " Possible shapes for a piece of text.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Upright",
+                        []
+                    ],
+                    [
+                        "SmallCaps",
+                        []
+                    ],
+                    [
+                        "Slanted",
+                        []
+                    ],
+                    [
+                        "Italic",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Typeface",
+                "comment": " Possible typefaces for text.\n\n`Serif`, `Sansserif`, and `Monospace` correspond to the default browser fonts of the user.\nUse `Font` to specify a concrete typeface.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Serif",
+                        []
+                    ],
+                    [
+                        "Sansserif",
+                        []
+                    ],
+                    [
+                        "Monospace",
+                        []
+                    ],
+                    [
+                        "Font",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Weight",
+                "comment": " Possible weights for a piece of text.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Thin",
+                        []
+                    ],
+                    [
+                        "Light",
+                        []
+                    ],
+                    [
+                        "Regular",
+                        []
+                    ],
+                    [
+                        "Medium",
+                        []
+                    ],
+                    [
+                        "SemiBold",
+                        []
+                    ],
+                    [
+                        "Bold",
+                        []
+                    ],
+                    [
+                        "Black",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Style",
+                "comment": " Specifies the styling (color, typeface, weight, etc.) of text.\n",
+                "args": [],
+                "type": "{ typeface : Collage.Text.Typeface, size : Basics.Int, color : Color.Color, shape : Collage.Text.Shape, weight : Collage.Text.Weight, line : Collage.Text.Line }"
+            },
+            {
+                "name": "Text",
+                "comment": " Opaque type representing styled text.\n",
+                "args": [],
+                "type": "Collage.Core.Text Collage.Text.Style"
+            }
+        ],
+        "values": [
+            {
+                "name": "color",
+                "comment": " Set the color of some text.\n\nUse the Color module to specify colors.\n\n    fromString \"Nice blue text\"\n      |> color Color.blue\n\n",
+                "type": "Color.Color -> Collage.Text.Text -> Collage.Text.Text"
+            },
+            {
+                "name": "defaultStyle",
+                "comment": " Plain black text.\n\nIt uses the browsers default typeface and text height.\nNo decorations are used.\n\n    defaultStyle =\n      { typeface = Sansserif\n      , size = normal\n      , color = Color.black\n      , shape = Upright\n      , weight = Regular\n      , line = None\n      }\n\n",
+                "type": "Collage.Text.Style"
+            },
+            {
+                "name": "empty",
+                "comment": " Text with nothing in it.\n\n    empty = fromString \"\"\n\n",
+                "type": "Collage.Text.Text"
+            },
+            {
+                "name": "enormous",
+                "comment": " 27 px\n",
+                "type": "Basics.Int"
+            },
+            {
+                "name": "fromString",
+                "comment": " Convert a string into text which can be styled and displayed.\n\nTo show the string \"Hello World!\" on screen in large, dark red, italics, you could say:\n\n    fromString \"Hello World!\"\n      |> size large\n      |> color Color.darkRed\n      |> shape Italic\n      |> Collage.rendered\n\n",
+                "type": "String.String -> Collage.Text.Text"
+            },
+            {
+                "name": "height",
+                "comment": " The height of the text when displayed on the user screen.\n\nThis is equal to the text size:\n\n    fromString \"Hello World!\"\n      |> size 16\n      |> height\n      == 16\n\n(Now you know why newlines are a bad idea...)\n\n",
+                "type": "Collage.Text.Text -> Basics.Float"
+            },
+            {
+                "name": "huge",
+                "comment": " 23 px\n",
+                "type": "Basics.Int"
+            },
+            {
+                "name": "large",
+                "comment": " 19 px\n",
+                "type": "Basics.Int"
+            },
+            {
+                "name": "line",
+                "comment": " Put lines on text.\n\nThis allows you to add an underline, an overline, or strike out text:\n\n    line None (fromString \"normal text\")\n\n    line Under (fromString \"underline\")\n\n    line Over (fromString \"overline\")\n\n    line Through (fromString \"strike out\")\n\n",
+                "type": "Collage.Text.Line -> Collage.Text.Text -> Collage.Text.Text"
+            },
+            {
+                "name": "normal",
+                "comment": " 16 px\n",
+                "type": "Basics.Int"
+            },
+            {
+                "name": "shape",
+                "comment": " Set the shape of some text.\n\n    fromString \"Italic text\"\n      |> shape Italic\n\n",
+                "type": "Collage.Text.Shape -> Collage.Text.Text -> Collage.Text.Text"
+            },
+            {
+                "name": "size",
+                "comment": " Set the size of some text.\n\n    fromString \"Big text\"\n      |> size huge\n\n",
+                "type": "Basics.Int -> Collage.Text.Text -> Collage.Text.Text"
+            },
+            {
+                "name": "small",
+                "comment": " 13 px\n",
+                "type": "Basics.Int"
+            },
+            {
+                "name": "style",
+                "comment": " Give some text a predefined style.\n\nFor example, if you design a style called `heading` that is specifically for heading text,\nyou could apply it to text like this:\n\n    heading =\n      { typeface = Sansserif\n      , size = huge\n      , color = Color.darkBlue\n      , shape = Upright\n      , weight = Bold\n      , line = Nothing\n      }\n\n    fromString \"Welcome to Elm Collage!\"\n      |> style heading\n\n",
+                "type": "Collage.Text.Style -> Collage.Text.Text -> Collage.Text.Text"
+            },
+            {
+                "name": "tiny",
+                "comment": " 11 px\n",
+                "type": "Basics.Int"
+            },
+            {
+                "name": "typeface",
+                "comment": " Set the typeface of some text.\n\n    fromString \"Text in my favorite font\"\n      |> typeface (Font \"Lato\")\n\n",
+                "type": "Collage.Text.Typeface -> Collage.Text.Text -> Collage.Text.Text"
+            },
+            {
+                "name": "weight",
+                "comment": " Set the weight of some text.\n\n    fromString \"Bold text\"\n      |> weight Bold\n\n",
+                "type": "Collage.Text.Weight -> Collage.Text.Text -> Collage.Text.Text"
+            },
+            {
+                "name": "width",
+                "comment": " The width of the text when displayed on the user screen.\n\n  - **Warning!**\n    Use this function sporadically.\n    Although it should be quite fast,\n    it calls methods of the canvas object (yes really) on the client which can take some time...\n\n",
+                "type": "Collage.Text.Text -> Basics.Float"
+            }
+        ],
+        "binops": []
+    }
+]

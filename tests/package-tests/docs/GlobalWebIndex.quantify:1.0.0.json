@@ -1,0 +1,56 @@
+[
+    {
+        "name": "Quantify",
+        "comment": " Quantify List, Set, Dict or a single value according to a predicate\n\n\n# Type\n\n@docs Quantifier\n\n\n# Quantify\n\n@docs list, set, dict, single, fromBool\n\n",
+        "unions": [
+            {
+                "name": "Quantifier",
+                "comment": " Quantifier type describes the result of the quantification.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "None",
+                        []
+                    ],
+                    [
+                        "Some",
+                        []
+                    ],
+                    [
+                        "All",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "dict",
+                "comment": " Quantify a dict according to a predicate. The predicate gets both the key and the value.\n\n    import Dict\n\n    isEven : Int -> Bool\n    isEven number =\n        modBy 2 number == 0\n\n    Quantify.dict (\\key value -> isEven value) (Dict.fromList [(0,1),(1,3),(2,5),(3,7)])\n    --> None\n\n    Quantify.dict (\\key value -> isEven value) (Dict.fromList [(0,0),(1,1),(2,2),(3,3)])\n    --> Some\n\n    Quantify.dict (\\key value -> isEven value) (Dict.fromList [(0,0),(1,2),(2,4),(3,6)])\n    --> All\n\n    Quantify.dict (\\key value -> isEven value) Dict.empty\n    --> None\n\n",
+                "type": "(comparable -> a -> Basics.Bool) -> Dict.Dict comparable a -> Quantify.Quantifier"
+            },
+            {
+                "name": "fromBool",
+                "comment": " Quantify a Bool value according to a predicate.\n\n    Quantify.fromBool True\n    --> All\n\n    Quantify.fromBool False\n    --> None\n\n",
+                "type": "Basics.Bool -> Quantify.Quantifier"
+            },
+            {
+                "name": "list",
+                "comment": " Quantify a list according to a predicate.\n\n    isEven : Int -> Bool\n    isEven number =\n        modBy 2 number == 0\n\n    Quantify.list isEven [1,3,5,7]\n    --> None\n\n    Quantify.list isEven [0,1,2,3]\n    --> Some\n\n    Quantify.list isEven [0,2,4,6]\n    --> All\n\n    Quantify.list isEven []\n    --> None\n\n",
+                "type": "(a -> Basics.Bool) -> List.List a -> Quantify.Quantifier"
+            },
+            {
+                "name": "set",
+                "comment": " Quantify a set according to a predicate.\n\n    import Set\n\n    isEven : Int -> Bool\n    isEven number =\n        modBy 2 number == 0\n\n    Quantify.set isEven (Set.fromList [1,3,5,7])\n    --> None\n\n    Quantify.set isEven (Set.fromList [0,1,2,3])\n    --> Some\n\n    Quantify.set isEven (Set.fromList [0,2,4,6])\n    --> All\n\n    Quantify.set isEven Set.empty\n    --> None\n\n",
+                "type": "(comparable -> Basics.Bool) -> Set.Set comparable -> Quantify.Quantifier"
+            },
+            {
+                "name": "single",
+                "comment": " Quantify a single value according to a predicate.\n\n    isEven : Int -> Bool\n    isEven number =\n        modBy 2 number == 0\n\n    Quantify.single isEven 1\n    --> None\n\n    Quantify.single isEven 0\n    --> All\n\n",
+                "type": "(a -> Basics.Bool) -> a -> Quantify.Quantifier"
+            }
+        ],
+        "binops": []
+    }
+]

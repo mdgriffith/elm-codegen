@@ -1,0 +1,192 @@
+[
+    {
+        "name": "NoSinglePatternCase",
+        "comment": "\n\n\n## Review Rule\n\n@docs rule\n\n\n# Config\n\n@docs Config, fixInArgument, fixInLet\n\n\n## Customizing Config Behavior\n\n@docs replaceUnusedBindings, ifAsPatternRequired, ifCannotDestructureAtArgument, ifNoLetExists\n\n\n## Config Behavior Options\n\nThese functions are simply used by\n[`ifAsPatternRequired`](#ifAsPatternRequired),\n[`ifCannotDestructureAtArgument`](#ifCannotDestructureAtArgument), and\n[`ifNoLetExists`](#ifNoLetExists) to customize behavior of the default configs.\nLook at the examples in those to understand how to use them.\n\n@docs fail, createNewLet, useAsPattern, fixInArgumentInstead, andIfAsPatternRequired, andIfCannotDestructureAtArgument, fixInLetInstead, andIfNoLetExists\n\n\n## Types\n\nYou shouldn't need to worry about these types; they are exported solely for the\nsake of annotation, should it be necessary.\n\n@docs FixInArgument, FixInLet, UseArgInstead, UseLetInstead, CreateNewLet, Fail, UseAsPattern, UseAsPatternOrFailOr, CreateNewLetOr, UseArgOrCreateNewLetOrFail, UseLetOr, UseLetOrFail, UseAsPatternOrLetsOrFail, Either\n\n",
+        "unions": [
+            {
+                "name": "Config",
+                "comment": " Configure the rule, determining how automatic fixes are generated.\n\nThe default `Config`s [`fixInArgument`](#fixInArgument) and\n[`fixInLet`](#fixInLet) should be used as reasonable defaults, with more\ncustomization detailed in those sections.\n\nThe behavior of the rule in the context of useless single pattern cases can also\nbe configured via [`replaceUnusedBindings`](#replaceUnusedBindings). A single\npattern case is considered to be useless if its pattern does not bind any name\nthat is actually used in the expression.\n\n",
+                "args": [
+                    "fixBy"
+                ],
+                "cases": []
+            },
+            {
+                "name": "CreateNewLet",
+                "comment": " Choose to create a new `let` block to destructure in.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Fail",
+                "comment": " Choose to fail at generating a fix.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "FixInArgument",
+                "comment": " Phantom type for `Config fixBy`.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "FixInLet",
+                "comment": " Phantom type for `Config fixBy`.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "UseArgInstead",
+                "comment": " Fallback to destructuring in the argument, if choosing not to create a `let`\nblock.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "UseAsPattern",
+                "comment": " Choose to use an `as` pattern.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "UseLetInstead",
+                "comment": " Fallback to using a `let` block if destructuring in the argument has failed\n(or we've chosen not to).\n",
+                "args": [
+                    "noValidLetOptions"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "CreateNewLetOr",
+                "comment": " At this point, a new `let` could be created or some other option.\n",
+                "args": [
+                    "or"
+                ],
+                "type": "NoSinglePatternCase.Either (NoSinglePatternCase.Either NoSinglePatternCase.CreateNewLet or) NoSinglePatternCase.Fail"
+            },
+            {
+                "name": "Either",
+                "comment": " Offer a choice between two options.\n",
+                "args": [
+                    "a",
+                    "b"
+                ],
+                "type": "Util.Either a b"
+            },
+            {
+                "name": "UseArgOrCreateNewLetOrFail",
+                "comment": " At this point, the argument could be used or a new `let` block created.\nblock.\n",
+                "args": [],
+                "type": "NoSinglePatternCase.Either (NoSinglePatternCase.Either NoSinglePatternCase.CreateNewLet NoSinglePatternCase.UseArgInstead) NoSinglePatternCase.Fail"
+            },
+            {
+                "name": "UseAsPatternOrFailOr",
+                "comment": " At this point, an `as` pattern could be used or some other option.\n",
+                "args": [
+                    "or"
+                ],
+                "type": "NoSinglePatternCase.Either (NoSinglePatternCase.Either or NoSinglePatternCase.UseAsPattern) NoSinglePatternCase.Fail"
+            },
+            {
+                "name": "UseAsPatternOrLetsOrFail",
+                "comment": " At this point, an `as` pattern could be used, or we could use a `let` block.\n",
+                "args": [],
+                "type": "NoSinglePatternCase.UseAsPatternOrFailOr (NoSinglePatternCase.UseLetInstead (NoSinglePatternCase.UseAsPatternOrFailOr NoSinglePatternCase.CreateNewLet))"
+            },
+            {
+                "name": "UseLetOr",
+                "comment": " At this point, a `let` could be used or either of two other options.\n",
+                "args": [
+                    "or1",
+                    "or2"
+                ],
+                "type": "NoSinglePatternCase.Either (NoSinglePatternCase.Either (NoSinglePatternCase.UseLetInstead or1) or2) NoSinglePatternCase.Fail"
+            },
+            {
+                "name": "UseLetOrFail",
+                "comment": " At this point, the only option is to use a `let` block.\n",
+                "args": [],
+                "type": "NoSinglePatternCase.UseLetOr (NoSinglePatternCase.CreateNewLetOr NoSinglePatternCase.Fail) NoSinglePatternCase.Fail"
+            }
+        ],
+        "values": [
+            {
+                "name": "andIfAsPatternRequired",
+                "comment": " Specify what to do if an `as` pattern would be necessary.\n\nAvailable options are [`useAsPattern`](#useAsPattern),\n[`createNewLet`](#createNewLet) or [`fail`](#fail)\n\n    c1 =\n        fixInLet\n            |> ifNoLetExists\n                (fixInArgumentInstead\n                    |> andIfAsPatternRequired useAsPattern\n                    |> andIfCannotDestructureAtArgument fail\n                )\n\n    c2 =\n        fixInLet\n            |> ifNoLetExists\n                (fixInArgumentInstead\n                    |> andIfAsPatternRequired createNewLet\n                    |> andIfCannotDestructureAtArgument fail\n                )\n\n    c3 =\n        fixInLet\n            |> ifNoLetExists\n                (fixInArgumentInstead\n                    |> andIfAsPatternRequired fail\n                    |> andIfCannotDestructureAtArgument fail\n                )\n\n",
+                "type": "NoSinglePatternCase.UseAsPatternOrFailOr NoSinglePatternCase.CreateNewLet -> (NoSinglePatternCase.UseAsPatternOrFailOr NoSinglePatternCase.CreateNewLet -> NoSinglePatternCase.CreateNewLetOr NoSinglePatternCase.Fail -> NoSinglePatternCase.UseArgOrCreateNewLetOrFail) -> NoSinglePatternCase.CreateNewLetOr NoSinglePatternCase.Fail -> NoSinglePatternCase.UseArgOrCreateNewLetOrFail"
+            },
+            {
+                "name": "andIfCannotDestructureAtArgument",
+                "comment": " Specify what to do if the argument cannot be destructured at, e.g.\n\n    f { recordField } =\n        case recordField of\n            Opaque i ->\n                i\n\nAvailable options are [`createNewLet`](#createNewLet) or [`fail`](#fail)\n\n    c1 =\n        fixInLet\n            |> ifNoLetExists\n                (fixInArgumentInstead\n                    |> andIfAsPatternRequired fail\n                    |> andIfCannotDestructureAtArgument createNewLet\n                )\n\n    c2 =\n        fixInLet\n            |> ifNoLetExists\n                (fixInArgumentInstead\n                    |> andIfAsPatternRequired fail\n                    |> andIfCannotDestructureAtArgument fail\n                )\n\n",
+                "type": "NoSinglePatternCase.CreateNewLetOr NoSinglePatternCase.Fail -> (NoSinglePatternCase.CreateNewLetOr NoSinglePatternCase.Fail -> NoSinglePatternCase.UseArgOrCreateNewLetOrFail) -> NoSinglePatternCase.UseArgOrCreateNewLetOrFail"
+            },
+            {
+                "name": "andIfNoLetExists",
+                "comment": " If no `let` block exists to destructure in, choose some other behavior\ninstead.\n",
+                "type": "a -> (a -> NoSinglePatternCase.UseLetOr a b) -> NoSinglePatternCase.UseLetOr a b"
+            },
+            {
+                "name": "createNewLet",
+                "comment": " Choose to create a `let` block when none exists.\n",
+                "type": "NoSinglePatternCase.CreateNewLetOr or"
+            },
+            {
+                "name": "fail",
+                "comment": " Choose to fail at generating a fix.\n",
+                "type": "NoSinglePatternCase.Either or NoSinglePatternCase.Fail"
+            },
+            {
+                "name": "fixInArgument",
+                "comment": " Always fix by destructuring in the argument. This will use `as` patterns if\nnecessary. If the argument cannot be destructured in, no fix will be generated.\n\nFor example:\n\n    f1 o =\n        case o of\n            Opaque i ->\n                i\n\n    f2 o =\n        let\n            x =\n                someFunc o\n        in\n        case o of\n            Opaque i ->\n                i + x\n\n    f3 { recordField } =\n        case recordField of\n            Opaque i ->\n                i\n\nwill be fixed to:\n\n    f1 (Opaque i) =\n        i\n\n    f2 ((Opaque i) as o) =\n        let\n            x =\n                someFunc o\n        in\n        i + x\n\n    f3 { recordField } =\n        case recordField of\n            Opaque i ->\n                i\n\nUse [`ifAsPatternRequired`](#ifAsPatternRequired) and\n[`ifCannotDestructureAtArgument`](#ifCannotDestructureAtArgument) to customize\nthe behavior in either of these cases.\n\n",
+                "type": "NoSinglePatternCase.Config NoSinglePatternCase.FixInArgument"
+            },
+            {
+                "name": "fixInArgumentInstead",
+                "comment": " Fallback to destructuring in the argument instead of a `let` block.\n\nNote that [`andIfAsPatternRequired`](#andIfAsPatternRequired) and\n[`andIfCannotDestructureAtArgument`](#andIfCannotDestructureAtArgument) must appear\nin that order, e.g.\n\n    c =\n        fixInLet\n            |> ifNoLetExists\n                (fixInArgumentInstead\n                    |> andIfAsPatternRequired useAsPattern\n                    |> andIfCannotDestructureAtArgument fail\n                )\n\n",
+                "type": "NoSinglePatternCase.UseAsPatternOrFailOr NoSinglePatternCase.CreateNewLet -> NoSinglePatternCase.CreateNewLetOr NoSinglePatternCase.Fail -> NoSinglePatternCase.UseArgOrCreateNewLetOrFail"
+            },
+            {
+                "name": "fixInLet",
+                "comment": " Always fix by destructuring in a `let` block, creating a new one if none\nexists.\nFor example:\n\n    f1 o =\n        case o of\n            Opaque i ->\n                i\n\n    f2 o =\n        let\n            x =\n                someFunc o\n        in\n        case o of\n            Opaque i ->\n                i + x\n\nwill be fixed to:\n\n    f1 o =\n        let\n            (Opaque i) =\n                o\n        in\n        i\n\n    f2 ((Opaque i) as o) =\n        let\n            x =\n                someFunc o\n\n            (Opaque i) =\n                o\n        in\n        i + x\n\nUse [`ifNoLetExists`](#ifNoLetExists) to customize the behavior in the case\nwhere no `let` block exists within the scope the pattern is valid in. To\nclarify, the following counts as no `let` existing:\n\n    unpack : Opaque -> Int\n    unpack o =\n        let\n            foo =\n                bar\n        in\n        (\\a ->\n            case a of\n                Opaque i ->\n                    i\n        )\n            o\n\nas the name `a` is not in scope in the extant `let` block.\n\n[`ifNoLetExists`](#ifNoLetExists) also handles the case where the closest `let`\nblock would result in a name clash. To clarify, the following counts as no\n`let` existing:\n\n    unpack : Opaque -> Int\n    unpack o =\n        let\n            foo =\n                (\\i -> i + 1) 0\n        in\n        case o of\n            Opaque i ->\n                i\n\nas `i` cannot be unpacked in the `let` block, as doing so would cause a name\nclash with the `i` in `foo`.\n\n",
+                "type": "NoSinglePatternCase.Config NoSinglePatternCase.FixInLet"
+            },
+            {
+                "name": "fixInLetInstead",
+                "comment": " Fallback to destructuring in a `let` block instead of the argument.\n",
+                "type": "a -> NoSinglePatternCase.UseLetOr a b"
+            },
+            {
+                "name": "ifAsPatternRequired",
+                "comment": " Specify what to do if an `as` pattern would be required to destructure in\nthe argument, e.g.\n\n    f o =\n        let\n            x =\n                someFunc o\n        in\n        case o of\n            Opaque i ->\n                i + x\n\nAvailable options are [`useAsPattern`](#useAsPattern) (this is the default),\n[`fixInLetInstead`](#fixInLetInstead) or [`fail`](#fail),\ne.g.\n\n    c1 =\n        fixInArgument\n            |> ifAsPatternRequired fail\n\n    c2 =\n        fixInArgument\n            |> ifAsPatternRequired useAsPattern\n\n    c3 =\n        fixInArgument\n            |> ifAsPatternRequired\n                (fixInLetInstead\n                    |> andIfNoLetExists createNewLet\n                )\n\n    c4 =\n        fixInArgument\n            |> ifAsPatternRequired\n                (fixInLetInstead\n                    |> andIfNoLetExists useAsPattern\n                )\n\n",
+                "type": "NoSinglePatternCase.UseAsPatternOrLetsOrFail -> NoSinglePatternCase.Config NoSinglePatternCase.FixInArgument -> NoSinglePatternCase.Config NoSinglePatternCase.FixInArgument"
+            },
+            {
+                "name": "ifCannotDestructureAtArgument",
+                "comment": " Specify what to do if the argument cannot be destructured at, either due to\nit being a record field, e.g.\n\n    f { recordField } =\n        case recordField of\n            Opaque i ->\n                i\n\nor a more complex `case` expression, e.g.\n\n    f a =\n        case foo <| bar a of\n            Opaque i ->\n                i\n\nor due to a name clash that would be caused by the increase in scope, e.g.\n\n    unpack : Opaque -> Int\n    unpack o =\n        let\n            foo =\n                (\\i -> i + 1) 0\n        in\n        case o of\n            Opaque i ->\n                i\n\nAvailable options are [`fixInLetInstead`](#fixInLetInstead) or [`fail`](#fail)\n(this is the default).\n\n    c1 =\n        fixInArgument\n            |> ifCannotDestructureAtArgument fail\n\n    c2 =\n        fixInArgument\n            |> ifCannotDestructureAtArgument\n                (fixInLetInstead\n                    |> andIfNoLetExists fail\n                )\n\n    c3 =\n        fixInArgument\n            |> ifCannotDestructureAtArgument\n                (fixInLetInstead\n                    |> andIfNoLetExists createNewLet\n                )\n\n",
+                "type": "NoSinglePatternCase.UseLetOrFail -> NoSinglePatternCase.Config NoSinglePatternCase.FixInArgument -> NoSinglePatternCase.Config NoSinglePatternCase.FixInArgument"
+            },
+            {
+                "name": "ifNoLetExists",
+                "comment": " Specify what to do it no `let` block exists in scope, instead of creating a\nnew one.\n\nAvailable options are [`fixInArgumentInstead`](#fixInArgumentInstead),\n[`createNewLet`](#createNewLet) (this is the default), or [`fail`](#fail). Note\nthat [`andIfAsPatternRequired`](#andIfAsPatternRequired) and\n[`andIfCannotDestructureAtArgument`](#andIfCannotDestructureAtArgument) must appear\nin that order after [`fixInArgumentInstead`](#fixInArgumentInstead).\n\n    c1 =\n        fixInLet\n            |> ifNoLetExists fail\n\n    c2 =\n        fixInLet\n            -- This is the default\n            |> ifNoLetExists createNewLet\n\n    c3 =\n        fixInLet\n            |> ifNoLetExists\n                (fixInArgumentInstead\n                    |> andIfAsPatternRequired useAsPattern\n                    |> andIfCannotDestructureAtArgument fail\n                )\n\n",
+                "type": "NoSinglePatternCase.UseArgOrCreateNewLetOrFail -> NoSinglePatternCase.Config NoSinglePatternCase.FixInLet -> NoSinglePatternCase.Config NoSinglePatternCase.FixInLet"
+            },
+            {
+                "name": "replaceUnusedBindings",
+                "comment": " A single pattern case is considered to be useless if its pattern does not\nbind any name that is actually used in the expression, e.g.\n\n    case x of\n        _ ->\n            True\n\n    case x of\n        () ->\n            True\n\n    case x of\n        A ({ field1, field2 } as record) ->\n            List.map foo bar\n                |> List.sum\n                |> baz\n\nThe rule will always provide fixes for such cases but by default will not\nreplace the binding used in the `case...of` expression. This option configures\nthe rule to replace such bindings where possible. Fox example:\n\n    f unusedArg =\n        case unusedArg of\n            _ ->\n                True\n\nwill be fixed to\n\n    f _ =\n        True\n\nThis provides a more clear indication that the binding is unused. The binding\nwill of course **not** be replaced if it used anywhere but in `case...of`.\n\n",
+                "type": "NoSinglePatternCase.Config fixBy -> NoSinglePatternCase.Config fixBy"
+            },
+            {
+                "name": "rule",
+                "comment": " Reports single-pattern case expressions, which may be written more concisely\nor removed entirely.\n\n    config =\n        [ NoSinglePatternCase.rule NoSinglePatternCase.fixInArgument ]\n\nSee [`Config`](#Config) for configuration details.\n\n\n## Fails\n\nSingle-pattern case expressions for destructuring are not allowed, as:\n\n    type Opaque\n        = Opaque Int\n\n    unpack : Opaque -> Int\n    unpack o =\n        case o of\n            Opaque i ->\n                i\n\nmay instead be written more concisely, for example as\n\n    unpack : Opaque -> Int\n    unpack (Opaque i) =\n        i\n\nSimilarly, single-pattern case expressions that ase not used for destructuring\nare not allowed, as:\n\n    type AOrB\n        = A\n        | B\n\n    pointless : AOrB -> Bool\n    pointless aOrB =\n        case aOrB of\n            _ ->\n                True\n\nmay instead be written more concisely, for example as\n\n    pointless : AOrB -> Bool\n    pointless _ =\n        True\n\nor\n\n    pointless : AOrB -> Bool\n    pointless =\n        always True\n\n\n## Success\n\nAny case expression with more than one pattern match will not be reported.\nConsider using [`jfmengels/elm-review-simplify`](https://package.elm-lang.org/packages/jfmengels/elm-review-simplify/latest)\nto detect unnecessary multi-pattern cases.\n\n\n## When (not) to enable this rule\n\nThis rule is useful if you prefer destructuring in function/lambda arguments or\n`let` bindings, rather than in a single-pattern case.\n\nThis rule is not useful if you prefer the more verbose style.\n\n\n## Try it out\n\nYou can try this rule out by running the following command:\n\n```bash\nelm-review --template SiriusStarr/elm-review-no-single-pattern-case/example --rules NoSinglePatternCase\n```\n\n",
+                "type": "NoSinglePatternCase.Config fixBy -> Review.Rule.Rule"
+            },
+            {
+                "name": "useAsPattern",
+                "comment": " Choose to use an `as` pattern to destructure in the argument if necessary.\n",
+                "type": "NoSinglePatternCase.UseAsPatternOrFailOr or"
+            }
+        ],
+        "binops": []
+    }
+]

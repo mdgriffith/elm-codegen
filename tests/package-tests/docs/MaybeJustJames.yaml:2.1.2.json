@@ -1,0 +1,272 @@
+[
+    {
+        "name": "Yaml.Decode",
+        "comment": " Turn [YAML](https://yaml.org) into Elm values. The library is structured in a similar way\nto `Json.Decode`, so if you haven't worked with decoders before, reading through\n[the guide](https://guide.elm-lang.org/effects/json.html) may be helpful.\n\n\n## Table of Contents\n\n  - **Primitives**: [int](#int), [string](#string), [bool](#bool), [float](#float), [null](#null)\n  - **Data Structures**: [nullable](#nullable), [list](#list), [dict](#dict)\n  - **Record Primitives**: [field](#field), [at](#at)\n  - **Inconsistent Structure**: [oneOf](#oneOf), [maybe](#maybe)\n  - **Maps**: [map](#map), [map2](#map2), [map3](#map3), [map4](#map4), [map5](#map5), [map6](#map6), [map7](#map7), [map8](#map8), [andMap](#andMap)\n  - **Fancy Decoding**: [lazy](#lazy), [value](#value), [fail](#fail), [succeed](#succeed), [andThen](#andThen)\n  - **Conversions**: [fromResult](#fromResult), [fromMaybe](#fromMaybe)\n\n@docs Decoder\n\n\n# Run Decoders\n\n@docs fromString, Value, Error, fromValue, errorToString\n\n\n# Primitives\n\n@docs string, bool, int, float, null\n\n\n# Data Structures\n\n@docs nullable, list, dict\n\n\n# Record Primitives\n\n@docs field, at\n\n\n# Inconsistent Structure\n\n@docs oneOf, maybe\n\n\n# Maps\n\n@docs map, map2, map3, map4, map5, map6, map7, map8, andMap\n\n\n# Fancy Decoding\n\n@docs lazy, value, fail, succeed, andThen\n\n\n# Conversions\n\n@docs fromResult, fromMaybe\n\n",
+        "unions": [
+            {
+                "name": "Decoder",
+                "comment": " A value that knows how to decode YAML.\n\nThere is a whole section in guide.elm-lang.org about decoders,\nso [check it out](https://guide.elm-lang.org/effects/json.html)\nfor a more comprehensive introduction!\n\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Error",
+                "comment": " A structured error describing how a decoder failed.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Parsing",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Decoding",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Value",
+                "comment": " Represents a YAML tree.\n",
+                "args": [],
+                "type": "Yaml.Parser.Value"
+            }
+        ],
+        "values": [
+            {
+                "name": "andMap",
+                "comment": " Can be useful when decoding large objects incrementally.\n\nFor example, this can be used to to [`mapN`](#map2) for any number of arguments. See the\n[documentation for `Json.Decode.Extra.andMap`](https://github.com/elm-community/json-extra/blob/master/docs/andMap.md) for a\nthorough explanation of how to use `andMap`.\n\n    -- map4\n    sumFields : Decoder Int\n    sumFields =\n      succeed (\\a b c d -> a + b + c + d)\n        |> andMap (field \"a\" int)\n        |> andMap (field \"b\" int)\n        |> andMap (field \"c\" int)\n        |> andMap (field \"d\" int)\n\n    fromString sumFields \"{a: 2, b: 5, c: -3, d: 9}\" --> Ok 13\n\n",
+                "type": "Yaml.Decode.Decoder a -> Yaml.Decode.Decoder (a -> b) -> Yaml.Decode.Decoder b"
+            },
+            {
+                "name": "andThen",
+                "comment": " Create decoders that depend on previous results.\n\nFor example, if you decoding depends on a `version`\nfield:\n\n    type alias Info =\n        { data: Int }\n\n    info : Decoder Info\n    info =\n        field \"version\" int\n            |> andThen infoHelp\n\n    -- infoHelp takes the \"version\" integer as its argument\n    infoHelp : Int -> Decoder Info\n    infoHelp version =\n        case version of\n            4 ->\n                infoDecoder4\n            3 ->\n                infoDecoder3\n            _ ->\n                fail (\"Version \"\n                        ++ String.fromInt version\n                        ++ \" is not supported.\")\n\n    infoDecoder4 : Decoder Info\n    infoDecoder4 =\n        map Info (field \"v4data\" int)\n\n    infoDecoder3 : Decoder Info\n    infoDecoder3 =\n        map (Info << String.length) (field \"v3data\" string)\n\n    fromString info \"{ version: 3, v3data: test }\"\n    --> Ok (Info 4)\n\n    fromString info \"{ version: 4, v4data: 5 }\"\n    --> Ok (Info 5)\n\n    fromString info \"{ version: 1 }\"\n    --> Err (Decoding \"Version 1 is not supported.\")\n\n",
+                "type": "(a -> Yaml.Decode.Decoder b) -> Yaml.Decode.Decoder a -> Yaml.Decode.Decoder b"
+            },
+            {
+                "name": "at",
+                "comment": " Decode a nested YAML record, requiring certain fields.\n\n    yaml : String\n    yaml = \"\"\"{ person: { name: Tom, age: 42 } }\"\"\"\n\n    fromString (at [\"person\", \"name\"] string) yaml --> Ok \"Tom\"\n\n    fromString (at [\"person\", \"age\"] int) yaml     --> Ok 42\n\n    fromString (at [\"not\", \"here\"] int) yaml --> Err (Decoding \"Expected property: not\")\n\nThis is really just shorthand for `field`. Equivalent to\nsaying things like:\n\n    fromString (field \"person\" (field \"name\" string)) yaml\n    --> fromString (at [ \"person\", \"name\" ] string) yaml\n\n",
+                "type": "List.List String.String -> Yaml.Decode.Decoder a -> Yaml.Decode.Decoder a"
+            },
+            {
+                "name": "bool",
+                "comment": " Decode a YAML boolean into an Elm `Bool`.\n\n    fromString bool \"true\" --> Ok True\n\n    fromString bool \"'true'\"\n    --> Err (Decoding \"Expected bool, got: \\\"true\\\"\")\n\n    fromString bool \"42\"\n    --> Err (Decoding \"Expected bool, got: 42 (int)\")\n\n    fromString bool \"hello\"\n    --> Err (Decoding \"Expected bool, got: \\\"hello\\\"\")\n\n    fromString bool \"hello: 42\"\n    --> Err (Decoding \"Expected bool, got: { hello: 42 (int) }\")\n\n",
+                "type": "Yaml.Decode.Decoder Basics.Bool"
+            },
+            {
+                "name": "dict",
+                "comment": " Decode a YAML record into an Elm `Dict`.\n\n    import Dict exposing (Dict)\n\n    fromString (dict int) \"{ alice: 42, bob: 99 }\"\n    --> Ok (Dict.fromList [ ( \"alice\", 42 ), ( \"bob\", 99 ) ])\n\n    fromString (dict string) \"42\"\n    --> Err (Decoding \"Expected record, got: 42 (int)\")\n\n",
+                "type": "Yaml.Decode.Decoder a -> Yaml.Decode.Decoder (Dict.Dict String.String a)"
+            },
+            {
+                "name": "errorToString",
+                "comment": " Convert a structured error into a `String` that is nice for debugging.\n",
+                "type": "Yaml.Decode.Error -> String.String"
+            },
+            {
+                "name": "fail",
+                "comment": " Ignore the YAML and make the decoder fail. This is handy\nwhen used with `oneOf` or `andThen` where you want to give a\ncustom error message in some case.\n\nSee the [andThen](#andThen) docs for an example.\n\n",
+                "type": "String.String -> Yaml.Decode.Decoder a"
+            },
+            {
+                "name": "field",
+                "comment": " Decode a YAML record, requiring a particular field.\n\n    fromString (field \"x\" int) \"{ x: 3 }\" --> Ok 3\n\n    fromString (field \"x\" int) \"{ x: 3, y: 4 }\" --> Ok 3\n\n    fromString (field \"x\" int) \"{ x: true }\" --> Err (Decoding \"Expected int, got: True (bool)\")\n\n    fromString (field \"x\" int) \"{ y: 4 }\" --> Err (Decoding \"Expected property: x\")\n\n    fromString (field \"name\" string) \"{ name: Tom }\" --> Ok \"Tom\"\n\nThe record _can_ have other fields. Lots of them! The only thing this decoder\ncares about is if `x` is present and that the value there can be decoded.\n\nCheck out [`mapN`](#map2) and [`andMap`](#andMap) to see how to decode multiple fields!\n\n",
+                "type": "String.String -> Yaml.Decode.Decoder a -> Yaml.Decode.Decoder a"
+            },
+            {
+                "name": "float",
+                "comment": " Decode a YAML number into an Elm `Float`.\n\n    fromString float \"true\"\n    --> Err (Decoding \"Expected float, got: True (bool)\")\n\n    fromString float \"'true'\"\n    --> Err (Decoding \"Expected float, got: \\\"true\\\"\")\n\n    fromString float \"42\" --> Ok 42\n\n    fromString float \"'42'\"\n    --> Err (Decoding \"Expected float, got: \\\"42\\\"\")\n\n    fromString float \"3.14\" --> Ok 3.14\n\n    fromString float \"hello\"\n    --> Err (Decoding \"Expected float, got: \\\"hello\\\"\")\n\n    fromString float \"hello: 42\"\n    --> Err (Decoding \"Expected float, got: { hello: 42 (int) }\")\n\n",
+                "type": "Yaml.Decode.Decoder Basics.Float"
+            },
+            {
+                "name": "fromMaybe",
+                "comment": " Convert a Maybe into a decoder.\n\nThis can be useful when you want to use functions that operate on `Maybe` in decoders,\nin combination with [`andThen`](#andThen).\n\n    fromString (string |> andThen (String.toInt >> fromMaybe \"Not an int\")) \"\\\"42\\\"\" --> Ok 42\n\n    fromString (string |> andThen (String.toInt >> fromMaybe \"Not an int\")) \"\" --> Err (Decoding \"Not an int\")\n\n",
+                "type": "String.String -> Maybe.Maybe a -> Yaml.Decode.Decoder a"
+            },
+            {
+                "name": "fromResult",
+                "comment": " Convert a Result into a decoder.\n\nThis can be useful when you want to use functions that operate on `Result` in decoders,\nin combination with [`andThen`](#andThen).\n\n    validate : String -> Result String String\n    validate s =\n        case s of\n            \"\" -> Err \"is empty\"\n            _ -> Ok s\n\n    fromString (string |> andThen (validate >> fromResult)) \"\\\"not empty\\\"\" --> Ok \"not empty\"\n\n    fromString (string |> andThen (validate >> fromResult)) \"\" --> Err (Decoding \"is empty\")\n\n",
+                "type": "Result.Result String.String a -> Yaml.Decode.Decoder a"
+            },
+            {
+                "name": "fromString",
+                "comment": " Decode a given string into an Elm value based on the\nprovided `Decoder`. This will fail if the string is not\nwell-formed YAML or if the `Decoder` doesn't match the\ninput.\n\n    fromString int \"4\" --> Ok 4\n\n    fromString int \"hello\" --> Err (Decoding \"Expected int, got: \\\"hello\\\"\")\n\n",
+                "type": "Yaml.Decode.Decoder a -> String.String -> Result.Result Yaml.Decode.Error a"
+            },
+            {
+                "name": "fromValue",
+                "comment": " Run a `Decoder` on a Yaml `Value`.\n",
+                "type": "Yaml.Decode.Decoder a -> Yaml.Decode.Value -> Result.Result Yaml.Decode.Error a"
+            },
+            {
+                "name": "int",
+                "comment": " Decode a YAML number into an Elm `Int`.\n\n    fromString int \"true\"\n    --> Err (Decoding \"Expected int, got: True (bool)\")\n\n    fromString int \"'true'\"\n    --> Err (Decoding \"Expected int, got: \\\"true\\\"\")\n\n    fromString int \"42\"        --> Ok 42\n\n    fromString int \"'42'\"\n    --> Err (Decoding \"Expected int, got: \\\"42\\\"\")\n\n    fromString int \"3.14\"\n    --> Err (Decoding \"Expected int, got: 3.14 (float)\")\n\n    fromString int \"hello\"\n    --> Err (Decoding \"Expected int, got: \\\"hello\\\"\")\n\n    fromString int \"hello: 42\"\n    --> Err (Decoding \"Expected int, got: { hello: 42 (int) }\")\n\n",
+                "type": "Yaml.Decode.Decoder Basics.Int"
+            },
+            {
+                "name": "lazy",
+                "comment": " Decode YAML with a recursive (nested) structure.\n\nAn example is nested comments:\n\n    type alias Comment =\n      { comment : String\n      , responses : Responses\n      }\n\n    type Responses = Responses (List Comment)\n\n    comment : Decoder Comment\n    comment =\n      map2 Comment\n        (field \"comment\" string)\n        (field \"responses\" (map Responses (list (lazy (\\_ -> comment)))))\n\n    yaml : String\n    yaml = \"{ comment: 'hello world', responses: [ {comment: 'hello', responses: [] } ] }\"\n\n    fromString comment yaml\n    --> Ok { comment = \"'hello world'\", responses = Responses [{ comment = \"'hello'\", responses = Responses [] }] }\n\nBy using `lazy` you make sure that the decoder only expands\nto be as deep as the YAML structure. You can read more about\nrecursive data structures\n[here](https://github.com/elm/compiler/blob/master/hints/recursive-alias.md).\n\n",
+                "type": "(() -> Yaml.Decode.Decoder a) -> Yaml.Decode.Decoder a"
+            },
+            {
+                "name": "list",
+                "comment": " Decode a YAML array into an Elm `List`.\n\n    fromString (list int) \"[1,2,3]\" --> Ok [ 1, 2, 3 ]\n\n    fromString (list bool) \"[ true, false ]\" --> Ok [ True, False ]\n\n    fromString (list float) \"true\"\n    --> Err (Decoding \"Expected list, got: True (bool)\")\n\n",
+                "type": "Yaml.Decode.Decoder a -> Yaml.Decode.Decoder (List.List a)"
+            },
+            {
+                "name": "map",
+                "comment": " Transform the result of a decoder. For example,\nget the length of a string:\n\n    stringLength : Decoder Int\n    stringLength =\n      map String.length string\n\n    fromString stringLength \"hello\" --> Ok 5\n\n`map` runs the decoder (`string` in the example above) and\ngives the result to the function (`String.length` in the\nexample above).\n\n",
+                "type": "(a -> b) -> Yaml.Decode.Decoder a -> Yaml.Decode.Decoder b"
+            },
+            {
+                "name": "map2",
+                "comment": " Try two decoders and then combine the result. You can use this to\ndecode records with 2 fields:\n\n    type alias Point = { x : Float, y : Float }\n\n    point : Decoder Point\n    point =\n      map2 Point\n         (field \"x\" float)\n         (field \"y\" float)\n\n    fromString point \"{x: 1.2, y: 2.5}\" --> Ok { x = 1.2, y = 2.5 }\n\n`map2` runs each decoder in order and privides the results to the\nfunction (taking 2 arguments; the `Point` constructor in the example\nabove).\n\n",
+                "type": "(a -> b -> c) -> Yaml.Decode.Decoder a -> Yaml.Decode.Decoder b -> Yaml.Decode.Decoder c"
+            },
+            {
+                "name": "map3",
+                "comment": " Try three decoders and then combine the result.\n",
+                "type": "(a -> b -> c -> d) -> Yaml.Decode.Decoder a -> Yaml.Decode.Decoder b -> Yaml.Decode.Decoder c -> Yaml.Decode.Decoder d"
+            },
+            {
+                "name": "map4",
+                "comment": " Try four decoders and then combine the result.\n",
+                "type": "(a -> b -> c -> d -> e) -> Yaml.Decode.Decoder a -> Yaml.Decode.Decoder b -> Yaml.Decode.Decoder c -> Yaml.Decode.Decoder d -> Yaml.Decode.Decoder e"
+            },
+            {
+                "name": "map5",
+                "comment": " Try five decoders and then combine the result.\n",
+                "type": "(a -> b -> c -> d -> e -> f) -> Yaml.Decode.Decoder a -> Yaml.Decode.Decoder b -> Yaml.Decode.Decoder c -> Yaml.Decode.Decoder d -> Yaml.Decode.Decoder e -> Yaml.Decode.Decoder f"
+            },
+            {
+                "name": "map6",
+                "comment": " Try six decoders and then combine the result.\n",
+                "type": "(a -> b -> c -> d -> e -> f -> g) -> Yaml.Decode.Decoder a -> Yaml.Decode.Decoder b -> Yaml.Decode.Decoder c -> Yaml.Decode.Decoder d -> Yaml.Decode.Decoder e -> Yaml.Decode.Decoder f -> Yaml.Decode.Decoder g"
+            },
+            {
+                "name": "map7",
+                "comment": " Try seven decoders and then combine the result.\n",
+                "type": "(a -> b -> c -> d -> e -> f -> g -> h) -> Yaml.Decode.Decoder a -> Yaml.Decode.Decoder b -> Yaml.Decode.Decoder c -> Yaml.Decode.Decoder d -> Yaml.Decode.Decoder e -> Yaml.Decode.Decoder f -> Yaml.Decode.Decoder g -> Yaml.Decode.Decoder h"
+            },
+            {
+                "name": "map8",
+                "comment": " Try eight decoders and then combine the result.\n",
+                "type": "(a -> b -> c -> d -> e -> f -> g -> h -> i) -> Yaml.Decode.Decoder a -> Yaml.Decode.Decoder b -> Yaml.Decode.Decoder c -> Yaml.Decode.Decoder d -> Yaml.Decode.Decoder e -> Yaml.Decode.Decoder f -> Yaml.Decode.Decoder g -> Yaml.Decode.Decoder h -> Yaml.Decode.Decoder i"
+            },
+            {
+                "name": "maybe",
+                "comment": " Makes its argument optional.\nA decoder which returns `Nothing` when it fails.\n\nHelpful when dealing with optional fields: you probably want to\nuse `maybe` outside `field` or `at`. Here are a few examples:\n\n    yaml : String\n    yaml = \"{ name: Stacy, age: 27, temperature: 37.6 }\"\n\n    fromString (maybe (field \"age\" int)) yaml      --> Ok (Just 27)\n\n    fromString (maybe (field \"height\" float)) yaml --> Ok Nothing\n\nThese two examples decode to `Nothing` if a field does not exist.\nThey say there _may_ be an `age` field, if it exists it _must_\nbe an integer. And there _may_ be a `height` field, if it exists\nit _must_ be a `Float`.\n\nYou can also decode to `Nothing` if a field is a different type:\n\n    fromString (field \"temperature\" (maybe string)) yaml --> Ok Nothing\n\n    fromString (field \"age\" (maybe int)) yaml --> Ok (Just 27)\n\nThese two examples say you _must_ have `temperature` and\n`age` fields and the content _may_ be integers.\n\n",
+                "type": "Yaml.Decode.Decoder a -> Yaml.Decode.Decoder (Maybe.Maybe a)"
+            },
+            {
+                "name": "null",
+                "comment": " Decode a YAML null value into [Nothing](elm/core/latest/Maybe).\n\n    fromString null \"\" --> Ok Nothing\n\n    fromString null \"null\" --> Ok Nothing\n\n    fromString null \"true\"\n    --> Err (Decoding \"Expected null, got: True (bool)\")\n\n    fromString null \"42\"\n    --> Err (Decoding \"Expected null, got: 42 (int)\")\n\n    fromString null \"hello: 42\"\n    --> Err (Decoding \"Expected null, got: { hello: 42 (int) }\")\n\n",
+                "type": "Yaml.Decode.Decoder (Maybe.Maybe a)"
+            },
+            {
+                "name": "nullable",
+                "comment": " Decode a nullable YAML value into an Elm value.\n\n    fromString (nullable int) \"42\" --> Ok (Just 42)\n\n    fromString (nullable int) \"3.14\"\n    --> Err (Decoding \"Expected int, got: 3.14 (float)\")\n\n    fromString (nullable int) \"null\" --> Ok Nothing\n\n    fromString (nullable int) \"true\"\n    --> Err (Decoding \"Expected int, got: True (bool)\")\n\n",
+                "type": "Yaml.Decode.Decoder a -> Yaml.Decode.Decoder (Maybe.Maybe a)"
+            },
+            {
+                "name": "oneOf",
+                "comment": " Try a list of different decoders. Pick the first working one.\nThis can be useful if the YAML comes in different formats. For\nexample, if you want to read an array of numbers but some of them\nare `null`.\n\n    fromString (oneOf [ field \"a\" int, field \"b\" int ]) \"{a: 42}\" --> Ok 42\n\n    fromString (oneOf [ field \"a\" int, field \"b\" int ]) \"{b: 3}\" --> Ok 3\n\n    fromString (oneOf [ field \"a\" int, field \"b\" int ]) \"true\" --> Err (Decoding \"Empty\")\n\n",
+                "type": "List.List (Yaml.Decode.Decoder a) -> Yaml.Decode.Decoder a"
+            },
+            {
+                "name": "string",
+                "comment": " Decode a YAML string into an Elm `String`.\n\n    fromString string \"true\"\n    --> Err (Decoding \"Expected string, got: True (bool)\")\n\n    fromString string \"'true'\" --> Ok \"true\"\n\n    fromString string \"42\"\n    --> Err (Decoding \"Expected string, got: 42 (int)\")\n\n    fromString string \"'42'\" --> Ok \"42\"\n\n    fromString string \"hello\" --> Ok \"hello\"\n\n    fromString string \"hello: 42\"\n    --> Err (Decoding \"Expected string, got: { hello: 42 (int) }\")\n\n",
+                "type": "Yaml.Decode.Decoder String.String"
+            },
+            {
+                "name": "succeed",
+                "comment": " Ignore the YAML and produce a given Elm value.\n\n    fromString (succeed 42) \"true\" --> Ok 42\n\n    fromString (succeed 42) \"[]\" --> Ok 42\n\n    fromString (succeed 42) \"{ \" |> Result.toMaybe --> Nothing -- Long parsing error\n\n",
+                "type": "a -> Yaml.Decode.Decoder a"
+            },
+            {
+                "name": "value",
+                "comment": " Do not do anything with a YAML value, just bring it into\nElm as a `Value`. This can be useful if you have particularly\ncomplex data that you would like to deal with later. Or if you\nare going to send it out of a port and do not care about its\nstructure.\n",
+                "type": "Yaml.Decode.Decoder Yaml.Decode.Value"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Yaml.Encode",
+        "comment": " Turn Elm values into [YAML](https://yaml.org). You use `Yaml.Encode` in a very similar\nway to how you use `Json.Encode`. For an excellent introduction to encoding (with `Json.Encode`)\nhave a look at\n[this blog post](https://korban.net/posts/elm/2018-09-12-generate-json-from-elm-values-json-encode/).\n\n\n## Table of Contents\n\n  - **Primitives**: [int](#int), [string](#string), [bool](#bool), [float](#float), [null](#null), [value](#value)\n  - **Data Structures**: [list](#list), [record](#record), [dict](#dict)\n  - **YAML specifics**: [document](#document)\n\n@docs Encoder\n\n\n# Run Encoders\n\n@docs toString\n\n\n# Primitives\n\n@docs string, int, float, bool, null, value\n\n\n# Data Structures\n\n@docs list, record, dict\n\n\n# YAML specific details\n\n@docs document\n\n",
+        "unions": [
+            {
+                "name": "Encoder",
+                "comment": " A value that knows how to encode Elm values into YAML.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "bool",
+                "comment": " Encode a `Bool` into a YAML bool.\n\n    toString 0 (bool True) --> \"true\"\n\n    toString 0 (bool False) --> \"false\"\n\n",
+                "type": "Basics.Bool -> Yaml.Encode.Encoder"
+            },
+            {
+                "name": "dict",
+                "comment": " Encode a `Dict` into a YAML record.\n\n    import Dict\n\n\n    toString 0 (dict\n                  identity\n                  int (Dict.singleton \"Sue\" 38))\n    --> \"{Sue: 38}\"\n\n    toString 2 (dict\n                  identity\n                  string (Dict.fromList [ (\"hello\", \"foo\")\n                                        , (\"world\", \"bar\")\n                                        ]\n                         )\n               )\n    --> \"hello: foo\\nworld: bar\"\n\n",
+                "type": "(k -> String.String) -> (v -> Yaml.Encode.Encoder) -> Dict.Dict k v -> Yaml.Encode.Encoder"
+            },
+            {
+                "name": "document",
+                "comment": " Encode a YAML document\n\nYAML \"documents\" are demarked by \"`---`\" at the beginning and\n\"`...`\" at the end. This encoder places a value into a\ndemarcated YAML document.\n\n    toString 0 (document <| string \"hello\")\n    --> \"---\\nhello\\n...\"\n\n    toString 2 (document\n                  <| record [ (\"hello\", int 5)\n                            , (\"foo\", int 3)\n                            ]\n               )\n    --> \"---\\nhello: 5\\nfoo: 3\\n...\"\n\n",
+                "type": "Yaml.Encode.Encoder -> Yaml.Encode.Encoder"
+            },
+            {
+                "name": "float",
+                "comment": " Encode a `Float` into a YAML float.\n\n    nan : Float\n    nan = (0/0)\n\n    infinity : Float\n    infinity = (1/0)\n\n    toString 0 (float 3.14)      --> \"3.14\"\n\n    toString 0 (float -42)       --> \"-42\"\n\n    toString 0 (float 0.0)       --> \"0\"\n\n    toString 0 (float nan)       --> \".nan\"\n\n    toString 0 (float -infinity) --> \"-.inf\"\n\n",
+                "type": "Basics.Float -> Yaml.Encode.Encoder"
+            },
+            {
+                "name": "int",
+                "comment": " Encode an `Int` into a YAML int.\n\n    toString 0 (int 42) --> \"42\"\n\n    toString 0 (int -7) --> \"-7\"\n\n    toString 0 (int 0) --> \"0\"\n\n",
+                "type": "Basics.Int -> Yaml.Encode.Encoder"
+            },
+            {
+                "name": "list",
+                "comment": " Encode a `List` into a YAML list.\n\n    toString 0 (list float [1.1, 2.2, 3.3])\n    --> \"[1.1,2.2,3.3]\"\n\n    toString 2 (list string [\"a\", \"b\"])\n    --> \"- a\\n- b\"\n\n",
+                "type": "(a -> Yaml.Encode.Encoder) -> List.List a -> Yaml.Encode.Encoder"
+            },
+            {
+                "name": "null",
+                "comment": " Encode a YAML `null` value\n\n    toString 0 null --> \"null\"\n\n    toString 2 (record [ (\"null\", null) ])\n    --> \"null: null\"\n\n",
+                "type": "Yaml.Encode.Encoder"
+            },
+            {
+                "name": "record",
+                "comment": " Encode a YAML record.\n\n    toString 0 (record [ ( \"name\", string \"Sally\" )\n                       , ( \"height\", int 187)\n                       ]\n               )\n    --> \"{name: Sally,height: 187}\"\n\n    toString 2 (record [ ( \"foo\", int 42 )\n                       , ( \"bar\", float 3.14 )\n                       ]\n               )\n    --> \"foo: 42\\nbar: 3.14\"\n\n",
+                "type": "List.List ( String.String, Yaml.Encode.Encoder ) -> Yaml.Encode.Encoder"
+            },
+            {
+                "name": "string",
+                "comment": " Encode a `String` into a YAML string.\n\n    toString 0 (string \"\") --> \"\"\n\n    toString 0 (string \"hello\") --> \"hello\"\n\n",
+                "type": "String.String -> Yaml.Encode.Encoder"
+            },
+            {
+                "name": "toString",
+                "comment": " Encode a given Elm value into a YAML formatted string.\n\nThe first argument specifies the amount of indentation in the\nresulting string.\n\n    toString 0 (int 4) --> \"4\"\n\n    toString 0 (list int [ 1, 2, 3 ]) --> \"[1,2,3]\"\n\n    toString 2 (list int [ 1, 2, 3 ])\n    --> \"- 1\\n- 2\\n- 3\"\n\nYou can also embed your encoded values into a YAML document:\n\n    toString 2 (document\n                  <| record [ ( \"hello\", string \"world\" ) ])\n    --> \"---\\nhello: world\\n...\"\n\n",
+                "type": "Basics.Int -> Yaml.Encode.Encoder -> String.String"
+            },
+            {
+                "name": "value",
+                "comment": " Encode a `Value` as produced by `Yaml.Decode.value`\n",
+                "type": "Yaml.Parser.Ast.Value -> Yaml.Encode.Encoder"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,91 @@
+[
+    {
+        "name": "ArchitectureTest",
+        "comment": " A library for **fuzz testing TEA models** by simulating user\ninteractions (using fuzzed lists of Msgs).\n\nThis means:\n\n  - start with a model (can be fuzzed, see `TestedModel`)\n  - generate random Msgs (ie. \"what the user would do\")\n  - apply them to the model\n  - test a property of the model (ie. \"Cancel Msg sets currentCoins to 0\")\n\n**You get the nice property of fuzz tests that this kind of testing\nwill show you the minimal Msg sequence to provoke a bug.**\n\nThe `app` in doc examples below is:\n\n    { model = ConstantModel model\n    , update = UpdateWithoutCmds update\n    , msgFuzzer =\n        Fuzz.oneOf\n            [ Fuzz.int 0 50 |> Fuzz.map AddCoins\n            , Fuzz.constant Cancel\n            , Fuzz.constant Buy\n            , Fuzz.constant TakeProduct\n            ]\n    }\n\nFor a complete code example, see the examples/ directory of the repo.\n\n\n# Tests\n\n@docs msgTest, msgTestWithPrecondition, invariantTest\n\n\n# Types\n\n@docs TestedApp, TestedModel, TestedUpdate\n\n\n# Fuzzers\n\n@docs modelFuzzer\n\n",
+        "unions": [
+            {
+                "name": "TestedModel",
+                "comment": " The strategy for choosing an init model to which the Msgs\nwill be applied.\n",
+                "args": [
+                    "model"
+                ],
+                "cases": [
+                    [
+                        "ConstantModel",
+                        [
+                            "model"
+                        ]
+                    ],
+                    [
+                        "FuzzedModel",
+                        [
+                            "Fuzz.Fuzzer model"
+                        ]
+                    ],
+                    [
+                        "OneOfModels",
+                        [
+                            "List.List model"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "TestedUpdate",
+                "comment": " Main applications can be of two types: those without Cmds\nand normal (Cmds present).\n\nFor custom `update` functions returning eg. triples etc.,\njust use `UpdateWithoutCmds` with a function that returns just the model part of\nthe result:\n\n    update : Msg -> Model -> {model : Model, cmd : Cmd Msg, outMsg : OutMsg}\n\n    UpdateWithoutCmds (\\msg model -> update msg model |> .model)\n\n",
+                "args": [
+                    "model",
+                    "msg"
+                ],
+                "cases": [
+                    [
+                        "UpdateWithoutCmds",
+                        [
+                            "msg -> model -> model"
+                        ]
+                    ],
+                    [
+                        "NormalUpdate",
+                        [
+                            "msg -> model -> ( model, Platform.Cmd.Cmd msg )"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "TestedApp",
+                "comment": " All of these \"architecture tests\" are going to have something\nin common: Model, update function and Msgs.\n\nNote that for some tests you can eg. make the Msg fuzzer prefer\ncertain Msgs more if you need to test them more extensively.\n\n",
+                "args": [
+                    "model",
+                    "msg"
+                ],
+                "type": "{ model : ArchitectureTest.TestedModel model, update : ArchitectureTest.TestedUpdate model msg, msgFuzzer : Fuzz.Fuzzer msg, msgToString : msg -> String.String, modelToString : model -> String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "invariantTest",
+                "comment": " Tests that a property holds no matter what Msgs we applied.\n\n    priceConstant : Test\n    priceConstant =\n        invariantTest \"Price is constant\"\n            app\n        <|\n            \\initModel _ finalModel ->\n                finalModel.productPrice\n                    |> Expect.equal initModel.productPrice\n\nThe test function's arguments are:\n\n    init model -> random Msgs -> final model\n\n",
+                "type": "String.String -> ArchitectureTest.TestedApp model msg -> (model -> List.List msg -> model -> Expect.Expectation) -> Test.Test"
+            },
+            {
+                "name": "modelFuzzer",
+                "comment": " Fuzz the model, always starting with initial `Model`s and then doing\nconsecutive `update` calls with fuzzed `Msg`s.\n\nGuarantees the final model is reachable using your Msgs and thus \"makes sense.\"\n\n",
+                "type": "ArchitectureTest.TestedApp model msg -> Fuzz.Fuzzer model"
+            },
+            {
+                "name": "msgTest",
+                "comment": " Tests that a condition holds for a randomly generated Model\nafter that specific Msg is applied.\n\nThe process is as follows:\n\n1.  get an initial `Model` (based on `TestedApp`)\n\n2.  stuff it and a list of random `Msg`s into `update` to get a random `Model`\n\n3.  create a `Msg` we will test\n\n4.  stuff it and the random `Model` into `update` to get the final `Model`\n\n5.  run your test function on the three values (random Model, tested Msg, final Model)\n\n```\ncancelReturnsMoney : Test\ncancelReturnsMoney =\n    msgTest \"Cancelling returns all input money\"\n        app\n        (Fuzz.constant Cancel)\n    <|\n        \\_ _ finalModel -> finalModel.currentCoins |> Expect.equal 0\n```\n\nThe test function's arguments are:\n\n    random Model (before the tested Msg) -> tested Msg -> final Model\n\n",
+                "type": "String.String -> ArchitectureTest.TestedApp model msg -> Fuzz.Fuzzer msg -> (model -> msg -> model -> Expect.Expectation) -> Test.Test"
+            },
+            {
+                "name": "msgTestWithPrecondition",
+                "comment": " Similar to msgTest, but only gets run when a precondition holds.\n\n    buyingAbovePriceVendsProduct : Test\n    buyingAbovePriceVendsProduct =\n        msgTestWithPrecondition \"Buying above price vends the product\"\n            app\n            (Fuzz.constant Buy)\n            (\\model -> model.currentCoins >= model.productPrice)\n        <|\n            \\_ _ finalModel ->\n                finalModel.isProductVended\n                    |> Expect.true \"Product should be vended after trying to buy with enough money\"\n\nThe precondition acts on the \"model before specific Msg\" (see `msgTest` docs).\n\n",
+                "type": "String.String -> ArchitectureTest.TestedApp model msg -> Fuzz.Fuzzer msg -> (model -> Basics.Bool) -> (model -> msg -> model -> Expect.Expectation) -> Test.Test"
+            }
+        ],
+        "binops": []
+    }
+]

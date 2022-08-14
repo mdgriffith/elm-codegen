@@ -1,0 +1,1249 @@
+[
+    {
+        "name": "Palette.Cubehelix",
+        "comment": " Cubehelix color palette.\n![](https://user-images.githubusercontent.com/8811312/52818779-82238080-305c-11e9-8084-9c0048f549a2.png)\n\nUse this palette generator when you want a color scheme in which none of the colors \"pop.\"\n\nProfessor Dave Green (whose name, given the context, makes me very happy! Please also see [these testimonials](http://davegreenfacts.soc.srcf.net/).)\ndeveloped this method of generating even-intensity color schemes for use in astronomy. He called this method\n\"cubehelix\" based on its relationship to the RGB color solid (a cube!). If you're curious (what cube?? what about the\nhelix?!) please read more about it [here](https://www.mrao.cam.ac.uk/~dag/CUBEHELIX/), or see the paper:\n\n> Green, D. A., 2011, [\"A colour scheme for the display of astronomical intensity images\"](http://astron-soc.in/bulletin/11June/289392011.pdf), Bulletin of the Astronomical Society of India, 39, 289.\n> ([2011BASI...39..289G](https://ui.adsabs.harvard.edu/#abs/2011BASI...39..289G) at [ADS](https://ui.adsabs.harvard.edu/).)\n\n\n## Generate a palette\n\n    import Palette.Cubehelix as Cubehelix\n    import SolidColor exposing (SolidColor)\n\n    myPalette : List SolidColor\n    myPalette =\n        -- This will generate 10 even-intensity colors\n        Cubehelix.generate 10\n\n![](https://user-images.githubusercontent.com/8811312/52819054-37563880-305d-11e9-9cf3-a553c54f2c11.png)\n\n[See this example code on Ellie](https://ellie-app.com/9jPd6k6kCGxa1)\n\n@docs generate\n\n\n## Customize your palette\n\n    import Palette.Cubehelix as Cubehelix\n    import SolidColor exposing (SolidColor)\n\n    myPalette : List SolidColor\n    myPalette =\n        Cubehelix.generateAdvanced 27\n            { start = SolidColor.fromHSL ( 20, 100, 0 )\n            , rotationDirection = Cubehelix.BGR\n            , rotations = 1.2\n            , gamma = 0.9\n            }\n\n[See this example code on Ellie](https://ellie-app.com/9jPdCCSD9dya1)\n\n@docs generateAdvanced, defaultConfig\n@docs AdvancedConfig, RotationDirection\n\n",
+        "unions": [
+            {
+                "name": "RotationDirection",
+                "comment": " The helix can rotate in the red, green, blue direction, or in the blue, green, red direction.\nTry both and see which one you like better!\n",
+                "args": [],
+                "cases": [
+                    [
+                        "RGB",
+                        []
+                    ],
+                    [
+                        "BGR",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "AdvancedConfig",
+                "comment": " `start` is used to derive what hue you want to start from (see HSL color space)\nas well as how saturated (how far from grey) you want the colors produced to be.\nThe lightness of the color that you pass in is not used.\n\n`rotationDirection` describes whether the helix moves towards red then green then blue, or\nblue then green then red. This is easiest to visualize if you think of a cube defined by three\nvectors, one each for red, green, and blue values. If that's not doing the trick,\ntake a look at [this image](https://www.mrao.cam.ac.uk/~dag/CUBEHELIX/3d-default.png).\n\n`rotations` describes the number of rotations the helix should make as it moves from black (`SolidColor.fromRGB (0, 0 0)`)\nto white `SolidColor.fromRGB (255, 255, 255)`. `rotations` should be in [0, 1.5]. If it's not, it will be absolute-value-ified & clamped.\n\nThe `gamma` value can be used to emphasize low- or high-intensity colors. `gamma` will be clamped with `clamp 0 2`.\n\n  - Provide a 0 < gamma < 1 to emphasize low-intensity values\n  - Provide a 1 < gamma < 2 to emphasize high-intensity values\n\n",
+                "args": [],
+                "type": "{ start : SolidColor.SolidColor, rotationDirection : Palette.Cubehelix.RotationDirection, rotations : Basics.Float, gamma : Basics.Float }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultConfig",
+                "comment": " `defaultConfig` is pre-populated with the values analagous to those that Professor Green uses.\nThis is a great place to start to learn what different settings can get you. Try playing with one\nvalue at a time to see how it changes the result!\n\n    { start = SolidColor.fromHSL ( -60, 100, 0 )\n    , rotationDirection = BGR\n    , rotations = 1.5\n    , gamma = 1.0\n    }\n\n",
+                "type": "Palette.Cubehelix.AdvancedConfig"
+            },
+            {
+                "name": "generate",
+                "comment": " The parameter (clamped between 0 and 256) corresponds to the number of colors you want to generate.\n",
+                "type": "Basics.Int -> List.List SolidColor.SolidColor"
+            },
+            {
+                "name": "generateAdvanced",
+                "comment": " The first parameter (clamped between 0 and 256) corresponds to the number of colors you want to generate.\n",
+                "type": "Basics.Int -> Palette.Cubehelix.AdvancedConfig -> List.List SolidColor.SolidColor"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Palette.Generative",
+        "comment": "\n\n\n### Generate a palette by hue\n\n@docs complementary, triadic, splitComplementary, square, tetratic\n\n\n### Generate a palette by lightness\n\n@docs monochromatic\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "complementary",
+                "comment": " Find the color opposite the color you pass in on the color wheel.\n\nE.g., if you pass in a reddish color, you should expect to get back a tealish color.\n\n[Ellie example](https://ellie-app.com/9jNWHMFD6X3a1)\n\n",
+                "type": "SolidColor.SolidColor -> SolidColor.SolidColor"
+            },
+            {
+                "name": "monochromatic",
+                "comment": " Create a monochromatic palette. The `Float` argument is size of the Lightness\nsteps that you'd like in the palette.\n\nIf you wanted a grayscale palette, and you wanted it to have five colors, you could do\nsomething like this:\n\n    grayscalePalette =\n        monochromatic 20 black\n\nColors will be arranged from darkest to lightest.\n\n[Ellie example](https://ellie-app.com/9jNGn2SvnJda1)\n\n",
+                "type": "Basics.Float -> SolidColor.SolidColor -> List.List SolidColor.SolidColor"
+            },
+            {
+                "name": "splitComplementary",
+                "comment": " Build a three-color scheme by rotating the same amount from the initial color\nin both directions.\n\n`triadic`, the evenly-spaced 3-color scheme, can be defined in terms of this function:\n\n    triadic color =\n        splitComplementary 120 color\n\nInitial rotation is clamped between 0 and 180.\n\n[Ellie example](https://ellie-app.com/9jNXxc85VR8a1)\n\n",
+                "type": "Basics.Float -> SolidColor.SolidColor -> ( SolidColor.SolidColor, SolidColor.SolidColor )"
+            },
+            {
+                "name": "square",
+                "comment": " Find four equally-spaced colors along the color wheel starting from the passed-in color.\n\n[Ellie example](https://ellie-app.com/9jNTjGx86wCa1)\n\n",
+                "type": "SolidColor.SolidColor -> ( SolidColor.SolidColor, SolidColor.SolidColor, SolidColor.SolidColor )"
+            },
+            {
+                "name": "tetratic",
+                "comment": " Find four colors along the color wheel starting from the passed-in color.\n\nThis differs from the `square` helper in that our values aren't equally spaced --\nwe are selecting colors on the color wheel with a rectangle. We can actually define\n`square` in terms of this function as follows:\n\n    square color =\n        tetratic 60 color\n\nWe'll rotate the number of degrees passed in along the color wheel to find our first\ncolor. Then we'll rotate the \"length\" of the rectangle -- as much as we need to in order\nto make it all the way around.\n\nInitial rotation is clamped between 0 and 180.\n\n[Ellie example](https://ellie-app.com/9jNJP4D3Pgqa1)\n\n",
+                "type": "Basics.Float -> SolidColor.SolidColor -> ( SolidColor.SolidColor, SolidColor.SolidColor, SolidColor.SolidColor )"
+            },
+            {
+                "name": "triadic",
+                "comment": " Find the other two colors in the triadic scheme defined by the color passed in.\n\nTriadic color schemes are evenly-spaced, so each of the three colors is 120 degrees\nfrom the others.\n\nThe internet says this scheme will be vibrant, and that you should\nmostly use one of the three colors and only use the other two for accents.\n\n[Ellie example](https://ellie-app.com/9jNW6cpLkfba1)\n\n",
+                "type": "SolidColor.SolidColor -> ( SolidColor.SolidColor, SolidColor.SolidColor )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Palette.Tango",
+        "comment": " [Tango](http://tango.freedesktop.org/Tango_Icon_Theme_Guidelines#Color_Palette) color palette.\n\n![](https://user-images.githubusercontent.com/8811312/51518135-c3b06b00-1dd1-11e9-9047-b53e5f179f77.png)\n\n[Ellie displaying all Tango colors](https://ellie-app.com/9jP8dCxps29a1)\n\n\n## Butters\n\n@docs butter1, butter2, butter3\n\n\n## Oranges\n\n@docs orange1, orange2, orange3\n\n\n## Chocolates\n\n@docs chocolate1, chocolate2, chocolate3\n\n\n## Chameleons\n\n@docs chameleon1, chameleon2, chameleon3\n\n\n## Sky Blues\n\n@docs skyBlue1, skyBlue2, skyBlue3\n\n\n## Plums\n\n@docs plum1, plum2, plum3\n\n\n## Scarlet Reds\n\n@docs scarletRed1, scarletRed2, scarletRed3\n\n\n## Aluminums\n\n@docs aluminum1, aluminum2, aluminum3, aluminum4, aluminum5, aluminum6\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "aluminum1",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "aluminum2",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "aluminum3",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "aluminum4",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "aluminum5",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "aluminum6",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "butter1",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "butter2",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "butter3",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "chameleon1",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "chameleon2",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "chameleon3",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "chocolate1",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "chocolate2",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "chocolate3",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "orange1",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "orange2",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "orange3",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "plum1",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "plum2",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "plum3",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "scarletRed1",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "scarletRed2",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "scarletRed3",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "skyBlue1",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "skyBlue2",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "skyBlue3",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Palette.X11",
+        "comment": " [X11 colors](https://en.wikipedia.org/wiki/Web_colors#X11_color_names).\n![](https://user-images.githubusercontent.com/8811312/51518957-62d66200-1dd4-11e9-86c7-ef90e7b06811.png)\n\n[Ellie displaying all X11 colors](https://ellie-app.com/9jPb7ddF3HKa1)\n\n\n## Pinks\n\n@docs pink, lightPink, hotPink, deepPink, paleVioletRed, mediumVioletRed\n\n\n## Reds\n\n@docs lightSalmon, salmon, darkSalmon, lightCoral, indianRed, crimson, firebrick, darkRed, red\n\n\n## Orange-Reds\n\n@docs orangeRed, tomato, coral, darkOrange, orange\n\n\n## Yellows\n\n@docs yellow, lightYellow, lemonChiffon, lightGoldenrodYellow, papayaWhip, moccasin, peachPuff, paleGoldenrod, khaki, darkKhaki, gold\n\n\n## Browns\n\n@docs cornsilk, blanchedAlmond, bisque, navajoWhite, wheat, burlywood, tan, rosyBrown, sandyBrown, goldenrod, darkGoldenrod, peru, chocolate, saddleBrown, sienna, brown, maroon\n\n\n## Greens\n\n@docs darkOliveGreen, olive, oliveDrab, yellowGreen, limeGreen, lime, lawnGreen, chartreuse, greenYellow, springGreen, mediumSpringGreen, lightGreen, paleGreen, darkSeaGreen, mediumAquamarine, mediumSeaGreen, seaGreen, forestGreen, green, darkGreen\n\n\n## Cyans\n\n@docs aqua, cyan, lightCyan, paleTurquoise, aquamarine, turquoise, mediumTurquoise, darkTurquoise, lightSeaGreen, cadetBlue, darkCyan, teal\n\n\n## Blues\n\n@docs lightSteelBlue, powderBlue, lightBlue, skyBlue, lightSkyBlue, deepSkyBlue, dodgerBlue, cornflowerBlue, steelBlue, royalBlue, blue, mediumBlue, darkBlue, navy, midnightBlue\n\n\n## Purples\n\n@docs lavender, thistle, plum, violet, orchid, fuchsia, magenta, mediumOrchid, mediumPurple, blueViolet, darkViolet, darkOrchid, darkMagenta, purple, indigo, darkSlateBlue, slateBlue, mediumSlateBlue\n\n\n## Whites\n\n@docs white, snow, honeydew, mintCream, azure, aliceBlue, ghostWhite, whiteSmoke, seashell, beige, oldLace, floralWhite, ivory, antiqueWhite, linen, lavenderBlush, mistyRose\n\n\n## Blacks and Grays\n\n@docs gainsboro, lightGray, silver, darkGray, gray, dimGray, lightSlateGray, slateGray, darkSlateGray, black\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "aliceBlue",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "antiqueWhite",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "aqua",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "aquamarine",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "azure",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "beige",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "bisque",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "black",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "blanchedAlmond",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "blue",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "blueViolet",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "brown",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "burlywood",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "cadetBlue",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "chartreuse",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "chocolate",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "coral",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "cornflowerBlue",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "cornsilk",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "crimson",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "cyan",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "darkBlue",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "darkCyan",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "darkGoldenrod",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "darkGray",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "darkGreen",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "darkKhaki",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "darkMagenta",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "darkOliveGreen",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "darkOrange",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "darkOrchid",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "darkRed",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "darkSalmon",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "darkSeaGreen",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "darkSlateBlue",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "darkSlateGray",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "darkTurquoise",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "darkViolet",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "deepPink",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "deepSkyBlue",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "dimGray",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "dodgerBlue",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "firebrick",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "floralWhite",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "forestGreen",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "fuchsia",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "gainsboro",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "ghostWhite",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "gold",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "goldenrod",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "gray",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "green",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "greenYellow",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "honeydew",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "hotPink",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "indianRed",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "indigo",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "ivory",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "khaki",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "lavender",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "lavenderBlush",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "lawnGreen",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "lemonChiffon",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "lightBlue",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "lightCoral",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "lightCyan",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "lightGoldenrodYellow",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "lightGray",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "lightGreen",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "lightPink",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "lightSalmon",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "lightSeaGreen",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "lightSkyBlue",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "lightSlateGray",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "lightSteelBlue",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "lightYellow",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "lime",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "limeGreen",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "linen",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "magenta",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "maroon",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "mediumAquamarine",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "mediumBlue",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "mediumOrchid",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "mediumPurple",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "mediumSeaGreen",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "mediumSlateBlue",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "mediumSpringGreen",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "mediumTurquoise",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "mediumVioletRed",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "midnightBlue",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "mintCream",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "mistyRose",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "moccasin",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "navajoWhite",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "navy",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "oldLace",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "olive",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "oliveDrab",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "orange",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "orangeRed",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "orchid",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "paleGoldenrod",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "paleGreen",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "paleTurquoise",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "paleVioletRed",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "papayaWhip",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "peachPuff",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "peru",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "pink",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "plum",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "powderBlue",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "purple",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "red",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "rosyBrown",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "royalBlue",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "saddleBrown",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "salmon",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "sandyBrown",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "seaGreen",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "seashell",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "sienna",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "silver",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "skyBlue",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "slateBlue",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "slateGray",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "snow",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "springGreen",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "steelBlue",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "tan",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "teal",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "thistle",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "tomato",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "turquoise",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "violet",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "wheat",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "white",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "whiteSmoke",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "yellow",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            },
+            {
+                "name": "yellowGreen",
+                "comment": " ",
+                "type": "SolidColor.SolidColor"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "SolidColor",
+        "comment": "\n\n@docs SolidColor\n\n\n## RGB\n\n@docs fromRGB, toRGB, toRGBString\n\n\n## HSL\n\n@docs fromHSL, toHSL, toHSLString\n\n\n## Hexadecimal\n\n@docs fromHex, toHex\n\n\n## Customize Colors\n\n@docs grayscale, invert, highContrast\n@docs blacken, whiten, grayen\n@docs rotateHue, addSaturation, addLightness\n@docs add, subtract, multiply, divide\n\n\n## Helpers\n\n@docs luminance\n\n",
+        "unions": [
+            {
+                "name": "SolidColor",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "add",
+                "comment": " Blends two colors together by adding the values in each RGB channel.\n\nThat is, `rgb(10, 20, 30) + rgb(10, 10, 10) = rgb(20, 30, 40)`.\n\nAs you work with RGB colors, it may also be helpful to know that this color space is **additive**.\n\nThis means that if you add red, green, and blue together, you'll end up with white. The more\ncolors you add, the brighter/whiter the result.\n\n",
+                "type": "SolidColor.SolidColor -> SolidColor.SolidColor -> SolidColor.SolidColor"
+            },
+            {
+                "name": "addLightness",
+                "comment": " Modify the lightness of a color in the HSL color space.\n",
+                "type": "Basics.Float -> SolidColor.SolidColor -> SolidColor.SolidColor"
+            },
+            {
+                "name": "addSaturation",
+                "comment": " Modify the saturation of a color in the HSL color space.\n\n[Ellie example](https://ellie-app.com/9jN6SbV5KCqa1)\n\n",
+                "type": "Basics.Float -> SolidColor.SolidColor -> SolidColor.SolidColor"
+            },
+            {
+                "name": "blacken",
+                "comment": " Use this function to produce a new \"shade\" of a SolidColor. Pass in the\npercentage value by which you want to darken the color.\n\n`blacken` decreases the \"lightness\" of the color in the HSL color space.\n\n    blacken : Float -> SolidColor -> SolidColor\n    blacken percentage color =\n        addLightness (0 - abs percentage) color\n\n[Ellie example](https://ellie-app.com/9jN6SbV5KCqa1)\n\n",
+                "type": "Basics.Float -> SolidColor.SolidColor -> SolidColor.SolidColor"
+            },
+            {
+                "name": "divide",
+                "comment": " Blend two colors together.\n",
+                "type": "SolidColor.SolidColor -> SolidColor.SolidColor -> SolidColor.SolidColor"
+            },
+            {
+                "name": "fromHSL",
+                "comment": " Build a new color based on HSL (Hue, Saturation, and Lightness) values.\n\n    import SolidColor exposing (SolidColor, fromHSL)\n\n    red : SolidColor\n    red =\n        fromHSL ( 0, 100, 50 )\n\nThe hue is specified in degrees on the color wheel. If you pass in a hue of\n`0`, `360`, or `-360`, you'll be specifying a red hue.\n\nSaturation is a percentage value that describes \"how much\" of the hue is present.\nSaturation clamped between 0 and 100 (inclusive). If the saturation is 0%, you'll\nsee gray.\n\nLightness is a percentage value that describes how bright the color is.\nLightness is clamped between 0 and 100 (inclusive). If the lightness is 0%, you'll\nsee black. If the saturation is 100%, you'll see white.\n\nGeometrically, you can think of HSL colors as modeled on a cylinder:\n\n![Representation of HSL values on a cylinder](https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/HSL_color_solid_cylinder_saturation_gray.png/320px-HSL_color_solid_cylinder_saturation_gray.png)\n[Image from the HSL and HSV article on Wikipedia](https://en.wikipedia.org/wiki/HSL_and_HSV)\n\n",
+                "type": "( Basics.Float, Basics.Float, Basics.Float ) -> SolidColor.SolidColor"
+            },
+            {
+                "name": "fromHex",
+                "comment": " Build a new color from a hex string.\nSupports lowercase and uppercase strings.\n\n    (SolidColor.fromHex \"#FFDD00\" == SolidColor.fromHex \"#FD0\")\n        && (SolidColor.fromHex \"#FFDD00\" == SolidColor.fromHex \"#ffdd00\")\n\nNote: this helper will ignore transparency values.\n\nHexadecimal colors use the same color space as RGB colors. The difference\nbetween the two systems is in the base: RGB colors are base 10 and hex colors are base 16.\n\nYou will need to use hex colors if you're working with an\n[HTML input of type color](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/color).\n\n[Ellie colorpicker example](https://ellie-app.com/9jMtLKZztsma1)\n\n",
+                "type": "String.String -> Result.Result String.String SolidColor.SolidColor"
+            },
+            {
+                "name": "fromRGB",
+                "comment": " Build a new color based on RGB (red, green, blue) values.\n\n    import SolidColor exposing (SolidColor, fromRGB)\n\n    red : SolidColor\n    red =\n        fromRGB ( 255, 0, 0 )\n\n    green : SolidColor\n    green =\n        fromRGB ( 0, 255, 0 )\n\n    blue : SolidColor\n    blue =\n        fromRGB ( 0, 0, 255 )\n\nThis function clamps each RGB value between 0 and 255 (inclusive).\n\n",
+                "type": "( Basics.Float, Basics.Float, Basics.Float ) -> SolidColor.SolidColor"
+            },
+            {
+                "name": "grayen",
+                "comment": " Use this function to produce a new \"tone\" of a SolidColor.\n\n`grayen` decreases the \"saturation\" of the color in the HSL color space.\n\n    grayen : Float -> SolidColor -> SolidColor\n    grayen percentage color =\n        addSaturation (0 - abs percentage) color\n\n[Ellie example](https://ellie-app.com/9jN6SbV5KCqa1)\n\n",
+                "type": "Basics.Float -> SolidColor.SolidColor -> SolidColor.SolidColor"
+            },
+            {
+                "name": "grayscale",
+                "comment": " Convert the color you pass in to a grayscale version. This function uses the\nluminance of the color you pass in to make a corresponding white <-> black value.\n\n[Ellie grayscale example](https://ellie-app.com/9jNx7gYxQTQa1)\n\n",
+                "type": "SolidColor.SolidColor -> SolidColor.SolidColor"
+            },
+            {
+                "name": "highContrast",
+                "comment": " Find a high contrast color to use in concert with the passed-in color.\nThis function will return either black or white, whichever will be higher contrast\ngiven the starting color.\n\nThis is often useful when working with styleguide colors.\n\n[Ellie example](https://ellie-app.com/9jNdS7F6wrHa1)\n\n",
+                "type": "SolidColor.SolidColor -> SolidColor.SolidColor"
+            },
+            {
+                "name": "invert",
+                "comment": " Use this function to invert a color. E.g., black inverted is white, white inverted is black....\n\n[Ellie color-inversion example](https://ellie-app.com/9jNxKgPPVmga1)\n\n",
+                "type": "SolidColor.SolidColor -> SolidColor.SolidColor"
+            },
+            {
+                "name": "luminance",
+                "comment": " Luminance calculation adopted from <https://www.w3.org/TR/WCAG20-TECHS/G17.html>\n\nLuminance describes the perceived brightness of a color. You're unlikely to need\nto use this function directly.\n\n",
+                "type": "SolidColor.SolidColor -> Basics.Float"
+            },
+            {
+                "name": "multiply",
+                "comment": " Blend two colors together.\n\nAny color multiplied by black will result in black.\nAny color multiplied by white will result in the color.\n`rgb(255, 0, 0)` will keep reds and remove any greens and blues.\n\n",
+                "type": "SolidColor.SolidColor -> SolidColor.SolidColor -> SolidColor.SolidColor"
+            },
+            {
+                "name": "rotateHue",
+                "comment": " Rotate a color's by degrees [0, 360) in the HSL color space.\n\nPicture the color wheel. Suppose you want to find 8 evenly-spaced colors from a starting color.\nYou might do something like this:\n\n    import SolidColor exposing (SolidColor)\n\n    eightEvenColors : SolidColor -> List SolidColor\n    eightEvenColors color =\n        List.range 0 7\n            |> List.map (\\i -> SolidColor.rotateHue (toFloat i * 360 / 8) color)\n\n[Ellie hue rotation example](https://ellie-app.com/9jMXL2Stb7Ra1)\n\n",
+                "type": "Basics.Float -> SolidColor.SolidColor -> SolidColor.SolidColor"
+            },
+            {
+                "name": "subtract",
+                "comment": " Blends two colors together by subtracting the second color's channel values from\nthe first color's channel values.\n\nThat is, `rgb(10, 20, 30) - rgb(10, 10, 10) = rgb(0, 10, 20)`.\n\n",
+                "type": "SolidColor.SolidColor -> SolidColor.SolidColor -> SolidColor.SolidColor"
+            },
+            {
+                "name": "toHSL",
+                "comment": " Extract the hue, saturation, and lightness values from an existing Color.\n",
+                "type": "SolidColor.SolidColor -> ( Basics.Float, Basics.Float, Basics.Float )"
+            },
+            {
+                "name": "toHSLString",
+                "comment": " Get the HSL representation of a color as a `String`.\n\n    import Html exposing (p, text)\n    import Html.Attributes exposing (style)\n    import Palette.X11 exposing (red)\n    import SolidColor exposing (toHSLString)\n\n    view =\n        p [ style \"color\" (toHSLString red) ]\n            [ text \"Wow! This sure looks red!\" ]\n\n",
+                "type": "SolidColor.SolidColor -> String.String"
+            },
+            {
+                "name": "toHex",
+                "comment": " Get the Hex representation of a color as a `String`.\n\n    import Color exposing (toHex)\n    import Html exposing (p, text)\n    import Html.Attributes exposing (type_, value)\n    import Palette.X11 exposing (red)\n\n    view =\n        Html.input\n            [ type_ \"color\"\n            , value (toHex red)\n            ]\n            []\n\nNote: this function will always return a string in the form \"#RRGGBB\".\nIt will not return shortened values (i.e., \"#RGB\").\n\n",
+                "type": "SolidColor.SolidColor -> String.String"
+            },
+            {
+                "name": "toRGB",
+                "comment": " Extract the red, green, blue values from an existing Color.\n",
+                "type": "SolidColor.SolidColor -> ( Basics.Float, Basics.Float, Basics.Float )"
+            },
+            {
+                "name": "toRGBString",
+                "comment": " Get the RGB representation of a color as a `String`.\n\n    import Html exposing (p, text)\n    import Html.Attributes exposing (style)\n    import Palette.X11 exposing (red)\n    import SolidColor exposing (toRGBString)\n\n    view =\n        p [ style \"color\" (toRGBString red) ]\n            [ text \"Wow! This sure looks red!\" ]\n\n",
+                "type": "SolidColor.SolidColor -> String.String"
+            },
+            {
+                "name": "whiten",
+                "comment": " Use this function to produce a new \"tint\" of a SolidColor. Pass in the\npercentage value by which you want to lighten the color.\n\n`whiten` increases the \"lightness\" of the color in the HSL color space.\n\n    whiten : Float -> SolidColor -> SolidColor\n    whiten percentage color =\n        addLightness (abs percentage) color\n\n[Ellie example](https://ellie-app.com/9jN6SbV5KCqa1)\n\n",
+                "type": "Basics.Float -> SolidColor.SolidColor -> SolidColor.SolidColor"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "SolidColor.Accessibility",
+        "comment": "\n\n@docs Rating, meetsAA, meetsAAA\n@docs checkContrast\n@docs contrast\n\n[Ellie example](https://ellie-app.com/9jPV682wPLYa1)\n\n",
+        "unions": [
+            {
+                "name": "Rating",
+                "comment": " Read more about levels of conformance at [WCAG](https://www.w3.org/TR/UNDERSTANDING-WCAG20/conformance.html#uc-levels-head).\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Inaccessible",
+                        []
+                    ],
+                    [
+                        "AA",
+                        []
+                    ],
+                    [
+                        "AAA",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "checkContrast",
+                "comment": " Checks whether two colors have enough contrast with each other to be used together\n(e.g., as a background and text color combination). Returns the WCAG Rating level.\n\nTo meet AA level sufficiently, [follow these standards](https://www.w3.org/WAI/WCAG21/quickref/?versions=2.0&showtechniques=143%2C146#contrast-minimum).\nTo meet AAA level sufficiently, [follow these standards](https://www.w3.org/WAI/WCAG21/quickref/?versions=2.0&showtechniques=143%2C146#contrast-enhanced).\n\n",
+                "type": "{ fontSize : Basics.Float, fontWeight : Basics.Int } -> SolidColor.SolidColor -> SolidColor.SolidColor -> SolidColor.Accessibility.Rating"
+            },
+            {
+                "name": "contrast",
+                "comment": " Calculate the contrast between two colors.\n",
+                "type": "SolidColor.SolidColor -> SolidColor.SolidColor -> Basics.Float"
+            },
+            {
+                "name": "meetsAA",
+                "comment": " ",
+                "type": "SolidColor.Accessibility.Rating -> Basics.Bool"
+            },
+            {
+                "name": "meetsAAA",
+                "comment": " ",
+                "type": "SolidColor.Accessibility.Rating -> Basics.Bool"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "TransparentColor",
+        "comment": " This module provides helpers for working with colors that are not fully opaque.\n\nWhy is `TransparentColor` separate from `SolidColor`? Why isn't `SolidColor` simply modeled\nas an RGBA color value?\n\nTransparency fundamentally involves stacking contexts on render; transparency\nis really a shortcut for saying \"blend my color with whatever is behind it.\"\n\nAs soon as we know that our color may be transparent, we can no longer make\nclaims about contrast or luminance. Black text on a white background provides\nhigh contrast, but transparent black text on a white background may not be high\ncontrast.\n\n`TransparentColor` exists in order to try to keep functions like `SolidColor.luminance`\nand `SolidColor.Accessibility.sufficientContrast` safe and reliable, while also providing\nfull-featured support for working with alpha channel values.\n\nThese docs assume that you're familiar with the color space you're looking at.\nIf not, read more about each color space in `SolidColor`.\n\n[Ellie example](https://ellie-app.com/9jRtM9fKbYza1)\n\n@docs TransparentColor\n\n\n## Opacity\n\n@docs Opacity\n@docs transparent, opaque, customOpacity\n@docs opacityToString, opacityToFloat\n\n\n## Conversions\n\n@docs fromColor, toColor\n@docs fromRGBA, toRGBA, toRGBAString\n@docs fromHSLA, toHSLA, toHSLAString\n@docs fromHexA, toHexA\n\n\n## Customize Colors\n\n@docs invert\n@docs blacken, whiten, grayen\n@docs rotateHue, addSaturation, addLightness\n\n",
+        "unions": [
+            {
+                "name": "TransparentColor",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Opacity",
+                "comment": " ",
+                "args": [],
+                "type": "Internal.Opacity.Opacity"
+            }
+        ],
+        "values": [
+            {
+                "name": "addLightness",
+                "comment": " ",
+                "type": "Basics.Float -> TransparentColor.TransparentColor -> TransparentColor.TransparentColor"
+            },
+            {
+                "name": "addSaturation",
+                "comment": " ",
+                "type": "Basics.Float -> TransparentColor.TransparentColor -> TransparentColor.TransparentColor"
+            },
+            {
+                "name": "blacken",
+                "comment": " ",
+                "type": "Basics.Float -> TransparentColor.TransparentColor -> TransparentColor.TransparentColor"
+            },
+            {
+                "name": "customOpacity",
+                "comment": " Pass in a value in [0, 1.0]. The value passed in will be clamped within these bounds.\n",
+                "type": "Basics.Float -> TransparentColor.Opacity"
+            },
+            {
+                "name": "fromColor",
+                "comment": " Specify the opacity for a color without opacity.\n\n    import SolidColor exposing (SolidColor)\n    import TransparentColor exposing (TransparentColor, customOpacity)\n\n    myRed : SolidColor\n    myRed =\n        SolidColor.fromRGB ( 255, 0, 0 )\n\n    myTransparentRed : TransparentColor\n    myTransparentRed =\n        TransparentColor.fromColor (customOpacity 0.5) myRed\n\n",
+                "type": "TransparentColor.Opacity -> SolidColor.SolidColor -> TransparentColor.TransparentColor"
+            },
+            {
+                "name": "fromHSLA",
+                "comment": " ",
+                "type": "{ hue : Basics.Float, saturation : Basics.Float, lightness : Basics.Float, alpha : TransparentColor.Opacity } -> TransparentColor.TransparentColor"
+            },
+            {
+                "name": "fromHexA",
+                "comment": " Build a new color from a hex string that might include transparencies.\nSupports lowercase and uppercase strings.\n",
+                "type": "String.String -> Result.Result String.String TransparentColor.TransparentColor"
+            },
+            {
+                "name": "fromRGBA",
+                "comment": " ",
+                "type": "{ red : Basics.Float, green : Basics.Float, blue : Basics.Float, alpha : TransparentColor.Opacity } -> TransparentColor.TransparentColor"
+            },
+            {
+                "name": "grayen",
+                "comment": " ",
+                "type": "Basics.Float -> TransparentColor.TransparentColor -> TransparentColor.TransparentColor"
+            },
+            {
+                "name": "invert",
+                "comment": " ",
+                "type": "TransparentColor.TransparentColor -> TransparentColor.TransparentColor"
+            },
+            {
+                "name": "opacityToFloat",
+                "comment": " ",
+                "type": "TransparentColor.Opacity -> Basics.Float"
+            },
+            {
+                "name": "opacityToString",
+                "comment": " ",
+                "type": "TransparentColor.Opacity -> String.String"
+            },
+            {
+                "name": "opaque",
+                "comment": " Provided for convenience. Equivalent to doing:\n\n    Opacity.customOpacity 1.0\n\n",
+                "type": "TransparentColor.Opacity"
+            },
+            {
+                "name": "rotateHue",
+                "comment": " ",
+                "type": "Basics.Float -> TransparentColor.TransparentColor -> TransparentColor.TransparentColor"
+            },
+            {
+                "name": "toColor",
+                "comment": " If you decide you don't care about the opacity anymore, you can\ndrop this information.\n",
+                "type": "TransparentColor.TransparentColor -> SolidColor.SolidColor"
+            },
+            {
+                "name": "toHSLA",
+                "comment": " Extract the hue, saturation, lightness, and alpha values from an existing Color.\n",
+                "type": "TransparentColor.TransparentColor -> { hue : Basics.Float, saturation : Basics.Float, lightness : Basics.Float, alpha : TransparentColor.Opacity }"
+            },
+            {
+                "name": "toHSLAString",
+                "comment": " ",
+                "type": "TransparentColor.TransparentColor -> String.String"
+            },
+            {
+                "name": "toHexA",
+                "comment": " ",
+                "type": "TransparentColor.TransparentColor -> String.String"
+            },
+            {
+                "name": "toRGBA",
+                "comment": " Extract the red, green, blue, and alpha values from an existing Color.\n",
+                "type": "TransparentColor.TransparentColor -> { red : Basics.Float, green : Basics.Float, blue : Basics.Float, alpha : TransparentColor.Opacity }"
+            },
+            {
+                "name": "toRGBAString",
+                "comment": " ",
+                "type": "TransparentColor.TransparentColor -> String.String"
+            },
+            {
+                "name": "transparent",
+                "comment": " Provided for convenience. Equivalent to doing:\n\n    Opacity.customOpacity 0\n\n",
+                "type": "TransparentColor.Opacity"
+            },
+            {
+                "name": "whiten",
+                "comment": " ",
+                "type": "Basics.Float -> TransparentColor.TransparentColor -> TransparentColor.TransparentColor"
+            }
+        ],
+        "binops": []
+    }
+]

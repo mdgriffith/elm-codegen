@@ -1,0 +1,16 @@
+[
+    {
+        "name": "Time.Distance",
+        "comment": "\n\n\n# Time.Distance\n\n@docs inWords\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "inWords",
+                "comment": " Returns the distance between two times in words.\n\n    time1 = Posix.fromMillis 1530403200000\n    time2 = Posix.fromMillis 1530403205000\n    inWords time1 time2 == \"less than 5 seconds\"\n\nMonth calculations are approximates, using 30 days.\n\n",
+                "type": "Time.Posix -> Time.Posix -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

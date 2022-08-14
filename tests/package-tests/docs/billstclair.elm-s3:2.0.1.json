@@ -1,0 +1,303 @@
+[
+    {
+        "name": "S3",
+        "comment": " Pure Elm client for the [AWS Simple Storage Service](https://aws.amazon.com/s3/) (S3) or [Digital Ocean Spaces](https://developers.digitalocean.com/documentation/spaces/).\n\n\n# Types\n\n@docs Request\n\n\n# Turning a Request into a Task\n\n@docs send\n\n\n# Creating S3 requests\n\n@docs listKeys\n@docs getObject, getFullObject, getHeaders, getObjectWithHeaders\n@docs putHtmlObject, putPublicObject, putObject\n@docs deleteObject\n\n\n# Creating Body values\n\n@docs htmlBody, jsonBody, stringBody\n\n\n# Adding queries and headers to a request\n\n@docs addQuery, addHeaders\n\n\n# Reading accounts into Elm\n\n@docs readAccounts, decodeAccounts, accountDecoder\n\n\n# Low-level functions\n\n@docs objectPath, parserRequest, stringRequest\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Request",
+                "comment": " A request that can be turned into a Task by `S3.send`.\n\n`a` is the type of the successful `Task` result from `S3.send`.\n\n",
+                "args": [
+                    "a"
+                ],
+                "type": "AWS.Http.Request AWS.Http.AWSAppError a"
+            }
+        ],
+        "values": [
+            {
+                "name": "accountDecoder",
+                "comment": " A `Decoder` for the `Account` type.\n",
+                "type": "Json.Decode.Decoder S3.Types.Account"
+            },
+            {
+                "name": "addHeaders",
+                "comment": " Add headers to a `Request`.\n",
+                "type": "S3.Types.Query -> S3.Request a -> S3.Request a"
+            },
+            {
+                "name": "addQuery",
+                "comment": " Add query parameters to a `Request`.\n",
+                "type": "S3.Types.Query -> S3.Request a -> S3.Request a"
+            },
+            {
+                "name": "decodeAccounts",
+                "comment": " Decode a JSON string encoding a list of `Account`s\n",
+                "type": "String.String -> Result.Result S3.Types.Error (List.List S3.Types.Account)"
+            },
+            {
+                "name": "deleteObject",
+                "comment": " Delete an S3 object.\n\nThe string resulting from a successful `send` isn't interesting.\n\n",
+                "type": "S3.Types.Bucket -> S3.Types.Key -> S3.Request String.String"
+            },
+            {
+                "name": "getFullObject",
+                "comment": " Read an object and process the entire Http Response.\n",
+                "type": "S3.Types.Bucket -> S3.Types.Key -> (Http.Metadata -> String.String -> Result.Result String.String a) -> S3.Request a"
+            },
+            {
+                "name": "getHeaders",
+                "comment": " Do a HEAD request to get only an object's headers.\n",
+                "type": "S3.Types.Bucket -> S3.Types.Key -> S3.Request (Dict.Dict String.String String.String)"
+            },
+            {
+                "name": "getObject",
+                "comment": " Read an S3 object.\n\nThe contents will be the successful result of the `Task` created by `S3.send`.\n\n",
+                "type": "S3.Types.Bucket -> S3.Types.Key -> S3.Request String.String"
+            },
+            {
+                "name": "getObjectWithHeaders",
+                "comment": " Read an object with its HTTP response headers.\n",
+                "type": "S3.Types.Bucket -> S3.Types.Key -> S3.Request ( String.String, Dict.Dict String.String String.String )"
+            },
+            {
+                "name": "htmlBody",
+                "comment": " Create an HTML body for `putObject` and friends.\n",
+                "type": "String.String -> AWS.Http.Body"
+            },
+            {
+                "name": "jsonBody",
+                "comment": " Create a JSON body for `putObject` and friends.\n",
+                "type": "Json.Encode.Value -> AWS.Http.Body"
+            },
+            {
+                "name": "listKeys",
+                "comment": " Create a `Request` to list the keys for an S3 bucket.\n",
+                "type": "S3.Types.Bucket -> S3.Request S3.Types.KeyList"
+            },
+            {
+                "name": "objectPath",
+                "comment": " Turn a bucket and a key into an object path.\n\n    \"/\" ++ bucket ++ \"/\" ++ key\n\n",
+                "type": "S3.Types.Bucket -> S3.Types.Key -> String.String"
+            },
+            {
+                "name": "parserRequest",
+                "comment": " Low-level request creator.\n\n    stringRequest : String -> Method -> Path -> Body -> Request String\n    stringRequest method url body =\n        parserRequest\n            name\n            method\n            url\n            body\n            (identity >> Ok)\n            Task.succeed\n\n",
+                "type": "String.String -> AWS.Http.Method -> AWS.Http.Path -> AWS.Http.Body -> (String.String -> Result.Result String.String a) -> S3.Request a"
+            },
+            {
+                "name": "putHtmlObject",
+                "comment": " Write an Html string to S3, with public-read permission.\n\nThe string resulting from a successful `send` isn't interesting.\n\n",
+                "type": "S3.Types.Bucket -> S3.Types.Key -> String.String -> S3.Request String.String"
+            },
+            {
+                "name": "putObject",
+                "comment": " Write an object to S3, with default permissions (private).\n\nThe string resulting from a successful `send` isn't interesting.\n\n",
+                "type": "S3.Types.Bucket -> S3.Types.Key -> AWS.Http.Body -> S3.Request String.String"
+            },
+            {
+                "name": "putPublicObject",
+                "comment": " Write an object to S3, with public-read permission.\n\nThe string resulting from a successful `send` isn't interesting.\n\n",
+                "type": "S3.Types.Bucket -> S3.Types.Key -> AWS.Http.Body -> S3.Request String.String"
+            },
+            {
+                "name": "readAccounts",
+                "comment": " Read JSON from a URL and turn it into a list of `Account`s.\n\nIf `Nothing` is passed for the first arg (the URL), will use the default of `\"accounts.json\"`.\n\nYou're not going to want to store the secret keys in this JSON in plain text anywhere but your development machine. I'll add support eventually for encryption of the accounts JSON.\n\nExample JSON (the `buckets` are used only by the example code):\n\n    [{\"name\": \"Digital Ocean\",\n      \"region\": \"nyc3\",\n      \"is-digital-ocean\": true,\n      \"access-key\": \"<20-character access key>\",\n      \"secret-key\": \"<40-character secret key>\",\n      \"buckets\": [\"bucket1\",\"bucket2\"]\n     },\n     {\"name\": \"Amazon S3\",\n      \"region\": \"us-east-1\",\n      \"access-key\": \"<20-character access key>\",\n      \"secret-key\": \"<40-character secret key>\",\n      \"buckets\": [\"bucket3\",\"bucket4\",\"bucket5\"]\n     }\n    ]\n\n",
+                "type": "Maybe.Maybe String.String -> Task.Task S3.Types.Error (List.List S3.Types.Account)"
+            },
+            {
+                "name": "send",
+                "comment": " Create a `Task` to send a signed request over the wire.\n",
+                "type": "S3.Types.Account -> S3.Request a -> Task.Task S3.Types.Error a"
+            },
+            {
+                "name": "stringBody",
+                "comment": " Create a body with any mimetype for `putObject` and friends.\n\n    stringBody \"text/html\" \"Hello, World!\"\n\n",
+                "type": "S3.Types.Mimetype -> String.String -> AWS.Http.Body"
+            },
+            {
+                "name": "stringRequest",
+                "comment": " Create a `Request` that returns its response body as a string.\n\n    getObject : Bucket -> Key -> Request String\n    getObject bucket key =\n        stringRequest \"operation\" GET (objectPath bucket key) emptyBody\n\n",
+                "type": "String.String -> AWS.Http.Method -> AWS.Http.Path -> AWS.Http.Body -> S3.Request String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "S3.Types",
+        "comment": " Types for S3 module\n\n\n# Types\n\n@docs Error, Account\n@docs Bucket, Key, Mimetype\n@docs StorageClass, Owner, KeyInfo, KeyList\n@docs Query, QueryElement, CannedAcl\n\n\n# Functions\n\n@docs aclToString\n\n",
+        "unions": [
+            {
+                "name": "CannedAcl",
+                "comment": " Values for the XAmzAcl Query type.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "AclPrivate",
+                        []
+                    ],
+                    [
+                        "AclPublicRead",
+                        []
+                    ],
+                    [
+                        "AclPublicReadWrite",
+                        []
+                    ],
+                    [
+                        "AclAwsExecRead",
+                        []
+                    ],
+                    [
+                        "AclAuthenticatedRead",
+                        []
+                    ],
+                    [
+                        "AclBucketOwnerRead",
+                        []
+                    ],
+                    [
+                        "AclBucketOwnerFullControl",
+                        []
+                    ],
+                    [
+                        "AclLogDeliveryWrite",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Error",
+                "comment": " Errors returned from S3 operations\n\n`HttpError` is from the standard Elm `Http` module.\n\n`AWSError` is from the AWS.Http module.\n\n`DecodeError` denotes a Decoder error in parsing S3 account info.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "HttpError",
+                        [
+                            "Http.Error"
+                        ]
+                    ],
+                    [
+                        "AWSError",
+                        [
+                            "AWS.Http.AWSAppError"
+                        ]
+                    ],
+                    [
+                        "DecodeError",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "QueryElement",
+                "comment": " An element of a `Query`, used for HTTP headers and query parameters.\n\n`AnyQuery` allows you to encode any key/value pair.\n\n`XAmzAcl` is used as a header with `S3.putObject`.\n\nThe others are used as query parameters with `S3.listKeys`.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "AnyQuery",
+                        [
+                            "String.String",
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "XAmzAcl",
+                        [
+                            "S3.Types.CannedAcl"
+                        ]
+                    ],
+                    [
+                        "Delimiter",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Marker",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "MaxKeys",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "Prefix",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Account",
+                "comment": " Information about an S3 account\n",
+                "args": [],
+                "type": "{ name : String.String, region : Maybe.Maybe String.String, isDigitalOcean : Basics.Bool, accessKey : String.String, secretKey : String.String, buckets : List.List String.String }"
+            },
+            {
+                "name": "Bucket",
+                "comment": " The name of an S3 bucket.\n",
+                "args": [],
+                "type": "String.String"
+            },
+            {
+                "name": "Key",
+                "comment": " The name of an S3 key.\n",
+                "args": [],
+                "type": "String.String"
+            },
+            {
+                "name": "KeyInfo",
+                "comment": " Information about a single key returned from listing a bucket's contents.\n",
+                "args": [],
+                "type": "{ key : S3.Types.Key, lastModified : String.String, eTag : String.String, size : Basics.Int, storageClass : S3.Types.StorageClass, owner : S3.Types.Owner }"
+            },
+            {
+                "name": "KeyList",
+                "comment": " All the information returned from listing a bucket's contents.\n\nAn Elm encoding of the ListBucketResult XML element.\n\n",
+                "args": [],
+                "type": "{ name : String.String, prefix : Maybe.Maybe String.String, marker : Maybe.Maybe String.String, nextMarker : Maybe.Maybe String.String, maxKeys : Basics.Int, isTruncated : Basics.Bool, keys : List.List S3.Types.KeyInfo }"
+            },
+            {
+                "name": "Mimetype",
+                "comment": " An HTTP mimetype, e.g. \"text/html\".\n",
+                "args": [],
+                "type": "String.String"
+            },
+            {
+                "name": "Owner",
+                "comment": " The owner of an object returned from listing a bucket's contents.\n",
+                "args": [],
+                "type": "{ id : String.String, displayName : String.String }"
+            },
+            {
+                "name": "Query",
+                "comment": " A list of `QueryElement`s.\n",
+                "args": [],
+                "type": "List.List S3.Types.QueryElement"
+            },
+            {
+                "name": "StorageClass",
+                "comment": " The StorageClass for a key returned from listing a bucket's contents.\n",
+                "args": [],
+                "type": "String.String"
+            }
+        ],
+        "values": [
+            {
+                "name": "aclToString",
+                "comment": " Convert a `CannedAcl` to a String.\n",
+                "type": "S3.Types.CannedAcl -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

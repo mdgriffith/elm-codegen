@@ -1,0 +1,58 @@
+[
+    {
+        "name": "SimpleTextIndex",
+        "comment": "\n\n\n# Init\n\n@docs Index, new\n\n\n# Configure\n\n@docs Config, config, setMaxResultSize, setConfig\n\n\n# Insert data\n\n@docs add\n\n\n# Search\n\n@docs search\n\n",
+        "unions": [
+            {
+                "name": "Config",
+                "comment": " A Config is required to add/search in an Index\n",
+                "args": [
+                    "doc"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Index",
+                "comment": " An Index holds data to quickly find doc document given doc substring of its\nindexed fields\n",
+                "args": [
+                    "doc"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "add",
+                "comment": " Add a document to an index\n",
+                "type": "doc -> SimpleTextIndex.Index doc -> SimpleTextIndex.Index doc"
+            },
+            {
+                "name": "config",
+                "comment": " Create doc config\n\n  - `ref` extracts the unique id of a document. It will be used to deduplicate\n    results\n\n  - `fields` is a list of content extractors. They return the text to index.\n\n  - `normalize` is called to simplify strings before being indexed, and on the\n    searched text.\n\nA typical config is:\n\n    { ref = .id\n    , fields = [ .name, .description ]\n    , normalize = Sring.toLower >> String.Normalize.removeDiacritics\n    }\n\n",
+                "type": "{ ref : doc -> String.String, fields : List.List (doc -> String.String), normalize : String.String -> String.String } -> SimpleTextIndex.Config doc"
+            },
+            {
+                "name": "new",
+                "comment": " Creates doc new empty Index\n",
+                "type": "SimpleTextIndex.Config doc -> SimpleTextIndex.Index doc"
+            },
+            {
+                "name": "search",
+                "comment": " Search a document in the index\n",
+                "type": "String.String -> SimpleTextIndex.Index doc -> List.List doc"
+            },
+            {
+                "name": "setConfig",
+                "comment": " Update the index configuration\n",
+                "type": "SimpleTextIndex.Config doc -> SimpleTextIndex.Index doc -> SimpleTextIndex.Index doc"
+            },
+            {
+                "name": "setMaxResultSize",
+                "comment": " Set the maximum number of results to return on a search\n\nThe default value is 1000\n\nThis value is indicative only and result may be bigger\n\n",
+                "type": "Basics.Int -> SimpleTextIndex.Config a -> SimpleTextIndex.Config a"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,705 @@
+[
+    {
+        "name": "AbelianGroup",
+        "comment": " Abelian Group typeclass definition and its instances for basic types.\n\n\n# Definition\n\n@docs AbelianGroup\n\n#Instances\n\n@docs numberSum, trivial, exclusiveOr, modularArithmetic\n\n",
+        "unions": [
+            {
+                "name": "AbelianGroup",
+                "comment": " Explicit typeclass which implements group operations for type `a` when the operation is commutative.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "AbelianGroup",
+                        [
+                            "Group.Group a"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "exclusiveOr",
+                "comment": " Construct exclusive Or\n",
+                "type": "AbelianGroup.AbelianGroup Basics.Bool"
+            },
+            {
+                "name": "modularArithmetic",
+                "comment": " Instance for modularArithmetic\n",
+                "type": "Basics.Int -> AbelianGroup.AbelianGroup Basics.Int"
+            },
+            {
+                "name": "numberSum",
+                "comment": " Construct an instance for any type which satisfies Elm's `number` magic constraint.\nImplements sum.\n",
+                "type": "AbelianGroup.AbelianGroup number"
+            },
+            {
+                "name": "trivial",
+                "comment": " Construct trivial group\n",
+                "type": "AbelianGroup.AbelianGroup ()"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "CommutativeDivisionRing",
+        "comment": " Commutative Divison Ring typeclass definition and its instances for basic types.\n\n\n# Definition\n\n@docs CommutativeDivisionRing\n\n#Instances\n\n@docs float, trivial\n\n",
+        "unions": [
+            {
+                "name": "CommutativeDivisionRing",
+                "comment": " Explicit typeclass which implements division ring operations for type `a`.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "CommutativeDivisionRing",
+                        [
+                            "DivisionRing.DivisionRing a"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "float",
+                "comment": " Construct real number division ring\n",
+                "type": "CommutativeDivisionRing.CommutativeDivisionRing Basics.Float"
+            },
+            {
+                "name": "trivial",
+                "comment": " Construct trivial Division ring\n",
+                "type": "CommutativeDivisionRing.CommutativeDivisionRing ()"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "CommutativeMonoid",
+        "comment": " Commutative Monoid typeclass definition and its instances for basic types.\n\n\n# Definition\n\n@docs CommutativeMonoid\n\n\n# Instances\n\n@docs numberProduct, intProduct, numberSum, intSum, unit, modularArithmetic, all, any, exclusiveOr, commutativeSemigroupAndIdentity\n\n",
+        "unions": [
+            {
+                "name": "CommutativeMonoid",
+                "comment": " Explicit typeclass which implements monoid operations for type `a` when the operation is commutative.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "CommutativeMonoid",
+                        [
+                            "Monoid.Monoid a"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "all",
+                "comment": " Instance for all\n",
+                "type": "CommutativeMonoid.CommutativeMonoid Basics.Bool"
+            },
+            {
+                "name": "any",
+                "comment": " Instance for any\n",
+                "type": "CommutativeMonoid.CommutativeMonoid Basics.Bool"
+            },
+            {
+                "name": "commutativeSemigroupAndIdentity",
+                "comment": " Construct an instance by specifying a commutative semigroup instance and an identity value.\n",
+                "type": "Semigroup.Semigroup a -> a -> CommutativeMonoid.CommutativeMonoid a"
+            },
+            {
+                "name": "exclusiveOr",
+                "comment": " Instance for exclusiveOr\n",
+                "type": "CommutativeMonoid.CommutativeMonoid Basics.Bool"
+            },
+            {
+                "name": "intProduct",
+                "comment": " Instance for integers under the multiplication operation.\n",
+                "type": "CommutativeMonoid.CommutativeMonoid Basics.Int"
+            },
+            {
+                "name": "intSum",
+                "comment": " Instance for integers under the sum operation.\n",
+                "type": "CommutativeMonoid.CommutativeMonoid Basics.Int"
+            },
+            {
+                "name": "modularArithmetic",
+                "comment": " Instance for modularArithmetic\n",
+                "type": "Basics.Int -> CommutativeMonoid.CommutativeMonoid Basics.Int"
+            },
+            {
+                "name": "numberProduct",
+                "comment": " Construct an instance for any type which satisfies Elm's `number` magic constraint.\nImplements multiplication.\n",
+                "type": "CommutativeMonoid.CommutativeMonoid number"
+            },
+            {
+                "name": "numberSum",
+                "comment": " Construct an instance for any type which satisfies Elm's `number` magic constraint.\nImplements sum.\n",
+                "type": "CommutativeMonoid.CommutativeMonoid number"
+            },
+            {
+                "name": "unit",
+                "comment": " Instance for trivial monoid\n",
+                "type": "CommutativeMonoid.CommutativeMonoid ()"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "CommutativeRing",
+        "comment": " Commutative Ring typeclass definition and its instances for basic types.\n\n\n# Definition\n\n@docs CommutativeRing\n\n#Instances\n\n@docs number, trivial, exclusiveOr\n\n",
+        "unions": [
+            {
+                "name": "CommutativeRing",
+                "comment": " Explicit typeclass which implements ring operations for type `a` when the multiplication operation is commutative.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "CommutativeRing",
+                        [
+                            "Ring.Ring a"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "exclusiveOr",
+                "comment": " Construct exclusive all ring\n",
+                "type": "CommutativeRing.CommutativeRing Basics.Bool"
+            },
+            {
+                "name": "number",
+                "comment": " Construct real number ring\n",
+                "type": "CommutativeRing.CommutativeRing number"
+            },
+            {
+                "name": "trivial",
+                "comment": " Construct trivial ring\n",
+                "type": "CommutativeRing.CommutativeRing ()"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "CommutativeSemigroup",
+        "comment": " Commutative Semigroup typeclass definition and its instances for basic types.\n\n\n# Definition\n\n@docs CommutativeSemigroup\n\n\n# Instances\n\n@docs numberProduct, intProduct, numberSum, intSum, setUnion, setIntersection, and, or, unit, xor, modularArithmetic\n\n",
+        "unions": [
+            {
+                "name": "CommutativeSemigroup",
+                "comment": " Explicit typeclass which implements semigroup operations for type `a` when the operation is commutative.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "CommutativeSemigroup",
+                        [
+                            "Semigroup.Semigroup a"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "and",
+                "comment": " Instance for and\n",
+                "type": "CommutativeSemigroup.CommutativeSemigroup Basics.Bool"
+            },
+            {
+                "name": "intProduct",
+                "comment": " Instance for integers under the multiplication operation.\n",
+                "type": "CommutativeSemigroup.CommutativeSemigroup Basics.Int"
+            },
+            {
+                "name": "intSum",
+                "comment": " Instance for integers under the sum operation.\n",
+                "type": "CommutativeSemigroup.CommutativeSemigroup Basics.Int"
+            },
+            {
+                "name": "modularArithmetic",
+                "comment": " Instance for modularArithmetic semigroup\n",
+                "type": "Basics.Int -> CommutativeSemigroup.CommutativeSemigroup Basics.Int"
+            },
+            {
+                "name": "numberProduct",
+                "comment": " Construct an instance for any type which satisfies Elm's `number` magic constraint.\nImplements multiplication.\n",
+                "type": "CommutativeSemigroup.CommutativeSemigroup number"
+            },
+            {
+                "name": "numberSum",
+                "comment": " Construct an instance for any type which satisfies Elm's `number` magic constraint.\nImplements sum.\n",
+                "type": "CommutativeSemigroup.CommutativeSemigroup number"
+            },
+            {
+                "name": "or",
+                "comment": " Instance for or\n",
+                "type": "CommutativeSemigroup.CommutativeSemigroup Basics.Bool"
+            },
+            {
+                "name": "setIntersection",
+                "comment": " Instance for set under the intersection operation.\n",
+                "type": "CommutativeSemigroup.CommutativeSemigroup (Set.Set comparable)"
+            },
+            {
+                "name": "setUnion",
+                "comment": " Instance for set under the union operation.\n",
+                "type": "CommutativeSemigroup.CommutativeSemigroup (Set.Set comparable)"
+            },
+            {
+                "name": "unit",
+                "comment": " Instance for trivial semigroup\n",
+                "type": "CommutativeSemigroup.CommutativeSemigroup ()"
+            },
+            {
+                "name": "xor",
+                "comment": " Instance for xor\n",
+                "type": "CommutativeSemigroup.CommutativeSemigroup Basics.Bool"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "DivisionRing",
+        "comment": " Divison Ring typeclass definition and its instances for basic types.\n\n\n# Definition\n\n@docs DivisionRing\n\n#Instances\n\n@docs floatDivisionRing, trivialDivisionRing\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "DivisionRing",
+                "comment": " Explicit typeclass which implements division ring operations for type `a`.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ addition : AbelianGroup.AbelianGroup a, multiplication : Group.Group a }"
+            }
+        ],
+        "values": [
+            {
+                "name": "floatDivisionRing",
+                "comment": " Construct real number division ring\n",
+                "type": "DivisionRing.DivisionRing Basics.Float"
+            },
+            {
+                "name": "trivialDivisionRing",
+                "comment": " Construct trivial Division ring\n",
+                "type": "DivisionRing.DivisionRing ()"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Field",
+        "comment": " Field typeclass definition and its instances for basic types.\n\n\n# Definition\n\n@docs Field\n\n#Instances\n\n@docs float, trivial\n\n",
+        "unions": [
+            {
+                "name": "Field",
+                "comment": " Explicit typeclass which implements group operations for type `a`.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Field",
+                        [
+                            "CommutativeDivisionRing.CommutativeDivisionRing a"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "float",
+                "comment": " Construct real number field\n",
+                "type": "Field.Field Basics.Float"
+            },
+            {
+                "name": "trivial",
+                "comment": " Construct trivial field\n",
+                "type": "Field.Field ()"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Group",
+        "comment": " Group typeclass definition and its instances for basic types.\n\n\n# Definition\n\n@docs Group\n\n#Instances\n\n@docs numberSum, trivial, exclusiveOr, modularArithmetic, floatProduct\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Group",
+                "comment": " Explicit typeclass which implements group operations for type `a`.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ monoid : Monoid.Monoid a, inverse : a -> a }"
+            }
+        ],
+        "values": [
+            {
+                "name": "exclusiveOr",
+                "comment": " Construct exclusive Or\n",
+                "type": "Group.Group Basics.Bool"
+            },
+            {
+                "name": "floatProduct",
+                "comment": " Implements product.\n",
+                "type": "Group.Group Basics.Float"
+            },
+            {
+                "name": "modularArithmetic",
+                "comment": " Instance for modularArithmetic\n",
+                "type": "Basics.Int -> Group.Group Basics.Int"
+            },
+            {
+                "name": "numberSum",
+                "comment": " Construct an instance for any type which satisfies Elm's `number` magic constraint.\nImplements sum.\n",
+                "type": "Group.Group number"
+            },
+            {
+                "name": "trivial",
+                "comment": " Construct trivial group\n",
+                "type": "Group.Group ()"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Monoid",
+        "comment": " Monoid typeclass definition and its instances for basic types.\n\n\n# Definition\n\n@docs Monoid\n\n\n# Construction utilities\n\n@docs identityAndConcat, semigroupAndIdentity, appendable\n\n\n# Instance transformation utilities\n\n@docs map\n\n\n# Instances\n\n@docs string, maybeFirst, list, cmd, sub, task, composition, setDifference, setUnion, all, any, exclusiveOr, intProduct, intSum, modularArithmetic, numberProduct, numberSum, unit\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Monoid",
+                "comment": " Explicit typeclass which implements monoid operations for type `a`.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ semigroup : Semigroup.Semigroup a, identity : a, concat : List.List a -> a }"
+            }
+        ],
+        "values": [
+            {
+                "name": "all",
+                "comment": " Instance for all\n",
+                "type": "Monoid.Monoid Basics.Bool"
+            },
+            {
+                "name": "any",
+                "comment": " Instance for any\n",
+                "type": "Monoid.Monoid Basics.Bool"
+            },
+            {
+                "name": "appendable",
+                "comment": " Construct an instance for any type which satisfies Elm's `appendable` magic constraint,\nby providing an identity value.\n",
+                "type": "appendable -> Monoid.Monoid appendable"
+            },
+            {
+                "name": "cmd",
+                "comment": " Instance for commands under the batch operation.\n",
+                "type": "Monoid.Monoid (Platform.Cmd.Cmd msg)"
+            },
+            {
+                "name": "composition",
+                "comment": " Instance for a -> a function\n",
+                "type": "Monoid.Monoid (a -> a)"
+            },
+            {
+                "name": "exclusiveOr",
+                "comment": " Instance for exclusiveOr\n",
+                "type": "Monoid.Monoid Basics.Bool"
+            },
+            {
+                "name": "identityAndConcat",
+                "comment": " Construct an instance by specifying identity value and a concatenation operation.\n",
+                "type": "a -> (List.List a -> a) -> Monoid.Monoid a"
+            },
+            {
+                "name": "intProduct",
+                "comment": " Instance for integers under the multiplication operation.\n",
+                "type": "Monoid.Monoid Basics.Int"
+            },
+            {
+                "name": "intSum",
+                "comment": " Instance for integers under the sum operation.\n",
+                "type": "Monoid.Monoid Basics.Int"
+            },
+            {
+                "name": "list",
+                "comment": " Instance for list under concatenation.\n",
+                "type": "Monoid.Monoid (List.List a)"
+            },
+            {
+                "name": "map",
+                "comment": " Map over the owner type of an instance to produce a new instance.\n\nYou need to provide both a covariant and a contravariant mapping\n(i.e., `(a -> b)` and `(b -> a)`).\n\n",
+                "type": "(a -> b) -> (b -> a) -> Monoid.Monoid a -> Monoid.Monoid b"
+            },
+            {
+                "name": "maybeFirst",
+                "comment": " Instance for maybe, which chooses the first `Just` value.\n",
+                "type": "Monoid.Monoid (Maybe.Maybe a)"
+            },
+            {
+                "name": "modularArithmetic",
+                "comment": " Instance for modularArithmetic\n",
+                "type": "Basics.Int -> Monoid.Monoid Basics.Int"
+            },
+            {
+                "name": "numberProduct",
+                "comment": " Construct an instance for any type which satisfies Elm's `number` magic constraint.\nImplements multiplication.\n",
+                "type": "Monoid.Monoid number"
+            },
+            {
+                "name": "numberSum",
+                "comment": " Construct an instance for any type which satisfies Elm's `number` magic constraint.\nImplements sum.\n",
+                "type": "Monoid.Monoid number"
+            },
+            {
+                "name": "semigroupAndIdentity",
+                "comment": " Construct an instance by specifying a semigroup instance and an identity value.\n",
+                "type": "Semigroup.Semigroup a -> a -> Monoid.Monoid a"
+            },
+            {
+                "name": "setDifference",
+                "comment": " Instance for set under the difference operation.\n",
+                "type": "Monoid.Monoid (Set.Set comparable)"
+            },
+            {
+                "name": "setUnion",
+                "comment": " Instance for set under the union operation.\n",
+                "type": "Monoid.Monoid (Set.Set comparable)"
+            },
+            {
+                "name": "string",
+                "comment": " Instance for strings under the appending operation.\n",
+                "type": "Monoid.Monoid String.String"
+            },
+            {
+                "name": "sub",
+                "comment": " Instance for subscriptions under the batch operation.\n",
+                "type": "Monoid.Monoid (Platform.Sub.Sub msg)"
+            },
+            {
+                "name": "task",
+                "comment": " Instance for tasks, which sequentially executes them and groups the results.\n",
+                "type": "Monoid.Monoid a -> Monoid.Monoid (Task.Task x a)"
+            },
+            {
+                "name": "unit",
+                "comment": " Instance for trivial monoid\n",
+                "type": "Monoid.Monoid ()"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Ring",
+        "comment": " Ring typeclass definition and its instances for basic types.\n\n\n# Definition\n\n@docs Ring\n\n#Instances\n\n@docs exclusiveOr, number, trivial\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Ring",
+                "comment": " Explicit typeclass which implements ring operations for type `a`.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ addition : AbelianGroup.AbelianGroup a, multiplication : Monoid.Monoid a }"
+            }
+        ],
+        "values": [
+            {
+                "name": "exclusiveOr",
+                "comment": " Construct exclusive all ring\n",
+                "type": "Ring.Ring Basics.Bool"
+            },
+            {
+                "name": "number",
+                "comment": " Construct real number ring\n",
+                "type": "Ring.Ring number"
+            },
+            {
+                "name": "trivial",
+                "comment": " Construct trivial ring\n",
+                "type": "Ring.Ring ()"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Semigroup",
+        "comment": " Semigroup typeclass definition and its instances for basic types.\n\n\n# Definition\n\n@docs Semigroup\n\n\n# Construction utilities\n\n@docs concat, appendable\n\n\n# Instance transformation utilities\n\n@docs map\n\n\n# Instances\n\n@docs string, maybeFirst, list, cmd, sub, task, composition, setDifference, and, intProduct, intSum, modularArithmetic, numberProduct, numberSum, or, setIntersection, setUnion, unit, xor\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Semigroup",
+                "comment": " Explicit typeclass which implements semigroup operations for type `a`.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "a -> a -> a"
+            }
+        ],
+        "values": [
+            {
+                "name": "and",
+                "comment": " Instance for and\n",
+                "type": "Semigroup.Semigroup Basics.Bool"
+            },
+            {
+                "name": "appendable",
+                "comment": " Construct an instance for any type which satisfies Elm's `appendable` magic constraint.\n",
+                "type": "Semigroup.Semigroup appendable"
+            },
+            {
+                "name": "cmd",
+                "comment": " Instance for commands under the batch operation.\n",
+                "type": "Semigroup.Semigroup (Platform.Cmd.Cmd msg)"
+            },
+            {
+                "name": "composition",
+                "comment": " Instance for a -> a function\n",
+                "type": "Semigroup.Semigroup (a -> a)"
+            },
+            {
+                "name": "concat",
+                "comment": " Construct from a concatenation function.\n",
+                "type": "(List.List a -> a) -> Semigroup.Semigroup a"
+            },
+            {
+                "name": "intProduct",
+                "comment": " Instance for integers under the multiplication operation.\n",
+                "type": "Semigroup.Semigroup Basics.Int"
+            },
+            {
+                "name": "intSum",
+                "comment": " Instance for integers under the sum operation.\n",
+                "type": "Semigroup.Semigroup Basics.Int"
+            },
+            {
+                "name": "list",
+                "comment": " Instance for list under concatenation.\n",
+                "type": "Semigroup.Semigroup (List.List a)"
+            },
+            {
+                "name": "map",
+                "comment": " Map over the owner type of an instance to produce a new instance.\n\nYou need to provide both a covariant and a contravariant mapping\n(i.e., `(a -> b)` and `(b -> a)`).\n\n",
+                "type": "(a -> b) -> (b -> a) -> Semigroup.Semigroup a -> Semigroup.Semigroup b"
+            },
+            {
+                "name": "maybeFirst",
+                "comment": " Instance for maybe, which chooses the first `Just` value.\n",
+                "type": "Semigroup.Semigroup (Maybe.Maybe a)"
+            },
+            {
+                "name": "modularArithmetic",
+                "comment": " Instance for modularArithmetic semigroup\n",
+                "type": "Basics.Int -> Semigroup.Semigroup Basics.Int"
+            },
+            {
+                "name": "numberProduct",
+                "comment": " Construct an instance for any type which satisfies Elm's `number` magic constraint.\nImplements multiplication.\n",
+                "type": "Semigroup.Semigroup number"
+            },
+            {
+                "name": "numberSum",
+                "comment": " Construct an instance for any type which satisfies Elm's `number` magic constraint.\nImplements sum.\n",
+                "type": "Semigroup.Semigroup number"
+            },
+            {
+                "name": "or",
+                "comment": " Instance for or\n",
+                "type": "Semigroup.Semigroup Basics.Bool"
+            },
+            {
+                "name": "setDifference",
+                "comment": " Instance for set under the difference operation.\n",
+                "type": "Semigroup.Semigroup (Set.Set comparable)"
+            },
+            {
+                "name": "setIntersection",
+                "comment": " Instance for set under the intersection operation.\n",
+                "type": "Semigroup.Semigroup (Set.Set comparable)"
+            },
+            {
+                "name": "setUnion",
+                "comment": " Instance for set under the union operation.\n",
+                "type": "Semigroup.Semigroup (Set.Set comparable)"
+            },
+            {
+                "name": "string",
+                "comment": " Instance for strings under the appending operation.\n",
+                "type": "Semigroup.Semigroup String.String"
+            },
+            {
+                "name": "sub",
+                "comment": " Instance for subscriptions under the batch operation.\n",
+                "type": "Semigroup.Semigroup (Platform.Sub.Sub msg)"
+            },
+            {
+                "name": "task",
+                "comment": " Instance for tasks, which sequentially executes them and groups the results.\n",
+                "type": "Semigroup.Semigroup a -> Semigroup.Semigroup (Task.Task x a)"
+            },
+            {
+                "name": "unit",
+                "comment": " Instance for trivial semigroup\n",
+                "type": "Semigroup.Semigroup ()"
+            },
+            {
+                "name": "xor",
+                "comment": " Instance for xor\n",
+                "type": "Semigroup.Semigroup Basics.Bool"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Semiring",
+        "comment": " Semiring typeclass definition and its instances for basic types.\n\n\n# Definition\n\n@docs Semiring\n\n#Instances\n\n@docs number, trivial, exclusiveOr\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Semiring",
+                "comment": " Explicit typeclass which implements group operations for type `a`.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ addition : CommutativeMonoid.CommutativeMonoid a, multiplication : Monoid.Monoid a }"
+            }
+        ],
+        "values": [
+            {
+                "name": "exclusiveOr",
+                "comment": " Construct exclusive all ring\n",
+                "type": "Semiring.Semiring Basics.Bool"
+            },
+            {
+                "name": "number",
+                "comment": " Construct real number ring\n",
+                "type": "Semiring.Semiring number"
+            },
+            {
+                "name": "trivial",
+                "comment": " Construct trivial ring\n",
+                "type": "Semiring.Semiring ()"
+            }
+        ],
+        "binops": []
+    }
+]

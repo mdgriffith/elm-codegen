@@ -1,0 +1,1789 @@
+[
+    {
+        "name": "Svg",
+        "comment": "\n\n# SVG Nodes\n@docs Svg, Attribute, text, node, map\n\n# HTML Embedding\n@docs svg, foreignObject\n\n# Graphics elements\n@docs circle, ellipse, image, line, path, polygon, polyline, rect, use\n\n# Animation elements\n@docs animate, animateColor, animateMotion, animateTransform, mpath, set\n\n# Descriptive elements\n@docs desc, metadata, title\n\n# Containers\n@docs a, defs, g, marker, mask, pattern, switch, symbol\n\n# Text\n@docs altGlyph, altGlyphDef, altGlyphItem, glyph, glyphRef, textPath, text_,\n  tref, tspan\n\n# Fonts\n@docs font\n\n# Gradients\n@docs linearGradient, radialGradient, stop\n\n# Filters\n@docs feBlend, feColorMatrix, feComponentTransfer, feComposite,\n  feConvolveMatrix, feDiffuseLighting, feDisplacementMap, feFlood, feFuncA,\n  feFuncB, feFuncG, feFuncR, feGaussianBlur, feImage, feMerge, feMergeNode,\n  feMorphology, feOffset, feSpecularLighting, feTile, feTurbulence\n\n# Light source elements\n@docs feDistantLight, fePointLight, feSpotLight\n\n# Miscellaneous\n@docs clipPath, colorProfile, cursor, filter, style, view\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Attribute",
+                "comment": " Set attributes on your `Svg`.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "VirtualDom.Attribute msg"
+            },
+            {
+                "name": "Svg",
+                "comment": " The core building block to create SVG. This library is filled with helper\nfunctions to create these `Svg` values.\n\nThis is backed by `VirtualDom.Node` in `evancz/virtual-dom`, but you do not\nneed to know any details about that to use this library!\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "VirtualDom.Node msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "a",
+                "comment": " The SVG Anchor Element defines a hyperlink.\n",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "altGlyph",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "altGlyphDef",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "altGlyphItem",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "animate",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "animateColor",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "animateMotion",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "animateTransform",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "circle",
+                "comment": " The circle element is an SVG basic shape, used to create circles based on\na center point and a radius.\n\n    circle [ cx \"60\", cy \"60\", r \"50\" ] []\n",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "clipPath",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "colorProfile",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "cursor",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "defs",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "desc",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "ellipse",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "feBlend",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "feColorMatrix",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "feComponentTransfer",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "feComposite",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "feConvolveMatrix",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "feDiffuseLighting",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "feDisplacementMap",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "feDistantLight",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "feFlood",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "feFuncA",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "feFuncB",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "feFuncG",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "feFuncR",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "feGaussianBlur",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "feImage",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "feMerge",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "feMergeNode",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "feMorphology",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "feOffset",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "fePointLight",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "feSpecularLighting",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "feSpotLight",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "feTile",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "feTurbulence",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "filter",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "font",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "foreignObject",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Html.Html msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "g",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "glyph",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "glyphRef",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "image",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "line",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "linearGradient",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "map",
+                "comment": " Transform the messages produced by some `Svg`.\n",
+                "type": "(a -> msg) -> Svg.Svg a -> Svg.Svg msg"
+            },
+            {
+                "name": "marker",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "mask",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "metadata",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "mpath",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "node",
+                "comment": " Create any SVG node. To create a `<rect>` helper function, you would write:\n\n    rect : List (Attribute msg) -> List (Svg msg) -> Svg msg\n    rect attributes children =\n        node \"rect\" attributes children\n\nYou should always be able to use the helper functions already defined in this\nlibrary though!\n",
+                "type": "String.String -> List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "path",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "pattern",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "polygon",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "polyline",
+                "comment": " The polyline element is an SVG basic shape, used to create a series of\nstraight lines connecting several points. Typically a polyline is used to\ncreate open shapes.\n\n    polyline [ fill \"none\", stroke \"black\", points \"20,100 40,60 70,80 100,20\" ] []\n",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "radialGradient",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "rect",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "set",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "stop",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "style",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "svg",
+                "comment": " The root `<svg>` node for any SVG scene. This example shows a scene\ncontaining a rounded rectangle:\n\n    import Svg exposing (..)\n    import Svg.Attributes exposing (..)\n\n    roundRect =\n        svg\n          [ width \"120\", height \"120\", viewBox \"0 0 120 120\" ]\n          [ rect [ x \"10\", y \"10\", width \"100\", height \"100\", rx \"15\", ry \"15\" ] [] ]\n",
+                "type": "List.List (Html.Attribute msg) -> List.List (Svg.Svg msg) -> Html.Html msg"
+            },
+            {
+                "name": "switch",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "symbol",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "text",
+                "comment": " A simple text node, no tags at all.\n\nWarning: not to be confused with `text_` which produces the SVG `<text>` tag!\n",
+                "type": "String.String -> Svg.Svg msg"
+            },
+            {
+                "name": "textPath",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "text_",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "title",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "tref",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "tspan",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "use",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            },
+            {
+                "name": "view",
+                "comment": "",
+                "type": "List.List (Svg.Attribute msg) -> List.List (Svg.Svg msg) -> Svg.Svg msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Svg.Attributes",
+        "comment": "\n\n# Regular attributes\n@docs accentHeight, accelerate, accumulate, additive, alphabetic, allowReorder,\n  amplitude, arabicForm, ascent, attributeName, attributeType, autoReverse,\n  azimuth, baseFrequency, baseProfile, bbox, begin, bias, by, calcMode,\n  capHeight, class, clipPathUnits, contentScriptType, contentStyleType, cx, cy,\n  d, decelerate, descent, diffuseConstant, divisor, dur, dx, dy, edgeMode,\n  elevation, end, exponent, externalResourcesRequired, filterRes, filterUnits,\n  format, from, fx, fy, g1, g2, glyphName, glyphRef, gradientTransform,\n  gradientUnits, hanging, height, horizAdvX, horizOriginX, horizOriginY, id,\n  ideographic, in_, in2, intercept, k, k1, k2, k3, k4, kernelMatrix,\n  kernelUnitLength, keyPoints, keySplines, keyTimes, lang, lengthAdjust,\n  limitingConeAngle, local, markerHeight, markerUnits, markerWidth,\n  maskContentUnits, maskUnits, mathematical, max, media, method, min, mode,\n  name, numOctaves, offset, operator, order, orient, orientation, origin,\n  overlinePosition, overlineThickness, panose1, path, pathLength,\n  patternContentUnits, patternTransform, patternUnits, pointOrder, points,\n  pointsAtX, pointsAtY, pointsAtZ, preserveAlpha, preserveAspectRatio,\n  primitiveUnits, r, radius, refX, refY, renderingIntent, repeatCount,\n  repeatDur, requiredExtensions, requiredFeatures, restart, result, rotate,\n  rx, ry, scale, seed, slope, spacing, specularConstant, specularExponent,\n  speed, spreadMethod, startOffset, stdDeviation, stemh, stemv, stitchTiles,\n  strikethroughPosition, strikethroughThickness, string, style, surfaceScale,\n  systemLanguage, tableValues, target, targetX, targetY, textLength, title, to,\n  transform, type_, u1, u2, underlinePosition, underlineThickness, unicode,\n  unicodeRange, unitsPerEm, vAlphabetic, vHanging, vIdeographic, vMathematical,\n  values, version, vertAdvY, vertOriginX, vertOriginY, viewBox, viewTarget,\n  width, widths, x, xHeight, x1, x2, xChannelSelector, xlinkActuate,\n  xlinkArcrole, xlinkHref, xlinkRole, xlinkShow, xlinkTitle, xlinkType,\n  xmlBase, xmlLang, xmlSpace, y, y1, y2, yChannelSelector, z, zoomAndPan\n\n# Presentation attributes\n@docs alignmentBaseline, baselineShift, clipPath, clipRule, clip,\n  colorInterpolationFilters, colorInterpolation, colorProfile, colorRendering,\n  color, cursor, direction, display, dominantBaseline, enableBackground,\n  fillOpacity, fillRule, fill, filter, floodColor, floodOpacity, fontFamily,\n  fontSizeAdjust, fontSize, fontStretch, fontStyle, fontVariant, fontWeight,\n  glyphOrientationHorizontal, glyphOrientationVertical, imageRendering,\n  kerning, letterSpacing, lightingColor, markerEnd, markerMid, markerStart,\n  mask, opacity, overflow, pointerEvents, shapeRendering, stopColor,\n  stopOpacity, strokeDasharray, strokeDashoffset, strokeLinecap,\n  strokeLinejoin, strokeMiterlimit, strokeOpacity, strokeWidth, stroke,\n  textAnchor, textDecoration, textRendering, unicodeBidi, visibility,\n  wordSpacing, writingMode\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "accelerate",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "accentHeight",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "accumulate",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "additive",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "alignmentBaseline",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "allowReorder",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "alphabetic",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "amplitude",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "arabicForm",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "ascent",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "attributeName",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "attributeType",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "autoReverse",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "azimuth",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "baseFrequency",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "baseProfile",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "baselineShift",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "bbox",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "begin",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "bias",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "by",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "calcMode",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "capHeight",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "class",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "clip",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "clipPath",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "clipPathUnits",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "clipRule",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "color",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "colorInterpolation",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "colorInterpolationFilters",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "colorProfile",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "colorRendering",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "contentScriptType",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "contentStyleType",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "cursor",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "cx",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "cy",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "d",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "decelerate",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "descent",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "diffuseConstant",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "direction",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "display",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "divisor",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "dominantBaseline",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "dur",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "dx",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "dy",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "edgeMode",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "elevation",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "enableBackground",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "end",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "exponent",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "externalResourcesRequired",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "fill",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "fillOpacity",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "fillRule",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "filter",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "filterRes",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "filterUnits",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "floodColor",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "floodOpacity",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "fontFamily",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "fontSize",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "fontSizeAdjust",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "fontStretch",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "fontStyle",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "fontVariant",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "fontWeight",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "format",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "from",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "fx",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "fy",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "g1",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "g2",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "glyphName",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "glyphOrientationHorizontal",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "glyphOrientationVertical",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "glyphRef",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "gradientTransform",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "gradientUnits",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "hanging",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "height",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "horizAdvX",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "horizOriginX",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "horizOriginY",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "id",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "ideographic",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "imageRendering",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "in2",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "in_",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "intercept",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "k",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "k1",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "k2",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "k3",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "k4",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "kernelMatrix",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "kernelUnitLength",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "kerning",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "keyPoints",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "keySplines",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "keyTimes",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "lang",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "lengthAdjust",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "letterSpacing",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "lightingColor",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "limitingConeAngle",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "local",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "markerEnd",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "markerHeight",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "markerMid",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "markerStart",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "markerUnits",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "markerWidth",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "mask",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "maskContentUnits",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "maskUnits",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "mathematical",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "max",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "media",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "method",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "min",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "mode",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "name",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "numOctaves",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "offset",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "opacity",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "operator",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "order",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "orient",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "orientation",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "origin",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "overflow",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "overlinePosition",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "overlineThickness",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "panose1",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "path",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "pathLength",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "patternContentUnits",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "patternTransform",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "patternUnits",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "pointOrder",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "pointerEvents",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "points",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "pointsAtX",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "pointsAtY",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "pointsAtZ",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "preserveAlpha",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "preserveAspectRatio",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "primitiveUnits",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "r",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "radius",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "refX",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "refY",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "renderingIntent",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "repeatCount",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "repeatDur",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "requiredExtensions",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "requiredFeatures",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "restart",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "result",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "rotate",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "rx",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "ry",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "scale",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "seed",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "shapeRendering",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "slope",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "spacing",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "specularConstant",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "specularExponent",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "speed",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "spreadMethod",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "startOffset",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "stdDeviation",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "stemh",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "stemv",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "stitchTiles",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "stopColor",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "stopOpacity",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "strikethroughPosition",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "strikethroughThickness",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "string",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "stroke",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "strokeDasharray",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "strokeDashoffset",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "strokeLinecap",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "strokeLinejoin",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "strokeMiterlimit",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "strokeOpacity",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "strokeWidth",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "style",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "surfaceScale",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "systemLanguage",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "tableValues",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "target",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "targetX",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "targetY",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "textAnchor",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "textDecoration",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "textLength",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "textRendering",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "title",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "to",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "transform",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "type_",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "u1",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "u2",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "underlinePosition",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "underlineThickness",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "unicode",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "unicodeBidi",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "unicodeRange",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "unitsPerEm",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "vAlphabetic",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "vHanging",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "vIdeographic",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "vMathematical",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "values",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "version",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "vertAdvY",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "vertOriginX",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "vertOriginY",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "viewBox",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "viewTarget",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "visibility",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "width",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "widths",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "wordSpacing",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "writingMode",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "x",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "x1",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "x2",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "xChannelSelector",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "xHeight",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "xlinkActuate",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "xlinkArcrole",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "xlinkHref",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "xlinkRole",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "xlinkShow",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "xlinkTitle",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "xlinkType",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "xmlBase",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "xmlLang",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "xmlSpace",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "y",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "y1",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "y2",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "yChannelSelector",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "z",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            },
+            {
+                "name": "zoomAndPan",
+                "comment": "",
+                "type": "String.String -> Svg.Attribute msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Svg.Events",
+        "comment": "\n\n# Mouse\n@docs onClick, onMouseDown, onMouseUp, onMouseOver, onMouseOut\n\n# Custom\n@docs on, stopPropagationOn, preventDefaultOn, custom\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "custom",
+                "comment": " Create an event listener that may [`stopPropagation`][stop] or\n[`preventDefault`][prevent].\n\n[stop]: https://developer.mozilla.org/en-US/docs/Web/API/Event/stopPropagation\n[prevent]: https://developer.mozilla.org/en-US/docs/Web/API/Event/preventDefault\n\n**Note:** If you need something even more custom (like capture phase) check\nout the lower-level event API in `elm/virtual-dom`.\n",
+                "type": "String.String -> Json.Decode.Decoder { message : msg, stopPropagation : Basics.Bool, preventDefault : Basics.Bool } -> Svg.Attribute msg"
+            },
+            {
+                "name": "on",
+                "comment": " Create a custom event listener. Normally this will not be necessary, but\nyou have the power! Here is how `onClick` is defined for example:\n\n    import Json.Decode as Decode\n\n    onClick : msg -> Attribute msg\n    onClick message =\n      on \"click\" (Decode.succeed message)\n\nThe first argument is the event name in the same format as with JavaScript's\n[`addEventListener`][aEL] function.\n\nThe second argument is a JSON decoder. Read more about these [here][decoder].\nWhen an event occurs, the decoder tries to turn the event object into an Elm\nvalue. If successful, the value is routed to your `update` function. In the\ncase of `onClick` we always just succeed with the given `message`.\n\nIf this is confusing, work through the [Elm Architecture Tutorial][tutorial].\nIt really helps!\n\n[aEL]: https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener\n[decoder]: /packages/elm/json/latest/Json-Decode\n[tutorial]: https://github.com/evancz/elm-architecture-tutorial/\n\n**Note:** This creates a [passive][] event listener, enabling optimizations for\ntouch, scroll, and wheel events in some browsers.\n\n[passive]: https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md\n",
+                "type": "String.String -> Json.Decode.Decoder msg -> Svg.Attribute msg"
+            },
+            {
+                "name": "onClick",
+                "comment": "",
+                "type": "msg -> Svg.Attribute msg"
+            },
+            {
+                "name": "onMouseDown",
+                "comment": "",
+                "type": "msg -> Svg.Attribute msg"
+            },
+            {
+                "name": "onMouseOut",
+                "comment": "",
+                "type": "msg -> Svg.Attribute msg"
+            },
+            {
+                "name": "onMouseOver",
+                "comment": "",
+                "type": "msg -> Svg.Attribute msg"
+            },
+            {
+                "name": "onMouseUp",
+                "comment": "",
+                "type": "msg -> Svg.Attribute msg"
+            },
+            {
+                "name": "preventDefaultOn",
+                "comment": " Create an event listener that may [`preventDefault`][prevent]. Your decoder\nmust produce a message and a `Bool` that decides if `preventDefault` should\nbe called.\n\nFor example, the `onSubmit` function in this library *always* prevents the\ndefault behavior:\n\n[prevent]: https://developer.mozilla.org/en-US/docs/Web/API/Event/preventDefault\n\n    onSubmit : msg -> Attribute msg\n    onSubmit msg =\n      preventDefaultOn \"submit\" (Json.map alwaysPreventDefault (Json.succeed msg))\n\n    alwaysPreventDefault : msg -> ( msg, Bool )\n    alwaysPreventDefault msg =\n      ( msg, True )\n",
+                "type": "String.String -> Json.Decode.Decoder ( msg, Basics.Bool ) -> Svg.Attribute msg"
+            },
+            {
+                "name": "stopPropagationOn",
+                "comment": " Create an event listener that may [`stopPropagation`][stop]. Your decoder\nmust produce a message and a `Bool` that decides if `stopPropagation` should\nbe called.\n\n[stop]: https://developer.mozilla.org/en-US/docs/Web/API/Event/stopPropagation\n\n**Note:** This creates a [passive][] event listener, enabling optimizations for\ntouch, scroll, and wheel events in some browsers.\n\n[passive]: https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md\n",
+                "type": "String.String -> Json.Decode.Decoder ( msg, Basics.Bool ) -> Svg.Attribute msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Svg.Keyed",
+        "comment": " A keyed node helps optimize cases where children are getting added, moved,\nremoved, etc. Common examples include:\n\n  - The user can delete items from a list.\n  - The user can create new items in a list.\n  - You can sort a list based on name or date or whatever.\n\nWhen you use a keyed node, every child is paired with a string identifier. This\nmakes it possible for the underlying diffing algorithm to reuse nodes more\nefficiently.\n\n# Keyed Nodes\n@docs node\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "node",
+                "comment": " Works just like `Svg.node`, but you add a unique identifier to each child\nnode. You want this when you have a list of nodes that is changing: adding\nnodes, removing nodes, etc. In these cases, the unique identifiers help make\nthe DOM modifications more efficient.\n",
+                "type": "String.String -> List.List (Svg.Attribute msg) -> List.List ( String.String, Svg.Svg msg ) -> Svg.Svg msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Svg.Lazy",
+        "comment": " Since all Elm functions are pure we have a guarantee that the same input\nwill always result in the same output. This module gives us tools to be lazy\nabout building `Svg` that utilize this fact.\n\nRather than immediately applying functions to their arguments, the `lazy`\nfunctions just bundle the function and arguments up for later. When diffing\nthe old and new virtual DOM, it checks to see if all the arguments are equal.\nIf so, it skips calling the function!\n\nThis is a really cheap test and often makes things a lot faster, but definitely\nbenchmark to be sure!\n\n@docs lazy, lazy2, lazy3, lazy4, lazy5, lazy6, lazy7, lazy8\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "lazy",
+                "comment": " A performance optimization that delays the building of virtual DOM nodes.\n\nCalling `(view model)` will definitely build some virtual DOM, perhaps a lot of\nit. Calling `(lazy view model)` delays the call until later. During diffing, we\ncan check to see if `model` is referentially equal to the previous value used,\nand if so, we just stop. No need to build up the tree structure and diff it,\nwe know if the input to `view` is the same, the output must be the same!\n",
+                "type": "(a -> Svg.Svg msg) -> a -> Svg.Svg msg"
+            },
+            {
+                "name": "lazy2",
+                "comment": " Same as `lazy` but checks on two arguments.\n",
+                "type": "(a -> b -> Svg.Svg msg) -> a -> b -> Svg.Svg msg"
+            },
+            {
+                "name": "lazy3",
+                "comment": " Same as `lazy` but checks on three arguments.\n",
+                "type": "(a -> b -> c -> Svg.Svg msg) -> a -> b -> c -> Svg.Svg msg"
+            },
+            {
+                "name": "lazy4",
+                "comment": " Same as `lazy` but checks on four arguments.\n",
+                "type": "(a -> b -> c -> d -> Svg.Svg msg) -> a -> b -> c -> d -> Svg.Svg msg"
+            },
+            {
+                "name": "lazy5",
+                "comment": " Same as `lazy` but checks on five arguments.\n",
+                "type": "(a -> b -> c -> d -> e -> Svg.Svg msg) -> a -> b -> c -> d -> e -> Svg.Svg msg"
+            },
+            {
+                "name": "lazy6",
+                "comment": " Same as `lazy` but checks on six arguments.\n",
+                "type": "(a -> b -> c -> d -> e -> f -> Svg.Svg msg) -> a -> b -> c -> d -> e -> f -> Svg.Svg msg"
+            },
+            {
+                "name": "lazy7",
+                "comment": " Same as `lazy` but checks on seven arguments.\n",
+                "type": "(a -> b -> c -> d -> e -> f -> g -> Svg.Svg msg) -> a -> b -> c -> d -> e -> f -> g -> Svg.Svg msg"
+            },
+            {
+                "name": "lazy8",
+                "comment": " Same as `lazy` but checks on eight arguments.\n",
+                "type": "(a -> b -> c -> d -> e -> f -> g -> h -> Svg.Svg msg) -> a -> b -> c -> d -> e -> f -> g -> h -> Svg.Svg msg"
+            }
+        ],
+        "binops": []
+    }
+]

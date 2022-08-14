@@ -1,0 +1,417 @@
+[
+    {
+        "name": "UInt64",
+        "comment": " 64-bit unsigned integer using wrapping overflow.\n\n  - [Type](#type)\n      - [`UInt64`](#UInt64)\n  - [Constants](#constants)\n      - [`minValue`](#minValue), [`maxValue`](#maxValue)\n      - [`maxSafe`](#maxSafe), [`maxSafeAsFloat`](#maxSafeAsFloat), [`maxFloat`](#maxFloat), [`maxFloatAsFloat`](#maxFloatAsFloat)\n      - [`zero`](#zero), [`one`](#one), [`two`](#two)\n  - [Argument handling](#argument-handling)\n      - [`limitSmallInt`](#limitSmallInt), [`limitLargeInt`](#limitLargeInt), [`limitFloat`](#limitFloat)\n  - [Conversion - Int](#conversion-int)\n      - [`fromInt`](#fromInt), [`toInt31`](#toInt31), [`toInt53`](#toInt53)\n  - [Conversion - Float](#conversion-float)\n      - [`floor`](#floor), [`toFloat`](#toFloat)\n  - [Conversion - Parts](#conversion-parts)\n      - [`fromInt32s`](#fromInt32s), [`toInt32s`](#toInt32s), [`fromInt24s`](#fromInt24s), [`toInt24s`](#toInt24s)\n      - [`fromDecimal12s`](#fromDecimal12s)\n      - [`fromBigEndianBytes`](#fromBigEndianBytes), [`toBigEndianBytes`](#toBigEndianBytes)\n  - [Conversion - String](#conversion-string)\n      - [`fromString`](#fromString), [`toString`](#toString), [`toHexString`](#toHexString)\n  - [Conversion - Digits](#conversion-digits)\n      - [`toDigits`](#toDigits), [`toIntDigits`](#toIntDigits)\n  - [Math](#math)\n      - [`add`](#add), [`sub`](#sub), [`mul`](#mul), [`pow`](#pow)\n      - [`increment`](#increment), [`decrement`](#decrement), [`square`](#square)\n  - [Division](#division)\n      - [`div`](#div), [`mod`](#mod), [`divMod`](#divMod)\n  - [Bitwise](#bitwise)\n      - [`and`](#and), [`or`](#or), [`xor`](#xor), [`complement`](#complement)\n      - [`shiftLeftBy`](#shiftLeftBy), [`shiftRightZfBy`](#shiftRightZfBy),\n        [`rotateLeftBy`](#rotateLeftBy), [`rotateRightBy`](#rotateRightBy)\n      - [`shiftRightZfBy1`](#shiftRightZfBy1)\n      - [`getBit`](#getBit), [`setBit`](#setBit)\n  - [Comparison](#comparison)\n      - [`compare`](#compare)\n  - [Check](#check)\n      - [`isSafe`](#isSafe), [`isZero`](#isZero), [`isEven`](#isEven), [`isOdd`](#isOdd)\n  - [Extra](#extra)\n      - [`divModFast`](#divModFast), [`divModSlow`](#divModSlow)\n\n\n# Type\n\n@docs UInt64\n\n\n# Constants\n\n@docs minValue, maxValue, maxSafe, maxSafeAsFloat, maxFloat, maxFloatAsFloat, zero, one, two\n\n\n# Argument handling\n\nEvery `Int` or `Float` argument of every [`UInt64`](#UInt64) function is limited\nby one of the following three functions (or equivalent code):\n\n  - If argument is `Int` and valid value is `0 <= x < 2^n`, `n <= 32`\n      - argument is limited by [`limitSmallInt`](#limitSmallInt)`n True value`.\n  - If argument is `Int` and valid value is `1 <= x <= 2^n`, `n <= 32`\n      - argument is limited by [`limitSmallInt`](#limitSmallInt)`n False value`.\n  - If argument is `Int` and valid value can be above `2^32`\n      - argument is limited by [`limitLargeInt`](#limitLargeInt)`value`.\n  - If argument is `Float` and valid value is `0 <= x <= max`\n      - argument is limited by [`limitFloat`](#limitFloat)`max value`.\n\n\n## Non-integer `Int`\n\n`Int` arguments are expected to be integers\nand are not checked for non-integer values like `NaN`, `-Infinity`, `+Infinity` or `12.34`.\n\n**Behavior of any [`UInt64`](#UInt64) function is undefined if `Int` argument is not an integer.**\n\n\n## Large `Int`\n\nBehavior of `Int` for values above `2^31 - 1` is undefined in Elm.\nAs of Elm 0.19.1, using `Int` as function parameter or return value works for full safe integer range\nup to [`maxSafe`](#maxSafe), but this could change in the future.\n\n**Note:** This affects also [`limitSmallInt`](#limitSmallInt) with `n = 32`.\n\n\n## `String`\n\n`String` argument can be any valid Unicode `String`.\n\nBehavior is undefined if `String` argument contains invalid Unicode.\nSuch `String`:s can't be fuzz-tested with `elm-test`,\nso I can't make functions robust against invalid Unicode.\n\n@docs limitSmallInt, limitLargeInt, limitFloat\n\n\n# Conversion - Int\n\n@docs fromInt, toInt31, toInt53\n\n\n# Conversion - Float\n\n@docs floor, toFloat\n\n\n# Conversion - Parts\n\n@docs fromInt32s, toInt32s, fromInt24s, toInt24s, fromDecimal12s, fromBigEndianBytes, toBigEndianBytes\n\n\n# Conversion - String\n\n@docs fromString, toString, toHexString\n\n\n# Conversion - Digits\n\nThese functions convert [`UInt64`](#UInt64) to [`Digits`](UInt64.Digits#Digits),\nwhich offers options like different bases, digits padding and digits grouping.\n\n@docs toDigits, toIntDigits\n\n\n# Math\n\n@docs add, sub, mul, pow, increment, decrement, square\n\n\n# Division\n\n**Note:** I would prefer to cause runtime exception on division-by-zero,\nbut that can't be tested, so I'll settle for returning [`zero`](#zero) which can be tested.\n\n@docs div, mod, divMod\n\n\n# Bitwise\n\n@docs and, or, xor, complement, shiftLeftBy, shiftRightZfBy, rotateLeftBy, rotateRightBy, shiftRightZfBy1, getBit, setBit\n\n\n# Comparison\n\n@docs compare\n\n\n# Check\n\n@docs isSafe, isZero, isEven, isOdd\n\n\n# Extra\n\nExtra functions which can be useful for some use cases, e.g. benchmarking and testing.\n\nThese are not intended to be useful generally.\n\n@docs divModFast, divModSlow\n\n",
+        "unions": [
+            {
+                "name": "UInt64",
+                "comment": " 64-bit unsigned integer.\n\n[`UInt64`](#UInt64) is represented internally as three unsigned integers:\n\n  - `high`: 16-bit unsigned integer for bits 48 - 63\n  - `mid`: 24-bit unsigned integer for bits 24 - 47\n  - `low`: 24-bit unsigned integer for bits 0 - 23\n\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "add",
+                "comment": " Addition with wrapping overflow.\n\n    -- `123 + 456`\n    UInt64.add (UInt64.fromInt 123) (UInt64.fromInt 456)\n        |> UInt64.toString\n        --> \"579\"\n\n    -- `maxValue + 100`\n    UInt64.add UInt64.maxValue (UInt64.fromInt 100)\n        |> UInt64.toString\n        --> \"99\"\n\n",
+                "type": "UInt64.UInt64 -> UInt64.UInt64 -> UInt64.UInt64"
+            },
+            {
+                "name": "and",
+                "comment": " Bitwise AND.\n\n    UInt64.and\n        (UInt64.fromInt32s 0x11223344 0xAABBCCDD)\n        (UInt64.fromInt32s 0x0000FFFF 0xFFFF0000)\n        |> UInt64.toHexString\n        --> \"00003344AABB0000\"\n\n",
+                "type": "UInt64.UInt64 -> UInt64.UInt64 -> UInt64.UInt64"
+            },
+            {
+                "name": "compare",
+                "comment": " Compare two [`UInt64`](#UInt64):s.\n\n    UInt64.compare UInt64.zero UInt64.one\n        --> LT\n\n",
+                "type": "UInt64.UInt64 -> UInt64.UInt64 -> Basics.Order"
+            },
+            {
+                "name": "complement",
+                "comment": " Bitwise complement, aka bitwise NOT, aka one's complement.\n\n    UInt64.fromInt32s 0x11223344 0xAABBCCDD\n        |> UInt64.complement\n        |> UInt64.toHexString\n        --> \"EEDDCCBB55443322\"\n\n",
+                "type": "UInt64.UInt64 -> UInt64.UInt64"
+            },
+            {
+                "name": "decrement",
+                "comment": " Decrement by one with wrapping overflow.\n\n    -- `42 - 1`\n    UInt64.decrement (UInt64.fromInt 42)\n        |> UInt64.toString\n        --> \"41\"\n\n    -- `0 - 1`\n    UInt64.decrement UInt64.zero\n        |> UInt64.toHexString\n        --> \"FFFFFFFFFFFFFFFF\"\n\n",
+                "type": "UInt64.UInt64 -> UInt64.UInt64"
+            },
+            {
+                "name": "div",
+                "comment": " Integer division.\n\n  - If divisor is [`zero`](#zero), return [`zero`](#zero).\n\n\n## Examples\n\n    UInt64.div (UInt64.fromInt 1234) (UInt64.fromInt 100)\n        |> UInt64.toFloat\n        --> 12\n\n    -- 0xFFFFFFFFFFFFFFFF / 1e10\n    UInt64.div UInt64.maxValue (UInt64.floor 1e10)\n        |> UInt64.toFloat\n        --> 1844674407\n\n",
+                "type": "UInt64.UInt64 -> UInt64.UInt64 -> UInt64.UInt64"
+            },
+            {
+                "name": "divMod",
+                "comment": " Integer division with modulo.\n\n`divMod a b` is same as `( div a b, mod a b )` but faster.\n\n  - If divisor is [`zero`](#zero), return `( zero, zero )`.\n\n\n## Examples\n\n    UInt64.divMod (UInt64.fromInt 1234) (UInt64.fromInt 100)\n        |> Tuple.mapBoth UInt64.toFloat UInt64.toFloat\n        --> ( 12, 34 )\n\n    -- ( 0xFFFFFFFFFFFFFFFF / 1e10, 0xFFFFFFFFFFFFFFFF % 1e10 )\n    UInt64.divMod UInt64.maxValue (UInt64.floor 1e10)\n        |> Tuple.mapBoth UInt64.toFloat UInt64.toFloat\n        --> ( 1844674407, 3709551615 )\n\n",
+                "type": "UInt64.UInt64 -> UInt64.UInt64 -> ( UInt64.UInt64, UInt64.UInt64 )"
+            },
+            {
+                "name": "divModFast",
+                "comment": " Fast but complex algorithm for integer division with modulo.\n\n  - If divisor is [`zero`](#zero), return `Ok ( zero, zero )`.\n  - If impossible happens, return `Err error`.\n      - This should never happen, but see [`divModSlow`](#divModSlow).\n\nYou should usually use [`divMod`](#divMod) instead because it will use\neven faster algorithms when `dividend < 2^53` or `divisor < 2^29`,\nand will fall back to [`divModFast`](#divModFast) otherwise.\n\nSo [`divModFast`](#divModFast) is faster than [`divMod`](#divMod) only when\n`dividend >= 2^53 && divisor >= 2^29`.\n\n",
+                "type": "UInt64.UInt64 -> UInt64.UInt64 -> Result.Result String.String ( UInt64.UInt64, UInt64.UInt64 )"
+            },
+            {
+                "name": "divModSlow",
+                "comment": " Simple but slow [long division][LD]🢅 algorithm for integer division with modulo.\n\n  - If divisor is [`zero`](#zero), return `( zero, zero )`.\n\nIntended use cases:\n\n  - Benchmarking against other algorithms.\n  - Used as fallback algorithm with [`divModFast`](#divModFast),\n    in case it returns `Err`. Which should never happen.\n\n[LD]: https://en.wikipedia.org/wiki/Division_algorithm#Long_division\n\n",
+                "type": "UInt64.UInt64 -> UInt64.UInt64 -> ( UInt64.UInt64, UInt64.UInt64 )"
+            },
+            {
+                "name": "floor",
+                "comment": " Convert `Float` to [`UInt64`](#UInt64), rounding down.\n\n  - `value`: `0 <= x <=`[`maxFloat`](#maxFloat)\\*\n\n\\*) If `value` is above [`maxValue`](#maxValue), return [`maxValue`](#maxValue).\n\nSee [argument handling](#argument-handling).\n\n\n## Values above maxSafe\n\nConversion is exact for all possible `Float` integer values from `0` to [`maxFloat`](#maxFloat).\nHowever because `Float` can't represent all integers above [`maxSafe`](#maxSafe),\nit can sometimes seem like there is an error.\n\nIn the following example value `11222333444555666777.0` can't be represented exactly as a `Float`.\nNearest value that can be represented exactly as a `Float` is `11222333444555667456.0`,\nand that is what `UInt64.floor` gets as its argument.\nThis argument is then converted exactly to [`UInt64`](#UInt64).\n\n    UInt64.floor 11222333444555666777.0\n        |> UInt64.toString\n        --> \"11222333444555667456\"\n\n[`fromDecimal12s`](#fromDecimal12s) can be used instead\nto convert decimal literals above [`maxSafe`](#maxSafe) to [`UInt64`](#UInt64):\n\n    UInt64.fromDecimal12s 11222333 444555666777\n        |> UInt64.toString\n        --> \"11222333444555666777\"\n\n",
+                "type": "Basics.Float -> UInt64.UInt64"
+            },
+            {
+                "name": "fromBigEndianBytes",
+                "comment": " Convert list of bytes in big-endian order to [`UInt64`](#UInt64).\n\n  - each `byte`: `0 <= x <= 255`\n  - If list has less than 8 bytes, highest bytes will be zeroes.\n  - If list has more than 8 bytes, highest extra bytes are ignored.\n\nSee [argument handling](#argument-handling).\n\n    UInt64.fromBigEndianBytes [ 0xAB, 0, 0xCD ]\n        |> UInt64.toHexString\n        --> \"0000000000AB00CD\"\n\n    List.range 0x01 0x0F\n        |> UInt64.fromBigEndianBytes\n        |> UInt64.toHexString\n        --> \"08090A0B0C0D0E0F\"\n\n",
+                "type": "List.List Basics.Int -> UInt64.UInt64"
+            },
+            {
+                "name": "fromDecimal12s",
+                "comment": " Convert 64-bit unsigned integer represented as two 12-decimal-digit unsigned integers to [`UInt64`](#UInt64).\n\n  - `high`: 8 highest digits, `0 <= high <= 18446745`\\*\n  - `low`: 12 lowest digits, `0 <= low <= 999999999999`\n\n\\*) If `high` is `18446745`, return [`maxValue`](#maxValue).\n\nSee [argument handling](#argument-handling).\n\n    UInt64.fromDecimal12s 111222 333444555666\n        |> UInt64.toString\n        --> \"111222333444555666\"\n\n    UInt64.fromDecimal12s 1 2\n        |> UInt64.toString\n        --> \"1000000000002\"\n\n",
+                "type": "Basics.Float -> Basics.Float -> UInt64.UInt64"
+            },
+            {
+                "name": "fromInt",
+                "comment": " Convert `Int` to [`UInt64`](#UInt64).\n\n  - `value`: `0 <= x <=`[`maxSafe`](#maxSafe)\n\nSee [argument handling](#argument-handling).\n\n    UInt64.fromInt 123\n        |> UInt64.toString\n        --> \"123\"\n\n",
+                "type": "Basics.Int -> UInt64.UInt64"
+            },
+            {
+                "name": "fromInt24s",
+                "comment": " Convert 64-bit unsigned integer represented as three 24-bit unsigned integers to [`UInt64`](#UInt64).\n\nThis is the internal format of [`UInt64`](#UInt64)\nand so [`fromInt24s`](#fromInt24s) is the fastest way to create [`UInt64`](#UInt64) value.\n\n  - `high`: 16-bit unsigned integer for bits 48 - 63\n  - `mid`: 24-bit unsigned integer for bits 24 - 47\n  - `low`: 24-bit unsigned integer for bits 0 - 23\n\nSee [argument handling](#argument-handling).\n\n    UInt64.fromInt24s 0x1122 0x334455 0x667788\n        |> UInt64.toHexString\n        --> \"1122334455667788\"\n\n    UInt64.fromInt24s 1 2 3\n        |> UInt64.toHexString\n        --> \"0001000002000003\"\n\n",
+                "type": "Basics.Int -> Basics.Int -> Basics.Int -> UInt64.UInt64"
+            },
+            {
+                "name": "fromInt32s",
+                "comment": " Convert 64-bit unsigned integer represented as two 32-bit unsigned integers to [`UInt64`](#UInt64).\n\n  - `high`: 32-bit unsigned integer for bits 32 - 63\n  - `low`: 32-bit unsigned integer for bits 0 - 31\n\nSee [argument handling](#argument-handling).\n\n    UInt64.fromInt32s 0x11223344 0xAABBCCDD\n        |> UInt64.toHexString\n        --> \"11223344AABBCCDD\"\n\n    UInt64.fromInt32s 1 2\n        |> UInt64.toHexString\n        --> \"0000000100000002\"\n\n",
+                "type": "Basics.Int -> Basics.Int -> UInt64.UInt64"
+            },
+            {
+                "name": "fromString",
+                "comment": " Convert `String` to [`UInt64`](#UInt64).\n\n`String` can be\n\n  - decimal `String` of digits `0123456789`\n  - hexadecimal `String` with prefix `0x` and digits `0123456789ABCDEFabcdef`\n  - octal `String` with prefix `0o` and digits `01234567`\n  - binary `String` with prefix `0b` and digits `01`\n\nReturn `Nothing` if `String` isn't valid for any of the above formats,\nor if the value would be above [`maxValue`](#maxValue).\n\nSee [`String` at argument handling](#-string-).\n\n    UInt64.fromString \"12345\"\n        |> Maybe.andThen UInt64.toInt31\n        --> Just 12345\n\n    UInt64.fromString \"0x11223344AABBCCDD\"\n        |> Maybe.map UInt64.toInt32s\n        --> Just ( 0x11223344, 0xAABBCCDD )\n\n    UInt64.fromString \"0o777\"\n        |> Maybe.map UInt64.toHexString\n        --> Just \"00000000000001FF\"\n\n    UInt64.fromString \"0b1111000011110000\"\n        |> Maybe.map UInt64.toHexString\n        --> Just \"000000000000F0F0\"\n\n    -- `e` is not valid without `0x` prefix\n    UInt64.fromString \"1e10\"\n        --> Nothing\n\n    -- value would be above `maxValue`\n    UInt64.fromString \"111222333444555666777\"\n        --> Nothing\n\n",
+                "type": "String.String -> Maybe.Maybe UInt64.UInt64"
+            },
+            {
+                "name": "getBit",
+                "comment": " Return a bit.\n\n  - `bitNumber`: `0 <= x <= 63`, least significant bit is `0`\n\nSee [argument handling](#argument-handling).\n\n    UInt64.one\n        |> UInt64.getBit 0\n        --> 1\n\n",
+                "type": "Basics.Int -> UInt64.UInt64 -> Basics.Int"
+            },
+            {
+                "name": "increment",
+                "comment": " Increment by one with wrapping overflow.\n\n    -- `42 + 1`\n    UInt64.increment (UInt64.fromInt 42)\n        |> UInt64.toString\n        --> \"43\"\n\n    -- `maxValue + 1`\n    UInt64.increment UInt64.maxValue\n        |> UInt64.toString\n        --> \"0\"\n\n",
+                "type": "UInt64.UInt64 -> UInt64.UInt64"
+            },
+            {
+                "name": "isEven",
+                "comment": " Return `True` if argument is even.\n",
+                "type": "UInt64.UInt64 -> Basics.Bool"
+            },
+            {
+                "name": "isOdd",
+                "comment": " Return `True` if argument is odd.\n",
+                "type": "UInt64.UInt64 -> Basics.Bool"
+            },
+            {
+                "name": "isSafe",
+                "comment": " Return `True` if argument is safe integer.\n\nA safe integer is an integer that\n\n  - can be represented exacly as `Float` and\n  - no other integer is rounded to as `Float`.\n\nUnsigned integers from `0` to [`maxSafe`](#maxSafe) are safe integers.\n\n\n## Example\n\nFor example `2^53` is not a safe integer.\nWhile it can be represented exactly as `Float`,\nthere exists another integer `2^53 + 1` which is rounded to `2^53`:\n\n    -- 2^53 + 1 (9007199254740993) is rounded to\n    -- 2^53     (9007199254740992) when converted to Float\n    UInt64.fromDecimal12s 9007 199254740993\n        |> UInt64.toFloat\n        --> 9007199254740992\n\n    UInt64.fromDecimal12s 9007 199254740993\n        |> UInt64.isSafe\n        --> False\n\nThis happens because `2^53 + 1` can't be represented exactly as `Float`,\nso it is rounded to another integer.\n\n",
+                "type": "UInt64.UInt64 -> Basics.Bool"
+            },
+            {
+                "name": "isZero",
+                "comment": " Return `True` if argument is [`zero`](#zero).\n\nThis is same as `(==)`[`zero`](#zero) but much faster.\n\n**Note:** See [Performance Optimization][PO]🢅 for discussion about speed of `==` in Elm 0.19.1.\n\n[PO]: https://discourse.elm-lang.org/t/performance-optimization/5105\n\n",
+                "type": "UInt64.UInt64 -> Basics.Bool"
+            },
+            {
+                "name": "limitFloat",
+                "comment": " Limit `Float` to `0 <= value <= max`.\n\n  - `max`: maximum allowed value, `max <=`[`maxFloat`](#maxFloat)\n  - `value`: value to limit\n\nSee [argument handling](#argument-handling).\n\nAlgorithm:\n\n  - If value is `NaN`, use `0` instead.\n  - If value is negative, use `0` instead.\n  - If value is above `max`, use `max` instead.\n  - If value is not an integer, round down to integer.\n\n\n## Examples\n\n    -- `-1` limited to 12 decimal digits\n    UInt64.limitFloat 999999999999 -1\n        --> 0\n\n    -- `1e20` limited to 12 decimal digits\n    UInt64.limitFloat 999999999999 1e20\n        --> 999999999999\n\n    -- `1e20` limited to `0 <= value <= maxFloat`\n    UInt64.limitFloat UInt64.maxFloatAsFloat 1.0e20\n        --> 18446744073709549568.0\n\n",
+                "type": "Basics.Float -> Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "limitLargeInt",
+                "comment": " Limit `Int` to `0 <= value <=`[`maxSafe`](#maxSafe).\n\nSee [argument handling](#argument-handling).\n\nAlgorithm:\n\n  - If value is negative, use `0` instead.\n  - If value is above [`maxSafe`](#maxSafe), use [`maxSafe`](#maxSafe) instead.\n\n\n## Examples\n\n    -- negative value is replaced with zero\n    UInt64.limitLargeInt -1\n        --> 0\n\n    -- value above `maxSafe` is replaced with `maxSafe`\n    UInt64.limitLargeInt 9007199254740992\n        --> 9007199254740991\n\n",
+                "type": "Basics.Int -> Basics.Int"
+            },
+            {
+                "name": "limitSmallInt",
+                "comment": " Limit `Int` to `0 <= x < 2 ^ bitSize` or `1 <= x <= 2 ^ bitSize`.\n\n  - `bitSize`: `1 <= bitSize <= 32`\n  - `startFromZero`\n      - `True` if valid range is `0 <= x < 2 ^ bitSize`\n      - `False` if valid range is `1 <= x <= 2 ^ bitSize`\n  - `value`: value to limit\n\nSee [argument handling](#argument-handling).\n\nAlgorithm:\n\n1.  If value is negative, convert it to positive by two's complement.\n2.  Apply unsigned bitwise AND with bitmask `2 ^ bitSize - 1`.\n3.  If value is zero and `not startFromZero`, use `2 ^ bitSize` as value.\n\n\n## Examples\n\n    -- `1234` limited to 6 bits, `0 <= x <= 63`\n    UInt64.limitSmallInt 6 True 1234\n        --> 18\n\n    -- `-1` limited to 8 bits, `0 <= x <= 255`\n    UInt64.limitSmallInt 8 True -1\n        --> 0xFF\n\n    -- `-1` limited to 32 bits, `0 <= x <= 2^32-1`\n    UInt64.limitSmallInt 32 True -1\n        --> 0xFFFFFFFF\n\n    -- `0` limited to 6 bits, `1 <= x <= 64`\n    UInt64.limitSmallInt 6 False 0\n        --> 64\n\n",
+                "type": "Basics.Int -> Basics.Bool -> Basics.Int -> Basics.Int"
+            },
+            {
+                "name": "maxFloat",
+                "comment": " Maximum [`UInt64`](#UInt64) value that can be represented exactly as a `Float`.\n\n`2^64 - 2048 = 18446744073709549568 = 0xFFFFFFFFFFFFF800`\n\n**Note:** `Float` can't represent exactly all integers above [`maxSafe`](#maxSafe).\nFor example integers [`maxFloat`](#maxFloat)`+ 1 <= x <=`[`maxValue`](#maxValue) can't be represented exactly as `Float`,\nmaking this the maximum [`UInt64`](#UInt64) value that can.\n\n",
+                "type": "UInt64.UInt64"
+            },
+            {
+                "name": "maxFloatAsFloat",
+                "comment": " [`maxFloat`](#maxFloat) as `Float`\n",
+                "type": "Basics.Float"
+            },
+            {
+                "name": "maxSafe",
+                "comment": " Maximum safe integer as [`UInt64`](#UInt64).\n\n`2^53 - 1 = 9007199254740991 = 0x001FFFFFFFFFFFFF`\n\nEqual to `Number.MAX_SAFE_INTEGER` in JavaScript.\n\nSee also [`isSafe`](#isSafe).\n\n",
+                "type": "UInt64.UInt64"
+            },
+            {
+                "name": "maxSafeAsFloat",
+                "comment": " [`maxSafe`](#maxSafe) as `Float`\n",
+                "type": "Basics.Float"
+            },
+            {
+                "name": "maxValue",
+                "comment": " Maximum possible [`UInt64`](#UInt64) value.\n\n`2^64 - 1 = 18446744073709551615 = 0xFFFFFFFFFFFFFFFF`\n\n    UInt64.maxValue\n        |> UInt64.toString\n        --> \"18446744073709551615\"\n\n",
+                "type": "UInt64.UInt64"
+            },
+            {
+                "name": "minValue",
+                "comment": " Minimum possible [`UInt64`](#UInt64) value.\n\nSame as [`zero`](#zero).\n\n    UInt64.minValue\n        |> UInt64.toString\n        --> \"0\"\n\n",
+                "type": "UInt64.UInt64"
+            },
+            {
+                "name": "mod",
+                "comment": " Remainder after [`div`](#div).\n\n  - If divisor is [`zero`](#zero), return [`zero`](#zero).\n\n\n## Examples\n\n    UInt64.mod (UInt64.fromInt 1234) (UInt64.fromInt 100)\n        |> UInt64.toFloat\n        --> 34\n\n    -- 0xFFFFFFFFFFFFFFFF % 1e10\n    UInt64.mod UInt64.maxValue (UInt64.floor 1e10)\n        |> UInt64.toFloat\n        --> 3709551615\n\n",
+                "type": "UInt64.UInt64 -> UInt64.UInt64 -> UInt64.UInt64"
+            },
+            {
+                "name": "mul",
+                "comment": " Multiplication with wrapping overflow.\n\n    -- `1e9 * 1e9`\n    UInt64.mul (UInt64.floor 1e9) (UInt64.floor 1e9)\n        |> UInt64.toString\n        --> \"1000000000000000000\"\n\n    -- `(1e10 * 1e10) % 2^64`\n    UInt64.mul (UInt64.floor 1e10) (UInt64.floor 1e10)\n        |> UInt64.toString\n        --> \"7766279631452241920\"\n\n",
+                "type": "UInt64.UInt64 -> UInt64.UInt64 -> UInt64.UInt64"
+            },
+            {
+                "name": "one",
+                "comment": " Number `1`\n",
+                "type": "UInt64.UInt64"
+            },
+            {
+                "name": "or",
+                "comment": " Bitwise OR.\n\n    UInt64.or\n        (UInt64.fromInt32s 0x11223344 0xAABBCCDD)\n        (UInt64.fromInt32s 0x0000FFFF 0xFFFF0000)\n        |> UInt64.toHexString\n        --> \"1122FFFFFFFFCCDD\"\n\n",
+                "type": "UInt64.UInt64 -> UInt64.UInt64 -> UInt64.UInt64"
+            },
+            {
+                "name": "pow",
+                "comment": " Power aka exponentiation. `0 ^ 0 = 1`\n\n    -- `3 ^ 7`\n    UInt64.pow (UInt64.fromInt 3) (UInt64.fromInt 7)\n        |> UInt64.toString\n        --> \"2187\"\n\n    -- `10 ^ 19`\n    UInt64.pow (UInt64.fromInt 10) (UInt64.fromInt 19)\n        |> UInt64.toString\n        --> \"10000000000000000000\"\n\n    -- `(3 ^ 10000000000000000000) % 2^64`\n    UInt64.pow (UInt64.fromInt 10) (UInt64.fromInt 19)\n        |> UInt64.pow (UInt64.fromInt 3)\n        |> UInt64.toString\n        --> \"12038004833498693633\"\n\n**Note:** Uses fast algorithms: Bases 0-2 are special-cased,\nexponents 0-16 use [addition-chain exponentiation][AC]🢅 and\nexponents over 16 use [exponentiation by squaring][ES]🢅.\n\n[AC]: https://en.wikipedia.org/wiki/Addition-chain_exponentiation\n[ES]: https://en.wikipedia.org/wiki/Exponentiation_by_squaring\n\n",
+                "type": "UInt64.UInt64 -> UInt64.UInt64 -> UInt64.UInt64"
+            },
+            {
+                "name": "rotateLeftBy",
+                "comment": " Bitwise rotate left.\n\n  - `shift`: `0 <= x <= 63`\n\nSee [argument handling](#argument-handling).\n\n    UInt64.fromInt32s 0x11223344 0xAABBCCDD\n        |> UInt64.rotateLeftBy 20\n        |> UInt64.toHexString\n        --> \"344AABBCCDD11223\"\n\n",
+                "type": "Basics.Int -> UInt64.UInt64 -> UInt64.UInt64"
+            },
+            {
+                "name": "rotateRightBy",
+                "comment": " Bitwise rotate right.\n\n  - `shift`: `0 <= x <= 63`\n\nSee [argument handling](#argument-handling).\n\n    UInt64.fromInt32s 0x11223344 0xAABBCCDD\n        |> UInt64.rotateRightBy 20\n        |> UInt64.toHexString\n        --> \"BCCDD11223344AAB\"\n\n",
+                "type": "Basics.Int -> UInt64.UInt64 -> UInt64.UInt64"
+            },
+            {
+                "name": "setBit",
+                "comment": " Set a bit to given value.\n\n  - `bitNumber`: `0 <= x <= 63`, least significant bit is `0`\n  - `bitValue`: new value, either `0` or `1`\n\nSee [argument handling](#argument-handling).\n\n    UInt64.zero\n        |> UInt64.setBit 30 1\n        |> UInt64.toHexString\n        --> \"0000000040000000\"\n\n",
+                "type": "Basics.Int -> Basics.Int -> UInt64.UInt64 -> UInt64.UInt64"
+            },
+            {
+                "name": "shiftLeftBy",
+                "comment": " Bitwise shift left, filling with zeroes from right.\n\n  - `shift`: `0 <= x <= 63`\n\nSee [argument handling](#argument-handling).\n\n    UInt64.fromInt32s 0x11223344 0xAABBCCDD\n        |> UInt64.shiftLeftBy 20\n        |> UInt64.toHexString\n        --> \"344AABBCCDD00000\"\n\n",
+                "type": "Basics.Int -> UInt64.UInt64 -> UInt64.UInt64"
+            },
+            {
+                "name": "shiftRightZfBy",
+                "comment": " Bitwise shift right, filling with zeroes from left.\n\n  - `shift`: `0 <= x <= 63`\n\nSee [argument handling](#argument-handling).\n\n    UInt64.fromInt32s 0x11223344 0xAABBCCDD\n        |> UInt64.shiftRightZfBy 20\n        |> UInt64.toHexString\n        --> \"0000011223344AAB\"\n\n",
+                "type": "Basics.Int -> UInt64.UInt64 -> UInt64.UInt64"
+            },
+            {
+                "name": "shiftRightZfBy1",
+                "comment": " Bitwise shift right by one bit, filling with zero from left.\n\n`shiftRightZfBy1 a` is same as `shiftRightZfBy 1 a` but faster.\n\n    UInt64.fromInt32s 0xEECCAA88 0x66442200\n        |> UInt64.shiftRightZfBy1\n        |> UInt64.toHexString\n        --> \"7766554433221100\"\n\n",
+                "type": "UInt64.UInt64 -> UInt64.UInt64"
+            },
+            {
+                "name": "square",
+                "comment": " Squaring with wrapping overflow.\n\n`square a` is same as `mul a a` or `pow a two` but faster.\n\n    -- `1e9 * 1e9`\n    UInt64.square (UInt64.floor 1e9)\n        |> UInt64.toString\n        --> \"1000000000000000000\"\n\n",
+                "type": "UInt64.UInt64 -> UInt64.UInt64"
+            },
+            {
+                "name": "sub",
+                "comment": " Subtraction with wrapping overflow.\n\n    -- `456 - 123`\n    UInt64.sub (UInt64.fromInt 456) (UInt64.fromInt 123)\n        |> UInt64.toString\n        --> \"333\"\n\n    -- `0 - 0xFF`\n    UInt64.sub UInt64.zero (UInt64.fromInt 0xFF)\n        |> UInt64.toHexString\n        --> \"FFFFFFFFFFFFFF01\"\n\n",
+                "type": "UInt64.UInt64 -> UInt64.UInt64 -> UInt64.UInt64"
+            },
+            {
+                "name": "toBigEndianBytes",
+                "comment": " Convert [`UInt64`](#UInt64) to list of 8 bytes in big-endian order.\n\n    UInt64.fromInt 0xABCDEF\n        |> UInt64.toBigEndianBytes\n        --> [ 0, 0, 0, 0, 0, 0xAB, 0xCD, 0xEF ]\n\n",
+                "type": "UInt64.UInt64 -> List.List Basics.Int"
+            },
+            {
+                "name": "toDigits",
+                "comment": " Convert [`UInt64`](#UInt64) to [`Digits`](UInt64.Digits#Digits) of `Char`\nusing given [`Base`](UInt64.Digits#Base).\n\nThis is intended as first step in converting [`UInt64`](#UInt64) to `String`.\n\n    import UInt64\n    import UInt64.Digits as Digits\n\n    UInt64.maxValue\n        |> UInt64.toDigits Digits.octal\n        |> Digits.toString\n        --> \"1777777777777777777777\"\n\n    UInt64.floor 1e15\n        |> UInt64.toDigits Digits.hexLower\n        |> Digits.padToMultipleOf 4 '0'\n        |> Digits.groupToString 4 ' '\n        --> \"0003 8d7e a4c6 8000\"\n\n",
+                "type": "UInt64.Internal.Base -> UInt64.UInt64 -> UInt64.Internal.Digits Char.Char"
+            },
+            {
+                "name": "toFloat",
+                "comment": " Convert [`UInt64`](#UInt64) to `Float`.\n\nConversion is exact for any value from `0` to [`maxSafe`](#maxSafe),\nbut above [`maxSafe`](#maxSafe) value is rounded if it can't be represented exactly as `Float`.\n\n\n## Example\n\n`9007199254740993` can't be represented exactly as `Float`,\nso it's rounded to `9007199254740992`.\n\n    UInt64.fromDecimal12s 9007 199254740993\n        |> UInt64.toFloat\n        --> 9007199254740992\n\n",
+                "type": "UInt64.UInt64 -> Basics.Float"
+            },
+            {
+                "name": "toHexString",
+                "comment": " Convert [`UInt64`](#UInt64) to uppercase hexadecimal `String` of 16 characters.\n\n    UInt64.floor 1e15\n        |> UInt64.toHexString\n        --> \"00038D7EA4C68000\"\n\n    UInt64.zero\n        |> UInt64.toHexString\n        --> \"0000000000000000\"\n\n**Note:** See [Conversion - Digits](#conversion-digits) for more options\nconverting [`UInt64`](#UInt64) to`String`.\n\n",
+                "type": "UInt64.UInt64 -> String.String"
+            },
+            {
+                "name": "toInt24s",
+                "comment": " Convert [`UInt64`](#UInt64) to 64-bit unsigned integer represented as three 24-bit unsigned integers.\n\nThis is the internal format of [`UInt64`](#UInt64)\nand so [`toInt24s`](#toInt24s) is the fastest way to extract value out of [`UInt64`](#UInt64).\n\n  - `high`: 16-bit unsigned integer for bits 48 - 63\n  - `mid`: 24-bit unsigned integer for bits 24 - 47\n  - `low`: 24-bit unsigned integer for bits 0 - 23\n\n\n## Example\n\n    UInt64.fromInt32s 0x11223344 0xAABBCCDD\n        |> UInt64.toInt24s\n        --> ( 0x1122, 0x3344AA, 0xBBCCDD )\n\n",
+                "type": "UInt64.UInt64 -> ( Basics.Int, Basics.Int, Basics.Int )"
+            },
+            {
+                "name": "toInt31",
+                "comment": " Convert [`UInt64`](#UInt64) to 31-bit unsigned integer.\n\nIf [`UInt64`](#UInt64) is above `2^31 - 1`, return `Nothing`.\n\n    UInt64.fromInt 0x7FFFFFFF\n        |> UInt64.toInt31\n        --> Just 0x7FFFFFFF\n\n    UInt64.fromInt 0x80000000\n        |> UInt64.toInt31\n        --> Nothing\n\n",
+                "type": "UInt64.UInt64 -> Maybe.Maybe Basics.Int"
+            },
+            {
+                "name": "toInt32s",
+                "comment": " Convert [`UInt64`](#UInt64) to 64-bit unsigned integer represented as two 32-bit unsigned integers.\n\n  - `high`: 32-bit unsigned integer for bits 32 - 63\n  - `low`: 32-bit unsigned integer for bits 0 - 31\n\nSee [large `Int`](#large-int-) note.\n\n    UInt64.floor 1e15\n        |> UInt64.toInt32s\n        --> ( 0x00038D7E, 0xA4C68000 )\n\n",
+                "type": "UInt64.UInt64 -> ( Basics.Int, Basics.Int )"
+            },
+            {
+                "name": "toInt53",
+                "comment": " Convert [`UInt64`](#UInt64) to 53-bit unsigned integer.\n\nIf [`UInt64`](#UInt64) is above [`maxSafe`](#maxSafe), return `Nothing`.\n\nSee [large `Int`](#large-int-) note.\n\n    UInt64.maxSafe\n        |> UInt64.toInt53\n        --> Just 9007199254740991\n\n    UInt64.maxSafe\n        |> UInt64.increment\n        |> UInt64.toInt53\n        --> Nothing\n\n",
+                "type": "UInt64.UInt64 -> Maybe.Maybe Basics.Int"
+            },
+            {
+                "name": "toIntDigits",
+                "comment": " Convert [`UInt64`](#UInt64) to [`Digits`](UInt64.Digits#Digits) of `Int`\nusing given [`Base`](UInt64.Digits#Base).\n\nThis is like [`toDigits`](#toDigits) except that each digit will be `Int` instead of `Char`.\n\n    import UInt64\n    import UInt64.Digits as Digits\n\n    UInt64.fromInt 0xABC\n        |> UInt64.toIntDigits Digits.hex\n        |> Digits.toList\n        --> [ 10, 11, 12 ]\n\n    -- digit sum of 1234 is `1+2+3+4 = 10`\n    UInt64.fromInt 1234\n        |> UInt64.toIntDigits Digits.decimal\n        |> Digits.toList\n        |> List.sum\n        --> 10\n\n",
+                "type": "UInt64.Internal.Base -> UInt64.UInt64 -> UInt64.Internal.Digits Basics.Int"
+            },
+            {
+                "name": "toString",
+                "comment": " Convert [`UInt64`](#UInt64) to decimal `String`.\n\n    UInt64.fromInt 0xFFFFFF\n        |> UInt64.toString\n        --> \"16777215\"\n\n**Note:** See [Conversion - Digits](#conversion-digits) for more options\nconverting [`UInt64`](#UInt64) to`String`.\n\n",
+                "type": "UInt64.UInt64 -> String.String"
+            },
+            {
+                "name": "two",
+                "comment": " Number `2`\n",
+                "type": "UInt64.UInt64"
+            },
+            {
+                "name": "xor",
+                "comment": " Bitwise XOR.\n\n    UInt64.xor\n        (UInt64.fromInt32s 0x11223344 0xAABBCCDD)\n        (UInt64.fromInt32s 0x0000FFFF 0xFFFF0000)\n        |> UInt64.toHexString\n        --> \"1122CCBB5544CCDD\"\n\n",
+                "type": "UInt64.UInt64 -> UInt64.UInt64 -> UInt64.UInt64"
+            },
+            {
+                "name": "zero",
+                "comment": " Number `0`\n",
+                "type": "UInt64.UInt64"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "UInt64.Digits",
+        "comment": " Working with list of digits, e.g. padding digits and grouping digits.\n\n    import UInt64\n    import UInt64.Digits as Digits\n\n    UInt64.fromInt 7654321\n        |> UInt64.toDigits Digits.decimal\n        |> Digits.groupToString 3 ' '\n        --> \"7 654 321\"\n\n    UInt64.fromInt 0xABCDE\n        |> UInt64.toDigits Digits.hexLower\n        |> Digits.padToPowerOfTwo '0'\n        |> Digits.toString\n        |> (++) \"0x\"\n        --> \"0x000abcde\"\n\n    UInt64.fromInt 0x10F\n        |> UInt64.toDigits Digits.binary\n        |> Digits.padToMultipleOf 4 '0'\n        |> Digits.pad 32 '.'\n        |> Digits.groupToString 4 ' '\n        --> \".... .... .... .... .... 0001 0000 1111\"\n\n    UInt64.fromInt 0x1FF\n        |> UInt64.toIntDigits Digits.octal\n        |> Digits.toList\n        --> [ 7, 7, 7 ]\n\n\n# Contents\n\n  - [Type](#type)\n      - [`Digits`](#Digits)\n  - [Create](#create)\n      - [`empty`](#empty)\n  - [Bases](#bases)\n      - [`Base`](#Base)\n      - [`decimal`](#decimal), [`hex`](#hex), [`octal`](#octal), [`binary`](#binary)\n      - [`hexUpper`](#hexUpper), [`hexLower`](#hexLower)\n  - [Padding](#padding)\n      - [`pad`](#pad), [`padToEven`](#padToEven), [`padToMultipleOf`](#padToMultipleOf), [`padToPowerOfTwo`](#padToPowerOfTwo)\n  - [Mapping](#Mapping)\n      - [`map`](#map)\n  - [Conversion - String](#conversion-string)\n      - [`toString`](#toString), [`groupToString`](#groupToString)\n  - [Conversion - List](#conversion-list)\n      - [`toList`](#toList), [`toListWithLength`](#toListWithLength)\n      - [`groupToFlatList`](#groupToFlatList), [`groupToList`](#groupToList)\n\n\n# Type\n\n@docs Digits\n\n\n# Create\n\nSee also [`UInt64.toDigits`](UInt64#toDigits) and [`UInt64.toIntDigits`](UInt64#toIntDigits).\n\n@docs empty\n\n\n# Bases\n\n@docs Base, decimal, hex, octal, binary, hexUpper, hexLower\n\n\n# Padding\n\nThe padding value given to these functions is not checked or validated in any way.\nIt can be any value and doesn't need to be a valid digit.\n\n@docs pad, padToEven, padToMultipleOf, padToPowerOfTwo\n\n\n# Mapping\n\n@docs map\n\n\n# Conversion - String\n\n@docs toString, groupToString\n\n\n# Conversion - List\n\n@docs toList, toListWithLength, groupToFlatList, groupToList\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Base",
+                "comment": " Base used with [`toDigits`](UInt64#toDigits) and [`toIntDigits`](UInt64#toIntDigits)\nto convert [`UInt64`](UInt64#UInt64) to [`Digits`](#Digits).\n",
+                "args": [],
+                "type": "UInt64.Internal.Base"
+            },
+            {
+                "name": "Digits",
+                "comment": " List of digits.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "UInt64.Internal.Digits a"
+            }
+        ],
+        "values": [
+            {
+                "name": "binary",
+                "comment": " Binary aka base 2.\n\n  - Digits used with [`toDigits`](UInt64#toDigits): `01`\n\n",
+                "type": "UInt64.Digits.Base"
+            },
+            {
+                "name": "decimal",
+                "comment": " Decimal aka base 10.\n\n  - Digits used with [`toDigits`](UInt64#toDigits): `0123456789`\n\n",
+                "type": "UInt64.Digits.Base"
+            },
+            {
+                "name": "empty",
+                "comment": " Empty [`Digits`](#Digits).\n\nThis can be useful e.g. when converting `Maybe UInt64` to [`Digits`](#Digits),\nso you can use [`empty`](#empty) for `Nothing`.\n\n    import UInt64.Digits as Digits\n\n    Digits.empty\n        |> Digits.toList\n        --> []\n\n",
+                "type": "UInt64.Digits.Digits a"
+            },
+            {
+                "name": "groupToFlatList",
+                "comment": " Convert [`Digits`](#Digits) to flat `List` of grouped digits.\n\nGroups are separated by given `separator`.\n\n  - `groupSize`: `1 <= x <= 64`\n\nSee [argument handling](UInt64#argument-handling).\n\n    import UInt64\n    import UInt64.Digits as Digits\n\n    UInt64.fromInt 7654321\n        |> UInt64.toDigits Digits.decimal\n        |> Digits.groupToFlatList 3 ' '\n        --> [ '7', ' ', '6', '5', '4', ' ', '3', '2', '1' ]\n\n",
+                "type": "Basics.Int -> a -> UInt64.Digits.Digits a -> List.List a"
+            },
+            {
+                "name": "groupToList",
+                "comment": " Convert [`Digits`](#Digits) to `List` of grouped digits.\n\nEach group will be a separate sub-`List`.\n\n  - `groupSize`: `1 <= x <= 64`\n\nSee [argument handling](UInt64#argument-handling).\n\n    import UInt64\n    import UInt64.Digits as Digits\n\n    UInt64.fromInt 7654321\n        |> UInt64.toDigits Digits.decimal\n        |> Digits.groupToList 3\n        --> [ [ '7' ], [ '6', '5', '4' ], [ '3', '2', '1' ] ]\n\n",
+                "type": "Basics.Int -> UInt64.Digits.Digits a -> List.List (List.List a)"
+            },
+            {
+                "name": "groupToString",
+                "comment": " Convert [`Digits`](#Digits) of `Char` to `String` of grouped digits.\n\nGroups are separated by given `separator`.\n\n  - `groupSize`: `1 <= x <= 64`\n\nSee [argument handling](UInt64#argument-handling).\n\n    import UInt64\n    import UInt64.Digits as Digits\n\n    UInt64.fromInt 7654321\n        |> UInt64.toDigits Digits.decimal\n        |> Digits.groupToString 3 ' '\n        --> \"7 654 321\"\n\n",
+                "type": "Basics.Int -> Char.Char -> UInt64.Digits.Digits Char.Char -> String.String"
+            },
+            {
+                "name": "hex",
+                "comment": " Hexadecimal aka base 16, using uppercase characters.\n\n  - Digits used with [`toDigits`](UInt64#toDigits): `0123456789ABCDEF`\n\n",
+                "type": "UInt64.Digits.Base"
+            },
+            {
+                "name": "hexLower",
+                "comment": " Hexadecimal aka base 16, using lowercase characters.\n\n  - Digits used with [`toDigits`](UInt64#toDigits): `0123456789abcdef`\n\n",
+                "type": "UInt64.Digits.Base"
+            },
+            {
+                "name": "hexUpper",
+                "comment": " Hexadecimal aka base 16, using uppercase characters.\n\nThis is same as [`hex`](#hex).\n\n  - Digits used with [`toDigits`](UInt64#toDigits): `0123456789ABCDEF`\n\n",
+                "type": "UInt64.Digits.Base"
+            },
+            {
+                "name": "map",
+                "comment": " Apply a function to every digit.\n\nIf [`Digits`](#Digits) has been padded, then function is also applied to added padding, if any.\n\n    import UInt64\n    import UInt64.Digits as Digits\n\n    UInt64.fromInt 11\n        |> UInt64.toIntDigits Digits.binary\n        |> Digits.map ((==) 1)\n        |> Digits.toList\n        --> [ True, False, True, True ]\n\n",
+                "type": "(a -> b) -> UInt64.Digits.Digits a -> UInt64.Digits.Digits b"
+            },
+            {
+                "name": "octal",
+                "comment": " Octal aka base 8.\n\n  - Digits used with [`toDigits`](UInt64#toDigits): `01234567`\n\n",
+                "type": "UInt64.Digits.Base"
+            },
+            {
+                "name": "pad",
+                "comment": " Pad to given number of digits.\n\n  - `Int`: `1 <= x <= 64`\n\nSee [argument handling](UInt64#argument-handling).\n\n    import UInt64\n    import UInt64.Digits as Digits\n\n    UInt64.fromInt 271\n        |> UInt64.toDigits Digits.binary\n        |> Digits.pad 32 '0'\n        |> Digits.toString\n        --> \"00000000000000000000000100001111\"\n\n",
+                "type": "Basics.Int -> a -> UInt64.Digits.Digits a -> UInt64.Digits.Digits a"
+            },
+            {
+                "name": "padToEven",
+                "comment": " Pad to even number of digits.\n\n    import UInt64\n    import UInt64.Digits as Digits\n\n    UInt64.fromInt 271\n        |> UInt64.toDigits Digits.binary\n        |> Digits.padToEven '0'\n        |> Digits.toString\n        --> \"0100001111\"\n\n",
+                "type": "a -> UInt64.Digits.Digits a -> UInt64.Digits.Digits a"
+            },
+            {
+                "name": "padToMultipleOf",
+                "comment": " Pad to multiple of given number of digits.\n\nFor example `padToMultipleOf 16` would pad to 0, 16, 32, 48 or 64 digits.\n\n  - `Int`: `1 <= x <= 64`\n\nSee [argument handling](UInt64#argument-handling).\n\n    import UInt64\n    import UInt64.Digits as Digits\n\n    UInt64.fromInt 271\n        |> UInt64.toDigits Digits.binary\n        |> Digits.padToMultipleOf 4 '0'\n        |> Digits.toString\n        --> \"000100001111\"\n\n",
+                "type": "Basics.Int -> a -> UInt64.Digits.Digits a -> UInt64.Digits.Digits a"
+            },
+            {
+                "name": "padToPowerOfTwo",
+                "comment": " Pad to `2^n` digits, i.e. to 0, 1, 2, 4, 8, 16, 32 or 64 digits.\n\n    import UInt64\n    import UInt64.Digits as Digits\n\n    UInt64.fromInt 271\n        |> UInt64.toDigits Digits.binary\n        |> Digits.padToPowerOfTwo '0'\n        |> Digits.toString\n        --> \"0000000100001111\"\n\n",
+                "type": "a -> UInt64.Digits.Digits a -> UInt64.Digits.Digits a"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert [`Digits`](#Digits) to `List` of digits.\n\n    import UInt64\n    import UInt64.Digits as Digits\n\n    UInt64.fromInt 7654321\n        |> UInt64.toDigits Digits.decimal\n        |> Digits.toList\n        --> [ '7', '6', '5', '4', '3', '2', '1' ]\n\n",
+                "type": "UInt64.Digits.Digits a -> List.List a"
+            },
+            {
+                "name": "toListWithLength",
+                "comment": " Convert [`Digits`](#Digits) to `List` of digits with list length.\n\nThis is O(1) while `List.length` is O(n), so if you need list length then\nusing this is faster than [`toList`](#toList) followed by `List.length`.\n\n    import UInt64\n    import UInt64.Digits as Digits\n\n    UInt64.fromInt 7654321\n        |> UInt64.toDigits Digits.decimal\n        |> Digits.toListWithLength\n        --> ( 7, [ '7', '6', '5', '4', '3', '2', '1' ] )\n\n",
+                "type": "UInt64.Digits.Digits a -> ( Basics.Int, List.List a )"
+            },
+            {
+                "name": "toString",
+                "comment": " Convert [`Digits`](#Digits) of `Char` to `String`.\n\n    import UInt64\n    import UInt64.Digits as Digits\n\n    UInt64.fromInt 7654321\n        |> UInt64.toDigits Digits.decimal\n        |> Digits.toString\n        --> \"7654321\"\n\n",
+                "type": "UInt64.Digits.Digits Char.Char -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,26 @@
+[
+    {
+        "name": "InlineSvg",
+        "comment": " This library allows you to inline external SVG file into Elm views.\n\n@docs inline, Helpers\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Helpers",
+                "comment": " This is the record returned from `inline` function. `icon` function is used to access individual SVG document, you can also pass a list of attributes to the SVG.\n\n    icon .share [Svg.Attributes.fill \"blue\"] : Html msg\n\n",
+                "args": [
+                    "icons",
+                    "msg"
+                ],
+                "type": "{ icon : (icons -> String.String) -> List.List (Svg.Attribute msg) -> Html.Html msg }"
+            }
+        ],
+        "values": [
+            {
+                "name": "inline",
+                "comment": " This function returns a record, which contains a `icon` function to reference individual SVG document.\n\n    { icon } =\n        inline\n            { github = \"./svg/github.svg\"\n            , share = \"./svg/share.svg\"\n            }\n\n    view =\n        div\n            []\n            [ icon .github [ Svg.Attributes.class \"icon icon--github\" ]\n            , icon .share [ Svg.Attributes.class \"icon icon--share\" ]\n            ]\n\n",
+                "type": "icons -> InlineSvg.Helpers icons msg"
+            }
+        ],
+        "binops": []
+    }
+]

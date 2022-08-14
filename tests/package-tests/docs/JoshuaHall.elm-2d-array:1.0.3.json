@@ -1,0 +1,183 @@
+[
+    {
+        "name": "Array2D",
+        "comment": " Provides an ergonomic and fast way to use 2 dimensional arrays in Elm.\n\n\n# 2D Arrays\n\n@docs Array2D\n\n\n# Creation\n\n@docs fromRows, fromColumns, fromRowMajor, initialize, repeat\n\n\n# Query\n\n@docs rows, columns, length, get\n\n\n# Manipulation\n\n@docs set, update\n\n\n# Transform\n\n@docs map, indexedMap\n\n\n# Arrays\n\n@docs toFlatArrayRowMajor\n\n\n# Randomness\n\n@docs generator\n\n",
+        "unions": [
+            {
+                "name": "Array2D",
+                "comment": " Type representing a 2 dimensional array.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "columns",
+                "comment": " Gets the number of columns the `Array2D` holds.\n",
+                "type": "Array2D.Array2D a -> Basics.Int"
+            },
+            {
+                "name": "fromColumns",
+                "comment": " Attempts to create a `Array2D` from an `Array` of `Array`s representing columns.\nReturns `Nothing` when the columns' lengths don't match.\n",
+                "type": "Array.Array (Array.Array a) -> Maybe.Maybe (Array2D.Array2D a)"
+            },
+            {
+                "name": "fromRowMajor",
+                "comment": " Attempts to create a `Array2D` from an `Array` of elements and the rows and columns amounts.\nOrders the elements in [row major order](https://en.wikipedia.org/wiki/Row-_and_column-major_order).\nThe array has to be the same length as the product of the provided rows and columns.\n",
+                "type": "Basics.Int -> Basics.Int -> Array.Array a -> Maybe.Maybe (Array2D.Array2D a)"
+            },
+            {
+                "name": "fromRows",
+                "comment": " Attempts to create a `Array2D` from an `Array` of `Array`s representing rows.\nReturns `Nothing` when the rows' lengths don't match.\n",
+                "type": "Array.Array (Array.Array a) -> Maybe.Maybe (Array2D.Array2D a)"
+            },
+            {
+                "name": "generator",
+                "comment": " Generates a `Array2D` where each value is randomly generated.\n",
+                "type": "Random.Generator a -> Basics.Int -> Basics.Int -> Random.Generator (Array2D.Array2D a)"
+            },
+            {
+                "name": "get",
+                "comment": " Gets an element from the `Array2D` at the provided row and column.\nReturns `Nothing` when the index is out of bounds.\n",
+                "type": "Basics.Int -> Basics.Int -> Array2D.Array2D a -> Maybe.Maybe a"
+            },
+            {
+                "name": "indexedMap",
+                "comment": " Applies a function to every element in the `Array2D`.\nThe index (row and column) are provided to the mapping function.\n",
+                "type": "(Basics.Int -> Basics.Int -> a -> b) -> Array2D.Array2D a -> Array2D.Array2D b"
+            },
+            {
+                "name": "initialize",
+                "comment": " Creates an `Array2D` with the provided rows and columns.\nEach element is created using the provided function which gives the index (row and column).\n",
+                "type": "Basics.Int -> Basics.Int -> (Basics.Int -> Basics.Int -> a) -> Array2D.Array2D a"
+            },
+            {
+                "name": "length",
+                "comment": " Gets the total number of elements the `Array2D` holds.\n",
+                "type": "Array2D.Array2D a -> Basics.Int"
+            },
+            {
+                "name": "map",
+                "comment": " Applies a function to every element in the `Array2D`.\n",
+                "type": "(a -> b) -> Array2D.Array2D a -> Array2D.Array2D b"
+            },
+            {
+                "name": "repeat",
+                "comment": " Creates a `Array2D` with the provided rows and columns and fills it with the provided element.\n",
+                "type": "Basics.Int -> Basics.Int -> a -> Array2D.Array2D a"
+            },
+            {
+                "name": "rows",
+                "comment": " Gets the number of rows the `Array2D` holds.\n",
+                "type": "Array2D.Array2D a -> Basics.Int"
+            },
+            {
+                "name": "set",
+                "comment": " Sets an element in the `Array2D` at the provided row and column.\nReturns the `Array2D` unchanged if the index is out of bounds.\n",
+                "type": "Basics.Int -> Basics.Int -> a -> Array2D.Array2D a -> Array2D.Array2D a"
+            },
+            {
+                "name": "toFlatArrayRowMajor",
+                "comment": " Flattens the `Array2D` in [row major order](https://en.wikipedia.org/wiki/Row-_and_column-major_order).\n",
+                "type": "Array2D.Array2D a -> Array.Array a"
+            },
+            {
+                "name": "update",
+                "comment": " Updates an element in the `Array2D` with a function at the provided row and column.\nReturns the `Array2D` unchanged if the index is out of bounds.\n",
+                "type": "Basics.Int -> Basics.Int -> (a -> a) -> Array2D.Array2D a -> Array2D.Array2D a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "SquareArray2D",
+        "comment": " Provides an ergonomic and fast way to use square 2 dimensional arrays in Elm.\n\n\n# Square 2D Arrays\n\n@docs SquareArray2D\n\n\n# Creation\n\n@docs fromRows, fromColumns, fromRowMajor, initialize, repeat\n\n\n# Query\n\n@docs sideLength, length, get\n\n\n# Manipulation\n\n@docs set, update\n\n\n# Transform\n\n@docs map, indexedMap\n\n\n# Arrays\n\n@docs toFlatArrayRowMajor\n\n\n# Randomness\n\n@docs generator\n\n",
+        "unions": [
+            {
+                "name": "SquareArray2D",
+                "comment": " Type representing a 2 dimensional square array.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fromColumns",
+                "comment": " Attempts to create a `SquareArray2D` from an `Array` of `Array`s representing columns.\nReturns `Nothing` when the elements don't form a square.\n",
+                "type": "Array.Array (Array.Array a) -> Maybe.Maybe (SquareArray2D.SquareArray2D a)"
+            },
+            {
+                "name": "fromRowMajor",
+                "comment": " Attempts to create a `SquareArray2D` from an `Array` of elements and a side length.\nOrders the elements in [row major order](https://en.wikipedia.org/wiki/Row-_and_column-major_order).\nThe array has to be the same length as the provided side length squared.\n",
+                "type": "Basics.Int -> Array.Array a -> Maybe.Maybe (SquareArray2D.SquareArray2D a)"
+            },
+            {
+                "name": "fromRows",
+                "comment": " Attempts to create a `SquareArray2D` from an `Array` of `Array`s representing rows.\nReturns `Nothing` when the elements don't form a square.\n",
+                "type": "Array.Array (Array.Array a) -> Maybe.Maybe (SquareArray2D.SquareArray2D a)"
+            },
+            {
+                "name": "generator",
+                "comment": " Generates a `SquareArray2D` where each value is randomly generated.\n",
+                "type": "Random.Generator a -> Basics.Int -> Random.Generator (SquareArray2D.SquareArray2D a)"
+            },
+            {
+                "name": "get",
+                "comment": " Gets an element from the `SquareArray2D` at the provided row and column.\nReturns `Nothing` when the index is out of bounds.\n",
+                "type": "Basics.Int -> Basics.Int -> SquareArray2D.SquareArray2D a -> Maybe.Maybe a"
+            },
+            {
+                "name": "indexedMap",
+                "comment": " Applies a function to every element in the `SquareArray2D`.\nThe index (row and column) are provided to the mapping function.\n",
+                "type": "(Basics.Int -> Basics.Int -> a -> b) -> SquareArray2D.SquareArray2D a -> SquareArray2D.SquareArray2D b"
+            },
+            {
+                "name": "initialize",
+                "comment": " Creates a `SquareArray2D` with the sideLength.\nEach element is created using the provided function which gives the index (row and column).\n",
+                "type": "Basics.Int -> (Basics.Int -> Basics.Int -> a) -> SquareArray2D.SquareArray2D a"
+            },
+            {
+                "name": "length",
+                "comment": " Gets the total number of elements the `SquareArray2D` holds.\n",
+                "type": "SquareArray2D.SquareArray2D a -> Basics.Int"
+            },
+            {
+                "name": "map",
+                "comment": " Applies a function to every element in the `SquareArray2D`.\n",
+                "type": "(a -> b) -> SquareArray2D.SquareArray2D a -> SquareArray2D.SquareArray2D b"
+            },
+            {
+                "name": "repeat",
+                "comment": " Creates a `SquareArray2D` with a provided side length and fills it with an element.\n",
+                "type": "Basics.Int -> a -> SquareArray2D.SquareArray2D a"
+            },
+            {
+                "name": "set",
+                "comment": " Sets an element in the `SquareArray2D` at the provided row and column.\nReturns the `SquareArray2D` unchanged if the index is out of bounds.\n",
+                "type": "Basics.Int -> Basics.Int -> a -> SquareArray2D.SquareArray2D a -> SquareArray2D.SquareArray2D a"
+            },
+            {
+                "name": "sideLength",
+                "comment": " Gets the side length of the `SquareArray2D`.\n",
+                "type": "SquareArray2D.SquareArray2D a -> Basics.Int"
+            },
+            {
+                "name": "toFlatArrayRowMajor",
+                "comment": " Flattens the `SquareArray2D` in [row major order](https://en.wikipedia.org/wiki/Row-_and_column-major_order).\n",
+                "type": "SquareArray2D.SquareArray2D a -> Array.Array a"
+            },
+            {
+                "name": "update",
+                "comment": " Updates an element in the `SquareArray2D` with a function at the provided row and column.\nReturns the `SquareArray2D` unchanged if the index is out of bounds.\n",
+                "type": "Basics.Int -> Basics.Int -> (a -> a) -> SquareArray2D.SquareArray2D a -> SquareArray2D.SquareArray2D a"
+            }
+        ],
+        "binops": []
+    }
+]

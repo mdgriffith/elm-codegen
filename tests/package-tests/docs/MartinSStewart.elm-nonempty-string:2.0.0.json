@@ -1,0 +1,236 @@
+[
+    {
+        "name": "String.Nonempty",
+        "comment": " A string that cannot be empty. The head and tail can be accessed without Maybes. Most other string functions are\navailable.\n\n\n# Strings\n\n@docs NonemptyString, length, reverse\n\n\n# Building\n\n@docs append, append_, concat, fromString, toString\n\n\n# Get Substrings\n\n@docs slice, left, right, dropLeft, dropRight, head, tail\n\n\n# Check for Substrings\n\n@docs contains, startsWith, endsWith, indexes, indices\n\n\n# Int Conversions\n\n@docs toInt, fromInt\n\n\n# Float Conversions\n\n@docs toFloat, fromFloat\n\n\n# Char Conversions\n\n@docs fromChar, cons, uncons\n\n\n# List Conversions\n\n@docs toNonemptyList, fromNonemptyList\n\n\n# Formatting\n\nCosmetic operations such as padding with extra characters or trimming whitespace.\n\n@docs toUpper, toLower, pad, padLeft, padRight, trim, trimLeft, trimRight\n\n\n# Higher-Order Functions\n\n@docs map, filter, foldl, foldr, any, all\n\n",
+        "unions": [
+            {
+                "name": "NonemptyString",
+                "comment": " A string with at least one character.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NonemptyString",
+                        [
+                            "Char.Char",
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "all",
+                "comment": " Determine whether _all_ characters pass the test.\n",
+                "type": "(Char.Char -> Basics.Bool) -> String.Nonempty.NonemptyString -> Basics.Bool"
+            },
+            {
+                "name": "any",
+                "comment": " Determine whether _any_ characters pass the test.\n",
+                "type": "(Char.Char -> Basics.Bool) -> String.Nonempty.NonemptyString -> Basics.Bool"
+            },
+            {
+                "name": "append",
+                "comment": " Append a string onto the beginning of a nonempty string.\n",
+                "type": "String.String -> String.Nonempty.NonemptyString -> String.Nonempty.NonemptyString"
+            },
+            {
+                "name": "append_",
+                "comment": " Append a string onto the end of a nonempty string.\n",
+                "type": "String.Nonempty.NonemptyString -> String.String -> String.Nonempty.NonemptyString"
+            },
+            {
+                "name": "concat",
+                "comment": " Concatenate many nonempty strings into one.\n",
+                "type": "List.Nonempty.Nonempty String.Nonempty.NonemptyString -> String.Nonempty.NonemptyString"
+            },
+            {
+                "name": "cons",
+                "comment": " Add a character to the beginning of a nonempty string.\n",
+                "type": "Char.Char -> String.Nonempty.NonemptyString -> String.Nonempty.NonemptyString"
+            },
+            {
+                "name": "contains",
+                "comment": " See if the second string contains the first one.\n",
+                "type": "String.String -> String.Nonempty.NonemptyString -> Basics.Bool"
+            },
+            {
+                "name": "dropLeft",
+                "comment": " Drop _n_ characters from the left side of a nonempty string.\n",
+                "type": "Basics.Int -> String.Nonempty.NonemptyString -> String.String"
+            },
+            {
+                "name": "dropRight",
+                "comment": " Drop _n_ characters from the right side of a nonempty string.\n",
+                "type": "Basics.Int -> String.Nonempty.NonemptyString -> String.String"
+            },
+            {
+                "name": "endsWith",
+                "comment": " See if the second string ends with the first one.\n",
+                "type": "String.String -> String.Nonempty.NonemptyString -> Basics.Bool"
+            },
+            {
+                "name": "filter",
+                "comment": " Keep only the characters that pass the test.\n",
+                "type": "(Char.Char -> Basics.Bool) -> String.Nonempty.NonemptyString -> String.String"
+            },
+            {
+                "name": "foldl",
+                "comment": " Reduce a nonempty string from the left.\n",
+                "type": "(Char.Char -> b -> b) -> b -> String.Nonempty.NonemptyString -> b"
+            },
+            {
+                "name": "foldr",
+                "comment": " Reduce a nonempty string from the right.\n",
+                "type": "(Char.Char -> b -> b) -> b -> String.Nonempty.NonemptyString -> b"
+            },
+            {
+                "name": "fromChar",
+                "comment": " Create a string from a given character.\n\n    fromChar 'a' == NonemptyString 'a' \"\"\n\n",
+                "type": "Char.Char -> String.Nonempty.NonemptyString"
+            },
+            {
+                "name": "fromFloat",
+                "comment": " Convert a `Float` to a `NonemptyString`.\n",
+                "type": "Basics.Float -> String.Nonempty.NonemptyString"
+            },
+            {
+                "name": "fromInt",
+                "comment": " Convert an `Int` to a `NonemptyString`.\n",
+                "type": "Basics.Int -> String.Nonempty.NonemptyString"
+            },
+            {
+                "name": "fromNonemptyList",
+                "comment": " Convert a nonempty list of characters into a nonempty string.\n",
+                "type": "List.Nonempty.Nonempty Char.Char -> String.Nonempty.NonemptyString"
+            },
+            {
+                "name": "fromString",
+                "comment": " Create a nonempty string from an ordinary string, failing on the empty string.\n",
+                "type": "String.String -> Maybe.Maybe String.Nonempty.NonemptyString"
+            },
+            {
+                "name": "head",
+                "comment": " Get the first character in the nonempty string.\n",
+                "type": "String.Nonempty.NonemptyString -> Char.Char"
+            },
+            {
+                "name": "indexes",
+                "comment": " Get all of the indexes for a substring in another string.\n\n    indexes \"i\" (NonemptyString 'M' \"ississippi\") == [ 1, 4, 7, 10 ]\n\n    indexes \"ss\" (NonemptyString 'M' \"ississippi\") == [ 2, 5 ]\n\n",
+                "type": "String.String -> String.Nonempty.NonemptyString -> List.List Basics.Int"
+            },
+            {
+                "name": "indices",
+                "comment": " Alias for `indexes`.\n",
+                "type": "String.String -> String.Nonempty.NonemptyString -> List.List Basics.Int"
+            },
+            {
+                "name": "left",
+                "comment": " Take _n_ characters from the left side of a nonempty string.\n",
+                "type": "Basics.Int -> String.Nonempty.NonemptyString -> String.String"
+            },
+            {
+                "name": "length",
+                "comment": " Get the length of a nonempty string.\n",
+                "type": "String.Nonempty.NonemptyString -> Basics.Int"
+            },
+            {
+                "name": "map",
+                "comment": " Transform every character in a nonempty string\n",
+                "type": "(Char.Char -> Char.Char) -> String.Nonempty.NonemptyString -> String.Nonempty.NonemptyString"
+            },
+            {
+                "name": "pad",
+                "comment": " Pad a nonempty string on both sides until it has a given length.\n",
+                "type": "Basics.Int -> Char.Char -> String.Nonempty.NonemptyString -> String.Nonempty.NonemptyString"
+            },
+            {
+                "name": "padLeft",
+                "comment": " Pad a nonempty string on the left until it has a given length.\n",
+                "type": "Basics.Int -> Char.Char -> String.Nonempty.NonemptyString -> String.Nonempty.NonemptyString"
+            },
+            {
+                "name": "padRight",
+                "comment": " Pad a nonempty string on the right until it has a given length.\n",
+                "type": "Basics.Int -> Char.Char -> String.Nonempty.NonemptyString -> String.Nonempty.NonemptyString"
+            },
+            {
+                "name": "reverse",
+                "comment": " Reverse a string.\n",
+                "type": "String.Nonempty.NonemptyString -> String.Nonempty.NonemptyString"
+            },
+            {
+                "name": "right",
+                "comment": " Take _n_ characters from the right side of a nonempty string.\n",
+                "type": "Basics.Int -> String.Nonempty.NonemptyString -> String.String"
+            },
+            {
+                "name": "slice",
+                "comment": " Take a substring given a start and end index. Negative indexes\nare taken starting from the _end_ of the list.\n\n    text = NonemptyString 's' \"nakes on a plane!\"\n\n    slice  7  9 text == \"on\"\n    slice  0  6 text == \"snakes\"\n    slice  0 -7 text == \"snakes on a\"\n    slice -6 -1 text == \"plane\"\n\n",
+                "type": "Basics.Int -> Basics.Int -> String.Nonempty.NonemptyString -> String.String"
+            },
+            {
+                "name": "startsWith",
+                "comment": " See if the second string starts with the first one.\n",
+                "type": "String.String -> String.Nonempty.NonemptyString -> Basics.Bool"
+            },
+            {
+                "name": "tail",
+                "comment": " Return all the characters after the first one.\n",
+                "type": "String.Nonempty.NonemptyString -> String.String"
+            },
+            {
+                "name": "toFloat",
+                "comment": " Try to convert a string into a float, failing on improperly formatted nonempty strings.\n",
+                "type": "String.Nonempty.NonemptyString -> Maybe.Maybe Basics.Float"
+            },
+            {
+                "name": "toInt",
+                "comment": " Try to convert a string into an int, failing on improperly formatted nonempty strings.\n",
+                "type": "String.Nonempty.NonemptyString -> Maybe.Maybe Basics.Int"
+            },
+            {
+                "name": "toLower",
+                "comment": " Convert a string to all lower case. Useful for case-insensitive comparisons.\n",
+                "type": "String.Nonempty.NonemptyString -> String.Nonempty.NonemptyString"
+            },
+            {
+                "name": "toNonemptyList",
+                "comment": " Convert a nonempty string to a nonempty list of characters.\n",
+                "type": "String.Nonempty.NonemptyString -> List.Nonempty.Nonempty Char.Char"
+            },
+            {
+                "name": "toString",
+                "comment": " Convert to an ordinary string.\n",
+                "type": "String.Nonempty.NonemptyString -> String.String"
+            },
+            {
+                "name": "toUpper",
+                "comment": " Convert a string to all upper case. Useful for case-insensitive comparisons and VIRTUAL YELLING.\n",
+                "type": "String.Nonempty.NonemptyString -> String.Nonempty.NonemptyString"
+            },
+            {
+                "name": "trim",
+                "comment": " Get rid of whitespace on both sides of a nonempty string.\n",
+                "type": "String.Nonempty.NonemptyString -> String.String"
+            },
+            {
+                "name": "trimLeft",
+                "comment": " Get rid of whitespace on the left of a nonempty string.\n",
+                "type": "String.Nonempty.NonemptyString -> String.String"
+            },
+            {
+                "name": "trimRight",
+                "comment": " Get rid of whitespace on the right of a nonempty string.\n",
+                "type": "String.Nonempty.NonemptyString -> String.String"
+            },
+            {
+                "name": "uncons",
+                "comment": " Split a nonempty string into its head and tail. This lets you pattern match on strings exactly as you would with lists.\n",
+                "type": "String.Nonempty.NonemptyString -> ( Char.Char, String.String )"
+            }
+        ],
+        "binops": []
+    }
+]

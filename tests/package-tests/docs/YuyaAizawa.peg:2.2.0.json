@@ -1,0 +1,167 @@
+[
+    {
+        "name": "Peg.Parser",
+        "comment": " A parser combinator implementation for Parsing Expression Grammer (PEG).\n\n# Parse\n@docs Parser, parse\n\n# Parsers\n@docs return, fail, match, char, chars\n\n# Basic Combinators\n@docs seq2, choice, option, zeroOrMore, oneOrMore, andPredicate, notPredicate\n\n# Transform\n@docs map, andThen\n\n# Position\n@docs Position, withPosition\n\n# Sequence Utils\n@docs seq3, seq4, seq5, seq6, intersperseSeq2, intersperseSeq3, intersperseSeq4,\nintersperseSeq5, intersperseSeq6, join, infixl, infixr\n\n",
+        "unions": [
+            {
+                "name": "Parser",
+                "comment": " A value decides wether the given input string should be accepted or not and\nconverts it into Elm object when accepted. ",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Position",
+                "comment": " Parsed posision in sourse string. ",
+                "args": [],
+                "type": "{ begin : Basics.Int, end : Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "andPredicate",
+                "comment": " Generate and-predicate parser. The parse succeeds if the specified parser\naccepts the input and fails if the specified parser rejects, but in either case,\n never consumes any input.\n\n    word = chars (always True)\n    p = seq2 (andPredicate (match \"A\")) (\\_ w -> w)\n    p |> parse \"Apple\"  -- Just \"Apple\"\n    p |> parse \"Banana\" -- Nothing\n",
+                "type": "Peg.Parser.Parser a -> Peg.Parser.Parser ()"
+            },
+            {
+                "name": "andThen",
+                "comment": " Incorporate specified parser to the parser. It re-parse the input using\nspecified parser with the original result when the original parser success\nparse, otherwise the parse failed. Using it can set more stringent\nconditions for parse success.\n\n    intParser =\n      chars Char.isDigit\n        |> andThen (\\str ->\n          case String.toInt str of\n            Just i -> return i\n            Nothing -> fail)\n",
+                "type": "(a -> Peg.Parser.Parser b) -> Peg.Parser.Parser a -> Peg.Parser.Parser b"
+            },
+            {
+                "name": "char",
+                "comment": " Generate the parser accepts characters satisfied with the specified\npredicator. The parser returns the specified character when accepted.\n\n    char Char.isUpper |> parse \"A\"  -- Just 'A'\n    char Char.isUpper |> parse \"a\"  -- Nothing\n",
+                "type": "(Char.Char -> Basics.Bool) -> Peg.Parser.Parser Char.Char"
+            },
+            {
+                "name": "chars",
+                "comment": " Generate the parser accepts consecutive characters satisfied with the\nspecified predicator. The parser returns the string when accepted.\n\n    char Char.isUpper |> parse \"AAA\"  -- Just \"AAA\"\n    char Char.isUpper |> parse \"aaa\"  -- Nothing\n",
+                "type": "(Char.Char -> Basics.Bool) -> Peg.Parser.Parser String.String"
+            },
+            {
+                "name": "choice",
+                "comment": " Generate new parser from specified parsers. result parser accepts all inputs\nspecified parsers accept. This combinator is ordered, in other words, if the\nfirst parser accepts input, the second parser is ignored. These parsers needs\nto be '() -> Parser' form. (It is useful for avoiding infinite reference.)\n\n    p =\n        choice\n        [ \\() -> match \"foo\"\n        , \\() -> match \"bar\"\n        ]\n    p |> parse \"foo\" -- Just \"foo\"\n    p |> parse \"bar\" -- Just \"bar\"\n",
+                "type": "List.List (() -> Peg.Parser.Parser a) -> Peg.Parser.Parser a"
+            },
+            {
+                "name": "fail",
+                "comment": " This `Parser` always fails on parse. It is \"mzero\" on monad context.\nTypically used with `andThen`.\n",
+                "type": "Peg.Parser.Parser a"
+            },
+            {
+                "name": "infixl",
+                "comment": " Generate parser parses left infix operator. The first argument is for operator,\nand the second is for term.\n\nThis is the four arithmetic operations sample.\n\n    let\n      nat =\n        chars Char.isDigit\n          |> andThen (\\num ->\n            case String.toInt num of\n              Just i -> return i\n              Nothing -> fail)\n\n      muldiv =\n        nat\n          |> infixl (\n            choice\n            [ \\_ -> match \"*\" |> map (always (*))\n            , \\_ -> match \"/\" |> map (always (//))\n            ])\n\n      addsub =\n        muldiv\n          |> infixl (\n            choice\n            [ \\_ -> match \"+\" |> map (always (+))\n            , \\_ -> match \"-\" |> map (always (-))\n            ])\n    in\n      addsub\n        |> parse \"1+2*4-5+6/2\" -- Just 7\n\n",
+                "type": "Peg.Parser.Parser (a -> a -> a) -> Peg.Parser.Parser a -> Peg.Parser.Parser a"
+            },
+            {
+                "name": "infixr",
+                "comment": " Generate parser parses right infix operator. The first argument is for operator,\nand the second is for term.\n",
+                "type": "Peg.Parser.Parser (a -> a -> a) -> Peg.Parser.Parser a -> Peg.Parser.Parser a"
+            },
+            {
+                "name": "intersperseSeq2",
+                "comment": " Concatenate two parsers with a specified parser in between.\n\n    ws = match \" \" |> oneOrMore\n    varTy = choise [ \\() -> match \"int\", \\() -> match \"char\" ]\n    varName = chars Char.isAlpha\n    varDecl =\n      intersperseSeq2\n      ws varTy varName           -- matches like \"int x\" or \"char  foo\"\n      (\\ty name -> ( ty, name )) -- result like (\"int\", \"x\") or (\"char\", \"foo\")\n",
+                "type": "Peg.Parser.Parser i -> Peg.Parser.Parser a -> Peg.Parser.Parser b -> (a -> b -> result) -> Peg.Parser.Parser result"
+            },
+            {
+                "name": "intersperseSeq3",
+                "comment": "",
+                "type": "Peg.Parser.Parser i -> Peg.Parser.Parser a -> Peg.Parser.Parser b -> Peg.Parser.Parser c -> (a -> b -> c -> result) -> Peg.Parser.Parser result"
+            },
+            {
+                "name": "intersperseSeq4",
+                "comment": "",
+                "type": "Peg.Parser.Parser i -> Peg.Parser.Parser a -> Peg.Parser.Parser b -> Peg.Parser.Parser c -> Peg.Parser.Parser d -> (a -> b -> c -> d -> result) -> Peg.Parser.Parser result"
+            },
+            {
+                "name": "intersperseSeq5",
+                "comment": "",
+                "type": "Peg.Parser.Parser i -> Peg.Parser.Parser a -> Peg.Parser.Parser b -> Peg.Parser.Parser c -> Peg.Parser.Parser d -> Peg.Parser.Parser e -> (a -> b -> c -> d -> e -> result) -> Peg.Parser.Parser result"
+            },
+            {
+                "name": "intersperseSeq6",
+                "comment": "",
+                "type": "Peg.Parser.Parser i -> Peg.Parser.Parser a -> Peg.Parser.Parser b -> Peg.Parser.Parser c -> Peg.Parser.Parser d -> Peg.Parser.Parser e -> Peg.Parser.Parser f -> (a -> b -> c -> d -> e -> f -> result) -> Peg.Parser.Parser result"
+            },
+            {
+                "name": "join",
+                "comment": " Generate one-or-more parser with a specified parser in between.\n\n    chars Char.isAlpha\n      |> join (match \", \")\n      |> parse \"foo, bar, baz\" -- Just [\"foo\", \"bar\", \"baz\"]\n",
+                "type": "Peg.Parser.Parser i -> Peg.Parser.Parser a -> Peg.Parser.Parser (List.List a)"
+            },
+            {
+                "name": "map",
+                "comment": " Generate new parser return mapped result by specifying mapper.\n",
+                "type": "(a -> b) -> Peg.Parser.Parser a -> Peg.Parser.Parser b"
+            },
+            {
+                "name": "match",
+                "comment": " Generate the parser accepts the specified string. The parser returns the same\nstring when accepts.\n\n    parse \"abc\" (match \"abc\") -- Just \"abc\"\n    parse \"xyz\" (match \"abc\") -- Nothing\n",
+                "type": "String.String -> Peg.Parser.Parser String.String"
+            },
+            {
+                "name": "notPredicate",
+                "comment": " Generate not-predicate parser. The parse succeeds if the specified parser\nrejects the input and fails if the specified parser accepts, but in either case,\n never consumes any input.\n\n    nums = chars Char.isDigit\n    p = seq2 (notPredicate (match \"0\")) nums (\\_ i -> i)\n    p |> parse \"1234\" -- Just \"1234\"\n    p |> parse \"0123\" -- Nothing\n",
+                "type": "Peg.Parser.Parser a -> Peg.Parser.Parser ()"
+            },
+            {
+                "name": "oneOrMore",
+                "comment": " Generate one-or-more parser. It accept one or more consecutive repetitions\nof string specified parser accepts. it always behaves greedily, consuming as\nmuch input as possible.\n\n    p = oneOrMore (match \"a\")\n    p |> parse \"aaa\" -- Just [\"a\", \"a\", \"a\"]\n    p |> parse \"\"    -- Nothing\n",
+                "type": "Peg.Parser.Parser a -> Peg.Parser.Parser (List.List a)"
+            },
+            {
+                "name": "option",
+                "comment": " Generate optional parser. It accepts whatever string and consumes only if\nspecified parser accepts. The parse result is `Maybe` value.\n\n    option (match \"foo\") |> parse \"\" -- Just Nothing\n",
+                "type": "Peg.Parser.Parser a -> Peg.Parser.Parser (Maybe.Maybe a)"
+            },
+            {
+                "name": "parse",
+                "comment": " Parse the given string and return the result. It returns `Just` value when\nthe string is accepted, `Nothing` otherwise.\n\n    parse \"abc\" (match \"abc\") -- Just \"abc\"\n    parse \"xyz\" (match \"abc\") -- Nothing\n",
+                "type": "String.String -> Peg.Parser.Parser a -> Maybe.Maybe a"
+            },
+            {
+                "name": "return",
+                "comment": " This `Parser` alway succeeds on parse and results in the given argument\nwithout consumption. Typically used with `andThen`.\n",
+                "type": "a -> Peg.Parser.Parser a"
+            },
+            {
+                "name": "seq2",
+                "comment": " Concatenate two specified parsers, in other words, generate new parser\naccepts the sequence. The result is also merged according to the 3rd parameter.\n\n    seq2 (match \"con\") (match \"cat\") (++) |> parse \"concat\" -- Just \"concat\"\n",
+                "type": "Peg.Parser.Parser a -> Peg.Parser.Parser b -> (a -> b -> result) -> Peg.Parser.Parser result"
+            },
+            {
+                "name": "seq3",
+                "comment": "",
+                "type": "Peg.Parser.Parser a -> Peg.Parser.Parser b -> Peg.Parser.Parser c -> (a -> b -> c -> result) -> Peg.Parser.Parser result"
+            },
+            {
+                "name": "seq4",
+                "comment": "",
+                "type": "Peg.Parser.Parser a -> Peg.Parser.Parser b -> Peg.Parser.Parser c -> Peg.Parser.Parser d -> (a -> b -> c -> d -> result) -> Peg.Parser.Parser result"
+            },
+            {
+                "name": "seq5",
+                "comment": "",
+                "type": "Peg.Parser.Parser a -> Peg.Parser.Parser b -> Peg.Parser.Parser c -> Peg.Parser.Parser d -> Peg.Parser.Parser e -> (a -> b -> c -> d -> e -> result) -> Peg.Parser.Parser result"
+            },
+            {
+                "name": "seq6",
+                "comment": "",
+                "type": "Peg.Parser.Parser a -> Peg.Parser.Parser b -> Peg.Parser.Parser c -> Peg.Parser.Parser d -> Peg.Parser.Parser e -> Peg.Parser.Parser f -> (a -> b -> c -> d -> e -> f -> result) -> Peg.Parser.Parser result"
+            },
+            {
+                "name": "withPosition",
+                "comment": " Generate parser returns result with position. Begin value is inclusive, end\nvalue is exclusive.\n\n    parse \"abc\" (match \"abc\" |> withPosition)\n      -- Just ( \"abc\", { begin = 0, end = 3 } )\n",
+                "type": "Peg.Parser.Parser a -> Peg.Parser.Parser ( a, Peg.Parser.Position )"
+            },
+            {
+                "name": "zeroOrMore",
+                "comment": " Generate zero-or-more parser. It accept zero or more consecutive repetitions\nof string specified parser accepts. it always behaves greedily, consuming as\nmuch input as possible.\n\n    p = zeroOrMore (match \"a\")\n    p |> parse \"aaa\" -- Just [\"a\", \"a\", \"a\"]\n    p |> parse \"\"    -- Just []\n",
+                "type": "Peg.Parser.Parser a -> Peg.Parser.Parser (List.List a)"
+            }
+        ],
+        "binops": []
+    }
+]

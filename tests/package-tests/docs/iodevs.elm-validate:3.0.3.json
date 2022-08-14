@@ -1,0 +1,282 @@
+[
+    {
+        "name": "Transformation",
+        "comment": " This module helps to transform validated forms to models.\n\n\n# Helpers\n\n@docs withField, withoutField, toModel\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toModel",
+                "comment": " This function transforms form to model and returns an `Err errorMessage` if\nany variable in the form is NotValidated either Invalid. Otherwise returns `Ok model`.\nSee examples above.\n",
+                "type": "model -> (Transformation.Transformer model form -> Transformation.Transformer data form) -> form -> Result.Result String.String data"
+            },
+            {
+                "name": "withField",
+                "comment": " This function is used to check if the given variable in the form has correct validity and\nif yes, then returns this variable with her value. Otherwise returns an `Err errorMessage`.\n\n    import Validation exposing (Field, preValidatedField)\n\n    type A\n        = A Int\n\n    type B\n        = B Float\n\n    type alias Model =\n        { a : A, b : B }\n\n    type alias Form =\n        { a : Field String Int, b : Field String Float }\n\n    form =\n        Form (preValidatedField String.fromInt 1) (preValidatedField String.fromFloat 0.3)\n\n    condPosInt : Int -> Result String A\n    condPosInt val =\n        if val > 0 then\n            Ok (A val)\n\n        else\n            Err \"Value must be positive number!!!\"\n\n    condFloatRange : Float -> Result String B\n    condFloatRange val =\n        if val < 10 && val > 0 then\n            Ok (B val)\n\n        else\n            Err \"Value isn't in range!!!\"\n\n    model : Result String Model\n    model =\n        toModel\n            Model\n            (withField condPosInt .a\n                >> withField condFloatRange .b\n            )\n            form\n\n\n    -- Ok { a = 1, b = 0.3 }\n\n",
+                "type": "(a -> Result.Result String.String b) -> (form -> Validation.Field raw a) -> Transformation.Transformer (b -> c) form -> Transformation.Transformer c form"
+            },
+            {
+                "name": "withoutField",
+                "comment": " This function is similar to function above and is used for non-field type of variables.\n\n    import Validation exposing (Field, preValidatedField)\n\n    type Planet\n        = Venus\n        | Earth\n        | Mars\n\n    type alias Model =\n        { planet : Planet, a : Int, b : Float }\n\n    type alias Form =\n        { planet : Planet, a : Field String Int, b : Field String Float }\n\n    form =\n        Form Earth (preValidatedField String.fromInt 1) (preValidatedField String.fromFloat 0.3)\n\n\n    --form = Form Mars (preValidatedField String.fromInt 1) (Validation.field \"40.5\")\n    model : Result String Model\n    model =\n        let\n            fieldOk =\n                withField Ok\n\n            valueOk =\n                withoutField Ok\n        in\n        toModel\n            Model\n            (valueOk .planet\n                >> fieldOk .a\n                >> fieldOk .b\n            )\n            form\n\n\n    -- Ok { planet = Earth, a = 1, b = 0.3 }\n    -- for form with Mars we get:\n    --      Err \"Form is not validated!\",\n    -- because validity of initial value b is NotValidated.\n\n",
+                "type": "(a -> Result.Result String.String b) -> (form -> a) -> Transformation.Transformer (b -> c) form -> Transformation.Transformer c form"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Validation",
+        "comment": " This module helps with validation of input forms.\n\n\n# Definition\n\n@docs Field, Validity, Event, SubmissionStatus, OptionalField, Validator, ErrorMessage\n\n\n# Helpers\n\n@docs extractError, field, preValidatedField, validate, validity, rawValue, optional, invalidate\n\n\n# Higher-Order Helpers\n\n@docs applyValidity, composite\n\n",
+        "unions": [
+            {
+                "name": "Event",
+                "comment": " Event describe state of input form:\n\n  - `OnSubmit` validates model data before submitting to server,\n    see `validateModel` in `example`.\n  - `OnBlur` validates input form when user leaves an input field.\n  - `OnRelatedChange` validates input form which is tied with another form.\n    For example: password and confirm form.\n  - `OnChange raw` validates input form when user changes value in input field,\n\n",
+                "args": [
+                    "raw"
+                ],
+                "cases": [
+                    [
+                        "OnSubmit",
+                        []
+                    ],
+                    [
+                        "OnBlur",
+                        []
+                    ],
+                    [
+                        "OnRelatedChange",
+                        []
+                    ],
+                    [
+                        "OnChange",
+                        [
+                            "raw"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Field",
+                "comment": " Define data type.\nFor example:\n\n    dist =\n        Field 40.5 NotValidated\n\nThat means `dist` has value 40.5 which hasn't validated yet.\n\n",
+                "args": [
+                    "raw",
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Field",
+                        [
+                            "raw",
+                            "Validation.Validity a"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "SubmissionStatus",
+                "comment": " Here `SubmissionStatus` define states for submit data to server:\n\n  - `NotSubmitted` means that data have not sent yet.\n\n  - `InProcess` for data being processed.\n\n  - `Succeeded` if data have been successfully received.\n\n  - `Failed` or vice versa, data have not been successfully received.\n\n    This also may be used to inform user on screen, see `renderStatus`in `example`.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NotSubmitted",
+                        []
+                    ],
+                    [
+                        "InProcess",
+                        []
+                    ],
+                    [
+                        "Succeeded",
+                        []
+                    ],
+                    [
+                        "Failed",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Validity",
+                "comment": " This type defines three state of Field:\n\n  - `NotValidated` values e.g. in input from, which have not validated yet.\n  - `Valid a` values ​​that have been validated and are correct.\n  - `Invalid String` and state for incorrect input values.\n\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "NotValidated",
+                        []
+                    ],
+                    [
+                        "Valid",
+                        [
+                            "a"
+                        ]
+                    ],
+                    [
+                        "Invalid",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "ErrorMessage",
+                "comment": " Represents error message for invalid values in input form.\nThis type is used for definition of validator functions.\n",
+                "args": [],
+                "type": "String.String"
+            },
+            {
+                "name": "OptionalField",
+                "comment": " Sometimes we want to use input form as optional, for example age.\nIn this case the input field can be an empty. But if somebody provides\ninput value then input field will be validated. So this type is used\nfor define optional variable.\n",
+                "args": [
+                    "raw",
+                    "a"
+                ],
+                "type": "Validation.Field raw (Maybe.Maybe a)"
+            },
+            {
+                "name": "Validator",
+                "comment": " It's used for validate variables, see `Validators` for example.\n",
+                "args": [
+                    "a",
+                    "b"
+                ],
+                "type": "a -> Result.Result String.String b"
+            }
+        ],
+        "values": [
+            {
+                "name": "applyValidity",
+                "comment": " Applying function to particular validation. For instance, see `submitIfValid` and\n`submit` function in `example`.\n",
+                "type": "Validation.Validity a -> Validation.Validity (a -> b) -> Validation.Validity b"
+            },
+            {
+                "name": "composite",
+                "comment": " Composition of two Validators.\n\n    import Validators exposing (isEmail, isNotEmpty)\n\n    emailValidation : Validator String String\n    emailValidation =\n        composite\n            (isNotEmpty \"An email is required.\")\n            (isEmail \"Please ensure this is a valid email.\")\n\n",
+                "type": "Validation.Validator a b -> Validation.Validator b c -> Validation.Validator a c"
+            },
+            {
+                "name": "extractError",
+                "comment": " Extract error message from Field.\n\n    import Validaton exposing (Field)\n\n    errorLabel : Field raw a -> Html Msg\n    errorLabel field =\n        div []\n            [ field\n                |> extractError\n                |> Maybe.withDefault \"\"\n                |> text\n            ]\n\n",
+                "type": "Validation.Field raw a -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "field",
+                "comment": " Default setting of Field with `NotValidated` validity.\n\n    import Validation exposing (Field, field)\n\n    intValue : Field String String\n    intValue =\n        field \"50\"\n\n    -- Field \"50\" NotValidated\n\n",
+                "type": "b -> Validation.Field b a"
+            },
+            {
+                "name": "invalidate",
+                "comment": " Default setting of Field with `Valid a` validity.\nFor `Field String String` use an identity function.\n\n    import Validation exposing (Field, invalidate, preValidatedField)\n\n    intValue : Field String Int\n    intValue =\n        preValidatedField String.fromInt 50\n\n    invalidate \"Bad value\" intValue  -- Field \"50\" (Invalid \"Bad value\")\n\n",
+                "type": "String.String -> Validation.Field raw a -> Validation.Field raw a"
+            },
+            {
+                "name": "optional",
+                "comment": " Validation of optional variable.\n\n    import Validaton exposing (Event(..), OptionalField, field, validate)\n    import Validators exposing (isPositiveInt)\n\n    age : OptionalField String Int\n    age =\n        field \"\"\n\n    validate\n        age\n            |> optional (isPositiveInt \"The age has to be positive number.\")\n            |> OnSubmit\n\n    -- Field \"\" (Valid Nothing)\n\n",
+                "type": "Validation.Validator String.String a -> String.String -> Result.Result String.String (Maybe.Maybe a)"
+            },
+            {
+                "name": "preValidatedField",
+                "comment": " Default setting of Field with `Valid a` validity.\nFor `Field String String` use an identity function.\n\n    import Validation exposing (Field, field)\n\n    intValue : Field String Int\n    intValue =\n        preValidatedField String.fromInt 50\n\n    -- Field \"50\" (Valid 50)\n\n",
+                "type": "(val -> String.String) -> val -> Validation.Field String.String val"
+            },
+            {
+                "name": "rawValue",
+                "comment": " Get value from Field.\n\n    import Validation exposing (Field)\n\n    intValue : Field String String\n    intValue =\n        Field \"50\" NotValidated\n\n    rawValue intValue       -- \"50\"\n\n",
+                "type": "Validation.Field b a -> b"
+            },
+            {
+                "name": "validate",
+                "comment": " Run validation on Field with `Event`.\n",
+                "type": "Validation.Event raw -> Validation.Validator raw a -> Validation.Field raw a -> Validation.Field raw a"
+            },
+            {
+                "name": "validity",
+                "comment": " Get validity from Field.\n\n    import Validation exposing (Field)\n\n    intValue : Field String Int\n    intValue =\n        Field \"50\" (Valid 50)\n\n    validity intValue       -- Valid 50\n\n",
+                "type": "Validation.Field raw a -> Validation.Validity a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Validators",
+        "comment": " This module provides a few functions for validating data.\n\n\n# Numbers validation\n\n@docs isFloat, isInt, isAtLeast, isAtMost, isGreaterThan, isLessThan, isRange\n\n\n# Strings validation\n\n@docs isNotEmpty, isEmail, isUrl\n\n\n# List validation\n\n@docs isInList\n\n\n# Others validation\n\n@docs isTrue, isEqualTo, isValidField\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "isAtLeast",
+                "comment": " Returns an `Err errorMessage2` or `Err errorMessage1` if the given value isn't\ngreater or equal to defined value (defined by user) or if first validation failed.\nOtherwise return `Ok value`.\n",
+                "type": "Validation.Validator String.String comparable -> comparable -> Validation.ErrorMessage -> Validation.Validator String.String comparable"
+            },
+            {
+                "name": "isAtMost",
+                "comment": " Returns an `Err errorMessage2` or `Err errorMessage1` if the given value isn't\nless or equal to defined value (defined by user) or if first validation failed.\nOtherwise return `Ok value`.\n",
+                "type": "Validation.Validator String.String comparable -> comparable -> Validation.ErrorMessage -> Validation.Validator String.String comparable"
+            },
+            {
+                "name": "isEmail",
+                "comment": " Returns an `Err errorMessage` if the given string isn't correct an email address,\notherwise return `Ok value`.\n",
+                "type": "Validation.ErrorMessage -> String.String -> Result.Result String.String String.String"
+            },
+            {
+                "name": "isEqualTo",
+                "comment": " Validate Field\n\nReturns an `Err errorMessage` if the given value of `Field Valid a` isn't same as\nvalidation argument, otherwise return `Ok validation argument` for others `Validity`\nor for `Valid a` is `Ok value`.\n\n    import Validation exposing (Validator, ErrorMessage, Field)\n\n    pass : Field String String\n    pass =\n        Field \"\" (Valid \"password*\")\n\n    confirmPasswordValidation : Validator String String\n    confirmPasswordValidation =\n        isEqualTo pass \"The passwords don't match.\"\n\n    confirmPasswordValidation \"password*\" -- Ok \"password*\"\n    confirmPasswordValidation \"pasword*\"  -- Err \"The passwords don't match.\"\n\n",
+                "type": "Validation.Field raw a -> Validation.ErrorMessage -> a -> Result.Result String.String a"
+            },
+            {
+                "name": "isFloat",
+                "comment": " Returns an `Err errorMessage` if the given value isn't float number, otherwise\nreturn `Ok value`.\n\n    import Validation exposing (Validator, ErrorMessage)\n\n    floatValidation : Validator String Float\n    floatValidation =\n        isFloat \"The value is not float number!\"\n\n    floatValidation \"5.39161\" -- Ok 5.39161\n    floatValidation \"t.39161\" -- Err \"It is not float number!\"\n\n",
+                "type": "Validation.ErrorMessage -> Validation.Validator String.String Basics.Float"
+            },
+            {
+                "name": "isGreaterThan",
+                "comment": " Returns an `Err errorMessage2` or `Err errorMessage1` if the given value isn't\ngreater than defined value (defined by user) or if first validation failed.\nOtherwise return `Ok value`.\n",
+                "type": "Validation.Validator String.String comparable -> comparable -> Validation.ErrorMessage -> Validation.Validator String.String comparable"
+            },
+            {
+                "name": "isInList",
+                "comment": " Returns an `Err errorMessage` if the given value isn't in list, otherwise\nreturn `Ok value`.\n\n    import Validation exposing (Validator, ErrorMessage)\n\n    elInListValidation : Validator (Int, List Int) Int\n    elInListValidation =\n        isInList \"Given value is not in list!\"\n\n    elInListValidation (3, [1, 2, 3]) -- Ok 3\n    elInListValidation (5, [1, 2, 3]) -- Err \"Given value is not in list!\"\n\n",
+                "type": "Validation.ErrorMessage -> ( a, List.List a ) -> Result.Result String.String a"
+            },
+            {
+                "name": "isInt",
+                "comment": " Returns an `Err errorMessage` if the given value isn't int number, otherwise\nreturn `Ok value`.\n\n    import Validation exposing (Validator, ErrorMessage)\n\n    intValidation : Validator String Int\n    intValidation =\n        isInt \"The value is not int number!\"\n\n    intValidation \"108\"  -- Ok 108\n    intValidation \"3.14\" -- Err \"It is not int number!\"\n\n",
+                "type": "Validation.ErrorMessage -> Validation.Validator String.String Basics.Int"
+            },
+            {
+                "name": "isLessThan",
+                "comment": " Returns an `Err errorMessage2` or `Err errorMessage1` if the given value isn't\nless than defined value (defined by user) or if first validation failed.\nOtherwise return `Ok value`.\n\n    import Validation exposing (ErrorMessage, Validator)\n    import Validators exposing (isLessThan)\n\n    isLessThanInt : Validator String Int\n    isLessThanInt =\n        isLessThan (isInt \"The value is not int number!\") 5 \"The value is not less than 5!\"\n\n    isLessThanInt \"3\"   -- Ok 3\n    isLessThanInt \"6\"   -- Err \"The value is not less than 5!\"\n    isLessThanInt \"6.3\" -- Err \"The value is not int number!\"\n\n",
+                "type": "Validation.Validator String.String comparable -> comparable -> Validation.ErrorMessage -> Validation.Validator String.String comparable"
+            },
+            {
+                "name": "isNotEmpty",
+                "comment": " Returns an `Err errorMessage` if the given string is empty, otherwise\nreturn `Ok value`.\n",
+                "type": "Validation.ErrorMessage -> String.String -> Result.Result String.String String.String"
+            },
+            {
+                "name": "isRange",
+                "comment": " Returns an `Err errorMessage2` or `Err errorMessage1` if the given value isn't\nin range (mathematically speaking it's closed interval) or if first validation failed.\nOtherwise return `Ok value`. First number has to be less than second.\n\n    import Validation exposing (ErrorMessage, Validator)\n    import Validators exposing (isFloat, isRange)\n\n    floatRange : Validator String Float\n    floatRange =\n        isRange (isFloat \"The value is not float number!\") 0 5.5 \"The value is not in range!\"\n\n    floatRange \"3.8\" -- Ok 3.8\n    floatRange \"6.1\" -- Err \"The value is not in range!\"\n    floatRange \"6.x\" -- Err \"The value is not float number!\"\n\n",
+                "type": "Validation.Validator String.String comparable -> comparable -> comparable -> Validation.ErrorMessage -> Validation.Validator String.String comparable"
+            },
+            {
+                "name": "isTrue",
+                "comment": " Returns an `Err errorMessage` if the given boolean value is false, otherwise\nreturn `Ok True`.\n",
+                "type": "Validation.ErrorMessage -> Basics.Bool -> Result.Result String.String Basics.Bool"
+            },
+            {
+                "name": "isUrl",
+                "comment": " Returns an `Err errorMessage` if the given string isn't correct an url path,\notherwise return `Ok value`.\n",
+                "type": "Validation.ErrorMessage -> String.String -> Result.Result String.String String.String"
+            },
+            {
+                "name": "isValidField",
+                "comment": " Returns false if `Field` hasn't validity `Valid a`, otherwise\nreturn true.\n\n    import Validation exposing (Field, field, preValidatedField)\n\n    intNotValidValue = field \"50\"        -- Field \"50\" NotValidated\n    intValidValue = preValidatedField 50 -- Field \"50\" (Valid 50)\n\n    isValidField intNotValidValue -- False\n    isValidField intValidValue    -- True\n\n",
+                "type": "Validation.Field raw a -> Basics.Bool"
+            }
+        ],
+        "binops": []
+    }
+]

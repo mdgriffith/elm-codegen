@@ -1,0 +1,203 @@
+[
+    {
+        "name": "ListView",
+        "comment": " A package for viewing data from a `List`. Features currently include _sorting_ and _pagination_.\n\nA key characteristic of this package is that it tries to seperate **transforming** the data (i.e., sort,\npaginate, group, filter, etc.) from actually **viewing** it (e.g., rendering a HTML table, CSS grid, etc.).\n\nThis module, `ListView`, is only responsible for the first part, however the `ListView.Viewers` module provides\nsome standard viewers that should be sufficient for many use cases.\n\n\n# Basic usage\n\nHere's a small example of how to render a list of data as a HTML table, using the viewer `ListView.Viewers.viewAsHtmlTable`.\nNote that we also use the `TableMsg` type and `updateTable` function from that same module, which are needed by\nthe `viewHtmlTable` function. As is ususal with other **Elm** packages, the `updateTable` function needs to be\ncalled from your main `update` function somehow.\n\n    -- main entity type we want to view\n    type alias Character =\n        { fullName : String\n        , power : Int\n        , imageUrl : String\n        }\n\n    -- some data, this is the list we want to view\n    rows : List Character\n    rows = [...]\n\n    -- this is just a helper function to render an image\n    viewPicture : character -> Html msg\n    viewPicture row =\n        Html.img [ class_ \"avatar\", src row.imageUrl ] []\n\n\n    -- config for my list to be viewed as an HTML table with 3 columns\n    tableConfig : Config Character Msg\n    tableConfig =\n        ListView.makeConfig\n            |> ListView.withColumn (ListView.makeColumn.html \"\" viewPicture)\n            |> ListView.withColumn (ListView.makeColumn.string \"Name\" .fullName)\n            |> ListView.withColumn (ListView.makeColumn.int \"Power\" .power)\n\n    -- we need to store the `DataList` state in our model\n    type alias Model = { tableState : ListView.State }\n\n\n    -- our app needs to be able to process messages from the `DataListViewer` (e.g., sort by this column)\n    type Msg\n        = OnTableMsg ListView.Viewers.ListViewMsg\n\n    -- our main `update` function needs to handle messages from the table\n    update : Msg -> Model -> Model\n    update msg model =\n        case msg of\n            OnTableMsg tableMsg ->\n                { model | tableState = ListView.Viewers.update rows tableMsg model.tableState }\n\n\n    view : Model -> Html Msg\n    view model =\n        ListView.Viewers.viewAsHtmlTable OnTableMsg tableConfig model.tableState rows\n\n    main : Program () Model Msg\n    main =\n        Browser.sandbox\n            { init = { tableState: ListView.makeState }\n            , view = view\n            , update = update\n            }\n\n@docs Config, makeConfig, makeColumn, withColumn, withColumns, State, makeState\n\n\n# Advanced usage\n\nSometimes the output of the standard viewers defined in `ListView.Viewers` may not be suitable for\nyour needs; maybe you want to layout your page using [elm-ui](https://github.com/mdgriffith/elm-ui) instead; or maybe you just need a\nsimpler paginator with only **Previous** and **Next** buttons.\n\nIn those cases, you may want to skip the `ListView.Viewers` altogether, and use the `ListView.getViewInfo`\ninstead, which returns all the information needed (hopefully) to render the list, already sorted, filtered, etc. This is\nexactly what the viewers from the `ListView.Viewers` module do, so be sure to check the source code.\n\nOne caveat is that, in order for external packages to be able to render data from the `ListView` module, a lot\nof (otherwise internal) details had to be exposed. This creates a very large public API, which will mostly likely change\nwhen this package evolves, creating many breaking changes along the way. More so in codebases that define their\nown viewers. Keep this in mind when going down this route!\n\nA final note: many customizations can be made to the standard viewers using CSS alone. You may not need\nbuild your own viewer!\n\n@docs getViewInfo, updateState, updateColumn, SortDirection, ListViewSortState, PageChange, ListViewInfo, PagingViewInfo, ColumnViewInfo, ColumnSortInfo\n\n",
+        "unions": [
+            {
+                "name": "ColumnSortInfo",
+                "comment": " Represents sort state for a single column\n",
+                "args": [],
+                "cases": [
+                    [
+                        "UnsortableColumn",
+                        []
+                    ],
+                    [
+                        "UnsortedColumn",
+                        []
+                    ],
+                    [
+                        "SortedColumn",
+                        [
+                            "ListView.SortDirection"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Config",
+                "comment": " Opaque type holding all the static configuration of the list (basically,\na list with all the viewable columns and their behavior)\n",
+                "args": [
+                    "a",
+                    "msg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "ListViewSortState",
+                "comment": " Information on how the table is currently being sorted. Part of `State`\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Unsorted",
+                        []
+                    ],
+                    [
+                        "Sorted",
+                        [
+                            "ListView.ColumnIndex",
+                            "ListView.SortDirection"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "PageChange",
+                "comment": " Represents a change in the current page\n",
+                "args": [],
+                "cases": [
+                    [
+                        "GotoFirstPage",
+                        []
+                    ],
+                    [
+                        "GotoLastPage",
+                        []
+                    ],
+                    [
+                        "GotoNextPage",
+                        []
+                    ],
+                    [
+                        "GotoPreviousPage",
+                        []
+                    ],
+                    [
+                        "GotoPage",
+                        [
+                            "Basics.Int"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "SortDirection",
+                "comment": " Direction of sorting. Note that currently, if a column is sortable, it can always be sorted in both directions.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "ASC",
+                        []
+                    ],
+                    [
+                        "DESC",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "State",
+                "comment": " Holds all the state of the `ListView`, like how it's currently being sorted or what the current page is.\n\nYou definately want to store this in your `Model`. In the future this should be exportable/importable in order to\nbe stored in local storage, for example.\n\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "ColumnViewInfo",
+                "comment": " Type that holds all the necessary information for rendering a column header\n",
+                "args": [],
+                "type": "{ name : String.String, code : String.String, index : ListView.ColumnIndex, sortInfo : ListView.ColumnSortInfo }"
+            },
+            {
+                "name": "ListViewInfo",
+                "comment": " Type that holds all the necessary information for rendering a `ListView`\n",
+                "args": [
+                    "a",
+                    "msg"
+                ],
+                "type": "{ columnsForRow : a -> ListView.RowIndex -> List.List (Html.Html msg), rowsToDisplay : List.List ( ListView.RowIndex, a ), columnsViewInfo : List.List ListView.ColumnViewInfo, pagingViewInfo : ListView.PagingViewInfo }"
+            },
+            {
+                "name": "PagingViewInfo",
+                "comment": " Information about the `ListView` paging, should contain all that's needed to render a paginator\n",
+                "args": [],
+                "type": "{ numberOfRows : Basics.Int, numberOfPages : Basics.Int, rowsPerPage : Basics.Int, currentPage : Basics.Int, currentPageStartIndex : Basics.Int, currentPageEndIndex : Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "getViewInfo",
+                "comment": " Takes in all the data, configuration and state and produces all the\ninformation needed to view the `ListView`, poperly sorted, paginated and formatted.\n\nAdvanced usages can call this function to completely customize what gets rendered,\nand what messages are produced.\n\nTypical usages that just need an HTML table or a CSS grid/flexbox should just use the\ncorresponding viewer from `ListView.Viewers` (which all call this function under the hoods).\n\n",
+                "type": "ListView.Config a msg -> ListView.State -> List.List a -> ListView.ListViewInfo a msg"
+            },
+            {
+                "name": "makeColumn",
+                "comment": " Namespace for aggregating all the functions that create new columns for the data list. Some examples:\n\n    makeColumn.string \"Car\" .carName\n\n`.carName` must return a `String` value. Column is sortable alphabetically by default.\n\n---\n\n    makeColumn.int \"Age\" .age\n    makeColumn.float \"Salary\" .salary\n\nValues are converted to `String` for rendering, but are sorted numerically by default.\n\n---\n\n    makeColumn.html \"Company url\" (\\row rowIndex -> Html.a [href row.url] [Html.text row.name])\n\nThe accessor function must return `Html msg`. Can be used to render just about anything. These columns are not sortable by default.\nAn important difference from the other column types is that the accessor function has access to the index of the row\nin the original list. This is sometimes usefule if the generated `Html` wants to produce messages that need to identify\nthe row by its index (e.g., a message to update the row somehow).\n\n---\n\n**Note**: This namespace only exists because there are already too many exposed functions in this module,\nand I wanted to group related functions into a common namespace, without creating a\nseparate module.\n\nNot really sure this is a good idea, may change in the future.\n\n",
+                "type": "{ string : String.String -> (a -> String.String) -> ListView.ColumnConfig a msg, int : String.String -> (a -> Basics.Int) -> ListView.ColumnConfig a msg, float : String.String -> (a -> Basics.Float) -> ListView.ColumnConfig a msg, html : String.String -> (a -> ListView.RowIndex -> Html.Html msg) -> ListView.ColumnConfig a msg }"
+            },
+            {
+                "name": "makeConfig",
+                "comment": " Make an empty (i.e., without columns) table configuration.\nThis is the starting point for adding new columns\n\n    makeConfig\n        |> withColumn (makeColumn.html \"\" viewPicture)\n        |> withColumn (makeColumn.string \"Name\" .fullName)\n        |> withColumn (makeColumn.string \"Tagline\" .tagLine)\n        |> withColumn (makeColumn.int \"Power\" .power)\n\n",
+                "type": "ListView.Config a msg"
+            },
+            {
+                "name": "makeState",
+                "comment": " Creates a `State` with default setting: page size of 10 elements and no sorting.\n",
+                "type": "ListView.State"
+            },
+            {
+                "name": "updateColumn",
+                "comment": " Namespace for aggregating all the functions that change the configuration\nan existing `Column` (i.e., how it's displayed or sorted, or even its name).\nFor example, to create a sortable HTML column:\n\n    showUsername person =\n        Html.span []\n            [ Html.img [ src person.avatar ] []\n            , Html.text person.name\n            ]\n    makeColumn.html \"Name\" showUsername .name\n\n",
+                "type": "{ withName : String.String -> ListView.ColumnConfig a msg -> ListView.ColumnConfig a msg, withCode : String.String -> ListView.ColumnConfig a msg -> ListView.ColumnConfig a msg, withSorter : (a -> comparable) -> ListView.ColumnConfig a msg -> ListView.ColumnConfig a msg, withViewer : (a -> ListView.RowIndex -> ListView.ColumnOutput msg) -> ListView.ColumnConfig a msg -> ListView.ColumnConfig a msg }"
+            },
+            {
+                "name": "updateState",
+                "comment": " Namespace for aggregating all the functions that update the given `ListView.State`.\n",
+                "type": "{ withPage : Basics.Int -> ListView.PageChange -> ListView.State -> ListView.State, withSorting : ListView.ListViewSortState -> ListView.State -> ListView.State, withRowsPerPage : Basics.Int -> ListView.State -> ListView.State }"
+            },
+            {
+                "name": "withColumn",
+                "comment": " Add a new column to a table configuration. Columns can be created with `makeColumn.XXX` functions\n",
+                "type": "ListView.ColumnConfig a msg -> ListView.Config a msg -> ListView.Config a msg"
+            },
+            {
+                "name": "withColumns",
+                "comment": " Add a bunch of new columns to a table configuration. Columns can be created with `makeColumn.XXX` functions\n",
+                "type": "List.List (ListView.ColumnConfig a msg) -> ListView.Config a msg -> ListView.Config a msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ListView.Viewers",
+        "comment": " Standard viewers for `ListView`.\n\nThe idea is that you first configure the list using functions from\nthe `ListView` module and then use this module to transform that\ninto `Html`. Check the documentation of `ListView` for details.\n\n@docs viewAsHtmlTable, viewAsCssGrid, update, ListViewMsg\n\n",
+        "unions": [
+            {
+                "name": "ListViewMsg",
+                "comment": " Messages specific to the standard `ListView` viewers included in this module.\n\nNote that, even if you decide to implement your own viewer, you can still use this\nmessage type (provided it's enough for your use case, of course). In that case, you'll\nprobably want to use `ListView.Viewers.update` as well.\n\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "update",
+                "comment": " Main function for updating the `ListView` state. Should be called by the app's update function.\n\nNote that, even if you decide to implement your own viewer, you can still use this\nupdate function message type (provided it's enough for your use case, of course). In that case, you'll\nalso have to user `ListViewMsg` as well.\n\n",
+                "type": "List.List a -> ListView.Viewers.ListViewMsg -> ListView.State -> ListView.State"
+            },
+            {
+                "name": "viewAsCssGrid",
+                "comment": " Views the `List` as a bunch of HTML elements that can by laid\nout using CSS only (ususlly CSS Grid or Flexbox) as a CSS grid.\n\nGenerated markup looks like:\n\n```html\n    <div class=\"listView listView--cssGrid\">\n        <div class=\"listView-header\">\n            <th class=\"listView-headerColumn listView-headerColumn--colCode\">...</th>\n            ...\n        </div>\n        <div class=\"listView-row\">\n            <div class=\"listView-column listView-column--colCode\">...</div>\n            ...\n        </div>\n        ...\n        <div class=\"listView-paginator\">...</div>\n    </div>\n```\n\n",
+                "type": "(ListView.Viewers.ListViewMsg -> msg) -> ListView.Config a msg -> ListView.State -> List.List a -> Html.Html msg"
+            },
+            {
+                "name": "viewAsHtmlTable",
+                "comment": " Views the `ListView` as a HTML table.\n\nGenerated markup looks like:\n\n```html\n    <table class=\"listView listView--htmlTable\">\n        <thead class=\"listView-header\">\n            <tr>\n                <th class=\"listView-headerColumn listView-headerColumn--colCode\">...</th>\n                ...\n            </tr>\n        </thead>\n        <tbody>\n            <tr class=\"listView-row\">\n                <td>\n                    <div class=\"listView-column listView-column--colCode\">...</div>\n                </td>\n                ...\n            </tr>\n        </tbody>\n        <tfoot class=\"listView-footer\">\n            <tr>\n                <td colspan=\"$numCols\">\n                    <div class=\"listView-paginator\">...</div>\n                </td>\n            </tr>\n        </tfoot>\n    </table>\n```\n\n",
+                "type": "(ListView.Viewers.ListViewMsg -> msg) -> ListView.Config a msg -> ListView.State -> List.List a -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

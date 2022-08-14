@@ -1,0 +1,61 @@
+[
+    {
+        "name": "Task.Extra",
+        "comment": "\n\n\n# Task.Extra\n\nFunctions provided by this module execute Tasks in sequence one after another.\n\n@docs map6\n@docs map7\n@docs map8\n@docs map9\n@docs map10\n@docs map11\n@docs map12\n@docs map13\n@docs map14\n@docs andMap\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "andMap",
+                "comment": " Combine any number of tasks.\n\n    type alias User =\n        { name : String\n        , age : Int\n        , bio : String\n        }\n\n    Task.succeed User\n        |> andMap (Task.succeed \"Jane Doe\")\n        |> andMap (Task.succeed 34)\n        |> andMap (Task.succeed \"Lorem Ipsum\")\n\n",
+                "type": "Task.Task x a -> Task.Task x (a -> b) -> Task.Task x b"
+            },
+            {
+                "name": "map10",
+                "comment": " Put the results of 10 tasks together.\n",
+                "type": "(a -> b -> c -> d -> e -> f -> g -> h -> i -> j -> result) -> Task.Task x a -> Task.Task x b -> Task.Task x c -> Task.Task x d -> Task.Task x e -> Task.Task x f -> Task.Task x g -> Task.Task x h -> Task.Task x i -> Task.Task x j -> Task.Task x result"
+            },
+            {
+                "name": "map11",
+                "comment": " Put the results of 11 tasks together.\n",
+                "type": "(a -> b -> c -> d -> e -> f -> g -> h -> i -> j -> k -> result) -> Task.Task x a -> Task.Task x b -> Task.Task x c -> Task.Task x d -> Task.Task x e -> Task.Task x f -> Task.Task x g -> Task.Task x h -> Task.Task x i -> Task.Task x j -> Task.Task x k -> Task.Task x result"
+            },
+            {
+                "name": "map12",
+                "comment": " Put the results of 12 tasks together.\n",
+                "type": "(a -> b -> c -> d -> e -> f -> g -> h -> i -> j -> k -> l -> result) -> Task.Task x a -> Task.Task x b -> Task.Task x c -> Task.Task x d -> Task.Task x e -> Task.Task x f -> Task.Task x g -> Task.Task x h -> Task.Task x i -> Task.Task x j -> Task.Task x k -> Task.Task x l -> Task.Task x result"
+            },
+            {
+                "name": "map13",
+                "comment": " Put the results of 13 tasks together.\n",
+                "type": "(a -> b -> c -> d -> e -> f -> g -> h -> i -> j -> k -> l -> m -> result) -> Task.Task x a -> Task.Task x b -> Task.Task x c -> Task.Task x d -> Task.Task x e -> Task.Task x f -> Task.Task x g -> Task.Task x h -> Task.Task x i -> Task.Task x j -> Task.Task x k -> Task.Task x l -> Task.Task x m -> Task.Task x result"
+            },
+            {
+                "name": "map14",
+                "comment": " Put the results of 14 tasks together.\n",
+                "type": "(a -> b -> c -> d -> e -> f -> g -> h -> i -> j -> k -> l -> m -> n -> result) -> Task.Task x a -> Task.Task x b -> Task.Task x c -> Task.Task x d -> Task.Task x e -> Task.Task x f -> Task.Task x g -> Task.Task x h -> Task.Task x i -> Task.Task x j -> Task.Task x k -> Task.Task x l -> Task.Task x m -> Task.Task x n -> Task.Task x result"
+            },
+            {
+                "name": "map6",
+                "comment": " Put the results of six tasks together.\n",
+                "type": "(a -> b -> c -> d -> e -> f -> result) -> Task.Task x a -> Task.Task x b -> Task.Task x c -> Task.Task x d -> Task.Task x e -> Task.Task x f -> Task.Task x result"
+            },
+            {
+                "name": "map7",
+                "comment": " Put the results of seven tasks together.\n",
+                "type": "(a -> b -> c -> d -> e -> f -> g -> result) -> Task.Task x a -> Task.Task x b -> Task.Task x c -> Task.Task x d -> Task.Task x e -> Task.Task x f -> Task.Task x g -> Task.Task x result"
+            },
+            {
+                "name": "map8",
+                "comment": " Put the results of eight tasks together.\n",
+                "type": "(a -> b -> c -> d -> e -> f -> g -> h -> result) -> Task.Task x a -> Task.Task x b -> Task.Task x c -> Task.Task x d -> Task.Task x e -> Task.Task x f -> Task.Task x g -> Task.Task x h -> Task.Task x result"
+            },
+            {
+                "name": "map9",
+                "comment": " Put the results of nine tasks together.\n",
+                "type": "(a -> b -> c -> d -> e -> f -> g -> h -> i -> result) -> Task.Task x a -> Task.Task x b -> Task.Task x c -> Task.Task x d -> Task.Task x e -> Task.Task x f -> Task.Task x g -> Task.Task x h -> Task.Task x i -> Task.Task x result"
+            }
+        ],
+        "binops": []
+    }
+]

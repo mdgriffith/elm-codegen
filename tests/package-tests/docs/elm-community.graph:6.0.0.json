@@ -1,0 +1,475 @@
+[
+    {
+        "name": "Graph",
+        "comment": " This module contains the primitives to build, update and traverse graphs.\nIf you find that this module is hard to use or the documentation\nis insufficient, consider opening an issue for that (and possibly even a\npull request :)).\n\nInternally, we use the `elm-intdict` package for efficient dynamic graph\nrepresentation.\n\n\n# Data\n\n@docs NodeId, Node, Edge, Adjacency, NodeContext, Graph\n\n\n# Building\n\n@docs empty, update, insert, remove, inducedSubgraph\n\n\n# Query\n\n@docs isEmpty, size, member, get, nodeIdRange\n\n\n# List representations\n\n@docs nodeIds, nodes, edges, fromNodesAndEdges, fromNodeLabelsAndEdgePairs\n\n\n# Transforms\n\n@docs fold, mapContexts, mapNodes, mapEdges, reverseEdges, symmetricClosure\n\n\n# Characterization\n\n@docs AcyclicGraph, checkAcyclic\n\n\n# Traversals\n\n\n## Neighbor selectors and node visitors\n\n@docs NeighborSelector, alongOutgoingEdges, alongIncomingEdges, SimpleNodeVisitor\n\n\n## Depth-first\n\n@docs DfsNodeVisitor, onDiscovery, onFinish, dfs, dfsTree, dfsForest, guidedDfs\n\n\n## Breadth-first\n\n@docs BfsNodeVisitor, ignorePath, bfs, guidedBfs\n\n\n# Topological Sort\n\n@docs topologicalSort, heightLevels\n\n\n# Strongly Connected Components\n\n@docs stronglyConnectedComponents\n\n\n# String representation\n\n@docs toString\n\n",
+        "unions": [
+            {
+                "name": "AcyclicGraph",
+                "comment": " `AcyclicGraph` wraps a `Graph` and witnesses the fact that\nit is acyclic.\n\nThis can be passed on to functions that only work on acyclic graphs,\nlike `topologicalSort` and `heightLevels`.\n\n",
+                "args": [
+                    "n",
+                    "e"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Graph",
+                "comment": " The central graph type. It is parameterized both over the node label type `n`\nand the edge label type `e`.\n\nOne can build such a graph with the primitives under _Build_. Most of the time\n`fromNodesAndEdges` works fairly well.\n\nFor simplicity, this library just uses a patricia trie based graph representation, which means\nit is just an efficient version of `Dict NodeId (NodeContext n e)`. This allows efficient insertion and\nremoval of nodes of the graph after building.\n\n",
+                "args": [
+                    "n",
+                    "e"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Adjacency",
+                "comment": " Adjacency is represented as an ordered dictionary\nrather than as an ordered list. This enables more dynamic\ngraphs with efficient edge removal and insertion on the run.\n",
+                "args": [
+                    "e"
+                ],
+                "type": "IntDict.IntDict e"
+            },
+            {
+                "name": "BfsNodeVisitor",
+                "comment": " A specialized node visitor for breadth-first traversal. Compared to a\n`SimpleNodeVisitor`, the path of contexts from the root to the current\nnode is passed instead of just the current node's context. Additionally, the\ndistance from the root is passed as an `Int` (the root has distance 0 and it\nholds always that `length path == distance - 1`).\n\nIf you don't need the additional information, you can turn a `SimpleNodeVisitor`\ninto a `BfsNodeVisitor` by calling `ignorePath`.\n\n",
+                "args": [
+                    "n",
+                    "e",
+                    "acc"
+                ],
+                "type": "List.List (Graph.NodeContext n e) -> Basics.Int -> acc -> acc"
+            },
+            {
+                "name": "DfsNodeVisitor",
+                "comment": " A node visitor specialized for depth-first traversal. Along with the node\ncontext of the currently visited node, the current accumulated value is passed.\nThe visitor then has the chance to both modify the value at discovery of the\nnode through the first return value and also provide a finishing\ntransformation which is called with the value after all children were processed\nand the node is about to be finished.\n\nIn the cases where you don't need access to the value both at dicovery and at\nfinish, look into `onDiscovery` and `onFinish`.\n\n",
+                "args": [
+                    "n",
+                    "e",
+                    "acc"
+                ],
+                "type": "Graph.NodeContext n e -> acc -> ( acc, acc -> acc )"
+            },
+            {
+                "name": "Edge",
+                "comment": " Represents a directd edge in the graph. In addition\nto start and end node identifiers, a label value can\nbe attached to an edge.\n",
+                "args": [
+                    "e"
+                ],
+                "type": "{ from : Graph.NodeId, to : Graph.NodeId, label : e }"
+            },
+            {
+                "name": "NeighborSelector",
+                "comment": " Selects the next neighbors for the currently visited node in the traversal.\n",
+                "args": [
+                    "n",
+                    "e"
+                ],
+                "type": "Graph.NodeContext n e -> List.List Graph.NodeId"
+            },
+            {
+                "name": "Node",
+                "comment": " The type representing a node: An identifier with\na label.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "{ id : Graph.NodeId, label : n }"
+            },
+            {
+                "name": "NodeContext",
+                "comment": " Represents a node with its incoming and outgoing edges\n(predecessors and successors).\n",
+                "args": [
+                    "n",
+                    "e"
+                ],
+                "type": "{ node : Graph.Node n, incoming : Graph.Adjacency e, outgoing : Graph.Adjacency e }"
+            },
+            {
+                "name": "NodeId",
+                "comment": " The type used for identifying nodes, an integer.\n",
+                "args": [],
+                "type": "Basics.Int"
+            },
+            {
+                "name": "SimpleNodeVisitor",
+                "comment": " A generic node visitor just like that in the ordinary `fold` function.\nThere are combinators that make these usable for both depth-first traversal\n(`onDiscovery`, `onFinish`) and breadth-first traversal (`ignorePath`).\n",
+                "args": [
+                    "n",
+                    "e",
+                    "acc"
+                ],
+                "type": "Graph.NodeContext n e -> acc -> acc"
+            }
+        ],
+        "values": [
+            {
+                "name": "alongIncomingEdges",
+                "comment": " A less common way for selecting neighbors is to follow incoming edges:\n\n    alongIncomingEdges ctx =\n        IntDict.keys ctx.incoming\n\n",
+                "type": "Graph.NodeContext n e -> List.List Graph.NodeId"
+            },
+            {
+                "name": "alongOutgoingEdges",
+                "comment": " A good default for selecting neighbors is to just go along outgoing edges:\n\n    alongOutgoingEdges ctx =\n        IntDict.keys ctx.outgoing\n\n`dfs`/`bfs` use this as their selecting strategy.\n\n",
+                "type": "Graph.NodeContext n e -> List.List Graph.NodeId"
+            },
+            {
+                "name": "bfs",
+                "comment": " An off-the-shelf breadth-first traversal. It will visit all components of the\ngraph in no guaranteed order, discovering nodes `alongOutgoingEdges`.\nSee the docs of `BfsNodeVisitor` on how to supply such a beast. There are also\nexamples on how to use `bfs`.\n",
+                "type": "Graph.BfsNodeVisitor n e acc -> acc -> Graph.Graph n e -> acc"
+            },
+            {
+                "name": "checkAcyclic",
+                "comment": " `checkAcyclic graph` checks `graph` for cycles.\n\nIf there are any cycles, this will return `Err edge`,\nwhere `edge` is an `Edge` that is part of a cycle.\nIf there aren't any cycles, this will return `Ok acyclic`, where\n`acyclic` is an `AcyclicGraph` that witnesses this fact.\n\n",
+                "type": "Graph.Graph n e -> Result.Result (Graph.Edge e) (Graph.AcyclicGraph n e)"
+            },
+            {
+                "name": "dfs",
+                "comment": " An off-the-shelf depth-first traversal. It will visit all components of the\ngraph in no guaranteed order, discovering nodes `alongOutgoingEdges`.\nSee the docs of `DfsNodeVisitor` on how to supply such a beast. There are also\nexamples on how to use `dfs`.\n",
+                "type": "Graph.DfsNodeVisitor n e acc -> acc -> Graph.Graph n e -> acc"
+            },
+            {
+                "name": "dfsForest",
+                "comment": " `dfsForest seeds graph` computes a depth-first spanning `Forest` of the\ncomponents in `graph` spanned by `seeds` `alongOutgoingEdges`.\n\nA traversal over this forest would be equivalent to a depth-first traversal\nover the original graph.\n\n",
+                "type": "List.List Graph.NodeId -> Graph.Graph n e -> Graph.Tree.Forest (Graph.NodeContext n e)"
+            },
+            {
+                "name": "dfsTree",
+                "comment": " `dfsTree seed graph` computes a depth-first [spanning tree](https://en.wikipedia.org/wiki/Spanning_tree) of the component\nin `graph` starting from `seed` `alongOutgoingEdges`. This function is exemplary for needing to\nutilize the whole power of `DfsNodeVisitor`.\n",
+                "type": "Graph.NodeId -> Graph.Graph n e -> Graph.Tree.Tree (Graph.NodeContext n e)"
+            },
+            {
+                "name": "edges",
+                "comment": " `edges graph` returns a list of all `Edge`s (e.g. a record of `from` and `to` ids\nand a `label`) in `graph`.\n\n    edges empty == []\n    graph = fromNodesAndEdges [Node 1 \"1\", Node 2 \"2\"] [Edge 1 2 \"->\"]\n    edges graph == [Edge 1 2 \"->\"]\n\n",
+                "type": "Graph.Graph n e -> List.List (Graph.Edge e)"
+            },
+            {
+                "name": "empty",
+                "comment": " An empty graph.\n\n    size empty == 0\n\n",
+                "type": "Graph.Graph n e"
+            },
+            {
+                "name": "fold",
+                "comment": " A fold over all node contexts. The accumulated value is computed lazily,\nso that the fold can exit early when the suspended accumulator is not forced.\n\n    hasLoop ctx = IntDict.member ctx.node.id ctx.incoming\n    graph = fromNodesAndEdges [Node 1 \"1\", Node 2 \"2\"] [Edge 1 2 \"->\"]\n    -- The graph should not have any loop.\n    fold (\\ctx acc -> acc || hasLoop ctx) False graph == False\n\n",
+                "type": "(Graph.NodeContext n e -> acc -> acc) -> acc -> Graph.Graph n e -> acc"
+            },
+            {
+                "name": "fromNodeLabelsAndEdgePairs",
+                "comment": " A more convenient version of `fromNodesAndEdges`, when edges are unlabeled\nand there are no special requirements on node ids.\n\n`fromNodeLabelsAndEdgePairs labels edges` implicitly assigns node ids according\nto the label's index in `labels` and the list of edge pairs is converted to\nunlabeled `Edge`s.\n\n    graph =\n        fromNodeLabelsAndEdgePairs [ 'a', 'b' ] [ ( 0, 1 ) ]\n\n",
+                "type": "List.List n -> List.List ( Graph.NodeId, Graph.NodeId ) -> Graph.Graph n ()"
+            },
+            {
+                "name": "fromNodesAndEdges",
+                "comment": " `fromNodesAndEdges nodes edges` constructs a graph from the supplied `nodes`\nand `edges`. This is the most comfortable way to construct a graph as a whole.\nOftentimes it is even more convenient to use `fromNodeLabelsAndEdgePairs` when\nedges are unlabeled anyway and auto incremented node ids are OK.\n\nThe following constructs a graph with 2 nodes with a string label, connected\nby an edge labeled \"->\".\n\n    graph =\n        fromNodesAndEdges [ Node 1 \"1\", Node 2 \"2\" ] [ Edge 1 2 \"->\" ]\n\n",
+                "type": "List.List (Graph.Node n) -> List.List (Graph.Edge e) -> Graph.Graph n e"
+            },
+            {
+                "name": "get",
+                "comment": " Analogous to `Dict.get`, `get nodeId graph` returns the `Just` the node\ncontext with id `nodeId` in `graph` if there is one and `Nothing` otherwise.\n\n    graph = fromNodesAndEdges [Node 1 \"1\", Node 2 \"2\"] []\n    get 42 graph == Nothing\n    get 1 graph == Just <node context of node 1>\n\n",
+                "type": "Graph.NodeId -> Graph.Graph n e -> Maybe.Maybe (Graph.NodeContext n e)"
+            },
+            {
+                "name": "guidedBfs",
+                "comment": " The `bfs` function is not powerful enough? Go for this beast.\n\n`guidedBfs selectNeighbors visitNode seeds acc graph` will perform a breadth-first\ntraversal on `graph` starting with a queue of `seeds`. The children of each node\nwill be selected with `selectNeighbors` (see `NeighborSelector`), the visiting\nof nodes is handled by `visitNode` (c.f. `BfsNodeVisitor`), folding `acc` over\nthe graph.\n\nWhen there are not any more nodes to be visited, the function will return the\naccumulated value together with the unvisited rest of `graph`.\n\n    bfsLevelOrder graph =\n        -- NodeId 1 is just a wild guess here\n        guidedBfs alongOutgoingEdges (ignorePath (::)) [ 1 ] [] graph\n\n",
+                "type": "Graph.NeighborSelector n e -> Graph.BfsNodeVisitor n e acc -> List.List Graph.NodeId -> acc -> Graph.Graph n e -> ( acc, Graph.Graph n e )"
+            },
+            {
+                "name": "guidedDfs",
+                "comment": " The `dfs*` functions are not powerful enough? Go for this beast.\n\n`guidedDfs selectNeighbors visitNode seeds acc graph` will perform a depth-first\ntraversal on `graph` starting with a stack of `seeds`. The children of each node\nwill be selected with `selectNeighbors` (see `NeighborSelector`), the visiting\nof nodes is handled by `visitNode` (c.f. `DfsNodeVisitor`), folding `acc` over\nthe graph.\n\nWhen there are not any more nodes to be visited, the function will return the\naccumulated value together with the unvisited rest of `graph`.\n\n    dfsPreOrder graph =\n        -- NodeId 1 is just a wild guess here\n        guidedDfs alongOutgoingEdges (onDiscovery (::)) [ 1 ] [] graph\n\n",
+                "type": "Graph.NeighborSelector n e -> Graph.DfsNodeVisitor n e acc -> List.List Graph.NodeId -> acc -> Graph.Graph n e -> ( acc, Graph.Graph n e )"
+            },
+            {
+                "name": "heightLevels",
+                "comment": " Computes the height function of a given `AcyclicGraph`. This is a more general\n[topological sort](https://en.wikipedia.org/wiki/Topological_sorting),\nwhere independent nodes are in the same height level (e.g. the same list\nindex). A valid topological sort is trivially obtained by flattening the\nresult of this function.\n\nThe height function is useful for solving the maximal clique problem for\ncertain [perfect graphs](https://en.wikipedia.org/wiki/Perfect_graph)\n([comparability graphs](https://en.wikipedia.org/wiki/Comparability_graph)).\nThere is the excellent reference\n[Algorithmic Graph Theory and Perfect Graphs](http://dl.acm.org/citation.cfm?id=984029).\n\n",
+                "type": "Graph.AcyclicGraph n e -> List.List (List.List (Graph.NodeContext n e))"
+            },
+            {
+                "name": "ignorePath",
+                "comment": " Turns a `SimpleNodeVisitor` into a `BfsNodeVisitor` by ignoring the path\nand distance parameters.\nThis is useful for when the visitor should be agnostic of the\ntraversal (breadth-first or depth-first or even just `fold`).\n\n    bfsLevelOrder : List (NodeContext n e)\n    bfsLevelOrder graph =\n        graph\n            |> bfs (ignorePath (::)) []\n            |> List.reverse\n\n",
+                "type": "Graph.SimpleNodeVisitor n e acc -> List.List (Graph.NodeContext n e) -> Basics.Int -> acc -> acc"
+            },
+            {
+                "name": "inducedSubgraph",
+                "comment": " The [induced subgraph](http://mathworld.wolfram.com/Edge-InducedSubgraph.html)\nof a number of node ids.\n",
+                "type": "List.List Graph.NodeId -> Graph.Graph n e -> Graph.Graph n e"
+            },
+            {
+                "name": "insert",
+                "comment": " Analogous to `Dict.insert`, `insert nodeContext graph` inserts a fresh node\nwith its context (label, id and edges) into `graph`. If there was already a node\nwith the same id, it will be replaced by the new node context.\n\n    graph1 = fromNodesAndEdges [Node 1 \"1\"] []\n    newNode =\n      { node = Node 2 \"2\"\n      , incoming = IntDict.singleton 1 () -- so there will be an edge from 1 to 2\n      , outgoing = IntDict.empty\n      }\n    graph2 = insert newNode graph1\n    size graph2 == 2\n\nIt's possible to build up whole graphs this way, but a lot less tedious way would\nbe simply to use `fromNodesAndEdges`.\n\n",
+                "type": "Graph.NodeContext n e -> Graph.Graph n e -> Graph.Graph n e"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " `isEmpty graph` is true if and only if there are no nodes in the graph.\nSome properties to reason about in code, which hold for any `graph`:\n\n    isEmpty graph =\n        graph == empty\n    isEmpty graph =\n        size graph == 0\n\n",
+                "type": "Graph.Graph n e -> Basics.Bool"
+            },
+            {
+                "name": "mapContexts",
+                "comment": " Maps each node context to another one. This may change edge and node labels\n(including their types), possibly the node ids and also add or remove edges\nentirely through modifying the adjacency lists.\n\nThe following is a specification for reverseEdges:\n\n    flipEdges ctx = { ctx | incoming = ctx.outgoing, outgoing = ctx.incoming }\n    graph = fromNodesAndEdges [Node 1 \"1\", Node 2 \"2\"] [Edge 1 2 \"->\"]\n    reverseEdges graph == mapContexts flipEdges graph\n\n",
+                "type": "(Graph.NodeContext n1 e1 -> Graph.NodeContext n2 e2) -> Graph.Graph n1 e1 -> Graph.Graph n2 e2"
+            },
+            {
+                "name": "mapEdges",
+                "comment": " Maps over edge labels, possibly chaing their types. Leaves the graph\ntopology intact.\n",
+                "type": "(e1 -> e2) -> Graph.Graph n e1 -> Graph.Graph n e2"
+            },
+            {
+                "name": "mapNodes",
+                "comment": " Maps over node labels, possibly changing their types. Leaves the graph\ntopology intact.\n",
+                "type": "(n1 -> n2) -> Graph.Graph n1 e -> Graph.Graph n2 e"
+            },
+            {
+                "name": "member",
+                "comment": " Analogous to `Dict.member`, `member nodeId graph` is true, if and only if\nthere is a node with id `nodeId` in `graph`.\n\n    graph = fromNodesAndEdges [Node 1 \"1\", Node 2 \"2\"] []\n    member 42 graph == False\n    member 1 graph == True\n\n",
+                "type": "Graph.NodeId -> Graph.Graph n e -> Basics.Bool"
+            },
+            {
+                "name": "nodeIdRange",
+                "comment": " `nodeIdRange graph` returns `Just (minNodeId, maxNodeId)` if `graph` is not empty and `Nothing`\notherwise.\n\nThis is useful for finding unoccupied node ids without trial and error.\n\n    nodeIdRange empty == Nothing\n    graph = fromNodesAndEdges [Node 1 \"1\", Node 2 \"2\"] []\n    nodeIdRange graph == Just (1, 2)\n\n",
+                "type": "Graph.Graph n e -> Maybe.Maybe ( Graph.NodeId, Graph.NodeId )"
+            },
+            {
+                "name": "nodeIds",
+                "comment": " `nodeIds graph` returns a list of all nodes' ids in `graph`.\n\n    nodeIds empty == []\n    graph = fromNodesAndEdges [Node 1 \"1\", Node 2 \"2\"] []\n    nodeIds graph == [1, 2]\n\n",
+                "type": "Graph.Graph n e -> List.List Graph.NodeId"
+            },
+            {
+                "name": "nodes",
+                "comment": " `nodes graph` returns a list of all `Node`s (e.g. `id` and `label`) in\n`graph`.\n\n    nodes empty == []\n    graph = fromNodesAndEdges [Node 1 \"1\", Node 2 \"2\"] []\n    nodes graph == [Node 1 \"1\", Node 2 \"2\"]\n\n",
+                "type": "Graph.Graph n e -> List.List (Graph.Node n)"
+            },
+            {
+                "name": "onDiscovery",
+                "comment": " Transform a `SimpleNodeVisitor` into an equivalent `DfsNodeVisitor`, which\nwill be called upon node discovery. This eases providing `DfsNodeVisitor`s in\nthe default case:\n\n    dfsPreOrder : Graph n e -> List (NodeContext n e)\n    dfsPreOrder graph =\n        List.reverse (dfs (onDiscovery (::)) [] graph)\n\n",
+                "type": "Graph.SimpleNodeVisitor n e acc -> Graph.NodeContext n e -> acc -> ( acc, acc -> acc )"
+            },
+            {
+                "name": "onFinish",
+                "comment": " Transform a `SimpleNodeVisitor` into an equivalent `DfsNodeVisitor`, which\nwill be called upon node finish. This eases providing `DfsNodeVisitor`s in\nthe default case:\n\n    dfsPostOrder : Graph n e -> List (NodeContext n e)\n    dfsPostOrder graph =\n        List.reverse (dfs (onFinish (::)) [] graph)\n\n",
+                "type": "Graph.SimpleNodeVisitor n e acc -> Graph.NodeContext n e -> acc -> ( acc, acc -> acc )"
+            },
+            {
+                "name": "remove",
+                "comment": " Analogous to `Dict.remove`, `remove nodeId graph` returns a version of `graph`\nwithout a node with id `nodeId`. If there was no node with that id, then remove\nis a no-op:\n\n    graph = fromNodesAndEdges [Node 1 \"1\", Node 2 \"2\"] [Edge 1 2 ()]\n    graph == remove 42 graph\n    graph |> remove 2 |> size == 1\n\n",
+                "type": "Graph.NodeId -> Graph.Graph n e -> Graph.Graph n e"
+            },
+            {
+                "name": "reverseEdges",
+                "comment": " Reverses the direction of every edge in the graph.\n",
+                "type": "Graph.Graph n e -> Graph.Graph n e"
+            },
+            {
+                "name": "size",
+                "comment": " `size graph` returns the number of nodes in `graph`.\n\n    size empty == 0\n    graph = fromNodesAndEdges [Node 1 \"1\", Node 2 \"2\"] []\n    size graph == 2\n\n",
+                "type": "Graph.Graph n e -> Basics.Int"
+            },
+            {
+                "name": "stronglyConnectedComponents",
+                "comment": " Decomposes a graph into its strongly connected components.\n\n`Ok acyclic` means that the graph was acyclic (so every node in the\ngraph forms a single connected component).\n\n`Err components` means there were cycles in the graph. The resulting\nlist of `components` is a topological ordering of the _condensation_ (e.g. the\nacyclic component graph) of the input graph.\n\n",
+                "type": "Graph.Graph n e -> Result.Result (List.List (Graph.Graph n e)) (Graph.AcyclicGraph n e)"
+            },
+            {
+                "name": "symmetricClosure",
+                "comment": " `symmetricClosure edgeMerger graph` is the\n[symmetric closure](https://en.wikipedia.org/wiki/Symmetric_closure) of `graph`,\ne.g. the undirected equivalent, where for every edge in `graph` there is also\na corresponding reverse edge. This implies that `ctx.incoming` == `ctx.outgoing`\nfor each node context `ctx`.\n\n`edgeMerger` resolves conflicts for when there are already edges in both\ndirections, e.g. the graph isn't truly directed. It is guaranteed that\n`edgeMerger` will only be called with the smaller node id passed in first\nto enforce consitency of merging decisions.\n\n    graph = fromNodesAndEdges [Node 1 \"1\", Node 2 \"2\"] [Edge 1 2 \"->\"]\n    onlyUndirectedEdges ctx =\n      ctx.incoming == ctx.outgoing\n    merger from to outgoingLabel incomingLabel =\n      outgoingLabel -- quite arbitrary, will not be called for the above graph\n    fold\n      (\\ctx acc -> acc && onlyUndirectedEdges ctx)\n      True\n      (symmetricClosure merger graph)\n      == True\n\n",
+                "type": "(Graph.NodeId -> Graph.NodeId -> e -> e -> e) -> Graph.Graph n e -> Graph.Graph n e"
+            },
+            {
+                "name": "toString",
+                "comment": " Returns a string representation of the graph.\n",
+                "type": "(n -> Maybe.Maybe String.String) -> (e -> Maybe.Maybe String.String) -> Graph.Graph n e -> String.String"
+            },
+            {
+                "name": "topologicalSort",
+                "comment": " Computes a\n[topological ordering](https://en.wikipedia.org/wiki/Topological_sorting)\nof the given `AcyclicGraph`.\n",
+                "type": "Graph.AcyclicGraph n e -> List.List (Graph.NodeContext n e)"
+            },
+            {
+                "name": "update",
+                "comment": " Analogous to `Dict.update`, `update nodeId updater graph` will find\nthe node context of the node with id `nodeId` in `graph`. It will then call `updater`\nwith `Just` that node context if that node was found and `Nothing`\notherwise. `updater` can then return `Just` an updated node context\n(modifying edges is also permitted!) or delete the node by returning\n`Nothing`. The updated `graph` is returned.\n\nThis is the most powerful building function since all possible per-node\noperations are possible (node removal, insertion and updating of context\nproperties).\n\nThe other operations can be implemented in terms of `update` like this:\n\n    remove nodeId graph =\n        update nodeId (always Nothing) graph\n\n    insert nodeContext graph =\n        update nodeContext.node.id (always (Just nodeContext)) graph\n\n",
+                "type": "Graph.NodeId -> (Maybe.Maybe (Graph.NodeContext n e) -> Maybe.Maybe (Graph.NodeContext n e)) -> Graph.Graph n e -> Graph.Graph n e"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Graph.DOT",
+        "comment": " This module provides a means of converting the `Graph` data type into a\nvalid [DOT](https://en.wikipedia.org/wiki/DOT_(graph_description_language))\nstring for visualizing your graph structure.\n\nYou can easily preview your graph by inserting the generated string into an\nonline GraphViz tool like <https://dreampuf.github.io/GraphvizOnline/>.\n\nYou can also dynamically draw your graph in your application by sending the\nstring over a port to the javascript version of the GraphViz library,\n<https://github.com/mdaines/viz.js/> (see the examples there fore more\nspecifics on how to embed the generated visualization).\n\n@docs output\n\n\n# Attrs\n\nGraphViz allows for customizing the graph's look via \"Attrs.\"\n\n@docs Styles, Rankdir, defaultStyles, outputWithStyles, outputWithStylesAndAttributes\n\n",
+        "unions": [
+            {
+                "name": "Rankdir",
+                "comment": " Values to control the direction of the graph\n",
+                "args": [],
+                "cases": [
+                    [
+                        "TB",
+                        []
+                    ],
+                    [
+                        "LR",
+                        []
+                    ],
+                    [
+                        "BT",
+                        []
+                    ],
+                    [
+                        "RL",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Styles",
+                "comment": " A type representing the attrs to apply at the graph, node, and edge\nentities (subgraphs and cluster subgraphs are not supported).\n\nNote that `Styles` is made up of strings, which loses type safety, but\nallows you to use any GraphViz attrs without having to model them out in\nentirety in this module. It is up to you to make sure you provide valid\nattr strings. See <http://www.graphviz.org/content/attrs> for available\noptions.\n\n",
+                "args": [],
+                "type": "{ rankdir : Graph.DOT.Rankdir, graph : String.String, node : String.String, edge : String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultStyles",
+                "comment": " A blank `Styles` record to build from to define your own styles.\n\n    myStyles =\n        { defaultStyles\n            | node = \"shape=box, color=blue, style=\\\"rounded, filled\\\"\"\n        }\n\n",
+                "type": "Graph.DOT.Styles"
+            },
+            {
+                "name": "output",
+                "comment": " Converts a `Graph` into a valid DOT string.\nNote that you must supply conversion functions for node labels and edge labels\nto `Maybe String`s.\n\nWhen a conversion function returns `Nothing`, no _label_ attribute is output.\nFor nodes, GraphViz falls back to displaying node ids.\nFor edges, no label is displayed.\n\n",
+                "type": "(n -> Maybe.Maybe String.String) -> (e -> Maybe.Maybe String.String) -> Graph.Graph n e -> String.String"
+            },
+            {
+                "name": "outputWithStyles",
+                "comment": " Same as `output`, but allows you to add attrs to the graph.\nThese attrs will be applied to the entire graph.\n",
+                "type": "Graph.DOT.Styles -> (n -> Maybe.Maybe String.String) -> (e -> Maybe.Maybe String.String) -> Graph.Graph n e -> String.String"
+            },
+            {
+                "name": "outputWithStylesAndAttributes",
+                "comment": " Same as `outputWithStyles`, but allows each node and edge to include its\nown attrs. Note that you must supply a conversion function for node and edge\nlabels that return a `Dict String String` of the attribute mappings.\n\nNote that you have to take care of setting the appropriate node and edge labels\nyourself.\n\n",
+                "type": "Graph.DOT.Styles -> (n -> Dict.Dict String.String String.String) -> (e -> Dict.Dict String.String String.String) -> Graph.Graph n e -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Graph.TGF",
+        "comment": " This module provides a means of converting the `Graph` data type into a\nvalid [TGF](https://en.wikipedia.org/wiki/Trivial_Graph_Format) string for\nvisualizing your graph structure.\n\nYou can preview your graph by inserting the generated string into\n[yEd](http://www.yworks.com/products/yed) or other compatible software.\n\n\n# Conversion\n\n@docs output\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "output",
+                "comment": " Converts a `Graph` into a valid TGF string.\n",
+                "type": "(node -> String.String) -> (edge -> String.String) -> Graph.Graph node edge -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Graph.Tree",
+        "comment": " This module provides a simple tree data type of arbitrary arity (a rose tree).\nThere are primitives for building and traversing such a tree.\n\n\n# Data\n\n@docs Tree, Forest\n\n\n# Building\n\n@docs empty, leaf, inner, unfoldTree, unfoldForest\n\n\n# Transforming\n\n@docs map\n\n\n# Query\n\n@docs isEmpty, root, size, height\n\n\n# Traversal\n\nIt is instructory to read the article on [tree traversals on Wikipedia](https://en.wikipedia.org/wiki/Tree_traversal) first if you are not familiar with the concept.\n\n@docs levelOrder, levelOrderList, preOrder, preOrderList, postOrder, postOrderList\n\n",
+        "unions": [
+            {
+                "name": "Tree",
+                "comment": " Data type representing an n-ary tree with node labels of type `a`\nBuilding such a tree is done with the `empty`, `leaf` and `inner` smart\nconstructors. An example for a tree with three leafs and a root node:\n\n    tree =\n        inner 1 [ leaf 2, leaf 3, leaf 4 ]\n\n",
+                "args": [
+                    "label"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Forest",
+                "comment": " This is just an alias for a list of trees, called a forest in the\nliterature.\n",
+                "args": [
+                    "label"
+                ],
+                "type": "List.List (Graph.Tree.Tree label)"
+            }
+        ],
+        "values": [
+            {
+                "name": "empty",
+                "comment": " Construct an empty tree with no nodes.\n",
+                "type": "Graph.Tree.Tree label"
+            },
+            {
+                "name": "height",
+                "comment": " Computes the height of the tree in O(n) time.\n\n    tree = inner 0 [inner 1 [leaf 2, leaf 3], inner 4 [leaf 5, leaf 6]]\n    height tree == 3\n\n",
+                "type": "Graph.Tree.Tree label -> Basics.Int"
+            },
+            {
+                "name": "inner",
+                "comment": " Construct a new tree by `inner label children`, combining a number of\nsubtrees `children` with a `label` for the new inner node which will be\nthe root of the tree. Empty subtrees are filtered out. An example:\n\n    tree1 = inner 1 [leaf 2, leaf 3, leaf 4]\n    tree2 = inner 1 [leaf 2, leaf 3, leaf 4, empty]\n    tree1 == tree2\n\n",
+                "type": "label -> List.List (Graph.Tree.Tree label) -> Graph.Tree.Tree label"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " `isEmpty tree` returns true if and only if `tree` is `empty`.\n\n    isEmpty empty == True\n\n    isEmpty (leaf 42) == False\n\n",
+                "type": "Graph.Tree.Tree label -> Basics.Bool"
+            },
+            {
+                "name": "leaf",
+                "comment": " Construct a tree with a single node from a value for the node's label.\n\n    tree : Tree Int\n    tree =\n        leaf 42\n\n",
+                "type": "label -> Graph.Tree.Tree label"
+            },
+            {
+                "name": "levelOrder",
+                "comment": " `levelOrder visit acc tree` is a breadth-first fold over `tree`,\nvisiting each node and accumulating results with `visit`. Nodes are visited\nin level-order, e.g. for a tree like\n\n    tree =\n        inner 0 [ inner 1 [ leaf 2, leaf 3 ], inner 4 [ leaf 5, leaf 6 ] ]\n\nnodes would be visited in order `[0, 1, 4, 2, 3, 5, 6]`. This is in fact the\nlist produced by `levelOrderList`, but through `levelOrder` you also get access\nto the children of the current node via the second parameter of visit.\n\n",
+                "type": "(label -> Graph.Tree.Forest label -> acc -> acc) -> acc -> Graph.Tree.Tree label -> acc"
+            },
+            {
+                "name": "levelOrderList",
+                "comment": " See the documentation on `levelOrder`. `levelOrderList tree` produces\na list of the nodes of the tree visited in level-order, e.g. breadth-first.\nSo:\n\n    tree = inner 0 [inner 1 [leaf 2, leaf 3], inner 4 [leaf 5, leaf 6]]\n    levelOrderList tree == [0, 1, 4, 2, 3, 5, 6]\n\nIf you also need information on child trees instead of just the node labels,\nuse `levelOrder`.\n\n",
+                "type": "Graph.Tree.Tree label -> List.List label"
+            },
+            {
+                "name": "map",
+                "comment": " `map f tree` applies supplied function f to every label in a tree, without changing the structure of the tree\n\n    map (\\x -> x + 1) empty == empty\n\n    map (\\x -> x * 10) (inner 1 [ leaf 2, leaf 3 ]) == inner 10 [ leaf 20, leaf 30 ]\n\n",
+                "type": "(a -> b) -> Graph.Tree.Tree a -> Graph.Tree.Tree b"
+            },
+            {
+                "name": "postOrder",
+                "comment": " `postOrder visit acc tree` is a (depth-first) post-order traversal (fold)\nover `tree` where `visit` is called with the label and the child sub-forest of\nthe current node in addition to a supplied accumulator value.\n\nWhen `visit` is called for some node, `acc` already contains the value of all\nsub-trees, so post-order traversal is a kind of bottom-up traversal, where\nall children are visited prior to their parent.\nSee `postOrderList` for an example on the order in which nodes are visited.\n\n",
+                "type": "(label -> Graph.Tree.Forest label -> acc -> acc) -> acc -> Graph.Tree.Tree label -> acc"
+            },
+            {
+                "name": "postOrderList",
+                "comment": " See `postOrder` for an explanation of how post-order traversals work.\nHere is an example on visit order:\n\n    tree = inner 0 [inner 1 [leaf 2, leaf 3], inner 4 [leaf 5, leaf 6]]\n    postOrderList tree == [2, 3, 1, 5, 6, 4, 0]\n\nIf you also need information on child trees instead of just the node labels,\nuse `postOrder`.\n\n",
+                "type": "Graph.Tree.Tree label -> List.List label"
+            },
+            {
+                "name": "preOrder",
+                "comment": " `preOrder visit acc tree` is a (depth-first) pre-order traversal (fold)\nover `tree` where `visit` is called with the label and the child sub-forest of\nthe current node in addition to a supplied accumulator value.\n\nPost-order traversals work top-down: When `visit` is called for some node,\n`acc` already contains the value of all ancestral nodes.\nSee `preOrderList` for an example on the order in which nodes are visited.\n\n",
+                "type": "(label -> Graph.Tree.Forest label -> acc -> acc) -> acc -> Graph.Tree.Tree label -> acc"
+            },
+            {
+                "name": "preOrderList",
+                "comment": " See `preOrder` for an explanation of how post-order traversals work.\nHere is an example on visit order:\n\n    tree = inner 0 [inner 1 [leaf 2, leaf 3], inner 4 [leaf 5, leaf 6]]\n    preOrderList tree == [0, 1, 2, 3, 4, 5, 6]\n\nIf you also need information on child trees instead of just the node labels,\nuse `preOrder`.\n\n",
+                "type": "Graph.Tree.Tree label -> List.List label"
+            },
+            {
+                "name": "root",
+                "comment": " `root tree` returns `Nothing` if `tree` is `empty`, otherwise\nit returns `Just (label, childForest)` of the root node.\n\n    tree = inner 1 [leaf 2, leaf 3, leaf 4]\n    root tree == Just (1, [leaf 2, leaf 3, leaf 4])\n    root empty == Nothing\n\n",
+                "type": "Graph.Tree.Tree label -> Maybe.Maybe ( label, Graph.Tree.Forest label )"
+            },
+            {
+                "name": "size",
+                "comment": " The size of the tree, e.g. the number of nodes.\n\n    tree = inner 0 [inner 1 [leaf 2, leaf 3], inner 4 [leaf 5, leaf 6]]\n    size tree == 7\n\n",
+                "type": "Graph.Tree.Tree label -> Basics.Int"
+            },
+            {
+                "name": "unfoldForest",
+                "comment": " Construct a new forest with `unfoldForest next seeds` by `unfoldTree next seed`\nfor each `seed` in `seeds`. A simple specification would be\n\n    unfoldForest next seeds =\n        List.map (unfoldTree next) seeds\n\n",
+                "type": "(seed -> ( label, List.List seed )) -> List.List seed -> Graph.Tree.Forest label"
+            },
+            {
+                "name": "unfoldTree",
+                "comment": " Construct a new tree with `unfoldTree next seed`, top to bottom. `next` will be\ncalled repeatedly with seeds, from which it should construct a label for\nthe current tree node but also a list of seeds from which to unfold\nchild nodes. This sort of works top to bottom compared to creating a\ntree bottom up by using the other primitives.\n\n    tree1 = inner 1 [leaf 2, leaf 3, leaf 4]\n    next seed = (seed, if seed == 1 then [2, 3, 4] else [])\n    tree2 = unfoldTree next 1\n    tree1 == tree2\n\n",
+                "type": "(seed -> ( label, List.List seed )) -> seed -> Graph.Tree.Tree label"
+            }
+        ],
+        "binops": []
+    }
+]

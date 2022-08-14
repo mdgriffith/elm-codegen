@@ -1,0 +1,116 @@
+[
+    {
+        "name": "Transducer",
+        "comment": " A transducer is a composable way of processing a series of values.\nMany basic transducers correspond to functions you may be familiar with for\nprocessing `List`s.\n\n    import Maybe\n    import String\n    import Transducer exposing (..)\n\n    parseValidInts =\n        map String.toInt\n            |> composeWith (map toMaybe)\n            |> composeWith (filter ((/=) Nothing))\n            |> composeWith (map (Maybe.withDefault 0))\n\n    exampleList : List Int\n    exampleList =\n        transduceList parseValidInts [ \"123\", \"-34\", \"35.0\", \"SDF\", \"7\" ]\n\n\n# Definitions\n\n@docs Reducer, Transducer, Fold\n\n\n# Common transducers\n\n@docs map, filter, take, drop\n\n\n# More transducers\n\n@docs concatMap, dedupe, partition\n\n\n# Composing transducers\n\n@docs composeWith\n\n\n# Applying transducers\n\n@docs transduce, transduceList, transduceSet, transduceArray\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Fold",
+                "comment": " A fold is function that takes a Reducer, an initial value, and input source,\nand returns a final value.\n",
+                "args": [
+                    "input",
+                    "result",
+                    "source"
+                ],
+                "type": "Transducer.Reducer input result -> result -> source -> result"
+            },
+            {
+                "name": "Reducer",
+                "comment": " A reducer is a function taking an input and a value and produces a new value.\n\n    List.foldl : Reducer a b -> b -> List a -> b\n\n",
+                "args": [
+                    "input",
+                    "result"
+                ],
+                "type": "input -> result -> result"
+            },
+            {
+                "name": "Transducer",
+                "comment": " A transducer an `init` value for it's internal state, a `step` function that\ntransforms a Reducer into a Reducer of a new type, and a `complete` function that\ntransforms a Reducer into a function collapsing the internal state.\n\nWhen defining transducers, the type parameter `r` should be left free.\n\n",
+                "args": [
+                    "a",
+                    "b",
+                    "r",
+                    "state"
+                ],
+                "type": "{ init : Transducer.Reducer b r -> r -> ( state, r ), step : Transducer.Reducer b r -> Transducer.Reducer a ( state, r ), complete : Transducer.Reducer b r -> ( state, r ) -> r }"
+            }
+        ],
+        "values": [
+            {
+                "name": "composeWith",
+                "comment": " Compose two transducers.\n\n    firstOperation\n        |> composeWith secondOperation\n\n",
+                "type": "Transducer.Transducer b c r s2 -> Transducer.Transducer a b ( s2, r ) s1 -> Transducer.Transducer a c r ( s1, s2 )"
+            },
+            {
+                "name": "concatMap",
+                "comment": " Map a given function onto a list and flatten the results.\n\n    transduceList (concatMap (\\x -> [ x, x + 10 ])) [ 1, 2 ] == [ 1, 10, 2, 20 ]\n\n",
+                "type": "(a -> List.List b) -> Transducer.Transducer a b r ()"
+            },
+            {
+                "name": "dedupe",
+                "comment": " Drop values that repeat the previous value.\n\n    transduceList dedupe [ 1, 1, 2, 2, 1 ] == [ 1, 2, 1 ]\n\n",
+                "type": "Transducer.Transducer a a r (Maybe.Maybe a)"
+            },
+            {
+                "name": "drop",
+                "comment": " Drop the first _n_ values.\n\n    transduceList (drop 2) [ 1, 2, 3, 4 ] == [ 3, 4 ]\n\n",
+                "type": "Basics.Int -> Transducer.Transducer a a r Basics.Int"
+            },
+            {
+                "name": "filter",
+                "comment": " Keep only values that satisfy the predicate.\n\n    transduceList (filter isEven) (List.range 1 6) == [ 2, 4, 6 ]\n\n",
+                "type": "(a -> Basics.Bool) -> Transducer.Transducer a a r ()"
+            },
+            {
+                "name": "map",
+                "comment": " Apply a function to every value.\n\n    transduceList (map sqrt) [ 1, 4, 9 ] == [ 1, 2, 3 ]\n\n",
+                "type": "(a -> b) -> Transducer.Transducer a b r ()"
+            },
+            {
+                "name": "partition",
+                "comment": " Group a series of values into Lists of size n.\n\n    transduceList (partition 2) [ 1, 2, 3, 4, 5 ] == [ [ 1, 2 ], [ 3, 4 ], [ 5 ] ]\n\n",
+                "type": "Basics.Int -> Transducer.Transducer a (List.List a) r ( Basics.Int, List.List a )"
+            },
+            {
+                "name": "take",
+                "comment": " Take the first _n_ values.\n\n    transduceList (take 2) [ 1, 2, 3, 4 ] == [ 1, 2 ]\n\n",
+                "type": "Basics.Int -> Transducer.Transducer a a r Basics.Int"
+            },
+            {
+                "name": "transduce",
+                "comment": " Apply a transducer.\n",
+                "type": "Transducer.Fold a ( s, r ) x -> Transducer.Reducer b r -> r -> Transducer.Transducer a b r s -> x -> r"
+            },
+            {
+                "name": "transduceArray",
+                "comment": " Apply a Transducer to an Array, producing an Array.\n\n    transduceArray t xs =\n        transduce Array.foldl Array.push Array.empty t xs\n\n",
+                "type": "Transducer.Transducer a b (Array.Array b) s -> Array.Array a -> Array.Array b"
+            },
+            {
+                "name": "transduceList",
+                "comment": " Apply a Transducer to a List, producing a List.\n\n    transduceList t xs == transduce List.foldr (::) [] t xs\n\n",
+                "type": "Transducer.Transducer a b (List.List b) s -> List.List a -> List.List b"
+            },
+            {
+                "name": "transduceSet",
+                "comment": " Apply a Transducer to a Set, producing a Set.\n\n    transduceSet t xs =\n        transduce Set.foldr Set.insert Set.empty t xs\n\n",
+                "type": "Transducer.Transducer a comparable (Set.Set comparable) s -> Set.Set a -> Set.Set comparable"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Transducer.Debug",
+        "comment": " This module provides support for debugging transducers.\n\n\n# Logging\n\n@docs debug\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "debug",
+                "comment": " Wrap an existing transducer such that input and output of the transducer\nwill be logged with `Debug.log`.\n\nBecause Elm 0.19 no longer allows published packages to use `Debug.log`,\nyou must provide `Debug.log` as a parameter to this function.\nAlso, because Elm lacks Rank-N types, you must provide `Debug.log` three times\nso it can be specialized for the input, the output, and the state of the transducer.\n\n    import Debug\n\n    filter' pred =\n        debug Debug.log Debug.log Debug.log \"filter\" (filter pred)\n\n    main =\n        show (transduceList (filter' ((/=) 2)) [ 1, 2, 3 ])\n\n\n    -- Console output:\n    --     filter: input: 3\n    --     filter: state: ()\n    --     filter -> : 3\n    --     filter: input: 2\n    --     filter: state: ()\n    --     filter: input: 1\n    --     filter: state: ()\n    --     filter -> : 1\n    --     filter: complete: ()\n\n",
+                "type": "(String.String -> a -> a) -> (String.String -> b -> b) -> (String.String -> s -> s) -> String.String -> Transducer.Transducer a b r s -> Transducer.Transducer a b r s"
+            }
+        ],
+        "binops": []
+    }
+]

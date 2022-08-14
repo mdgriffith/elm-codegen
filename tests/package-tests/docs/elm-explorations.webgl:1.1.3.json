@@ -1,0 +1,643 @@
+[
+    {
+        "name": "WebGL",
+        "comment": " The WebGL API is for high performance rendering. Definitely read about\n[how WebGL works](https://package.elm-lang.org/packages/elm-explorations/webgl/latest)\nand look at [some examples](https://github.com/elm-explorations/webgl/tree/main/examples)\nbefore trying to do too much with just the documentation provided here.\n\n\n# Mesh\n\n@docs Mesh, triangles\n\n\n# Shaders\n\n@docs Shader\n\n\n# Entities\n\n@docs Entity, entity\n\n\n# WebGL Html\n\n@docs toHtml\n\n\n# Advanced Usage\n\n@docs entityWith, toHtmlWith, Option, alpha, depth, stencil, antialias\n@docs clearColor, preserveDrawingBuffer\n\n\n# Meshes\n\n@docs indexedTriangles, lines, lineStrip, lineLoop, points, triangleFan\n@docs triangleStrip\n\n",
+        "unions": [
+            {
+                "name": "Entity",
+                "comment": " Conceptually, an encapsulation of the instructions to render something.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Mesh",
+                "comment": " Mesh forms geometry from the specified vertices. Each vertex contains a\nbunch of attributes, defined as a custom record type, e.g.:\n\n    type alias Attributes =\n        { position : Vec3\n        , color : Vec3\n        }\n\nThe supported types in attributes are: `Int`, `Float`, `Texture`\nand `Vec2`, `Vec3`, `Vec4`, `Mat4` from the\n[linear-algebra](https://package.elm-lang.org/packages/elm-explorations/linear-algebra/latest)\npackage.\n\nDo not generate meshes in `view`, [read more about this here](https://package.elm-lang.org/packages/elm-explorations/webgl/latest#making-the-most-of-the-gpu).\n\n",
+                "args": [
+                    "attributes"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Shader",
+                "comment": " Shaders are programs for running many computations on the GPU in parallel.\nThey are written in a language called\n[GLSL](https://en.wikipedia.org/wiki/OpenGL_Shading_Language). Read more about\nshaders [here](https://github.com/elm-explorations/webgl/blob/main/README.md).\n\nNormally you specify a shader with a `[glsl| |]` block. Elm compiler will parse\nthe shader code block and derive the type signature for your shader.\n\n  - `attributes` define vertices in the [mesh](#Mesh);\n  - `uniforms` allow you to pass scene parameters like\n    transformation matrix, texture, screen size, etc.;\n  - `varyings` define the output from the vertex shader.\n\n`attributes`, `uniforms` and `varyings` are records with the fields of the\nfollowing types: `Int`, `Float`, [`Texture`](#Texture) and `Vec2`, `Vec3`, `Vec4`,\n`Mat4` from the\n[linear-algebra](https://package.elm-lang.org/packages/elm-explorations/linear-algebra/latest)\npackage.\n\n",
+                "args": [
+                    "attributes",
+                    "uniforms",
+                    "varyings"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Option",
+                "comment": " Provides a way to enable features and change the scene behavior\nin [`toHtmlWith`](#toHtmlWith).\n",
+                "args": [],
+                "type": "WebGL.Internal.Option"
+            }
+        ],
+        "values": [
+            {
+                "name": "alpha",
+                "comment": " Enable alpha channel in the drawing buffer. If the argument is `True`, then\nthe page compositor will assume the drawing buffer contains colors with\npremultiplied alpha `(r * a, g * a, b * a, a)`.\n",
+                "type": "Basics.Bool -> WebGL.Option"
+            },
+            {
+                "name": "antialias",
+                "comment": " Enable multisample antialiasing of the drawing buffer, if supported by\nthe platform. Useful when you need to have smooth lines and smooth edges of\ntriangles at a lower cost than supersampling (rendering to larger dimensions and\nthen scaling down with CSS transform).\n",
+                "type": "WebGL.Option"
+            },
+            {
+                "name": "clearColor",
+                "comment": " Set the red, green, blue and alpha channels, that will be used to\nfill the drawing buffer every time before drawing the scene. The values are\nclamped between 0 and 1. The default is all 0's.\n",
+                "type": "Basics.Float -> Basics.Float -> Basics.Float -> Basics.Float -> WebGL.Option"
+            },
+            {
+                "name": "depth",
+                "comment": " Enable the depth buffer, and prefill it with given value each time before\nthe scene is rendered. The value is clamped between 0 and 1.\n",
+                "type": "Basics.Float -> WebGL.Option"
+            },
+            {
+                "name": "entity",
+                "comment": " Packages a vertex shader, a fragment shader, a mesh, and uniforms\nas an `Entity`. This specifies a full rendering pipeline to be run\non the GPU. You can read more about the pipeline\n[here](https://github.com/elm-explorations/webgl/blob/main/README.md).\n\nThe vertex shader receives `attributes` and `uniforms` and returns `varyings`\nand `gl_Position`—the position of the vertex on the screen, defined as\n`vec4(x, y, z, w)`, that means `(x/w, y/w, z/w)` in the clip space coordinates:\n\n    --   (-1,1,1) +================+ (1,1,1)\n    --           /|               /|\n    --          / |     |        / |\n    --(-1,1,-1)+================+ (1,1,-1)\n    --         |  |     | /     |  |\n    --         |  |     |/      |  |\n    --         |  |     +-------|->|\n    -- (-1,-1,1|) +--(0,0,0)----|--+ (1,-1,1)\n    --         | /              | /\n    --         |/               |/\n    --         +================+\n    --   (-1,-1,-1)         (1,-1,-1)\n\n\n\nThe fragment shader is called for each pixel inside the clip space with\n`varyings` and `uniforms` and returns `gl_FragColor`—the color of\nthe pixel, defined as `vec4(r, g, b, a)` where each color component is a float\nfrom 0 to 1.\n\nShaders and a mesh are cached so that they do not get resent to the GPU.\nIt should be relatively cheap to create new entities out of existing\nvalues.\n\nBy default, [depth test](WebGL-Settings-DepthTest#default) is enabled for you.\nIf you need more [settings](WebGL-Settings), like\n[blending](WebGL-Settings-Blend) or [stencil test](WebG-Settings-StencilTest),\nthen use [`entityWith`](#entityWith).\n\n    entity =\n        entityWith [ DepthTest.default ]\n\n",
+                "type": "WebGL.Shader attributes uniforms varyings -> WebGL.Shader {} uniforms varyings -> WebGL.Mesh attributes -> uniforms -> WebGL.Entity"
+            },
+            {
+                "name": "entityWith",
+                "comment": " The same as [`entity`](#entity), but allows to configure an entity with\n[settings](WebGL-Settings).\n",
+                "type": "List.List WebGL.Settings.Setting -> WebGL.Shader attributes uniforms varyings -> WebGL.Shader {} uniforms varyings -> WebGL.Mesh attributes -> uniforms -> WebGL.Entity"
+            },
+            {
+                "name": "indexedTriangles",
+                "comment": " Create triangles from vertices and indices, grouped in sets of three to\ndefine each triangle by refering the vertices. This helps to avoid duplicated vertices whenever two triangles share an\nedge.\n\n    -- v2 +---+ v1\n    --    |\\  |\n    --    | \\ |\n    --    |  \\|\n    -- v3 +---+ v0\n\n\n\nFor example, if you want to define a rectangle using\n[`triangles`](#triangles), `v0` and `v2` will have to be duplicated:\n\n    rectangle =\n        triangles [ ( v0, v1, v2 ), ( v2, v3, v0 ) ]\n\nThis will use two vertices less:\n\n    rectangle =\n        indexedTriangles [ v0, v1, v2, v3 ] [ ( 0, 1, 2 ), ( 2, 3, 0 ) ]\n\n",
+                "type": "List.List attributes -> List.List ( Basics.Int, Basics.Int, Basics.Int ) -> WebGL.Mesh attributes"
+            },
+            {
+                "name": "lineLoop",
+                "comment": " Similar to [`lineStrip`](#lineStrip), but connects the last vertex back to\nthe first.\n",
+                "type": "List.List attributes -> WebGL.Mesh attributes"
+            },
+            {
+                "name": "lineStrip",
+                "comment": " Connects each two subsequent vertices with a line.\n",
+                "type": "List.List attributes -> WebGL.Mesh attributes"
+            },
+            {
+                "name": "lines",
+                "comment": " Connects each pair of vertices with a line.\n",
+                "type": "List.List ( attributes, attributes ) -> WebGL.Mesh attributes"
+            },
+            {
+                "name": "points",
+                "comment": " Draws a single dot per vertex.\n",
+                "type": "List.List attributes -> WebGL.Mesh attributes"
+            },
+            {
+                "name": "preserveDrawingBuffer",
+                "comment": " By default, WebGL canvas swaps the drawing and display buffers.\nThis option forces it to copy the drawing buffer into the display buffer.\n\nEven though this slows down the rendering, it allows you to extract an image\nfrom the canvas element using `canvas.toBlob()` in JavaScript without having\nto worry about synchronization between frames.\n\n",
+                "type": "WebGL.Option"
+            },
+            {
+                "name": "stencil",
+                "comment": " Enable the stencil buffer, specifying the index used to fill the\nstencil buffer before we render the scene. The index is masked with 2^m - 1,\nwhere m >= 8 is the number of bits in the stencil buffer. The default is 0.\n",
+                "type": "Basics.Int -> WebGL.Option"
+            },
+            {
+                "name": "toHtml",
+                "comment": " Render a WebGL scene with the given html attributes, and entities.\n\n`width` and `height` html attributes resize the drawing buffer, while\nthe corresponding css properties scale the canvas element.\n\nTo prevent blurriness on retina screens, you may want the drawing buffer\nto be twice the size of the canvas element.\n\nTo remove an extra whitespace around the canvas, set `display: block`.\n\nBy default, alpha channel with premultiplied alpha, antialias and depth buffer\nare enabled. Use [`toHtmlWith`](#toHtmlWith) for custom options.\n\n    toHtml =\n        toHtmlWith [ alpha True, antialias, depth 1 ]\n\n",
+                "type": "List.List (Html.Attribute msg) -> List.List WebGL.Entity -> Html.Html msg"
+            },
+            {
+                "name": "toHtmlWith",
+                "comment": " Render a WebGL scene with the given options, html attributes, and entities.\n\nDue to browser limitations, options will be applied only once,\nwhen the canvas is created for the first time.\n\n",
+                "type": "List.List WebGL.Option -> List.List (Html.Attribute msg) -> List.List WebGL.Entity -> Html.Html msg"
+            },
+            {
+                "name": "triangleFan",
+                "comment": " Similar to [`triangleStrip`](#triangleStrip), but creates a fan shaped\noutput.\n",
+                "type": "List.List attributes -> WebGL.Mesh attributes"
+            },
+            {
+                "name": "triangleStrip",
+                "comment": " Creates a strip of triangles where each additional vertex creates an\nadditional triangle once the first three vertices have been drawn.\n",
+                "type": "List.List attributes -> WebGL.Mesh attributes"
+            },
+            {
+                "name": "triangles",
+                "comment": " Triangles are the basic building blocks of a mesh. You can put them together\nto form any shape.\n\nSo when you create `triangles` you are really providing three sets of attributes\nthat describe the corners of each triangle.\n\n",
+                "type": "List.List ( attributes, attributes, attributes ) -> WebGL.Mesh attributes"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "WebGL.Settings",
+        "comment": "\n\n\n# Settings\n\n@docs Setting, scissor, colorMask, polygonOffset, sampleAlphaToCoverage\n@docs sampleCoverage, cullFace\n\n\n## Face Modes\n\n@docs FaceMode, front, back, frontAndBack\n\n",
+        "unions": [
+            {
+                "name": "FaceMode",
+                "comment": " Targets the polygons based on their facing.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Setting",
+                "comment": " Lets you customize how an [`Entity`](WebGL#Entity) is rendered. So if you\nonly want to see the red part of your entity, you would use\n[`entityWith`](WebGL#entityWith) and [`colorMask`](#colorMask) to say:\n\n    entityWith [colorMask True False False False]\n        vertShader fragShader mesh uniforms\n\n    -- vertShader : Shader attributes uniforms varyings\n    -- fragShader : Shader {} uniforms varyings\n    -- mesh : Mesh attributes\n    -- uniforms : uniforms\n\n",
+                "args": [],
+                "type": "WebGL.Internal.Setting"
+            }
+        ],
+        "values": [
+            {
+                "name": "back",
+                "comment": " ",
+                "type": "WebGL.Settings.FaceMode"
+            },
+            {
+                "name": "colorMask",
+                "comment": " Specify whether or not each channel (red, green, blue, alpha) should be\noutput on the screen.\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> WebGL.Settings.Setting"
+            },
+            {
+                "name": "cullFace",
+                "comment": " Excludes polygons based on winding (the order of the vertices) in window\ncoordinates. Polygons with counter-clock-wise winding are front-facing.\n",
+                "type": "WebGL.Settings.FaceMode -> WebGL.Settings.Setting"
+            },
+            {
+                "name": "front",
+                "comment": " ",
+                "type": "WebGL.Settings.FaceMode"
+            },
+            {
+                "name": "frontAndBack",
+                "comment": " ",
+                "type": "WebGL.Settings.FaceMode"
+            },
+            {
+                "name": "polygonOffset",
+                "comment": " When you want to draw the highlighting wireframe on top of the solid\nobject, the lines may fade in and out of the coincident polygons,\nwhich is sometimes called \"stitching\" and is visually unpleasant.\n\n[Polygon Offset](https://www.glprogramming.com/red/chapter06.html#name4)\nhelps to avoid \"stitching\" by adding an offset to pixel’s depth\nvalues before the depth test is performed and before the value is written\ninto the depth buffer.\n\n    polygonOffset factor units\n\nThis adds an `offset = m * factor + r * units`, where\n\n  - `m = max (dz / dx) (dz / dy)` is the maximum depth slope of the polygon.\n    The depth slope is the change in `z` (depth) values divided by the change in\n    either `x` or `y` coordinates, as you traverse a polygon;\n  - `r` is the smallest value guaranteed to produce a resolvable difference in\n    window coordinate depth values. The value `r` is an implementation-specific\n    constant.\n\nThe question is: \"How much offset is enough?\". It really depends on the slope.\nFor polygons that are parallel to the near and far clipping planes,\nthe depth slope is zero, so the minimum offset is needed:\n\n    polygonOffset 0 1\n\nFor polygons that are at a great angle to the clipping planes, the depth slope\ncan be significantly greater than zero. Use small non-zero values for factor,\nsuch as `0.75` or `1.0` should be enough to generate distinct depth values:\n\n    polygonOffset 0.75 1\n\n",
+                "type": "Basics.Float -> Basics.Float -> WebGL.Settings.Setting"
+            },
+            {
+                "name": "sampleAlphaToCoverage",
+                "comment": " When you render overlapping transparent entities, like grass or hair, you\nmay notice that alpha blending doesn’t really work with depth testing, because\ndepth test ignores transparency.\n[Alpha To Coverage](https://wiki.polycount.com/wiki/Transparency_map#Alpha_To_Coverage)\nis a way to address this issue without sorting transparent entities.\n\nIt works by computing a temporary coverage value, where each bit is determined\nby the alpha value at the corresponding sample location. The temporary coverage\nvalue is then ANDed with the fragment coverage value.\n\nRequires [`WebGL.antialias`](WebGL#antialias) option.\n\n",
+                "type": "WebGL.Settings.Setting"
+            },
+            {
+                "name": "sampleCoverage",
+                "comment": " Specifies multisample coverage parameters. The fragment's coverage is ANDed\nwith the temporary coverage value.\n\n  - the first argument specifies sample coverage value, that is clamped to the\n    range from 0 to 1;\n  - the second argument represents if the coverage masks should be inverted.\n\nRequires [`WebGL.antialias`](WebGL#antialias) option.\n\n",
+                "type": "Basics.Float -> Basics.Bool -> WebGL.Settings.Setting"
+            },
+            {
+                "name": "scissor",
+                "comment": " Set the scissor box, which limits the drawing of fragments to the\nscreen to a specified rectangle.\n\nThe arguments are the coordinates of the lower left corner, width and height.\n\n",
+                "type": "Basics.Int -> Basics.Int -> Basics.Int -> Basics.Int -> WebGL.Settings.Setting"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "WebGL.Settings.Blend",
+        "comment": "\n\n\n# Blenders\n\n@docs add, subtract, reverseSubtract\n\n\n# Blend Factors\n\n@docs Factor, zero, one, srcColor, oneMinusSrcColor, dstColor\n@docs oneMinusDstColor, srcAlpha, oneMinusSrcAlpha, dstAlpha\n@docs oneMinusDstAlpha, srcAlphaSaturate\n\n\n# Custom Blenders\n\n@docs custom, Blender, customAdd, customSubtract, customReverseSubtract\n@docs constantColor, oneMinusConstantColor, constantAlpha\n@docs oneMinusConstantAlpha\n\n",
+        "unions": [
+            {
+                "name": "Blender",
+                "comment": " A `Blender` mixes the color of the current `Entity` (the source color)\nwith whatever is behind it (the destination color).\nYou can get a feel for all the options [here](https://threejs.org/examples/webgl_materials_blending_custom.html).\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Factor",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "add",
+                "comment": " Add the color of the current `Renderable` (the source color)\nwith whatever is behind it (the destination color). For example,\nhere is the “default” blender:\n\n    add one zero\n\nThe resulting color will be `(src * 1) + (dest * 0)`, which means\nwe do not use the destination color at all!\nYou can get a feel for all the different blending factors\n[here](https://threejs.org/examples/webgl_materials_blending_custom.html).\n\n",
+                "type": "WebGL.Settings.Blend.Factor -> WebGL.Settings.Blend.Factor -> WebGL.Settings.Setting"
+            },
+            {
+                "name": "constantAlpha",
+                "comment": " ",
+                "type": "WebGL.Settings.Blend.Factor"
+            },
+            {
+                "name": "constantColor",
+                "comment": " This uses the constant `r`, `g`, `b`, and `a` values\ngiven to [`custom`](#custom). If you use this `Factor` with\n[`add`](#add), the constant color will default to black.\n\nBecause of\n[restriction in WebGL](https://www.khronos.org/registry/webgl/specs/latest/1.0/#6.13),\nyou cannot create a `Blender`, that has one factor set to\n`constantColor` or `oneMinusConstantColor` and another set to\n`constantAlpha` or `oneMinusConstantAlpha`.\n\n",
+                "type": "WebGL.Settings.Blend.Factor"
+            },
+            {
+                "name": "custom",
+                "comment": " It is possible to do some very fancy blending with\n`custom`. For example, you can blend the color value and\nthe alpha values separately:\n\n    myBlender : Float -> Setting\n    myBlender alpha =\n        custom\n            { r = 0\n            , g = 0\n            , b = 0\n            , a = alpha\n            , color = customAdd one zero\n            , alpha = customAdd one constantAlpha\n            }\n\n",
+                "type": "{ r : Basics.Float, g : Basics.Float, b : Basics.Float, a : Basics.Float, color : WebGL.Settings.Blend.Blender, alpha : WebGL.Settings.Blend.Blender } -> WebGL.Settings.Setting"
+            },
+            {
+                "name": "customAdd",
+                "comment": " ",
+                "type": "WebGL.Settings.Blend.Factor -> WebGL.Settings.Blend.Factor -> WebGL.Settings.Blend.Blender"
+            },
+            {
+                "name": "customReverseSubtract",
+                "comment": " ",
+                "type": "WebGL.Settings.Blend.Factor -> WebGL.Settings.Blend.Factor -> WebGL.Settings.Blend.Blender"
+            },
+            {
+                "name": "customSubtract",
+                "comment": " ",
+                "type": "WebGL.Settings.Blend.Factor -> WebGL.Settings.Blend.Factor -> WebGL.Settings.Blend.Blender"
+            },
+            {
+                "name": "dstAlpha",
+                "comment": " ",
+                "type": "WebGL.Settings.Blend.Factor"
+            },
+            {
+                "name": "dstColor",
+                "comment": " ",
+                "type": "WebGL.Settings.Blend.Factor"
+            },
+            {
+                "name": "one",
+                "comment": " ",
+                "type": "WebGL.Settings.Blend.Factor"
+            },
+            {
+                "name": "oneMinusConstantAlpha",
+                "comment": " ",
+                "type": "WebGL.Settings.Blend.Factor"
+            },
+            {
+                "name": "oneMinusConstantColor",
+                "comment": " ",
+                "type": "WebGL.Settings.Blend.Factor"
+            },
+            {
+                "name": "oneMinusDstAlpha",
+                "comment": " ",
+                "type": "WebGL.Settings.Blend.Factor"
+            },
+            {
+                "name": "oneMinusDstColor",
+                "comment": " ",
+                "type": "WebGL.Settings.Blend.Factor"
+            },
+            {
+                "name": "oneMinusSrcAlpha",
+                "comment": " ",
+                "type": "WebGL.Settings.Blend.Factor"
+            },
+            {
+                "name": "oneMinusSrcColor",
+                "comment": " ",
+                "type": "WebGL.Settings.Blend.Factor"
+            },
+            {
+                "name": "reverseSubtract",
+                "comment": " Similar to [`add`](#add), but it does `(dest * factor2) - (src * factor1)`.\nThis one is weird.\n",
+                "type": "WebGL.Settings.Blend.Factor -> WebGL.Settings.Blend.Factor -> WebGL.Settings.Setting"
+            },
+            {
+                "name": "srcAlpha",
+                "comment": " ",
+                "type": "WebGL.Settings.Blend.Factor"
+            },
+            {
+                "name": "srcAlphaSaturate",
+                "comment": " ",
+                "type": "WebGL.Settings.Blend.Factor"
+            },
+            {
+                "name": "srcColor",
+                "comment": " ",
+                "type": "WebGL.Settings.Blend.Factor"
+            },
+            {
+                "name": "subtract",
+                "comment": " Similar to [`add`](#add), but it does `(src * factor1) - (dest * factor2)`.\nFor example:\n\n    subtract one one\n\nThis would do `(src * 1) - (dest * 1)` so you would take away colors\nbased on the background.\n\n",
+                "type": "WebGL.Settings.Blend.Factor -> WebGL.Settings.Blend.Factor -> WebGL.Settings.Setting"
+            },
+            {
+                "name": "zero",
+                "comment": " ",
+                "type": "WebGL.Settings.Blend.Factor"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "WebGL.Settings.DepthTest",
+        "comment": " You can read more about depth-testing in the\n[OpenGL wiki](https://www.khronos.org/opengl/wiki/Depth_Test)\nor [OpenGL docs](https://www.opengl.org/sdk/docs/man2/xhtml/glDepthFunc.xml).\n\n\n# Depth Test\n\n@docs default\n\n\n# Custom Tests\n\n@docs Options, less, never, always, equal, greater, notEqual\n@docs lessOrEqual, greaterOrEqual\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Options",
+                "comment": " When rendering, you have a buffer of pixels. Depth-testing works by\ncreating a second buffer with exactly the same number of entries, but\ninstead of holding colors, each entry holds the distance from the camera.\nYou go through all your entities, writing into the depth buffer, and then\nyou draw the color of the “winner”.\n\nWhich color wins? This is based on a bunch of comparison functions:\n\n    less options -- value < depth\n\n    never options -- Never pass\n\n    always options -- Always pass\n\n    equal options -- value == depth\n\n    greater options -- value > depth\n\n    notEqual options -- value != depth\n\n    lessOrEqual options -- value <= depth\n\n    greaterOrEqual options -- value >= depth\n\nIf the test passes, the current value will be written into the depth buffer, so\nthe next pixels will be tested against it. Sometimes you may want to disable\nwriting. For example, when using depth test together with stencil test to create\n[reflection effect](https://open.gl/depthstencils) you want to draw the\nreflection _underneath_ the floor, in this case you set `write = False`\nwhen drawing the floor. The\n[crate example](https://github.com/elm-explorations/webgl/blob/main/examples/crate.elm)\nshows how to do it in Elm.\n\n`near` and `far` allow to allocate a portion of the depth range from 0 to 1.\nFor example, if you want to render GUI on top of the scene, you can\nset `near = 0.1, far = 1` for the scene and then render the GUI with\n`near = 0, far = 0.1`.\n\n",
+                "args": [],
+                "type": "{ write : Basics.Bool, near : Basics.Float, far : Basics.Float }"
+            }
+        ],
+        "values": [
+            {
+                "name": "always",
+                "comment": " ",
+                "type": "WebGL.Settings.DepthTest.Options -> WebGL.Settings.Setting"
+            },
+            {
+                "name": "default",
+                "comment": " With every pixel, we have to figure out which color to show.\n\nImagine you have many entities in the same line of sight. The floor,\nthen a table, then a plate. When depth-testing is off, you go through\nthe entities in the order they appear in your _code_! That means if\nyou describe the floor last, it will be “on top” of the table and plate.\n\nDepth-testing means the color is chosen based on the distance from the\ncamera. So `default` uses the color closest to the camera. This means\nthe plate will be on top of the table, and both are on top of the floor.\nSeems more reasonable!\n\nThere are a bunch of ways you can customize the depth test, shown later,\nand you can use them to define `default` like this:\n\n    default =\n        less { write = True, near = 0, far = 1 }\n\nRequires [`WebGL.depth`](WebGL#depth) option in\n[`toHtmlWith`](WebGL#toHtmlWith).\n\n",
+                "type": "WebGL.Settings.Setting"
+            },
+            {
+                "name": "equal",
+                "comment": " ",
+                "type": "WebGL.Settings.DepthTest.Options -> WebGL.Settings.Setting"
+            },
+            {
+                "name": "greater",
+                "comment": " ",
+                "type": "WebGL.Settings.DepthTest.Options -> WebGL.Settings.Setting"
+            },
+            {
+                "name": "greaterOrEqual",
+                "comment": " ",
+                "type": "WebGL.Settings.DepthTest.Options -> WebGL.Settings.Setting"
+            },
+            {
+                "name": "less",
+                "comment": " ",
+                "type": "WebGL.Settings.DepthTest.Options -> WebGL.Settings.Setting"
+            },
+            {
+                "name": "lessOrEqual",
+                "comment": " ",
+                "type": "WebGL.Settings.DepthTest.Options -> WebGL.Settings.Setting"
+            },
+            {
+                "name": "never",
+                "comment": " ",
+                "type": "WebGL.Settings.DepthTest.Options -> WebGL.Settings.Setting"
+            },
+            {
+                "name": "notEqual",
+                "comment": " ",
+                "type": "WebGL.Settings.DepthTest.Options -> WebGL.Settings.Setting"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "WebGL.Settings.StencilTest",
+        "comment": " You can read more about stencil-testing in the\n[OpenGL wiki](https://www.khronos.org/opengl/wiki/Stencil_Test)\nor [OpenGL docs](https://www.opengl.org/sdk/docs/man2/xhtml/glStencilFunc.xml).\n\n\n# Stencil Test\n\n@docs test\n\n\n## Tests\n\n@docs Test, always, equal, never, less, greater, notEqual\n@docs lessOrEqual, greaterOrEqual\n\n\n## Operations\n\n@docs Operation, replace, keep, zero, increment, decrement, invert\n@docs incrementWrap, decrementWrap\n\n\n# Separate Test\n\n@docs testSeparate\n\n",
+        "unions": [
+            {
+                "name": "Operation",
+                "comment": " Defines how to update the value in the stencil buffer.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Test",
+                "comment": " The `Test` allows you to define how to compare the reference value\nwith the stencil buffer value, in order to set the conditions under which\nthe pixel will be drawn.\n\n    always -- Always pass\n\n    equal -- ref & mask == stencil & mask\n\n    never -- Never pass\n\n    less -- ref & mask < stencil & mask\n\n    greater -- ref & mask > stencil & mask\n\n    notEqual -- ref & mask != stencil & mask\n\n    lessOrEqual -- ref & mask <= stencil & mask\n\n    greaterOrEqual -- ref & mask >= stencil & mask\n\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "always",
+                "comment": " ",
+                "type": "WebGL.Settings.StencilTest.Test"
+            },
+            {
+                "name": "decrement",
+                "comment": " Decrements the current stencil buffer value. Clamps to 0.\n",
+                "type": "WebGL.Settings.StencilTest.Operation"
+            },
+            {
+                "name": "decrementWrap",
+                "comment": " Decrements the current stencil buffer value.\nWraps stencil buffer value to the maximum representable unsigned\nvalue when decrementing a stencil buffer value of zero.\n",
+                "type": "WebGL.Settings.StencilTest.Operation"
+            },
+            {
+                "name": "equal",
+                "comment": " ",
+                "type": "WebGL.Settings.StencilTest.Test"
+            },
+            {
+                "name": "greater",
+                "comment": " ",
+                "type": "WebGL.Settings.StencilTest.Test"
+            },
+            {
+                "name": "greaterOrEqual",
+                "comment": " ",
+                "type": "WebGL.Settings.StencilTest.Test"
+            },
+            {
+                "name": "increment",
+                "comment": " Increments the current stencil buffer value. Clamps to the maximum\nrepresentable unsigned value.\n",
+                "type": "WebGL.Settings.StencilTest.Operation"
+            },
+            {
+                "name": "incrementWrap",
+                "comment": " Increments the current stencil buffer value. Wraps stencil buffer value to\nzero when incrementing the maximum representable unsigned value.\n",
+                "type": "WebGL.Settings.StencilTest.Operation"
+            },
+            {
+                "name": "invert",
+                "comment": " Bitwise inverts the current stencil buffer value.\n",
+                "type": "WebGL.Settings.StencilTest.Operation"
+            },
+            {
+                "name": "keep",
+                "comment": " Keeps the current stencil buffer value. Use this as a noop.\n",
+                "type": "WebGL.Settings.StencilTest.Operation"
+            },
+            {
+                "name": "less",
+                "comment": " ",
+                "type": "WebGL.Settings.StencilTest.Test"
+            },
+            {
+                "name": "lessOrEqual",
+                "comment": " ",
+                "type": "WebGL.Settings.StencilTest.Test"
+            },
+            {
+                "name": "never",
+                "comment": " ",
+                "type": "WebGL.Settings.StencilTest.Test"
+            },
+            {
+                "name": "notEqual",
+                "comment": " ",
+                "type": "WebGL.Settings.StencilTest.Test"
+            },
+            {
+                "name": "replace",
+                "comment": " Sets the stencil buffer value to `ref` from the stencil test.\n",
+                "type": "WebGL.Settings.StencilTest.Operation"
+            },
+            {
+                "name": "test",
+                "comment": " When you need to draw an intercection of two entities, e.g. a reflection in\nthe mirror, you can test against the stencil buffer, that has to be enabled\nwith [`stencil`](WebGL#stencil) option in [`toHtmlWith`](WebGL#toHtmlWith).\n\nStencil test decides if the pixel should be drawn on the screen.\nDepending on the results, it performs one of the following\n[operations](#Operation) on the stencil buffer:\n\n  - `fail`—the operation to use when the stencil test fails;\n  - `zfail`—the operation to use when the stencil test passes, but the depth\n    test fails;\n  - `zpass`—the operation to use when both the stencil test and the depth test\n    pass, or when the stencil test passes and there is no depth buffer or depth\n    testing is disabled.\n\nFor example, draw the mirror `Entity` on the screen and fill the stencil buffer\nwith all 1's:\n\n    test\n        { ref = 1\n        , mask = 0xFF\n        , test = always -- pass for each pixel\n        , fail = keep -- noop\n        , zfail = keep -- noop\n        , zpass = replace -- write ref to the stencil buffer\n        , writeMask = 0xFF -- enable all stencil bits for writing\n        }\n\nCrop the reflection `Entity` using the values from the stencil buffer:\n\n    test\n        { ref = 1\n        , mask = 0xFF\n        , test = equal -- pass when the stencil value is equal to ref = 1\n        , fail = keep -- noop\n        , zfail = keep -- noop\n        , zpass = keep -- noop\n        , writeMask = 0 -- disable writing to the stencil buffer\n        }\n\nYou can see the complete example\n[here](https://github.com/elm-explorations/webgl/blob/main/examples/Crate.elm).\n\n",
+                "type": "{ ref : Basics.Int, mask : Basics.Int, test : WebGL.Settings.StencilTest.Test, fail : WebGL.Settings.StencilTest.Operation, zfail : WebGL.Settings.StencilTest.Operation, zpass : WebGL.Settings.StencilTest.Operation, writeMask : Basics.Int } -> WebGL.Settings.Setting"
+            },
+            {
+                "name": "testSeparate",
+                "comment": " Different options for front and back facing polygons.\n",
+                "type": "{ ref : Basics.Int, mask : Basics.Int, writeMask : Basics.Int } -> { test : WebGL.Settings.StencilTest.Test, fail : WebGL.Settings.StencilTest.Operation, zfail : WebGL.Settings.StencilTest.Operation, zpass : WebGL.Settings.StencilTest.Operation } -> { test : WebGL.Settings.StencilTest.Test, fail : WebGL.Settings.StencilTest.Operation, zfail : WebGL.Settings.StencilTest.Operation, zpass : WebGL.Settings.StencilTest.Operation } -> WebGL.Settings.Setting"
+            },
+            {
+                "name": "zero",
+                "comment": " Sets the stencil buffer value to 0.\n",
+                "type": "WebGL.Settings.StencilTest.Operation"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "WebGL.Texture",
+        "comment": "\n\n\n# Texture\n\n@docs Texture, load, Error, size\n\n\n# Custom Loading\n\n@docs loadWith, Options, defaultOptions\n\n\n## Resizing\n\n@docs Resize, linear, nearest\n@docs nearestMipmapLinear, nearestMipmapNearest\n@docs linearMipmapNearest, linearMipmapLinear\n@docs Bigger, Smaller\n\n\n## Wrapping\n\n@docs Wrap, repeat, clampToEdge, mirroredRepeat\n\n\n# Things You Shouldn’t Do\n\n@docs nonPowerOfTwoOptions\n\n",
+        "unions": [
+            {
+                "name": "Bigger",
+                "comment": " Helps restrict `options.magnify` to only allow\n[`linear`](#linear) and [`nearest`](#nearest).\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Error",
+                "comment": " Loading a texture can result in two kinds of errors:\n\n  - `LoadError` means the image did not load for some reason. Maybe\n    it was a network problem, or maybe it was a bad file format.\n\n  - `SizeError` means you are trying to load a weird shaped image.\n    For most operations you want a rectangle where the width is a power\n    of two and the height is a power of two. This is more efficient on\n    the GPU and it makes mipmapping possible. You can use\n    [`nonPowerOfTwoOptions`](#nonPowerOfTwoOptions) to get things working\n    now, but it is way better to create power-of-two assets!\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "LoadError",
+                        []
+                    ],
+                    [
+                        "SizeError",
+                        [
+                            "Basics.Int",
+                            "Basics.Int"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Resize",
+                "comment": " How to resize a texture.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Smaller",
+                "comment": " Helps restrict `options.magnify`, while also allowing\n`options.minify` to use mipmapping resizes, like\n[`nearestMipmapNearest`](#nearestMipmapNearest).\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Texture",
+                "comment": " Use `Texture` to pass the `sampler2D` uniform value to the shader.\nYou can create a texture with [`load`](#load) or [`loadWith`](#loadWith)\nand measure its dimensions with [`size`](#size).\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Wrap",
+                "comment": " Sets the wrap parameter for texture coordinate.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Options",
+                "comment": " `Options` describe how to:\n\n  - `magnify` - how to [`Resize`](#Resize) into a bigger texture\n  - `minify` - how to [`Resize`](#Resize) into a smaller texture\n  - `horizontalWrap` - how to [`Wrap`](#Wrap) the texture horizontally if the width is not a power of two\n  - `verticalWrap` - how to [`Wrap`](#Wrap) the texture vertically if the height is not a power of two\n  - `flipY` - flip the Y axis of the texture so it has the same direction\n    as the clip-space, i.e. pointing up.\n\nYou can read more about these parameters in the\n[specification](https://www.khronos.org/opengles/sdk/docs/man/xhtml/glTexParameter.xml).\n\n",
+                "args": [],
+                "type": "{ magnify : WebGL.Texture.Resize WebGL.Texture.Bigger, minify : WebGL.Texture.Resize WebGL.Texture.Smaller, horizontalWrap : WebGL.Texture.Wrap, verticalWrap : WebGL.Texture.Wrap, flipY : Basics.Bool }"
+            }
+        ],
+        "values": [
+            {
+                "name": "clampToEdge",
+                "comment": " Causes coordinates to be clamped to the range 1 2N 1 - 1 2N, where N is\nthe size of the texture in the direction of clamping.\n",
+                "type": "WebGL.Texture.Wrap"
+            },
+            {
+                "name": "defaultOptions",
+                "comment": " Default options for the loaded texture.\n\n    { magnify = linear\n    , minify = nearestMipmapLinear\n    , horizontalWrap = repeat\n    , verticalWrap = repeat\n    , flipY = True\n    }\n\n",
+                "type": "WebGL.Texture.Options"
+            },
+            {
+                "name": "linear",
+                "comment": " Returns the weighted average of the four texture elements that are closest\nto the center of the pixel being textured.\n",
+                "type": "WebGL.Texture.Resize a"
+            },
+            {
+                "name": "linearMipmapLinear",
+                "comment": " Chooses the two mipmaps that most closely match the size of the pixel being\ntextured and uses the `linear` criterion (a weighted average of the four\ntexture elements that are closest to the center of the pixel) to produce a\ntexture value from each mipmap. The final texture value is a weighted average\nof those two values.\n",
+                "type": "WebGL.Texture.Resize WebGL.Texture.Smaller"
+            },
+            {
+                "name": "linearMipmapNearest",
+                "comment": " Chooses the mipmap that most closely matches the size of the pixel being\ntextured and uses the `linear` criterion (a weighted average of the four\ntexture elements that are closest to the center of the pixel) to produce a\ntexture value.\n",
+                "type": "WebGL.Texture.Resize WebGL.Texture.Smaller"
+            },
+            {
+                "name": "load",
+                "comment": " Loads a texture from the given url with default options.\nPNG and JPEG are known to work, but other formats have not been as\nwell-tested yet.\n\nThe Y axis of the texture is flipped automatically for you, so it has\nthe same direction as in the clip-space, i.e. pointing up.\n\nIf you need to change flipping, filtering or wrapping, you can use\n[`loadWith`](#loadWith).\n\n    load url =\n        loadWith defaultOptions url\n\n",
+                "type": "String.String -> Task.Task WebGL.Texture.Error WebGL.Texture.Texture"
+            },
+            {
+                "name": "loadWith",
+                "comment": " Same as load, but allows to set options.\n",
+                "type": "WebGL.Texture.Options -> String.String -> Task.Task WebGL.Texture.Error WebGL.Texture.Texture"
+            },
+            {
+                "name": "mirroredRepeat",
+                "comment": " Causes the coordinate c to be set to the fractional part of the texture\ncoordinate if the integer part is even; if the integer part is odd, then\nthe coordinate is set to 1 - frac, where frac represents the fractional part\nof the coordinate.\n",
+                "type": "WebGL.Texture.Wrap"
+            },
+            {
+                "name": "nearest",
+                "comment": " Returns the value of the texture element that is nearest\n(in Manhattan distance) to the center of the pixel being textured.\n",
+                "type": "WebGL.Texture.Resize a"
+            },
+            {
+                "name": "nearestMipmapLinear",
+                "comment": " Chooses the two mipmaps that most closely match the size of the pixel being\ntextured and uses the `nearest` criterion (the texture element nearest to the\ncenter of the pixel) to produce a texture value from each mipmap. The final\ntexture value is a weighted average of those two values.\n",
+                "type": "WebGL.Texture.Resize WebGL.Texture.Smaller"
+            },
+            {
+                "name": "nearestMipmapNearest",
+                "comment": " Chooses the mipmap that most closely matches the size of the pixel being\ntextured and uses the `nearest` criterion (the texture element nearest to\nthe center of the pixel) to produce a texture value.\n\nA mipmap is an ordered set of arrays representing the same image at\nprogressively lower resolutions.\n\nThis is the default value of the minify filter.\n\n",
+                "type": "WebGL.Texture.Resize WebGL.Texture.Smaller"
+            },
+            {
+                "name": "nonPowerOfTwoOptions",
+                "comment": " The exact options needed to load textures with weird shapes.\nIf your image width or height is not a power of two, you need these\noptions:\n\n    { magnify = linear\n    , minify = nearest\n    , horizontalWrap = clampToEdge\n    , verticalWrap = clampToEdge\n    , flipY = True\n    }\n\n",
+                "type": "WebGL.Texture.Options"
+            },
+            {
+                "name": "repeat",
+                "comment": " Causes the integer part of the coordinate to be ignored. This is the\ndefault value for both texture axis.\n",
+                "type": "WebGL.Texture.Wrap"
+            },
+            {
+                "name": "size",
+                "comment": " Return the (width, height) size of a texture. Useful for sprite sheets\nor other times you may want to use only a potion of a texture image.\n",
+                "type": "WebGL.Texture.Texture -> ( Basics.Int, Basics.Int )"
+            }
+        ],
+        "binops": []
+    }
+]

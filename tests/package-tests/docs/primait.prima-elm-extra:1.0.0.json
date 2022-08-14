@@ -1,0 +1,164 @@
+[
+    {
+        "name": "PrimaCmd",
+        "comment": "\n\n@docs batchMap, cmdMap, fromMaybeMap\n\n\n# Conditionals\n\n@docs ifThenCmd, ifThenCmdMap, ifThenCmds, ifThenCmdsMap, ifThenElseCmdMap, ifThenElseCmdsMap, ifThenElseCmds\n\n\n# Effects\n\n@docs fromMsgWithDelay, fromMsg\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "batchMap",
+                "comment": " Batches the commands returned by the given functions\n\n    fetchUsers : Model -> Cmd Msg\n    serializeData : Model -> Cmd Msg\n\n    model\n    |> batchMap [ fetchUsers, serializeData ]\n\n",
+                "type": "List.List (a -> Platform.Cmd.Cmd msg) -> a -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "cmdMap",
+                "comment": " Maps the given Cmd suppliers to the same value. Usually used like that:\n\n    fetchUsers : Model -> Cmd Msg\n    sendLog : Model -> Cmd Msg\n    initializeAnalytics : Model -> Cmd Msg\n\n    model\n        |> cmdMap\n            [ fetchUsers\n            , sendLog\n            , initializeAnalytics\n            ]\n\n",
+                "type": "List.List (a -> Platform.Cmd.Cmd msg) -> a -> List.List (Platform.Cmd.Cmd msg)"
+            },
+            {
+                "name": "fromMaybeMap",
+                "comment": " Returns `Cmd.none` when argument is Nothing, maps it otherwise\n\n        fromMaybeMap Ports.log Nothing  -- => Cmd.none\n        fromMaybeMap Ports.log (Just \"hello!\") -- => Ports.log \"hello!\"\n\n",
+                "type": "(a -> Platform.Cmd.Cmd msg) -> Maybe.Maybe a -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "fromMsg",
+                "comment": " Lifts a msg to a Cmd.\n\n**warning:** this is usually an antipattern.\n\nThere are specific case in which this can be used\n(such as [flip](https://css-tricks.com/animating-layouts-with-the-flip-technique/) animations) but\nunless you encountered such edge cases, be sure to double check if there are different approaches possible\n\n",
+                "type": "msg -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "fromMsgWithDelay",
+                "comment": " Create a Cmd that triggers the given msg after n milliseconds\n",
+                "type": "Basics.Int -> msg -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "ifThenCmd",
+                "comment": "\n\n       ifThenCmd True x -- => x\n       ifThenCmd False x -- => Cmd.none\n\n",
+                "type": "Basics.Bool -> Platform.Cmd.Cmd msg -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "ifThenCmdMap",
+                "comment": "\n\n        fetchUsers : Model -> Cmd Msg\n\n        model\n        |> ifThenCmdMap Model.usersAreNotPresent\n            fetchUsers\n\n",
+                "type": "(a -> Basics.Bool) -> (a -> Platform.Cmd.Cmd msg) -> a -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "ifThenCmds",
+                "comment": "\n\n       ifThenCmd True cmds -- => Cmd.batch cmds\n       ifThenCmd False x -- => Cmd.none\n\n",
+                "type": "Basics.Bool -> List.List (Platform.Cmd.Cmd msg) -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "ifThenCmdsMap",
+                "comment": " Like [`ifThenCmdMap`](PrimaCmd#ifThenCmdMap), but with a list of cmds\n\n        fetchUsers : Model -> Cmd Msg\n        serializeData : Model -> Cmd Msg\n\n        model\n        |> ifThenCmdsMap Model.usersAreNotPresent\n            [ fetchUsers\n            , serializeData\n            ]\n\n",
+                "type": "(a -> Basics.Bool) -> List.List (a -> Platform.Cmd.Cmd msg) -> a -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "ifThenElseCmdMap",
+                "comment": " Same as [`PrimaFunction.ifThenElseMap`](PrimaFunction#ifThenElseMap) but for Cmds\n\n    model\n        |> ifThenElseMap modelHasError\n            (Model.toError >> Ports.logError)\n            (always () >> Ports.logSuccess)\n\n",
+                "type": "(a -> Basics.Bool) -> (a -> Platform.Cmd.Cmd msg) -> (a -> Platform.Cmd.Cmd msg) -> a -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "ifThenElseCmds",
+                "comment": " Like [`ifThenElse`](PrimaFunction#ifThenElse), but batches Cmds\n\n        ifThenElseMap model.hasError\n            [ Ports.logError () ]\n            [ Ports.logSuccess () ]\n\n",
+                "type": "Basics.Bool -> List.List (Platform.Cmd.Cmd msg) -> List.List (Platform.Cmd.Cmd msg) -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "ifThenElseCmdsMap",
+                "comment": " Like [`ifThenCmdMap`](PrimaCmd#ifThenCmdMap), but for List of commands\n\n        model\n        |> ifThenElseMap modelHasError\n            [  Model.toError >> Ports.logError ]\n            [ always () >> Ports.logSuccess\n            , Ports.serializeModel\n            ]\n\n",
+                "type": "(a -> Basics.Bool) -> List.List (a -> Platform.Cmd.Cmd msg) -> List.List (a -> Platform.Cmd.Cmd msg) -> a -> Platform.Cmd.Cmd msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "PrimaFunction",
+        "comment": "\n\n@docs curry, uncurry, flip\n\n\n# Functional conditionals\n\n@docs ifThenElse, ifThenMap, ifThenElseMap\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "curry",
+                "comment": " Given a function with a single argument as pair, returns its curried version\n\n        sumPair : (Int, Int) -> Int -> Int\n        sumPair (x, y) = x + y\n\n        curriedSum : Int -> Int -> Int\n        curriedSum x y = curry sumPair\n\n",
+                "type": "(( a, b ) -> c) -> a -> b -> c"
+            },
+            {
+                "name": "flip",
+                "comment": " Flips the first two (curried) arguments of a function\n\n        cons : a -> List a -> List a\n        cons = (::)\n\n        flippedCons : List a -> a -> List a\n        flippedCons = flip cons\n\n",
+                "type": "(a -> b -> c) -> b -> a -> c"
+            },
+            {
+                "name": "ifThenElse",
+                "comment": " If function\n\n        ifThenElse True \"x\" \"_\" -- => \"x\"\n        ifThenElse False \"_\" \"x\" -- => \"x\"\n\n",
+                "type": "Basics.Bool -> a -> a -> a"
+            },
+            {
+                "name": "ifThenElseMap",
+                "comment": " Conditional if that can be used in update circuits to avoid parenthesis/anonymous functions\neg.\n\n        model\n        |> doSomethingNiceWithModel\n        |> ifThenElseMap someBooleanConditionBasedOnModel\n            changeModelIfTrue\n            changeModelIfFalse\n        |> withoutCmds []\n\n",
+                "type": "(a -> Basics.Bool) -> (a -> b) -> (a -> b) -> a -> b"
+            },
+            {
+                "name": "ifThenMap",
+                "comment": " Maps the value whether the given predicate holds true for that value\n\n        showResults : List String -> List String\n        showResults xs =\n            xs\n                |> ifThenMap List.isEmpty\n                    (\\_ -> [ \"Cannot find users matching this query\" ])\n\n",
+                "type": "(a -> Basics.Bool) -> (a -> a) -> a -> a"
+            },
+            {
+                "name": "uncurry",
+                "comment": " Given a function with two (curried) arguments, returns a function whose only argument is a pair\n\n        curriedSum : Int -> Int -> Int\n        curriedSum x y = x + y\n\n        sumPair : (Int, Int) -> Int -> Int\n        sumPair = uncurry curriedSum\n\n",
+                "type": "(a -> b -> c) -> ( a, b ) -> c"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "PrimaUpdate",
+        "comment": " Update function helpers\n\n@docs PrimaUpdate\n\n\n# Update helpers\n\n@docs withCmd, andThen, withCmds, withCmdsMap, withoutCmds, mapModel, mapCmd\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "PrimaUpdate",
+                "comment": " The alias for a `(Model, Cmd Msg)` pair.\n\n    init : Update Model Msg\n    init =\n        { users = Nothing }\n            |> PrimaUpdate.withCmd fetchUsers\n\n",
+                "args": [
+                    "model",
+                    "msg"
+                ],
+                "type": "( model, Platform.Cmd.Cmd msg )"
+            }
+        ],
+        "values": [
+            {
+                "name": "andThen",
+                "comment": " Concatenates Updates batching their updates\n\n    (someModel, someCommand)\n    |> andThen (\\ someModel -> (anotherModel, anotherCommand))\n\n    -- =>  (anotherModel, Cmd.batch [someCommand, anotherCommand] )\n\n",
+                "type": "(model -> PrimaUpdate.PrimaUpdate otherModel msg) -> PrimaUpdate.PrimaUpdate model msg -> PrimaUpdate.PrimaUpdate otherModel msg"
+            },
+            {
+                "name": "mapCmd",
+                "comment": " `Cmd.map`s the pair cmd, preserving the model\n\n    intCmd : Cmd Int\n    intCmd =\n        Task.succeed 42 |> Task.perform identity\n\n    pair : Update () String\n    pair =\n        ()\n            |> withCmd intCmd\n            |> mapCmd String.fromInt\n\n",
+                "type": "(msg -> otherMsg) -> PrimaUpdate.PrimaUpdate model msg -> PrimaUpdate.PrimaUpdate model otherMsg"
+            },
+            {
+                "name": "mapModel",
+                "comment": " Maps the model preserving the current cmds\n\n     { count = 0 }\n        |> PrimaCmd.withoutCmds\n        |> PrimaCmd.mapModel (updateCount ((+) 1))\n        |> Expect.equal ({ count = 1 }, Cmd.none)\n\n",
+                "type": "(model -> otherModel) -> PrimaUpdate.PrimaUpdate model msg -> PrimaUpdate.PrimaUpdate otherModel msg"
+            },
+            {
+                "name": "withCmd",
+                "comment": " Wraps a command and a model in a PrimaUpdate pair\n\n    model\n    |> withCmd cmd\n    -- => (model, cmd)\n\n",
+                "type": "Platform.Cmd.Cmd msg -> model -> PrimaUpdate.PrimaUpdate model msg"
+            },
+            {
+                "name": "withCmds",
+                "comment": " Like [withCmd](PrimaUpdate#withCmd) but batches them\n\n    model\n    |> withCmds [cmd1, cmd2]\n    -- => (model, Cmd.batch [cmd1, cmd2])\n\n",
+                "type": "List.List (Platform.Cmd.Cmd msg) -> model -> PrimaUpdate.PrimaUpdate model msg"
+            },
+            {
+                "name": "withCmdsMap",
+                "comment": " Used to apply an updated model to the cmds in fluid style updating\n\n        serializeUsers : Model -> Cmd Msg\n        logEvent : String -> Model -> Cmd Msg\n\n        update : Msg -> Model -> PrimaUpdate Model Msg\n        update msg model =\n            case msg of\n                FetchedUsers newUsers ->\n                    model\n                        |> setUsers newUsers\n                        |> withCmdsMap [ serializeUsers, logEvent \"got users\" ]\n\n",
+                "type": "List.List (model -> Platform.Cmd.Cmd msg) -> model -> PrimaUpdate.PrimaUpdate model msg"
+            },
+            {
+                "name": "withoutCmds",
+                "comment": " Lifts a model to a `(model, Cmd msg)` pair\n",
+                "type": "model -> PrimaUpdate.PrimaUpdate model msg"
+            }
+        ],
+        "binops": []
+    }
+]

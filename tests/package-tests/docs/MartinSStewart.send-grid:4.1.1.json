@@ -1,0 +1,545 @@
+[
+    {
+        "name": "Email.Html",
+        "comment": " Only html tags that are supported by major all email clients are listed here.\nIf you need something not that's included (and potentially not universally supported) use [`node`](#node).\n\nThese sources were used to determine what should be included:\n<https://www.campaignmonitor.com/css/color-background/background/>\n<https://www.pinpointe.com/blog/email-campaign-html-and-css-support>\n<https://www.caniemail.com/>\n\nOpen an issue on github if something is missing or incorrectly included.\n\n\n# Html tags\n\n@docs a, b, br, div, font, h1, h2, h3, h4, h5, h6, hr, img, label, li, node, ol, p, span, strong, table, td, text, th, tr, u, ul, Attribute, Html\n\n\n# Inline images\n\n@docs inlineGifImg, inlineJpgImg, inlinePngImg\n\n\n# Convert\n\n@docs toHtml\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Attribute",
+                "comment": " ",
+                "args": [],
+                "type": "Internal.Attribute"
+            },
+            {
+                "name": "Html",
+                "comment": " ",
+                "args": [],
+                "type": "Internal.Html"
+            }
+        ],
+        "values": [
+            {
+                "name": "a",
+                "comment": " ",
+                "type": "List.List Email.Html.Attribute -> List.List Email.Html.Html -> Email.Html.Html"
+            },
+            {
+                "name": "b",
+                "comment": " ",
+                "type": "List.List Email.Html.Attribute -> List.List Email.Html.Html -> Email.Html.Html"
+            },
+            {
+                "name": "br",
+                "comment": " ",
+                "type": "List.List Email.Html.Attribute -> List.List Email.Html.Html -> Email.Html.Html"
+            },
+            {
+                "name": "div",
+                "comment": " ",
+                "type": "List.List Email.Html.Attribute -> List.List Email.Html.Html -> Email.Html.Html"
+            },
+            {
+                "name": "font",
+                "comment": " ",
+                "type": "List.List Email.Html.Attribute -> List.List Email.Html.Html -> Email.Html.Html"
+            },
+            {
+                "name": "h1",
+                "comment": " ",
+                "type": "List.List Email.Html.Attribute -> List.List Email.Html.Html -> Email.Html.Html"
+            },
+            {
+                "name": "h2",
+                "comment": " ",
+                "type": "List.List Email.Html.Attribute -> List.List Email.Html.Html -> Email.Html.Html"
+            },
+            {
+                "name": "h3",
+                "comment": " ",
+                "type": "List.List Email.Html.Attribute -> List.List Email.Html.Html -> Email.Html.Html"
+            },
+            {
+                "name": "h4",
+                "comment": " ",
+                "type": "List.List Email.Html.Attribute -> List.List Email.Html.Html -> Email.Html.Html"
+            },
+            {
+                "name": "h5",
+                "comment": " ",
+                "type": "List.List Email.Html.Attribute -> List.List Email.Html.Html -> Email.Html.Html"
+            },
+            {
+                "name": "h6",
+                "comment": " ",
+                "type": "List.List Email.Html.Attribute -> List.List Email.Html.Html -> Email.Html.Html"
+            },
+            {
+                "name": "hr",
+                "comment": " ",
+                "type": "List.List Email.Html.Attribute -> List.List Email.Html.Html -> Email.Html.Html"
+            },
+            {
+                "name": "img",
+                "comment": " ",
+                "type": "List.List Email.Html.Attribute -> List.List Email.Html.Html -> Email.Html.Html"
+            },
+            {
+                "name": "inlineGifImg",
+                "comment": " If you want to embed a gif within the email body, use this function.\nThe normal approach of using a base64 string as the image src doesn't always with emails.\n\nNote that [some email clients](https://www.caniemail.com/search/?s=gif) won't animate the gif.\n\n",
+                "type": "Bytes.Bytes -> List.List Email.Html.Attribute -> List.List Email.Html.Html -> Email.Html.Html"
+            },
+            {
+                "name": "inlineJpgImg",
+                "comment": " If you want to embed a jpg image within the email body, use this function.\nThe normal approach of using a base64 string as the image src doesn't always with emails.\n",
+                "type": "Bytes.Bytes -> List.List Email.Html.Attribute -> List.List Email.Html.Html -> Email.Html.Html"
+            },
+            {
+                "name": "inlinePngImg",
+                "comment": " If you want to embed a png image within the email body, use this function.\nThe normal approach of using a base64 string as the image src doesn't always work with emails.\n",
+                "type": "Bytes.Bytes -> List.List Email.Html.Attribute -> List.List Email.Html.Html -> Email.Html.Html"
+            },
+            {
+                "name": "label",
+                "comment": " ",
+                "type": "List.List Email.Html.Attribute -> List.List Email.Html.Html -> Email.Html.Html"
+            },
+            {
+                "name": "li",
+                "comment": " ",
+                "type": "List.List Email.Html.Attribute -> List.List Email.Html.Html -> Email.Html.Html"
+            },
+            {
+                "name": "node",
+                "comment": " This allows you to create html tags not included in this module (at the risk of it not rendering correctly in some email clients).\n",
+                "type": "String.String -> List.List Email.Html.Attribute -> List.List Email.Html.Html -> Email.Html.Html"
+            },
+            {
+                "name": "ol",
+                "comment": " ",
+                "type": "List.List Email.Html.Attribute -> List.List Email.Html.Html -> Email.Html.Html"
+            },
+            {
+                "name": "p",
+                "comment": " ",
+                "type": "List.List Email.Html.Attribute -> List.List Email.Html.Html -> Email.Html.Html"
+            },
+            {
+                "name": "span",
+                "comment": " ",
+                "type": "List.List Email.Html.Attribute -> List.List Email.Html.Html -> Email.Html.Html"
+            },
+            {
+                "name": "strong",
+                "comment": " ",
+                "type": "List.List Email.Html.Attribute -> List.List Email.Html.Html -> Email.Html.Html"
+            },
+            {
+                "name": "table",
+                "comment": " ",
+                "type": "List.List Email.Html.Attribute -> List.List Email.Html.Html -> Email.Html.Html"
+            },
+            {
+                "name": "td",
+                "comment": " ",
+                "type": "List.List Email.Html.Attribute -> List.List Email.Html.Html -> Email.Html.Html"
+            },
+            {
+                "name": "text",
+                "comment": " ",
+                "type": "String.String -> Internal.Html"
+            },
+            {
+                "name": "th",
+                "comment": " ",
+                "type": "List.List Email.Html.Attribute -> List.List Email.Html.Html -> Email.Html.Html"
+            },
+            {
+                "name": "toHtml",
+                "comment": " Convert a [`Email.Html.Html`](#Html) into normal a [`Html`](https://package.elm-lang.org/packages/elm/html/latest/Html). Useful if you want to preview your email content.\n",
+                "type": "Email.Html.Html -> Html.Html msg"
+            },
+            {
+                "name": "tr",
+                "comment": " ",
+                "type": "List.List Email.Html.Attribute -> List.List Email.Html.Html -> Email.Html.Html"
+            },
+            {
+                "name": "u",
+                "comment": " ",
+                "type": "List.List Email.Html.Attribute -> List.List Email.Html.Html -> Email.Html.Html"
+            },
+            {
+                "name": "ul",
+                "comment": " ",
+                "type": "List.List Email.Html.Attribute -> List.List Email.Html.Html -> Email.Html.Html"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Email.Html.Attributes",
+        "comment": " Only html attributes that are supported by all major email clients are listed here.\nIf you need something not that's included (and potentially not universally supported) use [`attribute`](#attribute) or [`style`](#style).\n\nThese sources were used to determine what should be included:\n<https://www.campaignmonitor.com/css/color-background/background/>\n<https://www.pinpointe.com/blog/email-campaign-html-and-css-support>\n<https://www.caniemail.com/>\n\nOpen an issue on github if something is missing or incorrectly included.\n\n\n# Attributes and styles\n\n@docs alt, attribute, backgroundColor, border, borderBottom, borderBottomColor, borderBottomStyle, borderBottomWidth, borderColor, borderLeft, borderLeftColor, borderLeftStyle, borderLeftWidth, borderRadius, borderRight, borderRightColor, borderRightStyle, borderRightWidth, borderStyle, borderTop, borderTopColor, borderWidth, color, fontFamily, fontSize, fontStyle, fontVariant, height, href, letterSpacing, lineHeight, padding, paddingBottom, paddingLeft, paddingRight, paddingTop, src, style, textAlign, verticalAlign, width\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "alt",
+                "comment": " ",
+                "type": "String.String -> Internal.Attribute"
+            },
+            {
+                "name": "attribute",
+                "comment": " Use this if there's a attribute you want to add that isn't present in this module.\nNote that there's a risk that it isn't supported by some email clients.\n",
+                "type": "String.String -> String.String -> Internal.Attribute"
+            },
+            {
+                "name": "backgroundColor",
+                "comment": " ",
+                "type": "String.String -> Internal.Attribute"
+            },
+            {
+                "name": "border",
+                "comment": " ",
+                "type": "String.String -> Internal.Attribute"
+            },
+            {
+                "name": "borderBottom",
+                "comment": " ",
+                "type": "String.String -> Internal.Attribute"
+            },
+            {
+                "name": "borderBottomColor",
+                "comment": " ",
+                "type": "String.String -> Internal.Attribute"
+            },
+            {
+                "name": "borderBottomStyle",
+                "comment": " ",
+                "type": "String.String -> Internal.Attribute"
+            },
+            {
+                "name": "borderBottomWidth",
+                "comment": " ",
+                "type": "String.String -> Internal.Attribute"
+            },
+            {
+                "name": "borderColor",
+                "comment": " ",
+                "type": "String.String -> Internal.Attribute"
+            },
+            {
+                "name": "borderLeft",
+                "comment": " ",
+                "type": "String.String -> Internal.Attribute"
+            },
+            {
+                "name": "borderLeftColor",
+                "comment": " ",
+                "type": "String.String -> Internal.Attribute"
+            },
+            {
+                "name": "borderLeftStyle",
+                "comment": " ",
+                "type": "String.String -> Internal.Attribute"
+            },
+            {
+                "name": "borderLeftWidth",
+                "comment": " ",
+                "type": "String.String -> Internal.Attribute"
+            },
+            {
+                "name": "borderRadius",
+                "comment": " ",
+                "type": "String.String -> Internal.Attribute"
+            },
+            {
+                "name": "borderRight",
+                "comment": " ",
+                "type": "String.String -> Internal.Attribute"
+            },
+            {
+                "name": "borderRightColor",
+                "comment": " ",
+                "type": "String.String -> Internal.Attribute"
+            },
+            {
+                "name": "borderRightStyle",
+                "comment": " ",
+                "type": "String.String -> Internal.Attribute"
+            },
+            {
+                "name": "borderRightWidth",
+                "comment": " ",
+                "type": "String.String -> Internal.Attribute"
+            },
+            {
+                "name": "borderStyle",
+                "comment": " ",
+                "type": "String.String -> Internal.Attribute"
+            },
+            {
+                "name": "borderTop",
+                "comment": " ",
+                "type": "String.String -> Internal.Attribute"
+            },
+            {
+                "name": "borderTopColor",
+                "comment": " ",
+                "type": "String.String -> Internal.Attribute"
+            },
+            {
+                "name": "borderWidth",
+                "comment": " ",
+                "type": "String.String -> Internal.Attribute"
+            },
+            {
+                "name": "color",
+                "comment": " ",
+                "type": "String.String -> Internal.Attribute"
+            },
+            {
+                "name": "fontFamily",
+                "comment": " ",
+                "type": "String.String -> Internal.Attribute"
+            },
+            {
+                "name": "fontSize",
+                "comment": " ",
+                "type": "String.String -> Internal.Attribute"
+            },
+            {
+                "name": "fontStyle",
+                "comment": " ",
+                "type": "String.String -> Internal.Attribute"
+            },
+            {
+                "name": "fontVariant",
+                "comment": " ",
+                "type": "String.String -> Internal.Attribute"
+            },
+            {
+                "name": "height",
+                "comment": " ",
+                "type": "String.String -> Internal.Attribute"
+            },
+            {
+                "name": "href",
+                "comment": " ",
+                "type": "String.String -> Internal.Attribute"
+            },
+            {
+                "name": "letterSpacing",
+                "comment": " ",
+                "type": "String.String -> Internal.Attribute"
+            },
+            {
+                "name": "lineHeight",
+                "comment": " ",
+                "type": "String.String -> Internal.Attribute"
+            },
+            {
+                "name": "padding",
+                "comment": " ",
+                "type": "String.String -> Internal.Attribute"
+            },
+            {
+                "name": "paddingBottom",
+                "comment": " ",
+                "type": "String.String -> Internal.Attribute"
+            },
+            {
+                "name": "paddingLeft",
+                "comment": " ",
+                "type": "String.String -> Internal.Attribute"
+            },
+            {
+                "name": "paddingRight",
+                "comment": " ",
+                "type": "String.String -> Internal.Attribute"
+            },
+            {
+                "name": "paddingTop",
+                "comment": " ",
+                "type": "String.String -> Internal.Attribute"
+            },
+            {
+                "name": "src",
+                "comment": " ",
+                "type": "String.String -> Internal.Attribute"
+            },
+            {
+                "name": "style",
+                "comment": " Use this if there's a style you want to add that isn't present in this module.\nNote that there's a risk that it isn't supported by some email clients.\n",
+                "type": "String.String -> String.String -> Internal.Attribute"
+            },
+            {
+                "name": "textAlign",
+                "comment": " ",
+                "type": "String.String -> Internal.Attribute"
+            },
+            {
+                "name": "verticalAlign",
+                "comment": " ",
+                "type": "String.String -> Internal.Attribute"
+            },
+            {
+                "name": "width",
+                "comment": " ",
+                "type": "String.String -> Internal.Attribute"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "EmailAddress",
+        "comment": "\n\n@docs EmailAddress, fromString, toString\n\n",
+        "unions": [
+            {
+                "name": "EmailAddress",
+                "comment": " The type of an email address\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fromString",
+                "comment": " Parse an email address from a String.\nNote that this will also convert all the characters to lowercase.\nThis is done because email addresses are case insensitive.\nIf the email wasn't converted to all lowercase you could end up with this gotcha `Email.fromString a@a.com /= Email.fromString A@a.com`\n",
+                "type": "String.String -> Maybe.Maybe EmailAddress.EmailAddress"
+            },
+            {
+                "name": "toString",
+                "comment": " Render Email to a String\n",
+                "type": "EmailAddress.EmailAddress -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "SendGrid",
+        "comment": "\n\n@docs ApiKey, apiKey, textEmail, htmlEmail, addCc, addBcc, addAttachments, sendEmail, sendEmailTask, Email, Error, ErrorMessage, ErrorMessage403\n\n",
+        "unions": [
+            {
+                "name": "ApiKey",
+                "comment": " A SendGrid API key. In order to send an email you must have one of these (see the readme for how to get one).\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Email",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Error",
+                "comment": " Possible error codes we might get back when trying to send an email.\nSome are just normal HTTP errors and others are specific to the SendGrid API.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "StatusCode400",
+                        [
+                            "List.List SendGrid.ErrorMessage"
+                        ]
+                    ],
+                    [
+                        "StatusCode401",
+                        [
+                            "List.List SendGrid.ErrorMessage"
+                        ]
+                    ],
+                    [
+                        "StatusCode403",
+                        [
+                            "{ errors : List.List SendGrid.ErrorMessage403, id : Maybe.Maybe String.String }"
+                        ]
+                    ],
+                    [
+                        "StatusCode413",
+                        [
+                            "List.List SendGrid.ErrorMessage"
+                        ]
+                    ],
+                    [
+                        "UnknownError",
+                        [
+                            "{ statusCode : Basics.Int, body : String.String }"
+                        ]
+                    ],
+                    [
+                        "NetworkError",
+                        []
+                    ],
+                    [
+                        "Timeout",
+                        []
+                    ],
+                    [
+                        "BadUrl",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "ErrorMessage",
+                "comment": " The content of a generic SendGrid error.\n",
+                "args": [],
+                "type": "{ field : Maybe.Maybe String.String, message : String.String, errorId : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "ErrorMessage403",
+                "comment": " The content of a 403 status code error.\n",
+                "args": [],
+                "type": "{ message : Maybe.Maybe String.String, field : Maybe.Maybe String.String, help : Maybe.Maybe String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "addAttachments",
+                "comment": " Attach files to the email. These will usually appear at the bottom of the email.\n\n    import Bytes exposing (Bytes)\n    import SendGrid\n\n    attachPngImage : String -> Bytes -> Email -> Email\n    attachPngImage name image email =\n        SendGrid.addAttachments\n            (Dict.fromList\n                [ ( name ++ \".png\"\n                  , { content = image\n                    , mimeType = \"image/png\"\n                    }\n                  )\n                ]\n            )\n            email\n\nIf you want to include an image file within the body of your email, use `Email.Html.inlinePngImg`, `Email.Html.inlineJpegImg`, or `Email.Html.inlineGifImg` instead.\n\n",
+                "type": "Dict.Dict String.String { content : Bytes.Bytes, mimeType : String.String } -> SendGrid.Email -> SendGrid.Email"
+            },
+            {
+                "name": "addBcc",
+                "comment": " Add a list of [BCC](https://en.wikipedia.org/wiki/Blind_carbon_copy) recipients.\n",
+                "type": "List.List EmailAddress.EmailAddress -> SendGrid.Email -> SendGrid.Email"
+            },
+            {
+                "name": "addCc",
+                "comment": " Add a list of [CC](https://en.wikipedia.org/wiki/Carbon_copy) recipients.\n",
+                "type": "List.List EmailAddress.EmailAddress -> SendGrid.Email -> SendGrid.Email"
+            },
+            {
+                "name": "apiKey",
+                "comment": " Create an API key from a raw string (see the readme for how to get one).\n",
+                "type": "String.String -> SendGrid.ApiKey"
+            },
+            {
+                "name": "htmlEmail",
+                "comment": " Create an email that contains html.\n\n    import Email\n    import Email.Html\n    import List.Nonempty\n    import String.Nonempty exposing (NonemptyString)\n\n    {-| An email to be sent to a recipient's email address.\n    -}\n    email : Email.Email -> SendGrid.Email\n    email recipient =\n        SendGrid.htmlEmail\n            { subject = NonemptyString 'S' \"ubject\"\n            , to = List.Nonempty.fromElement recipient\n            , content =\n                Email.Html.div\n                    []\n                    [ Email.Html.text \"Hi!\" ]\n            , nameOfSender = \"test name\"\n            , emailAddressOfSender =\n                -- this-can-be-anything@test.com\n                { localPart = \"this-can-be-anything\"\n                , tags = []\n                , domain = \"test\"\n                , tld = [ \"com\" ]\n                }\n            }\n\nNote that email clients are quite limited in what html features are supported!\nTo avoid accidentally using html that's unsupported by some email clients, the `Email.Html` and `Email.Html.Attributes` modules only define tags and attributes with universal support.\nYou can still use `Email.Html.node` and `Email.Html.Attributes.attribute` if you want something that might not be universally supported though.\n\n",
+                "type": "{ subject : String.Nonempty.NonemptyString, content : Email.Html.Html, to : List.Nonempty.Nonempty EmailAddress.EmailAddress, nameOfSender : String.String, emailAddressOfSender : EmailAddress.EmailAddress } -> SendGrid.Email"
+            },
+            {
+                "name": "sendEmail",
+                "comment": " Send an email using the SendGrid API.\n",
+                "type": "(Result.Result SendGrid.Error () -> msg) -> SendGrid.ApiKey -> SendGrid.Email -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "sendEmailTask",
+                "comment": " Send an email using the SendGrid API. This is the task version of [sendEmail](#sendEmail).\n",
+                "type": "SendGrid.ApiKey -> SendGrid.Email -> Task.Task SendGrid.Error ()"
+            },
+            {
+                "name": "textEmail",
+                "comment": " Create an email that only contains plain text.\n\n    import Email\n    import List.Nonempty\n    import String.Nonempty exposing (NonemptyString)\n\n    {-| An email to be sent to a recipient's email address.\n    -}\n    email : Email.Email -> SendGrid.Email\n    email recipient =\n        SendGrid.textEmail\n            { subject = NonemptyString 'S' \"ubject\"\n            , to = List.Nonempty.fromElement recipient\n            , content = NonemptyString 'H' \"i!\"\n            , nameOfSender = \"test name\"\n            , emailAddressOfSender =\n                -- this-can-be-anything@test.com\n                { localPart = \"this-can-be-anything\"\n                , tags = []\n                , domain = \"test\"\n                , tld = [ \"com\" ]\n                }\n            }\n\n",
+                "type": "{ subject : String.Nonempty.NonemptyString, content : String.Nonempty.NonemptyString, to : List.Nonempty.Nonempty EmailAddress.EmailAddress, nameOfSender : String.String, emailAddressOfSender : EmailAddress.EmailAddress } -> SendGrid.Email"
+            }
+        ],
+        "binops": []
+    }
+]

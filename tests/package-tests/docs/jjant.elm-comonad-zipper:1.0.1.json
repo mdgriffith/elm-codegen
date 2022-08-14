@@ -1,0 +1,94 @@
+[
+    {
+        "name": "Zipper",
+        "comment": " This package provides an implementation of a [List Zipper](https://en.wikipedia.org/wiki/Zipper_(data_structure)) as well as its corresponding comonadic interface, namely, the functions [`extract`](#extract), [`duplicate`](#duplicate) and [`extend`](#extend).\n\nThese are useful to perform transformations which depend on the neighborhood of the elements, see [`extend`](#extend) for one such example.\n\nYou can find more complete examples [here](https://github.com/jjant/list-zipper-comonad-elm/tree/master/examples).\n\n@docs Zipper, append, prepend, toList\n\n\n## Extracting values\n\n@docs prev, extract, next\n\n\n## Navigating\n\n@docs leftMay, rightMay, left, right\n\n\n## Transforming elements\n\n@docs map, duplicate, extend\n\n",
+        "unions": [
+            {
+                "name": "Zipper",
+                "comment": " A `Zipper a` is a nonempty list with a focused element.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Zipper",
+                        [
+                            "List.List a",
+                            "a",
+                            "List.List a"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "append",
+                "comment": " Add elements at the end of the Zipper.\n\n    import Zipper exposing (Zipper(..))\n\n    Zipper.append [ 5, 4 ] (Zipper [ 0 ] 1 [ 2, 3 ]) == Zipper [ 0 ] 1 [ 2, 3, 5, 4 ]\n\n",
+                "type": "List.List a -> Zipper.Zipper a -> Zipper.Zipper a"
+            },
+            {
+                "name": "duplicate",
+                "comment": " Returns a Zipper in which every element is a Zipper list.\n\n    import Zipper exposing (Zipper(..))\n\n    duplicate (Zipper [0] 1 [2]) == Zipper [Zipper [] 0 [1,2]] (Zipper [0] 1 [2]) [Zipper [0, 1] 2 []]\n\n",
+                "type": "Zipper.Zipper a -> Zipper.Zipper (Zipper.Zipper a)"
+            },
+            {
+                "name": "extend",
+                "comment": " Map elements in the Zipper, having access to the elements before and after it.\n\n    import Zipper exposing (Zipper(..))\n\n    maxSoFar (Zipper prev curr _) = List.foldr Basics.max curr prev\n\n    Zipper.extend maxSoFar (Zipper [2, 1, 3, 4, 5] 1 [2]) == Zipper [2, 2, 3, 4, 5] 5 [5]\n\n",
+                "type": "(Zipper.Zipper a -> b) -> Zipper.Zipper a -> Zipper.Zipper b"
+            },
+            {
+                "name": "extract",
+                "comment": " Returns the focused element.\n\n    import Zipper exposing (Zipper(..))\n\n    Zipper.extract (Zipper [0] 1 [2,3,4]) == 1\n\n",
+                "type": "Zipper.Zipper a -> a"
+            },
+            {
+                "name": "left",
+                "comment": " Attempts to select the element to the left of the focus. Returns the Zipper unchanged if there are no previous elements.\n\n      import Zipper exposing (Zipper(..))\n\n      Zipper.left (Zipper [] 1 [2,3,4]) == Zipper [] 1 [2,3,4]\n\n      Zipper.left (Zipper [1] 2 [3,4]) == Zipper [] 1 [2, 3, 4]\n\n",
+                "type": "Zipper.Zipper a -> Zipper.Zipper a"
+            },
+            {
+                "name": "leftMay",
+                "comment": " Attempts to select the element to the left of the focus, returns `Nothing` if there are no previous elements.\n\n      import Zipper exposing (Zipper(..))\n\n      Zipper.leftMay (Zipper [] 1 [2,3,4]) == Nothing\n\n      Zipper.leftMay (Zipper [1] 2 [3,4]) == Just (Zipper [] 1 [2, 3, 4])\n\n",
+                "type": "Zipper.Zipper a -> Maybe.Maybe (Zipper.Zipper a)"
+            },
+            {
+                "name": "map",
+                "comment": " Apply a function to every element in the Zipper.\n\n    import Zipper exposing (Zipper(..))\n\n    Zipper.map (\\x -> 2 * x) (Zipper [2, 0, 5] 1 [2]) == Zipper [4, 0, 10] 2 [4]\n\n",
+                "type": "(a -> b) -> Zipper.Zipper a -> Zipper.Zipper b"
+            },
+            {
+                "name": "next",
+                "comment": " Returns the elements after the focused element.\n\n      import Zipper exposing (Zipper(..))\n\n      Zipper.next (Zipper [0] 1 [2,3,4]) == [2,3,4]\n\n",
+                "type": "Zipper.Zipper a -> List.List a"
+            },
+            {
+                "name": "prepend",
+                "comment": " Add elements at the beginning of the Zipper.\n\n    import Zipper exposing (Zipper(..))\n\n    Zipper.prepend [ -1, -2 ] (Zipper [ 0 ] 1 [ 2, 3 ]) == Zipper [ -1, -2, 0 ] 1 [ 2, 3 ]\n\n",
+                "type": "List.List a -> Zipper.Zipper a -> Zipper.Zipper a"
+            },
+            {
+                "name": "prev",
+                "comment": " Returns the elements before the focused element.\n\n      import Zipper exposing (Zipper(..))\n\n      Zipper.prev (Zipper [0] 1 [2,3,4]) == [0]\n\n",
+                "type": "Zipper.Zipper a -> List.List a"
+            },
+            {
+                "name": "right",
+                "comment": " Attempts to select the element to the right of the focus. Returns the Zipper unchanged if there are no next elements.\n\n    import Zipper exposing (Zipper(..))\n\n    Zipper.right (Zipper [0] 1 []) == Zipper [0] 1 []\n\n    Zipper.right (Zipper [1] 2 [3,4]) == Zipper [1, 2] 3 [4]\n\n",
+                "type": "Zipper.Zipper a -> Zipper.Zipper a"
+            },
+            {
+                "name": "rightMay",
+                "comment": " Attempts to select the element to the right of the focus, returns `Nothing` if there are no next elements.\n\n    import Zipper exposing (Zipper(..))\n\n    Zipper.rightMay (Zipper [0] 1 []) == Nothing\n\n    Zipper.rightMay (Zipper [1] 2 [3,4]) == Just (Zipper [1, 2] 3 [4])\n\n",
+                "type": "Zipper.Zipper a -> Maybe.Maybe (Zipper.Zipper a)"
+            },
+            {
+                "name": "toList",
+                "comment": " Transforms a Zipper into a regular list.\n\n    import Zipper exposing (Zipper(..))\n\n    Zipper.toList (Zipper [0] 1 [2,3,4]) == [0,1,2,3,4]\n\n",
+                "type": "Zipper.Zipper a -> List.List a"
+            }
+        ],
+        "binops": []
+    }
+]

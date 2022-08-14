@@ -1,0 +1,614 @@
+[
+    {
+        "name": "GraphQL.Client.Http",
+        "comment": " The functions in this module let you perform HTTP requests to conventional GraphQL server endpoints.\n\n@docs Error, RequestError, DocumentLocation, sendQuery, sendMutation, RequestOptions,  customSendQuery, customSendMutation, customSendQueryRaw, customSendMutationRaw\n",
+        "unions": [
+            {
+                "name": "Error",
+                "comment": " Represents errors that can occur when sending a GraphQL request over HTTP.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "HttpError",
+                        [
+                            "Http.Error"
+                        ]
+                    ],
+                    [
+                        "GraphQLError",
+                        [
+                            "List.List GraphQL.Client.Http.RequestError"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "DocumentLocation",
+                "comment": " A location in a GraphQL request document.\n",
+                "args": [],
+                "type": "{ line : Basics.Int, column : Basics.Int }"
+            },
+            {
+                "name": "RequestError",
+                "comment": " An error returned by the GraphQL server that indicates there was something wrong with the request.\n",
+                "args": [],
+                "type": "{ message : String.String, locations : List.List GraphQL.Client.Http.DocumentLocation }"
+            },
+            {
+                "name": "RequestOptions",
+                "comment": " Options available for customizing GraphQL HTTP requests. `method` should be either `\"GET\"` or `\"POST\"`. For `GET` requests, the `url` is modified to include extra parameters in the query string for the GraphQL document and variables. Otherwise, the document and variables are included in the HTTP request body.\n",
+                "args": [],
+                "type": "{ method : String.String, headers : List.List Http.Header, url : String.String, timeout : Maybe.Maybe Basics.Float, withCredentials : Basics.Bool }"
+            }
+        ],
+        "values": [
+            {
+                "name": "customSendMutation",
+                "comment": " Like `sendMutation`, but takes an `RequestOptions` value instead of a URL to let you further customize the HTTP request.\n",
+                "type": "GraphQL.Client.Http.RequestOptions -> GraphQL.Request.Builder.Request GraphQL.Request.Builder.Mutation result -> Task.Task GraphQL.Client.Http.Error result"
+            },
+            {
+                "name": "customSendMutationRaw",
+                "comment": " Like `sendMutation`, but takes an `RequestOptions` value instead of a URL to let you further customize the HTTP request. You will get a plain `Http.Response` as Task result.\n\nUseful for things like custom errors decoding, etc.\n\nExample of response decoding:\n\n    let\n        decoder =\n            GraphQL.Request.Builder.responseDataDecoder mutationRequest\n                |> Json.Decode.field \"data\"\n\n        options =\n            { method = \"GET\"\n            , headers = []\n            , url = \"/graphql\"\n            , timeout = Nothing\n            , withCredentials = False\n            }\n    in\n        mutationRequest\n            |> GraphQL.Client.Http.customSendMutationRaw options\n            |> Task.andThen\n                (\\response ->\n                    case Json.Decode.decodeString decoder response.body of\n                        Err err ->\n                            Task.fail <| GraphQL.Client.Http.HttpError <| Http.BadPayload err response\n\n                        Ok decodedValue ->\n                            Task.succeed decodedValue\n                )\n\n",
+                "type": "GraphQL.Client.Http.RequestOptions -> GraphQL.Request.Builder.Request GraphQL.Request.Builder.Mutation result -> Task.Task GraphQL.Client.Http.Error (Http.Response String.String)"
+            },
+            {
+                "name": "customSendQuery",
+                "comment": " Like `sendQuery`, but takes an `RequestOptions` value instead of a URL to let you further customize the HTTP request.\n",
+                "type": "GraphQL.Client.Http.RequestOptions -> GraphQL.Request.Builder.Request GraphQL.Request.Builder.Query result -> Task.Task GraphQL.Client.Http.Error result"
+            },
+            {
+                "name": "customSendQueryRaw",
+                "comment": " Like `sendQuery`, but takes an `RequestOptions` value instead of a URL to let you further customize the HTTP request. You will get a plain `Http.Response` as Task result.\n\nUseful for things like caching, custom errors decoding, etc.\n\nExample of response decoding:\n\n    let\n        decoder =\n            GraphQL.Request.Builder.responseDataDecoder request\n                |> Json.Decode.field \"data\"\n\n        options =\n            { method = \"GET\"\n            , headers = []\n            , url = \"/graphql\"\n            , timeout = Nothing\n            , withCredentials = False\n            }\n    in\n        request\n            |> GraphQL.Client.Http.customSendQueryRaw options\n            |> Task.andThen\n                (\\response ->\n                    case Json.Decode.decodeString decoder response.body of\n                        Err err ->\n                            Task.fail <| GraphQL.Client.Http.HttpError <| Http.BadPayload err response\n\n                        Ok decodedValue ->\n                            Task.succeed decodedValue\n                )\n",
+                "type": "GraphQL.Client.Http.RequestOptions -> GraphQL.Request.Builder.Request GraphQL.Request.Builder.Query result -> Task.Task GraphQL.Client.Http.Error (Http.Response String.String)"
+            },
+            {
+                "name": "sendMutation",
+                "comment": " Takes a URL and a `Mutation` `Request` and returns a `Task` that you can perform with `Task.attempt` which will send a `POST` request to a GraphQL server at the given endpoint.\n",
+                "type": "String.String -> GraphQL.Request.Builder.Request GraphQL.Request.Builder.Mutation result -> Task.Task GraphQL.Client.Http.Error result"
+            },
+            {
+                "name": "sendQuery",
+                "comment": " Takes a URL and a `Query` `Request` and returns a `Task` that you can perform with `Task.attempt` which will send a `POST` request to a GraphQL server at the given endpoint.\n",
+                "type": "String.String -> GraphQL.Request.Builder.Request GraphQL.Request.Builder.Query result -> Task.Task GraphQL.Client.Http.Error result"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "GraphQL.Request.Builder",
+        "comment": " This module provides an interface for building up GraphQL requests in a way that gives you everything you need to safely and conveniently integrate them with your Elm program:\n\n  - GraphQL variables are automatically converted from corresponding Elm types, so the compiler will let you know if there's a mismatch between the variables used in a document and the values you provide when you send the request.\n  - Responses from the server are decoded using a `Json.Decode.Decoder` value that is built up as you build each part of the request document.\n\nIn order to use arguments and variables in your requests, you will need to use functions from the [`GraphQL.Request.Builder.Value`](GraphQL-Request-Builder-Value) and [`GraphQL.Request.Builder.Variable`](GraphQL-Request-Builder-Variable) modules. To send your requests over HTTP, see the [`GraphQL.Client.Http`](GraphQL-Client-Http) module.\n\n\n# Specifying the structure of values\n\n@docs ValueSpec, NonNull, Nullable, IntType, FloatType, StringType, BooleanType, IdType, EnumType, ListType, ObjectType\n\n\n## Objects and selections\n\n@docs object, SelectionSpec, with, withLocalConstant, extract, assume, withDirectives, keyValuePairs, dict\n\n\n### Fields\n\n@docs Field, field, aliasAs\n\n\n### Fragments\n\n@docs Fragment, FragmentSpread, InlineFragment, TypeCondition, fragment, onType, fragmentSpread, inlineFragment\n\n\n## Scalars\n\n@docs int, float, string, bool, id, enum, enumWithDefault, customScalar\n\n\n## Nullability\n\n@docs nullable\n\n\n## Lists\n\n@docs list\n\n\n# Customizing the decoding process\n\n@docs map\n\n\n# Documents\n\n@docs Document, Query, queryDocument, namedQueryDocument, Mutation, mutationDocument, namedMutationDocument\n\n\n# Requests\n\n@docs Request, request, requestBody, jsonVariableValues, responseDataDecoder\n\n",
+        "unions": [
+            {
+                "name": "BooleanType",
+                "comment": " Indicates that a `ValueSpec` describes GraphQL `Boolean` values.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Document",
+                "comment": " A `Document` represents a single-operation GraphQL request document, along with the information necessary to encode variable values used in the document and to decode successful responses from the server. The `vars` parameter is the type of value that must be provided when constructing a `Request` in order for the document's variable values to be obtained. The `operationType` and `result` parameters are the same as in the `Request` type.\n",
+                "args": [
+                    "operationType",
+                    "result",
+                    "vars"
+                ],
+                "cases": []
+            },
+            {
+                "name": "EnumType",
+                "comment": " Indicates that a `ValueSpec` describes values of some GraphQL Enum type.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Field",
+                "comment": " Indicates that a `SelectionSpec` represents a GraphQL field.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "FloatType",
+                "comment": " Indicates that a `ValueSpec` describes GraphQL `Float` values.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Fragment",
+                "comment": " A fragment definition. The `vars` parameter specifies the type of the Elm value required to supply any variables used anywhere within the fragment. The `result` parameter is the type of the Elm value obtained from the `Fragment`'s JSON decoder.\n",
+                "args": [
+                    "result",
+                    "vars"
+                ],
+                "cases": []
+            },
+            {
+                "name": "FragmentSpread",
+                "comment": " Indicates that a `SelectionSpec` represents a GraphQL fragment spread.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "IdType",
+                "comment": " Indicates that a `ValueSpec` describes GraphQL `ID` values.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "InlineFragment",
+                "comment": " Indicates that a `SelectionSpec` represents a GraphQL inline fragment.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "IntType",
+                "comment": " Indicates that a `ValueSpec` describes GraphQL `Int` values.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "ListType",
+                "comment": " Indicates that a `ValueSpec` describes values of some GraphQL List type.\n",
+                "args": [
+                    "itemNullability",
+                    "itemCoreType"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Mutation",
+                "comment": " This type is used as a marker for `Request` and `Document` types to indicate that the document's operation is a mutation.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "NonNull",
+                "comment": " Indicates that a `ValueSpec` describes GraphQL values that may not be `null`. Unlike in the GraphQL schema language, `NonNull` is the default in this library.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Nullable",
+                "comment": " Indicates that a `ValueSpec` describes GraphQL values that may be `null`.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "ObjectType",
+                "comment": " Indicates that a `ValueSpec` describes values of some GraphQL Object type.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Query",
+                "comment": " This type is used as a marker for `Request` and `Document` types to indicate that the document's operation is a query.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Request",
+                "comment": " A `Request` bundles a `Document` along with any variable values that are to be sent along with it to the server. The `operationType` parameter may be either `Query` or `Mutation`. The `result` parameter is the type that a successful response from the server is decoded into.\n",
+                "args": [
+                    "operationType",
+                    "result"
+                ],
+                "cases": []
+            },
+            {
+                "name": "SelectionSpec",
+                "comment": " A specification for a GraphQL selection, to be added to an object `ValueSpec` using the `with` function.\n\nThe `selectionType` can be either `Field`, `FragmentSpread`, or `InlineFragment`.\n\nThe `result` parameter specifies the type produced by the JSON decoder of the `SelectionSpec`.\n\nThe `vars` parameter specifies the type of the Elm value required to supply any variables used anywhere within the `SelectionSpec`.\n\n",
+                "args": [
+                    "selectionType",
+                    "result",
+                    "vars"
+                ],
+                "cases": []
+            },
+            {
+                "name": "StringType",
+                "comment": " Indicates that a `ValueSpec` describes GraphQL `String` values.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "ValueSpec",
+                "comment": " A `ValueSpec` is a structured way of describing a value that you want back from a GraphQL server, and it is the fundamental building block of the request builder interface provided by this module. It corresponds loosely with the GraphQL concept of the \"selection set\", but it is used for scalar values as well as object values, and holds more information about their expected types.\n\nThe `nullability` and `coreType` parameters are used by various functions in this module to ensure consistency when combining `ValueSpec` values. As such, they will probably only become relevant to you when reading error messages from the compiler, at which point they will hopefully make the situation easier to understand.\n\nThe `result` parameter specifies the type produced by the JSON decoder of the `ValueSpec`.\n\nThe `vars` parameter specifies the type of the Elm value required to supply any variables used anywhere within the `ValueSpec`.\n\n",
+                "args": [
+                    "nullability",
+                    "coreType",
+                    "result",
+                    "vars"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "TypeCondition",
+                "comment": " Specifies a named object, interface, or union type from the GraphQL schema that a fragment or inline fragment is valid to be used with.\n",
+                "args": [],
+                "type": "GraphQL.Request.Document.AST.TypeCondition"
+            }
+        ],
+        "values": [
+            {
+                "name": "aliasAs",
+                "comment": " Give an alias to a field, overriding its response key. Useful when you need to ask for a field multiple times with different sets of arguments:\n\n    type alias QueryRoot =\n        { username1 : String\n        , username2 : String\n        }\n\n    querySpec : ValueSpec NonNull ObjectType QueryRoot vars\n    querySpec =\n        object QueryRoot\n            |> with\n                (aliasAs \"user1\"\n                    (field \"user\"\n                        [ ( \"id\", Arg.id \"1\" ) ]\n                        (extract (field \"name\" [] string))\n                    )\n                )\n            |> with\n                (aliasAs \"user2\"\n                    (field \"user\"\n                        [ ( \"id\", Arg.id \"2\" ) ]\n                        (extract (field \"name\" [] string))\n                    )\n                )\n\n",
+                "type": "String.String -> GraphQL.Request.Builder.SelectionSpec GraphQL.Request.Builder.Field result vars -> GraphQL.Request.Builder.SelectionSpec GraphQL.Request.Builder.Field result vars"
+            },
+            {
+                "name": "assume",
+                "comment": " Convert a `SelectionSpec` that decodes to a `Maybe` type into one that assumes the presence of a value and unwraps the `Just` wrapper for you. If `Nothing` is encountered, then the entire decoding process of the response will fail, so don't use this unless you are confident in your assumption! This function is most useful when you know that a fragment spread or inline fragment will successfully match on an object and don't want to deal with an unnecessary `Maybe` wrapper:\n\n    type alias User =\n        { id : String\n        , name : String\n        }\n\n    userNameFragment : Fragment (Maybe String) vars\n    userNameFragment =\n        fragment \"userNameFragment\"\n            (onType \"User\")\n            (extract (field \"name\" [] string))\n\n    userSpec : ValueSpec NonNull ObjectType User vars\n    userSpec =\n        object User\n            |> with (field \"id\" [] id)\n            |> with (assume (fragmentSpread userNameFragment))\n\nAs long as the above `userSpec` is only ever used for selection sets on the schema's `\"User\"` type, then the fragment should always be returned by the server and the `assume` will always succeed.\n\nDepending on the semantics of the GraphQL schema you're working with, it may also be safe to use in some cases where fields are nullable in the schema but you know that in certain cases they are predictably non-null.\n\n",
+                "type": "GraphQL.Request.Builder.SelectionSpec selectionType (Maybe.Maybe result) vars -> GraphQL.Request.Builder.SelectionSpec selectionType result vars"
+            },
+            {
+                "name": "bool",
+                "comment": " A `ValueSpec` for the GraphQL `Boolean` type that decodes to an Elm `Bool`.\n",
+                "type": "GraphQL.Request.Builder.ValueSpec GraphQL.Request.Builder.NonNull GraphQL.Request.Builder.BooleanType Basics.Bool vars"
+            },
+            {
+                "name": "customScalar",
+                "comment": " Create a `ValueSpec` for a custom scalar type defined in the GraphQL schema you're interacting with. The `customTypeMarker` is an Elm type that you define specifically for this custom scalar `ValueSpec` you're making. The type should have a single constructor that takes no arguments, and both should have the CamelCase name of the custom scalar type in the GraphQL schema, plus a `\"Type\"` suffix. For example, if your GraphQL schema has a `Time` type, you should define your `customTypeMarker` like the following, in some module of your choosing:\n\n    type TimeType\n        = TimeType\n\nThe type marker is used by this package to help make sure `ValueSpec`s are only combined in valid ways. In the future, it may be used to help you validate that your queries and mutations against a target schema in your unit tests.\n\nOnce you have `TimeType` to use as a type marker, you can define a `ValueSpec` for the `Time` GraphQL type by supplying `TimeType` as a runtime argument to the function along with a JSON decoder that works with values of the type. For example, you might decide to use the `elm-iso8601` package for parsing and define the `ValueSpec` like so:\n\n    import ISO8601\n    import Json.Decode as Decode\n\n    type TimeType\n        = TimeType\n\n    time : ValueSpec NonNull TimeType ISO8601.Time vars\n    time =\n        Decode.string\n            |> Decode.andThen\n                (\\timeString ->\n                    case ISO8601.fromString timeString of\n                        Ok time ->\n                            Decode.succeed time\n\n                        Err errorMessage ->\n                            Decode.fail errorMessage\n                )\n            |> customScalar TimeType\n\n",
+                "type": "customTypeMarker -> Json.Decode.Decoder result -> GraphQL.Request.Builder.ValueSpec GraphQL.Request.Builder.NonNull customTypeMarker result vars"
+            },
+            {
+                "name": "dict",
+                "comment": " Just like `keyValuePairs`, but the decoded result is a `Dict String value` constructed by applying `Dict.fromList` to the decoded result of `keyValuePairs`.\n",
+                "type": "List.List (GraphQL.Request.Builder.SelectionSpec GraphQL.Request.Builder.Field value vars) -> GraphQL.Request.Builder.ValueSpec GraphQL.Request.Builder.NonNull GraphQL.Request.Builder.ObjectType (Dict.Dict String.String value) vars"
+            },
+            {
+                "name": "enum",
+                "comment": " Constructs a `ValueSpec` for a GraphQL Enum type. Takes a list of string-result pairs to map Enum values to `result` values. For example:\n\n    type AccessLevel\n        = AdminAccess\n        | MemberAccess\n\n    userAccessLevel : ValueSpec NonNull EnumType AccessLevel vars\n    userAccessLevel =\n        enum\n            [ ( \"ADMIN\", AdminAccess )\n            , ( \"MEMBER\", MemberAccess )\n            ]\n\n",
+                "type": "List.List ( String.String, result ) -> GraphQL.Request.Builder.ValueSpec GraphQL.Request.Builder.NonNull GraphQL.Request.Builder.EnumType result vars"
+            },
+            {
+                "name": "enumWithDefault",
+                "comment": " Constructs a `ValueSpec` for a GraphQL Enum type. Works the same as `enum`, but takes a default function to produce a `result` value from any Enum value not specified in the list of known Enum values. This is useful if you expect a schema to add more possible values to an Enum type in the future and don't want to bail out on the decoding process every time you encounter something you haven't seen before:\n\n    type AccessLevel\n        = AdminAccess\n        | MemberAccess\n        | UnknownAccess String\n\n    userAccessLevel : ValueSpec NonNull EnumType AccessLevel vars\n    userAccessLevel =\n        enumWithDefault UnknownAccess\n            [ ( \"ADMIN\", AdminAccess )\n            , ( \"MEMBER\", MemberAccess )\n            ]\n\n",
+                "type": "(String.String -> result) -> List.List ( String.String, result ) -> GraphQL.Request.Builder.ValueSpec GraphQL.Request.Builder.NonNull GraphQL.Request.Builder.EnumType result vars"
+            },
+            {
+                "name": "extract",
+                "comment": " Make a `ValueSpec` for an object with only a single `SelectionSpec`. In cases where you only need one selection from an object, this function lets you conveniently extract the decoded result of that selection directly into the parent result. For example, the following code uses `extract` to hoist the `id` field of each `Project` result into a list of `projectIDs` on the `User` record:\n\n    type alias User =\n        { name : String\n        , projectIDs : List String\n        }\n\n    userSpec : ValueSpec NonNull ObjectType User vars\n    userSpec =\n        object User\n            |> with (field \"name\" [])\n            |> with\n                (field \"projects\"\n                    []\n                    (list (extract (field \"id\" [] id)))\n                )\n\nThis helps you avoid having extra levels of nesting that you don't need in your result types.\n\n",
+                "type": "GraphQL.Request.Builder.SelectionSpec selectionType result vars -> GraphQL.Request.Builder.ValueSpec GraphQL.Request.Builder.NonNull GraphQL.Request.Builder.ObjectType result vars"
+            },
+            {
+                "name": "field",
+                "comment": " Constructs a `SelectionSpec` for a field that you can add to an object `ValueSpec` with the `with` function. Takes the name of the field, a list of arguments, and a `ValueSpec` for the field's value.\n",
+                "type": "String.String -> List.List ( String.String, GraphQL.Request.Builder.Arg.Value vars ) -> GraphQL.Request.Builder.ValueSpec nullability coreType result vars -> GraphQL.Request.Builder.SelectionSpec GraphQL.Request.Builder.Field result vars"
+            },
+            {
+                "name": "float",
+                "comment": " A `ValueSpec` for the GraphQL `Float` type that decodes to an Elm `Float`.\n",
+                "type": "GraphQL.Request.Builder.ValueSpec GraphQL.Request.Builder.NonNull GraphQL.Request.Builder.FloatType Basics.Float vars"
+            },
+            {
+                "name": "fragment",
+                "comment": " Construct a `Fragment` by providing a name, a `TypeCondition`, and a `ValueSpec`. The `ValueSpec` argument must be a `NonNull Object` ValueSpec, because it represents the selection set of the fragment.\n",
+                "type": "String.String -> GraphQL.Request.Builder.TypeCondition -> GraphQL.Request.Builder.ValueSpec GraphQL.Request.Builder.NonNull GraphQL.Request.Builder.ObjectType result vars -> GraphQL.Request.Builder.Fragment result vars"
+            },
+            {
+                "name": "fragmentSpread",
+                "comment": " Constructs a `SelectionSpec` for a fragment spread that you can add to an object `ValueSpec` with the `with` function. Takes a `Fragment` and a list of optional directives. The directives are tuples whose first element is the name of the directive, and whose second element is a list of key-value tuples representing the directive arguments. Argument values are constructed using functions from [`GraphQL.Request.Builder.Value`](GraphQL-Request-Builder-Value).\n\nThe fragment decoder's result type is wrapped in a `Maybe` to account for fragments with type constraints that do not hold for all values of the parent `ValueSpec`. This means that normally the parent `ValueSpec`'s constructor function must accept a `Maybe` of the fragment result as its next argument:\n\n    type alias User =\n        { name : String\n        , employeeInfo : Maybe EmployeeInfo\n        }\n\n    type alias EmployeeInfo =\n        { employeeNumber : Int\n        , title : String\n        }\n\n    employeeInfoFragment : Fragment EmployeeInfo vars\n    employeeInfoFragment =\n        fragment \"employeeInfoFragment\"\n            (onType \"Employee\")\n            (object EmployeeInfo\n                |> with (field \"employeeNumber\" [] int)\n                |> with (field \"title\" [] string)\n            )\n\n    userSpec : ValueSpec NonNull ObjectType User vars\n    userSpec =\n        object User\n            |> with (field \"name\" [] string)\n            |> with (fragmentSpread employeeInfoFragment [])\n\nIn cases where you know for sure that a fragment will successfully produce values in the response for a given `ValueSpec`, you can use the `assume` function to unwrap the `Maybe` for you.\n\nIncluding the above `userSpec` anywhere in a `Document` results in the following fragment definition being included in the serialized output:\n\n    fragment employeeInfoFragment on Employee {\n      employeeNumber\n      title\n    }\n\nMeanwhile, the selection set of `userSpec` itself would look like this wherever it's used:\n\n    {\n      name\n      ...employeeInfoFragment\n    }\n\n",
+                "type": "GraphQL.Request.Builder.Fragment result vars -> GraphQL.Request.Builder.SelectionSpec GraphQL.Request.Builder.FragmentSpread (Maybe.Maybe result) vars"
+            },
+            {
+                "name": "id",
+                "comment": " A `ValueSpec` for the GraphQL `ID` type that decodes to an Elm `String`.\n",
+                "type": "GraphQL.Request.Builder.ValueSpec GraphQL.Request.Builder.NonNull GraphQL.Request.Builder.IdType String.String vars"
+            },
+            {
+                "name": "inlineFragment",
+                "comment": " Constructs a `SelectionSpec` for an object with a single inline fragment. Takes an optional `TypeCondition`, a list of optional directives, and a `ValueSpec` representing the selection set of the inline fragment. The directives are tuples whose first element is the name of the directive, and whose second element is a list of key-value tuples representing the directive arguments. Argument values are constructed using functions from [`GraphQL.Request.Builder.Value`](GraphQL-Request-Builder-Value).\n\nThe result type of the inline fragment's `SelectionSpec` is wrapped in a `Maybe` to account for type constraints that do not hold for all values of the parent `ValueSpec`. This means that the parent `ValueSpec`'s constructor function must accept a `Maybe` of the fragment result as its next argument:\n\n    type alias User =\n        { name : String\n        , employeeInfo : Maybe EmployeeInfo\n        }\n\n    type alias EmployeeInfo =\n        { employeeNumber : Int\n        , title : String\n        }\n\n    userSpec : ValueSpec NonNull ObjectType User vars\n    userSpec =\n        object User\n            |> with (field \"name\" [] string)\n            |> with\n                (inlineFragment (Just (onType \"Employee\"))\n                    []\n                    (object EmployeeInfo\n                        |> with (field \"employeeNumber\" [] int)\n                        |> with (field \"title\" [] string)\n                    )\n                )\n\nThe selection set of the above `userSpec` would look like the following wherever it's used:\n\n    {\n      name\n      ... on Employee {\n        employeeNumber\n        title\n      }\n    }\n\n",
+                "type": "Maybe.Maybe GraphQL.Request.Builder.TypeCondition -> GraphQL.Request.Builder.ValueSpec GraphQL.Request.Builder.NonNull GraphQL.Request.Builder.ObjectType result vars -> GraphQL.Request.Builder.SelectionSpec GraphQL.Request.Builder.InlineFragment (Maybe.Maybe result) vars"
+            },
+            {
+                "name": "int",
+                "comment": " A `ValueSpec` for the GraphQL `Int` type that decodes to an Elm `Int`.\n",
+                "type": "GraphQL.Request.Builder.ValueSpec GraphQL.Request.Builder.NonNull GraphQL.Request.Builder.IntType Basics.Int vars"
+            },
+            {
+                "name": "jsonVariableValues",
+                "comment": " Get the variable values associated with a `Request` (if there are any) as a `Maybe Json.Encode.Value`, ready to be sent as a parameter to a GraphQL server.\n",
+                "type": "GraphQL.Request.Builder.Request operationType result -> Maybe.Maybe Json.Encode.Value"
+            },
+            {
+                "name": "keyValuePairs",
+                "comment": " Takes a list of field selections, all of whom must decode to the same Elm type, and returns a `ValueSpec` for an object that decodes to a list of corresponding `(key, value)` pairs. Especially useful when you want to dynamically query multiple variations of the same field using aliases. For example:\n\n    userAvatarUrlField : String -> SelectionSpec Field String vars\n    userAvatarUrlField name =\n        aliasAs name <|\n            field \"user\"\n                [ ( \"login\", Arg.string name ) ]\n                (extract (field \"avatarUrl\" [] string))\n\n    userAvatarUrls : List String -> Document Query (List ( String, String )) vars\n    userAvatarUrls names =\n        queryDocument <|\n            keyValuePairs (List.map userAvatarUrlField names)\n\nIf you used this code to construct a query document with `userAvatarUrls [\"alice\", \"bob\"]`, the resulting query would look like this:\n\n    alice: user(login: \"alice\") {\n      avatarUrl\n    }\n    bob: user(login: \"bob\") {\n      avatarUrl\n    }\n\n...and a successful decoded result would look something like this:\n\n    [ (\"alice\", \"https://cdn.example.com/alice.png\")\n    , (\"bob\", \"https://cdn.example.com/bob.png\")\n    ]\n\nNote that field aliases must still conform to the GraphQL spec:\n\n<https://facebook.github.io/graphql/#sec-Names>\n\nThis means that the above example would not be suitable to use when the usernames are supplied from user input. If the user supplies a name that is not a valid GraphQL alias, then the GraphQL server would return an error response. In a case like that where you are generating a query from user input, you will need to find some other way of generating the field aliases.\n\n",
+                "type": "List.List (GraphQL.Request.Builder.SelectionSpec GraphQL.Request.Builder.Field value vars) -> GraphQL.Request.Builder.ValueSpec GraphQL.Request.Builder.NonNull GraphQL.Request.Builder.ObjectType (List.List ( String.String, value )) vars"
+            },
+            {
+                "name": "list",
+                "comment": " Constructs a `ValueSpec` for a GraphQL List type. Takes any kind of `ValueSpec` to use for the items of the list, and returns a `ValueSpec` that decodes into an Elm `List`.\n",
+                "type": "GraphQL.Request.Builder.ValueSpec itemNullability itemType result vars -> GraphQL.Request.Builder.ValueSpec GraphQL.Request.Builder.NonNull (GraphQL.Request.Builder.ListType itemNullability itemType) (List.List result) vars"
+            },
+            {
+                "name": "map",
+                "comment": " Transform the decoded value of a `ValueSpec` with the given function, just like `Json.Decode.map`. Here it is used to wrap an `id` field in a custom type:\n\n    type UserId\n        = UserId String\n\n    type alias User =\n        { id : UserId\n        , name : String\n        }\n\n    user : ValueSpec NonNull ObjectType User vars\n    user =\n        object User\n            |> with (field \"id\" [] (map UserId id))\n            |> with (field \"name\" [] string)\n\nHere's an example of using `map` with `nullable` to implement a function that can provide a default value for nullable fields:\n\n    nullableWithDefault :\n        a\n        -> ValueSpec NonNull coreType a vars\n        -> ValueSpec Nullable coreType a vars\n    nullableWithDefault default spec =\n        map (Maybe.withDefault default) (nullable spec)\n\n",
+                "type": "(a -> b) -> GraphQL.Request.Builder.ValueSpec nullability coreType a vars -> GraphQL.Request.Builder.ValueSpec nullability coreType b vars"
+            },
+            {
+                "name": "mutationDocument",
+                "comment": " Take a `ValueSpec` and return a `Document` for a single mutation operation. The argument must be a `NonNull Object` ValueSpec, because it represents the root-level selection set of the mutation operation. Here's an example of a mutation that logs in a user and extracts an auth token from the response:\n\n    type alias LoginVars =\n        { username : String\n        , password : String\n        }\n\n    loginMutation : Document Mutation String LoginVars\n    loginMutation =\n        let\n            usernameVar =\n                Var.required \"username\" .username Var.string\n\n            passwordVar =\n                Var.required \"password\" .password Var.string\n        in\n            mutationDocument <|\n                extract\n                    (field \"login\"\n                        [ ( \"username\", Arg.variable usernameVar )\n                        , ( \"password\", Arg.variable passwordVar )\n                        ]\n                        (extract (field \"token\" [] string))\n                    )\n\n",
+                "type": "GraphQL.Request.Builder.ValueSpec GraphQL.Request.Builder.NonNull GraphQL.Request.Builder.ObjectType result vars -> GraphQL.Request.Builder.Document GraphQL.Request.Builder.Mutation result vars"
+            },
+            {
+                "name": "namedMutationDocument",
+                "comment": " Like `mutationDocument`, but takes a name for the mutation as an extra first argument. The name is used as a label for the operation in the generated GraphQL document and can be useful for logging and debugging purposes.\n",
+                "type": "String.String -> GraphQL.Request.Builder.ValueSpec GraphQL.Request.Builder.NonNull GraphQL.Request.Builder.ObjectType result vars -> GraphQL.Request.Builder.Document GraphQL.Request.Builder.Mutation result vars"
+            },
+            {
+                "name": "namedQueryDocument",
+                "comment": " Like `queryDocument`, but takes a name for the query as an extra first argument. The name is used as a label for the operation in the generated GraphQL document and can be useful for logging and debugging purposes.\n",
+                "type": "String.String -> GraphQL.Request.Builder.ValueSpec GraphQL.Request.Builder.NonNull GraphQL.Request.Builder.ObjectType result vars -> GraphQL.Request.Builder.Document GraphQL.Request.Builder.Query result vars"
+            },
+            {
+                "name": "nullable",
+                "comment": " Transforms a `NonNull` `ValueSpec` into one that allows `null` values, using a `Maybe` of the original `ValueSpec`'s `result` type to represent the nullability in the decoded Elm value.\n\nNote that the default `nullability` of a `ValueSpec` in this module is `NonNull`. This is the opposite of the situation in the GraphQL schema language, whose types must be annotated with the Non-Null (`!`) modifier in order to specify that their values will never be `null`.\n\n",
+                "type": "GraphQL.Request.Builder.ValueSpec GraphQL.Request.Builder.NonNull coreType result vars -> GraphQL.Request.Builder.ValueSpec GraphQL.Request.Builder.Nullable coreType (Maybe.Maybe result) vars"
+            },
+            {
+                "name": "object",
+                "comment": " Takes a constructor function for an Elm type you want to produce, and returns a `ValueSpec` for an object without any fields yet specified. This function is intended to start a pipeline of calls to the `with` function to add field and fragment selections to the `ValueSpec`. The order of arguments to the constructor function determines the order that the selections must be added. For example:\n\n    type alias User =\n        { name : String\n        , isAdmin : Bool\n        }\n\n    userSummary : ValueSpec NonNull ObjectType User vars\n    userSummary =\n        object User\n            |> with (field \"name\" [] string)\n            |> with (field \"isAdmin\" [] bool)\n\nThe above `ValueSpec` produces a GraphQL selection set that looks like the following:\n\n    {\n      name\n      isAdmin\n    }\n\nThe same `ValueSpec` also provides a JSON decoder for decoding part of the response, equivalent to the following:\n\n    Json.Decode.map2 User\n        (Json.Decode.field \"name\" Json.Decode.string)\n        (Json.Decode.field \"isAdmin\" Json.Decode.bool)\n\n",
+                "type": "(fieldValue -> a) -> GraphQL.Request.Builder.ValueSpec GraphQL.Request.Builder.NonNull GraphQL.Request.Builder.ObjectType (fieldValue -> a) vars"
+            },
+            {
+                "name": "onType",
+                "comment": " Construct a `TypeCondition` from the name of an object, interface, or union type defined in a GraphQL schema.\n",
+                "type": "String.String -> GraphQL.Request.Builder.TypeCondition"
+            },
+            {
+                "name": "queryDocument",
+                "comment": " Take a `ValueSpec` and return a `Document` for a single query operation. The argument must be a `NonNull Object` ValueSpec, because it represents the root-level selection set of the query operation.\n",
+                "type": "GraphQL.Request.Builder.ValueSpec GraphQL.Request.Builder.NonNull GraphQL.Request.Builder.ObjectType result vars -> GraphQL.Request.Builder.Document GraphQL.Request.Builder.Query result vars"
+            },
+            {
+                "name": "request",
+                "comment": " Turn a `Document` into a `Request` that can be sent to a server, by supplying a `vars` value that is used to obtain values for any variables used in the `Document`. If the `Document` does not use any variables, then you can pass in `()` or any other value as the `vars` and it will be ignored.\n",
+                "type": "vars -> GraphQL.Request.Builder.Document operationType result vars -> GraphQL.Request.Builder.Request operationType result"
+            },
+            {
+                "name": "requestBody",
+                "comment": " Get the serialized document body of a `Request`.\n",
+                "type": "GraphQL.Request.Builder.Request operationType result -> String.String"
+            },
+            {
+                "name": "responseDataDecoder",
+                "comment": " Get a JSON decoder that can be used to decode the data contained in a successful response to a `Request`. If you're working with a conventional GraphQL response over HTTP, the returned `Decoder` works on the data found under the `\"data\"` key of the response.\n",
+                "type": "GraphQL.Request.Builder.Request operationType result -> Json.Decode.Decoder result"
+            },
+            {
+                "name": "string",
+                "comment": " A `ValueSpec` for the GraphQL `String` type that decodes to an Elm `String`.\n",
+                "type": "GraphQL.Request.Builder.ValueSpec GraphQL.Request.Builder.NonNull GraphQL.Request.Builder.StringType String.String vars"
+            },
+            {
+                "name": "with",
+                "comment": " Use this function to add `SelectionSpec`s to an object `ValueSpec` pipeline:\n\n    type alias User =\n        { name : String\n        , adminAccess : Bool\n        }\n\n    userSpec : ValueSpec NonNull ObjectType User vars\n    userSpec =\n        object User\n            |> with (field \"name\" [] string)\n            |> with (field \"adminAccess\" [] bool)\n\n",
+                "type": "GraphQL.Request.Builder.SelectionSpec selectionType a vars -> GraphQL.Request.Builder.ValueSpec GraphQL.Request.Builder.NonNull GraphQL.Request.Builder.ObjectType (a -> b) vars -> GraphQL.Request.Builder.ValueSpec GraphQL.Request.Builder.NonNull GraphQL.Request.Builder.ObjectType b vars"
+            },
+            {
+                "name": "withDirectives",
+                "comment": " Specify a list of directives to use with a GraphQL selection. Each directive takes the form of a tuple of `(directiveName, args)`. The returned `SelectionSpec`'s decoder wraps the result type in a `Maybe` to account for the fact that the server may omit the selection because of the directives.\n",
+                "type": "List.List ( String.String, List.List ( String.String, GraphQL.Request.Builder.Arg.Value vars ) ) -> GraphQL.Request.Builder.SelectionSpec selectionType result vars -> GraphQL.Request.Builder.SelectionSpec selectionType (Maybe.Maybe result) vars"
+            },
+            {
+                "name": "withLocalConstant",
+                "comment": " Adds a hardcoded local constant value to an object `ValueSpec` pipeline. This can be useful for initializing records with default local state values:\n\n    type alias Item =\n        { name : String\n        , selected : Bool\n        }\n\n    itemSpec : ValueSpec NonNull ObjectType Item vars\n    itemSpec =\n        object Item\n            |> with (field \"name\" [] string)\n            |> withLocalConstant False\n\nAny `Item` record decoded by `itemSpec` would then have its `selected` field initialized to `False`. Adding a local constant in this way has no effect on the corresponding GraphQL selection set that is sent to the server — `itemSpec`'s selection set would simply be `{ name }`.\n\n",
+                "type": "a -> GraphQL.Request.Builder.ValueSpec GraphQL.Request.Builder.NonNull GraphQL.Request.Builder.ObjectType (a -> b) vars -> GraphQL.Request.Builder.ValueSpec GraphQL.Request.Builder.NonNull GraphQL.Request.Builder.ObjectType b vars"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "GraphQL.Request.Builder.Arg",
+        "comment": " The functions in this module let you construct argument values that you can pass to fields and directives using the functions in [`GraphQL.Request.Builder`](GraphQL-Request-Builder).\n\n@docs Value, variable, int, float, string, bool, true, false, null, enum, object, list, getAST, getVariables\n",
+        "unions": [
+            {
+                "name": "Value",
+                "comment": " An argument value, which might be either a constant or a variable. The `vars` parameter is the type of Elm value that variables will extract their values from.\n",
+                "args": [
+                    "vars"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "bool",
+                "comment": " Construct a constant GraphQL `Boolean` argument value from an Elm `Bool`.\n",
+                "type": "Basics.Bool -> GraphQL.Request.Builder.Arg.Value vars"
+            },
+            {
+                "name": "enum",
+                "comment": " Construct a GraphQL Enum value from a `String`.\n",
+                "type": "String.String -> GraphQL.Request.Builder.Arg.Value vars"
+            },
+            {
+                "name": "false",
+                "comment": " The GraphQL `false` value.\n",
+                "type": "GraphQL.Request.Builder.Arg.Value vars"
+            },
+            {
+                "name": "float",
+                "comment": " Construct a constant GraphQL `Float` argument value from an Elm `Float`.\n",
+                "type": "Basics.Float -> GraphQL.Request.Builder.Arg.Value vars"
+            },
+            {
+                "name": "getAST",
+                "comment": " Returns the AST (abstract syntax tree) representation of a `Value`.\n",
+                "type": "GraphQL.Request.Builder.Arg.Value vars -> GraphQL.Request.Document.AST.ArgumentValue"
+            },
+            {
+                "name": "getVariables",
+                "comment": " Returns a `List` of any `Variable`s used in the given `Value`.\n",
+                "type": "GraphQL.Request.Builder.Arg.Value vars -> List.List (GraphQL.Request.Builder.Variable.Variable vars)"
+            },
+            {
+                "name": "int",
+                "comment": " Construct a constant GraphQL `Int` argument value from an Elm `Int`.\n",
+                "type": "Basics.Int -> GraphQL.Request.Builder.Arg.Value vars"
+            },
+            {
+                "name": "list",
+                "comment": " Constructs a GraphQL List from an Elm `List` of `Value`s.\n",
+                "type": "List.List (GraphQL.Request.Builder.Arg.Value vars) -> GraphQL.Request.Builder.Arg.Value vars"
+            },
+            {
+                "name": "null",
+                "comment": " The GraphQL `null` value.\n",
+                "type": "GraphQL.Request.Builder.Arg.Value vars"
+            },
+            {
+                "name": "object",
+                "comment": " Constructs a GraphQL Input Object value from a list of key-value pairs.\n",
+                "type": "List.List ( String.String, GraphQL.Request.Builder.Arg.Value vars ) -> GraphQL.Request.Builder.Arg.Value vars"
+            },
+            {
+                "name": "string",
+                "comment": " Construct a constant GraphQL `String` argument value from an Elm `String`.\n",
+                "type": "String.String -> GraphQL.Request.Builder.Arg.Value vars"
+            },
+            {
+                "name": "true",
+                "comment": " The GraphQL `true` value.\n",
+                "type": "GraphQL.Request.Builder.Arg.Value vars"
+            },
+            {
+                "name": "variable",
+                "comment": " Construct a variable argument value.\n",
+                "type": "GraphQL.Request.Builder.Variable.Variable vars -> GraphQL.Request.Builder.Arg.Value vars"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "GraphQL.Request.Builder.Variable",
+        "comment": " The functions in this module let you define GraphQL variables that you can pass as arguments in your request documents built with the functions in [`GraphQL.Request.Builder`](GraphQL-Request-Builder).\n\n@docs VariableSpec, Nullable, NonNull, Variable, Field, required, optional, int, float, string, bool, id, enum, nullable, list, object, field, optionalField, name, toDefinitionAST, extractValuesFrom\n",
+        "unions": [
+            {
+                "name": "Field",
+                "comment": " Describes a single field of a GraphQL Input Object type.\n",
+                "args": [
+                    "source"
+                ],
+                "cases": []
+            },
+            {
+                "name": "NonNull",
+                "comment": " This type is used as a marker for the `VariableSpec` type's `nullability` parameter to indicate that the described GraphQL variable will never be filled with a `null` value.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Nullable",
+                "comment": " This type is used as a marker for the `VariableSpec` type's `nullability` parameter to indicate that the described GraphQL variable may be filled with a `null` value.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Variable",
+                "comment": " This type represents a GraphQL variable definition, and includes enough information to extract a conforming GraphQL value from some arbitrary `source` type supplied by your Elm code.\n",
+                "args": [
+                    "source"
+                ],
+                "cases": []
+            },
+            {
+                "name": "VariableSpec",
+                "comment": " A specification for the type of a `Variable` which includes enough information to extract a conforming value from an Elm value.\n",
+                "args": [
+                    "nullability",
+                    "source"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "bool",
+                "comment": " A `VariableSpec` for the GraphQL `Boolean` type that extracts its value from an Elm `Bool`.\n",
+                "type": "GraphQL.Request.Builder.Variable.VariableSpec GraphQL.Request.Builder.Variable.NonNull Basics.Bool"
+            },
+            {
+                "name": "enum",
+                "comment": " Constructs a `VariableSpec` for a GraphQL Enum type. The first argument is the name of an Enum type as defined in the GraphQL schema being used. The second argument is a function that converts values of some arbitrary `source` type into `String` symbols that correspond to the Enum's possible values as defined in the schema.\n\n    type AccessLevel\n        = AdminAccess\n        | MemberAccess\n\n    accessLevelToEnumSymbol : AccessLevel -> String\n    accessLevelToEnumSymbol accessLevel =\n        case accessLevel of\n            AdminAccess ->\n                \"ADMIN\"\n\n            MemberAccess ->\n                \"MEMBER\"\n\n    accessLevel : VariableSpec NonNull AccessLevel\n    accessLevel =\n        enum \"AccessLevel\" accessLevelToEnumSymbol\n",
+                "type": "String.String -> (source -> String.String) -> GraphQL.Request.Builder.Variable.VariableSpec GraphQL.Request.Builder.Variable.NonNull source"
+            },
+            {
+                "name": "extractValuesFrom",
+                "comment": " Extracts generic values from a `source` and a `List` of zero or more compatible `Variable`s.\n",
+                "type": "source -> List.List (GraphQL.Request.Builder.Variable.Variable source) -> List.List ( String.String, GraphQL.Request.Document.AST.ConstantValue )"
+            },
+            {
+                "name": "field",
+                "comment": " Constructs a `Field` to be passed to the `object` function. The first argument is the name of the field. The second argument is a function that extracts this field's value from the value that represents the whole object. See the documentation for `object` for more details.\n",
+                "type": "String.String -> (objVariableSource -> fieldVariableSource) -> GraphQL.Request.Builder.Variable.VariableSpec nullability fieldVariableSource -> GraphQL.Request.Builder.Variable.Field objVariableSource"
+            },
+            {
+                "name": "float",
+                "comment": " A `VariableSpec` for the GraphQL `Float` type that extracts its value from an Elm `Float`.\n",
+                "type": "GraphQL.Request.Builder.Variable.VariableSpec GraphQL.Request.Builder.Variable.NonNull Basics.Float"
+            },
+            {
+                "name": "id",
+                "comment": " A `VariableSpec` for the GraphQL `ID` type that extracts its value from an Elm `String`.\n",
+                "type": "GraphQL.Request.Builder.Variable.VariableSpec GraphQL.Request.Builder.Variable.NonNull String.String"
+            },
+            {
+                "name": "int",
+                "comment": " A `VariableSpec` for the GraphQL `Int` type that extracts its value from an Elm `Int`.\n",
+                "type": "GraphQL.Request.Builder.Variable.VariableSpec GraphQL.Request.Builder.Variable.NonNull Basics.Int"
+            },
+            {
+                "name": "list",
+                "comment": " Constructs a `VariableSpec` for a GraphQL List type out of another `VariableSpec` that represents its items.\n",
+                "type": "GraphQL.Request.Builder.Variable.VariableSpec nullability source -> GraphQL.Request.Builder.Variable.VariableSpec GraphQL.Request.Builder.Variable.NonNull (List.List source)"
+            },
+            {
+                "name": "name",
+                "comment": " Returns the name of a `Variable` as it appears in a GraphQL request document, without any leading dollar sign (`$`).\n",
+                "type": "GraphQL.Request.Builder.Variable.Variable source -> String.String"
+            },
+            {
+                "name": "nullable",
+                "comment": " Transforms a `NonNull` `VariableSpec` into one that allows `null` values, extracting its value from a `Maybe`.\n",
+                "type": "GraphQL.Request.Builder.Variable.VariableSpec GraphQL.Request.Builder.Variable.NonNull source -> GraphQL.Request.Builder.Variable.VariableSpec GraphQL.Request.Builder.Variable.Nullable (Maybe.Maybe source)"
+            },
+            {
+                "name": "object",
+                "comment": " Constructs a `VariableSpec` for a GraphQL Input Object type. The first argument is the name of an Input Object type as defined in the GraphQL schema being used. The second argument is a `List` of `Field` values constructed with the `field` function.\n\n    type alias UpdateUserInputData =\n        { name : String\n        , email : String\n        }\n\n    userDataVar : Variable { vars | userData : UpdateUserInputData }\n    userDataVar =\n        required \"userData\"\n            .userData\n            (object \"UpdateUserInput\"\n                [ field \"name\" .name string\n                , field \"email\" .email string\n                ]\n            )\n",
+                "type": "String.String -> List.List (GraphQL.Request.Builder.Variable.Field source) -> GraphQL.Request.Builder.Variable.VariableSpec GraphQL.Request.Builder.Variable.NonNull source"
+            },
+            {
+                "name": "optional",
+                "comment": " Construct a `Variable` that has a default value, and therefore its `source` may or may not provide a value for it. The first three arguments are the same as for the `required` function, except that the function to extract a value from `source` must return a `Maybe` of the type expected by the `VariableSpec`. The last argument is a default value for the variable.\n\nNote that the `VariableSpec` may be either `Nullable` or `NonNull`, but in both cases the variable definition is serialized _without_ a Non-Null modifier in the GraphQL request document, because optional variables may not be Non-Null in GraphQL. If you pass a `NonNull` `VariableSpec` into this function, it just means that you won't be able to represent an explicit `null` for the variable's value. If instead you pass a `Nullable` `VariableSpec` into this function, you will be able to represent an explicit `null` value for the variable, but you'll also have to deal with double-wrapped `Maybe` values – a missing value is then represented as a `Nothing` returned from your extraction function, and a `null` value is represented as `Just Nothing`. For this reason, it is recommended that you stick to `NonNull` `VariableSpec` values here unless you really need to be able to pass `null` explictly to the GraphQL server.\n",
+                "type": "String.String -> (source -> Maybe.Maybe a) -> GraphQL.Request.Builder.Variable.VariableSpec nullability a -> a -> GraphQL.Request.Builder.Variable.Variable source"
+            },
+            {
+                "name": "optionalField",
+                "comment": " Like `field`, except the extractor function must return a `Maybe` value. When the extracted value is `Nothing`, the field is not included in the object sent to the server at all. This works in a very similar way to the `optional` function, except that `optional` is used for entire optional variables while `optionalField` is used for optional fields of variable input objects.\n\nThe `VariableSpec` provided as the third argument may either be `Nullable` or `NonNull`. If the `VariableSpec` is `NonNull`, then the extracted value is wrapped in a single `Maybe` as described above. If it is `Nullable`, then a double-Maybe-wrapped value is extracted from the variables value. In this case, `Nothing` indicates that the field should be omitted, `Just Nothing` indicates an explicit `null` value, and `Just (Just x)` indicates a regular non-null value. In both cases, this function should never be used with fields of input objects that have been defined as non-null by the schema.\n\nIn the following example, both the `phoneNumber` and `email` fields are optional. However, only the `phoneNumber` field may be assigned an explicit `null` value (represented by `Just Nothing`):\n\n    type alias UpdateUserInputData =\n        { id : String\n        , email : Maybe String\n        , phoneNumber : Maybe (Maybe String)\n        }\n\n    userDataVar : Variable { vars | userData : UpdateUserInputData }\n    userDataVar =\n        required \"userData\"\n            .userData\n            (object \"UpdateUserInput\"\n                [ field \"id\" .id id\n                , optionalField \"email\" .email string\n                , optionalField \"phoneNumber\" .phoneNumber (nullable string)\n                ]\n            )\n",
+                "type": "String.String -> (objVariableSource -> Maybe.Maybe fieldVariableSource) -> GraphQL.Request.Builder.Variable.VariableSpec nullability fieldVariableSource -> GraphQL.Request.Builder.Variable.Field objVariableSource"
+            },
+            {
+                "name": "required",
+                "comment": " Construct a `Variable` that has no default value, and therefore must extract its value from a `source`. The first argument is the name of the variable that appears in the GraphQL request document, and must be unique for that document. It should _not_ include any leading dollar sign (`$`). The second argument is a function that extracts a value of the required type from a `source`. The third argument is a `VariableSpec` that describes the type of the variable.\n",
+                "type": "String.String -> (source -> a) -> GraphQL.Request.Builder.Variable.VariableSpec nullability a -> GraphQL.Request.Builder.Variable.Variable source"
+            },
+            {
+                "name": "string",
+                "comment": " A `VariableSpec` for the GraphQL `String` type that extracts its value from an Elm `String`.\n",
+                "type": "GraphQL.Request.Builder.Variable.VariableSpec GraphQL.Request.Builder.Variable.NonNull String.String"
+            },
+            {
+                "name": "toDefinitionAST",
+                "comment": " Returns the AST (abstract syntax tree) representation of a `Variable`.\n",
+                "type": "GraphQL.Request.Builder.Variable.Variable source -> GraphQL.Request.Document.AST.VariableDefinition"
+            }
+        ],
+        "binops": []
+    }
+]

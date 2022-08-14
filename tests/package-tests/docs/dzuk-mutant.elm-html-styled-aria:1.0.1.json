@@ -1,0 +1,106 @@
+[
+    {
+        "name": "Html.Styled.Attributes.Aria",
+        "comment": " Additional attributes for html\n\n\n# Aria role\n\n@docs role\n\n\n# Aria Attributes\n\n@docs ariaActiveDescendant\n@docs ariaChecked\n@docs ariaControls\n@docs ariaDescribedby\n@docs ariaDisabled\n@docs ariaExpanded\n@docs ariaHasPopup\n@docs ariaHidden\n@docs ariaLabel\n@docs ariaLabelledby\n@docs ariaLive\n@docs ariaPressed\n@docs ariaReadonly\n@docs ariaRequired\n@docs ariaSelected\n@docs ariaValueMax\n@docs ariaValueMin\n@docs ariaValueNow\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "ariaActiveDescendant",
+                "comment": " Identifies the currently active descendant of a composite widget.\nSee the [official specs](https://www.w3.org/TR/wai-aria-1.1/#aria-activedescendant).\n\n    div [ ariaActiveDescendant \"id\" ] [ text \"Hello aria!\" ]\n\n",
+                "type": "String.String -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "ariaChecked",
+                "comment": " Indicates the current \"checked\" state of checkboxes, radio buttons, and other widgets.\nSee the [official specs](https://www.w3.org/TR/wai-aria-1.1/#aria-checked).\n\n    div [ ariaChecked \"true\" ] [ text \"Hello aria!\" ]\n\n",
+                "type": "String.String -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "ariaControls",
+                "comment": " Identifies the element (or elements) whose contents or presence are controlled by the current element.\nSee the [official specs](https://www.w3.org/TR/wai-aria-1.1/#aria-controls).\n\n    div [ ariaControls \"dropdown-menu\" ] [ text \"Hello aria!\" ]\n\n",
+                "type": "String.String -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "ariaDescribedby",
+                "comment": " Identifies the element (or elements) that describes the object.\nSee the [official specs](https://www.w3.org/TR/wai-aria-1.1/#aria-describedby).\n\n    div [ ariaDescribedby \"id\" ] [ text \"Hello aria!\" ]\n\n",
+                "type": "String.String -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "ariaDisabled",
+                "comment": " Indicates that the element is perceivable but disabled, so it is not editable or otherwise operable.\nSee the [official specs](https://www.w3.org/TR/wai-aria-1.1/#aria-disabled).\n\n    div [ ariaDisabled True ] [ text \"Hello aria!\" ]\n\n",
+                "type": "Basics.Bool -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "ariaExpanded",
+                "comment": " Indicates whether the element, or another grouping element it controls, is currently expanded or collapsed.\nSee the [official specs](https://www.w3.org/TR/wai-aria-1.1/#aria-expanded).\n\n    div [ ariaExpanded \"true\" ] [ text \"Hello aria!\" ]\n\n",
+                "type": "String.String -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "ariaHasPopup",
+                "comment": " Indicates the availability and type of interactive popup element, such as menu or dialog, that can be triggered by an element.\nSee the [official specs](https://www.w3.org/TR/wai-aria-1.1/#aria-haspopup).\n\n    div [ ariaHasPopup \"menu\" ] [ text \"Hello aria!\" ]\n\n",
+                "type": "String.String -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "ariaHidden",
+                "comment": " Indicates that the element and all of its descendants are not visible or perceivable to any user as implemented by the author.\nSee the [official specs](https://www.w3.org/TR/wai-aria-1.1/#aria-hidden).\n\n    div [ ariaHidden True ] [ text \"Hello aria!\" ]\n\n",
+                "type": "Basics.Bool -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "ariaLabel",
+                "comment": " Defines a string value that labels the current element.\nSee the [official specs](https://www.w3.org/TR/wai-aria-1.1/#aria-label).\n\n    div [ ariaLabel \"label\" ] [ text \"Hello aria!\" ]\n\n",
+                "type": "String.String -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "ariaLabelledby",
+                "comment": " Identifies the element (or elements) that labels the current element.\nSee the [official specs](https://www.w3.org/TR/wai-aria-1.1/#aria-labelledby).\n\n    div [ ariaLabelledby \"id\" ] [ text \"Hello aria!\" ]\n\n",
+                "type": "String.String -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "ariaLive",
+                "comment": " Indicates that an element will be updated, and describes the types of updates the user agents,\nassistive technologies, and user can expect from the live region.\nSee the [official specs](https://www.w3.org/TR/wai-aria-1.1/#aria-live).\n\n    input [ ariaLive \"assertive\" ] []\n\n",
+                "type": "String.String -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "ariaPressed",
+                "comment": " Indicates the current \"pressed\" state of toggle buttons.\nSee the [official specs](https://www.w3.org/TR/wai-aria-1.1/#aria-pressed).\n\n    button [ ariaPressed True ] [ text \"Submit\" ]\n\n",
+                "type": "Basics.Bool -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "ariaReadonly",
+                "comment": " Indicates that the element is not editable, but is otherwise operable.\nSee the [official specs](https://www.w3.org/TR/wai-aria-1.1/#aria-readonly).\n\n    div [ ariaReadonly True ] [ text \"Hello aria!\" ]\n\n",
+                "type": "Basics.Bool -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "ariaRequired",
+                "comment": " Indicates that user input is required on the element before a form may be submitted.\nSee the [official specs](https://www.w3.org/TR/wai-aria-1.1/#aria-required).\n\n    div [ ariaRequired True ] [ text \"Hello aria!\" ]\n\n",
+                "type": "Basics.Bool -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "ariaSelected",
+                "comment": " Indicates the current \"selected\" state of various widgets.\nSee the [official specs](https://www.w3.org/TR/wai-aria-1.1/#aria-selected).\n\n    div [ ariaSelected \"true\" ] [ text \"Hello aria!\" ]\n\n",
+                "type": "String.String -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "ariaValueMax",
+                "comment": " Defines the maximum allowed value for a range widget.\nSee the [official specs](https://www.w3.org/TR/wai-aria-1.1/#aria-valuemax).\n\n    div [ ariaValueMax 10, role \"progressbar\" ] []\n\n",
+                "type": "Basics.Float -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "ariaValueMin",
+                "comment": " Defines the minimum allowed value for a range widget.\nSee the [official specs](https://www.w3.org/TR/wai-aria-1.1/#aria-valuemin).\n\n    div [ ariaValueMin 1, role \"progressbar\" ] []\n\n",
+                "type": "Basics.Float -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "ariaValueNow",
+                "comment": " Defines the current value for a range widget.\nSee the [official specs](https://www.w3.org/TR/wai-aria-1.1/#aria-valuenow).\n\n    div [ ariaValueNow 4, role \"progressbar\" ] []\n\n",
+                "type": "Basics.Float -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "role",
+                "comment": " An attribute to support the role classification of elements.\nSee the [official specs](https://www.w3.org/TR/role-attribute).\n\n    div [ role \"button\" ] [ text \"Submit\" ]\n\n",
+                "type": "String.String -> Html.Styled.Attribute msg"
+            }
+        ],
+        "binops": []
+    }
+]

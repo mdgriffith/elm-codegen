@@ -1,0 +1,288 @@
+[
+    {
+        "name": "BoundedDeque",
+        "comment": " A limited-size deque (double-ended queue).\n\nA deque is a data type for which elements can be efficiently added or removed from either the front or the back.\nIn this limited-size variant, when the deque is full, an insertion on the front will drop an element at the back, and vice versa.\n\n\n## Type\n\n@docs BoundedDeque\n\n\n## Build\n\n@docs empty, singleton, pushFront, pushBack, append\n\n\n## Lists\n\n@docs fromList, toList\n\n\n## Deques\n\n@docs fromDeque, toDeque\n\n\n## Bound\n\n@docs getMaxSize, resize\n\n\n## Query\n\n@docs isEmpty, member, length, first, last, popFront, popBack, takeFront, takeBack\n\n\n## Transform\n\n@docs map, filter, foldl, foldr, partition\n\n\n## Composition\n\n@docs map2, andMap\n\n",
+        "unions": [
+            {
+                "name": "BoundedDeque",
+                "comment": " The deque datatype\n\nBoundedDeque equality with `(==)` is unreliable (equivalent deques can have a different distribution of elements between the back\nand the front) and should not be used.\n\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "andMap",
+                "comment": " Handy function for constructing maps.\n\nto extend to map3 and beyond:\n\n    map3 f a b c =\n        map f a\n            |> andMap b\n            |> andMap c\n\n",
+                "type": "BoundedDeque.BoundedDeque a -> BoundedDeque.BoundedDeque (a -> b) -> BoundedDeque.BoundedDeque b"
+            },
+            {
+                "name": "append",
+                "comment": " Concatenate two deques into one.\n\nThis function is written in pipeline style, so\n\n    firstBoundedDeque\n        |> BoundedDeque.append secondBoundedDeque\n        |> BoundedDeque.toList\n\nis the same as\n\n    BoundedDeque.toList firstBoundedDeque\n        |> List.append (BoundedDeque.toList secondBoundedDeque)\n\nThe `maxSize` is set to the sum of the two sizes.\n\n",
+                "type": "BoundedDeque.BoundedDeque a -> BoundedDeque.BoundedDeque a -> BoundedDeque.BoundedDeque a"
+            },
+            {
+                "name": "empty",
+                "comment": " Create an empty deque.\n",
+                "type": "Basics.Int -> BoundedDeque.BoundedDeque a"
+            },
+            {
+                "name": "filter",
+                "comment": " Keep an element when it satisfies a predicate.\n",
+                "type": "(a -> Basics.Bool) -> BoundedDeque.BoundedDeque a -> BoundedDeque.BoundedDeque a"
+            },
+            {
+                "name": "first",
+                "comment": " Extract the first element of a deque\n",
+                "type": "BoundedDeque.BoundedDeque a -> Maybe.Maybe a"
+            },
+            {
+                "name": "foldl",
+                "comment": " Fold over the deque from left to right (highest priority to lowest priority).\n",
+                "type": "(a -> b -> b) -> b -> BoundedDeque.BoundedDeque a -> b"
+            },
+            {
+                "name": "foldr",
+                "comment": " Fold over the deque from right to left (lowest priority to highest priority).\n",
+                "type": "(a -> b -> b) -> b -> BoundedDeque.BoundedDeque a -> b"
+            },
+            {
+                "name": "fromDeque",
+                "comment": " Create a bounded deque from an unbounded one. If there is insufficient space, elements are dropped from the back.\n",
+                "type": "Basics.Int -> Internal.Deque a -> BoundedDeque.BoundedDeque a"
+            },
+            {
+                "name": "fromList",
+                "comment": " Create a bounded deque from a maximum size and a list.\n",
+                "type": "Basics.Int -> List.List a -> BoundedDeque.BoundedDeque a"
+            },
+            {
+                "name": "getMaxSize",
+                "comment": " Get the maximum number of elements this deque can hold.\n",
+                "type": "BoundedDeque.BoundedDeque a -> Basics.Int"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Determine if a deque is empty.\n",
+                "type": "BoundedDeque.BoundedDeque a -> Basics.Bool"
+            },
+            {
+                "name": "last",
+                "comment": " Extract the last element of a deque.\n",
+                "type": "BoundedDeque.BoundedDeque a -> Maybe.Maybe a"
+            },
+            {
+                "name": "length",
+                "comment": " Determine the length of a list.\n",
+                "type": "BoundedDeque.BoundedDeque a -> Basics.Int"
+            },
+            {
+                "name": "map",
+                "comment": " Apply a function to all elements in a deque.\n",
+                "type": "(a -> b) -> BoundedDeque.BoundedDeque a -> BoundedDeque.BoundedDeque b"
+            },
+            {
+                "name": "map2",
+                "comment": " Like List.map2; apply a function pairwise to two deques.\n",
+                "type": "(a -> b -> c) -> BoundedDeque.BoundedDeque a -> BoundedDeque.BoundedDeque b -> BoundedDeque.BoundedDeque c"
+            },
+            {
+                "name": "member",
+                "comment": " Figure out whether a deque contains a value.\n",
+                "type": "a -> BoundedDeque.BoundedDeque a -> Basics.Bool"
+            },
+            {
+                "name": "partition",
+                "comment": " Partition a deque according to a predicate. The first deque contains\nall elements that satisfy the predicate, and the second contains the rest.\n",
+                "type": "(a -> Basics.Bool) -> BoundedDeque.BoundedDeque a -> ( BoundedDeque.BoundedDeque a, BoundedDeque.BoundedDeque a )"
+            },
+            {
+                "name": "popBack",
+                "comment": " Gives Maybe the last element, and the deque without the last element.\nIf there are no elements, the empty deque is returned.\n",
+                "type": "BoundedDeque.BoundedDeque a -> ( Maybe.Maybe a, BoundedDeque.BoundedDeque a )"
+            },
+            {
+                "name": "popFront",
+                "comment": " Gives Maybe the first element, and the deque without the first element.\nIf there are no elements, the empty deque is returned.\n",
+                "type": "BoundedDeque.BoundedDeque a -> ( Maybe.Maybe a, BoundedDeque.BoundedDeque a )"
+            },
+            {
+                "name": "pushBack",
+                "comment": " Add an element to the back of the deque.\n\nIf the deque has reached its maximum capacity, an item is dropped at the front.\n\n",
+                "type": "a -> BoundedDeque.BoundedDeque a -> BoundedDeque.BoundedDeque a"
+            },
+            {
+                "name": "pushFront",
+                "comment": " Add an element to the front of the deque.\n\nIf the deque has reached its maximum capacity, an item is dropped at the back.\n\n",
+                "type": "a -> BoundedDeque.BoundedDeque a -> BoundedDeque.BoundedDeque a"
+            },
+            {
+                "name": "resize",
+                "comment": " Sets a bound to the number of elements the deque can hold.\na maxSize of Nothing means the deque's size is unbound,\nJust a value bounds the deque's size at that value.\n\nIf the deque is larger than the bound, items are dropped from the back.\n\n    BoundedDeque.fromList 10 (List.range 0 9)\n        |> resize (\\_ -> 5)\n        -- toList would give [ 0, 1, 2, 3, 4 ]\n        |> pushFront 42\n        -- toList would give [ 42, 0, 1, 2, 3 ]\n        |> pushBack -1\n        -- toList would give [ 0, 1, 2, 3, -1 ]\n        |> setMaxSize Nothing\n        |> pushFront 73\n        -- toList would give [ 73, 0, 1, 2, 3 -1 ]\n\n",
+                "type": "(Basics.Int -> Basics.Int) -> BoundedDeque.BoundedDeque a -> BoundedDeque.BoundedDeque a"
+            },
+            {
+                "name": "singleton",
+                "comment": " Create a deque with one element.\n",
+                "type": "Basics.Int -> a -> BoundedDeque.BoundedDeque a"
+            },
+            {
+                "name": "takeBack",
+                "comment": " Take the last `n` members of a deque.\n\n    BoundedDeque.fromList [2..10]\n        |> BoundedDeque.takeBack 3\n        -- == [ 10, 9, 8 ]\n\n",
+                "type": "Basics.Int -> BoundedDeque.BoundedDeque a -> List.List a"
+            },
+            {
+                "name": "takeFront",
+                "comment": " Take the first `n` members of a deque.\n\n    BoundedDeque.fromList [2..10]\n        |> BoundedDeque.takeBack 3\n        -- == [ 2, 3, 4 ]\n\n",
+                "type": "Basics.Int -> BoundedDeque.BoundedDeque a -> List.List a"
+            },
+            {
+                "name": "toDeque",
+                "comment": " Convert a bounded deque to a normal deque.\n",
+                "type": "BoundedDeque.BoundedDeque a -> Internal.Deque a"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert a deque to a list.\n",
+                "type": "BoundedDeque.BoundedDeque a -> List.List a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Deque",
+        "comment": " A Deque (double-ended queue) in Elm.\n\nA deque is a data type for which elements can be efficiently added or removed from either the front or the back.\n\nInternally, this is a head-tail linked list, modeled after this [deque in Haskell](https://hackage.haskell.org/package/dequeue-0.1.12/docs/Data-Dequeue.html) which\nin turn is based on Chris Okasaki's Purely Functional Data Structures. A head-tail linked list is based on two lists: one for the head and one for the tail.\nThis means that pop and push on either side are operations on the front portion of an elm list, which is very efficient (`O(1)`).\n\nThe deque rebalances (moves elements from the front to the rear or vice versa) when either one\nis 4 times as large as the other. This is a costly operation and therefore used as little as possible.\n\nFor a deque with a limited size, see [BoundedDeque](#BoundedDeque).\n\n\n## Type\n\n@docs Deque\n\n\n## Build\n\n@docs empty, singleton, pushFront, pushBack, append\n\n\n## Lists\n\n@docs fromList, toList\n\n\n## Query\n\n@docs isEmpty, member, length, first, last, popFront, popBack, takeFront, takeBack\n\n\n## Transform\n\n@docs map, filter, foldl, foldr, partition\n\n\n## Composition\n\n@docs map2, andMap\n\n",
+        "unions": [
+            {
+                "name": "Deque",
+                "comment": " The deque datatype\n\nDeque equality with `(==)` is unreliable (equivalent deques can have a different distribution of elements between the back\nand the front) and should not be used.\n\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "andMap",
+                "comment": " Handy function for constructing maps.\n\nto extend to map3 and beyond:\n\n    map3 f a b c =\n        map f a\n            |> andMap b\n            |> andMap c\n\n",
+                "type": "Deque.Deque a -> Deque.Deque (a -> b) -> Deque.Deque b"
+            },
+            {
+                "name": "append",
+                "comment": " Concatenate two deques into one.\n\nThis function is written in pipeline style, so\n\n    firstDeque\n        |> Deque.append secondDeque\n        |> Deque.toList\n\nis the same as\n\n    Deque.toList firstDeque\n        |> List.append (Deque.toList secondDeque)\n\n",
+                "type": "Deque.Deque a -> Deque.Deque a -> Deque.Deque a"
+            },
+            {
+                "name": "empty",
+                "comment": " Create an empty deque.\n",
+                "type": "Deque.Deque a"
+            },
+            {
+                "name": "filter",
+                "comment": " Keep an element when it satisfies a predicate.\n",
+                "type": "(a -> Basics.Bool) -> Deque.Deque a -> Deque.Deque a"
+            },
+            {
+                "name": "first",
+                "comment": " Extract the first element of a deque\n",
+                "type": "Deque.Deque a -> Maybe.Maybe a"
+            },
+            {
+                "name": "foldl",
+                "comment": " Fold over the deque from left to right (highest priority to lowest priority).\n",
+                "type": "(a -> b -> b) -> b -> Deque.Deque a -> b"
+            },
+            {
+                "name": "foldr",
+                "comment": " Fold over the deque from right to left (lowest priority to highest priority).\n",
+                "type": "(a -> b -> b) -> b -> Deque.Deque a -> b"
+            },
+            {
+                "name": "fromList",
+                "comment": " Create a deque from a list.\n",
+                "type": "List.List a -> Deque.Deque a"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Determine if a deque is empty.\n",
+                "type": "Deque.Deque a -> Basics.Bool"
+            },
+            {
+                "name": "last",
+                "comment": " Extract the last element of a deque.\n",
+                "type": "Deque.Deque a -> Maybe.Maybe a"
+            },
+            {
+                "name": "length",
+                "comment": " Determine the length of a list.\n",
+                "type": "Deque.Deque a -> Basics.Int"
+            },
+            {
+                "name": "map",
+                "comment": " Apply a function to all elements in a deque.\n",
+                "type": "(a -> b) -> Deque.Deque a -> Deque.Deque b"
+            },
+            {
+                "name": "map2",
+                "comment": " Like List.map2; apply a function pairwise to two deques.\n",
+                "type": "(a -> b -> c) -> Deque.Deque a -> Deque.Deque b -> Deque.Deque c"
+            },
+            {
+                "name": "member",
+                "comment": " Figure out whether a deque contains a value.\n",
+                "type": "a -> Deque.Deque a -> Basics.Bool"
+            },
+            {
+                "name": "partition",
+                "comment": " Partition a deque according to a predicate. The first deque contains\nall elements that satisfy the predicate, and the second contains the rest.\n",
+                "type": "(a -> Basics.Bool) -> Deque.Deque a -> ( Deque.Deque a, Deque.Deque a )"
+            },
+            {
+                "name": "popBack",
+                "comment": " Gives Maybe the last element, and the deque without the last element.\nIf there are no elements, the empty deque is returned.\n",
+                "type": "Deque.Deque a -> ( Maybe.Maybe a, Deque.Deque a )"
+            },
+            {
+                "name": "popFront",
+                "comment": " Gives Maybe the first element, and the deque without the first element.\nIf there are no elements, the empty deque is returned.\n",
+                "type": "Deque.Deque a -> ( Maybe.Maybe a, Deque.Deque a )"
+            },
+            {
+                "name": "pushBack",
+                "comment": " Add an element to the back of the deque.\n",
+                "type": "a -> Deque.Deque a -> Deque.Deque a"
+            },
+            {
+                "name": "pushFront",
+                "comment": " Add an element to the front of the deque.\n",
+                "type": "a -> Deque.Deque a -> Deque.Deque a"
+            },
+            {
+                "name": "singleton",
+                "comment": " Create a deque with one element.\n",
+                "type": "a -> Deque.Deque a"
+            },
+            {
+                "name": "takeBack",
+                "comment": " Take the last `n` members of a deque.\n\n    Deque.fromList [2..10]\n        |> Deque.takeBack 3\n        -- == [ 10, 9, 8 ]\n\n",
+                "type": "Basics.Int -> Deque.Deque a -> List.List a"
+            },
+            {
+                "name": "takeFront",
+                "comment": " Take the first `n` members of a deque.\n\n    Deque.fromList [2..10]\n        |> Deque.takeBack 3\n        -- == [ 2, 3, 4 ]\n\n",
+                "type": "Basics.Int -> Deque.Deque a -> List.List a"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert a deque to a list.\n",
+                "type": "Deque.Deque a -> List.List a"
+            }
+        ],
+        "binops": []
+    }
+]

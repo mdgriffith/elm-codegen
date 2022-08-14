@@ -1,0 +1,362 @@
+[
+    {
+        "name": "TestJourney",
+        "comment": " Write easy-to-maintain acceptance-like tests.\n\n\n## Setup\n\n@docs startSandbox, SandboxProgram\n@docs startApplication, ApplicationProgram\n@docs startElement, ElementProgram\n@docs startDocument, DocumentProgram\n@docs startView\n\n@docs TestState\n\n@docs finish\n\n\n## Direct model access\n\n@docs mapModel, expectModel\n\n\n## Effects\n\n@docs handleEffect, EffectHandlerResult, injectEffects\n\n\n## Messages\n\n@docs injectMsg\n\n\n## Html Events\n\n@docs blur, check, click, custom, doubleClick, focus, input, mouseDown, mouseEnter, mouseLeave, mouseOut, mouseOver, mouseUp, submit, uncheck\n\n\n## Expectations\n\nTo be used with your [`page`](../Page#page)\n\n@docs see, seeCount, seeText, seeClass, seeAttribute, seeChecked, seeUnchecked, seeDisabled, seeNotDisabled, seeHref, seeSrc, seeValue\n\n@docs dontSee, dontSeeClass\n\n@docs fail\n\n",
+        "unions": [
+            {
+                "name": "EffectHandlerResult",
+                "comment": " Used by [`handleEffect`](#handleEffect) to create expectations around the next Effect, and optionally inject a message simulating the result of the effect.\n\nTo play the part of the server in an http request, use `EffectProcessed`:\n\n        J.startDocument program\n            |> J.click page.addItemButton\n            |> J.handleEffect\n                (\\effect ->\n                    case effect of\n                        TodoExample.EffectAddItem msg input ->\n                            J.EffectProcessed\n                                (Expect.equal\n                                    \"myNewItem\"\n                                    input\n                                )\n                                (msg\n                                    (Ok ())\n                                )\n\n                        _ ->\n                            J.EffectUnexpected\n                )\n            |> J.finish\n\nTo perform expectations on an effect without generating an msg (useful for testing `port`s, which are fire-and-forget):\n\n        J.startDocument program\n            |> J.click page.addItemButton\n            |> J.handleEffect\n                (\\effect ->\n                    case effect of\n                        TodoExample.EffectPopJsAlert alertText ->\n                            J.EffectSeen\n                                (Expect.equal\n                                    \"Item already exists\"\n                                    alertText\n                                )\n\n                        _ ->\n                            J.EffectUnexpected\n                )\n            |> J.finish\n\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": [
+                    [
+                        "EffectProcessed",
+                        [
+                            "Expect.Expectation",
+                            "msg"
+                        ]
+                    ],
+                    [
+                        "EffectSeen",
+                        [
+                            "Expect.Expectation"
+                        ]
+                    ],
+                    [
+                        "EffectUnexpected",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "TestState",
+                "comment": " The state of the elm program under test, and its pending effects. Create using one of the `start*` functions.\n",
+                "args": [
+                    "model",
+                    "msg",
+                    "effect"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "ApplicationProgram",
+                "comment": " For use in [`startApplication`](#startApplication).\n\n`effectToString` should always be set to `Debug.toString`. Having the caller supply this allows `elm-test-program` to avoid it's use, and be published as a package.\n\n",
+                "args": [
+                    "model",
+                    "msg",
+                    "effect"
+                ],
+                "type": "{ view : model -> Browser.Document msg, update : msg -> model -> ( model, List.List effect ), model : model, onUrlRequest : Browser.UrlRequest -> msg, onUrlChange : Url.Url -> msg, effectToString : effect -> String.String }"
+            },
+            {
+                "name": "DocumentProgram",
+                "comment": " For use in [`startDocument`](#startDocument).\n\n`effectToString` should always be set to `Debug.toString`. Having the caller supply this allows `elm-test-program` to avoid it's use, and be published as a package.\n\n",
+                "args": [
+                    "model",
+                    "msg",
+                    "effect"
+                ],
+                "type": "{ view : model -> Browser.Document msg, update : msg -> model -> ( model, List.List effect ), model : model, effectToString : effect -> String.String }"
+            },
+            {
+                "name": "ElementProgram",
+                "comment": " For use in [`startElement`](#startElement).\n\n`effectToString` should always be set to `Debug.toString`. Having the caller supply this allows `elm-test-program` to avoid it's use, and be published as a package.\n\n",
+                "args": [
+                    "model",
+                    "msg",
+                    "effect"
+                ],
+                "type": "{ view : model -> Html.Html msg, update : msg -> model -> ( model, List.List effect ), model : model, effectToString : effect -> String.String }"
+            },
+            {
+                "name": "SandboxProgram",
+                "comment": " For use in [`startSandbox`](#startSandbox).\n\n`effectToString` should always be set to `Debug.toString`. Having the caller supply this allows `elm-test-program` to avoid it's use, and be published as a package.\n\n",
+                "args": [
+                    "model",
+                    "msg"
+                ],
+                "type": "{ view : model -> Html.Html msg, update : msg -> model -> model, model : model }"
+            }
+        ],
+        "values": [
+            {
+                "name": "blur",
+                "comment": " Ensures the target element exists exactly once, simulates a blur event, and processes the generated message.\n",
+                "type": "TestJourney.Page.Element children -> TestJourney.TestState model msg effect -> TestJourney.TestState model msg effect"
+            },
+            {
+                "name": "check",
+                "comment": " Ensures the target element exists exactly once, simulates a check true event, and processes the generated message.\n",
+                "type": "TestJourney.Page.Element children -> TestJourney.TestState model msg effect -> TestJourney.TestState model msg effect"
+            },
+            {
+                "name": "click",
+                "comment": " Ensures the target element exists exactly once, simulates a click event, and processes the generated message.\n",
+                "type": "TestJourney.Page.Element children -> TestJourney.TestState model msg effect -> TestJourney.TestState model msg effect"
+            },
+            {
+                "name": "custom",
+                "comment": " Ensures the target element exists exactly once, simulates a custom, and processes the generated message.\n\n                        See (see [Test.Html.Event.custom](https://package.elm-lang.org/packages/elm-explorations/test/latest/Test-Html-Event#custom))\n\n",
+                "type": "String.String -> Json.Encode.Value -> TestJourney.Page.Element children -> TestJourney.TestState model msg effect -> TestJourney.TestState model msg effect"
+            },
+            {
+                "name": "dontSee",
+                "comment": " Expect a given element to not exist. If the target is a sequence of page finders (e.g. `parent.child.grandchild`), `dontSee` only passes if\n`parent`, and `child` exist, but `grandchild` does not. Otherwise, it's too easy for `dontSee` to inadvertantly pass.\n",
+                "type": "TestJourney.Page.Element children -> TestJourney.TestState model msg effect -> TestJourney.TestState model msg effect"
+            },
+            {
+                "name": "dontSeeClass",
+                "comment": " Expect a class to not exist on the element and it's descendants.\n",
+                "type": "String.String -> TestJourney.Page.Element children -> TestJourney.TestState model msg effect -> TestJourney.TestState model msg effect"
+            },
+            {
+                "name": "doubleClick",
+                "comment": " Ensures the target element exists exactly once, simulates a double-click event, and processes the generated message.\n",
+                "type": "TestJourney.Page.Element children -> TestJourney.TestState model msg effect -> TestJourney.TestState model msg effect"
+            },
+            {
+                "name": "expectModel",
+                "comment": " Directly run an expectation on the current model of the application under tests. Useful when there are changes that aren't represented in the UI (e.g. I want to make sure I get a new session id after logging in).\n",
+                "type": "(model -> Expect.Expectation) -> TestJourney.TestState model msg effect -> TestJourney.TestState model msg effect"
+            },
+            {
+                "name": "fail",
+                "comment": " Cause the test to fail. Useful in cases where we want to fail during model construction, before the test gets going.\n",
+                "type": "String.String -> TestJourney.TestState model msg effect -> TestJourney.TestState model msg effect"
+            },
+            {
+                "name": "finish",
+                "comment": " Call at the end of your test. Automatically add an expectations that there are no\npending effects left to process, since that is usually inadvertant in practice.\n",
+                "type": "TestJourney.TestState model msg effect -> Expect.Expectation"
+            },
+            {
+                "name": "focus",
+                "comment": " Ensures the target element exists exactly once, simulates a focus event, and processes the generated message.\n",
+                "type": "TestJourney.Page.Element children -> TestJourney.TestState model msg effect -> TestJourney.TestState model msg effect"
+            },
+            {
+                "name": "handleEffect",
+                "comment": " Processes the next effect waiting to be processed.\n\nThis is usually simulating the other end of your effect. In the case of an effect representing an HTTP Cmd, this takes place of the server. For an out port, this plays the role simulating the javascript code.\n\n        -- Application Under Test\n        type alias ItemID = Int\n\n        type Msg =\n            ItemAdded ItemID\n\n        type MyEffect =\n            EffectAddItem (Result Http.Error ItemID) String\n            EffectRemoveItem ItemID\n\n\n        -- Test\n        handleAddItem effect =\n            case effect of\n                EffectAddItem msg label ->\n                    EffectProcessed\n                        (Expect.equal\n                            input\n                            \"myLabel\"\n                        )\n                        (msg\n                            (Ok ItemID 55))\n                        )\n\n                _ ->\n                    EffectUnexpected\n\n",
+                "type": "(effect -> TestJourney.EffectHandlerResult msg) -> TestJourney.TestState model msg effect -> TestJourney.TestState model msg effect"
+            },
+            {
+                "name": "injectEffects",
+                "comment": " Queues up the supplied `addedEffects` into application under test, so that `handleEffects` can subsequently be used to process them. This is useful if you have effects created during setup of your application, and need to feed them back into your tests.\n",
+                "type": "List.List effect -> TestJourney.TestState model msg effect -> TestJourney.TestState model msg effect"
+            },
+            {
+                "name": "injectMsg",
+                "comment": " Sends the supplied `msg` into appliication under test. This is how `ports` and `Subscriptions` should be simulated.\n",
+                "type": "msg -> TestJourney.TestState model msg effect -> TestJourney.TestState model msg effect"
+            },
+            {
+                "name": "input",
+                "comment": " Ensures the target element exists exactly once, simulates a input event w/ the given text, and processes the generated message.\n",
+                "type": "String.String -> TestJourney.Page.Element children -> TestJourney.TestState model msg effect -> TestJourney.TestState model msg effect"
+            },
+            {
+                "name": "mapModel",
+                "comment": " Directly transform the underlying model. This can be useful for altering your [`model`](#ProgramDefinition) supplied in [`ProgramDefinition`](#ProgramDefinition). This should generally be avoided in the body of your tests.\n",
+                "type": "(model -> model) -> TestJourney.TestState model msg effect -> TestJourney.TestState model msg effect"
+            },
+            {
+                "name": "mouseDown",
+                "comment": " Ensures the target element exists exactly once, simulates a mouseDown event, and processes the generated message.\n",
+                "type": "TestJourney.Page.Element children -> TestJourney.TestState model msg effect -> TestJourney.TestState model msg effect"
+            },
+            {
+                "name": "mouseEnter",
+                "comment": " Ensures the target element exists exactly once, simulates a mouseEnter event, and processes the generated message.\n",
+                "type": "TestJourney.Page.Element children -> TestJourney.TestState model msg effect -> TestJourney.TestState model msg effect"
+            },
+            {
+                "name": "mouseLeave",
+                "comment": " Ensures the target element exists exactly once, simulates a mouseLeave event, and processes the generated message.\n",
+                "type": "TestJourney.Page.Element children -> TestJourney.TestState model msg effect -> TestJourney.TestState model msg effect"
+            },
+            {
+                "name": "mouseOut",
+                "comment": " Ensures the target element exists exactly once, simulates a mouseOut event, and processes the generated message.\n",
+                "type": "TestJourney.Page.Element children -> TestJourney.TestState model msg effect -> TestJourney.TestState model msg effect"
+            },
+            {
+                "name": "mouseOver",
+                "comment": " Ensures the target element exists exactly once, simulates a mouseOver event, and processes the generated message.\n",
+                "type": "TestJourney.Page.Element children -> TestJourney.TestState model msg effect -> TestJourney.TestState model msg effect"
+            },
+            {
+                "name": "mouseUp",
+                "comment": " Ensures the target element exists exactly once, simulates a mouseUp event, and processes the generated message.\n",
+                "type": "TestJourney.Page.Element children -> TestJourney.TestState model msg effect -> TestJourney.TestState model msg effect"
+            },
+            {
+                "name": "see",
+                "comment": " Expect a given element to exist exactly once.\n",
+                "type": "TestJourney.Page.Element children -> TestJourney.TestState model msg effect -> TestJourney.TestState model msg effect"
+            },
+            {
+                "name": "seeAttribute",
+                "comment": " Expect an attribute attribute to exist on the element or a descendant.\n",
+                "type": "String.String -> String.String -> TestJourney.Page.Element children -> TestJourney.TestState model msg effect -> TestJourney.TestState model msg effect"
+            },
+            {
+                "name": "seeChecked",
+                "comment": " Expect the element or a descendant to be checked.\n",
+                "type": "TestJourney.Page.Element children -> TestJourney.TestState model msg effect -> TestJourney.TestState model msg effect"
+            },
+            {
+                "name": "seeClass",
+                "comment": " Expect a class to exist on the element or a descendant.\n",
+                "type": "String.String -> TestJourney.Page.Element children -> TestJourney.TestState model msg effect -> TestJourney.TestState model msg effect"
+            },
+            {
+                "name": "seeCount",
+                "comment": " Expect exactly a given number of matching elements to exist.\n",
+                "type": "Basics.Int -> (Basics.Int -> TestJourney.Page.Element children) -> TestJourney.TestState model msg effect -> TestJourney.TestState model msg effect"
+            },
+            {
+                "name": "seeDisabled",
+                "comment": " Expect a disabled attribute to exist on the element or a descendant.\n",
+                "type": "TestJourney.Page.Element children -> TestJourney.TestState model msg effect -> TestJourney.TestState model msg effect"
+            },
+            {
+                "name": "seeHref",
+                "comment": " Expect an href attribute attribute to exist on the element or a descendant.\n",
+                "type": "String.String -> TestJourney.Page.Element children -> TestJourney.TestState model msg effect -> TestJourney.TestState model msg effect"
+            },
+            {
+                "name": "seeNotDisabled",
+                "comment": " Expect a disabled attribute be false on an element or a descendant.\n",
+                "type": "TestJourney.Page.Element children -> TestJourney.TestState model msg effect -> TestJourney.TestState model msg effect"
+            },
+            {
+                "name": "seeSrc",
+                "comment": " Expect a src attribute to exist on the element or a descendant.\n",
+                "type": "String.String -> TestJourney.Page.Element children -> TestJourney.TestState model msg effect -> TestJourney.TestState model msg effect"
+            },
+            {
+                "name": "seeText",
+                "comment": " Expect text within itself or a descendant.\n",
+                "type": "String.String -> TestJourney.Page.Element children -> TestJourney.TestState model msg effect -> TestJourney.TestState model msg effect"
+            },
+            {
+                "name": "seeUnchecked",
+                "comment": " Expect the element or a descendant to be unchecked.\n",
+                "type": "TestJourney.Page.Element children -> TestJourney.TestState model msg effect -> TestJourney.TestState model msg effect"
+            },
+            {
+                "name": "seeValue",
+                "comment": " Expect a value attribute to exist on the element or a descendant.\n",
+                "type": "String.String -> TestJourney.Page.Element children -> TestJourney.TestState model msg effect -> TestJourney.TestState model msg effect"
+            },
+            {
+                "name": "startApplication",
+                "comment": " Defines the application under test and starts the test pipeline. Simular to `Browser.application`, but without subscriptions or init, and `List effect` instead of `Cmd`.\n",
+                "type": "TestJourney.ApplicationProgram model msg effect -> TestJourney.TestState model msg effect"
+            },
+            {
+                "name": "startDocument",
+                "comment": " Defines the application under test and starts the test pipeline. Simular to `Browser.document`, but without subscriptions or init, and `List effect` instead of `Cmd`.\n",
+                "type": "TestJourney.DocumentProgram model msg effect -> TestJourney.TestState model msg effect"
+            },
+            {
+                "name": "startElement",
+                "comment": " Defines the application under test and starts the test pipeline. Simular to `Browser.element`, but without subscriptions or init, and `List effect` instead of `Cmd`.\n\nThis is also useful if you want to want to limite the system under test to a subsection of your application, like a single page of an application, or maybe a single widget within your application.\n\n",
+                "type": "TestJourney.ElementProgram model msg effect -> TestJourney.TestState model msg effect"
+            },
+            {
+                "name": "startSandbox",
+                "comment": " Defines the application under test and starts the test pipeline. Simular to `Browser.sandbox`.\n",
+                "type": "TestJourney.SandboxProgram model msg -> TestJourney.TestState model msg effect"
+            },
+            {
+                "name": "startView",
+                "comment": " Defines the application under test as a static Html.Html. Useful if you want to test a view function in isolation.\n",
+                "type": "Html.Html msg -> TestJourney.TestState model msg effect"
+            },
+            {
+                "name": "submit",
+                "comment": " Ensures the target element exists exactly once, simulates a submit event, and processes the generated message.\n",
+                "type": "TestJourney.Page.Element children -> TestJourney.TestState model msg effect -> TestJourney.TestState model msg effect"
+            },
+            {
+                "name": "uncheck",
+                "comment": " Ensures the target element exists exactly once, simulates an check false event, and processes the generated message.\n",
+                "type": "TestJourney.Page.Element children -> TestJourney.TestState model msg effect -> TestJourney.TestState model msg effect"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "TestJourney.Page",
+        "comment": " Create Page Objects for `elm-test-journey`.\n\n\n## Building the Page Model\n\n@docs root, multiple, multipleRecord, single, singleRecord\n\n\n## Types\n\n@docs Element, Finder\n\n\n## Helpers\n\nIn practice, a convention like \"all elements are identified by an `\"data-test\"=\"myTestIdentifier\"`\" makes page objects\nmore resiliant, and makes it clear when a node in the application under test has test dependencies. These helpers make\ncreating Page Objects targeting that convention simpler. If your project has it's own conventions, create your own set of\nhelpers.\n\n@docs multipleTestAttr, multipleRecordTestAttr, singleTestAttr, singleRecordTestAttr\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Element",
+                "comment": " An element represents a series of selectors and functions that result in finding a single specific node in your application under test. When defining a record element, via [`singleRecord`](#singleRecord), or [`multipleRecord`](#multipleRecord), ensure that you always have a field named `self`. `self` allows elements with and without other fields defined to be treated uniformly.\n",
+                "args": [
+                    "children"
+                ],
+                "type": "{ children | self : TestJourney.Page.Finder }"
+            },
+            {
+                "name": "Finder",
+                "comment": "\n\n    Used by [`TestJourney` ](../../TestJourney.elm) to help locate [`Elements`](#Element) defined in your page.\n\n",
+                "args": [],
+                "type": "TestJourney.Internal.Finder"
+            }
+        ],
+        "values": [
+            {
+                "name": "multiple",
+                "comment": " Represents a list of nodes.\n\n    page =\n        root []\n            (\\rootElement ->\n                { self = rootElement\n                , myListItem =\n                    multiple rootElement\n                        \"myListItem\"\n                        [ Selector.attribute (Attributes.attribute \"data-test\" \"myListItem\")\n                        ]\n                }\n            )\n\n    element =\n        page.myListItem 1\n\n",
+                "type": "TestJourney.Page.Finder -> TestJourney.Internal.FriendlyName -> List.List Test.Html.Selector.Selector -> Basics.Int -> TestJourney.Page.Element {}"
+            },
+            {
+                "name": "multipleRecord",
+                "comment": " Represents a list of nodes w/ custom children.\n\n    page =\n        root []\n            (\\rootElement ->\n                { self = rootElement\n                , myListItem =\n                    multipleRecord rootElement\n                        \"myListItem\"\n                        [ Selector.attribute\n                            (Attributes.attribute \"data-test\" \"myListItem\")\n                        ]\n                        (\\myListItem ->\n                            { self = myListItem\n                            , label = singleTestAttr myListItem \"itemLabel\"\n                            }\n                        )\n                }\n            )\n\n    element =\n        page.myListItem 0 |> .label\n\n",
+                "type": "TestJourney.Page.Finder -> TestJourney.Internal.FriendlyName -> List.List Test.Html.Selector.Selector -> (TestJourney.Page.Finder -> TestJourney.Page.Element children) -> Basics.Int -> TestJourney.Page.Element children"
+            },
+            {
+                "name": "multipleRecordTestAttr",
+                "comment": " Represents a list of nodes w/ custom children, following the \"data-test\" attribute convention.\n\n    page =\n        root []\n            (\\rootElement ->\n                { self = rootElement\n                , myListItem =\n                    multipleRecord rootElement\n                        \"myListItem\"\n                        (\\myListItem ->\n                            { self = myListItem\n                            , label = singleTestAttr myListItem \"itemLabel\"\n                            }\n                        )\n                }\n            )\n\n    element =\n        page.myListItem 0 |> .label\n\n",
+                "type": "TestJourney.Page.Finder -> String.String -> (TestJourney.Page.Finder -> TestJourney.Page.Element children) -> Basics.Int -> TestJourney.Page.Element children"
+            },
+            {
+                "name": "multipleTestAttr",
+                "comment": " Represents a list of nodes, following the \"data-test\" attribute convention.\n\n    page =\n        root []\n            (\\rootElement ->\n                { self = rootElement\n                , myListItem =\n                    multipleTestAttr rootElement \"myListItem\"\n                }\n            )\n\n    element =\n        page.myListItem 1\n\n",
+                "type": "TestJourney.Page.Finder -> String.String -> Basics.Int -> TestJourney.Page.Element {}"
+            },
+            {
+                "name": "root",
+                "comment": " Sets up the context for the rest of the page object. An empty selector will match the root of the view (usually the body tag).\n\n    page =\n        root []\n            (\\rootElement ->\n                { self = rootElement\n                , myChildElement = singleTestAttr rootElement \"myChildElement\"\n                }\n            )\n\n",
+                "type": "List.List Test.Html.Selector.Selector -> (TestJourney.Page.Finder -> TestJourney.Page.Element children) -> TestJourney.Page.Element children"
+            },
+            {
+                "name": "single",
+                "comment": " Creates an ['Element'](#Element) referencing a single node.\n\n    page =\n        root\n            []\n            (\\rootElement ->\n                { self = rootElement\n                , myChildElement = single rootElement \"myChildElement\" [ Selector.attribute (Attributes.attribute \"data-test\" \"myChildElement\") ]\n                }\n            )\n\n    element =\n        page.myChildElement\n\n",
+                "type": "TestJourney.Page.Finder -> TestJourney.Internal.FriendlyName -> List.List Test.Html.Selector.Selector -> TestJourney.Page.Element {}"
+            },
+            {
+                "name": "singleRecord",
+                "comment": " Creates an ['Element'](#Element) referencing a single node, w/ custom children.\n\n    page =\n        root []\n            (\\rootElement ->\n                { self = rootElement\n                , myElementWithChildren =\n                    singleRecord rootElement\n                        \"myChildElement\"\n                        [ Selector.attribute (Attributes.attribute \"data-test\" \"myChildElement\") ]\n                        (\\myElementWithChildren ->\n                            { self = myElementWithChildren\n                            , childOfChild = singleTestAttr myElementWithChildren \"childOfChild\"\n                            }\n                        )\n                }\n            )\n\n    element =\n        page.myElementWithChildren.childOfChild\n\n",
+                "type": "TestJourney.Page.Finder -> TestJourney.Internal.FriendlyName -> List.List Test.Html.Selector.Selector -> (TestJourney.Page.Finder -> TestJourney.Page.Element children) -> TestJourney.Page.Element children"
+            },
+            {
+                "name": "singleRecordTestAttr",
+                "comment": " Creates an ['Element'](#Element) referencing a single node, w/ custom children, following the \"data-test\" attribute convention.\n\n    page =\n        root []\n            (\\rootElement ->\n                { self = rootElement\n                , myElementWithChildren =\n                    singleRecord rootElement\n                        \"myChildElement\"\n                        (\\myElementWithChildren ->\n                            { self = myElementWithChildren\n                            , childOfChild = singleTestAttr myElementWithChildren \"childOfChild\"\n                            }\n                        )\n                }\n            )\n\n    element =\n        page.myElementWithChildren.childOfChild\n\n",
+                "type": "TestJourney.Page.Finder -> String.String -> (TestJourney.Page.Finder -> TestJourney.Page.Element children) -> TestJourney.Page.Element children"
+            },
+            {
+                "name": "singleTestAttr",
+                "comment": " Creates an ['Element'](#Element) referencing a single node, following the \"data-test\" attribute convention.\n\n    page =\n        root\n            []\n            (\\rootElement ->\n                { self = rootElement\n                , myChildElement = singleTestAttr rootElement \"myChildElement\"\n                }\n            )\n\n    element =\n        page.myChildElement\n\n",
+                "type": "TestJourney.Page.Finder -> String.String -> TestJourney.Page.Element {}"
+            }
+        ],
+        "binops": []
+    }
+]

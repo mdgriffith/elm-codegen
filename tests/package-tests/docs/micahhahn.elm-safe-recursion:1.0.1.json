@@ -1,0 +1,145 @@
+[
+    {
+        "name": "Recursion",
+        "comment": " This module provides functions to construct the `Rec` type which encapsulates a recursion computation,\nand `runRecursion` to execute the recursion on a value. Recursions that are constructed and executed in this way\nare safe from blowing up the callstack.\n\nIf you are unfamiliar with why we need to be careful about unsafe recursion in Elm,\n[this is a good resource written by Evan describing the Tail-Call Elimination](https://functional-programming-in-elm.netlify.app/recursion/tail-call-elimination.html)\n\nIt is not terribly difficult to rewrite simple recursions to be safe by taking advantage of the Tail Call Optimization.\nHowever, the moment you need to recurse on two or more elements in a data structure it becomes quite hairy to write safely\nand the resulting code loses much of the beauty of recursion.\n\nThe `Rec` type is sufficently powerful to be able to represent non-simple recursion safely **and** will allow you to keep the recursive elegance that makes functional programming beautiful.\n\n\n## Example\n\nImagine we have a generic binary tree type that we want to write a `map` function for:\n\n    type Tree a\n        = Leaf a\n        | Node (Tree a) (Tree a)\n\nThe standard recursive map algorithm is straightforward:\n\n    mapTree : (a -> b) -> Tree a -> Tree b\n    mapTree f tree =\n        case tree of\n            Leaf a ->\n                Leaf (f a)\n\n            Node l r ->\n                Node (mapTree f l) (mapTree f r)\n\n⚠️ This is unsafe! ⚠️\n\nSince the recursive calls to `mapTree` are not located in tail call position the Tail Call Optimization will not fire.\nWe are exposing ourselves to a crash if the tree is deep enough that we would have a stack overflow while executing it!\n\n\n## Example using this library\n\n    mapTree : (a -> b) -> Tree a -> Tree b\n    mapTree f initTree =\n        runRecursion\n            (\\tree ->\n                case tree of\n                    Leaf a ->\n                        base (Leaf (f a))\n\n                    Node l r ->\n                        recurse l\n                            |> andThen\n                                (\\newL ->\n                                    recurse r\n                                        |> map (\\newR -> Node newL newR)\n                                )\n            )\n            initTree\n\nThis looks roughly the same as the naive implementation,\nbut we definitely have some additional complexity here so let's break it down step by step!\n\nThe first thing to notice is that there are no explicit calls to `mapTree` in this example.\nInstead of recursively calling `mapTree` on the `l` and `r` values of the `Node` we instead call `recurse`.\n\n`recurse` produces the opaque `Rec` type so we cannot simply just pass `recurse l` and `recurse r` into the `Node` constructor.\nInstead we stitch them together using `andThen` and `map` combinators which give us access to the resulting `newL` and `newR` values.\n\nWe also explicitly call `base` on `Leaf (f a)` to terminate the recursion in the base case.\n\nFinally `runRecursion` takes this function we provide and iteratively runs it in a stack safe way to produce the final value.\n\n\n## Recursion\n\n@docs runRecursion, Rec\n\n@docs base\n@docs recurse\n@docs map\n@docs andThen\n\n\n## Containers\n\nIf you data type you are recursing uses a container that holds a recursive value, you'll want to check out `Recursion.Traverse` and `Recursion.Fold`.\n\n[`Recursion.Traverse`](https://package.elm-lang.org/packages/micahhahn/elm-safe-recursion/1.0.1/Recursion-Traverse) is useful for cases where we want to **preserve** the structure of our datatype.\n\n[`Recursion.Fold`](https://package.elm-lang.org/packages/micahhahn/elm-safe-recursion/1.0.1/Recursion-Fold) is useful for cases where we want to **collapse** the structure of our datatype into another type.\n\n",
+        "unions": [
+            {
+                "name": "Rec",
+                "comment": " A type that encapsulates recursion computation.\n\n  - `a` is the original type of the object we are recursing over.\n\n  - `b` is the final type that we are constructing (Note that a `b` is the final result that `runRecursion` produces).\n\n  - `c` is an intermediate type used to help compose recursions together.\n\nI think it is helpful to think of `Rec` as similar to the `Promise` type in javascript. Similar to a `Promise`, a `Rec` will sometimes not have a value at hand.\nSo instead of using the value directly, we instead use `map` and `andThen` to specify actions to do when the result is finally available.\n\n`Rec a b c` forms a Functor over `c` with the `base` and `map` functions. It also forms a monad over `c` with the `base` and `andThen` functions.\n\n",
+                "args": [
+                    "a",
+                    "b",
+                    "c"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "andThen",
+                "comment": " Chain together one `Rec` type and potentially produce another.\n\nPrefer to use `map` instead of `andThen` if possible.\n\n",
+                "type": "(c -> Recursion.Rec a b d) -> Recursion.Rec a b c -> Recursion.Rec a b d"
+            },
+            {
+                "name": "base",
+                "comment": " The \"base case\" of recursion. We simply inject a result value straight into the `Rec` type.\n",
+                "type": "c -> Recursion.Rec a b c"
+            },
+            {
+                "name": "map",
+                "comment": " Map over the result of a `Rec` once it is complete.\n\nYou should prefer to use `map` instead of `andThen` whenever possible as it is slighly faster and easier on the eyes.\n\nFor example if you have code that looks like this:\n\n    |> andThen (\\x -> base <| ... )\n\nYou can and should rewrite it to this:\n\n    |> map (\\x -> ...)\n\n",
+                "type": "(c -> d) -> Recursion.Rec a b c -> Recursion.Rec a b d"
+            },
+            {
+                "name": "recurse",
+                "comment": " Specifies a recursion over the passed value. The function passed to `runRecursion` will eventually be run with this value.\n",
+                "type": "a -> Recursion.Rec a b b"
+            },
+            {
+                "name": "runRecursion",
+                "comment": " Iteratively calls the passed function to run one layer of a recursion at a time without growing the callstack.\n",
+                "type": "(a -> Recursion.Rec a b b) -> a -> b"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Recursion.Fold",
+        "comment": " This module contains functions for folding common collections types that can contain recursive data structures.\n\n\n## List\n\n@docs foldlList, foldrList\n\n\n## Dict\n\n@docs foldlDict, foldrDict\n\n\n## Array\n\n@docs foldlArray, foldrArray\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "foldlArray",
+                "comment": " Fold an array that contains recursive types from left to right.\n",
+                "type": "(x -> Recursion.Rec a b c) -> (c -> d -> d) -> d -> Array.Array x -> Recursion.Rec a b d"
+            },
+            {
+                "name": "foldlDict",
+                "comment": " Fold a dictionary that contains recursive types in its value type in ascending order of keys.\n",
+                "type": "(comparable -> v -> Recursion.Rec a b c) -> (c -> d -> d) -> d -> Dict.Dict comparable v -> Recursion.Rec a b d"
+            },
+            {
+                "name": "foldlList",
+                "comment": " Reduces a list that contains recursive types from left to right.\n\n    type RoseTree a\n        = Leaf a\n        | Node (List (RoseTree a))\n\n    countRoseTreeLeaves : RoseTree a -> Int\n    countRoseTreeLeaves =\n        runRecursion\n            (\\tree ->\n                case tree of\n                    Leaf _ ->\n                        base 1\n\n                    Node trees ->\n                        foldlList recurse (+) 0 trees\n            )\n\n",
+                "type": "(x -> Recursion.Rec a b c) -> (c -> d -> d) -> d -> List.List x -> Recursion.Rec a b d"
+            },
+            {
+                "name": "foldrArray",
+                "comment": " Fold an array that contains recursive types from right to left.\n",
+                "type": "(x -> Recursion.Rec a b c) -> (c -> d -> d) -> d -> Array.Array x -> Recursion.Rec a b d"
+            },
+            {
+                "name": "foldrDict",
+                "comment": " Fold a dictionary that contains recursive types in its value type in descending order of keys.\n",
+                "type": "(comparable -> v -> Recursion.Rec a b c) -> (c -> d -> d) -> d -> Dict.Dict comparable v -> Recursion.Rec a b d"
+            },
+            {
+                "name": "foldrList",
+                "comment": " Fold a list that contains recursive types from right to left.\n\n    type RoseTree a\n        = Leaf a\n        | Node (List (RoseTree a))\n\n    countRoseTreeLeaves : RoseTree a -> Int\n    countRoseTreeLeaves =\n        runRecursion\n            (\\tree ->\n                case tree of\n                    Leaf _ ->\n                        base 1\n\n                    Node trees ->\n                        foldrList recurse (+) 0 trees\n            )\n\nFavor `foldlList` if possible as it will be more efficient.\n\n",
+                "type": "(x -> Recursion.Rec a b c) -> (c -> d -> d) -> d -> List.List x -> Recursion.Rec a b d"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Recursion.Traverse",
+        "comment": " This module provides traversals for common data structures with the `Rec` type.\n\n\n### What is a traversal?\n\nA traversal is a transformation over a structure that **preserves the shape** of the structure.\nIn this module, the traversal functions allow us to convert from a structure containing recursive types into a recursive type containing the structure.\n\nIf you are trying to write a map function over a recursive data structure, a traversal is likely what you want.\n\n\n## List\n\n@docs traverseList, sequenceList\n\n\n## Dict\n\n@docs traverseDict, sequenceDict\n\n\n## Maybe\n\n@docs traverseMaybe, sequenceMaybe\n\n\n## Result\n\n@docs traverseResult, sequenceResult\n\n\n## Array\n\n@docs traverseArray, sequenceArray\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "sequenceArray",
+                "comment": " A specialization of `traverseArray` when each element of the list is directly recursive.\n\n`sequenceArray = traverseArray recurse`\n\n    type RoseTree a\n        = Leaf a\n        | Node (Array (RoseTree a))\n\n    mapRoseTree : (a -> b) -> RoseTree a -> RoseTree b\n    mapRoseTree f =\n        runRecursion <|\n            \\tree ->\n                case tree of\n                    Leaf a ->\n                        base <| Leaf (f a)\n\n                    Node nodes ->\n                        nodes\n                            |> sequenceArray\n                            |> map Node\n\n",
+                "type": "Array.Array a -> Recursion.Rec a b (Array.Array b)"
+            },
+            {
+                "name": "sequenceDict",
+                "comment": " Sequence a `Dict` where the values directly are recursive types.\n\n`sequenceDict = traverseDict recurse`\n\n",
+                "type": "Dict.Dict comparable v -> Recursion.Rec v b (Dict.Dict comparable b)"
+            },
+            {
+                "name": "sequenceList",
+                "comment": " A specialization of `traverseList` when each element of the list is directly recursive.\n\n`sequenceList = traverseList recurse`\n\n    type RoseTree a\n        = Leaf a\n        | Node (List (RoseTree a))\n\n    mapRoseTree : (a -> b) -> RoseTree a -> RoseTree b\n    mapRoseTree f =\n        runRecursion <|\n            \\tree ->\n                case tree of\n                    Leaf a ->\n                        base <| Leaf (f a)\n\n                    Node nodes ->\n                        nodes\n                            |> sequenceList\n                            |> map Node\n\n",
+                "type": "List.List a -> Recursion.Rec a b (List.List b)"
+            },
+            {
+                "name": "sequenceMaybe",
+                "comment": " A specialization of `traverseMaybe` for when the `Maybe` type is directly recursive.\n\n`sequenceMaybe = traverseMaybe recurse`\n\n    type NonEmpty a\n        = NonEmpty a (Maybe (NonEmpty a))\n\n    mapNonEmpty : (a -> b) -> NonEmpty a -> NonEmpty b\n    mapNonEmpty f =\n        runRecursion <|\n            \\(NonEmpty a maybe) ->\n                maybe\n                    |> sequenceMaybe\n                    |> map (NonEmpty (f a))\n\n",
+                "type": "Maybe.Maybe a -> Recursion.Rec a b (Maybe.Maybe b)"
+            },
+            {
+                "name": "sequenceResult",
+                "comment": " Sequence a `Result` where the success value directly is a recursive type.\n\n`sequenceResult = traverseResult recurse`\n\n",
+                "type": "Result.Result error value -> Recursion.Rec value b (Result.Result error b)"
+            },
+            {
+                "name": "traverseArray",
+                "comment": " Traverse an array of recursive data types.\n\n    type KeyedRoseTree a\n        = Leaf a\n        | Node (Array ( String, KeyedRoseTree a ))\n\n    mapKeyedRoseTree : (a -> b) -> KeyedRoseTree a -> KeyedRoseTree b\n    mapKeyedRoseTree f =\n        runRecursion <|\n            \\tree ->\n                case tree of\n                    Leaf a ->\n                        base <| Leaf (f a)\n\n                    Node nodes ->\n                        nodes\n                            |> traverseArray\n                                (\\( key, node ) ->\n                                    recurse node |> map (Tuple.pair key)\n                                )\n                            |> map Node\n\n",
+                "type": "(x -> Recursion.Rec a b c) -> Array.Array x -> Recursion.Rec a b (Array.Array c)"
+            },
+            {
+                "name": "traverseDict",
+                "comment": " Traverse over a `Dict` where the values contain an recursive type.\n",
+                "type": "(v -> Recursion.Rec a b c) -> Dict.Dict comparable v -> Recursion.Rec a b (Dict.Dict comparable c)"
+            },
+            {
+                "name": "traverseList",
+                "comment": " Traverse a list of recursive data types.\n\n    type KeyedRoseTree a\n        = Leaf a\n        | Node (List ( String, KeyedRoseTree a ))\n\n    mapKeyedRoseTree : (a -> b) -> KeyedRoseTree a -> KeyedRoseTree b\n    mapKeyedRoseTree f =\n        runRecursion <|\n            \\tree ->\n                case tree of\n                    Leaf a ->\n                        base <| Leaf (f a)\n\n                    Node nodes ->\n                        nodes\n                            |> traverseList\n                                (\\( key, node ) ->\n                                    recurse node |> map (Tuple.pair key)\n                                )\n                            |> map Node\n\n",
+                "type": "(x -> Recursion.Rec a b c) -> List.List x -> Recursion.Rec a b (List.List c)"
+            },
+            {
+                "name": "traverseMaybe",
+                "comment": " Traverse a maybe containing a recursive data type.\n\n    type SeparatedList sep val\n        = SeparatedList val (Maybe ( sep, SeparatedList sep val ))\n\n    mapSeparatedList : (a -> b) -> SeparatedList sep a -> SeparatedList sep b\n    mapSeparatedList f =\n        runRecursion <|\n            \\(SeparatedList a maybeOthers) ->\n                maybeOthers\n                    |> traverseMaybe (\\( sep, sepList ) -> recurse sepList |> map (Tuple.pair sep))\n                    |> map (SeparatedList (f a))\n\n",
+                "type": "(x -> Recursion.Rec a b c) -> Maybe.Maybe x -> Recursion.Rec a b (Maybe.Maybe c)"
+            },
+            {
+                "name": "traverseResult",
+                "comment": " Traverse over a `Result` where the success value can contain a recursive type.\n",
+                "type": "(value -> Recursion.Rec a b c) -> Result.Result error value -> Recursion.Rec a b (Result.Result error c)"
+            }
+        ],
+        "binops": []
+    }
+]

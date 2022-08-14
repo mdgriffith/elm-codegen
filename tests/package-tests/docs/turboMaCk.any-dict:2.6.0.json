@@ -1,0 +1,197 @@
+[
+    {
+        "name": "Dict.Any",
+        "comment": " A dictionary mapping unique keys to values.\nSimilar and based on Dict but without restriction on comparable keys.\n\nInsert, remove, and query operations all take O(log n) time.\n\n\n# Converting Types to Comparable\n\nWhen writing a function for conversion from the type you want to use for keys to comparable\nit's very important to make sure every distinct member of type k produces different value in set o of comparables.\n\nTake for instance those two examples:\n\nWe can use Bool as a key for our Dict (No matter how unpractical it might seem)\n\n    boolToInt : Bool -> Int\n    boolToInt bool =\n        case bool of\n            False -> 0\n            True -> 1\n\n    empty boolToInt\n    |> insert True \"foo\"\n    |> get True\n    --> Just \"foo\"\n\nor Maybe String.\n\n    comparableKey : Maybe String -> (Int, String)\n    comparableKey maybe =\n        case maybe of\n            Nothing -> (0, \"\")\n            Just str -> (1, str)\n\n    empty comparableKey\n        |> insert (Just \"foo\") 42\n        |> get (Just \"foo\")\n    --> Just 42\n\nNote that we give Int code to either constructor and in Case of Nothing we default to `\"\"` (empty string).\nThere is still a difference between `Nothing` and `Just \"\"` (`Int` value in the pair is different).\nIn fact, you can \"hardcode\" any value as the second member of the pair\nin case of nothing but empty string seems like a reasonable option for this case.\nGenerally, this is how I would implement `toComparable` function for most of your custom data types.\nHave a look at the longest constructor,\nDefine tuple where the first key is int (number of the constructor)\nand other are types within the constructor and you're good to go.\n\n\n# Dictionaries\n\n@docs AnyDict, equal\n\n\n# Build\n\n@docs empty, singleton, insert, update, remove, removeAll\n\n\n# Query\n\n@docs isEmpty, member, get, getKey, size, any, all\n\n\n# Lists\n\n@docs keys, values, toList, fromList\n\n\n# Transform\n\n@docs map, foldl, foldr, filter, partition, filterMap\n\n\n# Combine\n\n@docs union, intersect, diff, merge, groupBy\n\n\n# Dict\n\n@docs toDict\n\n\n# Json\n\n@docs decode, decode_, decodeList, encode, encodeList\n\n",
+        "unions": [
+            {
+                "name": "AnyDict",
+                "comment": " Be aware that AnyDict stores a function internally.\n\nUse [`equal`](#equal) function to check equality of two `AnyDict`s.\nUsing `(==)` would result in runtime exception because `AnyDict` type\ncontains a function.\n\n",
+                "args": [
+                    "comparable",
+                    "k",
+                    "v"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "all",
+                "comment": " Find out if all instances of a Dictionary match a predicate.\n\n    type Animal = Cat | Mouse | Dog\n\n    animalToInt : Animal -> Int\n    animalToInt animal =\n        case animal of\n            Cat -> 0\n            Mouse -> 1\n            Dog -> 2\n\n    animals : AnyDict Int Animal String\n    animals =\n        [ (Cat, \"Tom\"), (Mouse, \"Jerry\") ]\n            |> fromList animalToInt\n\n    aristocats : AnyDict Int Animal String\n    aristocats =\n        [ (Cat, \"Marie\"), (Cat, \"Duchess\"), (Cat, \"Toulouse\"), (Cat, \"Berlioz\") ]\n            |> fromList animalToInt\n\n    isACat : Animal -> String -> Bool\n    isACat animal _ =\n        case animal of\n            Cat -> True\n            _ -> False\n\n    all isACat animals\n    --> False\n\n    all isACat aristocats\n    --> True\n\n",
+                "type": "(k -> v -> Basics.Bool) -> Dict.Any.AnyDict comparable k v -> Basics.Bool"
+            },
+            {
+                "name": "any",
+                "comment": " Find out if there is any instance of something in a Dictionary.\n\n    type Animal = Cat | Mouse | Dog\n\n    animalToInt : Animal -> Int\n    animalToInt animal =\n        case animal of\n            Cat -> 0\n            Mouse -> 1\n            Dog -> 2\n\n    animals : AnyDict Int Animal String\n    animals =\n        [ (Cat, \"Tom\"), (Mouse, \"Jerry\") ]\n            |> fromList animalToInt\n\n    isACat : Animal -> String -> Bool\n    isACat animal _ =\n        case animal of\n            Cat -> True\n            _ -> False\n\n    any isACat animals\n    --> True\n\n",
+                "type": "(k -> v -> Basics.Bool) -> Dict.Any.AnyDict comparable k v -> Basics.Bool"
+            },
+            {
+                "name": "decode",
+                "comment": " Decode a JSON object into an `AnyDict`.\n\nThis encoder is limitted for cases where JSON representation\nfor a given type is an JSON Object. In JSON, object keys must be of type\n`String`.\nIf you need to decode different representation into `AnyDict` value,\njust use primitive `Decoder` types directly and map `AnyDict` constructors\nover these.\n\n    import Json.Decode\n\n    type Key = Foo | Bar\n\n    fromString : String -> Key\n    fromString str =\n       case str of\n          \"foo\" -> Foo\n          _     -> Bar\n\n    toString : Key -> String\n    toString key =\n      case key of\n         Foo -> \"foo\"\n         Bar -> \"bar\"\n\n    type alias Data = AnyDict String Key Int\n\n    dataDecoder : Json.Decode.Decoder Data\n    dataDecoder =\n       decode (\\str _ -> fromString str) toString Json.Decode.int\n\n\n    Json.Decode.decodeString dataDecoder \"{\\\"foo\\\":1,\\\"bar\\\":2}\"\n    |> Result.map toList\n    --> Ok [(Bar, 2), (Foo, 1)]\n\n",
+                "type": "(String.String -> v -> k) -> (k -> comparable) -> Json.Decode.Decoder v -> Json.Decode.Decoder (Dict.Any.AnyDict comparable k v)"
+            },
+            {
+                "name": "decodeList",
+                "comment": " Decode an AnyDict from a JSON list of tuples.\n\n    import Json.Decode as Decode\n    import Json.Encode as Encode\n\n    type alias Person = {first : String, last : String}\n    type alias Age = Int\n\n    personToString : Person -> String\n    personToString {first, last} = first ++ last\n\n    personDecode : Decode.Decoder Person\n    personDecode =\n        Decode.map2\n            Person\n                (Decode.field \"first\" Decode.string)\n                (Decode.field \"last\" Decode.string)\n\n    \"[[{\\\"first\\\":\\\"Jeve\\\",\\\"last\\\":\\\"Sobs\\\"},9001],[{\\\"first\\\":\\\"Tim\\\",\\\"last\\\":\\\"Berners-Lee\\\"},1234]]\"\n        |> Decode.decodeString (decodeList personToString (Decode.map2 Tuple.pair (Decode.index 0 personDecode) (Decode.index 1 Decode.int)))\n        --> Ok (fromList personToString [(Person \"Jeve\" \"Sobs\", 9001), (Person \"Tim\" \"Berners-Lee\", 1234)])\n\n",
+                "type": "(k -> comparable) -> Json.Decode.Decoder ( k, v ) -> Json.Decode.Decoder (Dict.Any.AnyDict comparable k v)"
+            },
+            {
+                "name": "decode_",
+                "comment": " Decode a JSON object into an `AnyDict`.\n\nThis variant of decode allows you to fail with error while parsing key from String.\nIn such case whole Dict decoding will fail.\n\n    import Json.Decode\n\n    type Key = Foo | Bar\n\n    fromString : String -> Result String Key\n    fromString str =\n       case str of\n          \"foo\" -> Ok Foo\n          \"bar\" -> Ok Bar\n          _     -> Err <| \"Unknown key \" ++ str\n\n    toString : Key -> String\n    toString key =\n      case key of\n         Foo -> \"foo\"\n         Bar -> \"bar\"\n\n    type alias Data = AnyDict String Key Int\n\n    dataDecoder : Json.Decode.Decoder Data\n    dataDecoder =\n       decode_ (\\str _ -> fromString str) toString Json.Decode.int\n\n\n    Json.Decode.decodeString dataDecoder \"{\\\"foo\\\":1,\\\"bar\\\":2}\"\n    |> Result.map toList\n    --> Ok [(Bar, 2), (Foo, 1)]\n\n    Json.Decode.decodeString dataDecoder \"{\\\"foo\\\":1,\\\"baz\\\":2}\"\n    |> Result.map toList\n    --> Json.Decode.decodeString (Json.Decode.fail \"Unknown key baz\") \"{}\"\n\n",
+                "type": "(String.String -> v -> Result.Result String.String k) -> (k -> comparable) -> Json.Decode.Decoder v -> Json.Decode.Decoder (Dict.Any.AnyDict comparable k v)"
+            },
+            {
+                "name": "diff",
+                "comment": " Keep a key-value pair when its key does not appear in the second dictionary.\n",
+                "type": "Dict.Any.AnyDict comparable k v -> Dict.Any.AnyDict comparable k v -> Dict.Any.AnyDict comparable k v"
+            },
+            {
+                "name": "empty",
+                "comment": " Create an empty dictionary by suppling function used for comparing keys.\n\n**Note that it's important to make sure every key is turned to different comparable.**\nOtherwise keys would conflict and overwrite each other.\n\n",
+                "type": "(k -> comparable) -> Dict.Any.AnyDict comparable k v"
+            },
+            {
+                "name": "encode",
+                "comment": " Turn an `AnyDict` into a JSON object.\n\n    import Json.Encode\n\n    type Key = Foo | Bar\n\n    toString : Key -> String\n    toString key =\n      case key of\n         Foo -> \"foo\"\n         Bar -> \"bar\"\n\n    type alias Data = AnyDict String Key Int\n\n    encodeData : Data -> Json.Encode.Value\n    encodeData =\n      encode toString Json.Encode.int\n\n    fromList toString [(Foo, 1), (Bar, 2)]\n    |> encodeData\n    |> Json.Encode.encode 0\n    --> \"{\\\"bar\\\":2,\\\"foo\\\":1}\"\n\n",
+                "type": "(k -> String.String) -> (v -> Json.Encode.Value) -> Dict.Any.AnyDict comparable k v -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeList",
+                "comment": " Turn an AnyDict into a JSON list of tuples. This is useful when you have more complex types as keys\n\n    import Json.Decode as Decode\n    import Json.Encode as Encode\n\n    type alias Person = {first : String, last : String}\n    type alias Age = Int\n\n    personToString : Person -> String\n    personToString {first, last} = first ++ last\n\n    personEncode : Person -> Encode.Value\n    personEncode {first, last} =\n        Encode.object [(\"first\", (Encode.string first)), (\"last\", (Encode.string last))]\n\n    example : AnyDict String Person Age\n    example =\n        fromList personToString [(Person \"Jeve\" \"Sobs\", 9001), (Person \"Tim\" \"Berners-Lee\", 1234)]\n\n    encodeList (\\k v -> Encode.list identity [ personEncode k, Encode.int v ]) example\n        |> Encode.encode 0\n        --> \"[[{\\\"first\\\":\\\"Jeve\\\",\\\"last\\\":\\\"Sobs\\\"},9001],[{\\\"first\\\":\\\"Tim\\\",\\\"last\\\":\\\"Berners-Lee\\\"},1234]]\"\n\n",
+                "type": "(k -> v -> Json.Encode.Value) -> Dict.Any.AnyDict comparable k v -> Json.Encode.Value"
+            },
+            {
+                "name": "equal",
+                "comment": " Check equality of two `AnyDict`s\n\n    * returns `True` if AnyDicts are equal\n    * returns `False` if AnyDicts are not equal\n\n",
+                "type": "Dict.Any.AnyDict comparable k v -> Dict.Any.AnyDict comparable k v -> Basics.Bool"
+            },
+            {
+                "name": "filter",
+                "comment": " Keep a key-value pair when it satisfies a predicate.\n",
+                "type": "(k -> v -> Basics.Bool) -> Dict.Any.AnyDict comparable k v -> Dict.Any.AnyDict comparable k v"
+            },
+            {
+                "name": "filterMap",
+                "comment": " Apply a function that may or may not succeed to all entries in a dictionary, but only keep the successes.\n\n    type Animal = Cat | Mouse | Dog\n\n    animalToInt : Animal -> Int\n    animalToInt animal =\n        case animal of\n            Cat -> 0\n            Mouse -> 1\n            Dog -> 2\n\n    animals : AnyDict Int Animal String\n    animals =\n        [ (Cat, \"Tom\"), (Mouse, \"Jerry\") ]\n            |> fromList animalToInt\n\n    onlyTom : AnyDict Int Animal String\n    onlyTom =\n        [ (Cat, \"Tom\") ]\n            |> fromList animalToInt\n\n    getCatName : Animal -> String -> Maybe String\n    getCatName animal name =\n        case animal of\n            Cat -> Just name\n            _ -> Nothing\n\n    filterMap getCatName animals == onlyTom\n    --> True\n\n",
+                "type": "(k -> v1 -> Maybe.Maybe v2) -> Dict.Any.AnyDict comparable k v1 -> Dict.Any.AnyDict comparable k v2"
+            },
+            {
+                "name": "foldl",
+                "comment": " Fold over the key-value pairs in a dictionary, in order from lowest key to highest key.\n",
+                "type": "(k -> v -> b -> b) -> b -> Dict.Any.AnyDict comparable k v -> b"
+            },
+            {
+                "name": "foldr",
+                "comment": " Fold over the key-value pairs in a dictionary, in order from highest key to lowest key.\n",
+                "type": "(k -> v -> b -> b) -> b -> Dict.Any.AnyDict comparable k v -> b"
+            },
+            {
+                "name": "fromList",
+                "comment": " Convert an association list into a dictionary.\n\n**Note that it's important to make sure every key is turned to different comparable.**\nOtherwise keys would conflict and overwrite each other.\n\n",
+                "type": "(k -> comparable) -> List.List ( k, v ) -> Dict.Any.AnyDict comparable k v"
+            },
+            {
+                "name": "get",
+                "comment": " Get the value associated with a key.\nIf the key is not found, return Nothing.\nThis is useful when you are not sure\nif a key will be in the dictionary.\n\n    type Animal = Cat | Mouse | Dog\n\n    animalToInt : Animal -> Int\n    animalToInt animal =\n        case animal of\n            Cat -> 0\n            Mouse -> 1\n            Dog -> 2\n\n    animals : AnyDict Int Animal String\n    animals =\n        [ (Cat, \"Tom\"), (Mouse, \"Jerry\") ]\n            |> fromList animalToInt\n\n    get Cat animals\n    -> Just \"Tom\"\n\n    get Mouse animals\n    --> Just \"Jerry\"\n\n    get Dog animals\n    --> Nothing\n\n",
+                "type": "k -> Dict.Any.AnyDict comparable k v -> Maybe.Maybe v"
+            },
+            {
+                "name": "getKey",
+                "comment": " Get a key associated with key.\n\nThis is useful in case of `AnyDict` because\nsome parts of a key might not be used\nfor generating comparable.\nThis function allows quering `AnyDict` with old\nkey to obtain updated one in such cases.\n\n",
+                "type": "k -> Dict.Any.AnyDict comparable k v -> Maybe.Maybe k"
+            },
+            {
+                "name": "groupBy",
+                "comment": " Takes a key-fn and a list.\nCreates an `AnyDict` which maps the key to a list of matching elements.\n",
+                "type": "(value -> key) -> (key -> comparable) -> List.List value -> Dict.Any.AnyDict comparable key (List.List value)"
+            },
+            {
+                "name": "insert",
+                "comment": " Insert a key-value pair into a dictionary. Replaces value when there is a collision.\n",
+                "type": "k -> v -> Dict.Any.AnyDict comparable k v -> Dict.Any.AnyDict comparable k v"
+            },
+            {
+                "name": "intersect",
+                "comment": " Keep a key-value pair when its key appears in the second dictionary.\nPreference is given to values in the first dictionary.\n",
+                "type": "Dict.Any.AnyDict comparable k v -> Dict.Any.AnyDict comparable k v -> Dict.Any.AnyDict comparable k v"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Determine if a dictionary is empty.\n\n    isEmpty (empty identity)\n    --> True\n\n    singleton 1 \"foo\" identity\n        |> isEmpty\n    --> False\n\n",
+                "type": "Dict.Any.AnyDict comparable k v -> Basics.Bool"
+            },
+            {
+                "name": "keys",
+                "comment": " Get all of the keys in a dictionary, sorted from lowest to highest.\n",
+                "type": "Dict.Any.AnyDict comparable k v -> List.List k"
+            },
+            {
+                "name": "map",
+                "comment": " Apply a function to all values in a dictionary.\n",
+                "type": "(a -> b -> c) -> Dict.Any.AnyDict comparable a b -> Dict.Any.AnyDict comparable a c"
+            },
+            {
+                "name": "member",
+                "comment": " Determine if a key is in a dictionary.\n",
+                "type": "k -> Dict.Any.AnyDict comparable k v -> Basics.Bool"
+            },
+            {
+                "name": "merge",
+                "comment": " The most general way of combining two dictionaries.\nYou provide three accumulators for when a given key appears:\n\n1.  Only in the left dictionary.\n2.  In both dictionaries.\n3.  Only in the right dictionary.\n\nOnly in the left dictionary.\nIn both dictionaries.\nOnly in the right dictionary.\n\n",
+                "type": "(k -> a -> result -> result) -> (k -> a -> b -> result -> result) -> (k -> b -> result -> result) -> Dict.Any.AnyDict comparable k a -> Dict.Any.AnyDict comparable k b -> result -> result"
+            },
+            {
+                "name": "partition",
+                "comment": " Partition a dictionary according to a predicate.\nThe first dictionary contains all key-value pairs which satisfy the predicate,\nand the second contains the rest.\n",
+                "type": "(k -> v -> Basics.Bool) -> Dict.Any.AnyDict comparable k v -> ( Dict.Any.AnyDict comparable k v, Dict.Any.AnyDict comparable k v )"
+            },
+            {
+                "name": "remove",
+                "comment": " Remove a key-value pair from a dictionary.\nIf the key is not found, no changes are made.\n",
+                "type": "k -> Dict.Any.AnyDict comparable k v -> Dict.Any.AnyDict comparable k v"
+            },
+            {
+                "name": "removeAll",
+                "comment": " Remove all entries from AnyDict.\n\nUseful when you need to create new empty AnyDict using\nsame comparable function for key type.\n\n",
+                "type": "Dict.Any.AnyDict comparable k v -> Dict.Any.AnyDict comparable k x"
+            },
+            {
+                "name": "singleton",
+                "comment": " Create a dictionary with one key-value pair.\n\n**Note that it's important to make sure every key is turned to different comparable.**\nOtherwise keys would conflict and overwrite each other.\n\n",
+                "type": "k -> v -> (k -> comparable) -> Dict.Any.AnyDict comparable k v"
+            },
+            {
+                "name": "size",
+                "comment": " Determine the number of key-value pairs in the dictionary.\n",
+                "type": "Dict.Any.AnyDict comparable k v -> Basics.Int"
+            },
+            {
+                "name": "toDict",
+                "comment": " Convert `AnyDict` to plain dictionary with comparable keys.\n",
+                "type": "Dict.Any.AnyDict comparable k v -> Dict.Dict comparable v"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert a dictionary into an association list of key-value pairs,\nsorted by keys.\n",
+                "type": "Dict.Any.AnyDict comparable k v -> List.List ( k, v )"
+            },
+            {
+                "name": "union",
+                "comment": " Combine two dictionaries. If there is a collision, preference is given to the first dictionary.\n",
+                "type": "Dict.Any.AnyDict comparable k v -> Dict.Any.AnyDict comparable k v -> Dict.Any.AnyDict comparable k v"
+            },
+            {
+                "name": "update",
+                "comment": " Update the value of a dictionary for a specific key with a given function.\n",
+                "type": "k -> (Maybe.Maybe v -> Maybe.Maybe v) -> Dict.Any.AnyDict comparable k v -> Dict.Any.AnyDict comparable k v"
+            },
+            {
+                "name": "values",
+                "comment": " Get all of the values in a dictionary, in the order of their keys.\n",
+                "type": "Dict.Any.AnyDict comparable k v -> List.List v"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,153 @@
+[
+    {
+        "name": "Complex",
+        "comment": " The complex module allows you to work with complex numbers. There is not much else to say. We have basic constructors, basic operations, trig, exponentials, and logarithms. More may be added in the future.\n\n\n# Basics\n\n@docs Complex, complex, i, one, zero, fromReal\n\n\n# Basic Unary Operations\n\n@docs real, imaginary, abs, conjugate, negation, sgn, arg, sqrt\n\n\n# Basic Binary Operations\n\n@docs add, sub, mult, div\n\n\n# Trig\n\n@docs sin, cos, tan, asin, acos, atan, euler\n\n\n# Exponents and Logarithms\n\n@docs ln, exp, pow\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Complex",
+                "comment": " A complex number is a record of a real part and an imaginary part.\n",
+                "args": [],
+                "type": "{ re : Basics.Float, im : Basics.Float }"
+            }
+        ],
+        "values": [
+            {
+                "name": "abs",
+                "comment": " Takes the absolute value of a complex number.\n\n    abs 2 + 2 i == sqrt 8\n\n    abs -2 - 2 i == sqrt 8\n\n    abs 0 + 0 i == 0\n\n",
+                "type": "Complex.Complex -> Basics.Float"
+            },
+            {
+                "name": "acos",
+                "comment": " Complex inverse cosine.\n",
+                "type": "Complex.Complex -> Complex.Complex"
+            },
+            {
+                "name": "add",
+                "comment": " Adds two complex numbers by adding the real and imaginary parts.\n",
+                "type": "Complex.Complex -> Complex.Complex -> Complex.Complex"
+            },
+            {
+                "name": "arg",
+                "comment": " The argument of a complex number. It is in radians. This is also known as the phase or angle.\n\n    arg 0 + 0 i == 0\n\n    arg 0 + i == pi / 2\n\n",
+                "type": "Complex.Complex -> Basics.Float"
+            },
+            {
+                "name": "asin",
+                "comment": " Complex inverse sine.\n",
+                "type": "Complex.Complex -> Complex.Complex"
+            },
+            {
+                "name": "atan",
+                "comment": " Complex inverse tan.\n",
+                "type": "Complex.Complex -> Complex.Complex"
+            },
+            {
+                "name": "complex",
+                "comment": " Generates a complex number.\n\n    complex 1 2 == 1 + 2 i\n\n",
+                "type": "Basics.Float -> Basics.Float -> Complex.Complex"
+            },
+            {
+                "name": "conjugate",
+                "comment": " Returns the conjugate of a complex number\n\n    conjugate 2 + 3 i == 2 - 3 i\n\n    conjugate 2 - 3 i == 2 + 3 i\n\n",
+                "type": "Complex.Complex -> Complex.Complex"
+            },
+            {
+                "name": "cos",
+                "comment": " Complex cosine.\n",
+                "type": "Complex.Complex -> Complex.Complex"
+            },
+            {
+                "name": "div",
+                "comment": " Divides two complex numbers.\n\n    div 2 + 2 i 1 + 1 i == 2 + 0\n\n    div 2 + 2 i 0 + 0 i == NaN + NaNi\n\n",
+                "type": "Complex.Complex -> Complex.Complex -> Complex.Complex"
+            },
+            {
+                "name": "euler",
+                "comment": " Euler's formula.\n\n           euler 2 == e^{i*2} == cos 2 + i*sin 2\n\n",
+                "type": "Basics.Float -> Complex.Complex"
+            },
+            {
+                "name": "exp",
+                "comment": " The exponent of a complex number.\n",
+                "type": "Complex.Complex -> Complex.Complex"
+            },
+            {
+                "name": "fromReal",
+                "comment": " Creates a complex number from one real numer.\n\n    fromReal 5 == 5 + 0 i\n\n",
+                "type": "Basics.Float -> Complex.Complex"
+            },
+            {
+                "name": "i",
+                "comment": " The number i\n\n    i == complex 0 1\n\n",
+                "type": "Complex.Complex"
+            },
+            {
+                "name": "imaginary",
+                "comment": " Provides the imaginary part of a complex number.\n\n    imaginary 2 + 3 i == 3\n\n",
+                "type": "Complex.Complex -> Basics.Float"
+            },
+            {
+                "name": "ln",
+                "comment": " The natrual log of a complex number.\n",
+                "type": "Complex.Complex -> Complex.Complex"
+            },
+            {
+                "name": "mult",
+                "comment": " Multiplies two complex numbers so that\n\n    mult (a + bi) (c + di) == (ac - bd) + (ad + bc)\n\n",
+                "type": "Complex.Complex -> Complex.Complex -> Complex.Complex"
+            },
+            {
+                "name": "negation",
+                "comment": " Negates a complex number.\n\n    negation 1 + 2 i == -1 - 2 i\n\n    negation -1 - 2 i == 1 + 2 i\n\n    negation -1 + 2 i == 1 - 2 i\n\n",
+                "type": "Complex.Complex -> Complex.Complex"
+            },
+            {
+                "name": "one",
+                "comment": " The number 1.\n\n    complex 1 0 == one\n\n",
+                "type": "Complex.Complex"
+            },
+            {
+                "name": "pow",
+                "comment": " Take a complex number to a complex power.\n\n    pow 1+0i 2+2i == (1)^{2+2i} == 1\n\n",
+                "type": "Complex.Complex -> Complex.Complex -> Complex.Complex"
+            },
+            {
+                "name": "real",
+                "comment": " Provides the real part of a complex number.\n\n    real 2 + 3 i == 2\n\n",
+                "type": "Complex.Complex -> Basics.Float"
+            },
+            {
+                "name": "sgn",
+                "comment": " Returns the sign of a complex number.\n\n    sgn 0 + 0 i == 0\n\n    sgn 0 + 2 i == 0\n\n    sgn 1 + -10 i == 1\n\n    sgn -1 + 10 i == -1\n\n    sgn -1 + -10 i == -1\n\n",
+                "type": "Complex.Complex -> Basics.Float"
+            },
+            {
+                "name": "sin",
+                "comment": " Complex sine.\n",
+                "type": "Complex.Complex -> Complex.Complex"
+            },
+            {
+                "name": "sqrt",
+                "comment": " Square root of a complex number. Returns only one of two possibilites.\n\n    sqrt (2+2i) == (1.55...) + i0.6435..\n\n",
+                "type": "Complex.Complex -> Complex.Complex"
+            },
+            {
+                "name": "sub",
+                "comment": " Subtacts two complex numbers by negating and adding.\n",
+                "type": "Complex.Complex -> Complex.Complex -> Complex.Complex"
+            },
+            {
+                "name": "tan",
+                "comment": " Complex tangent.\n",
+                "type": "Complex.Complex -> Complex.Complex"
+            },
+            {
+                "name": "zero",
+                "comment": " The number 0.\n\n    complex 0 0 == zero\n\n",
+                "type": "Complex.Complex"
+            }
+        ],
+        "binops": []
+    }
+]

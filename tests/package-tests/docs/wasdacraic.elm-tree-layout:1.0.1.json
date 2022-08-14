@@ -1,0 +1,16 @@
+[
+    {
+        "name": "TreeLayout",
+        "comment": " Return x and y coordinates for a general tree, layed out according to aesthetic rules\ndefined by [(Walker, 1989)](http://www.cs.unc.edu/techreports/89-034.pdf). This implementation\nis based on the pseudo-code given in the improved algorithm that runs in linear time by\n[(Buchheim, Junger and Leipert, 2006)](http://dirk.jivas.de/papers/buchheim02improving.pdf).\n\nWhile providing the coordinates, this module does not render the tree to keep it generic.\n\n@docs treeLayout\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "treeLayout",
+                "comment": " Return a dictionary of x and y coordinates keyed by a unique identifier for a node for a\ngiven 'distance' (used as a constant for x spacing) and 'nodes' (a list of hierarchy descriptors\nstarting with the root, represented by tuples of node identifier and parent node identifier).\n\n    treeLayout 2 [ ( \"a\", Nothing ), ( \"b\", Just \"a\" ), ( \"c\", Just \"a\" ) ]\n    --> (Dict.fromList [ ( \"a\", { x = 0, y = 1 } ), ( \"b\", { x = -1, y = 2 } ), ( \"c\", { x = 1, y = 2 } ) ])\n\n**Note:** The x coordinates will have negative values, as the root node will always be at 0.\nThe y coordinates will be integers from 1 to the max depth of the tree.\n\n",
+                "type": "Basics.Float -> List.List ( comparable, Maybe.Maybe comparable ) -> Dict.Dict comparable TreeLayout.Coordinate"
+            }
+        ],
+        "binops": []
+    }
+]

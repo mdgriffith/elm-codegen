@@ -1,0 +1,16 @@
+[
+    {
+        "name": "NoMissingDocumentation",
+        "comment": " Make sure that every top level declaration is documented.\n\n# Rule\n\n@docs rule\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": "\n\n\n## Usage\n\nAfter adding [elm-review](https://package.elm-lang.org/packages/jfmengels/elm-review/latest/) to your project, import this rule to\n`ReviewConfig.elm` file and add it to the config.\n\n\n## Example configuration\n\n    import NoMissingDocumentation\n    import Review.Rule exposing (Rule)\n\n    config : List Rule\n    config =\n        [ NoMissingDocumentation.rule ]\n\n",
+                "type": "Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    }
+]

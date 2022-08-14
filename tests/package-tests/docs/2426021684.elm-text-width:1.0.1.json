@@ -1,0 +1,16 @@
+[
+    {
+        "name": "TextWidth",
+        "comment": " This modules calculates the width of text\n\n@docs textWidth\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "textWidth",
+                "comment": " Calculate the width of text\n\n",
+                "type": "String.String -> String.String -> Basics.Float"
+            }
+        ],
+        "binops": []
+    }
+]

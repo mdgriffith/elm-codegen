@@ -1,0 +1,497 @@
+[
+    {
+        "name": "Admin",
+        "comment": "\n\n@docs admin, adminWithActions, Admin\n@docs router, protectedRouter\n@docs lightTheme, darkTheme, preferDarkMode, disableModeSwitch, darkModeStrategy\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Admin",
+                "comment": " ",
+                "args": [
+                    "flags",
+                    "model",
+                    "msg"
+                ],
+                "type": "Admin.Internal.Application.Admin flags model msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "admin",
+                "comment": " ",
+                "type": "{ title : String.String, init : flags -> Browser.Navigation.Key -> ( model, Platform.Cmd.Cmd msg ), update : msg -> model -> ( model, Platform.Cmd.Cmd msg ), subscriptions : model -> Platform.Sub.Sub msg } -> List.List (Admin.Attribute model msg) -> Admin.Admin flags model msg"
+            },
+            {
+                "name": "adminWithActions",
+                "comment": " ",
+                "type": "{ title : String.String, init : flags -> Browser.Navigation.Key -> ( model, Admin.Actions.Action msg ), update : msg -> model -> ( model, Admin.Actions.Action msg ), subscriptions : model -> Platform.Sub.Sub msg } -> List.List (Admin.Attribute model msg) -> Admin.Admin flags model msg"
+            },
+            {
+                "name": "darkModeStrategy",
+                "comment": " ",
+                "type": "ThemeProvider.DarkModeStrategy -> Admin.Attribute model msg"
+            },
+            {
+                "name": "darkTheme",
+                "comment": " ",
+                "type": "ThemeSpec.ThemeSpec -> Admin.Attribute model msg"
+            },
+            {
+                "name": "disableModeSwitch",
+                "comment": " ",
+                "type": "Basics.Bool -> Admin.Attribute model msg"
+            },
+            {
+                "name": "lightTheme",
+                "comment": " ",
+                "type": "ThemeSpec.ThemeSpec -> Admin.Attribute model msg"
+            },
+            {
+                "name": "preferDarkMode",
+                "comment": " ",
+                "type": "Basics.Bool -> Admin.Attribute model msg"
+            },
+            {
+                "name": "protectedRouter",
+                "comment": " ",
+                "type": "(model -> Maybe.Maybe subModel) -> List.List (Admin.Router.Route subModel msg) -> Admin.Attribute model msg"
+            },
+            {
+                "name": "router",
+                "comment": " ",
+                "type": "List.List (Admin.Router.Route model msg) -> Admin.Attribute model msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Admin.Actions",
+        "comment": " Actions are a especial kind of `Cmd` that can be used to trigger both your usual commands as well as especial ones used by ElmAdmin.\n\nYou can use commands that will be handled by your own update functions.\n\n    import ElmAdmin.Actions as Actions\n\n    update : RouteParams -> Msg -> Model -> ( Model, Action Msg )\n    update _ msg model =\n        case msg of\n            RequestedUsers ->\n                ( model\n                , Actions.cmd <| fetchUsers GotUsers\n                )\n\n            GotUsers users ->\n                ( { model | users = users }\n                , Actions.none\n                )\n\nBut you can also trigger actions that will be handled by ElmAdmin itself.\n\n    import ElmAdmin.Actions as Actions\n\n    update : RouteParams -> Msg -> Model -> ( Model, Action Msg )\n    update _ msg model =\n        case msg of\n            RequestedUsers ->\n                ( model\n                , Actions.cmd <| fetchUsers GotUsers\n                )\n\n            GotUsers users ->\n                ( { model | users = users }\n                , Actions.showNotification <|\n                    text \"Got some users!\"\n                )\n\n\n# Commands\n\n@docs cmd, none, batch, map, Action\n\n\n# Notifications\n\nYou can trigger a notification popup from anywhere in your application through one of these commands.\n\n@docs showNotification, showHighlightNotification, showSuccessNotification, showWarningNotification, showDangerNotification\n\n\n# Form\n\n@docs initForm, debounce\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Action",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Admin.Shared.Action msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "batch",
+                "comment": " Batchs a list of actions. You can mix and match your cmds and ElmAdmin actions by using this function.\n",
+                "type": "List.List (Admin.Actions.Action msg) -> Admin.Actions.Action msg"
+            },
+            {
+                "name": "cmd",
+                "comment": " Sends a command that will be handled by your update functions.\n",
+                "type": "Platform.Cmd.Cmd msg -> Admin.Actions.Action msg"
+            },
+            {
+                "name": "debounce",
+                "comment": " Debounce a message passing a string as a debounce key and a wait time in milliseconds.\n",
+                "type": "String.String -> Basics.Int -> msg -> Admin.Actions.Action msg"
+            },
+            {
+                "name": "initForm",
+                "comment": " Set a form state based on a resource.\n",
+                "type": "Admin.Form.Form model msg params resource -> resource -> Admin.Actions.Action msg"
+            },
+            {
+                "name": "map",
+                "comment": " Maps an `Action msgA` to an `Action msgB`. Useful for submodules.\n",
+                "type": "(msgA -> msgB) -> Admin.Actions.Action msgA -> Admin.Actions.Action msgB"
+            },
+            {
+                "name": "none",
+                "comment": " Does nothing. This is similar to `Cmd.none`.\n",
+                "type": "Admin.Actions.Action msg"
+            },
+            {
+                "name": "showDangerNotification",
+                "comment": " Triggers a notification with a \"danger\" theme.\n",
+                "type": "Html.Html msg -> Admin.Actions.Action msg"
+            },
+            {
+                "name": "showHighlightNotification",
+                "comment": " Triggers a notification with a \"highlight\" theme.\n",
+                "type": "Html.Html msg -> Admin.Actions.Action msg"
+            },
+            {
+                "name": "showNotification",
+                "comment": " Triggers a notification that will fade out after a while.\n",
+                "type": "Html.Html msg -> Admin.Actions.Action msg"
+            },
+            {
+                "name": "showSuccessNotification",
+                "comment": " Triggers a notification with a \"success\" theme.\n",
+                "type": "Html.Html msg -> Admin.Actions.Action msg"
+            },
+            {
+                "name": "showWarningNotification",
+                "comment": " Triggers a notification with a \"warning\" theme.\n",
+                "type": "Html.Html msg -> Admin.Actions.Action msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Admin.Form",
+        "comment": "\n\n@docs form, Form, FormField\n\n\n# Form Fields\n\n\n## Text\n\n@docs text, TextAttributes\n\n\n## Autocomplete\n\n@docs autocomplete, AutocompleteAttributes\n\n\n## Remote Autocomplete\n\n@docs remoteAutocomplete, RemoteAutocompleteAttributes\n\n\n## Checkbox\n\n@docs checkbox, CheckboxAttributes\n\n\n## Radio\n\n@docs radio, RadioAttributes\n\n\n## Select\n\n@docs select, SelectAttributes\n\n\n## Range\n\n@docs range, RangeAttributes\n\n\n# Attributes\n\n@docs readOnly, readOnlyIf, required, hidden, hiddenIf, onEnter, onSearch\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "AutocompleteAttributes",
+                "comment": " ",
+                "args": [
+                    "model",
+                    "msg",
+                    "params",
+                    "resource"
+                ],
+                "type": "{ required : Basics.Bool, hidden : model -> params -> resource -> Basics.Bool, readOnly : model -> params -> resource -> Basics.Bool, onEnter : Maybe.Maybe (model -> params -> resource -> String.String -> msg), onSearch : Maybe.Maybe (model -> params -> resource -> String.String -> msg) }"
+            },
+            {
+                "name": "CheckboxAttributes",
+                "comment": " ",
+                "args": [
+                    "model",
+                    "params",
+                    "resource"
+                ],
+                "type": "{ hidden : model -> params -> resource -> Basics.Bool, readOnly : model -> params -> resource -> Basics.Bool }"
+            },
+            {
+                "name": "Form",
+                "comment": " ",
+                "args": [
+                    "model",
+                    "msg",
+                    "params",
+                    "resource"
+                ],
+                "type": "Admin.Internal.Form.Form model msg params resource"
+            },
+            {
+                "name": "FormField",
+                "comment": " ",
+                "args": [
+                    "model",
+                    "msg",
+                    "params",
+                    "resource",
+                    "a",
+                    "b"
+                ],
+                "type": "Admin.Internal.Form.FormBuilder model msg params resource (a -> b) -> Admin.Internal.Form.FormBuilder model msg params resource b"
+            },
+            {
+                "name": "RadioAttributes",
+                "comment": " ",
+                "args": [
+                    "model",
+                    "params",
+                    "resource"
+                ],
+                "type": "{ hidden : model -> params -> resource -> Basics.Bool, readOnly : model -> params -> resource -> Basics.Bool }"
+            },
+            {
+                "name": "RangeAttributes",
+                "comment": " ",
+                "args": [
+                    "model",
+                    "params",
+                    "resource"
+                ],
+                "type": "{ hidden : model -> params -> resource -> Basics.Bool, readOnly : model -> params -> resource -> Basics.Bool }"
+            },
+            {
+                "name": "RemoteAutocompleteAttributes",
+                "comment": " ",
+                "args": [
+                    "model",
+                    "params",
+                    "resource"
+                ],
+                "type": "{ required : Basics.Bool, hidden : model -> params -> resource -> Basics.Bool, readOnly : model -> params -> resource -> Basics.Bool }"
+            },
+            {
+                "name": "SelectAttributes",
+                "comment": " ",
+                "args": [
+                    "model",
+                    "params",
+                    "resource"
+                ],
+                "type": "{ hidden : model -> params -> resource -> Basics.Bool, readOnly : model -> params -> resource -> Basics.Bool }"
+            },
+            {
+                "name": "TextAttributes",
+                "comment": " ",
+                "args": [
+                    "model",
+                    "params",
+                    "resource"
+                ],
+                "type": "{ required : Basics.Bool, hidden : model -> params -> resource -> Basics.Bool, readOnly : model -> params -> resource -> Basics.Bool }"
+            }
+        ],
+        "values": [
+            {
+                "name": "autocomplete",
+                "comment": " ",
+                "type": "{ label : String.String, value : resource -> Maybe.Maybe x, options : model -> params -> Maybe.Maybe (List.List x), optionToLabel : x -> String.String, attrs : List.List (Admin.Form.AutocompleteAttributes model msg params resource -> Admin.Form.AutocompleteAttributes model msg params resource) } -> Admin.Internal.Form.FormBuilder model msg params resource (Maybe.Maybe x -> a) -> Admin.Internal.Form.FormBuilder model msg params resource a"
+            },
+            {
+                "name": "checkbox",
+                "comment": " ",
+                "type": "String.String -> (resource -> Basics.Bool) -> List.List (Admin.Form.CheckboxAttributes model params resource -> Admin.Form.CheckboxAttributes model params resource) -> Admin.Internal.Form.FormBuilder model msg params resource (Basics.Bool -> a) -> Admin.Internal.Form.FormBuilder model msg params resource a"
+            },
+            {
+                "name": "form",
+                "comment": " ",
+                "type": "String.String -> a -> Admin.Internal.Form.FormBuilder model msg params resource a"
+            },
+            {
+                "name": "hidden",
+                "comment": " ",
+                "type": "{ m | hidden : model -> params -> resource -> Basics.Bool } -> { m | hidden : model -> params -> resource -> Basics.Bool }"
+            },
+            {
+                "name": "hiddenIf",
+                "comment": " ",
+                "type": "(model -> params -> resource -> Basics.Bool) -> { m | hidden : model -> params -> resource -> Basics.Bool } -> { m | hidden : model -> params -> resource -> Basics.Bool }"
+            },
+            {
+                "name": "onEnter",
+                "comment": " ",
+                "type": "(model -> params -> resource -> String.String -> msg) -> { m | onEnter : Maybe.Maybe (model -> params -> resource -> String.String -> msg) } -> { m | onEnter : Maybe.Maybe (model -> params -> resource -> String.String -> msg) }"
+            },
+            {
+                "name": "onSearch",
+                "comment": " ",
+                "type": "(model -> params -> resource -> String.String -> msg) -> { m | onSearch : Maybe.Maybe (model -> params -> resource -> String.String -> msg) } -> { m | onSearch : Maybe.Maybe (model -> params -> resource -> String.String -> msg) }"
+            },
+            {
+                "name": "radio",
+                "comment": " ",
+                "type": "{ label : String.String, value : resource -> x, options : model -> params -> List.List x, optionToLabel : x -> String.String, attrs : List.List (Admin.Form.RadioAttributes model params resource -> Admin.Form.RadioAttributes model params resource) } -> Admin.Internal.Form.FormBuilder model msg params resource (x -> a) -> Admin.Internal.Form.FormBuilder model msg params resource a"
+            },
+            {
+                "name": "range",
+                "comment": " ",
+                "type": "{ label : String.String, value : resource -> Basics.Float, min : Basics.Float, max : Basics.Float, step : Basics.Float, attrs : List.List (Admin.Form.RangeAttributes model params resource -> Admin.Form.RangeAttributes model params resource) } -> Admin.Internal.Form.FormBuilder model msg params resource (Basics.Float -> a) -> Admin.Internal.Form.FormBuilder model msg params resource a"
+            },
+            {
+                "name": "readOnly",
+                "comment": " ",
+                "type": "{ m | readOnly : model -> params -> resource -> Basics.Bool } -> { m | readOnly : model -> params -> resource -> Basics.Bool }"
+            },
+            {
+                "name": "readOnlyIf",
+                "comment": " ",
+                "type": "(model -> params -> resource -> Basics.Bool) -> { m | readOnly : model -> params -> resource -> Basics.Bool } -> { m | readOnly : model -> params -> resource -> Basics.Bool }"
+            },
+            {
+                "name": "remoteAutocomplete",
+                "comment": " ",
+                "type": "{ label : String.String, value : resource -> Maybe.Maybe String.String, initRequest : model -> params -> String.String -> Platform.Task Http.Error { id : String.String, label : String.String }, searchRequest : model -> params -> String.String -> Platform.Task Http.Error (List.List { id : String.String, label : String.String }), attrs : List.List (Admin.Form.RemoteAutocompleteAttributes model params resource -> Admin.Form.RemoteAutocompleteAttributes model params resource) } -> Admin.Internal.Form.FormBuilder model msg params resource (Maybe.Maybe String.String -> a) -> Admin.Internal.Form.FormBuilder model msg params resource a"
+            },
+            {
+                "name": "required",
+                "comment": " ",
+                "type": "{ m | required : Basics.Bool } -> { m | required : Basics.Bool }"
+            },
+            {
+                "name": "select",
+                "comment": " ",
+                "type": "{ label : String.String, value : resource -> x, options : model -> params -> List.List x, optionToLabel : x -> String.String, attrs : List.List (Admin.Form.SelectAttributes model params resource -> Admin.Form.SelectAttributes model params resource) } -> Admin.Internal.Form.FormBuilder model msg params resource (x -> a) -> Admin.Internal.Form.FormBuilder model msg params resource a"
+            },
+            {
+                "name": "text",
+                "comment": " ",
+                "type": "String.String -> (resource -> String.String) -> List.List (Admin.Form.TextAttributes model params resource -> Admin.Form.TextAttributes model params resource) -> Admin.Internal.Form.FormBuilder model msg params resource (String.String -> a) -> Admin.Internal.Form.FormBuilder model msg params resource a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Admin.Http",
+        "comment": "\n\n@docs get\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "get",
+                "comment": " ",
+                "type": "{ url : String.String, headers : List.List Http.Header, decoder : Json.Decode.Decoder a } -> Platform.Task Http.Error a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Admin.Page",
+        "comment": "\n\n@docs page, params, Page\n@docs title, nav, init\n@docs view, card, list, form\n@docs oneParam, customParam\n@docs parsedParams, paramsParser, path, custom, query, queryList, ParamsParser\n\n-- TODO: hidden, loading, readOnly\n\n",
+        "unions": [
+            {
+                "name": "ParamsParser",
+                "comment": " ",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Page",
+                "comment": " ",
+                "args": [
+                    "model",
+                    "msg",
+                    "params"
+                ],
+                "type": "Admin.Internal.Page.Page model msg params"
+            }
+        ],
+        "values": [
+            {
+                "name": "card",
+                "comment": " ",
+                "type": "(model -> params -> Html.Html msg) -> Admin.Page.Page model msg params -> Admin.Page.Page model msg params"
+            },
+            {
+                "name": "custom",
+                "comment": " ",
+                "type": "String.String -> (String.String -> Maybe.Maybe b) -> Admin.Page.ParamsParser (b -> a) -> Admin.Page.ParamsParser a"
+            },
+            {
+                "name": "customParam",
+                "comment": " ",
+                "type": "String.String -> (String.String -> Maybe.Maybe params) -> Admin.Page.Page model msg x -> Admin.Page.Page model msg params"
+            },
+            {
+                "name": "form",
+                "comment": " ",
+                "type": "{ init : model -> params -> Maybe.Maybe resource, form : Admin.Internal.Form.Form model msg params resource, attrs : List.List (Admin.Page.FormAttributes model params -> Admin.Page.FormAttributes model params), onSubmit : model -> params -> resource -> msg } -> Admin.Page.Page model msg params -> Admin.Page.Page model msg params"
+            },
+            {
+                "name": "init",
+                "comment": " ",
+                "type": "(model -> params -> msg) -> Admin.Page.Page model msg params -> Admin.Page.Page model msg params"
+            },
+            {
+                "name": "list",
+                "comment": " ",
+                "type": "{ title : Html.Html msg, init : model -> params -> Maybe.Maybe (List.List a), toItem : model -> params -> a -> { label : Html.Html msg, actions : List.List (Html.Html msg), options : List.List (W.DataRow.Attribute msg) } } -> Admin.Page.Page model msg params -> Admin.Page.Page model msg params"
+            },
+            {
+                "name": "nav",
+                "comment": " ",
+                "type": "(model -> params -> String.String) -> Admin.Page.Page model msg params -> Admin.Page.Page model msg params"
+            },
+            {
+                "name": "oneParam",
+                "comment": " ",
+                "type": "String.String -> Admin.Page.Page model msg x -> Admin.Page.Page model msg String.String"
+            },
+            {
+                "name": "page",
+                "comment": " ",
+                "type": "String.String -> Admin.Internal.Page.Page model msg ()"
+            },
+            {
+                "name": "params",
+                "comment": " ",
+                "type": "(Admin.Libs.Router.RouteParams -> Maybe.Maybe params) -> Admin.Page.Page model msg x -> Admin.Page.Page model msg params"
+            },
+            {
+                "name": "paramsParser",
+                "comment": " ",
+                "type": "a -> Admin.Page.ParamsParser a"
+            },
+            {
+                "name": "parsedParams",
+                "comment": " ",
+                "type": "Admin.Page.ParamsParser params -> Admin.Page.Page model msg x -> Admin.Page.Page model msg params"
+            },
+            {
+                "name": "path",
+                "comment": " ",
+                "type": "String.String -> Admin.Page.ParamsParser (String.String -> a) -> Admin.Page.ParamsParser a"
+            },
+            {
+                "name": "query",
+                "comment": " ",
+                "type": "String.String -> Admin.Page.ParamsParser (Maybe.Maybe String.String -> a) -> Admin.Page.ParamsParser a"
+            },
+            {
+                "name": "queryList",
+                "comment": " ",
+                "type": "String.String -> Admin.Page.ParamsParser (Maybe.Maybe (List.List String.String) -> a) -> Admin.Page.ParamsParser a"
+            },
+            {
+                "name": "title",
+                "comment": " ",
+                "type": "(model -> params -> String.String) -> Admin.Page.Page model msg params -> Admin.Page.Page model msg params"
+            },
+            {
+                "name": "view",
+                "comment": " ",
+                "type": "(model -> params -> Html.Html msg) -> Admin.Page.Page model msg params -> Admin.Page.Page model msg params"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Admin.Router",
+        "comment": "\n\n@docs route, external, Route\n@docs resource\n@docs protected, hidden, full\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Route",
+                "comment": " ",
+                "args": [
+                    "model",
+                    "msg"
+                ],
+                "type": "Admin.Internal.Router.Route model msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "external",
+                "comment": " ",
+                "type": "{ url : String.String, label : String.String } -> Admin.Router.Route model msg"
+            },
+            {
+                "name": "full",
+                "comment": " ",
+                "type": "Admin.Router.Option model msg"
+            },
+            {
+                "name": "hidden",
+                "comment": " ",
+                "type": "(model -> Admin.Libs.Router.RouteParams -> Basics.Bool) -> Admin.Router.Option model msg"
+            },
+            {
+                "name": "protected",
+                "comment": " ",
+                "type": "(model -> Basics.Bool) -> Admin.Router.Option model msg"
+            },
+            {
+                "name": "resource",
+                "comment": " ",
+                "type": "String.String -> { param : String.String, index : Admin.Internal.Page.Page model msg params, show : Admin.Internal.Page.Page model msg params, new : Admin.Internal.Page.Page model msg params, edit : Admin.Internal.Page.Page model msg params, options : List.List (Admin.Router.Option model msg) } -> List.List (Admin.Router.Route model msg) -> Admin.Router.Route model msg"
+            },
+            {
+                "name": "route",
+                "comment": " ",
+                "type": "String.String -> { page : Admin.Internal.Page.Page model msg params, options : List.List (Admin.Router.Option model msg) } -> List.List (Admin.Router.Route model msg) -> Admin.Router.Route model msg"
+            }
+        ],
+        "binops": []
+    }
+]

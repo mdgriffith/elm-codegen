@@ -1,0 +1,813 @@
+[
+    {
+        "name": "Form",
+        "comment": " Build [composable forms](#Form) comprised of [fields](#fields).\n\n\n# Definition\n\n@docs Form\n\n\n# Fields\n\n@docs textField, emailField, passwordField, textareaField, numberField, rangeField, checkboxField\n@docs radioField, selectField\n\n\n# Composition\n\nAll the functions in [the previous section](#fields) produce a `Form` with a **single**\nfield. You might then be wondering: \"How do I create a `Form` with multiple fields?!\"\nWell, as the name of this package says: `Form` is composable! This section explains how you\ncan combine different forms into bigger and more complex ones.\n\n@docs succeed, append, optional, disable, group, section, andThen, meta, list\n\n\n# Mapping\n\n@docs map, mapValues\n\n\n# Output\n\nThis section describes how to fill a `Form` with its `values` and obtain its\ndifferent fields and its `output`. This is mostly used to write custom view code.\n\nIf you just want to render a simple form as `Html`, check [`Form.View`](Form-View) first as it\nmight suit your needs.\n\n@docs Field, TextType, FilledField, fill\n\n",
+        "unions": [
+            {
+                "name": "Field",
+                "comment": " Represents a form field.\n\nIf you are writing custom view code you will probably need to pattern match this type,\nusing the result of [`fill`](#fill).\n\n",
+                "args": [
+                    "values"
+                ],
+                "cases": [
+                    [
+                        "Text",
+                        [
+                            "Form.TextType",
+                            "Form.Base.TextField.TextField values"
+                        ]
+                    ],
+                    [
+                        "Number",
+                        [
+                            "Form.Base.NumberField.NumberField Basics.Float values"
+                        ]
+                    ],
+                    [
+                        "Range",
+                        [
+                            "Form.Base.RangeField.RangeField Basics.Float values"
+                        ]
+                    ],
+                    [
+                        "Checkbox",
+                        [
+                            "Form.Base.CheckboxField.CheckboxField values"
+                        ]
+                    ],
+                    [
+                        "Radio",
+                        [
+                            "Form.Base.RadioField.RadioField values"
+                        ]
+                    ],
+                    [
+                        "Select",
+                        [
+                            "Form.Base.SelectField.SelectField values"
+                        ]
+                    ],
+                    [
+                        "Group",
+                        [
+                            "List.List (Form.FilledField values)"
+                        ]
+                    ],
+                    [
+                        "Section",
+                        [
+                            "String.String",
+                            "List.List (Form.FilledField values)"
+                        ]
+                    ],
+                    [
+                        "List",
+                        [
+                            "Form.Base.FormList.FormList values (Form.Field values)"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "TextType",
+                "comment": " Represents a type of text field\n",
+                "args": [],
+                "cases": [
+                    [
+                        "TextRaw",
+                        []
+                    ],
+                    [
+                        "TextEmail",
+                        []
+                    ],
+                    [
+                        "TextPassword",
+                        []
+                    ],
+                    [
+                        "TextArea",
+                        []
+                    ],
+                    [
+                        "TextSearch",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "FilledField",
+                "comment": " Represents a filled field.\n",
+                "args": [
+                    "values"
+                ],
+                "type": "Form.Base.FilledField (Form.Field values)"
+            },
+            {
+                "name": "Form",
+                "comment": " A `Form` collects and validates user input using fields. When a form is filled with `values`,\nit produces some `output` if validation succeeds.\n\nFor example, a `Form String EmailAddress` is a form that is filled with a `String` and produces\nan `EmailAddress` when valid. This form could very well be an [`emailField`](#emailField)!\n\nA `Form` is only the **definition** of your form logic! It only represents the shape of a form! It lives on its own, decoupled from its values, the rendering strategy and view state.\n\nIf you like to learn by example, you can check out [this excellent introduction to the package by Alex Korban][korban].\n\n[korban]: https://korban.net/posts/elm/2018-11-27-build-complex-forms-validation-elm/\n\n",
+                "args": [
+                    "values",
+                    "output"
+                ],
+                "type": "Form.Base.Form values output (Form.Field values)"
+            }
+        ],
+        "values": [
+            {
+                "name": "andThen",
+                "comment": " Fill a form `andThen` fill another one.\n\nThis is useful to build dynamic forms. For instance, you could use the output of a `selectField`\nto choose between different forms, like this:\n\n    type Msg\n        = CreatePost Post.Body\n        | CreateQuestion Question.Title Question.Body\n\n    type ContentType\n        = Post\n        | Question\n\n    type alias Values =\n        { type_ : String\n        , title : String\n        , body : String\n        }\n\n    contentForm : Form Values Msg\n    contentForm =\n        Form.selectField\n            { parser =\n                \\value ->\n                    case value of\n                        \"post\" ->\n                            Ok Post\n\n                        \"question\" ->\n                            Ok Question\n\n                        _ ->\n                            Err \"invalid content type\"\n            , value = .type_\n            , update = \\newValue values -> { values | type_ = newValue }\n            , attributes =\n                { label = \"Which type of content do you want to create?\"\n                , placeholder = \"Choose a type of content\"\n                , options = [ ( \"post\", \"Post\" ), ( \"question\", \"Question\" ) ]\n                }\n            }\n            |> Form.andThen\n                (\\contentType ->\n                    case contentType of\n                        Post ->\n                            let\n                                bodyField =\n                                    Form.textareaField\n                                        { -- ...\n                                        }\n                            in\n                            Form.succeed CreatePost\n                                |> Form.append bodyField\n\n                        Question ->\n                            let\n                                titleField =\n                                    Form.textField\n                                        { -- ...\n                                        }\n\n                                bodyField =\n                                    Form.textareaField\n                                        { -- ...\n                                        }\n                            in\n                            Form.succeed CreateQuestion\n                                |> Form.append titleField\n                                |> Form.append bodyField\n                )\n\n",
+                "type": "(a -> Form.Form values b) -> Form.Form values a -> Form.Form values b"
+            },
+            {
+                "name": "append",
+                "comment": " Append a form to another one while **capturing** the `output` of the first one.\n\nFor instance, we could build a signup form:\n\n    signupEmailField : Form { r | email : String } EmailAddress\n    signupEmailField =\n        Form.emailField\n            { -- ...\n            }\n\n    signupPasswordField : Form { r | password : String } Password\n    signupPasswordField =\n        Form.passwordField\n            { -- ...\n            }\n\n    signupForm :\n        Form\n            { email : String\n            , password : String\n            }\n            ( EmailAddress, Password )\n    signupForm =\n        Form.succeed Tuple.pair\n            |> Form.append signupEmailField\n            |> Form.append signupPasswordField\n\nIn this pipeline, `append` is being used to feed the `Tuple.pair` function and combine two forms\ninto a bigger form that outputs `( EmailAddress, Password )` when submitted.\n\n**Note:** You can use [`succeed`](#succeed) smartly to **skip** some values.\nThis is useful when you want to append some fields in your form to perform validation, but\nyou do not care about the `output` they produce. An example of this is a \"repeat password\" field:\n\n    passwordForm :\n        Form\n            { password : String\n            , repeatPassword : String\n            }\n            Password\n    passwordForm =\n        Form.succeed (\\password repeatedPassword -> password)\n            |> Form.append passwordField\n            |> Form.append repeatPasswordField\n\n",
+                "type": "Form.Form values a -> Form.Form values (a -> b) -> Form.Form values b"
+            },
+            {
+                "name": "checkboxField",
+                "comment": " Create a form that contains a single checkbox field.\n\nIt has a very similar configuration to [`textField`](#textField), the only differences are:\n\n  - Its value is a `Bool` instead of `String`.\n  - Its attributes are [`CheckboxField.Attributes`](Form-Base-CheckboxField#Attributes)\n    instead of [`TextField.Attributes`](Form-Base-TextField#Attributes).\n\n",
+                "type": "{ parser : Basics.Bool -> Result.Result String.String output, value : values -> Basics.Bool, update : Basics.Bool -> values -> values, error : values -> Maybe.Maybe String.String, attributes : Form.Base.CheckboxField.Attributes } -> Form.Form values output"
+            },
+            {
+                "name": "disable",
+                "comment": " Disable a form.\n\nYou can combine this with [`meta`](#meta) to disable parts of a form based on its\nown values.\n\n",
+                "type": "Form.Form values output -> Form.Form values output"
+            },
+            {
+                "name": "emailField",
+                "comment": " Create a form that contains a single email field.\n\nIt has the same configuration options as [`textField`](#textField).\n\n",
+                "type": "{ parser : String.String -> Result.Result String.String output, value : values -> String.String, update : String.String -> values -> values, error : values -> Maybe.Maybe String.String, attributes : Form.Base.TextField.Attributes } -> Form.Form values output"
+            },
+            {
+                "name": "fill",
+                "comment": " Fill a form with some `values`.\n\nIt returns:\n\n  - a list of the fields of the form, alongside their errors\n  - the result of the filled form, which can either be:\n      - a non-empty list of validation errors\n      - the correct `output`\n  - whether the form is empty or not\n\n",
+                "type": "Form.Form values output -> values -> { fields : List.List (Form.FilledField values), result : Result.Result ( Form.Error.Error, List.List Form.Error.Error ) output, isEmpty : Basics.Bool }"
+            },
+            {
+                "name": "group",
+                "comment": " Wraps a form in a group.\n\nUsing this function does not affect the behavior of the form in any way. However, groups of fields\nmight be rendered differently. For instance, [`Form.View`](Form-View) renders groups of\nfields horizontally.\n\n",
+                "type": "Form.Form values output -> Form.Form values output"
+            },
+            {
+                "name": "list",
+                "comment": " Build a variable list of forms.\n\nFor instance, you can build a form that asks for a variable number of websites:\n\n    type alias WebsiteValues =\n        { name : String\n        , address : String\n        }\n\n    websiteForm : Int -> Form WebsiteValues Website\n\n    websitesForm : Form { r | websites : List WebsiteValues } (List Website)\n    websitesForm =\n        Form.list\n            { default =\n                { name = \"\"\n                , address = \"https://\"\n                }\n            , value = .websites\n            , update = \\value values -> { values | websites = value }\n            , attributes =\n                { label = \"Websites\"\n                , add = Just \"Add website\"\n                , delete = Just \"\"\n                }\n            }\n            websiteForm\n\n",
+                "type": "Form.Base.FormList.Config values elementValues -> (Basics.Int -> Form.Form elementValues output) -> Form.Form values (List.List output)"
+            },
+            {
+                "name": "map",
+                "comment": " Transform the `output` of a form.\n\nThis function can help you to keep forms decoupled from specific view messages:\n\n    Form.map SignUp signupForm\n\n",
+                "type": "(a -> b) -> Form.Form values a -> Form.Form values b"
+            },
+            {
+                "name": "mapValues",
+                "comment": " Transform the `values` of a form.\n\nThis can be useful when you need to nest forms:\n\n    type alias SignupValues =\n        { email : String\n        , password : String\n        , address : AddressValues\n        }\n\n    addressForm : Form AddressValues Address\n\n    signupForm : Form SignupValues Msg\n    signupForm =\n        Form.succeed SignUp\n            |> Form.append emailField\n            |> Form.append passwordField\n            |> Form.append\n                (Form.mapValues\n                    { value = .address\n                    , update = \\newAddress values -> { values | address = newAddress }\n                    }\n                    addressForm\n                )\n\n",
+                "type": "{ value : a -> b, update : b -> a -> a } -> Form.Form b output -> Form.Form a output"
+            },
+            {
+                "name": "meta",
+                "comment": " Build a form that depends on its own `values`.\n\nThis is useful when you need some fields to perform validation based on\nthe values of other fields. An example of this is a \"repeat password\" field:\n\n    repeatPasswordField :\n        Form\n            { r\n                | password : String\n                , repeatPassword : String\n            }\n            ()\n    repeatPasswordField =\n        Form.meta\n            (\\values ->\n                Form.passwordField\n                    { parser =\n                        \\value ->\n                            if value == values.password then\n                                Ok ()\n\n                            else\n                                Err \"the passwords do not match\"\n                    , value = .repeatPassword\n                    , update =\n                        \\newValue values ->\n                            { values | repeatPassword = newValue }\n                    , attributes =\n                        { label = \"Repeat password\"\n                        , placeholder = \"Type your password again...\"\n                        }\n                    }\n            )\n\n",
+                "type": "(values -> Form.Form values output) -> Form.Form values output"
+            },
+            {
+                "name": "numberField",
+                "comment": " Create a form that contains a single number field.\n\nIt has a very similar configuration to [`textField`](#textField), the only difference is:\n\n  - Its attributes are [`NumberField.Attributes`](Form-Base-NumberField#Attributes)\n    instead of [`TextField.Attributes`](Form-Base-TextField#Attributes).\n\n",
+                "type": "{ parser : String.String -> Result.Result String.String output, value : values -> String.String, update : String.String -> values -> values, error : values -> Maybe.Maybe String.String, attributes : Form.Base.NumberField.Attributes Basics.Float } -> Form.Form values output"
+            },
+            {
+                "name": "optional",
+                "comment": " Make a form optional. An optional form succeeds when:\n\n  - All of its fields are **empty**, producing `Nothing`\n  - All of its fields are **correct**, producing `Just` the `output`\n\nLet's say we want to optionally ask for a website name and address:\n\n    websiteForm =\n        Form.optional\n            (Form.succeed Website\n                |> Form.append websiteNameField\n                |> Form.append websiteAddressField\n            )\n\nThis `websiteForm` will only be valid if **both** fields are blank, or **both** fields\nare filled correctly.\n\n",
+                "type": "Form.Form values output -> Form.Form values (Maybe.Maybe output)"
+            },
+            {
+                "name": "passwordField",
+                "comment": " Create a form that contains a single password field.\n\nIt has the same configuration options as [`textField`](#textField).\n\n",
+                "type": "{ parser : String.String -> Result.Result String.String output, value : values -> String.String, update : String.String -> values -> values, error : values -> Maybe.Maybe String.String, attributes : Form.Base.TextField.Attributes } -> Form.Form values output"
+            },
+            {
+                "name": "radioField",
+                "comment": " Create a form that contains a single fieldset of radio fields.\n\nIt has a very similar configuration to [`textField`](#textField), the only difference is:\n\n  - Its attributes are [`RadioField.Attributes`](Form-Base-RadioField#Attributes)\n    instead of [`TextField.Attributes`](Form-Base-TextField#Attributes).\n\n",
+                "type": "{ parser : String.String -> Result.Result String.String output, value : values -> String.String, update : String.String -> values -> values, error : values -> Maybe.Maybe String.String, attributes : Form.Base.RadioField.Attributes } -> Form.Form values output"
+            },
+            {
+                "name": "rangeField",
+                "comment": " Create a form that contains a single range field.\n\nIt has a very similar configuration to [`textField`](#textField), the only difference is:\n\n  - Its attributes are [`RangeField.Attributes`](Form-Base-RangeField#Attributes)\n    instead of [`TextField.Attributes`](Form-Base-TextField#Attributes).\n\n",
+                "type": "{ parser : Maybe.Maybe Basics.Float -> Result.Result String.String output, value : values -> Maybe.Maybe Basics.Float, update : Maybe.Maybe Basics.Float -> values -> values, error : values -> Maybe.Maybe String.String, attributes : Form.Base.RangeField.Attributes Basics.Float } -> Form.Form values output"
+            },
+            {
+                "name": "section",
+                "comment": " Wraps a form in a section: an area with a title.\n\nLike [`group`](#group), this function has no effect on form behavior. It just\nindicates to the form view function that the fields are part of some user-defined\nsection.\n\n",
+                "type": "String.String -> Form.Form values output -> Form.Form values output"
+            },
+            {
+                "name": "selectField",
+                "comment": " Create a form that contains a single select field.\n\nIt has a very similar configuration to [`textField`](#textField), the only difference is:\n\n  - Its attributes are [`SelectField.Attributes`](Form-Base-SelectField#Attributes)\n    instead of [`TextField.Attributes`](Form-Base-TextField#Attributes).\n\n",
+                "type": "{ parser : String.String -> Result.Result String.String output, value : values -> String.String, update : String.String -> values -> values, error : values -> Maybe.Maybe String.String, attributes : Form.Base.SelectField.Attributes } -> Form.Form values output"
+            },
+            {
+                "name": "succeed",
+                "comment": " Create an **empty** form that always succeeds when filled, returning the given `output`.\n\nIt might seem pointless on its own, but it becomes useful when used in combination with other\nfunctions. The docs for [`append`](#append) have some great examples.\n\n",
+                "type": "output -> Form.Form values output"
+            },
+            {
+                "name": "textField",
+                "comment": " Create a form that contains a single text field.\n\nIt requires some configuration:\n\n  - `parser` specifies how to validate the field. It needs a function that processes the value of\n    the field and produces a `Result` of either:\n      - a `String` describing an error\n      - a correct `output`\n  - `value` describes how to obtain the field value from the form `values`\n  - `update` describes how the current form `values` should be updated with a new field value\n  - `attributes` let you define the specific attributes of the field (`label` and `placeholder`\n    in this case, see [`TextField.Attributes`](Form-Base-TextField#Attributes))\n\nIt might seem like a lot of configuration, but don't be scared! In practice, it isn't!\nFor instance, you could use this function to build a `nameField` that only succeeds when the\ninputted name has at least 2 characters, like this:\n\n    nameField : Form { r | name : String } String\n    nameField =\n        Form.textField\n            { parser =\n                \\name ->\n                    if String.length name < 2 then\n                        Err \"the name must have at least 2 characters\"\n\n                    else\n                        Ok name\n            , value = .name\n            , update =\n                \\newValue values ->\n                    { values | name = newValue }\n            , attributes =\n                { label = \"Name\"\n                , placeholder = \"Type your name...\"\n                }\n            }\n\nAs you can see:\n\n  - a `parser` is just a simple validation function\n  - you can define `value` using [record accessors](http://elm-lang.org/docs/records#access)\n  - the `update` function updates the `values` of the form with the `newValue`\n  - `attributes` are most of the time a simple record\n\n",
+                "type": "{ parser : String.String -> Result.Result String.String output, value : values -> String.String, update : String.String -> values -> values, error : values -> Maybe.Maybe String.String, attributes : Form.Base.TextField.Attributes } -> Form.Form values output"
+            },
+            {
+                "name": "textareaField",
+                "comment": " Create a form that contains a single textarea field.\n\nIt has the same configuration options as [`textField`](#textField).\n\n",
+                "type": "{ parser : String.String -> Result.Result String.String output, value : values -> String.String, update : String.String -> values -> values, error : values -> Maybe.Maybe String.String, attributes : Form.Base.TextField.Attributes } -> Form.Form values output"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Form.Base",
+        "comment": " Build composable forms with your own custom fields.\n\nThis is the **base** of the `composable-form` package. It implements a composable [`Form`](#Form)\ntype that is not tied to any particular `field`.\n\nIn order to understand this module, you should be familar with [the basic `Form module`](Form)\nfirst.\n\n\n# Definition\n\n@docs Form\n\n\n# Custom fields\n\nSay you need to use a type of field that is not implemented in the [the basic `Form module`](Form).\nThe recommended way of doing this is to start your own `Form` module using [`field`](#field) and\n[`custom`](#custom) to define new types of fields.\n\nFor instance, you could start your own `MyProject.Form` module like this:\n\n    import Form.Base as Base\n\n    type alias Form values output =\n        Base.Form values output (Field values)\n\n    type Field values\n        = None\n\n    succeed : output -> Form values output\n    succeed =\n        Base.succeed\n\n    -- Other useful operations you will probably want to use,\n    -- like append, andThen...\n\nNotice that we could avoid redefining `succeed`, `append`, and others, but that would force us to\nimport `Form.Base` every time we needed to use those operations with our brand new form.\n\n@docs field, FieldConfig, custom, CustomField\n\n\n# Composition\n\n@docs succeed, append, andThen, optional, disable, meta\n\n\n# Mapping\n\n@docs map, mapValues, mapField\n\n\n# Output\n\n@docs FilledForm, FilledField, fill\n\n",
+        "unions": [
+            {
+                "name": "Form",
+                "comment": " A [`Form`](Form#Form) that can contain any type of `field`.\n",
+                "args": [
+                    "values",
+                    "output",
+                    "field"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "CustomField",
+                "comment": " Represents a custom field on a form that has been filled with values.\n\nIt contains:\n\n  - a field\n  - the result of the field\n  - whether the field is empty or not\n\n",
+                "args": [
+                    "output",
+                    "field"
+                ],
+                "type": "{ state : field, result : Result.Result ( Form.Error.Error, List.List Form.Error.Error ) output, isEmpty : Basics.Bool }"
+            },
+            {
+                "name": "FieldConfig",
+                "comment": " Most form fields require configuration! `FieldConfig` allows you to specify how a\nconcrete field is validated and updated, alongside its attributes:\n\n  - `parser` must be a function that validates the `input` of the field and produces a `Result`\n    of either:\n      - the correct `output`\n      - a `String` describing a problem\n  - `value` defines how the value of the field is obtained from the form `values`.\n  - `update` defines how the current form `values` should be updated with a new field value.\n  - `error` defines how to obtain a potential external error from the form `values`.\n    This can be useful to include server-side errors in your form!\n  - `attributes` represent the attributes of the field.\n\n",
+                "args": [
+                    "attrs",
+                    "input",
+                    "values",
+                    "output"
+                ],
+                "type": "{ parser : input -> Result.Result String.String output, value : values -> input, update : input -> values -> values, error : values -> Maybe.Maybe String.String, attributes : attrs }"
+            },
+            {
+                "name": "FilledField",
+                "comment": " Represents a filled field.\n",
+                "args": [
+                    "field"
+                ],
+                "type": "{ state : field, error : Maybe.Maybe Form.Error.Error, isDisabled : Basics.Bool }"
+            },
+            {
+                "name": "FilledForm",
+                "comment": " Represents a filled form.\n\nYou can obtain this by using [`fill`](#fill).\n\n",
+                "args": [
+                    "output",
+                    "field"
+                ],
+                "type": "{ fields : List.List (Form.Base.FilledField field), result : Result.Result ( Form.Error.Error, List.List Form.Error.Error ) output, isEmpty : Basics.Bool }"
+            }
+        ],
+        "values": [
+            {
+                "name": "andThen",
+                "comment": " Like [`Form.andThen`](Form#andThen) but not tied to a particular type of `field`.\n",
+                "type": "(a -> Form.Base.Form values b field) -> Form.Base.Form values a field -> Form.Base.Form values b field"
+            },
+            {
+                "name": "append",
+                "comment": " Like [`Form.append`](Form#append) but not tied to a particular type of `field`.\n",
+                "type": "Form.Base.Form values a field -> Form.Base.Form values (a -> b) field -> Form.Base.Form values b field"
+            },
+            {
+                "name": "custom",
+                "comment": " Create a custom field with total freedom.\n\nYou only need to provide a function that given some `values` produces a [`FilledField`](#FilledField).\n\nYou can check the [custom fields example][custom-fields] for some inspiration.\n\n[custom-fields]: https://hecrj.github.io/composable-form/#/custom-fields\n\n",
+                "type": "(values -> Form.Base.CustomField output field) -> Form.Base.Form values output field"
+            },
+            {
+                "name": "disable",
+                "comment": " Like [`Form.disable`](Form#disable) but not tied to a particular type of `field`.\n",
+                "type": "Form.Base.Form values output field -> Form.Base.Form values output field"
+            },
+            {
+                "name": "field",
+                "comment": " Create functions that build forms which contain a single field with an API that is similar to\n[the basic `Form` module](Form).\n\nThis function is meant to be partially applied, providing only the two first parameters to\nobtain a function that expects the configuration for a particular type of field. See\n[`FieldConfig`](#FieldConfig).\n\nFor this, you only need to provide:\n\n  - A function that given the `input` of the field tells whether it is empty or not.\n  - A function that maps a generic [`Field`](Field#Field) to your own specific `field` type.\n\nFor example, [`Form.textField`](Form#textField) could be implemented like this:\n\n    textField :\n        { parser : String -> Result String output\n        , value : values -> String\n        , update : String -> values -> values\n        , attributes : TextField.Attributes\n        }\n        -> Form values output\n    textField =\n        Base.field { isEmpty = String.isEmpty } (Text TextRaw)\n\nNotice how the configuration record in `textField` is a [`FieldConfig`](#FieldConfig).\n\n**Note:** You can use [`TextField.form`](Form-Base-TextField#form),\n[`SelectField.form`](Form-Base-SelectField#form), and others to build fields that are already\npresent in [`Form`](Form).\n\n",
+                "type": "{ isEmpty : input -> Basics.Bool } -> (Form.Field.Field attributes input values -> field) -> Form.Base.FieldConfig attributes input values output -> Form.Base.Form values output field"
+            },
+            {
+                "name": "fill",
+                "comment": " Like [`Form.fill`](Form#fill) but not tied to a particular type of `field`.\n",
+                "type": "Form.Base.Form values output field -> values -> Form.Base.FilledForm output field"
+            },
+            {
+                "name": "map",
+                "comment": " Like [`Form.map`](Form#map) but not tied to a particular type of `field`.\n",
+                "type": "(a -> b) -> Form.Base.Form values a field -> Form.Base.Form values b field"
+            },
+            {
+                "name": "mapField",
+                "comment": " Apply a function to each form `field`.\n",
+                "type": "(a -> b) -> Form.Base.Form values output a -> Form.Base.Form values output b"
+            },
+            {
+                "name": "mapValues",
+                "comment": " Apply a function to the input `values` of the form.\n",
+                "type": "(a -> b) -> Form.Base.Form b output field -> Form.Base.Form a output field"
+            },
+            {
+                "name": "meta",
+                "comment": " Like [`Form.meta`](Form#meta) but not tied to a particular type of `field`.\n",
+                "type": "(values -> Form.Base.Form values output field) -> Form.Base.Form values output field"
+            },
+            {
+                "name": "optional",
+                "comment": " Like [`Form.optional`](Form#optional) but not tied to a particular type of `field`.\n",
+                "type": "Form.Base.Form values output field -> Form.Base.Form values (Maybe.Maybe output) field"
+            },
+            {
+                "name": "succeed",
+                "comment": " Like [`Form.succeed`](Form#succeed) but not tied to a particular type of `field`.\n",
+                "type": "output -> Form.Base.Form values output field"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Form.Base.CheckboxField",
+        "comment": " This module contains a reusable `CheckboxField` type.\n\n\n# Definition\n\n@docs CheckboxField, Attributes\n\n\n# Helpers\n\n@docs form\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Attributes",
+                "comment": " The attributes of a CheckboxField.\n\nYou need to provide these to:\n\n  - [`Form.checkboxField`][checkboxField]\n\n[checkboxField]: Form#checkboxField\n\n",
+                "args": [],
+                "type": "{ label : String.String }"
+            },
+            {
+                "name": "CheckboxField",
+                "comment": " Represents a checkbox field.\n\n**Note:** You should not need to care about this unless you are creating your own\ncustom fields or writing custom view code.\n\n",
+                "args": [
+                    "values"
+                ],
+                "type": "Form.Field.Field Form.Base.CheckboxField.Attributes Basics.Bool values"
+            }
+        ],
+        "values": [
+            {
+                "name": "form",
+                "comment": " Builds a [`Form`](Form-Base#Form) with a single `CheckboxField`.\n\n**Note:** You should not need to care about this unless you are creating your own\ncustom fields.\n\n",
+                "type": "(Form.Base.CheckboxField.CheckboxField values -> field) -> Form.Base.FieldConfig Form.Base.CheckboxField.Attributes Basics.Bool values output -> Form.Base.Form values output field"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Form.Base.FormList",
+        "comment": " This module contains a reusable `FormList` type.\n\nIt is useful to build a variable list of forms based on a `List` of `values`.\n\n\n# Definition\n\n@docs FormList, Form, Attributes\n\n\n# Helpers\n\n@docs Config, ElementState, form\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Attributes",
+                "comment": " The attributes of a `FormList`.\n\n`add` and `delete` are optional labels for the add and delete buttons,\nrespectively. Providing `Nothing` hides the button.\n\n",
+                "args": [],
+                "type": "{ label : String.String, add : Maybe.Maybe String.String, delete : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "Config",
+                "comment": " The configuration of a `FormList`.\n\n  - `value` describes how to obtain a `List` with the values of the forms\n    in the list.\n  - `update` describes how to replace a new `List` of element values in the\n    `values` of the form.\n  - `default` defines the values that a new element will have when added to the list.\n\n",
+                "args": [
+                    "values",
+                    "elementValues"
+                ],
+                "type": "{ value : values -> List.List elementValues, update : List.List elementValues -> values -> values, default : elementValues, attributes : Form.Base.FormList.Attributes }"
+            },
+            {
+                "name": "ElementState",
+                "comment": " Describes the state of a particular element in a form list.\n\n  - `index` is the position of the element in the list.\n  - `update` defines how to update the current element.\n  - `values` contains the current values of the form.\n  - `elementValues` contains the current values of the element in the list.\n\n",
+                "args": [
+                    "values",
+                    "elementValues"
+                ],
+                "type": "{ index : Basics.Int, update : elementValues -> values -> values, values : values, elementValues : elementValues }"
+            },
+            {
+                "name": "Form",
+                "comment": " Represents an element in a list of forms.\n\nIt contains the fields of the form and a lazy `delete` action to remove itself\nfrom the list.\n\n",
+                "args": [
+                    "values",
+                    "field"
+                ],
+                "type": "{ fields : List.List (Form.Base.FilledField field), delete : () -> values }"
+            },
+            {
+                "name": "FormList",
+                "comment": " Represents a list of forms.\n\n**Note:** You should not need to care about this unless you are creating your own\ncustom fields or writing custom view code.\n\nIt contains a list of forms, a lazy `add` action to add a new item to the list,\nand some [Attributes](Form.Base.FormList#Attributes).\n\n",
+                "args": [
+                    "values",
+                    "field"
+                ],
+                "type": "{ forms : List.List (Form.Base.FormList.Form values field), add : () -> values, attributes : Form.Base.FormList.Attributes }"
+            }
+        ],
+        "values": [
+            {
+                "name": "form",
+                "comment": " Builds a [`Form`](Form-Base#Form) with a variable list of forms.\n\n**Note:** You should not need to care about this unless you are creating your own\ncustom fields.\n\n",
+                "type": "(Form.Base.FormList.FormList values field -> field) -> Form.Base.FormList.Config values elementValues -> (Form.Base.FormList.ElementState values elementValues -> Form.Base.FilledForm output field) -> Form.Base.Form values (List.List output) field"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Form.Base.NumberField",
+        "comment": " This module contains a reusable `NumberField` type.\n\n\n# Definition\n\n@docs NumberField, Attributes\n\n\n# Helpers\n\n@docs form\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Attributes",
+                "comment": " The attributes of a NumberField.\n\nYou need to provide these to:\n\n  - [`Form.numberField`][numberField]\n\n[numberField]: Form#numberField\n\n  - Its `step` is a Maybe -- `Nothing` represents the HTML attribute value of \"any\". If you want only integers allowed, use `Just 1`.\n\n",
+                "args": [
+                    "number"
+                ],
+                "type": "{ label : String.String, placeholder : String.String, step : Maybe.Maybe number, min : Maybe.Maybe number, max : Maybe.Maybe number }"
+            },
+            {
+                "name": "NumberField",
+                "comment": " Represents a number field.\n\n**Note:** You should not need to care about this unless you are creating your own\ncustom fields or writing custom view code.\n\n",
+                "args": [
+                    "number",
+                    "values"
+                ],
+                "type": "Form.Field.Field (Form.Base.NumberField.Attributes number) String.String values"
+            }
+        ],
+        "values": [
+            {
+                "name": "form",
+                "comment": " Builds a [`Form`](Form-Base#Form) with a single `NumberField`.\n\n**Note:** You should not need to care about this unless you are creating your own\ncustom fields.\n\n",
+                "type": "(Form.Base.NumberField.NumberField number values -> field) -> Form.Base.FieldConfig (Form.Base.NumberField.Attributes number) String.String values output -> Form.Base.Form values output field"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Form.Base.RadioField",
+        "comment": " This module contains a reusable `RadioField` type.\n\n\n# Definition\n\n@docs RadioField, Attributes\n\n\n# Helpers\n\n@docs form\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Attributes",
+                "comment": " The attributes of a RadioField.\n\nYou need to provide these to:\n\n  - [`Form.radioField`][radioField]\n\n[radioField]: Form#radioField\n\n",
+                "args": [],
+                "type": "{ label : String.String, options : List.List ( String.String, String.String ) }"
+            },
+            {
+                "name": "RadioField",
+                "comment": " Represents a radio field.\n\n**Note:** You should not need to care about this unless you are creating your own\ncustom fields or writing custom view code.\n\n",
+                "args": [
+                    "values"
+                ],
+                "type": "Form.Field.Field Form.Base.RadioField.Attributes String.String values"
+            }
+        ],
+        "values": [
+            {
+                "name": "form",
+                "comment": " Builds a [`Form`](Form-Base#Form) with a single `RadioField`.\n\n**Note:** You should not need to care about this unless you are creating your own\ncustom fields.\n\n",
+                "type": "(Form.Base.RadioField.RadioField values -> field) -> Form.Base.FieldConfig Form.Base.RadioField.Attributes String.String values output -> Form.Base.Form values output field"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Form.Base.RangeField",
+        "comment": " This module contains a reusable `RangeField` type.\n\n\n# Definition\n\n@docs RangeField, Attributes\n\n\n# Helpers\n\n@docs form\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Attributes",
+                "comment": " The attributes of a RangeField.\n\nYou need to provide these to:\n\n  - [`Form.rangeField`][rangeField]\n\n[rangeField]: Form#rangeField\n\n",
+                "args": [
+                    "number"
+                ],
+                "type": "{ label : String.String, step : number, min : Maybe.Maybe number, max : Maybe.Maybe number }"
+            },
+            {
+                "name": "RangeField",
+                "comment": " Represents a range field.\n\n**Note:** You should not need to care about this unless you are creating your own\ncustom fields or writing custom view code.\n\n",
+                "args": [
+                    "number",
+                    "values"
+                ],
+                "type": "Form.Field.Field (Form.Base.RangeField.Attributes number) (Maybe.Maybe number) values"
+            }
+        ],
+        "values": [
+            {
+                "name": "form",
+                "comment": " Builds a [`Form`](Form-Base#Form) with a single `RangeField`.\n\n**Note:** You should not need to care about this unless you are creating your own\ncustom fields.\n\n",
+                "type": "(Form.Base.RangeField.RangeField number values -> field) -> Form.Base.RangeField.Config number values output -> Form.Base.Form values output field"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Form.Base.SelectField",
+        "comment": " This module contains a reusable `SelectField` type.\n\n\n# Definition\n\n@docs SelectField, Attributes\n\n\n# Helpers\n\n@docs form\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Attributes",
+                "comment": " The attributes of a SelectField.\n\nYou need to provide these to:\n\n  - [`Form.selectField`][selectField]\n\n[selectField]: Form#selectField\n\n",
+                "args": [],
+                "type": "{ label : String.String, placeholder : String.String, options : List.List ( String.String, String.String ) }"
+            },
+            {
+                "name": "SelectField",
+                "comment": " Represents a select field.\n\n**Note:** You should not need to care about this unless you are creating your own\ncustom fields or writing custom view code.\n\n",
+                "args": [
+                    "values"
+                ],
+                "type": "Form.Field.Field Form.Base.SelectField.Attributes String.String values"
+            }
+        ],
+        "values": [
+            {
+                "name": "form",
+                "comment": " Builds a [`Form`](Form-Base#Form) with a single `SelectField`.\n\n**Note:** You should not need to care about this unless you are creating your own\ncustom fields.\n\n",
+                "type": "(Form.Base.SelectField.SelectField values -> field) -> Form.Base.FieldConfig Form.Base.SelectField.Attributes String.String values output -> Form.Base.Form values output field"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Form.Base.TextField",
+        "comment": " This module contains a reusable `TextField` type.\n\n\n# Definition\n\n@docs TextField, Attributes\n\n\n# Helpers\n\n@docs form\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Attributes",
+                "comment": " The attributes of a TextField.\n\nYou need to provide these to:\n\n  - [`Form.textField`][textField]\n  - [`Form.emailField`][emailField]\n  - [`Form.passwordField`][passwordField]\n  - [`Form.textareaField`][textareaField]\n\n[textField]: Form#textField\n[emailField]: Form#emailField\n[passwordField]: Form#passwordField\n[textareaField]: Form#textareaField\n\n",
+                "args": [],
+                "type": "{ label : String.String, placeholder : String.String }"
+            },
+            {
+                "name": "TextField",
+                "comment": " Represents a text field.\n\n**Note:** You should not need to care about this unless you are creating your own\ncustom fields or writing custom view code.\n\n",
+                "args": [
+                    "values"
+                ],
+                "type": "Form.Field.Field Form.Base.TextField.Attributes String.String values"
+            }
+        ],
+        "values": [
+            {
+                "name": "form",
+                "comment": " Builds a [`Form`](Form-Base#Form) with a single `TextField`.\n\n**Note:** You should not need to care about this unless you are creating your own\ncustom fields.\n\n",
+                "type": "(Form.Base.TextField.TextField values -> field) -> Form.Base.FieldConfig Form.Base.TextField.Attributes String.String values output -> Form.Base.Form values output field"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Form.Error",
+        "comment": " This module contains a form [`Error`](#Error) type.\n\n**Note:** You should not need to care about this unless you are writing\ncustom view code.\n\n@docs Error\n\n",
+        "unions": [
+            {
+                "name": "Error",
+                "comment": " Represents a form error.\n\nIt can either be:\n\n  - `RequiredFieldIsEmpty`, meaning that a required field is empty.\n  - `ValidationFailed`, meaning the field validation has failed. This type of\n    error contains a `String` describing the validation error.\n  - `External`, meaning the field has an external error that cannot be validated\n    on the client. This mostly contains errors directly assigned to the field\n    on form construction using the `error` attribute.\n\nThese type of errors are returned alongside each field in the [`Form.fill`](Form#fill) and\n[`Form.Base.fill`](Form-Base#fill) functions.\n\nYou can easily write a simple function that turns this type into a `String`:\n\n    errorToString : Error -> String\n    errorToString error =\n        case error of\n            Error.RequiredFieldIsEmpty ->\n                \"this field is required\"\n\n            Error.ValidationFailed errorDescription ->\n                errorDescription\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "RequiredFieldIsEmpty",
+                        []
+                    ],
+                    [
+                        "ValidationFailed",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "External",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "Form.Field",
+        "comment": " This module contains a type that represents a generic form field.\n\n**Note:** You should not need to care about this unless you are creating your own\ncustom fields or writing custom view code.\n\n@docs Field, mapValues\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Field",
+                "comment": " Represents a form field.\n\nIt contains:\n\n  - the current `value` of the field\n  - an `update` function that takes a new **field** value and returns updated\n    **form** values\n  - the `attributes` of the field\n\nThese record fields are normally used in view code to set up the `value` and `onInput`\nattributes. For example, you could render a `TextField` like this:\n\n    view : (values -> msg) -> Form values output -> values -> Html output\n    view onChange form values =\n        let\n            { fields, result } =\n                Form.fill form values\n\n            fieldsHtml =\n                List.map (viewField onChange) fields\n\n            -- ...\n        in\n        Html.form\n            [-- ...\n            ]\n            [ Html.div [] fieldsHtml\n            , submitButton\n            ]\n\n    viewField : (values -> msg) -> ( Form.Field values, Maybe Error ) -> Html msg\n    viewField onChange ( field, maybeError ) =\n        case field of\n            Form.Text TextField.Raw { value, update, attributes } ->\n                Html.input\n                    [ Attributes.type_ \"text\"\n                    , Attributes.value value\n                    , Attributes.onInput (update >> onChange)\n                    , Attributes.placeholder attributes.placeholder\n                    ]\n                    []\n\n            _ ->\n                -- ...\n\n",
+                "args": [
+                    "attributes",
+                    "value",
+                    "values"
+                ],
+                "type": "{ value : value, update : value -> values, attributes : attributes }"
+            }
+        ],
+        "values": [
+            {
+                "name": "mapValues",
+                "comment": " Transform the `values` of a `Field`.\n\nIt can be useful to build your own [`Form.mapValues`](Form#mapValues) function.\n\n",
+                "type": "(a -> b) -> Form.Field.Field attributes value a -> Form.Field.Field attributes value b"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Form.View",
+        "comment": " This module provides helpers to render a [`Form`](Form#Form).\n\nIf you just want to quickly render a [`Form`](Form#Form) as HTML, take a look at\n[`asHtml`](#asHtml). If you need more control, see [`custom`](#custom) and [`htmlViewConfig`](#htmlViewConfig).\n\n**Note:** If you are implementing your own custom fields using [`Form.Base`](Form-Base) then\nyou cannot use this module. You should use [`Form.Base.fill`](Form-Base#fill) to write\ncustom view code. Take a look at [the source code of this module][source] for inspiration.\n\n[source]: https://github.com/hecrj/composable-form/blob/1.0.0/src/Form/View.elm\n\n\n# Model\n\n@docs Model, State, idle\n\n\n# Configuration\n\n@docs ViewConfig, Validation\n\n\n# Basic HTML\n\n@docs asHtml, htmlViewConfig\n\n\n# Custom\n\n@docs custom, CustomConfig, FormConfig, TextFieldConfig, NumberFieldConfig, RangeFieldConfig\n@docs CheckboxFieldConfig, RadioFieldConfig, SelectFieldConfig\n@docs FormListConfig, FormListItemConfig\n\n",
+        "unions": [
+            {
+                "name": "State",
+                "comment": " Represents the state of the form.\n\nYou can change it at will from your `update` function. For example, you can set the state to\n`Loading` if submitting the form fires a remote action, or you can set it to `Error` when\nsuch action fails.\n\n    update : Msg -> Model -> ( Model, Cmd Msg )\n    update msg model =\n        case msg of\n            FormChanged newModel ->\n                ( { newModel | state = FormView.Idle }, Cmd.none )\n\n            SignUp email password ->\n                ( { model | state = FormView.Loading }\n                , User.signUp email password\n                    |> Task.attempt SignupTried\n                )\n\n            SignupTried (Ok user) ->\n                ( { model | state = FormView.Success \"You are now registered successfully :)\" }, Route.navigate (Route.Profile user.slug) )\n\n            SignupTried (Err error) ->\n                ( { model | state = FormView.Error error }, Cmd.none )\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Idle",
+                        []
+                    ],
+                    [
+                        "Loading",
+                        []
+                    ],
+                    [
+                        "Error",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Success",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Validation",
+                "comment": " The validation strategy.\n\n  - `ValidateOnSubmit` will show field errors only when the user tries to submit an invalid form.\n  - `ValidateOnBlur` will show field errors as fields are blurred. It uses field labels to identify fields on the form. This validation strategy will not work as expected if your form has multiple fields with the same label.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "ValidateOnSubmit",
+                        []
+                    ],
+                    [
+                        "ValidateOnBlur",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "CheckboxFieldConfig",
+                "comment": " Describes how a checkbox field should be rendered.\n\nThis is basically a [`TextFieldConfig`](#TextFieldConfig), but its `attributes` are\n[`CheckboxField.Attributes`](Form-Base-CheckboxField#Attributes).\n\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ onChange : Basics.Bool -> msg, onBlur : Maybe.Maybe msg, disabled : Basics.Bool, value : Basics.Bool, error : Maybe.Maybe Form.Error.Error, showError : Basics.Bool, attributes : Form.Base.CheckboxField.Attributes }"
+            },
+            {
+                "name": "CustomConfig",
+                "comment": " The configuration needed to create a custom view function.\n\nIt needs functions to render each of [the supported `Form` fields](Form#fields), a function to\nrender a [`group`](Form#group) of fields, and a function to wrap the fields together in a `form`.\n\n",
+                "args": [
+                    "msg",
+                    "element"
+                ],
+                "type": "{ form : Form.View.FormConfig msg element -> element, textField : Form.View.TextFieldConfig msg -> element, emailField : Form.View.TextFieldConfig msg -> element, passwordField : Form.View.TextFieldConfig msg -> element, textareaField : Form.View.TextFieldConfig msg -> element, searchField : Form.View.TextFieldConfig msg -> element, numberField : Form.View.NumberFieldConfig msg -> element, rangeField : Form.View.RangeFieldConfig msg -> element, checkboxField : Form.View.CheckboxFieldConfig msg -> element, radioField : Form.View.RadioFieldConfig msg -> element, selectField : Form.View.SelectFieldConfig msg -> element, group : List.List element -> element, section : String.String -> List.List element -> element, formList : Form.View.FormListConfig msg element -> element, formListItem : Form.View.FormListItemConfig msg element -> element }"
+            },
+            {
+                "name": "FormConfig",
+                "comment": " Describes how a form should be rendered.\n\n  - `onSubmit` contains the output of the form if there are no validation errors.\n  - `state` is the [`State`](#State) of the form.\n  - `action` is the main action of the form, you should probably render this in the submit button.\n  - `loading` is the loading message that should be shown when the form is loading.\n  - `fields` contains the already rendered fields.\n\n",
+                "args": [
+                    "msg",
+                    "element"
+                ],
+                "type": "{ onSubmit : Maybe.Maybe msg, state : Form.View.State, action : String.String, loading : String.String, fields : List.List element }"
+            },
+            {
+                "name": "FormListConfig",
+                "comment": " Describes how a form list should be rendered.\n\n  - `forms` is a list containing the elements of the form list.\n  - `add` describes an optional \"add an element\" button. It contains a lazy `action` that can be called in order to add a new element and a `label` for the button.\n\n",
+                "args": [
+                    "msg",
+                    "element"
+                ],
+                "type": "{ forms : List.List element, label : String.String, add : Maybe.Maybe { action : () -> msg, label : String.String }, disabled : Basics.Bool }"
+            },
+            {
+                "name": "FormListItemConfig",
+                "comment": " Describes how an item in a form list should be rendered.\n\n  - `fields` contains the different fields of the item.\n  - `delete` describes an optional \"delete item\" button. It contains a lazy `action` that can be called in order to delete the item and a `label` for the button.\n\n",
+                "args": [
+                    "msg",
+                    "element"
+                ],
+                "type": "{ fields : List.List element, delete : Maybe.Maybe { action : () -> msg, label : String.String }, disabled : Basics.Bool }"
+            },
+            {
+                "name": "Model",
+                "comment": " This type gathers the values of the form, with some exposed state and internal view state that\ntracks which fields should show validation errors.\n",
+                "args": [
+                    "values"
+                ],
+                "type": "{ values : values, state : Form.View.State, errorTracking : Form.View.ErrorTracking }"
+            },
+            {
+                "name": "NumberFieldConfig",
+                "comment": " Describes how a number field should be rendered.\n\n  - `onChange` takes a new value for the field and returns the `msg` that should be produced.\n  - `value` contains the current value of the field.\n  - `attributes` are [`NumberField.Attributes`](Form-Base-NumberField#Attributes).\n\nThe other record fields are described in [`TextFieldConfig`](#TextFieldConfig).\n\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ onChange : String.String -> msg, onBlur : Maybe.Maybe msg, disabled : Basics.Bool, value : String.String, error : Maybe.Maybe Form.Error.Error, showError : Basics.Bool, attributes : Form.Base.NumberField.Attributes Basics.Float }"
+            },
+            {
+                "name": "RadioFieldConfig",
+                "comment": " Describes how a radio field should be rendered.\n\nThis is basically a [`TextFieldConfig`](#TextFieldConfig), but its `attributes` are\n[`RadioField.Attributes`](Form-Base-RadioField#Attributes).\n\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ onChange : String.String -> msg, onBlur : Maybe.Maybe msg, disabled : Basics.Bool, value : String.String, error : Maybe.Maybe Form.Error.Error, showError : Basics.Bool, attributes : Form.Base.RadioField.Attributes }"
+            },
+            {
+                "name": "RangeFieldConfig",
+                "comment": " Describes how a range field should be rendered.\n\n  - `onChange` accepts a `Maybe` so the field value can be cleared.\n  - `value` will be `Nothing` if the field is blank or `Just` a `Float`.\n  - `attributes` are [`RangeField.Attributes`](Form-Base-RangeField#Attributes).\n\nThe other record fields are described in [`TextFieldConfig`](#TextFieldConfig).\n\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ onChange : Maybe.Maybe Basics.Float -> msg, onBlur : Maybe.Maybe msg, disabled : Basics.Bool, value : Maybe.Maybe Basics.Float, error : Maybe.Maybe Form.Error.Error, showError : Basics.Bool, attributes : Form.Base.RangeField.Attributes Basics.Float }"
+            },
+            {
+                "name": "SelectFieldConfig",
+                "comment": " Describes how a select field should be rendered.\n\nThis is basically a [`TextFieldConfig`](#TextFieldConfig), but its `attributes` are\n[`SelectField.Attributes`](Form-Base-SelectField#Attributes).\n\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ onChange : String.String -> msg, onBlur : Maybe.Maybe msg, disabled : Basics.Bool, value : String.String, error : Maybe.Maybe Form.Error.Error, showError : Basics.Bool, attributes : Form.Base.SelectField.Attributes }"
+            },
+            {
+                "name": "TextFieldConfig",
+                "comment": " Describes how a text field should be rendered.\n\n  - `onChange` takes a new value for the field and returns the `msg` that should be produced.\n  - `onBlur` might contain a `msg` that should be produced when the field is blurred.\n  - `disabled` tells you whether the field should be disabled or not. It is `True` when the form is\n    loading.\n  - `value` contains the current value of the field.\n  - `error` might contain a field [`Error`](Form-Error#Error).\n  - `showError` tells you if you should show the `error` for this particular field. Its value\n    depends on the [validation strategy](#Validation).\n  - `attributes` are [`TextField.Attributes`](Form-Base-TextField#Attributes).\n\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ onChange : String.String -> msg, onBlur : Maybe.Maybe msg, disabled : Basics.Bool, value : String.String, error : Maybe.Maybe Form.Error.Error, showError : Basics.Bool, attributes : Form.Base.TextField.Attributes }"
+            },
+            {
+                "name": "ViewConfig",
+                "comment": " This allows you to configure the view output.\n\n  - `onChange` specifies the message that should be produced when the `Model` changes.\n  - `action` is the text of the submit button when the form is not loading.\n  - `loading` is the text of the submit button when the form is loading.\n  - `validation` lets you choose the validation strategy.\n\n",
+                "args": [
+                    "values",
+                    "msg"
+                ],
+                "type": "{ onChange : Form.View.Model values -> msg, action : String.String, loading : String.String, validation : Form.View.Validation }"
+            }
+        ],
+        "values": [
+            {
+                "name": "asHtml",
+                "comment": " Render a form as HTML!\n\nYou could use it like this:\n\n    FormView.asHtml\n        { onChange = FormChanged\n        , action = \"Log in\"\n        , loading = \"Logging in...\"\n        , validation = FormView.ValidateOnSubmit\n        }\n        loginForm\n        model\n\nAnd here is an example of the produced HTML:\n\n```html\n<form class=\"elm-form\">\n   <label class=\"elm-form-field\">\n       <div class=\"elm-form-label\">E-Mail</div>\n       <input type=\"email\" value=\"some@value.com\" placeholder=\"Type your e-mail...\">\n   </label>\n   <label class=\"elm-form-field elm-form-field-error\">\n       <div class=\"elm-form-label\">Password</div>\n       <input type=\"password\" value=\"\" placeholder=\"Type your password...\">\n       <div class=\"elm-form-error\">This field is required</div>\n   </label>\n   <button type=\"submit\">Log in</button>\n</form>\n```\n\nYou can use the different CSS classes to style your forms as you please.\n\nIf you need more control over the produced HTML, use [`custom`](#custom) to provide\nyour own view functions. To customize the behavior of individual view functions, see [`htmlViewConfig`](#htmlViewConfig).\n\n",
+                "type": "Form.View.ViewConfig values msg -> Form.Form values msg -> Form.View.Model values -> Html.Html msg"
+            },
+            {
+                "name": "custom",
+                "comment": " Create a custom view function.\n\nYou need to provide a set of functions to render each field, and a function to\nput them all together in a form, see [`CustomConfig`](#CustomConfig).\n\nThis can be used to create view functions that are compatible with `style-elements`,\n`elm-mdl`, `elm-css`, etc. You could even use it to transform forms into a `String` or `Json.Value`!\nTake a look at [the different view modules in the examples directory][view-examples]\nas you might find an implementation that works for you.\n\n[view-examples]: https://github.com/hecrj/composable-form/tree/master/examples/src/Form/View\n\nOnce you provide a [`CustomConfig`](#CustomConfig), you get a view function that supports\na [`ViewConfig`](#ViewConfig).\n\n",
+                "type": "Form.View.CustomConfig msg element -> Form.View.ViewConfig values msg -> Form.Form values msg -> Form.View.Model values -> element"
+            },
+            {
+                "name": "htmlViewConfig",
+                "comment": " Default [`CustomConfig`](#CustomConfig) implementation for HTML output.\n\nYou can update a subset of the `CustomConfig` fields to implement a view function that overrides the behavior of `asHtml`. For example:\n\n    htmlView : ViewConfig values msg -> Form values msg -> Model values -> Html msg\n    htmlView =\n        custom\n            { htmlViewConfig\n                | selectField = mySelectField\n                , radioField = myRadioField\n            }\n\nIn fact, [`asHtml`](#asHtml) is just implemented as:\n\n    asHtml : ViewConfig values msg -> Form values msg -> Model values -> Html msg\n    asHtml =\n        custom htmlViewConfig\n\n",
+                "type": "Form.View.CustomConfig msg (Html.Html msg)"
+            },
+            {
+                "name": "idle",
+                "comment": " Create a `Model` representing an idle form.\n\nYou just need to provide the initial `values` of the form.\n\n",
+                "type": "values -> Form.View.Model values"
+            }
+        ],
+        "binops": []
+    }
+]

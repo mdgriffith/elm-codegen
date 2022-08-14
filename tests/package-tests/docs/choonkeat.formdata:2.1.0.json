@@ -1,0 +1,120 @@
+[
+    {
+        "name": "FormData",
+        "comment": " Using `Dict.Any` and a few helper functions to manage the state of a form\n\n    type alias Model =\n        { userForm : FormData UserFields User\n        }\n\n    type alias User =\n        { firstname : String\n        , hobbies : List Hobby\n        }\n\n    type UserFields\n        = Firstname\n        | Hobbies Hobby\n\n    type Hobby = Soccer | Football | Basketball\n\n    stringHobby : Hobby -> String\n    stringHobby hobby =\n        case hobby of\n            Soccer -> \"soccer\"\n            Football -> \"football\"\n            Basketball -> \"basketball\"\n\n    stringUserFields : UserFields -> String\n    stringUserFields field =\n        case field of\n            Firstname ->\n                \"firstname\"\n            Hobbies h ->\n                \"hobbies \" ++ stringHobby h\n\n    model : Model\n    model =\n        { userForm = FormData.init stringUserFields []\n        }\n\n    currentForm : FormData UserFields User\n    currentForm =\n        model.userForm\n            |> onInput Firstname \"Alice\"\n            |> onCheck (Hobbies Soccer) True\n            |> onCheck (Hobbies Football) True\n            |> onCheck (Hobbies Soccer) False\n            |> onCheck (Hobbies Basketball) True\n\n    currentForm\n    --> FormData.init stringUserFields\n    -->    [ (Firstname, \"Alice\"), (Hobbies Basketball, \"\"), (Hobbies Football, \"\") ]\n\n\n    parseDontValidate : List (UserFields, String) -> ( Maybe User, List ( Maybe UserFields, String ) )\n    parseDontValidate keyValueList =\n        let\n            initalUserWithErrors =\n                ( { firstname = \"\", hobbies = [] }\n                , [ ( Just Firstname, \"cannot be blank\")\n                  , ( Nothing, \"must choose one hobby\" )\n                  ]\n                )\n            --\n            buildUserErrs (k, s) (partUser, partErrs) =\n                case k of\n                    Firstname ->\n                        ( { partUser | firstname = s }\n                        , if s /= \"\" then\n                              List.filter (\\(maybeK, _) -> maybeK /= Just k) partErrs\n                          else\n                              partErrs\n                        )\n                    Hobbies h ->\n                        ( { partUser | hobbies = h :: partUser.hobbies }\n                        , List.filter (\\(maybeK, _) -> maybeK /= Nothing) partErrs\n                        )\n            --\n            (value, errs) =\n                List.foldl buildUserErrs initalUserWithErrors keyValueList\n        in\n        if [] == errs then\n            (Just { value | hobbies = List.reverse value.hobbies }, [])\n        else\n            (Nothing, errs)\n\n    model.userForm\n        |> FormData.parse parseDontValidate\n    --> ( Nothing , errorsFrom stringUserFields [ ( Just Firstname, \"cannot be blank\"), ( Nothing, \"must choose one hobby\") ] )\n\n    model.userForm\n        |> FormData.onInput Firstname \"Alice\"\n        |> FormData.parse parseDontValidate\n    --> ( Nothing , errorsFrom stringUserFields [ ( Nothing, \"must choose one hobby\") ] )\n\n    model.userForm\n        |> FormData.onInput Firstname \"Alice\"\n        |> FormData.onCheck (Hobbies Football) True\n        |> FormData.parse parseDontValidate\n    --> ( Just  { firstname = \"Alice\", hobbies = [Football] }, errorsFrom stringUserFields [] )\n\n\n## Types\n\n@docs FormData, init, Data, onSubmit, Errors, errorsFrom, errorAt\n\n\n## Input\n\n@docs value, onInput\n\n\n## Checkbox\n\n@docs isChecked, onCheck\n\n\n## Parse, don't validate\n\n@docs parse\n\n\n## Extra\n\nin order to _not_ show errors which user hasn't attempted, it would be nice\nto track which inputs were visited\n\n@docs onVisited, hadVisited, visitedErrors, keyValues\n\n",
+        "unions": [
+            {
+                "name": "Data",
+                "comment": " The 3 states your data can be in\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Invalid",
+                        []
+                    ],
+                    [
+                        "Valid",
+                        [
+                            "a"
+                        ]
+                    ],
+                    [
+                        "Submitting",
+                        [
+                            "a"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Errors",
+                "comment": " Holds error values for faster lookup\n",
+                "args": [
+                    "k",
+                    "err"
+                ],
+                "cases": []
+            },
+            {
+                "name": "FormData",
+                "comment": " The type that holds all the state.\n",
+                "args": [
+                    "k",
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "errorAt",
+                "comment": " Lookup if a Maybe k has error\n",
+                "type": "Maybe.Maybe k -> FormData.Errors k err -> Maybe.Maybe err"
+            },
+            {
+                "name": "errorsFrom",
+                "comment": " Builds Errors value from List; used inside FormData.parse\n",
+                "type": "(k -> String.String) -> List.List ( Maybe.Maybe k, err ) -> FormData.Errors k err"
+            },
+            {
+                "name": "hadVisited",
+                "comment": " inquire which inputs were visited\n",
+                "type": "Maybe.Maybe k -> FormData.FormData k a -> Basics.Bool"
+            },
+            {
+                "name": "init",
+                "comment": " The types parsed by Config will determine what types we are managing here\n\n    (k -> String)\n\n**Note that it's important to make sure every key is turned to different comparable.** Otherwise keys would conflict and overwrite each other.\n\n",
+                "type": "(k -> String.String) -> List.List ( k, String.String ) -> FormData.FormData k a"
+            },
+            {
+                "name": "isChecked",
+                "comment": " Is `String` a chosen option for field `k`?\n\n    view formdata =\n        label []\n            [ text \"Hobbies \"\n            , input\n                [ checked (FormData.isChecked (Hobbies Basketball) formdata)\n                , type_ \"checkbox\"\n                ]\n                []\n            ]\n\n",
+                "type": "k -> FormData.FormData k a -> Basics.Bool"
+            },
+            {
+                "name": "keyValues",
+                "comment": " Returns the form state as a `List` of `(k, String)` tuple\n\nThis is the data that\n\n  - is accepted by the `init` function\n  - `parse` will supply to your `parseDontValidate` function\n\n",
+                "type": "FormData.FormData k a -> List.List ( k, String.String )"
+            },
+            {
+                "name": "onCheck",
+                "comment": " For handling `onCheck`; stores multiple values for a single `k`\n\n    view formdata =\n        label []\n            [ text \"Hobbies \"\n            , input\n                [ checked (FormData.isChecked (Hobbies Basketball) formdata)\n                , onCheck (OnUserFormCheck (Hobbies Basketball))\n                , type_ \"checkbox\"\n                ]\n                []\n            ]\n\n    update msg model =\n        case msg of\n            OnUserFormCheck k b ->\n                ( { model | userForm = FormData.onCheck k b model.userForm }\n                , Cmd.none\n                )\n\n",
+                "type": "k -> Basics.Bool -> FormData.FormData k a -> FormData.FormData k a"
+            },
+            {
+                "name": "onInput",
+                "comment": " For handling `onInput`; updates the state based on incoming user input.\nThe incoming value is stored as-is\n\n    view formdata =\n        input\n            [ value (FormData.value Firstname formdata)\n            , onInput (OnUserFormInput Firstname)\n            ]\n            []\n\n    update msg model =\n        case msg of\n            OnUserFormInput k s ->\n                ( { model | userForm = formdata.onInput k s model.userForm }\n                , Cmd.none\n                )\n\n",
+                "type": "k -> String.String -> FormData.FormData k a -> FormData.FormData k a"
+            },
+            {
+                "name": "onSubmit",
+                "comment": " Toggles whether the FormData is submitting\n",
+                "type": "Basics.Bool -> FormData.FormData k a -> FormData.FormData k a"
+            },
+            {
+                "name": "onVisited",
+                "comment": " can be used with `onBlur` to track which inputs were visited\n\n    view formdata =\n        input\n            [ onBlur (OnUserFormBlur Firstname)\n            ]\n            []\n\n    update msg model =\n        case msg of\n            OnUserFormBlur k ->\n                ( { model | userForm = formdata.onVisited k model.userForm }\n                , Cmd.none\n                )\n\n",
+                "type": "Maybe.Maybe k -> FormData.FormData k a -> FormData.FormData k a"
+            },
+            {
+                "name": "parse",
+                "comment": " Before submitting, we should try to obtain a value (and a list of errors) from our FormData\n\n    ( maybeUser, errors ) =\n        FormData.parse parseDontValidate model.userForm\n\nIf we get `Nothing`, disable the submit button. Otherwise, wire up the `onSubmit` handler\n\n    button\n        [ case maybeUser of\n            Just user ->\n                onSubmit (Save user)\n\n            Nothing ->\n                disabled True\n        ]\n        [ text \"Submit\" ]\n\nIf there's an error, show it\n\n    div\n        [ input [ onInput (OnInput Name), type_ \"text\", placeholder \"Name\" ] []\n        , case List.head (List.filter (\\( k, v ) -> k == Just Name) errors) of\n            Just ( _, err ) ->\n                p [] [ small [] [ text err ] ]\n\n            Nothing ->\n                text \"\"\n        ]\n\n",
+                "type": "(List.List ( k, String.String ) -> ( Maybe.Maybe a, List.List ( Maybe.Maybe k, err ) )) -> FormData.FormData k a -> ( FormData.Data a, FormData.Errors k err )"
+            },
+            {
+                "name": "value",
+                "comment": " What's the current `value` that we should set for form element of field `k`\n\n    view =\n        input\n            [ value (FormData.value Firstname formdata) ]\n            []\n\n",
+                "type": "k -> FormData.FormData k a -> String.String"
+            },
+            {
+                "name": "visitedErrors",
+                "comment": " Filter Errors value against the visited tracker\n",
+                "type": "FormData.FormData k a -> FormData.Errors k err -> FormData.Errors k err"
+            }
+        ],
+        "binops": []
+    }
+]

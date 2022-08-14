@@ -1,0 +1,118 @@
+[
+    {
+        "name": "KeysSet",
+        "comment": "\n\n@docs KeysSet\n\n\n## create\n\n@docs promising\n\n\n### uniqueness\n\n@docs Uniqueness, unique\n\n\n## scan\n\n@docs equal, isEmpty, at, size, isUnique, all, any\n\n\n## modify\n\n@docs insert, insertAll, remove, update, updateAll\n\n\n### filter\n\n@docs when\n\n\n## transform\n\n@docs fold, toList, map\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "KeysSet",
+                "comment": " Unsorted data structure that lets you specify aspects that are checked to be unique across all elements.\n\n    countries =\n        KeysSet.promising\n            [ unique .flag, unique .code ]\n            |> KeysSet.insertAll\n                [ { flag = \"🇦🇺\", code = \"AU\", name = \"Australia\" }\n                , { flag = \"🇦🇶\", code = \"AQ\", name = \"Antarctica\" }\n                , { flag = \"🇱🇧\", code = \"LB\", name = \"Lebanon\" }\n                ]\n\nIf you have a key and the aspect to check if it matches, you can find the matching element:\n\n    KeysSet.at .flag \"🇦🇶\" countries\n    --> Just { flag = \"🇦🇶\", code = \"AQ\", name = \"Antarctica\" }\n\n    KeysSet.at .code \"LB\" countries\n    --> Just { flag = \"🇱🇧\", code = \"LB\", name = \"Lebanon\" }\n\n",
+                "args": [
+                    "element"
+                ],
+                "type": "Typed.Typed Typed.Checked KeysSet.KeysSetTag Typed.Internal (KeysSet.ElementsWithUniquenessPromises element)"
+            },
+            {
+                "name": "Uniqueness",
+                "comment": " Check 2 elements if they are equal in a specified aspect. See [unique](KeysSet#unique)\n\n    uniqueInCasedLetter =\n        [ unique .inAlphabet\n        , unique .lowercase\n        , unique .uppercase\n        ]\n\n    KeysSet.promising uniqueInCasedLetter\n        |> KeysSet.insert\n            { inAlphabet = 0, lowercase = 'a', uppercase = 'A' }\n        |> KeysSet.insert\n            { inAlphabet = 0, lowercase = 'b', uppercase = 'B' }\n        --> isn't inserted. There's already an element where .inAlphabet is 0.\n\n",
+                "args": [
+                    "element"
+                ],
+                "type": "element -> element -> { areUnique : Basics.Bool }"
+            }
+        ],
+        "values": [
+            {
+                "name": "all",
+                "comment": " Whether all elements pass a test.\n\n    KeysSet.promising\n        [ unique .username, unique .email ]\n        |> KeysSet.insertAll\n            [ { username = \"fred\", priority = 1, email = \"higgi@outlook.com\" }\n            , { username = \"gria\", priority = 3, email = \"miggo@inlook.go\" }\n            ]\n        |> KeysSet.all (\\user -> user.priority < 4)\n    --> True\n\n",
+                "type": "(element -> Basics.Bool) -> KeysSet.KeysSet element -> Basics.Bool"
+            },
+            {
+                "name": "any",
+                "comment": " Whether there is least one element that passes a test.\n\n    KeysSet.promising\n        [ unique .username, unique .email ]\n        |> KeysSet.insertAll\n            [ { username = \"fred\", priority = 1, email = \"higgi@outlook.com\" }\n            , { username = \"gria\", priority = 3, email = \"miggo@inlook.go\" }\n            ]\n        |> KeysSet.any (\\user -> user.priority > 4)\n    --> False\n\n    member needle =\n        KeysSet.any ((==) needle)\n\n",
+                "type": "(element -> Basics.Bool) -> KeysSet.KeysSet element -> Basics.Bool"
+            },
+            {
+                "name": "at",
+                "comment": " Try to find an element where a given aspect of it matches a given value.\n\n    casedLetters =\n        KeysSet.promising\n            [ unique .lowercase, unique .uppercase ]\n            |> KeysSet.insertAll\n                [ { lowercase = 'a', uppercase = 'A' }\n                , { lowercase = 'b', uppercase = 'B' }\n                ]\n\n    lowercase char =\n        casedLetters\n            |> KeysSet.at .uppercase char\n            |> Maybe.map .lowercase\n\n    uppercase char =\n        casedLetters\n            |> KeysSet.at .lowercase char\n            |> Maybe.map .uppercase\n\nIf the given aspect isn't promised to be unique,\n`at` will find the most recently inserted element where the given aspect matches the given value.\n\n    ratedOperators =\n        KeysSet.promising\n            [ unique .symbol, unique .name ]\n            |> KeysSet.insertAll\n                [ { rating = 0.5, symbol = \"<\", name = \"lt\" }\n                , { rating = 0.5, symbol = \">\", name = \"gt\" }\n                ]\n\n    KeysSet.at .rating 0.5 ratedOperators\n    --> { rating = 0.5, symbol = \">\", name = \"gt\" }\n    -->     |> Just\n\n",
+                "type": "(element -> aspect) -> aspect -> KeysSet.KeysSet element -> Maybe.Maybe element"
+            },
+            {
+                "name": "equal",
+                "comment": " How can you know if each element in `aKeysSet` can also be found in `bKeysSet`?\n\n    letterCodes =\n        KeysSet.insertAll\n            [ { letter = 'a', code = 97 }\n            , { letter = 'b', code = 98 }\n            ]\n            (KeysSet.promising\n                [ unique .letter, unique .code ]\n            )\n\n    fancyCompetingLetterCodes =\n        KeysSet.promising\n            [ unique .code, unique .letter ]\n            |> KeysSet.insert { code = 98, letter = 'b' }\n            |> KeysSet.insert { code = 97, letter = 'a' }\n\n    letterCodes == fancyCompetingLetterCodes\n    --> elm crashes\n\nBecause a `KeysSet`'s `Uniqueness` is defined as functions.\n\n    (letterCodes |> KeysSet.toList)\n    == (fancyCompetingLetterCodes |> KeysSet.toList)\n    --> False\n\nEven though both contain the same elements but in a different order.\n\n> → Don't use `==` to compare `KeysSet`s\n\n> The keys can be non-comparable. There is no obvious order.\n> → You shouldn't rely on order when using functions like `fold` or `toList`.\n\nInstead, use\n\n    KeysSet.equal\n        letterCodes\n        fancyCompetingLetterCodes\n    --> True\n\n",
+                "type": "KeysSet.KeysSet element -> KeysSet.KeysSet element -> Basics.Bool"
+            },
+            {
+                "name": "fold",
+                "comment": " Reduce the elements from most recently to least recently inserted element.\n\n> The keys can be non-comparable. There is no obvious order.\n\n> → You shouldn't rely on order when using functions like `fold` or `toList`.\n\n\n    brackets =\n        KeysSet.promising\n            [ unique .open, unique .closed ]\n            |> KeysSet.insertAll\n                [ { open = '(', closed = ')' }\n                , { open = '{', closed = '}' }\n                ]\n\n    openingAndClosing =\n        brackets\n            |> KeysSet.fold\n                (\\{ open, closed } ->\n                    (::) (String.fromList [ open, closed ])\n                )\n                []\n\n    --> []\n    -->     |> (::) (String.fromList [ '{' '}' ])\n    -->     |> (::) (String.fromList [ '(' ')' ])\n\n",
+                "type": "(element -> acc -> acc) -> acc -> KeysSet.KeysSet element -> acc"
+            },
+            {
+                "name": "insert",
+                "comment": " Put an element into the `KeysSet`.\n\nIf there is already an element where some aspect that is promised to be unique is equal, (see [`Uniqueness`](KeysSet#Uniqueness)), the `KeysSet` remains **unchanged**.\n\n    KeysSet.promising\n        [ unique .lowercase, unique .uppercase ]\n        |> KeysSet.insert\n            { lowercase = 'b', uppercase = 'B', rating = 0.5 }\n            --> is inserted\n        |> KeysSet.insert\n            { lowercase = 'a', uppercase = 'A', rating = 0.5 }\n            --> is inserted\n            -- .rating is not specified as unique\n        |> KeysSet.insert\n            { lowercase = 'b', uppercase = 'C', rating = 0 }\n            --> is ignored\n            -- .lowercase 'b' already exists\n        |> KeysSet.insert\n            { lowercase = 'c', uppercase = 'A', rating = 0 }\n            --> is ignored\n            -- .uppercase 'A' already exists\n        |> KeysSet.insert\n            { lowercase = 'c', uppercase = 'C', rating = 0.6 }\n            --> is inserted\n\n",
+                "type": "element -> KeysSet.KeysSet element -> KeysSet.KeysSet element"
+            },
+            {
+                "name": "insertAll",
+                "comment": " Conveniently insert a list of elements. See [insert](KeysSet#insert).\n\n    KeysSet.promising\n        [ unique .open, unique .closed ]\n        |> KeysSet.insertAll\n            [ { open = '(', closed = ')' }\n            , { open = '{', closed = '}' }\n            ]\n    --> KeysSet.promising [ unique .open, unique .closed ]\n    -->     |> KeysSet.insert { open = '(', closed = ')' }\n    -->     |> KeysSet.insert { open = '{', closed = '}' }\n\n",
+                "type": "List.List element -> KeysSet.KeysSet element -> KeysSet.KeysSet element"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Whether there are no elements inside.\n\n    KeysSet.promising [ unique .name ]\n        |> KeysSet.isEmpty\n    --> True\n\n    KeysSet.promising [ unique .name ]\n        |> KeysSet.insertAll []\n        |> KeysSet.isEmpty\n    --> True\n\n    KeysSet.promising [ unique .name ]\n        |> KeysSet.insert { name = \"pete\" }\n        |> KeysSet.isEmpty\n    --> False\n\n",
+                "type": "KeysSet.KeysSet element_ -> Basics.Bool"
+            },
+            {
+                "name": "isUnique",
+                "comment": " Whether this element is considered unique / would it be inserted.\n\n    letters =\n        KeysSet.promising\n            [ unique .lowercase, unique .uppercase ]\n            |> KeysSet.insertAll\n                [ { lowercase = 'a', uppercase = 'A' }\n                , { lowercase = 'b', uppercase = 'B' }\n                ]\n\n    letters\n        |> KeysSet.isUnique\n            { lowercase = 'b', uppercase = 'C' }\n    --> False\n    -- .lowercase 'b' already exists\n\n    letters\n        |> KeysSet.isUnique\n            { lowercase = 'c', uppercase = 'A' }\n    --> False\n    -- .uppercase 'A' already exists\n\n    letters\n        |> KeysSet.isUnique\n            { lowercase = 'c', uppercase = 'C' }\n    --> True\n\n",
+                "type": "element -> KeysSet.KeysSet element -> Basics.Bool"
+            },
+            {
+                "name": "map",
+                "comment": " Alter every element based on its current value.\n\n    digitNames =\n        KeysSet.promising\n            [ unique .number, unique .name ]\n            |> KeysSet.insertAll\n                [ { number = 0, name = \"zero\" }\n                , { number = 1, name = \"one\" }\n                ]\n\n    mathSymbolNames =\n        digitNames\n            |> KeysSet.map\n                (\\{ number, name } ->\n                    { symbol = String.fromInt number, name = name }\n                )\n                [ unique .symbol, unique .name ]\n            |> KeysSet.insert { symbol = \"+\", name = \"plus\" }\n\nIf the type doesn't change, use [`KeysSet.updateAll`](KeysSet#updateAll).\n\n",
+                "type": "(element -> mappedElement) -> List.List (KeysSet.Uniqueness mappedElement) -> KeysSet.KeysSet element -> KeysSet.KeysSet mappedElement"
+            },
+            {
+                "name": "promising",
+                "comment": " A `KeysSet` with no elements inside,\npromising that given aspects are unique across all elements.\nSee [`Uniqueness`](KeysSet#Uniqueness)\n\n    KeysSet.promising [ unique .email ]\n        |> KeysSet.insert\n            { username = \"ben\", email = \"ben10@gmx.de\" }\n        |> KeysSet.insert\n            { username = \"mai\", email = \"ben10@gmx.de\" }\n        --> is not inserted.\n        --> There's already an element where .email is \"ben10@gmx.de\"\n\nElements that are inserted must **not** contain **functions, json or regexes**.\nElm will crash trying to see if they are equal.\n\n",
+                "type": "List.List (KeysSet.Uniqueness element) -> KeysSet.KeysSet element"
+            },
+            {
+                "name": "remove",
+                "comment": " Remove the element where a given aspect of the element matches a given value.\n\n    openClosedBrackets =\n        KeysSet.promising\n            [ unique .open, unique .closed ]\n            |> KeysSet.insert\n                { open = \"(\", closed = \")\" }\n\n    openClosedBrackets\n        |> KeysSet.remove .open \")\"\n    --> no change\n    -- .open is never \")\"\n\n    openClosedBrackets\n        |> KeysSet.remove .closed \")\"\n    --> removes { open = \"(\", closed = \")\" }\n\nIf there the checked aspect isn't promised to be unique, `remove` acts as a filter.\n\n    KeysSet.promising\n        [ unique .open, unique .closed ]\n        |> KeysSet.insertAll\n            [ { open = \"[\", closed = \"]\", meaning = List }\n            , { open = \"<\", closed = \">\", meaning = Custom }\n            , { open = \"\\\\\", closed = \"/\", meaning = Custom }\n            ]\n        |> KeysSet.remove .meaning Custom\n    --> only { open = \"[\", closed = \"]\", meaning = List } remains\n\nIf filtering is your intention, use [`KeysSet.when`](KeysSet#when).\n\n",
+                "type": "(element -> aspect) -> aspect -> KeysSet.KeysSet element -> KeysSet.KeysSet element"
+            },
+            {
+                "name": "size",
+                "comment": " How many elements there are.\n\n    KeysSet.promising [ unique identity ]\n        |> KeysSet.insertAll (List.range 0 41)\n        |> KeysSet.size\n    --> 42\n\n",
+                "type": "KeysSet.KeysSet element_ -> Basics.Int"
+            },
+            {
+                "name": "toList",
+                "comment": " The `List` containing all elements from most recently (= head) to least recently inserted element.\n\n> The keys can be non-comparable. There is no obvious order.\n\n> → You shouldn't rely on order when using functions like `fold` or `toList`.\n\n    mostRecentlyInserted =\n        List.head << KeysSet.toList\n\n    KeysSet.promising\n        [ unique .open, unique .closed ]\n        |> KeysSet.insertAll\n            [ { open = '(', closed = ')' }\n            , { open = '{', closed = '}' }\n            ]\n        |> KeysSet.toList\n    --> [ { open = '{', closed = '}' }\n    --> , { open = '(', closed = ')' }\n    --> ]\n\n",
+                "type": "KeysSet.KeysSet element -> List.List element"
+            },
+            {
+                "name": "unique",
+                "comment": " Check elements if some aspect is not the same.\n\n    unique .name\n        { name = \"smile\", symbol = '😊' }\n        { symbol = '🙂', name = \"smile\" }\n    --> { areUnique = False }\n\n    unique .symbol\n        { name = \"smile\", symbol = '😊' }\n        { symbol = '🙂', name = \"smile\" }\n    --> { areUnique = True }\n\n    unique (\\person -> ( person.firstName, person.lastName ))\n        { lastName = \"jimmy\", firstName = \"petter\", ... }\n        { lastName = \"jimmy\", firstName = \"greg\", ... }\n    --> { areUnique = True }\n\nin `KeysSet`\n\n    KeysSet.promising [ unique .email ]\n        |> KeysSet.insert\n            { username = \"ben\", email = \"ben10@gmx.de\" }\n        |> KeysSet.insert\n            { username = \"mai\", email = \"ben10@gmx.de\" }\n        --> is not inserted.\n        --> There's already an element where .email is \"ben10@gmx.de\"\n\n",
+                "type": "(element -> aspect_) -> KeysSet.Uniqueness element"
+            },
+            {
+                "name": "update",
+                "comment": " Change the element with the matching aspect based on its current value.\n\n    KeysSet.promising\n        [ unique .username, unique .email ]\n        |> KeysSet.insertAll\n            [ { username = \"fred\", priority = 1, email = \"higgi@outlook.com\" }\n            , { username = \"gria\", priority = 3, email = \"miggo@inlook.go\" }\n            ]\n        |> KeysSet.update .username\n            \"fred\"\n            (\\user -> { user | priority = p.priority + 3 })\n\nIf this aspect isn't unique, all elements with the matching aspect are updated.\n\n    KeysSet.promising [ unique .email ]\n        |> KeysSet.insertAll\n            [ { username = \"fred\", priority = 1, email = \"higgi@outlook.com\" }\n            , { username = \"fred\", priority = 3, email = \"miggo@inlook.go\" }\n            ]\n        |> KeysSet.update .username\n            \"fred\"\n            (\\user -> { user | priority = p.priority + 3 })\n\nEvery fred gets a higher priority!\n\n",
+                "type": "(a -> b) -> b -> (a -> a) -> KeysSet.KeysSet a -> KeysSet.KeysSet a"
+            },
+            {
+                "name": "updateAll",
+                "comment": " Change every element based on its current value.\n\n    rankUpAllUsers =\n        KeysSet.updateAll\n            (\\user -> { user | rank = user.rank + 1 })\n\nIf aspects that are promised to be unique become the same for 2 elements, the more recently inserted element is chosen.\n\nUse [`map`](KeysSet#map) if your function changes the type of the element.\n\n",
+                "type": "(element -> element) -> KeysSet.KeysSet element -> KeysSet.KeysSet element"
+            },
+            {
+                "name": "when",
+                "comment": " Only keep elements that satisfy a test.\n\n\n    operators =\n        KeysSet.promising\n            [ unique .symbol, unique .name ]\n            |> KeysSet.insertAll\n                [ { symbol = \">\", name = \"gt\" }\n                , { symbol = \"<\", name = \"lt\" }\n                , { symbol = \"==\", name = \"eq\" }\n                ]\n\n    singleCharOperators =\n        operators\n            |> KeysSet.when\n                (.symbol >> String.length >> (==) 1)\n\n    --> KeysSet.promising\n    -->     [ unique .symbol, unique .name ]\n    -->     |> KeysSet.insertAll\n    -->         [ { symbol = \">\", name = \"gt\" }\n    -->         , { symbol = \"<\", name = \"lt\" }\n    -->         ]\n\n",
+                "type": "(element -> Basics.Bool) -> KeysSet.KeysSet element -> KeysSet.KeysSet element"
+            }
+        ],
+        "binops": []
+    }
+]

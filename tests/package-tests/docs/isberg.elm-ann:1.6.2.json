@@ -1,0 +1,143 @@
+[
+    {
+        "name": "Genome",
+        "comment": " Module for doing operations on Artificial Neural Network Genomes.\n\n@docs Genome\n\n@docs create, addConnection, addNode, modifyWeight, toString, toNetwork\n\n@docs mutate, Mutation, breed\n",
+        "unions": [
+            {
+                "name": "Genome",
+                "comment": " Genome represents an ANN genotype\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Mutation",
+                "comment": " Representing a new mutation ",
+                "args": [],
+                "cases": [
+                    [
+                        "NoMutation",
+                        []
+                    ],
+                    [
+                        "AddConnection",
+                        [
+                            "Basics.Int",
+                            "Basics.Int",
+                            "Basics.Float"
+                        ]
+                    ],
+                    [
+                        "AddNode",
+                        [
+                            "Basics.Int",
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "ModifyWeight",
+                        [
+                            "Basics.Int",
+                            "Basics.Int",
+                            "Basics.Float"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "addConnection",
+                "comment": " Add connection between existing nodes\n",
+                "type": "Basics.Int -> Basics.Int -> Basics.Float -> Genome.Genome -> Genome.Genome"
+            },
+            {
+                "name": "addNode",
+                "comment": " Add node by replacing existing connection with a node and two connections.\n",
+                "type": "Basics.Int -> Basics.Int -> Genome.Genome -> Genome.Genome"
+            },
+            {
+                "name": "breed",
+                "comment": " breeds 2 genomes creating one offspring\n",
+                "type": "Genome.Genome -> Genome.Genome -> Random.Generator Genome.Genome"
+            },
+            {
+                "name": "create",
+                "comment": " Create Genome with specified number of inputs, outputs, a bias node and no hidden nodes or connections\n",
+                "type": "Basics.Int -> Basics.Int -> Genome.Genome"
+            },
+            {
+                "name": "modifyWeight",
+                "comment": " modifyWeight adds the given modification to a specific connection\n",
+                "type": "Basics.Int -> Basics.Int -> Basics.Float -> Genome.Genome -> Genome.Genome"
+            },
+            {
+                "name": "mutate",
+                "comment": " mutate create a mutation generator\n",
+                "type": "Genome.Genome -> Random.Generator Genome.Mutation"
+            },
+            {
+                "name": "toNetwork",
+                "comment": " create network from genome\n",
+                "type": "Genome.Genome -> Network.Network"
+            },
+            {
+                "name": "toString",
+                "comment": " convert to string representation\n",
+                "type": "Genome.Genome -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Network",
+        "comment": " Basic module for creating and using Artificial Neural Networks (ANNs).\n\n@docs Network\n\n@docs create, setValues, activate, toString, toDot, fitness, get\n",
+        "unions": [
+            {
+                "name": "Network",
+                "comment": " Representing an Artificial Neural Network\n    \n    Network.create [(1, 0.5), (2, -0.1)] [(1, 2, -0.5)]\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "activate",
+                "comment": " activate updates the network node values using the Step function\n\n    someNetwork |> Network.activate \n",
+                "type": "Network.Network -> Network.Network"
+            },
+            {
+                "name": "create",
+                "comment": " create function\n\n    Network.create [(1, 0.5), (2, -0.1)] [(1, 2, -0.5)]\n",
+                "type": "List.List ( Basics.Int, Basics.Float ) -> List.List ( Basics.Int, Basics.Int, Basics.Float ) -> Network.Network"
+            },
+            {
+                "name": "fitness",
+                "comment": " fitness function defined as\n1 - RMSE = 1 - Root of Mean Squared Error, this calcuation is done per sample and then summed for all samples,\nwhich should mean the result gives how many correct answer the network gave (kind of).\nsee https://www.researchgate.net/figure/The-root-mean-squared-error-RMSE-when-the-genetic-algorithm-is-implemented-with-fitness_fig1_319382166\n\n    Network.create [(1, 0), (2, 0)] [(1, 2, 1.0)]\n                        |> Network.fitness \n                            [ ([(1, 0)], [(2, 0)])\n                            , ([(1, 1)], [(2, 1)])\n                            ]\n    -- == 2.0  (Meaning both samples correctly answered)\n\n",
+                "type": "List.List ( List.List ( Basics.Int, Basics.Float ), List.List ( Basics.Int, Basics.Float ) ) -> Network.Network -> Basics.Float"
+            },
+            {
+                "name": "get",
+                "comment": " get specific nodes with their current values\n",
+                "type": "List.List Basics.Int -> Network.Network -> List.List ( Basics.Int, Basics.Float )"
+            },
+            {
+                "name": "setValues",
+                "comment": " setValues is used to set values of input nodes\n\n    someNetwork |> Network.setValues [(0, 1), (1, -0.5)]\n",
+                "type": "List.List ( Basics.Int, Basics.Float ) -> Network.Network -> Network.Network"
+            },
+            {
+                "name": "toDot",
+                "comment": " toDot create graph description\nsee https://en.wikipedia.org/wiki/DOT_(graph_description_language)\ncan be vizualised with https://rise4fun.com/agl\nor https://dreampuf.github.io/GraphvizOnline/\nor using ports with https://github.com/mdaines/viz.js/\n\n    Network.create [(0, 1), (1, 0)] [(0, 1, -0.5)]\n        |> Network.toDot\n        -- == \n        digraph {\n            0 [label=\"0=1\"]\n            1 [label=\"1=0\"]\n            0 -- 1 [label=\"-0.5\"]\n        }\n",
+                "type": "Network.Network -> String.String"
+            },
+            {
+                "name": "toString",
+                "comment": " convert Network to String representation \n    \n    someNetwork |> Network.toString\n",
+                "type": "Network.Network -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

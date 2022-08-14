@@ -1,0 +1,624 @@
+[
+    {
+        "name": "Select",
+        "comment": " Select items from a menu list.\n\n\n# Set up\n\n@docs Config, State, MenuItem, BasicMenuItem, basicMenuItem, CustomMenuItem, customMenuItem, filterableMenuItem, Action, initState, Msg, menuItems, placeholder, selectIdentifier, state, update, view, searchable, setStyles\n\n\n# Single select\n\n@docs single, clearable\n\n\n# Multi select\n\n@docs multi\n\n\n# Native Single select\n\n@docs singleNative\n\n\n# Common\n\n@docs disabled, labelledBy, ariaDescribedBy, loading, loadingMessage\n\n\n# Advanced\n\n@docs jsOptimize\n\n",
+        "unions": [
+            {
+                "name": "Action",
+                "comment": " Specific events happen in the Select that you can react to from your update.\n\nMaybe you want to find out what country someone is from?\n\nWhen they select a country from the menu, it will be reflected in the Select action.\n\n    import Select exposing ( Action(..) )\n\n    type Msg\n        = SelectMsg (Select.Msg Country)\n        -- your other Msg's\n\n    type Country\n        = Australia\n        | Japan\n        | Taiwan\n        -- other countries\n\n    update : Msg -> Model -> (Model, Cmd Msg)\n    update msg model =\n        case msg of\n            SelectMsg selectMsg ->\n                let\n                    (maybeAction, selectState, selectCmds) =\n                        Select.update selectMsg model.selectState\n\n                    selectedCountry : Maybe Country\n                    selectedCountry =\n                        case maybeAction of\n                            Just (Select.Select someCountry) ->\n                                Just someCountry\n\n                            Nothing ->\n                                Nothing\n\n                in\n                -- (model, cmd)\n\n",
+                "args": [
+                    "item"
+                ],
+                "cases": [
+                    [
+                        "InputChange",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Select",
+                        [
+                            "item"
+                        ]
+                    ],
+                    [
+                        "DeselectMulti",
+                        [
+                            "item"
+                        ]
+                    ],
+                    [
+                        "ClearSingleSelectItem",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Config",
+                "comment": " ",
+                "args": [
+                    "item"
+                ],
+                "cases": []
+            },
+            {
+                "name": "MenuItem",
+                "comment": " ",
+                "args": [
+                    "item"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Msg",
+                "comment": " ",
+                "args": [
+                    "item"
+                ],
+                "cases": []
+            },
+            {
+                "name": "State",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "BasicMenuItem",
+                "comment": " A menu item that will be represented in the menu list.\n\nThe `item` property is the type representation of the menu item that will be used in an Action.\n\nThe `label` is the text representation that will be shown in the menu.\n\n    type Tool\n        = Screwdriver\n        | Hammer\n        | Drill\n\n    toolItems : MenuItem Tool\n    toolItems =\n        [ basicMenuItem { item = Screwdriver, label = \"Screwdriver\" }\n        , basicMenuItem { item = Hammer, label = \"Hammer\" }\n        , basicMenuItem { item = Drill, label = \"Drill\" }\n        ]\n\n    yourView model =\n        Html.map SelectMsg <|\n            view\n                (single Nothing\n                    |> menuItems toolItems\n                    |> state model.selectState\n                )\n                (selectIdentifier \"SingleSelectExample\")\n\nCombine this with [basicMenuItem](#basicMenuItem) to create a [MenuItem](#MenuItem)\n\n",
+                "args": [
+                    "item"
+                ],
+                "type": "{ item : item, label : String.String }"
+            },
+            {
+                "name": "CustomMenuItem",
+                "comment": " A menu item that will be represented in the menu list by a view you supply.\n\nThe `item` property is the type representation of the menu item that will be used in an Action.\n\nThe `label` is the text representation of the item.\n\nThe view is a `Html` view that you supply.\n\n    type Tool\n        = Screwdriver\n        | Hammer\n        | Drill\n\n    toolItems : MenuItem Tool\n    toolItems =\n        [ customMenuItem { item = Screwdriver, label = \"Screwdriver\", view = text \"Screwdriver\" }\n        , customMenuItem { item = Hammer, label = \"Hammer\", view = text \"Hammer\" }\n        , customMenuItem { item = Drill, label = \"Drill\", view = text \"Drill\" }\n        ]\n\n    yourView model =\n        Html.map SelectMsg <|\n            view\n                (single Nothing\n                    |> menuItems toolItems\n                    |> state model.selectState\n                )\n                (selectIdentifier \"SingleSelectExample\")\n\nThe view you provide will be rendered in a `li` element that is styled according to the value set by [setStyles](#setStyles).\n\n        customMenuItem { item = Hammer, label = \"Hammer\", view = text \"Hammer\" }\n        => <li>Hammer</>\n\nCombine this with [customMenuItem](#customMenuItem) to create a [MenuItem](#MenuItem).\n\n",
+                "args": [
+                    "item"
+                ],
+                "type": "{ item : item, label : String.String, view : Html.Styled.Html Basics.Never }"
+            }
+        ],
+        "values": [
+            {
+                "name": "ariaDescribedBy",
+                "comment": " The ID of element that describes the select.\n\n    yourView model =\n        label\n            [ id \"selectLabelId\" ]\n            [ text \"Select your country\"\n            , Html.map SelectMsg <|\n                view\n                    (single Nothing\n                        |> labelledBy \"selectLabelId\"\n                        |> ariaDescribedBy \"selectDescriptionId\"\n                    )\n                    (selectIdentifier \"SingleSelectExample\")\n            , div [ id \"selectDescriptionId\" ] [ text \"This text describes the select\" ]\n            ]\n\n",
+                "type": "String.String -> Select.Config item -> Select.Config item"
+            },
+            {
+                "name": "basicMenuItem",
+                "comment": " Create a [basic](#BasicMenuItem) type of [MenuItem](#MenuItem).\n\n        type Tool\n            = Screwdriver\n            | Hammer\n            | Drill\n\n        menuItems : List (MenuItem Tool)\n        menuItems =\n            [ basicMenuItem\n                { item = Screwdriver, label = \"Screwdriver\" }\n            , basicMenuItem\n                { item = Hammer, label = \"Hammer\" }\n            , basicMenuItem\n                { item = Drill, label = \"Drill\" }\n            ]\n\n",
+                "type": "Select.BasicMenuItem item -> Select.MenuItem item"
+            },
+            {
+                "name": "clearable",
+                "comment": " Allows a [single](#single) variant selected menu item to be cleared.\n\nTo handle a cleared item refer to the [ClearedSingleSelect](#Action ) action.\n\n      items =\n          [ basicMenuItem\n              { item = SomeValue, label = \"Some label\" }\n          ]\n\n        yourView model =\n            Html.map SelectMsg <|\n                view\n                    ( single Nothing\n                        |> clearable True\n                        |> menuItems items\n                    )\n                    (selectIdentifier \"SingleSelectExample\")\n\n",
+                "type": "Basics.Bool -> Select.Config item -> Select.Config item"
+            },
+            {
+                "name": "customMenuItem",
+                "comment": " Create a [custom](#CustomMenuItem) type of [MenuItem](#MenuItem).\n\n        type Tool\n            = Screwdriver\n            | Hammer\n            | Drill\n\n        menuItems : List (MenuItem Tool)\n        menuItems =\n            [ customMenuItem\n                { item = Screwdriver, label = \"Screwdriver\", view = text \"Screwdriver\" }\n            , customMenuItem\n                { item = Hammer, label = \"Hammer\", view = text \"Hammer\" }\n            , customMenuItem\n                { item = Drill, label = \"Drill\", view = text \"Drill\" }\n            ]\n\n",
+                "type": "Select.CustomMenuItem item -> Select.MenuItem item"
+            },
+            {
+                "name": "disabled",
+                "comment": " Disables the select input so that it cannot be interacted with.\n\n        yourView model =\n            Html.map SelectMsg <|\n                view\n                    (single Nothing |> disabled True)\n                    (selectIdentifier \"SingleSelectExample\")\n\n",
+                "type": "Basics.Bool -> Select.Config item -> Select.Config item"
+            },
+            {
+                "name": "filterableMenuItem",
+                "comment": " Choose whether a menu item is filterable.\n\nUseful for when you always want to have a selectable option in the menu.\n\nMenu items are filterable by default.\n\n        type Tool\n            = Screwdriver\n            | Hammer\n            | Drill\n\n        menuItems : List (MenuItem Tool)\n        menuItems =\n            [ customMenuItem\n                { item = Screwdriver, label = \"Screwdriver\", view = text \"Screwdriver\" }\n            , customMenuItem\n                { item = Hammer, label = \"Hammer\", view = text \"Hammer\" }\n            , customMenuItem\n                { item = Drill, label = \"Drill\", view = text \"Drill\" }\n                |> filterableMenuItem False\n            ]\n\nNOTE: This only takes effect when [searchable](#searchable) is `True`.\n\n",
+                "type": "Basics.Bool -> Select.MenuItem item -> Select.MenuItem item"
+            },
+            {
+                "name": "initState",
+                "comment": " Set up an initial state in your init function.\n\n    type Country\n        = Australia\n        | Japan\n        | Taiwan\n\n    type alias Model =\n        { selectState : State\n        , items : List (MenuItem Country)\n        , selectedCountry : Maybe Country\n        }\n\n    init : Model\n    init =\n        { selectState = initState\n        , items =\n            [ basicMenuItem\n                { item = Australia, label = \"Australia\" }\n            , basicMenuItem\n                { item = Japan, label = \"Japan\" }\n            , basicMenuItem\n                { item = Taiwan, label = \"Taiwan\" }\n            ]\n        , selectedCountry = Nothing\n        }\n\n",
+                "type": "Select.State"
+            },
+            {
+                "name": "jsOptimize",
+                "comment": " Opt in to a Javascript optimization.\n\nRead the [Advanced](https://package.elm-lang.org/packages/Confidenceman02/elm-select/latest/#opt-in-javascript-optimisation)\nsection of the README for a good explanation on why you might like to opt in.\n\n        model : Model model =\n            { selectState = initState |> jsOptimize True }\n\nInstall the Javascript package:\n\n**npm**\n\n> `npm install @confidenceman02/elm-select`\n\n**Import script**\n\n    <!DOCTYPE html>\n    <html>\n      <head>\n        <meta charset=\"utf-8\">\n        <title>Viewer</title>\n\n        <script src=\"/node_modules/@confidenceman02/elm-select/dist/dynamic.min.js\"></script>\n      </head>\n      <body>\n        <main></main>\n        <script src=\"index.js\"></script>\n      </body>\n    </html>\n\nAlternatively you can import the script wherever you are initialising your program.\n\n    import { Elm } from \"./src/Main\";\n    import \"@confidenceman02/elm-select\"\n\n    Elm.Main.init({node, flags})\n\n",
+                "type": "Basics.Bool -> Select.State -> Select.State"
+            },
+            {
+                "name": "labelledBy",
+                "comment": " The element ID of the label for the select.\n\nIt is best practice to render the select with a label.\n\n    yourView model =\n        label\n            [ id \"selectLabelId\" ]\n            [ text \"Select your country\"\n            , Html.map SelectMsg <|\n                view\n                    (single Nothing |> labelledBy \"selectLabelId\")\n                    (selectIdentifier \"SingleSelectExample\")\n            ]\n\n",
+                "type": "String.String -> Select.Config item -> Select.Config item"
+            },
+            {
+                "name": "loading",
+                "comment": " Displays an animated loading icon to visually represent that menu items are being loaded.\n\nThis would be useful if you are loading menu options asynchronously, like from a server.\n\n        yourView model =\n            Html.map SelectMsg <|\n                view\n                    (single Nothing |> loading True)\n                    (selectIdentifier \"SingleSelectExample\")\n\n",
+                "type": "Basics.Bool -> Select.Config item -> Select.Config item"
+            },
+            {
+                "name": "loadingMessage",
+                "comment": " Displays when there are no matched menu items and [loading](#loading) is True.\n\n        yourView model =\n            Html.map SelectMsg <|\n                view\n                    (single Nothing |> loadingMessage \"Fetching items...\")\n                    (selectIdentifier \"SingleSelectExample\")\n\n",
+                "type": "String.String -> Select.Config item -> Select.Config item"
+            },
+            {
+                "name": "menuItems",
+                "comment": " The items that will appear in the menu list.\n\nNOTE: When using the (multi) select, selected items will be reflected as a tags and\nvisually removed from the menu list.\n\n      items =\n          [ basicMenuItem\n              { item = SomeValue, label = \"Some label\" }\n          ]\n\n      yourView =\n          view\n              (Single Nothing |> menuItems items)\n              (selectIdentifier \"1234\")\n\n",
+                "type": "List.List (Select.MenuItem item) -> Select.Config item -> Select.Config item"
+            },
+            {
+                "name": "multi",
+                "comment": " Select multiple items.\n\nSelected items will render as tags and be visually removed from the menu list.\n\n    yourView model =\n        Html.map SelectMsg <|\n            view\n                (multi model.selectedCountries\n                    |> menuItems model.countries\n                )\n                (selectIdentifier \"1234\")\n\n",
+                "type": "List.List (Select.MenuItem item) -> Select.Config item"
+            },
+            {
+                "name": "placeholder",
+                "comment": " The text that will appear as an input placeholder.\n\n        yourView model =\n            Html.map SelectMsg <|\n                view\n                    (single Nothing |> placeholder \"some placeholder\")\n                    (selectIdentifier \"1234\")\n\n",
+                "type": "String.String -> Select.Config item -> Select.Config item"
+            },
+            {
+                "name": "searchable",
+                "comment": " Renders an input that let's you input text to search for menu items.\n\n        yourView model =\n            Html.map SelectMsg <|\n                view\n                    (single Nothing |> searchable True)\n                    (selectIdentifier \"1234\")\n\nNOTE: This doesn't affect the [Native single select](#native-single-select)\nvariant.\n\n",
+                "type": "Basics.Bool -> Select.Config item -> Select.Config item"
+            },
+            {
+                "name": "selectIdentifier",
+                "comment": " The ID for the rendered Select input\n\nNOTE: It is important that the ID's of all selects that exist on\na page remain unique.\n\n    yourView model =\n        Html.map SelectMsg <|\n            view\n                (single Nothing)\n                (selectIdentifier \"someUniqueId\")\n\n",
+                "type": "String.String -> Select.SelectId"
+            },
+            {
+                "name": "setStyles",
+                "comment": " Change some of the visual styles of the select.\n\nUseful for styling the select using your\ncolor branding.\n\n        import Select.Styles as Styles\n\n        baseStyles : Styles.Config\n        baseStyles =\n            Styles.default\n\n        controlBranding : Styles.ControlConfig\n        controlBranding =\n            Styles.getControlConfig baseStyles\n                |> Styles.setControlBorderColor (Css.hex \"#FFFFFF\")\n                |> Styles.setControlBorderColorFocus (Css.hex \"#0168B3\")\n\n        selectBranding : Styles.Config\n        selectBranding =\n          baseStyles\n              |> Styles.setControlStyles controlBranding\n\n        yourView model =\n            Html.map SelectMsg <|\n                view\n                    (single Nothing |> setStyles selectBranding)\n                    (selectIdentifier \"1234\")\n\n",
+                "type": "Select.Styles.Config -> Select.Config item -> Select.Config item"
+            },
+            {
+                "name": "single",
+                "comment": " Select a single item.\n\n      countries : List (MenuItem Country)\n      countries =\n          [ basicMenuItem\n              { item = Australia, label = \"Australia\" }\n          , basicMenuitem\n              { item = Taiwan, label = \"Taiwan\"\n            -- other countries\n          ]\n\n      yourView =\n          Html.map SelectMsg <|\n              view\n                  (single Nothing |> menuItems countries)\n                  (selectIdentifier \"1234\")\n\n",
+                "type": "Maybe.Maybe (Select.MenuItem item) -> Select.Config item"
+            },
+            {
+                "name": "singleNative",
+                "comment": " Select a single item with a native html [select](https://www.w3schools.com/tags/tag_select.asp) element.\n\nUseful for when you want to give a native select experience such as on touch\ndevices.\n\n      countries : List (MenuItem Country)\n      countries =\n          [ basicMenuItem\n              { item = Australia, label = \"Australia\" }\n          , basicMenuItem\n              { item = Taiwan, label = \"Taiwan\"\n          -- other countries\n          ]\n\n      yourView =\n          Html.map SelectMsg <|\n              view\n                  (singleNative Nothing |> menuItems countries)\n                  (selectIdentifier \"1234\")\n\n**Note**\n\n  - The only [Action](#Action) event that will be fired from the native single select is\n    the `Select` [Action](#Action). The other actions are not currently supported.\n\n  - Some [Config](#Config) values will not currently take effect when using the single native variant\n    i.e. [loading](#loading), [placeholder](#placeholder), [clearable](#clearable), [labelledBy](#labelledBy), [disabled](#disabled)\n\n",
+                "type": "Maybe.Maybe (Select.MenuItem item) -> Select.Config item"
+            },
+            {
+                "name": "state",
+                "comment": "\n\n        model : Model\n        model =\n            { selectState = initState }\n\n        yourView : Model\n        yourView model =\n            Html.map SelectMsg <|\n                view\n                    (single Nothing |> state model.selectState)\n                    (selectIdentifier \"1234\")\n\n",
+                "type": "Select.State -> Select.Config item -> Select.Config item"
+            },
+            {
+                "name": "update",
+                "comment": " Add a branch in your update to handle the view Msg's.\n\n        yourUpdate msg model =\n            case msg of\n                SelectMsg selectMsg ->\n                    update selectMsg model.selectState\n\n",
+                "type": "Select.Msg item -> Select.State -> ( Maybe.Maybe (Select.Action item), Select.State, Platform.Cmd.Cmd (Select.Msg item) )"
+            },
+            {
+                "name": "view",
+                "comment": " Render the select\n\n        yourView model =\n            Html.map SelectMsg <|\n                view\n                    (single Nothing)\n                    (selectIdentifier \"SingleSelectExample\")\n\n",
+                "type": "Select.Config item -> Select.SelectId -> Html.Styled.Html (Select.Msg item)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Select.Styles",
+        "comment": " Add custom styling to the Select control, menu and menu item.\n\n![elm-select](https://Confidenceman02.github.io/elm-select/StylesModules.png)\n\n\n# Set up\n\nStyles for the different sections of the Select all have their own configuration.\nThis means when you are setting styles to the [MenuConfig](#MenuConfig) you can only use the\n[Setters](#setters) for the MenuConfig.\n\nNOTE: The [native](/packages/Confidenceman02/elm-select/latest/Select#singleNative) Select variant\nonly respects some of the styles.\n\n@docs Config, ControlConfig, MenuConfig, MenuItemConfig, default\n\n\n# Setters\n\nSet styles\n\n\n## Control\n\n@docs setControlStyles, setControlBackgroundColor, setControlBackgroundColorHover, setControlBorderColor, setControlBorderColorFocus, setControlBorderColorHover, setControlBorderRadius, setControlColor, setControlClearIndicatorColor\n@docs setControlClearIndicatorColorHover, setControlDisabledOpacity, setControlDropdownIndicatorColor, setControlDropdownIndicatorColorHover\n@docs setControlLoadingIndicatorColor, setControlMultiTagBackgroundColor, setControlMultiTagBorderRadius, setControlMultiTagDismissibleBackgroundColor, setControlMultiTagTruncationWidth, setControlSelectedColor, setControlPlaceholderOpacity, setControlSeparatorColor\n\n\n# Menu\n\n@docs setMenuStyles, setMenuBackgroundColor, setMenuBorderRadius, setMenuBoxShadowBlur, setMenuBoxShadowColor, setMenuBoxShadowHOffset, setMenuBoxShadowVOffset\n\n\n# Menu item\n\n@docs setMenuItemStyles, setMenuItemBackgroundColorClicked, setMenuItemBackgroundColorSelected, setMenuItemBlockPadding, setMenuItemBorderRadius, setMenuItemColor, setMenuItemBackgroundColorNotSelected, setMenuItemColorHoverSelected, setMenuItemInlinePadding\n@docs setMenuItemColorHoverNotSelected\n\n\n# Getters\n\nGet styles\n\n\n## Control\n\n@docs getControlConfig, getControlBackgroundColor, getControlBackgroundColorHover, getControlBorderColor, getControlColor, getControlBorderColorFocus, getControlBorderColorHover, getControlBorderRadius, getControlClearIndicatorColor\n@docs getControlClearIndicatorColorHover, getControlDisabledOpacity, getControlDropdownIndicatorColor, getControlDropdownIndicatorColorHover\n@docs getControlLoadingIndicatorColor, getControlMultiTagBackgroundColor, getControlMultiTagBorderRadius, getControlMultiTagDismissibleBackgroundColor, getControlMultiTagTruncationWidth, getControlPlaceholderOpacity, getControlSelectedColor, getControlSeparatorColor\n\n\n# Menu\n\n@docs getMenuConfig, getMenuBackgroundColor, getMenuBorderRadius, getMenuBoxShadowColor, getMenuBoxShadowHOffset, getMenuBoxShadowVOffset, getMenuBoxShadowBlur\n\n\n# Menu item\n\n@docs getMenuItemConfig, getMenuItemBackgroundColorSelected, getMenuItemBackgroundColorClicked, getMenuItemBlockPadding, getMenuItemBorderRadius, getMenuItemColor, getMenuItemColorHoverSelected, getMenuItemColorHoverNotSelected, getMenuItemInlinePadding\n\n@docs getMenuItemBackgroundColorNotSelected\n\n\n# Theme\n\n@docs dracula\n\n",
+        "unions": [
+            {
+                "name": "Config",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "ControlConfig",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "MenuConfig",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "MenuItemConfig",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "default",
+                "comment": " The default styling for the select\n\nThis is the [Config](#Config) that all select variants use if no styles\nhave been configured.\n\n",
+                "type": "Select.Styles.Config"
+            },
+            {
+                "name": "dracula",
+                "comment": " A fun dark theme\n\n![elm-select](https://Confidenceman02.github.io/elm-select/DraculaTheme.png)\n\n",
+                "type": "Select.Styles.Config"
+            },
+            {
+                "name": "getControlBackgroundColor",
+                "comment": " ",
+                "type": "Select.Styles.ControlConfig -> Css.Color"
+            },
+            {
+                "name": "getControlBackgroundColorHover",
+                "comment": " ",
+                "type": "Select.Styles.ControlConfig -> Css.Color"
+            },
+            {
+                "name": "getControlBorderColor",
+                "comment": " ",
+                "type": "Select.Styles.ControlConfig -> Css.Color"
+            },
+            {
+                "name": "getControlBorderColorFocus",
+                "comment": " ",
+                "type": "Select.Styles.ControlConfig -> Css.Color"
+            },
+            {
+                "name": "getControlBorderColorHover",
+                "comment": " ",
+                "type": "Select.Styles.ControlConfig -> Css.Color"
+            },
+            {
+                "name": "getControlBorderRadius",
+                "comment": " ",
+                "type": "Select.Styles.ControlConfig -> Basics.Float"
+            },
+            {
+                "name": "getControlClearIndicatorColor",
+                "comment": " ",
+                "type": "Select.Styles.ControlConfig -> Css.Color"
+            },
+            {
+                "name": "getControlClearIndicatorColorHover",
+                "comment": " ",
+                "type": "Select.Styles.ControlConfig -> Css.Color"
+            },
+            {
+                "name": "getControlColor",
+                "comment": " ",
+                "type": "Select.Styles.ControlConfig -> Css.Color"
+            },
+            {
+                "name": "getControlConfig",
+                "comment": " Get the [ControlConfig](#ControlConfig)\n\n    baseStyles : Config\n    baseStyles =\n        default\n\n    baseControlStyles : ControlConfig\n    baseControlStyles =\n        getControlConfig baseStyles\n            |> setControlBorderColor (Css.hex \"ffffff\")\n\n",
+                "type": "Select.Styles.Config -> Select.Styles.ControlConfig"
+            },
+            {
+                "name": "getControlDisabledOpacity",
+                "comment": " ",
+                "type": "Select.Styles.ControlConfig -> Basics.Float"
+            },
+            {
+                "name": "getControlDropdownIndicatorColor",
+                "comment": " ",
+                "type": "Select.Styles.ControlConfig -> Css.Color"
+            },
+            {
+                "name": "getControlDropdownIndicatorColorHover",
+                "comment": " ",
+                "type": "Select.Styles.ControlConfig -> Css.Color"
+            },
+            {
+                "name": "getControlLoadingIndicatorColor",
+                "comment": " ",
+                "type": "Select.Styles.ControlConfig -> Css.Color"
+            },
+            {
+                "name": "getControlMultiTagBackgroundColor",
+                "comment": " ",
+                "type": "Select.Styles.ControlConfig -> Css.Color"
+            },
+            {
+                "name": "getControlMultiTagBorderRadius",
+                "comment": " ",
+                "type": "Select.Styles.ControlConfig -> Basics.Float"
+            },
+            {
+                "name": "getControlMultiTagDismissibleBackgroundColor",
+                "comment": " ",
+                "type": "Select.Styles.ControlConfig -> Css.Color"
+            },
+            {
+                "name": "getControlMultiTagTruncationWidth",
+                "comment": " ",
+                "type": "Select.Styles.ControlConfig -> Maybe.Maybe Basics.Float"
+            },
+            {
+                "name": "getControlPlaceholderOpacity",
+                "comment": " ",
+                "type": "Select.Styles.ControlConfig -> Basics.Float"
+            },
+            {
+                "name": "getControlSelectedColor",
+                "comment": " ",
+                "type": "Select.Styles.ControlConfig -> Css.Color"
+            },
+            {
+                "name": "getControlSeparatorColor",
+                "comment": " ",
+                "type": "Select.Styles.ControlConfig -> Css.Color"
+            },
+            {
+                "name": "getMenuBackgroundColor",
+                "comment": " ",
+                "type": "Select.Styles.MenuConfig -> Css.Color"
+            },
+            {
+                "name": "getMenuBorderRadius",
+                "comment": " ",
+                "type": "Select.Styles.MenuConfig -> Basics.Float"
+            },
+            {
+                "name": "getMenuBoxShadowBlur",
+                "comment": " ",
+                "type": "Select.Styles.MenuConfig -> Basics.Float"
+            },
+            {
+                "name": "getMenuBoxShadowColor",
+                "comment": " ",
+                "type": "Select.Styles.MenuConfig -> Css.Color"
+            },
+            {
+                "name": "getMenuBoxShadowHOffset",
+                "comment": " ",
+                "type": "Select.Styles.MenuConfig -> Basics.Float"
+            },
+            {
+                "name": "getMenuBoxShadowVOffset",
+                "comment": " ",
+                "type": "Select.Styles.MenuConfig -> Basics.Float"
+            },
+            {
+                "name": "getMenuConfig",
+                "comment": " Get the [MenuConfig](#MenuConfig)\n\n    baseStyles : Config\n    baseStyles =\n        default\n\n    baseMenuStyles : MenuConfig\n    baseMenuStyles =\n        getMenuConfig baseStyles\n            |> setMenuBorderRadius 4\n\n",
+                "type": "Select.Styles.Config -> Select.Styles.MenuConfig"
+            },
+            {
+                "name": "getMenuItemBackgroundColorClicked",
+                "comment": " ",
+                "type": "Select.Styles.MenuItemConfig -> Css.Color"
+            },
+            {
+                "name": "getMenuItemBackgroundColorNotSelected",
+                "comment": " ",
+                "type": "Select.Styles.MenuItemConfig -> Css.Color"
+            },
+            {
+                "name": "getMenuItemBackgroundColorSelected",
+                "comment": " ",
+                "type": "Select.Styles.MenuItemConfig -> Css.Color"
+            },
+            {
+                "name": "getMenuItemBlockPadding",
+                "comment": " ",
+                "type": "Select.Styles.MenuItemConfig -> Basics.Float"
+            },
+            {
+                "name": "getMenuItemBorderRadius",
+                "comment": " ",
+                "type": "Select.Styles.MenuItemConfig -> Basics.Float"
+            },
+            {
+                "name": "getMenuItemColor",
+                "comment": " ",
+                "type": "Select.Styles.MenuItemConfig -> Css.Color"
+            },
+            {
+                "name": "getMenuItemColorHoverNotSelected",
+                "comment": " ",
+                "type": "Select.Styles.MenuItemConfig -> Css.Color"
+            },
+            {
+                "name": "getMenuItemColorHoverSelected",
+                "comment": " ",
+                "type": "Select.Styles.MenuItemConfig -> Css.Color"
+            },
+            {
+                "name": "getMenuItemConfig",
+                "comment": " Get the MenuItemConfig\n\n    baseStyles : Config\n    baseStyles =\n        default\n\n    baseMenuStyles : MenuItemConfig\n    baseMenuStyles =\n        getMenuItemConfig baseStyles\n            |> setMenuItemBackgroundColorSelected (Css.hex \"#000000\")\n\n",
+                "type": "Select.Styles.Config -> Select.Styles.MenuItemConfig"
+            },
+            {
+                "name": "getMenuItemInlinePadding",
+                "comment": " ",
+                "type": "Select.Styles.MenuItemConfig -> Basics.Float"
+            },
+            {
+                "name": "setControlBackgroundColor",
+                "comment": " ",
+                "type": "Css.Color -> Select.Styles.ControlConfig -> Select.Styles.ControlConfig"
+            },
+            {
+                "name": "setControlBackgroundColorHover",
+                "comment": " ",
+                "type": "Css.Color -> Select.Styles.ControlConfig -> Select.Styles.ControlConfig"
+            },
+            {
+                "name": "setControlBorderColor",
+                "comment": " ",
+                "type": "Css.Color -> Select.Styles.ControlConfig -> Select.Styles.ControlConfig"
+            },
+            {
+                "name": "setControlBorderColorFocus",
+                "comment": " ",
+                "type": "Css.Color -> Select.Styles.ControlConfig -> Select.Styles.ControlConfig"
+            },
+            {
+                "name": "setControlBorderColorHover",
+                "comment": " ",
+                "type": "Css.Color -> Select.Styles.ControlConfig -> Select.Styles.ControlConfig"
+            },
+            {
+                "name": "setControlBorderRadius",
+                "comment": " ",
+                "type": "Basics.Float -> Select.Styles.ControlConfig -> Select.Styles.ControlConfig"
+            },
+            {
+                "name": "setControlClearIndicatorColor",
+                "comment": " ",
+                "type": "Css.Color -> Select.Styles.ControlConfig -> Select.Styles.ControlConfig"
+            },
+            {
+                "name": "setControlClearIndicatorColorHover",
+                "comment": " ",
+                "type": "Css.Color -> Select.Styles.ControlConfig -> Select.Styles.ControlConfig"
+            },
+            {
+                "name": "setControlColor",
+                "comment": " ",
+                "type": "Css.Color -> Select.Styles.ControlConfig -> Select.Styles.ControlConfig"
+            },
+            {
+                "name": "setControlDisabledOpacity",
+                "comment": " ",
+                "type": "Basics.Float -> Select.Styles.ControlConfig -> Select.Styles.ControlConfig"
+            },
+            {
+                "name": "setControlDropdownIndicatorColor",
+                "comment": " ",
+                "type": "Css.Color -> Select.Styles.ControlConfig -> Select.Styles.ControlConfig"
+            },
+            {
+                "name": "setControlDropdownIndicatorColorHover",
+                "comment": " ",
+                "type": "Css.Color -> Select.Styles.ControlConfig -> Select.Styles.ControlConfig"
+            },
+            {
+                "name": "setControlLoadingIndicatorColor",
+                "comment": " ",
+                "type": "Css.Color -> Select.Styles.ControlConfig -> Select.Styles.ControlConfig"
+            },
+            {
+                "name": "setControlMultiTagBackgroundColor",
+                "comment": " ",
+                "type": "Css.Color -> Select.Styles.ControlConfig -> Select.Styles.ControlConfig"
+            },
+            {
+                "name": "setControlMultiTagBorderRadius",
+                "comment": " ",
+                "type": "Basics.Float -> Select.Styles.ControlConfig -> Select.Styles.ControlConfig"
+            },
+            {
+                "name": "setControlMultiTagDismissibleBackgroundColor",
+                "comment": " ",
+                "type": "Css.Color -> Select.Styles.ControlConfig -> Select.Styles.ControlConfig"
+            },
+            {
+                "name": "setControlMultiTagTruncationWidth",
+                "comment": " ",
+                "type": "Basics.Float -> Select.Styles.ControlConfig -> Select.Styles.ControlConfig"
+            },
+            {
+                "name": "setControlPlaceholderOpacity",
+                "comment": " ",
+                "type": "Basics.Float -> Select.Styles.ControlConfig -> Select.Styles.ControlConfig"
+            },
+            {
+                "name": "setControlSelectedColor",
+                "comment": " ",
+                "type": "Css.Color -> Select.Styles.ControlConfig -> Select.Styles.ControlConfig"
+            },
+            {
+                "name": "setControlSeparatorColor",
+                "comment": " ",
+                "type": "Css.Color -> Select.Styles.ControlConfig -> Select.Styles.ControlConfig"
+            },
+            {
+                "name": "setControlStyles",
+                "comment": " Set styles for the select control\n\n        controlBranding : ControlConfig\n        controlBranding =\n            getControlConfig default\n                |> setControlBorderColor (Css.hex \"#FFFFFF\")\n                |> setControlBorderColorFocus (Css.hex \"#0168B3\")\n\n        selectBranding : Config\n        selectBranding\n            default\n                |> setControlStyles controlBranding\n\n",
+                "type": "Select.Styles.ControlConfig -> Select.Styles.Config -> Select.Styles.Config"
+            },
+            {
+                "name": "setMenuBackgroundColor",
+                "comment": " ",
+                "type": "Css.Color -> Select.Styles.MenuConfig -> Select.Styles.MenuConfig"
+            },
+            {
+                "name": "setMenuBorderRadius",
+                "comment": " ",
+                "type": "Basics.Float -> Select.Styles.MenuConfig -> Select.Styles.MenuConfig"
+            },
+            {
+                "name": "setMenuBoxShadowBlur",
+                "comment": " ",
+                "type": "Basics.Float -> Select.Styles.MenuConfig -> Select.Styles.MenuConfig"
+            },
+            {
+                "name": "setMenuBoxShadowColor",
+                "comment": " ",
+                "type": "Css.Color -> Select.Styles.MenuConfig -> Select.Styles.MenuConfig"
+            },
+            {
+                "name": "setMenuBoxShadowHOffset",
+                "comment": " ",
+                "type": "Basics.Float -> Select.Styles.MenuConfig -> Select.Styles.MenuConfig"
+            },
+            {
+                "name": "setMenuBoxShadowVOffset",
+                "comment": " ",
+                "type": "Basics.Float -> Select.Styles.MenuConfig -> Select.Styles.MenuConfig"
+            },
+            {
+                "name": "setMenuItemBackgroundColorClicked",
+                "comment": " ",
+                "type": "Css.Color -> Select.Styles.MenuItemConfig -> Select.Styles.MenuItemConfig"
+            },
+            {
+                "name": "setMenuItemBackgroundColorNotSelected",
+                "comment": " ",
+                "type": "Css.Color -> Select.Styles.MenuItemConfig -> Select.Styles.MenuItemConfig"
+            },
+            {
+                "name": "setMenuItemBackgroundColorSelected",
+                "comment": " ",
+                "type": "Css.Color -> Select.Styles.MenuItemConfig -> Select.Styles.MenuItemConfig"
+            },
+            {
+                "name": "setMenuItemBlockPadding",
+                "comment": " ",
+                "type": "Basics.Float -> Select.Styles.MenuItemConfig -> Select.Styles.MenuItemConfig"
+            },
+            {
+                "name": "setMenuItemBorderRadius",
+                "comment": " ",
+                "type": "Basics.Float -> Select.Styles.MenuItemConfig -> Select.Styles.MenuItemConfig"
+            },
+            {
+                "name": "setMenuItemColor",
+                "comment": " ",
+                "type": "Css.Color -> Select.Styles.MenuItemConfig -> Select.Styles.MenuItemConfig"
+            },
+            {
+                "name": "setMenuItemColorHoverNotSelected",
+                "comment": " ",
+                "type": "Css.Color -> Select.Styles.MenuItemConfig -> Select.Styles.MenuItemConfig"
+            },
+            {
+                "name": "setMenuItemColorHoverSelected",
+                "comment": " ",
+                "type": "Css.Color -> Select.Styles.MenuItemConfig -> Select.Styles.MenuItemConfig"
+            },
+            {
+                "name": "setMenuItemInlinePadding",
+                "comment": " ",
+                "type": "Basics.Float -> Select.Styles.MenuItemConfig -> Select.Styles.MenuItemConfig"
+            },
+            {
+                "name": "setMenuItemStyles",
+                "comment": " Set styles for Select menu item\n\n        menuItemBranding : MenuItemConfig\n        menuItemBranding =\n            getMenuItemConfig default\n                |> setMenuItemBackgroundColorNotSelected (Css.hex \"#000000\")\n\n\n        selectBranding : Config\n        selectBranding\n                default\n                    |> setMenuItemStyles menuItemBranding\n\n",
+                "type": "Select.Styles.MenuItemConfig -> Select.Styles.Config -> Select.Styles.Config"
+            },
+            {
+                "name": "setMenuStyles",
+                "comment": " Set styles for the Select menu\n\n        menuBranding : MenuConfig\n        menuBranding =\n            getMenuConfig default\n                |> setMenuBackgroundColor (Css.hex \"#000000\")\n                |> setMenuBorderRadius 4\n\n\n        selectBranding : Config\n        selectBranding\n            default\n                |> setMenuStyles menuBranding\n\n",
+                "type": "Select.Styles.MenuConfig -> Select.Styles.Config -> Select.Styles.Config"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,54 @@
+[
+    {
+        "name": "Alert",
+        "comment": " This module implement bootstrap alerts\n\n\n### As this project uses bootstrap look and feel, you have to use the bootstrap\n\n-- See an example:\n\n    type alias Model =\n        { alerts : Alert.State }\n\n    type Msg\n        = ShowAlert\n        | AlertMsg Alert.Msg\n\n    view : Model -> Html Msg\n    view model =\n        div []\n            [ button [ onClick ShowAlert, class \"btn btn-success\" ] [ text \"Hit me!\" ]\n            , Html.map AlertMsg (Alert.view model.alerts)\n            ]\n\n    update : Msg -> Model -> ( Model, Cmd Msg )\n    update msg model =\n        case msg of\n            ShowAlert ->\n                let\n                    ( alerts, cmd ) =\n                        Alert.success \"Hello, nice to meet you!\" model.alerts\n                in\n                ( { model | alerts = alerts }\n                , Cmd.map AlertMsg cmd\n                )\n\n            AlertMsg subMsg ->\n                let\n                    ( alerts, cmd ) =\n                        Alert.update subMsg model.alerts\n                in\n                ( { model | alerts = alerts }\n                , Cmd.map AlertMsg cmd\n                )\n\n    main : Program Never Model Msg\n    main =\n        Html.program\n            { init =\n                ( { alerts = Alert.initState }\n                , Cmd.none\n                )\n            , view = view\n            , update = update\n            , subscriptions = always Sub.none\n            }\n\n@docs State\n@docs initState\n@docs view\n@docs Msg\n@docs update\n@docs success\n@docs warning\n@docs error\n\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " Don't touch!\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "State",
+                "comment": " This is an opaque type\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "error",
+                "comment": " Error alert ( the red one :o )\n",
+                "type": "String.String -> Alert.State -> ( Alert.State, Platform.Cmd.Cmd Alert.Msg )"
+            },
+            {
+                "name": "initState",
+                "comment": " Function that ueturns the initial state, as we are using opaque types you dun't access to the internal values\n",
+                "type": "Alert.State"
+            },
+            {
+                "name": "success",
+                "comment": " Success alert ( the green one :o )\n",
+                "type": "String.String -> Alert.State -> ( Alert.State, Platform.Cmd.Cmd Alert.Msg )"
+            },
+            {
+                "name": "update",
+                "comment": " Update function\n",
+                "type": "Alert.Msg -> Alert.State -> ( Alert.State, Platform.Cmd.Cmd Alert.Msg )"
+            },
+            {
+                "name": "view",
+                "comment": " View\n",
+                "type": "Alert.State -> Html.Html Alert.Msg"
+            },
+            {
+                "name": "warning",
+                "comment": " Warning alert ( the yellow one :o )\n",
+                "type": "String.String -> Alert.State -> ( Alert.State, Platform.Cmd.Cmd Alert.Msg )"
+            }
+        ],
+        "binops": []
+    }
+]

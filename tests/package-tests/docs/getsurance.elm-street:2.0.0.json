@@ -1,0 +1,256 @@
+[
+    {
+        "name": "ElmStreet.AutocompletePrediction",
+        "comment": " Type aliases for Google Autocomplete api\n\n\n# Type aliases\n\n@docs AutocompletePrediction, StructuredFormatting, PredictionTerm, PredictionSubstring\n\n\n# Decoding\n\n@docs decoder, decodeList\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "AutocompletePrediction",
+                "comment": " Type alias for objects of type [AutcompletePrediction][ap]\n\n[ap]: https://developers.google.com/maps/documentation/javascript/reference/places-autocomplete-service#AutocompletePrediction\n\n",
+                "args": [],
+                "type": "{ description : String.String, id : String.String, matcheSubstrings : List.List ElmStreet.AutocompletePrediction.PredictionSubstring, placeId : String.String, reference : String.String, structuredFormatting : ElmStreet.AutocompletePrediction.StructuredFormatting, terms : List.List ElmStreet.AutocompletePrediction.PredictionTerm, types : List.List String.String }"
+            },
+            {
+                "name": "PredictionSubstring",
+                "comment": " Type alias for objects of type [PredictionSubstring][ms]\n\n[ms]: https://developers.google.com/maps/documentation/javascript/reference/places-autocomplete-service#PredictionSubstring\n\n",
+                "args": [],
+                "type": "{ length : Basics.Int, offset : Basics.Int }"
+            },
+            {
+                "name": "PredictionTerm",
+                "comment": " Type alias for objects of type [PredictionPredictionTerm][pt]\n\n[pt]: https://developers.google.com/maps/documentation/javascript/reference/places-autocomplete-service#PredictionPredictionTerm\n\n",
+                "args": [],
+                "type": "{ offset : Basics.Int, value : String.String }"
+            },
+            {
+                "name": "StructuredFormatting",
+                "comment": " Type alias for objects of type [StructuredFormatting][sf]\n\n[sf]: https://developers.google.com/maps/documentation/javascript/reference/places-autocomplete-service#StructuredFormatting\n\n",
+                "args": [],
+                "type": "{ mainText : String.String, mainTextPredictionSubstrings : List.List ElmStreet.AutocompletePrediction.PredictionSubstring, secondaryText : String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "decodeList",
+                "comment": " Decoder for list of [AutcompletePrediction][ap]\n\n[ap]: https://developers.google.com/maps/documentation/javascript/reference/places-autocomplete-service#AutocompletePrediction\n\n",
+                "type": "Json.Decode.Decoder (List.List ElmStreet.AutocompletePrediction.AutocompletePrediction)"
+            },
+            {
+                "name": "decoder",
+                "comment": " Decoder of [AutcompletePrediction][ap]\n\n[ap]: https://developers.google.com/maps/documentation/javascript/reference/places-autocomplete-service#AutocompletePrediction\n\n",
+                "type": "Json.Decode.Decoder ElmStreet.AutocompletePrediction.AutocompletePrediction"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ElmStreet.Place",
+        "comment": " Types for Google places api\n\n\n# Type aliases\n\n@docs Place, LatLng, LatLngBounds, AddressComponent, Geometry, ComponentType\n\n\n# Decoding\n\n@docs decoder\n\n\n# Helper\n\n@docs getComponentName\n\n",
+        "unions": [
+            {
+                "name": "ComponentType",
+                "comment": " [Types][ty] for address component\n\n[ty]: https://developers.google.com/maps/documentation/geocoding/intro#Types\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "StreetAddress",
+                        []
+                    ],
+                    [
+                        "Route",
+                        []
+                    ],
+                    [
+                        "Intersection",
+                        []
+                    ],
+                    [
+                        "Political",
+                        []
+                    ],
+                    [
+                        "Country",
+                        []
+                    ],
+                    [
+                        "AdministrativeAreaLevel1",
+                        []
+                    ],
+                    [
+                        "AdministrativeAreaLevel2",
+                        []
+                    ],
+                    [
+                        "AdministrativeAreaLevel3",
+                        []
+                    ],
+                    [
+                        "AdministrativeAreaLevel4",
+                        []
+                    ],
+                    [
+                        "AdministrativeAreaLevel5",
+                        []
+                    ],
+                    [
+                        "ColloquialArea",
+                        []
+                    ],
+                    [
+                        "Locality",
+                        []
+                    ],
+                    [
+                        "Sublocality",
+                        []
+                    ],
+                    [
+                        "SublocalityLevel1",
+                        []
+                    ],
+                    [
+                        "SublocalityLevel2",
+                        []
+                    ],
+                    [
+                        "SublocalityLevel3",
+                        []
+                    ],
+                    [
+                        "SublocalityLevel4",
+                        []
+                    ],
+                    [
+                        "SublocalityLevel5",
+                        []
+                    ],
+                    [
+                        "Neighborhood",
+                        []
+                    ],
+                    [
+                        "Premise",
+                        []
+                    ],
+                    [
+                        "Subpremise",
+                        []
+                    ],
+                    [
+                        "PostalCode",
+                        []
+                    ],
+                    [
+                        "NaturalFeature",
+                        []
+                    ],
+                    [
+                        "Airport",
+                        []
+                    ],
+                    [
+                        "Park",
+                        []
+                    ],
+                    [
+                        "PostBox",
+                        []
+                    ],
+                    [
+                        "StreetNumber",
+                        []
+                    ],
+                    [
+                        "Floor",
+                        []
+                    ],
+                    [
+                        "Room",
+                        []
+                    ],
+                    [
+                        "Establishment",
+                        []
+                    ],
+                    [
+                        "PointOfInterest",
+                        []
+                    ],
+                    [
+                        "Parking",
+                        []
+                    ],
+                    [
+                        "PostalTown",
+                        []
+                    ],
+                    [
+                        "BusStation",
+                        []
+                    ],
+                    [
+                        "TrainStation",
+                        []
+                    ],
+                    [
+                        "TransitStation",
+                        []
+                    ],
+                    [
+                        "PostalCodeSuffix",
+                        []
+                    ],
+                    [
+                        "OtherComponent",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "AddressComponent",
+                "comment": " Type alias for [GeocoderAddressComponent][ac]\n\n[ac]: https://developers.google.com/maps/documentation/javascript/reference/geocoder#GeocoderAddressComponent\n\n",
+                "args": [],
+                "type": "{ long_name : String.String, short_name : String.String, types : List.List ElmStreet.Place.ComponentType }"
+            },
+            {
+                "name": "Geometry",
+                "comment": " Type alias for [PlaceGeometry][pg]\n\n[pg]: https://developers.google.com/maps/documentation/javascript/reference/places-service#PlaceGeometry\n\n",
+                "args": [],
+                "type": "{ location : ElmStreet.Place.LatLng, viewport : ElmStreet.Place.LatLngBounds }"
+            },
+            {
+                "name": "LatLng",
+                "comment": " Type alias for [LatLng][ll] coordinates\n\n[ll]: https://developers.google.com/maps/documentation/javascript/reference/coordinates#LatLng\n\n",
+                "args": [],
+                "type": "{ lat : Basics.Float, lng : Basics.Float }"
+            },
+            {
+                "name": "LatLngBounds",
+                "comment": " Type alias for [LatLngBouns][llb]\n\n[llb]: https://developers.google.com/maps/documentation/javascript/reference/coordinates#LatLngBounds\n\n",
+                "args": [],
+                "type": "{ south : Basics.Float, west : Basics.Float, north : Basics.Float, east : Basics.Float }"
+            },
+            {
+                "name": "Place",
+                "comment": " Type alias for [PlaceResult][pr]\n\n[pr]: https://developers.google.com/maps/documentation/javascript/reference/places-service#PlaceResult\n\n",
+                "args": [],
+                "type": "{ addressComponents : List.List ElmStreet.Place.AddressComponent, adrAddress : String.String, formattedAddress : String.String, geometry : ElmStreet.Place.Geometry, icon : String.String, id : String.String, name : String.String, placeId : String.String, reference : String.String, scope : String.String, types : List.List String.String, url : String.String, utcOffset : Basics.Int, vicinity : Maybe.Maybe String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "decoder",
+                "comment": " Decoder for objects of type [PlaceResult][pr]\n\n[pr]: https://developers.google.com/maps/documentation/javascript/reference/places-service#PlaceResult\n\n",
+                "type": "Json.Decode.Decoder ElmStreet.Place.Place"
+            },
+            {
+                "name": "getComponentName",
+                "comment": " Helper function to name by components type.\n",
+                "type": "ElmStreet.Place.Place -> ElmStreet.Place.ComponentType -> Maybe.Maybe String.String"
+            }
+        ],
+        "binops": []
+    }
+]

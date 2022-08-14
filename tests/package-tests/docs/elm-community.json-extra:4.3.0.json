@@ -1,0 +1,120 @@
+[
+    {
+        "name": "Json.Decode.Extra",
+        "comment": " Convenience functions for working with Json\n\n\n# Dates\n\n@docs datetime\n\n\n# URLs\n\n@docs url\n\n\n# Incremental Decoding\n\n@docs andMap\n\n\n# Conditional Decoding\n\n@docs when\n\n\n# List\n\n@docs collection, sequence, combine, indexedList, keys\n\n\n# Set\n\n@docs set\n\n\n# Dict\n\n@docs dict2\n\n\n# Maybe\n\n@docs withDefault, optionalField, optionalNullableField, fromMaybe\n\n\n# Result\n\n@docs fromResult\n\n\n# Encoded strings\n\n@docs parseInt, parseFloat, doubleEncoded\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "andMap",
+                "comment": " Can be helpful when decoding large objects incrementally.\n\nSee [the `andMap` docs](https://github.com/elm-community/json-extra/blob/2.0.0/docs/andMap.md)\nfor an explanation of how `andMap` works and how to use it.\n\n",
+                "type": "Json.Decode.Decoder a -> Json.Decode.Decoder (a -> b) -> Json.Decode.Decoder b"
+            },
+            {
+                "name": "collection",
+                "comment": " Some JavaScript structures look like arrays, but aren't really. Examples\ninclude `HTMLCollection`, `NodeList` and everything else that has a `length`\nproperty, has values indexed by an integer key between 0 and `length`, but yet\n_is not_ a JavaScript Array.\n\nThis decoder can come to the rescue.\n\n    import Json.Decode exposing (..)\n\n\n    \"\"\" { \"length\": 3, \"0\": \"foo\", \"1\": \"bar\", \"2\": \"baz\" } \"\"\"\n        |> decodeString (collection string)\n    --> Ok [ \"foo\", \"bar\", \"baz\" ]\n\n",
+                "type": "Json.Decode.Decoder a -> Json.Decode.Decoder (List.List a)"
+            },
+            {
+                "name": "combine",
+                "comment": " Helps converting a list of decoders into a decoder for a list of that type.\n\n    import Json.Decode exposing (..)\n\n\n    decoders : List (Decoder String)\n    decoders =\n        [ field \"foo\" string\n        , field \"bar\" string\n        , field \"another\" string\n        ]\n\n\n    \"\"\" { \"foo\": \"hello\", \"another\": \"!\", \"bar\": \"world\" } \"\"\"\n        |> decodeString (combine decoders)\n    --> Ok [ \"hello\", \"world\", \"!\" ]\n\n",
+                "type": "List.List (Json.Decode.Decoder a) -> Json.Decode.Decoder (List.List a)"
+            },
+            {
+                "name": "datetime",
+                "comment": " Decode an ISO-8601 formatted date-time string.\n\nThis always returns a `Time.Posix` value, which is naturally always expressed in\nUTC.\n\n    import Json.Decode exposing (..)\n    import Json.Encode\n    import Time\n\n    \"\"\" \"2018-08-26T09:46:00+02:00\" \"\"\"\n        |> decodeString datetime\n    --> Ok (Time.millisToPosix 1535269560000)\n\n    \"\"\" \"\" \"\"\"\n      |> decodeString datetime\n    --> Err\n    -->    (Failure\n    -->        \"Expecting an ISO-8601 formatted date+time string\"\n    -->        (Json.Encode.string \"\")\n    -->    )\n\n",
+                "type": "Json.Decode.Decoder Time.Posix"
+            },
+            {
+                "name": "dict2",
+                "comment": " Extract a dict using separate decoders for keys and values.\n\n    import Json.Decode exposing (..)\n    import Dict\n\n\n    \"\"\" { \"1\": \"foo\", \"2\": \"bar\" } \"\"\"\n        |> decodeString (dict2 int string)\n    --> Ok <| Dict.fromList [ ( 1, \"foo\" ), ( 2, \"bar\" ) ]\n\n",
+                "type": "Json.Decode.Decoder comparable -> Json.Decode.Decoder v -> Json.Decode.Decoder (Dict.Dict comparable v)"
+            },
+            {
+                "name": "doubleEncoded",
+                "comment": " Extract a JSON-encoded string field\n\n\"Yo dawg, I heard you like JSON...\"\n\nIf someone has put JSON in your JSON (perhaps a JSON log entry, encoded\nas a string) this is the function you're looking for. Give it a decoder\nand it will return a new decoder that applies your decoder to a string\nfield and yields the result (or fails if your decoder fails).\n\n    import Json.Decode exposing (..)\n\n\n    logEntriesDecoder : Decoder (List String)\n    logEntriesDecoder =\n        doubleEncoded (list string)\n\n\n    logsDecoder : Decoder (List String)\n    logsDecoder =\n        field \"logs\" logEntriesDecoder\n\n\n    \"\"\" { \"logs\": \"[\\\\\"log1\\\\\", \\\\\"log2\\\\\"]\"} \"\"\"\n        |> decodeString logsDecoder\n    --> Ok [ \"log1\", \"log2\" ]\n\n",
+                "type": "Json.Decode.Decoder a -> Json.Decode.Decoder a"
+            },
+            {
+                "name": "fromMaybe",
+                "comment": " Transform a `Maybe a` into a `Decoder a`\n\nSometimes, you'll have a function that produces a `Maybe a` value, that you may\nwant to use in a decoder.\n\nLet's say, for example, that we have a function to extract the first letter of a\nstring, and we want to use that in a decoder so we can extract only the first\nletter of that string.\n\n    import Json.Decode exposing (..)\n    import Json.Encode\n\n\n    firstLetter : String -> Maybe Char\n    firstLetter input =\n        Maybe.map Tuple.first (String.uncons input)\n\n\n    firstLetterDecoder : Decoder Char\n    firstLetterDecoder =\n        andThen\n            (fromMaybe \"Empty string not allowed\" << firstLetter)\n            string\n\n    \"\"\" \"something\" \"\"\"\n        |> decodeString firstLetterDecoder\n    --> Ok 's'\n\n\n    \"\"\" \"\" \"\"\"\n        |> decodeString firstLetterDecoder\n    --> Err (Failure \"Empty string not allowed\" (Json.Encode.string \"\"))\n\n",
+                "type": "String.String -> Maybe.Maybe a -> Json.Decode.Decoder a"
+            },
+            {
+                "name": "fromResult",
+                "comment": " Transform a result into a decoder\n\nSometimes it can be useful to use functions that primarily operate on\n`Result` in decoders.\n\n    import Json.Decode exposing (..)\n    import Json.Encode\n\n\n    validateString : String -> Result String String\n    validateString input =\n        case input of\n            \"\" ->\n                Err \"Empty string is not allowed\"\n            _ ->\n                Ok input\n\n\n    \"\"\" \"something\" \"\"\"\n        |> decodeString (string |> andThen (fromResult << validateString))\n    --> Ok \"something\"\n\n\n    \"\"\" \"\" \"\"\"\n        |> decodeString (string |> andThen (fromResult << validateString))\n    --> Err (Failure \"Empty string is not allowed\" (Json.Encode.string \"\"))\n\n",
+                "type": "Result.Result String.String a -> Json.Decode.Decoder a"
+            },
+            {
+                "name": "indexedList",
+                "comment": " Get access to the current index while decoding a list element.\n\n    import Json.Decode exposing (..)\n\n\n    repeatedStringDecoder : Int -> Decoder String\n    repeatedStringDecoder times =\n        string |> map (String.repeat times)\n\n\n    \"\"\" [ \"a\", \"b\", \"c\", \"d\" ] \"\"\"\n        |> decodeString (indexedList repeatedStringDecoder)\n    --> Ok [ \"\", \"b\", \"cc\", \"ddd\" ]\n\n",
+                "type": "(Basics.Int -> Json.Decode.Decoder a) -> Json.Decode.Decoder (List.List a)"
+            },
+            {
+                "name": "keys",
+                "comment": " Get a list of the keys of a JSON object\n\n    import Json.Decode exposing (..)\n\n\n    \"\"\" { \"alice\": 42, \"bob\": 99 } \"\"\"\n        |> decodeString keys\n    --> Ok [ \"alice\", \"bob\" ]\n\n",
+                "type": "Json.Decode.Decoder (List.List String.String)"
+            },
+            {
+                "name": "optionalField",
+                "comment": " If a field is missing, succeed with `Nothing`. If it is present, decode it\nas normal and wrap successes in a `Just`.\n\nWhen decoding with\n[`maybe`](http://package.elm-lang.org/packages/elm-lang/core/latest/Json-Decode#maybe),\nif a field is present but malformed, you get a success and Nothing.\n`optionalField` gives you a failed decoding in that case, so you know\nyou received malformed data.\n\nExamples:\n\n    import Json.Decode exposing (..)\n    import Json.Encode\n\nLet's define a `stuffDecoder` that extracts the `\"stuff\"` field, if it exists.\n\n    stuffDecoder : Decoder (Maybe String)\n    stuffDecoder =\n        optionalField \"stuff\" string\n\nIf the \"stuff\" field is missing, decode to Nothing.\n\n    \"\"\" { } \"\"\"\n        |> decodeString stuffDecoder\n    --> Ok Nothing\n\nIf the \"stuff\" field is present but not a String, fail decoding.\n\n    expectedError : Error\n    expectedError =\n        Failure \"Expecting a STRING\" (Json.Encode.list identity [])\n          |> Field \"stuff\"\n\n    \"\"\" { \"stuff\": [] } \"\"\"\n        |> decodeString stuffDecoder\n    --> Err expectedError\n\nIf the \"stuff\" field is present and valid, decode to Just String.\n\n    \"\"\" { \"stuff\": \"yay!\" } \"\"\"\n        |> decodeString stuffDecoder\n    --> Ok <| Just \"yay!\"\n\n",
+                "type": "String.String -> Json.Decode.Decoder a -> Json.Decode.Decoder (Maybe.Maybe a)"
+            },
+            {
+                "name": "optionalNullableField",
+                "comment": " A neat combination of `optionalField` and `nullable`.\n\nWhat this means is that a decoder like `optionalNullableField \"foo\" string` will\nreturn `Just \"hello\"` for `{\"foo\": \"hello\"}`, `Nothing` for both `{\"foo\": null}`\nand `{}`, and an error for malformed input like `{\"foo\": 123}`.\n\n    import Json.Decode exposing (Decoder, Error(..), decodeString, field, string)\n    import Json.Decode.Extra exposing (optionalNullableField)\n    import Json.Encode\n\n    myDecoder : Decoder (Maybe String)\n    myDecoder =\n        optionalNullableField \"foo\" string\n\n\n    \"\"\" {\"foo\": \"hello\"} \"\"\"\n        |> decodeString myDecoder\n    --> Ok (Just \"hello\")\n\n\n    \"\"\" {\"foo\": null} \"\"\"\n        |> decodeString myDecoder\n    --> Ok Nothing\n\n\n    \"\"\" {} \"\"\"\n        |> decodeString myDecoder\n    --> Ok Nothing\n\n\n    \"\"\" {\"foo\": 123} \"\"\"\n        |> decodeString myDecoder\n        |> Result.mapError (\\_ -> \"expected error\")\n    --> Err \"expected error\"\n\n",
+                "type": "String.String -> Json.Decode.Decoder a -> Json.Decode.Decoder (Maybe.Maybe a)"
+            },
+            {
+                "name": "parseFloat",
+                "comment": " Extract a float using [`String.toFloat`](http://package.elm-lang.org/packages/elm-lang/core/latest/String#toFloat)\n\n    import Json.Decode exposing (..)\n\n\n    \"\"\" { \"field\": \"50.5\" } \"\"\"\n        |> decodeString (field \"field\" parseFloat)\n    --> Ok 50.5\n\n",
+                "type": "Json.Decode.Decoder Basics.Float"
+            },
+            {
+                "name": "parseInt",
+                "comment": " Extract an int using [`String.toInt`](http://package.elm-lang.org/packages/elm-lang/core/latest/String#toInt)\n\n    import Json.Decode exposing (..)\n\n\n    \"\"\" { \"field\": \"123\" } \"\"\"\n        |> decodeString (field \"field\" parseInt)\n    --> Ok 123\n\n",
+                "type": "Json.Decode.Decoder Basics.Int"
+            },
+            {
+                "name": "sequence",
+                "comment": " This function turns a list of decoders into a decoder that returns a list.\n\nThe returned decoder will zip the list of decoders with a list of values,\nmatching each decoder with exactly one value at the same position. This is most\noften useful in cases when you find yourself needing to dynamically generate a\nlist of decoders based on some data, and decode some other data with this list\nof decoders.\n\nNote that this function, unlike `List.map2`'s behaviour, expects the list of\ndecoders to have the same length as the list of values in the JSON.\n\n    import Json.Decode exposing (..)\n\n\n    decoder : Decoder (List (Maybe String))\n    decoder =\n        sequence\n            [ map Just string\n            , succeed Nothing\n            , map Just string\n            ]\n\n\n    decodeString decoder \"\"\" [ \"pick me\", \"ignore me\", \"and pick me\" ] \"\"\"\n    --> Ok [ Just \"pick me\", Nothing, Just \"and pick me\" ]\n\n",
+                "type": "List.List (Json.Decode.Decoder a) -> Json.Decode.Decoder (List.List a)"
+            },
+            {
+                "name": "set",
+                "comment": " Extract a set.\n\n    import Json.Decode exposing (..)\n    import Set\n\n\n    \"[ 1, 1, 5, 2 ]\"\n        |> decodeString (set int)\n    --> Ok <| Set.fromList [ 1, 2, 5 ]\n\n",
+                "type": "Json.Decode.Decoder comparable -> Json.Decode.Decoder (Set.Set comparable)"
+            },
+            {
+                "name": "url",
+                "comment": " Decode a URL\n\nThis always returns a `Url.Url` value.\n\n    import Json.Decode exposing (..)\n    import Url\n\n    \"\"\" \"http://foo.bar/quux\" \"\"\"\n        |> decodeString url\n    --> Ok <| Url.Url Url.Http \"foo.bar\" Nothing \"/quux\" Nothing Nothing\n\n",
+                "type": "Json.Decode.Decoder Url.Url"
+            },
+            {
+                "name": "when",
+                "comment": " Helper for conditionally decoding values based on some discriminator\nthat needs to pass a certain check.\n\n    import Json.Decode exposing (..)\n    import Json.Encode\n\n\n    is : a -> a -> Bool\n    is a b =\n        a == b\n\n\n    enabledValue : Decoder Int\n    enabledValue =\n      (field \"value\" int)\n        |> when (field \"enabled\" bool) (is True)\n\n\n    \"\"\" { \"enabled\": true, \"value\": 123 } \"\"\"\n        |> decodeString enabledValue\n    --> Ok 123\n\n\n    input : Json.Decode.Value\n    input =\n        Json.Encode.object\n            [ ( \"enabled\", Json.Encode.bool False )\n            , ( \"value\", Json.Encode.int 321 )\n            ]\n\n    expectedError : Error\n    expectedError =\n       Failure \"Check failed with input\" input\n\n    \"\"\" { \"enabled\": false, \"value\": 321 } \"\"\"\n        |> decodeString enabledValue\n    --> Err expectedError\n\nThis can also be used to decode union types that are encoded with a discriminator field:\n\n    type Animal = Cat String | Dog String\n\n\n    dog : Decoder Animal\n    dog =\n        map Dog (field \"name\" string)\n\n\n    cat : Decoder Animal\n    cat =\n        map Cat (field \"name\" string)\n\n\n    animalType : Decoder String\n    animalType =\n        field \"type\" string\n\n\n    animal : Decoder Animal\n    animal =\n        oneOf\n            [ when animalType (is \"dog\") dog\n            , when animalType (is \"cat\") cat\n            ]\n\n\n    \"\"\"\n    [\n      { \"type\": \"dog\", \"name\": \"Dawg\" },\n      { \"type\": \"cat\", \"name\": \"Roxy\" }\n    ]\n    \"\"\"\n        |> decodeString (list animal)\n    --> Ok [ Dog \"Dawg\", Cat \"Roxy\" ]\n\n",
+                "type": "Json.Decode.Decoder a -> (a -> Basics.Bool) -> Json.Decode.Decoder b -> Json.Decode.Decoder b"
+            },
+            {
+                "name": "withDefault",
+                "comment": " Try running the given decoder; if that fails, then succeed with the given\nfallback value.\n\n    import Json.Decode exposing (..)\n\n\n    \"\"\" { \"children\": \"oops\" } \"\"\"\n        |> decodeString (field \"children\" (list string) |> withDefault [])\n    --> Ok []\n\n\n    \"\"\" null \"\"\"\n        |> decodeString (field \"children\" (list string) |> withDefault [])\n    --> Ok []\n\n\n    \"\"\" 30 \"\"\"\n        |> decodeString (int |> withDefault 42)\n    --> Ok 30\n\n",
+                "type": "a -> Json.Decode.Decoder a -> Json.Decode.Decoder a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Json.Encode.Extra",
+        "comment": " Convenience functions for turning Elm values into Json values.\n\n@docs maybe\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "maybe",
+                "comment": " Encode a Maybe value. If the value is `Nothing` it will be encoded as `null`\n\n    import Json.Encode exposing (..)\n\n\n    maybe int (Just 50)\n    --> int 50\n\n\n    maybe int Nothing\n    --> null\n\n",
+                "type": "(a -> Json.Encode.Value) -> Maybe.Maybe a -> Json.Encode.Value"
+            }
+        ],
+        "binops": []
+    }
+]

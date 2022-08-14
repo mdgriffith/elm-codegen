@@ -1,0 +1,103 @@
+[
+    {
+        "name": "FormatNumber",
+        "comment": " This simple package formats `Float` numbers as pretty strings. It is\nflexible enough to deal with different number of decimals, different thousand\nseparators and different decimal separator.\n\n@docs format\n\n\n## What about `Int` numbers?\n\nJust convert them to `Float` before passing them to `format`:\n\n    >>> import FormatNumber.Locales exposing (usLocale)\n    >>> format usLocale (toFloat 1234)\n    \"1,234.00\"\n\n    >>> import FormatNumber.Locales exposing (usLocale)\n    >>> format { usLocale | decimals = Exact 0 } <| toFloat 1234\n    \"1,234\"\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "format",
+                "comment": " Format a float number as a pretty string:\n\n    import FormatNumber.Locales exposing (Decimals(..), Locale, System(..), frenchLocale, spanishLocale, usLocale)\n\n    format { decimals = Exact 2, system = Western, thousandSeparator = \".\", decimalSeparator = \",\", negativePrefix = \"−\", negativeSuffix = \"\", positivePrefix = \"\", positiveSuffix = \"\", zeroPrefix = \"\", zeroSuffix = \"\" } 123456.789\n    --> \"123.456,79\"\n\n    format { decimals = Exact 2, system = Western, thousandSeparator = \",\", decimalSeparator = \".\", negativePrefix = \"−\", negativeSuffix = \"\", positivePrefix = \"\", positiveSuffix = \"\", zeroPrefix = \"\", zeroSuffix = \"\" } 1234.5567\n    --> \"1,234.56\"\n\n    format (Locale (Exact 3) Western \".\" \",\" \"−\" \"\" \"\" \"\" \"\" \"\") -7654.3210\n    --> \"−7.654,321\"\n\n    format (Locale (Exact 1) Western \",\" \".\" \"−\" \"\" \"\" \"\" \"\" \"\") -0.01\n    --> \"0.0\"\n\n    format (Locale (Exact 2) Western \",\" \".\" \"−\" \"\" \"\" \"\" \"\" \"\") 0.01\n    --> \"0.01\"\n\n    format (Locale (Exact 0) Western \",\" \".\" \"−\" \"\" \"\" \"\" \"\" \"\") 123.456\n    --> \"123\"\n\n    format (Locale (Exact 0) Western \",\" \".\" \"−\" \"\" \"\" \"\" \"\" \"\") 1e9\n    --> \"1,000,000,000\"\n\n    format (Locale (Exact 5) Western \",\" \".\" \"−\" \"\" \"\" \"\" \"\" \"\") 1.0\n    --> \"1.00000\"\n\n    format (Locale (Exact 2) Western \",\" \".\" \"(\" \")\" \"\" \"\" \"\" \"\") -1.0\n    --> \"(1.00)\"\n\n    format usLocale pi\n    --> \"3.14\"\n\n    format { frenchLocale | decimals = Exact 4 } pi\n    --> \"3,1416\"\n\n    format frenchLocale 67295\n    --> \"67 295,000\"\n\n    format spanishLocale e\n    --> \"2,718\"\n\n    format spanishLocale 67295\n    --> \"67.295,000\"\n\n    format usLocale 67295\n    --> \"67,295.00\"\n\n    format spanishLocale -0.1\n    --> \"−0,100\"\n\n    format spanishLocale -0.00099\n    --> \"−0,001\"\n\n    format usLocale 1e10\n    --> \"10,000,000,000.00\"\n\n    format usLocale -1e10\n    --> \"−10,000,000,000.00\"\n\n    format { usLocale | negativePrefix = \"-\" } -1.0\n    --> \"-1.00\"\n\n    format { usLocale | positivePrefix = \"+\" } 1.0\n    --> \"+1.00\"\n\n    format { usLocale | positiveSuffix = \"+\" } 1.0\n    --> \"1.00+\"\n\n    format usLocale 7.34767309e22\n    --> \"73,476,730,900,000,000,000,000.00\"\n\n    format usLocale 7.34767309e+22\n    --> \"73,476,730,900,000,000,000,000.00\"\n\n    format usLocale 7.34767309e-22\n    --> \"0.00\"\n\n    format (Locale (Exact 3) Western \".\" \",\" \"−\" \"\" \"\" \"\" \"\" \"\") 123\n    --> \"123,000\"\n\n    format (Locale (Min 3) Western \".\" \",\" \"−\" \"\" \"\" \"\" \"\" \"\") 123.45678\n    --> \"123,45678\"\n\n    format (Locale (Min 0) Western \".\" \",\" \"−\" \"\" \"\" \"\" \"\" \"\") 1230\n    --> \"1.230\"\n\n    format (Locale (Min 3) Western \".\" \",\" \"−\" \"\" \"\" \"\" \"\" \"\") 123.45600\n    --> \"123,456\"\n\n    format (Locale (Min 3) Western \".\" \",\" \"−\" \"\" \"\" \"\" \"\" \"\") 123.456001\n    --> \"123,456001\"\n\n    format (Locale (Max 3) Western \".\" \",\" \"−\" \"\" \"\" \"\" \"\" \"\") 123.45678\n    --> \"123,457\"\n\n    format (Locale (Max 3) Western \".\" \",\" \"−\" \"\" \"\" \"\" \"\" \"\") 123.45633\n    --> \"123,456\"\n\n    format (Locale (Max 3) Western \".\" \",\" \"−\" \"\" \"\" \"\" \"\" \"\") 123.45600\n    --> \"123,456\"\n\n    format (Locale (Max 3) Western \".\" \",\" \"−\" \"\" \"\" \"\" \"\" \"\") 123.45\n    --> \"123,45\"\n\n    format (Locale (Max 3) Western \".\" \",\" \"−\" \"\" \"\" \"\" \"\" \"\") 123\n    --> \"123\"\n\n    format { usLocale | system = Indian } 7.34767309e22\n    --> \"73,47,67,30,90,00,00,00,00,00,000.00\"\n\n    format { usLocale | system = Indian } 75\n    --> \"75.00\"\n\n",
+                "type": "FormatNumber.Locales.Locale -> Basics.Float -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "FormatNumber.Locales",
+        "comment": " These locales and its names are based on this\n[International Language Environments\nGuide](https://docs.oracle.com/cd/E19455-01/806-0169/overview-9/index.html)\n\n@docs Decimals\n\n@docs Locale\n\n@docs System\n\n@docs base\n\n@docs fromString\n\n\n# Pre-defined locales\n\n@docs frenchLocale, indianLocale, spanishLocale, usLocale\n\n",
+        "unions": [
+            {
+                "name": "Decimals",
+                "comment": " The `Decimals` type contains different strategies for handling the number of\ndecimals when formatting the number:\n\n  - `Min` `Int` shows at least a certain amount of decimal digits, adding\n    trailing zeros if needed.\n  - `Max` `Int` shows up to a certain amount of decimal digits, discarding\n    trailing zeros if needed.\n  - `Exact` `Int` shows an exact number of decimal digits, adding trailing\n    zeros if needed.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Min",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "Max",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "Exact",
+                        [
+                            "Basics.Int"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "System",
+                "comment": " The `System` type contains different numeric systems currently supported:\n\n  - `Western` separates digits by thousands (e.g.: 1000000 might be separated\n    as 1,000,000).\n  - `Indian` separates digits by the thousand and, from there, by hundreds\n    (e.g.: 1000000 might be separated as 10,00,000).\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Western",
+                        []
+                    ],
+                    [
+                        "Indian",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Locale",
+                "comment": " This is the `Locale` type and constructor.\n",
+                "args": [],
+                "type": "{ decimals : FormatNumber.Locales.Decimals, system : FormatNumber.Locales.System, thousandSeparator : String.String, decimalSeparator : String.String, negativePrefix : String.String, negativeSuffix : String.String, positivePrefix : String.String, positiveSuffix : String.String, zeroPrefix : String.String, zeroSuffix : String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "base",
+                "comment": " The `base` locale is a `Western` numeric system which uses unicode minus\n(`U+2212`) instead of a hyphen/dash for visual consistency.\n\nNote that `String.toFloat` does not understand unicode minus (`U+2212`), thus\nit will return `Nothing` for negative number strings formatted using `base`\nlocale.\n\nIf you need a result compatible with `String.toFloat`, consider\ncreating your own locale with hypen as the `negativePrefix` or use a custom\nstring to float function that handles `U+2212` if need be.\n\n",
+                "type": "FormatNumber.Locales.Locale"
+            },
+            {
+                "name": "frenchLocale",
+                "comment": " Locale used in France, Canada, Finland and Sweden. It has 3 decimals\ndigits, uses a thin space (`U+202F`) as thousand separator and a `,` as decimal\nseparator. It uses a minus sign (not a hyphen) as a prefix for negative\nnumbers, but no suffix or prefix for positive numbers.\n",
+                "type": "FormatNumber.Locales.Locale"
+            },
+            {
+                "name": "fromString",
+                "comment": " Reads a JavaScript's `Number.toLocaleString()` return value to try to\ncreate a `Locale` according to the user's local settings. This is useful when\ncombined with [Elm's Flags](https://guide.elm-lang.org/interop/flags.html),\ne.g.:\n\n```js\nElm.Main.init\\({\n  flags: {\n    numberFormat: (Math.PI * -1000000).toLocaleString()\n  }\n}\\)\n```\n\nThen we use `fromString` to read this value from the flag.\n\nThe input `value` should be a number that offers enough hints so `fromString`\ncan make a informed prediction of the `Locale`:\n\n  - the number needs to be negative to predict the negative suffix and prefix\n\n  - the number needs to have decimals to predict the decimal separator\n\n  - the number needs use different separators for thousands and for decimals to\n    predict these separators\n\n  - the number's module needs to be greater than (or equal to) 100.000 and\n    lesser than (or equal to) 999.999 to predict the right numeric system, i.e.\n    `Western` or `Indian`\n\n    fromString \"3.1415\" -> Nothing\n\n    fromString \"-314,159.265\"\n    --> Just { base\n    --> | decimals = Exact 3\n    --> , thousandSeparator = \",\"\n    --> , decimalSeparator = \".\"\n    --> , negativePrefix = \"-\"\n    --> }\n\n    fromString \"-3,14,159.265\"\n    --> Just { base\n    --> | decimals = Exact 3\n    --> , thousandSeparator = \",\"\n    --> , decimalSeparator = \".\"\n    --> , negativePrefix = \"-\"\n    --> , system = Indian\n    --> }\n\n",
+                "type": "String.String -> Maybe.Maybe FormatNumber.Locales.Locale"
+            },
+            {
+                "name": "indianLocale",
+                "comment": " Locale used in India. It is similar to `usLocale`, but uses the `Indian`\nnumeric system.\n",
+                "type": "FormatNumber.Locales.Locale"
+            },
+            {
+                "name": "spanishLocale",
+                "comment": " Locale used in Spain, Italy and Norway. It has 3 decimals digits, uses a\n`.` as thousand separator and a `,` as decimal separator. It uses a minus sign\n(not a hyphen) as a prefix for negative numbers, but no suffix or prefix for\npositive numbers.\n",
+                "type": "FormatNumber.Locales.Locale"
+            },
+            {
+                "name": "usLocale",
+                "comment": " Locale used in the United States, Great Britain and Thailand. It has 2\ndecimals digits, uses a `,` as thousand separator and a `.` as decimal\nseparator. It uses a minus sign (not a hyphen) as a prefix for negative\nnumbers, no suffix or prefix for positive numbers.\n",
+                "type": "FormatNumber.Locales.Locale"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,298 @@
+[
+    {
+        "name": "Concept.Contract",
+        "comment": " This is part of the standard library for Delm.\n\n@docs Basic\n\n@docs Contract\n\n@docs ContractCore\n\n@docs FunctionIO\n\n@docs Interface\n\n@docs InterfaceIO\n\n@docs Signature\n\n@docs Model\n\n@docs Msg\n\n@docs deploy\n\n@docs interpret\n\n",
+        "unions": [
+            {
+                "name": "Basic",
+                "comment": " Blockchain base types.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "RAddress",
+                        [
+                            "Concept.Core.Address"
+                        ]
+                    ],
+                    [
+                        "RString",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "RInt",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "RBool",
+                        [
+                            "Basics.Bool"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "FunctionIO",
+                "comment": " Function parameter positions.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "None",
+                        []
+                    ],
+                    [
+                        "Single",
+                        [
+                            "Concept.Contract.Basic"
+                        ]
+                    ],
+                    [
+                        "Tuple2",
+                        [
+                            "( Concept.Contract.Basic, Concept.Contract.Basic )"
+                        ]
+                    ],
+                    [
+                        "Tuple3",
+                        [
+                            "( Concept.Contract.Basic, Concept.Contract.Basic, Concept.Contract.Basic )"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Interface",
+                "comment": " Interfaces.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "IAddress",
+                        []
+                    ],
+                    [
+                        "IString",
+                        []
+                    ],
+                    [
+                        "IInt",
+                        []
+                    ],
+                    [
+                        "IBool",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "InterfaceIO",
+                "comment": " Implementation type for Interfaces.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "INone",
+                        []
+                    ],
+                    [
+                        "ISingle",
+                        [
+                            "Concept.Contract.Interface"
+                        ]
+                    ],
+                    [
+                        "ITuple2",
+                        [
+                            "( Concept.Contract.Interface, Concept.Contract.Interface )"
+                        ]
+                    ],
+                    [
+                        "ITuple3",
+                        [
+                            "( Concept.Contract.Interface, Concept.Contract.Interface, Concept.Contract.Interface )"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Msg",
+                "comment": " Msg specification.\n\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Contract",
+                "comment": " Contract specification.\n\n",
+                "args": [
+                    "msg",
+                    "model"
+                ],
+                "type": "{ constructor : ( Concept.Core.Global -> Concept.Contract.FunctionIO -> model, Concept.Contract.InterfaceIO ), update : msg -> Concept.Core.Global -> model -> ( Concept.Core.Requirements, model, Concept.Contract.FunctionIO ) }"
+            },
+            {
+                "name": "ContractCore",
+                "comment": " Contract Core specification.\n\n",
+                "args": [
+                    "msg",
+                    "model"
+                ],
+                "type": "{ constructor : ( Concept.Core.Global -> Concept.Contract.FunctionIO -> model, Concept.Contract.InterfaceIO ), update : msg -> Concept.Core.Global -> model -> ( Concept.Core.Requirements, model, Concept.Contract.FunctionIO ), signatures : List.List ( String.String, Concept.Contract.Signature ), encodeMsg : ( String.String, Concept.Contract.FunctionIO ) -> msg }"
+            },
+            {
+                "name": "Model",
+                "comment": " Model specification.\n\n",
+                "args": [
+                    "model"
+                ],
+                "type": "{ deploys : Dict.Dict String.String model, form : Dict.Dict String.String ( Maybe.Maybe Concept.Contract.Basic, Maybe.Maybe Concept.Contract.Basic, Maybe.Maybe Concept.Contract.Basic ), returns : Dict.Dict String.String Concept.Contract.FunctionIO, addresses : Dict.Dict Concept.Core.Address Basics.Float, sender : Maybe.Maybe Concept.Core.Address, value : Basics.Int, global : Concept.Core.Global }"
+            },
+            {
+                "name": "Signature",
+                "comment": " Signature specification.\n\n",
+                "args": [],
+                "type": "{ inputs : Concept.Contract.InterfaceIO, outputs : Concept.Contract.InterfaceIO }"
+            }
+        ],
+        "values": [
+            {
+                "name": "deploy",
+                "comment": " Syntax sugar, not meant to be used directly.\n\n",
+                "type": "Concept.Contract.Contract msg model -> Platform.Program () model msg"
+            },
+            {
+                "name": "interpret",
+                "comment": " Interpreter function.\n\n",
+                "type": "Concept.Contract.ContractCore msg model -> Platform.Program () (Concept.Contract.Model model) Concept.Contract.Msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Concept.Core",
+        "comment": " This is part of the standard library for Delm.\n\n@docs Requirements\n\n@docs Address\n\n@docs PayableAddress\n\n@docs zeroAddress\n\n@docs throw\n\n@docs Msg\n\n@docs Block\n\n@docs Tx\n\n@docs Global\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Address",
+                "comment": " Address is a unique identification of a Wallet or Contract in a blockchain.\n\n",
+                "args": [],
+                "type": "String.String"
+            },
+            {
+                "name": "Block",
+                "comment": " An individual block information.\n\n",
+                "args": [],
+                "type": "{ coinbase : Concept.Core.Address, difficulty : Basics.Int, gasLimit : Basics.Int, number : Basics.Int, timestamp : Basics.Int }"
+            },
+            {
+                "name": "Global",
+                "comment": " Global information.\n\n",
+                "args": [],
+                "type": "{ msg : Concept.Core.Msg, block : Concept.Core.Block }"
+            },
+            {
+                "name": "Msg",
+                "comment": " Receiving Message.\n\n",
+                "args": [],
+                "type": "{ sender : Concept.Core.PayableAddress, data : String.String, sig : String.String, value : Basics.Int }"
+            },
+            {
+                "name": "PayableAddress",
+                "comment": " A Payable Address is an Address that can be used to send Ether.\n\n",
+                "args": [],
+                "type": "String.String"
+            },
+            {
+                "name": "Requirements",
+                "comment": " Validation for Contracts.\n\n",
+                "args": [],
+                "type": "List.List ( Basics.Bool, String.String )"
+            },
+            {
+                "name": "Tx",
+                "comment": " Transaction information.\n\n",
+                "args": [],
+                "type": "{ gasPrice : Basics.Int, origin : Concept.Core.Address }"
+            }
+        ],
+        "values": [
+            {
+                "name": "throw",
+                "comment": " Helper function to throw an error.\n\n",
+                "type": "String.String -> a"
+            },
+            {
+                "name": "zeroAddress",
+                "comment": " The Zero Address is a special Address that can be handy for burning tokens.\n\n",
+                "type": "String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Concept.DefaultValues",
+        "comment": " This is part of the standard library for Delm.\n\n@docs address\n\n@docs int\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "address",
+                "comment": " Address default value.\n\n",
+                "type": "Concept.Core.Address"
+            },
+            {
+                "name": "int",
+                "comment": " Integer default value.\n\n",
+                "type": "number"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Concept.Mapping",
+        "comment": " This is part of the standard library for Delm.\n\n@docs Mapping\n\n@docs singleton\n\n@docs empty\n\n@docs insert\n\n@docs remove\n\n@docs get\n\n",
+        "unions": [
+            {
+                "name": "Mapping",
+                "comment": " Mapping type.\n\n",
+                "args": [
+                    "comparable",
+                    "value"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "empty",
+                "comment": " Creates an empty mapping.\n\n",
+                "type": "value -> Concept.Mapping.Mapping comparable value"
+            },
+            {
+                "name": "get",
+                "comment": " Gets a value from a mapping.\n\n",
+                "type": "comparable -> Concept.Mapping.Mapping comparable value -> value"
+            },
+            {
+                "name": "insert",
+                "comment": " Inserts a key-value pair into a mapping.\n\n",
+                "type": "comparable -> value -> Concept.Mapping.Mapping comparable value -> Concept.Mapping.Mapping comparable value"
+            },
+            {
+                "name": "remove",
+                "comment": " Removes a key-value pair from a mapping.\n\n",
+                "type": "comparable -> Concept.Mapping.Mapping comparable value -> Concept.Mapping.Mapping comparable value"
+            },
+            {
+                "name": "singleton",
+                "comment": " Creates a mapping with a single key-value pair.\n\n",
+                "type": "comparable -> value -> value -> Concept.Mapping.Mapping comparable value"
+            }
+        ],
+        "binops": []
+    }
+]

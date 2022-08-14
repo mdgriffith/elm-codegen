@@ -1,0 +1,79 @@
+[
+    {
+        "name": "ThemeProvider",
+        "comment": "\n\n\n# Creating a Theme\n\nBefore using a **Theme** you need to create one! Thankfully it is really easy to do so:\n\n@docs fromList, Theme\n\n\n# Propagating Themes\n\nAfter creating one or more themes, you can use them in a few different ways.\n\n@docs globalProvider\n\nNow… **say you have a marketing website and each section of your website can use one of a number of available themes**. It would be really useful to create things using CSS variables and then just apply the theme you want when you want, right?\n\n@docs provider\n\n\n# Themes and Dark Mode\n\nYou can also use two similar functions as the ones above for specifying themes that automatically switch to a dark mode based on a defined strategy. The first thing to do then is decide which dark mode strategy will be the right one for your use case:\n\n@docs DarkModeStrategy\n\n@docs globalProviderWithDarkMode, providerWithDarkMode\n\n\n# Optimized Themes\n\nIf you're heavily using theme providers across your application, you're probably reusing the same themes over and over.\n\nFor those scenarios, otimized themes can be used to decouple the styles from the provider element so styles are only inserted once, even if the provider is being used at various locations.\n\n@docs optimizedTheme, optimizedThemeWithDarkMode, OptimizedTheme\n\n",
+        "unions": [
+            {
+                "name": "DarkModeStrategy",
+                "comment": " Defines the dark mode strategy.\n\n  - `SystemStrategy` uses the user system settings.\n  - `ClassStrategy` uses the presence of a CSS class to determine dark mode.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "SystemStrategy",
+                        []
+                    ],
+                    [
+                        "ClassStrategy",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Theme",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "OptimizedTheme",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ styles : Html.Html msg, provider : List.List (Html.Attribute msg) -> List.List (Html.Html msg) -> Html.Html msg }"
+            }
+        ],
+        "values": [
+            {
+                "name": "fromList",
+                "comment": " Creates a theme based on a list of CSS variables names and their values.\n\n    lightTheme : Theme\n    lightTheme =\n        Theme.fromList\n            [ ( \"background\", \"white\"\n            , ( \"base\", \"black\" )\n            , ( \"accent\", \"blue\" )\n            ]\n\n",
+                "type": "List.List ( String.String, String.String ) -> ThemeProvider.Theme"
+            },
+            {
+                "name": "globalProvider",
+                "comment": " Used to provide a **Theme** globally. It will be applied to your `body` element and it will be available for use anywhere in your application.\n\n    main : Html msg\n    main =\n        div []\n            [ ThemeProvider.globalProvider lightTheme\n            , p [ style \"color\" \"var(--my-theme-accent)\" ]\n                [ text \"I have the `accent` color\" ]\n            ]\n\n**Note**: You are still able to overwrite this **Theme** locally.\n\n",
+                "type": "ThemeProvider.Theme -> Html.Html msg"
+            },
+            {
+                "name": "globalProviderWithDarkMode",
+                "comment": " Used to provide a Theme globally with a dark mode alternative. Themes will automatically switch based on the strategy condition.\n\n    main : Html msg\n    main =\n        div []\n            [ ThemeProvider.globalProviderWithDarkMode\n                { light = lightTheme\n                , dark = darkTheme\n                , strategy = ThemeProvider.SystemStrategy\n                }\n            , p [ style \"color\" \"var(--my-theme-accent)\" ]\n                [ text \"I have the `accent` color\" ]\n            ]\n\n**Note**: You are still able to overwrite this **Theme** locally.\n\n",
+                "type": "{ light : ThemeProvider.Theme, dark : ThemeProvider.Theme, strategy : ThemeProvider.DarkModeStrategy } -> Html.Html msg"
+            },
+            {
+                "name": "optimizedTheme",
+                "comment": "\n\n    optimizedTheme =\n        optimizedTheme theme\n\n    body []\n        [ myTheme.styles\n        , myTheme.provider []\n            [ ... ]\n        ]\n\n",
+                "type": "ThemeProvider.Theme -> ThemeProvider.OptimizedTheme msg"
+            },
+            {
+                "name": "optimizedThemeWithDarkMode",
+                "comment": " ",
+                "type": "{ light : ThemeProvider.Theme, dark : ThemeProvider.Theme, strategy : ThemeProvider.DarkModeStrategy } -> ThemeProvider.OptimizedTheme msg"
+            },
+            {
+                "name": "provider",
+                "comment": " Used to propagate themes to an specific scope.\n\n    main : Html msg\n    main =\n        div []\n            [ ThemeProvider.globalProvider defaultTheme\n\n            -- section using the default theme\n            , section [] [ .. ]\n\n            -- section using the orange theme\n            , ThemeProvider.provider orangeTheme [] [ .. ]\n            ]\n\n",
+                "type": "ThemeProvider.Theme -> List.List (Html.Attribute msg) -> List.List (Html.Html msg) -> Html.Html msg"
+            },
+            {
+                "name": "providerWithDarkMode",
+                "comment": " Used to propagate themes to an specific scope with a dark mode alternative. Themes will automatically switch based on the strategy condition.\n\n    main : Html msg\n    main =\n        div []\n            [ ThemeProvider.globalProviderWithDarkMode\n                { light = lightTheme\n                , dark = darkTheme\n                , strategy = ThemeProvider.SystemStrategy\n                }\n\n            -- section using the default light or dark theme\n            , section [] [ .. ]\n\n            -- section using the orange light and dark themes\n            , ThemeProvider.providerWithDarkMode\n                { light = lightOrange\n                , dark = darkOrange\n                , strategy = ThemeProvider.SystemStrategy\n                }\n                [] [ .. ]\n            ]\n\n",
+                "type": "{ light : ThemeProvider.Theme, dark : ThemeProvider.Theme, strategy : ThemeProvider.DarkModeStrategy } -> List.List (Html.Attribute msg) -> List.List (Html.Html msg) -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

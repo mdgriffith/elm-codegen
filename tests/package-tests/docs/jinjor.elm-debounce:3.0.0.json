@@ -1,0 +1,105 @@
+[
+    {
+        "name": "Debounce",
+        "comment": " The Debouncer. See the full example [here](https://github.com/jinjor/elm-debounce/blob/master/examples/Main.elm).\n\n  - This module works with the Elm Architecture.\n  - You can choose the strategy and define how commands are sent.\n\n\n# Types\n\n@docs Debounce, Msg\n\n\n# Initialize\n\n@docs Config, init\n\n\n# Strategies\n\n@docs Strategy, soon, soonAfter, later, manual, manualAfter\n\n\n# Sending Commands\n\n@docs Send, takeLast, takeAll\n\n\n# Update\n\n@docs update, push, unlock\n\n",
+        "unions": [
+            {
+                "name": "Debounce",
+                "comment": " The state of the debouncer.\n\nIt is parameterized with the value type `a`.\n\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Msg",
+                "comment": " The messages that are used internally.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Strategy",
+                "comment": " Strategy defines the timing when commands are sent.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " Config contains the debouncing strategy and the message transformation.\n\nThis config should be constant and shared between `update` function and `push` function.\n\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ strategy : Debounce.Strategy, transform : Debounce.Msg -> msg }"
+            },
+            {
+                "name": "Send",
+                "comment": " This function consumes values and send a command.\n\nIf you want to postpone sending, return the values back to keep them.\n\n",
+                "args": [
+                    "a",
+                    "msg"
+                ],
+                "type": "a -> List.List a -> ( List.List a, Platform.Cmd.Cmd msg )"
+            }
+        ],
+        "values": [
+            {
+                "name": "init",
+                "comment": " Initialize the debouncer. Call this from your `init` function.\n",
+                "type": "Debounce.Debounce a"
+            },
+            {
+                "name": "later",
+                "comment": " Send command after becomming stable, with given delay time. (a.k.a. Debounce)\n",
+                "type": "Basics.Float -> Debounce.Strategy"
+            },
+            {
+                "name": "manual",
+                "comment": " Send command as soon as it gets ready, but not again until it gets unlocked manually. See `unlock`.\n\nTypically, `unlock` is called after previous response comes back.\n\n",
+                "type": "Debounce.Strategy"
+            },
+            {
+                "name": "manualAfter",
+                "comment": " Similar to `manual`, but the first command is sent after offset time.\n",
+                "type": "Basics.Float -> Debounce.Strategy"
+            },
+            {
+                "name": "push",
+                "comment": " Push a value into the debouncer.\n",
+                "type": "Debounce.Config msg -> a -> Debounce.Debounce a -> ( Debounce.Debounce a, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "soon",
+                "comment": " Send command as soon as it gets ready, with given rate limit. (a.k.a. Throttle)\n\nNote: The first command will be sent immidiately.\n\n",
+                "type": "Basics.Float -> Debounce.Strategy"
+            },
+            {
+                "name": "soonAfter",
+                "comment": " Similar to `soon`, but the first command is sent after offset time.\n",
+                "type": "Basics.Float -> Basics.Float -> Debounce.Strategy"
+            },
+            {
+                "name": "takeAll",
+                "comment": " Send a command using all the accumulated values.\n",
+                "type": "(a -> List.List a -> Platform.Cmd.Cmd msg) -> a -> List.List a -> ( List.List a, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "takeLast",
+                "comment": " Send a command using the latest value.\n",
+                "type": "(a -> Platform.Cmd.Cmd msg) -> a -> List.List a -> ( List.List a, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "unlock",
+                "comment": " Manually unlock. This works for `manual` or `manualAfter` Strategy.\n",
+                "type": "Debounce.Config msg -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "update",
+                "comment": " This is the component's update function following the Elm Architecture.\n\ne.g. Saving the last value.\n\n    ( debounce, cmd ) =\n        Debounce.update\n            { strategy = Debounce.later (1 * second)\n            , transform = DebounceMsg\n            }\n            (Debounce.takeLast save)\n            -- save : value -> Cmd Msg\n            msg\n            model.debounce\n\nThe config should be constant and shared with `push` function.\n\nThe sending logic can depend on the current model. If you want to stop sending, return `Cmd.none`.\n\n",
+                "type": "Debounce.Config msg -> Debounce.Send a msg -> Debounce.Msg -> Debounce.Debounce a -> ( Debounce.Debounce a, Platform.Cmd.Cmd msg )"
+            }
+        ],
+        "binops": []
+    }
+]

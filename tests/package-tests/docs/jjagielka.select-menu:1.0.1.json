@@ -1,0 +1,178 @@
+[
+    {
+        "name": "Menu",
+        "comment": " Make Dropdown and FocusList work together.\n\n\n# Types\n\n@docs Item, Menu, Msg\n\n\n# TEA\n\n@docs init, update, view\n\n\n# Items\n\n@docs link, button\n\n\n# Events\n\n@docs open, trigger, onSelect\n\n",
+        "unions": [
+            {
+                "name": "Menu",
+                "comment": " Menu type.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Msg",
+                "comment": " Internal select/menu messages.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Item",
+                "comment": " Menu item type.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "Menu.FocusList.Item msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "button",
+                "comment": " Button like menu. Use it when you need select mode - no url redirection but\nvalue collection. This is used with onSelect attributes.\n",
+                "type": "String.String -> List.List (Html.Attribute msg) -> List.List (Html.Html msg) -> Menu.Item msg"
+            },
+            {
+                "name": "init",
+                "comment": " Initialize a menu object. As the browser focus is used, menu requires\nunique identifier.\n",
+                "type": "String.String -> Menu.Menu"
+            },
+            {
+                "name": "link",
+                "comment": " Html link menu item. Click/Enter triggers url redirection.\n",
+                "type": "String.String -> List.List (Html.Attribute msg) -> List.List (Html.Html msg) -> Menu.Item msg"
+            },
+            {
+                "name": "onSelect",
+                "comment": " Menu selection catching. Add this as a Html.Attribute to the container carring the menu.\n",
+                "type": "(String.String -> msg) -> Menu.Menu -> Html.Attribute msg"
+            },
+            {
+                "name": "open",
+                "comment": " Changes the menu state to Open\n",
+                "type": "Menu.Menu -> Menu.Menu"
+            },
+            {
+                "name": "trigger",
+                "comment": " Menu control. Add that set of attributes to the element controling the menu: button, input, ...\n",
+                "type": "(Menu.Msg -> msg) -> Menu.Menu -> List.List (Html.Attribute msg)"
+            },
+            {
+                "name": "update",
+                "comment": " Standard elm update.\n",
+                "type": "Menu.Msg -> Menu.Menu -> ( Menu.Menu, Platform.Cmd.Cmd Menu.Msg )"
+            },
+            {
+                "name": "view",
+                "comment": " Renders the menu. Attributes are used to style the dropdown container.\nSecond parameter is an arbitrary list of menut Item's.\n",
+                "type": "Menu.Menu -> List.List (Html.Attribute Menu.Msg) -> List.List (Menu.Item Menu.Msg) -> Html.Html Menu.Msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Menu.Dropdown",
+        "comment": " Probably the simplest implementation of the dropdown.\n\n\n# Types\n\n@docs Dropdown\n\n\n# Operations\n\n\n## Creation\n\n@docs open, closed\n\n\n## View\n\n@docs view\n\n\n## Control\n\n@docs trigger\n\n",
+        "unions": [
+            {
+                "name": "Dropdown",
+                "comment": " Dropdown model type.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "closed",
+                "comment": " Creates a closed dropdown.\n",
+                "type": "Menu.Dropdown.Dropdown"
+            },
+            {
+                "name": "open",
+                "comment": " Creates an open dropdown.\n",
+                "type": "Menu.Dropdown.Dropdown"
+            },
+            {
+                "name": "trigger",
+                "comment": " This should be attached to the element that will control dropdown opening (button, input for search, ...)\n",
+                "type": "(Menu.Dropdown.Dropdown -> msg) -> Menu.Dropdown.Dropdown -> List.List (Html.Attribute msg)"
+            },
+            {
+                "name": "view",
+                "comment": " View\n",
+                "type": "(Menu.Dropdown.Dropdown -> msg) -> Menu.Dropdown.Dropdown -> List.List (Html.Attribute msg) -> List.List (Html.Html msg) -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Menu.FocusList",
+        "comment": " Manage focus changes through the list of sibilings.\n\n\n# Types\n\n@docs FocusList, Item, Msg\n\n\n# TEA\n\n@docs update, view\n\n\n# Events\n\n@docs trigger, onSelect, onKeyDown\n\n",
+        "unions": [
+            {
+                "name": "Item",
+                "comment": " List item types. Html link or button.\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": [
+                    [
+                        "Anchor",
+                        [
+                            "( String.String, List.List (Html.Attribute msg), List.List (Html.Html msg) )"
+                        ]
+                    ],
+                    [
+                        "Button",
+                        [
+                            "( String.String, List.List (Html.Attribute msg), List.List (Html.Html msg) )"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Msg",
+                "comment": " Internal module messages.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "FocusList",
+                "comment": " The only value needed to be stored is the unique identifier used to set focus.\n",
+                "args": [],
+                "type": "String.String"
+            }
+        ],
+        "values": [
+            {
+                "name": "onKeyDown",
+                "comment": " Html.Attribute to handle navigation keys.\n\n    div [ onKeyDown FocusListMsg ]\n        [ FocusList.view list children\n        ]\n\n",
+                "type": "String.String -> (Menu.FocusList.Msg -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "onSelect",
+                "comment": " Catches the selection.\n",
+                "type": "(String.String -> msg) -> Menu.FocusList.FocusList -> Html.Attribute msg"
+            },
+            {
+                "name": "trigger",
+                "comment": " Html.Attribute that causes the selection of the first elment in the list.\n",
+                "type": "(Menu.FocusList.Msg -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "update",
+                "comment": " Standard update function.\n",
+                "type": "Menu.FocusList.Msg -> Menu.FocusList.FocusList -> Platform.Cmd.Cmd Menu.FocusList.Msg"
+            },
+            {
+                "name": "view",
+                "comment": " Renders the list.\n",
+                "type": "Menu.FocusList.FocusList -> List.List (Menu.FocusList.Item msg) -> List.List (Html.Html msg)"
+            }
+        ],
+        "binops": []
+    }
+]

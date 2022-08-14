@@ -1,0 +1,110 @@
+[
+    {
+        "name": "InfiniteScroll",
+        "comment": " Infinite scroll allows you to load more content for the user as they scroll (up or down).\n\nThe infinite scroll must be bound to an `Html` element and will execute your own `Cmd` when the user\nscrolled to the bottom (or top) of the element.\n\nThe `Cmd` can be anything you want from local data fetching or complex requests on remote APIs.\nAll it has to do is to return a `Cmd msg` and call `stopLoading` once fetching is finished so that\nthe infinite scroll can continue asking for more content.\n\n\n# Definitions\n\n@docs LoadMoreCmd, Direction\n\n\n# Initialization\n\n@docs init, timeout, offset, direction, loadMoreCmd\n\n\n# Update\n\n@docs update\n\n\n# Scroll\n\n@docs infiniteScroll, stopLoading, startLoading, isLoading\n\n\n# Advanced\n\n@docs cmdFromScrollEvent, onScrollUpdate\n\n\n# Types\n\n@docs Model, Msg\n\n",
+        "unions": [
+            {
+                "name": "Direction",
+                "comment": " Scroll direction.\n\n  - `Top` means new content will be asked when the user scrolls to the top of the element\n  - `Bottom` means new content will be asked when the user scrolls to the bottom of the element\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Top",
+                        []
+                    ],
+                    [
+                        "Bottom",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Model",
+                "comment": " Model of the infinite scroll module. You need to create a new one using `init` function.\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Msg",
+                "comment": " Infinite scroll messages you have to give to the `update` function.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "LoadMoreCmd",
+                "comment": " Definition of the function you must provide to the API. This function will be called\nas soon as new content is required\n\n    loadMore : InfiniteScroll.Direction -> Cmd Msg\n    loadMore dir =\n        Task.perform OnLoadMore <| Task.succeed dir\n\n    InfiniteScroll.init loadMore\n\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "InfiniteScroll.Direction -> Platform.Cmd.Cmd msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "cmdFromScrollEvent",
+                "comment": " **Only use this function if you handle `on \"scroll\"` event yourself**\n_(for instance if another package is also using the scroll event on the same node)_\n\n_If you wish to use the `document` scroll, you should create a port to catch the document scroll and\nsend it to this function via the subscriptions_\n\nThe function returns a `Cmd msg` that will perform the model update normally done with `infiniteScroll`.\nYou have to pass it a `Json.Decode.Value` directly coming from `on \"scroll\"` event\n\n    type Msg\n        = InfiniteScrollMsg InfiniteScroll.Msg\n        | OnScroll JsonDecoder.Value\n\n    view : Model -> Html Msg\n    view model =\n        div [ on \"scroll\" (JsonDecoder.map OnScroll JsonDecoder.value) ] [ -- content -- ]\n\n    update : Msg -> Model -> ( Model, Cmd Msg )\n    update msg model =\n        case msg of\n            -- ... --\n\n            InfiniteScrollMsg msg_ ->\n                let\n                    ( infScroll, cmd ) =\n                        InfiniteScroll.update InfiniteScrollMsg msg_ model.infScroll\n                in\n                    ( { model | infScroll = infScroll }, cmd )\n\n            OnScroll value ->\n                ( model, InfiniteScroll.cmdFromScrollEvent InfiniteScrollMsg value )\n\n",
+                "type": "(InfiniteScroll.Msg -> msg) -> Json.Decode.Value -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "direction",
+                "comment": " Sets a different direction (default to `Bottom`).\n\nA direction set to `Bottom` will check distance of the scroll bar from the bottom of the element, whereas a direction set to `Top`\nwill check distance of the scroll bar from the top of the element.\n\n    init loadMore\n        |> direction Top\n\n",
+                "type": "InfiniteScroll.Direction -> InfiniteScroll.Model msg -> InfiniteScroll.Model msg"
+            },
+            {
+                "name": "infiniteScroll",
+                "comment": " Function used to bind the infinite scroll on an element.\n\n**The element's height must be explicitly set, otherwise scroll event won't be triggered**\n\n    type Msg\n        = InfiniteScrollMsg InfiniteScroll.Msg\n\n    view : Model -> Html Msg\n    view _ =\n        let\n            styles =\n                [ ( \"height\", \"300px\" ) ]\n        in\n            div [ infiniteScroll InfiniteScrollMsg, Attributes.style styles ]\n                [ -- Here will be my long list -- ]\n\n",
+                "type": "(InfiniteScroll.Msg -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "init",
+                "comment": " Creates a new `Model`. This function needs a `LoadMoreCmd` that will be called when new data is required.\n\n    type Msg\n        = OnLoadMore InfiniteScroll.Direction\n\n    type alias Model =\n        { infiniteScroll : InfiniteScroll.Model Msg }\n\n    loadMore : InfiniteScroll.Direction -> Cmd Msg\n    loadMore dir =\n        Task.perform OnLoadMore <| Task.succeed dir\n\n    initModel : Model\n    initModel =\n        { infiniteScroll = InfiniteScroll.init loadMore }\n\n",
+                "type": "InfiniteScroll.LoadMoreCmd msg -> InfiniteScroll.Model msg"
+            },
+            {
+                "name": "isLoading",
+                "comment": " Checks if the infinite scroll is currently in a loading state.\n\nWhich means it won't ask for more data even if the user scrolls\n\n",
+                "type": "InfiniteScroll.Model msg -> Basics.Bool"
+            },
+            {
+                "name": "loadMoreCmd",
+                "comment": " Sets a different command to load content.\n\nIt is useful if you need to change your request between two commands. You probably use it when your request is received.\n\n    newRequest page =\n        Task.perform OnLoadMore <| Task.succeed page\n\n    { model | infiniteScroll =\n        model.infiniteScroll\n            |> loadMoreCmd (newRequest model.page)\n    }\n\n",
+                "type": "InfiniteScroll.LoadMoreCmd msg -> InfiniteScroll.Model msg -> InfiniteScroll.Model msg"
+            },
+            {
+                "name": "offset",
+                "comment": " Sets a different offset (default 50).\n\nOffset is the number of pixels from top or bottom (depending on `Direction` value) from which infinite scroll\nwill detect it needs more content.\n\nFor instance with offset set to 50 and direction to `Top`. Once scroll position is 50 pixels or less from the top of the element it will require new content.\nThe same applies with a direction set to `Bottom` except it will check for the distance with the bottom of the element.\n\n    init loadMore\n        |> offset 100\n\n",
+                "type": "Basics.Int -> InfiniteScroll.Model msg -> InfiniteScroll.Model msg"
+            },
+            {
+                "name": "onScrollUpdate",
+                "comment": " Like `cmdFromScrollEvent` except it returns the updated `Model` and the `Cmd` to send instead of only a simple `Cmd`\nthat will be executed after\n",
+                "type": "(InfiniteScroll.Msg -> msg) -> Json.Decode.Value -> InfiniteScroll.Model msg -> ( InfiniteScroll.Model msg, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "startLoading",
+                "comment": " Starts loading more data. You should never have to use this function has it is automatically called\nwhen new content is required and your `loadMore` command is executed.\n",
+                "type": "InfiniteScroll.Model msg -> InfiniteScroll.Model msg"
+            },
+            {
+                "name": "stopLoading",
+                "comment": " Stops loading. You should call this function when you have finished fetching new data. This tells infinite scroll that it\ncan continue asking you more content.\n\nIf you forget to call this function or if your data fetching is too long, you will be asked to retrieve more content after timeout has expired.\n\n",
+                "type": "InfiniteScroll.Model msg -> InfiniteScroll.Model msg"
+            },
+            {
+                "name": "timeout",
+                "comment": " Sets a different timeout value (default is 5 seconds)\n\nWhen timeout is exceeded `stopLoading` will be automatically called so that infinite scroll can continue asking more content\nevent when previous request did not finished.\n\n    init loadMore\n        |> timeout (10 * 1000)\n\n",
+                "type": "Basics.Float -> InfiniteScroll.Model msg -> InfiniteScroll.Model msg"
+            },
+            {
+                "name": "update",
+                "comment": " The update function must be called in your own update function. It will return an updated `Model` and commands to execute.\n\n    type Msg\n        = InfiniteScrollMsg InfiniteScroll.Msg\n\n    type alias Model =\n        { infiniteScroll : InfiniteScroll.Model Msg }\n\n    update : Msg -> Model -> ( Model, Cmd Msg )\n    update msg model =\n        case msg of\n            InfiniteScrollMsg msg_ ->\n                let\n                    ( infiniteScroll, cmd ) =\n                        InfiniteScroll.update InfiniteScrollMsg msg_ model.infiniteScroll\n                in\n                ( { model | infiniteScroll = infiniteScroll }, cmd )\n\n",
+                "type": "(InfiniteScroll.Msg -> msg) -> InfiniteScroll.Msg -> InfiniteScroll.Model msg -> ( InfiniteScroll.Model msg, Platform.Cmd.Cmd msg )"
+            }
+        ],
+        "binops": []
+    }
+]

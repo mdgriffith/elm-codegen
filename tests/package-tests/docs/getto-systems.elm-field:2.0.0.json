@@ -1,0 +1,774 @@
+[
+    {
+        "name": "Getto.Field",
+        "comment": " edit field utilities\n\n    type Msg\n      = Set String\n\n    init = \"name\" |> Field.init signature attr \"\"\n\n    update msg model =\n      Set value -> ( field |> Field.set value, Cmd.none )\n\n    view model =\n      H.input\n        [ model |> Field.value |> A.value\n        , Set |> E.onInput\n        ] []\n\n# Definition\n@docs Model, Param\n\n# Construction\n@docs init\n\n# Getter\n@docs id, name, value, id_value, name_value, param\n\n# Update\n@docs set, toggle\n\n# Attribute\n@docs attribute, setAttribute\n ",
+        "unions": [
+            {
+                "name": "Model",
+                "comment": " field attribute and id, name value\n ",
+                "args": [
+                    "attr",
+                    "value"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Param",
+                "comment": " field original value (before) and modified value (after)\n ",
+                "args": [
+                    "a"
+                ],
+                "type": "{ before : a, after : a }"
+            }
+        ],
+        "values": [
+            {
+                "name": "attribute",
+                "comment": " field attribute\n ",
+                "type": "Getto.Field.Model attr value -> attr"
+            },
+            {
+                "name": "id",
+                "comment": " field id\n\n    H.input [ field |> Field.id |> A.id ] []\n ",
+                "type": "Getto.Field.Model attr value -> String.String"
+            },
+            {
+                "name": "id_value",
+                "comment": " ( id, value )\n ",
+                "type": "Getto.Field.Model attr value -> ( String.String, value )"
+            },
+            {
+                "name": "init",
+                "comment": " construct model from signature, attribute, default value, field name\n\n    signature = \"info\"\n    attr = ()\n\n    field = \"name\" |> Field.init signature attr \"\"\n ",
+                "type": "String.String -> attr -> value -> String.String -> Getto.Field.Model attr value"
+            },
+            {
+                "name": "name",
+                "comment": " field name\n\n    H.input [ field |> Field.name |> A.name ] []\n ",
+                "type": "Getto.Field.Model attr value -> String.String"
+            },
+            {
+                "name": "name_value",
+                "comment": " ( name, value )\n ",
+                "type": "Getto.Field.Model attr value -> ( String.String, value )"
+            },
+            {
+                "name": "param",
+                "comment": " maybe ( name, Param )\n ",
+                "type": "value -> Getto.Field.Model attr value -> Maybe.Maybe ( String.String, Getto.Field.Param value )"
+            },
+            {
+                "name": "set",
+                "comment": " set value\n\n    field = field |> Field.set \"John\"\n ",
+                "type": "value -> Getto.Field.Model attr value -> Getto.Field.Model attr value"
+            },
+            {
+                "name": "setAttribute",
+                "comment": " set attribute\n ",
+                "type": "attr -> Getto.Field.Model attr value -> Getto.Field.Model attr value"
+            },
+            {
+                "name": "toggle",
+                "comment": " toggle Set entry\n\n    field = field |> Field.toggle \"admin\" }\n ",
+                "type": "comparable -> Getto.Field.Model attr (Set.Set comparable) -> Getto.Field.Model attr (Set.Set comparable)"
+            },
+            {
+                "name": "value",
+                "comment": " field value\n\n    H.input [ field |> Field.value |> A.value ] []\n ",
+                "type": "Getto.Field.Model attr value -> value"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Getto.Field.Conflict",
+        "comment": " edit field utilities - conflict\n\n    name_ = Form.prop .name (\\v m -> { m | name = v })\n    get_name = .name\n\n    model =\n      { name = \"name\" |> Conflict.init signature \"\"\n      }\n\n    blank = Validate.blank \"blank\"\n\n    opts =\n      { error = \"conflict\"\n      , form  = model\n      , response =\n        { first = form.response\n        , last  = http.response\n        }\n      }\n\n    view a =\n      { name = a\n      }\n\n    Conflict.compose view\n      ( model |> ( ( name_, get_name ) |> Conflict.single [ model.name |> blank ] ) )\n    {-\n      { hasError = True\n      , hasModified = True\n      , form =\n        { name =\n          ( \"name\"\n          , { field = model.name\n            , prop  = name_\n            }\n          , { errors = [ \"blank\" ] -- model.name |> blank\n            , isModified = True\n            }\n          )\n        }\n      }\n    -}\n\n# Definition\n@docs View, Model, Single, Attribute, Field, Form, Prop, Getter, Options, State, Resolve\n\n# Construction\n@docs init, single\n\n# Getter\n@docs state\n\n# Setter\n@docs toConflict\n\n# Resolve\n@docs resolve, leave, revert\n\n# Helper\n@docs compose, compose2, compose3, compose4, compose5, compose6, compose7, compose8, compose9, compose10, compose11, compose12, compose13, compose14, compose15, compose16\n ",
+        "unions": [
+            {
+                "name": "Attribute",
+                "comment": " attribute of conflict state and resolve operation\n ",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Resolve",
+                "comment": " resolve type\n ",
+                "args": [
+                    "value"
+                ],
+                "cases": []
+            },
+            {
+                "name": "State",
+                "comment": " conflict state\n ",
+                "args": [
+                    "lastValue"
+                ],
+                "cases": [
+                    [
+                        "NoProblem",
+                        []
+                    ],
+                    [
+                        "Conflict",
+                        [
+                            "lastValue"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Field",
+                "comment": " conflict attribute field\n ",
+                "args": [
+                    "a"
+                ],
+                "type": "Getto.Field.Model (Getto.Field.Conflict.Attribute a) a"
+            },
+            {
+                "name": "Form",
+                "comment": " field, prop and last value\n ",
+                "args": [
+                    "form",
+                    "a"
+                ],
+                "type": "{ field : Getto.Field.Conflict.Field a, prop : Getto.Field.Conflict.Prop form a, last : a }"
+            },
+            {
+                "name": "Getter",
+                "comment": " response to value getter\n ",
+                "args": [
+                    "response",
+                    "a"
+                ],
+                "type": "response -> a"
+            },
+            {
+                "name": "Model",
+                "comment": " field name, form and errors\n ",
+                "args": [
+                    "form",
+                    "opts"
+                ],
+                "type": "Getto.Field.Validate.Model form { opts | isModified : Basics.Bool }"
+            },
+            {
+                "name": "Options",
+                "comment": " initialize options\n\n    { error : String -- error message\n    , form  : form   -- fields\n    , response :\n      { first : Maybe response -- response of edit start\n      , last  : response       -- last response\n      }\n    }\n ",
+                "args": [
+                    "form",
+                    "response"
+                ],
+                "type": "{ error : String.String, form : form, response : { first : Maybe.Maybe response, last : response } }"
+            },
+            {
+                "name": "Prop",
+                "comment": " Prop for conflict attribute field\n ",
+                "args": [
+                    "form",
+                    "a"
+                ],
+                "type": "Getto.Field.Form.Prop form (Getto.Field.Conflict.Attribute a) a"
+            },
+            {
+                "name": "Single",
+                "comment": " single form model\n ",
+                "args": [
+                    "form",
+                    "opts",
+                    "a"
+                ],
+                "type": "Getto.Field.Conflict.Model (Getto.Field.Conflict.Form form a) opts"
+            },
+            {
+                "name": "View",
+                "comment": " models and that has error, has modified\n ",
+                "args": [
+                    "model"
+                ],
+                "type": "{ hasError : Basics.Bool, hasModified : Basics.Bool, form : model }"
+            }
+        ],
+        "values": [
+            {
+                "name": "compose",
+                "comment": " compose models\n\n    type alias Form =\n      { name = Conflict.Field String\n      }\n\n    type alias Model =\n      { name = Conflict.Single Form {} String\n      }\n\n    name_ = Form.prop .name (\\v m -> { m | name = v })\n    get_name = .name\n\n    opts =\n      { error = \"conflict\"\n      , form  = form\n      , response =\n        { first = form.response\n        , last  = http.response\n        }\n      }\n\n    Conflict.compose Model\n      ( opts |> ( ( name_, get_name ) |> Conflict.single [ form.name |> Validate.blank \"blank\" ] ) )\n ",
+                "type": "(Getto.Field.Conflict.Model a opts -> model) -> Getto.Field.Conflict.Model a opts -> Getto.Field.Conflict.View model"
+            },
+            {
+                "name": "compose10",
+                "comment": " compose models with 10 args\n ",
+                "type": "(Getto.Field.Conflict.Model a opts -> Getto.Field.Conflict.Model b opts -> Getto.Field.Conflict.Model c opts -> Getto.Field.Conflict.Model d opts -> Getto.Field.Conflict.Model e opts -> Getto.Field.Conflict.Model f opts -> Getto.Field.Conflict.Model g opts -> Getto.Field.Conflict.Model h opts -> Getto.Field.Conflict.Model i opts -> Getto.Field.Conflict.Model j opts -> model) -> Getto.Field.Conflict.Model a opts -> Getto.Field.Conflict.Model b opts -> Getto.Field.Conflict.Model c opts -> Getto.Field.Conflict.Model d opts -> Getto.Field.Conflict.Model e opts -> Getto.Field.Conflict.Model f opts -> Getto.Field.Conflict.Model g opts -> Getto.Field.Conflict.Model h opts -> Getto.Field.Conflict.Model i opts -> Getto.Field.Conflict.Model j opts -> Getto.Field.Conflict.View model"
+            },
+            {
+                "name": "compose11",
+                "comment": " compose models with 11 args\n ",
+                "type": "(Getto.Field.Conflict.Model a opts -> Getto.Field.Conflict.Model b opts -> Getto.Field.Conflict.Model c opts -> Getto.Field.Conflict.Model d opts -> Getto.Field.Conflict.Model e opts -> Getto.Field.Conflict.Model f opts -> Getto.Field.Conflict.Model g opts -> Getto.Field.Conflict.Model h opts -> Getto.Field.Conflict.Model i opts -> Getto.Field.Conflict.Model j opts -> Getto.Field.Conflict.Model k opts -> model) -> Getto.Field.Conflict.Model a opts -> Getto.Field.Conflict.Model b opts -> Getto.Field.Conflict.Model c opts -> Getto.Field.Conflict.Model d opts -> Getto.Field.Conflict.Model e opts -> Getto.Field.Conflict.Model f opts -> Getto.Field.Conflict.Model g opts -> Getto.Field.Conflict.Model h opts -> Getto.Field.Conflict.Model i opts -> Getto.Field.Conflict.Model j opts -> Getto.Field.Conflict.Model k opts -> Getto.Field.Conflict.View model"
+            },
+            {
+                "name": "compose12",
+                "comment": " compose models with 12 args\n ",
+                "type": "(Getto.Field.Conflict.Model a opts -> Getto.Field.Conflict.Model b opts -> Getto.Field.Conflict.Model c opts -> Getto.Field.Conflict.Model d opts -> Getto.Field.Conflict.Model e opts -> Getto.Field.Conflict.Model f opts -> Getto.Field.Conflict.Model g opts -> Getto.Field.Conflict.Model h opts -> Getto.Field.Conflict.Model i opts -> Getto.Field.Conflict.Model j opts -> Getto.Field.Conflict.Model k opts -> Getto.Field.Conflict.Model l opts -> model) -> Getto.Field.Conflict.Model a opts -> Getto.Field.Conflict.Model b opts -> Getto.Field.Conflict.Model c opts -> Getto.Field.Conflict.Model d opts -> Getto.Field.Conflict.Model e opts -> Getto.Field.Conflict.Model f opts -> Getto.Field.Conflict.Model g opts -> Getto.Field.Conflict.Model h opts -> Getto.Field.Conflict.Model i opts -> Getto.Field.Conflict.Model j opts -> Getto.Field.Conflict.Model k opts -> Getto.Field.Conflict.Model l opts -> Getto.Field.Conflict.View model"
+            },
+            {
+                "name": "compose13",
+                "comment": " compose models with 13 args\n ",
+                "type": "(Getto.Field.Conflict.Model a opts -> Getto.Field.Conflict.Model b opts -> Getto.Field.Conflict.Model c opts -> Getto.Field.Conflict.Model d opts -> Getto.Field.Conflict.Model e opts -> Getto.Field.Conflict.Model f opts -> Getto.Field.Conflict.Model g opts -> Getto.Field.Conflict.Model h opts -> Getto.Field.Conflict.Model i opts -> Getto.Field.Conflict.Model j opts -> Getto.Field.Conflict.Model k opts -> Getto.Field.Conflict.Model l opts -> Getto.Field.Conflict.Model m opts -> model) -> Getto.Field.Conflict.Model a opts -> Getto.Field.Conflict.Model b opts -> Getto.Field.Conflict.Model c opts -> Getto.Field.Conflict.Model d opts -> Getto.Field.Conflict.Model e opts -> Getto.Field.Conflict.Model f opts -> Getto.Field.Conflict.Model g opts -> Getto.Field.Conflict.Model h opts -> Getto.Field.Conflict.Model i opts -> Getto.Field.Conflict.Model j opts -> Getto.Field.Conflict.Model k opts -> Getto.Field.Conflict.Model l opts -> Getto.Field.Conflict.Model m opts -> Getto.Field.Conflict.View model"
+            },
+            {
+                "name": "compose14",
+                "comment": " compose models with 14 args\n ",
+                "type": "(Getto.Field.Conflict.Model a opts -> Getto.Field.Conflict.Model b opts -> Getto.Field.Conflict.Model c opts -> Getto.Field.Conflict.Model d opts -> Getto.Field.Conflict.Model e opts -> Getto.Field.Conflict.Model f opts -> Getto.Field.Conflict.Model g opts -> Getto.Field.Conflict.Model h opts -> Getto.Field.Conflict.Model i opts -> Getto.Field.Conflict.Model j opts -> Getto.Field.Conflict.Model k opts -> Getto.Field.Conflict.Model l opts -> Getto.Field.Conflict.Model m opts -> Getto.Field.Conflict.Model n opts -> model) -> Getto.Field.Conflict.Model a opts -> Getto.Field.Conflict.Model b opts -> Getto.Field.Conflict.Model c opts -> Getto.Field.Conflict.Model d opts -> Getto.Field.Conflict.Model e opts -> Getto.Field.Conflict.Model f opts -> Getto.Field.Conflict.Model g opts -> Getto.Field.Conflict.Model h opts -> Getto.Field.Conflict.Model i opts -> Getto.Field.Conflict.Model j opts -> Getto.Field.Conflict.Model k opts -> Getto.Field.Conflict.Model l opts -> Getto.Field.Conflict.Model m opts -> Getto.Field.Conflict.Model n opts -> Getto.Field.Conflict.View model"
+            },
+            {
+                "name": "compose15",
+                "comment": " compose models with 15 args\n ",
+                "type": "(Getto.Field.Conflict.Model a opts -> Getto.Field.Conflict.Model b opts -> Getto.Field.Conflict.Model c opts -> Getto.Field.Conflict.Model d opts -> Getto.Field.Conflict.Model e opts -> Getto.Field.Conflict.Model f opts -> Getto.Field.Conflict.Model g opts -> Getto.Field.Conflict.Model h opts -> Getto.Field.Conflict.Model i opts -> Getto.Field.Conflict.Model j opts -> Getto.Field.Conflict.Model k opts -> Getto.Field.Conflict.Model l opts -> Getto.Field.Conflict.Model m opts -> Getto.Field.Conflict.Model n opts -> Getto.Field.Conflict.Model o opts -> model) -> Getto.Field.Conflict.Model a opts -> Getto.Field.Conflict.Model b opts -> Getto.Field.Conflict.Model c opts -> Getto.Field.Conflict.Model d opts -> Getto.Field.Conflict.Model e opts -> Getto.Field.Conflict.Model f opts -> Getto.Field.Conflict.Model g opts -> Getto.Field.Conflict.Model h opts -> Getto.Field.Conflict.Model i opts -> Getto.Field.Conflict.Model j opts -> Getto.Field.Conflict.Model k opts -> Getto.Field.Conflict.Model l opts -> Getto.Field.Conflict.Model m opts -> Getto.Field.Conflict.Model n opts -> Getto.Field.Conflict.Model o opts -> Getto.Field.Conflict.View model"
+            },
+            {
+                "name": "compose16",
+                "comment": " compose models with 16 args\n ",
+                "type": "(Getto.Field.Conflict.Model a opts -> Getto.Field.Conflict.Model b opts -> Getto.Field.Conflict.Model c opts -> Getto.Field.Conflict.Model d opts -> Getto.Field.Conflict.Model e opts -> Getto.Field.Conflict.Model f opts -> Getto.Field.Conflict.Model g opts -> Getto.Field.Conflict.Model h opts -> Getto.Field.Conflict.Model i opts -> Getto.Field.Conflict.Model j opts -> Getto.Field.Conflict.Model k opts -> Getto.Field.Conflict.Model l opts -> Getto.Field.Conflict.Model m opts -> Getto.Field.Conflict.Model n opts -> Getto.Field.Conflict.Model o opts -> Getto.Field.Conflict.Model p opts -> model) -> Getto.Field.Conflict.Model a opts -> Getto.Field.Conflict.Model b opts -> Getto.Field.Conflict.Model c opts -> Getto.Field.Conflict.Model d opts -> Getto.Field.Conflict.Model e opts -> Getto.Field.Conflict.Model f opts -> Getto.Field.Conflict.Model g opts -> Getto.Field.Conflict.Model h opts -> Getto.Field.Conflict.Model i opts -> Getto.Field.Conflict.Model j opts -> Getto.Field.Conflict.Model k opts -> Getto.Field.Conflict.Model l opts -> Getto.Field.Conflict.Model m opts -> Getto.Field.Conflict.Model n opts -> Getto.Field.Conflict.Model o opts -> Getto.Field.Conflict.Model p opts -> Getto.Field.Conflict.View model"
+            },
+            {
+                "name": "compose2",
+                "comment": " compose models with 2 args\n\n    Conflict.compose2 Model\n      ( opts |> ( ( name_, get_name ) |> Conflict.single [ form.name |> Validate.blank \"blank\" ] ) )\n      ( opts |> ( ( age_,  get_age )  |> Conflict.single [] ) )\n ",
+                "type": "(Getto.Field.Conflict.Model a opts -> Getto.Field.Conflict.Model b opts -> model) -> Getto.Field.Conflict.Model a opts -> Getto.Field.Conflict.Model b opts -> Getto.Field.Conflict.View model"
+            },
+            {
+                "name": "compose3",
+                "comment": " compose models with 3 args\n ",
+                "type": "(Getto.Field.Conflict.Model a opts -> Getto.Field.Conflict.Model b opts -> Getto.Field.Conflict.Model c opts -> model) -> Getto.Field.Conflict.Model a opts -> Getto.Field.Conflict.Model b opts -> Getto.Field.Conflict.Model c opts -> Getto.Field.Conflict.View model"
+            },
+            {
+                "name": "compose4",
+                "comment": " compose models with 4 args\n ",
+                "type": "(Getto.Field.Conflict.Model a opts -> Getto.Field.Conflict.Model b opts -> Getto.Field.Conflict.Model c opts -> Getto.Field.Conflict.Model d opts -> model) -> Getto.Field.Conflict.Model a opts -> Getto.Field.Conflict.Model b opts -> Getto.Field.Conflict.Model c opts -> Getto.Field.Conflict.Model d opts -> Getto.Field.Conflict.View model"
+            },
+            {
+                "name": "compose5",
+                "comment": " compose models with 5 args\n ",
+                "type": "(Getto.Field.Conflict.Model a opts -> Getto.Field.Conflict.Model b opts -> Getto.Field.Conflict.Model c opts -> Getto.Field.Conflict.Model d opts -> Getto.Field.Conflict.Model e opts -> model) -> Getto.Field.Conflict.Model a opts -> Getto.Field.Conflict.Model b opts -> Getto.Field.Conflict.Model c opts -> Getto.Field.Conflict.Model d opts -> Getto.Field.Conflict.Model e opts -> Getto.Field.Conflict.View model"
+            },
+            {
+                "name": "compose6",
+                "comment": " compose models with 6 args\n ",
+                "type": "(Getto.Field.Conflict.Model a opts -> Getto.Field.Conflict.Model b opts -> Getto.Field.Conflict.Model c opts -> Getto.Field.Conflict.Model d opts -> Getto.Field.Conflict.Model e opts -> Getto.Field.Conflict.Model f opts -> model) -> Getto.Field.Conflict.Model a opts -> Getto.Field.Conflict.Model b opts -> Getto.Field.Conflict.Model c opts -> Getto.Field.Conflict.Model d opts -> Getto.Field.Conflict.Model e opts -> Getto.Field.Conflict.Model f opts -> Getto.Field.Conflict.View model"
+            },
+            {
+                "name": "compose7",
+                "comment": " compose models with 7 args\n ",
+                "type": "(Getto.Field.Conflict.Model a opts -> Getto.Field.Conflict.Model b opts -> Getto.Field.Conflict.Model c opts -> Getto.Field.Conflict.Model d opts -> Getto.Field.Conflict.Model e opts -> Getto.Field.Conflict.Model f opts -> Getto.Field.Conflict.Model g opts -> model) -> Getto.Field.Conflict.Model a opts -> Getto.Field.Conflict.Model b opts -> Getto.Field.Conflict.Model c opts -> Getto.Field.Conflict.Model d opts -> Getto.Field.Conflict.Model e opts -> Getto.Field.Conflict.Model f opts -> Getto.Field.Conflict.Model g opts -> Getto.Field.Conflict.View model"
+            },
+            {
+                "name": "compose8",
+                "comment": " compose models with 8 args\n ",
+                "type": "(Getto.Field.Conflict.Model a opts -> Getto.Field.Conflict.Model b opts -> Getto.Field.Conflict.Model c opts -> Getto.Field.Conflict.Model d opts -> Getto.Field.Conflict.Model e opts -> Getto.Field.Conflict.Model f opts -> Getto.Field.Conflict.Model g opts -> Getto.Field.Conflict.Model h opts -> model) -> Getto.Field.Conflict.Model a opts -> Getto.Field.Conflict.Model b opts -> Getto.Field.Conflict.Model c opts -> Getto.Field.Conflict.Model d opts -> Getto.Field.Conflict.Model e opts -> Getto.Field.Conflict.Model f opts -> Getto.Field.Conflict.Model g opts -> Getto.Field.Conflict.Model h opts -> Getto.Field.Conflict.View model"
+            },
+            {
+                "name": "compose9",
+                "comment": " compose models with 9 args\n ",
+                "type": "(Getto.Field.Conflict.Model a opts -> Getto.Field.Conflict.Model b opts -> Getto.Field.Conflict.Model c opts -> Getto.Field.Conflict.Model d opts -> Getto.Field.Conflict.Model e opts -> Getto.Field.Conflict.Model f opts -> Getto.Field.Conflict.Model g opts -> Getto.Field.Conflict.Model h opts -> Getto.Field.Conflict.Model i opts -> model) -> Getto.Field.Conflict.Model a opts -> Getto.Field.Conflict.Model b opts -> Getto.Field.Conflict.Model c opts -> Getto.Field.Conflict.Model d opts -> Getto.Field.Conflict.Model e opts -> Getto.Field.Conflict.Model f opts -> Getto.Field.Conflict.Model g opts -> Getto.Field.Conflict.Model h opts -> Getto.Field.Conflict.Model i opts -> Getto.Field.Conflict.View model"
+            },
+            {
+                "name": "init",
+                "comment": " construct Field\n\n    \"name\" |> Conflict.init signature \"\"\n ",
+                "type": "String.String -> value -> String.String -> Getto.Field.Conflict.Field value"
+            },
+            {
+                "name": "leave",
+                "comment": " leave editing value\n ",
+                "type": "Getto.Field.Conflict.Resolve a"
+            },
+            {
+                "name": "resolve",
+                "comment": " resolve conflict\n\n    model |> Conflict.resolve prop Conflict.leave\n    model |> Conflict.resolve prop (Conflict.revert value)\n ",
+                "type": "Getto.Field.Conflict.Prop form a -> Getto.Field.Conflict.Resolve a -> form -> form"
+            },
+            {
+                "name": "revert",
+                "comment": " revert original value\n ",
+                "type": "a -> Getto.Field.Conflict.Resolve a"
+            },
+            {
+                "name": "single",
+                "comment": " construct Single\n\n    { error = \"conflict\"\n    , form  = form\n    , response =\n      { first = form.response\n      , last  = http.response\n      }\n    }\n    |> ( ( name_, get_name ) |> Conflict.single [ form.name |> Validate.blank \"blank\" ] )\n ",
+                "type": "List.List (Maybe.Maybe String.String) -> ( Getto.Field.Conflict.Prop form a, Getto.Field.Conflict.Getter response a ) -> Getto.Field.Conflict.Options form response -> Getto.Field.Conflict.Model (Getto.Field.Conflict.Form form a) {}"
+            },
+            {
+                "name": "state",
+                "comment": " get conflict state\n\n    form |> Conflict.state\n ",
+                "type": "Getto.Field.Conflict.Form form a -> Getto.Field.Conflict.State a"
+            },
+            {
+                "name": "toConflict",
+                "comment": " set conflict\n ",
+                "type": "a -> Getto.Field.Conflict.Field a -> Getto.Field.Conflict.Field a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Getto.Field.Edit",
+        "comment": " edit field utilities\n\n    fields =\n      { name = \"name\" |> Conflict.init signature \"\"\n      }\n\n    form = fields |> Edit.form\n\n    name_ = Form.prop .name (\\v m -> { m | name = v })\n    get_name = .name\n\n    blank = Validate.blank \"blank\"\n\n    (isStatic,options) =\n      { error       = \"conflict\"\n      , form        = form\n      , last        = http.get.response\n      , isConflict  = http.put.isConflict\n      , isDifferent = response.isDifferentResponse\n      }\n      |> Edit.options\n\n    view a =\n      { name = a\n      }\n\n    ( isStatic\n    , Conflict.compose view\n      ( options |> ( ( name_,  get_name  ) |> Conflict.single [ fields.name |> V.blank ] ) )\n    )\n    |> Edit.view\n      { data = \"data\"\n      }\n    {-\n      { isStatic = True\n      , state = HasError\n      , data =\n        { data = \"data\"\n        }\n      , form =\n        { name =\n          ( \"name\"\n          , { field = model.name\n            , prop  = name_\n            }\n          , { errors = [ \"blank\" ] -- model.name |> blank\n            , isModified = True\n            }\n          )\n        }\n      }\n    -}\n\n# Definition\n@docs Form, View, AggregateState\n\n# Construction\n@docs form, options, view\n\n# Getter\n@docs fields\n\n# Update\n@docs update, edit, cancel, commit, change\n\n# Encode/Decode\n@docs encode, decode\n ",
+        "unions": [
+            {
+                "name": "AggregateState",
+                "comment": " fields HasError or HasModified or Same\n ",
+                "args": [],
+                "cases": [
+                    [
+                        "Same",
+                        []
+                    ],
+                    [
+                        "HasError",
+                        []
+                    ],
+                    [
+                        "HasModified",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Form",
+                "comment": " edit/static state and fields\n ",
+                "args": [
+                    "response",
+                    "fields"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "View",
+                "comment": " isStatic, state (HasError, HasModified) and form\n ",
+                "args": [
+                    "data",
+                    "model"
+                ],
+                "type": "{ isStatic : Basics.Bool, state : Getto.Field.Edit.AggregateState, data : data, form : model }"
+            }
+        ],
+        "values": [
+            {
+                "name": "cancel",
+                "comment": " to static state\n ",
+                "type": "Getto.Field.Edit.Form response fields -> Getto.Field.Edit.Form response fields"
+            },
+            {
+                "name": "change",
+                "comment": " to changed state\n ",
+                "type": "Getto.Field.Edit.Form response fields -> Getto.Field.Edit.Form response fields"
+            },
+            {
+                "name": "commit",
+                "comment": " to commit state\n ",
+                "type": "Getto.Field.Edit.Form response fields -> Getto.Field.Edit.Form response fields"
+            },
+            {
+                "name": "decode",
+                "comment": " decode fields\n ",
+                "type": "Json.Decode.Decoder response -> (Json.Decode.Value -> Getto.Field.Edit.Form response fields -> Getto.Field.Edit.Form response fields) -> Json.Decode.Value -> Getto.Field.Edit.Form response fields -> Getto.Field.Edit.Form response fields"
+            },
+            {
+                "name": "edit",
+                "comment": " to edit state\n ",
+                "type": "(response -> Getto.Field.Edit.Form response fields -> Getto.Field.Edit.Form response fields) -> Maybe.Maybe response -> Getto.Field.Edit.Form response fields -> Getto.Field.Edit.Form response fields"
+            },
+            {
+                "name": "encode",
+                "comment": " encode fields\n ",
+                "type": "(response -> Json.Encode.Value) -> (fields -> Json.Encode.Value) -> Getto.Field.Edit.Form response fields -> Json.Encode.Value"
+            },
+            {
+                "name": "fields",
+                "comment": " form fields\n ",
+                "type": "Getto.Field.Edit.Form response fields -> fields"
+            },
+            {
+                "name": "form",
+                "comment": " construct form\n\n    { name = \"name\" |> Conflict.init signature \"\"\n    }\n    |> Edit.form\n ",
+                "type": "fields -> Getto.Field.Edit.Form response fields"
+            },
+            {
+                "name": "options",
+                "comment": " construct Conflict.Options\n\n    { error       = \"conflict\"\n    , form        = form\n    , last        = http.get.response\n    , isConflict  = http.put.isConflict\n    , isDifferent = response.isDifferentResponse\n    }\n    |> Edit.options\n    -- ( isStatic, options )\n ",
+                "type": "Getto.Field.Edit.Options response fields -> ( Basics.Bool, Getto.Field.Conflict.Options (Getto.Field.Edit.Form response fields) response )"
+            },
+            {
+                "name": "update",
+                "comment": " update fields\n ",
+                "type": "(fields -> fields) -> Getto.Field.Edit.Form response fields -> Getto.Field.Edit.Form response fields"
+            },
+            {
+                "name": "view",
+                "comment": " construct Conflict.Options\n\n    let\n      fields = form |> Edit.fields\n    in\n      ( isStatic\n      , Conflict.compose view\n        ( options |> ( ( name_,  get_name  ) |> Conflict.single [ fields.name |> V.blank ] ) )\n      )\n      |> Edit.view\n ",
+                "type": "data -> ( Basics.Bool, Getto.Field.Conflict.View model ) -> Getto.Field.Edit.View data model"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Getto.Field.Form",
+        "comment": " edit field utilities\n\n    type Msg\n      = Set (Form.Prop Model attr String) String\n\n    init =\n      { name = \"field\" |> Field.init signature attribute \"\"\n      }\n\n    update msg model =\n      case msg of\n        Set prop value -> model |> Form.set prop value\n\n    name_ = Form.prop .name (\\v m -> { m | name = v })\n\n    view model =\n      let\n        form =\n          { name = model.name |> Form.init name_\n          }\n      in\n        H.input\n          [ form.name.field |> Field.value |> A.value\n          , form.name.prop |> Set |> E.onInput\n          ] []\n\n# Definition\n@docs Model, Between, Prop\n\n# Construction\n@docs init, prop\n\n# Getter\n@docs at\n\n# Update\n@docs set, setIf, toggle\n\n# Attribute\n@docs setAttribute\n ",
+        "unions": [
+            {
+                "name": "Prop",
+                "comment": " getter and setter\n ",
+                "args": [
+                    "form",
+                    "attr",
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Between",
+                "comment": " gteq Model and lteq Model\n ",
+                "args": [
+                    "form",
+                    "attr",
+                    "a"
+                ],
+                "type": "{ gteq : Getto.Field.Form.Model form attr a, lteq : Getto.Field.Form.Model form attr a }"
+            },
+            {
+                "name": "Model",
+                "comment": " field and prop\n ",
+                "args": [
+                    "form",
+                    "attr",
+                    "a"
+                ],
+                "type": "{ field : Getto.Field.Model attr a, prop : Getto.Field.Form.Prop form attr a }"
+            }
+        ],
+        "values": [
+            {
+                "name": "at",
+                "comment": " get field from model\n\n    form |> Form.at name_\n ",
+                "type": "Getto.Field.Form.Prop form attr a -> form -> Getto.Field.Model attr a"
+            },
+            {
+                "name": "init",
+                "comment": " construct Model\n\n    form = field |> Form.init name_\n ",
+                "type": "Getto.Field.Form.Prop form attr a -> Getto.Field.Model attr a -> Getto.Field.Form.Model form attr a"
+            },
+            {
+                "name": "prop",
+                "comment": " construct Prop\n\n    name_ = Form.prop .name (\\v m -> { m | name = v })\n ",
+                "type": "Getto.Field.Form.Getter form attr a -> Getto.Field.Form.Setter form attr a -> Getto.Field.Form.Prop form attr a"
+            },
+            {
+                "name": "set",
+                "comment": " set value\n\n    form |> Form.set name_ \"value\"\n ",
+                "type": "Getto.Field.Form.Prop form attr a -> a -> form -> form"
+            },
+            {
+                "name": "setAttribute",
+                "comment": " set attribute\n\n    form |> Form.setAttribute name_ attr\n ",
+                "type": "Getto.Field.Form.Prop form attr value -> attr -> form -> form"
+            },
+            {
+                "name": "setIf",
+                "comment": " set value if value is present\n\n    form |> Form.setIf name_ (Just \"value\")\n    -- set \"value\"\n\n    form |> Form.setIf name_ Nothing\n    -- do nothing\n ",
+                "type": "Getto.Field.Form.Prop form attr a -> Maybe.Maybe a -> form -> form"
+            },
+            {
+                "name": "toggle",
+                "comment": " toggle set\n\n    form |> Form.toggle roles_ \"admin\"\n ",
+                "type": "Getto.Field.Form.Prop form attr (Set.Set comparable) -> comparable -> form -> form"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Getto.Field.Present",
+        "comment": " search field utilities - present\n\n    name_ = Form.prop .name (\\v m -> { m | name = v })\n\n    model =\n      { name = \"name\" |> Present.init signature \"John\"\n      }\n\n    view =\n      { name = model |> ( name_ |> Present.single Present.string )\n      {-\n        ( \"name\"\n        , { field = model.name\n          , prop  = name_\n          }\n        , { isPresent = True -- model.name |> Present.string\n          }\n        )\n      -}\n      }\n\n# Definition\n@docs Model, Single, Between, Field, Prop, Presenter\n\n# Construction\n@docs init, single, between\n\n# Presenters\n@docs string, set, present\n ",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Between",
+                "comment": " gteq-lteq value model\n ",
+                "args": [
+                    "form",
+                    "opts",
+                    "a"
+                ],
+                "type": "Getto.Field.Present.Model (Getto.Field.Form.Between form Getto.Field.Present.Attribute a) opts"
+            },
+            {
+                "name": "Field",
+                "comment": " no-attribute Field\n ",
+                "args": [
+                    "a"
+                ],
+                "type": "Getto.Field.Model Getto.Field.Present.Attribute a"
+            },
+            {
+                "name": "Model",
+                "comment": " field name, form and isPresent\n ",
+                "args": [
+                    "form",
+                    "opts"
+                ],
+                "type": "( String.String, form, { opts | isPresent : Basics.Bool } )"
+            },
+            {
+                "name": "Presenter",
+                "comment": " presence method\n ",
+                "args": [
+                    "attr",
+                    "a"
+                ],
+                "type": "Getto.Field.Model attr a -> Basics.Bool"
+            },
+            {
+                "name": "Prop",
+                "comment": " Prop for no-attribute Field\n ",
+                "args": [
+                    "form",
+                    "a"
+                ],
+                "type": "Getto.Field.Form.Prop form Getto.Field.Present.Attribute a"
+            },
+            {
+                "name": "Single",
+                "comment": " single value model\n ",
+                "args": [
+                    "form",
+                    "opts",
+                    "a"
+                ],
+                "type": "Getto.Field.Present.Model (Getto.Field.Form.Model form Getto.Field.Present.Attribute a) opts"
+            }
+        ],
+        "values": [
+            {
+                "name": "between",
+                "comment": " construct Between\n\n    form |>\n      ( \"age\" |> Present.between\n        { gteq = age_gteq_ |> Present.single Present.string\n        , lteq = age_lteq_ |> Present.single Present.string\n        }\n      )\n ",
+                "type": "{ gteq : model -> Getto.Field.Present.Model (Getto.Field.Form.Model form attr a) opts, lteq : model -> Getto.Field.Present.Model (Getto.Field.Form.Model form attr a) opts } -> String.String -> model -> Getto.Field.Present.Model (Getto.Field.Form.Between form attr a) {}"
+            },
+            {
+                "name": "init",
+                "comment": " construct Field\n\n    \"name\" |> Present.init signature \"\"\n ",
+                "type": "String.String -> value -> String.String -> Getto.Field.Present.Field value"
+            },
+            {
+                "name": "present",
+                "comment": " field value is present\n ",
+                "type": "(a -> Basics.Bool) -> Getto.Field.Present.Presenter attr a"
+            },
+            {
+                "name": "set",
+                "comment": " set is not empty\n ",
+                "type": "Getto.Field.Present.Presenter attr (Set.Set a)"
+            },
+            {
+                "name": "single",
+                "comment": " construct Single\n\n    form |> ( name_ |> Present.single Present.string )\n ",
+                "type": "Getto.Field.Present.Presenter attr a -> Getto.Field.Form.Prop form attr a -> form -> Getto.Field.Present.Model (Getto.Field.Form.Model form attr a) {}"
+            },
+            {
+                "name": "string",
+                "comment": " string is not empty\n ",
+                "type": "Getto.Field.Present.Presenter attr String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Getto.Field.Validate",
+        "comment": " edit field utilities - validation\n\n    name_ = Form.prop .name (\\v m -> { m | name = v })\n\n    model =\n      { name = \"name\" |> Validate.init signature \"\"\n      }\n\n    blank = Validate.blank \"blank\"\n\n    view a =\n      { name = a\n      }\n\n    Validate.compose view\n      ( model |> ( name_ |> Validate.single [ model.name |> blank ] ) )\n    {-\n      { hasError = True\n      , form =\n        { name =\n          ( \"name\"\n          , { field = model.name\n            , prop  = name_\n            }\n          , { errors = [ \"blank\" ] -- model.name |> blank\n            }\n          )\n        }\n      }\n    -}\n\n# Definition\n@docs View, Model, Single, Field, Prop, Validater\n\n# Construction\n@docs init, single\n\n# Validaters\n@docs nothing, blank, emptySet, emptyList, notInt, validate\n\n# Helper\n@docs compose, compose2, compose3, compose4, compose5, compose6, compose7, compose8, compose9, compose10, compose11, compose12, compose13, compose14, compose15, compose16\n ",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Field",
+                "comment": " no-attribute field\n ",
+                "args": [
+                    "a"
+                ],
+                "type": "Getto.Field.Model Getto.Field.Validate.Attribute a"
+            },
+            {
+                "name": "Model",
+                "comment": " field name, form and errors\n ",
+                "args": [
+                    "form",
+                    "opts"
+                ],
+                "type": "( String.String, form, { opts | errors : List.List String.String } )"
+            },
+            {
+                "name": "Prop",
+                "comment": " Prop for no-attribute field\n ",
+                "args": [
+                    "form",
+                    "a"
+                ],
+                "type": "Getto.Field.Form.Prop form Getto.Field.Validate.Attribute a"
+            },
+            {
+                "name": "Single",
+                "comment": " single form model\n ",
+                "args": [
+                    "form",
+                    "opts",
+                    "a"
+                ],
+                "type": "Getto.Field.Validate.Model (Getto.Field.Form.Model form Getto.Field.Validate.Attribute a) opts"
+            },
+            {
+                "name": "Validater",
+                "comment": " validate method\n ",
+                "args": [
+                    "attr",
+                    "a"
+                ],
+                "type": "Getto.Field.Model attr a -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "View",
+                "comment": " models and that has error\n ",
+                "args": [
+                    "model"
+                ],
+                "type": "{ hasError : Basics.Bool, form : model }"
+            }
+        ],
+        "values": [
+            {
+                "name": "blank",
+                "comment": " error if empty string\n ",
+                "type": "String.String -> Getto.Field.Validate.Validater attr String.String"
+            },
+            {
+                "name": "compose",
+                "comment": " compose models\n\n    type alias Form =\n      { name = Validate.Field String\n      }\n\n    type alias Model =\n      { name = Validate.Single Form {} String\n      }\n\n    name_ = Form.prop .name (\\v m -> { m | name = v })\n\n    Validate.compose Model\n      ( form |> ( name_ |> Validate.single [ form.name |> Validate.blank \"blank\" ] ) )\n ",
+                "type": "(Getto.Field.Validate.Model a opts -> model) -> Getto.Field.Validate.Model a opts -> Getto.Field.Validate.View model"
+            },
+            {
+                "name": "compose10",
+                "comment": " compose models with 10 args\n ",
+                "type": "(Getto.Field.Validate.Model a opts -> Getto.Field.Validate.Model b opts -> Getto.Field.Validate.Model c opts -> Getto.Field.Validate.Model d opts -> Getto.Field.Validate.Model e opts -> Getto.Field.Validate.Model f opts -> Getto.Field.Validate.Model g opts -> Getto.Field.Validate.Model h opts -> Getto.Field.Validate.Model i opts -> Getto.Field.Validate.Model j opts -> model) -> Getto.Field.Validate.Model a opts -> Getto.Field.Validate.Model b opts -> Getto.Field.Validate.Model c opts -> Getto.Field.Validate.Model d opts -> Getto.Field.Validate.Model e opts -> Getto.Field.Validate.Model f opts -> Getto.Field.Validate.Model g opts -> Getto.Field.Validate.Model h opts -> Getto.Field.Validate.Model i opts -> Getto.Field.Validate.Model j opts -> Getto.Field.Validate.View model"
+            },
+            {
+                "name": "compose11",
+                "comment": " compose models with 11 args\n ",
+                "type": "(Getto.Field.Validate.Model a opts -> Getto.Field.Validate.Model b opts -> Getto.Field.Validate.Model c opts -> Getto.Field.Validate.Model d opts -> Getto.Field.Validate.Model e opts -> Getto.Field.Validate.Model f opts -> Getto.Field.Validate.Model g opts -> Getto.Field.Validate.Model h opts -> Getto.Field.Validate.Model i opts -> Getto.Field.Validate.Model j opts -> Getto.Field.Validate.Model k opts -> model) -> Getto.Field.Validate.Model a opts -> Getto.Field.Validate.Model b opts -> Getto.Field.Validate.Model c opts -> Getto.Field.Validate.Model d opts -> Getto.Field.Validate.Model e opts -> Getto.Field.Validate.Model f opts -> Getto.Field.Validate.Model g opts -> Getto.Field.Validate.Model h opts -> Getto.Field.Validate.Model i opts -> Getto.Field.Validate.Model j opts -> Getto.Field.Validate.Model k opts -> Getto.Field.Validate.View model"
+            },
+            {
+                "name": "compose12",
+                "comment": " compose models with 12 args\n ",
+                "type": "(Getto.Field.Validate.Model a opts -> Getto.Field.Validate.Model b opts -> Getto.Field.Validate.Model c opts -> Getto.Field.Validate.Model d opts -> Getto.Field.Validate.Model e opts -> Getto.Field.Validate.Model f opts -> Getto.Field.Validate.Model g opts -> Getto.Field.Validate.Model h opts -> Getto.Field.Validate.Model i opts -> Getto.Field.Validate.Model j opts -> Getto.Field.Validate.Model k opts -> Getto.Field.Validate.Model l opts -> model) -> Getto.Field.Validate.Model a opts -> Getto.Field.Validate.Model b opts -> Getto.Field.Validate.Model c opts -> Getto.Field.Validate.Model d opts -> Getto.Field.Validate.Model e opts -> Getto.Field.Validate.Model f opts -> Getto.Field.Validate.Model g opts -> Getto.Field.Validate.Model h opts -> Getto.Field.Validate.Model i opts -> Getto.Field.Validate.Model j opts -> Getto.Field.Validate.Model k opts -> Getto.Field.Validate.Model l opts -> Getto.Field.Validate.View model"
+            },
+            {
+                "name": "compose13",
+                "comment": " compose models with 13 args\n ",
+                "type": "(Getto.Field.Validate.Model a opts -> Getto.Field.Validate.Model b opts -> Getto.Field.Validate.Model c opts -> Getto.Field.Validate.Model d opts -> Getto.Field.Validate.Model e opts -> Getto.Field.Validate.Model f opts -> Getto.Field.Validate.Model g opts -> Getto.Field.Validate.Model h opts -> Getto.Field.Validate.Model i opts -> Getto.Field.Validate.Model j opts -> Getto.Field.Validate.Model k opts -> Getto.Field.Validate.Model l opts -> Getto.Field.Validate.Model m opts -> model) -> Getto.Field.Validate.Model a opts -> Getto.Field.Validate.Model b opts -> Getto.Field.Validate.Model c opts -> Getto.Field.Validate.Model d opts -> Getto.Field.Validate.Model e opts -> Getto.Field.Validate.Model f opts -> Getto.Field.Validate.Model g opts -> Getto.Field.Validate.Model h opts -> Getto.Field.Validate.Model i opts -> Getto.Field.Validate.Model j opts -> Getto.Field.Validate.Model k opts -> Getto.Field.Validate.Model l opts -> Getto.Field.Validate.Model m opts -> Getto.Field.Validate.View model"
+            },
+            {
+                "name": "compose14",
+                "comment": " compose models with 14 args\n ",
+                "type": "(Getto.Field.Validate.Model a opts -> Getto.Field.Validate.Model b opts -> Getto.Field.Validate.Model c opts -> Getto.Field.Validate.Model d opts -> Getto.Field.Validate.Model e opts -> Getto.Field.Validate.Model f opts -> Getto.Field.Validate.Model g opts -> Getto.Field.Validate.Model h opts -> Getto.Field.Validate.Model i opts -> Getto.Field.Validate.Model j opts -> Getto.Field.Validate.Model k opts -> Getto.Field.Validate.Model l opts -> Getto.Field.Validate.Model m opts -> Getto.Field.Validate.Model n opts -> model) -> Getto.Field.Validate.Model a opts -> Getto.Field.Validate.Model b opts -> Getto.Field.Validate.Model c opts -> Getto.Field.Validate.Model d opts -> Getto.Field.Validate.Model e opts -> Getto.Field.Validate.Model f opts -> Getto.Field.Validate.Model g opts -> Getto.Field.Validate.Model h opts -> Getto.Field.Validate.Model i opts -> Getto.Field.Validate.Model j opts -> Getto.Field.Validate.Model k opts -> Getto.Field.Validate.Model l opts -> Getto.Field.Validate.Model m opts -> Getto.Field.Validate.Model n opts -> Getto.Field.Validate.View model"
+            },
+            {
+                "name": "compose15",
+                "comment": " compose models with 15 args\n ",
+                "type": "(Getto.Field.Validate.Model a opts -> Getto.Field.Validate.Model b opts -> Getto.Field.Validate.Model c opts -> Getto.Field.Validate.Model d opts -> Getto.Field.Validate.Model e opts -> Getto.Field.Validate.Model f opts -> Getto.Field.Validate.Model g opts -> Getto.Field.Validate.Model h opts -> Getto.Field.Validate.Model i opts -> Getto.Field.Validate.Model j opts -> Getto.Field.Validate.Model k opts -> Getto.Field.Validate.Model l opts -> Getto.Field.Validate.Model m opts -> Getto.Field.Validate.Model n opts -> Getto.Field.Validate.Model o opts -> model) -> Getto.Field.Validate.Model a opts -> Getto.Field.Validate.Model b opts -> Getto.Field.Validate.Model c opts -> Getto.Field.Validate.Model d opts -> Getto.Field.Validate.Model e opts -> Getto.Field.Validate.Model f opts -> Getto.Field.Validate.Model g opts -> Getto.Field.Validate.Model h opts -> Getto.Field.Validate.Model i opts -> Getto.Field.Validate.Model j opts -> Getto.Field.Validate.Model k opts -> Getto.Field.Validate.Model l opts -> Getto.Field.Validate.Model m opts -> Getto.Field.Validate.Model n opts -> Getto.Field.Validate.Model o opts -> Getto.Field.Validate.View model"
+            },
+            {
+                "name": "compose16",
+                "comment": " compose models with 16 args\n ",
+                "type": "(Getto.Field.Validate.Model a opts -> Getto.Field.Validate.Model b opts -> Getto.Field.Validate.Model c opts -> Getto.Field.Validate.Model d opts -> Getto.Field.Validate.Model e opts -> Getto.Field.Validate.Model f opts -> Getto.Field.Validate.Model g opts -> Getto.Field.Validate.Model h opts -> Getto.Field.Validate.Model i opts -> Getto.Field.Validate.Model j opts -> Getto.Field.Validate.Model k opts -> Getto.Field.Validate.Model l opts -> Getto.Field.Validate.Model m opts -> Getto.Field.Validate.Model n opts -> Getto.Field.Validate.Model o opts -> Getto.Field.Validate.Model p opts -> model) -> Getto.Field.Validate.Model a opts -> Getto.Field.Validate.Model b opts -> Getto.Field.Validate.Model c opts -> Getto.Field.Validate.Model d opts -> Getto.Field.Validate.Model e opts -> Getto.Field.Validate.Model f opts -> Getto.Field.Validate.Model g opts -> Getto.Field.Validate.Model h opts -> Getto.Field.Validate.Model i opts -> Getto.Field.Validate.Model j opts -> Getto.Field.Validate.Model k opts -> Getto.Field.Validate.Model l opts -> Getto.Field.Validate.Model m opts -> Getto.Field.Validate.Model n opts -> Getto.Field.Validate.Model o opts -> Getto.Field.Validate.Model p opts -> Getto.Field.Validate.View model"
+            },
+            {
+                "name": "compose2",
+                "comment": " compose models with 2 args\n\n    Validate.compose Model\n      ( form |> ( name_ |> Validate.single [ form.name |> Validate.blank \"blank\" ] ) )\n      ( form |> ( age_  |> Validate.single [] ) )\n ",
+                "type": "(Getto.Field.Validate.Model a opts -> Getto.Field.Validate.Model b opts -> model) -> Getto.Field.Validate.Model a opts -> Getto.Field.Validate.Model b opts -> Getto.Field.Validate.View model"
+            },
+            {
+                "name": "compose3",
+                "comment": " compose models with 3 args\n ",
+                "type": "(Getto.Field.Validate.Model a opts -> Getto.Field.Validate.Model b opts -> Getto.Field.Validate.Model c opts -> model) -> Getto.Field.Validate.Model a opts -> Getto.Field.Validate.Model b opts -> Getto.Field.Validate.Model c opts -> Getto.Field.Validate.View model"
+            },
+            {
+                "name": "compose4",
+                "comment": " compose models with 4 args\n ",
+                "type": "(Getto.Field.Validate.Model a opts -> Getto.Field.Validate.Model b opts -> Getto.Field.Validate.Model c opts -> Getto.Field.Validate.Model d opts -> model) -> Getto.Field.Validate.Model a opts -> Getto.Field.Validate.Model b opts -> Getto.Field.Validate.Model c opts -> Getto.Field.Validate.Model d opts -> Getto.Field.Validate.View model"
+            },
+            {
+                "name": "compose5",
+                "comment": " compose models with 5 args\n ",
+                "type": "(Getto.Field.Validate.Model a opts -> Getto.Field.Validate.Model b opts -> Getto.Field.Validate.Model c opts -> Getto.Field.Validate.Model d opts -> Getto.Field.Validate.Model e opts -> model) -> Getto.Field.Validate.Model a opts -> Getto.Field.Validate.Model b opts -> Getto.Field.Validate.Model c opts -> Getto.Field.Validate.Model d opts -> Getto.Field.Validate.Model e opts -> Getto.Field.Validate.View model"
+            },
+            {
+                "name": "compose6",
+                "comment": " compose models with 6 args\n ",
+                "type": "(Getto.Field.Validate.Model a opts -> Getto.Field.Validate.Model b opts -> Getto.Field.Validate.Model c opts -> Getto.Field.Validate.Model d opts -> Getto.Field.Validate.Model e opts -> Getto.Field.Validate.Model f opts -> model) -> Getto.Field.Validate.Model a opts -> Getto.Field.Validate.Model b opts -> Getto.Field.Validate.Model c opts -> Getto.Field.Validate.Model d opts -> Getto.Field.Validate.Model e opts -> Getto.Field.Validate.Model f opts -> Getto.Field.Validate.View model"
+            },
+            {
+                "name": "compose7",
+                "comment": " compose models with 7 args\n ",
+                "type": "(Getto.Field.Validate.Model a opts -> Getto.Field.Validate.Model b opts -> Getto.Field.Validate.Model c opts -> Getto.Field.Validate.Model d opts -> Getto.Field.Validate.Model e opts -> Getto.Field.Validate.Model f opts -> Getto.Field.Validate.Model g opts -> model) -> Getto.Field.Validate.Model a opts -> Getto.Field.Validate.Model b opts -> Getto.Field.Validate.Model c opts -> Getto.Field.Validate.Model d opts -> Getto.Field.Validate.Model e opts -> Getto.Field.Validate.Model f opts -> Getto.Field.Validate.Model g opts -> Getto.Field.Validate.View model"
+            },
+            {
+                "name": "compose8",
+                "comment": " compose models with 8 args\n ",
+                "type": "(Getto.Field.Validate.Model a opts -> Getto.Field.Validate.Model b opts -> Getto.Field.Validate.Model c opts -> Getto.Field.Validate.Model d opts -> Getto.Field.Validate.Model e opts -> Getto.Field.Validate.Model f opts -> Getto.Field.Validate.Model g opts -> Getto.Field.Validate.Model h opts -> model) -> Getto.Field.Validate.Model a opts -> Getto.Field.Validate.Model b opts -> Getto.Field.Validate.Model c opts -> Getto.Field.Validate.Model d opts -> Getto.Field.Validate.Model e opts -> Getto.Field.Validate.Model f opts -> Getto.Field.Validate.Model g opts -> Getto.Field.Validate.Model h opts -> Getto.Field.Validate.View model"
+            },
+            {
+                "name": "compose9",
+                "comment": " compose models with 9 args\n ",
+                "type": "(Getto.Field.Validate.Model a opts -> Getto.Field.Validate.Model b opts -> Getto.Field.Validate.Model c opts -> Getto.Field.Validate.Model d opts -> Getto.Field.Validate.Model e opts -> Getto.Field.Validate.Model f opts -> Getto.Field.Validate.Model g opts -> Getto.Field.Validate.Model h opts -> Getto.Field.Validate.Model i opts -> model) -> Getto.Field.Validate.Model a opts -> Getto.Field.Validate.Model b opts -> Getto.Field.Validate.Model c opts -> Getto.Field.Validate.Model d opts -> Getto.Field.Validate.Model e opts -> Getto.Field.Validate.Model f opts -> Getto.Field.Validate.Model g opts -> Getto.Field.Validate.Model h opts -> Getto.Field.Validate.Model i opts -> Getto.Field.Validate.View model"
+            },
+            {
+                "name": "emptyList",
+                "comment": " error if empty list\n ",
+                "type": "String.String -> Getto.Field.Validate.Validater attr (List.List a)"
+            },
+            {
+                "name": "emptySet",
+                "comment": " error if empty set\n ",
+                "type": "String.String -> Getto.Field.Validate.Validater attr (Set.Set a)"
+            },
+            {
+                "name": "init",
+                "comment": " construct Field\n\n    \"name\" |> Validate.init signature \"\"\n ",
+                "type": "String.String -> value -> String.String -> Getto.Field.Validate.Field value"
+            },
+            {
+                "name": "notInt",
+                "comment": " error if string is not int\n ",
+                "type": "String.String -> Getto.Field.Validate.Validater attr String.String"
+            },
+            {
+                "name": "nothing",
+                "comment": " error if Nothing\n ",
+                "type": "String.String -> Getto.Field.Validate.Validater attr (Maybe.Maybe value)"
+            },
+            {
+                "name": "single",
+                "comment": " construct Single\n\n    form |> ( name_ |> Validate.single [ form.name |> Validate.blank \"blank\" ] )\n ",
+                "type": "List.List (Maybe.Maybe String.String) -> Getto.Field.Form.Prop form attr a -> form -> Getto.Field.Validate.Model (Getto.Field.Form.Model form attr a) {}"
+            },
+            {
+                "name": "validate",
+                "comment": " error if validation failed\n ",
+                "type": "String.String -> (a -> Basics.Bool) -> Getto.Field.Model attr a -> Maybe.Maybe String.String"
+            }
+        ],
+        "binops": []
+    }
+]

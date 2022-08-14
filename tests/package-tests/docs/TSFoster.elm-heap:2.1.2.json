@@ -1,0 +1,118 @@
+[
+    {
+        "name": "Heap",
+        "comment": " Data structure for heaps.\n\nThis package exposes a data structure to implement heaps/priority queues/fast\nin-place sorting.\n\nThe heap is implemented as a pairing heap, as it is simple but fast, and has\nbeen shown to work well in real-world situations.\n\n\n# Definition\n\n@docs Heap, Options, smallest, biggest, by, thenBy, using\n\n\n# Creating heaps\n\n@docs empty, singleton, fromList\n\n\n# Inserting/removing values\n\n@docs push, mergeInto, pop, popBlind\n\n\n# Inspecting heaps\n\n@docs isEmpty, size, peek\n\n\n# Converting to lists\n\n@docs toList, toListReverse, toListUnordered\n\n\n# Running times\n\n  - peek: **Θ(1)**\n  - pop: **O(log n) (amortized)**\n  - push: **Θ(1)**\n  - size: **Θ(1)**\n  - mergeInto: **Θ(1)**\n\n",
+        "unions": [
+            {
+                "name": "Heap",
+                "comment": " A heap `Heap  a` takes values of type `a`, keeping them loosely ordered.\nValues can be very quickly added, and, depending on the type of heap, either the\n\"smallest\" or \"biggest\" value can be quickly recalled or removed.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Options",
+                "comment": " When creating a new heap `Heap a`, `Options a` must be provided. They will\ndetermine whether the heap keeps the \"smallest\" or \"biggest\" value to hand, and\nhow it determines how small or big the value is.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "biggest",
+                "comment": " A `biggest` heap is a heap of any comparable type (ints, floats, chars, strings,\nlists, or tuples), which keeps the biggest value to hand.\n\n    >>> Heap.fromList biggest [ 0, 1, 2, 3, 4 ]\n    ...     |> Heap.peek\n    Just 4\n\n",
+                "type": "Heap.Options comparable"
+            },
+            {
+                "name": "by",
+                "comment": " `by someFunction` tells the heap to sort by comparing values with the given\nfunction. This may commonly be a property of a record, and allows you to create\nheaps of non-comparable types:\n\n    Heap.singleton (biggest |> by .yearOfBirth)\n        { firstName = \"Buzz\"\n        , lastName = \"Aldrin\"\n        , yearOfBirth = 1930\n        }\n\n… or a hashing/consolidation function:\n\n    Heap.singleton (biggest |> by List.length)\n        [ 1, 2, 3, 4, 5, 6 ]\n\n",
+                "type": "(a -> comparable) -> Heap.Options b -> Heap.Options a"
+            },
+            {
+                "name": "empty",
+                "comment": " Given Heap.Options, returns an empty heap.\n\n    Heap.empty smallest\n        |> Heap.push 376373\n\n    Heap.empty (smallest |> by .age)\n        |> Heap.push { firstName = \"Pippi\", lastName = \"Longstocking\", age = 9 }\n\n",
+                "type": "Heap.Options a -> Heap.Heap a"
+            },
+            {
+                "name": "fromList",
+                "comment": " A heap containing all values in the list, given Heap.Options.\n\n    >>> Heap.fromList (biggest |> by (List.maximum >> Maybe.withDefault -999999))\n    ...     [ [ 1, 999 ]\n    ...     , [ 6, 4, 3, 8, 9, 347, 34, 132, 546 ]\n    ...     ]\n    ...         |> Heap.peek\n    Just [ 1, 999 ]\n\n    >>> Heap.fromList smallest []\n    ...    |> Heap.size\n    0\n\n    >>> Heap.fromList smallest [ 8, 3, 8, 3, 6, 67, 23 ]\n    ...    |> Heap.size\n    7\n\n",
+                "type": "Heap.Options a -> List.List a -> Heap.Heap a"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " `True` if the Heap is empty, otherwise `False`.\n\n    >>> Heap.isEmpty (Heap.empty smallest)\n    True\n\n    >>> Heap.isEmpty (Heap.singleton smallest 3)\n    False\n\n",
+                "type": "Heap.Heap a -> Basics.Bool"
+            },
+            {
+                "name": "mergeInto",
+                "comment": " Merge the second heap into the first heap.\n\n**Note** This function assumes that both heaps are sorted using the same method.\nStrictly speaking, the merged heap has the same sorting method as the first heap\ngiven.\n\n    >>> Heap.isEmpty (Heap.mergeInto (Heap.empty smallest) (Heap.empty smallest))\n    True\n\n    >>> Heap.mergeInto (Heap.fromList smallest [ 2, 4, 6, 7 ]) (Heap.fromList smallest [ 5, 7, 9, 3 ])\n    ...     |> Heap.size\n    8\n\n",
+                "type": "Heap.Heap a -> Heap.Heap a -> Heap.Heap a"
+            },
+            {
+                "name": "peek",
+                "comment": " Look at smallest/biggest value in heap without applying any transformations.\n\n    >>> Heap.peek (Heap.empty smallest)\n    Nothing\n\n    >>> Heap.peek (Heap.fromList smallest [ 3, 56, 8, 367, 0, 4 ])\n    Just 0\n\n    >>> Heap.peek (Heap.fromList biggest [ 3, 56, 8, 367, 0, 4 ])\n    Just 367\n\n",
+                "type": "Heap.Heap a -> Maybe.Maybe a"
+            },
+            {
+                "name": "pop",
+                "comment": " Try to remove the top value from the heap, returning the value and the\nnew heap. If the heap is empty, return Nothing.\n\n    >>> Heap.pop (Heap.empty biggest)\n    Nothing\n\n    >>> Heap.fromList smallest [ 3, 5, 7, 7, 2, 9 ]\n    ...     |> Heap.pop\n    ...     |> Maybe.map (Tuple.mapSecond Heap.size)\n    Just (2, 5)\n\n",
+                "type": "Heap.Heap a -> Maybe.Maybe ( a, Heap.Heap a )"
+            },
+            {
+                "name": "popBlind",
+                "comment": " Try to remove the top value from the heap, returning just the new heap.\nIf the heap is empty, return Nothing.\n\n    >>> Heap.popBlind (Heap.empty smallest)\n    Nothing\n\n    >>> Heap.singleton smallest 3\n    ...     |> Heap.popBlind\n    ...     |> Maybe.map Heap.size\n    Just 0\n\n",
+                "type": "Heap.Heap a -> Maybe.Maybe (Heap.Heap a)"
+            },
+            {
+                "name": "push",
+                "comment": " Add a value to a heap.\n\n    >>> Heap.fromList smallest [ 1, 6, 7 ]\n    ...     |> Heap.push 4\n    ...     |> Heap.peek\n    Just 1\n\n    >>> Heap.fromList smallest [ 5, 6, 7 ]\n    ...     |> Heap.push 4\n    ...     |> Heap.peek\n    Just 4\n\n",
+                "type": "a -> Heap.Heap a -> Heap.Heap a"
+            },
+            {
+                "name": "singleton",
+                "comment": " A heap containing one value, given Heap.Options\n\n    Heap.singleton (smallest |> by .age)\n        { firstName = \"Pippi\", lastName = \"Longstocking\", age = 9 }\n\n    Heap.singleton biggest\n        \"Peter Piper picked a pack of pickled peppers\"\n\n    Heap.singleton (biggest |> by String.length)\n        \"Peter Piper picked a pack of pickled peppers\"\n\n",
+                "type": "Heap.Options a -> a -> Heap.Heap a"
+            },
+            {
+                "name": "size",
+                "comment": " Number of elements in heap.\n\n    >>> Heap.size (Heap.empty biggest)\n    0\n\n    >>> Heap.size (Heap.fromList biggest [ 1, 2, 3, 4, 5, 6, 7, 8 ])\n    8\n\n",
+                "type": "Heap.Heap a -> Basics.Int"
+            },
+            {
+                "name": "smallest",
+                "comment": " A `smallest` heap is a heap of any comparable type (ints, floats, chars, strings,\nlists, or tuples), which keeps the smallest value to hand.\n\n    >>> Heap.fromList smallest [ 0, 1, 2, 3, 4 ]\n    ...     |> Heap.peek\n    Just 0\n\n",
+                "type": "Heap.Options comparable"
+            },
+            {
+                "name": "thenBy",
+                "comment": " `thenBy  someFunction` tells the heap to use the given function to compare\nvalues, if it cannot otherwise differentiate between two values.\n\n    Heap.singleton (smallest |> by .lastName |> thenBy .firstName)\n        { firstName = \"Buzz\"\n        , lastName = \"Aldrin\"\n        , yearOfBirth = 1930\n        }\n\n",
+                "type": "(a -> comparable) -> Heap.Options a -> Heap.Options a"
+            },
+            {
+                "name": "toList",
+                "comment": " Get all values from the heap, in order.\n\n    >>> Heap.toList (Heap.fromList smallest [ 9, 3, 6, 4, 1, 2, 8, 5, 7 ])\n    [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ]\n\n",
+                "type": "Heap.Heap a -> List.List a"
+            },
+            {
+                "name": "toListReverse",
+                "comment": " Get all values from the heap, in reverse order.\n\n    >>> Heap.toListReverse (Heap.fromList smallest [ 9, 3, 6, 4, 1, 2, 8, 5, 7 ])\n    [ 9, 8, 7, 6, 5, 4, 3, 2, 1 ]\n\n",
+                "type": "Heap.Heap a -> List.List a"
+            },
+            {
+                "name": "toListUnordered",
+                "comment": " Get all values out as fast as possible, regardless of order\n",
+                "type": "Heap.Heap a -> List.List a"
+            },
+            {
+                "name": "using",
+                "comment": " `using  customCompareFunction` allows you to provide a custom function for\ncomparing elements.\n\n    compareFunctions : (Int -> Int -> Int) -> (Int -> Int -> Int) -> Order\n    compareFunctions a b =\n        Basics.compare (a 2 1) (b 2 1)\n\n    heap : Heap (Int -> Int -> Int)\n    Heap.fromList (smallest |> using compareFunctions)\n        [(+), (-), (*)]\n\n",
+                "type": "(a -> a -> Basics.Order) -> Heap.Options b -> Heap.Options a"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,555 @@
+[
+    {
+        "name": "Editor",
+        "comment": " Use this module to embed a text editor in an Elm app.\n\n\n## Contents\n\n  - Embedding the Editor\n  - Using the Editor\n  - Types\n  - Getters\n  - Clipboard\n  - Scroll\n\n\n## Embedding the Editor\n\n@docs embedded, init\n\n\n## Using the editor\n\n@docs load, update, insert\n\n\n## Types\n\n@docs Editor, EditorConfig, EditorMsg\n\n\n## Getters\n\n@docs getBuffer, getState, getSource, getCursor, getWrapOption, getSelectedText, getFontSize, getWidth, transformConfig, lineAt, lineAtCursor\n\n\n## Setters\n\n@docs setSelectedText, setHeight, setWidth\n\n\n## Clipboard\n\n@docs placeInClipboard\n\n\n## Scroll\n\n@docs scrollToLine, scrollToString\n\n",
+        "unions": [
+            {
+                "name": "Editor",
+                "comment": " Embed the editor in an app like this:\n\n    type alias Model =\n        { editor : Editor\n        , ...\n        }\n\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "EditorConfig",
+                "comment": " A typical configuration:\n\n    config : EditorConfig Msg\n    config =\n        { editorMsg = EditorMsg\n        , sliderMsg = SliderMsg\n        , editorStyle = editorStyle\n        , width = 500\n        , lines = 30\n        , lineHeight = 16.0\n        , showInfoPanel = True\n        , wrapParams = { maximumWidth = 55, optimalWidth = 50, stringWidth = String.length }\n        , wrapOption = DontWrap\n        }\n\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ editorMsg : Editor.EditorMsg -> a, width : Basics.Float, height : Basics.Float, lineHeight : Basics.Float, showInfoPanel : Basics.Bool, wrapParams : { maximumWidth : Basics.Int, optimalWidth : Basics.Int, stringWidth : String.String -> Basics.Int }, wrapOption : Editor.Config.WrapOption, fontProportion : Basics.Float, lineHeightFactor : Basics.Float }"
+            },
+            {
+                "name": "EditorMsg",
+                "comment": " Example:\n\n    type Msg\n        = EditorMsg EditorMsg\n        | LogErr String\n        ...\n\n",
+                "args": [],
+                "type": "Editor.Update.Msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "embedded",
+                "comment": " Embed the editor in the host app:\n\n    view : Model -> Html Msg\n    view model =\n        div [ HA.style \"margin\" \"60px\" ]\n            [ ...\n            , Editor.embedded config model.editor\n            , ...\n            ]\n\n",
+                "type": "Editor.EditorConfig a -> Editor.Editor -> Html.Html a"
+            },
+            {
+                "name": "getBuffer",
+                "comment": " Get the buffer (mostly for tests)\n",
+                "type": "Editor.Editor -> Buffer.Buffer"
+            },
+            {
+                "name": "getCursor",
+                "comment": " Get the cursor position. See the example for `insert`.\n",
+                "type": "Editor.Editor -> Position.Position"
+            },
+            {
+                "name": "getFontSize",
+                "comment": " ",
+                "type": "Editor.Editor -> Basics.Float"
+            },
+            {
+                "name": "getSelectedText",
+                "comment": " ",
+                "type": "Editor.Editor -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "getSource",
+                "comment": " Return the current source text\n",
+                "type": "Editor.Editor -> String.String"
+            },
+            {
+                "name": "getState",
+                "comment": " Get the state (mostly for tests)\n",
+                "type": "Editor.Editor -> Editor.Model.InternalState"
+            },
+            {
+                "name": "getWidth",
+                "comment": " Get width in pixels of editor\n",
+                "type": "Editor.Editor -> Basics.Float"
+            },
+            {
+                "name": "getWrapOption",
+                "comment": " Get the options for wrapping text. See the example for `insert`.\n",
+                "type": "Editor.Editor -> Editor.Config.WrapOption"
+            },
+            {
+                "name": "init",
+                "comment": " XXX: Changed\n\nInitialize the embedded editor:\n\n    init : () -> ( Model, Cmd Msg )\n    init () =\n        ( { editor = Editor.init config AppText.jabberwocky\n          , ...\n          }\n        , Cmd.none\n        )\n\n",
+                "type": "Editor.EditorConfig a -> String.String -> Editor.Editor"
+            },
+            {
+                "name": "insert",
+                "comment": " Use to insert text into the editor at a given position, e.g.,\n\n    pasteToClipboard : Model -> String -> ( Model, Cmd msg )\n    pasteToClipboard model editor =\n        ( { model\n            | editor =\n                Editor.insert\n                    (Editor.getWrapOption model.editor)\n                    (Editor.getCursor model.editor)\n                    editor\n                    model.editor\n          }\n        , Cmd.none\n        )\n\n",
+                "type": "Editor.Config.WrapOption -> Position.Position -> String.String -> Editor.Editor -> Editor.Editor"
+            },
+            {
+                "name": "lineAt",
+                "comment": " Return the the line at the given position\n",
+                "type": "Position.Position -> Editor.Editor -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "lineAtCursor",
+                "comment": " Return the the line at the given position\n",
+                "type": "Editor.Editor -> String.String"
+            },
+            {
+                "name": "load",
+                "comment": " Load text into the embedded editor.\n\n    load : WrapOption -> String -> Model -> ( Model, Cmd Msg )\n    load wrapOption text model =\n        let\n            newEditor =\n                Editor.load wrapOption text model.editor\n        in\n        ( { model | editor = newEditor }, Cmd.none )\n\n",
+                "type": "Editor.Config.WrapOption -> String.String -> Editor.Editor -> Editor.Editor"
+            },
+            {
+                "name": "placeInClipboard",
+                "comment": " Place string in the editor's clipboard\n",
+                "type": "String.String -> Editor.Editor -> Editor.Editor"
+            },
+            {
+                "name": "scrollToLine",
+                "comment": " Scroll the editor to a given line\n",
+                "type": "Basics.Int -> Editor.Editor -> Editor.Editor"
+            },
+            {
+                "name": "scrollToString",
+                "comment": " Scroll the editor to the first occurrence of a given string\n",
+                "type": "String.String -> Editor.Editor -> Editor.Editor"
+            },
+            {
+                "name": "setHeight",
+                "comment": " Set height of editor in pixels\n",
+                "type": "Basics.Float -> Editor.Editor -> Editor.Editor"
+            },
+            {
+                "name": "setSelectedText",
+                "comment": " ",
+                "type": "String.String -> Editor.Editor -> Editor.Editor"
+            },
+            {
+                "name": "setWidth",
+                "comment": " Set width of editor in pixels\n",
+                "type": "Basics.Float -> Editor.Editor -> Editor.Editor"
+            },
+            {
+                "name": "transformConfig",
+                "comment": " XXX: Changed\n",
+                "type": "Editor.EditorConfig a -> Editor.Config.Config"
+            },
+            {
+                "name": "update",
+                "comment": " Respond to updates in the editor:\n\n    update : Msg -> Model -> ( Model, Cmd Msg )\n    update msg model =\n        case msg of\n            EditorMsg editorMsg ->\n                let\n                    ( editor, cmd ) =\n                        Editor.update editorMsg model.editor\n                in\n                ( { model | editor = editor }, Cmd.map EditorMsg cmd )\n\n            ...\n\n",
+                "type": "Editor.EditorMsg -> Editor.Editor -> ( Editor.Editor, Platform.Cmd.Cmd Editor.EditorMsg )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Editor.Config",
+        "comment": " Use this module to configure the editor.\nThe `default` value is a basic configuration\nwhich you can modify like this:\n\n    config =\n        { default | lines = 30 }\n\n@docs Config, WrapOption, WrapParams, default, setMaximumWrapWidth, setOptimumWrapWidth, setWrapOption\n\n",
+        "unions": [
+            {
+                "name": "WrapOption",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "DoWrap",
+                        []
+                    ],
+                    [
+                        "DontWrap",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " ",
+                "args": [],
+                "type": "{ wrapParams : Editor.Config.WrapParams, showInfoPanel : Basics.Bool, wrapOption : Editor.Config.WrapOption, width : Basics.Float, height : Basics.Float, lineHeight : Basics.Float, fontProportion : Basics.Float, lineHeightFactor : Basics.Float }"
+            },
+            {
+                "name": "WrapParams",
+                "comment": " ",
+                "args": [],
+                "type": "{ maximumWidth : Basics.Int, optimalWidth : Basics.Int, stringWidth : String.String -> Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "default",
+                "comment": " ",
+                "type": "Editor.Config.Config"
+            },
+            {
+                "name": "setMaximumWrapWidth",
+                "comment": " ",
+                "type": "Basics.Int -> Editor.Config.Config -> Editor.Config.Config"
+            },
+            {
+                "name": "setOptimumWrapWidth",
+                "comment": " ",
+                "type": "Basics.Int -> Editor.Config.Config -> Editor.Config.Config"
+            },
+            {
+                "name": "setWrapOption",
+                "comment": " ",
+                "type": "Editor.Config.WrapOption -> Editor.Config.Config -> Editor.Config.Config"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Editor.Strings",
+        "comment": " Strings for the help system.\n\n@docs help, info\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "help",
+                "comment": " Help text for the editor\n",
+                "type": "String.String"
+            },
+            {
+                "name": "info",
+                "comment": " Information about the Pure Elm Editor project.\n",
+                "type": "String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Editor.Update",
+        "comment": " Blah, blah ...\n\n@docs Msg, blur, clearState, focus, scrollToLine, scrollToText, update\n\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " The messages to which the editor responds\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NoOp",
+                        []
+                    ],
+                    [
+                        "MouseDown",
+                        [
+                            "Position.Position"
+                        ]
+                    ],
+                    [
+                        "MouseOver",
+                        [
+                            "Position.Position"
+                        ]
+                    ],
+                    [
+                        "MouseUp",
+                        []
+                    ],
+                    [
+                        "Copy",
+                        []
+                    ],
+                    [
+                        "CopyPasteClipboard",
+                        []
+                    ],
+                    [
+                        "WriteToSystemClipBoard",
+                        []
+                    ],
+                    [
+                        "Cut",
+                        []
+                    ],
+                    [
+                        "CursorLeft",
+                        []
+                    ],
+                    [
+                        "CursorRight",
+                        []
+                    ],
+                    [
+                        "CursorUp",
+                        []
+                    ],
+                    [
+                        "CursorDown",
+                        []
+                    ],
+                    [
+                        "CursorToLineEnd",
+                        []
+                    ],
+                    [
+                        "CursorToLineStart",
+                        []
+                    ],
+                    [
+                        "CursorToGroupEnd",
+                        []
+                    ],
+                    [
+                        "CursorToGroupStart",
+                        []
+                    ],
+                    [
+                        "Insert",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "FirstLine",
+                        []
+                    ],
+                    [
+                        "AcceptLineNumber",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "AcceptSearchText",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "AcceptReplacementText",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "ReplaceCurrentSelection",
+                        []
+                    ],
+                    [
+                        "LastLine",
+                        []
+                    ],
+                    [
+                        "Paste",
+                        []
+                    ],
+                    [
+                        "PasteFromClipboard",
+                        []
+                    ],
+                    [
+                        "RemoveCharAfter",
+                        []
+                    ],
+                    [
+                        "RemoveCharBefore",
+                        []
+                    ],
+                    [
+                        "RemoveGroupAfter",
+                        []
+                    ],
+                    [
+                        "RemoveGroupBefore",
+                        []
+                    ],
+                    [
+                        "Indent",
+                        []
+                    ],
+                    [
+                        "Deindent",
+                        []
+                    ],
+                    [
+                        "SelectUp",
+                        []
+                    ],
+                    [
+                        "SelectDown",
+                        []
+                    ],
+                    [
+                        "SelectLeft",
+                        []
+                    ],
+                    [
+                        "SelectRight",
+                        []
+                    ],
+                    [
+                        "SelectToLineStart",
+                        []
+                    ],
+                    [
+                        "SelectToLineEnd",
+                        []
+                    ],
+                    [
+                        "SelectToGroupStart",
+                        []
+                    ],
+                    [
+                        "SelectToGroupEnd",
+                        []
+                    ],
+                    [
+                        "SelectAll",
+                        []
+                    ],
+                    [
+                        "SelectGroup",
+                        []
+                    ],
+                    [
+                        "SelectLine",
+                        []
+                    ],
+                    [
+                        "SendLine",
+                        []
+                    ],
+                    [
+                        "Undo",
+                        []
+                    ],
+                    [
+                        "Redo",
+                        []
+                    ],
+                    [
+                        "ScrollUp",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "ScrollDown",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "ScrollToSelection",
+                        [
+                            "( Position.Position, Position.Position )"
+                        ]
+                    ],
+                    [
+                        "RollSearchSelectionForward",
+                        []
+                    ],
+                    [
+                        "RollSearchSelectionBackward",
+                        []
+                    ],
+                    [
+                        "SyncToSearchHit",
+                        []
+                    ],
+                    [
+                        "Clear",
+                        []
+                    ],
+                    [
+                        "WrapSelection",
+                        []
+                    ],
+                    [
+                        "WrapAll",
+                        []
+                    ],
+                    [
+                        "ToggleWrapping",
+                        []
+                    ],
+                    [
+                        "ToggleHelp",
+                        []
+                    ],
+                    [
+                        "ToggleInfoPanel",
+                        []
+                    ],
+                    [
+                        "ToggleGoToLinePanel",
+                        []
+                    ],
+                    [
+                        "ToggleSearchPanel",
+                        []
+                    ],
+                    [
+                        "ToggleReplacePanel",
+                        []
+                    ],
+                    [
+                        "OpenReplaceField",
+                        []
+                    ],
+                    [
+                        "DebounceMsg",
+                        [
+                            "Debounce.Msg"
+                        ]
+                    ],
+                    [
+                        "Unload",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "GotViewport",
+                        [
+                            "Result.Result Browser.Dom.Error Browser.Dom.Viewport"
+                        ]
+                    ],
+                    [
+                        "GotViewportForSync",
+                        [
+                            "Position.Position",
+                            "Maybe.Maybe Position.Position",
+                            "Result.Result Browser.Dom.Error Browser.Dom.Viewport"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "blur",
+                "comment": " A command to lose focus on the element with\nthe given id.\n",
+                "type": "String.String -> Platform.Cmd.Cmd Editor.Update.Msg"
+            },
+            {
+                "name": "clearState",
+                "comment": " Return the \"zero\"\" internal state\n",
+                "type": "Editor.Model.InternalState -> Editor.Model.InternalState"
+            },
+            {
+                "name": "focus",
+                "comment": " A command to place the focus on the element with\nthe given id.\n",
+                "type": "String.String -> Platform.Cmd.Cmd Editor.Update.Msg"
+            },
+            {
+                "name": "scrollToLine",
+                "comment": " Return a pair (InternalState, Buffer) representing the editor scrolled\nto a given line `k`.\n",
+                "type": "Basics.Int -> Editor.Model.InternalState -> Buffer.Buffer -> ( Editor.Model.InternalState, Buffer.Buffer )"
+            },
+            {
+                "name": "scrollToText",
+                "comment": " Return data representing the editor scrolled toa given string (first search occurrence).\n",
+                "type": "String.String -> Editor.Model.InternalState -> Buffer.Buffer -> ( Editor.Model.InternalState, Buffer.Buffer )"
+            },
+            {
+                "name": "update",
+                "comment": " Return data representing an editor updated via a message and a new buffer\n",
+                "type": "Buffer.Buffer -> Editor.Update.Msg -> Editor.Model.InternalState -> ( Editor.Model.InternalState, Buffer.Buffer, Platform.Cmd.Cmd Editor.Update.Msg )"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,16 @@
+[
+    {
+        "name": "PorterStemmer",
+        "comment": " Elm implementation of the classical Porter Stemming-algorithm. The algorithm\nis described in [this paper](http://tartarus.org/martin/PorterStemmer/def.txt)\nand on [Wikipedia](https://en.wikipedia.org/wiki/Stemming).\nThe implementation is inspired by the [JavaScript](http://tartarus.org/martin/PorterStemmer/js.txt)-\nand the [Haskell](http://tartarus.org/martin/PorterStemmer/haskell.txt)-implementation.\n\nThe module exposes a single function.\n\n@docs stem\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "stem",
+                "comment": " The stem-function takes a word and returns its stem.\n\n    stem \"sky\" == \"sky\"\n    stem \"hopefulness\" == \"hope\"\n",
+                "type": "String.String -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

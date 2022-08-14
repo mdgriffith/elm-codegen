@@ -1,0 +1,154 @@
+[
+    {
+        "name": "Random.General",
+        "comment": " A basis for random number generators.\nYou only need this if you want to use another internal random number generators than the default.\nThis could for instance be used to implement a cryptographically secure random number generator,\nwith the same functionality that you love from the elm `Random` library (e.g. Generators).\n\n\\*\\* All functions that are not documented here are exactly like the ones described in the `Random.Pcg` module. \\*\\*\n\n\n# Create custom RNGs\n\n@docs Config, makeConfig\n\n\n# Basic Generators\n\n@docs Generator, step, bool, int, float, oneIn, sample\n\n\n# Combining Generators\n\n@docs pair, list, maybe, choice, choices, frequency\n\n\n# Custom Generators\n\n@docs constant, map, map2, map3, map4, map5, andMap, andThen, filter\n\n\n# Constants\n\n@docs minInt, maxInt\n\n\n# Internal\n\n@docs generator\n\n",
+        "unions": [
+            {
+                "name": "Config",
+                "comment": " A `Config` describes how the internal random number generator works.\nsee `makeConfig` for more.\n",
+                "args": [
+                    "s"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Generator",
+                "comment": " ",
+                "args": [
+                    "s",
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "andMap",
+                "comment": " ",
+                "type": "Random.General.Generator s a -> Random.General.Generator s (a -> b) -> Random.General.Generator s b"
+            },
+            {
+                "name": "andThen",
+                "comment": " ",
+                "type": "(a -> Random.General.Generator s b) -> Random.General.Generator s a -> Random.General.Generator s b"
+            },
+            {
+                "name": "bool",
+                "comment": " ",
+                "type": "Random.General.Config s -> Random.General.Generator s Basics.Bool"
+            },
+            {
+                "name": "choice",
+                "comment": " ",
+                "type": "Random.General.Config s -> a -> a -> Random.General.Generator s a"
+            },
+            {
+                "name": "choices",
+                "comment": " ",
+                "type": "Random.General.Config s -> Random.General.Generator s a -> List.List (Random.General.Generator s a) -> Random.General.Generator s a"
+            },
+            {
+                "name": "constant",
+                "comment": " ",
+                "type": "a -> Random.General.Generator s a"
+            },
+            {
+                "name": "filter",
+                "comment": " ",
+                "type": "(a -> Basics.Bool) -> Random.General.Generator s a -> Random.General.Generator s a"
+            },
+            {
+                "name": "float",
+                "comment": " ",
+                "type": "Random.General.Config s -> Basics.Float -> Basics.Float -> Random.General.Generator s Basics.Float"
+            },
+            {
+                "name": "frequency",
+                "comment": " ",
+                "type": "Random.General.Config s -> ( Basics.Float, Random.General.Generator s a ) -> List.List ( Basics.Float, Random.General.Generator s a ) -> Random.General.Generator s a"
+            },
+            {
+                "name": "generator",
+                "comment": " This allows you to create base generators such as the `int` or `float` generator.\nOnly use this if you really know what you are doing.\nIn almost all cases it is better to create generators that are based on some other generators\nusing the combinations functions provided in this library.\n\nIf you really need this, a generator is just a function of type `s -> (a, s)`.\nE.g. a function that takes the current state of your seed, gets some value out of it and generates a new seed.\n\n",
+                "type": "(s -> ( a, s )) -> Random.General.Generator s a"
+            },
+            {
+                "name": "int",
+                "comment": " ",
+                "type": "Random.General.Config s -> Basics.Int -> Basics.Int -> Random.General.Generator s Basics.Int"
+            },
+            {
+                "name": "list",
+                "comment": " ",
+                "type": "Basics.Int -> Random.General.Generator s a -> Random.General.Generator s (List.List a)"
+            },
+            {
+                "name": "makeConfig",
+                "comment": " `makeConfig` takes two arguments, a `next` function and a `peel` function.\nThe `next` function describes how to generate a new internal state from the current internal state.\nThe `peel` function describes how to map the internal state to a single integer.\n\nAs an example, let's see how to implement a terrible RNG:\n\n    incrementRNG =\n        makeConfig\n            (\\s ->\n                -- Bitwise.shiftRightZfBy 0 is used to truncate the state to 32 bits\n                s + 1 |> Bitwise.shiftRightZfBy 0\n            )\n            identity\n\n",
+                "type": "(s -> s) -> (s -> Basics.Int) -> Random.General.Config s"
+            },
+            {
+                "name": "map",
+                "comment": " ",
+                "type": "(a -> b) -> Random.General.Generator s a -> Random.General.Generator s b"
+            },
+            {
+                "name": "map2",
+                "comment": " ",
+                "type": "(a -> b -> c) -> Random.General.Generator s a -> Random.General.Generator s b -> Random.General.Generator s c"
+            },
+            {
+                "name": "map3",
+                "comment": " ",
+                "type": "(a -> b -> c -> d) -> Random.General.Generator s a -> Random.General.Generator s b -> Random.General.Generator s c -> Random.General.Generator s d"
+            },
+            {
+                "name": "map4",
+                "comment": " ",
+                "type": "(a -> b -> c -> d -> e) -> Random.General.Generator s a -> Random.General.Generator s b -> Random.General.Generator s c -> Random.General.Generator s d -> Random.General.Generator s e"
+            },
+            {
+                "name": "map5",
+                "comment": " Combine five generators.\n",
+                "type": "(a -> b -> c -> d -> e -> f) -> Random.General.Generator s a -> Random.General.Generator s b -> Random.General.Generator s c -> Random.General.Generator s d -> Random.General.Generator s e -> Random.General.Generator s f"
+            },
+            {
+                "name": "maxInt",
+                "comment": " ",
+                "type": "Basics.Int"
+            },
+            {
+                "name": "maybe",
+                "comment": " ",
+                "type": "Random.General.Generator s Basics.Bool -> Random.General.Generator s a -> Random.General.Generator s (Maybe.Maybe a)"
+            },
+            {
+                "name": "minInt",
+                "comment": " ",
+                "type": "Basics.Int"
+            },
+            {
+                "name": "oneIn",
+                "comment": " ",
+                "type": "Random.General.Config s -> Basics.Int -> Random.General.Generator s Basics.Bool"
+            },
+            {
+                "name": "pair",
+                "comment": " ",
+                "type": "Random.General.Generator s a -> Random.General.Generator s b -> Random.General.Generator s ( a, b )"
+            },
+            {
+                "name": "sample",
+                "comment": " ",
+                "type": "Random.General.Config s -> List.List a -> Random.General.Generator s (Maybe.Maybe a)"
+            },
+            {
+                "name": "step",
+                "comment": " ",
+                "type": "Random.General.Generator s a -> s -> ( a, s )"
+            }
+        ],
+        "binops": []
+    }
+]

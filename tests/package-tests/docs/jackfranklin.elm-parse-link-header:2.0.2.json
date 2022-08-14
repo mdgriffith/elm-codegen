@@ -1,0 +1,61 @@
+[
+    {
+        "name": "LinkHeader",
+        "comment": " This library provides the ability to parse Link headers returned from APIs.\n\n\n# Types\n\n@docs WebLink, LinkRel\n\n\n# Parsing\n\n@docs parse\n\n",
+        "unions": [
+            {
+                "name": "LinkRel",
+                "comment": " The possible types of web links that this parser might produce.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "RelNext",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "RelPrev",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "RelFirst",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "RelLast",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "RelUnknown",
+                        [
+                            "Basics.Int"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "WebLink",
+                "comment": " An individual link contains a `rel`, the `page` number and the URL.\n",
+                "args": [],
+                "type": "{ rel : LinkHeader.LinkRel, url : String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "parse",
+                "comment": " Parse is given the string, which should be the entire link header from your API and returns a list of WebLinks. This will be empty if no matches were found\n",
+                "type": "String.String -> List.List LinkHeader.WebLink"
+            }
+        ],
+        "binops": []
+    }
+]

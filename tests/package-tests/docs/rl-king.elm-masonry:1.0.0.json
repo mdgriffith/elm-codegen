@@ -1,0 +1,77 @@
+[
+    {
+        "name": "Masonry",
+        "comment": " Distribute elements over columns, ordered from left to right while taking\nelement height into account so all columns are about the same length.\n\n\n# Create\n\n@docs Masonry\n@docs empty\n@docs init\n@docs append\n\n\n# View\n\n@docs Config\n@docs view\n@docs viewList\n\n\n# Update\n\n@docs Msg\n@docs update\n\n\n# Height\n\nSometimes the element height changes after page initialisation, like when it\ncontains an image for example.\n\nUpdate the height of an element with `getHeight`.\n\n    type Msg\n        = ImageLoaded Masonry.Id\n\n    update : Msg -> Model -> ( Model, Cmd Msg )\n    update msg model =\n        case msg of\n            ImageLoaded id ->\n                ( model\n                , Cmd.map MasonryMsg (Masonry.getHeight id)\n                )\n\n    viewItem : Masonry.Id -> () -> Html msg\n    viewItem id _ =\n        img [ on \"load\" (Decode.succeed (ImageLoaded id)) ] []\n\n@docs Id\n@docs getHeight\n\n",
+        "unions": [
+            {
+                "name": "Id",
+                "comment": " A unique element `Id`.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Masonry",
+                "comment": " ",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Msg",
+                "comment": " A message type for the `Masonry a` to update.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " Configure how you want your `Masonry a` to render.\nEach element gets rendered by `toView` and `columns` is the amount of columns.\n\nEach element is wrapped in a `div` and rendered with the class\n`\"elm-masonry-item-height-unknown\"`. Once the height is known the class\nis updated to `\"elm-masonry-item-height-known\"`. Because we need the elements\nto render in order to measure their height you might see some reordering\nhappening live in the browser. Set `opacity: 0;` of elements\nwith an unknown height class if this is bothersome.\n\n",
+                "args": [
+                    "a",
+                    "msg"
+                ],
+                "type": "{ toView : Masonry.Id -> a -> Html.Html msg, columns : Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "append",
+                "comment": " Append `List a` to an existing `Masonry a` and get each element height.\n",
+                "type": "List.List a -> Masonry.Masonry a -> ( Masonry.Masonry a, Platform.Cmd.Cmd Masonry.Msg )"
+            },
+            {
+                "name": "empty",
+                "comment": " A `Masonry a` containing no items.\n\nIf you're rendering multiple `Masonry a` on the same page\nprovide an id to not get the elements mixed up when getting their height.\n\n    Masonry.empty Nothing\n\n",
+                "type": "Maybe.Maybe String.String -> Masonry.Masonry a"
+            },
+            {
+                "name": "getHeight",
+                "comment": " Get the height of the element with given `Id`.\n",
+                "type": "Masonry.Id -> Platform.Cmd.Cmd Masonry.Msg"
+            },
+            {
+                "name": "init",
+                "comment": " Create a `Masonry a` from `List a` and get each element height.\n\nIf you're rendering multiple `Masonry a` on the same page\nprovide an id to not get the elements mixed up when getting their height.\n\n    Masonry.init (Just \"search-results\") results\n\n",
+                "type": "Maybe.Maybe String.String -> List.List a -> ( Masonry.Masonry a, Platform.Cmd.Cmd Masonry.Msg )"
+            },
+            {
+                "name": "update",
+                "comment": " Update `Masonry a`.\n",
+                "type": "Masonry.Msg -> Masonry.Masonry a -> Masonry.Masonry a"
+            },
+            {
+                "name": "view",
+                "comment": " Render `Masonry a` and distribute elements over columns\ntaking the height of each element into account.\n",
+                "type": "Masonry.Config a msg -> Masonry.Masonry a -> Html.Html msg"
+            },
+            {
+                "name": "viewList",
+                "comment": " Render a `List a` without all the fancy height calculations.\n\nIf you know all elements will be about the same height you don't really need\nto get each element height and calculate in what order the elements should be\ndisplayed.\n\nThis function will just distribute all elements over each column\nordered from left to right regardless of their height.\n\n",
+                "type": "Masonry.Config a msg -> List.List a -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

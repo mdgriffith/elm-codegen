@@ -1,0 +1,235 @@
+[
+    {
+        "name": "Prima.DatePicker",
+        "comment": "\n\n@docs init, Model, Msg, update, view, selectedDate\n\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Noop",
+                        []
+                    ],
+                    [
+                        "YearSelection",
+                        []
+                    ],
+                    [
+                        "DaySelection",
+                        []
+                    ],
+                    [
+                        "PrevMonth",
+                        []
+                    ],
+                    [
+                        "NextMonth",
+                        []
+                    ],
+                    [
+                        "SelectYear",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "SelectDay",
+                        [
+                            "Basics.Int"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Model",
+                "comment": " ",
+                "args": [],
+                "type": "{ date : Date.Date, selectingYear : Basics.Bool, daysPickerRange : ( Date.Date, Date.Date ) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "init",
+                "comment": " Get initial time picker model\n",
+                "type": "Date.Date -> ( Date.Date, Date.Date ) -> Prima.DatePicker.Model"
+            },
+            {
+                "name": "selectedDate",
+                "comment": " Returns currently selected date\n",
+                "type": "Prima.DatePicker.Model -> Date.Date"
+            },
+            {
+                "name": "update",
+                "comment": " ",
+                "type": "Prima.DatePicker.Msg -> Prima.DatePicker.Model -> Prima.DatePicker.Model"
+            },
+            {
+                "name": "view",
+                "comment": " ",
+                "type": "Prima.DatePicker.Model -> Html.Html Prima.DatePicker.Msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Prima.Form",
+        "comment": " Package to build a Form using [Prima Assicurazioni](https://www.prima.it)'s Design System.\n\nIn order to keep the configuration as simple as possible we decided to not allow\nCSS classes to be changed, also forcing consistency in our ecosystem.\n\n\n# Definition\n\n@docs FormField, FormFieldConfig, Validation\n\n\n# Basic components configuration\n\n@docs textConfig, passwordConfig, textareaConfig, checkboxConfig, CheckboxOption, checkboxWithOptionsConfig, SelectOption, selectConfig, RadioOption, radioConfig\n\n\n# Custom components configuration\n\n@docs AutocompleteOption\n@docs autocompleteConfig\n\n@docs datepickerConfig\n\n\n# Static components configuration\n\n@docs pureHtmlConfig\n\n\n# Render a FormField\n\n@docs render, renderWithGroup, wrapper\n\n\n# Check status of a FormField\n\n@docs isValid\n\n@docs isPristine\n\n",
+        "unions": [
+            {
+                "name": "FormField",
+                "comment": " Defines a Field component for a generic form.\nOpaque implementation.\n",
+                "args": [
+                    "model",
+                    "msg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "FormFieldConfig",
+                "comment": " Defines a configuration for a Field component.\nOpaque implementation.\n",
+                "args": [
+                    "model",
+                    "msg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Validation",
+                "comment": " Validation rules for a FormField.\n\n    NotEmpty \"This field cannot be empty.\"\n\n    Expression (Regex.regex \"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\\\.[a-zA-Z0-9-.]+$\") \"Insert a valid email.\"\n\n    Custom (\\model -> always True) \"This error message will never be shown.\"\n\n",
+                "args": [
+                    "model"
+                ],
+                "cases": [
+                    [
+                        "NotEmpty",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Expression",
+                        [
+                            "Regex.Regex",
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Custom",
+                        [
+                            "model -> Basics.Bool",
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "AutocompleteOption",
+                "comment": " Describes an option for an Autocomplete\n\n    [ AutocompleteOption \"Italy\" \"ita\"\n    , AutocompleteOption \"France\" \"fra\"\n    ]\n\n",
+                "args": [],
+                "type": "{ label : String.String, slug : String.String }"
+            },
+            {
+                "name": "CheckboxOption",
+                "comment": " Describes an option for a Checkbox\n\n    [ CheckboxOption \"Italy\" \"ita\" True\n    , CheckboxOption \"France\" \"fra\" False\n    , CheckboxOption \"Spain\" \"spa\" True\n    ]\n\n",
+                "args": [],
+                "type": "{ label : String.String, slug : String.String, isChecked : Basics.Bool }"
+            },
+            {
+                "name": "RadioOption",
+                "comment": " Describes an option for a Radio\n\n    [ RadioOption \"Italy\" \"ita\" True\n    , RadioOption \"France\" \"fra\" False\n    , RadioOption \"Spain\" \"spa\" True\n    ]\n\n",
+                "args": [],
+                "type": "{ label : String.String, slug : String.String }"
+            },
+            {
+                "name": "SelectOption",
+                "comment": " Describes an option for a Select\n\n    [ SelectOption \"Italy\" \"ita\"\n    , SelectOption \"France\" \"fra\"\n    ]\n\n",
+                "args": [],
+                "type": "{ label : String.String, slug : String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "autocompleteConfig",
+                "comment": " Autocomplete configuration method.\n\n    import Prima.Form as Form exposing (FormField, FormFieldConfig, Validation(..))\n    ...\n\n    type Msg\n        = OnSelectCountry (Maybe String)\n        | OnFilterCountry (Maybe String)\n        | OnFocusCountry\n        | OnBlurCountry\n        ...\n\n    type alias Model =\n        { country : Maybe String\n        , countryFilter : Maybe String\n        , isOpenCountryAutocomplete: Bool\n        ...\n        }\n\n    ...\n\n    countryConfig : Bool -> Maybe String -> FormField Model Msg\n    countryConfig isOpenCountryAutocomplete countryFilter =\n        let\n            lowerFilter =\n                (String.toLower << Maybe.withDefault \"\") countryFilter\n        in\n        Form.autocompleteConfig\n            \"country\"\n            \"Country\"\n            isOpenCountry\n            (Just \"No results\")\n            []\n            .countryFilter\n            .country\n            OnFilterCountry\n            OnSelectCountry\n            OnFocusCountry\n            OnBlurCountry\n            alwaysShowErrors\n            (List.filter (String.contains lowerFilter << String.toLower << .label) <| [ AutocompleteOption \"Italy\" \"ITA\", AutocompleteOption \"Brasil\" \"BRA\", AutocompleteOption \"France\" \"FRA\", AutocompleteOption \"England\" \"ENG\", AutocompleteOption \"USA\" \"USA\", AutocompleteOption \"Japan\" \"JAP\" ])\n            Nothing\n            [ NotEmpty \"Empty value is not acceptable.\" ]\n\n",
+                "type": "String.String -> Maybe.Maybe String.String -> Basics.Bool -> Maybe.Maybe String.String -> List.List (Html.Attribute msg) -> (model -> Maybe.Maybe String.String) -> (model -> Maybe.Maybe String.String) -> (Maybe.Maybe String.String -> msg) -> (Maybe.Maybe String.String -> msg) -> msg -> msg -> List.List Prima.Form.AutocompleteOption -> Basics.Bool -> Maybe.Maybe Basics.Int -> List.List (Prima.Form.Validation model) -> Prima.Form.FormField model msg"
+            },
+            {
+                "name": "checkboxConfig",
+                "comment": " Checkbox with single option configuration method.\n\n    import Prima.Form as Form exposing (FormField, FormFieldConfig, Validation(..))\n    ...\n\n    type Msg\n        = OnChangePrivacy Bool\n        | OnFocusPrivacy\n        | OnBlurPrivacy\n        ...\n\n    type alias Model =\n        { privacy : Bool\n        ...\n        }\n\n    ...\n    acceptPrivacyConfig : FormField Model Msg\n    acceptPrivacyConfig =\n        Form.checkboxConfig\n            \"privacy\"\n            \"Do you accept our Privacy Policy?\"\n            []\n            .privacy\n            OnChangePrivacy\n            OnFocusPrivacy\n            OnBlurPrivacy\n            alwaysShowErrors\n            Nothing\n            []\n\n",
+                "type": "String.String -> Maybe.Maybe String.String -> List.List (Html.Attribute msg) -> (model -> Basics.Bool) -> (Basics.Bool -> msg) -> msg -> msg -> Basics.Bool -> Maybe.Maybe Basics.Int -> List.List (Prima.Form.Validation model) -> Prima.Form.FormField model msg"
+            },
+            {
+                "name": "checkboxWithOptionsConfig",
+                "comment": " Checkbox with multiple option configuration method.\n\n    import Prima.Form as Form exposing (FormField, FormFieldConfig, Validation(..))\n    ...\n\n    type Msg\n        = OnChangeVisitedCountries String Bool\n        | OnFocusVisitedCountries\n        | OnBlurVisitedCountries\n        ...\n\n    type alias Model =\n        { visitedCountries : List (String, String, Bool)\n        ...\n        }\n\n    ...\n    visitedCountriesConfig : List ( String, String, Bool ) -> FormField Model Msg\n    visitedCountriesConfig options =\n        Form.checkboxWithOptionsConfig\n            \"visited_countries\"\n            \"Visited countries\"\n            []\n            (List.map (\\( label, slug, checked ) -> ( slug, checked )) << .visitedCountries)\n            OnChangeVisitedCountries\n            OnFocusVisitedCountries\n            OnBlurVisitedCountries\n            (List.map (\\( label, slug, checked ) -> CheckboxOption label slug checked) options)\n            alwaysShowErrors\n            Nothing\n            []\n\n",
+                "type": "String.String -> Maybe.Maybe String.String -> List.List (Html.Attribute msg) -> (model -> List.List ( String.String, Basics.Bool )) -> (String.String -> Basics.Bool -> msg) -> msg -> msg -> List.List Prima.Form.CheckboxOption -> Basics.Bool -> Maybe.Maybe Basics.Int -> List.List (Prima.Form.Validation model) -> Prima.Form.FormField model msg"
+            },
+            {
+                "name": "datepickerConfig",
+                "comment": " Datepicker configuration method.\n\n    import DatePicker\n    import Date.Format\n    import Prima.Form as Form exposing (FormField, FormFieldConfig, Validation(..))\n    ...\n\n    type Msg\n        = OnInputBirthDate (Maybe String)\n        | OnFocusBirthDate\n        | OnBlurBirthDate\n        | OnChangeBirthDateDatePicker DatePicker.Msg\n        ...\n\n    type alias Model =\n      { dateOfBirth : Maybe String\n      , dateOfBirthDP: DatePicker.Model\n      ...\n      }\n\n    update : Msg -> Model -> ( Model, Cmd Msg )\n    update msg model =\n        case msg of\n          OnChangeBirthDateDatePicker dpMsg ->\n              let\n                  updatedInstance =\n                      DatePicker.update dpMsg model.dateOfBirthDP\n              in\n              { model | dateOfBirthDP = updatedInstance, dateOfBirth = (Just << Date.Format.format \"%d/%m/%Y\" << DatePicker.selectedDate) updatedInstance } ! []\n          ...\n\n",
+                "type": "String.String -> Maybe.Maybe String.String -> List.List (Html.Attribute msg) -> (model -> Maybe.Maybe String.String) -> (Maybe.Maybe String.String -> msg) -> (Prima.DatePicker.Msg -> msg) -> msg -> msg -> Prima.DatePicker.Model -> Basics.Bool -> Basics.Bool -> Maybe.Maybe Basics.Int -> List.List (Prima.Form.Validation model) -> Prima.Form.FormField model msg"
+            },
+            {
+                "name": "isPristine",
+                "comment": " Checks the `pristine` status of a `FormField`.\n\n    isPristine model usernameConfig\n\n",
+                "type": "model -> Prima.Form.FormField model msg -> Basics.Bool"
+            },
+            {
+                "name": "isValid",
+                "comment": " Validate a `FormField`.\n\n    isValid model usernameConfig\n\n",
+                "type": "model -> Prima.Form.FormField model msg -> Basics.Bool"
+            },
+            {
+                "name": "passwordConfig",
+                "comment": " Input password configuration method. See `textConfig` for configuration options.\n",
+                "type": "String.String -> Maybe.Maybe String.String -> List.List (Html.Attribute msg) -> (model -> Maybe.Maybe String.String) -> (Maybe.Maybe String.String -> msg) -> msg -> msg -> Basics.Bool -> Maybe.Maybe Basics.Int -> List.List (Prima.Form.Validation model) -> Prima.Form.FormField model msg"
+            },
+            {
+                "name": "pureHtmlConfig",
+                "comment": " Static Html configuration method.\n\n    import Prima.Form as Form exposing (FormField, FormFieldConfig, Validation(..))\n    ...\n\n    staticHtmlConfig : List (Html Msg) -> FormField Model Msg\n    staticHtmlConfig content =\n      Form.pureHtmlConfig content\n\n",
+                "type": "List.List (Html.Html msg) -> Prima.Form.FormField model msg"
+            },
+            {
+                "name": "radioConfig",
+                "comment": " Input Radio configuration method.\n\n    import Prima.Form as Form exposing (FormField, FormFieldConfig, Validation(..))\n    ...\n\n    type Msg\n        = OnChangeGender (Maybe String)\n        | OnFocusGender\n        | OnBlurGender\n        ...\n\n    type alias Model =\n        { gender : Maybe String\n        ...\n        }\n\n    genderConfig : FormField Model Msg\n    genderConfig =\n        Form.radioConfig\n            \"gender\"\n            \"Gender\"\n            []\n            .gender\n            OnChangeGender\n            OnFocusGender\n            OnBlurGender\n            alwaysShowErrors\n            [ RadioOption \"Male\" \"male\" , RadioOption \"Female\" \"female\" ]\n            Nothing\n            [ Custom ((==) \"female\" << Maybe.withDefault \"female\" << .gender) \"You must select `Female` to proceed.\" ]\n\n",
+                "type": "String.String -> Maybe.Maybe String.String -> List.List (Html.Attribute msg) -> (model -> Maybe.Maybe String.String) -> (Maybe.Maybe String.String -> msg) -> msg -> msg -> List.List Prima.Form.RadioOption -> Basics.Bool -> Maybe.Maybe Basics.Int -> List.List (Prima.Form.Validation model) -> Prima.Form.FormField model msg"
+            },
+            {
+                "name": "render",
+                "comment": " Method for rendering a `FormField`\n",
+                "type": "model -> Prima.Form.FormField model msg -> List.List (Html.Html msg)"
+            },
+            {
+                "name": "renderWithGroup",
+                "comment": " Method for rendering a `FormField` adding a div which wraps the form field.\n",
+                "type": "List.List (Html.Html msg) -> model -> Prima.Form.FormField model msg -> List.List (Html.Html msg)"
+            },
+            {
+                "name": "selectConfig",
+                "comment": " Select configuration method.\n\n    import Prima.Form as Form exposing (FormField, FormFieldConfig, Validation(..))\n    ...\n\n    type Msg\n        = OnChangeCity (Maybe String)\n        | OnFocusCity\n        | OnBlurCity\n        | ToggleCity\n        ...\n\n    type alias Model =\n        { city : Maybe String\n        , isOpenCitySelect : Bool\n        , isDisabledCity: Bool\n        ...\n        }\n\n    ...\n\n    cityConfig : Bool -> Bool -> FormField Model Msg\n    cityConfig isDisabledCity isOpenCitySelect =\n        Form.selectConfig\n            \"city\"\n            \"City\"\n            isDisabledCity\n            isOpenCitySelect\n            (Just \"Select any option\")\n            []\n            .city\n            ToggleCity\n            OnChangeCity\n            OnFocusCity\n            OnBlurCity\n            (List.sortBy .label [ SelectOption \"Milan\" \"MI\" , SelectOption \"Turin\" \"TO\" , SelectOption \"Rome\" \"RO\" , SelectOption \"Naples\" \"NA\" , SelectOption \"Genoa\" \"GE\" ] )\n            alwaysShowErrors\n            Nothing\n            [ NotEmpty \"Empty value is not acceptable.\" ]\n\n",
+                "type": "String.String -> Maybe.Maybe String.String -> Basics.Bool -> Basics.Bool -> Maybe.Maybe String.String -> List.List (Html.Attribute msg) -> (model -> Maybe.Maybe String.String) -> (Basics.Bool -> msg) -> (Maybe.Maybe String.String -> msg) -> msg -> msg -> List.List Prima.Form.SelectOption -> Basics.Bool -> Maybe.Maybe Basics.Int -> List.List (Prima.Form.Validation model) -> Prima.Form.FormField model msg"
+            },
+            {
+                "name": "textConfig",
+                "comment": " Input Text configuration method.\n\n    import Prima.Form as Form exposing (FormField, FormFieldConfig, Validation(..))\n    ...\n\n    type Msg\n        = OnInputUsername (Maybe String)\n        | OnFocusUsername\n        | OnBlurUsername\n        ...\n\n    type alias Model =\n        { username : Maybe String\n        ...\n        }\n\n    usernameConfig : FormField Model Msg\n    usernameConfig  =\n        textConfig\n            \"username\"\n            \"Username:\"\n            [ minlength 3, maxlength 12, disabled False ]\n            .username\n            OnInputUsername\n            OnFocusUsername\n            OnBlurUsername\n            alwaysShowErrors\n            Nothing\n            [ NotEmpty \"Empty value is not acceptable.\"\n            , Custom ((<=) 3 << String.length << Maybe.withDefault \"\" << .username) \"Value must be between 3 and 12 characters length.\"\n            ]\n\n",
+                "type": "String.String -> Maybe.Maybe String.String -> List.List (Html.Attribute msg) -> (model -> Maybe.Maybe String.String) -> (Maybe.Maybe String.String -> msg) -> msg -> msg -> Basics.Bool -> Maybe.Maybe Basics.Int -> List.List (Prima.Form.Validation model) -> Prima.Form.FormField model msg"
+            },
+            {
+                "name": "textareaConfig",
+                "comment": " Textarea configuration method. See `textConfig` for configuration options.\n",
+                "type": "String.String -> Maybe.Maybe String.String -> List.List (Html.Attribute msg) -> (model -> Maybe.Maybe String.String) -> (Maybe.Maybe String.String -> msg) -> msg -> msg -> Basics.Bool -> Maybe.Maybe Basics.Int -> List.List (Prima.Form.Validation model) -> Prima.Form.FormField model msg"
+            },
+            {
+                "name": "wrapper",
+                "comment": " Wrapper for a FormField rendered with `render` function.\n",
+                "type": "List.List (Html.Html msg) -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

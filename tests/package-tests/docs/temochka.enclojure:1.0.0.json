@@ -1,0 +1,728 @@
+[
+    {
+        "name": "Enclojure",
+        "comment": " Enclojure is a Clojure-like scripting language for Elm apps. Enclojure is experimental software and subject to breaking API changes.\n\n\n# Initialize\n\n@docs Env, init\n\n\n# Pure programs\n\n@docs Exception, evalPure\n\n\n# Side-effecting programs\n\n@docs EvalResult, Step, eval, continueEval\n\n\n# Manipulating execution environment\n\n@docs getStepEnv, setStepEnv, getStepValue\n\n\n# Extracting documentation\n\n@docs Doc, FnInfo, documentation\n\n",
+        "unions": [
+            {
+                "name": "Doc",
+                "comment": " Represents the type of a documentation entry.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "SpecialFormDoc",
+                        []
+                    ],
+                    [
+                        "MacroDoc",
+                        []
+                    ],
+                    [
+                        "FunctionDoc",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "EvalResult",
+                "comment": " Returned by `eval`\n\n  - `Done value` - program completed successfully and returned `value`.\n  - `Error exception` - program threw `exception`.\n  - `Continue step` - program reached its `EvalOptions.maxOps` quota and can be resumed with continueEval (perhaps at the next animation frame).\n  - `RunIO io toStep` - program returned a side effect `io` and expects the caller to handle the side effect and call `toStep` with the result.\n\n",
+                "args": [
+                    "io"
+                ],
+                "cases": [
+                    [
+                        "RunIO",
+                        [
+                            "io",
+                            "Result.Result Enclojure.Exception (Enclojure.Common.Value io) -> Enclojure.Step io"
+                        ]
+                    ],
+                    [
+                        "Continue",
+                        [
+                            "Enclojure.Step io"
+                        ]
+                    ],
+                    [
+                        "Error",
+                        [
+                            "Enclojure.Exception"
+                        ]
+                    ],
+                    [
+                        "Done",
+                        [
+                            "Enclojure.Common.Value io"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Env",
+                "comment": " An execution environment. Think of this as the current state of the interpreter.\n",
+                "args": [
+                    "io"
+                ],
+                "type": "Enclojure.Common.Env io"
+            },
+            {
+                "name": "Exception",
+                "comment": " An Enclojure exception value.\n",
+                "args": [],
+                "type": "Enclojure.Common.Exception"
+            },
+            {
+                "name": "FnInfo",
+                "comment": " Basic function info: `name`, `doc`, and a list of `signatures`.\n",
+                "args": [],
+                "type": "Enclojure.Common.FnInfo"
+            },
+            {
+                "name": "Step",
+                "comment": " Represents an unfinished computation that can be continued using `continueEval`.\n",
+                "args": [
+                    "io"
+                ],
+                "type": "Enclojure.Located.Located (Enclojure.Common.Step io)"
+            }
+        ],
+        "values": [
+            {
+                "name": "continueEval",
+                "comment": " Continue evaluation from a previously returned step.\n",
+                "type": "Enclojure.EvalOptions -> Enclojure.Step io -> ( Enclojure.EvalResult io, Enclojure.Env io )"
+            },
+            {
+                "name": "documentation",
+                "comment": " Returns a list of documentation entries for a given evaluation environment.\n",
+                "type": "Enclojure.Env io -> List.List ( Enclojure.Doc, Enclojure.FnInfo )"
+            },
+            {
+                "name": "eval",
+                "comment": " Evaluates a given Enclojure program in a provided environment. Returns a tuple of\nthe evaluation result and modified environment. May cause an infinite loop if EvalOptions.maxOps is not specified.\n",
+                "type": "Enclojure.EvalOptions -> Enclojure.Env io -> String.String -> ( Enclojure.EvalResult io, Enclojure.Env io )"
+            },
+            {
+                "name": "evalPure",
+                "comment": " Evaluates a given Enclojure program in a provided environment. Returns an error on exception,\nand a tuple of returned value and changed environment on successful execution. Throws if the program attempts\nany side effects. May cause an infinite loop if EvalOptions.maxOps is not specified.\n",
+                "type": "Enclojure.EvalOptions -> Enclojure.Env io -> String.String -> Result.Result Enclojure.Exception ( Enclojure.Common.Value io, Enclojure.Env io )"
+            },
+            {
+                "name": "getStepEnv",
+                "comment": " Get the execution environment of an eval step.\n",
+                "type": "Enclojure.Step io -> Enclojure.Env io"
+            },
+            {
+                "name": "getStepValue",
+                "comment": " Get the value of an eval step unless the step returned a side effect.\n",
+                "type": "Enclojure.Step io -> Maybe.Maybe (Enclojure.Common.Value io)"
+            },
+            {
+                "name": "init",
+                "comment": " Initialize a fresh Enclojure execution environment\n",
+                "type": "Enclojure.Env io"
+            },
+            {
+                "name": "setStepEnv",
+                "comment": " Modify the execution environment of an eval step.\n",
+                "type": "Enclojure.Env io -> Enclojure.Step io -> Enclojure.Step io"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Enclojure.Callable",
+        "comment": " Helper functions for defining Enclojure callables.\n\n\n# Getting started\n\n@docs Callable, new\n\n\n# Fleshing out your callable\n\nUnlike Elm, one Enclojure function can have more than one \"arity\": the number of arguments it accepts. Arities can be\nfixed (positional arguments only) or variadic (some or no positional arguments + a list of remaining arguments).\n\n@docs fixedArity, variadicArity, toArityFunction, setArity0, setArity1, setArity2, setArity3\n\n\n# Misc\n\n@docs signatures\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Callable",
+                "comment": " Represents a callable (anonymous function).\n",
+                "args": [
+                    "io"
+                ],
+                "type": "Enclojure.Common.Callable io"
+            }
+        ],
+        "values": [
+            {
+                "name": "fixedArity",
+                "comment": " Build an arity that accepts positional args `a` and doesn’t accept any varargs.\n",
+                "type": "a -> (a -> Result.Result Enclojure.Common.Exception (Enclojure.Common.IO io)) -> Enclojure.Common.Arity io a"
+            },
+            {
+                "name": "new",
+                "comment": " Creates a new empty callable.\n",
+                "type": "Enclojure.Callable.Callable io"
+            },
+            {
+                "name": "setArity0",
+                "comment": " Overwrite the arity 0 (no positional arguments) on a callable.\n",
+                "type": "Enclojure.Common.Arity io () -> Enclojure.Callable.Callable io -> Enclojure.Callable.Callable io"
+            },
+            {
+                "name": "setArity1",
+                "comment": " Overwrite the arity 1 (one positional argument) on a callable\n",
+                "type": "Enclojure.Common.Arity io (Enclojure.Common.Value io) -> Enclojure.Callable.Callable io -> Enclojure.Callable.Callable io"
+            },
+            {
+                "name": "setArity2",
+                "comment": " Overwrite the arity 2 (two positional arguments) on a callable\n",
+                "type": "Enclojure.Common.Arity io ( Enclojure.Common.Value io, Enclojure.Common.Value io ) -> Enclojure.Callable.Callable io -> Enclojure.Callable.Callable io"
+            },
+            {
+                "name": "setArity3",
+                "comment": " Overwrite the arity 3 (three positional arguments) on a callable\n",
+                "type": "Enclojure.Common.Arity io ( Enclojure.Common.Value io, Enclojure.Common.Value io, Enclojure.Common.Value io ) -> Enclojure.Callable.Callable io -> Enclojure.Callable.Callable io"
+            },
+            {
+                "name": "signatures",
+                "comment": " Returns the list of signatures of a given callable.\n",
+                "type": "Enclojure.Callable.Callable io -> List.List (List.List String.String)"
+            },
+            {
+                "name": "toArityFunction",
+                "comment": " Converts a simplified arity to full arity.\n\nMost Enclojure callables don’t need to modify the environment or to access the continuation.\nThus, it's easier to define them as functions of `a -> Result Exception (IO io)`.\n\n",
+                "type": "(a -> Result.Result Enclojure.Common.Exception (Enclojure.Common.IO io)) -> a -> Enclojure.Common.Env io -> Enclojure.Common.Continuation io -> Enclojure.Common.Step io"
+            },
+            {
+                "name": "variadicArity",
+                "comment": " Build an arity that accepts positional args `a` and varargs.\n",
+                "type": "{ argNames : a, restArgName : Enclojure.Common.Value io } -> ({ args : a, rest : List.List (Enclojure.Common.Value io) } -> Result.Result Enclojure.Common.Exception (Enclojure.Common.IO io)) -> Enclojure.Common.Arity io a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Enclojure.Located",
+        "comment": " Some values have known locations in the evaluated source code. This module provides functions for\nworking with them.\n\n\n# Types\n\n@docs Located, Location, Offsets\n\n\n# Working with located values\n\n@docs at, getValue, map, sameAs, unknown\n\n\n# Extracting location information\n\n@docs getLocation, getOffsets\n\n",
+        "unions": [
+            {
+                "name": "Located",
+                "comment": " Represents a value `a` with location information.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Located",
+                        [
+                            "Enclojure.Located.Location",
+                            "a"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Location",
+                "comment": " Represents the location of a value in the source code. Known offsets or unknown.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Known",
+                        [
+                            "Enclojure.Located.Offsets"
+                        ]
+                    ],
+                    [
+                        "Unknown",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Offsets",
+                "comment": " Represents the offsets of the start and the end of a value in the source code.\n",
+                "args": [],
+                "type": "{ start : ( Basics.Int, Basics.Int ), end : ( Basics.Int, Basics.Int ) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "at",
+                "comment": " Wraps `a` in a location at given offsets\n",
+                "type": "( Basics.Int, Basics.Int ) -> ( Basics.Int, Basics.Int ) -> a -> Enclojure.Located.Located a"
+            },
+            {
+                "name": "getLocation",
+                "comment": " Extract the location of a located value\n",
+                "type": "Enclojure.Located.Located a -> Enclojure.Located.Location"
+            },
+            {
+                "name": "getOffsets",
+                "comment": " Extract the offsets of the located value (if known)\n",
+                "type": "Enclojure.Located.Located a -> Maybe.Maybe Enclojure.Located.Offsets"
+            },
+            {
+                "name": "getValue",
+                "comment": " Extracts the located value\n",
+                "type": "Enclojure.Located.Located a -> a"
+            },
+            {
+                "name": "map",
+                "comment": " Applies a function to the located value\n",
+                "type": "(a -> b) -> Enclojure.Located.Located a -> Enclojure.Located.Located b"
+            },
+            {
+                "name": "sameAs",
+                "comment": " Assigns location information from `a` to `b`\n",
+                "type": "Enclojure.Located.Located a -> b -> Enclojure.Located.Located b"
+            },
+            {
+                "name": "unknown",
+                "comment": " Wraps `a` in an unknown location\n",
+                "type": "a -> Enclojure.Located.Located a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Enclojure.Runtime",
+        "comment": " Advanced functions for working with Enclojure runtime.\n\n\n# Environment\n\n@docs emptyEnv, bindGlobal, bindLexical, fetchGlobal, fetchLexical, setCurrentStackFrameLocation\n\n\n# Exceptions\n\n@docs prettyTrace, throw\n\n\n# I/O\n\n@docs const, sideEffect\n\n\n# References\n\n@docs addAtom, deref, resetAtom\n\n\n# Misc\n\n@docs apply, terminate\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "addAtom",
+                "comment": " Adds a new atom containing a provided value to the environment. Returns a tuple of the updated environment and the\ngenerated atom id.\n",
+                "type": "Enclojure.Common.Value io -> Enclojure.Common.Env io -> ( Enclojure.Common.Env io, Basics.Int )"
+            },
+            {
+                "name": "apply",
+                "comment": " Attempts to interpret the first argument as a function and the second argument as a list of its arguments.\n",
+                "type": "Enclojure.Located.Located (Enclojure.Common.Value io) -> Enclojure.Located.Located (Enclojure.Common.Value io) -> Enclojure.Common.Env io -> Enclojure.Common.Continuation io -> Enclojure.Located.Located (Enclojure.Common.Step io)"
+            },
+            {
+                "name": "bindGlobal",
+                "comment": " Binds a given `String` name to `Value io` in the global scope of `Env io`.\n",
+                "type": "String.String -> Enclojure.Common.Value io -> Enclojure.Common.Env io -> Enclojure.Common.Env io"
+            },
+            {
+                "name": "bindLexical",
+                "comment": " Binds a given `String` name to `Value io` in the lexical scope of `Env io`\n",
+                "type": "String.String -> Enclojure.Common.Value io -> Enclojure.Common.Env io -> Enclojure.Common.Env io"
+            },
+            {
+                "name": "const",
+                "comment": " Indicates that the returned value is a constant.\n",
+                "type": "Enclojure.Common.Value io -> Enclojure.Common.IO io"
+            },
+            {
+                "name": "deref",
+                "comment": " Dereferences given `Ref io` in `Env io`.\n",
+                "type": "Enclojure.Common.Ref io -> Enclojure.Common.Env io -> Enclojure.Common.Value io"
+            },
+            {
+                "name": "emptyEnv",
+                "comment": " Returns an empty environment\n",
+                "type": "Enclojure.Common.Env io"
+            },
+            {
+                "name": "fetchGlobal",
+                "comment": " Fetches a value by name from the global scope\n",
+                "type": "String.String -> Enclojure.Common.Env io -> Maybe.Maybe (Enclojure.Common.Value io)"
+            },
+            {
+                "name": "fetchLexical",
+                "comment": " Fetches a value by name from the lexical scope\n",
+                "type": "String.String -> Enclojure.Common.Env io -> Maybe.Maybe (Enclojure.Common.Value io)"
+            },
+            {
+                "name": "prettyTrace",
+                "comment": " Return a \"prettified\" stack trace for an exception.\n",
+                "type": "Enclojure.Common.Exception -> List.List String.String"
+            },
+            {
+                "name": "resetAtom",
+                "comment": " Resets an atom identified by `Int` id to value `Value io` in the given environment `Env io`.\n",
+                "type": "Basics.Int -> Enclojure.Common.Value io -> Enclojure.Common.Env io -> Enclojure.Common.Env io"
+            },
+            {
+                "name": "setCurrentStackFrameLocation",
+                "comment": " Overwrites the location of the current stack frame in a given environment.\n",
+                "type": "Enclojure.Located.Location -> Enclojure.Common.Env io -> Enclojure.Common.Env io"
+            },
+            {
+                "name": "sideEffect",
+                "comment": " Indicates that the returned value is a side effect.\n",
+                "type": "io -> Enclojure.Common.IO io"
+            },
+            {
+                "name": "terminate",
+                "comment": " Returns a continuation that terminates the program.\n",
+                "type": "Enclojure.Located.Located (Enclojure.Common.Value io) -> Enclojure.Common.Env io -> Enclojure.Located.Located (Enclojure.Common.Step io)"
+            },
+            {
+                "name": "throw",
+                "comment": " Assigns the stack from the given environment to the exception.\n",
+                "type": "Enclojure.Common.Env io -> Enclojure.Common.Exception -> Enclojure.Common.Exception"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Enclojure.Value",
+        "comment": " Functions for working with Enclojure values and translating between Elm and Enclojure types.\n\n\n# Value type\n\n@docs Value\n\n\n# Inspecting values\n\n@docs inspect, inspectLocated, inspectType, isEqual, isTruthy\n\n\n# Transforming values\n\n@docs toMap, toSeq, toString\n\n\n# Encoding values\n\n@docs exception, float, fn, int, keyword, list, map, nil, string, symbol, throwable, vector, vectorFromList, vectorFromLocatedList\n\n\n# Decoding values\n\n@docs tryAtom, tryDictOf, tryFloat, tryInt, tryKeyword, tryList, tryListOf, tryMap, tryNil, tryOneOf, tryPatternOf2, tryRef, tryRegex, trySequenceOf, tryString, trySymbol, tryVector, tryVectorOf\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Value",
+                "comment": " Represents an Enclojure value.\n",
+                "args": [
+                    "io"
+                ],
+                "type": "Enclojure.Common.Value io"
+            }
+        ],
+        "values": [
+            {
+                "name": "exception",
+                "comment": " Creates an exception with a given message.\n",
+                "type": "String.String -> Enclojure.Common.Exception"
+            },
+            {
+                "name": "float",
+                "comment": " Wraps a float as a number value.\n",
+                "type": "Basics.Float -> Enclojure.Value.Value io"
+            },
+            {
+                "name": "fn",
+                "comment": " Wraps an (optionally named) function as a value.\n",
+                "type": "Maybe.Maybe String.String -> Enclojure.Common.Callable io -> Enclojure.Value.Value io"
+            },
+            {
+                "name": "inspect",
+                "comment": " Print value in a human readable way.\n",
+                "type": "Enclojure.Value.Value io -> String.String"
+            },
+            {
+                "name": "inspectLocated",
+                "comment": " Prints a value with location information.\n",
+                "type": "Enclojure.Located.Located (Enclojure.Value.Value io) -> String.String"
+            },
+            {
+                "name": "inspectType",
+                "comment": " Return a string representation of the value type\n",
+                "type": "Enclojure.Value.Value io -> String.String"
+            },
+            {
+                "name": "int",
+                "comment": " Wraps an int as a number value.\n",
+                "type": "Basics.Int -> Enclojure.Value.Value io"
+            },
+            {
+                "name": "isEqual",
+                "comment": " Returns True if the two values are equal.\n",
+                "type": "Enclojure.Value.Value io -> Enclojure.Value.Value io -> Basics.Bool"
+            },
+            {
+                "name": "isTruthy",
+                "comment": " Returns True if the value is truthy.\n",
+                "type": "Enclojure.Value.Value io -> Basics.Bool"
+            },
+            {
+                "name": "keyword",
+                "comment": " Wraps a string as a keyword value.\n",
+                "type": "String.String -> Enclojure.Value.Value io"
+            },
+            {
+                "name": "list",
+                "comment": " Wraps a list as a list value.\n",
+                "type": "List.List (Enclojure.Value.Value io) -> Enclojure.Value.Value io"
+            },
+            {
+                "name": "map",
+                "comment": " Wraps a value map as a map value.\n",
+                "type": "Enclojure.ValueMap.ValueMap io -> Enclojure.Value.Value io"
+            },
+            {
+                "name": "nil",
+                "comment": " Returns a nil value.\n",
+                "type": "Enclojure.Value.Value io"
+            },
+            {
+                "name": "string",
+                "comment": " Wraps a string as a string value.\n",
+                "type": "String.String -> Enclojure.Value.Value io"
+            },
+            {
+                "name": "symbol",
+                "comment": " Wraps a string as a symbol value.\n",
+                "type": "String.String -> Enclojure.Value.Value io"
+            },
+            {
+                "name": "throwable",
+                "comment": " Wraps an exception into a value.\n",
+                "type": "Enclojure.Common.Exception -> Enclojure.Value.Value io"
+            },
+            {
+                "name": "toMap",
+                "comment": " Attempts to interpret a given value as a map.\n",
+                "type": "Enclojure.Value.Value io -> Maybe.Maybe (Enclojure.ValueMap.ValueMap io)"
+            },
+            {
+                "name": "toSeq",
+                "comment": " Attempts to interpret a given value as a sequence (list).\n",
+                "type": "Enclojure.Value.Value io -> Result.Result Enclojure.Common.Exception (List.List (Enclojure.Located.Located (Enclojure.Value.Value io)))"
+            },
+            {
+                "name": "toString",
+                "comment": " Attempts to intrpret a value as a string.\n",
+                "type": "Enclojure.Value.Value io -> String.String"
+            },
+            {
+                "name": "tryAtom",
+                "comment": " Returns an atom id if the given value is an atom ref.\n",
+                "type": "Enclojure.Value.Value io -> Maybe.Maybe Basics.Int"
+            },
+            {
+                "name": "tryDictOf",
+                "comment": " If the value is a map, attempts to convert it to an Elm dictionary using the first argument to convert values to\nkeys and the second argument to convert values.\n",
+                "type": "(Enclojure.Value.Value io -> Maybe.Maybe comparable) -> (Enclojure.Value.Value io -> Maybe.Maybe b) -> Enclojure.Value.Value io -> Maybe.Maybe (Dict.Dict comparable b)"
+            },
+            {
+                "name": "tryFloat",
+                "comment": " Returns a float if the given value is a float.\n",
+                "type": "Enclojure.Value.Value io -> Maybe.Maybe Basics.Float"
+            },
+            {
+                "name": "tryInt",
+                "comment": " Returns an integer if the given value is an integer.\n",
+                "type": "Enclojure.Value.Value io -> Maybe.Maybe Basics.Int"
+            },
+            {
+                "name": "tryKeyword",
+                "comment": " Returns a keyword as a string if the given value is a keyword.\n",
+                "type": "Enclojure.Value.Value io -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "tryList",
+                "comment": " Returns a list of values if the given value is a list\n",
+                "type": "Enclojure.Value.Value io -> Maybe.Maybe (List.List (Enclojure.Located.Located (Enclojure.Value.Value io)))"
+            },
+            {
+                "name": "tryListOf",
+                "comment": " If the given value is a list, returns a list of `a` using the first argument as a function to interpret list\nvalues as `a`.\n",
+                "type": "(Enclojure.Value.Value io -> Maybe.Maybe a) -> Enclojure.Value.Value io -> Maybe.Maybe (List.List a)"
+            },
+            {
+                "name": "tryMap",
+                "comment": " Returns a `ValueMap io` if the given value is a map.\n",
+                "type": "Enclojure.Value.Value io -> Maybe.Maybe (Enclojure.ValueMap.ValueMap io)"
+            },
+            {
+                "name": "tryNil",
+                "comment": " Returns an empty tuple if the given value is nil.\n",
+                "type": "Enclojure.Value.Value io -> Maybe.Maybe ()"
+            },
+            {
+                "name": "tryOneOf",
+                "comment": " Attempts to interpret the given value as `a` as one of the given \"decoders\".\n",
+                "type": "List.List (Enclojure.Value.Value io -> Maybe.Maybe a) -> Enclojure.Value.Value io -> Maybe.Maybe a"
+            },
+            {
+                "name": "tryPatternOf2",
+                "comment": " Attempts to interpret a list of values as a pattern of two values of known type and the rest.\n",
+                "type": "(a -> b -> List.List (Enclojure.Value.Value io) -> Maybe.Maybe c) -> (Enclojure.Value.Value io -> Maybe.Maybe a) -> (Enclojure.Value.Value io -> Maybe.Maybe b) -> List.List (Enclojure.Value.Value io) -> Maybe.Maybe c"
+            },
+            {
+                "name": "tryRef",
+                "comment": " Returns a ref if the given value is a ref.\n",
+                "type": "Enclojure.Value.Value io -> Maybe.Maybe (Enclojure.Common.Ref io)"
+            },
+            {
+                "name": "tryRegex",
+                "comment": " Returns a regex if the given value is a regex.\n",
+                "type": "Enclojure.Value.Value io -> Maybe.Maybe Regex.Regex"
+            },
+            {
+                "name": "trySequenceOf",
+                "comment": " If the given value can be interpreted as a sequence, returns a list of `a` using the first argument as a function\nto interpret list values as `a`.\n",
+                "type": "(Enclojure.Value.Value io -> Maybe.Maybe a) -> Enclojure.Value.Value io -> Maybe.Maybe (List.List a)"
+            },
+            {
+                "name": "tryString",
+                "comment": " Returns a string if the given value is a string.\n",
+                "type": "Enclojure.Value.Value io -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "trySymbol",
+                "comment": " Returns a symbol as a string if the given value is a symbol.\n",
+                "type": "Enclojure.Value.Value io -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "tryVector",
+                "comment": " Returns an array of values if the given value is a vector.\n",
+                "type": "Enclojure.Value.Value io -> Maybe.Maybe (Array.Array (Enclojure.Located.Located (Enclojure.Value.Value io)))"
+            },
+            {
+                "name": "tryVectorOf",
+                "comment": " If the given value is a vector, returns a list of `a` using the first argument as a function to interpret vector\nvalues as `a`.\n",
+                "type": "(Enclojure.Value.Value io -> Maybe.Maybe a) -> Enclojure.Value.Value io -> Maybe.Maybe (List.List a)"
+            },
+            {
+                "name": "vector",
+                "comment": " Wraps an array as a vector value.\n",
+                "type": "Array.Array (Enclojure.Value.Value io) -> Enclojure.Value.Value io"
+            },
+            {
+                "name": "vectorFromList",
+                "comment": " Wraps a list as a vector value.\n",
+                "type": "List.List (Enclojure.Value.Value io) -> Enclojure.Value.Value io"
+            },
+            {
+                "name": "vectorFromLocatedList",
+                "comment": " Wraps a located list as a vector value.\n",
+                "type": "List.List (Enclojure.Located.Located (Enclojure.Value.Value io)) -> Enclojure.Value.Value io"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Enclojure.ValueMap",
+        "comment": " All Enclojure maps are backed by `ValueMap io` type. This namespace provides functions for working with this type.\n\n\n# Creating\n\n@docs ValueMap, ValueMapEntry, empty, fromList\n\n\n# Accessing values\n\n@docs get, keys, values, toList\n\n\n# Modifying\n\n@docs foldl, insert, map, remove\n\n\n# Predicates\n\n@docs isEmpty, member\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "ValueMap",
+                "comment": " Represents a map of values to located values. Operation complexity depends on the type of the key.\nFor keywords, symbols, strings, floats, and integers, the complexity of insert/remove operations is logarithmic.\nFor other value types, the complexity ranges from linear or worse, depending on the type of key values.\n",
+                "args": [
+                    "io"
+                ],
+                "type": "Enclojure.Common.ValueMap io"
+            },
+            {
+                "name": "ValueMapEntry",
+                "comment": " Represents a map entry.\n",
+                "args": [
+                    "io"
+                ],
+                "type": "Enclojure.Common.ValueMapEntry io"
+            }
+        ],
+        "values": [
+            {
+                "name": "empty",
+                "comment": " Returns an empty map.\n",
+                "type": "Enclojure.ValueMap.ValueMap io"
+            },
+            {
+                "name": "foldl",
+                "comment": " Folds a given map from left to right using a function that accepts the key, the located value, and the accumulator,\nand is called for each entry in the map.\n",
+                "type": "(Enclojure.Common.Value io -> Enclojure.Located.Located (Enclojure.Common.Value io) -> a -> a) -> a -> Enclojure.ValueMap.ValueMap io -> a"
+            },
+            {
+                "name": "fromList",
+                "comment": " Creates a map from a given list of map entries.\n",
+                "type": "List.List (Enclojure.ValueMap.ValueMapEntry io) -> Enclojure.ValueMap.ValueMap io"
+            },
+            {
+                "name": "get",
+                "comment": " Returns the located value at a given key in the map if present.\n",
+                "type": "Enclojure.Common.Value io -> Enclojure.ValueMap.ValueMap io -> Maybe.Maybe (Enclojure.Located.Located (Enclojure.Common.Value io))"
+            },
+            {
+                "name": "insert",
+                "comment": " Inserts a located value specified by the second argument to the key specified by the first argument.\n",
+                "type": "Enclojure.Common.Value io -> Enclojure.Located.Located (Enclojure.Common.Value io) -> Enclojure.ValueMap.ValueMap io -> Enclojure.ValueMap.ValueMap io"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Returns True if the map is empty.\n",
+                "type": "Enclojure.ValueMap.ValueMap io -> Basics.Bool"
+            },
+            {
+                "name": "keys",
+                "comment": " Returns the list of map keys.\n",
+                "type": "Enclojure.ValueMap.ValueMap io -> List.List (Enclojure.Common.Value io)"
+            },
+            {
+                "name": "map",
+                "comment": " Applies a function to every mapEntry in the map.\n",
+                "type": "(Enclojure.ValueMap.ValueMapEntry io -> Enclojure.ValueMap.ValueMapEntry io) -> Enclojure.ValueMap.ValueMap io -> Enclojure.ValueMap.ValueMap io"
+            },
+            {
+                "name": "member",
+                "comment": " Returns True if the map has a value at a given key.\n",
+                "type": "Enclojure.Common.Value io -> Enclojure.ValueMap.ValueMap io -> Basics.Bool"
+            },
+            {
+                "name": "remove",
+                "comment": " Removes the value at a given key from the map.\n",
+                "type": "Enclojure.Common.Value io -> Enclojure.ValueMap.ValueMap io -> Enclojure.ValueMap.ValueMap io"
+            },
+            {
+                "name": "toList",
+                "comment": " Transforms a given map into a list of map entries.\n",
+                "type": "Enclojure.ValueMap.ValueMap io -> List.List (Enclojure.ValueMap.ValueMapEntry io)"
+            },
+            {
+                "name": "values",
+                "comment": " Returns the list of map values without their source code locations.\n",
+                "type": "Enclojure.ValueMap.ValueMap io -> List.List (Enclojure.Common.Value io)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Enclojure.ValueSet",
+        "comment": " Represents a set of values. Operation complexity depends on the type of the value.\nFor keywords, symbols, strings, floats, and integers, the complexity of insert/remove operations is logarithmic.\nFor other value types, the complexity is typically linear or worse, depending on the type of key values.\n\n\n# Creating\n\n@docs ValueSet, empty, fromList\n\n\n# Accessing values\n\n@docs toList\n\n\n# Modifying\n\n@docs insert, map, remove\n\n\n# Predicates\n\n@docs isEmpty, member\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "ValueSet",
+                "comment": " Represents a set of values.\n",
+                "args": [
+                    "io"
+                ],
+                "type": "Enclojure.Common.ValueSet io"
+            }
+        ],
+        "values": [
+            {
+                "name": "empty",
+                "comment": " Returns an empty set.\n",
+                "type": "Enclojure.ValueSet.ValueSet io"
+            },
+            {
+                "name": "fromList",
+                "comment": " Creates a new set from a list of values.\n",
+                "type": "List.List (Enclojure.Common.Value io) -> Enclojure.ValueSet.ValueSet io"
+            },
+            {
+                "name": "insert",
+                "comment": " Inserts a value into the set.\n",
+                "type": "Enclojure.Common.Value io -> Enclojure.ValueSet.ValueSet io -> Enclojure.ValueSet.ValueSet io"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Returns True if the set is empty.\n",
+                "type": "Enclojure.ValueSet.ValueSet io -> Basics.Bool"
+            },
+            {
+                "name": "map",
+                "comment": " Applies a given function to each value in the set.\n",
+                "type": "(Enclojure.Common.Value io -> Enclojure.Common.Value io) -> Enclojure.ValueSet.ValueSet io -> Enclojure.ValueSet.ValueSet io"
+            },
+            {
+                "name": "member",
+                "comment": " Returns True if a given value is in the set.\n",
+                "type": "Enclojure.Common.Value io -> Enclojure.ValueSet.ValueSet io -> Basics.Bool"
+            },
+            {
+                "name": "remove",
+                "comment": " Removes a value from the set or does nothing if it's not present.\n",
+                "type": "Enclojure.Common.Value io -> Enclojure.ValueSet.ValueSet io -> Enclojure.ValueSet.ValueSet io"
+            },
+            {
+                "name": "toList",
+                "comment": " Returns a list of values in the set.\n",
+                "type": "Enclojure.ValueSet.ValueSet io -> List.List (Enclojure.Common.Value io)"
+            }
+        ],
+        "binops": []
+    }
+]

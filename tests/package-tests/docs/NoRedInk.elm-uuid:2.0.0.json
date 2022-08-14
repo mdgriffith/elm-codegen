@@ -1,0 +1,53 @@
+[
+    {
+        "name": "Prng.Uuid",
+        "comment": " This modules provides an opaque type for Uuids, helpers to serialize\nfrom and to String and helpers to generate new Uuids using the\n[Random.Pcg.Extended](http://package.elm-lang.org/packages/Zinggi/elm-random-pcg-extended/latest)\npseudo-random generator library.\n\nUuids are Universally Unique IDentifiers. They are 128 bit ids that are\ndesigned to be extremely unlikely to collide with other Uuids.\n\nThis library only supports generating Version 4 Uuid (those generated using\nrandom numbers, as opposed to hashing. See\n[Wikipedia on Uuids](https://en.wikipedia.org/wiki/Universally_unique_identifier#Version_4_.28random.29)\nfor more details). Version 4 Uuids are constructed using 122 pseudo random bits.\n\n**Disclaimer**: If you use this Library to generate Uuids, please make sure to correctly\nseed your random generator, as shown in the examples. **Don't** use the current time or something\nsimilar to seed the generator. If your generator isn't seeded properly, the chance of a collision\nbetween multiple clients is drastically increased!\n\nUuids can be generated either by parsing them from the canonical string representation\n(see `fromString`) or by generating them. If you are unfamiliar with random number generation\nin pure functional languages, this can be a bit confusing. The gist of it is that:\n\n1.  you need a good random seed and this has to come from outside our wonderfully\n    predictable Elm code (meaning you have to create an incoming port and feed in\n    some initial randomness)\n\n2.  every call to `generate` will give you a tuple of a Uuid and a new\n    seed. It is very important that whenever you generate a new Uuid you store this\n    seed you get back into your model and use this one for the next Uuid generation.\n    If you reuse a seed, you will create the same Uuid twice!\n\nHave a look at the examples in the package to see how to use it!\n\n@docs Uuid, generator, fromString, toString, encode, decoder\n\n\n## Barebones\n\n@docs stringGenerator, isValidUuid\n\n",
+        "unions": [
+            {
+                "name": "Uuid",
+                "comment": " Uuid type. Represents a 128 bit Uuid (Version 4)\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decoder",
+                "comment": " Decoder for getting Uuid out of Json\n",
+                "type": "Json.Decode.Decoder Prng.Uuid.Uuid"
+            },
+            {
+                "name": "encode",
+                "comment": " Encode Uuid to Json\n",
+                "type": "Prng.Uuid.Uuid -> Json.Encode.Value"
+            },
+            {
+                "name": "fromString",
+                "comment": " Create a Uuid from a String in the canonical form (e.g.\n\"63B9AAA2-6AAF-473E-B37E-22EB66E66B76\"). Note that this module only supports\ncanonical Uuids, Versions 1-5 and will refuse to parse other Uuid variants.\n",
+                "type": "String.String -> Maybe.Maybe Prng.Uuid.Uuid"
+            },
+            {
+                "name": "generator",
+                "comment": " Random.Pcg.Extended generator for Uuids.\n\nTo provide enough randomness, you should seed this generator with at least 4 32-bit integers\nthat are aquired from JavaScript via `crypto.getRandomValues(...)`.\nSee the examples on how to do this properly.\n\n",
+                "type": "Random.Pcg.Extended.Generator Prng.Uuid.Uuid"
+            },
+            {
+                "name": "isValidUuid",
+                "comment": " Check if the given string is a valid UUID\n",
+                "type": "String.String -> Basics.Bool"
+            },
+            {
+                "name": "stringGenerator",
+                "comment": " Random.Pcg.Extended generator for Uuid Strings.\n",
+                "type": "Random.Pcg.Extended.Generator String.String"
+            },
+            {
+                "name": "toString",
+                "comment": " Create a string representation from a Uuid in the canonical 8-4-4-4-12 form, i.e.\n\"63B9AAA2-6AAF-473E-B37E-22EB66E66B76\"\n",
+                "type": "Prng.Uuid.Uuid -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,81 @@
+[
+    {
+        "name": "Dict.Intersect",
+        "comment": "\r\n\r\n@docs foldl2, foldr2\r\n@docs foldl3, foldr3\r\n@docs foldl4, foldr4\r\n@docs foldl5, foldr5\r\n@docs foldl6, foldr6\r\n@docs foldl7, foldr7\r\n@docs foldl8, foldr8\r\n\r\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "foldl2",
+                "comment": " Fold over the key-value pairs in 2 dictionaries from lowest key to highest key.\r\nOnly keys that exist in both dictionaries are used.\r\n",
+                "type": "(comparable -> v1 -> v2 -> acc -> acc) -> acc -> Dict.Dict comparable v1 -> Dict.Dict comparable v2 -> acc"
+            },
+            {
+                "name": "foldl3",
+                "comment": " Fold over the key-value pairs in 3 dictionaries from lowest key to highest key.\r\nOnly keys that exist in all dictionaries are used.\r\n",
+                "type": "(comparable -> v1 -> v2 -> v3 -> acc -> acc) -> acc -> Dict.Dict comparable v1 -> Dict.Dict comparable v2 -> Dict.Dict comparable v3 -> acc"
+            },
+            {
+                "name": "foldl4",
+                "comment": " Fold over the key-value pairs in 4 dictionaries from lowest key to highest key.\r\nOnly keys that exist in all dictionaries are used.\r\n",
+                "type": "(comparable -> v1 -> v2 -> v3 -> v4 -> acc -> acc) -> acc -> Dict.Dict comparable v1 -> Dict.Dict comparable v2 -> Dict.Dict comparable v3 -> Dict.Dict comparable v4 -> acc"
+            },
+            {
+                "name": "foldl5",
+                "comment": " Fold over the key-value pairs in 5 dictionaries from lowest key to highest key.\r\nOnly keys that exist in all dictionaries are used.\r\n",
+                "type": "(comparable -> v1 -> v2 -> v3 -> v4 -> v5 -> acc -> acc) -> acc -> Dict.Dict comparable v1 -> Dict.Dict comparable v2 -> Dict.Dict comparable v3 -> Dict.Dict comparable v4 -> Dict.Dict comparable v5 -> acc"
+            },
+            {
+                "name": "foldl6",
+                "comment": " Fold over the key-value pairs in 6 dictionaries from lowest key to highest key.\r\nOnly keys that exist in all dictionaries are used.\r\n",
+                "type": "(comparable -> v1 -> v2 -> v3 -> v4 -> v5 -> v6 -> acc -> acc) -> acc -> Dict.Dict comparable v1 -> Dict.Dict comparable v2 -> Dict.Dict comparable v3 -> Dict.Dict comparable v4 -> Dict.Dict comparable v5 -> Dict.Dict comparable v6 -> acc"
+            },
+            {
+                "name": "foldl7",
+                "comment": " Fold over the key-value pairs in 7 dictionaries from lowest key to highest key.\r\nOnly keys that exist in all dictionaries are used.\r\n",
+                "type": "(comparable -> v1 -> v2 -> v3 -> v4 -> v5 -> v6 -> v7 -> acc -> acc) -> acc -> Dict.Dict comparable v1 -> Dict.Dict comparable v2 -> Dict.Dict comparable v3 -> Dict.Dict comparable v4 -> Dict.Dict comparable v5 -> Dict.Dict comparable v6 -> Dict.Dict comparable v7 -> acc"
+            },
+            {
+                "name": "foldl8",
+                "comment": " Fold over the key-value pairs in 8 dictionaries from lowest key to highest key.\r\nOnly keys that exist in all dictionaries are used.\r\n",
+                "type": "(comparable -> v1 -> v2 -> v3 -> v4 -> v5 -> v6 -> v7 -> v8 -> acc -> acc) -> acc -> Dict.Dict comparable v1 -> Dict.Dict comparable v2 -> Dict.Dict comparable v3 -> Dict.Dict comparable v4 -> Dict.Dict comparable v5 -> Dict.Dict comparable v6 -> Dict.Dict comparable v7 -> Dict.Dict comparable v8 -> acc"
+            },
+            {
+                "name": "foldr2",
+                "comment": " Fold over the key-value pairs in 2 dictionaries from highest key to lowest key.\r\nOnly keys that exist in both dictionaries are used.\r\n",
+                "type": "(comparable -> v1 -> v2 -> acc -> acc) -> acc -> Dict.Dict comparable v1 -> Dict.Dict comparable v2 -> acc"
+            },
+            {
+                "name": "foldr3",
+                "comment": " Fold over the key-value pairs in 3 dictionaries from highest key to lowest key.\r\nOnly keys that exist in all dictionaries are used.\r\n",
+                "type": "(comparable -> v1 -> v2 -> v3 -> acc -> acc) -> acc -> Dict.Dict comparable v1 -> Dict.Dict comparable v2 -> Dict.Dict comparable v3 -> acc"
+            },
+            {
+                "name": "foldr4",
+                "comment": " Fold over the key-value pairs in 4 dictionaries from highest key to lowest key.\r\nOnly keys that exist in all dictionaries are used.\r\n",
+                "type": "(comparable -> v1 -> v2 -> v3 -> v4 -> acc -> acc) -> acc -> Dict.Dict comparable v1 -> Dict.Dict comparable v2 -> Dict.Dict comparable v3 -> Dict.Dict comparable v4 -> acc"
+            },
+            {
+                "name": "foldr5",
+                "comment": " Fold over the key-value pairs in 5 dictionaries from highest key to lowest key.\r\nOnly keys that exist in all dictionaries are used.\r\n",
+                "type": "(comparable -> v1 -> v2 -> v3 -> v4 -> v5 -> acc -> acc) -> acc -> Dict.Dict comparable v1 -> Dict.Dict comparable v2 -> Dict.Dict comparable v3 -> Dict.Dict comparable v4 -> Dict.Dict comparable v5 -> acc"
+            },
+            {
+                "name": "foldr6",
+                "comment": " Fold over the key-value pairs in 6 dictionaries from highest key to lowest key.\r\nOnly keys that exist in all dictionaries are used.\r\n",
+                "type": "(comparable -> v1 -> v2 -> v3 -> v4 -> v5 -> v6 -> acc -> acc) -> acc -> Dict.Dict comparable v1 -> Dict.Dict comparable v2 -> Dict.Dict comparable v3 -> Dict.Dict comparable v4 -> Dict.Dict comparable v5 -> Dict.Dict comparable v6 -> acc"
+            },
+            {
+                "name": "foldr7",
+                "comment": " Fold over the key-value pairs in 7 dictionaries from highest key to lowest key.\r\nOnly keys that exist in all dictionaries are used.\r\n",
+                "type": "(comparable -> v1 -> v2 -> v3 -> v4 -> v5 -> v6 -> v7 -> acc -> acc) -> acc -> Dict.Dict comparable v1 -> Dict.Dict comparable v2 -> Dict.Dict comparable v3 -> Dict.Dict comparable v4 -> Dict.Dict comparable v5 -> Dict.Dict comparable v6 -> Dict.Dict comparable v7 -> acc"
+            },
+            {
+                "name": "foldr8",
+                "comment": " Fold over the key-value pairs in 8 dictionaries from highest key to lowest key.\r\nOnly keys that exist in all dictionaries are used.\r\n",
+                "type": "(comparable -> v1 -> v2 -> v3 -> v4 -> v5 -> v6 -> v7 -> v8 -> acc -> acc) -> acc -> Dict.Dict comparable v1 -> Dict.Dict comparable v2 -> Dict.Dict comparable v3 -> Dict.Dict comparable v4 -> Dict.Dict comparable v5 -> Dict.Dict comparable v6 -> Dict.Dict comparable v7 -> Dict.Dict comparable v8 -> acc"
+            }
+        ],
+        "binops": []
+    }
+]

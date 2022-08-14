@@ -1,0 +1,119 @@
+[
+    {
+        "name": "ISO8601",
+        "comment": " This package provides functionality for working with time and strings based\non the ISO 8601 standard i.e. `2016-03-31T12:13:14.22-04:00`\n\n\n# Time record\n\n@docs Time, Offset\n\n\n# Accessors\n\n@docs year, month, day, hour, minute, second, millisecond, offset, weekday\n\n\n# Parsing\n\n@docs fromString, toString\n\n\n# Time conversion\n\n@docs toTime, fromTime, toPosix, fromPosix\n\n\n# Manipulation\n\nNote: The Time record has an offset, but not a time size. Adding or\nsubtracting time across a daylight savings boundary will NOT adjust the\noffset.\n\n@docs diff, sub, add\n\n\n# Decoding\n\n@docs decode\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Offset",
+                "comment": " Offset represents the hour and minute timezone offset from UTC.\n",
+                "args": [],
+                "type": "Basics.Int"
+            },
+            {
+                "name": "Time",
+                "comment": " Record representing the time. Offset is tuple representing the hour and minute ± from UTC.\n",
+                "args": [],
+                "type": "ISO8601.Model"
+            }
+        ],
+        "values": [
+            {
+                "name": "add",
+                "comment": " Add milliseconds to a Time records\n",
+                "type": "ISO8601.Time -> Basics.Int -> ISO8601.Time"
+            },
+            {
+                "name": "day",
+                "comment": " return the day\n",
+                "type": "ISO8601.Time -> Basics.Int"
+            },
+            {
+                "name": "decode",
+                "comment": " Decode an ISO8601 string from JSON\n",
+                "type": "Json.Decode.Decoder ISO8601.Time"
+            },
+            {
+                "name": "diff",
+                "comment": " the difference between two Time records in milliseconds\n",
+                "type": "ISO8601.Time -> ISO8601.Time -> Basics.Int"
+            },
+            {
+                "name": "fromPosix",
+                "comment": " Converts the Time.Posix type to an ISO8601.Time\n",
+                "type": "Time.Posix -> ISO8601.Time"
+            },
+            {
+                "name": "fromString",
+                "comment": " Given an ISO 8601 compatible string, returns a Time record.\n\n    ISO8601.fromString \"2016-01-01T01:30:00-04:00\"\n    -- { year = 2016, month = 1, day = 1, hour = 1, minute = 30, second = 0, millisecond = 0, offset = -240) }\n        : ISO8601.Time\n    ISO8601.fromString \"2016-11-07\"\n    --{ year = 2016, month = 11, day = 7, hour = 0, minute = 0, second = 0, millisecond = 0, offset = 0 }\n        : ISO8601.Time\n    ```\n\n",
+                "type": "String.String -> Result.Result String.String ISO8601.Time"
+            },
+            {
+                "name": "fromTime",
+                "comment": " Converts the milliseconds relative to the Unix epoch to a Time record.\n",
+                "type": "Basics.Int -> ISO8601.Time"
+            },
+            {
+                "name": "hour",
+                "comment": " return the hour\n",
+                "type": "ISO8601.Time -> Basics.Int"
+            },
+            {
+                "name": "millisecond",
+                "comment": " return the millisecond\n",
+                "type": "ISO8601.Time -> Basics.Int"
+            },
+            {
+                "name": "minute",
+                "comment": " return the minute\n",
+                "type": "ISO8601.Time -> Basics.Int"
+            },
+            {
+                "name": "month",
+                "comment": " return the month\n",
+                "type": "ISO8601.Time -> Basics.Int"
+            },
+            {
+                "name": "offset",
+                "comment": " return the offset\n",
+                "type": "ISO8601.Time -> ISO8601.Offset"
+            },
+            {
+                "name": "second",
+                "comment": " return the secon\n",
+                "type": "ISO8601.Time -> Basics.Int"
+            },
+            {
+                "name": "sub",
+                "comment": " Subtract milliseconds from a Time records\n",
+                "type": "ISO8601.Time -> Basics.Int -> ISO8601.Time"
+            },
+            {
+                "name": "toPosix",
+                "comment": " Converts the Time to standard Time.Posix type\n",
+                "type": "ISO8601.Time -> Time.Posix"
+            },
+            {
+                "name": "toString",
+                "comment": " Converts a Time record to an ISO 8601 formated string.\n",
+                "type": "ISO8601.Time -> String.String"
+            },
+            {
+                "name": "toTime",
+                "comment": " Converts the Time to milliseconds relative to the Unix epoch: `1970-01-01T00:00:00Z`\n",
+                "type": "ISO8601.Time -> Basics.Int"
+            },
+            {
+                "name": "weekday",
+                "comment": " Returns the day of the week from the Time record\n",
+                "type": "ISO8601.Time -> Time.Weekday"
+            },
+            {
+                "name": "year",
+                "comment": " return the year\n",
+                "type": "ISO8601.Time -> Basics.Int"
+            }
+        ],
+        "binops": []
+    }
+]

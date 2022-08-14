@@ -1,0 +1,16 @@
+[
+    {
+        "name": "TLDs",
+        "comment": " iana.org list of Top Level Domains (TLDs). Generated with /build/index.js. See README.md for more info.\n\n@docs list\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "list",
+                "comment": " List of TLDs.\n",
+                "type": "List.List String.String"
+            }
+        ],
+        "binops": []
+    }
+]

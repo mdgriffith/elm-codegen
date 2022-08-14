@@ -1,0 +1,186 @@
+[
+    {
+        "name": "Burrito.Update",
+        "comment": " Monadic-style interface for state updates.\n\n\n# Update\n\n@docs Update, save, addCmd, map, mapCmd, join, kleisli, when\n\n\n## Chaining Updates\n\n@docs andThen, sequence\n\n\n## Applicative Interface\n\nThese functions address the need to map functions having more than one argument over some `Update`s.\n\n@docs andMap, ap, map2, map3, map4, map5, map6, map7\n\n\n## Callbacks\n\nCallbacks allow for information to be passed _up_ in the update tree.\n\n@docs apply, runCallbacks\n\n\n## Program Integration\n\n@docs run, run2, run3\n\n\n## Pointfree Helpers\n\n@docs using, with\n\n\n## Shortcuts\n\n@docs andApply, andAddCmd, andWith, andUsing, andIf\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Update",
+                "comment": " Type wrapper for Elm's `( model, Cmd msg )` tuple.\n",
+                "args": [
+                    "a",
+                    "msg",
+                    "t"
+                ],
+                "type": "( a, List.List (Platform.Cmd.Cmd msg), List.List t )"
+            }
+        ],
+        "values": [
+            {
+                "name": "addCmd",
+                "comment": " Add a command to an `Update` pipeline. For example;\n\n    update msg state =\n        case msg of\n            SomeMsg someMsg ->\n                state\n                    |> addCmd someCommand\n                    |> andThen (addCmd someOtherCommand)\n                    |> andThen (setStatus Done)\n\nIn this example, `andThen (addCmd someOtherCommand)` can also be shortened to\n[`andAddCmd`](#andAddCmd)`someOtherCommand`.\n\n",
+                "type": "Platform.Cmd.Cmd msg -> a -> Burrito.Update.Update a msg t"
+            },
+            {
+                "name": "andAddCmd",
+                "comment": " Shortcut for `andThen << addCmd`\n",
+                "type": "Platform.Cmd.Cmd msg -> Burrito.Update.Update a msg t -> Burrito.Update.Update a msg t"
+            },
+            {
+                "name": "andApply",
+                "comment": " Shortcut for `andThen << apply`\n",
+                "type": "t -> Burrito.Update.Update a msg t -> Burrito.Update.Update a msg t"
+            },
+            {
+                "name": "andIf",
+                "comment": " Shortcut for `\\cond -> andThen << when cond`\n",
+                "type": "Basics.Bool -> (a -> Burrito.Update.Update a msg t) -> Burrito.Update.Update a msg t -> Burrito.Update.Update a msg t"
+            },
+            {
+                "name": "andMap",
+                "comment": " Trying to map a function `number -> number -> number` over two `Update`s , applying the first value\n\n    map (+) (save 4)\n\nwe end up with a result of type `Update (number -> number) msg t`. To apply the function inside this value to another `Update number msg t` value, we can write&hellip;\n\n    map (+) (save 4) |> andMap (save 5)\n\nin `elm repl`, we can verify that the result is what we expect:\n\n    > (map (+) (save 4) |> andMap (save 5)) == save 9\n    True : Bool\n\nThis pattern scales in a nice way to functions of any number of arguments:\n\n    let\n        f x y z =\n            x + y + z\n    in\n    map f (save 1)\n        |> andMap (save 1)\n        |> andMap (save 1)\n\nIf not sooner, you'll need this when you want to `mapN` and N > 7.\n\nSee also [`map2`](#map2), [`map3`](#map3), etc.\n\n",
+                "type": "Burrito.Update.Update a msg t -> Burrito.Update.Update (a -> b) msg t -> Burrito.Update.Update b msg t"
+            },
+            {
+                "name": "andThen",
+                "comment": " Sequential composition of updates. This function is especially useful in conjunction\nwith the forward pipe operator (`|>`), for writing code in the style of pipelines. To chain\nupdates, we compose functions of the form `State -> Update State msg t`:\n\n    say : String -> State -> Update State msg t\n    say what state = ...\n\n    save state\n        |> andThen (say \"hello\")\n        |> andThen doSomethingElse\n\n_Aside:_ `andThen` is like the monadic bind `(>>=)` operator in Haskell, but with the arguments interchanged.\n\n",
+                "type": "(b -> Burrito.Update.Update a msg t) -> Burrito.Update.Update b msg t -> Burrito.Update.Update a msg t"
+            },
+            {
+                "name": "andUsing",
+                "comment": " Shortcut for `andThen << using`\n",
+                "type": "(b -> b -> Burrito.Update.Update a msg t) -> Burrito.Update.Update b msg t -> Burrito.Update.Update a msg t"
+            },
+            {
+                "name": "andWith",
+                "comment": " Shortcut for `\\fun -> andThen << with fun`\n",
+                "type": "(b -> c) -> (c -> b -> Burrito.Update.Update a msg t) -> Burrito.Update.Update b msg t -> Burrito.Update.Update a msg t"
+            },
+            {
+                "name": "ap",
+                "comment": " This function is like [`andMap`](#andMap), but with the arguments interchanged.\n",
+                "type": "Burrito.Update.Update (a -> b) msg t -> Burrito.Update.Update a msg t -> Burrito.Update.Update b msg t"
+            },
+            {
+                "name": "apply",
+                "comment": " Append a callback to the list of functions that subsequently get applied to the returned value using `runCallbacks`.\n",
+                "type": "t -> a -> Burrito.Update.Update a msg t"
+            },
+            {
+                "name": "join",
+                "comment": " Remove one level of monadic structure. It may suffice to know that some other\nfunctions in this library are implemented in terms of `join`. In particular, `andThen f = join << map f`\n",
+                "type": "Burrito.Update.Update (Burrito.Update.Update a msg t) msg t -> Burrito.Update.Update a msg t"
+            },
+            {
+                "name": "kleisli",
+                "comment": " Right-to-left (Kleisli) composition of two functions that return `Update` values,\npassing the state part of the first return value to the second function.\n",
+                "type": "(b -> Burrito.Update.Update c msg t) -> (a -> Burrito.Update.Update b msg t) -> a -> Burrito.Update.Update c msg t"
+            },
+            {
+                "name": "map",
+                "comment": " Apply a function to the state portion of an `Update`.\n",
+                "type": "(a -> b) -> Burrito.Update.Update a msg t -> Burrito.Update.Update b msg t"
+            },
+            {
+                "name": "map2",
+                "comment": " Combine the state of two `Update`s using a function of two arguments.\nEquivalently, we can think of this as taking a function `a -> b -> c` and\ntransforming it into a “lifted” function of type `Update a msg t -> Update b msg t -> Update c msg t`.\n",
+                "type": "(p -> q -> r) -> Burrito.Update.Update p msg t1 -> Burrito.Update.Update q msg t1 -> Burrito.Update.Update r msg t1"
+            },
+            {
+                "name": "map3",
+                "comment": " Combine the state of three `Update`s using a function of three arguments.\n",
+                "type": "(p -> q -> r -> s) -> Burrito.Update.Update p msg t1 -> Burrito.Update.Update q msg t1 -> Burrito.Update.Update r msg t1 -> Burrito.Update.Update s msg t1"
+            },
+            {
+                "name": "map4",
+                "comment": " Combine the state of four `Update`s using a function of four arguments.\n",
+                "type": "(p -> q -> r -> s -> t) -> Burrito.Update.Update p msg t1 -> Burrito.Update.Update q msg t1 -> Burrito.Update.Update r msg t1 -> Burrito.Update.Update s msg t1 -> Burrito.Update.Update t msg t1"
+            },
+            {
+                "name": "map5",
+                "comment": " Combine the state of five `Update`s using a function of five arguments.\n",
+                "type": "(p -> q -> r -> s -> t -> u) -> Burrito.Update.Update p msg t1 -> Burrito.Update.Update q msg t1 -> Burrito.Update.Update r msg t1 -> Burrito.Update.Update s msg t1 -> Burrito.Update.Update t msg t1 -> Burrito.Update.Update u msg t1"
+            },
+            {
+                "name": "map6",
+                "comment": " Combine the state of six `Update`s using a function of six arguments.\n",
+                "type": "(p -> q -> r -> s -> t -> u -> v) -> Burrito.Update.Update p msg t1 -> Burrito.Update.Update q msg t1 -> Burrito.Update.Update r msg t1 -> Burrito.Update.Update s msg t1 -> Burrito.Update.Update t msg t1 -> Burrito.Update.Update u msg t1 -> Burrito.Update.Update v msg t1"
+            },
+            {
+                "name": "map7",
+                "comment": " Combine the state of seven `Update`s using a function of seven arguments.\n",
+                "type": "(p -> q -> r -> s -> t -> u -> v -> w) -> Burrito.Update.Update p msg t1 -> Burrito.Update.Update q msg t1 -> Burrito.Update.Update r msg t1 -> Burrito.Update.Update s msg t1 -> Burrito.Update.Update t msg t1 -> Burrito.Update.Update u msg t1 -> Burrito.Update.Update v msg t1 -> Burrito.Update.Update w msg t1"
+            },
+            {
+                "name": "mapCmd",
+                "comment": " Map over the `Cmd` contained in the provided `Update`.\n",
+                "type": "(msg -> msg1) -> Burrito.Update.Update a msg t -> Burrito.Update.Update a msg1 t"
+            },
+            {
+                "name": "run",
+                "comment": " Translate a function that returns an `Update` into one that returns a plain `( model, cmd )` pair.\n",
+                "type": "(p -> Burrito.Update.Update a msg t) -> p -> ( a, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "run2",
+                "comment": " Same as [`run`](#run), but for functions of two arguments.\n",
+                "type": "(p -> q -> Burrito.Update.Update a msg t) -> p -> q -> ( a, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "run3",
+                "comment": " Same as [`run`](#run), but for functions of three arguments.\n",
+                "type": "(p -> q -> r -> Burrito.Update.Update a msg t) -> p -> q -> r -> ( a, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "runCallbacks",
+                "comment": " Compose and apply the list of monadic functions (callbacks) produced by a nested update call.\n",
+                "type": "Burrito.Update.Update a msg (a -> Burrito.Update.Update a msg t) -> Burrito.Update.Update a msg t"
+            },
+            {
+                "name": "save",
+                "comment": " Lifts a value into the `Update` context. For example,\n\n    save model\n\ncorresponds to `( model, Cmd.none )` in code that doesn't use this library.\n\n",
+                "type": "a -> Burrito.Update.Update a msg t"
+            },
+            {
+                "name": "sequence",
+                "comment": " Take a list of `a -> Update a msg t` values and run them sequentially, in a left-to-right manner.\n",
+                "type": "List.List (a -> Burrito.Update.Update a msg t) -> a -> Burrito.Update.Update a msg t"
+            },
+            {
+                "name": "using",
+                "comment": " Combinator useful for pointfree style. For example;\n\n    nextPage state =\n        goToPage (state.current + 1) state\n\ncan be changed to\n\n    nextPage =\n        using (\\{ current } -> goToPage (current + 1))\n\n",
+                "type": "(a -> a -> b) -> a -> b"
+            },
+            {
+                "name": "when",
+                "comment": " Run an update if the given condition is `True`, otherwise do nothing.\n",
+                "type": "Basics.Bool -> (a -> Burrito.Update.Update a msg t) -> a -> Burrito.Update.Update a msg t"
+            },
+            {
+                "name": "with",
+                "comment": " Combinator useful for pointfree style. For example, to get rid of the lambda in the following code;\n\n    update msg state =\n        case msg of\n            Click ->\n                state\n                    |> updateSomething\n                    |> andThen (\\s -> setCounterValue (s.counter + 1) s)\n\nwe can write:\n\n    update msg state =\n        case msg of\n            Click ->\n                state\n                    |> updateSomething\n                    |> andThen (with .counter (setCounterValue << (+) 1))\n\n",
+                "type": "(a -> b) -> (b -> a -> c) -> a -> c"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Burrito.Update.Browser",
+        "comment": "\n\n@docs application, document\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "application",
+                "comment": " Used as a drop-in replacement for `Browser.application`, but instead creates a `Program`\nwhere `init` and `update` are based on the `Update` type of this library.\n\n    init : flags -> Url -> Navigation.Key -> Update model msg\n\n    update : msg -> model -> Update model msg\n\n",
+                "type": "{ init : flags -> Url.Url -> Browser.Navigation.Key -> Burrito.Update.Update model msg t, onUrlChange : Url.Url -> msg, onUrlRequest : Browser.UrlRequest -> msg, subscriptions : model -> Platform.Sub.Sub msg, update : msg -> model -> Burrito.Update.Update model msg t, view : model -> Browser.Document msg } -> Platform.Program flags model msg"
+            },
+            {
+                "name": "document",
+                "comment": " Used as a drop-in replacement for `Browser.document`, but instead creates a `Program`\nwhere `init` and `update` are based on the `Update` type of this library.\n\n    init : flags -> Update model msg\n\n    update : msg -> model -> Update model msg\n\n",
+                "type": "{ init : flags -> Burrito.Update.Update model msg t, subscriptions : model -> Platform.Sub.Sub msg, update : msg -> model -> Burrito.Update.Update model msg t, view : model -> Browser.Document msg } -> Platform.Program flags model msg"
+            }
+        ],
+        "binops": []
+    }
+]

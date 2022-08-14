@@ -1,0 +1,16 @@
+[
+    {
+        "name": "LTTB",
+        "comment": "\n\n\n# Largest-Triangle-Three-Buckets Algorithm\n\n\n## Downsampling data for plotting\n\n    type alias Input a =\n        { data : List a\n        , threshold : Int\n        , xGetter : a -> Float\n        , yGetter : a -> Float\n        }\n\n@docs downsample\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "downsample",
+                "comment": " Say we have a list of ten thousand of these:\n\n    type alias OurRecord =\n        { id : Int\n        , time : Time.Posix\n        , temperature : Float\n        , humidity : Float\n        , comment : String\n        }\n\nand we just want five hundred points when plotting time on the x-axis and temperature on the y-axis we can downsample it with:\n\n    LTTB.downsample\n        { data = originalData\n        , threshold = 500\n        , xGetter = .time >> Time.posixToMillis >> toFloat\n        , yGetter = .temperature\n        }\n\nwhich results in a `List OurRecord` of length `500` sorted by `.time`.\n\n",
+                "type": "LTTB.Input a -> List.List a"
+            }
+        ],
+        "binops": []
+    }
+]

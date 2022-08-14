@@ -1,0 +1,2257 @@
+[
+    {
+        "name": "N",
+        "comment": " Express exact natural numbers in a type.\n\n    onlyExact1 : Nat (Only Nat1 maybeN) -> Cake\n\n  - `takesOnlyExact1 nat10` is a compile-time error\n\n```\nadd2 : Nat (Only n maybeN) -> Nat (ValueOnly (Nat2Plus n))\n```\n\n  - `add2 nat2` is of type `Nat (ValueOnly Nat4)`\n\n\n### about a big limitation\n\nSadly, while experimenting with type aliases, I discovered that type aliases can only expand so much.\n\n    compilingGetsKilled : Nat (N (Nat100Plus Nat93) x y)\n\nIf a type alias is not fully expanded after ~192 tries,\n\n  - the compilation stops\n\n  - the elm-stuff can corrupt\n\n\n## plus n\n\n@docs Nat100Plus, Nat101Plus, Nat102Plus, Nat103Plus, Nat104Plus, Nat105Plus\n@docs Nat106Plus, Nat107Plus, Nat108Plus, Nat109Plus, Nat10Plus, Nat110Plus\n@docs Nat111Plus, Nat112Plus, Nat113Plus, Nat114Plus, Nat115Plus, Nat116Plus\n@docs Nat117Plus, Nat118Plus, Nat119Plus, Nat11Plus, Nat120Plus, Nat121Plus\n@docs Nat122Plus, Nat123Plus, Nat124Plus, Nat125Plus, Nat126Plus, Nat127Plus\n@docs Nat128Plus, Nat129Plus, Nat12Plus, Nat130Plus, Nat131Plus, Nat132Plus\n@docs Nat133Plus, Nat134Plus, Nat135Plus, Nat136Plus, Nat137Plus, Nat138Plus\n@docs Nat139Plus, Nat13Plus, Nat140Plus, Nat141Plus, Nat142Plus, Nat143Plus\n@docs Nat144Plus, Nat145Plus, Nat146Plus, Nat147Plus, Nat148Plus, Nat149Plus\n@docs Nat14Plus, Nat150Plus, Nat151Plus, Nat152Plus, Nat153Plus, Nat154Plus\n@docs Nat155Plus, Nat156Plus, Nat157Plus, Nat158Plus, Nat159Plus, Nat15Plus\n@docs Nat160Plus, Nat16Plus, Nat17Plus, Nat18Plus, Nat19Plus, Nat1Plus, Nat20Plus\n@docs Nat21Plus, Nat22Plus, Nat23Plus, Nat24Plus, Nat25Plus, Nat26Plus, Nat27Plus\n@docs Nat28Plus, Nat29Plus, Nat2Plus, Nat30Plus, Nat31Plus, Nat32Plus, Nat33Plus\n@docs Nat34Plus, Nat35Plus, Nat36Plus, Nat37Plus, Nat38Plus, Nat39Plus, Nat3Plus\n@docs Nat40Plus, Nat41Plus, Nat42Plus, Nat43Plus, Nat44Plus, Nat45Plus, Nat46Plus\n@docs Nat47Plus, Nat48Plus, Nat49Plus, Nat4Plus, Nat50Plus, Nat51Plus, Nat52Plus\n@docs Nat53Plus, Nat54Plus, Nat55Plus, Nat56Plus, Nat57Plus, Nat58Plus, Nat59Plus\n@docs Nat5Plus, Nat60Plus, Nat61Plus, Nat62Plus, Nat63Plus, Nat64Plus, Nat65Plus\n@docs Nat66Plus, Nat67Plus, Nat68Plus, Nat69Plus, Nat6Plus, Nat70Plus, Nat71Plus\n@docs Nat72Plus, Nat73Plus, Nat74Plus, Nat75Plus, Nat76Plus, Nat77Plus, Nat78Plus\n@docs Nat79Plus, Nat7Plus, Nat80Plus, Nat81Plus, Nat82Plus, Nat83Plus, Nat84Plus\n@docs Nat85Plus, Nat86Plus, Nat87Plus, Nat88Plus, Nat89Plus, Nat8Plus, Nat90Plus\n@docs Nat91Plus, Nat92Plus, Nat93Plus, Nat94Plus, Nat95Plus, Nat96Plus, Nat97Plus\n@docs Nat98Plus, Nat99Plus, Nat9Plus\n\n\n## exact\n\n@docs Nat0, Nat1, Nat10, Nat100, Nat101, Nat102, Nat103, Nat104, Nat105, Nat106, Nat107\n@docs Nat108, Nat109, Nat11, Nat110, Nat111, Nat112, Nat113, Nat114, Nat115, Nat116\n@docs Nat117, Nat118, Nat119, Nat12, Nat120, Nat121, Nat122, Nat123, Nat124, Nat125\n@docs Nat126, Nat127, Nat128, Nat129, Nat13, Nat130, Nat131, Nat132, Nat133, Nat134\n@docs Nat135, Nat136, Nat137, Nat138, Nat139, Nat14, Nat140, Nat141, Nat142, Nat143\n@docs Nat144, Nat145, Nat146, Nat147, Nat148, Nat149, Nat15, Nat150, Nat151, Nat152\n@docs Nat153, Nat154, Nat155, Nat156, Nat157, Nat158, Nat159, Nat16, Nat160, Nat17, Nat18\n@docs Nat19, Nat2, Nat20, Nat21, Nat22, Nat23, Nat24, Nat25, Nat26, Nat27, Nat28, Nat29, Nat3\n@docs Nat30, Nat31, Nat32, Nat33, Nat34, Nat35, Nat36, Nat37, Nat38, Nat39, Nat4, Nat40, Nat41\n@docs Nat42, Nat43, Nat44, Nat45, Nat46, Nat47, Nat48, Nat49, Nat5, Nat50, Nat51, Nat52, Nat53\n@docs Nat54, Nat55, Nat56, Nat57, Nat58, Nat59, Nat6, Nat60, Nat61, Nat62, Nat63, Nat64, Nat65\n@docs Nat66, Nat67, Nat68, Nat69, Nat7, Nat70, Nat71, Nat72, Nat73, Nat74, Nat75, Nat76, Nat77\n@docs Nat78, Nat79, Nat8, Nat80, Nat81, Nat82, Nat83, Nat84, Nat85, Nat86, Nat87, Nat88, Nat89\n@docs Nat9, Nat90, Nat91, Nat92, Nat93, Nat94, Nat95, Nat96, Nat97, Nat98, Nat99\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Nat0",
+                "comment": " Exact the natural number 0.\n",
+                "args": [],
+                "type": "N.Z"
+            },
+            {
+                "name": "Nat1",
+                "comment": " Exact the natural number 1.\n",
+                "args": [],
+                "type": "N.Nat1Plus N.Z"
+            },
+            {
+                "name": "Nat10",
+                "comment": " Exact the natural number 10.\n",
+                "args": [],
+                "type": "N.Nat10Plus N.Z"
+            },
+            {
+                "name": "Nat100",
+                "comment": " Exact the natural number 100.\n",
+                "args": [],
+                "type": "N.Nat100Plus N.Z"
+            },
+            {
+                "name": "Nat100Plus",
+                "comment": " 100 + some natural number `n`. This is at least 100.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat101",
+                "comment": " Exact the natural number 101.\n",
+                "args": [],
+                "type": "N.Nat101Plus N.Z"
+            },
+            {
+                "name": "Nat101Plus",
+                "comment": " 101 + some natural number `n`. This is at least 101.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat102",
+                "comment": " Exact the natural number 102.\n",
+                "args": [],
+                "type": "N.Nat102Plus N.Z"
+            },
+            {
+                "name": "Nat102Plus",
+                "comment": " 102 + some natural number `n`. This is at least 102.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat103",
+                "comment": " Exact the natural number 103.\n",
+                "args": [],
+                "type": "N.Nat103Plus N.Z"
+            },
+            {
+                "name": "Nat103Plus",
+                "comment": " 103 + some natural number `n`. This is at least 103.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat104",
+                "comment": " Exact the natural number 104.\n",
+                "args": [],
+                "type": "N.Nat104Plus N.Z"
+            },
+            {
+                "name": "Nat104Plus",
+                "comment": " 104 + some natural number `n`. This is at least 104.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat105",
+                "comment": " Exact the natural number 105.\n",
+                "args": [],
+                "type": "N.Nat105Plus N.Z"
+            },
+            {
+                "name": "Nat105Plus",
+                "comment": " 105 + some natural number `n`. This is at least 105.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat106",
+                "comment": " Exact the natural number 106.\n",
+                "args": [],
+                "type": "N.Nat106Plus N.Z"
+            },
+            {
+                "name": "Nat106Plus",
+                "comment": " 106 + some natural number `n`. This is at least 106.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat107",
+                "comment": " Exact the natural number 107.\n",
+                "args": [],
+                "type": "N.Nat107Plus N.Z"
+            },
+            {
+                "name": "Nat107Plus",
+                "comment": " 107 + some natural number `n`. This is at least 107.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat108",
+                "comment": " Exact the natural number 108.\n",
+                "args": [],
+                "type": "N.Nat108Plus N.Z"
+            },
+            {
+                "name": "Nat108Plus",
+                "comment": " 108 + some natural number `n`. This is at least 108.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat109",
+                "comment": " Exact the natural number 109.\n",
+                "args": [],
+                "type": "N.Nat109Plus N.Z"
+            },
+            {
+                "name": "Nat109Plus",
+                "comment": " 109 + some natural number `n`. This is at least 109.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat10Plus",
+                "comment": " 10 + some natural number `n`. This is at least 10.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))"
+            },
+            {
+                "name": "Nat11",
+                "comment": " Exact the natural number 11.\n",
+                "args": [],
+                "type": "N.Nat11Plus N.Z"
+            },
+            {
+                "name": "Nat110",
+                "comment": " Exact the natural number 110.\n",
+                "args": [],
+                "type": "N.Nat110Plus N.Z"
+            },
+            {
+                "name": "Nat110Plus",
+                "comment": " 110 + some natural number `n`. This is at least 110.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat111",
+                "comment": " Exact the natural number 111.\n",
+                "args": [],
+                "type": "N.Nat111Plus N.Z"
+            },
+            {
+                "name": "Nat111Plus",
+                "comment": " 111 + some natural number `n`. This is at least 111.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat112",
+                "comment": " Exact the natural number 112.\n",
+                "args": [],
+                "type": "N.Nat112Plus N.Z"
+            },
+            {
+                "name": "Nat112Plus",
+                "comment": " 112 + some natural number `n`. This is at least 112.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat113",
+                "comment": " Exact the natural number 113.\n",
+                "args": [],
+                "type": "N.Nat113Plus N.Z"
+            },
+            {
+                "name": "Nat113Plus",
+                "comment": " 113 + some natural number `n`. This is at least 113.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat114",
+                "comment": " Exact the natural number 114.\n",
+                "args": [],
+                "type": "N.Nat114Plus N.Z"
+            },
+            {
+                "name": "Nat114Plus",
+                "comment": " 114 + some natural number `n`. This is at least 114.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat115",
+                "comment": " Exact the natural number 115.\n",
+                "args": [],
+                "type": "N.Nat115Plus N.Z"
+            },
+            {
+                "name": "Nat115Plus",
+                "comment": " 115 + some natural number `n`. This is at least 115.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat116",
+                "comment": " Exact the natural number 116.\n",
+                "args": [],
+                "type": "N.Nat116Plus N.Z"
+            },
+            {
+                "name": "Nat116Plus",
+                "comment": " 116 + some natural number `n`. This is at least 116.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat117",
+                "comment": " Exact the natural number 117.\n",
+                "args": [],
+                "type": "N.Nat117Plus N.Z"
+            },
+            {
+                "name": "Nat117Plus",
+                "comment": " 117 + some natural number `n`. This is at least 117.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat118",
+                "comment": " Exact the natural number 118.\n",
+                "args": [],
+                "type": "N.Nat118Plus N.Z"
+            },
+            {
+                "name": "Nat118Plus",
+                "comment": " 118 + some natural number `n`. This is at least 118.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat119",
+                "comment": " Exact the natural number 119.\n",
+                "args": [],
+                "type": "N.Nat119Plus N.Z"
+            },
+            {
+                "name": "Nat119Plus",
+                "comment": " 119 + some natural number `n`. This is at least 119.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat11Plus",
+                "comment": " 11 + some natural number `n`. This is at least 11.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))"
+            },
+            {
+                "name": "Nat12",
+                "comment": " Exact the natural number 12.\n",
+                "args": [],
+                "type": "N.Nat12Plus N.Z"
+            },
+            {
+                "name": "Nat120",
+                "comment": " Exact the natural number 120.\n",
+                "args": [],
+                "type": "N.Nat120Plus N.Z"
+            },
+            {
+                "name": "Nat120Plus",
+                "comment": " 120 + some natural number `n`. This is at least 120.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat121",
+                "comment": " Exact the natural number 121.\n",
+                "args": [],
+                "type": "N.Nat121Plus N.Z"
+            },
+            {
+                "name": "Nat121Plus",
+                "comment": " 121 + some natural number `n`. This is at least 121.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat122",
+                "comment": " Exact the natural number 122.\n",
+                "args": [],
+                "type": "N.Nat122Plus N.Z"
+            },
+            {
+                "name": "Nat122Plus",
+                "comment": " 122 + some natural number `n`. This is at least 122.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat123",
+                "comment": " Exact the natural number 123.\n",
+                "args": [],
+                "type": "N.Nat123Plus N.Z"
+            },
+            {
+                "name": "Nat123Plus",
+                "comment": " 123 + some natural number `n`. This is at least 123.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat124",
+                "comment": " Exact the natural number 124.\n",
+                "args": [],
+                "type": "N.Nat124Plus N.Z"
+            },
+            {
+                "name": "Nat124Plus",
+                "comment": " 124 + some natural number `n`. This is at least 124.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat125",
+                "comment": " Exact the natural number 125.\n",
+                "args": [],
+                "type": "N.Nat125Plus N.Z"
+            },
+            {
+                "name": "Nat125Plus",
+                "comment": " 125 + some natural number `n`. This is at least 125.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat126",
+                "comment": " Exact the natural number 126.\n",
+                "args": [],
+                "type": "N.Nat126Plus N.Z"
+            },
+            {
+                "name": "Nat126Plus",
+                "comment": " 126 + some natural number `n`. This is at least 126.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat127",
+                "comment": " Exact the natural number 127.\n",
+                "args": [],
+                "type": "N.Nat127Plus N.Z"
+            },
+            {
+                "name": "Nat127Plus",
+                "comment": " 127 + some natural number `n`. This is at least 127.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat128",
+                "comment": " Exact the natural number 128.\n",
+                "args": [],
+                "type": "N.Nat128Plus N.Z"
+            },
+            {
+                "name": "Nat128Plus",
+                "comment": " 128 + some natural number `n`. This is at least 128.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat129",
+                "comment": " Exact the natural number 129.\n",
+                "args": [],
+                "type": "N.Nat129Plus N.Z"
+            },
+            {
+                "name": "Nat129Plus",
+                "comment": " 129 + some natural number `n`. This is at least 129.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat12Plus",
+                "comment": " 12 + some natural number `n`. This is at least 12.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))"
+            },
+            {
+                "name": "Nat13",
+                "comment": " Exact the natural number 13.\n",
+                "args": [],
+                "type": "N.Nat13Plus N.Z"
+            },
+            {
+                "name": "Nat130",
+                "comment": " Exact the natural number 130.\n",
+                "args": [],
+                "type": "N.Nat130Plus N.Z"
+            },
+            {
+                "name": "Nat130Plus",
+                "comment": " 130 + some natural number `n`. This is at least 130.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat131",
+                "comment": " Exact the natural number 131.\n",
+                "args": [],
+                "type": "N.Nat131Plus N.Z"
+            },
+            {
+                "name": "Nat131Plus",
+                "comment": " 131 + some natural number `n`. This is at least 131.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat132",
+                "comment": " Exact the natural number 132.\n",
+                "args": [],
+                "type": "N.Nat132Plus N.Z"
+            },
+            {
+                "name": "Nat132Plus",
+                "comment": " 132 + some natural number `n`. This is at least 132.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat133",
+                "comment": " Exact the natural number 133.\n",
+                "args": [],
+                "type": "N.Nat133Plus N.Z"
+            },
+            {
+                "name": "Nat133Plus",
+                "comment": " 133 + some natural number `n`. This is at least 133.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat134",
+                "comment": " Exact the natural number 134.\n",
+                "args": [],
+                "type": "N.Nat134Plus N.Z"
+            },
+            {
+                "name": "Nat134Plus",
+                "comment": " 134 + some natural number `n`. This is at least 134.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat135",
+                "comment": " Exact the natural number 135.\n",
+                "args": [],
+                "type": "N.Nat135Plus N.Z"
+            },
+            {
+                "name": "Nat135Plus",
+                "comment": " 135 + some natural number `n`. This is at least 135.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat136",
+                "comment": " Exact the natural number 136.\n",
+                "args": [],
+                "type": "N.Nat136Plus N.Z"
+            },
+            {
+                "name": "Nat136Plus",
+                "comment": " 136 + some natural number `n`. This is at least 136.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat137",
+                "comment": " Exact the natural number 137.\n",
+                "args": [],
+                "type": "N.Nat137Plus N.Z"
+            },
+            {
+                "name": "Nat137Plus",
+                "comment": " 137 + some natural number `n`. This is at least 137.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat138",
+                "comment": " Exact the natural number 138.\n",
+                "args": [],
+                "type": "N.Nat138Plus N.Z"
+            },
+            {
+                "name": "Nat138Plus",
+                "comment": " 138 + some natural number `n`. This is at least 138.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat139",
+                "comment": " Exact the natural number 139.\n",
+                "args": [],
+                "type": "N.Nat139Plus N.Z"
+            },
+            {
+                "name": "Nat139Plus",
+                "comment": " 139 + some natural number `n`. This is at least 139.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat13Plus",
+                "comment": " 13 + some natural number `n`. This is at least 13.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))"
+            },
+            {
+                "name": "Nat14",
+                "comment": " Exact the natural number 14.\n",
+                "args": [],
+                "type": "N.Nat14Plus N.Z"
+            },
+            {
+                "name": "Nat140",
+                "comment": " Exact the natural number 140.\n",
+                "args": [],
+                "type": "N.Nat140Plus N.Z"
+            },
+            {
+                "name": "Nat140Plus",
+                "comment": " 140 + some natural number `n`. This is at least 140.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat141",
+                "comment": " Exact the natural number 141.\n",
+                "args": [],
+                "type": "N.Nat141Plus N.Z"
+            },
+            {
+                "name": "Nat141Plus",
+                "comment": " 141 + some natural number `n`. This is at least 141.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat142",
+                "comment": " Exact the natural number 142.\n",
+                "args": [],
+                "type": "N.Nat142Plus N.Z"
+            },
+            {
+                "name": "Nat142Plus",
+                "comment": " 142 + some natural number `n`. This is at least 142.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat143",
+                "comment": " Exact the natural number 143.\n",
+                "args": [],
+                "type": "N.Nat143Plus N.Z"
+            },
+            {
+                "name": "Nat143Plus",
+                "comment": " 143 + some natural number `n`. This is at least 143.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat144",
+                "comment": " Exact the natural number 144.\n",
+                "args": [],
+                "type": "N.Nat144Plus N.Z"
+            },
+            {
+                "name": "Nat144Plus",
+                "comment": " 144 + some natural number `n`. This is at least 144.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat145",
+                "comment": " Exact the natural number 145.\n",
+                "args": [],
+                "type": "N.Nat145Plus N.Z"
+            },
+            {
+                "name": "Nat145Plus",
+                "comment": " 145 + some natural number `n`. This is at least 145.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat146",
+                "comment": " Exact the natural number 146.\n",
+                "args": [],
+                "type": "N.Nat146Plus N.Z"
+            },
+            {
+                "name": "Nat146Plus",
+                "comment": " 146 + some natural number `n`. This is at least 146.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat147",
+                "comment": " Exact the natural number 147.\n",
+                "args": [],
+                "type": "N.Nat147Plus N.Z"
+            },
+            {
+                "name": "Nat147Plus",
+                "comment": " 147 + some natural number `n`. This is at least 147.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat148",
+                "comment": " Exact the natural number 148.\n",
+                "args": [],
+                "type": "N.Nat148Plus N.Z"
+            },
+            {
+                "name": "Nat148Plus",
+                "comment": " 148 + some natural number `n`. This is at least 148.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat149",
+                "comment": " Exact the natural number 149.\n",
+                "args": [],
+                "type": "N.Nat149Plus N.Z"
+            },
+            {
+                "name": "Nat149Plus",
+                "comment": " 149 + some natural number `n`. This is at least 149.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat14Plus",
+                "comment": " 14 + some natural number `n`. This is at least 14.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))"
+            },
+            {
+                "name": "Nat15",
+                "comment": " Exact the natural number 15.\n",
+                "args": [],
+                "type": "N.Nat15Plus N.Z"
+            },
+            {
+                "name": "Nat150",
+                "comment": " Exact the natural number 150.\n",
+                "args": [],
+                "type": "N.Nat150Plus N.Z"
+            },
+            {
+                "name": "Nat150Plus",
+                "comment": " 150 + some natural number `n`. This is at least 150.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat151",
+                "comment": " Exact the natural number 151.\n",
+                "args": [],
+                "type": "N.Nat151Plus N.Z"
+            },
+            {
+                "name": "Nat151Plus",
+                "comment": " 151 + some natural number `n`. This is at least 151.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat152",
+                "comment": " Exact the natural number 152.\n",
+                "args": [],
+                "type": "N.Nat152Plus N.Z"
+            },
+            {
+                "name": "Nat152Plus",
+                "comment": " 152 + some natural number `n`. This is at least 152.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat153",
+                "comment": " Exact the natural number 153.\n",
+                "args": [],
+                "type": "N.Nat153Plus N.Z"
+            },
+            {
+                "name": "Nat153Plus",
+                "comment": " 153 + some natural number `n`. This is at least 153.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat154",
+                "comment": " Exact the natural number 154.\n",
+                "args": [],
+                "type": "N.Nat154Plus N.Z"
+            },
+            {
+                "name": "Nat154Plus",
+                "comment": " 154 + some natural number `n`. This is at least 154.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat155",
+                "comment": " Exact the natural number 155.\n",
+                "args": [],
+                "type": "N.Nat155Plus N.Z"
+            },
+            {
+                "name": "Nat155Plus",
+                "comment": " 155 + some natural number `n`. This is at least 155.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat156",
+                "comment": " Exact the natural number 156.\n",
+                "args": [],
+                "type": "N.Nat156Plus N.Z"
+            },
+            {
+                "name": "Nat156Plus",
+                "comment": " 156 + some natural number `n`. This is at least 156.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat157",
+                "comment": " Exact the natural number 157.\n",
+                "args": [],
+                "type": "N.Nat157Plus N.Z"
+            },
+            {
+                "name": "Nat157Plus",
+                "comment": " 157 + some natural number `n`. This is at least 157.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat158",
+                "comment": " Exact the natural number 158.\n",
+                "args": [],
+                "type": "N.Nat158Plus N.Z"
+            },
+            {
+                "name": "Nat158Plus",
+                "comment": " 158 + some natural number `n`. This is at least 158.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat159",
+                "comment": " Exact the natural number 159.\n",
+                "args": [],
+                "type": "N.Nat159Plus N.Z"
+            },
+            {
+                "name": "Nat159Plus",
+                "comment": " 159 + some natural number `n`. This is at least 159.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat15Plus",
+                "comment": " 15 + some natural number `n`. This is at least 15.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))"
+            },
+            {
+                "name": "Nat16",
+                "comment": " Exact the natural number 16.\n",
+                "args": [],
+                "type": "N.Nat16Plus N.Z"
+            },
+            {
+                "name": "Nat160",
+                "comment": " Exact the natural number 160.\n",
+                "args": [],
+                "type": "N.Nat160Plus N.Z"
+            },
+            {
+                "name": "Nat160Plus",
+                "comment": " 160 + some natural number `n`. This is at least 160.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat16Plus",
+                "comment": " 16 + some natural number `n`. This is at least 16.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))"
+            },
+            {
+                "name": "Nat17",
+                "comment": " Exact the natural number 17.\n",
+                "args": [],
+                "type": "N.Nat17Plus N.Z"
+            },
+            {
+                "name": "Nat17Plus",
+                "comment": " 17 + some natural number `n`. This is at least 17.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))"
+            },
+            {
+                "name": "Nat18",
+                "comment": " Exact the natural number 18.\n",
+                "args": [],
+                "type": "N.Nat18Plus N.Z"
+            },
+            {
+                "name": "Nat18Plus",
+                "comment": " 18 + some natural number `n`. This is at least 18.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))"
+            },
+            {
+                "name": "Nat19",
+                "comment": " Exact the natural number 19.\n",
+                "args": [],
+                "type": "N.Nat19Plus N.Z"
+            },
+            {
+                "name": "Nat19Plus",
+                "comment": " 19 + some natural number `n`. This is at least 19.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))"
+            },
+            {
+                "name": "Nat1Plus",
+                "comment": " 1 + some natural number `n`. This is at least 1.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S n"
+            },
+            {
+                "name": "Nat2",
+                "comment": " Exact the natural number 2.\n",
+                "args": [],
+                "type": "N.Nat2Plus N.Z"
+            },
+            {
+                "name": "Nat20",
+                "comment": " Exact the natural number 20.\n",
+                "args": [],
+                "type": "N.Nat20Plus N.Z"
+            },
+            {
+                "name": "Nat20Plus",
+                "comment": " 20 + some natural number `n`. This is at least 20.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))"
+            },
+            {
+                "name": "Nat21",
+                "comment": " Exact the natural number 21.\n",
+                "args": [],
+                "type": "N.Nat21Plus N.Z"
+            },
+            {
+                "name": "Nat21Plus",
+                "comment": " 21 + some natural number `n`. This is at least 21.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))"
+            },
+            {
+                "name": "Nat22",
+                "comment": " Exact the natural number 22.\n",
+                "args": [],
+                "type": "N.Nat22Plus N.Z"
+            },
+            {
+                "name": "Nat22Plus",
+                "comment": " 22 + some natural number `n`. This is at least 22.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))"
+            },
+            {
+                "name": "Nat23",
+                "comment": " Exact the natural number 23.\n",
+                "args": [],
+                "type": "N.Nat23Plus N.Z"
+            },
+            {
+                "name": "Nat23Plus",
+                "comment": " 23 + some natural number `n`. This is at least 23.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat24",
+                "comment": " Exact the natural number 24.\n",
+                "args": [],
+                "type": "N.Nat24Plus N.Z"
+            },
+            {
+                "name": "Nat24Plus",
+                "comment": " 24 + some natural number `n`. This is at least 24.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat25",
+                "comment": " Exact the natural number 25.\n",
+                "args": [],
+                "type": "N.Nat25Plus N.Z"
+            },
+            {
+                "name": "Nat25Plus",
+                "comment": " 25 + some natural number `n`. This is at least 25.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat26",
+                "comment": " Exact the natural number 26.\n",
+                "args": [],
+                "type": "N.Nat26Plus N.Z"
+            },
+            {
+                "name": "Nat26Plus",
+                "comment": " 26 + some natural number `n`. This is at least 26.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat27",
+                "comment": " Exact the natural number 27.\n",
+                "args": [],
+                "type": "N.Nat27Plus N.Z"
+            },
+            {
+                "name": "Nat27Plus",
+                "comment": " 27 + some natural number `n`. This is at least 27.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat28",
+                "comment": " Exact the natural number 28.\n",
+                "args": [],
+                "type": "N.Nat28Plus N.Z"
+            },
+            {
+                "name": "Nat28Plus",
+                "comment": " 28 + some natural number `n`. This is at least 28.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat29",
+                "comment": " Exact the natural number 29.\n",
+                "args": [],
+                "type": "N.Nat29Plus N.Z"
+            },
+            {
+                "name": "Nat29Plus",
+                "comment": " 29 + some natural number `n`. This is at least 29.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat2Plus",
+                "comment": " 2 + some natural number `n`. This is at least 2.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S n)"
+            },
+            {
+                "name": "Nat3",
+                "comment": " Exact the natural number 3.\n",
+                "args": [],
+                "type": "N.Nat3Plus N.Z"
+            },
+            {
+                "name": "Nat30",
+                "comment": " Exact the natural number 30.\n",
+                "args": [],
+                "type": "N.Nat30Plus N.Z"
+            },
+            {
+                "name": "Nat30Plus",
+                "comment": " 30 + some natural number `n`. This is at least 30.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat31",
+                "comment": " Exact the natural number 31.\n",
+                "args": [],
+                "type": "N.Nat31Plus N.Z"
+            },
+            {
+                "name": "Nat31Plus",
+                "comment": " 31 + some natural number `n`. This is at least 31.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat32",
+                "comment": " Exact the natural number 32.\n",
+                "args": [],
+                "type": "N.Nat32Plus N.Z"
+            },
+            {
+                "name": "Nat32Plus",
+                "comment": " 32 + some natural number `n`. This is at least 32.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat33",
+                "comment": " Exact the natural number 33.\n",
+                "args": [],
+                "type": "N.Nat33Plus N.Z"
+            },
+            {
+                "name": "Nat33Plus",
+                "comment": " 33 + some natural number `n`. This is at least 33.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat34",
+                "comment": " Exact the natural number 34.\n",
+                "args": [],
+                "type": "N.Nat34Plus N.Z"
+            },
+            {
+                "name": "Nat34Plus",
+                "comment": " 34 + some natural number `n`. This is at least 34.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat35",
+                "comment": " Exact the natural number 35.\n",
+                "args": [],
+                "type": "N.Nat35Plus N.Z"
+            },
+            {
+                "name": "Nat35Plus",
+                "comment": " 35 + some natural number `n`. This is at least 35.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat36",
+                "comment": " Exact the natural number 36.\n",
+                "args": [],
+                "type": "N.Nat36Plus N.Z"
+            },
+            {
+                "name": "Nat36Plus",
+                "comment": " 36 + some natural number `n`. This is at least 36.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat37",
+                "comment": " Exact the natural number 37.\n",
+                "args": [],
+                "type": "N.Nat37Plus N.Z"
+            },
+            {
+                "name": "Nat37Plus",
+                "comment": " 37 + some natural number `n`. This is at least 37.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat38",
+                "comment": " Exact the natural number 38.\n",
+                "args": [],
+                "type": "N.Nat38Plus N.Z"
+            },
+            {
+                "name": "Nat38Plus",
+                "comment": " 38 + some natural number `n`. This is at least 38.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat39",
+                "comment": " Exact the natural number 39.\n",
+                "args": [],
+                "type": "N.Nat39Plus N.Z"
+            },
+            {
+                "name": "Nat39Plus",
+                "comment": " 39 + some natural number `n`. This is at least 39.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat3Plus",
+                "comment": " 3 + some natural number `n`. This is at least 3.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S n))"
+            },
+            {
+                "name": "Nat4",
+                "comment": " Exact the natural number 4.\n",
+                "args": [],
+                "type": "N.Nat4Plus N.Z"
+            },
+            {
+                "name": "Nat40",
+                "comment": " Exact the natural number 40.\n",
+                "args": [],
+                "type": "N.Nat40Plus N.Z"
+            },
+            {
+                "name": "Nat40Plus",
+                "comment": " 40 + some natural number `n`. This is at least 40.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat41",
+                "comment": " Exact the natural number 41.\n",
+                "args": [],
+                "type": "N.Nat41Plus N.Z"
+            },
+            {
+                "name": "Nat41Plus",
+                "comment": " 41 + some natural number `n`. This is at least 41.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat42",
+                "comment": " Exact the natural number 42.\n",
+                "args": [],
+                "type": "N.Nat42Plus N.Z"
+            },
+            {
+                "name": "Nat42Plus",
+                "comment": " 42 + some natural number `n`. This is at least 42.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat43",
+                "comment": " Exact the natural number 43.\n",
+                "args": [],
+                "type": "N.Nat43Plus N.Z"
+            },
+            {
+                "name": "Nat43Plus",
+                "comment": " 43 + some natural number `n`. This is at least 43.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat44",
+                "comment": " Exact the natural number 44.\n",
+                "args": [],
+                "type": "N.Nat44Plus N.Z"
+            },
+            {
+                "name": "Nat44Plus",
+                "comment": " 44 + some natural number `n`. This is at least 44.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat45",
+                "comment": " Exact the natural number 45.\n",
+                "args": [],
+                "type": "N.Nat45Plus N.Z"
+            },
+            {
+                "name": "Nat45Plus",
+                "comment": " 45 + some natural number `n`. This is at least 45.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat46",
+                "comment": " Exact the natural number 46.\n",
+                "args": [],
+                "type": "N.Nat46Plus N.Z"
+            },
+            {
+                "name": "Nat46Plus",
+                "comment": " 46 + some natural number `n`. This is at least 46.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat47",
+                "comment": " Exact the natural number 47.\n",
+                "args": [],
+                "type": "N.Nat47Plus N.Z"
+            },
+            {
+                "name": "Nat47Plus",
+                "comment": " 47 + some natural number `n`. This is at least 47.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat48",
+                "comment": " Exact the natural number 48.\n",
+                "args": [],
+                "type": "N.Nat48Plus N.Z"
+            },
+            {
+                "name": "Nat48Plus",
+                "comment": " 48 + some natural number `n`. This is at least 48.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat49",
+                "comment": " Exact the natural number 49.\n",
+                "args": [],
+                "type": "N.Nat49Plus N.Z"
+            },
+            {
+                "name": "Nat49Plus",
+                "comment": " 49 + some natural number `n`. This is at least 49.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat4Plus",
+                "comment": " 4 + some natural number `n`. This is at least 4.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S n)))"
+            },
+            {
+                "name": "Nat5",
+                "comment": " Exact the natural number 5.\n",
+                "args": [],
+                "type": "N.Nat5Plus N.Z"
+            },
+            {
+                "name": "Nat50",
+                "comment": " Exact the natural number 50.\n",
+                "args": [],
+                "type": "N.Nat50Plus N.Z"
+            },
+            {
+                "name": "Nat50Plus",
+                "comment": " 50 + some natural number `n`. This is at least 50.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat51",
+                "comment": " Exact the natural number 51.\n",
+                "args": [],
+                "type": "N.Nat51Plus N.Z"
+            },
+            {
+                "name": "Nat51Plus",
+                "comment": " 51 + some natural number `n`. This is at least 51.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat52",
+                "comment": " Exact the natural number 52.\n",
+                "args": [],
+                "type": "N.Nat52Plus N.Z"
+            },
+            {
+                "name": "Nat52Plus",
+                "comment": " 52 + some natural number `n`. This is at least 52.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat53",
+                "comment": " Exact the natural number 53.\n",
+                "args": [],
+                "type": "N.Nat53Plus N.Z"
+            },
+            {
+                "name": "Nat53Plus",
+                "comment": " 53 + some natural number `n`. This is at least 53.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat54",
+                "comment": " Exact the natural number 54.\n",
+                "args": [],
+                "type": "N.Nat54Plus N.Z"
+            },
+            {
+                "name": "Nat54Plus",
+                "comment": " 54 + some natural number `n`. This is at least 54.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat55",
+                "comment": " Exact the natural number 55.\n",
+                "args": [],
+                "type": "N.Nat55Plus N.Z"
+            },
+            {
+                "name": "Nat55Plus",
+                "comment": " 55 + some natural number `n`. This is at least 55.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat56",
+                "comment": " Exact the natural number 56.\n",
+                "args": [],
+                "type": "N.Nat56Plus N.Z"
+            },
+            {
+                "name": "Nat56Plus",
+                "comment": " 56 + some natural number `n`. This is at least 56.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat57",
+                "comment": " Exact the natural number 57.\n",
+                "args": [],
+                "type": "N.Nat57Plus N.Z"
+            },
+            {
+                "name": "Nat57Plus",
+                "comment": " 57 + some natural number `n`. This is at least 57.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat58",
+                "comment": " Exact the natural number 58.\n",
+                "args": [],
+                "type": "N.Nat58Plus N.Z"
+            },
+            {
+                "name": "Nat58Plus",
+                "comment": " 58 + some natural number `n`. This is at least 58.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat59",
+                "comment": " Exact the natural number 59.\n",
+                "args": [],
+                "type": "N.Nat59Plus N.Z"
+            },
+            {
+                "name": "Nat59Plus",
+                "comment": " 59 + some natural number `n`. This is at least 59.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat5Plus",
+                "comment": " 5 + some natural number `n`. This is at least 5.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S n))))"
+            },
+            {
+                "name": "Nat6",
+                "comment": " Exact the natural number 6.\n",
+                "args": [],
+                "type": "N.Nat6Plus N.Z"
+            },
+            {
+                "name": "Nat60",
+                "comment": " Exact the natural number 60.\n",
+                "args": [],
+                "type": "N.Nat60Plus N.Z"
+            },
+            {
+                "name": "Nat60Plus",
+                "comment": " 60 + some natural number `n`. This is at least 60.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat61",
+                "comment": " Exact the natural number 61.\n",
+                "args": [],
+                "type": "N.Nat61Plus N.Z"
+            },
+            {
+                "name": "Nat61Plus",
+                "comment": " 61 + some natural number `n`. This is at least 61.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat62",
+                "comment": " Exact the natural number 62.\n",
+                "args": [],
+                "type": "N.Nat62Plus N.Z"
+            },
+            {
+                "name": "Nat62Plus",
+                "comment": " 62 + some natural number `n`. This is at least 62.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat63",
+                "comment": " Exact the natural number 63.\n",
+                "args": [],
+                "type": "N.Nat63Plus N.Z"
+            },
+            {
+                "name": "Nat63Plus",
+                "comment": " 63 + some natural number `n`. This is at least 63.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat64",
+                "comment": " Exact the natural number 64.\n",
+                "args": [],
+                "type": "N.Nat64Plus N.Z"
+            },
+            {
+                "name": "Nat64Plus",
+                "comment": " 64 + some natural number `n`. This is at least 64.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat65",
+                "comment": " Exact the natural number 65.\n",
+                "args": [],
+                "type": "N.Nat65Plus N.Z"
+            },
+            {
+                "name": "Nat65Plus",
+                "comment": " 65 + some natural number `n`. This is at least 65.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat66",
+                "comment": " Exact the natural number 66.\n",
+                "args": [],
+                "type": "N.Nat66Plus N.Z"
+            },
+            {
+                "name": "Nat66Plus",
+                "comment": " 66 + some natural number `n`. This is at least 66.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat67",
+                "comment": " Exact the natural number 67.\n",
+                "args": [],
+                "type": "N.Nat67Plus N.Z"
+            },
+            {
+                "name": "Nat67Plus",
+                "comment": " 67 + some natural number `n`. This is at least 67.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat68",
+                "comment": " Exact the natural number 68.\n",
+                "args": [],
+                "type": "N.Nat68Plus N.Z"
+            },
+            {
+                "name": "Nat68Plus",
+                "comment": " 68 + some natural number `n`. This is at least 68.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat69",
+                "comment": " Exact the natural number 69.\n",
+                "args": [],
+                "type": "N.Nat69Plus N.Z"
+            },
+            {
+                "name": "Nat69Plus",
+                "comment": " 69 + some natural number `n`. This is at least 69.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat6Plus",
+                "comment": " 6 + some natural number `n`. This is at least 6.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S n)))))"
+            },
+            {
+                "name": "Nat7",
+                "comment": " Exact the natural number 7.\n",
+                "args": [],
+                "type": "N.Nat7Plus N.Z"
+            },
+            {
+                "name": "Nat70",
+                "comment": " Exact the natural number 70.\n",
+                "args": [],
+                "type": "N.Nat70Plus N.Z"
+            },
+            {
+                "name": "Nat70Plus",
+                "comment": " 70 + some natural number `n`. This is at least 70.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat71",
+                "comment": " Exact the natural number 71.\n",
+                "args": [],
+                "type": "N.Nat71Plus N.Z"
+            },
+            {
+                "name": "Nat71Plus",
+                "comment": " 71 + some natural number `n`. This is at least 71.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat72",
+                "comment": " Exact the natural number 72.\n",
+                "args": [],
+                "type": "N.Nat72Plus N.Z"
+            },
+            {
+                "name": "Nat72Plus",
+                "comment": " 72 + some natural number `n`. This is at least 72.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat73",
+                "comment": " Exact the natural number 73.\n",
+                "args": [],
+                "type": "N.Nat73Plus N.Z"
+            },
+            {
+                "name": "Nat73Plus",
+                "comment": " 73 + some natural number `n`. This is at least 73.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat74",
+                "comment": " Exact the natural number 74.\n",
+                "args": [],
+                "type": "N.Nat74Plus N.Z"
+            },
+            {
+                "name": "Nat74Plus",
+                "comment": " 74 + some natural number `n`. This is at least 74.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat75",
+                "comment": " Exact the natural number 75.\n",
+                "args": [],
+                "type": "N.Nat75Plus N.Z"
+            },
+            {
+                "name": "Nat75Plus",
+                "comment": " 75 + some natural number `n`. This is at least 75.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat76",
+                "comment": " Exact the natural number 76.\n",
+                "args": [],
+                "type": "N.Nat76Plus N.Z"
+            },
+            {
+                "name": "Nat76Plus",
+                "comment": " 76 + some natural number `n`. This is at least 76.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat77",
+                "comment": " Exact the natural number 77.\n",
+                "args": [],
+                "type": "N.Nat77Plus N.Z"
+            },
+            {
+                "name": "Nat77Plus",
+                "comment": " 77 + some natural number `n`. This is at least 77.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat78",
+                "comment": " Exact the natural number 78.\n",
+                "args": [],
+                "type": "N.Nat78Plus N.Z"
+            },
+            {
+                "name": "Nat78Plus",
+                "comment": " 78 + some natural number `n`. This is at least 78.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat79",
+                "comment": " Exact the natural number 79.\n",
+                "args": [],
+                "type": "N.Nat79Plus N.Z"
+            },
+            {
+                "name": "Nat79Plus",
+                "comment": " 79 + some natural number `n`. This is at least 79.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat7Plus",
+                "comment": " 7 + some natural number `n`. This is at least 7.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))"
+            },
+            {
+                "name": "Nat8",
+                "comment": " Exact the natural number 8.\n",
+                "args": [],
+                "type": "N.Nat8Plus N.Z"
+            },
+            {
+                "name": "Nat80",
+                "comment": " Exact the natural number 80.\n",
+                "args": [],
+                "type": "N.Nat80Plus N.Z"
+            },
+            {
+                "name": "Nat80Plus",
+                "comment": " 80 + some natural number `n`. This is at least 80.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat81",
+                "comment": " Exact the natural number 81.\n",
+                "args": [],
+                "type": "N.Nat81Plus N.Z"
+            },
+            {
+                "name": "Nat81Plus",
+                "comment": " 81 + some natural number `n`. This is at least 81.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat82",
+                "comment": " Exact the natural number 82.\n",
+                "args": [],
+                "type": "N.Nat82Plus N.Z"
+            },
+            {
+                "name": "Nat82Plus",
+                "comment": " 82 + some natural number `n`. This is at least 82.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat83",
+                "comment": " Exact the natural number 83.\n",
+                "args": [],
+                "type": "N.Nat83Plus N.Z"
+            },
+            {
+                "name": "Nat83Plus",
+                "comment": " 83 + some natural number `n`. This is at least 83.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat84",
+                "comment": " Exact the natural number 84.\n",
+                "args": [],
+                "type": "N.Nat84Plus N.Z"
+            },
+            {
+                "name": "Nat84Plus",
+                "comment": " 84 + some natural number `n`. This is at least 84.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat85",
+                "comment": " Exact the natural number 85.\n",
+                "args": [],
+                "type": "N.Nat85Plus N.Z"
+            },
+            {
+                "name": "Nat85Plus",
+                "comment": " 85 + some natural number `n`. This is at least 85.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat86",
+                "comment": " Exact the natural number 86.\n",
+                "args": [],
+                "type": "N.Nat86Plus N.Z"
+            },
+            {
+                "name": "Nat86Plus",
+                "comment": " 86 + some natural number `n`. This is at least 86.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat87",
+                "comment": " Exact the natural number 87.\n",
+                "args": [],
+                "type": "N.Nat87Plus N.Z"
+            },
+            {
+                "name": "Nat87Plus",
+                "comment": " 87 + some natural number `n`. This is at least 87.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat88",
+                "comment": " Exact the natural number 88.\n",
+                "args": [],
+                "type": "N.Nat88Plus N.Z"
+            },
+            {
+                "name": "Nat88Plus",
+                "comment": " 88 + some natural number `n`. This is at least 88.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat89",
+                "comment": " Exact the natural number 89.\n",
+                "args": [],
+                "type": "N.Nat89Plus N.Z"
+            },
+            {
+                "name": "Nat89Plus",
+                "comment": " 89 + some natural number `n`. This is at least 89.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat8Plus",
+                "comment": " 8 + some natural number `n`. This is at least 8.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))"
+            },
+            {
+                "name": "Nat9",
+                "comment": " Exact the natural number 9.\n",
+                "args": [],
+                "type": "N.Nat9Plus N.Z"
+            },
+            {
+                "name": "Nat90",
+                "comment": " Exact the natural number 90.\n",
+                "args": [],
+                "type": "N.Nat90Plus N.Z"
+            },
+            {
+                "name": "Nat90Plus",
+                "comment": " 90 + some natural number `n`. This is at least 90.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat91",
+                "comment": " Exact the natural number 91.\n",
+                "args": [],
+                "type": "N.Nat91Plus N.Z"
+            },
+            {
+                "name": "Nat91Plus",
+                "comment": " 91 + some natural number `n`. This is at least 91.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat92",
+                "comment": " Exact the natural number 92.\n",
+                "args": [],
+                "type": "N.Nat92Plus N.Z"
+            },
+            {
+                "name": "Nat92Plus",
+                "comment": " 92 + some natural number `n`. This is at least 92.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat93",
+                "comment": " Exact the natural number 93.\n",
+                "args": [],
+                "type": "N.Nat93Plus N.Z"
+            },
+            {
+                "name": "Nat93Plus",
+                "comment": " 93 + some natural number `n`. This is at least 93.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat94",
+                "comment": " Exact the natural number 94.\n",
+                "args": [],
+                "type": "N.Nat94Plus N.Z"
+            },
+            {
+                "name": "Nat94Plus",
+                "comment": " 94 + some natural number `n`. This is at least 94.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat95",
+                "comment": " Exact the natural number 95.\n",
+                "args": [],
+                "type": "N.Nat95Plus N.Z"
+            },
+            {
+                "name": "Nat95Plus",
+                "comment": " 95 + some natural number `n`. This is at least 95.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat96",
+                "comment": " Exact the natural number 96.\n",
+                "args": [],
+                "type": "N.Nat96Plus N.Z"
+            },
+            {
+                "name": "Nat96Plus",
+                "comment": " 96 + some natural number `n`. This is at least 96.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat97",
+                "comment": " Exact the natural number 97.\n",
+                "args": [],
+                "type": "N.Nat97Plus N.Z"
+            },
+            {
+                "name": "Nat97Plus",
+                "comment": " 97 + some natural number `n`. This is at least 97.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat98",
+                "comment": " Exact the natural number 98.\n",
+                "args": [],
+                "type": "N.Nat98Plus N.Z"
+            },
+            {
+                "name": "Nat98Plus",
+                "comment": " 98 + some natural number `n`. This is at least 98.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat99",
+                "comment": " Exact the natural number 99.\n",
+                "args": [],
+                "type": "N.Nat99Plus N.Z"
+            },
+            {
+                "name": "Nat99Plus",
+                "comment": " 99 + some natural number `n`. This is at least 99.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+            },
+            {
+                "name": "Nat9Plus",
+                "comment": " 9 + some natural number `n`. This is at least 9.\n",
+                "args": [
+                    "n"
+                ],
+                "type": "N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S (N.S n))))))))"
+            }
+        ],
+        "values": [],
+        "binops": []
+    }
+]

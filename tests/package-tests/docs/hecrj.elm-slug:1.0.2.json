@@ -1,0 +1,33 @@
+[
+    {
+        "name": "Slug",
+        "comment": " Type-safe slugs for Elm\n\n\n# Definition\n\n@docs Slug\n\n\n# Constructors\n\n@docs generate, parse\n\n\n# Helpers\n\n@docs toString\n\n",
+        "unions": [
+            {
+                "name": "Slug",
+                "comment": " Represents a slug\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "generate",
+                "comment": " Generate a valid slug from a given text.\n\nIf a valid slug can be generated it returns just the slug, otherwise nothing is\nreturned.\n\n    generate \"Some text here\" == Just (Slug \"some-text-here\")\n    generate \"--!@·==)/()\" == Nothing\n\n",
+                "type": "String.String -> Maybe.Maybe Slug.Slug"
+            },
+            {
+                "name": "parse",
+                "comment": " Parse a slug from its string representation.\n\nIt returns the slug if the input is a valid slug, otherwise it returns nothing.\n\n    parse \"some-valid-slug\" == Just (Slug \"some-valid-slug\")\n    parse \"Not a valid slug\" == Nothing\n    parse \"another-invalid-slug-\" == Nothing\n\n",
+                "type": "String.String -> Maybe.Maybe Slug.Slug"
+            },
+            {
+                "name": "toString",
+                "comment": " Returns the string representation of a slug.\n\n    Maybe.map toString (generate \"Some text\") == Just \"some-text\"\n\n",
+                "type": "Slug.Slug -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

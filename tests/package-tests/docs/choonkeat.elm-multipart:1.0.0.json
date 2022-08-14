@@ -1,0 +1,77 @@
+[
+    {
+        "name": "Multipart",
+        "comment": "\n\n@docs Multipart, ContentType, Boundary, boundary, Header, header\n\n\n## Empty initial values\n\n@docs mixed, alternative, subtype\n\n\n## Adding parts inside\n\n@docs addStringPart, addMultipart\n\n\n## Return a useful value\n\n@docs string\n\n",
+        "unions": [
+            {
+                "name": "Boundary",
+                "comment": " 7-bit ASCII like e.g. `z84d86635fa691af3d9d7d9436cc5d44018a7bc8`\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Header",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Multipart",
+                "comment": " use the [`string`](#string) function to convert a `Multipart` value into a `String`\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "ContentType",
+                "comment": " e.g. `text/html; charset=\"utf-8\"`\n",
+                "args": [],
+                "type": "String.String"
+            }
+        ],
+        "values": [
+            {
+                "name": "addMultipart",
+                "comment": " Embeds another multipart into an outer multipart. The\n\n    Multipart.mixed (Multipart.boundary \"boundary-string111\")\n        |> Multipart.addStringPart \"text/plain\" [] \"hello world!\"\n        |> Multipart.addMultipart\n            (Multipart.alternative (Multipart.boundary \"boundary-string222\")\n                |> Multipart.addStringPart \"text/plain\" [] \"hello world!\"\n                |> Multipart.addStringPart \"text/html\" [] \"<p>hello world!</p>\"\n            )\n        |> Multipart.string\n    --> \"Content-Type: multipart/mixed; boundary=\\\"boundary-string111\\\"\\r\\nContent-Transfer-Encoding: 7bit\\r\\n\\r\\n--boundary-string111\\r\\nContent-Type: text/plain\\r\\n\\r\\nhello world!\\r\\n\\r\\n--boundary-string111\\r\\nContent-Type: multipart/alternative; boundary=\\\"boundary-string222\\\"\\r\\nContent-Transfer-Encoding: 7bit\\r\\n\\r\\n--boundary-string222\\r\\nContent-Type: text/plain\\r\\n\\r\\nhello world!\\r\\n\\r\\n--boundary-string222\\r\\nContent-Type: text/html\\r\\n\\r\\n<p>hello world!</p>\\r\\n\\r\\n--boundary-string222--\\r\\n\\r\\n--boundary-string111--\"\n\n",
+                "type": "Multipart.Multipart -> Multipart.Multipart -> Multipart.Multipart"
+            },
+            {
+                "name": "addStringPart",
+                "comment": " Add a section to a `Multipart` value\n\n    Multipart.mixed (Multipart.boundary \"boundary-string\")\n        |> Multipart.addStringPart \"text/plain\" [] \"hello world!\"\n        |> Multipart.string\n    --> \"Content-Type: text/plain\\r\\n\\r\\nhello world!\"\n\nA `Multipart` with more than 1 part carries `Content-Type` header of `multipart/alternative`\n\n    Multipart.alternative (Multipart.boundary \"boundary-string\")\n        |> Multipart.addStringPart \"text/plain\" [] \"hello world!\"\n        |> Multipart.addStringPart \"text/html\" [] \"<p>hello world!</p>\"\n        |> Multipart.string\n    --> \"Content-Type: multipart/alternative; boundary=\\\"boundary-string\\\"\\r\\nContent-Transfer-Encoding: 7bit\\r\\n\\r\\n--boundary-string\\r\\nContent-Type: text/plain\\r\\n\\r\\nhello world!\\r\\n\\r\\n--boundary-string\\r\\nContent-Type: text/html\\r\\n\\r\\n<p>hello world!</p>\\r\\n\\r\\n--boundary-string--\"\n\n",
+                "type": "Multipart.ContentType -> List.List Multipart.Header -> String.String -> Multipart.Multipart -> Multipart.Multipart"
+            },
+            {
+                "name": "alternative",
+                "comment": " An empty `Content-Type: multipart/alternative` parts container.\n\n_each of the parts is an \"alternative\" version of the same information. User agents\nshould recognize that the content of the various parts are interchangeable. The user\nagent should either choose the \"best\" type based on the user's environment and\npreferences, or offer the user the available alternatives. In general, choosing\nthe best type means displaying only the LAST part that can be displayed._\n<https://www.w3.org/Protocols/rfc1341/7_2_Multipart.html>\n\nIn the following multipart, the \"best\" type is `text/html`\n\n    Multipart.alternative (Multipart.boundary \"boundary-string\")\n        |> Multipart.addStringPart \"text/plain; charset=\\\"utf-8\\\"\" textHeaders textContent\n        |> Multipart.addStringPart \"text/html; charset=\\\"utf-8\\\"\" htmlHeaders htmlContent\n        |> Multipart.string\n\n",
+                "type": "Multipart.Boundary -> Multipart.Multipart"
+            },
+            {
+                "name": "boundary",
+                "comment": " clamps given `String` to 7-bit ASCII\n",
+                "type": "String.String -> Multipart.Boundary"
+            },
+            {
+                "name": "header",
+                "comment": "\n\n    header \"Content-Type\" \"application/json\"\n\n",
+                "type": "String.String -> String.String -> Multipart.Header"
+            },
+            {
+                "name": "mixed",
+                "comment": " An empty `Content-Type: multipart/mixed` parts container.\n\n_The primary subtype for multipart, \"mixed\", is intended for use when the body parts\nare independent and intended to be displayed serially. Any multipart subtypes that\nan implementation does not recognize should be treated as being of subtype \"mixed\"._\n<https://www.w3.org/Protocols/rfc1341/7_2_Multipart.html>\n\n",
+                "type": "Multipart.Boundary -> Multipart.Multipart"
+            },
+            {
+                "name": "string",
+                "comment": " Returns a `Multipart` value as `String` so you can use it, e.g. as an email body\n",
+                "type": "Multipart.Multipart -> String.String"
+            },
+            {
+                "name": "subtype",
+                "comment": " An empty `Content-Type: multipart/{{subtype}}` parts container. Where `{{subtype}}`\nis any `String` you supply\n\nSee <https://en.wikipedia.org/wiki/MIME#Multipart_subtypes>\n\n    Multipart.subtype \"related\" (Multipart.boundary \"boundary-string\")\n        |> Multipart.addStringPart \"text/css; charset=\\\"utf-8\\\"\" cssHeaders cssContent\n        |> Multipart.addStringPart \"text/html; charset=\\\"utf-8\\\"\" htmlHeaders htmlContent\n        |> Multipart.string\n\n",
+                "type": "String.String -> Multipart.Boundary -> Multipart.Multipart"
+            }
+        ],
+        "binops": []
+    }
+]

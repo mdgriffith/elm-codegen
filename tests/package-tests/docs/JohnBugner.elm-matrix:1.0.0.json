@@ -1,0 +1,85 @@
+[
+    {
+        "name": "Matrix",
+        "comment": "\n\n# Matrices\n@docs Matrix\n\n# Creation\n@docs empty, initialize, repeat, fromList\n\n# Query\n@docs isEmpty, size, get\n\n# Manipulate\n@docs set, slice\n\n# Lists\n@docs toList, toIndexedList\n\n# Transform\n@docs map, indexedMap\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Matrix",
+                "comment": " Stores elements in a rectangular 2-dimensional grid. Uses arrays internally.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ size : ( Basics.Int, Basics.Int ), arrays : Array.Array (Array.Array a) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "empty",
+                "comment": " Create an empty matrix.\n",
+                "type": "Matrix.Matrix a"
+            },
+            {
+                "name": "fromList",
+                "comment": " Create an array from a list of lists.\nThe height will be either 0 or the length of the outer list.\nThe width will be as wide as possible while keeping the matrix rectangular.\nIf the width is 0, then the height is also 0, and vice-versa.\n",
+                "type": "List.List (List.List a) -> Matrix.Matrix a"
+            },
+            {
+                "name": "get",
+                "comment": " Return `Just` the element at the index or `Nothing` if the index is out of bounds.\n",
+                "type": "( Basics.Int, Basics.Int ) -> Matrix.Matrix a -> Maybe.Maybe a"
+            },
+            {
+                "name": "indexedMap",
+                "comment": " Apply a function to every element in a matrix with its index as the first argument.\n",
+                "type": "(( Basics.Int, Basics.Int ) -> a -> b) -> Matrix.Matrix a -> Matrix.Matrix b"
+            },
+            {
+                "name": "initialize",
+                "comment": " Create a matrix of a given size, with the element at index `(x,y)` initialized to the result of `f (x,y)`.\n",
+                "type": "( Basics.Int, Basics.Int ) -> (( Basics.Int, Basics.Int ) -> a) -> Matrix.Matrix a"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Determine if a matrix is empty.\n",
+                "type": "Matrix.Matrix a -> Basics.Bool"
+            },
+            {
+                "name": "map",
+                "comment": " Apply a function to every element in a matrix.\n",
+                "type": "(a -> b) -> Matrix.Matrix a -> Matrix.Matrix b"
+            },
+            {
+                "name": "repeat",
+                "comment": " Create a matrix of a given size, filled with a default element.\n",
+                "type": "( Basics.Int, Basics.Int ) -> a -> Matrix.Matrix a"
+            },
+            {
+                "name": "set",
+                "comment": " Set the element at a particular index. Returns an updated matrix. If the index is out of bounds, the matrix is unaltered.\n",
+                "type": "( Basics.Int, Basics.Int ) -> a -> Matrix.Matrix a -> Matrix.Matrix a"
+            },
+            {
+                "name": "size",
+                "comment": " Return the dimensions of a matrix.\n",
+                "type": "Matrix.Matrix a -> ( Basics.Int, Basics.Int )"
+            },
+            {
+                "name": "slice",
+                "comment": " Get a sub-section of a matrix: `slice startIndex endIndex array`. The slice extracts from `startIndex` up to but not including `endIndex`.\n",
+                "type": "( Basics.Int, Basics.Int ) -> ( Basics.Int, Basics.Int ) -> Matrix.Matrix a -> Matrix.Matrix a"
+            },
+            {
+                "name": "toIndexedList",
+                "comment": " Create a list of indexed elements from a matrix. Each element of the matrix will be paired with its index.\n",
+                "type": "Matrix.Matrix a -> List.List ( ( Basics.Int, Basics.Int ), a )"
+            },
+            {
+                "name": "toList",
+                "comment": " Create a list of lists of elements from a matrix.\n",
+                "type": "Matrix.Matrix a -> List.List (List.List a)"
+            }
+        ],
+        "binops": []
+    }
+]

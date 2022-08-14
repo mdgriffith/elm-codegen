@@ -1,0 +1,313 @@
+[
+    {
+        "name": "Validator",
+        "comment": " Validators work in a pipeline (or applicative functor style), similar to the one used in\n_json-decode-pipeline_. Values are checked and applied to a function one by one.\nIf everything goes well, the pipeline returns an `Ok` result, otherwise it will return all the errors.\n\n    Ok ValidatedForm\n        |> validate (String.notEmpty \"name is required\") form.name\n        |> validate (String.isEmail \"email is invalid\") form.email\n        |> validateMany\n            [ String.hasLetter \"password needs to contain letters\"\n            , String.hasNumber \"password needs to contain numbers\"\n            ]\n            form.password\n        |> noCheck form.message\n        |> checkOnly (Bool.isTrue \"you need to approve\") form.approved\n\nIn the example above, I used Strings as errors, but they can be any type you want.\nErrors will be accumulated from top to bottom into a List. If you want to know exactly which field\nhad errors, take a look at the `Validator.Named` module.\n\n@docs Validated, Validator\n\n\n# Pipeline functions\n\n@docs noCheck, validate, checkOnly, validateMany, validateAll\n\n\n# Helpers\n\n@docs map, andThen, mapErrors, many, all, customValidator\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Validated",
+                "comment": " `Validated` is simply an alias for a Result type, with errors as a list of your type, which can be\na string, or any custom error type.\nYou will not need to work with some exotic type, this is only here for convenience.\n",
+                "args": [
+                    "error",
+                    "value"
+                ],
+                "type": "Result.Result (List.List error) value"
+            },
+            {
+                "name": "Validator",
+                "comment": " `Validator` is function, that checks a value, and returns a `Validated`. Some validators can change the type of the value of type `a` to type `b`.\n",
+                "args": [
+                    "error",
+                    "a",
+                    "b"
+                ],
+                "type": "a -> Validator.Validated error b"
+            }
+        ],
+        "values": [
+            {
+                "name": "all",
+                "comment": " Compose a list of validators for a single value. Checks are performed from left to right, and will return all errors.\n",
+                "type": "List.List (Validator.Validator x a a) -> Validator.Validator x a a"
+            },
+            {
+                "name": "andThen",
+                "comment": " Chain together validators. Only the first error will be returned on failure.\n\nNote: `validateMany` and `validateAll` provide a cleaner interface for most use cases.\n\n",
+                "type": "Validator.Validator x b c -> Validator.Validator x a b -> a -> Validator.Validated x c"
+            },
+            {
+                "name": "checkOnly",
+                "comment": " Validate a value without applying it to the pipeline.\n",
+                "type": "Validator.Validator x a b -> a -> Validator.Validated x c -> Validator.Validated x c"
+            },
+            {
+                "name": "customValidator",
+                "comment": " Create a custom validator, using a predicate function.\n",
+                "type": "x -> (a -> Basics.Bool) -> a -> Validator.Validated x a"
+            },
+            {
+                "name": "many",
+                "comment": " Compose a list of validators for a single value. Checks are performed from left to right, and will stop on the first failure, returning only the first error.\n",
+                "type": "List.List (Validator.Validator x a a) -> Validator.Validator x a a"
+            },
+            {
+                "name": "map",
+                "comment": " Map a function into the happy path.\n",
+                "type": "(b -> c) -> Validator.Validator x a b -> a -> Validator.Validated x c"
+            },
+            {
+                "name": "mapErrors",
+                "comment": " Transfrom error values.\n",
+                "type": "(x -> y) -> Validator.Validator x a b -> a -> Validator.Validated y b"
+            },
+            {
+                "name": "noCheck",
+                "comment": " Apply a value to the pipeline without perfoming any checks.\n",
+                "type": "a -> Validator.Validated x (a -> b) -> Validator.Validated x b"
+            },
+            {
+                "name": "validate",
+                "comment": " Validate a value and apply it to the pipeline.\n",
+                "type": "Validator.Validator x a b -> a -> Validator.Validated x (b -> c) -> Validator.Validated x c"
+            },
+            {
+                "name": "validateAll",
+                "comment": " Validate a value using a list of validators. Checks are performed from left to right, and will return all errors.\n\nNote: `validateAll` is a convenience function onver `validate << all`\n\n",
+                "type": "List.List (Validator.Validator x a a) -> a -> Validator.Validated x (a -> b) -> Validator.Validated x b"
+            },
+            {
+                "name": "validateMany",
+                "comment": " Validate a value using a list of validators. Checks are performed from left to right, and will stop on the first failure, returning only the first error.\n\nNote: `validateMany` is a convenience function onver `validate << many`\n\n",
+                "type": "List.List (Validator.Validator x a a) -> a -> Validator.Validated x (a -> b) -> Validator.Validated x b"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Validator.Bool",
+        "comment": " Validators for Bools.\n\n@docs isTrue, isFalse\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "isFalse",
+                "comment": " Checks if a boolean is false\n",
+                "type": "x -> Validator.Validator x Basics.Bool Basics.Bool"
+            },
+            {
+                "name": "isTrue",
+                "comment": " Checks if a boolean is true\n",
+                "type": "x -> Validator.Validator x Basics.Bool Basics.Bool"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Validator.List",
+        "comment": " Validators for Lists.\n\n@docs minLength, maxLength, every\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "every",
+                "comment": " Checks if every item in a list passes the validation.\n\n    List.every (String.letterOnly \"All items must be letters only\") [ \"abc\", \"def\" ] == Ok [ \"abc\", \"def\" ]\n\n    List.every (String.letterOnly \"All items must be letters only\") [ \"abc\", \"ab2c\" ] == Err [ \"All items must be letters only\" ]\n\n",
+                "type": "Validator.Validator x a a -> Validator.Validator x (List.List a) (List.List a)"
+            },
+            {
+                "name": "maxLength",
+                "comment": " Checks if a list is shorter than or equal to a given number\n",
+                "type": "x -> Basics.Int -> Validator.Validator x (List.List a) (List.List a)"
+            },
+            {
+                "name": "minLength",
+                "comment": " Checks if a list is longer than or equal to a given number\n",
+                "type": "x -> Basics.Int -> Validator.Validator x (List.List a) (List.List a)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Validator.Maybe",
+        "comment": " Validators and helpers for Maybes.\n\n@docs isJust, notRequired\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "isJust",
+                "comment": " Checks if a Maybe has a value, and if so, returns it.\n\nIf you need to check the value itself, you can use andThen.\n\n    isJust \"This field is required\" myValue\n        |> andThen (Validator.String.isEmail \"This is not a valid email\")\n\n",
+                "type": "x -> Maybe.Maybe a -> Validator.Validated x a"
+            },
+            {
+                "name": "notRequired",
+                "comment": " This helper can be used to check the correctness of a non required Maybe.\nIt will only pass if the Maybe is Nothing, or if the value of Just passes the given validator.\n\n    notRequired (Validator.String.isEmail \"This is not a valid email\") Nothing == Ok Nothing\n\n    notRequired (Validator.String.isEmail \"This is not a valid email\") (Just \"test@example.com\") == Ok (Just \"test@example.com\")\n\n    notRequired (Validator.String.isEmail \"This is not a valid email\") (Just \"test\") == Err [ \"This is not a valid email\" ]\n\n",
+                "type": "Validator.Validator x a b -> Maybe.Maybe a -> Validator.Validated x (Maybe.Maybe b)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Validator.Named",
+        "comment": " Named validators work exactly the same way, as the simple ones, but every validate function takes a name string. Errors will be accumulated into a Dict, where the key is the given name, and the value is a\nlist of errors.\n\n    Ok ValidatedForm\n        |> validate \"name\" (notEmpty \"name is required\") form.name\n        |> validate \"email\" (isEmail \"email is invalid\") form.email\n        |> validateMany \"password\"\n            [ hasLetter \"password needs to contain letters\"\n            , hasNumber \"password needs to contain numbers\"\n            ]\n            form.password\n        |> noCheck form.message\n        |> checkOnly \"approved\" (Bool.isTrue \"you need to approve\") form.approved\n\n\n# Pipeline functions\n\n@docs noCheck, validate, checkOnly, validateMany, validateAll\n\n\n# Errors\n\nNamed validators return lists of errors in a Dict, where the key is the field name. You don't even\nneed to use these helpers to get errors for a field, you can simply use `Dict.get NAME`.\n\n@docs Validated, Errors, hasErrorsOn, getErrors, countErrors\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Errors",
+                "comment": " Named validators return lists of errors in a Dict, where the key is the field name.\n",
+                "args": [
+                    "error"
+                ],
+                "type": "Dict.Dict String.String (List.List error)"
+            },
+            {
+                "name": "Validated",
+                "comment": " `Validated` is an alias for a Result type with Errors.\n",
+                "args": [
+                    "error",
+                    "value"
+                ],
+                "type": "Result.Result (Validator.Named.Errors error) value"
+            }
+        ],
+        "values": [
+            {
+                "name": "checkOnly",
+                "comment": " Validate a value without applying it to the pipe.\n",
+                "type": "String.String -> Validator.Validator x a b -> a -> Validator.Named.Validated x c -> Validator.Named.Validated x c"
+            },
+            {
+                "name": "countErrors",
+                "comment": " Count all the errors.\n",
+                "type": "Validator.Named.Validated x a -> Basics.Int"
+            },
+            {
+                "name": "getErrors",
+                "comment": " Get errors for a given field.\n",
+                "type": "String.String -> Validator.Named.Validated x a -> Maybe.Maybe (List.List x)"
+            },
+            {
+                "name": "hasErrorsOn",
+                "comment": " Checks if there are any errors for a given field name.\n",
+                "type": "String.String -> Validator.Named.Validated x a -> Basics.Bool"
+            },
+            {
+                "name": "noCheck",
+                "comment": " Pipe a value through without perfoming any checks.\n",
+                "type": "a -> Validator.Named.Validated x (a -> b) -> Validator.Named.Validated x b"
+            },
+            {
+                "name": "validate",
+                "comment": " Validate a value using a validator.\n",
+                "type": "String.String -> Validator.Validator x a b -> a -> Validator.Named.Validated x (b -> c) -> Validator.Named.Validated x c"
+            },
+            {
+                "name": "validateAll",
+                "comment": " Validate a value using a list of validators. Checks are performed from left to right, and will return all errors.\n",
+                "type": "String.String -> List.List (Validator.Validator x a a) -> a -> Validator.Named.Validated x (a -> b) -> Validator.Named.Validated x b"
+            },
+            {
+                "name": "validateMany",
+                "comment": " Validate a value using a list of validators. Checks are performed from left to right, and will stop on the first failure, returning only the first error.\n",
+                "type": "String.String -> List.List (Validator.Validator x a a) -> a -> Validator.Named.Validated x (a -> b) -> Validator.Named.Validated x b"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Validator.Number",
+        "comment": " Validators for Ints and Floats.\n\n@docs min, max\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "max",
+                "comment": " Checks if a number is smaller than or equal to a given number\n",
+                "type": "x -> number -> Validator.Validator x number number"
+            },
+            {
+                "name": "min",
+                "comment": " Checks if a number is greater than or equal to a given number\n",
+                "type": "x -> number -> Validator.Validator x number number"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Validator.String",
+        "comment": " Validators for strings.\n\n\n# Validators\n\n@docs notEmpty, notBlank, isEmail, isPhoneJp, isUrl, hasLetter, letterOnly, hasNumber, numberOnly, minLength, maxLength, regexValidator\n\n\n# Casting validators\n\n@docs isInt, isFloat\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "hasLetter",
+                "comment": " Checks if a string contains at least one letter.\n",
+                "type": "x -> Validator.Validator x String.String String.String"
+            },
+            {
+                "name": "hasNumber",
+                "comment": " Checks if a string contains at least one number.\n",
+                "type": "x -> Validator.Validator x String.String String.String"
+            },
+            {
+                "name": "isEmail",
+                "comment": " Checks if a string is valid email.\nThis validator works for most emails, but it is not 100%.\n\nRegex is from: <https://emailregex.com/>\n\n",
+                "type": "x -> Validator.Validator x String.String String.String"
+            },
+            {
+                "name": "isFloat",
+                "comment": " Checks if a string can be casted to a float and if so, it returns the value.\n",
+                "type": "x -> String.String -> Validator.Validated x Basics.Float"
+            },
+            {
+                "name": "isInt",
+                "comment": " Checks if a string can be casted to an integer, and if so, it returns the value.\n",
+                "type": "x -> String.String -> Validator.Validated x Basics.Int"
+            },
+            {
+                "name": "isPhoneJp",
+                "comment": " Checks if a string is a valid Japanese phone number.\n\nNote: I only added japanese regex, because that's what I use, but you can easily use your own regex, or send me a Pull Request.\n\n",
+                "type": "x -> Validator.Validator x String.String String.String"
+            },
+            {
+                "name": "isUrl",
+                "comment": " Checks if a string is valid URL.\n\nRegex is from: <https://gist.github.com/dperini/729294>\n\n",
+                "type": "x -> Validator.Validator x String.String String.String"
+            },
+            {
+                "name": "letterOnly",
+                "comment": " Checks if a string only contains letters (white spaces are not allowed).\n",
+                "type": "x -> Validator.Validator x String.String String.String"
+            },
+            {
+                "name": "maxLength",
+                "comment": " Checks if a string is shorter than or equal to a given value.\n",
+                "type": "x -> Basics.Int -> Validator.Validator x String.String String.String"
+            },
+            {
+                "name": "minLength",
+                "comment": " Checks if a string is longer than or equal to a given value.\n",
+                "type": "x -> Basics.Int -> Validator.Validator x String.String String.String"
+            },
+            {
+                "name": "notBlank",
+                "comment": " Checks if a string is empty (white spaces are not allowed).\n",
+                "type": "x -> Validator.Validator x String.String String.String"
+            },
+            {
+                "name": "notEmpty",
+                "comment": " Checks if a string is empty (white spaces allowed).\n",
+                "type": "x -> Validator.Validator x String.String String.String"
+            },
+            {
+                "name": "numberOnly",
+                "comment": " Checks if a string only contains numbers.\n",
+                "type": "x -> Validator.Validator x String.String String.String"
+            },
+            {
+                "name": "regexValidator",
+                "comment": " Custom string validator using a regular expression.\n",
+                "type": "x -> Maybe.Maybe Regex.Regex -> String.String -> Validator.Validated x String.String"
+            }
+        ],
+        "binops": []
+    }
+]

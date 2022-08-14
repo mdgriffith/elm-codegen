@@ -1,0 +1,21 @@
+[
+    {
+        "name": "Base45",
+        "comment": " Base45 Data Encoding\n\nEncode/Decode binary data for/from QR codes\n\n\n# API\n\n@docs decode, encode\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decode",
+                "comment": " Converts a Base45 string into Bytes\n\nFails if the string is not of length 3x or 3x + 2\n\n",
+                "type": "String.String -> Result.Result String.String Bytes.Bytes"
+            },
+            {
+                "name": "encode",
+                "comment": " Converts Bytes into a Base45 string\n",
+                "type": "Bytes.Bytes -> Maybe.Maybe String.String"
+            }
+        ],
+        "binops": []
+    }
+]

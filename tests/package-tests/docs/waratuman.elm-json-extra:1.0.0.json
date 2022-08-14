@@ -1,0 +1,65 @@
+[
+    {
+        "name": "Json.Decode.Extra",
+        "comment": " Helper functions for the `Json.Decode` module of `elm/json`.\n\n@docs nothing, date, iso8601, posix, timezone\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "date",
+                "comment": " Decode an ISO8601 JSON string into a `Posix`.\n\n    import Json.Decode exposing (..)\n    import Time\n\n    decodeString (field \"created_at\" date) \"{ \\\"created_at\\\": \\\"2019-11-22\\\"}\"\n        --> Ok (2019, Time.Nov, 22)\n\n",
+                "type": "Json.Decode.Decoder ( Basics.Int, Time.Month, Basics.Int )"
+            },
+            {
+                "name": "iso8601",
+                "comment": " Decode an ISO8601 JSON string into a `Posix`.\n\n    import Json.Decode exposing (..)\n    import Time\n\n\n    decodeString (field \"created_at\" iso8601)\n        \"{ \\\"created_at\\\": \\\"2019-11-22T18:26:45Z\\\"}\"\n        --> Ok (Time.millisToPosix 1574447205000)\n\n",
+                "type": "Json.Decode.Decoder Time.Posix"
+            },
+            {
+                "name": "nothing",
+                "comment": " Decode a JSON value and do nothing with it.\n\n    import Json.Decode exposing (..)\n\n    decodeString nothing \"{}\" --> Ok ()\n\n",
+                "type": "Json.Decode.Decoder ()"
+            },
+            {
+                "name": "posix",
+                "comment": " Decode a JSON float value representing the number of seconds since epoch\ninto a `Posix`.\n\n    import Json.Decode exposing (..)\n    import Time\n\n    decodeString (field \"created_at\" posix)\n        \"{ \\\"created_at\\\": 1574447205.394}\"\n        --> Ok (Time.millisToPosix 1574447205000)\n\n",
+                "type": "Json.Decode.Decoder Time.Posix"
+            },
+            {
+                "name": "timezone",
+                "comment": " Decode a timezone JSON string value into a `Zone`.\n\n    import Json.Decode exposing (..)\n    import TimeZone\n\n    decodeString (field \"timezone\" timezone)\n        \"{ \\\"timezone\\\": \\\"America/Los_Angeles\\\"}\"\n        --> Ok (\"America/Los_Angeles\", TimeZone.america__los_angeles ())\n\n",
+                "type": "Json.Decode.Decoder ( String.String, Time.Zone )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Json.Encode.Extra",
+        "comment": " Helper functions for the `Json.Decode` module of `elm/json`.\n\n@docs iso8601, posix, timezone, maybe\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "iso8601",
+                "comment": " Encode a `Posix` value into a ISO8601 JSON string.\n\n    import Json.Encode exposing (..)\n    import Time\n\n    encode 0\n        ( object\n            [ ( \"created_at\", iso8601 (Time.millisToPosix 1574447205394 ) ) ]\n        )\n        --> \"{\\\"created_at\\\":\\\"2019-11-22T18:26:45.394Z\\\"}\"\n\n",
+                "type": "Time.Posix -> Json.Encode.Value"
+            },
+            {
+                "name": "maybe",
+                "comment": " Encode a `Maybe` value with the given encoder.\n\n    import Json.Encode exposing (..)\n\n    encode 0 (maybe int Nothing)\n        --> \"null\"\n\n    encode 0 (maybe int (Just 1))\n        --> \"1\"\n\n",
+                "type": "(a -> Json.Encode.Value) -> Maybe.Maybe a -> Json.Encode.Value"
+            },
+            {
+                "name": "posix",
+                "comment": " Encode a `Posix` value into a JSON float representing the number of seconds\nsince epoch.\n\n    import Json.Encode exposing (..)\n    import Time\n\n    encode 0\n        ( object\n            [ ( \"created_at\", posix (Time.millisToPosix 1574447205 ) ) ]\n        )\n        --> \"{\\\"created_at\\\":1574447.205}\"\n\n",
+                "type": "Time.Posix -> Json.Encode.Value"
+            },
+            {
+                "name": "timezone",
+                "comment": " Encode a `( String, Zone )` value into a JSON string with the\nvalue being the name of the timezone.\n\n    import Json.Encode exposing (..)\n    import TimeZone\n\n    let\n        losAngeles =\n            (\"America/Los_Angeles\", TimeZone.america__los_angeles ())\n    in\n    encode 0\n        ( object\n            [ ( \"timezone\", timezone losAngeles ) ]\n        )\n        --> \"{\\\"timezone\\\":\\\"America/Los_Angeles\\\"}\"\n\n",
+                "type": "( String.String, Time.Zone ) -> Json.Encode.Value"
+            }
+        ],
+        "binops": []
+    }
+]

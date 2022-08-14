@@ -1,0 +1,16 @@
+[
+    {
+        "name": "NoPrimitiveTypeAlias",
+        "comment": "\n\n@docs rule\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": " Reports type aliases to single-value primitive types, like `type alias UserId = String`. Does not report errors for\ntype aliases of Record, List, Dict, Maybe, or Result types (i.e. compound primitives).\n\n    config =\n        [ NoPrimitiveTypeAlias.rule\n        ]\n\n\n## Fail\n\n    type alias UserId =\n        String\n\n\n## Success\n\n    type alias User =\n        { first : String, last : String }\n\n\n## When (not) to enable this rule\n\nThis rule is useful when you want to make sure you can trust types to represent Custom Types that will give you helpful compiler feedback, as described in the Rationale section of the README.\nThis rule is not useful when you have low-level workarounds where you are choosing to use simple primitive type aliases, or if you disagree with this advice choose to use that style as your personal preference.\n\n\n## Try it out\n\nYou can try this rule out by running the following command:\n\n```bash\nelm-review --template dillonkearns/elm-review-no-primitive-type-alias/example --rules NoPrimitiveTypeAlias\n```\n\n",
+                "type": "Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,70 @@
+[
+    {
+        "name": "Http.Decorators",
+        "comment": " This module contains several functions that build on the\n[elm-lang/http](https://package.elm-lang.org/packages/elm-lang/http/latest) package.\nNote that `interpretStatus` and `promoteError` are no longer included, because\nthe `Http` module now does what they used to do.\n\nFor new projects, I would recommend using\n[lukewestby/elm-http-builder](https://package.elm-lang.org/packages/lukewestby/elm-http-builder/latest/)\ninstead of this package. It is capable of doing everything this package\ndoes, and more.\n\n\n## Transparent Requests\n\n@docs RawRequest, defaultPost, defaultGet, defaultGetString, sendRaw, toTaskRaw, toRequest\n\n\n## Cache busting\n\n@docs cacheBusterUrl, addCacheBuster, taskWithCacheBuster, sendWithCacheBuster\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "RawRequest",
+                "comment": " The [`Request`](/packages/elm-lang/http/1.0.0/Http#Request) type in the `Http` module\nis opaque, in the sense that once you have a `Request`, you cannot extract its\nparts in order to construct a different `Request`. The `RawRequest` type is a\nworkaround for that, allowing you to work with the parts of a request.\n\nYou can construct a `RawRequest` manually, by filling in its parts. The various parts\nhave the same meaning as the parameters to [`Http.request`](/packages/elm-lang/http/1.0.0/Http#request).\n\n    req : RawRequest String\n    req =\n        { method = \"GET\"\n        , headers = [ header \"X-Test-Header\" \"Foo\" ]\n        , url = \"http://elm-lang.org\"\n        , body = Http.emptyBody\n        , expect = Http.expectString\n        , timeout = Nothing\n        , withCredentials = False\n        }\n\nAlternatively, you can construct a `RawRequest` by using [`defaultGet`](#defaultGet),\n[`defaultGetString`](#defaultGetString), or [`defaultPost`](#defaultPost) to fill in\nsome defaults. These functions are like [`Http.get`](/packages/elm-lang/http/1.0.0/Http#get),\n[`Http.getString`](/packages/elm-lang/http/1.0.0/Http#getString) and\n[`Http.post`](/packages/elm-lang/http/1.0.0/Http#post), except that they return a\n`RawRequest` which you can further customize, rather than an opaque\n[`Request`](/packages/elm-lang/http/1.0.0/Http#Request).\n\n    req : RawRequest String\n    req =\n        let\n            default =\n                defaultGetString \"http://elm-lang.org\"\n        in\n        { default | headers = [ header \"X-Test-Header\" \"Foo\" ] }\n\nOnce you have a `RawRequest`, you can use [`toRequest`](#toRequest) to turn it into a\n[`Request`](/packages/elm-lang/http/1.0.0/Http#Request) that the `Http` module can use.\nAlternatively, you can [`sendRaw`](#sendRaw) or\n[`toTaskRaw`](#toTaskRaw) to turn the `RawRequest` directly into a `Cmd` or `Task`.\n\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ method : String.String, headers : List.List Http.Header, url : String.String, body : Http.Body, expect : Http.Expect a, timeout : Maybe.Maybe Basics.Float, withCredentials : Basics.Bool }"
+            }
+        ],
+        "values": [
+            {
+                "name": "addCacheBuster",
+                "comment": " Given a `RawRequest`, add a cache-busting parameter to the URL. This uses\n[`cacheBusterUrl`](#cacheBusterUrl) internally to generate the parameter.\n\nNote that the resulting task will resolve with the modified `RawRequest`, which\nwill itself need to be turned into a `Task` or `Cmd` to be actually executed.\nThus, you often would not need to call this directly -- you could use\n[`taskWithCacheBuster`](#taskWithCacheBuster) or [`sendWithCacheBuster`](#sendWithCacheBuster)\ninstead. You would only need `addCacheBuster` in cases where you need to do some\nfurther processing of the resolved `RawRequest` before turning it into a `Task` or a `Cmd`.\n\n",
+                "type": "Http.Decorators.RawRequest a -> Task.Task x (Http.Decorators.RawRequest a)"
+            },
+            {
+                "name": "cacheBusterUrl",
+                "comment": " Given a URL, add a 'cache busting' parameter of the form\n'?cacheBuster=219384729384', where the number is derived from the current time.\nThe purpose of doing this would be to help defeat any caching that might\notherwise take place at some point between the client and server.\n\nOften you won't need to call this directly -- you can use [`addCacheBuster`](#addCacheBuster),\n[`taskWithCacheBuster`](#taskWithCacheBuster) or [`sendWithCacheBuster`](#sendWithCacheBuster) instead.\n\n    urlWithTime : Task x String\n    urlWithTime =\n        cacheBusterUrl \"http://elm-lang.org\"\n\n\n    -- Should resolve to something like \"http://elm-lang.org?param=7&cacheBuster=12348257\"\n    urlWithTime2 : Task x String\n    urlWithTime2 =\n        cacheBusterUrl \"http://elm-lang.org?param=7\"\n\n",
+                "type": "String.String -> Task.Task x String.String"
+            },
+            {
+                "name": "defaultGet",
+                "comment": " Like [`Http.get`](/packages/elm-lang/http/1.0.0/Http#get), but returns a\n`RawRequest String` that you could further customize.\n\nYou can then use [`toRequest`](#toRequest) to make an actual\n[`Http.Request`](/packages/elm-lang/http/1.0.0/Http#Request), or supply\nthe `RawRequest` to [`sendRaw`](#sendRaw) or [`toTaskRaw`](#toTaskRaw).\n\n",
+                "type": "String.String -> Json.Decode.Decoder a -> Http.Decorators.RawRequest a"
+            },
+            {
+                "name": "defaultGetString",
+                "comment": " Like [`Http.getString`](/packages/elm-lang/http/1.0.0/Http#getString), but returns\na `RawRequest String` that you could further customize.\n\nYou can then use [`toRequest`](#toRequest) to make an actual\n[`Http.Request`](/packages/elm-lang/http/1.0.0/Http#Request), or supply\nthe `RawRequest` to [`sendRaw`](#sendRaw) or [`toTaskRaw`](#toTaskRaw).\n\n    req : RawRequest String\n    req =\n        let\n            default =\n                defaultGet \"http://elm-lang.org\"\n        in\n        { default | timeout = Just (1 * Time.second) }\n\n",
+                "type": "String.String -> Http.Decorators.RawRequest String.String"
+            },
+            {
+                "name": "defaultPost",
+                "comment": " Like [`Http.post`](/packages/elm-lang/http/1.0.0/Http#post), but returns\na `RawRequest` that you could further customize.\n\nYou can then use [`toRequest`](#toRequest) to make an actual\n[`Http.Request`](/packages/elm-lang/http/1.0.0/Http#Request), or supply\nthe `RawRequest` to [`sendRaw`](#sendRaw) or [`toTaskRaw`](#toTaskRaw).\n\n",
+                "type": "String.String -> Http.Body -> Json.Decode.Decoder a -> Http.Decorators.RawRequest a"
+            },
+            {
+                "name": "sendRaw",
+                "comment": " Like [`Http.send`](/packages/elm-lang/http/1.0.0/Http#send),\nbut uses a `RawRequest` instead of a\n[`Request`](/packages/elm-lang/http/1.0.0/Http#Request).\n",
+                "type": "(Result.Result Http.Error a -> msg) -> Http.Decorators.RawRequest a -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "sendWithCacheBuster",
+                "comment": " Given a `RawRequest`, add a cache-busting parameter to the URL and return\na `Cmd` that executes the request.\n\nThis is a convenience for cases in which your `RawRequest` is meant to result\nin a simple `Cmd`. For more complex cases, you can use [`taskWithCacheBuster`](#taskWithCacheBuster),\n[`addCacheBuster`](#addCacheBuster) or [`cacheBusterUrl`](#cacheBusterUrl), depending\non how much further customization you need.\n\n",
+                "type": "(Result.Result Http.Error a -> msg) -> Http.Decorators.RawRequest a -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "taskWithCacheBuster",
+                "comment": " Given a `RawRequest`, add a cache-busting parameter to the URL and return\na `Task` that executes the request.\n\nThis is useful in cases where the resulting `Task` is part of some larger\nchain of tasks. In cases where you are just going to turn this very `Task`\ninto a `Cmd`, you could use [`sendWithCacheBuster`](#sendWithCacheBuster) instead.\n\n",
+                "type": "Http.Decorators.RawRequest a -> Task.Task Http.Error a"
+            },
+            {
+                "name": "toRequest",
+                "comment": " Turns a `RawRequest a` into an\n[`Http.Request a`](/packages/elm-lang/http/1.0.0/Http#Request).\nThis is just another name for\n[`Http.request`](/packages/elm-lang/http/1.0.0/Http#request).\n",
+                "type": "Http.Decorators.RawRequest a -> Http.Request a"
+            },
+            {
+                "name": "toTaskRaw",
+                "comment": " Like [`Http.toTask`](/packages/elm-lang/http/1.0.0/Http#toTask),\nbut uses a `RawRequest` instead of a\n[`Request`](/packages/elm-lang/http/1.0.0/Http#Request).\n",
+                "type": "Http.Decorators.RawRequest a -> Task.Task Http.Error a"
+            }
+        ],
+        "binops": []
+    }
+]

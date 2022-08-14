@@ -1,0 +1,3951 @@
+[
+    {
+        "name": "Ant.Icons.Svg",
+        "comment": " List of Ant Design icons\n\n\n# Directional Icons\n\n@docs stepBackwardOutlined, stepBackwardFilled, stepForwardOutlined, stepForwardFilled, fastBackwardOutlined, fastBackwardFilled, fastForwardOutlined, fastForwardFilled, shrinkOutlined, arrowsAltOutlined, downOutlined, upOutlined, leftOutlined, rightOutlined, caretUpOutlined, caretUpFilled, caretDownOutlined, caretDownFilled, caretLeftOutlined, caretLeftFilled, caretRightOutlined, caretRightFilled, upCircleOutlined, upCircleFilled, upCircleTwoTone, downCircleOutlined, downCircleFilled, downCircleTwoTone, leftCircleOutlined, leftCircleFilled, leftCircleTwoTone, rightCircleOutlined, rightCircleFilled, rightCircleTwoTone, doubleRightOutlined, doubleLeftOutlined, verticalLeftOutlined, verticalRightOutlined, verticalAlignTopOutlined, verticalAlignMiddleOutlined, verticalAlignBottomOutlined, forwardOutlined, forwardFilled, backwardOutlined, backwardFilled, rollbackOutlined, enterOutlined, retweetOutlined, swapOutlined, swapLeftOutlined, swapRightOutlined, arrowUpOutlined, arrowDownOutlined, arrowLeftOutlined, arrowRightOutlined, playCircleOutlined, playCircleFilled, playCircleTwoTone, upSquareOutlined, upSquareFilled, upSquareTwoTone, downSquareOutlined, downSquareFilled, downSquareTwoTone, leftSquareOutlined, leftSquareFilled, leftSquareTwoTone, rightSquareOutlined, rightSquareFilled, rightSquareTwoTone, loginOutlined, logoutOutlined, menuFoldOutlined, menuUnfoldOutlined, borderBottomOutlined, borderHorizontalOutlined, borderInnerOutlined, borderOuterOutlined, borderLeftOutlined, borderRightOutlined, borderTopOutlined, borderVerticleOutlined, picCenterOutlined, picLeftOutlined, picRightOutlined, radiusBottomleftOutlined, radiusBottomrightOutlined, radiusUpleftOutlined, radiusUprightOutlined, fullscreenOutlined, fullscreenExitOutlined\n\n\n# Suggested Icons\n\n@docs questionOutlined, questionCircleOutlined, questionCircleFilled, questionCircleTwoTone, plusOutlined, plusCircleOutlined, plusCircleFilled, plusCircleTwoTone, pauseOutlined, pauseCircleOutlined, pauseCircleFilled, pauseCircleTwoTone, minusOutlined, minusCircleOutlined, minusCircleFilled, minusCircleTwoTone, plusSquareOutlined, plusSquareFilled, plusSquareTwoTone, minusSquareOutlined, minusSquareFilled, minusSquareTwoTone, infoOutlined, infoCircleOutlined, infoCircleFilled, infoCircleTwoTone, exclamationOutlined, exclamationCircleOutlined, exclamationCircleFilled, exclamationCircleTwoTone, closeOutlined, closeCircleOutlined, closeCircleFilled, closeCircleTwoTone, closeSquareOutlined, closeSquareFilled, closeSquareTwoTone, checkOutlined, checkCircleOutlined, checkCircleFilled, checkCircleTwoTone, checkSquareOutlined, checkSquareFilled, checkSquareTwoTone, clockCircleOutlined, clockCircleFilled, clockCircleTwoTone, warningOutlined, warningFilled, warningTwoTone, issuesCloseOutlined, stopOutlined, stopFilled, stopTwoTone\n\n\n# Editor Icons\n\n@docs editOutlined, editFilled, editTwoTone, formOutlined, copyOutlined, copyFilled, copyTwoTone, scissorOutlined, deleteOutlined, deleteFilled, deleteTwoTone, snippetsOutlined, snippetsFilled, snippetsTwoTone, diffOutlined, diffFilled, diffTwoTone, highlightOutlined, highlightFilled, highlightTwoTone, alignCenterOutlined, alignLeftOutlined, alignRightOutlined, bgColorsOutlined, boldOutlined, italicOutlined, underlineOutlined, strikethroughOutlined, redoOutlined, undoOutlined, zoomInOutlined, zoomOutOutlined, fontColorsOutlined, fontSizeOutlined, lineHeightOutlined, dashOutlined, smallDashOutlined, sortAscendingOutlined, sortDescendingOutlined, dragOutlined, orderedListOutlined, unorderedListOutlined, radiusSettingOutlined, columnWidthOutlined, columnHeightOutlined\n\n\n# Data Icons\n\n@docs areaChartOutlined, pieChartOutlined, pieChartFilled, pieChartTwoTone, barChartOutlined, dotChartOutlined, lineChartOutlined, radarChartOutlined, heatMapOutlined, fallOutlined, riseOutlined, stockOutlined, boxPlotOutlined, boxPlotFilled, boxPlotTwoTone, fundOutlined, fundFilled, fundTwoTone, slidersOutlined, slidersFilled, slidersTwoTone\n\n\n# Brand and Logos\n\n@docs androidOutlined, androidFilled, appleOutlined, appleFilled, windowsOutlined, windowsFilled, ieOutlined, chromeOutlined, chromeFilled, githubOutlined, githubFilled, aliwangwangOutlined, aliwangwangFilled, dingdingOutlined, weiboSquareOutlined, weiboSquareFilled, weiboCircleOutlined, weiboCircleFilled, taobaoCircleOutlined, taobaoCircleFilled, html5Outlined, html5Filled, html5TwoTone, weiboOutlined, twitterOutlined, wechatOutlined, wechatFilled, youtubeOutlined, youtubeFilled, alipayCircleOutlined, alipayCircleFilled, taobaoOutlined, skypeOutlined, skypeFilled, qqOutlined, mediumWorkmarkOutlined, gitlabOutlined, gitlabFilled, mediumOutlined, linkedinOutlined, linkedinFilled, googlePlusOutlined, dropboxOutlined, facebookOutlined, facebookFilled, codepenOutlined, codeSandboxOutlined, codeSandboxCircleFilled, amazonOutlined, googleOutlined, codepenCircleOutlined, codepenCircleFilled, alipayOutlined, antDesignOutlined, antCloudOutlined, aliyunOutlined, zhihuOutlined, slackOutlined, slackSquareOutlined, slackSquareFilled, behanceOutlined, behanceSquareOutlined, behanceSquareFilled, dribbbleOutlined, dribbbleSquareOutlined, dribbbleSquareFilled, instagramOutlined, instagramFilled, yuqueOutlined, yuqueFilled, alibabaOutlined, yahooOutlined, yahooFilled, redditOutlined, sketchOutlined\n\n\n# Application Icons\n\n@docs accountBookOutlined, accountBookFilled, accountBookTwoTone, aimOutlined, alertOutlined, alertFilled, alertTwoTone, alipaySquareFilled, amazonCircleFilled, amazonSquareFilled, apartmentOutlined, apiOutlined, apiFilled, apiTwoTone, appstoreAddOutlined, appstoreOutlined, appstoreFilled, appstoreTwoTone, audioOutlined, audioFilled, audioTwoTone, audioMutedOutlined, auditOutlined, bankOutlined, bankFilled, bankTwoTone, barcodeOutlined, barsOutlined, behanceCircleFilled, bellOutlined, bellFilled, bellTwoTone, blockOutlined, bookOutlined, bookFilled, bookTwoTone, borderOutlined, borderlessTableOutlined, branchesOutlined, bugOutlined, bugFilled, bugTwoTone, buildOutlined, buildFilled, buildTwoTone, bulbOutlined, bulbFilled, bulbTwoTone, calculatorOutlined, calculatorFilled, calculatorTwoTone, calendarOutlined, calendarFilled, calendarTwoTone, cameraOutlined, cameraFilled, cameraTwoTone, carOutlined, carFilled, carTwoTone, carryOutOutlined, carryOutFilled, carryOutTwoTone, ciCircleOutlined, ciCircleFilled, ciCircleTwoTone, ciOutlined, ciTwoTone, clearOutlined, cloudDownloadOutlined, cloudOutlined, cloudFilled, cloudTwoTone, cloudServerOutlined, cloudSyncOutlined, cloudUploadOutlined, clusterOutlined, codeOutlined, codeFilled, codeTwoTone, codeSandboxSquareFilled, codepenSquareFilled, coffeeOutlined, commentOutlined, compassOutlined, compassFilled, compassTwoTone, compressOutlined, consoleSqlOutlined, contactsOutlined, contactsFilled, contactsTwoTone, containerOutlined, containerFilled, containerTwoTone, controlOutlined, controlFilled, controlTwoTone, copyrightCircleOutlined, copyrightCircleFilled, copyrightCircleTwoTone, copyrightOutlined, copyrightTwoTone, creditCardOutlined, creditCardFilled, creditCardTwoTone, crownOutlined, crownFilled, crownTwoTone, customerServiceOutlined, customerServiceFilled, customerServiceTwoTone, dashboardOutlined, dashboardFilled, dashboardTwoTone, databaseOutlined, databaseFilled, databaseTwoTone, deleteColumnOutlined, deleteRowOutlined, deliveredProcedureOutlined, deploymentUnitOutlined, desktopOutlined, dingtalkCircleFilled, dingtalkOutlined, dingtalkSquareFilled, disconnectOutlined, dislikeOutlined, dislikeFilled, dislikeTwoTone, dollarCircleOutlined, dollarCircleFilled, dollarCircleTwoTone, dollarOutlined, dollarTwoTone, downloadOutlined, dribbbleCircleFilled, dropboxCircleFilled, dropboxSquareFilled, ellipsisOutlined, environmentOutlined, environmentFilled, environmentTwoTone, euroCircleOutlined, euroCircleFilled, euroCircleTwoTone, euroOutlined, euroTwoTone, exceptionOutlined, expandAltOutlined, expandOutlined, experimentOutlined, experimentFilled, experimentTwoTone, exportOutlined, eyeOutlined, eyeFilled, eyeTwoTone, eyeInvisibleOutlined, eyeInvisibleFilled, eyeInvisibleTwoTone, fieldBinaryOutlined, fieldNumberOutlined, fieldStringOutlined, fieldTimeOutlined, fileAddOutlined, fileAddFilled, fileAddTwoTone, fileDoneOutlined, fileExcelOutlined, fileExcelFilled, fileExcelTwoTone, fileExclamationOutlined, fileExclamationFilled, fileExclamationTwoTone, fileOutlined, fileFilled, fileTwoTone, fileGifOutlined, fileImageOutlined, fileImageFilled, fileImageTwoTone, fileJpgOutlined, fileMarkdownOutlined, fileMarkdownFilled, fileMarkdownTwoTone, filePdfOutlined, filePdfFilled, filePdfTwoTone, filePptOutlined, filePptFilled, filePptTwoTone, fileProtectOutlined, fileSearchOutlined, fileSyncOutlined, fileTextOutlined, fileTextFilled, fileTextTwoTone, fileUnknownOutlined, fileUnknownFilled, fileUnknownTwoTone, fileWordOutlined, fileWordFilled, fileWordTwoTone, fileZipOutlined, fileZipFilled, fileZipTwoTone, filterOutlined, filterFilled, filterTwoTone, fireOutlined, fireFilled, fireTwoTone, flagOutlined, flagFilled, flagTwoTone, folderAddOutlined, folderAddFilled, folderAddTwoTone, folderOutlined, folderFilled, folderTwoTone, folderOpenOutlined, folderOpenFilled, folderOpenTwoTone, folderViewOutlined, forkOutlined, formatPainterOutlined, formatPainterFilled, frownOutlined, frownFilled, frownTwoTone, functionOutlined, fundProjectionScreenOutlined, fundViewOutlined, funnelPlotOutlined, funnelPlotFilled, funnelPlotTwoTone, gatewayOutlined, gifOutlined, giftOutlined, giftFilled, giftTwoTone, globalOutlined, goldOutlined, goldFilled, goldTwoTone, goldenFilled, googleCircleFilled, googlePlusCircleFilled, googlePlusSquareFilled, googleSquareFilled, groupOutlined, hddOutlined, hddFilled, hddTwoTone, heartOutlined, heartFilled, heartTwoTone, historyOutlined, homeOutlined, homeFilled, homeTwoTone, hourglassOutlined, hourglassFilled, hourglassTwoTone, idcardOutlined, idcardFilled, idcardTwoTone, ieCircleFilled, ieSquareFilled, importOutlined, inboxOutlined, insertRowAboveOutlined, insertRowBelowOutlined, insertRowLeftOutlined, insertRowRightOutlined, insuranceOutlined, insuranceFilled, insuranceTwoTone, interactionOutlined, interactionFilled, interactionTwoTone, keyOutlined, laptopOutlined, layoutOutlined, layoutFilled, layoutTwoTone, likeOutlined, likeFilled, likeTwoTone, lineOutlined, linkOutlined, loading3QuartersOutlined, loadingOutlined, lockOutlined, lockFilled, lockTwoTone, macCommandOutlined, macCommandFilled, mailOutlined, mailFilled, mailTwoTone, manOutlined, medicineBoxOutlined, medicineBoxFilled, medicineBoxTwoTone, mediumCircleFilled, mediumSquareFilled, mehOutlined, mehFilled, mehTwoTone, menuOutlined, mergeCellsOutlined, messageOutlined, messageFilled, messageTwoTone, mobileOutlined, mobileFilled, mobileTwoTone, moneyCollectOutlined, moneyCollectFilled, moneyCollectTwoTone, monitorOutlined, moreOutlined, nodeCollapseOutlined, nodeExpandOutlined, nodeIndexOutlined, notificationOutlined, notificationFilled, notificationTwoTone, numberOutlined, oneToOneOutlined, paperClipOutlined, partitionOutlined, payCircleOutlined, payCircleFilled, percentageOutlined, phoneOutlined, phoneFilled, phoneTwoTone, pictureOutlined, pictureFilled, pictureTwoTone, playSquareOutlined, playSquareFilled, playSquareTwoTone, poundCircleOutlined, poundCircleFilled, poundCircleTwoTone, poundOutlined, poweroffOutlined, printerOutlined, printerFilled, printerTwoTone, profileOutlined, profileFilled, profileTwoTone, projectOutlined, projectFilled, projectTwoTone, propertySafetyOutlined, propertySafetyFilled, propertySafetyTwoTone, pullRequestOutlined, pushpinOutlined, pushpinFilled, pushpinTwoTone, qqCircleFilled, qqSquareFilled, qrcodeOutlined, readOutlined, readFilled, reconciliationOutlined, reconciliationFilled, reconciliationTwoTone, redEnvelopeOutlined, redEnvelopeFilled, redEnvelopeTwoTone, redditCircleFilled, redditSquareFilled, reloadOutlined, restOutlined, restFilled, restTwoTone, robotOutlined, robotFilled, rocketOutlined, rocketFilled, rocketTwoTone, rotateLeftOutlined, rotateRightOutlined, safetyCertificateOutlined, safetyCertificateFilled, safetyCertificateTwoTone, safetyOutlined, saveOutlined, saveFilled, saveTwoTone, scanOutlined, scheduleOutlined, scheduleFilled, scheduleTwoTone, searchOutlined, securityScanOutlined, securityScanFilled, securityScanTwoTone, selectOutlined, sendOutlined, settingOutlined, settingFilled, settingTwoTone, shakeOutlined, shareAltOutlined, shopOutlined, shopFilled, shopTwoTone, shoppingCartOutlined, shoppingOutlined, shoppingFilled, shoppingTwoTone, signalFilled, sisternodeOutlined, sketchCircleFilled, sketchSquareFilled, skinOutlined, skinFilled, skinTwoTone, slackCircleFilled, smileOutlined, smileFilled, smileTwoTone, solutionOutlined, soundOutlined, soundFilled, soundTwoTone, splitCellsOutlined, starOutlined, starFilled, starTwoTone, subnodeOutlined, switcherOutlined, switcherFilled, switcherTwoTone, syncOutlined, tableOutlined, tabletOutlined, tabletFilled, tabletTwoTone, tagOutlined, tagFilled, tagTwoTone, tagsOutlined, tagsFilled, tagsTwoTone, taobaoSquareFilled, teamOutlined, thunderboltOutlined, thunderboltFilled, thunderboltTwoTone, toTopOutlined, toolOutlined, toolFilled, toolTwoTone, trademarkCircleOutlined, trademarkCircleFilled, trademarkCircleTwoTone, trademarkOutlined, transactionOutlined, translationOutlined, trophyOutlined, trophyFilled, trophyTwoTone, twitterCircleFilled, twitterSquareFilled, ungroupOutlined, unlockOutlined, unlockFilled, unlockTwoTone, uploadOutlined, usbOutlined, usbFilled, usbTwoTone, userAddOutlined, userDeleteOutlined, userOutlined, userSwitchOutlined, usergroupAddOutlined, usergroupDeleteOutlined, verifiedOutlined, videoCameraAddOutlined, videoCameraOutlined, videoCameraFilled, videoCameraTwoTone, walletOutlined, walletFilled, walletTwoTone, whatsAppOutlined, wifiOutlined, womanOutlined, zhihuCircleFilled, zhihuSquareFilled\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "accountBookFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "accountBookOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "accountBookTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "aimOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "alertFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "alertOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "alertTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "alibabaOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "alignCenterOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "alignLeftOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "alignRightOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "alipayCircleFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "alipayCircleOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "alipayOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "alipaySquareFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "aliwangwangFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "aliwangwangOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "aliyunOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "amazonCircleFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "amazonOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "amazonSquareFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "androidFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "androidOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "antCloudOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "antDesignOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "apartmentOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "apiFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "apiOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "apiTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "appleFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "appleOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "appstoreAddOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "appstoreFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "appstoreOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "appstoreTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "areaChartOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "arrowDownOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "arrowLeftOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "arrowRightOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "arrowUpOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "arrowsAltOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "audioFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "audioMutedOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "audioOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "audioTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "auditOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "backwardFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "backwardOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "bankFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "bankOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "bankTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "barChartOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "barcodeOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "barsOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "behanceCircleFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "behanceOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "behanceSquareFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "behanceSquareOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "bellFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "bellOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "bellTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "bgColorsOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "blockOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "boldOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "bookFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "bookOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "bookTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "borderBottomOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "borderHorizontalOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "borderInnerOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "borderLeftOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "borderOuterOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "borderOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "borderRightOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "borderTopOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "borderVerticleOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "borderlessTableOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "boxPlotFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "boxPlotOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "boxPlotTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "branchesOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "bugFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "bugOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "bugTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "buildFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "buildOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "buildTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "bulbFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "bulbOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "bulbTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "calculatorFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "calculatorOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "calculatorTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "calendarFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "calendarOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "calendarTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "cameraFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "cameraOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "cameraTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "carFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "carOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "carTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "caretDownFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "caretDownOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "caretLeftFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "caretLeftOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "caretRightFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "caretRightOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "caretUpFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "caretUpOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "carryOutFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "carryOutOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "carryOutTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "checkCircleFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "checkCircleOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "checkCircleTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "checkOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "checkSquareFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "checkSquareOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "checkSquareTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "chromeFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "chromeOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "ciCircleFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "ciCircleOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "ciCircleTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "ciOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "ciTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "clearOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "clockCircleFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "clockCircleOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "clockCircleTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "closeCircleFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "closeCircleOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "closeCircleTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "closeOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "closeSquareFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "closeSquareOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "closeSquareTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "cloudDownloadOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "cloudFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "cloudOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "cloudServerOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "cloudSyncOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "cloudTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "cloudUploadOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "clusterOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "codeFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "codeOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "codeSandboxCircleFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "codeSandboxOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "codeSandboxSquareFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "codeTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "codepenCircleFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "codepenCircleOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "codepenOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "codepenSquareFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "coffeeOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "columnHeightOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "columnWidthOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "commentOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "compassFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "compassOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "compassTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "compressOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "consoleSqlOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "contactsFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "contactsOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "contactsTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "containerFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "containerOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "containerTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "controlFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "controlOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "controlTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "copyFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "copyOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "copyTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "copyrightCircleFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "copyrightCircleOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "copyrightCircleTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "copyrightOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "copyrightTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "creditCardFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "creditCardOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "creditCardTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "crownFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "crownOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "crownTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "customerServiceFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "customerServiceOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "customerServiceTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "dashOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "dashboardFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "dashboardOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "dashboardTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "databaseFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "databaseOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "databaseTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "deleteColumnOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "deleteFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "deleteOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "deleteRowOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "deleteTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "deliveredProcedureOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "deploymentUnitOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "desktopOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "diffFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "diffOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "diffTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "dingdingOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "dingtalkCircleFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "dingtalkOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "dingtalkSquareFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "disconnectOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "dislikeFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "dislikeOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "dislikeTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "dollarCircleFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "dollarCircleOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "dollarCircleTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "dollarOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "dollarTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "dotChartOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "doubleLeftOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "doubleRightOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "downCircleFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "downCircleOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "downCircleTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "downOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "downSquareFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "downSquareOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "downSquareTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "downloadOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "dragOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "dribbbleCircleFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "dribbbleOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "dribbbleSquareFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "dribbbleSquareOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "dropboxCircleFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "dropboxOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "dropboxSquareFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "editFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "editOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "editTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "ellipsisOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "enterOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "environmentFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "environmentOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "environmentTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "euroCircleFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "euroCircleOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "euroCircleTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "euroOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "euroTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "exceptionOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "exclamationCircleFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "exclamationCircleOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "exclamationCircleTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "exclamationOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "expandAltOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "expandOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "experimentFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "experimentOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "experimentTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "exportOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "eyeFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "eyeInvisibleFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "eyeInvisibleOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "eyeInvisibleTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "eyeOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "eyeTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "facebookFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "facebookOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "fallOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "fastBackwardFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "fastBackwardOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "fastForwardFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "fastForwardOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "fieldBinaryOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "fieldNumberOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "fieldStringOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "fieldTimeOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "fileAddFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "fileAddOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "fileAddTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "fileDoneOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "fileExcelFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "fileExcelOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "fileExcelTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "fileExclamationFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "fileExclamationOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "fileExclamationTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "fileFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "fileGifOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "fileImageFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "fileImageOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "fileImageTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "fileJpgOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "fileMarkdownFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "fileMarkdownOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "fileMarkdownTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "fileOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "filePdfFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "filePdfOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "filePdfTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "filePptFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "filePptOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "filePptTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "fileProtectOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "fileSearchOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "fileSyncOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "fileTextFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "fileTextOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "fileTextTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "fileTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "fileUnknownFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "fileUnknownOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "fileUnknownTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "fileWordFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "fileWordOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "fileWordTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "fileZipFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "fileZipOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "fileZipTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "filterFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "filterOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "filterTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "fireFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "fireOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "fireTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "flagFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "flagOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "flagTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "folderAddFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "folderAddOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "folderAddTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "folderFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "folderOpenFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "folderOpenOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "folderOpenTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "folderOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "folderTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "folderViewOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "fontColorsOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "fontSizeOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "forkOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "formOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "formatPainterFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "formatPainterOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "forwardFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "forwardOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "frownFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "frownOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "frownTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "fullscreenExitOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "fullscreenOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "functionOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "fundFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "fundOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "fundProjectionScreenOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "fundTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "fundViewOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "funnelPlotFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "funnelPlotOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "funnelPlotTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "gatewayOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "gifOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "giftFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "giftOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "giftTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "githubFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "githubOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "gitlabFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "gitlabOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "globalOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "goldFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "goldOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "goldTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "goldenFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "googleCircleFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "googleOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "googlePlusCircleFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "googlePlusOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "googlePlusSquareFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "googleSquareFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "groupOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "hddFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "hddOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "hddTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "heartFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "heartOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "heartTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "heatMapOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "highlightFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "highlightOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "highlightTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "historyOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "homeFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "homeOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "homeTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "hourglassFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "hourglassOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "hourglassTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "html5Filled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "html5Outlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "html5TwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "idcardFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "idcardOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "idcardTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "ieCircleFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "ieOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "ieSquareFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "importOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "inboxOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "infoCircleFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "infoCircleOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "infoCircleTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "infoOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "insertRowAboveOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "insertRowBelowOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "insertRowLeftOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "insertRowRightOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "instagramFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "instagramOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "insuranceFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "insuranceOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "insuranceTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "interactionFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "interactionOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "interactionTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "issuesCloseOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "italicOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "keyOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "laptopOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "layoutFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "layoutOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "layoutTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "leftCircleFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "leftCircleOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "leftCircleTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "leftOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "leftSquareFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "leftSquareOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "leftSquareTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "likeFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "likeOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "likeTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "lineChartOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "lineHeightOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "lineOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "linkOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "linkedinFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "linkedinOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "loading3QuartersOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "loadingOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "lockFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "lockOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "lockTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "loginOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "logoutOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "macCommandFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "macCommandOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "mailFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "mailOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "mailTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "manOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "medicineBoxFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "medicineBoxOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "medicineBoxTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "mediumCircleFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "mediumOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "mediumSquareFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "mediumWorkmarkOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "mehFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "mehOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "mehTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "menuFoldOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "menuOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "menuUnfoldOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "mergeCellsOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "messageFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "messageOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "messageTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "minusCircleFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "minusCircleOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "minusCircleTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "minusOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "minusSquareFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "minusSquareOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "minusSquareTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "mobileFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "mobileOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "mobileTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "moneyCollectFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "moneyCollectOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "moneyCollectTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "monitorOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "moreOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "nodeCollapseOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "nodeExpandOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "nodeIndexOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "notificationFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "notificationOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "notificationTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "numberOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "oneToOneOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "orderedListOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "paperClipOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "partitionOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "pauseCircleFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "pauseCircleOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "pauseCircleTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "pauseOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "payCircleFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "payCircleOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "percentageOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "phoneFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "phoneOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "phoneTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "picCenterOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "picLeftOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "picRightOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "pictureFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "pictureOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "pictureTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "pieChartFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "pieChartOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "pieChartTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "playCircleFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "playCircleOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "playCircleTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "playSquareFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "playSquareOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "playSquareTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "plusCircleFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "plusCircleOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "plusCircleTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "plusOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "plusSquareFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "plusSquareOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "plusSquareTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "poundCircleFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "poundCircleOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "poundCircleTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "poundOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "poweroffOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "printerFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "printerOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "printerTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "profileFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "profileOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "profileTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "projectFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "projectOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "projectTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "propertySafetyFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "propertySafetyOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "propertySafetyTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "pullRequestOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "pushpinFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "pushpinOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "pushpinTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "qqCircleFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "qqOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "qqSquareFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "qrcodeOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "questionCircleFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "questionCircleOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "questionCircleTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "questionOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "radarChartOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "radiusBottomleftOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "radiusBottomrightOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "radiusSettingOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "radiusUpleftOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "radiusUprightOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "readFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "readOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "reconciliationFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "reconciliationOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "reconciliationTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "redEnvelopeFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "redEnvelopeOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "redEnvelopeTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "redditCircleFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "redditOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "redditSquareFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "redoOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "reloadOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "restFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "restOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "restTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "retweetOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "rightCircleFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "rightCircleOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "rightCircleTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "rightOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "rightSquareFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "rightSquareOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "rightSquareTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "riseOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "robotFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "robotOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "rocketFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "rocketOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "rocketTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "rollbackOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "rotateLeftOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "rotateRightOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "safetyCertificateFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "safetyCertificateOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "safetyCertificateTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "safetyOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "saveFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "saveOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "saveTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "scanOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "scheduleFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "scheduleOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "scheduleTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "scissorOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "searchOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "securityScanFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "securityScanOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "securityScanTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "selectOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "sendOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "settingFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "settingOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "settingTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "shakeOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "shareAltOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "shopFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "shopOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "shopTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "shoppingCartOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "shoppingFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "shoppingOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "shoppingTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "shrinkOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "signalFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "sisternodeOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "sketchCircleFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "sketchOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "sketchSquareFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "skinFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "skinOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "skinTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "skypeFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "skypeOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "slackCircleFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "slackOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "slackSquareFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "slackSquareOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "slidersFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "slidersOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "slidersTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "smallDashOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "smileFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "smileOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "smileTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "snippetsFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "snippetsOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "snippetsTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "solutionOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "sortAscendingOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "sortDescendingOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "soundFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "soundOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "soundTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "splitCellsOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "starFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "starOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "starTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "stepBackwardFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "stepBackwardOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "stepForwardFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "stepForwardOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "stockOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "stopFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "stopOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "stopTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "strikethroughOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "subnodeOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "swapLeftOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "swapOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "swapRightOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "switcherFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "switcherOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "switcherTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "syncOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "tableOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "tabletFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "tabletOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "tabletTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "tagFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "tagOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "tagTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "tagsFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "tagsOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "tagsTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "taobaoCircleFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "taobaoCircleOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "taobaoOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "taobaoSquareFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "teamOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "thunderboltFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "thunderboltOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "thunderboltTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "toTopOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "toolFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "toolOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "toolTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "trademarkCircleFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "trademarkCircleOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "trademarkCircleTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "trademarkOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "transactionOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "translationOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "trophyFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "trophyOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "trophyTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "twitterCircleFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "twitterOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "twitterSquareFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "underlineOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "undoOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "ungroupOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "unlockFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "unlockOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "unlockTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "unorderedListOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "upCircleFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "upCircleOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "upCircleTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "upOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "upSquareFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "upSquareOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "upSquareTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "uploadOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "usbFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "usbOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "usbTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "userAddOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "userDeleteOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "userOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "userSwitchOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "usergroupAddOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "usergroupDeleteOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "verifiedOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "verticalAlignBottomOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "verticalAlignMiddleOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "verticalAlignTopOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "verticalLeftOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "verticalRightOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "videoCameraAddOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "videoCameraFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "videoCameraOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "videoCameraTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "walletFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "walletOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "walletTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "warningFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "warningOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "warningTwoTone",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "wechatFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "wechatOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "weiboCircleFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "weiboCircleOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "weiboOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "weiboSquareFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "weiboSquareOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "whatsAppOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "wifiOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "windowsFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "windowsOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "womanOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "yahooFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "yahooOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "youtubeFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "youtubeOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "yuqueFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "yuqueOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "zhihuCircleFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "zhihuOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "zhihuSquareFilled",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "zoomInOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "zoomOutOutlined",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

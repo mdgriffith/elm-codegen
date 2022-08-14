@@ -1,0 +1,60 @@
+[
+    {
+        "name": "DisjointSet",
+        "comment": " A disjoint set implementation with path compression.\n\n@docs DisjointSet, empty\n\n\n# Adding elements\n\n@docs union, add\n\n\n# Querying for elements\n\n@docs find, has, items\n\n\n# List operations\n\n@docs toList, fromList\n\n",
+        "unions": [
+            {
+                "name": "DisjointSet",
+                "comment": " A data structure that stores non-overlapping sets.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "add",
+                "comment": " Adds a list of elements into their own set.\n\n    add [ \"a\" ] empty |> toList --> [ (\"a\", \"a\") ]\n    add [ \"a\", \"b\" ] empty |> toList --> [ (\"a\", \"a\"), (\"b\", \"b\") ]\n\n    empty\n        |> add [ \"a\" ]\n        |> add [ \"b\", \"c\" ]\n        |> toList\n    --> [ (\"a\", \"a\"), (\"b\", \"b\"), (\"c\", \"c\") ]\n\n",
+                "type": "List.List a -> DisjointSet.DisjointSet a -> DisjointSet.DisjointSet a"
+            },
+            {
+                "name": "empty",
+                "comment": " Creats an empty disjoint set.\n",
+                "type": "DisjointSet.DisjointSet a"
+            },
+            {
+                "name": "find",
+                "comment": " Finds the root element from a given element if it exists.\n\n    set : DisjointSet String\n    set =\n        empty\n            |> union \"a\" \"b\"\n            |> union \"b\" \"c\"\n            |> union \"c\" \"d\"\n            |> union \"e\" \"e\"\n\n    find \"a\" set --> Just \"a\"\n    find \"b\" set --> Just \"a\"\n    find \"c\" set --> Just \"a\"\n    find \"d\" set --> Just \"a\"\n    find \"e\" set --> Just \"e\"\n    find \"x\" set --> Nothing\n\n",
+                "type": "a -> DisjointSet.DisjointSet a -> Maybe.Maybe a"
+            },
+            {
+                "name": "fromList",
+                "comment": " Creates a disjoint set from a list of `(element, equivalent)` pairs.\n",
+                "type": "List.List ( a, a ) -> DisjointSet.DisjointSet a"
+            },
+            {
+                "name": "has",
+                "comment": " Checks whether or not the disjoint set contains an element.\n\n    set : DisjointSet String\n    set =\n        add [ \"a\" ] empty\n\n    has \"a\" set --> True\n    has \"b\" set --> False\n\n",
+                "type": "a -> DisjointSet.DisjointSet a -> Basics.Bool"
+            },
+            {
+                "name": "items",
+                "comment": " Returns a list of all the elements contained in the disjoint set.\n\n    items empty --> []\n    items (add [ \"a\", \"b\", \"c\" ] empty) --> [ \"a\", \"b\", \"c\" ]\n\n    empty\n        |> union \"a\" \"b\"\n        |> union \"c\" \"d\"\n        |> items\n    --> [ \"a\", \"b\", \"c\", \"d\" ]\n\n",
+                "type": "DisjointSet.DisjointSet a -> List.List a"
+            },
+            {
+                "name": "toList",
+                "comment": " Creates a list of `(element, equivalent)` pairs from a disjoint set.\n",
+                "type": "DisjointSet.DisjointSet a -> List.List ( a, a )"
+            },
+            {
+                "name": "union",
+                "comment": " Unifies two elements. If an element is not part of any set, it is created.\n\nThe root element is always the first element that was added.\n\nThis operation does path compression as an optimization.\n\n    union \"a\" \"a\" empty |> toList --> [ (\"a\", \"a\") ]\n    union \"a\" \"b\" empty |> toList --> [ (\"a\", \"a\"), (\"b\", \"a\") ]\n\n    empty\n        |> union \"a\" \"b\"\n        |> union \"b\" \"c\"\n        |> toList\n    --> [ (\"a\", \"a\"), (\"b\", \"a\"), (\"c\", \"a\") ]\n\n    empty\n        |> union \"a\" \"b\"\n        |> union \"x\" \"y\"\n        |> union \"b\" \"y\"\n        |> toList\n    --> [ (\"a\", \"a\"), (\"b\", \"a\"), (\"x\", \"a\"), (\"y\", \"a\") ]\n\n",
+                "type": "a -> a -> DisjointSet.DisjointSet a -> DisjointSet.DisjointSet a"
+            }
+        ],
+        "binops": []
+    }
+]

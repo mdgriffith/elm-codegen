@@ -1,0 +1,434 @@
+[
+    {
+        "name": "Plot",
+        "comment": "\n\n\n# Series\n\n@docs viewSeries\n\n\n## Simple series\n\n@docs dots, line, area\n\n\n## Simple data points\n\nData points are the coordinates which make up your series. They come with views or without.\nPass your x and y coordinates, respectively, to create a data point for your series.\n\n@docs clear, square, circle, diamond, triangle\n\n\n## Custom series\n\n@docs Series, Interpolation, customSeries, DataPoint, dot, hintDot, rangeFrameDot, emphasizedDot, customDot\n\n\n## Small helper views\n\nJust thought you might want a hand with all the views you need for your data points.\n\n@docs viewCircle, viewSquare, viewDiamond, viewTriangle\n\n\n# Bars\n\n@docs viewBars\n\n\n# Simple bars\n\n@docs groups, group, histogram, histogramBar\n\n\n## Custom bars\n\n@docs Bars, BarGroup, MaxBarWidth, hintGroup, customGroups, customGroup\n\n\n# Custom plot\n\n@docs PlotCustomizations, PlotSummary, defaultSeriesPlotCustomizations, viewSeriesCustom, defaultBarsPlotCustomizations, viewBarsCustom\n\n\n## Hint customizations\n\n@docs Point, normalHintContainer, flyingHintContainer, normalHintContainerInner\n\n\n## Grid customizations\n\n@docs Grid, GridLineCustomizations, decentGrid, clearGrid, customGrid\n\n\n## Junk\n\n@docs JunkCustomizations, junk\n\n\n# Axis customizations\n\n@docs Axis, AxisSummary, TickCustomizations, LabelCustomizations, LineCustomizations\n\n\n# Various axis\n\n@docs normalAxis, normalBarsAxis, sometimesYouDoNotHaveAnAxis, clearAxis, axisAtMin, axisAtMax, customAxis, closestToZero\n\n\n## Position helpers\n\n@docs decentPositions, interval, remove\n\n\n## Small axis helpers\n\n@docs simpleLine, simpleTick, simpleLabel, fullLine, viewLabel, displace\n\n",
+        "unions": [
+            {
+                "name": "Axis",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Grid",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Interpolation",
+                "comment": " [Interpolation](https://en.wikipedia.org/wiki/Interpolation) is basically the line that goes\nbetween your data points. Your current options are:\n\n  - None: No interpolation (a scatter plot).\n  - Linear: A straight line.\n  - Monotone: A nice looking curvy line which doesn't extend outside the y values of the two\n    points involved (Huh? Here's an [illustration](https://en.wikipedia.org/wiki/Monotone_cubic_interpolation#/media/File:MonotCubInt.png)).\n\nAll but `None` **takes a color which determines whether it draws the area below the interpolation** and\na list of attributes which you can use for styling your interpolation.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "None",
+                        []
+                    ],
+                    [
+                        "Linear",
+                        [
+                            "Maybe.Maybe String.String",
+                            "List.List (Svg.Attribute Basics.Never)"
+                        ]
+                    ],
+                    [
+                        "Monotone",
+                        [
+                            "Maybe.Maybe String.String",
+                            "List.List (Svg.Attribute Basics.Never)"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "MaxBarWidth",
+                "comment": " The width options of your bars. If `Percentage` is used, it will be _maximum_ that\npercentage of one unit on the horizontal axis wide. Similarily, using `Fixed` will\nset your bar to be maximum the provided float in pixels.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Percentage",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "Fixed",
+                        [
+                            "Basics.Float"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "AxisSummary",
+                "comment": " A summary of information about an axis.\n",
+                "args": [],
+                "type": "{ min : Basics.Float, max : Basics.Float, dataMin : Basics.Float, dataMax : Basics.Float, marginLower : Basics.Float, marginUpper : Basics.Float, length : Basics.Float, all : List.List Basics.Float }"
+            },
+            {
+                "name": "BarGroup",
+                "comment": " A bar group is, well, a group of bars attached to a single data point on\nthe horizontal axis.\n\n  - The `bars` property specify the height and label of each bar in your\n    group.\n  - The `label` is what will show up on the horizontal axis\n    at that data point. This is a function as you don't get to pick your own x.\n    This is because bar charts, per design, are supposed to be scattered at a consistent\n    interval.\n  - The `hint` property is the view which will show up in your hint when\n    hovering the group.\n  - The `verticalLine` property is an option to add a vertical line. Nice when you have a hint.\n\n",
+                "args": [],
+                "type": "{ label : Basics.Float -> Plot.LabelCustomizations, hint : Basics.Float -> Maybe.Maybe (Svg.Svg Basics.Never), verticalLine : Basics.Float -> Maybe.Maybe (Plot.AxisSummary -> Plot.LineCustomizations), bars : List.List Plot.Bar }"
+            },
+            {
+                "name": "Bars",
+                "comment": " The bar configurations allows you to specify the styles of\nyour bars, the max width of your bars, how your data is transformed into\nbar groups, as well the vertical axis related to your bar series.\n",
+                "args": [
+                    "data",
+                    "msg"
+                ],
+                "type": "{ axis : Plot.Axis, toGroups : data -> List.List Plot.BarGroup, styles : List.List (List.List (Svg.Attribute msg)), maxWidth : Plot.MaxBarWidth }"
+            },
+            {
+                "name": "DataPoint",
+                "comment": " The data point. Here you can do tons of crazy stuff, although most\nimportantly, you can specify the coordinates of your plot with\nthe `x` and `y` properties. Besides that you can:\n\n  - `view`: Add an SVG view at your data point.\n  - `xLine`: Provide a summary of the vertical axis, you can create\n    a horizontal line. Useful when hovering your point.\n  - `yLine`: Same as `xLine`, but vertically.\n  - `xTick`: So this is for the progressive plotter. [Tufte](https://en.wikipedia.org/wiki/Edward_Tufte)\n    recommends placing a tick where [the actual data point is](https://plot.ly/~riddhiman/254/miles-per-gallon-of-fuel-vs-car-weight-lb1000.png).\n    Adding a tick view to this, will cast a tick to the horizontal axis and allow you to make a plot as in the link.\n  - `yTick`: Like `xTick`, but vertically.\n  - `hint`: The view added here will show up in the hint container (Whose view can be\n    customized in the `PlotCustomizations`).\n\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ view : Maybe.Maybe (Svg.Svg msg), xLine : Maybe.Maybe (Plot.AxisSummary -> Plot.LineCustomizations), yLine : Maybe.Maybe (Plot.AxisSummary -> Plot.LineCustomizations), xTick : Maybe.Maybe Plot.TickCustomizations, yTick : Maybe.Maybe Plot.TickCustomizations, hint : Maybe.Maybe (Html.Html Basics.Never), x : Basics.Float, y : Basics.Float }"
+            },
+            {
+                "name": "GridLineCustomizations",
+                "comment": " ",
+                "args": [],
+                "type": "{ attributes : List.List (Svg.Attribute Basics.Never), position : Basics.Float }"
+            },
+            {
+                "name": "JunkCustomizations",
+                "comment": " Just add whatever you want. A title might be an idea though.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ x : Basics.Float, y : Basics.Float, view : Svg.Svg msg }"
+            },
+            {
+                "name": "LabelCustomizations",
+                "comment": " ",
+                "args": [],
+                "type": "{ view : Svg.Svg Basics.Never, position : Basics.Float }"
+            },
+            {
+                "name": "LineCustomizations",
+                "comment": " ",
+                "args": [],
+                "type": "{ attributes : List.List (Svg.Attribute Basics.Never), start : Basics.Float, end : Basics.Float }"
+            },
+            {
+                "name": "PlotCustomizations",
+                "comment": " The plot customizations. Here you may:\n\n  - Add attributes to your whole plot (Useful when you want to do events for your plot).\n  - Add an id (the id in here will overrule an id attribute you add in `.attributes`).\n  - Change the width or height of your plot. I recommend the golden ratio!\n  - Add SVG `defs` for all kinds [tricks](https://github.com/terezka/elm-plot/blob/master/examples/Gradient.elm).\n  - Change the margin (useful when you can't see your ticks!).\n  - Add a message which will be sent when your hover over a point on your plot!\n  - Add your own container for your hints or use the predefined ones.\n  - Add a more exciting horizontal axis. Maybe try `axisAtMin` or make your own?\n  - Add a grid, but do consider whether that will actually improve the readability of your plot.\n  - Change the bounds of your plot. For example, if you want your plot to start\n    atleast at -5 on the y-axis, then add `toDomainLowest = min -5`.\n\n_Note:_ The `id` is particularily important when you have\nseveral plots in your dom.\n\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ attributes : List.List (Svg.Attribute msg), id : String.String, width : Basics.Int, height : Basics.Int, defs : List.List (Svg.Svg msg), margin : { top : Basics.Int, right : Basics.Int, bottom : Basics.Int, left : Basics.Int }, onHover : Maybe.Maybe (Maybe.Maybe Plot.Point -> msg), hintContainer : Plot.PlotSummary -> List.List (Html.Html Basics.Never) -> Html.Html Basics.Never, horizontalAxis : Plot.Axis, grid : { horizontal : Plot.Grid, vertical : Plot.Grid }, junk : Plot.PlotSummary -> List.List (Plot.JunkCustomizations msg), toDomainLowest : Basics.Float -> Basics.Float, toDomainHighest : Basics.Float -> Basics.Float, toRangeLowest : Basics.Float -> Basics.Float, toRangeHighest : Basics.Float -> Basics.Float }"
+            },
+            {
+                "name": "PlotSummary",
+                "comment": " ",
+                "args": [],
+                "type": "{ x : Plot.AxisSummary, y : Plot.AxisSummary }"
+            },
+            {
+                "name": "Point",
+                "comment": " Just an x and a y property.\n",
+                "args": [],
+                "type": "Internal.Draw.Point"
+            },
+            {
+                "name": "Series",
+                "comment": " The series configuration allows you to specify your\nown interpolation and how your data is transformed into series data points,\nbut also a vertical axis relating to the series' scale. This way it's made sure\nyou never have more than one y-axis per data set, because that would be just\ncrazy.\n",
+                "args": [
+                    "data",
+                    "msg"
+                ],
+                "type": "{ axis : Plot.Axis, interpolation : Plot.Interpolation, toDataPoints : data -> List.List (Plot.DataPoint msg) }"
+            },
+            {
+                "name": "TickCustomizations",
+                "comment": " ",
+                "args": [],
+                "type": "{ attributes : List.List (Svg.Attribute Basics.Never), length : Basics.Float, position : Basics.Float }"
+            }
+        ],
+        "values": [
+            {
+                "name": "area",
+                "comment": " ",
+                "type": "(data -> List.List (Plot.DataPoint msg)) -> Plot.Series data msg"
+            },
+            {
+                "name": "axisAtMax",
+                "comment": " Like `axisAtMin`, but opposite.\n",
+                "type": "Plot.Axis"
+            },
+            {
+                "name": "axisAtMin",
+                "comment": " An axis which is placed at the minimum of your axis! Meaning if you use it as\na vertical axis, then it will end up to the far left, and if you use it as\na horizontal axis, then it will end up in the bottom.\n",
+                "type": "Plot.Axis"
+            },
+            {
+                "name": "circle",
+                "comment": " ",
+                "type": "Basics.Float -> Basics.Float -> Plot.DataPoint msg"
+            },
+            {
+                "name": "clear",
+                "comment": " A data point without a view.\n",
+                "type": "Basics.Float -> Basics.Float -> Plot.DataPoint msg"
+            },
+            {
+                "name": "clearAxis",
+                "comment": " An axis closest to zero, but doesn't look like much unless you use the `rangeFrameDot`.\n",
+                "type": "Plot.Axis"
+            },
+            {
+                "name": "clearGrid",
+                "comment": " No grid. Tufte would be proud of you. 💛\n",
+                "type": "Plot.Grid"
+            },
+            {
+                "name": "closestToZero",
+                "comment": " A helper to position your axis as close to zero as possible, meaning if your\nrange is 4 - 10, then the x-axis will be a 4, as that's the closest to zero it gets.\nUseful for avoiding confusion when your axis disappears below the reach of your plot\nbecause zero is not in your plot.\n",
+                "type": "Basics.Float -> Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "customAxis",
+                "comment": " When you want to make your own axis. This is where the fun starts! The\n`normalAxis` looks like this on the inside:\n\n    normalAxis : Axis\n    normalAxis =\n        customAxis <|\n            \\summary ->\n                { position = closestToZero\n                , axisLine = Just (simpleLine summary)\n                , ticks = List.map simpleTick (decentPositions summary |> remove 0)\n                , labels = List.map simpleLabel (decentPositions summary |> remove 0)\n                , flipAnchor = False\n                }\n\nBut the special snowflake you are, you might want something different.\n\n",
+                "type": "(Plot.AxisSummary -> Plot.AxisCustomizations) -> Plot.Axis"
+            },
+            {
+                "name": "customDot",
+                "comment": " Just do whatever you want.\n",
+                "type": "Maybe.Maybe (Svg.Svg msg) -> Maybe.Maybe (Plot.AxisSummary -> Plot.LineCustomizations) -> Maybe.Maybe (Plot.AxisSummary -> Plot.LineCustomizations) -> Maybe.Maybe Plot.TickCustomizations -> Maybe.Maybe Plot.TickCustomizations -> Maybe.Maybe (Html.Html Basics.Never) -> Basics.Float -> Basics.Float -> Plot.DataPoint msg"
+            },
+            {
+                "name": "customGrid",
+                "comment": " Make your own grid!\n",
+                "type": "(Plot.AxisSummary -> List.List Plot.GridLineCustomizations) -> Plot.Grid"
+            },
+            {
+                "name": "customGroup",
+                "comment": " For your special groups.\n",
+                "type": "(Basics.Float -> Plot.LabelCustomizations) -> (Basics.Float -> Maybe.Maybe (Svg.Svg Basics.Never)) -> (Basics.Float -> Maybe.Maybe (Plot.AxisSummary -> Plot.LineCustomizations)) -> List.List Plot.Bar -> Plot.BarGroup"
+            },
+            {
+                "name": "customGroups",
+                "comment": " For special bar charts.\n",
+                "type": "Plot.Axis -> (data -> List.List Plot.BarGroup) -> List.List (List.List (Svg.Attribute msg)) -> Plot.MaxBarWidth -> Plot.Bars data msg"
+            },
+            {
+                "name": "customSeries",
+                "comment": " Make your own series! The standard line series looks like this on the inside:\n\n    line : (data -> List (DataPoint msg)) -> Series data msg\n    line toDataPoints =\n        { axis = normalAxis\n        , interpolation = Linear Nothing [ stroke pinkStroke ]\n        , toDataPoints = toDataPoints\n        }\n\nMaybe pink isn't really your color and you want to make it green. No problem! You\njust add some different attributes to the interpolation. If you want a different\ninterpolation or an area under that interpolation, look at the\n[Interpolation](#Interpolation) type for more info.\n\n",
+                "type": "Plot.Axis -> Plot.Interpolation -> (data -> List.List (Plot.DataPoint msg)) -> Plot.Series data msg"
+            },
+            {
+                "name": "decentGrid",
+                "comment": " A grid with decent spacing. Uses the `decentPositions` function to calculate\nthe positions of the grid lines. This also means that if you use `decentPositions`\nto calculate your tick positions, then they will match.\n",
+                "type": "Plot.Grid"
+            },
+            {
+                "name": "decentPositions",
+                "comment": " For decently spaced positions. Useful in tick/label and grid configurations.\n",
+                "type": "Plot.AxisSummary -> List.List Basics.Float"
+            },
+            {
+                "name": "defaultBarsPlotCustomizations",
+                "comment": " The default bars plot customizations.\n",
+                "type": "Plot.PlotCustomizations msg"
+            },
+            {
+                "name": "defaultSeriesPlotCustomizations",
+                "comment": " The default series plot customizations.\n",
+                "type": "Plot.PlotCustomizations msg"
+            },
+            {
+                "name": "diamond",
+                "comment": " ",
+                "type": "Basics.Float -> Basics.Float -> Plot.DataPoint msg"
+            },
+            {
+                "name": "displace",
+                "comment": " ",
+                "type": "Basics.Float -> Basics.Float -> Svg.Attribute msg"
+            },
+            {
+                "name": "dot",
+                "comment": " Makes a data point provided a `view`, an `x` and a `y`.\n",
+                "type": "Svg.Svg msg -> Basics.Float -> Basics.Float -> Plot.DataPoint msg"
+            },
+            {
+                "name": "dots",
+                "comment": " ",
+                "type": "(data -> List.List (Plot.DataPoint msg)) -> Plot.Series data msg"
+            },
+            {
+                "name": "emphasizedDot",
+                "comment": " Really a silly surprise dot you can use if you want to be flashy. Try it if\nyou're feeling lucky.\n",
+                "type": "Svg.Svg msg -> Basics.Float -> Basics.Float -> Plot.DataPoint msg"
+            },
+            {
+                "name": "flyingHintContainer",
+                "comment": " A view holding your hint views which flies around on your plot following the hovered x.\n",
+                "type": "(Basics.Bool -> List.List (Html.Html Basics.Never) -> Html.Html Basics.Never) -> Maybe.Maybe Plot.Point -> Plot.PlotSummary -> List.List (Html.Html Basics.Never) -> Html.Html Basics.Never"
+            },
+            {
+                "name": "fullLine",
+                "comment": " A line which goes from one end of the plot to the other.\n",
+                "type": "List.List (Svg.Attribute Basics.Never) -> Plot.AxisSummary -> Plot.LineCustomizations"
+            },
+            {
+                "name": "group",
+                "comment": " A pretty plain group, nothing fancy.\n",
+                "type": "String.String -> List.List Basics.Float -> Plot.BarGroup"
+            },
+            {
+                "name": "groups",
+                "comment": " For pink and blue bar groups. If you have more than two colors, you have to\nmake your own group. Under this documentation, it looks like this:\n\n    groups : (data -> List BarGroup) -> Bars data msg\n    groups toGroups =\n        { axis = normalAxis\n        , toGroups = toGroups\n        , styles = [ [ fill pinkFill ], [ fill blueFill ] ]\n        , maxWidth = Percentage 75\n        }\n\nSo you can just go right ahead and add a third pastel to those styles!\n\n",
+                "type": "(data -> List.List Plot.BarGroup) -> Plot.Bars data msg"
+            },
+            {
+                "name": "hintDot",
+                "comment": " Like `dot`, except it also takes a maybe coordinates to know if\nit should add a hint view/vertical line or not.\n",
+                "type": "Svg.Svg msg -> Maybe.Maybe Plot.Point -> Basics.Float -> Basics.Float -> Plot.DataPoint msg"
+            },
+            {
+                "name": "hintGroup",
+                "comment": " For groups with a hint.\n",
+                "type": "Maybe.Maybe Plot.Point -> String.String -> List.List Basics.Float -> Plot.BarGroup"
+            },
+            {
+                "name": "histogram",
+                "comment": " For histograms! Meaning that there is only one bar in each group and it's always\none horizontal unit wide.\n",
+                "type": "(data -> List.List Plot.BarGroup) -> Plot.Bars data msg"
+            },
+            {
+                "name": "histogramBar",
+                "comment": " ",
+                "type": "Basics.Float -> Plot.BarGroup"
+            },
+            {
+                "name": "interval",
+                "comment": " For ticks with a particular interval. The first value passed is the offset,\nand the second value is the actual interval. The offset is useful when you want\ntwo sets of ticks with different views. For example, if you want a long tick\nat every 2 \\* x and a small tick at every 2 \\* x + 1.\n",
+                "type": "Basics.Float -> Basics.Float -> Plot.AxisSummary -> List.List Basics.Float"
+            },
+            {
+                "name": "junk",
+                "comment": " Takes a `view`, an `x` coordinate and a `y` coordinate, and you can put your junk anywhere!\nIf you want to add a title, which I assume is the real reason why you're here, you can do this:\n\n    title : Svg msg\n    title =\n      viewLabel\n        [ fill \"bleak-capitalistic-color\"\n        , style \"text-anchor: end; font-style: italic;\"\n        ]\n        \"Ca$h earned\"\n\n    view : Svg.Svg a\n    view =\n      viewSeriesCustom\n        { defaultSeriesPlotCustomizations\n        | ...\n        , junk = \\summary -> [ junk title summary.x.max summary.y.max  ]\n        , ...\n        }\n        [ customLine ]\n        data\n\nNot sure if this is self explanatory, but `summary.x.min/max`, `summary.y.min/max`\nare just floats which you can do anything you'd like with.\n\nYou can of course also put other junk here, like legends for example.\n\n",
+                "type": "Svg.Svg msg -> Basics.Float -> Basics.Float -> Plot.JunkCustomizations msg"
+            },
+            {
+                "name": "line",
+                "comment": " ",
+                "type": "(data -> List.List (Plot.DataPoint msg)) -> Plot.Series data msg"
+            },
+            {
+                "name": "normalAxis",
+                "comment": " A super regular axis.\n",
+                "type": "Plot.Axis"
+            },
+            {
+                "name": "normalBarsAxis",
+                "comment": " So because there is extra funky labels added to your bar groups,\nyour axis should not be cluttered up with other random numbers. So use this one.\n",
+                "type": "Plot.Axis"
+            },
+            {
+                "name": "normalHintContainer",
+                "comment": " A view located at the bottom left corner of your plot, holding the hint views you\n(maybe) added in your data points or groups.\n",
+                "type": "Plot.PlotSummary -> List.List (Html.Html Basics.Never) -> Html.Html Basics.Never"
+            },
+            {
+                "name": "normalHintContainerInner",
+                "comment": " The normal hint view.\n",
+                "type": "Basics.Bool -> List.List (Html.Html Basics.Never) -> Html.Html Basics.Never"
+            },
+            {
+                "name": "rangeFrameDot",
+                "comment": " This dot implements a special plot in [Tuftes](https://en.wikipedia.org/wiki/Edward_Tufte) [book](https://www.amazon.com/Visual-Display-Quantitative-Information/dp/1930824130).\nIt basically just adds ticks to your axis where [your data points are](https://plot.ly/~riddhiman/254/miles-per-gallon-of-fuel-vs-car-weight-lb1000.png)!\nYou might want to use `clearAxis` to remove all the other useless chart junk, now that you have all\nthese nice ticks.\n",
+                "type": "Svg.Svg msg -> Basics.Float -> Basics.Float -> Plot.DataPoint msg"
+            },
+            {
+                "name": "remove",
+                "comment": " If you regret a particular position. Typically used for removing the label\nat the origin. Use like this:\n\n    normalAxis : Axis\n    normalAxis =\n        axis <|\n            \\summary ->\n                { position = ClosestToZero\n                , axisLine = Just (simpleLine summary)\n                , ticks = List.map simpleTick (decentPositions summary |> remove 0)\n                , labels = List.map simpleLabel (decentPositions summary |> remove 0)\n                }\n\nSee how in the normal axis we make a bunch of ticks, but then remove the one we don't\nwant. You can do the same!\n\n",
+                "type": "Basics.Float -> List.List Basics.Float -> List.List Basics.Float"
+            },
+            {
+                "name": "simpleLabel",
+                "comment": " A simple label. You might want to try an make your own!\n",
+                "type": "Basics.Float -> Plot.LabelCustomizations"
+            },
+            {
+                "name": "simpleLine",
+                "comment": " A nice grey line which goes from one side of your plot to the other.\n",
+                "type": "Plot.AxisSummary -> Plot.LineCustomizations"
+            },
+            {
+                "name": "simpleTick",
+                "comment": " A simple but powerful tick.\n",
+                "type": "Basics.Float -> Plot.TickCustomizations"
+            },
+            {
+                "name": "sometimesYouDoNotHaveAnAxis",
+                "comment": " When you don't have an axis, which is only sometimes.\n",
+                "type": "Plot.Axis"
+            },
+            {
+                "name": "square",
+                "comment": " ",
+                "type": "Basics.Float -> Basics.Float -> Plot.DataPoint msg"
+            },
+            {
+                "name": "triangle",
+                "comment": " ",
+                "type": "Basics.Float -> Basics.Float -> Plot.DataPoint msg"
+            },
+            {
+                "name": "viewBars",
+                "comment": " This is for viewing a bar chart! The example below renders four groups of two\nbars each, labeled Q1, Q2, Q3, Q4 respectively.\n\n    view : Svg msg\n    view =\n        viewBars\n            (groups (List.map (\\data -> group data.label data.heights)))\n            [ { label = \"Q1\", heights = [ 1, 2 ] }\n            , { label = \"Q2\", heights = [ 3, 4 ] }\n            , { label = \"Q3\", heights = [ 4, 5 ] }\n            , { label = \"Q4\", heights = [ 3, 2 ] }\n            ]\n\n",
+                "type": "Plot.Bars data msg -> data -> Html.Html msg"
+            },
+            {
+                "name": "viewBarsCustom",
+                "comment": " Plot your bar series with special needs!\n",
+                "type": "Plot.PlotCustomizations msg -> Plot.Bars data msg -> data -> Html.Html msg"
+            },
+            {
+                "name": "viewCircle",
+                "comment": " Pass radius and color to make a circle!\n",
+                "type": "Basics.Float -> String.String -> Svg.Svg msg"
+            },
+            {
+                "name": "viewDiamond",
+                "comment": " Pass width, height and color to make a diamond and impress with your\nclassy plot!\n",
+                "type": "Basics.Float -> Basics.Float -> String.String -> Svg.Svg msg"
+            },
+            {
+                "name": "viewLabel",
+                "comment": " ",
+                "type": "List.List (Svg.Attribute msg) -> String.String -> Svg.Svg msg"
+            },
+            {
+                "name": "viewSeries",
+                "comment": " A series is a list of data points possibly joined by some sort of\ninterpolation. The example below renders an area, with the coordinates\nof the last argument given to `viewSeries`, where the coordinates are\nemphasized with a circle.\n\n    view : Svg msg\n    view =\n        viewSeries\n            [ area (List.map (\\{ x, y } -> circle x y)) ]\n            [ { x = 0, y = 1 }\n            , { x = 2, y = 2 }\n            , { x = 3, y = 3 }\n            , { x = 4, y = 5 }\n            , { x = 5, y = 8 }\n            ]\n\n",
+                "type": "List.List (Plot.Series data msg) -> data -> Html.Html msg"
+            },
+            {
+                "name": "viewSeriesCustom",
+                "comment": " Plot your series with special needs!\n",
+                "type": "Plot.PlotCustomizations msg -> List.List (Plot.Series data msg) -> data -> Html.Html msg"
+            },
+            {
+                "name": "viewSquare",
+                "comment": " Pass width and color to make a square!\n",
+                "type": "Basics.Float -> String.String -> Svg.Svg msg"
+            },
+            {
+                "name": "viewTriangle",
+                "comment": " Pass a color to make a triangle! Great for academic looking plots.\n",
+                "type": "String.String -> Svg.Svg msg"
+            }
+        ],
+        "binops": []
+    }
+]

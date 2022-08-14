@@ -1,0 +1,43 @@
+[
+    {
+        "name": "Mask",
+        "comment": " A mask is a formatting pattern that you can apply to a value. This module has some functions to help you create and apply masks.\n\n\n# Common Helpers\n\n@docs string, number\n\n\n# Formating numbers\n\n@docs DecimalOptions, defaultDecimalOptions, floatDecimal, intDecimal\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "DecimalOptions",
+                "comment": " Options used to format numbers. `decimal` and `thousand` are the characters that separate each section of the number and `precision` is the number of decimal places\n",
+                "args": [],
+                "type": "{ decimal : String.String, thousand : String.String, precision : Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultDecimalOptions",
+                "comment": " Default options to format numbers. Extend this if you want to customize the way numbers are formatted.\n\n    defaultDecimalOptions =\n        { decimal = \".\"\n        , thousand = \",\"\n        , precision = 2\n        }\n\n",
+                "type": "Mask.DecimalOptions"
+            },
+            {
+                "name": "floatDecimal",
+                "comment": " Formats a `Float` number according to the specified options\n\n    floatDecimal defaultDecimalOptions 10500.5 == \"10.500.50\"\n\n    floatDecimal { defaultDecimalOptions | precision = 3, decimal = \",\", thousand = \".\" } 10500.5 == \"1.050,050\"\n\n",
+                "type": "Mask.DecimalOptions -> Basics.Float -> String.String"
+            },
+            {
+                "name": "intDecimal",
+                "comment": " Formats a `Int` number according to the specified options\n\n    intDecimal defaultDecimalOptions 105005 == \"1,050.05\"\n\n    intDecimal { defaultDecimalOptions | precision = 3, decimal = \",\" } 105005 == \"105,005\"\n\n",
+                "type": "Mask.DecimalOptions -> Basics.Int -> String.String"
+            },
+            {
+                "name": "number",
+                "comment": " Formats a string filtering only the numbers of it\n\n    number \"(##) ####-####\" \"1234567890\" == \"(12) 3456-7890\"\n\n    number \"#-##-#\" \"1b0a\" == \"1-0\"\n\n",
+                "type": "String.String -> String.String -> String.String"
+            },
+            {
+                "name": "string",
+                "comment": " Formats a string using a pattern. A pattern is a string where the `#` is going to be replaced by a character of the input\n\n    string \"#-##-#\" \"1b0a\" == \"1-b0-a\"\n\n    string \"FOO##.###.##BAR\" \"EXAMPLE\" == \"FOEX.AMP.LEBAR\"\n\n",
+                "type": "String.String -> String.String -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

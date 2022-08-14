@@ -1,0 +1,165 @@
+[
+    {
+        "name": "Tuple2",
+        "comment": " Convenience functions for working with 2-tuples.\n\n\n## Creating tuples\n\n@docs pairTo, double\n\n\n## Swapping values\n\n@docs swap\n\n\n## Applying functions\n\n@docs uncurry, apply\n\n\n## Tuples and Maybes\n\n@docs maybeMapFirst, maybeMapSecond\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "apply",
+                "comment": " Apply the second value in a 2-tuple to the function in the first position.\n\napply (String.toLower, \"HELLO\") --> \"hello\"\n\n",
+                "type": "( a -> b, a ) -> b"
+            },
+            {
+                "name": "double",
+                "comment": " Create a 2-tuple.\n\n    double 0 --> (0, 0)\n\n",
+                "type": "a -> ( a, a )"
+            },
+            {
+                "name": "maybeMapFirst",
+                "comment": " Apply a function that produces a `Maybe` to the first value in a 2-tuple. If\nit returns `Just something`, pair the something back with the second value in\nthe 2-tuple.\n\n    (\"1\", \"horse\")\n      |> maybeMapFirst String.toInt\n    --> Just (1, \"horse\")\n\n    (\"One\", \"horse\")\n      |> maybeMapFirst String.toInt\n    --> Nothing\n\n",
+                "type": "(a -> Maybe.Maybe a2) -> ( a, b ) -> Maybe.Maybe ( a2, b )"
+            },
+            {
+                "name": "maybeMapSecond",
+                "comment": " Apply a function that produces a `Maybe` to the second value in a 2-tuple.\nIf it returns `Just something`, pair the something back with the first value in\nthe 2-tuple.\n\n    (\"King\", [\"Kong\", \"Kunta\", \"Henry VIII\"])\n      |> maybeMapSecond List.head\n    --> Just (\"King\", \"Kong\")\n\n",
+                "type": "(b -> Maybe.Maybe b2) -> ( a, b ) -> Maybe.Maybe ( a, b2 )"
+            },
+            {
+                "name": "pairTo",
+                "comment": " Create a 2-tuple.\n\n    { foo = [1, 2], bar = Nothing }\n        |> pairTo Cmd.none\n    --> ({ foo = [1, 2], bar = Nothing }, Cmd.none)\n\n",
+                "type": "b -> a -> ( a, b )"
+            },
+            {
+                "name": "swap",
+                "comment": " Swap the values in a 2-tuple.\n\n    swap ( '1', \"1\" ) --> (\"1\", '1')\n\n",
+                "type": "( a, b ) -> ( b, a )"
+            },
+            {
+                "name": "uncurry",
+                "comment": " Apply each value in a 2-tuple to a function that takes at least 2 arguments.\n\n    uncurry List.repeat ( 3, 'a' ) --> ['a', 'a', 'a']\n\n",
+                "type": "(a -> b -> c) -> ( a, b ) -> c"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Tuple3",
+        "comment": " Convenience functions for working with tuples.\n\n\n## `Tuple` functions for 3-tuples\n\n@docs first, second, third, mapFirst, mapSecond, mapThird, mapAllThree\n\n\n## Creating tuples\n\n@docs join, joinTo, triple, splitFirst, splitSecond\n\n\n## Swapping values\n\n@docs reverse, rotateLeft, rotateRight, swapFirst, swapLast\n\n\n## Applying functions\n\n@docs uncurry, apply\n\n\n## Tuples and Maybes\n\n@docs maybeMapFirst, maybeMapSecond, maybeMapThird\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "apply",
+                "comment": " Apply the second and third values in a 3-tuple to the first.\n\n    apply (String.cons, 'H', \"ello\")\n    --> \"Hello\"\n\n",
+                "type": "( a -> b -> c, a, b ) -> c"
+            },
+            {
+                "name": "first",
+                "comment": " Extract the first value from a 3-tuple.\n\n    first ( 3, 4, 5 ) --> 3\n\n    first ( \"John\", \"H.\", \"Doe\" ) --> \"John\"\n\n",
+                "type": "( a, b, c ) -> a"
+            },
+            {
+                "name": "join",
+                "comment": " Create a 3-tuple with three values.\n\n    join 1 2 3 --> ( 1, 2, 3 )\n\n",
+                "type": "a -> b -> c -> ( a, b, c )"
+            },
+            {
+                "name": "joinTo",
+                "comment": " Create a 3-tuple with three values.\n\n    1 |> joinTo 2 3\n    --> ( 1, 2, 3 )\n\n",
+                "type": "b -> c -> a -> ( a, b, c )"
+            },
+            {
+                "name": "mapAllThree",
+                "comment": " Transform all three parts of a 3-tuple.\n\n    mapAllThree String.reverse sqrt List.length ( \"stressed\", 16, [] ) --> ( \"desserts\", 4, 0 )\n\n    mapAllThree String.length negate List.isEmpty ( \"stressed\", 16, [] ) --> ( 8, -16, True )\n\n",
+                "type": "(a -> d) -> (b -> e) -> (c -> f) -> ( a, b, c ) -> ( d, e, f )"
+            },
+            {
+                "name": "mapFirst",
+                "comment": " Transform the first value in a 3-tuple.\n\n    mapFirst String.reverse ( \"stressed\", 16, 1 ) --> ( \"desserts\", 16, 1 )\n\n    mapFirst String.length ( \"stressed\", 16, 1 ) --> ( 8, 16, 1 )\n\n",
+                "type": "(a -> a2) -> ( a, b, c ) -> ( a2, b, c )"
+            },
+            {
+                "name": "mapSecond",
+                "comment": " Transform the second value in a 3-tuple.\n\n    mapSecond sqrt ( \"stressed\", 16, 1 ) --> ( \"stressed\", 4, 1 )\n\n    mapSecond negate ( \"stressed\", 16, 1 ) --> ( \"stressed\", -16, 1 )\n\n",
+                "type": "(b -> b2) -> ( a, b, c ) -> ( a, b2, c )"
+            },
+            {
+                "name": "mapThird",
+                "comment": " Transform the second value in a 3-tuple.\n\n    mapThird (List.repeat 2) ( \"stressed\", 16, 1 ) --> ( \"stressed\", 16, [1, 1] )\n\n    mapThird String.fromInt ( \"stressed\", 16, 1 ) --> ( \"stressed\", 16, \"1\" )\n\n",
+                "type": "(c -> c2) -> ( a, b, c ) -> ( a, b, c2 )"
+            },
+            {
+                "name": "maybeMapFirst",
+                "comment": " Apply a function that returns a `Maybe` to the first value in a 3-tuple. If\nit returns `Just something`, join the second and third values back with it.\n\n    (\"1\", \"hit\", \"wonder\")\n      |> maybeMapFirst String.toInt\n    --> Just (1, \"hit\", \"wonder\")\n\n    (\"One\", \"hit\", \"wonder\")\n      |> maybeMapFirst String.toInt\n    --> Nothing\n\n",
+                "type": "(a -> Maybe.Maybe a2) -> ( a, b, c ) -> Maybe.Maybe ( a2, b, c )"
+            },
+            {
+                "name": "maybeMapSecond",
+                "comment": " Apply a function that returns a `Maybe` to the second value in a 3-tuple. If\nit returns `Just something`, join the first and third values back with it.\n\n    (1, \"hit\", \"wonder\")\n      |> maybeMapSecond String.uncons\n    --> Just (1, ('h', \"it\"), \"wonder\")\n\n    (1, \"hit\", \"wonder\")\n      |> maybeMapSecond String.toInt\n    --> Nothing\n\n",
+                "type": "(b -> Maybe.Maybe b2) -> ( a, b, c ) -> Maybe.Maybe ( a, b2, c )"
+            },
+            {
+                "name": "maybeMapThird",
+                "comment": " Apply a function that returns a `Maybe` to the third value in a 3-tuple. If\nit returns `Just something`, join the first and second values back with it.\n\n    (1, \"hit\", \"wonder\")\n      |> maybeMapThird String.uncons\n    --> Just (1, \"hit\", ('w', \"onder\"))\n\n    (1, \"hit\", \"wonder\")\n      |> maybeMapThird String.toInt\n    --> Nothing\n\n",
+                "type": "(c -> Maybe.Maybe c2) -> ( a, b, c ) -> Maybe.Maybe ( a, b, c2 )"
+            },
+            {
+                "name": "reverse",
+                "comment": " Reverse values in a 3-tuple.\n\n    reverse ( 1, 2, 3 ) --> ( 3, 2, 1 )\n\n",
+                "type": "( a, b, c ) -> ( c, b, a )"
+            },
+            {
+                "name": "rotateLeft",
+                "comment": " Rotate values in 3-tuple to the left.\n\n    rotateLeft ( 1, 2, 3 ) --> ( 2, 3, 1 )\n\n",
+                "type": "( a, b, c ) -> ( b, c, a )"
+            },
+            {
+                "name": "rotateRight",
+                "comment": " Rotate values in 3-tuple to the right.\n\n    rotateRight ( 1, 2, 3 ) --> ( 3, 1, 2 )\n\n",
+                "type": "( a, b, c ) -> ( c, a, b )"
+            },
+            {
+                "name": "second",
+                "comment": " Extract the second value from a 3-tuple.\n\n    second ( 3, 4, 5 ) --> 4\n\n    second ( \"John\", \"H.\", \"Doe\" ) --> \"H.\"\n\n",
+                "type": "( a, b, c ) -> b"
+            },
+            {
+                "name": "splitFirst",
+                "comment": " Create a 3-tuple from a 2-tuple with a 2-tuple.\n\n    splitFirst ( ( 1, 2 ), 3 ) --> ( 1, 2, 3 )\n\n",
+                "type": "( ( a, b ), c ) -> ( a, b, c )"
+            },
+            {
+                "name": "splitSecond",
+                "comment": " Create a 3-tuple from a 2-tuple with a 2-tuple.\n\n    splitSecond ( 1, ( 2, 3 ) ) --> ( 1, 2, 3 )\n\n",
+                "type": "( a, ( b, c ) ) -> ( a, b, c )"
+            },
+            {
+                "name": "swapFirst",
+                "comment": " Swap first two values in a 3-tuple.\n\n    swapFirst ( 1, 2, 3 ) --> ( 2, 1, 3 )\n\n",
+                "type": "( a, b, c ) -> ( b, a, c )"
+            },
+            {
+                "name": "swapLast",
+                "comment": " Swap last two values in a 3-tuple.\n\n    swapLast ( 1, 2, 3 ) --> ( 1, 3, 2 )\n\n",
+                "type": "( a, b, c ) -> ( a, c, b )"
+            },
+            {
+                "name": "third",
+                "comment": " Extract the third value from a 3-tuple.\n\n    third ( 3, 4, 5 ) --> 5\n\n    third ( \"John\", \"H.\", \"Doe\" ) --> \"Doe\"\n\n",
+                "type": "( a, b, c ) -> c"
+            },
+            {
+                "name": "triple",
+                "comment": " Create a 3-tuple with the same value.\n\n    triple 0\n    --> ( 0, 0, 0 )\n\n",
+                "type": "a -> ( a, a, a )"
+            },
+            {
+                "name": "uncurry",
+                "comment": " Apply each value in a 3-tuple to a function that takes at least 3 arguments.\n\n    type alias Person =\n        { name : String\n        , age : Int\n        , hobbies : List String\n        }\n\n    uncurry Person ( \"John Doe\", 34, [\"Hockey\"] )\n    --> { name = \"John Doe\", age = 34, hobbies = [ \"Hockey\" ] }\n\n",
+                "type": "(a -> b -> c -> d) -> ( a, b, c ) -> d"
+            }
+        ],
+        "binops": []
+    }
+]

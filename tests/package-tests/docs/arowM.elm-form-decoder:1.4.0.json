@@ -1,0 +1,197 @@
+[
+    {
+        "name": "Form.Decoder",
+        "comment": " Main module that exports primitive decoders and helper functions for form decoding.\n\n\n# Types\n\n@docs Decoder\n@docs Validator\n\n\n# Decode functions\n\n@docs run\n@docs errors\n\n\n# Primitive decoders\n\n@docs int\n@docs float\n@docs always\n@docs identity\n@docs fail\n\n\n# Primitive validators\n\n@docs minBound\n@docs minBoundWith\n@docs maxBound\n@docs maxBoundWith\n@docs minLength\n@docs maxLength\n\n\n# Custom decoders\n\n@docs custom\n\n\n# Helper functions for validation\n\n@docs assert\n@docs when\n@docs unless\n\n\n# Function to build up decoder for forms\n\n@docs lift\n@docs map\n@docs map2\n@docs map3\n@docs map4\n@docs map5\n@docs field\n@docs top\n@docs mapError\n\n\n# Advanced\n\n@docs pass\n@docs with\n@docs andThen\n\n\n# Helper functions for special situation\n\n@docs list\n@docs listOf\n@docs array\n@docs arrayOf\n\n",
+        "unions": [
+            {
+                "name": "Decoder",
+                "comment": " Core type representing a decoder.\nIt decodes input into type `a`, while raising errors of type `err`.\n",
+                "args": [
+                    "input",
+                    "err",
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Validator",
+                "comment": " An alias for special decoder that does not produce any outputs.\nIt is used for just validating inputs.\n",
+                "args": [
+                    "input",
+                    "err"
+                ],
+                "type": "Form.Decoder.Decoder input err ()"
+            }
+        ],
+        "values": [
+            {
+                "name": "always",
+                "comment": " Primitive decoder that always succeeds with constant value.\n\n    run (Form.Decoder.always \"bar\") \"foo\"\n    --> Ok \"bar\"\n\n    run (Form.Decoder.always 34) 23\n    --> Ok 34\n\n",
+                "type": "a -> Form.Decoder.Decoder input never a"
+            },
+            {
+                "name": "andThen",
+                "comment": " Similar to `with`, but convenient for chaining a sequence of decoders.\n\n    type Image\n        = B64Image Base64\n        | ImagePath Path\n\n    type Base64\n        = Base64 String\n\n    type Path\n        = Path (List String)\n\n    type Error\n        = Required\n\n    base64Decoder : Decoder String Error Base64\n    base64Decoder =\n        custom <| \\s -> Ok <| Base64 s\n\n\n    pathDecoder : Decoder String Error Path\n    pathDecoder =\n        custom <| \\s -> Ok <| Path <| String.split \"/\" s\n\n    imageDecoder : Decoder String Error Image\n    imageDecoder =\n        Form.Decoder.identity\n            |> assert (minLength Required 1)\n            |> andThen\n                (\\str ->\n                    if String.startsWith \"data:\" str\n                        then map B64Image base64Decoder\n                        else map ImagePath pathDecoder\n                )\n\n    run imageDecoder \"\"\n    --> Err [ Required ]\n\n    run imageDecoder \"foo\"\n    --> Ok <| ImagePath <| Path [ \"foo\" ]\n\n    run imageDecoder \"/foo/bar\"\n    --> Ok <| ImagePath <| Path [ \"\", \"foo\", \"bar\" ]\n\n    run imageDecoder \"data:image/png;base64,xxxxx...\"\n    --> Ok <| B64Image <| Base64 \"data:image/png;base64,xxxxx...\"\n\n",
+                "type": "(a -> Form.Decoder.Decoder input x b) -> Form.Decoder.Decoder input x a -> Form.Decoder.Decoder input x b"
+            },
+            {
+                "name": "array",
+                "comment": "\n\n    import Array\n\n    type Error\n        = TooShort\n        | TooLong\n\n    decoder : Decoder String Error String\n    decoder =\n        Form.Decoder.identity\n            |> assert (minLength TooShort 1)\n            |> assert (maxLength TooLong 5)\n\n    run (array decoder) <| Array.fromList [ \"foo\", \"bar\", \"baz\" ]\n    --> Ok <| Array.fromList [ \"foo\", \"bar\", \"baz\" ]\n\n    run (array decoder) <| Array.fromList [ \"foo\", \"\", \"baz\" ]\n    --> Err [ TooShort ]\n\n    run (array decoder) <| Array.fromList [ \"foo\", \"\", \"bazbaz\", \"barbar\" ]\n    --> Err [ TooShort, TooLong, TooLong ]\n\n",
+                "type": "Form.Decoder.Decoder a err b -> Form.Decoder.Decoder (Array.Array a) err (Array.Array b)"
+            },
+            {
+                "name": "arrayOf",
+                "comment": " Similar to `array`, but also returns the index of the element where the error occurred.\n\n    import Array\n\n    type Error\n        = TooShort\n        | TooLong\n\n    decoder : Decoder String Error String\n    decoder =\n        Form.Decoder.identity\n            |> assert (minLength TooShort 1)\n            |> assert (maxLength TooLong 5)\n\n    run (arrayOf decoder) <| Array.fromList [ \"foo\", \"bar\", \"baz\" ]\n    --> Ok <| Array.fromList [ \"foo\", \"bar\", \"baz\" ]\n\n    run (arrayOf decoder) <| Array.fromList [ \"foo\", \"\", \"baz\" ]\n    --> Err [ (1, TooShort) ]\n\n    run (arrayOf decoder) <| Array.fromList [ \"foo\", \"\", \"bazbaz\", \"barbar\" ]\n    --> Err [ (1, TooShort), (2, TooLong), (3, TooLong) ]\n\n",
+                "type": "Form.Decoder.Decoder a err b -> Form.Decoder.Decoder (Array.Array a) ( Basics.Int, err ) (Array.Array b)"
+            },
+            {
+                "name": "assert",
+                "comment": " Apply validator on given decoder.\nIf a input is invalid for given validator, decoding fails.\n\n    type Error\n        = Invalid\n        | TooSmall\n        | TooBig\n\n    validator1 : Validator Int Error\n    validator1 =\n        minBound TooSmall 3\n\n    validator2 : Validator Int Error\n    validator2 =\n        maxBound TooBig 6\n\n    myDecoder : Decoder String Error Int\n    myDecoder =\n        int Invalid\n            |> assert validator1\n            |> assert validator2\n\n    run myDecoder \"foo\"\n    --> Err [ Invalid ]\n\n    run myDecoder \"32\"\n    --> Err [ TooBig ]\n\n    run myDecoder \"2\"\n    --> Err [ TooSmall ]\n\n    run myDecoder \"3\"\n    --> Ok 3\n\n",
+                "type": "Form.Decoder.Validator a err -> Form.Decoder.Decoder input err a -> Form.Decoder.Decoder input err a"
+            },
+            {
+                "name": "custom",
+                "comment": " Constructor for `Decoder input err a`.\n\n    type Error\n        = TooSmall\n        | InvalidInt\n\n    customValidator : Validator Int Error\n    customValidator =\n        custom <| \\n ->\n            if n < 10\n                then Err [ TooSmall ]\n                else Ok ()\n\n    customInt : Decoder String Error Int\n    customInt =\n        custom <| Result.fromMaybe [ InvalidInt ] << String.toInt\n\n    run customValidator 8\n    --> Err [ TooSmall ]\n\n    run customInt \"foo\"\n    --> Err [ InvalidInt ]\n\n",
+                "type": "(input -> Result.Result (List.List err) a) -> Form.Decoder.Decoder input err a"
+            },
+            {
+                "name": "errors",
+                "comment": " Checks if there are errors.\n\n    errors (int \"Invalid\") \"foo\"\n    --> [ \"Invalid\" ]\n\n    errors (int \"Invalid\") \"34\"\n    --> []\n\n",
+                "type": "Form.Decoder.Decoder input err a -> input -> List.List err"
+            },
+            {
+                "name": "fail",
+                "comment": " Primitive decoder which always results to invalid.\n\n    run (fail \"error\") \"foo\"\n    --> Err [ \"error\" ]\n\n    run (fail \"error\") <| Just 34\n    --> Err [ \"error\" ]\n\n    run (when (\\n -> n < 0) <| fail \"error\") -1\n    --> Err [ \"error\" ]\n\n    run (when (\\n -> n < 0) <| fail \"error\") 0\n    --> Ok ()\n\n",
+                "type": "err -> Form.Decoder.Decoder input err a"
+            },
+            {
+                "name": "field",
+                "comment": " Build up decoder for form.\nIt can be used as `mapN`.\n\n    mapN f d1 d2 d3 ... dN =\n        top f\n            |> field d1\n            |> field d2\n            |> field d3\n            ...\n            |> field dN\n\n",
+                "type": "Form.Decoder.Decoder i err a -> Form.Decoder.Decoder i err (a -> b) -> Form.Decoder.Decoder i err b"
+            },
+            {
+                "name": "float",
+                "comment": " Decoder into `Float`, while raising errors of type `err` when a input is invalid for an float.\n\n    run (float \"Invalid\") \"foo\"\n    --> Err [ \"Invalid\" ]\n\n    run (float \"Invalid\") \"34\"\n    --> Ok 34\n\n    run (float \"Invalid\") \"34.3\"\n    --> Ok 34.3\n\n    run (float \"Invalid\") \"34e3\"\n    --> Ok 34000\n\n",
+                "type": "err -> Form.Decoder.Decoder String.String err Basics.Float"
+            },
+            {
+                "name": "identity",
+                "comment": " Primitive decoder that always succeeds with input as it is.\n\n    run Form.Decoder.identity \"foo\"\n    --> Ok \"foo\"\n\n    run Form.Decoder.identity 34\n    --> Ok 34\n\n",
+                "type": "Form.Decoder.Decoder input never input"
+            },
+            {
+                "name": "int",
+                "comment": " Decoder into `Int`, while raising errors of type `err` when a input is invalid for an integer.\n\n    run (int \"Invalid\") \"foo\"\n    --> Err [ \"Invalid\" ]\n\n    run (int \"Invalid\") \"34\"\n    --> Ok 34\n\n    run (int \"Invalid\") \"34.3\"\n    --> Err [ \"Invalid\" ]\n\n    run (int \"Invalid\") \"34e3\"\n    --> Err [ \"Invalid\" ]\n\n",
+                "type": "err -> Form.Decoder.Decoder String.String err Basics.Int"
+            },
+            {
+                "name": "lift",
+                "comment": " The `lift` function \"lifts\" a decoder up to operate on a larger structure.\n\n    type alias Form =\n        { field1 : String\n        , field2 : String\n        }\n\n    type Error\n        = TooShort\n\n    run (lift .field1 <| minLength TooShort 5)\n        (Form \"foo\" \"barrrrrrrrrrr\")\n    --> Err [ TooShort ]\n\n",
+                "type": "(j -> i) -> Form.Decoder.Decoder i err a -> Form.Decoder.Decoder j err a"
+            },
+            {
+                "name": "list",
+                "comment": " Supposed to be used for advanced input fields that user can append new input.\n\nFor example, some forms would accept arbitrary number of email addresses by providing \"Add\" button to append new input field.\n![list-sample](https://user-images.githubusercontent.com/1481749/57004659-a1698d00-6c0b-11e9-83c6-1a17c998125c.png)\n\n    type Error\n        = TooShort\n        | TooLong\n\n    decoder : Decoder String Error String\n    decoder =\n        Form.Decoder.identity\n            |> assert (minLength TooShort 1)\n            |> assert (maxLength TooLong 5)\n\n    run (list decoder) [ \"foo\", \"bar\", \"baz\" ]\n    --> Ok [ \"foo\", \"bar\", \"baz\" ]\n\n    run (list decoder) [ \"foo\", \"\", \"baz\" ]\n    --> Err [ TooShort ]\n\n    run (list decoder) [ \"foo\", \"\", \"bazbaz\", \"barbar\" ]\n    --> Err [ TooShort, TooLong, TooLong ]\n\n",
+                "type": "Form.Decoder.Decoder a err b -> Form.Decoder.Decoder (List.List a) err (List.List b)"
+            },
+            {
+                "name": "listOf",
+                "comment": " Similar to `list`, but also returns the index of the element where the error occurred.\n\n    type Error\n        = TooShort\n        | TooLong\n\n    decoder : Decoder String Error String\n    decoder =\n        Form.Decoder.identity\n            |> assert (minLength TooShort 1)\n            |> assert (maxLength TooLong 5)\n\n    run (listOf decoder) [ \"foo\", \"bar\", \"baz\" ]\n    --> Ok [ \"foo\", \"bar\", \"baz\" ]\n\n    run (listOf decoder) [ \"foo\", \"\", \"baz\" ]\n    --> Err [ (1, TooShort) ]\n\n    run (listOf decoder) [ \"foo\", \"\", \"bazbaz\", \"barbar\" ]\n    --> Err [ (1, TooShort), (2, TooLong), (3, TooLong) ]\n\n",
+                "type": "Form.Decoder.Decoder a err b -> Form.Decoder.Decoder (List.List a) ( Basics.Int, err ) (List.List b)"
+            },
+            {
+                "name": "map",
+                "comment": " ",
+                "type": "(a -> b) -> Form.Decoder.Decoder input x a -> Form.Decoder.Decoder input x b"
+            },
+            {
+                "name": "map2",
+                "comment": "\n\n    type alias Form =\n        { str : String\n        , int : String\n        }\n\n    type alias Decoded =\n        { str : String\n        , int : Int\n        }\n\n    type Error\n        = TooShort\n        | InvalidInt\n\n    strDecoder : Decoder String Error String\n    strDecoder =\n        Form.Decoder.identity\n            |> assert (minLength TooShort 5)\n\n    intDecoder : Decoder String Error Int\n    intDecoder =\n        int InvalidInt\n\n    formDecoder : Decoder Form Error Decoded\n    formDecoder =\n        map2 Decoded\n            (lift .str strDecoder)\n            (lift .int intDecoder)\n\n    run formDecoder (Form \"foo\" \"bar\")\n    --> Err [ TooShort, InvalidInt ]\n\n    run formDecoder (Form \"foo\" \"23\")\n    --> Err [ TooShort ]\n\n    run formDecoder (Form \"foobar\" \"bar\")\n    --> Err [ InvalidInt ]\n\n    run formDecoder (Form \"foobar\" \"23\")\n    --> Ok (Decoded \"foobar\" 23)\n\n",
+                "type": "(a -> b -> value) -> Form.Decoder.Decoder input x a -> Form.Decoder.Decoder input x b -> Form.Decoder.Decoder input x value"
+            },
+            {
+                "name": "map3",
+                "comment": " ",
+                "type": "(a -> b -> c -> value) -> Form.Decoder.Decoder input x a -> Form.Decoder.Decoder input x b -> Form.Decoder.Decoder input x c -> Form.Decoder.Decoder input x value"
+            },
+            {
+                "name": "map4",
+                "comment": " ",
+                "type": "(a -> b -> c -> d -> value) -> Form.Decoder.Decoder input x a -> Form.Decoder.Decoder input x b -> Form.Decoder.Decoder input x c -> Form.Decoder.Decoder input x d -> Form.Decoder.Decoder input x value"
+            },
+            {
+                "name": "map5",
+                "comment": " ",
+                "type": "(a -> b -> c -> d -> e -> value) -> Form.Decoder.Decoder input x a -> Form.Decoder.Decoder input x b -> Form.Decoder.Decoder input x c -> Form.Decoder.Decoder input x d -> Form.Decoder.Decoder input x e -> Form.Decoder.Decoder input x value"
+            },
+            {
+                "name": "mapError",
+                "comment": "\n\n    type alias Form =\n        { str : String\n        , int : String\n        }\n\n    type alias Decoded =\n        { str : String\n        , int : Int\n        }\n\n    type FormError\n        = FormErrorStr StrError\n        | FormErrorInt IntError\n\n\n    type StrError\n        = TooShort\n\n    type IntError\n        = Invalid\n\n    strDecoder : Decoder String StrError String\n    strDecoder =\n        Form.Decoder.identity\n            |> assert (minLength TooShort 5)\n\n    intDecoder : Decoder String IntError Int\n    intDecoder =\n        int Invalid\n\n    formDecoder : Decoder Form FormError Decoded\n    formDecoder =\n        map2 Decoded\n            (mapError FormErrorStr <| lift .str strDecoder)\n            (mapError FormErrorInt <| lift .int intDecoder)\n\n\n    run formDecoder (Form \"foo\" \"bar\")\n    --> Err [ FormErrorStr TooShort, FormErrorInt Invalid ]\n\n    run formDecoder (Form \"foo\" \"23\")\n    --> Err [ FormErrorStr TooShort ]\n\n    run formDecoder (Form \"foobar\" \"bar\")\n    --> Err [ FormErrorInt Invalid ]\n\n    run formDecoder (Form \"foobar\" \"23\")\n    --> Ok (Decoded \"foobar\" 23)\n\n",
+                "type": "(x -> y) -> Form.Decoder.Decoder input x a -> Form.Decoder.Decoder input y a"
+            },
+            {
+                "name": "maxBound",
+                "comment": " Primitive validator limiting by maximum bound.\n\n    run (maxBound \"Too large\" 100) 200\n    --> Err [ \"Too large\" ]\n\n",
+                "type": "err -> comparable -> Form.Decoder.Validator comparable err"
+            },
+            {
+                "name": "maxBoundWith",
+                "comment": " Primitive validator limiting by maximum bound with a custom comparison function.\n\n    run (maxBoundWith compare \"Too large\" 100) 200\n    --> Err [ \"Too large\" ]\n\n",
+                "type": "(a -> a -> Basics.Order) -> err -> a -> Form.Decoder.Validator a err"
+            },
+            {
+                "name": "maxLength",
+                "comment": " Primitive validator limiting by maximum length.\n\n    run (maxLength \"Too long\" 10) \"tooooooooo long\"\n    --> Err [ \"Too long\" ]\n\n",
+                "type": "err -> Basics.Int -> Form.Decoder.Validator String.String err"
+            },
+            {
+                "name": "minBound",
+                "comment": " Primitive validator limiting by minimum bound.\n\n    run (minBound \"Too small\" 10) 2\n    --> Err [ \"Too small\" ]\n\n",
+                "type": "err -> comparable -> Form.Decoder.Validator comparable err"
+            },
+            {
+                "name": "minBoundWith",
+                "comment": " Primitive validator limiting by minimum bound with a custom comparison function.\n\n    run (minBoundWith compare \"Too small\" 10) 2\n    --> Err [ \"Too small\" ]\n\n",
+                "type": "(a -> a -> Basics.Order) -> err -> a -> Form.Decoder.Validator a err"
+            },
+            {
+                "name": "minLength",
+                "comment": " Primitive validator limiting by minimum length.\n\n    run (minLength \"Too short\" 10) \"short\"\n    --> Err [ \"Too short\" ]\n\n",
+                "type": "err -> Basics.Int -> Form.Decoder.Validator String.String err"
+            },
+            {
+                "name": "pass",
+                "comment": " Chain together a sequence of decoders.\n\n    type Error\n        = InvalidInt\n        | TooLong\n        | TooBig\n\n    advancedDecoder : Decoder String Error Int\n    advancedDecoder =\n        Form.Decoder.identity\n            |> assert (maxLength TooLong 5)\n            |> pass (int InvalidInt)\n            |> assert (maxBound TooBig 300)\n\n    run advancedDecoder \"foooooo\"\n    --> Err [ TooLong ]\n\n    run advancedDecoder \"foo\"\n    --> Err [ InvalidInt ]\n\n    run advancedDecoder \"1000000\"\n    --> Err [ TooLong ]\n\n    run advancedDecoder \"500\"\n    --> Err [ TooBig ]\n\n    run advancedDecoder \"200\"\n    --> Ok 200\n\n",
+                "type": "Form.Decoder.Decoder b x c -> Form.Decoder.Decoder a x b -> Form.Decoder.Decoder a x c"
+            },
+            {
+                "name": "run",
+                "comment": " Basic function that decodes input by given decoder.\n\n    run (int \"Invalid\") \"foo\"\n    --> Err [ \"Invalid\" ]\n\n    run (int \"Invalid\") \"34\"\n    --> Ok 34\n\n",
+                "type": "Form.Decoder.Decoder input err a -> input -> Result.Result (List.List err) a"
+            },
+            {
+                "name": "top",
+                "comment": " ",
+                "type": "f -> Form.Decoder.Decoder i err f"
+            },
+            {
+                "name": "unless",
+                "comment": " Only checks validity unless a condition is `True`.\n\n    type alias Form =\n        { skipCheck : Bool\n        , input : String\n        }\n\n    type Error\n        = TooShort\n\n    myValidator : Validator Form Error\n    myValidator =\n        unless .skipCheck <|\n            lift .input <|\n                minLength TooShort 3\n\n    run myValidator { skipCheck = False, input = \"f\" }\n    --> Err [ TooShort ]\n\n    run myValidator { skipCheck = True, input = \"f\" }\n    --> Ok ()\n\n    run myValidator { skipCheck = False, input = \"foo\" }\n    --> Ok ()\n\n",
+                "type": "(a -> Basics.Bool) -> Form.Decoder.Validator a err -> Form.Decoder.Validator a err"
+            },
+            {
+                "name": "when",
+                "comment": " Only checks validity if a condition is `True`.\n\n    type alias Form =\n        { enableCheck : Bool\n        , input : String\n        }\n\n    type Error\n        = TooShort\n\n    myValidator : Validator Form Error\n    myValidator =\n        when .enableCheck <|\n            lift .input <|\n                minLength TooShort 3\n\n    run myValidator { enableCheck = True, input = \"f\" }\n    --> Err [ TooShort ]\n\n    run myValidator { enableCheck = False, input = \"f\" }\n    --> Ok ()\n\n    run myValidator { enableCheck = True, input = \"foo\" }\n    --> Ok ()\n\n",
+                "type": "(a -> Basics.Bool) -> Form.Decoder.Validator a err -> Form.Decoder.Validator a err"
+            },
+            {
+                "name": "with",
+                "comment": " Advanced function to build up case-sensitive decoder.\n\n    type alias Form =\n        { selection : Maybe Selection\n        , int : String\n        , str : String\n        }\n\n    type Selection\n        = IntField\n        | StrField\n\n\n    type Selected\n        = SelectInt Int\n        | SelectStr String\n\n    type Error\n        = TooShort\n        | InvalidInt\n        | NoSelection\n\n    myDecoder : Decoder Form Error Selected\n    myDecoder =\n        with <| \\form ->\n            case form.selection of\n                Just IntField ->\n                    map SelectInt <|\n                        lift .int intDecoder\n                Just StrField ->\n                    map SelectStr <|\n                        lift .str strDecoder\n                Nothing ->\n                    fail NoSelection\n\n    intDecoder : Decoder String Error Int\n    intDecoder =\n        int InvalidInt\n\n    strDecoder : Decoder String Error String\n    strDecoder =\n        Form.Decoder.identity\n            |> assert (minLength TooShort 5)\n\n\n    run myDecoder <| Form (Just IntField) \"foo\" \"bar\"\n    --> Err [ InvalidInt ]\n\n    run myDecoder <| Form (Just StrField) \"foo\" \"bar\"\n    --> Err [ TooShort ]\n\n    run myDecoder <| Form (Just IntField) \"23\" \"bar\"\n    --> Ok <| SelectInt 23\n\n    run myDecoder <| Form (Just StrField) \"23\" \"bar\"\n    --> Err [ TooShort ]\n\n    run myDecoder <| Form (Just IntField) \"foo\" \"barrrrr\"\n    --> Err [ InvalidInt ]\n\n    run myDecoder <| Form (Just StrField) \"foo\" \"barrrrr\"\n    --> Ok <| SelectStr \"barrrrr\"\n\n    run myDecoder <| Form Nothing \"foo\" \"barrrrr\"\n    --> Err [ NoSelection ]\n\n",
+                "type": "(i -> Form.Decoder.Decoder i err a) -> Form.Decoder.Decoder i err a"
+            }
+        ],
+        "binops": []
+    }
+]

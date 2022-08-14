@@ -1,0 +1,35 @@
+[
+    {
+        "name": "Effects.Time",
+        "comment": " Time system is used to subscribe for time events.\nIt uses effects for communication with other systems.\n\n\n# Create\n\n@docs Effects, every\n\n\n# Transform\n\n@docs map, subscription\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Effects",
+                "comment": " Time system effects which are used for communication with other systems.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "Effects.Effects (Effects.Time.Effect msg)"
+            }
+        ],
+        "values": [
+            {
+                "name": "every",
+                "comment": " Creates time system effect to subscribe for time event.\n",
+                "type": "Basics.Float -> (Time.Posix -> msg) -> Effects.Time.Effects msg"
+            },
+            {
+                "name": "map",
+                "comment": " Maps time system effects.\n",
+                "type": "(msgA -> msgB) -> Effects.Time.Effects msgA -> Effects.Time.Effects msgB"
+            },
+            {
+                "name": "subscription",
+                "comment": " Time system subscription for all effects.\n",
+                "type": "Effects.Time.Effects msg -> Platform.Sub.Sub msg"
+            }
+        ],
+        "binops": []
+    }
+]

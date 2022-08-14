@@ -1,0 +1,75 @@
+[
+    {
+        "name": "LSystem",
+        "comment": " Implementation of a L-System.\n\nL-Systems are algorithms originally developed to simulate plants, now\nwidely adopted by the generative geometry community.\n\nThe core concept of a L-system is to rewrite states based on a previous state,\nusing a set of user-defined rules. For example:\n\n    type State\n        = A\n        | B\n\n    rule : LSystem.Rule State\n    rule state =\n        case state of\n            A ->\n                [ A, B ]\n\n            B ->\n                [ A ]\n\nThe result is concatentated after applying the rules to each state in the list.\nIf we start with the state `[A]` and apply the rule a few times, we would have:\n\n`[A]` => `[A, B]`\n\n`[A, B]` => `[A, B, A]`\n\n`[A, B, A]` => `[A, B, A, A, B]`\n\nSo why is this useful for generative graphics? As it turns out, L-System states\ncan be thought of as drawing commands. Here is an example of a \"turtle graphics\nsystem\":\n\n    type State\n        = D -- | Draw forward by 1 unit\n        | S -- | Skip foward 1 unit without drawing\n        | L -- | Turn left by 90 degrees\n        | R -- | Turn right by 90 degrees\n\n    rule : LSystem.Rule State\n    rule state =\n        case state of\n            D ->\n                [ D, D, R, D, L, D, R, D, R, D, D ]\n\n            S ->\n                [ S ]\n\n            L ->\n                [ L ]\n\n            R ->\n                [ R ]\n\nExperiment with the starting state `[D, R, D, R, D, R, D]`, which draws a\nsquare, you can try it out by pen and paper, and see that the rule draws a more\ninteresting square with rectangles within. You can see an example of the above\nafter applying the rule 3 iterations [here](https://twitter.com/Xavier_Ho/status/995651719064252416).\n\nIf you want a complete example of how this can be used in the Elm Architecture,\nsee <https://github.com/creative/elm-generative/blob/master/example/Turtle.elm>\n\nIf you are after a very comprehrensive and dense introductory textbook,\n[The Algorithm Beauty of Plants](http://algorithmicbotany.org/papers/abop/abop.pdf)\nis a great introduction.\n\n\n## DOL-Systems\n\nDOL-Systems are a subset of L-Systems. It is the simplest type of a L-System,\nand it stands for \"determinstic, out-of-context L-Systems\". In other words, it\nwill always yield the same result regardless of outside state.\n\n\n# Module functions\n\n@docs Rule, apply\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Rule",
+                "comment": " Rule to rewrite to. `Rule` is completed by defining `a`, and a `rule`\nfunction that covers all possible states of `a`. For example, here is a complete\ndefinition:\n\n    type State\n        = A\n        | B\n\n    rule : LSystem.Rule State\n    rule state =\n        case state of\n            A ->\n                [ A, B ]\n\n            B ->\n                [ A ]\n\n",
+                "args": [
+                    "a"
+                ],
+                "type": "a -> List.List a"
+            }
+        ],
+        "values": [
+            {
+                "name": "apply",
+                "comment": " Applies a ruleset to a starting state, and returns the next state. Given\nthe example above, and with a starting state of `[A]`, you will have:\n\n    `[A]` => `[A, B]`\n\nCalling `apply` consecutively with the output of the previous call will yield:\n\n    `[A, B]` => `[A, B, A]`\n    `[A, B, A]` => `[A, B, A, A, B]`\n\nand so on.\n\n",
+                "type": "LSystem.Rule a -> List.List a -> List.List a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "LSystem.Turtle",
+        "comment": " Turtle graphics consists of 4 states:\n\n    type State\n        = D -- | Draw forward\n        | S -- | Skip foward without drawing\n        | L -- | Turn left by some degrees\n        | R -- | Turn right by some degrees\n\n(In formal literature, it is known as `F`, `f`, `-`, and `+` respectively.)\n\nGiven a starting point and an angle, you can iterate through a list of `State`s\nand create a generative drawing.\n\nFor example, the following ruleset applied 3 times will generate [this](https://twitter.com/Xavier_Ho/status/995651719064252416):\n\n    rule : LSystem.Rule State\n    rule state =\n        case state of\n            D ->\n                [ D, D, R, D, L, D, R, D, R, D, D ]\n\n            S ->\n                [ S ]\n\n            L ->\n                [ L ]\n\n            R ->\n                [ R ]\n\nIf you want a complete example of how this can be used in the Elm Architecture,\nsee <https://github.com/creative/elm-generative/blob/master/example/Turtle.elm>\n\n\n# Module functions\n\n@docs State, turtle\n\n",
+        "unions": [
+            {
+                "name": "State",
+                "comment": " Turtle consists of 4 primary states.\n\n  - D -- Draw forward\n  - S -- Skip foward without drawing\n  - L -- Turn left by some degrees\n  - R -- Turn right by some degrees\n\nWe also supply additional states `A`, `B`, and `C`, which are ignored during\ndrawing. They are useful for constructing rulesets only.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "D",
+                        []
+                    ],
+                    [
+                        "S",
+                        []
+                    ],
+                    [
+                        "L",
+                        []
+                    ],
+                    [
+                        "R",
+                        []
+                    ],
+                    [
+                        "A",
+                        []
+                    ],
+                    [
+                        "B",
+                        []
+                    ],
+                    [
+                        "C",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "turtle",
+                "comment": " Transforms a list of `State`s into `Svg.Path` `d`-compatible property\nstrings. This requires a starting point and a starting angle.\n\nYou can use the `Svg.PathD` library's [`d_`](http://package.elm-lang.org/packages/spaxe/svg-pathd/1.0.1/Svg-PathD#d_)\nto draw segments as a SVG attribute:\n\n    import Svg.PathD as PathD exposing (pathD)\n\n    ...\n\n\n    Svg.path\n        [ d <| pathD <| turtle [ D, R, D, R, D, R, D ] 90\n        ]\n        []\n\n",
+                "type": "List.List LSystem.Turtle.State -> Basics.Float -> List.List Svg.PathD.Segment"
+            }
+        ],
+        "binops": []
+    }
+]

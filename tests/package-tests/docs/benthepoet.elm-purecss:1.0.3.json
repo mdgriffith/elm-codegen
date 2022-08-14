@@ -1,0 +1,166 @@
+[
+    {
+        "name": "Pure",
+        "comment": " A set of helpers for Pure CSS\n\n@docs button, buttonActive, buttonDisabled, buttonPrimary\n    , checkbox, controlGroup, form, formAligned, formStacked\n    , grid, group, img, input, inputRounded, menu, menuAllowHover\n    , menuChildren, menuDisabled, menuHasChildren, menuHeading\n    , menuHorizontal, menuItem, menuLink, menuList, menuSelected\n    , menuScrollable, radio, table, tableBordered, tableStriped\n    , unit\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "button",
+                "comment": "",
+                "type": "String.String"
+            },
+            {
+                "name": "buttonActive",
+                "comment": "",
+                "type": "String.String"
+            },
+            {
+                "name": "buttonDisabled",
+                "comment": "",
+                "type": "String.String"
+            },
+            {
+                "name": "buttonPrimary",
+                "comment": "",
+                "type": "String.String"
+            },
+            {
+                "name": "checkbox",
+                "comment": "",
+                "type": "String.String"
+            },
+            {
+                "name": "controlGroup",
+                "comment": "",
+                "type": "String.String"
+            },
+            {
+                "name": "form",
+                "comment": "",
+                "type": "String.String"
+            },
+            {
+                "name": "formAligned",
+                "comment": "",
+                "type": "String.String"
+            },
+            {
+                "name": "formStacked",
+                "comment": "",
+                "type": "String.String"
+            },
+            {
+                "name": "grid",
+                "comment": "",
+                "type": "String.String"
+            },
+            {
+                "name": "group",
+                "comment": "",
+                "type": "String.String"
+            },
+            {
+                "name": "img",
+                "comment": "",
+                "type": "String.String"
+            },
+            {
+                "name": "input",
+                "comment": "",
+                "type": "List.List String.String -> String.String"
+            },
+            {
+                "name": "inputRounded",
+                "comment": "",
+                "type": "String.String"
+            },
+            {
+                "name": "menu",
+                "comment": "",
+                "type": "String.String"
+            },
+            {
+                "name": "menuAllowHover",
+                "comment": "",
+                "type": "String.String"
+            },
+            {
+                "name": "menuChildren",
+                "comment": "",
+                "type": "String.String"
+            },
+            {
+                "name": "menuDisabled",
+                "comment": "",
+                "type": "String.String"
+            },
+            {
+                "name": "menuHasChildren",
+                "comment": "",
+                "type": "String.String"
+            },
+            {
+                "name": "menuHeading",
+                "comment": "",
+                "type": "String.String"
+            },
+            {
+                "name": "menuHorizontal",
+                "comment": "",
+                "type": "String.String"
+            },
+            {
+                "name": "menuItem",
+                "comment": "",
+                "type": "String.String"
+            },
+            {
+                "name": "menuLink",
+                "comment": "",
+                "type": "String.String"
+            },
+            {
+                "name": "menuList",
+                "comment": "",
+                "type": "String.String"
+            },
+            {
+                "name": "menuScrollable",
+                "comment": "",
+                "type": "String.String"
+            },
+            {
+                "name": "menuSelected",
+                "comment": "",
+                "type": "String.String"
+            },
+            {
+                "name": "radio",
+                "comment": "",
+                "type": "String.String"
+            },
+            {
+                "name": "table",
+                "comment": "",
+                "type": "String.String"
+            },
+            {
+                "name": "tableBordered",
+                "comment": "",
+                "type": "String.String"
+            },
+            {
+                "name": "tableStriped",
+                "comment": "",
+                "type": "String.String"
+            },
+            {
+                "name": "unit",
+                "comment": "",
+                "type": "List.List String.String -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

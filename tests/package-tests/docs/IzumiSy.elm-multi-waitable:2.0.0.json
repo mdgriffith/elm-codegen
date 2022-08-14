@@ -1,0 +1,237 @@
+[
+    {
+        "name": "MultiWaitable",
+        "comment": "\n\n\n# Wait2\n\n@docs Wait2, init2, wait2Update1, wait2Update2, Results2, toResults2\n\n\n# Wait3\n\n@docs Wait3, init3, wait3Update1, wait3Update2, wait3Update3, Results3, toResults3\n\n\n# Wait4\n\n@docs Wait4, init4, wait4Update1, wait4Update2, wait4Update3, wait4Update4, Results4, toResults4\n\n\n# Wait5\n\n@docs Wait5, init5, wait5Update1, wait5Update2, wait5Update3, wait5Update4, wait5Update5, Results5, toResults5\n\n",
+        "unions": [
+            {
+                "name": "Results2",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b"
+                ],
+                "cases": [
+                    [
+                        "Results2",
+                        [
+                            "Maybe.Maybe a",
+                            "Maybe.Maybe b"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Results3",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c"
+                ],
+                "cases": [
+                    [
+                        "Results3",
+                        [
+                            "Maybe.Maybe a",
+                            "Maybe.Maybe b",
+                            "Maybe.Maybe c"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Results4",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d"
+                ],
+                "cases": [
+                    [
+                        "Results4",
+                        [
+                            "Maybe.Maybe a",
+                            "Maybe.Maybe b",
+                            "Maybe.Maybe c",
+                            "Maybe.Maybe d"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Results5",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Wait2",
+                "comment": " ",
+                "args": [
+                    "msg",
+                    "a",
+                    "b"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Wait3",
+                "comment": " ",
+                "args": [
+                    "msg",
+                    "a",
+                    "b",
+                    "c"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Wait4",
+                "comment": " ",
+                "args": [
+                    "msg",
+                    "a",
+                    "b",
+                    "c",
+                    "d"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Wait5",
+                "comment": " ",
+                "args": [
+                    "msg",
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "init2",
+                "comment": " ",
+                "type": "(a -> b -> msg) -> MultiWaitable.Wait2 msg a b"
+            },
+            {
+                "name": "init3",
+                "comment": " ",
+                "type": "(a -> b -> c -> msg) -> MultiWaitable.Wait3 msg a b c"
+            },
+            {
+                "name": "init4",
+                "comment": " ",
+                "type": "(a -> b -> c -> d -> msg) -> MultiWaitable.Wait4 msg a b c d"
+            },
+            {
+                "name": "init5",
+                "comment": " ",
+                "type": "(a -> b -> c -> d -> e -> msg) -> MultiWaitable.Wait5 msg a b c d e"
+            },
+            {
+                "name": "toResults2",
+                "comment": " ",
+                "type": "MultiWaitable.Wait2 msg a b -> MultiWaitable.Results2 a b"
+            },
+            {
+                "name": "toResults3",
+                "comment": " ",
+                "type": "MultiWaitable.Wait3 msg a b c -> MultiWaitable.Results3 a b c"
+            },
+            {
+                "name": "toResults4",
+                "comment": " ",
+                "type": "MultiWaitable.Wait4 msg a b c d -> MultiWaitable.Results4 a b c d"
+            },
+            {
+                "name": "toResults5",
+                "comment": " ",
+                "type": "MultiWaitable.Wait5 msg a b c d e -> MultiWaitable.Results5 a b c d e"
+            },
+            {
+                "name": "wait2Update1",
+                "comment": " ",
+                "type": "a -> MultiWaitable.Wait2 msg a b -> ( MultiWaitable.Wait2 msg a b, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "wait2Update2",
+                "comment": " ",
+                "type": "b -> MultiWaitable.Wait2 msg a b -> ( MultiWaitable.Wait2 msg a b, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "wait3Update1",
+                "comment": " ",
+                "type": "a -> MultiWaitable.Wait3 msg a b c -> ( MultiWaitable.Wait3 msg a b c, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "wait3Update2",
+                "comment": " ",
+                "type": "b -> MultiWaitable.Wait3 msg a b c -> ( MultiWaitable.Wait3 msg a b c, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "wait3Update3",
+                "comment": " ",
+                "type": "c -> MultiWaitable.Wait3 msg a b c -> ( MultiWaitable.Wait3 msg a b c, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "wait4Update1",
+                "comment": " ",
+                "type": "a -> MultiWaitable.Wait4 msg a b c d -> ( MultiWaitable.Wait4 msg a b c d, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "wait4Update2",
+                "comment": " ",
+                "type": "b -> MultiWaitable.Wait4 msg a b c d -> ( MultiWaitable.Wait4 msg a b c d, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "wait4Update3",
+                "comment": " ",
+                "type": "c -> MultiWaitable.Wait4 msg a b c d -> ( MultiWaitable.Wait4 msg a b c d, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "wait4Update4",
+                "comment": " ",
+                "type": "d -> MultiWaitable.Wait4 msg a b c d -> ( MultiWaitable.Wait4 msg a b c d, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "wait5Update1",
+                "comment": " ",
+                "type": "a -> MultiWaitable.Wait5 msg a b c d e -> ( MultiWaitable.Wait5 msg a b c d e, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "wait5Update2",
+                "comment": " ",
+                "type": "b -> MultiWaitable.Wait5 msg a b c d e -> ( MultiWaitable.Wait5 msg a b c d e, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "wait5Update3",
+                "comment": " ",
+                "type": "c -> MultiWaitable.Wait5 msg a b c d e -> ( MultiWaitable.Wait5 msg a b c d e, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "wait5Update4",
+                "comment": " ",
+                "type": "d -> MultiWaitable.Wait5 msg a b c d e -> ( MultiWaitable.Wait5 msg a b c d e, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "wait5Update5",
+                "comment": " ",
+                "type": "e -> MultiWaitable.Wait5 msg a b c d e -> ( MultiWaitable.Wait5 msg a b c d e, Platform.Cmd.Cmd msg )"
+            }
+        ],
+        "binops": []
+    }
+]

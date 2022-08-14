@@ -1,0 +1,359 @@
+[
+    {
+        "name": "Github",
+        "comment": "\n\n\n## Authorization\n\n@docs OAuthToken, oauthToken, oauthTokenToString, AccessTokenResponse, oauthLink, OAuthCode, oauthCode, oauthCodeToString, ClientId, clientId, clientIdToString, ClientSecret, clientSecret, clientSecretToString, getAccessToken, Scope, scopeFromString, scopeToString\n\n\n## Get repository\n\n@docs getRepository, getContents, Owner, owner, ownerToString, updateFileContents\n\n\n## Work with git\n\n@docs Branch, branch, branchToString, getBranches, getBranch, updateBranch, listTags, createBranch, getBranchZip, getTag, getCommit, createCommit, getCommitZip, sha, shaToString, ShaHash, CommitSha, TreeSha, Content, ContentType, DirectoryEntry, createTree\n\n\n## Pull request\n\n@docs PullRequest, getPullRequests, getPullRequest, createPullRequest, createFork\n\n\n## Issues\n\n@docs getComments, createComment, createIssue\n\n",
+        "unions": [
+            {
+                "name": "Branch",
+                "comment": " The name of a git branch, i.e. \"master\", \"main\", \"feature-branch\"\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "ClientId",
+                "comment": " Github application client id\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "ClientSecret",
+                "comment": " Github application client secret (do not include this on your frontend!)\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "CommitSha",
+                "comment": " A SHA that's used as a pointer for a commit\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Content",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "FileContent",
+                        [
+                            "{ encoding : String.String, content : String.String, sha : Github.ShaHash Github.CommitSha, downloadUrl : Url.Url, url : Url.Url }"
+                        ]
+                    ],
+                    [
+                        "DirectoryContent",
+                        [
+                            "List.List Github.DirectoryEntry"
+                        ]
+                    ],
+                    [
+                        "Symlink",
+                        []
+                    ],
+                    [
+                        "Submodule",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "ContentType",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "FileContentType",
+                        []
+                    ],
+                    [
+                        "DirectoryContentType",
+                        []
+                    ],
+                    [
+                        "SymLinkType",
+                        []
+                    ],
+                    [
+                        "SubmoduleType",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "OAuthCode",
+                "comment": " Not to be confused with `OAuthToken`! This is an intermediate value you get while generating an `OAuthToken`.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "OAuthToken",
+                "comment": " An OAuth token used to authenticate various Github API requests. Not to be confused with `OAuthCode` which is used in order to generate an `OAuthToken`.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Owner",
+                "comment": " The the name of owner of a repo, (\"avh4\" for example)\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Scope",
+                "comment": " See <https://docs.github.com/en/developers/apps/building-oauth-apps/scopes-for-oauth-apps>\n",
+                "args": [],
+                "cases": [
+                    [
+                        "RepoScope",
+                        []
+                    ],
+                    [
+                        "RepoStatusScope",
+                        []
+                    ],
+                    [
+                        "RepoDeploymentScope",
+                        []
+                    ],
+                    [
+                        "PublicRepoScope",
+                        []
+                    ],
+                    [
+                        "RepoInviteScope",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "ShaHash",
+                "comment": " A SHA identifier\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            },
+            {
+                "name": "TreeSha",
+                "comment": " A SHA that's used as a pointer for a tree\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "AccessTokenResponse",
+                "comment": " ",
+                "args": [],
+                "type": "{ accessToken : Github.OAuthToken, scope : String.String, tokenType : String.String }"
+            },
+            {
+                "name": "DirectoryEntry",
+                "comment": " A file directory in a git repo.\n",
+                "args": [],
+                "type": "{ contentType : Github.ContentType, name : String.String, path : String.String, sha : Github.ShaHash Github.CommitSha, downloadUrl : Maybe.Maybe Url.Url, url : Maybe.Maybe Url.Url }"
+            },
+            {
+                "name": "PullRequest",
+                "comment": " The data returned by [`getPullRequests`](#getPullRequests).\n",
+                "args": [],
+                "type": "{ number : Basics.Int, title : String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "branch",
+                "comment": " ",
+                "type": "String.String -> Github.Branch"
+            },
+            {
+                "name": "branchToString",
+                "comment": " ",
+                "type": "Github.Branch -> String.String"
+            },
+            {
+                "name": "clientId",
+                "comment": " ",
+                "type": "String.String -> Github.ClientId"
+            },
+            {
+                "name": "clientIdToString",
+                "comment": " ",
+                "type": "Github.ClientId -> String.String"
+            },
+            {
+                "name": "clientSecret",
+                "comment": " ",
+                "type": "String.String -> Github.ClientSecret"
+            },
+            {
+                "name": "clientSecretToString",
+                "comment": " ",
+                "type": "Github.ClientSecret -> String.String"
+            },
+            {
+                "name": "createBranch",
+                "comment": " See <https://developer.github.com/v3/git/refs/#create-a-reference>\n\nNOTE: Not all input options and output fields are supported yet. Pull requests adding more complete support are welcome.\n\n",
+                "type": "{ authToken : Github.OAuthToken, owner : Github.Owner, repo : String.String, branchName : Github.Branch, sha : Github.ShaHash Github.CommitSha } -> Task.Task Http.Error ()"
+            },
+            {
+                "name": "createComment",
+                "comment": " See <https://developer.github.com/v3/issues/comments/#create-a-comment>\n\nNOTE: Not all input options and output fields are supported yet. Pull requests adding more complete support are welcome.\n\n",
+                "type": "{ authToken : Github.OAuthToken, repo : String.String, issueNumber : Basics.Int, body : String.String } -> Task.Task Http.Error { body : String.String, user : { login : String.String, avatarUrl : String.String }, createdAt : Time.Posix, updatedAt : Time.Posix }"
+            },
+            {
+                "name": "createCommit",
+                "comment": " See <https://docs.github.com/en/rest/reference/git#create-a-commit>\n\nNOTE: Not all input options and output fields are supported yet. Pull requests adding more complete support are welcome.\n\n",
+                "type": "{ authToken : Github.OAuthToken, owner : Github.Owner, repo : String.String, message : String.String, tree : Github.ShaHash Github.TreeSha, parents : List.List (Github.ShaHash Github.CommitSha) } -> Task.Task Http.Error (Github.ShaHash Github.CommitSha)"
+            },
+            {
+                "name": "createFork",
+                "comment": " See <https://docs.github.com/en/rest/reference/repos#create-a-fork>\n\nNOTE: Not all input options and output fields are supported yet. Pull requests adding more complete support are welcome.\n\n",
+                "type": "{ authToken : Github.OAuthToken, owner : Github.Owner, repo : String.String } -> Task.Task Http.Error { owner : Github.Owner, repo : String.String }"
+            },
+            {
+                "name": "createIssue",
+                "comment": " See <https://docs.github.com/en/rest/reference/issues#create-an-issue>\n",
+                "type": "{ authToken : Github.OAuthToken, owner : Github.Owner, repo : String.String, title : String.Nonempty.NonemptyString, body : String.String } -> Task.Task Http.Error ()"
+            },
+            {
+                "name": "createPullRequest",
+                "comment": " See <https://developer.github.com/v3/pulls/#create-a-pull-request>\n\nNOTE: Not all input options and output fields are supported yet. Pull requests adding more complete support are welcome.\n\n",
+                "type": "{ authToken : Github.OAuthToken, destinationOwner : Github.Owner, destinationRepo : String.String, destinationBranch : Github.Branch, sourceBranchOwner : Github.Owner, sourceBranch : Github.Branch, title : String.String, description : String.String } -> Task.Task Http.Error { apiUrl : String.String, htmlUrl : String.String }"
+            },
+            {
+                "name": "createTree",
+                "comment": " See <https://docs.github.com/en/rest/reference/git#create-a-tree>\n\nNOTE: Not all input options and output fields are supported yet. Pull requests adding more complete support are welcome.\n\n",
+                "type": "{ authToken : Github.OAuthToken, owner : Github.Owner, repo : String.String, treeNodes : List.Nonempty.Nonempty { path : String.String, content : String.String }, baseTree : Maybe.Maybe (Github.ShaHash Github.TreeSha) } -> Task.Task Http.Error { treeSha : Github.ShaHash Github.TreeSha }"
+            },
+            {
+                "name": "getAccessToken",
+                "comment": " See <https://docs.github.com/en/developers/apps/building-github-apps/identifying-and-authorizing-users-for-github-apps#2-users-are-redirected-back-to-your-site-by-github>\n",
+                "type": "{ clientId : Github.ClientId, clientSecret : Github.ClientSecret, oauthCode : Github.OAuthCode, state : Maybe.Maybe String.String } -> Task.Task Http.Error Github.AccessTokenResponse"
+            },
+            {
+                "name": "getBranch",
+                "comment": " See <https://docs.github.com/en/rest/reference/git#get-a-reference>\n\nNOTE: Not all input options and output fields are supported yet. Pull requests adding more complete support are welcome.\n\n",
+                "type": "{ authToken : Github.OAuthToken, owner : Github.Owner, repo : String.String, branchName : Github.Branch } -> Task.Task Http.Error (Github.ShaHash Github.CommitSha)"
+            },
+            {
+                "name": "getBranchZip",
+                "comment": " authToken is Maybe here because it seems like there can be problems request a zip from a public repo if you provide authentication.\n",
+                "type": "{ authToken : Maybe.Maybe Github.OAuthToken, owner : Github.Owner, repo : String.String, branchName : Maybe.Maybe Github.Branch } -> Task.Task Http.Error Bytes.Bytes"
+            },
+            {
+                "name": "getBranches",
+                "comment": " Get all branches for a git repo.\n",
+                "type": "{ authToken : Github.OAuthToken, owner : Github.Owner, repo : String.String } -> Task.Task Http.Error (List.List { name : String.String, sha : Github.ShaHash Github.CommitSha })"
+            },
+            {
+                "name": "getComments",
+                "comment": " See <https://developer.github.com/v3/issues/comments/#list-comments-on-an-issue>\n\nNOTE: Not all input options and output fields are supported yet. Pull requests adding more complete support are welcome.\n\n",
+                "type": "{ authToken : Github.OAuthToken, repo : String.String, issueNumber : Basics.Int } -> Task.Task Http.Error (List.List { body : String.String, user : { login : String.String, avatarUrl : String.String }, createdAt : Time.Posix, updatedAt : Time.Posix })"
+            },
+            {
+                "name": "getCommit",
+                "comment": " See <https://docs.github.com/en/rest/reference/git#get-a-commit>\n\nNOTE: Not all input options and output fields are supported yet. Pull requests adding more complete support are welcome.\n\n",
+                "type": "{ authToken : Github.OAuthToken, owner : Github.Owner, repo : String.String, sha : Github.ShaHash Github.CommitSha } -> Task.Task Http.Error (Github.ShaHash Github.TreeSha)"
+            },
+            {
+                "name": "getCommitZip",
+                "comment": " ",
+                "type": "{ authToken : Github.OAuthToken, owner : Github.Owner, repo : String.String, sha : Github.ShaHash Github.CommitSha } -> Task.Task Http.Error Bytes.Bytes"
+            },
+            {
+                "name": "getContents",
+                "comment": " See <https://docs.github.com/en/rest/reference/repos#contents>\n\nNOTE: Not all input options and output fields are supported yet. Pull requests adding more complete support are welcome.\n\n",
+                "type": "{ authToken : Github.OAuthToken, owner : Github.Owner, repo : String.String, ref : Maybe.Maybe String.String, path : String.String } -> Task.Task Http.Error Github.Content"
+            },
+            {
+                "name": "getPullRequest",
+                "comment": " See <https://developer.github.com/v3/pulls/#get-a-single-pull-request>\n\nNOTE: Not all input options and output fields are supported yet. Pull requests adding more complete support are welcome.\n\n",
+                "type": "{ authToken : Github.OAuthToken, repo : String.String, number : Basics.Int } -> Task.Task Http.Error { head : { ref : String.String, sha : Github.ShaHash Github.CommitSha } }"
+            },
+            {
+                "name": "getPullRequests",
+                "comment": " See <https://developer.github.com/v3/pulls/#list-pull-requests>\n\nNOTE: Not all input options and output fields are supported yet. Pull requests adding more complete support are welcome.\n\n",
+                "type": "{ authToken : Github.OAuthToken, repo : String.String } -> Task.Task Http.Error (List.List Github.PullRequest)"
+            },
+            {
+                "name": "getRepository",
+                "comment": " See <https://docs.github.com/en/rest/reference/repos#get-a-repository>\n\nNOTE: Not all input options and output fields are supported yet. Pull requests adding more complete support are welcome.\n\n",
+                "type": "{ authToken : Github.OAuthToken, owner : Github.Owner, repo : String.String } -> Task.Task Http.Error { defaultBranch : Github.Branch }"
+            },
+            {
+                "name": "getTag",
+                "comment": " See <https://docs.github.com/en/rest/reference/git#get-a-reference>\n\nNOTE: Not all input options and output fields are supported yet. Pull requests adding more complete support are welcome.\n\n",
+                "type": "{ authToken : Github.OAuthToken, owner : Github.Owner, repo : String.String, tagName : String.String } -> Task.Task Http.Error (Github.ShaHash Github.CommitSha)"
+            },
+            {
+                "name": "listTags",
+                "comment": " See <https://docs.github.com/en/rest/reference/repos#list-repository-tags>\n\nNOTE: Not all input options and output fields are supported yet. Pull requests adding more complete support are welcome.\n\n",
+                "type": "{ authToken : Github.OAuthToken, owner : Github.Owner, repo : String.String } -> Task.Task Http.Error (List.List Github.Tag)"
+            },
+            {
+                "name": "oauthCode",
+                "comment": " ",
+                "type": "String.String -> Github.OAuthCode"
+            },
+            {
+                "name": "oauthCodeToString",
+                "comment": " ",
+                "type": "Github.OAuthCode -> String.String"
+            },
+            {
+                "name": "oauthLink",
+                "comment": " The link a user clicks on to be prompted about authorizing a github app.\nSee <https://docs.github.com/en/developers/apps/building-github-apps/identifying-and-authorizing-users-for-github-apps#1-request-a-users-github-identity>\n",
+                "type": "{ clientId : Github.ClientId, redirectUri : Maybe.Maybe String.String, scopes : List.List Github.Scope, state : Maybe.Maybe String.String } -> String.String"
+            },
+            {
+                "name": "oauthToken",
+                "comment": " ",
+                "type": "String.String -> Github.OAuthToken"
+            },
+            {
+                "name": "oauthTokenToString",
+                "comment": " ",
+                "type": "Github.OAuthToken -> String.String"
+            },
+            {
+                "name": "owner",
+                "comment": " ",
+                "type": "String.String -> Github.Owner"
+            },
+            {
+                "name": "ownerToString",
+                "comment": " ",
+                "type": "Github.Owner -> String.String"
+            },
+            {
+                "name": "scopeFromString",
+                "comment": " ",
+                "type": "String.String -> Maybe.Maybe Github.Scope"
+            },
+            {
+                "name": "scopeToString",
+                "comment": " ",
+                "type": "Github.Scope -> String.String"
+            },
+            {
+                "name": "sha",
+                "comment": " ",
+                "type": "String.String -> Github.ShaHash a"
+            },
+            {
+                "name": "shaToString",
+                "comment": " Get the raw sha string.\n",
+                "type": "Github.ShaHash a -> String.String"
+            },
+            {
+                "name": "updateBranch",
+                "comment": " See <https://docs.github.com/en/rest/reference/git#update-a-reference>\n\nNOTE: Not all input options and output fields are supported yet. Pull requests adding more complete support are welcome.\n\n",
+                "type": "{ authToken : Github.OAuthToken, owner : Github.Owner, repo : String.String, branchName : Github.Branch, sha : Github.ShaHash Github.CommitSha, force : Basics.Bool } -> Task.Task Http.Error (Github.ShaHash Github.CommitSha)"
+            },
+            {
+                "name": "updateFileContents",
+                "comment": " See <https://developer.github.com/v3/repos/contents/#update-a-file>\n\nNOTE: Not all input options and output fields are supported yet. Pull requests adding more complete support are welcome.\n\n",
+                "type": "{ authToken : Github.OAuthToken, repo : String.String, branch : Github.Branch, path : String.String, sha : Github.ShaHash a, message : String.String, content : String.String } -> Task.Task Http.Error { content : { sha : Github.ShaHash a } }"
+            }
+        ],
+        "binops": []
+    }
+]

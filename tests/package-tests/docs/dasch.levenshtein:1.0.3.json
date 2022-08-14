@@ -1,0 +1,16 @@
+[
+    {
+        "name": "Levenshtein",
+        "comment": " Levenshtein distance is a metric for measuring the difference between two strings.\n\n@docs distance\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "distance",
+                "comment": " Computes the Levenshtein distance between two strings.\n",
+                "type": "String.String -> String.String -> Basics.Int"
+            }
+        ],
+        "binops": []
+    }
+]

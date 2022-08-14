@@ -1,0 +1,256 @@
+[
+    {
+        "name": "Stomp.Client",
+        "comment": " A session manages the connection with the server and is used to send commands to the server.\n\n\n# Ports\n\n@docs Connection, OnMessage, listen\n\n\n# Session\n\n@docs Options, Session, init\n\n\n# Connection\n\n@docs connect, disconnect\n\n\n# Commands\n\n@docs send, call, subscribe, unsubscribe\n\n\n# Acknowledgement\n\n@docs ack, nack\n\n\n# Transactions\n\n@docs begin, commit, abort\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Connection",
+                "comment": " Connection to a STOMP server. This is the type of the outgoing port.\n\n    port socket : Stomp.Client.Connection msg\n\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "Stomp.Internal.Connection.Connection msg"
+            },
+            {
+                "name": "OnMessage",
+                "comment": " Incoming port for messages from the STOMP server.\n\n    port onMessage : Stomp.Client.OnMessage msg\n\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "Stomp.Internal.Connection.OnMessage msg"
+            },
+            {
+                "name": "Options",
+                "comment": " The messages to send to your update function when the state of the connection changes.\n\n    { onConnected : msg\n    , onDisconnected : msg\n    , onError : String -> msg\n    , onHeartBeat : msg\n    }\n\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "Stomp.Internal.Session.Options msg"
+            },
+            {
+                "name": "Session",
+                "comment": " The Session holds the state of the connection. ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Stomp.Internal.Session.Session msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "abort",
+                "comment": " `abort` is used to roll back a transaction in progress.\n",
+                "type": "Stomp.Client.Session msg -> String.String -> ( Stomp.Client.Session msg, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "ack",
+                "comment": " Acknowledge that a message was consumed by the session when using `SessionAck` or `SessionIndividualAck` modes on a subscription.\n",
+                "type": "Stomp.Client.Session msg -> Stomp.Message.Message -> Maybe.Maybe String.String -> ( Stomp.Client.Session msg, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "begin",
+                "comment": " `begin` is used to start a transaction. Transactions in this case apply to sending and acknowledging - any messages sent or acknowledged during a transaction will be processed atomically based on the transaction.\n",
+                "type": "Stomp.Client.Session msg -> String.String -> ( Stomp.Client.Session msg, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "call",
+                "comment": " Send a remote procedure call to a server.\n\n    type Msg\n        = Strings (Result String Stomp.Message.Message)\n\n    getStrings : Cmd Msg\n    getStrings =\n        Stomp.Proc.init \"example.strings\"\n            |> Stomp.Proc.onResponse Strings\n            |> Stomp.Session.call session\n\n",
+                "type": "Stomp.Client.Session msg -> Stomp.Proc.RemoteProcedure msg -> ( Stomp.Client.Session msg, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "commit",
+                "comment": " `commit` is used to commit a transaction in progress.\n",
+                "type": "Stomp.Client.Session msg -> String.String -> ( Stomp.Client.Session msg, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "connect",
+                "comment": " Send a CONNECT frame to the server. This always needs to be the first message sent, to establish the connection and authenticate the user. Trying to send a message before the server has recieved and acknowledged the CONNECT message will result in the server simply closing the socket.\n\n    Stomp.Client.connect session \"guest\" \"guest\" \"/\"\n\n",
+                "type": "Stomp.Client.Session msg -> String.String -> String.String -> String.String -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "disconnect",
+                "comment": " Send a DISCONNECT frame to the server. ",
+                "type": "Stomp.Client.Session msg -> ( Stomp.Client.Session msg, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "init",
+                "comment": " Create a session that manages the WebSocket connection (through a port) and keeps track of the STOMP state.\n\n    Stomp.Client.init socket\n        { onConnected = Connected\n        , onDisconnected = Disconnected\n        , onError = Error\n        , onHeartBeat = HeartBeat\n        }\n\n",
+                "type": "Stomp.Client.Connection msg -> Stomp.Client.Options msg -> Stomp.Client.Session msg"
+            },
+            {
+                "name": "listen",
+                "comment": " A subscription that will listen for new WebSocket messages on the provided port and dispatch them to the STOMP session.\n\n    subscriptions : State -> Sub Msg\n    subscriptions state =\n        Stomp.Client.listen onMessage state.session\n\n",
+                "type": "Stomp.Client.OnMessage msg -> Stomp.Client.Session msg -> Platform.Sub.Sub msg"
+            },
+            {
+                "name": "nack",
+                "comment": " The opposite of `ack`.\n\nIt is used to tell the server that the session did not consume the message. The server can then either send the message to a different session, discard it, or put it in a dead letter queue. The exact behavior is server specific.\n\n`nack` applies either to one single message (if the subscription's ack mode is `SessionIndividualAck`) or to all messages sent before and not yet `ack`'ed or `nack`'ed (if the subscription's ack mode is `SessionAck`).\n\n",
+                "type": "Stomp.Client.Session msg -> Stomp.Message.Message -> Maybe.Maybe String.String -> ( Stomp.Client.Session msg, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "send",
+                "comment": " Send a message to a specific topic.\n\n    sendStrings : List String -> Cmd Msg\n    sendStrings strings =\n        let\n            topic =\n                \"example.strings\"\n\n            headers =\n                [ ( \"x-example\", \"this is a header\" ) ]\n\n            body =\n                Json.Encode.list (List.map Json.Encode.string strings)\n        in\n        Stomp.Session.send session topic headers body\n\n",
+                "type": "Stomp.Client.Session msg -> String.String -> List.List Stomp.Internal.Frame.Header -> Stomp.Internal.Body.Value -> ( Stomp.Client.Session msg, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "subscribe",
+                "comment": " Subscribe to message from a server on a specific topic.\n\n    type Msg\n        = Strings (Result String Stomp.Message.Message)\n\n    strings : Cmd Msg\n    strings =\n        Stomp.Subscription.init \"example.strings\"\n            |> Stomp.Subscription.onMessage Strings\n            |> Stomp.Session.subscribe session\n\n",
+                "type": "Stomp.Client.Session msg -> Stomp.Subscription.Subscription msg -> ( Stomp.Client.Session msg, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "unsubscribe",
+                "comment": " Unsubscribe an existing subscription (uses subscription id to identify which subscription to unsubscribe).\n\n    Stomp.Subscription.init \"example.strings\"\n        |> Stomp.Subscription.withSubscriptionId \"strings-1\"\n        |> Stomp.Session.unsubscribe session\n\n",
+                "type": "Stomp.Client.Session msg -> Stomp.Subscription.Subscription msg -> ( Stomp.Client.Session msg, Platform.Cmd.Cmd msg )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Stomp.Message",
+        "comment": " A message from the server. A server can send a message either as a response to a remote procedure call or because you created a subscription on a topic.\n\n\n# Messages\n\n@docs Message\n\n\n# Message Content\n\n@docs header, payload\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Message",
+                "comment": " A message from the server.\n",
+                "args": [],
+                "type": "Stomp.Internal.Message.InternalMessage"
+            }
+        ],
+        "values": [
+            {
+                "name": "header",
+                "comment": " Read the value of a message header.\n\n    header \"message-id\" message\n\n",
+                "type": "String.String -> Stomp.Message.Message -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "payload",
+                "comment": " Decode the payload content of a message.\n\n    import Json.Decode exposing (list, string)\n    import Stomp.Message\n\n    getStrings : Stomp.Message.Message -> List String\n    getStrings message =\n        Stomp.Message.payload (list string) message\n\n",
+                "type": "Json.Decode.Decoder a -> Stomp.Message.Message -> Result.Result String.String a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Stomp.Proc",
+        "comment": " A remote procedure call (the request/response pattern).\n\n    import Stomp.Proc\n    import Stomp.Client\n\n    type Msg = Click | Response (Result String (List String))\n\n    update : Msg -> State -> (State, Cmd Msg)\n    update msg state =\n        case msg of\n            Click ->\n                state ! [ getStrings ]\n\n            Response (Ok strings) ->\n                ...\n\n            Response (Err _) ->\n                ...\n\n    getStrings : Cmd Msg\n    getStrings =\n        Stomp.Proc.init \"example.strings\"\n            |> Stomp.Proc.onResponse Response\n            |> Stomp.Client.call server\n\n\n# Remote Procedures\n\n@docs RemoteProcedure, init\n\n\n# Headers and Payload\n\n@docs withHeader, withHeaders, withPayload\n\n\n# Response\n\n@docs onResponse, expectJson\n\n\n# Batching\n\n@docs batch, none\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "RemoteProcedure",
+                "comment": " Describes a remote procedure call.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "Stomp.Internal.Batch.Batch (Stomp.Internal.Proc.Proc msg)"
+            }
+        ],
+        "values": [
+            {
+                "name": "batch",
+                "comment": " Batch multiple remote procedure calls together.\n",
+                "type": "List.List (Stomp.Proc.RemoteProcedure msg) -> Stomp.Proc.RemoteProcedure msg"
+            },
+            {
+                "name": "expectJson",
+                "comment": " Set a callback to be triggered when the response message is received and a JSON decoder to be used to decode the message body.\n",
+                "type": "(Result.Result String.String a -> msg) -> Json.Decode.Decoder a -> Stomp.Proc.RemoteProcedure msg -> Stomp.Proc.RemoteProcedure msg"
+            },
+            {
+                "name": "init",
+                "comment": " Construct a remote procedure call with the specified command (queue name).\n",
+                "type": "String.String -> Stomp.Proc.RemoteProcedure msg"
+            },
+            {
+                "name": "none",
+                "comment": " Return a remote procedure call that does nothing.\n",
+                "type": "Stomp.Proc.RemoteProcedure msg"
+            },
+            {
+                "name": "onResponse",
+                "comment": " Set a callback to be triggered when the response message is received.\n",
+                "type": "Stomp.Internal.Callback.Callback msg -> Stomp.Proc.RemoteProcedure msg -> Stomp.Proc.RemoteProcedure msg"
+            },
+            {
+                "name": "withHeader",
+                "comment": " Add a header to the request message.\n",
+                "type": "Stomp.Internal.Frame.Header -> Stomp.Proc.RemoteProcedure msg -> Stomp.Proc.RemoteProcedure msg"
+            },
+            {
+                "name": "withHeaders",
+                "comment": " Add multiple headers to the request message.\n",
+                "type": "List.List Stomp.Internal.Frame.Header -> Stomp.Proc.RemoteProcedure msg -> Stomp.Proc.RemoteProcedure msg"
+            },
+            {
+                "name": "withPayload",
+                "comment": " Add a payload to the request message.\n",
+                "type": "Json.Encode.Value -> Stomp.Proc.RemoteProcedure msg -> Stomp.Proc.RemoteProcedure msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Stomp.Subscription",
+        "comment": " A subscription on a topic.\n\n\n# Subscriptions\n\n@docs Subscription, init\n\n\n# Response\n\n@docs onMessage, expectJson\n\n\n# Subscription Identifier\n\n@docs withSubscriptionId\n\n\n# Acknowledgement\n\n@docs autoAck, clientAck, clientIndividualAck\n\n\n# Batching\n\n@docs batch, none\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Subscription",
+                "comment": " Describes a subscription.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "Stomp.Internal.Batch.Batch (Stomp.Internal.Subscription.Sub msg)"
+            }
+        ],
+        "values": [
+            {
+                "name": "autoAck",
+                "comment": " Set the message acknowledgment mode to \"auto\" (the default).\n\nWhen the ack mode is \"auto\", then the client does not need to send the server\nacknowledgements for the messages it receives. The server will assume the\nclient has received the message as soon as it sends it to the client. This\nacknowledgment mode can cause messages being transmitted to the client to get\ndropped.\n\n",
+                "type": "Stomp.Subscription.Subscription msg -> Stomp.Subscription.Subscription msg"
+            },
+            {
+                "name": "batch",
+                "comment": " Batch multiple subscriptions together.\n",
+                "type": "List.List (Stomp.Subscription.Subscription msg) -> Stomp.Subscription.Subscription msg"
+            },
+            {
+                "name": "clientAck",
+                "comment": " Set the message acknowledgment mode to \"client\".\n\nWhen the ack mode is \"client\", then the client must send the server\nacknowledgements for the messages it processes. If the connection fails before\na client sends an acknowledgement for the message the server will assume the\nmessage has not been processed and may redeliver the message to another client.\n\n",
+                "type": "Stomp.Subscription.Subscription msg -> Stomp.Subscription.Subscription msg"
+            },
+            {
+                "name": "clientIndividualAck",
+                "comment": " Set the message acknowledgment mode to \"client-individual\".\n\nWhen the ack mode is \"client-individual\", the acknowledgment operates just like\nthe \"client\" acknowledgment mode except that the `ack` or `nack` sent by the\nclient are not cumulative. This means that an `ack` or `nack` for a\nsubsequent message does not cause a previous message to get acknowledged.\n\n",
+                "type": "Stomp.Subscription.Subscription msg -> Stomp.Subscription.Subscription msg"
+            },
+            {
+                "name": "expectJson",
+                "comment": " Set a callback to be triggered when a message is received and a JSON decoder to be used to decode the message body.\n",
+                "type": "(Result.Result String.String a -> msg) -> Json.Decode.Decoder a -> Stomp.Subscription.Subscription msg -> Stomp.Subscription.Subscription msg"
+            },
+            {
+                "name": "init",
+                "comment": " Construct a subscription on a specific topic.\n",
+                "type": "String.String -> Stomp.Subscription.Subscription msg"
+            },
+            {
+                "name": "none",
+                "comment": " Return a subscription that does nothing.\n",
+                "type": "Stomp.Subscription.Subscription msg"
+            },
+            {
+                "name": "onMessage",
+                "comment": " Set a callback to be triggered when a message is received.\n",
+                "type": "Stomp.Internal.Callback.Callback msg -> Stomp.Subscription.Subscription msg -> Stomp.Subscription.Subscription msg"
+            },
+            {
+                "name": "withSubscriptionId",
+                "comment": " Set the id of the subscription to differentiate between multiple\nsubscriptions to the same topic (default is to use the topic name).\n",
+                "type": "String.String -> Stomp.Subscription.Subscription msg -> Stomp.Subscription.Subscription msg"
+            }
+        ],
+        "binops": []
+    }
+]

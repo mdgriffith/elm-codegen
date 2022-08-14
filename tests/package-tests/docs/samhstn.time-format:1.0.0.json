@@ -1,0 +1,26 @@
+[
+    {
+        "name": "Time.Format",
+        "comment": " Format time in elm with ease.\n\n@docs format\n@docs monthToString\n@docs weekdayToString\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "format",
+                "comment": " Formats date from milliseconds based on a format string.\nStrings which will be substitued with correct time:\n\n\"Millis\"\n\"padMillis\"\n\"Second\"\n\"padSecond\"\n\"Minute\"\n\"padMinute\"\n\"Hour\"\n\"padHour\"\n\"Weekday\"\n\"Day\"\n\"padDay\"\n\"ordDay\"\n\"Month\"\n\"Year\"\n\n(example milliseconds can be obtained in js with:\n\n```js\nnew Date(\"1 Jan 2018\").getTime()\n// => 1514764800000\n```\n\n)\n\nExamples:\nimport Time exposing (utc)\nimport Time.Format as Time\n\nformat = Time.format utc\n\nformat \"Weekday, Day Month Year at Hour:Minute:Second and Millisms\" 1514764800000\n-- \"Mon, 1 Jan 2018 at 0:0:0 and 0ms\"\n\nformat \"Weekday, padDay Month Year at padHour:padMinute:padSecond and padMillisms\" 1514764800000\n-- \"Mon, 01 Jan 2018 at 00:00:00 and 000ms\"\n\nformat \"Weekday, ordDay Month Year at Hour:Minute:Second and Millisms\" 1514764800000\n-- \"Mon, 1st Jan 2018 at 0:0:0 and 0ms\"\n\n",
+                "type": "Time.Zone -> String.String -> Basics.Int -> String.String"
+            },
+            {
+                "name": "monthToString",
+                "comment": " monthToString returns Month as a `String`\n\nExample:\nmonthToString Jan\n-- \"Jan\"\n\n",
+                "type": "Time.Month -> String.String"
+            },
+            {
+                "name": "weekdayToString",
+                "comment": " weekdayToString returns Weekday as a `String`\n\nExample:\nweekdayToString Mon\n-- \"Mon\"\n\n",
+                "type": "Time.Weekday -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

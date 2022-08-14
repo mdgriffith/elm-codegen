@@ -1,0 +1,920 @@
+[
+    {
+        "name": "TerminusDb",
+        "comment": " This module provides types and helpers for building url paths to data on a\nTerminusDB server.\n\n@docs databasePath, graphPath, graphType\n\n@docs reference, withRef\n\n@docs Database, Graph, GraphType\n\n@docs RepoReference, Reference\n\n",
+        "unions": [
+            {
+                "name": "Database",
+                "comment": " The Database type includes the system databases and user created ones. User\ndatabases are prefixed by an account name, often the name of the associated\norganisation.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Terminus",
+                        []
+                    ],
+                    [
+                        "System",
+                        []
+                    ],
+                    [
+                        "Database",
+                        [
+                            "String.String",
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Graph",
+                "comment": " Within one database multiple data Graphs can coexist, defaulting to a single\nMainGraph with subgraphs for instances, the schema and inferences. Any\nadditional graphs are described by CustomGraph values, taking a name String and\na subgraph type (Instance, Schema or Inference).\n",
+                "args": [],
+                "cases": [
+                    [
+                        "MainGraph",
+                        [
+                            "TerminusDb.GraphType"
+                        ]
+                    ],
+                    [
+                        "CustomGraph",
+                        [
+                            "String.String",
+                            "TerminusDb.GraphType"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "GraphType",
+                "comment": " Instance represents the instance graph which holds the actual content data\nin the graph database, where a Schema graph describes the constraints the data\nshould adhere to (the types). I guess I need to read more on or ask around about\nInference graphs, because I realise I don't exactly know their role.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Instance",
+                        []
+                    ],
+                    [
+                        "Schema",
+                        []
+                    ],
+                    [
+                        "Inference",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Reference",
+                "comment": " Represents a branch or specific commit.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Main",
+                        []
+                    ],
+                    [
+                        "Branch",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Commit",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "RepoReference",
+                "comment": " Represents a Local or Remote repository with branch/commit.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Local",
+                        [
+                            "TerminusDb.Reference"
+                        ]
+                    ],
+                    [
+                        "Remote",
+                        [
+                            "String.String",
+                            "TerminusDb.Reference"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "databasePath",
+                "comment": " Constructs a list of url path segments for selecting the specified database.\n",
+                "type": "TerminusDb.Database -> List.List String.String"
+            },
+            {
+                "name": "graphPath",
+                "comment": " Helper function for contructing the graph segements of a db url.\n",
+                "type": "TerminusDb.Graph -> List.List String.String"
+            },
+            {
+                "name": "graphType",
+                "comment": " Returns the name (string) of the GraphType provided.\n",
+                "type": "TerminusDb.GraphType -> String.String"
+            },
+            {
+                "name": "reference",
+                "comment": " Helper for constructing repository reference url segments of a db url.\n",
+                "type": "TerminusDb.RepoReference -> List.List String.String"
+            },
+            {
+                "name": "withRef",
+                "comment": " Helper for adding repository reference url segments to a list of url segments.\n",
+                "type": "TerminusDb.RepoReference -> List.List String.String -> List.List String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "TerminusDb.Api.AddUser",
+        "comment": " This module provides the api call `command` to add a user to the TerminusDB\ndatabase.\n\nIt gets configured by the `Request` data type, constructed by the `request` and\n`with..` convenience helpers, for building the Request in pipeline style.\n\n@docs command, Request\n\n@docs request, withDescription\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Request",
+                "comment": " Represents an AddUser request.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ message : Result.Result TerminusDb.Woql.Error Basics.Bool -> msg, name : String.String, password : String.String, comment : String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "command",
+                "comment": " AddUser query command builder, using the provided session for auth token,\nconnection parameters and schema context.\n",
+                "type": "TerminusDb.Session.Session -> TerminusDb.Api.AddUser.Request msg -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "request",
+                "comment": " Request builder with defaults.\n",
+                "type": "(Result.Result TerminusDb.Woql.Error Basics.Bool -> msg) -> { name : String.String, password : String.String } -> TerminusDb.Api.AddUser.Request msg"
+            },
+            {
+                "name": "withDescription",
+                "comment": " Helper for adding a description to a AddUser query.\n",
+                "type": "String.String -> TerminusDb.Api.AddUser.Request msg -> TerminusDb.Api.AddUser.Request msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "TerminusDb.Api.Connect",
+        "comment": " This module provides the api call `command` to connect with a TerminusDB\nserver.\n\nIt gets configured by the `Request` data type, constructed by the `request` and\n`with..` convenience helpers, for building the Request in pipeline style.\n\n@docs command, Request\n\n@docs request, toServer, asUser, withPassword, toOrganisation, toDatabase, toRepository, withGraph\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Request",
+                "comment": " Represents parameters for a Connect request.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ message : Result.Result TerminusDb.Woql.Error TerminusDb.Session.Session -> msg, server : String.String, organisation : Maybe.Maybe String.String, database : Maybe.Maybe String.String, repository : TerminusDb.RepoReference, graph : TerminusDb.Graph, username : String.String, password : String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "asUser",
+                "comment": " Helper for specifying a user account for the Connect Request.\n",
+                "type": "String.String -> TerminusDb.Api.Connect.Request msg -> TerminusDb.Api.Connect.Request msg"
+            },
+            {
+                "name": "command",
+                "comment": " Connect request command builder, using the parameters from provided Request.\n",
+                "type": "TerminusDb.Api.Connect.Request msg -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "request",
+                "comment": " Request builder with defaults.\n",
+                "type": "(Result.Result TerminusDb.Woql.Error TerminusDb.Session.Session -> msg) -> TerminusDb.Api.Connect.Request msg"
+            },
+            {
+                "name": "toDatabase",
+                "comment": " Helper for setting the target database name for a Connect Request.\n",
+                "type": "String.String -> TerminusDb.Api.Connect.Request msg -> TerminusDb.Api.Connect.Request msg"
+            },
+            {
+                "name": "toOrganisation",
+                "comment": " Helper for setting the target database account for a Connect Request.\n",
+                "type": "String.String -> TerminusDb.Api.Connect.Request msg -> TerminusDb.Api.Connect.Request msg"
+            },
+            {
+                "name": "toRepository",
+                "comment": " Helper for specifying a repository reference scope session default.\n",
+                "type": "TerminusDb.RepoReference -> TerminusDb.Api.Connect.Request msg -> TerminusDb.Api.Connect.Request msg"
+            },
+            {
+                "name": "toServer",
+                "comment": " Helper for setting the database server address for a Connect Request.\n",
+                "type": "String.String -> TerminusDb.Api.Connect.Request msg -> TerminusDb.Api.Connect.Request msg"
+            },
+            {
+                "name": "withGraph",
+                "comment": " Helper for setting a Graph scope session default.\n",
+                "type": "TerminusDb.Graph -> TerminusDb.Api.Connect.Request msg -> TerminusDb.Api.Connect.Request msg"
+            },
+            {
+                "name": "withPassword",
+                "comment": " Helper for providing a password to a Connect Request configuration.\n",
+                "type": "String.String -> TerminusDb.Api.Connect.Request msg -> TerminusDb.Api.Connect.Request msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "TerminusDb.Api.CreateDatabase",
+        "comment": " This module provides the api call `command` to create a database on a\nTerminusDB server.\n\nIt gets configured by the `Request` data type, constructed by the `request` and\n`with..` convenience helpers, for building the Request in pipeline style.\n\n@docs command, Request\n\n@docs request, withLabel, withDescription, forOrganisation, local, public, withSchema\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Request",
+                "comment": " Represents a CreateDatabase request.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ message : Result.Result TerminusDb.Woql.Error Basics.Bool -> msg, name : String.String, organisation : String.String, label : String.String, comment : String.String, isPublic : Basics.Bool, hasSchema : Basics.Bool, isLocal : Basics.Bool }"
+            }
+        ],
+        "values": [
+            {
+                "name": "command",
+                "comment": " CreateDatabase query command builder, using the provided session for auth\ntoken, connection parameters and schema context.\n",
+                "type": "TerminusDb.Session.Session -> TerminusDb.Api.CreateDatabase.Request msg -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "forOrganisation",
+                "comment": " Helper for providing an organisation (database account) parameter to the\nrequest.\n",
+                "type": "String.String -> TerminusDb.Api.CreateDatabase.Request msg -> TerminusDb.Api.CreateDatabase.Request msg"
+            },
+            {
+                "name": "local",
+                "comment": " Helper for specifying whether the target database is local or remote.\n",
+                "type": "Basics.Bool -> TerminusDb.Api.CreateDatabase.Request msg -> TerminusDb.Api.CreateDatabase.Request msg"
+            },
+            {
+                "name": "public",
+                "comment": " Helper for specifying if the target database is to be public.\n",
+                "type": "Basics.Bool -> TerminusDb.Api.CreateDatabase.Request msg -> TerminusDb.Api.CreateDatabase.Request msg"
+            },
+            {
+                "name": "request",
+                "comment": " Request builder with defaults.\n",
+                "type": "(Result.Result TerminusDb.Woql.Error Basics.Bool -> msg) -> String.String -> TerminusDb.Api.CreateDatabase.Request msg"
+            },
+            {
+                "name": "withDescription",
+                "comment": " Helper for providing a comment describing the target database.\n",
+                "type": "String.String -> TerminusDb.Api.CreateDatabase.Request msg -> TerminusDb.Api.CreateDatabase.Request msg"
+            },
+            {
+                "name": "withLabel",
+                "comment": " Helper for providing the friendly name of the target database.\n",
+                "type": "String.String -> TerminusDb.Api.CreateDatabase.Request msg -> TerminusDb.Api.CreateDatabase.Request msg"
+            },
+            {
+                "name": "withSchema",
+                "comment": " Helper for specifying whether the target database needs a schema.\n",
+                "type": "Basics.Bool -> TerminusDb.Api.CreateDatabase.Request msg -> TerminusDb.Api.CreateDatabase.Request msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "TerminusDb.Api.Query",
+        "comment": " This module provides the api call `command` to perform a TerminusDB query.\n\nIt gets configured by the `Request` data type, constructed by the `request`\nhelper.\n\n@docs command, Request\n\n@docs request\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Request",
+                "comment": " Represents a Query request.\n",
+                "args": [
+                    "a",
+                    "msg"
+                ],
+                "type": "{ message : Result.Result TerminusDb.Woql.Error a -> msg, decoder : TerminusDb.Schema.Prefix.Context -> Json.Decode.Decoder a, commit : Maybe.Maybe TerminusDb.Woql.CommitInfo, prefixes : List.List TerminusDb.Schema.Prefix.Prefix, query : TerminusDb.Woql.Query }"
+            }
+        ],
+        "values": [
+            {
+                "name": "command",
+                "comment": " Query request command builder, using the provided session for auth token,\nconnection parameters and schema context.\n",
+                "type": "TerminusDb.Session.Session -> TerminusDb.Api.Query.Request a msg -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "request",
+                "comment": " Request builder with defaults.\n",
+                "type": "(Result.Result TerminusDb.Woql.Error a -> msg) -> (TerminusDb.Schema.Prefix.Context -> Json.Decode.Decoder a) -> TerminusDb.Woql.Query -> TerminusDb.Api.Query.Request a msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "TerminusDb.Schema",
+        "comment": " This library covers working with Terminus (XSD, OWL) data schemata, such as\ndecoding json responses with schema prefix contexts into validated values.\n\n\n# Values\n\n@docs Value, TranslatedText\n\n\n# Translated text helpers\n\n@docs translation, translatedText, addTranslation\n\n\n# Decoders\n\n@docs field, literal, value\n\n\n# Decoding helpers\n\n@docs prefixed, requireType, andMap\n\n",
+        "unions": [
+            {
+                "name": "Value",
+                "comment": " Represents a literal or node reference value.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "StringLiteral",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "IntLiteral",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "TextLiteral",
+                        [
+                            "TerminusDb.Schema.TranslatedText"
+                        ]
+                    ],
+                    [
+                        "Reference",
+                        [
+                            "TerminusDb.Schema.Prefix.Prefix",
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "TranslatedText",
+                "comment": " A TranslatedText holds a dict with translations per language (keys should be\nlanguage codes, values the translated text.)\n",
+                "args": [],
+                "type": "Dict.Dict String.String String.String"
+            }
+        ],
+        "values": [
+            {
+                "name": "addTranslation",
+                "comment": " Add a translation for a specified language to a translations dictionary.\n",
+                "type": "String.String -> String.String -> TerminusDb.Schema.TranslatedText -> TerminusDb.Schema.TranslatedText"
+            },
+            {
+                "name": "andMap",
+                "comment": " When a document has been partially decoded by a generic document decoder,\nandMap is used to decode the remaining fields needed to satisfy the specific\ndocument type, and apply them to the (partially applied) constructor, as seen in\nSchema.System.User.decode.\n",
+                "type": "Json.Decode.Decoder a -> Json.Decode.Decoder (a -> value) -> Json.Decode.Decoder value"
+            },
+            {
+                "name": "field",
+                "comment": " Decoder for fields taking the schema prefix context into account.\n",
+                "type": "TerminusDb.Schema.Prefix.Context -> TerminusDb.Schema.Prefix.Prefix -> String.String -> Json.Decode.Decoder a -> Json.Decode.Decoder a"
+            },
+            {
+                "name": "literal",
+                "comment": " Decoder for translating a specific literal string into a boolean value.\n",
+                "type": "String.String -> Json.Decode.Decoder Basics.Bool"
+            },
+            {
+                "name": "prefixed",
+                "comment": " Decoder that first decodes the schema prefix context from a response and\nsubsequently applies the provided context dependent decoder.\n",
+                "type": "(TerminusDb.Schema.Prefix.Context -> Json.Decode.Decoder value) -> Json.Decode.Decoder value"
+            },
+            {
+                "name": "requireType",
+                "comment": " Decoder that requires a certain data type to match the type specified in the\nvalue that is being decoded.\n",
+                "type": "TerminusDb.Schema.Prefix.Context -> TerminusDb.Schema.Prefix.Prefix -> String.String -> Json.Decode.Decoder a -> Json.Decode.Decoder a"
+            },
+            {
+                "name": "translatedText",
+                "comment": " Decoder for building a dictionary of translations from the list of @language\n@value pairs in the value that is being decoded.\n",
+                "type": "Json.Decode.Decoder TerminusDb.Schema.TranslatedText"
+            },
+            {
+                "name": "translation",
+                "comment": " Create a single translation from a language identifier string and text\ncontent.\n",
+                "type": "String.String -> String.String -> TerminusDb.Schema.TranslatedText"
+            },
+            {
+                "name": "value",
+                "comment": " Decoder for translating a specific literal string value into a specified\ninstance of a (custom) data type.\n",
+                "type": "TerminusDb.Schema.Prefix.Context -> TerminusDb.Schema.Prefix.Prefix -> String.String -> a -> Json.Decode.Decoder a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "TerminusDb.Schema.Builder",
+        "comment": " This module exposes query builder functions to define new doctypes.\n\n@docs doctype\n\n\n# Doctype builder helpers\n\n@docs label, description, property\n\n@docs graph\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "description",
+                "comment": " Helper for adding a description property/field to a doctype. Takes a\ntranslated field description and the a reference to the target doctype.\n",
+                "type": "TerminusDb.Schema.TranslatedText -> TerminusDb.Woql.Value -> TerminusDb.Woql.Query"
+            },
+            {
+                "name": "doctype",
+                "comment": " Helper for building a doctype specification query. Takes the target document\ntype name and parent document class, with a list of queries for further\nspecification of the doctype, carrying a parameter for passing the doctype\nreference.\n",
+                "type": "String.String -> TerminusDb.Woql.Value -> List.List (TerminusDb.Woql.Value -> TerminusDb.Woql.Query) -> TerminusDb.Woql.Query"
+            },
+            {
+                "name": "graph",
+                "comment": " Helper providing a literal referring to the default graph.\n",
+                "type": "TerminusDb.Woql.Value"
+            },
+            {
+                "name": "label",
+                "comment": " Helper for adding a label property/field to a doctype. Takes a translated\nfield description and a reference to the target doctype.\n",
+                "type": "TerminusDb.Schema.TranslatedText -> TerminusDb.Woql.Value -> TerminusDb.Woql.Query"
+            },
+            {
+                "name": "property",
+                "comment": " Helper for adding a custom property/field to a doctype. Takes the target\nproperty name and range, and sets the domain to the specified target doctype.\nApplies further specification of the property via the provided queries.\n",
+                "type": "String.String -> TerminusDb.Woql.Value -> List.List (TerminusDb.Woql.Value -> TerminusDb.Woql.Query) -> TerminusDb.Woql.Value -> TerminusDb.Woql.Query"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "TerminusDb.Schema.Prefix",
+        "comment": " This module provides preset schema prefixes and helpers for handling prefix\ncontexts.\n\n@docs Prefix, Context\n\n@docs string, uri\n\n@docs context, uriFromContext, fromContext\n\n@docs encodeContext, decodeContext\n\n",
+        "unions": [
+            {
+                "name": "Prefix",
+                "comment": " This type enumerates predefined schema prefixes.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Unprefixed",
+                        []
+                    ],
+                    [
+                        "Api",
+                        []
+                    ],
+                    [
+                        "Doc",
+                        []
+                    ],
+                    [
+                        "Owl",
+                        []
+                    ],
+                    [
+                        "Rdf",
+                        []
+                    ],
+                    [
+                        "Rdfs",
+                        []
+                    ],
+                    [
+                        "Scm",
+                        []
+                    ],
+                    [
+                        "System",
+                        []
+                    ],
+                    [
+                        "Woql",
+                        []
+                    ],
+                    [
+                        "Xsd",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Context",
+                "comment": " The Context type alias is a dictionary, mapping prefix strings to schema uris.\n",
+                "args": [],
+                "type": "Dict.Dict String.String String.String"
+            }
+        ],
+        "values": [
+            {
+                "name": "context",
+                "comment": " Assemble a context from a list of prefixes.\n",
+                "type": "List.List TerminusDb.Schema.Prefix.Prefix -> TerminusDb.Schema.Prefix.Context"
+            },
+            {
+                "name": "decodeContext",
+                "comment": " Decode the `@context` json field into a Context dictionary.\n",
+                "type": "Json.Decode.Decoder TerminusDb.Schema.Prefix.Context"
+            },
+            {
+                "name": "encodeContext",
+                "comment": " Encode a Context dictionary into a json value.\n",
+                "type": "TerminusDb.Schema.Prefix.Context -> Json.Encode.Value"
+            },
+            {
+                "name": "fromContext",
+                "comment": " Get a list of alternatives to use as prefix for a specified schema url,\nfalling back to the entire url, from the provided context.\n",
+                "type": "TerminusDb.Schema.Prefix.Context -> String.String -> List.List String.String"
+            },
+            {
+                "name": "string",
+                "comment": " Return the Prefix as a String.\n",
+                "type": "TerminusDb.Schema.Prefix.Prefix -> String.String"
+            },
+            {
+                "name": "uri",
+                "comment": " Return the associated uri for a Prefix.\n",
+                "type": "TerminusDb.Schema.Prefix.Prefix -> String.String"
+            },
+            {
+                "name": "uriFromContext",
+                "comment": " Look up a prefix in the provided context and return the associated url,\ndefaulting to the entire url.\n",
+                "type": "TerminusDb.Schema.Prefix.Context -> String.String -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "TerminusDb.Schema.System.Document",
+        "comment": " This module provides the System Document type and decoders.\n\n@docs Document\n\n@docs decoder, decoderFor\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Document",
+                "comment": " Represents the Document base type.\n",
+                "args": [],
+                "type": "{ id : String.String, comment : TerminusDb.Schema.TranslatedText }"
+            }
+        ],
+        "values": [
+            {
+                "name": "decoder",
+                "comment": " Document decoder, decodes id and comment, as these are mandatory for any\ndocument.\n",
+                "type": "TerminusDb.Schema.Prefix.Context -> Json.Decode.Decoder TerminusDb.Schema.System.Document.Document"
+            },
+            {
+                "name": "decoderFor",
+                "comment": " Decoder for documents based upon the base Document type.\n",
+                "type": "TerminusDb.Schema.Prefix.Context -> TerminusDb.Schema.Prefix.Prefix -> String.String -> (String.String -> TerminusDb.Schema.TranslatedText -> value) -> Json.Decode.Decoder value"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "TerminusDb.Schema.System.User",
+        "comment": " This module provides the System User type and decoders.\n\n@docs User\n\n@docs decoder\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "User",
+                "comment": " Represents a database user account.\n",
+                "args": [],
+                "type": "{ id : String.String, comment : TerminusDb.Schema.TranslatedText, name : String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "decoder",
+                "comment": " Decoder for database user documents.\n",
+                "type": "TerminusDb.Schema.Prefix.Context -> Json.Decode.Decoder TerminusDb.Schema.System.User.User"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "TerminusDb.Schema.Xsd.Decode",
+        "comment": " This module provides decoders for Xsd data types.\n\n@docs string, integer, nonNegativeInteger, dateTime\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "dateTime",
+                "comment": " Decoder for dataTime values - for now decoded to string.\n",
+                "type": "TerminusDb.Schema.Prefix.Context -> Json.Decode.Decoder String.String"
+            },
+            {
+                "name": "integer",
+                "comment": " Decoder for generic integer values.\n",
+                "type": "TerminusDb.Schema.Prefix.Context -> Json.Decode.Decoder Basics.Int"
+            },
+            {
+                "name": "nonNegativeInteger",
+                "comment": " Decoder for non negative integers.\n",
+                "type": "TerminusDb.Schema.Prefix.Context -> Json.Decode.Decoder Basics.Int"
+            },
+            {
+                "name": "string",
+                "comment": " Decoder for string values.\n",
+                "type": "TerminusDb.Schema.Prefix.Context -> Json.Decode.Decoder String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "TerminusDb.Schema.Xsd.Encode",
+        "comment": " This module provides encoders for Xsd data types.\n\n@docs string, integer, nonNegativeInteger, translatedText\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "integer",
+                "comment": " Encoder for generic integer values.\n",
+                "type": "Basics.Int -> Json.Encode.Value"
+            },
+            {
+                "name": "nonNegativeInteger",
+                "comment": " Encoder for non negative integer values.\n",
+                "type": "Basics.Int -> Json.Encode.Value"
+            },
+            {
+                "name": "string",
+                "comment": " Encoder for string values.\n",
+                "type": "String.String -> Json.Encode.Value"
+            },
+            {
+                "name": "translatedText",
+                "comment": " Encoder for translated text, a list of translations.\n",
+                "type": "TerminusDb.Schema.TranslatedText -> Json.Encode.Value"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "TerminusDb.Session",
+        "comment": " This module provides the Session type and decoder\n\n@docs Session, LogLevel, decoder\n\n",
+        "unions": [
+            {
+                "name": "LogLevel",
+                "comment": " Represents a log level.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Session",
+                "comment": " Represents a database session, holding connection configuration,\nauthentication token and log.\n",
+                "args": [],
+                "type": "{ server : String.String, database : TerminusDb.Database, ref : TerminusDb.RepoReference, graph : TerminusDb.Graph, context : TerminusDb.Schema.Prefix.Context, token : String.String, log : List.List ( Time.Posix, TerminusDb.Session.LogLevel, String.String ), user : TerminusDb.Schema.System.User.User }"
+            }
+        ],
+        "values": [
+            {
+                "name": "decoder",
+                "comment": " Decoder for database sessions.\n",
+                "type": "String.String -> String.String -> TerminusDb.Database -> TerminusDb.RepoReference -> TerminusDb.Graph -> TerminusDb.Schema.Prefix.Context -> Json.Decode.Decoder TerminusDb.Session.Session"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "TerminusDb.Woql",
+        "comment": " Construct WOQL requests and read out responses using this module.\n\n@docs Request, request, CommitInfo, commitInfo, Response, response, success, Error, Bindings\n\n@docs Query, Subject, Predicate, Object, Graph, Value, Variables\n\n@docs expectJson\n\n",
+        "unions": [
+            {
+                "name": "Error",
+                "comment": " Represents the types of errors that can occur in WOQL requests.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "BadConnection",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "BadResponse",
+                        [
+                            "Basics.Int",
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "BadData",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Query",
+                "comment": " Represents the WOQL query language.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Select",
+                        [
+                            "TerminusDb.Woql.Variables",
+                            "TerminusDb.Woql.Query"
+                        ]
+                    ],
+                    [
+                        "And",
+                        [
+                            "List.List TerminusDb.Woql.Query"
+                        ]
+                    ],
+                    [
+                        "Or",
+                        [
+                            "List.List TerminusDb.Woql.Query"
+                        ]
+                    ],
+                    [
+                        "Triple",
+                        [
+                            "TerminusDb.Woql.Subject",
+                            "TerminusDb.Woql.Predicate",
+                            "TerminusDb.Woql.Object"
+                        ]
+                    ],
+                    [
+                        "Optional",
+                        [
+                            "TerminusDb.Woql.Query"
+                        ]
+                    ],
+                    [
+                        "Limit",
+                        [
+                            "Basics.Int",
+                            "TerminusDb.Woql.Query"
+                        ]
+                    ],
+                    [
+                        "AddTriple",
+                        [
+                            "TerminusDb.Woql.Subject",
+                            "TerminusDb.Woql.Predicate",
+                            "TerminusDb.Woql.Object"
+                        ]
+                    ],
+                    [
+                        "AddQuad",
+                        [
+                            "TerminusDb.Woql.Subject",
+                            "TerminusDb.Woql.Predicate",
+                            "TerminusDb.Woql.Object",
+                            "TerminusDb.Woql.Graph"
+                        ]
+                    ],
+                    [
+                        "IdGen",
+                        [
+                            "TerminusDb.Woql.Base",
+                            "TerminusDb.Woql.Key",
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Request",
+                "comment": " Represents a WOQL request with or without provided commit metadata.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "QueryRequest",
+                        [
+                            "List.List TerminusDb.Schema.Prefix.Prefix",
+                            "TerminusDb.Woql.Query"
+                        ]
+                    ],
+                    [
+                        "QueryCommitRequest",
+                        [
+                            "List.List TerminusDb.Schema.Prefix.Prefix",
+                            "TerminusDb.Woql.Query",
+                            "TerminusDb.Woql.CommitInfo"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Value",
+                "comment": " Represents a WOQL query value, a variable, node reference, literal, or\ntranslated data type.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Var",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Node",
+                        [
+                            "TerminusDb.Schema.Prefix.Prefix",
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Literal",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Datatype",
+                        [
+                            "TerminusDb.Schema.TranslatedText"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Bindings",
+                "comment": " Represents bindings of names (dict keys) to query variables (dict values).\n",
+                "args": [],
+                "type": "List.List (Dict.Dict String.String String.String)"
+            },
+            {
+                "name": "CommitInfo",
+                "comment": " Represents meta information sent with a commit.\n",
+                "args": [],
+                "type": "{ author : String.String, message : String.String }"
+            },
+            {
+                "name": "Graph",
+                "comment": " Represents the Graph within a quad (triple + graph).\n",
+                "args": [],
+                "type": "TerminusDb.Woql.Value"
+            },
+            {
+                "name": "Object",
+                "comment": " Represents the Object within a triple.\n",
+                "args": [],
+                "type": "TerminusDb.Woql.Value"
+            },
+            {
+                "name": "Predicate",
+                "comment": " Represents the Predicate within a triple.\n",
+                "args": [],
+                "type": "TerminusDb.Woql.Value"
+            },
+            {
+                "name": "Response",
+                "comment": " Represents a WOQL response record.\n",
+                "args": [],
+                "type": "{ success : Basics.Bool, variables : List.List String.String, bindings : TerminusDb.Woql.Bindings, inserts : Basics.Int, deletes : Basics.Int, retries : Basics.Int }"
+            },
+            {
+                "name": "Subject",
+                "comment": " Represents the Subject within a triple.\n",
+                "args": [],
+                "type": "TerminusDb.Woql.Value"
+            },
+            {
+                "name": "Variables",
+                "comment": " Represents a list of WOQL variable names.\n",
+                "args": [],
+                "type": "List.List String.String"
+            }
+        ],
+        "values": [
+            {
+                "name": "commitInfo",
+                "comment": " CommitInfo encoder.\n",
+                "type": "TerminusDb.Woql.CommitInfo -> Json.Encode.Value"
+            },
+            {
+                "name": "expectJson",
+                "comment": " Helper for building WOQL response expectations and adding error categories\nfor easy handling in applications.\n",
+                "type": "(Result.Result TerminusDb.Woql.Error a -> msg) -> Json.Decode.Decoder a -> Http.Expect msg"
+            },
+            {
+                "name": "request",
+                "comment": " Encodes a WOQL request with provided query.\n",
+                "type": "TerminusDb.Woql.Request -> Json.Encode.Value"
+            },
+            {
+                "name": "response",
+                "comment": " WOQL Response decoder.\n",
+                "type": "TerminusDb.Schema.Prefix.Context -> Json.Decode.Decoder TerminusDb.Woql.Response"
+            },
+            {
+                "name": "success",
+                "comment": " Decoder for determining whether a response was successful.\n",
+                "type": "TerminusDb.Schema.Prefix.Context -> Json.Decode.Decoder Basics.Bool"
+            }
+        ],
+        "binops": []
+    }
+]

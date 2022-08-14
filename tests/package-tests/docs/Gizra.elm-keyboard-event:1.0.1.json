@@ -1,0 +1,44 @@
+[
+    {
+        "name": "Keyboard.Event",
+        "comment": " There are various ways to listen to\n[keyboard events](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent)\nin Elm. If you want to get all keyboard events, you can subscribe using functions from\n[Browser.Events](https://package.elm-lang.org/packages/elm/browser/latest/Browser-Events).\nAnd, if you want to get keyboard events for specific HTML elements, you can use\n[Html.Events.on](https://package.elm-lang.org/packages/elm/html/latest/Html-Events#on).\n\nEach of those functions asks you to provide a `Decoder msg` to convert the\nkeyboard event into a message your application can handle. To help you along\nthe way, `Html.Events` has a handy\n[keyCode](https://package.elm-lang.org/packages/elm/html/latest/Html-Events#keyCode)\ndecoder. You can use it to turn the keyboard event into a keycode -- which you\ncan then map into a message your app understands.\n\nHowever, there is more information available in a keyboard event than just the\nkeycode. So, we provide a decoder which gives you all the available\ninformation:\n\n    type alias KeyboardEvent =\n        { altKey : Bool\n        , ctrlKey : Bool\n        , key : Maybe String\n        , keyCode : Key\n        , metaKey : Bool\n        , repeat : Bool\n        , shiftKey : Bool\n        }\n\nEven better, we:\n\n  - normalize some browser-specific quirks, such as where to look for the keyCode\n    (under \"keyCode\", \"which\" or \"charCode\")\n\n  - turn the keyCode into a type-safe `Key` value.\n\nBut wait, there's more! We also have a version of the keyboard event decoder\nwhich allows you to filter events right in the decoder. That way, you can\nprevent some events from reaching your update function at all, which can be\nuseful in some scenarios.\n\n\n## Examples\n\nTo listen for keyboard events on HTML elements, you can do something like this:\n\n    div\n        [ on \"keydown\" <|\n            Json.Decode.map HandleKeyboardEvent decodeKeyboardEvent\n        , tabindex 0\n        , id \"id-for-auto-focus\"\n        , style [ ( \"outline\", \"none\" ) ]\n        ]\n        []\n\nWe use the`tabIndex` attribute to make the element focusable, since an HTML\nelement must be focusable in order to receive keyboard events. And, we provide\nan `id` in case we want to programmatically focus on the element, via\n[Browser.Dom.focus](https://package.elm-lang.org/packages/elm/browser/latest/Browser-Dom#focus).\n\nFor complete examples, see:\n\n  - [Listen for events on an outermost div](https://gizra.github.io/elm-keyboard-event/OutermostDiv.html)\n  - [Listen for events on multiple divs](https://gizra.github.io/elm-keyboard-event/TwoDivs.html)\n\nTo listen for keyboard events globally, you can use functions from\n[Browser.Events](https://package.elm-lang.org/packages/elm/browser/latest/Browser-Events)\nto subscribe to all keyboard events. For an example, see\n\n  - [Listen for events on the `document` object](https://gizra.github.io/elm-keyboard-event/Document.html)\n\n\n## KeyboardEvent\n\n@docs KeyboardEvent, decodeKeyboardEvent, considerKeyboardEvent\n\n\n## Helpers\n\nSome lower-level helpers that you might find useful.\n\n@docs KeyCode, decodeKeyCode, decodeKey\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "KeyCode",
+                "comment": " A type alias for `Int`.\n",
+                "args": [],
+                "type": "Basics.Int"
+            },
+            {
+                "name": "KeyboardEvent",
+                "comment": " A representation of a [keyboard event][keyboard-event].\n\nThe `key` field may or may not be present, depending on the listener (\"keydown\"\nvs. \"keypress\" vs. \"keyup\"), browser, and key pressed (character key vs.\nspecial key). If not present, it will be `Nothing` here.\n\nThe `keyCode` is normalized by `decodeKeyboardEvent` to use whichever of\n`which`, `keyCode` or `charCode` is provided, and made type-safe via\n`Keyboard.Key`\n(see the excellent [SwiftsNamesake/proper-keyboard][proper-keyboard-pkg] for\nfurther manipulation of a `Key`).\n\n[keyboard-event]: https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent\n[proper-keyboard-pkg]: http://package.elm-lang.org/packages/SwiftsNamesake/proper-keyboard/latest\n\n",
+                "args": [],
+                "type": "{ altKey : Basics.Bool, ctrlKey : Basics.Bool, key : Maybe.Maybe String.String, keyCode : Keyboard.Key.Key, metaKey : Basics.Bool, repeat : Basics.Bool, shiftKey : Basics.Bool }"
+            }
+        ],
+        "values": [
+            {
+                "name": "considerKeyboardEvent",
+                "comment": " You provide a function which, given a `KeyboardEvent`, turns it into a\nmessage your `update` function can handle. You get back a `Decoder` for those\nmessages.\n\nWhen your function returns `Nothing`, the decoder will fail. This means that\nthe event will simply be ignored -- that is, it will not reach your `update`\nfunction at all.\n\nEssentially, this allows you to filter keyboard events inside the decoder\nitself, rather than in the `update` function. Whether this is a good idea or\nnot will depend on your scenario.\n\n",
+                "type": "(Keyboard.Event.KeyboardEvent -> Maybe.Maybe msg) -> Json.Decode.Decoder msg"
+            },
+            {
+                "name": "decodeKey",
+                "comment": " Decodes the `key` field from a [keyboard event][keyboard-event].\nResults in `Nothing` if the `key` field is not present, or blank.\n\n[keyboard-event]: https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent\n\n",
+                "type": "Json.Decode.Decoder (Maybe.Maybe String.String)"
+            },
+            {
+                "name": "decodeKeyCode",
+                "comment": " Decodes `keyCode`, `which` or `charCode` from a [keyboard event][keyboard-event]\nto get a numeric code for the key that was pressed.\n\n[keyboard-event]: https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent\n\n",
+                "type": "Json.Decode.Decoder Keyboard.Event.KeyCode"
+            },
+            {
+                "name": "decodeKeyboardEvent",
+                "comment": " Decodes a `KeyboardEvent` from a [keyboard event][keyboard-event].\n\n[keyboard-event]: https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent\n\n",
+                "type": "Json.Decode.Decoder Keyboard.Event.KeyboardEvent"
+            }
+        ],
+        "binops": []
+    }
+]

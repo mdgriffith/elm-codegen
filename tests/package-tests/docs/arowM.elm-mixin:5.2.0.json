@@ -1,0 +1,255 @@
+[
+    {
+        "name": "Mixin",
+        "comment": " Core module for elm-mixin, which makes it easy to handle conditional attributes, [CSS custom properties](https://developer.mozilla.org/docs/Web/CSS/Using_CSS_custom_properties), and more.\n\n\n# Primitives\n\n@docs Mixin\n@docs fromAttributes\n@docs map\n@docs batch\n@docs none\n@docs style\n@docs property\n@docs attribute\n\n\n# Super Common Attributes\n\n@docs class\n@docs id\n@docs boolAttribute\n\n\n# Apply on HTML Nodes\n\n@docs lift\n\n\n# Conditional Functions\n\n@docs when\n@docs unless\n@docs withMaybe\n\n",
+        "unions": [
+            {
+                "name": "Mixin",
+                "comment": " Developer-friendly alternative to `Html.Attribute msg`.\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "attribute",
+                "comment": " Alternative to [`Html.Attributes.attribute`](https://package.elm-lang.org/packages/elm/html/latest/Html-Attributes#attribute).\n\n    class : String -> Mixin msg\n    class name =\n        Mixin.attribute \"class\" name\n\n",
+                "type": "String.String -> String.String -> Mixin.Mixin msg"
+            },
+            {
+                "name": "batch",
+                "comment": " When you need to set a couple HTML attributes only if a certain condition is met, you can batch them together.\n\n    greeting : Animal -> Html msg\n    greeting animal =\n        Mixin.div\n            [ Mixin.class \"greeting\"\n            , case animal of\n                Goat { horns } ->\n                    Mixin.batch\n                        [ Mixin.class \"greeting-goat\"\n                        , Mixin.style \"--horns\" (String.fromInt horns)\n                        ]\n\n                Dog ->\n                    Mixin.batch\n                        [ Mixin.class \"greeting-dog\"\n                        ]\n\n                _ ->\n                    Mixin.none\n            ]\n            [ text \"Hello!\"\n            ]\n\nNote1: `Mixin.none` and `Mixin.batch [ Mixin.none, Mixin.none ]` and `Mixin.batch []` all do the same thing.\n\nNote2: It simply flattens as each item appears; so `[ Mixin.batch [ foo, bar ], baz, Mixin.batch [ foobar, foobaz ] ]` is reduced to `[ foo, bar, baz, foobar, foobaz ]`.\n\n",
+                "type": "List.List (Mixin.Mixin msg) -> Mixin.Mixin msg"
+            },
+            {
+                "name": "boolAttribute",
+                "comment": " Create arbitrary bool `attribute`.\nThe `boolAttribute` converts the `Bool` argument into the string `\"true\"` or `\"false\"`.\n\n    ariaHidden : Bool -> Mixin msg\n    ariaHidden =\n        boolAttribute \"aria-hidden\"\n\n",
+                "type": "String.String -> Basics.Bool -> Mixin.Mixin msg"
+            },
+            {
+                "name": "class",
+                "comment": " Alternative to [`Html.Attributes.class`](https://package.elm-lang.org/packages/elm/html/latest/Html-Attributes#class).\n",
+                "type": "String.String -> Mixin.Mixin msg"
+            },
+            {
+                "name": "fromAttributes",
+                "comment": " Lower level function to build `Mixin` from [`Html.Attribute`](https://package.elm-lang.org/packages/elm/html/latest/Html#Attribute)s.\n\n    onClick : msg -> Mixin msg\n    onClick msg =\n        Mixin.fromAttributes\n            [ Html.Events.onClick msg\n            ]\n\n",
+                "type": "List.List (Html.Attribute msg) -> Mixin.Mixin msg"
+            },
+            {
+                "name": "id",
+                "comment": " Alternative to [`Html.Attributes.id`](https://package.elm-lang.org/packages/elm/html/latest/Html-Attributes#id).\n",
+                "type": "String.String -> Mixin.Mixin msg"
+            },
+            {
+                "name": "lift",
+                "comment": " Apply `Mixin` on `Html` functions.\n\n    view : Html msg\n    view =\n        Mixin.lift Html.div\n            [ Mixin.class \"foo\"\n            , Mixin.id \"bar\"\n            ]\n            [ Html.text \"baz\"\n            ]\n\n",
+                "type": "(List.List (Html.Attribute msg) -> a) -> List.List (Mixin.Mixin msg) -> a"
+            },
+            {
+                "name": "map",
+                "comment": " ",
+                "type": "(a -> b) -> Mixin.Mixin a -> Mixin.Mixin b"
+            },
+            {
+                "name": "none",
+                "comment": " No HTML attributes.\n",
+                "type": "Mixin.Mixin msg"
+            },
+            {
+                "name": "property",
+                "comment": " Alternative to [`Html.Attributes.property`](https://package.elm-lang.org/packages/elm/html/latest/Html-Attributes#property).\n\n    import Json.Encode as Encode\n\n    class : String -> Mixin msg\n    class name =\n        Mixin.property \"className\" (Encode.string name)\n\n",
+                "type": "String.String -> Json.Encode.Value -> Mixin.Mixin msg"
+            },
+            {
+                "name": "style",
+                "comment": " Specify a style.\n\n    greeting : Html msg\n    greeting =\n        Mixin.div\n            [ Mixin.style \"background-color\" \"red\"\n            , Mixin.style \"height\" \"90px\"\n            , Mixin.style \"--min-height\" \"3em\"\n            , Mixin.style \"width\" \"100%\"\n            ]\n            [ text \"Hello!\"\n            ]\n\nUnlike [`Html.Attributes.style`](https://package.elm-lang.org/packages/elm/html/latest/Html-Attributes#style), this `style` can also handle [CSS custom properties](https://developer.mozilla.org/docs/Web/CSS/Using_CSS_custom_properties) well.\n\n",
+                "type": "String.String -> String.String -> Mixin.Mixin msg"
+            },
+            {
+                "name": "unless",
+                "comment": " Insert a `Mixin` unless conditions are met.\n",
+                "type": "Basics.Bool -> Mixin.Mixin msg -> Mixin.Mixin msg"
+            },
+            {
+                "name": "when",
+                "comment": " Insert a `Mixin` only when conditions are met.\n",
+                "type": "Basics.Bool -> Mixin.Mixin msg -> Mixin.Mixin msg"
+            },
+            {
+                "name": "withMaybe",
+                "comment": " Insert a `Mixin` only when the value actually exists.\n",
+                "type": "Maybe.Maybe a -> (a -> Mixin.Mixin msg) -> Mixin.Mixin msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Mixin.Events",
+        "comment": " [`Html.Events`](https://package.elm-lang.org/packages/elm/html/latest/Html-Events) alternatives just for convenience.\n\n\n# Mouse\n\n@docs onClick, onDoubleClick\n@docs onMouseDown, onMouseUp\n@docs onMouseEnter, onMouseLeave\n@docs onMouseOver, onMouseOut\n\n\n# Forms\n\n@docs onInput, onChange, onCheck, onSubmit\n\n\n# Focus\n\n@docs onBlur, onFocus\n\n\n# Custom\n\n@docs on, stopPropagationOn, preventDefaultOn, custom\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "custom",
+                "comment": " Alternetive to [`Html.Events.custom`](https://package.elm-lang.org/packages/elm/html/latest/Html-Events#custom).\n",
+                "type": "String.String -> Json.Decode.Decoder { message : msg, stopPropagation : Basics.Bool, preventDefault : Basics.Bool } -> Mixin.Mixin msg"
+            },
+            {
+                "name": "on",
+                "comment": " Alternetive to [`Html.Events.on`](https://package.elm-lang.org/packages/elm/html/latest/Html-Events#on).\n",
+                "type": "String.String -> Json.Decode.Decoder msg -> Mixin.Mixin msg"
+            },
+            {
+                "name": "onBlur",
+                "comment": " ",
+                "type": "msg -> Mixin.Mixin msg"
+            },
+            {
+                "name": "onChange",
+                "comment": " Alternetive to [`Html.Events.Extra.onChange`](https://package.elm-lang.org/packages/elm-community/html-extra/latest/Html-Events-Extra#onChange).\n\nThough `onChange` is not in `elm-html`, it makes it easy to debounce user input events for certain cases.\n\n",
+                "type": "(String.String -> msg) -> Mixin.Mixin msg"
+            },
+            {
+                "name": "onCheck",
+                "comment": " Alternetive to [`Html.Events.onCheck`](https://package.elm-lang.org/packages/elm/html/latest/Html-Events#onCheck).\n",
+                "type": "(Basics.Bool -> msg) -> Mixin.Mixin msg"
+            },
+            {
+                "name": "onClick",
+                "comment": " ",
+                "type": "msg -> Mixin.Mixin msg"
+            },
+            {
+                "name": "onDoubleClick",
+                "comment": " ",
+                "type": "msg -> Mixin.Mixin msg"
+            },
+            {
+                "name": "onFocus",
+                "comment": " ",
+                "type": "msg -> Mixin.Mixin msg"
+            },
+            {
+                "name": "onInput",
+                "comment": " Alternetive to [`Html.Events.onInput`](https://package.elm-lang.org/packages/elm/html/latest/Html-Events#onInput).\n",
+                "type": "(String.String -> msg) -> Mixin.Mixin msg"
+            },
+            {
+                "name": "onMouseDown",
+                "comment": " ",
+                "type": "msg -> Mixin.Mixin msg"
+            },
+            {
+                "name": "onMouseEnter",
+                "comment": " ",
+                "type": "msg -> Mixin.Mixin msg"
+            },
+            {
+                "name": "onMouseLeave",
+                "comment": " ",
+                "type": "msg -> Mixin.Mixin msg"
+            },
+            {
+                "name": "onMouseOut",
+                "comment": " ",
+                "type": "msg -> Mixin.Mixin msg"
+            },
+            {
+                "name": "onMouseOver",
+                "comment": " ",
+                "type": "msg -> Mixin.Mixin msg"
+            },
+            {
+                "name": "onMouseUp",
+                "comment": " ",
+                "type": "msg -> Mixin.Mixin msg"
+            },
+            {
+                "name": "onSubmit",
+                "comment": " Alternetive to [`Html.Events.onSubmit`](https://package.elm-lang.org/packages/elm/html/latest/Html-Events#onSubmit).\n",
+                "type": "msg -> Mixin.Mixin msg"
+            },
+            {
+                "name": "preventDefaultOn",
+                "comment": " Alternetive to [`Html.Events.preventDefaultOn`](https://package.elm-lang.org/packages/elm/html/latest/Html-Events#preventDefaultOn).\n",
+                "type": "String.String -> Json.Decode.Decoder ( msg, Basics.Bool ) -> Mixin.Mixin msg"
+            },
+            {
+                "name": "stopPropagationOn",
+                "comment": " Alternetive to [`Html.Events.stopPropagationOn`](https://package.elm-lang.org/packages/elm/html/latest/Html-Events#stopPropagationOn).\n",
+                "type": "String.String -> Json.Decode.Decoder ( msg, Basics.Bool ) -> Mixin.Mixin msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Mixin.Html",
+        "comment": " [`Html`](https://package.elm-lang.org/packages/elm/html/latest/Html) alternatives just for convenience.\n\n\n# Primitives\n\n@docs Html\n@docs Attribute\n@docs text\n@docs node\n@docs map\n@docs keyed\n\n\n## Super Common Tags\n\n@docs div\n@docs span\n@docs p\n@docs a\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Attribute",
+                "comment": " Reexport [`Html.Attribute`](https://package.elm-lang.org/packages/elm/html/latest/Html#Attribute) just for convenience.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Attribute msg"
+            },
+            {
+                "name": "Html",
+                "comment": " Reexport [`Html.Html`](https://package.elm-lang.org/packages/elm/html/latest/Html#Html) just for convenience.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Html msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "a",
+                "comment": " Represents a hyperlink, linking to another resource.\n\nSee [MDN document](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a) for details.\n\n",
+                "type": "List.List (Mixin.Mixin msg) -> List.List (Mixin.Html.Html msg) -> Mixin.Html.Html msg"
+            },
+            {
+                "name": "div",
+                "comment": " Represents a generic container with no special meaning.\n\nSee [MDN document](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/div) for details.\n\n",
+                "type": "List.List (Mixin.Mixin msg) -> List.List (Mixin.Html.Html msg) -> Mixin.Html.Html msg"
+            },
+            {
+                "name": "keyed",
+                "comment": " Works just like `node`, but you add a unique identifier to each child node. See [`Html.Keyed.node`](https://package.elm-lang.org/packages/elm/html/latest/Html-Keyed#node) for details.\n",
+                "type": "String.String -> List.List (Mixin.Mixin msg) -> List.List ( String.String, Mixin.Html.Html msg ) -> Mixin.Html.Html msg"
+            },
+            {
+                "name": "map",
+                "comment": " Same as [`Html.map`](https://package.elm-lang.org/packages/elm/html/latest/Html#map).\n",
+                "type": "(a -> msg) -> Mixin.Html.Html a -> Mixin.Html.Html msg"
+            },
+            {
+                "name": "node",
+                "comment": " Alternative to [`Html.node`](https://package.elm-lang.org/packages/elm/html/latest/Html#node). It is a handy way to create HTML nodes with `Mixin`.\n\n    div : List (Mixin msg) -> List (Html msg) -> Html msg\n    div mixins children =\n        Mixin.node \"div\" mixins children\n\n",
+                "type": "String.String -> List.List (Mixin.Mixin msg) -> List.List (Mixin.Html.Html msg) -> Mixin.Html.Html msg"
+            },
+            {
+                "name": "p",
+                "comment": " Defines a portion that should be displayed as a paragraph.\n\nSee [MDN document](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/p) for details.\n\n",
+                "type": "List.List (Mixin.Mixin msg) -> List.List (Mixin.Html.Html msg) -> Mixin.Html.Html msg"
+            },
+            {
+                "name": "span",
+                "comment": " Represents text with no specific meaning.\n\nSee [MDN document](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/span) for details.\n\n",
+                "type": "List.List (Mixin.Mixin msg) -> List.List (Mixin.Html.Html msg) -> Mixin.Html.Html msg"
+            },
+            {
+                "name": "text",
+                "comment": " Reexport [`Html.text`](https://package.elm-lang.org/packages/elm/html/latest/Html#text) just for convenience.\n",
+                "type": "String.String -> Mixin.Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

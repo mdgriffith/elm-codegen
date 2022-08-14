@@ -1,0 +1,34 @@
+[
+    {
+        "name": "BinaryBase64",
+        "comment": " Library for encoding Binary to Base64 and vice-versa,\n\n\n# Definition\n\n\n# Data Types\n\n@docs Octet, ByteString\n\n\n# Functions\n\n@docs encode, decode\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "ByteString",
+                "comment": " a ByteString - a list of Octets\n",
+                "args": [],
+                "type": "List.List BinaryBase64.Octet"
+            },
+            {
+                "name": "Octet",
+                "comment": " an 8-bit word masquerading as an Int - we don't have an elm Byte type yet\n",
+                "args": [],
+                "type": "Basics.Int"
+            }
+        ],
+        "values": [
+            {
+                "name": "decode",
+                "comment": " decode a Base64 String\n",
+                "type": "String.String -> Result.Result String.String BinaryBase64.ByteString"
+            },
+            {
+                "name": "encode",
+                "comment": " encode a ByteString as Base64\n",
+                "type": "BinaryBase64.ByteString -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,102 @@
+[
+    {
+        "name": "Typed",
+        "comment": "\n\n\n# Types\n\n@docs Typed\n\n\n# Permissions\n\n@docs ReadOnly, ReadWrite, WriteOnly\n\n\n# Policies\n\n@docs Readable, Writable\n\n\n# Constructor\n\n@docs new, writeOnly\n\n\n# Manipulation\n\n@docs value, map, andThen\n\n\n# Serialization\n\n@docs encode, decode, encodeStrict, decodeStrict\n\n",
+        "unions": [
+            {
+                "name": "Typed",
+                "comment": " A definition of `Typed` data.\n\nUsers can control data modifiability by giving permission to the type variable `p`.\n\n",
+                "args": [
+                    "tag",
+                    "a",
+                    "p"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "ReadOnly",
+                "comment": " ReadOnly permission prohibits users to call all functions that do constructing and updating such as `new`, `map` and `andThen`.\n",
+                "args": [],
+                "type": "{ read : Typed.Allowed, write : Typed.Unallowed }"
+            },
+            {
+                "name": "ReadWrite",
+                "comment": " ReadWrite permission allows users to call all functions.\n",
+                "args": [],
+                "type": "{ read : Typed.Allowed, write : Typed.Allowed }"
+            },
+            {
+                "name": "Readable",
+                "comment": " Policy for allowing `read` permission.\n",
+                "args": [
+                    "p"
+                ],
+                "type": "{ p | read : Typed.Allowed }"
+            },
+            {
+                "name": "Writable",
+                "comment": " Policy for allowing `write` permission.\n",
+                "args": [
+                    "p"
+                ],
+                "type": "{ p | write : Typed.Allowed }"
+            },
+            {
+                "name": "WriteOnly",
+                "comment": " WriteOnly permission prohibits users to call `value` function to get internal implementation.\n",
+                "args": [],
+                "type": "{ read : Typed.Unallowed, write : Typed.Allowed }"
+            }
+        ],
+        "values": [
+            {
+                "name": "andThen",
+                "comment": " ",
+                "type": "(a -> Typed.Typed tag b (Typed.Writable p)) -> Typed.Typed tag a (Typed.Writable p) -> Typed.Typed tag b (Typed.Writable p)"
+            },
+            {
+                "name": "decode",
+                "comment": " ",
+                "type": "Json.Decode.Decoder a -> Json.Decode.Decoder (Typed.Typed tag a p)"
+            },
+            {
+                "name": "decodeStrict",
+                "comment": " Stricter version of `decode` that accepts a tag to check.\n",
+                "type": "tag -> Json.Decode.Decoder a -> Json.Decode.Decoder (Typed.Typed tag a p)"
+            },
+            {
+                "name": "encode",
+                "comment": " ",
+                "type": "(a -> Json.Encode.Value) -> Typed.Typed tag a p -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeStrict",
+                "comment": " Stricter version of `encode` that accepts a tag to check.\n",
+                "type": "tag -> (a -> Json.Encode.Value) -> Typed.Typed tag a p -> Json.Encode.Value"
+            },
+            {
+                "name": "map",
+                "comment": " ",
+                "type": "(a -> a) -> Typed.Typed tag a (Typed.Writable p) -> Typed.Typed tag a (Typed.Writable p)"
+            },
+            {
+                "name": "new",
+                "comment": " ",
+                "type": "a -> Typed.Typed tag a Typed.ReadWrite"
+            },
+            {
+                "name": "value",
+                "comment": " ",
+                "type": "Typed.Typed tag a (Typed.Readable p) -> a"
+            },
+            {
+                "name": "writeOnly",
+                "comment": " ",
+                "type": "a -> Typed.Typed tag a Typed.WriteOnly"
+            }
+        ],
+        "binops": []
+    }
+]

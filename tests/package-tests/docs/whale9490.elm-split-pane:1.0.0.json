@@ -1,0 +1,156 @@
+[
+    {
+        "name": "SplitPane",
+        "comment": " This is a split pane view library. Can be used to split views into multiple parts with a splitter between them.\n\nCheck out the [examples] to see how it works.\n\n[examples]: https://github.com/doodledood/elm-split-pane/tree/master/examples\n\n\n# View\n\n@docs view, createViewConfig\n\n\n# Update\n\n@docs update, subscriptions\n\n\n# State\n\n@docs State, init, configureSplitter, orientation, draggable\n\n\n# Helpers\n\n@docs percentage, px\n\n\n# Definitions\n\n@docs Msg, Orientation, SizeUnit, ViewConfig, UpdateConfig, CustomSplitter, HtmlDetails\n\n\n# Customization\n\n@docs customUpdate, createUpdateConfig, createCustomSplitter\n\n",
+        "unions": [
+            {
+                "name": "CustomSplitter",
+                "comment": " Describes a custom splitter\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Msg",
+                "comment": " Internal messages.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Orientation",
+                "comment": " Orientation of pane.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Horizontal",
+                        []
+                    ],
+                    [
+                        "Vertical",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "SizeUnit",
+                "comment": " Size unit for setting slider - either percentage value between 0.0 and 1.0 or pixel value (> 0)\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Percentage",
+                        [
+                            "Bound.Bounded Basics.Float"
+                        ]
+                    ],
+                    [
+                        "Px",
+                        [
+                            "Bound.Bounded Basics.Int"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "State",
+                "comment": " Tracks state of pane.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "UpdateConfig",
+                "comment": " Configuration for updates.\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "ViewConfig",
+                "comment": " Configuration for the view.\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "HtmlDetails",
+                "comment": " Lets you specify attributes such as style and children for the splitter element\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ attributes : List.List (Html.Attribute msg), children : List.List (Html.Html msg) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "configureSplitter",
+                "comment": " Change the splitter position and limit\n",
+                "type": "SplitPane.SizeUnit -> SplitPane.State -> SplitPane.State"
+            },
+            {
+                "name": "createCustomSplitter",
+                "comment": " Creates a custom splitter.\n\n        myCustomSplitter : CustomSplitter Msg\n        myCustomSplitter =\n            createCustomSplitter PaneMsg\n                { attributes =\n                    [ style\n                        [ ( \"width\", \"20px\" )\n                        , ( \"height\", \"20px\" )\n                        ]\n                    ]\n                , children =\n                    []\n                }\n\n",
+                "type": "(SplitPane.Msg -> msg) -> SplitPane.HtmlDetails msg -> SplitPane.CustomSplitter msg"
+            },
+            {
+                "name": "createUpdateConfig",
+                "comment": " Creates the update configuration.\nGives you the option to respond to various things that happen.\n\n    For example:\n    - Draw a different view when the pane is resized:\n\n        updateConfig\n            { onResize (\\p -> Just (SwitchViews p))\n            , onResizeStarted Nothing\n            , onResizeEnded Nothing\n            }\n\n",
+                "type": "{ onResize : SplitPane.SizeUnit -> Maybe.Maybe msg, onResizeStarted : Maybe.Maybe msg, onResizeEnded : Maybe.Maybe msg } -> SplitPane.UpdateConfig msg"
+            },
+            {
+                "name": "createViewConfig",
+                "comment": " Creates a configuration for the view.\n",
+                "type": "{ toMsg : SplitPane.Msg -> msg, customSplitter : Maybe.Maybe (SplitPane.CustomSplitter msg) } -> SplitPane.ViewConfig msg"
+            },
+            {
+                "name": "customUpdate",
+                "comment": " Updates internal model using custom configuration.\n",
+                "type": "SplitPane.UpdateConfig msg -> SplitPane.Msg -> SplitPane.State -> ( SplitPane.State, Maybe.Maybe msg )"
+            },
+            {
+                "name": "draggable",
+                "comment": " Sets whether the pane is draggable or not\n",
+                "type": "Basics.Bool -> SplitPane.State -> SplitPane.State"
+            },
+            {
+                "name": "init",
+                "comment": " Initialize a new model.\n\n        init Horizontal\n\n",
+                "type": "SplitPane.Orientation -> SplitPane.State"
+            },
+            {
+                "name": "orientation",
+                "comment": " Changes orientation of the pane.\n",
+                "type": "SplitPane.Orientation -> SplitPane.State -> SplitPane.State"
+            },
+            {
+                "name": "percentage",
+                "comment": " Creates a percentage size unit from a float\n",
+                "type": "Basics.Float -> Maybe.Maybe ( Basics.Float, Basics.Float ) -> SplitPane.SizeUnit"
+            },
+            {
+                "name": "px",
+                "comment": " Creates a pixel size unit from an int\n",
+                "type": "Basics.Int -> Maybe.Maybe ( Basics.Int, Basics.Int ) -> SplitPane.SizeUnit"
+            },
+            {
+                "name": "subscriptions",
+                "comment": " Subscribes to relevant events for resizing\n",
+                "type": "SplitPane.State -> Platform.Sub.Sub SplitPane.Msg"
+            },
+            {
+                "name": "update",
+                "comment": " Updates internal model.\n",
+                "type": "SplitPane.Msg -> SplitPane.State -> SplitPane.State"
+            },
+            {
+                "name": "view",
+                "comment": " Creates a view.\n\n        view : Model -> Html Msg\n        view =\n            SplitPane.view viewConfig firstView secondView\n\n\n        viewConfig : ViewConfig Msg\n        viewConfig =\n            createViewConfig\n                { toMsg = PaneMsg\n                , customSplitter = Nothing\n                }\n\n        firstView : Html a\n        firstView =\n            img [ src \"http://4.bp.blogspot.com/-s3sIvuCfg4o/VP-82RkCOGI/AAAAAAAALSY/509obByLvNw/s1600/baby-cat-wallpaper.jpg\" ] []\n\n\n        secondView : Html a\n        secondView =\n            img [ src \"http://2.bp.blogspot.com/-pATX0YgNSFs/VP-82AQKcuI/AAAAAAAALSU/Vet9e7Qsjjw/s1600/Cat-hd-wallpapers.jpg\" ] []\n\n",
+                "type": "SplitPane.ViewConfig msg -> Html.Html msg -> Html.Html msg -> SplitPane.State -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

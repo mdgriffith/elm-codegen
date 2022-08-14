@@ -1,0 +1,2289 @@
+[
+    {
+        "name": "Cldr.Format.Date",
+        "comment": "\n\n\n# Date Formatting\n\n@docs format\n\n\n## Format Type\n\n@docs FormatType\n\n",
+        "unions": [
+            {
+                "name": "FormatType",
+                "comment": " Dates can be formatted using a\n`Cldr.Format.Length.Length` or `Cldr.Format.Options.DateOptions`.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "WithLength",
+                        [
+                            "Cldr.Format.Length.Length"
+                        ]
+                    ],
+                    [
+                        "WithOptions",
+                        [
+                            "Cldr.Format.Options.DateOptions"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "format",
+                "comment": " Formats a `Date` using the specified `FormatType` and `Locale`.\n\n    import Cldr.Format.Length exposing (Length(..))\n    import Cldr.Locale exposing (en)\n    import Date\n    import Time exposing (Month(..))\n\n    let\n        date = Date.fromCalendarDate 2000 Jan 1\n    in\n    format (WithLength Short) en date\n    --> \"1/1/00\"\n\n",
+                "type": "Cldr.Format.Date.FormatType -> Internal.Locale.Locale -> Date.Date -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Cldr.Format.DateTime",
+        "comment": "\n\n\n# DateTime Formatting\n\n@docs format\n\n\n## Format Type\n\n@docs FormatType\n@docs short, medium, long, full\n\n",
+        "unions": [
+            {
+                "name": "FormatType",
+                "comment": " The different combinations of date and time that can be formatted.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "DateOnly",
+                        [
+                            "Cldr.Format.Length.Length"
+                        ]
+                    ],
+                    [
+                        "TimeOnly",
+                        [
+                            "Cldr.Format.Length.Length"
+                        ]
+                    ],
+                    [
+                        "DateAndTime",
+                        [
+                            "{ date : Cldr.Format.Length.Length, time : Cldr.Format.Length.Length }"
+                        ]
+                    ],
+                    [
+                        "WithOptions",
+                        [
+                            "Cldr.Format.Options.DateTimeOptions"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "format",
+                "comment": " Format a `Time.Posix` value, using the format for a specified `FormatType`, `Locale`, and `Time.Zone`\n\n    import Time\n    import Cldr.Locale exposing (en)\n\n    format short en Time.utc (Time.millisToPosix 959829796738)\n    --> \"6/1/00, 3:23 AM\"\n\n",
+                "type": "Cldr.Format.DateTime.FormatType -> Internal.Locale.Locale -> Time.Zone -> Time.Posix -> String.String"
+            },
+            {
+                "name": "full",
+                "comment": " Use `Full` for both date and time\n",
+                "type": "Cldr.Format.DateTime.FormatType"
+            },
+            {
+                "name": "long",
+                "comment": " Use `Long` for both date and time\n",
+                "type": "Cldr.Format.DateTime.FormatType"
+            },
+            {
+                "name": "medium",
+                "comment": " Use `Medium` for both date and time\n",
+                "type": "Cldr.Format.DateTime.FormatType"
+            },
+            {
+                "name": "short",
+                "comment": " Use `Short` for both date and time\n",
+                "type": "Cldr.Format.DateTime.FormatType"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Cldr.Format.Length",
+        "comment": "\n\n\n# Length\n\nProvides the length values for `Cldr.Format.Date` and `Cldr.Format.DateTime`\n\n@docs Length\n\n",
+        "unions": [
+            {
+                "name": "Length",
+                "comment": " There are four lengths for formatting.\nThese determine how verbose the formatted output will be.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Short",
+                        []
+                    ],
+                    [
+                        "Medium",
+                        []
+                    ],
+                    [
+                        "Long",
+                        []
+                    ],
+                    [
+                        "Full",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "Cldr.Format.Options",
+        "comment": "\n\n\n# Formatting Options\n\n\n## Options for DateTime Formatting\n\n@docs DateTimeOptions, defaultDateTimeOptions\n\n\n## Options for Date Formatting\n\n@docs DateOptions, defaultDateOptions\n\n\n## Common Option Types\n\n@docs TextOption, NumberOption, NumberOrTextOption\n@docs HourType, FractionalDigits, NameOption\n\n",
+        "unions": [
+            {
+                "name": "FractionalDigits",
+                "comment": " A value to choose the number of fractional digits to display.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "One",
+                        []
+                    ],
+                    [
+                        "Two",
+                        []
+                    ],
+                    [
+                        "Three",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "HourType",
+                "comment": " A value to choose between 12 and 24 hour based formatting.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Hour12",
+                        []
+                    ],
+                    [
+                        "Hour24",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "NameOption",
+                "comment": " Time Zone names can only be \"short\" or \"long\".\n",
+                "args": [],
+                "cases": [
+                    [
+                        "ShortName",
+                        []
+                    ],
+                    [
+                        "LongName",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "NumberOption",
+                "comment": " A value for number-based options, such as year or hour.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Numeric",
+                        []
+                    ],
+                    [
+                        "TwoDigit",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "NumberOrTextOption",
+                "comment": " A value for options that can use text or numbers, such as month.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Text",
+                        [
+                            "Cldr.Format.Options.TextOption"
+                        ]
+                    ],
+                    [
+                        "Number",
+                        [
+                            "Cldr.Format.Options.NumberOption"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "TextOption",
+                "comment": " A value for text-based options, such as weekday name and am/pm period.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Short",
+                        []
+                    ],
+                    [
+                        "Long",
+                        []
+                    ],
+                    [
+                        "Narrow",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "DateOptions",
+                "comment": " The options that are relevant to formatting a Date value.\n\nThese match a subset of the options that can be used in the\n[`Intl.DateTimeFormat`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat) JS [API](https://402.ecma-international.org/8.0/#table-datetimeformat-components).\n\n",
+                "args": [],
+                "type": "{ era : Maybe.Maybe Cldr.Format.Options.TextOption, year : Maybe.Maybe Cldr.Format.Options.NumberOption, month : Maybe.Maybe Cldr.Format.Options.NumberOrTextOption, day : Maybe.Maybe Cldr.Format.Options.NumberOption, weekday : Maybe.Maybe Cldr.Format.Options.TextOption }"
+            },
+            {
+                "name": "DateTimeOptions",
+                "comment": " The options that are relevant to formatting a DateTime value.\n\nThese match the options that can be used in the\n[`Intl.DateTimeFormat`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat) JS [API](https://402.ecma-international.org/8.0/#table-datetimeformat-components).\n\n",
+                "args": [],
+                "type": "{ era : Maybe.Maybe Cldr.Format.Options.TextOption, year : Maybe.Maybe Cldr.Format.Options.NumberOption, month : Maybe.Maybe Cldr.Format.Options.NumberOrTextOption, day : Maybe.Maybe Cldr.Format.Options.NumberOption, weekday : Maybe.Maybe Cldr.Format.Options.TextOption, period : Maybe.Maybe Cldr.Format.Options.TextOption, dayPeriod : Maybe.Maybe Cldr.Format.Options.TextOption, hour : Maybe.Maybe Cldr.Format.Options.NumberOption, minute : Maybe.Maybe Cldr.Format.Options.NumberOption, second : Maybe.Maybe Cldr.Format.Options.NumberOption, fractionalSecondDigits : Maybe.Maybe Cldr.Format.Options.FractionalDigits, zone : Maybe.Maybe Cldr.Format.Options.NameOption, hour12 : Maybe.Maybe Cldr.Format.Options.HourType }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultDateOptions",
+                "comment": " A default record that can be used. Defaults each option to Nothing.\n\n    import Cldr.Format.Options exposing (defaultDateOptions)\n\n    options =\n        { defaultDateOptionis | year = Just Numeric }\n\n",
+                "type": "Cldr.Format.Options.DateOptions"
+            },
+            {
+                "name": "defaultDateTimeOptions",
+                "comment": " A default record that can be used. Defaults each option to Nothing.\n\n    import Cldr.Format.Options exposing (defaultDateTimeOptions)\n\n    options =\n        { defaultDateTimeOptions | hour = Just Numeric }\n\n",
+                "type": "Cldr.Format.Options.DateTimeOptions"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Cldr.Format.OptionsBuilder",
+        "comment": " Build options records using type-safe helper functions.\n\n    import Cldr.Format.Options exposing (..)\n\n    options : DateTimeOptions\n    options =\n        initDateTime\n            |> setYear Numeric\n            |> setMonthText Short\n            |> setDay Numeric\n            |> setHour Numeric\n            |> setMinute TwoDigit\n            |> setPeriod Short\n            |> toOptions\n\n@docs OptionsBuilder\n\n\n# Initialize\n\n@docs initDateTime, initDate\n\n\n# Set options\n\n\n## Date options\n\n@docs setEra, setYear, setMonthNumber, setMonthText, setDay, setWeekday\n\n\n## DateTime specific options\n\n@docs setPeriod, setHour, setMinute, setSecond, setFractionalSecondDigits\n@docs setZone, setHour12\n\n\n## Convert\n\n@docs toOptions\n\n",
+        "unions": [
+            {
+                "name": "OptionsBuilder",
+                "comment": " An opaque type that uses the \"phantom builder\" pattern.\n",
+                "args": [
+                    "a",
+                    "b"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "initDate",
+                "comment": " Start building a `DateTime` value\n",
+                "type": "Cldr.Format.OptionsBuilder.OptionsBuilder Cldr.Format.OptionsBuilder.EmptyDate Cldr.Format.Options.DateOptions"
+            },
+            {
+                "name": "initDateTime",
+                "comment": " Start building a `DateTimeOptions` value\n",
+                "type": "Cldr.Format.OptionsBuilder.OptionsBuilder Cldr.Format.OptionsBuilder.EmptyDateTime Cldr.Format.Options.DateTimeOptions"
+            },
+            {
+                "name": "setDay",
+                "comment": " Set the `day` field.\n",
+                "type": "Cldr.Format.Options.NumberOption -> Cldr.Format.OptionsBuilder.OptionsBuilder (Cldr.Format.OptionsBuilder.DayNotSetYet a) (Cldr.Format.OptionsBuilder.HasDay b) -> Cldr.Format.OptionsBuilder.OptionsBuilder a (Cldr.Format.OptionsBuilder.HasDay b)"
+            },
+            {
+                "name": "setEra",
+                "comment": " Set the `era` field.\n",
+                "type": "Cldr.Format.Options.TextOption -> Cldr.Format.OptionsBuilder.OptionsBuilder (Cldr.Format.OptionsBuilder.EraNotSetYet a) (Cldr.Format.OptionsBuilder.HasEra b) -> Cldr.Format.OptionsBuilder.OptionsBuilder a (Cldr.Format.OptionsBuilder.HasEra b)"
+            },
+            {
+                "name": "setFractionalSecondDigits",
+                "comment": " Set the `fractionalSecondDigits` field.\n",
+                "type": "Cldr.Format.Options.FractionalDigits -> Cldr.Format.OptionsBuilder.OptionsBuilder (Cldr.Format.OptionsBuilder.FractionalSecondDigitsNotSetYet a) (Cldr.Format.OptionsBuilder.HasFractionalSecondDigits b) -> Cldr.Format.OptionsBuilder.OptionsBuilder a (Cldr.Format.OptionsBuilder.HasFractionalSecondDigits b)"
+            },
+            {
+                "name": "setHour",
+                "comment": " Set the `hour` field.\n",
+                "type": "Cldr.Format.Options.NumberOption -> Cldr.Format.OptionsBuilder.OptionsBuilder (Cldr.Format.OptionsBuilder.HourNotSetYet a) (Cldr.Format.OptionsBuilder.HasHour b) -> Cldr.Format.OptionsBuilder.OptionsBuilder a (Cldr.Format.OptionsBuilder.HasHour b)"
+            },
+            {
+                "name": "setHour12",
+                "comment": " Set the `hour12` field.\n",
+                "type": "Cldr.Format.Options.HourType -> Cldr.Format.OptionsBuilder.OptionsBuilder (Cldr.Format.OptionsBuilder.Hour12NotSetYet a) (Cldr.Format.OptionsBuilder.HasHour12 b) -> Cldr.Format.OptionsBuilder.OptionsBuilder a (Cldr.Format.OptionsBuilder.HasHour12 b)"
+            },
+            {
+                "name": "setMinute",
+                "comment": " Set the `minute` field.\n",
+                "type": "Cldr.Format.Options.NumberOption -> Cldr.Format.OptionsBuilder.OptionsBuilder (Cldr.Format.OptionsBuilder.MinuteNotSetYet a) (Cldr.Format.OptionsBuilder.HasMinute b) -> Cldr.Format.OptionsBuilder.OptionsBuilder a (Cldr.Format.OptionsBuilder.HasMinute b)"
+            },
+            {
+                "name": "setMonthNumber",
+                "comment": " Set the `month` field to a `NumberOption` value.\n",
+                "type": "Cldr.Format.Options.NumberOption -> Cldr.Format.OptionsBuilder.OptionsBuilder (Cldr.Format.OptionsBuilder.MonthNotSetYet a) (Cldr.Format.OptionsBuilder.HasMonth b) -> Cldr.Format.OptionsBuilder.OptionsBuilder a (Cldr.Format.OptionsBuilder.HasMonth b)"
+            },
+            {
+                "name": "setMonthText",
+                "comment": " Set the `month` field to a `TextOption` value.\n",
+                "type": "Cldr.Format.Options.TextOption -> Cldr.Format.OptionsBuilder.OptionsBuilder (Cldr.Format.OptionsBuilder.MonthNotSetYet a) (Cldr.Format.OptionsBuilder.HasMonth b) -> Cldr.Format.OptionsBuilder.OptionsBuilder a (Cldr.Format.OptionsBuilder.HasMonth b)"
+            },
+            {
+                "name": "setPeriod",
+                "comment": " Set the `period` field.\n",
+                "type": "Cldr.Format.Options.TextOption -> Cldr.Format.OptionsBuilder.OptionsBuilder (Cldr.Format.OptionsBuilder.PeriodNotSetYet a) (Cldr.Format.OptionsBuilder.HasPeriod b) -> Cldr.Format.OptionsBuilder.OptionsBuilder a (Cldr.Format.OptionsBuilder.HasPeriod b)"
+            },
+            {
+                "name": "setSecond",
+                "comment": " Set the `second` field.\n",
+                "type": "Cldr.Format.Options.NumberOption -> Cldr.Format.OptionsBuilder.OptionsBuilder (Cldr.Format.OptionsBuilder.SecondNotSetYet a) (Cldr.Format.OptionsBuilder.HasSecond b) -> Cldr.Format.OptionsBuilder.OptionsBuilder a (Cldr.Format.OptionsBuilder.HasSecond b)"
+            },
+            {
+                "name": "setWeekday",
+                "comment": " Set the `weekday` field.\n",
+                "type": "Cldr.Format.Options.TextOption -> Cldr.Format.OptionsBuilder.OptionsBuilder (Cldr.Format.OptionsBuilder.WeekdayNotSetYet a) (Cldr.Format.OptionsBuilder.HasWeekday b) -> Cldr.Format.OptionsBuilder.OptionsBuilder a (Cldr.Format.OptionsBuilder.HasWeekday b)"
+            },
+            {
+                "name": "setYear",
+                "comment": " Set the `year` field.\n",
+                "type": "Cldr.Format.Options.NumberOption -> Cldr.Format.OptionsBuilder.OptionsBuilder (Cldr.Format.OptionsBuilder.YearNotSetYet a) (Cldr.Format.OptionsBuilder.HasYear b) -> Cldr.Format.OptionsBuilder.OptionsBuilder a (Cldr.Format.OptionsBuilder.HasYear b)"
+            },
+            {
+                "name": "setZone",
+                "comment": " Set the `zone` field.\n",
+                "type": "Cldr.Format.Options.NameOption -> Cldr.Format.OptionsBuilder.OptionsBuilder (Cldr.Format.OptionsBuilder.ZoneNotSetYet a) (Cldr.Format.OptionsBuilder.HasZone b) -> Cldr.Format.OptionsBuilder.OptionsBuilder a (Cldr.Format.OptionsBuilder.HasZone b)"
+            },
+            {
+                "name": "toOptions",
+                "comment": " Get the options that you have built.\n",
+                "type": "Cldr.Format.OptionsBuilder.OptionsBuilder a b -> b"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Cldr.Locale",
+        "comment": "\n\n\n# Locale\n\n@docs Locale\n\n\n## Create\n\n@docs fromString\n\n@docs allLocales, basicLocales\n\n\n## Convert\n\n@docs toUnicode\n\n\n## Locales by language\n\n\n### Af\n\n@docs af, af_NA\n\n\n### Am\n\n@docs am\n\n\n### Ar\n\n@docs ar, ar_AE, ar_BH, ar_DJ, ar_DZ, ar_EG, ar_EH, ar_ER, ar_IL, ar_IQ, ar_JO, ar_KM, ar_KW, ar_LB, ar_LY, ar_MA\n@docs ar_MR, ar_OM, ar_PS, ar_QA, ar_SA, ar_SD, ar_SO, ar_SS, ar_SY, ar_TD, ar_TN, ar_YE\n\n\n### As\n\n@docs locale_as\n\n\n### Az\n\n@docs az, az_Latn\n\n\n### Be\n\n@docs be, be_TARASK\n\n\n### Bg\n\n@docs bg\n\n\n### Bn\n\n@docs bn, bn_IN\n\n\n### Bs\n\n@docs bs, bs_Latn\n\n\n### Ca\n\n@docs ca, ca_AD, ca_ES_VALENCIA, ca_FR, ca_IT\n\n\n### Cs\n\n@docs cs\n\n\n### Cy\n\n@docs cy\n\n\n### Da\n\n@docs da, da_GL\n\n\n### De\n\n@docs de, de_AT, de_BE, de_CH, de_IT, de_LI, de_LU\n\n\n### El\n\n@docs el, el_CY\n\n\n### En\n\n@docs en, en_001, en_150, en_AE, en_AG, en_AI, en_AS, en_AT, en_AU, en_BB, en_BE, en_BI, en_BM, en_BS, en_BW, en_BZ\n@docs en_CA, en_CC, en_CH, en_CK, en_CM, en_CX, en_CY, en_DE, en_DG, en_DK, en_DM, en_ER, en_FI, en_FJ, en_FK, en_FM\n@docs en_GB, en_GD, en_GG, en_GH, en_GI, en_GM, en_GU, en_GY, en_HK, en_IE, en_IL, en_IM, en_IN, en_IO, en_JE, en_JM\n@docs en_KE, en_KI, en_KN, en_KY, en_LC, en_LR, en_LS, en_Latn, en_MG, en_MH, en_MO, en_MP, en_MS, en_MT, en_MU\n@docs en_MV, en_MW, en_MY, en_NA, en_NF, en_NG, en_NL, en_NR, en_NU, en_NZ, en_PG, en_PH, en_PK, en_PN, en_PR, en_PW\n@docs en_RW, en_SB, en_SC, en_SD, en_SE, en_SG, en_SH, en_SI, en_SL, en_SS, en_SX, en_SZ, en_TC, en_TK, en_TO, en_TT\n@docs en_TV, en_TZ, en_UG, en_UM, en_VC, en_VG, en_VI, en_VU, en_WS, en_ZA, en_ZM, en_ZW\n\n\n### Es\n\n@docs es, es_419, es_AR, es_BO, es_BR, es_BZ, es_CL, es_CO, es_CR, es_CU, es_DO, es_EA, es_EC, es_GQ, es_GT, es_HN\n@docs es_IC, es_MX, es_NI, es_PA, es_PE, es_PH, es_PR, es_PY, es_SV, es_US, es_UY, es_VE\n\n\n### Et\n\n@docs et\n\n\n### Eu\n\n@docs eu\n\n\n### Fa\n\n@docs fa, fa_AF\n\n\n### Fi\n\n@docs fi\n\n\n### Fil\n\n@docs fil\n\n\n### Fr\n\n@docs fr, fr_BE, fr_BF, fr_BI, fr_BJ, fr_BL, fr_CA, fr_CD, fr_CF, fr_CG, fr_CH, fr_CI, fr_CM, fr_DJ, fr_DZ, fr_GA\n@docs fr_GF, fr_GN, fr_GP, fr_GQ, fr_HT, fr_KM, fr_LU, fr_MA, fr_MC, fr_MF, fr_MG, fr_ML, fr_MQ, fr_MR, fr_MU, fr_NC\n@docs fr_NE, fr_PF, fr_PM, fr_RE, fr_RW, fr_SC, fr_SN, fr_SY, fr_TD, fr_TG, fr_TN, fr_VU, fr_WF, fr_YT\n\n\n### Ga\n\n@docs ga, ga_GB\n\n\n### Gl\n\n@docs gl\n\n\n### Gu\n\n@docs gu\n\n\n### He\n\n@docs he\n\n\n### Hi\n\n@docs hi\n\n\n### Hr\n\n@docs hr, hr_BA\n\n\n### Hu\n\n@docs hu\n\n\n### Hy\n\n@docs hy\n\n\n### Id\n\n@docs id\n\n\n### Is\n\n@docs is\n\n\n### It\n\n@docs it, it_CH, it_SM, it_VA\n\n\n### Ja\n\n@docs ja\n\n\n### Jv\n\n@docs jv\n\n\n### Ka\n\n@docs ka\n\n\n### Kk\n\n@docs kk\n\n\n### Km\n\n@docs km\n\n\n### Kn\n\n@docs kn\n\n\n### Ko\n\n@docs ko, ko_KP\n\n\n### Ky\n\n@docs ky\n\n\n### Lo\n\n@docs lo\n\n\n### Lt\n\n@docs lt\n\n\n### Lv\n\n@docs lv\n\n\n### Mk\n\n@docs mk\n\n\n### Ml\n\n@docs ml\n\n\n### Mn\n\n@docs mn\n\n\n### Mr\n\n@docs mr\n\n\n### Ms\n\n@docs ms, ms_BN, ms_ID, ms_SG\n\n\n### My\n\n@docs my\n\n\n### Nb\n\n@docs nb, nb_SJ\n\n\n### Ne\n\n@docs ne, ne_IN\n\n\n### Nl\n\n@docs nl, nl_AW, nl_BE, nl_BQ, nl_CW, nl_SR, nl_SX\n\n\n### Nn\n\n@docs nn\n\n\n### No\n\n@docs no\n\n\n### Or\n\n@docs or\n\n\n### Pa\n\n@docs pa, pa_Guru\n\n\n### Pl\n\n@docs pl\n\n\n### Ps\n\n@docs ps, ps_PK\n\n\n### Pt\n\n@docs pt, pt_AO, pt_CH, pt_CV, pt_GQ, pt_GW, pt_LU, pt_MO, pt_MZ, pt_PT, pt_ST, pt_TL\n\n\n### Ro\n\n@docs ro, ro_MD\n\n\n### Ru\n\n@docs ru, ru_BY, ru_KG, ru_KZ, ru_MD, ru_UA\n\n\n### Sd\n\n@docs sd, sd_Arab\n\n\n### Si\n\n@docs si\n\n\n### Sk\n\n@docs sk\n\n\n### Sl\n\n@docs sl\n\n\n### So\n\n@docs so, so_DJ, so_ET, so_KE\n\n\n### Sq\n\n@docs sq, sq_MK, sq_XK\n\n\n### Sr\n\n@docs sr, sr_Cyrl, sr_Cyrl_BA, sr_Cyrl_ME, sr_Cyrl_XK, sr_Latn, sr_Latn_BA, sr_Latn_ME, sr_Latn_XK\n\n\n### Sv\n\n@docs sv, sv_AX, sv_FI\n\n\n### Sw\n\n@docs sw, sw_CD, sw_KE, sw_UG\n\n\n### Ta\n\n@docs ta, ta_LK, ta_MY, ta_SG\n\n\n### Te\n\n@docs te\n\n\n### Th\n\n@docs th\n\n\n### Tk\n\n@docs tk\n\n\n### Tr\n\n@docs tr, tr_CY\n\n\n### Uk\n\n@docs uk\n\n\n### Root\n\n@docs root\n\n\n### Ur\n\n@docs ur, ur_IN\n\n\n### Uz\n\n@docs uz, uz_Latn\n\n\n### Vi\n\n@docs vi\n\n\n### Yue\n\n@docs yue, yue_Hant\n\n\n### Zh\n\n@docs zh, zh_Hans, zh_Hans_HK, zh_Hans_MO, zh_Hans_SG, zh_Hant, zh_Hant_HK, zh_Hant_MO\n\n\n### Zu\n\n@docs zu\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Locale",
+                "comment": " Represents the locale to use for formatting.\n\nYou can parse a value from JS like `navigator.language` or use hardcoded locales.\n\n",
+                "args": [],
+                "type": "Internal.Locale.Locale"
+            }
+        ],
+        "values": [
+            {
+                "name": "af",
+                "comment": " Date format strings:\n\n  - Short : y-MM-dd\n  - Medium : dd MMM y\n  - Long : dd MMMM y\n  - Full : EEEE dd MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "af_NA",
+                "comment": " Date format strings:\n\n  - Short : y-MM-dd\n  - Medium : dd MMM y\n  - Long : dd MMMM y\n  - Full : EEEE dd MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "allLocales",
+                "comment": " A list of every locale listed in the JSON version of the CLDR.\n",
+                "type": "List.List Cldr.Locale.Locale"
+            },
+            {
+                "name": "am",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : y MMMM d, EEEE\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "ar",
+                "comment": " Date format strings:\n\n  - Short : d‏/M‏/y\n  - Medium : dd‏/MM‏/y\n  - Long : d MMMM y\n  - Full : EEEE، d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "ar_AE",
+                "comment": " Date format strings:\n\n  - Short : d‏/M‏/y\n  - Medium : dd‏/MM‏/y\n  - Long : d MMMM y\n  - Full : EEEE، d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "ar_BH",
+                "comment": " Date format strings:\n\n  - Short : d‏/M‏/y\n  - Medium : dd‏/MM‏/y\n  - Long : d MMMM y\n  - Full : EEEE، d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "ar_DJ",
+                "comment": " Date format strings:\n\n  - Short : d‏/M‏/y\n  - Medium : dd‏/MM‏/y\n  - Long : d MMMM y\n  - Full : EEEE، d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "ar_DZ",
+                "comment": " Date format strings:\n\n  - Short : d‏/M‏/y\n  - Medium : dd‏/MM‏/y\n  - Long : d MMMM y\n  - Full : EEEE، d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "ar_EG",
+                "comment": " Date format strings:\n\n  - Short : d‏/M‏/y\n  - Medium : dd‏/MM‏/y\n  - Long : d MMMM y\n  - Full : EEEE، d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "ar_EH",
+                "comment": " Date format strings:\n\n  - Short : d‏/M‏/y\n  - Medium : dd‏/MM‏/y\n  - Long : d MMMM y\n  - Full : EEEE، d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "ar_ER",
+                "comment": " Date format strings:\n\n  - Short : d‏/M‏/y\n  - Medium : dd‏/MM‏/y\n  - Long : d MMMM y\n  - Full : EEEE، d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "ar_IL",
+                "comment": " Date format strings:\n\n  - Short : d‏/M‏/y\n  - Medium : dd‏/MM‏/y\n  - Long : d MMMM y\n  - Full : EEEE، d MMMM y\n\nTime format strings:\n\n  - Short : H:mm\n  - Medium : H:mm:ss\n  - Long : H:mm:ss z\n  - Full : H:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "ar_IQ",
+                "comment": " Date format strings:\n\n  - Short : d‏/M‏/y\n  - Medium : dd‏/MM‏/y\n  - Long : d MMMM y\n  - Full : EEEE، d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "ar_JO",
+                "comment": " Date format strings:\n\n  - Short : d‏/M‏/y\n  - Medium : dd‏/MM‏/y\n  - Long : d MMMM y\n  - Full : EEEE، d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "ar_KM",
+                "comment": " Date format strings:\n\n  - Short : d‏/M‏/y\n  - Medium : dd‏/MM‏/y\n  - Long : d MMMM y\n  - Full : EEEE، d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "ar_KW",
+                "comment": " Date format strings:\n\n  - Short : d‏/M‏/y\n  - Medium : dd‏/MM‏/y\n  - Long : d MMMM y\n  - Full : EEEE، d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "ar_LB",
+                "comment": " Date format strings:\n\n  - Short : d‏/M‏/y\n  - Medium : dd‏/MM‏/y\n  - Long : d MMMM y\n  - Full : EEEE، d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "ar_LY",
+                "comment": " Date format strings:\n\n  - Short : d‏/M‏/y\n  - Medium : dd‏/MM‏/y\n  - Long : d MMMM y\n  - Full : EEEE، d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "ar_MA",
+                "comment": " Date format strings:\n\n  - Short : d‏/M‏/y\n  - Medium : dd‏/MM‏/y\n  - Long : d MMMM y\n  - Full : EEEE، d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "ar_MR",
+                "comment": " Date format strings:\n\n  - Short : d‏/M‏/y\n  - Medium : dd‏/MM‏/y\n  - Long : d MMMM y\n  - Full : EEEE، d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "ar_OM",
+                "comment": " Date format strings:\n\n  - Short : d‏/M‏/y\n  - Medium : dd‏/MM‏/y\n  - Long : d MMMM y\n  - Full : EEEE، d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "ar_PS",
+                "comment": " Date format strings:\n\n  - Short : d‏/M‏/y\n  - Medium : dd‏/MM‏/y\n  - Long : d MMMM y\n  - Full : EEEE، d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "ar_QA",
+                "comment": " Date format strings:\n\n  - Short : d‏/M‏/y\n  - Medium : dd‏/MM‏/y\n  - Long : d MMMM y\n  - Full : EEEE، d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "ar_SA",
+                "comment": " Date format strings:\n\n  - Short : d‏/M‏/y\n  - Medium : dd‏/MM‏/y\n  - Long : d MMMM y\n  - Full : EEEE، d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "ar_SD",
+                "comment": " Date format strings:\n\n  - Short : d‏/M‏/y\n  - Medium : dd‏/MM‏/y\n  - Long : d MMMM y\n  - Full : EEEE، d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "ar_SO",
+                "comment": " Date format strings:\n\n  - Short : d‏/M‏/y\n  - Medium : dd‏/MM‏/y\n  - Long : d MMMM y\n  - Full : EEEE، d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "ar_SS",
+                "comment": " Date format strings:\n\n  - Short : d‏/M‏/y\n  - Medium : dd‏/MM‏/y\n  - Long : d MMMM y\n  - Full : EEEE، d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "ar_SY",
+                "comment": " Date format strings:\n\n  - Short : d‏/M‏/y\n  - Medium : dd‏/MM‏/y\n  - Long : d MMMM y\n  - Full : EEEE، d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "ar_TD",
+                "comment": " Date format strings:\n\n  - Short : d‏/M‏/y\n  - Medium : dd‏/MM‏/y\n  - Long : d MMMM y\n  - Full : EEEE، d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "ar_TN",
+                "comment": " Date format strings:\n\n  - Short : d‏/M‏/y\n  - Medium : dd‏/MM‏/y\n  - Long : d MMMM y\n  - Full : EEEE، d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "ar_YE",
+                "comment": " Date format strings:\n\n  - Short : d‏/M‏/y\n  - Medium : dd‏/MM‏/y\n  - Long : d MMMM y\n  - Full : EEEE، d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "az",
+                "comment": " Date format strings:\n\n  - Short : dd.MM.yy\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : d MMMM y, EEEE\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "az_Latn",
+                "comment": " Date format strings:\n\n  - Short : dd.MM.yy\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : d MMMM y, EEEE\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "basicLocales",
+                "comment": " A list of every \"basic\" locale listed in the JSON version of the CLDR.\n\nA \"basic\" locale is a locale without a region, script, or variant subtag, such as `en` or `ru`.\n\n",
+                "type": "List.List Cldr.Locale.Locale"
+            },
+            {
+                "name": "be",
+                "comment": " Date format strings:\n\n  - Short : d.MM.yy\n  - Medium : d MMM y 'г'.\n  - Long : d MMMM y 'г'.\n  - Full : EEEE, d MMMM y 'г'.\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss, zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "be_TARASK",
+                "comment": " Date format strings:\n\n  - Short : d.MM.yy\n  - Medium : d MMM y 'г'.\n  - Long : d MMMM y 'г'.\n  - Full : EEEE, d MMMM y 'г'.\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss, zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "bg",
+                "comment": " Date format strings:\n\n  - Short : d.MM.yy 'г'.\n  - Medium : d.MM.y 'г'.\n  - Long : d MMMM y 'г'.\n  - Full : EEEE, d MMMM y 'г'.\n\nTime format strings:\n\n  - Short : H:mm 'ч'.\n  - Medium : H:mm:ss 'ч'.\n  - Long : H:mm:ss 'ч'. z\n  - Full : H:mm:ss 'ч'. zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "bn",
+                "comment": " Date format strings:\n\n  - Short : d/M/yy\n  - Medium : d MMM, y\n  - Long : d MMMM, y\n  - Full : EEEE, d MMMM, y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "bn_IN",
+                "comment": " Date format strings:\n\n  - Short : d/M/yy\n  - Medium : d MMM, y\n  - Long : d MMMM, y\n  - Full : EEEE, d MMMM, y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "bs",
+                "comment": " Date format strings:\n\n  - Short : d. M. y.\n  - Medium : d. MMM y.\n  - Long : d. MMMM y.\n  - Full : EEEE, d. MMMM y.\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "bs_Latn",
+                "comment": " Date format strings:\n\n  - Short : d. M. y.\n  - Medium : d. MMM y.\n  - Long : d. MMMM y.\n  - Full : EEEE, d. MMMM y.\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "ca",
+                "comment": " Date format strings:\n\n  - Short : d/M/yy\n  - Medium : d MMM y\n  - Long : d MMMM 'de' y\n  - Full : EEEE, d MMMM 'de' y\n\nTime format strings:\n\n  - Short : H:mm\n  - Medium : H:mm:ss\n  - Long : H:mm:ss z\n  - Full : H:mm:ss (zzzz)\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "ca_AD",
+                "comment": " Date format strings:\n\n  - Short : d/M/yy\n  - Medium : d MMM y\n  - Long : d MMMM 'de' y\n  - Full : EEEE, d MMMM 'de' y\n\nTime format strings:\n\n  - Short : H:mm\n  - Medium : H:mm:ss\n  - Long : H:mm:ss z\n  - Full : H:mm:ss (zzzz)\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "ca_ES_VALENCIA",
+                "comment": " Date format strings:\n\n  - Short : d/M/yy\n  - Medium : d MMM y\n  - Long : d MMMM 'de' y\n  - Full : EEEE, d MMMM 'de' y\n\nTime format strings:\n\n  - Short : H:mm\n  - Medium : H:mm:ss\n  - Long : H:mm:ss z\n  - Full : H:mm:ss (zzzz)\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "ca_FR",
+                "comment": " Date format strings:\n\n  - Short : d/M/yy\n  - Medium : d MMM y\n  - Long : d MMMM 'de' y\n  - Full : EEEE, d MMMM 'de' y\n\nTime format strings:\n\n  - Short : H:mm\n  - Medium : H:mm:ss\n  - Long : H:mm:ss z\n  - Full : H:mm:ss (zzzz)\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "ca_IT",
+                "comment": " Date format strings:\n\n  - Short : d/M/yy\n  - Medium : d MMM y\n  - Long : d MMMM 'de' y\n  - Full : EEEE, d MMMM 'de' y\n\nTime format strings:\n\n  - Short : H:mm\n  - Medium : H:mm:ss\n  - Long : H:mm:ss z\n  - Full : H:mm:ss (zzzz)\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "cs",
+                "comment": " Date format strings:\n\n  - Short : dd.MM.yy\n  - Medium : d. M. y\n  - Long : d. MMMM y\n  - Full : EEEE d. MMMM y\n\nTime format strings:\n\n  - Short : H:mm\n  - Medium : H:mm:ss\n  - Long : H:mm:ss z\n  - Full : H:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "cy",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/yy\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "da",
+                "comment": " Date format strings:\n\n  - Short : dd.MM.y\n  - Medium : d. MMM y\n  - Long : d. MMMM y\n  - Full : EEEE 'den' d. MMMM y\n\nTime format strings:\n\n  - Short : HH.mm\n  - Medium : HH.mm.ss\n  - Long : HH.mm.ss z\n  - Full : HH.mm.ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "da_GL",
+                "comment": " Date format strings:\n\n  - Short : dd.MM.y\n  - Medium : d. MMM y\n  - Long : d. MMMM y\n  - Full : EEEE 'den' d. MMMM y\n\nTime format strings:\n\n  - Short : HH.mm\n  - Medium : HH.mm.ss\n  - Long : HH.mm.ss z\n  - Full : HH.mm.ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "de",
+                "comment": " Date format strings:\n\n  - Short : dd.MM.yy\n  - Medium : dd.MM.y\n  - Long : d. MMMM y\n  - Full : EEEE, d. MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "de_AT",
+                "comment": " Date format strings:\n\n  - Short : dd.MM.yy\n  - Medium : dd.MM.y\n  - Long : d. MMMM y\n  - Full : EEEE, d. MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "de_BE",
+                "comment": " Date format strings:\n\n  - Short : dd.MM.yy\n  - Medium : dd.MM.y\n  - Long : d. MMMM y\n  - Full : EEEE, d. MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "de_CH",
+                "comment": " Date format strings:\n\n  - Short : dd.MM.yy\n  - Medium : dd.MM.y\n  - Long : d. MMMM y\n  - Full : EEEE, d. MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "de_IT",
+                "comment": " Date format strings:\n\n  - Short : dd.MM.yy\n  - Medium : dd.MM.y\n  - Long : d. MMMM y\n  - Full : EEEE, d. MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "de_LI",
+                "comment": " Date format strings:\n\n  - Short : dd.MM.yy\n  - Medium : dd.MM.y\n  - Long : d. MMMM y\n  - Full : EEEE, d. MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "de_LU",
+                "comment": " Date format strings:\n\n  - Short : dd.MM.yy\n  - Medium : dd.MM.y\n  - Long : d. MMMM y\n  - Full : EEEE, d. MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "el",
+                "comment": " Date format strings:\n\n  - Short : d/M/yy\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "el_CY",
+                "comment": " Date format strings:\n\n  - Short : d/M/yy\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en",
+                "comment": " Date format strings:\n\n  - Short : M/d/yy\n  - Medium : MMM d, y\n  - Long : MMMM d, y\n  - Full : EEEE, MMMM d, y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_001",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_150",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_AE",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_AG",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_AI",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_AS",
+                "comment": " Date format strings:\n\n  - Short : M/d/yy\n  - Medium : MMM d, y\n  - Long : MMMM d, y\n  - Full : EEEE, MMMM d, y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_AT",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_AU",
+                "comment": " Date format strings:\n\n  - Short : d/M/yy\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_BB",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_BE",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/yy\n  - Medium : dd MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_BI",
+                "comment": " Date format strings:\n\n  - Short : M/d/yy\n  - Medium : MMM d, y\n  - Long : MMMM d, y\n  - Full : EEEE, MMMM d, y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_BM",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_BS",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_BW",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/yy\n  - Medium : dd MMM y\n  - Long : dd MMMM y\n  - Full : EEEE, dd MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_BZ",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/yy\n  - Medium : dd-MMM-y\n  - Long : dd MMMM y\n  - Full : EEEE, dd MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_CA",
+                "comment": " Date format strings:\n\n  - Short : y-MM-dd\n  - Medium : MMM d, y\n  - Long : MMMM d, y\n  - Full : EEEE, MMMM d, y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_CC",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_CH",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_CK",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_CM",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_CX",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_CY",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_DE",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_DG",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_DK",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : HH.mm\n  - Medium : HH.mm.ss\n  - Long : HH.mm.ss z\n  - Full : HH.mm.ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_DM",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_ER",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_FI",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : H.mm\n  - Medium : H.mm.ss\n  - Long : H.mm.ss z\n  - Full : H.mm.ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_FJ",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_FK",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_FM",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_GB",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_GD",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_GG",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_GH",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_GI",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_GM",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_GU",
+                "comment": " Date format strings:\n\n  - Short : M/d/yy\n  - Medium : MMM d, y\n  - Long : MMMM d, y\n  - Full : EEEE, MMMM d, y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_GY",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_HK",
+                "comment": " Date format strings:\n\n  - Short : d/M/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_IE",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_IL",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : H:mm\n  - Medium : H:mm:ss\n  - Long : H:mm:ss z\n  - Full : H:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_IM",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_IN",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/yy\n  - Medium : dd-MMM-y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM, y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_IO",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_JE",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_JM",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_KE",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_KI",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_KN",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_KY",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_LC",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_LR",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_LS",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_Latn",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : dd-MMM-y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM, y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_MG",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_MH",
+                "comment": " Date format strings:\n\n  - Short : M/d/yy\n  - Medium : MMM d, y\n  - Long : MMMM d, y\n  - Full : EEEE, MMMM d, y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_MO",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_MP",
+                "comment": " Date format strings:\n\n  - Short : M/d/yy\n  - Medium : MMM d, y\n  - Long : MMMM d, y\n  - Full : EEEE, MMMM d, y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_MS",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_MT",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : dd MMM y\n  - Long : dd MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_MU",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_MV",
+                "comment": " Date format strings:\n\n  - Short : d-M-yy\n  - Medium : dd-MM-y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_MW",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_MY",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_NA",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_NF",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_NG",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_NL",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_NR",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_NU",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_NZ",
+                "comment": " Date format strings:\n\n  - Short : d/MM/yy\n  - Medium : d/MM/y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_PG",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_PH",
+                "comment": " Date format strings:\n\n  - Short : M/d/yy\n  - Medium : MMM d, y\n  - Long : MMMM d, y\n  - Full : EEEE, MMMM d, y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_PK",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : dd-MMM-y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_PN",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_PR",
+                "comment": " Date format strings:\n\n  - Short : M/d/yy\n  - Medium : MMM d, y\n  - Long : MMMM d, y\n  - Full : EEEE, MMMM d, y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_PW",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_RW",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_SB",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_SC",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_SD",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_SE",
+                "comment": " Date format strings:\n\n  - Short : y-MM-dd\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_SG",
+                "comment": " Date format strings:\n\n  - Short : d/M/yy\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_SH",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_SI",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_SL",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_SS",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_SX",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_SZ",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_TC",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_TK",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_TO",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_TT",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_TV",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_TZ",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_UG",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_UM",
+                "comment": " Date format strings:\n\n  - Short : M/d/yy\n  - Medium : MMM d, y\n  - Long : MMMM d, y\n  - Full : EEEE, MMMM d, y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_VC",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_VG",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_VI",
+                "comment": " Date format strings:\n\n  - Short : M/d/yy\n  - Medium : MMM d, y\n  - Long : MMMM d, y\n  - Full : EEEE, MMMM d, y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_VU",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_WS",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_ZA",
+                "comment": " Date format strings:\n\n  - Short : y/MM/dd\n  - Medium : dd MMM y\n  - Long : dd MMMM y\n  - Full : EEEE, dd MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_ZM",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "en_ZW",
+                "comment": " Date format strings:\n\n  - Short : d/M/y\n  - Medium : dd MMM,y\n  - Long : dd MMMM y\n  - Full : EEEE, dd MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "es",
+                "comment": " Date format strings:\n\n  - Short : d/M/yy\n  - Medium : d MMM y\n  - Long : d 'de' MMMM 'de' y\n  - Full : EEEE, d 'de' MMMM 'de' y\n\nTime format strings:\n\n  - Short : H:mm\n  - Medium : H:mm:ss\n  - Long : H:mm:ss z\n  - Full : H:mm:ss (zzzz)\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "es_419",
+                "comment": " Date format strings:\n\n  - Short : d/M/yy\n  - Medium : d MMM y\n  - Long : d 'de' MMMM 'de' y\n  - Full : EEEE, d 'de' MMMM 'de' y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "es_AR",
+                "comment": " Date format strings:\n\n  - Short : d/M/yy\n  - Medium : d MMM y\n  - Long : d 'de' MMMM 'de' y\n  - Full : EEEE, d 'de' MMMM 'de' y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "es_BO",
+                "comment": " Date format strings:\n\n  - Short : d/M/yy\n  - Medium : d MMM 'de' y\n  - Long : d 'de' MMMM 'de' y\n  - Full : EEEE, d 'de' MMMM 'de' y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "es_BR",
+                "comment": " Date format strings:\n\n  - Short : d/M/yy\n  - Medium : d MMM y\n  - Long : d 'de' MMMM 'de' y\n  - Full : EEEE, d 'de' MMMM 'de' y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "es_BZ",
+                "comment": " Date format strings:\n\n  - Short : d/M/yy\n  - Medium : d MMM y\n  - Long : d 'de' MMMM 'de' y\n  - Full : EEEE, d 'de' MMMM 'de' y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "es_CL",
+                "comment": " Date format strings:\n\n  - Short : dd-MM-yy\n  - Medium : dd-MM-y\n  - Long : d 'de' MMMM 'de' y\n  - Full : EEEE, d 'de' MMMM 'de' y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "es_CO",
+                "comment": " Date format strings:\n\n  - Short : d/MM/yy\n  - Medium : d/MM/y\n  - Long : d 'de' MMMM 'de' y\n  - Full : EEEE, d 'de' MMMM 'de' y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "es_CR",
+                "comment": " Date format strings:\n\n  - Short : d/M/yy\n  - Medium : d MMM y\n  - Long : d 'de' MMMM 'de' y\n  - Full : EEEE, d 'de' MMMM 'de' y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "es_CU",
+                "comment": " Date format strings:\n\n  - Short : d/M/yy\n  - Medium : d MMM y\n  - Long : d 'de' MMMM 'de' y\n  - Full : EEEE, d 'de' MMMM 'de' y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "es_DO",
+                "comment": " Date format strings:\n\n  - Short : d/M/yy\n  - Medium : d MMM y\n  - Long : d 'de' MMMM 'de' y\n  - Full : EEEE, d 'de' MMMM 'de' y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "es_EA",
+                "comment": " Date format strings:\n\n  - Short : d/M/yy\n  - Medium : d MMM y\n  - Long : d 'de' MMMM 'de' y\n  - Full : EEEE, d 'de' MMMM 'de' y\n\nTime format strings:\n\n  - Short : H:mm\n  - Medium : H:mm:ss\n  - Long : H:mm:ss z\n  - Full : H:mm:ss (zzzz)\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "es_EC",
+                "comment": " Date format strings:\n\n  - Short : d/M/yy\n  - Medium : d MMM y\n  - Long : d 'de' MMMM 'de' y\n  - Full : EEEE, d 'de' MMMM 'de' y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "es_GQ",
+                "comment": " Date format strings:\n\n  - Short : d/M/yy\n  - Medium : d MMM y\n  - Long : d 'de' MMMM 'de' y\n  - Full : EEEE, d 'de' MMMM 'de' y\n\nTime format strings:\n\n  - Short : H:mm\n  - Medium : H:mm:ss\n  - Long : H:mm:ss z\n  - Full : H:mm:ss (zzzz)\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "es_GT",
+                "comment": " Date format strings:\n\n  - Short : d/MM/yy\n  - Medium : d/MM/y\n  - Long : d 'de' MMMM 'de' y\n  - Full : EEEE, d 'de' MMMM 'de' y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "es_HN",
+                "comment": " Date format strings:\n\n  - Short : d/M/yy\n  - Medium : d MMM y\n  - Long : dd 'de' MMMM 'de' y\n  - Full : EEEE dd 'de' MMMM 'de' y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "es_IC",
+                "comment": " Date format strings:\n\n  - Short : d/M/yy\n  - Medium : d MMM y\n  - Long : d 'de' MMMM 'de' y\n  - Full : EEEE, d 'de' MMMM 'de' y\n\nTime format strings:\n\n  - Short : H:mm\n  - Medium : H:mm:ss\n  - Long : H:mm:ss z\n  - Full : H:mm:ss (zzzz)\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "es_MX",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/yy\n  - Medium : d MMM y\n  - Long : d 'de' MMMM 'de' y\n  - Full : EEEE, d 'de' MMMM 'de' y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "es_NI",
+                "comment": " Date format strings:\n\n  - Short : d/M/yy\n  - Medium : d MMM y\n  - Long : d 'de' MMMM 'de' y\n  - Full : EEEE, d 'de' MMMM 'de' y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "es_PA",
+                "comment": " Date format strings:\n\n  - Short : MM/dd/yy\n  - Medium : MM/dd/y\n  - Long : d 'de' MMMM 'de' y\n  - Full : EEEE, d 'de' MMMM 'de' y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "es_PE",
+                "comment": " Date format strings:\n\n  - Short : d/MM/yy\n  - Medium : d MMM y\n  - Long : d 'de' MMMM 'de' y\n  - Full : EEEE, d 'de' MMMM 'de' y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "es_PH",
+                "comment": " Date format strings:\n\n  - Short : d/M/yy\n  - Medium : d MMM y\n  - Long : d 'de' MMMM 'de' y\n  - Full : EEEE, d 'de' MMMM 'de' y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "es_PR",
+                "comment": " Date format strings:\n\n  - Short : MM/dd/yy\n  - Medium : MM/dd/y\n  - Long : d 'de' MMMM 'de' y\n  - Full : EEEE, d 'de' MMMM 'de' y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "es_PY",
+                "comment": " Date format strings:\n\n  - Short : d/M/yy\n  - Medium : d MMM y\n  - Long : d 'de' MMMM 'de' y\n  - Full : EEEE, d 'de' MMMM 'de' y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "es_SV",
+                "comment": " Date format strings:\n\n  - Short : d/M/yy\n  - Medium : d MMM y\n  - Long : d 'de' MMMM 'de' y\n  - Full : EEEE, d 'de' MMMM 'de' y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "es_US",
+                "comment": " Date format strings:\n\n  - Short : d/M/y\n  - Medium : d MMM y\n  - Long : d 'de' MMMM 'de' y\n  - Full : EEEE, d 'de' MMMM 'de' y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "es_UY",
+                "comment": " Date format strings:\n\n  - Short : d/M/yy\n  - Medium : d MMM y\n  - Long : d 'de' MMMM 'de' y\n  - Full : EEEE, d 'de' MMMM 'de' y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "es_VE",
+                "comment": " Date format strings:\n\n  - Short : d/M/yy\n  - Medium : d MMM y\n  - Long : d 'de' MMMM 'de' y\n  - Full : EEEE, d 'de' MMMM 'de' y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "et",
+                "comment": " Date format strings:\n\n  - Short : dd.MM.yy\n  - Medium : d. MMM y\n  - Long : d. MMMM y\n  - Full : EEEE, d. MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "eu",
+                "comment": " Date format strings:\n\n  - Short : yy/M/d\n  - Medium : y('e')'ko' MMM d('a')\n  - Long : y('e')'ko' MMMM'ren' d('a')\n  - Full : y('e')'ko' MMMM'ren' d('a'), EEEE\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss (z)\n  - Full : HH:mm:ss (zzzz)\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "fa",
+                "comment": " Date format strings:\n\n  - Short : y/M/d\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : H:mm\n  - Medium : H:mm:ss\n  - Long : H:mm:ss (z)\n  - Full : H:mm:ss (zzzz)\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "fa_AF",
+                "comment": " Date format strings:\n\n  - Short : y/M/d\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : H:mm\n  - Medium : H:mm:ss\n  - Long : H:mm:ss (z)\n  - Full : H:mm:ss (zzzz)\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "fi",
+                "comment": " Date format strings:\n\n  - Short : d.M.y\n  - Medium : d.M.y\n  - Long : d. MMMM y\n  - Full : cccc d. MMMM y\n\nTime format strings:\n\n  - Short : H.mm\n  - Medium : H.mm.ss\n  - Long : H.mm.ss z\n  - Full : H.mm.ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "fil",
+                "comment": " Date format strings:\n\n  - Short : M/d/yy\n  - Medium : MMM d, y\n  - Long : MMMM d, y\n  - Full : EEEE, MMMM d, y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "fr",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "fr_BE",
+                "comment": " Date format strings:\n\n  - Short : d/MM/yy\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : H 'h' mm 'min' ss 's' zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "fr_BF",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "fr_BI",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "fr_BJ",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "fr_BL",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "fr_CA",
+                "comment": " Date format strings:\n\n  - Short : y-MM-dd\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : HH 'h' mm\n  - Medium : HH 'h' mm 'min' ss 's'\n  - Long : HH 'h' mm 'min' ss 's' z\n  - Full : HH 'h' mm 'min' ss 's' zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "fr_CD",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "fr_CF",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "fr_CG",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "fr_CH",
+                "comment": " Date format strings:\n\n  - Short : dd.MM.yy\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH.mm:ss 'h' zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "fr_CI",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "fr_CM",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "fr_DJ",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "fr_DZ",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "fr_GA",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "fr_GF",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "fr_GN",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "fr_GP",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "fr_GQ",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "fr_HT",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "fr_KM",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "fr_LU",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "fr_MA",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "fr_MC",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "fr_MF",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "fr_MG",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "fr_ML",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "fr_MQ",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "fr_MR",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "fr_MU",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "fr_NC",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "fr_NE",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "fr_PF",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "fr_PM",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "fr_RE",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "fr_RW",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "fr_SC",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "fr_SN",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "fr_SY",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "fr_TD",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "fr_TG",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "fr_TN",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "fr_VU",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "fr_WF",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "fr_YT",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "fromString",
+                "comment": " Parse a `Locale` from a Unicode or BCP47 identifier.\n\n    fromString basicLocales \"en\"\n    --> Just en\n\n    fromString allLocales \"en-GB\"\n    --> Just en_GB\n\n",
+                "type": "List.List Cldr.Locale.Locale -> String.String -> Maybe.Maybe Cldr.Locale.Locale"
+            },
+            {
+                "name": "ga",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "ga_GB",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "gl",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/yy\n  - Medium : d 'de' MMM 'de' y\n  - Long : d 'de' MMMM 'de' y\n  - Full : EEEE, d 'de' MMMM 'de' y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "gu",
+                "comment": " Date format strings:\n\n  - Short : d/M/yy\n  - Medium : d MMM, y\n  - Long : d MMMM, y\n  - Full : EEEE, d MMMM, y\n\nTime format strings:\n\n  - Short : hh:mm a\n  - Medium : hh:mm:ss a\n  - Long : hh:mm:ss a z\n  - Full : hh:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "he",
+                "comment": " Date format strings:\n\n  - Short : d.M.y\n  - Medium : d בMMM y\n  - Long : d בMMMM y\n  - Full : EEEE, d בMMMM y\n\nTime format strings:\n\n  - Short : H:mm\n  - Medium : H:mm:ss\n  - Long : H:mm:ss z\n  - Full : H:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "hi",
+                "comment": " Date format strings:\n\n  - Short : d/M/yy\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "hr",
+                "comment": " Date format strings:\n\n  - Short : dd. MM. y.\n  - Medium : d. MMM y.\n  - Long : d. MMMM y.\n  - Full : EEEE, d. MMMM y.\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss (zzzz)\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "hr_BA",
+                "comment": " Date format strings:\n\n  - Short : d. M. yy.\n  - Medium : d. MMM y.\n  - Long : d. MMMM y.\n  - Full : EEEE, d. MMMM y.\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss (zzzz)\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "hu",
+                "comment": " Date format strings:\n\n  - Short : y. MM. dd.\n  - Medium : y. MMM d.\n  - Long : y. MMMM d.\n  - Full : y. MMMM d., EEEE\n\nTime format strings:\n\n  - Short : H:mm\n  - Medium : H:mm:ss\n  - Long : H:mm:ss z\n  - Full : H:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "hy",
+                "comment": " Date format strings:\n\n  - Short : dd.MM.yy\n  - Medium : dd MMM, y թ.\n  - Long : dd MMMM, y թ.\n  - Full : y թ. MMMM d, EEEE\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "id",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/yy\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, dd MMMM y\n\nTime format strings:\n\n  - Short : HH.mm\n  - Medium : HH.mm.ss\n  - Long : HH.mm.ss z\n  - Full : HH.mm.ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "is",
+                "comment": " Date format strings:\n\n  - Short : d.M.y\n  - Medium : d. MMM y\n  - Long : d. MMMM y\n  - Full : EEEE, d. MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "it",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/yy\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "it_CH",
+                "comment": " Date format strings:\n\n  - Short : dd.MM.yy\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "it_SM",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/yy\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "it_VA",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/yy\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "ja",
+                "comment": " Date format strings:\n\n  - Short : y/MM/dd\n  - Medium : y/MM/dd\n  - Long : y年M月d日\n  - Full : y年M月d日EEEE\n\nTime format strings:\n\n  - Short : H:mm\n  - Medium : H:mm:ss\n  - Long : H:mm:ss z\n  - Full : H時mm分ss秒 zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "jv",
+                "comment": " Date format strings:\n\n  - Short : dd-MM-y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "ka",
+                "comment": " Date format strings:\n\n  - Short : dd.MM.yy\n  - Medium : d MMM. y\n  - Long : d MMMM, y\n  - Full : EEEE, dd MMMM, y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "kk",
+                "comment": " Date format strings:\n\n  - Short : dd.MM.yy\n  - Medium : y 'ж'. dd MMM\n  - Long : y 'ж'. d MMMM\n  - Full : y 'ж'. d MMMM, EEEE\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "km",
+                "comment": " Date format strings:\n\n  - Short : d/M/yy\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "kn",
+                "comment": " Date format strings:\n\n  - Short : d/M/yy\n  - Medium : MMM d, y\n  - Long : MMMM d, y\n  - Full : EEEE, MMMM d, y\n\nTime format strings:\n\n  - Short : hh:mm a\n  - Medium : hh:mm:ss a\n  - Long : hh:mm:ss a z\n  - Full : hh:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "ko",
+                "comment": " Date format strings:\n\n  - Short : yy. M. d.\n  - Medium : y. M. d.\n  - Long : y년 M월 d일\n  - Full : y년 M월 d일 EEEE\n\nTime format strings:\n\n  - Short : a h:mm\n  - Medium : a h:mm:ss\n  - Long : a h시 m분 s초 z\n  - Full : a h시 m분 s초 zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "ko_KP",
+                "comment": " Date format strings:\n\n  - Short : yy. M. d.\n  - Medium : y. M. d.\n  - Long : y년 M월 d일\n  - Full : y년 M월 d일 EEEE\n\nTime format strings:\n\n  - Short : a h:mm\n  - Medium : a h:mm:ss\n  - Long : a h시 m분 s초 z\n  - Full : a h시 m분 s초 zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "ky",
+                "comment": " Date format strings:\n\n  - Short : d/M/yy\n  - Medium : y-'ж'., d-MMM\n  - Long : y-'ж'., d-MMMM\n  - Full : y-'ж'., d-MMMM, EEEE\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "lo",
+                "comment": " Date format strings:\n\n  - Short : d/M/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE ທີ d MMMM G y\n\nTime format strings:\n\n  - Short : H:mm\n  - Medium : H:mm:ss\n  - Long : H ໂມງ m ນາທີ ss ວິນາທີ z\n  - Full : H ໂມງ m ນາທີ ss ວິນາທີ zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "locale_as",
+                "comment": " Date format strings:\n\n  - Short : d-M-y\n  - Medium : dd-MM-y\n  - Long : d MMMM, y\n  - Full : EEEE, d MMMM, y\n\nTime format strings:\n\n  - Short : a h.mm\n  - Medium : a h.mm.ss\n  - Long : a h.mm.ss z\n  - Full : a h.mm.ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "lt",
+                "comment": " Date format strings:\n\n  - Short : y-MM-dd\n  - Medium : y-MM-dd\n  - Long : y 'm'. MMMM d 'd'.\n  - Full : y 'm'. MMMM d 'd'., EEEE\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "lv",
+                "comment": " Date format strings:\n\n  - Short : dd.MM.yy\n  - Medium : y. 'gada' d. MMM\n  - Long : y. 'gada' d. MMMM\n  - Full : EEEE, y. 'gada' d. MMMM\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "mk",
+                "comment": " Date format strings:\n\n  - Short : d.M.yy\n  - Medium : d.M.y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "ml",
+                "comment": " Date format strings:\n\n  - Short : d/M/yy\n  - Medium : y, MMM d\n  - Long : y, MMMM d\n  - Full : y, MMMM d, EEEE\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "mn",
+                "comment": " Date format strings:\n\n  - Short : y.MM.dd\n  - Medium : y 'оны' MMM'ын' d\n  - Long : y 'оны' MMMM'ын' d\n  - Full : y 'оны' MMMM'ын' d, EEEE 'гараг'\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss (z)\n  - Full : HH:mm:ss (zzzz)\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "mr",
+                "comment": " Date format strings:\n\n  - Short : d/M/yy\n  - Medium : d MMM, y\n  - Long : d MMMM, y\n  - Full : EEEE, d MMMM, y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "ms",
+                "comment": " Date format strings:\n\n  - Short : d/MM/yy\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "ms_BN",
+                "comment": " Date format strings:\n\n  - Short : d/MM/yy\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : dd MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "ms_ID",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/yy\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, dd MMMM y\n\nTime format strings:\n\n  - Short : HH.mm\n  - Medium : HH.mm.ss\n  - Long : HH.mm.ss z\n  - Full : HH.mm.ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "ms_SG",
+                "comment": " Date format strings:\n\n  - Short : d/MM/yy\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "my",
+                "comment": " Date format strings:\n\n  - Short : dd-MM-yy\n  - Medium : y- MMM d\n  - Long : y- MMMM d\n  - Full : y- MMMM d- EEEE\n\nTime format strings:\n\n  - Short : H:mm\n  - Medium : H:mm:ss\n  - Long : z HH:mm:ss\n  - Full : zzzz HH:mm:ss\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "nb",
+                "comment": " Date format strings:\n\n  - Short : dd.MM.y\n  - Medium : d. MMM y\n  - Long : d. MMMM y\n  - Full : EEEE d. MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "nb_SJ",
+                "comment": " Date format strings:\n\n  - Short : dd.MM.y\n  - Medium : d. MMM y\n  - Long : d. MMMM y\n  - Full : EEEE d. MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "ne",
+                "comment": " Date format strings:\n\n  - Short : yy/M/d\n  - Medium : y MMM d\n  - Long : y MMMM d\n  - Full : y MMMM d, EEEE\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "ne_IN",
+                "comment": " Date format strings:\n\n  - Short : yy/M/d\n  - Medium : y MMM d\n  - Long : y MMMM d\n  - Full : y MMMM d, EEEE\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "nl",
+                "comment": " Date format strings:\n\n  - Short : dd-MM-y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "nl_AW",
+                "comment": " Date format strings:\n\n  - Short : dd-MM-y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "nl_BE",
+                "comment": " Date format strings:\n\n  - Short : d/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "nl_BQ",
+                "comment": " Date format strings:\n\n  - Short : dd-MM-y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "nl_CW",
+                "comment": " Date format strings:\n\n  - Short : dd-MM-y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "nl_SR",
+                "comment": " Date format strings:\n\n  - Short : dd-MM-y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "nl_SX",
+                "comment": " Date format strings:\n\n  - Short : dd-MM-y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "nn",
+                "comment": " Date format strings:\n\n  - Short : dd.MM.y\n  - Medium : d. MMM y\n  - Long : d. MMMM y\n  - Full : EEEE d. MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : 'kl'. HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "no",
+                "comment": " Date format strings:\n\n  - Short : dd.MM.y\n  - Medium : d. MMM y\n  - Long : d. MMMM y\n  - Full : EEEE d. MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "or",
+                "comment": " Date format strings:\n\n  - Short : M/d/yy\n  - Medium : MMM d, y\n  - Long : MMMM d, y\n  - Full : EEEE, MMMM d, y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "pa",
+                "comment": " Date format strings:\n\n  - Short : d/M/yy\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "pa_Guru",
+                "comment": " Date format strings:\n\n  - Short : d/M/yy\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "pl",
+                "comment": " Date format strings:\n\n  - Short : d.MM.y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "ps",
+                "comment": " Date format strings:\n\n  - Short : y/M/d\n  - Medium : y MMM d\n  - Long : د y د MMMM d\n  - Full : EEEE د y د MMMM d\n\nTime format strings:\n\n  - Short : H:mm\n  - Medium : H:mm:ss\n  - Long : H:mm:ss (z)\n  - Full : H:mm:ss (zzzz)\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "ps_PK",
+                "comment": " Date format strings:\n\n  - Short : y/M/d\n  - Medium : y MMM d\n  - Long : د y د MMMM d\n  - Full : EEEE د y د MMMM d\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "pt",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d 'de' MMM 'de' y\n  - Long : d 'de' MMMM 'de' y\n  - Full : EEEE, d 'de' MMMM 'de' y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "pt_AO",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/yy\n  - Medium : dd/MM/y\n  - Long : d 'de' MMMM 'de' y\n  - Full : EEEE, d 'de' MMMM 'de' y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "pt_CH",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/yy\n  - Medium : dd/MM/y\n  - Long : d 'de' MMMM 'de' y\n  - Full : EEEE, d 'de' MMMM 'de' y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "pt_CV",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/yy\n  - Medium : dd/MM/y\n  - Long : d 'de' MMMM 'de' y\n  - Full : EEEE, d 'de' MMMM 'de' y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "pt_GQ",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/yy\n  - Medium : dd/MM/y\n  - Long : d 'de' MMMM 'de' y\n  - Full : EEEE, d 'de' MMMM 'de' y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "pt_GW",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/yy\n  - Medium : dd/MM/y\n  - Long : d 'de' MMMM 'de' y\n  - Full : EEEE, d 'de' MMMM 'de' y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "pt_LU",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/yy\n  - Medium : dd/MM/y\n  - Long : d 'de' MMMM 'de' y\n  - Full : EEEE, d 'de' MMMM 'de' y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "pt_MO",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/yy\n  - Medium : dd/MM/y\n  - Long : d 'de' MMMM 'de' y\n  - Full : EEEE, d 'de' MMMM 'de' y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "pt_MZ",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/yy\n  - Medium : dd/MM/y\n  - Long : d 'de' MMMM 'de' y\n  - Full : EEEE, d 'de' MMMM 'de' y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "pt_PT",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/yy\n  - Medium : dd/MM/y\n  - Long : d 'de' MMMM 'de' y\n  - Full : EEEE, d 'de' MMMM 'de' y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "pt_ST",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/yy\n  - Medium : dd/MM/y\n  - Long : d 'de' MMMM 'de' y\n  - Full : EEEE, d 'de' MMMM 'de' y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "pt_TL",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/yy\n  - Medium : dd/MM/y\n  - Long : d 'de' MMMM 'de' y\n  - Full : EEEE, d 'de' MMMM 'de' y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "ro",
+                "comment": " Date format strings:\n\n  - Short : dd.MM.y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "ro_MD",
+                "comment": " Date format strings:\n\n  - Short : dd.MM.y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "root",
+                "comment": " Date format strings:\n\n  - Short : y-MM-dd\n  - Medium : y MMM d\n  - Long : y MMMM d\n  - Full : y MMMM d, EEEE\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "ru",
+                "comment": " Date format strings:\n\n  - Short : dd.MM.y\n  - Medium : d MMM y 'г'.\n  - Long : d MMMM y 'г'.\n  - Full : EEEE, d MMMM y 'г'.\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "ru_BY",
+                "comment": " Date format strings:\n\n  - Short : dd.MM.y\n  - Medium : d MMM y 'г'.\n  - Long : d MMMM y 'г'.\n  - Full : EEEE, d MMMM y 'г'.\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "ru_KG",
+                "comment": " Date format strings:\n\n  - Short : dd.MM.y\n  - Medium : d MMM y 'г'.\n  - Long : d MMMM y 'г'.\n  - Full : EEEE, d MMMM y 'г'.\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "ru_KZ",
+                "comment": " Date format strings:\n\n  - Short : dd.MM.y\n  - Medium : d MMM y 'г'.\n  - Long : d MMMM y 'г'.\n  - Full : EEEE, d MMMM y 'г'.\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "ru_MD",
+                "comment": " Date format strings:\n\n  - Short : dd.MM.y\n  - Medium : d MMM y 'г'.\n  - Long : d MMMM y 'г'.\n  - Full : EEEE, d MMMM y 'г'.\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "ru_UA",
+                "comment": " Date format strings:\n\n  - Short : dd.MM.y\n  - Medium : d MMM y 'г'.\n  - Long : d MMMM y 'г'.\n  - Full : EEEE, d MMMM y 'г'.\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "sd",
+                "comment": " Date format strings:\n\n  - Short : y-MM-dd\n  - Medium : y MMM d\n  - Long : y MMMM d\n  - Full : y MMMM d, EEEE\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "sd_Arab",
+                "comment": " Date format strings:\n\n  - Short : y-MM-dd\n  - Medium : y MMM d\n  - Long : y MMMM d\n  - Full : y MMMM d, EEEE\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "si",
+                "comment": " Date format strings:\n\n  - Short : y-MM-dd\n  - Medium : y MMM d\n  - Long : y MMMM d\n  - Full : y MMMM d, EEEE\n\nTime format strings:\n\n  - Short : HH.mm\n  - Medium : HH.mm.ss\n  - Long : HH.mm.ss z\n  - Full : HH.mm.ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "sk",
+                "comment": " Date format strings:\n\n  - Short : d. M. y\n  - Medium : d. M. y\n  - Long : d. MMMM y\n  - Full : EEEE d. MMMM y\n\nTime format strings:\n\n  - Short : H:mm\n  - Medium : H:mm:ss\n  - Long : H:mm:ss z\n  - Full : H:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "sl",
+                "comment": " Date format strings:\n\n  - Short : d. MM. yy\n  - Medium : d. MMM y\n  - Long : d. MMMM y\n  - Full : EEEE, d. MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "so",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/yy\n  - Medium : dd-MMM-y\n  - Long : MMMM d, y\n  - Full : EEEE, MMMM d, y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "so_DJ",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/yy\n  - Medium : dd-MMM-y\n  - Long : MMMM d, y\n  - Full : EEEE, MMMM d, y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "so_ET",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/yy\n  - Medium : dd-MMM-y\n  - Long : MMMM d, y\n  - Full : EEEE, MMMM d, y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "so_KE",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/yy\n  - Medium : dd-MMM-y\n  - Long : MMMM d, y\n  - Full : EEEE, MMMM d, y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "sq",
+                "comment": " Date format strings:\n\n  - Short : d.M.yy\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a, z\n  - Full : h:mm:ss a, zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "sq_MK",
+                "comment": " Date format strings:\n\n  - Short : d.M.yy\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "sq_XK",
+                "comment": " Date format strings:\n\n  - Short : d.M.yy\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "sr",
+                "comment": " Date format strings:\n\n  - Short : d.M.yy.\n  - Medium : d. M. y.\n  - Long : d. MMMM y.\n  - Full : EEEE, d. MMMM y.\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "sr_Cyrl",
+                "comment": " Date format strings:\n\n  - Short : d.M.yy.\n  - Medium : d. M. y.\n  - Long : d. MMMM y.\n  - Full : EEEE, d. MMMM y.\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "sr_Cyrl_BA",
+                "comment": " Date format strings:\n\n  - Short : d.M.yy.\n  - Medium : d. M. y.\n  - Long : d. MMMM y.\n  - Full : EEEE, d. MMMM y.\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "sr_Cyrl_ME",
+                "comment": " Date format strings:\n\n  - Short : d.M.yy.\n  - Medium : d. M. y.\n  - Long : d. MMMM y.\n  - Full : EEEE, d. MMMM y.\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "sr_Cyrl_XK",
+                "comment": " Date format strings:\n\n  - Short : d.M.yy.\n  - Medium : d. M. y.\n  - Long : d. MMMM y.\n  - Full : EEEE, d. MMMM y.\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "sr_Latn",
+                "comment": " Date format strings:\n\n  - Short : d.M.yy.\n  - Medium : d. M. y.\n  - Long : d. MMMM y.\n  - Full : EEEE, d. MMMM y.\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "sr_Latn_BA",
+                "comment": " Date format strings:\n\n  - Short : d.M.yy.\n  - Medium : d. M. y.\n  - Long : d. MMMM y.\n  - Full : EEEE, d. MMMM y.\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "sr_Latn_ME",
+                "comment": " Date format strings:\n\n  - Short : d.M.yy.\n  - Medium : d. M. y.\n  - Long : d. MMMM y.\n  - Full : EEEE, d. MMMM y.\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "sr_Latn_XK",
+                "comment": " Date format strings:\n\n  - Short : d.M.yy.\n  - Medium : d. M. y.\n  - Long : d. MMMM y.\n  - Full : EEEE, d. MMMM y.\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "sv",
+                "comment": " Date format strings:\n\n  - Short : y-MM-dd\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "sv_AX",
+                "comment": " Date format strings:\n\n  - Short : y-MM-dd\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "sv_FI",
+                "comment": " Date format strings:\n\n  - Short : y-MM-dd\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "sw",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "sw_CD",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "sw_KE",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "sw_UG",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : EEEE, d MMMM y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "ta",
+                "comment": " Date format strings:\n\n  - Short : d/M/yy\n  - Medium : d MMM, y\n  - Long : d MMMM, y\n  - Full : EEEE, d MMMM, y\n\nTime format strings:\n\n  - Short : a h:mm\n  - Medium : a h:mm:ss\n  - Long : a h:mm:ss z\n  - Full : a h:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "ta_LK",
+                "comment": " Date format strings:\n\n  - Short : d/M/yy\n  - Medium : d MMM, y\n  - Long : d MMMM, y\n  - Full : EEEE, d MMMM, y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "ta_MY",
+                "comment": " Date format strings:\n\n  - Short : d/M/yy\n  - Medium : d MMM, y\n  - Long : d MMMM, y\n  - Full : EEEE, d MMMM, y\n\nTime format strings:\n\n  - Short : a h:mm\n  - Medium : a h:mm:ss\n  - Long : a h:mm:ss z\n  - Full : a h:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "ta_SG",
+                "comment": " Date format strings:\n\n  - Short : d/M/yy\n  - Medium : d MMM, y\n  - Long : d MMMM, y\n  - Full : EEEE, d MMMM, y\n\nTime format strings:\n\n  - Short : a h:mm\n  - Medium : a h:mm:ss\n  - Long : a h:mm:ss z\n  - Full : a h:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "te",
+                "comment": " Date format strings:\n\n  - Short : dd-MM-yy\n  - Medium : d MMM, y\n  - Long : d MMMM, y\n  - Full : d, MMMM y, EEEE\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "th",
+                "comment": " Date format strings:\n\n  - Short : d/M/yy\n  - Medium : d MMM y\n  - Long : d MMMM G y\n  - Full : EEEEที่ d MMMM G y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : H นาฬิกา mm นาที ss วินาที z\n  - Full : H นาฬิกา mm นาที ss วินาที zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "tk",
+                "comment": " Date format strings:\n\n  - Short : dd.MM.y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : d MMMM y EEEE\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "toUnicode",
+                "comment": " Get the [Unicode](https://unicode.org/reports/tr35/#Identifiers) representation of a locale.\n\n    toUnicode en_GB\n    --> \"en-GB\"\n\n",
+                "type": "Cldr.Locale.Locale -> String.String"
+            },
+            {
+                "name": "tr",
+                "comment": " Date format strings:\n\n  - Short : d.MM.y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : d MMMM y EEEE\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "tr_CY",
+                "comment": " Date format strings:\n\n  - Short : d.MM.y\n  - Medium : d MMM y\n  - Long : d MMMM y\n  - Full : d MMMM y EEEE\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "uk",
+                "comment": " Date format strings:\n\n  - Short : dd.MM.yy\n  - Medium : d MMM y 'р'.\n  - Long : d MMMM y 'р'.\n  - Full : EEEE, d MMMM y 'р'.\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "ur",
+                "comment": " Date format strings:\n\n  - Short : d/M/yy\n  - Medium : d MMM، y\n  - Long : d MMMM، y\n  - Full : EEEE، d MMMM، y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "ur_IN",
+                "comment": " Date format strings:\n\n  - Short : d/M/yy\n  - Medium : d MMM، y\n  - Long : d MMMM، y\n  - Full : EEEE، d MMMM، y\n\nTime format strings:\n\n  - Short : h:mm a\n  - Medium : h:mm:ss a\n  - Long : h:mm:ss a z\n  - Full : h:mm:ss a zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "uz",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/yy\n  - Medium : d-MMM, y\n  - Long : d-MMMM, y\n  - Full : EEEE, d-MMMM, y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : H:mm:ss (z)\n  - Full : H:mm:ss (zzzz)\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "uz_Latn",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/yy\n  - Medium : d-MMM, y\n  - Long : d-MMMM, y\n  - Full : EEEE, d-MMMM, y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : H:mm:ss (z)\n  - Full : H:mm:ss (zzzz)\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "vi",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/y\n  - Medium : d MMM, y\n  - Long : d MMMM, y\n  - Full : EEEE, d MMMM, y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "yue",
+                "comment": " Date format strings:\n\n  - Short : y/M/d\n  - Medium : y年M月d日\n  - Long : y年M月d日\n  - Full : y年M月d日 EEEE\n\nTime format strings:\n\n  - Short : ah:mm\n  - Medium : ah:mm:ss\n  - Long : ah:mm:ss [z]\n  - Full : ah:mm:ss [zzzz]\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "yue_Hant",
+                "comment": " Date format strings:\n\n  - Short : y/M/d\n  - Medium : y年M月d日\n  - Long : y年M月d日\n  - Full : y年M月d日 EEEE\n\nTime format strings:\n\n  - Short : ah:mm\n  - Medium : ah:mm:ss\n  - Long : ah:mm:ss [z]\n  - Full : ah:mm:ss [zzzz]\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "zh",
+                "comment": " Date format strings:\n\n  - Short : y/M/d\n  - Medium : y年M月d日\n  - Long : y年M月d日\n  - Full : y年M月d日EEEE\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : z HH:mm:ss\n  - Full : zzzz HH:mm:ss\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "zh_Hans",
+                "comment": " Date format strings:\n\n  - Short : y/M/d\n  - Medium : y年M月d日\n  - Long : y年M月d日\n  - Full : y年M月d日EEEE\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : z HH:mm:ss\n  - Full : zzzz HH:mm:ss\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "zh_Hans_HK",
+                "comment": " Date format strings:\n\n  - Short : d/M/yy\n  - Medium : y年M月d日\n  - Long : y年M月d日\n  - Full : y年M月d日EEEE\n\nTime format strings:\n\n  - Short : ah:mm\n  - Medium : ah:mm:ss\n  - Long : z ah:mm:ss\n  - Full : zzzz ah:mm:ss\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "zh_Hans_MO",
+                "comment": " Date format strings:\n\n  - Short : d/M/yy\n  - Medium : y年M月d日\n  - Long : y年M月d日\n  - Full : y年M月d日EEEE\n\nTime format strings:\n\n  - Short : ah:mm\n  - Medium : ah:mm:ss\n  - Long : z ah:mm:ss\n  - Full : zzzz ah:mm:ss\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "zh_Hans_SG",
+                "comment": " Date format strings:\n\n  - Short : dd/MM/yy\n  - Medium : y年M月d日\n  - Long : y年M月d日\n  - Full : y年M月d日EEEE\n\nTime format strings:\n\n  - Short : ah:mm\n  - Medium : ah:mm:ss\n  - Long : z ah:mm:ss\n  - Full : zzzz ah:mm:ss\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "zh_Hant",
+                "comment": " Date format strings:\n\n  - Short : y/M/d\n  - Medium : y年M月d日\n  - Long : y年M月d日\n  - Full : y年M月d日 EEEE\n\nTime format strings:\n\n  - Short : Bh:mm\n  - Medium : Bh:mm:ss\n  - Long : Bh:mm:ss [z]\n  - Full : Bh:mm:ss [zzzz]\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "zh_Hant_HK",
+                "comment": " Date format strings:\n\n  - Short : d/M/y\n  - Medium : y年M月d日\n  - Long : y年M月d日\n  - Full : y年M月d日EEEE\n\nTime format strings:\n\n  - Short : ah:mm\n  - Medium : ah:mm:ss\n  - Long : ah:mm:ss [z]\n  - Full : ah:mm:ss [zzzz]\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "zh_Hant_MO",
+                "comment": " Date format strings:\n\n  - Short : d/M/y\n  - Medium : y年M月d日\n  - Long : y年M月d日\n  - Full : y年M月d日EEEE\n\nTime format strings:\n\n  - Short : ah:mm\n  - Medium : ah:mm:ss\n  - Long : ah:mm:ss [z]\n  - Full : ah:mm:ss [zzzz]\n\n",
+                "type": "Cldr.Locale.Locale"
+            },
+            {
+                "name": "zu",
+                "comment": " Date format strings:\n\n  - Short : M/d/yy\n  - Medium : MMM d, y\n  - Long : MMMM d, y\n  - Full : EEEE, MMMM d, y\n\nTime format strings:\n\n  - Short : HH:mm\n  - Medium : HH:mm:ss\n  - Long : HH:mm:ss z\n  - Full : HH:mm:ss zzzz\n\n",
+                "type": "Cldr.Locale.Locale"
+            }
+        ],
+        "binops": []
+    }
+]

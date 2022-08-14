@@ -1,0 +1,326 @@
+[
+    {
+        "name": "Boxed",
+        "comment": " This library allows a variable to hold a value of any type. The name of the\nmodule is derived from the Autoboxing concept in Java. `Boxed` values can be\nuseful when receiving external data that you do not want to thoroughly check for\nerrors, but rather disregard the type of some of the values obtained. For\nexample, you might be more interested in the structure of the received data than\nthe type of all of the member values. The decoder found at `Boxed.Json` lets\nany kind of value through, allowing you to focus on the shape of the whole data\nstructure.\n\nSome helper functions are provided to extract native Elm values, for example:\n\n    filterMap asFloat (Lst [Integer 1, Str \"b\", Double 3.01])\n    -- It returns [1,3.01]\n\nNote: Dict has been limited to use only `String` as keys\n\n\n# Definition\n\n@docs Boxed\n\n\n# Unboxing\n\n\n### Return value of the indicated type only if given `Boxed` is currently holding an encapsulation of said type. (Exception made on `asFloat`).\n\n@docs asBool, asFloat, asInt, asString, asValue, asList, asDict, isTrue\n\n\n# Query\n\n\n### Functions to determine the type currently encapsulated.\n\n@docs isBool, isFloat, isInt, isString, isValue, isList, isDict, isTuple, isCustom, isNull\n\n",
+        "unions": [
+            {
+                "name": "Boxed",
+                "comment": " ",
+                "args": [
+                    "c"
+                ],
+                "cases": [
+                    [
+                        "Null",
+                        []
+                    ],
+                    [
+                        "Boolean",
+                        [
+                            "Basics.Bool"
+                        ]
+                    ],
+                    [
+                        "Integer",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "Double",
+                        [
+                            "Basics.Float"
+                        ]
+                    ],
+                    [
+                        "Str",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Json",
+                        [
+                            "Json.Encode.Value"
+                        ]
+                    ],
+                    [
+                        "Lst",
+                        [
+                            "List.List (Boxed.Boxed c)"
+                        ]
+                    ],
+                    [
+                        "Dictionary",
+                        [
+                            "Dict.Dict String.String (Boxed.Boxed c)"
+                        ]
+                    ],
+                    [
+                        "Tup",
+                        [
+                            "( Boxed.Boxed c, Boxed.Boxed c )"
+                        ]
+                    ],
+                    [
+                        "Custom",
+                        [
+                            "c"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "asBool",
+                "comment": " ",
+                "type": "Boxed.Boxed c -> Maybe.Maybe Basics.Bool"
+            },
+            {
+                "name": "asDict",
+                "comment": " Always returns a `Dict`. Consider using it along with isDict.\n",
+                "type": "Boxed.Boxed c -> Dict.Dict String.String (Boxed.Boxed c)"
+            },
+            {
+                "name": "asFloat",
+                "comment": " Note: Both `Integer` and `Double` will be able to pass as `Float`\n",
+                "type": "Boxed.Boxed c -> Maybe.Maybe Basics.Float"
+            },
+            {
+                "name": "asInt",
+                "comment": " ",
+                "type": "Boxed.Boxed c -> Maybe.Maybe Basics.Int"
+            },
+            {
+                "name": "asList",
+                "comment": " Always returns a `List`. Consider using it along with isList.\n",
+                "type": "Boxed.Boxed c -> List.List (Boxed.Boxed c)"
+            },
+            {
+                "name": "asString",
+                "comment": " ",
+                "type": "Boxed.Boxed c -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "asValue",
+                "comment": " ",
+                "type": "Boxed.Boxed c -> Maybe.Maybe Json.Encode.Value"
+            },
+            {
+                "name": "isBool",
+                "comment": " ",
+                "type": "Boxed.Boxed c -> Basics.Bool"
+            },
+            {
+                "name": "isCustom",
+                "comment": " ",
+                "type": "Boxed.Boxed c -> Basics.Bool"
+            },
+            {
+                "name": "isDict",
+                "comment": " ",
+                "type": "Boxed.Boxed c -> Basics.Bool"
+            },
+            {
+                "name": "isFloat",
+                "comment": " ",
+                "type": "Boxed.Boxed c -> Basics.Bool"
+            },
+            {
+                "name": "isInt",
+                "comment": " ",
+                "type": "Boxed.Boxed c -> Basics.Bool"
+            },
+            {
+                "name": "isList",
+                "comment": " ",
+                "type": "Boxed.Boxed c -> Basics.Bool"
+            },
+            {
+                "name": "isNull",
+                "comment": " ",
+                "type": "Boxed.Boxed c -> Basics.Bool"
+            },
+            {
+                "name": "isString",
+                "comment": " ",
+                "type": "Boxed.Boxed c -> Basics.Bool"
+            },
+            {
+                "name": "isTrue",
+                "comment": " Return value of boxed `Bool`. If `Boxed` is holding any other type,\nreturn False.\n",
+                "type": "Boxed.Boxed c -> Basics.Bool"
+            },
+            {
+                "name": "isTuple",
+                "comment": " ",
+                "type": "Boxed.Boxed c -> Basics.Bool"
+            },
+            {
+                "name": "isValue",
+                "comment": " ",
+                "type": "Boxed.Boxed c -> Basics.Bool"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Boxed.Dictionary",
+        "comment": " Some well known tools carried over from the `Dict` module, and\nothers derived from it. Since the members of a dictionary are `Boxed`, all of\nthem can be encapsulations of values of different types.\n\n\n# Unboxing\n\n@docs filterMap, foldr, foldl, mapGet\n\n\n### Return value of the indicated type only if given `Boxed` is currently holding an encapsulation of said type. Defined mainly as helpers for the Dict's `map`, `filter` and `partition` functions.\n\n@docs tryBool, tryFloat, tryInt, tryString, tryValue\n\n\n# Build\n\n@docs empty, singleton, insert, update, remove\n\n\n# Mapping\n\n@docs apply\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "apply",
+                "comment": " Apply a given function to a boxed dictionary.\n\n    boxedDict = Dictionary (Dict.fromList [(\"one\", Str \"b\"), (\"two\", Double 3.03)])\n\n    apply (Dict.get \"two\") boxedDict == Just (Double 3.03)\n    apply (Dict.member \"one\") boxedDict == True\n    apply Dict.size boxedDict == 2\n    apply Dict.isEmpty (Str \"d\") == True\n    apply (Dict.map tryString) boxedDict == Dict.fromList [(\"one\",Just \"b\"),(\"two\",Nothing)]\n\n",
+                "type": "(Dict.Dict String.String (Boxed.Boxed c) -> a) -> Boxed.Boxed c -> a"
+            },
+            {
+                "name": "empty",
+                "comment": " Create an empty dictionary.\n",
+                "type": "Boxed.Boxed c"
+            },
+            {
+                "name": "filterMap",
+                "comment": " Returns a `Dict` with only succesful values, resulting from the\napplication of a given function.\n\n    boxedDict = Dict.fromList [(\"one\",Integer 1), (\"two\",Str \"b\"), (\"three\",Str \"c\")] |> Dictionary\n\n    filterMap tryString boxedDict == Dict.fromList [(\"three\",Str \"b\"), (\"two\",Str \"c\")]\n    filterMap tryBool (Dictionary Dict.empty) == Dict.fromList []\n    filterMap tryBool (Double 3.01) == Dict.fromList []\n\n",
+                "type": "(String.String -> Boxed.Boxed c -> Maybe.Maybe a) -> Boxed.Boxed c -> Dict.Dict String.String a"
+            },
+            {
+                "name": "foldl",
+                "comment": " ",
+                "type": "(String.String -> Boxed.Boxed c -> a -> a) -> a -> Boxed.Boxed c -> a"
+            },
+            {
+                "name": "foldr",
+                "comment": " ",
+                "type": "(String.String -> Boxed.Boxed c -> a -> a) -> a -> Boxed.Boxed c -> a"
+            },
+            {
+                "name": "insert",
+                "comment": " Insert a key-value pair into a `Boxed` as a dictionary. Succesful even if\nthe `Boxed` target is not even currently holding a dictionary.\n\n    boxedDict = Dictionary (Dict.fromList [(\"one\", Str \"b\"), (\"two\", Double 3.03)])\n\n    insert \"tree\" (Integer 1) boxedDict ==  Dictionary (Dict.fromList [(\"one\", Str \"b\"), (\"tree\", Integer 1), (\"two\", Double 3.03)])\n    insert \"tree\" (Integer 1) (Str \"placeholder\")  ==  Dictionary (Dict.fromList [(\"tree\", Integer 1)])\n\n",
+                "type": "String.String -> Boxed.Boxed c -> Boxed.Boxed c -> Boxed.Boxed c"
+            },
+            {
+                "name": "mapGet",
+                "comment": " Get the value associated with a key. Successful only if found, and\nthe given function could be applied to it.\n\n    boxedDict = Dictionary (Dict.fromList [(\"one\", Integer 1), (\"two\", Double 3.03)])\n\n    mapGet asBool \"two\" boxedDict == Nothing\n    mapGet asInt \"one\"  boxedDict == Just 1\n\n",
+                "type": "(Boxed.Boxed c -> Maybe.Maybe a) -> String.String -> Boxed.Boxed c -> Maybe.Maybe a"
+            },
+            {
+                "name": "remove",
+                "comment": " Remove a key-value pair from a boxed dictionary.\n\n    boxedDict = Dictionary (Dict.fromList [(\"one\", Str \"b\"), (\"two\", Double 3.03)])\n\n    remove \"one\" boxedDict  ==  Dictionary (Dict.fromList [(\"two\", Double 3.03)])\n    remove \"three\" (Integer 1) == Dictionary (Dict.fromList [])\n\n",
+                "type": "String.String -> Boxed.Boxed c -> Boxed.Boxed c"
+            },
+            {
+                "name": "singleton",
+                "comment": " Create a boxed dictionary with one key-value pair.\n",
+                "type": "String.String -> Boxed.Boxed c -> Boxed.Boxed c"
+            },
+            {
+                "name": "tryBool",
+                "comment": " ",
+                "type": "String.String -> Boxed.Boxed c -> Maybe.Maybe Basics.Bool"
+            },
+            {
+                "name": "tryFloat",
+                "comment": " Both `Integer` and `Double` will be able to pass as `Float`\n",
+                "type": "String.String -> Boxed.Boxed c -> Maybe.Maybe Basics.Float"
+            },
+            {
+                "name": "tryInt",
+                "comment": " ",
+                "type": "String.String -> Boxed.Boxed c -> Maybe.Maybe Basics.Int"
+            },
+            {
+                "name": "tryString",
+                "comment": " ",
+                "type": "String.String -> Boxed.Boxed c -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "tryValue",
+                "comment": " ",
+                "type": "String.String -> Boxed.Boxed c -> Maybe.Maybe Json.Encode.Value"
+            },
+            {
+                "name": "update",
+                "comment": " Update the value of a boxed dictionary for a specific key with a given function.\n\n    boxedDict = Dictionary (Dict.fromList [(\"one\", Str \"b\"), (\"two\", Double 3.03)])\n\n    modifier = always (Just (Boolean False))\n\n    update \"two\" modifier boxedDict ==  Dictionary (Dict.fromList [(\"one\", Str \"b\"), (\"two\", Boolean False)])\n\n",
+                "type": "String.String -> (Maybe.Maybe (Boxed.Boxed c) -> Maybe.Maybe (Boxed.Boxed c)) -> Boxed.Boxed c -> Boxed.Boxed c"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Boxed.Json",
+        "comment": " Some functions to deal with json data.\n\n\n# Decoding\n\n@docs decoder, expand\n\n\n# Encoding\n\n@docs encoder\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decoder",
+                "comment": " Handy decoder for the `Boxed` type. It does not decode tuples or\ncustom values. It will only decode dictionaries at top level if they are only\none level deep and its values are all primitives. Same with lists. Composite\nobjects deeper than that will be stored as Json.\n",
+                "type": "Json.Decode.Decoder (Boxed.Boxed c)"
+            },
+            {
+                "name": "encoder",
+                "comment": " Handy encoder for the `Boxed` type. It only encodes primitives, Dictionary\nand Lst. If it encouters a `Tup` or a `Custom`, it will render them `null`.\n",
+                "type": "Boxed.Boxed c -> Json.Encode.Value"
+            },
+            {
+                "name": "expand",
+                "comment": " Turn raw json into a fully developed object defined in terms of Dictionary,\nLst and primitives.\n\n    str =  \"{ \\\"banker\\\": { \\\"name\\\": \\\"Alice\\\" }, \\\"fireman\\\": { \\\"age\\\": 42 } }\"\n    boxed =  decodeString decoder str |> Result.withDefault Null\n    expand boxed == Dictionary (Dict.fromList [(\"banker\",Dictionary (Dict.fromList [(\"name\",Str \"Alice\")])),(\"fireman\",Dictionary (Dict.fromList [(\"age\",Integer 42)]))])\n\n",
+                "type": "Boxed.Boxed c -> Boxed.Boxed c"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Boxed.Lst",
+        "comment": " A couple of well known tools carried over from the `List` module, and\nothers derived from it. Since the members of a list are `Boxed`, all of them\ncan be encapsulations of values of different types.\n\n\n# Unboxing\n\n@docs mapHead, mapFind, filterMap, foldr, foldl\n\n\n# Putting Lists Together\n\n@docs cons\n\n\n# Extraction\n\n@docs find\n\n\n# Mapping\n\n@docs apply\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "apply",
+                "comment": " Apply a given function to a boxed list.\n\n    apply List.head (Lst [ Integer 1, Str \"b\", Double 3.03 ]) == Just (Integer 1)\n\n    apply List.tail (Lst [ Integer 1, Str \"b\", Double 3.03 ]) == Just [ Str \"b\", Double 3.03 ]\n\n    apply (List.member (Str \"b\")) (Lst [ Integer 1, Str \"b\", Double 3.03 ]) == True\n\n    apply (List.map asInt) (Lst [ Integer 1, Str \"b\", Double 3.03 ]) == [ Just 1, Nothing, Nothing ]\n\n",
+                "type": "(List.List (Boxed.Boxed c) -> a) -> Boxed.Boxed c -> a"
+            },
+            {
+                "name": "cons",
+                "comment": " Adds an element to the front of a `Boxed` list. The encapsulated value\nof the new member does not need to be of the same type as the rest.\n\n    cons (Integer 1) (Lst [ Str \"b\", Double 3.03 ]) == Lst [ Integer 1, Str \"b\", Double 3.03 ]\n\n    cons (Integer 1) (Lst []) == Lst [ Integer 1 ]\n\n    cons (Integer 1) (Str \"d\") == Lst [ Integer 1 ]\n\n",
+                "type": "Boxed.Boxed c -> Boxed.Boxed c -> Boxed.Boxed c"
+            },
+            {
+                "name": "filterMap",
+                "comment": " Returns only succesful values, resulting from the application of a\ngiven function.\n\n    filterMap asFloat (Lst [ Integer 1, Str \"b\", Double 3.01 ]) == [ 1, 3.01 ]\n\n    filterMap asBool (Lst [ Integer 1, Str \"b\", Double 3.01 ]) == []\n\n    filterMap asBool (Double 3.01) == []\n\n",
+                "type": "(Boxed.Boxed c -> Maybe.Maybe a) -> Boxed.Boxed c -> List.List a"
+            },
+            {
+                "name": "find",
+                "comment": " Finds, inside a list, a 'Boxed' that passes a given test.\n\n     find isString (Lst [Integer 1, Str \"b\", Double 3.01]) == Just (Str \"b\")\n     find isTuple (Lst [Integer 1, Str \"b\", Double 3.01]) == Nothing\n     find isNull (Lst [Integer 1, Null, Double 3.01]) == Just Null\n\n",
+                "type": "(Boxed.Boxed c -> Basics.Bool) -> Boxed.Boxed c -> Maybe.Maybe (Boxed.Boxed c)"
+            },
+            {
+                "name": "foldl",
+                "comment": " Reduce a boxed list from the left.\n",
+                "type": "(Boxed.Boxed c -> a -> a) -> a -> Boxed.Boxed c -> a"
+            },
+            {
+                "name": "foldr",
+                "comment": " Reduce a boxed list from the right.\n",
+                "type": "(Boxed.Boxed c -> a -> a) -> a -> Boxed.Boxed c -> a"
+            },
+            {
+                "name": "mapFind",
+                "comment": " Finds a member in a boxed list, only if it could be transformed into a\ndifferent value.\n\n    mapFind asString (Lst [ Integer 1, Str \"b\", Double 3.01 ]) == Just \"b\"\n\n    mapFind asBool (Lst [ Integer 1, Str \"b\", Double 3.01 ]) == Nothing\n\n",
+                "type": "(Boxed.Boxed c -> Maybe.Maybe a) -> Boxed.Boxed c -> Maybe.Maybe a"
+            },
+            {
+                "name": "mapHead",
+                "comment": " Returns the first member of a boxed list, only if it could be transformed\ninto a different value.\n\n    mapHead asInt (Lst [ Integer 1, Str \"b\", Double 3.01 ]) == Just 1\n\n\n    --It was decided that integers can become floats\n    mapHead asFloat (Lst [ Integer 1, Str \"b\", Double 3.01 ]) == Just 1\n\n    mapHead asString (Lst [ Integer 1, Str \"b\", Double 3.01 ]) == Nothing\n\n",
+                "type": "(Boxed.Boxed c -> Maybe.Maybe a) -> Boxed.Boxed c -> Maybe.Maybe a"
+            }
+        ],
+        "binops": []
+    }
+]

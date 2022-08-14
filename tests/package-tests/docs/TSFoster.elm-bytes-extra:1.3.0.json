@@ -1,0 +1,159 @@
+[
+    {
+        "name": "Bytes.Decode.Extra",
+        "comment": " Helpers for working with `Bytes.Decoder`s.\n\n@docs list, byteValues\n\n\n## 24-bit Integers\n\nOne notable use of 24-bit integers is in 24-bit color, a.k.a. \"True color\".\n\n@docs unsignedInt24, signedInt24\n\n\n## Pipeline-style\n\n[`Json.Decode.Pipeline`][json-pipeline] provides a neat, scalable way for\ndecoding JSON. This module provides a few helpers for adopting a similar style\nwhen decoding `Bytes`.\n\nIt is important to note that decoding bytes poses more restrictions than\ndecoding JSON, as bytes are consumed in order, and a maximum of one time. This\nmakes an equivalent to `Json.Decode.Pipeline.optional` difficult to impossible.\n\n    import Bytes exposing (Endianness(..))\n    import Bytes.Decode exposing (Decoder, succeed, andThen, unsignedInt32, string, float64, decode)\n    import Bytes.Extra exposing (fromByteValues)\n\n    type Status = Downloaded | LocallyGenerated\n\n    type alias MyData =\n      { id: Int\n      , status : Status\n      , name: String\n      , value: Float\n      }\n\n    myDataDecoder : Decoder MyData\n    myDataDecoder =\n        succeed MyData\n            |> andMap (unsignedInt32 BE)\n            |> hardcoded Downloaded\n            |> andMap (unsignedInt32 BE |> andThen string)\n            |> andMap (float64 BE)\n\n\n    decode myDataDecoder (fromByteValues [0,0,0,252,0,0,0,8,116,104,101,95,110,97,109,101,63,224,0,0,0,0,0,0])\n    --> Just\n    -->     { id = 252\n    -->     , status = Downloaded\n    -->     , name = \"the_name\"\n    -->     , value = 0.5\n    -->     }\n\n[json-pipeline]: https://package.elm-lang.org/packages/NoRedInk/elm-json-decode-pipeline/latest/\n\n@docs andMap, hardcoded\n\n\n## Skipping bytes\n\n@docs withOffset\n\n\n## Extra maps\n\n@docs map6, map7, map8, map9, map16\n\n\n## Working with Results and Maybes\n\n@docs onlyOks, onlyJusts\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "andMap",
+                "comment": " `andMap` behaves in a similar way to [`Json.Decode.Pipeline.required`][pipeline-required]. It is named `andMap` to match the naming of similar functions in other packages, and because this package does not provide an equivalent to `Json.Decode.Pipeline.optional`.\n\n    modelDecoder : Decoder Model\n    modelDecoder =\n        succeed Model\n            |> andMap (unsignedInt32 BE)\n            |> andMap (unsignedInt32 BE |> andThen string)\n            |> andMap myCustomTypeDecoder\n            |> andMap myCustomBooleanDecoder\n\n[pipeline-required]: https://package.elm-lang.org/packages/NoRedInk/elm-json-decode-pipeline/latest/Json-Decode-Pipeline#required\n\n",
+                "type": "Bytes.Decode.Decoder a -> Bytes.Decode.Decoder (a -> b) -> Bytes.Decode.Decoder b"
+            },
+            {
+                "name": "byteValues",
+                "comment": " Before the release of [elm/bytes], many packages would use `List Int`\nto represent bytes. `byteValues` aids interaciton between those packages\nand `Bytes`.\n\n    import Bytes exposing (Bytes)\n    import Bytes.Decode\n    import Bytes.Extra exposing (fromByteValues)\n\n    input : Bytes\n    input =\n        fromByteValues [ 0x32, 0xFF, 0x53, 0x54, 0x55 ]\n\n    Bytes.Decode.decode (byteValues 3) input\n    --> Just [ 0x32, 0xFF, 0x53 ]\n\n",
+                "type": "Basics.Int -> Bytes.Decode.Decoder (List.List Basics.Int)"
+            },
+            {
+                "name": "hardcoded",
+                "comment": " A neat way to fill in predetermined information that's not part of the data\nbeing decoded, similar to [`Json.Decode.Pipeline.hardcoded`][json-hardcoded].\n\n    modelDecoder : Decoder Model\n    modelDecoder =\n        succeed Model\n            |> andMap (unsignedInt32 BE)\n            |> andMap (unsignedInt32 BE |> andThen string)\n            |> hardcoded []\n            |> andMap myCustomBooleanDecoder\n            |> hardcoded SubModel.default\n\n[json-hardcoded]: https://package.elm-lang.org/packages/NoRedInk/elm-json-decode-pipeline/latest/Json-Decode-Pipeline#hardcoded\n\n",
+                "type": "a -> Bytes.Decode.Decoder (a -> b) -> Bytes.Decode.Decoder b"
+            },
+            {
+                "name": "list",
+                "comment": " Run a decoder a set amount of times, and collect the result in a list.\n\n    import Bytes.Decode\n    import Bytes.Extra exposing (fromByteValues)\n\n\n    fromByteValues (List.range 0 20)\n        |> Bytes.Decode.decode (Bytes.Decode.Extra.list 21 Bytes.Decode.unsignedInt8)\n    --> Just (List.range 0 20)\n\n",
+                "type": "Basics.Int -> Bytes.Decode.Decoder a -> Bytes.Decode.Decoder (List.List a)"
+            },
+            {
+                "name": "map16",
+                "comment": " ",
+                "type": "(a -> b -> c -> d -> e -> f -> g -> h -> i -> j -> k -> l -> m -> n -> o -> p -> result) -> Bytes.Decode.Decoder a -> Bytes.Decode.Decoder b -> Bytes.Decode.Decoder c -> Bytes.Decode.Decoder d -> Bytes.Decode.Decoder e -> Bytes.Decode.Decoder f -> Bytes.Decode.Decoder g -> Bytes.Decode.Decoder h -> Bytes.Decode.Decoder i -> Bytes.Decode.Decoder j -> Bytes.Decode.Decoder k -> Bytes.Decode.Decoder l -> Bytes.Decode.Decoder m -> Bytes.Decode.Decoder n -> Bytes.Decode.Decoder o -> Bytes.Decode.Decoder p -> Bytes.Decode.Decoder result"
+            },
+            {
+                "name": "map6",
+                "comment": " ",
+                "type": "(a -> b -> c -> d -> e -> f -> result) -> Bytes.Decode.Decoder a -> Bytes.Decode.Decoder b -> Bytes.Decode.Decoder c -> Bytes.Decode.Decoder d -> Bytes.Decode.Decoder e -> Bytes.Decode.Decoder f -> Bytes.Decode.Decoder result"
+            },
+            {
+                "name": "map7",
+                "comment": " ",
+                "type": "(a -> b -> c -> d -> e -> f -> g -> result) -> Bytes.Decode.Decoder a -> Bytes.Decode.Decoder b -> Bytes.Decode.Decoder c -> Bytes.Decode.Decoder d -> Bytes.Decode.Decoder e -> Bytes.Decode.Decoder f -> Bytes.Decode.Decoder g -> Bytes.Decode.Decoder result"
+            },
+            {
+                "name": "map8",
+                "comment": " ",
+                "type": "(a -> b -> c -> d -> e -> f -> g -> h -> result) -> Bytes.Decode.Decoder a -> Bytes.Decode.Decoder b -> Bytes.Decode.Decoder c -> Bytes.Decode.Decoder d -> Bytes.Decode.Decoder e -> Bytes.Decode.Decoder f -> Bytes.Decode.Decoder g -> Bytes.Decode.Decoder h -> Bytes.Decode.Decoder result"
+            },
+            {
+                "name": "map9",
+                "comment": " ",
+                "type": "(a -> b -> c -> d -> e -> f -> g -> h -> i -> result) -> Bytes.Decode.Decoder a -> Bytes.Decode.Decoder b -> Bytes.Decode.Decoder c -> Bytes.Decode.Decoder d -> Bytes.Decode.Decoder e -> Bytes.Decode.Decoder f -> Bytes.Decode.Decoder g -> Bytes.Decode.Decoder h -> Bytes.Decode.Decoder i -> Bytes.Decode.Decoder result"
+            },
+            {
+                "name": "onlyJusts",
+                "comment": " Take a `Decoder (Maybe a)` and make it fail if it decodes to `Nothing`.\n\n    import Bytes.Extra exposing (fromByteValues)\n    import Bytes.Decode exposing (decode, map, string)\n\n    fromByteValues [ 0x30, 0x30, 0x30, 0x31, 0x30 ] -- \"00010\"\n        |> decode (onlyJusts (map String.toInt (string 5)))\n    --> Just 10\n\n",
+                "type": "Bytes.Decode.Decoder (Maybe.Maybe a) -> Bytes.Decode.Decoder a"
+            },
+            {
+                "name": "onlyOks",
+                "comment": " Take a `Decoder (Result err a)` and make it fail if it decodes an `Err`.\n",
+                "type": "Bytes.Decode.Decoder (Result.Result err a) -> Bytes.Decode.Decoder a"
+            },
+            {
+                "name": "signedInt24",
+                "comment": " Decode three bytes into an integer from `-8388608` to `8388607`.\n",
+                "type": "Bytes.Endianness -> Bytes.Decode.Decoder Basics.Int"
+            },
+            {
+                "name": "unsignedInt24",
+                "comment": " Decode three bytes into an integer from `0` to `16777215`.\n",
+                "type": "Bytes.Endianness -> Bytes.Decode.Decoder Basics.Int"
+            },
+            {
+                "name": "withOffset",
+                "comment": " Sometimes the value you need to decode is preceded by a bunch of bytes you just don't need.\n\n    import Bytes exposing (Endianness(..))\n    import Bytes.Decode exposing (decode, unsignedInt16)\n    import Bytes.Extra exposing (fromByteValues)\n\n    fromByteValues [ 0xff, 0xff, 0xff, 0x21, 0x30 ]\n        |> decode (withOffset 3 (unsignedInt16 BE))\n    --> Just 8496\n\n",
+                "type": "Basics.Int -> Bytes.Decode.Decoder a -> Bytes.Decode.Decoder a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Bytes.Encode.Extra",
+        "comment": " This module provides helpers for working with `Bytes.Encode.Encoder`s.\n\n@docs list, byteValues\n\n\n## 24-bit Integers\n\nOne notable use of 24-bit integers is in 24-bit color, a.k.a. \"True color\".\n\n@docs signedInt24, unsignedInt24\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "byteValues",
+                "comment": " Before the release of [elm/bytes], many packages would use `List Int`\nto represent bytes. `byteValues` aids interaciton between those packages\nand `Bytes`.\n\n    import Bytes.Encode exposing (Encoder)\n    import Bytes.Extra\n    import MD5\n\n    myEncoder : String -> Encoder\n    myEncoder string =\n        Bytes.Encode.sequence\n            [ Bytes.Encode.unsignedInt8 (String.length string)\n            , Bytes.Encode.string string\n            , Bytes.Encode.Extra.byteValues (MD5.bytes string)\n            ]\n\n\n    Bytes.Extra.toByteValues (Bytes.Encode.encode (myEncoder \"hello world\"))\n    --> [ 11                                                               -- Length of \"hello world\"\n    --> , 0x68, 0x65, 0x6c, 0x6c, 0x6f, 0x20, 0x77, 0x6f, 0x72, 0x6c, 0x64 -- \"hello world\" in bytes\n    --> , 0x5e , 0xb6 , 0x3b , 0xbb, 0xe0 , 0x1e , 0xee , 0xd0             -- |\n    --> , 0x93 , 0xcb , 0x22 , 0xbb, 0x8f , 0x5a , 0xcd , 0xc3             -- |- MD5 of \"hello world\"\n    --> ]\n\n",
+                "type": "List.List Basics.Int -> Bytes.Encode.Encoder"
+            },
+            {
+                "name": "list",
+                "comment": " Create an encoder for a list. This does not encode the length of the list.\n\n    import Bytes exposing (Endianness(..))\n    import Bytes.Encode\n    import Bytes.Decode\n    import Bytes.Decode.Extra\n\n    data : List Int\n    data =\n        [ 6, 3, 200, 236, 123 ]\n\n    list (Bytes.Encode.unsignedInt32 BE) data\n        |> Bytes.Encode.encode\n        |> Bytes.Decode.decode (Bytes.Decode.Extra.list 5 (Bytes.Decode.unsignedInt32 BE))\n    --> Just data\n\n",
+                "type": "(a -> Bytes.Encode.Encoder) -> List.List a -> Bytes.Encode.Encoder"
+            },
+            {
+                "name": "signedInt24",
+                "comment": " Encode a 24-bit signed integer\n",
+                "type": "Bytes.Endianness -> Basics.Int -> Bytes.Encode.Encoder"
+            },
+            {
+                "name": "unsignedInt24",
+                "comment": " Encode a 24-bit unsigned integer\n",
+                "type": "Bytes.Endianness -> Basics.Int -> Bytes.Encode.Encoder"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Bytes.Extra",
+        "comment": "\n\n@docs empty\n\n\n## Byte values\n\nBefore the release of [elm/bytes][elm-bytes], many packages would use `List Int`\nto represent bytes. To enable interaction with these packages, you can use\n`fromByteValues` and `toByteValues`.\n\n[elm-bytes]: https://package.elm-lang.org/packages/elm/bytes/latest/\n\n@docs fromByteValues, toByteValues\n\n\n## Slicing and dicing\n\n@docs slice, take, drop, splitAt, last\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "drop",
+                "comment": " Drop the first `n` bytes of the given byte sequence.\n\n    fromByteValues (List.range 0 20)\n        |> drop 15\n        |> toByteValues\n    --> [ 15, 16, 17, 18, 19, 20 ]\n\n",
+                "type": "Basics.Int -> Bytes.Bytes -> Bytes.Bytes"
+            },
+            {
+                "name": "empty",
+                "comment": " An empty `Bytes`. Useful for default cases or unreachable branches.\n",
+                "type": "Bytes.Bytes"
+            },
+            {
+                "name": "fromByteValues",
+                "comment": " Convert a `List Int` to `Bytes`. Each `Int` represents a single byte,\nso values are assumed to be between 0 and 255 inclusive.\n\n    import MD5\n    import Bytes.Decode\n    import Bytes.Decode.Extra\n\n    MD5.bytes \"hello world\"\n        |> fromByteValues\n        |> Bytes.Decode.decode (Bytes.Decode.Extra.list 16 Bytes.Decode.unsignedInt8)\n        |> Maybe.withDefault []\n    --> [ 0x5E , 0xB6 , 0x3B , 0xBB\n    --> , 0xE0 , 0x1E , 0xEE , 0xD0\n    --> , 0x93 , 0xCB , 0x22 , 0xBB\n    --> , 0x8F , 0x5A , 0xCD , 0xC3\n    --> ]\n\n",
+                "type": "List.List Basics.Int -> Bytes.Bytes"
+            },
+            {
+                "name": "last",
+                "comment": " Take the last `n` bytes from a sequence of bytes.\n\n    fromByteValues (List.range 0 20)\n        |> last 3\n        |> toByteValues\n    --> [ 18, 19, 20 ]\n\n",
+                "type": "Basics.Int -> Bytes.Bytes -> Bytes.Bytes"
+            },
+            {
+                "name": "slice",
+                "comment": " Slice a segment from `Bytes`. Negative indexes are taken starting from the\nend of the byte sequence.\n\n    fromByteValues (List.range 0 20)\n        |> slice 5 10\n        |> toByteValues\n    --> [ 5, 6, 7, 8, 9 ]\n\n    fromByteValues (List.range 0 20)\n        |> slice -5 -1\n        |> toByteValues\n    --> [ 16, 17, 18, 19 ]\n\n",
+                "type": "Basics.Int -> Basics.Int -> Bytes.Bytes -> Bytes.Bytes"
+            },
+            {
+                "name": "splitAt",
+                "comment": " Split some `Bytes` into two at the given index. Negative indexes are counted\nfrom the end of the byte sequence.\n\n    fromByteValues (List.range 0 5)\n        |> splitAt 3\n        |> Tuple.mapBoth toByteValues toByteValues\n    --> ([ 0, 1, 2 ], [ 3, 4, 5 ])\n\n    fromByteValues (List.range 0 5)\n        |> splitAt -2\n        |> Tuple.mapBoth toByteValues toByteValues\n    --> ([ 0, 1, 2, 3 ], [ 4, 5 ])\n\n",
+                "type": "Basics.Int -> Bytes.Bytes -> ( Bytes.Bytes, Bytes.Bytes )"
+            },
+            {
+                "name": "take",
+                "comment": " Take the first `n` bytes of the given bytes sequence.\n\n    fromByteValues (List.range 0 20)\n        |> take 5\n        |> toByteValues\n    --> [ 0, 1, 2, 3, 4 ]\n\n",
+                "type": "Basics.Int -> Bytes.Bytes -> Bytes.Bytes"
+            },
+            {
+                "name": "toByteValues",
+                "comment": " Convert `Bytes` to `List Int`. Each `Int` represents a single byte,\nso values will be between 0 and 255 inclusive.\n\n    import SHA1\n\n    SHA1.fromString \"And the band begins to play\"\n        |> SHA1.toBytes\n        |> toByteValues\n    --> [ 0xF3, 0x08, 0x73, 0x13\n    --> , 0xD6, 0xBC, 0xE5, 0x5B\n    --> , 0x60, 0x0C, 0x69, 0x2F\n    --> , 0xE0, 0x92, 0xF4, 0x53\n    --> , 0x87, 0x3F, 0xAE, 0x91\n    --> ]\n\n",
+                "type": "Bytes.Bytes -> List.List Basics.Int"
+            }
+        ],
+        "binops": []
+    }
+]

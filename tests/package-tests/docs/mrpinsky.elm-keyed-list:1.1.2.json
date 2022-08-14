@@ -1,0 +1,96 @@
+[
+    {
+        "name": "KeyedList",
+        "comment": " A library for lists of things you want to track, kind of like Html.Keyed but for your data model.\n\n\n# Keyed Lists\n\n@docs KeyedList, Key\n\n\n# Build\n\n@docs empty, cons, push, fromList, decoder\n\n\n# Modify\n\n@docs update, remove\n\n\n# Consume\n\n@docs toList, keyedMap, encode\n\n\n# Common Helpers\n\n@docs isEmpty, length\n\n\n# Transform\n\n@docs filter, map\n\n",
+        "unions": [
+            {
+                "name": "Key",
+                "comment": " An item identifier. Use with [`update`](#update) and [`remove`](#remove).\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "KeyedList",
+                "comment": " A list that gives each element a locally unique [`Key`](#Key) for later modification or removal.\n\nConvert a list using [`fromList`](#fromList) or build one from scratch with [`empty`](#empty) and [`push`](#push).\n\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "cons",
+                "comment": " Attach a new item to the beginning of the list.\n",
+                "type": "a -> KeyedList.KeyedList a -> KeyedList.KeyedList a"
+            },
+            {
+                "name": "decoder",
+                "comment": " Decode a `KeyedList` from JSON\n",
+                "type": "Json.Decode.Decoder a -> Json.Decode.Decoder (KeyedList.KeyedList a)"
+            },
+            {
+                "name": "empty",
+                "comment": " A list with no items.\n",
+                "type": "KeyedList.KeyedList a"
+            },
+            {
+                "name": "encode",
+                "comment": " Encode a `KeyedList` to JSON\n",
+                "type": "(a -> Json.Encode.Value) -> KeyedList.KeyedList a -> Json.Encode.Value"
+            },
+            {
+                "name": "filter",
+                "comment": " Keep only elements that satisfy the predicate, preserving `Key`s.\n",
+                "type": "(a -> Basics.Bool) -> KeyedList.KeyedList a -> KeyedList.KeyedList a"
+            },
+            {
+                "name": "fromList",
+                "comment": " Convert a `List` to a `KeyedList`, preserving the order of the items.\n",
+                "type": "List.List a -> KeyedList.KeyedList a"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Check if a list is currently empty\n",
+                "type": "KeyedList.KeyedList a -> Basics.Bool"
+            },
+            {
+                "name": "keyedMap",
+                "comment": " Create a `List` out of items and their `Key`s. This is particularly useful in the `view` of a `Model` that contains a `KeyedList`.\n\n    type alias Model =\n        { submodels : KeyedList SubModel\n          ...\n        }\n\n    view : Model -> Html Msg\n    view model =\n        keyedMap viewKeyedSubmodel model.submodels\n            |> div []\n\n    viewKeyedSubmodel : Key -> SubModel -> Html Msg\n    viewKeyedSubmodel key submodel =\n        div [ onClick <| Click key ] [ SubModel.view submodel ]\n\n",
+                "type": "(KeyedList.Key -> a -> b) -> KeyedList.KeyedList a -> List.List b"
+            },
+            {
+                "name": "length",
+                "comment": " Get the current length of a list\n",
+                "type": "KeyedList.KeyedList a -> Basics.Int"
+            },
+            {
+                "name": "map",
+                "comment": " Apply a function to every item in a list, preserving `Key`s.\n",
+                "type": "(a -> b) -> KeyedList.KeyedList a -> KeyedList.KeyedList b"
+            },
+            {
+                "name": "push",
+                "comment": " Attach a new item to the end of the list.\n",
+                "type": "a -> KeyedList.KeyedList a -> KeyedList.KeyedList a"
+            },
+            {
+                "name": "remove",
+                "comment": " Remove an item from a list by `Key`. If the `Key` is not found, no changes are made.\n",
+                "type": "KeyedList.Key -> KeyedList.KeyedList a -> KeyedList.KeyedList a"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert to a regular `List`.\n",
+                "type": "KeyedList.KeyedList a -> List.List a"
+            },
+            {
+                "name": "update",
+                "comment": " Update the value of a list for a specific `Key` with a given function.\n",
+                "type": "KeyedList.Key -> (a -> a) -> KeyedList.KeyedList a -> KeyedList.KeyedList a"
+            }
+        ],
+        "binops": []
+    }
+]

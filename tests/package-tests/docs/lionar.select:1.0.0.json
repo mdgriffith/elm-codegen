@@ -1,0 +1,34 @@
+[
+    {
+        "name": "Mdc.Select",
+        "comment": " This library provides help with setting up a select box\r\n\r\n# Helpers\r\n@docs view\r\n@docs Data\r\n@docs Msgs\r\n\r\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Data",
+                "comment": "\r\n\r\n",
+                "args": [
+                    "item"
+                ],
+                "type": "{ items : List.List item, opened : Basics.Bool, selected : item }"
+            },
+            {
+                "name": "Msgs",
+                "comment": "\r\n\r\n",
+                "args": [
+                    "item",
+                    "msg"
+                ],
+                "type": "{ close : msg, select : item -> msg, toggle : msg }"
+            }
+        ],
+        "values": [
+            {
+                "name": "view",
+                "comment": "\r\n\r\n",
+                "type": "Mdc.Select.Data item -> Mdc.Select.Msgs item msg -> (item -> String.String) -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

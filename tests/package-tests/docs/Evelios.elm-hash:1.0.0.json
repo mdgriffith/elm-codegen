@@ -1,0 +1,48 @@
+[
+    {
+        "name": "Hash",
+        "comment": "\n\n\n# Types\n\n@docs Hash\n\n\n# Builders\n\n@docs fromInt, fromFloat, fromString\n\n\n# Accessors\n\n@docs toString\n\n\n# Combiners\n\n@docs independent, dependent\n\n",
+        "unions": [
+            {
+                "name": "Hash",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "dependent",
+                "comment": " Combine two hash pairs in a unique way. The order of the parameters matters.\n",
+                "type": "Hash.Hash -> Hash.Hash -> Hash.Hash"
+            },
+            {
+                "name": "fromFloat",
+                "comment": " ",
+                "type": "Basics.Float -> Hash.Hash"
+            },
+            {
+                "name": "fromInt",
+                "comment": " ",
+                "type": "Basics.Int -> Hash.Hash"
+            },
+            {
+                "name": "fromString",
+                "comment": " ",
+                "type": "String.String -> Hash.Hash"
+            },
+            {
+                "name": "independent",
+                "comment": " Combine two hash pairs such that the order does NOT matter.\n",
+                "type": "Hash.Hash -> Hash.Hash -> Hash.Hash"
+            },
+            {
+                "name": "toString",
+                "comment": " This is the only reliable way of accessing the hash id. This is the\n`comparable` type to use for any other elm library.\n",
+                "type": "Hash.Hash -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,43 @@
+[
+    {
+        "name": "Boon",
+        "comment": " Parsing and evaulation of [Boon](https://docs.google.com/document/u/0/d/1UzsnnKjjW7T_u-OPb5dcPmc9My4YS_jHoyButolNVa4/mobilebasic#heading=h.wazvxi10wtkz) strings.\n\n\n# Terminology\n\nIn the boon expression:\n\n`this OR that`\n\n`OR` is an _operator_, and `this` and `that` are _identifiers_.\n\n\n# Parse\n\n@docs Expression, parse\n\n\n# Evaluate\n\n@docs evalFromDict, evalFromSet, eval, identifiers\n\n",
+        "unions": [
+            {
+                "name": "Expression",
+                "comment": " A parsed Boon expression. Can be evaluated many times\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "eval",
+                "comment": " Evaluate an expression based on a user-provided lookup function that maps\nidentifiers to boolean values.\n\n    trueOrFalse str =\n        if (str == \"true\") then\n            True\n        else\n            False\n\n    -- Evaluates to False\n    parse \"true AND false\"\n        |> eval trueOrFalse\n\n",
+                "type": "(String.String -> Basics.Bool) -> Boon.Expression -> Basics.Bool"
+            },
+            {
+                "name": "evalFromDict",
+                "comment": " Evaluate an expression by looking up identifiers in a `Dict String Bool`. If a\nkey is absent, it will evaluate to `False`\n\n    values =\n        Dict.fromList\n            [ ( \"foo\", True )\n            , ( \"bar\", False )\n            ]\n\n    -- Evaluates to True\n    parse \"foo OR bar\"\n        |> evalFromDict values\n\n    -- Evaluates to False\n    parse \"baz OR bar\"\n        |> evalFromDict values\n\n",
+                "type": "Dict.Dict String.String Basics.Bool -> Boon.Expression -> Basics.Bool"
+            },
+            {
+                "name": "evalFromSet",
+                "comment": " Evalute an expression by looking up identifiers in a `Set String`. Identifiers\npresent in the set are `True`, any others are `False`.\n\n    values = Set.fromList [\"foo\", \"bar\"]\n\n    -- Evaluates to True\n    parse \"foo AND bar\"\n        |> evalFromSet values\n\n    -- Evaluates to False\n    parse \"bar AND baz\"\n        |> evalFromSet values\n\n",
+                "type": "Set.Set String.String -> Boon.Expression -> Basics.Bool"
+            },
+            {
+                "name": "identifiers",
+                "comment": " Get the set of identifiers used in an expression. This can be useful if\nyou need to fetch these identifiers from some external source with a Cmd prior\nto evaluation, or validate that they meet some specific format.\n",
+                "type": "Boon.Expression -> Set.Set String.String"
+            },
+            {
+                "name": "parse",
+                "comment": " Try to parse a string as a Boon expression, failing on invalid input.\n",
+                "type": "String.String -> Result.Result String.String Boon.Expression"
+            }
+        ],
+        "binops": []
+    }
+]

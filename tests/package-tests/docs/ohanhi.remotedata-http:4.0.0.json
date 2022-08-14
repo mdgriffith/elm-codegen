@@ -1,0 +1,154 @@
+[
+    {
+        "name": "RemoteData.Http",
+        "comment": " Friendly abstraction over remote API communication in JSON.\n\n\n# Commands\n\n@docs get, post, put, patch, delete\n\n\n# Helpful headers\n\n@docs noCache, acceptJson\n\n\n# Commands with configuration\n\n@docs Config, defaultConfig, noCacheConfig\n\n@docs getWithConfig, postWithConfig, putWithConfig, patchWithConfig, deleteWithConfig\n\n\n# Tasks\n\nThese should be rather rarely used.\n\n@docs getTask, postTask, putTask, patchTask, deleteTask\n\n\n# Tasks with configuration\n\n@docs TaskConfig, defaultTaskConfig, noCacheTaskConfig\n\n@docs getTaskWithConfig, postTaskWithConfig, putTaskWithConfig, patchTaskWithConfig, deleteTaskWithConfig\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " If you need more control over the request, you can use the\n`<verb>WithConfig` function with a record like this.\n\n    specialConfig : Config\n    specialConfig =\n        { defaultConfig | headers = [ specialHeader, anotherHeader ] }\n\n    postCat : Cat -> Cmd Msg\n    postCat cat =\n        postWithConfig specialConfig \"/api/cats/\" HandlePostCat catDecoder (encodeCat cat)\n\n",
+                "args": [],
+                "type": "{ headers : List.List Http.Header, timeout : Maybe.Maybe Basics.Float, tracker : Maybe.Maybe String.String, risky : Basics.Bool }"
+            },
+            {
+                "name": "TaskConfig",
+                "comment": " If you need more control over the request, you can use the\n`<verb>TaskWithConfig` function with a record like this.\n\n    specialConfig : TaskConfig\n    specialConfig =\n        { defaultConfig | headers = [ specialHeader, anotherHeader ] }\n\n    postCatTask cat =\n        postTaskWithConfig specialConfig \"/api/cats/\" HandlePostCat catDecoder (encodeCat cat)\n\n",
+                "args": [],
+                "type": "{ headers : List.List Http.Header, timeout : Maybe.Maybe Basics.Float, risky : Basics.Bool }"
+            }
+        ],
+        "values": [
+            {
+                "name": "acceptJson",
+                "comment": " Header for explicitly stating we are expecting JSON back.\n",
+                "type": "Http.Header"
+            },
+            {
+                "name": "defaultConfig",
+                "comment": " The default configuration for all requests besides `GET`:\n\n  - accept application/json\n  - no timeout\n  - no tracker\n  - not a risky request\n\n",
+                "type": "RemoteData.Http.Config"
+            },
+            {
+                "name": "defaultTaskConfig",
+                "comment": " The default configuration for all requests besides `GET`:\n\n  - accept application/json\n  - no timeout\n  - not a risky request\n\n",
+                "type": "RemoteData.Http.TaskConfig"
+            },
+            {
+                "name": "delete",
+                "comment": " `DELETE` request as a command, expecting a `String` response.\n\nIn many APIs, the response for successful delete requests has an empty\nHTTP body, so decoding it as JSON will always fail. This is why `delete` and\n`deleteTask` don't have a decoder argument. If you really want to decode the\nresponse, use `Json.Decode.decodeString`.\n\n    type Msg\n        = HandleDeleteCat (WebData String)\n\n    deleteCat : Cat -> Cmd Msg\n    deleteCat cat =\n        delete \"/api/cats/\" HandleDeleteCat (encodeCat cat)\n\n",
+                "type": "String.String -> (RemoteData.WebData String.String -> msg) -> Json.Encode.Value -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "deleteTask",
+                "comment": " `DELETE` request as a task, expecting a `String` response.\nIn many APIs, the response for successful delete requests has an empty\nHTTP body, so decoding it as JSON will always fail. This is why `delete` and\n`deleteTask` don't have a decoder argument. If you really want to decode the\nresponse, use `Json.Decode.decodeString`.\n\n    deleteCatTask : Cat -> Task () (WebData String)\n    deleteCatTask cat =\n        deleteTask \"/api/cats/\" (encodeCat cat)\n\n",
+                "type": "String.String -> Json.Decode.Value -> Task.Task () (RemoteData.WebData String.String)"
+            },
+            {
+                "name": "deleteTaskWithConfig",
+                "comment": " `DELETE` request as a task, with additional `Config`.\n\n    deleteTaskWithConfig defaultTaskConfig == deleteTask\n\n",
+                "type": "RemoteData.Http.TaskConfig -> String.String -> Json.Decode.Value -> Task.Task () (RemoteData.WebData String.String)"
+            },
+            {
+                "name": "deleteWithConfig",
+                "comment": " `DELETE` request as a command, with additional `Config`.\n\n    deleteWithConfig defaultConfig == deleteTask\n\n",
+                "type": "RemoteData.Http.Config -> String.String -> (RemoteData.WebData String.String -> msg) -> Json.Encode.Value -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "get",
+                "comment": " `GET` request as a command.\nHas a `no-cache` header to ensure data integrity.\n\n    type Msg\n        = HandleGetCat (WebData Cat)\n\n    getCat : Cmd Msg\n    getCat =\n        get \"/api/cats/1\" HandleGetCat catDecoder\n\n",
+                "type": "String.String -> (RemoteData.WebData success -> msg) -> Json.Decode.Decoder success -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "getTask",
+                "comment": " `GET` request as a task.\nHas a `no-cache` header to ensure data integrity.\n\n    getCatTask : Task () (WebData Cat)\n    getCatTask =\n        getTask \"/api/cats/1\" catDecoder\n\n",
+                "type": "String.String -> Json.Decode.Decoder success -> Task.Task () (RemoteData.WebData success)"
+            },
+            {
+                "name": "getTaskWithConfig",
+                "comment": " `GET` request as a task, with additional `Config`. _NB._ allowing cache in API `GET` calls can lead\nto strange conditions.\n\n    getTaskWithConfig noCacheConfig \"http://example.com/users.json\" userDecoder\n        == getTask \"http://example.com/users.json\" userDecoder\n\nFor a request without any headers, you can use:\n\n    getTaskWithConfig defaultTaskConfig url decoder\n\n",
+                "type": "RemoteData.Http.TaskConfig -> String.String -> Json.Decode.Decoder success -> Task.Task () (RemoteData.WebData success)"
+            },
+            {
+                "name": "getWithConfig",
+                "comment": " `GET` request as a command, with cache. _NB._ allowing cache in API `GET` calls can lead\nto strange conditions.\n\n    getWithConfig noCacheConfig \"http://example.com/users.json\" userDecoder\n        == get \"http://example.com/users.json\" userDecoder\n\nFor a request without any headers, you can use:\n\n    getWithConfig defaultConfig url decoder\n\n",
+                "type": "RemoteData.Http.Config -> String.String -> (RemoteData.WebData success -> msg) -> Json.Decode.Decoder success -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "noCache",
+                "comment": " Header that makes sure the response doesn't come from a cache.\nOnly relevant for GET requests.\n",
+                "type": "Http.Header"
+            },
+            {
+                "name": "noCacheConfig",
+                "comment": " The default configuration for `GET` requests:\n\n  - a `no-cache` header\n  - accept application/json\n  - without credentials\n  - no timeout\n  - no tracker\n  - not a risky request\n\n",
+                "type": "RemoteData.Http.Config"
+            },
+            {
+                "name": "noCacheTaskConfig",
+                "comment": " The default configuration for `GET` requests:\n\n  - a `no-cache` header\n  - accept application/json\n  - without credentials\n  - no timeout\n  - not a risky request\n\n",
+                "type": "RemoteData.Http.TaskConfig"
+            },
+            {
+                "name": "patch",
+                "comment": " `PATCH` request as a command.\n\n    type Msg\n        = HandlePatchCat (WebData Cat)\n\n    patchCat : Cat -> Cmd Msg\n    patchCat cat =\n        patch \"/api/cats/\" HandlePatchCat catDecoder (encodeCat cat)\n\n",
+                "type": "String.String -> (RemoteData.WebData success -> msg) -> Json.Decode.Decoder success -> Json.Encode.Value -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "patchTask",
+                "comment": " `PATCH` request as a task.\n\n    patchCatTask : Cat -> Task () (WebData Cat)\n    patchCatTask cat =\n        patchTask \"/api/cats/\" catDecoder (encodeCat cat)\n\n",
+                "type": "String.String -> Json.Decode.Decoder success -> Json.Decode.Value -> Task.Task () (RemoteData.WebData success)"
+            },
+            {
+                "name": "patchTaskWithConfig",
+                "comment": " `PATCH` request as a task, with additional `Config`.\n\n    patchTaskWithConfig defaultTaskConfig == patchTask\n\n",
+                "type": "RemoteData.Http.TaskConfig -> String.String -> Json.Decode.Decoder success -> Json.Encode.Value -> Task.Task () (RemoteData.WebData success)"
+            },
+            {
+                "name": "patchWithConfig",
+                "comment": " `PATCH` request as a command, with additional `Config`.\n\n    patchWithConfig defaultConfig == patchTask\n\n",
+                "type": "RemoteData.Http.Config -> String.String -> (RemoteData.WebData success -> msg) -> Json.Decode.Decoder success -> Json.Encode.Value -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "post",
+                "comment": " `POST` request as a command.\n\n    type Msg\n        = HandlePostCat (WebData Cat)\n\n    postCat : Cat -> Cmd Msg\n    postCat cat =\n        post \"/api/cats/\" HandlePostCat catDecoder (encodeCat cat)\n\n",
+                "type": "String.String -> (RemoteData.WebData success -> msg) -> Json.Decode.Decoder success -> Json.Encode.Value -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "postTask",
+                "comment": " `POST` request as a task.\n\n    postCatTask : Cat -> Task () (WebData Cat)\n    postCatTask cat =\n        postTask \"/api/cats/\" catDecoder (encodeCat cat)\n\n",
+                "type": "String.String -> Json.Decode.Decoder success -> Json.Decode.Value -> Task.Task () (RemoteData.WebData success)"
+            },
+            {
+                "name": "postTaskWithConfig",
+                "comment": " `POST` request as a task, with additional `Config`.\n\n    postTaskWithConfig defaultTaskConfig == postTask\n\n",
+                "type": "RemoteData.Http.TaskConfig -> String.String -> Json.Decode.Decoder success -> Json.Encode.Value -> Task.Task () (RemoteData.WebData success)"
+            },
+            {
+                "name": "postWithConfig",
+                "comment": " `POST` request as a command, with additional `Config`.\n\n    postWithConfig defaultConfig == post\n\n",
+                "type": "RemoteData.Http.Config -> String.String -> (RemoteData.WebData success -> msg) -> Json.Decode.Decoder success -> Json.Encode.Value -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "put",
+                "comment": " `PUT` request as a command.\n\n    type Msg\n        = HandlePutCat (WebData Cat)\n\n    putCat : Cat -> Cmd Msg\n    putCat cat =\n        put \"/api/cats/\" HandlePutCat catDecoder (encodeCat cat)\n\n",
+                "type": "String.String -> (RemoteData.WebData success -> msg) -> Json.Decode.Decoder success -> Json.Encode.Value -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "putTask",
+                "comment": " `PUT` request as a task.\n\n    putCatTask : Cat -> Task () (WebData Cat)\n    putCatTask cat =\n        putTask \"/api/cats/\" catDecoder (encodeCat cat)\n\n",
+                "type": "String.String -> Json.Decode.Decoder success -> Json.Decode.Value -> Task.Task () (RemoteData.WebData success)"
+            },
+            {
+                "name": "putTaskWithConfig",
+                "comment": " `PUT` request as a task, with additional `Config`.\n\n    putTaskWithConfig defaultTaskConfig == putTask\n\n",
+                "type": "RemoteData.Http.TaskConfig -> String.String -> Json.Decode.Decoder success -> Json.Encode.Value -> Task.Task () (RemoteData.WebData success)"
+            },
+            {
+                "name": "putWithConfig",
+                "comment": " `PUT` request as a command, with additional `Config`.\n\n    putWithConfig defaultConfig == putTask\n\n",
+                "type": "RemoteData.Http.Config -> String.String -> (RemoteData.WebData success -> msg) -> Json.Decode.Decoder success -> Json.Encode.Value -> Platform.Cmd.Cmd msg"
+            }
+        ],
+        "binops": []
+    }
+]

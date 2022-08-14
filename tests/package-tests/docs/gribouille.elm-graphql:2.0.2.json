@@ -1,0 +1,106 @@
+[
+    {
+        "name": "GraphQL",
+        "comment": " An easy-to-use GraphQL library.\n\n\n## Types\n\n@docs Response, Error, Path, QLRes, Res, Root\n\n\n## Functions\n\n@docs run, segment\n\n",
+        "unions": [
+            {
+                "name": "Path",
+                "comment": " Path of the response field which experienced the error.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "PathKey",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "PathItem",
+                        [
+                            "Basics.Int"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "QLRes",
+                "comment": " Type to expose several GraphQL response scenari.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "ResHttpError",
+                        [
+                            "Http.Error"
+                        ]
+                    ],
+                    [
+                        "ResOnlyErrors",
+                        [
+                            "List.List GraphQL.Error"
+                        ]
+                    ],
+                    [
+                        "ResWithErrors",
+                        [
+                            "List.List GraphQL.Error",
+                            "a"
+                        ]
+                    ],
+                    [
+                        "ResWithoutError",
+                        [
+                            "a"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Error",
+                "comment": " GraphQL error type [spec](https://spec.graphql.org/June2018/#sec-Errors).\n",
+                "args": [],
+                "type": "{ message : String.String, locations : Maybe.Maybe (List.List GraphQL.Location), path : Maybe.Maybe (List.List GraphQL.Path), extensions : Maybe.Maybe (Dict.Dict String.String Json.Decode.Value) }"
+            },
+            {
+                "name": "Res",
+                "comment": " GraphQL data type [spec](https://spec.graphql.org/June2018/#sec-Data).\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ data : Maybe.Maybe (GraphQL.Root a), errors : Maybe.Maybe (List.List GraphQL.Error) }"
+            },
+            {
+                "name": "Response",
+                "comment": " GraphQL response type [spec](https://spec.graphql.org/June2018/#sec-Response-Format).\n",
+                "args": [
+                    "a"
+                ],
+                "type": "Result.Result Http.Error (GraphQL.Res a)"
+            },
+            {
+                "name": "Root",
+                "comment": " Root data response.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ root : a }"
+            }
+        ],
+        "values": [
+            {
+                "name": "run",
+                "comment": " Run a GraphQL request.\n",
+                "type": "{ query : String.String, headers : List.List Http.Header, url : String.String, root : String.String, decoder : Json.Decode.Decoder a, variables : Maybe.Maybe Json.Decode.Value, on : GraphQL.Response a -> msg } -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "segment",
+                "comment": " Convert a raw Graph `Response` to the more expressive type `QLRes`.\n",
+                "type": "GraphQL.Response a -> GraphQL.QLRes a"
+            }
+        ],
+        "binops": []
+    }
+]

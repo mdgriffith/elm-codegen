@@ -1,0 +1,153 @@
+[
+    {
+        "name": "CreditCard",
+        "comment": "\n\n\n# View\n\n@docs card, form, number, name, month, year, cvv\n\n\n# Data\n\n@docs CardData, emptyCardData\n\n\n# Internal State\n\n@docs State, initialState\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "CardData",
+                "comment": " Stores the card data such as number, name, etc.\n\nThis `CardData` can be embeded into your application's Model in various ways.\nHere's 2 example of embedding this data into your model:\nExample 1:\n\n    -- Use CardData in your model directly\n    type alias Model =\n        { cardData : CreditCard.CardData {}\n        ...\n        }\n\n    -- Initial the model\n    init =\n        { cardData = CardData.emptyCardData\n        ...\n        }\n\nExample 2:\n\n    -- Extends the CardData in your Model\n    type alias Model =\n        { number : Maybe String\n        , name : Maybe String\n        , month : Maybe String\n        , year : Maybe String\n        , cvv : Maybe String\n        , state : CreditCard.State\n        , shippingAddress : Maybe String\n        ...\n        }\n\n    -- Initial the model\n    init =\n        let\n            emptyCardData =\n                CardData.emptyCardData\n        in\n            { emptyCardData |\n            shippingAddress = Nothing\n            ...\n            }\n\n",
+                "args": [
+                    "model"
+                ],
+                "type": "{ model | number : Maybe.Maybe String.String, name : Maybe.Maybe String.String, month : Maybe.Maybe String.String, year : Maybe.Maybe String.String, cvv : Maybe.Maybe String.String, state : CreditCard.State }"
+            },
+            {
+                "name": "State",
+                "comment": " Internal State of the card view\n",
+                "args": [],
+                "type": "CreditCard.Internal.State"
+            }
+        ],
+        "values": [
+            {
+                "name": "card",
+                "comment": " Card view\n\nRender the card view individually.\nExample:\n\n    view model =\n        let\n            config =\n                CreditCard.Config.defaultConfig\n        in\n        CreditCard.card config model\n\n",
+                "type": "CreditCard.Config.Config config -> CreditCard.CardData model -> Html.Html msg"
+            },
+            {
+                "name": "cvv",
+                "comment": " CVV form field\n\nRender the CVV field individually.\nExample:\n\n    type Msg = UpdateCardData Model\n\n    view model =\n        let\n            config =\n                CreditCard.Config.defaultFormConfig UpdateCardData\n        in\n            form []\n                [ CreditCard.card config model\n                , CreditCard.cvv config [] model\n                ...\n\n",
+                "type": "CreditCard.Config.FormConfig model msg -> List.List (Html.Attribute msg) -> CreditCard.CardData model -> Html.Html msg"
+            },
+            {
+                "name": "emptyCardData",
+                "comment": " Empty card data\n",
+                "type": "CreditCard.CardData {}"
+            },
+            {
+                "name": "form",
+                "comment": " Form view\n\nRender the card view with the full form fields.\nExample:\n\n    type Msg\n        = UpdateCardData Model\n\n    view model =\n        let\n            config =\n                CreditCard.Config.defaultFormConfig UpdateCardData\n        in\n        CreditCard.card config model\n\n",
+                "type": "CreditCard.Config.FormConfig model msg -> CreditCard.CardData model -> Html.Html msg"
+            },
+            {
+                "name": "initialState",
+                "comment": " Initial state of the card view\n",
+                "type": "CreditCard.State"
+            },
+            {
+                "name": "month",
+                "comment": " Month form field\n\nRender the month field individually.\nExample:\n\n    type Msg = UpdateCardData Model\n\n    view model =\n        let\n            config =\n                CreditCard.Config.defaultFormConfig UpdateCardData\n        in\n            form []\n                [ CreditCard.card config model\n                , CreditCard.month config [] model\n                ...\n\n",
+                "type": "CreditCard.Config.FormConfig model msg -> List.List (Html.Attribute msg) -> CreditCard.CardData model -> Html.Html msg"
+            },
+            {
+                "name": "name",
+                "comment": " Name form field\n\nRender the name field individually.\nExample:\n\n    type Msg = UpdateCardData Model\n\n    view model =\n        let\n            config =\n                CreditCard.Config.defaultFormConfig UpdateCardData\n        in\n            form []\n                [ CreditCard.card config model\n                , CreditCard.name config [] model\n                ...\n\n",
+                "type": "CreditCard.Config.FormConfig model msg -> List.List (Html.Attribute msg) -> CreditCard.CardData model -> Html.Html msg"
+            },
+            {
+                "name": "number",
+                "comment": " Number form field\n\nRender the number field individually.\nExample:\n\n    type Msg = UpdateCardData Model\n\n    view model =\n        let\n            config =\n                CreditCard.Config.defaultFormConfig UpdateCardData\n        in\n            form []\n                [ CreditCard.card config model\n                , CreditCard.number config [] model\n                ...\n\n",
+                "type": "CreditCard.Config.FormConfig model msg -> List.List (Html.Attribute msg) -> CreditCard.CardData model -> Html.Html msg"
+            },
+            {
+                "name": "year",
+                "comment": " Year form field\n\nRender the year field individually.\nExample:\n\n    type Msg = UpdateCardData Model\n\n    view model =\n        let\n            config =\n                CreditCard.Config.defaultFormConfig UpdateCardData\n        in\n            form []\n                [ CreditCard.card config model\n                , CreditCard.year config [] model\n                ...\n\n",
+                "type": "CreditCard.Config.FormConfig model msg -> List.List (Html.Attribute msg) -> CreditCard.CardData model -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "CreditCard.Config",
+        "comment": "\n\n\n# Configuration\n\n@docs Config, FormConfig, Form\n\n\n# Default Configuration\n\n@docs defaultConfig, defaultFormConfig, defaultClasses, defaultLabels, defaultPlaceholders\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " Configuration for card view\n\n  - `blankChar` : character used to render empty text in the card.\n  - `blankName` : text used as placeholder for when the name is empty.\n\n",
+                "args": [
+                    "config"
+                ],
+                "type": "{ config | blankChar : Char.Char, blankName : String.String, class : String.String }"
+            },
+            {
+                "name": "Form",
+                "comment": " For all form related configuration (e.g.: classes, labels, etc)\n",
+                "args": [],
+                "type": "{ number : String.String, name : String.String, month : String.String, year : String.String, cvv : String.String }"
+            },
+            {
+                "name": "FormConfig",
+                "comment": " Configuration for form view.\n\nThis includes all configuration from `Config` with addition of:\n\n  - `onChange` : `Msg` function for updating `CardData`\n  - `showLabel` : hide/show the label of each form field.\n  - `classes` : classes of each form field's container, stored in a `Form` record.\n  - `labels` : text of each form field's label, stored in a `Form` record.\n  - `placeholders` : the placeholder text of form field, stored in a `Form` record.\n  - `yearConfig` : the config for year input. see `YearConfig`.\n\n",
+                "args": [
+                    "model",
+                    "msg"
+                ],
+                "type": "{ blankChar : Char.Char, blankName : String.String, class : String.String, onChange : CreditCard.Internal.CardData model -> msg, showLabel : Basics.Bool, classes : CreditCard.Config.Form, labels : CreditCard.Config.Form, placeholders : CreditCard.Config.Form, autocomplete : Basics.Bool }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultClasses",
+                "comment": " Default classes name for form view\n\n  - `number = \"Number\"`\n  - `name = \"Name\"`\n  - `month = \"Month\"`\n  - `year = \"Year\"`\n  - `cvv = \"CVV\"`\n\n",
+                "type": "CreditCard.Config.Form"
+            },
+            {
+                "name": "defaultConfig",
+                "comment": " Default configuration for card view\n\n  - `blankChar = '•'`\n  - `blankName = 'YOUR NAME'`\n\n",
+                "type": "CreditCard.Config.Config {}"
+            },
+            {
+                "name": "defaultFormConfig",
+                "comment": " Default configuration for form view\nRequires a `Msg` function to update the `CardData`\n\n  - `showLabel = True`\n  - `classes =` See `defaultClasses`\n  - `labels =` See `defaultLabels`\n  - `placeholders =` See `defaultPlaceholders`\n\n",
+                "type": "(CreditCard.Internal.CardData model -> msg) -> CreditCard.Config.FormConfig model msg"
+            },
+            {
+                "name": "defaultLabels",
+                "comment": " Default label for form view\n\n  - `number = \"Number\"`\n  - `name = \"Full Name\"`\n  - `month = \"Month\"`\n  - `year = \"Year\"`\n  - `cvv = \"CVV\"`\n\n",
+                "type": "CreditCard.Config.Form"
+            },
+            {
+                "name": "defaultPlaceholders",
+                "comment": " Default placeholder text for form view\n\n  - `number = \"Credit Card Number\"`\n  - `name = \"First Last\"`\n  - `month = \"MM\"`\n  - `year = \"YY\"`\n  - `cvv = \"CVV\"`\n\n",
+                "type": "CreditCard.Config.Form"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "CreditCard.Events",
+        "comment": " Helpers function for all events related to focus/blur of CVV field for card flipping effects.\nSee examples in the demo folder of the git repo for some example on how to use this module.\n\n\n# Events\n\n@docs updateCVVFocus, onCVVFocus, onCVVBlur\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "onCVVBlur",
+                "comment": " `onBlur` event for the CVV field.\nThis will update the focus state of the cvv field to `False` in the internal state\n",
+                "type": "(CreditCard.Internal.State -> msg) -> CreditCard.Internal.CardData model -> Html.Attribute msg"
+            },
+            {
+                "name": "onCVVFocus",
+                "comment": " `onFocus` event for the CVV field.\nThis will update the focus state of the cvv field to `True` in the internal state\n",
+                "type": "(CreditCard.Internal.State -> msg) -> CreditCard.Internal.CardData model -> Html.Attribute msg"
+            },
+            {
+                "name": "updateCVVFocus",
+                "comment": " Helper function to update the focus state of the cvv field in the internal state\n",
+                "type": "Basics.Bool -> CreditCard.Internal.CardData model -> CreditCard.Internal.CardData model"
+            }
+        ],
+        "binops": []
+    }
+]

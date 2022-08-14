@@ -1,0 +1,23 @@
+[
+    {
+        "name": "WebpackAsset",
+        "comment": " This library lets you reference webpack assets in your Elm views,\nand have them replaced with require() statements (and eventually, the URLs\nof the assets) at compile time.\n\nDesigned to be used with the corresponding babel-elm-assets-plugin.\nSee https://github.com/cultureamp/babel-elm-assets-plugin\n\n@docs AssetUrl\n@docs assetUrl\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "AssetUrl",
+                "comment": " An AssetUrl will hold the URL of your asset at runtime\n\nThe value is provided by webpack, the same as `require('./logo.svg')` would be in JS.\n\n    view model =\n        div []\n            [ img [ src (assetUrl \"./logo.svg\") ] []\n            ]\n\n",
+                "args": [],
+                "type": "String.String"
+            }
+        ],
+        "values": [
+            {
+                "name": "assetUrl",
+                "comment": " A function to get the URL of a webpack asset.\n\nThe path you supply must be a literal string, not a variable or function that returns a string.\n\nIt must also be relative to the root of your Elm project, rather than being relative to the current file.\n\n    view model =\n        div []\n            [ img [ src (assetUrl \"./logo.svg\") ] []\n            ]\n\n",
+                "type": "String.String -> WebpackAsset.AssetUrl"
+            }
+        ],
+        "binops": []
+    }
+]

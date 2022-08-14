@@ -1,0 +1,148 @@
+[
+    {
+        "name": "VerbalExpressions",
+        "comment": " Elm port of [VerbalExpressions](https://github.com/VerbalExpressions)\n\n@docs verex, startOfLine, endOfLine, followedBy, find, possibly, anything, anythingBut\n@docs something, somethingBut, lineBreak, tab, word, anyOf, range, withAnyCase, repeatPrevious\n@docs repeatPrevious2, multiple, multiple2, orElse, beginCapture, endCapture, captureGroup, toRegex\n@docs toString, VerbalExpression\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "VerbalExpression",
+                "comment": " The main type used for constructing verbal expressions\n",
+                "args": [],
+                "type": "{ prefixes : String.String, source : String.String, suffixes : String.String, modifiers : { insensitive : Basics.Bool, multiline : Basics.Bool } }"
+            }
+        ],
+        "values": [
+            {
+                "name": "anyOf",
+                "comment": " Match a character class\n",
+                "type": "String.String -> VerbalExpressions.VerbalExpression -> VerbalExpressions.VerbalExpression"
+            },
+            {
+                "name": "anything",
+                "comment": " Match any set of characters or not\n",
+                "type": "VerbalExpressions.VerbalExpression -> VerbalExpressions.VerbalExpression"
+            },
+            {
+                "name": "anythingBut",
+                "comment": " Match any set of characters except a particular String\n",
+                "type": "String.String -> VerbalExpressions.VerbalExpression -> VerbalExpressions.VerbalExpression"
+            },
+            {
+                "name": "beginCapture",
+                "comment": " Start capturing a group\n",
+                "type": "VerbalExpressions.VerbalExpression -> VerbalExpressions.VerbalExpression"
+            },
+            {
+                "name": "captureGroup",
+                "comment": " Captures a group\n",
+                "type": "(VerbalExpressions.VerbalExpression -> VerbalExpressions.VerbalExpression) -> VerbalExpressions.VerbalExpression -> VerbalExpressions.VerbalExpression"
+            },
+            {
+                "name": "endCapture",
+                "comment": " Finish capturing a group\n",
+                "type": "VerbalExpressions.VerbalExpression -> VerbalExpressions.VerbalExpression"
+            },
+            {
+                "name": "endOfLine",
+                "comment": " Restrict matches to end of line\n",
+                "type": "VerbalExpressions.VerbalExpression -> VerbalExpressions.VerbalExpression"
+            },
+            {
+                "name": "find",
+                "comment": " Start the expression with a matching group\n",
+                "type": "String.String -> VerbalExpressions.VerbalExpression -> VerbalExpressions.VerbalExpression"
+            },
+            {
+                "name": "followedBy",
+                "comment": " Include a matching group in the expression\n",
+                "type": "String.String -> VerbalExpressions.VerbalExpression -> VerbalExpressions.VerbalExpression"
+            },
+            {
+                "name": "lineBreak",
+                "comment": " Match a new line\n",
+                "type": "VerbalExpressions.VerbalExpression -> VerbalExpressions.VerbalExpression"
+            },
+            {
+                "name": "multiple",
+                "comment": " Match a group any number of times\n",
+                "type": "String.String -> VerbalExpressions.VerbalExpression -> VerbalExpressions.VerbalExpression"
+            },
+            {
+                "name": "multiple2",
+                "comment": " Match a group a particular number of times\n",
+                "type": "String.String -> Basics.Int -> VerbalExpressions.VerbalExpression -> VerbalExpressions.VerbalExpression"
+            },
+            {
+                "name": "orElse",
+                "comment": " Add an alternative expression\n",
+                "type": "String.String -> VerbalExpressions.VerbalExpression -> VerbalExpressions.VerbalExpression"
+            },
+            {
+                "name": "possibly",
+                "comment": " Include an optional matching group\n",
+                "type": "String.String -> VerbalExpressions.VerbalExpression -> VerbalExpressions.VerbalExpression"
+            },
+            {
+                "name": "range",
+                "comment": " Match a character class with ranges\n",
+                "type": "List.List ( String.String, String.String ) -> VerbalExpressions.VerbalExpression -> VerbalExpressions.VerbalExpression"
+            },
+            {
+                "name": "repeatPrevious",
+                "comment": " Repeat the prior case a number of times\n",
+                "type": "Basics.Int -> VerbalExpressions.VerbalExpression -> VerbalExpressions.VerbalExpression"
+            },
+            {
+                "name": "repeatPrevious2",
+                "comment": " Repeat the prior case within some range of times\n",
+                "type": "Basics.Int -> Basics.Int -> VerbalExpressions.VerbalExpression -> VerbalExpressions.VerbalExpression"
+            },
+            {
+                "name": "something",
+                "comment": " Match on one or more characters\n",
+                "type": "VerbalExpressions.VerbalExpression -> VerbalExpressions.VerbalExpression"
+            },
+            {
+                "name": "somethingBut",
+                "comment": " Match on one or more characters, with the execption of some String\n",
+                "type": "String.String -> VerbalExpressions.VerbalExpression -> VerbalExpressions.VerbalExpression"
+            },
+            {
+                "name": "startOfLine",
+                "comment": " Restrict matches to start of line\n",
+                "type": "VerbalExpressions.VerbalExpression -> VerbalExpressions.VerbalExpression"
+            },
+            {
+                "name": "tab",
+                "comment": " Match a tab\n",
+                "type": "VerbalExpressions.VerbalExpression -> VerbalExpressions.VerbalExpression"
+            },
+            {
+                "name": "toRegex",
+                "comment": " Compile result down to a Regex.Regex\n",
+                "type": "VerbalExpressions.VerbalExpression -> Regex.Regex"
+            },
+            {
+                "name": "toString",
+                "comment": " Compile result down to a String\nNote, this is just a string of the expression. Modifier flags are discarded.\n",
+                "type": "VerbalExpressions.VerbalExpression -> String.String"
+            },
+            {
+                "name": "verex",
+                "comment": " An initial, empty verex to start from and pipe through functions\n",
+                "type": "VerbalExpressions.VerbalExpression"
+            },
+            {
+                "name": "withAnyCase",
+                "comment": " Let the expression be case insensitive\n",
+                "type": "Basics.Bool -> VerbalExpressions.VerbalExpression -> VerbalExpressions.VerbalExpression"
+            },
+            {
+                "name": "word",
+                "comment": " Match an alphanumeric word\n",
+                "type": "VerbalExpressions.VerbalExpression -> VerbalExpressions.VerbalExpression"
+            }
+        ],
+        "binops": []
+    }
+]

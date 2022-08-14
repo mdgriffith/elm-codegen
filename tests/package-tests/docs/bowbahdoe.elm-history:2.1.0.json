@@ -1,0 +1,60 @@
+[
+    {
+        "name": "History",
+        "comment": " This library gives you a way to manage a series of values where you are only interested in one\nvalue at a time and are interested in potentially revisiting previous values.\n\nThe provided data structure is referred to here as a \"History\", although it is more often referred to as\na [\"Zip List\"][2]. This is meant to provide you with a better idea of what you can effectively use this\nlibrary for. Namely, you can use this data structure to power any feature that fits the pattern of\n\"undo\" and \"redo\".\n\nFor more insights on why you might want to use this data structure, I highly reccomend watching [this talk][1]\n\nIf you are here looking for a way to manage the actual history of a web browser, you should instead\nbe looking at the [elm/Browser][3] package.\n\n[1]: https://www.youtube.com/watch?v=IcgmSRJHu_8\n[2]: https://en.wikipedia.org/wiki/Zipper_(data_structure)\n[3]: https://package.elm-lang.org/packages/elm/browser/latest/Browser-Navigation#pushUrl\n\n\n# The Data Structure\n\n@docs History\n\n\n# Create\n\n@docs new, fromList\n\n\n# Maneuvering\n\n@docs forward, back, current, to, evolve\n\n\n# Transform\n\n@docs map\n\n",
+        "unions": [
+            {
+                "name": "History",
+                "comment": " A \"History\" of values.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "back",
+                "comment": " Moves backward in the history. If there are no past values\nthen there is no change. This is synonymous with an \"undo\" operation.\n",
+                "type": "History.History a -> History.History a"
+            },
+            {
+                "name": "current",
+                "comment": " Gets the current value in the History.\n",
+                "type": "History.History a -> a"
+            },
+            {
+                "name": "evolve",
+                "comment": " Moves the History to a new value obtained by applying a function to the current value. Just like `to`, this\nwill erase any of your knowledge of the future.\n",
+                "type": "(a -> a) -> History.History a -> History.History a"
+            },
+            {
+                "name": "forward",
+                "comment": " Moves forward in the history. If there are no values in the future\nthen there is no change. This is synonymous with a \"redo\" operation.\n",
+                "type": "History.History a -> History.History a"
+            },
+            {
+                "name": "fromList",
+                "comment": " Creates a history from a list. Treats the first element in the list as the present state\nand all the other items as the states that occurred in the past. If the list is empty, then no History will be produced.\n",
+                "type": "List.List a -> Maybe.Maybe (History.History a)"
+            },
+            {
+                "name": "map",
+                "comment": " Maps a function over all the values in the history.\n",
+                "type": "(a -> b) -> History.History a -> History.History b"
+            },
+            {
+                "name": "new",
+                "comment": " Creates a new History, starting with the given value.\n",
+                "type": "a -> History.History a"
+            },
+            {
+                "name": "to",
+                "comment": " Moves the History to a new value. This will erase anything in the future.\nThink of it like time travel: If you go back in time and change what happens next,\nall your knowledge of the future is now irrelevant.\n",
+                "type": "a -> History.History a -> History.History a"
+            }
+        ],
+        "binops": []
+    }
+]

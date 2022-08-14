@@ -1,0 +1,86 @@
+[
+    {
+        "name": "Pgn",
+        "comment": " This is a library for parsing \"Portable Game Notation\" (PGN) for standard chess. PGN is a plain text standard for recording chess games. For more information check out [the Wikipedia entry on PGN](https://en.wikipedia.org/wiki/Portable_Game_Notation) or [the PGN spec itself](https://ia802908.us.archive.org/26/items/pgn-standard-1994-03-12/PGN_standard_1994-03-12.txt).\n\n\n# Data Structures\n\n@docs Pgn, TagPair, Move\n\n\n# The Parsers\n\n@docs parse, parseMove, parseMoves, parseTagPair, parseTagPairs\n\n\n# Errors\n\n@docs parseErrorToString\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Move",
+                "comment": " The `Move` data structure contains the move number and the move of each player.\nA move in PGN like `42. Rxg7 Kc8` would be represented in this data structure as `{ number: \"42\", white: \"Rxg7\", black: \"Kc8\"}`\n",
+                "args": [],
+                "type": "{ number : String.String, white : String.String, black : String.String }"
+            },
+            {
+                "name": "Pgn",
+                "comment": " The `Pgn` object represents a complete PGN. The tag pairs (or roster) typically contain archival or supplemental information for the game itself. And then there are the moves of the game itself.\n",
+                "args": [],
+                "type": "{ tagPairs : List.List Pgn.TagPair, moves : List.List Pgn.Move }"
+            },
+            {
+                "name": "TagPair",
+                "comment": " The `TagPair` strcuture should minimally contain what is also known as the \"Seven Tag Roster\" (STR). The tag pairs can extend beyond the standard seven however. A good example of a the tag pairs describing a game looks like this:\n\n        [ Event \"Russia - The Rest of the World\" ]\n\n        [ Site \"Moscow RUS\" ]\n\n        [ Date \"2002.09.09\" ]\n\n        [ EventDate \"2002.09.08\" ]\n\n        [ Round \"5\" ]\n\n        [ Result \"1-0\" ]\n\n        [ White \"Judit Polgar\" ]\n\n        [ Black \"Garry Kasparov\"]\n\n        [ ECO \"C67\" ]\n\n        [ WhiteElo \"2681\" ]\n\n        [ BlackElo \"2838\" ]\n\n        [ PlyCount \"84\" ]\n\nEach statement (starting with `[` and ending with `]`) is a tag pair. So the tag pair `[Result \"1-0\"]` would be represented in the data structure as `{ title: \"Result\", value: \"1-0\"}`\n\nIt's **important** to note that tag pairs are treated something like key, value pairs and the value must be in quotes!\n\n",
+                "args": [],
+                "type": "{ title : String.String, value : String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "parse",
+                "comment": " The `parse` function expects a complete PGN as a string and returns either a PGN or a [`DeadEnd`](https://package.elm-lang.org/packages/elm/parser/latest/Parser#DeadEnd) error.\n\nFor more information from any errors you see, check out the `parseErrorToString` function.\n\n",
+                "type": "String.String -> Result.Result (List.List Parser.DeadEnd) Pgn.Pgn"
+            },
+            {
+                "name": "parseErrorToString",
+                "comment": " The `parseErrorToString` is to help pinpoint what's causing issues with a parse. It simply produces a string for human consumption that describes what the parser thinks went wrong, followed by the line of the error then a `^` below where it thinks the problem is. For example, attempting to parse this invalid tag pair:\n\n        [EventTitle After the title, everything else in the tag pair needs to be in quotes!]\n\nwould result in this output:\n\n        error on row:  1, col: 13. Problem: Expecting: \\\"\n        > [EventTitle After the title everything else in the tag pair needs to be in quotes!]\n                      ^\n\n",
+                "type": "String.String -> List.List Parser.DeadEnd -> String.String"
+            },
+            {
+                "name": "parseMove",
+                "comment": " The `parseMove` function accepts input in the shape of a single line of [Movetext](https://en.wikipedia.org/wiki/Portable_Game_Notation#Movetext), i.e. `1. e4 e5`\n\n        parseMove \"1. e4 e5\" ==\n            Ok { number = \"1\", white = \"e4\", black = \"e5\" }\n\n",
+                "type": "String.String -> Result.Result (List.List Parser.DeadEnd) Pgn.Move"
+            },
+            {
+                "name": "parseMoves",
+                "comment": " The `parseMoves` function accepts string input in the shape of a multiple lines of [Movetext](https://en.wikipedia.org/wiki/Portable_Game_Notation#Movetext), i.e. `1. e4 e5 2. Nf3 Nc6 3. Bb5 Nf6`\n\n        parseMoves \"1. e4 e5 2. Nf3 Nc6 3. Bb5 Nf6\" ==\n            Ok\n                [ { number = \"1\"\n                  , white = \"e4\"\n                  , black = \"e5\"\n                  }\n                , { number = \"2\", white = \"Nf3\", black = \"Nc6\" }\n                , { number = \"3\", white = \"Bb5\", black = \"Nf6\" }\n                ]\n\n",
+                "type": "String.String -> Result.Result (List.List Parser.DeadEnd) (List.List Pgn.Move)"
+            },
+            {
+                "name": "parseTagPair",
+                "comment": " The `parseTagPair` function accepts string input in the shape of a single tag pair, i.e. `[EventDate \"2002.09.08\"]`\n\n        parseTagPair \"[EventDate \\\"2002.09.08\\\"]\" ==\n            Ok { title = \"EventDate\", value = \"2002.09.08\" }\n\n",
+                "type": "String.String -> Result.Result (List.List Parser.DeadEnd) Pgn.TagPair"
+            },
+            {
+                "name": "parseTagPairs",
+                "comment": " The `parseTagPairs` function accepts string input in the shape of a series of tag pairs, i.e. `[EventDate \"2002.09.08\"] [Round \"5\"]`\n\n        parseTagPairs \"[EventDate \\\"2002.09.08\\\"]  [Round \\\"5\\\"]\" ==\n            Ok\n                [ { title = \"EventDate\"\n                  , value = \"2002.09.08\"\n                  }\n                , { title = \"Round\", value = \"5\" }\n                ]\n\n",
+                "type": "String.String -> Result.Result (List.List Parser.DeadEnd) (List.List Pgn.TagPair)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Pgn.Extra",
+        "comment": " Convenience functions for working with Pgn\n\n\n# Data Structures\n\n@docs SevenTag\n\n\n# Functions\n\n@docs toSevenTag, toString\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "SevenTag",
+                "comment": " The `SevenTag` data structure represents the standard values you'd expect to see in a PGN's tag pairs. The idea behind it is that if you want easy access to a result or the date a game took place, you shouldn't need to traverse a list!\n",
+                "args": [],
+                "type": "{ event : Maybe.Maybe String.String, site : Maybe.Maybe String.String, date : Maybe.Maybe String.String, round : Maybe.Maybe String.String, white : Maybe.Maybe String.String, black : Maybe.Maybe String.String, result : Maybe.Maybe String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "toSevenTag",
+                "comment": " The `toSevenTag` function takes a list of TagPair and does the work for you to produce common / expected values from a PGN tag pair.\n\n        pgn =\n            Pgn.parse \"...\"\n\n        sevenTag =\n            toSevenTag pgn.tagPairs\n\n",
+                "type": "List.List Pgn.TagPair -> Pgn.Extra.SevenTag"
+            },
+            {
+                "name": "toString",
+                "comment": " The `toString` can be helpful if you want to display a parsed PGN in a way that's _visually_ parseable. It separates each TagPair with `\\n`, the TagPairs from the Moves with `\\n\\n`, and each Move with `\\n`\n",
+                "type": "Pgn.Pgn -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,199 @@
+[
+    {
+        "name": "MiniLatex",
+        "comment": " This library exposes functions for rendering MiniLaTeX text into HTML.\nMost users will need only (1) the functions exposed in the `MiniLatex` module\nand (2) `EditRecord`, which is exposed in the `Differ` module.\n\nSee [MiniLatex Live](https://jxxcarlson.github.io/app/miniLatexLive/index.html)\nfor a no-login demo of the MiniLatex technology. [Source code](https://github.com/jxxcarlson/MiniLatexLive)\n\nSee this [Hackernoon article](https://hackernoon.com/towards-latex-in-the-browser-2ff4d94a0c08)\nfor an explanation of the theory behind the MiniLatex package.\n\n\n# API\n\n@docs parse, render, renderWithSeed\n\n@docs LatexExpression, LatexState, emptyLatexState\n\n@docs TocEntry, TableOfContents\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "LatexExpression",
+                "comment": " Type of the syntax tree\n",
+                "args": [],
+                "type": "Internal.Parser.LatexExpression"
+            },
+            {
+                "name": "LatexState",
+                "comment": " Auxiliary data compiled during parsing\n",
+                "args": [],
+                "type": "Internal.LatexState.LatexState"
+            },
+            {
+                "name": "TableOfContents",
+                "comment": " The table of contents\n",
+                "args": [],
+                "type": "Internal.LatexState.TableOfContents"
+            },
+            {
+                "name": "TocEntry",
+                "comment": " Describes an entry in the table of contents\n",
+                "args": [],
+                "type": "Internal.LatexState.TocEntry"
+            }
+        ],
+        "values": [
+            {
+                "name": "emptyLatexState",
+                "comment": " Used for initialization\n",
+                "type": "MiniLatex.LatexState"
+            },
+            {
+                "name": "parse",
+                "comment": " parse a string of LaTeX text and return its syntax tree\n",
+                "type": "String.String -> List.List MiniLatex.LatexExpression"
+            },
+            {
+                "name": "render",
+                "comment": " The function call\n\n    render \"\" NoDelay sourceTest\n\nproduces an HTML value corresponding to the given MiniLaTeX source text.\nIn this example, the first parameter is an id of an element\nto be highlighted. It can be left empty. The second parameter, here\n`noDelay`, defines the way that MathJax will go about typesetting\nthe content passed to it. Use `NoDelay` for\ndocuments with not too many math elements and for\nediting all documents, since only changed text is re-rendered.\nUse `Delay` for loading document containing many\nmath elements.\n\n",
+                "type": "String.String -> String.String -> Html.Html MiniLatex.Edit.LaTeXMsg"
+            },
+            {
+                "name": "renderWithSeed",
+                "comment": " Like render, but used the `seed` to define the ids for each paragraph:\n\n    render NoDelay seed macros sourceTest\n\n",
+                "type": "String.String -> Basics.Int -> String.String -> String.String -> Html.Html MiniLatex.Edit.LaTeXMsg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "MiniLatex.Edit",
+        "comment": " Data structures and functions for managing interactive edits. The parse tree, rendered text, and other information needed\nfor this is stored in a value of type\n\n    MiniLatex.Edit.Data\n\nThat data is initialized using\n\n    data =\n        init version text\n\nwhere the version is an integer that distinguishes\ndifferent edits.\n\n\n# API\n\n@docs Data, emptyData, init, update, get, parse, LaTeXMsg\n\n",
+        "unions": [
+            {
+                "name": "LaTeXMsg",
+                "comment": " Use this type so that clicks in the rendered text can be detected\n",
+                "args": [],
+                "cases": [
+                    [
+                        "IDClicked",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Data",
+                "comment": " Data for differential parsing and rendering\n",
+                "args": [
+                    "a"
+                ],
+                "type": "Internal.Differ.EditRecord a"
+            }
+        ],
+        "values": [
+            {
+                "name": "emptyData",
+                "comment": " Used for initialization.\n",
+                "type": "MiniLatex.Edit.Data (Html.Html MiniLatex.Edit.LaTeXMsg)"
+            },
+            {
+                "name": "get",
+                "comment": " Retrieve Html from a Data object and construct\nthe click handlers used to highlight the selected paragraph\n(if any). Example:\n\n    get \"p.1.10\" data\n\nwill retrieve the rendered text and will hightlight the paragraph\nwith ID \"p.1.10\". The ID decodes\nas \"paragraph 10, version 1\". The version number\nof a paragraph is incremented when it is edited.\n\n",
+                "type": "String.String -> MiniLatex.Edit.Data (Html.Html MiniLatex.Edit.LaTeXMsg) -> List.List (Html.Html MiniLatex.Edit.LaTeXMsg)"
+            },
+            {
+                "name": "init",
+                "comment": " Create Data from a string of MiniLaTeX text and a version number.\nThe version number should be different for each call of init.\n",
+                "type": "Basics.Int -> String.String -> MiniLatex.Edit.Data (Html.Html MiniLatex.Edit.LaTeXMsg)"
+            },
+            {
+                "name": "parse",
+                "comment": " Parse the given text and return an AST representing it.\n",
+                "type": "String.String -> ( List.List String.String, List.List (List.List Internal.Parser.LatexExpression) )"
+            },
+            {
+                "name": "update",
+                "comment": " Update Data with modified text, re-parsing and re-rerendering changed elements.\n",
+                "type": "Basics.Int -> String.String -> MiniLatex.Edit.Data (Html.Html MiniLatex.Edit.LaTeXMsg) -> MiniLatex.Edit.Data (Html.Html MiniLatex.Edit.LaTeXMsg)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "MiniLatex.EditSimple",
+        "comment": " This module is like MiniLaTeX.Edit, except that the Data type, which is an\nalias of the record type `Internal.DifferSimple.EditRecord`, contains no functions.\n\n\n# API\n\n@docs Data, emptyData, init, update, get, render, renderWithVersion, LaTeXMsg\n\n",
+        "unions": [
+            {
+                "name": "LaTeXMsg",
+                "comment": " Use this type so that clicks in the rendered text can be detected\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Data",
+                "comment": " Data structures and functions for managing interactive edits. The parse tree, rendered text, and other information needed\nfor this is stored in a value of type\n\n    MiniLatex.Edit.Data\n\nThat data is initialized using\n\n    data =\n        init version text\n\nwhere the version is an integer that distinguishes\ndifferent edits.\n\n\n# API\n\n@docs Data, emptyData, init, update, get, LaTeXMsg\n\n",
+                "args": [],
+                "type": "Internal.DifferSimple.EditRecord"
+            }
+        ],
+        "values": [
+            {
+                "name": "emptyData",
+                "comment": " Used for initialization.\n",
+                "type": "MiniLatex.EditSimple.Data"
+            },
+            {
+                "name": "get",
+                "comment": " Retrieve Html from a Data object and construct\nthe click handlers used to highlight the selected paragraph\n(if any). Example:\n\n    get \"p.1.10\" data\n\nwill retrieve the rendered text and will hightlight the paragraph\nwith ID \"p.1.10\". The ID decodes\nas \"paragraph 10, version 1\". The version number\nof a paragraph is incremented when it is edited.\n\n",
+                "type": "String.String -> MiniLatex.EditSimple.Data -> List.List (Html.Html MiniLatex.EditSimple.LaTeXMsg)"
+            },
+            {
+                "name": "init",
+                "comment": " Create Data from a string of MiniLaTeX text and a version number.\nThe version number should be different for each call of init.\n",
+                "type": "Basics.Int -> String.String -> Maybe.Maybe String.String -> MiniLatex.EditSimple.Data"
+            },
+            {
+                "name": "render",
+                "comment": " Simplest function for rendering a string of LaTeX ",
+                "type": "String.String -> List.List (Html.Html MiniLatex.EditSimple.LaTeXMsg)"
+            },
+            {
+                "name": "renderWithVersion",
+                "comment": " Like 'render', but adds a 'version' id to the Html.\n This is used in applications that edit LaTeX text ",
+                "type": "Basics.Int -> String.String -> List.List (Html.Html MiniLatex.EditSimple.LaTeXMsg)"
+            },
+            {
+                "name": "update",
+                "comment": " Update Data with modified text, re-parsing and re-rerendering changed elements.\n",
+                "type": "Basics.Int -> String.String -> Maybe.Maybe String.String -> MiniLatex.EditSimple.Data -> MiniLatex.EditSimple.Data"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "MiniLatex.Export",
+        "comment": " This module is for preparing latex for export.\n\n\n# API\n\n@docs toLaTeX, toLaTeXWithImages\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toLaTeX",
+                "comment": " Map MiniLaTeX source text to standard LaTeX\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "toLaTeXWithImages",
+                "comment": " Map MiniLaTeX source text to a tuple,\nwhere the first is a LaTeX version of the source\ntext, and where the second element is a list\nof the image urls in the source text.\n",
+                "type": "String.String -> ( String.String, List.List String.String )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "MiniLatex.Markdown",
+        "comment": " Convert MiniLaTeX to Markdown\n\n\n# API\n\n@docs convert\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "convert",
+                "comment": " Convert MiniLaTeX to Markdown.  Experimental ",
+                "type": "String.String -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

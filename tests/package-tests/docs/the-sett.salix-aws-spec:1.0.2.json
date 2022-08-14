@@ -1,0 +1,16 @@
+[
+    {
+        "name": "AWS.TransformServiceSpec",
+        "comment": " Transforms an `AWS.ServiceSpec` service specification from the`elm-aws-core`\npackage, into a Salix model annotated for code generation.\n\n@docs transform\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "transform",
+                "comment": " Attempts to transform a `ServiceSpec` into `L3`.\n",
+                "type": "(() -> SourcePos.SourceLines) -> AWS.ServiceSpec.ServiceSpec -> ResultME.ResultME Errors.Error (L3.L3 ())"
+            }
+        ],
+        "binops": []
+    }
+]

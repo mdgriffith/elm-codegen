@@ -1,0 +1,41 @@
+[
+    {
+        "name": "Printf",
+        "comment": " This package provides a type-safe implementation of the famous printf function.\n\n@docs printf\n\n\n## Format\n\n@docs c, s, i, f\n\n\n## Combining formats\n\n@docs ap\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "ap",
+                "comment": " Combine two formats.\n\n      printf (c \"Some\" |> ap (c \" string\")) == \"Some string\"\n\n      printf (c \"My name is \" |> ap s) \"Jon\" == \"My name is Jon\"\n\n",
+                "type": "((String.String -> b) -> a) -> ((String.String -> a) -> c) -> (String.String -> b) -> c"
+            },
+            {
+                "name": "c",
+                "comment": " The constant format. Takes a string which printf prints as is.\nprintf (c \"Something...\") == \"Something...\"\n",
+                "type": "String.String -> (String.String -> a) -> a"
+            },
+            {
+                "name": "f",
+                "comment": " The Float format. Passing it to printf means you expect a Float.\nTakes an argument being the number of decimals to show.\n\n      printf (f 5) 1.0000123 == \"1.00001\"\n\n",
+                "type": "Basics.Int -> (String.String -> a) -> Basics.Float -> a"
+            },
+            {
+                "name": "i",
+                "comment": " The Int format. Passing it to printf means you expect an Int\n\n      printf i 23 == \"23\"\n\n",
+                "type": "(String.String -> a) -> Basics.Int -> a"
+            },
+            {
+                "name": "printf",
+                "comment": " The printf function, takes a format and returns the appropiate type.\n\n      printf (c \"Hey\") == \"Hey\"\n\n      printf s \"Some string\" == \"Some string\"\n\n",
+                "type": "((a -> a) -> b) -> b"
+            },
+            {
+                "name": "s",
+                "comment": " The String format. Passing it to printf means you expect a String.\n\n      printf s \"Hey\" == \"Hey\"\n\n",
+                "type": "(String.String -> a) -> String.String -> a"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,861 @@
+[
+    {
+        "name": "Step.Bytes",
+        "comment": " Low-level functionality for encoding and decoding `Bytes` values as\nspecified in the STEP standard. In most case you will want to use\n[`Step.Decode.binaryData`](Step-Decode#binaryData) and [`Step.Encode.binaryData`](Step-Encode#binaryData)\ninstead of using this module directly.\n\n@docs encode, decode\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decode",
+                "comment": " Decode STEP-encoded bytes. The input is assumed _not_ to include the leading\nand trailing double quotation marks used when writing binary data to a STEP\nfile.\n",
+                "type": "String.String -> Bytes.Bytes"
+            },
+            {
+                "name": "encode",
+                "comment": " Encode a `Bytes` value using method specified in the STEP standard (a form\nof Base64 encoding):\n\n    bytes =\n        Bytes.Encode.encode (Bytes.Encode.unsignedInt16 Bytes.BE 1234)\n\n    Step.Bytes.encode bytes\n    --> \"004D2\"\n\nNote that the leading and trailing double quotation marks (used when writing\nbinary data to a STEP file) are _not_ included in the result.\n\n",
+                "type": "Bytes.Bytes -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Step.Decode",
+        "comment": "\n\n@docs Decoder, File, Context\n\n@docs parse, header, single, all, get\n\n\n# Entities\n\nThe `simpleEntity*` functions all attempt to decode a simple STEP entity with\nthe given number of attributes.\n\n@docs simpleEntity1, simpleEntity2, simpleEntity3, simpleEntity4, simpleEntity5, simpleEntity6, simpleEntity7, simpleEntity8, simpleEntity9, simpleEntity10, simpleEntity11, simpleEntity12, simpleEntity13, simpleEntity14, simpleEntity15, simpleEntity16\n\n\n## Complex entities\n\nThe `complexEntity*` functions all attempt to decode a complex STEP entity with\nthe given number of sub-entities.\n\n@docs complexEntity1, complexEntity2, complexEntity3, complexEntity4, complexEntity5, complexEntity6, complexEntity7, complexEntity8, complexEntity9, complexEntity10, complexEntity11, complexEntity12\n\nThe `subEntity*` functions all attempt to decode a sub-entity (of a complex STEP\nentity) with the given number of attributes.\n\n@docs subEntity0, subEntity1, subEntity2, subEntity3, subEntity4, subEntity5, subEntity6, subEntity7, subEntity8, subEntity9, subEntity10, subEntity11, subEntity12\n\n\n## Alternatives\n\n@docs oneOf\n\n\n## Context\n\n@docs keepContext, ignoreContext\n\n\n## Entity ID\n\n@docs keepId, ignoreId\n\n\n# Attributes\n\n@docs keep, ignore\n\n@docs bool, int, float, string, emptyString, binaryData, derivedValue, null, optional, enum, list, tuple2, tuple3, referenceTo, referencedId, referenceWithId\n\n@docs typedAttribute\n\n\n# Working with decoders\n\n@docs map, validate, resolve, andThen, succeed, fail, lazy\n\n\n## Context\n\n@docs chain, filter, inject, transform\n\n",
+        "unions": [
+            {
+                "name": "Context",
+                "comment": " Represents a 'context' value that is threaded through decoding after being\npassed in at the top level (and possibly updated/transformed during decoding).\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Decoder",
+                "comment": " A `Decoder` describes how to attempt to decode some input of type `i` (an\nentity or an attribute) and produce some output of type `a`.\n",
+                "args": [
+                    "input",
+                    "context",
+                    "output"
+                ],
+                "cases": []
+            },
+            {
+                "name": "File",
+                "comment": " Represents an entire STEP file composed of a header and a list of entities.\nYou can [get the header](#header) from a file or extract data from it using\n[entity decoders](#entities).\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "all",
+                "comment": " Find all entities in a file matching the given decoder.\n",
+                "type": "Step.Decode.Decoder Step.Types.Entity context output -> Step.Decode.File -> context -> Result.Result String.String (List.List output)"
+            },
+            {
+                "name": "andThen",
+                "comment": " Based on the result of one entity decoder, produce a second decoder to run\non the same entity.\n\n_**WARNING**_: This is sometimes necessary but can be a major performance issue!\nWherever possible, ensure decoders are created _once_ instead of on the fly\ninside an `andThen` callback. For example, in some cases you may be able to\ncreate a few static decoders and then have logic inside and `andThen` simply\nchoose which of those to use.\n\n",
+                "type": "(a -> Step.Decode.Decoder Step.Types.Entity context b) -> Step.Decode.Decoder Step.Types.Entity context a -> Step.Decode.Decoder Step.Types.Entity context b"
+            },
+            {
+                "name": "binaryData",
+                "comment": " Decode a single attribute as a blob of binary data, using the given\n[binary decoder](https://package.elm-lang.org/packages/elm/bytes/latest/Bytes-Decode).\n",
+                "type": "Bytes.Decode.Decoder a -> Step.Decode.Decoder Step.Types.Attribute context a"
+            },
+            {
+                "name": "bool",
+                "comment": " Decode a single attribute as a `Bool` (from the special STEP enum values\n`.T.` and `.F.`).\n",
+                "type": "Step.Decode.Decoder Step.Types.Attribute context Basics.Bool"
+            },
+            {
+                "name": "chain",
+                "comment": " Chain two decoders together so that the output of the first can affect the\nbehavior of the second. Given two decoders, you must additionally pass a\nfunction that takes the context of the first decoder and its output, and\nproduces the context to feed into the second decoder. The result is a combined\ndecoder that accepts the context of the first and produces the output of the\nsecond.\n",
+                "type": "(context1 -> output1 -> context2) -> Step.Decode.Decoder Step.Types.Entity context1 output1 -> Step.Decode.Decoder Step.Types.Entity context2 output2 -> Step.Decode.Decoder Step.Types.Entity context1 output2"
+            },
+            {
+                "name": "complexEntity1",
+                "comment": " ",
+                "type": "callback -> Step.Decode.Decoder Step.Decode.Context context (callback -> a) -> Step.Decode.Decoder Basics.Int context (a -> b) -> Step.Decode.Decoder Step.Types.SubEntity context (b -> output) -> Step.Decode.Decoder Step.Types.Entity context output"
+            },
+            {
+                "name": "complexEntity10",
+                "comment": " ",
+                "type": "callback -> Step.Decode.Decoder Step.Decode.Context context (callback -> a) -> Step.Decode.Decoder Basics.Int context (a -> b) -> Step.Decode.Decoder Step.Types.SubEntity context (b -> c) -> Step.Decode.Decoder Step.Types.SubEntity context (c -> d) -> Step.Decode.Decoder Step.Types.SubEntity context (d -> e) -> Step.Decode.Decoder Step.Types.SubEntity context (e -> f) -> Step.Decode.Decoder Step.Types.SubEntity context (f -> g) -> Step.Decode.Decoder Step.Types.SubEntity context (g -> h) -> Step.Decode.Decoder Step.Types.SubEntity context (h -> i) -> Step.Decode.Decoder Step.Types.SubEntity context (i -> j) -> Step.Decode.Decoder Step.Types.SubEntity context (j -> k) -> Step.Decode.Decoder Step.Types.SubEntity context (k -> output) -> Step.Decode.Decoder Step.Types.Entity context output"
+            },
+            {
+                "name": "complexEntity11",
+                "comment": " ",
+                "type": "callback -> Step.Decode.Decoder Step.Decode.Context context (callback -> a) -> Step.Decode.Decoder Basics.Int context (a -> b) -> Step.Decode.Decoder Step.Types.SubEntity context (b -> c) -> Step.Decode.Decoder Step.Types.SubEntity context (c -> d) -> Step.Decode.Decoder Step.Types.SubEntity context (d -> e) -> Step.Decode.Decoder Step.Types.SubEntity context (e -> f) -> Step.Decode.Decoder Step.Types.SubEntity context (f -> g) -> Step.Decode.Decoder Step.Types.SubEntity context (g -> h) -> Step.Decode.Decoder Step.Types.SubEntity context (h -> i) -> Step.Decode.Decoder Step.Types.SubEntity context (i -> j) -> Step.Decode.Decoder Step.Types.SubEntity context (j -> k) -> Step.Decode.Decoder Step.Types.SubEntity context (k -> l) -> Step.Decode.Decoder Step.Types.SubEntity context (l -> output) -> Step.Decode.Decoder Step.Types.Entity context output"
+            },
+            {
+                "name": "complexEntity12",
+                "comment": " ",
+                "type": "callback -> Step.Decode.Decoder Step.Decode.Context context (callback -> a) -> Step.Decode.Decoder Basics.Int context (a -> b) -> Step.Decode.Decoder Step.Types.SubEntity context (b -> c) -> Step.Decode.Decoder Step.Types.SubEntity context (c -> d) -> Step.Decode.Decoder Step.Types.SubEntity context (d -> e) -> Step.Decode.Decoder Step.Types.SubEntity context (e -> f) -> Step.Decode.Decoder Step.Types.SubEntity context (f -> g) -> Step.Decode.Decoder Step.Types.SubEntity context (g -> h) -> Step.Decode.Decoder Step.Types.SubEntity context (h -> i) -> Step.Decode.Decoder Step.Types.SubEntity context (i -> j) -> Step.Decode.Decoder Step.Types.SubEntity context (j -> k) -> Step.Decode.Decoder Step.Types.SubEntity context (k -> l) -> Step.Decode.Decoder Step.Types.SubEntity context (l -> m) -> Step.Decode.Decoder Step.Types.SubEntity context (m -> output) -> Step.Decode.Decoder Step.Types.Entity context output"
+            },
+            {
+                "name": "complexEntity2",
+                "comment": " ",
+                "type": "callback -> Step.Decode.Decoder Step.Decode.Context context (callback -> a) -> Step.Decode.Decoder Basics.Int context (a -> b) -> Step.Decode.Decoder Step.Types.SubEntity context (b -> c) -> Step.Decode.Decoder Step.Types.SubEntity context (c -> output) -> Step.Decode.Decoder Step.Types.Entity context output"
+            },
+            {
+                "name": "complexEntity3",
+                "comment": " ",
+                "type": "callback -> Step.Decode.Decoder Step.Decode.Context context (callback -> a) -> Step.Decode.Decoder Basics.Int context (a -> b) -> Step.Decode.Decoder Step.Types.SubEntity context (b -> c) -> Step.Decode.Decoder Step.Types.SubEntity context (c -> d) -> Step.Decode.Decoder Step.Types.SubEntity context (d -> output) -> Step.Decode.Decoder Step.Types.Entity context output"
+            },
+            {
+                "name": "complexEntity4",
+                "comment": " ",
+                "type": "callback -> Step.Decode.Decoder Step.Decode.Context context (callback -> a) -> Step.Decode.Decoder Basics.Int context (a -> b) -> Step.Decode.Decoder Step.Types.SubEntity context (b -> c) -> Step.Decode.Decoder Step.Types.SubEntity context (c -> d) -> Step.Decode.Decoder Step.Types.SubEntity context (d -> e) -> Step.Decode.Decoder Step.Types.SubEntity context (e -> output) -> Step.Decode.Decoder Step.Types.Entity context output"
+            },
+            {
+                "name": "complexEntity5",
+                "comment": " ",
+                "type": "callback -> Step.Decode.Decoder Step.Decode.Context context (callback -> a) -> Step.Decode.Decoder Basics.Int context (a -> b) -> Step.Decode.Decoder Step.Types.SubEntity context (b -> c) -> Step.Decode.Decoder Step.Types.SubEntity context (c -> d) -> Step.Decode.Decoder Step.Types.SubEntity context (d -> e) -> Step.Decode.Decoder Step.Types.SubEntity context (e -> f) -> Step.Decode.Decoder Step.Types.SubEntity context (f -> output) -> Step.Decode.Decoder Step.Types.Entity context output"
+            },
+            {
+                "name": "complexEntity6",
+                "comment": " ",
+                "type": "callback -> Step.Decode.Decoder Step.Decode.Context context (callback -> a) -> Step.Decode.Decoder Basics.Int context (a -> b) -> Step.Decode.Decoder Step.Types.SubEntity context (b -> c) -> Step.Decode.Decoder Step.Types.SubEntity context (c -> d) -> Step.Decode.Decoder Step.Types.SubEntity context (d -> e) -> Step.Decode.Decoder Step.Types.SubEntity context (e -> f) -> Step.Decode.Decoder Step.Types.SubEntity context (f -> g) -> Step.Decode.Decoder Step.Types.SubEntity context (g -> output) -> Step.Decode.Decoder Step.Types.Entity context output"
+            },
+            {
+                "name": "complexEntity7",
+                "comment": " ",
+                "type": "callback -> Step.Decode.Decoder Step.Decode.Context context (callback -> a) -> Step.Decode.Decoder Basics.Int context (a -> b) -> Step.Decode.Decoder Step.Types.SubEntity context (b -> c) -> Step.Decode.Decoder Step.Types.SubEntity context (c -> d) -> Step.Decode.Decoder Step.Types.SubEntity context (d -> e) -> Step.Decode.Decoder Step.Types.SubEntity context (e -> f) -> Step.Decode.Decoder Step.Types.SubEntity context (f -> g) -> Step.Decode.Decoder Step.Types.SubEntity context (g -> h) -> Step.Decode.Decoder Step.Types.SubEntity context (h -> output) -> Step.Decode.Decoder Step.Types.Entity context output"
+            },
+            {
+                "name": "complexEntity8",
+                "comment": " ",
+                "type": "callback -> Step.Decode.Decoder Step.Decode.Context context (callback -> a) -> Step.Decode.Decoder Basics.Int context (a -> b) -> Step.Decode.Decoder Step.Types.SubEntity context (b -> c) -> Step.Decode.Decoder Step.Types.SubEntity context (c -> d) -> Step.Decode.Decoder Step.Types.SubEntity context (d -> e) -> Step.Decode.Decoder Step.Types.SubEntity context (e -> f) -> Step.Decode.Decoder Step.Types.SubEntity context (f -> g) -> Step.Decode.Decoder Step.Types.SubEntity context (g -> h) -> Step.Decode.Decoder Step.Types.SubEntity context (h -> i) -> Step.Decode.Decoder Step.Types.SubEntity context (i -> output) -> Step.Decode.Decoder Step.Types.Entity context output"
+            },
+            {
+                "name": "complexEntity9",
+                "comment": " ",
+                "type": "callback -> Step.Decode.Decoder Step.Decode.Context context (callback -> a) -> Step.Decode.Decoder Basics.Int context (a -> b) -> Step.Decode.Decoder Step.Types.SubEntity context (b -> c) -> Step.Decode.Decoder Step.Types.SubEntity context (c -> d) -> Step.Decode.Decoder Step.Types.SubEntity context (d -> e) -> Step.Decode.Decoder Step.Types.SubEntity context (e -> f) -> Step.Decode.Decoder Step.Types.SubEntity context (f -> g) -> Step.Decode.Decoder Step.Types.SubEntity context (g -> h) -> Step.Decode.Decoder Step.Types.SubEntity context (h -> i) -> Step.Decode.Decoder Step.Types.SubEntity context (i -> j) -> Step.Decode.Decoder Step.Types.SubEntity context (j -> output) -> Step.Decode.Decoder Step.Types.Entity context output"
+            },
+            {
+                "name": "derivedValue",
+                "comment": " Decode the special 'derived value' attribute (`*`) as the given value.\n",
+                "type": "a -> Step.Decode.Decoder Step.Types.Attribute context a"
+            },
+            {
+                "name": "emptyString",
+                "comment": " Decode a single attribute as a string which must be empty (whitespace only).\nUseful when used with [`ignore`](#ignore) to check that the string being ignored\nis in fact empty.\n",
+                "type": "Step.Decode.Decoder Step.Types.Attribute context ()"
+            },
+            {
+                "name": "enum",
+                "comment": " Decode a single enum attribute, by passing a list of enum cases as their\nSTEP type name and corresponding Elm value. For example, given a STEP enum with\nvalues `RED`, `YELLOW` and `GREEN` you might write:\n\n    type LightColor\n        = Red\n        | Yellow\n        | Green\n\n    lightColorDecoder : Decoder Attribute LightColor\n    lightColorDecoder =\n        Decode.enum\n            [ ( \"RED\", Red )\n            , ( \"YELLOW\", Yellow )\n            , ( \"GREEN\", Green )\n            ]\n\n(Note that the given strings will be normalized, so case does not matter.)\n\n",
+                "type": "List.List ( String.String, a ) -> Step.Decode.Decoder Step.Types.Attribute context a"
+            },
+            {
+                "name": "fail",
+                "comment": " A trivial decoder that always failes with the given error message. May be\nuseful in combination with `andThen`, but consider using `validate` instead.\n",
+                "type": "String.String -> Step.Decode.Decoder Step.Types.Entity context a"
+            },
+            {
+                "name": "filter",
+                "comment": " A variant of [`chain`](#chain) that additionally allows you to stop decoding\nafter the first step (never run the second decoder) by returning `Nothing`\ninstead of `Just context` from the callback function. In that case the output\nof the combined decoder will also be `Nothing`.\n",
+                "type": "(context1 -> output1 -> Maybe.Maybe context2) -> Step.Decode.Decoder Step.Types.Entity context1 output1 -> Step.Decode.Decoder Step.Types.Entity context2 output2 -> Step.Decode.Decoder Step.Types.Entity context1 (Maybe.Maybe output2)"
+            },
+            {
+                "name": "float",
+                "comment": " Decode a single attribute as a `Float`. Note that unlike JSON, STEP has\ndifferent encodings for `Int` and `Float` values so you cannot use this\nfunction to decode integer values; if you want to decode an integer value as a\n`Float` you will need to use\n\n    Decode.map toFloat Decode.int\n\n",
+                "type": "Step.Decode.Decoder Step.Types.Attribute context Basics.Float"
+            },
+            {
+                "name": "get",
+                "comment": " Decode a single entity from a file by ID, using the given decoder. Usually\nyou will want to use [`single`](#single) instead.\n",
+                "type": "Basics.Int -> Step.Decode.Decoder Step.Types.Entity context output -> Step.Decode.File -> context -> Result.Result String.String output"
+            },
+            {
+                "name": "header",
+                "comment": " Get the [header](Step-Types#Header) of a given file.\n",
+                "type": "Step.Decode.File -> Step.Types.Header"
+            },
+            {
+                "name": "ignore",
+                "comment": " Ignore a particular attribute so that it does not get passed to the callback\nfunction for the entity being decoded.\n",
+                "type": "Step.Decode.Decoder Step.Types.Attribute context a -> Step.Decode.Decoder Step.Types.Attribute context (b -> b)"
+            },
+            {
+                "name": "ignoreContext",
+                "comment": " Ignore the current context while decoding.\n",
+                "type": "Step.Decode.Decoder Step.Decode.Context context (a -> a)"
+            },
+            {
+                "name": "ignoreId",
+                "comment": " Ignore the ID of an entity while decoding.\n",
+                "type": "Step.Decode.Decoder Basics.Int context (a -> a)"
+            },
+            {
+                "name": "inject",
+                "comment": " Take a decoder that expects a particular type of context, and 'inject' part\nof the current context into it.\n",
+                "type": "(outerContext -> innerContext) -> Step.Decode.Decoder input innerContext output -> Step.Decode.Decoder input outerContext output"
+            },
+            {
+                "name": "int",
+                "comment": " Decode a single attribute as an `Int`.\n",
+                "type": "Step.Decode.Decoder Step.Types.Attribute context Basics.Int"
+            },
+            {
+                "name": "keep",
+                "comment": " Keep a particular attribute value to pass to the callback function for the\nentity being decoded.\n",
+                "type": "Step.Decode.Decoder Step.Types.Attribute context a -> Step.Decode.Decoder Step.Types.Attribute context ((a -> b) -> b)"
+            },
+            {
+                "name": "keepContext",
+                "comment": " Get the current context while decoding.\n",
+                "type": "Step.Decode.Decoder Step.Decode.Context context ((context -> a) -> a)"
+            },
+            {
+                "name": "keepId",
+                "comment": " Get the ID of an entity while decoding.\n",
+                "type": "Step.Decode.Decoder Basics.Int context ((Basics.Int -> a) -> a)"
+            },
+            {
+                "name": "lazy",
+                "comment": " Define a decoder lazily such that it is only constructed if needed. This is\nprimarily used to break circular reference chains between decoders.\n\nFor efficiency reasons, you should make sure that the provided callback function\nsimply returns an already-existing decoder value; it should _not_ construct\none on the fly.\n\n",
+                "type": "(() -> Step.Decode.Decoder Step.Types.Entity context a) -> Step.Decode.Decoder Step.Types.Entity context a"
+            },
+            {
+                "name": "list",
+                "comment": " Decode an attribute as a list, passing the decoder to be used for each list\nitem.\n",
+                "type": "Step.Decode.Decoder Step.Types.Attribute context a -> Step.Decode.Decoder Step.Types.Attribute context (List.List a)"
+            },
+            {
+                "name": "map",
+                "comment": " Map the value produced by a decoder.\n",
+                "type": "(a -> b) -> Step.Decode.Decoder input context a -> Step.Decode.Decoder input context b"
+            },
+            {
+                "name": "null",
+                "comment": " Decode the special 'null' attribute (`$`) as the given value.\n",
+                "type": "a -> Step.Decode.Decoder Step.Types.Attribute context a"
+            },
+            {
+                "name": "oneOf",
+                "comment": " Construct an entity decoder that tries several other entity decoders in\nsequence.\n",
+                "type": "List.List (Step.Decode.Decoder Step.Types.Entity context a) -> Step.Decode.Decoder Step.Types.Entity context a"
+            },
+            {
+                "name": "optional",
+                "comment": " Decode an attribute that may be null, returning `Nothing` if it is.\n",
+                "type": "Step.Decode.Decoder Step.Types.Attribute context output -> Step.Decode.Decoder Step.Types.Attribute context (Maybe.Maybe output)"
+            },
+            {
+                "name": "parse",
+                "comment": " Attempt to parse a given string as a STEP file.\n",
+                "type": "String.String -> Result.Result String.String Step.Decode.File"
+            },
+            {
+                "name": "referenceTo",
+                "comment": " Decode an attribute which is a reference to another entity, by providing the\ndecoder to use for that entity.\n",
+                "type": "Step.Decode.Decoder Step.Types.Entity context a -> Step.Decode.Decoder Step.Types.Attribute context a"
+            },
+            {
+                "name": "referenceWithId",
+                "comment": " Decode an attribute which is a reference to another entity, and additionally\nget the ID of that entity. You will need to pass a function that combines the\nID and decoded value into whatever you want; for example if you pass\n`Tuple.pair` then you will get an `( Int, a )` value back.\n",
+                "type": "(Basics.Int -> a -> b) -> Step.Decode.Decoder Step.Types.Entity context a -> Step.Decode.Decoder Step.Types.Attribute context b"
+            },
+            {
+                "name": "referencedId",
+                "comment": " Decode just the ID from an entity reference attribute. This may be useful\nfor deferred decoding/processing.\n",
+                "type": "Step.Decode.Decoder Step.Types.Attribute context Basics.Int"
+            },
+            {
+                "name": "resolve",
+                "comment": " If a decoder produces a `Result String a` instead of simply a value of type\n`a` (for example if the callback function can fail) then this can 'resolve' that\nback into a regular decoder. It is equivalent to (and implemented as)\n`validate identity`.\n",
+                "type": "Step.Decode.Decoder input context (Result.Result String.String output) -> Step.Decode.Decoder input context output"
+            },
+            {
+                "name": "simpleEntity1",
+                "comment": " ",
+                "type": "callback -> Step.Decode.Decoder Step.Decode.Context context (callback -> a) -> Step.Decode.Decoder Basics.Int context (a -> b) -> String.String -> Step.Decode.Decoder Step.Types.Attribute context (b -> output) -> Step.Decode.Decoder Step.Types.Entity context output"
+            },
+            {
+                "name": "simpleEntity10",
+                "comment": " ",
+                "type": "callback -> Step.Decode.Decoder Step.Decode.Context context (callback -> a) -> Step.Decode.Decoder Basics.Int context (a -> b) -> String.String -> Step.Decode.Decoder Step.Types.Attribute context (b -> c) -> Step.Decode.Decoder Step.Types.Attribute context (c -> d) -> Step.Decode.Decoder Step.Types.Attribute context (d -> e) -> Step.Decode.Decoder Step.Types.Attribute context (e -> f) -> Step.Decode.Decoder Step.Types.Attribute context (f -> g) -> Step.Decode.Decoder Step.Types.Attribute context (g -> h) -> Step.Decode.Decoder Step.Types.Attribute context (h -> i) -> Step.Decode.Decoder Step.Types.Attribute context (i -> j) -> Step.Decode.Decoder Step.Types.Attribute context (j -> k) -> Step.Decode.Decoder Step.Types.Attribute context (k -> output) -> Step.Decode.Decoder Step.Types.Entity context output"
+            },
+            {
+                "name": "simpleEntity11",
+                "comment": " ",
+                "type": "callback -> Step.Decode.Decoder Step.Decode.Context context (callback -> a) -> Step.Decode.Decoder Basics.Int context (a -> b) -> String.String -> Step.Decode.Decoder Step.Types.Attribute context (b -> c) -> Step.Decode.Decoder Step.Types.Attribute context (c -> d) -> Step.Decode.Decoder Step.Types.Attribute context (d -> e) -> Step.Decode.Decoder Step.Types.Attribute context (e -> f) -> Step.Decode.Decoder Step.Types.Attribute context (f -> g) -> Step.Decode.Decoder Step.Types.Attribute context (g -> h) -> Step.Decode.Decoder Step.Types.Attribute context (h -> i) -> Step.Decode.Decoder Step.Types.Attribute context (i -> j) -> Step.Decode.Decoder Step.Types.Attribute context (j -> k) -> Step.Decode.Decoder Step.Types.Attribute context (k -> l) -> Step.Decode.Decoder Step.Types.Attribute context (l -> output) -> Step.Decode.Decoder Step.Types.Entity context output"
+            },
+            {
+                "name": "simpleEntity12",
+                "comment": " ",
+                "type": "callback -> Step.Decode.Decoder Step.Decode.Context context (callback -> a) -> Step.Decode.Decoder Basics.Int context (a -> b) -> String.String -> Step.Decode.Decoder Step.Types.Attribute context (b -> c) -> Step.Decode.Decoder Step.Types.Attribute context (c -> d) -> Step.Decode.Decoder Step.Types.Attribute context (d -> e) -> Step.Decode.Decoder Step.Types.Attribute context (e -> f) -> Step.Decode.Decoder Step.Types.Attribute context (f -> g) -> Step.Decode.Decoder Step.Types.Attribute context (g -> h) -> Step.Decode.Decoder Step.Types.Attribute context (h -> i) -> Step.Decode.Decoder Step.Types.Attribute context (i -> j) -> Step.Decode.Decoder Step.Types.Attribute context (j -> k) -> Step.Decode.Decoder Step.Types.Attribute context (k -> l) -> Step.Decode.Decoder Step.Types.Attribute context (l -> m) -> Step.Decode.Decoder Step.Types.Attribute context (m -> output) -> Step.Decode.Decoder Step.Types.Entity context output"
+            },
+            {
+                "name": "simpleEntity13",
+                "comment": " ",
+                "type": "callback -> Step.Decode.Decoder Step.Decode.Context context (callback -> a) -> Step.Decode.Decoder Basics.Int context (a -> b) -> String.String -> Step.Decode.Decoder Step.Types.Attribute context (b -> c) -> Step.Decode.Decoder Step.Types.Attribute context (c -> d) -> Step.Decode.Decoder Step.Types.Attribute context (d -> e) -> Step.Decode.Decoder Step.Types.Attribute context (e -> f) -> Step.Decode.Decoder Step.Types.Attribute context (f -> g) -> Step.Decode.Decoder Step.Types.Attribute context (g -> h) -> Step.Decode.Decoder Step.Types.Attribute context (h -> i) -> Step.Decode.Decoder Step.Types.Attribute context (i -> j) -> Step.Decode.Decoder Step.Types.Attribute context (j -> k) -> Step.Decode.Decoder Step.Types.Attribute context (k -> l) -> Step.Decode.Decoder Step.Types.Attribute context (l -> m) -> Step.Decode.Decoder Step.Types.Attribute context (m -> n) -> Step.Decode.Decoder Step.Types.Attribute context (n -> output) -> Step.Decode.Decoder Step.Types.Entity context output"
+            },
+            {
+                "name": "simpleEntity14",
+                "comment": " ",
+                "type": "callback -> Step.Decode.Decoder Step.Decode.Context context (callback -> a) -> Step.Decode.Decoder Basics.Int context (a -> b) -> String.String -> Step.Decode.Decoder Step.Types.Attribute context (b -> c) -> Step.Decode.Decoder Step.Types.Attribute context (c -> d) -> Step.Decode.Decoder Step.Types.Attribute context (d -> e) -> Step.Decode.Decoder Step.Types.Attribute context (e -> f) -> Step.Decode.Decoder Step.Types.Attribute context (f -> g) -> Step.Decode.Decoder Step.Types.Attribute context (g -> h) -> Step.Decode.Decoder Step.Types.Attribute context (h -> i) -> Step.Decode.Decoder Step.Types.Attribute context (i -> j) -> Step.Decode.Decoder Step.Types.Attribute context (j -> k) -> Step.Decode.Decoder Step.Types.Attribute context (k -> l) -> Step.Decode.Decoder Step.Types.Attribute context (l -> m) -> Step.Decode.Decoder Step.Types.Attribute context (m -> n) -> Step.Decode.Decoder Step.Types.Attribute context (n -> o) -> Step.Decode.Decoder Step.Types.Attribute context (o -> output) -> Step.Decode.Decoder Step.Types.Entity context output"
+            },
+            {
+                "name": "simpleEntity15",
+                "comment": " ",
+                "type": "callback -> Step.Decode.Decoder Step.Decode.Context context (callback -> a) -> Step.Decode.Decoder Basics.Int context (a -> b) -> String.String -> Step.Decode.Decoder Step.Types.Attribute context (b -> c) -> Step.Decode.Decoder Step.Types.Attribute context (c -> d) -> Step.Decode.Decoder Step.Types.Attribute context (d -> e) -> Step.Decode.Decoder Step.Types.Attribute context (e -> f) -> Step.Decode.Decoder Step.Types.Attribute context (f -> g) -> Step.Decode.Decoder Step.Types.Attribute context (g -> h) -> Step.Decode.Decoder Step.Types.Attribute context (h -> i) -> Step.Decode.Decoder Step.Types.Attribute context (i -> j) -> Step.Decode.Decoder Step.Types.Attribute context (j -> k) -> Step.Decode.Decoder Step.Types.Attribute context (k -> l) -> Step.Decode.Decoder Step.Types.Attribute context (l -> m) -> Step.Decode.Decoder Step.Types.Attribute context (m -> n) -> Step.Decode.Decoder Step.Types.Attribute context (n -> o) -> Step.Decode.Decoder Step.Types.Attribute context (o -> p) -> Step.Decode.Decoder Step.Types.Attribute context (p -> output) -> Step.Decode.Decoder Step.Types.Entity context output"
+            },
+            {
+                "name": "simpleEntity16",
+                "comment": " ",
+                "type": "callback -> Step.Decode.Decoder Step.Decode.Context context (callback -> a) -> Step.Decode.Decoder Basics.Int context (a -> b) -> String.String -> Step.Decode.Decoder Step.Types.Attribute context (b -> c) -> Step.Decode.Decoder Step.Types.Attribute context (c -> d) -> Step.Decode.Decoder Step.Types.Attribute context (d -> e) -> Step.Decode.Decoder Step.Types.Attribute context (e -> f) -> Step.Decode.Decoder Step.Types.Attribute context (f -> g) -> Step.Decode.Decoder Step.Types.Attribute context (g -> h) -> Step.Decode.Decoder Step.Types.Attribute context (h -> i) -> Step.Decode.Decoder Step.Types.Attribute context (i -> j) -> Step.Decode.Decoder Step.Types.Attribute context (j -> k) -> Step.Decode.Decoder Step.Types.Attribute context (k -> l) -> Step.Decode.Decoder Step.Types.Attribute context (l -> m) -> Step.Decode.Decoder Step.Types.Attribute context (m -> n) -> Step.Decode.Decoder Step.Types.Attribute context (n -> o) -> Step.Decode.Decoder Step.Types.Attribute context (o -> p) -> Step.Decode.Decoder Step.Types.Attribute context (p -> q) -> Step.Decode.Decoder Step.Types.Attribute context (q -> output) -> Step.Decode.Decoder Step.Types.Entity context output"
+            },
+            {
+                "name": "simpleEntity2",
+                "comment": " ",
+                "type": "callback -> Step.Decode.Decoder Step.Decode.Context context (callback -> a) -> Step.Decode.Decoder Basics.Int context (a -> b) -> String.String -> Step.Decode.Decoder Step.Types.Attribute context (b -> c) -> Step.Decode.Decoder Step.Types.Attribute context (c -> output) -> Step.Decode.Decoder Step.Types.Entity context output"
+            },
+            {
+                "name": "simpleEntity3",
+                "comment": " ",
+                "type": "callback -> Step.Decode.Decoder Step.Decode.Context context (callback -> a) -> Step.Decode.Decoder Basics.Int context (a -> b) -> String.String -> Step.Decode.Decoder Step.Types.Attribute context (b -> c) -> Step.Decode.Decoder Step.Types.Attribute context (c -> d) -> Step.Decode.Decoder Step.Types.Attribute context (d -> output) -> Step.Decode.Decoder Step.Types.Entity context output"
+            },
+            {
+                "name": "simpleEntity4",
+                "comment": " ",
+                "type": "callback -> Step.Decode.Decoder Step.Decode.Context context (callback -> a) -> Step.Decode.Decoder Basics.Int context (a -> b) -> String.String -> Step.Decode.Decoder Step.Types.Attribute context (b -> c) -> Step.Decode.Decoder Step.Types.Attribute context (c -> d) -> Step.Decode.Decoder Step.Types.Attribute context (d -> e) -> Step.Decode.Decoder Step.Types.Attribute context (e -> output) -> Step.Decode.Decoder Step.Types.Entity context output"
+            },
+            {
+                "name": "simpleEntity5",
+                "comment": " ",
+                "type": "callback -> Step.Decode.Decoder Step.Decode.Context context (callback -> a) -> Step.Decode.Decoder Basics.Int context (a -> b) -> String.String -> Step.Decode.Decoder Step.Types.Attribute context (b -> c) -> Step.Decode.Decoder Step.Types.Attribute context (c -> d) -> Step.Decode.Decoder Step.Types.Attribute context (d -> e) -> Step.Decode.Decoder Step.Types.Attribute context (e -> f) -> Step.Decode.Decoder Step.Types.Attribute context (f -> output) -> Step.Decode.Decoder Step.Types.Entity context output"
+            },
+            {
+                "name": "simpleEntity6",
+                "comment": " ",
+                "type": "callback -> Step.Decode.Decoder Step.Decode.Context context (callback -> a) -> Step.Decode.Decoder Basics.Int context (a -> b) -> String.String -> Step.Decode.Decoder Step.Types.Attribute context (b -> c) -> Step.Decode.Decoder Step.Types.Attribute context (c -> d) -> Step.Decode.Decoder Step.Types.Attribute context (d -> e) -> Step.Decode.Decoder Step.Types.Attribute context (e -> f) -> Step.Decode.Decoder Step.Types.Attribute context (f -> g) -> Step.Decode.Decoder Step.Types.Attribute context (g -> output) -> Step.Decode.Decoder Step.Types.Entity context output"
+            },
+            {
+                "name": "simpleEntity7",
+                "comment": " ",
+                "type": "callback -> Step.Decode.Decoder Step.Decode.Context context (callback -> a) -> Step.Decode.Decoder Basics.Int context (a -> b) -> String.String -> Step.Decode.Decoder Step.Types.Attribute context (b -> c) -> Step.Decode.Decoder Step.Types.Attribute context (c -> d) -> Step.Decode.Decoder Step.Types.Attribute context (d -> e) -> Step.Decode.Decoder Step.Types.Attribute context (e -> f) -> Step.Decode.Decoder Step.Types.Attribute context (f -> g) -> Step.Decode.Decoder Step.Types.Attribute context (g -> h) -> Step.Decode.Decoder Step.Types.Attribute context (h -> output) -> Step.Decode.Decoder Step.Types.Entity context output"
+            },
+            {
+                "name": "simpleEntity8",
+                "comment": " ",
+                "type": "callback -> Step.Decode.Decoder Step.Decode.Context context (callback -> a) -> Step.Decode.Decoder Basics.Int context (a -> b) -> String.String -> Step.Decode.Decoder Step.Types.Attribute context (b -> c) -> Step.Decode.Decoder Step.Types.Attribute context (c -> d) -> Step.Decode.Decoder Step.Types.Attribute context (d -> e) -> Step.Decode.Decoder Step.Types.Attribute context (e -> f) -> Step.Decode.Decoder Step.Types.Attribute context (f -> g) -> Step.Decode.Decoder Step.Types.Attribute context (g -> h) -> Step.Decode.Decoder Step.Types.Attribute context (h -> i) -> Step.Decode.Decoder Step.Types.Attribute context (i -> output) -> Step.Decode.Decoder Step.Types.Entity context output"
+            },
+            {
+                "name": "simpleEntity9",
+                "comment": " ",
+                "type": "callback -> Step.Decode.Decoder Step.Decode.Context context (callback -> a) -> Step.Decode.Decoder Basics.Int context (a -> b) -> String.String -> Step.Decode.Decoder Step.Types.Attribute context (b -> c) -> Step.Decode.Decoder Step.Types.Attribute context (c -> d) -> Step.Decode.Decoder Step.Types.Attribute context (d -> e) -> Step.Decode.Decoder Step.Types.Attribute context (e -> f) -> Step.Decode.Decoder Step.Types.Attribute context (f -> g) -> Step.Decode.Decoder Step.Types.Attribute context (g -> h) -> Step.Decode.Decoder Step.Types.Attribute context (h -> i) -> Step.Decode.Decoder Step.Types.Attribute context (i -> j) -> Step.Decode.Decoder Step.Types.Attribute context (j -> output) -> Step.Decode.Decoder Step.Types.Entity context output"
+            },
+            {
+                "name": "single",
+                "comment": " Attempt to find exactly one entity in a file that matches the given decoder.\nIf there are no matching entities or more than one matching entity, an error\nmessage will be returned.\n",
+                "type": "Step.Decode.Decoder Step.Types.Entity context output -> Step.Decode.File -> context -> Result.Result String.String output"
+            },
+            {
+                "name": "string",
+                "comment": " Decode a single attribute as a `String`.\n",
+                "type": "Step.Decode.Decoder Step.Types.Attribute context String.String"
+            },
+            {
+                "name": "subEntity0",
+                "comment": " ",
+                "type": "String.String -> Step.Decode.Decoder Step.Types.SubEntity context (a -> a)"
+            },
+            {
+                "name": "subEntity1",
+                "comment": " ",
+                "type": "String.String -> Step.Decode.Decoder Step.Types.Attribute context (a -> b) -> Step.Decode.Decoder Step.Types.SubEntity context (a -> b)"
+            },
+            {
+                "name": "subEntity10",
+                "comment": " ",
+                "type": "String.String -> Step.Decode.Decoder Step.Types.Attribute context (a -> b) -> Step.Decode.Decoder Step.Types.Attribute context (b -> c) -> Step.Decode.Decoder Step.Types.Attribute context (c -> d) -> Step.Decode.Decoder Step.Types.Attribute context (d -> e) -> Step.Decode.Decoder Step.Types.Attribute context (e -> f) -> Step.Decode.Decoder Step.Types.Attribute context (f -> g) -> Step.Decode.Decoder Step.Types.Attribute context (g -> h) -> Step.Decode.Decoder Step.Types.Attribute context (h -> i) -> Step.Decode.Decoder Step.Types.Attribute context (i -> j) -> Step.Decode.Decoder Step.Types.Attribute context (j -> k) -> Step.Decode.Decoder Step.Types.SubEntity context (a -> k)"
+            },
+            {
+                "name": "subEntity11",
+                "comment": " ",
+                "type": "String.String -> Step.Decode.Decoder Step.Types.Attribute context (a -> b) -> Step.Decode.Decoder Step.Types.Attribute context (b -> c) -> Step.Decode.Decoder Step.Types.Attribute context (c -> d) -> Step.Decode.Decoder Step.Types.Attribute context (d -> e) -> Step.Decode.Decoder Step.Types.Attribute context (e -> f) -> Step.Decode.Decoder Step.Types.Attribute context (f -> g) -> Step.Decode.Decoder Step.Types.Attribute context (g -> h) -> Step.Decode.Decoder Step.Types.Attribute context (h -> i) -> Step.Decode.Decoder Step.Types.Attribute context (i -> j) -> Step.Decode.Decoder Step.Types.Attribute context (j -> k) -> Step.Decode.Decoder Step.Types.Attribute context (k -> l) -> Step.Decode.Decoder Step.Types.SubEntity context (a -> l)"
+            },
+            {
+                "name": "subEntity12",
+                "comment": " ",
+                "type": "String.String -> Step.Decode.Decoder Step.Types.Attribute context (a -> b) -> Step.Decode.Decoder Step.Types.Attribute context (b -> c) -> Step.Decode.Decoder Step.Types.Attribute context (c -> d) -> Step.Decode.Decoder Step.Types.Attribute context (d -> e) -> Step.Decode.Decoder Step.Types.Attribute context (e -> f) -> Step.Decode.Decoder Step.Types.Attribute context (f -> g) -> Step.Decode.Decoder Step.Types.Attribute context (g -> h) -> Step.Decode.Decoder Step.Types.Attribute context (h -> i) -> Step.Decode.Decoder Step.Types.Attribute context (i -> j) -> Step.Decode.Decoder Step.Types.Attribute context (j -> k) -> Step.Decode.Decoder Step.Types.Attribute context (k -> l) -> Step.Decode.Decoder Step.Types.Attribute context (l -> m) -> Step.Decode.Decoder Step.Types.SubEntity context (a -> m)"
+            },
+            {
+                "name": "subEntity2",
+                "comment": " ",
+                "type": "String.String -> Step.Decode.Decoder Step.Types.Attribute context (a -> b) -> Step.Decode.Decoder Step.Types.Attribute context (b -> c) -> Step.Decode.Decoder Step.Types.SubEntity context (a -> c)"
+            },
+            {
+                "name": "subEntity3",
+                "comment": " ",
+                "type": "String.String -> Step.Decode.Decoder Step.Types.Attribute context (a -> b) -> Step.Decode.Decoder Step.Types.Attribute context (b -> c) -> Step.Decode.Decoder Step.Types.Attribute context (c -> d) -> Step.Decode.Decoder Step.Types.SubEntity context (a -> d)"
+            },
+            {
+                "name": "subEntity4",
+                "comment": " ",
+                "type": "String.String -> Step.Decode.Decoder Step.Types.Attribute context (a -> b) -> Step.Decode.Decoder Step.Types.Attribute context (b -> c) -> Step.Decode.Decoder Step.Types.Attribute context (c -> d) -> Step.Decode.Decoder Step.Types.Attribute context (d -> e) -> Step.Decode.Decoder Step.Types.SubEntity context (a -> e)"
+            },
+            {
+                "name": "subEntity5",
+                "comment": " ",
+                "type": "String.String -> Step.Decode.Decoder Step.Types.Attribute context (a -> b) -> Step.Decode.Decoder Step.Types.Attribute context (b -> c) -> Step.Decode.Decoder Step.Types.Attribute context (c -> d) -> Step.Decode.Decoder Step.Types.Attribute context (d -> e) -> Step.Decode.Decoder Step.Types.Attribute context (e -> f) -> Step.Decode.Decoder Step.Types.SubEntity context (a -> f)"
+            },
+            {
+                "name": "subEntity6",
+                "comment": " ",
+                "type": "String.String -> Step.Decode.Decoder Step.Types.Attribute context (a -> b) -> Step.Decode.Decoder Step.Types.Attribute context (b -> c) -> Step.Decode.Decoder Step.Types.Attribute context (c -> d) -> Step.Decode.Decoder Step.Types.Attribute context (d -> e) -> Step.Decode.Decoder Step.Types.Attribute context (e -> f) -> Step.Decode.Decoder Step.Types.Attribute context (f -> g) -> Step.Decode.Decoder Step.Types.SubEntity context (a -> g)"
+            },
+            {
+                "name": "subEntity7",
+                "comment": " ",
+                "type": "String.String -> Step.Decode.Decoder Step.Types.Attribute context (a -> b) -> Step.Decode.Decoder Step.Types.Attribute context (b -> c) -> Step.Decode.Decoder Step.Types.Attribute context (c -> d) -> Step.Decode.Decoder Step.Types.Attribute context (d -> e) -> Step.Decode.Decoder Step.Types.Attribute context (e -> f) -> Step.Decode.Decoder Step.Types.Attribute context (f -> g) -> Step.Decode.Decoder Step.Types.Attribute context (g -> h) -> Step.Decode.Decoder Step.Types.SubEntity context (a -> h)"
+            },
+            {
+                "name": "subEntity8",
+                "comment": " ",
+                "type": "String.String -> Step.Decode.Decoder Step.Types.Attribute context (a -> b) -> Step.Decode.Decoder Step.Types.Attribute context (b -> c) -> Step.Decode.Decoder Step.Types.Attribute context (c -> d) -> Step.Decode.Decoder Step.Types.Attribute context (d -> e) -> Step.Decode.Decoder Step.Types.Attribute context (e -> f) -> Step.Decode.Decoder Step.Types.Attribute context (f -> g) -> Step.Decode.Decoder Step.Types.Attribute context (g -> h) -> Step.Decode.Decoder Step.Types.Attribute context (h -> i) -> Step.Decode.Decoder Step.Types.SubEntity context (a -> i)"
+            },
+            {
+                "name": "subEntity9",
+                "comment": " ",
+                "type": "String.String -> Step.Decode.Decoder Step.Types.Attribute context (a -> b) -> Step.Decode.Decoder Step.Types.Attribute context (b -> c) -> Step.Decode.Decoder Step.Types.Attribute context (c -> d) -> Step.Decode.Decoder Step.Types.Attribute context (d -> e) -> Step.Decode.Decoder Step.Types.Attribute context (e -> f) -> Step.Decode.Decoder Step.Types.Attribute context (f -> g) -> Step.Decode.Decoder Step.Types.Attribute context (g -> h) -> Step.Decode.Decoder Step.Types.Attribute context (h -> i) -> Step.Decode.Decoder Step.Types.Attribute context (i -> j) -> Step.Decode.Decoder Step.Types.SubEntity context (a -> j)"
+            },
+            {
+                "name": "succeed",
+                "comment": " A trivial decoder that always succeeds with the given value. May be useful\nin combination with `andThen`, but consider using `validate` instead.\n",
+                "type": "a -> Step.Decode.Decoder Step.Types.Entity context a"
+            },
+            {
+                "name": "transform",
+                "comment": " Transform the result of a decoder using its context. This works just like\n`map` but additionally passes the current context to the mapping function.\n",
+                "type": "(context -> a -> b) -> Step.Decode.Decoder input context a -> Step.Decode.Decoder input context b"
+            },
+            {
+                "name": "tuple2",
+                "comment": " Decode a list of exactly two elements, passing the decoder to be used for\nthe two elements.\n",
+                "type": "Step.Decode.Decoder Step.Types.Attribute context a -> Step.Decode.Decoder Step.Types.Attribute context ( a, a )"
+            },
+            {
+                "name": "tuple3",
+                "comment": " Decode a list of exactly three elements, passing the decoder to be used for\nthe two elements.\n",
+                "type": "Step.Decode.Decoder Step.Types.Attribute context a -> Step.Decode.Decoder Step.Types.Attribute context ( a, a, a )"
+            },
+            {
+                "name": "typedAttribute",
+                "comment": " Decode a 'typed attribute'; for example if someone's age was stored as an\ninteger, then it might be encoded directly as an integer like `38` or as a typed\ninteger like `AGE(38)` or `YEARS(38)` or similar.\n",
+                "type": "String.String -> Step.Decode.Decoder Step.Types.Attribute context a -> Step.Decode.Decoder Step.Types.Attribute context a"
+            },
+            {
+                "name": "validate",
+                "comment": " Post-process the result of a decoder, either succeeding with a new value\n(possibly of a different type) or failing with an error message. This is a\nrestricted form of `andThen` that does not have the same performance concerns,\nso use `validate` instead of `andThen` wherever possible.\n",
+                "type": "(a -> Result.Result String.String b) -> Step.Decode.Decoder input context a -> Step.Decode.Decoder input context b"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Step.Encode",
+        "comment": " This module allows you to encode data in [ISO 10303-21](https://en.wikipedia.org/wiki/ISO_10303-21)\n(STEP file) format.\n\n\n## Example\n\nHere is a sample STEP file (adapted from [Wikipedia](https://en.wikipedia.org/wiki/ISO_10303-21#Example)):\n\n    ISO-10303-21;\n    HEADER;\n    FILE_DESCRIPTION(('A minimal AP214 example with a single part'),'2;1');\n    FILE_NAME('demo','2003-12-27T11:57:53',('Lothar Klein'),('LKSoft'),' ','IDA-STEP',' ');\n    FILE_SCHEMA(('AUTOMOTIVE_DESIGN { 1 0 10303 214 2 1 1}'));\n    ENDSEC;\n    DATA;\n    #10=ORGANIZATION('O0001','LKSoft','company');\n    #11=PRODUCT_DEFINITION_CONTEXT('part definition',#12,'manufacturing');\n    #12=APPLICATION_CONTEXT('mechanical design');\n    #13=APPLICATION_PROTOCOL_DEFINITION('','automotive_design',2003,#12);\n    #14=PRODUCT_DEFINITION('0',$,#15,#11);\n    #15=PRODUCT_DEFINITION_FORMATION('1',$,#16);\n    #16=PRODUCT('A0001','Test Part 1','',(#18));\n    #17=PRODUCT_RELATED_PRODUCT_CATEGORY('part',$,(#16));\n    #18=PRODUCT_CONTEXT('',#12,'');\n    #19=APPLIED_ORGANIZATION_ASSIGNMENT(#10,#20,(#16));\n    #20=ORGANIZATION_ROLE('id owner');\n    ENDSEC;\n    END-ISO-10303-21;\n\nTo create this file using this package, you could write\n\n    module Example exposing (..)\n\n    import Step.Encode as Encode\n\n    stepFile : String\n    stepFile =\n        let\n            header =\n                { description = [ \"A minimal AP214 example with a single part\" ]\n                , implementationLevel = \"2;1\"\n                , fileName = \"demo\"\n                , timeStamp = \"2003-12-27T11:57:53\"\n                , author = [ \"Lothar Klein\" ]\n                , organization = [ \"LKSoft\" ]\n                , preprocessorVersion = \" \"\n                , originatingSystem = \"IDA-STEP\"\n                , authorization = \" \"\n                , schemaIdentifiers = [ \"AUTOMOTIVE_DESIGN { 1 0 10303 214 2 1 1}\" ]\n                }\n\n            applicationContext =\n                Encode.entity \"APPLICATION_CONTEXT\"\n                    [ Encode.string \"mechanical design\"\n                    ]\n\n            applicationProtocolDefinition =\n                Encode.entity \"APPLICATION_PROTOCOL_DEFINITION\"\n                    [ Encode.string \"\"\n                    , Encode.string \"automotive_design\"\n                    , Encode.int 2003\n                    , Encode.referenceTo applicationContext\n                    ]\n\n            product =\n                Encode.entity \"PRODUCT\"\n                    [ Encode.string \"A0001\"\n                    , Encode.string \"Test Part 1\"\n                    , Encode.string \"\"\n                    , Encode.list Encode.referenceTo\n                        [ Encode.entity \"PRODUCT_CONTEXT\"\n                            [ Encode.string \"\"\n                            , Encode.referenceTo applicationContext\n                            , Encode.string \"\"\n                            ]\n                        ]\n                    ]\n\n            productDefinition =\n                Encode.entity \"PRODUCT_DEFINITION\"\n                    [ Encode.string \"0\"\n                    , Encode.null\n                    , Encode.referenceTo <|\n                        Encode.entity \"PRODUCT_DEFINITION_FORMATION\"\n                            [ Encode.string \"1\"\n                            , Encode.null\n                            , Encode.referenceTo product\n                            ]\n                    , Encode.referenceTo <|\n                        Encode.entity \"PRODUCT_DEFINITION_CONTEXT\"\n                            [ Encode.string \"part definition\"\n                            , Encode.referenceTo applicationContext\n                            , Encode.string \"manufacturing\"\n                            ]\n                    ]\n\n            productRelatedProductCategory =\n                Encode.entity \"PRODUCT_RELATED_PRODUCT_CATEGORY\"\n                    [ Encode.string \"part\"\n                    , Encode.null\n                    , Encode.list Encode.referenceTo [ product ]\n                    ]\n\n            appliedOrganizationAssignment =\n                Encode.entity \"APPLIED_ORGANIZATION_ASSIGNMENT\"\n                    [ Encode.referenceTo <|\n                        Encode.entity \"ORGANIZATION\"\n                            [ Encode.string \"O0001\"\n                            , Encode.string \"LKSoft\"\n                            , Encode.string \"company\"\n                            ]\n                    , Encode.referenceTo <|\n                        Encode.entity \"ORGANIZATION_ROLE\"\n                            [ Encode.string \"id owner\"\n                            ]\n                    , Encode.list Encode.referenceTo [ product ]\n                    ]\n        in\n        Encode.file header\n            [ applicationContext\n            , applicationProtocolDefinition\n            , productDefinition\n            , productRelatedProductCategory\n            , appliedOrganizationAssignment\n            ]\n\nNote that entities can be declared directly 'inside' other entities where this\nmakes sense, and not all entities have to be explicitly listed in the\n`Encode.file` call, only top-level ones. Any entities directly or indirectly\nreferenced by the listed entities will also be included in the output. Entity\nIDs are automatically generated and entities may be written out in arbitrary\norder.\n\n@docs file\n\n\n# Entities\n\n@docs entity, complexEntity, subEntity\n\n\n# Attributes\n\n@docs derivedValue, null, optional, bool, int, float, string, referenceTo, enum, binaryData, list, tuple2, tuple3\n\n\n## Typed attributes\n\nTyped attributes are sometimes needed when dealing with SELECT types.\n\n@docs boolAs, intAs, floatAs, stringAs, enumAs, binaryDataAs, listAs, typedAttribute\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "binaryData",
+                "comment": " Construct an attribute from a blob of binary data given as an [encoder](https://package.elm-lang.org/packages/elm/bytes/latest/Bytes-Encode).\n\nNote that since Elm only supports byte-aligned binary data, there is no way to\ncreate (for example) a blob of binary data exactly 5 bits in size even though\nthat is supported by the STEP standard.\n\n",
+                "type": "Bytes.Encode.Encoder -> Step.Types.Attribute"
+            },
+            {
+                "name": "binaryDataAs",
+                "comment": " Construct a type-tagged binary-valued attribute.\n",
+                "type": "String.String -> Bytes.Encode.Encoder -> Step.Types.Attribute"
+            },
+            {
+                "name": "bool",
+                "comment": " Construct a Boolean-valued attribute.\n",
+                "type": "Basics.Bool -> Step.Types.Attribute"
+            },
+            {
+                "name": "boolAs",
+                "comment": " Construct a type-tagged Boolean-valued attribute.\n",
+                "type": "String.String -> Basics.Bool -> Step.Types.Attribute"
+            },
+            {
+                "name": "complexEntity",
+                "comment": " Construct a single 'complex entity'; for example\n\n    Encode.complexEntity\n        [ Encode.subEntity \"A\" [ Encode.int 1 ]\n        , Encode.subEntity \"B\"\n            [ Encode.int 2\n            , Encode.string \"three\"\n            ]\n        , Encode.subEntity \"C\" [ Encode.enum \"FOUR\" ]\n        ]\n\nwill be encoded as\n\n    #1=(A(1)B(2,'three')C(.FOUR.));\n\n",
+                "type": "List.List Step.Types.SubEntity -> Step.Types.Entity"
+            },
+            {
+                "name": "derivedValue",
+                "comment": " The special 'derived value' attribute.\n",
+                "type": "Step.Types.Attribute"
+            },
+            {
+                "name": "entity",
+                "comment": " Construct a single simple entity with the given type and attributes. The\ntype name will be capitalized if necessary. An [`IfcDirection`](http://www.buildingsmart-tech.org/ifc/IFC4/final/html/schema/ifcgeometryresource/lexical/ifcdirection.htm)\nrepresenting the positive Y direction in 3D could be created using\n\n    direction =\n        Encode.entity \"IFCDIRECTION\"\n            [ Encode.list Encode.float [ 0, 1, 0 ]\n            ]\n\nwhich might get encoded as `#1=IFCDIRECTION((0.,1.,0.));`.\n\nIf a given entity is _only_ referred to by a single other entity, you can create\nit directly inside the definition of the parent entity. For example, to create\nentity #121 from [this AP214 example](https://github.com/stepcode/stepcode/blob/master/data/ap214e3/as1-oc-214.stp),\nyou could use\n\n    Encode.entity \"AXIS2_PLACEMENT_3D\"\n        [ Encode.string \"\"\n        , Encode.referenceTo <|\n            Encode.entity \"CARTESIAN_POINT\"\n                [ Encode.string \"\"\n                , Encode.list Encode.float [ 20, 7.5, 0 ]\n                ]\n        , Encode.referenceTo <|\n            Encode.entity \"DIRECTION\"\n                [ Encode.string \"\"\n                , Encode.list Encode.float [ 1, 0, 0 ]\n                ]\n        , Encode.referenceTo <|\n            Encode.entity \"DIRECTION\"\n                [ Encode.string \"\"\n                , Encode.list Encode.float [ 0, 0, -1 ]\n                ]\n        ]\n\nWhen actually encoded to a STEP file, this will get converted into four separate\nentities, with the top-level entity referring to the other three by their\nautomatically-generated IDs, something like:\n\n    #1=AXIS2_PLACEMENT_3D('',#2,#3,#4);\n    #2=CARTESIAN_POINT('',(20.,7.5,0.));\n    #3=DIRECTION('',(1.,0.,0.));\n    #4=DIRECTION('',(0.,0.,-1.));\n\n",
+                "type": "String.String -> List.List Step.Types.Attribute -> Step.Types.Entity"
+            },
+            {
+                "name": "enum",
+                "comment": " Construct an attribute that refers to an enumeration value defined in an\nEXPRESS schema. Enumeration values are always encoded as all-caps with leading\nand trailing periods, like `.STEEL.`.\n\nThis function will capitalize and add periods if necessary, so both\n`Encode.enum \"steel\"` and `Encode.enum \".STEEL.\"` will be encoded as\n`.STEEL.`.\n\n",
+                "type": "String.String -> Step.Types.Attribute"
+            },
+            {
+                "name": "enumAs",
+                "comment": " Construct a type-tagged enumeration attribute.\n",
+                "type": "String.String -> String.String -> Step.Types.Attribute"
+            },
+            {
+                "name": "file",
+                "comment": " Build a string representing a complete STEP file from a header and a list of\nentities. Entities will be assigned integer IDs automatically, and nested\nentities (entities that reference other entities) will be 'flattened' into\nseparate entities referring to each other by their automatically-generated IDs.\n\nNote that it is not actually necessary to list all entities explicitly, only\ntop-level ones; any entities that are referenced by entities in the given list\nwill also get included in the output.\n\n",
+                "type": "Step.Types.Header -> List.List Step.Types.Entity -> String.String"
+            },
+            {
+                "name": "float",
+                "comment": " Construct a real-valued attribute.\n",
+                "type": "Basics.Float -> Step.Types.Attribute"
+            },
+            {
+                "name": "floatAs",
+                "comment": " Construct a type-tagged float-valued attribute.\n",
+                "type": "String.String -> Basics.Float -> Step.Types.Attribute"
+            },
+            {
+                "name": "int",
+                "comment": " Construct an integer-valued attribute.\n",
+                "type": "Basics.Int -> Step.Types.Attribute"
+            },
+            {
+                "name": "intAs",
+                "comment": " Construct a type-tagged integer-valued attribute.\n",
+                "type": "String.String -> Basics.Int -> Step.Types.Attribute"
+            },
+            {
+                "name": "list",
+                "comment": " Construct an attribute which is itself a list of other attributes. You\nprovide a list of values and a function to convert each of those values to an\nattribute (which will usually be one of the attribute construction functions in\nthis module!). For example, to construct an attribute which is a list of floats:\n\n    Encode.list Encode.float [ 0, 1, 0 ]\n\nTo construct a list of references to various entities:\n\n    Encode.list Encode.referenceTo\n        [ firstEntity\n        , secondEntity\n        , thirdEntity\n        ]\n\nIn the odd case where you already have a `List Attribute`, you can use Elm's\nbuilt-in `identity` function as the first argument:\n\n    Encode.list identity\n        [ firstAttribute\n        , secondAttribute\n        , thirdAttribute\n        ]\n\n",
+                "type": "(a -> Step.Types.Attribute) -> List.List a -> Step.Types.Attribute"
+            },
+            {
+                "name": "listAs",
+                "comment": " Construct a type-tagged list attribute.\n",
+                "type": "String.String -> (a -> Step.Types.Attribute) -> List.List a -> Step.Types.Attribute"
+            },
+            {
+                "name": "null",
+                "comment": " The special 'null value' attribute.\n",
+                "type": "Step.Types.Attribute"
+            },
+            {
+                "name": "optional",
+                "comment": " Encode a `Maybe` either using the given decoder if it is a `Just value`, or\nas null if it is `Nothing`.\n",
+                "type": "(a -> Step.Types.Attribute) -> Maybe.Maybe a -> Step.Types.Attribute"
+            },
+            {
+                "name": "referenceTo",
+                "comment": " Construct a reference to another STEP entity (will end up being encoded\nusing an integer ID in the resulting STEP file, e.g. `#123`).\n",
+                "type": "Step.Types.Entity -> Step.Types.Attribute"
+            },
+            {
+                "name": "string",
+                "comment": " Construct a string-valued attribute.\n",
+                "type": "String.String -> Step.Types.Attribute"
+            },
+            {
+                "name": "stringAs",
+                "comment": " Construct a type-tagged string-valued attribute.\n",
+                "type": "String.String -> String.String -> Step.Types.Attribute"
+            },
+            {
+                "name": "subEntity",
+                "comment": " Encode a sub-entity that will become part of a [complex entity](#complexEntity),\nwith the given type name and attributes.\n",
+                "type": "String.String -> List.List Step.Types.Attribute -> Step.Types.SubEntity"
+            },
+            {
+                "name": "tuple2",
+                "comment": " Encode a tuple of two values as a list using the given encoding function.\n",
+                "type": "(a -> Step.Types.Attribute) -> ( a, a ) -> Step.Types.Attribute"
+            },
+            {
+                "name": "tuple3",
+                "comment": " Encode a tuple of three values as a list using the given encoding function.\n",
+                "type": "(a -> Step.Types.Attribute) -> ( a, a, a ) -> Step.Types.Attribute"
+            },
+            {
+                "name": "typedAttribute",
+                "comment": " Construct a generic type-tagged attribute. In most cases it will be simpler\nto use one of the specific functions such as `floatAs` or `enumAs`.\n",
+                "type": "String.String -> Step.Types.Attribute -> Step.Types.Attribute"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Step.EnumValue",
+        "comment": "\n\n@docs EnumValue, fromString, toString\n\n",
+        "unions": [
+            {
+                "name": "EnumValue",
+                "comment": " A capitalized enum value such as \"STEEL\" or \"METRE\".\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fromString",
+                "comment": " Construct an enum value from a string. The string will be capitalized and\nwill have periods removed.\n",
+                "type": "String.String -> Step.EnumValue.EnumValue"
+            },
+            {
+                "name": "toString",
+                "comment": " Convert an enum value to a string. The result will always be capitalized\nand will not have a leading/trailing periods (enum values are encoded in STEP\nfiles using leading and trailing periods, but those periods are considered to be\nan encoding detail and not part of the enum value).\n",
+                "type": "Step.EnumValue.EnumValue -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Step.Format",
+        "comment": " Low-level attribute formatting functionality. Usually you will want to use\nthe functions in the [`Step.Encode`](Step-Encode) module instead.\n\n@docs derivedValue, null, bool, int, float, string, id, enum, binaryData, list, typedAttribute\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "binaryData",
+                "comment": " Format binary data as a hex-encoded string according to the STEP\nstandard and wrap it in double quotation marks.\n\nNote that since Elm only supports byte-aligned binary data, there is no way to\ncreate (for example) a blob of binary data exactly 5 bits in size even though\nthat is supported by the STEP standard. As a result, the encoded string will\nalways start with 0 (since that character is otherwise used to indicate a\nnumber of padding zero bits).\n\n",
+                "type": "Bytes.Encode.Encoder -> String.String"
+            },
+            {
+                "name": "bool",
+                "comment": " Format a boolean value as either `.T.` or `.F.`.\n",
+                "type": "Basics.Bool -> String.String"
+            },
+            {
+                "name": "derivedValue",
+                "comment": " The special 'derived value' string `*`.\n",
+                "type": "String.String"
+            },
+            {
+                "name": "enum",
+                "comment": " Format an enum value as a capitalized string with leading and trailing\nperiods, for example `.METRE.`.\n",
+                "type": "Step.EnumValue.EnumValue -> String.String"
+            },
+            {
+                "name": "float",
+                "comment": " Format a floating-point value. This is almost the same as Elm's built-in\n`String.fromFloat` but (as required by the STEP standard) will ensure that the\nresulting string has a trailing decimal place if one is not otherwise required.\nFor example, the value 3 will be formatted as `3.` instead of just `3`.\n",
+                "type": "Basics.Float -> String.String"
+            },
+            {
+                "name": "id",
+                "comment": " Format a STEP integer ID as (for example) `#123`.\n",
+                "type": "Basics.Int -> String.String"
+            },
+            {
+                "name": "int",
+                "comment": " Format an integer value. (This is really just an alias for Elm's built-in\n`String.fromInt`.)\n",
+                "type": "Basics.Int -> String.String"
+            },
+            {
+                "name": "list",
+                "comment": " Given a list strings (assumed to be formatted attribute values produced by\nother functions in this module), join them using a comma and enclose them in\nparentheses, for example `(#1,#2,#3)` for a list of entity references.\n",
+                "type": "List.List String.String -> String.String"
+            },
+            {
+                "name": "null",
+                "comment": " The special 'null value' string `$`.\n",
+                "type": "String.String"
+            },
+            {
+                "name": "string",
+                "comment": " Format a string by wrapping it in single quotation marks. Unicode characters\nwill be properly escaped according to the (weird, custom) method specified in\nthe STEP standard; for example, \"see § 4.1\" will be encoded as `'see \\X\\A7 4.1'`.\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "typedAttribute",
+                "comment": " Format a typed attribute by surrounding an existing attribute (given as a\nstring) in parentheses and prepending the given type name, for example\n`SOME_TYPE_NAME(123)` for a typed integer attribute.\n",
+                "type": "Step.TypeName.TypeName -> String.String -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Step.String",
+        "comment": " Low-level functionality for encoding and decoding strings as specified in\nthe STEP standard. In most case you will want to use [`Step.Decode.string`](Step-Decode#string)\nand [`Step.Encode.string`](Step-Encode#string) instead of using this module\ndirectly.\n\n@docs encode, decode\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decode",
+                "comment": " Decode a STEP-encoded string.\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "encode",
+                "comment": " Encode a string using the (weird, custom) method specified in the STEP\nstandard:\n\n    Step.String.encode \"see § 4.1\"\n    --> \"see \\X\\A7 4.1\"\n\nNote that the leading and trailing single quotation marks (used when writing\nstrings to a STEP file) are _not_ included in the result.\n\n",
+                "type": "String.String -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Step.TypeName",
+        "comment": "\n\n@docs TypeName, fromString, toString\n\n",
+        "unions": [
+            {
+                "name": "TypeName",
+                "comment": " A capitalized type name like \"IFCWALL\".\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fromString",
+                "comment": " Construct a type name from a string. This wil capitalize the string.\n",
+                "type": "String.String -> Step.TypeName.TypeName"
+            },
+            {
+                "name": "toString",
+                "comment": " Convert a type name to a string. The result will always be capitalized.\n",
+                "type": "Step.TypeName.TypeName -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Step.Types",
+        "comment": " The types in this module are shared between the [`Encode`](Step-Encode) and\n[`Decode`](Step-Decode) modules. In many cases you should be able to import this\nmodule using\n\n    import Step.Types as Step\n\nso that you can then refer to `Step.Header`, `Step.Entity`, `Step.TypeName` etc.\n\n@docs Header, Entity, SubEntity, Attribute\n\nThe `TypeName` and `EnumValue` types are defined in their own modules but have\nbeen aliased here for convenience.\n\n@docs TypeName, EnumValue\n\n",
+        "unions": [
+            {
+                "name": "Attribute",
+                "comment": " An `Attribute` represents a single attribute of an `Entity`, such as an X\ncoordinate value, a GUID string, or a reference to another entity.\n\nInstead of creating or inspecting `Attribute` values directly, you will\ngenerally create them using an [encoder](Step-Encode#attributes) and extract\ndata from them using a [decoder](Step-Decode#decoding-attributes).\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "DerivedValue",
+                        []
+                    ],
+                    [
+                        "NullAttribute",
+                        []
+                    ],
+                    [
+                        "BoolAttribute",
+                        [
+                            "Basics.Bool"
+                        ]
+                    ],
+                    [
+                        "IntAttribute",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "FloatAttribute",
+                        [
+                            "Basics.Float"
+                        ]
+                    ],
+                    [
+                        "StringAttribute",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "BinaryDataAttribute",
+                        [
+                            "Bytes.Bytes"
+                        ]
+                    ],
+                    [
+                        "EnumAttribute",
+                        [
+                            "Step.EnumValue.EnumValue"
+                        ]
+                    ],
+                    [
+                        "ReferenceTo",
+                        [
+                            "Step.Types.Entity"
+                        ]
+                    ],
+                    [
+                        "TypedAttribute",
+                        [
+                            "Step.TypeName.TypeName",
+                            "Step.Types.Attribute"
+                        ]
+                    ],
+                    [
+                        "AttributeList",
+                        [
+                            "List.List Step.Types.Attribute"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Entity",
+                "comment": " An `Entity` represents a single entity stored in the data section of a STEP\nfile. An entity may be a point, a curve, a part, an assembly, or even an entire\nbuilding. Entities may be 'simple' (having a type and a list of attributes,\nwhich can themselves be references to other entities) or 'complex' (effectively\na list of simple entities combined together).\n\nInstead of creating or inspecting `Entity` values directly, you will generally\ncreate them using [`Step.Encode.entity`](Step-Encode#entity) and extract data\nfrom them using [`Step.Decode.entity`](Step-Decode#entity).\n\nNote that if you do construct `Entity` values directly, you should generally use\n`Nothing` as the entity ID. Entity IDs are auto-generated anyways when encoding\na STEP file, so there is no point in specifying them. However, entities read\nfrom a file will be assigned the ID they had in that file. (Note that even if\nthose entities are written out to another file later, they will have fresh IDs\ngenerated.)\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "SimpleEntity",
+                        [
+                            "Maybe.Maybe Basics.Int",
+                            "Step.TypeName.TypeName",
+                            "List.List Step.Types.Attribute"
+                        ]
+                    ],
+                    [
+                        "ComplexEntity",
+                        [
+                            "Maybe.Maybe Basics.Int",
+                            "List.List Step.Types.SubEntity"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "SubEntity",
+                "comment": " Some entities are 'complex', which means they are composed of a number of\nsub-entities each with its own type and attributes. A `SubEntity` represents\none such sub-entity.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "SubEntity",
+                        [
+                            "Step.TypeName.TypeName",
+                            "List.List Step.Types.Attribute"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "EnumValue",
+                "comment": " ",
+                "args": [],
+                "type": "Step.EnumValue.EnumValue"
+            },
+            {
+                "name": "Header",
+                "comment": " A `Header` represents the data stored in the header section of a STEP file:\n\n  - `description` should be an informal description of the contents of the file.\n  - `implementationLevel` will typically be `\"2;1\"` indicating version 2 of\n    ISO 10303, conformance class 1 (which in turn means that the file has a\n    single data section and no anchor or reference sections, along with several\n    other restrictions). For other possible values, see section 8.2.2 of ISO\n    10303-21.\n  - `fileName` may be the file name of the actual file, or it may be an abstract\n    name for the contents of the file used when cross-referencing between files.\n  - `timeStamp` should be an\n    [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)-formatted date and time.\n  - `author` should include the name and address of the person who created the\n    file.\n  - `organization` should be the organization that the `author` is associated\n    with.\n  - One of `preprocessorVersion` or `originatingSystem` should identify what CAD\n    program was used to generate the file. This does not seem to be used\n    terribly consistently!\n  - `authorization` should include the name and address of whoever authorized\n    sending the file.\n  - `schemaIdentifiers` identifies the EXPRESS schema used by entities in the\n    file. This will usually be a list containing a single string, which may be\n    either a simple string like `\"IFC2X3\"` or an 'object identifier' such as\n    `\"AUTOMOTIVE_DESIGN { 1 0 10303 214 1 1 1 1 }\"` (more commonly known as\n    AP214).\n\n",
+                "args": [],
+                "type": "{ description : List.List String.String, implementationLevel : String.String, fileName : String.String, timeStamp : String.String, author : List.List String.String, organization : List.List String.String, preprocessorVersion : String.String, originatingSystem : String.String, authorization : String.String, schemaIdentifiers : List.List String.String }"
+            },
+            {
+                "name": "TypeName",
+                "comment": " ",
+                "args": [],
+                "type": "Step.TypeName.TypeName"
+            }
+        ],
+        "values": [],
+        "binops": []
+    }
+]

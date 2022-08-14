@@ -1,0 +1,53 @@
+[
+    {
+        "name": "Engage.Localization",
+        "comment": " Helpers for working with DNN Localization for Engage Software team.\n\n\n# Types\n\n@docs Localization\n\n\n# Create Localization Dict\n\n@docs decoder, fromDict, empty\n\n\n# Get localized values\n\n@docs localizeString, localizeStringWithDefault, localizeText, localizeTextWithDefault\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Localization",
+                "comment": " `Dict` for storing localized text\n",
+                "args": [],
+                "type": "Dict.Dict String.String String.String"
+            }
+        ],
+        "values": [
+            {
+                "name": "decoder",
+                "comment": " Decode from JSON values to a `Localization`.\n\nSupports three formats:\n\n  - an array of object with `key` and `value` string properties\n\n  - an array of object with `Key` and `Value` string properties\n\n  - an object with string properties\n\n```\n    import Dict\n    import Engage.Localization exposing (Localization)\n    import Json.Decode as Decode\n    import Result\n\n    type alias Model =\n        { localization : Localization\n        }\n\n    \"\"\" [ { \"key\": \"FirstName.Text\", \"value\": \"First Name:\" } ] \"\"\"\n        |> Decode.decodeString decoder\n        |> Result.withDefault Dict.empty\n        |> Model\n        |> localizeString \"FirstName\"\n    --> \"First Name:\"\n\n    \"\"\" [ { \"Key\": \"LastName.Text\", \"Value\": \"Last Name:\" } ] \"\"\"\n        |> Decode.decodeString decoder\n        |> Result.withDefault Dict.empty\n        |> Model\n        |> localizeString \"lastname\"\n    --> \"Last Name:\"\n\n    \"\"\" { \"FirstName.Text\": \"Given Name\", \"FirstName.Help\": \"Your given name\" } \"\"\"\n        |> Decode.decodeString decoder\n        |> Result.withDefault Dict.empty\n        |> Model\n        |> localizeString \"FirstName.Help\"\n    --> \"Your given name\"\n```\n\n",
+                "type": "Json.Decode.Decoder Engage.Localization.Localization"
+            },
+            {
+                "name": "empty",
+                "comment": " Creates an empty `Localization`.\n\n    import Engage.Localization as Localization\n\n    type alias Model =\n        { localization : Localization\n        }\n\n    initialModel : Model\n    initialModel =\n        Model Localization.empty\n\n    initialModel\n        |> Localization.localizeString \"FirstName\"\n    --> \"[FirstName]\"\n\n",
+                "type": "Engage.Localization.Localization"
+            },
+            {
+                "name": "fromDict",
+                "comment": " Convert a dictionary to a `Localization`.\n\nThis normalizes the data in the dictionary (i.e. it is not the same as just using a `Dict String String` directly).\n\n    import Dict\n    import Engage.Localization as Localization\n\n    type alias Model =\n        { localization : Localization\n        }\n\n    Dict.fromList [ (\"FirstName.Text\", \"First Name:\") ]\n        |> Localization.fromDict\n        |> Model\n        |> Localization.localizeString \"FirstName\"\n    --> \"First Name:\"\n\n",
+                "type": "Dict.Dict String.String String.String -> Engage.Localization.Localization"
+            },
+            {
+                "name": "localizeString",
+                "comment": " Localize a key using the given `Localization` dict.\n\nIf the key is not found, this function will return the key value wrapped in `[ ]`.\nThe key is searched in a case-insensitive manner.\nKeys which end in `.Text` may omit that suffix.\n\n    import Dict\n    import Engage.Localization as Localization exposing (Localization)\n\n    myLocalization : Localization\n    myLocalization = Dict.fromList [ (\"FirstName.Text\", \"First Name: \") ] |> Localization.fromDict\n\n    localizeString \"FirstName\" { localization = myLocalization }\n    --> \"First Name: \"\n\n    localizeString \"LastName\" { localization = myLocalization }\n    --> \"[LastName]\"\n\n",
+                "type": "String.String -> { a | localization : Engage.Localization.Localization } -> String.String"
+            },
+            {
+                "name": "localizeStringWithDefault",
+                "comment": " Try to localize a key using the given `Localization` dict, and if the key is not found, return the given default value.\n\nThe key is searched in a case-insensitive manner.\nKeys which end in `.Text` may omit that suffix.\n\n    import Dict\n    import Engage.Localization as Localization exposing (Localization)\n\n    myLocalization : Localization\n    myLocalization = Dict.fromList [ (\"FirstName.Text\", \"First Name: \") ] |> Localization.fromDict\n\n    localizeStringWithDefault \"First Name\" \"FirstName.Text\" { localization = myLocalization }\n    --> \"First Name: \"\n    localizeStringWithDefault \"Last Name\" \"LastName.Text\" { localization = myLocalization }\n    --> \"Last Name\"\n\n",
+                "type": "String.String -> String.String -> { a | localization : Engage.Localization.Localization } -> String.String"
+            },
+            {
+                "name": "localizeText",
+                "comment": " Similar to `localizeText`, but with the text wrapped in `Html.text`\n\n    import Dict\n    import Engage.Localization as Localization exposing (Localization)\n    import Html\n\n    myLocalization : Localization\n    myLocalization = Dict.fromList [ (\"FirstName.Text\", \"First Name: \") ] |> Localization.fromDict\n\n    localizeText \"FirstName.Text\" { localization = myLocalization }\n    --> Html.text \"First Name: \"\n    localizeText \"LastName.Text\" { localization = myLocalization }\n    --> Html.text \"[LastName.Text]\"\n\n",
+                "type": "String.String -> { a | localization : Engage.Localization.Localization } -> Html.Html msg"
+            },
+            {
+                "name": "localizeTextWithDefault",
+                "comment": " Similar to `localizeTextWithDefault`, but with the text wrapped in `Html.text`\n\n    import Dict\n    import Engage.Localization as Localization exposing (Localization)\n    import Html\n\n    myLocalization : Localization\n    myLocalization = Dict.fromList [ (\"FirstName.Text\", \"First Name: \") ] |> Localization.fromDict\n\n    localizeTextWithDefault \"First Name\" \"FirstName.Text\" { localization = myLocalization }\n    --> Html.text \"First Name: \"\n    localizeTextWithDefault \"Last Name\" \"LastName.Text\" { localization = myLocalization }\n    --> Html.text \"Last Name\"\n\n",
+                "type": "String.String -> String.String -> { a | localization : Engage.Localization.Localization } -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

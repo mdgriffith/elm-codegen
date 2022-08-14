@@ -1,0 +1,16 @@
+[
+    {
+        "name": "NoRegex",
+        "comment": " Makes sure that `Regex` package is not being used in the code.\nAs mentioned in the [Regex](https://github.com/elm/regex/tree/1.0.0#regex-in-elm) package readme,\nit will be easier and nicer to use parser instead of regex.\n\n\n# Rule\n\n@docs rule\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": "\n\n\n## Usage\n\nAfter adding [elm-review](https://package.elm-lang.org/packages/jfmengels/elm-review/latest/) to your project,\nimport this rule to `ReviewConfig.elm` file and add it to the config.\n\n\n## Example configuration\n\n    import NoRegex\n    import Review.Rule exposing (Rule)\n\n    config : List Rule\n    config =\n        [ NoRegex.rule ]\n\n",
+                "type": "Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    }
+]

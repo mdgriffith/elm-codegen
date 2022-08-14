@@ -1,0 +1,2218 @@
+[
+    {
+        "name": "Mastodon",
+        "comment": " Talk to the Mastodon API.\n\nThis module contains re-exposed versions of the most-used parts of\n`Mastodon.Entity` and `Mastodon.Request`.\n\nTo authorize access, you need to call the functions in `Mastodon.Login`.\n\nFor API documentation, see <https://docs.joinmastodon.org/client/>\n\n\n# Types\n\n@docs ServerInfo, Request, Response, Error\n\n\n# Creating an HTTP REST request.\n\n@docs serverRequest\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Error",
+                "comment": " An error from the REST API.\n\nSame as Http.Error, but includes `Http.Metadata` when it's available.\n\nAn alias of `Mastodon.Request.Error`. See that module's documentation for details.\n\n",
+                "args": [],
+                "type": "Mastodon.Request.Error"
+            },
+            {
+                "name": "Request",
+                "comment": " A request for the REST API.\n\nAn alias of `Mastodon.Request.Request`. See that module's documentation for details.\n\n",
+                "args": [],
+                "type": "Mastodon.Request.Request"
+            },
+            {
+                "name": "Response",
+                "comment": " A response from the REST API.\n\nAn alias of `Mastodon.Request.Response`. See that module's documentation for details.\n\n",
+                "args": [],
+                "type": "Mastodon.Request.Response"
+            },
+            {
+                "name": "ServerInfo",
+                "comment": " Used to create the HTTP URL and fill in its authentication token.\n\nIt's the host name for the URL.\n\nExample `server`: \"mastodon.social\"\n\nA few requests do not require a token. Most do, and will error if you don't include one.\n\nCopy of `Mastodon.Request.ServerInfo`.\n\n",
+                "args": [],
+                "type": "{ server : String.String, token : Maybe.Maybe String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "serverRequest",
+                "comment": " Create a request for the REST API.\n\nThe `id` is whatever will help you to identify the response, if the `Request` and the `Response` don't suffice.\n\nThis is a copy of `Mastodon.Request.serverRequest`.\n\nThere is a low-level interface for requests in `Mastodon.Request`.\n\n",
+                "type": "(id -> Result.Result Mastodon.Error Mastodon.Response -> msg) -> List.List Http.Header -> Mastodon.ServerInfo -> id -> Mastodon.Request -> Platform.Cmd.Cmd msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Mastodon.EncodeDecode",
+        "comment": " Encoders and Decoders for JSON that goes over the wire.\n\nYou will rarely use any of these. Encoding and decoding will usually\nbe done for you by by `Mastodon.Requests.requestToRawRequest`, which\nyour code will call indirectly via `Mastodon.Requests.serverRequest`.\n\n\n# For the one type to rule them all\n\n@docs encodeEntity, entityDecoder, entityValue\n\n\n# For the individual entity types\n\n@docs accountDecoder, encodeAccount\n@docs fieldDecoder, encodeField\n@docs appDecoder, encodeApp\n@docs sourceDecoder, encodeSource\n@docs tokenDecoder, encodeToken\n@docs applicationDecoder, encodeApplication\n@docs attachmentDecoder, encodeAttachment\n@docs cardDecoder, encodeCard\n@docs contextDecoder, encodeContext\n@docs visibilityDecoder, encodeVisibility\n@docs emojiDecoder, encodeEmoji\n@docs encodeStatus, statusDecoder, rawStatusDecoder, simpleStatusDecoder\n@docs encodeError, errorDecoder\n@docs encodePoll, pollDecoder\n@docs encodeFilter, filterDecoder\n@docs encodeFilterContext, filterContextDecoder\n@docs encodeInstance, instanceDecoder, defaultedInstance\n@docs encodeActivity, activityDecoder\n@docs encodeListEntity, listEntityDecoder\n@docs encodeNotification, notificationDecoder\n@docs encodeNotificationType, notificationTypeDecoder\n@docs encodePushSubscription, pushSubscriptionDecoder\n@docs encodeRelationship, relationshipDecoder\n@docs encodeResults, resultsDecoder\n@docs encodeScheduledStatus, scheduledStatusDecoder\n@docs encodeConversation, conversationDecoder\n@docs encodeGroup, groupDecoder\n@docs encodeGroupRelationship, groupRelationshipDecoder\n\n@docs encodeTag, tagDecoder\n\n\n# Encoder and decoder for the login parameters.\n\n@docs encodeAuthorization, authorizationDecoder\n\n\n# Utilities\n\n@docs encodeMaybe\n@docs privacyToString, notificationTypeToString, filterContextToString\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "accountDecoder",
+                "comment": " Decode an `Account`.\n",
+                "type": "Json.Decode.Decoder Mastodon.Entity.Account"
+            },
+            {
+                "name": "activityDecoder",
+                "comment": " Decode an `Activity`\n",
+                "type": "Json.Decode.Decoder Mastodon.Entity.Activity"
+            },
+            {
+                "name": "appDecoder",
+                "comment": " Decode an `App`.\n",
+                "type": "Json.Decode.Decoder Mastodon.Entity.App"
+            },
+            {
+                "name": "applicationDecoder",
+                "comment": " Decode an `Application`.\n",
+                "type": "Json.Decode.Decoder Mastodon.Entity.Application"
+            },
+            {
+                "name": "attachmentDecoder",
+                "comment": " Decode an `Attachment`.\n",
+                "type": "Json.Decode.Decoder Mastodon.Entity.Attachment"
+            },
+            {
+                "name": "authorizationDecoder",
+                "comment": " Decoder for `Authorization`.\n",
+                "type": "Json.Decode.Decoder Mastodon.Entity.Authorization"
+            },
+            {
+                "name": "cardDecoder",
+                "comment": " Decode a `Card`.\n",
+                "type": "Json.Decode.Decoder Mastodon.Entity.Card"
+            },
+            {
+                "name": "contextDecoder",
+                "comment": " Decode a `Context`.\n",
+                "type": "Json.Decode.Decoder Mastodon.Entity.Context"
+            },
+            {
+                "name": "conversationDecoder",
+                "comment": " Decoder for `Conversation`.\n",
+                "type": "Json.Decode.Decoder Mastodon.Entity.Conversation"
+            },
+            {
+                "name": "defaultedInstance",
+                "comment": " Return the default instance for a URL string.\n\nUsed for servers that return a malformed Instance or no JSON at all.\n\n",
+                "type": "String.String -> Json.Encode.Value -> Mastodon.Entity.Instance"
+            },
+            {
+                "name": "emojiDecoder",
+                "comment": " Decode an `Emoji`.\n",
+                "type": "Json.Decode.Decoder Mastodon.Entity.Emoji"
+            },
+            {
+                "name": "encodeAccount",
+                "comment": " Encode an `Account`.\n",
+                "type": "Mastodon.Entity.Account -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeActivity",
+                "comment": " Encode an `Activity`.\n\nMastodon encodes all the `Int` fields as strings, so we follow suit here.\nPleroma and Gab don't support \"GET instance/activity\".\n\n",
+                "type": "Mastodon.Entity.Activity -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeApp",
+                "comment": " Encode an `App`.\n",
+                "type": "Mastodon.Entity.App -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeApplication",
+                "comment": " Encode an `Application`.\n",
+                "type": "Mastodon.Entity.Application -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeAttachment",
+                "comment": " Encode an `Attachment`.\n",
+                "type": "Mastodon.Entity.Attachment -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeAuthorization",
+                "comment": " Encoder for `Authorization`.\n",
+                "type": "Mastodon.Entity.Authorization -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeCard",
+                "comment": " Encode a `Card`.\n",
+                "type": "Mastodon.Entity.Card -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeContext",
+                "comment": " Encode a `Context`.\n",
+                "type": "Mastodon.Entity.Context -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeConversation",
+                "comment": " Encoder for `Conversation`.\n",
+                "type": "Mastodon.Entity.Conversation -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeEmoji",
+                "comment": " Encode an `Emoji`.\n",
+                "type": "Mastodon.Entity.Emoji -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeEntity",
+                "comment": " Encode an `Entity` into a `Value`.\n",
+                "type": "Mastodon.Entity.Entity -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeError",
+                "comment": " Encode an `Error`.\n\nNote that the `httpStatus` field does NOT get encoded.\nYou'll probably never need to encode one of these, anyway.\n\n",
+                "type": "Mastodon.Entity.Error -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeField",
+                "comment": " Encode a `Field`.\n",
+                "type": "Mastodon.Entity.Field -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeFilter",
+                "comment": " Encode a `Filter`.\n",
+                "type": "Mastodon.Entity.Filter -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeFilterContext",
+                "comment": " Encode a `FilterContext`.\n",
+                "type": "Mastodon.Entity.FilterContext -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeGroup",
+                "comment": " Encoder for `Group`.\n",
+                "type": "Mastodon.Entity.Group -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeGroupRelationship",
+                "comment": " Encoder for `GroupRelationship`.\n",
+                "type": "Mastodon.Entity.GroupRelationship -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeInstance",
+                "comment": " Encode an `Instance`.\n",
+                "type": "Mastodon.Entity.Instance -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeListEntity",
+                "comment": " Encode a `ListEntity`.\n",
+                "type": "Mastodon.Entity.ListEntity -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeMaybe",
+                "comment": " Encode `Maybe x` to `Json.Encode.null` if it's Nothing,\n\nor with the encoder otherwise.\n\n",
+                "type": "(x -> Json.Encode.Value) -> Maybe.Maybe x -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeNotification",
+                "comment": " Encode a `Notification`.\n",
+                "type": "Mastodon.Entity.Notification -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeNotificationType",
+                "comment": " Encode a `NotificationType`.\n",
+                "type": "Mastodon.Entity.NotificationType -> Json.Encode.Value"
+            },
+            {
+                "name": "encodePoll",
+                "comment": " Encode a `Poll`.\n",
+                "type": "Mastodon.Entity.Poll -> Json.Encode.Value"
+            },
+            {
+                "name": "encodePushSubscription",
+                "comment": " Encoder for `PushSubscription`.\n",
+                "type": "Mastodon.Entity.PushSubscription -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeRelationship",
+                "comment": " Encoder for `Relationship`.\n",
+                "type": "Mastodon.Entity.Relationship -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeResults",
+                "comment": " Encoder for `Results`.\n",
+                "type": "Mastodon.Entity.Results -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeScheduledStatus",
+                "comment": " Encoder for `ScheduledStatus`.\n",
+                "type": "Mastodon.Entity.ScheduledStatus -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeSource",
+                "comment": " Encode a `Source`.\n",
+                "type": "Mastodon.Entity.Source -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeStatus",
+                "comment": " Encode a `Status`.\n",
+                "type": "Mastodon.Entity.Status -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeTag",
+                "comment": " Encode a `Tag`.\n",
+                "type": "Mastodon.Entity.Tag -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeToken",
+                "comment": " Encode a `Token`.\n",
+                "type": "Mastodon.Entity.Token -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeVisibility",
+                "comment": " Encode a `Visibility`.\n",
+                "type": "Mastodon.Entity.Visibility -> Json.Encode.Value"
+            },
+            {
+                "name": "entityDecoder",
+                "comment": " Decode an `Entity`.\n\nYou'll usually know which entity you're looking for, and will use\nits decoder explicitly. In case you don't...\n\nThe urlString is used only to decode an Instance.\nIt is used to default fields when the server returns {}\n(which it shouldn't, but some do).\n\n",
+                "type": "String.String -> Json.Decode.Decoder Mastodon.Entity.Entity"
+            },
+            {
+                "name": "entityValue",
+                "comment": " Similar to `encodeEntity`, but returns the `v` field, if it is non-null,\n\ngiving you the raw data that came over the wire, if this entity DID come over\nthe wire, and is not one of the few that don't have a `v` field.\n\n",
+                "type": "Mastodon.Entity.Entity -> Json.Encode.Value"
+            },
+            {
+                "name": "errorDecoder",
+                "comment": " Decode an `Error`.\n\nSince the `httpStatus` comes from the HTTP headers, it needs to be\npassed in here as a parameter, as it isn't in the JSON.\n\n",
+                "type": "String.String -> Json.Decode.Decoder Mastodon.Entity.Error"
+            },
+            {
+                "name": "fieldDecoder",
+                "comment": " Decode a `Field`.\n",
+                "type": "Json.Decode.Decoder Mastodon.Entity.Field"
+            },
+            {
+                "name": "filterContextDecoder",
+                "comment": " Decode a `FilterContext`.\n",
+                "type": "Json.Decode.Decoder Mastodon.Entity.FilterContext"
+            },
+            {
+                "name": "filterContextToString",
+                "comment": " Turn a `FilterContext` into a `String`.\n",
+                "type": "Mastodon.Entity.FilterContext -> String.String"
+            },
+            {
+                "name": "filterDecoder",
+                "comment": " Decode a `Filter`.\n",
+                "type": "Json.Decode.Decoder Mastodon.Entity.Filter"
+            },
+            {
+                "name": "groupDecoder",
+                "comment": " Decoder for `Group`.\n",
+                "type": "Json.Decode.Decoder Mastodon.Entity.Group"
+            },
+            {
+                "name": "groupRelationshipDecoder",
+                "comment": " Decoder for `GroupRelationship`.\n",
+                "type": "Json.Decode.Decoder Mastodon.Entity.GroupRelationship"
+            },
+            {
+                "name": "instanceDecoder",
+                "comment": " Decode an `Instance`.\n",
+                "type": "String.String -> Json.Decode.Decoder Mastodon.Entity.Instance"
+            },
+            {
+                "name": "listEntityDecoder",
+                "comment": " Decode a `ListEntity`.\n",
+                "type": "Json.Decode.Decoder Mastodon.Entity.ListEntity"
+            },
+            {
+                "name": "notificationDecoder",
+                "comment": " Decode a `Notification`.\n",
+                "type": "Json.Decode.Decoder Mastodon.Entity.Notification"
+            },
+            {
+                "name": "notificationTypeDecoder",
+                "comment": " Decode a \\`NotificationType.\n",
+                "type": "Json.Decode.Decoder Mastodon.Entity.NotificationType"
+            },
+            {
+                "name": "notificationTypeToString",
+                "comment": " Convert a `NoticiationType` to a string\n",
+                "type": "Mastodon.Entity.NotificationType -> String.String"
+            },
+            {
+                "name": "pollDecoder",
+                "comment": " Decode a `Poll`.\n",
+                "type": "Json.Decode.Decoder Mastodon.Entity.Poll"
+            },
+            {
+                "name": "privacyToString",
+                "comment": " Convert `Privacy` to a `String`.\n",
+                "type": "Mastodon.Entity.Privacy -> String.String"
+            },
+            {
+                "name": "pushSubscriptionDecoder",
+                "comment": " Decoder for `PushSubscription`.\n",
+                "type": "Json.Decode.Decoder Mastodon.Entity.PushSubscription"
+            },
+            {
+                "name": "rawStatusDecoder",
+                "comment": " Decode a `RawStatus`.\n",
+                "type": "Json.Decode.Decoder Mastodon.Entity.RawStatus"
+            },
+            {
+                "name": "relationshipDecoder",
+                "comment": " Decode a `Relationship`.\n",
+                "type": "Json.Decode.Decoder Mastodon.Entity.Relationship"
+            },
+            {
+                "name": "resultsDecoder",
+                "comment": " Decoder for `Results`.\n",
+                "type": "Json.Decode.Decoder Mastodon.Entity.Results"
+            },
+            {
+                "name": "scheduledStatusDecoder",
+                "comment": " Decoder for `ScheduledStatus`.\n",
+                "type": "Json.Decode.Decoder Mastodon.Entity.ScheduledStatus"
+            },
+            {
+                "name": "simpleStatusDecoder",
+                "comment": " Just decode the fields that are supported by all servers.\n\nThe `content` field means different things on some servers, so use\n`statusDecoder` if you want it to have the full HTML for the post.\n\n",
+                "type": "Json.Decode.Decoder Mastodon.Entity.Status"
+            },
+            {
+                "name": "sourceDecoder",
+                "comment": " Decode a `Source`.\n",
+                "type": "Json.Decode.Decoder Mastodon.Entity.Source"
+            },
+            {
+                "name": "statusDecoder",
+                "comment": " Decode a `Status`.\n\nThis integrates the non-standard fields, so that you can just use `content`\nfor the full HTML to actually display.\n\n",
+                "type": "Json.Decode.Decoder Mastodon.Entity.Status"
+            },
+            {
+                "name": "tagDecoder",
+                "comment": " Decode a `Tag`.\n",
+                "type": "Json.Decode.Decoder Mastodon.Entity.Tag"
+            },
+            {
+                "name": "tokenDecoder",
+                "comment": " Decode a `Token`.\n",
+                "type": "Json.Decode.Decoder Mastodon.Entity.Token"
+            },
+            {
+                "name": "visibilityDecoder",
+                "comment": " Decode a `Visibility`.\n",
+                "type": "Json.Decode.Decoder Mastodon.Entity.Visibility"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Mastodon.Entity",
+        "comment": " The Mastodon API entities.\n\nThese are JSON-encoded over the wire. Mastodon.EncodeDecode knows how to do that.\n\nDocumented at <https://docs.joinmastodon.org/api/entities/>\n\nMost of the Entity have a `v` field, which is the raw JS value from\nwhich it was decoded. This is useful if you want to display what you\ngot over the wire. Code that creates these can set it to\n`Json.Encode.null`.\n\n\n# Entity\n\n@docs Entity\n\n\n# String aliases\n\n@docs Datetime, UrlString, HtmlString, ISO6391, ISO6392, UnixTimestamp\n\n\n# Entities\n\n@docs Account, Source, Token, Application, App\n@docs Card, Context, Error, Filter, Instance, Activity\n@docs ListEntity, Notification\n@docs PushSubscription, Relationship, Results\n@docs Status, RawStatus, ScheduledStatus, Conversation\n@docs Group, GroupRelationship\n\n\n# Entity field types\n\n@docs Emoji, Field, Privacy, Attachment, AttachmentType\n@docs Meta, ImageMetaFields, VideoMetaFields\n@docs ImageMetaInfo, VideoMetaInfo, Focus\n@docs CardType, FilterContext, URLs, Stats, NotificationType\n@docs Visibility, Mention, Tag, History, Poll, PollOption, StatusParams\n@docs PleromaStatusContent\n\n\n# Authorization parameters\n\n@docs Authorization\n\n\n# Wrappers to prevent type recursion\n\n@docs WrappedAccount, WrappedStatus\n\n",
+        "unions": [
+            {
+                "name": "AttachmentType",
+                "comment": " Types for the `Attachment.type_` field.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "UnknownAttachment",
+                        []
+                    ],
+                    [
+                        "ImageAttachment",
+                        []
+                    ],
+                    [
+                        "GifvAttachment",
+                        []
+                    ],
+                    [
+                        "VideoAttachment",
+                        []
+                    ],
+                    [
+                        "AudioAttachment",
+                        []
+                    ],
+                    [
+                        "UnrecognizedAttachment",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "CardType",
+                "comment": " Choices for the `Card.type_` field.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "LinkCard",
+                        []
+                    ],
+                    [
+                        "PhotoCard",
+                        []
+                    ],
+                    [
+                        "VideoCard",
+                        []
+                    ],
+                    [
+                        "RichCard",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Entity",
+                "comment": " One type to rule them all.\n\nThis is mostly to make tests easier to define. Most code will use\nindividual entities explicitly.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NoEntity",
+                        []
+                    ],
+                    [
+                        "AccountEntity",
+                        [
+                            "Mastodon.Entity.Account"
+                        ]
+                    ],
+                    [
+                        "AccountListEntity",
+                        [
+                            "List.List Mastodon.Entity.Account"
+                        ]
+                    ],
+                    [
+                        "SourceEntity",
+                        [
+                            "Mastodon.Entity.Source"
+                        ]
+                    ],
+                    [
+                        "TokenEntity",
+                        [
+                            "Mastodon.Entity.Token"
+                        ]
+                    ],
+                    [
+                        "ApplicationEntity",
+                        [
+                            "Mastodon.Entity.Application"
+                        ]
+                    ],
+                    [
+                        "AppEntity",
+                        [
+                            "Mastodon.Entity.App"
+                        ]
+                    ],
+                    [
+                        "CardEntity",
+                        [
+                            "Mastodon.Entity.Card"
+                        ]
+                    ],
+                    [
+                        "ContextEntity",
+                        [
+                            "Mastodon.Entity.Context"
+                        ]
+                    ],
+                    [
+                        "EmojiEntity",
+                        [
+                            "Mastodon.Entity.Emoji"
+                        ]
+                    ],
+                    [
+                        "EmojiListEntity",
+                        [
+                            "List.List Mastodon.Entity.Emoji"
+                        ]
+                    ],
+                    [
+                        "ErrorEntity",
+                        [
+                            "Mastodon.Entity.Error"
+                        ]
+                    ],
+                    [
+                        "FilterEntity",
+                        [
+                            "Mastodon.Entity.Filter"
+                        ]
+                    ],
+                    [
+                        "FilterListEntity",
+                        [
+                            "List.List Mastodon.Entity.Filter"
+                        ]
+                    ],
+                    [
+                        "InstanceEntity",
+                        [
+                            "Mastodon.Entity.Instance"
+                        ]
+                    ],
+                    [
+                        "ActivityEntity",
+                        [
+                            "Mastodon.Entity.Activity"
+                        ]
+                    ],
+                    [
+                        "ActivityListEntity",
+                        [
+                            "List.List Mastodon.Entity.Activity"
+                        ]
+                    ],
+                    [
+                        "PeersEntity",
+                        [
+                            "List.List String.String"
+                        ]
+                    ],
+                    [
+                        "ListEntityEntity",
+                        [
+                            "Mastodon.Entity.ListEntity"
+                        ]
+                    ],
+                    [
+                        "ListEntityListEntity",
+                        [
+                            "List.List Mastodon.Entity.ListEntity"
+                        ]
+                    ],
+                    [
+                        "AttachmentEntity",
+                        [
+                            "Mastodon.Entity.Attachment"
+                        ]
+                    ],
+                    [
+                        "AttachmentListEntity",
+                        [
+                            "List.List Mastodon.Entity.Attachment"
+                        ]
+                    ],
+                    [
+                        "NotificationEntity",
+                        [
+                            "Mastodon.Entity.Notification"
+                        ]
+                    ],
+                    [
+                        "NotificationListEntity",
+                        [
+                            "List.List Mastodon.Entity.Notification"
+                        ]
+                    ],
+                    [
+                        "PushSubscriptionEntity",
+                        [
+                            "Mastodon.Entity.PushSubscription"
+                        ]
+                    ],
+                    [
+                        "RelationshipEntity",
+                        [
+                            "Mastodon.Entity.Relationship"
+                        ]
+                    ],
+                    [
+                        "RelationshipListEntity",
+                        [
+                            "List.List Mastodon.Entity.Relationship"
+                        ]
+                    ],
+                    [
+                        "ResultsEntity",
+                        [
+                            "Mastodon.Entity.Results"
+                        ]
+                    ],
+                    [
+                        "StatusEntity",
+                        [
+                            "Mastodon.Entity.Status"
+                        ]
+                    ],
+                    [
+                        "PollEntity",
+                        [
+                            "Mastodon.Entity.Poll"
+                        ]
+                    ],
+                    [
+                        "StatusListEntity",
+                        [
+                            "List.List Mastodon.Entity.Status"
+                        ]
+                    ],
+                    [
+                        "ScheduledStatusEntity",
+                        [
+                            "Mastodon.Entity.ScheduledStatus"
+                        ]
+                    ],
+                    [
+                        "ScheduledStatusListEntity",
+                        [
+                            "List.List Mastodon.Entity.ScheduledStatus"
+                        ]
+                    ],
+                    [
+                        "ConversationEntity",
+                        [
+                            "Mastodon.Entity.Conversation"
+                        ]
+                    ],
+                    [
+                        "ConversationListEntity",
+                        [
+                            "List.List Mastodon.Entity.Conversation"
+                        ]
+                    ],
+                    [
+                        "GroupEntity",
+                        [
+                            "Mastodon.Entity.Group"
+                        ]
+                    ],
+                    [
+                        "GroupRelationshipEntity",
+                        [
+                            "Mastodon.Entity.GroupRelationship"
+                        ]
+                    ],
+                    [
+                        "GroupRelationshipListEntity",
+                        [
+                            "List.List Mastodon.Entity.GroupRelationship"
+                        ]
+                    ],
+                    [
+                        "GroupListEntity",
+                        [
+                            "List.List Mastodon.Entity.Group"
+                        ]
+                    ],
+                    [
+                        "StringListEntity",
+                        [
+                            "List.List String.String"
+                        ]
+                    ],
+                    [
+                        "TagListEntity",
+                        [
+                            "List.List Mastodon.Entity.Tag"
+                        ]
+                    ],
+                    [
+                        "ValueEntity",
+                        [
+                            "Json.Encode.Value"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "FilterContext",
+                "comment": " Choices for the `Filter.context` list.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "HomeContext",
+                        []
+                    ],
+                    [
+                        "NotificationsContext",
+                        []
+                    ],
+                    [
+                        "PublicContext",
+                        []
+                    ],
+                    [
+                        "ThreadContext",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Meta",
+                "comment": " Value for `Attachment.meta`\n",
+                "args": [],
+                "cases": [
+                    [
+                        "ImageMeta",
+                        [
+                            "Mastodon.Entity.ImageMetaFields"
+                        ]
+                    ],
+                    [
+                        "VideoMeta",
+                        [
+                            "Mastodon.Entity.VideoMetaFields"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "NotificationType",
+                "comment": " Choices for `Notification.type_`.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "FollowNotification",
+                        []
+                    ],
+                    [
+                        "MentionNotification",
+                        []
+                    ],
+                    [
+                        "ReblogNotification",
+                        []
+                    ],
+                    [
+                        "FavouriteNotification",
+                        []
+                    ],
+                    [
+                        "PollNotification",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Privacy",
+                "comment": " Values for `Source.privacy`\n",
+                "args": [],
+                "cases": [
+                    [
+                        "PublicPrivacy",
+                        []
+                    ],
+                    [
+                        "UnlistedPrivacy",
+                        []
+                    ],
+                    [
+                        "PrivatePrivacy",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Visibility",
+                "comment": " Values for `Status.visibility`.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "PublicVisibility",
+                        []
+                    ],
+                    [
+                        "UnlistedVisibility",
+                        []
+                    ],
+                    [
+                        "PrivateVisibility",
+                        []
+                    ],
+                    [
+                        "DirectVisibility",
+                        []
+                    ],
+                    [
+                        "PrivateGroupVisibility",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "WrappedAccount",
+                "comment": " Wrapped `Account`, to prevent type recursion.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "WrappedAccount",
+                        [
+                            "Mastodon.Entity.Account"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "WrappedStatus",
+                "comment": " Wrapped `Status`, to prevent type recursion.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "WrappedStatus",
+                        [
+                            "Mastodon.Entity.Status"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Account",
+                "comment": " Account entity\n\nPleroma servers have an additional field here, not yet supported:\n\n    \"pleroma\":{\"tags\":[],\n               \"skip_thread_containment\":false,\n               \"settings_store\":{},\n               \"relationship\":{\"subscribing\":false,\n                               \"showing_reblogs\":true,\n                               \"requested\":false,\n                               \"muting_notifications\":false,\n                               \"muting\":false,\n                               \"id\":\"9kL2555DTtECY9TEQK\",\n                               \"following\":true,\n                               \"followed_by\":true,\n                               \"endorsed\":false,\n                               \"domain_blocking\":false,\n                               \"blocking\":false\n                              }\n\n",
+                "args": [],
+                "type": "{ id : String.String, username : String.String, acct : String.String, display_name : String.String, locked : Basics.Bool, created_at : Mastodon.Entity.Datetime, followers_count : Basics.Int, following_count : Basics.Int, statuses_count : Basics.Int, note : String.String, url : Mastodon.Entity.UrlString, avatar : Mastodon.Entity.UrlString, avatar_static : Mastodon.Entity.UrlString, header : Mastodon.Entity.UrlString, header_static : Mastodon.Entity.UrlString, emojis : List.List Mastodon.Entity.Emoji, moved : Maybe.Maybe Mastodon.Entity.WrappedAccount, fields : List.List Mastodon.Entity.Field, bot : Basics.Bool, source : Maybe.Maybe Mastodon.Entity.Source, is_pro : Basics.Bool, is_verified : Basics.Bool, is_donor : Basics.Bool, is_investor : Basics.Bool, v : Json.Encode.Value }"
+            },
+            {
+                "name": "Activity",
+                "comment": " `Activity` entity.\n\nNot documented. A list of these is returned by \"GET instance/activity\"\n\n",
+                "args": [],
+                "type": "{ week : Basics.Int, statuses : Basics.Int, logins : Maybe.Maybe Basics.Int, registrations : Basics.Int, v : Json.Encode.Value }"
+            },
+            {
+                "name": "App",
+                "comment": " App entity.\n\nThis is not documented, so I requested one and reverse engineered it.\n\n",
+                "args": [],
+                "type": "{ id : String.String, name : String.String, website : Maybe.Maybe String.String, redirect_uri : String.String, client_id : String.String, client_secret : String.String, vapid_key : Maybe.Maybe String.String, v : Json.Encode.Value }"
+            },
+            {
+                "name": "Application",
+                "comment": " Application entity.\n",
+                "args": [],
+                "type": "{ name : String.String, website : Maybe.Maybe Mastodon.Entity.UrlString, v : Json.Encode.Value }"
+            },
+            {
+                "name": "Attachment",
+                "comment": " Element of `Status.media_attachments` and `ScheduledStatus.media_attachments`.\n\nNote that it's possible to create an `Attachment` whose `type_` disagrees\nwith its `meta`. Maybe I should have represented it to prevent that, but I\nchose to mostly match the JSON.\n\n",
+                "args": [],
+                "type": "{ id : String.String, type_ : Mastodon.Entity.AttachmentType, url : Mastodon.Entity.UrlString, remote_url : Maybe.Maybe Mastodon.Entity.UrlString, preview_url : Maybe.Maybe Mastodon.Entity.UrlString, text_url : Maybe.Maybe Mastodon.Entity.UrlString, meta : Maybe.Maybe Mastodon.Entity.Meta, description : Maybe.Maybe String.String, v : Json.Encode.Value }"
+            },
+            {
+                "name": "Authorization",
+                "comment": " Authorization Parameters.\n\nApplications will usually save this in `localStorage`, use the saved token\nuntil it expires, then use the client ID and secret to mint a new authorization.\n\nThe authorization is usually of the type \"Bearer <token>\".\n\n",
+                "args": [],
+                "type": "{ clientId : String.String, clientSecret : String.String, token : String.String }"
+            },
+            {
+                "name": "Card",
+                "comment": " Card entity.\n",
+                "args": [],
+                "type": "{ url : Mastodon.Entity.UrlString, title : String.String, description : String.String, image : Maybe.Maybe Mastodon.Entity.UrlString, type_ : Mastodon.Entity.CardType, author_name : Maybe.Maybe String.String, author_url : Maybe.Maybe Mastodon.Entity.UrlString, provider_name : Maybe.Maybe String.String, provider_url : Maybe.Maybe Mastodon.Entity.UrlString, html : Maybe.Maybe Mastodon.Entity.HtmlString, width : Maybe.Maybe Basics.Int, height : Maybe.Maybe Basics.Int, v : Json.Encode.Value }"
+            },
+            {
+                "name": "Context",
+                "comment": " Context entity.\n",
+                "args": [],
+                "type": "{ ancestors : List.List Mastodon.Entity.Status, descendants : List.List Mastodon.Entity.Status }"
+            },
+            {
+                "name": "Conversation",
+                "comment": " Conversation entity.\n",
+                "args": [],
+                "type": "{ id : String.String, accounts : List.List Mastodon.Entity.Account, last_status : Maybe.Maybe Mastodon.Entity.Status, unread : Basics.Bool, v : Json.Encode.Value }"
+            },
+            {
+                "name": "Datetime",
+                "comment": " Alias of `String`\n",
+                "args": [],
+                "type": "String.String"
+            },
+            {
+                "name": "Emoji",
+                "comment": " Values for the `Account.emojis` list. Also returned by `/api/v1/custom_emojis`.\n",
+                "args": [],
+                "type": "{ shortcode : String.String, static_url : Mastodon.Entity.UrlString, url : Mastodon.Entity.UrlString, visible_in_picker : Basics.Bool }"
+            },
+            {
+                "name": "Error",
+                "comment": " Error entity.\n",
+                "args": [],
+                "type": "{ httpStatus : String.String, error : String.String }"
+            },
+            {
+                "name": "Field",
+                "comment": " Values for the `Account.fields` and `Source.fields` lists.\n",
+                "args": [],
+                "type": "{ name : String.String, value : Mastodon.Entity.HtmlString, verified_at : Maybe.Maybe Mastodon.Entity.Datetime }"
+            },
+            {
+                "name": "Filter",
+                "comment": " Filter entity.\n",
+                "args": [],
+                "type": "{ id : String.String, phrase : String.String, context : List.List Mastodon.Entity.FilterContext, expires_at : Maybe.Maybe Mastodon.Entity.Datetime, irreversible : Basics.Bool, whole_word : Basics.Bool, v : Json.Encode.Value }"
+            },
+            {
+                "name": "Focus",
+                "comment": " The optional focus of an image attachment.\n",
+                "args": [],
+                "type": "{ x : Basics.Float, y : Basics.Float }"
+            },
+            {
+                "name": "Group",
+                "comment": " Group entity.\n\nThis is a Gab extension.\n\n",
+                "args": [],
+                "type": "{ id : String.String, title : String.String, description : String.String, cover_image_url : String.String, is_archived : Basics.Bool, member_count : Basics.Int, v : Json.Encode.Value }"
+            },
+            {
+                "name": "GroupRelationship",
+                "comment": " Group relationship entity.\n\nThis is a Gab extension.\n\n",
+                "args": [],
+                "type": "{ id : String.String, member : Basics.Bool, admin : Basics.Bool, unread_count : Basics.Int, v : Json.Encode.Value }"
+            },
+            {
+                "name": "History",
+                "comment": " Value for `Tag.history`.\n",
+                "args": [],
+                "type": "{ day : Mastodon.Entity.UnixTimestamp, uses : Basics.Int, accounts : Basics.Int }"
+            },
+            {
+                "name": "HtmlString",
+                "comment": " Alias of `String`\n",
+                "args": [],
+                "type": "String.String"
+            },
+            {
+                "name": "ISO6391",
+                "comment": " Alias of `String`\n",
+                "args": [],
+                "type": "String.String"
+            },
+            {
+                "name": "ISO6392",
+                "comment": " Alias of `String`\n",
+                "args": [],
+                "type": "String.String"
+            },
+            {
+                "name": "ImageMetaFields",
+                "comment": " Fields for an `ImageMeta`.\n",
+                "args": [],
+                "type": "{ small : Maybe.Maybe Mastodon.Entity.ImageMetaInfo, original : Maybe.Maybe Mastodon.Entity.ImageMetaInfo, focus : Maybe.Maybe Mastodon.Entity.Focus }"
+            },
+            {
+                "name": "ImageMetaInfo",
+                "comment": " Values for `ImageMetaFields.small` and `ImageMetaFields.original`\n",
+                "args": [],
+                "type": "{ width : Maybe.Maybe Basics.Int, height : Maybe.Maybe Basics.Int, size : Maybe.Maybe String.String, aspect : Maybe.Maybe Basics.Float }"
+            },
+            {
+                "name": "Instance",
+                "comment": " Instance entity.\n",
+                "args": [],
+                "type": "{ uri : String.String, title : String.String, description : String.String, email : String.String, version : String.String, thumbnail : Maybe.Maybe Mastodon.Entity.UrlString, urls : Maybe.Maybe Mastodon.Entity.URLs, stats : Mastodon.Entity.Stats, max_toot_chars : Maybe.Maybe Basics.Int, languages : List.List Mastodon.Entity.ISO6391, contact_account : Maybe.Maybe Mastodon.Entity.Account, v : Json.Encode.Value }"
+            },
+            {
+                "name": "ListEntity",
+                "comment": " List entity.\n",
+                "args": [],
+                "type": "{ id : String.String, title : String.String }"
+            },
+            {
+                "name": "Mention",
+                "comment": " Values in `Status.mentions`.\n",
+                "args": [],
+                "type": "{ url : Mastodon.Entity.UrlString, username : String.String, acct : String.String, id : String.String }"
+            },
+            {
+                "name": "Notification",
+                "comment": " Notification entity.\n",
+                "args": [],
+                "type": "{ id : String.String, type_ : Mastodon.Entity.NotificationType, created_at : Mastodon.Entity.Datetime, account : Mastodon.Entity.Account, status : Maybe.Maybe Mastodon.Entity.Status, v : Json.Encode.Value }"
+            },
+            {
+                "name": "PleromaStatusContent",
+                "comment": " The `pleroma` field of a `RawStatus` entity (Pleroma only).\n",
+                "args": [],
+                "type": "{ content : { plain_text : String.String } }"
+            },
+            {
+                "name": "Poll",
+                "comment": " Value for `Status.poll`, and an `Entity` in its own right.\n",
+                "args": [],
+                "type": "{ id : String.String, expires_at : Maybe.Maybe Mastodon.Entity.Datetime, expired : Basics.Bool, multiple : Basics.Bool, votes_count : Basics.Int, options : List.List Mastodon.Entity.PollOption, voted : Basics.Bool, v : Json.Encode.Value }"
+            },
+            {
+                "name": "PollOption",
+                "comment": " Elements of the `Poll.options` list.\n",
+                "args": [],
+                "type": "{ title : String.String, votes_count : Basics.Int }"
+            },
+            {
+                "name": "PushSubscription",
+                "comment": " Push subscription entity.\n",
+                "args": [],
+                "type": "{ id : String.String, endpoint : Mastodon.Entity.UrlString, server_key : String.String, alerts : Json.Encode.Value, v : Json.Encode.Value }"
+            },
+            {
+                "name": "RawStatus",
+                "comment": " RawStatus entity.\n\nExtra Status fields that are not returned by all servers.\n\n",
+                "args": [],
+                "type": "{ plain_markdown : Maybe.Maybe String.String, rich_content : Maybe.Maybe String.String, pleroma : Maybe.Maybe Mastodon.Entity.PleromaStatusContent, v : Json.Encode.Value }"
+            },
+            {
+                "name": "Relationship",
+                "comment": " Relationship entity.\n",
+                "args": [],
+                "type": "{ id : String.String, following : Basics.Bool, followed_by : Basics.Bool, blocking : Basics.Bool, muting : Basics.Bool, muting_notifications : Basics.Bool, requested : Basics.Bool, domain_blocking : Basics.Bool, showing_reblogs : Basics.Bool, endorsed : Basics.Bool, v : Json.Encode.Value }"
+            },
+            {
+                "name": "Results",
+                "comment": " Results entity.\n",
+                "args": [],
+                "type": "{ accounts : List.List Mastodon.Entity.Account, statuses : List.List Mastodon.Entity.Status, hashtags : List.List String.String, groups : List.List Mastodon.Entity.Group, v : Json.Encode.Value }"
+            },
+            {
+                "name": "ScheduledStatus",
+                "comment": " ScheduledStatus entity.\n",
+                "args": [],
+                "type": "{ id : String.String, scheduled_at : Mastodon.Entity.Datetime, params : Mastodon.Entity.StatusParams, media_attachments : List.List Mastodon.Entity.Attachment, v : Json.Encode.Value }"
+            },
+            {
+                "name": "Source",
+                "comment": " Source entity.\n\nPleroma servers have an additional field here, not yet supported:\n\n    \"pleroma\":{\"show_role\":true,\"no_rich_text\":false}\n\n",
+                "args": [],
+                "type": "{ privacy : Mastodon.Entity.Privacy, sensitive : Basics.Bool, language : Maybe.Maybe Mastodon.Entity.ISO6391, note : String.String, fields : List.List Mastodon.Entity.Field, v : Json.Encode.Value }"
+            },
+            {
+                "name": "Stats",
+                "comment": " Value of `Instance.stats`.\n",
+                "args": [],
+                "type": "{ user_count : Basics.Int, status_count : Basics.Int, domain_count : Basics.Int }"
+            },
+            {
+                "name": "Status",
+                "comment": " Status entity.\n\nThe `plain_markdown` and `plain_text` fields are elm-mastodon additions.\n\n`content` is the HTML to display.\n`plain_markdown` is the markdown the user entered, if it is available.\n`plain_text` is the unformatted text, if it is available.\n\n",
+                "args": [],
+                "type": "{ id : String.String, uri : String.String, url : Maybe.Maybe Mastodon.Entity.UrlString, account : Mastodon.Entity.Account, in_reply_to_id : Maybe.Maybe String.String, in_reply_to_account_id : Maybe.Maybe String.String, reblog : Maybe.Maybe Mastodon.Entity.WrappedStatus, content : Mastodon.Entity.HtmlString, plain_markdown : Maybe.Maybe String.String, plain_text : Maybe.Maybe String.String, created_at : Mastodon.Entity.Datetime, emojis : List.List Mastodon.Entity.Emoji, replies_count : Basics.Int, reblogs_count : Basics.Int, favourites_count : Basics.Int, reblogged : Basics.Bool, favourited : Basics.Bool, muted : Basics.Bool, sensitive : Basics.Bool, spoiler_text : String.String, visibility : Mastodon.Entity.Visibility, media_attachments : List.List Mastodon.Entity.Attachment, mentions : List.List Mastodon.Entity.Mention, tags : List.List Mastodon.Entity.Tag, card : Maybe.Maybe Mastodon.Entity.Card, poll : Maybe.Maybe Mastodon.Entity.Poll, application : Maybe.Maybe Mastodon.Entity.Application, language : Maybe.Maybe String.String, pinned : Basics.Bool, group : Maybe.Maybe Mastodon.Entity.Group, quote_of_id : Maybe.Maybe String.String, quote : Maybe.Maybe Mastodon.Entity.WrappedStatus, v : Json.Encode.Value }"
+            },
+            {
+                "name": "StatusParams",
+                "comment": " Elements of `ScheduledStatus.params`.\n",
+                "args": [],
+                "type": "{ text : String.String, in_reply_to_id : Maybe.Maybe String.String, media_ids : List.List String.String, sensitive : Basics.Bool, spoiler_text : Maybe.Maybe String.String, visibility : Maybe.Maybe Mastodon.Entity.Visibility, scheduled_at : Maybe.Maybe Mastodon.Entity.Datetime, application_id : String.String }"
+            },
+            {
+                "name": "Tag",
+                "comment": " Elements of `Results.hashtags` and `Status.tags`.\n",
+                "args": [],
+                "type": "{ name : String.String, url : Mastodon.Entity.UrlString, history : List.List Mastodon.Entity.History }"
+            },
+            {
+                "name": "Token",
+                "comment": " Token entity.\n",
+                "args": [],
+                "type": "{ access_token : String.String, token_type : String.String, scope : String.String, created_at : Basics.Int, v : Json.Encode.Value }"
+            },
+            {
+                "name": "URLs",
+                "comment": " Value of `Instance.urls`.\n",
+                "args": [],
+                "type": "{ streaming_api : Mastodon.Entity.UrlString }"
+            },
+            {
+                "name": "UnixTimestamp",
+                "comment": " Alias of `String`\n",
+                "args": [],
+                "type": "String.String"
+            },
+            {
+                "name": "UrlString",
+                "comment": " Alias of `String`\n",
+                "args": [],
+                "type": "String.String"
+            },
+            {
+                "name": "VideoMetaFields",
+                "comment": " Fields for a `VideoMeta`.\n",
+                "args": [],
+                "type": "{ small : Maybe.Maybe Mastodon.Entity.VideoMetaInfo, original : Maybe.Maybe Mastodon.Entity.VideoMetaInfo, focus : Maybe.Maybe Mastodon.Entity.Focus }"
+            },
+            {
+                "name": "VideoMetaInfo",
+                "comment": " Values for `VideoMetaFields.small` and `VideoMetaFields.original`\n",
+                "args": [],
+                "type": "{ width : Maybe.Maybe Basics.Int, height : Maybe.Maybe Basics.Int, frame_rate : Maybe.Maybe String.String, duration : Maybe.Maybe Basics.Float, bitrate : Maybe.Maybe Basics.Int }"
+            }
+        ],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "Mastodon.Login",
+        "comment": " Support for creating an `App` and logging in to a server.\n\nSee <https://docs.joinmastodon.org/client/authorized/>\n\n@docs FetchAccountOrRedirect, loginTask, getTokenTask\n\n\n# Internal functions.\n\n@docs appToAuthorizeUrl\n\n",
+        "unions": [
+            {
+                "name": "FetchAccountOrRedirect",
+                "comment": " The result type of the `loginTask` function.\n\nIt's either a task to fetch the logged-in user's `Mastodon.Entity.Account`\nor a task to redirect to the authorization server to get a code.\n\nThe two `String`s in `FetchAccount` are the server name and token.\nThe `String` in `Redirect` is the server name.\n\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": [
+                    [
+                        "FetchAccount",
+                        [
+                            "Task.Task ( String.String, Mastodon.Request.Error ) ( String.String, String.String, Mastodon.Entity.Account )"
+                        ]
+                    ],
+                    [
+                        "Redirect",
+                        [
+                            "Task.Task ( String.String, Mastodon.Request.Error ) ( String.String, Mastodon.Entity.App, Platform.Cmd.Cmd msg )"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "appToAuthorizeUrl",
+                "comment": " Compute URL to redirect to for authentication.\n\nArgs are:\n\n    appToAuthorizeUrl server app\n\nReturns:\n\n    https://<server>/oauth/authorize\n       ?client_id=<app.client_id>\n       &redirect_uri=<app.redirect_uri>\n       &response_type=code\n       &scope=<all scopes>\n\nYou will call this explicitly only when a token expires, and you need\nto mint a new one from a previously created `App`:\n\n    appToAuthorizeUrl server app\n        |> Browser.Navigation.load\n\n",
+                "type": "String.String -> Mastodon.Entity.App -> String.String"
+            },
+            {
+                "name": "getTokenTask",
+                "comment": " Continue after being restarted with a `code` and `state` in the URL query.\n\nThis continues from step 6 in the full login procedure description,\nwhich is included with the documentation for `loginTask` above.\n\nYour application will usually persist the `Authorization`, so you can use it\nthe next time the user starts the application, as a parameter to `loginTask`.\n\nThe `String` in the `Task` is the server name, e.g. \"mastodon.social\".\n\n",
+                "type": "{ code : String.String, server : String.String, app : Mastodon.Entity.App } -> Task.Task ( String.String, Mastodon.Request.Error ) ( String.String, Mastodon.Entity.Authorization, Mastodon.Entity.Account )"
+            },
+            {
+                "name": "loginTask",
+                "comment": " Get a token and, if possible, the logged in `Account` from the server.\n\nThe `Maybe String` arg is a login token, called `maybeToken` below, if\nit is not Nothing.\n\nReturns a `Task` to either fetch an `Account` for a known authorization token,\nor to redirect to the authentication server to create a code with which\nto mint the token.\n\nIf `maybeToken` is not `Nothing`, will attempt to get an `Account`\nusing that token. If that fails, will return an error. If `maybeToken`\nis `Nothing`, will create a new `App`, and redirect to do\nauthentication. When the application is restarted, with a `code` in\nthe URL query, call `getTokenTask` to use that code and the saved\n`App` instance to mint a new token, and to use that to get an\n`Account`.\n\nUsually, you will get a `Token` from persistent\n`localStorage`, pass that here, and successfully receive the `Account`\nback. No redirects necessary. But the redirects must happen at least\nonce, and then whenever the authorization token expires. This is step\n8 below. Only if that fails will this do step 3, or, if there was no\npersisted client id and secret, steps 1 through 3.\n\nCurrently, permission for all scopes is requested. Maybe the scopes should\nbe passed as a parameter.\n\nThe full login procedure is as follows:\n\n1.  Send \"POST /api/v1/apps\" to the Mastodon server, via a `PostApp` request,\n\n2.  Receive the returned App, including `client_id` and `client_secret`.\n    Save it in localStorage, keyed with the Mastodon server's host name\n    (from `applicationUri`).\n\n3.  Redirect to `<server_url>/oauth/authorize?client_id=<client_id>&redirect_uri=<applicationUri>&response_type=code&scope=<scopes>`\n\n4.  The user enters login authorization information to the server web site.\n\n5.  The server web site redirects to `<applicationUri>?code=<code>`\n\n6.  Lookup the saved `App` instance using the Mastodon server's host name\n    (which your top-level application must persist somewhere).\n    Use that to POST to `<server_url>/oauth/token`:\n\n        POST /oauth/token HTTP/1.1\n        Host: <server_url>\n        Authorization: Basic `(Base64.encode (<client_id> ++ \":\" ++ <client_secret>))`\n        Content-Type: application/x-www-form-urlencoded\n        grant_type=authorization_code&code=<code>&redirect_uri=<applicationUri>&client_id=<client_id>&client_secret=<client_secret>\n\n    The `Authorization` header isn't needed for new Mastodon API servers,\n    but that's how it was done for old ones, so I'm hoping this will give\n    some backward compatibility.\n\n7.  Receive back token information, JSON-encoded:\n\n        { \"access_token\":\"cptLSO8ff7zKbBXlTTyH15bnxQS5b9erVUWi_n0_EGd\",\n          \"token_type\":\"Bearer\",\n          \"scope\":\"write,read,follow,push\",\n          \"created_at\":1561845912\n        }\n\n8.  Use the `token_type` and `access_token` to authenticate a request\n    for the user's `Account`.\n\n",
+                "type": "{ client_name : String.String, server : String.String, applicationUri : String.String } -> Maybe.Maybe String.String -> Mastodon.Login.FetchAccountOrRedirect msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Mastodon.Request",
+        "comment": " Types to represent the Mastodon REST API.\n\nFuncion to generate a request and parse the return.\n\nDocumentation starts at <https://docs.joinmastodon.org/api/rest/accounts>\n\n\n# Basic Types\n\n@docs ServerInfo, Request, Response, Error\n\n\n# Creating an HTTP request\n\n@docs serverRequest\n\n\n# Request details\n\n@docs AccountsReq, AppsReq, BlocksReq, CustomEmojisReq, DomainBlocksReq\n@docs EndorsementsReq, FavouritesReq, FiltersReq, FollowRequestsReq\n@docs FollowSuggestionsReq, GroupsReq, InstanceReq, ListsReq, MediaAttachmentsReq\n@docs MutesReq, NotificationsReq, PollsReq, ReportsReq\n@docs ScheduledStatusesReq, SearchReq, StatusesReq, TimelinesReq, TrendsReq\n\n\n# Non-atomic data in requests\n\n@docs Paging, SourceUpdate, FieldUpdate, PollDefinition, WhichGroups\n\n\n# Utility\n\n@docs userAgentHeader, idempotencyKeyHeader, emptyPaging, simplePostStatus\n\n\n# Low-level request creation\n\n@docs RawRequest, requestToRawRequest, rawRequestToCmd, rawRequestToTask\n\n\n# Testing\n\n@docs emptyRawRequest, emptyServerInfo\n\n",
+        "unions": [
+            {
+                "name": "AccountsReq",
+                "comment": " GET/POST/PATCH /api/v1/accounts\n\n(and `GET /api/v1/account_by_username`)\n\n`GetAccountByUsername` and `GetAccount` do not require an authentication token.\n\n`GetAccountByUsername`, `GetAccount`, `GetVerifyCredentials`, and `PatchUpdateCredentials` result in an `AccountEntity`.\n\n`GetFollowers`, `GetFollowing`, and `GetSearchAccounts` result in an `AccountListEntity`.\n\n`GetStatuses` results in a `StatusListEntity`.\n\n`PostFollow` and `PostUnfollow` result in a `RelationshipEntity`.\n\n`GetRelationships` results in a `RelationshipListEntity`.\n\n`GetAccountByUsername` (`GET account_by_username`) is not documented, and may be Gab-only.\n\nThe `fields_attributes` list in `PatchUpdateCredentials` will be silently shortened to four elements if it's longer than that. If it's shorter than four elements, then the fields past those specified will be cleared.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "GetVerifyCredentials",
+                        []
+                    ],
+                    [
+                        "GetAccountByUsername",
+                        [
+                            "{ username : String.String }"
+                        ]
+                    ],
+                    [
+                        "GetAccount",
+                        [
+                            "{ id : String.String }"
+                        ]
+                    ],
+                    [
+                        "PatchUpdateCredentials",
+                        [
+                            "{ display_name : Maybe.Maybe String.String, note : Maybe.Maybe String.String, avatar : Maybe.Maybe File.File, header : Maybe.Maybe File.File, locked : Maybe.Maybe Basics.Bool, source : Maybe.Maybe Mastodon.Request.SourceUpdate, fields_attributes : Maybe.Maybe (List.List Mastodon.Request.FieldUpdate) }"
+                        ]
+                    ],
+                    [
+                        "GetFollowers",
+                        [
+                            "{ id : String.String, limit : Maybe.Maybe Basics.Int }"
+                        ]
+                    ],
+                    [
+                        "GetFollowing",
+                        [
+                            "{ id : String.String, limit : Maybe.Maybe Basics.Int }"
+                        ]
+                    ],
+                    [
+                        "GetStatuses",
+                        [
+                            "{ id : String.String, only_media : Basics.Bool, pinned : Basics.Bool, exclude_replies : Basics.Bool, paging : Maybe.Maybe Mastodon.Request.Paging, exclude_reblogs : Basics.Bool }"
+                        ]
+                    ],
+                    [
+                        "PostFollow",
+                        [
+                            "{ id : String.String, reblogs : Basics.Bool }"
+                        ]
+                    ],
+                    [
+                        "PostUnfollow",
+                        [
+                            "{ id : String.String }"
+                        ]
+                    ],
+                    [
+                        "GetRelationships",
+                        [
+                            "{ ids : List.List String.String }"
+                        ]
+                    ],
+                    [
+                        "GetSearchAccounts",
+                        [
+                            "{ q : String.String, limit : Maybe.Maybe Basics.Int, resolve : Basics.Bool, following : Basics.Bool }"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "AppsReq",
+                "comment": " GET/POST /api/v1/apps\n\n`PostApp` results in an `AppEntity`.\n\nThese are not associated with your account on Mastodon servers, but\nthey need to be deleted when you're done with them on Pleroma servers\n(if you use one to get a token, and you wouldn't bother to make it\nexcept for that). I don't know yet how to delete them, except in the\nPleroma server's web API (the \"Security\" tab at\n`https://<pleroma-server.com>/user-settings`).\n\nYou will rarely use `PostApp` directly, instead allowing the functions\nin the `Mastodon.Login` module to do that for you.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "PostApp",
+                        [
+                            "{ client_name : String.String, redirect_uris : String.String, scopes : List.List String.String, website : Maybe.Maybe String.String }"
+                        ]
+                    ],
+                    [
+                        "GetVerifyAppCredentials",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "BlocksReq",
+                "comment": " GET/POST /api/v1/blocks\n\n`GetBlocks` results in an `AccountListEntity`.\n\n`PostBlock` and `PostUnblock` result in a `RelationshipEntity`.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "GetBlocks",
+                        [
+                            "{ limit : Maybe.Maybe Basics.Int }"
+                        ]
+                    ],
+                    [
+                        "PostBlock",
+                        [
+                            "{ id : String.String }"
+                        ]
+                    ],
+                    [
+                        "PostUnblock",
+                        [
+                            "{ id : String.String }"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "CustomEmojisReq",
+                "comment": " GET /api/v8/custom\\_emojis\n\n`GetCustomEmojis` results in an `EmojiListEntity`.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "GetCustomEmojis",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "DomainBlocksReq",
+                "comment": " GET/POST /api/v8/domain\\_blocks\n\n`GetDomainBlocks` results in a `StringListEntity`, a list of domain names.\n\n`PostDomainBlock` and `DeleteDomainBlock` result in `NoEntity`.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "GetDomainBlocks",
+                        [
+                            "{ limit : Maybe.Maybe Basics.Int }"
+                        ]
+                    ],
+                    [
+                        "PostDomainBlock",
+                        [
+                            "{ domain : String.String }"
+                        ]
+                    ],
+                    [
+                        "DeleteDomainBlock",
+                        [
+                            "{ domain : String.String }"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "EndorsementsReq",
+                "comment": " GET/POST /api/v1/endorsements\n\n`GetEndorsements` results in an `AccountListEntity`.\n\n`PostPinAccount` and `PostUnpinAccount` result in a `RelationshipEntity`.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "GetEndorsements",
+                        []
+                    ],
+                    [
+                        "PostPinAccount",
+                        [
+                            "{ id : String.String }"
+                        ]
+                    ],
+                    [
+                        "PostUnpinAccount",
+                        [
+                            "{ id : String.String }"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Error",
+                "comment": " Encodes an error from the server request.\n\nSame as `Http.Error`, but includes `Http.Metadata` when it's available.\n\nThe `String` in a `BadStatus` is the Http error message, usually HTML.\n\nThe `Error` in `BadBody` is a `Json.Decode.Error`. The `String` in `BadBody` is the JSON string returned by the Http request.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "BadUrl",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Timeout",
+                        []
+                    ],
+                    [
+                        "NetworkError",
+                        []
+                    ],
+                    [
+                        "BadStatus",
+                        [
+                            "Http.Metadata",
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "BadBody",
+                        [
+                            "Http.Metadata",
+                            "Json.Decode.Error",
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "FavouritesReq",
+                "comment": " GET/POST /api/v1/favourites\n\n`GetFavourites` results in a `StatusListEntity`.\n\n`PostFavourite` and `PostUnfavorite` result in a `StatusEntity`.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "GetFavourites",
+                        [
+                            "{ limit : Maybe.Maybe Basics.Int }"
+                        ]
+                    ],
+                    [
+                        "PostFavourite",
+                        [
+                            "{ id : String.String }"
+                        ]
+                    ],
+                    [
+                        "PostUnfavourite",
+                        [
+                            "{ id : String.String }"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "FiltersReq",
+                "comment": " GET/POST/PUT /api/v1/filters\n\n`GetFilters` results in a `FilterListEntity`.\n\n`PostFilter`, `GetFilter`, and `PutFilter` result in a `FilterEntity`.\n\n`DeleteFilter` results in `NoEntity`.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "GetFilters",
+                        []
+                    ],
+                    [
+                        "PostFilter",
+                        [
+                            "{ phrase : String.String, context : List.List Mastodon.Entity.FilterContext, irreversible : Basics.Bool, whole_word : Basics.Bool, expires_in : Maybe.Maybe Basics.Int }"
+                        ]
+                    ],
+                    [
+                        "GetFilter",
+                        [
+                            "{ id : String.String }"
+                        ]
+                    ],
+                    [
+                        "PutFilter",
+                        [
+                            "{ id : String.String, phrase : String.String, context : List.List Mastodon.Entity.FilterContext, irreversible : Basics.Bool, whole_word : Basics.Bool, expires_in : Maybe.Maybe Basics.Int }"
+                        ]
+                    ],
+                    [
+                        "DeleteFilter",
+                        [
+                            "{ id : String.String }"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "FollowRequestsReq",
+                "comment": " GET/POST /api/v1/follow\\_requests\n\n`GetFollowRequests` results in an `AccountListEntity`.\n\n`PostAuthorizeFollow` and `PostRejectFollow` result in `NoEntity`.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "GetFollowRequests",
+                        [
+                            "{ limit : Maybe.Maybe Basics.Int }"
+                        ]
+                    ],
+                    [
+                        "PostAuthorizeFollow",
+                        [
+                            "{ id : String.String }"
+                        ]
+                    ],
+                    [
+                        "PostRejectFollow",
+                        [
+                            "{ id : String.String }"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "FollowSuggestionsReq",
+                "comment": " GET/DELETE /api/v1/suggestions\n\n`GetFollowSuggestions` results in an `AccountListEntity`.\n\n`DeleteFollowSuggestions` results in `NoEntity`.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "GetFollowSuggestions",
+                        []
+                    ],
+                    [
+                        "DeleteFollowSuggestions",
+                        [
+                            "{ account_id : String.String }"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "GroupsReq",
+                "comment": " GET /api/v1/groups\n\nThe groups API is Gab-only.\n\n`GetGroups` results in a `GroupListEntity`.\n\n`GetGroup`, `PostGroup`, and `PutGroup` result in a `GroupEntity`\n\n`GetGroupRelationships` results in a `GroupRelationshipListEntity`.\n\n`GetGroupAccounts` and `GetGroupRemovedAccounts` result in an `AccountListEntity`.\n\n`PostGroupJoin` results in a `GroupRelationshipEntity`.\n\n`DeleteGroupJoin`, `DeleteGroupStatus`, `PostGroupRemovedAccounts`, `DeleteGroupRemovedAccounts`, and `PatchGroupAddAdministrator` result in `NoEntity`.\n\n\n## Descriptions\n\n`GetGroups` fetches the list of all groups of which the logged-in account is a member.\n\n`GetGroup` fetches one group.\n\n`GetGroupAccounts` returns the members of a group.\n\n`GetGroupRelationships` gets the logged-in account relationships for one or more groups.\n\n`PostGroup` creates a new group.\n\n`PutGroup` updates the group profile information.\n\n`PostGroupJoin` joins a group from the logged-in account.\n\n`DeletGroupJoin` leaves a group from the logged-in account.\n\n`DeleteGroupStatus` removes a status from the group.\n\n`GetGroupRemovedAccounts` returns the list of removed accounts for a group.\n\n`PostGroupRemovedAccounts` revokes group membership for an account.\n\n`DeleteGroupRemovedAccounts` removes a previously revoked membership from the list of deleted accounts.\n\n`PatchGroupAddAdministrator` adds an administrator to a group. There is currently no way to remove an administrator, except to remove the account from the group.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "GetGroups",
+                        [
+                            "{ tab : Mastodon.Request.WhichGroups }"
+                        ]
+                    ],
+                    [
+                        "GetGroup",
+                        [
+                            "{ id : String.String }"
+                        ]
+                    ],
+                    [
+                        "GetGroupAccounts",
+                        [
+                            "{ id : String.String }"
+                        ]
+                    ],
+                    [
+                        "PostGroup",
+                        [
+                            "{ title : String.String, description : String.String, cover_image : Maybe.Maybe File.File }"
+                        ]
+                    ],
+                    [
+                        "PutGroup",
+                        [
+                            "{ id : String.String, title : Maybe.Maybe String.String, description : Maybe.Maybe String.String, cover_image : Maybe.Maybe File.File }"
+                        ]
+                    ],
+                    [
+                        "GetGroupRelationships",
+                        [
+                            "{ ids : List.List String.String }"
+                        ]
+                    ],
+                    [
+                        "PostGroupJoin",
+                        [
+                            "{ id : String.String }"
+                        ]
+                    ],
+                    [
+                        "DeleteGroupJoin",
+                        [
+                            "{ id : String.String }"
+                        ]
+                    ],
+                    [
+                        "DeleteGroupStatus",
+                        [
+                            "{ id : String.String, status_id : String.String }"
+                        ]
+                    ],
+                    [
+                        "GetGroupRemovedAccounts",
+                        [
+                            "{ id : String.String }"
+                        ]
+                    ],
+                    [
+                        "PostGroupRemovedAccounts",
+                        [
+                            "{ id : String.String, account_id : String.String }"
+                        ]
+                    ],
+                    [
+                        "DeleteGroupRemovedAccounts",
+                        [
+                            "{ id : String.String, account_id : String.String }"
+                        ]
+                    ],
+                    [
+                        "PatchGroupAddAdministrator",
+                        [
+                            "{ id : String.String, account_id : String.String }"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "InstanceReq",
+                "comment": " GET /api/v1/instance\n",
+                "args": [],
+                "cases": [
+                    [
+                        "GetInstance",
+                        []
+                    ],
+                    [
+                        "GetActivity",
+                        []
+                    ],
+                    [
+                        "GetPeers",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "ListsReq",
+                "comment": " GET/POST/PUT/DELETE /api/v1/lists\n\n`GetLists` and `GetAccountLists` result in a `ListEntityListEntity`.\n\n`GetListAccounts` results in an `AccountListEntity`.\n\n`GetList`, `PostList`, and `PutList` result in a `ListEntity`.\n\n`PostListAccounts` and `DeleteListAccounts` result in `NoEntity`.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "GetLists",
+                        []
+                    ],
+                    [
+                        "GetAccountLists",
+                        [
+                            "{ id : String.String }"
+                        ]
+                    ],
+                    [
+                        "GetListAccounts",
+                        [
+                            "{ id : String.String, limit : Maybe.Maybe Basics.Int }"
+                        ]
+                    ],
+                    [
+                        "GetList",
+                        [
+                            "{ id : String.String }"
+                        ]
+                    ],
+                    [
+                        "PostList",
+                        [
+                            "{ title : String.String }"
+                        ]
+                    ],
+                    [
+                        "PutList",
+                        [
+                            "{ id : String.String, title : String.String }"
+                        ]
+                    ],
+                    [
+                        "DeleteList",
+                        [
+                            "{ id : String.String }"
+                        ]
+                    ],
+                    [
+                        "PostListAccounts",
+                        [
+                            "{ id : String.String, account_ids : List.List String.String }"
+                        ]
+                    ],
+                    [
+                        "DeleteListAccounts",
+                        [
+                            "{ id : String.String, account_ids : List.List String.String }"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "MediaAttachmentsReq",
+                "comment": " GET/POST /api/v1/media\n\n`PostMedia` and `PutMedia` result in an `AttachmentEntity`.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "PostMedia",
+                        [
+                            "{ file : File.File, description : Maybe.Maybe String.String, focus : Maybe.Maybe Mastodon.Entity.Focus }"
+                        ]
+                    ],
+                    [
+                        "PutMedia",
+                        [
+                            "{ id : String.String, description : Maybe.Maybe String.String, focus : Maybe.Maybe Mastodon.Entity.Focus }"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "MutesReq",
+                "comment": " GET/POST /api/v1/mutes\n\n`GetAccountMutes` results in an `AccountListEntity`.\n\n`PostAccountMute` and `PostAccountUnmute` result in a `RelationshipEntity`.\n\n`PostStatusMute` and `PostStatusUnmute` result in a `StatusEntity`.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "GetAccountMutes",
+                        [
+                            "{ limit : Maybe.Maybe Basics.Int }"
+                        ]
+                    ],
+                    [
+                        "PostAccountMute",
+                        [
+                            "{ id : String.String, notifications : Basics.Bool }"
+                        ]
+                    ],
+                    [
+                        "PostAccountUnmute",
+                        [
+                            "{ id : String.String }"
+                        ]
+                    ],
+                    [
+                        "PostStatusMute",
+                        [
+                            "{ id : String.String }"
+                        ]
+                    ],
+                    [
+                        "PostStatusUnmute",
+                        [
+                            "{ id : String.String }"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "NotificationsReq",
+                "comment": " GET/POST /api/v1/notifications\n\n`GetNotifications` results in a `NotificationListEntity`.\n\n`GetNotification` results in `NotificationEntity`.\n\n`PostClearNotifications` and `PostDismissNotifications` result in `NoEntity`.\n\nThis doesn't yet define requests for \"POST /api/v1/push/subscription\",\n\"GET /api/v1/push/subscription\", \"PUT /api/v1/push/subscription\", or\n\"DELETE /api/v1/push/subscription\".\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "GetNotifications",
+                        [
+                            "{ paging : Maybe.Maybe Mastodon.Request.Paging, exclude_types : List.List Mastodon.Entity.NotificationType, account_id : Maybe.Maybe String.String }"
+                        ]
+                    ],
+                    [
+                        "GetNotification",
+                        [
+                            "{ id : String.String }"
+                        ]
+                    ],
+                    [
+                        "PostClearNotifications",
+                        []
+                    ],
+                    [
+                        "PostDismissNotification",
+                        [
+                            "{ id : String.String }"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "PollsReq",
+                "comment": " GET/POST /api/v1/polls\n\n`GetPoll` and `PostVotes` result in a `PollInstance`.\n\n`GetPoll` does not require an authentication token.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "GetPoll",
+                        [
+                            "{ id : String.String }"
+                        ]
+                    ],
+                    [
+                        "PostVotes",
+                        [
+                            "{ id : String.String, choices : List.List Basics.Int }"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "ReportsReq",
+                "comment": " POST /api/v1/reports\n\n`PostReports` results in `NoInstance`.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "PostReports",
+                        [
+                            "{ account_id : String.String, status_ids : List.List String.String, comment : Maybe.Maybe String.String, forward : Basics.Bool }"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Request",
+                "comment": " An API request.\n\nBroken down as in the documentation.\n\nResult entity types are documented with the various \"xxxReq\" types.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "AccountsRequest",
+                        [
+                            "Mastodon.Request.AccountsReq"
+                        ]
+                    ],
+                    [
+                        "AppsRequest",
+                        [
+                            "Mastodon.Request.AppsReq"
+                        ]
+                    ],
+                    [
+                        "BlocksRequest",
+                        [
+                            "Mastodon.Request.BlocksReq"
+                        ]
+                    ],
+                    [
+                        "CustomEmojisRequest",
+                        [
+                            "Mastodon.Request.CustomEmojisReq"
+                        ]
+                    ],
+                    [
+                        "DomainBlocksRequest",
+                        [
+                            "Mastodon.Request.DomainBlocksReq"
+                        ]
+                    ],
+                    [
+                        "EndorsementsRequest",
+                        [
+                            "Mastodon.Request.EndorsementsReq"
+                        ]
+                    ],
+                    [
+                        "FavouritesRequest",
+                        [
+                            "Mastodon.Request.FavouritesReq"
+                        ]
+                    ],
+                    [
+                        "FiltersRequest",
+                        [
+                            "Mastodon.Request.FiltersReq"
+                        ]
+                    ],
+                    [
+                        "FollowRequestsRequest",
+                        [
+                            "Mastodon.Request.FollowRequestsReq"
+                        ]
+                    ],
+                    [
+                        "FollowSuggestionsRequest",
+                        [
+                            "Mastodon.Request.FollowSuggestionsReq"
+                        ]
+                    ],
+                    [
+                        "GroupsRequest",
+                        [
+                            "Mastodon.Request.GroupsReq"
+                        ]
+                    ],
+                    [
+                        "InstanceRequest",
+                        [
+                            "Mastodon.Request.InstanceReq"
+                        ]
+                    ],
+                    [
+                        "ListsRequest",
+                        [
+                            "Mastodon.Request.ListsReq"
+                        ]
+                    ],
+                    [
+                        "MediaAttachmentsRequest",
+                        [
+                            "Mastodon.Request.MediaAttachmentsReq"
+                        ]
+                    ],
+                    [
+                        "MutesRequest",
+                        [
+                            "Mastodon.Request.MutesReq"
+                        ]
+                    ],
+                    [
+                        "NotificationsRequest",
+                        [
+                            "Mastodon.Request.NotificationsReq"
+                        ]
+                    ],
+                    [
+                        "PollsRequest",
+                        [
+                            "Mastodon.Request.PollsReq"
+                        ]
+                    ],
+                    [
+                        "ReportsRequest",
+                        [
+                            "Mastodon.Request.ReportsReq"
+                        ]
+                    ],
+                    [
+                        "ScheduledStatusesRequest",
+                        [
+                            "Mastodon.Request.ScheduledStatusesReq"
+                        ]
+                    ],
+                    [
+                        "SearchRequest",
+                        [
+                            "Mastodon.Request.SearchReq"
+                        ]
+                    ],
+                    [
+                        "StatusesRequest",
+                        [
+                            "Mastodon.Request.StatusesReq"
+                        ]
+                    ],
+                    [
+                        "TimelinesRequest",
+                        [
+                            "Mastodon.Request.TimelinesReq"
+                        ]
+                    ],
+                    [
+                        "TrendsRequest",
+                        [
+                            "Mastodon.Request.TrendsReq"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "ScheduledStatusesReq",
+                "comment": " GET/PUT /api/v1/scheduled\\_statuses\n\n`GetScheduledStatuses` results in a `ScheduledStatusListInstance`.\n\n`GetScheduledStatus` and `PutScheduledStatus` result in a `ScheduledStatusInstance`.\n\n`DeleteScheduledStatus` results in `NoInstance`.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "GetScheduledStatuses",
+                        []
+                    ],
+                    [
+                        "GetScheduledStatus",
+                        [
+                            "{ id : String.String }"
+                        ]
+                    ],
+                    [
+                        "PutScheduledStatus",
+                        [
+                            "{ id : String.String, scheduled_at : Maybe.Maybe Mastodon.Entity.UnixTimestamp }"
+                        ]
+                    ],
+                    [
+                        "DeleteScheduledStatus",
+                        [
+                            "{ id : String.String }"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "SearchReq",
+                "comment": " GET/POST /api/v1/search\n\n`GetSearch` results in a `ResultsInstance`.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "GetSearch",
+                        [
+                            "{ q : String.String, resolve : Basics.Bool, limit : Maybe.Maybe Basics.Int, offset : Maybe.Maybe Basics.Int, following : Basics.Bool }"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "StatusesReq",
+                "comment": " GET/POST /api/v1/statuses\n\n`GetStatus`, `PostStatus`, `PostReblogStatus`, `PostUnreblogStatus`, `PostPinStatus`, and `PostUnpinStatus` result in a `StatusEntity`.\n\n`GetStatusContext` results in a `ContextEntity`.\n\n`GetStatusCard` results in a `CardEntity`.\n\n`GetStatusRebloggedBy` and `GetStatusFavouritedBy` result in an `AccountListEntity`.\n\n`DeleteStatus` results in `NoEntity`.\n\nThe `GetXxx` requests require no authentication token.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "GetStatus",
+                        [
+                            "{ id : String.String }"
+                        ]
+                    ],
+                    [
+                        "GetStatusContext",
+                        [
+                            "{ id : String.String }"
+                        ]
+                    ],
+                    [
+                        "GetStatusCard",
+                        [
+                            "{ id : String.String }"
+                        ]
+                    ],
+                    [
+                        "GetStatusRebloggedBy",
+                        [
+                            "{ id : String.String, limit : Maybe.Maybe Basics.Int }"
+                        ]
+                    ],
+                    [
+                        "GetStatusFavouritedBy",
+                        [
+                            "{ id : String.String, limit : Maybe.Maybe Basics.Int }"
+                        ]
+                    ],
+                    [
+                        "PostStatus",
+                        [
+                            "{ status : Maybe.Maybe String.String, in_reply_to_id : Maybe.Maybe String.String, group_id : Maybe.Maybe String.String, quote_of_id : Maybe.Maybe String.String, media_ids : List.List String.String, poll : Maybe.Maybe Mastodon.Request.PollDefinition, sensitive : Basics.Bool, spoiler_text : Maybe.Maybe String.String, visibility : Maybe.Maybe Mastodon.Entity.Visibility, scheduled_at : Maybe.Maybe Mastodon.Entity.Datetime, language : Maybe.Maybe Mastodon.Entity.ISO6391, idempotencyKey : Maybe.Maybe String.String }"
+                        ]
+                    ],
+                    [
+                        "DeleteStatus",
+                        [
+                            "{ id : String.String }"
+                        ]
+                    ],
+                    [
+                        "PostReblogStatus",
+                        [
+                            "{ id : String.String }"
+                        ]
+                    ],
+                    [
+                        "PostUnreblogStatus",
+                        [
+                            "{ id : String.String }"
+                        ]
+                    ],
+                    [
+                        "PostPinStatus",
+                        [
+                            "{ id : String.String }"
+                        ]
+                    ],
+                    [
+                        "PostUnpinStatus",
+                        [
+                            "{ id : String.String }"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "TimelinesReq",
+                "comment": " GET/POST /api/v1/timelines\n\n`GetHomeTimeline`, `GetPublicTimeline`, `GetProTimeline`, `GetTagTimeline`, and `GetListTimeline` result in a `StatusListEntity`.\n\n`GetConversations` results in a `ConversationListEntity`.\n\n`GetPublicTimeline` and `GetTagTimeline` do not require an authentication token.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "GetHomeTimeline",
+                        [
+                            "{ paging : Maybe.Maybe Mastodon.Request.Paging }"
+                        ]
+                    ],
+                    [
+                        "GetConversations",
+                        [
+                            "{ paging : Maybe.Maybe Mastodon.Request.Paging }"
+                        ]
+                    ],
+                    [
+                        "GetPublicTimeline",
+                        [
+                            "{ local : Basics.Bool, only_media : Basics.Bool, paging : Maybe.Maybe Mastodon.Request.Paging }"
+                        ]
+                    ],
+                    [
+                        "GetProTimeline",
+                        [
+                            "{ only_media : Basics.Bool, paging : Maybe.Maybe Mastodon.Request.Paging }"
+                        ]
+                    ],
+                    [
+                        "GetTagTimeline",
+                        [
+                            "{ hashtag : String.String, local : Basics.Bool, only_media : Basics.Bool, paging : Maybe.Maybe Mastodon.Request.Paging }"
+                        ]
+                    ],
+                    [
+                        "GetListTimeline",
+                        [
+                            "{ list_id : String.String, paging : Maybe.Maybe Mastodon.Request.Paging }"
+                        ]
+                    ],
+                    [
+                        "GetGroupTimeline",
+                        [
+                            "{ group_id : String.String, paging : Maybe.Maybe Mastodon.Request.Paging }"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "TrendsReq",
+                "comment": " GET /api/v1/trends\n\n`GetTrends` results in a `TagListEntity`.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "GetTrends",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "WhichGroups",
+                "comment": " Which groups to return from `GetGroups { tab : WhichGroups }`\n",
+                "args": [],
+                "cases": [
+                    [
+                        "MemberGroups",
+                        []
+                    ],
+                    [
+                        "FeaturedGroups",
+                        []
+                    ],
+                    [
+                        "AdminGroups",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "FieldUpdate",
+                "comment": " Updated account `Field` information.\n",
+                "args": [],
+                "type": "{ name : String.String, value : Mastodon.Entity.HtmlString }"
+            },
+            {
+                "name": "Paging",
+                "comment": " Parameters to control paging for requests that return lists.\n",
+                "args": [],
+                "type": "{ max_id : Maybe.Maybe String.String, since_id : Maybe.Maybe String.String, min_id : Maybe.Maybe String.String, limit : Maybe.Maybe Basics.Int }"
+            },
+            {
+                "name": "PollDefinition",
+                "comment": " Define a Poll as part of a posted new Status\n",
+                "args": [],
+                "type": "{ options : List.List String.String, expires_in : Basics.Int, multiple : Basics.Bool, hide_totals : Basics.Bool }"
+            },
+            {
+                "name": "RawRequest",
+                "comment": " Represent an HTTP request.\n\nUsually, you will let `serverRequest` create one of these internally.\n\nSometimes, however, you need to create one yourself, or call\n`requestToRawRequest` to make one, make changes to it, and then call\n`rawRequestToCmd`.\n\n",
+                "args": [],
+                "type": "{ method : String.String, token : Maybe.Maybe String.String, url : String.String, headers : List.List Http.Header, body : Http.Body, request : Mastodon.Request.Request, jsonBody : Maybe.Maybe Json.Encode.Value, decoder : Json.Decode.Decoder Mastodon.Entity.Entity }"
+            },
+            {
+                "name": "Response",
+                "comment": " A response from an API request.\n\nThe `request` is a copy of the `Request` that was sent over the wire,\nfor cases where that isn't obvious from the `Entity` tag.\n\nThe `metadata` is `Http.Metadata` for a successful request, mostly so\nyou can get to the headers, if you need them.\n\n",
+                "args": [],
+                "type": "{ request : Mastodon.Request.Request, rawRequest : Mastodon.Request.RawRequest, metadata : Http.Metadata, entity : Mastodon.Entity.Entity }"
+            },
+            {
+                "name": "ServerInfo",
+                "comment": " Used to create the HTTP URL and fill in its authentication token.\n\nIt's the host name for the URL.\n\nExample `server`: \"mastodon.social\".\n\nA few requests do not require a token. Most do, and will error if you don't include one.\n\n",
+                "args": [],
+                "type": "{ server : String.String, token : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "SourceUpdate",
+                "comment": " Updated account `Source` information\n",
+                "args": [],
+                "type": "{ privacy : Maybe.Maybe Mastodon.Entity.Privacy, sensitive : Maybe.Maybe Basics.Bool, language : Maybe.Maybe (Maybe.Maybe Mastodon.Entity.ISO6391) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "emptyPaging",
+                "comment": " The default `Paging` instance, with no restrictions.\n",
+                "type": "Mastodon.Request.Paging"
+            },
+            {
+                "name": "emptyRawRequest",
+                "comment": " An empty raw request.\n\nExposed only for testing in `elm repl`.\n\n",
+                "type": "Mastodon.Request.RawRequest"
+            },
+            {
+                "name": "emptyServerInfo",
+                "comment": " For testing in `elm repl`.\n",
+                "type": "Mastodon.Request.ServerInfo"
+            },
+            {
+                "name": "idempotencyKeyHeader",
+                "comment": " Create an \"Idempotency-Key\" header for use with `PostStatus`.\n\nUsually, you will create this header by passing `Just key` for the\n`idempotencyKey` property of the parameter to `PostStatus`, but if you\nneed to create it in another context, use this.\n\n",
+                "type": "String.String -> Http.Header"
+            },
+            {
+                "name": "rawRequestToCmd",
+                "comment": " Convert a `RawRequest` into a `Cmd`.\n\nYou will usually not call this yourself, but let `serverRequest` do it internally.\n\nSometimes, however, you need to create a `RawRequest`, by hand or by calling\n`requestToRawRequest`, then pass it here to turn it into a `Cmd`.\n\n",
+                "type": "(Result.Result Mastodon.Request.Error Mastodon.Request.Response -> msg) -> Mastodon.Request.RawRequest -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "rawRequestToTask",
+                "comment": " Same as rawRequestToCmd, but returns a `Task`.\n\n`rawRequestToCmd` could be defined as:\n\n    rawRequestToCmd : (Result Error Response -> msg) -> RawRequest -> Cmd msg\n    rawRequestToCmd tagger rawRequest =\n        Task.attempt tagger <|\n            rawRequestToTask rawRequest\n\n",
+                "type": "Mastodon.Request.RawRequest -> Task.Task Mastodon.Request.Error Mastodon.Request.Response"
+            },
+            {
+                "name": "requestToRawRequest",
+                "comment": " Convert a Request into a RawRequest.\n\nYou will usually not call this yourself, but let `serverRequest` do it internally.\n\nSometimes, however, you need to call this to create a `RawRequest`, modify it,\nand then call `rawRequestToCmd` to turn it into a `Cmd`.\n\n",
+                "type": "List.List Http.Header -> Mastodon.Request.ServerInfo -> Mastodon.Request.Request -> Mastodon.Request.RawRequest"
+            },
+            {
+                "name": "serverRequest",
+                "comment": " Create an HTTP request for the server.\n\nThe `id` is whatever you need, besides the `Request`, to identify the returned\n`Error` or `Response`.\n\nYou will often pass `[]` for headers, but including a \"User-Agent\" header\nis usually a good idea. For example, <https://mammudeck.com> uses:\n\n    [ Mastodon.Request.userAgentHeader \"Mammudeck\" ]\n\n",
+                "type": "(id -> Result.Result Mastodon.Request.Error Mastodon.Request.Response -> msg) -> List.List Http.Header -> Mastodon.Request.ServerInfo -> id -> Mastodon.Request.Request -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "simplePostStatus",
+                "comment": " Create a `PostStatus` request using only the most common non-blank fields.\n\nParameters are:\n\n    simplePostStatus status in_reply_to_id spoiler_text\n\n",
+                "type": "String.String -> Maybe.Maybe String.String -> Maybe.Maybe String.String -> Mastodon.Request.Request"
+            },
+            {
+                "name": "userAgentHeader",
+                "comment": " Only required by GitHub that I know of, but can't hurt.\n\nPass whatever string describes your user agent. Or fake a common one.\n\n",
+                "type": "String.String -> Http.Header"
+            }
+        ],
+        "binops": []
+    }
+]

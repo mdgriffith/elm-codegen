@@ -1,0 +1,58 @@
+[
+    {
+        "name": "Reader",
+        "comment": " A Reader helps in solving the problem of passing down the same values to many functions.\nIf there are computations that read value from a shared environment or configurations to be passed around,\na Reader can be used in all such cases. It is also often used as a way of doing dependency injections.\n\n\n# Definition\n\n@docs Reader\n\n\n# Helpers\n\n@docs run, ask, reader, local\n\n\n# Mapping\n\n@docs map\n\n\n# Chaining\n\n@docs andThen\n\n",
+        "unions": [
+            {
+                "name": "Reader",
+                "comment": " Represents a computation that expects a context that when run returns the result of the computation.\n",
+                "args": [
+                    "context",
+                    "someA"
+                ],
+                "cases": [
+                    [
+                        "Reader",
+                        [
+                            "context -> someA"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "andThen",
+                "comment": " Chain together Readers\n",
+                "type": "(someA -> Reader.Reader context someB) -> Reader.Reader context someA -> Reader.Reader context someB"
+            },
+            {
+                "name": "ask",
+                "comment": " Returns a Reader that when run with a context value gives back the context value as is.\n",
+                "type": "Reader.Reader context context"
+            },
+            {
+                "name": "local",
+                "comment": " Modify the context of a Reader\n",
+                "type": "(context -> context) -> Reader.Reader context someA -> Reader.Reader context someA"
+            },
+            {
+                "name": "map",
+                "comment": " Transform a Reader\n",
+                "type": "(someA -> someB) -> Reader.Reader context someA -> Reader.Reader context someB"
+            },
+            {
+                "name": "reader",
+                "comment": " Returns a Reader that when run will produce the value provided, no matter what the context.\n",
+                "type": "value -> Reader.Reader env value"
+            },
+            {
+                "name": "run",
+                "comment": " A Reader expects an environment or a context to run,\nthe run function takes in a Reader and the context it expects and returns the result of the computation.\n",
+                "type": "Reader.Reader context someA -> context -> someA"
+            }
+        ],
+        "binops": []
+    }
+]

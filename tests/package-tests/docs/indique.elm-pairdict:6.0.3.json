@@ -1,0 +1,102 @@
+[
+    {
+        "name": "PairDict",
+        "comment": " \n@docs PairDict\n\n## create\n@docs empty, fromDict, fromList, decode\n\n## scan\n@docs equal, access, emptyOrMore, size\n\n## in\n@docs putIn, union\n\n## out\n@docs remove\n\n## shape\n@docs values, fold, map, toDict, encode\n",
+        "unions": [
+            {
+                "name": "PairDict",
+                "comment": " Want to look up value-pairs from the left or the right?\n\n> You want the pair where `🗝️` is `1` and the pair where `🔑` is `0`?\n\n      → < 🔑= 0, 🗝️= 2 >\n        < 🔑= 2, 🗝️= 0 >\n        < 🔑= 1, 🗝️= 1 > ←\n\n> Going through while checking every pair, if `🗝️` is equal, then, if `🔑` is equal... Ah! Here they are:\n\n        🔑 is 1 where 🗝️ is 1  and   🗝️ is 2 where 🔑 is 0\n\nLike [assoc-list](https://github.com/pzp1997/assoc-list),\na `PairDict` allows for anything as values except for functions and things that contain functions.\n\n## Example: cased letters\n    type alias CasedLetter=\n      { lowercase: Char\n      , uppercase: Char\n      }\n\n    casedLetters: PairDict CasedLetter Char Char\n    casedLetters=\n      PairDict.empty .lowercase .uppercase\n      |>PairDict.putIn { lowercase= 'a', uppercase= 'A' }\n      |>PairDict.putIn { lowercase= 'b', uppercase= 'B' }\n      |>PairDict.putIn { lowercase= 'c', uppercase= 'C' }\n\n    uppercase char=\n      PairDict.access .lowercase char lowerUppercaseLetters\n      |>Maybe.map .uppercase\n",
+                "args": [
+                    "pair",
+                    "left",
+                    "right"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "access",
+                "comment": " `Just` the pair in which `key` is present in the `PairDict`,\nif no pair with the `key` is found `Nothing`.\n\n    casedLetters=\n      PairDict.empty .lowercase .uppercase\n      |>PairDict.putIn { lowercase= 'a', uppercase= 'A' }\n      |>PairDict.putIn { lowercase= 'b', uppercase= 'B' }\n\n    lowercase char=\n      PairDict.access .uppercase char\n        casedLetters\n      |>Maybe.map .lowercase\n    uppercase char=\n      PairDict.access .lowercase char\n        casedLetters\n      |>Maybe.map .uppercase\n\n**Note**: If `accessKey` is neither `accessLeft` or `accessRight` (see `empty`, `fromList`, `fromDict`),\n`access` will find the most recently inserted value where `key` is equal in the pair.\n\n    PairDict.empty .lowercase .uppercase\n    |>PairDict.putIn { inAlphabet= 0, lowercase= 'a', uppercase= 'A' }\n    |>PairDict.putIn { inAlphabet= 1, lowercase= 'b', uppercase= 'B' }\n    |>PairDict.access .inAlphabet 1\n> `{ inAlphabet= 1, lowercase= 'b', uppercase= 'B' }`\n",
+                "type": "(pair -> key) -> key -> PairDict.PairDict pair left right -> Maybe.Maybe pair"
+            },
+            {
+                "name": "decode",
+                "comment": " A `Json.Decode.Decoder` for `PairDict`s encoded by `encodePair`.\n\nThe order of insertion is not reconstructed (see `equal`)\n\n    type alias NamedNumber=\n      { number: Int\n      , name: String\n      }\n    \n    decodeNamedNumber=\n      Decode.map NamedNumber\n        (\\{ number, name }->\n          Decode.object\n            [ ( \"number\", Decode.int number )\n            , ( \"name\", Decode.string name )\n            ]\n        )\n\n    \"\"\"\n    [\n     {\n      \\\"left\\\": 2,\n      \\\"right\\\": \"two\"\n     },\n     {\n      \\\"left\\\": 1,\n      \\\"right\\\": \"one\"\n     }\n    ]\n    \"\"\"\n    |>Decode.decodeString\n        (PairDict.decode .number .name\n          decodeNamedNumber\n        )\n\n> `Ok (Pairs [ { number= 1, name= \"one\" }, { number= 2, name= \"two\" } ])`\n> = a `PairDict`\n",
+                "type": "(pair -> left) -> (pair -> right) -> Json.Decode.Decoder pair -> Json.Decode.Decoder (PairDict.PairDict pair left right)"
+            },
+            {
+                "name": "empty",
+                "comment": " A `PairDict` with no pairs inside\n",
+                "type": "(pair -> left) -> (pair -> right) -> PairDict.PairDict pair left right"
+            },
+            {
+                "name": "emptyOrMore",
+                "comment": " `ifEmpty` if the `PairDict` contains no pairs,\nelse `ifMore` with the most recently putIned pair followed by a `PairDict` with the other pairs.\n\nIt has a very similar use case to a `case` .. `of` on a `List`.\n\n    isEmpty=\n      PairDict.emptyOrMore\n        { ifEmpty= True\n        , ifMore= \\_ _-> False\n        }\n    mostRecent=\n      PairDict.emptyOrMore\n        { ifMore= \\pair _-> Just pair\n        , ifEmpty= Nothing\n        }\n    removeMostRecent pairDict=\n      pairDict\n      |>PairDict.emptyOrMore\n          { ifMore= \\_ rest-> rest\n          , ifEmpty= pairDict\n          }\n",
+                "type": "{ ifEmpty : result, ifMore : pair -> PairDict.PairDict pair left right -> result } -> PairDict.PairDict pair left right -> result"
+            },
+            {
+                "name": "encode",
+                "comment": " Convert a `PairDict` to a `Json.Encode.Value`.\n\n    somePairDict=\n      PairDict.empty\n      |>PairDict.putIn ( 1, 11 )\n      |>PairDict.putIn ( 2, 22 )\n    Encode.encode 1\n      (PairDict.encode\n        Encode.int Encode.int\n        somePairDict\n      )\n\n    \"\"\"\n    [\n     {\n      \\\"left\\\": 2,\n      \\\"right\\\": 22\n     },\n     {\n      \\\"left\\\": 1,\n      \\\"right\\\": 11\n     }\n    ]\n    \"\"\"\n",
+                "type": "(pair -> Json.Encode.Value) -> PairDict.PairDict pair left right -> Json.Encode.Value"
+            },
+            {
+                "name": "equal",
+                "comment": " using built-in (==) equality is often not useful in the context of association-dicts.\n\nDo these 2 `PairDict`s have the same size and identical pairs (ignoring insertion order)?\n\n    letterCodes=\n      PairDict.fromList .letter .code \n        [ { letter= 'a', code= 97 }\n        , { letter= 'b', code= 98 }\n        ]\n    fancyCompetingLetterCodes=\n      PairDict.empty .code .letter\n      |>PairDict.putIn { code= 98, letter= 'b' }\n      |>PairDict.putIn { code= 97, letter= 'a' }\n    \n    PairDict.equal\n      letterCodes\n      fancyCompetingLetterCodes\n> `True`\n",
+                "type": "PairDict.PairDict pair leftA rightA -> PairDict.PairDict pair leftB rightB -> Basics.Bool"
+            },
+            {
+                "name": "fold",
+                "comment": " Reduce the left-right pairs\nfrom most recently putIned to least recently putIned.\n\nA fold in the other direction doesn't exist, as association-`Dict`s should rarely rely on order (see `equal`).\n\n    brackets=\n      PairDict.empty\n      |>PairDict.putIn ( '(', ')' )\n      |>PairDict.putIn ( '{', '}' )\n\n    openingAndClosing=\n      brackets\n      |>PairDict.fold\n          (\\( left, right ) acc->\n            acc++[ String.fromList [ left, right ] ]\n          )\n          []\n> `[ \"{}\", \"()\" ]`\n",
+                "type": "(pair -> acc -> acc) -> acc -> PairDict.PairDict pair left right -> acc"
+            },
+            {
+                "name": "fromDict",
+                "comment": " Create a `PairDict` from a association-`Dict`. `left` is the key, `right` is the value.\nIf multiple equal keys or values are present, the value **first** in the `Dict` is **prefered** (see `putIn`).\n    \n    lowerToUpperLetters=\n      AssocList.empty\n      |>AssocList.insert 'a' 'A'\n      |>AssocList.insert 'b' 'B'\n\n    lowerUpperLetters=\n      PairDict.fromDict\n        (\\k v-> { lowercase= k, uppercase= v })\n        .lowercase .uppercase\n        lowerToUpperLetters\n",
+                "type": "(left -> right -> pair) -> (pair -> left) -> (pair -> right) -> AssocList.Dict left right -> PairDict.PairDict pair left right"
+            },
+            {
+                "name": "fromList",
+                "comment": " Create a `PairDict` _conveniently_ from pairs.\nIf right or left values are given multiple times, the value **first** in the `List` is **prefered** (see `putIn`).\n    \n    PairDict.fromList\n      [ { lowercase= 'b', uppercase= 'B' } --put in\n      , { lowercase= 'a', uppercase= 'A' } --put in\n      , { lowercase= 'b', uppercase= 'C' }\n          --ignored, as the left value already exists\n      , { lowercase= 'c', uppercase= 'A' }\n          --ignored, as the right value already exists\n      , { lowercase= 'c', uppercase= 'C' } --put in\n      ]\n",
+                "type": "(pair -> left) -> (pair -> right) -> List.List pair -> PairDict.PairDict pair left right"
+            },
+            {
+                "name": "map",
+                "comment": " Map pairs. Take a look at pair's map operations.\n\n    digitNames=\n      PairDict.empty .number .name\n      |>PairDict.putIn { number= 0, name= \"zero\" }\n      |>PairDict.putIn { number= 1, name= \"one\" }\n\n    mathSymbolNames=\n      digitNames\n      |>PairDict.map .symbol .name\n          (\\{ number, name }->\n            { symbol= String.fromInt number, name= name }\n          )\n      |>PairDict.putIn { symbol= \"+\", name= \"plus\" }\n",
+                "type": "(pair -> resultPair) -> (resultPair -> resultLeft) -> (resultPair -> resultRight) -> PairDict.PairDict pair left right -> PairDict.PairDict resultPair resultLeft resultRight"
+            },
+            {
+                "name": "putIn",
+                "comment": " Put in a pair.\n\nIf either **value** is already **present**, the `PairDict` is **unchanged**.\n\n    specialCasedA=\n      { lowercase= 'a', uppercase= 'A', inAphabet= 0 }\n    \n    casedBadB=\n      { lowercase= 'b', uppercase= 'B', inAlphabet= 0 }\n\n    PairDict.empty .lowercase .uppercase --lowercase and uppercase are unique across each pair\n    |>PairDict.putIn casedBadB --put in \n    |>PairDict.putIn specialCasedA --put in, because inAlphabet isn't checked\n    |>PairDict.putIn { lowercase= 'b', uppercase= 'C' }\n        --ignored, the left value already exists\n    |>PairDict.putIn { lowercase= 'c', uppercase= 'A' }\n        --ignored, the right value already exists\n    |>PairDict.putIn { lowercase= 'c', uppercase= 'C' } --put in\n",
+                "type": "pair -> PairDict.PairDict pair left right -> PairDict.PairDict pair left right"
+            },
+            {
+                "name": "remove",
+                "comment": " Remove the left-right pair at `left`.\nIf **the value does not exist**, the `PairDict` is **unchanged**\n\n    openClosedBrackets=\n      PairDict.empty .open .closed\n      |>PairDict.putIn { open= \"(\", closed= \")\" }\n\n    openClosedBrackets\n    |>PairDict.remove .open \")\" \n        --unchanged, \")\" is not a open value\n    |>PairDict.remove .open \"(\"\n> `PairDict.empty`\n\n    openClosedBrackets\n    |>PairDict.remove .closed \"(\"\n        --unchanged, \"(\" is not a closed value\n    |>PairDict.remove .closed \")\"\n> `PairDict.empty`\n\n**Notice:** If you don't specify `accessValue` as `left` or `right`, it acts as a normal filter\n\n    PairDict.empty .open .closed\n    |>PairDict.putIn { open= \"(\", closed= \")\", meaning= Nothing }\n    |>PairDict.putIn { open= \"[\", closed= \"]\", meaning= Just (List Element) }\n    |>PairDict.putIn { open= \"<, closed= \">\", meaning= Nothing }\n    |>PairDict.remove .meaning Nothing\n",
+                "type": "(pair -> key) -> key -> PairDict.PairDict pair left right -> PairDict.PairDict pair left right"
+            },
+            {
+                "name": "size",
+                "comment": " How many pairs there are in a `PairDict`.\n\n    PairDict.fromList .number .following\n      (List.map (\\i-> { number= i, following= i+1 })\n        (List.range 0 41)\n      )\n    |>PairDict.size\n> `42`\n",
+                "type": "PairDict.PairDict pair left right -> Basics.Int"
+            },
+            {
+                "name": "toDict",
+                "comment": " Convert a `PairDict` to an association-`Dict`, which you can **access** only **from the left**.\n\n    casedLetters=\n      PairDict.fromList .lowercase .uppercase\n        [ { uppercase= 'A', lowercase= 'a' }\n        , { uppercase= 'B', lowercase= 'b' }\n        ]\n    lowerFromUpper=\n      PairDict.toDict casedLetters\n",
+                "type": "PairDict.PairDict pair left right -> AssocList.Dict left right"
+            },
+            {
+                "name": "union",
+                "comment": " Combine 2 `PairDict`s, so that the pairs in `toInsert` are put into `preferred`.\nIf a value on the left or right is present, prefer the last `PairDict` (see `putIn`).\n\n    numberNamedOperators=\n      PairDict.fromList\n        [ { operator= '+', name= \"plus\" }\n        , { operator= '-', name= \"minus\" }\n        ]\n    customNamedOperators=\n      PairDict.fromList\n        [ { operator= '∧', name= \"and\" }\n        , { operator= '∨', name= \"or\" }\n        , { operator= '-', name= \"negate\" }\n        ]\n    validNamedOperators=\n      PairDict.union\n        custumNamedOperators --has a '-' left\n        numberOperatorNames --preferred → its '-'-pair is put in\n",
+                "type": "PairDict.PairDict pair left right -> PairDict.PairDict pair left right -> PairDict.PairDict pair left right"
+            },
+            {
+                "name": "values",
+                "comment": " Values on the pairs.\n\n    brackets=\n      PairDict.fromList .open .closed\n        [ { open= '(', closed= ')' }\n        , { open= '{', closed= '}' }\n        ]\n    \n    open= values .open brackets\n    closed= values .closed brackets\n",
+                "type": "(pair -> value) -> PairDict.PairDict pair left right -> List.List value"
+            }
+        ],
+        "binops": []
+    }
+]

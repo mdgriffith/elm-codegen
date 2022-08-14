@@ -1,0 +1,84 @@
+[
+    {
+        "name": "Snackbar",
+        "comment": " A Material Design Snackbar!\n\n\n# Definition\n\n@docs Snackbar, Msg, AutoHide\n\n\n# Show / Hide Snackbars\n\n@docs action, hidden, link, message\n\n\n# Integrate with an application\n\n@docs update, view\n\n\n# Utils\n\n@docs visible\n\n",
+        "unions": [
+            {
+                "name": "AutoHide",
+                "comment": " From MD spec - <https://material.io/design/components/snackbars.html#behavior>\n\n> Snackbars appear without warning, and don't require user interaction. They automatically disappear from the screen after a minimum of four seconds, and a maximum of ten seconds.\n\nIf you need to customize, you can. The auto-hide in example below is 6 seconds.\n\n      Snackbar.CustomDelay 6000\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "ShowForever",
+                        []
+                    ],
+                    [
+                        "DefaultDelay",
+                        []
+                    ],
+                    [
+                        "CustomDelay",
+                        [
+                            "Basics.Float"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Msg",
+                "comment": " The Snackbar msgs\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Snackbar",
+                "comment": " The Snackbar model\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "action",
+                "comment": " Show a snackbar with a button that issues a msg. DefaultDelay is 10 seconds which gives a user time to click\n\n      Snackbar.action DefaultDelay \"Your thing was deleted.\" \"UNDO\" (UndoDelete)\n\n",
+                "type": "Snackbar.AutoHide -> String.String -> String.String -> msg -> ( Snackbar.Snackbar msg, Platform.Cmd.Cmd (Snackbar.Msg msg) )"
+            },
+            {
+                "name": "hidden",
+                "comment": " Hide the snackbar. You might use it in an update function like this\n\n      { model | snackbar = Snackbar.hidden }\n\n",
+                "type": "Snackbar.Snackbar msg"
+            },
+            {
+                "name": "link",
+                "comment": " Show a snackbar with a link to another url. DefaultDelay is 10 seconds which gives a user time to click\n\n      Snackbar.link DefaultDelay \"Your upload is ready.\" \"GO\" \"https://path-to-thing\"\n\n",
+                "type": "Snackbar.AutoHide -> String.String -> String.String -> String.String -> ( Snackbar.Snackbar msg, Platform.Cmd.Cmd (Snackbar.Msg msg) )"
+            },
+            {
+                "name": "message",
+                "comment": " Show a snackbar with only a message. DefaultDelay is 4 seconds\n\n      Snackbar.message DefaultDelay \"Hi!\"\n\n",
+                "type": "Snackbar.AutoHide -> String.String -> ( Snackbar.Snackbar msg, Platform.Cmd.Cmd (Snackbar.Msg msg) )"
+            },
+            {
+                "name": "update",
+                "comment": " Update function for mapping into your app's update\n\n      type Msg =\n        SnackMessage (Snackbar.Msg Msg)\n\n      SnackMessage submsg ->\n        let\n          ( sb, cmd ) =\n              Snackbar.update submsg model.snackbar\n        in\n        ( { model | snackbar = sb }, Cmd.map SnackMessage cmd )\n\n",
+                "type": "Snackbar.Msg msg -> Snackbar.Snackbar msg -> ( Snackbar.Snackbar msg, Platform.Cmd.Cmd (Snackbar.Msg msg) )"
+            },
+            {
+                "name": "view",
+                "comment": " Render a snackbar. Typical usage:\n\n        Html.map SnackMessage <| Snackbar.view model.snackbar\n\n",
+                "type": "Snackbar.Snackbar msg -> Html.Html msg"
+            },
+            {
+                "name": "visible",
+                "comment": " Tells if the snackbar currently visible.\n",
+                "type": "Snackbar.Snackbar msg -> Basics.Bool"
+            }
+        ],
+        "binops": []
+    }
+]

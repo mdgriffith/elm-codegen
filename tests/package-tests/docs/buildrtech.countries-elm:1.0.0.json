@@ -1,0 +1,2679 @@
+[
+    {
+        "name": "ISO3166",
+        "comment": " Based upon the country data from <https://github.com/countries/countries>\nCountries is a collection of all sorts of useful information for every country in the ISO 3166 standard. It contains info for the following standards ISO3166-1 (countries), ISO3166-2 (states/subdivisions), ISO4217 (currency) and E.164 (phone numbers). I will add any country based data I can get access to. I hope this to be a repository for all country based information.\n\n\n# Types\n\n@docs Country, Subdivision\n\n\n# Helpers\n\n@docs all, fromAlpha2, fromAlpha3, findSubdivisionByCode\n\n\n# Countries\n\n@docs countryAF, countryAL, countryDZ, countryAS, countryAD, countryAO, countryAI, countryAQ, countryAG, countryAR, countryAM, countryAW, countryAU, countryAT, countryAZ, countryBS, countryBH, countryBD, countryBB, countryBY, countryBE, countryBZ, countryBJ, countryBM, countryBT, countryBO, countryBQ, countryBA, countryBW, countryBV, countryBR, countryIO, countryBN, countryBG, countryBF, countryBI, countryCV, countryKH, countryCM, countryCA, countryKY, countryCF, countryTD, countryCL, countryCN, countryCX, countryCC, countryCO, countryKM, countryCG, countryCD, countryCK, countryCR, countryHR, countryCU, countryCW, countryCY, countryCZ, countryCI, countryDK, countryDJ, countryDM, countryDO, countryEC, countryEG, countrySV, countryGQ, countryER, countryEE, countryET, countryFK, countryFO, countryFJ, countryFI, countryFR, countryGF, countryPF, countryTF, countryGA, countryGM, countryGE, countryDE, countryGH, countryGI, countryGR, countryGL, countryGD, countryGP, countryGU, countryGT, countryGG, countryGN, countryGW, countryGY, countryHT, countryHM, countryVA, countryHN, countryHK, countryHU, countryIS, countryIN, countryID, countryIR, countryIQ, countryIE, countryIM, countryIL, countryIT, countryJM, countryJP, countryJE, countryJO, countryKZ, countryKE, countryKI, countryKP, countryKR, countryKW, countryKG, countryLA, countryLV, countryLB, countryLS, countryLR, countryLY, countryLI, countryLT, countryLU, countryMO, countryMG, countryMW, countryMY, countryMV, countryML, countryMT, countryMH, countryMQ, countryMR, countryMU, countryYT, countryMX, countryFM, countryMD, countryMC, countryMN, countryME, countryMS, countryMA, countryMZ, countryMM, countryNA, countryNR, countryNP, countryNL, countryNC, countryNZ, countryNI, countryNE, countryNG, countryNU, countryNF, countryMK, countryMP, countryNO, countryOM, countryPK, countryPW, countryPS, countryPA, countryPG, countryPY, countryPE, countryPH, countryPN, countryPL, countryPT, countryPR, countryQA, countryRO, countryRU, countryRW, countryRE, countryBL, countrySH, countryKN, countryLC, countryMF, countryPM, countryVC, countryWS, countrySM, countryST, countrySA, countrySN, countryRS, countrySC, countrySL, countrySG, countrySX, countrySK, countrySI, countrySB, countrySO, countryZA, countryGS, countrySS, countryES, countryLK, countrySD, countrySR, countrySJ, countrySE, countryCH, countrySY, countryTW, countryTJ, countryTZ, countryTH, countryTL, countryTG, countryTK, countryTO, countryTT, countryTN, countryTR, countryTM, countryTC, countryTV, countryUG, countryUA, countryAE, countryGB, countryUM, countryUS, countryUY, countryUZ, countryVU, countryVE, countryVN, countryVG, countryVI, countryWF, countryEH, countryYE, countryZM, countryZW, countrySZ, countryAX\n\n\n# Subdivisions\n\n@docs countryADSubdivisions, countryAESubdivisions, countryAFSubdivisions, countryAGSubdivisions, countryAISubdivisions, countryALSubdivisions, countryAMSubdivisions, countryAOSubdivisions, countryARSubdivisions, countryASSubdivisions, countryATSubdivisions, countryAUSubdivisions, countryAWSubdivisions, countryAXSubdivisions, countryAZSubdivisions, countryBASubdivisions, countryBBSubdivisions, countryBDSubdivisions, countryBESubdivisions, countryBFSubdivisions, countryBGSubdivisions, countryBHSubdivisions, countryBISubdivisions, countryBJSubdivisions, countryBLSubdivisions, countryBMSubdivisions, countryBNSubdivisions, countryBOSubdivisions, countryBQSubdivisions, countryBRSubdivisions, countryBSSubdivisions, countryBTSubdivisions, countryBWSubdivisions, countryBYSubdivisions, countryBZSubdivisions, countryCASubdivisions, countryCDSubdivisions, countryCFSubdivisions, countryCGSubdivisions, countryCHSubdivisions, countryCISubdivisions, countryCKSubdivisions, countryCLSubdivisions, countryCMSubdivisions, countryCNSubdivisions, countryCOSubdivisions, countryCRSubdivisions, countryCUSubdivisions, countryCVSubdivisions, countryCWSubdivisions, countryCYSubdivisions, countryCZSubdivisions, countryDESubdivisions, countryDJSubdivisions, countryDKSubdivisions, countryDMSubdivisions, countryDOSubdivisions, countryDZSubdivisions, countryECSubdivisions, countryEESubdivisions, countryEGSubdivisions, countryEHSubdivisions, countryERSubdivisions, countryESSubdivisions, countryETSubdivisions, countryFISubdivisions, countryFJSubdivisions, countryFMSubdivisions, countryFOSubdivisions, countryFRSubdivisions, countryGASubdivisions, countryGBSubdivisions, countryGDSubdivisions, countryGESubdivisions, countryGFSubdivisions, countryGGSubdivisions, countryGHSubdivisions, countryGLSubdivisions, countryGMSubdivisions, countryGNSubdivisions, countryGPSubdivisions, countryGQSubdivisions, countryGRSubdivisions, countryGTSubdivisions, countryGUSubdivisions, countryGWSubdivisions, countryGYSubdivisions, countryHKSubdivisions, countryHNSubdivisions, countryHRSubdivisions, countryHTSubdivisions, countryHUSubdivisions, countryIDSubdivisions, countryIESubdivisions, countryILSubdivisions, countryIMSubdivisions, countryINSubdivisions, countryIQSubdivisions, countryIRSubdivisions, countryISSubdivisions, countryITSubdivisions, countryJESubdivisions, countryJMSubdivisions, countryJOSubdivisions, countryJPSubdivisions, countryKESubdivisions, countryKGSubdivisions, countryKHSubdivisions, countryKISubdivisions, countryKMSubdivisions, countryKNSubdivisions, countryKPSubdivisions, countryKRSubdivisions, countryKWSubdivisions, countryKYSubdivisions, countryKZSubdivisions, countryLASubdivisions, countryLBSubdivisions, countryLCSubdivisions, countryLISubdivisions, countryLKSubdivisions, countryLRSubdivisions, countryLSSubdivisions, countryLTSubdivisions, countryLUSubdivisions, countryLVSubdivisions, countryLYSubdivisions, countryMASubdivisions, countryMCSubdivisions, countryMDSubdivisions, countryMESubdivisions, countryMFSubdivisions, countryMGSubdivisions, countryMHSubdivisions, countryMKSubdivisions, countryMLSubdivisions, countryMMSubdivisions, countryMNSubdivisions, countryMOSubdivisions, countryMPSubdivisions, countryMQSubdivisions, countryMRSubdivisions, countryMSSubdivisions, countryMTSubdivisions, countryMUSubdivisions, countryMVSubdivisions, countryMWSubdivisions, countryMXSubdivisions, countryMYSubdivisions, countryMZSubdivisions, countryNASubdivisions, countryNCSubdivisions, countryNESubdivisions, countryNGSubdivisions, countryNISubdivisions, countryNLSubdivisions, countryNOSubdivisions, countryNPSubdivisions, countryNRSubdivisions, countryNZSubdivisions, countryOMSubdivisions, countryPASubdivisions, countryPESubdivisions, countryPFSubdivisions, countryPGSubdivisions, countryPHSubdivisions, countryPKSubdivisions, countryPLSubdivisions, countryPMSubdivisions, countryPRSubdivisions, countryPSSubdivisions, countryPTSubdivisions, countryPWSubdivisions, countryPYSubdivisions, countryQASubdivisions, countryRESubdivisions, countryROSubdivisions, countryRSSubdivisions, countryRUSubdivisions, countryRWSubdivisions, countrySASubdivisions, countrySBSubdivisions, countrySCSubdivisions, countrySDSubdivisions, countrySESubdivisions, countrySGSubdivisions, countrySHSubdivisions, countrySISubdivisions, countrySJSubdivisions, countrySKSubdivisions, countrySLSubdivisions, countrySMSubdivisions, countrySNSubdivisions, countrySOSubdivisions, countrySRSubdivisions, countrySSSubdivisions, countrySTSubdivisions, countrySVSubdivisions, countrySXSubdivisions, countrySYSubdivisions, countrySZSubdivisions, countryTDSubdivisions, countryTFSubdivisions, countryTGSubdivisions, countryTHSubdivisions, countryTJSubdivisions, countryTKSubdivisions, countryTLSubdivisions, countryTMSubdivisions, countryTNSubdivisions, countryTOSubdivisions, countryTRSubdivisions, countryTTSubdivisions, countryTVSubdivisions, countryTWSubdivisions, countryTZSubdivisions, countryUASubdivisions, countryUGSubdivisions, countryUMSubdivisions, countryUSSubdivisions, countryUYSubdivisions, countryUZSubdivisions, countryVCSubdivisions, countryVESubdivisions, countryVISubdivisions, countryVNSubdivisions, countryVUSubdivisions, countryWFSubdivisions, countryWSSubdivisions, countryYESubdivisions, countryYTSubdivisions, countryZASubdivisions, countryZMSubdivisions, countryZWSubdivisions\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Country",
+                "comment": " Representation of a country.\n\n\n# Identification Codes\n\n      c.number # => \"840\"\n      c.alpha2 # => \"US\"\n      c.alpha3 # => \"USA\"\n      c.gec    # => \"US\"\n      c.un_locode # => \"US\"\n\n\n# Emoji\n\n      c.emoji # => \"🇺🇸\"\n\n\n# Names and translations\n\n      c.name # => \"United States\"\n      c.unofficialNames # => [\"United States of America\", \"Vereinigte Staaten von Amerika\", \"États-Unis\", \"Estados Unidos\"]\n\n      c = ISO3166.belgium\n      c.localNames # => [\"België\", \"Belgique\", \"Belgien\"]\n\n\n# Subdivisions\n\n      c.subdivisions\n\n\n# Location\n\n      c.region # => \"Americas\"\n      c.subregion # => \"Northern America\"\n\n\n# Telephone Routing\n\n      c.countryCode # => \"1\"\n      c.nationalDestinationCodeLengths # => [3]\n      c.nationalNumberLengths # => [10]\n      c.internationalPrefix # => \"011\"\n      c.nationalPrefix # => \"1\"\n\n\n# Currency\n\n      c.currencyCode # => \"USD\"\n\n\n# Address Formatting\n\nThese templates are compatible with the Liquid template system.\n\n      c.addressFormat # => \"{{recipient}}\\n{{street}}\\n{{city}} {{region_short}} {{postalcode}}\\n{{country}}\\n\"\n\n",
+                "args": [],
+                "type": "{ addressFormat : String.String, alpha2 : String.String, alpha3 : String.String, continent : ISO3166.Continent.Continent, countryCode : String.String, currencyCode : String.String, emoji : String.String, gec : String.String, internationalPrefix : String.String, ioc : String.String, languagesOfficial : List.List String.String, languagesSpoken : List.List String.String, localNames : List.List String.String, name : String.String, nanpPrefix : String.String, nationalDestinationCodeLengths : List.List Basics.Int, nationalNumberLengths : List.List Basics.Int, nationalPrefix : String.String, nationality : String.String, number : String.String, postalCode : Basics.Bool, postalCodeFormat : String.String, region : ISO3166.Region.Region, startOfWeek : Time.Weekday, subdivisions : List.List ISO3166.Subdivision, subregion : ISO3166.Subregion.Subregion, unLocode : String.String, unofficialNames : List.List String.String, worldRegion : ISO3166.WorldRegion.WorldRegion }"
+            },
+            {
+                "name": "Subdivision",
+                "comment": " Representation of a subdivision.\n",
+                "args": [],
+                "type": "{ name : String.String, code : String.String, unofficialNames : List.List String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "all",
+                "comment": " A list of all countries.\n",
+                "type": "List.List ISO3166.Country"
+            },
+            {
+                "name": "countryAD",
+                "comment": " Andorra\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryADSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryAE",
+                "comment": " United Arab Emirates\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryAESubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryAF",
+                "comment": " Afghanistan\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryAFSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryAG",
+                "comment": " Antigua and Barbuda\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryAGSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryAI",
+                "comment": " Anguilla\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryAISubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryAL",
+                "comment": " Albania\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryALSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryAM",
+                "comment": " Armenia\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryAMSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryAO",
+                "comment": " Angola\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryAOSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryAQ",
+                "comment": " Antarctica\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryAR",
+                "comment": " Argentina\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryARSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryAS",
+                "comment": " American Samoa\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryASSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryAT",
+                "comment": " Austria\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryATSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryAU",
+                "comment": " Australia\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryAUSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryAW",
+                "comment": " Aruba\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryAWSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryAX",
+                "comment": " Åland Islands\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryAXSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryAZ",
+                "comment": " Azerbaijan\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryAZSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryBA",
+                "comment": " Bosnia and Herzegovina\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryBASubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryBB",
+                "comment": " Barbados\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryBBSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryBD",
+                "comment": " Bangladesh\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryBDSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryBE",
+                "comment": " Belgium\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryBESubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryBF",
+                "comment": " Burkina Faso\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryBFSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryBG",
+                "comment": " Bulgaria\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryBGSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryBH",
+                "comment": " Bahrain\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryBHSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryBI",
+                "comment": " Burundi\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryBISubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryBJ",
+                "comment": " Benin\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryBJSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryBL",
+                "comment": " Saint Barthélemy\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryBLSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryBM",
+                "comment": " Bermuda\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryBMSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryBN",
+                "comment": " Brunei Darussalam\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryBNSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryBO",
+                "comment": " Bolivia (Plurinational State of)\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryBOSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryBQ",
+                "comment": " Bonaire, Sint Eustatius and Saba\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryBQSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryBR",
+                "comment": " Brazil\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryBRSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryBS",
+                "comment": " Bahamas\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryBSSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryBT",
+                "comment": " Bhutan\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryBTSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryBV",
+                "comment": " Bouvet Island\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryBW",
+                "comment": " Botswana\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryBWSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryBY",
+                "comment": " Belarus\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryBYSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryBZ",
+                "comment": " Belize\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryBZSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryCA",
+                "comment": " Canada\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryCASubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryCC",
+                "comment": " Cocos (Keeling) Islands\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryCD",
+                "comment": " Congo (Democratic Republic of the)\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryCDSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryCF",
+                "comment": " Central African Republic\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryCFSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryCG",
+                "comment": " Congo\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryCGSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryCH",
+                "comment": " Switzerland\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryCHSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryCI",
+                "comment": " Côte d'Ivoire\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryCISubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryCK",
+                "comment": " Cook Islands\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryCKSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryCL",
+                "comment": " Chile\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryCLSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryCM",
+                "comment": " Cameroon\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryCMSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryCN",
+                "comment": " China\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryCNSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryCO",
+                "comment": " Colombia\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryCOSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryCR",
+                "comment": " Costa Rica\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryCRSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryCU",
+                "comment": " Cuba\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryCUSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryCV",
+                "comment": " Cabo Verde\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryCVSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryCW",
+                "comment": " Curaçao\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryCWSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryCX",
+                "comment": " Christmas Island\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryCY",
+                "comment": " Cyprus\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryCYSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryCZ",
+                "comment": " Czech Republic\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryCZSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryDE",
+                "comment": " Germany\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryDESubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryDJ",
+                "comment": " Djibouti\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryDJSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryDK",
+                "comment": " Denmark\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryDKSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryDM",
+                "comment": " Dominica\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryDMSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryDO",
+                "comment": " Dominican Republic\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryDOSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryDZ",
+                "comment": " Algeria\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryDZSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryEC",
+                "comment": " Ecuador\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryECSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryEE",
+                "comment": " Estonia\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryEESubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryEG",
+                "comment": " Egypt\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryEGSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryEH",
+                "comment": " Western Sahara\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryEHSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryER",
+                "comment": " Eritrea\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryERSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryES",
+                "comment": " Spain\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryESSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryET",
+                "comment": " Ethiopia\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryETSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryFI",
+                "comment": " Finland\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryFISubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryFJ",
+                "comment": " Fiji\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryFJSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryFK",
+                "comment": " Falkland Islands (Malvinas)\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryFM",
+                "comment": " Micronesia (Federated States of)\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryFMSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryFO",
+                "comment": " Faroe Islands\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryFOSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryFR",
+                "comment": " France\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryFRSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryGA",
+                "comment": " Gabon\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryGASubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryGB",
+                "comment": " United Kingdom of Great Britain and Northern Ireland\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryGBSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryGD",
+                "comment": " Grenada\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryGDSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryGE",
+                "comment": " Georgia\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryGESubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryGF",
+                "comment": " French Guiana\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryGFSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryGG",
+                "comment": " Guernsey\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryGGSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryGH",
+                "comment": " Ghana\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryGHSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryGI",
+                "comment": " Gibraltar\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryGL",
+                "comment": " Greenland\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryGLSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryGM",
+                "comment": " Gambia\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryGMSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryGN",
+                "comment": " Guinea\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryGNSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryGP",
+                "comment": " Guadeloupe\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryGPSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryGQ",
+                "comment": " Equatorial Guinea\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryGQSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryGR",
+                "comment": " Greece\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryGRSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryGS",
+                "comment": " South Georgia and the South Sandwich Islands\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryGT",
+                "comment": " Guatemala\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryGTSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryGU",
+                "comment": " Guam\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryGUSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryGW",
+                "comment": " Guinea-Bissau\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryGWSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryGY",
+                "comment": " Guyana\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryGYSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryHK",
+                "comment": " Hong Kong\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryHKSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryHM",
+                "comment": " Heard Island and McDonald Islands\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryHN",
+                "comment": " Honduras\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryHNSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryHR",
+                "comment": " Croatia\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryHRSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryHT",
+                "comment": " Haiti\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryHTSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryHU",
+                "comment": " Hungary\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryHUSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryID",
+                "comment": " Indonesia\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryIDSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryIE",
+                "comment": " Ireland\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryIESubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryIL",
+                "comment": " Israel\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryILSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryIM",
+                "comment": " Isle of Man\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryIMSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryIN",
+                "comment": " India\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryINSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryIO",
+                "comment": " British Indian Ocean Territory\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryIQ",
+                "comment": " Iraq\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryIQSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryIR",
+                "comment": " Iran (Islamic Republic of)\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryIRSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryIS",
+                "comment": " Iceland\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryISSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryIT",
+                "comment": " Italy\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryITSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryJE",
+                "comment": " Jersey\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryJESubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryJM",
+                "comment": " Jamaica\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryJMSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryJO",
+                "comment": " Jordan\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryJOSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryJP",
+                "comment": " Japan\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryJPSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryKE",
+                "comment": " Kenya\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryKESubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryKG",
+                "comment": " Kyrgyzstan\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryKGSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryKH",
+                "comment": " Cambodia\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryKHSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryKI",
+                "comment": " Kiribati\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryKISubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryKM",
+                "comment": " Comoros\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryKMSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryKN",
+                "comment": " Saint Kitts and Nevis\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryKNSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryKP",
+                "comment": " Korea (Democratic People's Republic of)\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryKPSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryKR",
+                "comment": " Korea (Republic of)\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryKRSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryKW",
+                "comment": " Kuwait\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryKWSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryKY",
+                "comment": " Cayman Islands\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryKYSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryKZ",
+                "comment": " Kazakhstan\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryKZSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryLA",
+                "comment": " Lao People's Democratic Republic\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryLASubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryLB",
+                "comment": " Lebanon\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryLBSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryLC",
+                "comment": " Saint Lucia\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryLCSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryLI",
+                "comment": " Liechtenstein\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryLISubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryLK",
+                "comment": " Sri Lanka\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryLKSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryLR",
+                "comment": " Liberia\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryLRSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryLS",
+                "comment": " Lesotho\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryLSSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryLT",
+                "comment": " Lithuania\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryLTSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryLU",
+                "comment": " Luxembourg\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryLUSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryLV",
+                "comment": " Latvia\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryLVSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryLY",
+                "comment": " Libya\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryLYSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryMA",
+                "comment": " Morocco\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryMASubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryMC",
+                "comment": " Monaco\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryMCSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryMD",
+                "comment": " Moldova (Republic of)\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryMDSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryME",
+                "comment": " Montenegro\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryMESubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryMF",
+                "comment": " Saint Martin (French part)\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryMFSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryMG",
+                "comment": " Madagascar\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryMGSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryMH",
+                "comment": " Marshall Islands\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryMHSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryMK",
+                "comment": " North Macedonia\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryMKSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryML",
+                "comment": " Mali\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryMLSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryMM",
+                "comment": " Myanmar\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryMMSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryMN",
+                "comment": " Mongolia\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryMNSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryMO",
+                "comment": " Macao\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryMOSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryMP",
+                "comment": " Northern Mariana Islands\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryMPSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryMQ",
+                "comment": " Martinique\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryMQSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryMR",
+                "comment": " Mauritania\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryMRSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryMS",
+                "comment": " Montserrat\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryMSSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryMT",
+                "comment": " Malta\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryMTSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryMU",
+                "comment": " Mauritius\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryMUSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryMV",
+                "comment": " Maldives\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryMVSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryMW",
+                "comment": " Malawi\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryMWSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryMX",
+                "comment": " Mexico\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryMXSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryMY",
+                "comment": " Malaysia\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryMYSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryMZ",
+                "comment": " Mozambique\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryMZSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryNA",
+                "comment": " Namibia\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryNASubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryNC",
+                "comment": " New Caledonia\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryNCSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryNE",
+                "comment": " Niger\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryNESubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryNF",
+                "comment": " Norfolk Island\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryNG",
+                "comment": " Nigeria\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryNGSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryNI",
+                "comment": " Nicaragua\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryNISubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryNL",
+                "comment": " Netherlands\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryNLSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryNO",
+                "comment": " Norway\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryNOSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryNP",
+                "comment": " Nepal\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryNPSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryNR",
+                "comment": " Nauru\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryNRSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryNU",
+                "comment": " Niue\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryNZ",
+                "comment": " New Zealand\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryNZSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryOM",
+                "comment": " Oman\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryOMSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryPA",
+                "comment": " Panama\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryPASubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryPE",
+                "comment": " Peru\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryPESubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryPF",
+                "comment": " French Polynesia\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryPFSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryPG",
+                "comment": " Papua New Guinea\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryPGSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryPH",
+                "comment": " Philippines\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryPHSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryPK",
+                "comment": " Pakistan\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryPKSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryPL",
+                "comment": " Poland\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryPLSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryPM",
+                "comment": " Saint Pierre and Miquelon\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryPMSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryPN",
+                "comment": " Pitcairn\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryPR",
+                "comment": " Puerto Rico\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryPRSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryPS",
+                "comment": " Palestine, State of\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryPSSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryPT",
+                "comment": " Portugal\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryPTSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryPW",
+                "comment": " Palau\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryPWSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryPY",
+                "comment": " Paraguay\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryPYSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryQA",
+                "comment": " Qatar\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryQASubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryRE",
+                "comment": " Réunion\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryRESubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryRO",
+                "comment": " Romania\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryROSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryRS",
+                "comment": " Serbia\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryRSSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryRU",
+                "comment": " Russian Federation\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryRUSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryRW",
+                "comment": " Rwanda\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryRWSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countrySA",
+                "comment": " Saudi Arabia\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countrySASubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countrySB",
+                "comment": " Solomon Islands\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countrySBSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countrySC",
+                "comment": " Seychelles\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countrySCSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countrySD",
+                "comment": " Sudan\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countrySDSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countrySE",
+                "comment": " Sweden\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countrySESubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countrySG",
+                "comment": " Singapore\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countrySGSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countrySH",
+                "comment": " Saint Helena, Ascension and Tristan da Cunha\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countrySHSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countrySI",
+                "comment": " Slovenia\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countrySISubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countrySJ",
+                "comment": " Svalbard and Jan Mayen\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countrySJSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countrySK",
+                "comment": " Slovakia\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countrySKSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countrySL",
+                "comment": " Sierra Leone\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countrySLSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countrySM",
+                "comment": " San Marino\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countrySMSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countrySN",
+                "comment": " Senegal\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countrySNSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countrySO",
+                "comment": " Somalia\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countrySOSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countrySR",
+                "comment": " Suriname\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countrySRSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countrySS",
+                "comment": " South Sudan\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countrySSSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryST",
+                "comment": " Sao Tome and Principe\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countrySTSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countrySV",
+                "comment": " El Salvador\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countrySVSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countrySX",
+                "comment": " Sint Maarten (Dutch part)\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countrySXSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countrySY",
+                "comment": " Syrian Arab Republic\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countrySYSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countrySZ",
+                "comment": " eSwatini\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countrySZSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryTC",
+                "comment": " Turks and Caicos Islands\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryTD",
+                "comment": " Chad\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryTDSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryTF",
+                "comment": " French Southern Territories\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryTFSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryTG",
+                "comment": " Togo\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryTGSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryTH",
+                "comment": " Thailand\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryTHSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryTJ",
+                "comment": " Tajikistan\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryTJSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryTK",
+                "comment": " Tokelau\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryTKSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryTL",
+                "comment": " Timor-Leste\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryTLSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryTM",
+                "comment": " Turkmenistan\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryTMSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryTN",
+                "comment": " Tunisia\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryTNSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryTO",
+                "comment": " Tonga\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryTOSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryTR",
+                "comment": " Turkey\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryTRSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryTT",
+                "comment": " Trinidad and Tobago\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryTTSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryTV",
+                "comment": " Tuvalu\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryTVSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryTW",
+                "comment": " Taiwan, Province of China\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryTWSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryTZ",
+                "comment": " Tanzania, United Republic of\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryTZSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryUA",
+                "comment": " Ukraine\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryUASubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryUG",
+                "comment": " Uganda\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryUGSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryUM",
+                "comment": " United States Minor Outlying Islands\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryUMSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryUS",
+                "comment": " United States of America\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryUSSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryUY",
+                "comment": " Uruguay\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryUYSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryUZ",
+                "comment": " Uzbekistan\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryUZSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryVA",
+                "comment": " Holy See\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryVC",
+                "comment": " Saint Vincent and the Grenadines\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryVCSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryVE",
+                "comment": " Venezuela (Bolivarian Republic of)\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryVESubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryVG",
+                "comment": " Virgin Islands (British)\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryVI",
+                "comment": " Virgin Islands (U.S.)\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryVISubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryVN",
+                "comment": " Viet Nam\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryVNSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryVU",
+                "comment": " Vanuatu\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryVUSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryWF",
+                "comment": " Wallis and Futuna\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryWFSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryWS",
+                "comment": " Samoa\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryWSSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryYE",
+                "comment": " Yemen\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryYESubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryYT",
+                "comment": " Mayotte\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryYTSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryZA",
+                "comment": " South Africa\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryZASubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryZM",
+                "comment": " Zambia\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryZMSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "countryZW",
+                "comment": " Zimbabwe\n",
+                "type": "ISO3166.Country"
+            },
+            {
+                "name": "countryZWSubdivisions",
+                "comment": " ",
+                "type": "List.List ISO3166.Subdivision"
+            },
+            {
+                "name": "findSubdivisionByCode",
+                "comment": " Find a subdivision by it's code.\n\n      ISO3166.findSubdivisionByCode ISO3166.countryUS \"NY\" # => Just { name = \"New York\", code = \"NY\", ... }\n\n",
+                "type": "ISO3166.Country -> String.String -> Maybe.Maybe ISO3166.Subdivision"
+            },
+            {
+                "name": "fromAlpha2",
+                "comment": " Find a country by it's alpha2 code.\n\n      ISO3166.fromAlpha2 \"US\" # => Just { name = \"United States\", alpha2 = \"US\", alpha3 = \"USA\", ... }\n\n",
+                "type": "String.String -> Maybe.Maybe ISO3166.Country"
+            },
+            {
+                "name": "fromAlpha3",
+                "comment": " Find a country by it's alpha3 code.\n\n      ISO3166.fromAlpha3 \"US\" # => Just { name = \"United States\", alpha3 = \"US\", alpha3 = \"USA\", ... }\n\n",
+                "type": "String.String -> Maybe.Maybe ISO3166.Country"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ISO3166.Continent",
+        "comment": "\n\n@docs Continent\n\n",
+        "unions": [
+            {
+                "name": "Continent",
+                "comment": " The continent of a country.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Africa",
+                        []
+                    ],
+                    [
+                        "Antarctica",
+                        []
+                    ],
+                    [
+                        "Asia",
+                        []
+                    ],
+                    [
+                        "Australia",
+                        []
+                    ],
+                    [
+                        "Europe",
+                        []
+                    ],
+                    [
+                        "NorthAmerica",
+                        []
+                    ],
+                    [
+                        "SouthAmerica",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "ISO3166.Region",
+        "comment": "\n\n@docs Region\n\n",
+        "unions": [
+            {
+                "name": "Region",
+                "comment": " The region of a country.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "None",
+                        []
+                    ],
+                    [
+                        "Africa",
+                        []
+                    ],
+                    [
+                        "Americas",
+                        []
+                    ],
+                    [
+                        "Asia",
+                        []
+                    ],
+                    [
+                        "Europe",
+                        []
+                    ],
+                    [
+                        "Oceania",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "ISO3166.Subregion",
+        "comment": "\n\n@docs Subregion\n\n",
+        "unions": [
+            {
+                "name": "Subregion",
+                "comment": " The subregion of a country.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "None",
+                        []
+                    ],
+                    [
+                        "AustraliaAndNewZealand",
+                        []
+                    ],
+                    [
+                        "Caribbean",
+                        []
+                    ],
+                    [
+                        "CentralAmerica",
+                        []
+                    ],
+                    [
+                        "CentralAsia",
+                        []
+                    ],
+                    [
+                        "EasternAfrica",
+                        []
+                    ],
+                    [
+                        "EasternAsia",
+                        []
+                    ],
+                    [
+                        "EasternEurope",
+                        []
+                    ],
+                    [
+                        "Melanesia",
+                        []
+                    ],
+                    [
+                        "Micronesia",
+                        []
+                    ],
+                    [
+                        "MiddleAfrica",
+                        []
+                    ],
+                    [
+                        "NorthernAfrica",
+                        []
+                    ],
+                    [
+                        "NorthernAmerica",
+                        []
+                    ],
+                    [
+                        "NorthernEurope",
+                        []
+                    ],
+                    [
+                        "Polynesia",
+                        []
+                    ],
+                    [
+                        "SouthAmerica",
+                        []
+                    ],
+                    [
+                        "SouthEasternAsia",
+                        []
+                    ],
+                    [
+                        "SouthernAfrica",
+                        []
+                    ],
+                    [
+                        "SouthernAsia",
+                        []
+                    ],
+                    [
+                        "SouthernEurope",
+                        []
+                    ],
+                    [
+                        "WesternAfrica",
+                        []
+                    ],
+                    [
+                        "WesternAsia",
+                        []
+                    ],
+                    [
+                        "WesternEurope",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "ISO3166.WorldRegion",
+        "comment": "\n\n@docs WorldRegion\n\n",
+        "unions": [
+            {
+                "name": "WorldRegion",
+                "comment": " The world region of a country.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Amer",
+                        []
+                    ],
+                    [
+                        "Apac",
+                        []
+                    ],
+                    [
+                        "Emea",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [],
+        "binops": []
+    }
+]

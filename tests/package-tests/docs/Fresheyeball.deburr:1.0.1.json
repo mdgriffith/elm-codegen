@@ -1,0 +1,16 @@
+[
+    {
+        "name": "String.Deburr",
+        "comment": "\nThis exposes a single function `deburr` this function removes burrs from\na String.\n\n# Deburr\n@docs deburr\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "deburr",
+                "comment": " Deburr a string, removing umlauts, accents, etc.\n\n    >>> deburr \"Jeg spiser brød.\"\n    \"Jeg spiser brod.\"\n",
+                "type": "String.String -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

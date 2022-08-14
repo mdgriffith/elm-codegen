@@ -1,0 +1,273 @@
+[
+    {
+        "name": "Url.Codec",
+        "comment": " An alternative to [`Url.Parser`](https://package.elm-lang.org/packages/elm/url/latest/Url-Parser)\nand [`Url.Builder`](https://package.elm-lang.org/packages/elm/url/latest/Url-Builder)\nmodules from the [`elm/url`](https://package.elm-lang.org/packages/elm/url/latest/)\npackage.\n\n**Allows you to define both the URL parser and the URL builder at the same time.**\n\nNote that if you only need an URL parser, the [`Url.SimpleParser`](Url-SimpleParser)\nmodule will be nicer to use (require less boilerplate) while providing the same\nfunctionality.\n\n@docs Codec, CodecInProgress\n\n\n## URL parsing\n\n@docs ParseError, parsePath, parseUrl\n\n\n## URL building\n\n@docs toString\n\n\n## Combinators\n\n@docs succeed, s, int, string\n\n\n## Query parameters\n\n@docs queryInt, queryString, queryInts, queryStrings\n@docs queryFlag, allQueryFlags\n\n\n## Fragment\n\n@docs fragment\n\n",
+        "unions": [
+            {
+                "name": "CodecInProgress",
+                "comment": " CodecInProgress is an unfinished codec that needs some more steps to be able\nto fully parse and build URLs.\n\nWhenever you see `CodecInProgress` with two unequal types, you're likely missing\nan argument to your final value somewhere.\n\nYou'll typically start with something like\n\n    type Route\n        = CommentPage String Int\n        | PostPage String\n\n    isComment : Route -> Bool\n    isComment route =\n        case route of\n            CommentPage _ _ ->\n                True\n\n            _ ->\n                False\n\n    myCodec =\n        Url.Codec.succeed CommentPage isComment\n\nAt this point, the codec is of type:\n\n    myCodec : CodecInProgress Route (String -> Int -> Route)\n\nYour goal here is to provide both arguments to `CommentPage`: the `String` and\nthe `Int`. Do that with the various combinators ([`int`](#int),\n[`string`](#string), [`fragment`](#fragment) and all the `*query*` functions).\n\nYou can also use the [`s`](#s) (as in \"segment\") function to provide hardcoded\nsegments in the URL path:\n\n    myCodec =\n        Url.Codec.succeed CommentPage isComment\n            |> Url.Codec.s \"post\"\n            |> Url.Codec.string getCommentPageSlug\n            |> Url.Codec.s \"page\"\n            |> Url.Codec.int getCommentPageNumber\n\nNow that we've used both [`string`](#string) and [`int`](#int), the second part\nof the type signature has changed from `String -> Int -> Route` to `Route`,\nmeaning both parts are the same (`CodecInProgress Route Route`, also expressible\nas `Codec Route`) and the codec is ready to use! It will now be able to both\nparse and build URLs:\n\n    Url.Codec.parsePath [myCodec] \"/post/hello-world/page/1\"\n    --> Ok (CommentPage \"hello-world\" 1)\n\n    Url.Codec.toString [myCodec] (CommentPage \"you-too\" 222)\n    --> Just \"post/you-too/page/222\"\n\nNote that the functions that provide you with data will need you to provide\na getter, used by the `toString` function to get the data from your `Route` type.\nHere is a typical implementation of one:\n\n    getCommentPageSlug : Route -> Maybe String\n    getCommentPageSlug route =\n        case route of\n            CommentPage slug _ ->\n                Just slug\n\n            _ ->\n                Nothing\n\n_Sidenote: In principle it should be possible to make an `elm-review` rule that\nwould generate these getters for you. The more noise you'll make (ping\n`@janiczek` on the Elm Slack or on Twitter), the better chance it will come into\nexistence :)_\n\n",
+                "args": [
+                    "target",
+                    "parseResult"
+                ],
+                "cases": []
+            },
+            {
+                "name": "ParseError",
+                "comment": " All the ways the parsing can fail.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "SegmentMismatch",
+                        [
+                            "{ expected : String.String, available : String.String }"
+                        ]
+                    ],
+                    [
+                        "SegmentNotAvailable",
+                        []
+                    ],
+                    [
+                        "WasNotInt",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "DidNotConsumeEverything",
+                        [
+                            "List.List String.String"
+                        ]
+                    ],
+                    [
+                        "NeededSingleQueryParameterValueGotMultiple",
+                        [
+                            "{ key : String.String, got : List.List String.String }"
+                        ]
+                    ],
+                    [
+                        "NotAllQueryParameterValuesWereInts",
+                        [
+                            "{ key : String.String, got : List.List String.String }"
+                        ]
+                    ],
+                    [
+                        "NoCodecs",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Codec",
+                "comment": " Codec knows both:\n\n  - how to parse an URL string into Elm data\n  - how to build an URL from Elm data.\n\nCreate it with the combinators:\n\n  - [`succeed`](#succeed), [`s`](#s), [`int`](#int), [`string`](#string)\n  - [`queryInt`](#queryInt), [`queryString`](#queryString), [`queryInts`](#queryInts), [`queryStrings`](#queryStrings),\n  - [`queryFlag`](#queryFlag), [`allQueryFlags`](#allQueryFlags)\n\nUse it to **parse** URLs with the functions [`parsePath`](#parsePath) and [`parseUrl`](#parseUrl).\n\nUse it to **build** URLs with the function [`toString`](#toString).\n\nLeading and trailing slashes don't matter.\n\n",
+                "args": [
+                    "target"
+                ],
+                "type": "Url.Codec.CodecInProgress target target"
+            }
+        ],
+        "values": [
+            {
+                "name": "allQueryFlags",
+                "comment": " All query flags, like eg. `/settings?admin&no-exports`.\n\n    type Route\n        = SettingsRoute (List String)\n        | ...\n\n    codec : Codec Route\n    codec =\n        Url.Codec.succeed SettingsRoute isSettingsRoute\n            |> Url.Codec.s \"settings\"\n            |> Url.Codec.allQueryFlags getSettingsFlags\n\n    isSettingsRoute : Route -> Bool\n    isSettingsRoute route =\n        case route of\n            SettingsRoute _ ->\n                True\n\n            _ ->\n                False\n\n    getSettingsFlags : Route -> List String\n    getSettingsFlags route =\n        case route of\n            SettingsRoute flags ->\n                flags\n\n            _ ->\n                []\n\n    Url.Codec.parsePath [codec] \"settings?admin\"\n    --> Ok (SettingsRoute [\"admin\"])\n\n    Url.Codec.parsePath [codec] \"settings\"\n    --> Ok (SettingsRoute [])\n\n    Url.Codec.parsePath [codec] \"settings?admin&no-exports\"\n    --> Ok (SettingsRoute [\"admin\", \"no-exports\"])\n\n    Url.Codec.toString [codec] (SettingsRoute [])\n    --> Just \"settings\"\n\n    Url.Codec.toString [codec] (SettingsRoute [\"foo\"])\n    --> Just \"settings?foo\"\n\n    Url.Codec.toString [codec] (SettingsRoute [\"foo\", \"bar\"])\n    --> Just \"settings?foo&bar\"\n\n",
+                "type": "(target -> List.List String.String) -> Url.Codec.CodecInProgress target (List.List String.String -> parseResult) -> Url.Codec.CodecInProgress target parseResult"
+            },
+            {
+                "name": "fragment",
+                "comment": " Fragment part of the URL, eg. `/settings#HelloThereWorld`.\n\n    type Route\n        = SettingsRoute (Maybe String)\n        | ...\n\n    codec : Codec Route\n    codec =\n        Url.Codec.succeed SettingsRoute isSettingsRoute\n            |> Url.Codec.s \"settings\"\n            |> Url.Codec.fragment getSettingsFragment\n\n    isSettingsRoute : Route -> Bool\n    isSettingsRoute route =\n        case route of\n            SettingsRoute _ ->\n                True\n\n            _ ->\n                False\n\n    getSettingsFragment : Route -> Maybe String\n    getSettingsFragment route =\n        case route of\n            SettingsRoute fragment ->\n                fragment\n\n            _ ->\n                []\n\n    Url.Codec.parsePath [codec] \"settings#abc\"\n    --> Ok (SettingsRoute (Just \"abc\"))\n\n    Url.Codec.parsePath [codec] \"settings\"\n    --> Ok (SettingsRoute Nothing)\n\n    Url.Codec.parsePath [codec] \"settings#\"\n    --> Ok (SettingsRoute (Just \"\"))\n\n    Url.Codec.toString [codec] (SettingsRoute (Just \"abc\"))\n    --> Just \"settings#abc\"\n\n    Url.Codec.toString [codec] (SettingsRoute Nothing)\n    --> Just \"settings\"\n\n    Url.Codec.toString [codec] (SettingsRoute (Just \"\"))\n    --> Just \"settings#\"\n\n",
+                "type": "(target -> Maybe.Maybe String.String) -> Url.Codec.CodecInProgress target (Maybe.Maybe String.String -> parseResult) -> Url.Codec.CodecInProgress target parseResult"
+            },
+            {
+                "name": "int",
+                "comment": " An integer path segment.\n\n    type Route\n        = UserRoute Int\n        | ...\n\n    codec : Codec Route\n    codec =\n        Url.Codec.succeed UserRoute isUserRoute\n            |> Url.Codec.s \"user\"\n            |> Url.Codec.int getUserRouteId\n\n    isUserRoute : Route -> Bool\n    isUserRoute route =\n        case route of\n            UserRoute _ ->\n                True\n\n            _ ->\n                False\n\n    getUserRouteId : Route -> Maybe Int\n    getUserRouteId route =\n        case route of\n            UserRoute id ->\n                Just id\n\n            _ ->\n                Nothing\n\n    Url.Codec.parsePath [codec] \"user/123\"\n    --> Ok (UserRoute 123)\n\n    Url.Codec.parsePath [codec] \"user\"\n    --> Err SegmentNotAvailable\n\n    Url.Codec.toString [codec] (UserRoute 999)\n    --> Just \"user/999\"\n\n",
+                "type": "(target -> Maybe.Maybe Basics.Int) -> Url.Codec.CodecInProgress target (Basics.Int -> parseResult) -> Url.Codec.CodecInProgress target parseResult"
+            },
+            {
+                "name": "parsePath",
+                "comment": " Parse the URL path string, trying out multiple codecs if necessary.\n\nWill stop at the first success.\n\nWill prefer to report error from the parser that had most success parsing.\n\n    allCodecs =\n        [ helloCodec, homeCodec ]\n\n    Url.Codec.parsePath allCodecs \"hello/123\"\n    --> Ok (HelloPage 123)\n\n    Url.Codec.parsePath allCodecs \"/hello/123?comments=1\"\n    --> Ok (HelloPage 123)\n\n    Url.Codec.parsePath allCodecs \"hello/123whoops\"\n    --> Err (WasNotInt \"123whoops\")\n\n    Url.Codec.parsePath allCodecs \"\"\n    --> Ok HomePage\n\n    Url.Codec.parsePath [] \"\"\n    --> Err NoCodecs\n\n",
+                "type": "List.List (Url.Codec.Codec parseResult) -> String.String -> Result.Result Url.Codec.ParseError parseResult"
+            },
+            {
+                "name": "parseUrl",
+                "comment": " A variant of [`parsePath`](#parsePath) that accepts an\n[`Url`](https://package.elm-lang.org/packages/elm/url/latest/Url#Url).\n",
+                "type": "List.List (Url.Codec.Codec parseResult) -> Url.Url -> Result.Result Url.Codec.ParseError parseResult"
+            },
+            {
+                "name": "queryFlag",
+                "comment": " A query flag (parameter without `=` and a value), like eg. `/settings?admin`.\n\n    type Route\n        = SettingsRoute { admin : Bool }\n        | ...\n\n    codec : Codec Route\n    codec =\n        Url.Codec.succeed (\\admin -> SettingsRoute { admin = admin }) isSettingsRoute\n            |> Url.Codec.s \"settings\"\n            |> Url.Codec.queryFlag \"admin\" getSettingsAdminFlag\n\n    isSettingsRoute : Route -> Bool\n    isSettingsRoute route =\n        case route of\n            SettingsRoute _ ->\n                True\n\n            _ ->\n                False\n\n    getSettingsAdminFlag : Route -> Bool\n    getSettingsAdminFlag route =\n        case route of\n            SettingsRoute {admin} ->\n                admin\n\n            _ ->\n                False\n\n    Url.Codec.parsePath [codec] \"settings?admin\"\n    --> Ok (SettingsRoute { admin = True })\n\n    Url.Codec.parsePath [codec] \"settings\"\n    --> Ok (SettingsRoute { admin = False })\n\n    Url.Codec.toString [codec] (SettingsRoute { admin = False })\n    --> Just \"settings\"\n\n    Url.Codec.toString [codec] (SettingsRoute { admin = True })\n    --> Just \"settings?admin\"\n\n",
+                "type": "String.String -> (target -> Basics.Bool) -> Url.Codec.CodecInProgress target (Basics.Bool -> parseResult) -> Url.Codec.CodecInProgress target parseResult"
+            },
+            {
+                "name": "queryInt",
+                "comment": " An integer query parameter.\n\n    type Route\n        = UserRoute (Maybe Int)\n        | ...\n\n    codec : Codec Route\n    codec =\n        Url.Codec.succeed UserRoute isUserRoute\n            |> Url.Codec.s \"user\"\n            |> Url.Codec.queryInt \"id\" getUserRouteId\n\n    isUserRoute : Route -> Bool\n    isUserRoute route =\n        case route of\n            UserRoute _ ->\n                True\n\n            _ ->\n                False\n\n    getUserRouteId : Route -> Maybe Int\n    getUserRouteId route =\n        case route of\n            UserRoute maybeId ->\n                maybeId\n\n            _ ->\n                Nothing\n\n    Url.Codec.parsePath [codec] \"user?id=123\"\n    --> Ok (UserRoute (Just 123))\n\n    Url.Codec.parsePath [codec] \"user\"\n    --> Ok (UserRoute Nothing)\n\n    Url.Codec.toString [codec] (UserRoute (Just 999))\n    --> Just \"user?id=999\"\n\n    Url.Codec.toString [codec] (UserRoute Nothing)\n    --> Just \"user\"\n\nWill fail if there are multiple query parameters with the same key:\n\n    Url.Codec.parsePath [codec] \"user?id=1&id=2\"\n    --> Err (NeededSingleQueryParameterValueGotMultiple { got = [\"1\",\"2\"], key = \"id\" })\n\nWill succeed with Nothing if the query parameter contains a non-integer string:\n\n    Url.Codec.parsePath [codec] \"user?id=martin\"\n    --> Ok (UserRoute Nothing)\n\n",
+                "type": "String.String -> (target -> Maybe.Maybe Basics.Int) -> Url.Codec.CodecInProgress target (Maybe.Maybe Basics.Int -> parseResult) -> Url.Codec.CodecInProgress target parseResult"
+            },
+            {
+                "name": "queryInts",
+                "comment": " A repeated integer query parameter.\n\n    type Route\n        = UserListingRoute (List Int)\n        | ...\n\n    codec : Codec Route\n    codec =\n        Url.Codec.succeed UserListingRoute isUserListingRoute\n            |> Url.Codec.s \"users\"\n            |> Url.Codec.queryInts \"id\" getUserListingRouteIds\n\n    isUserListingRoute : Route -> Bool\n    isUserListingRoute route =\n        case route of\n            UserListingRoute _ ->\n                True\n\n            _ ->\n                False\n\n    getUserListingRouteIds : Route -> List Int\n    getUserListingRouteIds route =\n        case route of\n            UserListingRoute ids ->\n                ids\n\n            _ ->\n                []\n\n    Url.Codec.parsePath [codec] \"users?id=1\"\n    --> Ok (UserListingRoute [1])\n\n    Url.Codec.parsePath [codec] \"users?id=1&id=2&id=3\"\n    --> Ok (UserListingRoute [1,2,3])\n\n    Url.Codec.parsePath [codec] \"users\"\n    --> Ok (UserListingRoute [])\n\n    Url.Codec.toString [codec] (UserListingRoute [])\n    --> Just \"user\"\n\n    Url.Codec.toString [codec] (UserListingRoute [1])\n    --> Just \"user?id=1\"\n\n    Url.Codec.toString [codec] (UserListingRoute [1,2])\n    --> Just \"user?id=1&id=2\"\n\nWill fail if given a query parameter with an empty value:\n\n    Url.Codec.parsePath [codec] \"users?id=\"\n    --> Err (NotAllQueryParameterValuesWereInts { got = [ \"\" ] , key = \"id\" })\n\nWill fail if any of the query parameters has a non-integer value:\n\n    Url.Codec.parsePath [codec] \"users?id=1&id=hello\"\n    --> Err (NotAllQueryParameterValuesWereInts { got = [ \"1\", \"hello\" ] , key = \"id\" })\n\n",
+                "type": "String.String -> (target -> List.List Basics.Int) -> Url.Codec.CodecInProgress target (List.List Basics.Int -> parseResult) -> Url.Codec.CodecInProgress target parseResult"
+            },
+            {
+                "name": "queryString",
+                "comment": " A string query parameter.\n\n    type Route\n        = UserRoute (Maybe String)\n        | ...\n\n    codec : Codec Route\n    codec =\n        Url.Codec.succeed UserRoute isUserRoute\n            |> Url.Codec.s \"user\"\n            |> Url.Codec.queryString \"name\" getUserRouteName\n\n    isUserRoute : Route -> Bool\n    isUserRoute route =\n        case route of\n            UserRoute _ ->\n                True\n\n            _ ->\n                False\n\n    getUserRouteName : Route -> Maybe String\n    getUserRouteName route =\n        case route of\n            UserRoute name ->\n                name\n\n            _ ->\n                Nothing\n\n    Url.Codec.parsePath [codec] \"user?name=martin\"\n    --> Ok (UserRoute (Just \"martin\"))\n\n    Url.Codec.toString [codec] (UserRoute (Just \"john\")\n    --> Just \"user?name=john\"\n\nWill fail if there are multiple query parameters with the same key:\n\n    Url.Codec.parsePath [codec] \"user?name=a&name=b\"\n    --> Err (NeededSingleQueryParameterValueGotMultiple { got = [\"a\",\"b\"], key = \"name\" })\n\n",
+                "type": "String.String -> (target -> Maybe.Maybe String.String) -> Url.Codec.CodecInProgress target (Maybe.Maybe String.String -> parseResult) -> Url.Codec.CodecInProgress target parseResult"
+            },
+            {
+                "name": "queryStrings",
+                "comment": " A repeated string query parameter.\n\n    type Route\n        = UserListingRoute (List String)\n        | ...\n\n    codec : Codec Route\n    codec =\n        Url.Codec.succeed UserListingRoute isUserListingRoute\n            |> Url.Codec.s \"users\"\n            |> Url.Codec.queryInts \"tags\" getUserListingRouteTags\n\n    isUserListingRoute : Route -> Bool\n    isUserListingRoute route =\n        case route of\n            UserListingRoute _ ->\n                True\n\n            _ ->\n                False\n\n    getUserListingRouteTags : Route -> List String\n    getUserListingRouteTags route =\n        case route of\n            UserListingRoute tags ->\n                tags\n\n            _ ->\n                []\n\n    Url.Codec.parsePath [codec] \"users?tags=Foo\"\n    --> Ok (UserListingRoute [\"Foo\"])\n\n    Url.Codec.parsePath [codec] \"users?tags=Foo&tags=Bar&tags=999\"\n    --> Ok (UserListingRoute [\"Foo\", \"Bar\", \"999\"])\n\n    Url.Codec.parsePath [codec] \"users\"\n    --> Ok (UserListingRoute [])\n\n    Url.Codec.toString [codec] (UserListingRoute [])\n    --> Just \"user\"\n\n    Url.Codec.toString [codec] (UserListingRoute [\"hello\"])\n    --> Just \"user?tags=hello\n\n    Url.Codec.toString [codec] (UserListingRoute [\"hello\", \"111\"])\n    --> Just \"user?tags=hello&tags=111\"\n\nWill succeed with an empty string if given a query parameter with an empty value:\n\n    Url.Codec.parsePath [codec] \"users?tags=\"\n    --> Ok (UserListingRoute [\"\"])\n\n",
+                "type": "String.String -> (target -> List.List String.String) -> Url.Codec.CodecInProgress target (List.List String.String -> parseResult) -> Url.Codec.CodecInProgress target parseResult"
+            },
+            {
+                "name": "s",
+                "comment": " A hardcoded path segment.\n\n    type Route\n        = HomeRoute\n\n    codec : Codec Route\n    codec =\n        Url.Codec.succeed HomeRoute isHomeRoute\n            |> Url.Codec.s \"home\"\n\n    isHomeRoute : Route -> Bool\n    isHomeRoute route =\n        route == HomeRoute\n\n    Url.Codec.parsePath [codec] \"home\"\n    --> Ok HomeRoute\n\n    Url.Codec.toString [codec] HomeRoute\n    --> Just \"home\"\n\n",
+                "type": "String.String -> Url.Codec.CodecInProgress target parseResult -> Url.Codec.CodecInProgress target parseResult"
+            },
+            {
+                "name": "string",
+                "comment": " A string path segment.\n\n    type Route\n        = PostRoute String\n        | ...\n\n    codec : Codec Route\n    codec =\n        Url.Codec.succeed PostRoute isPostRoute\n            |> Url.Codec.s \"post\"\n            |> Url.Codec.string getPostRouteSlug\n\n    isPostRoute : Route -> Bool\n    isPostRoute route =\n        case route of\n            PostRoute _ ->\n                True\n\n            _ ->\n                False\n\n    getPostRouteSlug : Route -> Maybe String\n    getPostRouteSlug route =\n        case route of\n            PostRoute slug ->\n                Just slug\n\n            _ ->\n                Nothing\n\n    Url.Codec.parsePath [codec] \"post/hello\"\n    --> Ok (PostRoute \"hello\")\n\n    Url.Codec.parsePath [codec] \"post\"\n    --> Err SegmentNotAvailable\n\n    Url.Codec.toString [codec] (PostRoute \"hiya\")\n    --> Just \"post/hiya\"\n\n",
+                "type": "(target -> Maybe.Maybe String.String) -> Url.Codec.CodecInProgress target (String.String -> parseResult) -> Url.Codec.CodecInProgress target parseResult"
+            },
+            {
+                "name": "succeed",
+                "comment": " A way to start your Codec definition.\n\n    unfinishedCodec : CodecInProgress Route (String -> Route)\n    unfinishedCodec =\n        -- needs a string provided via a combinator like `Url.Codec.string`\n        Url.Codec.succeed UserRoute isUserRoute\n\n    isUserRoute : Route -> Bool\n    isUserRoute route =\n        case route of\n            UserRoute _ ->\n                True\n\n            _ ->\n                False\n\nYou'll then need to continue with some other combinators to provide the data to\nyour route constructor.\n\nCan also work standalone for URLs without path segments:\n\n    -- same as CodecInProgress Route Route\n    codec : Codec Route\n    codec =\n        Url.Codec.succeed HomeRoute isHomeRoute\n\n    isHomeRoute : Route -> Bool\n    isHomeRoute route =\n        route == HomeRoute\n\n    Url.Codec.parsePath [codec] \"\"\n    --> Ok HomeRoute\n\n    Url.Codec.toString [codec] HomeRoute\n    --> Just \"\"\n\n",
+                "type": "parseResult -> (target -> Basics.Bool) -> Url.Codec.CodecInProgress target parseResult"
+            },
+            {
+                "name": "toString",
+                "comment": " Convert the given value into an URL string, trying out multiple codecs if\nnecessary.\n\nWill stop at the first success.\n\nCan fail (eg. if you use a codec for one route with a string belonging to a\ndifferent route, such that the predicate given to `success` will return `False`\nor the getters return `Nothing`).\n\n    allCodecs =\n        [ helloCodec, postCodec ]\n\n    Url.Codec.toString allCodecs (HelloPage 123)\n    --> Just \"hello/123\"\n\n    Url.Codec.toString allCodecs (PostPage \"goto-bad\")\n    --> Just \"post/goto-bad\"\n\n    Url.Codec.toString [nonHelloPageCodec] (HelloPage 123)\n    --> Nothing\n\n",
+                "type": "List.List (Url.Codec.Codec target) -> target -> Maybe.Maybe String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Url.SimpleParser",
+        "comment": " A simpler alternative to [`Url.Parser`](https://package.elm-lang.org/packages/elm/url/latest/Url-Parser)\nmodule from the [`elm/url`](https://package.elm-lang.org/packages/elm/url/latest/)\npackage.\n\nNote that if you want to build both URL parsers and builders at the same time,\nyou should use the [`Url.Codec`](Url-Codec) module instead. The API is very similar!\n\n\n## URL parsing\n\n@docs Parser, ParseError, parsePath, parseUrl\n\n\n## Combinators\n\n@docs succeed, s, int, string\n\n\n## Query parameters\n\n@docs queryInt, queryString, queryInts, queryStrings\n@docs queryFlag, allQueryFlags\n\n\n## Fragment\n\n@docs fragment\n\n",
+        "unions": [
+            {
+                "name": "ParseError",
+                "comment": " All the ways the parsing can fail.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "SegmentMismatch",
+                        [
+                            "{ expected : String.String, available : String.String }"
+                        ]
+                    ],
+                    [
+                        "SegmentNotAvailable",
+                        []
+                    ],
+                    [
+                        "WasNotInt",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "DidNotConsumeEverything",
+                        [
+                            "List.List String.String"
+                        ]
+                    ],
+                    [
+                        "NeededSingleQueryParameterValueGotMultiple",
+                        [
+                            "{ key : String.String, got : List.List String.String }"
+                        ]
+                    ],
+                    [
+                        "NotAllQueryParameterValuesWereInts",
+                        [
+                            "{ key : String.String, got : List.List String.String }"
+                        ]
+                    ],
+                    [
+                        "NoParsers",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Parser",
+                "comment": " Parser knows how to parse an URL string into Elm data.\n\nCreate it with the combinators:\n\n  - [`succeed`](#succeed), [`s`](#s), [`int`](#int), [`string`](#string)\n  - [`queryInt`](#queryInt), [`queryString`](#queryString), [`queryInts`](#queryInts), [`queryStrings`](#queryStrings),\n  - [`queryFlag`](#queryFlag), [`allQueryFlags`](#allQueryFlags)\n\nUse it to parse URLs with the functions [`parsePath`](#parsePath) and [`parseUrl`](#parseUrl).\n\nLeading and trailing slashes don't matter.\n\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "allQueryFlags",
+                "comment": " All query flags, like eg. `/settings?admin&no-exports`.\n\n    type Route\n        = SettingsRoute (List String)\n        | ...\n\n    parser : Parser Route\n    parser =\n        Url.SimpleParser.succeed SettingsRoute\n            |> Url.SimpleParser.s \"settings\"\n            |> Url.SimpleParser.allQueryFlags\n\n    Url.SimpleParser.parsePath [parser] \"settings?admin\"\n    --> Ok (SettingsRoute [\"admin\"])\n\n    Url.SimpleParser.parsePath [parser] \"settings\"\n    --> Ok (SettingsRoute [])\n\n    Url.SimpleParser.parsePath [parser] \"settings?admin&no-exports\"\n    --> Ok (SettingsRoute [\"admin\", \"no-exports\"])\n\n",
+                "type": "Url.SimpleParser.Parser (List.List String.String -> a) -> Url.SimpleParser.Parser a"
+            },
+            {
+                "name": "fragment",
+                "comment": " Fragment part of the URL, eg. `/settings#HelloThereWorld`.\n\n    type Route\n        = SettingsRoute (Maybe String)\n        | ...\n\n    parser : Parser Route\n    parser =\n        Url.SimpleParser.succeed SettingsRoute\n            |> Url.SimpleParser.s \"settings\"\n            |> Url.SimpleParser.fragment\n\n    Url.SimpleParser.parsePath [parser] \"settings#abc\"\n    --> Ok (SettingsRoute (Just \"abc\"))\n\n    Url.SimpleParser.parsePath [parser] \"settings\"\n    --> Ok (SettingsRoute Nothing)\n\n    Url.SimpleParser.parsePath [parser] \"settings#\"\n    --> Ok (SettingsRoute (Just \"\"))\n\n",
+                "type": "Url.SimpleParser.Parser (Maybe.Maybe String.String -> a) -> Url.SimpleParser.Parser a"
+            },
+            {
+                "name": "int",
+                "comment": " An integer path segment.\n\n    type Route\n        = UserRoute Int\n        | ...\n\n    parser : Parser Route\n    parser =\n        Url.SimpleParser.succeed UserRoute\n            |> Url.SimpleParser.s \"user\"\n            |> Url.SimpleParser.int\n\n    Url.SimpleParser.parsePath [parser] \"user/123\"\n    --> Ok (UserRoute 123)\n\n    Url.SimpleParser.parsePath [parser] \"user\"\n    --> Err SegmentNotAvailable\n\n",
+                "type": "Url.SimpleParser.Parser (Basics.Int -> a) -> Url.SimpleParser.Parser a"
+            },
+            {
+                "name": "parsePath",
+                "comment": " Parse the URL path string, trying out multiple parsers if necessary.\n\nWill stop at the first success.\n\nWill prefer to report error from the parser that had most success parsing.\n\n    allParsers =\n        [ helloParser, homeParser ]\n\n    Url.SimpleParser.parse allParsers \"hello/123\"\n    --> Ok (HelloPage 123)\n\n    Url.SimpleParser.parse allParsers \"/hello/123?comments=1\"\n    --> Ok (HelloPage 123)\n\n    Url.SimpleParser.parse allParsers \"hello/123whoops\"\n    --> Err (WasNotInt \"123whoops\")\n\n    Url.SimpleParser.parse allParsers \"\"\n    --> Ok HomePage\n\n    Url.SimpleParser.parse [] \"\"\n    --> Err NoParsers\n\n",
+                "type": "List.List (Url.SimpleParser.Parser a) -> String.String -> Result.Result Url.SimpleParser.ParseError a"
+            },
+            {
+                "name": "parseUrl",
+                "comment": " A variant of [`parsePath`](#parsePath) that accepts an\n[`Url`](https://package.elm-lang.org/packages/elm/url/latest/Url#Url).\n",
+                "type": "List.List (Url.SimpleParser.Parser parseResult) -> Url.Url -> Result.Result Url.SimpleParser.ParseError parseResult"
+            },
+            {
+                "name": "queryFlag",
+                "comment": " A query flag (parameter without `=` and a value), like eg. `/settings?admin`.\n\n    type Route\n        = SettingsRoute { admin : Bool }\n        | ...\n\n    parser : Parser Route\n    parser =\n        Url.SimpleParser.succeed (\\admin -> SettingsRoute { admin = admin })\n            |> Url.SimpleParser.s \"settings\"\n            |> Url.SimpleParser.queryFlag \"admin\"\n\n    Url.SimpleParser.parsePath [parser] \"settings?admin\"\n    --> Ok (SettingsRoute { admin = True })\n\n    Url.SimpleParser.parsePath [parser] \"settings\"\n    --> Ok (SettingsRoute { admin = False })\n\n",
+                "type": "String.String -> Url.SimpleParser.Parser (Basics.Bool -> a) -> Url.SimpleParser.Parser a"
+            },
+            {
+                "name": "queryInt",
+                "comment": " An integer query parameter.\n\n    type Route\n        = UserRoute (Maybe Int)\n        | ...\n\n    parser : Parser Route\n    parser =\n        Url.SimpleParser.succeed UserRoute\n            |> Url.SimpleParser.s \"user\"\n            |> Url.SimpleParser.queryInt \"id\"\n\n    Url.SimpleParser.parsePath [parser] \"user?id=123\"\n    --> Ok (UserRoute (Just 123))\n\n    Url.SimpleParser.parsePath [parser] \"user\"\n    --> Ok (UserRoute Nothing)\n\nWill fail if there are multiple query parameters with the same key:\n\n    Url.SimpleParser.parsePath [parser] \"user?id=1&id=2\"\n    --> Err (NeededSingleQueryParameterValueGotMultiple { got = [\"1\",\"2\"], key = \"id\" })\n\nWill succeed with Nothing if the query parameter contains a non-integer string:\n\n    Url.SimpleParser.parsePath [parser] \"user?id=martin\"\n    --> Ok (UserRoute Nothing)\n\n",
+                "type": "String.String -> Url.SimpleParser.Parser (Maybe.Maybe Basics.Int -> a) -> Url.SimpleParser.Parser a"
+            },
+            {
+                "name": "queryInts",
+                "comment": " A repeated integer query parameter.\n\n    type Route\n        = UserListingRoute (List Int)\n        | ...\n\n    parser : Parser Route\n    parser =\n        Url.SimpleParser.succeed UserListingRoute\n            |> Url.SimpleParser.s \"users\"\n            |> Url.SimpleParser.queryInts \"id\"\n\n    Url.SimpleParser.parsePath [parser] \"users?id=1\"\n    --> Ok (UserListingRoute [1])\n\n    Url.SimpleParser.parsePath [parser] \"users?id=1&id=2&id=3\"\n    --> Ok (UserListingRoute [1,2,3])\n\n    Url.SimpleParser.parsePath [parser] \"users\"\n    --> Ok (UserListingRoute [])\n\nWill fail if given a query parameter with an empty value:\n\n    Url.SimpleParser.parsePath [parser] \"users?id=\"\n    --> Err (NotAllQueryParameterValuesWereInts { got = [ \"\" ] , key = \"id\" })\n\nWill fail if any of the query parameters has a non-integer value:\n\n    Url.SimpleParser.parsePath [parser] \"users?id=1&id=hello\"\n    --> Err (NotAllQueryParameterValuesWereInts { got = [ \"1\", \"hello\" ] , key = \"id\" })\n\n",
+                "type": "String.String -> Url.SimpleParser.Parser (List.List Basics.Int -> a) -> Url.SimpleParser.Parser a"
+            },
+            {
+                "name": "queryString",
+                "comment": " A string query parameter.\n\n    type Route\n        = UserRoute (Maybe String)\n        | ...\n\n    parser : Parser Route\n    parser =\n        Url.SimpleParser.succeed UserRoute\n            |> Url.SimpleParser.s \"user\"\n            |> Url.SimpleParser.queryString \"name\"\n\n    Url.SimpleParser.parsePath [parser] \"user?name=martin\"\n    --> Ok (UserRoute (Just \"martin\"))\n\nWill fail if there are multiple query parameters with the same key:\n\n    Url.SimpleParser.parsePath [parser] \"user?name=a&name=b\"\n    --> Err (NeededSingleQueryParameterValueGotMultiple { got = [\"a\",\"b\"], key = \"name\" })\n\n",
+                "type": "String.String -> Url.SimpleParser.Parser (Maybe.Maybe String.String -> a) -> Url.SimpleParser.Parser a"
+            },
+            {
+                "name": "queryStrings",
+                "comment": " A repeated string query parameter.\n\n    type Route\n        = UserListingRoute (List String)\n        | ...\n\n    parser : Parser Route\n    parser =\n        Url.SimpleParser.succeed UserListingRoute\n            |> Url.SimpleParser.s \"users\"\n            |> Url.SimpleParser.queryInts \"tags\"\n\n    Url.SimpleParser.parsePath [parser] \"users?tags=Foo\"\n    --> Ok (UserListingRoute [\"Foo\"])\n\n    Url.SimpleParser.parsePath [parser] \"users?tags=Foo&tags=Bar&tags=999\"\n    --> Ok (UserListingRoute [\"Foo\", \"Bar\", \"999\"])\n\n    Url.SimpleParser.parsePath [parser] \"users\"\n    --> Ok (UserListingRoute [])\n\nWill succeed with an empty string if given a query parameter with an empty value:\n\n    Url.SimpleParser.parsePath [parser] \"users?tags=\"\n    --> Ok (UserListingRoute [\"\"])\n\n",
+                "type": "String.String -> Url.SimpleParser.Parser (List.List String.String -> a) -> Url.SimpleParser.Parser a"
+            },
+            {
+                "name": "s",
+                "comment": " A hardcoded path segment.\n\n    parser : Parser Route\n    parser =\n        Url.SimpleParser.succeed HomeRoute\n            |> Url.SimpleParser.s \"home\"\n\n    Url.SimpleParser.parsePath [parser] \"home\"\n    --> Ok HomeRoute\n\n",
+                "type": "String.String -> Url.SimpleParser.Parser a -> Url.SimpleParser.Parser a"
+            },
+            {
+                "name": "string",
+                "comment": " A string path segment.\n\n    type Route\n        = PostRoute String\n        | ...\n\n    parser : Parser Route\n    parser =\n        Url.SimpleParser.succeed PostRoute\n            |> Url.SimpleParser.s \"post\"\n            |> Url.SimpleParser.string\n\n    Url.SimpleParser.parsePath [parser] \"post/hello\"\n    --> Ok (PostRoute \"hello\")\n\n    Url.SimpleParser.parsePath [parser] \"post\"\n    --> Err SegmentNotAvailable\n\n",
+                "type": "Url.SimpleParser.Parser (String.String -> a) -> Url.SimpleParser.Parser a"
+            },
+            {
+                "name": "succeed",
+                "comment": " A way to start your Parser definition.\n\n    unfinishedParser : Parser (String -> Route)\n    unfinishedParser =\n        -- needs a string provided via a combinator like `Url.SimpleParser.string`\n        Url.SimpleParser.succeed UserRoute\n\nCan also work standalone for URLs without path segments:\n\n    parser : Parser Route\n    parser =\n        Url.SimpleParser.succeed HomeRoute\n\n    Url.SimpleParser.parsePath [parser] \"\"\n    --> Ok HomeRoute\n\n",
+                "type": "a -> Url.SimpleParser.Parser a"
+            }
+        ],
+        "binops": []
+    }
+]

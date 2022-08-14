@@ -1,0 +1,33 @@
+[
+    {
+        "name": "SmoothScroll",
+        "comment": "\n\n\n# Config\n\n@docs Config\n@docs defaultConfig\n\n\n# Scrolling\n\n@docs scrollTo\n@docs scrollToWithOptions\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " Configuration options for smooth scrolling. Has three options:\n\n  - offset: The amount of space in pixels between the element to scroll to and the top of the viewport that is to remain after scrolling\n  - speed: The higher this number, the faster the scrolling!\n  - easing: The easing function to use. Check out the [easing functions](https://package.elm-lang.org/packages/elm-community/easing-functions/latest/) package for more information.\n\n",
+                "args": [],
+                "type": "{ offset : Basics.Int, speed : Basics.Int, easing : Ease.Easing }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultConfig",
+                "comment": "\n\n    import SmoothScroll\n\n    defaultConfig : Config\n    defaultConfig =\n        { offset = 12\n        , speed = 200\n        , easing = Ease.outQuint\n        }\n\n",
+                "type": "SmoothScroll.Config"
+            },
+            {
+                "name": "scrollTo",
+                "comment": " Scroll to the element with the given id, using the default configuration\n\n    import SmoothScroll\n\n    scrollTo \"article\"\n\n",
+                "type": "String.String -> Task.Task Browser.Dom.Error (List.List ())"
+            },
+            {
+                "name": "scrollToWithOptions",
+                "comment": " Scroll to the element with the given id, using a custom configuration\n\n    import SmoothScroll exposing (defaultConfig)\n\n    scrollToWithOptions { defaultConfig | offset = 60 } \"article\"\n\n",
+                "type": "SmoothScroll.Config -> String.String -> Task.Task Browser.Dom.Error (List.List ())"
+            }
+        ],
+        "binops": []
+    }
+]

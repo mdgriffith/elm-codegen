@@ -1,0 +1,130 @@
+[
+    {
+        "name": "Time.Extra",
+        "comment": "\n\n\n# Create\n\n@docs Parts, partsToPosix\n\n\n# Convert\n\n@docs posixToParts\n\n\n# Intervals\n\n@docs Interval\n\n\n## Difference\n\n@docs diff\n\n\n## Shift\n\n@docs add, floor, ceiling\n\n\n## Lists\n\n@docs range\n\n\n# Time zone offset\n\n@docs toOffset\n\n",
+        "unions": [
+            {
+                "name": "Interval",
+                "comment": " Represents an interval of time.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Year",
+                        []
+                    ],
+                    [
+                        "Quarter",
+                        []
+                    ],
+                    [
+                        "Month",
+                        []
+                    ],
+                    [
+                        "Week",
+                        []
+                    ],
+                    [
+                        "Monday",
+                        []
+                    ],
+                    [
+                        "Tuesday",
+                        []
+                    ],
+                    [
+                        "Wednesday",
+                        []
+                    ],
+                    [
+                        "Thursday",
+                        []
+                    ],
+                    [
+                        "Friday",
+                        []
+                    ],
+                    [
+                        "Saturday",
+                        []
+                    ],
+                    [
+                        "Sunday",
+                        []
+                    ],
+                    [
+                        "Day",
+                        []
+                    ],
+                    [
+                        "Hour",
+                        []
+                    ],
+                    [
+                        "Minute",
+                        []
+                    ],
+                    [
+                        "Second",
+                        []
+                    ],
+                    [
+                        "Millisecond",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Parts",
+                "comment": " Represents a time abstractly by describing its calendar date and clock\ntime. Given a time zone, this information can be converted to a `Posix`, i.e.\na concrete moment in time.\n",
+                "args": [],
+                "type": "{ year : Basics.Int, month : Time.Month, day : Basics.Int, hour : Basics.Int, minute : Basics.Int, second : Basics.Int, millisecond : Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "add",
+                "comment": " Shift a time into the past or future by adding a number of whole intervals.\n\n    import Time exposing (Month(..), utc)\n    import Time.Extra exposing (Interval(..), Parts, partsToPosix, add)\n\n    add Week 2 utc (partsToPosix utc (Parts 2018 Sep 1 11 55 0 0))\n        == partsToPosix utc (Parts 2018 Sep 15 11 55 0 0)\n\nWhen adding `Month`, `Quarter`, or `Year` intervals, day values are clamped to\nthe end of the month if necessary.\n\n    add Month 1 utc (partsToPosix utc (Parts 2020 Jan 31 0 0 0 0))\n        == partsToPosix utc (Parts 2020 Feb 29 0 0 0 0)\n\n",
+                "type": "Time.Extra.Interval -> Basics.Int -> Time.Zone -> Time.Posix -> Time.Posix"
+            },
+            {
+                "name": "ceiling",
+                "comment": " Round up a time to the beginning of the closest interval. The resulting\ntime will be greater than or equal to the one provided.\n\n    import Time exposing (Month(..), utc)\n    import Time.Extra exposing (Interval(..), Parts, partsToPosix, ceiling)\n\n    ceiling Hour utc\n        (partsToPosix utc (Parts 1999 Dec 31 23 59 59 999))\n        == (partsToPosix utc (Parts 2000 Jan 1 0 0 0 0))\n\n",
+                "type": "Time.Extra.Interval -> Time.Zone -> Time.Posix -> Time.Posix"
+            },
+            {
+                "name": "diff",
+                "comment": " Get the difference, as a number of whole intervals, between two times.\n\n    import Time exposing (Month(..), utc)\n    import Time.Extra exposing (Interval(..), Parts, partsToPosix, diff)\n\n    diff Month utc\n        (partsToPosix utc (Parts 2020 Jan 2 0 0 0 0))\n        (partsToPosix utc (Parts 2020 Apr 1 0 0 0 0))\n        == 2\n\n",
+                "type": "Time.Extra.Interval -> Time.Zone -> Time.Posix -> Time.Posix -> Basics.Int"
+            },
+            {
+                "name": "floor",
+                "comment": " Round down a time to the beginning of the closest interval. The resulting\ntime will be less than or equal to the one provided.\n\n    import Time exposing (Month(..), utc)\n    import Time.Extra exposing (Interval(..), Parts, partsToPosix, floor)\n\n    floor Hour utc\n        (partsToPosix utc (Parts 1999 Dec 31 23 59 59 999))\n        == (partsToPosix utc (Parts 1999 Dec 31 23 0 0 0))\n\n",
+                "type": "Time.Extra.Interval -> Time.Zone -> Time.Posix -> Time.Posix"
+            },
+            {
+                "name": "partsToPosix",
+                "comment": " Create a `Posix` from a description of a time and a specific time zone.\n\n    import Time exposing (Month(..), utc)\n    import Time.Extra exposing (Parts, partsToPosix)\n\n    partsToPosix utc (Parts 2018 Sep 26 14 30 0 0)\n\nAny out-of-range day or time values will be clamped within range.\n\n    partsToPosix utc (Parts 2018 Sep 31 24 60 -60 -500)\n        == partsToPosix utc (Parts 2018 Sep 30 23 59 0 0)\n\n",
+                "type": "Time.Zone -> Time.Extra.Parts -> Time.Posix"
+            },
+            {
+                "name": "posixToParts",
+                "comment": " Convert a `Posix` to a description of a time in a specific time zone. This\nis a convenience function for extracting parts of a time into a single record.\n\n    import Time exposing (Month(..), utc)\n    import Time.Extra exposing (Parts, partsToPosix, posixToParts)\n\n    posixToParts\n        utc\n        (partsToPosix utc (Parts 2018 Sep 26 14 30 0 0))\n        == { year = 2018\n           , month = Sep\n           , day = 26\n           , hour = 14\n           , minute = 30\n           , second = 0\n           , millisecond = 0\n           }\n\n",
+                "type": "Time.Zone -> Time.Posix -> Time.Extra.Parts"
+            },
+            {
+                "name": "range",
+                "comment": " Create a list of times, at rounded intervals, increasing by a step value,\nbetween two times. The list will start on or after the first time, and end\nbefore the second time.\n\n    import Time exposing (Month(..), utc)\n    import Time.Extra exposing (Interval(..), Parts, partsToPosix, range)\n\n    start = Parts 2020 Jan 1 12 0 0 0\n    until = Parts 2020 Jan 8 0 0 0 0\n\n    range Day 2 utc (partsToPosix utc start) (partsToPosix utc until)\n        == List.map (partsToPosix utc)\n            [ Parts 2020 Jan 2 0 0 0 0\n            , Parts 2020 Jan 4 0 0 0 0\n            , Parts 2020 Jan 6 0 0 0 0\n            ]\n\n",
+                "type": "Time.Extra.Interval -> Basics.Int -> Time.Zone -> Time.Posix -> Time.Posix -> List.List Time.Posix"
+            },
+            {
+                "name": "toOffset",
+                "comment": " What is the offset from UTC, in minutes, for this `Zone` at this\n`Posix` time?\n\n    import Time exposing (Month(..))\n    import Time.Extra exposing (Parts, partsToPosix, toOffset)\n\n    toOffset nyc\n        (partsToPosix nyc (Parts 2018 Sep 26 10 30 0 0))\n        == -240\n\n    -- assuming `nyc` is a `Zone` for America/New_York\n\n**Note:** It's possible to verify the example above by using time zone data\nfrom the package [justinmimbs/timezone-data][tzdata] to define `nyc`:\n\n    import TimeZone\n\n    nyc =\n        TimeZone.america__new_york ()\n\n[tzdata]: https://package.elm-lang.org/packages/justinmimbs/timezone-data/latest/\n\n",
+                "type": "Time.Zone -> Time.Posix -> Basics.Int"
+            }
+        ],
+        "binops": []
+    }
+]

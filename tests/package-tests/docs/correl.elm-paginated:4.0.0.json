@@ -1,0 +1,54 @@
+[
+    {
+        "name": "Paginated",
+        "comment": " A library for Facilitates fetching data from a paginated JSON API.\n\n\n# Requests and Responses\n\n@docs Request, get, post\n\n\n## Custom requests\n\n@docs RequestOptions, request\n\n\n# Sending requests\n\n@docs send\n\n\n# Low-Level operations\n\n@docs toTask\n\n",
+        "unions": [
+            {
+                "name": "Request",
+                "comment": " Encapsulates an API request for a list of items of type `a`.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "RequestOptions",
+                "comment": " Describes an API request.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ method : String.String, headers : List.List Http.Header, url : String.String, body : Http.Body, decoder : Json.Decode.Decoder a, timeout : Maybe.Maybe Basics.Float, withCredentials : Basics.Bool }"
+            }
+        ],
+        "values": [
+            {
+                "name": "get",
+                "comment": " Build a GET request.\n",
+                "type": "String.String -> Json.Decode.Decoder a -> Paginated.Request a"
+            },
+            {
+                "name": "post",
+                "comment": " Build a POST request.\n",
+                "type": "String.String -> Http.Body -> Json.Decode.Decoder a -> Paginated.Request a"
+            },
+            {
+                "name": "request",
+                "comment": " Create a custom request, allowing the specification of HTTP\nheaders and other options. For example:\n\n    Paginated.request\n        { method = \"GET\"\n        , headers = [ Http.header \"Private-Token\" \"XXXXXXXXXXXXXXXX\" ]\n        , url = url\n        , body = Http.emptyBody\n        , decoder = decoder\n        , timeout = Nothing\n        , withCredentials = False\n        }\n\n",
+                "type": "Paginated.RequestOptions a -> Paginated.Request a"
+            },
+            {
+                "name": "send",
+                "comment": " Send a `Request`.\n",
+                "type": "(Result.Result Http.Error (List.List a) -> msg) -> Paginated.Request a -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "toTask",
+                "comment": " Convert a `Request` into a `Task`.\n\nThis is only really useful if you want to chain together a bunch of\nrequests (or any other tasks) in a single command.\n\n",
+                "type": "Paginated.Request a -> Task.Task Http.Error (List.List a)"
+            }
+        ],
+        "binops": []
+    }
+]

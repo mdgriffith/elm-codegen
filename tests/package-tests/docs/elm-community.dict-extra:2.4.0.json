@@ -1,0 +1,86 @@
+[
+    {
+        "name": "Dict.Extra",
+        "comment": " Convenience functions for working with `Dict`\n\n\n# List operations\n\n@docs groupBy, filterGroupBy, fromListBy, fromListDedupe, fromListDedupeBy, frequencies\n\n\n# Manipulation\n\n@docs removeWhen, removeMany, keepOnly, insertDedupe, mapKeys, filterMap, invert\n\n\n# Utilities\n\n@docs any, find\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "any",
+                "comment": " Determine if any key/value pair satisfies some test.\n\n    Dict.fromList [ ( 9, \"Jill\" ), ( 7, \"Jill\" ) ]\n        |> any (\\_ value -> value == \"Jill\")\n    --> True\n\n    Dict.fromList [ ( 9, \"Jill\" ), ( 7, \"Jill\" ) ]\n        |> any (\\key _ -> key == 5)\n    --> False\n\n",
+                "type": "(comparable -> a -> Basics.Bool) -> Dict.Dict comparable a -> Basics.Bool"
+            },
+            {
+                "name": "filterGroupBy",
+                "comment": " Takes a key-fn and a list.\nCreates a `Dict` which maps the key to a list of matching elements, skipping elements\nwhere key-fn returns `Nothing`\n\n    import Dict\n\n    filterGroupBy (String.uncons >> Maybe.map Tuple.first) [ \"tree\" , \"\", \"tweet\", \"apple\" , \"leaf\", \"\" ]\n    --> Dict.fromList [ ( 't', [ \"tree\", \"tweet\" ] ), ( 'a', [ \"apple\" ] ), ( 'l', [ \"leaf\" ] ) ]\n\n    filterGroupBy\n        .car\n        [ { name = \"Mary\"\n          , car = Just \"Ford\"\n          }\n        , { name = \"Jack\"\n          , car = Nothing\n          }\n        , { name = \"Jill\"\n          , car = Just \"Tesla\"\n          }\n        , { name = \"John\"\n          , car = Just \"Tesla\"\n          }\n        ]\n    --> Dict.fromList\n        [ ( \"Ford\"\n          , [ { name = \"Mary\" , car = Just \"Ford\" } ]\n          )\n        , ( \"Tesla\"\n          , [ { name = \"Jill\" , car = Just \"Tesla\" }\n            , { name = \"John\" , car = Just \"Tesla\" }\n            ]\n          )\n        ]\n\n",
+                "type": "(a -> Maybe.Maybe comparable) -> List.List a -> Dict.Dict comparable (List.List a)"
+            },
+            {
+                "name": "filterMap",
+                "comment": " Apply a function that may or may not succeed to all entries in a dictionary,\nbut only keep the successes.\n\n    let\n        isTeen n a =\n            if 13 <= n && n <= 19 then\n                Just <| String.toUpper a\n            else\n                Nothing\n    in\n        Dict.fromList [ ( 5, \"Jack\" ), ( 15, \"Jill\" ), ( 20, \"Jones\" ) ]\n            |> filterMap isTeen\n    --> Dict.fromList [ ( 15, \"JILL\" ) ]\n\n",
+                "type": "(comparable -> a -> Maybe.Maybe b) -> Dict.Dict comparable a -> Dict.Dict comparable b"
+            },
+            {
+                "name": "find",
+                "comment": " Find the first key/value pair that matches a predicate.\n\n    Dict.fromList [ ( 9, \"Jill\" ), ( 7, \"Jill\" ) ]\n        |> find (\\_ value -> value == \"Jill\")\n    --> Just ( 7, \"Jill\" )\n\n    Dict.fromList [ ( 9, \"Jill\" ), ( 7, \"Jill\" ) ]\n        |> find (\\key _ -> key == 5)\n    --> Nothing\n\n",
+                "type": "(comparable -> a -> Basics.Bool) -> Dict.Dict comparable a -> Maybe.Maybe ( comparable, a )"
+            },
+            {
+                "name": "frequencies",
+                "comment": " Count the number of occurences for each of the elements in the list.\n\n    frequencies [ \"A\", \"B\", \"C\", \"B\", \"C\", \"B\" ]\n    --> Dict.fromList [ ( \"A\", 1 ), ( \"B\", 3 ), ( \"C\", 2 ) ]\n\n",
+                "type": "List.List comparable -> Dict.Dict comparable Basics.Int"
+            },
+            {
+                "name": "fromListBy",
+                "comment": " Create a dictionary from a list of values, by passing a function that can get a key from any such value.\nIf the function does not return unique keys, earlier values are discarded.\n\n    fromListBy String.length [ \"tree\" , \"apple\" , \"leaf\" ]\n    --> Dict.fromList [ ( 4, \"leaf\" ), ( 5, \"apple\" ) ]\n\n",
+                "type": "(a -> comparable) -> List.List a -> Dict.Dict comparable a"
+            },
+            {
+                "name": "fromListDedupe",
+                "comment": " Like `Dict.fromList`, but you provide a way to deal with\nduplicate keys. Create a dictionary from a list of pairs of keys and\nvalues, providing a function that is used to combine multiple values\npaired with the same key.\n\n    fromListDedupe\n        (\\a b -> a ++ \" \" ++ b)\n        [ ( \"class\", \"menu\" ), ( \"width\", \"100%\" ), ( \"class\", \"big\" ) ]\n    --> Dict.fromList [ ( \"class\", \"menu big\" ), ( \"width\", \"100%\" ) ]\n\n",
+                "type": "(a -> a -> a) -> List.List ( comparable, a ) -> Dict.Dict comparable a"
+            },
+            {
+                "name": "fromListDedupeBy",
+                "comment": " `fromListBy` and `fromListDedupe` rolled into one.\n\n    fromListDedupeBy (\\first second -> first) String.length [ \"tree\" , \"apple\" , \"leaf\" ]\n    --> Dict.fromList [ ( 4, \"tree\" ), ( 5, \"apple\" ) ]\n\n",
+                "type": "(a -> a -> a) -> (a -> comparable) -> List.List a -> Dict.Dict comparable a"
+            },
+            {
+                "name": "groupBy",
+                "comment": " Takes a key-fn and a list.\nCreates a `Dict` which maps the key to a list of matching elements.\n\n    import Dict\n\n    groupBy String.length [ \"tree\" , \"apple\" , \"leaf\" ]\n    --> Dict.fromList [ ( 4, [ \"tree\", \"leaf\" ] ), ( 5, [ \"apple\" ] ) ]\n\n",
+                "type": "(a -> comparable) -> List.List a -> Dict.Dict comparable (List.List a)"
+            },
+            {
+                "name": "insertDedupe",
+                "comment": " Insert an element at the given key, providing a combining\nfunction that used in the case that there is already an\nelement at that key. The combining function is called with\noriginal element and the new element as arguments and\nreturns the element to be inserted.\n\n    Dict.fromList [ ( \"expenses\", 38.25 ), ( \"assets\", 100.85 ) ]\n        |> insertDedupe (+) \"expenses\" 2.50\n        |> insertDedupe (+) \"liabilities\" -2.50\n    --> Dict.fromList [ ( \"expenses\", 40.75 ), ( \"assets\", 100.85 ), ( \"liabilities\", -2.50 ) ]\n\n",
+                "type": "(v -> v -> v) -> comparable -> v -> Dict.Dict comparable v -> Dict.Dict comparable v"
+            },
+            {
+                "name": "invert",
+                "comment": " Inverts the keys and values of an array.\n\n    Dict.fromList [ (\"key\", \"value\")  ]\n        |> invert\n    --> Dict.fromList [ ( \"value\", \"key\" ) ]\n\n",
+                "type": "Dict.Dict comparable1 comparable2 -> Dict.Dict comparable2 comparable1"
+            },
+            {
+                "name": "keepOnly",
+                "comment": " Keep a key-value pair if its key appears in the set.\n\n    Dict.fromList [ ( \"Mary\", 1 ), ( \"Jack\", 2 ), ( \"Jill\", 1 ) ]\n        |> keepOnly (Set.fromList [ \"Jack\", \"Jill\" ])\n    --> Dict.fromList [ ( \"Jack\", 2 ), ( \"Jill\", 1 ) ]\n\n",
+                "type": "Set.Set comparable -> Dict.Dict comparable v -> Dict.Dict comparable v"
+            },
+            {
+                "name": "mapKeys",
+                "comment": " Apply a function to all keys in a dictionary.\n\n    Dict.fromList [ ( 5, \"Jack\" ), ( 10, \"Jill\" ) ]\n        |> mapKeys (\\x -> x + 1)\n    --> Dict.fromList [ ( 6, \"Jack\" ), ( 11, \"Jill\" ) ]\n\n    Dict.fromList [ ( 5, \"Jack\" ), ( 10, \"Jill\" ) ]\n        |> mapKeys toString\n    --> Dict.fromList [ ( \"5\", \"Jack\" ), ( \"10\", \"Jill\" ) ]\n\n",
+                "type": "(comparable -> comparable1) -> Dict.Dict comparable v -> Dict.Dict comparable1 v"
+            },
+            {
+                "name": "removeMany",
+                "comment": " Remove a key-value pair if its key appears in the set.\n\n    import Set\n\n    Dict.fromList [ ( \"Mary\", 1 ), ( \"Jack\", 2 ), ( \"Jill\", 1 ) ]\n        |> removeMany (Set.fromList [ \"Mary\", \"Jill\" ])\n    --> Dict.fromList [ ( \"Jack\", 2 ) ]\n\n",
+                "type": "Set.Set comparable -> Dict.Dict comparable v -> Dict.Dict comparable v"
+            },
+            {
+                "name": "removeWhen",
+                "comment": " Remove elements which satisfies the predicate.\n\n    Dict.fromList [ ( \"Mary\", 1 ), ( \"Jack\", 2 ), ( \"Jill\", 1 ) ]\n        |> removeWhen (\\_ value -> value == 1 )\n    --> Dict.fromList [ ( \"Jack\", 2 ) ]\n\n",
+                "type": "(comparable -> v -> Basics.Bool) -> Dict.Dict comparable v -> Dict.Dict comparable v"
+            }
+        ],
+        "binops": []
+    }
+]

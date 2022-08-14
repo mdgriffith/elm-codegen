@@ -1,0 +1,300 @@
+[
+    {
+        "name": "Makie",
+        "comment": " This module provides API to draw images on canvas (using elm-canvas)\n\n\n# Types\n\n@docs Makie, Msg\n\n\n# Constructor\n\n@docs makie\n\n\n# Update and view\n\n@docs update, view, tick\n\n\n# Accessor\n\n@docs getMode, setMode\n\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " Makie message.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Makie",
+                "comment": " Makie type.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "Makie.Internal.Makie.Makie msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "getMode",
+                "comment": " getMode\n",
+                "type": "Makie.Makie msg -> Makie.Mode.Mode"
+            },
+            {
+                "name": "makie",
+                "comment": " Constructor\n",
+                "type": "{ options : Makie.Options.Options, project : Makie.Project.Project, data : Makie.Data.Data, lifter : Makie.Msg -> msg } -> Makie.Makie msg"
+            },
+            {
+                "name": "setMode",
+                "comment": " setMode\n",
+                "type": "Makie.Mode.Mode -> Makie.Makie msg -> Makie.Makie msg"
+            },
+            {
+                "name": "tick",
+                "comment": " tick\n",
+                "type": "Time.Posix -> Makie.Msg"
+            },
+            {
+                "name": "update",
+                "comment": " Update function\n",
+                "type": "{ options : Makie.Options.Options, project : Makie.Project.Project, data : Makie.Data.Data, lifter : Makie.Msg -> msg } -> Makie.Msg -> Makie.Makie msg -> ( Makie.Makie msg, List.List Makie.Data.Query )"
+            },
+            {
+                "name": "view",
+                "comment": " View\n",
+                "type": "(Makie.Msg -> msg) -> Makie.Makie msg -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Makie.Annotation",
+        "comment": " This module provides API related to Annotation\n\n\n# Types\n\n@docs Annotation, Id\n\n\n# Constructor\n\n@docs id, point\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Annotation",
+                "comment": " Annotation type.\n",
+                "args": [],
+                "type": "Makie.Internal.Makie.Annotation"
+            },
+            {
+                "name": "Id",
+                "comment": " Annotation's ID type.\n",
+                "args": [],
+                "type": "Makie.Internal.Makie.AnnotationId"
+            }
+        ],
+        "values": [
+            {
+                "name": "id",
+                "comment": " Construct Id\n",
+                "type": "String.String -> Makie.Annotation.Id"
+            },
+            {
+                "name": "point",
+                "comment": " Create point annotation\n",
+                "type": "Time.Posix -> Makie.Category.Id -> { x : Basics.Float, y : Basics.Float } -> Makie.Annotation.Annotation"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Makie.Category",
+        "comment": " This module provides API related to Category\n\n\n# Types\n\n@docs Category, Id\n\n\n# Constructor\n\n@docs id, category, categoryWith\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Category",
+                "comment": " Category type.\n",
+                "args": [],
+                "type": "Makie.Internal.Makie.Category"
+            },
+            {
+                "name": "Id",
+                "comment": " Category Id type.\n",
+                "args": [],
+                "type": "Makie.Internal.Makie.CategoryId"
+            }
+        ],
+        "values": [
+            {
+                "name": "category",
+                "comment": " Create category\n",
+                "type": "String.String -> Color.Color -> Makie.Category.Category"
+            },
+            {
+                "name": "categoryWith",
+                "comment": " Create category with options\n",
+                "type": "{ name : String.String, color : Color.Color, selectedColor : Color.Color, fillColor : Color.Color, selectedFillColor : Color.Color, borderColor : Color.Color, selectedBorderColor : Color.Color } -> Makie.Category.Category"
+            },
+            {
+                "name": "id",
+                "comment": " Construct Id\n",
+                "type": "String.String -> Makie.Category.Id"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Makie.Data",
+        "comment": " This module provides API related to Data\n\n\n# Types\n\n@docs Data, Status, Query\n\n\n# Constructor\n\n@docs data, update\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Data",
+                "comment": " Data type.\n",
+                "args": [],
+                "type": "Makie.Internal.Makie.Data"
+            },
+            {
+                "name": "Query",
+                "comment": " Query type.\n",
+                "args": [],
+                "type": "Makie.Internal.Makie.Query"
+            },
+            {
+                "name": "Status",
+                "comment": " Status type.\n",
+                "args": [],
+                "type": "Makie.Internal.Makie.Status"
+            }
+        ],
+        "values": [
+            {
+                "name": "data",
+                "comment": " Constructor\n",
+                "type": "Basics.Int -> Makie.Image.Image -> List.List Makie.Annotation.Annotation -> Makie.Data.Data"
+            },
+            {
+                "name": "update",
+                "comment": " Update data by queries\n",
+                "type": "List.List Makie.Data.Query -> Makie.Data.Data -> Makie.Data.Data"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Makie.Image",
+        "comment": " This module provides API related to Image\n\n\n# Types\n\n@docs Image, Id\n\n\n# Constructor\n\n@docs id, image\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Id",
+                "comment": " Image's ID type.\n",
+                "args": [],
+                "type": "Makie.Types.Data.ImageIdentifier"
+            },
+            {
+                "name": "Image",
+                "comment": " Annotation type.\n",
+                "args": [],
+                "type": "Makie.Types.Data.Image"
+            }
+        ],
+        "values": [
+            {
+                "name": "id",
+                "comment": " Construct Id\n",
+                "type": "String.String -> Makie.Image.Id"
+            },
+            {
+                "name": "image",
+                "comment": " Create image\n",
+                "type": "Makie.Image.Id -> { name : String.String, url : String.String, width : Basics.Int, height : Basics.Int } -> Makie.Image.Image"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Makie.Mode",
+        "comment": " This module provides API related to Mode\n\n\n# Types\n\n@docs Mode\n\n\n# Constructor\n\n@docs fromString, point, browse\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Mode",
+                "comment": " Mode type.\n",
+                "args": [],
+                "type": "Makie.Types.State.Mode"
+            }
+        ],
+        "values": [
+            {
+                "name": "browse",
+                "comment": " browse mode\n",
+                "type": "Makie.Mode.Mode"
+            },
+            {
+                "name": "fromString",
+                "comment": " from string\n",
+                "type": "String.String -> Maybe.Maybe Makie.Mode.Mode"
+            },
+            {
+                "name": "point",
+                "comment": " point mode\n",
+                "type": "Makie.Mode.Mode"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Makie.Options",
+        "comment": " This module provides API related to Options\n\n\n# Types\n\n@docs Options\n\n\n# Constructor\n\n@docs default\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Options",
+                "comment": " Options type.\n",
+                "args": [],
+                "type": "Makie.Internal.Makie.Options"
+            }
+        ],
+        "values": [
+            {
+                "name": "default",
+                "comment": " Create default options\n",
+                "type": "Makie.Options.Options"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Makie.Project",
+        "comment": " This module provides API related to Project\n\n\n# Types\n\n@docs Project, Categories\n\n\n# Constructor\n\n@docs project, empty\n\n\n# Getter and setter\n\n@docs selected, setSelected, categories, setCategories\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Categories",
+                "comment": " Categories type.\n",
+                "args": [],
+                "type": "List.List ( Makie.Category.Id, Makie.Category.Category )"
+            },
+            {
+                "name": "Project",
+                "comment": " Project type.\n",
+                "args": [],
+                "type": "Makie.Internal.Makie.Project"
+            }
+        ],
+        "values": [
+            {
+                "name": "categories",
+                "comment": " Get categories\n",
+                "type": "Makie.Project.Project -> Makie.Project.Categories"
+            },
+            {
+                "name": "empty",
+                "comment": " Empty project\n",
+                "type": "Makie.Project.Project"
+            },
+            {
+                "name": "project",
+                "comment": " Create project\n",
+                "type": "String.String -> Makie.Project.Categories -> Maybe.Maybe Makie.Category.Id -> Makie.Project.Project"
+            },
+            {
+                "name": "selected",
+                "comment": " Get selected category.\n",
+                "type": "Makie.Project.Project -> Maybe.Maybe ( Makie.Category.Id, Makie.Category.Category )"
+            },
+            {
+                "name": "setCategories",
+                "comment": " Set categories\n",
+                "type": "Makie.Project.Categories -> Makie.Project.Project -> Makie.Project.Project"
+            },
+            {
+                "name": "setSelected",
+                "comment": " Set selected category.\n",
+                "type": "Maybe.Maybe Makie.Category.Id -> Makie.Project.Project -> Makie.Project.Project"
+            }
+        ],
+        "binops": []
+    }
+]

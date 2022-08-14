@@ -1,0 +1,51 @@
+[
+    {
+        "name": "FileValue",
+        "comment": "\n\n\n# Files\n\n@docs File, decoder, encode\n\n\n# Load files with an input\n\n@docs hiddenInputSingle, hiddenInputMultiple\n\n\n# Drop files\n\n@docs onDrop, DropConfig\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "DropConfig",
+                "comment": " Configuration of a file drop target.\nThe `onOver`, `onDrop` and `onLeave` record entries of `DropConfig` correspond\nrespectively to the Html `dragover`, `drop` and `dragleave` events.\n\nThe Html `dragenter` and `dragleave` events generally are unreliable\nbecause they bubble up from children items and do not behave\nconsistently with borders.\n\nSince the `dragover` event can usually replace the `dragenter` event,\nwe do not provide a config entry for `dragenter`.\nBeware though that the `dragover` event\nwill trigger multiple times while the mouse is moving on the drop area.\n\nIf you really want to track `dragleave` events,\nyou need to also provide a unique id that will be used to identify the event original target.\n\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ onOver : FileValue.File -> List.List FileValue.File -> msg, onDrop : FileValue.File -> List.List FileValue.File -> msg, onLeave : Maybe.Maybe { id : String.String, msg : msg } }"
+            },
+            {
+                "name": "File",
+                "comment": " Represents an uploaded file with its metadata.\n\nThe file is store as its raw JavaScript value.\nIf needed, it is possible to convert it to the `File`\ntype defined in [`elm/file`](/packages/elm/file/latest)\nsimply by using the decoder defined there on the `value` field here.\n\n",
+                "args": [],
+                "type": "{ value : Json.Decode.Value, name : String.String, mime : String.String, size : Basics.Int, lastModified : Time.Posix }"
+            }
+        ],
+        "values": [
+            {
+                "name": "decoder",
+                "comment": " Decode `File` values.\n",
+                "type": "Json.Decode.Decoder FileValue.File"
+            },
+            {
+                "name": "encode",
+                "comment": " Encode a `File`.\n",
+                "type": "FileValue.File -> Json.Decode.Value"
+            },
+            {
+                "name": "hiddenInputMultiple",
+                "comment": " A hidden file input to load multiple files.\nTo use it, add a visible label linked to this input by its id.\n\n    type Msg\n        = LoadImages File (List File)\n\n    view _ =\n        div []\n            [ hiddenInputMultiple \"TheFileInput\" [ \"image/*\" ] LoadImages\n            , label [ for \"TheFileInput\" ] [ text \"click to load the images\" ]\n            ]\n\n",
+                "type": "String.String -> List.List String.String -> (FileValue.File -> List.List FileValue.File -> msg) -> Html.Html msg"
+            },
+            {
+                "name": "hiddenInputSingle",
+                "comment": " A hidden file input to load a single file.\nTo use it, add a visible label linked to this input by its id.\n\n    type Msg\n        = LoadData File\n\n    view _ =\n        div []\n            [ hiddenInputSingle \"TheFileInput\" [ \"text/csv\" ] LoadData\n            , label [ for \"TheFileInput\" ] [ text \"click to load data\" ]\n            ]\n\n",
+                "type": "String.String -> List.List String.String -> (FileValue.File -> msg) -> Html.Html msg"
+            },
+            {
+                "name": "onDrop",
+                "comment": " Create Html attributes for a file dropping area.\n\n    type Msg\n        = DragOver File (List File)\n        | Drop File (List File)\n        | DragLeave\n\n    dropConfig =\n        { onOver = DragOver\n        , onDrop = Drop\n        , onLeave = Just { id = \"FileDropArea\", msg = DragLeave }\n        }\n\n    view _ =\n        div (FileValue.onDrop dropConfig)\n            [ text \"Drop files here\" ]\n\n",
+                "type": "FileValue.DropConfig msg -> List.List (Html.Attribute msg)"
+            }
+        ],
+        "binops": []
+    }
+]

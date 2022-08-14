@@ -1,0 +1,16 @@
+[
+    {
+        "name": "Flip",
+        "comment": " Reverse the arguments of a function with only two arguments.\n\n@docs flip\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "flip",
+                "comment": " Take a function, the first argument, and return a new function that accepts the same parameters as the original function, but in reverse order.\n",
+                "type": "(a -> b -> c) -> b -> a -> c"
+            }
+        ],
+        "binops": []
+    }
+]

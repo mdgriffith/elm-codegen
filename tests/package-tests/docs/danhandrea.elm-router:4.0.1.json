@@ -1,0 +1,180 @@
+[
+    {
+        "name": "Router",
+        "comment": "\n\n    Router\n\n\n# Config\n\n@docs Config\n\n\n# Options\n\n@docs Options, Cache, defaultOptions\n\n\n# Router Msg\n\n@docs Router, Msg\n\n\n# Layout\n\n@docs Layout\n\n\n# Basic\n\n@docs init, update, view, subscriptions\n\n\n# App url\n\n@docs onUrlChange, onUrlRequest\n\n\n# Map\n\n@docs mapUpdate, mapView\n\n\n# Query\n\n@docs url, route, page, viewport, base\n\n\n# Navigation\n\n@docs redirect, reload\n\n\n# Events\n\n@docs Event\n\n",
+        "unions": [
+            {
+                "name": "Cache",
+                "comment": " Cache rules\n",
+                "args": [
+                    "route"
+                ],
+                "cases": [
+                    [
+                        "Always",
+                        []
+                    ],
+                    [
+                        "Never",
+                        []
+                    ],
+                    [
+                        "Custom",
+                        [
+                            "route -> Basics.Bool"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Event",
+                "comment": " Event\n\nBasic router events\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "UrlRequested",
+                        [
+                            "Url.Url"
+                        ]
+                    ],
+                    [
+                        "UrlChanged",
+                        [
+                            "Url.Url"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Msg",
+                "comment": " Msg\n",
+                "args": [
+                    "pageMsg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Router",
+                "comment": " Router\n",
+                "args": [
+                    "route",
+                    "page"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " Config\n\nbind\nYour router Msg eg `RouterMsg (Router.Msg Page.Msg)`\n\nparser\nYour `Route` parser\n\nnotFound\nYour not found `Route`\n\ninit\nYour `Page` init\n\nupdate\nYour `Page` update\n\nview\nYour `Page` view\n\nsubscriptions\nYour `Page` subscriptions\n\noptions\n`Router` options\n\n",
+                "args": [
+                    "msg",
+                    "route",
+                    "page",
+                    "pageMsg"
+                ],
+                "type": "{ bind : Router.Msg pageMsg -> msg, parser : Url.Parser.Parser (route -> route) route, notFound : Url.Url -> route, init : route -> ( page, Platform.Cmd.Cmd pageMsg ), update : pageMsg -> page -> ( page, Platform.Cmd.Cmd pageMsg ), view : page -> Router.Layout pageMsg, subscriptions : page -> Platform.Sub.Sub pageMsg, options : Router.Options route msg }"
+            },
+            {
+                "name": "Layout",
+                "comment": " Layout\n\ntitle\nSet a title for each page.\n\nattrs\nAttributes that will be set on the container.\n\nmain\nHtml content to be set inside the container.\n\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ title : Maybe.Maybe String.String, attrs : List.List (Html.Attribute msg), main : List.List (Html.Html msg) }"
+            },
+            {
+                "name": "Options",
+                "comment": " Router options\n\ncache\ncache strategy\n\ncacheExceptions\npaths to ignore caching for, useful for pages like login\nwhere you don't want the inputs to remain filled.\n\nnavigation delay\nadd delay to navigation so you can animate page transitions\n\nonEvent\nreceive notifications for Router events\n\n",
+                "args": [
+                    "route",
+                    "msg"
+                ],
+                "type": "{ cache : Router.Cache route, cacheExceptions : List.List String.String, navigationDelay : Maybe.Maybe Basics.Float, onEvent : Maybe.Maybe (Router.Event -> msg) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "base",
+                "comment": " base\n",
+                "type": "Router.Router route page -> Url.Url"
+            },
+            {
+                "name": "defaultOptions",
+                "comment": " default options\n\nAlways use cache\n\nNo exceptions\n\nNo navigation delay\n\nNo events\n\n",
+                "type": "Router.Options route msg"
+            },
+            {
+                "name": "init",
+                "comment": " init\n",
+                "type": "Router.Config msg route page pageMsg -> Url.Url -> Browser.Navigation.Key -> ( Router.Router route page, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "mapUpdate",
+                "comment": " map update\n",
+                "type": "(model -> page) -> (msg -> pageMsg) -> ( model, Platform.Cmd.Cmd msg ) -> ( page, Platform.Cmd.Cmd pageMsg )"
+            },
+            {
+                "name": "mapView",
+                "comment": " map view\n",
+                "type": "(msgA -> msgB) -> Router.Layout msgA -> Router.Layout msgB"
+            },
+            {
+                "name": "onUrlChange",
+                "comment": " onUrlChange\n",
+                "type": "(Router.Msg pageMsg -> msg) -> Url.Url -> msg"
+            },
+            {
+                "name": "onUrlRequest",
+                "comment": " onUrlRequest\n",
+                "type": "(Router.Msg pageMsg -> msg) -> Browser.UrlRequest -> msg"
+            },
+            {
+                "name": "page",
+                "comment": " currentPage\n",
+                "type": "Router.Router route page -> Maybe.Maybe page"
+            },
+            {
+                "name": "redirect",
+                "comment": " redirect\n",
+                "type": "Router.Config msg route page pageMsg -> Router.Router route page -> String.String -> ( Router.Router route page, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "reload",
+                "comment": " reload\n\nThis never results in a page load!\nIt will just re-init the current page\n\n",
+                "type": "Router.Config msg route page pageMsg -> Router.Router route page -> ( Router.Router route page, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "route",
+                "comment": " currentRoute\n",
+                "type": "Router.Router route page -> route"
+            },
+            {
+                "name": "subscriptions",
+                "comment": " subscriptions\n",
+                "type": "Router.Config msg route page pageMsg -> Router.Router route page -> Platform.Sub.Sub msg"
+            },
+            {
+                "name": "update",
+                "comment": " update\n",
+                "type": "Router.Config msg route page pageMsg -> Router.Msg pageMsg -> Router.Router route page -> ( Router.Router route page, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "url",
+                "comment": " currentUrl\n",
+                "type": "Router.Router route page -> Url.Url"
+            },
+            {
+                "name": "view",
+                "comment": " view\n",
+                "type": "Router.Config msg route page pageMsg -> Router.Router route page -> Router.Layout msg"
+            },
+            {
+                "name": "viewport",
+                "comment": " currentViewPort\n",
+                "type": "Router.Router route page -> Maybe.Maybe Browser.Dom.Viewport"
+            }
+        ],
+        "binops": []
+    }
+]

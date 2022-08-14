@@ -1,0 +1,848 @@
+[
+    {
+        "name": "Elm.CodeGen",
+        "comment": " Elm.CodeGen is a DSL designed to make it easier to write Elm code that generates Elm code.\n\n\n# Build an Elm source file.\n\n@docs file\n\n\n# Build a module declaration.\n\n`elm-syntax` also permits effects modules, but with kernel code restrictions you cannot use these so\nthey have been ommitted from the DSL.\n\n@docs normalModule, portModule\n\n\n# Build an 'exposing' statement.\n\n@docs exposeAll, exposeExplicit, infixExpose\n@docs closedTypeExpose, funExpose, openTypeExpose, typeOrAliasExpose\n\n\n# Build an import statement.\n\n@docs importStmt\n\n\n# Incrementally build import and exposing statements.\n\nThis is useful during code generation where the exact imports and exports are not known in advance\nbut depend on what code is actually generated. Each section of code generation can declare the imports and\nexposings that it needs and they can be combined and de-duplicated to produce a final list.\n\nI have used the name `Linkage` to refer to the combination of a modules imports and exports. It describes\nhow a module is linked to other modules.\n\n@docs Linkage, addExposing, addImport, combineLinkage, emptyLinkage\n\n\n# Build comments in a structured way.\n\n@docs Comment, DocComment, FileComment, emptyDocComment, emptyFileComment, markdown, code, docTags, docTagsFromExposings\n\n\n# Build top-level declarations.\n\n@docs aliasDecl, customTypeDecl, funDecl, valDecl, portDecl\n\n\n# Operators\n\n@docs BinOp, composer, composel, power, mult, div, intDiv, modulo, remOp, plus\n@docs minus, append, cons, equals, notEqual, lt, gt, lte, gte, and, or, piper, pipel\n@docs binOp, applyBinOp, applyUnaryMinus\n\n\n# Other Expressions.\n\n@docs access, accessFun, apply, construct, caseExpr, char, float, fqConstruct, fqFun, fqVal, fun, glsl, hex\n@docs ifExpr, int, lambda, letExpr, list, negate, parens, record\n@docs string, tuple, unit, update, val\n@docs letFunction, letDestructuring, letVal\n\n\n# Helper functions for common expression patterns.\n\n@docs chain, pipe, binOpChain\n\n\n# Build a pattern matching expression.\n\n@docs allPattern, asPattern, charPattern, floatPattern, fqNamedPattern, hexPattern, intPattern\n@docs listPattern, namedPattern, parensPattern, recordPattern, stringPattern, tuplePattern, unConsPattern\n@docs unitPattern, varPattern\n\n\n# Build a type annotation.\n\n@docs extRecordAnn, fqTyped, funAnn, recordAnn, tupleAnn, typeVar, typed, unitAnn\n@docs boolAnn, intAnn, floatAnn, stringAnn, charAnn\n@docs listAnn, setAnn, dictAnn, maybeAnn\n\n\n# Build a type signature.\n\n@docs signature\n\n\n# Types describing parts of the Elm AST.\n\nThese types are all declared in `elm-syntax` but are re-exported here for convenience.\n\n@docs ModuleName, Module, File, Declaration, Import, TypeAnnotation\n@docs Exposing, TopLevelExpose, Expression, Pattern, LetDeclaration\n\n",
+        "unions": [
+            {
+                "name": "BinOp",
+                "comment": " Represents all of the binary operators allowed in Elm.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Declaration",
+                "comment": " The AST for a top-level Elm declaration; a function, a value, a type or a\ntype alias.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "DeclWithComment",
+                        [
+                            "Elm.CodeGen.Comment Elm.CodeGen.DocComment",
+                            "String.String -> Elm.Syntax.Declaration.Declaration"
+                        ]
+                    ],
+                    [
+                        "DeclNoComment",
+                        [
+                            "Elm.Syntax.Declaration.Declaration"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Comment",
+                "comment": " A structured representation of an Elm comment on a file or declaration.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "Elm.Comments.Comment a"
+            },
+            {
+                "name": "DocComment",
+                "comment": " A comment type for doc comments on top-level declarations.\n",
+                "args": [],
+                "type": "Elm.Comments.DocComment"
+            },
+            {
+                "name": "Exposing",
+                "comment": " The AST for an Elm exposing statement.\n",
+                "args": [],
+                "type": "Elm.Syntax.Exposing.Exposing"
+            },
+            {
+                "name": "Expression",
+                "comment": " The AST for an Elm expression.\n",
+                "args": [],
+                "type": "Elm.Syntax.Expression.Expression"
+            },
+            {
+                "name": "File",
+                "comment": " The AST for an Elm file.\n",
+                "args": [],
+                "type": "{ moduleDefinition : Elm.Syntax.Node.Node Elm.CodeGen.Module, imports : List.List (Elm.Syntax.Node.Node Elm.CodeGen.Import), declarations : List.List Elm.CodeGen.Declaration, comments : Maybe.Maybe (Elm.CodeGen.Comment Elm.CodeGen.FileComment) }"
+            },
+            {
+                "name": "FileComment",
+                "comment": " A comment type for file comments at the head of a .elm file.\n",
+                "args": [],
+                "type": "Elm.Comments.FileComment"
+            },
+            {
+                "name": "Import",
+                "comment": " The AST for an Elm import statement.\n",
+                "args": [],
+                "type": "Elm.Syntax.Import.Import"
+            },
+            {
+                "name": "LetDeclaration",
+                "comment": " The AST for an Elm let declaration.\n",
+                "args": [],
+                "type": "Elm.Syntax.Expression.LetDeclaration"
+            },
+            {
+                "name": "Linkage",
+                "comment": " Linkage describes the lists of imports and exposings of a module and allows\nthese to be built up incrementally as code generation progresses.\n",
+                "args": [],
+                "type": "( List.List Elm.CodeGen.Import, List.List Elm.CodeGen.TopLevelExpose )"
+            },
+            {
+                "name": "Module",
+                "comment": " The AST for an Elm module.\n",
+                "args": [],
+                "type": "Elm.Syntax.Module.Module"
+            },
+            {
+                "name": "ModuleName",
+                "comment": " A module name can consist of mulitple Stirngs separated with '.'.\n",
+                "args": [],
+                "type": "List.List String.String"
+            },
+            {
+                "name": "Pattern",
+                "comment": " The AST for a de-structuring Elm pattern matching expression.\n",
+                "args": [],
+                "type": "Elm.Syntax.Pattern.Pattern"
+            },
+            {
+                "name": "TopLevelExpose",
+                "comment": " The AST for a member of an Elm exposing statement.\n",
+                "args": [],
+                "type": "Elm.Syntax.Exposing.TopLevelExpose"
+            },
+            {
+                "name": "TypeAnnotation",
+                "comment": " The AST for an Elm type annotation.\n",
+                "args": [],
+                "type": "Elm.Syntax.TypeAnnotation.TypeAnnotation"
+            }
+        ],
+        "values": [
+            {
+                "name": "access",
+                "comment": " RecordAccess (Node Expression) (Node String)\n",
+                "type": "Elm.CodeGen.Expression -> String.String -> Elm.CodeGen.Expression"
+            },
+            {
+                "name": "accessFun",
+                "comment": " RecordAccessFunction String\n",
+                "type": "String.String -> Elm.CodeGen.Expression"
+            },
+            {
+                "name": "addExposing",
+                "comment": " Adds an exposing to the list.\n",
+                "type": "Elm.CodeGen.TopLevelExpose -> Elm.CodeGen.Linkage -> Elm.CodeGen.Linkage"
+            },
+            {
+                "name": "addImport",
+                "comment": " Adds an import to the list.\n",
+                "type": "Elm.CodeGen.Import -> Elm.CodeGen.Linkage -> Elm.CodeGen.Linkage"
+            },
+            {
+                "name": "aliasDecl",
+                "comment": " AliasDeclaration TypeAlias\n",
+                "type": "Maybe.Maybe (Elm.CodeGen.Comment Elm.CodeGen.DocComment) -> String.String -> List.List String.String -> Elm.CodeGen.TypeAnnotation -> Elm.CodeGen.Declaration"
+            },
+            {
+                "name": "allPattern",
+                "comment": " AllPattern\n",
+                "type": "Elm.CodeGen.Pattern"
+            },
+            {
+                "name": "and",
+                "comment": " The logical and operator `&&`.\n",
+                "type": "Elm.CodeGen.BinOp"
+            },
+            {
+                "name": "append",
+                "comment": " The append operator `++`.\n",
+                "type": "Elm.CodeGen.BinOp"
+            },
+            {
+                "name": "apply",
+                "comment": " Application (List (Node Expression))\n",
+                "type": "List.List Elm.CodeGen.Expression -> Elm.CodeGen.Expression"
+            },
+            {
+                "name": "applyBinOp",
+                "comment": " Applies a binary operator to left and right expressions. This takes the\nexpression in the order that is usual; that being `expr op expr`.\n\n    applyBinOp (int 2) plus (int 3)\n\nYields:\n\n    2 + 3\n\n",
+                "type": "Elm.CodeGen.Expression -> Elm.CodeGen.BinOp -> Elm.CodeGen.Expression -> Elm.CodeGen.Expression"
+            },
+            {
+                "name": "applyUnaryMinus",
+                "comment": " There is only one unary operator in Elm, and that is the minus sign prefixed\nonto some numeric expression.\n\n    applyUnaryMinus (int 5)\n\nYields:\n\n     -5\n\n",
+                "type": "Elm.CodeGen.Expression -> Elm.CodeGen.Expression"
+            },
+            {
+                "name": "asPattern",
+                "comment": " AsPattern (Node Pattern) (Node String)\n",
+                "type": "Elm.CodeGen.Pattern -> String.String -> Elm.CodeGen.Pattern"
+            },
+            {
+                "name": "binOp",
+                "comment": " Creates a binary operator in its prefix form, as a bracketed expression.\n\n    binOp equals\n\nYields:\n\n    (=)\n\n",
+                "type": "Elm.CodeGen.BinOp -> Elm.CodeGen.Expression"
+            },
+            {
+                "name": "binOpChain",
+                "comment": " Joins multiple expressions together with a binary operator. An\nexpression `a`, and operator op, combined with a list of expressions `[b, c, d]`\nresults in:\n\n    a op b op c op d\n\nThe expression is not bracketed so will parse as the operator associativity\ndirects.\n\n",
+                "type": "Elm.CodeGen.Expression -> Elm.CodeGen.BinOp -> List.List Elm.CodeGen.Expression -> Elm.CodeGen.Expression"
+            },
+            {
+                "name": "boolAnn",
+                "comment": " A `Bool` type annotation.\n",
+                "type": "Elm.CodeGen.TypeAnnotation"
+            },
+            {
+                "name": "caseExpr",
+                "comment": " CaseExpression CaseBlock\n",
+                "type": "Elm.CodeGen.Expression -> List.List ( Elm.CodeGen.Pattern, Elm.CodeGen.Expression ) -> Elm.CodeGen.Expression"
+            },
+            {
+                "name": "chain",
+                "comment": " Joins multiple expressions together with the function chain operator `>>`. An\nexpression `a` combined with a list of expressions `[b, c, d]` results in:\n\n    a >> b >> c >> d\n\n",
+                "type": "Elm.CodeGen.Expression -> List.List Elm.CodeGen.Expression -> Elm.CodeGen.Expression"
+            },
+            {
+                "name": "char",
+                "comment": " CharLiteral Char\n",
+                "type": "Char.Char -> Elm.CodeGen.Expression"
+            },
+            {
+                "name": "charAnn",
+                "comment": " A `Char` type annotation.\n",
+                "type": "Elm.CodeGen.TypeAnnotation"
+            },
+            {
+                "name": "charPattern",
+                "comment": " CharPattern Char\n",
+                "type": "Char.Char -> Elm.CodeGen.Pattern"
+            },
+            {
+                "name": "closedTypeExpose",
+                "comment": " TypeExpose ExposedType\n",
+                "type": "String.String -> Elm.CodeGen.TopLevelExpose"
+            },
+            {
+                "name": "code",
+                "comment": " Adds a code block to a comment.\n",
+                "type": "String.String -> Elm.CodeGen.Comment a -> Elm.CodeGen.Comment a"
+            },
+            {
+                "name": "combineLinkage",
+                "comment": " Simplifies the imports and exposings by removing any duplicates.\n",
+                "type": "List.List Elm.CodeGen.Linkage -> Elm.CodeGen.Linkage"
+            },
+            {
+                "name": "composel",
+                "comment": " The compose left operator `<<`.\n",
+                "type": "Elm.CodeGen.BinOp"
+            },
+            {
+                "name": "composer",
+                "comment": " The compose right operator `>>`.\n",
+                "type": "Elm.CodeGen.BinOp"
+            },
+            {
+                "name": "cons",
+                "comment": " The cons operator `::`.\n",
+                "type": "Elm.CodeGen.BinOp"
+            },
+            {
+                "name": "construct",
+                "comment": " Apply a named constructor to a list of arguments.\n",
+                "type": "String.String -> List.List Elm.CodeGen.Expression -> Elm.CodeGen.Expression"
+            },
+            {
+                "name": "customTypeDecl",
+                "comment": " CustomTypeDeclaration Type\n",
+                "type": "Maybe.Maybe (Elm.CodeGen.Comment Elm.CodeGen.DocComment) -> String.String -> List.List String.String -> List.List ( String.String, List.List Elm.CodeGen.TypeAnnotation ) -> Elm.CodeGen.Declaration"
+            },
+            {
+                "name": "dictAnn",
+                "comment": " Creates a `Dict` type annotation.\n",
+                "type": "Elm.CodeGen.TypeAnnotation -> Elm.CodeGen.TypeAnnotation -> Elm.CodeGen.TypeAnnotation"
+            },
+            {
+                "name": "div",
+                "comment": " The division operator `/`.\n",
+                "type": "Elm.CodeGen.BinOp"
+            },
+            {
+                "name": "docTags",
+                "comment": " Adds a set of doc tags to a comment.\n\nDoc tags will never be merged into a single line, but if they are too long to fit\nthe page width, the pretty printer can break them into separate lines.\n\n",
+                "type": "List.List String.String -> Elm.CodeGen.Comment Elm.CodeGen.FileComment -> Elm.CodeGen.Comment Elm.CodeGen.FileComment"
+            },
+            {
+                "name": "docTagsFromExposings",
+                "comment": " Adds a set of doc tags taking from a description of what a module exposes,\ninto a comment.\n\nDoc tags will never be merged into a single line, but if they are too long to fit\nthe page width, the pretty printer can break them into separate lines.\n\n",
+                "type": "List.List Elm.CodeGen.TopLevelExpose -> Elm.CodeGen.Comment Elm.CodeGen.FileComment -> Elm.CodeGen.Comment Elm.CodeGen.FileComment"
+            },
+            {
+                "name": "emptyDocComment",
+                "comment": " Creates an empty documenting comment that will go on a declaration.\n",
+                "type": "Elm.CodeGen.Comment Elm.CodeGen.DocComment"
+            },
+            {
+                "name": "emptyFileComment",
+                "comment": " Creates an empty comment that will go on a module file.\n",
+                "type": "Elm.CodeGen.Comment Elm.CodeGen.FileComment"
+            },
+            {
+                "name": "emptyLinkage",
+                "comment": " Creates empty imports and exposings lists.\n",
+                "type": "Elm.CodeGen.Linkage"
+            },
+            {
+                "name": "equals",
+                "comment": " The equality operator `==`.\n",
+                "type": "Elm.CodeGen.BinOp"
+            },
+            {
+                "name": "exposeAll",
+                "comment": " All Range\n",
+                "type": "Elm.CodeGen.Exposing"
+            },
+            {
+                "name": "exposeExplicit",
+                "comment": " Explicit (List (Node TopLevelExpose))\n",
+                "type": "List.List Elm.CodeGen.TopLevelExpose -> Elm.CodeGen.Exposing"
+            },
+            {
+                "name": "extRecordAnn",
+                "comment": " GenericRecord (Node String) (Node RecordDefinition)\n",
+                "type": "String.String -> List.List ( String.String, Elm.CodeGen.TypeAnnotation ) -> Elm.CodeGen.TypeAnnotation"
+            },
+            {
+                "name": "file",
+                "comment": " Assembles all the components of an Elm file; the module declaration, the\ncomments, the imports and the top-level declarations.\n",
+                "type": "Elm.CodeGen.Module -> List.List Elm.CodeGen.Import -> List.List Elm.CodeGen.Declaration -> Maybe.Maybe (Elm.CodeGen.Comment Elm.CodeGen.FileComment) -> Elm.CodeGen.File"
+            },
+            {
+                "name": "float",
+                "comment": " Floatable Float\n",
+                "type": "Basics.Float -> Elm.CodeGen.Expression"
+            },
+            {
+                "name": "floatAnn",
+                "comment": " A `Float` type annotation.\n",
+                "type": "Elm.CodeGen.TypeAnnotation"
+            },
+            {
+                "name": "floatPattern",
+                "comment": " FloatPattern Float\n",
+                "type": "Basics.Float -> Elm.CodeGen.Pattern"
+            },
+            {
+                "name": "fqConstruct",
+                "comment": " Apply a named constructor fully qualified with a module name, to a list of\narguments.\n",
+                "type": "Elm.CodeGen.ModuleName -> String.String -> List.List Elm.CodeGen.Expression -> Elm.CodeGen.Expression"
+            },
+            {
+                "name": "fqFun",
+                "comment": " FunctionOrValue ModuleName String\n",
+                "type": "Elm.CodeGen.ModuleName -> String.String -> Elm.CodeGen.Expression"
+            },
+            {
+                "name": "fqNamedPattern",
+                "comment": " NamedPattern QualifiedNameRef (List (Node Pattern))\n",
+                "type": "Elm.CodeGen.ModuleName -> String.String -> List.List Elm.CodeGen.Pattern -> Elm.CodeGen.Pattern"
+            },
+            {
+                "name": "fqTyped",
+                "comment": " Typed (Node ( ModuleName, String )) (List (Node TypeAnnotation))\n",
+                "type": "Elm.CodeGen.ModuleName -> String.String -> List.List Elm.CodeGen.TypeAnnotation -> Elm.CodeGen.TypeAnnotation"
+            },
+            {
+                "name": "fqVal",
+                "comment": " FunctionOrValue ModuleName String\n\nNote this is the same as `fqFun`\n\n",
+                "type": "Elm.CodeGen.ModuleName -> String.String -> Elm.CodeGen.Expression"
+            },
+            {
+                "name": "fun",
+                "comment": " Creates a FunctionOrValue with no qualifying module.\n",
+                "type": "String.String -> Elm.CodeGen.Expression"
+            },
+            {
+                "name": "funAnn",
+                "comment": " FunctionTypeAnnotation (Node TypeAnnotation) (Node TypeAnnotation)\n",
+                "type": "Elm.CodeGen.TypeAnnotation -> Elm.CodeGen.TypeAnnotation -> Elm.CodeGen.TypeAnnotation"
+            },
+            {
+                "name": "funDecl",
+                "comment": " FunctionDeclaration Function\n",
+                "type": "Maybe.Maybe (Elm.CodeGen.Comment Elm.CodeGen.DocComment) -> Maybe.Maybe Elm.CodeGen.TypeAnnotation -> String.String -> List.List Elm.CodeGen.Pattern -> Elm.CodeGen.Expression -> Elm.CodeGen.Declaration"
+            },
+            {
+                "name": "funExpose",
+                "comment": " FunctionExpose String\n",
+                "type": "String.String -> Elm.CodeGen.TopLevelExpose"
+            },
+            {
+                "name": "glsl",
+                "comment": " GLSLExpression String\n",
+                "type": "String.String -> Elm.CodeGen.Expression"
+            },
+            {
+                "name": "gt",
+                "comment": " The greater-than operator `>`.\n",
+                "type": "Elm.CodeGen.BinOp"
+            },
+            {
+                "name": "gte",
+                "comment": " The greater-than-or-equal operator `>=`.\n",
+                "type": "Elm.CodeGen.BinOp"
+            },
+            {
+                "name": "hex",
+                "comment": " Hex Int\n",
+                "type": "Basics.Int -> Elm.CodeGen.Expression"
+            },
+            {
+                "name": "hexPattern",
+                "comment": " HexPattern Int\n",
+                "type": "Basics.Int -> Elm.CodeGen.Pattern"
+            },
+            {
+                "name": "ifExpr",
+                "comment": " IfBlock (Node Expression) (Node Expression) (Node Expression)\n",
+                "type": "Elm.CodeGen.Expression -> Elm.CodeGen.Expression -> Elm.CodeGen.Expression -> Elm.CodeGen.Expression"
+            },
+            {
+                "name": "importStmt",
+                "comment": " Creates an Elm import statement; the name of the module, an optional alias\nname for the module, and an optional list of exposings from the module.\n",
+                "type": "Elm.CodeGen.ModuleName -> Maybe.Maybe Elm.CodeGen.ModuleName -> Maybe.Maybe Elm.CodeGen.Exposing -> Elm.CodeGen.Import"
+            },
+            {
+                "name": "infixExpose",
+                "comment": " Custom operators were removed from Elm 0.19, but you can still import them\nfrom the kernel modules that do define them, such as elm/parser.\n",
+                "type": "String.String -> Elm.CodeGen.TopLevelExpose"
+            },
+            {
+                "name": "int",
+                "comment": " Integer Int\n",
+                "type": "Basics.Int -> Elm.CodeGen.Expression"
+            },
+            {
+                "name": "intAnn",
+                "comment": " An `Int` type annotation.\n",
+                "type": "Elm.CodeGen.TypeAnnotation"
+            },
+            {
+                "name": "intDiv",
+                "comment": " The integer division operator `//`.\n",
+                "type": "Elm.CodeGen.BinOp"
+            },
+            {
+                "name": "intPattern",
+                "comment": " IntPattern Int\n",
+                "type": "Basics.Int -> Elm.CodeGen.Pattern"
+            },
+            {
+                "name": "lambda",
+                "comment": " LambdaExpression Lambda\n",
+                "type": "List.List Elm.CodeGen.Pattern -> Elm.CodeGen.Expression -> Elm.CodeGen.Expression"
+            },
+            {
+                "name": "letDestructuring",
+                "comment": " A pattern matching declared inside a let block.\n",
+                "type": "Elm.CodeGen.Pattern -> Elm.CodeGen.Expression -> Elm.CodeGen.LetDeclaration"
+            },
+            {
+                "name": "letExpr",
+                "comment": " LetExpression LetBlock\n",
+                "type": "List.List Elm.CodeGen.LetDeclaration -> Elm.CodeGen.Expression -> Elm.CodeGen.Expression"
+            },
+            {
+                "name": "letFunction",
+                "comment": " A function declared inside a let block.\n",
+                "type": "String.String -> List.List Elm.CodeGen.Pattern -> Elm.CodeGen.Expression -> Elm.CodeGen.LetDeclaration"
+            },
+            {
+                "name": "letVal",
+                "comment": " A value declared inside a let block.\n",
+                "type": "String.String -> Elm.CodeGen.Expression -> Elm.CodeGen.LetDeclaration"
+            },
+            {
+                "name": "list",
+                "comment": " ListExpr (List (Node Expression))\n",
+                "type": "List.List Elm.CodeGen.Expression -> Elm.CodeGen.Expression"
+            },
+            {
+                "name": "listAnn",
+                "comment": " Creates a `List` type annotation.\n",
+                "type": "Elm.CodeGen.TypeAnnotation -> Elm.CodeGen.TypeAnnotation"
+            },
+            {
+                "name": "listPattern",
+                "comment": " ListPattern (List (Node Pattern))\n",
+                "type": "List.List Elm.CodeGen.Pattern -> Elm.CodeGen.Pattern"
+            },
+            {
+                "name": "lt",
+                "comment": " The less-than operator `<`.\n",
+                "type": "Elm.CodeGen.BinOp"
+            },
+            {
+                "name": "lte",
+                "comment": " The less-than-or-equal operator `<=`.\n",
+                "type": "Elm.CodeGen.BinOp"
+            },
+            {
+                "name": "markdown",
+                "comment": " Adds some markdown to a comment.\n",
+                "type": "String.String -> Elm.CodeGen.Comment a -> Elm.CodeGen.Comment a"
+            },
+            {
+                "name": "maybeAnn",
+                "comment": " Creates a `Maybe` type annotation.\n",
+                "type": "Elm.CodeGen.TypeAnnotation -> Elm.CodeGen.TypeAnnotation"
+            },
+            {
+                "name": "minus",
+                "comment": " The subtraction operator `-`.\n",
+                "type": "Elm.CodeGen.BinOp"
+            },
+            {
+                "name": "modulo",
+                "comment": " The modulo operator `%`.\n",
+                "type": "Elm.CodeGen.BinOp"
+            },
+            {
+                "name": "mult",
+                "comment": " The multiplication operator `*`.\n",
+                "type": "Elm.CodeGen.BinOp"
+            },
+            {
+                "name": "namedPattern",
+                "comment": " NamedPattern QualifiedNameRef (List (Node Pattern))\n",
+                "type": "String.String -> List.List Elm.CodeGen.Pattern -> Elm.CodeGen.Pattern"
+            },
+            {
+                "name": "negate",
+                "comment": " Negation (Node Expression)\n",
+                "type": "Elm.CodeGen.Expression -> Elm.CodeGen.Expression"
+            },
+            {
+                "name": "normalModule",
+                "comment": " NormalModule DefaultModuleData\n",
+                "type": "Elm.CodeGen.ModuleName -> List.List Elm.CodeGen.TopLevelExpose -> Elm.CodeGen.Module"
+            },
+            {
+                "name": "notEqual",
+                "comment": " The inequality operator `/=`.\n",
+                "type": "Elm.CodeGen.BinOp"
+            },
+            {
+                "name": "openTypeExpose",
+                "comment": " TypeExpose ExposedType\n",
+                "type": "String.String -> Elm.CodeGen.TopLevelExpose"
+            },
+            {
+                "name": "or",
+                "comment": " The logical or operator `||`.\n",
+                "type": "Elm.CodeGen.BinOp"
+            },
+            {
+                "name": "parens",
+                "comment": " ParenthesizedExpression (Node Expression)\n\nNote: elm-syntax-dsl should insert parentheses automatically in relevant places, however this can still be useful in corner cases.\n\n",
+                "type": "Elm.CodeGen.Expression -> Elm.CodeGen.Expression"
+            },
+            {
+                "name": "parensPattern",
+                "comment": " ParenthesizedPattern (Node Pattern)\n",
+                "type": "Elm.CodeGen.Pattern -> Elm.CodeGen.Pattern"
+            },
+            {
+                "name": "pipe",
+                "comment": " Joins multiple expressions together with the pipe operator `|>`. An\nexpression `a` combined with a list of expressions `[b, c, d]` results in:\n\n    a |> b |> c |> d\n\n",
+                "type": "Elm.CodeGen.Expression -> List.List Elm.CodeGen.Expression -> Elm.CodeGen.Expression"
+            },
+            {
+                "name": "pipel",
+                "comment": " The pipe left operator `<|`.\n",
+                "type": "Elm.CodeGen.BinOp"
+            },
+            {
+                "name": "piper",
+                "comment": " The pipe right operator `|>`.\n",
+                "type": "Elm.CodeGen.BinOp"
+            },
+            {
+                "name": "plus",
+                "comment": " The addition operator `+`.\n",
+                "type": "Elm.CodeGen.BinOp"
+            },
+            {
+                "name": "portDecl",
+                "comment": " PortDeclaration Signature\n",
+                "type": "String.String -> Elm.CodeGen.TypeAnnotation -> Elm.CodeGen.Declaration"
+            },
+            {
+                "name": "portModule",
+                "comment": " PortModule DefaultModuleData\n",
+                "type": "Elm.CodeGen.ModuleName -> List.List Elm.CodeGen.TopLevelExpose -> Elm.CodeGen.Module"
+            },
+            {
+                "name": "power",
+                "comment": " The to-the-power-of operator `^`\n",
+                "type": "Elm.CodeGen.BinOp"
+            },
+            {
+                "name": "record",
+                "comment": " RecordExpr (List (Node RecordSetter))\n",
+                "type": "List.List ( String.String, Elm.CodeGen.Expression ) -> Elm.CodeGen.Expression"
+            },
+            {
+                "name": "recordAnn",
+                "comment": " Record RecordDefinition\n",
+                "type": "List.List ( String.String, Elm.CodeGen.TypeAnnotation ) -> Elm.CodeGen.TypeAnnotation"
+            },
+            {
+                "name": "recordPattern",
+                "comment": " RecordPattern (List (Node String))\n",
+                "type": "List.List String.String -> Elm.CodeGen.Pattern"
+            },
+            {
+                "name": "remOp",
+                "comment": " The remainder operator `rem`.\n",
+                "type": "Elm.CodeGen.BinOp"
+            },
+            {
+                "name": "setAnn",
+                "comment": " Creates a `Set` type annotation.\n",
+                "type": "Elm.CodeGen.TypeAnnotation -> Elm.CodeGen.TypeAnnotation"
+            },
+            {
+                "name": "signature",
+                "comment": " Creates a type signature.\n",
+                "type": "String.String -> Elm.CodeGen.TypeAnnotation -> Elm.Syntax.Signature.Signature"
+            },
+            {
+                "name": "string",
+                "comment": " Literal String\n",
+                "type": "String.String -> Elm.CodeGen.Expression"
+            },
+            {
+                "name": "stringAnn",
+                "comment": " A `String` type annotation.\n",
+                "type": "Elm.CodeGen.TypeAnnotation"
+            },
+            {
+                "name": "stringPattern",
+                "comment": " StringPattern String\n",
+                "type": "String.String -> Elm.CodeGen.Pattern"
+            },
+            {
+                "name": "tuple",
+                "comment": " TupledExpression (List (Node Expression))\n",
+                "type": "List.List Elm.CodeGen.Expression -> Elm.CodeGen.Expression"
+            },
+            {
+                "name": "tupleAnn",
+                "comment": " Tupled (List (Node TypeAnnotation))\n",
+                "type": "List.List Elm.CodeGen.TypeAnnotation -> Elm.CodeGen.TypeAnnotation"
+            },
+            {
+                "name": "tuplePattern",
+                "comment": " TuplePattern (List (Node Pattern))\n",
+                "type": "List.List Elm.CodeGen.Pattern -> Elm.CodeGen.Pattern"
+            },
+            {
+                "name": "typeOrAliasExpose",
+                "comment": " TypeOrAliasExpose String\n",
+                "type": "String.String -> Elm.CodeGen.TopLevelExpose"
+            },
+            {
+                "name": "typeVar",
+                "comment": " GenericType String\n",
+                "type": "String.String -> Elm.CodeGen.TypeAnnotation"
+            },
+            {
+                "name": "typed",
+                "comment": " Typed (Node ( ModuleName, String )) (List (Node TypeAnnotation))\n",
+                "type": "String.String -> List.List Elm.CodeGen.TypeAnnotation -> Elm.CodeGen.TypeAnnotation"
+            },
+            {
+                "name": "unConsPattern",
+                "comment": " UnConsPattern (Node Pattern) (Node Pattern)\n",
+                "type": "Elm.CodeGen.Pattern -> Elm.CodeGen.Pattern -> Elm.CodeGen.Pattern"
+            },
+            {
+                "name": "unit",
+                "comment": " UnitExpr\n",
+                "type": "Elm.CodeGen.Expression"
+            },
+            {
+                "name": "unitAnn",
+                "comment": " Unit\n",
+                "type": "Elm.CodeGen.TypeAnnotation"
+            },
+            {
+                "name": "unitPattern",
+                "comment": " UnitPattern\n",
+                "type": "Elm.CodeGen.Pattern"
+            },
+            {
+                "name": "update",
+                "comment": " RecordUpdateExpression (Node String) (List (Node RecordSetter))\n",
+                "type": "String.String -> List.List ( String.String, Elm.CodeGen.Expression ) -> Elm.CodeGen.Expression"
+            },
+            {
+                "name": "val",
+                "comment": " Creates a FunctionOrValue with no qualifying module.\n\nNote this is the same as `fun`.\n\n",
+                "type": "String.String -> Elm.CodeGen.Expression"
+            },
+            {
+                "name": "valDecl",
+                "comment": " A top-level value declaration or constant.\n",
+                "type": "Maybe.Maybe (Elm.CodeGen.Comment Elm.CodeGen.DocComment) -> Maybe.Maybe Elm.CodeGen.TypeAnnotation -> String.String -> Elm.CodeGen.Expression -> Elm.CodeGen.Declaration"
+            },
+            {
+                "name": "varPattern",
+                "comment": " VarPattern String\n",
+                "type": "String.String -> Elm.CodeGen.Pattern"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Elm.DSLParser",
+        "comment": " An Elm source code parser.\n\nThis differs from the parser in Elm.Parser which is part of `stil4m/elm-syntax`,\nin that it does not parse comments just as strings, but into a structured format.\n\nThe structured format know the difference between different parts of the comment\nmarkdown including descriptive text, code examples and docs tags. The structured\nformat is used to re-flow comments to fit a page width, and to use doc tags to\ndetermine how to lay out exposing lists to match.\n\n@docs parse\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "parse",
+                "comment": " Parses a string into a file of Elm code.\n",
+                "type": "String.String -> Result.Result (List.List Parser.DeadEnd) Elm.CodeGen.File"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Elm.Pretty",
+        "comment": " Elm.Pretty is a pretty printer for Elm syntax trees. It makes use of\n`the-sett/elm-pretty-printer` to best fit the code to a given page width in\ncharacters.\n\nIt aims to output code that is fully stable with respect to `elm-format` in the\nsense that running `elm-format` on the output should have no effect at all. The\nadvantage of this is that if generated code moves to being edited by hand, there\nwill not be a large white-space only diff created when `elm-format` is applied.\n\nTo print the `Doc` created by the `pretty` functions, `the-sett/elm-pretty-printer`\nis used:\n\n    import Elm.Pretty\n    import Pretty\n\n\n    -- Fit to a page width of 120 characters\n    elmAsString =\n        Elm.Pretty.prepareLayout 120 someFile\n            |> Pretty.pretty 120\n\nUse the `Pretty.Renderer` module to consume the `Tag`s when printing to create\nfancy outputs such as HTML or console colors for syntax highlighting:\n\n    -- Fit to a column width of 120 characters\n    elmAsHtmlWithHighlighting =\n        Elm.Pretty.prepareLayout 120 someFile\n            |> Pretty.Renderer.pretty htmlRenderer 120\n\nThere is also a helper `pretty` function in this module that can go straight to\na `String`, for convenience:\n\n    -- Fit to a page width of 120 characters\n    elmAsString =\n        Elm.Pretty.pretty 120 someFile\n\n\n# Syntax highlighting tags.\n\n@docs Tag\n\n\n# Pretty prints an entire Elm file.\n\n@docs prepareLayout, pretty\n\n\n# Pretty printing snippets of Elm.\n\n@docs prettyModule\n@docs prettyImports, prettyExposing\n@docs prettyDeclaration, prettyFun, prettyTypeAlias, prettyCustomType, prettyPortDeclaration, prettyDestructuring\n@docs prettySignature, prettyPattern, prettyExpression, prettyTypeAnnotation\n\n",
+        "unions": [
+            {
+                "name": "Tag",
+                "comment": " Elm syntax tags. The pretty print `Doc Tag` is parameterized over this set of\ntags, which describe which part of the Elm syntax the various parts of the `Doc`\nare for.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "KeywordTag",
+                        []
+                    ],
+                    [
+                        "CommentTag",
+                        []
+                    ],
+                    [
+                        "OperatorTag",
+                        []
+                    ],
+                    [
+                        "TypeTag",
+                        []
+                    ],
+                    [
+                        "StatementTag",
+                        []
+                    ],
+                    [
+                        "SignatureTag",
+                        []
+                    ],
+                    [
+                        "LiteralTag",
+                        []
+                    ],
+                    [
+                        "NumberTag",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "prepareLayout",
+                "comment": " Prepares a file of Elm code for layout by the pretty printer.\n\nNote that the `Doc` type returned by this is a `Pretty.Doc`. This can be printed\nto a string by the `the-sett/elm-pretty-printer` package.\n\nThese `Doc` based functions are exposed in case you want to pretty print some\nElm inside something else with the pretty printer, or do more fancy outputs with\nsyntax highlighting.\n\nThe `pretty` function can be used to go directly from a `File` to a `String`, if\nthat is more convenient.\n\n",
+                "type": "Basics.Int -> Elm.CodeGen.File -> Pretty.Doc Elm.Pretty.Tag"
+            },
+            {
+                "name": "pretty",
+                "comment": " Prints a file of Elm code to the given page width, making use of the pretty\nprinter.\n",
+                "type": "Basics.Int -> Elm.CodeGen.File -> String.String"
+            },
+            {
+                "name": "prettyCustomType",
+                "comment": " Pretty prints a custom type declaration, which may include documentation too.\n",
+                "type": "Elm.Syntax.Type.Type -> Pretty.Doc Elm.Pretty.Tag"
+            },
+            {
+                "name": "prettyDeclaration",
+                "comment": " Pretty prints a single top-level declaration.\n",
+                "type": "Basics.Int -> Elm.CodeGen.Declaration -> Pretty.Doc Elm.Pretty.Tag"
+            },
+            {
+                "name": "prettyDestructuring",
+                "comment": " Pretty prints a destructuring declaration.\n",
+                "type": "Elm.Syntax.Pattern.Pattern -> Elm.Syntax.Expression.Expression -> Pretty.Doc Elm.Pretty.Tag"
+            },
+            {
+                "name": "prettyExposing",
+                "comment": " Pretty prints the contents of an exposing statement, as found on a module or import\nstatement.\n\nThe exposed values will be de-duplicated and sorted.\n\n",
+                "type": "Elm.Syntax.Exposing.Exposing -> Pretty.Doc Elm.Pretty.Tag"
+            },
+            {
+                "name": "prettyExpression",
+                "comment": " Pretty prints an expression.\n",
+                "type": "Elm.Syntax.Expression.Expression -> Pretty.Doc Elm.Pretty.Tag"
+            },
+            {
+                "name": "prettyFun",
+                "comment": " Pretty prints an Elm function, which may include documentation and a signature too.\n",
+                "type": "Elm.Syntax.Expression.Function -> Pretty.Doc Elm.Pretty.Tag"
+            },
+            {
+                "name": "prettyImports",
+                "comment": " Pretty prints a list of import statements.\n\nThe list will be de-duplicated and sorted.\n\n",
+                "type": "List.List Elm.Syntax.Import.Import -> Pretty.Doc Elm.Pretty.Tag"
+            },
+            {
+                "name": "prettyModule",
+                "comment": " Pretty prints a module definition.\n",
+                "type": "Elm.Syntax.Module.Module -> Pretty.Doc Elm.Pretty.Tag"
+            },
+            {
+                "name": "prettyPattern",
+                "comment": " Pretty prints a pattern.\n",
+                "type": "Elm.Syntax.Pattern.Pattern -> Pretty.Doc Elm.Pretty.Tag"
+            },
+            {
+                "name": "prettyPortDeclaration",
+                "comment": " Pretty prints a port declaration.\n",
+                "type": "Elm.Syntax.Signature.Signature -> Pretty.Doc Elm.Pretty.Tag"
+            },
+            {
+                "name": "prettySignature",
+                "comment": " Pretty prints a type signature.\n",
+                "type": "Elm.Syntax.Signature.Signature -> Pretty.Doc Elm.Pretty.Tag"
+            },
+            {
+                "name": "prettyTypeAlias",
+                "comment": " Pretty prints a type alias definition, which may include documentation too.\n",
+                "type": "Elm.Syntax.TypeAlias.TypeAlias -> Pretty.Doc Elm.Pretty.Tag"
+            },
+            {
+                "name": "prettyTypeAnnotation",
+                "comment": " Pretty prints a type annotation.\n",
+                "type": "Elm.Syntax.TypeAnnotation.TypeAnnotation -> Pretty.Doc Elm.Pretty.Tag"
+            }
+        ],
+        "binops": []
+    }
+]

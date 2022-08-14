@@ -1,0 +1,232 @@
+[
+    {
+        "name": "Bytes.Parser",
+        "comment": " Parse `Bytes` with custom error reporting and context tracking.\n\n\n# Running parsers\n\n@docs Parser, run, Error\n\n\n# Static parsers\n\n@docs succeed, fail, inContext\n\n\n# Basic parsers\n\n\n## Integers\n\n@docs unsignedInt8, unsignedInt16, unsignedInt32, signedInt8, signedInt16, signedInt32\n\n\n## Floats\n\n@docs float32, float64\n\n\n## Strings\n\n@docs string\n\n\n## Bytes\n\n@docs bytes\n\n\n# Transforming values\n\n@docs map, map2, map3, map4, map5\n\n\n# Combininig parsers\n\n@docs keep, ignore, skip\n\n\n# Fancy parsers\n\n@docs andThen, oneOf, repeat, Step, loop\n\n\n# Random access\n\n@docs Position, position, startOfInput, randomAccess\n\n",
+        "unions": [
+            {
+                "name": "Error",
+                "comment": " Describes errors that arise while parsing.\n\nCustom errors happen through [`fail`](#fail), context tracking happens through\n[`inContext`](#inContext).\n\n",
+                "args": [
+                    "context",
+                    "error"
+                ],
+                "cases": [
+                    [
+                        "InContext",
+                        [
+                            "{ label : context, start : Basics.Int }",
+                            "Bytes.Parser.Error context error"
+                        ]
+                    ],
+                    [
+                        "OutOfBounds",
+                        [
+                            "{ at : Basics.Int, bytes : Basics.Int }"
+                        ]
+                    ],
+                    [
+                        "Custom",
+                        [
+                            "{ at : Basics.Int }",
+                            "error"
+                        ]
+                    ],
+                    [
+                        "BadOneOf",
+                        [
+                            "{ at : Basics.Int }",
+                            "List.List (Bytes.Parser.Error context error)"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Parser",
+                "comment": " A parser which tracks a certain type of context, a certain type of error and\nproduces a certain type of value.\n",
+                "args": [
+                    "context",
+                    "error",
+                    "value"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Position",
+                "comment": " A concrete position in the input.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Step",
+                "comment": " Represent the next step of a loop: Either continue looping with some new\ninternal state, or finish while producing a value.\n",
+                "args": [
+                    "state",
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Loop",
+                        [
+                            "state"
+                        ]
+                    ],
+                    [
+                        "Done",
+                        [
+                            "a"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "andThen",
+                "comment": " Parse one thing, and then parse another thing based on the first thing.\n\nThis is very useful to make the content of your data drive your parser. As an\nexample, consider a string encoded as the length of the string, followed by the\nactual data:\n\n    import Bytes.Encode as E\n    import Bytes.Parser as P exposing (Parser)\n\n\n    string : Parser c e String\n    string =\n        P.unsignedInt8 |> P.andThen P.string\n\n\n    [ E.unsignedInt8 5\n    , E.string \"hello\"\n    ]\n        |> E.sequence\n        |> E.encode\n        |> P.run string\n    --> Ok \"hello\"\n\n",
+                "type": "(a -> Bytes.Parser.Parser context error b) -> Bytes.Parser.Parser context error a -> Bytes.Parser.Parser context error b"
+            },
+            {
+                "name": "bytes",
+                "comment": " Parse `count` bytes as `Bytes`.\n",
+                "type": "Basics.Int -> Bytes.Parser.Parser context error Bytes.Bytes"
+            },
+            {
+                "name": "fail",
+                "comment": " A Parser that always fails with the given error.\n\n    import Bytes.Encode as E\n    import Bytes.Parser as P\n\n\n    type Error = SomeFailure\n\n\n    E.sequence []\n        |> E.encode\n        |> P.run (P.fail SomeFailure)\n    --> Err (P.Custom { at = 0 } SomeFailure)\n\n_Important note about using `fail` in `andThen`_:\n\nThe offset the `Custom` constructor of `Error` is tagged with, is the offset the\nparser is at when `fail` is executed. When this happens inside and `andThen`, be\naware that something was already read in order for there to be and `andThen` in\nthe first place.\n\nFor example, consider this:\n\n    E.unsignedInt8 1\n        |> E.encode\n        |> P.run (P.andThen (\\_ -> P.fail \"fail\") P.unsignedInt8)\n    --> Err (P.Custom { at = 1 } \"fail\")\n\nWe may have intended for the failure to be about the byte we just read, and\nexpect the offset to be \"before\" reading that byte. That's not quite what\n`andThen` means, though! `andThen` means we parsed something successfully\nalready!\n\n",
+                "type": "error -> Bytes.Parser.Parser context error value"
+            },
+            {
+                "name": "float32",
+                "comment": " Parse 4 bytes into a Float.\n",
+                "type": "Bytes.Endianness -> Bytes.Parser.Parser context error Basics.Float"
+            },
+            {
+                "name": "float64",
+                "comment": " Parse 8 bytes into a Float.\n",
+                "type": "Bytes.Endianness -> Bytes.Parser.Parser context error Basics.Float"
+            },
+            {
+                "name": "ignore",
+                "comment": " Ignore the value produced by a parser.\n\nNote that the parser must still succeed for the pipeline to succeed. This means\nyou can use this for checking the value of something, without using the value.\n\n    import Bytes.Encode as E\n    import Bytes.Parser as P exposing (Parser)\n\n\n    type Error = Mismatch { expected : Int, actual : Int }\n\n\n    match : Int -> Parser c Error Int\n    match expected =\n        P.unsignedInt8\n            |> P.andThen\n                (\\actual ->\n                    if expected == actual then\n                        P.succeed actual\n                    else\n                        P.fail (Mismatch { expected = expected, actual = actual})\n                )\n\n    parser : Parser c Error ()\n    parser =\n        P.succeed ()\n            |> P.ignore (match 66)\n\n\n    E.unsignedInt8 66\n        |> E.encode\n        |> P.run parser\n    --> Ok ()\n\n\n    E.unsignedInt8 44\n        |> E.encode\n        |> P.run parser\n    --> Mismatch { expected = 66, actual = 44 }\n    -->   |> P.Custom { at = 1 }\n    -->   |> Err\n\n",
+                "type": "Bytes.Parser.Parser context error ignore -> Bytes.Parser.Parser context error keep -> Bytes.Parser.Parser context error keep"
+            },
+            {
+                "name": "inContext",
+                "comment": " Add context to errors that may occur during parsing.\n\nAdding context makes it easier to debug where issues occur.\n\n    import Bytes.Encode as E\n    import Bytes.Parser as P\n\n\n    type Context = Header | DataArea\n\n\n    E.sequence []\n        |> E.encode\n        |> P.run (P.inContext Header P.unsignedInt8)\n    --> Err\n    -->    (P.InContext\n    -->        { label = Header\n    -->        , start = 0\n    -->        }\n    -->        (P.OutOfBounds { at = 0, bytes = 1})\n    -->    )\n\n",
+                "type": "context -> Bytes.Parser.Parser context error value -> Bytes.Parser.Parser context error value"
+            },
+            {
+                "name": "keep",
+                "comment": " Keep the value produced by a parser in a pipeline.\n\nTogether with [`succeed`](#succeed) and [`ignore`](#ignore), this allows writing\npretty flexible parsers in a straightforward manner: the order in which things\nare parsed is apparent.\n\n    import Bytes.Encode as E\n    import Bytes.Parser as P exposing (Parser)\n\n    parser : Parser c e (Int, Int)\n    parser =\n        P.succeed Tuple.pair\n            |> P.keep P.unsignedInt8\n            |> P.ignore P.unsignedInt8\n            |> P.keep P.unsignedInt8\n\n    [ E.unsignedInt8 12\n    , E.unsignedInt8 3\n    , E.unsignedInt8 45\n    ]\n        |> E.sequence\n        |> E.encode\n        |> P.run parser\n    --> Ok ( 12, 45 )\n\n",
+                "type": "Bytes.Parser.Parser context error a -> Bytes.Parser.Parser context error (a -> b) -> Bytes.Parser.Parser context error b"
+            },
+            {
+                "name": "loop",
+                "comment": " Loop a parser until it declares it is done looping.\n\nThe first argument is a function which, given some state, will usually parse\nsome stuff and indicate it wants to either continue, or declare it is done and\nproduce the final value. The second argument is the initial state for the loop.\n\nThis particular order of parameters was chosen to make it somewhat easier to\nproduce the initial state using a parser (which seems to be a fairly common use\ncase) and to hint at the mental model, which isn't unlike a `fold`.\n\n    import Bytes.Encode as E\n    import Bytes.Parser as P\n\n    nullTerminatedString_ : (Int, P.Position) -> P.Parser c e (P.Step (Int, P.Position) String)\n    nullTerminatedString_ ( count, startPos ) =\n        P.unsignedInt8\n            |> P.andThen\n                (\\byte ->\n                     if byte == 0x00 then\n                         P.string count\n                             |> P.randomAccess { offset = 0, relativeTo = startPos }\n                             |> P.map P.Done\n                     else\n                         P.succeed (P.Loop ( count + 1, startPos ))\n                )\n\n    nullTerminatedString : Parser c e String\n    nullTerminatedString =\n        P.map (Tuple.pair 0) P.position\n            |> P.andThen (P.loop nullTerminatedString_)\n\n\n    [ E.string \"hello world!\"\n    , E.unsignedInt8 0\n    ]\n        |> E.sequence\n        |> E.encode\n        |> P.run nullTerminatedString\n    --> Ok \"hello world!\"\n\n",
+                "type": "(state -> Bytes.Parser.Parser context error (Bytes.Parser.Step state a)) -> state -> Bytes.Parser.Parser context error a"
+            },
+            {
+                "name": "map",
+                "comment": " Transform the value a parser produces\n\n    import Bytes.Encode as E\n    import Bytes.Parser as P\n\n\n    E.string \"hello\"\n        |> E.encode\n        |> P.run (P.map String.length (P.string 5))\n    --> Ok 5\n\n",
+                "type": "(a -> b) -> Bytes.Parser.Parser context error a -> Bytes.Parser.Parser context error b"
+            },
+            {
+                "name": "map2",
+                "comment": " Combine what 2 parsers produce into a single parser.\n\n    import Bytes exposing (Bytes)\n    import Bytes.Encode as E\n    import Bytes.Parser as P exposing (Parser)\n\n\n    input : Bytes\n    input =\n        [ E.unsignedInt8 3\n        , E.string \"wat\"\n        ]\n            |> E.sequence\n            |> E.encode\n\n\n    map2Example : Parser c e String\n    map2Example =\n        P.map2 String.repeat P.unsignedInt8 (P.string 3)\n\n\n    P.run map2Example input\n    --> Ok \"watwatwat\"\n\nNote that the effect of `map2` (and, in fact, every `map` variation) can also be\nachieved using a combination of [`succeed`](#succeed) and [`keep`](#keep).\n\n    equivalent : Parser c e String\n    equivalent =\n        P.succeed String.repeat\n            |> P.keep P.unsignedInt8\n            |> P.keep (P.string 3)\n\n    P.run equivalent input\n    --> Ok \"watwatwat\"\n\n",
+                "type": "(x -> y -> z) -> Bytes.Parser.Parser context error x -> Bytes.Parser.Parser context error y -> Bytes.Parser.Parser context error z"
+            },
+            {
+                "name": "map3",
+                "comment": " ",
+                "type": "(w -> x -> y -> z) -> Bytes.Parser.Parser context error w -> Bytes.Parser.Parser context error x -> Bytes.Parser.Parser context error y -> Bytes.Parser.Parser context error z"
+            },
+            {
+                "name": "map4",
+                "comment": " ",
+                "type": "(v -> w -> x -> y -> z) -> Bytes.Parser.Parser context error v -> Bytes.Parser.Parser context error w -> Bytes.Parser.Parser context error x -> Bytes.Parser.Parser context error y -> Bytes.Parser.Parser context error z"
+            },
+            {
+                "name": "map5",
+                "comment": " ",
+                "type": "(u -> v -> w -> x -> y -> z) -> Bytes.Parser.Parser context error u -> Bytes.Parser.Parser context error v -> Bytes.Parser.Parser context error w -> Bytes.Parser.Parser context error x -> Bytes.Parser.Parser context error y -> Bytes.Parser.Parser context error z"
+            },
+            {
+                "name": "oneOf",
+                "comment": " Tries a bunch of parsers and succeeds with the first one to succeed.\n\nNote that this uses backtracking when a parser fails after making some progress.\n\n",
+                "type": "List.List (Bytes.Parser.Parser context error value) -> Bytes.Parser.Parser context error value"
+            },
+            {
+                "name": "position",
+                "comment": " Produce the current offset in the input.\n\n    import Bytes.Encode as E\n    import Bytes.Parser as P\n\n\n    E.encode (E.string \"hello\")\n        |> P.run P.position\n    --> Ok P.startOfInput\n\n\n    parser : P.Parser c e P.Position\n    parser =\n        P.succeed identity\n            |> P.skip 2\n            |> P.keep P.position\n\n\n    E.encode (E.string \"hello\")\n        |> P.run parser\n        |> Result.map ((==) P.startOfInput)\n    --> Ok False\n\n",
+                "type": "Bytes.Parser.Parser context error Bytes.Parser.Position"
+            },
+            {
+                "name": "randomAccess",
+                "comment": " Read some data based on an offset.\n\nThis is meant for \"out of band\" reading - the resulting parser will resume\nreading where you left off.\n\nAs an example, consider we have some data like this:\n\n  - An integer specifying the length of a string\n  - An offset to the string, relative to the entire sequence\n  - A number we also need\n\nWhich can be represented like so:\n\n    import Bytes exposing (Bytes)\n    import Bytes.Encode as E\n\n    input : Bytes\n    input =\n        [ E.unsignedInt8 5 -- length of the string we're interested in\n        , E.unsignedInt8 15 -- absolute offset to the string\n        , E.unsignedInt8 6 -- another number we're interested in\n        , E.string (String.repeat 12 \"\\u{0000}\") -- buffer. Its content is irrelevant.\n        , E.string \"hello\" -- our actual string\n        ]\n            |> E.sequence\n            |> E.encode\n\nNow, to decode this, let's first try decoding the `String` by decoding the\nlength and offset, and then reading the data:\n\n    import Bytes.Parser as P exposing (Parser)\n\n\n    string : Parser c e String\n    string =\n        P.succeed Tuple.pair\n            |> P.keep P.unsignedInt8\n            |> P.keep P.unsignedInt8\n            |> P.andThen readStringWithLengthAndOffset\n\n\n    readStringWithLengthAndOffset : ( Int, Int ) -> Parser c e String\n    readStringWithLengthAndOffset ( length, offset ) =\n        P.randomAccess\n            { offset = offset, relativeTo = P.startOfInput }\n            (P.string length)\n\n\n    P.run string input\n    --> Ok \"hello\"\n\nNow, to illustrate the \"resume\" behaviour, let's use the above parser, and also\nread the interesting number:\n\n    final : Parser c e { string : String, number : Int }\n    final =\n        P.succeed (\\s n -> { string = s, number = n })\n            |> P.keep string\n            |> P.keep P.unsignedInt8\n\n\n    P.run final input\n    --> Ok { string = \"hello\", number = 6 }\n\nThe trick here is that parsing continues its sequential behaviour, with the\n`randomAccess` parser running in a separate context.\n\nIf the offset isn't absolute, but relative, we can use a similar setup, with the\naddition of specifying the position we want the offset to be relative to using\n[`position`](#position).\n\n    relativeString : Parser c e String\n    relativeString =\n        P.succeed readRelativeString\n            |> P.keep P.unsignedInt8\n            |> P.keep P.position\n            |> P.keep P.unsignedInt8\n            |> P.andThen identity\n\n    readRelativeString : Int -> P.Position -> Int -> Parser c e String\n    readRelativeString length marker offset =\n        P.randomAccess\n            { offset = offset, relativeTo = marker }\n            (P.string length)\n\n",
+                "type": "{ offset : Basics.Int, relativeTo : Bytes.Parser.Position } -> Bytes.Parser.Parser context error value -> Bytes.Parser.Parser context error value"
+            },
+            {
+                "name": "repeat",
+                "comment": " Repeat a given parser `count` times.\n\nThe order of arguments is based on the common occurence of reading the number of\ntimes to repeat something through a parser.\n\n    import Bytes.Encode as E\n    import Bytes.Parser as P\n\n\n    intList : P.Parser c e (List Int)\n    intList =\n        P.unsignedInt8 |> P.andThen (P.repeat P.unsignedInt8)\n\n\n    [ 5, 0, 1, 2, 3, 4 ]\n        |> List.map E.unsignedInt8\n        |> E.sequence\n        |> E.encode\n        |> P.run intList\n    --> Ok [ 0, 1, 2, 3, 4 ]\n\n",
+                "type": "Bytes.Parser.Parser context error value -> Basics.Int -> Bytes.Parser.Parser context error (List.List value)"
+            },
+            {
+                "name": "run",
+                "comment": " Run the given parser on the provided bytes and the result.\n\n    import Bytes.Encode as E\n    import Bytes.Parser as P\n\n\n    E.string \"hello\"\n        |> E.encode\n        |> P.run (P.string 5)\n    --> Ok \"hello\"\n\n\n    E.string \"hello\"\n        |> E.encode\n        |> P.run (P.string 6)\n    --> Err (P.OutOfBounds { at = 0, bytes = 6 })\n\n",
+                "type": "Bytes.Parser.Parser context error value -> Bytes.Bytes -> Result.Result (Bytes.Parser.Error context error) value"
+            },
+            {
+                "name": "signedInt16",
+                "comment": " Parse two bytes into an integer from -32768 to 32767.\n",
+                "type": "Bytes.Endianness -> Bytes.Parser.Parser context error Basics.Int"
+            },
+            {
+                "name": "signedInt32",
+                "comment": " Parse four bytes into an integer from -2147483648 to 2147483647.\n",
+                "type": "Bytes.Endianness -> Bytes.Parser.Parser context error Basics.Int"
+            },
+            {
+                "name": "signedInt8",
+                "comment": " Parse one byte into an integer from -128 to 127.\n",
+                "type": "Bytes.Parser.Parser context error Basics.Int"
+            },
+            {
+                "name": "skip",
+                "comment": " Skip a number of bytes in a pipeline.\n\nThis is similar to `ignore`, but rather than parsing a value and discarding it,\nthis just goes ahead and skips them altogether.\n\n",
+                "type": "Basics.Int -> Bytes.Parser.Parser context error value -> Bytes.Parser.Parser context error value"
+            },
+            {
+                "name": "startOfInput",
+                "comment": " Position signifying the start of input.\n\nThis is mostly useful when feeding absolute offsets to\n[`randomAccess`](#randomAccess).\n\n",
+                "type": "Bytes.Parser.Position"
+            },
+            {
+                "name": "string",
+                "comment": " Parse `count` bytes representing UTF-8 characters into a String.\n\nNote that Elm strings use UTF-16. As a result, the `String.length` will not\nalways agree with the number of bytes that went into it!\n\n    import Bytes.Encode as E\n    import Bytes.Parser as P\n\n\n    [ 0xF0, 0x9F, 0x91, 0x8D ]\n        |> List.map E.unsignedInt8\n        |> E.sequence\n        |> E.encode\n        |> P.run (P.string 4)\n    --> Ok \"👍\"\n\n",
+                "type": "Basics.Int -> Bytes.Parser.Parser context error String.String"
+            },
+            {
+                "name": "succeed",
+                "comment": " Always succeed with the given value.\n\n    import Bytes.Encode as E\n    import Bytes.Parser as P\n\n\n    E.encode (E.sequence [])\n        |> P.run (P.succeed \"hi there\")\n    --> Ok \"hi there\"\n\n",
+                "type": "value -> Bytes.Parser.Parser context error value"
+            },
+            {
+                "name": "unsignedInt16",
+                "comment": " Parse two bytes into an integer from 0 to 65535.\n",
+                "type": "Bytes.Endianness -> Bytes.Parser.Parser context error Basics.Int"
+            },
+            {
+                "name": "unsignedInt32",
+                "comment": " Parse four bytes into an integer from 0 to 4294967295.\n",
+                "type": "Bytes.Endianness -> Bytes.Parser.Parser context error Basics.Int"
+            },
+            {
+                "name": "unsignedInt8",
+                "comment": " Parse one byte into an integer from 0 to 255.\n",
+                "type": "Bytes.Parser.Parser context error Basics.Int"
+            }
+        ],
+        "binops": []
+    }
+]

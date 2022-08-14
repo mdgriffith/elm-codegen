@@ -1,0 +1,882 @@
+[
+    {
+        "name": "Google.Protobuf",
+        "comment": " This module contains the **Well-Known Types** of Protocol Buffers.\nFor the official and complete documentation, see <https://developers.google.com/protocol-buffers/docs/reference/google.protobuf>.\n\n\n# Models\n\n\n## Any\n\n@docs Any\n\n\n## Api\n\n@docs Api, Method, Mixin\n\n\n## Duration\n\n@docs Duration\n\n\n## Empty\n\n@docs Empty\n\n\n## FieldMask\n\n@docs FieldMask\n\n\n## SourceContext\n\n@docs SourceContext\n\n\n## Struct\n\n@docs Struct, StructFields, Value, ValueKind, KindType, NullValue, ListValue, ListValueValues\n\n\n## Timestamp\n\n@docs Timestamp\n\n\n## Type\n\n@docs Type, Field, Kind, Cardinality, Enum, EnumValue, Option, Syntax\n\n\n## Wrappers\n\n`Int64Value` and `UInt64Value` are not provided here as explained in the known limitations.\n\n@docs DoubleValue, FloatValue, Int32Value, UInt32Value, BoolValue, StringValue, BytesValue\n\n\n# Decoders\n\nThe package exposes decoders for all top-level well-known types.\n\n@docs anyDecoder\n@docs apiDecoder\n@docs methodDecoder\n@docs mixinDecoder\n@docs durationDecoder\n@docs emptyDecoder\n@docs fieldMaskDecoder\n@docs sourceContextDecoder\n@docs structDecoder, valueDecoder, listValueDecoder\n@docs timestampDecoder\n@docs typeDecoder, fieldDecoder, kindDecoder, cardinalityDecoder, enumDecoder, enumValueDecoder, optionDecoder, syntaxDecoder\n@docs doubleValueDecoder, floatValueDecoder, int32ValueDecoder, uInt32ValueDecoder, boolValueDecoder, stringValueDecoder, bytesValueDecoder\n\n\n# Encoders\n\nThe package exposes encoders for all top-level well-known types.\n\n@docs toAnyEncoder\n@docs toApiEncoder\n@docs toMethodEncoder\n@docs toMixinEncoder\n@docs toDurationEncoder\n@docs toEmptyEncoder\n@docs toFieldMaskEncoder\n@docs toSourceContextEncoder\n@docs toStructEncoder, toValueEncoder, toListValueEncoder\n@docs toTimestampEncoder\n@docs toTypeEncoder, toFieldEncoder, toKindEncoder, toCardinalityEncoder, toEnumEncoder, toEnumValueEncoder, toOptionEncoder, toSyntaxEncoder\n@docs toDoubleValueEncoder, toFloatValueEncoder, toInt32ValueEncoder, toUInt32ValueEncoder, toBoolValueEncoder, toStringValueEncoder, toBytesValueEncoder\n\n",
+        "unions": [
+            {
+                "name": "Cardinality",
+                "comment": " Whether a field is optional, required, or repeated.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "CardinalityUnknown",
+                        []
+                    ],
+                    [
+                        "CardinalityOptional",
+                        []
+                    ],
+                    [
+                        "CardinalityRequired",
+                        []
+                    ],
+                    [
+                        "CardinalityRepeated",
+                        []
+                    ],
+                    [
+                        "CardinalityUnrecognized_",
+                        [
+                            "Basics.Int"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Kind",
+                "comment": " Basic field types.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "TypeUnknown",
+                        []
+                    ],
+                    [
+                        "TypeDouble",
+                        []
+                    ],
+                    [
+                        "TypeFloat",
+                        []
+                    ],
+                    [
+                        "TypeInt64",
+                        []
+                    ],
+                    [
+                        "TypeUint64",
+                        []
+                    ],
+                    [
+                        "TypeInt32",
+                        []
+                    ],
+                    [
+                        "TypeFixed64",
+                        []
+                    ],
+                    [
+                        "TypeFixed32",
+                        []
+                    ],
+                    [
+                        "TypeBool",
+                        []
+                    ],
+                    [
+                        "TypeString",
+                        []
+                    ],
+                    [
+                        "TypeGroup",
+                        []
+                    ],
+                    [
+                        "TypeMessage",
+                        []
+                    ],
+                    [
+                        "TypeBytes",
+                        []
+                    ],
+                    [
+                        "TypeUint32",
+                        []
+                    ],
+                    [
+                        "TypeEnum",
+                        []
+                    ],
+                    [
+                        "TypeSfixed32",
+                        []
+                    ],
+                    [
+                        "TypeSfixed64",
+                        []
+                    ],
+                    [
+                        "TypeSint32",
+                        []
+                    ],
+                    [
+                        "TypeSint64",
+                        []
+                    ],
+                    [
+                        "KindUnrecognized_",
+                        [
+                            "Basics.Int"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "KindType",
+                "comment": " The kind of value.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "KindNullValue",
+                        [
+                            "Google.Protobuf.NullValue"
+                        ]
+                    ],
+                    [
+                        "KindNumberValue",
+                        [
+                            "Basics.Float"
+                        ]
+                    ],
+                    [
+                        "KindStringValue",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "KindBoolValue",
+                        [
+                            "Basics.Bool"
+                        ]
+                    ],
+                    [
+                        "KindStructValue",
+                        [
+                            "Google.Protobuf.Struct"
+                        ]
+                    ],
+                    [
+                        "KindListValue",
+                        [
+                            "Google.Protobuf.ListValue"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "ListValueValues",
+                "comment": " Wrapper type to work with [recursive aliases](https://elm-lang.org/0.19.0/recursive-alias).\n",
+                "args": [],
+                "cases": [
+                    [
+                        "ListValueValues",
+                        [
+                            "List.List Google.Protobuf.Value"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "NullValue",
+                "comment": " `NullValue` is a singleton enumeration to represent the null value for the\n`Value` type union.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NullValue",
+                        []
+                    ],
+                    [
+                        "NullValueUnrecognized_",
+                        [
+                            "Basics.Int"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "StructFields",
+                "comment": " Wrapper type to work with [recursive aliases](https://elm-lang.org/0.19.0/recursive-alias).\n",
+                "args": [],
+                "cases": [
+                    [
+                        "StructFields",
+                        [
+                            "Dict.Dict String.String (Maybe.Maybe Google.Protobuf.Value)"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Syntax",
+                "comment": " The syntax in which a protocol buffer element is defined.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "SyntaxProto2",
+                        []
+                    ],
+                    [
+                        "SyntaxProto3",
+                        []
+                    ],
+                    [
+                        "SyntaxUnrecognized_",
+                        [
+                            "Basics.Int"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "ValueKind",
+                "comment": " Wrapper type to work with [recursive aliases](https://elm-lang.org/0.19.0/recursive-alias).\n",
+                "args": [],
+                "cases": [
+                    [
+                        "ValueKind",
+                        [
+                            "Maybe.Maybe Google.Protobuf.KindType"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Any",
+                "comment": " `Any` contains an arbitrary serialized protocol buffer message along with a\nURL that describes the type of the serialized message.\n",
+                "args": [],
+                "type": "{ typeUrl : String.String, value : Bytes.Bytes }"
+            },
+            {
+                "name": "Api",
+                "comment": " Api is a light-weight descriptor for an API Interface.\n",
+                "args": [],
+                "type": "{ name : String.String, methods : List.List Google.Protobuf.Method, options : List.List Google.Protobuf.Option, version : String.String, sourceContext : Maybe.Maybe Google.Protobuf.SourceContext, mixins : List.List Google.Protobuf.Mixin, syntax : Google.Protobuf.Syntax }"
+            },
+            {
+                "name": "BoolValue",
+                "comment": " Wrapper message for `bool`.\n",
+                "args": [],
+                "type": "{ value : Basics.Bool }"
+            },
+            {
+                "name": "BytesValue",
+                "comment": " Wrapper message for `bytes`.\n",
+                "args": [],
+                "type": "{ value : Bytes.Bytes }"
+            },
+            {
+                "name": "DoubleValue",
+                "comment": " Wrapper message for `double`.\n",
+                "args": [],
+                "type": "{ value : Basics.Float }"
+            },
+            {
+                "name": "Duration",
+                "comment": " A Duration represents a signed, fixed-length span of time represented\nas a count of seconds and fractions of seconds at nanosecond\nresolution. It is independent of any calendar and concepts like \"day\"\nor \"month\". It is related to Timestamp in that the difference between\ntwo Timestamp values is a Duration and it can be added or subtracted\nfrom a Timestamp.\n\n**Warning**: Range is only +/-68 years instead of the specified +/-10,000 as\n64 bit integers are currently not supported.\n\n",
+                "args": [],
+                "type": "{ seconds : Basics.Int, nanos : Basics.Int }"
+            },
+            {
+                "name": "Empty",
+                "comment": " A generic empty message that you can re-use to avoid defining duplicated\nempty messages in your APIs. A typical example is to use it as the request\nor the response type of an API method.\n",
+                "args": [],
+                "type": "{}"
+            },
+            {
+                "name": "Enum",
+                "comment": " Enum type definition.\n",
+                "args": [],
+                "type": "{ name : String.String, enumvalue : List.List Google.Protobuf.EnumValue, options : List.List Google.Protobuf.Option, sourceContext : Maybe.Maybe Google.Protobuf.SourceContext, syntax : Google.Protobuf.Syntax }"
+            },
+            {
+                "name": "EnumValue",
+                "comment": " Enum value definition.\n",
+                "args": [],
+                "type": "{ name : String.String, number : Basics.Int, options : List.List Google.Protobuf.Option }"
+            },
+            {
+                "name": "Field",
+                "comment": " A single field of a message type.\n",
+                "args": [],
+                "type": "{ kind : Google.Protobuf.Kind, cardinality : Google.Protobuf.Cardinality, number : Basics.Int, name : String.String, typeUrl : String.String, oneofIndex : Basics.Int, packed : Basics.Bool, options : List.List Google.Protobuf.Option, jsonName : String.String, defaultValue : String.String }"
+            },
+            {
+                "name": "FieldMask",
+                "comment": " `FieldMask` represents a set of symbolic field paths.\n",
+                "args": [],
+                "type": "{ paths : List.List String.String }"
+            },
+            {
+                "name": "FloatValue",
+                "comment": " Wrapper message for `float`.\n",
+                "args": [],
+                "type": "{ value : Basics.Float }"
+            },
+            {
+                "name": "Int32Value",
+                "comment": " Wrapper message for `int32`.\n",
+                "args": [],
+                "type": "{ value : Basics.Int }"
+            },
+            {
+                "name": "ListValue",
+                "comment": " `ListValue` is a wrapper around a repeated field of values.\n",
+                "args": [],
+                "type": "{ values : Google.Protobuf.ListValueValues }"
+            },
+            {
+                "name": "Method",
+                "comment": " Method represents a method of an API interface.\n",
+                "args": [],
+                "type": "{ name : String.String, requestTypeUrl : String.String, requestStreaming : Basics.Bool, responseTypeUrl : String.String, responseStreaming : Basics.Bool, options : List.List Google.Protobuf.Option, syntax : Google.Protobuf.Syntax }"
+            },
+            {
+                "name": "Mixin",
+                "comment": " Declares an API Interface to be included in this interface.\n",
+                "args": [],
+                "type": "{ name : String.String, root : String.String }"
+            },
+            {
+                "name": "Option",
+                "comment": " A protocol buffer option, which can be attached to a message, field,\nenumeration, etc.\n",
+                "args": [],
+                "type": "{ name : String.String, value : Maybe.Maybe Google.Protobuf.Any }"
+            },
+            {
+                "name": "SourceContext",
+                "comment": " `SourceContext` represents information about the source of a\nprotobuf element, like the file in which it is defined.\n",
+                "args": [],
+                "type": "{ fileName : String.String }"
+            },
+            {
+                "name": "StringValue",
+                "comment": " Wrapper message for `string`.\n",
+                "args": [],
+                "type": "{ value : String.String }"
+            },
+            {
+                "name": "Struct",
+                "comment": " `Struct` represents a structured data value, consisting of fields\nwhich map to dynamically typed values.\n",
+                "args": [],
+                "type": "{ fields : Google.Protobuf.StructFields }"
+            },
+            {
+                "name": "Timestamp",
+                "comment": " A Timestamp represents a point in time independent of any time zone or local\ncalendar, encoded as a count of seconds and fractions of seconds at\nnanosecond resolution. The count is relative to an epoch at UTC midnight on\nJanuary 1, 1970, in the proleptic Gregorian calendar which extends the\nGregorian calendar backwards to year one.\n\nAll minutes are 60 seconds long. Leap seconds are \"smeared\" so that no leap\nsecond table is needed for interpretation, using a [24-hour linear\nsmear](https://developers.google.com/time/smear).\n\n**Warning**: Range is only from 1901-12-13T20:45:52Z to 2038-01-19T03:14:07Z\ninstead of the specified 0001-01-01T00:00:00Z to 9999-12-31T23:59:59.999999999Z\nas 64 bit integers are currently not supported.\n\n",
+                "args": [],
+                "type": "{ seconds : Basics.Int, nanos : Basics.Int }"
+            },
+            {
+                "name": "Type",
+                "comment": " A protocol buffer message type.\n",
+                "args": [],
+                "type": "{ name : String.String, fields : List.List Google.Protobuf.Field, oneofs : List.List String.String, options : List.List Google.Protobuf.Option, sourceContext : Maybe.Maybe Google.Protobuf.SourceContext, syntax : Google.Protobuf.Syntax }"
+            },
+            {
+                "name": "UInt32Value",
+                "comment": " Wrapper message for `uint32`.\n",
+                "args": [],
+                "type": "{ value : Basics.Int }"
+            },
+            {
+                "name": "Value",
+                "comment": " `Value` represents a dynamically typed value which can be either\nnull, a number, a string, a boolean, a recursive struct value, or a\nlist of values. A producer of value is expected to set one of that\nvariants, absence of any variant indicates an error.\n",
+                "args": [],
+                "type": "{ kind : Google.Protobuf.ValueKind }"
+            }
+        ],
+        "values": [
+            {
+                "name": "anyDecoder",
+                "comment": " ",
+                "type": "Protobuf.Decode.Decoder Google.Protobuf.Any"
+            },
+            {
+                "name": "apiDecoder",
+                "comment": " ",
+                "type": "Protobuf.Decode.Decoder Google.Protobuf.Api"
+            },
+            {
+                "name": "boolValueDecoder",
+                "comment": " ",
+                "type": "Protobuf.Decode.Decoder Google.Protobuf.BoolValue"
+            },
+            {
+                "name": "bytesValueDecoder",
+                "comment": " ",
+                "type": "Protobuf.Decode.Decoder Google.Protobuf.BytesValue"
+            },
+            {
+                "name": "cardinalityDecoder",
+                "comment": " ",
+                "type": "Protobuf.Decode.Decoder Google.Protobuf.Cardinality"
+            },
+            {
+                "name": "doubleValueDecoder",
+                "comment": " ",
+                "type": "Protobuf.Decode.Decoder Google.Protobuf.DoubleValue"
+            },
+            {
+                "name": "durationDecoder",
+                "comment": " ",
+                "type": "Protobuf.Decode.Decoder Google.Protobuf.Duration"
+            },
+            {
+                "name": "emptyDecoder",
+                "comment": " ",
+                "type": "Protobuf.Decode.Decoder Google.Protobuf.Empty"
+            },
+            {
+                "name": "enumDecoder",
+                "comment": " ",
+                "type": "Protobuf.Decode.Decoder Google.Protobuf.Enum"
+            },
+            {
+                "name": "enumValueDecoder",
+                "comment": " ",
+                "type": "Protobuf.Decode.Decoder Google.Protobuf.EnumValue"
+            },
+            {
+                "name": "fieldDecoder",
+                "comment": " ",
+                "type": "Protobuf.Decode.Decoder Google.Protobuf.Field"
+            },
+            {
+                "name": "fieldMaskDecoder",
+                "comment": " ",
+                "type": "Protobuf.Decode.Decoder Google.Protobuf.FieldMask"
+            },
+            {
+                "name": "floatValueDecoder",
+                "comment": " ",
+                "type": "Protobuf.Decode.Decoder Google.Protobuf.FloatValue"
+            },
+            {
+                "name": "int32ValueDecoder",
+                "comment": " ",
+                "type": "Protobuf.Decode.Decoder Google.Protobuf.Int32Value"
+            },
+            {
+                "name": "kindDecoder",
+                "comment": " ",
+                "type": "Protobuf.Decode.Decoder Google.Protobuf.Kind"
+            },
+            {
+                "name": "listValueDecoder",
+                "comment": " ",
+                "type": "Protobuf.Decode.Decoder Google.Protobuf.ListValue"
+            },
+            {
+                "name": "methodDecoder",
+                "comment": " ",
+                "type": "Protobuf.Decode.Decoder Google.Protobuf.Method"
+            },
+            {
+                "name": "mixinDecoder",
+                "comment": " ",
+                "type": "Protobuf.Decode.Decoder Google.Protobuf.Mixin"
+            },
+            {
+                "name": "optionDecoder",
+                "comment": " ",
+                "type": "Protobuf.Decode.Decoder Google.Protobuf.Option"
+            },
+            {
+                "name": "sourceContextDecoder",
+                "comment": " ",
+                "type": "Protobuf.Decode.Decoder Google.Protobuf.SourceContext"
+            },
+            {
+                "name": "stringValueDecoder",
+                "comment": " ",
+                "type": "Protobuf.Decode.Decoder Google.Protobuf.StringValue"
+            },
+            {
+                "name": "structDecoder",
+                "comment": " ",
+                "type": "Protobuf.Decode.Decoder Google.Protobuf.Struct"
+            },
+            {
+                "name": "syntaxDecoder",
+                "comment": " ",
+                "type": "Protobuf.Decode.Decoder Google.Protobuf.Syntax"
+            },
+            {
+                "name": "timestampDecoder",
+                "comment": " ",
+                "type": "Protobuf.Decode.Decoder Google.Protobuf.Timestamp"
+            },
+            {
+                "name": "toAnyEncoder",
+                "comment": " ",
+                "type": "Google.Protobuf.Any -> Protobuf.Encode.Encoder"
+            },
+            {
+                "name": "toApiEncoder",
+                "comment": " ",
+                "type": "Google.Protobuf.Api -> Protobuf.Encode.Encoder"
+            },
+            {
+                "name": "toBoolValueEncoder",
+                "comment": " ",
+                "type": "Google.Protobuf.BoolValue -> Protobuf.Encode.Encoder"
+            },
+            {
+                "name": "toBytesValueEncoder",
+                "comment": " ",
+                "type": "Google.Protobuf.BytesValue -> Protobuf.Encode.Encoder"
+            },
+            {
+                "name": "toCardinalityEncoder",
+                "comment": " ",
+                "type": "Google.Protobuf.Cardinality -> Protobuf.Encode.Encoder"
+            },
+            {
+                "name": "toDoubleValueEncoder",
+                "comment": " ",
+                "type": "Google.Protobuf.DoubleValue -> Protobuf.Encode.Encoder"
+            },
+            {
+                "name": "toDurationEncoder",
+                "comment": " ",
+                "type": "Google.Protobuf.Duration -> Protobuf.Encode.Encoder"
+            },
+            {
+                "name": "toEmptyEncoder",
+                "comment": " ",
+                "type": "Google.Protobuf.Empty -> Protobuf.Encode.Encoder"
+            },
+            {
+                "name": "toEnumEncoder",
+                "comment": " ",
+                "type": "Google.Protobuf.Enum -> Protobuf.Encode.Encoder"
+            },
+            {
+                "name": "toEnumValueEncoder",
+                "comment": " ",
+                "type": "Google.Protobuf.EnumValue -> Protobuf.Encode.Encoder"
+            },
+            {
+                "name": "toFieldEncoder",
+                "comment": " ",
+                "type": "Google.Protobuf.Field -> Protobuf.Encode.Encoder"
+            },
+            {
+                "name": "toFieldMaskEncoder",
+                "comment": " ",
+                "type": "Google.Protobuf.FieldMask -> Protobuf.Encode.Encoder"
+            },
+            {
+                "name": "toFloatValueEncoder",
+                "comment": " ",
+                "type": "Google.Protobuf.FloatValue -> Protobuf.Encode.Encoder"
+            },
+            {
+                "name": "toInt32ValueEncoder",
+                "comment": " ",
+                "type": "Google.Protobuf.Int32Value -> Protobuf.Encode.Encoder"
+            },
+            {
+                "name": "toKindEncoder",
+                "comment": " ",
+                "type": "Google.Protobuf.Kind -> Protobuf.Encode.Encoder"
+            },
+            {
+                "name": "toListValueEncoder",
+                "comment": " ",
+                "type": "Google.Protobuf.ListValue -> Protobuf.Encode.Encoder"
+            },
+            {
+                "name": "toMethodEncoder",
+                "comment": " ",
+                "type": "Google.Protobuf.Method -> Protobuf.Encode.Encoder"
+            },
+            {
+                "name": "toMixinEncoder",
+                "comment": " ",
+                "type": "Google.Protobuf.Mixin -> Protobuf.Encode.Encoder"
+            },
+            {
+                "name": "toOptionEncoder",
+                "comment": " ",
+                "type": "Google.Protobuf.Option -> Protobuf.Encode.Encoder"
+            },
+            {
+                "name": "toSourceContextEncoder",
+                "comment": " ",
+                "type": "Google.Protobuf.SourceContext -> Protobuf.Encode.Encoder"
+            },
+            {
+                "name": "toStringValueEncoder",
+                "comment": " ",
+                "type": "Google.Protobuf.StringValue -> Protobuf.Encode.Encoder"
+            },
+            {
+                "name": "toStructEncoder",
+                "comment": " ",
+                "type": "Google.Protobuf.Struct -> Protobuf.Encode.Encoder"
+            },
+            {
+                "name": "toSyntaxEncoder",
+                "comment": " ",
+                "type": "Google.Protobuf.Syntax -> Protobuf.Encode.Encoder"
+            },
+            {
+                "name": "toTimestampEncoder",
+                "comment": " ",
+                "type": "Google.Protobuf.Timestamp -> Protobuf.Encode.Encoder"
+            },
+            {
+                "name": "toTypeEncoder",
+                "comment": " ",
+                "type": "Google.Protobuf.Type -> Protobuf.Encode.Encoder"
+            },
+            {
+                "name": "toUInt32ValueEncoder",
+                "comment": " ",
+                "type": "Google.Protobuf.UInt32Value -> Protobuf.Encode.Encoder"
+            },
+            {
+                "name": "toValueEncoder",
+                "comment": " ",
+                "type": "Google.Protobuf.Value -> Protobuf.Encode.Encoder"
+            },
+            {
+                "name": "typeDecoder",
+                "comment": " ",
+                "type": "Protobuf.Decode.Decoder Google.Protobuf.Type"
+            },
+            {
+                "name": "uInt32ValueDecoder",
+                "comment": " ",
+                "type": "Protobuf.Decode.Decoder Google.Protobuf.UInt32Value"
+            },
+            {
+                "name": "valueDecoder",
+                "comment": " ",
+                "type": "Protobuf.Decode.Decoder Google.Protobuf.Value"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Protobuf.Decode",
+        "comment": " Library for turning\n[Protobuf](https://developers.google.com/protocol-buffers) messages into Elm\nvalues.\n\n\n# Decoding\n\n@docs Decoder, decode, expectBytes, FieldDecoder, message\n\n\n# Field Decoders\n\n@docs required, optional, repeated, mapped, oneOf\n\n\n# Integers\n\n@docs int32, uint32, sint32, fixed32, sfixed32\n\n\n# Floats\n\n@docs double, float\n\n\n# Strings\n\n@docs string\n\n\n# Booleans\n\n@docs bool\n\n\n# Bytes\n\n@docs bytes\n\n\n# Map\n\n@docs map\n\n\n# Lazy\n\n@docs lazy\n\n",
+        "unions": [
+            {
+                "name": "Decoder",
+                "comment": " Describes how to turn a sequence of Protobuf-encoded bytes into a nice Elm value.\n\n    import Protobuf.Decode as Decode\n\n    type alias Person =\n        { age : Int\n        , name : String\n        }\n\n    personDecoder : Decode.Decoder Person\n    personDecoder =\n        Decode.message (Person 0 \"\")\n            |> Decode.optional 1 Decode.int32 setAge\n            |> Decode.optional 2 Decode.string setName\n\n    -- SETTERS\n    setAge : a -> { b | age : a } -> { b | age : a }\n    setAge value model =\n        { model | age = value }\n\n    setName : a -> { b | name : a } -> { b | name : a }\n    setName value model =\n        { model | name = value }\n\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            },
+            {
+                "name": "FieldDecoder",
+                "comment": " Describes how to decode a certain field in a Protobuf-encoded message and\nhow to update a record with the new Elm value.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "bool",
+                "comment": " Decode one byte into a boolean.\n",
+                "type": "Protobuf.Decode.Decoder Basics.Bool"
+            },
+            {
+                "name": "bytes",
+                "comment": " Copy all bytes into a new `Bytes` sequence.\n",
+                "type": "Protobuf.Decode.Decoder Bytes.Bytes"
+            },
+            {
+                "name": "decode",
+                "comment": " Turn a sequence of bytes into a nice Elm value.\n\n     decode int32 <7F>    -- Just 127\n     decode sint32 <7F>   -- Just -64\n     decode sfixed32 <7F> -- Nothing\n\nThe `Decoder` specifies exactly how this should happen. This process may fail\nif:\n\n  - a required field is not present (`proto2` only);\n  - there is a mismatch of the\n    [_wire type_](https://developers.google.com/protocol-buffers/docs/encoding#structure)\n    of the encoded value and the decoder;\n  - the sequence of bytes is corrupted or unexpected somehow.\n\nThe examples above show a case where there are not enough bytes. They also show\nthe same bytes sequence can lead to different values depending on the `Decoder`\nthat is being used. Decoders cannot always detect these kind of mismatches.\n\nValues are always encoded together with a field number and their\n[_wire type_](https://developers.google.com/protocol-buffers/docs/encoding#structure)\n. This allows the decoder to set the right fields and to process the correct\nnumber of bytes.\n\n",
+                "type": "Protobuf.Decode.Decoder a -> Bytes.Bytes -> Maybe.Maybe a"
+            },
+            {
+                "name": "double",
+                "comment": " Decode eight bytes into a floating point number.\n",
+                "type": "Protobuf.Decode.Decoder Basics.Float"
+            },
+            {
+                "name": "expectBytes",
+                "comment": " Turn a [`Decoder`](#Decoder) into a `Http.Expect`. You probably received\nthe `Bytes` you want to decode from an HTTP request. As [`message`](#message)\nconsumes **all remaining bytes** on the wire, you cannot use `Http.expectBytes`\ndirectly (as it is not aware of the width of the bytes sequence). Hence, you\nmight want to use the `expectBytes` as provided by this package.\n\n    import Http\n    import Protobuf.Decode as Decode\n\n    getPerson : (Result Http.Error a -> msg) -> Cmd msg\n    getPerson toMsg =\n        Http.get\n          { url = \"https://example.com/person\"\n          , Decode.expectBytes toMsg personDecoder\n          }\n\n",
+                "type": "(Result.Result Http.Error a -> msg) -> Protobuf.Decode.Decoder a -> Http.Expect msg"
+            },
+            {
+                "name": "fixed32",
+                "comment": " Decode four bytes into an integer from 0 to 4294967295.\n",
+                "type": "Protobuf.Decode.Decoder Basics.Int"
+            },
+            {
+                "name": "float",
+                "comment": " Decode four bytes into a floating point number.\n",
+                "type": "Protobuf.Decode.Decoder Basics.Float"
+            },
+            {
+                "name": "int32",
+                "comment": " Decode a variable number of bytes into an integer from -2147483648 to 2147483647.\n",
+                "type": "Protobuf.Decode.Decoder Basics.Int"
+            },
+            {
+                "name": "lazy",
+                "comment": " Sometimes you have messages with a recursive structure, like nested\ncomments. You must use `lazy`to make sure your decoder unrolls lazily.\n\n    type alias Comment =\n        { message : String\n        , responses : Responses\n        }\n\n    type Responses\n        = Responses (List Comment)\n\n    commentDecoder : Decoder Comment\n    commentDecoder =\n        Decode.message (Comment \"\" (Responses []))\n            [ Decode.optional 1 Decode.string setMessage\n            , Decode.repeated 2\n                (Decode.lazy (\\_ -> commentDecoder))\n                (unwrapResponses << .responses)\n                (setResponses << Responses)\n            ]\n\n    -- SETTERS\n    setMessage : a -> { b | message : a } -> { b | message : a }\n    setMessage value model =\n        { model | message = value }\n\n    setResponses : a -> { b | responses : a } -> { b | responses : a }\n    setResponses value model =\n        { model | responses = value }\n\n    unwrapResponses : Responses -> List Comment\n    unwrapResponses (Responses responses) =\n        responses\n\n[Here](https://elm-lang.org/0.19.0/bad-recursion) you can read more about\nrecursive data structures.\n\n",
+                "type": "(() -> Protobuf.Decode.Decoder a) -> Protobuf.Decode.Decoder a"
+            },
+            {
+                "name": "map",
+                "comment": " Transform the value produced by a decoder.\nThis is useful when encoding custom types as an enumeration:\n\n    type Fruit\n        = Apple\n        | Banana\n        | Mango\n        | Unrecognized Int\n\n    fruitDecoder : Decoder Fruit\n    fruitDecoder =\n        Decode.int32\n            |> Decode.map\n                (\\value ->\n                    case value of\n                        0 ->\n                            Apple\n\n                        1 ->\n                            Banana\n\n                        2 ->\n                            Mango\n\n                        v ->\n                            Unrecognized v\n                )\n\n`Unrecognized Int` is only used for values that are present but not known. For\n`proto2` decoding it is left out and unrecognized values are left out.\n\n",
+                "type": "(a -> b) -> Protobuf.Decode.Decoder a -> Protobuf.Decode.Decoder b"
+            },
+            {
+                "name": "mapped",
+                "comment": " Decode a map field. If no such fields are present when decoding a message,\nthe result will be an empty `Dict`. Note that you need to provide one decoder\nfor the keys and another one for the values. Keys without a value or values\nwithout a key stick to the provided defaults.\n\nAs map fields may occur multiple times in a bytes sequence, `mapped`\nalso needs to get hold of the record's current value in order to append the new\nvalue.\n\n    import Dict exposing (Dict)\n    import Protobuf.Decode as Decode\n\n    type alias Administration =\n        { persons : Dict Int String -- field number 6\n        }\n\n    administrationDecoder : Decode.Decoder Administration\n    administrationDecoder =\n        -- <32 08 08 01 12 04 4A 6F 68 6E 32 08 08 02 12 04 4B 61 74 65> == Just (Administration (Dict.fromList [( 1, \"John\" ), ( 2, \"Kate\" )])\n        -- <32 08 08 01 12 04 4A 6F 68 6E>                               == Just (Administration (Dict.fromList [( 1, \"John\" )])\n        -- <32 08 08 01>                                                 == Just (Administration (Dict.fromList [( 1, \"\" )])\n        -- <>                                                            == Just (Administration Dict.empty)\n        Decode.message (Administration Dict.empty)\n            [ Decode.mapped 6 ( 0, \"\" ) int32 string .persons setPersons\n            ]\n\n    -- SETTERS\n    setPersons : a -> { b | persons : a } -> { b | persons : a }\n    setPersons value model =\n        { model | persons = value }\n\n",
+                "type": "Basics.Int -> ( comparable, a ) -> Protobuf.Decode.Decoder comparable -> Protobuf.Decode.Decoder a -> (b -> Dict.Dict comparable a) -> (Dict.Dict comparable a -> b -> b) -> Protobuf.Decode.FieldDecoder b"
+            },
+            {
+                "name": "message",
+                "comment": " Decode **all remaining bytes** into an record. The initial value given here\nholds all default values (which cannot be overridden for `proto3`). Each\nprovided field decoder calls a setter function to update the record when its\nfield number is encountered on the bytes sequence. _Unknown fields_ that have\nno matching field decoder are currently being ignored.\n\n    import Protobuf.Decode as Decode\n\n    type alias Person =\n        { name : String\n        }\n\n    personDecoder : Decode.Decoder Person\n    personDecoder =\n        -- Person \"John\"\n        Decode.message (Person \"John\") []\n\n",
+                "type": "a -> List.List (Protobuf.Decode.FieldDecoder a) -> Protobuf.Decode.Decoder a"
+            },
+            {
+                "name": "oneOf",
+                "comment": " Decode one of some fields. As the decoder is capable of deserializing\ndifferent types of data its return type must be a custom type.\n\n    import Protobuf.Decode as Decode\n\n    type alias FormValue =\n        { key : String -- field number 7\n        , value : Maybe Value -- field number 8 or 9\n        }\n\n    type Value\n        = StringValue String\n        | IntValue Int\n\n    formValueDecoder : Decode.Decoder FormValue\n    formValueDecoder =\n        -- <0A 03 6B 65 79 12 05 76 61 6C 75 65> == Just (FormValue \"key\" (StringValue \"value\"))\n        -- <0A 03 6B 65 79 10 64>                == Just (FormValue \"key\" (IntValue 100))\n        -- <0A 03 6B 65 79>                      == Just (FormValue \"key\" NoValue)\n        -- <>                                    == Just (FormValue \"\" NoValue)\n        Decode.message (FormValue \"\" NoValue)\n            [ Decode.optional 7 string setKey\n            , Decode.oneOf\n                [ ( 8, Decode.map StringValue Decode.string )\n                , ( 9, Decode.map IntValue Decode.int32 )\n                ]\n                setValue\n            ]\n\n    -- SETTERS\n    setKey : a -> { b | key : a } -> { b | key : a }\n    setKey value model =\n        { model | key = value }\n\n    setValue : a -> { b | value : a } -> { b | value : a }\n    setValue value model =\n        { model | value = value }\n\n",
+                "type": "List.List ( Basics.Int, Protobuf.Decode.Decoder a ) -> (Maybe.Maybe a -> b -> b) -> Protobuf.Decode.FieldDecoder b"
+            },
+            {
+                "name": "optional",
+                "comment": " Decode an optional field.\n\n    import Protobuf.Decode as Decode\n\n    type alias Person =\n        { age : Int -- field number 2\n        , name : String -- field number 4\n        }\n\n    personDecoder : Decode.Decoder Person\n    personDecoder =\n        -- <08 21 1A 04 4A 6F 68 6E> == Just (Person 33 \"John\")\n        -- <08 21>                   == Just (Person 33 \"\")\n        -- <>                        == Just (Person 0 \"\")\n        Decode.message (Person 0 \"\")\n            [ Decode.optional 2 int32 setAge\n            , Decode.optional 4 string setName\n            ]\n\n    -- SETTERS\n    setAge : a -> { b | age : a } -> { b | age : a }\n    setAge value model =\n        { model | age = value }\n\n    setName : a -> { b | name : a } -> { b | name : a }\n    setName value model =\n        { model | name = value }\n\n",
+                "type": "Basics.Int -> Protobuf.Decode.Decoder a -> (a -> b -> b) -> Protobuf.Decode.FieldDecoder b"
+            },
+            {
+                "name": "repeated",
+                "comment": " Decode a repeated field. If no such fields are present when decoding a\nmessage, the result will be an empty list.\n\nAs repeated fields may occur multiple times in a bytes sequence, `repeated`\nalso needs to get hold of the record's current value in order to append the new\nvalue.\n\n    import Protobuf.Decode as Decode\n\n    type alias Person =\n        { names : List String -- field number 5\n        }\n\n    personDecoder : Decode.Decoder Person\n    personDecoder =\n        -- <2A 04 4A 6F 68 6E 2A 07 4D 61 72 77 6F 6F 64> == Just (Person [ \"John\", \"Marwood\" ])\n        -- <2A 04 4A 6F 68 6E>                            == Just (Person [ \"John\" ])\n        -- <>                                             == Just (Person [])\n        Decode.message (Person [])\n            [ Decode.repeated 5 string .names setNames\n            ]\n\n    -- SETTERS\n    setNames : a -> { b | names : a } -> { b | names : a }\n    setNames value model =\n        { model | names = value }\n\n",
+                "type": "Basics.Int -> Protobuf.Decode.Decoder a -> (b -> List.List a) -> (List.List a -> b -> b) -> Protobuf.Decode.FieldDecoder b"
+            },
+            {
+                "name": "required",
+                "comment": " Decode a required field. Decoding a message fails when one of its required\nfields is not present in the bytes sequence. Required fields are only supported\nin `proto2`.\n\n    type alias Person =\n        { age : Int -- field number 1\n        , name : String -- field number 3\n        }\n\n    personDecoder : Decode.Decoder Person\n    personDecoder =\n        -- <08 21 1A 04 4A 6F 68 6E> == Just (Person 33 \"John\")\n        -- <08 21>                   == Nothing\n        -- <>                        == Nothing\n        Decode.message (Person 0 \"\")\n            [ Decode.required 1 int32 setAge\n            , Decode.required 3 string setName\n            ]\n\n    -- SETTERS\n    setAge : a -> { b | age : a } -> { b | age : a }\n    setAge value model =\n        { model | age = value }\n\n    setName : a -> { b | name : a } -> { b | name : a }\n    setName value model =\n        { model | name = value }\n\n",
+                "type": "Basics.Int -> Protobuf.Decode.Decoder a -> (a -> b -> b) -> Protobuf.Decode.FieldDecoder b"
+            },
+            {
+                "name": "sfixed32",
+                "comment": " Decode four bytes into an integer from -2147483648 to 2147483647.\n",
+                "type": "Protobuf.Decode.Decoder Basics.Int"
+            },
+            {
+                "name": "sint32",
+                "comment": " Decode a variable number of bytes into an integer from -2147483648 to 2147483647.\n",
+                "type": "Protobuf.Decode.Decoder Basics.Int"
+            },
+            {
+                "name": "string",
+                "comment": " Decode all bytes into a string.\n",
+                "type": "Protobuf.Decode.Decoder String.String"
+            },
+            {
+                "name": "uint32",
+                "comment": " Decode a variable number of bytes into an integer from 0 to 4294967295.\n",
+                "type": "Protobuf.Decode.Decoder Basics.Int"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Protobuf.Encode",
+        "comment": " Library for turning Elm values into\n[Protobuf](https://developers.google.com/protocol-buffers) messages.\n\n> The examples show `Bytes` values like this: `<3A* 05* 68 65 6C 6C 6F>`. The\n> `*` means the byte is Protobuf _metadata_. It does not contain any real\n> value. Here `3A` means the next encoded field is a _length delimited_ value\n> for field number `7`. `05` is the number of bytes that was used to encode the\n> value that follows. Those five bytes contain the string `hello`. Read\n> [this](https://developers.google.com/protocol-buffers/docs/encoding) if\n> you want to learn more about how Protobuf encoding works.\n\n\n# Encoding\n\n@docs encode, Encoder, message\n\n\n# Integers\n\n@docs int32, uint32, sint32, fixed32, sfixed32\n\n\n# Floats\n\n@docs double, float\n\n\n# Strings\n\n@docs string\n\n\n# Booleans\n\n@docs bool\n\n\n# Bytes\n\n@docs bytes\n\n\n# None\n\n@docs none\n\n\n# Data Structures\n\n@docs list, dict\n\n",
+        "unions": [
+            {
+                "name": "Encoder",
+                "comment": " Describes how to generate a sequence of bytes according to the\nspecification of Protobuf.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "bool",
+                "comment": " Encode booleans into a message.\n\n     encode (bool False) -- <00>\n     encode (bool True)  -- <01>\n\n",
+                "type": "Basics.Bool -> Protobuf.Encode.Encoder"
+            },
+            {
+                "name": "bytes",
+                "comment": " Copy raw `Bytes` into a message.\n\n    -- bs == <0A 0B 0C>\n    encode (bytes bs) -- <0A 0B 0C>\n\n",
+                "type": "Bytes.Bytes -> Protobuf.Encode.Encoder"
+            },
+            {
+                "name": "dict",
+                "comment": " Encode a dictionary of key-value pairs. This requires providing one encoder\nfor the keys and one for the values.\n\n    let\n        value =\n            Dict.fromList\n                [ ( 1, \"foo\" ) -- <0A* 07* 08* 01 12* 03* 66 6F 6F\n                , ( 2, \"bar\" ) --  0A* 07* 08* 02 12* 03* 62 61 72>\n                ]\n    in\n    message [ ( 1, dict int32 string value ) ]\n\n",
+                "type": "(k -> Protobuf.Encode.Encoder) -> (v -> Protobuf.Encode.Encoder) -> Dict.Dict k v -> Protobuf.Encode.Encoder"
+            },
+            {
+                "name": "double",
+                "comment": " Encode 64-bit floating point numbers into a message.\n\n     encode (double 0)    -- <00 00 00 00 00 00 00 00>\n     encode (double 100)  -- <00 00 00 00 00 00 59 40>\n     encode (double -100) -- <00 00 00 00 00 00 59 C0>\n\n",
+                "type": "Basics.Float -> Protobuf.Encode.Encoder"
+            },
+            {
+                "name": "encode",
+                "comment": " Turn an `Encoder` into `Bytes`.\n\n     encode (int32 127)    -- <7F>\n     encode (sint32 127)   -- <FE 01>\n     encode (sfixed32 127) -- <7F 00 00 00>\n\nValues are encoded together with a field number and the\n[_wire type_](https://developers.google.com/protocol-buffers/docs/encoding#structure)\nconform the specification in a `.proto` file. This allows decoders to know what\nfield it is decoding and to read the right number of `Bytes`.\n\n    import Protobuf.Encode as Encode\n\n    type alias Person =\n        { age : Int\n        , name : String\n        }\n\n    toPersonEncoder : Person -> Encode.Encoder\n    toPersonEncoder person =\n        Encode.message\n            [ ( 1, Encode.uint32 person.age )\n            , ( 2, Encode.string person.name )\n            ]\n\n    Encode.encode (encodePerson (Person 33 \"Tom\")) -- <08* 21 12* 03* 54 6F 6D>\n\nYou probably want to send these `Bytes` in the body of an HTTP request:\n\n    import Http\n    import Protobuf.Encode as Encode\n\n    postPerson : (Result Http.Error () -> msg) -> Person -> Cmd msg\n    postPerson toMsg person =\n        Http.post\n            { url = \"https://example.com/person\"\n            , body =\n                Http.bytesBody \"application/octet-stream\" <|\n                    Encode.encode (encodePerson person)\n            , expect = Http.expectWhatever\n            }\n\n",
+                "type": "Protobuf.Encode.Encoder -> Bytes.Bytes"
+            },
+            {
+                "name": "fixed32",
+                "comment": " Encode integers from `0` to `4294967295` into a message. Always four bytes.\nMore efficient than [`uint32`](#uint32) if values are often greater than\n`268435456`.\n\n     encode (fixed32 0)   -- <00 00 00 00>\n     encode (fixed32 100) -- <64 00 00 00>\n\n",
+                "type": "Basics.Int -> Protobuf.Encode.Encoder"
+            },
+            {
+                "name": "float",
+                "comment": " Encode 32-bit floating point numbers into a message.\nThe value may lose some precision by encoding it as a float.\n\n     encode (float 0)    -- <00 00 00 00>\n     encode (float 100)  -- <00 00 C8 42>\n     encode (float -100) -- <00 00 C8 C2>\n\n",
+                "type": "Basics.Float -> Protobuf.Encode.Encoder"
+            },
+            {
+                "name": "int32",
+                "comment": " Encode integers from `-2147483648` to `2147483647` into a message. Uses\nvariable-length encoding. Inefficient for encoding negative numbers – if your\nfield is likely to have negative values, use [`sint32`](#sint32) instead.\n\n     encode (int32 0)    -- <00>\n     encode (int32 100)  -- <64>\n     encode (int32 -100) -- <FF FF FF FF FF FF FF 9C>\n\nThis function can also be used to encode custom types as enumeration:\n\n    type Fruit\n        = Apple\n        | Banana\n        | Mango\n        | Unrecognized Int\n\n    toFruitEncoder : Fruit -> Encoder\n    toFruitEncoder value =\n        Encode.int32 <|\n            case value of\n                Apple ->\n                    0\n\n                Banana ->\n                    1\n\n                Mango ->\n                    2\n\n                Unrecognized v ->\n                    v\n\nNote that for `proto2` the `Unrecognized Int` field can be left out.\n\n",
+                "type": "Basics.Int -> Protobuf.Encode.Encoder"
+            },
+            {
+                "name": "list",
+                "comment": " Encode a list of values into a message.\nProtobuf support two kind of encodings:\n\n     -- packed encoding\n     message\n         [ ( 1, list int32 [ 1, 2, 3 ] ) -- <0A* 03* 01 02 03>\n         ]\n\n     -- non-packed encoding\n     message\n         [ ( 1\n           , list string\n                 [ \"one\"   -- <0A* 03* 6F 6E 65\n                 , \"two\"   --  0A* 03* 74 77 6F\n                 , \"three\" --  0A* 05* 74 68 72 65 65>\n                 ]\n           )\n         ]\n\nPacked encoding is preferred as it uses less bytes on the wire. `list` will\nautomatically fall-back to non-packed encoding for non-scalar numeric types.\n\n",
+                "type": "(a -> Protobuf.Encode.Encoder) -> List.List a -> Protobuf.Encode.Encoder"
+            },
+            {
+                "name": "message",
+                "comment": " Encode a record into a message. For this you need to provide a list of\n**unique** field numbers (between `1` and `536870911`) and their corresponding\n`Encoder`s.\n\n     type alias Foo =\n         { a : Float\n         , b : String\n         , c : List Int\n         }\n\n     foo : Foo\n     foo =\n        Foo 1.25 \"hello\" [ 1, 2, 3, 4, 5 ]\n\n     toEncoder : Encoder\n     toEncoder =\n         message\n             [ ( 1, double foo.a )         -- <09* 00 00 00 00 00 00 F4 3F\n             , ( 2, string foo.b )         --  12* 05* 68 65 6C 6C 6F\n             , ( 3, repeated int32 foo.c ) --  1A* 05* 01 02 03 04 05>\n             ]\n\n",
+                "type": "List.List ( Basics.Int, Protobuf.Encode.Encoder ) -> Protobuf.Encode.Encoder"
+            },
+            {
+                "name": "none",
+                "comment": " Encode nothing. Note that you can easily combine this encoder with _any_\nfield number to pass to [`message`](#message) as literally **nothing** will be\nencoded.\n\nThis can be useful when encoding embedded messages:\n\n    type alias Report =\n        { title : String\n        , contents : String\n        , attachment : Maybe Attachment\n        }\n\n    toReportEncoder : Report -> Encoder\n    toReportEncoder report =\n        message\n            [ ( 1, string report.title )\n            , ( 2, string report.contents )\n            , ( 3, Maybe.withDefault none <| Maybe.map toAttachmentEncoder report.attachment )\n            ]\n\nOr when encoding custom types:\n\n    type alias FormValue =\n        { key : String\n        , value : Maybe Value\n        }\n\n    type Value\n        = StringValue String\n        | IntValue Int\n\n    toKeyValueEncoder : FormValue -> Encoder\n    toKeyValueEncoder formValue =\n        message\n            [ ( 1, string formValue.key )\n            , Maybe.withDefault ( 0, none ) <| Maybe.map toValueEncoder formValue.value\n            ]\n\n    toValueEncoder : Value -> ( Int, Encoder )\n    toValueEncoder model =\n        case model of\n            StringValue value ->\n                ( 2, string value )\n\n            IntValue value ->\n                ( 3, int32 value )\n\n",
+                "type": "Protobuf.Encode.Encoder"
+            },
+            {
+                "name": "sfixed32",
+                "comment": " Encode integers from `-2147483648` to `2147483647` into a message.\nAlways four bytes.\n\n     encode (sfixed32 0)    -- <00 00 00 00>\n     encode (sfixed32 100)  -- <64 00 00 00>\n     encode (sfixed32 -100) -- <9C FF FF FF>\n\n",
+                "type": "Basics.Int -> Protobuf.Encode.Encoder"
+            },
+            {
+                "name": "sint32",
+                "comment": " Encode integers from `-2147483648` to `2147483647` into a message. Uses\nvariable-length encoding. These encoder encodes negative numbers more\nefficiently than [`int32`](#int32).\n\n     encode (sint32 0)    -- <00>\n     encode (sint32 100)  -- <C8 01>\n     encode (sint32 -100) -- <C7 01>\n\n",
+                "type": "Basics.Int -> Protobuf.Encode.Encoder"
+            },
+            {
+                "name": "string",
+                "comment": " Encode strings into a message.\n\n     encode (string \"$20\")   -- <24 32 30>\n     encode (string \"£20\")   -- <C2 A3 32 30>\n     encode (string \"€20\")   -- <E2 82 AC 32 30>\n     encode (string \"bread\") -- <62 72 65 61 64>\n     encode (string \"brød\")  -- <62 72 C3 B8 64>\n\n",
+                "type": "String.String -> Protobuf.Encode.Encoder"
+            },
+            {
+                "name": "uint32",
+                "comment": " Encode integers from `0` to `4294967295` into a message.\nUses variable-length encoding.\n\n     encode (uint32 0)   -- <00>\n     encode (uint32 100) -- <64>\n\n",
+                "type": "Basics.Int -> Protobuf.Encode.Encoder"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,114 @@
+[
+    {
+        "name": "TreeDiagram",
+        "comment": " This library provides functions drawing diagrams of trees.\n\n\n# Building a tree\n\n@docs Tree, node\n\n\n# Drawing a tree\n\n@docs Coord, Drawable, NodeDrawer, EdgeDrawer, draw_\n\n\n# Tree layout options\n\n@docs TreeLayout, defaultTreeLayout, TreeOrientation, leftToRight, rightToLeft, bottomToTop, topToBottom\n\n",
+        "unions": [
+            {
+                "name": "Tree",
+                "comment": " A tree data structure\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            },
+            {
+                "name": "TreeOrientation",
+                "comment": " Direction of the tree from root to leaves\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Coord",
+                "comment": " 2D coordinate\n",
+                "args": [],
+                "type": "( Basics.Float, Basics.Float )"
+            },
+            {
+                "name": "Drawable",
+                "comment": " Functions for moving around and composing drawings\n",
+                "args": [
+                    "fmt",
+                    "out"
+                ],
+                "type": "{ position : TreeDiagram.Coord -> fmt -> fmt, compose : Basics.Int -> Basics.Int -> List.List fmt -> out, transform : Basics.Int -> Basics.Int -> TreeDiagram.Coord -> TreeDiagram.Coord }"
+            },
+            {
+                "name": "EdgeDrawer",
+                "comment": " Alias for functions that draw edges between nodes\n",
+                "args": [
+                    "fmt"
+                ],
+                "type": "TreeDiagram.Coord -> fmt"
+            },
+            {
+                "name": "NodeDrawer",
+                "comment": " Alias for functions that draw nodes\n",
+                "args": [
+                    "a",
+                    "fmt"
+                ],
+                "type": "a -> fmt"
+            },
+            {
+                "name": "TreeLayout",
+                "comment": " Options to be passed to `draw_` for laying out the tree:\n\n  - orientation: direction of the tree from root to leaves.\n  - levelHeight: vertical distance between parent and child nodes.\n  - subtreeDistance: horizontal distance between subtrees.\n  - siblingDistance: horizontal distance between siblings. This is usually set\n    below `subtreeDistance` to produce a clearer distinction between sibling\n    nodes and non-siblings on the same level of the tree.\n  - padding: amount of space to leave around the edges of the diagram.\n\n",
+                "args": [],
+                "type": "{ orientation : TreeDiagram.TreeOrientation, levelHeight : Basics.Int, siblingDistance : Basics.Int, subtreeDistance : Basics.Int, padding : Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "bottomToTop",
+                "comment": " Bottom-to-top tree orientation\n",
+                "type": "TreeDiagram.TreeOrientation"
+            },
+            {
+                "name": "defaultTreeLayout",
+                "comment": " A set of default values that should be modified to create your TreeLayout\n",
+                "type": "TreeDiagram.TreeLayout"
+            },
+            {
+                "name": "draw_",
+                "comment": " Draws the tree using the provided functions for drawings nodes and edges.\nTreeLayout contains some more options for positioning the tree.\n",
+                "type": "TreeDiagram.Drawable fmt out -> TreeDiagram.TreeLayout -> TreeDiagram.NodeDrawer a fmt -> TreeDiagram.EdgeDrawer fmt -> TreeDiagram.Tree a -> out"
+            },
+            {
+                "name": "leftToRight",
+                "comment": " Left-to-right tree orientation\n",
+                "type": "TreeDiagram.TreeOrientation"
+            },
+            {
+                "name": "node",
+                "comment": " Constructs a tree out of a root value and a list of subtrees\n",
+                "type": "a -> List.List (TreeDiagram.Tree a) -> TreeDiagram.Tree a"
+            },
+            {
+                "name": "rightToLeft",
+                "comment": " Right-to-left tree orientation\n",
+                "type": "TreeDiagram.TreeOrientation"
+            },
+            {
+                "name": "topToBottom",
+                "comment": " Top-to-bottom tree orientation\n",
+                "type": "TreeDiagram.TreeOrientation"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "TreeDiagram.Svg",
+        "comment": " Provides a draw function for drawing trees as SVGs.\n\n@docs draw\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "draw",
+                "comment": " Draws the tree using the provided functions for drawings nodes and edges.\nTreeLayout contains some more options for positioning the tree.\n",
+                "type": "TreeDiagram.TreeLayout -> TreeDiagram.NodeDrawer a (Svg.Svg msg) -> TreeDiagram.EdgeDrawer (Svg.Svg msg) -> TreeDiagram.Tree a -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

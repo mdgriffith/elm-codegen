@@ -1,0 +1,124 @@
+[
+    {
+        "name": "Array2D",
+        "comment": " Implements 2D array using nested Arrays. Useful for implementing data grids,\nas it specifically provides row and column operations.\n\nCells are accessed by row, then column. Otherwise, it works very similarly to the\nArray class. The documentation examples usually omit converting Lists to Arrays\nfor brevity.\n\nArray2D's can be constructed from an Array or List of rows, where each\nrow is an Array or List of cells.\n\n    Array2D.fromList\n      [ [\"Row 1-Col 1\", \"Row 1-Col 2\"]\n      , [\"Row 2-Col 1\", \"Row 2-Col 2\"]\n      ]\n\nIf the nested arrays happen to be jagged, all rows will be truncated to the\nlength of the smallest row! Be careful!\n\n    Array2D.fromList\n      [ [0, 1]\n      , [0, 1, 2]\n      ]\n    -- Becomes:\n      [ [0, 1]\n      , [0, 1]\n      ]\n\n\n## Drawbacks and caveats\n\nMost examples of nested models in Elm use Lists of elements with a\nunique, constant ID, e.g.:\n\n    type alias Cell = { uid : Int, ... }\n\nThis allows messages to always be routed to the correct\nelement, even if elements are re-ordered, removed, added, etc.\nIf you use the **index** of an element instead to create a long Task\nthat will change the element when it ends, be aware that the target\nelement's index may have changed during the task!\n\nFor data grids you are probably not going to be re-positioning\ncells. Most data grids simply modify cells in place, which is what\nArray2D is mainly intended for. **The danger comes from inserting and\ndeleting rows and columns.** During such operations, you may want to\ntemporarily make your grid \"read-only\" somehow.\n\n\n# Base type\n\n@docs Array2D\n\n\n# Initialization\n\n@docs empty, fromArray, fromList, initialize, repeat\n\n\n# Getting info\n\n@docs rows, columns, isEmpty\n\n\n# Fetching/updating individual cells\n\n@docs get, set\n\n\n# Adding/removing rows\n\n@docs getRow, appendRow, deleteRow\n\n\n# Adding/removing columns\n\n@docs getColumn, appendColumn, deleteColumn\n\n\n# Mapping cell data\n\n@docs map, indexedMap\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Array2D",
+                "comment": " Base Array2D type\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ data : Array.Array (Array.Array a), columns : Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "appendColumn",
+                "comment": " Append a column. Filler will be used if the column length\nis less than the number of rows in the Array2D. If it is longer,\nit will be truncated.\n\n    appendColumn [2, 2] -1 [[1], [1]] == [[1, 2], [1,2]]\n\n    -- Filler needed for short column:\n    appendColumn [2] -1 [[1], [1]] == [[1, 2], [1,-1]]\n\n",
+                "type": "Array.Array a -> a -> Array2D.Array2D a -> Array2D.Array2D a"
+            },
+            {
+                "name": "appendRow",
+                "comment": " Append a row. If the row is too long, it will be truncated,\ntoo short and it will be expanded with filler elements.\n\n    appendRow [3, 4] -1 [[1, 2]] == [[1, 2], [3, 4]]\n\n    -- Filler needed for short row:\n    appendRow [3] -1 [[1, 2]] == [[1, 2], [3, -1]]\n\n",
+                "type": "Array.Array a -> a -> Array2D.Array2D a -> Array2D.Array2D a"
+            },
+            {
+                "name": "columns",
+                "comment": " Get the number of columns in an Array2D\n\n    columns [[1, 2, 3], [4, 5, 6]] == 3\n\n",
+                "type": "Array2D.Array2D a -> Basics.Int"
+            },
+            {
+                "name": "deleteColumn",
+                "comment": " Delete a column. If the index is invalid, nothing will happen.\n",
+                "type": "Basics.Int -> Array2D.Array2D a -> Array2D.Array2D a"
+            },
+            {
+                "name": "deleteRow",
+                "comment": " Delete a row. Does nothing if the index is out of bounds.\n",
+                "type": "Basics.Int -> Array2D.Array2D a -> Array2D.Array2D a"
+            },
+            {
+                "name": "empty",
+                "comment": " Create an empty Array2D\n",
+                "type": "Array2D.Array2D a"
+            },
+            {
+                "name": "fromArray",
+                "comment": " Create an Array2D from an Array of Arrays. All rows will\nbe truncated to the length of the shortest row.\n\n    let\n      row1 = Array.fromList [1, 2]\n      row2 = Array.fromList [2, 3]\n    in\n      fromArray (Array.fromList [row1, row2])\n\n",
+                "type": "Array.Array (Array.Array a) -> Array2D.Array2D a"
+            },
+            {
+                "name": "fromList",
+                "comment": " Create an Array2D from a List of Lists.\n\n    fromList [[1, 2, 3], [4, 5, 6]]\n\n",
+                "type": "List.List (List.List a) -> Array2D.Array2D a"
+            },
+            {
+                "name": "get",
+                "comment": " Get a cell.\n\n    get 1 1 [[1, 2], [3, 4]] == Just 4\n\n",
+                "type": "Basics.Int -> Basics.Int -> Array2D.Array2D a -> Maybe.Maybe a"
+            },
+            {
+                "name": "getColumn",
+                "comment": " get column-th cell of each row as an Array\n\n    getColumn 1 [[1, 2], [3, 4]] == Just [2, 4]\n\n",
+                "type": "Basics.Int -> Array2D.Array2D a -> Maybe.Maybe (Array.Array a)"
+            },
+            {
+                "name": "getRow",
+                "comment": " Get an individual row\n\n    getRow 1 [[1, 2], [3, 4]] == Just [3, 4]\n\n",
+                "type": "Basics.Int -> Array2D.Array2D a -> Maybe.Maybe (Array.Array a)"
+            },
+            {
+                "name": "indexedMap",
+                "comment": " 2D version of Array.indexedMap. First two arguments of map\nfunction are the row and column.\n\n    indexedMap\n        (\\row column cell -> toString row)\n        [[1, 2], [3, 4]]\n        == [[\"0\", \"0\"], [\"1\", \"1\"]]\n\n",
+                "type": "(Basics.Int -> Basics.Int -> a -> b) -> Array2D.Array2D a -> Array2D.Array2D b"
+            },
+            {
+                "name": "initialize",
+                "comment": " Initialize an Array2D. `initialize rows cols f` creates an array\nwith the given dimensions with the element at index `row col`\ninitialized to the result of `(f row col)`. Similar to\n`Array.initialize`.\n\n    initialize 2 3 (\\row col -> row + col)  == fromList [[0, 1, 2], [1, 2, 3]]\n\n",
+                "type": "Basics.Int -> Basics.Int -> (Basics.Int -> Basics.Int -> a) -> Array2D.Array2D a"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Check if an Array2D is empty.\n\n    isEmpty [] == True\n\n",
+                "type": "Array2D.Array2D a -> Basics.Bool"
+            },
+            {
+                "name": "map",
+                "comment": " 2D version of Array.map.\n\n    map\n        (\\cell -> toString cell)\n        [[1, 2], [3, 4]]\n        == [[\"1\", \"2\"], [\"3\", \"4\"]]\n\n",
+                "type": "(a -> b) -> Array2D.Array2D a -> Array2D.Array2D b"
+            },
+            {
+                "name": "repeat",
+                "comment": " Create a 2D of a given size, filled with a default element.\nSimilar to Array.repeat\n\n    repeat 2 3 0 == [[0, 0, 0], [0, 0, 0]]\n\n",
+                "type": "Basics.Int -> Basics.Int -> a -> Array2D.Array2D a"
+            },
+            {
+                "name": "rows",
+                "comment": " Get the number of rows in an Array2D\n\n    rows [[1, 2, 3], [4, 5, 6]] == 2\n\n",
+                "type": "Array2D.Array2D a -> Basics.Int"
+            },
+            {
+                "name": "set",
+                "comment": " Update a cell, returning the changed Array2D.\n\n    set 0 0 -100 [[1, 2], [3, 4]] == [[-100, 2], [3, 4]]\n\n",
+                "type": "Basics.Int -> Basics.Int -> a -> Array2D.Array2D a -> Array2D.Array2D a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Array2D.Json",
+        "comment": " JSON decoding/encoding utilities for Array2D.\n\n\n# Decoding 2D arrays\n\n@docs decoder\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decoder",
+                "comment": " JSON decoder to turn nested arrays into an Array2D.\n\nIf the rows are jagged, all rows will be truncated to the\nsame length as the shortest row!\n\n",
+                "type": "Json.Decode.Decoder a -> Json.Decode.Decoder (Array2D.Array2D a)"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,76 @@
+[
+    {
+        "name": "Response",
+        "comment": " Response utilities for Elm Architecture. Build responses from tasks, pipe them, map over.\n\n\n# Construct\n\n@docs Response, res, taskRes, withCmd, withCmds, withTask, withNone, pure\n\n\n# Transform\n\n@docs mapModel, mapCmd, mapBoth, andThen\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Response",
+                "comment": " A response is an updated model and some cmd.\n",
+                "args": [
+                    "model",
+                    "msg"
+                ],
+                "type": "( model, Platform.Cmd.Cmd msg )"
+            }
+        ],
+        "values": [
+            {
+                "name": "andThen",
+                "comment": " Sequence one update after another.\n\n    update1 : Model -> Response Model (Cmd Msg)\n    update2 : Model -> Response Model (Cmd Msg)\n    update3 : Model -> Response Model (Cmd Msg)\n\n    update1 model\n    |> andThen update2\n    |> andThen update3\n\n",
+                "type": "(m -> Response.Response m a) -> Response.Response m a -> Response.Response m a"
+            },
+            {
+                "name": "mapBoth",
+                "comment": " Map over model and cmd.\n",
+                "type": "(m -> n) -> (a -> b) -> Response.Response m a -> Response.Response n b"
+            },
+            {
+                "name": "mapCmd",
+                "comment": " Map over cmd.\n",
+                "type": "(a -> b) -> Response.Response m a -> Response.Response m b"
+            },
+            {
+                "name": "mapModel",
+                "comment": " Map over model.\n",
+                "type": "(m -> n) -> Response.Response m a -> Response.Response n a"
+            },
+            {
+                "name": "pure",
+                "comment": " Synonym for withNone (for those with a personal preference).\n\n    pure { model | foo = bar }\n\n",
+                "type": "m -> Response.Response m a"
+            },
+            {
+                "name": "res",
+                "comment": " Canonical usage: construct a result from model and cmd.\n",
+                "type": "model -> Platform.Cmd.Cmd msg -> Response.Response model msg"
+            },
+            {
+                "name": "taskRes",
+                "comment": " Construct a response from a model and task.\n",
+                "type": "model -> (Result.Result x a -> msg) -> Task.Task x a -> Response.Response model msg"
+            },
+            {
+                "name": "withCmd",
+                "comment": " Construct a result from model and cmd, flipped for piping:\n\n    { model | foo = bar }\n        |> withCmd someCmd\n\n",
+                "type": "Platform.Cmd.Cmd a -> m -> Response.Response m a"
+            },
+            {
+                "name": "withCmds",
+                "comment": " Construct a result from model and multiple cmds, flipped for piping:\n\n    { model | foo = bar }\n        |> withCmds [ someCmd1, someCmd1 ]\n\n",
+                "type": "List.List (Platform.Cmd.Cmd a) -> m -> Response.Response m a"
+            },
+            {
+                "name": "withNone",
+                "comment": " Construct a result from model without cmd, flipped for piping:\n\n    { model | foo = bar }\n        |> withNone\n\n",
+                "type": "m -> Response.Response m a"
+            },
+            {
+                "name": "withTask",
+                "comment": " Construct a result from model and task, flipped for piping:\n\n    { model | foo = bar }\n        |> withTask someTask\n\n",
+                "type": "(Result.Result x a -> msg) -> Task.Task x a -> model -> Response.Response model msg"
+            }
+        ],
+        "binops": []
+    }
+]

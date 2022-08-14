@@ -1,0 +1,61 @@
+[
+    {
+        "name": "Dropdown",
+        "comment": " Flexible dropdown component which serves as a foundation for custom dropdowns, select–inputs, popovers, and more.\n\n\n# Example\n\nBasic example of usage:\n\n    init : Model\n    init =\n        { myDropdown = False }\n\n    type alias Model =\n        { myDropdown : Dropdown.State }\n\n    type Msg\n        = ToggleDropdown Bool\n\n    update : Msg -> Model -> ( Model, Cmd Msg )\n    update msg model =\n        case msg of\n            ToggleDropdown newState ->\n                ( { model | myDropdown = newState }, Cmd.none )\n\n    view : Model -> Html Msg\n    view model =\n        div []\n            [ dropdown\n                model.myDropdown\n                myDropdownConfig\n                (toggle button [] [ text \"Toggle\" ])\n                (drawer div\n                    []\n                    [ button [] [ text \"Option 1\" ]\n                    , button [] [ text \"Option 2\" ]\n                    , button [] [ text \"Option 3\" ]\n                    ]\n                )\n            ]\n\n    myDropdownConfig : Dropdown.Config Msg\n    myDropdownConfig =\n        Dropdown.Config\n            \"myDropdown\"\n            OnClick\n            (class \"visible\")\n            ToggleDropdown\n\n\n# Configuration\n\n@docs State, Config, ToggleEvent\n\n\n# Views\n\n@docs dropdown, toggle, drawer\n\n",
+        "unions": [
+            {
+                "name": "ToggleEvent",
+                "comment": " Used to set the event on which the dropdown's drawer should appear or disappear.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "OnClick",
+                        []
+                    ],
+                    [
+                        "OnHover",
+                        []
+                    ],
+                    [
+                        "OnFocus",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " Configuration.\n\n  - `identifier`: unique identifier for the dropdown.\n  - `toggleEvent`: Event on which the dropdown's drawer should appear or disappear.\n  - `drawerVisibleAttribute`: `Html.Attribute msg` that's applied to the dropdown's drawer when visible.\n  - `callback`: msg which will be called when the state of the dropdown should be changed.\n\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ identifier : String.String, toggleEvent : Dropdown.ToggleEvent, drawerVisibleAttribute : Html.Attribute msg, callback : Basics.Bool -> msg }"
+            },
+            {
+                "name": "State",
+                "comment": " Indicates wether the dropdown's drawer is visible or not.\n",
+                "args": [],
+                "type": "Basics.Bool"
+            }
+        ],
+        "values": [
+            {
+                "name": "drawer",
+                "comment": " Transforms the given HTML-element into a working drawer for your dropdown.\nSee `dropdown` on how to use in combination with `toggle`.\n\nExample of use:\n\n    drawer div\n        [ class \"myDropdownDrawer\" ]\n        [ button [ onClick NewFile ] [ text \"New\" ]\n        , button [ onClick OpenFile ] [ text \"Open...\" ]\n        , button [ onClick SaveFile ] [ text \"Save\" ]\n        ]\n\n",
+                "type": "(List.List (Html.Attribute msg) -> List.List (Html.Html msg) -> Html.Html msg) -> List.List (Html.Attribute msg) -> List.List (Html.Html msg) -> Dropdown.State -> Dropdown.Config msg -> Html.Html msg"
+            },
+            {
+                "name": "dropdown",
+                "comment": " Creates a dropdown using the given state, config, toggle, and drawer.\n\n    dropdown div\n        []\n        [ toggle button\n            [ class \"myButton\" ] [ text \"More options\" ]\n        , drawer div\n            [ class \"myDropdownDrawer\" ]\n            [ button [ onClick NewFile ] [ text \"New\" ]\n            , button [ onClick OpenFile ] [ text \"Open...\" ]\n            , button [ onClick SaveFile ] [ text \"Save\" ]\n            ]\n        ]\n        model.myDropdownState\n        myDropdownConfig\n\n",
+                "type": "(List.List (Html.Attribute msg) -> List.List (Html.Html msg) -> Html.Html msg) -> List.List (Html.Attribute msg) -> List.List (Dropdown.State -> Dropdown.Config msg -> Html.Html msg) -> Dropdown.State -> Dropdown.Config msg -> Html.Html msg"
+            },
+            {
+                "name": "toggle",
+                "comment": " Transforms the given HTML-element into a working toggle for your dropdown.\nSee `dropdown` on how to use in combination with `drawer`.\n\nExample of use:\n\n    toggle button\n        [ class \"myButton\" ]\n        [ text \"More options\" ]\n\n",
+                "type": "(List.List (Html.Attribute msg) -> List.List (Html.Html msg) -> Html.Html msg) -> List.List (Html.Attribute msg) -> List.List (Html.Html msg) -> Dropdown.State -> Dropdown.Config msg -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

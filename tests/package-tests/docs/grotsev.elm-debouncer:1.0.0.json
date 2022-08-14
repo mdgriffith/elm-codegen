@@ -1,0 +1,43 @@
+[
+    {
+        "name": "Bounce",
+        "comment": "\n\n\n# Bounce state\n\nThe most simple debouncer for Elm.\n\n@docs Bounce, steady\n\n\n# State manipulation\n\n@docs init, push, pop\n\n\n# Command\n\n@docs delay\n\n",
+        "unions": [
+            {
+                "name": "Bounce",
+                "comment": " Event counter counts in-flight events\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "delay",
+                "comment": " Delay event, time in milliseconds.\n",
+                "type": "Basics.Float -> msg -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "init",
+                "comment": " Initial steady state.\n",
+                "type": "Bounce.Bounce"
+            },
+            {
+                "name": "pop",
+                "comment": " Count delayed event.\n",
+                "type": "Bounce.Bounce -> Bounce.Bounce"
+            },
+            {
+                "name": "push",
+                "comment": " Count new user event.\n",
+                "type": "Bounce.Bounce -> Bounce.Bounce"
+            },
+            {
+                "name": "steady",
+                "comment": " State is steady, i.e. there is no in-flight events.\n",
+                "type": "Bounce.Bounce -> Basics.Bool"
+            }
+        ],
+        "binops": []
+    }
+]

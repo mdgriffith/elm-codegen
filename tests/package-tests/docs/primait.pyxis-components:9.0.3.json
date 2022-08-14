@@ -1,0 +1,3505 @@
+[
+    {
+        "name": "Prima.Pyxis.Accordion",
+        "comment": "\n\n\n## Configuration\n\n@docs Config, State\n\n\n## Configuration Methods\n\n@docs base, light, dark, state\n\n\n## Methods\n\n@docs open, close\n\n\n## Rendering\n\n@docs render, renderGroup\n\n\n## Options\n\n@docs withAttribute, withWrapperClass, withContentClass, withSimpleTitle, withHtmlTitle, withContent\n\n",
+        "unions": [
+            {
+                "name": "Config",
+                "comment": " Represents the static configuration of the component. Values\npassed in are no more modified by the setter.\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "State",
+                "comment": " Internal. Represents the state of the component. Values passed in are\nsusceptible to change.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "base",
+                "comment": " Returns the configuration for a Base accordion skin.\n\n    ...\n\n    type alias Slug =\n        String\n\n    type Msg =\n        Toggled Slug Bool\n\n    ...\n\n    myAccordionConfig : Accordion\n    myAccordionConfig =\n        Accordion.base \"my_accordion_slug\" Toggled\n\n\n    render : Html Msg\n    render =\n        Accordion.render myAccordionConfig\n    ...\n\n",
+                "type": "String.String -> (String.String -> Basics.Bool -> msg) -> Prima.Pyxis.Accordion.Config msg"
+            },
+            {
+                "name": "close",
+                "comment": " Closes the Accordion to hide it's content.\n\n    updatedAccordionState =\n        Accordion.close myAccordionState\n\n",
+                "type": "Prima.Pyxis.Accordion.State"
+            },
+            {
+                "name": "dark",
+                "comment": " The same as base but with a Dark skin.\n",
+                "type": "String.String -> (String.String -> Basics.Bool -> msg) -> Prima.Pyxis.Accordion.Config msg"
+            },
+            {
+                "name": "light",
+                "comment": " The same as base but with a Light skin.\n",
+                "type": "String.String -> (String.String -> Basics.Bool -> msg) -> Prima.Pyxis.Accordion.Config msg"
+            },
+            {
+                "name": "open",
+                "comment": " Opens the Accordion to reveal it's content.\n\n    updatedAccordionState =\n        Accordion.open myAccordionState\n\n",
+                "type": "Prima.Pyxis.Accordion.State"
+            },
+            {
+                "name": "render",
+                "comment": " Renders the `Accordion`.\n",
+                "type": "Prima.Pyxis.Accordion.State -> Prima.Pyxis.Accordion.Config msg -> Html.Html msg"
+            },
+            {
+                "name": "renderGroup",
+                "comment": " Renders a group of Accordion(s) inside an AccordionGroup.\n",
+                "type": "List.List ( Prima.Pyxis.Accordion.State, Prima.Pyxis.Accordion.Config msg ) -> Html.Html msg"
+            },
+            {
+                "name": "state",
+                "comment": " Returns the basic state of the component.\n",
+                "type": "Basics.Bool -> Prima.Pyxis.Accordion.State"
+            },
+            {
+                "name": "withAttribute",
+                "comment": " Adds a generic Html.Attribute to the `Accordion`.\n",
+                "type": "Html.Attribute msg -> Prima.Pyxis.Accordion.Config msg -> Prima.Pyxis.Accordion.Config msg"
+            },
+            {
+                "name": "withContent",
+                "comment": " Adds content to the Accordion\n",
+                "type": "List.List (Html.Html msg) -> Prima.Pyxis.Accordion.Config msg -> Prima.Pyxis.Accordion.Config msg"
+            },
+            {
+                "name": "withContentClass",
+                "comment": " Adds a class for the content to the `Accordion`.\n",
+                "type": "String.String -> Prima.Pyxis.Accordion.Config msg -> Prima.Pyxis.Accordion.Config msg"
+            },
+            {
+                "name": "withHtmlTitle",
+                "comment": " Adds an Html title to the `Accordion`.\n",
+                "type": "Html.Html msg -> Prima.Pyxis.Accordion.Config msg -> Prima.Pyxis.Accordion.Config msg"
+            },
+            {
+                "name": "withSimpleTitle",
+                "comment": " Adds a string title to the `Accordion`.\n",
+                "type": "String.String -> Prima.Pyxis.Accordion.Config msg -> Prima.Pyxis.Accordion.Config msg"
+            },
+            {
+                "name": "withWrapperClass",
+                "comment": " Adds a class for the wrapper to the `Accordion`.\n",
+                "type": "String.String -> Prima.Pyxis.Accordion.Config msg -> Prima.Pyxis.Accordion.Config msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Prima.Pyxis.AtrTable",
+        "comment": "\n\n\n## Configuration\n\n@docs State, AtrDetail, Msg\n\n\n## Configuration Methods\n\n@docs state, update, atr, paritaria, paritariaMista, paritariaCose, paritariaPersone, principale, principaleMista, principaleCose, principalePersone\n\n\n## Rendering\n\n@docs render\n\n\n## Options\n\n@docs withClass\n\n",
+        "unions": [
+            {
+                "name": "AtrDetail",
+                "comment": " Represents a detail for an `ATR` which contains information about\nthe number of accidents in a specific year.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Msg",
+                "comment": " Represents the `AtrTable`'s `Msg`.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "State",
+                "comment": " Defines the configuration of an Atr table\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "atr",
+                "comment": " Creates an empty `AtrDetail`.\nEach detail is identified by an year and representation of accidents occurred\nduring it. All setters methods are pipeable.\n",
+                "type": "Basics.Int -> Prima.Pyxis.AtrTable.AtrDetail"
+            },
+            {
+                "name": "paritaria",
+                "comment": " Sets the Responsabilità Paritaria value for a specific `AtrDetail`.\n",
+                "type": "Maybe.Maybe String.String -> Prima.Pyxis.AtrTable.AtrDetail -> Prima.Pyxis.AtrTable.AtrDetail"
+            },
+            {
+                "name": "paritariaCose",
+                "comment": " Sets the Responsabilità Paritaria Cose value for a specific `AtrDetail`.\n",
+                "type": "Maybe.Maybe String.String -> Prima.Pyxis.AtrTable.AtrDetail -> Prima.Pyxis.AtrTable.AtrDetail"
+            },
+            {
+                "name": "paritariaMista",
+                "comment": " Sets the Responsabilità Paritaria Mista value for a specific `AtrDetail`.\n",
+                "type": "Maybe.Maybe String.String -> Prima.Pyxis.AtrTable.AtrDetail -> Prima.Pyxis.AtrTable.AtrDetail"
+            },
+            {
+                "name": "paritariaPersone",
+                "comment": " Sets the Responsabilità Paritaria Persone value for a specific `AtrDetail`.\n",
+                "type": "Maybe.Maybe String.String -> Prima.Pyxis.AtrTable.AtrDetail -> Prima.Pyxis.AtrTable.AtrDetail"
+            },
+            {
+                "name": "principale",
+                "comment": " Sets the `Responsabilità Principale` value for a specific `AtrDetail`.\n",
+                "type": "Maybe.Maybe String.String -> Prima.Pyxis.AtrTable.AtrDetail -> Prima.Pyxis.AtrTable.AtrDetail"
+            },
+            {
+                "name": "principaleCose",
+                "comment": " Sets the Responsabilità Principale Cose value for a specific `AtrDetail`.\n",
+                "type": "Maybe.Maybe String.String -> Prima.Pyxis.AtrTable.AtrDetail -> Prima.Pyxis.AtrTable.AtrDetail"
+            },
+            {
+                "name": "principaleMista",
+                "comment": " Sets the Responsabilità Principale Mista value for a specific `AtrDetail`.\n",
+                "type": "Maybe.Maybe String.String -> Prima.Pyxis.AtrTable.AtrDetail -> Prima.Pyxis.AtrTable.AtrDetail"
+            },
+            {
+                "name": "principalePersone",
+                "comment": " Sets the Responsabilità Principale Persone value for a specific `AtrDetail`.\n",
+                "type": "Maybe.Maybe String.String -> Prima.Pyxis.AtrTable.AtrDetail -> Prima.Pyxis.AtrTable.AtrDetail"
+            },
+            {
+                "name": "render",
+                "comment": " Renders the table by receiving a Configuration. The columns of this table are expressed by the length of the AtrDetail list.\n",
+                "type": "Prima.Pyxis.AtrTable.State -> Html.Html Prima.Pyxis.AtrTable.Msg"
+            },
+            {
+                "name": "state",
+                "comment": " Returns a Tuple containing the Config and a possible batch of side effects to\nbe managed by parent application. Requires a list of `AtrDetail`.\n",
+                "type": "Basics.Bool -> List.List Prima.Pyxis.AtrTable.AtrDetail -> ( Prima.Pyxis.AtrTable.State, Platform.Cmd.Cmd Prima.Pyxis.AtrTable.Msg )"
+            },
+            {
+                "name": "update",
+                "comment": " Updates the configuration of the Atr table.\nReturns a tuple containing the new Config.\n",
+                "type": "Prima.Pyxis.AtrTable.Msg -> Prima.Pyxis.AtrTable.State -> ( Prima.Pyxis.AtrTable.State, Platform.Cmd.Cmd Prima.Pyxis.AtrTable.Msg, List.List Prima.Pyxis.AtrTable.AtrDetail )"
+            },
+            {
+                "name": "withClass",
+                "comment": " Adds a class to the `AtrTable`.\n",
+                "type": "String.String -> Prima.Pyxis.AtrTable.State -> Prima.Pyxis.AtrTable.State"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Prima.Pyxis.Button",
+        "comment": "\n\n\n## Configuration\n\n@docs Config\n\n\n## Configuration Methods\n\n@docs callOut, primary, secondary, tertiary, loading, primaryAlt, secondaryAlt, tertiaryAlt\n\n\n## Rendering\n\n@docs render\n\n\n## Options\n\n@docs withAttribute, withClass, withDisabled, withIcon, withId, withMediumSize, withSmallSize, withTinySize, withTabIndex, withTargetBlank, withTargetParent, withTargetSelf, withTargetTop, withTitle, withTypeButton, withTypeReset, withTypeSubmit, withLoading\n\n\n## Event Options\n\n@docs withOnClick, withOnMouseDown, withOnMouseUp, withOnMouseEnter, withOnMouseLeave, withOnMouseOver, withOnMouseOut\n\n",
+        "unions": [
+            {
+                "name": "Config",
+                "comment": " Represent the configuration of the `Button`.\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "callOut",
+                "comment": " Create a button with a `callOut` visual weight and a `default size`.\n\n    --\n\n    import Prima.Pyxis.Button as Button\n\n    type Msg =\n        Clicked\n\n    ...\n\n    myBtn : Button.Config Msg\n    myBtn =\n        Button.primary \"Click me!\"\n            |> Button.withOnClick Clicked\n\n",
+                "type": "String.String -> Prima.Pyxis.Button.Config msg"
+            },
+            {
+                "name": "loading",
+                "comment": " Create a button with a `Loading` visual weight and a `default size`.\n",
+                "type": "String.String -> Prima.Pyxis.Button.Config msg"
+            },
+            {
+                "name": "primary",
+                "comment": " Create a button with a `Primary` visual weight and a `default size`.\n",
+                "type": "String.String -> Prima.Pyxis.Button.Config msg"
+            },
+            {
+                "name": "primaryAlt",
+                "comment": " Create a button with a `Primary Alt` visual weight and a `default size`.\n",
+                "type": "String.String -> Prima.Pyxis.Button.Config msg"
+            },
+            {
+                "name": "render",
+                "comment": " Renders the button by receiving it's configuration.\n\n    --\n\n    import Prima.Pyxis.Button as Button\n\n    type Msg =\n        Clicked\n\n    ...\n\n    myBtn : Button.Config Msg\n    myBtn =\n        Button.callOut \"Click me!\"\n            |> Button.withDisabled False\n            |> Button.withOnClick Clicked\n\n    ...\n\n    view : Html Msg\n    view =\n        Button.render myBtn\n\n",
+                "type": "Prima.Pyxis.Button.Config msg -> Html.Html msg"
+            },
+            {
+                "name": "secondary",
+                "comment": " Create a button with a `Secondary` visual weight and a `default size`.\n",
+                "type": "String.String -> Prima.Pyxis.Button.Config msg"
+            },
+            {
+                "name": "secondaryAlt",
+                "comment": " Create a button with a `Secondary Alt` visual weight and a `default size`.\n",
+                "type": "String.String -> Prima.Pyxis.Button.Config msg"
+            },
+            {
+                "name": "tertiary",
+                "comment": " Create a button with a `Tertiary` visual weight and a `default size`.\n",
+                "type": "String.String -> Prima.Pyxis.Button.Config msg"
+            },
+            {
+                "name": "tertiaryAlt",
+                "comment": " Create a button with a `Tertiary Alt` visual weight and a `default size`.\n",
+                "type": "String.String -> Prima.Pyxis.Button.Config msg"
+            },
+            {
+                "name": "withAttribute",
+                "comment": " Adds a generic attribute to the Button.\n",
+                "type": "Html.Attribute msg -> Prima.Pyxis.Button.Config msg -> Prima.Pyxis.Button.Config msg"
+            },
+            {
+                "name": "withClass",
+                "comment": " Adds classes to the `classes` of the `Button`.\n",
+                "type": "String.String -> Prima.Pyxis.Button.Config msg -> Prima.Pyxis.Button.Config msg"
+            },
+            {
+                "name": "withDisabled",
+                "comment": " Adds a `disabled` Html.Attribute to the `Button`.\n",
+                "type": "Basics.Bool -> Prima.Pyxis.Button.Config msg -> Prima.Pyxis.Button.Config msg"
+            },
+            {
+                "name": "withIcon",
+                "comment": " Adds an `icon` to the `Button`.\n",
+                "type": "String.String -> Prima.Pyxis.Button.Config msg -> Prima.Pyxis.Button.Config msg"
+            },
+            {
+                "name": "withId",
+                "comment": " Adds an `id` Html.Attribute to the `Button`.\n",
+                "type": "String.String -> Prima.Pyxis.Button.Config msg -> Prima.Pyxis.Button.Config msg"
+            },
+            {
+                "name": "withLoading",
+                "comment": " Sets a emphasis of `Loading` to the `Button`.\n",
+                "type": "Basics.Bool -> Prima.Pyxis.Button.Config msg -> Prima.Pyxis.Button.Config msg"
+            },
+            {
+                "name": "withMediumSize",
+                "comment": " Sets a size of `Medium` to the `Button`.\n",
+                "type": "Prima.Pyxis.Button.Config msg -> Prima.Pyxis.Button.Config msg"
+            },
+            {
+                "name": "withOnClick",
+                "comment": " Adds an `onClick` Html.Event to the `Button`.\n",
+                "type": "msg -> Prima.Pyxis.Button.Config msg -> Prima.Pyxis.Button.Config msg"
+            },
+            {
+                "name": "withOnMouseDown",
+                "comment": " Adds an `onMouseDown` Html.Event to the `Button`.\n",
+                "type": "msg -> Prima.Pyxis.Button.Config msg -> Prima.Pyxis.Button.Config msg"
+            },
+            {
+                "name": "withOnMouseEnter",
+                "comment": " Adds an `onMouseEnter` Html.Event to the `Button`.\n",
+                "type": "msg -> Prima.Pyxis.Button.Config msg -> Prima.Pyxis.Button.Config msg"
+            },
+            {
+                "name": "withOnMouseLeave",
+                "comment": " Adds an `onMouseLeave` Html.Event to the `Button`.\n",
+                "type": "msg -> Prima.Pyxis.Button.Config msg -> Prima.Pyxis.Button.Config msg"
+            },
+            {
+                "name": "withOnMouseOut",
+                "comment": " Adds an `onMouseOut` Html.Event to the `Button`.\n",
+                "type": "msg -> Prima.Pyxis.Button.Config msg -> Prima.Pyxis.Button.Config msg"
+            },
+            {
+                "name": "withOnMouseOver",
+                "comment": " Adds an `onMouseOver` Html.Event to the `Button`.\n",
+                "type": "msg -> Prima.Pyxis.Button.Config msg -> Prima.Pyxis.Button.Config msg"
+            },
+            {
+                "name": "withOnMouseUp",
+                "comment": " Adds an `onMouseUp` Html.Event to the `Button`.\n",
+                "type": "msg -> Prima.Pyxis.Button.Config msg -> Prima.Pyxis.Button.Config msg"
+            },
+            {
+                "name": "withSmallSize",
+                "comment": " Sets a size of `Small` to the `Button`.\n",
+                "type": "Prima.Pyxis.Button.Config msg -> Prima.Pyxis.Button.Config msg"
+            },
+            {
+                "name": "withTabIndex",
+                "comment": " Adds a `tabIndex` Html.Attribute to the `Button`.\n",
+                "type": "Basics.Int -> Prima.Pyxis.Button.Config msg -> Prima.Pyxis.Button.Config msg"
+            },
+            {
+                "name": "withTargetBlank",
+                "comment": " Adds a `target` Html.Attribute to the `Button`.\n",
+                "type": "Prima.Pyxis.Button.Config msg -> Prima.Pyxis.Button.Config msg"
+            },
+            {
+                "name": "withTargetParent",
+                "comment": " Adds a `target` Html.Attribute to the `Button`.\n",
+                "type": "Prima.Pyxis.Button.Config msg -> Prima.Pyxis.Button.Config msg"
+            },
+            {
+                "name": "withTargetSelf",
+                "comment": " Adds a `target` Html.Attribute to the `Button`.\n",
+                "type": "Prima.Pyxis.Button.Config msg -> Prima.Pyxis.Button.Config msg"
+            },
+            {
+                "name": "withTargetTop",
+                "comment": " Adds a `target` Html.Attribute to the `Button`.\n",
+                "type": "Prima.Pyxis.Button.Config msg -> Prima.Pyxis.Button.Config msg"
+            },
+            {
+                "name": "withTinySize",
+                "comment": " Sets a size of `Tiny` to the `Button`.\n",
+                "type": "Prima.Pyxis.Button.Config msg -> Prima.Pyxis.Button.Config msg"
+            },
+            {
+                "name": "withTitle",
+                "comment": " Adds a `title` Html.Attribute to the `Button`.\n",
+                "type": "String.String -> Prima.Pyxis.Button.Config msg -> Prima.Pyxis.Button.Config msg"
+            },
+            {
+                "name": "withTypeButton",
+                "comment": " Adds a `type` Html.Attribute to the `Button`.\n",
+                "type": "Prima.Pyxis.Button.Config msg -> Prima.Pyxis.Button.Config msg"
+            },
+            {
+                "name": "withTypeReset",
+                "comment": " Adds a `type` Html.Attribute to the `Button`.\n",
+                "type": "Prima.Pyxis.Button.Config msg -> Prima.Pyxis.Button.Config msg"
+            },
+            {
+                "name": "withTypeSubmit",
+                "comment": " Adds a `type` Html.Attribute to the `Button`.\n",
+                "type": "Prima.Pyxis.Button.Config msg -> Prima.Pyxis.Button.Config msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Prima.Pyxis.ButtonGroup",
+        "comment": "\n\n\n## Configuration\n\n@docs Config\n\n\n## Configuration Methods\n\n@docs create\n\n\n## Rendering\n\n@docs render\n\n\n## Options\n\n@docs withAttribute, withAlignmentCentered, withAlignmentContentEnd, withAlignmentContentStart, withAlignmentCoverFluid, withAlignmentSpaceAround, withAlignmentSpaceBetween, withAlignmentSpaceEvenly, withClass, withId\n\n",
+        "unions": [
+            {
+                "name": "Config",
+                "comment": " Represent the configuration of the buttonGroup.\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "create",
+                "comment": " Create a button group.\n\n    --\n\n\n    import Prima.Pyxis.ButtonGroup as ButtonGroup\n\n    myBtnGroup : ButtonGroup.Config Msg\n    myBtnGroup =\n        ButtonGroup.configure myButtons\n\n",
+                "type": "List.List (Prima.Pyxis.Button.Config msg) -> Prima.Pyxis.ButtonGroup.Config msg"
+            },
+            {
+                "name": "render",
+                "comment": " Create a button wrapper which can hold a set of `Button`s.\n\n    --\n\n    import Prima.Pyxis.Button as Button\n    import Prima.Pyxis.ButtonGroup as Group\n\n    type Msg =\n        Clicked\n\n    ...\n\n    ctaBtn : Button.Config Msg\n    ctaBtn =\n        Button.callOut \"Click me!\"\n            |> Button.withOnClick Clicked\n            |> Button.withDisabled True\n\n\n    primaryBtn : Button.Config Msg\n    primaryBtn =\n        Button.primary \"Click me!\"\n            |> Button.withOnClick Clicked\n\n    ...\n\n    buttonGroup : ButtonGroup.Config Msg\n    buttonGroup =\n        ButtonGroup.centered [ctaBtn, primaryBtn]\n            |> ButtonGroup.withId \"group-1\"\n\n    ...\n\n    view : Html Msg\n    view =\n        ButtonGroup.render buttonGroup\n\n",
+                "type": "Prima.Pyxis.ButtonGroup.Config msg -> Html.Html msg"
+            },
+            {
+                "name": "withAlignmentCentered",
+                "comment": " Adds an alignment class to the `ButtonGroup`.\n",
+                "type": "Prima.Pyxis.ButtonGroup.Config msg -> Prima.Pyxis.ButtonGroup.Config msg"
+            },
+            {
+                "name": "withAlignmentContentEnd",
+                "comment": " Adds an alignment class to the `ButtonGroup`.\n",
+                "type": "Prima.Pyxis.ButtonGroup.Config msg -> Prima.Pyxis.ButtonGroup.Config msg"
+            },
+            {
+                "name": "withAlignmentContentStart",
+                "comment": " Adds an alignment class to the `ButtonGroup`.\n",
+                "type": "Prima.Pyxis.ButtonGroup.Config msg -> Prima.Pyxis.ButtonGroup.Config msg"
+            },
+            {
+                "name": "withAlignmentCoverFluid",
+                "comment": " Adds an alignment class to the `ButtonGroup`.\n",
+                "type": "Prima.Pyxis.ButtonGroup.Config msg -> Prima.Pyxis.ButtonGroup.Config msg"
+            },
+            {
+                "name": "withAlignmentSpaceAround",
+                "comment": " Adds an alignment class to the `ButtonGroup`.\n",
+                "type": "Prima.Pyxis.ButtonGroup.Config msg -> Prima.Pyxis.ButtonGroup.Config msg"
+            },
+            {
+                "name": "withAlignmentSpaceBetween",
+                "comment": " Adds an alignment class to the `ButtonGroup`.\n",
+                "type": "Prima.Pyxis.ButtonGroup.Config msg -> Prima.Pyxis.ButtonGroup.Config msg"
+            },
+            {
+                "name": "withAlignmentSpaceEvenly",
+                "comment": " Adds an alignment class to the `ButtonGroup`.\n",
+                "type": "Prima.Pyxis.ButtonGroup.Config msg -> Prima.Pyxis.ButtonGroup.Config msg"
+            },
+            {
+                "name": "withAttribute",
+                "comment": " Adds a generic attribute to the `ButtonGroup`.\n",
+                "type": "Html.Attribute msg -> Prima.Pyxis.ButtonGroup.Config msg -> Prima.Pyxis.ButtonGroup.Config msg"
+            },
+            {
+                "name": "withClass",
+                "comment": " Adds a class to the `ButtonGroup`.\n",
+                "type": "String.String -> Prima.Pyxis.ButtonGroup.Config msg -> Prima.Pyxis.ButtonGroup.Config msg"
+            },
+            {
+                "name": "withId",
+                "comment": " Adds an `id` Html.Attribute to the `ButtonGroup`.\n",
+                "type": "String.String -> Prima.Pyxis.ButtonGroup.Config msg -> Prima.Pyxis.ButtonGroup.Config msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Prima.Pyxis.Container",
+        "comment": "\n\n\n## Configuration\n\n@docs Config\n\n\n## Configuration Methods\n\n@docs row, column, rowFluid, columnFluid\n\n\n## Rendering\n\n@docs render\n\n\n## Options\n\n@docs withAccessKey, withAttribute, withChangeSizeOnLarge, withChangeSizeOnMedium, withChangeSizeOnSmall, withChangeSizeOnXLarge, withClass, withClassList, withContent, withContentEditable, withDraggable, withDropZone, withHidden, withId, withStyle, withTabIndex, withTitle\n\n\n## Event Options\n\n@docs withOnBlur, withOnClick, withOnDoubleClick, withOnFocus, withOnMouseEnter, withOnMouseLeave, withOnMouseOut, withOnMouseOver\n\n",
+        "unions": [
+            {
+                "name": "Config",
+                "comment": " Represent the configuration of a `Container`.\nThis type can't be created directly and is Opaque.\nYou must use Configuration constructors instead\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "column",
+                "comment": " Constructs an empty container with regular sizing and direction column\n",
+                "type": "Prima.Pyxis.Container.Config msg"
+            },
+            {
+                "name": "columnFluid",
+                "comment": " Constructs an empty container with fluid sizing and direction column\n",
+                "type": "Prima.Pyxis.Container.Config msg"
+            },
+            {
+                "name": "render",
+                "comment": " Renders the `Container`.\n",
+                "type": "Prima.Pyxis.Container.Config msg -> Html.Html msg"
+            },
+            {
+                "name": "row",
+                "comment": " Constructs an empty container with regular sizing and direction row\n",
+                "type": "Prima.Pyxis.Container.Config msg"
+            },
+            {
+                "name": "rowFluid",
+                "comment": " Constructs an empty container with fluid sizing and direction row\n",
+                "type": "Prima.Pyxis.Container.Config msg"
+            },
+            {
+                "name": "withAccessKey",
+                "comment": " Configuration modifier. Adds withAccessKey attribute on the container\n",
+                "type": "Char.Char -> Prima.Pyxis.Container.Config msg -> Prima.Pyxis.Container.Config msg"
+            },
+            {
+                "name": "withAttribute",
+                "comment": " Configuration modifier.\nAdds a generic attribute on the container.\nYou shouldn't use this if is not strictly necessary\n",
+                "type": "Html.Attribute msg -> Prima.Pyxis.Container.Config msg -> Prima.Pyxis.Container.Config msg"
+            },
+            {
+                "name": "withChangeSizeOnLarge",
+                "comment": " Configuration modifier.\nSwap between Medium or Fluid sizing on Large breakpoint\n",
+                "type": "Prima.Pyxis.Container.Config msg -> Prima.Pyxis.Container.Config msg"
+            },
+            {
+                "name": "withChangeSizeOnMedium",
+                "comment": " Configuration modifier.\nSwap between Medium or Fluid sizing on Medium breakpoint\n",
+                "type": "Prima.Pyxis.Container.Config msg -> Prima.Pyxis.Container.Config msg"
+            },
+            {
+                "name": "withChangeSizeOnSmall",
+                "comment": " Configuration modifier.\nSwap between Medium or Fluid sizing on Small breakpoint\n",
+                "type": "Prima.Pyxis.Container.Config msg -> Prima.Pyxis.Container.Config msg"
+            },
+            {
+                "name": "withChangeSizeOnXLarge",
+                "comment": " Configuration modifier.\nSwap between Medium or Fluid sizing on XLarge breakpoint\n",
+                "type": "Prima.Pyxis.Container.Config msg -> Prima.Pyxis.Container.Config msg"
+            },
+            {
+                "name": "withClass",
+                "comment": " Configuration modifier. Adds class attribute on the container\n",
+                "type": "String.String -> Prima.Pyxis.Container.Config msg -> Prima.Pyxis.Container.Config msg"
+            },
+            {
+                "name": "withClassList",
+                "comment": " Configuration modifier. Adds classList attribute on the container\n",
+                "type": "List.List ( String.String, Basics.Bool ) -> Prima.Pyxis.Container.Config msg -> Prima.Pyxis.Container.Config msg"
+            },
+            {
+                "name": "withContent",
+                "comment": " Adds a child content in your container\n\n    --\n\n    import Prima.Pyxis.Container as Container\n\n    myFancyContainer: Html Msg\n    myFancyContainer =\n        Container.row\n        |> withContent\n            [ p [][ text \"Some fancy text in your row container]\n            , img [ src \"my/fancy/image.png\" ]\n            ]\n        |> Container.render\n\n",
+                "type": "List.List (Html.Html msg) -> Prima.Pyxis.Container.Config msg -> Prima.Pyxis.Container.Config msg"
+            },
+            {
+                "name": "withContentEditable",
+                "comment": " Configuration modifier.\nAdds contenteditable attribute on the container\n",
+                "type": "Basics.Bool -> Prima.Pyxis.Container.Config msg -> Prima.Pyxis.Container.Config msg"
+            },
+            {
+                "name": "withDraggable",
+                "comment": " Configuration modifier.\nAdds draggable attribute on the container\n",
+                "type": "String.String -> Prima.Pyxis.Container.Config msg -> Prima.Pyxis.Container.Config msg"
+            },
+            {
+                "name": "withDropZone",
+                "comment": " Configuration modifier.\nAdds dropzone attribute on the container\n",
+                "type": "String.String -> Prima.Pyxis.Container.Config msg -> Prima.Pyxis.Container.Config msg"
+            },
+            {
+                "name": "withHidden",
+                "comment": " Configuration modifier.\nAdds hidden attribute on the container\n",
+                "type": "Basics.Bool -> Prima.Pyxis.Container.Config msg -> Prima.Pyxis.Container.Config msg"
+            },
+            {
+                "name": "withId",
+                "comment": " Configuration modifier.\nAdds id attribute on the container\n",
+                "type": "String.String -> Prima.Pyxis.Container.Config msg -> Prima.Pyxis.Container.Config msg"
+            },
+            {
+                "name": "withOnBlur",
+                "comment": " Configuration modifier.\nAdds onBlur event listener on Container\n",
+                "type": "msg -> Prima.Pyxis.Container.Config msg -> Prima.Pyxis.Container.Config msg"
+            },
+            {
+                "name": "withOnClick",
+                "comment": " Configuration modifier.\nAdds onClick event listener on Container\n",
+                "type": "msg -> Prima.Pyxis.Container.Config msg -> Prima.Pyxis.Container.Config msg"
+            },
+            {
+                "name": "withOnDoubleClick",
+                "comment": " Configuration modifier.\nAdds onDoubleClick event listener on Container\n",
+                "type": "msg -> Prima.Pyxis.Container.Config msg -> Prima.Pyxis.Container.Config msg"
+            },
+            {
+                "name": "withOnFocus",
+                "comment": " Configuration modifier.\nAdds onFocus event listener on Container\n",
+                "type": "msg -> Prima.Pyxis.Container.Config msg -> Prima.Pyxis.Container.Config msg"
+            },
+            {
+                "name": "withOnMouseEnter",
+                "comment": " Configuration modifier.\nAdds onMouseEnter event listener on Container\n",
+                "type": "msg -> Prima.Pyxis.Container.Config msg -> Prima.Pyxis.Container.Config msg"
+            },
+            {
+                "name": "withOnMouseLeave",
+                "comment": " Configuration modifier.\nAdds onMouseLeave event listener on Container\n",
+                "type": "msg -> Prima.Pyxis.Container.Config msg -> Prima.Pyxis.Container.Config msg"
+            },
+            {
+                "name": "withOnMouseOut",
+                "comment": " Configuration modifier.\nAdds onMouseOut event listener on Container\n",
+                "type": "msg -> Prima.Pyxis.Container.Config msg -> Prima.Pyxis.Container.Config msg"
+            },
+            {
+                "name": "withOnMouseOver",
+                "comment": " Configuration modifier.\nAdds onMouseOver event listener on Container\n",
+                "type": "msg -> Prima.Pyxis.Container.Config msg -> Prima.Pyxis.Container.Config msg"
+            },
+            {
+                "name": "withStyle",
+                "comment": " Configuration modifier.\nAdds style attribute on the container (it can be used multiple times)\n",
+                "type": "String.String -> String.String -> Prima.Pyxis.Container.Config msg -> Prima.Pyxis.Container.Config msg"
+            },
+            {
+                "name": "withTabIndex",
+                "comment": " Configuration modifier.\nAdds tab-index attribute on the container\n",
+                "type": "Basics.Int -> Prima.Pyxis.Container.Config msg -> Prima.Pyxis.Container.Config msg"
+            },
+            {
+                "name": "withTitle",
+                "comment": " Configuration modifier.\nAdds title attribute on the container\n",
+                "type": "String.String -> Prima.Pyxis.Container.Config msg -> Prima.Pyxis.Container.Config msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Prima.Pyxis.DownloadButton",
+        "comment": "\n\n\n## Configuration\n\n@docs Config\n\n\n## Configuration Methods\n\n@docs download\n\n\n## Rendering\n\n@docs render\n\n\n## Options\n\n@docs withAttribute, withClass, withDisabled, withId, withTabIndex, withTargetBlank, withTargetParent, withTargetSelf, withTargetTop, withTitle, withSvgIcon\n\n\n## Event Options\n\n@docs withOnClick, withOnMouseDown, withOnMouseUp, withOnMouseEnter, withOnMouseLeave, withOnMouseOver, withOnMouseOut\n\n",
+        "unions": [
+            {
+                "name": "Config",
+                "comment": " Represent the configuration of the `DownloadButton`.\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "download",
+                "comment": " Create a default download button.\n",
+                "type": "String.String -> String.String -> Prima.Pyxis.DownloadButton.Config msg"
+            },
+            {
+                "name": "render",
+                "comment": " Renders the button by receiving it's configuration.\n\n    --\n\n    import Prima.Pyxis.DownloadButton as DownloadButtonButton\n\n    type Msg =\n        Clicked\n\n    ...\n\n    myBtn : DownloadButton.Config Msg\n    myBtn =\n        DownloadButton.default \"Certificato di polizza\" \"Scarica .pdf\"\n            |> DownloadButton.withDisabled False\n            |> DownloadButton.withOnClick Clicked\n\n    ...\n\n    view : Html Msg\n    view =\n        DownloadButton.render myBtn\n\n",
+                "type": "Prima.Pyxis.DownloadButton.Config msg -> Html.Html msg"
+            },
+            {
+                "name": "withAttribute",
+                "comment": " Adds a generic attribute to the Button.\n",
+                "type": "Html.Attribute msg -> Prima.Pyxis.DownloadButton.Config msg -> Prima.Pyxis.DownloadButton.Config msg"
+            },
+            {
+                "name": "withClass",
+                "comment": " Adds classes to the `classes` of the `DownloadButton`.\n",
+                "type": "String.String -> Prima.Pyxis.DownloadButton.Config msg -> Prima.Pyxis.DownloadButton.Config msg"
+            },
+            {
+                "name": "withDisabled",
+                "comment": " Adds a `disabled` Html.Attribute to the `DownloadButton`.\n",
+                "type": "Basics.Bool -> Prima.Pyxis.DownloadButton.Config msg -> Prima.Pyxis.DownloadButton.Config msg"
+            },
+            {
+                "name": "withId",
+                "comment": " Adds an `id` Html.Attribute to the `DownloadButton`.\n",
+                "type": "String.String -> Prima.Pyxis.DownloadButton.Config msg -> Prima.Pyxis.DownloadButton.Config msg"
+            },
+            {
+                "name": "withOnClick",
+                "comment": " Adds an `onClick` Html.Event to the `DownloadButton`.\n",
+                "type": "msg -> Prima.Pyxis.DownloadButton.Config msg -> Prima.Pyxis.DownloadButton.Config msg"
+            },
+            {
+                "name": "withOnMouseDown",
+                "comment": " Adds an `onMouseDown` Html.Event to the `DownloadButton`.\n",
+                "type": "msg -> Prima.Pyxis.DownloadButton.Config msg -> Prima.Pyxis.DownloadButton.Config msg"
+            },
+            {
+                "name": "withOnMouseEnter",
+                "comment": " Adds an `onMouseEnter` Html.Event to the `DownloadButton`.\n",
+                "type": "msg -> Prima.Pyxis.DownloadButton.Config msg -> Prima.Pyxis.DownloadButton.Config msg"
+            },
+            {
+                "name": "withOnMouseLeave",
+                "comment": " Adds an `onMouseLeave` Html.Event to the `DownloadButton`.\n",
+                "type": "msg -> Prima.Pyxis.DownloadButton.Config msg -> Prima.Pyxis.DownloadButton.Config msg"
+            },
+            {
+                "name": "withOnMouseOut",
+                "comment": " Adds an `onMouseOut` Html.Event to the `DownloadButton`.\n",
+                "type": "msg -> Prima.Pyxis.DownloadButton.Config msg -> Prima.Pyxis.DownloadButton.Config msg"
+            },
+            {
+                "name": "withOnMouseOver",
+                "comment": " Adds an `onMouseOver` Html.Event to the `DownloadButton`.\n",
+                "type": "msg -> Prima.Pyxis.DownloadButton.Config msg -> Prima.Pyxis.DownloadButton.Config msg"
+            },
+            {
+                "name": "withOnMouseUp",
+                "comment": " Adds an `onMouseUp` Html.Event to the `DownloadButton`.\n",
+                "type": "msg -> Prima.Pyxis.DownloadButton.Config msg -> Prima.Pyxis.DownloadButton.Config msg"
+            },
+            {
+                "name": "withSvgIcon",
+                "comment": " Tells the `DownloadButton` component to use SVG icons instead of Pyxis icons.\n",
+                "type": "Prima.Pyxis.DownloadButton.Config msg -> Prima.Pyxis.DownloadButton.Config msg"
+            },
+            {
+                "name": "withTabIndex",
+                "comment": " Adds a `tabIndex` Html.Attribute to the `DownloadButton`.\n",
+                "type": "Basics.Int -> Prima.Pyxis.DownloadButton.Config msg -> Prima.Pyxis.DownloadButton.Config msg"
+            },
+            {
+                "name": "withTargetBlank",
+                "comment": " Adds a `target` Html.Attribute to the `DownloadButton`.\n",
+                "type": "Prima.Pyxis.DownloadButton.Config msg -> Prima.Pyxis.DownloadButton.Config msg"
+            },
+            {
+                "name": "withTargetParent",
+                "comment": " Adds a `target` Html.Attribute to the `DownloadButton`.\n",
+                "type": "Prima.Pyxis.DownloadButton.Config msg -> Prima.Pyxis.DownloadButton.Config msg"
+            },
+            {
+                "name": "withTargetSelf",
+                "comment": " Adds a `target` Html.Attribute to the `DownloadButton`.\n",
+                "type": "Prima.Pyxis.DownloadButton.Config msg -> Prima.Pyxis.DownloadButton.Config msg"
+            },
+            {
+                "name": "withTargetTop",
+                "comment": " Adds a `target` Html.Attribute to the `DownloadButton`.\n",
+                "type": "Prima.Pyxis.DownloadButton.Config msg -> Prima.Pyxis.DownloadButton.Config msg"
+            },
+            {
+                "name": "withTitle",
+                "comment": " Adds a `title` Html.Attribute to the `DownloadButton`.\n",
+                "type": "String.String -> Prima.Pyxis.DownloadButton.Config msg -> Prima.Pyxis.DownloadButton.Config msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Prima.Pyxis.Form",
+        "comment": "\n\n\n## Configuration\n\n@docs Form, FormField, FormFieldset, Legend, RowKind\n\n\n## Configuration Methods\n\n@docs init\n\n\n## Change Kind to the Form\n\n@docs withBeside, withVertical\n\n\n## Adding Fields to the Form\n\n@docs withFields, withFieldsAndLegend\n\n\n## Defining a fieldset with a legend\n\n@docs legend, legendWithPrependableHtml, legendWithAppendableHtml\n\n\n## Defining Fields\n\n@docs input, inputList, autocomplete, checkbox, date, filterableSelect, flag, radio, radioFlag, radioButton, select, textArea\n\n\n## Manipulating Fields\n\n@docs withLabel, withAppendableHtml\n\n\n## Rendering\n\n@docs renderField, renderFields, renderLabel, render\n\n",
+        "unions": [
+            {
+                "name": "Form",
+                "comment": " Represent the `Form`.\n",
+                "args": [
+                    "model",
+                    "msg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "FormField",
+                "comment": " Represent the fields admitted by the `Form`.\n",
+                "args": [
+                    "model",
+                    "msg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "FormFieldset",
+                "comment": " Represents `FormFieldset`.\nThis is not a one-to-one representation of an html `fieldset` tag.\n\nA `FormFieldset` is made up of a list of list of `FormFields`.\nThe first list represents the rows of a grid, the latter represents each column of a row.\n\n",
+                "args": [
+                    "model",
+                    "msg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Legend",
+                "comment": " Represents the `Legend` for a `FormFieldset`.\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "RowKind",
+                "comment": " Define the flow in which form fields should be displayed.\nYou can choose to use the Pyxis standard (`Grid`), or to go out of default boundaries with `Vertical` and `Beside`.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Grid",
+                        []
+                    ],
+                    [
+                        "Beside",
+                        []
+                    ],
+                    [
+                        "Vertical",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "autocomplete",
+                "comment": " Transforms an `Autocomplete` component into a `FormField`.\n",
+                "type": "(Prima.Pyxis.Form.Autocomplete.Msg -> msg) -> Prima.Pyxis.Form.Autocomplete.State -> Prima.Pyxis.Form.Autocomplete.Autocomplete model -> Prima.Pyxis.Form.FormField model msg"
+            },
+            {
+                "name": "checkbox",
+                "comment": " Transforms a `Checkbox` component into a `FormField`.\n",
+                "type": "Prima.Pyxis.Form.Checkbox.Checkbox model msg -> Prima.Pyxis.Form.FormField model msg"
+            },
+            {
+                "name": "date",
+                "comment": " Transforms a `Date` component into a `FormField`.\n",
+                "type": "Prima.Pyxis.Form.Date.Date model msg -> Prima.Pyxis.Form.FormField model msg"
+            },
+            {
+                "name": "filterableSelect",
+                "comment": " Transforms an `FilterableSelect` component into a `FormField`.\n",
+                "type": "(Prima.Pyxis.Form.FilterableSelect.Msg -> msg) -> Prima.Pyxis.Form.FilterableSelect.State -> Prima.Pyxis.Form.FilterableSelect.FilterableSelect model -> Prima.Pyxis.Form.FormField model msg"
+            },
+            {
+                "name": "flag",
+                "comment": " Transforms a `Flag` component into a `FormField`.\n",
+                "type": "Prima.Pyxis.Form.CheckboxFlag.Flag model msg -> Prima.Pyxis.Form.FormField model msg"
+            },
+            {
+                "name": "init",
+                "comment": " Create an instance of a `Form`.\nYou can specify later which fields will go inside it.\n",
+                "type": "Prima.Pyxis.Form.Form model msg"
+            },
+            {
+                "name": "input",
+                "comment": " Transforms an `Input` component into a `FormField`.\n",
+                "type": "Prima.Pyxis.Form.Input.Input model msg -> Prima.Pyxis.Form.FormField model msg"
+            },
+            {
+                "name": "inputList",
+                "comment": " Transforms an `Input` component into a `FormField`.\n",
+                "type": "List.List (Prima.Pyxis.Form.Input.Input model msg) -> Prima.Pyxis.Form.FormField model msg"
+            },
+            {
+                "name": "legend",
+                "comment": " Creates a `Legend` for a `FormFieldset`.\n",
+                "type": "String.String -> Prima.Pyxis.Form.Legend msg"
+            },
+            {
+                "name": "legendWithAppendableHtml",
+                "comment": " Creates a `Legend` with appendable Html.\n",
+                "type": "String.String -> List.List (Html.Html msg) -> Prima.Pyxis.Form.Legend msg"
+            },
+            {
+                "name": "legendWithPrependableHtml",
+                "comment": " Creates a `Legend` with prependable Html.\n",
+                "type": "String.String -> List.List (Html.Html msg) -> Prima.Pyxis.Form.Legend msg"
+            },
+            {
+                "name": "radio",
+                "comment": " Transforms a `Radio` component into a `FormField`.\n",
+                "type": "Prima.Pyxis.Form.Radio.Radio model msg -> Prima.Pyxis.Form.FormField model msg"
+            },
+            {
+                "name": "radioButton",
+                "comment": " Transforms a `RadioButton` component into a `FormField`.\n",
+                "type": "Prima.Pyxis.Form.RadioButton.RadioButton model msg -> Prima.Pyxis.Form.FormField model msg"
+            },
+            {
+                "name": "radioFlag",
+                "comment": " Transforms a `RadioFlag` component into a `FormField`.\n",
+                "type": "Prima.Pyxis.Form.RadioFlag.RadioFlag model msg -> Prima.Pyxis.Form.FormField model msg"
+            },
+            {
+                "name": "render",
+                "comment": " Renders the form with all his fields.\n",
+                "type": "model -> Prima.Pyxis.Form.Form model msg -> Html.Html msg"
+            },
+            {
+                "name": "renderField",
+                "comment": " Transforms o render a `FormField` into Html.\n",
+                "type": "model -> Prima.Pyxis.Form.FormField model msg -> List.List (Html.Html msg)"
+            },
+            {
+                "name": "renderFields",
+                "comment": " Transforms or render a `FormField list` into Html without fieldset and form div.\n",
+                "type": "model -> Prima.Pyxis.Form.RowKind -> List.List (Prima.Pyxis.Form.FormFieldList model msg) -> List.List (Html.Html msg)"
+            },
+            {
+                "name": "renderLabel",
+                "comment": " Transforms or render a `FormField` label into Html.\n",
+                "type": "Prima.Pyxis.Form.FormField model msg -> List.List (Html.Html msg)"
+            },
+            {
+                "name": "select",
+                "comment": " Transforms a `Select` component into a `FormField`.\n",
+                "type": "(Prima.Pyxis.Form.Select.Msg -> msg) -> Prima.Pyxis.Form.Select.State -> Prima.Pyxis.Form.Select.Select model -> Prima.Pyxis.Form.FormField model msg"
+            },
+            {
+                "name": "textArea",
+                "comment": " Transforms a `TextArea` component into a `FormField`.\n",
+                "type": "Prima.Pyxis.Form.TextArea.TextArea model msg -> Prima.Pyxis.Form.FormField model msg"
+            },
+            {
+                "name": "withAppendableHtml",
+                "comment": " Adds a list of `Html` to a `FormField`. They will be printed after the component tag and it's wrapper.\n",
+                "type": "List.List (Html.Html msg) -> Prima.Pyxis.Form.FormField model msg -> Prima.Pyxis.Form.FormField model msg"
+            },
+            {
+                "name": "withBeside",
+                "comment": " Create an instance of a `Form` with standard layout where you have\n2 fields in line with 1 label.\nYou can specify later which fields will go inside it.\n",
+                "type": "Prima.Pyxis.Form.Form model msg -> Prima.Pyxis.Form.Form model msg"
+            },
+            {
+                "name": "withFields",
+                "comment": " Adds a list of field (which represents a row of the `Grid`) to the `Form`.\n",
+                "type": "Prima.Pyxis.Form.FormFieldList model msg -> Prima.Pyxis.Form.Form model msg -> Prima.Pyxis.Form.Form model msg"
+            },
+            {
+                "name": "withFieldsAndLegend",
+                "comment": " Adds a list of list of field (which represents a list of row of the `Grid`) to the `Form`.\nThis list will be wrapped inside a fieldset.\n",
+                "type": "Prima.Pyxis.Form.Legend msg -> List.List (Prima.Pyxis.Form.FormFieldList model msg) -> Prima.Pyxis.Form.Form model msg -> Prima.Pyxis.Form.Form model msg"
+            },
+            {
+                "name": "withLabel",
+                "comment": " Adds a `Label` component into a `FormField`.\n",
+                "type": "Prima.Pyxis.Form.Label.Label msg -> Prima.Pyxis.Form.FormField model msg -> Prima.Pyxis.Form.FormField model msg"
+            },
+            {
+                "name": "withVertical",
+                "comment": " Create an instance of a `Form` with vertical layout.\nYou can specify later which fields will go inside it.\n",
+                "type": "Prima.Pyxis.Form.Form model msg -> Prima.Pyxis.Form.Form model msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Prima.Pyxis.Form.Autocomplete",
+        "comment": "\n\n\n## Configuration\n\n@docs Autocomplete, State, Msg, AutocompleteChoice\n\n\n## Configuration Methods\n\n@docs autocomplete, init, initWithDefault, update, autocompleteChoice, updateChoices\n\n\n## Rendering\n\n@docs render\n\n\n## Methods\n\n@docs selectedValue, filterValue, subscription, open, close, isOpen, toggle, reset\n\n\n## Options\n\n@docs withAttribute, withClass, withDebouncer, withDefaultValue, withDisabled, withId, withLargeSize, withMediumSize, withName, withOverridingClass, withPlaceholder, withSmallSize, withThreshold, withIsSubmitted\n\n\n## Event Options\n\n@docs withOnBlur, withOnFocus\n\n\n## Validation\n\n@docs withValidation\n\n",
+        "unions": [
+            {
+                "name": "Autocomplete",
+                "comment": " Represent the opaque `Autocomplete` configuration.\n",
+                "args": [
+                    "model"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Msg",
+                "comment": " Represents the Msg of the `Autocomplete`.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "OnKeyPress",
+                        [
+                            "Maybe.Maybe Prima.Pyxis.Form.Commons.KeyboardEvents.KeyCode"
+                        ]
+                    ],
+                    [
+                        "OnFilter",
+                        []
+                    ],
+                    [
+                        "OnSelect",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "OnReset",
+                        []
+                    ],
+                    [
+                        "OnInput",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Debounce",
+                        [
+                            "Debouncer.Basic.Msg Prima.Pyxis.Form.Autocomplete.Msg"
+                        ]
+                    ],
+                    [
+                        "OpenMenu",
+                        []
+                    ],
+                    [
+                        "CloseMenu",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "State",
+                "comment": " The `State` of the `Autocomplete`\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "AutocompleteChoice",
+                "comment": " Represent the `AutocompleteChoice` configuration.\n",
+                "args": [],
+                "type": "{ value : String.String, label : String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "autocomplete",
+                "comment": " Creates an autocomplete.\n",
+                "type": "Prima.Pyxis.Form.Autocomplete.Autocomplete model"
+            },
+            {
+                "name": "autocompleteChoice",
+                "comment": " Create the AutocompleteChoice configuration.\n",
+                "type": "String.String -> String.String -> Prima.Pyxis.Form.Autocomplete.AutocompleteChoice"
+            },
+            {
+                "name": "close",
+                "comment": " Hide the available options for the autocomplete.\n",
+                "type": "Prima.Pyxis.Form.Autocomplete.State -> Prima.Pyxis.Form.Autocomplete.State"
+            },
+            {
+                "name": "filterValue",
+                "comment": " Returns the current filter inserted by the user.\n",
+                "type": "Prima.Pyxis.Form.Autocomplete.State -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "init",
+                "comment": " Initializes the `Autocomplete`'s `State`.\n",
+                "type": "Prima.Pyxis.Form.Autocomplete.State"
+            },
+            {
+                "name": "initWithDefault",
+                "comment": " Initializes the `Autocomplete`'s `State` with a default selected value.\n",
+                "type": "String.String -> String.String -> Prima.Pyxis.Form.Autocomplete.State"
+            },
+            {
+                "name": "isOpen",
+                "comment": " Returns whether the menu is open or not.\n",
+                "type": "Prima.Pyxis.Form.Autocomplete.State -> Basics.Bool"
+            },
+            {
+                "name": "open",
+                "comment": " Show the available options for the autocomplete.\n",
+                "type": "Prima.Pyxis.Form.Autocomplete.State -> Prima.Pyxis.Form.Autocomplete.State"
+            },
+            {
+                "name": "render",
+                "comment": " Renders the `Autocomplete`.\n",
+                "type": "model -> Prima.Pyxis.Form.Autocomplete.State -> Prima.Pyxis.Form.Autocomplete.Autocomplete model -> List.List (Html.Html Prima.Pyxis.Form.Autocomplete.Msg)"
+            },
+            {
+                "name": "reset",
+                "comment": " Reset selected value.\n",
+                "type": "Prima.Pyxis.Form.Autocomplete.State -> Prima.Pyxis.Form.Autocomplete.State"
+            },
+            {
+                "name": "selectedValue",
+                "comment": " Returns the current `AutocompleteChoice.value` selected by the user.\n",
+                "type": "Prima.Pyxis.Form.Autocomplete.State -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "subscription",
+                "comment": " Needed to wire keyboard events to the `Autocomplete`.\n",
+                "type": "Prima.Pyxis.Form.Autocomplete.State -> Platform.Sub.Sub Prima.Pyxis.Form.Autocomplete.Msg"
+            },
+            {
+                "name": "toggle",
+                "comment": " Toggle the menu openness.\n",
+                "type": "Prima.Pyxis.Form.Autocomplete.State -> Prima.Pyxis.Form.Autocomplete.State"
+            },
+            {
+                "name": "update",
+                "comment": " Updates the `Autocomplete`'s `State`.\n",
+                "type": "Prima.Pyxis.Form.Autocomplete.Msg -> Prima.Pyxis.Form.Autocomplete.State -> ( Prima.Pyxis.Form.Autocomplete.State, Platform.Cmd.Cmd Prima.Pyxis.Form.Autocomplete.Msg, Maybe.Maybe String.String )"
+            },
+            {
+                "name": "updateChoices",
+                "comment": " Update the `AutocompleteChoice`\n",
+                "type": "List.List Prima.Pyxis.Form.Autocomplete.AutocompleteChoice -> Prima.Pyxis.Form.Autocomplete.State -> Prima.Pyxis.Form.Autocomplete.State"
+            },
+            {
+                "name": "withAttribute",
+                "comment": " Adds a generic Html.Attribute to the `Autocomplete`.\n",
+                "type": "Html.Attribute Prima.Pyxis.Form.Autocomplete.Msg -> Prima.Pyxis.Form.Autocomplete.Autocomplete model -> Prima.Pyxis.Form.Autocomplete.Autocomplete model"
+            },
+            {
+                "name": "withClass",
+                "comment": " Adds a `class` to the `Autocomplete`.\n",
+                "type": "String.String -> Prima.Pyxis.Form.Autocomplete.Autocomplete model -> Prima.Pyxis.Form.Autocomplete.Autocomplete model"
+            },
+            {
+                "name": "withDebouncer",
+                "comment": " Set the seconds for the debounce.\n",
+                "type": "Basics.Float -> Prima.Pyxis.Form.Autocomplete.State -> Prima.Pyxis.Form.Autocomplete.State"
+            },
+            {
+                "name": "withDefaultValue",
+                "comment": " Adds a default value to the `Input`.\nUseful to teach the component about it's `pristine/touched` state.\n",
+                "type": "Maybe.Maybe String.String -> Prima.Pyxis.Form.Autocomplete.Autocomplete model -> Prima.Pyxis.Form.Autocomplete.Autocomplete model"
+            },
+            {
+                "name": "withDisabled",
+                "comment": " Adds a `disabled` Html.Attribute to the `Autocomplete`.\n",
+                "type": "Basics.Bool -> Prima.Pyxis.Form.Autocomplete.Autocomplete model -> Prima.Pyxis.Form.Autocomplete.Autocomplete model"
+            },
+            {
+                "name": "withId",
+                "comment": " Adds an `id` Html.Attribute to the `Autocomplete`.\n",
+                "type": "String.String -> Prima.Pyxis.Form.Autocomplete.Autocomplete model -> Prima.Pyxis.Form.Autocomplete.Autocomplete model"
+            },
+            {
+                "name": "withIsSubmitted",
+                "comment": " Adds an `isSubmitted` predicate to the `Autocomplete`.\n",
+                "type": "(model -> Basics.Bool) -> Prima.Pyxis.Form.Autocomplete.Autocomplete model -> Prima.Pyxis.Form.Autocomplete.Autocomplete model"
+            },
+            {
+                "name": "withLargeSize",
+                "comment": " Adds a `size` of `Large` to the `Autocomplete`.\n",
+                "type": "Prima.Pyxis.Form.Autocomplete.Autocomplete model -> Prima.Pyxis.Form.Autocomplete.Autocomplete model"
+            },
+            {
+                "name": "withMediumSize",
+                "comment": " Adds a `size` of `Medium` to the `Autocomplete`.\n",
+                "type": "Prima.Pyxis.Form.Autocomplete.Autocomplete model -> Prima.Pyxis.Form.Autocomplete.Autocomplete model"
+            },
+            {
+                "name": "withName",
+                "comment": " Adds a `name` Html.Attribute to the `Autocomplete`.\n",
+                "type": "String.String -> Prima.Pyxis.Form.Autocomplete.Autocomplete model -> Prima.Pyxis.Form.Autocomplete.Autocomplete model"
+            },
+            {
+                "name": "withOnBlur",
+                "comment": " Attaches the `onBlur` event to the `Autocomplete`.\n",
+                "type": "Prima.Pyxis.Form.Autocomplete.Msg -> Prima.Pyxis.Form.Autocomplete.Autocomplete model -> Prima.Pyxis.Form.Autocomplete.Autocomplete model"
+            },
+            {
+                "name": "withOnFocus",
+                "comment": " Attaches the `onFocus` event to the `Autocomplete`.\n",
+                "type": "Prima.Pyxis.Form.Autocomplete.Msg -> Prima.Pyxis.Form.Autocomplete.Autocomplete model -> Prima.Pyxis.Form.Autocomplete.Autocomplete model"
+            },
+            {
+                "name": "withOverridingClass",
+                "comment": " Adds a `class` to the `Autocomplete` which overrides all the previous.\n",
+                "type": "String.String -> Prima.Pyxis.Form.Autocomplete.Autocomplete model -> Prima.Pyxis.Form.Autocomplete.Autocomplete model"
+            },
+            {
+                "name": "withPlaceholder",
+                "comment": " Adds a `placeholder` Html.Attribute to the `Autocomplete`.\n",
+                "type": "String.String -> Prima.Pyxis.Form.Autocomplete.Autocomplete model -> Prima.Pyxis.Form.Autocomplete.Autocomplete model"
+            },
+            {
+                "name": "withSmallSize",
+                "comment": " Adds a `size` of `Small` to the `Autocomplete`.\n",
+                "type": "Prima.Pyxis.Form.Autocomplete.Autocomplete model -> Prima.Pyxis.Form.Autocomplete.Autocomplete model"
+            },
+            {
+                "name": "withThreshold",
+                "comment": " Set the threshold for the filter application.\n",
+                "type": "Basics.Int -> Prima.Pyxis.Form.Autocomplete.State -> Prima.Pyxis.Form.Autocomplete.State"
+            },
+            {
+                "name": "withValidation",
+                "comment": " Adds a `Validation` rule to the `Autocomplete`.\n",
+                "type": "(model -> Maybe.Maybe Prima.Pyxis.Form.Validation.Type) -> Prima.Pyxis.Form.Autocomplete.Autocomplete model -> Prima.Pyxis.Form.Autocomplete.Autocomplete model"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Prima.Pyxis.Form.Checkbox",
+        "comment": "\n\n\n## Configuration\n\n@docs Checkbox, CheckboxChoice\n\n\n## Configuration Methods\n\n@docs checkbox, checkboxChoice\n\n\n## Rendering\n\n@docs render\n\n\n## Options\n\n@docs withAttribute, withDisabled, withClass, withId, withName\n\n\n## Event Options\n\n@docs withOnFocus, withOnBlur\n\n\n## Validation\n\n@docs withValidation\n\n",
+        "unions": [
+            {
+                "name": "Checkbox",
+                "comment": " Represent the opaque `Checkbox` configuration.\n",
+                "args": [
+                    "model",
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "CheckboxChoice",
+                "comment": " Represent a choice for the `Checkbox`.\n",
+                "args": [],
+                "type": "{ value : String.String, label : String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "checkbox",
+                "comment": " Create a checkbox.\n",
+                "type": "(model -> List.List String.String) -> (String.String -> msg) -> List.List Prima.Pyxis.Form.Checkbox.CheckboxChoice -> Prima.Pyxis.Form.Checkbox.Checkbox model msg"
+            },
+            {
+                "name": "checkboxChoice",
+                "comment": " Creates a choice for the `Checkbox`.\n",
+                "type": "String.String -> String.String -> Prima.Pyxis.Form.Checkbox.CheckboxChoice"
+            },
+            {
+                "name": "render",
+                "comment": " Renders the `Checkbox`.\n",
+                "type": "model -> Prima.Pyxis.Form.Checkbox.Checkbox model msg -> List.List (Html.Html msg)"
+            },
+            {
+                "name": "withAttribute",
+                "comment": " Adds a generic Html.Attribute to the `Checkbox`.\n",
+                "type": "Html.Attribute msg -> Prima.Pyxis.Form.Checkbox.Checkbox model msg -> Prima.Pyxis.Form.Checkbox.Checkbox model msg"
+            },
+            {
+                "name": "withClass",
+                "comment": " Adds a `class` to the `Checkbox`.\n",
+                "type": "String.String -> Prima.Pyxis.Form.Checkbox.Checkbox model msg -> Prima.Pyxis.Form.Checkbox.Checkbox model msg"
+            },
+            {
+                "name": "withDisabled",
+                "comment": " Adds a `disabled` Html.Attribute to the `Checkbox`.\n",
+                "type": "Basics.Bool -> Prima.Pyxis.Form.Checkbox.Checkbox model msg -> Prima.Pyxis.Form.Checkbox.Checkbox model msg"
+            },
+            {
+                "name": "withId",
+                "comment": " Adds an `id` Html.Attribute to the `Checkbox`.\n",
+                "type": "String.String -> Prima.Pyxis.Form.Checkbox.Checkbox model msg -> Prima.Pyxis.Form.Checkbox.Checkbox model msg"
+            },
+            {
+                "name": "withName",
+                "comment": " Adds a `name` Html.Attribute to the `Checkbox`.\n",
+                "type": "String.String -> Prima.Pyxis.Form.Checkbox.Checkbox model msg -> Prima.Pyxis.Form.Checkbox.Checkbox model msg"
+            },
+            {
+                "name": "withOnBlur",
+                "comment": " Attaches the `onBlur` event to the `Checkbox`.\n",
+                "type": "msg -> Prima.Pyxis.Form.Checkbox.Checkbox model msg -> Prima.Pyxis.Form.Checkbox.Checkbox model msg"
+            },
+            {
+                "name": "withOnFocus",
+                "comment": " Attaches the `onFocus` event to the `Checkbox`.\n",
+                "type": "msg -> Prima.Pyxis.Form.Checkbox.Checkbox model msg -> Prima.Pyxis.Form.Checkbox.Checkbox model msg"
+            },
+            {
+                "name": "withValidation",
+                "comment": " Adds a `Validation` rule to the `Checkbox`.\n",
+                "type": "(model -> Maybe.Maybe Prima.Pyxis.Form.Validation.Type) -> Prima.Pyxis.Form.Checkbox.Checkbox model msg -> Prima.Pyxis.Form.Checkbox.Checkbox model msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Prima.Pyxis.Form.CheckboxFlag",
+        "comment": "\n\n\n## Configuration\n\n@docs Flag\n\n\n## Configuration Methods\n\n@docs flag\n\n\n## Rendering\n\n@docs render\n\n\n## Options\n\n@docs withAttribute, withDisabled, withLabel, withName\n\n\n## Event Options\n\n@docs withOnBlur, withOnFocus\n\n\n## Validation\n\n@docs withValidation\n\n",
+        "unions": [
+            {
+                "name": "Flag",
+                "comment": " Represent the opaque `Flag` configuration.\n",
+                "args": [
+                    "model",
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "flag",
+                "comment": " Create a `Flag`.\n",
+                "type": "(model -> Maybe.Maybe Basics.Bool) -> (Basics.Bool -> msg) -> String.String -> Prima.Pyxis.Form.CheckboxFlag.Flag model msg"
+            },
+            {
+                "name": "render",
+                "comment": "\n\n\n## Renders the `Input`.\n\n    import Html\n    import Prima.Pyxis.Form.Flag as Flag\n    import Prima.Pyxis.Form.Validation as Validation\n\n    ...\n\n    type Msg =\n        OnCheck Bool\n\n    type alias Model =\n        { privacy: Maybe Bool }\n\n    ...\n\n    view : Html Msg\n    view =\n        Html.div\n            []\n            (Flag.flag .privacy OnInput\n                |> Input.withValidation (Maybe.andThen validate << .privacy)\n            )\n\n    validate : Maybe Bool -> Validation.Type\n    validate privacy=\n        if isJust privacy then\n            Just <| Validation.ErrorWithMessage \"Privacy cannot be blank\".\n        else\n            Nothing\n\n",
+                "type": "model -> Prima.Pyxis.Form.CheckboxFlag.Flag model msg -> List.List (Html.Html msg)"
+            },
+            {
+                "name": "withAttribute",
+                "comment": " Adds a generic Html.Attribute to the `Input`.\n",
+                "type": "Html.Attribute msg -> Prima.Pyxis.Form.CheckboxFlag.Flag model msg -> Prima.Pyxis.Form.CheckboxFlag.Flag model msg"
+            },
+            {
+                "name": "withDisabled",
+                "comment": " Sets a `disabled` to the `Flag config`.\n",
+                "type": "Basics.Bool -> Prima.Pyxis.Form.CheckboxFlag.Flag model msg -> Prima.Pyxis.Form.CheckboxFlag.Flag model msg"
+            },
+            {
+                "name": "withLabel",
+                "comment": " Adds a `Label` Html.Attribute to the `Flag`.\n",
+                "type": "Prima.Pyxis.Form.Label.Label msg -> Prima.Pyxis.Form.CheckboxFlag.Flag model msg -> Prima.Pyxis.Form.CheckboxFlag.Flag model msg"
+            },
+            {
+                "name": "withName",
+                "comment": " Adds a `name` Html.Attribute to the `Flag`.\n",
+                "type": "String.String -> Prima.Pyxis.Form.CheckboxFlag.Flag model msg -> Prima.Pyxis.Form.CheckboxFlag.Flag model msg"
+            },
+            {
+                "name": "withOnBlur",
+                "comment": " Attaches the `onBlur` event to the `Flag`.\n",
+                "type": "msg -> Prima.Pyxis.Form.CheckboxFlag.Flag model msg -> Prima.Pyxis.Form.CheckboxFlag.Flag model msg"
+            },
+            {
+                "name": "withOnFocus",
+                "comment": " Attaches the `onFocus` event to the `Flag`.\n",
+                "type": "msg -> Prima.Pyxis.Form.CheckboxFlag.Flag model msg -> Prima.Pyxis.Form.CheckboxFlag.Flag model msg"
+            },
+            {
+                "name": "withValidation",
+                "comment": " Adds a `Validation` rule to the `Flag`.\n",
+                "type": "(model -> Maybe.Maybe Prima.Pyxis.Form.Validation.Type) -> Prima.Pyxis.Form.CheckboxFlag.Flag model msg -> Prima.Pyxis.Form.CheckboxFlag.Flag model msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Prima.Pyxis.Form.Date",
+        "comment": "\n\n\n## Configuration\n\n@docs Date\n\n\n## Configuration Methods\n\n@docs date\n\n\n## Rendering\n\n@docs render\n\n\n## Options\n\n@docs withAttribute, withClass, withDefaultValue, withDisabled, withId, withMediumSize, withSmallSize, withLargeSize, withName, withPlaceholder, withIsSubmitted\n\n\n## DatePicker Options\n\n@docs withDatePicker, withDatePickerVisibility\n\n\n## Event Options\n\n@docs withOnBlur, withOnFocus, withOnIconClick\n\n\n## Validation\n\n@docs withValidation\n\n",
+        "unions": [
+            {
+                "name": "Date",
+                "comment": " Represent the opaque `Date` configuration.\n",
+                "args": [
+                    "model",
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "date",
+                "comment": " Create an `input[type=\"date\"]` with the default options.\n",
+                "type": "(model -> Prima.Pyxis.Form.DatePicker.Date) -> (Prima.Pyxis.Form.DatePicker.Date -> msg) -> Prima.Pyxis.Form.Date.Date model msg"
+            },
+            {
+                "name": "render",
+                "comment": " Renders the `Date`.\n",
+                "type": "model -> Prima.Pyxis.Form.Date.Date model msg -> List.List (Html.Html msg)"
+            },
+            {
+                "name": "withAttribute",
+                "comment": " Sets an `attribute` to the `Date`.\n",
+                "type": "Html.Attribute msg -> Prima.Pyxis.Form.Date.Date model msg -> Prima.Pyxis.Form.Date.Date model msg"
+            },
+            {
+                "name": "withClass",
+                "comment": " Sets a `class` to the `Date`.\n",
+                "type": "String.String -> Prima.Pyxis.Form.Date.Date model msg -> Prima.Pyxis.Form.Date.Date model msg"
+            },
+            {
+                "name": "withDatePicker",
+                "comment": " Adds a DatePicker to the `Date`.\nRemember to add the visibility policy with `withDatePickerVisibility`.\n",
+                "type": "(model -> Maybe.Maybe Prima.Pyxis.Form.DatePicker.Model) -> (Prima.Pyxis.Form.DatePicker.Msg -> msg) -> Prima.Pyxis.Form.Date.Date model msg -> Prima.Pyxis.Form.Date.Date model msg"
+            },
+            {
+                "name": "withDatePickerVisibility",
+                "comment": " Adds a visibility policy to the DatePicker built via `withDatePicker`.\n",
+                "type": "(model -> Basics.Bool) -> Prima.Pyxis.Form.Date.Date model msg -> Prima.Pyxis.Form.Date.Date model msg"
+            },
+            {
+                "name": "withDefaultValue",
+                "comment": " Adds a default value to the `Date`.\nUseful to teach the component about it's `pristine/touched` state.\n",
+                "type": "Prima.Pyxis.Form.DatePicker.Date -> Prima.Pyxis.Form.Date.Date model msg -> Prima.Pyxis.Form.Date.Date model msg"
+            },
+            {
+                "name": "withDisabled",
+                "comment": " Sets a `disabled` to the `Date`.\n",
+                "type": "Basics.Bool -> Prima.Pyxis.Form.Date.Date model msg -> Prima.Pyxis.Form.Date.Date model msg"
+            },
+            {
+                "name": "withId",
+                "comment": " Sets an `id` to the `Date`.\n",
+                "type": "String.String -> Prima.Pyxis.Form.Date.Date model msg -> Prima.Pyxis.Form.Date.Date model msg"
+            },
+            {
+                "name": "withIsSubmitted",
+                "comment": " Adds an `isSubmitted` predicate to the `Date`.\n",
+                "type": "(model -> Basics.Bool) -> Prima.Pyxis.Form.Date.Date model msg -> Prima.Pyxis.Form.Date.Date model msg"
+            },
+            {
+                "name": "withLargeSize",
+                "comment": " Sets a `size` to the `Date`.\n",
+                "type": "Prima.Pyxis.Form.Date.Date model msg -> Prima.Pyxis.Form.Date.Date model msg"
+            },
+            {
+                "name": "withMediumSize",
+                "comment": " Sets a `size` to the `Date`.\n",
+                "type": "Prima.Pyxis.Form.Date.Date model msg -> Prima.Pyxis.Form.Date.Date model msg"
+            },
+            {
+                "name": "withName",
+                "comment": " Sets a `name` to the `Date`.\n",
+                "type": "String.String -> Prima.Pyxis.Form.Date.Date model msg -> Prima.Pyxis.Form.Date.Date model msg"
+            },
+            {
+                "name": "withOnBlur",
+                "comment": " Sets an `onBlur event` to the `Date`.\n",
+                "type": "msg -> Prima.Pyxis.Form.Date.Date model msg -> Prima.Pyxis.Form.Date.Date model msg"
+            },
+            {
+                "name": "withOnFocus",
+                "comment": " Sets an `onFocus event` to the `Date`.\n",
+                "type": "msg -> Prima.Pyxis.Form.Date.Date model msg -> Prima.Pyxis.Form.Date.Date model msg"
+            },
+            {
+                "name": "withOnIconClick",
+                "comment": " Sets an `onClick event` to the `Date icon`.\n",
+                "type": "msg -> Prima.Pyxis.Form.Date.Date model msg -> Prima.Pyxis.Form.Date.Date model msg"
+            },
+            {
+                "name": "withPlaceholder",
+                "comment": " Sets a `placeholder` to the `Date`.\n",
+                "type": "String.String -> Prima.Pyxis.Form.Date.Date model msg -> Prima.Pyxis.Form.Date.Date model msg"
+            },
+            {
+                "name": "withSmallSize",
+                "comment": " Sets a `size` to the `Date`.\n",
+                "type": "Prima.Pyxis.Form.Date.Date model msg -> Prima.Pyxis.Form.Date.Date model msg"
+            },
+            {
+                "name": "withValidation",
+                "comment": " Adds a `Validation` rule to the `Date`.\n",
+                "type": "(model -> Maybe.Maybe Prima.Pyxis.Form.Validation.Type) -> Prima.Pyxis.Form.Date.Date model msg -> Prima.Pyxis.Form.Date.Date model msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Prima.Pyxis.Form.DatePicker",
+        "comment": "\n\n\n## Configuration\n\n@docs Model, Msg, Date\n\n\n## Configuration Methods\n\n@docs init, update\n\n\n## Rendering\n\n@docs render\n\n\n## Methods\n\n@docs selectedDate, setDate, toMaybeDate, isPartialDate, isParsedDate, fromMaybeDate\n\n",
+        "unions": [
+            {
+                "name": "Date",
+                "comment": " Represents a Date. It can be a valid one (ParsedDate Date.Date) or a partial\n",
+                "args": [],
+                "cases": [
+                    [
+                        "ParsedDate",
+                        [
+                            "Date.Date"
+                        ]
+                    ],
+                    [
+                        "PartialDate",
+                        [
+                            "Maybe.Maybe String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Msg",
+                "comment": " The DatePicker message\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Noop",
+                        []
+                    ],
+                    [
+                        "YearSelection",
+                        []
+                    ],
+                    [
+                        "DaySelection",
+                        []
+                    ],
+                    [
+                        "PrevMonth",
+                        []
+                    ],
+                    [
+                        "NextMonth",
+                        []
+                    ],
+                    [
+                        "SelectYear",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "SelectDay",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "SelectDate",
+                        [
+                            "Date.Date"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Model",
+                "comment": " Represents the `DatePicker`'s `Model`.\n",
+                "args": [],
+                "type": "{ date : Date.Date, selectingYear : Basics.Bool, daysPickerRange : ( Date.Date, Date.Date ) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "fromMaybeDate",
+                "comment": " Converts a Maybe elm Date into a DatePicker.Date\n",
+                "type": "Maybe.Maybe Date.Date -> Prima.Pyxis.Form.DatePicker.Date"
+            },
+            {
+                "name": "init",
+                "comment": " Get initial time picker model\n",
+                "type": "Date.Date -> ( Date.Date, Date.Date ) -> Prima.Pyxis.Form.DatePicker.Model"
+            },
+            {
+                "name": "isParsedDate",
+                "comment": " Returns true if date is valid\n",
+                "type": "Prima.Pyxis.Form.DatePicker.Date -> Basics.Bool"
+            },
+            {
+                "name": "isPartialDate",
+                "comment": " Returns true if Date is a Partial one\n",
+                "type": "Prima.Pyxis.Form.DatePicker.Date -> Basics.Bool"
+            },
+            {
+                "name": "render",
+                "comment": " ",
+                "type": "Prima.Pyxis.Form.DatePicker.Model -> Html.Html Prima.Pyxis.Form.DatePicker.Msg"
+            },
+            {
+                "name": "selectedDate",
+                "comment": " Returns currently selected date\n",
+                "type": "Prima.Pyxis.Form.DatePicker.Model -> Prima.Pyxis.Form.DatePicker.Date"
+            },
+            {
+                "name": "setDate",
+                "comment": " Selects a valid Date into the DatePicker\n",
+                "type": "Date.Date -> Prima.Pyxis.Form.DatePicker.Model -> Prima.Pyxis.Form.DatePicker.Model"
+            },
+            {
+                "name": "toMaybeDate",
+                "comment": " Converts DatePicker.Date into a Maybe elm Date\n",
+                "type": "Prima.Pyxis.Form.DatePicker.Date -> Maybe.Maybe Date.Date"
+            },
+            {
+                "name": "update",
+                "comment": " ",
+                "type": "Prima.Pyxis.Form.DatePicker.Msg -> Prima.Pyxis.Form.DatePicker.Model -> Prima.Pyxis.Form.DatePicker.Model"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Prima.Pyxis.Form.FilterableSelect",
+        "comment": "\n\n\n## Configuration\n\n@docs FilterableSelect, State, Msg, FilterableSelectChoice\n\n\n## Configuration Methods\n\n@docs filterableSelect, init, initWithDefault, update, updateChoices, filterableSelectChoice\n\n\n## Rendering\n\n@docs render\n\n\n## Methods\n\n@docs selectedValue, filterValue, subscription, open, close, isOpen, toggle, reset\n\n\n## Options\n\n@docs withAttribute, withClass, withDefaultValue, withDisabled, withId, withName, withMediumSize, withSmallSize, withLargeSize, withPlaceholder, withOverridingClass, withThreshold, withIsSubmitted\n\n\n## Event Options\n\n@docs withOnBlur, withOnFocus\n\n\n## Validation\n\n@docs withValidation\n\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " Represents the Msg of the `FilterableSelect`.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "FilterableSelectMsg",
+                        [
+                            "Prima.Pyxis.Form.Autocomplete.Msg"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "State",
+                "comment": " The `State` of the `FilterableSelect`\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "FilterableSelect",
+                "comment": " Represent the opaque `FilterableSelect` configuration.\n",
+                "args": [
+                    "model"
+                ],
+                "type": "Prima.Pyxis.Form.Autocomplete.Autocomplete model"
+            },
+            {
+                "name": "FilterableSelectChoice",
+                "comment": " Represent the `FilterableSelectChoice` configuration.\n",
+                "args": [],
+                "type": "Prima.Pyxis.Form.Autocomplete.AutocompleteChoice"
+            }
+        ],
+        "values": [
+            {
+                "name": "close",
+                "comment": " Hide the available options for the filterable select.\n",
+                "type": "Prima.Pyxis.Form.FilterableSelect.State -> Prima.Pyxis.Form.FilterableSelect.State"
+            },
+            {
+                "name": "filterValue",
+                "comment": " Returns the current filter inserted by the user.\n",
+                "type": "Prima.Pyxis.Form.FilterableSelect.State -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "filterableSelect",
+                "comment": " Creates an select with a filter input.\n",
+                "type": "Prima.Pyxis.Form.FilterableSelect.FilterableSelect model"
+            },
+            {
+                "name": "filterableSelectChoice",
+                "comment": " Create the FilterableSelectChoice configuration.\n",
+                "type": "String.String -> String.String -> Prima.Pyxis.Form.FilterableSelect.FilterableSelectChoice"
+            },
+            {
+                "name": "init",
+                "comment": " Initializes the `FilterableSelect`'s `State`.\n",
+                "type": "List.List Prima.Pyxis.Form.FilterableSelect.FilterableSelectChoice -> Prima.Pyxis.Form.FilterableSelect.State"
+            },
+            {
+                "name": "initWithDefault",
+                "comment": " Initializes the `Autocomplete`'s `State` with a default selected value.\n",
+                "type": "String.String -> String.String -> List.List Prima.Pyxis.Form.FilterableSelect.FilterableSelectChoice -> Prima.Pyxis.Form.FilterableSelect.State"
+            },
+            {
+                "name": "isOpen",
+                "comment": " Returns whether the menu is open or not.\n",
+                "type": "Prima.Pyxis.Form.FilterableSelect.State -> Basics.Bool"
+            },
+            {
+                "name": "open",
+                "comment": " Show the available options for the filterable select.\n",
+                "type": "Prima.Pyxis.Form.FilterableSelect.State -> Prima.Pyxis.Form.FilterableSelect.State"
+            },
+            {
+                "name": "render",
+                "comment": " Renders the `FilterableSelect`.\n",
+                "type": "model -> Prima.Pyxis.Form.FilterableSelect.State -> Prima.Pyxis.Form.FilterableSelect.FilterableSelect model -> List.List (Html.Html Prima.Pyxis.Form.FilterableSelect.Msg)"
+            },
+            {
+                "name": "reset",
+                "comment": " Reset selected value.\n",
+                "type": "Prima.Pyxis.Form.FilterableSelect.State -> Prima.Pyxis.Form.FilterableSelect.State"
+            },
+            {
+                "name": "selectedValue",
+                "comment": " Returns the current `FilterableSelectChoice.value` selected by the user.\n",
+                "type": "Prima.Pyxis.Form.FilterableSelect.State -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "subscription",
+                "comment": " Needed to wire keyboard events to the `FilterableSelect`.\n",
+                "type": "Prima.Pyxis.Form.FilterableSelect.State -> Platform.Sub.Sub Prima.Pyxis.Form.FilterableSelect.Msg"
+            },
+            {
+                "name": "toggle",
+                "comment": " Toggle the menu openness.\n",
+                "type": "Prima.Pyxis.Form.FilterableSelect.State -> Prima.Pyxis.Form.FilterableSelect.State"
+            },
+            {
+                "name": "update",
+                "comment": " Updates the `FilterableSelect`'s `State`.\n",
+                "type": "Prima.Pyxis.Form.FilterableSelect.Msg -> Prima.Pyxis.Form.FilterableSelect.State -> Prima.Pyxis.Form.FilterableSelect.State"
+            },
+            {
+                "name": "updateChoices",
+                "comment": " Update the `FilterableSelectChoice` inside `Autocomplete`'s state\n",
+                "type": "List.List Prima.Pyxis.Form.FilterableSelect.FilterableSelectChoice -> Prima.Pyxis.Form.FilterableSelect.State -> Prima.Pyxis.Form.FilterableSelect.State"
+            },
+            {
+                "name": "withAttribute",
+                "comment": " Adds a generic Html.Attribute to the `FilterableSelect`.\n",
+                "type": "Html.Attribute Prima.Pyxis.Form.Autocomplete.Msg -> Prima.Pyxis.Form.Autocomplete.Autocomplete model -> Prima.Pyxis.Form.FilterableSelect.FilterableSelect model"
+            },
+            {
+                "name": "withClass",
+                "comment": " Adds a `class` to the `FilterableSelect`.\n",
+                "type": "String.String -> Prima.Pyxis.Form.FilterableSelect.FilterableSelect model -> Prima.Pyxis.Form.FilterableSelect.FilterableSelect model"
+            },
+            {
+                "name": "withDefaultValue",
+                "comment": " Adds a default value to the `Input`.\nUseful to teach the component about it's `pristine/touched` state.\n",
+                "type": "Maybe.Maybe String.String -> Prima.Pyxis.Form.FilterableSelect.FilterableSelect model -> Prima.Pyxis.Form.FilterableSelect.FilterableSelect model"
+            },
+            {
+                "name": "withDisabled",
+                "comment": " Adds a `disabled` Html.Attribute to the `FilterableSelect`.\n",
+                "type": "Basics.Bool -> Prima.Pyxis.Form.FilterableSelect.FilterableSelect model -> Prima.Pyxis.Form.FilterableSelect.FilterableSelect model"
+            },
+            {
+                "name": "withId",
+                "comment": " Adds an `id` Html.Attribute to the `FilterableSelect`.\n",
+                "type": "String.String -> Prima.Pyxis.Form.FilterableSelect.FilterableSelect model -> Prima.Pyxis.Form.FilterableSelect.FilterableSelect model"
+            },
+            {
+                "name": "withIsSubmitted",
+                "comment": " Adds an `isSubmitted` predicate to the `Autocomplete`.\n",
+                "type": "(model -> Basics.Bool) -> Prima.Pyxis.Form.FilterableSelect.FilterableSelect model -> Prima.Pyxis.Form.FilterableSelect.FilterableSelect model"
+            },
+            {
+                "name": "withLargeSize",
+                "comment": " Adds a `size` of `Large` to the `FilterableSelect`.\n",
+                "type": "Prima.Pyxis.Form.FilterableSelect.FilterableSelect model -> Prima.Pyxis.Form.FilterableSelect.FilterableSelect model"
+            },
+            {
+                "name": "withMediumSize",
+                "comment": " Adds a `size` of `Medium` to the `FilterableSelect`.\n",
+                "type": "Prima.Pyxis.Form.FilterableSelect.FilterableSelect model -> Prima.Pyxis.Form.FilterableSelect.FilterableSelect model"
+            },
+            {
+                "name": "withName",
+                "comment": " Adds a `name` Html.Attribute to the `FilterableSelect`.\n",
+                "type": "String.String -> Prima.Pyxis.Form.FilterableSelect.FilterableSelect model -> Prima.Pyxis.Form.FilterableSelect.FilterableSelect model"
+            },
+            {
+                "name": "withOnBlur",
+                "comment": " Attaches the `onBlur` event to the `FilterableSelect`.\n",
+                "type": "Prima.Pyxis.Form.Autocomplete.Msg -> Prima.Pyxis.Form.FilterableSelect.FilterableSelect model -> Prima.Pyxis.Form.FilterableSelect.FilterableSelect model"
+            },
+            {
+                "name": "withOnFocus",
+                "comment": " Attaches the `onFocus` event to the `FilterableSelect`.\n",
+                "type": "Prima.Pyxis.Form.Autocomplete.Msg -> Prima.Pyxis.Form.FilterableSelect.FilterableSelect model -> Prima.Pyxis.Form.FilterableSelect.FilterableSelect model"
+            },
+            {
+                "name": "withOverridingClass",
+                "comment": " Adds a `class` to the `FilterableSelect` which overrides all the previous.\n",
+                "type": "String.String -> Prima.Pyxis.Form.FilterableSelect.FilterableSelect model -> Prima.Pyxis.Form.FilterableSelect.FilterableSelect model"
+            },
+            {
+                "name": "withPlaceholder",
+                "comment": " Adds a `placeholder` Html.Attribute to the `FilterableSelect`.\n",
+                "type": "String.String -> Prima.Pyxis.Form.FilterableSelect.FilterableSelect model -> Prima.Pyxis.Form.FilterableSelect.FilterableSelect model"
+            },
+            {
+                "name": "withSmallSize",
+                "comment": " Adds a `size` of `Small` to the `FilterableSelect`.\n",
+                "type": "Prima.Pyxis.Form.FilterableSelect.FilterableSelect model -> Prima.Pyxis.Form.FilterableSelect.FilterableSelect model"
+            },
+            {
+                "name": "withThreshold",
+                "comment": " Changes the threshold value\n",
+                "type": "Basics.Int -> Prima.Pyxis.Form.FilterableSelect.State -> Prima.Pyxis.Form.FilterableSelect.State"
+            },
+            {
+                "name": "withValidation",
+                "comment": " Adds a `Validation` rule to the `FilterableSelect`.\n",
+                "type": "(model -> Maybe.Maybe Prima.Pyxis.Form.Validation.Type) -> Prima.Pyxis.Form.FilterableSelect.FilterableSelect model -> Prima.Pyxis.Form.FilterableSelect.FilterableSelect model"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Prima.Pyxis.Form.Grid",
+        "comment": "\n\n\n## Configuration\n\n@docs Grid, Row, Children\n\n\n## Configuration Methods\n\n@docs create, emptyRow, addRow\n\n\n## Rendering\n\n@docs render\n\n\n## Options\n\n@docs withOneColumn, withTwoColumns, withThreeColumns, withFourColumns\n\n",
+        "unions": [
+            {
+                "name": "Grid",
+                "comment": " Represent the `Grid`.\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Row",
+                "comment": " Represents a `Row` which is the child of a `Grid`.\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Children",
+                "comment": " Convenient alias for a `List (Html msg)`.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "List.List (Html.Html msg)"
+            }
+        ],
+        "values": [
+            {
+                "name": "addRow",
+                "comment": " Adds a `Row` to the `Grid`.\n",
+                "type": "Prima.Pyxis.Form.Grid.Row msg -> Prima.Pyxis.Form.Grid.Grid msg -> Prima.Pyxis.Form.Grid.Grid msg"
+            },
+            {
+                "name": "create",
+                "comment": " Creates a `Grid`.\n",
+                "type": "Prima.Pyxis.Form.Grid.Grid msg"
+            },
+            {
+                "name": "emptyRow",
+                "comment": " Creates an empty `Row`.\n",
+                "type": "Prima.Pyxis.Form.Grid.Row msg"
+            },
+            {
+                "name": "render",
+                "comment": " Renders the `Grid`.\n",
+                "type": "Prima.Pyxis.Form.Grid.Grid msg -> List.List (Html.Html msg)"
+            },
+            {
+                "name": "withFourColumns",
+                "comment": " Creates a `Row` with 4 `Column`s.\n",
+                "type": "Prima.Pyxis.Form.Grid.Children msg -> Prima.Pyxis.Form.Grid.Children msg -> Prima.Pyxis.Form.Grid.Children msg -> Prima.Pyxis.Form.Grid.Children msg -> Prima.Pyxis.Form.Grid.Row msg"
+            },
+            {
+                "name": "withOneColumn",
+                "comment": " Adds one `Column` to a row.\n",
+                "type": "Prima.Pyxis.Form.Grid.Children msg -> Prima.Pyxis.Form.Grid.Row msg"
+            },
+            {
+                "name": "withThreeColumns",
+                "comment": " Creates a `Row` with 3 `Column`s.\n",
+                "type": "Prima.Pyxis.Form.Grid.Children msg -> Prima.Pyxis.Form.Grid.Children msg -> Prima.Pyxis.Form.Grid.Children msg -> Prima.Pyxis.Form.Grid.Row msg"
+            },
+            {
+                "name": "withTwoColumns",
+                "comment": " Creates a `Row` with 2 `Column`s.\n",
+                "type": "Prima.Pyxis.Form.Grid.Children msg -> Prima.Pyxis.Form.Grid.Children msg -> Prima.Pyxis.Form.Grid.Row msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Prima.Pyxis.Form.Input",
+        "comment": "\n\n\n## Configuration\n\n@docs Input\n\n\n## Configuration Methods\n\n@docs text, password, date, number, email\n\n\n## Rendering\n\n@docs render\n\n\n## Options\n\n@docs withAttribute, withClass, withDefaultValue, withDisabled, withId, withName, withMediumSize, withSmallSize, withLargeSize, withPlaceholder, withOverridingClass, withIsSubmitted\n\n\n## Group Options\n\n@docs withPrependGroup, withAppendGroup, withGroupClass\n\n\n## Event Options\n\n@docs withOnBlur, withOnFocus\n\n\n## Validation\n\n@docs withValidation\n\n",
+        "unions": [
+            {
+                "name": "Input",
+                "comment": " Represent the opaque `Input` configuration.\n",
+                "args": [
+                    "model",
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "date",
+                "comment": " Create an `input[type=\"date\"]`.\n",
+                "type": "(model -> Maybe.Maybe String.String) -> (String.String -> msg) -> Prima.Pyxis.Form.Input.Input model msg"
+            },
+            {
+                "name": "email",
+                "comment": " Create an `input[type=\"email\"]`.\n",
+                "type": "(model -> Maybe.Maybe String.String) -> (String.String -> msg) -> Prima.Pyxis.Form.Input.Input model msg"
+            },
+            {
+                "name": "number",
+                "comment": " Create an `input[type=\"number\"]`.\n",
+                "type": "(model -> Maybe.Maybe String.String) -> (String.String -> msg) -> Prima.Pyxis.Form.Input.Input model msg"
+            },
+            {
+                "name": "password",
+                "comment": " Create an `input[type=\"password\"]`.\n",
+                "type": "(model -> Maybe.Maybe String.String) -> (String.String -> msg) -> Prima.Pyxis.Form.Input.Input model msg"
+            },
+            {
+                "name": "render",
+                "comment": "\n\n\n## Renders the `Input`.\n\n    import Html\n    import Prima.Pyxis.Form.Input as Input\n    import Prima.Pyxis.Form.Validation as Validation\n\n    ...\n\n    type Msg =\n        OnInput String\n\n    type alias Model =\n        { username : Maybe String\n        , isSubmitted : Bool\n        }\n\n    ...\n\n    view : Html Msg\n    view =\n        Html.div\n            []\n            (Input.email .username OnInput\n                |> Input.withClass \"my-custom-class\"\n                |> Input.withValidation (Maybe.andThen validate << .username)\n                |> Input.withIsSubmitted .isSubmitted\n            )\n\n    validate : String -> Validation.Type\n    validate str =\n        if String.isEmpty str then\n            Just <| Validation.ErrorWithMessage \"Username is empty\".\n        else\n            Nothing\n\n",
+                "type": "model -> Prima.Pyxis.Form.Input.Input model msg -> List.List (Html.Html msg)"
+            },
+            {
+                "name": "text",
+                "comment": " Create an `input[type=\"text\"]`.\n",
+                "type": "(model -> Maybe.Maybe String.String) -> (String.String -> msg) -> Prima.Pyxis.Form.Input.Input model msg"
+            },
+            {
+                "name": "withAppendGroup",
+                "comment": " Appends an `InputGroup` with custom `Html`.\n",
+                "type": "List.List (Html.Html msg) -> Prima.Pyxis.Form.Input.Input model msg -> Prima.Pyxis.Form.Input.Input model msg"
+            },
+            {
+                "name": "withAttribute",
+                "comment": " Adds a generic Html.Attribute to the `Input`.\n",
+                "type": "Html.Attribute msg -> Prima.Pyxis.Form.Input.Input model msg -> Prima.Pyxis.Form.Input.Input model msg"
+            },
+            {
+                "name": "withClass",
+                "comment": " Adds a `class` to the `Input`.\n",
+                "type": "String.String -> Prima.Pyxis.Form.Input.Input model msg -> Prima.Pyxis.Form.Input.Input model msg"
+            },
+            {
+                "name": "withDefaultValue",
+                "comment": " Adds a default value to the `Input`.\nUseful to teach the component about it's `pristine/touched` state.\n",
+                "type": "Maybe.Maybe String.String -> Prima.Pyxis.Form.Input.Input model msg -> Prima.Pyxis.Form.Input.Input model msg"
+            },
+            {
+                "name": "withDisabled",
+                "comment": " Adds a `disabled` Html.Attribute to the `Input`.\n",
+                "type": "Basics.Bool -> Prima.Pyxis.Form.Input.Input model msg -> Prima.Pyxis.Form.Input.Input model msg"
+            },
+            {
+                "name": "withGroupClass",
+                "comment": " Adds a `class` to the `InputGroup` which wraps the `Input`.\n",
+                "type": "String.String -> Prima.Pyxis.Form.Input.Input model msg -> Prima.Pyxis.Form.Input.Input model msg"
+            },
+            {
+                "name": "withId",
+                "comment": " Adds an `id` Html.Attribute to the `Input`.\n",
+                "type": "String.String -> Prima.Pyxis.Form.Input.Input model msg -> Prima.Pyxis.Form.Input.Input model msg"
+            },
+            {
+                "name": "withIsSubmitted",
+                "comment": " Adds an `isSubmitted` predicate to the `Input`.\n",
+                "type": "(model -> Basics.Bool) -> Prima.Pyxis.Form.Input.Input model msg -> Prima.Pyxis.Form.Input.Input model msg"
+            },
+            {
+                "name": "withLargeSize",
+                "comment": " Adds a `size` of `Large` to the `Input`.\n",
+                "type": "Prima.Pyxis.Form.Input.Input model msg -> Prima.Pyxis.Form.Input.Input model msg"
+            },
+            {
+                "name": "withMediumSize",
+                "comment": " Adds a `size` of `Medium` to the `Input`.\n",
+                "type": "Prima.Pyxis.Form.Input.Input model msg -> Prima.Pyxis.Form.Input.Input model msg"
+            },
+            {
+                "name": "withName",
+                "comment": " Adds a `name` Html.Attribute to the `Input`.\n",
+                "type": "String.String -> Prima.Pyxis.Form.Input.Input model msg -> Prima.Pyxis.Form.Input.Input model msg"
+            },
+            {
+                "name": "withOnBlur",
+                "comment": " Attaches the `onBlur` event to the `Input`.\n",
+                "type": "msg -> Prima.Pyxis.Form.Input.Input model msg -> Prima.Pyxis.Form.Input.Input model msg"
+            },
+            {
+                "name": "withOnFocus",
+                "comment": " Attaches the `onFocus` event to the `Input`.\n",
+                "type": "msg -> Prima.Pyxis.Form.Input.Input model msg -> Prima.Pyxis.Form.Input.Input model msg"
+            },
+            {
+                "name": "withOverridingClass",
+                "comment": " Adds a `class` to the `Input` which overrides all the previous.\n",
+                "type": "String.String -> Prima.Pyxis.Form.Input.Input model msg -> Prima.Pyxis.Form.Input.Input model msg"
+            },
+            {
+                "name": "withPlaceholder",
+                "comment": " Adds a `placeholder` Html.Attribute to the `Input`.\n",
+                "type": "String.String -> Prima.Pyxis.Form.Input.Input model msg -> Prima.Pyxis.Form.Input.Input model msg"
+            },
+            {
+                "name": "withPrependGroup",
+                "comment": " Prepends an `InputGroup` with custom `Html`.\n",
+                "type": "List.List (Html.Html msg) -> Prima.Pyxis.Form.Input.Input model msg -> Prima.Pyxis.Form.Input.Input model msg"
+            },
+            {
+                "name": "withSmallSize",
+                "comment": " Sets a `size` of `Small` to the `Input`.\n",
+                "type": "Prima.Pyxis.Form.Input.Input model msg -> Prima.Pyxis.Form.Input.Input model msg"
+            },
+            {
+                "name": "withValidation",
+                "comment": " Adds a `Validation` rule to the `Input`.\n",
+                "type": "(model -> Maybe.Maybe Prima.Pyxis.Form.Validation.Type) -> Prima.Pyxis.Form.Input.Input model msg -> Prima.Pyxis.Form.Input.Input model msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Prima.Pyxis.Form.Label",
+        "comment": "\n\n\n## Configuration\n\n@docs Label\n\n\n## Configuration Methods\n\n@docs label, labelWithHtml\n\n\n## Rendering\n\n@docs render\n\n\n## Options\n\n@docs withAttribute, withClass, withConditionallyFor, withFor, withOverridingClass, withSubtitle\n\n\n## Event Options\n\n@docs withOnClick\n\n",
+        "unions": [
+            {
+                "name": "Label",
+                "comment": " Represent the opaque `Label` configuration.\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "label",
+                "comment": " Create a label with string content.\n",
+                "type": "String.String -> Prima.Pyxis.Form.Label.Label msg"
+            },
+            {
+                "name": "labelWithHtml",
+                "comment": " Create a label with html content.\n",
+                "type": "List.List (Html.Html msg) -> Prima.Pyxis.Form.Label.Label msg"
+            },
+            {
+                "name": "render",
+                "comment": " Renders a `Label config`.\n\n    import Prima.Pyxis.Form.Label as Label\n\n    view : List (Html msg)\n    view =\n        \"My Label\"\n            |> Label.label\n            |> Label.withId \"myForId\"\n            |> Label.render\n\n",
+                "type": "Prima.Pyxis.Form.Label.Label msg -> Html.Html msg"
+            },
+            {
+                "name": "withAttribute",
+                "comment": " Sets an `attribute` to the `Label config`.\n",
+                "type": "Html.Attribute msg -> Prima.Pyxis.Form.Label.Label msg -> Prima.Pyxis.Form.Label.Label msg"
+            },
+            {
+                "name": "withClass",
+                "comment": " Sets a class to the `Label config`.\n",
+                "type": "String.String -> Prima.Pyxis.Form.Label.Label msg -> Prima.Pyxis.Form.Label.Label msg"
+            },
+            {
+                "name": "withConditionallyFor",
+                "comment": " Sets a for to the `Label config` if the maybeFor argument has a value,\notherwise it leaves the `Label config` unchanged.\n",
+                "type": "Maybe.Maybe String.String -> Prima.Pyxis.Form.Label.Label msg -> Prima.Pyxis.Form.Label.Label msg"
+            },
+            {
+                "name": "withFor",
+                "comment": " Sets a for to the `Label config`.\n",
+                "type": "String.String -> Prima.Pyxis.Form.Label.Label msg -> Prima.Pyxis.Form.Label.Label msg"
+            },
+            {
+                "name": "withOnClick",
+                "comment": " Sets an `onClick` to the `Label config`.\n",
+                "type": "msg -> Prima.Pyxis.Form.Label.Label msg -> Prima.Pyxis.Form.Label.Label msg"
+            },
+            {
+                "name": "withOverridingClass",
+                "comment": " Sets a class which will override the others to the `Label config`.\n",
+                "type": "String.String -> Prima.Pyxis.Form.Label.Label msg -> Prima.Pyxis.Form.Label.Label msg"
+            },
+            {
+                "name": "withSubtitle",
+                "comment": " Sets a `subLabel` to the `Label config`.\n",
+                "type": "String.String -> Prima.Pyxis.Form.Label.Label msg -> Prima.Pyxis.Form.Label.Label msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Prima.Pyxis.Form.Radio",
+        "comment": "\n\n\n## Configuration\n\n@docs Radio, RadioChoice\n\n\n## Configuration Methods\n\n@docs radio, radioChoice\n\n\n## Rendering\n\n@docs render\n\n\n## Options\n\n@docs withAttribute, withClass, withDisabled, withId, withName\n\n\n## Event Options\n\n@docs withOnBlur, withOnFocus\n\n\n## Validation\n\n@docs withValidation\n\n",
+        "unions": [
+            {
+                "name": "Radio",
+                "comment": " Represents the configuration choice for the `Radio`.\n",
+                "args": [
+                    "model",
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "RadioChoice",
+                "comment": " Represents a choice for the `Radio`.\n",
+                "args": [],
+                "type": "{ value : String.String, label : String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "radio",
+                "comment": " Creates the `Radio`.\n",
+                "type": "(model -> Maybe.Maybe String.String) -> (String.String -> msg) -> List.List Prima.Pyxis.Form.Radio.RadioChoice -> Prima.Pyxis.Form.Radio.Radio model msg"
+            },
+            {
+                "name": "radioChoice",
+                "comment": " Creates a choice for the `Radio`.\n",
+                "type": "String.String -> String.String -> Prima.Pyxis.Form.Radio.RadioChoice"
+            },
+            {
+                "name": "render",
+                "comment": " Renders the `Radio config`.\n\n    import Prima.Pyxis.Form.Radio as Radio\n\n    view : List (Html Msg)\n    view =\n        [ radioChoice \"option_1\" \"Option 1\"\n        , radioChoice \"option_2\" \"Option 2\"\n        ]\n            |> Radio.radio\n            |> Radio.render\n\n",
+                "type": "model -> Prima.Pyxis.Form.Radio.Radio model msg -> List.List (Html.Html msg)"
+            },
+            {
+                "name": "withAttribute",
+                "comment": " Sets an `attribute` to the `Radio config`.\n",
+                "type": "Html.Attribute msg -> Prima.Pyxis.Form.Radio.Radio model msg -> Prima.Pyxis.Form.Radio.Radio model msg"
+            },
+            {
+                "name": "withClass",
+                "comment": " Sets a `class` to the `Radio config`.\n",
+                "type": "String.String -> Prima.Pyxis.Form.Radio.Radio model msg -> Prima.Pyxis.Form.Radio.Radio model msg"
+            },
+            {
+                "name": "withDisabled",
+                "comment": " Sets a `disabled` to the `Radio config`.\n",
+                "type": "Basics.Bool -> Prima.Pyxis.Form.Radio.Radio model msg -> Prima.Pyxis.Form.Radio.Radio model msg"
+            },
+            {
+                "name": "withId",
+                "comment": " Sets an `id` to the `Radio config`.\n",
+                "type": "String.String -> Prima.Pyxis.Form.Radio.Radio model msg -> Prima.Pyxis.Form.Radio.Radio model msg"
+            },
+            {
+                "name": "withName",
+                "comment": " Sets a `name` to the `Radio config`.\n",
+                "type": "String.String -> Prima.Pyxis.Form.Radio.Radio model msg -> Prima.Pyxis.Form.Radio.Radio model msg"
+            },
+            {
+                "name": "withOnBlur",
+                "comment": " Sets an `onBlur event` to the `Radio config`.\n",
+                "type": "msg -> Prima.Pyxis.Form.Radio.Radio model msg -> Prima.Pyxis.Form.Radio.Radio model msg"
+            },
+            {
+                "name": "withOnFocus",
+                "comment": " Sets an `onFocus event` to the `Radio config`.\n",
+                "type": "msg -> Prima.Pyxis.Form.Radio.Radio model msg -> Prima.Pyxis.Form.Radio.Radio model msg"
+            },
+            {
+                "name": "withValidation",
+                "comment": " Adds a validation rule to the `Radio`.\n",
+                "type": "(model -> Maybe.Maybe Prima.Pyxis.Form.Validation.Type) -> Prima.Pyxis.Form.Radio.Radio model msg -> Prima.Pyxis.Form.Radio.Radio model msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Prima.Pyxis.Form.RadioButton",
+        "comment": "\n\n\n## Configuration\n\n@docs RadioButton, RadioButtonChoice\n\n\n## Configuration Methods\n\n@docs radioButton, radioButtonChoice, radioButtonChoiceWithSubtitle\n\n\n## Rendering\n\n@docs render\n\n\n## Options\n\n@docs withAttribute, withClass, withId, withDisabled\n\n\n## Event Options\n\n@docs withOnBlur, withOnFocus\n\n\n## Validation\n\n@docs withValidation\n\n",
+        "unions": [
+            {
+                "name": "RadioButton",
+                "comment": " Represent the opaque `RadioButton` configuration.\n",
+                "args": [
+                    "model",
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "RadioButtonChoice",
+                "comment": " Represent the `RadioButtonChoice` configuration.\n",
+                "args": [],
+                "type": "{ value : String.String, title : String.String, subtitle : Maybe.Maybe String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "radioButton",
+                "comment": " Create a radioButton.\n",
+                "type": "(model -> Maybe.Maybe String.String) -> (String.String -> msg) -> List.List Prima.Pyxis.Form.RadioButton.RadioButtonChoice -> Prima.Pyxis.Form.RadioButton.RadioButton model msg"
+            },
+            {
+                "name": "radioButtonChoice",
+                "comment": " Create the 'RadioButtonChoice' configuration.\n",
+                "type": "String.String -> String.String -> Prima.Pyxis.Form.RadioButton.RadioButtonChoice"
+            },
+            {
+                "name": "radioButtonChoiceWithSubtitle",
+                "comment": " Create the 'radioButtonChoiceWithSubtitle' configuration.\n",
+                "type": "String.String -> String.String -> String.String -> Prima.Pyxis.Form.RadioButton.RadioButtonChoice"
+            },
+            {
+                "name": "render",
+                "comment": "\n\n\n## Renders the `Input`.\n\n    import Html\n    import Prima.Pyxis.Form.RadioButton as RadioButton\n    import Prima.Pyxis.Form.Validation as Validation\n\n    ...\n\n    type Msg =\n        OnChange String\n\n\n    type alias Model =\n        { tipoPolizza: Maybe String }\n\n    ...\n\n    view : Html Msg\n    view =\n        Html.div\n            []\n            (Input.email .tipoPolizza OnInput\n                |> Input.withClass \"my-custom-class\"\n                |> Input.withValidation (Maybe.andThen validate << .tipoPolizza)\n            )\n\n    validate : String -> Validation.Type\n    validate str =\n        if String.isEmpty str then\n            Just <| Validation.ErrorWithMessage \"Tipo di polizza is empty\".\n        else\n            Nothing\n\n",
+                "type": "model -> Prima.Pyxis.Form.RadioButton.RadioButton model msg -> List.List (Html.Html msg)"
+            },
+            {
+                "name": "withAttribute",
+                "comment": " Adds a generic Html.Attribute to the `RadioButton`.\n",
+                "type": "Html.Attribute msg -> Prima.Pyxis.Form.RadioButton.RadioButton model msg -> Prima.Pyxis.Form.RadioButton.RadioButton model msg"
+            },
+            {
+                "name": "withClass",
+                "comment": " Adds a `class` to the `RadioButton`.\n",
+                "type": "String.String -> Prima.Pyxis.Form.RadioButton.RadioButton model msg -> Prima.Pyxis.Form.RadioButton.RadioButton model msg"
+            },
+            {
+                "name": "withDisabled",
+                "comment": " Adds disabled Html.Attribute to the `RadioButton`.\n",
+                "type": "Basics.Bool -> Prima.Pyxis.Form.RadioButton.RadioButton model msg -> Prima.Pyxis.Form.RadioButton.RadioButton model msg"
+            },
+            {
+                "name": "withId",
+                "comment": " Adds an `id` Html.Attribute to the `RadioButton`.\n",
+                "type": "String.String -> Prima.Pyxis.Form.RadioButton.RadioButton model msg -> Prima.Pyxis.Form.RadioButton.RadioButton model msg"
+            },
+            {
+                "name": "withOnBlur",
+                "comment": " Attaches the `onBlur` event to the `RadioButton`.\n",
+                "type": "msg -> Prima.Pyxis.Form.RadioButton.RadioButton model msg -> Prima.Pyxis.Form.RadioButton.RadioButton model msg"
+            },
+            {
+                "name": "withOnFocus",
+                "comment": " Attaches the `onFocus` event to the `RadioButton`.\n",
+                "type": "msg -> Prima.Pyxis.Form.RadioButton.RadioButton model msg -> Prima.Pyxis.Form.RadioButton.RadioButton model msg"
+            },
+            {
+                "name": "withValidation",
+                "comment": " Adds a `Validation` rule to the `RadioButton`.\n",
+                "type": "(model -> Maybe.Maybe Prima.Pyxis.Form.Validation.Type) -> Prima.Pyxis.Form.RadioButton.RadioButton model msg -> Prima.Pyxis.Form.RadioButton.RadioButton model msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Prima.Pyxis.Form.RadioFlag",
+        "comment": "\n\n\n## Configuration\n\n@docs RadioFlag, RadioFlagChoice\n\n\n## Configuration Methods\n\n@docs radioFlagLight, radioFlagDark\n\n\n## Rendering\n\n@docs render\n\n\n## Options\n\n@docs withAttribute, withClass, withDisabled, withId, withName\n\n\n## Event Options\n\n@docs withOnBlur, withOnFocus\n\n\n## Validation\n\n@docs withValidation\n\n",
+        "unions": [
+            {
+                "name": "RadioFlag",
+                "comment": " Represents the configuration choice for the `RadioFlag`.\n",
+                "args": [
+                    "model",
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "RadioFlagChoice",
+                "comment": " Represents a choice for the `RadioFlag`.\n",
+                "args": [],
+                "type": "{ value : Basics.Bool, label : String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "radioFlagDark",
+                "comment": " Creates the `RadioFlag` with a dark skin.\n",
+                "type": "(model -> Maybe.Maybe Basics.Bool) -> (Basics.Bool -> msg) -> Prima.Pyxis.Form.RadioFlag.RadioFlag model msg"
+            },
+            {
+                "name": "radioFlagLight",
+                "comment": " Creates the `RadioFlag` with a light skin.\n",
+                "type": "(model -> Maybe.Maybe Basics.Bool) -> (Basics.Bool -> msg) -> Prima.Pyxis.Form.RadioFlag.RadioFlag model msg"
+            },
+            {
+                "name": "render",
+                "comment": " Renders the `RadioFlag`.\n",
+                "type": "model -> Prima.Pyxis.Form.RadioFlag.RadioFlag model msg -> List.List (Html.Html msg)"
+            },
+            {
+                "name": "withAttribute",
+                "comment": " Sets an `attribute` to the `Radio config`.\n",
+                "type": "Html.Attribute msg -> Prima.Pyxis.Form.RadioFlag.RadioFlag model msg -> Prima.Pyxis.Form.RadioFlag.RadioFlag model msg"
+            },
+            {
+                "name": "withClass",
+                "comment": " Sets a `class` to the `Radio config`.\n",
+                "type": "String.String -> Prima.Pyxis.Form.RadioFlag.RadioFlag model msg -> Prima.Pyxis.Form.RadioFlag.RadioFlag model msg"
+            },
+            {
+                "name": "withDisabled",
+                "comment": " Sets a `disabled` to the `Radio config`.\n",
+                "type": "Basics.Bool -> Prima.Pyxis.Form.RadioFlag.RadioFlag model msg -> Prima.Pyxis.Form.RadioFlag.RadioFlag model msg"
+            },
+            {
+                "name": "withId",
+                "comment": " Sets an `id` to the `Radio config`.\n",
+                "type": "String.String -> Prima.Pyxis.Form.RadioFlag.RadioFlag model msg -> Prima.Pyxis.Form.RadioFlag.RadioFlag model msg"
+            },
+            {
+                "name": "withName",
+                "comment": " Sets a `name` to the `Radio config`.\n",
+                "type": "String.String -> Prima.Pyxis.Form.RadioFlag.RadioFlag model msg -> Prima.Pyxis.Form.RadioFlag.RadioFlag model msg"
+            },
+            {
+                "name": "withOnBlur",
+                "comment": " Sets an `onBlur event` to the `Radio config`.\n",
+                "type": "msg -> Prima.Pyxis.Form.RadioFlag.RadioFlag model msg -> Prima.Pyxis.Form.RadioFlag.RadioFlag model msg"
+            },
+            {
+                "name": "withOnFocus",
+                "comment": " Sets an `onFocus event` to the `Radio config`.\n",
+                "type": "msg -> Prima.Pyxis.Form.RadioFlag.RadioFlag model msg -> Prima.Pyxis.Form.RadioFlag.RadioFlag model msg"
+            },
+            {
+                "name": "withValidation",
+                "comment": " Adds a validation rule to the `RadioFlag`.\n",
+                "type": "(model -> Maybe.Maybe Prima.Pyxis.Form.Validation.Type) -> Prima.Pyxis.Form.RadioFlag.RadioFlag model msg -> Prima.Pyxis.Form.RadioFlag.RadioFlag model msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Prima.Pyxis.Form.Select",
+        "comment": "\n\n\n## Configuration\n\n@docs Select, State, Msg, SelectChoice\n\n\n## Configuration Methods\n\n@docs select, init, initWithDefault, update, selectChoice\n\n\n## Methods\n\n@docs selectedValue, subscription, open, close, isOpen, toggle, reset\n\n\n## Rendering\n\n@docs render\n\n\n## Options\n\n@docs withAttribute, withId, withDefaultValue, withDisabled, withClass, withLargeSize, withMediumSize, withOverridingClass, withPlaceholder, withSmallSize, withIsSubmitted\n\n\n## Event Options\n\n@docs withOnBlur, withOnFocus\n\n\n## Validation\n\n@docs withValidation\n\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " Represents the Msg of the `Select`.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "OnSelect",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "OnToggleMenu",
+                        []
+                    ],
+                    [
+                        "OnKeyPress",
+                        [
+                            "Maybe.Maybe Prima.Pyxis.Form.Commons.KeyboardEvents.KeyCode"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Select",
+                "comment": " Represent the opaque `Select` configuration.\n",
+                "args": [
+                    "model"
+                ],
+                "cases": []
+            },
+            {
+                "name": "State",
+                "comment": " The `State` of the `Select`\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "SelectChoice",
+                "comment": " Represents an option for the `Select`.\n",
+                "args": [],
+                "type": "{ value : String.String, label : String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "close",
+                "comment": " Hide the available options for the select.\n",
+                "type": "Prima.Pyxis.Form.Select.State -> Prima.Pyxis.Form.Select.State"
+            },
+            {
+                "name": "init",
+                "comment": " Initializes the `Select`'s `State`.\n",
+                "type": "List.List Prima.Pyxis.Form.Select.SelectChoice -> Prima.Pyxis.Form.Select.State"
+            },
+            {
+                "name": "initWithDefault",
+                "comment": " Initializes the `Select`'s `State` with a default value.\n",
+                "type": "String.String -> List.List Prima.Pyxis.Form.Select.SelectChoice -> Prima.Pyxis.Form.Select.State"
+            },
+            {
+                "name": "isOpen",
+                "comment": " Returns whether the menu is open or not.\n",
+                "type": "Prima.Pyxis.Form.Select.State -> Basics.Bool"
+            },
+            {
+                "name": "open",
+                "comment": " Show the available options for the select.\n",
+                "type": "Prima.Pyxis.Form.Select.State -> Prima.Pyxis.Form.Select.State"
+            },
+            {
+                "name": "render",
+                "comment": " Renders the `Radio config`.\n",
+                "type": "model -> Prima.Pyxis.Form.Select.State -> Prima.Pyxis.Form.Select.Select model -> List.List (Html.Html Prima.Pyxis.Form.Select.Msg)"
+            },
+            {
+                "name": "reset",
+                "comment": " Reset selected value.\n",
+                "type": "Prima.Pyxis.Form.Select.State -> Prima.Pyxis.Form.Select.State"
+            },
+            {
+                "name": "select",
+                "comment": " Creates the `Select`.\n",
+                "type": "Prima.Pyxis.Form.Select.Select model"
+            },
+            {
+                "name": "selectChoice",
+                "comment": " Creates an option for the `Select`.\n",
+                "type": "String.String -> String.String -> Prima.Pyxis.Form.Select.SelectChoice"
+            },
+            {
+                "name": "selectedValue",
+                "comment": " Returns the current `SelectChoice.value` selected by the user.\n",
+                "type": "Prima.Pyxis.Form.Select.State -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "subscription",
+                "comment": " Needed to wire keyboard events to the `Select`.\n",
+                "type": "Prima.Pyxis.Form.Select.State -> Platform.Sub.Sub Prima.Pyxis.Form.Select.Msg"
+            },
+            {
+                "name": "toggle",
+                "comment": " Toggle the menu openness.\n",
+                "type": "Prima.Pyxis.Form.Select.State -> Prima.Pyxis.Form.Select.State"
+            },
+            {
+                "name": "update",
+                "comment": " Updates the `Select`'s `State`.\n",
+                "type": "Prima.Pyxis.Form.Select.Msg -> Prima.Pyxis.Form.Select.State -> Prima.Pyxis.Form.Select.State"
+            },
+            {
+                "name": "withAttribute",
+                "comment": " Sets an `attribute` to the `Select`.\n",
+                "type": "Html.Attribute Prima.Pyxis.Form.Select.Msg -> Prima.Pyxis.Form.Select.Select model -> Prima.Pyxis.Form.Select.Select model"
+            },
+            {
+                "name": "withClass",
+                "comment": " Adds a `class` to the `Select`.\n",
+                "type": "String.String -> Prima.Pyxis.Form.Select.Select model -> Prima.Pyxis.Form.Select.Select model"
+            },
+            {
+                "name": "withDefaultValue",
+                "comment": " Adds a default value to the `Select`.\nUseful to teach the component about it's `pristine/touched` state.\n",
+                "type": "Maybe.Maybe String.String -> Prima.Pyxis.Form.Select.Select model -> Prima.Pyxis.Form.Select.Select model"
+            },
+            {
+                "name": "withDisabled",
+                "comment": " Sets a `disabled` to the `Select`.\n",
+                "type": "Basics.Bool -> Prima.Pyxis.Form.Select.Select model -> Prima.Pyxis.Form.Select.Select model"
+            },
+            {
+                "name": "withId",
+                "comment": " Sets an `id` to the `Select`.\n",
+                "type": "String.String -> Prima.Pyxis.Form.Select.Select model -> Prima.Pyxis.Form.Select.Select model"
+            },
+            {
+                "name": "withIsSubmitted",
+                "comment": " Adds an `isSubmitted` predicate to the `Input`.\n",
+                "type": "(model -> Basics.Bool) -> Prima.Pyxis.Form.Select.Select model -> Prima.Pyxis.Form.Select.Select model"
+            },
+            {
+                "name": "withLargeSize",
+                "comment": " Sets a `Size` to the `Select`.\n",
+                "type": "Prima.Pyxis.Form.Select.Select model -> Prima.Pyxis.Form.Select.Select model"
+            },
+            {
+                "name": "withMediumSize",
+                "comment": " Sets a `Size` to the `Select`.\n",
+                "type": "Prima.Pyxis.Form.Select.Select model -> Prima.Pyxis.Form.Select.Select model"
+            },
+            {
+                "name": "withOnBlur",
+                "comment": " Sets an `onBlur event` to the `Select`.\n",
+                "type": "Prima.Pyxis.Form.Select.Msg -> Prima.Pyxis.Form.Select.Select model -> Prima.Pyxis.Form.Select.Select model"
+            },
+            {
+                "name": "withOnFocus",
+                "comment": " Sets an `onFocus event` to the `Select`.\n",
+                "type": "Prima.Pyxis.Form.Select.Msg -> Prima.Pyxis.Form.Select.Select model -> Prima.Pyxis.Form.Select.Select model"
+            },
+            {
+                "name": "withOverridingClass",
+                "comment": " Overrides the default classes of the `Select`.\n",
+                "type": "String.String -> Prima.Pyxis.Form.Select.Select model -> Prima.Pyxis.Form.Select.Select model"
+            },
+            {
+                "name": "withPlaceholder",
+                "comment": " Sets a `placeholder` to the `Select`.\n",
+                "type": "String.String -> Prima.Pyxis.Form.Select.Select model -> Prima.Pyxis.Form.Select.Select model"
+            },
+            {
+                "name": "withSmallSize",
+                "comment": " Sets a `Size` to the `Select`.\n",
+                "type": "Prima.Pyxis.Form.Select.Select model -> Prima.Pyxis.Form.Select.Select model"
+            },
+            {
+                "name": "withValidation",
+                "comment": " Adds a validation rule to the `Select`.\n",
+                "type": "(model -> Maybe.Maybe Prima.Pyxis.Form.Validation.Type) -> Prima.Pyxis.Form.Select.Select model -> Prima.Pyxis.Form.Select.Select model"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Prima.Pyxis.Form.TextArea",
+        "comment": "\n\n\n## Configuration\n\n@docs TextArea\n\n\n## Configuration Methods\n\n@docs textArea\n\n\n## Rendering\n\n@docs render\n\n\n## Options\n\n@docs withAttribute, withClass, withDefaultValue, withDisabled, withId, withMediumSize, withSmallSize, withLargeSize, withName, withPlaceholder, withIsSubmitted\n\n\n## Event Options\n\n@docs withOnBlur, withOnFocus\n\n\n## Validation\n\n@docs withValidation\n\n",
+        "unions": [
+            {
+                "name": "TextArea",
+                "comment": " Represent the opaque `TextArea` configuration.\n",
+                "args": [
+                    "model",
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "render",
+                "comment": "\n\n\n## Renders the `TextArea`.\n\n    import Html\n    import Prima.Pyxis.Form.TextArea as TextArea\n    import Prima.Pyxis.Form.Validation as Validation\n\n    ...\n\n    type Msg =\n        OnInput String\n\n    type alias Model =\n        { note: Maybe String }\n\n    ...\n\n    view : Html Msg\n    view =\n        Html.div\n            []\n            (TextArea.textArea .note OnInput\n                |> Input.withClass \"my-custom-class\"\n                |> Input.withValidation (Maybe.andThen validate << .note)\n            )\n\n    validate : String -> Validation.Type\n    validate str =\n        if String.isEmpty str then\n            Just <| Validation.ErrorWithMessage \"Note is empty\".\n        else\n            Nothing\n\n",
+                "type": "model -> Prima.Pyxis.Form.TextArea.TextArea model msg -> List.List (Html.Html msg)"
+            },
+            {
+                "name": "textArea",
+                "comment": " Create an `textarea`.\n",
+                "type": "(model -> Maybe.Maybe String.String) -> (String.String -> msg) -> Prima.Pyxis.Form.TextArea.TextArea model msg"
+            },
+            {
+                "name": "withAttribute",
+                "comment": " Adds a generic Html.Attribute to the `TextArea`.\n",
+                "type": "Html.Attribute msg -> Prima.Pyxis.Form.TextArea.TextArea model msg -> Prima.Pyxis.Form.TextArea.TextArea model msg"
+            },
+            {
+                "name": "withClass",
+                "comment": " Adds a `class` to the `TextArea`.\n",
+                "type": "String.String -> Prima.Pyxis.Form.TextArea.TextArea model msg -> Prima.Pyxis.Form.TextArea.TextArea model msg"
+            },
+            {
+                "name": "withDefaultValue",
+                "comment": " Adds a default value to the `Textarea`.\nUseful to teach the component about it's `pristine/touched` state.\n",
+                "type": "Maybe.Maybe String.String -> Prima.Pyxis.Form.TextArea.TextArea model msg -> Prima.Pyxis.Form.TextArea.TextArea model msg"
+            },
+            {
+                "name": "withDisabled",
+                "comment": " Adds a `disabled` Html.Attribute to the `TextArea`.\n",
+                "type": "Basics.Bool -> Prima.Pyxis.Form.TextArea.TextArea model msg -> Prima.Pyxis.Form.TextArea.TextArea model msg"
+            },
+            {
+                "name": "withId",
+                "comment": " Adds an `id` Html.Attribute to the `TextArea`.\n",
+                "type": "String.String -> Prima.Pyxis.Form.TextArea.TextArea model msg -> Prima.Pyxis.Form.TextArea.TextArea model msg"
+            },
+            {
+                "name": "withIsSubmitted",
+                "comment": " Adds an `isSubmitted` predicate to the `TextArea`.\n",
+                "type": "(model -> Basics.Bool) -> Prima.Pyxis.Form.TextArea.TextArea model msg -> Prima.Pyxis.Form.TextArea.TextArea model msg"
+            },
+            {
+                "name": "withLargeSize",
+                "comment": " Adds a `size` of `Large` to the `TextArea`.\n",
+                "type": "Prima.Pyxis.Form.TextArea.TextArea model msg -> Prima.Pyxis.Form.TextArea.TextArea model msg"
+            },
+            {
+                "name": "withMediumSize",
+                "comment": " Adds a `size` of `Medium` to the `TextArea`.\n",
+                "type": "Prima.Pyxis.Form.TextArea.TextArea model msg -> Prima.Pyxis.Form.TextArea.TextArea model msg"
+            },
+            {
+                "name": "withName",
+                "comment": " Adds a `name` Html.Attribute to the `TextArea`.\n",
+                "type": "String.String -> Prima.Pyxis.Form.TextArea.TextArea model msg -> Prima.Pyxis.Form.TextArea.TextArea model msg"
+            },
+            {
+                "name": "withOnBlur",
+                "comment": " Attaches the `onBlur` event to the `TextArea`.\n",
+                "type": "msg -> Prima.Pyxis.Form.TextArea.TextArea model msg -> Prima.Pyxis.Form.TextArea.TextArea model msg"
+            },
+            {
+                "name": "withOnFocus",
+                "comment": " Attaches the `onFocus` event to the `TextArea`.\n",
+                "type": "msg -> Prima.Pyxis.Form.TextArea.TextArea model msg -> Prima.Pyxis.Form.TextArea.TextArea model msg"
+            },
+            {
+                "name": "withPlaceholder",
+                "comment": " Adds a `placeholder` Html.Attribute to the `TextArea`.\n",
+                "type": "String.String -> Prima.Pyxis.Form.TextArea.TextArea model msg -> Prima.Pyxis.Form.TextArea.TextArea model msg"
+            },
+            {
+                "name": "withSmallSize",
+                "comment": " Sets a `size` of `Small` to the `TextArea`.\n",
+                "type": "Prima.Pyxis.Form.TextArea.TextArea model msg -> Prima.Pyxis.Form.TextArea.TextArea model msg"
+            },
+            {
+                "name": "withValidation",
+                "comment": " Adds a `Validation` rule to the `TextArea`.\n",
+                "type": "(model -> Maybe.Maybe Prima.Pyxis.Form.Validation.Type) -> Prima.Pyxis.Form.TextArea.TextArea model msg -> Prima.Pyxis.Form.TextArea.TextArea model msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Prima.Pyxis.Form.Validation",
+        "comment": "\n\n\n## Configuration\n\n@docs Type\n\n\n## Methods\n\n@docs isError, isWarning\n\n\n## Rendering\n\n@docs render\n\n",
+        "unions": [
+            {
+                "name": "Type",
+                "comment": " Represents the available `Validation`s.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Error",
+                        []
+                    ],
+                    [
+                        "ErrorWithMessage",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Warning",
+                        []
+                    ],
+                    [
+                        "WarningWithMessage",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "isError",
+                "comment": " Checks that a `Validation.Type` is an `Error`.\n",
+                "type": "Prima.Pyxis.Form.Validation.Type -> Basics.Bool"
+            },
+            {
+                "name": "isWarning",
+                "comment": " Checks that a `Validation.Type` is a `Warning`.\n",
+                "type": "Prima.Pyxis.Form.Validation.Type -> Basics.Bool"
+            },
+            {
+                "name": "render",
+                "comment": " Renders a `Validation` message.\n",
+                "type": "Prima.Pyxis.Form.Validation.Type -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Prima.Pyxis.Link",
+        "comment": "\n\n\n## Configuration\n\n@docs Config\n\n\n## Configuration Methods\n\n@docs simple, standalone\n\n\n## Rendering\n\n@docs render\n\n\n## Options\n\n@docs withAttribute, withId, withClass, withClassList, withIcon, withHref, withTargetBlank, withTargetParent, withTargetSelf, withTargetTop\n\n\n## Event Options\n\n@docs withOnClick, withOnMouseDown, withOnMouseUp, withOnMouseEnter, withOnMouseLeave, withOnMouseOver, withOnMouseOut\n\n",
+        "unions": [
+            {
+                "name": "Config",
+                "comment": " Represent the configuration of a `Link`.\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "render",
+                "comment": " Renders a link by receiving it's configuration.\n",
+                "type": "Prima.Pyxis.Link.Config msg -> Html.Html msg"
+            },
+            {
+                "name": "simple",
+                "comment": " Create a simple link. Used when the link itself is in a paragraph.\n\n    --\n\n    import Prima.Pyxis.Link as Link\n\n    ...\n\n    myLink : Link.Config\n    myLink =\n        Link.simple \"Visit site\" \"https://www.prima.it\"\n\n",
+                "type": "String.String -> Prima.Pyxis.Link.Config msg"
+            },
+            {
+                "name": "standalone",
+                "comment": " Create a standalone link. Used when the link itself stands alone.\n\n    --\n\n    import Prima.Pyxis.Link as Link\n\n    ...\n\n    myLink : Link.Config\n    myLink =\n        Link.standalone \"Visit site\" \"https://www.prima.it\"\n\n",
+                "type": "String.String -> Prima.Pyxis.Link.Config msg"
+            },
+            {
+                "name": "withAttribute",
+                "comment": " Adds a generic attribute to the Link.\n",
+                "type": "Html.Attribute msg -> Prima.Pyxis.Link.Config msg -> Prima.Pyxis.Link.Config msg"
+            },
+            {
+                "name": "withClass",
+                "comment": " Adds a `class` to the `Link`.\n",
+                "type": "String.String -> Prima.Pyxis.Link.Config msg -> Prima.Pyxis.Link.Config msg"
+            },
+            {
+                "name": "withClassList",
+                "comment": " Adds classes to the `classList` of the `Link`.\n",
+                "type": "List.List ( String.String, Basics.Bool ) -> Prima.Pyxis.Link.Config msg -> Prima.Pyxis.Link.Config msg"
+            },
+            {
+                "name": "withHref",
+                "comment": " Adds href attribute to the `Link` component\n",
+                "type": "String.String -> Prima.Pyxis.Link.Config msg -> Prima.Pyxis.Link.Config msg"
+            },
+            {
+                "name": "withIcon",
+                "comment": " Creates a arrow-right icon.\n",
+                "type": "String.String -> Prima.Pyxis.Link.Config msg -> Prima.Pyxis.Link.Config msg"
+            },
+            {
+                "name": "withId",
+                "comment": " Adds an `id` Html.Attribute to the `Link`.\n",
+                "type": "String.String -> Prima.Pyxis.Link.Config msg -> Prima.Pyxis.Link.Config msg"
+            },
+            {
+                "name": "withOnClick",
+                "comment": " Adds an `onClick` Html.Event to the `Link`.\n",
+                "type": "msg -> Prima.Pyxis.Link.Config msg -> Prima.Pyxis.Link.Config msg"
+            },
+            {
+                "name": "withOnMouseDown",
+                "comment": " Adds an `onMouseDown` Html.Event to the `Link`.\n",
+                "type": "msg -> Prima.Pyxis.Link.Config msg -> Prima.Pyxis.Link.Config msg"
+            },
+            {
+                "name": "withOnMouseEnter",
+                "comment": " Adds an `onMouseEnter` Html.Event to the `Link`.\n",
+                "type": "msg -> Prima.Pyxis.Link.Config msg -> Prima.Pyxis.Link.Config msg"
+            },
+            {
+                "name": "withOnMouseLeave",
+                "comment": " Adds an `onMouseLeave` Html.Event to the `Link`.\n",
+                "type": "msg -> Prima.Pyxis.Link.Config msg -> Prima.Pyxis.Link.Config msg"
+            },
+            {
+                "name": "withOnMouseOut",
+                "comment": " Adds an `onMouseOut` Html.Event to the `Link`.\n",
+                "type": "msg -> Prima.Pyxis.Link.Config msg -> Prima.Pyxis.Link.Config msg"
+            },
+            {
+                "name": "withOnMouseOver",
+                "comment": " Adds an `onMouseOver` Html.Event to the `Link`.\n",
+                "type": "msg -> Prima.Pyxis.Link.Config msg -> Prima.Pyxis.Link.Config msg"
+            },
+            {
+                "name": "withOnMouseUp",
+                "comment": " Adds an `onMouseUp` Html.Event to the `Link`.\n",
+                "type": "msg -> Prima.Pyxis.Link.Config msg -> Prima.Pyxis.Link.Config msg"
+            },
+            {
+                "name": "withTargetBlank",
+                "comment": " Add `a[target=\"_blank\"]` attr to the `Config`.\n\n    --\n\n    import Prima.Pyxis.Link as Link\n\n    ...\n\n    myLink : Link.Config\n    myLink =\n      \"https://www.prima.it\"\n        |> Link.simple \"Visit site\"\n        |> Link.withTargetBlank\n\n",
+                "type": "Prima.Pyxis.Link.Config msg -> Prima.Pyxis.Link.Config msg"
+            },
+            {
+                "name": "withTargetParent",
+                "comment": " Add `a[target=\"_parent\"]` attr to the `Config`.\n\n    --\n\n    import Prima.Pyxis.Link as Link\n\n    ...\n\n    myLink : Link.Config\n    myLink =\n      \"https://www.prima.it\"\n        |> Link.simple \"Visit site\"\n        |> Link.withTargetParent\n\n",
+                "type": "Prima.Pyxis.Link.Config msg -> Prima.Pyxis.Link.Config msg"
+            },
+            {
+                "name": "withTargetSelf",
+                "comment": " Add `a[target=\"_self\"]` attr to the `Config`.\n\n    --\n\n    import Prima.Pyxis.Link as Link\n\n    ...\n\n    myLink : Link.Config\n    myLink =\n      \"https://www.prima.it\"\n        |> Link.simple \"Visit site\"\n        |> Link.withTargetSelf\n\n",
+                "type": "Prima.Pyxis.Link.Config msg -> Prima.Pyxis.Link.Config msg"
+            },
+            {
+                "name": "withTargetTop",
+                "comment": " Add `a[target=\"_top\"]` attr to the `Config`.\n\n    --\n\n    import Prima.Pyxis.Link as Link\n\n    ...\n\n    myLink : Link.Config\n    myLink =\n      \"https://www.prima.it\"\n        |> Link.simple \"Visit site\"\n        |> Link.withTargetTop\n\n",
+                "type": "Prima.Pyxis.Link.Config msg -> Prima.Pyxis.Link.Config msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Prima.Pyxis.ListChooser",
+        "comment": "\n\n\n## Configuration\n\n@docs Config, State, Msg, ChooserItem, ViewMode\n\n\n## Configuration Methods\n\n@docs config, init, update, createItem\n\n\n## Rendering\n\n@docs render\n\n\n## Options\n\n@docs withId, withAttribute, withItems, withItemClass, withMultipleSelection, withSelectedItemClass, withWrapperClass\n\n",
+        "unions": [
+            {
+                "name": "ChooserItem",
+                "comment": " Represent a single item which can be selected via ListChooser's API.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Config",
+                "comment": " Represent the configuration of the component.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Msg",
+                "comment": " Represents the messages dispatched by the ListChooser Component\n",
+                "args": [],
+                "cases": [
+                    [
+                        "ToggleViewMode",
+                        []
+                    ],
+                    [
+                        "ChooseItem",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "State",
+                "comment": " Represent the component State.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "ViewMode",
+                "comment": " Defines the mode in which the list must be shown. It's possible to choose\nbetween the full list of items (`viewModeAll`) or a limited set of items (viewModePartial).\nIn this case the number of items to be shown is expressed via `shownItems`.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "All",
+                        []
+                    ],
+                    [
+                        "Partial",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "config",
+                "comment": " Create the configuration of the ListChooser.\n\n    ...\n\n    myConfig : ListChooser.Config\n    myConfig =\n        let\n            shownItems =\n                5\n\n            viewAllLabel =\n                \"Show all\"\n\n            viewPartialLabel =\n                \"Show first \" ++ (String.fromInt shownItems) ++ \" elements\"\n        in\n        ListChooser.config shownItems viewAllLabel viewPartialLabel\n\n    ...\n\n",
+                "type": "Basics.Int -> String.String -> String.String -> Prima.Pyxis.ListChooser.Config"
+            },
+            {
+                "name": "createItem",
+                "comment": " Creates a representation of a ChooserItem.\n\n    ...\n\n    myItem : ListChooser.ChooserItem\n    myItem =\n        let\n            slug =\n                \"my_item_slug\"\n\n            content =\n                \"Lorem ipsum dolor sit amet.\"\n\n            isSelected =\n                False\n        in\n        ListChooser.createItem (slug, content, isSelected)\n\n    ...\n\n",
+                "type": "String.String -> String.String -> Basics.Bool -> Prima.Pyxis.ListChooser.ChooserItem"
+            },
+            {
+                "name": "init",
+                "comment": " Creates the State record of a ListChooser.\n",
+                "type": "Prima.Pyxis.ListChooser.ViewMode -> Prima.Pyxis.ListChooser.State"
+            },
+            {
+                "name": "render",
+                "comment": " Renders the component by receiving a State and a Config.\n",
+                "type": "Prima.Pyxis.ListChooser.State -> Prima.Pyxis.ListChooser.Config -> Html.Html Prima.Pyxis.ListChooser.Msg"
+            },
+            {
+                "name": "update",
+                "comment": " Updates the state of the component when a Msg is received.\n",
+                "type": "Prima.Pyxis.ListChooser.Msg -> Prima.Pyxis.ListChooser.Config -> Prima.Pyxis.ListChooser.State -> Prima.Pyxis.ListChooser.State"
+            },
+            {
+                "name": "withAttribute",
+                "comment": " Adds a generic `Html.Attribute` to the `ListChooser`.\n",
+                "type": "Html.Attribute Prima.Pyxis.ListChooser.Msg -> Prima.Pyxis.ListChooser.Config -> Prima.Pyxis.ListChooser.Config"
+            },
+            {
+                "name": "withId",
+                "comment": " Adds an `id` Html.Attribute to the `ListChooser`.\n",
+                "type": "String.String -> Prima.Pyxis.ListChooser.Config -> Prima.Pyxis.ListChooser.Config"
+            },
+            {
+                "name": "withItemClass",
+                "comment": " Adds a class for every item into the `Config`.\n",
+                "type": "String.String -> Prima.Pyxis.ListChooser.Config -> Prima.Pyxis.ListChooser.Config"
+            },
+            {
+                "name": "withItems",
+                "comment": " Adds items to the ListChooser instance State record.\n",
+                "type": "List.List Prima.Pyxis.ListChooser.ChooserItem -> Prima.Pyxis.ListChooser.State -> Prima.Pyxis.ListChooser.State"
+            },
+            {
+                "name": "withMultipleSelection",
+                "comment": " Adds an `id` Html.Attribute to the `ListChooser`.\n",
+                "type": "Basics.Bool -> Prima.Pyxis.ListChooser.Config -> Prima.Pyxis.ListChooser.Config"
+            },
+            {
+                "name": "withSelectedItemClass",
+                "comment": " Adds a class for the selected items to the `Config`.\n",
+                "type": "String.String -> Prima.Pyxis.ListChooser.Config -> Prima.Pyxis.ListChooser.Config"
+            },
+            {
+                "name": "withWrapperClass",
+                "comment": " Adds a class for the wrapper to the `Config`.\n",
+                "type": "String.String -> Prima.Pyxis.ListChooser.Config -> Prima.Pyxis.ListChooser.Config"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Prima.Pyxis.Loader",
+        "comment": "\n\n\n## Configuration\n\n@docs Config\n\n\n## Configuration Methods\n\n@docs spinner, vehicle\n\n\n## Rendering\n\n@docs render\n\n\n## Options\n\n@docs withMediumSize, withSmallSize, withText\n\n",
+        "unions": [
+            {
+                "name": "Config",
+                "comment": " Represent the configuration of the loader.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "render",
+                "comment": " Renders the loader and it's (infinite) animation.\n",
+                "type": "Prima.Pyxis.Loader.Config -> Html.Html msg"
+            },
+            {
+                "name": "spinner",
+                "comment": " Represent the configuration of the Spinner loader.\n",
+                "type": "Prima.Pyxis.Loader.Config"
+            },
+            {
+                "name": "vehicle",
+                "comment": " Represent the configuration of the Vehicle loader.\n",
+                "type": "Prima.Pyxis.Loader.Config"
+            },
+            {
+                "name": "withMediumSize",
+                "comment": " Sets a size to the `Loader`.\n",
+                "type": "Prima.Pyxis.Loader.Config -> Prima.Pyxis.Loader.Config"
+            },
+            {
+                "name": "withSmallSize",
+                "comment": " Sets a size to the `Loader`.\n",
+                "type": "Prima.Pyxis.Loader.Config -> Prima.Pyxis.Loader.Config"
+            },
+            {
+                "name": "withText",
+                "comment": " Adds a text to the `Loader`.\n",
+                "type": "String.String -> Prima.Pyxis.Loader.Config -> Prima.Pyxis.Loader.Config"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Prima.Pyxis.Message",
+        "comment": "\n\n\n## Configuration\n\n@docs Config\n\n\n## Configuration Methods\n\n@docs error, info, success, alert, errorAlt, infoAlt, successAlt, alertAlt\n\n\n## Rendering\n\n@docs render\n\n\n## Options\n\n@docs withClass, withClassList, withAttribute, withSvgIcons\n\n\n## Event Options\n\n@docs withOnClick, withOnMouseDown, withOnMouseUp, withOnMouseEnter, withOnMouseLeave, withOnMouseOver, withOnMouseOut\n\n",
+        "unions": [
+            {
+                "name": "Config",
+                "comment": " Represent the configuration of a Message\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "alert",
+                "comment": " Defines the configuration of an Alert message.\n",
+                "type": "List.List (Html.Html msg) -> Prima.Pyxis.Message.Config msg"
+            },
+            {
+                "name": "alertAlt",
+                "comment": " Defines the configuration of an Alert message with kind Alt.\n",
+                "type": "List.List (Html.Html msg) -> Prima.Pyxis.Message.Config msg"
+            },
+            {
+                "name": "error",
+                "comment": " Defines the configuration of an Error message.\n",
+                "type": "List.List (Html.Html msg) -> Prima.Pyxis.Message.Config msg"
+            },
+            {
+                "name": "errorAlt",
+                "comment": " Defines the configuration of an Error message with kind Alt.\n",
+                "type": "List.List (Html.Html msg) -> Prima.Pyxis.Message.Config msg"
+            },
+            {
+                "name": "info",
+                "comment": " Defines the configuration of an Info message.\n",
+                "type": "List.List (Html.Html msg) -> Prima.Pyxis.Message.Config msg"
+            },
+            {
+                "name": "infoAlt",
+                "comment": " Defines the configuration of an Info message with kind Alt.\n",
+                "type": "List.List (Html.Html msg) -> Prima.Pyxis.Message.Config msg"
+            },
+            {
+                "name": "render",
+                "comment": " Renders the Message by receiving it's configuration.\n",
+                "type": "Prima.Pyxis.Message.Config msg -> Html.Html msg"
+            },
+            {
+                "name": "success",
+                "comment": " Defines the configuration of a Success message.\n",
+                "type": "List.List (Html.Html msg) -> Prima.Pyxis.Message.Config msg"
+            },
+            {
+                "name": "successAlt",
+                "comment": " Defines the configuration of a Success message with kind Alt.\n",
+                "type": "List.List (Html.Html msg) -> Prima.Pyxis.Message.Config msg"
+            },
+            {
+                "name": "withAttribute",
+                "comment": " Adds a generic attribute to the `Message`.\n",
+                "type": "Html.Attribute msg -> Prima.Pyxis.Message.Config msg -> Prima.Pyxis.Message.Config msg"
+            },
+            {
+                "name": "withClass",
+                "comment": " Adds a `class` to the `Message`.\n",
+                "type": "String.String -> Prima.Pyxis.Message.Config msg -> Prima.Pyxis.Message.Config msg"
+            },
+            {
+                "name": "withClassList",
+                "comment": " Adds classes to the `classList` of the `Message`.\n",
+                "type": "List.List ( String.String, Basics.Bool ) -> Prima.Pyxis.Message.Config msg -> Prima.Pyxis.Message.Config msg"
+            },
+            {
+                "name": "withOnClick",
+                "comment": " Adds an `onClick` Html.Event to the `Message`.\n",
+                "type": "msg -> Prima.Pyxis.Message.Config msg -> Prima.Pyxis.Message.Config msg"
+            },
+            {
+                "name": "withOnMouseDown",
+                "comment": " Adds an `onMouseDown` Html.Event to the `Message`.\n",
+                "type": "msg -> Prima.Pyxis.Message.Config msg -> Prima.Pyxis.Message.Config msg"
+            },
+            {
+                "name": "withOnMouseEnter",
+                "comment": " Adds an `onMouseEnter` Html.Event to the `Message`.\n",
+                "type": "msg -> Prima.Pyxis.Message.Config msg -> Prima.Pyxis.Message.Config msg"
+            },
+            {
+                "name": "withOnMouseLeave",
+                "comment": " Adds an `onMouseLeave` Html.Event to the `Message`.\n",
+                "type": "msg -> Prima.Pyxis.Message.Config msg -> Prima.Pyxis.Message.Config msg"
+            },
+            {
+                "name": "withOnMouseOut",
+                "comment": " Adds an `onMouseOut` Html.Event to the `Message`.\n",
+                "type": "msg -> Prima.Pyxis.Message.Config msg -> Prima.Pyxis.Message.Config msg"
+            },
+            {
+                "name": "withOnMouseOver",
+                "comment": " Adds an `onMouseOver` Html.Event to the `Message`.\n",
+                "type": "msg -> Prima.Pyxis.Message.Config msg -> Prima.Pyxis.Message.Config msg"
+            },
+            {
+                "name": "withOnMouseUp",
+                "comment": " Adds an `onMouseUp` Html.Event to the `Message`.\n",
+                "type": "msg -> Prima.Pyxis.Message.Config msg -> Prima.Pyxis.Message.Config msg"
+            },
+            {
+                "name": "withSvgIcons",
+                "comment": " Tells the `Message` component to use SVG icons instead of Pyxis icons.\n",
+                "type": "Prima.Pyxis.Message.Config msg -> Prima.Pyxis.Message.Config msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Prima.Pyxis.Modal",
+        "comment": "\n\n\n## Configuration\n\n@docs Config\n\n\n## Configuration Methods\n\n@docs small, medium, large , smallAlt, mediumAlt, largeAlt\n\n\n## Rendering\n\n@docs render\n\n\n## Methods\n\n@docs hide, show, toggle\n\n\n## Options\n\n@docs withAttribute, withClass, withClassList, withId, withStyle, withTitleAttribute\n\n\n## Overlay Options\n\n@docs withCloseOnOverlayClick, withOverlayStyle, withOverlayAttribute, withOverlayClass, withOverlayClassList\n\n\n## Header Options\n\n@docs withHeaderAttribute, withHeaderClass, withHeaderClassList, withHeaderContent, withHeaderContentOnly, withHeaderStyle, withHeaderTitle, withHeaderTitleOnly\n\n\n## Body Options\n\n@docs withBodyAttribute, withBodyClass, withBodyClassList, withBodyContent, withBodyStyle\n\n\n## Footer Options\n\n@docs withFooterAttribute, withFooterClass, withFooterClassList, withFooterContent, withFooterStyle\n\n",
+        "unions": [
+            {
+                "name": "Config",
+                "comment": " Represent the configuration of a `Modal`.\nThis type can't be created directly and is Opaque.\nYou must use Configuration constructors instead\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "hide",
+                "comment": " Utility that hides a modal.\nIf you need to hold modal config in your model you\ncan avoid visibility state duplication and simply use\nthis helper in your update to hide the modal when you need\n\n\n## eg.\n\n    --\n    type Msg\n        = HideYourModal\n        | ShowModal\n\n    type alias Model =\n        { ...\n        , myModal : Modal.Config Msg\n        }\n\n    model: Model\n    model =\n       { ...\n       , myModal = Modal.small False HideYourModal\n       }\n    ...\n    -- Somewhere in your views\n\n    yourModal : Model -> Html Msg\n    yourModal { myModal } =\n        myModal\n            |> Modal.render\n\n    -- Somewhere in your update\n    case msg of\n        ShowModal ->\n            model\n                |> showModal\n                |> withoutCmds\n        HideYourModal ->\n            model\n                |> hideModal\n                |> withoutCmds\n     ...\n\n     showModal: Model -> Model\n     showModal model =\n        { model\n            | myModal = Modal.show model.myModal\n        }\n\n     hideModal: Model -> Model\n     hideModal model =\n        { model\n             | myModal = Modal.hide model.myModal\n        }\n\n",
+                "type": "Prima.Pyxis.Modal.Config msg -> Prima.Pyxis.Modal.Config msg"
+            },
+            {
+                "name": "large",
+                "comment": " Large modal configuration constructor.\nModal by default is printed with a close button on header\nRequires initial visibility state, and the event that should be emitted\nwhen user interacts with close button\n\n\n## eg.\n\n    --\n    type Msg\n        = HideYourModal\n\n    type alias Model =\n        { field1 : FieldType\n        , isModalVisible : Bool\n        }\n    ...\n    -- Somewhere in your views\n\n    yourModal : Model -> Html Msg\n    yourModal { isModalVisible } =\n        Modal.large isModalVisible HideYourModal\n            |> Modal.render\n\n",
+                "type": "Basics.Bool -> msg -> Prima.Pyxis.Modal.Config msg"
+            },
+            {
+                "name": "largeAlt",
+                "comment": " Large size modal constructor with Dark style.\n",
+                "type": "Basics.Bool -> msg -> Prima.Pyxis.Modal.Config msg"
+            },
+            {
+                "name": "medium",
+                "comment": " Medium modal configuration constructor.\nModal by default is printed with a close button on header\nRequires initial visibility state, and the event that should be emitted\nwhen user interacts with close button\n\n\n## eg.\n\n    --\n    type Msg\n        = HideYourModal\n\n    type alias Model =\n        { field1 : FieldType\n        , isModalVisible : Bool\n        }\n    ...\n    -- Somewhere in your views\n\n    yourModal : Model -> Html Msg\n    yourModal { isModalVisible } =\n        Modal.medium isModalVisible HideYourModal\n            |> Modal.render\n\n",
+                "type": "Basics.Bool -> msg -> Prima.Pyxis.Modal.Config msg"
+            },
+            {
+                "name": "mediumAlt",
+                "comment": " Medium size modal constructor with Dark style.\n",
+                "type": "Basics.Bool -> msg -> Prima.Pyxis.Modal.Config msg"
+            },
+            {
+                "name": "render",
+                "comment": " Renders the modal config\n(note that modal is not rendered until visible\n",
+                "type": "Prima.Pyxis.Modal.Config msg -> Html.Html msg"
+            },
+            {
+                "name": "show",
+                "comment": " Utility that shows a modal.\nIf you need to hold modal config in your model you\ncan avoid visibility state duplication and simply use\nthis helper in your update to show the modal when you need\n\n\n## eg.\n\n    --\n    type Msg\n        = HideYourModal\n        | ShowModal\n\n    type alias Model =\n        { ...\n        , myModal : Modal.Config Msg\n        }\n\n    model: Model\n    model =\n       { ...\n       , myModal = Modal.small False HideYourModal\n       }\n    ...\n    -- Somewhere in your views\n\n    yourModal : Model -> Html Msg\n    yourModal { myModal } =\n        myModal\n            |> Modal.render\n\n    -- Somewhere in your update\n    case msg of\n        ShowModal ->\n            model\n                |> showModal\n                |> withoutCmds\n        HideYourModal ->\n            model\n                |> hideModal\n                |> withoutCmds\n     ...\n\n     showModal: Model -> Model\n     showModal model =\n        { model\n            | myModal = Modal.show model.myModal\n        }\n\n     hideModal: Model -> Model\n     hideModal model =\n        { model\n             | myModal = Modal.hide model.myModal\n        }\n\n",
+                "type": "Prima.Pyxis.Modal.Config msg -> Prima.Pyxis.Modal.Config msg"
+            },
+            {
+                "name": "small",
+                "comment": " Small size modal constructor.\nModal by default is printed with a close button on header\nRequires initial visibility state, and the event that should be emitted\nwhen user interacts with close button\n\n\n## eg.\n\n    --\n    type Msg\n        = HideYourModal\n\n    type alias Model =\n        { field1 : FieldType\n        , isModalVisible : Bool\n        }\n    ...\n    -- Somewhere in your views\n\n    yourModal : Model -> Html Msg\n    yourModal { isModalVisible } =\n        Modal.small isModalVisible HideYourModal\n            |> Modal.render\n\n",
+                "type": "Basics.Bool -> msg -> Prima.Pyxis.Modal.Config msg"
+            },
+            {
+                "name": "smallAlt",
+                "comment": " Small size modal constructor with Dark style.\n",
+                "type": "Basics.Bool -> msg -> Prima.Pyxis.Modal.Config msg"
+            },
+            {
+                "name": "toggle",
+                "comment": " Utility that toggle modal visibility.\nIf you need to hold modal config in your model you\ncan avoid visibility state duplication and simply use\nthis helper in your update to toggle the modal when you need\n\n\n## eg.\n\n    --\n    type Msg\n        = ToggleYourModal\n\n    type alias Model =\n        { ...\n        , myModal : Modal.Config Msg\n        }\n\n    model: Model\n    model =\n       { ...\n       , myModal = Modal.small False HideYourModal\n       }\n    ...\n    -- Somewhere in your views\n\n    yourModal : Model -> Html Msg\n    yourModal { myModal } =\n        myModal\n            |> Modal.render\n\n    -- Somewhere in your update\n    case msg of\n        ToggleModal ->\n            model\n                |> toggleModal\n                |> withoutCmds\n     ...\n\n     toggleModal: Model -> Model\n     toggleModal model =\n        { model\n            | myModal = Modal.toggle model.myModal\n        }\n\n",
+                "type": "Prima.Pyxis.Modal.Config msg -> Prima.Pyxis.Modal.Config msg"
+            },
+            {
+                "name": "withAttribute",
+                "comment": " Modifier\nAdds generic attribute to modal.\nIt can be used several times\n",
+                "type": "Html.Attribute msg -> Prima.Pyxis.Modal.Config msg -> Prima.Pyxis.Modal.Config msg"
+            },
+            {
+                "name": "withBodyAttribute",
+                "comment": " Modifier\nAdds a generic attribute to modal body.\nIt can be used several times\n",
+                "type": "Html.Attribute msg -> Prima.Pyxis.Modal.Config msg -> Prima.Pyxis.Modal.Config msg"
+            },
+            {
+                "name": "withBodyClass",
+                "comment": " Modifier\nAdds a class attribute to modal body.\n",
+                "type": "String.String -> Prima.Pyxis.Modal.Config msg -> Prima.Pyxis.Modal.Config msg"
+            },
+            {
+                "name": "withBodyClassList",
+                "comment": " Modifier\nAdds a classList attribute to modal body.\n",
+                "type": "List.List ( String.String, Basics.Bool ) -> Prima.Pyxis.Modal.Config msg -> Prima.Pyxis.Modal.Config msg"
+            },
+            {
+                "name": "withBodyContent",
+                "comment": " Modifier\nAdds a content to modal body.\n",
+                "type": "List.List (Html.Html msg) -> Prima.Pyxis.Modal.Config msg -> Prima.Pyxis.Modal.Config msg"
+            },
+            {
+                "name": "withBodyStyle",
+                "comment": " Modifier\nAdds a style attribute to modal body.\nIt can be used several times\n",
+                "type": "String.String -> String.String -> Prima.Pyxis.Modal.Config msg -> Prima.Pyxis.Modal.Config msg"
+            },
+            {
+                "name": "withClass",
+                "comment": " Modifier\nAdds class attribute to modal.\n",
+                "type": "String.String -> Prima.Pyxis.Modal.Config msg -> Prima.Pyxis.Modal.Config msg"
+            },
+            {
+                "name": "withClassList",
+                "comment": " Modifier\nAdds classList attribute to modal.\n",
+                "type": "List.List ( String.String, Basics.Bool ) -> Prima.Pyxis.Modal.Config msg -> Prima.Pyxis.Modal.Config msg"
+            },
+            {
+                "name": "withCloseOnOverlayClick",
+                "comment": " Modifier\nThe modal closes if overlay is clicked\n",
+                "type": "Prima.Pyxis.Modal.Config msg -> Prima.Pyxis.Modal.Config msg"
+            },
+            {
+                "name": "withFooterAttribute",
+                "comment": " Modifier\nAdds a generic attribute to modal footer.\nIt can be used several times\n",
+                "type": "Html.Attribute msg -> Prima.Pyxis.Modal.Config msg -> Prima.Pyxis.Modal.Config msg"
+            },
+            {
+                "name": "withFooterClass",
+                "comment": " Modifier\nAdds a class attribute to modal footer.\n",
+                "type": "String.String -> Prima.Pyxis.Modal.Config msg -> Prima.Pyxis.Modal.Config msg"
+            },
+            {
+                "name": "withFooterClassList",
+                "comment": " Modifier\nAdds classList attribute to modal footer.\n",
+                "type": "List.List ( String.String, Basics.Bool ) -> Prima.Pyxis.Modal.Config msg -> Prima.Pyxis.Modal.Config msg"
+            },
+            {
+                "name": "withFooterContent",
+                "comment": " Modifier\nAdds a content to modal footer.\n",
+                "type": "List.List (Html.Html msg) -> Prima.Pyxis.Modal.Config msg -> Prima.Pyxis.Modal.Config msg"
+            },
+            {
+                "name": "withFooterStyle",
+                "comment": " Modifier\nAdds a style attribute to modal footer.\nIt can be used several times\n",
+                "type": "String.String -> String.String -> Prima.Pyxis.Modal.Config msg -> Prima.Pyxis.Modal.Config msg"
+            },
+            {
+                "name": "withHeaderAttribute",
+                "comment": " Modifier\nAdds generic attribute to modal header.\nIt can be used several times\n",
+                "type": "Html.Attribute msg -> Prima.Pyxis.Modal.Config msg -> Prima.Pyxis.Modal.Config msg"
+            },
+            {
+                "name": "withHeaderClass",
+                "comment": " Modifier\nAdds class attribute to modal header.\n",
+                "type": "String.String -> Prima.Pyxis.Modal.Config msg -> Prima.Pyxis.Modal.Config msg"
+            },
+            {
+                "name": "withHeaderClassList",
+                "comment": " Modifier\nAdds classList attribute to modal header.\n",
+                "type": "List.List ( String.String, Basics.Bool ) -> Prima.Pyxis.Modal.Config msg -> Prima.Pyxis.Modal.Config msg"
+            },
+            {
+                "name": "withHeaderContent",
+                "comment": " Modifier\nAdds a custom html content in modal header with close button\n",
+                "type": "List.List (Html.Html msg) -> Prima.Pyxis.Modal.Config msg -> Prima.Pyxis.Modal.Config msg"
+            },
+            {
+                "name": "withHeaderContentOnly",
+                "comment": " Modifier\nAdds a custom html content in modal header without close button\n",
+                "type": "List.List (Html.Html msg) -> Prima.Pyxis.Modal.Config msg -> Prima.Pyxis.Modal.Config msg"
+            },
+            {
+                "name": "withHeaderStyle",
+                "comment": " Modifier\nAdds a style attribute to header.\nIt can be used several times\n",
+                "type": "String.String -> String.String -> Prima.Pyxis.Modal.Config msg -> Prima.Pyxis.Modal.Config msg"
+            },
+            {
+                "name": "withHeaderTitle",
+                "comment": " Modifier\nPrints given string in modal title section with close button\n",
+                "type": "String.String -> Prima.Pyxis.Modal.Config msg -> Prima.Pyxis.Modal.Config msg"
+            },
+            {
+                "name": "withHeaderTitleOnly",
+                "comment": " Modifier\nPrints given string in modal title section without close button\n",
+                "type": "String.String -> Prima.Pyxis.Modal.Config msg -> Prima.Pyxis.Modal.Config msg"
+            },
+            {
+                "name": "withId",
+                "comment": " Modifier\nAdds id attribute to modal.\n",
+                "type": "String.String -> Prima.Pyxis.Modal.Config msg -> Prima.Pyxis.Modal.Config msg"
+            },
+            {
+                "name": "withOverlayAttribute",
+                "comment": " Modifier\nAdds a generic attribute to overlay.\nIf you are planning to add a custom event listener you may\ntake a look to InterceptedEvents and Interceptor modules to avoid\nundesired bubbling and onOverlayClick function in this module.\n",
+                "type": "Html.Attribute msg -> Prima.Pyxis.Modal.Config msg -> Prima.Pyxis.Modal.Config msg"
+            },
+            {
+                "name": "withOverlayClass",
+                "comment": " Modifier\nAdds class attribute to overlay\n",
+                "type": "String.String -> Prima.Pyxis.Modal.Config msg -> Prima.Pyxis.Modal.Config msg"
+            },
+            {
+                "name": "withOverlayClassList",
+                "comment": " Modifier\nAdds classList attribute to overlay\n",
+                "type": "List.List ( String.String, Basics.Bool ) -> Prima.Pyxis.Modal.Config msg -> Prima.Pyxis.Modal.Config msg"
+            },
+            {
+                "name": "withOverlayStyle",
+                "comment": " Modifier\nAdds a style attribute to overlay.\nIt can be used several times\n",
+                "type": "String.String -> String.String -> Prima.Pyxis.Modal.Config msg -> Prima.Pyxis.Modal.Config msg"
+            },
+            {
+                "name": "withStyle",
+                "comment": " Modifier\nAdds style attribute to modal.\nIt can be used several times\n",
+                "type": "String.String -> String.String -> Prima.Pyxis.Modal.Config msg -> Prima.Pyxis.Modal.Config msg"
+            },
+            {
+                "name": "withTitleAttribute",
+                "comment": " Modifier\nAdds title attribute to modal.\n",
+                "type": "String.String -> Prima.Pyxis.Modal.Config msg -> Prima.Pyxis.Modal.Config msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Prima.Pyxis.Table",
+        "comment": "\n\n\n## Configuration\n\n@docs Config, State, Header, Row, Column, ColSpan, Sort\n\n\n## Configuration Methods\n\n@docs base, light, init, header, row, columnFloat, columnHtml, columnInteger, columnString, addHeaders, addRows, addFooters\n\n\n## Rendering\n\n@docs render\n\n\n## Options\n\n@docs withAlternateRows, withClass, withClassList, withComparableHtml, withElementClass, withFooterClass, withHeaderClass, withId, withSort\n\n",
+        "unions": [
+            {
+                "name": "Column",
+                "comment": " Represent a Column which can manage a specific kind of data.\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Config",
+                "comment": " Represent the static configuration of the component.\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Header",
+                "comment": " Represent an Header of the table. It's gonna be rendered as a <th/> tag.\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Row",
+                "comment": " Represent a Row which contains a list of Columns.\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Sort",
+                "comment": " Represents the sort algorithm\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Asc",
+                        []
+                    ],
+                    [
+                        "Desc",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "State",
+                "comment": " Represent the basic state of the component.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "ColSpan",
+                "comment": " Represent the colSpan of a column. Alias for Integer.\n",
+                "args": [],
+                "type": "Basics.Int"
+            }
+        ],
+        "values": [
+            {
+                "name": "addFooters",
+                "comment": " Sets the footer columns of the table.\n",
+                "type": "List.List (Prima.Pyxis.Table.Row msg) -> Prima.Pyxis.Table.Config msg -> Prima.Pyxis.Table.Config msg"
+            },
+            {
+                "name": "addHeaders",
+                "comment": " Sets the header columns of the table.\n",
+                "type": "List.List (Prima.Pyxis.Table.Header msg) -> Prima.Pyxis.Table.Config msg -> Prima.Pyxis.Table.Config msg"
+            },
+            {
+                "name": "addRows",
+                "comment": " Sets the content of the rows of the table.\n",
+                "type": "List.List (Prima.Pyxis.Table.Row msg) -> Prima.Pyxis.Table.Config msg -> Prima.Pyxis.Table.Config msg"
+            },
+            {
+                "name": "base",
+                "comment": " Creates a `Table` with the `Base` skin.\n",
+                "type": "Basics.Bool -> (Prima.Pyxis.Table.State -> msg) -> Prima.Pyxis.Table.Config msg"
+            },
+            {
+                "name": "columnFloat",
+                "comment": " Create a Column which content is Float primitive.\n",
+                "type": "Prima.Pyxis.Table.ColSpan -> Basics.Float -> Prima.Pyxis.Table.Column msg"
+            },
+            {
+                "name": "columnHtml",
+                "comment": " Create a Column which content is Html, that can be sorted using compareFunction.\n",
+                "type": "Prima.Pyxis.Table.ColSpan -> List.List (Html.Html msg) -> Prima.Pyxis.Table.Column msg"
+            },
+            {
+                "name": "columnInteger",
+                "comment": " Create a Column which content is Integer primitive.\n",
+                "type": "Prima.Pyxis.Table.ColSpan -> Basics.Int -> Prima.Pyxis.Table.Column msg"
+            },
+            {
+                "name": "columnString",
+                "comment": " Create a Column which content is String primitive.\n",
+                "type": "Prima.Pyxis.Table.ColSpan -> String.String -> Prima.Pyxis.Table.Column msg"
+            },
+            {
+                "name": "header",
+                "comment": " Create the Header.\n\n    myHeader : String -> String -> Table.Header\n    myHeader slug content =\n        Table.header slug content\n\n",
+                "type": "Prima.Pyxis.Table.Slug -> List.List (Html.Html msg) -> Prima.Pyxis.Table.Header msg"
+            },
+            {
+                "name": "init",
+                "comment": " Create an initial State defined by Sort and Column.\n",
+                "type": "Maybe.Maybe Prima.Pyxis.Table.Sort -> Maybe.Maybe String.String -> Prima.Pyxis.Table.State"
+            },
+            {
+                "name": "light",
+                "comment": " Creates a `Table` with the `Light` skin.\n",
+                "type": "Basics.Bool -> (Prima.Pyxis.Table.State -> msg) -> Prima.Pyxis.Table.Config msg"
+            },
+            {
+                "name": "render",
+                "comment": " Renders a Table by receiving a State and a Config\n",
+                "type": "Prima.Pyxis.Table.State -> Prima.Pyxis.Table.Config msg -> Html.Html msg"
+            },
+            {
+                "name": "row",
+                "comment": " Create a Row\n\n    myRow : List Column -> Table.Row\n    myRow columns =\n        Table.row columns\n\n",
+                "type": "List.List (Prima.Pyxis.Table.Column msg) -> Prima.Pyxis.Table.Row msg"
+            },
+            {
+                "name": "withAlternateRows",
+                "comment": " Sets the alternate rows option for the Table component to `Config`.\n",
+                "type": "Basics.Bool -> Prima.Pyxis.Table.Config msg -> Prima.Pyxis.Table.Config msg"
+            },
+            {
+                "name": "withClass",
+                "comment": " Adds a class for the <table> tag to the `Config`\n",
+                "type": "String.String -> Prima.Pyxis.Table.Config msg -> Prima.Pyxis.Table.Config msg"
+            },
+            {
+                "name": "withClassList",
+                "comment": " Adds an entry to the classList of the <table> tag.\n",
+                "type": "List.List ( String.String, Basics.Bool ) -> Prima.Pyxis.Table.Config msg -> Prima.Pyxis.Table.Config msg"
+            },
+            {
+                "name": "withComparableHtml",
+                "comment": " Sets the function to convert HTML content to string to be compared in sorting.\n",
+                "type": "(List.List (Html.Html msg) -> String.String) -> Prima.Pyxis.Table.Config msg -> Prima.Pyxis.Table.Config msg"
+            },
+            {
+                "name": "withElementClass",
+                "comment": " Adds a class for the <td> tags to the `Config`.\n",
+                "type": "String.String -> Prima.Pyxis.Table.Config msg -> Prima.Pyxis.Table.Config msg"
+            },
+            {
+                "name": "withFooterClass",
+                "comment": " Adds a class for the <tfoot> tag to the `Config`.\n",
+                "type": "String.String -> Prima.Pyxis.Table.Config msg -> Prima.Pyxis.Table.Config msg"
+            },
+            {
+                "name": "withHeaderClass",
+                "comment": " Adds a class for the <thead> tag to the `Config`.\n",
+                "type": "String.String -> Prima.Pyxis.Table.Config msg -> Prima.Pyxis.Table.Config msg"
+            },
+            {
+                "name": "withId",
+                "comment": " Adds an id for the <table> tag to the `Config`.\n",
+                "type": "String.String -> Prima.Pyxis.Table.Config msg -> Prima.Pyxis.Table.Config msg"
+            },
+            {
+                "name": "withSort",
+                "comment": " Sets the sorting algorithm for a specific column.\n",
+                "type": "Prima.Pyxis.Table.Slug -> Prima.Pyxis.Table.Sort -> Prima.Pyxis.Table.State -> Prima.Pyxis.Table.State"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Prima.Pyxis.Tooltip",
+        "comment": "\n\n\n## Configuration\n\n@docs Config\n\n\n## Configuration Methods\n\n@docs top, bottom, left, right, brand, error, warning\n\n\n## Rendering\n\n@docs render\n\n\n## Options\n\n@docs withClass, withId, withPositionBottom, withPositionLeft, withPositionRight, withPositionTop\n\n",
+        "unions": [
+            {
+                "name": "Config",
+                "comment": " Represent the opaque `Tooltip` configuration.\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "bottom",
+                "comment": " Create a tooltip bottom.\n",
+                "type": "List.List (Html.Html msg) -> Prima.Pyxis.Tooltip.Config msg"
+            },
+            {
+                "name": "brand",
+                "comment": " Create a tooltip brand.\n",
+                "type": "List.List (Html.Html msg) -> Prima.Pyxis.Tooltip.Config msg"
+            },
+            {
+                "name": "error",
+                "comment": " Create a tooltip error.\n",
+                "type": "List.List (Html.Html msg) -> Prima.Pyxis.Tooltip.Config msg"
+            },
+            {
+                "name": "left",
+                "comment": " Create a tooltip left.\n",
+                "type": "List.List (Html.Html msg) -> Prima.Pyxis.Tooltip.Config msg"
+            },
+            {
+                "name": "render",
+                "comment": "\n\n\n## Renders the `Tooltip`.\n\n    import Html\n    import Prima.Pyxis.Tooltip as Tooltip\n\n    ...\n\n    type Msg =\n        NoOp\n\n    type alias Model =\n        {}\n\n    ...\n\n    view : Html Msg\n    view =\n            Tooltip.brand [ text \"Lorem ipsum dolor sit amet\" ]\n              |> Tooltip.render\n\n",
+                "type": "Prima.Pyxis.Tooltip.Config msg -> Html.Html msg"
+            },
+            {
+                "name": "right",
+                "comment": " Create a tooltip right.\n",
+                "type": "List.List (Html.Html msg) -> Prima.Pyxis.Tooltip.Config msg"
+            },
+            {
+                "name": "top",
+                "comment": " Create a tooltip top.\n",
+                "type": "List.List (Html.Html msg) -> Prima.Pyxis.Tooltip.Config msg"
+            },
+            {
+                "name": "warning",
+                "comment": " Create a tooltip warning.\n",
+                "type": "List.List (Html.Html msg) -> Prima.Pyxis.Tooltip.Config msg"
+            },
+            {
+                "name": "withClass",
+                "comment": " Adds a `class` to the `Tooltip`.\n",
+                "type": "String.String -> Prima.Pyxis.Tooltip.Config msg -> Prima.Pyxis.Tooltip.Config msg"
+            },
+            {
+                "name": "withId",
+                "comment": " Adds an `id` Html.Attribute to the `Tooltip`.\n",
+                "type": "String.String -> Prima.Pyxis.Tooltip.Config msg -> Prima.Pyxis.Tooltip.Config msg"
+            },
+            {
+                "name": "withPositionBottom",
+                "comment": " Sets a type position `Bottom` to the `Tooltip`.\n",
+                "type": "Prima.Pyxis.Tooltip.Config msg -> Prima.Pyxis.Tooltip.Config msg"
+            },
+            {
+                "name": "withPositionLeft",
+                "comment": " Sets a type position `Left` to the `Tooltip`.\n",
+                "type": "Prima.Pyxis.Tooltip.Config msg -> Prima.Pyxis.Tooltip.Config msg"
+            },
+            {
+                "name": "withPositionRight",
+                "comment": " Sets a type position `Right` to the `Tooltip`.\n",
+                "type": "Prima.Pyxis.Tooltip.Config msg -> Prima.Pyxis.Tooltip.Config msg"
+            },
+            {
+                "name": "withPositionTop",
+                "comment": " Sets a type position `Top` to the `Tooltip`.\n",
+                "type": "Prima.Pyxis.Tooltip.Config msg -> Prima.Pyxis.Tooltip.Config msg"
+            }
+        ],
+        "binops": []
+    }
+]

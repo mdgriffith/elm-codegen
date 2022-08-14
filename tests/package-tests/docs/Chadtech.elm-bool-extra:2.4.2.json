@@ -1,0 +1,71 @@
+[
+    {
+        "name": "Bool.Extra",
+        "comment": " Convenience functions for working with Bools\n\n\n# Basics\n\n@docs all, none, any, notAll, ifElse\n\n\n# Predicate\n\n@docs allPass, anyPass\n\n\n# Maybe\n\n@docs toMaybe\n\n\n# String\n\n@docs toString, fromString, stringDecoder, encodeAsString\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "all",
+                "comment": " All the bools are true.\n\n    all [ True, True, True ]\n    --> True\n\n    all [ True, False ]\n    --> False\n\n    all [ False, False ]\n    --> False\n\n    all []\n    --> True\n\n",
+                "type": "List.List Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "allPass",
+                "comment": " Determine if all predicates are satisfied by the value.\n\n    allPass [ (>) 20, (<) 10 ] 11\n    --> True\n\n    allPass [ (>) 20, (<) 10 ] 21\n    --> False\n\n    allPass [ (>) 20, (<) 10 ] 4\n    --> False\n\n    allPass [] 21\n    --> True\n\n",
+                "type": "List.List (a -> Basics.Bool) -> a -> Basics.Bool"
+            },
+            {
+                "name": "any",
+                "comment": " At least one of the bools is true.\n\n    any [ True, True ]\n    --> True\n\n    any [ True, False ]\n    --> True\n\n    any [ False, False ]\n    --> False\n\n    any []\n    --> False\n\n",
+                "type": "List.List Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "anyPass",
+                "comment": " Determine if any predicate is satisfied by the value.\n\n    anyPass [ (>) 20, (<) 10 ] 100\n    --> True\n\n    anyPass [ (>) 20, (==) 10 ] 21\n    --> False\n\n    anyPass [] 21\n    --> False\n\n",
+                "type": "List.List (a -> Basics.Bool) -> a -> Basics.Bool"
+            },
+            {
+                "name": "encodeAsString",
+                "comment": " Sometimes in weird unideal circumstances you need to encode `True` to `\"true\"` instead of just `true`.\n\n    import Json.Encode exposing (encode)\n\n    encode 0 (encodeAsString True)\n    --> \"\\\"true\\\"\"\n\n    encode 0 (encodeAsString False)\n    --> \"\\\"false\\\"\"\n\n",
+                "type": "Basics.Bool -> Json.Encode.Value"
+            },
+            {
+                "name": "fromString",
+                "comment": " Try and extract a `Bool` from a `String`\n\n    fromString \"true\"\n    --> Just True\n\n    fromString \"False\"\n    --> Just False\n\n    fromString \"t\"\n    --> Nothing\n\n    fromString \"My pal foot foot\"\n    --> Nothing\n\n",
+                "type": "String.String -> Maybe.Maybe Basics.Bool"
+            },
+            {
+                "name": "ifElse",
+                "comment": " Return the first argument if the given predicate is `True`. Otherwise, return the second argument.\n\n    ifElse \"yes\" \"no\" True\n    --> \"yes\"\n\n    ifElse \"yes\" \"no\" False\n    --> \"no\"\n\n",
+                "type": "a -> a -> Basics.Bool -> a"
+            },
+            {
+                "name": "none",
+                "comment": " None of the bools are true.\n\n    none [ True, True ]\n    --> False\n\n    none [ True, False ]\n    --> False\n\n    none [ False, False ]\n    --> True\n\n    none []\n    --> True\n\n",
+                "type": "List.List Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "notAll",
+                "comment": " Not all of them are true\n\n    notAll [ True, True ]\n    --> False\n\n    notAll [ True, False ]\n    --> True\n\n    notAll [ False, False ]\n    --> True\n\n    notAll []\n    --> False\n\n",
+                "type": "List.List Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "stringDecoder",
+                "comment": " Sometimes webservers will return the unideal json of a string `\"true\"` rather than just the native boolean value `true`. This decoder decodes a string that looks like a `Bool`, into a `Bool`\n\n    import Json.Decode as Decode\n    import Json.Encode as Encode\n\n    Decode.decodeString stringDecoder \"\\\"true\\\"\"\n    --> Ok True\n\n    Decode.decodeString stringDecoder \"true\"\n    --> Err (Decode.Failure \"Expecting a STRING\" (Encode.bool True))\n\n",
+                "type": "Json.Decode.Decoder Basics.Bool"
+            },
+            {
+                "name": "toMaybe",
+                "comment": " Given a value `a` and a `Bool`, and wrap `a` in `Just` if the `Bool` is `True`.\n\n    toMaybe 4 True\n    --> Just 4\n\n    toMaybe 4 False\n    --> Nothing\n\nThis kind of function is handy when populating lists..\n\n    [ Bool.Extra.toMaybe adminRoute (User.isAdmin user)\n    , Just dashboardRoute\n    , Bool.Extra.toMaybe profile (User.isLoggedIn user)\n    ]\n        |> List.filterMap identity\n\n..or when generating errors during form validation..\n\n    { field\n        | error =\n            Bool.Extra.toMaybe FieldIsEmpty (String.isEmpty field.value)\n    }\n\n",
+                "type": "a -> Basics.Bool -> Maybe.Maybe a"
+            },
+            {
+                "name": "toString",
+                "comment": " Turn a bool into a string\n\n    toString True\n    --> \"True\"\n\n    toString False\n    --> \"False\"\n\n",
+                "type": "Basics.Bool -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

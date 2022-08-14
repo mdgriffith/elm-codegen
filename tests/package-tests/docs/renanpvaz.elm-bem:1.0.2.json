@@ -1,0 +1,41 @@
+[
+    {
+        "name": "Bem",
+        "comment": " This package has a set of utilities for using the [BEM](http://getbem.com/naming/)\nconvention in Elm. Exposing the functions in this module is disencouraged: the functions\nwere intentionally given small and vague names to avoid verboseness.\n\n    view : { stickyHeader : Bool } -> Html msg\n    view model =\n        header\n            [ Bem.mod \"nav\" ( \"sticky\", model.stickyHeader ) ]\n            [ h1 [] [ text \"header\" ]\n\n            -- ...\n            ]\n\n\n# Modifiers\n\n@docs modList, mod, modifier\n\n\n# Elements\n\n@docs el, element\n\n\n# Blocks\n\n@docs block\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "block",
+                "comment": " Returns a record with the partially-applied versions of `el`, `mod` and `modList`\nusing the base class supplied.\n\n    checkbox =\n        Bem.block \"checkbox\"\n\n    view =\n        div [ checkbox.mod \"big\" ]\n            [ input [ checkbox.el \"input\" ] []\n            , i [ checkbox.el \"tick\" ] []\n            ]\n\n",
+                "type": "String.String -> { el : String.String -> Html.Attribute msg, mod : ( String.String, Basics.Bool ) -> Html.Attribute msg, modList : List.List ( String.String, Basics.Bool ) -> Html.Attribute msg }"
+            },
+            {
+                "name": "el",
+                "comment": " Returns a _element_ class\n\n    button [ mod \"button\" ( \"primary\", True ) ]\n        [ span [ el \"button\" \"label\" ] [ text \"click me\" ]\n        , i [ el \"button\" \"icon\" ] []\n        ]\n\n",
+                "type": "String.String -> String.String -> Html.Attribute msg"
+            },
+            {
+                "name": "element",
+                "comment": " Joins two strings using the _element_ separator.\n\n    element \"form\" \"section\" == \"form__section\"\n\n    element \"switch\" \"handle\" == \"switch__handle\"\n\n",
+                "type": "String.String -> String.String -> String.String"
+            },
+            {
+                "name": "mod",
+                "comment": " Shorthand version of `modList` supporting one modifier.\n\n    button\n        [ mod \"button\" ( \"primary\", True ) ]\n        [ text \"click me\" ]\n\n",
+                "type": "String.String -> ( String.String, Basics.Bool ) -> Html.Attribute msg"
+            },
+            {
+                "name": "modList",
+                "comment": " Like [classList](https://package.elm-lang.org/packages/elm/html/latest/Html-Attributes#classList)\nbut for [BEM](http://getbem.com/naming/) modifiers.\n\n    button\n        [ modList \"button\"\n            [ ( \"primary\", True )\n            , ( \"small\", False )\n            ]\n        ]\n        [ text \"click me\" ]\n\n",
+                "type": "String.String -> List.List ( String.String, Basics.Bool ) -> Html.Attribute msg"
+            },
+            {
+                "name": "modifier",
+                "comment": " Joins two strings using the _modifier_ separator.\n\n    modifier \"form\" \"invalid\" == \"form--invalid\"\n\n    modifier \"switch\" \"on\" == \"switch--on\"\n\n",
+                "type": "String.String -> String.String -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

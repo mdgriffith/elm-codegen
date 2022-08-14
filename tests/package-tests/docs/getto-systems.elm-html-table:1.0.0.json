@@ -1,0 +1,139 @@
+[
+    {
+        "name": "Getto.Html.Table",
+        "comment": " construct table structure for html\n\n    import Html as H\n    import Html.Attributes as A\n\n    config =\n      { attr =\n        { table = \\data ->\n          [ [ \"div-auto-size: none\"\n            , \"rows: \" ++ (data.thead |> String.fromInt)\n            ]\n            |> String.join \"; \"\n            |> A.attribute \"_fixedhead\"\n          ]\n        , summary = [ \"border-top-single\" |> A.class ]\n        , border = \\(left,right) ->\n          [ case left of\n            Table.None -> []\n            Table.Single -> [\"border-left\"]\n            Table.Double -> [\"border-left-double\"]\n          , case right of\n            Table.None -> []\n            Table.Single -> [\"border-right\"]\n            Table.Double -> [\"border-right-double\"]\n          ]\n          |> List.concat |> List.map A.class\n        }\n      , emptyContent = Table.td []\n        [ H.p [ \"alert\" |> A.class ]\n          [ \"empty!\" |> H.text ]\n        ]\n      }\n\n    data =\n      { sum = 18\n      , roleLength = 2\n      , genders =\n        [ { value = \"male\"\n          , sum = 2\n          }\n        , { value = \"female\"\n          , sum = 3\n          }\n        , { value = \"other\"\n          , sum = 1\n          }\n        ]\n      }\n\n    rows =\n      [ { id     = 2\n        , name   = \"John\"\n        , gender = \"male\"\n        , roles = [ \"admin\" ]\n        , comments =\n          [ { user = \"guest\"\n            , text = \"looks goot to me\"\n            , likes =\n              [ { user = \"master\"\n                , text = \"looks great to me!\"\n                }\n              ]\n            }\n          ]\n        }\n      ]\n\n    rows |> Table.render config\n      [ Table.column ( Table.none, Table.none )\n        { header  = Table.th [] [ \"id\" |> H.text ]\n        , summary = Table.empty\n        , content = \\row -> Table.td [ \"is-center\" |> A.class ]\n          [ H.p [] [ row.id |> String.fromInt |> H.text ] ]\n        }\n      , Table.group ( Table.th [ \"is-center\" |> A.class ] [ \"info\" |> H.text ] )\n        [ Table.column ( Table.none, Table.none )\n          { header  = Table.th [] [ \"name\" |> H.text ]\n          , summary = Table.th [ \"is-right\" |> A.class ] [ \"sum\" |> H.text ]\n          , content = \\row -> Table.td []\n            [ H.p [] [ row.name |> H.text ] ]\n          }\n        , Table.column ( Table.none, Table.single )\n          { header  = Table.th [] [ \"gender\" |> H.text ]\n          , summary = Table.td [] [ H.p [] [ data.sum |> String.fromInt |> H.text ] ]\n          , content = \\row -> Table.td []\n            [ H.p [] [ row.gender |> H.text ] ]\n          }\n        , Table.union ( Table.none, Table.none )\n          { header  = Table.th [] [ \"roles\" |> H.text ]\n          , summary = Table.empty\n          , colspan = data.roleLength\n          , data    = \\row -> row.roles |> List.map (\\role -> ( row, role ))\n          , content = \\(row,role) -> Table.td []\n            [ H.p [] [ role |> H.text ] ]\n          }\n        , Table.parts data.genders\n          (\\gender ->\n            [ Table.column ( Table.none, Table.none )\n              { header  = Table.th [] [ gender.value |> H.text ]\n              , summary = Table.td [ \"is-center\" |> A.class ]\n                [ H.p [] [ gender.sum |> String.fromInt |> H.text ] ]\n              , content = \\row -> Table.td [ \"is-center\" |> A.class ]\n                [ H.p []\n                  [ if row.gender == gender.value\n                    then \"v\" |> H.text\n                    else \"\"  |> H.text\n                  ]\n                ]\n              }\n            , Table.column ( Table.none, Table.none )\n              { header  = Table.th [] [ gender.value |> H.text ]\n              , summary = Table.td [ \"is-center\" |> A.class ]\n                [ H.p [] [ gender.sum |> String.fromInt |> H.text ] ]\n              , content = \\row -> Table.td [ \"is-center\" |> A.class ]\n                [ H.p []\n                  [ if row.gender /= gender.value\n                    then \"o\" |> H.text\n                    else \"\"  |> H.text\n                  ]\n                ]\n              }\n            ]\n          )\n        , Table.rows ( \\row -> row.roles |> List.map (\\role -> ( row, role )) )\n          [ Table.column ( Table.none, Table.none )\n            { header  = Table.th [] [ \"roles\" |> H.text ]\n            , summary = Table.empty\n            , content = \\(row,role) -> Table.td []\n              [ H.p [] [ role |> H.text ] ]\n            }\n          , Table.column ( Table.none, Table.none )\n            { header  = Table.th [] [ \"roles\" |> H.text ]\n            , summary = Table.empty\n            , content = \\(row,role) -> Table.td []\n              [ H.p [] [ role |> H.text ] ]\n            }\n          ]\n        , Table.group ( Table.th [ \"is-center\" |> A.class ] [ \"comment\" |> H.text ] )\n          [ Table.rows ( \\row -> row.comments |> List.map (\\comment -> ( row, comment )) )\n            [ Table.column ( Table.single, Table.none )\n              { header  = Table.th [] [ \"user\" |> H.text ]\n              , summary = Table.empty\n              , content = \\(row,comment) -> Table.td []\n                [ H.p [] [ comment.user |> H.text ] ]\n              }\n            , Table.column ( Table.none, Table.none )\n              { header  = Table.th [] [ \"text\" |> H.text ]\n              , summary = Table.empty\n              , content = \\(row,comment) -> Table.td []\n                [ H.p [] [ comment.text |> H.text ] ]\n              }\n            , Table.group ( Table.th [ \"is-center\" |> A.class ] [ \"like\" |> H.text ] )\n              [ Table.rows\n                ( \\(row,comment) -> comment.likes |> List.map (\\like -> ( row, comment, like )) )\n                [ Table.column ( Table.single, Table.none )\n                  { header  = Table.th [] [ \"user\" |> H.text ]\n                  , summary = Table.empty\n                  , content = \\(row,comment,like) -> Table.td []\n                    [ H.p [] [ like.user |> H.text ] ]\n                  }\n                , Table.column ( Table.none, Table.none )\n                  { header  = Table.th [] [ \"text\" |> H.text ]\n                  , summary = Table.empty\n                  , content = \\(row,comment,like) -> Table.td []\n                    [ H.p [] [ like.text |> H.text ] ]\n                  }\n                ]\n              ]\n            ]\n          ]\n        ]\n      ]\n\n# Definition\n@docs Config, Border, BorderStyle, Column, ColumnModel, UnionModel\n\n# Render\n@docs render\n\n# Column Construction\n@docs column, group, union, parts, rows\n\n# Border Construction\n@docs none, single, double\n\n# Cell Construction\n@docs empty, th, td\n\n# Helper\n@docs map\n ",
+        "unions": [
+            {
+                "name": "BorderStyle",
+                "comment": " border style\n ",
+                "args": [],
+                "cases": [
+                    [
+                        "None",
+                        []
+                    ],
+                    [
+                        "Single",
+                        []
+                    ],
+                    [
+                        "Double",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Border",
+                "comment": " left border and right border\n\n    ( BorderStyle, BorderStyle ) -- left, right\n ",
+                "args": [],
+                "type": "Getto.Html.Table.Struct.Border"
+            },
+            {
+                "name": "Column",
+                "comment": " column definition\n ",
+                "args": [
+                    "row",
+                    "msg"
+                ],
+                "type": "Getto.Html.Table.Struct.Column row (Getto.Html.Table.Cell msg)"
+            },
+            {
+                "name": "ColumnModel",
+                "comment": " config for `column`\n\n    { header  : Cell msg        -- header cell\n    , summary : Cell msg        -- summary cell\n    , content : row -> Cell msg -- content cell\n    }\n ",
+                "args": [
+                    "row",
+                    "msg"
+                ],
+                "type": "Getto.Html.Table.Struct.ColumnModel row (Getto.Html.Table.Cell msg)"
+            },
+            {
+                "name": "Config",
+                "comment": " configuration for rendering\n\n      { attr =\n          -- attribute of <table> tag\n        { table = \\data ->\n          [ [ \"div-auto-size: none\"\n            , \"rows: \" ++ (data.thead |> String.fromInt)\n            ]\n            |> String.join \"; \"\n            |> A.attribute \"_fixedhead\"\n          ]\n          -- attribute of summary <tr> tag\n        , summary = [ \"border-top-single\" |> A.class ]\n          -- border attribute of <td> or <th> tag\n        , border = \\(left,right) ->\n          [ case left of\n            Table.None -> []\n            Table.Single -> [\"border-left\"]\n            Table.Double -> [\"border-left-double\"]\n          , case right of\n            Table.None -> []\n            Table.Single -> [\"border-right\"]\n            Table.Double -> [\"border-right-double\"]\n          ]\n          |> List.concat |> List.map A.class\n        }\n        -- <td> content when empty rows\n      , emptyContent = Table.td []\n        [ H.p [ \"alert\" |> A.class ]\n          [ \"empty!\" |> H.text ]\n        ]\n      }\n\n ",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ attr : { table : { thead : Basics.Int } -> List.List (Html.Attribute msg), summary : List.List (Html.Attribute msg), border : Getto.Html.Table.BorderAttribute msg }, emptyContent : Getto.Html.Table.Struct.Cell (Getto.Html.Table.Cell msg) }"
+            },
+            {
+                "name": "UnionModel",
+                "comment": " config for `union`\n\n    { header  : Cell msg         -- header cell\n    , summary : Cell msg         -- summary cell\n    , colspan : Int              -- colspan\n    , data    : row -> List data -- list of sub data\n    , content : data -> Cell msg -- content cell\n    }\n ",
+                "args": [
+                    "row",
+                    "data",
+                    "msg"
+                ],
+                "type": "Getto.Html.Table.Struct.UnionModel row data (Getto.Html.Table.Cell msg)"
+            }
+        ],
+        "values": [
+            {
+                "name": "column",
+                "comment": " define `column`\n\n    Table.column\n      ( Table.none, Table.none )       -- border ( left, right )\n      { header  =\n        Table.th [] [ \"id\" |> H.text ] -- header cell\n      , summary = Table.empty          -- summary cell\n      , content =                      -- content cell\n        \\row ->\n          Table.td [ \"is-center\" |> A.class ]\n            [ H.p [] [ row.id |> String.fromInt |> H.text ] ]\n      }\n ",
+                "type": "Getto.Html.Table.Border -> Getto.Html.Table.ColumnModel row msg -> Getto.Html.Table.Column row msg"
+            },
+            {
+                "name": "double",
+                "comment": " border style `Double`\n ",
+                "type": "Getto.Html.Table.Struct.BorderStyle"
+            },
+            {
+                "name": "empty",
+                "comment": " empty Cell\n\n    summary = Table.empty -- nothing for summary\n ",
+                "type": "Getto.Html.Table.Struct.Cell (Getto.Html.Table.Cell msg)"
+            },
+            {
+                "name": "group",
+                "comment": " define `group`\n\n    Table.group\n      ( Table.th [ \"is-center\" |> A.class ] -- header cell\n        [ \"info\" |> H.text ]\n      )\n      [ Table.column                        -- group columns\n        ( Table.none, Table.none )\n        { header  = Table.th [] [ \"name\" |> H.text ]\n        , summary = Table.th [ \"is-right\" |> A.class ] [ \"sum\" |> H.text ]\n        , content = \\row -> Table.td []\n          [ H.p [] [ row.name |> H.text ] ]\n        }\n      ]\n ",
+                "type": "Getto.Html.Table.Struct.Cell (Getto.Html.Table.Cell msg) -> List.List (Getto.Html.Table.Column row msg) -> Getto.Html.Table.Column row msg"
+            },
+            {
+                "name": "map",
+                "comment": " map Column\n\n    type Msg\n      = Sub SubMsg\n\n    column : model -> Table.Column row SubMsg\n\n    model |> column |> Table.map Sub\n ",
+                "type": "(msg -> super) -> Getto.Html.Table.Column row msg -> Getto.Html.Table.Column row super"
+            },
+            {
+                "name": "none",
+                "comment": " border style `None`\n ",
+                "type": "Getto.Html.Table.Struct.BorderStyle"
+            },
+            {
+                "name": "parts",
+                "comment": " define `parts`\n\n    Table.parts\n      data.genders -- list of sub data\n      (\\gender ->  -- sub data columns\n        [ Table.column ( Table.none, Table.none )\n          { header  = Table.th [] [ gender.value |> H.text ]\n          , summary = Table.td [ \"is-center\" |> A.class ]\n            [ H.p [] [ gender.sum |> String.fromInt |> H.text ] ]\n          , content = \\row -> Table.td [ \"is-center\" |> A.class ]\n            [ H.p []\n              [ if row.gender == gender.value\n                then \"v\" |> H.text\n                else \"\"  |> H.text\n              ]\n            ]\n          }\n        ]\n      )\n ",
+                "type": "List.List data -> (data -> List.List (Getto.Html.Table.Column row msg)) -> Getto.Html.Table.Column row msg"
+            },
+            {
+                "name": "render",
+                "comment": " render html by Config, Columns, data\n ",
+                "type": "Getto.Html.Table.Config msg -> List.List (Getto.Html.Table.Column row msg) -> List.List row -> Html.Html msg"
+            },
+            {
+                "name": "rows",
+                "comment": " define `rows`\n\n    Table.rows\n      ( \\row -> -- list of sub data\n        row.roles |> List.map (\\role -> ( row, role ))\n      )\n      [ Table.column -- sub data columns\n        ( Table.none, Table.none )\n        { header  = Table.th [] [ \"roles\" |> H.text ]\n        , summary = Table.empty\n        , content = \\(row,role) -> Table.td []\n          [ H.p [] [ role |> H.text ] ]\n        }\n      ]\n ",
+                "type": "(row -> List.List data) -> List.List (Getto.Html.Table.Column data msg) -> Getto.Html.Table.Column row msg"
+            },
+            {
+                "name": "single",
+                "comment": " border style `Single`\n ",
+                "type": "Getto.Html.Table.Struct.BorderStyle"
+            },
+            {
+                "name": "td",
+                "comment": " td Cell\n\n    Table.td [] -- attributes\n      [ H.p []  -- content\n        [ \"content\" |> H.text ]\n      ]\n ",
+                "type": "List.List (Html.Attribute msg) -> List.List (Html.Html msg) -> Getto.Html.Table.Struct.Cell (Getto.Html.Table.Cell msg)"
+            },
+            {
+                "name": "th",
+                "comment": " th Cell\n\n    Table.th []          -- attributes\n      [ \"id\" |> H.text ] -- contents\n ",
+                "type": "List.List (Html.Attribute msg) -> List.List (Html.Html msg) -> Getto.Html.Table.Struct.Cell (Getto.Html.Table.Cell msg)"
+            },
+            {
+                "name": "union",
+                "comment": " define `union`\n\n    Table.union\n      ( Table.none, Table.none )          -- border ( left, right )\n      { header  =\n        Table.th [] [ \"roles\" |> H.text ] -- header cell\n      , summary = Table.empty             -- summary cell\n      , colspan = data.roleLength         -- colspan\n      , data    =                         -- list of sub data\n        \\row -> row.roles |> List.map (\\role -> ( row, role ))\n      , content =                         -- content cell\n        \\(row,role) ->\n          Table.td []\n            [ H.p [] [ role |> H.text ] ]\n      }\n ",
+                "type": "Getto.Html.Table.Border -> Getto.Html.Table.UnionModel row data msg -> Getto.Html.Table.Column row msg"
+            }
+        ],
+        "binops": []
+    }
+]

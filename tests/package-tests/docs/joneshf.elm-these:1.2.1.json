@@ -1,0 +1,90 @@
+[
+    {
+        "name": "Dict.Simple",
+        "comment": " @docs merge\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "merge",
+                "comment": " The definition of [Dict.merge](http://package.elm-lang.org/packages/elm-lang/core/latest/Dict#merge)\nleaves something to be desired.\n\nWe provide a simpler version here that takes one function for the merging.\nYou can handle all the cases in your one supplied function.\nIf you use the functions from [These](http://package.elm-lang.org/packages/joneshf/elm-these/latest/These),\nyou can probably inline it.\n\nThe version in core requires you to write three separate functions to work with it.\nThe reason it does this is because there's no \"inclusive-or\" abstraction in core.\nSo, we're forced to deal with this more complex function.\n\n---\n\nFun fact:\n\nThe core [Dict.merge](http://package.elm-lang.org/packages/elm-lang/core/latest/Dict#merge)\nactually encodes [These](http://package.elm-lang.org/packages/joneshf/elm-these/latest/These)\nwith a [Boehm-Berarducci](http://okmij.org/ftp/tagless-final/course/Boehm-Berarducci.html) encoding.\n\nIt's basically Church encoding, but typed.\n\n",
+                "type": "(comparable -> These.These a b -> result -> result) -> Dict.Dict comparable a -> Dict.Dict comparable b -> result -> result"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "These",
+        "comment": " A type that may be an `a`, a `b`, or both an `a` and a `b` at once.\n\n@docs These, these, mapThis, mapThat, mapBoth, mergeWith, merge, align\n\n",
+        "unions": [
+            {
+                "name": "These",
+                "comment": " This type is very closely related to [Result a b](http://package.elm-lang.org/packages/elm-lang/core/latest/Result#Result).\n\nWhile [Result a b](http://package.elm-lang.org/packages/elm-lang/core/latest/Result#Result)\nmodels exclusive-or, this type models inclusive-or.\n\n",
+                "args": [
+                    "a",
+                    "b"
+                ],
+                "cases": [
+                    [
+                        "This",
+                        [
+                            "a"
+                        ]
+                    ],
+                    [
+                        "That",
+                        [
+                            "b"
+                        ]
+                    ],
+                    [
+                        "These",
+                        [
+                            "a",
+                            "b"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "align",
+                "comment": " Similar to [List.Extra.zip](http://package.elm-lang.org/packages/elm-community/list-extra/latest/List-Extra#zip)\nexcept the resulting list is the length of the longer list.\n\nWe can also think of this from a relational algebra perspective (or SQL if that's your thing).\nWe view each list as a relation (table) where the primary key is its index in the list.\nThen [List.Extra.zip](http://package.elm-lang.org/packages/elm-community/list-extra/latest/List-Extra#zip)\ncan be viewed as a natural join (inner join),\nand [align](#align) can be viewed as a full outer join.\n\n",
+                "type": "List.List a -> List.List b -> List.List (These.These a b)"
+            },
+            {
+                "name": "mapBoth",
+                "comment": " There is only one implementation of this function.\nIt is fully described by the type signature.\n\nReplace any `a`s with `c`s and replace any `b`s with `d`s.\n\n",
+                "type": "(a -> c) -> (b -> d) -> These.These a b -> These.These c d"
+            },
+            {
+                "name": "mapThat",
+                "comment": " There is only one implementation of this function.\nIt is fully described by the type signature.\n\nReplace any `b`s with `c`s\n\n",
+                "type": "(b -> c) -> These.These a b -> These.These a c"
+            },
+            {
+                "name": "mapThis",
+                "comment": " There is only one implementation of this function.\nIt is fully described by the type signature.\n\nReplace any `a`s with `c`s\n\n",
+                "type": "(a -> c) -> These.These a b -> These.These c b"
+            },
+            {
+                "name": "merge",
+                "comment": " A version of [mergeWith](#mergeWith) that does not modify the `This a` or `That a` values.\n",
+                "type": "(a -> a -> a) -> These.These a a -> a"
+            },
+            {
+                "name": "mergeWith",
+                "comment": " Similar to [these](#these).\n\nThe difference is that in the `These a b` case\nwe apply the second and third functions and merge the results with the first function.\n\n",
+                "type": "(c -> c -> c) -> (a -> c) -> (b -> c) -> These.These a b -> c"
+            },
+            {
+                "name": "these",
+                "comment": " Destroy the structure of a [These a b](#These).\n\nThe first two functions are applied to the `This a` and `That b` values, respectively.\nThe third function is applied to the `These a b` value.\n\n",
+                "type": "(a -> c) -> (b -> c) -> (a -> b -> c) -> These.These a b -> c"
+            }
+        ],
+        "binops": []
+    }
+]

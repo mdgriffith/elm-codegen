@@ -1,0 +1,164 @@
+[
+    {
+        "name": "Generator",
+        "comment": " This library provides a way to simulate lazy lists, or streams, in the form of generators.\n\n\n# Definition\n\n@docs Generator, CycleGenerator\n\n\n# Constructors\n\n@docs init, repeat, iterate, cycle, cons, prefix\n\n\n# Basic Manipulation\n\n@docs advance, head, tail, take, takeWhile, drop, dropWhile\n\n\n# Transformations\n\n@docs map, filter, scanl\n\n\n# Zipping and Combining\n\nNote that a zipped generator will terminate when either of its parent generators becomes empty, whereas a merged generator will emit values until both its parent generators are empty.\n\n@docs zip, zipWith, merge, mergeWith, intersperse, interleave\n\n\n# Finite Generators\n\n@docs fromList, toList, foldl\n\n\n# Introspection\n\n@docs empty, inspect\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "CycleGenerator",
+                "comment": " A convenience export for generators constructed with `cycle`.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "Generator.Generator a ( List.List a, a, List.List a )"
+            },
+            {
+                "name": "Generator",
+                "comment": " A generator is parameterized with: (a) the type of value it emits, (b) the type of its internal state. In general, users only care about the former, and the latter is merely something that's required for type checking.\n",
+                "args": [
+                    "a",
+                    "b"
+                ],
+                "type": "Internal.Types.Generator a b"
+            }
+        ],
+        "values": [
+            {
+                "name": "advance",
+                "comment": " Advance a generator by a given nubmer of steps and collect emitted values. Returns the list of collected values and the updated generated as a pair.\n\n    iterate ((+) 1) 1\n    |> advance 5       -- ([1, 2, 3, 4, 5], updated generator)\n    |> Tuple.second\n    |> advance 5        -- ([6, 7, 8, 9, 10], updated generator)\n    |> Tuple.first\n    --> [6, 7, 8, 9, 10]\n\n",
+                "type": "Basics.Int -> Generator.Generator a b -> ( List.List a, Generator.Generator a b )"
+            },
+            {
+                "name": "cons",
+                "comment": " Cons a value to a generator.\n\n    cons \"a\" (fromList [\"b\", \"c\", \"d\"])\n    |> take 4\n    --> [\"a\", \"b\", \"c\", \"d\"]\n\n",
+                "type": "a -> Generator.Generator a b -> Generator.Generator a ( b, List.List a )"
+            },
+            {
+                "name": "cycle",
+                "comment": " An infinite generator that repeated cycles through the list of given values.\n\n    cycle [1, 2, 3]\n    |> take 6\n    --> [1, 2, 3, 1, 2, 3]\n\n",
+                "type": "List.List a -> Generator.CycleGenerator a"
+            },
+            {
+                "name": "drop",
+                "comment": " Advance the generator by n steps, dropping the emitted values. Convenience function for `advance n >> Tuple.second`.\n\n    iterate ((+) 1) 1\n    |> drop 5\n    |> take 5\n    --> [6, 7, 8, 9, 10]\n\n",
+                "type": "Basics.Int -> Generator.Generator a b -> Generator.Generator a b"
+            },
+            {
+                "name": "dropWhile",
+                "comment": " Drop items emitted by the generator while the given predicate holds.\n\n    iterate ((+) 1) 1\n    |> dropWhile ((>) 5)\n    |> take 5\n    --> [6, 7, 8, 9, 10]\n\n",
+                "type": "(a -> Basics.Bool) -> Generator.Generator a b -> Generator.Generator a b"
+            },
+            {
+                "name": "empty",
+                "comment": " Test if a generator is empty. An empty generator will emit no further values. Note that it's not necessary to check for emptiness before calling `advance` or other functions that attempt to advance the generator.\n\n    fromList [1, 2, 3, 4, 5]\n    |> drop 6\n    |> empty\n    --> True\n\n",
+                "type": "Generator.Generator a b -> Basics.Bool"
+            },
+            {
+                "name": "filter",
+                "comment": " Return a new generator that filters every value emitted.\n\n    iterate ((+) 1) 1\n    |> filter ((<) 3)\n    |> take 5\n    --> [4, 5, 6, 7, 8]\n\n**Note**: using `filter` without care may produce generators that run forever. For example, this will not terminate:\n\n    iterate ((+) 1) 0\n        |> filter ((>) 0)\n        |> take 1\n\n",
+                "type": "(a -> Basics.Bool) -> Generator.Generator a b -> Generator.Generator a b"
+            },
+            {
+                "name": "foldl",
+                "comment": " Attempt to reduce all values emitted from a generator from the left.\n\n    fromList [ 1, 2, 3, 4, 5 ]\n    |> foldl (::) []\n    --> [ 5, 4, 3, 2, 1 ]\n\n    fromList [ 1, 2, 3, 4, 5 ]\n    |> foldl (+) 0\n    --> 15\n\n**Note**: this function runs forever if the generater is infinite.\n\n",
+                "type": "(a -> c -> c) -> c -> Generator.Generator a b -> c"
+            },
+            {
+                "name": "fromList",
+                "comment": " Construct a finite generator.\n\n    fromList [ 1, 2, 3, 4, 5 ]\n    |> advance 5\n    |> Tuple.first\n    --> [1, 2, 3, 4, 5]\n\n",
+                "type": "List.List a -> Generator.Generator a (List.List a)"
+            },
+            {
+                "name": "head",
+                "comment": " Advance one step and return the emitted value (or `Nothing` if the generator is empty).\n\n    repeat 1\n    |> head\n    --> Just 1\n\n",
+                "type": "Generator.Generator a b -> Maybe.Maybe a"
+            },
+            {
+                "name": "init",
+                "comment": " Construct a generator. Provide an initial state, and a function that takes state and returns a successor in the form of a `Maybe` (value, next state) tuple. Returning a `Nothing` signifiies that the generator is empty and will emit no further values.\n\n     init 1 (\\n -> Just (n, n+1))\n     |> take 5\n     --> [1, 2, 3, 4, 5]\n\n",
+                "type": "b -> (b -> Maybe.Maybe ( a, b )) -> Generator.Generator a b"
+            },
+            {
+                "name": "inspect",
+                "comment": " Retrieve current state from generator (or Nothing if the generator is empty).\n\nThis function isn't intended for use in normal interaction with or manipulation of generators. It can be useful for debugging, though, or otherwise studying non-trivial generator state.\n\n    fromList [1, 2, 3, 4, 5]\n    |> drop 6\n    |> inspect\n    --> Nothing\n\n\n    fromList [1, 2, 3, 4, 5]\n    |> drop 2\n    |> inspect\n    --> Just [3, 4, 5]\n\n",
+                "type": "Generator.Generator a b -> Maybe.Maybe b"
+            },
+            {
+                "name": "interleave",
+                "comment": " Return a new generator that alternates between values emitted by the two given generators.\n\n    interleave (repeat 1) (repeat 2)\n    |> take 6\n    --> [1, 2, 1, 2, 1, 2]\n\n",
+                "type": "Generator.Generator a b -> Generator.Generator a c -> Generator.Generator a ( b, c, Basics.Bool )"
+            },
+            {
+                "name": "intersperse",
+                "comment": " Return a new generator that intersperses values from the given generator with the given constant value.\n\n    intersperse \".\" (fromList [\"a\", \"b\", \"c\"])\n    |> take 6\n    --> [\"a\", \".\", \"b\", \".\", \"c\", \".\"]\n\n",
+                "type": "a -> Generator.Generator a b -> Generator.Generator a ( b, (), Basics.Bool )"
+            },
+            {
+                "name": "iterate",
+                "comment": " An infinite generator that repeatedly applies the given function to emit successive values.\n\n    iterate ((+) 1) 1\n    |> take 5\n    --> [1, 2, 3, 4, 5]\n\n",
+                "type": "(a -> a) -> a -> Generator.Generator a a"
+            },
+            {
+                "name": "map",
+                "comment": " Return a new generator that maps the given function to every value emitted.\n\n    iterate ((+) 1) 1\n    |> map ((+) 1)\n    |> map ((+) 1)\n    |> take 5\n    --> [3, 4, 5, 6, 7]\n\n",
+                "type": "(a -> c) -> Generator.Generator a b -> Generator.Generator c b"
+            },
+            {
+                "name": "merge",
+                "comment": " Return a new generator that merges two generators.\n\nThe merge rule is a predicate function that compares the values emitted by the two generators and chooses the left value if the predicate is true. Only the generator with the chosen value will be advanced.\n\n    fromList [ 1, 3, 4, 8 ]\n    |> (\\g1 -> ( g1, fromList [ 2, 3, 5, 7 ] ))\n    |> (\\(g1, g2) -> merge (<) g1 g2)\n    |> toList\n    --> [1, 2, 3, 3, 4, 5, 7, 8]\n\n",
+                "type": "(a -> a -> Basics.Bool) -> Generator.Generator a b -> Generator.Generator a d -> Generator.Generator a ( b, d )"
+            },
+            {
+                "name": "mergeWith",
+                "comment": " Return a new generator that merges two generators with a custom function. This is the most expressive way to combine two generators, with control over whether to emit values and whether to advance either generator.\n\nThe merge function takes two values and returns a triple of (maybe a merged value, bool to advance left generator, bool to advance the right generator). Since the new generator may emit values of any type, additional functions are required to convert the left and right generator values to maybes of the merged value type (in case either generator is empty). Maybe is used to allow values to be skipped entirely.\n\n    -- a trivial example\n    mergeWith\n        (\\x xs -> (Just <| x :: xs, True, True))\n        (\\x -> Just [x])\n        (\\xs -> Just xs)\n        (fromList [1, 2, 3, 4])\n        (fromList [[10], [11], [12]])\n     |> take 10\n     --> [[1, 10], [2, 11], [3, 12], [4]]\n\nAlso see [`Examples/Timeseries.elm`](https://github.com/tkuriyama/elm-generator/blob/master/src/Examples/Timeseries.elm).\n\n",
+                "type": "(a -> c -> ( Maybe.Maybe e, Basics.Bool, Basics.Bool )) -> (a -> Maybe.Maybe e) -> (c -> Maybe.Maybe e) -> Generator.Generator a b -> Generator.Generator c d -> Generator.Generator e ( b, d )"
+            },
+            {
+                "name": "prefix",
+                "comment": " Prefix a list of values to a generator.\n\n    prefix [1, 2, 3] (fromList [4, 5, 6])\n    |> take 6\n    --> [1, 2, 3, 4, 5, 6]\n\n",
+                "type": "List.List a -> Generator.Generator a b -> Generator.Generator a ( b, List.List a )"
+            },
+            {
+                "name": "repeat",
+                "comment": " An infinite generator that repeats the given value.\n\n    repeat 1\n    |> take 5\n    --> [1, 1, 1, 1, 1]\n\n",
+                "type": "a -> Generator.Generator a ()"
+            },
+            {
+                "name": "scanl",
+                "comment": " Foldl for genereators: return a new generator that successively reduces emitted values.\n\n    fromList [ 1, 2, 3 ]\n    |> scanl (+) 0\n    |> take 3\n    --> [1, 3, 6]\n\n",
+                "type": "(c -> a -> c) -> c -> Generator.Generator a b -> Generator.Generator c ( b, c )"
+            },
+            {
+                "name": "tail",
+                "comment": " Advance one step and return the updated generator.\n\n    iterate ((+) 1) 1\n    |> tail\n    |> head\n    --> Just 2\n\n",
+                "type": "Generator.Generator a b -> Generator.Generator a b"
+            },
+            {
+                "name": "take",
+                "comment": " Take the first n items emitted by the generator. Convenience function for `advance n >> Tuple.first`.\n\n    iterate ((+) 1) 1\n    |> take 5\n    --> [1, 2, 3, 4, 5]\n\n",
+                "type": "Basics.Int -> Generator.Generator a b -> List.List a"
+            },
+            {
+                "name": "takeWhile",
+                "comment": " Take items emitted by the generator while the given predicate holds.\n\n    iterate ((+) 1) 1\n    |> takeWhile ((>) 5)\n    --> [1, 2, 3, 4]\n\n",
+                "type": "(a -> Basics.Bool) -> Generator.Generator a b -> List.List a"
+            },
+            {
+                "name": "toList",
+                "comment": " Attempt to collect all values emitted from a generator into a list.\n\n    fromList [ 1, 2, 3, 4, 5 ]\n    |> toList\n    --> [1, 2, 3, 4, 5]\n\n**Note**: this function runs forever if the generater is infinite.\n\n",
+                "type": "Generator.Generator a b -> List.List a"
+            },
+            {
+                "name": "zip",
+                "comment": " Return a new generator that combines values emitted by two generators into pairs.\n\n    iterate ((+) 1) 1\n    |> (\\g -> zip g g)\n    |> take 3\n    --> [(1, 1), (2, 2), (3, 3)]\n\n",
+                "type": "Generator.Generator a b -> Generator.Generator c d -> Generator.Generator ( a, c ) ( b, d )"
+            },
+            {
+                "name": "zipWith",
+                "comment": " Return a new generator that combines values emitted by two generators with the given function.\n\n    iterate ((+) 1) 1\n    |> (\\g -> zipWith (+) g g)\n    |> take 5\n    --> [2, 4, 6, 8, 10]\n\n    iterate ((+) 1) 1\n    |> (\\g -> zipWith (+) g (filter ((<) 5) g))\n    |> take 5\n    --> [7, 9, 11, 13, 15]\n\n",
+                "type": "(a -> c -> e) -> Generator.Generator a b -> Generator.Generator c d -> Generator.Generator e ( b, d )"
+            }
+        ],
+        "binops": []
+    }
+]

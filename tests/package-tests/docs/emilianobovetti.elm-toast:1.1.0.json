@@ -1,0 +1,195 @@
+[
+    {
+        "name": "Toast",
+        "comment": " All you need to create, append and render toast stacks\nin the Elm architecture.\n\n\n# Pick one kind of toast\n\n@docs persistent, expireIn, expireOnBlur\n\n\n# Set an exit transition length\n\n@docs withExitTransition\n\n\n# Start with an empty tray, add your toasts\n\n@docs Toast, Tray, tray\n@docs add, addUnique, addUniqueBy, addUniqueWith\n\n\n# Forward messages and update toast's tray\n\n@docs Msg, update, tuple\n\n\n# Customize & render toasts\n\n@docs Config, config, render\n@docs Phase, Interaction, Info\n@docs withAttributes, withFocusAttributes\n@docs withEnterAttributes, withExitAttributes, withTransitionAttributes\n@docs withTrayAttributes, withTrayNode\n\n\n# Remove toasts\n\n@docs remove, exit\n\n",
+        "unions": [
+            {
+                "name": "Interaction",
+                "comment": " Can be `Toast.Focus` or `Toast.Blur`, just like [Toast.Phase](#Phase)\nyou'll have this information while rendering a toast through [Toast.Info](#Info).\n\n    viewToast :\n        List (Html.Attribute Msg)\n        -> Toast.Info Toast\n        -> Html Msg\n    viewToast attributes toast =\n        Html.div\n            (if toast.interaction == Toast.Focus then\n                class \"toast-active\" :: attributes\n\n             else\n                attributes\n            )\n            [ Html.text toast.content.message ]\n\n    view : Model -> Html Msg\n    view model =\n        Toast.config ToastMsg\n            |> Toast.render viewToast model.tray\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Focus",
+                        []
+                    ],
+                    [
+                        "Blur",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Msg",
+                "comment": " Internal message, you probably want to do something like\n\n    type Msg\n        = ToastMsg Toast.Msg\n          -- other stuff...\n        | AddToast MyToastContent\n\nin your app `Msg`.\n\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Phase",
+                "comment": " A toast go through three phases:\n\n  - `Toast.Enter` when it's just been added to a tray\n  - `Toast.In` during the next render, immediately after enter phase\n  - `Toast.Exit` when it's about to be removed\n\nYou can control how much time a toast is kept in\n`Toast.Exit` phase through [withExitTransition](#withExitTransition).\n\nBoth `Toast.Enter` and `Toast.Exit` are considered [transition phases](#withTransitionAttributes).\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Enter",
+                        []
+                    ],
+                    [
+                        "In",
+                        []
+                    ],
+                    [
+                        "Exit",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " `Toast.Config` is something that holds information about\nrendering stuff.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "Toast.Private (Toast.Config_ msg)"
+            },
+            {
+                "name": "Info",
+                "comment": " `Toast.Info` represent data publicly exposed about a toast.\n\nYou already know [Toast.Phase](#Phase) and [Toast.Interaction](#Interaction),\nof course you also know `content` since this is your own data.\n\nMeet `id`, this little field contains a unique value for each toast\nthat you need to pass to [Toast.remove](#remove) and [Toast.exit](#exit).\n\n",
+                "args": [
+                    "content"
+                ],
+                "type": "{ id : Toast.Private Toast.Id, phase : Toast.Phase, interaction : Toast.Interaction, content : content }"
+            },
+            {
+                "name": "Toast",
+                "comment": " `Toast.Toast` is something you'll need if you have to reference\nthe output type of [persistent](#persistent), [expireIn](#expireIn), [expireOnBlur](#expireOnBlur),\nthis is one of those things you'll know when you need it, so don't worry about this.\n",
+                "args": [
+                    "content"
+                ],
+                "type": "Toast.Private (Toast.Toast_ content)"
+            },
+            {
+                "name": "Tray",
+                "comment": " `Toast.Tray` represents the stack where toasts are stored.\nYou probably want to use this opaque type in your model:\n\n    type alias MyToast =\n        { message : String\n        , color : String\n        }\n\n    type alias Model =\n        { tray : Toast.Tray MyToast\n\n        -- model fields...\n        }\n\n",
+                "args": [
+                    "content"
+                ],
+                "type": "Toast.Private (Toast.Tray_ content)"
+            }
+        ],
+        "values": [
+            {
+                "name": "add",
+                "comment": " Add a toast to a tray, produces an updated tray and a `Cmd Toast.Msg`.\n\n    updateTuple :\n        ( Toast.Tray { message : String, color : String }\n        , Cmd Toast.Msg\n        )\n    updateTuple =\n        Toast.persistent { message = \"hello, world\", color = \"#7f7\" }\n            |> Toast.withExitTransition 1000\n            |> Toast.add currentTray\n\n",
+                "type": "Toast.Tray content -> Toast.Toast content -> ( Toast.Tray content, Platform.Cmd.Cmd Toast.Msg )"
+            },
+            {
+                "name": "addUnique",
+                "comment": " Add a toast only if its content is not already in the tray.\n\nToast contents are compared with [structural equality](https://package.elm-lang.org/packages/elm/core/latest/Basics#==).\n\n    -- if currentTray already contains a toast with the same\n    -- message and color it won't be added again\n    Toast.persistent { message = \"hello, world\", color = \"#7f7\" }\n        |> Toast.addUnique currentTray\n\n",
+                "type": "Toast.Tray content -> Toast.Toast content -> ( Toast.Tray content, Platform.Cmd.Cmd Toast.Msg )"
+            },
+            {
+                "name": "addUniqueBy",
+                "comment": " This is what you need if, for example, you want to have toast\nwith unique `content.message`.\n\n    -- no two \"hello, world\" in the same tray\n    Toast.persistent { message = \"hello, world\", color = \"#7f7\" }\n        |> Toast.addUniqueBy .message currentTray\n\n",
+                "type": "(content -> a) -> Toast.Tray content -> Toast.Toast content -> ( Toast.Tray content, Platform.Cmd.Cmd Toast.Msg )"
+            },
+            {
+                "name": "addUniqueWith",
+                "comment": " Most powerful `addUnique` version: it takes a function that\ncompares two toast contents.\n\n    type alias MyToast =\n        { message : String\n        , color : String\n        }\n\n    sameMessageLength : MyToast -> MyToast -> Bool\n    sameMessageLength t1 t2 =\n        String.length t1.message == String.length t2.message\n\n    -- we can't have two toast with same message length\n    -- for some reason...\n    Toast.persistent { message = \"hello, world\", color = \"#7f7\" }\n        |> Toast.addUniqueWith sameMessageLength currentTray\n\n",
+                "type": "(content -> content -> Basics.Bool) -> Toast.Tray content -> Toast.Toast content -> ( Toast.Tray content, Platform.Cmd.Cmd Toast.Msg )"
+            },
+            {
+                "name": "config",
+                "comment": " To create an empty [Toast.Config](#Config) you have to provide\na `Toast.Msg -> msg` function, this probably should look like\n\n    type Msg\n        = ToastMsg Toast.Msg\n          -- other stuff...\n        | AddToast MyToastContent\n\n    toastConfig : Toast.Config Msg\n    toastConfig =\n        Toast.config ToastMsg\n\n",
+                "type": "(Toast.Msg -> msg) -> Toast.Config msg"
+            },
+            {
+                "name": "exit",
+                "comment": " Same as [remove](#remove), but the toast goes through\nits exit transition phase.\nIf you have a fade-out animation it'll be showed.\n",
+                "type": "Toast.Private Toast.Id -> Toast.Msg"
+            },
+            {
+                "name": "expireIn",
+                "comment": " Create a new toast with a fixed expiry.\nToast's lifespan is expressed in milliseconds.\n\n    Toast.expireIn 5000 \"I'll disappear in five seconds\"\n\n",
+                "type": "Basics.Int -> content -> Toast.Toast content"
+            },
+            {
+                "name": "expireOnBlur",
+                "comment": " This kind of toast has an interaction-based expiration.\nIt'll be removed automatically in given time if user doesn't\ninteract with the toast, but it'll stay visible if receives focus\nor mouse over.\n\nWhen the interaction has ended and the toast lost both focus\nand mouse over the given amount of milliseconds is awaited before\nit's removed.\n\n    Toast.expireOnBlur 5000 \"I won't go away while I'm focused!\"\n\n",
+                "type": "Basics.Int -> content -> Toast.Toast content"
+            },
+            {
+                "name": "persistent",
+                "comment": " Create a new toast that won't be automatically removed,\nit will stay visible until you explicitly remove it.\n\n    Toast.persistent\n        { message = \"hello, world\"\n        , color = \"#7f7\"\n        }\n\n",
+                "type": "content -> Toast.Toast content"
+            },
+            {
+                "name": "remove",
+                "comment": " Inside your [viewToast](#render) you may want to remove\nyour toast programmatically.\nRemove means that the toast is deleted right away.\nIf you want to go through the exit transition use [exit](#exit).\n\n    closeButton : Toast.Info Toast -> Html Msg\n    closeButton toast =\n        Html.div\n            [ onClick <| ToastMsg (Toast.exit toast.id) ]\n            [ Html.text \"✘\" ]\n\n    viewToast : List (Html.Attribute Msg) -> Toast.Info Toast -> Html Msg\n    viewToast attrs toast =\n        Html.div\n            attrs\n            [ Html.text toast.content.message\n            , closeButton toast\n            ]\n\n",
+                "type": "Toast.Private Toast.Id -> Toast.Msg"
+            },
+            {
+                "name": "render",
+                "comment": " This function is where our money are: all our data shrunk down\nto a beautiful `Html msg`, ready to be served.\n\nThe first thing needed to make this magic is a `viewToast` function\nthat I'll try to explain how it works:\n\n  - It takes all the html attributes compiled by `elm-toast`\n    which you need to remember to attach to some node\n  - Takes a [Toast.Info](#Info) so you can access to your\n    toast's `content` and other stuff\n  - Return an `Html msg` that represent your toast,\n    or something that contains your toast like a wrapper\n    or whatever\n\nSecondly you have to provide a [Toast.Tray](#Tray)\nand last but not least your [Toast.Config](#Config).\n\n    viewToast : List (Html.Attribute Msg) -> Toast.Info Toast -> Html Msg\n    viewToast attrs toast =\n        Html.div\n            attrs -- do not forget this little friend!\n            [ Html.text toast.content.message ]\n\n    Toast.render viewToast model.tray toastConfig\n\n",
+                "type": "(List.List (Html.Attribute msg) -> Toast.Info content -> Html.Html msg) -> Toast.Tray content -> Toast.Config msg -> Html.Html msg"
+            },
+            {
+                "name": "tray",
+                "comment": " An empty tray, it's a thing you can put in an `init`.\n\n    init : anything -> ( Model, Cmd msg )\n    init _ =\n        ( { tray = Toast.tray }, Cmd.none )\n\n",
+                "type": "Toast.Tray content"
+            },
+            {
+                "name": "tuple",
+                "comment": " Helps in conversion between\n`( Toast.Tray, Cmd Toast.Msg )` and `( Model, Cmd Msg )`.\n\n    update : Msg -> Model -> ( Model, Cmd Msg )\n    update msg model =\n        case msg of\n            AddToast content ->\n                Toast.persistent content\n                    |> Toast.add model.tray\n                    |> Toast.tuple ToastMsg model\n\n            ToastMsg tmsg ->\n                Toast.update tmsg model.tray\n                    |> Toast.tuple ToastMsg model\n\n",
+                "type": "(Toast.Msg -> msg) -> { model | tray : Toast.Tray content } -> ( Toast.Tray content, Platform.Cmd.Cmd Toast.Msg ) -> ( { model | tray : Toast.Tray content }, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "update",
+                "comment": " Nothing fancy here: given a [Toast.Msg](#Msg) and a [Toast.Tray](#Tray)\nupdates tray's state and produces a `Cmd`.\n",
+                "type": "Toast.Msg -> Toast.Tray content -> ( Toast.Tray content, Platform.Cmd.Cmd Toast.Msg )"
+            },
+            {
+                "name": "withAttributes",
+                "comment": " Add custom attributes to every toasts.\n\n    Toast.config ToastMsg\n        |> Toast.withAttributes [ style \"background\" \"#4a90e2\" ]\n        |> Toast.render viewToast model.tray\n\n",
+                "type": "List.List (Html.Attribute msg) -> Toast.Config msg -> Toast.Config msg"
+            },
+            {
+                "name": "withEnterAttributes",
+                "comment": " Add custom attributes to toasts only during their\n[Toast.Enter](#Phase) phase.\n\n    import Html.Attributes exposing (style)\n\n    Toast.config ToastMsg\n        |> Toast.withEnterAttributes [ style \"opacity\" \"0\" ]\n        |> Toast.render viewToast model.tray\n\n",
+                "type": "List.List (Html.Attribute msg) -> Toast.Config msg -> Toast.Config msg"
+            },
+            {
+                "name": "withExitAttributes",
+                "comment": " Add custom attributes to toasts only during their\n[Toast.Exit](#Phase) phase.\n\n    Toast.config ToastMsg\n        |> Toast.withExitAttributes [ style \"transform\" \"translateX(20em)\" ]\n        |> Toast.render viewToast model.tray\n\n",
+                "type": "List.List (Html.Attribute msg) -> Toast.Config msg -> Toast.Config msg"
+            },
+            {
+                "name": "withExitTransition",
+                "comment": " Add a delay between toast exit phase and actual removal.\n\n    Toast.persistent { message = \"hello, world\", color = \"#7f7\" }\n        |> Toast.withExitTransition 1000\n\n",
+                "type": "Basics.Int -> Toast.Toast content -> Toast.Toast content"
+            },
+            {
+                "name": "withFocusAttributes",
+                "comment": " Add custom attributes to toasts when they're [focused](#Interaction).\n\n    Toast.config ToastMsg\n        |> Toast.withFocusAttributes [ style \"box-shadow\" \"2px 3px 7px 2px #c8cdd0\" ]\n        |> Toast.render viewToast model.tray\n\n",
+                "type": "List.List (Html.Attribute msg) -> Toast.Config msg -> Toast.Config msg"
+            },
+            {
+                "name": "withTransitionAttributes",
+                "comment": " Shortcut for [withEnterAttributes](#withEnterAttributes) plus [withExitAttributes](#withExitAttributes).\n\n    Toast.config ToastMsg\n        |> Toast.withEnterAttributes [ class \"toast-fade-out\" ]\n        |> Toast.withExitAttributes [ class \"toast-fade-out\" ]\n        |> Toast.render viewToast model.tray\n\n    Toast.config ToastMsg\n        |> Toast.withTransitionAttributes [ class \"toast-fade-out\" ]\n        |> Toast.render viewToast model.tray\n\n",
+                "type": "List.List (Html.Attribute msg) -> Toast.Config msg -> Toast.Config msg"
+            },
+            {
+                "name": "withTrayAttributes",
+                "comment": " Add custom attributes to rendered [Toast.Tray](#Tray).\n\n    Toast.config ToastMsg\n        |> Toast.withTrayAttributes [ class \"nice-tray\" ]\n        |> Toast.render viewToast model.tray\n\n",
+                "type": "List.List (Html.Attribute msg) -> Toast.Config msg -> Toast.Config msg"
+            },
+            {
+                "name": "withTrayNode",
+                "comment": " Set [nodeName](https://developer.mozilla.org/en-US/docs/Web/API/Node/nodeName)\nof rendered [Toast.Tray](#Tray).\n\nBy default this is `\"div\"`. I know, as a `String`,\nbut hey that's what you get from [Html.Keyed.node](https://package.elm-lang.org/packages/elm/html/latest/Html-Keyed#node)\n\n",
+                "type": "String.String -> Toast.Config msg -> Toast.Config msg"
+            }
+        ],
+        "binops": []
+    }
+]

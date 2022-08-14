@@ -1,0 +1,59 @@
+[
+    {
+        "name": "Graph.Extra",
+        "comment": " This module implements additional convenience functions to work with the\n[elm-community/graph](https://package.elm-lang.org/packages/elm-community/graph/latest/Graph)\n\n\n# Utility\n\n@docs alongAnyEdges\n\n\n# Algorithms\n\n@docs bellmanFord\n@docs kruskal\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "alongAnyEdges",
+                "comment": " A good default for selecting neighbors that go along outgoing edges\nor follow along incoming edges:\n",
+                "type": "Graph.NodeContext n e -> List.List Graph.NodeId"
+            },
+            {
+                "name": "bellmanFord",
+                "comment": " An implementation of bellman ford algorithm, for finding shortest path between\nsingle source and all vertices. Returns them as a dictionary or an error in Result type.\n\n_Note_: You may know error occurs in case there is a negative weight cycle.\n\n",
+                "type": "Graph.NodeId -> (Graph.Edge e -> number) -> Graph.Graph n e -> Result.Result String.String (Dict.Dict Graph.NodeId ( number, List.List Graph.NodeId ))"
+            },
+            {
+                "name": "kruskal",
+                "comment": " This algorithms returns the minimum spanning tree for the given graph using Kruskal's algorithm.\n\n_Note_ :\n1. Returns Minimum Spanning Arborescence in case of directed graph\n2. Assumes directed graphs, so if you want MST on undirected graph, pass (Graph.symmetricClosure graph)\n\n",
+                "type": "(Graph.Edge e -> number) -> Graph.Graph n e -> Graph.Graph n e"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Graph.Tree.Extra",
+        "comment": " This module implements additional convenience functions to work with the\n[elm-community/graph.tree](https://package.elm-lang.org/packages/elm-community/graph/latest/Graph-Tree)\n\n_Note_: please open a issue on github if you find any:\n\n1.  Any bugs in implementation\n2.  Request for adding a new convenience function to the package.\n\n\n# API\n\n@docs toGraph\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toGraph",
+                "comment": " This function takes a elm-community/Graph.Tree tree, converts the\nTree into a elm-community/Graph Graph, which can then easily visualised using\nthe Render module present in [goyalarchit/elm-dagre](https://package.elm-lang.org/packages/goyalarchit/elm-dagre/latest/)\n",
+                "type": "Graph.Tree.Tree label -> Graph.Graph label ()"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Random.Graph",
+        "comment": " This module is useful for generating a random graph with given number of edges and nodes.\n\n#Generators\n\n@docs simpleConnectedGraph\n\n@docs simpleConnectedGraphWithRandomNodeEdgeLabels\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "simpleConnectedGraph",
+                "comment": " This function generates a random graph that is connected if number of edges >= number of nodes - 1\n\n_Note_: You can also generate random trees, just pass edge count as n-1.\n\n",
+                "type": "Basics.Int -> Basics.Int -> Random.Generator ( List.List Basics.Int, List.List ( Basics.Int, Basics.Int ) )"
+            },
+            {
+                "name": "simpleConnectedGraphWithRandomNodeEdgeLabels",
+                "comment": " Similar to simpleConnectedGraph, also generates edge labels and node labels using the given generator.\n",
+                "type": "Basics.Int -> Basics.Int -> Random.Generator n -> Random.Generator e -> Random.Generator (Graph.Graph n e)"
+            }
+        ],
+        "binops": []
+    }
+]

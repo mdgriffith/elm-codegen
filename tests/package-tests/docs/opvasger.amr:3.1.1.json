@@ -1,0 +1,51 @@
+[
+    {
+        "name": "AMR",
+        "comment": " This module helps you set up an Elm program with automatic message-replay.\n\n\n# Configuration\n\n@docs Config\n\n\n# Programs\n\nThis API mirrors [elm/browser](https://package.elm-lang.org/packages/elm/browser/latest).\n\n@docs sandbox, element, document, application\n\n@docs Program\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " This is the configuration required for automatic message-replay.\n\nLet's say your program is initialized in HTML like this:\n\n    <script>\n        const app = Elm.Main.init({\n            node: document.body,\n            flags: {\n                amr : localStorage.getItem(\"app-amr\")\n            }\n        })\n\n        app.ports.toCache.subscribe(output =>\n            localStorage.setItem(\"app-amr\", output)\n        )\n    </script>\n\nThe configuration for that script would be like this:\n\n    port toCache : Maybe String -> Cmd msg\n\n    fromCache =\n        .amr\n\n`encodeMsg` and `msgDecoder` depends how messages are defined. You can find an example [here](https://ellie-app.com/6LPwsV9sgpJa1).\n\n",
+                "args": [
+                    "flags",
+                    "msg"
+                ],
+                "type": "{ encodeMsg : msg -> Json.Encode.Value, msgDecoder : Json.Decode.Decoder msg, fromCache : flags -> Maybe.Maybe String.String, toCache : String.String -> Platform.Cmd.Cmd msg }"
+            },
+            {
+                "name": "Program",
+                "comment": " A program with automatic message-replay enabled.\n",
+                "args": [
+                    "flags",
+                    "model",
+                    "msg"
+                ],
+                "type": "Platform.Program flags (AMR.Main.Model model) msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "application",
+                "comment": " Create an application that manages Url changes. More about that [here](https://package.elm-lang.org/packages/elm/browser/1.0.1/Browser#application).\n",
+                "type": "AMR.Config flags msg -> { init : flags -> Url.Url -> Browser.Navigation.Key -> ( model, Platform.Cmd.Cmd msg ), update : msg -> model -> ( model, Platform.Cmd.Cmd msg ), subscriptions : model -> Platform.Sub.Sub msg, view : model -> Browser.Document msg, onUrlChange : Url.Url -> msg, onUrlRequest : Browser.UrlRequest -> msg } -> AMR.Program flags model msg"
+            },
+            {
+                "name": "document",
+                "comment": " Create an HTML document managed by Elm. More about that [here](https://package.elm-lang.org/packages/elm/browser/1.0.1/Browser#document).\n",
+                "type": "AMR.Config flags msg -> { init : flags -> ( model, Platform.Cmd.Cmd msg ), subscriptions : model -> Platform.Sub.Sub msg, update : msg -> model -> ( model, Platform.Cmd.Cmd msg ), view : model -> Browser.Document msg } -> AMR.Program flags model msg"
+            },
+            {
+                "name": "element",
+                "comment": " Create an HTML element managed by Elm. More about that [here](https://package.elm-lang.org/packages/elm/browser/1.0.1/Browser#element).\n",
+                "type": "AMR.Config flags msg -> { init : flags -> ( model, Platform.Cmd.Cmd msg ), view : model -> Html.Html msg, update : msg -> model -> ( model, Platform.Cmd.Cmd msg ), subscriptions : model -> Platform.Sub.Sub msg } -> AMR.Program flags model msg"
+            },
+            {
+                "name": "sandbox",
+                "comment": " Create a “sandboxed” program that cannot communicate with the outside world. More about that [here](https://package.elm-lang.org/packages/elm/browser/1.0.1/Browser#sandbox).\n",
+                "type": "AMR.Config flags msg -> { init : model, view : model -> Html.Html msg, update : msg -> model -> model } -> AMR.Program flags model msg"
+            }
+        ],
+        "binops": []
+    }
+]

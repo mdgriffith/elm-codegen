@@ -1,0 +1,86 @@
+[
+    {
+        "name": "OneToOne",
+        "comment": " A one-to-one mapping between values. The values can be any comparable\ntype. This includes `Int`, `Float`, `Time`, `Char`, `String`, and tuples or\nlists of comparable types.\n\nInsert, remove, and query operations all take _O(log n)_ time.\n\n\n# One-to-one correspondence\n\n@docs OneToOne\n\n\n# Build\n\n@docs empty, singleton, insert, removeFirst, removeSecond\n\n\n# Query\n\n@docs isEmpty, memberFirst, memberSecond, first, second, size\n\n\n# Lists\n\n@docs toList, fromList\n\n",
+        "unions": [
+            {
+                "name": "OneToOne",
+                "comment": " Represents a one-to-one mapping between values. So a `OneToOne String Int` is\na one-to-one mapping that lets you look up a `String` and find the associated\n`Int` and vice versa.\n",
+                "args": [
+                    "a",
+                    "b"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "empty",
+                "comment": " Create an empty one-to-one mapping.\n\n    empty --> fromList []\n\n",
+                "type": "OneToOne.OneToOne a b"
+            },
+            {
+                "name": "first",
+                "comment": " Extract the first value associated with a second value. If the second value\nis not found, return `Nothing`.\n\n    animalNamesToNumbers : OneToOne String Int\n    animalNamesToNumbers =\n        fromList [ ( \"Tom\", 1 ), ( \"Jerry\", 2 ) ]\n\n    first 1 animalNamesToNumbers --> Just \"Tom\"\n    first 2 animalNamesToNumbers --> Just \"Jerry\"\n    first 3 animalNamesToNumbers --> Nothing\n\n",
+                "type": "comparableB -> OneToOne.OneToOne a comparableB -> Maybe.Maybe a"
+            },
+            {
+                "name": "fromList",
+                "comment": " Convert an association list into a one-to-one mapping.\n\n    fromList [ ( \"tomato\", \"cabbage\" ) ] --> (singleton \"tomato\" \"cabbage\")\n\n",
+                "type": "List.List ( comparableA, comparableB ) -> OneToOne.OneToOne comparableA comparableB"
+            },
+            {
+                "name": "insert",
+                "comment": " Insert a pair of values into a one-to-one mapping. Removes overlapping\npairs when there is a collision.\n\n    oneToOne : OneToOne Int Int\n    oneToOne =\n        empty\n            |> insert 1 1\n            |> insert 2 1\n\n    oneToOne --> fromList [ ( 2, 1 ) ]\n\n",
+                "type": "comparableA -> comparableB -> OneToOne.OneToOne comparableA comparableB -> OneToOne.OneToOne comparableA comparableB"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Determine if a one-to-one mapping is empty.\n\n    isEmpty empty --> True\n\n    isEmpty (singleton 1 1) --> False\n\n",
+                "type": "OneToOne.OneToOne a b -> Basics.Bool"
+            },
+            {
+                "name": "memberFirst",
+                "comment": " Determine if a first value is in a one-to-one mapping.\n\n    memberFirst 1 (singleton 1 2) --> True\n\n    memberFirst 2 (singleton 1 2) --> False\n\n",
+                "type": "comparableA -> OneToOne.OneToOne comparableA b -> Basics.Bool"
+            },
+            {
+                "name": "memberSecond",
+                "comment": " Determine if a second value is in a one-to-one mapping.\n\n    memberSecond 2 (singleton 1 2) --> True\n\n    memberSecond 1 (singleton 1 2) --> False\n\n",
+                "type": "comparableB -> OneToOne.OneToOne a comparableB -> Basics.Bool"
+            },
+            {
+                "name": "removeFirst",
+                "comment": " Remove a pair from a one-to-one mapping by the first value. If the pair is\nnot found, no changes are made.\n\n    animalNamesToNumbers : OneToOne String Int\n    animalNamesToNumbers =\n        fromList [ ( \"Tom\", 1 ), ( \"Jerry\", 2 ) ]\n\n    removeFirst \"Tom\" animalNamesToNumbers --> fromList [ ( \"Jerry\", 2 ) ]\n\n    removeFirst \"Quacker\" animalNamesToNumbers --> fromList [ ( \"Tom\", 1 ), ( \"Jerry\", 2 ) ]\n\n",
+                "type": "comparableA -> OneToOne.OneToOne comparableA comparableB -> OneToOne.OneToOne comparableA comparableB"
+            },
+            {
+                "name": "removeSecond",
+                "comment": " Remove a pair from a one-to-one mapping by the second value. If the pair is\nnot found, no changes are made.\n\n    animalNamesToNumbers : OneToOne String Int\n    animalNamesToNumbers =\n        fromList [ ( \"Tom\", 1 ), ( \"Jerry\", 2 ) ]\n\n    removeSecond 1 animalNamesToNumbers --> fromList [ ( \"Jerry\", 2 ) ]\n\n    removeSecond 3 animalNamesToNumbers --> fromList [ ( \"Tom\", 1 ), ( \"Jerry\", 2 ) ]\n\n",
+                "type": "comparableB -> OneToOne.OneToOne comparableA comparableB -> OneToOne.OneToOne comparableA comparableB"
+            },
+            {
+                "name": "second",
+                "comment": " Extract the second value associated with a first value. If the first value\nis not found, return `Nothing`.\n\n    animalNamesToNumbers : OneToOne String Int\n    animalNamesToNumbers =\n        fromList [ ( \"Tom\", 1 ), ( \"Jerry\", 2 ) ]\n\n    second \"Tom\" animalNamesToNumbers --> Just 1\n    second \"Jerry\" animalNamesToNumbers --> Just 2\n    second \"Quacker\" animalNamesToNumbers --> Nothing\n\n",
+                "type": "comparableA -> OneToOne.OneToOne comparableA b -> Maybe.Maybe b"
+            },
+            {
+                "name": "singleton",
+                "comment": " ",
+                "type": "comparableA -> comparableB -> OneToOne.OneToOne comparableA comparableB"
+            },
+            {
+                "name": "size",
+                "comment": " Determine the number of pairs in a one-to-one mapping.\n\n    animalNamesToNumbers : OneToOne String Int\n    animalNamesToNumbers =\n       fromList [ ( \"Tom\", 1 ), ( \"Jerry\", 2 ) ]\n\n    size animalNamesToNumbers --> 2\n\n",
+                "type": "OneToOne.OneToOne first second -> Basics.Int"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert a one-to-one mapping into an association list of pairs, sorted by\nthe first value.\n\n    toList (singleton \"tomato\" \"cabbage\") --> [ ( \"tomato\", \"cabbage\" ) ]\n\n",
+                "type": "OneToOne.OneToOne a b -> List.List ( a, b )"
+            }
+        ],
+        "binops": []
+    }
+]

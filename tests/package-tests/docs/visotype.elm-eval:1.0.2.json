@@ -1,0 +1,26 @@
+[
+    {
+        "name": "Eval",
+        "comment": " This package provides an infrastructure for parsing and evaluating Elm\nfunction calls that have been passed in as data through ports.\n\n@docs call\n@docs parse\n@docs coreLib\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "call",
+                "comment": " Given an interface to some Elm library, try to execute a `Call` and return\nthe result, providing an error message if the function is not found or the\narguments do not match.\n\nExample with a function from Elm's core libraries:\n\n    { f = \"(+)\"\n    , args =\n      [ 1 |> Json.Encode.int\n      , 2 |> Json.Encode.int\n      ]\n    }\n      |> Eval.call Eval.coreLib\n\n    --> Ok (Json.Encode.Value 3)\n\n\nExample with a function from a user library called `Greeting` that has a\nfunction named `hello`:\n\n      { f = \"hello\"\n      , args = [ \"World\" |> Json.Encode.string ]\n      }\n        |> Eval.call Greeting.lib\n\n      --> Ok (Json.Encode.Value \"Hello, World!\")\n\n",
+                "type": "(String.String -> Result.Result String.String Eval.Function.Function) -> Eval.Call.Call -> Result.Result String.String Json.Encode.Value"
+            },
+            {
+                "name": "coreLib",
+                "comment": " An interface to Elm's core libraries (can be passed as the first argument\nto `call`)\n",
+                "type": "String.String -> Result.Result String.String Eval.Function.Function"
+            },
+            {
+                "name": "parse",
+                "comment": " Parse a `Json` object as a `Call`, resolving errors in the `f` field to an\nempty string and resoving errors in the `args` field to an empty list\n\n    jsObject\n      |> Eval.parse\n      |> Eval.call Eval.coreLib\n\n",
+                "type": "Json.Encode.Value -> Eval.Call.Call"
+            }
+        ],
+        "binops": []
+    }
+]

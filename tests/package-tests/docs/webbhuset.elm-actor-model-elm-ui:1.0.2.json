@@ -1,0 +1,212 @@
+[
+    {
+        "name": "Webbhuset.ElmUI.Actor",
+        "comment": "\n\n# Actor for Elm UI\n\nThis module has an identical API to Webbhuset.Actor\nbut with the view functions returning `Element msg`.\n\nCheck Webbhuset.Actor for more info.\n\n@docs PID\n\n## Create Actors from Components\n\n@docs fromUI, fromService, fromLayout\n\n## Bootstrap\n\n@docs Actor\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Actor",
+                "comment": " An actor is acomponent where the types are wrapped\nto fit the System types.\n\n",
+                "args": [
+                    "compModel",
+                    "appModel",
+                    "msg"
+                ],
+                "type": "Webbhuset.ActorSystem.Actor compModel appModel (Element.Element msg) msg"
+            },
+            {
+                "name": "PID",
+                "comment": " A PID is an identifier for a Process.\n\n",
+                "args": [],
+                "type": "Webbhuset.PID.PID"
+            }
+        ],
+        "values": [
+            {
+                "name": "fromLayout",
+                "comment": " Create an actor from a Layout Component\n\n",
+                "type": "{ wrapModel : compModel -> appModel, wrapMsg : msgIn -> appMsg, mapIn : appMsg -> Maybe.Maybe msgIn, mapOut : Webbhuset.ElmUI.Actor.PID -> msgOut -> Webbhuset.ElmUI.Actor.SysMsg name appMsg } -> Webbhuset.ElmUI.Component.Layout compModel msgIn msgOut (Webbhuset.ElmUI.Actor.SysMsg name appMsg) -> Webbhuset.ElmUI.Actor.Actor compModel appModel (Webbhuset.ElmUI.Actor.SysMsg name appMsg)"
+            },
+            {
+                "name": "fromService",
+                "comment": " Create an actor from a Service Component\n\n",
+                "type": "{ wrapModel : compModel -> appModel, wrapMsg : msgIn -> appMsg, mapIn : appMsg -> Maybe.Maybe msgIn, mapOut : Webbhuset.ElmUI.Actor.PID -> msgOut -> Webbhuset.ElmUI.Actor.SysMsg name appMsg } -> Webbhuset.ElmUI.Component.Service compModel msgIn msgOut -> Webbhuset.ElmUI.Actor.Actor compModel appModel (Webbhuset.ElmUI.Actor.SysMsg name appMsg)"
+            },
+            {
+                "name": "fromUI",
+                "comment": " Create an actor from a UI Component\n\n\n",
+                "type": "{ wrapModel : compModel -> appModel, wrapMsg : msgIn -> appMsg, mapIn : appMsg -> Maybe.Maybe msgIn, mapOut : Webbhuset.ElmUI.Actor.PID -> msgOut -> Webbhuset.ElmUI.Actor.SysMsg name appMsg } -> Webbhuset.ElmUI.Component.UI compModel msgIn msgOut -> Webbhuset.ElmUI.Actor.Actor compModel appModel (Webbhuset.ElmUI.Actor.SysMsg name appMsg)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Webbhuset.ElmUI.Component",
+        "comment": "\n\n@docs PID\n\n# Elm UI Components\n\nThis module has an identical API to Webbhuset.Component\nbut with the view functions returning `Element msg`.\n\nCheck Webbhuset.Component for more info.\n\n\n@docs UI\n@docs Service\n@docs Layout\n    , mapFirst\n    , mapSecond\n    , mapThird\n    , andThen\n    , addOutMsg\n    , addCmd\n    , toCmd\n    , toCmdWithDelay\n    , Queue\n    , emptyQueue\n    , addToQueue\n    , runQueue\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Layout",
+                "comment": " Layout Component Type\n\n",
+                "args": [
+                    "model",
+                    "msgIn",
+                    "msgOut",
+                    "msg"
+                ],
+                "type": "{ init : Webbhuset.ElmUI.Component.PID -> ( model, List.List msgOut, Platform.Cmd.Cmd msgIn ), update : msgIn -> model -> ( model, List.List msgOut, Platform.Cmd.Cmd msgIn ), view : (msgIn -> msg) -> model -> (Webbhuset.ElmUI.Component.PID -> Element.Element msg) -> Element.Element msg, onSystem : Webbhuset.Component.SystemEvent.SystemEvent -> Webbhuset.Component.SystemEvent.Handling msgIn, subs : model -> Platform.Sub.Sub msgIn }"
+            },
+            {
+                "name": "PID",
+                "comment": " A PID is an identifier for a Process.\n\n",
+                "args": [],
+                "type": "Webbhuset.PID.PID"
+            },
+            {
+                "name": "Queue",
+                "comment": " Store messages in a queue.\n\n",
+                "args": [
+                    "msgIn"
+                ],
+                "type": "Webbhuset.Component.Queue msgIn"
+            },
+            {
+                "name": "Service",
+                "comment": " Service Component Type\n\n",
+                "args": [
+                    "model",
+                    "msgIn",
+                    "msgOut"
+                ],
+                "type": "{ init : Webbhuset.ElmUI.Component.PID -> ( model, List.List msgOut, Platform.Cmd.Cmd msgIn ), update : msgIn -> model -> ( model, List.List msgOut, Platform.Cmd.Cmd msgIn ), onSystem : Webbhuset.Component.SystemEvent.SystemEvent -> Webbhuset.Component.SystemEvent.Handling msgIn, subs : model -> Platform.Sub.Sub msgIn }"
+            },
+            {
+                "name": "UI",
+                "comment": " UI Component Type\n\n",
+                "args": [
+                    "model",
+                    "msgIn",
+                    "msgOut"
+                ],
+                "type": "{ init : Webbhuset.ElmUI.Component.PID -> ( model, List.List msgOut, Platform.Cmd.Cmd msgIn ), update : msgIn -> model -> ( model, List.List msgOut, Platform.Cmd.Cmd msgIn ), view : model -> Element.Element msgIn, onSystem : Webbhuset.Component.SystemEvent.SystemEvent -> Webbhuset.Component.SystemEvent.Handling msgIn, subs : model -> Platform.Sub.Sub msgIn }"
+            }
+        ],
+        "values": [
+            {
+                "name": "addCmd",
+                "comment": " Add a Cmd to the output 3-Tuple.\n\n",
+                "type": "Platform.Cmd.Cmd msg -> ( x, y, Platform.Cmd.Cmd msg ) -> ( x, y, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "addOutMsg",
+                "comment": " Add an out message to the output 3-Tuple.\n\n",
+                "type": "msg -> ( x, List.List msg, y ) -> ( x, List.List msg, y )"
+            },
+            {
+                "name": "addToQueue",
+                "comment": " Add a msg to the queue\n\n",
+                "type": "msgIn -> Webbhuset.ElmUI.Component.Queue msgIn -> Webbhuset.ElmUI.Component.Queue msgIn"
+            },
+            {
+                "name": "andThen",
+                "comment": " Run a series of updates on the model\n\n",
+                "type": "(model -> ( model, List.List msgOut, Platform.Cmd.Cmd msgIn )) -> ( model, List.List msgOut, Platform.Cmd.Cmd msgIn ) -> ( model, List.List msgOut, Platform.Cmd.Cmd msgIn )"
+            },
+            {
+                "name": "emptyQueue",
+                "comment": " Create an Empty Queue\n\n",
+                "type": "Webbhuset.ElmUI.Component.Queue msgIn"
+            },
+            {
+                "name": "mapFirst",
+                "comment": " Map the first argument (Model).\n\n",
+                "type": "(input -> out) -> ( input, x, y ) -> ( out, x, y )"
+            },
+            {
+                "name": "mapSecond",
+                "comment": " Map the second argument (List MsgOut).\n\n",
+                "type": "(input -> out) -> ( x, input, y ) -> ( x, out, y )"
+            },
+            {
+                "name": "mapThird",
+                "comment": " Map the third argument (Cmd).\n\n",
+                "type": "(input -> out) -> ( x, y, input ) -> ( x, y, out )"
+            },
+            {
+                "name": "runQueue",
+                "comment": " Run the `update` function on all messages in the queue\nand compose all output.\n",
+                "type": "Webbhuset.ElmUI.Component.Queue msgIn -> (msgIn -> model -> ( model, List.List msgOut, Platform.Cmd.Cmd msgIn )) -> ( model, List.List msgOut, Platform.Cmd.Cmd msgIn ) -> ( model, List.List msgOut, Platform.Cmd.Cmd msgIn )"
+            },
+            {
+                "name": "toCmd",
+                "comment": " Convert a msg to Cmd.\n\n",
+                "type": "msg -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "toCmdWithDelay",
+                "comment": " Convert a msg to Cmd with a timeout in milliseconds.\n\n",
+                "type": "Basics.Float -> msg -> Platform.Cmd.Cmd msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Webbhuset.ElmUI.Sandbox",
+        "comment": "\n\nSandbox support for Elm UI\n\n@docs SandboxProgram\n    , TestCase\n    , ui\n    , layout\n    , service\n    , sendMsg\n    , delay\n    , spawnChild\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "SandboxProgram",
+                "comment": " Sandbox Program\n\n",
+                "args": [
+                    "model",
+                    "msgIn",
+                    "msgOut"
+                ],
+                "type": "Webbhuset.Component.Sandbox.SandboxProgram model msgIn msgOut"
+            },
+            {
+                "name": "TestCase",
+                "comment": " Test Case\n\n",
+                "args": [
+                    "msgIn",
+                    "msgOut"
+                ],
+                "type": "Webbhuset.Component.Sandbox.TestCase msgIn msgOut"
+            }
+        ],
+        "values": [
+            {
+                "name": "delay",
+                "comment": " Delay\n\n",
+                "type": "Basics.Float -> Webbhuset.Component.Sandbox.Action msgIn -> Webbhuset.Component.Sandbox.Action msgIn"
+            },
+            {
+                "name": "layout",
+                "comment": " Layout Component\n\n",
+                "type": "{ title : String.String, component : Webbhuset.ElmUI.Component.Layout model msgIn msgOut (Webbhuset.Component.Sandbox.Msg msgIn msgOut), cases : List.List (Webbhuset.ElmUI.Sandbox.TestCase msgIn msgOut), stringifyMsgIn : msgIn -> String.String, stringifyMsgOut : msgOut -> String.String, wrapView : (msgIn -> Webbhuset.Component.Sandbox.Msg msgIn msgOut) -> Element.Element (Webbhuset.Component.Sandbox.Msg msgIn msgOut) -> Html.Html (Webbhuset.Component.Sandbox.Msg msgIn msgOut) } -> Webbhuset.ElmUI.Sandbox.SandboxProgram model msgIn msgOut"
+            },
+            {
+                "name": "sendMsg",
+                "comment": " Send a message\n\n",
+                "type": "msgIn -> Webbhuset.Component.Sandbox.Action msgIn"
+            },
+            {
+                "name": "service",
+                "comment": " Service Component\n\n",
+                "type": "{ title : String.String, component : Webbhuset.ElmUI.Component.Service model msgIn msgOut, cases : List.List (Webbhuset.ElmUI.Sandbox.TestCase msgIn msgOut), view : model -> Html.Html msgIn, stringifyMsgIn : msgIn -> String.String, stringifyMsgOut : msgOut -> String.String } -> Webbhuset.ElmUI.Sandbox.SandboxProgram model msgIn msgOut"
+            },
+            {
+                "name": "spawnChild",
+                "comment": " Spawn child\n\n",
+                "type": "String.String -> (Webbhuset.PID.PID -> msgIn) -> Webbhuset.Component.Sandbox.Action msgIn"
+            },
+            {
+                "name": "ui",
+                "comment": " Layout Component\n\n",
+                "type": "{ title : String.String, component : Webbhuset.ElmUI.Component.UI model msgIn msgOut, cases : List.List (Webbhuset.ElmUI.Sandbox.TestCase msgIn msgOut), stringifyMsgIn : msgIn -> String.String, stringifyMsgOut : msgOut -> String.String, wrapView : Element.Element msgIn -> Html.Html msgIn } -> Webbhuset.ElmUI.Sandbox.SandboxProgram model msgIn msgOut"
+            }
+        ],
+        "binops": []
+    }
+]

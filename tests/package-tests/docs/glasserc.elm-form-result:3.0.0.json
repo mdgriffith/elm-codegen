@@ -1,0 +1,138 @@
+[
+    {
+        "name": "Form.Result",
+        "comment": " A type for validating a form, collecting errors as we go.\n\nImagine you have a type that represents the data a user has currently\nentered into a form. For example, maybe it looks like this:\n\n    type alias FormData =\n        { username : String\n        , password : String\n        , confirmPassword : String\n        }\n\nYou want to validate it into a user object:\n\n    type alias User =\n        { username : String\n        , password : String\n        }\n\nWhen we build up our user type, even one bad field is enough to fail\nthe validation. But when we display the invalid form, we want to show\nthe problems for every single field, not just the first bad one. So\nwhen validation doesn't succeed, you want to produce a `FormErrors`:\n\n    type UsernameError\n        = UsernameMissing\n\n    type PasswordError\n        = PasswordNotStrongEnough\n        | PasswordsDontMatch\n\n    type alias FormErrors =\n        { username : Maybe UsernameError\n        , password : Maybe PasswordError\n        , confirmPassword : Maybe PasswordError\n        }\n\nWe want to stop building the User as soon as we get one failed field,\nso you could try using `Maybe.Extra.andMap`:\n\n    validateUser : FormData -> Maybe User\n    validateUser state =\n        Just (\\username password _ -> User username password)\n            |> MaybeEx.andMap (checkStringEmpty state.username)\n            |> MaybeEx.andMap (checkPasswordStrength state.password)\n            |> MaybeEx.andMap (checkMatch state.password state.confirmPassword)\n\nBut then what if the user was Nothing? You have to re-use all those\nfield checks and even invert them to produce errors instead of\nsuccesses so that you can use them in the `FormErrors` type.\n\n`FormResult` solves this problem by building up both the error type\nand the validated \"output\" type at the same time. You feed it\n`Result`s and it feeds `Err`s to the error type and `Ok`s to the\n\"output\" type. After all the fields have been provided, you can\nconvert the whole thing into a `Result`, which will be `Ok` if all the\nfields were `Ok`, or `Err` otherwise.\n\n    validateUsername : String -> Either UsernameError String\n    validateUsername s =\n        if s == \"\" then Err UsernameMissing else Ok s\n\n    validatePassword : String -> Either PasswordError String\n    validatePassword s = ...\n\n    validateMatch : String -> String -> Either PasswordError String\n    validateMatch password confirmPassword = ...\n\n    validateUser : FormData -> Either FormErrors User\n    validateUser state =\n        Form.Result.start FormErrors User\n            |> Form.Result.validate (validateUsername state.username)\n            |> Form.Result.validate (validatePassword state.password)\n            |> Form.Result.checkErr (validateMatch state.password state.confirmPassword)\n            |> Form.Result.toResult\n\nNote that although `state.confirmPassword` does not contribute\nanything to our output type, we still need to check it for errors, and\nany errors in it should cause the validation to fail.\n\nA fully-functioning demo can be found in the\n[examples](https://github.com/glasserc/elm-form-result/tree/master/examples)\ndirectory in [this project's\nrepository](https://github.com/glasserc/elm-form-result).\n\n\n## Hints\n\n  - `FormResult` is easiest to use if the order of fields in your error\n    type corresponds to the order of fields in your output type. (Your\n    form state type and generated HTML can be in any order you like, of\n    course.) If you have to feed fields to your output type and your\n    error type in a different order, you can do that using\n    `maybeValid` and `maybeErr`, but it's easy to get confused.\n\n  - If you find yourself with a `FormResult` that has a lot of fields\n    and you're losing track of what field belongs to what output type,\n    you might consider splitting up your validation function into\n    smaller validation functions, producing smaller types. For an\n    example of this, check `validateFraction` in [the\n    example](https://github.com/glasserc/elm-form-result/blob/master/examples/src/Main.elm).\n\n@docs FormResult, start, validated, toResult\n@docs maybeValid, maybeErr\n@docs checkErr, ifMissing, missingAs\n@docs unconditional, unconditionalErr\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "FormResult",
+                "comment": " An \"in progress\" form validation.\nThe first type variable `err` is the form errors type.\nThe second type variable `res` is the \"real model\" type, which you\nhope to get if validation succeeds.\n",
+                "args": [
+                    "err",
+                    "res"
+                ],
+                "type": "{ errorType : err, realModel : Maybe.Maybe res }"
+            }
+        ],
+        "values": [
+            {
+                "name": "checkErr",
+                "comment": " A shortcut for calling `maybeErr` with a `Result` instead of a\n`Maybe`.\n\nIf the field is `Err`, it indicates that validation failed.\nIf the field is `Ok whatever`, discard the `whatever` and call the\nerror type with `Nothing`.\n\nThis is useful when you have a validation function that produces a\n`Result err something` but you don't actually care about the `something`.\n\n",
+                "type": "Result.Result errField a -> Form.Result.FormResult (Maybe.Maybe errField -> err) res -> Form.Result.FormResult err res"
+            },
+            {
+                "name": "ifMissing",
+                "comment": " A shortcut for calling `validated` with a `Maybe` instead of a\n`Result`.\n\nIf the field is `Nothing`, it indicates that the validation failed,\nand the given error is what is used to indicate the error.\nIf the field is `Just something`, use the `something` as the output\nand call the error type with `Nothing`.\n\nThis is useful e.g. when handling select fields, where the only thing\nyou want to validate is that the user actually selected something.\n\n",
+                "type": "Maybe.Maybe resField -> errField -> Form.Result.FormResult (Maybe.Maybe errField -> err) (resField -> res) -> Form.Result.FormResult err res"
+            },
+            {
+                "name": "maybeErr",
+                "comment": " Add something to just the error side of an \"in progress\" form\nvalidation, with `Just err` meaning that validation has failed.\n\nThis can be useful if multiple fields in your form type correspond to\na single field in your output type. In this case, you'll probably have\nseveral fields in your form error type that don't correspond to\nanything in your output type, so you'll want to feed a possible error\nin to each without touching the output type.\n\n",
+                "type": "Maybe.Maybe errField -> Form.Result.FormResult (Maybe.Maybe errField -> err) res -> Form.Result.FormResult err res"
+            },
+            {
+                "name": "maybeValid",
+                "comment": " Add a possible output field to an \"in progress\" form validation,\nwith `Nothing` indicating that validation has failed.\n\nThis can be useful if multiple fields in your form type correspond to\na single field in your output type. In this case, a field in your\noutput type might not be present, but without an error in the very\nnext form error field. In that case, you can use this function to\nincorporate a `Maybe field`, and add `Maybe error`s using\n`maybeErr`.\n\n",
+                "type": "Maybe.Maybe resField -> Form.Result.FormResult err (resField -> res) -> Form.Result.FormResult err res"
+            },
+            {
+                "name": "missingAs",
+                "comment": " The same as `ifMissing`, but with the argument order reversed.\n",
+                "type": "errField -> Maybe.Maybe resField -> Form.Result.FormResult (Maybe.Maybe errField -> err) (resField -> res) -> Form.Result.FormResult err res"
+            },
+            {
+                "name": "start",
+                "comment": " Create a form validation.\n",
+                "type": "err -> res -> Form.Result.FormResult err res"
+            },
+            {
+                "name": "toResult",
+                "comment": " Convert a FormResult to a Result.\n",
+                "type": "Form.Result.FormResult err res -> Result.Result err res"
+            },
+            {
+                "name": "unconditional",
+                "comment": " Add a field to the output type of an \"in progress\" form\nvalidation, unconditionally.\n\nYou might use this if there are fields in your output type that are\nnot dependent on user input.\n\n",
+                "type": "resField -> Form.Result.FormResult err (resField -> res) -> Form.Result.FormResult err res"
+            },
+            {
+                "name": "unconditionalErr",
+                "comment": " Add something to just the error side of an \"in progress\" form\nvalidation, unconditionally.\n\nThis can be useful if your error type has fields that aren't Maybe, or\nwhen `Just err` in an error field doesn't necessarily mean that the\nvalidation failed.\n\n",
+                "type": "errField -> Form.Result.FormResult (errField -> err) res -> Form.Result.FormResult err res"
+            },
+            {
+                "name": "validated",
+                "comment": " Add a field to an \"in progress\" form validation, with `Err\nsomething` indicating that validation has failed.\n",
+                "type": "Result.Result a b -> Form.Result.FormResult (Maybe.Maybe a -> err) (b -> res) -> Form.Result.FormResult err res"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Form.Result.AnyJust",
+        "comment": " A helper type to look for a Just in a pile of Maybes.\n\n\n## Background\n\nLet's imagine you have a FormError type like this:\n\n    type alias FormError =\n        { password : Maybe PasswordStrengthError\n        , acceptedTerms : Maybe MustAcceptTermsError\n        }\n\nYou might produce these values by validating a registration\nform. You'd augment the form with any errors you produced, and as the\nuser updated the form, you would clear the error fields (until you\nvalidated it again).\n\nYou have a submit button but you want to disable it if there's an\nerror that needs correcting, so you add a `disabled` attribute\naccording to the condition `Maybe.isJust formErrors`. But eventually\nthe user will clear the last error and you'll have a FormError full of\n`Nothing`s. You need to convert that `Just` \"empty\" FormError into a\n`Nothing` so that the submit button can be activated again.\n\nYou could write a function like this:\n\n    flatten : FormErrors -> Maybe FormErrors\n    flatten ({ password, acceptedTerms } as formErrors) =\n        case ( password, acceptedTerms ) of\n            ( Nothing, Nothing ) ->\n                Nothing\n\n            _ ->\n                Just formErrors\n\nBut this function is brittle. If you add a field to the `FormErrors`\ntype, this function needs to be updated too, and the compiler won't\nhelp you.\n\nInstead, this module provides an `AnyJust` type that re-uses the\nconstructor to your `FormErrors` type to ensure that every field is\nchecked for presence. You could re-write the `flatten` function with\nit as:\n\n    flatten : FormErrors -> Maybe FormErrors\n    flatten formErrors =\n        AnyJust.start FormErorrs\n            |> AnyJust.check formErrors.password\n            |> AnyJust.check formErrors.acceptedTerms\n            |> AnyJust.finish\n\nAs the name implies, if any field is `Just`, then at the end, you wind\nup with a `Just FormErrors` (produced by re-constructing it with the\nvalues given). If no `Just` was provided to `AnyJust.check`, then you\nend up with `Nothing`. The reconstruction of the `FormErrors` is\nslightly inefficient, but in exchage, we can leverage the compiler to\ncomplain if we add another field.\n\n@docs AnyJust, start, check, finish, map, andMap, andThen\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "AnyJust",
+                "comment": " A utility type for checking for a `Just` in a pile of `Maybe`s.\n\nIt wraps some other type, typically a constructor, and as you feed it\narguments using `check`, it updates a `Bool` to see if it ever saw\na `Just`. At first, this `Bool` is `False`. It switches to `True`\nif `check` is ever given a `Just`.\n\nYou can feel free to think of this type as a writer monad for a\nBool. You can also feel free not to think of it that way, if you\ndon't know what that means or find it confusing.\n\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ model : a, seenJust : Basics.Bool }"
+            }
+        ],
+        "values": [
+            {
+                "name": "andMap",
+                "comment": " Applicative `andMap`, just for completeness.\n\nThe resulting `AnyJust` will register as having seen a `Just` if either\ninput saw a `Just`.\n\nBe careful not to use this instead of `check` if you intend to check a\n`Maybe`. If you do, the types will still work out, but the `finish`\nfunction will not produce a `Just` at the end.\n\n",
+                "type": "Form.Result.AnyJust.AnyJust a -> Form.Result.AnyJust.AnyJust (a -> b) -> Form.Result.AnyJust.AnyJust b"
+            },
+            {
+                "name": "andThen",
+                "comment": " Monadic `andThen`, just for completeness.\n\nThe resulting `AnyJust` will register as having seen a `Just` if the\noriginal `AnyJust` saw a `Just` or if the output `AnyJust` saw a\n`Just`.\n\nBe careful not to use this instead of `check` if you intend to check a\n`Maybe`. If you do, the types will still work out, but the `finish`\nfunction will not produce a `Just` at the end.\n\n",
+                "type": "(a -> Form.Result.AnyJust.AnyJust b) -> Form.Result.AnyJust.AnyJust a -> Form.Result.AnyJust.AnyJust b"
+            },
+            {
+                "name": "check",
+                "comment": " Feed a `Maybe` to the underlying type, checking if it's a `Just`.\n",
+                "type": "Maybe.Maybe a -> Form.Result.AnyJust.AnyJust (Maybe.Maybe a -> b) -> Form.Result.AnyJust.AnyJust b"
+            },
+            {
+                "name": "finish",
+                "comment": " Resolve the `AnyJust`, producing `Just a` if we ever saw a `Just`.\n",
+                "type": "Form.Result.AnyJust.AnyJust a -> Maybe.Maybe a"
+            },
+            {
+                "name": "map",
+                "comment": " Functor `map`, just for completeness.\n\nBe careful not to use this instead of `check` if you intend to check a\n`Maybe`. If you do, the types will still work out, but the `finish`\nfunction will not produce a `Just` at the end.\n\n",
+                "type": "(a -> b) -> Form.Result.AnyJust.AnyJust a -> Form.Result.AnyJust.AnyJust b"
+            },
+            {
+                "name": "start",
+                "comment": " Start an `AnyJust` that has never seen a `Just`.\n",
+                "type": "a -> Form.Result.AnyJust.AnyJust a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Form.Result.Utils",
+        "comment": " Some basic utilities that don't belong anywhere else.\n\n@docs ifNothing, nothingAs\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "ifNothing",
+                "comment": " Look for `Nothing`, using some other value to show you found it.\n\nThis comes in handy when you want to e.g. react to an absent field by\nraising an error, but don't need to do anything when the field is\npresent.\n\n",
+                "type": "Maybe.Maybe a -> b -> Maybe.Maybe b"
+            },
+            {
+                "name": "nothingAs",
+                "comment": " Same as `ifNothing`, but with the argument order reversed.\n",
+                "type": "b -> Maybe.Maybe a -> Maybe.Maybe b"
+            }
+        ],
+        "binops": []
+    }
+]

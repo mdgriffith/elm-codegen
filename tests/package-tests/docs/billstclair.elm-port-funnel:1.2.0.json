@@ -1,0 +1,369 @@
+[
+    {
+        "name": "PortFunnel",
+        "comment": " PortFunnel allows you easily use multiple port modules.\n\nYou create a single outgoing/incoming pair of ports, and PortFunnel does the rest.\n\nSome very simple JavaScript boilerplate directs `PortFunnel.js` to load and wire up all the other PortFunnel-aware JavaScript files. You write one simple case statement to choose which port package's message is coming in, and then write package-specific code to handle each one.\n\n\n## Types\n\n@docs FunnelSpec, ModuleDesc, StateAccessors, GenericMessage, JSVersion\n\n\n## PortFunnel-aware Modules\n\n@docs makeModuleDesc, getModuleDescName, emptyCommander\n\n\n## API\n\n@docs send, sendMessage, processValue, appProcess, process\n\n\n## Low-level conversion between `Value` and `GenericMessage`\n\n@docs encodeGenericMessage, decodeGenericMessage\n@docs genericMessageDecoder\n@docs messageToValue, messageToJsonString\n\n\n## Simulated Message Processing\n\n@docs makeSimulatedFunnelCmdPort\n\n",
+        "unions": [
+            {
+                "name": "ModuleDesc",
+                "comment": " Everything we need to know to route one module's messages.\n",
+                "args": [
+                    "message",
+                    "substate",
+                    "response"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "FunnelSpec",
+                "comment": " All the information needed to use a PortFunnel-aware application\n\nwith a single PortFunnel-aware module.\n\n`StateAccessors` is provided by the application.\n\n`ModuleDesc` is provided by the module, usually via a `moduleDesc` variable.\n\n`commander` is provided by the module, usually via a `commander` variable.\n\n`handler` is provided by the application.\n\n",
+                "args": [
+                    "state",
+                    "substate",
+                    "message",
+                    "response",
+                    "model",
+                    "msg"
+                ],
+                "type": "{ accessors : PortFunnel.StateAccessors state substate, moduleDesc : PortFunnel.ModuleDesc message substate response, commander : (PortFunnel.GenericMessage -> Platform.Cmd.Cmd msg) -> response -> Platform.Cmd.Cmd msg, handler : response -> state -> model -> ( model, Platform.Cmd.Cmd msg ) }"
+            },
+            {
+                "name": "GenericMessage",
+                "comment": " A generic message that goes over the wire to/from the module JavaScript.\n",
+                "args": [],
+                "type": "{ moduleName : String.String, tag : String.String, args : Json.Encode.Value }"
+            },
+            {
+                "name": "JSVersion",
+                "comment": " This is used to force a major version bump when the JS changes.\n\nYou'll usually not use it for anything.\n\n",
+                "args": [],
+                "type": "{ v4_1 : () }"
+            },
+            {
+                "name": "StateAccessors",
+                "comment": " Package up an application's functions for accessing one funnel module's state.\n",
+                "args": [
+                    "state",
+                    "substate"
+                ],
+                "type": "{ get : state -> substate, set : substate -> state -> state }"
+            }
+        ],
+        "values": [
+            {
+                "name": "appProcess",
+                "comment": " Finish the processing begun in `processValue`.\n",
+                "type": "(Json.Encode.Value -> Platform.Cmd.Cmd msg) -> PortFunnel.GenericMessage -> PortFunnel.FunnelSpec state substate message response model msg -> state -> model -> Result.Result String.String ( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "decodeGenericMessage",
+                "comment": " Turn a `Value` from the `Sub` port into a `GenericMessage`.\n",
+                "type": "Json.Encode.Value -> Result.Result String.String PortFunnel.GenericMessage"
+            },
+            {
+                "name": "emptyCommander",
+                "comment": " A `commander` for a `FunnelSpec` that always returns `Cmd.none`\n\nUseful for funnels that do not send themselves messages.\n\n",
+                "type": "(PortFunnel.GenericMessage -> Platform.Cmd.Cmd msg) -> response -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "encodeGenericMessage",
+                "comment": " Low-level GenericMessage encoder.\n",
+                "type": "PortFunnel.GenericMessage -> Json.Encode.Value"
+            },
+            {
+                "name": "genericMessageDecoder",
+                "comment": " Decoder for a `GenericMessage`.\n",
+                "type": "Json.Decode.Decoder PortFunnel.GenericMessage"
+            },
+            {
+                "name": "getModuleDescName",
+                "comment": " Get the name from a `ModuleDesc`.\n",
+                "type": "PortFunnel.ModuleDesc message substate response -> String.String"
+            },
+            {
+                "name": "makeModuleDesc",
+                "comment": " Make a `ModuleDesc`.\n\nA module-specific one of these is available from a `PortFunnel`-aware module. The args are:\n\n    name encoder decoder processor\n\n`name` is the name of the module, it must match the name of the JS file.\n\n`encoder` turns your custom `Message` type into a `GenericMessage`.\n\n`decoder` turns a `GenericMessage` into your custom message type.\n\n`processor` is called when a message comes in over the subscription port. It's very similar to a standard application `update` function. `substate` is your module's `State` type, not to be confused with `state`, which is the user's application state type.\n\n",
+                "type": "String.String -> (message -> PortFunnel.GenericMessage) -> (PortFunnel.GenericMessage -> Result.Result String.String message) -> (message -> substate -> ( substate, response )) -> PortFunnel.ModuleDesc message substate response"
+            },
+            {
+                "name": "makeSimulatedFunnelCmdPort",
+                "comment": " Simulate a `Cmd` port, outgoing to a funnel's backend.\n\n    makeSimulatedFunnelCmdPort moduleDesc simulator tagger value\n\nUsually, a funnel `Module` will provide one of these by leaving off the last two args, `tagger` and `value`:\n\n    simulator : Message -> Maybe Message\n    simulator message =\n        ...\n\n    makeSimulatedCmdPort : (Value -> msg) -> Value -> Cmd msg\n    makeSimulatedCmdPort =\n        PortFunnel.makeSimulatedFunnelCmdPort\n            moduleDesc\n            simulator\n\nThen the application code will call `simulatedPort` with a tagger, which turns a `Value` into the application `msg` type. That gives something with the same signature, `Value -> Cmd msg` as a `Cmd` port:\n\n    type Msg\n        = Receive Value\n        | ...\n\n    simulatedModuleCmdPort : Value -> Cmd msg\n    simulatedModuleCmdPort =\n        Module.makeSimulatedPort Receive\n\nThis can only simulate synchronous message responses, but that's sufficient to test a lot. And it works in `elm reactor`, with no port JavaScript code.\n\nNote that this ignores errors in decoding a `Value` to a `GenericMessage` and from there to a `message`, returning `Cmd.none` if it gets an error from either. Funnel developers will have to test their encoders and decoders separately.\n\n",
+                "type": "PortFunnel.ModuleDesc message substate response -> (message -> Maybe.Maybe message) -> (Json.Encode.Value -> msg) -> Json.Encode.Value -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "messageToJsonString",
+                "comment": " Convert a message to a JSON `Value` and encode it as a string.\n",
+                "type": "PortFunnel.ModuleDesc message substate response -> message -> String.String"
+            },
+            {
+                "name": "messageToValue",
+                "comment": " Convert a message to a JSON `Value`\n",
+                "type": "PortFunnel.ModuleDesc message substate response -> message -> Json.Encode.Value"
+            },
+            {
+                "name": "process",
+                "comment": " Process a GenericMessage.\n\nThis is low-level processing. Most applications will call this through `appProcess` via `processValue`.\n\n",
+                "type": "PortFunnel.StateAccessors state substate -> PortFunnel.ModuleDesc message substate response -> PortFunnel.GenericMessage -> state -> Result.Result String.String ( state, response )"
+            },
+            {
+                "name": "processValue",
+                "comment": " Process a `Value` from your subscription port.\n\n    processValue funnels appTrampoline value state model\n\nParse the `Value` into a `GenericMessage`.\n\nIf successful, use the `moduleName` from there to look up a funnel from the `Dict` you provide.\n\nIf the lookup succeeds, call your `appTrampoline`, to unbox the `funnel` and call `PortFunnel.appProcess` to do the rest of the processing.\n\nSee `example/boilerplate.elm` and `example/simple.elm` for examples of using this.\n\n",
+                "type": "Dict.Dict String.String funnel -> (PortFunnel.GenericMessage -> funnel -> state -> model -> Result.Result String.String ( model, Platform.Cmd.Cmd msg )) -> Json.Encode.Value -> state -> model -> Result.Result String.String ( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "send",
+                "comment": " Send a `GenericMessage` over a `Cmd port`.\n",
+                "type": "(Json.Encode.Value -> Platform.Cmd.Cmd msg) -> PortFunnel.GenericMessage -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "sendMessage",
+                "comment": " Send a `message` over a `Cmd port`.\n",
+                "type": "PortFunnel.ModuleDesc message substate response -> (Json.Encode.Value -> Platform.Cmd.Cmd msg) -> message -> Platform.Cmd.Cmd msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "PortFunnel.AddXY",
+        "comment": " An example add/multiply funnel, with a simulator.\n\n\n# Types\n\n@docs Message, Response, State\n\n\n# Components of a `PortFunnel.FunnelSpec`\n\n@docs moduleName, moduleDesc, commander\n\n\n# Initial `State`\n\n@docs initialState\n\n\n# Sending a `Message` out the `Cmd` Port\n\n@docs makeAddMessage, makeMultiplyMessage, send\n\n\n# Conversion to Strings\n\n@docs toString, toJsonString\n\n\n# Simulator\n\n@docs makeSimulatedCmdPort\n\n\n# Non-standard Functions\n\n@docs stateToStrings\n\n",
+        "unions": [
+            {
+                "name": "Message",
+                "comment": " `AddMessage` and `MultiplyMessage` go out from Elm to the JS.\n\n`SumMessage` and `ProductMessage` come back in.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "AddMessage",
+                        [
+                            "PortFunnel.AddXY.Question"
+                        ]
+                    ],
+                    [
+                        "MultiplyMessage",
+                        [
+                            "PortFunnel.AddXY.Question"
+                        ]
+                    ],
+                    [
+                        "SumMessage",
+                        [
+                            "PortFunnel.AddXY.Answer"
+                        ]
+                    ],
+                    [
+                        "ProductMessage",
+                        [
+                            "PortFunnel.AddXY.Answer"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Response",
+                "comment": " A `MessageResponse` encapsulates a message.\n\n`NoResponse` is currently unused, but many PortFunnel-aware modules will need it.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NoResponse",
+                        []
+                    ],
+                    [
+                        "MessageResponse",
+                        [
+                            "PortFunnel.AddXY.Message"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "State",
+                "comment": " Our internal state.\n\nJust tracks all incoming messages.\n\n",
+                "args": [],
+                "type": "List.List PortFunnel.AddXY.Message"
+            }
+        ],
+        "values": [
+            {
+                "name": "commander",
+                "comment": " Responsible for sending a `CmdResponse` back througt the port.\n\nCalled by `PortFunnel.appProcess` for each response returned by `process`.\n\nThe `AddXY` module doesn't send itself messages, so this is just `PortFunnel.emptyCommander`.\n\n",
+                "type": "(PortFunnel.GenericMessage -> Platform.Cmd.Cmd msg) -> PortFunnel.AddXY.Response -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "initialState",
+                "comment": " The initial, empty state, so the application can initialize its state.\n",
+                "type": "PortFunnel.AddXY.State"
+            },
+            {
+                "name": "makeAddMessage",
+                "comment": " Make an `AddMessage`\n",
+                "type": "Basics.Int -> Basics.Int -> PortFunnel.AddXY.Message"
+            },
+            {
+                "name": "makeMultiplyMessage",
+                "comment": " Make a `MultiplyMessage`\n",
+                "type": "Basics.Int -> Basics.Int -> PortFunnel.AddXY.Message"
+            },
+            {
+                "name": "makeSimulatedCmdPort",
+                "comment": " Make a simulated `Cmd` port.\n",
+                "type": "(Json.Encode.Value -> msg) -> Json.Encode.Value -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "moduleDesc",
+                "comment": " Our module descriptor.\n",
+                "type": "PortFunnel.ModuleDesc PortFunnel.AddXY.Message PortFunnel.AddXY.State PortFunnel.AddXY.Response"
+            },
+            {
+                "name": "moduleName",
+                "comment": " The name of this module: \"AddXY\".\n",
+                "type": "String.String"
+            },
+            {
+                "name": "send",
+                "comment": " Send a `Message` through a `Cmd` port.\n",
+                "type": "(Json.Encode.Value -> Platform.Cmd.Cmd msg) -> PortFunnel.AddXY.Message -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "stateToStrings",
+                "comment": " Convert our `State` to a list of strings.\n",
+                "type": "PortFunnel.AddXY.State -> List.List String.String"
+            },
+            {
+                "name": "toJsonString",
+                "comment": " Convert a `Message` to the same JSON string that gets sent\n\nover the wire to the JS code.\n\n",
+                "type": "PortFunnel.AddXY.Message -> String.String"
+            },
+            {
+                "name": "toString",
+                "comment": " Convert a `Message` to a nice-looking human-readable string.\n",
+                "type": "PortFunnel.AddXY.Message -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "PortFunnel.Echo",
+        "comment": " An example echo funnel, with a simulator.\n\n\n# Types\n\n@docs Message, Response, State\n\n\n# Components of a `PortFunnel.FunnelSpec`\n\n@docs moduleName, moduleDesc, commander\n\n\n# Initial `State`\n\n@docs initialState\n\n\n# Sending a `Message` out the `Cmd` Port\n\n@docs makeMessage, send\n\n\n# Conversion to Strings\n\n@docs toString, toJsonString\n\n\n# Simulator\n\n@docs makeSimulatedCmdPort\n\n\n# Non-standard Functions\n\n@docs isLoaded, findMessages, stateToStrings\n\n",
+        "unions": [
+            {
+                "name": "Message",
+                "comment": " Since this is a simple echo example, the messages are just strings.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Request",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Startup",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Response",
+                "comment": " A `MessageResponse` encapsulates a message.\n\n`NoResponse` is currently unused, but many PortFunnel-aware modules will need it.\n\n`CmdResponse` denotes a message that needs to be sent through the port. This is done by the `commander` function.\n\n`ListResponse` allows us to return multiple responses. `commander` descends a `ListResponse` looking for `CmdResponse` responses. `findMessages` descends a list of `Response` records, collecting the `MessageResponse` messages.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NoResponse",
+                        []
+                    ],
+                    [
+                        "MessageResponse",
+                        [
+                            "PortFunnel.Echo.Message"
+                        ]
+                    ],
+                    [
+                        "CmdResponse",
+                        [
+                            "PortFunnel.Echo.Message"
+                        ]
+                    ],
+                    [
+                        "ListResponse",
+                        [
+                            "List.List PortFunnel.Echo.Response"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "State",
+                "comment": " Our internal state.\n\nJust tracks all incoming messages.\n\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "commander",
+                "comment": " Responsible for sending a `CmdResponse` back througt the port.\n\nCalled by `PortFunnel.appProcess` for each response returned by `process`.\n\n",
+                "type": "(PortFunnel.GenericMessage -> Platform.Cmd.Cmd msg) -> PortFunnel.Echo.Response -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "findMessages",
+                "comment": " When it needs to send the tail of a message beginning with a dollar sign\n\nthrough the port, the `Echo` module returns a `ListResponse`. This function recursively descends a ListResponse, and returns a list of the `Message`s from any `MessageResponse`s it finds.\n\n",
+                "type": "List.List PortFunnel.Echo.Response -> List.List PortFunnel.Echo.Message"
+            },
+            {
+                "name": "initialState",
+                "comment": " The initial, empty state, so the application can initialize its state.\n",
+                "type": "PortFunnel.Echo.State"
+            },
+            {
+                "name": "isLoaded",
+                "comment": " Returns true if a `Startup` message has been processed.\n\nThis is sent by the port code after it has initialized.\n\n",
+                "type": "PortFunnel.Echo.State -> Basics.Bool"
+            },
+            {
+                "name": "makeMessage",
+                "comment": " Make a message to send out through the port.\n",
+                "type": "String.String -> PortFunnel.Echo.Message"
+            },
+            {
+                "name": "makeSimulatedCmdPort",
+                "comment": " Make a simulated `Cmd` port.\n",
+                "type": "(Json.Encode.Value -> msg) -> Json.Encode.Value -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "moduleDesc",
+                "comment": " Our module descriptor.\n",
+                "type": "PortFunnel.ModuleDesc PortFunnel.Echo.Message PortFunnel.Echo.State PortFunnel.Echo.Response"
+            },
+            {
+                "name": "moduleName",
+                "comment": " The name of this module: \"Echo\".\n",
+                "type": "String.String"
+            },
+            {
+                "name": "send",
+                "comment": " Send a `Message` through a `Cmd` port.\n",
+                "type": "(Json.Encode.Value -> Platform.Cmd.Cmd msg) -> PortFunnel.Echo.Message -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "stateToStrings",
+                "comment": " Convert our `State` to a list of strings.\n",
+                "type": "PortFunnel.Echo.State -> List.List String.String"
+            },
+            {
+                "name": "toJsonString",
+                "comment": " Convert a `Message` to the same JSON string that gets sent\n\nover the wire to the JS code.\n\n",
+                "type": "PortFunnel.Echo.Message -> String.String"
+            },
+            {
+                "name": "toString",
+                "comment": " Convert a `Message` to a nice-looking human-readable string.\n",
+                "type": "PortFunnel.Echo.Message -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

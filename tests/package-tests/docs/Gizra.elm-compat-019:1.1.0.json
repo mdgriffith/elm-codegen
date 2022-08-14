@@ -1,0 +1,937 @@
+[
+    {
+        "name": "Basics017",
+        "comment": " Several functions from Elm 0.17 were moved to other modules in Elm 0.18, so\nhere they are!\n\n@docs fst, snd\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fst",
+                "comment": " Given a 2-tuple, returns the first value.\n",
+                "type": "( a, b ) -> a"
+            },
+            {
+                "name": "snd",
+                "comment": " Given a 2-tuple, returns the second value.\n",
+                "type": "( a, b ) -> b"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Basics018",
+        "comment": " Elm 0.19 made sevral changes:\n\n  - renamed `rem` to `remainderBy`\n  - removed `flip`,`curry`, and `uncurry`\n\nThe `toString` function was moved to the `Debug` module. It is not possible to\nre-implement it here.\n\n@docs rem, flip, curry, uncurry\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "curry",
+                "comment": " Change how arguments are passed to a function.\nThis splits paired arguments into two separate arguments.\n",
+                "type": "(( a, b ) -> c) -> a -> b -> c"
+            },
+            {
+                "name": "flip",
+                "comment": " Flip the order of the first two arguments to a function.\n",
+                "type": "(a -> b -> c) -> b -> a -> c"
+            },
+            {
+                "name": "rem",
+                "comment": " Find the remainder after dividing one number by another.\n\n    rem 11 4 --> 3\n\n    rem 12 4 --> 0\n\n    rem 13 4 --> 1\n\n    rem -1 4 --> -1\n\n",
+                "type": "Basics.Int -> Basics.Int -> Basics.Int"
+            },
+            {
+                "name": "uncurry",
+                "comment": " Change how arguments are passed to a function.\nThis combines two arguments into a single pair.\n",
+                "type": "(a -> b -> c) -> ( a, b ) -> c"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Bitwise017",
+        "comment": " Elm 0.18 replaced some functions from Elm 0.17 with flipped versions.\nSo, here are the original unfipped versions.\n\n@docs shiftLeft, shiftRight, shiftRightLogical\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "shiftLeft",
+                "comment": " Shift bits to the left by a given offset, filling new bits with zeros.\nThis can be used to multiply numbers by powers of two.\n\n    8 `shiftLeft` 1 == 16\n\n    8 `shiftLeft` 2 == 32\n\n",
+                "type": "Basics.Int -> Basics.Int -> Basics.Int"
+            },
+            {
+                "name": "shiftRight",
+                "comment": " Shift bits to the right by a given offset, filling new bits with\nwhatever is the topmost bit. This can be used to divide numbers by powers of two.\n\n    32 `shiftRight` 1 == 16\n\n    32\n        `shiftRight` 2\n        == 8\n        - 32\n        `shiftRight` 1\n        == -16\n\nThis is called an [arithmetic right\nshift](http://en.wikipedia.org/wiki/Bitwise_operation#Arithmetic_shift),\noften written (>>), and sometimes called a sign-propagating\nright shift because it fills empty spots with copies of the highest bit.\n\n",
+                "type": "Basics.Int -> Basics.Int -> Basics.Int"
+            },
+            {
+                "name": "shiftRightLogical",
+                "comment": " Shift bits to the right by a given offset, filling new bits with\nzeros.\n\n    32 `shiftRightLogical` 1 == 16\n\n    32\n        `shiftRightLogical` 2\n        == 8\n        - 32\n        `shiftRightLogical` 1\n        == 2147483632\n\nThis is called an [logical right\nshift](http://en.wikipedia.org/wiki/Bitwise_operation#Logical_shift), often written (>>>),\nand sometimes called a zero-fill right shift because it fills empty spots\nwith zeros.\n\n",
+                "type": "Basics.Int -> Basics.Int -> Basics.Int"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Color018",
+        "comment": "\n\n> The `Color` module was removed in Elm 0.19.\n\nLibrary for working with colors. Includes\n\n[RGB](https://en.wikipedia.org/wiki/RGB_color_model) and\n[HSL](http://en.wikipedia.org/wiki/HSL_and_HSV) creation, gradients, and\nbuilt-in names.\n\n\n# Colors\n\n@docs Color\n\n\n# Creation\n\n@docs rgb, rgba, hsl, hsla, greyscale, grayscale, complement\n\n\n# Gradients\n\n@docs Gradient, linear, radial\n\n\n# Extracting Colors\n\n@docs toRgb, toHsl\n\n\n# Built-in Colors\n\nThese colors come from the [Tango\npalette](http://tango.freedesktop.org/Tango_Icon_Theme_Guidelines)\nwhich provides aesthetically reasonable defaults for colors. Each color also\ncomes with a light and dark version.\n\n\n### Standard\n\n@docs red, orange, yellow, green, blue, purple, brown\n\n\n### Light\n\n@docs lightRed, lightOrange, lightYellow, lightGreen, lightBlue, lightPurple, lightBrown\n\n\n### Dark\n\n@docs darkRed, darkOrange, darkYellow, darkGreen, darkBlue, darkPurple, darkBrown\n\n\n### Eight Shades of Grey\n\nThese colors are a compatible series of shades of grey, fitting nicely\nwith the Tango palette.\n\n@docs white, lightGrey, grey, darkGrey, lightCharcoal, charcoal, darkCharcoal, black\n\nThese are identical to the _grey_ versions. It seems the spelling is regional, but\nthat has never helped me remember which one I should be writing.\n\n@docs lightGray, gray, darkGray\n\n",
+        "unions": [
+            {
+                "name": "Color",
+                "comment": " Representation of colors.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Gradient",
+                "comment": " Abstract representation of a color gradient.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "black",
+                "comment": " ",
+                "type": "Color018.Color"
+            },
+            {
+                "name": "blue",
+                "comment": " ",
+                "type": "Color018.Color"
+            },
+            {
+                "name": "brown",
+                "comment": " ",
+                "type": "Color018.Color"
+            },
+            {
+                "name": "charcoal",
+                "comment": " ",
+                "type": "Color018.Color"
+            },
+            {
+                "name": "complement",
+                "comment": " Produce a &ldquo;complementary color&rdquo;. The two colors will\naccent each other. This is the same as rotating the hue by 180&deg;.\n",
+                "type": "Color018.Color -> Color018.Color"
+            },
+            {
+                "name": "darkBlue",
+                "comment": " ",
+                "type": "Color018.Color"
+            },
+            {
+                "name": "darkBrown",
+                "comment": " ",
+                "type": "Color018.Color"
+            },
+            {
+                "name": "darkCharcoal",
+                "comment": " ",
+                "type": "Color018.Color"
+            },
+            {
+                "name": "darkGray",
+                "comment": " ",
+                "type": "Color018.Color"
+            },
+            {
+                "name": "darkGreen",
+                "comment": " ",
+                "type": "Color018.Color"
+            },
+            {
+                "name": "darkGrey",
+                "comment": " ",
+                "type": "Color018.Color"
+            },
+            {
+                "name": "darkOrange",
+                "comment": " ",
+                "type": "Color018.Color"
+            },
+            {
+                "name": "darkPurple",
+                "comment": " ",
+                "type": "Color018.Color"
+            },
+            {
+                "name": "darkRed",
+                "comment": " ",
+                "type": "Color018.Color"
+            },
+            {
+                "name": "darkYellow",
+                "comment": " ",
+                "type": "Color018.Color"
+            },
+            {
+                "name": "gray",
+                "comment": " ",
+                "type": "Color018.Color"
+            },
+            {
+                "name": "grayscale",
+                "comment": " Produce a gray based on the input. 0 is white, 1 is black.\n",
+                "type": "Basics.Float -> Color018.Color"
+            },
+            {
+                "name": "green",
+                "comment": " ",
+                "type": "Color018.Color"
+            },
+            {
+                "name": "grey",
+                "comment": " ",
+                "type": "Color018.Color"
+            },
+            {
+                "name": "greyscale",
+                "comment": " Produce a gray based on the input. 0 is white, 1 is black.\n",
+                "type": "Basics.Float -> Color018.Color"
+            },
+            {
+                "name": "hsl",
+                "comment": " Create [HSL colors](http://en.wikipedia.org/wiki/HSL_and_HSV). This gives\nyou access to colors more like a color wheel, where all hues are arranged in a\ncircle that you specify with standard Elm angles (radians).\n\n    red =\n        hsl (degrees 0) 1 0.5\n\n    green =\n        hsl (degrees 120) 1 0.5\n\n    blue =\n        hsl (degrees 240) 1 0.5\n\n    pastelRed =\n        hsl (degrees 0) 0.7 0.7\n\nTo cycle through all colors, just cycle through degrees. The saturation level\nis how vibrant the color is, like a dial between grey and bright colors. The\nlightness level is a dial between white and black.\n\n",
+                "type": "Basics.Float -> Basics.Float -> Basics.Float -> Color018.Color"
+            },
+            {
+                "name": "hsla",
+                "comment": " Create [HSL colors](http://en.wikipedia.org/wiki/HSL_and_HSV)\nwith an alpha component for transparency.\n",
+                "type": "Basics.Float -> Basics.Float -> Basics.Float -> Basics.Float -> Color018.Color"
+            },
+            {
+                "name": "lightBlue",
+                "comment": " ",
+                "type": "Color018.Color"
+            },
+            {
+                "name": "lightBrown",
+                "comment": " ",
+                "type": "Color018.Color"
+            },
+            {
+                "name": "lightCharcoal",
+                "comment": " ",
+                "type": "Color018.Color"
+            },
+            {
+                "name": "lightGray",
+                "comment": " ",
+                "type": "Color018.Color"
+            },
+            {
+                "name": "lightGreen",
+                "comment": " ",
+                "type": "Color018.Color"
+            },
+            {
+                "name": "lightGrey",
+                "comment": " ",
+                "type": "Color018.Color"
+            },
+            {
+                "name": "lightOrange",
+                "comment": " ",
+                "type": "Color018.Color"
+            },
+            {
+                "name": "lightPurple",
+                "comment": " ",
+                "type": "Color018.Color"
+            },
+            {
+                "name": "lightRed",
+                "comment": " ",
+                "type": "Color018.Color"
+            },
+            {
+                "name": "lightYellow",
+                "comment": " ",
+                "type": "Color018.Color"
+            },
+            {
+                "name": "linear",
+                "comment": " Create a linear gradient. Takes a start and end point and then a series of\n&ldquo;color stops&rdquo; that indicate how to interpolate between the start and\nend points. See [this example](http://elm-lang.org/examples/linear-gradient) for a\nmore visual explanation.\n",
+                "type": "( Basics.Float, Basics.Float ) -> ( Basics.Float, Basics.Float ) -> List.List ( Basics.Float, Color018.Color ) -> Color018.Gradient"
+            },
+            {
+                "name": "orange",
+                "comment": " ",
+                "type": "Color018.Color"
+            },
+            {
+                "name": "purple",
+                "comment": " ",
+                "type": "Color018.Color"
+            },
+            {
+                "name": "radial",
+                "comment": " Create a radial gradient. First takes a start point and inner radius. Then\ntakes an end point and outer radius. It then takes a series of &ldquo;color\nstops&rdquo; that indicate how to interpolate between the inner and outer\ncircles. See [this example](http://elm-lang.org/examples/radial-gradient) for a\nmore visual explanation.\n",
+                "type": "( Basics.Float, Basics.Float ) -> Basics.Float -> ( Basics.Float, Basics.Float ) -> Basics.Float -> List.List ( Basics.Float, Color018.Color ) -> Color018.Gradient"
+            },
+            {
+                "name": "red",
+                "comment": " ",
+                "type": "Color018.Color"
+            },
+            {
+                "name": "rgb",
+                "comment": " Create RGB colors from numbers between 0 and 255 inclusive.\n",
+                "type": "Basics.Int -> Basics.Int -> Basics.Int -> Color018.Color"
+            },
+            {
+                "name": "rgba",
+                "comment": " Create RGB colors with an alpha component for transparency.\nThe alpha component is specified with numbers between 0 and 1.\n",
+                "type": "Basics.Int -> Basics.Int -> Basics.Int -> Basics.Float -> Color018.Color"
+            },
+            {
+                "name": "toHsl",
+                "comment": " Extract the components of a color in the HSL format.\n",
+                "type": "Color018.Color -> { hue : Basics.Float, saturation : Basics.Float, lightness : Basics.Float, alpha : Basics.Float }"
+            },
+            {
+                "name": "toRgb",
+                "comment": " Extract the components of a color in the RGB format.\n",
+                "type": "Color018.Color -> { red : Basics.Int, green : Basics.Int, blue : Basics.Int, alpha : Basics.Float }"
+            },
+            {
+                "name": "white",
+                "comment": " ",
+                "type": "Color018.Color"
+            },
+            {
+                "name": "yellow",
+                "comment": " ",
+                "type": "Color018.Color"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Date018",
+        "comment": " In Elm 0.19, the `Date` module was moved to a separate package\n[elm-time](https://package.elm-lang.org/packages/elm/time/1.0.0/), with a\nsignificantly modified API. This implements parts of the old API.\n\nIt is not practical to re-implement Elm 0.18's `fromString`. Elm 0.18 simply\nsupplied the input to the Javascript runtime to perform the conversion. To\nimplement that reliably in Elm 0.19, we would need a pure Elm function that\nmimicked the behaviour of the Javascript runtime. This would be possible, but\ndoes not seem practical.\n\nIt does not seem possible to re-implement the Elm 0.18 signatures for `year`,\n`month`, `day`, `dayOfWeek`, `hour`, `minute`, `second`, or `millisecond`.\nThe difficulty is that they all have an implicit dependency on some time zone.\n\n  - In Elm 0.18, they were calculated according to the local time zone. We can\n    get that in Elm 0.19 via the `here` function, but that returns a `Task`. So,\n    the function signatures would also need to return a `Task`.\n\n  - We could re-implement the functions with the Elm 0.18 signatures if we\n    assumed a UTC time zone. However, that would not be the same behaviour as in\n    Elm 0.18, so it seems unwise.\n\nThus, for these functions, there is no real substitute for re-writing your code.\n\\`\n\n@docs Date, now\n@docs toTime, fromTime\n@docs Month, Day\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Date",
+                "comment": " Representation of a date.\n",
+                "args": [],
+                "type": "Time.Posix"
+            },
+            {
+                "name": "Day",
+                "comment": " Represents the days of the week.\n",
+                "args": [],
+                "type": "Time.Weekday"
+            },
+            {
+                "name": "Month",
+                "comment": " Represents the month of the year.\n",
+                "args": [],
+                "type": "Time.Month"
+            }
+        ],
+        "values": [
+            {
+                "name": "fromTime",
+                "comment": " Convert a time in milliseconds into a `Date`.\n\nA time is the number of milliseconds since\n[the Unix epoch](http://en.wikipedia.org/wiki/Unix_time).\n\n",
+                "type": "Time018.Time -> Date018.Date"
+            },
+            {
+                "name": "now",
+                "comment": " Get the `Date` at the moment when this task is run.\n",
+                "type": "Task.Task x Date018.Date"
+            },
+            {
+                "name": "toTime",
+                "comment": " Convert a `Date` to a time in milliseconds.\n\nA time is the number of milliseconds since\n[the Unix epoch](http://en.wikipedia.org/wiki/Unix_time).\n\n",
+                "type": "Date018.Date -> Time018.Time"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Http017",
+        "comment": " Elm 0.18 made significant changes to the `Http` API. This module\nre-implements the entire Elm 0.17 API.\n\nNote that we could not avoid adding an extra parameter to the `string`\nfunction. We also could not avoid adding a new constructor to `RawError`\nand `Error`.\n\n\n# Encoding and Decoding\n\n@docs url, uriEncode, uriDecode\n\n\n# Fetch Strings and JSON\n\n@docs getString, get, post, Error\n\n\n# Body Values\n\n@docs Body, empty, string, multipart, Data, stringData\n\n\n# Arbitrary Requests\n\n@docs send, Request, Settings, defaultSettings\n\n\n# Responses\n\n@docs Response, Value, fromJson, RawError\n\n",
+        "unions": [
+            {
+                "name": "Error",
+                "comment": " The kinds of errors you typically want in practice. When you get a\nresponse but its status is not in the 200 range, it will trigger a\n`BadResponse`. When you try to decode JSON but something goes wrong,\nyou will get an `UnexpectedPayload`.\n\n> A new `BadUrl` constructor has been added which was not in Elm 0.17.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Timeout",
+                        []
+                    ],
+                    [
+                        "NetworkError",
+                        []
+                    ],
+                    [
+                        "UnexpectedPayload",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "BadResponse",
+                        [
+                            "Basics.Int",
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "BadUrl",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "RawError",
+                "comment": " The things that count as errors at the lowest level. Technically, getting\na response back with status 404 is a &ldquo;successful&rdquo; response in that\nyou actually got all the information you asked for.\n\nThe `fromJson` function and `Error` type provide higher-level errors, but the\npoint of `RawError` is to allow you to define higher-level errors however you\nwant.\n\n> We needed to add a new constructor `RawBadUrl` to cover an error state\n> added in Elm 0.18.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "RawTimeout",
+                        []
+                    ],
+                    [
+                        "RawNetworkError",
+                        []
+                    ],
+                    [
+                        "RawBadUrl",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Value",
+                "comment": " The information given in the response. Currently there is no way to handle\n`Blob` types since we do not have an Elm API for that yet. This type will\nexpand as more values become available in Elm itself.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Text",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Blob",
+                        [
+                            "Http017.Blob"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Body",
+                "comment": " An opaque type representing the body of your HTTP message. With GET\nrequests this is empty, but in other cases it may be a string or blob.\n",
+                "args": [],
+                "type": "Http.Body"
+            },
+            {
+                "name": "Data",
+                "comment": " Represents data that can be put in a multi-part body. Right now it only\nsupports strings, but we will support blobs and files when we get an API for\nthem in Elm.\n",
+                "args": [],
+                "type": "Http.Part"
+            },
+            {
+                "name": "Request",
+                "comment": " Fully specify the request you want to send. For example, if you want to\nsend a request between domains (CORS request) you will need to specify some\nheaders manually.\n\n    corsPost : Request\n    corsPost =\n        { verb = \"POST\"\n        , headers =\n            [ ( \"Origin\", \"http://elm-lang.org\" )\n            , ( \"Access-Control-Request-Method\", \"POST\" )\n            , ( \"Access-Control-Request-Headers\", \"X-Custom-Header\" )\n            ]\n        , url = \"http://example.com/hats\"\n        , body = empty\n        }\n\n> In later versions of Elm, this becomes an opaque type.\n\n",
+                "args": [],
+                "type": "{ verb : String.String, headers : List.List ( String.String, String.String ), url : String.String, body : Http017.Body }"
+            },
+            {
+                "name": "Response",
+                "comment": " All the details of the response. There are many weird facts about\nresponses which include:\n\n  - The `status` may be 0 in the case that you load something from `file://`\n  - You cannot handle redirects yourself, they will all be followed\n    automatically. If you want to know if you have gone through one or more\n    redirect, the `url` field will let you know who sent you the response, so\n    you will know if it does not match the URL you requested.\n  - You are allowed to have duplicate headers, and their values will be\n    combined into a single comma-separated string.\n\nWe have left these underlying facts about `XMLHttpRequest` as is because one\ngoal of this library is to give a low-level enough API that others can build\nwhatever helpful behavior they want on top of it.\n\n",
+                "args": [],
+                "type": "{ status : Basics.Int, statusText : String.String, headers : Dict.Dict String.String String.String, url : String.String, value : Http017.Value }"
+            },
+            {
+                "name": "Settings",
+                "comment": " Configure your request if you need specific behavior.\n\n  - `timeout` lets you specify how long you are willing to wait for a response\n    before giving up. By default it is 0 which means &ldquo;never give\n    up!&rdquo;\n\n> It is not feasible to re-implement the `onStart` or `onProgress` fields\n> with the same signatures as in Elm 0.17. For this reason, those fields\n> have been omitted ... to track progress, you will need to use the Elm 0.19\n> APIs.\n>\n> It is also not possible in Elm 0.19 to re-implement what Elm 0.17 did with\n> the `desiredResponseType` field. Therefore, it has also been omitted.\n\n",
+                "args": [],
+                "type": "{ timeout : Time018.Time, withCredentials : Basics.Bool }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultSettings",
+                "comment": " The default settings used by `get` and `post`.\n\n    { timeout = 0\n    , onStart = Nothing\n    , onProgress = Nothing\n    , desiredResponseType = Nothing\n    , withCredentials = False\n    }\n\n",
+                "type": "Http017.Settings"
+            },
+            {
+                "name": "empty",
+                "comment": " An empty request body, no value will be sent along.\n",
+                "type": "Http017.Body"
+            },
+            {
+                "name": "fromJson",
+                "comment": " Turn a `Response` into an Elm value that is easier to deal with. Helpful\nif you are making customized HTTP requests with `send`, as is the case with\n`get` and `post`.\n\nGiven a `Response` this function will:\n\n  - Check that the status code is in the 200 range.\n  - Make sure the response `Value` is a string.\n  - Convert the string to Elm with the given `Decoder`.\n\nAssuming all these steps succeed, you will get an Elm value as the result!\n\n",
+                "type": "Json.Decode.Decoder a -> Task.Task Http017.RawError Http017.Response -> Task.Task Http017.Error a"
+            },
+            {
+                "name": "get",
+                "comment": " Send a GET request to the given URL. You also specify how to decode the\nresponse.\n\n    hats : Task Error (List String)\n    hats =\n        get (list string) \"http://example.com/hat-categories.json\"\n\n",
+                "type": "Json.Decode.Decoder value -> String.String -> Task.Task Http017.Error value"
+            },
+            {
+                "name": "getString",
+                "comment": " Send a GET request to the given URL. You will get the entire response as a\nstring.\n\n    hats : Task Error String\n    hats =\n        getString \"http://example.com/hat-categories.markdown\"\n\n",
+                "type": "String.String -> Task.Task Http017.Error String.String"
+            },
+            {
+                "name": "multipart",
+                "comment": " Create multi-part request bodies, allowing you to send many chunks of data\nall in one request. All chunks of data must be given a name.\n\nCurrently, you can only construct `stringData`, but we will support `blobData`\nand `fileData` once we have proper APIs for those types of data in Elm.\n\n",
+                "type": "List.List Http017.Data -> Http017.Body"
+            },
+            {
+                "name": "post",
+                "comment": " Send a POST request to the given URL, carrying the given body. You also\nspecify how to decode the response with [a JSON decoder][json].\n\n[json]: http://package.elm-lang.org/packages/elm-lang/core/latest/Json-Decode#Decoder\n\n    hats : Task Error (List String)\n    hats =\n        post (list string) \"http://example.com/hat-categories.json\" empty\n\n",
+                "type": "Json.Decode.Decoder value -> String.String -> Http017.Body -> Task.Task Http017.Error value"
+            },
+            {
+                "name": "send",
+                "comment": " Send a request exactly how you want it. The `Settings` argument lets you\nconfigure things like timeouts and progress monitoring. The `Request` argument\ndefines all the information that will actually be sent along to a server.\n\n    crossOriginGet : String -> String -> Task RawError Response\n    crossOriginGet origin url =\n        send defaultSettings\n            { verb = \"GET\"\n            , headers = [ ( \"Origin\", origin ) ]\n            , url = url\n            , body = empty\n            }\n\n",
+                "type": "Http017.Settings -> Http017.Request -> Task.Task Http017.RawError Http017.Response"
+            },
+            {
+                "name": "string",
+                "comment": " Provide a string as the body of the request.\n\nNotice that the first argument is a [MIME type][mime] so we know to add\n`Content-Type: application/json` to our request headers. Make sure your\nMIME type matches your data. Some servers are strict about this!\n\n[mime]: https://en.wikipedia.org/wiki/Media_type\n\n> Im Elm 0.17, the first parameter was missing, and it seems that Elm\n> did not send a `Content-type` header at all. In later versions of Elm,\n> there is no way of avoiding sending a `Content-type` header, so we have\n> to supply the content type here. Thus, you will need to modify your code\n> to specify the desired content type.\n\n",
+                "type": "String.String -> String.String -> Http017.Body"
+            },
+            {
+                "name": "stringData",
+                "comment": " A named chunk of string data.\n\n    import Json.Encode as JS\n\n    body =\n        multipart\n            [ stringData \"user\" (JS.encode user)\n            , stringData \"payload\" (JS.encode payload)\n            ]\n\n",
+                "type": "String.String -> String.String -> Http017.Data"
+            },
+            {
+                "name": "uriDecode",
+                "comment": " Decode a URI string. Same behavior as JavaScript's `decodeURIComponent`\nfunction.\n\n    -- ASCII\n    uriDecode \"hat\" --> \"hat\"\n\n    uriDecode \"to%20be\" --> \"to be\"\n\n    uriDecode \"99%25\" --> \"99%\"\n\n\n    -- UTF-8\n    uriDecode \"%24\" --> \"$\"\n\n    uriDecode \"%C2%A2\" --> \"¢\"\n\n    uriDecode \"%E2%82%AC\" --> \"€\"\n\n\n    -- Failing\n    uriDecode \"%\" --> \"%\"  -- not followed by two hex digits\n\n    uriDecode \"%XY\" --> \"%XY\"  -- not followed by two HEX digits\n\n    uriDecode \"%C2\" --> \"%C2\"  -- half of the \"¢\" encoding \"%C2%A2\"\n\n> In later verions of Elm, the signature of the equivalent functions is\n> `String -> Maybe String` to account for the fact that the input may be\n> invalidly encoded. We can't do exactly that here, so if the input is\n> invalid, we return it unchanged.\n\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "uriEncode",
+                "comment": " Encode a string to be placed in any part of a URI. Same behavior as\nJavaScript's `encodeURIComponent` function.\n\n    uriEncode \"hat\" --> \"hat\"\n\n    uriEncode \"to be\" --> \"to%20be\"\n\n    uriEncode \"99%\" --> \"99%25\"\n\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "url",
+                "comment": " Create a properly encoded URL with a [query string][qs]. The first argument is\nthe portion of the URL before the query string, which is assumed to be\nproperly encoded already. The second argument is a list of all the\nkey/value pairs needed for the query string. Both the keys and values\nwill be appropriately encoded, so they can contain spaces, ampersands, etc.\n\n[qs]: http://en.wikipedia.org/wiki/Query_string\n\n    url \"http://example.com/users\" [ (\"name\", \"john doe\"), (\"age\", \"30\") ]\n        --> \"http://example.com/users?name=john+doe&age=30\"\n\n",
+                "type": "String.String -> List.List ( String.String, String.String ) -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Http018",
+        "comment": " Elm 0.19 moved `encodeUri` and `decodeUri` to the `elm/url` package,\nand renamed them `percentEncode` and `percentDecode`.\n\n@docs encodeUri, decodeUri\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decodeUri",
+                "comment": " Use this to unescape query parameters. It converts things like `%2F` to\n`/`. It can fail in some cases. For example, there is no way to unescape `%`\nbecause it could never appear alone in a properly escaped string.\n\nIt works just like `decodeURIComponent` in JavaScript.\n\n    -- ASCII\n    decodeUri \"hat\"     --> Just \"hat\"\n\n    decodeUri \"to%20be\"   --> Just \"to be\"\n\n    decodeUri \"99%25\"       --> Just \"99%\"\n\n    -- UTF-8\n    decodeUri \"%24\"       --> Just \"$\"\n\n    decodeUri \"%C2%A2\"    --> Just \"¢\"\n\n    decodeUri \"%E2%82%AC\" --> Just \"€\"\n\n    -- Failing\n    decodeUri \"%\"   --> Nothing  -- not followed by two hex digits\n\n    decodeUri \"%XY\" --> Nothing  -- not followed by two HEX digits\n\n    decodeUri \"%C2\" --> Nothing  -- half of the \"¢\" encoding \"%C2%A2\"\n\n",
+                "type": "String.String -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "encodeUri",
+                "comment": " Use this to escape query parameters. Converts characters like `/` to `%2F`\nso that it does not clash with normal URL\n\nIt work just like `encodeURIComponent` in JavaScript.\n\n    encodeUri \"hat\" --> \"hat\"\n\n    encodeUri \"to be\" --> \"to%20be\"\n\n    encodeUri \"99%\" --> \"99%25\"\n\n",
+                "type": "String.String -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Json.Decode017",
+        "comment": " There were quite a few changes between Elm 0.17 and 0.18 in Json.Decode.\nHere are some things from Elm 0.17.\n\n@docs andThen, customDecoder\n@docs object1, object2, object3, object4, object5, object6, object7, object8\n@docs tuple1, tuple2, tuple3, tuple4, tuple5, tuple6, tuple7, tuple8\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "andThen",
+                "comment": " Helpful when a field tells you about the overall structure of the JSON\nyou are dealing with. For example, imagine we are getting JSON representing\ndifferent shapes. Data like this:\n\n    { \"tag\": \"rectangle\", \"width\": 2, \"height\": 3 }\n    { \"tag\": \"circle\", \"radius\": 2 }\n\nThe following `shape` decoder looks at the `tag` to know what other fields to\nexpect **and then** it extracts the relevant information.\n\n    type Shape\n        = Rectangle Float Float\n        | Circle Float\n\n    shape : Decoder Shape\n    shape =\n        field \"tag\" string `andThen` shapeInfo\n\n    shapeInfo : String -> Decoder Shape\n    shapeInfo tag =\n        case tag of\n            \"rectangle\" ->\n                object2 Rectangle (field \"width\" float) (field \"height\" float)\n\n            \"circle\" ->\n                object1 Circle (field \"radius\" float)\n\n            _ ->\n                fail (tag ++ \" is not a recognized tag for shapes\")\n\n",
+                "type": "Json.Decode.Decoder a -> (a -> Json.Decode.Decoder b) -> Json.Decode.Decoder b"
+            },
+            {
+                "name": "customDecoder",
+                "comment": " Create a custom decoder that may do some fancy computation.\n",
+                "type": "Json.Decode.Decoder a -> (a -> Result.Result String.String b) -> Json.Decode.Decoder b"
+            },
+            {
+                "name": "object1",
+                "comment": " Apply a function to a decoder. You can use this function as `map` if you\nmust (which can be done with any `objectN` function actually).\n\n    object1 sqrt (field \"x\" float)\n\n",
+                "type": "(a -> value) -> Json.Decode.Decoder a -> Json.Decode.Decoder value"
+            },
+            {
+                "name": "object2",
+                "comment": " Use two different decoders on a JS value. This is nice for extracting\nmultiple fields from an object.\n\n    point : Decoder ( Float, Float )\n    point =\n        object2 (\\a b -> ( a, b ))\n            (field \"x\" float)\n            (field \"y\" float)\n\n",
+                "type": "(a -> b -> value) -> Json.Decode.Decoder a -> Json.Decode.Decoder b -> Json.Decode.Decoder value"
+            },
+            {
+                "name": "object3",
+                "comment": " Use three different decoders on a JS value. This is nice for extracting\nmultiple fields from an object.\n\n    type alias Job =\n        { name : String, id : Int, completed : Bool }\n\n    job : Decoder Job\n    job =\n        object3 Job\n            (field \"name\" string)\n            (field \"id\" int)\n            (field \"completed\" bool)\n\n",
+                "type": "(a -> b -> c -> value) -> Json.Decode.Decoder a -> Json.Decode.Decoder b -> Json.Decode.Decoder c -> Json.Decode.Decoder value"
+            },
+            {
+                "name": "object4",
+                "comment": " ",
+                "type": "(a -> b -> c -> d -> value) -> Json.Decode.Decoder a -> Json.Decode.Decoder b -> Json.Decode.Decoder c -> Json.Decode.Decoder d -> Json.Decode.Decoder value"
+            },
+            {
+                "name": "object5",
+                "comment": " ",
+                "type": "(a -> b -> c -> d -> e -> value) -> Json.Decode.Decoder a -> Json.Decode.Decoder b -> Json.Decode.Decoder c -> Json.Decode.Decoder d -> Json.Decode.Decoder e -> Json.Decode.Decoder value"
+            },
+            {
+                "name": "object6",
+                "comment": " ",
+                "type": "(a -> b -> c -> d -> e -> f -> value) -> Json.Decode.Decoder a -> Json.Decode.Decoder b -> Json.Decode.Decoder c -> Json.Decode.Decoder d -> Json.Decode.Decoder e -> Json.Decode.Decoder f -> Json.Decode.Decoder value"
+            },
+            {
+                "name": "object7",
+                "comment": " ",
+                "type": "(a -> b -> c -> d -> e -> f -> g -> value) -> Json.Decode.Decoder a -> Json.Decode.Decoder b -> Json.Decode.Decoder c -> Json.Decode.Decoder d -> Json.Decode.Decoder e -> Json.Decode.Decoder f -> Json.Decode.Decoder g -> Json.Decode.Decoder value"
+            },
+            {
+                "name": "object8",
+                "comment": " ",
+                "type": "(a -> b -> c -> d -> e -> f -> g -> h -> value) -> Json.Decode.Decoder a -> Json.Decode.Decoder b -> Json.Decode.Decoder c -> Json.Decode.Decoder d -> Json.Decode.Decoder e -> Json.Decode.Decoder f -> Json.Decode.Decoder g -> Json.Decode.Decoder h -> Json.Decode.Decoder value"
+            },
+            {
+                "name": "tuple1",
+                "comment": " Handle an array with exactly one element.\n\n    extractString : Decoder String\n    extractString =\n        tuple1 identity string\n\n    authorship : Decoder String\n    authorship =\n        oneOf\n            [ tuple1 (\\author -> \"Author: \" ++ author) string\n            , list string |> map (\\authors -> \"Co-authors: \" ++ String.join \", \" authors)\n            ]\n\n",
+                "type": "(a -> value) -> Json.Decode.Decoder a -> Json.Decode.Decoder value"
+            },
+            {
+                "name": "tuple2",
+                "comment": " Handle an array with exactly two elements. Useful for points and simple\npairs.\n\n    point : Decoder ( Float, Float )\n    point =\n        tuple2 (\\a b -> ( a, b )) float float\n\n\n    -- [\"John\",\"Doe\"] or [\"Hermann\",\"Hesse\"]\n    name : Decoder Name\n    name =\n        tuple2 Name string string\n\n    type alias Name =\n        { first : String, last : String }\n\n",
+                "type": "(a -> b -> value) -> Json.Decode.Decoder a -> Json.Decode.Decoder b -> Json.Decode.Decoder value"
+            },
+            {
+                "name": "tuple3",
+                "comment": " Handle an array with exactly three elements.\n\n    point3D : Decoder ( Float, Float, Float )\n    point3D =\n        tuple3 (\\a b c -> ( a, b, c )) float float float\n\n",
+                "type": "(a -> b -> c -> value) -> Json.Decode.Decoder a -> Json.Decode.Decoder b -> Json.Decode.Decoder c -> Json.Decode.Decoder value"
+            },
+            {
+                "name": "tuple4",
+                "comment": " ",
+                "type": "(a -> b -> c -> d -> value) -> Json.Decode.Decoder a -> Json.Decode.Decoder b -> Json.Decode.Decoder c -> Json.Decode.Decoder d -> Json.Decode.Decoder value"
+            },
+            {
+                "name": "tuple5",
+                "comment": " ",
+                "type": "(a -> b -> c -> d -> e -> value) -> Json.Decode.Decoder a -> Json.Decode.Decoder b -> Json.Decode.Decoder c -> Json.Decode.Decoder d -> Json.Decode.Decoder e -> Json.Decode.Decoder value"
+            },
+            {
+                "name": "tuple6",
+                "comment": " ",
+                "type": "(a -> b -> c -> d -> e -> f -> value) -> Json.Decode.Decoder a -> Json.Decode.Decoder b -> Json.Decode.Decoder c -> Json.Decode.Decoder d -> Json.Decode.Decoder e -> Json.Decode.Decoder f -> Json.Decode.Decoder value"
+            },
+            {
+                "name": "tuple7",
+                "comment": " ",
+                "type": "(a -> b -> c -> d -> e -> f -> g -> value) -> Json.Decode.Decoder a -> Json.Decode.Decoder b -> Json.Decode.Decoder c -> Json.Decode.Decoder d -> Json.Decode.Decoder e -> Json.Decode.Decoder f -> Json.Decode.Decoder g -> Json.Decode.Decoder value"
+            },
+            {
+                "name": "tuple8",
+                "comment": " ",
+                "type": "(a -> b -> c -> d -> e -> f -> g -> h -> value) -> Json.Decode.Decoder a -> Json.Decode.Decoder b -> Json.Decode.Decoder c -> Json.Decode.Decoder d -> Json.Decode.Decoder e -> Json.Decode.Decoder f -> Json.Decode.Decoder g -> Json.Decode.Decoder h -> Json.Decode.Decoder value"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Json.Decode018",
+        "comment": " Elm 0.19 changed the signatures of `decodeString` and `decodeValue`.\n\n@docs decodeString, decodeValue\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decodeString",
+                "comment": " Parse the given string into a JSON value and then run the `Decoder` on it.\nThis will fail if the string is not well-formed JSON or if the `Decoder`\nfails for some reason.\n\n    import Json.Decode exposing (int)\n\n    decodeString int \"4\"     --> Ok 4\n\n    decodeString int \"1 + 2\" == Err ...\n\n",
+                "type": "Json.Decode.Decoder a -> String.String -> Result.Result String.String a"
+            },
+            {
+                "name": "decodeValue",
+                "comment": " Run a `Decoder` on some JSON `Value`. You can send these JSON values\nthrough ports, so that is probably the main time you would use this function.\n",
+                "type": "Json.Decode.Decoder a -> Json.Encode.Value -> Result.Result String.String a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Maybe017",
+        "comment": " Some functions from Elm 0.17\n\n@docs andThen, oneOf\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "andThen",
+                "comment": " Chain together many computations that may fail. It is helpful to see its\ndefinition:\n\n    andThen : Maybe a -> (a -> Maybe b) -> Maybe b\n    andThen maybe callback =\n        case maybe of\n            Just value ->\n                callback value\n\n            Nothing ->\n                Nothing\n\nThis means we only continue with the callback if things are going well. For\nexample, say you need to use (`head : List Int -> Maybe Int`) to get the\nfirst month from a `List` and then make sure it is between 1 and 12:\n\n    toValidMonth : Int -> Maybe Int\n    toValidMonth month =\n        if month >= 1 && month <= 12 then\n            Just month\n\n        else\n            Nothing\n\n    getFirstMonth : List Int -> Maybe Int\n    getFirstMonth months =\n        head months `andThen` toValidMonth\n\nIf `head` fails and results in `Nothing` (because the `List` was `empty`),\nthis entire chain of operations will short-circuit and result in `Nothing`.\nIf `toValidMonth` results in `Nothing`, again the chain of computations\nwill result in `Nothing`.\n\n",
+                "type": "Maybe.Maybe a -> (a -> Maybe.Maybe b) -> Maybe.Maybe b"
+            },
+            {
+                "name": "oneOf",
+                "comment": " Pick the first `Maybe` that actually has a value. Useful when you want to\ntry a couple different things, but there is no default value.\n\n    oneOf [ Nothing, Just 42, Just 71 ] == Just 42\n\n    oneOf [ Nothing, Nothing, Just 71 ] == Just 71\n\n    oneOf [ Nothing, Nothing, Nothing ] == Nothing\n\n",
+                "type": "List.List (Maybe.Maybe a) -> Maybe.Maybe a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Platform018",
+        "comment": " In Elm 0.19, `programWithFlags` was renamed to `worker`, and\n`program` was removed.\n\n@docs program, programWithFlags\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "program",
+                "comment": " Create a [headless] program. This is great if you want to use Elm as the\n&ldquo;brain&rdquo; for something else. You can still communicate with JS via\nports and manage your model, you just do not have to specify a `view`.\n",
+                "type": "{ init : ( model, Platform.Cmd.Cmd msg ), update : msg -> model -> ( model, Platform.Cmd.Cmd msg ), subscriptions : model -> Platform.Sub.Sub msg } -> Platform.Program Basics.Never model msg"
+            },
+            {
+                "name": "programWithFlags",
+                "comment": " Same as [`program`](#program), but you can provide flags.\n",
+                "type": "{ init : flags -> ( model, Platform.Cmd.Cmd msg ), update : msg -> model -> ( model, Platform.Cmd.Cmd msg ), subscriptions : model -> Platform.Sub.Sub msg } -> Platform.Program flags model msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Random017",
+        "comment": " Like in other modules, the paramenters of `andThen` were flipped in Elm\n0.18.\n\n@docs andThen\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "andThen",
+                "comment": " Chain random operations, threading through the seed. In the following\nexample, we will generate a random letter by putting together uppercase and\nlowercase letters.\n\n\n    letter : Generator Char\n    letter =\n        bool\n            `andThen`\n                (\\b ->\n                    if b then\n                        uppercaseLetter\n\n                    else\n                        lowercaseLetter\n                )\n\n\n    -- bool : Generator Bool\n    -- uppercaseLetter : Generator Char\n    -- lowercaseLetter : Generator Char\n\n",
+                "type": "Random.Generator a -> (a -> Random.Generator b) -> Random.Generator b"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Random018",
+        "comment": " Elm 0.19 removed the `bool` function.\n\n@docs bool\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "bool",
+                "comment": " Create a generator that produces boolean values. The following example\nsimulates a coin flip that may land heads or tails.\n\n    type Flip\n        = Heads\n        | Tails\n\n    coinFlip : Generator Flip\n    coinFlip =\n        map\n            (\\b ->\n                if b then\n                    Heads\n\n                else\n                    Tails\n            )\n            bool\n\n",
+                "type": "Random.Generator Basics.Bool"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Regex018",
+        "comment": " Elm 0.19 made several improvements to the API.\n\n  - `regex` was renamed `fromString`, and can no longer crash\n  - `find`, `replace` and `split` were simplified, with the addition of\n    variations for `findAtMost`, `replaceAtMost` and `splitAtMost`\n  - the `HowMany` type was removed, in favour of the separate `...AtMost`\n    functions\n\nSome of the old API cannot be re-implemented for Elm 0.19.\n\n  - `caseInsensitive` used to take a `Regex` as input. That signature cannot be\n    implemented now. Instead, you would need to use `fromStringWith` and provide\n    the desired options.\n\n@docs HowMany, regex, find, replace, split\n\n",
+        "unions": [
+            {
+                "name": "HowMany",
+                "comment": " `HowMany` is used to specify how many matches you want to make. So\n`replace All` would replace every match, but `replace (AtMost 2)` would\nreplace at most two matches (i.e. zero, one, two, but never three or more).\n",
+                "args": [],
+                "cases": [
+                    [
+                        "All",
+                        []
+                    ],
+                    [
+                        "AtMost",
+                        [
+                            "Basics.Int"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "find",
+                "comment": " Find matches in a string:\n\n    find (AtMost 2) (regex \",\") \"a,b,c,d,e\"\n        |> List.map .index\n    --> [1,3]\n\n    find (AtMost 2) (regex \",\") \"a b c d e\"\n        |> List.map .index\n    --> []\n\n    find All\n        (regex \"[oi]n a (\\\\w+)\")\n        \"I am on a boat in a lake.\"\n        |> List.map .match\n    -->  [\"on a boat\", \"in a lake\"]\n\n\n    find All\n        (regex \"[oi]n a (\\\\w+)\")\n        \"I am on a boat in a lake.\"\n        |> List.map .submatches\n    --> [ [Just \"boat\"], [Just \"lake\"] ]\n\n",
+                "type": "Regex018.HowMany -> Regex.Regex -> String.String -> List.List Regex.Match"
+            },
+            {
+                "name": "regex",
+                "comment": " Create a Regex that matches patterns [as specified in JavaScript](https://developer.mozilla.org/en/docs/Web/JavaScript/Guide/Regular_Expressions#Writing_a_Regular_Expression_Pattern).\n\nBe careful to escape backslashes properly! For example, `\"\\w\"` is escaping the\nletter `w` which is probably not what you want. You probably want `\"\\\\w\"`\ninstead, which escapes the backslash.\n\n> In Elm 0.18, an invalid input string would crash the runtime. It is not\n> possible to reproduce this behaviour in Elm 0.19. Thus, if given invalid\n> input, we will instead return a `Regex` that never matches anything.\n\n",
+                "type": "String.String -> Regex.Regex"
+            },
+            {
+                "name": "replace",
+                "comment": " Replace matches. The function from `Match` to `String` lets\nyou use the details of a specific match when making replacements.\n\n    replace All\n        (regex \"[aeiou]\")\n        (\\_ -> \"\")\n        \"The quick brown fox\"\n    -->  \"Th qck brwn fx\"\n\n    replace (AtMost 2)\n        (regex \"\\\\w+\")\n        (\\{ match } -> String.reverse match)\n        \"deliver mined parts\"\n    --> \"reviled denim parts\"\n\n",
+                "type": "Regex018.HowMany -> Regex.Regex -> (Regex.Match -> String.String) -> String.String -> String.String"
+            },
+            {
+                "name": "split",
+                "comment": " Split a string, using the regex as the separator.\n\n    split (AtMost 1)\n        (regex \",\")\n        \"tom,99,90,85\"\n    --> [ \"tom\", \"99,90,85\" ]\n\n    split All\n        (regex \",\")\n        \"a,b,c,d\"\n    --> [ \"a\", \"b\", \"c\", \"d\" ]\n\n",
+                "type": "Regex018.HowMany -> Regex.Regex -> String.String -> List.List String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Result017",
+        "comment": " `formatError` was renamed to `mapError` in Elm 0.18, and\nthe parameters of `andThen` were flipped.\n\n@docs andThen, formatError\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "andThen",
+                "comment": " Chain together a sequence of computations that may fail. It is helpful\nto see its definition:\n\n    andThen : Result e a -> (a -> Result e b) -> Result e b\n    andThen result callback =\n        case result of\n            Ok value ->\n                callback value\n\n            Err msg ->\n                Err msg\n\nThis means we only continue with the callback if things are going well. For\nexample, say you need to use (`toInt : String -> Result String Int`) to parse\na month and make sure it is between 1 and 12:\n\n\n    toValidMonth : Int -> Result String Int\n    toValidMonth month =\n        if month >= 1 && month <= 12 then\n            Ok month\n\n        else\n            Err \"months must be between 1 and 12\"\n\n    toMonth : String -> Result String Int\n    toMonth rawString =\n        toInt rawString `andThen` toValidMonth\n\n\n    -- toMonth \"4\" == Ok 4\n    -- toMonth \"9\" == Ok 9\n    -- toMonth \"a\" == Err \"cannot parse to an Int\"\n    -- toMonth \"0\" == Err \"months must be between 1 and 12\"\n\nThis allows us to come out of a chain of operations with quite a specific error\nmessage. It is often best to create a custom type that explicitly represents\nthe exact ways your computation may fail. This way it is easy to handle in your\ncode.\n\n",
+                "type": "Result.Result x a -> (a -> Result.Result x b) -> Result.Result x b"
+            },
+            {
+                "name": "formatError",
+                "comment": " Format the error value of a result. If the result is `Ok`, it stays exactly\nthe same, but if the result is an `Err` we will format the error. For example,\nsay the errors we get have too much information:\n\n    parseInt : String -> Result ParseError Int\n\n    type alias ParseError =\n        { message : String\n        , code : Int\n        , position : (Int,Int)\n        }\n\n    formatError .message (parseInt \"123\") == Ok 123\n    formatError .message (parseInt \"abc\") == Err \"char 'a' is not a number\"\n\n",
+                "type": "(error1 -> error2) -> Result.Result error1 a -> Result.Result error2 a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "String018",
+        "comment": " Elm 0.19 changed the signatures of `toInt` and `toFloat`.\n\n@docs toInt, toFloat\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toFloat",
+                "comment": " Try to convert a string into a float, failing on improperly formatted strings.\n\n    String018.toFloat \"123\" --> Ok 123.0\n\n    String018.toFloat \"-42\" --> Ok -42.0\n\n    String018.toFloat \"3.1\" --> Ok 3.1\n\n    String018.toFloat \"31a\" --> Err \"could not convert string '31a' to a Float\"\n\nIf you are extracting a number from some raw user input, you will typically\nwant to use [`Result.withDefault`](Result#withDefault) to handle bad data:\n\n    Result.withDefault 0 (String018.toFloat \"42.5\") == 42.5\n\n    Result.withDefault 0 (String018.toFloat \"cats\") == 0\n\n",
+                "type": "String.String -> Result.Result String.String Basics.Float"
+            },
+            {
+                "name": "toInt",
+                "comment": " Try to convert a string into an int, failing on improperly formatted strings.\n\n    String018.toInt \"123\" --> Ok 123\n\n    String018.toInt \"-42\" --> Ok -42\n\n    String018.toInt \"3.1\" --> Err \"could not convert string '3.1' to an Int\"\n\n    String018.toInt \"31a\" --> Err \"could not convert string '31a' to an Int\"\n\nIf you are extracting a number from some raw user input, you will typically\nwant to use [`Result.withDefault`](Result#withDefault) to handle bad data:\n\n    Result.withDefault 0 (String018.toInt \"42\") --> 42\n\n    Result.withDefault 0 (String018.toInt \"ab\") --> 0\n\n",
+                "type": "String.String -> Result.Result String.String Basics.Int"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Task017",
+        "comment": " Elm 0.18 flipped parameters for `andThen` and `onError`, altered `perform`,\nand removed functions converting from and to `Maybe` and `Result`.\n\n@docs andThen, onError, perform, andMap, fromMaybe, fromResult, toMaybe, toResult\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "andMap",
+                "comment": " Put the results of two tasks together. If either task fails, the whole\nthing fails. It also runs in order so the first task will be completely\nfinished before the second task starts.\n\nThis function makes it possible to chain tons of tasks together and pipe them\nall into a single function.\n\n    f `map` task1 `andMap` task2 `andMap` task3 -- map3 f task1 task2 task3\n\n",
+                "type": "Task.Task x (a -> b) -> Task.Task x a -> Task.Task x b"
+            },
+            {
+                "name": "andThen",
+                "comment": " Chain together a task and a callback. The first task will run, and if it is\nsuccessful, you give the result to the callback resulting in another task. This\ntask then gets run.\n\n    succeed 2 `andThen` (\\n -> succeed (n + 2)) -- succeed 4\n\nThis is useful for chaining tasks together. Maybe you need to get a user from\nyour servers _and then_ lookup their picture once you know their name.\n\n",
+                "type": "Task.Task x a -> (a -> Task.Task x b) -> Task.Task x b"
+            },
+            {
+                "name": "fromMaybe",
+                "comment": " If you are chaining together a bunch of tasks, it may be useful to treat\na maybe value like a task.\n\n    fromMaybe \"file not found\" Nothing -- fail \"file not found\"\n\n    fromMaybe \"file not found\" (Just 42) -- succeed 42\n\n",
+                "type": "x -> Maybe.Maybe a -> Task.Task x a"
+            },
+            {
+                "name": "fromResult",
+                "comment": " If you are chaining together a bunch of tasks, it may be useful to treat\na result like a task.\n\n    fromResult (Err \"file not found\") -- fail \"file not found\"\n\n    fromResult (Ok 42) -- succeed 42\n\n",
+                "type": "Result.Result x a -> Task.Task x a"
+            },
+            {
+                "name": "onError",
+                "comment": " Recover from a failure in a task. If the given task fails, we use the\ncallback to recover.\n\n    fail \"file not found\" `onError` (\\msg -> succeed 42) -- succeed 42\n\n    succeed 9 `onError` (\\msg -> succeed 42) -- succeed 9\n\n",
+                "type": "Task.Task x a -> (x -> Task.Task y a) -> Task.Task y a"
+            },
+            {
+                "name": "perform",
+                "comment": " Command the runtime system to perform a task. The most important argument\nis the `Task` which describes what you want to happen. But you also need to\nprovide functions to tag the two possible outcomes of the task. It can fail or\nsucceed, but either way, you need to have a message to feed back into your\napplication.\n",
+                "type": "(x -> msg) -> (a -> msg) -> Task.Task x a -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "toMaybe",
+                "comment": " Translate a task that can fail into a task that can never fail, by\nconverting any failure into `Nothing` and any success into `Just` something.\n\n    toMaybe (fail \"file not found\") -- succeed Nothing\n\n    toMaybe (succeed 42) -- succeed (Just 42)\n\nThis means you can handle the error with the `Maybe` module instead.\n\n",
+                "type": "Task.Task x a -> Task.Task never (Maybe.Maybe a)"
+            },
+            {
+                "name": "toResult",
+                "comment": " Translate a task that can fail into a task that can never fail, by\nconverting any failure into `Err` something and any success into `Ok` something.\n\n    toResult (fail \"file not found\") -- succeed (Err \"file not found\")\n\n    toResult (succeed 42) -- succeed (Ok 42)\n\nThis means you can handle the error with the `Result` module instead.\n\n",
+                "type": "Task.Task x a -> Task.Task never (Result.Result x a)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Time018",
+        "comment": " In Elm 0.19, the `Time` module was moved to a separate package\n[elm-time](https://package.elm-lang.org/packages/elm/time/1.0.0/), with a\nsignificantly modified API. This implements the old API.\n\n\n# Time\n\n@docs Time, now, every\n\n\n# Units\n\n@docs millisecond, second, minute, hour\n@docs inMilliseconds, inSeconds, inMinutes, inHours\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Time",
+                "comment": " Type alias to make it clearer when you are working with time values.\nUsing the `Time` helpers like `second` and `inSeconds` instead of raw numbers\nis very highly recommended.\n",
+                "args": [],
+                "type": "Basics.Float"
+            }
+        ],
+        "values": [
+            {
+                "name": "every",
+                "comment": " Subscribe to the current time. First you provide an interval describing how\nfrequently you want updates. Second, you give a tagger that turns a time into a\nmessage for your `update` function. So if you want to hear about the current\ntime every second, you would say something like this:\n\n    type Msg = Tick Time | ...\n\n    subscriptions model =\n      every second Tick\n\nCheck out the [Elm Architecture Tutorial][arch] for more info on how\nsubscriptions work.\n\n[arch]: https://github.com/evancz/elm-architecture-tutorial/\n\n**Note:** this function is not for animation! You need to use something based\non `requestAnimationFrame` to get smooth animations. This is based on\n`setInterval` which is better for recurring tasks like “check on something\nevery 30 seconds”.\n\n",
+                "type": "Time018.Time -> (Time018.Time -> msg) -> Platform.Sub.Sub msg"
+            },
+            {
+                "name": "hour",
+                "comment": " ",
+                "type": "Time018.Time"
+            },
+            {
+                "name": "inHours",
+                "comment": " ",
+                "type": "Time018.Time -> Basics.Float"
+            },
+            {
+                "name": "inMilliseconds",
+                "comment": " ",
+                "type": "Time018.Time -> Basics.Float"
+            },
+            {
+                "name": "inMinutes",
+                "comment": " ",
+                "type": "Time018.Time -> Basics.Float"
+            },
+            {
+                "name": "inSeconds",
+                "comment": " ",
+                "type": "Time018.Time -> Basics.Float"
+            },
+            {
+                "name": "millisecond",
+                "comment": " Units of time, making it easier to specify things like a half-second\n`(500 * millisecond)` without remembering Elm&rsquo;s underlying units of time.\n",
+                "type": "Time018.Time"
+            },
+            {
+                "name": "minute",
+                "comment": " ",
+                "type": "Time018.Time"
+            },
+            {
+                "name": "now",
+                "comment": " Get the `Time` at the moment when this task is run.\n",
+                "type": "Task.Task x Time018.Time"
+            },
+            {
+                "name": "second",
+                "comment": " ",
+                "type": "Time018.Time"
+            }
+        ],
+        "binops": []
+    }
+]

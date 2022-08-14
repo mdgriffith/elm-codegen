@@ -1,0 +1,256 @@
+[
+    {
+        "name": "Swagger.Decoder",
+        "comment": "  This module defines the decoder for the `SwaggerSpecification` type\n\n@docs swaggerDecoder\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "swaggerDecoder",
+                "comment": " ",
+                "type": "Json.Decode.Decoder Swagger.Types.SwaggerSpecification"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Swagger.Types",
+        "comment": "  This module defines the types that make up a swagger schema\n\n@docs SwaggerSpecification\n@docs Info\n@docs Contact\n@docs License\n@docs Scheme(..)\n@docs Paths\n@docs PathItem\n@docs Operation\n@docs ExternalDocs\n@docs Parameter\n@docs ParameterIn(..)\n@docs ParameterBody(..)\n@docs ParameterBodyOthersBody\n@docs Items(..)\n@docs ItemsBody\n@docs CollectionFormat(..)\n@docs Schema(..)\n@docs Reference\n@docs Responses\n@docs Response\n@docs Header\n@docs Headers\n@docs Example\n@docs SecurityRequirement\n",
+        "unions": [
+            {
+                "name": "CollectionFormat",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Csv",
+                        []
+                    ],
+                    [
+                        "Ssv",
+                        []
+                    ],
+                    [
+                        "Tsv",
+                        []
+                    ],
+                    [
+                        "Pipes",
+                        []
+                    ],
+                    [
+                        "Multi",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Items",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Items",
+                        [
+                            "Swagger.Types.ItemsBody"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "ParameterBody",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "ParameterBodySchema",
+                        [
+                            "Swagger.Types.Schema"
+                        ]
+                    ],
+                    [
+                        "ParameterBodyOthers",
+                        [
+                            "Swagger.Types.ParameterBodyOthersBody"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "ParameterIn",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Query",
+                        []
+                    ],
+                    [
+                        "Header_",
+                        []
+                    ],
+                    [
+                        "Path",
+                        []
+                    ],
+                    [
+                        "FormData",
+                        []
+                    ],
+                    [
+                        "Body",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Schema",
+                "comment": " Out of scope of this project to decode this ",
+                "args": [],
+                "cases": [
+                    [
+                        "Schema",
+                        [
+                            "()"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Scheme",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Http",
+                        []
+                    ],
+                    [
+                        "Https",
+                        []
+                    ],
+                    [
+                        "Ws",
+                        []
+                    ],
+                    [
+                        "Wss",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Contact",
+                "comment": " ",
+                "args": [],
+                "type": "{ name : Maybe.Maybe String.String, url : Maybe.Maybe String.String, email : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "Example",
+                "comment": " ",
+                "args": [],
+                "type": "Dict.Dict String.String Json.Decode.Value"
+            },
+            {
+                "name": "ExternalDocs",
+                "comment": " ",
+                "args": [],
+                "type": "{ description : Maybe.Maybe String.String, url : String.String }"
+            },
+            {
+                "name": "Header",
+                "comment": " ",
+                "args": [],
+                "type": "{ description : Maybe.Maybe String.String, type_ : String.String, format : Maybe.Maybe String.String, items : Maybe.Maybe Swagger.Types.Items, collectionFormat : Swagger.Types.CollectionFormat }"
+            },
+            {
+                "name": "Headers",
+                "comment": " ",
+                "args": [],
+                "type": "Dict.Dict String.String Swagger.Types.Header"
+            },
+            {
+                "name": "Info",
+                "comment": " ",
+                "args": [],
+                "type": "{ title : String.String, description : Maybe.Maybe String.String, termsOfService : Maybe.Maybe String.String, contact : Maybe.Maybe Swagger.Types.Contact, license : Maybe.Maybe Swagger.Types.License, version : String.String }"
+            },
+            {
+                "name": "ItemsBody",
+                "comment": " ",
+                "args": [],
+                "type": "{ type_ : String.String, format : Maybe.Maybe String.String, items : Maybe.Maybe Swagger.Types.Items, collectionFormat : Swagger.Types.CollectionFormat }"
+            },
+            {
+                "name": "License",
+                "comment": " ",
+                "args": [],
+                "type": "{ name : String.String, url : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "Operation",
+                "comment": " ",
+                "args": [],
+                "type": "{ tags : List.List String.String, summary : Maybe.Maybe String.String, description : Maybe.Maybe String.String, externalDocs : Maybe.Maybe Swagger.Types.ExternalDocs, operationId : Maybe.Maybe String.String, consumes : List.List String.String, produces : List.List String.String, parameters : Maybe.Maybe (Either.Either Swagger.Types.Parameter Swagger.Types.Reference), responses : Swagger.Types.Responses, schemes : List.List Swagger.Types.Scheme, deprecated : Basics.Bool, security : Maybe.Maybe Swagger.Types.SecurityRequirement }"
+            },
+            {
+                "name": "Parameter",
+                "comment": " ",
+                "args": [],
+                "type": "{ name : String.String, in_ : Swagger.Types.ParameterIn, description : Maybe.Maybe String.String, required : Basics.Bool, parameterBody : Swagger.Types.ParameterBody }"
+            },
+            {
+                "name": "ParameterBodyOthersBody",
+                "comment": " ",
+                "args": [],
+                "type": "{ type_ : String.String, format : Maybe.Maybe String.String, allowEmptyValue : Basics.Bool, items : Maybe.Maybe Swagger.Types.Items, collectionFormat : Swagger.Types.CollectionFormat }"
+            },
+            {
+                "name": "PathItem",
+                "comment": " ",
+                "args": [],
+                "type": "{ ref : Maybe.Maybe String.String, get : Maybe.Maybe Swagger.Types.Operation, put : Maybe.Maybe Swagger.Types.Operation, post : Maybe.Maybe Swagger.Types.Operation, delete : Maybe.Maybe Swagger.Types.Operation, options : Maybe.Maybe Swagger.Types.Operation, head : Maybe.Maybe Swagger.Types.Operation, patch : Maybe.Maybe Swagger.Types.Operation, parameters : Maybe.Maybe (Either.Either Swagger.Types.Parameter Swagger.Types.Reference) }"
+            },
+            {
+                "name": "Paths",
+                "comment": " ",
+                "args": [],
+                "type": "Dict.Dict String.String Swagger.Types.PathItem"
+            },
+            {
+                "name": "Reference",
+                "comment": " ",
+                "args": [],
+                "type": "{ ref : String.String }"
+            },
+            {
+                "name": "Response",
+                "comment": " ",
+                "args": [],
+                "type": "{ description : String.String, schema : Maybe.Maybe Swagger.Types.Schema, headers : Maybe.Maybe Swagger.Types.Headers, examples : Maybe.Maybe Swagger.Types.Example }"
+            },
+            {
+                "name": "Responses",
+                "comment": " ",
+                "args": [],
+                "type": "{ default : Maybe.Maybe (Either.Either Swagger.Types.Response Swagger.Types.Reference), get : Maybe.Maybe (Either.Either Swagger.Types.Response Swagger.Types.Reference), put : Maybe.Maybe (Either.Either Swagger.Types.Response Swagger.Types.Reference), post : Maybe.Maybe (Either.Either Swagger.Types.Response Swagger.Types.Reference), delete : Maybe.Maybe (Either.Either Swagger.Types.Response Swagger.Types.Reference), options : Maybe.Maybe (Either.Either Swagger.Types.Response Swagger.Types.Reference), head : Maybe.Maybe (Either.Either Swagger.Types.Response Swagger.Types.Reference), patch : Maybe.Maybe (Either.Either Swagger.Types.Response Swagger.Types.Reference) }"
+            },
+            {
+                "name": "SecurityRequirement",
+                "comment": " ",
+                "args": [],
+                "type": "Dict.Dict String.String (List.List String.String)"
+            },
+            {
+                "name": "SwaggerSpecification",
+                "comment": " ",
+                "args": [],
+                "type": "{ info : Swagger.Types.Info, host : Maybe.Maybe String.String, basePath : Maybe.Maybe String.String, schemes : List.List Swagger.Types.Scheme, consumes : List.List String.String, produces : List.List String.String, paths : Swagger.Types.Paths }"
+            }
+        ],
+        "values": [],
+        "binops": []
+    }
+]

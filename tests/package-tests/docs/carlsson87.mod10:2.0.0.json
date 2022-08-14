@@ -1,0 +1,37 @@
+[
+    {
+        "name": "Mod10",
+        "comment": "\n\n\n# Problems\n\n@docs Error\n\n\n# Validating\n\n@docs hasValidCheckDigit\n\n\n# Constructing\n\n@docs calculateCheckDigit\n\n",
+        "unions": [
+            {
+                "name": "Error",
+                "comment": " The Modulus 10 algorithm works on sequences of digits, but since boths lists and integers\ncan represent values that are invalid in this context there are some cases that will result in\nerrors.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NumbersOutOfRange",
+                        []
+                    ],
+                    [
+                        "EmptySequence",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "calculateCheckDigit",
+                "comment": " calculateCheckDigit the check digit for a given sequence of digits.\n",
+                "type": "List.List Basics.Int -> Result.Result Mod10.Error Basics.Int"
+            },
+            {
+                "name": "hasValidCheckDigit",
+                "comment": " Check if the last digit in a sequence of digits is a valid check\ndigit for the sequence according to the Modulus 10 algorithm.\n\n    hasValidCheckDigit [ 1, 2, 3 ] == Ok False\n\n    hasValidCheckDigit [ -2, 3 4 ] == Err NumbersOutOfRange\n\n    hasValidCheckDigit [] == Err EmptySequence\n\n",
+                "type": "List.List Basics.Int -> Result.Result Mod10.Error Basics.Bool"
+            }
+        ],
+        "binops": []
+    }
+]

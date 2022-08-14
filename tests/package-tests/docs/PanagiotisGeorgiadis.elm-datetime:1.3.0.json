@@ -1,0 +1,552 @@
+[
+    {
+        "name": "Calendar",
+        "comment": " The [Calendar](Calendar#) module was introduced in order to keep track of the `Calendar Date` concept.\r\nIt has no knowledge of `Time` therefore it can only represent a [Date](Calendar#Date)\r\nwhich consists of a `Day`, a `Month` and a `Year`. You can construct a `Calendar Date` either\r\nfrom a [Posix](https://package.elm-lang.org/packages/elm/time/latest/Time#Posix) time or by\r\nusing its [Raw constituent parts](Calendar#RawDate). You can use a `Date` and the\r\nCalendar's utilities as a standalone or you can combine a [Date](Calendar#Date) and a\r\n[Time](Clock#Time) in order to get a [DateTime](DateTime#DateTime) which can then be converted into\r\na [Posix](https://package.elm-lang.org/packages/elm/time/latest/Time#Posix).\r\n\r\n\r\n# Type definition\r\n\r\n@docs Date, RawDate\r\n\r\n\r\n# Creating a `Date`\r\n\r\n@docs fromPosix, fromRawParts\r\n\r\n\r\n# Conversions\r\n\r\n@docs toMillis, monthToInt\r\n\r\n\r\n# Accessors\r\n\r\n@docs getYear, getMonth, getDay\r\n\r\n\r\n# Setters\r\n\r\n@docs setYear, setMonth, setDay\r\n\r\n\r\n# Increment values\r\n\r\n@docs incrementYear, incrementMonth, incrementDay\r\n\r\n\r\n# Decrement values\r\n\r\n@docs decrementYear, decrementMonth, decrementDay\r\n\r\n\r\n# Compare values\r\n\r\n@docs compare\r\n\r\n\r\n# Utilities\r\n\r\n@docs getDateRange, getDatesInMonth, getDayDiff, getFollowingMonths, getPrecedingMonths, getWeekday, isLeapYear, lastDayOf, sort\r\n\r\n\r\n# Constants\r\n\r\n@docs months, millisInADay\r\n\r\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Date",
+                "comment": " A full ([Gregorian](https://en.wikipedia.org/wiki/Gregorian_calendar)) calendar date.\r\n",
+                "args": [],
+                "type": "Calendar.Internal.Date"
+            },
+            {
+                "name": "RawDate",
+                "comment": " The raw representation of a calendar date.\r\n",
+                "args": [],
+                "type": "{ year : Basics.Int, month : Time.Month, day : Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "compare",
+                "comment": " Compares the two given [Dates](Calendar#Date) and returns an [Order](https://package.elm-lang.org/packages/elm/core/latest/Basics#Order).\r\n\r\n    -- past   == 25 Aug 2019\r\n    -- future == 26 Aug 2019\r\n    compare past past -- EQ : Order\r\n\r\n    compare past future -- LT : Order\r\n\r\n    compare future past -- GT : Order\r\n\r\n",
+                "type": "Calendar.Date -> Calendar.Date -> Basics.Order"
+            },
+            {
+                "name": "decrementDay",
+                "comment": " Decrements the `Day` in a given [Date](Calendar#Date). Will also decrement `Month` and `Year` where applicable.\r\n\r\n    -- date  == 27 Aug 2019\r\n    decrementDay date -- 26 Aug 2019 : Date\r\n\r\n    -- date2 == 1 Jan 2020\r\n    decrementDay date2 -- 31 Dec 2019 : Date\r\n\r\n",
+                "type": "Calendar.Date -> Calendar.Date"
+            },
+            {
+                "name": "decrementMonth",
+                "comment": " Decrements the `Month` in a given [Date](Calendar#Date). It will also roll backwards to the previous year where applicable.\r\n\r\n    -- date  == 15 Sep 2019\r\n    decrementMonth date -- 15 Aug 2019 : Date\r\n\r\n    -- date2 == 15 Jan 2020\r\n    decrementMonth date2 -- 15 Dec 2019 : Date\r\n\r\n    -- date3 == 31 Dec 2019\r\n    decrementMonth date3 -- 30 Nov 2019 : Date\r\n\r\n**Note:** In the first example, decrementing the `Month` causes no changes in the `Year` and `Day` parts while\r\non the second example it rolls backwards the `Year`. On the last example we see that the `Day` part is different\r\nthan the input. This is because the resulting date would be an invalid one ( _**31st of November 2019**_ ). As a result\r\nof this scenario we fall back to the last valid day of the given `Month` and `Year` combination.\r\n\r\n",
+                "type": "Calendar.Date -> Calendar.Date"
+            },
+            {
+                "name": "decrementYear",
+                "comment": " Decrements the `Year` in a given [Date](Calendar#Date) while preserving the `Month` and `Day` parts.\r\n\r\n    -- date  == 31 Jan 2019\r\n    decrementYear date -- 31 Jan 2018 : Date\r\n\r\n    -- date2 == 29 Feb 2020\r\n    decrementYear date2 -- 28 Feb 2019 : Date\r\n\r\n**Note:** In the first example, decrementing the `Year` causes no changes in the `Month` and `Day` parts.\r\nOn the second example we see that the `Day` part is different than the input. This is because the resulting date\r\nwould be an invalid date ( _**29th of February 2019**_ ). As a result of this scenario we fall back to the last\r\nvalid day of the given `Month` and `Year` combination.\r\n\r\n",
+                "type": "Calendar.Date -> Calendar.Date"
+            },
+            {
+                "name": "fromPosix",
+                "comment": " Construct a [Date](Calendar#Date) from a [Posix](https://package.elm-lang.org/packages/elm/time/latest/Time#Posix) time.\r\nYou can construct a `Posix` time from milliseconds using the [millisToPosix](https://package.elm-lang.org/packages/elm/time/latest/Time#millisToPosix)\r\nfunction located in the [elm/time](https://package.elm-lang.org/packages/elm/time/latest/) package.\r\n\r\n    fromPosix (Time.millisToPosix 0)\r\n    -- Date { day = Day 1, month = Jan, year = Year 1970 } : Date\r\n\r\n    fromPosix (Time.millisToPosix 1566795954000)\r\n    -- Date { day = Day 26, month = Aug, year = Year 2019 } : Date\r\n\r\n    fromPosix (Time.millisToPosix 1566777600000)\r\n    -- Date { day = Day 26, month = Aug, year = Year 2019 } : Date\r\n\r\nNotice that in the second and third examples the timestamps that are used are different but the resulting [Dates](Calendar#Date) are identical.\r\nThis is because the [Calendar](Calendar#) module doesn't have any knowledge of `Time` which means that if we attempt to convert both of these dates back [toMillis](Calendar#toMillis)\r\nthey will result in the same milliseconds. It is recommended using the [fromPosix](DateTime#fromPosix) function provided in the [DateTime](DateTime#)\r\nmodule if you need to preserve both `Date` and `Time`.\r\n\r\n",
+                "type": "Time.Posix -> Calendar.Date"
+            },
+            {
+                "name": "fromRawParts",
+                "comment": " Attempt to construct a [Date](Calendar#Date) from its (raw) constituent parts.\r\nReturns `Nothing` if any parts or their combination would form an invalid date.\r\n\r\n    fromRawParts { day = 25, month = Dec, year = 2019 }\r\n    -- Just (Date { day = Day 25, month = Dec, year = Year 2019 }) : Maybe Date\r\n\r\n    fromRawParts { day = 29, month = Feb, year = 2019 }\r\n    -- Nothing : Maybe Date\r\n\r\n",
+                "type": "Calendar.RawDate -> Maybe.Maybe Calendar.Date"
+            },
+            {
+                "name": "getDateRange",
+                "comment": " Returns an incrementally sorted [Date](Calendar#Date) list based on the **start** and **end** date parameters.\r\n_**The resulting list will include both start and end dates**_.\r\n\r\n    -- start == 26 Feb 2020\r\n    -- end   == 1 Mar 2020\r\n\r\n    getDateRange start end\r\n    -- [ 26 Feb 2020, 27 Feb 2020, 28 Feb 2020, 29 Feb 2020, 1  Mar 2020 ] : List Date\r\n\r\n    getDateRange end start\r\n    -- [ 26 Feb 2020, 27 Feb 2020, 28 Feb 2020, 29 Feb 2020, 1  Mar 2020 ] : List Date\r\n\r\n",
+                "type": "Calendar.Date -> Calendar.Date -> List.List Calendar.Date"
+            },
+            {
+                "name": "getDatesInMonth",
+                "comment": " Returns a list of [Dates](Calendar#Date) for the given `Year` and `Month` combination.\r\n\r\n    -- date == 26 Aug 2019\r\n\r\n    getDatesInMonth date\r\n    -- [ 1 Aug 2019, 2 Aug 2019, 3 Aug 2019, ..., 29 Aug 2019, 30 Aug 2019, 31 Aug 2019 ] : List Date\r\n\r\n",
+                "type": "Calendar.Date -> List.List Calendar.Date"
+            },
+            {
+                "name": "getDay",
+                "comment": " Extract the `Day` part of a [Date](Calendar#Date).\r\n\r\n    -- date == 25 Dec 2019\r\n    getDay date -- 25 : Int\r\n\r\n",
+                "type": "Calendar.Date -> Basics.Int"
+            },
+            {
+                "name": "getDayDiff",
+                "comment": " Returns the difference in days between two [Dates](Calendar#Date). We can have a negative difference of days as can be seen in the examples below.\r\n\r\n    -- past   == 24 Aug 2019\r\n    -- future == 26 Aug 2019\r\n    getDayDiff past future -- 2  : Int\r\n\r\n    getDayDiff future past -- -2 : Int\r\n\r\n",
+                "type": "Calendar.Date -> Calendar.Date -> Basics.Int"
+            },
+            {
+                "name": "getFollowingMonths",
+                "comment": " Returns a list with all the following months in a Calendar Year based on the `Month` argument provided.\r\nThe resulting list **will not include** the given `Month`.\r\n\r\n    getFollowingMonths Aug -- [ Sep, Oct, Nov, Dec ] : List Month\r\n\r\n    getFollowingMonths Dec -- [] : List Month\r\n\r\n",
+                "type": "Time.Month -> List.List Time.Month"
+            },
+            {
+                "name": "getMonth",
+                "comment": " Extract the `Month` part of a [Date](Calendar#Date).\r\n\r\n    -- date == 25 Dec 2019\r\n    getMonth date -- Dec : Month\r\n\r\n",
+                "type": "Calendar.Date -> Time.Month"
+            },
+            {
+                "name": "getPrecedingMonths",
+                "comment": " Returns a list with all the preceding months in a Calendar Year based on the `Month` argument provided.\r\nThe resulting list **will not include** the given `Month`.\r\n\r\n    getPrecedingMonths May -- [ Jan, Feb, Mar, Apr ] : List Month\r\n\r\n    getPrecedingMonths Jan -- [] : List Month\r\n\r\n",
+                "type": "Time.Month -> List.List Time.Month"
+            },
+            {
+                "name": "getWeekday",
+                "comment": " Returns the weekday of a specific [Date](Calendar#Date).\r\n\r\n    -- date == 26 Aug 2019\r\n    getWeekday date -- Mon : Weekday\r\n\r\n",
+                "type": "Calendar.Date -> Time.Weekday"
+            },
+            {
+                "name": "getYear",
+                "comment": " Extract the `Year` part of a [Date](Calendar#Date).\r\n\r\n    -- date == 25 Dec 2019\r\n    getYear date -- 2019 : Int\r\n\r\n",
+                "type": "Calendar.Date -> Basics.Int"
+            },
+            {
+                "name": "incrementDay",
+                "comment": " Increments the `Day` in a given [Date](Calendar#Date). Will also increment `Month` and `Year` where applicable.\r\n\r\n    -- date  == 25 Aug 2019\r\n    incrementDay date -- 26 Aug 2019 : Date\r\n\r\n    -- date2 == 31 Dec 2019\r\n    incrementDay date2 -- 1 Jan 2020 : Date\r\n\r\n",
+                "type": "Calendar.Date -> Calendar.Date"
+            },
+            {
+                "name": "incrementMonth",
+                "comment": " Increments the `Month` in a given [Date](Calendar#Date). It will also roll over to the next year where applicable.\r\n\r\n    -- date  == 15 Sep 2019\r\n    incrementMonth date -- 15 Oct 2019 : Date\r\n\r\n    -- date2 == 15 Dec 2019\r\n    incrementMonth date2 -- 15 Jan 2020 : Date\r\n\r\n    -- date3 == 31 Jan 2019\r\n    incrementMonth date3 -- 28 Feb 2019 : Date\r\n\r\n**Note:** In the first example, incrementing the `Month` causes no changes in the `Year` and `Day` parts while on the second\r\nexample it rolls forward the 'Year'. On the last example we see that the `Day` part is different than the input. This is because\r\nthe resulting date would be an invalid one ( _**31st of February 2019**_ ). As a result of this scenario we fall back to the last\r\nvalid day of the given `Month` and `Year` combination.\r\n\r\n",
+                "type": "Calendar.Date -> Calendar.Date"
+            },
+            {
+                "name": "incrementYear",
+                "comment": " Increments the `Year` in a given [Date](Calendar#Date) while preserving the `Month` and `Day` parts.\r\n\r\n    -- date  == 31 Jan 2019\r\n    incrementYear date -- 31 Jan 2020 : Date\r\n\r\n    -- date2 == 29 Feb 2020\r\n    incrementYear date2 -- 28 Feb 2021 : Date\r\n\r\n**Note:** In the first example, incrementing the `Year` causes no changes in the `Month` and `Day` parts.\r\nOn the second example we see that the `Day` part is different than the input. This is because the resulting date\r\nwould be an invalid date ( _**29th of February 2021**_ ). As a result of this scenario we fall back to the last valid day\r\nof the given `Month` and `Year` combination.\r\n\r\n",
+                "type": "Calendar.Date -> Calendar.Date"
+            },
+            {
+                "name": "isLeapYear",
+                "comment": " Checks if the `Year` part of the given [Date](Calendar#Date) is a leap year.\r\n\r\n    -- date  == 25 Dec 2019\r\n    isLeapYear date -- False\r\n\r\n    -- date2 == 25 Dec 2020\r\n    isLeapYear date2 -- True\r\n\r\n",
+                "type": "Calendar.Date -> Basics.Bool"
+            },
+            {
+                "name": "lastDayOf",
+                "comment": " Returns the __last day__ of the combination of the `Year` and `Month` parts of the given [Date](Calendar#Date).\r\n\r\n    -- date == 1 Dec 2018\r\n    lastDayOf date -- 31 : Int\r\n\r\n    -- date2 == 1 Feb 2019\r\n    lastDayOf date2 -- 28 : Int\r\n\r\n    -- date3 = 1 Feb 2020\r\n    lastDayOf date3 -- 29 : Int\r\n\r\n",
+                "type": "Calendar.Date -> Basics.Int"
+            },
+            {
+                "name": "millisInADay",
+                "comment": " Returns the milliseconds in a day.\r\n",
+                "type": "Basics.Int"
+            },
+            {
+                "name": "monthToInt",
+                "comment": " Convert a given [Month](https://package.elm-lang.org/packages/elm/time/latest/Time#Month) to an integer starting from 1.\r\n\r\n    monthToInt Jan -- 1 : Int\r\n\r\n    monthToInt Aug -- 8 : Int\r\n\r\n",
+                "type": "Time.Month -> Basics.Int"
+            },
+            {
+                "name": "months",
+                "comment": " Returns a list of all the `Months` in Calendar order.\r\n",
+                "type": "Array.Array Time.Month"
+            },
+            {
+                "name": "setDay",
+                "comment": " Attempts to set the `Day` part of a [Date](Calendar#Date).\r\n\r\n    -- date == 31 Jan 2019\r\n    setDay 25 date -- Just (25 Jan 2019) : Maybe Date\r\n\r\n    setDay 32 date -- Nothing : Maybe Date\r\n\r\n",
+                "type": "Basics.Int -> Calendar.Date -> Maybe.Maybe Calendar.Date"
+            },
+            {
+                "name": "setMonth",
+                "comment": " Attempts to set the `Month` part of a [Date](Calendar#Date).\r\n\r\n    -- date == 31 Jan 2019\r\n    setMonth Aug date -- Just (31 Aug 2019) : Maybe Date\r\n\r\n    setMonth Apr date -- Nothing : Maybe Date\r\n\r\n",
+                "type": "Time.Month -> Calendar.Date -> Maybe.Maybe Calendar.Date"
+            },
+            {
+                "name": "setYear",
+                "comment": " Attempts to set the `Year` part of a [Date](Calendar#Date).\r\n\r\n    -- date == 29 Feb 2020\r\n    setYear 2024 date -- Just (29 Feb 2024) : Maybe Date\r\n\r\n    setYear 2019 date -- Nothing : Maybe Date\r\n\r\n",
+                "type": "Basics.Int -> Calendar.Date -> Maybe.Maybe Calendar.Date"
+            },
+            {
+                "name": "sort",
+                "comment": " Sorts incrementally a list of [Dates](Calendar#Date).\r\n\r\n    -- past   == 26 Aug 1920\r\n    -- epoch  == 1 Jan 1970\r\n    -- future == 25 Dec 2020\r\n\r\n    sort [ future, past, epoch ]\r\n    -- [ 26 Aug 1920, 1 Jan 1970, 25 Dec 2020 ] : List Date\r\n\r\n",
+                "type": "List.List Calendar.Date -> List.List Calendar.Date"
+            },
+            {
+                "name": "toMillis",
+                "comment": " Transforms a [Date](Calendar#Date) into milliseconds.\r\n\r\n    date = fromRawParts { day = 25, month = Dec, year = 2019 }\r\n    Maybe.map toMillis date -- Just 1577232000000 == 25 Dec 2019 00:00:00.000\r\n\r\n    want = 1566795954000 -- 26 Aug 2019 05:05:54.000\r\n    got = toMillis (fromPosix (Time.millisToPosix want)) -- 1566777600000 == 26 Aug 2019 00:00:00.000\r\n\r\n    want == got -- False\r\n\r\nNotice that transforming a **date** to milliseconds will always get you midnight hours.\r\nThe first example above will return a timestamp that equals to **Wed 25th of December 2019 00:00:00.000**\r\nand the second example will return a timestamp that equals to **26th of August 2019 00:00:00.000** even though\r\nthe timestamp we provided in the [fromPosix](Calendar#fromPosix) was equal to **26th of August 2019 05:05:54.000**\r\n\r\n",
+                "type": "Calendar.Date -> Basics.Int"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Clock",
+        "comment": " The [Clock](Clock#) module was introduced in order to keep track of the `Time` concept.\r\nIt has no notion of a `Date` or any of its parts and it represents `Time` as a [24-hour clock](https://en.wikipedia.org/wiki/24-hour_clock)\r\nwhich consists of `Hours`, `Minutes`, `Seconds` and `Milliseconds`. You can construct a `Time`\r\neither by providing a [Posix](https://package.elm-lang.org/packages/elm/time/latest/Time#Posix) time\r\nor by using its [Raw constituent parts](Clock#RawTime). You can use a `Time` and\r\nthe Clock's utilities as a standalone or you can combine a [Time](Clock#Time) and a [Date](Calendar#Date)\r\nin order to get a [DateTime](DateTime#DateTime) which can then be converted into a [Posix](https://package.elm-lang.org/packages/elm/time/latest/Time#Posix).\r\n\r\n\r\n# Type definition\r\n\r\n@docs Time, RawTime\r\n\r\n\r\n# Creating a `Time`\r\n\r\n@docs fromPosix, fromRawParts\r\n\r\n\r\n# Conversions\r\n\r\n@docs toMillis\r\n\r\n\r\n# Accessors\r\n\r\n@docs getHours, getMinutes, getSeconds, getMilliseconds\r\n\r\n\r\n# Setters\r\n\r\n@docs setHours, setMinutes, setSeconds, setMilliseconds\r\n\r\n\r\n# Increment values\r\n\r\n@docs incrementHours, incrementMinutes, incrementSeconds, incrementMilliseconds\r\n\r\n\r\n# Decrement values\r\n\r\n@docs decrementHours, decrementMinutes, decrementSeconds, decrementMilliseconds\r\n\r\n\r\n# Compare values\r\n\r\n@docs compare\r\n\r\n\r\n# Utilities\r\n\r\n@docs sort\r\n\r\n\r\n# Constants\r\n\r\n@docs midnight\r\n\r\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "RawTime",
+                "comment": " An 'abstract' representation of Time and its constituent parts based on Integers.\r\n",
+                "args": [],
+                "type": "{ hours : Basics.Int, minutes : Basics.Int, seconds : Basics.Int, milliseconds : Basics.Int }"
+            },
+            {
+                "name": "Time",
+                "comment": " A clock time.\r\n",
+                "args": [],
+                "type": "Clock.Internal.Time"
+            }
+        ],
+        "values": [
+            {
+                "name": "compare",
+                "comment": " Compare two `Time` values.\r\n\r\n    -- past   == 15:45:24.780\r\n    -- future == 15:45:24.800\r\n    compare past past -- EQ : Order\r\n\r\n    compare past future -- LT : Order\r\n\r\n    compare future past -- GT : Order\r\n\r\n",
+                "type": "Clock.Time -> Clock.Time -> Basics.Order"
+            },
+            {
+                "name": "decrementHours",
+                "comment": " Decrements an `Hour` inside a [Time](Clock#Time). The [Time](Clock#Time) will keep on cycling backwards with a\r\nminimum time of _00:00:00.000_. It also returns a `Bool` flag which indicates if the new `Time` has passed through the midnight hour ( 00:00:00.000 ).\r\nThis flag can be used in order to notify that a `Day` has passed but it is advised to use the [DateTime](DateTime#) module for these kind\r\nof operations since it provides all the available helpers and takes care of any [Calendar](Calendar#) changes.\r\n\r\n    -- time  == 13:15:45.750\r\n    decrementHours time -- (12:15:45.750, False) : (Time, Bool)\r\n\r\n    -- time2 == 00:59:59.999\r\n    decrementHours time2 -- (23:59:59.999, True) : (Time, Bool)\r\n\r\n",
+                "type": "Clock.Time -> ( Clock.Time, Basics.Bool )"
+            },
+            {
+                "name": "decrementMilliseconds",
+                "comment": " Decrements a `Millisecond` inside a [Time](Clock#Time). The [Time](Clock#Time) will keep on cycling backwards\r\nas mentioned in the [decrementHours](Clock#decrementHours) description.\r\n\r\n    -- time  == 12:15:00.000\r\n    decrementMilliseconds time -- (12:14:59.999, False) : (Time, Bool)\r\n\r\n    -- time2 == 00:00:00.000\r\n    decrementMilliseconds time2 -- (23:59:59.999, True) : (Time, Bool)\r\n\r\n",
+                "type": "Clock.Time -> ( Clock.Time, Basics.Bool )"
+            },
+            {
+                "name": "decrementMinutes",
+                "comment": " Decrements a `Minute` inside a [Time](Clock#Time). The [Time](Clock#Time) will keep on cycling backwards\r\nas mentioned in the [decrementHours](Clock#decrementHours) description.\r\n\r\n    -- time  == 12:15:00.000\r\n    decrementMinutes time -- (12:14:00.000, False) : (Time, Bool)\r\n\r\n    -- time2 == 00:00:00.000\r\n    decrementMinutes time2 -- (23:59:00.000, True) : (Time, Bool)\r\n\r\n",
+                "type": "Clock.Time -> ( Clock.Time, Basics.Bool )"
+            },
+            {
+                "name": "decrementSeconds",
+                "comment": " Decrements a `Second` inside a [Time](Clock#Time). The [Time](Clock#Time) will keep on cycling backwards\r\nas mentioned in the [decrementHours](Clock#decrementHours) description.\r\n\r\n    -- time  == 12:15:00.000\r\n    decrementSeconds time -- (12:14:59.000, False) : (Time, Bool)\r\n\r\n    -- time2 == 00:00:00.000\r\n    decrementSeconds time2 -- (23:59:59.000, True) : (Time, Bool)\r\n\r\n",
+                "type": "Clock.Time -> ( Clock.Time, Basics.Bool )"
+            },
+            {
+                "name": "fromPosix",
+                "comment": " Construct a [Time](Clock#Time) from a [Posix](https://package.elm-lang.org/packages/elm/time/latest/Time#Posix) time.\r\nYou can construct a `Posix` time from milliseconds using the [millisToPosix](https://package.elm-lang.org/packages/elm/time/latest/Time#millisToPosix)\r\nfunction located in the [elm/time](https://package.elm-lang.org/packages/elm/time/latest/) package.\r\n\r\n    fromPosix (Time.millisToPosix 0)\r\n    -- Time { hours = Hour 0, minutes = Minute 0, seconds = Second 0, milliseconds = Millisecond 0 } : Time\r\n\r\n    fromPosix (Time.millisToPosix 1566795954000)\r\n    -- Time { hours = Hour 5, minutes = Minute 5, seconds = Second 54, milliseconds = Millisecond 0 } : Time\r\n\r\n    fromPosix (Time.millisToPosix 1566777600000)\r\n    -- Time { hours = Hour 0, minutes = Minute 0, seconds = Second 0, milliseconds = Millisecond 0 } : Time\r\n\r\nNotice that in the first and third examples the timestamps that are used are different but the result [Times](Clock#Time) are identical.\r\nThis is because the [Clock](Clock#) module only extracts the `Hours`, `Minutes`, `Seconds` and `Milliseconds` from the given\r\n[Posix](https://package.elm-lang.org/packages/elm/time/latest/Time#Posix) time given. This means that if we attempt to convert both of these `Times`\r\nback [toMillis](Clock#toMillis) they will result in the same milliseconds. It is recommended using the [fromPosix](DateTime#fromPosix)\r\nfunction provided in the [DateTime](DateTime#) module if you need to preserve both `Date` and `Time`.\r\n\r\n",
+                "type": "Time.Posix -> Clock.Time"
+            },
+            {
+                "name": "fromRawParts",
+                "comment": " Construct a clock [Time](Clock#Time) from raw `Hour`, `Minute`, `Second`, `Millisecond` integers.\r\n\r\n    fromRawParts { hours = 23, minutes = 15, seconds = 45, milliseconds = 999 }\r\n    -- Just (Time { hours = Hour 23, minutes = Minute 15, seconds = Second 45, milliseconds = Millisecond 999 }) : Maybe Time\r\n\r\n    fromRawParts { hours = 24, minutes = 15, seconds = 45, milliseconds = 999 }\r\n    -- Nothing : Maybe Time\r\n\r\nNotice that the second attempt to construct a time resulted in `Nothing`. This is because the upper limit for an `Hour` is 23.\r\n\r\nThe limits are as follows:\r\n\r\n  - 0 &le; Hours &lt; 24\r\n  - 0 &le; Minutes &lt; 60\r\n  - 0 &le; Seconds &lt; 60\r\n  - 0 &le; Milliseconds &lt; 1000\r\n\r\n",
+                "type": "Clock.RawTime -> Maybe.Maybe Clock.Time"
+            },
+            {
+                "name": "getHours",
+                "comment": " Extract the `Hours` part of a [Time](Clock#Time).\r\n\r\n    -- time == 12:15:45.500\r\n    getHours time -- 12 : Int\r\n\r\n",
+                "type": "Clock.Time -> Basics.Int"
+            },
+            {
+                "name": "getMilliseconds",
+                "comment": " Extract the `Millisecond` part of a [Time](Clock#Time).\r\n\r\n    -- time == 12:15:45.500\r\n    getMilliseconds time -- 500 : Int\r\n\r\n",
+                "type": "Clock.Time -> Basics.Int"
+            },
+            {
+                "name": "getMinutes",
+                "comment": " Extract the `Minutes` part of a [Time](Clock#Time).\r\n\r\n    -- time == 12:15:45.500\r\n    getMinutes time -- 15 : Int\r\n\r\n",
+                "type": "Clock.Time -> Basics.Int"
+            },
+            {
+                "name": "getSeconds",
+                "comment": " Extract the `Seconds` part of a [Time](Clock#Time).\r\n\r\n    -- time == 12:15:45.500\r\n    getSeconds time -- 45 : Int\r\n\r\n",
+                "type": "Clock.Time -> Basics.Int"
+            },
+            {
+                "name": "incrementHours",
+                "comment": " Increments an `Hour` inside a [Time](Clock#Time). The [Time](Clock#Time) will keep on cycling forward with a\r\nmaximum time of _23:59:59.999_. It also returns a `Bool` flag which indicates if the new `Time` has passed through the midnight hour ( 00:00:00.000 ).\r\nThis flag can be used in order to notify that a `Day` has passed but it is advised to use the [DateTime](DateTime#) module for these kind\r\nof operations since it provides all the available helpers and takes care of any [Calendar](Calendar#) changes.\r\n\r\n-- time == 12:15:45.750\r\nincrementHours time -- (13:15:45.750, False) : (Time, Bool)\r\n\r\n-- time2 == 23:00:00.000\r\nincrementHours time2 -- (00:00:00.000, True) : (Time, Bool)\r\n\r\n",
+                "type": "Clock.Time -> ( Clock.Time, Basics.Bool )"
+            },
+            {
+                "name": "incrementMilliseconds",
+                "comment": " Increments a `Millisecond` inside a [Time](Clock#Time). The [Time](Clock#Time) will keep on cycling around\r\nas mentioned in the [incrementHours](Clock#incrementHours) description.\r\n\r\n-- time == 12:59:59.999\r\nincrementMilliseconds time -- (13:00:00.000, False) : (Time, Bool)\r\n\r\n-- time2 == 23:59:59.999\r\nincrementMilliseconds time2 -- (00:00:00.000, True) : (Time, Bool)\r\n\r\n",
+                "type": "Clock.Time -> ( Clock.Time, Basics.Bool )"
+            },
+            {
+                "name": "incrementMinutes",
+                "comment": " Increments a `Minute` inside a [Time](Clock#Time). The [Time](Clock#Time) will keep on cycling around\r\nas mentioned in the [incrementHours](Clock#incrementHours) description.\r\n\r\n-- time == 12:59:45.750\r\nincrementMinutes time -- (13:00:45.750, False) : (Time, Bool)\r\n\r\n-- time2 == 23:59:45.750\r\nincrementMinutes time2 -- (00:00:45.750, True) : (Time, Bool)\r\n\r\n",
+                "type": "Clock.Time -> ( Clock.Time, Basics.Bool )"
+            },
+            {
+                "name": "incrementSeconds",
+                "comment": " Increments a `Second` inside a [Time](Clock#Time). The [Time](Clock#Time) will keep on cycling around\r\nas mentioned in the [incrementHours](Clock#incrementHours) description.\r\n\r\n-- time == 12:59:59.750\r\nincrementSeconds time -- (13:00:00.750, False) : (Time, Bool)\r\n\r\n-- time2 == 23:59:59.750\r\nincrementSeconds time2 -- (00:00:00.750, True) : (Time, Bool)\r\n\r\n",
+                "type": "Clock.Time -> ( Clock.Time, Basics.Bool )"
+            },
+            {
+                "name": "midnight",
+                "comment": " Returns midnight time.\r\n\r\n    midnight == 00:00:00.000\r\n\r\n",
+                "type": "Clock.Time"
+            },
+            {
+                "name": "setHours",
+                "comment": " Attempts to set the `Hour` on an existing time.\r\n\r\n    -- time == 15:45:54.250\r\n    setHours 23 time -- Just (23:45:54.250) : Maybe Time\r\n\r\n    setHours 24 time -- Nothing : Maybe Time\r\n\r\n",
+                "type": "Basics.Int -> Clock.Time -> Maybe.Maybe Clock.Time"
+            },
+            {
+                "name": "setMilliseconds",
+                "comment": " Attempts to set the `Millisecond` on an existing time.\r\n\r\n    -- time == 15:45:54.250\r\n    setMilliseconds 589 time -- Just (15:45:54.589) : Maybe Time\r\n\r\n    setMilliseconds 1000 time -- Nothing : Maybe Time\r\n\r\n",
+                "type": "Basics.Int -> Clock.Time -> Maybe.Maybe Clock.Time"
+            },
+            {
+                "name": "setMinutes",
+                "comment": " Attempts to set the `Minute` on an existing time.\r\n\r\n    -- time == 15:45:54.250\r\n    setMinutes 36 time -- Just (15:36:54.250) : Maybe Time\r\n\r\n    setMinutes 60 time -- Nothing : Maybe Time\r\n\r\n",
+                "type": "Basics.Int -> Clock.Time -> Maybe.Maybe Clock.Time"
+            },
+            {
+                "name": "setSeconds",
+                "comment": " Attempts to set the `Second` on an existing time.\r\n\r\n    -- time == 15:45:54.250\r\n    setSeconds 20 time -- Just (15:45:20.250) : Maybe Time\r\n\r\n    setSeconds 60 time -- Nothing : Maybe Time\r\n\r\n",
+                "type": "Basics.Int -> Clock.Time -> Maybe.Maybe Clock.Time"
+            },
+            {
+                "name": "sort",
+                "comment": " Sorts a List of 'Time' based on their representation in milliseconds.\r\n\r\n    -- dawn     == 06:00:00.000\r\n    -- noon     == 12:00:00.000\r\n    -- dusk     == 18:00:00.000\r\n    -- midnight == 00:00:00.000\r\n\r\n    sort [ noon, dawn, dusk, midnight ]\r\n    -- [ 00:00:00.000, 06:00:00.000, 12:00:00.000, 18:00:00.000 ] : List Time\r\n\r\n",
+                "type": "List.List Clock.Time -> List.List Clock.Time"
+            },
+            {
+                "name": "toMillis",
+                "comment": " Convert a [Time](Clock#Time) to milliseconds since midnight.\r\n\r\n    time = fromRawParts { hours = 12, minutes = 30, seconds = 0, milliseconds = 0 }\r\n    Maybe.map toMillis time -- Just 45000000 : Maybe Int\r\n\r\n    want = 1566777600000 -- 26 Aug 2019 00:00:00.000\r\n    got = toMillis (fromPosix (Time.millisToPosix want)) -- 0 : Int\r\n\r\n    want == got -- False\r\n\r\n",
+                "type": "Clock.Time -> Basics.Int"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "DateTime",
+        "comment": " The [DateTime](DateTime#) module was introduced in order to keep track of both the\r\n[Date](Calendar#Date) and [Time](Clock#Time). The `DateTime`\r\nconsists of a `Day`, `Month`, `Year`, `Hours`, `Minutes`, `Seconds` and `Milliseconds`.\r\nYou can construct a `DateTime` either by using a [Posix](https://package.elm-lang.org/packages/elm/time/latest/Time#Posix)\r\nor by using an existing [Date](Calendar#Date) and [Time](Clock#Time) combination. Otherwise\r\nyou can _**attempt**_ to construct a `DateTime` by using a combination of a\r\n[RawDate](Calendar#RawDate) and a [RawClock](Clock#RawClock).\r\n\r\n@docs DateTime\r\n\r\n\r\n# Creating a `DateTime`\r\n\r\n@docs fromPosix, fromRawParts, fromDateAndTime\r\n\r\n\r\n# Conversions\r\n\r\n@docs toPosix, toMillis\r\n\r\n\r\n# Accessors\r\n\r\n@docs getDate, getTime, getYear, getMonth, getDay, getHours, getMinutes, getSeconds, getMilliseconds\r\n\r\n\r\n# Setters\r\n\r\n@docs setDate, setTime, setYear, setMonth, setDay, setHours, setMinutes, setSeconds, setMilliseconds\r\n\r\n\r\n# Increment values\r\n\r\n@docs incrementYear, incrementMonth, incrementDay, incrementHours, incrementMinutes, incrementSeconds, incrementMilliseconds\r\n\r\n\r\n# Decrement values\r\n\r\n@docs decrementYear, decrementMonth, decrementDay, decrementHours, decrementMinutes, decrementSeconds, decrementMilliseconds\r\n\r\n\r\n# Compare values\r\n\r\n@docs compare, compareDates, compareTime\r\n\r\n\r\n# Utilities\r\n\r\n@docs getTimezoneOffset, getDateRange, getDatesInMonth, getDayDiff, getWeekday, isLeapYear, lastDayOf, sort\r\n\r\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "DateTime",
+                "comment": " An instant in time, composed of a [Date](Calendar#Date) and a [Time](Clock#Time).\r\n",
+                "args": [],
+                "type": "DateTime.Internal.DateTime"
+            }
+        ],
+        "values": [
+            {
+                "name": "compare",
+                "comment": " Compares the two given [DateTimes](DateTime#DateTime) and returns an [Order](https://package.elm-lang.org/packages/elm/core/latest/Basics#Order).\r\n\r\n    -- past   == 25 Aug 2019 12:15:45.250\r\n    -- future == 26 Aug 2019 12:15:45.250\r\n    compare past past -- EQ : Order\r\n\r\n    compare past future -- LT : Order\r\n\r\n    compare future past -- GT : Order\r\n\r\n",
+                "type": "DateTime.DateTime -> DateTime.DateTime -> Basics.Order"
+            },
+            {
+                "name": "compareDates",
+                "comment": " Compares the [Date](Calendar#Date) part of two given [DateTime](DateTime#DateTime) and returns an [Order](https://package.elm-lang.org/packages/elm/core/latest/Basics#Order).\r\n\r\n    -- dateTime  == 25 Aug 2019 12:15:45.250\r\n    -- dateTime2 == 25 Aug 2019 21:00:00.000\r\n    -- dateTime3 == 26 Aug 2019 12:15:45.250\r\n    compare dateTime dateTime2 -- EQ : Order\r\n\r\n    compare dateTime dateTime3 -- LT : Order\r\n\r\n    compare dateTime3 dateTime2 -- GT : Order\r\n\r\n",
+                "type": "DateTime.DateTime -> DateTime.DateTime -> Basics.Order"
+            },
+            {
+                "name": "compareTime",
+                "comment": " Compares the [Time](Clock#Time) part of two given [DateTime](DateTime#DateTime) and returns an [Order](https://package.elm-lang.org/packages/elm/core/latest/Basics#Order).\r\n\r\n    -- dateTime  == 25 Aug 2019 12:15:45.250\r\n    -- dateTime2 == 25 Aug 2019 21:00:00.000\r\n    -- dateTime3 == 26 Aug 2019 12:15:45.250\r\n    compare dateTime dateTime3 -- EQ : Order\r\n\r\n    compare dateTime dateTime2 -- LT : Order\r\n\r\n    compare dateTime2 dateTime3 -- GT : Order\r\n\r\n",
+                "type": "DateTime.DateTime -> DateTime.DateTime -> Basics.Order"
+            },
+            {
+                "name": "decrementDay",
+                "comment": " Decrements the `Day` in a given [DateTime](DateTime#DateTime). Will also decrement `Month` and `Year` where applicable.\r\n\r\n    -- dateTime  == 27 Aug 2019 15:30:45.100\r\n    decrementDay dateTime -- 26 Aug 2019 15:30:45.100 : DateTime\r\n\r\n    -- dateTime2 == 1 Jan 2020 15:30:45.100\r\n    decrementDay dateTime2 -- 31 Dec 2019 15:30:45.100 : DateTime\r\n\r\n",
+                "type": "DateTime.DateTime -> DateTime.DateTime"
+            },
+            {
+                "name": "decrementHours",
+                "comment": " Decrements the `Hours` in a given [DateTime](DateTime#DateTime). Will also decrement `Day`, `Month`, `Year` where applicable.\r\n\r\n    -- dateTime  == 25 Aug 2019 15:30:45.100\r\n    decrementHours dateTime -- 25 Aug 2019 14:30:45.100 : DateTime\r\n\r\n    -- dateTime2 == 1 Jan 2020 00:00:00.000\r\n    decrementHours dateTime2 -- 31 Dec 2019 23:00:00.000 : DateTime\r\n\r\n",
+                "type": "DateTime.DateTime -> DateTime.DateTime"
+            },
+            {
+                "name": "decrementMilliseconds",
+                "comment": " Decrements the `Milliseconds` in a given [DateTime](DateTime#DateTime). Will also decrement `Seconds`, `Minutes`, `Hours`, `Day`, `Month`, `Year` where applicable.\r\n\r\n    -- dateTime  == 25 Aug 2019 15:30:45.100\r\n    decrementMilliseconds dateTime -- 25 Aug 2019 15:30:45.099 : DateTime\r\n\r\n    -- dateTime2 == 1 Jan 2020 00:00:00.000\r\n    decrementMilliseconds dateTime2 -- 31 Dec 2019 23:59:59.999 : DateTime\r\n\r\n",
+                "type": "DateTime.DateTime -> DateTime.DateTime"
+            },
+            {
+                "name": "decrementMinutes",
+                "comment": " Decrements the `Minutes` in a given [DateTime](DateTime#DateTime). Will also decrement `Hours`, `Day`, `Month`, `Year` where applicable.\r\n\r\n    -- dateTime  == 25 Aug 2019 15:30:45.100\r\n    decrementMinutes dateTime -- 25 Aug 2019 15:29:45.100 : DateTime\r\n\r\n    -- dateTime2 == 1 Jan 2020 00:00:00.000\r\n    decrementMinutes dateTime2 -- 31 Dec 2019 23:59:00.000 : DateTime\r\n\r\n",
+                "type": "DateTime.DateTime -> DateTime.DateTime"
+            },
+            {
+                "name": "decrementMonth",
+                "comment": " Decrements the `Month` in a given [DateTime](DateTime#DateTime). It will also roll backwards to the previous year where applicable.\r\n_The [Time](Clock#Time) related parts will remain the same._\r\n\r\n    -- dateTime  == 15 Sep 2019 15:30:45.100\r\n    decrementMonth dateTime -- 15 Aug 2019 15:30:45.100 : DateTime\r\n\r\n    -- dateTime2 == 15 Jan 2020 15:30:45.100\r\n    decrementMonth dateTime2 -- 15 Dec 2019 15:30:45.100 : DateTime\r\n\r\n    -- dateTime3 == 31 Dec 2019 15:30:45.100\r\n    decrementMonth dateTime3 -- 30 Nov 2019 15:30:45.100 : DateTime\r\n\r\n**Note:** In the first example, decrementing the `Month` causes no changes in the `Year` and `Day` parts while\r\non the second example it rolls backwards the `Year`. On the last example we see that the `Day` part is different\r\nthan the input. This is because the resulting date would be an invalid one ( _**31st of November 2019**_ ). As a result\r\nof this scenario we fall back to the last valid day of the given `Month` and `Year` combination.\r\n\r\n",
+                "type": "DateTime.DateTime -> DateTime.DateTime"
+            },
+            {
+                "name": "decrementSeconds",
+                "comment": " Decrements the `Seconds` in a given [DateTime](DateTime#DateTime). Will also decrement `Minutes`, `Hours`, `Day`, `Month`, `Year` where applicable.\r\n\r\n    -- dateTime  == 25 Aug 2019 15:30:45.100\r\n    decrementSeconds dateTime -- 25 Aug 2019 15:30:44.100 : DateTime\r\n\r\n    -- dateTime2 == 1 Jan 2020 00:00:00.000\r\n    decrementSeconds dateTime2 -- 31 Dec 2019 23:59:59.000 : DateTime\r\n\r\n",
+                "type": "DateTime.DateTime -> DateTime.DateTime"
+            },
+            {
+                "name": "decrementYear",
+                "comment": " Decrements the `Year` in a given [DateTime](DateTime#DateTime) while preserving the `Month` and `Day`.\r\n_The [Time](Clock#Time) related parts will remain the same._\r\n\r\n    -- dateTime  == 31 Jan 2019 15:30:45.100\r\n    decrementYear dateTime -- 31 Jan 2018 15:30:45.100 : DateTime\r\n\r\n    -- dateTime2 == 29 Feb 2020 15:30:45.100\r\n    decrementYear dateTime2 -- 28 Feb 2019 15:30:45.100 : DateTime\r\n\r\n**Note:** In the first example, decrementing the `Year` causes no changes in the `Month` and `Day` parts.\r\nOn the second example we see that the `Day` part is different than the input. This is because the resulting date in the `DateTime`\r\nwould be an invalid date ( _**29th of February 2019**_ ). As a result of this scenario we fall back to the last valid day\r\nof the given `Month` and `Year` combination.\r\n\r\n",
+                "type": "DateTime.DateTime -> DateTime.DateTime"
+            },
+            {
+                "name": "fromDateAndTime",
+                "comment": " Create a [DateTime](DateTime#DateTime) by combining a [Date](Calendar#Date) and [Time](Clock#Time).\r\n\r\n    -- date == 26 Aug 2019\r\n    -- time == 12:30:45.000\r\n\r\n    fromDateAndTime date time\r\n    -- DateTime { date = Date { day = Day 26, month = Aug, year = Year 2019 }, time = Time { hours = Hour 12, minutes = Minute 30, seconds = Second 45, milliseconds = Millisecond 0 } } : DateTime\r\n\r\n",
+                "type": "Calendar.Date -> Clock.Time -> DateTime.DateTime"
+            },
+            {
+                "name": "fromPosix",
+                "comment": " Create a `DateTime` from a [Posix](https://package.elm-lang.org/packages/elm/time/latest/Time#Posix) time.\r\n\r\n    fromPosix (Time.millisToPosix 0)\r\n    -- DateTime { date = Date { day = Day 1, month = Jan, year = Year 1970 }, time = Time { hours = Hour 0, minutes = Minute 0, seconds = Second 0, milliseconds = Millisecond 0 } } : DateTime\r\n\r\n    fromPosix (Time.millisToPosix 1566795954000)\r\n    -- DateTime { date = Date { day = Day 26, month = Aug, year = Year 2019 }, time = Time { hours = Hour 5, minutes = Minute 5, seconds = Second 54, milliseconds = Millisecond 0 } } : DateTime\r\n\r\n",
+                "type": "Time.Posix -> DateTime.DateTime"
+            },
+            {
+                "name": "fromRawParts",
+                "comment": " Attempts to construct a new `DateTime` object from its raw constituent parts. Returns `Nothing` if\r\nany parts or their combination would result in an invalid [DateTime](DateTime#DateTime).\r\n\r\n    fromRawParts { day = 26, month = Aug, year = 2019 } { hours = 12, minutes = 30, seconds = 45, milliseconds = 0 }\r\n    -- Just (DateTime { date = Date { day = Day 26, month = Aug, year = Year 2019 }, time = Time { hours = Hour 12, minutes = Minute 30, seconds = Second 45, milliseconds = Millisecond 0 }}) : Maybe DateTime\r\n\r\n    fromRawParts { day = 29, month = Feb, year = 2019 } { hours = 16, minutes = 30, seconds = 45, milliseconds = 0 }\r\n    -- Nothing : Maybe DateTime\r\n\r\n    fromRawParts { day = 15, month = Nov, year = 2019 } { hours = 24, minutes = 20, seconds = 40, milliseconds = 0 }\r\n    -- Nothing : Maybe DateTime\r\n\r\n",
+                "type": "Calendar.RawDate -> Clock.RawTime -> Maybe.Maybe DateTime.DateTime"
+            },
+            {
+                "name": "getDate",
+                "comment": " Extract the [Date](Calendar#Date) from a `DateTime`.\r\n\r\n    -- dateTime == 25 Dec 2019 16:45:30.000\r\n    getDate dateTime -- 25 Dec 2019 : Calendar.Date\r\n\r\n",
+                "type": "DateTime.DateTime -> Calendar.Date"
+            },
+            {
+                "name": "getDateRange",
+                "comment": " Returns an incrementally sorted [DateTime](DateTime#DateTime) list based on the **start** and **end** `DateTime` parameters.\r\nThe `Time` parts of the resulting list will be equal to the `Time` argument that was provided.\r\n_**The resulting list will include both start and end dates**_.\r\n\r\n    -- start       == 26 Feb 2020 12:30:45.000\r\n    -- end         == 1  Mar 2020 16:30:45.000\r\n    -- defaultTime == 21:00:00.000\r\n\r\n    getDateRange start end defaultTime\r\n    -- [ 26 Feb 2020 21:00:00.000, 27 Feb 2020 21:00:00.000, 28 Feb 2020 21:00:00.000, 29 Feb 2020 21:00:00.000, 1 Mar 2020 21:00:00.000 ] : List DateTime\r\n\r\n",
+                "type": "DateTime.DateTime -> DateTime.DateTime -> Clock.Time -> List.List DateTime.DateTime"
+            },
+            {
+                "name": "getDatesInMonth",
+                "comment": " Returns a list of [DateTimes](DateTime#DateTime) for the given `Year` and `Month` combination.\r\nThe `Time` parts of the resulting list will be equal to the `Time` portion of the [DateTime](DateTime#DateTime)\r\nthat was provided.\r\n\r\n    -- dateTime == 26 Aug 2019 21:00:00.000\r\n\r\n    getDatesInMonth dateTime\r\n    --   [ 1  Aug 2019  21:00:00.000\r\n    --   , 2  Aug 2019  21:00:00.000\r\n    --   , 3  Aug 2019  21:00:00.000\r\n    --   ...\r\n    --   , 29 Aug 2019 21:00:00.000\r\n    --   , 30 Aug 2019 21:00:00.000\r\n    --   , 31 Aug 2019 21:00:00.000\r\n    --   ] : List DateTime\r\n\r\n",
+                "type": "DateTime.DateTime -> List.List DateTime.DateTime"
+            },
+            {
+                "name": "getDay",
+                "comment": " Extract the `Day` part of `DateTime` as an Int.\r\n\r\n    -- dateTime == 25 Dec 2019 16:45:30.000\r\n    getDay dateTime -- 25 : Int\r\n\r\n",
+                "type": "DateTime.DateTime -> Basics.Int"
+            },
+            {
+                "name": "getDayDiff",
+                "comment": " Returns the difference in days between two [DateTimes](DateTime#DateTime).\r\nWe can have a negative difference of days as can be seen in the examples below.\r\n\r\n    -- dateTime  == 24 Aug 2019 12:00:00.000\r\n    -- dateTime2 == 24 Aug 2019 21:00:00.000\r\n    -- dateTime3 == 26 Aug 2019 15:45:00.000\r\n    getDayDiff dateTime dateTime2 -- 0 : Int\r\n\r\n    getDayDiff dateTime dateTime3 -- 2  : Int\r\n\r\n    getDayDiff dateTime3 dateTime -- -2 : Int\r\n\r\n",
+                "type": "DateTime.DateTime -> DateTime.DateTime -> Basics.Int"
+            },
+            {
+                "name": "getHours",
+                "comment": " Extract the `Hour` part of `DateTime` as an Int.\r\n\r\n    -- dateTime == 25 Dec 2019 16:45:30.000\r\n    getHours dateTime -- 16 : Int\r\n\r\n",
+                "type": "DateTime.DateTime -> Basics.Int"
+            },
+            {
+                "name": "getMilliseconds",
+                "comment": " Extract the `Millisecond` part of `DateTime` as an Int.\r\n\r\n    -- dateTime == 25 Dec 2019 16:45:30.000\r\n    getMilliseconds dateTime -- 0 : Int\r\n\r\n",
+                "type": "DateTime.DateTime -> Basics.Int"
+            },
+            {
+                "name": "getMinutes",
+                "comment": " Extract the `Minute` part of `DateTime` as an Int.\r\n\r\n    -- dateTime == 25 Dec 2019 16:45:30.000\r\n    getMinutes dateTime -- 45 : Int\r\n\r\n",
+                "type": "DateTime.DateTime -> Basics.Int"
+            },
+            {
+                "name": "getMonth",
+                "comment": " Extract the `Month` part of a `DateTime` as a [Month](https://package.elm-lang.org/packages/elm/time/latest/Time#Month).\r\n\r\n    -- dateTime == 25 Dec 2019 16:45:30.000\r\n    getMonth dateTime -- Dec : Time.Month\r\n\r\n",
+                "type": "DateTime.DateTime -> Time.Month"
+            },
+            {
+                "name": "getSeconds",
+                "comment": " Extract the `Second` part of `DateTime` as an Int.\r\n\r\n    -- dateTime == 25 Dec 2019 16:45:30.000\r\n    getSeconds dateTime -- 30 : Int\r\n\r\n",
+                "type": "DateTime.DateTime -> Basics.Int"
+            },
+            {
+                "name": "getTime",
+                "comment": " Extract the [Time](Clock#Time) from a `DateTime`.\r\n\r\n    -- dateTime == 25 Dec 2019 16:45:30.000\r\n    getTime dateTime -- 16:45:30.000 : Clock.Time\r\n\r\n",
+                "type": "DateTime.DateTime -> Clock.Time"
+            },
+            {
+                "name": "getTimezoneOffset",
+                "comment": " Returns the Timezone Offset in Milliseconds. This function can be\r\nused in order to form a `DateTime` that actually matches each users local `DateTime`.\r\n\r\n\r\n    dateTime =\r\n        DateTime.fromPosix posix\r\n\r\n    offset =\r\n        DateTime.getTimezoneOffset zone posix\r\n\r\n    zonedDateTime =\r\n        DateTime.fromPosix (posix + offset)\r\n\r\n    -- zone == GMT+1100\r\n    -- posix == 1554660000000 -- 2019-04-07 18:00:00 UTC\r\n    -- dateTime == 2019-04-07 18:00:00 UTC\r\n    -- zonedDateTime == 2019-04-08 05:00:00 GMT+1100\r\n\r\n_The above example shows the difference between getting a `DateTime` in **UTC** and in **GMT+1100.**_\r\n\r\n**Note:** Timezones ( and local times ) should only be used for date representation purposes and never\r\nfor storing or modeling. If you use getTimezoneOffset for constructing a _**local today**_ `DateTime`,\r\nremember to convert it back to UTC when storing it in a database.\r\n\r\n",
+                "type": "Time.Zone -> Time.Posix -> Basics.Int"
+            },
+            {
+                "name": "getWeekday",
+                "comment": " Returns the weekday of a specific [DateTime](DateTime#DateTime).\r\n\r\n    -- dateTime == 26 Aug 2019 12:30:45.000\r\n    getWeekday dateTime -- Mon : Weekday\r\n\r\n",
+                "type": "DateTime.DateTime -> Time.Weekday"
+            },
+            {
+                "name": "getYear",
+                "comment": " Extract the `Year` part of a `DateTime` as an Int.\r\n\r\n    -- dateTime == 25 Dec 2019 16:45:30.000\r\n    getYear dateTime -- 2019 : Int\r\n\r\n",
+                "type": "DateTime.DateTime -> Basics.Int"
+            },
+            {
+                "name": "incrementDay",
+                "comment": " Increments the `Day` in a given [DateTime](DateTime#DateTime). Will also increment `Month` and `Year` where applicable.\r\n\r\n    -- dateTime  == 25 Aug 2019 15:30:45.100\r\n    incrementDay dateTime -- 26 Aug 2019 15:30:45.100 : DateTime\r\n\r\n    -- dateTime2 == 31 Dec 2019 15:30:45.100\r\n    incrementDay dateTime2 -- 1 Jan 2020 15:30:45.100 : DateTime\r\n\r\n",
+                "type": "DateTime.DateTime -> DateTime.DateTime"
+            },
+            {
+                "name": "incrementHours",
+                "comment": " Increments the `Hours` in a given [DateTime](DateTime#DateTime). Will also increment `Day`, `Month`, `Year` where applicable.\r\n\r\n    -- dateTime  == 25 Aug 2019 15:30:45.100\r\n    incrementHours dateTime -- 25 Aug 2019 16:30:45.100 : DateTime\r\n\r\n    -- dateTime2 == 31 Dec 2019 23:00:00.000\r\n    incrementHours dateTime2 -- 1 Jan 2020 00:00:00.000 : DateTime\r\n\r\n",
+                "type": "DateTime.DateTime -> DateTime.DateTime"
+            },
+            {
+                "name": "incrementMilliseconds",
+                "comment": " Increments the `Milliseconds` in a given [DateTime](DateTime#DateTime). Will also increment `Seconds`, `Minutes`, `Hours`, `Day`, `Month`, `Year` where applicable.\r\n\r\n    -- dateTime  == 25 Aug 2019 15:30:45.100\r\n    incrementMilliseconds dateTime -- 25 Aug 2019 15:30:45:101 : DateTime\r\n\r\n    -- dateTime2 == 31 Dec 2019 23:59:59.999\r\n    incrementMilliseconds dateTime2 -- 1 Jan 2020 00:00:00.000 : DateTime\r\n\r\n",
+                "type": "DateTime.DateTime -> DateTime.DateTime"
+            },
+            {
+                "name": "incrementMinutes",
+                "comment": " Increments the `Minutes` in a given [DateTime](DateTime#DateTime). Will also increment `Hours`, `Day`, `Month`, `Year` where applicable.\r\n\r\n    -- dateTime  == 25 Aug 2019 15:30:45.100\r\n    incrementMinutes dateTime -- 25 Aug 2019 15:31:45.100 : DateTime\r\n\r\n    -- dateTime2 == 31 Dec 2019 23:59:00.000\r\n    incrementMinutes dateTime2 -- 1 Jan 2020 00:00:00.000 : DateTime\r\n\r\n",
+                "type": "DateTime.DateTime -> DateTime.DateTime"
+            },
+            {
+                "name": "incrementMonth",
+                "comment": " Increments the `Month` in a given [DateTime](DateTime#DateTime). It will also roll over to the next year where applicable.\r\n_The [Time](Clock#Time) related parts will remain the same._\r\n\r\n    -- dateTime  == 15 Sep 2019 15:30:45.100\r\n    incrementMonth dateTime -- 15 Oct 2019 15:30:45.100 : DateTime\r\n\r\n    -- dateTime2 == 15 Dec 2019 15:30:45.100\r\n    incrementMonth dateTime2 -- 15 Jan 2020 15:30:45.100 : DateTime\r\n\r\n    -- dateTime3 == 30 Jan 2019 15:30:45.100\r\n    incrementMonth dateTime3 -- 28 Feb 2019 15:30:45.100 : DateTime\r\n\r\n**Note:** In the first example, incrementing the `Month` causes no changes in the `Year` and `Day` parts while on the second\r\nexample it rolls forward the 'Year'. On the last example we see that the `Day` part is different than the input. This is because\r\nthe resulting date would be an invalid one ( _**31st of February 2019**_ ). As a result of this scenario we fall back to the last\r\nvalid day of the given `Month` and `Year` combination.\r\n\r\n",
+                "type": "DateTime.DateTime -> DateTime.DateTime"
+            },
+            {
+                "name": "incrementSeconds",
+                "comment": " Increments the `Seconds` in a given [DateTime](DateTime#DateTime). Will also increment `Minutes`, `Hours`, `Day`, `Month`, `Year` where applicable.\r\n\r\n    -- dateTime  == 25 Aug 2019 15:30:45.100\r\n    incrementSeconds dateTime -- 25 Aug 2019 15:30:46.100 : DateTime\r\n\r\n    -- dateTime2 == 31 Dec 2019 23:59:59.000\r\n    incrementSeconds dateTime2 -- 1 Jan 2020 00:00:00.000 : DateTime\r\n\r\n",
+                "type": "DateTime.DateTime -> DateTime.DateTime"
+            },
+            {
+                "name": "incrementYear",
+                "comment": " Increments the `Year` in a given [DateTime](DateTime#DateTime) while preserving the `Month`, and `Day` parts.\r\n_The [Time](Clock#Time) related parts will remain the same._\r\n\r\n    -- dateTime  == 31 Jan 2019 15:30:45.100\r\n    incrementYear dateTime -- 31 Jan 2020 15:30:45.100 : DateTime\r\n\r\n    -- dateTime2 == 29 Feb 2020 15:30:45.100\r\n    incrementYear dateTime2 -- 28 Feb 2021 15:30:45.100 : DateTime\r\n\r\n**Note:** In the first example, incrementing the `Year` causes no changes in the `Month` and `Day` parts.\r\nOn the second example we see that the `Day` part is different than the input. This is because the resulting date in the `DateTime`\r\nwould be an invalid date ( _**29th of February 2021**_ ). As a result of this scenario we fall back to the last valid day\r\nof the given `Month` and `Year` combination.\r\n\r\n",
+                "type": "DateTime.DateTime -> DateTime.DateTime"
+            },
+            {
+                "name": "isLeapYear",
+                "comment": " Checks if the `Year` part of the given [DateTime](DateTime#DateTime) is a leap year.\r\n\r\n    -- dateTime  == 25 Dec 2019 21:00:00.000\r\n    isLeapYear dateTime -- False\r\n\r\n    -- dateTime2 == 25 Dec 2020 12:00:00.000\r\n    isLeapYear dateTime2 -- True\r\n\r\n",
+                "type": "DateTime.DateTime -> Basics.Bool"
+            },
+            {
+                "name": "lastDayOf",
+                "comment": " Returns the **last day** of the combination of the `Year` and `Month` parts of the given [DateTime](DateTime#DateTime).\r\n\r\n    -- dateTime == 1 Dec 2018 12:00:00.000\r\n    lastDayOf dateTime -- 31 : Int\r\n\r\n    -- dateTime2 == 1 Feb 2019 22:00:00.000\r\n    lastDayOf dateTime2 -- 28 : Int\r\n\r\n    -- dateTime3 = 1 Feb 2020 21:00:00.000\r\n    lastDayOf dateTime3 -- 29 : Int\r\n\r\n",
+                "type": "DateTime.DateTime -> Basics.Int"
+            },
+            {
+                "name": "setDate",
+                "comment": " Sets the `Date` part of a [DateTime#DateTime].\r\n\r\n    -- date == 26 Aug 2019\r\n    -- dateTime == 25 Dec 2019 16:45:30.000\r\n    setDate date dateTime -- 26 Aug 2019 16:45:30.000\r\n\r\n",
+                "type": "Calendar.Date -> DateTime.DateTime -> DateTime.DateTime"
+            },
+            {
+                "name": "setDay",
+                "comment": " Attempts to set the `Day` part of a [Calendar.Date](Calendar#Date) in a `DateTime`.\r\n\r\n    -- dateTime == 31 Jan 2019 15:30:30.000\r\n    setDay 25 dateTime -- Just (25 Jan 2019 15:30:30.000) : Maybe DateTime\r\n\r\n    setDay 32 dateTime -- Nothing : Maybe DateTime\r\n\r\n",
+                "type": "Basics.Int -> DateTime.DateTime -> Maybe.Maybe DateTime.DateTime"
+            },
+            {
+                "name": "setHours",
+                "comment": " Attempts to set the `Hours` part of a [Clock.Time](Clock#Time) in a DateTime.\r\n\r\n    -- dateTime == 2 Jul 2019 12:00:00.000\r\n    setHours 23 dateTime -- Just (2 Jul 2019 23:00:00.000) : Maybe DateTime\r\n\r\n    setHours 24 dateTime -- Nothing : Maybe DateTime\r\n\r\n",
+                "type": "Basics.Int -> DateTime.DateTime -> Maybe.Maybe DateTime.DateTime"
+            },
+            {
+                "name": "setMilliseconds",
+                "comment": " Attempts to set the `Milliseconds` part of a [Clock.Time](Clock#Time) in a DateTime.\r\n\r\n    -- dateTime == 2 Jul 2019 12:00:00.000\r\n    setMilliseconds 589 dateTime -- Just (2 Jul 2019 12:00:00.589) : Maybe DateTime\r\n\r\n    setMilliseconds 1000 dateTime -- Nothing : Maybe DateTime\r\n\r\n",
+                "type": "Basics.Int -> DateTime.DateTime -> Maybe.Maybe DateTime.DateTime"
+            },
+            {
+                "name": "setMinutes",
+                "comment": " Attempts to set the `Minutes` part of a [Clock.Time](Clock#Time) in a DateTime.\r\n\r\n    -- dateTime == 2 Jul 2019 12:00:00.000\r\n    setMinutes 36 dateTime -- Just (2 Jul 2019 12:36:00.000) : Maybe DateTime\r\n\r\n    setMinutes 60 dateTime -- Nothing : Maybe DateTime\r\n\r\n",
+                "type": "Basics.Int -> DateTime.DateTime -> Maybe.Maybe DateTime.DateTime"
+            },
+            {
+                "name": "setMonth",
+                "comment": " Attempts to set the `Month` part of a [Calendar.Date](Calendar#Date) in a `DateTime`.\r\n\r\n    -- dateTime == 31 Jan 2019 15:30:30.000\r\n    setMonth Aug dateTime -- Just (31 Aug 2019 15:30:30.000) : Maybe DateTime\r\n\r\n    setMonth Apr dateTime -- Nothing : Maybe DateTime\r\n\r\n",
+                "type": "Time.Month -> DateTime.DateTime -> Maybe.Maybe DateTime.DateTime"
+            },
+            {
+                "name": "setSeconds",
+                "comment": " Attempts to set the `Seconds` part of a [Clock.Time](Clock#Time) in a DateTime.\r\n\r\n    -- dateTime == 2 Jul 2019 12:00:00.000\r\n    setSeconds 20 dateTime -- Just (2 Jul 2019 12:00:20.000) : Maybe DateTime\r\n\r\n    setSeconds 60 dateTime -- Nothing : Maybe DateTime\r\n\r\n",
+                "type": "Basics.Int -> DateTime.DateTime -> Maybe.Maybe DateTime.DateTime"
+            },
+            {
+                "name": "setTime",
+                "comment": " Sets the `Time` part of a [DateTime#DateTime].\r\n\r\n    -- dateTime == 25 Dec 2019 16:45:30.000\r\n    setTime Clock.midnight dateTime -- 25 Dec 2019 00:00:00.000\r\n\r\n",
+                "type": "Clock.Time -> DateTime.DateTime -> DateTime.DateTime"
+            },
+            {
+                "name": "setYear",
+                "comment": " Attempts to set the `Year` part of a [Calendar.Date](Calendar#Date) in a `DateTime`.\r\n\r\n    -- dateTime == 29 Feb 2020 15:30:30.000\r\n    setYear 2024 dateTime -- Just (29 Feb 2024 15:30:30.000) : Maybe DateTime\r\n\r\n    setYear 2019 dateTime -- Nothing : Maybe DateTime\r\n\r\n",
+                "type": "Basics.Int -> DateTime.DateTime -> Maybe.Maybe DateTime.DateTime"
+            },
+            {
+                "name": "sort",
+                "comment": " Sorts incrementally a list of [DateTime](DateTime#DateTime).\r\n\r\n    -- dateTime  == 26 Aug 1920 12:30:45.000\r\n    -- dateTime2 == 26 Aug 1920 21:00:00.000\r\n    -- dateTime3 == 1  Jan 1970 00:00:00.000\r\n    -- dateTime4 == 1  Jan 1970 14:40:20.120\r\n    -- dateTime5 == 25 Dec 2020 14:40:20.120\r\n    -- dateTime6 == 25 Dec 2020 14:40:20.150\r\n\r\n    sort [ dateTime4, dateTime2, dateTime6, dateTime5, dateTime, dateTime3 ]\r\n    -- [ 26 Aug 1920 12:30:45.000\r\n    -- , 26 Aug 1920 21:00:00.000\r\n    -- , 1  Jan 1970 00:00:00.000\r\n    -- , 1  Jan 1970 14:40:20.120\r\n    -- , 25 Dec 2020 14:40:20.120\r\n    -- , 25 Dec 2020 14:40:20.120\r\n    -- ] : List DateTime\r\n\r\n",
+                "type": "List.List DateTime.DateTime -> List.List DateTime.DateTime"
+            },
+            {
+                "name": "toMillis",
+                "comment": " Convers a `DateTime` to the equivalent milliseconds. The result is relative to the [Epoch](https://en.wikipedia.org/wiki/Unix_time).\r\nThis basically means that **if the DateTime provided is after the Epoch** the result will be a **positive number** representing the milliseconds\r\nthat have elapsed since the Epoch. Otherwise the result will be a negative number representing the milliseconds required in order to reach the Epoch.\r\n\r\n    -- dateTime  == 25 Dec 2019 19:23:45.000\r\n    toMillis dateTime -- 1577301825000 : Int\r\n\r\n    -- dateTime2 == 1 Jan 1970 00:00:00.000\r\n    toMillis dateTime2 -- 0 : Int\r\n\r\n    -- dateTime3 == 8 Jan 1920 04:36:15.000\r\n    toMillis dateTime3 -- -1577301825000 : Int\r\n\r\n",
+                "type": "DateTime.DateTime -> Basics.Int"
+            },
+            {
+                "name": "toPosix",
+                "comment": " Converts a `DateTime` to a posix time. The result is relative to the [Epoch](https://en.wikipedia.org/wiki/Unix_time).\r\nThis basically means that **if the DateTime provided is after the Epoch** the result will be a **positive posix time.** Otherwise the\r\nresult will be a **negative posix time**.\r\n\r\n    -- dateTime  == 25 Dec 2019 19:23:45.000\r\n    toPosix dateTime -- Posix 1577301825000 : Posix\r\n\r\n    -- dateTime2 == 1 Jan 1970 00:00:00.000 : Posix\r\n    toPosix dateTime2 -- Posix 0\r\n\r\n    -- dateTime3 == 8 Jan 1920 04:36:15.000\r\n    toPosix dateTime3 -- Posix -1577301825000 : Posix\r\n\r\n",
+                "type": "DateTime.DateTime -> Time.Posix"
+            }
+        ],
+        "binops": []
+    }
+]

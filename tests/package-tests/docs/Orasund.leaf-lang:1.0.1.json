@@ -1,0 +1,269 @@
+[
+    {
+        "name": "Leaf",
+        "comment": " This is the main module for working with Leaf scripts.\n\n\n# Basic Evaluation\n\nTo run this script in Elm you need to call `Leaf.run`.\n\n    import Leaf exposing (Value(..))\n\n    \"\\\"Hello World\\\"\"\n        |> Leaf.run Dict.empty\n        --> Ok (StringVal \"Hello World\",Dict.empty)\n\n@docs Exp, Value, run\n\n\n# Context-Sensitive Evaluation\n\nYou can also evaluate context sensitive Leaf scripts.\n\n    import Leaf exposing (Value(..))\n    import Dict exposing (Dict)\n    import Leaf.Core as Core\n\n    context : Dict String Field\n    context =\n        [ StringVal \"World\" |> Leaf.field \"name\"\n        , (\\s2 s1 -> StringVal (s1 ++ s2))\n            |> Leaf.binaryFun (Leaf.typed Leaf.asString)\n                (Leaf.typed Leaf.asString)\n            |> Leaf.field \"append\"\n        ]\n            |> Dict.fromList\n            |> Leaf.addExposed Core.package\n\n    \"\\\"Hello \\\" .append name\"\n        |> Leaf.run context\n        --> Ok (StringVal \"Hello World\",context)\n\n@docs Field, field, mutField, unaryFun, binaryFun, trinaryFun\n\n@docs untyped, typed, asNull, asBool, asString, asFloat, asInt, asNullable, asAnyList, asList, asObject, asFunction, asExtension\n\n\n# Utility Functions\n\n@docs toString, addPackage, addExposed\n\n",
+        "unions": [
+            {
+                "name": "Value",
+                "comment": " Every Leaf script evaluates to a Value\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NullVal",
+                        []
+                    ],
+                    [
+                        "StringVal",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "BoolVal",
+                        [
+                            "Basics.Bool"
+                        ]
+                    ],
+                    [
+                        "FloatVal",
+                        [
+                            "Basics.Float"
+                        ]
+                    ],
+                    [
+                        "IntVal",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "ListVal",
+                        [
+                            "List.List Leaf.Value"
+                        ]
+                    ],
+                    [
+                        "ObjectVal",
+                        [
+                            "Dict.Dict String.String Leaf.Value"
+                        ]
+                    ],
+                    [
+                        "FunctionVal",
+                        [
+                            "Maybe.Maybe String.String",
+                            "Leaf.Exp"
+                        ]
+                    ],
+                    [
+                        "ExtensionVal",
+                        [
+                            "Leaf.Value -> Result.Result String.String Leaf.Value"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Exp",
+                "comment": " A leaf script is internally translated into an Exp\n",
+                "args": [],
+                "type": "Internal.Language.Exp"
+            },
+            {
+                "name": "Field",
+                "comment": " Internal type for fields\n",
+                "args": [],
+                "type": "Internal.Semantics.Field"
+            }
+        ],
+        "values": [
+            {
+                "name": "addExposed",
+                "comment": " Adds a package and exposes all function. This should only be used for essential packages.\n\n    import Dict\n\n    addExposed\n        --> Dict.union\n\n",
+                "type": "Dict.Dict String.String Leaf.Field -> Dict.Dict String.String Leaf.Field -> Dict.Dict String.String Leaf.Field"
+            },
+            {
+                "name": "addPackage",
+                "comment": " Adds a package to a context and applies the naming convention `Package::functionName`.\n",
+                "type": "String.String -> Dict.Dict String.String Leaf.Field -> Dict.Dict String.String Leaf.Field -> Dict.Dict String.String Leaf.Field"
+            },
+            {
+                "name": "asAnyList",
+                "comment": " converts a Leaf list into an Elm list of values\n",
+                "type": "Leaf.Value -> Result.Result String.String (List.List Leaf.Value)"
+            },
+            {
+                "name": "asBool",
+                "comment": " Converts a Leaf bool into an Elm bool\n",
+                "type": "Leaf.Value -> Result.Result String.String Basics.Bool"
+            },
+            {
+                "name": "asExtension",
+                "comment": " converts a Leaf extension into an Elm function\n",
+                "type": "Leaf.Value -> Result.Result String.String (Leaf.Value -> Result.Result String.String Leaf.Value)"
+            },
+            {
+                "name": "asFloat",
+                "comment": " Converts a Leaf float into an Elm float\n",
+                "type": "Leaf.Value -> Result.Result String.String Basics.Float"
+            },
+            {
+                "name": "asFunction",
+                "comment": " converts a Leaf functions into an Elm tuple\n",
+                "type": "Leaf.Value -> Result.Result String.String ( Maybe.Maybe String.String, Leaf.Exp )"
+            },
+            {
+                "name": "asInt",
+                "comment": " Converts a Leaf int into an Elm int\n",
+                "type": "Leaf.Value -> Result.Result String.String Basics.Int"
+            },
+            {
+                "name": "asList",
+                "comment": " converts a Leaf list into an Elm list type\n",
+                "type": "(Leaf.Value -> Result.Result String.String a) -> Leaf.Value -> Result.Result String.String (List.List a)"
+            },
+            {
+                "name": "asNull",
+                "comment": " Converts a Leaf null into an Elm unit\n",
+                "type": "Leaf.Value -> Result.Result String.String ()"
+            },
+            {
+                "name": "asNullable",
+                "comment": " converts a Leaf value into an Elm maybe type\n",
+                "type": "(Leaf.Value -> Result.Result String.String a) -> Leaf.Value -> Result.Result String.String (Maybe.Maybe a)"
+            },
+            {
+                "name": "asObject",
+                "comment": " converts a Leaf object into an Elm dict\n",
+                "type": "Leaf.Value -> Result.Result String.String (Dict.Dict String.String Leaf.Value)"
+            },
+            {
+                "name": "asString",
+                "comment": " Converts a Leaf string into an Elm string\n",
+                "type": "Leaf.Value -> Result.Result String.String String.String"
+            },
+            {
+                "name": "binaryFun",
+                "comment": " Turns an Elm function with two argument into a Leaf extension\n\n    import Leaf.Core as Core\n    import Leaf exposing (Field)\n\n    (\\v1 v2 -> Core.equal v1 v2 |> BoolVal)\n        |> Leaf.binaryFun Leaf.untyped Leaf.untyped\n        |> Leaf.field \"equal\"\n\n",
+                "type": "((a -> Leaf.Value) -> Leaf.Value) -> ((b -> Leaf.Value) -> Leaf.Value) -> (a -> b -> Leaf.Value) -> Leaf.Value"
+            },
+            {
+                "name": "field",
+                "comment": " Constructs a context field. Use this in combination with Dict.fromList\n",
+                "type": "String.String -> Leaf.Value -> ( String.String, Leaf.Field )"
+            },
+            {
+                "name": "mutField",
+                "comment": " Constructs a mutable context field. Use this in combination with Dict.fromList\n",
+                "type": "String.String -> Leaf.Value -> ( String.String, Leaf.Field )"
+            },
+            {
+                "name": "run",
+                "comment": " Evaluates a Leaf script. The dictionary may contain fields that can be called from inside the Leaf script.\n\n    import Leaf exposing (Value(..))\n    import Dict exposing (Dict)\n\n    context : Dict String Field\n    context =\n        [ StringVal \"World\" |> Leaf.field \"name\"\n        , (\\s2 s1 -> StringVal (s1 ++ s2) )\n            |> Leaf.binaryFun\n                (Leaf.typed Leaf.asString)\n                (Leaf.typed Leaf.asString)\n            |> Leaf.field \"append\"\n        ]\n        |> Dict.fromList\n\n    \"\\\"Hello \\\" .append name\"\n        |> Leaf.run context\n        --> Ok (StringVal \"Hello World\",context)\n\n",
+                "type": "Dict.Dict String.String Leaf.Field -> String.String -> Result.Result String.String ( Leaf.Value, Dict.Dict String.String Leaf.Field )"
+            },
+            {
+                "name": "toString",
+                "comment": " returns a readable string representation of a value\n",
+                "type": "Leaf.Value -> String.String"
+            },
+            {
+                "name": "trinaryFun",
+                "comment": " Turns an Elm function with three argument into a Leaf extension\n\n    import Leaf.Core as Core\n    import Leaf exposing (Field)\n\n    (\\v1 v2 -> Core.equal v1 v2 |> BoolVal)\n        |> Leaf.binaryFun Leaf.untyped Leaf.untyped\n        |> Leaf.field \"equal\"\n\n",
+                "type": "((a -> Leaf.Value) -> Leaf.Value) -> ((b -> Leaf.Value) -> Leaf.Value) -> ((c -> Leaf.Value) -> Leaf.Value) -> (a -> b -> c -> Leaf.Value) -> Leaf.Value"
+            },
+            {
+                "name": "typed",
+                "comment": " States that an extension function takes a typed value\n\n    import Leaf.Core as Core\n\n    Core.if_\n        |> Leaf.trinaryFun (Leaf.typed Leaf.asBool) Leaf.untyped Leaf.untyped\n        |> Leaf.field \"if\"\n\n",
+                "type": "(Leaf.Value -> Result.Result String.String a) -> (a -> Leaf.Value) -> Leaf.Value"
+            },
+            {
+                "name": "unaryFun",
+                "comment": " Turns an Elm function with one argument into a Leaf extension\n\n    import Leaf.Core as Core\n\n    (Core.isNull >> BoolVal)\n        |> Leaf.unaryFun Leaf.untyped\n        |> Leaf.field \"isNull\"\n\n",
+                "type": "((a -> Leaf.Value) -> Leaf.Value) -> (a -> Leaf.Value) -> Leaf.Value"
+            },
+            {
+                "name": "untyped",
+                "comment": " States that an extension function takes an untyped value\n\n    import Leaf.Core as Core\n\n    (Core.isNull >> BoolVal)\n        |> Leaf.unaryFun Leaf.untyped\n        |> Leaf.field \"isNull\"\n\n",
+                "type": "(Leaf.Value -> Leaf.Value) -> Leaf.Value"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Leaf.Core",
+        "comment": " This is the core package, it contains all essential functions.\n\n@docs package\n\n\n# Equality and If-Statement\n\n@docs equal, notEqual, if_\n\n\n# Type checking\n\n@docs isBool, isExtension, isFloat, isFunction, isInt, isList, isNull, isObject, isString\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "equal",
+                "comment": " Checks if two values are (structually) equal.\n",
+                "type": "Leaf.Value -> Leaf.Value -> Basics.Bool"
+            },
+            {
+                "name": "if_",
+                "comment": " If the first value is true, it returns the second value, else it returns the third value.\n",
+                "type": "Basics.Bool -> Leaf.Value -> Leaf.Value -> Leaf.Value"
+            },
+            {
+                "name": "isBool",
+                "comment": " Checks if a value is a boolean\n",
+                "type": "Leaf.Value -> Basics.Bool"
+            },
+            {
+                "name": "isExtension",
+                "comment": " Checks if a value is an extension function.\n",
+                "type": "Leaf.Value -> Basics.Bool"
+            },
+            {
+                "name": "isFloat",
+                "comment": " Checks if a value is a float\n",
+                "type": "Leaf.Value -> Basics.Bool"
+            },
+            {
+                "name": "isFunction",
+                "comment": " Checks if a value is a function.\n",
+                "type": "Leaf.Value -> Basics.Bool"
+            },
+            {
+                "name": "isInt",
+                "comment": " Checks if a value is an int\n",
+                "type": "Leaf.Value -> Basics.Bool"
+            },
+            {
+                "name": "isList",
+                "comment": " Checks if a value is a list. Does not check if all values of the list have the same type.\n",
+                "type": "Leaf.Value -> Basics.Bool"
+            },
+            {
+                "name": "isNull",
+                "comment": " Checks if a value is null\n",
+                "type": "Leaf.Value -> Basics.Bool"
+            },
+            {
+                "name": "isObject",
+                "comment": " Checks if a value is an object. This is not useful if you want an object with a specific structure, write your own checker instead.\n",
+                "type": "Leaf.Value -> Basics.Bool"
+            },
+            {
+                "name": "isString",
+                "comment": " Checks if a value is a string\n",
+                "type": "Leaf.Value -> Basics.Bool"
+            },
+            {
+                "name": "notEqual",
+                "comment": " Checks if two values are (structually) different.\n",
+                "type": "Leaf.Value -> Leaf.Value -> Basics.Bool"
+            },
+            {
+                "name": "package",
+                "comment": " Dict containing all functions in this package, read to be used in Leaf.\n",
+                "type": "Dict.Dict String.String Leaf.Field"
+            }
+        ],
+        "binops": []
+    }
+]

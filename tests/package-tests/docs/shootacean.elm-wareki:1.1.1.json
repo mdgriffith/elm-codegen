@@ -1,0 +1,21 @@
+[
+    {
+        "name": "Wareki",
+        "comment": " This library convert date-string to Wareki (japanese-era) in Elm.\n\n# Convert Functions\n@docs toNengoFromPosix, toWarekiFromIsoString\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toNengoFromPosix",
+                "comment": " This functions convert posix to Wareki(japanese-era):\n\n    toNengoFromPosix 0 == \"昭和\"\n    toNengoFromPosix 796303523000 == \"平成\"\n    toNengoFromPosix 1599909981000 == \"令和\"\n",
+                "type": "Time.Posix -> Result.Result String.String String.String"
+            },
+            {
+                "name": "toWarekiFromIsoString",
+                "comment": " This functions convert date-string to Wareki(japanese-era) string:\n\n    toWarekiFromIsoString \"2020-05-01\" == \"令和2年5月1日\"\n    toWarekiFromIsoString \"hoge\" == \"Do not exists matched Wareki.\"\n",
+                "type": "String.String -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

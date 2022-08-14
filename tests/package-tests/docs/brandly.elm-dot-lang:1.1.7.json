@@ -1,0 +1,302 @@
+[
+    {
+        "name": "DotLang",
+        "comment": " Parse DOT Language in Elm.\nTake a look at the grammar <https://www.graphviz.org/doc/info/lang.html>\n\n@docs fromString, Dot\n\n\n# DOT Components\n\n@docs EdgeType, ID, Stmt\n\n\n# Stmt Components\n\n@docs NodeId, Attr, AttrStmtType, EdgeRHS, Subgraph, Port, CompassPt\n\n\n# toString\n\n@docs toString, Config, toStringWithConfig\n\n\n# Internal\n\n@docs dot\n\n",
+        "unions": [
+            {
+                "name": "Attr",
+                "comment": " An `Attr` is a key/value pair describing a property of the graph.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Attr",
+                        [
+                            "DotLang.ID",
+                            "DotLang.ID"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "AttrStmtType",
+                "comment": " An `AttrStmt` might apply to all nodes or edges, or even the graph as a\nwhole. The `AttrStmtType` indicates which is being described.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "AttrGraph",
+                        []
+                    ],
+                    [
+                        "AttrNode",
+                        []
+                    ],
+                    [
+                        "AttrEdge",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "CompassPt",
+                "comment": " A `CompassPt` describes the 8 compass directions, as well as `C` for\n\"center\" and `UND` for the default, unspecified direction.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "N",
+                        []
+                    ],
+                    [
+                        "NE",
+                        []
+                    ],
+                    [
+                        "E",
+                        []
+                    ],
+                    [
+                        "SE",
+                        []
+                    ],
+                    [
+                        "S",
+                        []
+                    ],
+                    [
+                        "SW",
+                        []
+                    ],
+                    [
+                        "W",
+                        []
+                    ],
+                    [
+                        "NW",
+                        []
+                    ],
+                    [
+                        "C",
+                        []
+                    ],
+                    [
+                        "UND",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Config",
+                "comment": " Configure `toStringWithConfig`, either exporting a graph onto `OneLine`,\nif you don't care about readability, or with some number of spaces per\n`Indent`.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "OneLine",
+                        []
+                    ],
+                    [
+                        "Indent",
+                        [
+                            "Basics.Int"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Dot",
+                "comment": " A DOT file. Either a `graph` or `digraph` is represented. It might have\nan `ID`. `Stmt`s describe the graph's properties, including vertices and edges.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Dot",
+                        [
+                            "DotLang.EdgeType",
+                            "Maybe.Maybe DotLang.ID",
+                            "List.List DotLang.Stmt"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "EdgeRHS",
+                "comment": " The right-hand side of an edge describes what the left-hand side is\nconnected to. In DOT, you can string together many right-hand sides to describe\nlarge graph structures in a single `Stmt`.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "EdgeNode",
+                        [
+                            "DotLang.NodeId"
+                        ]
+                    ],
+                    [
+                        "EdgeSubgraph",
+                        [
+                            "DotLang.Subgraph"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "EdgeType",
+                "comment": " A DOT file representing an undirected graph starts with `graph` and edges\nare described with `--`. A directed graph starts with `digraph` and uses `->`\nfor its edges.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Graph",
+                        []
+                    ],
+                    [
+                        "Digraph",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "ID",
+                "comment": " The identifier for a vertex.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "ID",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "HtmlID",
+                        [
+                            "Html.Parser.Node"
+                        ]
+                    ],
+                    [
+                        "NumeralID",
+                        [
+                            "Basics.Float"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "NodeId",
+                "comment": " `NodeId` describes the `ID` of a vertex. Potentially, it has a `Port` which\ndescribes where edges can attach to the vertex.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NodeId",
+                        [
+                            "DotLang.ID",
+                            "Maybe.Maybe DotLang.Port"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Port",
+                "comment": " A `Port` is a point where edges can attach to a vertex. The `Port` can have\nan `ID`, but they're primarily described by the 8 compass directions.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "PortId",
+                        [
+                            "DotLang.ID",
+                            "Maybe.Maybe DotLang.CompassPt"
+                        ]
+                    ],
+                    [
+                        "PortPt",
+                        [
+                            "DotLang.CompassPt"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Stmt",
+                "comment": " This is the core of a graph's definition. DOT holds a list of statements\ndescribing the vertices and edges, along with their properties.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NodeStmt",
+                        [
+                            "DotLang.NodeId",
+                            "List.List DotLang.Attr"
+                        ]
+                    ],
+                    [
+                        "EdgeStmtNode",
+                        [
+                            "DotLang.NodeId",
+                            "DotLang.EdgeRHS",
+                            "List.List DotLang.EdgeRHS",
+                            "List.List DotLang.Attr"
+                        ]
+                    ],
+                    [
+                        "EdgeStmtSubgraph",
+                        [
+                            "DotLang.Subgraph",
+                            "DotLang.EdgeRHS",
+                            "List.List DotLang.EdgeRHS",
+                            "List.List DotLang.Attr"
+                        ]
+                    ],
+                    [
+                        "AttrStmt",
+                        [
+                            "DotLang.AttrStmtType",
+                            "List.List DotLang.Attr"
+                        ]
+                    ],
+                    [
+                        "LooseAttr",
+                        [
+                            "DotLang.Attr"
+                        ]
+                    ],
+                    [
+                        "SubgraphStmt",
+                        [
+                            "DotLang.Subgraph"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Subgraph",
+                "comment": " A `Subgraph` defines a subset of vertices and edges within a graph. You\nmight use this to visually group a set of vertices together or just as a\nshorthand for defining edges between one vertex and a list of other vertices.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Subgraph",
+                        [
+                            "Maybe.Maybe DotLang.ID",
+                            "List.List DotLang.Stmt"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "dot",
+                "comment": " The core `Parser`, in case you want to embed it in some other parser.\n",
+                "type": "Parser.Parser DotLang.Dot"
+            },
+            {
+                "name": "fromString",
+                "comment": " Parse a DOT string.\n\n    fromString \"graph {}\" == Ok (Dot Graph Nothing [])\n\n",
+                "type": "String.String -> Result.Result (List.List Parser.DeadEnd) DotLang.Dot"
+            },
+            {
+                "name": "toString",
+                "comment": " Export `Dot` into valid DOT Language syntax, using four spaces for\nindentation.\n\n    toString (Dot Graph Nothing []) == \"graph {}\"\n\n",
+                "type": "DotLang.Dot -> String.String"
+            },
+            {
+                "name": "toStringWithConfig",
+                "comment": " Export `Dot` into valid DOT Language syntax with a given `Config`.\n",
+                "type": "DotLang.Config -> DotLang.Dot -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

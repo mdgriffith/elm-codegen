@@ -1,0 +1,230 @@
+[
+    {
+        "name": "Queue",
+        "comment": " Queue FIFO (first-in first-out) data structure.\n\nIt has the same API as [`List`](https://package.elm-lang.org/packages/elm/core/latest/List)\nand it takes constant time `O(1)` for `enqueue`, `head` and `length` operations.\nIt takes constant time in average case for `dequeue` `θ(1)`.\n\n@docs Queue\n\n\n# Construct\n\n@docs empty, singleton, fromList, repeat, range\n\n\n# Deconstruct\n\n@docs head, tail, take, drop, partition, unzip, toList\n\n\n# Manipulation\n\n@docs enqueue, dequeue\n\n\n# Query\n\n@docs length, isEmpty, isEqual, any, all, member, maximum, minimum, sum, product\n\n\n# Transform\n\n@docs map, indexedMap, foldr, foldl, filter, filterMap, reverse\n\n\n# Combine\n\n@docs append, concat, concatMap, intersperse, map2, map3, map4, map5\n\n\n# Sort\n\n@docs sort, sortBy, sortWith\n\n",
+        "unions": [
+            {
+                "name": "Queue",
+                "comment": " A queue of values.\nYou can think about a Queue representation like about List,\nwhere left side is the input and right is output:\n\n    fromList   [ 2, 4, 6, 8 ]\n    -- indx -> [ 3, 2, 1, 0 ] ->\n\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "all",
+                "comment": " Determine if all elements satisfy some test.\n\n    all isEven (fromList [ 2, 4 ]) == True\n\n    all isEven (fromList [ 2, 3 ]) == False\n\n    all isEven (fromList []) == True\n\n",
+                "type": "(a -> Basics.Bool) -> Queue.Queue a -> Basics.Bool"
+            },
+            {
+                "name": "any",
+                "comment": " Determine if any elements satisfy some test:\n\n    any isEven (fromList [ 2, 3 ]) == True\n\n    any isEven (fromList [ 1, 3 ]) == False\n\n    any isEven (fromList []) == False\n\n",
+                "type": "(a -> Basics.Bool) -> Queue.Queue a -> Basics.Bool"
+            },
+            {
+                "name": "append",
+                "comment": " Put two queues together:\n\n    append (fromList [ 1, 1, 2 ]) (fromList [ 3, 5, 8 ])\n        == fromList [ 1, 1, 2, 3, 5, 8 ]\n\n    append (fromList [ 'a', 'b' ]) (fromList [ 'c' ])\n        == fromList [ 'a', 'b', 'c' ]\n\n",
+                "type": "Queue.Queue a -> Queue.Queue a -> Queue.Queue a"
+            },
+            {
+                "name": "concat",
+                "comment": " Concatenate a bunch of queues into a single queue:\n\n    [ fromList [ 1, 2 ]\n    , fromList [ 3 ]\n    , fromList [ 4, 5 ]\n    ]\n        |> fromList\n        |> concat\n        == fromList [ 1, 2, 3, 4, 5 ]\n\n",
+                "type": "Queue.Queue (Queue.Queue a) -> Queue.Queue a"
+            },
+            {
+                "name": "concatMap",
+                "comment": " Map a given function onto a queue and flatten the resulting queues:\n\n    concatMap f xs == concat (map f xs)\n\n",
+                "type": "(a -> Queue.Queue b) -> Queue.Queue a -> Queue.Queue b"
+            },
+            {
+                "name": "dequeue",
+                "comment": " Extract and remove the first element from the queue:\n\n    dequeue empty == Nothing\n\n    dequeue (singleton 1) == Just ( 1, empty )\n\n    dequeue (fromList [ 1, 2, 3 ])\n        == Just ( 3, fromList [ 1, 2 ] )\n\nIt takes constant time in average case `θ(1)` (`Ω(1)` and `O(N)`).\n\n",
+                "type": "Queue.Queue a -> Maybe.Maybe ( a, Queue.Queue a )"
+            },
+            {
+                "name": "drop",
+                "comment": " Drop the first `n` members of a queue:\n\n    drop 2 (fromList [ 1, 2, 3 ]) == formList [ 1 ]\n\nIt takes constant time in case when `n <= 0 || n >= N`.\n\n",
+                "type": "Basics.Int -> Queue.Queue a -> Queue.Queue a"
+            },
+            {
+                "name": "empty",
+                "comment": " Create an empty queue:\n\n    empty == fromList []\n\n",
+                "type": "Queue.Queue a"
+            },
+            {
+                "name": "enqueue",
+                "comment": " Add an element to the queue.\n\n    enqueue 1 empty == fromList [ 1 ]\n\n    enqueue 1 (fromList [ 2, 3, 4 ])\n        == fromList [ 1, 2, 3, 4 ]\n\n    empty\n        |> enqueue 1\n        |> enqueue 2\n        |> enqueue 3\n        == fromList [ 3, 2, 1 ]\n\nIt takes constant time `O(1)`.\n\n",
+                "type": "a -> Queue.Queue a -> Queue.Queue a"
+            },
+            {
+                "name": "filter",
+                "comment": " Keep elements that satisfy the test:\n\n    filter isEven (fromList [ 1, 2, 3, 4, 5, 6 ])\n        == fromList [ 2, 4, 6 ]\n\n",
+                "type": "(a -> Basics.Bool) -> Queue.Queue a -> Queue.Queue a"
+            },
+            {
+                "name": "filterMap",
+                "comment": " Filter out certain values.\nFor example, maybe you have a bunch of strings from an untrusted source\nand you want to turn them into numbers:\n\n    [ \"3\", \"hi\", \"12\", \"4th\", \"May\" ]\n        |> fromList\n        |> filterMap String.toInt\n        == fromList [ 3, 12 ]\n\n",
+                "type": "(a -> Maybe.Maybe b) -> Queue.Queue a -> Queue.Queue b"
+            },
+            {
+                "name": "foldl",
+                "comment": " Reduce queue from right to left (or from the newest to oldest):\n\n    empty\n        |> enqueue 3\n        |> enqueue 2\n        |> enqueue 1\n        |> foldl (+) 0\n        === 6\n\n    empty\n        |> enqueue 3\n        |> enqueue 2\n        |> enqueue 1\n        |> foldl (::) []\n        == [ 3, 2, 1 ]\n\nSo `foldl step state (fromList [ 1, 2, 3 ])` is like saying:\n\n    state\n        |> step 1\n        |> step 2\n        |> step 3\n\n",
+                "type": "(a -> b -> b) -> b -> Queue.Queue a -> b"
+            },
+            {
+                "name": "foldr",
+                "comment": " Reduce queue from left to right (or from the oldest to newest):\n\n    empty\n        |> enqueue 3\n        |> enqueue 2\n        |> enqueue 1\n        |> foldr (+) 0\n        === 6\n\n    empty\n        |> enqueue 3\n        |> enqueue 2\n        |> enqueue 1\n        |> foldr (::) []\n        == [ 1, 2, 3 ]\n\nSo `foldr step state (fromList [ 1, 2, 3 ])` is like saying:\n\n    state\n        |> step 3\n        |> step 2\n        |> step 1\n\n",
+                "type": "(a -> b -> b) -> b -> Queue.Queue a -> b"
+            },
+            {
+                "name": "fromList",
+                "comment": " Create a queue from `List`.\n\nIt take time proportional to `O(N)`.\n\n",
+                "type": "List.List a -> Queue.Queue a"
+            },
+            {
+                "name": "head",
+                "comment": " Extract the next element of a queue:\n\n    head empty == Nothing\n\n    head (singleton 0) == Just 0\n\n    head (fromList [ 1, 2, 3 ]) == Just 3\n\nIt takes constant time `O(1)`.\n\n",
+                "type": "Queue.Queue a -> Maybe.Maybe a"
+            },
+            {
+                "name": "indexedMap",
+                "comment": " Same as map but the function is also applied to the index of each element (starting at zero):\n\n    indexedMap Tuple.pair (fromList [ \"A\", \"B\", \"C\" ])\n        == fromList [ ( 2, \"A\" ), ( 1, \"B\" ), ( 0, \"C\" ) ]\n\n",
+                "type": "(Basics.Int -> a -> b) -> Queue.Queue a -> Queue.Queue b"
+            },
+            {
+                "name": "intersperse",
+                "comment": " Places the given value between all members of the given queue.\n\n    intersperse \">\" (fromList [ \"third\", \"second\", \"first\" ])\n        == fromList [ \"third\", \">\", \"second\", \">\", \"first\" ]\n\n",
+                "type": "a -> Queue.Queue a -> Queue.Queue a"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Determine if a queue is empty.\n\n    isEmpty (fromList []) == True\n\n    isEmpty (fromList [ 1, 2, 3 ]) == False\n\n",
+                "type": "Queue.Queue a -> Basics.Bool"
+            },
+            {
+                "name": "isEqual",
+                "comment": " Determine if two queues are equal.\nIt takes constant time `O(1)` when lengths are different.\n",
+                "type": "Queue.Queue a -> Queue.Queue a -> Basics.Bool"
+            },
+            {
+                "name": "length",
+                "comment": " Determine the length of a queue:\n\n    length empty == 0\n\n    length (fromList [ 3, 2, 1 ]) == 3\n\nIt takes constant time `O(1)`.\n\n",
+                "type": "Queue.Queue a -> Basics.Int"
+            },
+            {
+                "name": "map",
+                "comment": " Apply a function to every element of a queue:\n\n    map sqrt (fromList [ 1, 4, 9 ])\n        == fromList [ 1, 2, 3 ]\n\n",
+                "type": "(a -> b) -> Queue.Queue a -> Queue.Queue b"
+            },
+            {
+                "name": "map2",
+                "comment": " Combine two queues, combining them with the given function.\nIf one queue is longer, the extra elements are dropped.\n\n    map2 (+)\n        (fromList [ 1, 2, 3 ])\n        (fromList [ 4, 5, 6 ])\n        == fromList [ 5, 7, 9 ]\n\n    map2 Tuple.pair\n        (fromList [ \"alice\", \"bob\", \"chuck\" ])\n        (fromList [ 2, 5, 7, 8 ])\n        == fromList\n            [ ( \"alice\", 5 )\n            , ( \"bob\", 7 )\n            , ( \"chuck\", 8 )\n            ]\n\n",
+                "type": "(a -> b -> result) -> Queue.Queue a -> Queue.Queue b -> Queue.Queue result"
+            },
+            {
+                "name": "map3",
+                "comment": " ",
+                "type": "(a -> b -> c -> result) -> Queue.Queue a -> Queue.Queue b -> Queue.Queue c -> Queue.Queue result"
+            },
+            {
+                "name": "map4",
+                "comment": " ",
+                "type": "(a -> b -> c -> d -> result) -> Queue.Queue a -> Queue.Queue b -> Queue.Queue c -> Queue.Queue d -> Queue.Queue result"
+            },
+            {
+                "name": "map5",
+                "comment": " ",
+                "type": "(a -> b -> c -> d -> e -> result) -> Queue.Queue a -> Queue.Queue b -> Queue.Queue c -> Queue.Queue d -> Queue.Queue e -> Queue.Queue result"
+            },
+            {
+                "name": "maximum",
+                "comment": " Find the maximum element in a non-empty queue:\n\n    maximum (fromList [ 1, 4, 2 ]) == Just 4\n\n    maximum (fromList []) == Nothing\n\n",
+                "type": "Queue.Queue comparable -> Maybe.Maybe comparable"
+            },
+            {
+                "name": "member",
+                "comment": " Figure out whether a queue contains a value.\n\n    member 9 (fromList []) == False\n\n    member 9 (fromList [ 1, 2, 3, 4 ]) == False\n\n    member 4 (fromList [ 1, 2, 3, 4 ]) == True\n\n",
+                "type": "a -> Queue.Queue a -> Basics.Bool"
+            },
+            {
+                "name": "minimum",
+                "comment": " Find the minimum element in a non-empty queue:\n\n    minimum (fromList [ 3, 2, 1 ]) == Just 1\n\n    minimum (fromList []) == Nothing\n\n",
+                "type": "Queue.Queue comparable -> Maybe.Maybe comparable"
+            },
+            {
+                "name": "partition",
+                "comment": " Partition a queue based on some test.\nThe first queue contains all values that satisfy the test,\nand the second queue contains all the value that do not.\n\n    [ 0, 1, 2, 3, 4, 5 ]\n        |> fromList\n        |> partition (\\x -> x < 3)\n        == ( fromList [ 0, 1, 2 ], fromList [ 3, 4, 5 ] )\n\n    [ 0, 1, 2, 3, 4, 5 ]\n        |> fromList\n        |> partition isEven\n        == ( fromList [ 0, 2, 4 ], fromList [ 1, 3, 5 ] )\n\n",
+                "type": "(a -> Basics.Bool) -> Queue.Queue a -> ( Queue.Queue a, Queue.Queue a )"
+            },
+            {
+                "name": "product",
+                "comment": " Get the product of the queue elements:\n\n    product (from List [ 2, 2, 2 ]) == 8\n\n    product (from List [ 3, 3, 3 ]) == 27\n\n    product (from List []) == 1\n\n",
+                "type": "Queue.Queue number -> number"
+            },
+            {
+                "name": "range",
+                "comment": " Create a queue of numbers, every element increasing one.\nYou give the lowest and the highest number that should be in the queue.\n\n    range 3 6 == fromList [ 6, 5, 4, 3 ]\n\n    range 3 3 == fromList [ 3 ]\n\n    range 6 3 == fromList []\n\n    head (range 3 6) == Just 3\n\n",
+                "type": "Basics.Int -> Basics.Int -> Queue.Queue Basics.Int"
+            },
+            {
+                "name": "repeat",
+                "comment": " Create a queue with _n_ copies of a value:\n\n    repeat 3 \"hi\"\n        == fromList [ \"hi\", \"hi\", \"hi\" ]\n\n",
+                "type": "Basics.Int -> a -> Queue.Queue a"
+            },
+            {
+                "name": "reverse",
+                "comment": " Reverse the queue:\n\n    reverse (fromList [ 1, 2, 3, 4 ])\n        == fromList [ 4, 3, 2, 1 ]\n\n",
+                "type": "Queue.Queue a -> Queue.Queue a"
+            },
+            {
+                "name": "singleton",
+                "comment": " Create a queue with only one element:\n\n    singleton 1234 == fromList [ 1234 ]\n\n    singleton \"hi\" == fromList [ \"hi\" ]\n\n",
+                "type": "a -> Queue.Queue a"
+            },
+            {
+                "name": "sort",
+                "comment": " Sort values from lowest to highest:\n\n    sort (fromList [ 3, 1, 5 ]) == fromList [ 5, 3, 1 ]\n\n",
+                "type": "Queue.Queue comparable -> Queue.Queue comparable"
+            },
+            {
+                "name": "sortBy",
+                "comment": " Sort values by a derived property:\n\n    alice =\n        { name = \"Alice\", height = 1.62 }\n\n    bob =\n        { name = \"Bob\", height = 1.85 }\n\n    chuck =\n        { name = \"Chuck\", height = 1.76 }\n\n    [ chuck, alice, bob ]\n        |> fromList\n        |> sortBy .name\n        == fromList [ chuck, bob, alice ]\n\n    [ chuck, alice, bob ]\n        |> fromList\n        |> sortBy .height\n        == fromList [ bob, chuck, alice ]\n\n    [ \"cat\", \"mouse\" ]\n        |> fromList\n        |> sortBy String.length\n        == fromList [ \"mouse\", \"cat\" ]\n\n",
+                "type": "(a -> comparable) -> Queue.Queue a -> Queue.Queue a"
+            },
+            {
+                "name": "sortWith",
+                "comment": " Sort values with a custom comparison function:\n\n    flippedComparison a b =\n        case compare a b of\n            LT -> GT\n            EQ -> EQ\n            GT -> LT\n\n    [ 5, 4, 3, 2, 1 ]\n        |> fromList\n        |> sortWith flippedComparison\n        == fromList [ 1, 2, 3, 4, 5 ]\n\n",
+                "type": "(a -> a -> Basics.Order) -> Queue.Queue a -> Queue.Queue a"
+            },
+            {
+                "name": "sum",
+                "comment": " Get the sum of the queue elements:\n\n    sum (fromList [ 1, 2, 3 ]) == 6\n\n    sum (fromList [ 1, 1, 1 ]) == 3\n\n    sum (fromList []) == 0\n\n",
+                "type": "Queue.Queue number -> number"
+            },
+            {
+                "name": "tail",
+                "comment": " Extract the rest of the list:\n\n    tail (fromList [ 1, 2, 3 ]) == Just [ 1, 2 ]\n\n    tail empty == Nothing\n\nIt takes constant time in average case `θ(1)` (`Ω(1)` and `O(N)`).\n\n",
+                "type": "Queue.Queue a -> Maybe.Maybe (Queue.Queue a)"
+            },
+            {
+                "name": "take",
+                "comment": " Take the first `n` members of a queue:\n\n    take 2 (fromList [ 1, 2, 3 ]) == formList [ 2, 3 ]\n\nIt takes constant time in case when `n <= 0 || n >= N`.\n\n",
+                "type": "Basics.Int -> Queue.Queue a -> Queue.Queue a"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert a queue (FIFO) to list (LIFO):\n\n    toList (fromList [ 1, 2, 3 ]) == [ 1, 2, 3 ]\n\n    empty\n        |> enqueue 3\n        |> enqueue 2\n        |> enqueue 1\n        |> toList\n        == [ 1, 2, 3 ]\n\nIt takes time proportional to `O(N)`.\n\n",
+                "type": "Queue.Queue a -> List.List a"
+            },
+            {
+                "name": "unzip",
+                "comment": " Decompose a queue of tuples into a tuple of queues.\n\n    [ ( 0, True )\n    , ( 17, False )\n    , ( 1337, True )\n    ]\n        |> fromList\n        |> unzip\n        == ( fromList [ 0, 17, 1337 ]\n           , fromList [ True, False, True ]\n           )\n\n",
+                "type": "Queue.Queue ( a, b ) -> ( Queue.Queue a, Queue.Queue b )"
+            }
+        ],
+        "binops": []
+    }
+]

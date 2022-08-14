@@ -1,0 +1,58 @@
+[
+    {
+        "name": "Do.List",
+        "comment": " This library extends List from elm-core with do function\n\n@docs do\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "do",
+                "comment": "\n    import Do.List as List\n\n    List.do [1, 2, 3] <| \\x ->\n    List.do [1, 2, 3] <| \\y ->\n    [[ x, y ]]  -- [[1,1],[1,2],[1,3],[2,1],[2,2],[2,3],[3,1],[3,2],[3,3]]\n",
+                "type": "List.List a -> (a -> List.List b) -> List.List b"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Do.Maybe",
+        "comment": " This library extends Maybe from elm-core with do function\n\n@docs do\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "do",
+                "comment": "\n    import Do.Maybe as Maybe\n\n    Maybe.do (Just 1) <| \\x ->\n    Maybe.do (Just 2) <| \\y ->\n    Just ( x, y )  -- (Just ( 1, 2 ))\n",
+                "type": "Maybe.Maybe a -> (a -> Maybe.Maybe b) -> Maybe.Maybe b"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Do.Result",
+        "comment": " This library extends Result from elm-core with do function\n\n@docs do\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "do",
+                "comment": "\n    import Do.Result as Result\n\n    Result.do (Ok 1) <| \\x ->\n    Result.do (Ok 2) <| \\y ->\n    Ok ( x, y )  -- Ok ( 1, 2 )\n",
+                "type": "Result.Result error a -> (a -> Result.Result error b) -> Result.Result error b"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Do.Task",
+        "comment": " This library extends Task from elm-core with do function\n\n@docs do\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "do",
+                "comment": "\n    import Do.Task as Task\n    import Task\n    import Time\n\n    Task.do Time.now <| \\now ->\n    Task.succeed (Time.posixToMillis now)\n",
+                "type": "Task.Task x a -> (a -> Task.Task x b) -> Task.Task x b"
+            }
+        ],
+        "binops": []
+    }
+]

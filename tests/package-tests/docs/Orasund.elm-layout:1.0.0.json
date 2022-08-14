@@ -1,0 +1,91 @@
+[
+    {
+        "name": "Layout",
+        "comment": " write HTML like elm-ui\n\n\n# Html container\n\n@docs none, el, column, row\n\n\n# Attributes\n\n@docs centered, alignBaseline, alignCenter, centerContent, noWrap\n\n\n# Size\n\n@docs fill, fillPortion\n\n\n# Spacing\n\n@docs spacing, spaceBetween\n\n\n## Sticky\n\n@docs sticky, stickyOnBottom, stickyOnTop\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "alignBaseline",
+                "comment": "\n\n    alignBaseline : Attribute msg\n    alignBaseline =\n        Attr.style \"align-items\" \"baseline\"\n\n",
+                "type": "Html.Attribute msg"
+            },
+            {
+                "name": "alignCenter",
+                "comment": "\n\n    alignCenter : Attribute msg\n    alignCenter =\n        Attr.style \"align-items\" \"center\"\n\n",
+                "type": "Html.Attribute msg"
+            },
+            {
+                "name": "centerContent",
+                "comment": "\n\n    centerContent : Attribute msg\n    centerContent =\n        Attr.style \"justify-content\" \"center\"\n\n",
+                "type": "Html.Attribute msg"
+            },
+            {
+                "name": "centered",
+                "comment": "\n\n    centered : List (Attribute msg)\n    centered =\n        [ alignBaseline, alignCenter ]\n\n",
+                "type": "List.List (Html.Attribute msg)"
+            },
+            {
+                "name": "column",
+                "comment": "\n\n    column : List (Attribute msg) -> List (Html msg) -> Html msg\n    column attrs =\n        Html.div\n            ([ Attr.style \"display\" \"flex\"\n             , Attr.style \"flex-direction\" \"column\"\n             ]\n                ++ attrs\n            )\n\n",
+                "type": "List.List (Html.Attribute msg) -> List.List (Html.Html msg) -> Html.Html msg"
+            },
+            {
+                "name": "el",
+                "comment": "\n\n    el : List (Attribute msg) -> Html msg -> Html msg\n    el attrs content =\n        Html.div\n            (Attr.style \"display\" \"flex\"\n                :: attrs\n            )\n            [ content ]\n\n",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg -> Html.Html msg"
+            },
+            {
+                "name": "fill",
+                "comment": "\n\n    fill : Attribute msg\n    fill =\n        fillPortion 1\n\n",
+                "type": "Html.Attribute msg"
+            },
+            {
+                "name": "fillPortion",
+                "comment": "\n\n    fillPortion : Int -> Attribute msg\n    fillPortion n =\n        Attr.style \"flex\" (String.fromInt n)\n\n",
+                "type": "Basics.Int -> Html.Attribute msg"
+            },
+            {
+                "name": "noWrap",
+                "comment": "\n\n    noWrap : Attribute msg\n    noWrap =\n        Attr.style \"flex-wrap\" \"nowrap\"\n\n",
+                "type": "Html.Attribute msg"
+            },
+            {
+                "name": "none",
+                "comment": "\n\n    none : Html msg\n    none =\n        Html.text \"\"\n\n",
+                "type": "Html.Html msg"
+            },
+            {
+                "name": "row",
+                "comment": "\n\n    row : List (Attribute msg) -> List (Html msg) -> Html msg\n    row attrs =\n        Html.div\n            ([ Attr.style \"display\" \"flex\"\n             , Attr.style \"flex-direction\" \"row\"\n             , Attr.style \"flex-wrap\" \"wrap\"\n             ]\n                ++ attrs\n            )\n\nWill wrap into the next line if there is not enough space.\n\nIf you don't want this behavior, you can just add `noWrap`:\n\n    unwrappedRow : List (Attribute msg) -> List (Html msg) -> Html msg\n    unwrappedRow attrs =\n        Layout.row ([ Layout.noWrap ] ++ attrs)\n\n",
+                "type": "List.List (Html.Attribute msg) -> List.List (Html.Html msg) -> Html.Html msg"
+            },
+            {
+                "name": "spaceBetween",
+                "comment": "\n\n    spaceBetween : Attribute msg\n    spaceBetween =\n        Attr.style \"justify-content\" \"space-between\"\n\n",
+                "type": "Html.Attribute msg"
+            },
+            {
+                "name": "spacing",
+                "comment": "\n\n    spacing : Float -> Attribute msg\n    spacing n =\n        Attr.style \"gap\" (String.fromFloat n ++ \"px\")\n\n",
+                "type": "Basics.Float -> Html.Attribute msg"
+            },
+            {
+                "name": "sticky",
+                "comment": "\n\n    sticky : List (Attribute msg)\n    sticky =\n        [ Attr.style \"position\" \"sticky\"\n        , Attr.style \"z-index\" \"99999\"\n        ]\n\n",
+                "type": "List.List (Html.Attribute msg)"
+            },
+            {
+                "name": "stickyOnBottom",
+                "comment": "\n\n    stickyOnBottom : List (Attribute msg)\n    stickyOnBottom =\n        [ Attr.style \"position\" \"sticky\"\n        , Attr.style \"bottom\" \"0\"\n        , Attr.style \"z-index\" \"99999\"\n        ]\n\n",
+                "type": "List.List (Html.Attribute msg)"
+            },
+            {
+                "name": "stickyOnTop",
+                "comment": "\n\n    stickyOnTop : List (Attribute msg)\n    stickyOnTop =\n        [ Attr.style \"position\" \"sticky\"\n        , Attr.style \"top\" \"0\"\n        , Attr.style \"z-index\" \"99999\"\n        ]\n\n",
+                "type": "List.List (Html.Attribute msg)"
+            }
+        ],
+        "binops": []
+    }
+]

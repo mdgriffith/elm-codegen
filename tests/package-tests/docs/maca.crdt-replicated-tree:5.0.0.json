@@ -1,0 +1,310 @@
+[
+    {
+        "name": "CRDTree",
+        "comment": " The local replica state.\n\nNot two replicas should have the same id across a network, a server\nshould be used to assign unique numeric ids to each replica.\n\nThe timestamp for the replica is a vector clock, encoded as an integer,\nconsisting in the id of the replica taking the first bits and the\nnumber of the last operation taking the last 32 bits.\n\nThe path of a node in the tree is represented as a `List Int`.\n\n\n# Init\n\n@docs CRDTree\n@docs init\n\n# Operations\n\n@docs Error\n@docs add\n@docs addAfter\n@docs addBranch\n@docs batch\n@docs delete\n@docs apply\n@docs operationsSince\n@docs lastOperation\n\n# Tree\n\n@docs id\n@docs timestamp\n@docs root\n@docs get\n@docs getValue\n@docs cursor\n@docs moveCursorUp\n\n# Replicas\n\n@docs lastReplicaTimestamp\n\n",
+        "unions": [
+            {
+                "name": "CRDTree",
+                "comment": " A Replicated Tree, see [int](#init).\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Error",
+                "comment": " Failure to apply an operation\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Error",
+                        [
+                            "CRDTree.Operation.Operation a"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "add",
+                "comment": " Add a node after tree cursor, the cursor is set\nat the added node path.\n\n    init 1\n      |> add \"a\"\n      |> Result.andThen (add \"b\")\n      |> Result.andThen (add \"c\")\n\n",
+                "type": "a -> CRDTree.CRDTree a -> Result.Result (CRDTree.Error a) (CRDTree.CRDTree a)"
+            },
+            {
+                "name": "addAfter",
+                "comment": " Add a node after another node at given path,\nthe cursor is set at the added node path.\n\n    init 1\n      |> add \"a\"\n      |> Result.andThen (add \"b\")\n      |> Result.andThen (addAfter [1] \"c\")\n    -- node with value \"c\" is inserted between nodes \"a\" and \"b\"\n\n",
+                "type": "List.List Basics.Int -> a -> CRDTree.CRDTree a -> Result.Result (CRDTree.Error a) (CRDTree.CRDTree a)"
+            },
+            {
+                "name": "addBranch",
+                "comment": " Add a branch after tree cursor, subsequent\nadditions are added to the branch.\n\n    init 1\n      |> addBranch \"a\"\n      |> Result.andThen (add \"a,b\")\n      |> Result.andThen (add \"a,c\")\n",
+                "type": "a -> CRDTree.CRDTree a -> Result.Result (CRDTree.Error a) (CRDTree.CRDTree a)"
+            },
+            {
+                "name": "apply",
+                "comment": " Apply a remote operation\n\n    treeA : CRDTree String\n    treeA =\n      let\n          tree = init 1\n      in\n      tree\n        |> batch [ add \"a\", add \"b\", add \"c\" ]\n        |> Result.withDefault tree\n\n    operation : Operation String\n    operation =\n      lastOperation treeA\n\n    treeB : CRDTree String\n    treeB =\n      let\n          tree = init 1\n      in\n      tree\n        |> apply operation\n        |> Result.withDefault tree\n\n    (root treeA) == (root treeB)\n    (operations treeA) == (operations treeB)\n    (path treeA) /= (path treeB)\n    (timestamp treeA) /= (timestamp treeB)\n\n",
+                "type": "CRDTree.Operation.Operation a -> CRDTree.CRDTree a -> Result.Result (CRDTree.Error a) (CRDTree.CRDTree a)"
+            },
+            {
+                "name": "batch",
+                "comment": " Apply a list of operations\n\n    init 1 |> batch [ add \"a\", add \"b\", add \"c\" ]\n",
+                "type": "List.List (CRDTree.CRDTree a -> Result.Result (CRDTree.Error a) (CRDTree.CRDTree a)) -> CRDTree.CRDTree a -> Result.Result (CRDTree.Error a) (CRDTree.CRDTree a)"
+            },
+            {
+                "name": "cursor",
+                "comment": " Return the tree cursor\n\n    treeA : CRDTree String\n    treeA =\n      let\n          tree = init 1\n      in\n      tree\n        |> batch [ add \"a\", add \"b\", add \"c\" ]\n        |> Result.withDefault tree\n\n    (cursor treeA) == [3]\n\n\n    treeB : CRDTree String\n    treeB =\n      let\n          tree = init 1\n      in\n      tree\n        |> batch [ addBranch \"a\", addBranch \"b\" ]\n        |> Result.withDefault tree\n\n    (cursor treeB) == [1, 2, 0]\n\n",
+                "type": "CRDTree.CRDTree a -> List.List Basics.Int"
+            },
+            {
+                "name": "delete",
+                "comment": " Mark a node at a path as deleted.\n\n    init 1\n      |> batch [ add \"a\", add \"b\" ]\n      |> Result.andThen (\\tree -> delete (cursor tree) tree)\n\nNodes are not actually deleted but marked and their children\ndiscarded.\n",
+                "type": "List.List Basics.Int -> CRDTree.CRDTree a -> Result.Result (CRDTree.Error a) (CRDTree.CRDTree a)"
+            },
+            {
+                "name": "get",
+                "comment": " Get a value at path\n\n    treeA : CRDTree String\n    treeA =\n      let\n          tree = init 1\n      in\n      tree\n        |> batch [ addBranch \"a\", addBranch \"b\", add \"c\" ]\n        |> Result.withDefault tree\n\n    (get [1] treeA) == (Just (Node.init \"a\" [1]))\n    (get [1, 2] treeA) == (Just (Node.init \"b\" [1,2]))\n    (get [1, 2, 3] treeA) == (Just (Node.init \"c\" [1, 2, 3]))\n    (get [4] treeA) == Nothing\n\n",
+                "type": "List.List Basics.Int -> CRDTree.CRDTree a -> Maybe.Maybe (CRDTree.Node.Node a)"
+            },
+            {
+                "name": "getValue",
+                "comment": " Get a value at path\n\n    treeA : CRDTree String\n    treeA =\n      let\n          tree = init 1\n      in\n      tree\n        |> batch [ addBranch \"a\", addBranch \"b\", add \"c\" ]\n        |> Result.withDefault tree\n\n    (get [1] treeA) == (Just \"a\")\n    (get [1, 2] treeA) == (Just \"b\")\n    (get [1, 2, 3] treeA) == (Just \"c\")\n    (get [4] treeA) == Nothing\n\n",
+                "type": "List.List Basics.Int -> CRDTree.CRDTree a -> Maybe.Maybe a"
+            },
+            {
+                "name": "id",
+                "comment": " The local replica id\n",
+                "type": "CRDTree.CRDTree a -> Basics.Int"
+            },
+            {
+                "name": "init",
+                "comment": " Build a CRDTree providing the replica id.\n\n    tree : CRDTree String\n    tree = init 1\n\n",
+                "type": "Basics.Int -> CRDTree.CRDTree a"
+            },
+            {
+                "name": "lastOperation",
+                "comment": " Return the last successfully applied operation or batch\nor if operation was not succesfull an empty batch.\n\n      import Operation exposing (Operation(..))\n\n      -- success\n      init 1\n        |> batch [ add \"a\", add \"b\", add \"c\" ]\n        |> Result.map (\\tree ->\n             (lastOperation tree) /= Batch [])\n\n      -- failure\n      init 1\n        |> delete [1,2,3]\n        |> Result.map (\\tree ->\n            (lastOperation tree) == Batch [])\n\n",
+                "type": "CRDTree.CRDTree a -> CRDTree.Operation.Operation a"
+            },
+            {
+                "name": "lastReplicaTimestamp",
+                "comment": " Last know timestamp for a replica\n",
+                "type": "Basics.Int -> CRDTree.CRDTree a -> Basics.Int"
+            },
+            {
+                "name": "moveCursorUp",
+                "comment": " Move the tree cursor one level up\n\n    treeA : CRDTree String\n    treeA =\n      let\n          tree = init 1\n      in\n      tree\n        |> batch [ addBranch \"a\", addBranch \"b\", add \"c\" ]\n        |> Result.withDefault tree\n\n    (cursor treeA) == [1, 2, 3]\n    (cursor (moveCursorUp treeA)) == [1, 2]\n\n",
+                "type": "CRDTree.CRDTree a -> CRDTree.CRDTree a"
+            },
+            {
+                "name": "operationsSince",
+                "comment": " Return a batch of operations after a known timestamp\n\n    treeA : CRDTree String\n    treeA =\n      let\n          tree = init 1\n      in\n      tree\n        |> batch [ add \"a\", add \"b\" ]\n        |> Result.withDefault tree\n\n    (List.length (Operation.toList <| operationsSince 0 treeA)) == 2\n    (List.length (Operation.toList <| operationsSince 1 treeA)) == 2\n    (List.length (Operation.toList <| operationsSince 2 treeA)) == 1\n\n    (List.length (Operation.toList <| operationsSince 5 treeA)) == 0\n\n",
+                "type": "Basics.Int -> CRDTree.CRDTree a -> CRDTree.Operation.Operation a"
+            },
+            {
+                "name": "root",
+                "comment": " Root node of the CRDTree\n",
+                "type": "CRDTree.CRDTree a -> CRDTree.Node.Node a"
+            },
+            {
+                "name": "timestamp",
+                "comment": " The local replica timestamp\n",
+                "type": "CRDTree.CRDTree a -> Basics.Int"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "CRDTree.Json",
+        "comment": " Replicated Tree JSON serialization\n\n@docs operationEncoder\n@docs operationDecoder\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "operationDecoder",
+                "comment": " Decoder for an operation\n",
+                "type": "Json.Decode.Decoder a -> Json.Decode.Decoder (CRDTree.Operation.Operation a)"
+            },
+            {
+                "name": "operationEncoder",
+                "comment": " Encoder for an operation, expects a function that takes\nanything and returns a value\n",
+                "type": "(a -> Json.Encode.Value) -> CRDTree.Operation.Operation a -> Json.Encode.Value"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "CRDTree.Node",
+        "comment": " This module implements types and functions to build, find, get\nvalues from, and compare nodes\n\n@docs Node\n@docs Error\n\n# Properties\n@docs value\n@docs timestamp\n@docs path\n@docs isDeleted\n\n# Traverse\n@docs children\n@docs descendant\n\n# Build\n@docs init\n@docs root\n@docs tombstone\n\n# Operations\n@docs addAfter\n@docs delete\n@docs updateParent\n\n",
+        "unions": [
+            {
+                "name": "Error",
+                "comment": " Represents an Error updating a node ",
+                "args": [],
+                "cases": [
+                    [
+                        "NotFound",
+                        []
+                    ],
+                    [
+                        "AlreadyApplied",
+                        []
+                    ],
+                    [
+                        "BadTimestamp",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Node",
+                "comment": " Node can be either a branch or leaf `Node` with optional\ndata or a `Tombstone` representing a removed Node\n ",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "addAfter",
+                "comment": " Adds  after node with timestamp\n",
+                "type": "Basics.Int -> ( Basics.Int, a ) -> CRDTree.Node.Node a -> Result.Result CRDTree.Node.Error (CRDTree.Node.Node a)"
+            },
+            {
+                "name": "children",
+                "comment": " Return a list of a nodes' children\n",
+                "type": "CRDTree.Node.Node a -> List.List (CRDTree.Node.Node a)"
+            },
+            {
+                "name": "delete",
+                "comment": " Delete a node ",
+                "type": "Basics.Int -> CRDTree.Node.Node a -> Result.Result CRDTree.Node.Error (CRDTree.Node.Node a)"
+            },
+            {
+                "name": "descendant",
+                "comment": " Return a Node at a path\n",
+                "type": "List.List Basics.Int -> CRDTree.Node.Node a -> Maybe.Maybe (CRDTree.Node.Node a)"
+            },
+            {
+                "name": "init",
+                "comment": " Build a node\n\n    timestamp (init 'a' [0, 1]) == 1\n    path (init 'a' [0, 1]) == [0, 1]\n    value (init 'a' [0, 1]) == Just 'a'\n ",
+                "type": "a -> List.List Basics.Int -> CRDTree.Node.Node a"
+            },
+            {
+                "name": "isDeleted",
+                "comment": " Return `True` if the node has been deleted\n",
+                "type": "CRDTree.Node.Node a -> Basics.Bool"
+            },
+            {
+                "name": "path",
+                "comment": " Return the path of a node\n\n    path (node (Just 'a') [0, 1]) == [0, 1]\n",
+                "type": "CRDTree.Node.Node a -> List.List Basics.Int"
+            },
+            {
+                "name": "root",
+                "comment": " Build a root node\n\n    timestamp root == 0\n    path root == []\n    value root == Nothing\n ",
+                "type": "CRDTree.Node.Node a"
+            },
+            {
+                "name": "timestamp",
+                "comment": " Return the timestamp of a node\n\n    timestamp (node 'a' [0, 1]) == 1\n",
+                "type": "CRDTree.Node.Node a -> Basics.Int"
+            },
+            {
+                "name": "tombstone",
+                "comment": " Build a tombstone providing timestamp and path\n\n    timestamp (tombstone [0, 1]) == 1\n    path (tombstone [0, 1]) == [0, 1]\n    value (tombstone [0, 1]) == Nothing\n",
+                "type": "List.List Basics.Int -> CRDTree.Node.Node a"
+            },
+            {
+                "name": "updateParent",
+                "comment": " Update a node with a successful result ",
+                "type": "Basics.Int -> CRDTree.Node.Node a -> (CRDTree.Node.Node a -> Result.Result CRDTree.Node.Error (CRDTree.Node.Node a)) -> Result.Result CRDTree.Node.Error (CRDTree.Node.Node a)"
+            },
+            {
+                "name": "value",
+                "comment": " Return the value of a node\n\n    value (node 'a' [0, 1]) == Just 'a'\n    value (tombstone [0, 1]) == Nothing\n",
+                "type": "CRDTree.Node.Node a -> Maybe.Maybe a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "CRDTree.Operation",
+        "comment": " Represents an CRDTree operation\n\n@docs Operation\n\n# Properties\n@docs timestamp\n@docs path\n@docs replicaId\n\n# List\n@docs since\n@docs toList\n@docs fromList\n\n# Manipulation\n@docs merge\n\n\n",
+        "unions": [
+            {
+                "name": "Operation",
+                "comment": " Represents an CRDTree operation\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Add",
+                        [
+                            "Basics.Int",
+                            "List.List Basics.Int",
+                            "a"
+                        ]
+                    ],
+                    [
+                        "Delete",
+                        [
+                            "List.List Basics.Int"
+                        ]
+                    ],
+                    [
+                        "Batch",
+                        [
+                            "List.List (CRDTree.Operation.Operation a)"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fromList",
+                "comment": "\nList of Operations to Batch\n\n",
+                "type": "List.List (CRDTree.Operation.Operation a) -> CRDTree.Operation.Operation a"
+            },
+            {
+                "name": "merge",
+                "comment": " Merge two operations\n",
+                "type": "CRDTree.Operation.Operation a -> CRDTree.Operation.Operation a -> CRDTree.Operation.Operation a"
+            },
+            {
+                "name": "path",
+                "comment": " Operation path\n",
+                "type": "CRDTree.Operation.Operation a -> Maybe.Maybe (List.List Basics.Int)"
+            },
+            {
+                "name": "replicaId",
+                "comment": " Id of the replica originating the operation\n",
+                "type": "CRDTree.Operation.Operation a -> Maybe.Maybe Basics.Int"
+            },
+            {
+                "name": "since",
+                "comment": " Return operations since a timestamp\n",
+                "type": "Basics.Int -> List.List (CRDTree.Operation.Operation a) -> List.List (CRDTree.Operation.Operation a)"
+            },
+            {
+                "name": "timestamp",
+                "comment": " Timestamp of the operation\n",
+                "type": "CRDTree.Operation.Operation a -> Maybe.Maybe Basics.Int"
+            },
+            {
+                "name": "toList",
+                "comment": "\nOperation to List of Operations\n\n",
+                "type": "CRDTree.Operation.Operation a -> List.List (CRDTree.Operation.Operation a)"
+            }
+        ],
+        "binops": []
+    }
+]

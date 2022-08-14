@@ -1,0 +1,59 @@
+[
+    {
+        "name": "ScrollTo",
+        "comment": "\n\n@docs Status, Msg\n\n\n# Setup\n\n@docs init, update, subscriptions\n\n\n# Run the Scroll Animation\n\n@docs toPosition\n\n\n# Animation Customizations\n\n@docs withDelay, withDuration, withEasing\n\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " Track scroll messages.\n\n    type Msg\n        = ScrollToMsg ScrollTo.Msg\n\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Status",
+                "comment": " Represent the state of the scroll; the status will remain waiting until a\nscroll command is issued.\n\n    type alias Model =\n        { scrollToStatus : ScrollTo.Status }}\n\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "init",
+                "comment": " Setup a basic scroll command.\n\n    ScrollTo.init\n\n",
+                "type": "ScrollTo.Status"
+            },
+            {
+                "name": "subscriptions",
+                "comment": " Subscribe to scroll animation updates.\n\n    ScrollTo.subscriptions ScrollToMsg model.scrollToStatus\n\n",
+                "type": "(ScrollTo.Msg -> msg) -> ScrollTo.Status -> Platform.Sub.Sub msg"
+            },
+            {
+                "name": "toPosition",
+                "comment": " Scroll to a position offset on the screen.\n\n    -- to the top!\n    ScrollTo.toPosition { x = 0, y = 0 } model.scrollToStatus\n\n    -- to x offset\n    ScrollTo.toPosition { x = 1080, y = 0 } model.scrollToStatus\n\n    -- to y offset\n    ScrollTo.toPosition { x = 0, y = 540 } model.scrollToStatus\n\n    -- to x,y offset\n    ScrollTo.toPosition { x = 1080, y = 540 } model.scrollToStatus\n\n",
+                "type": "ScrollTo.Position -> ScrollTo.Status -> Platform.Cmd.Cmd ScrollTo.Msg"
+            },
+            {
+                "name": "update",
+                "comment": " Handle updates from the scroll animation.\n\n    ScrollTo.update scrollToMsg model.scrollToStatus\n\n",
+                "type": "ScrollTo.Msg -> ScrollTo.Status -> ( ScrollTo.Status, Platform.Cmd.Cmd ScrollTo.Msg )"
+            },
+            {
+                "name": "withDelay",
+                "comment": " Add a delay (in ms) to your scroll command.\n\n    -- default: 0\n    ScrollTo.withDelay 1000\n\n",
+                "type": "Basics.Float -> ScrollTo.Status -> ScrollTo.Status"
+            },
+            {
+                "name": "withDuration",
+                "comment": " Add a duration (in ms) to your scroll command.\n\n    -- default: 1000\n    ScrollTo.withDuration 5000\n\n",
+                "type": "Basics.Float -> ScrollTo.Status -> ScrollTo.Status"
+            },
+            {
+                "name": "withEasing",
+                "comment": " Add an easing function\n([elm-community/easing-functions](https://package.elm-lang.org/packages/elm-community/easing-functions/latest))\nto your scroll command.\n\n    -- default: identity (linear)\n    ScrollTo.withEasing Ease.inOutQuint\n\n",
+                "type": "(Basics.Float -> Basics.Float) -> ScrollTo.Status -> ScrollTo.Status"
+            }
+        ],
+        "binops": []
+    }
+]

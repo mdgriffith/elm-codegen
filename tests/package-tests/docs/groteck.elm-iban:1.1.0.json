@@ -1,0 +1,460 @@
+[
+    {
+        "name": "IBAN",
+        "comment": " IBAN parser\n\n\n## Parse\n\n@docs fromString\n\n\n## Format\n\n@docs toString\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fromString",
+                "comment": " Creates an IBAN value from a string\n\nBuilds and validates an IBAN given a String.\n\nThe input string can contain random spaces and lower letters.\n\n",
+                "type": "String.String -> Result.Result IBAN.Types.Error IBAN.Types.IBAN"
+            },
+            {
+                "name": "toString",
+                "comment": " Format an IBAN value\n\nFormats back an IBAN value to its canonic forms.\nthere are 2 forms:\n\n1.  `Textual` i.e. characters are grouped in groups of 4\n2.  `Electronic` i.e. without spaces, and capital letters\n\n",
+                "type": "IBAN.Types.Format -> IBAN.Types.IBAN -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "IBAN.Types",
+        "comment": " This module have all the types needed to interact with the main IBAN module\n\n@docs IBAN\n@docs CheckCode\n@docs BBAN\n@docs Error\n@docs Format\n@docs Country\n\n",
+        "unions": [
+            {
+                "name": "Country",
+                "comment": " List of countries with `IBAN` type into a string\n\n```\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Albania",
+                        []
+                    ],
+                    [
+                        "Algeria",
+                        []
+                    ],
+                    [
+                        "Andorra",
+                        []
+                    ],
+                    [
+                        "Angola",
+                        []
+                    ],
+                    [
+                        "Austria",
+                        []
+                    ],
+                    [
+                        "Azerbaijan",
+                        []
+                    ],
+                    [
+                        "Bahrain",
+                        []
+                    ],
+                    [
+                        "Benin",
+                        []
+                    ],
+                    [
+                        "Belarus",
+                        []
+                    ],
+                    [
+                        "Belgium",
+                        []
+                    ],
+                    [
+                        "BosniaHerzegovina",
+                        []
+                    ],
+                    [
+                        "Brazil",
+                        []
+                    ],
+                    [
+                        "BritishVirginIslands",
+                        []
+                    ],
+                    [
+                        "Bulgaria",
+                        []
+                    ],
+                    [
+                        "BurkinaFaso",
+                        []
+                    ],
+                    [
+                        "Burundi",
+                        []
+                    ],
+                    [
+                        "Cameroon",
+                        []
+                    ],
+                    [
+                        "CapeVerde",
+                        []
+                    ],
+                    [
+                        "CostaRica",
+                        []
+                    ],
+                    [
+                        "Croatia",
+                        []
+                    ],
+                    [
+                        "Cyprus",
+                        []
+                    ],
+                    [
+                        "CzechRepublic",
+                        []
+                    ],
+                    [
+                        "Denmark",
+                        []
+                    ],
+                    [
+                        "DominicanRepublic",
+                        []
+                    ],
+                    [
+                        "EastTimor",
+                        []
+                    ],
+                    [
+                        "ElSalvador",
+                        []
+                    ],
+                    [
+                        "Estonia",
+                        []
+                    ],
+                    [
+                        "FaroeIslands",
+                        []
+                    ],
+                    [
+                        "Finland",
+                        []
+                    ],
+                    [
+                        "France",
+                        []
+                    ],
+                    [
+                        "Georgia",
+                        []
+                    ],
+                    [
+                        "Germany",
+                        []
+                    ],
+                    [
+                        "Gibraltar",
+                        []
+                    ],
+                    [
+                        "Greece",
+                        []
+                    ],
+                    [
+                        "Greenland",
+                        []
+                    ],
+                    [
+                        "Guatemala",
+                        []
+                    ],
+                    [
+                        "Hungary",
+                        []
+                    ],
+                    [
+                        "Iceland",
+                        []
+                    ],
+                    [
+                        "Iran",
+                        []
+                    ],
+                    [
+                        "Iraq",
+                        []
+                    ],
+                    [
+                        "Ireland",
+                        []
+                    ],
+                    [
+                        "Israel",
+                        []
+                    ],
+                    [
+                        "Italy",
+                        []
+                    ],
+                    [
+                        "IvoryCoast",
+                        []
+                    ],
+                    [
+                        "Jordan",
+                        []
+                    ],
+                    [
+                        "Kazakhstan",
+                        []
+                    ],
+                    [
+                        "Kosovo",
+                        []
+                    ],
+                    [
+                        "Kuwait",
+                        []
+                    ],
+                    [
+                        "Latvia",
+                        []
+                    ],
+                    [
+                        "Lebanon",
+                        []
+                    ],
+                    [
+                        "Liechtenstein",
+                        []
+                    ],
+                    [
+                        "Lithuania",
+                        []
+                    ],
+                    [
+                        "Luxembourg",
+                        []
+                    ],
+                    [
+                        "Macedonia",
+                        []
+                    ],
+                    [
+                        "Madagascar",
+                        []
+                    ],
+                    [
+                        "Mali",
+                        []
+                    ],
+                    [
+                        "Malta",
+                        []
+                    ],
+                    [
+                        "Mauritania",
+                        []
+                    ],
+                    [
+                        "Mauritius",
+                        []
+                    ],
+                    [
+                        "Monaco",
+                        []
+                    ],
+                    [
+                        "Moldova",
+                        []
+                    ],
+                    [
+                        "Montenegro",
+                        []
+                    ],
+                    [
+                        "Mozambique",
+                        []
+                    ],
+                    [
+                        "Netherlands",
+                        []
+                    ],
+                    [
+                        "Norway",
+                        []
+                    ],
+                    [
+                        "Pakistan",
+                        []
+                    ],
+                    [
+                        "PalestinianTerritories",
+                        []
+                    ],
+                    [
+                        "Poland",
+                        []
+                    ],
+                    [
+                        "Portugal",
+                        []
+                    ],
+                    [
+                        "Qatar",
+                        []
+                    ],
+                    [
+                        "Romania",
+                        []
+                    ],
+                    [
+                        "SaintLucia",
+                        []
+                    ],
+                    [
+                        "SanMarino",
+                        []
+                    ],
+                    [
+                        "SaoTomeAndPrincipe",
+                        []
+                    ],
+                    [
+                        "SaudiArabia",
+                        []
+                    ],
+                    [
+                        "Senegal",
+                        []
+                    ],
+                    [
+                        "Serbia",
+                        []
+                    ],
+                    [
+                        "Seychelles",
+                        []
+                    ],
+                    [
+                        "Slovakia",
+                        []
+                    ],
+                    [
+                        "Slovenia",
+                        []
+                    ],
+                    [
+                        "Spain",
+                        []
+                    ],
+                    [
+                        "Sweden",
+                        []
+                    ],
+                    [
+                        "Switzerland",
+                        []
+                    ],
+                    [
+                        "Tunisia",
+                        []
+                    ],
+                    [
+                        "Turkey",
+                        []
+                    ],
+                    [
+                        "Ukraine",
+                        []
+                    ],
+                    [
+                        "UnitedArabEmirates",
+                        []
+                    ],
+                    [
+                        "UnitedKingdom",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Error",
+                "comment": " This types can be use in case of error to serialize into specific text\nmessages on the interface\n",
+                "args": [],
+                "cases": [
+                    [
+                        "IBANLengthError",
+                        [
+                            "IBAN.Types.Country",
+                            "{ actual : Basics.Int, expected : Basics.Int }"
+                        ]
+                    ],
+                    [
+                        "InvalidCharacter",
+                        []
+                    ],
+                    [
+                        "SanityCheckFailed",
+                        []
+                    ],
+                    [
+                        "UnknownCountryCode",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Format",
+                "comment": " This type is needed to transform and `IBAN\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Textual",
+                        []
+                    ],
+                    [
+                        "Electronic",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "IBAN",
+                "comment": " Main IBAN type, that the information decomposed into different chunks\nof information\n",
+                "args": [],
+                "cases": [
+                    [
+                        "IBAN",
+                        [
+                            "IBAN.Types.Country",
+                            "IBAN.Types.CheckCode",
+                            "IBAN.Types.BBAN"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "BBAN",
+                "comment": " Simple alias for a string that represent the BBAN\n",
+                "args": [],
+                "type": "String.String"
+            },
+            {
+                "name": "CheckCode",
+                "comment": " Simple alias for a string that represent the CheckCode\n",
+                "args": [],
+                "type": "String.String"
+            }
+        ],
+        "values": [],
+        "binops": []
+    }
+]

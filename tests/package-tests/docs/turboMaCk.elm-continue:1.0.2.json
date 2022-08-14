@@ -1,0 +1,58 @@
+[
+    {
+        "name": "Continue",
+        "comment": " Abstraction for working with continuations.\n\n\n# Type\n\n@docs Continue, return\n\n\n# Run continuation\n\n@docs run, exec\n\n\n# Compositions\n\n@docs map, andMap, andThen\n\n",
+        "unions": [
+            {
+                "name": "Continue",
+                "comment": " Continuation type\n",
+                "args": [
+                    "r",
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Cont",
+                        [
+                            "(a -> r) -> r"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "andMap",
+                "comment": " Apply values to function within continuation\n\n    return (\\a b -> a / b)\n      |> andMap (return 5)\n      |> andMap (return 2)\n      |> exec\n    --> 2.5\n\n",
+                "type": "Continue.Continue r a -> Continue.Continue r (a -> b) -> Continue.Continue r b"
+            },
+            {
+                "name": "andThen",
+                "comment": " Chain continuations\n\n    return 3\n      |> andThen (\\a -> return <| a * 2)\n      |> exec\n    --> 6\n\n",
+                "type": "(a -> Continue.Continue r b) -> Continue.Continue r a -> Continue.Continue r b"
+            },
+            {
+                "name": "exec",
+                "comment": " Run with identity function.\n\n**This is useful only in case of very simple scenarios.**\n\n    return ()\n      |> exec\n    --> ()\n\n",
+                "type": "Continue.Continue r r -> r"
+            },
+            {
+                "name": "map",
+                "comment": " Map value within continuation\n\n    return 5\n      |> map (\\a -> a ^ 2)\n      |> exec\n    --> 25\n\n",
+                "type": "(a -> b) -> Continue.Continue r a -> Continue.Continue r b"
+            },
+            {
+                "name": "return",
+                "comment": " construct continuation from value\n\n    return 42\n      |> exec\n    --> 42\n\n",
+                "type": "a -> Continue.Continue r a"
+            },
+            {
+                "name": "run",
+                "comment": " Run function within continuation\n\n    return \"foo\"\n      |> run (\\h -> h :: [ \"bar\" ])\n    --> [ \"foo\", \"bar\" ]\n\nThis will inject `timesTwo` as continuation to\n`squareAndAdd`. Final calculation should then be:\n`n ^ 2 + n * 2` where `n` is argument passed to `squereAndAdd`.\n\n    squareAndAdd : Int -> Continue Int Int\n    squareAndAdd a =\n        Cont <| \\k -> a ^ 2 + k a\n\n    times2 : Int -> Int\n    times2 a =\n        2 * a\n\n    run times2 (squareAndAdd 3)\n    --> 15\n\n    run times2 (squareAndAdd 4)\n    --> 24\n\n",
+                "type": "(a -> r) -> Continue.Continue r a -> r"
+            }
+        ],
+        "binops": []
+    }
+]

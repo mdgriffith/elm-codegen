@@ -1,0 +1,21 @@
+[
+    {
+        "name": "Pilf",
+        "comment": " This library has the awesome function `flip` and a functionally equal function `pilf` for awesomeness purposes\n\n@docs flip\n@docs pilf\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "flip",
+                "comment": " Flip the order of the first two arguments to a function. ",
+                "type": "(a -> b -> c) -> b -> a -> c"
+            },
+            {
+                "name": "pilf",
+                "comment": " Pilf the order of the first two arguments to a function.\n\nFunctionality is the same as `flip` but the names in the implementation also changed order which make it looks like pilf instead of flip.\n",
+                "type": "(b -> a -> c) -> a -> b -> c"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,132 @@
+[
+    {
+        "name": "Intl",
+        "comment": " CodeGen for Intl functions. The Intl API will be given access to by a Proxy Object injected into the Elm Runtime via Flags.\nThis mechanism makes it possible to have synchronous communication with JS. In order to avoid a lot of methods on the JS side,\nwe are using a eval-like mechanism: We pass the information which Sub API to call and with which arguments as a JSON string.\n\n@docs Intl, decode, PluralRule, pluralRuleToString, pluralRuleFromString, PluralType, PluralOptions, determinePluralRuleInt, determinePluralRuleFloat, FormatNumberOptions, formatFloat, formatInt, FormatDateTimeOptions, formatDateTime, unsafeAccess\n\n",
+        "unions": [
+            {
+                "name": "PluralRule",
+                "comment": " The different plural rules. Depending on language, you might only have two of these like English (one, other) or all 6.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Zero",
+                        []
+                    ],
+                    [
+                        "One",
+                        []
+                    ],
+                    [
+                        "Two",
+                        []
+                    ],
+                    [
+                        "Few",
+                        []
+                    ],
+                    [
+                        "Many",
+                        []
+                    ],
+                    [
+                        "Other",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "PluralType",
+                "comment": " Cardinal: Semantics of amount, Ordinal: Semantics of ranking (think 1st, 2nd ...)\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Cardinal",
+                        []
+                    ],
+                    [
+                        "Ordinal",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "FormatDateTimeOptions",
+                "comment": " Options for the `formatDate` function.\n\n`args` can consist of any object entries you want to pass to the DateTimeFormat constructor.\nThe following serves as a hint to what is actually valid and will not result in an error:\n\n    - timeZone: String, implementation specific. UTC is the default and works for all implementations. Stuff like Asia/Shanghai could work depending on browser.\n    - hour12: Bool, determines whether AM/PM or 24h format should be used.\n    - hourCycle: \"h11\", \"h12\", \"h23\" or \"h24\". Overrides the hour12 argument.\n    - weekday: \"narrow\", \"short or \"long\"\n    - era: \"narrow\", \"short or \"long\"\n    - year: \"numeric\" or \"2-digit\"\n    - month: \"numeric\", \"2-digit\", \"narrow\", \"short or \"long\"\n    - day: \"numeric\" or \"2-digit\"\n    - hour: \"numeric\" or \"2-digit\"\n    - minute: \"numeric\" or \"2-digit\"\n    - second: \"numeric\" or \"2-digit\"\n    - timeZoneName: \"short\" or \"long\"\n\n",
+                "args": [],
+                "type": "{ time : Time.Posix, args : List.List ( String.String, Json.Encode.Value ), language : String.String }"
+            },
+            {
+                "name": "FormatNumberOptions",
+                "comment": " Options for the `formatInt` and `formatFloat` functions.\n\n`args` can consist of any object entries you want to pass to the NumberFormat constructor.\nThe following serves as a hint to what is actually valid and will not result in an error:\n\n    - currency: String, needs to be set if style is \"currency\". For example \"EUR\" is a valid currency.\n    - currencyDisplay: \"name\", \"symbol\" or \"code\", defaults to \"symbol\"\n    - maximumFractionDigits: Int\n    - maximumSignificantDigits: Int\n    - minimumFractionDigits: Int\n    - minimumIntegerDigits: Int\n    - minimumSignificantDigits: Int\n    - style : one of \"decimal\", \"currency\", \"percent\"\n    - useGrouping : Bool, True results in something like 123.456.789 while False will result in 123456789\n\n",
+                "args": [
+                    "number"
+                ],
+                "type": "{ language : String.String, args : List.List ( String.String, Json.Encode.Value ), number : number }"
+            },
+            {
+                "name": "Intl",
+                "comment": " Use this type for the JS Proxy Object you received via a flag or a port from the accompanying JS package.\n",
+                "args": [],
+                "type": "Json.Decode.Value"
+            },
+            {
+                "name": "PluralOptions",
+                "comment": " Options for the `plural` function.\n",
+                "args": [
+                    "number"
+                ],
+                "type": "{ language : String.String, type_ : Intl.PluralType, number : number }"
+            }
+        ],
+        "values": [
+            {
+                "name": "decode",
+                "comment": " Convienience decoder for Intl Type. This makes it possible for me to change the internal representation without a breaking change.\n",
+                "type": "Json.Decode.Decoder Intl.Intl"
+            },
+            {
+                "name": "determinePluralRuleFloat",
+                "comment": " Determine the CLDR plural category (see <https://www.unicode.org/cldr/cldr-aux/charts/30/supplemental/language_plural_rules.html>)\nfor a given `Float` and language.\n\nThe possible categories are: `zero`, `one`, `two`, `few`, `many`, and `other`.\nWhen the category cannot be determined for whatever reason, this function will default to \"other\".\n\n",
+                "type": "Intl.Intl -> Intl.PluralOptions Basics.Float -> Intl.PluralRule"
+            },
+            {
+                "name": "determinePluralRuleInt",
+                "comment": " Determine the CLDR plural category (see <https://www.unicode.org/cldr/cldr-aux/charts/30/supplemental/language_plural_rules.html>)\nfor a given `Int` and language.\n\nThe possible categories are: `zero`, `one`, `two`, `few`, `many`, and `other`.\nWhen the category cannot be determined for whatever reason, this function will default to \"other\".\n\n",
+                "type": "Intl.Intl -> Intl.PluralOptions Basics.Int -> Intl.PluralRule"
+            },
+            {
+                "name": "formatDateTime",
+                "comment": " Format a Posix Time with the given Options\n",
+                "type": "Intl.Intl -> Intl.FormatDateTimeOptions -> String.String"
+            },
+            {
+                "name": "formatFloat",
+                "comment": " Format a Float with the given Options\n",
+                "type": "Intl.Intl -> Intl.FormatNumberOptions Basics.Float -> String.String"
+            },
+            {
+                "name": "formatInt",
+                "comment": " Format an Int with the given Options\n",
+                "type": "Intl.Intl -> Intl.FormatNumberOptions Basics.Int -> String.String"
+            },
+            {
+                "name": "pluralRuleFromString",
+                "comment": " Parse a `PluralRule` from a `String`. This is written so it is compatible with the return values of the Intl API.\n",
+                "type": "String.String -> Maybe.Maybe Intl.PluralRule"
+            },
+            {
+                "name": "pluralRuleToString",
+                "comment": " Convert a `PluralRule` to its `String` representation. This is written so it is compatible with the return values of the Intl API.\n",
+                "type": "Intl.PluralRule -> String.String"
+            },
+            {
+                "name": "unsafeAccess",
+                "comment": " Use only if you know what you are doing! Accesses the Intl object directly which can be more efficient\nif you only want to relay json strings instead of decoding and encoding dicts in Elm. Also provides access to APIs that are not wrapped\nin a more typesafe way by this package yet.\n",
+                "type": "Intl.Intl -> String.String -> Maybe.Maybe String.String"
+            }
+        ],
+        "binops": []
+    }
+]

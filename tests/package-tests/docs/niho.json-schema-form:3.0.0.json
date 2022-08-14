@@ -1,0 +1,255 @@
+[
+    {
+        "name": "Json.Schema.Form",
+        "comment": " Generate validating forms from JSON schemas.\n\n\n# Types\n\n@docs Options, State, Msg\n\n\n# Init/update lifecycle\n\n@docs init, update\n\n\n# View\n\n@docs view, submit\n\n\n# Output\n\n@docs getOutput\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Msg",
+                "comment": " Form messages for `update`.\n",
+                "args": [],
+                "type": "Form.Msg"
+            },
+            {
+                "name": "Options",
+                "comment": " Customize the generated form.\n\n  - `errors` - A function that turns error values into user readable strings.\n  - `formats` - A list of custom formats (see `Json.Schema.Form.Format`).\n\n",
+                "args": [],
+                "type": "{ errors : Json.Schema.Form.Error.Errors, formats : Dict.Dict String.String Json.Schema.Form.Format.Format }"
+            },
+            {
+                "name": "State",
+                "comment": " The form state.\n",
+                "args": [],
+                "type": "{ options : Json.Schema.Form.Options, schema : Json.Schema.Definitions.Schema, form : Form.Form Json.Schema.Form.Error.ErrorValue Json.Schema.Form.Value.Value }"
+            }
+        ],
+        "values": [
+            {
+                "name": "getOutput",
+                "comment": " Get the output value of the form if it validates.\n\n    case Json.Schema.Form.getOutput state of\n        Just value ->\n            -- The `value` is a tree of all the fields in the form (see the\n            -- `Json.Schema.Form.Value` module).\n            -- Use the `Json.Schema.Form.Encode.encode` function to turn\n            -- it into a JSON value.\n        Nothing ->\n            -- If any field in the form is not valid `getOutput` will\n            -- return `Nothing`.\n\n",
+                "type": "Json.Schema.Form.State -> Maybe.Maybe Json.Schema.Form.Value.Value"
+            },
+            {
+                "name": "init",
+                "comment": " Initialize a form state with options and a schema. Use [json-tools/json-schema](https://package.elm-lang.org/packages/json-tools/json-schema/1.0.2/) to parse or build a schema.\n",
+                "type": "Json.Schema.Form.Options -> Json.Schema.Definitions.Schema -> Json.Schema.Form.State"
+            },
+            {
+                "name": "submit",
+                "comment": " Triggers the form to be submitted for validation.\n\n    form [ onSubmit Json.Schema.Form.submit ]\n        [ Json.Schema.Form.view state\n        , button [] [ text \"Submit\" ]\n        ]\n\n",
+                "type": "Json.Schema.Form.Msg"
+            },
+            {
+                "name": "update",
+                "comment": " Update the form state.\n",
+                "type": "Json.Schema.Form.Msg -> Json.Schema.Form.State -> Json.Schema.Form.State"
+            },
+            {
+                "name": "view",
+                "comment": " The form fields as HTML. Use together with `submit` to submit the form.\n",
+                "type": "Json.Schema.Form.State -> Html.Html Json.Schema.Form.Msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Json.Schema.Form.Encode",
+        "comment": " Encode form values as JSON.\n\n\n# Encode\n\n@docs encode\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "encode",
+                "comment": " Encode a form value (the output of a valid form) as JSON.\n",
+                "type": "Json.Schema.Form.Value.Value -> Json.Encode.Value"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Json.Schema.Form.Error",
+        "comment": " Validation errors.\n\n@docs ErrorValue, Errors\n\n",
+        "unions": [
+            {
+                "name": "ErrorValue",
+                "comment": " A validation error. See `etaque/elm-form` for more error types.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Invalid",
+                        []
+                    ],
+                    [
+                        "InvalidSet",
+                        []
+                    ],
+                    [
+                        "ShorterListThan",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "LongerListThan",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "InvalidCustomFormat",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Errors",
+                "comment": " A function that converts a field path and an `ErrorValue` into a user readable string.\n",
+                "args": [],
+                "type": "String.String -> Form.Error.ErrorValue Json.Schema.Form.Error.ErrorValue -> String.String"
+            }
+        ],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "Json.Schema.Form.Format",
+        "comment": " In a JSON schema the `format` keyword has a number of pre-defined formats (`date`, `email`, etc.) but can also be any custom format (see [7. Semantic Validation with \"format\"](https://json-schema.org/latest/json-schema-validation.html#rfc.section.7)). If you simply need a to match a field against a regular expression you should use the `pattern` keyword instead. Custom formats are intended for annotation and more complex validation that is not possible to accomplish with a regex.\n\n\n# Custom format\n\n@docs Format, init\n\n\n# Input field\n\n@docs withPrefix, withSuffix, withPlaceholder, withAutocompleteOff, withAutocompleteOn, withAutocomplete, withInputType, withLines\n\n\n# Custom input\n\n@docs withInput\n\n\n# Validation\n\n@docs withValidation\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Format",
+                "comment": " A custom format.\n",
+                "args": [],
+                "type": "{ prefix : Maybe.Maybe String.String, suffix : Maybe.Maybe String.String, placeholder : Maybe.Maybe String.String, autocomplete : Maybe.Maybe String.String, inputType : Maybe.Maybe String.String, lines : Basics.Int, input : Maybe.Maybe (Form.Input.Input Json.Schema.Form.Error.ErrorValue String.String), validation : String.String -> Form.Validate.Validation Json.Schema.Form.Error.ErrorValue String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "init",
+                "comment": " Initialize a new format with default values.\n",
+                "type": "Json.Schema.Form.Format.Format"
+            },
+            {
+                "name": "withAutocomplete",
+                "comment": " The browser is allowed to automatically complete the input. See <https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/autocomplete> for a list of possible values and <https://cloudfour.com/thinks/autofill-what-web-devs-should-know-but-dont/> for in-depth guidance on how to use autocomplete.\n",
+                "type": "String.String -> Json.Schema.Form.Format.Format -> Json.Schema.Form.Format.Format"
+            },
+            {
+                "name": "withAutocompleteOff",
+                "comment": " The browser is not permitted to automatically enter or select a value for this field.\n",
+                "type": "Json.Schema.Form.Format.Format -> Json.Schema.Form.Format.Format"
+            },
+            {
+                "name": "withAutocompleteOn",
+                "comment": " The browser is allowed to automatically complete the input. No guidance is provided as to the type of data expected in the field, so the browser may use its own judgement.\n",
+                "type": "Json.Schema.Form.Format.Format -> Json.Schema.Form.Format.Format"
+            },
+            {
+                "name": "withInput",
+                "comment": " Customize the input field with your own HTML.\n",
+                "type": "Form.Input.Input Json.Schema.Form.Error.ErrorValue String.String -> Json.Schema.Form.Format.Format -> Json.Schema.Form.Format.Format"
+            },
+            {
+                "name": "withInputType",
+                "comment": " The type of `input` to use. The default is `text`.\n",
+                "type": "String.String -> Json.Schema.Form.Format.Format -> Json.Schema.Form.Format.Format"
+            },
+            {
+                "name": "withLines",
+                "comment": " The expected number of lines. If more than one the field will be rendered as a `textarea`. The default is 1.\n",
+                "type": "Basics.Int -> Json.Schema.Form.Format.Format -> Json.Schema.Form.Format.Format"
+            },
+            {
+                "name": "withPlaceholder",
+                "comment": " A short hint that describes the expected value of the field.\n",
+                "type": "String.String -> Json.Schema.Form.Format.Format -> Json.Schema.Form.Format.Format"
+            },
+            {
+                "name": "withPrefix",
+                "comment": " A short label that is displayed at the beginning of the input field.\n",
+                "type": "String.String -> Json.Schema.Form.Format.Format -> Json.Schema.Form.Format.Format"
+            },
+            {
+                "name": "withSuffix",
+                "comment": " A short label that is displayed at the end of the input field.\n",
+                "type": "String.String -> Json.Schema.Form.Format.Format -> Json.Schema.Form.Format.Format"
+            },
+            {
+                "name": "withValidation",
+                "comment": " A validation function (see [etaque/elm-form](https://package.elm-lang.org/packages/etaque/elm-form/4.0.0/Form-Validate) for details on how to write a validation function).\n",
+                "type": "(String.String -> Form.Validate.Validation Json.Schema.Form.Error.ErrorValue String.String) -> Json.Schema.Form.Format.Format -> Json.Schema.Form.Format.Format"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Json.Schema.Form.Value",
+        "comment": " When a form is valid the output is a tree of `Value` items that represent the type and value of each field or group/list of fields in the form.\n\n@docs Value\n\n",
+        "unions": [
+            {
+                "name": "Value",
+                "comment": " A form value.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "IntValue",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "FloatValue",
+                        [
+                            "Basics.Float"
+                        ]
+                    ],
+                    [
+                        "StringValue",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "BoolValue",
+                        [
+                            "Basics.Bool"
+                        ]
+                    ],
+                    [
+                        "ListValue",
+                        [
+                            "List.List Json.Schema.Form.Value.Value"
+                        ]
+                    ],
+                    [
+                        "ObjectValue",
+                        [
+                            "List.List ( String.String, Json.Schema.Form.Value.Value )"
+                        ]
+                    ],
+                    [
+                        "NullValue",
+                        []
+                    ],
+                    [
+                        "EmptyValue",
+                        []
+                    ],
+                    [
+                        "JsonValue",
+                        [
+                            "Json.Decode.Value"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [],
+        "binops": []
+    }
+]

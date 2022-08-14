@@ -1,0 +1,23 @@
+[
+    {
+        "name": "GoogleDomains",
+        "comment": " List of google supported domains: <https://www.google.com/supported_domains>.\n\n@docs Domain, list\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Domain",
+                "comment": " Domain record.\n",
+                "args": [],
+                "type": "{ domain : String.String, country : String.String, flag : String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "list",
+                "comment": " List.\n",
+                "type": "List.List GoogleDomains.Domain"
+            }
+        ],
+        "binops": []
+    }
+]

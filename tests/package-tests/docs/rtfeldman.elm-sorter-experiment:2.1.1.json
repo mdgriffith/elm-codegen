@@ -1,0 +1,292 @@
+[
+    {
+        "name": "Sort",
+        "comment": " Sort values. You can use this as a self-documenting alternative to `List.sort`:\n\n    Sort.list Sort.alphabetical [ \"foo\", \"bar\", \"baz\" ]\n        --> [ \"bar\", \"baz\", \"foo\" ]\n\nYou can also use [`Sort.by`](#by), [`Sort.reverse`](#reverse), and [`Sort.tiebreaker`](#tiebreaker) to transform sorters:\n\n    -- Sort users by name, in reverse alphabetical order\n    Sort.list\n        (Sort.by .name (Sort.reverse Sort.alphabetical))\n        users\n\nFinally, you can use these to create sets and dictionaries with keys that\ndo not have to be `comparable`. See the `Sort.Dict` and `Sort.Set` modules.\n\n\n## Types\n\n@docs Sorter\n\n\n## Conversions\n\n@docs custom, toOrder\n\n\n## Composing Sorters\n\n@docs reverse, by, tiebreaker\n\n\n## Primitives\n\n@docs alphabetical, increasing\n\n\n## Collections\n\n@docs list\n\n",
+        "unions": [
+            {
+                "name": "Sorter",
+                "comment": " A description of how to sort values of a particular type.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "alphabetical",
+                "comment": " Sort strings alphabetically.\n\n    Sort.list Sort.alphabetical [ \"cabbage\", \"banana\", \"apple\" ]\n    --> [ \"apple\", \"banana\", \"cabbage\" ]\n\nTo sort in reverse alphabetical order, use [`Sort.reverse`](#reverse)\n\n    Sort.list (Sort.reverse Sort.alphabetical) [ \"cabbage\", \"banana\", \"apple\" ]\n    --> [ \"cabbage\",  \"banana\", \"apple\" ]\n\n",
+                "type": "Sort.Sorter String.String"
+            },
+            {
+                "name": "by",
+                "comment": " Sort by a derived value.\n\nOne way to use this is with collections of records:\n\n    Sort.list (Sort.by .name Sort.alphabetical)\n      [ { name = \"Bo\" }, { name = \"Amy\" }, { name = \"Cam\" } ]\n    --> [ { name = \"Amy\" }, { name = \"Bo\" }, { name = \"Cam\" } ]\n\nAnother use is for unwrapping union type constructors:\n\n    import Sort exposing (Sorter)\n\n    type Username\n        = Username String\n\n    alphabetical : Sorter Username\n    alphabetical =\n        Sort.by (\\(Username str) -> str) Sort.alphabetical\n\n",
+                "type": "(b -> a) -> Sort.Sorter a -> Sort.Sorter b"
+            },
+            {
+                "name": "custom",
+                "comment": " Create a custom [`Sorter`](#Sorter) by defining how to order two values.\n",
+                "type": "(a -> a -> Basics.Order) -> Sort.Sorter a"
+            },
+            {
+                "name": "increasing",
+                "comment": " Sort numbers from lowest to highest.\n\n    Sort.list Sort.increasing [ 4, 7, 2 ]\n    --> [ 2, 4, 7 ]\n\nTo sort decreasing, use [`Sort.reverse`](#reverse)\n\n    Sort.list (Sort.reverse Sort.increasing) [ 4, 7, 2 ]\n    --> [ 7, 4, 2 ]\n\n",
+                "type": "Sort.Sorter number"
+            },
+            {
+                "name": "list",
+                "comment": " Sort a list using a `Sorter`.\n\nThis can be used as an alternative to `List.sort`, `List.sortBy`, and `List.sortWith`.\n\n    Sort.list Sort.alphabetical [ \"foo\", \"bar\", \"baz\" ]\n        --> [ \"baz\", \"bar\", \"foo\" ]\n\nYou can also use `Sort.by` and `Sort.reverse` to transform sorters:\n\n    -- Sort users by name, in reverse alphabetical order\n    Sort.list\n        (Sort.by .name (Sort.reverse Sort.alphabetical))\n        users\n\n",
+                "type": "Sort.Sorter a -> List.List a -> List.List a"
+            },
+            {
+                "name": "reverse",
+                "comment": " Reverse a sorter.\n\n    Sort.list Sort.alphabetical [ \"b\", \"c\", \"a\" ]\n    --> [ \"a\", \"b\", \"c\" ]\n\n    Sort.list (Sort.reverse Sort.alphabetical) [ \"b\", \"c\", \"a\" ]\n    --> [ \"c\", \"b\", \"a\" ]\n\n",
+                "type": "Sort.Sorter a -> Sort.Sorter a"
+            },
+            {
+                "name": "tiebreaker",
+                "comment": " Apply a tiebreaker `Sorter` to use when the given `Sorter` finds the\ntwo values are equal.\n\nThis would be useful in a table that is sorted by multiple columns.\n\n    -- Without tiebreaker\n    Sort.list (Sort.by .name Sort.alphabetical)\n        [ { name = \"Bo\", cats = 4 }, { name = \"Bo\", cats = 2 }, { name = \"Amy\", cats = 3 } ]\n        --> [ { name = \"Amy\", cats = 3 }, { name = \"Bo\", cats = 4 }, { name = \"Bo\", cats = 2 } ]\n\n    -- With tiebreaker, the last two records are swapped\n    Sort.list (Sort.by .name Sort.alphabetical |> Sort.tiebreaker (Sort.by .cats Sort.increasing))\n        [ { name = \"Bo\", cats = 4 }, { name = \"Bo\", cats = 2 }, { name = \"Amy\", cats = 3 } ]\n        --> [ { name = \"Amy\", cats = 3 }, { name = \"Bo\", cats = 2 }, { name = \"Bo\", cats = 4 } ]\n\n",
+                "type": "Sort.Sorter b -> Sort.Sorter b -> Sort.Sorter b"
+            },
+            {
+                "name": "toOrder",
+                "comment": " Determine an Order for two values, based on the given\n[`Sorter`](#Sorter)\n",
+                "type": "Sort.Sorter a -> a -> a -> Basics.Order"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Sort.Dict",
+        "comment": " A dictionary mapping unique keys to values.\n\nInsert, remove, and query operations all take _O(log n)_ time.\n\nThis implementation is based on\n[`Skinney/elm-dict-exploration`](http://package.elm-lang.org/packages/Skinney/elm-dict-exploration),\nexcept that it uses `Sorter` instead of `comparable`, so it permits keys\nthat are not `comparable`.\n\n\n# Dictionaries\n\n@docs Dict\n\n\n# Build\n\n@docs empty, singleton, insert, insertAll, remove, update, merge\n\n\n# Query\n\n@docs isEmpty, size, get, memberOf, eq\n\n\n# Transform\n\n@docs map, keepIf, dropIf, foldl, foldr, partition\n\n\n# Lists\n\n@docs keys, values, toList, fromList\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Dict",
+                "comment": " A dictionary of keys and values. So a `(Dict String User)` is a dictionary\nthat lets you look up a `String` (such as user names) and find the associated\n`User`.\n",
+                "args": [
+                    "key",
+                    "value"
+                ],
+                "type": "Internal.Dict.Dict key value"
+            }
+        ],
+        "values": [
+            {
+                "name": "dropIf",
+                "comment": " Remove a key-value pair if it satisfies a predicate.\n",
+                "type": "(k -> v -> Basics.Bool) -> Sort.Dict.Dict k v -> Sort.Dict.Dict k v"
+            },
+            {
+                "name": "empty",
+                "comment": " Create an empty dictionary.\n",
+                "type": "Sort.Sorter k -> Sort.Dict.Dict k v"
+            },
+            {
+                "name": "eq",
+                "comment": " Check if two dictionaries are equal.\n",
+                "type": "Sort.Dict.Dict k v -> Sort.Dict.Dict k v -> Basics.Bool"
+            },
+            {
+                "name": "foldl",
+                "comment": " Fold over the key-value pairs in a dictionary, in order from lowest\nkey to highest key.\n",
+                "type": "(k -> v -> b -> b) -> b -> Sort.Dict.Dict k v -> b"
+            },
+            {
+                "name": "foldr",
+                "comment": " Fold over the key-value pairs in a dictionary, in order from highest\nkey to lowest key.\n",
+                "type": "(k -> v -> b -> b) -> b -> Sort.Dict.Dict k v -> b"
+            },
+            {
+                "name": "fromList",
+                "comment": " Convert an association list into a dictionary.\n",
+                "type": "Sort.Sorter k -> List.List ( k, v ) -> Sort.Dict.Dict k v"
+            },
+            {
+                "name": "get",
+                "comment": " Get the value associated with a key. If the key is not found, return\n`Nothing`. This is useful when you are not sure if a key will be in the\ndictionary.\n\n    animals = fromList [ (\"Tom\", Cat), (\"Jerry\", Mouse) ]\n    get \"Tom\" animals == Just Cat\n    get \"Jerry\" animals == Just Mouse\n    get \"Spike\" animals == Nothing\n\n",
+                "type": "k -> Sort.Dict.Dict k v -> Maybe.Maybe v"
+            },
+            {
+                "name": "insert",
+                "comment": " Insert a key-value pair in a dictionary. Replaces value when that key is\nalready present.\n",
+                "type": "k -> v -> Sort.Dict.Dict k v -> Sort.Dict.Dict k v"
+            },
+            {
+                "name": "insertAll",
+                "comment": " Take all the key-value pairs in the first dictionary and\n`insert` them into the second dictionary.\n",
+                "type": "Sort.Dict.Dict k v -> Sort.Dict.Dict k v -> Sort.Dict.Dict k v"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Determine if a dictionary is empty.\nisEmpty empty == True\n",
+                "type": "Sort.Dict.Dict k v -> Basics.Bool"
+            },
+            {
+                "name": "keepIf",
+                "comment": " Keep a key-value pair only if it satisfies a predicate.\n",
+                "type": "(k -> v -> Basics.Bool) -> Sort.Dict.Dict k v -> Sort.Dict.Dict k v"
+            },
+            {
+                "name": "keys",
+                "comment": " Get all of the keys in a dictionary, sorted from lowest to highest.\nkeys (fromList [(0,\"Alice\"),(1,\"Bob\")]) == [0,1]\n",
+                "type": "Sort.Dict.Dict k v -> List.List k"
+            },
+            {
+                "name": "map",
+                "comment": " Apply a function to all values in a dictionary.\n",
+                "type": "(k -> a -> b) -> Sort.Dict.Dict k a -> Sort.Dict.Dict k b"
+            },
+            {
+                "name": "memberOf",
+                "comment": " Return `True` if the given key is in the given dictionary.\n",
+                "type": "Sort.Dict.Dict k v -> k -> Basics.Bool"
+            },
+            {
+                "name": "merge",
+                "comment": " The most general way of combining two dictionaries. You provide three\naccumulators for when a given key appears:\n\n1.  Only in the first dictionary\n2.  In both dictionaries\n3.  Only in the second dictionary\n\nYou then traverse all the keys, building up whatever you want.\n\nThe given `Sorter` will be used to compare the keys.\n\n",
+                "type": "Sort.Sorter k -> (k -> a -> result -> result) -> (k -> a -> b -> result -> result) -> (k -> b -> result -> result) -> Sort.Dict.Dict k a -> Sort.Dict.Dict k b -> result -> result"
+            },
+            {
+                "name": "partition",
+                "comment": " Partition a dictionary according to a predicate. The first dictionary\ncontains all key-value pairs which satisfy the predicate, and the second\ncontains the rest.\n",
+                "type": "(k -> v -> Basics.Bool) -> Sort.Dict.Dict k v -> ( Sort.Dict.Dict k v, Sort.Dict.Dict k v )"
+            },
+            {
+                "name": "remove",
+                "comment": " Remove a key-value pair from a dictionary. If the key is not found,\nno changes are made.\n",
+                "type": "k -> Sort.Dict.Dict k v -> Sort.Dict.Dict k v"
+            },
+            {
+                "name": "singleton",
+                "comment": " Create a dictionary with one key-value pair.\n",
+                "type": "Sort.Sorter k -> k -> v -> Sort.Dict.Dict k v"
+            },
+            {
+                "name": "size",
+                "comment": " Determine the number of key-value pairs in the dictionary.\n",
+                "type": "Sort.Dict.Dict k v -> Basics.Int"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert a dictionary into an association list of key-value pairs, sorted by keys.\n",
+                "type": "Sort.Dict.Dict k v -> List.List ( k, v )"
+            },
+            {
+                "name": "update",
+                "comment": " Update the value of a dictionary for a specific key with a given function.\nThe given function gets the current value as a parameter and its return value\ndetermines if the value is updated or removed. New key-value pairs can be\nstored too.\n",
+                "type": "k -> (Maybe.Maybe v -> Maybe.Maybe v) -> Sort.Dict.Dict k v -> Sort.Dict.Dict k v"
+            },
+            {
+                "name": "values",
+                "comment": " Get all of the values in a dictionary, in the order of their keys.\nvalues (fromList [(0,\"Alice\"),(1,\"Bob\")]) == [\"Alice\", \"Bob\"]\n",
+                "type": "Sort.Dict.Dict k v -> List.List v"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Sort.Set",
+        "comment": " A set of unique values.\n\nInsert, remove, and query operations all take _O(log n)_ time.\n\nThis implementation is based on\n[`Skinney/elm-dict-exploration`](http://package.elm-lang.org/packages/Skinney/elm-dict-exploration),\nexcept that it uses `Sorter` instead of `comparable`, so it permits keys\nthat are not `comparable`.\n\n\n# Sets\n\n@docs Set\n\n\n# Build\n\n@docs empty, singleton, insert, remove\n\n\n# Query\n\n@docs isEmpty, memberOf, size, eq\n\n\n# Combine\n\n@docs union\n\n\n# Lists\n\n@docs toList, fromList\n\n\n# Transform\n\n@docs map, keepIf, dropIf, foldl, foldr, partition\n\n",
+        "unions": [
+            {
+                "name": "Set",
+                "comment": " Represents a set of unique values. So `(Set Int)` is a set of integers and\n`(Set String)` is a set of strings.\n",
+                "args": [
+                    "t"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "dropIf",
+                "comment": " Remove elements that pass the given test.\n\n    numbers =\n        Set.fromList [ -2, -1, 0, 1, 2, 3, 4, 5 ]\n\n    positives =\n        Set.dropIf (\\num -> num <= 0) numbers\n\n    evens =\n        Set.dropIf (\\num -> num % 2 == 1) numbers\n\n    positiveOdds =\n        -- Difference\n        Set.dropIf (Set.member evens) positives\n\n",
+                "type": "(a -> Basics.Bool) -> Sort.Set.Set a -> Sort.Set.Set a"
+            },
+            {
+                "name": "empty",
+                "comment": " Create an empty set.\n",
+                "type": "Sort.Sorter a -> Sort.Set.Set a"
+            },
+            {
+                "name": "eq",
+                "comment": " Check if two sets are equal\n",
+                "type": "Sort.Set.Set a -> Sort.Set.Set a -> Basics.Bool"
+            },
+            {
+                "name": "foldl",
+                "comment": " Fold over the values in a set, in order from lowest to highest.\n",
+                "type": "(a -> b -> b) -> b -> Sort.Set.Set a -> b"
+            },
+            {
+                "name": "foldr",
+                "comment": " Fold over the values in a set, in order from highest to lowest.\n",
+                "type": "(a -> b -> b) -> b -> Sort.Set.Set a -> b"
+            },
+            {
+                "name": "fromList",
+                "comment": " Convert a list into a set, removing any duplicates.\n",
+                "type": "Sort.Sorter a -> List.List a -> Sort.Set.Set a"
+            },
+            {
+                "name": "insert",
+                "comment": " Insert a value into a set.\n",
+                "type": "a -> Sort.Set.Set a -> Sort.Set.Set a"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Determine if a set is empty.\n",
+                "type": "Sort.Set.Set a -> Basics.Bool"
+            },
+            {
+                "name": "keepIf",
+                "comment": " Only keep elements that pass the given test.\n\n    numbers =\n        Set.fromList [ -2, -1, 0, 1, 2, 3, 4, 5 ]\n\n    positives =\n        Set.keepIf (\\num -> num > 0) numbers\n\n    evens =\n        Set.keepIf (\\num -> num % 2 == 0) numbers\n\n    positiveEvens =\n        -- Intersection\n        Set.keepIf (Set.member evens) positives\n\n",
+                "type": "(a -> Basics.Bool) -> Sort.Set.Set a -> Sort.Set.Set a"
+            },
+            {
+                "name": "map",
+                "comment": " Map a function onto a set, creating a new set with no duplicates.\n",
+                "type": "Sort.Sorter b -> (a -> b) -> Sort.Set.Set a -> Sort.Set.Set b"
+            },
+            {
+                "name": "memberOf",
+                "comment": " Return `True` if the given value is in the given set.\n",
+                "type": "Sort.Set.Set a -> a -> Basics.Bool"
+            },
+            {
+                "name": "partition",
+                "comment": " Create two new sets. The first contains all the elements that passed the\ngiven test, and the second contains all the elements that did not.\n",
+                "type": "(a -> Basics.Bool) -> Sort.Set.Set a -> ( Sort.Set.Set a, Sort.Set.Set a )"
+            },
+            {
+                "name": "remove",
+                "comment": " Remove a value from a set. If the value is not found, no changes are made.\n",
+                "type": "a -> Sort.Set.Set a -> Sort.Set.Set a"
+            },
+            {
+                "name": "singleton",
+                "comment": " Create a set with one value.\n",
+                "type": "Sort.Sorter a -> a -> Sort.Set.Set a"
+            },
+            {
+                "name": "size",
+                "comment": " Return the number of elements in a set.\n",
+                "type": "Sort.Set.Set a -> Basics.Int"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert a set into a list, sorted from lowest to highest.\n",
+                "type": "Sort.Set.Set a -> List.List a"
+            },
+            {
+                "name": "union",
+                "comment": " Get the union of two sets. Keep all values.\n",
+                "type": "Sort.Sorter a -> Sort.Set.Set a -> Sort.Set.Set a -> Sort.Set.Set a"
+            }
+        ],
+        "binops": []
+    }
+]

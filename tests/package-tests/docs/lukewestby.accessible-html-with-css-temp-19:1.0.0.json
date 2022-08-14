@@ -1,0 +1,1341 @@
+[
+    {
+        "name": "Accessibility.Styled",
+        "comment": "\n\n\n## Labels\n\n@docs labelBefore, labelAfter, labelHidden\n\n\n## Inputs\n\nRight now, this library only supports a few input types. Many more input types exist.\nSee [MDN's input information](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input) for\nmore options.\n\n@docs inputText, radio, checkbox\n\n\n## Tabs\n\nTogether, `tabList`, `tab`, and `tabPanel` describe the pieces of a tab component view.\n\n    import Accessibility.Styled exposing (Html, tab, tabList, tabPanel, text)\n    import Accessibility.Styled.Widget exposing (controls, hidden, labelledBy, selected)\n    import Html.Styled.Attributes exposing (id)\n\n    view : Html msg\n    view =\n        tabList\n            [ id \"tab-list\" ]\n            [ tab\n                [ id \"tab-1\"\n                , selected True\n                , controls \"panel-1\"\n                ]\n                [ text \"Tab One\" ]\n            , tab\n                [ id \"tab-2\"\n                , selected False\n                , controls \"panel-2\"\n                ]\n                [ text \"Tab Two\" ]\n            , tabPanel\n                [ id \"panel-1\"\n                , labelledBy \"tab-1\"\n                , hidden False\n                , Html.Styled.Attributes.hidden False\n                ]\n                [ text \"Panel One Content\" ]\n            , tabPanel\n                [ id \"panel-2\"\n                , labelledBy \"tab-2\"\n                , hidden True\n                , Html.Styled.Attributes.hidden True\n                ]\n                [ text \"Panel Two Content\" ]\n            ]\n\nFor a more fully-fledged example using these helpers check out [elm-tabs](http://package.elm-lang.org/packages/tesk9/elm-tabs/latest).\n\n@docs tabList, tab, tabPanel\n\n\n## Images\n\nThere are two `img` tag helpers that ask you as the developer to decide whether\nthe image you want to display for screenviewers is necessary or distracting for\nscreenreaders. Essentially, does it convey meaning and value, or is it decorative?\nRemember, **redundant** information can be confusing too.\n\n    import Accessibility.Styled as Html exposing (..)\n    import Html.Styled.Attributes exposing (src)\n\n    view : Html msg\n    view =\n        div []\n            [ img \"Bear rubbing back on tree\" [ src \"bear.png\" ]\n            , decorativeImg [ src \"smiling_family.jpg\" ]\n            ]\n\n@docs img, decorativeImg\n\n\n## From [Html](http://package.elm-lang.org/packages/elm/html/latest)\n\n\n### Interactive\n\n@docs button, textarea, select\n\n\n### Non-interactive\n\nThese elements will prevent you from adding event listeners.\n\n    import Accessibility.Styled exposing (..)\n\n@docs text\n@docs h1, h2, h3, h4, h5, h6\n@docs div, p, hr, pre, blockquote\n@docs span, a, code, em, strong, i, b, u, sub, sup, br\n@docs ol, ul, li, dl, dt, dd\n@docs iframe, canvas, math\n@docs form, option\n@docs section, nav, article, aside, header, footer, address, main_\n@docs figure, figcaption\n@docs table, caption, colgroup, col, tbody, thead, tfoot, tr, td, th\n@docs fieldset, legend, label, datalist, optgroup, output, progress, meter\n@docs audio, video, source, track\n@docs embed, object, param\n@docs ins, del\n@docs small, cite, dfn, abbr, time, var, samp, kbd, s, q\n@docs mark, ruby, rt, rp, bdi, bdo, wbr\n@docs details, summary, menuitem, menu\n\n\n### Html aliases for Convenience\n\nThese are here to make the following nicer:\n\n    import Accessibility.Styled as Html exposing (..)\n\n@docs Html, Attribute, map\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Attribute",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "Html",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Styled.Html msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "a",
+                "comment": " `a` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "abbr",
+                "comment": " `abbr` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "address",
+                "comment": " `address` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "article",
+                "comment": " `article` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "aside",
+                "comment": " `aside` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "audio",
+                "comment": " `audio` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "b",
+                "comment": " `b` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "bdi",
+                "comment": " `bdi` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "bdo",
+                "comment": " `bdo` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "blockquote",
+                "comment": " `blockquote` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "br",
+                "comment": " `br` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "button",
+                "comment": " ",
+                "type": "List.List (Accessibility.Styled.Attribute msg) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "canvas",
+                "comment": " `canvas` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "caption",
+                "comment": " `caption` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "checkbox",
+                "comment": " Constructs an input of type \"checkbox\". Use in conjunction with one of the label\nhelpers (`labelBefore`, `labelAfter`, `labelHidden`).\nCheckboxes may be checked, unchecked, or indeterminate.\n\n    filterResultsInput : Maybe Bool -> Html Msg\n    filterResultsInput checked =\n        labelBefore\n            []\n            (text \"Filter Results\")\n            (checkbox \"No filter\" Nothing [])\n\n",
+                "type": "String.String -> Maybe.Maybe Basics.Bool -> List.List (Accessibility.Styled.Attribute msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "cite",
+                "comment": " `cite` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "code",
+                "comment": " `code` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "col",
+                "comment": " `col` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "colgroup",
+                "comment": " `colgroup` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "datalist",
+                "comment": " `datalist` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "dd",
+                "comment": " `dd` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "decorativeImg",
+                "comment": " Use this tag when the image is decorative or provides redundant information. Read through [the w3 decorative image tutorial](https://www.w3.org/WAI/tutorials/images/decorative/) to learn more.\n\n    decorativeImg [ src \"smiling_family.jpg\" ]\n\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "del",
+                "comment": " `del` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "details",
+                "comment": " `details` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "dfn",
+                "comment": " `dfn` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "div",
+                "comment": " `div` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "dl",
+                "comment": " `dl` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "dt",
+                "comment": " `dt` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "em",
+                "comment": " `em` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "embed",
+                "comment": " `embed` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "fieldset",
+                "comment": " `fieldset` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "figcaption",
+                "comment": " `figcaption` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "figure",
+                "comment": " Adds the group role to a figure.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "footer",
+                "comment": " `footer` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "form",
+                "comment": " `form` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "h1",
+                "comment": " `h1` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "h2",
+                "comment": " `h2` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "h3",
+                "comment": " `h3` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "h4",
+                "comment": " `h4` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "h5",
+                "comment": " `h5` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "h6",
+                "comment": " `h6` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "header",
+                "comment": " `header` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "hr",
+                "comment": " `hr` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "i",
+                "comment": " `i` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "iframe",
+                "comment": " `iframe` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "img",
+                "comment": " Use this tag when the image provides information not expressed in the text of the page.\nWhen images are used to express the purpose of a button or link, aim for alternative text that encapsulates the function of the image.\n\nRead through [the w3 informative image tutorial](https://www.w3.org/WAI/tutorials/images/informative/) and the [the w3 functional image tutorial](https://www.w3.org/WAI/tutorials/images/functional/) to learn more.\n\nFor graphs and diagrams, see `figure` and `longDesc`.\n\n    img \"Bear rubbing back on tree\" [ src \"bear.png\" ]\n\n",
+                "type": "String.String -> List.List (Accessibility.Styled.Attribute Basics.Never) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "inputText",
+                "comment": " Constructs an input of type \"text\". Use in conjunction with one of the label\nhelpers (`labelBefore`, `labelAfter`, `labelHidden`).\n\n    firstNameInput : String -> Html Msg\n    firstNameInput name =\n        labelHidden\n            \"name-input\"\n            [ class \"data-entry\" ]\n            (text \"First Name:\")\n            (inputText name [ onBlur FirstName ])\n\n",
+                "type": "String.String -> List.List (Accessibility.Styled.Attribute msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "ins",
+                "comment": " `ins` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "kbd",
+                "comment": " `kbd` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "label",
+                "comment": " `label` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "labelAfter",
+                "comment": " All inputs must be associated with a `<label>` tag. Here is an example\nthat creates a text input for first names:\n\n    firstNameInput : String -> Html msg\n    firstNameInput name =\n        labelAfter\n            [ class \"data-entry\" ]\n            (text \"First Name:\")\n            (input [ type_ \"text\" ] name)\n\nNow if you said `firstNameInput \"Tom\"` you would get HTML like this:\n\n```html\n<label class=\"data-entry\">\n  <input type=\"text\" value=\"Tom\"></input>\n  First Name:\n</label>\n```\n\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> Accessibility.Styled.Html Basics.Never -> Accessibility.Styled.Html msg -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "labelBefore",
+                "comment": " All inputs must be associated with a `<label>` tag. Here is an example\nthat creates a text input for first names:\n\n    firstNameInput : String -> Html msg\n    firstNameInput name =\n        labelBefore\n            [ class \"data-entry\" ]\n            (text \"First Name:\")\n            (input [ type_ \"text\" ] name)\n\nNow if you said `firstNameInput \"Tom\"` you would get HTML like this:\n\n```html\n<label class=\"data-entry\">\n  First Name:\n  <input type=\"text\" value=\"Tom\"></input>\n</label>\n```\n\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> Accessibility.Styled.Html Basics.Never -> Accessibility.Styled.Html msg -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "labelHidden",
+                "comment": " All inputs must be associated with a `<label>` tag. Here is an example\nthat creates a text input for first names:\n\n    firstNameInput : String -> Html msg\n    firstNameInput name =\n        labelHidden\n            \"name-input\"\n            [ class \"data-entry\" ]\n            (text \"First Name:\")\n            (input [ type_ \"text\", id \"name-input\" ] name)\n\nNow if you said `firstNameInput \"Tom\"` you would get HTML like this:\n\n```html\n<span>\n    <label for=\"name-input\" class=\"data-entry\" style=\"[styles hiding the input]\">\n        First Name:\n    </label>\n    <input id=\"name-input\" type=\"text\" value=\"Tom\"></input>\n</span>\n```\n\n",
+                "type": "String.String -> List.List (Accessibility.Styled.Attribute Basics.Never) -> Accessibility.Styled.Html Basics.Never -> Accessibility.Styled.Html msg -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "legend",
+                "comment": " `legend` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "li",
+                "comment": " `li` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "main_",
+                "comment": " `main_` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "map",
+                "comment": " `map` directly aliases the function of the same name from elm/html.\n\nPlease see [the docs for the original](http://package.elm-lang.org/packages/elm/html/2.0.0/Html#map).\n\n",
+                "type": "(a -> msg) -> Accessibility.Styled.Html a -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "mark",
+                "comment": " `mark` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "math",
+                "comment": " `math` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "menu",
+                "comment": " `menu` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "menuitem",
+                "comment": " `menuitem` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "meter",
+                "comment": " `meter` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "nav",
+                "comment": " `nav` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "object",
+                "comment": " `object` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "ol",
+                "comment": " `ol` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "optgroup",
+                "comment": " `optgroup` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "option",
+                "comment": " `option` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "output",
+                "comment": " `output` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "p",
+                "comment": " `p` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "param",
+                "comment": " `param` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "pre",
+                "comment": " `pre` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "progress",
+                "comment": " `progress` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "q",
+                "comment": " `q` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "radio",
+                "comment": " Constructs an input of type \"radio\". Use in conjunction with one of the label\nhelpers (`labelBefore`, `labelAfter`, `labelHidden`).\n\n    elementaryGradeInput : String -> Html Msg\n    elementaryGradeInput name =\n        labelAfter\n            []\n            (text \"Elementary School\")\n            (radio \"school-radio-group\" \"Elementary\" True [])\n\n",
+                "type": "String.String -> String.String -> Basics.Bool -> List.List (Accessibility.Styled.Attribute msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "rp",
+                "comment": " `rp` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "rt",
+                "comment": " `rt` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "ruby",
+                "comment": " `ruby` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "s",
+                "comment": " `s` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "samp",
+                "comment": " `samp` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "section",
+                "comment": " `section` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "select",
+                "comment": " ",
+                "type": "List.List (Accessibility.Styled.Attribute msg) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "small",
+                "comment": " `small` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "source",
+                "comment": " `source` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "span",
+                "comment": " `span` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "strong",
+                "comment": " `strong` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "sub",
+                "comment": " `sub` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "summary",
+                "comment": " `summary` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "sup",
+                "comment": " `sup` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "tab",
+                "comment": " Create a tab. This is the part that you select in order to change panel views.\nYou'll want to listen for click events **and** for keyboard events: when users hit\nthe right and left keys on their keyboards, they expect for the selected tab to change.\n",
+                "type": "List.List (Accessibility.Styled.Attribute msg) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "tabList",
+                "comment": " Create a tablist. This is the outer container for a list of tabs.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "tabPanel",
+                "comment": " Create a tab panel.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "table",
+                "comment": " `table` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "tbody",
+                "comment": " `tbody` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "td",
+                "comment": " `td` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "text",
+                "comment": " ",
+                "type": "String.String -> Html.Styled.Html msg"
+            },
+            {
+                "name": "textarea",
+                "comment": " ",
+                "type": "List.List (Accessibility.Styled.Attribute msg) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "tfoot",
+                "comment": " `tfoot` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "th",
+                "comment": " `th` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "thead",
+                "comment": " `thead` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "time",
+                "comment": " `time` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "tr",
+                "comment": " `tr` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "track",
+                "comment": " `track` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "u",
+                "comment": " `u` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "ul",
+                "comment": " `ul` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "var",
+                "comment": " `var` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "video",
+                "comment": " `video` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            },
+            {
+                "name": "wbr",
+                "comment": " `wbr` should generally not have event listeners. If you _really_ need to add\nan event listener, use the elm/html library instead.\n",
+                "type": "List.List (Accessibility.Styled.Attribute Basics.Never) -> List.List (Accessibility.Styled.Html msg) -> Accessibility.Styled.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Accessibility.Styled.Aria",
+        "comment": "\n\n@docs activeDescendant, controls\n\n\n### Providing More Info\n\n@docs longDescription, details, describedBy, labelledBy, labeledBy\n@docs keyShortcuts, roleDescription\n\n\n### Navigation and Flow\n\n@docs flowTo\n\n\n### Textbox Related\n\n@docs placeholder\n\n\n### Table Related\n\n@docs colCount, colIndex, colSpan, rowCount, rowIndex, rowSpan\n\n\n### Set-related\n\n@docs setSize, posInSet\n\n\n### Current\n\n@docs currentItem, currentPage, currentStep, currentLocation, currentDate, currentTime\n\n@docs errorMessage\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "activeDescendant",
+                "comment": " Supported in container-y roles: `application`, `composite`, `group`, `textbox`,\n`comboBox`, `grid`, `listBox`, `menu`, `menuBar`, `radioGroup`, `row`, `searchBox`,\n`select`, `spinButton`, `tabList`, `toolBar`, `tree`, and `treeGrid`.\n\nIdentifies the currently-active element.\n\n",
+                "type": "String.String -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "colCount",
+                "comment": " Supported by `table`, `grid`, `treegrid`.\n\nDeclares the number of columns in a grid in which not all of the columns are\ndisplayed. (If all columns are present--skip using this.)\n\n`-1` indicates total column number is unknown.\n\n",
+                "type": "Basics.Int -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "colIndex",
+                "comment": " Supported by `cell`, `row`, `columnHeader`, `gridCell`, and `rowHeader`.\n\nIndexing begins from 1, NOT 0. Plus, the colIndex should not be greater than the `colCount`!\nIf a cell stretches across multiple columns, use the starting column index and `colSpan`.\n\nThe simplest rule is to put the `colIndex` on every child of a `row`.\n\n",
+                "type": "Basics.Int -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "colSpan",
+                "comment": " Supported by `cell`, `columnHeader`, `gridCell`, and `rowHeader`.\n\nIndicate how many columns-wide a cell is.\n\n",
+                "type": "Basics.Int -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "controls",
+                "comment": " Creates aria controls attribute. Pass the unique string id of whatever is being controlled.\n",
+                "type": "String.String -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "currentDate",
+                "comment": " Supported by all elements.\n\nAs in a calendar widget.\n\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "currentItem",
+                "comment": " Supported by all elements.\n",
+                "type": "Basics.Bool -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "currentLocation",
+                "comment": " Supported by all elements.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "currentPage",
+                "comment": " Supported by all elements.\n\nIndicate that a link in a nav or list is the current location.\n\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "currentStep",
+                "comment": " Supported by all elements.\n\nIndicate which step in a step-based flow is the current one.\n\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "currentTime",
+                "comment": " Supported by all elements.\n\nAs in a timepicker widget.\n\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "describedBy",
+                "comment": " Supported by all elements.\n\nKind of a more-verbose version of `labelledBy`. Pass it a list of ids\nof elements that describe the given element.\n\n",
+                "type": "List.List String.String -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "details",
+                "comment": " Supported by all elements.\n\nRefer to a single extended description section--maybe a couple of paragraphs\nand a chart. Pass in the section's id.\n\n",
+                "type": "String.String -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "errorMessage",
+                "comment": " Supported by all elements.\n\nReference the element that has error details. e.g., if you've got an input field\nthat's invalid, add `errorMessage` to the input with the id of whatever element\nis telling the user in what way their submission is wrong.\n\n    input [ invalid True, errorMessage \"error-message-id\" ] []\n\n",
+                "type": "String.String -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "flowTo",
+                "comment": " Supported by all elements.\n\nProvide an alternative document reading order and offer navigation to the\nelements referenced in the passed-in list of ids.\n\n",
+                "type": "List.List String.String -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "keyShortcuts",
+                "comment": " Supported by all elements.\n\nKeyboard shortcuts!!! Pass in a list of keyboard shortcuts. See [recommendations](https://www.w3.org/TR/wai-aria-practices-1.1/#kbd_shortcuts)\non how to make good shortcuts.\n\n    keyShortcuts [ \"Alt+Shift+P\", \"Control+F\" ]\n\n",
+                "type": "List.List String.String -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "labeledBy",
+                "comment": " Creates aria labelledby attribute. Pass the unique string id of the labelling element.\n`labeledBy` and `labelledBy` are identical.\n",
+                "type": "String.String -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "labelledBy",
+                "comment": " Creates aria labelledby attribute. Pass the unique string id of the labelling element.\n`labeledBy` and `labelledBy` are identical.\n",
+                "type": "String.String -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "longDescription",
+                "comment": " Creates the longDesc attribute with the given url, which should point to a text description of the content. This attribute is only supported on img tags.\n\n    import Accessibility exposing (Html, img)\n    import Accessibility.Aria exposing (longDescription)\n\n    view : Html msg\n    view =\n        img\n            \"Growth Chart in Some Sweet Unit (Quarter 4)\"\n            [ longDescription \"/quarter_4_summary#Growth\" ]\n\n",
+                "type": "String.String -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "placeholder",
+                "comment": " Supported by `textbox` and `searchbox`.\n\nProvide a hint about an expected value.\n\n",
+                "type": "String.String -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "posInSet",
+                "comment": " Supported by list-y elements: `article`, `listItem`, `menuItem`, `option`,\n`radio`, `tab`, `menuitemcheckbox`, `menuitemradio`, and `treeItem`.\n\nOnly necessary when not all of the items in the set are in the DOM. Use with `setSize`.\n\n",
+                "type": "Basics.Int -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "roleDescription",
+                "comment": " Supported by all elements.\n\nProvide human-readable description of the role of an element. Should be used\nalongside an actual role--this is supplementary information.\n\n",
+                "type": "String.String -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "rowCount",
+                "comment": " Supported by `table`, `grid`, `treegrid`.\n\nDeclares the number of rows in a grid in which not all of the rows are\ndisplayed. (If all rows are present--skip using this.)\n\n`-1` indicates total row number is unknown.\n\n",
+                "type": "Basics.Int -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "rowIndex",
+                "comment": " Supported by `cell`, `row`, `columnHeader`, `gridCell`, and `rowHeader`.\n\nAnalagous to `colIndex`.\n\n",
+                "type": "Basics.Int -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "rowSpan",
+                "comment": " Supported by `cell`, `columnHeader`, `gridCell`, and `rowHeader`.\n\nIndicate how many rows-wide a cell is.\n\n",
+                "type": "Basics.Int -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "setSize",
+                "comment": " Supported by list-y elements: `article`, `listItem`, `menuItem`, `option`,\n`radio`, `tab`, `menuitemcheckbox`, `menuitemradio`, and `treeItem`.\n\n`setSize` indicates the total number of items in a set where not all the items are\ncurrently present in the DOM.\n\n",
+                "type": "Basics.Int -> Html.Styled.Attribute msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Accessibility.Styled.Key",
+        "comment": "\n\n\n## Managing focus\n\n@docs tabbable\n\n\n## Keyboard event listener\n\n@docs onKeyDown\n\n\n## Decoders\n\n\n### Navigation\n\n@docs tab, tabBack\n\n@docs up, right, down, left\n\n\n### Activation\n\n@docs enter, space\n\n\n### Deactivation\n\n@docs escape\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "down",
+                "comment": " Use with `onKeyDown` to succeed when user hits the down arrow key.\n\n    onKeyDown [ down Down ]\n\n",
+                "type": "msg -> Json.Decode.Decoder msg"
+            },
+            {
+                "name": "enter",
+                "comment": " Use with `onKeyDown` to succeed when user hits the Enter key.\n\n    onKeyDown [ enter TheyHitEnterDoSomething ]\n\n",
+                "type": "msg -> Json.Decode.Decoder msg"
+            },
+            {
+                "name": "escape",
+                "comment": " Use with `onKeyDown` to succeed when user hits `esc`.\n\n    onKeyDown [ escape CloseModal ]\n\n",
+                "type": "msg -> Json.Decode.Decoder msg"
+            },
+            {
+                "name": "left",
+                "comment": " Use with `onKeyDown` to succeed when user hits the left arrow key.\n\n    onKeyDown [ left Left ]\n\n",
+                "type": "msg -> Json.Decode.Decoder msg"
+            },
+            {
+                "name": "onKeyDown",
+                "comment": " Pass a list of decoders.\n\n    onKeyDown [ enter TheyHitEnterDoSomething, left DoSomeOtherThing ]\n\n",
+                "type": "List.List (Json.Decode.Decoder msg) -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "right",
+                "comment": " Use with `onKeyDown` to succeed when user hits the right arrow key.\n\n    onKeyDown [ right Right ]\n\n",
+                "type": "msg -> Json.Decode.Decoder msg"
+            },
+            {
+                "name": "space",
+                "comment": " Use with `onKeyDown` to succeed when user hits the spacebar.\n\n    onKeyDown [ space SpaceBar ]\n\n",
+                "type": "msg -> Json.Decode.Decoder msg"
+            },
+            {
+                "name": "tab",
+                "comment": " Use with `onKeyDown` to succeed when user hits the tab key.\n\n    onKeyDown [ tab Tab ]\n\n",
+                "type": "msg -> Json.Decode.Decoder msg"
+            },
+            {
+                "name": "tabBack",
+                "comment": " Use with `onKeyDown` to succeed when user hits the tab key while hitting shift.\n\n    onKeyDown [ tabBack GoBack ]\n\n",
+                "type": "msg -> Json.Decode.Decoder msg"
+            },
+            {
+                "name": "tabbable",
+                "comment": " Add or remove an element from the normal flow of tabbable/focusable elements.\n\n`tabbable True` will set the tabindex to 0, and `tabbable False` will set the\ntabindex to -1.\n\nYou may use Html.Styled.Attributes.tabindex if you need to control the tab order more\nexplicitly, but you may want to restructure your HTML to match how you want\nusers to interact with it instead.\n\n",
+                "type": "Basics.Bool -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "up",
+                "comment": " Use with `onKeyDown` to succeed when user hits the up arrow key.\n\n    onKeyDown [ up Up ]\n\n",
+                "type": "msg -> Json.Decode.Decoder msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Accessibility.Styled.Landmark",
+        "comment": " [On page regions.](https://www.w3.org/TR/WCAG20-TECHS/ARIA11.html)\n\nLandmarks help your users to navigate your site by giving them \"landmarks\" to\nthe regions they might want to see. Are they trying the `search` the site? Do\nthey want to access the `main` content? Do they want information about the content,\nlike copyright and legal notices--`contentInfo`, if you will?\n\nLandmarks keep your users from being overwhelmed by a slew of information to sift through\nor from being bored by need to tab through the same old set of unlabeled links on\nevery single page of your site.\n\nGenerally, these landmark tags are implicit in HTML5. The default landmark roles\nare specified [here](https://www.w3.org/TR/wai-aria-practices/examples/landmarks/HTML5.html).\n`search` does not have a corresponding HTML5 tag.\n\n@docs banner, complementary, contentInfo, form, main_, navigation, search, application, region\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "application",
+                "comment": " Declare a region as a web application.\nBe careful with this one--see <https://www.w3.org/TR/WCAG20-TECHS/ARIA11.html>.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "banner",
+                "comment": " This banner should have the page title in it. In HTML5, the `header` element\ngenerally is implicitly a `banner`. (For specifics on what DOM relationships will\naffect this default behavior, please check out [W3](https://www.w3.org/TR/wai-aria-practices/examples/landmarks/banner.html).)\n\n    import Accessibility as Html exposing (Html, div, h1, img, text)\n    import Accessibility.Landmark exposing (banner)\n    import Html.Attributes exposing (src)\n\n    view : Html msg\n    view =\n        div\n            [ banner ]\n            [ h1 [] [ text \"Such Site!\" ]\n            , img \"Such Logo!\" [ src \"logo.png\" ]\n            ]\n\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "complementary",
+                "comment": " \"Complements\" the main content. If there are more than one complementary elements\non the page, please be sure to use `labeledBy` to point to the heading of each\ncomplementary element.\n\nThe HTML5 `aside` tag has this role by default (you still need to use `labeledBy`\nif there are more than one asides!).\n\nCheck out [W3's docs for `complementary`](https://www.w3.org/TR/wai-aria-practices/examples/landmarks/complementary.html)--\nnote that you can toggle the \"Show Landmarks\" button at the top of the page\nto see a real example of using the complementary role!\n\n    import Accessibility as Html exposing (Html, div, text)\n    import Accessibility.Aria exposing (labeledBy)\n    import Accessibility.Landmark exposing (complementary)\n\n    view : Html msg\n    view =\n        div []\n            [ div\n                [ complementary, labeledBy \"extra-thoughts\" ]\n                [ h2 [ id \"extra-thoughts\" ] [ text \"Extra thoughts...\" ]\n                , text \"some content\"\n                ]\n            , div\n                [ complementary, labeledBy \"related-docs\" ]\n                [ h2 [ id \"related-docs\" ] [ text \"Related Documentation\" ] ]\n            ]\n\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "contentInfo",
+                "comment": " Copyrights, privacy statements, etc. There ought only be one element with the\ncontent info role per page.\n\nYou may already have a content info element role fulfilled\non your page via the HTML5 `footer` element--as long as its context is the `body`, not\na `section` or `main` or what-have-you (see [W3](https://www.w3.org/TR/wai-aria-practices/examples/landmarks/contentinfo.html) for the full list).\n\n    div [ contentInfo ]\n        [ h2 []\n            [ text \"Link to the Privacy Statement You Probably Really Should Read Someday\" ]\n        ]\n\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "form",
+                "comment": " A form container. The HTML5 alternative is to use a `form` element with a `name`.\n\nFor examples, please see [W3](https://www.w3.org/TR/wai-aria-practices/examples/landmarks/form.html).\n\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "main_",
+                "comment": " Main content in a document. (There should only be one--if you require more than\none element with role main, make sure each is labeled. See [W3](https://www.w3.org/TR/wai-aria-practices/examples/landmarks/main.html).)\n\nHTML5's `main` tag is implicitly role `main`.\n\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "navigation",
+                "comment": " Navigation--wrap lists of links intended to help your users navigate your site\nin an element with this role or use HTML5's `nav` tag.\n\nIf there's more than one `nav` list on a given page, please make sure that the\nnavigation is labeled (what kinds of links should your users expect to find in\nthis list?). For examples of how to do this using the `labeledBy` property,\ncheck out [W3](https://www.w3.org/TR/wai-aria-practices/examples/landmarks/navigation.html).\n\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "region",
+                "comment": " Prefer the other Landmark options to `region`. Be sure to add a name when using this attribute!\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "search",
+                "comment": " A search input. [W3 docs](https://www.w3.org/TR/wai-aria-practices/examples/landmarks/search.html?)\n\nIf you're going to learn about an ARIA Landmark role, this is the one to know,\nas HTML5 does NOT have a corresponding element! Add this property to forms to signify\nthat they describe search functionality.\n\nAs ever, if there's more than one search element on the page, please be sure to label.\n\n    import Accessibility exposing (Html, button, form, inputText, labelBefore, text)\n    import Accessibility.Landmark exposing (search)\n    import Html.Attributes exposing (type_)\n    import Html.Events exposing (onChange)\n\n    type Msg\n        = Search String\n\n    view : String -> Html Msg\n    view value =\n        form [ search ]\n            [ labelBefore []\n                (text \"Search for something good\")\n                (inputText value [ onChange Search ])\n            , button [ type_ \"submit\" ] [ text \"Search\" ]\n            ]\n\n",
+                "type": "Html.Styled.Attribute msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Accessibility.Styled.Live",
+        "comment": "\n\n\n# Live Region Attributes\n\nLearn more about how to use live regions [here](https://www.w3.org/TR/wai-aria-practices-1.1/#liveprops).\n\n@docs atomic, busy, livePolite, liveAssertive\n\n\n# Properties on Live Attributes\n\n@docs relevantAdditions, relevantAdditionsText, relevantAll, relevantRemovals, relevantText\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "atomic",
+                "comment": " Supported for all elements.\n\nThis property indicates that a region is live, and may change even when the\nregion doesn't have focus. When `True`, all the contents of the element will be\npresented to the user.\n\n",
+                "type": "Basics.Bool -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "busy",
+                "comment": " Supported for all elements.\n\nWhen set to `True`, this is the aria equivalent of a loading spinner--indicates\nthat stuff is changing/is not ready for interaction/reading-off yet.\n\n",
+                "type": "Basics.Bool -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "liveAssertive",
+                "comment": " Supported by all elements.\n\nUpdates to the region will cause the assistive technologies to immediately\ninterrupt the user with the big news.\n\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "livePolite",
+                "comment": " Supported by all elements.\n\nWhen the region's contents change, assistive technologies will wait for a good\nmoment to interrupt and do so politely with the update.\n\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "relevantAdditions",
+                "comment": " Supported by live regions.\n\nKeep track of additions to the live region.\n\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "relevantAdditionsText",
+                "comment": " Supported by live regions.\n\nKeep track of node additions to the live region and text additions.\n\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "relevantAll",
+                "comment": " Supported by live regions.\n\nKeep track of everything to occur in the live region. Use sparingly!\n\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "relevantRemovals",
+                "comment": " Supported by live regions.\n\nKeep track of text or node removals. Use sparingly!\n\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "relevantText",
+                "comment": " Supported by live regions.\n\nKeep track of text additions to the live region.\n\n",
+                "type": "Html.Styled.Attribute msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Accessibility.Styled.Role",
+        "comment": "\n\n\n### General\n\n@docs article, comboBox, definition, directory, document, img, link, math, note\n\n\n### Dialogs\n\n@docs alertDialog, dialog\n\n\n### Grids\n\n@docs columnHeader, grid, gridCell, row, rowGroup, rowHeader\n\n\n### Grouping\n\n@docs group, radioGroup\n\n\n### Heading\n\n@docs heading\n\n\n### Inputs\n\n@docs button, checkBox, option, radio, textBox\n\n\n### Lists\n\n@docs list, listBox, listItem\n\n\n### Live Regions\n\n@docs alert, log, marquee, timer, status\n\n\n### Menus\n\n@docs menu, menuBar, menuItem, menuItemCheckBox, menuItemRadio\n\n\n### Range-y widgets\n\n@docs progressBar, scrollBar, separator, slider, spinButton\n\n\n### Tabs\n\n@docs tab, tabList, tabPanel\n\n\n### Tools\n\n@docs toolBar, toolTip\n\n\n### Trees\n\n@docs tree, treeGrid, treeItem\n\n\n## Other\n\n@docs presentation\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "alert",
+                "comment": " Add `role=\"alert\"` to the attributes of an element.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "alertDialog",
+                "comment": " Add `role=\"alertdialog\"` to the attributes of an element.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "article",
+                "comment": " Add `role=\"article\"` to the attributes of an element.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "button",
+                "comment": " Add `role=\"button\"` to the attributes of an element.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "checkBox",
+                "comment": " Add `role=\"checkbox\"` to the attributes of an element.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "columnHeader",
+                "comment": " Add `role=\"columnheader\"` to the attributes of an element.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "comboBox",
+                "comment": " Add `role=\"combobox\"` to the attributes of an element.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "definition",
+                "comment": " Add `role=\"definition\"` to the attributes of an element.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "dialog",
+                "comment": " Add `role=\"dialog\"` to the attributes of an element.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "directory",
+                "comment": " Add `role=\"directory\"` to the attributes of an element.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "document",
+                "comment": " Add `role=\"document\"` to the attributes of an element.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "grid",
+                "comment": " Add `role=\"grid\"` to the attributes of an element.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "gridCell",
+                "comment": " Add `role=\"gridcell\"` to the attributes of an element.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "group",
+                "comment": " Define a set of controls. (for a group of radio inputs, see radioGroup).\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "heading",
+                "comment": " Prefer using `h1`, `h2`, `h3`, `h4`, `h5`, and `h6`.\nReally this attribute should only be necessary if you need an `h7`-type heading.\n\n    div [ heading, level 7 ] []\n\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "img",
+                "comment": " Add `role=\"img\"` to the attributes of an element.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "link",
+                "comment": " Add `role=\"link\"` to the attributes of an element.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "list",
+                "comment": " Add `role=\"list\"` to the attributes of an element.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "listBox",
+                "comment": " Add `role=\"listbox\"` to the attributes of an element.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "listItem",
+                "comment": " Add `role=\"listitem\"` to the attributes of an element.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "log",
+                "comment": " Add `role=\"log\"` to the attributes of an element.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "marquee",
+                "comment": " Add `role=\"marquee\"` to the attributes of an element.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "math",
+                "comment": " Add `role=\"math\"` to the attributes of an element.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "menu",
+                "comment": " Add `role=\"menu\"` to the attributes of an element.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "menuBar",
+                "comment": " Add `role=\"menubar\"` to the attributes of an element.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "menuItem",
+                "comment": " Add `role=\"menuitem\"` to the attributes of an element.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "menuItemCheckBox",
+                "comment": " Add `role=\"menuitemcheckbox\"` to the attributes of an element.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "menuItemRadio",
+                "comment": " Add `role=\"menuitemradio\"` to the attributes of an element.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "note",
+                "comment": " Add `role=\"note\"` to the attributes of an element.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "option",
+                "comment": " Add `role=\"option\"` to the attributes of an element.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "presentation",
+                "comment": " Sets role presentation.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "progressBar",
+                "comment": " Add `role=\"progressbar\"` to the attributes of an element.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "radio",
+                "comment": " Add `role=\"radio\"` to the attributes of an element.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "radioGroup",
+                "comment": " Define a set of radio-controls.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "row",
+                "comment": " Add `role=\"row\"` to the attributes of an element.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "rowGroup",
+                "comment": " Add `role=\"rowgroup\"` to the attributes of an element.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "rowHeader",
+                "comment": " Add `role=\"rowheader\"` to the attributes of an element.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "scrollBar",
+                "comment": " Add `role=\"scrollbar\"` to the attributes of an element.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "separator",
+                "comment": " Add `role=\"separator\"` to the attributes of an element.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "slider",
+                "comment": " Add `role=\"slider\"` to the attributes of an element.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "spinButton",
+                "comment": " Add `role=\"spinbutton\"` to the attributes of an element.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "status",
+                "comment": " Add `role=\"status\"` to the attributes of an element.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "tab",
+                "comment": " Add `role=\"tab\"` to the attributes of an element.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "tabList",
+                "comment": " Add `role=\"tablist\"` to the attributes of an element.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "tabPanel",
+                "comment": " Add `role=\"tabpanel\"` to the attributes of an element.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "textBox",
+                "comment": " Add `role=\"textbox\"` to the attributes of an element.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "timer",
+                "comment": " Add `role=\"timer\"` to the attributes of an element.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "toolBar",
+                "comment": " Add `role=\"toolbar\"` to the attributes of an element.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "toolTip",
+                "comment": " Add `role=\"tooltip\"` to the attributes of an element.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "tree",
+                "comment": " Add `role=\"tree\"` to the attributes of an element.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "treeGrid",
+                "comment": " Add `role=\"treegrid\"` to the attributes of an element.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "treeItem",
+                "comment": " Add `role=\"treeitem\"` to the attributes of an element.\n",
+                "type": "Html.Styled.Attribute msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Accessibility.Styled.Style",
+        "comment": "\n\n\n## Hiding content\n\nFor more information on hiding/semi-hiding elements, please see [the a11y project.](http://a11yproject.com/posts/how-to-hide-content/)\n\n@docs invisible\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "invisible",
+                "comment": " Makes content invisible without making it inaccessible.\n\n    label invisible [ text \"Screen readers can still read me!\" ]\n\n",
+                "type": "List.List (Html.Styled.Attribute msg)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Accessibility.Styled.Widget",
+        "comment": "\n\n\n## Widget States and Properties\n\nSome of these are also globally available, including: `busy`, `disabled`, `grabbed`, `hidden`, `invalid`.\n\n\n### Inputs\n\n@docs required, label\n\n\n### Button\n\n@docs pressed\n\n\n### TextBox\n\n@docs multiLine\n\n\n#### Auto-complete behavior:\n\nSee [the autocomplete spec](https://www.w3.org/TR/wai-aria-1.1/#aria-autocomplete).\n\n@docs autoCompleteInline, autoCompleteList, autoCompleteBoth\n\n\n### Selection\n\n@docs checked, selected, indeterminate\n\n\n### Validity\n\n@docs invalid, invalidGrammar, invalidSpelling\n\n\n### Interactability\n\n@docs expanded, hidden, readOnly, disabled\n\n\n### Pop-Ups\n\n@docs modal\n\nPop-ups are supported for all elements (but not meant for use on tooltips).\n\nThe pop-up itself needs to have a containing element with one of these roles:\n`menu`, `listbox`, `tree`, `grid`, or `dialog`, and the pop-up value must match.\nThat is, use `hasMenuPopUp` if the pop-up container has a role of `menu`.\n\nSee [the spec](https://www.w3.org/TR/wai-aria-1.1/#aria-haspopup).\n\n@docs hasMenuPopUp, hasListBoxPopUp, hasTreePopUp, hasGridPopUp, hasDialogPopUp\n\n\n### Orientation and Range Widgets\n\n@docs orientationHorizontal, orientationVertical, valueMin, valueMax, valueNow, valueText\n\n\n### Table Sort-by-column\n\n@docs sortAscending, sortDescending, sortCustom, sortNone\n\n\n### Misc\n\n@docs multiSelectable\n\n\n### Page Hierarchy\n\n@docs level\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "autoCompleteBoth",
+                "comment": " Available on `comboBox` or `textbox`.\nUse when there's a suggestion for completing the field when there's both\ninline autocomplete and list autocomplete occurring at once.\n\nBe sure to indicate that the auto-completed text is selected.\n\nSee [the autocomplete spec](https://www.w3.org/TR/wai-aria-1.1/#aria-autocomplete).\n\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "autoCompleteInline",
+                "comment": " Available on `comboBox` or `textbox`.\nUse when there's a suggestion for completing the field that shows up\nin the line that the user is completing.\n\nBe sure to indicate that the auto-completed text is selected.\n\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "autoCompleteList",
+                "comment": " Available on `comboBox` or `textbox`.\nUse when there's a suggestion for completing the field that shows up as a list\nof options from which the user can pick.\n\nBe sure to indicate that the auto-completed text is selected.\n\nSee [the autocomplete spec](https://www.w3.org/TR/wai-aria-1.1/#aria-autocomplete).\n\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "checked",
+                "comment": " Available on `checkbox`, `option`, `radio`, `switch`\n\nCheck boxes can be checked (`Just True`), unchecked (`Just False`), or indeterminate (`Nothing`).\nOther elements won't support tri-state checkedness.\n\nSee [the checked spec](https://www.w3.org/TR/wai-aria-1.1/#aria-checked).\n\n",
+                "type": "Maybe.Maybe Basics.Bool -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "disabled",
+                "comment": " Supported for all elements. Elements are not disabled (are enabled) by default.\n",
+                "type": "Basics.Bool -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "expanded",
+                "comment": " Available on `button`, `comboBox`, `document`, `link`, `section`, `sectionHead`, and `window`.\n\nTrickily, this attribute can be applied to either an element that is itself\nexpanded/collapsed, OR to an elment it controls that is either expanded/collapsed.\nIn the latter case, throw on a `controls` attribute as well to clarify the relationship.\n\n",
+                "type": "Basics.Bool -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "hasDialogPopUp",
+                "comment": " Indicate that interaction with this element can trigger a `dialog` pop-up.\n\nBe careful while managing focus and triggering.\n\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "hasGridPopUp",
+                "comment": " Indicate that interaction with this element can trigger a `grid` pop-up.\n\nBe careful while managing focus and triggering.\n\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "hasListBoxPopUp",
+                "comment": " Indicate that interaction with this element can trigger a `listBox` pop-up.\n\nBe careful while managing focus and triggering.\n\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "hasMenuPopUp",
+                "comment": " Indicate that interaction with this element can trigger a `menu` pop-up.\n\nBe careful while managing focus and triggering.\n\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "hasTreePopUp",
+                "comment": " Indicate that interaction with this element can trigger a `tree` pop-up.\n\nBe careful while managing focus and triggering.\n\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "hidden",
+                "comment": " ",
+                "type": "Basics.Bool -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "indeterminate",
+                "comment": " Sets the indeterminate value to be true.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "invalid",
+                "comment": " Supported for all elements.\n\nFor invalid grammar or spelling, please see `invalidGrammar` and `invalidSpelling` respectively.\n\n",
+                "type": "Basics.Bool -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "invalidGrammar",
+                "comment": " Supported for all elements.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "invalidSpelling",
+                "comment": " Supported for all elements.\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "label",
+                "comment": " Supported for all elements.\n",
+                "type": "String.String -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "level",
+                "comment": " Supported for `grid`, `heading`, `listItem`, `row`, and `tabList`.\n\nThis attribute is about hierarchy--how many \"levels\" deep is an element? Please\nrefer to the [documentation](https://www.w3.org/TR/wai-aria-1.1/#aria-level) to get a better sense of when to use.\n\n    h7 attributes =\n        div (heading :: level 7 :: attributes)\n\n",
+                "type": "Basics.Int -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "modal",
+                "comment": " Indicate that a modal is showing and the rest of the page contents are not\ninteractable.\n\n    import Accessibility exposing (div, h2, p, text)\n    import Accessibility.Aria exposing (labelledBy)\n    import Accessibility.Role exposing (dialog)\n    import Accessibility.Widget exposing (modal)\n    import Html.Attributes exposing (id)\n\n    modal : Html msg\n    modal =\n        div [ dialog, modal, labelledBy \"header-id\" ]\n            [ h2 [ id \"header-id\" ] [ text \"Modal Header\" ]\n            , p [] [ text \"Wow, such modal contents!\" ]\n            ]\n\n",
+                "type": "Basics.Bool -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "multiLine",
+                "comment": " Supported for `textbox` only.\n\nIndicate whether the `textbox` is for multi-line inputs or single-line inputs.\n\nCareful of default keyboard behavior when coupling this property with text inputs,\nwhich by default submit their form group on enter.\n\n",
+                "type": "Basics.Bool -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "multiSelectable",
+                "comment": " Supported on `grid`, `listBox`, `tabList`, `tree`. (However, what would it mean\nfor a `tabList`, say, to have multiple selectable descendants?)\n\nWhen true, users are not restricted to selecting only one selectable descendant at a time.\n\n",
+                "type": "Basics.Bool -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "orientationHorizontal",
+                "comment": " Supported on roles with some sense of inherent orientation:\n`progressBar`, `scrollbar`, `select`, `separator`, `slider`, `tabList`, `toolBar`\n\nCareful: default behavior is inconsistent across those roles.\n\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "orientationVertical",
+                "comment": " Supported on roles with some sense of inherent orientation:\n`progressBar`, `scrollbar`, `select`, `separator`, `slider`, `tabList`, `toolBar`\n\nCareful: default behavior is inconsistent across those roles.\n\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "pressed",
+                "comment": " Supported on `button`.\n\nUse `pressed` when describing a toggle button--a button that can be \"toggled\" between\nan on state and an off state (or an on state, an indeterminate state, and an off state).\n\nPlease check out these [examples](https://www.w3.org/TR/2016/WD-wai-aria-practices-1.1-20160317/examples/button/button.html)\nas well.\n\n    button\n        [ pressed <| Just True ]\n        [ text \"This button should be styled for site viewers such that it's clear it's pressed!\" ]\n\n",
+                "type": "Maybe.Maybe Basics.Bool -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "readOnly",
+                "comment": " Supported on `checkBox`, `comboBox`, `grid`, `gridCell`, `listBox`,\n`radioGroup`, `slider`, `spinButton`, and `textBox`.\n\nIndicates read-only status of a widget, although normal navigation rules and\ncopying behavior should apply. (Read: `readOnly` elements are navigable but\nunchangeable, and `disabled` elements are neither navigable nor unchangebale).\n\n",
+                "type": "Basics.Bool -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "required",
+                "comment": " Supported by `comboBox`, `gridCell`, `listBox`, `radioGroup`, `spinButton`, `textBox`, `tree`\n\nIndicate whether user input is or is not required on a field for valid form submission.\n\n",
+                "type": "Basics.Bool -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "selected",
+                "comment": " Supported by `gridCell`, `option`, `row`, `tab`.\n\nIndicate whether an element (in a single- or multi-selectable widget) is or is not selected.\n\n",
+                "type": "Basics.Bool -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "sortAscending",
+                "comment": " Supported by `columnHeader` and `rowHeader`, but only where those roles are\nused on table or grid headers.\n\nThis should only be applied to one header at a time.\n\nTable is sorted by this column's values in ascending order.\n\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "sortCustom",
+                "comment": " Supported by `columnHeader` and `rowHeader`, but only where those roles are\nused on table or grid headers.\n\nOnly one column in a table should be sorting the values in table.\n\nTable is sorted by this column's values, but the algorithm for that sorting\nis custom (not ascending or descending).\n\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "sortDescending",
+                "comment": " Supported by `columnHeader` and `rowHeader`, but only where those roles are\nused on table or grid headers.\n\nOnly one column in a table should be sorting the values in table.\n\nTable is sorted by this column's values in descending order.\n\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "sortNone",
+                "comment": " Supported by `columnHeader` and `rowHeader`, but only where those roles are\nused on table or grid headers.\n\nTable is not sorted by this column's values.\n\n",
+                "type": "Html.Styled.Attribute msg"
+            },
+            {
+                "name": "valueMax",
+                "comment": " Supported by `progressBar`, `scrollbar`, `separator`, `slider`, and `spinButton`.\n\nSet the max allowed value for a range widget.\n\n",
+                "type": "Basics.Float -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "valueMin",
+                "comment": " Supported by `progressBar`, `scrollbar`, `separator`, `slider`, and `spinButton`.\n\nSet the min allowed value for a range widget.\n\n",
+                "type": "Basics.Float -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "valueNow",
+                "comment": " Supported by `progressBar`, `scrollbar`, `separator`, `slider`, and `spinButton`.\n\nSet the current value for a range widget. Don't use this property for indeterminate states.\n\n",
+                "type": "Basics.Float -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "valueText",
+                "comment": " Supported by `progressBar`, `scrollbar`, `separator`, `slider`, and `spinButton`.\n\nThis property takes precedence over `valueNow`, and should show a human-readable\nversion of the current value. However, `valueNow` should always be used.\n\n",
+                "type": "String.String -> Html.Styled.Attribute msg"
+            }
+        ],
+        "binops": []
+    }
+]

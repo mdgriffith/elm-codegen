@@ -1,0 +1,73 @@
+[
+    {
+        "name": "EmojiPicker",
+        "comment": " This module provides a general-purpose emoji picker, with emojis\nsegregated by category. See [this file](https://github.com/Holmusk/elmoji/blob/master/examples/Main.elm)\nfor an example of how to use the picker in your application!\n\n# Internals\n@docs Model, Msg\n\n# Config & Initialization\n@docs PickerConfig, init\n\n# Functions to use in integration\n@docs view, update\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " Most of the messages are handled internally, but there are a couple that will\nbe of interest to the parent module:\n\n`Toggle`: Use this message in the parent to toggle the emoji picker on and off  \n`Select`: Catch this message in the parent to retrieve the selected emoji  \n",
+                "args": [],
+                "cases": [
+                    [
+                        "NoOp",
+                        []
+                    ],
+                    [
+                        "Toggle",
+                        []
+                    ],
+                    [
+                        "ChooseSkinColor",
+                        [
+                            "EmojiPicker.SkinColor"
+                        ]
+                    ],
+                    [
+                        "SelectCategory",
+                        [
+                            "Types.Category"
+                        ]
+                    ],
+                    [
+                        "Select",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Model",
+                "comment": " The internal state of the emoji picker.  \n\nNote: the `skinColor` field is not in use in the current version, \nbut a future release may include a skin tone selector to switch between\nemoji variants.\n",
+                "args": [],
+                "type": "{ skinColor : EmojiPicker.SkinColor, activeCategory : Types.Category, hidden : Basics.Bool, offsetX : Basics.Float, offsetY : Basics.Float, closeOnSelect : Basics.Bool }"
+            },
+            {
+                "name": "PickerConfig",
+                "comment": " When initializing the emoji picker, you'll need to provide a few\nconfiguration parameters.\n\n`offsetX`: the horizontal offset from where the picker is declared  \n`offsetY`: the vertical offset from where the picker is declared  \n`closeOnSelect`: whether or not the close the picker after an emoji is selected  \n",
+                "args": [],
+                "type": "{ offsetX : Basics.Float, offsetY : Basics.Float, closeOnSelect : Basics.Bool }"
+            }
+        ],
+        "values": [
+            {
+                "name": "init",
+                "comment": " This is the function to call to initialize the emoji picker.\n\n    pickerConfig : PickerConfig\n    pickerConfig = \n        { offsetX       = -271\n        , offsetY       = -410\n        , closeOnSelect = True\n        }\n\n    emojiModel : EmojiPicker.Model\n    emojiModel = EmojiPicker.init pickerConfig\n",
+                "type": "EmojiPicker.PickerConfig -> EmojiPicker.Model"
+            },
+            {
+                "name": "update",
+                "comment": " You'll need to catch the `Select` message in your parent module to\nobtain the emoji from the picker. However, don't forget to propagate the\nmessages down to this function, because some internal states will probably\nneed to be updated.\n",
+                "type": "EmojiPicker.Msg -> EmojiPicker.Model -> ( EmojiPicker.Model, Platform.Cmd.Cmd EmojiPicker.Msg )"
+            },
+            {
+                "name": "view",
+                "comment": " Use this function to instantiate the actual `Html msg` for the picker.\n",
+                "type": "EmojiPicker.Model -> Html.Html EmojiPicker.Msg"
+            }
+        ],
+        "binops": []
+    }
+]

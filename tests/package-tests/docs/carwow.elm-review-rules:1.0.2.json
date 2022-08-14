@@ -1,0 +1,16 @@
+[
+    {
+        "name": "CarwowReview",
+        "comment": " A set of elm-review rules used across our projects at carwow\n\n\n# Rules\n\n@docs rules\n\nThe rules in this module are chosen to help us maintain a clean and tidy codebase, promote good patterns, and codify conventions that we think are important.\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rules",
+                "comment": " Returns a list of elm-review rules that we apply to all of our elm at carwow.\n\nInclude the result in the list of rules returned by the `rules` function of the `ReviewConfig.elm` file in each application.\n\n",
+                "type": "List.List Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    }
+]

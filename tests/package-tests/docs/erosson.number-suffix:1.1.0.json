@@ -1,0 +1,79 @@
+[
+    {
+        "name": "NumberSuffix",
+        "comment": " Format numbers with fancy suffixes.\n\n\n# Formatting\n\n@docs format, formatInt, formatSigExp\n\n\n# Configuration\n\n@docs Config, standardConfig, scientificConfig, Locale\n\n\n# Suffix list configuration\n\nYou'll usually use one of the built-in suffix lists below, but you could write your own. Here's a modified scientific notation suffix generator:\n\n    suffixPow10 : Int -> String\n    suffixPow10 digits = \" * 10 ^ \" ++ String.fromInt digits\n\n    config : Config\n    config = { scientificConfig | getSuffix = suffixPow10 }\n\n    format config 1e6 --> \"1.00 * 10 ^ 6\"\n\n@docs suffixStandard, suffixStandardShort, suffixEngineering, suffixLongScale, suffixLongScaleShort, suffixAlphabetic\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " Configure how numbers are formatted.\n\n`getSuffix` returns a suffix, given a digit count for the number. See the [suffix functions](#suffixStandard) below.\n\n`sigfigs` is the number of significant figures shown.\n\nBelow `minSuffix`, a comma-separated number is shown instead of a suffixed number.\n\n",
+                "args": [],
+                "type": "{ getSuffix : Basics.Int -> String.String, locale : NumberSuffix.Locale, sigfigs : Basics.Int, suffixDivisor : Basics.Int, minSuffix : Basics.Float }"
+            },
+            {
+                "name": "Locale",
+                "comment": " Format numbers differently based on the user's location and culture.\n\nSee `cuducos/elm-format-number:FormatNumber.Locales`.\n\nThis does not change the language suffixes are in, only the formatting of the\nnumbers themselves. Consider this with a custom suffix list if you need complete\ninternationalization.\n\n    import FormatNumber.Locales\n\n    spanishConfig : Config\n    spanishConfig = { standardConfig | locale = FormatNumber.Locales.spanishLocale }\n\n    format standardConfig 1234 --> \"1,234\"\n    format spanishConfig 1234 --> \"1.234\"\n\n",
+                "args": [],
+                "type": "FormatNumber.Locales.Locale"
+            }
+        ],
+        "values": [
+            {
+                "name": "format",
+                "comment": " Format numbers with fancy suffixes.\n\n    format standardConfig 12345 --> \"12,345\"\n\n    format standardConfig 1.23e10 --> \"12.3 billion\"\n\n    config : Config\n    config = { standardConfig | getSuffix = suffixStandardShort }\n    format config 1.23e10 --> \"12.3B\"\n\n",
+                "type": "NumberSuffix.Config -> Basics.Float -> String.String"
+            },
+            {
+                "name": "formatInt",
+                "comment": " Format integers with fancy suffixes. See `format`.\n",
+                "type": "NumberSuffix.Config -> Basics.Int -> String.String"
+            },
+            {
+                "name": "formatSigExp",
+                "comment": " Format a significand and an exponent.\n\n    formatSigExp standardConfig 12.345 3 --> \"12,345\"\n\n    formatSigExp standardConfig 1.23 10 --> \"12.3 billion\"\n\n    config : Config\n    config = { standardConfig | getSuffix = suffixStandardShort }\n    formatSigExp config 1.23 10 --> \"12.3B\"\n\n",
+                "type": "NumberSuffix.Config -> Basics.Float -> Basics.Int -> String.String"
+            },
+            {
+                "name": "scientificConfig",
+                "comment": " Scientific notation formatting configuration.\n\n    config : Config\n    config = scientificConfig\n\n    format config 1.0e3 --> \"1,000\"\n    format config 1.0e6 --> \"1.00e6\"\n    format config 1.0e7 --> \"1.00e7\"\n    format config 1.0e8 --> \"1.00e8\"\n    format config 1.0e9 --> \"1.00e9\"\n\n",
+                "type": "NumberSuffix.Config"
+            },
+            {
+                "name": "standardConfig",
+                "comment": " Default formatting configuration.\n\nBy default, we use standard suffixes, US locale, 3 significant figures,\nthousands grouping (suffixDivisor=3), and show no suffixes for values below 100,000.\n\n",
+                "type": "NumberSuffix.Config"
+            },
+            {
+                "name": "suffixAlphabetic",
+                "comment": " Alphabetic suffixes.\n\n    config : Config\n    config = { standardConfig | getSuffix = suffixAlphabetic }\n\n    format config 1e3 --> \"1,000\"\n    format config 1e5 --> \"100K\"\n    format config 1e6 --> \"1.00M\"\n    format config 1e9 --> \"1.00B\"\n    format config 1e12 --> \"1.00T\"\n    format config 1e15 --> \"1.00aa\"\n    format config 1e18 --> \"1.00ab\"\n\n",
+                "type": "Basics.Int -> String.String"
+            },
+            {
+                "name": "suffixEngineering",
+                "comment": " Engineering notation.\n\nUnlike scientific notation, engineering notation numbers are always divisible by 3.\n\n    config : Config\n    config = { standardConfig | getSuffix = suffixEngineering }\n\n    format config 1e3 --> \"1,000\"\n    format config 1e5 --> \"100E3\"\n    format config 1e6 --> \"1.00E6\"\n    format config 1e7 --> \"10.0E6\"\n    format config 1e8 --> \"100E6\"\n    format config 1e9 --> \"1.00E9\"\n\n",
+                "type": "Basics.Int -> String.String"
+            },
+            {
+                "name": "suffixLongScale",
+                "comment": " Long-scale suffixes.\n\n    config : Config\n    config = { standardConfig | getSuffix = suffixLongScale }\n\n    format config 1e3 --> \"1,000\"\n    format config 1e5 --> \"100 thousand\"\n    format config 1e6 --> \"1.00 million\"\n    format config 1e9 --> \"1.00 milliard\"\n    format config 1e12 --> \"1.00 billion\"\n    format config 1e15 --> \"1.00 billiard\"\n\n",
+                "type": "Basics.Int -> String.String"
+            },
+            {
+                "name": "suffixLongScaleShort",
+                "comment": " Abbreviated long-scale suffixes.\n\n    config : Config\n    config = { standardConfig | getSuffix = suffixLongScaleShort }\n\n    format config 1e3 --> \"1,000\"\n    format config 1e5 --> \"100K\"\n    format config 1e6 --> \"1.00M\"\n    format config 1e9 --> \"1.00Md\"\n    format config 1e12 --> \"1.00B\"\n    format config 1e15 --> \"1.00Bd\"\n\n",
+                "type": "Basics.Int -> String.String"
+            },
+            {
+                "name": "suffixStandard",
+                "comment": " Standard suffixes.\n\n    config : Config\n    config = { standardConfig | getSuffix = suffixStandard }\n    -- `config = standardConfig` would work too; this is the default\n\n    format config 1e3 --> \"1,000\"\n    format config 1e5 --> \"100 thousand\"\n    format config 1e6 --> \"1.00 million\"\n    format config 1e9 --> \"1.00 billion\"\n    format config 1e12 --> \"1.00 trillion\"\n    format config 1e15 --> \"1.00 quadrillion\"\n\n",
+                "type": "Basics.Int -> String.String"
+            },
+            {
+                "name": "suffixStandardShort",
+                "comment": " Abbreviated standard suffixes.\n\n    config : Config\n    config = { standardConfig | getSuffix = suffixStandardShort }\n\n    format config 1e3 --> \"1,000\"\n    format config 1e5 --> \"100K\"\n    format config 1e6 --> \"1.00M\"\n    format config 1e9 --> \"1.00B\"\n    format config 1e12 --> \"1.00T\"\n    format config 1e15 --> \"1.00Qa\"\n\n",
+                "type": "Basics.Int -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

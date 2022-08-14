@@ -1,0 +1,16 @@
+[
+    {
+        "name": "NoForbiddenWords",
+        "comment": "\n\n@docs rule\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": " Forbid certain words in Elm comments, README and elm.json (package summary only).\n\n    config : List Rule\n    config =\n        [ NoForbiddenWords.rule [ \"TODO\", \"- [ ]\" ]\n        ]\n\n\n## Failure Examples\n\nBased on the configured words `TODO` and `- [ ]` the following examples would fail:\n\n    -- TODO: Finish writing this function\n\n\n\nMulti-line comments `{- ... -}` and documentation `{-| ... -}` also work:\n\n\n\n    {- Actions\n       - [ ] Documentation\n       - [ ] Tests\n    -}\n\n",
+                "type": "List.List String.String -> Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    }
+]

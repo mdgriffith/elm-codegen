@@ -1,0 +1,167 @@
+[
+    {
+        "name": "HslaColor",
+        "comment": " This package defines a standard `Hsla` type.\n\n\n# Types\n\n@docs HslaColor\n\n\n# Creating color\n\n\n## From numbers\n\n@docs hsl, hsla, hsl360, rgb255, rgb, rgba\n\n\n## From records\n\n@docs fromRgba, fromHsla\n\n\n# Using colors with HTML/CSS/SVG\n\n@docs toCssString\n\n\n# Extracing values from `Hsla` type\n\n@docs toRgba, toHsla, toColor\n\n\n# Seed colors\n\n@docs red, yellow, lime, cyan, blue, magenta\n\n\n# white, gray, black\n\n@docs white, gray, black\n\n",
+        "unions": [
+            {
+                "name": "HslaColor",
+                "comment": " Represents a color.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "black",
+                "comment": " ",
+                "type": "HslaColor.HslaColor"
+            },
+            {
+                "name": "blue",
+                "comment": " ",
+                "type": "HslaColor.HslaColor"
+            },
+            {
+                "name": "cyan",
+                "comment": " ",
+                "type": "HslaColor.HslaColor"
+            },
+            {
+                "name": "fromHsla",
+                "comment": " Creates a color from HSLA (hue, saturation, lightness, alpha) values between:\n\n  - hue range is 0->360\n  - saturation range is 0->100\n  - lightness range is 0->100\n  - alpha range is 0->1\n\nSee also:\n\nIf you want to be more concise, see [`hsla`](#hsla) or [`hsl`](#hsl).\n\n",
+                "type": "{ hue : Basics.Float, saturation : Basics.Float, lightness : Basics.Float, alpha : Basics.Float } -> HslaColor.HslaColor"
+            },
+            {
+                "name": "fromRgba",
+                "comment": " Creates from a record of RGBA values (red, green, blue, alpha) between 0.0 and 1.0 (inclusive).\n\nSee also:\n\nIf you want to be more concise, see [`rgba`](#rgba) or [`rgb`](#rgb).\n\n",
+                "type": "{ red : Basics.Float, green : Basics.Float, blue : Basics.Float, alpha : Basics.Float } -> HslaColor.HslaColor"
+            },
+            {
+                "name": "gray",
+                "comment": " ",
+                "type": "HslaColor.HslaColor"
+            },
+            {
+                "name": "hsl",
+                "comment": " Creates a color from HSL (hue, saturation, lightness)\nvalues between 0.0 and 1.0 (inclusive).\n\nSee also:\n\nIf you need to provide an alpha value, see [`hsla`](#hsla).\n\nIf you want to be more explicit with parameter names, see [`fromHsla`](#fromHsla).\n\n",
+                "type": "Basics.Float -> Basics.Float -> Basics.Float -> HslaColor.HslaColor"
+            },
+            {
+                "name": "hsl360",
+                "comment": " Creates a color from HSL (hue, saturation, lightness) float values between:\n\n  - hue range is 0->360\n  - saturation range is 0->100\n  - lightness range is 0->100\n  - alpha range is 0->1\n\nSee also:\n\nIf you want to provide Hsl values as `Float` values between 0.0 and 1.0, see [`hsl`](#hsl).\n\n",
+                "type": "Basics.Float -> Basics.Float -> Basics.Float -> HslaColor.HslaColor"
+            },
+            {
+                "name": "hsla",
+                "comment": " Creates a color from HSLA (hue, saturation, lightness, alpha)\nvalues between 0.0 and 1.0 (inclusive).\n\nSee also:\n\nIf you want to be more concise and want full alpha, see [`hsl`](#hsl).\n\nIf you want to be more explicit with parameter names, see [`fromHsla`](#fromHsla).\n\n",
+                "type": "Basics.Float -> Basics.Float -> Basics.Float -> Basics.Float -> HslaColor.HslaColor"
+            },
+            {
+                "name": "lime",
+                "comment": " ",
+                "type": "HslaColor.HslaColor"
+            },
+            {
+                "name": "magenta",
+                "comment": " ",
+                "type": "HslaColor.HslaColor"
+            },
+            {
+                "name": "red",
+                "comment": " ",
+                "type": "HslaColor.HslaColor"
+            },
+            {
+                "name": "rgb",
+                "comment": " Creates a color from RGB (red, green, blue) values between 0.0 and 1.0 (inclusive).\n\nThis is a convenience function for making a color value with full opacity.\n\nSee also:\n\nIf you want to pass RGB values as `Int` values between 0 and 255, see [`rgb255`](#rgb255).\n\nIf you need to provide an alpha value, see [`rgba`](#rgba).\n\nIf you want to be more explicit with parameter names, see [`fromRgba`](#fromRgba).\n\n",
+                "type": "Basics.Float -> Basics.Float -> Basics.Float -> HslaColor.HslaColor"
+            },
+            {
+                "name": "rgb255",
+                "comment": " Creates a color from RGB (red, green, blue) integer values between 0 and 255.\n\nThis is a convenience function if you find passing RGB channels as integers scaled to 255 more intuitive.\n\nSee also:\n\nIf you want to provide RGB values as `Float` values between 0.0 and 1.0, see [`rgb`](#rgb).\n\n",
+                "type": "Basics.Int -> Basics.Int -> Basics.Int -> HslaColor.HslaColor"
+            },
+            {
+                "name": "rgba",
+                "comment": " Creates a color from RGBA (red, green, blue, alpha) values between 0.0 and 1.0 (inclusive).\n\nSee also:\n\nIf you want to be more concise and want full alpha, see [`rgb`](#rgb).\n\nIf you want to be more explicit with parameter names, see [`fromRgba`](#fromRgba).\n\n",
+                "type": "Basics.Float -> Basics.Float -> Basics.Float -> Basics.Float -> HslaColor.HslaColor"
+            },
+            {
+                "name": "toColor",
+                "comment": " Convert an HslaColor to a Color\n",
+                "type": "HslaColor.HslaColor -> Color.Color"
+            },
+            {
+                "name": "toCssString",
+                "comment": " Converts a `Hsla` type to a string suitable for use in CSS.\nThe string will conform to [CSS Color Module Level 3](https://www.w3.org/TR/css-color-3/).\n\n    Html.Attributes.style \"background-color\" (Hsl.toCssString Hsl.lightPurple)\n\n",
+                "type": "HslaColor.HslaColor -> String.String"
+            },
+            {
+                "name": "toHsla",
+                "comment": " Extract the HSLA (hue, saturation, lightness, alpha) components from a `Hsla` type.\nThe component values will be between 0.0 and 1.0 (inclusive).\n",
+                "type": "HslaColor.HslaColor -> { hue : Basics.Float, saturation : Basics.Float, lightness : Basics.Float, alpha : Basics.Float }"
+            },
+            {
+                "name": "toRgba",
+                "comment": " Extract the RGBA (red, green, blue, alpha) components `Hsla` type.\nThe component values will be between 0.0 and 1.0 (inclusive).\n",
+                "type": "HslaColor.HslaColor -> { red : Basics.Float, green : Basics.Float, blue : Basics.Float, alpha : Basics.Float }"
+            },
+            {
+                "name": "white",
+                "comment": " ",
+                "type": "HslaColor.HslaColor"
+            },
+            {
+                "name": "yellow",
+                "comment": " ",
+                "type": "HslaColor.HslaColor"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "HslaColor.Manipulate",
+        "comment": " A library for creating and manipulating colors.\n\n\n# Color adjustment\n\n@docs rotateHue, saturate, desaturate, lighten, darken, fadeIn, fadeOut\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "darken",
+                "comment": " Decrease the lightning of a color\n",
+                "type": "Basics.Float -> HslaColor.HslaColor -> HslaColor.HslaColor"
+            },
+            {
+                "name": "desaturate",
+                "comment": " Decrease the saturation of a color\n",
+                "type": "Basics.Float -> HslaColor.HslaColor -> HslaColor.HslaColor"
+            },
+            {
+                "name": "fadeIn",
+                "comment": " Increase the opacity of a color\n",
+                "type": "Basics.Float -> HslaColor.HslaColor -> HslaColor.HslaColor"
+            },
+            {
+                "name": "fadeOut",
+                "comment": " Decrease the opacity of a color\n",
+                "type": "Basics.Float -> HslaColor.HslaColor -> HslaColor.HslaColor"
+            },
+            {
+                "name": "lighten",
+                "comment": " Increase the lightning of a color\n",
+                "type": "Basics.Float -> HslaColor.HslaColor -> HslaColor.HslaColor"
+            },
+            {
+                "name": "rotateHue",
+                "comment": " Change the hue of a color. The angle value must be in degrees\n",
+                "type": "Basics.Float -> HslaColor.HslaColor -> HslaColor.HslaColor"
+            },
+            {
+                "name": "saturate",
+                "comment": " Increase the saturation of a color\n",
+                "type": "Basics.Float -> HslaColor.HslaColor -> HslaColor.HslaColor"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,30 @@
+[
+    {
+        "name": "ZenCss.NoHtmlClasses",
+        "comment": "\n\n@docs rule\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": " Reports the use of `Html.Attributes.class`, `Html.Attributes.classList` and\n`Svg.Attributes.class`.\n\n    config =\n        [ ZenCss.NoHtmlClasses.rule\n        ]\n\n\n## Fail\n\n    import Html exposing (Html)\n    import Html.Attributes as Attributes\n\n    main : Html msg\n    main =\n        Html.div [ Attributes.class \"container\" ]\n            [ Html.text \"Hello!\" ]\n\n\n## Success\n\n    import CSS.Attributes\n    import Classes\n    import Html exposing (Html)\n\n    main : Html msg\n    main =\n        Html.div [ CSS.Attributes.class Classes.container ]\n            [ Html.text \"Hello!\" ]\n\n\n## When (not) to enable this rule\n\nThis rule is useful when using the `elm-zen-css` library.\nThis rule is not useful when references to CSS classes are still required.\n\n\n## Try it out\n\nYou can try this rule out by running the following command:\n\n```bash\nelm-review --template decioferreira/elm-review-zen-css/example --rules ZenCss.NoHtmlClasses\n```\n\n",
+                "type": "Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ZenCss.NoHtmlStyles",
+        "comment": "\n\n@docs rule\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": " Reports the use of `Html.Attributes.style` and `Svg.Attributes.style`.\n\n    config =\n        [ ZenCss.NoHtmlStyles.rule\n        ]\n\n\n## Fail\n\n    import Html exposing (Html)\n    import Html.Attributes as Attributes\n\n    main : Html msg\n    main =\n        Html.div [ Attributes.style \"color\" \"blue\" ]\n            [ Html.text \"Hello!\" ]\n\n\n## Success\n\n    import CSS.Attributes\n    import Classes\n    import Html exposing (Html)\n\n    main : Html msg\n    main =\n        Html.div [ CSS.Attributes.class Classes.container ]\n            [ Html.text \"Hello!\" ]\n\n\n## When (not) to enable this rule\n\nThis rule is useful when using the `elm-zen-css` library.\nThis rule is not useful when inline style attributes are still required.\n\n\n## Try it out\n\nYou can try this rule out by running the following command:\n\n```bash\nelm-review --template decioferreira/elm-review-zen-css/example --rules ZenCss.NoHtmlStyles\n```\n\n",
+                "type": "Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    }
+]

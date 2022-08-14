@@ -1,0 +1,21 @@
+[
+    {
+        "name": "Element.HexColor",
+        "comment": " This module just adds two helper functions to convert CSS hex strings into a elm-ui Color\n\n# CSS Color Helpers\n@docs rgbaCSSHex, rgbCSSHex\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rgbCSSHex",
+                "comment": " Convert a CSS Hex color into an elm-ui.Element.Color with rgb255 \n    rgbCSSHex \"#7f11E0\"\n",
+                "type": "String.String -> Element.Color"
+            },
+            {
+                "name": "rgbaCSSHex",
+                "comment": " Convert a CSS Hex color into an elm-ui.Element.Color with rgba255 \n    rgbaCSSHex \"#7f11e088\"\n",
+                "type": "String.String -> Element.Color"
+            }
+        ],
+        "binops": []
+    }
+]

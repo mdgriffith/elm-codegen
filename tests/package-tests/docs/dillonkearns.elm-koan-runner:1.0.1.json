@@ -1,0 +1,33 @@
+[
+    {
+        "name": "Test.Koan",
+        "comment": " Koan\n\n@docs program\n\n\n## elm-test helpers\n\nThese are all drop-in replacements for the helpers you'll find in `elm-test`.\n`elm-koan-runner` takes each one and streams failures so only one failure at a time is displayed.\n\n@docs Test, describe, test\n\n",
+        "unions": [
+            {
+                "name": "Test",
+                "comment": " A test case or group of test cases.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "describe",
+                "comment": " Groups together a List of Tests.\n",
+                "type": "String.String -> List.List Test.Koan.Test -> Test.Koan.Test"
+            },
+            {
+                "name": "program",
+                "comment": " An Elm Program that presents failing tests one at a time in the style of a Koan exercise.\n",
+                "type": "Test.Koan.Test -> Platform.Program () Test.Koan.Model Test.Koan.Msg"
+            },
+            {
+                "name": "test",
+                "comment": " Creates a single test case.\n",
+                "type": "String.String -> (() -> Expect.Expectation) -> Test.Koan.Test"
+            }
+        ],
+        "binops": []
+    }
+]

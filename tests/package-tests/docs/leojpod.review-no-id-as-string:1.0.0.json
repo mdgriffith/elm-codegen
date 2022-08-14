@@ -1,0 +1,16 @@
+[
+    {
+        "name": "NoStringAsId",
+        "comment": " This library add a simple [`elm-review`](https://package.elm-lang.org/packages/jfmengels/elm-review/latest/) rule to minimize the use of `String` as id and instead suggest using an opaque type.\n\n@docs rule\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": " This is the rule you should add to your elm-review process.\n\nFor details on how to add a rule to your setup, check [here](https://package.elm-lang.org/packages/jfmengels/elm-review/latest/#configuration) it's quite simple!\n\n",
+                "type": "Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    }
+]

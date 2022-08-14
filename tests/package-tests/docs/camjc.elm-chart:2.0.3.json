@@ -1,0 +1,16 @@
+[
+    {
+        "name": "Chart",
+        "comment": " An SVG chart library.\n\n# Pie\n@docs pie\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "pie",
+                "comment": " Draws a pie chart of given diameter of the dataset.\n\n    Chart.pie 300 [{color = \"#0ff\", value = 3}, {color = \"purple\", value = 27}]\n",
+                "type": "Basics.Int -> Chart.Dataset -> Svg.Svg a"
+            }
+        ],
+        "binops": []
+    }
+]

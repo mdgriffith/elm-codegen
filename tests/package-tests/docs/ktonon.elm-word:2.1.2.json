@@ -1,0 +1,188 @@
+[
+    {
+        "name": "Word",
+        "comment": " Unsigned 32 or 64 bit integers and related operations.\n\n\n## Table of Contents\n\n  - [Types](#types)\n  - [Constructors](#constructors)\n  - [Conversions](#conversions)\n  - [Arithmetic](#arithmetic)\n  - [Bitwise](#bitwise)\n  - [Misc](#misc)\n\nThis package was developed to facilitate computations for [SHA-2](https://en.wikipedia.org/wiki/SHA-2).\nIt contains the minimal set of functions required by those algorithms.\n\n## Types\n\n@docs Word, Size\n\n\n## Constructors\n\n@docs fromBytes, fromUTF8, zero\n\n\n## Conversions\n\n@docs toBytes\n\n\n## Arithmetic\n\n@docs add\n\n\n## Bitwise\n\n@docs and, xor, complement, rotateLeftBy, rotateRightBy, shiftRightZfBy\n\n\n## Misc\n\n@docs sizeInBytes\n\n",
+        "unions": [
+            {
+                "name": "Size",
+                "comment": " Size of a word.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Bit32",
+                        []
+                    ],
+                    [
+                        "Bit64",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Word",
+                "comment": " Unsigned integers of size 32 or 64 bits.\n\n  - `W` a \"word\" of size 32 bits\n  - `D` a \"double word\" of size 64 bits\n  - `Mismatch` value of any operation that mixes word types\n\nThese constructors are provided as a convenience, but are unsafe.\nUse `fromBytes` or `fromUTF8` to safely create arrays of words of the same type.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "W",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "D",
+                        [
+                            "Basics.Int",
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "Mismatch",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "add",
+                "comment": " Modulo adds two words of the same type.\n\n    import Word.Hex as Hex\n\n    add (W 0x80000000) (W 0x7FFFFFFF) |> Hex.fromWord\n    --> \"ffffffff\"\n\n    add (W 0x80000000) (W 0x80000003) |> Hex.fromWord\n    --> \"00000003\"\n\n    add (D 0 0xFFFFFFFF) (D 0 1) |> Hex.fromWord\n    --> \"0000000100000000\"\n\n    add (D 0xFFFFFFFF 0xFFFFFFFF) (D 0 2) |> Hex.fromWord\n    --> \"0000000000000001\"\n\n    add (W 0) (D 0 0)\n    --> Mismatch\n\n",
+                "type": "Word.Word -> Word.Word -> Word.Word"
+            },
+            {
+                "name": "and",
+                "comment": " Bitwise and.\n\n    import Word.Hex as Hex\n\n    and\n        (W 0xFF00FF00)\n        (W 0xFFFF0000) |> Hex.fromWord\n    --> \"ff000000\"\n\n    and\n        (D 0xFF00FF00 0xFFFF0000)\n        (D 0xFFFF0000 0xFF00FF00) |> Hex.fromWord\n    --> \"ff000000ff000000\"\n\n",
+                "type": "Word.Word -> Word.Word -> Word.Word"
+            },
+            {
+                "name": "complement",
+                "comment": " Bitwise complement.\n\n    import Word.Hex as Hex\n\n    complement\n        (W 0x00FF00FF) |> Hex.fromWord\n    --> \"ff00ff00\"\n\n    complement\n        (D 0x00FF00FF 0x00FF00FF) |> Hex.fromWord\n    --> \"ff00ff00ff00ff00\"\n\n",
+                "type": "Word.Word -> Word.Word"
+            },
+            {
+                "name": "fromBytes",
+                "comment": " Convert a list of bytes to an array of words of the given size.\n\n    import Word.Hex as Hex\n\n    fromBytes Bit32 [ 0xDE, 0xAD, 0xBE, 0xEF ]\n        |> Hex.fromWordArray\n    --> \"deadbeef\"\n\n    fromBytes Bit32\n        [ 0xDE, 0xAD, 0xBE, 0xEF\n        , 0x01, 0x23, 0x45, 0x67\n        ]\n        |> Hex.fromWordArray\n    --> \"deadbeef01234567\"\n\n    fromBytes Bit64\n        [ 0xDE, 0xAD, 0xBE, 0xEF\n        , 0x01, 0x23, 0x45, 0x67\n        ]\n        |> Hex.fromWordArray\n    --> \"deadbeef01234567\"\n\n",
+                "type": "Word.Size -> List.List Basics.Int -> Array.Array Word.Word"
+            },
+            {
+                "name": "fromUTF8",
+                "comment": " Convert a UTF8 string to an array of words of the given size.\n\n    import Word.Hex as Hex\n\n    fromUTF8 Bit32 \"I ❤ UTF strings!\" |> Hex.fromWordArray\n    --> [ \"4920e29d\"  -- 'I', ' ', 226, 157\n    --> , \"a4205554\"  -- 164, ' ', 'U', 'T'\n    --> , \"46207374\"  -- 'F', ' ', 's', 't'\n    --> , \"72696e67\"  -- 'r', 'i', 'n', 'g'\n    --> , \"73210000\"  -- 's', '!'\n    --> ] |> String.join \"\"\n\n    fromUTF8 Bit64 \"I ❤ UTF strings!\" |> Hex.fromWordArray\n    --> [ \"4920e29d\", \"a4205554\"  -- 'I', ' ', 226, 157, 164, ' ', 'U', 'T'\n    --> , \"46207374\", \"72696e67\"  -- 'F', ' ', 's', 't', 'r', 'i', 'n', 'g'\n    --> , \"73210000\", \"00000000\"  -- 's', '!'\n    --> ] |> String.join \"\"\n\n",
+                "type": "Word.Size -> String.String -> Array.Array Word.Word"
+            },
+            {
+                "name": "rotateLeftBy",
+                "comment": " Rotate bits to the left by the given offset.\n\n[[[[[[[[[[[[https://en.wikipedia.org/wiki/Bitwise\\_operation#Rotate\\_no\\_carry](https://en.wikipedia.org/wiki/Bitwise_operation#Rotate_no_carry)](https://en.wikipedia.org/wiki/Bitwise_operation#Rotate_no_carry)](https://en.wikipedia.org/wiki/Bitwise_operation#Rotate_no_carry)](https://en.wikipedia.org/wiki/Bitwise_operation#Rotate_no_carry)](https://en.wikipedia.org/wiki/Bitwise_operation#Rotate_no_carry)](https://en.wikipedia.org/wiki/Bitwise_operation#Rotate_no_carry)](https://en.wikipedia.org/wiki/Bitwise_operation#Rotate_no_carry)](https://en.wikipedia.org/wiki/Bitwise_operation#Rotate_no_carry)](https://en.wikipedia.org/wiki/Bitwise_operation#Rotate_no_carry)](https://en.wikipedia.org/wiki/Bitwise_operation#Rotate_no_carry)](https://en.wikipedia.org/wiki/Bitwise_operation#Rotate_no_carry)](https://en.wikipedia.org/wiki/Bitwise_operation#Rotate_no_carry)\n\n    import Word.Hex as Hex\n\n    rotateLeftBy 4 (W 0xDEADBEEF) |> Hex.fromWord\n    --> \"eadbeefd\"\n\n    rotateLeftBy 4 (D 0xDDEEAADD 0xBBEEAAFF) |> Hex.fromWord\n    --> \"deeaaddbbeeaaffd\"\n\n    rotateLeftBy 7 Mismatch\n    --> Mismatch\n\n",
+                "type": "Basics.Int -> Word.Word -> Word.Word"
+            },
+            {
+                "name": "rotateRightBy",
+                "comment": " Rotate bits to the right by the given offset.\n\n[[[[[[[[[[[[https://en.wikipedia.org/wiki/Bitwise\\_operation#Rotate\\_no\\_carry](https://en.wikipedia.org/wiki/Bitwise_operation#Rotate_no_carry)](https://en.wikipedia.org/wiki/Bitwise_operation#Rotate_no_carry)](https://en.wikipedia.org/wiki/Bitwise_operation#Rotate_no_carry)](https://en.wikipedia.org/wiki/Bitwise_operation#Rotate_no_carry)](https://en.wikipedia.org/wiki/Bitwise_operation#Rotate_no_carry)](https://en.wikipedia.org/wiki/Bitwise_operation#Rotate_no_carry)](https://en.wikipedia.org/wiki/Bitwise_operation#Rotate_no_carry)](https://en.wikipedia.org/wiki/Bitwise_operation#Rotate_no_carry)](https://en.wikipedia.org/wiki/Bitwise_operation#Rotate_no_carry)](https://en.wikipedia.org/wiki/Bitwise_operation#Rotate_no_carry)](https://en.wikipedia.org/wiki/Bitwise_operation#Rotate_no_carry)](https://en.wikipedia.org/wiki/Bitwise_operation#Rotate_no_carry)\n\n    import Word.Hex as Hex\n\n    rotateRightBy 4 (W 0xDEADBEEF) |> Hex.fromWord\n    --> \"fdeadbee\"\n\n    rotateRightBy 4 (D 0xDDEEAADD 0xBBEEAAFF) |> Hex.fromWord\n    --> \"fddeeaaddbbeeaaf\"\n\n    rotateRightBy 7 Mismatch\n    --> Mismatch\n\n",
+                "type": "Basics.Int -> Word.Word -> Word.Word"
+            },
+            {
+                "name": "shiftRightZfBy",
+                "comment": " Shift bits to the right by a given offset, filling new bits with zeros.\n\n[[[[[[[[[[[[https://en.wikipedia.org/wiki/Bitwise\\_operation#Logical\\_shift](https://en.wikipedia.org/wiki/Bitwise_operation#Logical_shift)](https://en.wikipedia.org/wiki/Bitwise_operation#Logical_shift)](https://en.wikipedia.org/wiki/Bitwise_operation#Logical_shift)](https://en.wikipedia.org/wiki/Bitwise_operation#Logical_shift)](https://en.wikipedia.org/wiki/Bitwise_operation#Logical_shift)](https://en.wikipedia.org/wiki/Bitwise_operation#Logical_shift)](https://en.wikipedia.org/wiki/Bitwise_operation#Logical_shift)](https://en.wikipedia.org/wiki/Bitwise_operation#Logical_shift)](https://en.wikipedia.org/wiki/Bitwise_operation#Logical_shift)](https://en.wikipedia.org/wiki/Bitwise_operation#Logical_shift)](https://en.wikipedia.org/wiki/Bitwise_operation#Logical_shift)](https://en.wikipedia.org/wiki/Bitwise_operation#Logical_shift)\n\n    import Word.Hex as Hex\n\n    shiftRightZfBy 9 (W 0xFFFF) |> Hex.fromWord\n    --> \"0000007f\"\n\n    shiftRightZfBy 32 (W 0xFFFF) |> Hex.fromWord\n    --> \"00000000\"\n\n    shiftRightZfBy 8 (D 0x01234567 0x89abcdef) |> Hex.fromWord\n    --> \"000123456789abcd\"\n\n    shiftRightZfBy 4 Mismatch\n    --> Mismatch\n\n",
+                "type": "Basics.Int -> Word.Word -> Word.Word"
+            },
+            {
+                "name": "sizeInBytes",
+                "comment": " Convert the given word size to a byte count.\n",
+                "type": "Word.Size -> Basics.Int"
+            },
+            {
+                "name": "toBytes",
+                "comment": " Convert an array of words to a list of bytes.\n\n    import Array\n\n    [ W 0 ] |> Array.fromList |> toBytes\n    --> [ 0, 0, 0, 0 ]\n\n    [ D 0 0 ] |> Array.fromList |> toBytes\n    --> [ 0, 0, 0, 0, 0, 0, 0, 0 ]\n\n    [ W 16843010 ] |> Array.fromList |> toBytes\n    --> [ 1, 1, 1, 2 ]\n\n",
+                "type": "Array.Array Word.Word -> List.List Basics.Int"
+            },
+            {
+                "name": "xor",
+                "comment": " Bitwise xor.\n\n    import Word.Hex as Hex\n\n    Word.xor\n        (W 0xFF00FF00)\n        (W 0x00FFFF00) |> Hex.fromWord\n    --> \"ffff0000\"\n\n    Word.xor\n        (D 0xFF00FF00 0x00FFFF00)\n        (D 0x00FFFF00 0xFF00FF00) |> Hex.fromWord\n    --> \"ffff0000ffff0000\"\n\n",
+                "type": "Word.Word -> Word.Word -> Word.Word"
+            },
+            {
+                "name": "zero",
+                "comment": " The integer zero as a word of the given size.\n",
+                "type": "Word.Size -> Word.Word"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Word.Bytes",
+        "comment": " Helper functions for creating lists of bytes.\n\n@docs ByteCount, fromInt, fromUTF8\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "ByteCount",
+                "comment": " Total number of bytes\n",
+                "args": [],
+                "type": "Basics.Int"
+            }
+        ],
+        "values": [
+            {
+                "name": "fromInt",
+                "comment": " Split an integer value into a list of bytes with the given length.\n\n    import Word.Hex as Hex\n\n    fromInt 4 0 |> Hex.fromByteList\n    --> \"00000000\"\n\n    fromInt 4 1 |> Hex.fromByteList\n    --> \"00000001\"\n\n    fromInt 2 2 |> Hex.fromByteList\n    --> \"0002\"\n\n    fromInt 1 255 |> Hex.fromByteList\n    --> \"ff\"\n\n    fromInt 4 256 |> Hex.fromByteList\n    --> \"00000100\"\n\n    fromInt 4 65537 |> Hex.fromByteList\n    --> \"00010001\"\n\n    fromInt 4 16777216 |> Hex.fromByteList\n    --> \"01000000\"\n\n    fromInt 8 344 |> Hex.fromByteList\n    --> \"0000000000000158\"\n\n    fromInt 16 344 |> Hex.fromByteList\n    --> \"00000000000000000000000000000158\"\n\n",
+                "type": "Word.Bytes.ByteCount -> Basics.Int -> List.List Basics.Int"
+            },
+            {
+                "name": "fromUTF8",
+                "comment": " Convert a character into a list of bytes\n\n    import Word.Hex as Hex\n\n    fromUTF8 \"a\" |> Hex.fromByteList\n    --> \"61\"\n\n    fromUTF8 \"I ❤ cheese\"\n    --> [ 73, 32,\n    -->   226, 157, 164,\n    -->   32, 99, 104, 101, 101, 115, 101 ]\n\n    fromUTF8 \"dѐf\"\n    --> [ 100, 209, 144, 102 ]\n\n",
+                "type": "String.String -> List.List Basics.Int"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Word.Hex",
+        "comment": " Convert to and from strings of hexadecimal characters.\n\n## From Other to Hex\n\n@docs CharCount, fromInt, fromByte, fromWord, fromByteList, fromWordArray\n\n\n## From Hex to Other\n\n@docs toByteList, toWordArray\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "CharCount",
+                "comment": " When converting from integers, the number characters in the hex string.\n",
+                "args": [],
+                "type": "Basics.Int"
+            }
+        ],
+        "values": [
+            {
+                "name": "fromByte",
+                "comment": " Convert a byte to a hex string of length 2.\n\n    fromByte 0x7B\n    --> \"7b\"\n\n",
+                "type": "Basics.Int -> String.String"
+            },
+            {
+                "name": "fromByteList",
+                "comment": " Convert a list of bytes to a string of hexadecimal characters.\n\n    fromByteList [ 0xde, 0xad, 0xbe, 0xef ]\n    --> \"deadbeef\"\n\n",
+                "type": "List.List Basics.Int -> String.String"
+            },
+            {
+                "name": "fromInt",
+                "comment": " Convert an integer to a string of hexadecimal characters.\n\n    fromInt 1 10\n    --> \"a\"\n\n    fromInt 8 0x42BEEF\n    --> \"0042beef\"\n\n",
+                "type": "Word.Hex.CharCount -> Basics.Int -> String.String"
+            },
+            {
+                "name": "fromWord",
+                "comment": " Convert a list of words to a string of hexadecimal characters.\n\n    import Word exposing (Word(..))\n\n    W 16 |> fromWord\n    --> \"00000010\"\n\n    D 0xDEADBEEF 0x00112233 |> fromWord\n    --> \"deadbeef00112233\"\n\n",
+                "type": "Word.Word -> String.String"
+            },
+            {
+                "name": "fromWordArray",
+                "comment": " Convert an array of words to a string of hexadecimal characters.\n\n    import Word exposing (Word(..))\n\n    Word.fromUTF8 Word.Bit32 \"I ❤ UTF strings!\" |> fromWordArray\n    --> \"4920e29da42055544620737472696e6773210000\"\n\n",
+                "type": "Array.Array Word.Word -> String.String"
+            },
+            {
+                "name": "toByteList",
+                "comment": " Convert a string of hexadecimal values to a list of bytes.\n\nFails for non-hex strings.\n\n    toByteList \"not hex\"\n    --> []\n\nEach byte requires 2 characters, so odd length strings fail\n\n    toByteList \"000\"\n    --> []\n\nSome passing examples\n\n    toByteList \"00\"\n    --> [ 0x00 ]\n\n    toByteList \"010203040506DEADbeef\"\n    --> [ 0x01, 0x02, 0x03, 0x04\n    --> , 0x05, 0x06, 0xDE, 0xAD\n    --> , 0xBE, 0xEF\n    --> ]\n\n",
+                "type": "String.String -> List.List Basics.Int"
+            },
+            {
+                "name": "toWordArray",
+                "comment": " Convert a string of hexadecimal values to an array of words.\n\n    import Word exposing (Word(..))\n\n    toWordArray Word.Bit32 \"DEADBEEFdeadbeef\" |> fromWordArray\n    --> \"deadbeefdeadbeef\"\n\n",
+                "type": "Word.Size -> String.String -> Array.Array Word.Word"
+            }
+        ],
+        "binops": []
+    }
+]

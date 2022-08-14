@@ -1,0 +1,128 @@
+[
+    {
+        "name": "Iso8601",
+        "comment": " Format a posix time to a ISO8601 String.\n\nNone of the generated Strings include timezone postfix.\n\n\n# UTC strings\n\n@docs toUtcString\n\n@docs toUtcDateString, toUtcTimeString, toUtcTimeMilliString\n@docs toUtcDateTimeString, toUtcDateTimeMilliString\n\n\n# Custom timezone\n\n@docs toString\n\n@docs toDateString, toTimeString, toTimeMilliString\n@docs toDateTimeString, toDateTimeMilliString\n\n\n## Mode for different precission\n\n@docs Mode\n\n\n# Custom format helper\n\n@docs toTuple\n\n",
+        "unions": [
+            {
+                "name": "Mode",
+                "comment": " The precission of the resulting String can be defined by the Mode parameter\n\nThe resulting string will have the following format\n\n  - Year: \"YYYY\"\n  - Month: \"YYYY-MM\"\n  - Day: \"YYYY-MM-DD\"\n  - Hour: \"YYYY-MM-DDThh\"\n  - Minute: \"YYYY-MM-DDThh:mm\"\n  - Second: \"YYYY-MM-DDThh:mm:ss\"\n  - Milli: \"YYYY-MM-DDThh:mm:ss.sss\"\n  - HourOnly: \"hh\"\n  - HourMinute: \"hh:mm\"\n  - HourSecond: \"hh:mm:ss\"\n  - HourMilli: \"hh:mm:ss.sss\"\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Year",
+                        []
+                    ],
+                    [
+                        "Month",
+                        []
+                    ],
+                    [
+                        "Day",
+                        []
+                    ],
+                    [
+                        "Hour",
+                        []
+                    ],
+                    [
+                        "Minute",
+                        []
+                    ],
+                    [
+                        "Second",
+                        []
+                    ],
+                    [
+                        "Milli",
+                        []
+                    ],
+                    [
+                        "HourOnly",
+                        []
+                    ],
+                    [
+                        "HourMinute",
+                        []
+                    ],
+                    [
+                        "HourSecond",
+                        []
+                    ],
+                    [
+                        "HourMilli",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toDateString",
+                "comment": " Format a date (\"YYYY-MM-DD\")\n",
+                "type": "Time.Zone -> Time.Posix -> String.String"
+            },
+            {
+                "name": "toDateTimeMilliString",
+                "comment": " Format a time including millis (\"YYYY-MM-DDThh:mm:ss.sss\")\n",
+                "type": "Time.Zone -> Time.Posix -> String.String"
+            },
+            {
+                "name": "toDateTimeString",
+                "comment": " Format a date time (\"YYYY-MM-DDThh:mm:ss\")\n",
+                "type": "Time.Zone -> Time.Posix -> String.String"
+            },
+            {
+                "name": "toString",
+                "comment": " Convert a posix time into a ISO8601 string\n",
+                "type": "Iso8601.Mode -> Time.Zone -> Time.Posix -> String.String"
+            },
+            {
+                "name": "toTimeMilliString",
+                "comment": " Format a time including millis (\"hh:mm:ss.sss\")\n",
+                "type": "Time.Zone -> Time.Posix -> String.String"
+            },
+            {
+                "name": "toTimeString",
+                "comment": " Format a time (\"hh:mm:ss\")\n",
+                "type": "Time.Zone -> Time.Posix -> String.String"
+            },
+            {
+                "name": "toTuple",
+                "comment": " Get a tuple containg strings for all date string parts\n\nThis can be used to quickly imlement your own format:\n\n    timeToString time =\n        let\n            ( ( year, month, day ), ( hour, minute, second ), ms ) =\n                toTuple time\n        in\n        year ++ \"/\" ++ month ++ \"/\" ++ day ++ \" \" ++ hour ++ \"_\" ++ minute ++ \"!\"\n\n",
+                "type": "Time.Zone -> Time.Posix -> ( ( String.String, String.String, String.String ), ( String.String, String.String, String.String ), String.String )"
+            },
+            {
+                "name": "toUtcDateString",
+                "comment": " Format a date (\"YYYY-MM-DD\")\n",
+                "type": "Time.Posix -> String.String"
+            },
+            {
+                "name": "toUtcDateTimeMilliString",
+                "comment": " Format a time including millis (\"YYYY-MM-DDThh:mm:ss.sss\")\n",
+                "type": "Time.Posix -> String.String"
+            },
+            {
+                "name": "toUtcDateTimeString",
+                "comment": " Format a date time (\"YYYY-MM-DDThh:mm:ss\")\n",
+                "type": "Time.Posix -> String.String"
+            },
+            {
+                "name": "toUtcString",
+                "comment": " Format a String without timezone offset\n",
+                "type": "Iso8601.Mode -> Time.Posix -> String.String"
+            },
+            {
+                "name": "toUtcTimeMilliString",
+                "comment": " Format a time including millis (\"hh:mm:ss.sss\")\n",
+                "type": "Time.Posix -> String.String"
+            },
+            {
+                "name": "toUtcTimeString",
+                "comment": " Format a time (\"hh:mm:ss\")\n",
+                "type": "Time.Posix -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

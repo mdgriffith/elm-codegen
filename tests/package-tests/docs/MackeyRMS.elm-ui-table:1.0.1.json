@@ -1,0 +1,247 @@
+[
+    {
+        "name": "Table",
+        "comment": " Flexible helpers for constructing `Table`s\n\n\n# Construct a Table from a List of records with an id key\n\n@docs init, sort, preFilter, filtered, Table\n\n\n# Prepare the View for a Table giving it a Msg constructor that takes a Table\n\n@docs View, lined, build\n\n\n# Takes a Table returns Html\n\n@docs view\n\n\n# Phantom helpers\n\n@docs WithAbilities, attributes, headRowAttributes, bodyRowAttributes\n@docs withRowBorders, withStickyHeader\n@docs InfiniteListConf, RowHeight, WindowHeight, infinite\n\n\n# Filtering\n\n@docs keep\n\n\n# Accessors\n\n@docs records\n\n",
+        "unions": [
+            {
+                "name": "Table",
+                "comment": " ",
+                "args": [
+                    "record"
+                ],
+                "cases": []
+            },
+            {
+                "name": "View",
+                "comment": " ",
+                "args": [
+                    "c",
+                    "ctx",
+                    "record",
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "InfiniteListConf",
+                "comment": " ",
+                "args": [],
+                "type": "{ rowHeight : Table.RowHeight, containerHeight : Maybe.Maybe Table.WindowHeight, howManyLengthsBelowTheFold : Basics.Int }"
+            },
+            {
+                "name": "RowHeight",
+                "comment": " ",
+                "args": [],
+                "type": "Length.Length"
+            },
+            {
+                "name": "WindowHeight",
+                "comment": " ",
+                "args": [],
+                "type": "Length.Length"
+            },
+            {
+                "name": "WithAbilities",
+                "comment": " ",
+                "args": [],
+                "type": "{ can_add_table_attributes : (), can_add_header_row_attributes : (), can_add_body_row_attributes : (), can_add_row_borders : () }"
+            }
+        ],
+        "values": [
+            {
+                "name": "attributes",
+                "comment": " ",
+                "type": "List.List (Element.WithContext.Attribute ctx msg) -> Table.View { c | can_add_table_attributes : () } ctx record msg -> Table.View c ctx record msg"
+            },
+            {
+                "name": "bodyRowAttributes",
+                "comment": " ",
+                "type": "(record -> List.List (Element.WithContext.Attribute ctx msg)) -> Table.View { c | can_add_body_row_attributes : () } ctx record msg -> Table.View c ctx record msg"
+            },
+            {
+                "name": "build",
+                "comment": " Make a raw elm-ui native table\n",
+                "type": "{ idPrefix : String.String } -> (Table.Table record -> msg) -> Table.Table record -> List.List (Table.Column.Column ctx record msg) -> Table.View Table.WithAbilities ctx record msg"
+            },
+            {
+                "name": "filtered",
+                "comment": " ",
+                "type": "Maybe.Maybe (record -> Basics.Bool) -> List.List (Table.Column.Column ctx record msg) -> Table.Table record -> List.List record"
+            },
+            {
+                "name": "headRowAttributes",
+                "comment": " ",
+                "type": "List.List (Element.WithContext.Attribute ctx msg) -> Table.View { c | can_add_header_row_attributes : () } ctx record msg -> Table.View c ctx record msg"
+            },
+            {
+                "name": "infinite",
+                "comment": " ",
+                "type": "Table.InfiniteListConf -> Table.View c ctx record msg -> Table.View c ctx record msg"
+            },
+            {
+                "name": "init",
+                "comment": " ",
+                "type": "List.List r -> Table.Table r"
+            },
+            {
+                "name": "keep",
+                "comment": " ",
+                "type": "(r -> Basics.Bool) -> Table.View c ctx r msg -> Table.View c ctx r msg"
+            },
+            {
+                "name": "lined",
+                "comment": " Make an elm-ui based table with sane defaults for a common use case\n",
+                "type": "{ idPrefix : String.String } -> (Table.Table record -> msg) -> Table.Table record -> List.List (Table.Column.Column ctx record msg) -> Table.View { can_add_body_row_attributes : (), can_add_header_row_attributes : (), can_add_table_attributes : () } ctx record msg"
+            },
+            {
+                "name": "preFilter",
+                "comment": " ",
+                "type": "Table.Column.Column ctx r msg -> String.String -> Table.Table r -> Table.Table r"
+            },
+            {
+                "name": "records",
+                "comment": " ",
+                "type": "Table.Table record -> List.List record"
+            },
+            {
+                "name": "sort",
+                "comment": " ",
+                "type": "Table.Column.Column ctx record msg -> Table.Table record -> Table.Table record"
+            },
+            {
+                "name": "view",
+                "comment": " ",
+                "type": "Table.View c ctx record msg -> Element.WithContext.Element ctx msg"
+            },
+            {
+                "name": "withRowBorders",
+                "comment": " ",
+                "type": "Table.View { c | can_add_row_borders : () } ctx record msg -> Table.View c ctx record msg"
+            },
+            {
+                "name": "withStickyHeader",
+                "comment": " ",
+                "type": "Table.View c ctx record msg -> Table.View c ctx record msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Table.Column",
+        "comment": " Flexible helpers for constructing `Table.Column`s\n\n\n# Primary Constructors\n\n@docs Column, date, dateTime, float, int, string, ellipsis, custom\n\n\n# Extended Constructors\n\n@docs date_, dateTime_, int_, string_, custom_\n\n\n# Exposing Type Constructors\n\n@docs Sorter\n\n\n# Column Modifiers\n\n@docs keep, tooltip, withSort\n\n",
+        "unions": [
+            {
+                "name": "Sorter",
+                "comment": " ",
+                "args": [
+                    "record"
+                ],
+                "cases": [
+                    [
+                        "Sorted",
+                        [
+                            "String.String",
+                            "List.List record -> List.List record"
+                        ]
+                    ],
+                    [
+                        "Unsorted",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Column",
+                "comment": " ",
+                "args": [
+                    "ctx",
+                    "record",
+                    "msg"
+                ],
+                "type": "{ title : String.String, startingWidth : Maybe.Maybe Element.WithContext.Length, sort : Table.Column.Sorter record, body : record -> Element.WithContext.Element ctx msg, toStr : record -> String.String, filter : Maybe.Maybe (String.String -> String.String -> Basics.Bool), encode : record -> Json.Encode.Value, tooltip : Maybe.Maybe String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "custom",
+                "comment": " SIMPLE\n",
+                "type": "String.String -> Maybe.Maybe Element.WithContext.Length -> (record -> Element.WithContext.Element ctx msg) -> Table.Column.Column ctx record msg"
+            },
+            {
+                "name": "custom_",
+                "comment": " COMPLEX\n",
+                "type": "String.String -> Maybe.Maybe Element.WithContext.Length -> (record -> Element.WithContext.Element ctx msg) -> (record -> Json.Encode.Value) -> Table.Column.Column ctx record msg"
+            },
+            {
+                "name": "date",
+                "comment": " SIMPLE\n",
+                "type": "String.String -> Maybe.Maybe Element.WithContext.Length -> (record -> Time.Posix) -> Table.Column.Column { ctx | tz : Time.Zone } record msg"
+            },
+            {
+                "name": "dateTime",
+                "comment": " SIMPLE\n",
+                "type": "String.String -> Maybe.Maybe Element.WithContext.Length -> (record -> Time.Posix) -> Table.Column.Column { ctx | tz : Time.Zone } record msg"
+            },
+            {
+                "name": "dateTime_",
+                "comment": " COMPLEX\n",
+                "type": "String.String -> Maybe.Maybe Element.WithContext.Length -> (record -> Time.Posix) -> Table.Column.Column { ctx | tz : Time.Zone } record msg"
+            },
+            {
+                "name": "date_",
+                "comment": " COMPLEX\n",
+                "type": "String.String -> Maybe.Maybe Element.WithContext.Length -> (record -> Time.Posix) -> (record -> Element.WithContext.Element { ctx | tz : Time.Zone } msg) -> Table.Column.Column { ctx | tz : Time.Zone } record msg"
+            },
+            {
+                "name": "ellipsis",
+                "comment": " ",
+                "type": "String.String -> Maybe.Maybe Element.WithContext.Length -> (record -> String.String) -> Table.Column.Column ctx record msg"
+            },
+            {
+                "name": "float",
+                "comment": " SIMPLE\n",
+                "type": "String.String -> Maybe.Maybe Element.WithContext.Length -> (record -> Basics.Float) -> Table.Column.Column ctx record msg"
+            },
+            {
+                "name": "int",
+                "comment": " SIMPLE\n",
+                "type": "String.String -> Maybe.Maybe Element.WithContext.Length -> (record -> Basics.Int) -> Table.Column.Column ctx record msg"
+            },
+            {
+                "name": "int_",
+                "comment": " COMPLEX\n",
+                "type": "String.String -> Maybe.Maybe Element.WithContext.Length -> (record -> Basics.Int) -> (record -> Element.WithContext.Element ctx msg) -> Table.Column.Column ctx record msg"
+            },
+            {
+                "name": "keep",
+                "comment": " ",
+                "type": "(String.String -> String.String -> Basics.Bool) -> Table.Column.Column ctx record msg -> Table.Column.Column ctx record msg"
+            },
+            {
+                "name": "string",
+                "comment": " SIMPLE\n",
+                "type": "String.String -> Maybe.Maybe Element.WithContext.Length -> (record -> String.String) -> Table.Column.Column ctx record msg"
+            },
+            {
+                "name": "string_",
+                "comment": " COMPLEX\n",
+                "type": "String.String -> Maybe.Maybe Element.WithContext.Length -> (record -> String.String) -> (record -> Element.WithContext.Element ctx msg) -> (record -> Json.Encode.Value) -> Table.Column.Column ctx record msg"
+            },
+            {
+                "name": "tooltip",
+                "comment": " ",
+                "type": "String.String -> Table.Column.Column ctx record msg -> Table.Column.Column ctx record msg"
+            },
+            {
+                "name": "withSort",
+                "comment": " ",
+                "type": "(record -> comparable) -> Table.Column.Column ctx record msg -> Table.Column.Column ctx record msg"
+            }
+        ],
+        "binops": []
+    }
+]

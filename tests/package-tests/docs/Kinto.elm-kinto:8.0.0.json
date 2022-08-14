@@ -1,0 +1,368 @@
+[
+    {
+        "name": "Kinto",
+        "comment": " [Kinto](http://www.kinto-storage.org/) client to ease communicating with\nthe REST API.\n\nKinto is the backend for your next application. It's a generic JSON document\nstore with sharing and synchronisation capabilities. It's open source. It's\neasy to deploy. You can host it yourself, own your data and keep it out of\nsilos.\n\n\n# Configure a client and resources\n\n@docs Client, client, Auth, headersForAuth, Resource, bucketResource, collectionResource, recordResource, decodeData, encodeData, errorDecoder, errorToString\n\n\n# Creating requests\n\nYou create requests on either an item or a plural (list) endpoint.\n[Kinto concepts](http://kinto.readthedocs.io/en/stable/concepts.html) explain\nthat in details.\n\nPlural (list) endpoints are:\n\n  - buckets: `buckets/`\n  - collections: `buckets/:bucketId/collections/`\n  - records: `buckets/:bucketId/collections/:collectionId/records/`\n\nItem endpoints are:\n\n  - bucket: `buckets/:bucketId`\n  - collection: `buckets/:bucketId/collections/:collectionId`\n  - record: `buckets/:bucketId/collections/:collectionId/records/:recordId`\n\n@docs Request, withQueryParam\n\n\n## Single item requests\n\n@docs get, create, update, replace, delete\n\n\n## Resource list requests\n\n@docs getList, count\n\n\n### Paginated list\n\n@docs Pager, emptyPager, updatePager, loadNextPage\n\n\n# Sorting, limiting, filtering\n\n@docs sort, limit, filter, Filter\n\n\n# Types and Errors\n\n@docs Endpoint, endpointUrl, ErrorDetail, Error, expectJson, expectPagerJson\n\n\n# Sending requests\n\n@docs send\n\n",
+        "unions": [
+            {
+                "name": "Auth",
+                "comment": " A type for authentication\n\n    Basic \"username\" \"password\"\n\n    Bearer \"<token>\"\n\n    Custom \"customType\" \"customString\"\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NoAuth",
+                        []
+                    ],
+                    [
+                        "Basic",
+                        [
+                            "String.String",
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Bearer",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Custom",
+                        [
+                            "String.String",
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Endpoint",
+                "comment": " A type for Kinto API endpoints.\n\n    RecordEndpoint \"bucket-name\" \"collection-name\" \"item-id\"\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "RootEndpoint",
+                        []
+                    ],
+                    [
+                        "BucketListEndpoint",
+                        []
+                    ],
+                    [
+                        "BucketEndpoint",
+                        [
+                            "Kinto.BucketName"
+                        ]
+                    ],
+                    [
+                        "CollectionListEndpoint",
+                        [
+                            "Kinto.BucketName"
+                        ]
+                    ],
+                    [
+                        "CollectionEndpoint",
+                        [
+                            "Kinto.BucketName",
+                            "Kinto.CollectionName"
+                        ]
+                    ],
+                    [
+                        "RecordListEndpoint",
+                        [
+                            "Kinto.BucketName",
+                            "Kinto.CollectionName"
+                        ]
+                    ],
+                    [
+                        "RecordEndpoint",
+                        [
+                            "Kinto.BucketName",
+                            "Kinto.CollectionName",
+                            "Kinto.RecordId"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Error",
+                "comment": " A type for all errors that the elm-client may return.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "ServerError",
+                        [
+                            "Kinto.StatusCode",
+                            "Kinto.StatusMsg",
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "KintoError",
+                        [
+                            "Kinto.StatusCode",
+                            "Kinto.StatusMsg",
+                            "Kinto.ErrorDetail"
+                        ]
+                    ],
+                    [
+                        "NetworkError",
+                        [
+                            "Http.Response String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Filter",
+                "comment": " A type for filtering, used with `filter`\n",
+                "args": [],
+                "cases": [
+                    [
+                        "EQUAL",
+                        [
+                            "String.String",
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "MIN",
+                        [
+                            "String.String",
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "MAX",
+                        [
+                            "String.String",
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "LT",
+                        [
+                            "String.String",
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "GT",
+                        [
+                            "String.String",
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "IN",
+                        [
+                            "String.String",
+                            "List.List String.String"
+                        ]
+                    ],
+                    [
+                        "NOT",
+                        [
+                            "String.String",
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "LIKE",
+                        [
+                            "String.String",
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "SINCE",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "BEFORE",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Client",
+                "comment": " A Kinto Client. Constructed using the `client` helper.\n",
+                "args": [],
+                "type": "{ baseUrl : String.String, headers : List.List ( String.String, String.String ) }"
+            },
+            {
+                "name": "ErrorDetail",
+                "comment": " A type for Kinto error details.\n",
+                "args": [],
+                "type": "{ errno : Basics.Int, message : String.String, code : Basics.Int, error : String.String }"
+            },
+            {
+                "name": "Pager",
+                "comment": " A stateful accumulator for a paginated list of objects.\n\n**Note:** as of 8.0.0, the `total` field has been removed from the record. You\nmust use the [`count`](#count) function to retrieve the total number of records.\n\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ client : Kinto.Client, objects : List.List a, decoder : Json.Decode.Decoder (List.List a), nextPage : Maybe.Maybe Kinto.Url }"
+            },
+            {
+                "name": "Request",
+                "comment": " A type describing a Kinto request. Basically an alias for an\n[elm-http-builder](https://package.elm-lang.org/packages/lukewestby/elm-http-builder/latest)\nrequest builder.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "HttpBuilder.RequestBuilder a"
+            },
+            {
+                "name": "Resource",
+                "comment": " A type for a Kinto resource. Usually constructed using one of `bucketResource`,\n`collectionResource` or `recordResource`.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ itemEndpoint : String.String -> Kinto.Endpoint, listEndpoint : Kinto.Endpoint, itemDecoder : Json.Decode.Decoder a, listDecoder : Json.Decode.Decoder (List.List a) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "bucketResource",
+                "comment": " A constructor for a bucket resource.\n\n    bucketResource bucketDecoder\n\n",
+                "type": "Json.Decode.Decoder a -> Kinto.Resource a"
+            },
+            {
+                "name": "client",
+                "comment": " A constructor for a `Client`.\n\n    client\n        \"https://kinto.dev.mozaws.net/v1/\"\n        (Basic \"username\" \"password\")\n\n",
+                "type": "Kinto.Url -> Kinto.Auth -> Kinto.Client"
+            },
+            {
+                "name": "collectionResource",
+                "comment": " A constructor for a collection resource.\n\n    collectionResource \"bucket-name\" collectionDecoder\n\n",
+                "type": "Kinto.BucketName -> Json.Decode.Decoder a -> Kinto.Resource a"
+            },
+            {
+                "name": "count",
+                "comment": " Count the number of records within a given collection\n\n    client\n        |> count resource CountReceived\n\n",
+                "type": "Kinto.Resource a -> (Result.Result Kinto.Error Basics.Int -> msg) -> Kinto.Client -> Kinto.Request msg"
+            },
+            {
+                "name": "create",
+                "comment": " Create a POST request on a plural endpoint:\n\n    client\n        |> create resource itemId data\n\n",
+                "type": "Kinto.Resource a -> Kinto.Body -> (Result.Result Kinto.Error a -> msg) -> Kinto.Client -> Kinto.Request msg"
+            },
+            {
+                "name": "decodeData",
+                "comment": " A decoder for a basic Kinto response.\n",
+                "type": "Json.Decode.Decoder a -> Json.Decode.Decoder a"
+            },
+            {
+                "name": "delete",
+                "comment": " Create a DELETE request on an item endpoint:\n\n    client\n        |> delete resource itemId\n\n",
+                "type": "Kinto.Resource a -> String.String -> (Result.Result Kinto.Error a -> msg) -> Kinto.Client -> Kinto.Request msg"
+            },
+            {
+                "name": "emptyPager",
+                "comment": " Initialize a `Pager`.\n\n    emptyPager resource\n\n",
+                "type": "Kinto.Client -> Kinto.Resource a -> Kinto.Pager a"
+            },
+            {
+                "name": "encodeData",
+                "comment": " An encoder for a basic Kinto query.\n",
+                "type": "Json.Encode.Value -> Json.Encode.Value"
+            },
+            {
+                "name": "endpointUrl",
+                "comment": " Get the full url to an endpoint.\n\n    endpointUrl \"https://kinto.dev.mozaws.net/v1/\" (RecordListEndpoint \"default\" \"test-items\")\n\n",
+                "type": "String.String -> Kinto.Endpoint -> Kinto.Url"
+            },
+            {
+                "name": "errorDecoder",
+                "comment": " A decoder for `ErrorDetail`. This is the kind of json message answered by Kinto when there's an error:\n\n    {\"errno\":104,\n     \"message\":\"Please authenticate yourself to use this endpoint.\",\n     \"code\":401,\n     \"error\":\"Unauthorized\"}\n\n",
+                "type": "Json.Decode.Decoder Kinto.ErrorDetail"
+            },
+            {
+                "name": "errorToString",
+                "comment": " Convert any Kinto.Error to a string\n",
+                "type": "Kinto.Error -> String.String"
+            },
+            {
+                "name": "expectJson",
+                "comment": " Extract an `Error` from an `Http.Error` or return the decoded value.\n",
+                "type": "(Result.Result Kinto.Error a -> msg) -> Json.Decode.Decoder a -> Http.Expect msg"
+            },
+            {
+                "name": "expectPagerJson",
+                "comment": " Extract an `Error` from an `Http.Error` or return a Pager for the decoded list.\n",
+                "type": "(Result.Result Kinto.Error (Kinto.Pager a) -> msg) -> Kinto.Client -> Json.Decode.Decoder (List.List a) -> Http.Expect msg"
+            },
+            {
+                "name": "filter",
+                "comment": " Add [filtering query parameters](http://kinto.readthedocs.io/en/stable/api/1.x/filtering.html) to the request sent to the Kinto server.\n\n    type Msg = TodosFetched (Result Kinto.Error (Kinto.pager Todo))\n\n    client\n        |> getList recordResource\n        |> filter (NOT \"title\" \"test\")\n        |> send TodosFetched\n\n",
+                "type": "Kinto.Filter -> Kinto.Request a -> Kinto.Request a"
+            },
+            {
+                "name": "get",
+                "comment": " Create a GET request on an item endpoint\n\n    client\n        |> get resource itemId\n\n",
+                "type": "Kinto.Resource a -> String.String -> (Result.Result Kinto.Error a -> msg) -> Kinto.Client -> Kinto.Request msg"
+            },
+            {
+                "name": "getList",
+                "comment": " Create a GET request on one of the plural endpoints. As lists are always\npossibly paginated, When the request is succesful, a `Pager` is attached to the\nreponse message.\n\n    client\n        |> getList resource\n\n",
+                "type": "Kinto.Resource a -> (Result.Result Kinto.Error (Kinto.Pager a) -> msg) -> Kinto.Client -> Kinto.Request msg"
+            },
+            {
+                "name": "headersForAuth",
+                "comment": " Return the header name and value for the given `Auth`.\n\n    headersForAuth (Basic \"username\" \"password\")\n\n",
+                "type": "Kinto.Auth -> ( String.String, String.String )"
+            },
+            {
+                "name": "limit",
+                "comment": " Add [limit query parameters](http://kinto.readthedocs.io/en/stable/api/1.x/pagination.html) to the request sent to the Kinto server.\n\n    type Msg = TodosFetched (Result Kinto.Error (Kinto.pager Todo))\n\n    client\n        |> getList recordResource\n        |> limit 10\n        |> send TodosFetched\n\n",
+                "type": "Basics.Int -> Kinto.Request a -> Kinto.Request a"
+            },
+            {
+                "name": "loadNextPage",
+                "comment": " If a pager has a `nextPage`, creates a GET request to retrieve the next page of objects.\nWhen the request is succesful, a `Pager` with new objects appended is attached to the\nreponse message.\n\n    client\n        |> loadNextPage pager\n\n",
+                "type": "Kinto.Pager a -> (Result.Result Kinto.Error (Kinto.Pager a) -> msg) -> Maybe.Maybe (Kinto.Request msg)"
+            },
+            {
+                "name": "recordResource",
+                "comment": " A constructor for a record resource.\n",
+                "type": "Kinto.BucketName -> Kinto.CollectionName -> Json.Decode.Decoder a -> Kinto.Resource a"
+            },
+            {
+                "name": "replace",
+                "comment": " Create a PUT request on an item endpoint:\n\n    client\n        |> replace resource itemId data\n\n",
+                "type": "Kinto.Resource a -> String.String -> Kinto.Body -> (Result.Result Kinto.Error a -> msg) -> Kinto.Client -> Kinto.Request msg"
+            },
+            {
+                "name": "send",
+                "comment": " Send a request to the Kinto server.\n\n    type Msg = TodoAdded (Result Kinto.Error Todo)\n\n    client\n        |> create resource data\n        |> send TodoAdded\n\n",
+                "type": "Kinto.Request a -> Platform.Cmd.Cmd a"
+            },
+            {
+                "name": "sort",
+                "comment": " Add [sorting query parameters](http://kinto.readthedocs.io/en/stable/api/1.x/sorting.html) to the request sent to the Kinto server.\n\n    type Msg = TodosFetched (Result Kinto.Error (Kinto.pager Todo))\n\n    client\n        |> getList recordResource\n        |> sort [\"title\", \"description\"]\n        |> send TodosFetched\n\n",
+                "type": "List.List String.String -> Kinto.Request a -> Kinto.Request a"
+            },
+            {
+                "name": "update",
+                "comment": " Create a PATCH request on an item endpoint:\n\n    client\n        |> update resource itemId data\n\n",
+                "type": "Kinto.Resource a -> String.String -> Kinto.Body -> (Result.Result Kinto.Error a -> msg) -> Kinto.Client -> Kinto.Request msg"
+            },
+            {
+                "name": "updatePager",
+                "comment": " Update a previous pager with data from a new one, appending new objects\nto the previous list.\n\n    updatePager nextPager previousPager\n\n",
+                "type": "Kinto.Pager a -> Kinto.Pager a -> Kinto.Pager a"
+            },
+            {
+                "name": "withQueryParam",
+                "comment": " Update the URL to add a query parameter.\n",
+                "type": "( String.String, String.String ) -> Kinto.Request a -> Kinto.Request a"
+            }
+        ],
+        "binops": []
+    }
+]

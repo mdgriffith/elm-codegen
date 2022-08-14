@@ -1,0 +1,51 @@
+[
+    {
+        "name": "AutoExpand",
+        "comment": " This library lets you use automatically expanding textareas in Elm.\nThis means the textarea grows in height until it reaches the maximum number of\nrows allowed and then becomes a scrollable box.\n\n\n# View\n\n@docs view\n\n\n# Configuration\n\n@docs Config, config, withAttribute\n\n\n# State\n\n@docs State, initState\n\n\n# Custom textareas\n\n@docs attributes\n\n",
+        "unions": [
+            {
+                "name": "Config",
+                "comment": " Configuration for your textarea, describing the look and feel.\n\n**Note:** Your `Config` should _never_ be held in your model.\nIt should only appear in `view` code.\n\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "State",
+                "comment": " Keeps track of how many rows we need.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "attributes",
+                "comment": " Get the attributes needed for a custom textarea. Note that you may\naccidentally break functionality by including some attributes twice.\n\n    textarea\n        ([ placeholder \"Custom...\" ]\n            ++ AutoExpand.attributes\n                myConfig\n                model.autoExpandState\n                model.textValue\n        )\n        []\n\n",
+                "type": "AutoExpand.Config msg -> AutoExpand.State -> String.String -> List.List (Html.Attribute msg)"
+            },
+            {
+                "name": "config",
+                "comment": " Create the `Config` for the auto expanding textarea.\n\nA typical configuration might look like this:\n\n    type Msg\n        = AutoExpandInput { textValue : String, state : AutoExpand.State }\n\n    config : AutoExpand.Config Msg\n    config =\n        AutoExpand.config\n            { onInput = AutoExpandInput\n            , padding = 10\n            , lineHeight = 20\n            , minRows = 1\n            , maxRows = 4\n            }\n\n",
+                "type": "{ onInput : { textValue : String.String, state : AutoExpand.State } -> msg, padding : Basics.Float, lineHeight : Basics.Float, minRows : Basics.Int, maxRows : Basics.Int } -> AutoExpand.Config msg"
+            },
+            {
+                "name": "initState",
+                "comment": " Sets up the initial `State` for the textarea using a `Config`.\n",
+                "type": "AutoExpand.Config msg -> AutoExpand.State"
+            },
+            {
+                "name": "view",
+                "comment": " Show the textarea on your page.\n\n    view : Model -> Html Msg\n    view model =\n        AutoExpand.view config model.autoExpandState model.textValue\n\n",
+                "type": "AutoExpand.Config msg -> AutoExpand.State -> String.String -> Html.Html msg"
+            },
+            {
+                "name": "withAttribute",
+                "comment": " Add your own attributes for the textarea.\n\n    myConfig\n        |> withAttribute (Html.Attributes.class \"chat-textbox\")\n        |> withAttribute (Html.Attributes.placeholder \"jane.dow@example.com\")\n\n",
+                "type": "Html.Attribute msg -> AutoExpand.Config msg -> AutoExpand.Config msg"
+            }
+        ],
+        "binops": []
+    }
+]

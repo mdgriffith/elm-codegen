@@ -1,0 +1,160 @@
+[
+    {
+        "name": "Json.Decode.Broken",
+        "comment": " Parse/decode broken JSON.\n\nWhen reading these docs or the code in this module, it might be useful to refer\nto [json.org] (for the diagrams) or [RFC 8259] (for the official word). The\ndiagrams especially.\n\n[json.org]: https://json.org/\n[RFC 8259]: https://tools.ietf.org/html/rfc8259\n\n\n# Parsing\n\nWhen successful, parsing returns a `Json.Encode.Value`. Use with with\n`Json.Decode.decodeValue` to extract the information you need into your\napplication's data structures.\n\n@docs parse\n\n\n# Custom parsing\n\nThis isn't going to get you total flexibility, but using [`Config`](#Config) and\nco. will at least help you put together a consistent parser for JSON-like data.\nBy consistent, I mean that you override, say, the number parser and it will be\napplied everywhere you might expect to see a number, be that at the top level,\nor nested within any depths of objects or arrays.\n\n@docs parseWith, Config, defaultConfig\n\n\n# Top-level parsers\n\nUsing this module, a strict parser for a JSON _value_ is defined by:\n\n    Parser.oneOf\n        [ object defaultConfig\n        , array defaultConfig\n        , string\n        , number\n        , true\n        , false\n        , null\n        ]\n\nAccording to the [specification][rfc7159], a JSON document is: optional\nwhitespace, a JSON value (that `oneOf …` expression above), then more optional\nwhitespace. That's what the [`json`](#json) parser does. Hence parsing a\ncompliant JSON document is:\n\n    Parser.run (json defaultConfig) \"…\"\n\nThose component parsers are also exposed, as are several other sub-parsers. Use\nthem as building blocks to compose a parser for broken JSON as you need. If you\nneed to parse non-compliant quoted strings, for example, you might start by\nlooking at [`stringLiteral`](#stringLiteral). It might even be best to copy just\nthe [`string`](#string) code from this module into your project, and use the\nother parsers in this module – [`object`](#object), [`array`](#array), and so on\n– to compose a new parser by creating a new [`Config`](#Config) or deriving from\n[`defaultConfig`](#defaultConfig).\n\n[rfc7159]: https://tools.ietf.org/html/rfc7159\n\n@docs json\n\n\n# Parsers for objects\n\n@docs object, key\n\n\n# Parsers for arrays\n\n@docs array\n\n\n# Parsers for strings\n\n@docs string, stringLiteral, escape, unicodeHexCode, unescaped\n\n\n# Parsers for numbers\n\n@docs number, int, frac, exp, digit, digits, digitsMaybe, zero, oneNine\n\n\n# Parsers for the others\n\n@docs true, false, null, ws\n\n\n# Useful functions\n\n@docs hexChar, yields\n\n",
+        "unions": [
+            {
+                "name": "Config",
+                "comment": " Configuration for the parser.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Config",
+                        [
+                            "{ json : Json.Decode.Broken.Config -> Parser.Parser Json.Encode.Value, value : Json.Decode.Broken.Config -> Parser.Parser Json.Encode.Value, object : Json.Decode.Broken.Config -> Parser.Parser Json.Encode.Value, array : Json.Decode.Broken.Config -> Parser.Parser Json.Encode.Value, key : Parser.Parser String.String, string : Parser.Parser Json.Encode.Value, number : Parser.Parser Json.Encode.Value, true : Parser.Parser Json.Encode.Value, false : Parser.Parser Json.Encode.Value, null : Parser.Parser Json.Encode.Value, ws : Parser.Parser () }"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "array",
+                "comment": " Parser for a JSON array.\n",
+                "type": "Json.Decode.Broken.Config -> Parser.Parser Json.Encode.Value"
+            },
+            {
+                "name": "defaultConfig",
+                "comment": " Default configuration for the parser.\n",
+                "type": "Json.Decode.Broken.Config"
+            },
+            {
+                "name": "digit",
+                "comment": " Parser for a single decimal digit.\n",
+                "type": "Parser.Parser ()"
+            },
+            {
+                "name": "digits",
+                "comment": " Parser for one or more decimal digits.\n\nThis chomps characters; it does not yield them. Wrap with `getChompedString` to\nobtain the matched string.\n\n",
+                "type": "Parser.Parser ()"
+            },
+            {
+                "name": "digitsMaybe",
+                "comment": " Parser for _zero_ or more decimal digits.\n",
+                "type": "Parser.Parser ()"
+            },
+            {
+                "name": "escape",
+                "comment": " Parser for an escape sequence.\n\nThis does **not** include the leading escape prefix, i.e. `\\\\`.\n\n",
+                "type": "Parser.Parser Char.Char"
+            },
+            {
+                "name": "exp",
+                "comment": " Parser for an optional exponent portion of a JSON number.\n\n    123.456e+78\n           ^^^^\n\n",
+                "type": "Parser.Parser ()"
+            },
+            {
+                "name": "false",
+                "comment": " Parser for a JSON `false` literal.\n",
+                "type": "Parser.Parser Json.Encode.Value"
+            },
+            {
+                "name": "frac",
+                "comment": " Parser for an optional fractional portion of a JSON number.\n\n    123.456e+78\n       ^^^^\n\n",
+                "type": "Parser.Parser ()"
+            },
+            {
+                "name": "hexChar",
+                "comment": " Convert a Unicode hexadecimal code to a `Char`.\n\nUseful with [`unicodeHexCode`](#unicodeHexCode).\n\nNote that ECMA 404 does not put a limit on the character ranges, i.e. it is\npermissible in JSON to specify a character for which Unicode does not have a\ncharacter assignment. This leans on the behaviour of `Char.fromCode` to\ndetermine what happens for codes not covered by Unicode.\n\n",
+                "type": "String.String -> Char.Char"
+            },
+            {
+                "name": "int",
+                "comment": " Parser for the integer portion of a JSON number.\n\n    123.456e+78\n    ^^^\n\n",
+                "type": "Parser.Parser String.String"
+            },
+            {
+                "name": "json",
+                "comment": " Parser for JSON.\n\nThis is a JSON value surrounded by optional whitespace.\n\n",
+                "type": "Json.Decode.Broken.Config -> Parser.Parser Json.Encode.Value"
+            },
+            {
+                "name": "key",
+                "comment": " Parser for a JSON object _key_.\n",
+                "type": "Parser.Parser String.String"
+            },
+            {
+                "name": "null",
+                "comment": " Parser for a JSON `null` literal.\n",
+                "type": "Parser.Parser Json.Encode.Value"
+            },
+            {
+                "name": "number",
+                "comment": " Parser for a JSON number.\n",
+                "type": "Parser.Parser Json.Encode.Value"
+            },
+            {
+                "name": "object",
+                "comment": " Parser for a JSON object.\n",
+                "type": "Json.Decode.Broken.Config -> Parser.Parser Json.Encode.Value"
+            },
+            {
+                "name": "oneNine",
+                "comment": " Parser for a single decimal digit between `1` and `9` inclusive.\n",
+                "type": "Parser.Parser ()"
+            },
+            {
+                "name": "parse",
+                "comment": " Parse the given JSON string.\n\nThis assumes a spec-compliant JSON string; it will choke on \"broken\" JSON. This\nseems kind of weird for a package that's all about parsing broken JSON. However,\nwe all have to start somewhere. Read the code, copy it, modify it, make it work\nfor your use case.\n\nErrors come straight from [elm/parser] and may not be super useful. Sorry. I may\nswitch to elm/parser's `Parser.Advanced` to improve this at some point.\n\n[elm/parser]: https://package.elm-lang.org/packages/elm/parser/latest/\n\n",
+                "type": "String.String -> Result.Result (List.List Parser.DeadEnd) Json.Encode.Value"
+            },
+            {
+                "name": "parseWith",
+                "comment": " Parse the given JSON string with a custom configuration.\n",
+                "type": "Json.Decode.Broken.Config -> String.String -> Result.Result (List.List Parser.DeadEnd) Json.Encode.Value"
+            },
+            {
+                "name": "string",
+                "comment": " Parser for a quoted JSON string.\n\n[`string`](#string) and some of its helpers have been adapted from elm/parser's\n`DoubleQuoteString` example.\n\n",
+                "type": "Parser.Parser Json.Encode.Value"
+            },
+            {
+                "name": "stringLiteral",
+                "comment": " Parser for a quoted JSON string literal.\n\nThis gives some flexibility over parsing unescaped string content and escape\nsequences. The literal must still start and end with `\"`, but it's possible to\nchange the rules for content to allow, for example, new-lines or carriage\nreturns, or to process non-standard escape sequences.\n\nOne other difference from [`string`](#string) is that this yields the actual\n`String` rather than a re-encoded `Value`. This is also used for object keys\nwhich need to be captured as `String`.\n\n",
+                "type": "Parser.Parser String.String -> Parser.Parser Char.Char -> Parser.Parser String.String"
+            },
+            {
+                "name": "true",
+                "comment": " Parser for a JSON `true` literal.\n",
+                "type": "Parser.Parser Json.Encode.Value"
+            },
+            {
+                "name": "unescaped",
+                "comment": " Parser for unescaped string contents.\n\nThe JSON specifications are specific about what characters are permissible in a\nquoted string. Perhaps most interestingly, horizontal tabs, new-lines, and\ncarriage returns are **not** permitted; these **must** be escaped.\n\n",
+                "type": "Parser.Parser String.String"
+            },
+            {
+                "name": "unicodeHexCode",
+                "comment": " Parser for a Unicode hexadecimal code.\n\nE.g. \"AbCd\" or \"1234\" or \"000D\".\n\nIt will match exactly 4 hex digits, case-insensitive.\n\nGoes well with [`hexChar`](#hexChar).\n\n",
+                "type": "Parser.Parser String.String"
+            },
+            {
+                "name": "ws",
+                "comment": " Parser for JSON whitespace.\n\nThis is the whitespace that appears between significant elements of JSON, and\nbefore and after JSON documents, not whitespace within quoted strings.\n\n",
+                "type": "Parser.Parser ()"
+            },
+            {
+                "name": "yields",
+                "comment": " Parser that, on success, always returns `a`\n\nFor example:\n\n    token \"true\" |> yields (Encode.bool True)\n\nWhen the token `true` is matched, a boolean true value is yielded.\n\n",
+                "type": "a -> Parser.Parser b -> Parser.Parser a"
+            },
+            {
+                "name": "zero",
+                "comment": " Parser for a single decimal zero digit, `0`.\n",
+                "type": "Parser.Parser ()"
+            }
+        ],
+        "binops": []
+    }
+]

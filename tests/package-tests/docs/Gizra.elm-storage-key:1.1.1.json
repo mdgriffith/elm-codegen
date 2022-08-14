@@ -1,0 +1,46 @@
+[
+    {
+        "name": "StorageKey",
+        "comment": " A `StorageKey` represents a value that is either `New` or `Existing`.\n\n`StorageKey` is a type that would be used normally as a key in an\n[EveryDict](http://package.elm-lang.org/packages/eeue56/elm-all-dict/latest)\nor [EveryDictList](http://package.elm-lang.org/packages/Gizra/elm-dictlist/latest)\nto indicate if a value is already `Existing` - that is, stored in the backend, or `New`.\n\nIf used as a key for an `EveryDict` we are guarnteed to have only a single `New`.\n\n@docs StorageKey, isExisting, isNew, value\n\n",
+        "unions": [
+            {
+                "name": "StorageKey",
+                "comment": " A `StorageKey` value is either `New` or `Existing`.\n\n    view : StorageKey -> Html msg\n    view storageKey =\n        case storageKey of\n            Existing recordId ->\n                text <| \"Record ID is \" ++ toString recordId\n\n            ReadOnly saved ->\n                text \"Record was not saved yet\"\n\n",
+                "args": [
+                    "recordId"
+                ],
+                "cases": [
+                    [
+                        "New",
+                        []
+                    ],
+                    [
+                        "Existing",
+                        [
+                            "recordId"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "isExisting",
+                "comment": " Determines if a `StorageKey` is of type `Existing`.\n\n    StorageKey.New\n        |> StorageKey.isExisting  --> False\n\n    StorageKey.Existing \"uuid-1234\"\n        |> StorageKey.isExisting  --> True\n\n",
+                "type": "StorageKey.StorageKey recordId -> Basics.Bool"
+            },
+            {
+                "name": "isNew",
+                "comment": " Determines if a `StorageKey` is of type `New`.\n\n    StorageKey.New\n        |> StorageKey.isNew  --> True\n\n    StorageKey.Existing \"uuid-1234\"\n        |> StorageKey.isNew  --> False\n\n",
+                "type": "StorageKey.StorageKey recordId -> Basics.Bool"
+            },
+            {
+                "name": "value",
+                "comment": " Gets the record ID value out of a `StorageKey` if it is of type `Existing`.\nOtherwise, it retuens `Nothing`.\n\n    StorageKey.New\n        |> StorageKey.value  --> Nothing\n\n    StorageKey.Existing \"uuid-1234\"\n        |> StorageKey.value  --> Just \"uuid-1234\"\n\n",
+                "type": "StorageKey.StorageKey recordId -> Maybe.Maybe recordId"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,34 @@
+[
+    {
+        "name": "Auth0.UrlParser",
+        "comment": " UrlParser for Auth0 token callback\n\nRecommend o use this library with\n`[kkpoon/elm-auth0](https://github.com/kkpoon/elm-auth0)`.\n\n@docs Auth0CallbackInfo, Auth0CallbackError\n\n@docs accessTokenUrlParser, unauthorizedUrlParser\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Auth0CallbackError",
+                "comment": " Callback of Error\n",
+                "args": [],
+                "type": "{ error : String.String, description : String.String }"
+            },
+            {
+                "name": "Auth0CallbackInfo",
+                "comment": " Callback parameters from Auth0\n\nIf no `openid` in `scope` parameters in authorize request, no idToken return\n\n",
+                "args": [],
+                "type": "{ accessToken : String.String, idToken : Maybe.Maybe String.String, expiresIn : Maybe.Maybe Basics.Int, tokenType : Maybe.Maybe String.String, state : Maybe.Maybe String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "accessTokenUrlParser",
+                "comment": " Create a token callback UrlParser\n\n    import UrlParser exposing (..)\n    import Auth0.UrlParser exposing (Auth0CallbackInfo, accessTokenUrlParser)\n\n    type Route\n        = AccessTokenRoute Auth0CallbackInfo\n        | SomeOtherRoute\n\n    route : Parser (Route -> a) a\n    route =\n        oneOf\n            [ map AccessTokenRoute accessTokenUrlParser\n            , map SomeOtherRoute (s \"others\")\n            ]\n\n",
+                "type": "Url.Parser.Parser (Auth0.UrlParser.Auth0CallbackInfo -> a) a"
+            },
+            {
+                "name": "unauthorizedUrlParser",
+                "comment": " Create an error callback UrlParser\n\n    import UrlParser exposing (..)\n    import Auth0.UrlParser exposing (Auth0CallbackError, unauthorizedUrlParser)\n\n    type Route\n        = UnauthorizedRoute Auth0CallbackError\n        | SomeOtherRoute\n\n    route : Parser (Route -> a) a\n    route =\n        oneOf\n            [ map UnauthorizedRoute unauthorizedUrlParser\n            , map SomeOtherRoute (s \"others\")\n            ]\n\n",
+                "type": "Url.Parser.Parser (Auth0.UrlParser.Auth0CallbackError -> a) a"
+            }
+        ],
+        "binops": []
+    }
+]

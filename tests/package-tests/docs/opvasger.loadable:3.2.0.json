@@ -1,0 +1,130 @@
+[
+    {
+        "name": "Loadable",
+        "comment": " This module helps you model values loaded, for example, from a database over Http/GraphQL.\n\n@docs Loadable, expectUpdate, update\n\n\n# Queries\n\n@docs isLoading, isStale, hasValue, hasError\n\n\n# Conversion\n\n@docs map, map2, map3, mapError, andThen, withDefault, toValue, toError, fromResult\n\n",
+        "unions": [
+            {
+                "name": "Loadable",
+                "comment": " A representation of data-loading. This would usually go into your model.\n",
+                "args": [
+                    "error",
+                    "value"
+                ],
+                "cases": [
+                    [
+                        "Idle",
+                        []
+                    ],
+                    [
+                        "Loading",
+                        []
+                    ],
+                    [
+                        "Success",
+                        [
+                            "value"
+                        ]
+                    ],
+                    [
+                        "Failure",
+                        [
+                            "error"
+                        ]
+                    ],
+                    [
+                        "Reloading",
+                        [
+                            "value"
+                        ]
+                    ],
+                    [
+                        "ReloadFailure",
+                        [
+                            "error",
+                            "value"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "andThen",
+                "comment": " Sometimes values are loaded based on other loaded values - This function makes that situation more ergonomic.\n",
+                "type": "(another -> Loadable.Loadable error value) -> Loadable.Loadable error another -> Loadable.Loadable error value"
+            },
+            {
+                "name": "expectUpdate",
+                "comment": " Update your loadable to expect a new value. Use this when you expect a new value to arrive soon.\n",
+                "type": "Loadable.Loadable error value -> Loadable.Loadable error value"
+            },
+            {
+                "name": "fromResult",
+                "comment": " Transform a result into a loadable.\n",
+                "type": "Result.Result error value -> Loadable.Loadable error value"
+            },
+            {
+                "name": "hasError",
+                "comment": " Has the loadable failed on the latest load or reload?\n",
+                "type": "Loadable.Loadable error value -> Basics.Bool"
+            },
+            {
+                "name": "hasValue",
+                "comment": " Is any value, stale or otherwise, contained within the loadable?\n",
+                "type": "Loadable.Loadable error value -> Basics.Bool"
+            },
+            {
+                "name": "isLoading",
+                "comment": " Is the loadable expecting a new value?\n",
+                "type": "Loadable.Loadable error value -> Basics.Bool"
+            },
+            {
+                "name": "isStale",
+                "comment": " Does the loadable contain a stale value?\nStaleness implies a reload is underway or failed, in which case the value from the most recent load is available.\n",
+                "type": "Loadable.Loadable error value -> Basics.Bool"
+            },
+            {
+                "name": "map",
+                "comment": " Transform the value of a loadable.\n",
+                "type": "(value -> otherValue) -> Loadable.Loadable error value -> Loadable.Loadable error otherValue"
+            },
+            {
+                "name": "map2",
+                "comment": " Transform the values of two loadables, falling back to the weakest constructor of the two. Precedence is as follows:\n\n1.  Failure\n2.  Idle\n3.  Loading\n4.  ReloadFailure\n5.  Reloading\n6.  Success\n\n",
+                "type": "(first -> second -> third) -> Loadable.Loadable error first -> Loadable.Loadable error second -> Loadable.Loadable error third"
+            },
+            {
+                "name": "map3",
+                "comment": " Refer to [map2](#map2). Loadables are combined chronologically.\n",
+                "type": "(value -> secondValue -> thirdValue -> fourthValue) -> Loadable.Loadable error value -> Loadable.Loadable error secondValue -> Loadable.Loadable error thirdValue -> Loadable.Loadable error fourthValue"
+            },
+            {
+                "name": "mapError",
+                "comment": " Transform the error of a loadable.\n",
+                "type": "(error -> otherError) -> Loadable.Loadable error value -> Loadable.Loadable otherError value"
+            },
+            {
+                "name": "toError",
+                "comment": " Extract the error of a loadable, should there be one.\n",
+                "type": "Loadable.Loadable error value -> Maybe.Maybe error"
+            },
+            {
+                "name": "toValue",
+                "comment": " Extract the value of a loadable, should there be one.\n",
+                "type": "Loadable.Loadable error value -> Maybe.Maybe value"
+            },
+            {
+                "name": "update",
+                "comment": " Update the loadable with a result. Use this when a new value arrives, and your loadable is expecting the update.\n",
+                "type": "Result.Result error value -> Loadable.Loadable error value -> Loadable.Loadable error value"
+            },
+            {
+                "name": "withDefault",
+                "comment": " Get the value of a loadable, or a default value if there is none.\n",
+                "type": "value -> Loadable.Loadable error value -> value"
+            }
+        ],
+        "binops": []
+    }
+]

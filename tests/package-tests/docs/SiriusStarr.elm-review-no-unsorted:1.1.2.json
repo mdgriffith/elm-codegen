@@ -1,0 +1,315 @@
+[
+    {
+        "name": "NoUnsortedCases",
+        "comment": "\n\n\n## Review Rule\n\n@docs rule\n\n\n## Configuration\n\n@docs RuleConfig, defaults, sortOnlyMatchingTypes, doNotSortLiterals, doNotSortTypesFromDependencies, sortTypesFromDependenciesAlphabetically, sortListPatternsByLength, doNotLookPastUnsortable\n\n",
+        "unions": [
+            {
+                "name": "RuleConfig",
+                "comment": " Configuration for this rule. Create a new one with `defaults` and use\n`doNotSortLiterals`, `sortListPatternsByLength`, etc. to alter it.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "defaults",
+                "comment": " The default configuration, with the following behavior:\n\n  - All custom types are sorted. (This can be restricted by using\n    `sortOnlyMatchingTypes`.)\n\n  - Literal patterns (`String`, `Int`, etc.) are sorted in the natural order for their type.\n\n  - Types imported from dependencies are sorted in declaration order, i.e. in the order they appear in the dependency's source file (or more technically in its documentation); this is identical to the behavior of types defined within your own modules.\n\n  - Lists are sorted elementwise, by comparing the elements sequentially at each\n    position (from left to right).\n\n  - Unsortable patterns can be looked beyond to resolve ties, for example:\n\n```\nfunc custom =\n    case custom of\n        Container { field } Bar ->\n            not field\n\n        Container { field } Baz ->\n            field\n\n        Container { field } Foo ->\n            field\n```\n\nwill be sorted to\n\n    func custom =\n        case custom of\n            Container { field } Foo ->\n                field\n\n            Container { field } Bar ->\n                not field\n\n            Container { field } Baz ->\n                field\n\nUse `doNotSortLiterals`, `sortListPatternsByLength`, etc. to alter any of this\nbehavior, e.g.\n\n    config =\n        [ NoUnsortedCases.defaults\n            |> NoUnsortedCases.doNotSortLiterals\n            |> NoUnsortedCases.sortListPatternsByLength\n            |> NoUnsortedCases.rule\n        ]\n\n",
+                "type": "NoUnsortedCases.RuleConfig"
+            },
+            {
+                "name": "doNotLookPastUnsortable",
+                "comment": " Do not look beyond unsortable patterns, rendering the following unsortable:\n\n    func custom =\n        case custom of\n            Container { field } Bar ->\n                not field\n\n            Container { field } Baz ->\n                field\n\n            Container { field } Foo ->\n                field\n\n",
+                "type": "NoUnsortedCases.RuleConfig -> NoUnsortedCases.RuleConfig"
+            },
+            {
+                "name": "doNotSortLiterals",
+                "comment": " Change the behavior of the rule to **not** sort literal patterns. If\nliterals are not sorted, case expressions that would require sorting literals\ncannot be sorted and will thus be ignored by the rule.\n",
+                "type": "NoUnsortedCases.RuleConfig -> NoUnsortedCases.RuleConfig"
+            },
+            {
+                "name": "doNotSortTypesFromDependencies",
+                "comment": " Do not sort types from dependencies at all. Note that this will render\nunsortable any patterns requiring types from dependencies to be sorted.\n",
+                "type": "NoUnsortedCases.RuleConfig -> NoUnsortedCases.RuleConfig"
+            },
+            {
+                "name": "rule",
+                "comment": " Reports case patterns that are not in the \"proper\" order.\n\n🔧 Running with `--fix` will automatically sort the patterns.\n\nThe proper order of custom types is the order in which they are defined in your\nsource files, and the order of other patterns may be specified in the rule\nconfiguration. See the [Configuration](#configuration) section below for more\ninformation.\n\n    config =\n        [ NoUnsortedCases.rule NoUnsortedCases.defaults\n        ]\n\n\n## Fail\n\n    type Custom\n        = Foo\n        | Bar\n        | Baz\n\n    func1 c =\n        case c of\n            Bar ->\n                \"bar\"\n\n            Foo ->\n                \"foo\"\n\n            Baz ->\n                \"baz\"\n\n    func2 cs =\n        case cs of\n            [ Bar ] ->\n                \"bar\"\n\n            [ Foo ] ->\n                \"foo\"\n\n            [ Foo, Foo ] ->\n                \"foofoo\"\n\n            [ Baz ] ->\n                \"baz\"\n\n            _ ->\n                \"other\"\n\n    func3 c =\n        case c of\n            Nothing ->\n                \"\"\n\n            Just Bar ->\n                \"bar\"\n\n            Just Foo ->\n                \"foo\"\n\n            Just Baz ->\n                \"baz\"\n\n    func4 c1 c2 =\n        case ( c1, c2 ) of\n            ( Foo, Baz ) ->\n                \"foo baz\"\n\n            ( Foo, Bar ) ->\n                \"foo bar\"\n\n            ( Bar, Foo ) ->\n                \"bar foo\"\n\n            ( Baz, Foo ) ->\n                \"baz foo\"\n\n            _ ->\n                \"other\"\n\n\n## Success\n\n    type Custom\n        = Foo\n        | Bar\n        | Baz\n\n    func1 c =\n        case c of\n            Foo ->\n                \"foo\"\n\n            Bar ->\n                \"bar\"\n\n            Baz ->\n                \"baz\"\n\n    func2 cs =\n        case cs of\n            [ Foo ] ->\n                \"foo\"\n\n            [ Foo, Foo ] ->\n                \"foofoo\"\n\n            [ Bar ] ->\n                \"bar\"\n\n            [ Baz ] ->\n                \"baz\"\n\n            _ ->\n                \"other\"\n\n    func3 c =\n        case c of\n            Just Foo ->\n                \"foo\"\n\n            Just Bar ->\n                \"bar\"\n\n            Just Baz ->\n                \"baz\"\n\n            Nothing ->\n                \"\"\n\n    func4 c1 c2 =\n        case ( c1, c2 ) of\n            ( Foo, Bar ) ->\n                \"foo bar\"\n\n            ( Foo, Baz ) ->\n                \"foo baz\"\n\n            ( Bar, Foo ) ->\n                \"bar foo\"\n\n            ( Baz, Foo ) ->\n                \"baz foo\"\n\n            _ ->\n                \"other\"\n\n\n## When (not) to enable this rule\n\nThis rule is useful when you want to ensure that you pattern match in a\nconsistent, predictable order, that is consistent with the order in which a type\nwas defined, as well as ensuring (optionally) that literal patterns and the like\nare sorted.\n\nThis rule is not useful when you want to be able to write case patterns in\ndifferent orders throughout your codebase, e.g. if you want to emphasize what\npattern is most important at any given point or glean a tiny bit of performance\nout of matching the more commonly-expected patterns first.\n\n\n## Try it out\n\nYou can try this rule out by running the following command:\n\n```bash\nelm-review --template SiriusStarr/elm-review-no-unsorted/example --rules NoUnsortedCases\n```\n\n",
+                "type": "NoUnsortedCases.RuleConfig -> Review.Rule.Rule"
+            },
+            {
+                "name": "sortListPatternsByLength",
+                "comment": " List patterns may be sorted in one of two ways:\n\n  - Elementwise (**default**) -- Patterns are sorted by comparing elements\n    sequentially at each position (from left to right). This is the same\n    behavior as `List.sort` (which is why it is the default).\n  - Length First -- Shorter patterns always come before longer pattern, with patterns of the same length sorted elementwise at each position.\n\nNote that uncons patterns are considered the length of their matching list, with\nwildcard patterns considered to have infinite length for the purposes of\nsorting. This is necessary to ensure that earlier patterns are not erroneously\nmatched by wildcards.\n\n**Elementwise**\n\n    case list of\n        [] ->\n            \"\"\n\n        [ 1 ] ->\n            \"1\"\n\n        [ 1, 1 ] ->\n            \"11\"\n\n        [ 1, 1, 1 ] ->\n            \"111\"\n\n        [ 1, 2 ] ->\n            \"12\"\n\n        [ 1, 3 ] ->\n            \"13\"\n\n        [ 2 ] ->\n            \"2\"\n\n        [ 2, 1 ] ->\n            \"21\"\n\n        [ 2, 2 ] ->\n            \"22\"\n\n        [ 2, 3 ] ->\n            \"23\"\n\n        [ 3 ] ->\n            \"3\"\n\n        _ ->\n            \"Too many...\"\n\n**Length First**\n\n    case list of\n        [] ->\n            \"\"\n\n        [ 1 ] ->\n            \"1\"\n\n        [ 2 ] ->\n            \"2\"\n\n        [ 3 ] ->\n            \"3\"\n\n        [ 1, 1 ] ->\n            \"11\"\n\n        [ 1, 2 ] ->\n            \"12\"\n\n        [ 1, 3 ] ->\n            \"13\"\n\n        [ 2, 1 ] ->\n            \"21\"\n\n        [ 2, 2 ] ->\n            \"22\"\n\n        [ 2, 3 ] ->\n            \"23\"\n\n        [ 1, 1, 1 ] ->\n            \"111\"\n\n        _ ->\n            \"Too many...\"\n\n",
+                "type": "NoUnsortedCases.RuleConfig -> NoUnsortedCases.RuleConfig"
+            },
+            {
+                "name": "sortOnlyMatchingTypes",
+                "comment": " Restrict custom type sorting to only those matching a provided predicate.\nThis function takes two strings, the first being the full module name of a type,\ne.g. `\"Review.Rule\"` and the second being the name of a type, e.g. `\"Rule\"`, and\nreturns a `Bool` indicating whether the type should be sorted (with `True`\nmeaning sortable). For example:\n\nModule Foo:\n\n    module Foo exposing (Foo(..))\n\n    type Foo\n        = Foo\n        | Bar\n        | Baz\n\nModule Main:\n\n    module Main exposing (..)\n\n    type Msg\n        = ButtonPressed\n        | ButtonClicked\n\nModule ReviewConfig:\n\n    onlyMsg moduleName typeName =\n        case ( moduleName, typeName ) of\n            ( \"Main\", \"Msg\" ) ->\n                True\n\n            _ ->\n                False\n\n    config =\n        [ NoUnsortedCases.defaults\n            |> NoUnsortedCases.sortOnlyMatchingTypes onlyMsg\n            |> NoUnsortedCases.rule\n        ]\n\nwill sort the following pattern:\n\n    case msg of\n        ButtonClicked ->\n            ( { model | clicked = True }, Cmd.none )\n\n        ButtonPressed ->\n            ( { model | pressed = True }, Cmd.none )\n\nbut will not sort:\n\n    case foo of\n        Bar ->\n            \"bar\"\n\n        Baz ->\n            \"baz\"\n\n        Foo ->\n            \"foo\"\n\n",
+                "type": "(String.String -> String.String -> Basics.Bool) -> NoUnsortedCases.RuleConfig -> NoUnsortedCases.RuleConfig"
+            },
+            {
+                "name": "sortTypesFromDependenciesAlphabetically",
+                "comment": " Sort custom types imported from dependencies (including `Basics` types like `Maybe` and `Bool`) alphabetically, rather than by their source order in the dependency's source code.\n",
+                "type": "NoUnsortedCases.RuleConfig -> NoUnsortedCases.RuleConfig"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "NoUnsortedLetDeclarations",
+        "comment": "\n\n\n## Review Rule\n\n@docs rule\n\n\n## Configuration\n\n@docs RuleConfig, sortLetDeclarations\n\n\n## Orderings\n\n@docs alphabetically, usedInExpressionFirst, usedInExpressionLast, usedInOtherDeclarationsLast, usedInOtherDeclarationsFirst, valuesBeforeFunctions, valuesAfterFunctions\n\n\n## Glues\n\nGlues provide a way to \"stick\" one declaration to another, i.e. to always sort\none declaration alongside another. Note that glues will chain, i.e. if `a` is\nglued before `b` and `b` is glued after `c`, then the result will be `c` -> `a`\n-> `b` (sorted wherever `c` is sorted to). Glues behave in the following ways:\n\n  - If multiple glues are specified, the first specified will be used.\n  - If multiple declarations are glued at the same place, they will be ordered\n    by the orderings specified.\n  - If glues are not acyclic (i.e. two declarations are glued to each other,\n    possibly via intermediates), then all of the involved declarations will not\n    be glued and will be sorted normally.\n\n@docs glueHelpersBefore, glueHelpersAfter, glueDependenciesBeforeFirstDependent, glueDependenciesAfterFirstDependent, glueDependenciesBeforeLastDependent, glueDependenciesAfterLastDependent\n\n",
+        "unions": [
+            {
+                "name": "RuleConfig",
+                "comment": " Configuration for this rule. Create a new one with `sortLetDeclarations` and use\norderings to create a hierarchy of sorting.\n",
+                "args": [
+                    "r"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "alphabetically",
+                "comment": " Sort declarations alphabetically by the name of their binding. For\ndestructurings, this will be the name of the actual bindings that are made, in\nalphabetical order. For example, the following is sorted alphabetically:\n\n    let\n        (Opaque a) =\n            i\n\n        ( z, b ) =\n            j\n\n        { c, y } =\n            k\n\n        d =\n            l\n    in\n    x\n\n",
+                "type": "NoUnsortedLetDeclarations.RuleConfig { r | noAlphabetical : () } -> NoUnsortedLetDeclarations.RuleConfig r"
+            },
+            {
+                "name": "glueDependenciesAfterFirstDependent",
+                "comment": " Dependencies are declarations that are _not_ used in the expression that are\nused in multiple other declarations. This glue attaches them immediately after\nthe first declaration they are used in.\n\nFor example:\n\n    foo =\n        let\n            a x =\n                unwrap x\n\n            unwrap =\n                some func\n\n            b x =\n                unwrap x\n\n            c x =\n                unwrap x\n        in\n        bar\n\n",
+                "type": "NoUnsortedLetDeclarations.RuleConfig { r | noDependency : () } -> NoUnsortedLetDeclarations.RuleConfig r"
+            },
+            {
+                "name": "glueDependenciesAfterLastDependent",
+                "comment": " Dependencies are declarations that are _not_ used in the expression that are\nused in multiple other declarations. This glue attaches them immediately after\nthe last declaration they are used in.\n\nFor example:\n\n    foo =\n        let\n            a x =\n                unwrap x\n\n            b x =\n                unwrap x\n\n            c x =\n                unwrap x\n\n            unwrap =\n                some func\n        in\n        bar\n\n",
+                "type": "NoUnsortedLetDeclarations.RuleConfig { r | noDependency : () } -> NoUnsortedLetDeclarations.RuleConfig r"
+            },
+            {
+                "name": "glueDependenciesBeforeFirstDependent",
+                "comment": " Dependencies are declarations that are _not_ used in the expression that are\nused in multiple other declarations. This glue attaches them immediately before\nthe first declaration they are used in.\n\nFor example:\n\n    foo =\n        let\n            unwrap =\n                some func\n\n            a x =\n                unwrap x\n\n            b x =\n                unwrap x\n\n            c x =\n                unwrap x\n        in\n        bar\n\n",
+                "type": "NoUnsortedLetDeclarations.RuleConfig { r | noDependency : () } -> NoUnsortedLetDeclarations.RuleConfig r"
+            },
+            {
+                "name": "glueDependenciesBeforeLastDependent",
+                "comment": " Dependencies are declarations that are _not_ used in the expression that are\nused in multiple other declarations. This glue attaches them immediately before\nthe last declaration they are used in.\n\nFor example:\n\n    foo =\n        let\n            a x =\n                unwrap x\n\n            b x =\n                unwrap x\n\n            unwrap =\n                some func\n\n            c x =\n                unwrap x\n        in\n        bar\n\n",
+                "type": "NoUnsortedLetDeclarations.RuleConfig { r | noDependency : () } -> NoUnsortedLetDeclarations.RuleConfig r"
+            },
+            {
+                "name": "glueHelpersAfter",
+                "comment": " Helpers are declarations that are _not_ used in the expression that are used\nin exactly one other declaration. This glue attaches them immediately after the\ndeclaration they are used in.\n\nFor example:\n\n    foo input =\n        let\n            sum : Int\n            sum =\n                List.foldl step 0 input\n\n            step : Int -> Int -> Int\n            step i acc =\n                i + acc\n        in\n        sum + 1\n\n",
+                "type": "NoUnsortedLetDeclarations.RuleConfig { r | noHelper : () } -> NoUnsortedLetDeclarations.RuleConfig r"
+            },
+            {
+                "name": "glueHelpersBefore",
+                "comment": " Helpers are declarations that are _not_ used in the expression that are used\nin exactly one other declaration. This glue attaches them immediately before the\ndeclaration they are used in.\n\nFor example:\n\n    foo input =\n        let\n            step : Int -> Int -> Int\n            step i acc =\n                i + acc\n\n            sum : Int\n            sum =\n                List.foldl step 0 input\n        in\n        sum + 1\n\n",
+                "type": "NoUnsortedLetDeclarations.RuleConfig { r | noHelper : () } -> NoUnsortedLetDeclarations.RuleConfig r"
+            },
+            {
+                "name": "rule",
+                "comment": " Reports `let` declarations that are not in the \"proper\" order.\n\n🔧 Running with `--fix` will automatically sort the declarations.\n\nThe proper order of declarations is specified in the rule configuration. See the\n[Configuration](#configuration) section below for more information.\n\n    config =\n        [ NoUnsortedLetDeclarations.rule\n            (NoUnsortedLetDeclarations.sortLetDeclarations\n                |> NoUnsortedLetDeclarations.usedInExpressionFirst\n                |> NoUnsortedLetDeclarations.alphabetically\n            )\n        ]\n\n\n## Fail\n\n    a =\n        let\n            -- These are used in the expression\n            x =\n                a\n\n            y =\n                b\n\n            -- These are not\n            b =\n                j\n\n            a =\n                i\n        in\n        x + y\n\n    b =\n        let\n            -- These are not used in the expression\n            a =\n                i\n\n            b =\n                j\n\n            -- These are\n            x =\n                a\n\n            y =\n                b\n        in\n        x + y\n\n\n## Success\n\n    a =\n        let\n            -- These are used in the expression\n            x =\n                a\n\n            y =\n                b\n\n            -- These are not\n            a =\n                i\n\n            b =\n                j\n        in\n        x + y\n\n\n## When (not) to enable this rule\n\nThis rule is useful when you want to ensure that your `let` declarations are in\na consistent, predictable order.\n\nThis rule is not useful when you want to be able to write `let` declarations in\nvarying orders throughout your codebase, e.g. if you want to emphasize what\nis most important on a case-by-case basis.\n\n\n## Try it out\n\nYou can try this rule out by running the following command:\n\n```bash\nelm-review --template SiriusStarr/elm-review-no-unsorted/example --rules NoUnsortedLetDeclarations\n```\n\n",
+                "type": "NoUnsortedLetDeclarations.RuleConfig r -> Review.Rule.Rule"
+            },
+            {
+                "name": "sortLetDeclarations",
+                "comment": " Create a new `RuleConfig`. Use the various orderings to then specify\nprimary and fallback orderings.\n",
+                "type": "NoUnsortedLetDeclarations.RuleConfig { noAlphabetical : (), noArgCount : (), noDependency : (), noHelper : (), noUsedInOther : (), noUsedInExpression : () }"
+            },
+            {
+                "name": "usedInExpressionFirst",
+                "comment": " Sort declarations with those used in the expression of the `let` block\ncoming first, then those that aren't. Ties will be broken by the next specified\nordering. For example, the following is sorted by this ordering and then\nalphabetically:\n\n    let\n        -- These are used in the expression\n        x =\n            a\n\n        y =\n            b\n\n        -- These are not\n        a =\n            i\n\n        b =\n            j\n    in\n    x + y\n\n",
+                "type": "NoUnsortedLetDeclarations.RuleConfig { r | noUsedInExpression : () } -> NoUnsortedLetDeclarations.RuleConfig r"
+            },
+            {
+                "name": "usedInExpressionLast",
+                "comment": " Sort declarations with those used in the expression of the `let` block\ncoming last, with those that aren't coming first. Ties will be broken by the\nnext specified ordering. For example, the following is sorted by this ordering\nand then alphabetically:\n\n    let\n        -- These are not used in the expression\n        x =\n            i\n\n        y =\n            j\n\n        -- These are used in the expression\n        a =\n            x\n\n        b =\n            y\n    in\n    a + b\n\n",
+                "type": "NoUnsortedLetDeclarations.RuleConfig { r | noUsedInExpression : () } -> NoUnsortedLetDeclarations.RuleConfig r"
+            },
+            {
+                "name": "usedInOtherDeclarationsFirst",
+                "comment": " Sort declarations with those used in other declarations coming before those\nthat are not. Ties will be broken by the next specified ordering. For example,\nthe following is sorted by this ordering and then alphabetically:\n\n    let\n        x =\n            i\n\n        y =\n            j\n\n        a =\n            x\n\n        b =\n            y\n    in\n    0\n\n",
+                "type": "NoUnsortedLetDeclarations.RuleConfig { r | noUsedInOther : () } -> NoUnsortedLetDeclarations.RuleConfig r"
+            },
+            {
+                "name": "usedInOtherDeclarationsLast",
+                "comment": " Sort declarations with those used in other declarations coming after those\nthat are not. Ties will be broken by the next specified ordering. For example,\nthe following is sorted by this ordering and then alphabetically:\n\n    let\n        a =\n            x\n\n        b =\n            y\n\n        x =\n            i\n\n        y =\n            j\n    in\n    0\n\n",
+                "type": "NoUnsortedLetDeclarations.RuleConfig { r | noUsedInOther : () } -> NoUnsortedLetDeclarations.RuleConfig r"
+            },
+            {
+                "name": "valuesAfterFunctions",
+                "comment": " Sort declarations that do not have arguments after those that do. Since no\ntype inference is performed, this does not guarantee that some things that are\nfunctions will not be sorted with values. For example, the following is sorted\nby this ordering and then alphabetically:\n\n    let\n        -- These have arguments\n        a i =\n            i\n\n        b j =\n            j\n\n        -- These do not\n        x =\n            a\n\n        y =\n            b\n    in\n    x + y\n\n",
+                "type": "NoUnsortedLetDeclarations.RuleConfig { r | noArgCount : () } -> NoUnsortedLetDeclarations.RuleConfig r"
+            },
+            {
+                "name": "valuesBeforeFunctions",
+                "comment": " Sort declarations that do not have arguments before those that do. Since no\ntype inference is performed, this does not guarantee that some things that are\nfunctions will not be sorted with values. For example, the following is sorted\nby this ordering and then alphabetically:\n\n    let\n        -- These do not have arguments\n        x =\n            a\n\n        y =\n            b\n\n        -- These do\n        a i =\n            i\n\n        b j =\n            j\n    in\n    x + y\n\n",
+                "type": "NoUnsortedLetDeclarations.RuleConfig { r | noArgCount : () } -> NoUnsortedLetDeclarations.RuleConfig r"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "NoUnsortedRecords",
+        "comment": "\n\n\n## Review Rule\n\n@docs rule\n\n\n## Configuration\n\n@docs RuleConfig, defaults\n\n\n### Sorting\n\n@docs sortGenericFieldsLast\n\n\n### Ambiguous Records\n\nAn ambiguous record is a record that matches more than one known \"canonical\"\nrecord.\n\n@docs doNotSortAmbiguousRecords, reportAmbiguousRecordsWithoutFix\n\n\n### Unknown Records\n\nAn unknown record is a record that does not match any known \"canonical\" records.\n\n@docs doNotSortUnknownRecords, reportUnknownRecordsWithoutFix\n\n\n### Subrecords\n\nSubrecords are records that are either within the fields of a type alias or are\narguments of a custom type.\n\n@docs treatSubrecordsAsUnknown, treatAllSubrecordsAsCanonical, treatCustomTypeRecordsAsCanonical\n\n\n### Other Settings\n\n@docs typecheckAllRecords\n\n",
+        "unions": [
+            {
+                "name": "RuleConfig",
+                "comment": " Configuration for this rule. Create a new one with `defaults` and use\n`reportAmbiguousRecordsWithoutFix`, `doNotSortUnknownRecords`, etc. to alter it.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "defaults",
+                "comment": " The default configuration, with the following behavior:\n\n  - Unknown records (those that match no known canonical order) are sorted\n    alphabetically\n  - Ambiguous records (those that match more than one canonical order) are\n    sorted alphabetically\n  - Generic fields of generic records are sorted before the canonical ones.\n  - Subrecords are treated as having canonical order only when associated with\n    their outer record/constructor.\n  - Typechecking is only used to disambiguate records, i.e. a record will not\n    _not_ match a canonical record just because the rule thinks it has the wrong\n    type. For instance, `{ foo = 1, bar = 2 }` will match\n    `{ foo : String, bar : String }` if no other records exist with the fields\n    `foo` and `bar`. This is to protect against incorrect type inference by this\n    rule.\n\nUse `reportUnknownRecordsWithoutFix`, etc. to alter this behavior, e.g.\n\n    config =\n        [ NoUnsortedRecords.rule\n            (NoUnsortedRecords.defaults\n                |> NoUnsortedRecords.reportAmbiguousRecordsWithoutFix\n            )\n        ]\n\n",
+                "type": "NoUnsortedRecords.RuleConfig"
+            },
+            {
+                "name": "doNotSortAmbiguousRecords",
+                "comment": " By default, records that match multiple known aliases with different field\norders are sorted alphabetically. (If the field orders of the various matches\nare identical, then it is not ambiguous.) This disables that behavior, leaving\nthem in their base sorting instead.\n",
+                "type": "NoUnsortedRecords.RuleConfig -> NoUnsortedRecords.RuleConfig"
+            },
+            {
+                "name": "doNotSortUnknownRecords",
+                "comment": " By default, records that do not match any known aliases or custom types are\nsorted alphabetically. This disables that behavior, leaving them in their base\nsorting.\n",
+                "type": "NoUnsortedRecords.RuleConfig -> NoUnsortedRecords.RuleConfig"
+            },
+            {
+                "name": "reportAmbiguousRecordsWithoutFix",
+                "comment": " By default, records that match multiple known aliases with different field\norders are sorted alphabetically. (If the field orders of the various matches\nare identical, then it is not ambiguous.) This disables that behavior, reporting\nthem as ambiguous without automatically fixing them. This is useful if you want\nto catch ambiguous records and e.g. provide type annotations to make them\nunambiguous.\n",
+                "type": "NoUnsortedRecords.RuleConfig -> NoUnsortedRecords.RuleConfig"
+            },
+            {
+                "name": "reportUnknownRecordsWithoutFix",
+                "comment": " By default, records that do not match any known aliases or custom types are\nsorted alphabetically. This disables that behavior, reporting them as unknown\nwithout automatically fixing them.\n\nNote that this will effectively forbid the use of _ad hoc_/anonymous records!\n\n",
+                "type": "NoUnsortedRecords.RuleConfig -> NoUnsortedRecords.RuleConfig"
+            },
+            {
+                "name": "rule",
+                "comment": " Reports record fields that are not in the \"proper\" order.\n\n🔧 Running with `--fix` will automatically sort the fields.\n\nThe proper order of record fields is the order in which they are defined in the\ntype alias in your source files. See the \"Configuration\" section below for more\ninformation.\n\n    config =\n        [ NoUnsortedRecords.rule\n            (NoUnsortedRecords.defaults\n                |> NoUnsortedRecords.reportAmbiguousRecordsWithoutFix\n            )\n        ]\n\n\n## \"Proper\" Order\n\nProper order may be defined in several ways. Firstly, type aliases define order,\ne.g.\n\n    type alias MyRecord =\n        { foo : Int, bar : Int, baz : Int }\n\ncreates a record with name `MyRecord` and the known field order `foo`, `bar`,\n`baz`.\n\nSecondly, records without a defined type alias that are nevertheless either a\nsubrecord of a type alias or attached to a custom type are considered to be in\nthe order they are defined in the source:\n\n    type MyType\n        = A Int { foo : Int, bar : Int, baz : Int }\n        | B { b : Int, a : Int, c : Int } String\n\nwhen encountered in their larger context. By default, these are _not_ considered\ncanonical records when encountered alone, though this behavior may be turned on\nwith [`treatAllSubrecordsAsCanonical`](#treatAllSubrecordsAsCanonical) or\n[`treatCustomTypeRecordsAsCanonical`](#treatCustomTypeRecordsAsCanonical).\n\n\n## Inference/Disambiguation\n\nSince records are not associated with a unique name, it is necessary to infer\nwhat type alias a record matches. In the most ambiguous case, all type aliases\nare checked for matching fields. If none are found, then the rule can't match it\nto a specific order (though it may still optionally be sorted alphabetically).\n\nIf only one matching type alias is found, then the rule will sort by that order.\n\nIn the case of multiple matching field sets, several things may happen. If all\nof the field sets have the same order, then it isn't necessary to unambiguously\nidentify which is being matched, and that one order will be used. Otherwise, the\nrule is capable of using the following disambiguation rules:\n\n  - Disambiguation by the fact that all fields must be present:\n\n```\ntype alias A =\n    { foo : Int, bar : Int, baz : Int }\n\ntype alias B =\n    { bar : Int, foo : Int, baz : Int, extra : Int }\n\n-- Must be type `A` because missing `extra`\na =\n    { foo = 1, bar = 2, baz = 3 }\n```\n\n  - Disambiguation by type signature:\n\n```\ntype alias A =\n    { foo : Int, bar : Int, baz : Int }\n\ntype alias B =\n    { bar : Int, foo : Int, baz : Int }\n\na : A\na =\n    { foo = 1, bar = 2, baz = 3 }\n```\n\nIt should be noted that this works with relatively complex type signatures, e.g.\n\n    type alias A =\n        { foo : Int, bar : Int, baz : Int }\n\n    type alias B =\n        { bar : Int, foo : Int, baz : Int }\n\n    a : Int -> String -> ( Int, String, List A )\n    a i s =\n        ( i, s, [ { foo = 1, bar = 2, baz = 3 } ] )\n\nThis also works with patterns, e.g.\n\n    type alias A =\n        { foo : Int, bar : Int, baz : Int }\n\n    type alias B =\n        { bar : Int, foo : Int, baz : Int }\n\n    a : Int -> A -> Int -> Bool\n    a i1 { foo, bar, baz } i2 =\n        True\n\n  - Disambiguation by field type. Very rudimentary type inference is performed,\n    but it may frequently be useful to add annotations, as the inference is by\n    no means complete.\n\n```\ntype alias A =\n    { foo : Int, bar : Int, baz : Int }\n\ntype alias B =\n    { bar : Int, foo : String, baz : Int }\n\n-- Must be type `A` because `foo` is `Int`\na : { foo : Int, bar : Int, baz : Int }\na =\n    { foo = 1, bar = 2, baz = 3 }\n```\n\n  - Disambiguation by the fact that the it is associated with a custom type with\n    a known record argument:\n\n```\ntype Custom\n    = A { foo : Int, bar : Int, baz : Int }\n    | B { bar : Int, foo : Int, baz : Int }\n\na =\n    -- Must be `A`'s record\n    A { foo = 1, bar = 2, baz = 3 }\n\nb custom =\n    case custom of\n        -- Must be `A`'s record\n        A { foo, bar } ->\n            False\n\n        -- Must be `B`'s record\n        B { bar, foo } ->\n            True\n```\n\n  - Disambiguation by the fact that the it is associated with a specific index\n    of a custom type with a known record argument:\n\n```\ntype Custom\n    = A\n        Int\n        { foo : Int\n        , bar : Int\n        , baz : Int\n        }\n        String\n        { bar : Int\n        , foo : Int\n        , baz : Int\n        }\n\na custom =\n    case custom of\n        A _ { foo, bar } _ { bar, foo } ->\n            False\n```\n\n  - Disambiguation by the fact that the it is associated with a specific field\n    of a record alias:\n\n```\ntype alias A =\n    { a : { foo : Int, bar : Int, baz : Int }\n    , b : { bar : Int, foo : Int, baz : Int }\n    }\n\nfunc : A\nfunc =\n    { a = { foo = 2, bar = 1, baz = 3 }\n    , b = { bar = 2, foo = 1, baz = 3 }\n    }\n```\n\n  - Disambiguation by known function argument types (this includes local\n    bindings):\n\n```\nmodule A exposing (..)\n\ntype alias A =\n    { foo : Int, bar : Int, baz : Int }\n\ntype alias B =\n    { bar : Int, foo : Int, baz : Int }\n\nfoo : A -> Bool\nfoo a =\n    True\n\nfunc : Bool\nfunc =\n    -- Must be `A`, because `foo` has type `A -> Bool`\n    foo { foo = 1, bar = 2, baz = 3 }\n```\n\n\n## Best Practices for Disambiguation\n\nType annotations are always useful! If all functions have type annotations (with\nthe appropriate aliases), then it's unlikely ambiguous records will ever be\nencountered. Beyond that, ambiguity can always be avoided by just making the\ncanonical order for possibly-ambiguous records identical.\n\nIf you want to ensure that this rule is not encountering ambiguous/unknown\nrecords, then you can use `reportAmbiguousRecordsWithoutFix` and/or\n`reportUnknownRecordsWithoutFix` to report them without automatically sorting\nthem alphabetically. Alternately, you can use `doNotSortAmbiguousRecords` and/or\n`doNotSortUnknownRecords` to disable all sorting/error reporting for them.\n\n\n## When (not) to enable this rule\n\nThis rule is useful when you want to ensure that your record fields are in a\nconsistent, predictable order, that is consistent with the order in which they\nwere defined.\n\nThis rule is not useful when you want to be able to write records in different\norders throughout your codebase, e.g. if you want to emphasize what fields are\nmost important at any given point. It may also not be useful if you have many\nrecords with the same fields.\n\n\n## Try it out\n\nYou can try this rule out by running the following command:\n\n```bash\nelm-review --template SiriusStarr/elm-review-no-unsorted/example --rules NoUnsortedRecords\n```\n\n",
+                "type": "NoUnsortedRecords.RuleConfig -> Review.Rule.Rule"
+            },
+            {
+                "name": "sortGenericFieldsLast",
+                "comment": " By default, generic fields are placed before others; this alters that\nbehavior to place them at the end instead, e.g.\n\n    type alias A =\n        { z : Int, y : Int, x : Int }\n\n    type alias Generic record =\n        { record | foo : Int, bar : Int, baz : Int }\n\n    rec : Generic A\n    rec =\n        { foo = 1, bar = 2, baz = 3, z = 4, y = 5, x = 6 }\n\n",
+                "type": "NoUnsortedRecords.RuleConfig -> NoUnsortedRecords.RuleConfig"
+            },
+            {
+                "name": "treatAllSubrecordsAsCanonical",
+                "comment": " By default, anonymous records within known records and within custom type\nconstructors are sorted by their declaration order when encountered in the\ncontext of their outer record/constructor. This extends that behavior to sort\nthem even when encountered alone (i.e. not in the context of their parent\nrecord/constructor. Note that canonical records will always take priority,\nhowever.\n\nFor example:\n\n    type alias Rec =\n        { yi : { foo : Int, bar : Int, baz : Int }, er : Int }\n\n    thisWillHaveCanonicalOrder =\n        -- Even though it does not appear in the context of `Rec`\n        { foo = 3, bar = 1, baz = 2 }\n\n",
+                "type": "NoUnsortedRecords.RuleConfig -> NoUnsortedRecords.RuleConfig"
+            },
+            {
+                "name": "treatCustomTypeRecordsAsCanonical",
+                "comment": " By default, anonymous records within known records and within custom type\nconstructors are sorted by their declaration order when encountered in the\ncontext of their outer record/constructor. This extends that behavior to sort\ncustom type args even when encountered alone (i.e. not in the context of their\nconstructor. This was the behavior prior to version `1.1.0` and thus this\nsetting is provided for compatibility. Note that canonical records will always\ntake priority, however.\n\nFor example:\n\n    type A\n        = A { foo : Int, bar : Int, baz : Int }\n\n    thisWillHaveCanonicalOrder =\n        -- Even though it does not appear in the context of `A`\n        { foo = 3, bar = 1, baz = 2 }\n\n",
+                "type": "NoUnsortedRecords.RuleConfig -> NoUnsortedRecords.RuleConfig"
+            },
+            {
+                "name": "treatSubrecordsAsUnknown",
+                "comment": " By default, anonymous records within known records and within custom type\nconstructors are sorted by their declaration order when encountered in the\ncontext of their outer record/constructor. This disables that behavior,\ntreating them the same as any other unknown record.\n\nFor example:\n\n    type A\n        = A { foo : Int, bar : Int, baz : Int }\n\n    type alias Rec =\n        { yi : { foo : Int, bar : Int, baz : Int }, er : Int }\n\n    thisWillBeUnknown =\n        A { bar = 1, baz = 2, foo = 3 }\n\n    and =\n        { yi =\n            -- This will also be unknown\n            { bar = 1, baz = 2, foo = 3 }\n        , er = 1\n        }\n\n",
+                "type": "NoUnsortedRecords.RuleConfig -> NoUnsortedRecords.RuleConfig"
+            },
+            {
+                "name": "typecheckAllRecords",
+                "comment": " By default, typechecking is only used to disambiguate records. This alters\nthat behavior to typecheck _all_ records. For instance, this will force\n`{ foo = 1, bar = 2 }` to be an \"unknown\" record if\n`{ foo : String, bar : String }` is known. This should probably be left turned\noff, unless you wish to help find examples of incorrect type inference by this\nrule.\n",
+                "type": "NoUnsortedRecords.RuleConfig -> NoUnsortedRecords.RuleConfig"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "NoUnsortedTopLevelDeclarations",
+        "comment": "\n\n\n## Review Rule\n\n@docs rule\n\n\n## Configuration\n\n@docs RuleConfig, sortTopLevelDeclarations\n\n\n## Orderings\n\n@docs alphabetically, exposedOrderWithPrivateLast, exposedOrderWithPrivateFirst, typesFirst, typesLast, portsFirst, portsLast\n\n\n## Glues\n\nGlues provide a way to \"stick\" one declaration to another, i.e. to always sort\none declaration alongside another. Note that glues will chain, i.e. if `a` is\nglued before `b` and `b` is glued after `c`, then the result will be `c` -> `a`\n-> `b` (sorted wherever `c` is sorted to). Glues behave in the following ways:\n\n  - If multiple glues are specified, the first specified will be used.\n  - If multiple declarations are glued at the same place, they will be ordered\n    by the orderings specified.\n  - If glues are not acyclic (i.e. two declarations are glued to each other,\n    possibly via intermediates), then all of the involved declarations will not\n    be glued and will be sorted normally.\n\n@docs glueHelpersBefore, glueHelpersAfter, glueDependenciesBeforeFirstDependent, glueDependenciesAfterFirstDependent, glueDependenciesAfterLastDependent, glueDependenciesBeforeLastDependent\n\n",
+        "unions": [
+            {
+                "name": "RuleConfig",
+                "comment": " Configuration for this rule. Create a new one with\n`sortTopLevelDeclarations` and use orderings to create a hierarchy of sorting.\n",
+                "args": [
+                    "r"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "alphabetically",
+                "comment": " Sort declarations alphabetically. Note that this decapitalizes the first\nletter before performing the comparison so as to treat types and functions the\nsame. For example, the following is sorted alphabetically:\n\n    type A\n        = A\n\n    a =\n        foo\n\n    b =\n        bar\n\n    z =\n        zed\n\n    type alias Z =\n        A\n\n",
+                "type": "NoUnsortedTopLevelDeclarations.RuleConfig { r | noAlphabetical : () } -> NoUnsortedTopLevelDeclarations.RuleConfig r"
+            },
+            {
+                "name": "exposedOrderWithPrivateFirst",
+                "comment": " Sort TLDs in the order they are exposed by the module, with private TLDs\ncoming before all those that are exposed. For example, the following is sorted\nby this and then alphabetically:\n\n    module A exposing\n        ( A, a\n        , Z\n        )\n\n    {-|\n\n    @docs A, a\n    @docs Z\n\n    -}\n\n    b =\n        bar\n\n    z =\n        zed\n\n    type A\n        = A\n\n    a =\n        foo\n\n    type alias Z =\n        A\n\n",
+                "type": "NoUnsortedTopLevelDeclarations.RuleConfig { r | noExposed : () } -> NoUnsortedTopLevelDeclarations.RuleConfig r"
+            },
+            {
+                "name": "exposedOrderWithPrivateLast",
+                "comment": " Sort TLDs in the order they are exposed by the module, with private TLDs\ncoming after all those that are exposed. For example, the following is sorted\nby this and then alphabetically:\n\n    module A exposing\n        ( A, a\n        , Z\n        )\n\n    {-|\n\n    @docs A, a\n    @docs Z\n\n    -}\n\n    type A\n        = A\n\n    a =\n        foo\n\n    type alias Z =\n        A\n\n    b =\n        bar\n\n    z =\n        zed\n\n",
+                "type": "NoUnsortedTopLevelDeclarations.RuleConfig { r | noExposed : () } -> NoUnsortedTopLevelDeclarations.RuleConfig r"
+            },
+            {
+                "name": "glueDependenciesAfterFirstDependent",
+                "comment": " Dependencies are _unexposed_ functions that are used in multiple other\nfunctions. This glue attaches them immediately after the first function they\nare used in.\n\nFor example:\n\n    a x =\n        unwrap x\n\n    unwrap =\n        some func\n\n    b x =\n        unwrap x\n\n    c x =\n        unwrap x\n\n",
+                "type": "NoUnsortedTopLevelDeclarations.RuleConfig { r | noDependency : () } -> NoUnsortedTopLevelDeclarations.RuleConfig r"
+            },
+            {
+                "name": "glueDependenciesAfterLastDependent",
+                "comment": " Dependencies are _unexposed_ functions that are used in multiple other\nfunctions. This glue attaches them immediately after the last function they\nare used in.\n\nFor example:\n\n    a x =\n        unwrap x\n\n    b x =\n        unwrap x\n\n    c x =\n        unwrap x\n\n    unwrap =\n        some func\n\n",
+                "type": "NoUnsortedTopLevelDeclarations.RuleConfig { r | noDependency : () } -> NoUnsortedTopLevelDeclarations.RuleConfig r"
+            },
+            {
+                "name": "glueDependenciesBeforeFirstDependent",
+                "comment": " Dependencies are _unexposed_ functions that are used in multiple other\nfunctions. This glue attaches them immediately before the first function they\nare used in.\n\nFor example:\n\n    unwrap =\n        some func\n\n    a x =\n        unwrap x\n\n    b x =\n        unwrap x\n\n    c x =\n        unwrap x\n\n",
+                "type": "NoUnsortedTopLevelDeclarations.RuleConfig { r | noDependency : () } -> NoUnsortedTopLevelDeclarations.RuleConfig r"
+            },
+            {
+                "name": "glueDependenciesBeforeLastDependent",
+                "comment": " Dependencies are _unexposed_ functions that are used in multiple other\nfunctions. This glue attaches them immediately before the last function they\nare used in.\n\nFor example:\n\n    a x =\n        unwrap x\n\n    b x =\n        unwrap x\n\n    unwrap =\n        some func\n\n    c x =\n        unwrap x\n\n",
+                "type": "NoUnsortedTopLevelDeclarations.RuleConfig { r | noDependency : () } -> NoUnsortedTopLevelDeclarations.RuleConfig r"
+            },
+            {
+                "name": "glueHelpersAfter",
+                "comment": " Helpers are _unexposed_ functions that are used in exactly one other\nfunction. This glue attaches them immediately after the function they are used\nin.\n\nFor example:\n\n    {-| Reduce a list from the right.\n    -}\n    foldr : (a -> b -> b) -> b -> List a -> b\n    foldr fn acc ls =\n        foldrHelper fn acc 0 ls\n\n    foldrHelper : (a -> b -> b) -> b -> Int -> List a -> b\n    foldrHelper fn acc ctr ls =\n        case ls of\n            [] ->\n                acc\n\n            a :: r1 ->\n                ...\n\n",
+                "type": "NoUnsortedTopLevelDeclarations.RuleConfig { r | noHelper : () } -> NoUnsortedTopLevelDeclarations.RuleConfig r"
+            },
+            {
+                "name": "glueHelpersBefore",
+                "comment": " Helpers are _unexposed_ functions that are used in exactly one other\nfunction. This glue attaches them immediately before the function they are used\nin.\n\nFor example:\n\n    foldrHelper : (a -> b -> b) -> b -> Int -> List a -> b\n    foldrHelper fn acc ctr ls =\n        case ls of\n            [] ->\n                acc\n\n            a :: r1 ->\n                ...\n\n    {-| Reduce a list from the right.\n    -}\n    foldr : (a -> b -> b) -> b -> List a -> b\n    foldr fn acc ls =\n        foldrHelper fn acc 0 ls\n\n",
+                "type": "NoUnsortedTopLevelDeclarations.RuleConfig { r | noHelper : () } -> NoUnsortedTopLevelDeclarations.RuleConfig r"
+            },
+            {
+                "name": "portsFirst",
+                "comment": " Sort TLDs so that ports always come before functions (and types, if they\nhaven't been sorted already). For example, the following is sorted by this order\nand then alphabetically:\n\n    port sendMessage : String -> Cmd msg\n\n    type A\n        = A\n\n    a =\n        foo\n\n    b =\n        bar\n\n    type alias Z =\n        A\n\n    z =\n        zed\n\n",
+                "type": "NoUnsortedTopLevelDeclarations.RuleConfig { r | noPort : () } -> NoUnsortedTopLevelDeclarations.RuleConfig r"
+            },
+            {
+                "name": "portsLast",
+                "comment": " Sort TLDs so that ports always come after functions (and types, if they\nhaven't been sorted already). For example, the following is sorted by this order\nand then alphabetically:\n\n    type A\n        = A\n\n    a =\n        foo\n\n    b =\n        bar\n\n    type alias Z =\n        A\n\n    z =\n        zed\n\n    port sendMessage : String -> Cmd msg\n\n",
+                "type": "NoUnsortedTopLevelDeclarations.RuleConfig { r | noPort : () } -> NoUnsortedTopLevelDeclarations.RuleConfig r"
+            },
+            {
+                "name": "rule",
+                "comment": " Reports top-level declarations that are not in the \"proper\" order.\n\n🔧 Running with `--fix` will automatically sort the declarations.\n\nThe proper order of declarations is specified in the rule configuration. See the\n[Configuration](#configuration) section below for more information.\n\n    config =\n        [ NoUnsortedTopLevelDeclarations.rule\n            (NoUnsortedTopLevelDeclarations.sortTopLevelDeclarations\n                |> NoUnsortedTopLevelDeclarations.portsFirst\n                |> NoUnsortedTopLevelDeclarations.exposedOrderWithPrivateLast\n                |> NoUnsortedTopLevelDeclarations.alphabetically\n            )\n        ]\n\n\n## Fail\n\n    module A exposing\n        ( A, a\n        , Z\n        )\n\n    {-|\n\n    @docs A, a\n    @docs Z\n\n    -}\n\n    type A\n        = A\n\n    z =\n        zed\n\n    type alias Z =\n        A\n\n    a =\n        foo\n\n    b =\n        bar\n\n\n## Success\n\n    module A exposing\n        ( A, a\n        , Z\n        )\n\n    {-|\n\n    @docs A, a\n    @docs Z\n\n    -}\n\n    type A\n        = A\n\n    a =\n        foo\n\n    type alias Z =\n        A\n\n    b =\n        bar\n\n    z =\n        zed\n\n\n## When (not) to enable this rule\n\nThis rule is useful when you want to ensure that your top-level declarations are\nin a consistent, predictable order.\n\nThis rule is not useful when you want to be able to write top-level declarations\nin varying orders throughout your codebase, e.g. if you want to emphasize what\nis most important on a case-by-case basis.\n\n\n## Try it out\n\nYou can try this rule out by running the following command:\n\n```bash\nelm-review --template SiriusStarr/elm-review-no-unsorted/example --rules NoUnsortedTopLevelDeclarations\n```\n\n",
+                "type": "NoUnsortedTopLevelDeclarations.RuleConfig r -> Review.Rule.Rule"
+            },
+            {
+                "name": "sortTopLevelDeclarations",
+                "comment": " Create a new `RuleConfig`. Use the various orderings to then specify\nprimary and fallback orderings.\n",
+                "type": "NoUnsortedTopLevelDeclarations.RuleConfig { noAlphabetical : (), noDependency : (), noExposed : (), noHelper : (), noType : (), noPort : () }"
+            },
+            {
+                "name": "typesFirst",
+                "comment": " Sort TLDs so that types and type aliases always come before functions (and\nports, if they haven't been sorted already). For example, the following is\nsorted by this order and then alphabetically:\n\n    type A\n        = A\n\n    type alias Z =\n        A\n\n    a =\n        foo\n\n    b =\n        bar\n\n    z =\n        zed\n\n",
+                "type": "NoUnsortedTopLevelDeclarations.RuleConfig { r | noType : () } -> NoUnsortedTopLevelDeclarations.RuleConfig r"
+            },
+            {
+                "name": "typesLast",
+                "comment": " Sort TLDs so that types and type aliases always come after functions (and\nports, if they haven't been sorted already). For example, the following is\nsorted by this order and then alphabetically:\n\n    a =\n        foo\n\n    b =\n        bar\n\n    z =\n        zed\n\n    type A\n        = A\n\n    type alias Z =\n        A\n\n",
+                "type": "NoUnsortedTopLevelDeclarations.RuleConfig { r | noType : () } -> NoUnsortedTopLevelDeclarations.RuleConfig r"
+            }
+        ],
+        "binops": []
+    }
+]

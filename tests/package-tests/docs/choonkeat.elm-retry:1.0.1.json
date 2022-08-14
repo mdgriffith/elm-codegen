@@ -1,0 +1,52 @@
+[
+    {
+        "name": "Retry",
+        "comment": " Add retries to a task, based on a list of retry policies, until any one of\nthe policies fail too.\n\n@docs Policy, with\n\n\n## Common policies\n\n@docs maxRetries, maxDuration, constantInterval, exponentialBackoff\n\n",
+        "unions": [
+            {
+                "name": "Policy",
+                "comment": " A [`Policy`](#Policy) is attached with a function that will return another\n[`Policy`](#Policy) as a [`Task`](https://package.elm-lang.org/packages/elm/core/latest/Task#Task) value.\n\nThe arguments of the function are\n\n  - `Int` timestamp of when we first started `originalTask`, in milliseconds\n  - `Policy x` the current policy; destructure to obtain the function to call\n  - `x` last error from attempting `originalTask`\n\nRefer to [`maxRetries`](#maxRetries) source code for a simple example.\n\n",
+                "args": [
+                    "x"
+                ],
+                "cases": [
+                    [
+                        "Policy",
+                        [
+                            "Basics.Int -> Retry.Policy x -> x -> Task.Task x (Retry.Policy x)"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "constantInterval",
+                "comment": " Sleep for the same number of milliseconds before every retry.\n\n    Retry.with [ Retry.constantInterval 1000 ] originalTask\n        |> Task.attempt DidOriginalTask\n\nNOTE: The code above will keep retrying `originalTask`; best to combine with\n[`maxRetries`](#maxRetries) or [`maxDuration`](#maxDuration)\n\n",
+                "type": "Basics.Float -> Retry.Policy x"
+            },
+            {
+                "name": "exponentialBackoff",
+                "comment": " Sleep for an increasing number of milliseconds before every retry. Backoff\nalgorithim is based off [https://github.com/cenkalti/backoff](https://github.com/cenkalti/backoff/blob/4b4cebaf850ec58f1bb1fec5bdebdf8501c2bc3f/exponential.go#L144-L153)\n\n    Retry.with [ Retry.exponentialBackoff { interval = 500, maxInterval = 3000 } ] originalTask\n        |> Task.attempt DidOriginalTask\n\nNOTE: The code above will keep retrying `originalTask`; best to combine with\n[`maxRetries`](#maxRetries) or [`maxDuration`](#maxDuration)\n\n",
+                "type": "{ interval : Basics.Float, maxInterval : Basics.Float } -> Retry.Policy x"
+            },
+            {
+                "name": "maxDuration",
+                "comment": " Stop retrying `originalTask` after some number of milliseconds.\n\n    Retry.with [ Retry.maxDuration 7000 ] originalTask\n        |> Task.attempt DidOriginalTask\n\nNOTE: The code above does NOT sleep between retries; best to combine with\n[`constantInterval`](#constantInterval) or [`exponentialBackoff`](#exponentialBackoff)\n\n",
+                "type": "Basics.Int -> Retry.Policy x"
+            },
+            {
+                "name": "maxRetries",
+                "comment": " Stop retrying `originalTask` after a number of retries.\n\n    Retry.with [ Retry.maxRetries 20 ] originalTask\n        |> Task.attempt DidOriginalTask\n\nNOTE: The code above does NOT sleep between retries; best to combine with\n[`constantInterval`](#constantInterval) or [`exponentialBackoff`](#exponentialBackoff)\n\n",
+                "type": "Basics.Int -> Retry.Policy x"
+            },
+            {
+                "name": "with",
+                "comment": " Given a list of error handling [`Policy`](#Policy) we can make our `originalTask`\nretry on failure until any one of the [`Policy`](#Policy) fails.\n\n    originalTask\n        |> Retry.with\n            [ Retry.maxDuration 7000\n            , Retry.exponentialBackoff { interval = 500, maxInterval = 3000 }\n            ]\n        |> Task.attempt DidOriginalTask\n\n",
+                "type": "List.List (Retry.Policy x) -> Task.Task x a -> Task.Task x a"
+            }
+        ],
+        "binops": []
+    }
+]

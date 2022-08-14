@@ -1,0 +1,197 @@
+[
+    {
+        "name": "WebSocketFramework.Server",
+        "comment": " Support for a Node.js server for WebSocketFramework messages.\n\n\n# Types\n\n@docs Model, Socket, Msg\n\n\n# Callbacks\n\n@docs UserFunctions, ServerMessageSender, ServerGamesDeleter, ServerPlayersDeleter\n\n\n# Top-level program\n\n@docs program\n\n\n# Message sending\n\n@docs sendToOne, sendToMany, sendToOthers, sendToAll\n\n\n# State accessors\n\n@docs getState, setState, getServerModel, setServerModel\n@docs getDeathRowDuration, setDeathRowDuration, getTime\n\n\n# Utilities\n\n@docs otherSockets\n\n\n# Model accessors\n\n@docs verbose\n\n",
+        "unions": [
+            {
+                "name": "Model",
+                "comment": " An opaque type containing the application state.\n",
+                "args": [
+                    "servermodel",
+                    "message",
+                    "gamestate",
+                    "player"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Msg",
+                "comment": " The messages processed by our `update` function.\n\nOpaque, because your code doesn't need to know.\n\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "ServerGamesDeleter",
+                "comment": " Called when games are auto-deleted due to socket connections being lost.\n\nThis will only happen if your server code tracks the association between sockets, games and players in the `xxxDict` properties of the Model. When tracked games are dropped, this function, stored in the `gamesDeleter` property of `UserFunctions`, is called, so that you can clean up any reference to those games in your `gamestate`.\n\nIt is called BEFORE the game information is removed from the `ServerState`.\n\n",
+                "args": [
+                    "servermodel",
+                    "message",
+                    "gamestate",
+                    "player"
+                ],
+                "type": "WebSocketFramework.Server.Model servermodel message gamestate player -> List.List WebSocketFramework.Types.GameId -> WebSocketFramework.Types.ServerState gamestate player -> ( WebSocketFramework.Server.Model servermodel message gamestate player, Platform.Cmd.Cmd WebSocketFramework.Server.Msg )"
+            },
+            {
+                "name": "ServerMessageSender",
+                "comment": " User function that is called to send the response(s) to a request.\n\nThis will usually call `sendToOne` and/or `sendToMany` with the `message` emitted by the `ServiceMessageProcessor` in the `UserFunctions` passed to `program`.\n\nThe first `message` is the request that came from client to server. The second `message` is the response. If no response is returned by the `ServiceMessageProcessor`, this function is not called.\n\nThe `ServerState` arg is the value of the `state` property of the `Model` arg, pulled out for your convenience. If you change it, you must put it back in the model you return.\n\n",
+                "args": [
+                    "servermodel",
+                    "message",
+                    "gamestate",
+                    "player"
+                ],
+                "type": "WebSocketFramework.Server.Model servermodel message gamestate player -> WebSocketFramework.Server.Socket -> WebSocketFramework.Types.ServerState gamestate player -> message -> message -> ( WebSocketFramework.Server.Model servermodel message gamestate player, Platform.Cmd.Cmd WebSocketFramework.Server.Msg )"
+            },
+            {
+                "name": "ServerPlayersDeleter",
+                "comment": " Called when players are auto-deleted due to socket connections being lost.\n\nThis will only happen if your server code tracks the association between sockets, games and players in the `xxxDict` properties of the Model. When tracked players are dropped, this function, stored in the `playersDelete` property of `UserFunctions`, is called, so that you can clean up any reference to those players in your `gamestate`.\n\nIt is called BEFORE the player information is removed from the `ServerState`.\n\n",
+                "args": [
+                    "servermodel",
+                    "message",
+                    "gamestate",
+                    "player"
+                ],
+                "type": "WebSocketFramework.Server.Model servermodel message gamestate player -> WebSocketFramework.Types.GameId -> List.List WebSocketFramework.Types.PlayerId -> WebSocketFramework.Types.ServerState gamestate player -> ( WebSocketFramework.Server.Model servermodel message gamestate player, Platform.Cmd.Cmd WebSocketFramework.Server.Msg )"
+            },
+            {
+                "name": "Socket",
+                "comment": " An alias of `WebSocketServer.Socket`.\n",
+                "args": [],
+                "type": "WebSocketServer.Socket"
+            },
+            {
+                "name": "UserFunctions",
+                "comment": " User functions that get called by the generic server code.\n\n`encodeDecode` is used to translate messages to and from strings.\n\n`messageProcessor` processes a client request into state changes and a response message.\n\n`messageSender` decides what to do with the response message.\n\n`messageToGameid` extracts a GameId from a message, if there is one.\n\n`messageToPlayerid` extracts a PlayerId from a message, if there is one.\n\n`autoDeleteGame` is called when all sockets referencing a `GameId` have disconnected. If it returns True, then the game will be put on deathwatch, meaning it will be removed from the tables after a delay. Usually used to keep public games from being auto-deleted.\n\n`gamesDeleter` is called when games are deleted due to their sockets being disconnected. See the `ServerGamesDeleter` description for more details.\n\n`playersDeleter` is called when players are deleted due to their sockets being disconnected. See the `ServerPlayersDeleter` description for more details.\n\n`inputPort` and `outputPort` are the ports used to communicate with the Node.js code.\n\n",
+                "args": [
+                    "servermodel",
+                    "message",
+                    "gamestate",
+                    "player"
+                ],
+                "type": "{ encodeDecode : WebSocketFramework.Types.EncodeDecode message, messageProcessor : WebSocketFramework.Types.ServerMessageProcessor gamestate player message, messageSender : WebSocketFramework.Server.ServerMessageSender servermodel message gamestate player, messageToGameid : Maybe.Maybe (message -> Maybe.Maybe WebSocketFramework.Types.GameId), messageToPlayerid : Maybe.Maybe (message -> Maybe.Maybe WebSocketFramework.Types.PlayerId), autoDeleteGame : Maybe.Maybe (WebSocketFramework.Types.GameId -> WebSocketFramework.Types.ServerState gamestate player -> Basics.Bool), gamesDeleter : Maybe.Maybe (WebSocketFramework.Server.ServerGamesDeleter servermodel message gamestate player), playersDeleter : Maybe.Maybe (WebSocketFramework.Server.ServerPlayersDeleter servermodel message gamestate player), inputPort : WebSocketFramework.Types.InputPort WebSocketFramework.Server.Msg, outputPort : WebSocketFramework.Types.OutputPort WebSocketFramework.Server.Msg }"
+            }
+        ],
+        "values": [
+            {
+                "name": "getDeathRowDuration",
+                "comment": " Get the death row duration from a model.\n\nThis is the time a game or player sticks around after no connections reference it.\n\n",
+                "type": "WebSocketFramework.Server.Model servermodel message gamestate player -> Basics.Int"
+            },
+            {
+                "name": "getServerModel",
+                "comment": " Get the servermodel from a model.\n",
+                "type": "WebSocketFramework.Server.Model servermodel message gamestate player -> servermodel"
+            },
+            {
+                "name": "getState",
+                "comment": " Get the servermodel from a model.\n",
+                "type": "WebSocketFramework.Server.Model servermodel message gamestate player -> WebSocketFramework.Types.ServerState gamestate player"
+            },
+            {
+                "name": "getTime",
+                "comment": " Get the current time from a model.\n\nThe time is updated once a second.\n\n",
+                "type": "WebSocketFramework.Server.Model servermodel message gamestate player -> Basics.Int"
+            },
+            {
+                "name": "otherSockets",
+                "comment": " Return sockets associated with a game.\n\nRemoves the passed socket from the list.\n\nOften useful in `ServerMessageSender` functions to send responses to all players.\n\n",
+                "type": "WebSocketFramework.Types.GameId -> WebSocketFramework.Server.Socket -> WebSocketFramework.Server.Model servermodel message gamestate player -> List.List WebSocketFramework.Server.Socket"
+            },
+            {
+                "name": "program",
+                "comment": " Create the top-level application program.\n\nYou will usually use the result of this function as the value of `main` in your top-level module.\n\nMost servers will not need to use the `servermodel`, but it's a place to stash extra server-wide state that doesn't make sense in the game-specific `gamestate`, which is stored in the `ServerModel`, accessible via `getServerModel`.\n\n",
+                "type": "servermodel -> WebSocketFramework.Server.UserFunctions servermodel message gamestate player -> Maybe.Maybe gamestate -> Platform.Program (Maybe.Maybe String.String) (WebSocketFramework.Server.Model servermodel message gamestate player) WebSocketFramework.Server.Msg"
+            },
+            {
+                "name": "sendToAll",
+                "comment": " Encode a message to all the sockets for a GameId.\n",
+                "type": "WebSocketFramework.Types.GameId -> WebSocketFramework.Server.Model servermodel message gamestate player -> WebSocketFramework.Types.MessageEncoder message -> message -> Platform.Cmd.Cmd WebSocketFramework.Server.Msg"
+            },
+            {
+                "name": "sendToMany",
+                "comment": " Encode a message to multiple sockets via an output port.\n",
+                "type": "WebSocketFramework.Types.MessageEncoder message -> message -> WebSocketFramework.Types.OutputPort WebSocketFramework.Server.Msg -> List.List WebSocketFramework.Server.Socket -> Platform.Cmd.Cmd WebSocketFramework.Server.Msg"
+            },
+            {
+                "name": "sendToOne",
+                "comment": " Encode a message to a single socket via an output port.\n\nIf the first arg is True, log the operation on the console.\n\n",
+                "type": "WebSocketFramework.Types.MessageEncoder message -> message -> WebSocketFramework.Types.OutputPort WebSocketFramework.Server.Msg -> WebSocketFramework.Server.Socket -> Platform.Cmd.Cmd WebSocketFramework.Server.Msg"
+            },
+            {
+                "name": "sendToOthers",
+                "comment": " Encode a message to all the sockets for a GameId except the passed one.\n",
+                "type": "WebSocketFramework.Types.GameId -> WebSocketFramework.Server.Socket -> WebSocketFramework.Server.Model servermodel message gamestate player -> WebSocketFramework.Types.MessageEncoder message -> message -> Platform.Cmd.Cmd WebSocketFramework.Server.Msg"
+            },
+            {
+                "name": "setDeathRowDuration",
+                "comment": " Set the death row duration in a model.\n\nThis is the time a game or player sticks around after no connections reference it.\n\n",
+                "type": "WebSocketFramework.Server.Model servermodel message gamestate player -> Basics.Int -> WebSocketFramework.Server.Model servermodel message gamestate player"
+            },
+            {
+                "name": "setServerModel",
+                "comment": " Set the servermodel in a model.\n",
+                "type": "WebSocketFramework.Server.Model servermodel message gamestate player -> servermodel -> WebSocketFramework.Server.Model servermodel message gamestate player"
+            },
+            {
+                "name": "setState",
+                "comment": " Set the ServerState in a model.\n",
+                "type": "WebSocketFramework.Server.Model servermodel message gamestate player -> WebSocketFramework.Types.ServerState gamestate player -> WebSocketFramework.Server.Model servermodel message gamestate player"
+            },
+            {
+                "name": "verbose",
+                "comment": " Return whether VERBOSE is set in the server's environment\n",
+                "type": "WebSocketFramework.Server.Model servermodel message gamestate player -> Basics.Bool"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "WebSocketServer",
+        "comment": " Web socket server enables you to write the server part of your websocket\napplication in Elm.\n\nThis is copied from the upgraded version of `RGBBoy/websocket-server` at [github.com/billstclair/websocket-server](https://github.com/billstclair/websocket-server). You probably won't need to use it, except via `WebSocketFramework.Server`.\n\n\n# Web Socket Server\n\n@docs Socket, Location, eventDecoder\n\n\n# Commands\n\n@docs sendToOne, sendToMany, sendToOthers, close\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Location",
+                "comment": " The same Location type as found in `elm-lang/navigation` in Elm 0.17.\n",
+                "args": [],
+                "type": "{ href : String.String, host : String.String, hostname : String.String, protocol : String.String, origin : String.String, port_ : String.String, pathname : String.String, search : String.String, hash : String.String, username : String.String, password : String.String }"
+            },
+            {
+                "name": "Socket",
+                "comment": " A pointer to the socket in the node.js world. These are based on uuids and\nare unique to each connection that is created.\n",
+                "args": [],
+                "type": "String.String"
+            }
+        ],
+        "values": [
+            {
+                "name": "close",
+                "comment": " Close a socket connection. Given you have an output port:\n\n    port outputPort : Encode.Value -> Cmd msg\n\nYou would write something like this to create a cmd to close a socket:\n\n    close outputPort socketA\n\n",
+                "type": "(Json.Encode.Value -> a) -> WebSocketServer.Socket -> a"
+            },
+            {
+                "name": "eventDecoder",
+                "comment": " Create a decoder to use with your input port. This allows you to hook into\nthe events that will be triggered over a sockets lifetime and respond to them\nin your update function.\n\n    onConnection : Socket -> Location -> msg\n\nTriggered when a new connection is made. Can be used to get the new connection\nand the Location that the connection was made to. This can be useful to\nsegregate connections into groups or associating a private id.\n\n    onDisconnection : Socket -> Location -> msg\n\nTriggered when a disconnection happens. Can be used to clean up the connection\nfrom anywhere it has been saved in your application state.\n\n    onMessage : Socket -> Location -> String -> msg\n\nTriggered when a socket recieves a message.\n\n**Note 1:** Almost everyone will want to use a URL parsing library like\n[`evancz/url-parser`][parse] to turn a `Location` into something more useful.\n\n[parse]: https://github.com/evancz/url-parser\n\n",
+                "type": "{ onConnection : WebSocketServer.Socket -> WebSocketServer.Location -> msg, onDisconnection : WebSocketServer.Socket -> WebSocketServer.Location -> msg, onMessage : WebSocketServer.Socket -> WebSocketServer.Location -> String.String -> msg } -> Json.Decode.Decoder msg"
+            },
+            {
+                "name": "sendToMany",
+                "comment": " Send a message to a many sockets. Given you have an output port:\n\n    port outputPort : Encode.Value -> Cmd msg\n\nYou would write something like this to create a cmd to send messages:\n\n    sendToMany outputPort \"Hello!\" [ socketA, socketB ]\n        |> Cmd.batch\n\n",
+                "type": "(Json.Encode.Value -> a) -> String.String -> List.List WebSocketServer.Socket -> List.List a"
+            },
+            {
+                "name": "sendToOne",
+                "comment": " Send a message to a particular socket. Given you have an output port:\n\n    port outputPort : Encode.Value -> Cmd msg\n\nYou would write something like this to create a cmd to send a message:\n\n    sendToOne outputPort \"Hello!\" socketA\n\n",
+                "type": "(Json.Encode.Value -> a) -> String.String -> WebSocketServer.Socket -> a"
+            },
+            {
+                "name": "sendToOthers",
+                "comment": " Send a message to a all sockets except one. Given you have an output port:\n\n    port outputPort : Encode.Value -> Cmd msg\n\nYou would write something like this to create a cmd to send messages:\n\n    sendToOthers outputPort \"Hello!\" socketA [ socketA, socketB, socketC ]\n        |> Cmd.batch\n\n",
+                "type": "(Json.Encode.Value -> a) -> String.String -> WebSocketServer.Socket -> List.List WebSocketServer.Socket -> List.List a"
+            }
+        ],
+        "binops": []
+    }
+]

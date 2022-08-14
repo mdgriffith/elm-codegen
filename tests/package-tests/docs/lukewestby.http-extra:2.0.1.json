@@ -1,0 +1,38 @@
+[
+    {
+        "name": "Http.Extra",
+        "comment": " Convenience functions for working with Http\n\n\n# Types\n\n@docs NoContent\n\n\n# Expects\n\n@docs expectJsonResponse, expectValue, expectNoContent\n\n",
+        "unions": [
+            {
+                "name": "NoContent",
+                "comment": " A value representing a response that has no content. Like such a response,\nthis value contains no information and has one value.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NoContent",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "expectJsonResponse",
+                "comment": " Decode a response body as JSON, but keep the rest of the response. Unlike\nHttp.expecJson, you can decode using a Decoder but still get access to response\nheaders, status code, etc.\n",
+                "type": "Json.Decode.Decoder a -> Http.Expect (Http.Response a)"
+            },
+            {
+                "name": "expectNoContent",
+                "comment": " Complete a request with `NoContent` value. Skips JSON decoding to always\ncomplete with `NoContent`, regardless of what the server returns.\n",
+                "type": "Http.Expect Http.Extra.NoContent"
+            },
+            {
+                "name": "expectValue",
+                "comment": " Complete a request with a predetermined value. Using `Json.Decode.succeed`\nfails when the the server doesn't send back valid JSON, as `expectJson` always\nattempts to parse the response body as JSON. `expectValue` skips decoding\nentirely.\n",
+                "type": "a -> Http.Expect a"
+            }
+        ],
+        "binops": []
+    }
+]

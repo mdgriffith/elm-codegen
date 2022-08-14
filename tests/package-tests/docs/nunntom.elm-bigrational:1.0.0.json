@@ -1,0 +1,181 @@
+[
+    {
+        "name": "BigRational",
+        "comment": " Big rational numbers. Represent and perform arithmetic on non-integer values\nwithout floating point errors or native integer bounds.\n\n\n# Definition\n\n@docs BigRational\n\n\n# From\n\n@docs fromInt, fromBigInt, fromInts, fromBigInts, fromFloat, fromString, fromFloatString\n\n\n# To\n\n@docs toBigInts, toMixedFraction, toMixedParts, toDecimalString, toFloat, toString\n\n\n# Arithmetic\n\n@docs add, sub, mul, div, pow, invert, negate, abs\n\n\n# Compare\n\n@docs compare, lt, gt\n\n\n# Rounding\n\n@docs MidpointRounding, round, floor, ceiling, truncate\n\n",
+        "unions": [
+            {
+                "name": "BigRational",
+                "comment": " The BigRational opaque type.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "MidpointRounding",
+                "comment": " When rounding, if the number is exactly half-way between two whole numbers, which way to go?\n",
+                "args": [],
+                "cases": [
+                    [
+                        "ToEven",
+                        []
+                    ],
+                    [
+                        "ToOdd",
+                        []
+                    ],
+                    [
+                        "ToInfinity",
+                        []
+                    ],
+                    [
+                        "AwayFromZero",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "abs",
+                "comment": " Get the [absolute](https://en.wikipedia.org/wiki/Absolute_value) value of a rational\n\n    abs (fromInts -10 3) == fromInts 10 3\n\n",
+                "type": "BigRational.BigRational -> BigRational.BigRational"
+            },
+            {
+                "name": "add",
+                "comment": " Add two big rationals.\n\n    add (fromInts 1 2) (fromInts 1 4) == fromInts 3 4\n\n",
+                "type": "BigRational.BigRational -> BigRational.BigRational -> BigRational.BigRational"
+            },
+            {
+                "name": "ceiling",
+                "comment": " The opposite of floor. Round up.\n",
+                "type": "BigRational.BigRational -> BigInt.BigInt"
+            },
+            {
+                "name": "compare",
+                "comment": " Compare two rationals.\n\n    compare (fromInts 3 2) (fromInts 1 2) == GT\n\n",
+                "type": "BigRational.BigRational -> BigRational.BigRational -> Basics.Order"
+            },
+            {
+                "name": "div",
+                "comment": " Divide one big rational by another.\n",
+                "type": "BigRational.BigRational -> BigRational.BigRational -> BigRational.BigRational"
+            },
+            {
+                "name": "floor",
+                "comment": " Floor means always rounding down, away from infinity.\n",
+                "type": "BigRational.BigRational -> BigInt.BigInt"
+            },
+            {
+                "name": "fromBigInt",
+                "comment": " Make a rational from a BigInt.\n",
+                "type": "BigInt.BigInt -> BigRational.BigRational"
+            },
+            {
+                "name": "fromBigInts",
+                "comment": " Make a rational as the ratio of two BigInts. `fromBigInts 3 4` is 4 quarters.\n",
+                "type": "BigInt.BigInt -> BigInt.BigInt -> BigRational.BigRational"
+            },
+            {
+                "name": "fromFloat",
+                "comment": " Make a rational out of a float.\n\n    fromFloat 1.5 == fromInts 3 2\n\n",
+                "type": "Basics.Float -> BigRational.BigRational"
+            },
+            {
+                "name": "fromFloatString",
+                "comment": " Try to make a rational from a string representation of a float/decimal number.\n\n    fromFloatString \"1.5\" == Just (fromInts 3 2)\n\n    fromFloatString \"5e-2\" == fromString \"100/5\"\n\n    fromFloatString \"1.5E7\" == fromString \"15000000\"\n\n",
+                "type": "String.String -> Maybe.Maybe BigRational.BigRational"
+            },
+            {
+                "name": "fromInt",
+                "comment": " Make a rational from an integer.\n",
+                "type": "Basics.Int -> BigRational.BigRational"
+            },
+            {
+                "name": "fromInts",
+                "comment": " Make a rational as the ratio of two integers. `fromInts 1 2` is a half (1/2).\n",
+                "type": "Basics.Int -> Basics.Int -> BigRational.BigRational"
+            },
+            {
+                "name": "fromString",
+                "comment": " Try to make a rational from a string. The string can in the format\n`\"1/3\"` or `\"5 3/4\"` or `\"-4 3/25\"` with a single space between\nthe integer part (if present) and the fraction.\n\n    fromString \"5 10/100\" == Just (fromFloat 5.1)\n\n    fromString \"12/5\" == Just (fromFloat 2.4)\n\n    fromString \"-1/3\" == Just (fromInts -1 3)\n\n",
+                "type": "String.String -> Maybe.Maybe BigRational.BigRational"
+            },
+            {
+                "name": "gt",
+                "comment": " Is one rational greater than another?\n",
+                "type": "BigRational.BigRational -> BigRational.BigRational -> Basics.Bool"
+            },
+            {
+                "name": "invert",
+                "comment": " Invert a rational. Flip the fraction upside down. 1/2 becomes 2/1.\n\n    BR.invert (BR.fromInts 1 2) == BR.fromInts 2 1\n\n",
+                "type": "BigRational.BigRational -> BigRational.BigRational"
+            },
+            {
+                "name": "lt",
+                "comment": " Is one rational lesser than another?\n",
+                "type": "BigRational.BigRational -> BigRational.BigRational -> Basics.Bool"
+            },
+            {
+                "name": "mul",
+                "comment": " Multiply two big rationals.\n\n    mul (fromInts 5 2) (fromInts 3 2) == fromInts 15 4\n\n",
+                "type": "BigRational.BigRational -> BigRational.BigRational -> BigRational.BigRational"
+            },
+            {
+                "name": "negate",
+                "comment": " Negate a rational.\n\n    (fromInts 10 3 |> negate |> toString) == \"-10/3\"\n\n",
+                "type": "BigRational.BigRational -> BigRational.BigRational"
+            },
+            {
+                "name": "pow",
+                "comment": " Raise a big rational to the power of an integer.\n\n    (fromInts 5 2 |> pow 2 |> toString) == \"6 1/4\"\n\n    (fromInts 5 2 |> pow -2 |> toFloat) == 0.16\n\n",
+                "type": "Basics.Int -> BigRational.BigRational -> BigRational.BigRational"
+            },
+            {
+                "name": "round",
+                "comment": " Round a rational number to the nearest whole number.\n\n    round ToEven (fromInts 10 3) == BigInt.fromInt 3\n\n    round ToEven (fromFloat 1.5) == BigInt.fromInt 2\n\n    round ToEven (fromFloat 2.5) == BigInt.fromInt 2\n\n    round ToOdd (fromFloat 2.5) == BigInt.fromInt 3\n\n    round ToInfinity (fromFloat 2.5) == BigInt.fromInt 3\n\n    round AwayFromZero (fromFloat -2.5) == BigInt.fromInt -3\n\n    round ToInfinity (fromFloat -2.5) == BigInt.fromInt -2\n\n",
+                "type": "BigRational.MidpointRounding -> BigRational.BigRational -> BigInt.BigInt"
+            },
+            {
+                "name": "sub",
+                "comment": " Subtract one big rational from another.\n\n    sub (fromInt 10) (fromFloat 2.5) == fromInts 15 2\n\n",
+                "type": "BigRational.BigRational -> BigRational.BigRational -> BigRational.BigRational"
+            },
+            {
+                "name": "toBigInts",
+                "comment": " Get the numerator and denominator of the rational as two BigInts\n",
+                "type": "BigRational.BigRational -> ( BigInt.BigInt, BigInt.BigInt )"
+            },
+            {
+                "name": "toDecimalString",
+                "comment": " Turn a rational into a decimal string with the specified number of decimal places.\n\n    (fromInts 10 3 |> toDecimalString 5) == \"3.33333\"\n\n    (fromInts 20 3 |> toDecimalString 10) == \"6.6666666667\"\n\n    (fromInts 22 7 |> toDecimalString 30) == \"3.142857142857142857142857142857\"\n\n",
+                "type": "Basics.Int -> BigRational.BigRational -> String.String"
+            },
+            {
+                "name": "toFloat",
+                "comment": " Turn a rational into a float approximation.\n\n    (fromInts 10 3 |> toFloat) == 3.3333333333333335\n\n    (fromInts 1 2000000 |> toFloat) == 5.0e-7\n\n",
+                "type": "BigRational.BigRational -> Basics.Float"
+            },
+            {
+                "name": "toMixedFraction",
+                "comment": " Turn a rational into a [mixed fraction](https://www.mathsisfun.com/mixed-fractions.html). That is, a BigInt,\nand a BigRational representing a [proper fraction](https://www.mathsisfun.com/proper-fractions.html).\n\n    toMixedFraction (fromInts 25 2) == ( BigInt.fromInt 12, fromInts 1 2 )\n\n",
+                "type": "BigRational.BigRational -> ( BigInt.BigInt, BigRational.BigRational )"
+            },
+            {
+                "name": "toMixedParts",
+                "comment": " Turn a rational into a [mixed fraction](https://www.mathsisfun.com/mixed-fractions.html) and get the individual parts as BigInts. This may be useful for displaying the number in your own way.\n",
+                "type": "BigRational.BigRational -> ( BigInt.BigInt, BigInt.BigInt, BigInt.BigInt )"
+            },
+            {
+                "name": "toString",
+                "comment": " Turn a rational into a string like `\"1/2\"` or `\"5 3/4\"` or `\"-3 5/8\"`.\n\n    toString (fromFloat 2.25) == \"2 1/4\"\n\n",
+                "type": "BigRational.BigRational -> String.String"
+            },
+            {
+                "name": "truncate",
+                "comment": " Truncate a rational, rounding toward zero.\n",
+                "type": "BigRational.BigRational -> BigInt.BigInt"
+            }
+        ],
+        "binops": []
+    }
+]

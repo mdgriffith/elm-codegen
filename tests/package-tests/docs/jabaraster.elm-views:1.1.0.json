@@ -1,0 +1,26 @@
+[
+    {
+        "name": "Jabara.Views",
+        "comment": " This module provides some views.\n\n\n# Font Awesome Icon.\n\n@docs fas, fas_, fasCheck\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fas",
+                "comment": " Font Awesome Icon with class attributes.\nPlease refer Font Awesome css from html file.\n\n    button [] [ fas \"class-button-icon\" \"sync\" ]\n\n",
+                "type": "String.String -> String.String -> Html.Html msg"
+            },
+            {
+                "name": "fasCheck",
+                "comment": " A little cool checkbox by Font Awesome Icon.\nPlease refer Font Awesome css from html file.\n\n    View only:\n        fasCheck True \"Alwaiy Checked\" Nothing\n\n    With action:\n        fasCheck True \"Alwaiy Checked\" (Just SomeMessage)\n",
+                "type": "Basics.Bool -> String.String -> Maybe.Maybe msg -> Html.Html msg"
+            },
+            {
+                "name": "fas_",
+                "comment": " Font Awesome Icon without class attributes.\nPlease refer Font Awesome css from html file.\n\n    div [] [ input [] [], fas_ \"sync\" ]\n\n",
+                "type": "String.String -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

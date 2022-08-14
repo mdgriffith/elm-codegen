@@ -1,0 +1,109 @@
+[
+    {
+        "name": "UiExplorer",
+        "comment": "\n\n\n### Create an app that lets you browse and interact with UI you've created.\n\n![example-image](https://raw.githubusercontent.com/insurello/elm-ui-explorer/master/example-image.png)\nIn this image, the panel to the left is called the sidebar and the page selected in it is shown in the remaining space to the right.\n\nNote that this package is built primarily for UI created with [`mdgriffith/elm-ui`](https://package.elm-lang.org/packages/mdgriffith/elm-ui/latest/).\nYou can still use [`elm/html`](https://package.elm-lang.org/packages/elm/html/latest/) with [`Element.html`](https://package.elm-lang.org/packages/mdgriffith/elm-ui/latest/Element#html) though.\n\n\n# Application\n\n@docs application, defaultConfig, ApplicationConfig, Model, Msg, PageMsg\n\n\n# Pages\n\nA \"page\" is something you can select in the sidebar to display when the app is running.\nPages can contain a single widget, tables showing every variation of your button components, or an entire login page. It's up to you!\n\n@docs firstPage, nextPage, groupPages, static, getPagePaths, Page, PageSize, PageBuilder\n\n",
+        "unions": [
+            {
+                "name": "Model",
+                "comment": " ",
+                "args": [
+                    "pageModel",
+                    "flags"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Msg",
+                "comment": " ",
+                "args": [
+                    "pageMsg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "PageBuilder",
+                "comment": " ",
+                "args": [
+                    "model",
+                    "msg",
+                    "flags"
+                ],
+                "cases": []
+            },
+            {
+                "name": "PageMsg",
+                "comment": " ",
+                "args": [
+                    "previous",
+                    "current"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "ApplicationConfig",
+                "comment": " These are settings we can change when creating our UI explorer application.\n\n  - `flagsDecoder` lets us parse json flags we pass to our app. This gets passed along to the init function in our pages (or the view function if you're creating a static page).\n  - `layoutOptions` and `layoutAttributes` are used in our app's [Element.layoutWith](https://package.elm-lang.org/packages/mdgriffith/elm-ui/latest/Element#layoutWith) to control things like the default font or focusStyle.\n  - `relativeUrlPath` sets the relative path to pages. `relativeUrlPath = []` makes the page link look like this <https://localhost/MyPage>, and `relativeUrlPath = [ ui, here ]` produces <https://localhost/ui/here/MyPage>\n\n",
+                "args": [
+                    "msg",
+                    "flags"
+                ],
+                "type": "{ flagsDecoder : Json.Decode.Decoder flags, layoutOptions : List.List Element.Option, layoutAttributes : List.List (Element.Attribute msg), relativeUrlPath : List.List String.String, sidebarTitle : Element.Element msg }"
+            },
+            {
+                "name": "Page",
+                "comment": " All the functions you need for wiring together an interactive page. It's basically just `Browser.element`.\n\n    import MyCoolUi\n    import UiExplorer\n\n    loginPage =\n        { init = MyCoolUi.loginInit\n        , update = MyCoolUi.loginUpdate\n        , view = \\pageSize model -> MyCoolUi.loginView model\n        , subscriptions = always Sub.none\n        }\n\n    pages =\n        UiExplorer.firstPage \"Login Form\" loginPage\n\n",
+                "args": [
+                    "model",
+                    "msg",
+                    "flags"
+                ],
+                "type": "{ init : flags -> ( model, Platform.Cmd.Cmd msg ), update : msg -> model -> ( model, Platform.Cmd.Cmd msg ), view : UiExplorer.PageSize -> model -> Element.Element msg, subscriptions : model -> Platform.Sub.Sub msg }"
+            },
+            {
+                "name": "PageSize",
+                "comment": " The size of the page your UI gets placed in.\nThis is not the same as `Browser.Events.resize` since the UI explorer displays a sidebar that can take up some of the window space.\n\nYou'll need [`ianmackenzie/elm-units`](https://package.elm-lang.org/packages/ianmackenzie/elm-units/latest/) in order to use `Quantity Int Pixels`.\n\n    import Pixels\n\n    getWidth : PageSize -> Int\n    getWidth pageSize =\n        Pixels.inPixels pageSize.width\n\n",
+                "args": [],
+                "type": "{ width : Quantity.Quantity Basics.Int Pixels.Pixels, height : Quantity.Quantity Basics.Int Pixels.Pixels }"
+            }
+        ],
+        "values": [
+            {
+                "name": "application",
+                "comment": " Here we create our UI explorer app.\n\n    import MyCoolUi\n    import UiExplorer\n\n    pages =\n        UiExplorer.firstPage\n            \"Button\"\n            (UiExplorer.static MyCoolUi.button)\n            |> UiExplorer.nextPage\n                \"Footer\"\n                (UiExplorer.static MyCoolUi.footer)\n            |> UiExplorer.nextPage\n                \"Login Form\"\n                { init = MyCoolUi.loginInit\n                , update = MyCoolUi.loginUpdate\n                , view =\n                    \\pageSize model ->\n                        MyCoolUi.loginView model\n                , subscriptions = always Sub.none\n                }\n\n    main =\n        UiExplorer.application\n            UiExplorer.defaultConfig\n            pages\n\nNote that we didn't add type signatures for `pages` and `main` in the example.\nIf we did, we'd have to update it every time we add a new page and the type signatures would get messy.\nInstead it's best to just let the compiler infer it automatically.\n\n",
+                "type": "UiExplorer.ApplicationConfig (UiExplorer.Msg pageMsg) flags -> UiExplorer.PageBuilder pageModel pageMsg flags -> Platform.Program Json.Decode.Value (UiExplorer.Model pageModel flags) (UiExplorer.Msg pageMsg)"
+            },
+            {
+                "name": "defaultConfig",
+                "comment": " The default application configuration.\n\n    { flagsDecoder = Decode.succeed ()\n    , layoutOptions = []\n    , layoutAttributes = []\n    , relativeUrlPath = []\n    , title = Element.text \"UI explorer\"\n    }\n\n",
+                "type": "UiExplorer.ApplicationConfig msg ()"
+            },
+            {
+                "name": "firstPage",
+                "comment": " The first page in your UI explorer. This is the default page if the user doesn't specify a url path.\n\n    import Element\n    import UiExplorer\n\n    pages =\n        UiExplorer.firstPage\n            \"My first page\"\n            (UiExplorer.static (\\_ _ -> Element.text \"Hi!\"))\n\n",
+                "type": "String.String -> UiExplorer.Page model msg flags -> UiExplorer.PageBuilder ( (), model ) (UiExplorer.PageMsg () msg) flags"
+            },
+            {
+                "name": "getPagePaths",
+                "comment": " Get the relative paths to all the pages you've defined.\n\n    pages =\n        UiExplorer.firstPage \"First page\" (UiExplorer.static (\\_ _ -> Element.none))\n            |> UiExplorer.nextPage \"Second page\" (UiExplorer.static (\\_ _ -> Element.none))\n\n    paths =\n        -- [ \"/First%20page\", \"/Second%20page\" ]\n        getPagePaths [] pages\n\n    pathWithSubdomain =\n        -- [ \"/subdomain/First%20page\", \"/subdomain/Second%20page\" ]\n        getPagePaths [ \"subdomain\" ] pages\n\n",
+                "type": "List.List String.String -> UiExplorer.PageBuilder model msg flags -> List.List String.String"
+            },
+            {
+                "name": "groupPages",
+                "comment": " If your list of pages on the sidebar is starting to get too long, you can group some of them together with `groupPages`.\n\n    import MyPages\n    import UiExplorer\n\n    flatPages =\n        UiExplorer.firstPage \"Login\" MyPage.login\n            |> UiExplorer.nextPage \"About us\" MyPage.aboutUs\n            |> UiExplorer.nextPage \"Fonts\" MyPage.fonts\n            |> UiExplorer.nextPage \"Colors\" MyPage.colors\n            |> UiExplorer.nextPage \"Basic components\" MyPage.basicComponents\n            |> UiExplorer.nextPage \"Homepage\" MyPage.homepage\n\n    nowItsGrouped =\n        UiExplorer.firstPage \"Login\" MyPage.login\n            |> UiExplorer.nextPage \"About us\" MyPage.aboutUs\n            |> UiExplorer.groupPages \"Building blocks\"\n                (UiExplorer.nextPage \"Fonts\" MyPage.fonts\n                    >> UiExplorer.nextPage \"Colors\" MyPage.colors\n                    >> UiExplorer.nextPage \"Basic components\" MyPage.basicComponents\n                )\n            |> UiExplorer.nextPage \"Homepage\" MyPage.homepage\n\nTwo things to note:\n\n  - Normally pages need unique names, but with groups it's okay to have two pages use the same name so long as they are in different groups.\n  - Due to [`firstPage`](#firstPage) having a different type signature from [`nextPage`](#nextPage), you can't place the first page in a group.\n    If this is a problem, [create an issue on github](https://github.com/insurello/elm-ui-explorer/issues/new) explaining your use case.\n\n",
+                "type": "String.String -> (UiExplorer.PageBuilder a0 b0 c0 -> UiExplorer.PageBuilder a1 b1 c1) -> UiExplorer.PageBuilder a0 b0 c0 -> UiExplorer.PageBuilder a1 b1 c1"
+            },
+            {
+                "name": "nextPage",
+                "comment": " Additional pages in your UI explorer.\nYou have to start with [`firstPage`](#firstPage) before chaining the result to `nextPage`s.\nEach page must also have a unique name.\n\n    import Element\n    import UiExplorer\n\n    pages =\n        UiExplorer.firstPage\n            \"My first page\"\n            (UiExplorer.static (\\_ _ -> Element.text \"Hi!\"))\n            |> UiExplorer.nextPage\n                \"My second page\"\n                (UiExplorer.static (\\_ _ -> Element.none))\n\n",
+                "type": "String.String -> UiExplorer.Page model msg flags -> UiExplorer.PageBuilder modelPrevious msgPrevious flags -> UiExplorer.PageBuilder ( modelPrevious, model ) (UiExplorer.PageMsg msgPrevious msg) flags"
+            },
+            {
+                "name": "static",
+                "comment": " A page that doesn't change or react to user input. It's just a view function.\n",
+                "type": "(UiExplorer.PageSize -> flags -> Element.Element msg) -> UiExplorer.Page flags msg flags"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,591 @@
+[
+    {
+        "name": "Neat",
+        "comment": " Main module for elm-neat-layout.\n\n\n# Core\n\n@docs View\n@docs NoGap\n\n\n# `Browser.*` alternatives\n\n@docs sandbox\n@docs Renderer\n@docs defaultRenderer\n@docs element\n@docs document\n@docs Document\n@docs application\n\n\n# Constructors\n\n@docs lift\n@docs textBlock\n@docs textNode\n@docs none\n@docs empty\n@docs emptyNode\n\n\n# Special nodes\n\n@docs input\n@docs textarea\n@docs select\n\n\n# Modifiers\n\n@docs setMixin\n@docs setMixins\n@docs setAttribute\n@docs setAttributes\n@docs setLayout\n\n\n# Handle cases\n\n@docs when\n@docs unless\n\n\n# Keyed\n\n@docs keyed\n\n\n# Custom gaps\n\nYou can use custom gaps just by declaring their types and `IsGap` values.\n\ne.g.,\n\n    module MyGap exposing\n        ( ButtonGroup\n        , buttonGroup\n        )\n\n    import Neat exposing (IsGap)\n\n    type ButtonGroup\n        = ButtonGroup\n\n    buttonGroup : IsGap ButtonGroup\n    buttonGroup =\n        IsGap\n            { width = 0.6\n            , height = 0.6\n            }\n\n@docs IsGap\n\n\n# Convert between gaps\n\n@docs fromNoGap\n@docs expand\n@docs setBoundary\n@docs setBoundaryWith\n@docs setBoundaryWithMap\n\n\n# Accessibility\n\n@docs setRole\n@docs setAria\n@docs setBoolAria\n\n\n# Lower level functions for performance optimization\n\nThese are lower level functions, so all you need would be `Neat.Layout.Row.optimized` and `Neat.Layout.Column.optimized`.\n\nDo not worry even if you cannot understand how to use these functions.\n\n@docs optimized\n@docs toProtected\n@docs Protected\n\n",
+        "unions": [
+            {
+                "name": "IsGap",
+                "comment": " Information about your custom gaps.\n\n  - width : gap width relative to `baseGapSize` of `Renderer`\n  - height : gap height relative to `baseGapSize` of `Renderer`\n\nThe `Renderer` value above is given to `sandbox`, `element`, `document`, `application`.\n\ne.g., When `baseGapSize = \"2rem\"` is passed to `sandbox`, `IsGap { width = 1.2, height = 2 }` becomes gap with `\"2.4rem\"` width and `\"4rem\"` height.\n\n",
+                "args": [
+                    "p"
+                ],
+                "cases": [
+                    [
+                        "IsGap",
+                        [
+                            "{ width : Basics.Float, height : Basics.Float }"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "NoGap",
+                "comment": " Primitive type representing no gap\n\nFor custom gaps, see [Custom gaps](#custom-gaps).\n\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Protected",
+                "comment": " ",
+                "args": [
+                    "g",
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Document",
+                "comment": " Alternative to `Browser.Document`.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ title : String.String, body : Neat.View Neat.NoGap msg }"
+            },
+            {
+                "name": "Renderer",
+                "comment": " Settings for rendering `View`.\n\nThe `baseGapSize` is base gap size in [<length> CSS data type](https://developer.mozilla.org/en-US/docs/Web/CSS/length).\nAll gap sizes are determined relative to this value.\ne.g., `\"16px\"`, `\"1.2rem\"`, ...\nThe \"em\" unit is not recommended because it varies with parent node font-size of each gap.\n\n",
+                "args": [],
+                "type": "{ baseGapSize : String.String }"
+            },
+            {
+                "name": "View",
+                "comment": " Html alternative type.\n",
+                "args": [
+                    "gap",
+                    "msg"
+                ],
+                "type": "Neat.Internal.View gap msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "application",
+                "comment": " Alternative to `Browser.application`.\nThis also inserts following style tag.\n\n    <style>\n    *,\n    *::before,\n    *::after {\n      box-sizing: border-box;\n    }\n    [data-elm-neat-layout~=flex]{\n        display:-ms-flexbox;\n        display:flex\n    }\n    </style>\n\n",
+                "type": "{ init : flags -> Url.Url -> Browser.Navigation.Key -> ( model, Platform.Cmd.Cmd msg ), view : model -> Neat.Document msg, update : msg -> model -> ( model, Platform.Cmd.Cmd msg ), subscriptions : model -> Platform.Sub.Sub msg, onUrlRequest : Browser.UrlRequest -> msg, onUrlChange : Url.Url -> msg, renderer : model -> Neat.Renderer } -> Platform.Program flags model msg"
+            },
+            {
+                "name": "defaultRenderer",
+                "comment": "\n\n    defaultRenderer =\n        { baseGapSize = \"1rem\"\n        }\n\n",
+                "type": "Neat.Renderer"
+            },
+            {
+                "name": "document",
+                "comment": " Alternative to `Browser.document`.\nThis also inserts following style tag.\n\n    <style>\n    *,\n    *::before,\n    *::after {\n      box-sizing: border-box;\n    }\n    [data-elm-neat-layout~=flex] {\n      display:-ms-flexbox;\n      display:flex\n    }\n    </style>\n\n",
+                "type": "{ init : flags -> ( model, Platform.Cmd.Cmd msg ), view : model -> Neat.Document msg, update : msg -> model -> ( model, Platform.Cmd.Cmd msg ), subscriptions : model -> Platform.Sub.Sub msg, renderer : model -> Neat.Renderer } -> Platform.Program flags model msg"
+            },
+            {
+                "name": "element",
+                "comment": " Alternative to `Browser.element`.\nThis also inserts following style tag.\n\n    <style>\n    *,\n    *::before,\n    *::after {\n      box-sizing: border-box;\n    }\n    [data-elm-neat-layout~=flex] {\n      display:-ms-flexbox;\n      display:flex\n    }\n    </style>\n\n",
+                "type": "{ init : flags -> ( model, Platform.Cmd.Cmd msg ), view : model -> Neat.View Neat.NoGap msg, update : msg -> model -> ( model, Platform.Cmd.Cmd msg ), subscriptions : model -> Platform.Sub.Sub msg, renderer : model -> Neat.Renderer } -> Platform.Program flags model msg"
+            },
+            {
+                "name": "empty",
+                "comment": " An alias for `div [] []`.\n",
+                "type": "Neat.View Neat.NoGap a"
+            },
+            {
+                "name": "emptyNode",
+                "comment": " An alias for `\\node -> lift node [] []`.\n",
+                "type": "(List.List (Html.Attribute msg) -> List.List (Html.Html msg) -> Html.Html msg) -> Neat.View Neat.NoGap msg"
+            },
+            {
+                "name": "expand",
+                "comment": " Expand gap from `g1` to `g2`.\nBoth the width and the height of `g2` is supposed to be greater than `g1`.\n",
+                "type": "Neat.IsGap g1 -> Neat.IsGap g2 -> Neat.View g1 msg -> Neat.View g2 msg"
+            },
+            {
+                "name": "fromNoGap",
+                "comment": " ",
+                "type": "Neat.IsGap g -> Neat.View Neat.NoGap msg -> Neat.View g msg"
+            },
+            {
+                "name": "input",
+                "comment": " `View` version of `Html.input`.\nDiffer from `lift Html.input [] []`, it can accept \"padding\" style property.\n",
+                "type": "Neat.View g msg"
+            },
+            {
+                "name": "keyed",
+                "comment": " ",
+                "type": "String.String -> List.List (Mixin.Mixin msg) -> List.List ( String.String, Neat.View g msg ) -> Neat.View g msg"
+            },
+            {
+                "name": "lift",
+                "comment": " Lift `Html` nodes into `View`.\n\n    import Html exposing (div)\n    import Mixin exposing (Mixin)\n    import Neat exposing (View)\n    import Neat.Gap as Gap exposing (NoGap)\n\n    view1 : View NoGap msg\n    view1 =\n        Neat.div\n            []\n            [ Neat.text \"view1\"\n            ]\n\n    view2 : View NoGap msg\n    view2 =\n        Neat.div\n            []\n            [ Neat.text \"view2\"\n            ]\n\n    composed : View NoGap msg\n    composed =\n        lift div\n            [ Mixin.class \"parent\"\n            ]\n            [ view1\n            , view2\n            ]\n\n",
+                "type": "(List.List (Html.Attribute msg) -> List.List (Html.Html msg) -> Html.Html msg) -> List.List (Mixin.Mixin msg) -> List.List (Neat.View g msg) -> Neat.View g msg"
+            },
+            {
+                "name": "none",
+                "comment": " View version of `Html.text \"\"`.\n",
+                "type": "Neat.View g a"
+            },
+            {
+                "name": "optimized",
+                "comment": "\n\n    v1 : View g msg\n    v1 =\n        Debug.todo \"v1\"\n\n    v2 : View g msg\n    v2 =\n        Debug.todo \"v2\"\n\n    child : Int -> View g msg\n    child _ =\n        Debug.todo \"child\"\n\n    child_ : Int -> Html (Protected g msg)\n    child_ =\n        toProtected << child\n\n    v : List Int -> View g msg\n    v =\n        optimized\n            String.fromInt\n            (lazy child_)\n            \"div\"\n            []\n\n",
+                "type": "(x -> String.String) -> (x -> Neat.Renderer -> Html.Html (Neat.Protected g msg)) -> String.String -> List.List (Mixin.Mixin msg) -> List.List x -> Neat.View g msg"
+            },
+            {
+                "name": "sandbox",
+                "comment": " Alternative to `Browser.sandbox`.\n\nThis inserts following CSS.\n\n    <style>\n    *,\n    *::before,\n    *::after {\n      box-sizing: border-box;\n    }\n    [data-elm-neat-layout~=flex] {\n      display:-ms-flexbox;\n      display:flex\n    }\n    </style>\n\n",
+                "type": "{ init : model, view : model -> Neat.View Neat.NoGap msg, update : msg -> model -> model, renderer : Neat.Renderer } -> Platform.Program () model msg"
+            },
+            {
+                "name": "select",
+                "comment": " `View` version of `Html.select`.\nDiffer from `lift Html.select`, it can accept \"padding\" style property.\n",
+                "type": "List.List (Mixin.Mixin msg) -> List.List (Neat.View g msg) -> Neat.View g msg"
+            },
+            {
+                "name": "setAria",
+                "comment": " Set \"aria-\\*\" value for WAI-ARIA.\n\ne.g., `setAria \"required\" \"true\"` stands for \"aria-required\" is \"true\".\n\n",
+                "type": "String.String -> String.String -> Neat.View g msg -> Neat.View g msg"
+            },
+            {
+                "name": "setAttribute",
+                "comment": " ",
+                "type": "Html.Attribute msg -> Neat.View Neat.NoGap msg -> Neat.View Neat.NoGap msg"
+            },
+            {
+                "name": "setAttributes",
+                "comment": " ",
+                "type": "List.List (Html.Attribute msg) -> Neat.View Neat.NoGap msg -> Neat.View Neat.NoGap msg"
+            },
+            {
+                "name": "setBoolAria",
+                "comment": " Set boolean \"aria-\\*\" value for WAI-ARIA.\n\ni.e.,\n\n  - `setBoolAria name True` is equal to `setAria name \"true\"`\n  - `setBoolAria name False` is equal to `setAria name \"false\"`\n\n",
+                "type": "String.String -> Basics.Bool -> Neat.View g msg -> Neat.View g msg"
+            },
+            {
+                "name": "setBoundary",
+                "comment": " Wrap a view with boundary without gap.\nAlias for `setBoundary defaultBoundary`.\n",
+                "type": "Neat.IsGap g -> Neat.View g msg -> Neat.View Neat.NoGap msg"
+            },
+            {
+                "name": "setBoundaryWith",
+                "comment": " Set boundary to convert into `NoGap`.\nAlias for `setBoundaryWithMap identity`.\n",
+                "type": "Neat.Boundary.Boundary -> Neat.IsGap g -> Neat.View g msg -> Neat.View Neat.NoGap msg"
+            },
+            {
+                "name": "setBoundaryWithMap",
+                "comment": " Set boundary to convert into `NoGap`.\nIn addition, `setBoundaryWithMap` can convert msg type of a View.\n\n(The elm-neat-layout does not have `map` function. Use `setBoundaryWithMap`, `Layout.Row.rowWithMap`, and `Layout.Column.columnWithMap`, instead.)\n\n",
+                "type": "(a -> b) -> Neat.Boundary.Boundary -> Neat.IsGap g -> Neat.View g a -> Neat.View Neat.NoGap b"
+            },
+            {
+                "name": "setLayout",
+                "comment": " ",
+                "type": "Neat.Layout.Internal.Layout msg -> Neat.View g msg -> Neat.View g msg"
+            },
+            {
+                "name": "setMixin",
+                "comment": " ",
+                "type": "Mixin.Mixin msg -> Neat.View Neat.NoGap msg -> Neat.View Neat.NoGap msg"
+            },
+            {
+                "name": "setMixins",
+                "comment": " ",
+                "type": "List.List (Mixin.Mixin msg) -> Neat.View Neat.NoGap msg -> Neat.View Neat.NoGap msg"
+            },
+            {
+                "name": "setRole",
+                "comment": " Set \"role\" value for WAI-ARIA.\n",
+                "type": "String.String -> Neat.View g msg -> Neat.View g msg"
+            },
+            {
+                "name": "textBlock",
+                "comment": " Create a text block.\n\n`textBlock \"foo\"` is equivalent to `Html.div [] [ Html.text \"foo\" ]` in Html world.\n\n    textBlock =\n        textNode Html.div\n\n",
+                "type": "String.String -> Neat.View Neat.NoGap msg"
+            },
+            {
+                "name": "textNode",
+                "comment": " Create a View which only contains a text node.\n\n`textNode Html.option \"Item1\"` is equivalent to `Html.option [] [ Html.text \"Item1\" ]` in Html world.\n\n",
+                "type": "(List.List (Html.Attribute msg) -> List.List (Html.Html msg) -> Html.Html msg) -> String.String -> Neat.View Neat.NoGap msg"
+            },
+            {
+                "name": "textarea",
+                "comment": " `View` version of `Html.textarea`.\nDiffer from `lift Html.textarea [] []`, it can accept \"padding\" style property.\n",
+                "type": "Neat.View g msg"
+            },
+            {
+                "name": "toProtected",
+                "comment": " This is supposed to be used in order to make `Html.Lazy.lazyN` work.\nSee `optimized` for real usage.\n",
+                "type": "Neat.View g a -> Neat.Renderer -> Html.Html (Neat.Protected g a)"
+            },
+            {
+                "name": "unless",
+                "comment": " Insert a `View` unless a condition is met.\n",
+                "type": "Basics.Bool -> Neat.View p msg -> Neat.View p msg"
+            },
+            {
+                "name": "when",
+                "comment": " Insert a `View` only when a condition is met.\n",
+                "type": "Basics.Bool -> Neat.View p msg -> Neat.View p msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Neat.Layout",
+        "comment": " Alignment functions.\n\n\n# Core\n\n@docs Layout\n\n\n# Rows and Columns\n\n@docs row\n@docs rowWith\n@docs column\n@docs columnWith\n\n\n# Fill items in Rows and Columns\n\n@docs fill\n@docs fillBy\n@docs noShrink\n@docs shrinkBy\n@docs basis\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Layout",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "Neat.Layout.Internal.Layout msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "basis",
+                "comment": " basis\n",
+                "type": "String.String -> Neat.Layout.Layout msg"
+            },
+            {
+                "name": "column",
+                "comment": " Re-exposing of `Neat.Alignment.Column.column`.\n",
+                "type": "List.List (Neat.View p msg) -> Neat.View p msg"
+            },
+            {
+                "name": "columnWith",
+                "comment": " Re-exposing of `Neat.Alignment.Column.columnWith`.\n\nAn alias for `columnWith Neat.Alignment.Column.default`.\n\n",
+                "type": "Neat.Layout.Column.Column -> List.List (Neat.View p msg) -> Neat.View p msg"
+            },
+            {
+                "name": "fill",
+                "comment": " Expand the item in row/column.\n\nShorthands for `fillBy 1`.\n\n",
+                "type": "Neat.Layout.Layout msg"
+            },
+            {
+                "name": "fillBy",
+                "comment": " Specifies how much of the remaining space in the row/column should be assigned to the item.\n",
+                "type": "Basics.Int -> Neat.Layout.Layout msg"
+            },
+            {
+                "name": "noShrink",
+                "comment": " Prohibit to shrink the item in row/column.\n\nShorthands for `fillBy 0`.\n\n",
+                "type": "Neat.Layout.Layout msg"
+            },
+            {
+                "name": "row",
+                "comment": " Re-exposing of `Neat.Alignment.Row.row`.\n",
+                "type": "List.List (Neat.View p msg) -> Neat.View p msg"
+            },
+            {
+                "name": "rowWith",
+                "comment": " Re-exposing of `Neat.Alignment.Row.rowWith`.\n\nAn alias for `rowWith Neat.Alignment.Row.default`.\n\n",
+                "type": "Neat.Layout.Row.Row -> List.List (Neat.View p msg) -> Neat.View p msg"
+            },
+            {
+                "name": "shrinkBy",
+                "comment": " If the size of all flex items in row/column is larger than the container, items shrink to fit according to `shrinkBy`.\n",
+                "type": "Basics.Int -> Neat.Layout.Layout msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Neat.Layout.Column",
+        "comment": "\n\n\n# Columns\n\n@docs columnWith\n@docs columnWithMap\n@docs Column\n@docs Wrap\n@docs defaultColumn\n@docs column\n@docs Vertical\n@docs Horizontal\n\n\n# Optimization\n\n@docs optimized\n@docs toProtected\n\n",
+        "unions": [
+            {
+                "name": "Horizontal",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Left",
+                        []
+                    ],
+                    [
+                        "Right",
+                        []
+                    ],
+                    [
+                        "HCenter",
+                        []
+                    ],
+                    [
+                        "Stretch",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Vertical",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Top",
+                        []
+                    ],
+                    [
+                        "Bottom",
+                        []
+                    ],
+                    [
+                        "VCenter",
+                        []
+                    ],
+                    [
+                        "SpaceBetween",
+                        []
+                    ],
+                    [
+                        "SpaceAround",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Wrap",
+                "comment": " Configuration about wrapping.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NoWrap",
+                        []
+                    ],
+                    [
+                        "Wrap",
+                        []
+                    ],
+                    [
+                        "WrapInto",
+                        [
+                            "Basics.Int"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Column",
+                "comment": " Configuration about column alignment.\n",
+                "args": [],
+                "type": "{ vertical : Neat.Layout.Column.Vertical, horizontal : Neat.Layout.Column.Horizontal, wrap : Neat.Layout.Column.Wrap, nodeName : String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "column",
+                "comment": " An alias for `columnWith defaultColumn`.\n",
+                "type": "List.List (Neat.View p msg) -> Neat.View p msg"
+            },
+            {
+                "name": "columnWith",
+                "comment": " Align Views vertically.\n\nAlias for `columnWithMap`.\n\n",
+                "type": "Neat.Layout.Column.Column -> List.List (Neat.View p msg) -> Neat.View p msg"
+            },
+            {
+                "name": "columnWithMap",
+                "comment": " Align Views vertically.\nIn addition, `columnWithMap` can convert msg type of a View.\n",
+                "type": "(a -> b) -> Neat.Layout.Column.Column -> List.List (Neat.View p a) -> Neat.View p b"
+            },
+            {
+                "name": "defaultColumn",
+                "comment": " Default `Column` configuration.\n\n    { vertical = Top\n    , horizontal = Stretch\n    , wrap = NoWrap\n    , nodeName = \"div\"\n    }\n\n",
+                "type": "Neat.Layout.Column.Column"
+            },
+            {
+                "name": "optimized",
+                "comment": " Optimized column.\n\n  - First argument: identifier for each element\n      - the return value must be unique among all elements\n\n  - Second argument: apply `lazyN` on the resulting function of `toProtected`.\n\n```\nv1 : View p msg\nv1 =\n    Debug.todo \"v1\"\n\nv2 : View p msg\nv2 =\n    Debug.todo \"v2\"\n\nchild : Int -> View p msg\nchild _ =\n    Debug.todo \"child\"\n\n-- Make sure to declare this top level in order to `lazy` works well.\nchild_ : Int -> Column -> Renderer -> Html (Protected p msg)\nchild_ n =\n    toProtected <| child n\n\nv : List Int -> View p msg\nv =\n    optimized\n        String.fromInt\n        (\\n -> lazy2 child_ n)\n        defaultColumn\n```\n\n",
+                "type": "(x -> String.String) -> (x -> Neat.Layout.Column.Column -> Neat.Renderer -> Html.Html (Neat.Protected p msg)) -> Neat.Layout.Column.Column -> List.List x -> Neat.View p msg"
+            },
+            {
+                "name": "toProtected",
+                "comment": " This is supposed to be used in order to make `Html.lazy.lazyN` work.\nSee `optimized` for real usage.\n",
+                "type": "Neat.View p a -> Neat.Layout.Column.Column -> Neat.Renderer -> Html.Html (Neat.Protected p a)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Neat.Layout.Row",
+        "comment": "\n\n\n# Row\n\n@docs rowWith\n@docs rowWithMap\n@docs Row\n@docs Wrap\n@docs defaultRow\n@docs row\n@docs Vertical\n@docs Horizontal\n\n\n# Optimization\n\n@docs optimized\n@docs toProtected\n\n",
+        "unions": [
+            {
+                "name": "Horizontal",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Left",
+                        []
+                    ],
+                    [
+                        "Right",
+                        []
+                    ],
+                    [
+                        "HCenter",
+                        []
+                    ],
+                    [
+                        "SpaceBetween",
+                        []
+                    ],
+                    [
+                        "SpaceAround",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Vertical",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Top",
+                        []
+                    ],
+                    [
+                        "Bottom",
+                        []
+                    ],
+                    [
+                        "VCenter",
+                        []
+                    ],
+                    [
+                        "Stretch",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Wrap",
+                "comment": " Configuration about wrapping.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NoWrap",
+                        []
+                    ],
+                    [
+                        "Wrap",
+                        []
+                    ],
+                    [
+                        "WrapInto",
+                        [
+                            "Basics.Int"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Row",
+                "comment": " Configuration about row alignment.\n",
+                "args": [],
+                "type": "{ vertical : Neat.Layout.Row.Vertical, horizontal : Neat.Layout.Row.Horizontal, wrap : Neat.Layout.Row.Wrap, nodeName : String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultRow",
+                "comment": " Default `Row` configuration.\n\n    { vertical = Stretch\n    , horizontal = Left\n    , wrap = NoWrap\n    , nodeName = \"div\"\n    }\n\n",
+                "type": "Neat.Layout.Row.Row"
+            },
+            {
+                "name": "optimized",
+                "comment": " Optimized row.\n\n  - First argument: identifier for each element\n      - the return value must be unique among all elements\n\n  - Second argument: apply `lazyN` on the resulting function of `toProtected`.\n\n```\nv1 : View p msg\nv1 =\n    Debug.todo \"v1\"\n\nv2 : View p msg\nv2 =\n    Debug.todo \"v2\"\n\nchild : Int -> View p msg\nchild _ =\n    Debug.todo \"child\"\n\n-- Make sure to declare this top level in order to `lazy` works well.\nchild_ : Int -> Row -> Renderer -> Html (Protected p msg)\nchild_ n =\n    toProtected <| child n\n\nv : List Int -> View p msg\nv =\n    optimized\n        String.fromInt\n        (\\n -> lazy2 child_ n)\n        defaultRow\n```\n\n",
+                "type": "(x -> String.String) -> (x -> Neat.Layout.Row.Row -> Neat.Renderer -> Html.Html (Neat.Protected p msg)) -> Neat.Layout.Row.Row -> List.List x -> Neat.View p msg"
+            },
+            {
+                "name": "row",
+                "comment": " An alias for `rowWith defaultRow`.\n",
+                "type": "List.List (Neat.View p msg) -> Neat.View p msg"
+            },
+            {
+                "name": "rowWith",
+                "comment": " Align Views horizontally.\n\nAlias for `rowWithMap`.\n\n",
+                "type": "Neat.Layout.Row.Row -> List.List (Neat.View p msg) -> Neat.View p msg"
+            },
+            {
+                "name": "rowWithMap",
+                "comment": " Align Views horizontally.\nIn addition, `rowWithMap` can convert msg type of a View.\n",
+                "type": "(a -> b) -> Neat.Layout.Row.Row -> List.List (Neat.View p a) -> Neat.View p b"
+            },
+            {
+                "name": "toProtected",
+                "comment": " This is supposed to be used in order to make `Html.lazy.lazyN` work.\nSee `optimized` for real usage.\n",
+                "type": "Neat.View p a -> Neat.Layout.Row.Row -> Neat.Renderer -> Html.Html (Neat.Protected p a)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Neat.Media",
+        "comment": " Helper module for responsive design.\nThe `Neat.Media` provides helper functions to handle width of the target element dynamically.\n\n\n# Core\n\n@docs Media\n@docs element\n@docs Element\n\n\n# Functions for TEA\n\n@docs Msg\n@docs init\n@docs RootElement\n@docs subscriptions\n@docs update\n\n",
+        "unions": [
+            {
+                "name": "Media",
+                "comment": " Core data type.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Msg",
+                "comment": " Internal Msg\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "RootElement",
+                "comment": " The target element you want to get its width.\n\n  - Window: browser window\n  - RootWithId: element specified by `id` attribute value\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Window",
+                        []
+                    ],
+                    [
+                        "RootWithId",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Element",
+                "comment": " Reexport [`Browser.Dom.Element`](https://package.elm-lang.org/packages/elm/browser/latest/Browser-Dom#Element) for convenience.\n",
+                "args": [],
+                "type": "{ scene : { width : Basics.Float, height : Basics.Float }, viewport : { x : Basics.Float, y : Basics.Float, width : Basics.Float, height : Basics.Float }, element : { x : Basics.Float, y : Basics.Float, width : Basics.Float, height : Basics.Float } }"
+            }
+        ],
+        "values": [
+            {
+                "name": "element",
+                "comment": " Take `Element` of the target element form `Media`.\n",
+                "type": "Neat.Media.Media -> Maybe.Maybe Neat.Media.Element"
+            },
+            {
+                "name": "init",
+                "comment": " Initial state for TEA.\n\n  - root: the target element you want to get its width\n\n",
+                "type": "{ root : Neat.Media.RootElement } -> ( Neat.Media.Media, Platform.Cmd.Cmd Neat.Media.Msg )"
+            },
+            {
+                "name": "subscriptions",
+                "comment": " ",
+                "type": "Neat.Media.Media -> Platform.Sub.Sub Neat.Media.Msg"
+            },
+            {
+                "name": "update",
+                "comment": " ",
+                "type": "Neat.Media.Msg -> Neat.Media.Media -> ( Neat.Media.Media, Platform.Cmd.Cmd Neat.Media.Msg )"
+            }
+        ],
+        "binops": []
+    }
+]

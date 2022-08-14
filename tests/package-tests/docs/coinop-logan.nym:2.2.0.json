@@ -1,0 +1,82 @@
+[
+    {
+        "name": "Nym",
+        "comment": " Blarg.\n\n@docs uintToRenderedNym, Nym, renderNym, renderNymTemplate, EyeQuadAndPupil2d, Pupil2d, EyeQuad2d, binarySourceToNymTemplateResult, binarySourceToNymTemplate\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "EyeQuad2d",
+                "comment": " temp\n",
+                "args": [],
+                "type": "{ bottomRight : Vector2.Vector2, bottomLeft : Vector2.Vector2, topLeft : Vector2.Vector2, topRight : Vector2.Vector2 }"
+            },
+            {
+                "name": "EyeQuadAndPupil2d",
+                "comment": " temp\n",
+                "args": [],
+                "type": "{ pupil : Nym.Pupil2d, eyeQuad : Nym.EyeQuad2d }"
+            },
+            {
+                "name": "Nym",
+                "comment": " A Physical structure and coloring of a particular Nym.\n",
+                "args": [],
+                "type": "Types.Nym"
+            },
+            {
+                "name": "Pupil2d",
+                "comment": " temp\n",
+                "args": [],
+                "type": "List.List ( Vector2.Vector2, Vector2.Vector2, Vector2.Vector2 )"
+            }
+        ],
+        "values": [
+            {
+                "name": "binarySourceToNymTemplate",
+                "comment": " Given a BinarySource, build a NymTemplate\n",
+                "type": "BinarySource.BinarySource -> ( String.String, ( Basics.Int, List.List Basics.Int ), Types.NymTemplate )"
+            },
+            {
+                "name": "binarySourceToNymTemplateResult",
+                "comment": " Given a BinarySource, build a NymTemplate, but return a result\n",
+                "type": "BinarySource.BinarySource -> Result.Result ( Types.NymTemplate, Types.GenError ) Nym.Nym"
+            },
+            {
+                "name": "renderNym",
+                "comment": " Given a `Nym`, render an Entity.\n",
+                "type": "Nym.Nym -> Scene3d.Entity ()"
+            },
+            {
+                "name": "renderNymTemplate",
+                "comment": " Given a `NymTemplate`, render an Entity\n",
+                "type": "Basics.Bool -> Types.NymTemplate -> Scene3d.Entity ()"
+            },
+            {
+                "name": "uintToRenderedNym",
+                "comment": " Turn uint Nym NFT id into a rendered `Scene3d.Entity ()`\n",
+                "type": "BigInt.BigInt -> Scene3d.Entity ()"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "NymSource",
+        "comment": " Blarg.\n\n@docs Source, fromUintId\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Source",
+                "comment": " Represents the \"genetic code\" of the Nym. Use `fromUintId` to generate.\n",
+                "args": [],
+                "type": "BinarySource.BinarySource"
+            }
+        ],
+        "values": [
+            {
+                "name": "fromUintId",
+                "comment": " Generate a Source from a BigInt (assumed to be the Nym NFT identifier in uint form)\n",
+                "type": "BigInt.BigInt -> BinarySource.BinarySource"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,599 @@
+[
+    {
+        "name": "Warrior",
+        "comment": " You'll need the functions and Action type in this module to implement a turn function. The Map module can also be of some assistance.\n\n@docs Warrior, Action\n\n@docs id, position, health, maxHealth, healingPotential, attackDamage, inventory\n\n",
+        "unions": [
+            {
+                "name": "Action",
+                "comment": " The different actions which can be performed on a given turn.\n_Wait_ will simply skip your turn.\n_Heal_ let's the warrior recover some health. How much is influenced by the existence of potions in your inventory.\n_Pickup_ will pick an item from the tile you are on, and place it on your inventory.\n_Move_ let's you move one tile in any direction.\n_Attack_ will make you attack in any direction. If another warrior is there that warrior will lose health. How much is influenced by the existance of a sword in your inventory.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Wait",
+                        []
+                    ],
+                    [
+                        "Heal",
+                        []
+                    ],
+                    [
+                        "Pickup",
+                        []
+                    ],
+                    [
+                        "Move",
+                        [
+                            "Warrior.Direction.Direction"
+                        ]
+                    ],
+                    [
+                        "Attack",
+                        [
+                            "Warrior.Direction.Direction"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Warrior",
+                "comment": " This type represents a warrior.\n",
+                "args": [],
+                "type": "Warrior.Internal.Warrior.Warrior"
+            }
+        ],
+        "values": [
+            {
+                "name": "attackDamage",
+                "comment": " Calculates how much damage the warrior will do as the result of an attack. The returned value depends on the items in the inventory.\n",
+                "type": "Warrior.Warrior -> Basics.Int"
+            },
+            {
+                "name": "healingPotential",
+                "comment": " Calculates much health the warrior could _potentially_ recover as the result of a heal action. This function doesn't consider your current health; you will never heal past your `maxHealth`.\n",
+                "type": "Warrior.Warrior -> Basics.Int"
+            },
+            {
+                "name": "health",
+                "comment": " Get the health of a warrior.\n",
+                "type": "Warrior.Warrior -> Basics.Int"
+            },
+            {
+                "name": "id",
+                "comment": " The id, or name, of the warrior.\n",
+                "type": "Warrior.Warrior -> String.String"
+            },
+            {
+                "name": "inventory",
+                "comment": " A list of all the items a warrior has in its possession.\n",
+                "type": "Warrior.Warrior -> List.List Warrior.Item.Item"
+            },
+            {
+                "name": "maxHealth",
+                "comment": " Get the maximum health the warrior can have. The warrior will start a map with this much health.\n",
+                "type": "Warrior.Warrior -> Basics.Int"
+            },
+            {
+                "name": "position",
+                "comment": " Retrieve the current position of a warrior.\n",
+                "type": "Warrior.Warrior -> Warrior.Coordinate.Coordinate"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Warrior.Coordinate",
+        "comment": " Coordinates are simple records that describes a position on a map\n\n@docs Coordinate\n\n@docs toString\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Coordinate",
+                "comment": " A Coordinate is the intersection of column x and row y.\n",
+                "args": [],
+                "type": "{ x : Basics.Int, y : Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "toString",
+                "comment": " A human readable string of the given coordinate.\n",
+                "type": "Warrior.Coordinate.Coordinate -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Warrior.Direction",
+        "comment": " Directions are usually used to specify where an action is applied.\n\n@docs Direction\n@docs all, toString\n\n",
+        "unions": [
+            {
+                "name": "Direction",
+                "comment": " The different directions a player can move, look and attack. Note that there are no diagonal directions.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Left",
+                        []
+                    ],
+                    [
+                        "Right",
+                        []
+                    ],
+                    [
+                        "Up",
+                        []
+                    ],
+                    [
+                        "Down",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "all",
+                "comment": " A simple list containing all Direction values. Handy when combined with `List.filter` or `List.map`\n",
+                "type": "List.List Warrior.Direction.Direction"
+            },
+            {
+                "name": "toString",
+                "comment": " Turns direction value into a human readable string\n",
+                "type": "Warrior.Direction.Direction -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Warrior.History",
+        "comment": " Every warrior's turn is recorded into History. You can use this module to answer questions about the past.\n\n@docs History\n\n@docs roundsPlayed, previousStates, previousActions\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "History",
+                "comment": " The History record. It contains all past actions, and the previous states of warriors and the map\n",
+                "args": [],
+                "type": "Warrior.Internal.History.History"
+            }
+        ],
+        "values": [
+            {
+                "name": "previousActions",
+                "comment": " A list of every action a warrior has ever taken. The first element will be the previous action, the last element the first action.\n",
+                "type": "Warrior.Warrior -> Warrior.History.History -> List.List Warrior.Action"
+            },
+            {
+                "name": "previousStates",
+                "comment": " Returns a list of the state of a warrior and the map, going back to the first turn. The first element in the list will represent the state of the warrior and the map at the beginning of that warrior's last turn.\n",
+                "type": "Warrior.Warrior -> Warrior.History.History -> List.List ( Warrior.Warrior, Warrior.Map.Map )"
+            },
+            {
+                "name": "roundsPlayed",
+                "comment": " How many complete rounds have been played? A round is over when every warrior has taken an action.\n",
+                "type": "Warrior.History.History -> Basics.Int"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Warrior.Item",
+        "comment": " A warrior might find and use different items on their quest.\n\n@docs Item\n@docs toString\n\n",
+        "unions": [
+            {
+                "name": "Item",
+                "comment": " The different items that can be encountered and used during the game.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Sword",
+                        []
+                    ],
+                    [
+                        "Potion",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toString",
+                "comment": " Human readable name of item\n",
+                "type": "Warrior.Item.Item -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Warrior.Map",
+        "comment": " This module contains functions which allow you look around a map, based on the location of a warrior.\n\n@docs Map\n\n\n# Search\n\n@docs look, lookDown\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Map",
+                "comment": " A map, represented by a grid of tiles.\n",
+                "args": [],
+                "type": "Warrior.Internal.Map.Map"
+            }
+        ],
+        "values": [
+            {
+                "name": "look",
+                "comment": " Provides a list of everything the warrior can see in a specific direction. The first item of the list will be the one tile away. The second item will be two tiles away, etc.\n",
+                "type": "Warrior.Direction.Direction -> Warrior.Warrior -> Warrior.Map.Map -> List.List ( Warrior.Coordinate.Coordinate, Warrior.Map.Tile.Tile )"
+            },
+            {
+                "name": "lookDown",
+                "comment": " Describe what is at the warrior's feet. Usually this will just be empty space, but occasionally you might see an item worth picking up.\n",
+                "type": "Warrior.Warrior -> Warrior.Map.Map -> Warrior.Map.Tile.Tile"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Warrior.Map.Builder",
+        "comment": " You can use this module to build your own maps!\n\n@docs Template\n\n\n# Map layout\n\n@docs Size, init, withDescription, withSpawnPoint, withExitPoint, withWalledArea\n\n\n# Non-playable characters (Npc's) and Items\n\n@docs withNpc, armLastNpc, withItem\n\n\n# Queries\n\n@docs spawnPoints, npcs\n\n\n# Finally\n\n@docs build\n\n",
+        "unions": [
+            {
+                "name": "Template",
+                "comment": " A map in progress.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Size",
+                "comment": " Describes how large a map should be in rows and columns.\n",
+                "args": [],
+                "type": "{ rows : Basics.Int, columns : Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "armLastNpc",
+                "comment": " Places an item into the inventory of the last villain added with the `withNpc` function.\n",
+                "type": "Warrior.Item.Item -> Warrior.Map.Builder.Template -> Warrior.Map.Builder.Template"
+            },
+            {
+                "name": "build",
+                "comment": " Turn this template into a map\n",
+                "type": "Warrior.Map.Builder.Template -> Warrior.Internal.Map.Map"
+            },
+            {
+                "name": "init",
+                "comment": " Initialize an empty map of a given size where every tile is empty. Use the the following `with` functions to make the map more interesting.\n",
+                "type": "Warrior.Map.Builder.Size -> Warrior.Map.Builder.Template"
+            },
+            {
+                "name": "npcs",
+                "comment": " Return a list of all non-playable characters along with their turn functions.\n",
+                "type": "Warrior.Map.Builder.Template -> List.List ( Warrior.Warrior, Warrior.Warrior -> Warrior.Internal.Map.Map -> Warrior.History.History -> Warrior.Action )"
+            },
+            {
+                "name": "spawnPoints",
+                "comment": " A list of points where warriors can spawn.\n",
+                "type": "Warrior.Map.Builder.Template -> List.List Warrior.Coordinate.Coordinate"
+            },
+            {
+                "name": "withDescription",
+                "comment": " Sets a description for the map which will be displayed above the map when the game is played.\n",
+                "type": "String.String -> Warrior.Map.Builder.Template -> Warrior.Map.Builder.Template"
+            },
+            {
+                "name": "withExitPoint",
+                "comment": " Marks a coordinate on the map where the player needs to go to advance to the next map.\n",
+                "type": "Warrior.Coordinate.Coordinate -> Warrior.Map.Builder.Template -> Warrior.Map.Builder.Template"
+            },
+            {
+                "name": "withItem",
+                "comment": " Places an item on the map which can be picked up by warriors.\n",
+                "type": "Warrior.Coordinate.Coordinate -> Warrior.Item.Item -> Warrior.Map.Builder.Template -> Warrior.Map.Builder.Template"
+            },
+            {
+                "name": "withNpc",
+                "comment": " Places a villain on the specific coordinate of the map, using the supplied function to know what to do each turn. You can find pre-made turn functions in the `Warrior.Npc` module.\n",
+                "type": "String.String -> Warrior.Coordinate.Coordinate -> (Warrior.Warrior -> Warrior.Internal.Map.Map -> Warrior.History.History -> Warrior.Action) -> Warrior.Map.Builder.Template -> Warrior.Map.Builder.Template"
+            },
+            {
+                "name": "withSpawnPoint",
+                "comment": " Marks a coordinate on the map where a playable warrior will spawn.\n",
+                "type": "Warrior.Coordinate.Coordinate -> Warrior.Map.Builder.Template -> Warrior.Map.Builder.Template"
+            },
+            {
+                "name": "withWalledArea",
+                "comment": " Turns every tile between two coordinates into wall tiles.\n",
+                "type": "Warrior.Coordinate.Coordinate -> Warrior.Coordinate.Coordinate -> Warrior.Map.Builder.Template -> Warrior.Map.Builder.Template"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Warrior.Map.Progression",
+        "comment": " In this module you will find functions that define when a map has been won and lost. You can also define your own progression functions if you want to customize the game a bit.\n\n@docs Progression, ProgressionFunction\n\n\n# Pre-made progression functions\n\n@docs reachExitPoint, lastWarriorStanding\n\n\n# Additional limitations\n\n@docs withRoundLimit\n\n",
+        "unions": [
+            {
+                "name": "Progression",
+                "comment": " There are three ways the course of the game can progress. We can _advance_ certain players to the next map. If there are no maps left, the advanced players are deemed the winners. The game can be lost, also known as _game over_, or the map can be _undecided_.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Advance",
+                        [
+                            "List.List Warrior.Internal.Warrior.Warrior"
+                        ]
+                    ],
+                    [
+                        "GameOver",
+                        []
+                    ],
+                    [
+                        "Undecided",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "ProgressionFunction",
+                "comment": " A function which receives information about the current map played, and decides what the game engine should do next. The function will be called at the end of every turn.\n",
+                "args": [],
+                "type": "List.List Warrior.Internal.Warrior.Warrior -> Warrior.Map.Map -> Warrior.History.History -> Warrior.Map.Progression.Progression"
+            }
+        ],
+        "values": [
+            {
+                "name": "lastWarriorStanding",
+                "comment": " A progression function that ends the game when only one warrior remains. Perfect for deathmatches.\n",
+                "type": "List.List Warrior.Internal.Warrior.Warrior -> Warrior.Map.Map -> Warrior.History.History -> Warrior.Map.Progression.Progression"
+            },
+            {
+                "name": "reachExitPoint",
+                "comment": " A progression function which advances all players when one has reached an exit point. The game is lost if all players are dead.\n",
+                "type": "List.List Warrior.Internal.Warrior.Warrior -> Warrior.Map.Map -> Warrior.History.History -> Warrior.Map.Progression.Progression"
+            },
+            {
+                "name": "withRoundLimit",
+                "comment": " Takes in a progression function and ends the game if the original progression function is undecided, and a certain number of rounds has passed.\n",
+                "type": "Basics.Int -> Warrior.Map.Progression.ProgressionFunction -> Warrior.Map.Progression.ProgressionFunction"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Warrior.Map.Tile",
+        "comment": " A map is built of several tiles. You can use this module to get a better idea of how the map is made up.\n\n@docs Tile\n\n\n# Predicates\n\nSometimes a pattern match is a bit much when all you want is the answer to a simple question. So here are simple predicate functions that make it easy to answer the most basic question about a tile.\n\n@docs isWall, isEmpty, isSpawnPoint, isExit, isWarrior, isItem, canMoveOnto\n\n",
+        "unions": [
+            {
+                "name": "Tile",
+                "comment": " Describes what is on a specific coordinate of a map.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Wall",
+                        []
+                    ],
+                    [
+                        "Empty",
+                        []
+                    ],
+                    [
+                        "SpawnPoint",
+                        []
+                    ],
+                    [
+                        "Exit",
+                        []
+                    ],
+                    [
+                        "Warrior",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Item",
+                        [
+                            "Warrior.Item.Item"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "canMoveOnto",
+                "comment": " True if a warrior can move to this tile with a move action.\n",
+                "type": "Warrior.Map.Tile.Tile -> Basics.Bool"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " True if the given Tile represents Empty space\n",
+                "type": "Warrior.Map.Tile.Tile -> Basics.Bool"
+            },
+            {
+                "name": "isExit",
+                "comment": " True if the given Tile is an exit point\n",
+                "type": "Warrior.Map.Tile.Tile -> Basics.Bool"
+            },
+            {
+                "name": "isItem",
+                "comment": " True if the given Tile represents an item\n",
+                "type": "Warrior.Map.Tile.Tile -> Basics.Bool"
+            },
+            {
+                "name": "isSpawnPoint",
+                "comment": " True if the given Tile is a spawn point\n",
+                "type": "Warrior.Map.Tile.Tile -> Basics.Bool"
+            },
+            {
+                "name": "isWall",
+                "comment": " True if the given Tile is a Wall\n",
+                "type": "Warrior.Map.Tile.Tile -> Basics.Bool"
+            },
+            {
+                "name": "isWarrior",
+                "comment": " True if the given Tile represents another warrior\n",
+                "type": "Warrior.Map.Tile.Tile -> Basics.Bool"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Warrior.Maps",
+        "comment": " A selection of pre-made maps to test your warrior.\n\n@docs all, movement, fighting\n\n\n# Movement only\n\n@docs straight, inverseL, loop, withDeadEndLeft, withDeadEndRight, openSpace, openSpaceReverse\n\n\n# Fighing only\n\n@docs straightGuard, straightPowerfulGuard, straightGuardPickupSword, straightGuardPickupPotion, dungeon\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "all",
+                "comment": " A list of all pre-made maps.\n",
+                "type": "List.List Warrior.Map.Builder.Template"
+            },
+            {
+                "name": "dungeon",
+                "comment": " ",
+                "type": "Warrior.Map.Builder.Template"
+            },
+            {
+                "name": "fighting",
+                "comment": " A list of maps which require fighting in addition to navigation.\n",
+                "type": "List.List Warrior.Map.Builder.Template"
+            },
+            {
+                "name": "inverseL",
+                "comment": " ",
+                "type": "Warrior.Map.Builder.Template"
+            },
+            {
+                "name": "loop",
+                "comment": " ",
+                "type": "Warrior.Map.Builder.Template"
+            },
+            {
+                "name": "movement",
+                "comment": " A list of map that only require navigation.\n",
+                "type": "List.List Warrior.Map.Builder.Template"
+            },
+            {
+                "name": "openSpace",
+                "comment": " ",
+                "type": "Warrior.Map.Builder.Template"
+            },
+            {
+                "name": "openSpaceReverse",
+                "comment": " ",
+                "type": "Warrior.Map.Builder.Template"
+            },
+            {
+                "name": "straight",
+                "comment": " ",
+                "type": "Warrior.Map.Builder.Template"
+            },
+            {
+                "name": "straightGuard",
+                "comment": " ",
+                "type": "Warrior.Map.Builder.Template"
+            },
+            {
+                "name": "straightGuardPickupPotion",
+                "comment": " ",
+                "type": "Warrior.Map.Builder.Template"
+            },
+            {
+                "name": "straightGuardPickupSword",
+                "comment": " ",
+                "type": "Warrior.Map.Builder.Template"
+            },
+            {
+                "name": "straightPowerfulGuard",
+                "comment": " ",
+                "type": "Warrior.Map.Builder.Template"
+            },
+            {
+                "name": "withDeadEndLeft",
+                "comment": " ",
+                "type": "Warrior.Map.Builder.Template"
+            },
+            {
+                "name": "withDeadEndRight",
+                "comment": " ",
+                "type": "Warrior.Map.Builder.Template"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Warrior.Npc.Dummy",
+        "comment": " A dummy. A villainous entity which can be counted on for exactly one thing: standing still.\n\n@docs takeTurn\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "takeTurn",
+                "comment": " Use this function with the `withNpc` function of the `Warrior.Map.Builder` module to add opponents to a map.\n",
+                "type": "Warrior.Warrior -> Warrior.Map.Map -> Warrior.History.History -> Warrior.Action"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Warrior.Npc.StationaryAttacker",
+        "comment": " A villain which will attack anything that gets close.\n\n@docs takeTurn\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "takeTurn",
+                "comment": " Use this function with the `withNpc` function of the `Warrior.Map.Builder` module to add dangerous opponents to a map.\n",
+                "type": "Warrior.Warrior -> Warrior.Map.Map -> Warrior.History.History -> Warrior.Action"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Warrior.Program",
+        "comment": " Contains the essential logic for rendering and defining the game. The `Map` and `Player` modules will be of more interest for programming your warrior.\n\n@docs TurnFunction\n@docs Model, Msg\n@docs Config, program\n\n",
+        "unions": [
+            {
+                "name": "Model",
+                "comment": " The game model.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Msg",
+                "comment": " The game message type.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " This configuration decides what kind of game you'll play.\nYou can find a bunch of pre-made maps in the `Warrior.Maps` module, unless you want to make your own.\nFor players you can add a list of ( PlayerName, TurnFunction ).\nYou can decide how long to wait between turns using the msPerTurn field.\nFinally, the progressionFunction decides when the game is over, or when it is won. You can find some progressionFunctions in `Warrior.Maps.Progression`.\n",
+                "args": [],
+                "type": "{ maps : List.List Warrior.Map.Builder.Template, players : List.List ( String.String, Warrior.Program.TurnFunction ), msPerTurn : Basics.Float, progressionFunction : Warrior.Map.Progression.ProgressionFunction }"
+            },
+            {
+                "name": "TurnFunction",
+                "comment": " The type signature of a turn function. Turn functions with decide the actions of a Warrior.\n",
+                "args": [],
+                "type": "Warrior.Warrior -> Warrior.Internal.Map.Map -> Warrior.Internal.History.History -> Warrior.Action"
+            }
+        ],
+        "values": [
+            {
+                "name": "program",
+                "comment": " Start a program with a given config.\n",
+                "type": "Warrior.Program.Config -> Platform.Program () Warrior.Program.Model Warrior.Program.Msg"
+            }
+        ],
+        "binops": []
+    }
+]

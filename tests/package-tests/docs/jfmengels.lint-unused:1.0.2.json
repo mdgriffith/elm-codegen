@@ -1,0 +1,30 @@
+[
+    {
+        "name": "NoUnused.CustomTypeConstructors",
+        "comment": " Forbid having unused custom type constructors in a file.\n\n\n# Rule\n\n@docs rule\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": " Forbid having unused custom type constructors in a file.\n\n    config =\n        [ NoUnused.CustomTypeConstructors.rule\n        ]\n\nNote that this does not report a constructor if it is exposed in the module, even\nif it is not used anywhere in the project. For a more accurate detection of\nunused constructors (and functions) across your project, you might want to check\nout [elm-xref](https://github.com/zwilias/elm-xref). You may still want to use\nthis rule in your config so that you get notified of unused constructors earlier\nin your editor, rather than when running your tests or [elm-xref](https://github.com/zwilias/elm-xref).\n\n\n## Fail\n\n    module A exposing (a)\n\n    type MyType\n        = UsedType\n        | UnusedType -- Will get reported\n\n    a =\n        UsedType\n\n\n## Success\n\n    module A exposing (ExposedType(..))\n\n    type MyType\n        = UsedType\n\n    a =\n        UsedType\n\n    type ExposedType\n        = A\n        | B\n        | C\n\n    -----------------------\n    module A exposing (..)\n\n    type ExposedType\n        = A\n        | B\n        | C\n\n",
+                "type": "Lint.Rule.Rule"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "NoUnused.Variables",
+        "comment": " Report variables or types that are declared or imported but never used.\n\n\n# Rule\n\n@docs rule\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": " Report variables or types that are declared or imported but never used.\n\n**NOTE**: Since `elm-lint` only works in the scope of a single file, this rule\nwill not report variables that are exposed but not used anywhere in the project.\nIf you wish those to be reported, check out [`elm-xref`](https://github.com/zwilias/elm-xref).\n\n    config =\n        [ NoUnused.Variables.rule\n        ]\n\n\n## Fail\n\n    module A exposing (a)\n\n    a n =\n        n + 1\n\n    b =\n        a 2\n\n\n## Success\n\n    module A exposing (a)\n\n    a n =\n        n + 1\n\n",
+                "type": "Lint.Rule.Rule"
+            }
+        ],
+        "binops": []
+    }
+]

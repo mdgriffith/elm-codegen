@@ -1,0 +1,319 @@
+[
+    {
+        "name": "Markdown",
+        "comment": " A pure Elm package for markdown parsing and rendering.\n\n\n# Parsing and rendering Markdown\n\n@docs toHtml\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toHtml",
+                "comment": " Turn a markdown string into a list of HTML elements.\n\n    view : Html msg\n    view =\n        div [] <|\n            toHtml Nothing \"# Title with *emphasis*\"\n\n**Note:** If `Maybe Options` is `Nothing`,\n`Config.defaultOptions` will be used.\n\n",
+                "type": "Maybe.Maybe Markdown.Config.Options -> String.String -> List.List (Html.Html msg)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Markdown.Block",
+        "comment": " Block parsing, rendering and helpers.\n\n\n# Model\n\n@docs Block, CodeBlock, Fence, ListBlock, ListType\n\n\n# Parsing\n\n@docs parse\n\n\n# Rendering\n\n@docs toHtml, defaultHtml\n\n\n# Helpers\n\n@docs walk, walkInlines, query, queryInlines\n\n",
+        "unions": [
+            {
+                "name": "Block",
+                "comment": " The block type.\n\n  - **BlankLine** | _Text_\n  - **ThematicBreak**\n  - **Heading** | _Raw text_ | _Level_ | _Inlines_\n  - **CodeBlock** | _CodeBlock_ | _Code_\n  - **Paragraph** | _Raw text_ | _Inlines_\n  - **BlockQuote** | _Blocks_\n  - **List** | _ListBlock_ | _Items_\n  - **PlainInlines** | _Inlines_\n  - **Custom** | _Custom type_ | _Blocks_\n\n",
+                "args": [
+                    "b",
+                    "i"
+                ],
+                "cases": [
+                    [
+                        "BlankLine",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "ThematicBreak",
+                        []
+                    ],
+                    [
+                        "Heading",
+                        [
+                            "String.String",
+                            "Basics.Int",
+                            "List.List (Markdown.Inline.Inline i)"
+                        ]
+                    ],
+                    [
+                        "CodeBlock",
+                        [
+                            "Markdown.Block.CodeBlock",
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Paragraph",
+                        [
+                            "String.String",
+                            "List.List (Markdown.Inline.Inline i)"
+                        ]
+                    ],
+                    [
+                        "BlockQuote",
+                        [
+                            "List.List (Markdown.Block.Block b i)"
+                        ]
+                    ],
+                    [
+                        "List",
+                        [
+                            "Markdown.Block.ListBlock",
+                            "List.List (List.List (Markdown.Block.Block b i))"
+                        ]
+                    ],
+                    [
+                        "PlainInlines",
+                        [
+                            "List.List (Markdown.Inline.Inline i)"
+                        ]
+                    ],
+                    [
+                        "Custom",
+                        [
+                            "b",
+                            "List.List (Markdown.Block.Block b i)"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "CodeBlock",
+                "comment": " CodeBlock type.\n\n  - **Indented**\n  - **Fenced** | _Is fence open?_ | _Fence_\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Indented",
+                        []
+                    ],
+                    [
+                        "Fenced",
+                        [
+                            "Basics.Bool",
+                            "Markdown.Block.Fence"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "ListType",
+                "comment": " Types of list.\n\n  - **Unordered**\n  - **Ordered** | _Start_\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Unordered",
+                        []
+                    ],
+                    [
+                        "Ordered",
+                        [
+                            "Basics.Int"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Fence",
+                "comment": " Code fence model.\n",
+                "args": [],
+                "type": "{ indentLength : Basics.Int, fenceLength : Basics.Int, fenceChar : String.String, language : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "ListBlock",
+                "comment": " List model.\n",
+                "args": [],
+                "type": "{ type_ : Markdown.Block.ListType, indentLength : Basics.Int, delimiter : String.String, isLoose : Basics.Bool }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultHtml",
+                "comment": " If you want to customize the html output,\nthis function will help you.\n\nTransform a block into a list of Html, optionally\nusing custom html elements to render inner blocks\nor/and inlines.\n\nExample of rendering:\n\n  - All blockquotes as a detail element;\n  - Images using figure and figcaption;\n  - Links not starting with `http://elm-lang.org` with a `target=\"_blank\"` attribute.\n\n```\nimport Html exposing (..)\nimport Html.Attributes exposing (..)\nimport Markdown.Block as Block exposing (Block(..))\nimport Markdown.Inline as Inline exposing (Inline(..))\n\nview : Html msg\nview =\n    myMarkdownString\n        |> Block.parse Nothing\n        -- using Config.defaultOptions\n        |> List.map customHtmlBlock\n        |> List.concat\n        |> article []\n\ncustomHtmlBlock : Block b i -> List (Html msg)\ncustomHtmlBlock block =\n    case block of\n        BlockQuote blocks ->\n            List.map customHtmlBlock blocks\n                |> List.concat\n                |> details []\n                |> (\\a -> (::) a [])\n\n        _ ->\n            Block.defaultHtml\n                (Just customHtmlBlock)\n                (Just customHtmlInline)\n                block\n\ncustomHtmlInline : Inline i -> Html msg\ncustomHtmlInline inline =\n    case inline of\n        Image url maybeTitle inlines ->\n            figure []\n                [ img\n                    [ alt (Inline.extractText inlines)\n                    , src url\n                    , title (Maybe.withDefault \"\" maybeTitle)\n                    ]\n                    []\n                , figcaption []\n                    [ text (Inline.extractText inlines) ]\n                ]\n\n        Link url maybeTitle inlines ->\n            if String.startsWith \"http://elm-lang.org\" url then\n                a\n                    [ href url\n                    , title (Maybe.withDefault \"\" maybeTitle)\n                    ]\n                    (List.map customHtmlInline inlines)\n            else\n                a\n                    [ href url\n                    , title (Maybe.withDefault \"\" maybeTitle)\n                    , target \"_blank\"\n                    , rel \"noopener noreferrer\"\n                    ]\n                    (List.map customHtmlInline inlines)\n\n        _ ->\n            Inline.defaultHtml (Just customHtmlInline) inline\n```\n\n**Note:** If both `Maybe` arguments are `Nothing`,\nthe default html elements will be used to render\nthe inner blocks and inlines.\n\n",
+                "type": "Maybe.Maybe (Markdown.Block.Block b i -> List.List (Html.Html msg)) -> Maybe.Maybe (Markdown.Inline.Inline i -> Html.Html msg) -> Markdown.Block.Block b i -> List.List (Html.Html msg)"
+            },
+            {
+                "name": "parse",
+                "comment": " Turn a markdown string into a list of blocks.\n\n    blocks : List (Block b i)\n    blocks =\n        parse Nothing \"# Heading with *emphasis*\"\n\nIt's the same of:\n\n    blocks : List (Block b i)\n    blocks =\n        [ Heading \"Heading with *emphasis*\"\n            1\n            [ Text \"Heading with \"\n            , Emphasis 1\n                [ Text \"emphasis\" ]\n            ]\n        ]\n\n**Note:** If `Maybe Options` is `Nothing`,\n`Config.defaultOptions` will be used.\n\n",
+                "type": "Maybe.Maybe Markdown.Config.Options -> String.String -> List.List (Markdown.Block.Block b i)"
+            },
+            {
+                "name": "query",
+                "comment": " Walks a block and applies a function for every block,\nappending the results.\n\nExample of getting all headings of a list of blocks:\n\n    toc : List ( Int, String )\n    toc =\n        myMarkdownString\n            |> Block.parse Nothing\n            |> List.map (Block.query getHeader)\n            |> List.concat\n\n    getHeader : Block b i -> List ( Int, String )\n    getHeader block =\n        case block of\n            Heading _ lvl inlines ->\n                [ ( lvl, Inline.extractText inlines ) ]\n\n            _ ->\n                []\n\n",
+                "type": "(Markdown.Block.Block b i -> List.List a) -> Markdown.Block.Block b i -> List.List a"
+            },
+            {
+                "name": "queryInlines",
+                "comment": " Walks a block and applies a function for every inline,\nappending the results.\n\nExample of getting all links within a list of blocks:\n\n    links : List String\n    links =\n        myMarkdownString\n            |> Block.parse Nothing\n            |> List.map (Block.queryInlines getLinks)\n            |> List.concat\n\n    getLinks : Inline i -> List String\n    getLinks inline =\n        case inline of\n            Link url _ _ ->\n                [ url ]\n\n            _ ->\n                []\n\n",
+                "type": "(Markdown.Inline.Inline i -> List.List a) -> Markdown.Block.Block b i -> List.List a"
+            },
+            {
+                "name": "toHtml",
+                "comment": " Transform a Block into a list of Html\nusing the default html elements.\n\n    import Html exposing (Html, div)\n    import Markdown.Block as Block\n\n    view : Html msg\n    view =\n        myMarkdownString\n            |> Block.parse Nothing\n            -- using Config.defaultOptions\n            |> List.map Block.toHtml\n            |> List.concat\n            |> div []\n\n",
+                "type": "Markdown.Block.Block b i -> List.List (Html.Html msg)"
+            },
+            {
+                "name": "walk",
+                "comment": " Apply a function to every block whithin a block recursively.\n\nExample of replacing all **level 3+ heading** to\n**regular paragraphs**:\n\n    import Html exposing (Html, section)\n    import Markdown.Block as Block exposing (Block(..))\n\n    view : Html msg\n    view =\n        myMarkdownString\n            |> Block.parse Nothing\n            -- using Config.defaultOptions\n            |> List.map (Block.walk modHeader)\n            |> List.map Block.toHtml\n            |> List.concat\n            |> section []\n\n    modHeader : Block b i -> Block b i\n    modHeader block =\n        case block of\n            Heading rawText level inlines ->\n                if level >= 3 then\n                    Paragraph rawText inlines\n                else\n                    block\n\n            _ ->\n                block\n\n",
+                "type": "(Markdown.Block.Block b i -> Markdown.Block.Block b i) -> Markdown.Block.Block b i -> Markdown.Block.Block b i"
+            },
+            {
+                "name": "walkInlines",
+                "comment": " Apply a function to every block's inline recursively.\n\nExample of converting all **Text** to **UPPERCASE**:\n\n    import Html exposing (Html, section)\n    import Markdown.Block as Block exposing (Block(..))\n    import Markdown.Inline exposing (Inline(..))\n\n    view : Html msg\n    view =\n        myMarkdownString\n            |> Block.parse Nothing\n            |> List.map (Block.walkInlines upperText)\n            |> List.map Block.toHtml\n            |> List.concat\n            |> section []\n\n    upperText : Inline i -> Inline i\n    upperText inline =\n        case inline of\n            Text str ->\n                Text (String.toUpper str)\n\n            _ ->\n                inline\n\n",
+                "type": "(Markdown.Inline.Inline i -> Markdown.Inline.Inline i) -> Markdown.Block.Block b i -> Markdown.Block.Block b i"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Markdown.Config",
+        "comment": " Configure markdown to fit your needs.\n\n\n# Options\n\n@docs Options, HtmlOption, SanitizeOptions, defaultOptions, defaultSanitizeOptions\n\n",
+        "unions": [
+            {
+                "name": "HtmlOption",
+                "comment": " Choose what to do with raw html tags.\n\n  - `ParseUnsafe`: Will parse any valid html tag and attribute. This includes malicious code like `<script>alert(\"XSS ALERT!!\");</script>`.\n  - `Sanitize SanitizeOptions`: Will parse only specific html elements and attributes.\n  - `DontParse`: Do not parse any html tag. It will include the raw text in the output.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "ParseUnsafe",
+                        []
+                    ],
+                    [
+                        "Sanitize",
+                        [
+                            "Markdown.Config.SanitizeOptions"
+                        ]
+                    ],
+                    [
+                        "DontParse",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Options",
+                "comment": " Some parser options so you can tweak things for your\nparticular case.\n\n  - `softAsHardLineBreak`: If set to `True`, will render `\\n` as `<br>`.\n  - `rawHtml`: This determine what to do with raw html elements.\n\n",
+                "args": [],
+                "type": "{ softAsHardLineBreak : Basics.Bool, rawHtml : Markdown.Config.HtmlOption }"
+            },
+            {
+                "name": "SanitizeOptions",
+                "comment": " Choose what html elements and attributes are allowed to parse.\n\n  - `allowedHtmlElements`: List of allowed html elements.\n  - `allowedHtmlAttributes`: List of allowed attributes.\n\n",
+                "args": [],
+                "type": "{ allowedHtmlElements : List.List String.String, allowedHtmlAttributes : List.List String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultOptions",
+                "comment": " The `Options` used in `Markdown.toHtml`.\n\n    { softAsHardLineBreak = False\n    , rawHtml = Sanitize defaultSanitizeOptions\n    }\n\n",
+                "type": "Markdown.Config.Options"
+            },
+            {
+                "name": "defaultSanitizeOptions",
+                "comment": " The `SanitizeOptions` used by `defaultOptions`.\n\n    { allowedHtmlElements =\n        [ \"address\", \"article\", \"aside\", \"b\", \"blockquote\", \"br\"\n        , \"caption\", \"center\", \"cite\", \"code\", \"col\", \"colgroup\"\n        , \"dd\", \"details\", \"div\", \"dl\", \"dt\", \"figcaption\", \"figure\"\n        , \"footer\", \"h1\", \"h2\", \"h3\", \"h4\", \"h5\", \"h6\", \"hr\", \"i\"\n        , \"legend\", \"li\", \"menu\", \"menuitem\", \"nav\", \"ol\", \"optgroup\"\n        , \"option\", \"p\", \"pre\", \"section\", \"strike\", \"summary\"\n        , \"small\", \"table\", \"tbody\", \"td\", \"tfoot\", \"th\", \"thead\"\n        , \"tr\", \"ul\" ]\n    , allowedHtmlAttributes =\n        [ \"name\", \"class\" ]\n    }\n\n",
+                "type": "Markdown.Config.SanitizeOptions"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Markdown.Inline",
+        "comment": " Inline rendering and helpers.\n\n\n# Model\n\n@docs Inline\n\n\n# Renders\n\n@docs toHtml, defaultHtml\n\n\n# Helpers\n\n@docs extractText\n\n",
+        "unions": [
+            {
+                "name": "Inline",
+                "comment": " The inline type.\n\n  - **Text** | _Text_\n  - **HardLineBreak**\n  - **CodeInline** | _Code_\n  - **Link** | _Url_ | _Maybe Title_ | _Inlines_\n  - **Image** | _Source_ | _Maybe Title_ | _Inlines_\n  - **HtmlInline** | _Tag_ | _List ( Attribute, Maybe Value )_ | _Inlines_\n  - **Emphasis** | _Delimiter Length_ | _Inlines_\n  - **Custom** | _Custom type_ | _Inlines_\n\n",
+                "args": [
+                    "i"
+                ],
+                "cases": [
+                    [
+                        "Text",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "HardLineBreak",
+                        []
+                    ],
+                    [
+                        "CodeInline",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Link",
+                        [
+                            "String.String",
+                            "Maybe.Maybe String.String",
+                            "List.List (Markdown.Inline.Inline i)"
+                        ]
+                    ],
+                    [
+                        "Image",
+                        [
+                            "String.String",
+                            "Maybe.Maybe String.String",
+                            "List.List (Markdown.Inline.Inline i)"
+                        ]
+                    ],
+                    [
+                        "HtmlInline",
+                        [
+                            "String.String",
+                            "List.List ( String.String, Maybe.Maybe String.String )",
+                            "List.List (Markdown.Inline.Inline i)"
+                        ]
+                    ],
+                    [
+                        "Emphasis",
+                        [
+                            "Basics.Int",
+                            "List.List (Markdown.Inline.Inline i)"
+                        ]
+                    ],
+                    [
+                        "Custom",
+                        [
+                            "i",
+                            "List.List (Markdown.Inline.Inline i)"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "defaultHtml",
+                "comment": " Transform an Inline into a Html, optionally\nusing custom html elements to render inner inlines.\n\n    upperText : Inline i -> Html msg\n    upperText inline =\n        case inline of\n            Text str ->\n                Html.text (String.toUpper str)\n\n            _ ->\n                defaultHtml (Just upperText) inline\n\n\n    defaultHtml (Just upperText) (Text \"hello\") == text \"hello\"\n    defaultHtml (Just upperText) (Emphasis 2 [ Text \"hello\" ]) == strong [] [ text \"HELLO\" ]\n    upperText (Text \"hello\") == text \"HELLO\"\n\n**Note:** If the first argument is `Nothing`,\nthe default html elements will be used to render\nthe inner inlines.\n\n",
+                "type": "Maybe.Maybe (Markdown.Inline.Inline i -> Html.Html msg) -> Markdown.Inline.Inline i -> Html.Html msg"
+            },
+            {
+                "name": "extractText",
+                "comment": " Extract the text from a list of inlines.\n\n    inlines : List (Inline i)\n    inlines =\n        [ Text \"Heading with \"\n        , Emphasis 1\n            [ Text \"emphasis\" ]\n        ]\n\n    extractText inlines == \"Heading with emphasis\"\n\n    -- Original string: \"Heading with *emphasis*\"\n\n",
+                "type": "List.List (Markdown.Inline.Inline i) -> String.String"
+            },
+            {
+                "name": "toHtml",
+                "comment": " Transform an Inline into Html\nusing the default html elements.\n\n    toHtml (Text \"Inner text\") == Html.text \"Inner text\"\n    toHtml HardLineBreak == Html.br [] []\n    toHtml (CodeInline code) == Html.code [] [ Html.text code ]\n\n",
+                "type": "Markdown.Inline.Inline i -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

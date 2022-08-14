@@ -1,0 +1,397 @@
+[
+    {
+        "name": "Svg.String",
+        "comment": " This file is organized roughly in order of popularity. The tags which you'd\nexpect to use frequently will be closer to the top.\n\n\n# Serialization\n\n@docs toHtml, toString\n\n\n# Primitives\n\n@docs Svg, Html, Attribute, text, node, map\n\n\n# Tags\n\n@docs circle, defs, feColorMatrix, feGaussianBlur, feOffset, filter, g, rect, svg, text_, tspan, use\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Attribute",
+                "comment": " Set attributes on your `Svg`.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "Svg.Types.Attribute msg"
+            },
+            {
+                "name": "Html",
+                "comment": " The core building block used to build up HTML.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "Svg.Types.Html msg"
+            },
+            {
+                "name": "Svg",
+                "comment": " The core building block to create SVG. This library is filled with helper\nfunctions to create these `Svg` values.\n\nThis is backed by `VirtualDom.Node` in `evancz/virtual-dom`, but you do not\nneed to know any details about that to use this library!\n\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "Svg.Types.Svg msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "circle",
+                "comment": " ",
+                "type": "List.List (Svg.String.Attribute msg) -> List.List (Svg.String.Svg msg) -> Svg.String.Svg msg"
+            },
+            {
+                "name": "defs",
+                "comment": " ",
+                "type": "List.List (Svg.String.Attribute msg) -> List.List (Svg.String.Svg msg) -> Svg.String.Svg msg"
+            },
+            {
+                "name": "feColorMatrix",
+                "comment": " ",
+                "type": "List.List (Svg.String.Attribute msg) -> List.List (Svg.String.Svg msg) -> Svg.String.Svg msg"
+            },
+            {
+                "name": "feGaussianBlur",
+                "comment": " ",
+                "type": "List.List (Svg.String.Attribute msg) -> List.List (Svg.String.Svg msg) -> Svg.String.Svg msg"
+            },
+            {
+                "name": "feOffset",
+                "comment": " ",
+                "type": "List.List (Svg.String.Attribute msg) -> List.List (Svg.String.Svg msg) -> Svg.String.Svg msg"
+            },
+            {
+                "name": "filter",
+                "comment": " ",
+                "type": "List.List (Svg.String.Attribute msg) -> List.List (Svg.String.Svg msg) -> Svg.String.Svg msg"
+            },
+            {
+                "name": "g",
+                "comment": " ",
+                "type": "List.List (Svg.String.Attribute msg) -> List.List (Svg.String.Svg msg) -> Svg.String.Svg msg"
+            },
+            {
+                "name": "map",
+                "comment": " Transform the messages produced by some `Svg`.\n",
+                "type": "(a -> b) -> Svg.String.Svg a -> Svg.String.Svg b"
+            },
+            {
+                "name": "node",
+                "comment": " Create any SVG node. To create a `<rect>` helper function, you would write:\n\n    rect : List (Attribute msg) -> List (Svg msg) -> Svg msg\n    rect attributes children =\n        node \"rect\" attributes children\n\nYou should always be able to use the helper functions already defined in this\nlibrary though!\n\n",
+                "type": "String.String -> List.List (Svg.String.Attribute msg) -> List.List (Svg.String.Svg msg) -> Svg.String.Svg msg"
+            },
+            {
+                "name": "rect",
+                "comment": " ",
+                "type": "List.List (Svg.String.Attribute msg) -> List.List (Svg.String.Svg msg) -> Svg.String.Svg msg"
+            },
+            {
+                "name": "svg",
+                "comment": " ",
+                "type": "List.List (Svg.String.Attribute msg) -> List.List (Svg.String.Svg msg) -> Svg.String.Html msg"
+            },
+            {
+                "name": "text",
+                "comment": " A simple text node, no tags at all.\n\nWarning: not to be confused with `text_` which produces the SVG `<text>` tag!\n\n",
+                "type": "String.String -> Svg.String.Svg msg"
+            },
+            {
+                "name": "text_",
+                "comment": " ",
+                "type": "List.List (Svg.String.Attribute msg) -> List.List (Svg.String.Svg msg) -> Svg.String.Svg msg"
+            },
+            {
+                "name": "toHtml",
+                "comment": " Convert to regular `elm/html` Html.\n",
+                "type": "Svg.String.Html msg -> Html.Html msg"
+            },
+            {
+                "name": "toString",
+                "comment": " Convert to a string with indentation.\n\nSetting indentation to 0 will additionally remove newlines between tags, sort of\nlike `Json.Encode.encode 0`.\n\n    import Svg.String.Attributes exposing (g, rect, stroke)\n\n\n    someHtml : Html msg\n    someHtml =\n        svg [ height \"68px\" ] [ g [] [ rect [ x \"10\", y \"20\", stroke \"red\" ]]]\n\n\n    Svg.String.toString 2 someHtml\n    -->\"<svg height=\\\"68px\\\">\\n  <g>\\n    <rect x=\\\"10\\\" y=\\\"20\\\" stroke=\\\"red\\\">\\n    </rect>\\n  </g>\\n</svg>\"\n\n    Svg.String.toString 0 someHtml\n    --> \"<svg height=\\\"68px\\\"><g><rect x=\\\"10\\\" y=\\\"20\\\" stroke=\\\"red\\\"></rect></g></svg>\"\n\n",
+                "type": "Basics.Int -> Svg.String.Html msg -> String.String"
+            },
+            {
+                "name": "tspan",
+                "comment": " ",
+                "type": "List.List (Svg.String.Attribute msg) -> List.List (Svg.String.Svg msg) -> Svg.String.Svg msg"
+            },
+            {
+                "name": "use",
+                "comment": " ",
+                "type": "List.List (Svg.String.Attribute msg) -> List.List (Svg.String.Svg msg) -> Svg.String.Svg msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Svg.String.Attributes",
+        "comment": " Helper functions for SVG attributes.\n\n\n# Regular attributes\n\n@docs attribute, cx, cy, dx, dy, fill, fillOpacity, fillRule, filter, filterUnits, fontFamily, fontSize\n@docs fontWeight, height, id, in_, map, r, result, rx, ry, stdDeviation, stroke, strokeWidth, style, transform\n@docs type_, values, viewBox, width, x, xlinkHref, y\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "attribute",
+                "comment": " ",
+                "type": "String.String -> String.String -> Svg.String.Attribute msg"
+            },
+            {
+                "name": "cx",
+                "comment": " ",
+                "type": "String.String -> Svg.String.Attribute msg"
+            },
+            {
+                "name": "cy",
+                "comment": " ",
+                "type": "String.String -> Svg.String.Attribute msg"
+            },
+            {
+                "name": "dx",
+                "comment": " ",
+                "type": "String.String -> Svg.String.Attribute msg"
+            },
+            {
+                "name": "dy",
+                "comment": " ",
+                "type": "String.String -> Svg.String.Attribute msg"
+            },
+            {
+                "name": "fill",
+                "comment": " ",
+                "type": "String.String -> Svg.String.Attribute msg"
+            },
+            {
+                "name": "fillOpacity",
+                "comment": " ",
+                "type": "String.String -> Svg.String.Attribute msg"
+            },
+            {
+                "name": "fillRule",
+                "comment": " ",
+                "type": "String.String -> Svg.String.Attribute msg"
+            },
+            {
+                "name": "filter",
+                "comment": " ",
+                "type": "String.String -> Svg.String.Attribute msg"
+            },
+            {
+                "name": "filterUnits",
+                "comment": " ",
+                "type": "String.String -> Svg.String.Attribute msg"
+            },
+            {
+                "name": "fontFamily",
+                "comment": " ",
+                "type": "String.String -> Svg.String.Attribute msg"
+            },
+            {
+                "name": "fontSize",
+                "comment": " ",
+                "type": "String.String -> Svg.String.Attribute msg"
+            },
+            {
+                "name": "fontWeight",
+                "comment": " ",
+                "type": "String.String -> Svg.String.Attribute msg"
+            },
+            {
+                "name": "height",
+                "comment": " ",
+                "type": "String.String -> Svg.String.Attribute msg"
+            },
+            {
+                "name": "id",
+                "comment": " ",
+                "type": "String.String -> Svg.String.Attribute msg"
+            },
+            {
+                "name": "in_",
+                "comment": " ",
+                "type": "String.String -> Svg.String.Attribute msg"
+            },
+            {
+                "name": "map",
+                "comment": " Transform the messages produced by an `Attribute`.\n",
+                "type": "(a -> msg) -> Svg.String.Attribute a -> Svg.String.Attribute msg"
+            },
+            {
+                "name": "r",
+                "comment": " ",
+                "type": "String.String -> Svg.String.Attribute msg"
+            },
+            {
+                "name": "result",
+                "comment": " ",
+                "type": "String.String -> Svg.String.Attribute msg"
+            },
+            {
+                "name": "rx",
+                "comment": " ",
+                "type": "String.String -> Svg.String.Attribute msg"
+            },
+            {
+                "name": "ry",
+                "comment": " ",
+                "type": "String.String -> Svg.String.Attribute msg"
+            },
+            {
+                "name": "stdDeviation",
+                "comment": " ",
+                "type": "String.String -> Svg.String.Attribute msg"
+            },
+            {
+                "name": "stroke",
+                "comment": " ",
+                "type": "String.String -> Svg.String.Attribute msg"
+            },
+            {
+                "name": "strokeWidth",
+                "comment": " ",
+                "type": "String.String -> Svg.String.Attribute msg"
+            },
+            {
+                "name": "style",
+                "comment": " ",
+                "type": "String.String -> Svg.String.Attribute msg"
+            },
+            {
+                "name": "transform",
+                "comment": " ",
+                "type": "String.String -> Svg.String.Attribute msg"
+            },
+            {
+                "name": "type_",
+                "comment": " ",
+                "type": "String.String -> Svg.String.Attribute msg"
+            },
+            {
+                "name": "values",
+                "comment": " ",
+                "type": "String.String -> Svg.String.Attribute msg"
+            },
+            {
+                "name": "viewBox",
+                "comment": " ",
+                "type": "String.String -> Svg.String.Attribute msg"
+            },
+            {
+                "name": "width",
+                "comment": " ",
+                "type": "String.String -> Svg.String.Attribute msg"
+            },
+            {
+                "name": "x",
+                "comment": " ",
+                "type": "String.String -> Svg.String.Attribute msg"
+            },
+            {
+                "name": "xlinkHref",
+                "comment": " ",
+                "type": "String.String -> Svg.String.Attribute msg"
+            },
+            {
+                "name": "y",
+                "comment": " ",
+                "type": "String.String -> Svg.String.Attribute msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Svg.String.Events",
+        "comment": "\n\n\n# Mouse\n\n@docs onClick, onMouseDown, onMouseUp, onMouseOver, onMouseOut\n\n\n# Custom\n\n@docs on\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "on",
+                "comment": " Create a custom event listener. Normally this will not be necessary, but\nyou have the power! Here is how `onClick` is defined for example:\n\n    import Json.Decode as Decode\n\n    onClick : msg -> Attribute msg\n    onClick message =\n        on \"click\" (Decode.succeed message)\n\nThe first argument is the event name in the same format as with JavaScript's\n[`addEventListener`][aEL] function.\n\nThe second argument is a JSON decoder. Read more about these [here][decoder].\nWhen an event occurs, the decoder tries to turn the event object into an Elm\nvalue. If successful, the value is routed to your `update` function. In the\ncase of `onClick` we always just succeed with the given `message`.\n\nIf this is confusing, work through the [Elm Architecture Tutorial][tutorial].\nIt really helps!\n\n[aEL]: https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener\n[decoder]: /packages/elm/json/latest/Json-Decode\n[tutorial]: https://github.com/evancz/elm-architecture-tutorial/\n\n**Note:** This creates a [passive] event listener, enabling optimizations for\ntouch, scroll, and wheel events in some browsers.\n\n[passive]: https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md\n\n",
+                "type": "String.String -> Json.Decode.Decoder msg -> Svg.String.Attribute msg"
+            },
+            {
+                "name": "onClick",
+                "comment": " ",
+                "type": "msg -> Svg.String.Attribute msg"
+            },
+            {
+                "name": "onMouseDown",
+                "comment": " ",
+                "type": "msg -> Svg.String.Attribute msg"
+            },
+            {
+                "name": "onMouseOut",
+                "comment": " ",
+                "type": "msg -> Svg.String.Attribute msg"
+            },
+            {
+                "name": "onMouseOver",
+                "comment": " ",
+                "type": "msg -> Svg.String.Attribute msg"
+            },
+            {
+                "name": "onMouseUp",
+                "comment": " ",
+                "type": "msg -> Svg.String.Attribute msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Svg.String.Keyed",
+        "comment": " A keyed node helps optimize cases where children are getting added, moved,\nremoved, etc. Common examples include:\n\n  - The user can delete items from a list.\n  - The user can create new items in a list.\n  - You can sort a list based on name or date or whatever.\n    When you use a keyed node, every child is paired with a string identifier. This\n    makes it possible for the underlying diffing algorithm to reuse nodes more\n    efficiently.\n\n\n# Keyed Nodes\n\n@docs node\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "node",
+                "comment": " Works just like `Svg.node`, but you add a unique identifier to each child\nnode. You want this when you have a list of nodes that is changing: adding\nnodes, removing nodes, etc. In these cases, the unique identifiers help make\nthe DOM modifications more efficient.\n",
+                "type": "String.String -> List.List (Svg.String.Attribute msg) -> List.List ( String.String, Svg.String.Svg msg ) -> Svg.String.Svg msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Svg.String.Lazy",
+        "comment": "\n\n\n# 🔥 This isn't actually lazy in this library..\n\n.. because we can't keep track ofn the model without existential types. It just\neagerly evaluates. This set ofn fnunction is here to serve as a drop-in\nreplacement.\n\n@docs lazy, lazy2, lazy3, lazy4, lazy5, lazy6, lazy7, lazy8\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "lazy",
+                "comment": " A performance optimization that delays the building of virtual DOM nodes.\n\nCalling `(view model)` will definitely build some virtual DOM, perhaps a lot of\nit. Calling `(lazy view model)` delays the call until later. During diffing, we\ncan check to see if `model` is referentially equal to the previous value used,\nand if so, we just stop. No need to build up the tree structure and diff it,\nwe know if the input to `view` is the same, the output must be the same!\n\n",
+                "type": "(a -> Svg.Svg msg) -> a -> Svg.Svg msg"
+            },
+            {
+                "name": "lazy2",
+                "comment": " Same as `lazy` but checks on two arguments.\n",
+                "type": "(a -> b -> Svg.Svg msg) -> a -> b -> Svg.Svg msg"
+            },
+            {
+                "name": "lazy3",
+                "comment": " Same as `lazy` but checks on three arguments.\n",
+                "type": "(a -> b -> c -> Svg.Svg msg) -> a -> b -> c -> Svg.Svg msg"
+            },
+            {
+                "name": "lazy4",
+                "comment": " Same as `lazy` but checks on fnour arguments.\n",
+                "type": "(a -> b -> c -> d -> Svg.Svg msg) -> a -> b -> c -> d -> Svg.Svg msg"
+            },
+            {
+                "name": "lazy5",
+                "comment": " Same as `lazy` but checks on fnive arguments.\n",
+                "type": "(a -> b -> c -> d -> e -> Svg.Svg msg) -> a -> b -> c -> d -> e -> Svg.Svg msg"
+            },
+            {
+                "name": "lazy6",
+                "comment": " Same as `lazy` but checks on six arguments.\n",
+                "type": "(a -> b -> c -> d -> e -> f -> Svg.Svg msg) -> a -> b -> c -> d -> e -> f -> Svg.Svg msg"
+            },
+            {
+                "name": "lazy7",
+                "comment": " Same as `lazy` but checks on seven arguments.\n",
+                "type": "(a -> b -> c -> d -> e -> f -> g -> Svg.Svg msg) -> a -> b -> c -> d -> e -> f -> g -> Svg.Svg msg"
+            },
+            {
+                "name": "lazy8",
+                "comment": " Same as `lazy` but checks on eight arguments.\n",
+                "type": "(a -> b -> c -> d -> e -> f -> g -> h -> Svg.Svg msg) -> a -> b -> c -> d -> e -> f -> g -> h -> Svg.Svg msg"
+            }
+        ],
+        "binops": []
+    }
+]

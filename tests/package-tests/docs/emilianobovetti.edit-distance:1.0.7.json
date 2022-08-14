@@ -1,0 +1,21 @@
+[
+    {
+        "name": "EditDistance",
+        "comment": " Algorithms for edit distance calculation.\n\n\n# Levenshtein distance\n\n@docs levenshtein, levenshteinOfStrings\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "levenshtein",
+                "comment": " Finds the [Levenshtein distance](https://en.wikipedia.org/wiki/Levenshtein_distance)\nbetween two `List comparable` in `O(mn)`.\n\n    kitten = String.toList \"kitten\"\n    sitten = String.toList \"sitten\"\n    sittin = String.toList \"sittin\"\n    sitting = String.toList \"sitting\"\n\n    levenshtein kitten sitten == 1\n    levenshtein sitten sittin == 1\n    levenshtein sittin sitting == 1\n\n",
+                "type": "List.List comparable -> List.List comparable -> Basics.Int"
+            },
+            {
+                "name": "levenshteinOfStrings",
+                "comment": " Like [levenshtein](#levenshtein), but takes two `String` as input.\n",
+                "type": "String.String -> String.String -> Basics.Int"
+            }
+        ],
+        "binops": []
+    }
+]

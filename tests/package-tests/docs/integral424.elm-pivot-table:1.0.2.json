@@ -1,0 +1,59 @@
+[
+    {
+        "name": "PivotTable",
+        "comment": " This package provides a pivot table view function with which\nyou can analyze and visualize your data by grouping various fields.\n\n\n# Definition\n\n@docs Table, Field\n\n\n# Table operations\n\n@docs makeTable, getField\n\n\n# Pivot table\n\nIn this package, a pivot table is\na table to show values grouped by some fields.\n\n\n## Example 1\n\n    genderToString : Gender -> String\n    genderToString gender =\n        case gender of\n            Male   -> \"Male\"\n            Female -> \"Female\"\n\n    pivotTable\n        { rowGroupFields = []\n        , colGroupFields = [ genderField ]\n        , aggregator = List.length\n        , viewRow = always Element.none\n        , viewCol = Element.text\n        , viewAgg = String.fromInt >> Element.text\n        }\n        myTable\n\nThe code above produces a table:\n\n```text\n|Male |Female |\n|-----|-------|\n|2    |1      |\n```\n\n@docs Aggregator, pivotTable, pivotTableHtml\n\n",
+        "unions": [
+            {
+                "name": "Table",
+                "comment": " In this package, a table is defined as a list of rows.\n\nIn the most naive case, a table may be represented by a list of records like:\n\n    type alias Person =\n        { name : String\n        , age : Int\n        , gender : Gender\n        }\n\n    type Gender\n        = Male\n        | Female\n\n    type alias MyTable =\n        Table Person\n\n**Note:** Notice that rows can be any type.\n\n",
+                "args": [
+                    "row"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Aggregator",
+                "comment": " The pivot table groups table rows.\nAfter that, the `Aggregator` aggregates\nthe list of rows into a single value (of any type).\n",
+                "args": [
+                    "row",
+                    "agg"
+                ],
+                "type": "List.List row -> agg"
+            },
+            {
+                "name": "Field",
+                "comment": " In this package, a field is defined as a function from row to something.\n",
+                "args": [
+                    "row",
+                    "a"
+                ],
+                "type": "row -> a"
+            }
+        ],
+        "values": [
+            {
+                "name": "getField",
+                "comment": " A function to get values from a table.\n\nWith the example appeared in the [`Table` doc](#Table),\neach field can be accessed like:\n\n    nameField = .name\n    ageField = .age\n    genderField = .gender\n\n    myTable : MyTable\n    myTable = makeTable\n        [ { name = \"Alice\",   age = 17, gender = Female }\n        , { name = \"Bob\",     age = 8,  gender = Male   }\n        , { name = \"Charlie\", age = 35, gender = Male   }\n        ]\n\n    getField nameField myTable   -- [\"Alice\", \"Bob\", \"Charlie\"]\n    getField ageField myTable    -- [17, 8, 35]\n    getField genderField myTable -- [Female, Male, Male]\n\n**Note:** Notice that a field does not have to be a record element.\nThis is a valid code:\n\n    nameInitialLetterField = .name >> String.left 1\n\n    getField nameInitialLetterField myTable -- [\"A\", \"B\", \"C\"]\n\n",
+                "type": "PivotTable.Field row a -> PivotTable.Table row -> List.List a"
+            },
+            {
+                "name": "makeTable",
+                "comment": " A function to create a table.\n\nSince the `Table` is an opaque type, all user of this package must use this\nfunction to create a `Table` value.\n\n",
+                "type": "List.List row -> PivotTable.Table row"
+            },
+            {
+                "name": "pivotTable",
+                "comment": " Draws a pivot table.\n\n  - `rowGroupFields` is a list of `Field`'s to group and generates grouped _rows_.\n  - `colGroupFields` is a list of `Field`'s to group and generates grouped _columns_.\n  - `aggregator` aggregates each grouped set of table data into a single value.\n  - `viewRow`, `viewCol` and `viewAgg` are view functions to show each headers and cells.\n\n",
+                "type": "{ rowGroupFields : List.List (PivotTable.Field row comparable1), colGroupFields : List.List (PivotTable.Field row comparable2), aggregator : PivotTable.Aggregator row agg, viewRow : comparable1 -> Element.Element msg, viewCol : comparable2 -> Element.Element msg, viewAgg : agg -> Element.Element msg } -> PivotTable.Table row -> Element.Element msg"
+            },
+            {
+                "name": "pivotTableHtml",
+                "comment": " Draws a pivot table of `Html` type.\n\nThis view makes use of grid attributes of html table.\nUse this view function when you want to avoid using `elm-ui`.\n",
+                "type": "{ rowGroupFields : List.List (PivotTable.Field row comparable1), colGroupFields : List.List (PivotTable.Field row comparable2), aggregator : PivotTable.Aggregator row agg, viewRow : comparable1 -> Html.Html msg, viewCol : comparable2 -> Html.Html msg, viewAgg : agg -> Html.Html msg } -> PivotTable.Table row -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

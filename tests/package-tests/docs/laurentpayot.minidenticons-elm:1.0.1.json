@@ -1,0 +1,21 @@
+[
+    {
+        "name": "Minidenticons",
+        "comment": " This library contains the main `identicon` function as well as a bonus `simpleHash` function.\n\n# SVG identicon\n@docs identicon\n\n# Bonus\n@docs simpleHash\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "identicon",
+                "comment": " Generate the SVG identicon.\n\nThe `identicon` function will return a SVG element generated from its username string argument.\nThe saturation and lightness arguments have to be percentages, i.e integers between 0 and 100.\n\nFor instance for the username \"alienHead66\", with a saturation of 75% and a lightness of 50%:\n\n    identicon 75 50 \"alienHead66\"\n\nYou will get the following identicon (without the border):\n\n[![\"alienHead66\" identicon](https://raw.githubusercontent.com/laurentpayot/minidenticons-elm/main/img/alienHead66_150.svg)](https://raw.githubusercontent.com/laurentpayot/minidenticons-elm/main/img/alienHead66_150.svg)\n- Note that the picture above is resized. [By default identicons will take all the space available.](https://raw.githubusercontent.com/laurentpayot/minidenticons-elm/main/img/alienHead66.svg)\n\n- The white space around the colored squares is here to allow uncropped circle avatars like the ones\nyou can see in [the demo](https://laurentpayot.github.io/minidenticons/).\n\nPlay with [the demo](https://laurentpayot.github.io/minidenticons/) to find a combination of\nsaturation and lightness that matches your website theme colors: light, dark, pastel or whatever 😎\n\n![Minidenticons light](https://raw.githubusercontent.com/laurentpayot/minidenticons-elm/main/img/minidenticons_light.png)\n![Minidenticons dark](https://raw.githubusercontent.com/laurentpayot/minidenticons-elm/main/img/minidenticons_dark.png)\n![Minidenticons pastel](https://raw.githubusercontent.com/laurentpayot/minidenticons-elm/main/img/minidenticons_pastel.png)\n\n",
+                "type": "Basics.Int -> Basics.Int -> String.String -> Html.Html msg"
+            },
+            {
+                "name": "simpleHash",
+                "comment": " Hash function used by Minidenticons.\nBased on the [FNV1a](http://www.isthe.com/chongo/tech/comp/fnv/index.html) hash algorithm,\nmodified for *signed* 32 bit integers. Always return a *positive* integer.\n\n    simpleHash \"alienHead66\" -- 39870209603664160\n\n",
+                "type": "String.String -> Basics.Int"
+            }
+        ],
+        "binops": []
+    }
+]

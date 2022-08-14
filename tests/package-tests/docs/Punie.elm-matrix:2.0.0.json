@@ -1,0 +1,105 @@
+[
+    {
+        "name": "Matrix",
+        "comment": " A simple linear algebra library using flat-arrays\n\n\n# The Matrix type\n\n@docs Matrix\n\n\n# Creating matrices\n\n@docs empty, repeat, initialize, identity, fromList, fromLists\n\n\n# Get matrix dimensions\n\n@docs height, width, size\n\n\n# Working with individual elements\n\n@docs get\n\n\n# Matrix manipulation\n\n@docs map, map2, transpose, dot\n\n\n# Matrix representation\n\n@docs toList, toLists, pretty\n\n",
+        "unions": [
+            {
+                "name": "Matrix",
+                "comment": " Representation of a matrix. You can create matrices of any type\nbut arithmetic operations in Matrix.Operations requires the matrices\nto have numeric types.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "dot",
+                "comment": " Perform the standard matrix multiplication.\nIf the dimensions of the matrices are incompatible, returns `Nothing`.\n",
+                "type": "Matrix.Matrix number -> Matrix.Matrix number -> Maybe.Maybe (Matrix.Matrix number)"
+            },
+            {
+                "name": "empty",
+                "comment": " Create an empty matrix.\n\n    size empty == ( 0, 0 )\n\n",
+                "type": "Matrix.Matrix a"
+            },
+            {
+                "name": "fromList",
+                "comment": " Create a matrix from a list given the desired size.\nIf the list has a length inferior to `n * m`, returns `Nothing`.\n\n    fromList 2 2 [ 1, 1, 1, 1, 1 ] == Just <| repeat 2 2 1\n\n    fromList 3 3 [ 0, 1, 2 ] == Nothing\n\n",
+                "type": "Basics.Int -> Basics.Int -> List.List a -> Maybe.Maybe (Matrix.Matrix a)"
+            },
+            {
+                "name": "fromLists",
+                "comment": " Create a matrix from a list of lists.\nIf any inner list is shorter than the first, returns `Nothing`.\nOtherwise, the length of the first list determines the width of the matrix.\n\n    fromLists [] == Just empty\n\n    fromLists [ [] ] == Just empty\n\n    fromLists [ [ 1, 2, 3 ], [ 1, 2 ] ] == Nothing\n\n    fromLists [ [ 1, 0 ], [ 0, 1 ] ] == Just <| identity 2\n\n",
+                "type": "List.List (List.List a) -> Maybe.Maybe (Matrix.Matrix a)"
+            },
+            {
+                "name": "get",
+                "comment": " Return `Just` the element at the index or `Nothing` if the index is out of bounds.\n",
+                "type": "Basics.Int -> Basics.Int -> Matrix.Matrix a -> Maybe.Maybe a"
+            },
+            {
+                "name": "height",
+                "comment": " Return the number of rows in a given matrix.\n",
+                "type": "Matrix.Matrix a -> Basics.Int"
+            },
+            {
+                "name": "identity",
+                "comment": " Create the identity matrix of dimension `n`.\n",
+                "type": "Basics.Int -> Matrix.Matrix number"
+            },
+            {
+                "name": "initialize",
+                "comment": " Createsa matrix with a given size, with the elements at index `(i, j)` initialized to the result of `f (i, j)`.\n\n    initialize 3\n        3\n        (\\( i, j ) ->\n            if i == j then\n                1\n\n            else\n                0\n        )\n        == identity 3\n\n",
+                "type": "Basics.Int -> Basics.Int -> (( Basics.Int, Basics.Int ) -> a) -> Matrix.Matrix a"
+            },
+            {
+                "name": "map",
+                "comment": " Apply a function on every element of a matrix\n",
+                "type": "(a -> b) -> Matrix.Matrix a -> Matrix.Matrix b"
+            },
+            {
+                "name": "map2",
+                "comment": " Apply a function between pairwise elements of two matrices.\nIf the matrices are of differents sizes, returns `Nothing`.\n",
+                "type": "(a -> b -> c) -> Matrix.Matrix a -> Matrix.Matrix b -> Maybe.Maybe (Matrix.Matrix c)"
+            },
+            {
+                "name": "pretty",
+                "comment": " Convert a matrix to a formatted string.\n\n    pretty (identity 3) = \"\"\"\n        [ [ 1, 0, 0 ]\n        , [ 0, 1, 0 ]\n        , [ 0, 0, 1 ] ]\n    \"\"\"\n\n",
+                "type": "(a -> String.String) -> Matrix.Matrix a -> String.String"
+            },
+            {
+                "name": "repeat",
+                "comment": " Create a matrix with a given size, filled with a default value.\n\n    repeat 2 3 0 ~= [ [ 0, 0, 0 ], [ 0, 0, 0 ] ]\n\n",
+                "type": "Basics.Int -> Basics.Int -> a -> Matrix.Matrix a"
+            },
+            {
+                "name": "size",
+                "comment": " Return the dimensions of a given matrix in the form `(rows, columns)`.\n",
+                "type": "Matrix.Matrix a -> ( Basics.Int, Basics.Int )"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert the matrix to a flat list.\n\n    toList (identity 3) == [ 1, 0, 0, 0, 1, 0, 0, 0, 1 ]\n\n",
+                "type": "Matrix.Matrix a -> List.List a"
+            },
+            {
+                "name": "toLists",
+                "comment": " Convert the matrix to a list of lists.\n\n    toLists (identity 3) = [ [1,0,0], [0,1,0], [0,0,1] ]\n\n",
+                "type": "Matrix.Matrix a -> List.List (List.List a)"
+            },
+            {
+                "name": "transpose",
+                "comment": " Return the transpose of a matrix.\n",
+                "type": "Matrix.Matrix a -> Matrix.Matrix a"
+            },
+            {
+                "name": "width",
+                "comment": " Return the number of columns in a given matrix.\n",
+                "type": "Matrix.Matrix a -> Basics.Int"
+            }
+        ],
+        "binops": []
+    }
+]

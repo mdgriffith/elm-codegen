@@ -1,0 +1,16 @@
+[
+    {
+        "name": "JaroWinkler",
+        "comment": "\n\n@docs similarity\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "similarity",
+                "comment": " Calculates the Jaro-Winkler similarity of two strings.\n\nReturns a value between 1.0 and 0.0 where:\n1.0 is returned for equal strings,\nand 0.0 is returned for maximally disimilar strings.\n\n",
+                "type": "String.String -> String.String -> Basics.Float"
+            }
+        ],
+        "binops": []
+    }
+]

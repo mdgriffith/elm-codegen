@@ -1,0 +1,136 @@
+[
+    {
+        "name": "TOTP",
+        "comment": " Based on specification in <https://datatracker.ietf.org/doc/html/rfc6238>\n\n\n## Main function\n\n@docs generateTOTP\n\n\n## Helper functions\n\n@docs test\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "generateTOTP",
+                "comment": " <https://datatracker.ietf.org/doc/html/rfc6238#appendix-B>\n\n    import TOTP.Algorithm\n    import TOTP.Base32String exposing (Base32String(..))\n    import Time\n\n    seed : Base32String\n    seed =\n        \"12345678901234567890\"\n            |> TOTP.Base32String.stringToBase32\n            |> Result.withDefault (TOTP.Base32String.test.base32String \"error\")\n\n    seed32 : Base32String\n    seed32 =\n        \"12345678901234567890123456789012\"\n            |> TOTP.Base32String.stringToBase32\n            |> Result.withDefault (TOTP.Base32String.test.base32String \"error\")\n\n    seed64 : Base32String\n    seed64 =\n        \"1234567890123456789012345678901234567890123456789012345678901234\"\n            |> TOTP.Base32String.stringToBase32\n            |> Result.withDefault (TOTP.Base32String.test.base32String \"error\")\n\n    testTable : List (Int, String, (TOTP.Algorithm.Algorithm, Base32String))\n    testTable =\n        [ ( 59,         \"94287082\",  ( TOTP.Algorithm.SHA1,   seed ) )\n        , ( 59,         \"46119246\",  ( TOTP.Algorithm.SHA256, seed32 ) )\n        , ( 59,         \"90693936\",  ( TOTP.Algorithm.SHA512, seed64 ) )\n        , ( 1111111109, \"07081804\",  ( TOTP.Algorithm.SHA1,   seed ) )\n        , ( 1111111109, \"68084774\",  ( TOTP.Algorithm.SHA256, seed32 ) )\n        , ( 1111111109, \"25091201\",  ( TOTP.Algorithm.SHA512, seed64 ) )\n        , ( 1111111111, \"14050471\",  ( TOTP.Algorithm.SHA1,   seed ) )\n        , ( 1111111111, \"67062674\",  ( TOTP.Algorithm.SHA256, seed32 ) )\n        , ( 1111111111, \"99943326\",  ( TOTP.Algorithm.SHA512, seed64 ) )\n        , ( 1234567890, \"89005924\",  ( TOTP.Algorithm.SHA1,   seed ) )\n        , ( 1234567890, \"91819424\",  ( TOTP.Algorithm.SHA256, seed32 ) )\n        , ( 1234567890, \"93441116\",  ( TOTP.Algorithm.SHA512, seed64 ) )\n        , ( 2000000000, \"69279037\",  ( TOTP.Algorithm.SHA1,   seed ) )\n        , ( 2000000000, \"90698825\",  ( TOTP.Algorithm.SHA256, seed32 ) )\n        , ( 2000000000, \"38618901\",  ( TOTP.Algorithm.SHA512, seed64 ) )\n        , ( 20000000000, \"65353130\", ( TOTP.Algorithm.SHA1,   seed ) )\n        , ( 20000000000, \"77737706\", ( TOTP.Algorithm.SHA256, seed32 ) )\n        , ( 20000000000, \"47863826\", ( TOTP.Algorithm.SHA512, seed64 ) )\n        ]\n\n    testTable\n        |> List.map (\\(secs, _, (alg, secret)) -> generateTOTP alg { outputLength = 8, periodSeconds = 30 } secret (Time.millisToPosix (secs * 1000)))\n    --> List.map (\\(_, answer, _) -> Ok answer) testTable\n\n",
+                "type": "TOTP.Algorithm.Algorithm -> { outputLength : Basics.Int, periodSeconds : Basics.Int } -> TOTP.Base32String.Base32String -> Time.Posix -> Result.Result String.String String.String"
+            },
+            {
+                "name": "test",
+                "comment": " Exposed functions to facilitate unit testing of this library\n",
+                "type": "{ valueT : Basics.Int -> Time.Posix -> TOTP.ValueT, newValueT : Basics.Int -> TOTP.ValueT, hexCounter : TOTP.ValueT -> String.String, dynamicTruncation : Basics.Int -> Array.Array Basics.Int -> Maybe.Maybe String.String, base32String : String.String -> TOTP.Base32String.Base32String }"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "TOTP.Algorithm",
+        "comment": "\n\n\n## Types\n\n@docs Algorithm\n\n\n## Helper functions\n\n@docs digestBytes, fromString, toString\n\n",
+        "unions": [
+            {
+                "name": "Algorithm",
+                "comment": " <https://github.com/google/google-authenticator/wiki/Key-Uri-Format#algorithm>\n\nCurrently, the algorithm parameter is ignored by the Google Authenticator implementations.\n\nDefault is SHA1\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "SHA1",
+                        []
+                    ],
+                    [
+                        "SHA256",
+                        []
+                    ],
+                    [
+                        "SHA512",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "digestBytes",
+                "comment": " We need this function to route calls between underlying libraries\n\n  - [romariolopezc/elm-hmac-sha1](https://package.elm-lang.org/packages/romariolopezc/elm-hmac-sha1/latest/)\n  - [ktonon/elm-crypto](https://package.elm-lang.org/packages/ktonon/elm-crypto/latest)\n\nbecause [ktonon/elm-crypto does not support SHA1](https://github.com/ktonon/elm-crypto/issues/3)\n\n",
+                "type": "TOTP.Algorithm.Algorithm -> Bytes.Bytes -> Bytes.Bytes -> List.List Basics.Int"
+            },
+            {
+                "name": "fromString",
+                "comment": " Function to resolve the `Algorithm` from a `String` value.\n\nThis is useful when working with HTML inputs, allowing users to choose\nwhich algorithm to use.\n\n",
+                "type": "String.String -> Maybe.Maybe TOTP.Algorithm.Algorithm"
+            },
+            {
+                "name": "toString",
+                "comment": " String representation of `Algorithm` value\n",
+                "type": "TOTP.Algorithm.Algorithm -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "TOTP.Key",
+        "comment": "\n\n\n# Type\n\n@docs Key\n\n\n# Helper functions\n\n@docs code, expiresIn, fromString, init, toString\n\n\n# Accessors\n\n@docs keyIssuer, keyUser, keyRawSecret, keyOutputLength, keyPeriodSeconds, keyAlgorithm\n\n",
+        "unions": [
+            {
+                "name": "Key",
+                "comment": " An opaque type to hold the configuration value for a TOTP.\n\nThis is the value to store in your database, by calling `toString`\n\n<https://github.com/google/google-authenticator/wiki/Key-Uri-Format#algorithm>\n\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "code",
+                "comment": " Attempt to return the expected OTP code at the given time.\n\nCompare this value against the user input to verify if their OTP is correct.\n\n",
+                "type": "Time.Posix -> TOTP.Key.Key -> Result.Result String.String String.String"
+            },
+            {
+                "name": "expiresIn",
+                "comment": " Return the number of seconds the OTP from `code` is valid for\n",
+                "type": "TOTP.Key.Key -> Time.Posix -> Basics.Int"
+            },
+            {
+                "name": "fromString",
+                "comment": " Attempt to parse a String representation of `Key`\nback into a `Key` value\n",
+                "type": "String.String -> Maybe.Maybe TOTP.Key.Key"
+            },
+            {
+                "name": "init",
+                "comment": " Builds a `Key` value from the parameters\n",
+                "type": "{ issuer : String.String, user : String.String, rawSecret : String.String, outputLength : Maybe.Maybe Basics.Int, periodSeconds : Maybe.Maybe Basics.Int, algorithm : TOTP.Algorithm.Algorithm } -> Result.Result String.String TOTP.Key.Key"
+            },
+            {
+                "name": "keyAlgorithm",
+                "comment": "\n\n    import TOTP.Algorithm\n\n    keyResult : Result String Key\n    keyResult =\n        init\n            { issuer = \"123issuer\"\n            , user = \"123user\"\n            , rawSecret = \"123rawSecret\"\n            , outputLength = Just 123\n            , periodSeconds = Just 456\n            , algorithm = TOTP.Algorithm.SHA512\n            }\n\n    Result.map keyAlgorithm keyResult\n    --> Ok TOTP.Algorithm.SHA512\n\n",
+                "type": "TOTP.Key.Key -> TOTP.Algorithm.Algorithm"
+            },
+            {
+                "name": "keyIssuer",
+                "comment": "\n\n    import TOTP.Algorithm\n\n    keyResult : Result String Key\n    keyResult =\n        init\n            { issuer = \"123issuer\"\n            , user = \"123user\"\n            , rawSecret = \"123rawSecret\"\n            , outputLength = Just 123\n            , periodSeconds = Just 456\n            , algorithm = TOTP.Algorithm.SHA512\n            }\n\n    Result.map keyIssuer keyResult\n    --> Ok \"123issuer\"\n\n",
+                "type": "TOTP.Key.Key -> String.String"
+            },
+            {
+                "name": "keyOutputLength",
+                "comment": "\n\n    import TOTP.Algorithm\n\n    keyResult : Result String Key\n    keyResult =\n        init\n            { issuer = \"123issuer\"\n            , user = \"123user\"\n            , rawSecret = \"123rawSecret\"\n            , outputLength = Just 123\n            , periodSeconds = Just 456\n            , algorithm = TOTP.Algorithm.SHA512\n            }\n\n    Result.map keyOutputLength keyResult\n    --> Ok (Just 123)\n\n",
+                "type": "TOTP.Key.Key -> Maybe.Maybe Basics.Int"
+            },
+            {
+                "name": "keyPeriodSeconds",
+                "comment": "\n\n    import TOTP.Algorithm\n\n    keyResult : Result String Key\n    keyResult =\n        init\n            { issuer = \"123issuer\"\n            , user = \"123user\"\n            , rawSecret = \"123rawSecret\"\n            , outputLength = Just 123\n            , periodSeconds = Just 456\n            , algorithm = TOTP.Algorithm.SHA512\n            }\n\n    Result.map keyPeriodSeconds keyResult\n    --> Ok (Just 456)\n\n",
+                "type": "TOTP.Key.Key -> Maybe.Maybe Basics.Int"
+            },
+            {
+                "name": "keyRawSecret",
+                "comment": "\n\n    import TOTP.Algorithm\n\n    keyResult : Result String Key\n    keyResult =\n        init\n            { issuer = \"123issuer\"\n            , user = \"123user\"\n            , rawSecret = \"123rawSecret\"\n            , outputLength = Just 123\n            , periodSeconds = Just 456\n            , algorithm = TOTP.Algorithm.SHA512\n            }\n\n    Result.andThen keyRawSecret keyResult\n    --> Ok \"123rawSecret\"\n\n",
+                "type": "TOTP.Key.Key -> Result.Result String.String String.String"
+            },
+            {
+                "name": "keyUser",
+                "comment": "\n\n    import TOTP.Algorithm\n\n    keyResult : Result String Key\n    keyResult =\n        init\n            { issuer = \"123issuer\"\n            , user = \"123user\"\n            , rawSecret = \"123rawSecret\"\n            , outputLength = Just 123\n            , periodSeconds = Just 456\n            , algorithm = TOTP.Algorithm.SHA512\n            }\n\n    Result.map keyUser keyResult\n    --> Ok \"123user\"\n\n",
+                "type": "TOTP.Key.Key -> String.String"
+            },
+            {
+                "name": "toString",
+                "comment": " <https://rootprojects.org/authenticator/>\n\n    import Base32\n    import String.Extra\n    import TOTP.Algorithm\n    import TOTP\n\n    keyResult : Result String Key\n    keyResult =\n        init\n            { issuer = \"ACME Co\"\n            , user = \"john@example.com\"\n            , rawSecret = \"HXDMVJECJJWSRB3HWIZR4IFUGFTMXBOZ\"\n                |> Base32.decode\n                |> Result.map String.Extra.fromCodePoints\n                |> Result.withDefault \"<fail>\"\n            , outputLength = Just 6\n            , periodSeconds = Just 30\n            , algorithm = TOTP.Algorithm.SHA1\n            }\n\n    -- expected String output\n    Result.map toString keyResult\n    --> Ok \"otpauth://totp/ACME%20Co:john@example.com?secret=HXDMVJECJJWSRB3HWIZR4IFUGFTMXBOZ&issuer=ACME%20Co&algorithm=SHA1&digits=6&period=30\"\n\n\n    -- toString and fromString are reversible\n    Result.map toString keyResult\n    |> Result.map fromString\n    --> Ok (Result.toMaybe keyResult)\n\n",
+                "type": "TOTP.Key.Key -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

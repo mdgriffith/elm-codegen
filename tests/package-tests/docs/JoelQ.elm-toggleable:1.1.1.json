@@ -1,0 +1,63 @@
+[
+    {
+        "name": "Toggleable",
+        "comment": " A representation of values in a toggleable UI as well as functions for\ncommon transformations. The `Toggleable` type models values that are\nindependently toggleable. See it in action in this\n[live example](https://ellie-app.com/kPBk4HDKQa1/1).\n\nIf you are looking to implement \"accordion\"-style behavior, you may want to\nuse a zipper implementation instead such as\n[SelectList](http://package.elm-lang.org/packages/rtfeldman/selectlist/latest).\n\n\n# Definition\n\n@docs Toggleable\n\n\n# Toggling\n\n@docs toggle, toggleIf, open, close\n\n\n# Unwrapping\n\n@docs unwrap\n\n\n# Transforming\n\n@docs map\n\n",
+        "unions": [
+            {
+                "name": "Toggleable",
+                "comment": " Represent a value that might be toggled open or closed. You can put these\ndirectly in your model.\n\n    { article = \"a lot of text...\"\n    , comments = [ Open comment1, Closed comment2 ]\n    }\n\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Open",
+                        [
+                            "a"
+                        ]
+                    ],
+                    [
+                        "Closed",
+                        [
+                            "a"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "close",
+                "comment": " Convert a any toggleable value to `Closed`.\n\n    close (Closed \"hello\") -- Closed \"hello\"\n\n    close (Open \"hello\") -- Closed \"hello\n\n",
+                "type": "Toggleable.Toggleable a -> Toggleable.Toggleable a"
+            },
+            {
+                "name": "map",
+                "comment": " Transform the value inside the toggleable _without_ modifying the toggleable\nstate.\n\n    map String.toUpper (Open \"hello\") -- Open \"HELLO\"\n\n    map String.toUpper (Closed \"hello\") -- Closed \"HELLO\"\n\n",
+                "type": "(a -> b) -> Toggleable.Toggleable a -> Toggleable.Toggleable b"
+            },
+            {
+                "name": "open",
+                "comment": " Convert a any toggleable value to `Open`.\n\n    open (Closed \"hello\") -- Open \"hello\"\n\n    open (Open \"hello\") -- Open \"hello\n\n",
+                "type": "Toggleable.Toggleable a -> Toggleable.Toggleable a"
+            },
+            {
+                "name": "toggle",
+                "comment": " Toggle from `Open` to `Closed` or vice-versa.\n\n    toggle (Open \"hello\") -- Closed \"hello\"\n\n    toggle (Closed \"hello\") -- Open \"hello\"\n\n",
+                "type": "Toggleable.Toggleable a -> Toggleable.Toggleable a"
+            },
+            {
+                "name": "toggleIf",
+                "comment": " Only toggle if the given expression is True. The value inside the toggleable\nremains unchanged.\n\n    toggleIf String.isEmpty (Open \"\") -- Closed \"\"\n\n    toggleIf String.isEmpty (Open \"hello\") -- Open \"hello\"\n\n",
+                "type": "(a -> Basics.Bool) -> Toggleable.Toggleable a -> Toggleable.Toggleable a"
+            },
+            {
+                "name": "unwrap",
+                "comment": " Get the value inside the toggleable.\n\n    unwrap (Open \"hello\") -- \"hello\"\n\n",
+                "type": "Toggleable.Toggleable a -> a"
+            }
+        ],
+        "binops": []
+    }
+]

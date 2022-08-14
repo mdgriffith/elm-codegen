@@ -1,0 +1,36 @@
+[
+    {
+        "name": "VLQ",
+        "comment": " VLQ ([variable-length\nquantity](http://en.wikipedia.org/wiki/Variable-length_quantity)) is a way to\nencode integers via text.\n\nThis base64-encoded variant is notably used in [sourcemaps](https://www.youtube.com/watch?v=6LI0BJIiamg).\n\n\n# Conversion\n\n@docs encode, encodeSingle, decode\n\n\n# Constants\n\nThe minimum and maximum VLQ integer values representable by JavaScript bitwise\noperators are -2147483648 (-2^31) and 2147483647 (2^31 - 1) respectively.\n\n@docs minInt, maxInt\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decode",
+                "comment": " Decode a VLQ-encoded string back into a list of integers.\n\n    VLQ.decode \"C\"\n    --> Just [ 1 ]\n\n    VLQ.decode \"AAAA\"\n    --> Just [ 0, 0, 0, 0 ]\n\n    VLQ.decode \"2HwcqxB\"\n    --> Just [ 123, 456, 789 ]\n\n    VLQ.decode \"Not a VLQ string\"\n    --> Nothing\n\n",
+                "type": "String.String -> Maybe.Maybe (List.List Basics.Int)"
+            },
+            {
+                "name": "encode",
+                "comment": " Encode a list of integers to the VLQ representation.\n\n    VLQ.encode [ 1, 2, 3 ]\n    --> \"CEG\"\n\n    VLQ.encode [ 8, 0, 4, 16 ]\n    --> \"QAIgB\"\n\n    VLQ.encode [ 123456789 ]\n    --> \"qxmvrH\"\n\n",
+                "type": "List.List Basics.Int -> String.String"
+            },
+            {
+                "name": "encodeSingle",
+                "comment": " Encode a single integer to the VLQ representation.\n\nThis will always behave the same as if you wrapped the integer in a list and encoded it with [`encode`](#encode)\n\n    VLQ.encodeSingle 1\n    --> \"C\"\n\n    VLQ.encodeSingle 123456789\n    --> \"qxmvrH\"\n\n",
+                "type": "Basics.Int -> String.String"
+            },
+            {
+                "name": "maxInt",
+                "comment": " Maximum integer usable with this library: 2147483647 (2^31 - 1)\n",
+                "type": "Basics.Int"
+            },
+            {
+                "name": "minInt",
+                "comment": " Minimum integer usable with this library: -2147483648 (-2^31)\n",
+                "type": "Basics.Int"
+            }
+        ],
+        "binops": []
+    }
+]

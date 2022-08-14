@@ -1,0 +1,21 @@
+[
+    {
+        "name": "DebugToJson",
+        "comment": " Convert Debug.toString output to JSON\n\n\n# Pretty print\n\n@docs pp\n\n\n# Convert to JSON\n\n@docs toJson\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "pp",
+                "comment": " Pretty print output from Debug.toString to JSON\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "toJson",
+                "comment": " Convert output from Debug.toString to JSON\n",
+                "type": "String.String -> Result.Result (List.List Parser.DeadEnd) Json.Encode.Value"
+            }
+        ],
+        "binops": []
+    }
+]

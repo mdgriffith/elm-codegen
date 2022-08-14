@@ -1,0 +1,132 @@
+[
+    {
+        "name": "Tree.Extra.Lue",
+        "comment": " To `import as Tree exposing (leaf)`.\n\n\n## create\n\n@docs leaf\n\n\n## scan\n\n@docs at\n\n\n## modify\n\n@docs replaceLabel, mapWithPath, updateAt, removeAt, replaceAt, appendChildren, prependChildren\n\n\n### filter\n\n@docs when\n\n\n## transform\n\n@docs fold, serialize\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "appendChildren",
+                "comment": " Put a list of children after all current children.\n\n    import Tree exposing (tree)\n    import Tree.Extra.Lue as Tree exposing (leaf)\n\n    tree \"hello\" [ leaf \"you\" ]\n        |> Tree.appendChildren\n            [ leaf \"and\", leaf \"you\" ]\n    --> tree \"hello\"\n    -->     [ leaf \"you\", leaf \"and\", leaf \"you\" ]\n\n",
+                "type": "List.List (Tree.Tree a) -> Tree.Tree a -> Tree.Tree a"
+            },
+            {
+                "name": "at",
+                "comment": " Following the [`TreePath`](TreePath#TreePath), where do we end?\n\n    import Tree exposing (tree)\n    import Tree.Extra.Lue as Tree exposing (leaf)\n    import TreePath\n\n    leaf \"jo\"\n        |> Tree.at TreePath.atTrunk\n    --> Just (leaf \"jo\")\n\n    tree \"jo\"\n        [ leaf \"ann\"\n        , tree \"mic\"\n            [ leaf \"igg\"\n            , leaf \"dee\"\n            , leaf \"bee\"\n            ]\n        ]\n        |> Tree.at (TreePath.go [ 1, 2 ])\n    --> Just (leaf \"bee\")\n\n    tree \"jo\"\n        [ leaf \"ann\"\n        , tree \"mic\"\n            [ leaf \"igg\"\n            , leaf \"dee\"\n            ]\n        ]\n        |> Tree.at (TreePath.go [ 1, 2 ])\n    --> Nothing\n\n",
+                "type": "TreePath.TreePath -> Tree.Tree a -> Maybe.Maybe (Tree.Tree a)"
+            },
+            {
+                "name": "fold",
+                "comment": " Reduce all labels in the `Tree` depth-first in a [direction](https://package.elm-lang.org/packages/lue-bird/elm-linear-direction/latest/):\n\n    import Array\n    import Tree exposing (tree)\n    import Tree.Extra.Lue as Tree exposing (leaf)\n    import LinearDirection exposing (LinearDirection(..))\n\n    tree 0 [ leaf 1, tree 2 [ leaf 3 ], leaf 5 ]\n        |> Tree.fold FirstToLast Array.push Array.empty\n    --> [ 0, 1, 2, 3, 5 ] |> Array.fromList\n\n    tree 0 [ leaf 1, tree 2 [ leaf 3 ], leaf 5 ]\n        |> Tree.fold LastToFirst Array.push Array.empty\n    --> [ 5, 3, 2, 1, 0 ] |> Array.fromList\n\n",
+                "type": "LinearDirection.LinearDirection -> (a -> acc -> acc) -> acc -> Tree.Tree a -> acc"
+            },
+            {
+                "name": "leaf",
+                "comment": " Alias to `Tree.singleton`: A `Tree` without children. It can be exposed → less noise.\n\n    import Tree\n    import Tree.Extra.Lue exposing (leaf)\n\n    leaf 5 |> Tree.label\n    --> 5\n\n    leaf \"foo\" |> Tree.children\n    --> []\n\n",
+                "type": "a -> Tree.Tree a"
+            },
+            {
+                "name": "mapWithPath",
+                "comment": " Alter every label based on its [`TreePath`](TreePath#TreePath) and current value.\n\n    import Tree exposing (tree)\n    import Tree.Extra.Lue as Tree exposing (leaf)\n    import TreePath\n\n    tree 1\n        [ leaf 2\n        , tree 3 [ leaf 4 ]\n        , leaf 5\n        ]\n        |> Tree.mapWithPath\n            (\\path n -> ( n * 2, path ))\n    --> tree ( 2, TreePath.atTrunk )\n    -->     [ leaf ( 4, TreePath.go [ 0 ] )\n    -->     , tree ( 6, TreePath.go [ 1 ] )\n    -->         [ leaf ( 8, TreePath.go [ 1, 0 ] ) ]\n    -->     , leaf ( 10, TreePath.go [ 2 ] )\n    -->     ]\n\n",
+                "type": "(TreePath.TreePath -> a -> b) -> Tree.Tree a -> Tree.Tree b"
+            },
+            {
+                "name": "prependChildren",
+                "comment": " Put a list of children left to all current children.\n\n    import Tree exposing (tree)\n    import Tree.Extra.Lue as Tree exposing (leaf)\n\n    tree \"dear\" [ leaf \"George\" ]\n        |> Tree.prependChildren\n            [ leaf \"May\", leaf \"and\" ]\n    --> tree \"dear\"\n    -->     [ leaf \"May\", leaf \"and\", leaf \"George\" ]\n\n",
+                "type": "List.List (Tree.Tree a) -> Tree.Tree a -> Tree.Tree a"
+            },
+            {
+                "name": "removeAt",
+                "comment": " Remove the sub-`Tree` at the end of a [`TreePath`](TreePath#TreePath) from a `Tree`.\n\n    import Tree exposing (tree)\n    import Tree.Extra.Lue as Tree exposing (leaf)\n    import TreePath\n\n    [ leaf \"ann\"\n    , tree \"mic\"\n        [ leaf \"igg\"\n        , leaf \"dee\"\n        , leaf \"bee\"\n        ]\n    ]\n    |> Tree.removeAt (TreePath.go [ 1, 2 ])\n    --> [ leaf \"ann\"\n    --> , tree \"mic\"\n    -->     [ leaf \"igg\"\n    -->     , leaf \"dee\"\n    -->     ]\n    --> ]\n\n\n    [ leaf \"ann\"\n    , tree \"mic\"\n        [ leaf \"igg\"\n        , leaf \"dee\"\n        ]\n    ]\n    |> Tree.removeAt (TreePath.go [ 1, 2 ])\n    --> [ leaf \"ann\"\n    --> , tree \"mic\"\n    -->     [ leaf \"igg\"\n    -->     , leaf \"dee\"\n    -->     ]\n    --> ]\n\n    [ leaf \"jo\" ]\n        |> Tree.removeAt TreePath.atTrunk\n    --> []\n\n",
+                "type": "TreePath.TreePath -> List.List (Tree.Tree a) -> List.List (Tree.Tree a)"
+            },
+            {
+                "name": "replaceAt",
+                "comment": " Replace the sub-tree at a [`TreePath`](TreePath#TreePath) with a new `Tree`.\n\n    import Tree exposing (tree)\n    import Tree.Extra.Lue as Tree exposing (leaf)\n    import TreePath\n\n    tree \"jo\"\n        [ leaf \"ann\"\n        , tree \"mic\"\n            [ leaf \"igg\"\n            , leaf \"dee\"\n            , leaf \"bee\"\n            ]\n        ]\n        |> Tree.replaceAt (TreePath.go [ 1, 2 ])\n            (leaf \"be\")\n    --> tree \"jo\"\n    -->     [ leaf \"ann\"\n    -->     , tree \"mic\"\n    -->         [ leaf \"igg\"\n    -->         , leaf \"dee\"\n    -->         , leaf \"be\"\n    -->         ]\n    -->     ]\n\n    tree \"jo\"\n        [ leaf \"ann\"\n        , tree \"mic\"\n            [ leaf \"igg\"\n            , leaf \"dee\"\n            ]\n        ]\n        |> Tree.replaceAt (TreePath.go [ 1, 2 ])\n            (leaf \"be\")\n    --> tree \"jo\"\n    -->     [ leaf \"ann\"\n    -->     , tree \"mic\"\n    -->         [ leaf \"igg\"\n    -->         , leaf \"dee\"\n    -->         ]\n    -->     ]\n\n",
+                "type": "TreePath.TreePath -> Tree.Tree a -> Tree.Tree a -> Tree.Tree a"
+            },
+            {
+                "name": "replaceLabel",
+                "comment": " Set the label of this tree to a new value.\n\n    import Tree exposing (tree)\n    import Tree.Extra.Lue as Tree\n\n    tree \"hello\" [ leaf \"world\" ]\n        |> Tree.replaceLabel \"bye\"\n    --> tree \"bye\" [ leaf \"world\" ]\n\n",
+                "type": "a -> Tree.Tree a -> Tree.Tree a"
+            },
+            {
+                "name": "serialize",
+                "comment": " A [`Codec`](https://package.elm-lang.org/packages/MartinSStewart/elm-serialize/latest/) to serialize a `Tree`.\n",
+                "type": "Serialize.Codec error a -> Serialize.Codec error (Tree.Tree a)"
+            },
+            {
+                "name": "updateAt",
+                "comment": " Change the sub-tree at a [`TreePath`](TreePath#TreePath) based on its current value.\n\n    import Tree exposing (tree)\n    import Tree.Extra.Lue as Tree exposing (leaf)\n    import TreePath\n\n    tree \"jo\"\n        [ leaf \"ann\"\n        , tree \"mic\"\n            [ leaf \"igg\"\n            , leaf \"dee\"\n            , leaf \"bee\"\n            ]\n        ]\n        |> Tree.updateAt (TreePath.go [ 1, 2 ])\n            (Tree.mapLabel String.toUpper)\n    --> tree \"jo\"\n    -->     [ leaf \"ann\"\n    -->     , tree \"mic\"\n    -->         [ leaf \"igg\"\n    -->         , leaf \"dee\"\n    -->         , leaf \"BEE\"\n    -->         ]\n    -->     ]\n\n    tree \"jo\"\n        [ leaf \"ann\"\n        , tree \"mic\"\n            [ leaf \"igg\"\n            , leaf \"dee\"\n            ]\n        ]\n        |> Tree.updateAt (TreePath.go [ 1, 2 ])\n            (Tree.mapLabel String.toUpper)\n    --> tree \"jo\"\n    -->     [ leaf \"ann\"\n    -->     , tree \"mic\"\n    -->         [ leaf \"igg\"\n    -->         , leaf \"dee\"\n    -->         ]\n    -->     ]\n\n",
+                "type": "TreePath.TreePath -> (Tree.Tree a -> Tree.Tree a) -> Tree.Tree a -> Tree.Tree a"
+            },
+            {
+                "name": "when",
+                "comment": " Take all the branches where condition is met.\nWhen a branch fails, all its children are checked.\n\n    import Tree exposing (tree)\n    import Tree.Extra.Lue as Tree exposing (leaf)\n\n    tree { name = \"boss tree\", selected = False }\n        [ tree { name = \"hugg\", selected = True }\n            [ leaf { name = \"zugg\", selected = True }\n            , leaf { name = \"gugg\", selected = False }\n            ]\n        , leaf { name = \"naomi\", selected = False }\n        , tree { name = \"unselmo\", selected = False }\n            [ leaf { name = \"selmo\", selected = True }\n            , leaf { name = \"helmo\", selected = False }\n            ]\n        ]\n        |> Tree.children\n        |> Tree.when\n            (Tree.label >> .selected)\n\n    --> [ tree { name = \"hugg\", selected = True }\n    -->     [ leaf { name = \"zugg\", selected = True }\n    -->     , leaf { name = \"gugg\", selected = False }\n    -->     ]\n    --> , leaf { name = \"selmo\", selected = True }\n    --> ]\n\n",
+                "type": "(Tree.Tree a -> Basics.Bool) -> List.List (Tree.Tree a) -> List.List (Tree.Tree a)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "TreePath",
+        "comment": " `import exposing (TreePath, atTrunk)`.\n\n@docs TreePath, atTrunk, go\n\n\n## scan\n\n@docs depth, goesToChildOf, goesToParentOf\n\n\n## modify\n\n@docs step, toParent, toChild\n\n\n## transform\n\n@docs serialize\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "TreePath",
+                "comment": " The unique location of a child-`Tree` in a `Tree`.\n\nYou describe which branch index to go along every step.\n\n    [ {-first go to its child at index-}0\n    , {-then go to the child of its child at index-}2\n    , ...\n    ]\n\n",
+                "args": [],
+                "type": "List.List Basics.Int"
+            }
+        ],
+        "values": [
+            {
+                "name": "atTrunk",
+                "comment": " Stay at that tree. Don't go anywhere.\n\n    TreePath.atTrunk\n    --> TreePath.go []\n\n    TreePath.atTrunk\n        |> TreePath.depth\n    --> 0\n\n",
+                "type": "TreePath.TreePath"
+            },
+            {
+                "name": "depth",
+                "comment": " On which level of sub-branch is the final tree located?\n\n    TreePath.depth TreePath.atTrunk\n    --> 0\n\n    TreePath.atTrunk\n        |> TreePath.toChild 5\n        |> TreePath.toChild 2\n        |> TreePath.toChild 0\n        |> TreePath.depth\n    --> 3\n\n",
+                "type": "TreePath.TreePath -> Basics.Int"
+            },
+            {
+                "name": "go",
+                "comment": " Conveniently describe the route to go from the trunk.\n\n    TreePath.go [ 2, 4, 0 ]\n    --> [ 2, 4, 0 ]\n\n    -- or\n    TreePath.go [ 2, 4, 0 ]\n    --> TreePath.atTrunk\n    -->     |> TreePath.toChild 2\n    -->     |> TreePath.toChild 4\n    -->     |> TreePath.toChild 0\n\n",
+                "type": "List.List Basics.Int -> TreePath.TreePath"
+            },
+            {
+                "name": "goesToChildOf",
+                "comment": " Does this path lead to a child or child of a child or ... of the tree at this path?\n\n    TreePath.go [ 2, 3, 0 ]\n        |> TreePath.goesToChildOf\n            (TreePath.go [ 2, 3 ])\n    --> True\n\n    TreePath.go [ 2 ]\n        |> TreePath.goesToChildOf\n            (TreePath.go [ 2, 3 ])\n    --> False\n\n",
+                "type": "TreePath.TreePath -> TreePath.TreePath -> Basics.Bool"
+            },
+            {
+                "name": "goesToParentOf",
+                "comment": " Does this path lead to its parent or the parent of its parent or ... of the tree at this path?\n\n    TreePath.go [ 2 ]\n        |> TreePath.goesToParentOf\n            (TreePath.go [ 2, 3 ])\n    --> True\n\n    TreePath.go [ 2, 3, 0 ]\n        |> TreePath.goesToParentOf\n            (TreePath.go [ 2, 3 ])\n    --> False\n\n",
+                "type": "TreePath.TreePath -> TreePath.TreePath -> Basics.Bool"
+            },
+            {
+                "name": "serialize",
+                "comment": " A [`Codec`](https://package.elm-lang.org/packages/MartinSStewart/elm-serialize/latest/) to serialize a `Tree`.\n",
+                "type": "Serialize.Codec serializeError_ TreePath.TreePath"
+            },
+            {
+                "name": "step",
+                "comment": " Go to the next child index.\n\n    import Tree exposing (Tree)\n    import TreePath exposing (TreePath)\n\n\n    TreePath.go [ 2, 4, 0 ]\n        |> TreePath.step\n    --> Just ( 2, TreePath.go [ 4, 0 ] )\n\n    TreePath.atTrunk\n        |> TreePath.step\n    --> Nothing\n\n    at path =\n        case TreePath.step path of\n            Nothing ->\n                Just\n\n            Just ( index, further ) ->\n                Tree.children\n                    >> List.getAt index\n                    >> Maybe.andThen (at further)\n\n",
+                "type": "TreePath.TreePath -> Maybe.Maybe ( Basics.Int, TreePath.TreePath )"
+            },
+            {
+                "name": "toChild",
+                "comment": " The path to its ...th child from there.\n\n    TreePath.atTrunk\n        |> TreePath.toChild 4\n        |> TreePath.toChild 1\n        |> TreePath.toChild 8\n    --> TreePath.go [ 4, 1, 8 ]\n\n1.  Take the branch at index 4\n2.  Then take its branch at index 1\n3.  Its child at index 8 is where you wanted to go\n\nThis is often useful in recursive functions.\n\n    view path tree =\n        button [ onPress (Clicked path) ]\n            :: (Tree.children tree\n                    |> List.indexedMap\n                        (\\index ->\n                            view (path |> TreePath.toChild index)\n                        )\n               )\n            |> column [ Ui.padding (10 / TreePath.depth path) ]\n\n",
+                "type": "Basics.Int -> TreePath.TreePath -> TreePath.TreePath"
+            },
+            {
+                "name": "toParent",
+                "comment": " The `TreePath` to its parent tree – if there is one.\n\n    TreePath.go [ 1, 2, 3 ]\n        |> TreePath.toParent\n    --> Just (TreePath.go [ 1, 2 ])\n\n    TreePath.atTrunk\n        |> TreePath.toParent\n    --> Nothing\n\n",
+                "type": "TreePath.TreePath -> Maybe.Maybe TreePath.TreePath"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,177 @@
+[
+    {
+        "name": "Treeview",
+        "comment": " A customizable ELM treeview component.\n\nUsage example:\n\n    import Html\n    import Treeview exposing (..)\n\n    model : Model\n    model = ...     -- see Model documentation\n\n    styles : Styles\n    styles = ...    -- see Styles documentation\n\n    config : Config\n    config = default styles\n\n    main : Program Never Model Msg\n    main =\n      Html.beginnerProgram\n        { model = model\n        , view = view config\n        , update = update\n        }\n\n\n## Model\n\n@docs Config, Model, Node, Options, Styles, Style, Sort, default\n@docs node, nodeKey, nodeChildren, setNodeChildren, nodeTitle\n@docs toggleNode, setNodeVisible, nodeVisible, toggleAll, toggle\n\n\n## Messages\n\n@docs Msg, update\n\n\n## View\n\n@docs view\n\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " Messages of treeview:\n\n  - `Toggle Key`: open / close a node\n  - `Select Key`: click on the title of node\n  - `Search String`: filter search\n  - `ToggleCheck Multiple Cascade Key Value`: check/uncheck a node checkbox.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Toggle",
+                        [
+                            "Treeview.Key"
+                        ]
+                    ],
+                    [
+                        "Select",
+                        [
+                            "Treeview.Key"
+                        ]
+                    ],
+                    [
+                        "Search",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "ToggleCheck",
+                        [
+                            "Basics.Bool",
+                            "Basics.Bool",
+                            "Treeview.Key",
+                            "Basics.Bool"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Node",
+                "comment": " Node is an item of treeview.\n\nEach node has:\n\n  - an unique key\n  - a title\n  - a list of options (see `Options`)\n  - maybe list of children.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Node",
+                        [
+                            "Treeview.Key",
+                            "Treeview.Title",
+                            "Treeview.Options",
+                            "Treeview.Children"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Sort",
+                "comment": " Sort the node from the title:\n\n  - `None` = no sort\n  - `Asc` = ascending order\n  - `Desc` = descending order\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "None",
+                        []
+                    ],
+                    [
+                        "Asc",
+                        []
+                    ],
+                    [
+                        "Desc",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " Configure the treeview component.\n\nOptions:\n\n  - `checkbox.enable`: activate the checkbox selection for each node.\n  - `checkbox.multiple`: multiple nodes can be selected.\n  - `checkbox.cascade`: enable the cascading selection (the children node will selected if the parent is selected).\n  - `search.enable`: activate the search toolbar.\n  - `sort`: sort the nodes (see `Sort` for more details).\n  - `look.theme`: apply the theme.\n  - `look.styles`: define the styles (CSS class and icons) for nodes.\n\nUse default to get a default configuration and set a specific options.\n\nExample:\n\n    config : Config\n    config =\n        let\n            d =\n                default styles\n        in\n        { d | search = { enable = True } }\n\n",
+                "args": [],
+                "type": "{ checkbox : { enable : Basics.Bool, multiple : Basics.Bool, cascade : Basics.Bool }, search : { enable : Basics.Bool }, sort : Treeview.Sort, look : { theme : String.String, styles : Treeview.Styles } }"
+            },
+            {
+                "name": "Model",
+                "comment": " Model of treeview.\n\nExample:\n\n    model : Model\n    model =\n        [ T.node \"pA\" \"Project A\" \"folder\" False <|\n            Just\n                [ T.node \"pAg1\" \"Report 1\" \"folder\" False <|\n                    Just\n                        [ T.node \"pAg1f1\" \"report_1_revA.pdf\" \"pdf\" True Nothing\n                        , T.node \"pAg1f2\" \"report_1_revB.pdf\" \"pdf\" True Nothing\n                        , T.node \"pAg1f3\" \"report_1_revC.pdf\" \"pdf\" True Nothing\n                        ]\n                , T.node \"pAg2\" \"Report 2\" \"folder\" False <|\n                    Just\n                        [ T.node \"pAg2f1\" \"report_2_revA.pdf\" \"pdf\" True Nothing\n                        , T.node \"pAg2f2\" \"report_2_revB.pdf\" \"pdf\" True Nothing\n                        ]\n                , T.node \"pAf1\" \"lorem.doc\" \"word\" True Nothing\n                , T.node \"pAf2\" \"ipsum.xls\" \"excel\" True Nothing\n                ]\n        , T.node \"pB\" \"Keynote\" \"folder\" False <|\n            Just\n                [ T.node \"pBf1\" \"workshop_part1.ppt\" \"powerpoint\" True Nothing\n                , T.node \"pBf2\" \"workshop_part2.ppt\" \"powerpoint\" True Nothing\n                , T.node \"pBf3\" \"image1.png\" \"image\" True Nothing\n                , T.node \"pBf4\" \"image2.ppt\" \"image\" True Nothing\n                , T.node \"pBf5\" \"image3.ppt\" \"image\" True Nothing\n                , T.node \"pBf5\" \"image4.ppt\" \"image\" True Nothing\n                ]\n        ]\n\n",
+                "args": [],
+                "type": "List.List Treeview.Node"
+            },
+            {
+                "name": "Options",
+                "comment": " Define the option of current node.\n\nOptions:\n\n  - `style`: node style defined in `Config.look.styles`\n  - `selectable`: `True` if the node is clickable\n  - `opened`: `True` if the children are visibles\n  - `disabled`: to disable the node (children handle and node selection)\n  - `visible`: to hide the node\n  - `checked`: to select the node (required `Config.checkbox.enable = true`).\n\n",
+                "args": [],
+                "type": "{ style : Treeview.StyleName, selectable : Treeview.Selectable, opened : Treeview.Opened, disabled : Treeview.Disabled, visible : Treeview.Visible, checked : Treeview.Checked }"
+            },
+            {
+                "name": "Style",
+                "comment": " Define the style of node.\n\nOptions:\n\n  - `name`: a unique id of style\n  - `icon`: icon when the node is closed and when the node is opened\n  - `class`: CSS class of node.\n\nNote: the CSS class `opened` is added when the node is opened thus you can\ndefined a custom style in function of node state:\n\n```scss\n.myNodeStyle {\n  ...\n  .opened {...}\n}\n```\n\n",
+                "args": [],
+                "type": "{ name : Treeview.StyleName, icon : Treeview.Icon, class : Treeview.Class }"
+            },
+            {
+                "name": "Styles",
+                "comment": " List of node's styles.\n\nExample:\n\n    styles : Styles\n    styles =\n        [ T.Style \"folder\" ( \"folder yellow\", \"folder-open yellow\" ) \"\"\n        , T.Style \"archive\" ( \"file-archive-o\", \"file-archive-o\" ) \"\"\n        , T.Style \"word\" ( \"file-word-o\", \"file-word-o\" ) \"blue\"\n        , T.Style \"image\" ( \"file-image-o\", \"file-image-o\" ) \"\"\n        , T.Style \"pdf\" ( \"file-pdf-o\", \"file-pdf-o\" ) \"red\"\n        , T.Style \"powerpoint\" ( \"file-powerpoint-o\", \"file-powerpoint-o\" ) \"orange\"\n        , T.Style \"excel\" ( \"file-excel-o\", \"file-excel-o\" ) \"green\"\n        ]\n\n",
+                "args": [],
+                "type": "List.List Treeview.Style"
+            }
+        ],
+        "values": [
+            {
+                "name": "default",
+                "comment": " Create a default `Config` in function of list of styles.\n",
+                "type": "Treeview.Styles -> Treeview.Config"
+            },
+            {
+                "name": "node",
+                "comment": " Shortcut to create a new `Node`.\n",
+                "type": "Treeview.Key -> Treeview.Title -> Treeview.StyleName -> Treeview.Selectable -> Treeview.Children -> Treeview.Node"
+            },
+            {
+                "name": "nodeChildren",
+                "comment": " Get the node children.\n",
+                "type": "Treeview.Node -> Treeview.Children"
+            },
+            {
+                "name": "nodeKey",
+                "comment": " Get the node key.\n",
+                "type": "Treeview.Node -> Treeview.Key"
+            },
+            {
+                "name": "nodeTitle",
+                "comment": " Get the node title.\n",
+                "type": "Treeview.Node -> Treeview.Title"
+            },
+            {
+                "name": "nodeVisible",
+                "comment": " Get the node visibility.\n",
+                "type": "Treeview.Node -> Treeview.Visible"
+            },
+            {
+                "name": "setNodeChildren",
+                "comment": " Set the node children.\n",
+                "type": "Treeview.Children -> Treeview.Node -> Treeview.Node"
+            },
+            {
+                "name": "setNodeVisible",
+                "comment": " Set the node visibility.\n",
+                "type": "Treeview.Visible -> Treeview.Node -> Treeview.Node"
+            },
+            {
+                "name": "toggle",
+                "comment": " Toggle the opened options.\n",
+                "type": "Treeview.Key -> Treeview.Model -> Treeview.Model"
+            },
+            {
+                "name": "toggleAll",
+                "comment": " Toggle all items.\n",
+                "type": "Treeview.Model -> Treeview.Model"
+            },
+            {
+                "name": "toggleNode",
+                "comment": " Toggle the node opening.\n",
+                "type": "Treeview.Node -> Treeview.Node"
+            },
+            {
+                "name": "update",
+                "comment": " The treeview update function.\n",
+                "type": "Treeview.Msg -> Treeview.Model -> Treeview.Model"
+            },
+            {
+                "name": "view",
+                "comment": " Tree treeview view function.\n",
+                "type": "Treeview.Config -> Treeview.Model -> Html.Html Treeview.Msg"
+            }
+        ],
+        "binops": []
+    }
+]

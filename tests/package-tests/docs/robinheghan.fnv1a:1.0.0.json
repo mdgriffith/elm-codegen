@@ -1,0 +1,26 @@
+[
+    {
+        "name": "FNV1a",
+        "comment": "\n\n@docs hash, hashWithSeed, initialSeed\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "hash",
+                "comment": " Turn a string into an integer value based on its contents.\nWhen passed the empty string, the `initialSeed` is returned.\n\n    hash \"Lorem ipsum\" == 2898375356\n\n",
+                "type": "String.String -> Basics.Int"
+            },
+            {
+                "name": "hashWithSeed",
+                "comment": " Like `hash`, this turns a string into an integer value.\nIt differs in that you can provide your own seed, or your own initial hash value.\nThis allows you to hash two, or more, strings in sequence without concatenating them first.\n\n    hashWithSeed \"ipsum\" (hash \"Lorem \") == hash \"Lorem ipsum\"\n\n",
+                "type": "String.String -> Basics.Int -> Basics.Int"
+            },
+            {
+                "name": "initialSeed",
+                "comment": " The initial seed represents the starting point of a hash.\nIn other words:\n\n    hash \"\" == initialSeed\n\n",
+                "type": "Basics.Int"
+            }
+        ],
+        "binops": []
+    }
+]

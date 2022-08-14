@@ -1,0 +1,94 @@
+[
+    {
+        "name": "Dialog",
+        "comment": " Simple Dialog.\n\nWe recommend checking out the [examples] to get a feel for how it works.\n\n[examples]: https://github.com/canceraiddev/elm-dialog/tree/main/examples\n\n\n# Model\n\n@docs Model, Dialog, error, httpError, info, loading, okCancel\n\n\n# Configuration\n\n@docs Customizations\n\n\n# Update\n\n@docs Msg, update\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Customizations",
+                "comment": " Customizations for dialog.\n\nUse `viewLoadingIndicator` to set a custom loading icon, e.g. a .gif or custom HTML element.\n\nUse `viewHttpError` to render Http.Detailed.Error messages.\n\n",
+                "args": [
+                    "body",
+                    "msg"
+                ],
+                "type": "{ viewLoadingIndicator : Html.Html msg, viewHttpError : Http.Detailed.Error body -> Html.Html msg, toMsg : Dialog.Msg -> msg }"
+            },
+            {
+                "name": "Dialog",
+                "comment": " Dialog data type.\n",
+                "args": [
+                    "body",
+                    "msg"
+                ],
+                "type": "Dialog.Internal.Dialog body msg"
+            },
+            {
+                "name": "Model",
+                "comment": " Dialog Model data type.\n",
+                "args": [
+                    "body",
+                    "msg"
+                ],
+                "type": "Maybe.Maybe (Dialog.Internal.Dialog body msg)"
+            },
+            {
+                "name": "Msg",
+                "comment": " Opaque type representing the messages of the Dialog.\n",
+                "args": [],
+                "type": "Dialog.Internal.Msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "error",
+                "comment": " Create an error dialog.\n",
+                "type": "{ title : String.String, message : String.String } -> Dialog.Dialog body msg"
+            },
+            {
+                "name": "httpError",
+                "comment": " Create a httpError dialog.\n",
+                "type": "{ title : String.String, message : String.String } -> Http.Detailed.Error body -> Dialog.Dialog body msg"
+            },
+            {
+                "name": "info",
+                "comment": " Create an info dialog.\n",
+                "type": "{ title : String.String, message : String.String } -> Dialog.Dialog body msg"
+            },
+            {
+                "name": "loading",
+                "comment": " Create a loading dialog.\n",
+                "type": "Dialog.Dialog body msg"
+            },
+            {
+                "name": "okCancel",
+                "comment": " Create an OK/Cancel dialog.\n",
+                "type": "{ title : String.String, message : String.String, ok : msg, cancel : msg } -> Dialog.Dialog body msg"
+            },
+            {
+                "name": "update",
+                "comment": " Update dialog.\n",
+                "type": "Dialog.Msg -> Dialog.Model body msg -> ( Dialog.Model body msg, Platform.Cmd.Cmd Dialog.Msg )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Dialog.Bulma",
+        "comment": " [Bulma](https://bulma.io) specific customizations and view for `Dialog`.\n\n    -- MODEL\n    type alias Model =\n        Dialog.Model String\n\n    init : ( Model, Cmd Msg )\n    init =\n        ( Nothing, Cmd.none )\n\n    -- UPDATE\n    type Msg\n        = DialogMsg Dialog.Msg\n        | OpenInfoDialog\n        | OpenErrorDialog\n        | OpenHttpErrorDialog\n        | OpenLoadingDialog\n\n    update : Msg -> Model -> ( Model, Cmd Msg )\n    update msg model =\n        case msg of\n            DialogMsg subMsg ->\n                Dialog.update subMsg model\n                    |> Tuple.mapSecond (Cmd.map DialogMsg)\n\n            OpenInfoDialog ->\n                ( Just <|\n                    Dialog.info\n                        { title = \"Info\"\n                        , message = \"Hello from elm-dialog\"\n                        }\n                , Cmd.none\n                )\n\n            OpenErrorDialog ->\n                ( Just <|\n                    Dialog.error\n                        { title = \"Error\"\n                        , message = \"Something went wrong :(\"\n                        }\n                , Cmd.none\n                )\n\n            OpenHttpErrorDialog ->\n                ( Just <|\n                    Dialog.httpError\n                        { title = \"Error\"\n                        , message = \"Something went wrong :(\"\n                        }\n                        HttpDetailed.Timeout\n                , Cmd.none\n                )\n\n            OpenLoadingDialog ->\n                ( Just <| Dialog.loading\n                , Cmd.none\n                )\n\n    -- VIEW\n    view : Model -> Html Msg\n    view model =\n        div [ class \"p-4\" ]\n            [ h1 [ class \"title\" ] [ text \"Elm Dialog Example\" ]\n            , button [ class \"button\", onClick OpenInfoDialog ] [ text \"Open Info Dialog\" ]\n            , button [ class \"button ml-3\", onClick OpenErrorDialog ] [ text \"Open Error Dialog\" ]\n            , button [ class \"button ml-3\", onClick OpenHttpErrorDialog ] [ text \"Open Http Error Dialog\" ]\n            , button [ class \"button ml-3\", onClick OpenLoadingDialog ] [ text \"Open Loading Dialog\" ]\n            , Html.map DialogMsg <| DialogBulma.view DialogBulma.defaultCustomizations model\n            ]\n\nWe recommend checking out the [examples] to get a feel for how it works.\n\n[examples]: https://github.com/canceraiddev/elm-dialog/tree/main/examples\n\n\n# Configuration\n\n@docs defaultCustomizations\n\n\n# View\n\n@docs view\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "defaultCustomizations",
+                "comment": " Default `Dialog` customizations for Bulma.\n",
+                "type": "(Dialog.Msg -> msg) -> Dialog.Customizations String.String msg"
+            },
+            {
+                "name": "view",
+                "comment": " View Dialog using Bulma css classes. Built using [modal] and [message] components.\n\n[modal]: https://bulma.io/documentation/components/modal/\n[message]: https://bulma.io/documentation/components/message/\n\n",
+                "type": "Dialog.Customizations body msg -> Dialog.Model body msg -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

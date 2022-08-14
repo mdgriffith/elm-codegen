@@ -1,0 +1,254 @@
+[
+    {
+        "name": "Postgrest.Queries",
+        "comment": "\n\n\n# Types\n\n@docs Param, Params, Selectable, ColumnOrder, Value\n@docs Operator\n\n\n# Select\n\n@docs select\n@docs allAttributes\n@docs attribute\n@docs attributes\n@docs resource\n@docs resourceWithParams\n\n\n# Converting/combining into something usable\n\n@docs combineParams\n@docs concatParams\n@docs normalizeParams\n@docs toQueryString\n\n\n# Param\n\n@docs param\n@docs or\n@docs and\n@docs nestedParam\n\n\n# Operators\n\n@docs eq\n@docs gt\n@docs gte\n@docs inList\n@docs limit\n@docs lt\n@docs lte\n@docs neq\n@docs not\n@docs true\n@docs false\n@docs null\n@docs value\n@docs offset\n@docs ilike\n@docs like\n\n\n# Values\n\n@docs string\n@docs int\n@docs list\n\n\n# Order\n\n@docs order\n@docs asc\n@docs desc\n@docs nullsfirst\n@docs nullslast\n\n\n# Full-Text Search\n\n@docs plfts\n@docs phfts\n@docs fts\n\n",
+        "unions": [
+            {
+                "name": "ColumnOrder",
+                "comment": " A type to specify whether you want an order to be ascending or descending, and\noptionally whether you want nulls to be first or last.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Operator",
+                "comment": " A type that represents the clause of a query. In `name=eq.John` the clause would be the part\nafter the equal sign.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Param",
+                "comment": " An individual postgrest parameter.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Selectable",
+                "comment": " A type representing which attributes and resources you want to select.\nIt also contains parameters that target nested resources.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Value",
+                "comment": " Type that can be represented in the queries: strings, ints and lists.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Params",
+                "comment": " A collection of parameters that make up a postgrest request.\n",
+                "args": [],
+                "type": "List.List Postgrest.Queries.Param"
+            }
+        ],
+        "values": [
+            {
+                "name": "allAttributes",
+                "comment": " When you want to select all attributes. This is only useful when used\nto select attributes of a resource or override default parameters in another function\nsince postgrest returns all attributes by default.\n",
+                "type": "List.List Postgrest.Queries.Selectable"
+            },
+            {
+                "name": "and",
+                "comment": " Join multiple conditions together with and.\n\n    [ and\n        [ param \"grade\" <| gte <| int 90\n        , param \"student\" <| true\n        , or\n            [ param \"age\" <| gte <| int 14\n            , param \"age\" <| null\n            ]\n        ]\n    ]\n    |> toQueryString\n\n    -- and=(grade.gte.90,student.is.true,or(age.gte.14,age.is.null))\n\n",
+                "type": "List.List Postgrest.Queries.Param -> Postgrest.Queries.Param"
+            },
+            {
+                "name": "asc",
+                "comment": " Used in combination with `order` to sort results ascending.\n",
+                "type": "String.String -> Postgrest.Queries.ColumnOrder"
+            },
+            {
+                "name": "attribute",
+                "comment": " When you want to select a certain column.\n",
+                "type": "String.String -> Postgrest.Queries.Selectable"
+            },
+            {
+                "name": "attributes",
+                "comment": " Shorthand for attributes, when you don't need to specify nested resources:\n\n    -- Short version\n    attributes [ \"id\" \"name\" ]\n\n    -- Long version\n    [ attribute \"id\"\n    , attribute \"name\"\n    ]\n\n",
+                "type": "List.List String.String -> List.List Postgrest.Queries.Selectable"
+            },
+            {
+                "name": "combineParams",
+                "comment": " Takes a default set of params and a custom set of params and prefers the second set.\nUseful when you're constructing reusable functions that make similar queries.\n",
+                "type": "Postgrest.Queries.Params -> Postgrest.Queries.Params -> Postgrest.Queries.Params"
+            },
+            {
+                "name": "concatParams",
+                "comment": " Takes a list of Params and combines them, preferring the last sets first.\n",
+                "type": "List.List Postgrest.Queries.Params -> Postgrest.Queries.Params"
+            },
+            {
+                "name": "desc",
+                "comment": " Used in combination with `order` to sort results descending.\n",
+                "type": "String.String -> Postgrest.Queries.ColumnOrder"
+            },
+            {
+                "name": "eq",
+                "comment": " Used to indicate you need a column to be equal to a certain value.\n",
+                "type": "Postgrest.Queries.Value -> Postgrest.Queries.Operator"
+            },
+            {
+                "name": "false",
+                "comment": " When you need a column value to be false\n\n    -- foo=is.false\n    [ P.param \"foo\" P.false ]\n        |> toQueryString\n\n",
+                "type": "Postgrest.Queries.Operator"
+            },
+            {
+                "name": "fts",
+                "comment": " Full-Text Search using to\\_tsquery\n\n    [ param \"my_tsv\" <| fts (Just \"french\") \"amusant\" ]\n        |> toQueryString\n\n    \"my_tsv=fts(french).amusant\"\n\n",
+                "type": "Maybe.Maybe Postgrest.Queries.Language -> String.String -> Postgrest.Queries.Operator"
+            },
+            {
+                "name": "gt",
+                "comment": " Used to indicate you need a column to be greater than a certain value.\n",
+                "type": "Postgrest.Queries.Value -> Postgrest.Queries.Operator"
+            },
+            {
+                "name": "gte",
+                "comment": " Used to indicate you need a column to be greater than or equal than a certain value.\n",
+                "type": "Postgrest.Queries.Value -> Postgrest.Queries.Operator"
+            },
+            {
+                "name": "ilike",
+                "comment": " ILIKE operator (use \\* in place of %)\n\n    param \"text\" <| ilike \"foo*bar\"\n\n",
+                "type": "String.String -> Postgrest.Queries.Operator"
+            },
+            {
+                "name": "inList",
+                "comment": " Used to indicate you need a column to be within a certain list of values.\n\n    param \"name\" <| inList string [ \"Chico\", \"Harpo\", \"Groucho\" ]\n\n    -- name=in.(\\\"Chico\\\",\\\"Harpo\\\",\\\"Groucho\\\")\"\n\n",
+                "type": "(a -> Postgrest.Queries.Value) -> List.List a -> Postgrest.Queries.Operator"
+            },
+            {
+                "name": "int",
+                "comment": " Normalize an int into a postgrest value.\n",
+                "type": "Basics.Int -> Postgrest.Queries.Value"
+            },
+            {
+                "name": "like",
+                "comment": " LIKE operator (use \\* in place of %)\n\n    param \"text\" <| like \"foo*bar\"\n\n",
+                "type": "String.String -> Postgrest.Queries.Operator"
+            },
+            {
+                "name": "limit",
+                "comment": " A constructor for the limit parameter.\n\n    limit 10\n\n",
+                "type": "Basics.Int -> Postgrest.Queries.Param"
+            },
+            {
+                "name": "list",
+                "comment": " This is available if you need it, but more likely you'll want to use\n`inList`.\n",
+                "type": "List.List Postgrest.Queries.Value -> Postgrest.Queries.Value"
+            },
+            {
+                "name": "lt",
+                "comment": " Used to indicate you need a column to be less than a certain value.\n",
+                "type": "Postgrest.Queries.Value -> Postgrest.Queries.Operator"
+            },
+            {
+                "name": "lte",
+                "comment": " Used to indicate you need a column to be less than or equal than a certain value.\n",
+                "type": "Postgrest.Queries.Value -> Postgrest.Queries.Operator"
+            },
+            {
+                "name": "neq",
+                "comment": " Used to indicate you need a column to be not equal to a certain value.\n",
+                "type": "Postgrest.Queries.Value -> Postgrest.Queries.Operator"
+            },
+            {
+                "name": "nestedParam",
+                "comment": " When you want to specify an operator for a nested resource manually.\nIt is recommended to use resourceWithParams though.\n\n    [ select\n        [ attribute \"*\"\n        , resource \"actors\" allAttributes\n        ]\n    , nestedParam [ \"actors\" ] <| limit 10\n    , nestedParam [ \"actors\" ] <| offset 2\n    ]\n    |> toQueryString\n    -- \"select=*,actors(*)&actors.limit=10&actors.offset=2\"\n\n",
+                "type": "List.List String.String -> Postgrest.Queries.Param -> Postgrest.Queries.Param"
+            },
+            {
+                "name": "normalizeParams",
+                "comment": " Takes Params and returns the parameters as a list of (Key, Value) strings.\n",
+                "type": "Postgrest.Queries.Params -> List.List ( String.String, String.String )"
+            },
+            {
+                "name": "not",
+                "comment": " Negate a condition.\n\n    [ param \"my_tsv\" <| not <| phfts (Just \"english\") \"The Fat Cats\"\n    ]\n    |> toQueryString\n    -- my_tsv=not.phfts(english).The%20Fat%20Cats\n\n",
+                "type": "Postgrest.Queries.Operator -> Postgrest.Queries.Operator"
+            },
+            {
+                "name": "null",
+                "comment": " When a value needs to be null\n\n    param \"age\" <| null\n\n",
+                "type": "Postgrest.Queries.Operator"
+            },
+            {
+                "name": "nullsfirst",
+                "comment": " Sort so that nulls will come first.\n\n    order [ asc \"age\" |> nullsfirst ]\n\n",
+                "type": "Postgrest.Queries.ColumnOrder -> Postgrest.Queries.ColumnOrder"
+            },
+            {
+                "name": "nullslast",
+                "comment": " Sort so that nulls will come last.\n\n    order [ asc \"age\" |> nullslast ]\n\n",
+                "type": "Postgrest.Queries.ColumnOrder -> Postgrest.Queries.ColumnOrder"
+            },
+            {
+                "name": "offset",
+                "comment": " Offset\n",
+                "type": "Basics.Int -> Postgrest.Queries.Param"
+            },
+            {
+                "name": "or",
+                "comment": " Join multiple conditions together with or.\n\n    [ or\n        [ param \"age\" <| gte <| int 14\n        , param \"age\" <| lte <| int 18\n        ]\n    ]\n    |> toQueryString\n\n    -- or=(age.gte.14,age.lte.18)\n\n",
+                "type": "List.List Postgrest.Queries.Param -> Postgrest.Queries.Param"
+            },
+            {
+                "name": "order",
+                "comment": " A constructor for the limit parameter.\n\n    order (asc \"name\")\n\n    order (desc \"name\")\n\n",
+                "type": "List.List Postgrest.Queries.ColumnOrder -> Postgrest.Queries.Param"
+            },
+            {
+                "name": "param",
+                "comment": " A constructor for an individual postgrest parameter.\n\n    param \"name\" (eq (string \"John\"))\n\n",
+                "type": "String.String -> Postgrest.Queries.Operator -> Postgrest.Queries.Param"
+            },
+            {
+                "name": "phfts",
+                "comment": " Full-Text Search using phraseto\\_tsquery\n",
+                "type": "Maybe.Maybe Postgrest.Queries.Language -> String.String -> Postgrest.Queries.Operator"
+            },
+            {
+                "name": "plfts",
+                "comment": " Full-Text Search using plainto\\_tsquery\n",
+                "type": "Maybe.Maybe Postgrest.Queries.Language -> String.String -> Postgrest.Queries.Operator"
+            },
+            {
+                "name": "resource",
+                "comment": " When you want to select a nested resource with no special parameters for the nested\nresources. If you do want to specify parameters, see `resourceWithParams`.\n",
+                "type": "Postgrest.Queries.ResourceName -> List.List Postgrest.Queries.Selectable -> Postgrest.Queries.Selectable"
+            },
+            {
+                "name": "resourceWithParams",
+                "comment": " When you want to select a nested resource with special praameters.\n\n    [ P.select\n        [ P.resource \"sites\"\n            [ P.resourceWithParams \"streams\"\n                [ P.order [ P.asc \"name\" ]\n                ]\n                allAttributes\n            ]\n        ]\n    ]\n        |> toQueryString\n\n    -- select=sites(streams(*))&sites.streams.order=name.asc\n\n",
+                "type": "Postgrest.Queries.ResourceName -> Postgrest.Queries.Params -> List.List Postgrest.Queries.Selectable -> Postgrest.Queries.Selectable"
+            },
+            {
+                "name": "select",
+                "comment": " A constructor for the select parameter.\n\n    P.select\n        [ P.attribute \"id\"\n        , P.attribute \"title\"\n        , P.resource \"user\" <|\n            P.attributes\n                [ \"email\"\n                , \"name\"\n                ]\n        ]\n\n",
+                "type": "List.List Postgrest.Queries.Selectable -> Postgrest.Queries.Param"
+            },
+            {
+                "name": "string",
+                "comment": " Normalize a string into a postgrest value.\n",
+                "type": "String.String -> Postgrest.Queries.Value"
+            },
+            {
+                "name": "toQueryString",
+                "comment": " Takes Params and returns a query string such as\n`foo=eq.bar&baz=is.true`\n",
+                "type": "Postgrest.Queries.Params -> String.String"
+            },
+            {
+                "name": "true",
+                "comment": " When you need a column value to be true\n\n    -- foo=is.true\n    [ P.param \"foo\" P.true ]\n        |> toQueryString\n\n",
+                "type": "Postgrest.Queries.Operator"
+            },
+            {
+                "name": "value",
+                "comment": " When you don't want to use a specific type after the equals sign in the query, you\ncan use `value` to set anything you want.\n",
+                "type": "Postgrest.Queries.Value -> Postgrest.Queries.Operator"
+            }
+        ],
+        "binops": []
+    }
+]

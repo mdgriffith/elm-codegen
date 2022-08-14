@@ -1,0 +1,529 @@
+[
+    {
+        "name": "WebAudio",
+        "comment": "\n# Types\n@docs Node, Type, Key, Graph\n\n# Basic Constructors\n@docs node, ref, key, param\n\n# Web Audio Nodes\n## Common audio nodes\n@docs oscillator, osc, gain, audioDestination, dac, audioBufferSource, delay\n\n## Utility nodes\n@docs channelMerger, channelSplitter, constantSource\n\n## Signal processing nodes\n@docs biquadFilter, convolver, dynamicsCompressor, iirFilter, panner, stereoPanner, waveShaper\n\n# JSON Encoding\nTo turn the json in Web Audio nodes, you need to know what that data looks like.\nHere's a breakdown of how everything is encoded:\n\n**Node:**\n\n```json\n{\n    \"type\": \"OscillatorNode\",\n    \"properties\": [\n        ...\n    ],\n    \"connections\": [\n        ...\n    ]\n}\n```\n\n**Keyed:**\n\n```json\n{\n    \"key\": \"myOsc\",\n    \"type\": \"OscillatorNode\",\n    \"properties\": [\n        ...\n    ],\n    \"connections\": [\n        ...\n    ]\n}\n```\n\n**Ref:**\n\n```json\n{\n    \"key\": \"myOsc\",\n    \"type\": \"RefNode\"\n}\n```\n\nProperties can come in two types, AudioParam and NodeProperty. While the Web \nAudio API doesn't make an official distinction between the two, how they are \nused differs.\n\nAudioParams represent parameters that can be updated at either audio rate \n(a-rate) or control rate (k-rate). Other audio nodes can connect to an \nAudioParam and modulate its value in real time. Examples of AudioParams include \nfrequency, gain, and delayTime.\n\n**AudioParam:**\n\n```json\n{\n    \"type\": \"AudioParam\",\n    \"label\": \"frequency\",\n    \"value\": 440\n}\n```\n\nNodeProperties are any other parameter on an audio node. An example of a \nNodeProperty is an OscillatorNode's \"type\" parameter.\n\n**NodeProperty:**\n\n```json\n{\n   \"type\": \"NodeProperty\",\n   \"label\": \"type\",\n   \"value\": \"square\"\n}\n```\n\n@docs encode, encodeGraph\n\n",
+        "unions": [
+            {
+                "name": "Node",
+                "comment": " The core building block of any Web Audio signal graph. `Keyed` nodes are \njust like regular nodes but with an additonal `Key` property. This allows `Ref` \nnodes to reference them elsewhere in the graph!\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Graph",
+                "comment": " ",
+                "args": [],
+                "type": "List.List WebAudio.Node"
+            },
+            {
+                "name": "Key",
+                "comment": " A simple type alias representing unique key used to identify nodes. Use \n`Key`s like you would use the `id` attribute on a HTML element.\n",
+                "args": [],
+                "type": "String.String"
+            },
+            {
+                "name": "Type",
+                "comment": " A simple type alias representing the type of `Node`. This could be \nsomething like \"OscillatorNode\" or \"RefNode\".\n",
+                "args": [],
+                "type": "String.String"
+            }
+        ],
+        "values": [
+            {
+                "name": "audioBufferSource",
+                "comment": " See: <https://developer.mozilla.org/en-US/docs/Web/API/AudioBufferSourceNode>\nCommon properties:\n\n  - buffer\n  - detune\n  - loop\n  - loopStart\n  - loopEnd\n  - playbackRate\n\n",
+                "type": "List.List WebAudio.Property.Property -> List.List WebAudio.Node -> WebAudio.Node"
+            },
+            {
+                "name": "audioDestination",
+                "comment": " See: <https://developer.mozilla.org/en-US/docs/Web/API/AudioDestinationNode>\n",
+                "type": "WebAudio.Node"
+            },
+            {
+                "name": "biquadFilter",
+                "comment": " See: <https://developer.mozilla.org/en-US/docs/Web/API/BiquadFilterNode>\nCommon properties:\n\n  - frequency\n  - detune\n  - Q\n  - type\n\n",
+                "type": "List.List WebAudio.Property.Property -> List.List WebAudio.Node -> WebAudio.Node"
+            },
+            {
+                "name": "channelMerger",
+                "comment": " See: <https://developer.mozilla.org/en-US/docs/Web/API/ChannelMergerNode>\n",
+                "type": "List.List WebAudio.Property.Property -> List.List WebAudio.Node -> WebAudio.Node"
+            },
+            {
+                "name": "channelSplitter",
+                "comment": " See: <https://developer.mozilla.org/en-US/docs/Web/API/ChanneSplliterNode>\n",
+                "type": "List.List WebAudio.Property.Property -> List.List WebAudio.Node -> WebAudio.Node"
+            },
+            {
+                "name": "constantSource",
+                "comment": " See: <https://developer.mozilla.org/en-US/docs/Web/API/ConstantSourceNode>\nCommon properties:\n\n  - offset\n\n",
+                "type": "List.List WebAudio.Property.Property -> List.List WebAudio.Node -> WebAudio.Node"
+            },
+            {
+                "name": "convolver",
+                "comment": " See: <https://developer.mozilla.org/en-US/docs/Web/API/ConvolverNode>\nCommon properties:\n\n  - buffer\n  - normalize | normalise\n\n",
+                "type": "List.List WebAudio.Property.Property -> List.List WebAudio.Node -> WebAudio.Node"
+            },
+            {
+                "name": "dac",
+                "comment": " An alias for `audioDestination`.\n",
+                "type": "WebAudio.Node"
+            },
+            {
+                "name": "delay",
+                "comment": " See: <https://developer.mozilla.org/en-US/docs/Web/API/DelayNode>\nCommon properties:\n\n  - delayTime\n\n",
+                "type": "List.List WebAudio.Property.Property -> List.List WebAudio.Node -> WebAudio.Node"
+            },
+            {
+                "name": "dynamicsCompressor",
+                "comment": " See: <https://developer.mozilla.org/en-US/docs/Web/API/DynamicsCompressorNode>\nCommon properties:\n\n  - threshold\n  - knee\n  - ratio\n  - reduction\n  - attack\n  - release\n\n",
+                "type": "List.List WebAudio.Property.Property -> List.List WebAudio.Node -> WebAudio.Node"
+            },
+            {
+                "name": "encode",
+                "comment": " Converts a `Node` into a Json value. Use this to send a node through a port \nto javascipt, where it can be constructed into a Web Audio node!\n",
+                "type": "WebAudio.Node -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeGraph",
+                "comment": " Encode a graph of nodes into a Json value. More than likely you'll use this \nmore than `encode`\n",
+                "type": "WebAudio.Graph -> Json.Encode.Value"
+            },
+            {
+                "name": "gain",
+                "comment": " See: <https://developer.mozilla.org/en-US/docs/Web/API/GainNode>\nCommon properties:\n\n  - gain\n\n",
+                "type": "List.List WebAudio.Property.Property -> List.List WebAudio.Node -> WebAudio.Node"
+            },
+            {
+                "name": "iirFilter",
+                "comment": " See: <https://developer.mozilla.org/en-US/docs/Web/API/>\n",
+                "type": "List.List WebAudio.Property.Property -> List.List WebAudio.Node -> WebAudio.Node"
+            },
+            {
+                "name": "key",
+                "comment": " Use this function to apply a key to a node. In the case of already keyed \nnodes, or ref nodes, this will update the key to the new value.\n\n    a = osc [ Property.freq 440 ] [ dac ]\n    b = key \"b\" <| gain [ Property.gain 0.5 ] [ dac ]\n    c = ref \"b\"\n\n    key \"myOsc\" a -- Give a the key \"myOsc\"\n    key \"myGain\" b -- Rename b's key to \"myGain\"\n    key \"myOsc\" c -- c is now a RefNode to \"myOsc\"\n\n",
+                "type": "WebAudio.Key -> WebAudio.Node -> WebAudio.Node"
+            },
+            {
+                "name": "node",
+                "comment": " General way to construct Web Audio nodes. This is used to create all the \nhelper functions below. You can use this function to define custom nodes by \npartially applying just the `type` parameter. This is handy if you're using a \nlibrary like Tone.js and want to use those nodes in Elm.\n\n    omniOscillator : List Property -> List Node -> Node\n    omniOscillator =\n        node \"Tone-OmniOscillatorNode\"\n\n    myOsc =\n        omniOscillator\n            [ Property.freq 440 ]\n            [ dac ]\n\n",
+                "type": "WebAudio.Type -> List.List WebAudio.Property.Property -> List.List WebAudio.Node -> WebAudio.Node"
+            },
+            {
+                "name": "osc",
+                "comment": " An alias for `oscillator`.\n",
+                "type": "List.List WebAudio.Property.Property -> List.List WebAudio.Node -> WebAudio.Node"
+            },
+            {
+                "name": "oscillator",
+                "comment": " See: <https://developer.mozilla.org/en-US/docs/Web/API/OscillatorNode>\nCommon properties:\n\n  - frequency\n  - detune\n  - type\n\n",
+                "type": "List.List WebAudio.Property.Property -> List.List WebAudio.Node -> WebAudio.Node"
+            },
+            {
+                "name": "panner",
+                "comment": " See: <https://developer.mozilla.org/en-US/docs/Web/API/PannerNode>\nCommon properties:\n\n  - coneInnerAngle\n  - coneOuterAngle\n  - coneOuterGain\n  - distanceModel\n  - maxDistance\n  - orientationX\n  - orientationY\n  - orientationZ\n  - panningModel\n  - positionX\n  - positionY\n  - positionZ\n  - refDistance\n  - rolloffFactor\n\n",
+                "type": "List.List WebAudio.Property.Property -> List.List WebAudio.Node -> WebAudio.Node"
+            },
+            {
+                "name": "param",
+                "comment": " Audio nodes can connect to AudioParams to modulate their value. Use this\nfunction for that. The first argument is the key of an existing keyedd node and\nthe second argument is the name of the AudioParam to connect to.\n\nThis is commonly used for frequency modulation (FM) and amplitude modulation\n(AM) synthesis.\n\n    a = osc [ frequency 10 ] [ param \"carrier\" \"frequency\" ]\n    b = key \"carrier\" <| osc [] [ dac ]\n\nUnder the hood, this actually just creates a standard ref node! You could create\nthis function yourself:\n\n    param key name = ref (key ++ \".\" name)\n    \n",
+                "type": "WebAudio.Key -> String.String -> WebAudio.Node"
+            },
+            {
+                "name": "ref",
+                "comment": " A ref node is used to refer to a keyed node elsewhere in the graph. This is \nhow we connect multiple \"chains\" of nodes together and represet a graph in a \nsimple list.\n",
+                "type": "WebAudio.Key -> WebAudio.Node"
+            },
+            {
+                "name": "stereoPanner",
+                "comment": " See: <https://developer.mozilla.org/en-US/docs/Web/API/StereoPannerNode>\nCommon properties:\n\n  - pan\n\n",
+                "type": "List.List WebAudio.Property.Property -> List.List WebAudio.Node -> WebAudio.Node"
+            },
+            {
+                "name": "waveShaper",
+                "comment": " See: <https://developer.mozilla.org/en-US/docs/Web/API/WaveShaperNode>\nCommon properties:\n\n  - curve\n  - oversample\n\n",
+                "type": "List.List WebAudio.Property.Property -> List.List WebAudio.Node -> WebAudio.Node"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "WebAudio.Context",
+        "comment": "\n\n# Types\n@docs AudioContext, State\n\n# AudioContext Property Accessors\n@docs currentTime, sampleRate, state, baseLatency, outputLatency\n\n# Subscriptions\n@docs every, every_\n\n",
+        "unions": [
+            {
+                "name": "State",
+                "comment": " The state of an AudioContext encoded as a nice Elm union type. Mostly handy\nto prevent unecessary calcultions of audio graphs if the context is suspended or\nclosed.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Suspended",
+                        []
+                    ],
+                    [
+                        "Running",
+                        []
+                    ],
+                    [
+                        "Closed",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "AudioContext",
+                "comment": " An AudioContext is a simple alias for a Json.Decode.Value. By making clever\nuse of a context's [computed properties](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/get)\nwe can decode information such as the current time or the context's state whenver\nwe need it.\n\n```javascript\nconst context = new AudioContext()\nconst App = Elm.Main.init({\n  node: document.querySelector('#app'),\n  flags: context\n})\n```\n\nBy passing an AudioContext to the Elm app through flags, we can pass it on to the\nproperty accessors below whenever we need to query the state of the context.\n",
+                "args": [],
+                "type": "Json.Decode.Value"
+            }
+        ],
+        "values": [
+            {
+                "name": "baseLatency",
+                "comment": " The base latency of an AudioContext is the number of seconds of processing\nlatency incurred by the AudioContext passing the audio from the AudioDestinationNode\nto the audio subsystem.\n",
+                "type": "WebAudio.Context.AudioContext -> Basics.Float"
+            },
+            {
+                "name": "currentTime",
+                "comment": " Get the time since an AudioContext was started. This is necessary if you want\nto use scheduled audio properties to update values in the future (like an amplitude\nenvelope perhaps).\n",
+                "type": "WebAudio.Context.AudioContext -> Basics.Float"
+            },
+            {
+                "name": "every",
+                "comment": " This function works like Time.every, and allows us to get an AudioContext's\ncurrent time according to some interval. There are some important differences\nbetween this and Time.every, however.\n\nIn javascript land setInterval can be hugely inconsistent, making musical timing\ndifficult as the interval drifts over time. To combat this we can combine setInterval\nwith a short interval and an AudioContext to look ahead in time, making it possible\nto schedule sample-accurate updates.\n\nBecause of this, the AudioContext time returned by `every` will usually be a few\nmilliseconds in the future. This works great when combined with scheduled parameter\nupdates!\n\n    type alias Model = \n      { time : Float\n      , context : AudioContext\n      , freq : Float\n      , ...\n      }\n\n    type Msg\n      = NoOp\n      | NextStep Float\n      | ...\n\n    audio model =\n      osc [ setValueAtTime (freq model.freq) model.time ] \n        [ dac ]\n\n    ...\n\n    -- Every 250ms move to the next step in a sequencer.  \n    subscriptions model =\n      every 0.25 model.time NoOp NextStep model.context\n\nBecause we poll rapidly with Time.every, we provide a NoOp msg to return whenver\nwe're *not* at the next time interval. This is a necessary evil because of how\nElm handles time subscriptions. \n",
+                "type": "Basics.Float -> Basics.Float -> msg -> (Basics.Float -> msg) -> WebAudio.Context.AudioContext -> Platform.Sub.Sub msg"
+            },
+            {
+                "name": "every_",
+                "comment": " An alternative version of Context.every that allows you to supply the polling\ntime for Time.every. The standard function polls the AudioContext current time\nevery 25ms. This is fine for most applications, but can flood the update function\nwith many NoOp msgs if you have a reasonably large time interval. You can use \nthis function to specify a custom, longer, polling time in these cases.\n",
+                "type": "Basics.Float -> Basics.Float -> Basics.Float -> msg -> (Basics.Float -> msg) -> WebAudio.Context.AudioContext -> Platform.Sub.Sub msg"
+            },
+            {
+                "name": "outputLatency",
+                "comment": " The output latency of an Audio Context is the time, in seconds, between the \nbrowser requesting the host system to play a buffer and the time at which the first \nsample in the buffer is actually processed by the audio output device.\n",
+                "type": "WebAudio.Context.AudioContext -> Basics.Float"
+            },
+            {
+                "name": "sampleRate",
+                "comment": " Find out what sample rate an AudioContext is running at, in samples per second.\n",
+                "type": "WebAudio.Context.AudioContext -> Basics.Float"
+            },
+            {
+                "name": "state",
+                "comment": " Find out what state an AudioContext is currently in. An AudioContext can either\nbe Suspended, Running, or Closed. \n\nIt is common for AudioContexts to start in a Suspended state and must be resumed\nafter some user interaction event. By using a port we can resume an AudioContext\nafter a user interactios with our Elm app.\n",
+                "type": "WebAudio.Context.AudioContext -> WebAudio.Context.State"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "WebAudio.Program",
+        "comment": " Each of the functions contained in this module are wrappers for the existing\nBrowser application types. They need just two additions to the record:\n\n- An audio function that takes your model and returns a `WebAudio.Graph`.\n\n```elm\naudio : Model -> WebAudio.Graph\naudio model =\n  List.map voice model.notes\n```\n\n- A port to send the encoded audio graph to javascript.\n\n```elm\nport audioPort : Json.Encode.Value -> Cmd msg\n```\n\nWith these programs, your audio function is called automatically after every\nupdate just like your view function is. So if we wanted to create a\nBrowser.element program, we'd instead do:\n\n```elm\nmain : Program () Model Msg\nmain =\n  WebAudio.Program.element\n    { init = init\n    , update = update\n    , audio = audio\n    , view = view\n    , subscriptions = subscriptions\n    , audioPort = audioPort\n    }\n```\n\nThe only program from Browser not support is `Browser.sandbox` as those\nprograms cannot produce Cmds and so can't call the port needed to send our audio\ngraph to javascript.\n\n@docs element, document, application, worker\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "application",
+                "comment": "\n",
+                "type": "{ init : flags -> Url.Url -> Browser.Navigation.Key -> ( model, Platform.Cmd.Cmd msg ), update : msg -> model -> ( model, Platform.Cmd.Cmd msg ), audio : model -> WebAudio.Graph, view : model -> Browser.Document msg, subscriptions : model -> Platform.Sub.Sub msg, audioPort : Json.Encode.Value -> Platform.Cmd.Cmd msg, onUrlRequest : Browser.UrlRequest -> msg, onUrlChange : Url.Url -> msg } -> Platform.Program flags model msg"
+            },
+            {
+                "name": "document",
+                "comment": "\n",
+                "type": "{ init : flags -> ( model, Platform.Cmd.Cmd msg ), update : msg -> model -> ( model, Platform.Cmd.Cmd msg ), audio : model -> WebAudio.Graph, view : model -> Browser.Document msg, subscriptions : model -> Platform.Sub.Sub msg, audioPort : Json.Encode.Value -> Platform.Cmd.Cmd msg } -> Platform.Program flags model msg"
+            },
+            {
+                "name": "element",
+                "comment": "\n",
+                "type": "{ init : flags -> ( model, Platform.Cmd.Cmd msg ), update : msg -> model -> ( model, Platform.Cmd.Cmd msg ), audio : model -> WebAudio.Graph, view : model -> Html.Html msg, subscriptions : model -> Platform.Sub.Sub msg, audioPort : Json.Encode.Value -> Platform.Cmd.Cmd msg } -> Platform.Program flags model msg"
+            },
+            {
+                "name": "worker",
+                "comment": "\n",
+                "type": "{ init : flags -> ( model, Platform.Cmd.Cmd msg ), update : msg -> model -> ( model, Platform.Cmd.Cmd msg ), audio : model -> WebAudio.Graph, subscriptions : model -> Platform.Sub.Sub msg, audioPort : Json.Encode.Value -> Platform.Cmd.Cmd msg } -> Platform.Program flags model msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "WebAudio.Property",
+        "comment": "\n\n# Types\n@docs Property, Value\n\n# Basic Constructors\n@docs nodeProperty, audioParam\n\n## Primatives\n@docs bool, float, floatList, int, string\n\n## Scheduled Audio Params\n@docs setValueAtTime, linearRampToValueAtTime, exponentialRampToValueAtTime\n\n# Properties\n@docs attack, buffer, coneInnerAngle, coneOuterAngle, coneOuterGain, curve, delayTime, detune, distanceModel, fftSize, frequency, gain, knee, loop, loopEnd, loopStart, maxChannelCount, maxDecibels, minDecibels, normalize, offset, orientationX, orientationY, orientationZ, oversample, pan, panningModel, playbackRate, positionX, positionY, positionZ, q, ratio, reduction, refDistance, release, rolloffFactor, smoothingTimeConstant, threshold, type_\n\n# JSON Encoding\n@docs encode\n\n",
+        "unions": [
+            {
+                "name": "Property",
+                "comment": " A type to encapsulate all the different properties that can exist on a Web\nAudio node. This could be something like an oscillator's frequency, whether an\naudio buffer is set to loop, or whether a filter is a highpass or a lowpass\nfilter.\n\n\nThe implementation is currently concealled because I don't *think* it is necessary \nto distinguish between the different types of Property when developing.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Value",
+                "comment": " Properties can have different types of value, for example the frequency \nproperty of an oscillator is a `Float` but its type property is a `String`. To\ncapture all these posibilities we have a special Value type.\n\nSee the Primatives section below for functions create Values yourself. This is\nonly necessary if you're creating a Property manually because you're using some\ncustom audio nodes or you can't find a Property below.\n\n> *Note: If you can't find a Property but it's exists on a standard Web Audio node,\nconsider submitting an issue or a pull request to add it!*\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "attack",
+                "comment": " ",
+                "type": "Basics.Float -> WebAudio.Property.Property"
+            },
+            {
+                "name": "audioParam",
+                "comment": " \n\n> *Node: It is rare to need to create your own properties in this way.*\n",
+                "type": "String.String -> WebAudio.Property.Value -> WebAudio.Property.Property"
+            },
+            {
+                "name": "bool",
+                "comment": " Convert a `Bool` to a Property value.\n\n    import WebAudio.Property exposing (nodeProperty, bool)\n\n    nodeProperty \"loop\" (bool True)\n",
+                "type": "Basics.Bool -> WebAudio.Property.Value"
+            },
+            {
+                "name": "buffer",
+                "comment": " ",
+                "type": "List.List Basics.Float -> WebAudio.Property.Property"
+            },
+            {
+                "name": "coneInnerAngle",
+                "comment": " ",
+                "type": "Basics.Float -> WebAudio.Property.Property"
+            },
+            {
+                "name": "coneOuterAngle",
+                "comment": " ",
+                "type": "Basics.Float -> WebAudio.Property.Property"
+            },
+            {
+                "name": "coneOuterGain",
+                "comment": " ",
+                "type": "Basics.Float -> WebAudio.Property.Property"
+            },
+            {
+                "name": "curve",
+                "comment": " ",
+                "type": "List.List Basics.Float -> WebAudio.Property.Property"
+            },
+            {
+                "name": "delayTime",
+                "comment": " ",
+                "type": "Basics.Float -> WebAudio.Property.Property"
+            },
+            {
+                "name": "detune",
+                "comment": " ",
+                "type": "Basics.Float -> WebAudio.Property.Property"
+            },
+            {
+                "name": "distanceModel",
+                "comment": " ",
+                "type": "String.String -> WebAudio.Property.Property"
+            },
+            {
+                "name": "encode",
+                "comment": " ",
+                "type": "WebAudio.Property.Property -> Json.Encode.Value"
+            },
+            {
+                "name": "exponentialRampToValueAtTime",
+                "comment": " Schedule an exponential ramp of a property value from now untl some point in the\nfuture. Try to make sure the value is non-zero!\n\n    import WebAudio.Property exposing (exponentialRampToValueAtTime, frequency)\n\n    exponentialRampToValueAtTime (frequency 440) 1\n\nIt's important to note that `1` refers to one second after an Audio Context has\nstarted, **not** one second from *now*. This is best used once you have the\n[current time](/WebAudio.Context#currentTime) from an existing Audio Context.\n",
+                "type": "WebAudio.Property.Property -> Basics.Float -> WebAudio.Property.Property"
+            },
+            {
+                "name": "fftSize",
+                "comment": " ",
+                "type": "Basics.Int -> WebAudio.Property.Property"
+            },
+            {
+                "name": "float",
+                "comment": " Convert a `Float` to a Property value.\n\n    import WebAudio.Property exposing (audioParam, float)\n\n    audioParam \"detune\" (float 0.2)\n",
+                "type": "Basics.Float -> WebAudio.Property.Value"
+            },
+            {
+                "name": "floatList",
+                "comment": " Convert a list of `Float`s to a Property value.\n\n    import WebAudio.Property exposing (nodeProperty, floatList)\n\n    nodeProperty \"buffer\" (floatList [0, 0.5, 1, 0.5, 0, -0.5, -1])\n",
+                "type": "List.List Basics.Float -> WebAudio.Property.Value"
+            },
+            {
+                "name": "frequency",
+                "comment": " ",
+                "type": "Basics.Float -> WebAudio.Property.Property"
+            },
+            {
+                "name": "gain",
+                "comment": " ",
+                "type": "Basics.Float -> WebAudio.Property.Property"
+            },
+            {
+                "name": "int",
+                "comment": " Convert an `Int` to a Property value.\n\n    import WebAudio.Property exposing (nodeProperty, int)\n\n    nodeProperty \"fftSize\" (int 512)\n",
+                "type": "Basics.Int -> WebAudio.Property.Value"
+            },
+            {
+                "name": "knee",
+                "comment": " ",
+                "type": "Basics.Float -> WebAudio.Property.Property"
+            },
+            {
+                "name": "linearRampToValueAtTime",
+                "comment": " Schedule a linear ramp of a property value from now untl some point in the\nfuture.\n\n    import WebAudio.Property exposing (linearRampToValueAtTime, frequency)\n\n    linearRampToValueAtTime (frequency 440) 1\n\nIt's important to note that `1` refers to one second after an Audio Context has\nstarted, **not** one second from *now*. This is best used once you have the\n[current time](/WebAudio.Context#currentTime) from an existing Audio Context.\n",
+                "type": "WebAudio.Property.Property -> Basics.Float -> WebAudio.Property.Property"
+            },
+            {
+                "name": "loop",
+                "comment": " ",
+                "type": "Basics.Bool -> WebAudio.Property.Property"
+            },
+            {
+                "name": "loopEnd",
+                "comment": " ",
+                "type": "Basics.Float -> WebAudio.Property.Property"
+            },
+            {
+                "name": "loopStart",
+                "comment": " ",
+                "type": "Basics.Float -> WebAudio.Property.Property"
+            },
+            {
+                "name": "maxChannelCount",
+                "comment": " ",
+                "type": "Basics.Int -> WebAudio.Property.Property"
+            },
+            {
+                "name": "maxDecibels",
+                "comment": " ",
+                "type": "Basics.Float -> WebAudio.Property.Property"
+            },
+            {
+                "name": "minDecibels",
+                "comment": " ",
+                "type": "Basics.Float -> WebAudio.Property.Property"
+            },
+            {
+                "name": "nodeProperty",
+                "comment": " \n\n> *Note: It is rare to need to create your own properties in this way.*\n",
+                "type": "String.String -> WebAudio.Property.Value -> WebAudio.Property.Property"
+            },
+            {
+                "name": "normalize",
+                "comment": " ",
+                "type": "Basics.Bool -> WebAudio.Property.Property"
+            },
+            {
+                "name": "offset",
+                "comment": " ",
+                "type": "Basics.Float -> WebAudio.Property.Property"
+            },
+            {
+                "name": "orientationX",
+                "comment": " ",
+                "type": "Basics.Float -> WebAudio.Property.Property"
+            },
+            {
+                "name": "orientationY",
+                "comment": " ",
+                "type": "Basics.Float -> WebAudio.Property.Property"
+            },
+            {
+                "name": "orientationZ",
+                "comment": " ",
+                "type": "Basics.Float -> WebAudio.Property.Property"
+            },
+            {
+                "name": "oversample",
+                "comment": " ",
+                "type": "String.String -> WebAudio.Property.Property"
+            },
+            {
+                "name": "pan",
+                "comment": " ",
+                "type": "Basics.Float -> WebAudio.Property.Property"
+            },
+            {
+                "name": "panningModel",
+                "comment": " ",
+                "type": "String.String -> WebAudio.Property.Property"
+            },
+            {
+                "name": "playbackRate",
+                "comment": " ",
+                "type": "Basics.Float -> WebAudio.Property.Property"
+            },
+            {
+                "name": "positionX",
+                "comment": " ",
+                "type": "Basics.Float -> WebAudio.Property.Property"
+            },
+            {
+                "name": "positionY",
+                "comment": " ",
+                "type": "Basics.Float -> WebAudio.Property.Property"
+            },
+            {
+                "name": "positionZ",
+                "comment": " ",
+                "type": "Basics.Float -> WebAudio.Property.Property"
+            },
+            {
+                "name": "q",
+                "comment": " ",
+                "type": "Basics.Float -> WebAudio.Property.Property"
+            },
+            {
+                "name": "ratio",
+                "comment": " ",
+                "type": "Basics.Float -> WebAudio.Property.Property"
+            },
+            {
+                "name": "reduction",
+                "comment": " ",
+                "type": "Basics.Float -> WebAudio.Property.Property"
+            },
+            {
+                "name": "refDistance",
+                "comment": " ",
+                "type": "Basics.Float -> WebAudio.Property.Property"
+            },
+            {
+                "name": "release",
+                "comment": " ",
+                "type": "Basics.Float -> WebAudio.Property.Property"
+            },
+            {
+                "name": "rolloffFactor",
+                "comment": " ",
+                "type": "Basics.Float -> WebAudio.Property.Property"
+            },
+            {
+                "name": "setValueAtTime",
+                "comment": " Schedule an update to a property to take place at some point in the future.\n\n    import WebAudio.Property exposing (setValueAtTime, frequency)\n\n    setValueAtTime (frequency 440) 1\n\nIt's important to note that `1` refers to one second after an Audio Context has\nstarted, **not** one second from *now*. This is best used once you have the\n[current time](/WebAudio.Context#currentTime) from an existing Audio Context.\n",
+                "type": "WebAudio.Property.Property -> Basics.Float -> WebAudio.Property.Property"
+            },
+            {
+                "name": "smoothingTimeConstant",
+                "comment": " ",
+                "type": "Basics.Float -> WebAudio.Property.Property"
+            },
+            {
+                "name": "string",
+                "comment": " Convert a `String` to a Property value.\n\n    import WebAudio.Property exposing (nodeProperty, string)\n\n    nodeProperty \"type\" (string \"triangle\")\n",
+                "type": "String.String -> WebAudio.Property.Value"
+            },
+            {
+                "name": "threshold",
+                "comment": " ",
+                "type": "Basics.Float -> WebAudio.Property.Property"
+            },
+            {
+                "name": "type_",
+                "comment": " ",
+                "type": "String.String -> WebAudio.Property.Property"
+            }
+        ],
+        "binops": []
+    }
+]

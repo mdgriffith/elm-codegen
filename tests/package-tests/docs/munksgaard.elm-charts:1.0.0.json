@@ -1,0 +1,61 @@
+[
+    {
+        "name": "Chart",
+        "comment": " This module comprises tools to create and modify a model of the data, labels and styling, and then the function `toHtml` renders the model using one of the provided views.\n\n\n# Chart constructors\n\n@docs hBar, vBar, pie\n\n\n# Customisers\n\n@docs title, colours, colors, addValueToLabel, updateStyles, dimensions\n\n\n# Rendering\n\n@docs toHtml\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "addValueToLabel",
+                "comment": " addValueToLabel adds the data value of each item to the data label. This is applied by default in hBar.\n\n    vBar data\n        |> addValueToLabel\n        |> toHtml\n\n",
+                "type": "ChartModel.Model -> ChartModel.Model"
+            },
+            {
+                "name": "colors",
+                "comment": " colors supports alternative spelling of colours\n",
+                "type": "List.List String.String -> ChartModel.Model -> ChartModel.Model"
+            },
+            {
+                "name": "colours",
+                "comment": " colours replaces the default colours. Bar charts use just one colour, which will be the head of the list provided.\n\n    vChart data\n        |> colours [ \"steelblue\" ]\n        |> toHtml\n\n    pie data\n        |> colours [ \"steelblue\", \"#96A65B\", \"#D9A679\", \"#593F27\", \"#A63D33\" ]\n        |> toHtml\n\n",
+                "type": "List.List String.String -> ChartModel.Model -> ChartModel.Model"
+            },
+            {
+                "name": "dimensions",
+                "comment": " sets the width and height of a chart\n\n    vChart vs ls\n        |> dimensions 400 300\n        |> toHtml\n\n",
+                "type": "Basics.Int -> Basics.Int -> ChartModel.Model -> ChartModel.Model"
+            },
+            {
+                "name": "hBar",
+                "comment": " The horizontal bar chart results in a set of bars, one above the other, of lengths in proportion to the value. A label with the data value is printed in each bar.\n\n    hBar data\n        |> title \"My Chart\"\n        |> toHtml\n\n",
+                "type": "List.List ( Basics.Float, String.String ) -> ChartModel.Model"
+            },
+            {
+                "name": "pie",
+                "comment": " The pie chart results in a circle cut into coloured segments of size proportional to the data value.\n\n    pie data\n        |> toHtml\n\n",
+                "type": "List.List ( Basics.Float, String.String ) -> ChartModel.Model"
+            },
+            {
+                "name": "title",
+                "comment": " title adds a title to the model.\n\n    -- e.g. build a chart from scratch\n    chartInit vs ls BarHorizontal\n        |> title \"This will be the title\"\n        |> toHtml\n\n",
+                "type": "String.String -> ChartModel.Model -> ChartModel.Model"
+            },
+            {
+                "name": "toHtml",
+                "comment": " toHtml is called last, and causes the chart data to be rendered to html.\n\n    hBar data\n        |> toHtml\n\n",
+                "type": "ChartModel.Model -> Html.Html a"
+            },
+            {
+                "name": "updateStyles",
+                "comment": " updateStyles replaces styles for a specified part of the chart. Charts have the following div structure\n\n    .container\n        .title\n        .chart-container\n            .chart      (container for the bars or pie segments)\n                .chart-elements\n            .legend     (also for the label container in a vertical bar chart)\n                .legend-labels\n\n    vChart vs ls\n        |> updateStyles \"chart\" [ ( \"color\", \"black\" ) ]\n        |> toHtml\n\n",
+                "type": "String.String -> List.List ChartModel.Style -> ChartModel.Model -> ChartModel.Model"
+            },
+            {
+                "name": "vBar",
+                "comment": " The vertical bar chart results in a set of bars of lengths in proportion to the value. A label is printed below each bar.\n\n    vBar data\n        |> title \"My Chart\"\n        |> toHtml\n\n",
+                "type": "List.List ( Basics.Float, String.String ) -> ChartModel.Model"
+            }
+        ],
+        "binops": []
+    }
+]

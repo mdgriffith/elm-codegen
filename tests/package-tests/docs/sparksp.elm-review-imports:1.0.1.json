@@ -1,0 +1,47 @@
+[
+    {
+        "name": "NoInconsistentAliases",
+        "comment": "\n\n@docs rule, config, noMissingAliases\n@docs Config\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " Configuration for the NoInconsistentAliases rule.\n",
+                "args": [],
+                "type": "NoInconsistentAliases.Config.Config"
+            }
+        ],
+        "values": [
+            {
+                "name": "config",
+                "comment": " Provide a list of preferred names to be enforced. If we find any of the given modules imported with a different alias we will report them.\n\n    NoInconsistentAliases.config\n        [ ( \"Html.Attributes\", \"Attr\" )\n        , ( \"Json.Decode\", \"Decode\" )\n        , ( \"Json.Encode\", \"Encode\" )\n        ]\n        |> NoInconsistentAliases.rule\n\n",
+                "type": "List.List ( String.String, String.String ) -> NoInconsistentAliases.Config"
+            },
+            {
+                "name": "noMissingAliases",
+                "comment": " Ensure that imports are aliased if a module is used to qualify a function or type, and has a known alias.\n\n    NoInconsistentAliases.config\n        [ ( \"Html.Attributes\", \"Attr\" )\n        ]\n        |> NoInconsistentAliases.noMissingAliases\n        |> NoInconsistentAliases.rule\n\n\n## Failure\n\nHere `Html.Attributes` has been used to call `class` and the preferred alias has not been used.\n\n    import Html.Attributes\n\n    view children =\n        div [ Html.Attributes.class \"container\" ] children\n\n\n## Success\n\nHere `Html.Attributes` has been aliased to `Attr` as expected.\n\n    import Html.Attributes as Attr\n\n    view children =\n        div [ Attr.class \"container\" ] children\n\n\n## Success\n\nHere `class` has been exposed so the alias is not needed.\n\n    import Html.Attributes exposing (class)\n\n    view children =\n        div [ class \"container\" ] children\n\n",
+                "type": "NoInconsistentAliases.Config -> NoInconsistentAliases.Config"
+            },
+            {
+                "name": "rule",
+                "comment": " Ensure consistent use of import aliases throughout your project.\n\n    config : List Rule\n    config =\n        [ NoInconsistentAliases.config\n            [ ( \"Html.Attributes\", \"Attr\" )\n            ]\n            |> NoInconsistentAliases.rule\n        ]\n\n",
+                "type": "NoInconsistentAliases.Config -> Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "NoModuleOnExposedNames",
+        "comment": "\n\n@docs rule\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": " Forbid modules on names that have been exposed.\n\n    config : List Rule\n    config =\n        [ NoModuleOnExposedNames.rule\n        ]\n\nIf a function or type has been exposed on import do not allow it to be called via the module name/alias. You should either remove the call from the import exposes or remove the module name from the call.\n\n\n## Failure\n\nHere `class` is exposed but is still called by `Attr.class`.\n\n    import Html.Attributes as Attr exposing (class)\n\n    view children =\n        div [ Attr.class \"container\" ] children\n\n\n## Success\n\nRemove the module name from the call:\n\n    import Html.Attributes as Attr exposing (class)\n\n    view children =\n        div [ class \"container\" ] children\n\n\n## Success\n\nOr remove `class` from `exposing`:\n\n    import Html.Attributes as Attr\n\n    view children =\n        div [ Attr.class \"container\" ] children\n\n\n## Failure\n\nHere `Attribute` has been exposed but is still called by `Html.Attribute`.\n\n    import Html exposing (Attribute, Html)\n\n    container : List (Html.Attribute msg) -> List (Html msg) -> Html msg\n    container attributes children =\n        div attributes children\n\n\n## Success\n\nRemove the module name from the call:\n\n    import Html exposing (Attribute, Html)\n\n    container : List (Attribute msg) -> List (Html msg) -> Html msg\n    container attributes children =\n        div attributes children\n\n\n## Success\n\nOr remove `Attribute` from `exposing`:\n\n    import Html exposing (Html)\n\n    container : List (Html.Attribute msg) -> List (Html msg) -> Html msg\n    container attributes children =\n        div attributes children\n\n",
+                "type": "Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,33 @@
+[
+    {
+        "name": "HRTheme",
+        "comment": " Decode theme files and use themes that conform to the\n[Hundred Rabbits theme framework](https://github.com/hundredrabbits/Themes).\n\n@docs HRTheme, decoder, toXmlString, toSvgImage\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "HRTheme",
+                "comment": " A color theme that uses the Hundred Rabbits theme spec.\n\nBecause there's no central Color type in elm, you may have\nto convert these colours to another type when you get them\nto be usable.\n\nThe Color types used in this record are from `avh4/elm-color`.\n\nBecause it would be impractical to do so,\nthere is no constructor function for this type, you just manually\ncreate the record like so:\n\n    import Color exposing (rgb255) -- avh4/elm-color\n\n    myTheme : HRTheme\n    myTheme = { background = rgb255 224 177 203\n            , fHigh = rgb255 35 25 66\n            , fMed = rgb255 94 84 142\n            , fLow = rgb255 190 149 196\n            , fInv = rgb255 224 177 203\n            , bHigh = rgb255 255 255 255\n            , bMed = rgb255 94 84 142\n            , bLow = rgb255 190 149 196\n            , bInv = rgb255 159 134 192\n            }\n\n\n\n",
+                "args": [],
+                "type": "{ background : Color.Color, fHigh : Color.Color, fMed : Color.Color, fLow : Color.Color, fInv : Color.Color, bHigh : Color.Color, bMed : Color.Color, bLow : Color.Color, bInv : Color.Color }"
+            }
+        ],
+        "values": [
+            {
+                "name": "decoder",
+                "comment": " Decodes a Hundred Rabbits theme SVG file/string into a\nusable type in Elm.\n\n\n    import Xml.Decode as XD -- from ymtszw/elm-xml-decode\n    import HRTheme\n\n    hundredRabbitsTheme = XD.run HRTheme.decoder xmlString\n\n\nAlongside the String-based errors the XML decoder might generate,\nthis decoder will generate errors specific to Hundred Rabbits themes:\n\n- Missing ID - eg. `The ID 'f_low' was not found.`\n- Invalid color hex - eg. `The color at ID 'f_high' is not a valid hex color.`\n\n\n",
+                "type": "Xml.Decode.Decoder HRTheme.HRTheme"
+            },
+            {
+                "name": "toSvgImage",
+                "comment": " Generates an `Svg` of the theme in the same way that\n100r theme files look like.\n\n    HRTheme.toSvgImage theme\n",
+                "type": "HRTheme.HRTheme -> Svg.Svg msg"
+            },
+            {
+                "name": "toXmlString",
+                "comment": " Converts a Hundred Rabbits Theme to an XML string\nso that it can be downloaded to the user as a file.\n\n    import File.Download as Download\n    import HRTheme\n\n    save : Theme -> Cmd msg\n    save theme =\n        Download.string \"theme.svg\" \"image/svg+xml\" (HRTheme.toXmlString theme)\n\n",
+                "type": "HRTheme.HRTheme -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

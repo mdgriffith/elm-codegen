@@ -1,0 +1,21 @@
+[
+    {
+        "name": "Char.Extra",
+        "comment": " Convenience functionality on [`Char`](https://package.elm-lang.org/packages/elm/core/latest/Char)\n\n@docs isSpace, isControl\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "isControl",
+                "comment": " Returns true if the given character is an ASCII control character.\n",
+                "type": "Char.Char -> Basics.Bool"
+            },
+            {
+                "name": "isSpace",
+                "comment": " Returns true if the given character is whitespace character.\n",
+                "type": "Char.Char -> Basics.Bool"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,87 @@
+[
+    {
+        "name": "ParseInt",
+        "comment": " Convert String value to Int, or Int to String, with given radix.\n\n\n# Functions\n\n@docs parseInt, parseIntOct, parseIntHex, parseIntRadix, toRadix, toRadixUnsafe, toOct, toHex, intFromChar, charFromInt\n\n\n# Errors\n\n@docs Error\n\n",
+        "unions": [
+            {
+                "name": "Error",
+                "comment": " Possible Result.Err returns from these functions.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "InvalidChar",
+                        [
+                            "Char.Char"
+                        ]
+                    ],
+                    [
+                        "OutOfRange",
+                        [
+                            "Char.Char"
+                        ]
+                    ],
+                    [
+                        "InvalidRadix",
+                        [
+                            "Basics.Int"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "charFromInt",
+                "comment": " Convert Int to corresponding Char representing it as a digit. Values from\n10..15 are represented as upper-case 'A'..'F'. Values 16 and above extend the\nhexadecimal characters in the natural way. This function assumes that the input\nvalue is in the range 0 .. 36.\n",
+                "type": "Basics.Int -> Char.Char"
+            },
+            {
+                "name": "intFromChar",
+                "comment": " Convert an alphanumeric character to an int value as a \"digit\", validating\nagainst the given radix. Alphabetic characters past \"F\" are extended in the\nnatural way: 'G' == 16, 'H' == 17, etc. Upper and lower case are treated the\nsame. Passing a non-alphanumeric character results in the `InvalidChar`\nerror. If the resulting value would be greater than the given radix, an\n`OutOfRange` error results instead.\n",
+                "type": "Basics.Int -> Char.Char -> Result.Result ParseInt.Error Basics.Int"
+            },
+            {
+                "name": "parseInt",
+                "comment": " Convert String to Int assuming base 10.\n\n    parseInt \"314159\" == Ok 314159\n    parseInt \"foo\" = Err (OutOfRange 'o')\n\n",
+                "type": "String.String -> Result.Result ParseInt.Error Basics.Int"
+            },
+            {
+                "name": "parseIntHex",
+                "comment": " Convert String to Int assuming base 16 (hexadecimal). No leading characters\nare expected; input starting with \"0x\" (or any other out of range character)\nwill cause an `Err` return.\n",
+                "type": "String.String -> Result.Result ParseInt.Error Basics.Int"
+            },
+            {
+                "name": "parseIntOct",
+                "comment": " Convert String to Int assuming base 8 (octal). No leading '0' is required.\n",
+                "type": "String.String -> Result.Result ParseInt.Error Basics.Int"
+            },
+            {
+                "name": "parseIntRadix",
+                "comment": " Convert String to Int assuming given radix. Radix can be any of\n2..36. Leading zeroes are ignored. Valid characters are the alphanumerics: those\nin the ASCII range [0-9a-zA-Z]. Case does not matter. For radixes beyond 16 the\nnormal [A-F] range for hexadecimal is extended in the natural way. Any invalid\ncharacter results in a `Err` return. Any valid character outside of the range\ndefined by the radix also results in an `Err`. In particular, any initial '-' or\n' ' (space) is an error. An `Ok` return means that the entire input string was\nconsumed. The empty string results in `Ok 0`\n\n    parseIntRadix 16 \"DEADBEEF\" =\n        Ok 3735928559\n\n",
+                "type": "Basics.Int -> String.String -> Result.Result ParseInt.Error Basics.Int"
+            },
+            {
+                "name": "toHex",
+                "comment": " Convert Int to hexadecimal String.\n",
+                "type": "Basics.Int -> String.String"
+            },
+            {
+                "name": "toOct",
+                "comment": " Convert Int to octal String.\n",
+                "type": "Basics.Int -> String.String"
+            },
+            {
+                "name": "toRadix",
+                "comment": " Convert Int to String assuming given radix. Radix values from 2..36 are\nallowed; others result in an `Err InvalidRadix`. Negative numbers get an initial\n'-'.\n\n    toRadix 16 1234 == Ok \"4D2\"\n\n    toRadix 8 -99 == Ok \"-143\"\n\n",
+                "type": "Basics.Int -> Basics.Int -> Result.Result ParseInt.Error String.String"
+            },
+            {
+                "name": "toRadixUnsafe",
+                "comment": " Convert Int to String assuming given radix. Radix value must be in 2..36\n(not checked, so it can crash).\n\n    toRadixUnsafe 16 3735928559 == \"DEADBEEF\"\n\n    toRadixUnsafe 37 36 --> crash\n\n",
+                "type": "Basics.Int -> Basics.Int -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

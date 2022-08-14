@@ -1,0 +1,54 @@
+[
+    {
+        "name": "Imperative",
+        "comment": " Functions that resemble imperative syntax\n\n@docs while, until, doWhile\n\n@docs Termination, explicitLoop\n\n",
+        "unions": [
+            {
+                "name": "Termination",
+                "comment": " A way that a loop can end\n",
+                "args": [
+                    "a",
+                    "b"
+                ],
+                "cases": [
+                    [
+                        "Break",
+                        [
+                            "b"
+                        ]
+                    ],
+                    [
+                        "Continue",
+                        [
+                            "a"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "doWhile",
+                "comment": " Much like `while`, however this function applies its `a -> a` before it continues, ensuring that `f` is applied to the output at least once.\n\n    while ((>) 0) 0 ((+) 1) == 0\n\n    doWhile ((>) 0) 0 ((+) 1) == 1\n\n",
+                "type": "(a -> Basics.Bool) -> a -> (a -> a) -> a"
+            },
+            {
+                "name": "explicitLoop",
+                "comment": " A loop in imperative code might have break and continue cases that are clearly marketed out with words like `break;` and `return ...;`. With this `explicitLoop` function you can map the break points in imperative code directly to `Break` and `Continue` points in a function.\n\n    clipSegment x0 y0 x1 y1 c0 c1 ({ xmax, xmin, ymax, ymin } as viewport) =\n        Imperative.explicitLoop\n            (\\{ x0, y0, x1, y1, c0, c1 } ->\n                if c0 == 0 && c1 == 0 then\n                    Imperative.Break <| Just ( x0, y0, x1, y1 )\n\n                else if Bitwise.and c0 c1 /= 0 then\n                    Imperative.Break Nothing\n\n                else\n                    let\n                        c =\n                            if c0 == 0 then\n                                c1\n\n                            else\n                                c0\n\n                        ( x, y ) =\n                            if Bitwise.and c 8 /= 0 then\n                                ( x0 + (x1 - x0) * (ymax - y0) / (y1 - y0), ymax )\n\n                            else if Bitwise.and c 4 /= 0 then\n                                ( x0 + (x1 - x0) * (ymin - y0) / (y1 - y0), ymin )\n\n                            else if Bitwise.and c 2 /= 0 then\n                                ( xmax, y0 + (y1 - y0) * (xmax - x0) / (x1 - x0) )\n\n                            else\n                                ( xmin, y0 + (y1 - y0) * (xmin - x0) / (x1 - x0) )\n                    in\n                    if c0 /= 0 then\n                        Imperative.Continue { x0 = x, y0 = y, x1 = x1, y1 = y1, c0 = regionCode x y viewport, c1 = c1 }\n\n                    else\n                        Imperative.Continue { x0 = x0, y0 = y0, x1 = x, y1 = y, c1 = regionCode x y viewport, c0 = c0 }\n            )\n            { x0 = x0, y0 = y0, x1 = x1, y1 = y1, c1 = c1, c0 = c0 }\n\n",
+                "type": "(a -> Imperative.Termination a b) -> a -> b"
+            },
+            {
+                "name": "until",
+                "comment": " A twist on the classic while loop. It loops while the condition is NOT met.\n\n    countJustForFun : Int -> Int\n    countJustForFun to =\n        Loop.until\n            ((==) to)\n            0\n            ((+) 1)\n\n",
+                "type": "(a -> Basics.Bool) -> a -> (a -> a) -> a"
+            },
+            {
+                "name": "while",
+                "comment": " The classic while loop.\n\n\n    count : Int\n    count =\n        Loop.while ((>) 100) 0 ((+) 1)\n\n\n    -- is basically analagous to..\n    --\n    -- var i = 0;\n    -- while ( i < 100) {\n    --   i++;\n    -- }\n\n",
+                "type": "(a -> Basics.Bool) -> a -> (a -> a) -> a"
+            }
+        ],
+        "binops": []
+    }
+]

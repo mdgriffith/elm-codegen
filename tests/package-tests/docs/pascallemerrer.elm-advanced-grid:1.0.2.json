@@ -1,0 +1,338 @@
+[
+    {
+        "name": "Grid",
+        "comment": " This module allows to create dynamically configurable data grid.\n\n\n# Configure the grid\n\nA grid is defined using a `Config`\n\n@docs Config, withColumns, withConfig\n\n\n# Configure a column\n\n@docs ColumnConfig, ColumnProperties, stringColumnConfig, intColumnConfig, floatColumnConfig, boolColumnConfig\n\n\n# Configure the column sorting\n\n@docs Sorting, compareFields, compareBoolField\n\n\n# Configure the rendering when a custom one is needed\n\n@docs viewBool, viewFloat, viewInt, viewProgressBar, viewString, cumulatedBorderWidth, cellAttributes\n\n\n# Boilerplate\n\n@docs Model, Msg, init, update, view\n\n\n# Get data\n\n@docs filteredItems, selectedAndVisibleItems\n\n\n# Get grid config\n\n@docs visibleColumns, isColumn, isSelectionColumn, isSelectionColumnProperties\n\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " The messages the grid view can emit.\n\nThe messages constructed with UserClickedLine (Item a)\nare emitted when an item is clicked, so you can update the model of your app.\nIf you use this message, you'll probably want to define a cursor of type pointer for the rows\n(see the rowClass property of the Config type )\n\nThe messages using the UserToggledSelection constructor let you know a line selection status changed,\nso you can update the list of selected items if you use it.\n\nThe ShowPreferences message constructor is to be used when you want to trigger the display of the column visibility panel.\nIt must be sent by the parent module. There is no way to trigger it from Grid.\n\nUserToggledColumnVisibility, and UserEndedMouseInteraction may be used in the parent module to save the grid configuration\n(if you want to make persistant the changes of columns' width, position and/or visibility by example).\n\nIf you want to trigger a scrolling of the grid from your program, you can call Grid's update function with ScrollTo message.\nScrollTo takes one argument: a selection function. The row diplayed on top after the scrolling is the first one for which\nthe selection function returns True.\n\nYou probably should not use the other constructors.\n\n    case msg of\n        GridMsg (UserClickedLine item) ->\n            let\n                ( newGridModel, cmd ) =\n                    Grid.update (UserClickedLine item) model.gridModel\n            in\n            ( { model\n                | gridModel = newGridModel\n                , clickedItem = Just item\n              }\n            , Cmd.map GridMsg cmd\n            )\n\n        GridMsg (UserToggledSelection item status) ->\n            let\n                ( newGridModel, cmd ) =\n                    Grid.update (UserToggledSelection item status) model.gridModel\n\n                selectedItems =\n                    List.filter .selected newGridModel.content\n            in\n            ( { model\n                | gridModel = newGridModel\n                , selectedItems = selectedItems\n              }\n            , Cmd.map GridMsg cmd\n            )\n\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "ColumnsModificationRequested",
+                        [
+                            "List.List (Grid.ColumnConfig a)"
+                        ]
+                    ],
+                    [
+                        "InfiniteListMsg",
+                        [
+                            "InfiniteList.Model"
+                        ]
+                    ],
+                    [
+                        "FilterLostFocus",
+                        []
+                    ],
+                    [
+                        "FilterModified",
+                        [
+                            "Grid.ColumnConfig a",
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "SetFilters",
+                        [
+                            "Dict.Dict String.String String.String"
+                        ]
+                    ],
+                    [
+                        "SetSorting",
+                        [
+                            "String.String",
+                            "Grid.Sorting"
+                        ]
+                    ],
+                    [
+                        "NoOp",
+                        []
+                    ],
+                    [
+                        "GotHeaderContainerInfo",
+                        [
+                            "Result.Result Browser.Dom.Error Browser.Dom.Element"
+                        ]
+                    ],
+                    [
+                        "ScrollTo",
+                        [
+                            "Grid.Item.Item a -> Basics.Bool"
+                        ]
+                    ],
+                    [
+                        "ShowPreferences",
+                        []
+                    ],
+                    [
+                        "UserClickedHeader",
+                        [
+                            "Grid.ColumnConfig a"
+                        ]
+                    ],
+                    [
+                        "UserClickedFilter",
+                        []
+                    ],
+                    [
+                        "UserClickedLine",
+                        [
+                            "Grid.Item.Item a"
+                        ]
+                    ],
+                    [
+                        "UserClickedDragHandle",
+                        [
+                            "Grid.ColumnConfig a",
+                            "Grid.Position"
+                        ]
+                    ],
+                    [
+                        "UserHoveredDragHandle",
+                        []
+                    ],
+                    [
+                        "UserClickedPreferenceCloseButton",
+                        []
+                    ],
+                    [
+                        "UserClickedResizeHandle",
+                        [
+                            "Grid.ColumnConfig a",
+                            "Grid.Position"
+                        ]
+                    ],
+                    [
+                        "UserDraggedColumn",
+                        [
+                            "Grid.Position"
+                        ]
+                    ],
+                    [
+                        "UserEndedMouseInteraction",
+                        []
+                    ],
+                    [
+                        "UserMovedResizeHandle",
+                        [
+                            "Grid.Position"
+                        ]
+                    ],
+                    [
+                        "UserSwappedColumns",
+                        [
+                            "Grid.ColumnConfig a",
+                            "Grid.ColumnConfig a"
+                        ]
+                    ],
+                    [
+                        "UserToggledAllItemSelection",
+                        []
+                    ],
+                    [
+                        "UserToggledColumnVisibility",
+                        [
+                            "Grid.ColumnConfig a"
+                        ]
+                    ],
+                    [
+                        "UserToggledSelection",
+                        [
+                            "Grid.Item.Item a"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Sorting",
+                "comment": " The sorting options for a column, to be used in the properties of a ColumnConfig.\n\nNB: This type is useful to define custom column types. You wont need it for common usages.\n\nBy default you probably should use \"Unsorted\" as the value for the order field.\nIf you give any other value (Ascending or Descending), it must match the order\nof the data provided to initialize the grid model.\n\n        { properties =\n            { id = \"Id\"\n            , order = Unsorted\n            , title = \"Id\"\n            , visible = True\n            , width = 50\n            }\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Unsorted",
+                        []
+                    ],
+                    [
+                        "Ascending",
+                        []
+                    ],
+                    [
+                        "Descending",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "ColumnConfig",
+                "comment": " The configuration for a column. The grid content is described\nusing a list of ColumnConfigs.\n\nNB: This is a \"low level API\", useful to define custom column types.\nIn order to define common column types, you may want to use the higher level API,\ni.e. stringColumnConfig, intColumnConfig, floatColumnConfig,\nboolColumnConfig\n\n    idColumnConfig =\n        { properties =\n            { id = \"Id\"\n            , order = Unsorted\n            , title = \"Id\"\n            , visible = True\n            , width = 50\n            }\n        , comparator = compareIntField .id\n        , filters = IntFilter <| intFilter .id\n        , filteringValue = Nothing\n        , toString = String.fromInt .id\n        , renderer = viewInt .id\n        }\n\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ properties : Grid.ColumnProperties, comparator : Grid.Item.Item a -> Grid.Item.Item a -> Basics.Order, filteringValue : Maybe.Maybe String.String, filters : Grid.Filters.Filter a, toString : Grid.Item.Item a -> String.String, renderer : Grid.ColumnProperties -> Grid.Item.Item a -> Html.Styled.Html (Grid.Msg a) }"
+            },
+            {
+                "name": "ColumnProperties",
+                "comment": " ColumnProperties are a part of the configuration for a column.\n\nNB: This is a \"low level API\", useful to define custom column types.\nIn order to define common column types, you may want to use the higher level API,\ni.e. stringColumnConfig, intColumnConfig, floatColumnConfig,\nboolColumnConfig\n\n    properties =\n        { id = \"name\"\n        , order = Unsorted\n        , title = \"Name\"\n        , visible = True\n        , width = 100\n        }\n\n",
+                "args": [],
+                "type": "{ id : String.String, order : Grid.Sorting, title : String.String, tooltip : String.String, visible : Basics.Bool, width : Basics.Int }"
+            },
+            {
+                "name": "Config",
+                "comment": " The configuration for the grid. The grid content is described\nusing a list of ColumnConfig.\nYou should define the css classes, if you want to use some.\nBy example you could add to all rows a \"cursor: pointer\" style,\nif you define some behaviour to be triggered when the user clicks a line.\n\n    gridConfig =\n        { canSelectRows = True\n        , columns = columnList\n        , containerHeight = 500\n        , containerWidth = 700\n        , hasFilters = True\n        , lineHeight = 20\n        , rowClass = cssClassname\n        }\n\n    cssClassname : Item -> String\n    cssClassname item =\n        if item.selected then\n            \"selected\"\n\n        else\n            \"\"\n\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ canSelectRows : Basics.Bool, columns : List.List (Grid.ColumnConfig a), containerHeight : Basics.Int, containerWidth : Basics.Int, hasFilters : Basics.Bool, headerHeight : Basics.Int, lineHeight : Basics.Int, rowClass : Grid.Item.Item a -> String.String }"
+            },
+            {
+                "name": "Model",
+                "comment": " The grid model. You'll use it but should not have to access its fields,\nand definitely should not modify them directly\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ clickedItem : Maybe.Maybe (Grid.Item.Item a), config : Grid.Config a, columnsX : List.List Basics.Int, content : List.List a, draggedColumn : Maybe.Maybe (Grid.DraggedColumn a), dragStartX : Basics.Float, filterHasFocus : Basics.Bool, hoveredColumn : Maybe.Maybe (Grid.ColumnConfig a), infList : InfiniteList.Model, isAllSelected : Basics.Bool, headerContainerPosition : Grid.Position, order : Grid.Sorting, resizedColumn : Maybe.Maybe (Grid.ColumnConfig a), showPreferences : Basics.Bool, sortedBy : Maybe.Maybe (Grid.ColumnConfig a), visibleItems : List.List (Grid.Item.Item a) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "boolColumnConfig",
+                "comment": " Create a ColumnConfig for a column containing a boolean value\n\nlocalize takes the title or the tooltip of the column as a parameter, and returns its translation, if you need internationalization.\nIf you don't need it, just use [identity](https://package.elm-lang.org/packages/elm/core/latest/Basics#identity).\n\n",
+                "type": "{ id : String.String, title : String.String, tooltip : String.String, width : Basics.Int, getter : a -> Basics.Bool, localize : String.String -> String.String } -> Grid.ColumnConfig a"
+            },
+            {
+                "name": "cellAttributes",
+                "comment": " Common attributes for cell renderers\n",
+                "type": "Grid.ColumnProperties -> List.List (Html.Styled.Attribute (Grid.Msg a))"
+            },
+            {
+                "name": "compareBoolField",
+                "comment": " Compares two booleans. Use this function in a ColumnConfig\nto define how the values in a given column should be compared.\nThe unique parameter to be provided is a lambda which\nreturns the field to be displayed in this column.\n\n    comparator =\n        compareBoolField (\\item -> item.even)\n\n",
+                "type": "(Grid.Item.Item a -> Basics.Bool) -> Grid.Item.Item a -> Grid.Item.Item a -> Basics.Order"
+            },
+            {
+                "name": "compareFields",
+                "comment": " Compares two integers, two floats or two strings.\nUse this function in a ColumnConfig\nto define how the values in a given column should be compared.\nThe unique parameter to be provided is a lambda which\nreturns the field to be displayed in this column.\n\n    comparator =\n        compareFields (\\item -> item.id)\n\n",
+                "type": "(Grid.Item.Item a -> comparable) -> Grid.Item.Item a -> Grid.Item.Item a -> Basics.Order"
+            },
+            {
+                "name": "cumulatedBorderWidth",
+                "comment": " Left + right cell border width, including padding, in px.\nUseful to take into account the borders when calculating the total grid width\n",
+                "type": "Basics.Int"
+            },
+            {
+                "name": "filteredItems",
+                "comment": " The list of items satisfying the current filtering values\n",
+                "type": "Grid.Model a -> List.List a"
+            },
+            {
+                "name": "floatColumnConfig",
+                "comment": " Create a ColumnConfig for a column containing a float value\n\ngetter is usually a simple field access function, like \".age\" to get the age field of a Person record.\n\nlocalize takes the title or the tooltip of the column as a parameter, and returns its translation, if you need internationalization.\nIf you don't need it, just use [identity](https://package.elm-lang.org/packages/elm/core/latest/Basics#identity).\n\n",
+                "type": "{ id : String.String, title : String.String, tooltip : String.String, width : Basics.Int, getter : a -> Basics.Float, localize : String.String -> String.String } -> Grid.ColumnConfig a"
+            },
+            {
+                "name": "init",
+                "comment": " Initializes the grid model, according to the given grid configuration\nand content.\n\n      init : () -> ( Model, Cmd Msg )\n      init _ =\n         ( { gridModel = Grid.init gridConfig data\n           }\n         , Cmd.none\n         )\n\n",
+                "type": "Grid.Config a -> List.List a -> Grid.Model a"
+            },
+            {
+                "name": "intColumnConfig",
+                "comment": " Create a ColumnConfig for a column containing an integer value\n\ngetter is usually a simple field access function, like \".age\" to get the age field of a Person record.\n\nlocalize takes the title or the tooltip of the column as a parameter, and returns its translation, if you need internationalization.\nIf you don't need it, just use [identity](https://package.elm-lang.org/packages/elm/core/latest/Basics#identity).\n\n",
+                "type": "{ id : String.String, title : String.String, tooltip : String.String, width : Basics.Int, getter : a -> Basics.Int, localize : String.String -> String.String } -> Grid.ColumnConfig a"
+            },
+            {
+                "name": "isColumn",
+                "comment": " Compares the identity of two columns\n",
+                "type": "Grid.ColumnConfig a -> Grid.ColumnConfig a -> Basics.Bool"
+            },
+            {
+                "name": "isSelectionColumn",
+                "comment": " Returns true when the given ColumnConfig is the multiple selection column\n(column added by Grid when row selection is activated)\n",
+                "type": "Grid.ColumnConfig a -> Basics.Bool"
+            },
+            {
+                "name": "isSelectionColumnProperties",
+                "comment": " Returns true when the given Properties are the one of the multiple selection column,\nprovided by Grid when row selection is activated\n",
+                "type": "{ a | id : String.String } -> Basics.Bool"
+            },
+            {
+                "name": "selectedAndVisibleItems",
+                "comment": " the list of items selected by the user, after filters were applied\n",
+                "type": "Grid.Model a -> List.List (Grid.Item.Item a)"
+            },
+            {
+                "name": "stringColumnConfig",
+                "comment": " Create a ColumnConfig for a column containing a string value\n\ngetter is usually a simple field access function, like \".age\" to get the age field of a Person record.\n\nlocalize takes the title or the tooltip of the column as a parameter, and returns its translation, if you need internationalization.\nIf you don't need it, just use [identity](https://package.elm-lang.org/packages/elm/core/latest/Basics#identity).\n\n",
+                "type": "{ id : String.String, title : String.String, tooltip : String.String, width : Basics.Int, getter : a -> String.String, localize : String.String -> String.String } -> Grid.ColumnConfig a"
+            },
+            {
+                "name": "update",
+                "comment": " Updates the grid model\n",
+                "type": "Grid.Msg a -> Grid.Model a -> ( Grid.Model a, Platform.Cmd.Cmd (Grid.Msg a) )"
+            },
+            {
+                "name": "view",
+                "comment": " Renders the grid\n",
+                "type": "Grid.Model a -> Html.Html (Grid.Msg a)"
+            },
+            {
+                "name": "viewBool",
+                "comment": " Renders a cell containing a boolean value. Use this function in a ColumnConfig\nto define how the values in a given column should be rendered.\nThe unique parameter to be provided is a lambda which\nreturns the field to be displayed in this column.\n\n    renderer =\n        viewBool (\\item -> item.even)\n\n",
+                "type": "(Grid.Item.Item a -> Basics.Bool) -> Grid.ColumnProperties -> Grid.Item.Item a -> Html.Styled.Html (Grid.Msg a)"
+            },
+            {
+                "name": "viewFloat",
+                "comment": " Renders a cell containing a floating number. Use this function in a ColumnConfig\nto define how the values in a given column should be rendered.\nThe unique parameter to be provided is a lambda which\nreturns the field to be displayed in this column.\n\n    renderer =\n        viewFloat (\\item -> item.value)\n\n",
+                "type": "(Grid.Item.Item a -> Basics.Float) -> Grid.ColumnProperties -> Grid.Item.Item a -> Html.Styled.Html (Grid.Msg a)"
+            },
+            {
+                "name": "viewInt",
+                "comment": " Renders a cell containing an int value. Use this function in a ColumnConfig\nto define how the values in a given column should be rendered.\nThe unique parameter to be provided is a lambda which\nreturns the field to be displayed in this column.\n\n    renderer =\n        viewInt (\\item -> item.id)\n\n",
+                "type": "(Grid.Item.Item a -> Basics.Int) -> Grid.ColumnProperties -> Grid.Item.Item a -> Html.Styled.Html (Grid.Msg a)"
+            },
+            {
+                "name": "viewProgressBar",
+                "comment": " Renders a progress bar in a a cell containing a integer.\nUse this function in a ColumnConfig to define how the values\nin a given column should be rendered.\nThe unique parameter to be provided is a lambda which\nreturns the field to be displayed in this column.\n\n    renderer =\n        viewProgressBar 8 (\\item -> item.value)\n\n",
+                "type": "Basics.Int -> (a -> Basics.Float) -> Grid.ColumnProperties -> Grid.Item.Item a -> Html.Styled.Html (Grid.Msg a)"
+            },
+            {
+                "name": "viewString",
+                "comment": " Renders a cell containing a string. Use this function in a ColumnConfig\nto define how the values in a given column should be rendered.\nThe unique parameter to be provided is a lambda which\nreturns the field to be displayed in this column.\n\n    renderer =\n        viewString (\\item -> item.name)\n\n",
+                "type": "(Grid.Item.Item a -> String.String) -> Grid.ColumnProperties -> Grid.Item.Item a -> Html.Styled.Html (Grid.Msg a)"
+            },
+            {
+                "name": "visibleColumns",
+                "comment": " The list of visible columns according to their current configuration.\nThis list ignores the actual position of the columns; some of them may require\nan horizontal scrolling to be seen\n",
+                "type": "Grid.Model a -> List.List (Grid.ColumnConfig a)"
+            },
+            {
+                "name": "withColumns",
+                "comment": " Sets the column definitions into the configuration\n",
+                "type": "List.List (Grid.ColumnConfig a) -> Grid.Model a -> Grid.Model a"
+            },
+            {
+                "name": "withConfig",
+                "comment": " Sets the grid configuration\n",
+                "type": "Grid.Config a -> Grid.Model a -> Grid.Model a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Grid.Csv",
+        "comment": " The CSV module provides a function to export the visible rows and columns as CSV.\n\n\n# Configure the grid\n\n@docs visibleItemsToCsv\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "visibleItemsToCsv",
+                "comment": " Converts the list of visible items and properties to a Comma Separated Values string\n",
+                "type": "String.String -> Grid.Model a -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

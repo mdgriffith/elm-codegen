@@ -1,0 +1,43 @@
+[
+    {
+        "name": "Easter",
+        "comment": " This library makes it easy to compute the date of Easter for any given\nyear.\n\n@docs Date, EasterMethod, easter\n\n",
+        "unions": [
+            {
+                "name": "EasterMethod",
+                "comment": " There are three different algorithms for computing the Easter\ndate. The `Western` algorithm is the most widely used nowadays.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Julian",
+                        []
+                    ],
+                    [
+                        "Orthodox",
+                        []
+                    ],
+                    [
+                        "Western",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Date",
+                "comment": " A date consists of year, month and day. The `Month` type in\n`elm/time` is used for the month.\n",
+                "args": [],
+                "type": "{ year : Basics.Int, month : Time.Month, day : Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "easter",
+                "comment": " Compute the Easter date for the given method and year\n\n    easter Western 2017 -- 2017-04-16\n\n    easter Orthodox 1416 -- 1416-04-29\n\n",
+                "type": "Easter.EasterMethod -> Basics.Int -> Easter.Date"
+            }
+        ],
+        "binops": []
+    }
+]

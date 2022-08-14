@@ -1,0 +1,53 @@
+[
+    {
+        "name": "Combo",
+        "comment": " Combobox component.\n\n\n# Data\n\n@docs Config, Model, State, config, init, value\n\n\n# View\n\n@docs view\n\n",
+        "unions": [
+            {
+                "name": "Config",
+                "comment": " Opaque type to configure the component (construct with the `config` function).\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "State",
+                "comment": " Opaque type to manage the states of component.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Model",
+                "comment": " Combo options.\n",
+                "args": [],
+                "type": "List.List String.String"
+            }
+        ],
+        "values": [
+            {
+                "name": "config",
+                "comment": " Config constructor.\n",
+                "type": "(Combo.State -> msg) -> List.List String.String -> Combo.Config msg"
+            },
+            {
+                "name": "init",
+                "comment": " Initialize the component state.\n",
+                "type": "String.String -> Combo.State"
+            },
+            {
+                "name": "value",
+                "comment": " Get the selected value.\n",
+                "type": "Combo.State -> String.String"
+            },
+            {
+                "name": "view",
+                "comment": " Component view.\n",
+                "type": "Combo.Config msg -> Combo.State -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

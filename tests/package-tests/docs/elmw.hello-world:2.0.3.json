@@ -1,0 +1,51 @@
+[
+    {
+        "name": "Main",
+        "comment": "\nA \"Hello, World!\" is an introductory computer program.\\\n📦 [Package](https://package.elm-lang.org/packages/elmw/hello-world/latest/),\n📘 [Wiki](https://github.com/elmw/hello-world/wiki).\n@docs eq, imply\n@docs eqv, imp\n@docs and, and0, and1, and2\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "and",
+                "comment": "\nCheck if all values are true.\n[📘](https://github.com/elmw/hello-world/wiki/and)\n    -- and[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    and True True             == True\n    and True False            == False\n    and4 True True True True  == True\n    and4 True False True True == False\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "and0",
+                "comment": "\nCheck if all values are true.\n[📘](https://github.com/elmw/hello-world/wiki/and)\n    -- and[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    and True True             == True\n    and True False            == False\n    and4 True True True True  == True\n    and4 True False True True == False\n",
+                "type": "Basics.Bool"
+            },
+            {
+                "name": "and1",
+                "comment": "\nCheck if all values are true.\n[📘](https://github.com/elmw/hello-world/wiki/and)\n    -- and[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    and True True             == True\n    and True False            == False\n    and4 True True True True  == True\n    and4 True False True True == False\n",
+                "type": "Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "and2",
+                "comment": "\nCheck if all values are true.\n[📘](https://github.com/elmw/hello-world/wiki/and)\n    -- and[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    and True True             == True\n    and True False            == False\n    and4 True True True True  == True\n    and4 True False True True == False\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "eq",
+                "comment": "\nCheck if antecedent ⇔ consequent (a ⇔ b).\n[📘](https://github.com/elmw/hello-world/wiki/eq)\n    -- eq a b\n    -- a: antecedent\n    -- b: consequent\n    eq True True   == True\n    eq False False == True\n    eq True False  == False\n    eq False True  == False\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "eqv",
+                "comment": "\nCheck if antecedent ⇔ consequent (a ⇔ b).\n[📘](https://github.com/elmw/hello-world/wiki/eqv)\n    -- eqv a b\n    -- a: antecedent\n    -- b: consequent\n    eqv True True   == True\n    eqv False False == True\n    eqv True False  == False\n    eqv False True  == False\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "imp",
+                "comment": "\nCheck if antecedent ⇒ consequent (a ⇒ b).\n[📘](https://github.com/elmw/hello-world/wiki/imp)\n    -- imp a b\n    -- a: antecedent\n    -- b: consequent\n    imp True True   == True\n    imp False True  == True\n    imp False False == True\n    imp True False  == False\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "imply",
+                "comment": "\nCheck if antecedent ⇒ consequent (a ⇒ b).\n[📘](https://github.com/elmw/hello-world/wiki/imply)\n    -- imply a b\n    -- a: antecedent\n    -- b: consequent\n    imply True True   == True\n    imply False True  == True\n    imply False False == True\n    imply True False  == False\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool"
+            }
+        ],
+        "binops": []
+    }
+]

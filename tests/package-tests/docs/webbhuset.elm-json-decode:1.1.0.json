@@ -1,0 +1,76 @@
+[
+    {
+        "name": "Json.Decode.Field",
+        "comment": " # Decode JSON objects\n\nSince JSON values are not known until runtime there is no way\nof checking them at compile time. This means that there is a\npossibility a decoding operation can not be successfully completed.\n\nIn that case there are two possible solutions:\n\n1. Fail the whole decoding operation.\n2. Deal with the missing value situation, either by defaulting to some value or by\n   using a `Maybe` value\n\nIn this module these two options are represented by `require` and\n`attempt`.\n\n* `require` can fail if the decoding can not be completed.\n* `attempt` will never fail. It always decodes to a `Maybe` value.\n\n@docs require, requireAt, attempt, attemptAt\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "attempt",
+                "comment": " Decode optional fields.\n\nAlways decodes to a `Maybe` value and never fails.\n\nExample:\n\n    person : Decoder Person\n    person =\n        require \"name\" Decode.string <| \\name ->\n        attempt \"weight\" Decode.int <| \\maybeWeight ->\n\n        Decode.succeed\n            { name = name\n            , weight = maybeWeight\n            }\n\nIn this example the `maybeWeight` value will be `Nothing` if:\n\n* The JSON value was not an object\n* The `weight` field is missing.\n* The `weight` field is not an `Int`.\n\nIn this case there is no difference between a field being `null` or missing.\nIf a field must exist but can be null, use `require` and `Decode.maybe` instead:\n\n    require \"field\" (Decode.maybe Decode.string) <| \\field ->\n\n",
+                "type": "String.String -> Json.Decode.Decoder a -> (Maybe.Maybe a -> Json.Decode.Decoder b) -> Json.Decode.Decoder b"
+            },
+            {
+                "name": "attemptAt",
+                "comment": " Decode optional nested fields. Works the same way as `attempt` but on nested fields.\n\n",
+                "type": "List.List String.String -> Json.Decode.Decoder a -> (Maybe.Maybe a -> Json.Decode.Decoder b) -> Json.Decode.Decoder b"
+            },
+            {
+                "name": "require",
+                "comment": " Decode required fields.\n\nExample:\n\n    user : Decoder User\n    user =\n        require \"id\" Decode.int <| \\id ->\n        require \"name\" Decode.string <| \\name ->\n\n        Decode.succeed\n            { id = id\n            , name = name\n            }\n\nIn this example the decoder will fail if:\n\n* The JSON value is not an object.\n* Any of the fields `\"id\"` or `\"name\"` are missing. If the object contains other fields\n  they are ignored and will not cause the decoder to fail.\n* The value of field `\"id\"` is not an `Int`.\n* The value of field `\"name\"` is not a `String`.\n\n",
+                "type": "String.String -> Json.Decode.Decoder a -> (a -> Json.Decode.Decoder b) -> Json.Decode.Decoder b"
+            },
+            {
+                "name": "requireAt",
+                "comment": " Decode nested fields. Works the same as `require` but on nested fieds.\n\n    blogPost : Decoder BlogPost\n    blogPost =\n        require \"id\" Decode.int <| \\id ->\n        require \"title\" Decode.string <| \\title ->\n        requireAt [\"author\", \"name\"] Decode.string <| \\authorName ->\n\n        Decode.succeed\n            { id = id\n            , title = title\n            , author = authorName\n            }\n",
+                "type": "List.List String.String -> Json.Decode.Decoder a -> (a -> Json.Decode.Decoder b) -> Json.Decode.Decoder b"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Json.Decode.Flags",
+        "comment": "\n\n\n# Flags decoder\n\nThis module helps you create a Json Decoder that will never fail.\nThis is useful when you want to decode a record but not\nfail if something is wrong.\n\nThis could of course be achieved by defaulting if the normal decoder fails:\n\n    Json.Decode.decodeValue recordDecoder value\n        |> Result.withDefault defaultRecord\n\nThe problem with this approach is that if one field is faulty the\nwhole record will be defaulted. In some cases you want to decode\neverything possible and only use default for fields that couldn't\nbe decoded.\n\nThis decoder will always succeed with a value and a list of errors.\n\n```\nimport Json.Decode as Decode\n\ndecoder =\n    at [\"field1\"] Decode.string \"Default 1\" <| \\value1 ->\n    at [\"field2\"] Decode.string \"Default 2\" <| \\value2 ->\n    return\n        { field1 = value1\n        , field2 = value2\n        }\n```\n\nRunning the decoder with this Json value:\n\n```\n{\n    \"field1\": \"Hello\",\n    \"field2\": null\n}\n```\n\nWill result in the record:\n\n```\n{ field1 = \"Hello\"\n, field2 = \"Default 2\"\n}\n```\n\nand a list of `Error`:\n\n```\n[ { path = [\"field2\"]\n  , error = Field \"field2\" (Failure (\"Expecting a STRING\") <internals>)\n  }\n]\n```\n\n## Create a Flags Decoder\n\n@docs FlagsDecoder, at, return\n\n\n## Run FlagsDecoder\n\n@docs Error, decodeString, decodeValue\n\n",
+        "unions": [
+            {
+                "name": "FlagsDecoder",
+                "comment": " A decoder that never fails.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Error",
+                "comment": " A decode error.\n",
+                "args": [],
+                "type": "{ path : List.List String.String, error : Json.Decode.Error }"
+            }
+        ],
+        "values": [
+            {
+                "name": "at",
+                "comment": " Decode a field with an optional value\n\n    at <path> <decoder> <default value> <continuation>\n\n    at [\"field1\"] Decode.string \"1\" <| \\value1 ->\n    at [\"field2\"] Decode.int 2 <| \\value2 ->\n    return\n        { field1 = value1\n        , field2 = value2\n        }\n",
+                "type": "List.List String.String -> Json.Decode.Flags.JsonDecoder a -> a -> (a -> Json.Decode.Flags.FlagsDecoder b) -> Json.Decode.Flags.FlagsDecoder b"
+            },
+            {
+                "name": "decodeString",
+                "comment": " Decode a json string\n",
+                "type": "Json.Decode.Flags.FlagsDecoder a -> String.String -> ( List.List Json.Decode.Flags.Error, a )"
+            },
+            {
+                "name": "decodeValue",
+                "comment": " Decode a Json value\n",
+                "type": "Json.Decode.Flags.FlagsDecoder a -> Json.Decode.Value -> ( List.List Json.Decode.Flags.Error, a )"
+            },
+            {
+                "name": "return",
+                "comment": " Return a value from your decoder.\n",
+                "type": "a -> Json.Decode.Flags.FlagsDecoder a"
+            }
+        ],
+        "binops": []
+    }
+]

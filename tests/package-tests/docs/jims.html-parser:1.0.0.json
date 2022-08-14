@@ -1,0 +1,75 @@
+[
+    {
+        "name": "Html.Parser",
+        "comment": " Parse HTML 5 in Elm.\nSee <https://www.w3.org/TR/html5/syntax.html>\n\n@docs run, Node, Attribute\n\n\n# Internals\n\nIf you are building a parser of your own using [`elm/parser`][elm-parser] and\nyou need to parse HTML... This section is for you!\n\n[elm-parser]: https://package.elm-lang.org/packages/elm/parser/latest\n\n@docs node, nodeToString\n\n",
+        "unions": [
+            {
+                "name": "Node",
+                "comment": " An HTML node. It can either be:\n\n  - Text\n  - Element (with its **tag name**, **attributes** and **children**)\n  - Comment\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Text",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Element",
+                        [
+                            "String.String",
+                            "List.List Html.Parser.Attribute",
+                            "List.List Html.Parser.Node"
+                        ]
+                    ],
+                    [
+                        "Comment",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Attribute",
+                "comment": " An HTML attribute. For instance:\n\n    ( \"href\", \"https://elm-lang.org\" )\n\n",
+                "args": [],
+                "type": "( String.String, String.String )"
+            }
+        ],
+        "values": [
+            {
+                "name": "node",
+                "comment": " Parse an HTML node.\n\nYou can use this in your own parser to add support for HTML 5.\n\n",
+                "type": "Parser.Parser Html.Parser.Node"
+            },
+            {
+                "name": "nodeToString",
+                "comment": " Turn a parser node back into its HTML string.\n\nFor instance:\n\n    Element \"a\"\n        [ ( \"href\", \"https://elm-lang.org\" ) ]\n        [ Text \"Elm\" ]\n        |> nodeToString\n\nProduces `<a href=\"https://elm-lang.org\">Elm</a>`.\n\n",
+                "type": "Html.Parser.Node -> String.String"
+            },
+            {
+                "name": "run",
+                "comment": " Run the parser!\n\n    run \"<div><p>Hello, world!</p></div>\"\n    -- => Ok [ Element \"div\" [] [ Element \"p\" [] [ Text \"Hello, world!\" ] ] ]\n\n",
+                "type": "String.String -> Result.Result (List.List Parser.DeadEnd) (List.List Html.Parser.Node)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Html.Parser.Util",
+        "comment": " Utility functions that may help you digging into the contents.\n\n\n# Virtual DOM\n\n@docs toVirtualDom\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toVirtualDom",
+                "comment": " Converts nodes to virtual dom nodes.\n",
+                "type": "List.List Html.Parser.Node -> List.List (Html.Html msg)"
+            }
+        ],
+        "binops": []
+    }
+]

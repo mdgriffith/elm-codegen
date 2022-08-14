@@ -1,0 +1,23 @@
+[
+    {
+        "name": "Unique",
+        "comment": " Create unique types in elm.\n\n@docs Unique, unique\n\n",
+        "unions": [
+            {
+                "name": "Unique",
+                "comment": " The unique type.\nAny record or custom type containing `Unique` values will only compare as equal\nif they are exactly the same object.\n\nSee the README for an example.\n\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "unique",
+                "comment": " Generate unique types.\n",
+                "type": "() -> Unique.Unique"
+            }
+        ],
+        "binops": []
+    }
+]

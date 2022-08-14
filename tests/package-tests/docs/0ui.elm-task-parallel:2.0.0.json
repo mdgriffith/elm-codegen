@@ -1,0 +1,332 @@
+[
+    {
+        "name": "Task.Parallel",
+        "comment": " This library helps you run tasks in parallel when you only need the results\nif every task finishes successfully, similar to `Promise.all()` in Javascript. A\ngood use case is handling the result of multiple HTTP requests.\n\n\n## Task Helpers\n\n@docs attempt2, attempt3, attempt4, attempt5, attempt6, attempt7, attempt8, attempt9, attemptList\n\n\n## Less Common Helpers\n\n@docs attempt\n\n\n## Update\n\nYou will have to pass internal messages and commands along in your update\nfunction in order to eventually get your results.\n\n@docs update2, update3, update4, update5, update6, update7, update8, update9, updateList\n\n\n## Types\n\n@docs State2, State3, State4, State5, State6, State7, State8, State9, Msg2, Msg3, Msg4, Msg5, Msg6, Msg7, Msg8, Msg9, ListState, ListMsg\n\n",
+        "unions": [
+            {
+                "name": "ListMsg",
+                "comment": " Opaque type for updating state of task lists.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            },
+            {
+                "name": "ListState",
+                "comment": " Opaque type for storing state of task lists.\n",
+                "args": [
+                    "msg",
+                    "a"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Msg2",
+                "comment": " Opaque type for updating state of tasks.\n",
+                "args": [
+                    "a",
+                    "b"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Msg3",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Msg4",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Msg5",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Msg6",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "f"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Msg7",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "f",
+                    "g"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Msg8",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "f",
+                    "g",
+                    "h"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Msg9",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "f",
+                    "g",
+                    "h",
+                    "i"
+                ],
+                "cases": []
+            },
+            {
+                "name": "State2",
+                "comment": " Opaque type for storing state of tasks.\n",
+                "args": [
+                    "msg",
+                    "a",
+                    "b"
+                ],
+                "cases": []
+            },
+            {
+                "name": "State3",
+                "comment": " ",
+                "args": [
+                    "msg",
+                    "a",
+                    "b",
+                    "c"
+                ],
+                "cases": []
+            },
+            {
+                "name": "State4",
+                "comment": " ",
+                "args": [
+                    "msg",
+                    "a",
+                    "b",
+                    "c",
+                    "d"
+                ],
+                "cases": []
+            },
+            {
+                "name": "State5",
+                "comment": " ",
+                "args": [
+                    "msg",
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e"
+                ],
+                "cases": []
+            },
+            {
+                "name": "State6",
+                "comment": " ",
+                "args": [
+                    "msg",
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "f"
+                ],
+                "cases": []
+            },
+            {
+                "name": "State7",
+                "comment": " ",
+                "args": [
+                    "msg",
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "f",
+                    "g"
+                ],
+                "cases": []
+            },
+            {
+                "name": "State8",
+                "comment": " ",
+                "args": [
+                    "msg",
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "f",
+                    "g",
+                    "h"
+                ],
+                "cases": []
+            },
+            {
+                "name": "State9",
+                "comment": " ",
+                "args": [
+                    "msg",
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "f",
+                    "g",
+                    "h",
+                    "i"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "attempt",
+                "comment": " Attempt a single task. The benefit of this over Task.attempt is that it\nhandles routing the result to the provided success and failure messages. You can\nreuse those error messages for different tasks if they're handled the same way.\nSince there are no other tasks, you don't need to manage any additional updates.\n\n    type Msg\n        = ErrorOcurred Http.Error\n        | FetchCompleted MyData\n\n    doTask : Cmd Msg\n    doTask =\n        attempt FetchCompleted ErrorOcurred fetchMyData\n\n",
+                "type": "(a -> msg) -> (x -> msg) -> Task.Task x a -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "attempt2",
+                "comment": " Attempt two tasks which will send an update when either all tasks finish\nsuccessfully or one fails. The returned `State` will be used in your main\nupdate function to call [`update`](#update) and pass internal messages.\n\n    type Msg\n        = TaskStateUpdated (Task.Parallel.Msg2 String Int)\n        | OneTaskFailed Http.Error\n        | AllTasksCompleted String Int\n\n    doTask : ( Task.Parallel.State2 Msg String Int, Cmd Msg )\n    doTask =\n        attempt2\n            { task1 = fetchString\n            , task2 = fetchInt\n            , onUpdates = TaskStateUpdated\n            , onFailure = OneTaskFailed\n            , onSuccess = AllTasksCompleted\n            }\n\n",
+                "type": "{ task1 : Task.Task x a, task2 : Task.Task x b, onUpdates : Task.Parallel.Msg2 a b -> msg, onSuccess : a -> b -> msg, onFailure : x -> msg } -> ( Task.Parallel.State2 msg a b, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "attempt3",
+                "comment": " ",
+                "type": "{ task1 : Task.Task x a, task2 : Task.Task x b, task3 : Task.Task x c, onUpdates : Task.Parallel.Msg3 a b c -> msg, onSuccess : a -> b -> c -> msg, onFailure : x -> msg } -> ( Task.Parallel.State3 msg a b c, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "attempt4",
+                "comment": " ",
+                "type": "{ task1 : Task.Task x a, task2 : Task.Task x b, task3 : Task.Task x c, task4 : Task.Task x d, onUpdates : Task.Parallel.Msg4 a b c d -> msg, onSuccess : a -> b -> c -> d -> msg, onFailure : x -> msg } -> ( Task.Parallel.State4 msg a b c d, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "attempt5",
+                "comment": " ",
+                "type": "{ task1 : Task.Task x a, task2 : Task.Task x b, task3 : Task.Task x c, task4 : Task.Task x d, task5 : Task.Task x e, onUpdates : Task.Parallel.Msg5 a b c d e -> msg, onSuccess : a -> b -> c -> d -> e -> msg, onFailure : x -> msg } -> ( Task.Parallel.State5 msg a b c d e, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "attempt6",
+                "comment": " ",
+                "type": "{ task1 : Task.Task x a, task2 : Task.Task x b, task3 : Task.Task x c, task4 : Task.Task x d, task5 : Task.Task x e, task6 : Task.Task x f, onUpdates : Task.Parallel.Msg6 a b c d e f -> msg, onSuccess : a -> b -> c -> d -> e -> f -> msg, onFailure : x -> msg } -> ( Task.Parallel.State6 msg a b c d e f, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "attempt7",
+                "comment": " ",
+                "type": "{ task1 : Task.Task x a, task2 : Task.Task x b, task3 : Task.Task x c, task4 : Task.Task x d, task5 : Task.Task x e, task6 : Task.Task x f, task7 : Task.Task x g, onUpdates : Task.Parallel.Msg7 a b c d e f g -> msg, onSuccess : a -> b -> c -> d -> e -> f -> g -> msg, onFailure : x -> msg } -> ( Task.Parallel.State7 msg a b c d e f g, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "attempt8",
+                "comment": " ",
+                "type": "{ task1 : Task.Task x a, task2 : Task.Task x b, task3 : Task.Task x c, task4 : Task.Task x d, task5 : Task.Task x e, task6 : Task.Task x f, task7 : Task.Task x g, task8 : Task.Task x h, onUpdates : Task.Parallel.Msg8 a b c d e f g h -> msg, onSuccess : a -> b -> c -> d -> e -> f -> g -> h -> msg, onFailure : x -> msg } -> ( Task.Parallel.State8 msg a b c d e f g h, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "attempt9",
+                "comment": " ",
+                "type": "{ task1 : Task.Task x a, task2 : Task.Task x b, task3 : Task.Task x c, task4 : Task.Task x d, task5 : Task.Task x e, task6 : Task.Task x f, task7 : Task.Task x g, task8 : Task.Task x h, task9 : Task.Task x i, onUpdates : Task.Parallel.Msg9 a b c d e f g h i -> msg, onSuccess : a -> b -> c -> d -> e -> f -> g -> h -> i -> msg, onFailure : x -> msg } -> ( Task.Parallel.State9 msg a b c d e f g h i, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "attemptList",
+                "comment": " Attempt a list of tasks which will update when all the tasks have finished\nor when one fails. Similar to a `Task.sequence` except in parallel.\n\n    type Msg\n        = DownloadUpdated (Task.Parallel.ListMsg String)\n        | DownloadFailed Http.Error\n        | DownloadCompleted (List String)\n\n    fetchNames : ( ListState String, next )\n    fetchNames =\n        attemptList\n            { tasks = [ fetchFirstName, fetchSecondName, fetchThirdName ]\n            , onUpdates = DownloadUpdated\n            , onFailure = DownloadFailed\n            , onSuccess = DownloadCompleted\n            }\n\n",
+                "type": "{ tasks : List.List (Task.Task x a), onUpdates : Task.Parallel.ListMsg a -> msg, onSuccess : List.List a -> msg, onFailure : x -> msg } -> ( Task.Parallel.ListState msg a, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "update2",
+                "comment": " Handle updates for two tasks by calling `update2` inside of your main update\nfunction to keep this library's internal state updated. If they have either all\nfinished successfully or one has failed, the corresponding message you provided\nwill be sent to your main `update` function. Maintain a copy of the returned\nstate to pass in on each subsequent `update`. This step is required with\n`attempt[n]` functions.\n\n    type Msg\n        = DownloadUpdated (Task.Parallel.Msg2 Actor Film)\n        | DownloadFailed Http.Error\n        | DownloadCompleted Actor Film\n\n    update : Msg -> Model -> ( Model, Cmd Msg )\n    update msg model =\n        case msg of\n            DownloadUpdated taskMsg ->\n                let\n                    ( nextTaskState, nextCmd ) =\n                        Task.Parallel.update2 model.taskState taskMsg\n                in\n                ( { model | taskState = nextTaskState }, nextCmd )\n\n            DownloadCompleted actor film ->\n                ( { model | actor = actor, film = film, Cmd.none )\n\n            DownloadFailed err ->\n                ( { model | loadingError = Just err }, Cmd.none )\n\n",
+                "type": "Task.Parallel.State2 msg a b -> Task.Parallel.Msg2 a b -> ( Task.Parallel.State2 msg a b, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "update3",
+                "comment": " ",
+                "type": "Task.Parallel.State3 msg a b c -> Task.Parallel.Msg3 a b c -> ( Task.Parallel.State3 msg a b c, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "update4",
+                "comment": " ",
+                "type": "Task.Parallel.State4 msg a b c d -> Task.Parallel.Msg4 a b c d -> ( Task.Parallel.State4 msg a b c d, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "update5",
+                "comment": " ",
+                "type": "Task.Parallel.State5 msg a b c d e -> Task.Parallel.Msg5 a b c d e -> ( Task.Parallel.State5 msg a b c d e, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "update6",
+                "comment": " ",
+                "type": "Task.Parallel.State6 msg a b c d e f -> Task.Parallel.Msg6 a b c d e f -> ( Task.Parallel.State6 msg a b c d e f, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "update7",
+                "comment": " ",
+                "type": "Task.Parallel.State7 msg a b c d e f g -> Task.Parallel.Msg7 a b c d e f g -> ( Task.Parallel.State7 msg a b c d e f g, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "update8",
+                "comment": " ",
+                "type": "Task.Parallel.State8 msg a b c d e f g h -> Task.Parallel.Msg8 a b c d e f g h -> ( Task.Parallel.State8 msg a b c d e f g h, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "update9",
+                "comment": " ",
+                "type": "Task.Parallel.State9 msg a b c d e f g h i -> Task.Parallel.Msg9 a b c d e f g h i -> ( Task.Parallel.State9 msg a b c d e f g h i, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "updateList",
+                "comment": " Call `updateList` inside of your main update function to check if the\ntasks have failed or finished. Maintain a copy of the returned state to pass in\non each subsequent `updateList`. This step is required with\n[`attemptList`](#attemptList).\n\n    type Msg\n        = DownloadUpdated (Task.Parallel.ListMsg Actor Http.Error)\n        | DownloadFailed Http.Error\n        | DownloadCompleted (List Actor)\n\n    update : Msg -> Model -> ( Model, Cmd Msg )\n    update msg model =\n        case msg of\n            DownloadUpdated taskMsg ->\n                let\n                    ( nextTaskState, next ) =\n                        Task.Parallel.updateList model.taskState taskMsg\n                in\n                ( { model | taskState = nextTaskState }, next )\n\n            DownloadCompleted actors ->\n                ( { model | actorList = actors, Cmd.none )\n\n            DownloadFailed err ->\n                ( { model | loadingError = Just err }, Cmd.none )\n\n",
+                "type": "Task.Parallel.ListState msg a -> Task.Parallel.ListMsg a -> ( Task.Parallel.ListState msg a, Platform.Cmd.Cmd msg )"
+            }
+        ],
+        "binops": []
+    }
+]

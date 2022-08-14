@@ -1,0 +1,40 @@
+[
+    {
+        "name": "AngularCustomElement",
+        "comment": " The package contains helper function to view custom elements to reuse AngularJS directives/components in Elm.\n\n\n# View\n\n@docs view, viewWithTransclusion\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "view",
+                "comment": " Creates a custom element which will be used to create AngularJS component\n",
+                "type": "{ componentName : String.String, attributes : List.List (Html.Attribute msg) } -> Html.Html msg"
+            },
+            {
+                "name": "viewWithTransclusion",
+                "comment": " Creates a custom element which will be used to create AngularJS component with transclusion\n",
+                "type": "{ componentName : String.String, attributes : List.List (Html.Attribute msg), transclude : List.List (Html.Html Basics.Never) } -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "AngularCustomElement.Styled",
+        "comment": " The package contains helper function to view custom elements to reuse AngularJS directives/components in Elm.\n\n\n# View\n\n@docs view, viewWithTransclusion\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "view",
+                "comment": " Creates a custom element which will be used to create AngularJS component\n",
+                "type": "{ componentName : String.String, attributes : List.List (Html.Styled.Attribute msg) } -> Html.Styled.Html msg"
+            },
+            {
+                "name": "viewWithTransclusion",
+                "comment": " Creates a custom element which will be used to create AngularJS component with transclusion\n",
+                "type": "{ componentName : String.String, attributes : List.List (Html.Styled.Attribute msg), transclude : List.List (Html.Styled.Html Basics.Never) } -> Html.Styled.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

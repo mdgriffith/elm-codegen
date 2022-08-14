@@ -1,0 +1,74 @@
+[
+    {
+        "name": "Tiler",
+        "comment": " Generate random tiling patters.\n\n    import Tiler exposing (Board, Neighbor(..), emptyBoard, generateBoard, map)\n\n# Tiler\n\n@docs Board, emptyBoard, generateBoard, map, Neighbor, positionToString, positionFromString, positionToXY\n",
+        "unions": [
+            {
+                "name": "Neighbor",
+                "comment": " Used for determining the relative positioning of 2 tiles.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "North",
+                        []
+                    ],
+                    [
+                        "South",
+                        []
+                    ],
+                    [
+                        "East",
+                        []
+                    ],
+                    [
+                        "West",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Board",
+                "comment": " The set of all tiles. Can be easily mapped over for displaying\n",
+                "args": [
+                    "t"
+                ],
+                "type": "Dict.Dict String.String (Tiler.Tile t)"
+            }
+        ],
+        "values": [
+            {
+                "name": "emptyBoard",
+                "comment": " An empty board.\n",
+                "type": "Tiler.Board t"
+            },
+            {
+                "name": "generateBoard",
+                "comment": " Generates a new Board.\n\nExpects an Int width, Int height, function for populating the possible tiles per position in the board, function for validating neighbors, and an initial Seeds.\n\nThe function gets 2 arguments. First a tuple of Ints, in the same format as positionToXY. Second a List of the tile(s).\nA single item in the list represents the tile being set to that item. Multiple represents that the tile is still undecided.\n\n    generateBoard width height generateOneOf validateNeighbors seed\n\ngenerateOneOf gets a tuple of Ints in the format of positionToXY and returns a tuple of (tile, List tile) representing the possible tiles for this coordinate.\n\nvalidateNeighbors gets a list of tiles, a list of neighbor tiles, and a Neighbor direction for describing the position of the neighbor tiles relative to the first tiles\n",
+                "type": "Basics.Int -> Basics.Int -> (( Basics.Int, Basics.Int ) -> ( t, List.List t )) -> (List.List t -> List.List t -> Tiler.Neighbor -> ( t, List.List t )) -> Random.Seed -> ( Tiler.Board t, Random.Seed )"
+            },
+            {
+                "name": "map",
+                "comment": " Used for mapping over a Board. Takes a function and a Board.\n\nThe function gets 2 arguments. First a tuple of Ints, in the same format as positionToXY. Second a List of the tile(s).\nA single item in the list represents the tile being set to that item. Multiple represents that the tile is still undecided.\n\n    map (\\(x, y) (tile, tiles) -> a) someBoard\n",
+                "type": "(( Basics.Int, Basics.Int ) -> ( t, List.List t ) -> a) -> Tiler.Board t -> List.List a"
+            },
+            {
+                "name": "positionFromString",
+                "comment": " Used to build a position from a string\n\n    positionFromString \"3, 2\" == Just { x = 3, y = 2 }\n    positionFromString \"6 8\" == Nothing\n",
+                "type": "String.String -> Maybe.Maybe Tiler.Position"
+            },
+            {
+                "name": "positionToString",
+                "comment": " Used for pretty printing a Position.\n\n    -- A position where x == 3 and y ==2\n    positionToString pos == \"3, 2\"\n",
+                "type": "Tiler.Position -> String.String"
+            },
+            {
+                "name": "positionToXY",
+                "comment": " Used to get the X and Y values from a position\n\n    -- A position where x == 3 and y ==2\n    positionToXY pos == (3, 2)\n",
+                "type": "Tiler.Position -> ( Basics.Int, Basics.Int )"
+            }
+        ],
+        "binops": []
+    }
+]

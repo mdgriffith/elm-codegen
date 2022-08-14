@@ -1,0 +1,209 @@
+[
+    {
+        "name": "OrderedDict",
+        "comment": " A dictionary mapping unique keys to values while remembering their\ninsertion order. The keys can be any comparable type. This includes\n`Int`, `Float`, `Time`, `Char`, `String`, and tuples or lists\nof comparable types.\n\nThe insertion order is reflected in the functions under\n[\"Conversions\"](#conversions) and [\"Transform\"](#transform).\nThe order in the lists and the iteration order will be the order of insertion.\n\nThe API mirrors the core\n[`Dict`](https://package.elm-lang.org/packages/elm/core/latest/Dict)'s\nAPI, with exception for the functions listed there under\n[\"Combine\"](https://package.elm-lang.org/packages/elm/core/latest/Dict#combine),\nbecause these functions do not have an obvious way to handle\nthe order between the combined dictionaries.\n\n\n# Dictionaries\n\n@docs OrderedDict\n\n\n# Build\n\n@docs empty, singleton, insert, update, remove\n\n\n# Query\n\n@docs isEmpty, member, get, size\n\n\n# Conversions\n\n@docs keys, values, toList, fromList, toDict\n\n\n# Transform\n\n@docs map, foldl, foldr, filter, partition\n\n",
+        "unions": [
+            {
+                "name": "OrderedDict",
+                "comment": " A dictionary of keys and values that remembers the order of insertion.\n",
+                "args": [
+                    "comparable",
+                    "v"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "empty",
+                "comment": " Create an empty dictionary.\n",
+                "type": "OrderedDict.OrderedDict comparable v"
+            },
+            {
+                "name": "filter",
+                "comment": " Keep only the key-value pairs that pass the given test.\n",
+                "type": "(comparable -> v -> Basics.Bool) -> OrderedDict.OrderedDict comparable v -> OrderedDict.OrderedDict comparable v"
+            },
+            {
+                "name": "foldl",
+                "comment": " Fold over the key-value pairs in a dictionary in insertion order.\n",
+                "type": "(comparable -> v -> b -> b) -> b -> OrderedDict.OrderedDict comparable v -> b"
+            },
+            {
+                "name": "foldr",
+                "comment": " Fold over the key-value pairs in a dictionary in reverse insertion order.\n",
+                "type": "(comparable -> v -> b -> b) -> b -> OrderedDict.OrderedDict comparable v -> b"
+            },
+            {
+                "name": "fromList",
+                "comment": " Convert an association list into a dictionary.\n\nIf a key appears multiple times in the list, only the last occurrence is kept.\n\n",
+                "type": "List.List ( comparable, v ) -> OrderedDict.OrderedDict comparable v"
+            },
+            {
+                "name": "get",
+                "comment": " Get the value associated with a key. If the key is not found, return Nothing.\n",
+                "type": "comparable -> OrderedDict.OrderedDict comparable v -> Maybe.Maybe v"
+            },
+            {
+                "name": "insert",
+                "comment": " Insert a key-value pair into a dictionary. If the key already exists,\nthe old value will be forgotten and the new value will be inserted at the end.\n\n    import OrderedDict\n\n    OrderedDict.empty\n        |> OrderedDict.insert 1 \"one\"\n        |> OrderedDict.insert 2 \"two\"\n        |> OrderedDict.insert 1 \"three\"\n        |> OrderedDict.toList\n    --> [ (2, \"two\"), (1, \"three\") ]\n\n",
+                "type": "comparable -> v -> OrderedDict.OrderedDict comparable v -> OrderedDict.OrderedDict comparable v"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Determine if a dictionary is empty.\n",
+                "type": "OrderedDict.OrderedDict comparable v -> Basics.Bool"
+            },
+            {
+                "name": "keys",
+                "comment": " Get all of the keys in a dictionary, in insertion order.\n",
+                "type": "OrderedDict.OrderedDict comparable v -> List.List comparable"
+            },
+            {
+                "name": "map",
+                "comment": " Apply a function to all values in a dictionary.\n",
+                "type": "(comparable -> a -> b) -> OrderedDict.OrderedDict comparable a -> OrderedDict.OrderedDict comparable b"
+            },
+            {
+                "name": "member",
+                "comment": " Determine if a key is in a dictionary.\n",
+                "type": "comparable -> OrderedDict.OrderedDict comparable v -> Basics.Bool"
+            },
+            {
+                "name": "partition",
+                "comment": " Partition a dictionary according to some test. The first dictionary\ncontains all key-value pairs which passed the test, and the second\ncontains the pairs that did not.\n\nThe order will be preserved in these new dictionaries in the sense\nthat elements that are inserted after each other will\nremain ordered after each other.\n\n",
+                "type": "(comparable -> v -> Basics.Bool) -> OrderedDict.OrderedDict comparable v -> ( OrderedDict.OrderedDict comparable v, OrderedDict.OrderedDict comparable v )"
+            },
+            {
+                "name": "remove",
+                "comment": " Remove a key-value pair from a dictionary. If the key is not found,\nno changes are made.\n",
+                "type": "comparable -> OrderedDict.OrderedDict comparable v -> OrderedDict.OrderedDict comparable v"
+            },
+            {
+                "name": "singleton",
+                "comment": " Create a dictionary with one key-value pair.\n",
+                "type": "comparable -> v -> OrderedDict.OrderedDict comparable v"
+            },
+            {
+                "name": "size",
+                "comment": " Determine the number of key-value pairs in the dictionary.\n",
+                "type": "OrderedDict.OrderedDict comparable v -> Basics.Int"
+            },
+            {
+                "name": "toDict",
+                "comment": " Convert an ordered dictionary into a regular\n[`Dict`](https://package.elm-lang.org/packages/elm/core/latest/Dict#Dict).\n",
+                "type": "OrderedDict.OrderedDict comparable v -> Dict.Dict comparable v"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert a dictionary into an association list of key-value pairs, in insertion order.\n",
+                "type": "OrderedDict.OrderedDict comparable v -> List.List ( comparable, v )"
+            },
+            {
+                "name": "update",
+                "comment": " Update the value of a dictionary for a specific key with a given function.\n\nIf a value exists for the key and the passed function returns a `Just v`,\nthe value will be replaced, keeping its order. If it did not exist, the\nnew value will be added to the end.\n\nWhen the function returns a `Nothing`, the key is removed.\n\n    import OrderedDict\n\n    OrderedDict.empty\n        |> OrderedDict.insert 1 \"one\"\n        |> OrderedDict.insert 2 \"two\"\n        |> OrderedDict.update 1 (\\_ -> Just \"three\")\n        |> OrderedDict.toList\n    --> [ (1, \"three\"), (2, \"two\") ]\n\n    OrderedDict.singleton 1 \"one\"\n        |> OrderedDict.update 2 (\\_ -> Just \"two\")\n        |> OrderedDict.toList\n    --> [ (1, \"one\"), (2, \"two\") ]\n\n    OrderedDict.singleton 1 \"one\"\n        |> OrderedDict.update 1 (\\_ -> Nothing)\n        |> OrderedDict.toList\n    --> []\n\n",
+                "type": "comparable -> (Maybe.Maybe v -> Maybe.Maybe v) -> OrderedDict.OrderedDict comparable v -> OrderedDict.OrderedDict comparable v"
+            },
+            {
+                "name": "values",
+                "comment": " Get all of the values in a dictionary, in insertion order.\n",
+                "type": "OrderedDict.OrderedDict comparable v -> List.List v"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "OrderedSet",
+        "comment": " A set of unique values that remembers their insertion order.\nThe values can be any comparable type. This includes `Int`,\n`Float`, `Time`, `Char`, `String`, and tuples or lists\nof comparable types.\n\nThe insertion order is reflected in the functions under\n[\"Conversions\"](#conversions) and [\"Transform\"](#transform).\nThe list order and the iteration order will be the order of insertion.\n\nThe API mirrors the core\n[`Set`](https://package.elm-lang.org/packages/elm/core/latest/Set)'s\nAPI, with exception for the functions listed there under\n[\"Combine\"](https://package.elm-lang.org/packages/elm/core/latest/Set#combine),\nbecause these functions do not have an obvious way to handle\nthe order between the combined sets.\n\n\n# Sets\n\n@docs OrderedSet\n\n\n# Build\n\n@docs empty, singleton, insert, remove\n\n\n# Query\n\n@docs isEmpty, member, size\n\n\n# Conversions\n\n@docs toList, fromList, toSet\n\n\n# Transform\n\n@docs map, foldl, foldr, filter, partition\n\n",
+        "unions": [
+            {
+                "name": "OrderedSet",
+                "comment": " Represents a set of unique values that remembers insertion order.\n",
+                "args": [
+                    "comparable"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "empty",
+                "comment": " Create an empty set.\n",
+                "type": "OrderedSet.OrderedSet comparable"
+            },
+            {
+                "name": "filter",
+                "comment": " Only keep elements that pass the given test.\n",
+                "type": "(comparable -> Basics.Bool) -> OrderedSet.OrderedSet comparable -> OrderedSet.OrderedSet comparable"
+            },
+            {
+                "name": "foldl",
+                "comment": " Fold over the values in a set, in insertion order.\n",
+                "type": "(comparable -> b -> b) -> b -> OrderedSet.OrderedSet comparable -> b"
+            },
+            {
+                "name": "foldr",
+                "comment": " Fold over the values in a set, in reverse insertion order.\n",
+                "type": "(comparable -> b -> b) -> b -> OrderedSet.OrderedSet comparable -> b"
+            },
+            {
+                "name": "fromList",
+                "comment": " Convert a list into a set, removing any duplicates.\n",
+                "type": "List.List comparable -> OrderedSet.OrderedSet comparable"
+            },
+            {
+                "name": "insert",
+                "comment": " Insert a value into a set. If the key already exists,\nthe old value will be forgotten and the new value will be inserted at the end.\n\n    import OrderedSet\n\n    OrderedSet.empty\n        |> OrderedSet.insert 1\n        |> OrderedSet.insert 2\n        |> OrderedSet.insert 1\n        |> OrderedSet.toList\n    --> [ 2, 1 ]\n\n",
+                "type": "comparable -> OrderedSet.OrderedSet comparable -> OrderedSet.OrderedSet comparable"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Determine if a set is empty.\n",
+                "type": "OrderedSet.OrderedSet comparable -> Basics.Bool"
+            },
+            {
+                "name": "map",
+                "comment": " Map a function onto a set, creating a new set with no duplicates.\n",
+                "type": "(comparable -> comparable2) -> OrderedSet.OrderedSet comparable -> OrderedSet.OrderedSet comparable2"
+            },
+            {
+                "name": "member",
+                "comment": " Determine if a value is in a set.\n",
+                "type": "comparable -> OrderedSet.OrderedSet comparable -> Basics.Bool"
+            },
+            {
+                "name": "partition",
+                "comment": " Create two new sets. The first contains all the elements\nthat passed the given test, and the second contains\nall the elements that did not.\n\nThe order will be preserved in these new sets in the sense\nthat elements that are inserted after each other will\nremain ordered after each other.\n\n",
+                "type": "(comparable -> Basics.Bool) -> OrderedSet.OrderedSet comparable -> ( OrderedSet.OrderedSet comparable, OrderedSet.OrderedSet comparable )"
+            },
+            {
+                "name": "remove",
+                "comment": " Remove a value from a set. If the value is not found,\nno changes are made.\n",
+                "type": "comparable -> OrderedSet.OrderedSet comparable -> OrderedSet.OrderedSet comparable"
+            },
+            {
+                "name": "singleton",
+                "comment": " Create a set with one value.\n",
+                "type": "comparable -> OrderedSet.OrderedSet comparable"
+            },
+            {
+                "name": "size",
+                "comment": " Determine the number of elements in a set.\n",
+                "type": "OrderedSet.OrderedSet comparable -> Basics.Int"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert a set into a list in insertion order.\n",
+                "type": "OrderedSet.OrderedSet comparable -> List.List comparable"
+            },
+            {
+                "name": "toSet",
+                "comment": " Convert an ordered set into a regular\n[`Set`](https://package.elm-lang.org/packages/elm/core/latest/Set#Set).\n",
+                "type": "OrderedSet.OrderedSet comparable -> Set.Set comparable"
+            }
+        ],
+        "binops": []
+    }
+]

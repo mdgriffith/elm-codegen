@@ -1,0 +1,201 @@
+[
+    {
+        "name": "Camera3d",
+        "comment": " A `Camera3d` is a perspective or orthographic camera in 3D, encapsulating\nthe camera's viewpoint and projection matrix as well as the dimensions of the\nscreen the camera renders to. This module contains functions for:\n\n  - Defining perspective and orthographic cameras\n  - Obtaining view and projection matrices for a given camera, which can then be\n    used for WebGL rendering\n  - Using cameras to project 3D geometry to 2D screen space\n\n@docs Camera3d\n\n\n# Constructors\n\n@docs perspective, orthographic\n\n\n# Properties\n\n@docs viewpoint\n\n\n# Ray casting\n\n@docs ray\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Camera3d",
+                "comment": " ",
+                "args": [
+                    "units",
+                    "coordinates"
+                ],
+                "type": "Camera3d.Types.Camera3d units coordinates"
+            }
+        ],
+        "values": [
+            {
+                "name": "orthographic",
+                "comment": " Create an orthographic camera from a viewpoint and the height of the\northographic viewport: this is the height in 3D world units of the section of\nthe model to be rendered.\n\n    orthographicCamera =\n        Camera3d.orthographic\n            { viewpoint = cameraViewpoint\n            , viewportHeight = Length.meters 5\n            }\n\n",
+                "type": "{ viewpoint : Viewpoint3d.Viewpoint3d units coordinates, viewportHeight : Quantity.Quantity Basics.Float units } -> Camera3d.Camera3d units coordinates"
+            },
+            {
+                "name": "perspective",
+                "comment": " Create a perspective camera from a viewpoint and a vertical field of view.\n\n    perspectiveCamera =\n        Camera3d.perspective\n            { viewpoint = cameraViewpoint\n            , verticalFieldOfView = Angle.degrees 30\n            }\n\n",
+                "type": "{ viewpoint : Viewpoint3d.Viewpoint3d units coordinates, verticalFieldOfView : Angle.Angle } -> Camera3d.Camera3d units coordinates"
+            },
+            {
+                "name": "ray",
+                "comment": " Given a camera, a rectangle defining the shape and size of a screen, and a\n2D point within that screen, calculate the corresponding 3D ray as an `Axis3d`.\nConceptually, the ray will pass through the given point on the screen and will\nhave direction equal to the viewing direction at that point.\n\nFor a perspective camera, the origin of the ray will be constant (always equal\nto the camera's eye point) and the direction will vary depending on the 2D\nscreen point. For an orthographic camera, the direction of the ray will be\nconstant (the view direction of the camera) but the origin will vary depending\non the 2D screen point.\n\n",
+                "type": "Camera3d.Camera3d units coordinates -> Rectangle2d.Rectangle2d screenUnits screenCoordinates -> Point2d.Point2d screenUnits screenCoordinates -> Axis3d.Axis3d units coordinates"
+            },
+            {
+                "name": "viewpoint",
+                "comment": " Get the viewpoint defining the position and orientation of a camera.\n",
+                "type": "Camera3d.Camera3d units coordinates -> Viewpoint3d.Viewpoint3d units coordinates"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "LineSegment3d.Projection",
+        "comment": "\n\n@docs toScreenSpace\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toScreenSpace",
+                "comment": " Project a line segment from 3D world to 2D screen coordinates. Equivalent\nto calling [`Point3d.toScreenSpace`](Point3d-Projection#toScreenSpace) on the\ntwo endpoints of the line segment.\n",
+                "type": "Camera3d.Camera3d worldUnits worldCoordinates -> Rectangle2d.Rectangle2d screenUnits screenCoordinates -> LineSegment3d.LineSegment3d worldUnits worldCoordinates -> LineSegment2d.LineSegment2d screenUnits screenCoordinates"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Point3d.Projection",
+        "comment": "\n\n@docs depth, toScreenSpace\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "depth",
+                "comment": " Find the 'depth' of a point relative to a camera. This is the signed\ndistance of the point from a plane with:\n\n  - origin point equal to the camera's eye point\n  - normal direction equal to the camera's viewing direction\n\nThe returned depth is positive for points in front of the camera and negative\nfor points behind.\n\n",
+                "type": "Camera3d.Camera3d units coordinates -> Point3d.Point3d units coordinates -> Quantity.Quantity Basics.Float units"
+            },
+            {
+                "name": "toScreenSpace",
+                "comment": " Project a point from 3D world to 2D screen coordinates, by supplying a\nrectangle that defines the shape and size of the screen. Points directly ahead\nof the camera will end up in the center of the given screen rectangle.\n\nNote that the projected 2D point may be outside the given rectangle, if the\ngiven 3D point is outside the field of view of the given camera.\n\n",
+                "type": "Camera3d.Camera3d worldUnits worldCoordinates -> Rectangle2d.Rectangle2d screenUnits screenCoordinates -> Point3d.Point3d worldUnits worldCoordinates -> Point2d.Point2d screenUnits screenCoordinates"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Triangle3d.Projection",
+        "comment": "\n\n@docs toScreenSpace, isFrontFacing\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "isFrontFacing",
+                "comment": " Check if a given triangle is front facing with respect to the given camera.\nA 'front facing' triangle has a normal direction towards the camera instead of\naway. This also means that when projected into 2D, the vertices of the triangle\nwill be in counterclockwise order.\n",
+                "type": "Camera3d.Camera3d units coordinates -> Triangle3d.Triangle3d units coordinates -> Basics.Bool"
+            },
+            {
+                "name": "toScreenSpace",
+                "comment": " Project a triangle from 3D world to 2D screen coordinates. Equivalent\nto calling [`Point3d.toScreenSpace`](Point3d-Projection#toScreenSpace) on the\nthree vertices of the triangle.\n",
+                "type": "Camera3d.Camera3d worldUnits worldCoordinates -> Rectangle2d.Rectangle2d screenUnits screenCoordinates -> Triangle3d.Triangle3d worldUnits worldCoordinates -> Triangle2d.Triangle2d screenUnits screenCoordinates"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Viewpoint3d",
+        "comment": " A `Viewpoint3d` represents the position and orientation of a camera in 3D.\n\n@docs Viewpoint3d\n\n\n# Constructors\n\n@docs lookAt, orbit, orbitZ, isometricElevation, isometric\n\n\n# Properties\n\n@docs eyePoint, viewDirection, viewPlane, xDirection, yDirection\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Viewpoint3d",
+                "comment": " ",
+                "args": [
+                    "units",
+                    "coordinates"
+                ],
+                "type": "Camera3d.Types.Viewpoint3d units coordinates"
+            }
+        ],
+        "values": [
+            {
+                "name": "eyePoint",
+                "comment": " Get the actual eye point of a viewpoint.\n",
+                "type": "Viewpoint3d.Viewpoint3d units coordinates -> Point3d.Point3d units coordinates"
+            },
+            {
+                "name": "isometric",
+                "comment": " Construct a viewpoint looking at the given focal point, the given distance\naway, such that a set of XYZ axes at that point will appear to have:\n\n  - Z straight up\n  - X pointing to the left and 30 degrees down\n  - Y pointing to the right and 30 degrees down\n\nYou can combine `Viewpoint3d.isometric` with [`Camera3d.orthographic`](Camera3d#orthographic)\nto achieve [isometric projection](https://en.wikipedia.org/wiki/Isometric_projection).\n\n",
+                "type": "{ focalPoint : Point3d.Point3d units coordinates, distance : Quantity.Quantity Basics.Float units } -> Viewpoint3d.Viewpoint3d units coordinates"
+            },
+            {
+                "name": "isometricElevation",
+                "comment": " Not actually a constructor, but a useful value (approximately 35.26 degrees)\nto use when constructing viewpoints using `orbit` or `orbitZ`: using this as the\n`elevation` value will result in an [isometric](#isometric) viewpoint if\n`azimuth` is set to 45 degrees. Said another way, this is the elevation angle of\na vector with components (1, 1, 1).\n",
+                "type": "Angle.Angle"
+            },
+            {
+                "name": "lookAt",
+                "comment": " Construct a `Viewpoint3d` at the given eye point looking towards the given\nfocal point, with the given global up direction (which will typically be\n`Direction3d.positiveZ` or `Direction3d.positiveY`). For example, to construct a\nviewpoint at the point (10, 0, 5) looking towards the origin:\n\n    viewpoint =\n        Viewpoint3d.lookAt\n            { eyePoint = Point3d.meters 10 0 5\n            , focalPoint = Point3d.origin\n            , upDirection = Direction3d.positiveZ\n            }\n\n    Viewpoint3d.eyePoint viewpoint\n    --> Point3d.meters 10 0 5\n\n    Viewpoint3d.xDirection viewpoint\n    --> Direction3d.positiveY\n\n    Viewpoint3d.yDirection viewpoint\n    --> Direction3d.xz (Angle.degrees 116.57)\n\n    Viewpoint3d.viewDirection viewpoint\n    --> Direction3d.xz (Angle.degrees -153.43)\n\nThat is likely all you need to know but if you are interested in the details and\ncorner cases, read on!\n\nThe view direction of the returned viewpoint will point from the eye point to\nthe focal point. The Y direction will be chosen to be as close to the global up\ndirection as possible (the viewpoint will not have any 'roll') and the X\ndirection will point to the right.\n\nIf the direction from the eye point to the focal point is parallel to the global\nup direction (that is, the viewpoint represents looking straight up or straight\ndown) then the X and Y directions will be chosen arbitrarily.\n\nIf the given eye point and focal point are coincident (so that there is no well-\ndefined view direction), then the returned frame will have its Y direction set\nto the global up direction and its X and view directions will be chosen\narbitrarily.\n\n",
+                "type": "{ focalPoint : Point3d.Point3d units coordinates, eyePoint : Point3d.Point3d units coordinates, upDirection : Direction3d.Direction3d coordinates } -> Viewpoint3d.Viewpoint3d units coordinates"
+            },
+            {
+                "name": "orbit",
+                "comment": " Construct a `Viewpoint3d` looking at the given focal point, the given\ndistance away. The direction from the focal point to the eye point is defined by\nthe given azimuth and elevation angles, which are with respect to the given\nground plane (the position of the ground plane does not matter, only its\norientation). For example,\n\n    Viewpoint3d.orbit\n        { focalPoint = Point3d.meters 0 0 1\n        , groundPlane = SketchPlane3d.xy\n        , azimuth = Angle.degrees 0\n        , elevation = Angle.degrees 45\n        , distance = Length.meters 10\n        }\n\nis equivalent to\n\n    Viewpoint3d.lookAt\n        { focalPoint = Point3d.meters 0 0 1\n        , eyePoint = Point3d.meters 7.071 0 8.071\n        , upDirection = Direction3d.z\n        }\n\nAs the name suggests, `Viewpoint3d.orbit` is useful for making orbiting cameras;\nyou can orbit around the focal point by changing just the azimuth, and rotate\nup and down by changing just the elevation.\n\n",
+                "type": "{ focalPoint : Point3d.Point3d units coordinates, groundPlane : SketchPlane3d.SketchPlane3d units coordinates defines, azimuth : Angle.Angle, elevation : Angle.Angle, distance : Quantity.Quantity Basics.Float units } -> Viewpoint3d.Viewpoint3d units coordinates"
+            },
+            {
+                "name": "orbitZ",
+                "comment": " A special case of `orbit` for orbiting around a Z axis through the given\nfocal point. This corresponds to setting `groundPlane` to `SketchPlane3d.xy`,\nso azimuth is measured from the X axis towards the Y axis and elevation is\nmeasured up from the XY plane. Not related to the [classic soft drink](https://en.wikipedia.org/wiki/Orbitz_%28drink%29).\n",
+                "type": "{ focalPoint : Point3d.Point3d units coordinates, azimuth : Angle.Angle, elevation : Angle.Angle, distance : Quantity.Quantity Basics.Float units } -> Viewpoint3d.Viewpoint3d units coordinates"
+            },
+            {
+                "name": "viewDirection",
+                "comment": " Get the viewing direction of a viewpoint.\n",
+                "type": "Viewpoint3d.Viewpoint3d units coordinates -> Direction3d.Direction3d coordinates"
+            },
+            {
+                "name": "viewPlane",
+                "comment": " The view plane of a viewpoint is a `SketchPlane3d` perpendicular to the view\ndirection, with origin point equal to the eye point. For an observer looking\nstraight down the view direction, the X direction of the view plane points to\nthe right and the Y direction points up; this means that the view plane's normal\ndirection is the _opposite_ of the view direction. (Note that the Y direction\nwill _not_ be equal to the global up direction unless the view direction is\nhorizontal).\n",
+                "type": "Viewpoint3d.Viewpoint3d units coordinates -> SketchPlane3d.SketchPlane3d units coordinates defines"
+            },
+            {
+                "name": "xDirection",
+                "comment": " Get the X (right) direction of a viewpoint's view plane.\n",
+                "type": "Viewpoint3d.Viewpoint3d units coordinates -> Direction3d.Direction3d coordinates"
+            },
+            {
+                "name": "yDirection",
+                "comment": " Get the Y (local up) direction of a viewpoint's view plane.\n",
+                "type": "Viewpoint3d.Viewpoint3d units coordinates -> Direction3d.Direction3d coordinates"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "WebGL.Matrices",
+        "comment": " These matrices can be used for rendering 3D [WebGL](https://package.elm-lang.org/packages/elm-explorations/webgl/latest/)\nscenes. For in-depth explanations of how they are used, check out:\n\n  - <https://learnopengl.com/Getting-started/Coordinate-Systems>\n  - <http://www.opengl-tutorial.org/beginners-tutorials/tutorial-3-matrices/>\n  - <http://www.songho.ca/opengl/gl_transform.html>\n\n\n# Individual matrices\n\n@docs modelMatrix, viewMatrix, projectionMatrix\n\n\n# Combined matrices\n\n@docs modelViewMatrix, viewProjectionMatrix, modelViewProjectionMatrix\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "modelMatrix",
+                "comment": " Construct a WebGL model matrix given a `Frame3d` that defines the position\nand orientation of an object. Multiplying by this matrix transforms from local\nobject coordinates (coordinates relative to the given frame) to world\ncoordinates.\n\n(This is an alias of [`Frame3d.toMat4`](https://package.elm-lang.org/packages/ianmackenzie/elm-geometry-linear-algebra-interop/latest/Geometry-Interop-LinearAlgebra-Frame3d#toMat4),\nprovided here for consistency/convenience.)\n\n",
+                "type": "Frame3d.Frame3d units coordinates defines -> Math.Matrix4.Mat4"
+            },
+            {
+                "name": "modelViewMatrix",
+                "comment": " Construct a WebGL model-view matrix given a viewpoint and a `Frame3d` that\ndefines the position and orientation of an object.\n\nMultiplying by this matrix transforms from local object coordinates (coordinates\nrelative to the given frame) directly to view (eye) coordinates without first\ntransforming to world coordinates. Avoiding this intermediate conversion to\nworld coordinates improves accuracy, especially if both the object and camera\nare far from the world origin point.\n\n",
+                "type": "Frame3d.Frame3d units coordinates defines -> Viewpoint3d.Viewpoint3d units coordinates -> Math.Matrix4.Mat4"
+            },
+            {
+                "name": "modelViewProjectionMatrix",
+                "comment": " Construct a WebGL model-view-projection matrix for a given camera; this is\nthe product of the projection and model-view matrices. Multiplying by this\nmatrix converts from local object coordinates to clip coordinates.\n",
+                "type": "Frame3d.Frame3d units coordinates defines -> Camera3d.Camera3d units coordinates -> { nearClipDepth : Quantity.Quantity Basics.Float units, farClipDepth : Quantity.Quantity Basics.Float units, aspectRatio : Basics.Float } -> Math.Matrix4.Mat4"
+            },
+            {
+                "name": "projectionMatrix",
+                "comment": " Construct a WebGL projection matrix for a given camera, by supplying near\nand far clip depths as well as the aspect ratio (width over height) of the WebGL\nwindow being rendered to. Multiplying by this matrix converts from view\ncoordinates to [clip coordinates](https://en.wikipedia.org/wiki/Clip_coordinates).\n\nUsing a value of [`Quantity.positiveInfinity`](https://package.elm-lang.org/packages/ianmackenzie/elm-units/latest/Quantity#positiveInfinity)\nfor `farClipDepth` is supported, and this often works well for perspective\ncameras. However, for orthographic cameras, an infinite far clip depth means\nthat depth testing will not work. For things like line drawings this might be\nfine, but if you are depending on closer objects being reliably drawn in front\nof further-away objects (at least when using an orthographic camera) then you\nwill have to specify a finite far clip depth.\n\n",
+                "type": "Camera3d.Camera3d units coordinates -> { nearClipDepth : Quantity.Quantity Basics.Float units, farClipDepth : Quantity.Quantity Basics.Float units, aspectRatio : Basics.Float } -> Math.Matrix4.Mat4"
+            },
+            {
+                "name": "viewMatrix",
+                "comment": " Construct a WebGL view matrix for a given viewpoint. Multiplying by this\nmatrix transforms from world coordinates to view (eye) coordinates.\n\nNote that to avoid accuracy/roundoff issues (especially if both the viewpoint\nand rendered objects are far from the world origin point), it is often better to\nuse [`modelViewMatrix`](#modelViewMatrix) instead of calling `modelMatrix` and\n`viewMatrix` separately.\n\n",
+                "type": "Viewpoint3d.Viewpoint3d units coordinates -> Math.Matrix4.Mat4"
+            },
+            {
+                "name": "viewProjectionMatrix",
+                "comment": " Construct a WebGL view-projection matrix for a given camera; this is the\nproduct of the projection and view matrices. Multiplying by this matrix\nconverts from world coordinates to clip coordinates.\n",
+                "type": "Camera3d.Camera3d units coordinates -> { nearClipDepth : Quantity.Quantity Basics.Float units, farClipDepth : Quantity.Quantity Basics.Float units, aspectRatio : Basics.Float } -> Math.Matrix4.Mat4"
+            }
+        ],
+        "binops": []
+    }
+]

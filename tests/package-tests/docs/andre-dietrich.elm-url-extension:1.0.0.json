@@ -1,0 +1,68 @@
+[
+    {
+        "name": "UrlExtension",
+        "comment": " This is a simple wrapper for `elm/url` that allows to deal with custom protocols, next to `http` and `https`.\nIt does not take into account the different standards for `file`, `ftp`, `etc`, it simply allows to define different\nprotocols, while still relying on the `elm/url` parsing methods.\n\n@docs Protocol, Url\n\n@docs fromString, fromStringWithProtocol, toString\n\n@docs parse\n\n",
+        "unions": [
+            {
+                "name": "Protocol",
+                "comment": " To don't interfere with the original `Url.Protocol` type, this type is defined in uppercase.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "HTTP",
+                        []
+                    ],
+                    [
+                        "HTTPS",
+                        []
+                    ],
+                    [
+                        "FILE",
+                        []
+                    ],
+                    [
+                        "FTP",
+                        []
+                    ],
+                    [
+                        "CUSTOM",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Url",
+                "comment": " This is actually only an replacement for the `Url.Url` type, the only difference is the internal usage of a separate `Protocol` type.\n",
+                "args": [],
+                "type": "{ protocol : UrlExtension.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "fromString",
+                "comment": " This is a shortcut for `fromStringWithProtocol`, which uses only use the `ftp` and `file` protocol.\nIf you want to define your own custom protocols for internal routing use `fromStringWithProtocol`.\n\n    fromString \"file:///home/user/example.png\"\n    --> Just { fragment = Nothing, host = \"\", path = \"/home/user/example.png\", port_ = Nothing, protocol = FILE, query = Nothing }\n\n    fromString \"file://C:/home/user/example.png\"\n    --> Just { fragment = Nothing, host = \"C:\", path = \"/home/user/example.png\", port_ = Nothing, protocol = FILE, query = Nothing }\n\n    fromString \"ftp://internet.address.edu/path/file.gz\"\n    --> Just { fragment = Nothing, host = \"internet.address.edu\", path = \"/path/file.gz\", port_ = Nothing, protocol = FTP, query = Nothing }\n\n",
+                "type": "String.String -> Maybe.Maybe UrlExtension.Url"
+            },
+            {
+                "name": "fromStringWithProtocol",
+                "comment": " Use this, if you want to use more protocols, such as `ipfs`, `dweb`, or something `custom`\n\n    fromStringWithProtocol\n        [\"ipfs\", \"custom\"]\n        \"ipfs://bafybeiemxf5abjwjbikoz4mc3a3dla6ual3jsgpdr4cjr3oz3evfyavhwq/wiki/Vincent_van_Gogh.html\"\n    --> Just { fragment = Nothing, host = \"bafybeiemxf5abjwjbikoz4mc3a3dla6ual3jsgpdr4cjr3oz3evfyavhwq\", path = \"/wiki/Vincent_van_Gogh.html\", port_ = Nothing, protocol = CUSTOM \"ipfs\", query = Nothing }\n\n    fromStringWithProtocol\n        [\"ipfs\", \"custom\"]\n        \"custom://RouteTo/http://example.com\"\n    --> Just { fragment = Nothing, host = \"RouteTo\", path = \"/http://example.com\", port_ = Nothing, protocol = CUSTOM \"custom\", query = Nothing }\n\n",
+                "type": "List.List String.String -> String.String -> Maybe.Maybe UrlExtension.Url"
+            },
+            {
+                "name": "parse",
+                "comment": " Use this function to wrap your custom protocol into `Url.Http`, so that you can run your parsers from the Url.Parser module.\n",
+                "type": "Url.Parser.Parser (a -> a) a -> UrlExtension.Url -> Maybe.Maybe a"
+            },
+            {
+                "name": "toString",
+                "comment": " Use this to turn your Url back into a string:\n\n    { fragment = Nothing\n    , host = \"bafybeiemxf5abjwjbikoz4mc3a3dla6ual3jsgpdr4cjr3oz3evfyavhwq\"\n    , path = \"/wiki/Vincent_van_Gogh.html\"\n    , port_ = Nothing\n    , protocol = CUSTOM \"ipfs\"\n    , query = Nothing\n    }\n    |> toString\n    --> \"ipfs://bafybeiemxf5abjwjbikoz4mc3a3dla6ual3jsgpdr4cjr3oz3evfyavhwq/wiki/Vincent_van_Gogh.html\"\n\n",
+                "type": "UrlExtension.Url -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

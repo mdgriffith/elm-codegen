@@ -1,0 +1,16 @@
+[
+    {
+        "name": "NoTypeAliasConstructorCall",
+        "comment": "\n\n@docs rule\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": " `NoTypeAliasConstructorCall` forces you to use Record Expression for any type aliases declared in the current module\n\n\n## Configuration\n\n    config : List Rule\n    config =\n        [ NoTypeAliasConstructorCall.rule ]\n\n\n## Example\n\nThe following code will report an error\n\n    type alias Foo =\n        { foo : String\n        , bar : Bool\n        , baz : Float\n        }\n\n    init : Foo\n    init =\n        Foo \"hello\" True 0.2\n\nTo get rid of the error, do this:\n\n    type alias Foo =\n        { foo : String\n        , bar : Bool\n        , baz : Float\n        }\n\n    init : Foo\n    init =\n        { foo = \"hello\"\n        , bar = True\n        , baz = 0.2\n        }\n\n\n## Caution\n\nThis rule does not apply to `map` functions in `Json.Decode`, so the following code will NOT report an error\n\n    type alias Point =\n        { x : Float, y : Float }\n\n    point : Decoder Point\n    point =\n        map2 Point\n            (field \"x\" float)\n            (field \"y\" float)\n\n",
+                "type": "Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    }
+]

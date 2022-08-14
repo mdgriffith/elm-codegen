@@ -1,0 +1,46 @@
+[
+    {
+        "name": "Rpx",
+        "comment": " Provides easy shorthands for designing in rems in elm-css.\n\n```\nHtml.label\n    [ class \"label\"\n    , for id\n    , css   [ displayFlex\n            , boxSizing borderBox\n            , minHeight (blc 3) -- 1.5 rems, or 24px at 'normal' font size.\n            , paddingTop (rpx 1) -- 0.0625 rems, or 1px at 'normal' font size.\n            , fontSize (rpx 14) - 0.875 rems or 14px at 'normal' font size.\n            ]\n    ]\n    []\n```\n\n# Units\nAll of these produce Css.Rem values for elm-css.\n\n@docs rpx, blc\n\n\n# Convenience math functions\n\nSometimes in a project you might want to establish consistent\nmetrics for certain things across your interface, but because of\nhow elm-css measurement values work, you can't use normal math operators\non Rem values. So these functions let you apply some basic math to Rems.\n\n```\npaddingLeft <| Rpx.subtract focusBorderWidth (blc 6)\n```\n\n@docs add, subtract, multiply, divide, negate\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "add",
+                "comment": " Adds one Rem-based value (rem, rpx, blc) to another.\n\n```\nwidth <| Rpx.add thing (blc 10)\n```\n",
+                "type": "Css.Rem -> Css.Rem -> Css.Rem"
+            },
+            {
+                "name": "blc",
+                "comment": " Block.\n\nA measurement that's 8rpx (0.5rem). This is a handy shorthand if you're\ndoing layout measurements in multiples of 8.\n\n- 1blc = 8px at 16px (default) browser font size.\n- 1blc = 1/2rem\n\n```\npadding (blc 2)\n```\n",
+                "type": "Basics.Float -> Css.Rem"
+            },
+            {
+                "name": "divide",
+                "comment": " Divides one Rem-based value (rem, rpx, blc) by a Float value.\n\n```\n    width <| Rpx.divide (blc 100) 10 -- 10blcs\n```\n",
+                "type": "Css.Rem -> Basics.Float -> Css.Rem"
+            },
+            {
+                "name": "multiply",
+                "comment": " Multiplies one Rem-based value (rem, rpx, blc) by a Float value.\n\n```\n    width <| Rpx.multply cellWidth 3\n```\n",
+                "type": "Css.Rem -> Basics.Float -> Css.Rem"
+            },
+            {
+                "name": "negate",
+                "comment": " Negates a Rem value (does the equivalent of Elm Core `Basics.negate`).\n\n```\nmarginTop <| Rpx.negate importantMeasurement\n```\n",
+                "type": "Css.Rem -> Css.Rem"
+            },
+            {
+                "name": "rpx",
+                "comment": " Responsive Pixels.\n\nWrite measurements in pixels that output to rems.\n\nThis gives you the easy to reason about unit of a pixel, but\nallows you to publish in rems, which is a responsive\nformat that scales to user's browser font size preference.\n\n- 1rpx = 1px at 16px (default) browser font size.\n- 1rpx = 1/16rem\n\n```\nfontSize (rpx 14)\n```\n",
+                "type": "Basics.Float -> Css.Rem"
+            },
+            {
+                "name": "subtract",
+                "comment": " Subtracts one Rem-based value (rem, rpx, blc) from another.\n\n```\npaddingLeft <| Rpx.subtract focusBorderWidth (rpx 2)\n```\n",
+                "type": "Css.Rem -> Css.Rem -> Css.Rem"
+            }
+        ],
+        "binops": []
+    }
+]

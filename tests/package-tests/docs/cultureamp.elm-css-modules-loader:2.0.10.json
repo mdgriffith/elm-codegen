@@ -1,0 +1,26 @@
+[
+    {
+        "name": "CssModules",
+        "comment": " This library lets you reference classes defined in CSS modules in your Elm\nviews, and then have the actual class names injected into your Elm modules by\nWebpack at build time.\n\n@docs css\n@docs Helpers\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Helpers",
+                "comment": " A set of functions for accessing the class names in a CSS module.\n\n`class` and `classList` are drop-in replacements for their counterparts in\n`Html.Attributes`, except they take a record accessor to specify a class name\nfrom your CSS module (e.g. `.someClass`).\n\n    view =\n        div\n            [ classList\n                [ ( .someClass, True )\n                , ( .anotherClass, False )\n                ]\n            ]\n\n`toString` lets you obtain the raw `String` for a given class name, which you\nmight need if you're mixing CSS Module classes together with plain string class\nnames.\n\n",
+                "args": [
+                    "classes",
+                    "msg"
+                ],
+                "type": "{ class : (classes -> String.String) -> Html.Attribute msg, classList : List.List ( classes -> String.String, Basics.Bool ) -> Html.Attribute msg, toString : (classes -> String.String) -> String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "css",
+                "comment": " Use a CSS module in your Elm application.\n\n    styles =\n        css \"./styles.css\"\n            { someClass = \"someClass\"\n            , anotherClass = \"anotherClass\"\n            }\n\n    view =\n        div [ styles.class .someClass ]\n\nThis function returns a record, containing functions for accessing the CSS\nmodule’s class names. See [`Helpers`](#Helpers) for a description of these\nfunctions.\n\nThe CSS filename’s path is relative to either 1) a Webpack module root\ndirectory, or 2) the JavaScript file in which your top-level Elm module is\nreferenced (in which case the path should begin with with `./`).\n\n**Important:** The CSS filename must be a literal string.\n\nEach of the classes in the list must have the value of the corresponding class\nname, which will be substituted for a require of the CSS module by the Webpack\nloader at build time.\n\n**Warning:** Currently, if you list a class that is not defined in the CSS\nmodule, it will receive a value of `undefined` at runtime, which is likely to\nresult in `class=\"undefined\"`.\n\n",
+                "type": "String.String -> classes -> CssModules.Helpers classes msg"
+            }
+        ],
+        "binops": []
+    }
+]

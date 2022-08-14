@@ -1,0 +1,73 @@
+[
+    {
+        "name": "SlidingMenu",
+        "comment": " An Elm library to create animated, nested menus (e.g. for mobile-first websites).\n\n\n# View\n\n@docs view, ViewConfig\n\n\n## Update\n\n@docs update, UpdateConfig, subscriptions, Msg\n\n\n# Setting up\n\n@docs Model, init, MenuItem, leaf, node\n\n",
+        "unions": [
+            {
+                "name": "MenuItem",
+                "comment": " Opaque type: models a heirarchical menu.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Model",
+                "comment": " Opaque type that you will need to add to your model.\n\n    type alias Model =\n        { menu : SlidingMenu.Model\n        , ...\n        }\n\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Msg",
+                "comment": " Opaque type\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "UpdateConfig",
+                "comment": " Data required for the update function. At present, menu is not used but is required here to prevent\na breaking change down the line. The `easing` function can be any elm-animation [Interpolation](http://package.elm-lang.org/packages/mdgriffith/elm-style-animation/3.5.5/Animation#Interpolation) with the default\nset to ['zippy' spring](http://package.elm-lang.org/packages/mdgriffith/elm-style-animation/3.5.5/Animation-Spring-Presets).\n",
+                "args": [],
+                "type": "{ menu : List.List SlidingMenu.MenuItem, easing : Maybe.Maybe Animation.Interpolation }"
+            },
+            {
+                "name": "ViewConfig",
+                "comment": " Data required for the view function. `menu` is the data for the different layers of the menu; see below for how to make `MenuItem`s.\n`back` is the string that will be used alongside a \"<\" to make the back item.\n",
+                "args": [],
+                "type": "{ menu : List.List SlidingMenu.MenuItem, back : String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "init",
+                "comment": " init\n",
+                "type": "SlidingMenu.Model"
+            },
+            {
+                "name": "leaf",
+                "comment": " Helper function build a leaf MenuItem\n",
+                "type": "String.String -> SlidingMenu.MenuItem"
+            },
+            {
+                "name": "node",
+                "comment": " Helper function to build parent MenuItem\n",
+                "type": "String.String -> List.List SlidingMenu.MenuItem -> SlidingMenu.MenuItem"
+            },
+            {
+                "name": "subscriptions",
+                "comment": " This subscription must be added in your `main` function.\n\n    subscriptions : Model -> Sub Msg\n    subscriptions { menu } =\n        Sub.map MenuMsg (SlidingMenu.subscriptions menu)\n\n",
+                "type": "SlidingMenu.Model -> Platform.Sub.Sub SlidingMenu.Msg"
+            },
+            {
+                "name": "update",
+                "comment": " update returns a 3-tuple of the model, a `Cmd SlidingMenu.Msg`, and - following a user click - the menu path chosen by the user.\n\n    update message model =\n        case message of\n            MenuMsg msg ->\n                let\n                    ( menu, cmd, maybePath ) =\n                        SlidingMenu.update myUpdateConfig msg model.menu\n\n                    newModel =\n                        { model\n                            | menu = menu\n                            , chosenPath =\n                                maybePath\n                                    |> Maybe.withDefault model.chosenPath\n                        }\n                in\n                ( newModel, Cmd.map MenuMsg cmd )\n\n",
+                "type": "SlidingMenu.UpdateConfig -> SlidingMenu.Msg -> SlidingMenu.Model -> ( SlidingMenu.Model, Platform.Cmd.Cmd SlidingMenu.Msg, Maybe.Maybe (List.List String.String) )"
+            },
+            {
+                "name": "view",
+                "comment": " Renders the menu. The CSS heirarchy is:\n\n    .sliding\n        - menu\n        - container\n            ul.sliding\n        - menu\n        - page.previous\n            ul.sliding\n        - menu\n        - page.current\n            ul.sliding\n        - menu\n        - page.next\n\nNote that `.sliding-menu-page` is `display : relative`, and `.sliding-menu-page` is `display : absolute`,\nand the library animates the `left` style. You will need to add an appropriate `height` to `.sliding-menu-page`\n\n",
+                "type": "SlidingMenu.ViewConfig -> SlidingMenu.Model -> Html.Html SlidingMenu.Msg"
+            }
+        ],
+        "binops": []
+    }
+]

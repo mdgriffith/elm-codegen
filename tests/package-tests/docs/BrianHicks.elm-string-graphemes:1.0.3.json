@@ -1,0 +1,231 @@
+[
+    {
+        "name": "String.Graphemes",
+        "comment": " A built-in representation for efficient string manipulation. String literals\nare enclosed in `\"double quotes\"`. Strings are _not_ lists of characters.\n\n\n# Strings\n\n@docs isEmpty, length, reverse, repeat, replace\n\n\n# Building and Splitting\n\n@docs append, concat, split, join, words, lines\n\n\n# Get Substrings\n\n@docs slice, left, right, dropLeft, dropRight\n\n\n# Check for Substrings\n\n@docs contains, startsWith, endsWith, indexes, indices\n\n\n# Int Conversions\n\n@docs toInt, fromInt\n\n\n# Float Conversions\n\n@docs toFloat, fromFloat\n\n\n# Char Conversions\n\n@docs fromChar, cons, uncons\n\n\n# List Conversions\n\n@docs toList, fromList\n\n\n# Formatting\n\nCosmetic operations such as padding with extra characters or trimming whitespace.\n\n@docs toUpper, toLower, pad, padLeft, padRight, trim, trimLeft, trimRight\n\n\n# Higher-Order Functions\n\n@docs map, filter, foldl, foldr, any, all\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "all",
+                "comment": " Determine whether _all_ graphemes pass the test.\n\n    all (String.all Char.isDigit) \"90210\" --> True\n\n    all (String.all Char.isDigit) \"R2-D2\" --> False\n\n    all (String.all Char.isDigit) \"heart\" --> False\n\n",
+                "type": "(String.String -> Basics.Bool) -> String.String -> Basics.Bool"
+            },
+            {
+                "name": "any",
+                "comment": " Determine whether _any_ graphemes pass the test.\n\n    any (String.all Char.isDigit) \"90210\" --> True\n\n    any (String.all Char.isDigit) \"R2-D2\" --> True\n\n    any (String.all Char.isDigit) \"heart\" --> False\n\n",
+                "type": "(String.String -> Basics.Bool) -> String.String -> Basics.Bool"
+            },
+            {
+                "name": "append",
+                "comment": " Append two strings. You can also use [the `(++)` operator](Basics#++)\nto do this.\n\n    append \"butter\" \"fly\" --> \"butterfly\"\n\n",
+                "type": "String.String -> String.String -> String.String"
+            },
+            {
+                "name": "concat",
+                "comment": " Concatenate many strings into one.\n\n    concat [ \"never\", \"the\", \"less\" ] --> \"nevertheless\"\n\n",
+                "type": "List.List String.String -> String.String"
+            },
+            {
+                "name": "cons",
+                "comment": " Add a character to the beginning of a string.\n\n    cons 'T' \"he truth is out there\" --> \"The truth is out there\"\n\n",
+                "type": "Char.Char -> String.String -> String.String"
+            },
+            {
+                "name": "contains",
+                "comment": " See if the second string contains the first one.\n\n    contains \"the\" \"theory\" --> True\n\n    contains \"hat\" \"theory\" --> False\n\n    contains \"THE\" \"theory\" --> False\n\n",
+                "type": "String.String -> String.String -> Basics.Bool"
+            },
+            {
+                "name": "dropLeft",
+                "comment": " Drop _n_ characters from the left side of a string.\n\n    dropLeft 2 \"The Lone Gunmen\" --> \"e Lone Gunmen\"\n\n",
+                "type": "Basics.Int -> String.String -> String.String"
+            },
+            {
+                "name": "dropRight",
+                "comment": " Drop _n_ characters from the right side of a string.\n\n    dropRight 2 \"Cigarette Smoking Man\" --> \"Cigarette Smoking M\"\n\n",
+                "type": "Basics.Int -> String.String -> String.String"
+            },
+            {
+                "name": "endsWith",
+                "comment": " See if the second string ends with the first one.\n\n    endsWith \"the\" \"theory\" --> False\n\n    endsWith \"ory\" \"theory\" --> True\n\n",
+                "type": "String.String -> String.String -> Basics.Bool"
+            },
+            {
+                "name": "filter",
+                "comment": " Keep only the graphemes that pass the test.\n\n    filter (String.all Char.isDigit) \"R2-D2\" --> \"22\"\n\n",
+                "type": "(String.String -> Basics.Bool) -> String.String -> String.String"
+            },
+            {
+                "name": "foldl",
+                "comment": " Reduce a string from the left.\n\n    foldl (++) \"\" \"time\" --> \"emit\"\n\n",
+                "type": "(String.String -> b -> b) -> b -> String.String -> b"
+            },
+            {
+                "name": "foldr",
+                "comment": " Reduce a string from the right.\n\n    foldr (++) \"\" \"time\" --> \"time\"\n\n",
+                "type": "(String.String -> b -> b) -> b -> String.String -> b"
+            },
+            {
+                "name": "fromChar",
+                "comment": " Create a string from a given character.\n\n    fromChar 'a' --> \"a\"\n\n",
+                "type": "Char.Char -> String.String"
+            },
+            {
+                "name": "fromFloat",
+                "comment": " Convert a `Float` to a `String`.\n\n    String.fromFloat 123 --> \"123\"\n\n    String.fromFloat -42 --> \"-42\"\n\n    String.fromFloat 3.9 --> \"3.9\"\n\nCheck out [`Debug.toString`](Debug#toString) to convert _any_ value to a string\nfor debugging purposes.\n\n",
+                "type": "Basics.Float -> String.String"
+            },
+            {
+                "name": "fromInt",
+                "comment": " Convert an `Int` to a `String`.\n\n    String.fromInt 123 --> \"123\"\n\n    String.fromInt -42 --> \"-42\"\n\nCheck out [`Debug.toString`](Debug#toString) to convert _any_ value to a string\nfor debugging purposes.\n\n",
+                "type": "Basics.Int -> String.String"
+            },
+            {
+                "name": "fromList",
+                "comment": " Convert a list of graphemes into a String. Can be useful if you\nwant to create a string primarily by consing, perhaps for decoding\nsomething.\n\n    fromList [ \"a\", \"b\", \"c\" ] --> \"abc\"\n\n    fromList [ \"🙈\", \"🙉\", \"🙊\" ] --> \"🙈🙉🙊\"\n\n",
+                "type": "List.List String.String -> String.String"
+            },
+            {
+                "name": "indexes",
+                "comment": " Get all of the indexes for a substring in another string.\n\n    indexes \"i\" \"Mississippi\" --> [ 1, 4, 7, 10 ]\n\n    indexes \"ss\" \"Mississippi\" --> [ 2, 5 ]\n\n    indexes \"needle\" \"haystack\" --> []\n\n",
+                "type": "String.String -> String.String -> List.List Basics.Int"
+            },
+            {
+                "name": "indices",
+                "comment": " Alias for `indexes`.\n",
+                "type": "String.String -> String.String -> List.List Basics.Int"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Determine if a string is empty.\n\n    isEmpty \"\" --> True\n\n    isEmpty \"the world\" --> False\n\n",
+                "type": "String.String -> Basics.Bool"
+            },
+            {
+                "name": "join",
+                "comment": " Put many strings together with a given separator.\n\n    join \"a\" [ \"H\", \"w\", \"ii\", \"n\" ] --> \"Hawaiian\"\n\n    join \" \" [ \"cat\", \"dog\", \"cow\" ] --> \"cat dog cow\"\n\n    join \"/\" [ \"home\", \"evan\", \"Desktop\" ] --> \"home/evan/Desktop\"\n\n",
+                "type": "String.String -> List.List String.String -> String.String"
+            },
+            {
+                "name": "left",
+                "comment": " Take _n_ characters from the left side of a string.\n\n    left 2 \"Mulder\" --> \"Mu\"\n\n",
+                "type": "Basics.Int -> String.String -> String.String"
+            },
+            {
+                "name": "length",
+                "comment": " Get the length of a string.\n\n    length \"innumerable\" --> 11\n\n    length \"\" --> 0\n\n    length \"🇨🇦\" --> 1\n\n",
+                "type": "String.String -> Basics.Int"
+            },
+            {
+                "name": "lines",
+                "comment": " Break a string into lines, splitting on newlines.\n\n    lines \"How are you?\\nGood?\" --> [ \"How are you?\", \"Good?\" ]\n\n",
+                "type": "String.String -> List.List String.String"
+            },
+            {
+                "name": "map",
+                "comment": " Transform every grapheme in a string\n",
+                "type": "(String.String -> String.String) -> String.String -> String.String"
+            },
+            {
+                "name": "pad",
+                "comment": " Pad a string on both sides until it has a given length.\n\n    pad 5 ' ' \"1\" --> \"  1  \"\n\n    pad 5 ' ' \"11\" --> \"  11 \"\n\n    pad 5 ' ' \"121\" --> \" 121 \"\n\n",
+                "type": "Basics.Int -> Char.Char -> String.String -> String.String"
+            },
+            {
+                "name": "padLeft",
+                "comment": " Pad a string on the left until it has a given length.\n\n    padLeft 5 '.' \"1\" --> \"....1\"\n\n    padLeft 5 '.' \"11\" --> \"...11\"\n\n    padLeft 5 '.' \"121\" --> \"..121\"\n\n",
+                "type": "Basics.Int -> Char.Char -> String.String -> String.String"
+            },
+            {
+                "name": "padRight",
+                "comment": " Pad a string on the right until it has a given length.\n\n    padRight 5 '.' \"1\" --> \"1....\"\n\n    padRight 5 '.' \"11\" --> \"11...\"\n\n    padRight 5 '.' \"121\" --> \"121..\"\n\n",
+                "type": "Basics.Int -> Char.Char -> String.String -> String.String"
+            },
+            {
+                "name": "repeat",
+                "comment": " Repeat a string _n_ times.\n\n    repeat 3 \"ha\" --> \"hahaha\"\n\n",
+                "type": "Basics.Int -> String.String -> String.String"
+            },
+            {
+                "name": "replace",
+                "comment": " Replace all occurrences of some substring.\n\n    replace \".\" \"-\" \"Json.Decode.succeed\" --> \"Json-Decode-succeed\"\n\n    replace \",\" \"/\" \"a,b,c,d,e\" --> \"a/b/c/d/e\"\n\n**Note:** If you need more advanced replacements, check out the\n[`elm/parser`][parser] or [`elm/regex`][regex] package.\n\n[parser]: /packages/elm/parser/latest\n[regex]: /packages/elm/regex/latest\n\n",
+                "type": "String.String -> String.String -> String.String -> String.String"
+            },
+            {
+                "name": "reverse",
+                "comment": " Reverse a string.\n\n    reverse \"stressed\" --> \"desserts\"\n\n    reverse \"🇨🇦🇲🇽\" --> \"🇲🇽🇨🇦\"\n\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "right",
+                "comment": " Take _n_ characters from the right side of a string.\n\n    right 2 \"Scully\" --> \"ly\"\n\n",
+                "type": "Basics.Int -> String.String -> String.String"
+            },
+            {
+                "name": "slice",
+                "comment": " Take a substring given a start and end index. Negative indexes\nare taken starting from the _end_ of the list.\n\n    slice 7 9 \"snakes on a plane!\" --> \"on\"\n\n    slice 0 6 \"snakes on a plane!\" --> \"snakes\"\n\n    slice 0 -7 \"snakes on a plane!\" --> \"snakes on a\"\n\n    slice -6 -1 \"snakes on a plane!\" --> \"plane\"\n\n",
+                "type": "Basics.Int -> Basics.Int -> String.String -> String.String"
+            },
+            {
+                "name": "split",
+                "comment": " Split a string using a given separator.\n\n    split \",\" \"cat,dog,cow\" --> [ \"cat\", \"dog\", \"cow\" ]\n\n    split \"/\" \"home/evan/Desktop/\" --> [ \"home\", \"evan\", \"Desktop\", \"\" ]\n\n**Note:** this will split a string very literally—including breaking grapheme\nboundaries. If this causes problems for you, please open an issue.\n\n",
+                "type": "String.String -> String.String -> List.List String.String"
+            },
+            {
+                "name": "startsWith",
+                "comment": " See if the second string starts with the first one.\n\n    startsWith \"the\" \"theory\" --> True\n\n    startsWith \"ory\" \"theory\" --> False\n\n",
+                "type": "String.String -> String.String -> Basics.Bool"
+            },
+            {
+                "name": "toFloat",
+                "comment": " Try to convert a string into a float, failing on improperly formatted strings.\n",
+                "type": "String.String -> Maybe.Maybe Basics.Float"
+            },
+            {
+                "name": "toInt",
+                "comment": " Try to convert a string into an int, failing on improperly formatted strings.\n\n    String.toInt \"123\" --> Just 123\n\n    String.toInt \"-42\" --> Just -42\n\n    String.toInt \"3.1\" --> Nothing\n\n    String.toInt \"31a\" --> Nothing\n\nIf you are extracting a number from some raw user input, you will typically\nwant to use [`Maybe.withDefault`](Maybe#withDefault) to handle bad data:\n\n    Maybe.withDefault 0 (String.toInt \"42\") --> 42\n\n    Maybe.withDefault 0 (String.toInt \"ab\") --> 0\n\n",
+                "type": "String.String -> Maybe.Maybe Basics.Int"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert a string to a list of characters.\n\n    toList \"abc\" --> [ \"a\", \"b\", \"c\" ]\n\n    toList \"🙈🙉🙊\" --> [ \"🙈\", \"🙉\", \"🙊\" ]\n\n",
+                "type": "String.String -> List.List String.String"
+            },
+            {
+                "name": "toLower",
+                "comment": " Convert a string to all lower case. Useful for case-insensitive comparisons.\n\n    toLower \"X-FILES\" --> \"x-files\"\n\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "toUpper",
+                "comment": " Convert a string to all upper case. Useful for case-insensitive comparisons\nand VIRTUAL YELLING.\n\n    toUpper \"skinner\" --> \"SKINNER\"\n\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "trim",
+                "comment": " Get rid of whitespace on both sides of a string.\n\n    trim \"  hats  \\n\" --> \"hats\"\n\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "trimLeft",
+                "comment": " Get rid of whitespace on the left of a string.\n\n    trimLeft \"  hats  \\n\" --> \"hats  \\n\"\n\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "trimRight",
+                "comment": " Get rid of whitespace on the right of a string.\n\n    trimRight \"  hats  \\n\" --> \"  hats\"\n\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "uncons",
+                "comment": " Split a non-empty string into its head and tail. This lets you\npattern match on strings exactly as you would with lists.\n\n    uncons \"abc\" --> Just ( \"a\", \"bc\" )\n\n    uncons \"\" --> Nothing\n\n",
+                "type": "String.String -> Maybe.Maybe ( String.String, String.String )"
+            },
+            {
+                "name": "words",
+                "comment": " Break a string into words, splitting on chunks of whitespace.\n\n    words \"How are \\t you? \\n Good?\" --> [ \"How\", \"are\", \"you?\", \"Good?\" ]\n\n",
+                "type": "String.String -> List.List String.String"
+            }
+        ],
+        "binops": []
+    }
+]

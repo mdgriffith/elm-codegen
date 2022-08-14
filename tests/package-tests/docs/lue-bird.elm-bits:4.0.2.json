@@ -1,0 +1,76 @@
+[
+    {
+        "name": "Lue.Bit",
+        "comment": " To `import as Bit exposing (Bit(..))`\n\n@docs Bit\n\n\n## create\n\n@docs random\n\n\n## shape\n\n@docs toNat\n\n\n## extra\n\n@docs serialize\n\n&emsp;\n\n`Lue.` is just the github username to avoid overlaps in module names.\n\n",
+        "unions": [
+            {
+                "name": "Bit",
+                "comment": " One of 2 states.\n\n  - 1, on: `I`\n  - 0, off: `O`\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "I",
+                        []
+                    ],
+                    [
+                        "O",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "random",
+                "comment": " `Random.Generator` for either `I` or `O`.\n",
+                "type": "Random.Generator Lue.Bit.Bit"
+            },
+            {
+                "name": "serialize",
+                "comment": " A [`Codec`](https://package.elm-lang.org/packages/MartinSStewart/elm-serialize/latest/) to serialize 1 `Bit`.\n",
+                "type": "Serialize.Codec error_ Lue.Bit.Bit"
+            },
+            {
+                "name": "toNat",
+                "comment": " Convert `O` to zero, `I` to one. `Nat (In Nat0 (Nat1Plus a))` means that the result will be between 0 & 1.\n\n    toInt bit =\n        bit |> Bit.toNat |> val\n\n`val` is from [`Typed`](https://package.elm-lang.org/packages/lue-bird/elm-typed-value/latest/Typed).\n\n",
+                "type": "Lue.Bit.Bit -> Nat.Nat (Nat.In Nats.Nat0 (Nats.Nat1Plus a_))"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Lue.Bits",
+        "comment": " Working with an [`Arr`](https://package.elm-lang.org/packages/lue-bird/elm-typesafe-array/latest/) of `Bit`s. To `import as Bits`\n\n\n## create\n\n@docs random\n\n\n## transform\n\n@docs toNat, toBytes, padToByte\n\n\n## extra\n\n@docs serialize\n\n&emsp;\n\n`Lue.` is just the github username to avoid overlaps in module names.\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "padToByte",
+                "comment": " Fill `O`s to the begin of the `Arr` until it has 8 elements.\n\n    Arr.from3 I I I |> Bits.padToByte\n    --> Arr.from8 O O O O O I I I\n\n",
+                "type": "Arr.Arr (Nat.In min_ Nats.Nat8) Lue.Bit.Bit -> Arr.Arr (Nat.In Nats.Nat8 (Nats.Nat8Plus a_)) Lue.Bit.Bit"
+            },
+            {
+                "name": "random",
+                "comment": " A `Random.Generator` for an `Arr` of `Bit`s.\n\nTo use it effectively, you will need some [extra bits of randomness](https://package.elm-lang.org/packages/NoRedInk/elm-random-pcg-extended/latest/).\n\n",
+                "type": "Nat.Nat (Nat.ArgIn minAmount maxAmount ifN_) -> Random.Generator (Arr.Arr (Nat.In minAmount maxAmount) Lue.Bit.Bit)"
+            },
+            {
+                "name": "serialize",
+                "comment": " A [`Codec`](https://package.elm-lang.org/packages/MartinSStewart/elm-serialize/latest/) for an `Arr` of `Bit`s.\n\nTo get a `Codec` with a string error:\n\nimport Serialize exposing (Codec)\n\n    bit128 :\n        Codec\n            String\n            (Arr (In Nat128 (Nat128Plus a_)) Bit)\n    bit128 =\n        Bits.serialize nat128 Arr.errorToString\n\nUse the `serialize` functions in `InArr` and `MinArr` to serialize `Arr`s with a length in a range.\n\n",
+                "type": "Nat.Nat (Nat.ArgIn minLength maxLength ifN_) -> (InArr.Error -> error) -> Serialize.Codec error (Arr.Arr (Nat.In minLength maxLength) Lue.Bit.Bit)"
+            },
+            {
+                "name": "toBytes",
+                "comment": " Group an `Arr` of `Bit`s into `Arr`s of size 8.\n\n    Bits.toBytes (Arr.from1 O)\n    --> Arr.from1 (Arr.from8 O O O O O O O O)\n\n    Arr.from3 I I I\n        |> InArr.append nat8 (Arr.from8 O I I I O I O O)\n        |> InArr.append nat8 (Arr.from8 O I I I O I O O)\n        |> InArr.append nat8 (Arr.from8 O I I I O I O O)\n        |> Bits.toBytes\n    --> (Arr.from8 O O O O O I I I\n    -->     |> Arr.push (Arr.from8 O I I I O I O O)\n    -->     |> Arr.push (Arr.from8 O I I I O I O O)\n    -->     |> Arr.push (Arr.from8 O I I I O I O O)\n    --> )\n\n`O`s at the start are kept.\n\n",
+                "type": "Arr.Arr (Nat.In minLength_ maxLength_) Lue.Bit.Bit -> Arr.Arr (Nat.Min Nats.Nat0) (Arr.Arr (Nat.In Nats.Nat8 (Nats.Nat8Plus a_)) Lue.Bit.Bit)"
+            },
+            {
+                "name": "toNat",
+                "comment": " Convert an `Arr` of up to 53 `Bit`s to a `Nat`.\n\nBits from the [53](https://package.elm-lang.org/packages/elm-community/basics-extra/4.1.0/Basics-Extra#maxSafeInteger)th index become mathematically unsound so they are avoided.\n\n    Bits.toNat (Arr.from8 I O O O I O I O)\n    --> Nat 138\n\n",
+                "type": "Arr.Arr (Nat.In minLength_ Nats.Nat53) Lue.Bit.Bit -> Nat.Nat (Nat.Min Nats.Nat0)"
+            }
+        ],
+        "binops": []
+    }
+]

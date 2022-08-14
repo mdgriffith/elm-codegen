@@ -1,0 +1,97 @@
+[
+    {
+        "name": "Csv.Decode",
+        "comment": "\n\n\n## Basic usage\n\nUsing `periodic/elm-csv` (which returns a `Result (List String) Csv`):\n\n    Csv.parse rawData |> Csv.Decode.decode myDecoder\n\nUsing `lovasoa/elm-csv` (which returns a plain `Csv`):\n\n    Csv.parse rawData |> Csv.Decode.decodeCsv myDecoder\n\nYou can define decoders based on field position or on header name. See\nexamples below.\n\n\n# Types\n\n@docs Csv, Decoder\n\n\n# Running\n\n@docs decode, decodeCsv\n\n\n# Defining\n\n@docs next, field, assertNext, assertField, maybe\n\n\n# Combining\n\n@docs andMap, oneOf, map\n\n\n# Errors\n\n@docs Errors\n\n",
+        "unions": [
+            {
+                "name": "Decoder",
+                "comment": " A value that encapsulates how to decode CSV records (`List String`)\n",
+                "args": [
+                    "a",
+                    "b"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Errors",
+                "comment": " Errors can either be\n\n1.  Errors passed through from the underlying CSV parsing (`CsvErrors`), or\n2.  Errors in decoding a list of parsed records to models (`DecodeErrors`)\n\nNote that the latter reports the record index together with the error message.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "CsvErrors",
+                        [
+                            "List.List String.String"
+                        ]
+                    ],
+                    [
+                        "DecodeErrors",
+                        [
+                            "List.List ( Basics.Int, String.String )"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Csv",
+                "comment": " The raw CSV data structure.\n",
+                "args": [],
+                "type": "{ headers : List.List String.String, records : List.List (List.List String.String) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "andMap",
+                "comment": " Decode multiple fields.\n\n    decodeCsv\n        (assertField \"site\" \"blog\"\n            |> andMap (field \"id\" String.toInt)\n        )\n        data\n\n    -- { headers = [ \"site\", \"id\" ]\n    -- , records = [[\"blog\",\"35\"]]\n    -- }   ==>  Ok [35]\n\n\n",
+                "type": "Csv.Decode.Decoder b c -> Csv.Decode.Decoder a b -> Csv.Decode.Decoder a c"
+            },
+            {
+                "name": "assertField",
+                "comment": " Decode a named field if it matches the given string.\n\nThe same example above, but for header-based decoding:\n\n    type Mailing\n        = Letter Float\n        | Parcel Float Dimensions\n\n    decodeMailing : Decoder (Mailing -> a) a\n    decodeMailing =\n        oneOf\n            [ map Letter\n                  ( assertField \"type\" \"LETTER\"\n                      |> andMap (field \"weight\" String.toFloat)\n                  )\n            , map Parcel\n                  ( assertField \"type\" \"PARCEL\"\n                      |> andMap (field \"weight\" String.toFloat)\n                      |> andMap (field \"dimensions\"  parseDimensions)\n                  )\n            ]\n\n",
+                "type": "String.String -> String.String -> Csv.Decode.Decoder a a"
+            },
+            {
+                "name": "assertNext",
+                "comment": " Decode the next field if it matches the given string.\n\nThis can be useful to decode a union type based on a field of the CSV.\nFor example:\n\n    type Mailing\n        = Letter Float\n        | Parcel Float Dimensions\n\n    decodeMailing : Decoder (Mailing -> a) a\n    decodeMailing =\n        oneOf\n            [ map Letter\n                  ( assertNext \"LETTER\"\n                      |> andMap (next String.toFloat)\n                  )\n            , map Parcel\n                  ( assertNext \"PARCEL\"\n                      |> andMap (next String.toFloat)\n                      |> andMap (next parseDimensions)\n                  )\n            ]\n\n(Note: If you are familiar with the `url-parser` library, this is structurally\nsimilar to the `s` function.)\n\n",
+                "type": "String.String -> Csv.Decode.Decoder a a"
+            },
+            {
+                "name": "decode",
+                "comment": " Decode the raw result of CSV parsing.\n\nTypically you chain them together like this (using `periodic/elm-csv`):\n\n    Csv.parse rawData |> Csv.Decode.decode myDecoder\n\n",
+                "type": "Csv.Decode.Decoder (a -> a) a -> Result.Result (List.List String.String) Csv.Decode.Csv -> Result.Result Csv.Decode.Errors (List.List a)"
+            },
+            {
+                "name": "decodeCsv",
+                "comment": " Decode raw CSV data.\n\nThis is useful if you already have a `Csv` structure not\nwrapped in a `Result`, for instance `lovasoa/elm-csv` parses CSV strings this\nway.\n\n",
+                "type": "Csv.Decode.Decoder (a -> a) a -> Csv.Decode.Csv -> Result.Result Csv.Decode.Errors (List.List a)"
+            },
+            {
+                "name": "field",
+                "comment": " Decode the named field from the input: header-based decoding.\n\nUse this when you do not want to rely on the order of the fields, or when your\nsource fields map to more than one target field.\n\n    type alias Nutrition =\n       { name : String, calories : Int, protein : Float }\n\n    decodeNutrition : Decoder (Nutrition -> a) a\n    decodeNutrition =\n        map Nutrition\n            ( field \"name\" Ok\n                |> andMap (field \"calories\"  String.toInt)\n                |> andMap (field \"protein\" String.toFloat)\n            )\n\nNote that position- and header-based decoding can be combined, but it is not\ngenerally recommended.\n\n",
+                "type": "String.String -> (String.String -> Result.Result String.String a) -> Csv.Decode.Decoder (a -> b) b"
+            },
+            {
+                "name": "map",
+                "comment": " Transform a decoder.\n\nTypically used to feed a bunch of parsed state into a type constructor.\n\n    type alias Comment = { author : String, id : Int }\n\n    decodeRawComment : Decoder (String -> Int -> a) a\n    decodeRawComment =\n        field \"author\" Ok |> andMap (field \"id\" String.toInt)\n\n    decodeComment : Decoder (Comment -> a) a\n    decodeComment =\n        map Comment decodeRawComment\n\n\n",
+                "type": "a -> Csv.Decode.Decoder a b -> Csv.Decode.Decoder (b -> c) c"
+            },
+            {
+                "name": "maybe",
+                "comment": " A convenience function for converting empty strings to `Nothing`.\nUseful when you have optional fields.\n\n    type alias Letter =\n        { weight = Float\n        , insurance = Maybe CurrencyAmount\n        }\n\n    decodeLetter : Decoder (Letter -> a) a\n    decodeLetter =\n        map Letter\n            ( field \"weight\" String.toFloat\n                |> andMap (field \"insurance\"  (maybe parseCurrencyAmount))\n            )\n\n",
+                "type": "(String.String -> Result.Result String.String a) -> String.String -> Result.Result String.String (Maybe.Maybe a)"
+            },
+            {
+                "name": "next",
+                "comment": " Decode the next field from the input: positional decoding.\n\nUse this when you are certain of the order of the fields. It is faster than\nheader-based decoding.\n\n    type alias Coordinates =\n        { x : Float, y : Float, z : Float }\n\n    decodeCoordinates : Decoder (Coordinates -> a) a\n    decodeCoordinates =\n        map Coordinates\n            ( next String.toFloat\n                |> andMap (next String.toFloat)\n                |> andMap (next String.toFloat)\n            )\n\n",
+                "type": "(String.String -> Result.Result String.String a) -> Csv.Decode.Decoder (a -> b) b"
+            },
+            {
+                "name": "oneOf",
+                "comment": " Try a bunch of different decoders, using the first one that succeeds.\n\n    type IntOrFloat\n       = Int_ Int\n       | Float_ Float\n\n    decode : Decoder (IntOrFloat -> a) a\n    decode =\n        oneOf\n          [ map Int_ <| next String.toInt\n          , map Float_ <| next String.toFloat\n          ]\n\n",
+                "type": "List.List (Csv.Decode.Decoder a b) -> Csv.Decode.Decoder a b"
+            }
+        ],
+        "binops": []
+    }
+]

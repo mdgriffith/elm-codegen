@@ -1,0 +1,53 @@
+[
+    {
+        "name": "SparseVector",
+        "comment": " SparseVector is an n-dimension sparse vector.\n\nVery simple implementation with just the functions I needed at the time for Lunrelm.\n\nModel stored in Dict with index as key.\n\nDimension of vector is not held, so there is no way to check that dot or\ncosineSimilarity are both using the same dimension vector.\n\n@docs SparseVector\n@docs empty\n@docs isEmpty\n@docs insert\n@docs insertList\n\n@docs magnitude\n@docs dot\n@docs cosineSimilarity\n\nCopyright (c) 2015 Robin Luiten\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "SparseVector",
+                "comment": " SparseVector type alias\n",
+                "args": [],
+                "type": "Dict.Dict Basics.Int Basics.Float"
+            }
+        ],
+        "values": [
+            {
+                "name": "cosineSimilarity",
+                "comment": " Calculates the cosine similarity between vectors.\n",
+                "type": "SparseVector.SparseVector -> SparseVector.SparseVector -> Basics.Float"
+            },
+            {
+                "name": "dot",
+                "comment": " Calculates the dot product between vectors.\n",
+                "type": "SparseVector.SparseVector -> SparseVector.SparseVector -> Basics.Float"
+            },
+            {
+                "name": "empty",
+                "comment": " Empty SparseVector\n",
+                "type": "SparseVector.SparseVector"
+            },
+            {
+                "name": "insert",
+                "comment": " Insert value in vector.\n",
+                "type": "Basics.Int -> Basics.Float -> SparseVector.SparseVector -> SparseVector.SparseVector"
+            },
+            {
+                "name": "insertList",
+                "comment": " Insert list of values in vector.\n",
+                "type": "List.List ( Basics.Int, Basics.Float ) -> SparseVector.SparseVector -> SparseVector.SparseVector"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Return true if vector is empty\n",
+                "type": "SparseVector.SparseVector -> Basics.Bool"
+            },
+            {
+                "name": "magnitude",
+                "comment": " Calculates magnitude of vector.\n\nSqrt of Sum of Squares of each dimension value.\n\n",
+                "type": "SparseVector.SparseVector -> Basics.Float"
+            }
+        ],
+        "binops": []
+    }
+]

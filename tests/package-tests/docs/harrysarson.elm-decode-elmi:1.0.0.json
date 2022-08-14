@@ -1,0 +1,459 @@
+[
+    {
+        "name": "Ast.BinaryOperation",
+        "comment": "\n\n@docs Associativity, Precedence\n\n",
+        "unions": [
+            {
+                "name": "Associativity",
+                "comment": " Associativity of a binary operation.\n\nPrecedence makes sense of repeated use of operators without parentheses. For\nexample in `x * y * z`, `x * y` is evaluated first as `*` is left associative.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Left",
+                        []
+                    ],
+                    [
+                        "None",
+                        []
+                    ],
+                    [
+                        "Right",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Precedence",
+                "comment": " Precedence of a binary operation.\n\nPrecedence determines the order of operatiations. For example, in `5 * 7 -2`\nthe `*` operation has higher precedence and so `5 * 7` is evaluated first.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Precedence",
+                        [
+                            "Basics.Int"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "Ast.Canonical",
+        "comment": "\n\n@docs Alias, AliasType, Annotation, FieldType, Type, Union, UnionCtor\n\n",
+        "unions": [
+            {
+                "name": "Alias",
+                "comment": " A type alias.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Alias",
+                        [
+                            "List.List String.String",
+                            "Ast.Canonical.Type"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "AliasType",
+                "comment": " An type alias can either be holey or filled.\n\nI believe that holey type aliases are those with generic parameters.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Holey",
+                        [
+                            "Ast.Canonical.Type"
+                        ]
+                    ],
+                    [
+                        "Filled",
+                        [
+                            "Ast.Canonical.Type"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Annotation",
+                "comment": " An elm type annotation.\n\nThe set of strings are the free type variables that the annotation contains.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Annotation",
+                        [
+                            "Set.Set String.String",
+                            "Ast.Canonical.Type"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "FieldType",
+                "comment": " A field in an elm record with an index and a type.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "FieldType",
+                        [
+                            "Basics.Int",
+                            "Ast.Canonical.Type"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Type",
+                "comment": " A type definition or alias in elm.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "TLambda",
+                        [
+                            "Ast.Canonical.Type",
+                            "Ast.Canonical.Type"
+                        ]
+                    ],
+                    [
+                        "TVar",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "TType",
+                        [
+                            "ElmFile.Module.Name",
+                            "String.String",
+                            "List.List Ast.Canonical.Type"
+                        ]
+                    ],
+                    [
+                        "TRecord",
+                        [
+                            "Dict.Dict String.String Ast.Canonical.FieldType",
+                            "Maybe.Maybe String.String"
+                        ]
+                    ],
+                    [
+                        "TUnit",
+                        []
+                    ],
+                    [
+                        "TTuple",
+                        [
+                            "Ast.Canonical.Type",
+                            "Ast.Canonical.Type",
+                            "Maybe.Maybe Ast.Canonical.Type"
+                        ]
+                    ],
+                    [
+                        "TAlias",
+                        [
+                            "ElmFile.Module.Name",
+                            "String.String",
+                            "List.List ( String.String, Ast.Canonical.Type )",
+                            "Ast.Canonical.AliasType"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Union",
+                "comment": " An elm custom type.\n\nThis record stores the type variables in `vars` and the \"options that you would\nwrite a case statement for\" in `alts`.\n\nNote: the binary data also includes the number of alternatives and some\noptimation information - this is all currently discarded.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Union",
+                        [
+                            "{ vars : List.List String.String, alts : List.List Ast.Canonical.UnionCtor }"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "UnionCtor",
+                "comment": " A contructor for a custom type alternative.\n\nTODO: document the meaning of each arg.\n\nNote: some of these ints are redundant.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "UnionCtor",
+                        [
+                            "String.String",
+                            "Basics.Int",
+                            "Basics.Int",
+                            "List.List Ast.Canonical.Type"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "Bytes.Decode.Ast.BinaryOperation",
+        "comment": "\n\n@docs associativity, precedence\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "associativity",
+                "comment": " Decoder for the associativity of an elm binary op.\n",
+                "type": "Bytes.Decode.Decoder Ast.BinaryOperation.Associativity"
+            },
+            {
+                "name": "precedence",
+                "comment": " Decoder for the precedence of an elm binary op.\n",
+                "type": "(Basics.Int -> Basics.Int -> any) -> Bytes.Decode.Decoder Ast.BinaryOperation.Precedence"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Bytes.Decode.Ast.Canonical",
+        "comment": "\n\n@docs alias, aliasType, annotation, fieldtype, type_, union, unionCtor\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "alias",
+                "comment": " Decoder for an elm type alias.\n",
+                "type": "(Basics.Int -> Basics.Int -> any) -> Bytes.Decode.Decoder Ast.Canonical.Alias"
+            },
+            {
+                "name": "aliasType",
+                "comment": " Decoder whether an elm type alias is holey or not.\n",
+                "type": "(Basics.Int -> Basics.Int -> any) -> Bytes.Decode.Decoder Ast.Canonical.AliasType"
+            },
+            {
+                "name": "annotation",
+                "comment": " Decoder for an elm type annotation.\n",
+                "type": "(Basics.Int -> Basics.Int -> any) -> Bytes.Decode.Decoder Ast.Canonical.Annotation"
+            },
+            {
+                "name": "fieldtype",
+                "comment": " Decoder the index and type of a field in an elm record.\n",
+                "type": "(Basics.Int -> Basics.Int -> any) -> Bytes.Decode.Decoder Ast.Canonical.FieldType"
+            },
+            {
+                "name": "type_",
+                "comment": " Decoder an elm type.\n",
+                "type": "(Basics.Int -> Basics.Int -> any) -> Bytes.Decode.Decoder Ast.Canonical.Type"
+            },
+            {
+                "name": "union",
+                "comment": " Decoder for an elm custom type.\n",
+                "type": "(Basics.Int -> Basics.Int -> any) -> Bytes.Decode.Decoder Ast.Canonical.Union"
+            },
+            {
+                "name": "unionCtor",
+                "comment": " Decoder for the constructor of an elm custom type alternative.\n",
+                "type": "(Basics.Int -> Basics.Int -> any) -> Bytes.Decode.Decoder Ast.Canonical.UnionCtor"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Bytes.Decode.ElmFile.Interface",
+        "comment": "\n\n@docs alias, binaryOperation, interface, interfaces, union\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "alias",
+                "comment": " Decoder for a type alias.\n",
+                "type": "(Basics.Int -> Basics.Int -> any) -> Bytes.Decode.Decoder ElmFile.Interface.Alias"
+            },
+            {
+                "name": "binaryOperation",
+                "comment": " Decoder for a binary operation.\n",
+                "type": "(Basics.Int -> Basics.Int -> any) -> Bytes.Decode.Decoder ElmFile.Interface.BinaryOperation"
+            },
+            {
+                "name": "interface",
+                "comment": " Decoder for the Interface type.\n\nThis function will decode the binary of an `.elmi` file found in `elm-stuff`\ndirectories.\n\n",
+                "type": "(Basics.Int -> Basics.Int -> any) -> Bytes.Decode.Decoder ElmFile.Interface.Interface"
+            },
+            {
+                "name": "interfaces",
+                "comment": " Decoder for the Interfaces type.\n\nThis function will decode the binary of an `ifaces.dat` file found in the elm\nhome directrory.\n\n",
+                "type": "(Basics.Int -> Basics.Int -> any) -> Bytes.Decode.Decoder ElmFile.Interface.Interfaces"
+            },
+            {
+                "name": "union",
+                "comment": " Decoder for a custom type.\n",
+                "type": "(Basics.Int -> Basics.Int -> any) -> Bytes.Decode.Decoder ElmFile.Interface.Union"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Bytes.Decode.ElmFile.Module",
+        "comment": "\n\n@docs name\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "name",
+                "comment": " Decoder for the name of an elm module.\n",
+                "type": "(Basics.Int -> Basics.Int -> any) -> Bytes.Decode.Decoder ElmFile.Module.Name"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Bytes.Decode.ElmFile.Package",
+        "comment": "\n\n@docs name\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "name",
+                "comment": " Decoder for the name of an elm package.\n",
+                "type": "(Basics.Int -> Basics.Int -> any) -> Bytes.Decode.Decoder ElmFile.Package.Name"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ElmFile.Interface",
+        "comment": "\n\n@docs Alias, BinaryOperation, Interface, Interfaces, Union\n\n",
+        "unions": [
+            {
+                "name": "Alias",
+                "comment": " A type alias in an elm file.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "PublicAlias",
+                        [
+                            "Ast.Canonical.Alias"
+                        ]
+                    ],
+                    [
+                        "PrivateAlias",
+                        [
+                            "Ast.Canonical.Alias"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "BinaryOperation",
+                "comment": " A binary option in an elm file.\n\nNote: these will only show up in the interface exported by modules from\nthe blessed elm/\\* packages.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "BinaryOperation",
+                        [
+                            "{ name : String.String, annotation : Ast.Canonical.Annotation, associativity : Ast.BinaryOperation.Associativity, precedence : Ast.BinaryOperation.Precedence }"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Interface",
+                "comment": " The interface defined by a module.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Interface",
+                        [
+                            "{ types_ : Dict.Dict String.String Ast.Canonical.Annotation, unions : Dict.Dict String.String ElmFile.Interface.Union, aliases : Dict.Dict String.String ElmFile.Interface.Alias, binaryOperations : Dict.Dict String.String ElmFile.Interface.BinaryOperation }"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Interfaces",
+                "comment": " A list of interfaces defined by the modueles in a package.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Interfaces",
+                        [
+                            "List.List ( ElmFile.Module.Name, ElmFile.Interface.Interface )"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Union",
+                "comment": " A custom type in an elm file.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "OpenUnion",
+                        [
+                            "Ast.Canonical.Union"
+                        ]
+                    ],
+                    [
+                        "ClosedUnion",
+                        [
+                            "Ast.Canonical.Union"
+                        ]
+                    ],
+                    [
+                        "PrivateUnion",
+                        [
+                            "Ast.Canonical.Union"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "ElmFile.Module",
+        "comment": "\n\n@docs Name\n\n",
+        "unions": [
+            {
+                "name": "Name",
+                "comment": " The name of an elm module, including the package it is from.\n\nNote: I am not sure what this looks like for the name of a module from an\nelm application. I suspect that `package` and `application` can be used\ninterchangably here.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Name",
+                        [
+                            "{ package : ElmFile.Package.Name, module_ : String.String }"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "ElmFile.Package",
+        "comment": "\n\n@docs Name\n\n",
+        "unions": [
+            {
+                "name": "Name",
+                "comment": " The name of an elm package.\n\nNote: This might also be the name of an elm application - in which case what\nwould the author be?\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Name",
+                        [
+                            "{ author : String.String, project : String.String }"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [],
+        "binops": []
+    }
+]

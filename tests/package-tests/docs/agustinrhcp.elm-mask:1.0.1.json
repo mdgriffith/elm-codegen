@@ -1,0 +1,43 @@
+[
+    {
+        "name": "Mask",
+        "comment": " Simple libreary to mask strings and inputs.\n\n\n# Pattern\n\n@docs Pattern\n\n\n# Helpers\n\n@docs fromString\n\n\n# Masking / Unmasking strings\n\n@docs mask, unMask\n\n\n# Input helpers\n\n@docs maskedValue, onMaskedInput\n\n",
+        "unions": [
+            {
+                "name": "Pattern",
+                "comment": " Represent the pattern that will be applied to the\nstring to mask\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fromString",
+                "comment": " Creates a pattern from a String, using\n\n\n# to match digits and \\* for any character.\n\n    phonePattern : Pattern\n\n    phonePatter =\n        Mask.fromString \"(###)###-####\"\n\n",
+                "type": "String.String -> Mask.Pattern"
+            },
+            {
+                "name": "mask",
+                "comment": " Masks a string, useful for displaying formatted data.\n\n    maskPhone : String -> String\n    maskPhone phoneNumber =\n        Mask.mask phonePattern phoneNumber\n\n    maskPhone \"1231231234\" == \"(123)123-1234\"\n\n",
+                "type": "Mask.Pattern -> String.String -> String.String"
+            },
+            {
+                "name": "maskedValue",
+                "comment": " Similar to Html.Attributes.value, but applying the provided pattern\n\n    input [ maskedValue phonePattern model.phoneNumber ] []\n\n",
+                "type": "Mask.Pattern -> String.String -> Html.Attribute msg"
+            },
+            {
+                "name": "onMaskedInput",
+                "comment": " Similar to Html.Events.onInput, but unmasking a masked value.\nIt requires the previous value as the second argument\n\n    type Msg = SetPhone String\n\n    input\n        [ maskedValue phonePattern model.phoneNumber\n        , onMaskedValue phonePattern model.phoneNumber SetPhoneNumber\n        ]\n        []\n\n",
+                "type": "Mask.Pattern -> String.String -> (String.String -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "unMask",
+                "comment": " Unmasks a string.\n\n    unmaskPhone : String -> String\n    unmaskPhone phoneNumber =\n        Mask.unMask phonePattern phoneNumber\n\n    maskPhone \"(123)123-1234\" == \"1231231234\"\n\n",
+                "type": "Mask.Pattern -> String.String -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

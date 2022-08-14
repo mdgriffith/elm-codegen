@@ -1,0 +1,418 @@
+[
+    {
+        "name": "Widget.Bar",
+        "comment": "\n\n\n## Construct and render\n\n@docs make, toElement\n\n\n## Orientation\n\n@docs horizontal, vertical\n\n\n## Dimensions\n\n@docs withSize, withThickness\n\n\n## Color\n\n@docs withRGB, withRGBHex\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "horizontal",
+                "comment": " ",
+                "type": "Widget.Bar.Bar -> Widget.Bar.Bar"
+            },
+            {
+                "name": "make",
+                "comment": " ",
+                "type": "Basics.Float -> Widget.Bar.Bar"
+            },
+            {
+                "name": "toElement",
+                "comment": " ",
+                "type": "Widget.Bar.Bar -> Element.Element msg"
+            },
+            {
+                "name": "vertical",
+                "comment": " ",
+                "type": "Widget.Bar.Bar -> Widget.Bar.Bar"
+            },
+            {
+                "name": "withRGB",
+                "comment": " ",
+                "type": "Basics.Float -> Basics.Float -> Basics.Float -> Widget.Bar.Bar -> Widget.Bar.Bar"
+            },
+            {
+                "name": "withRGBHex",
+                "comment": " ",
+                "type": "String.String -> Widget.Bar.Bar -> Widget.Bar.Bar"
+            },
+            {
+                "name": "withSize",
+                "comment": " ",
+                "type": "Basics.Float -> Widget.Bar.Bar -> Widget.Bar.Bar"
+            },
+            {
+                "name": "withThickness",
+                "comment": " ",
+                "type": "Basics.Float -> Widget.Bar.Bar -> Widget.Bar.Bar"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Widget.Button",
+        "comment": "\n\n\n## Types\n\n@docs Alignment, Role, Size, ButtonStyle\n\n\n## Construct and render\n\n@docs make, toElement\n\n\n## Options\n\n@docs withAlignment, withBackgroundColor, withFontColor, withHeight, withRole, withSelected, withSelectedBackgroundColor, withSelectedFontColor, withStyle, withTitle, withWidth, withIcon\n\n",
+        "unions": [
+            {
+                "name": "Alignment",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Left",
+                        []
+                    ],
+                    [
+                        "Center",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "ButtonStyle",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Square",
+                        []
+                    ],
+                    [
+                        "Rounded",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Role",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Primary",
+                        []
+                    ],
+                    [
+                        "Outline",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Size",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Bounded",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "Unbounded",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "make",
+                "comment": " ",
+                "type": "msg -> String.String -> Widget.Button.Button msg"
+            },
+            {
+                "name": "toElement",
+                "comment": " ",
+                "type": "Widget.Button.Button msg -> Element.Element msg"
+            },
+            {
+                "name": "withAlignment",
+                "comment": " ",
+                "type": "Widget.Button.Alignment -> Widget.Button.Button msg -> Widget.Button.Button msg"
+            },
+            {
+                "name": "withBackgroundColor",
+                "comment": " ",
+                "type": "Element.Color -> Widget.Button.Button msg -> Widget.Button.Button msg"
+            },
+            {
+                "name": "withFontColor",
+                "comment": " ",
+                "type": "Element.Color -> Widget.Button.Button msg -> Widget.Button.Button msg"
+            },
+            {
+                "name": "withHeight",
+                "comment": " ",
+                "type": "Widget.Button.Size -> Widget.Button.Button msg -> Widget.Button.Button msg"
+            },
+            {
+                "name": "withIcon",
+                "comment": " ",
+                "type": "Svg.Svg msg -> Widget.Button.Button msg -> Widget.Button.Button msg"
+            },
+            {
+                "name": "withRole",
+                "comment": " ",
+                "type": "Widget.Button.Role -> Widget.Button.Button msg -> Widget.Button.Button msg"
+            },
+            {
+                "name": "withSelected",
+                "comment": " ",
+                "type": "Basics.Bool -> Widget.Button.Button msg -> Widget.Button.Button msg"
+            },
+            {
+                "name": "withSelectedBackgroundColor",
+                "comment": " ",
+                "type": "Element.Color -> Widget.Button.Button msg -> Widget.Button.Button msg"
+            },
+            {
+                "name": "withSelectedFontColor",
+                "comment": " ",
+                "type": "Element.Color -> Widget.Button.Button msg -> Widget.Button.Button msg"
+            },
+            {
+                "name": "withStyle",
+                "comment": " ",
+                "type": "Widget.Button.ButtonStyle -> Widget.Button.Button msg -> Widget.Button.Button msg"
+            },
+            {
+                "name": "withTitle",
+                "comment": " ",
+                "type": "String.String -> Widget.Button.Button msg -> Widget.Button.Button msg"
+            },
+            {
+                "name": "withWidth",
+                "comment": " ",
+                "type": "Widget.Button.Size -> Widget.Button.Button msg -> Widget.Button.Button msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Widget.Style",
+        "comment": " Example:\n\n        Element.layoutWith { options =\n          [ focusStyle Widget.Style.focus ] }\n\n@docs noFocus\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "noFocus",
+                "comment": " ",
+                "type": "Element.FocusStyle"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Widget.TextArea",
+        "comment": "\n\n\n## Types\n\n@docs Options, Role, Size, TextArea\n\n\n## Construct, render, set options\n\n@docs make, toElement, withHeight, withWidth\n\n",
+        "unions": [
+            {
+                "name": "Role",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Primary",
+                        []
+                    ],
+                    [
+                        "Secondary",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Size",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Bounded",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "Unbounded",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "TextArea",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "cases": [
+                    [
+                        "TextArea",
+                        [
+                            "Widget.TextArea.Options",
+                            "String.String -> msg",
+                            "String.String",
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Options",
+                "comment": " ",
+                "args": [],
+                "type": "{ role : Widget.TextArea.Role, selected : Basics.Bool, backgroundColor : Element.Color, fontColor : Element.Color, selectedBackgroundColor : Element.Color, selectedFontColor : Element.Color, width : Basics.Int, height : Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "make",
+                "comment": " ",
+                "type": "(String.String -> msg) -> String.String -> String.String -> Widget.TextArea.TextArea msg"
+            },
+            {
+                "name": "toElement",
+                "comment": " ",
+                "type": "Widget.TextArea.TextArea msg -> Element.Element msg"
+            },
+            {
+                "name": "withHeight",
+                "comment": " ",
+                "type": "Basics.Int -> Widget.TextArea.TextArea msg -> Widget.TextArea.TextArea msg"
+            },
+            {
+                "name": "withWidth",
+                "comment": " ",
+                "type": "Basics.Int -> Widget.TextArea.TextArea msg -> Widget.TextArea.TextArea msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Widget.TextField",
+        "comment": "\n\n\n## Types\n\n@docs Role, Size, LabelPosition\n\n\n## Construct, render\n\n@docs make, toElement\n\n\n## Options\n\n@docs withId, withHeight, withLabelWidth, withWidth, withLabelPosition, withFontColor, withBackgroundColor, withRole, withTitle\n\n",
+        "unions": [
+            {
+                "name": "LabelPosition",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "LabelLeft",
+                        []
+                    ],
+                    [
+                        "LabelAbove",
+                        []
+                    ],
+                    [
+                        "LabelRight",
+                        []
+                    ],
+                    [
+                        "NoLabel",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Role",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Primary",
+                        []
+                    ],
+                    [
+                        "Secondary",
+                        []
+                    ],
+                    [
+                        "Password",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Size",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Bounded",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "Unbounded",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "make",
+                "comment": " ",
+                "type": "(String.String -> msg) -> String.String -> String.String -> Widget.TextField.TextField msg"
+            },
+            {
+                "name": "toElement",
+                "comment": " ",
+                "type": "Widget.TextField.TextField msg -> Element.Element msg"
+            },
+            {
+                "name": "withBackgroundColor",
+                "comment": " ",
+                "type": "Element.Color -> Widget.TextField.TextField msg -> Widget.TextField.TextField msg"
+            },
+            {
+                "name": "withFontColor",
+                "comment": " ",
+                "type": "Element.Color -> Widget.TextField.TextField msg -> Widget.TextField.TextField msg"
+            },
+            {
+                "name": "withHeight",
+                "comment": " ",
+                "type": "Basics.Int -> Widget.TextField.TextField msg -> Widget.TextField.TextField msg"
+            },
+            {
+                "name": "withId",
+                "comment": " ",
+                "type": "String.String -> Widget.TextField.TextField msg -> Widget.TextField.TextField msg"
+            },
+            {
+                "name": "withLabelPosition",
+                "comment": " ",
+                "type": "Widget.TextField.LabelPosition -> Widget.TextField.TextField msg -> Widget.TextField.TextField msg"
+            },
+            {
+                "name": "withLabelWidth",
+                "comment": " ",
+                "type": "Basics.Int -> Widget.TextField.TextField msg -> Widget.TextField.TextField msg"
+            },
+            {
+                "name": "withRole",
+                "comment": " ",
+                "type": "Widget.TextField.Role -> Widget.TextField.TextField msg -> Widget.TextField.TextField msg"
+            },
+            {
+                "name": "withTitle",
+                "comment": " ",
+                "type": "String.String -> Widget.TextField.TextField msg -> Widget.TextField.TextField msg"
+            },
+            {
+                "name": "withWidth",
+                "comment": " ",
+                "type": "Basics.Int -> Widget.TextField.TextField msg -> Widget.TextField.TextField msg"
+            }
+        ],
+        "binops": []
+    }
+]

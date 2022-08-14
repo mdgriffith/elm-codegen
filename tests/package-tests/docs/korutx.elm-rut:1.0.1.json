@@ -1,0 +1,46 @@
+[
+    {
+        "name": "Rut",
+        "comment": " Formatear, calcular el dígito verificador y probar la validez de un rut\n\n# Types\n@docs Formatter\n\n# Api\n@docs format, computeDv, isValidRut\n",
+        "unions": [
+            {
+                "name": "Formatter",
+                "comment": " Types for the formatter\n    format Cleared \"11.111.111-1\" == \"111111111\"\n    format Simple \"11.111.111-1\" == \"11111111-1\"\n    format ThousandsSeparated \"11111111-1\" == \"11.111.111-1\" \n",
+                "args": [],
+                "cases": [
+                    [
+                        "ThousandsSeparated",
+                        []
+                    ],
+                    [
+                        "Simple",
+                        []
+                    ],
+                    [
+                        "Cleared",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "computeDv",
+                "comment": " Compute the virifier digit for a rut, it must be a cleared rut without verifier digit\n    computeDv \"11111111\"\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "format",
+                "comment": " format rut to a one of Cleared, Simple or ThousandsSeparated\n    format Cleared \"11.111.111-1\" == \"111111111\"\n    format Simple \"11.111.111-1\" == \"11111111-1\"\n    format ThousandsSeparated \"11111111-1\" == \"11.111.111-1\" \n",
+                "type": "Rut.Formatter -> String.String -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "isValidRut",
+                "comment": " Test if a rut string is valid\n    isValidRut 2 \"11.111.111-1\"\n",
+                "type": "Basics.Int -> String.String -> Basics.Bool"
+            }
+        ],
+        "binops": []
+    }
+]

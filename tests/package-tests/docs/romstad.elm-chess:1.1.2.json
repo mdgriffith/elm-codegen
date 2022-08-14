@@ -1,0 +1,1111 @@
+[
+    {
+        "name": "Game",
+        "comment": " The `Game` type and related functions.\n\nAt the moment, a game is little more than a sequence of moves, and a current\nposition. There is no support for annotation in the form of comments or\nvariations. Support for tree-like games with recursive variations and\ncomments are planned for a future version of this library.\n\n\n# Types\n\n@docs Game\n\n\n# Constants\n\n@docs empty\n\n\n# Converting Games to and from PGN\n\n@docs fromPgn, toPgn\n\n\n# Getting the Current Position\n\n@docs position\n\n\n# Getting Game Moves\n\n@docs moves, previousMove, nextMove\n\n\n# Navigating in the Game.\n\n@docs goToMove, forward, back, toBeginning, toEnd, isAtBeginning, isAtEnd\n\n\n# Adding New Moves\n\n@docs addMove\n\n",
+        "unions": [
+            {
+                "name": "Game",
+                "comment": " Type representing a chess game.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "addMove",
+                "comment": " Add a move to the game at the current move index. Any previous game\ncontinuation will be overwritten.\n",
+                "type": "Move.Move -> Game.Game -> Game.Game"
+            },
+            {
+                "name": "back",
+                "comment": " Step one move backward, unless we are already at the beginning of the game.\nIf we are already at the beginning, do nothing.\n",
+                "type": "Game.Game -> Game.Game"
+            },
+            {
+                "name": "empty",
+                "comment": " A new game starting from the standard opening position.\n",
+                "type": "Game.Game"
+            },
+            {
+                "name": "forward",
+                "comment": " Step one move forward, unless we are already at the end of the game.\nIf we are already at the end, do nothing.\n",
+                "type": "Game.Game -> Game.Game"
+            },
+            {
+                "name": "fromPgn",
+                "comment": " Tries to create a `Game` from a PGN string. Returns `Nothing` if PGN\nparsing fails, or if there are illegal or ambiguous moves.\n",
+                "type": "String.String -> Maybe.Maybe Game.Game"
+            },
+            {
+                "name": "goToMove",
+                "comment": " Jump to the given game ply number. If the ply is less than 0, goes to the\nbeginning of the game. If the ply is bigger than the length of the game, goes\nto the end of the game.\n",
+                "type": "Basics.Int -> Game.Game -> Game.Game"
+            },
+            {
+                "name": "isAtBeginning",
+                "comment": " Are we at the beginning of the game?\n",
+                "type": "Game.Game -> Basics.Bool"
+            },
+            {
+                "name": "isAtEnd",
+                "comment": " Are we at the beginning of the game?\n",
+                "type": "Game.Game -> Basics.Bool"
+            },
+            {
+                "name": "moves",
+                "comment": " List of all moves in the game.\n",
+                "type": "Game.Game -> List.List Move.Move"
+            },
+            {
+                "name": "nextMove",
+                "comment": " The next move in the game from the current position. Returns `Nothing` if\nwe're at the end of the game.\n",
+                "type": "Game.Game -> Maybe.Maybe Move.Move"
+            },
+            {
+                "name": "position",
+                "comment": " The current position in the game.\n",
+                "type": "Game.Game -> Position.Position"
+            },
+            {
+                "name": "previousMove",
+                "comment": " The previous move in the game, i.e. the move that resulted in the\ncurrent game position. Returns `Nothing` if we're at the beginning of the\ngame.\n",
+                "type": "Game.Game -> Maybe.Maybe Move.Move"
+            },
+            {
+                "name": "toBeginning",
+                "comment": " Go to the beginning of the game.\n",
+                "type": "Game.Game -> Game.Game"
+            },
+            {
+                "name": "toEnd",
+                "comment": " Go to the end of the game.\n",
+                "type": "Game.Game -> Game.Game"
+            },
+            {
+                "name": "toPgn",
+                "comment": " Converts a game to a string in PGN format.\n",
+                "type": "Game.Game -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Move",
+        "comment": " The `Move` and `Variation` data types, and miscellaneus functions\noperating on moves.\n\n\n# Types\n\n@docs Move, Variation\n\n\n# Extracting Properties of Moves\n\n@docs from, to, promotion, isPromotion, isCastle, isKingsideCastle, isQueensideCastle, isEp\n\n\n# Converting Moves to UCI Notation\n\n@docs toUci\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Move",
+                "comment": " Type representing a chess move. The move contains information about the\nfrom and to square, and whether the move is a castle, an en passant capture,\nor a pawn promotion.\n",
+                "args": [],
+                "type": "Internal.Move.Move"
+            },
+            {
+                "name": "Variation",
+                "comment": " Type representing a variation, i.e. a sequence of moves.\n",
+                "args": [],
+                "type": "List.List Move.Move"
+            }
+        ],
+        "values": [
+            {
+                "name": "from",
+                "comment": " The source square of a move.\n",
+                "type": "Move.Move -> Square.Square"
+            },
+            {
+                "name": "isCastle",
+                "comment": " Whether the move is a castling move.\n",
+                "type": "Move.Move -> Basics.Bool"
+            },
+            {
+                "name": "isEp",
+                "comment": " Whether the move is an en passant capture.\n",
+                "type": "Move.Move -> Basics.Bool"
+            },
+            {
+                "name": "isKingsideCastle",
+                "comment": " Whether the move is a kingside castling move.\n",
+                "type": "Move.Move -> Basics.Bool"
+            },
+            {
+                "name": "isPromotion",
+                "comment": " Whether the move is a pawn promotion\n",
+                "type": "Move.Move -> Basics.Bool"
+            },
+            {
+                "name": "isQueensideCastle",
+                "comment": " Whether the move is a queenside castling move.\n",
+                "type": "Move.Move -> Basics.Bool"
+            },
+            {
+                "name": "promotion",
+                "comment": " The piece type to which the move promotes, or `Nothing` if the move is not\na promotion move.\n",
+                "type": "Move.Move -> Maybe.Maybe PieceType.PieceType"
+            },
+            {
+                "name": "to",
+                "comment": " The destination square of a move.\n",
+                "type": "Move.Move -> Square.Square"
+            },
+            {
+                "name": "toUci",
+                "comment": " Translate a move to UCI notation. Translating _from_ UCI cannot be done by\ninspecting the move a lone, since it also requires a board.\n",
+                "type": "Move.Move -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Notation",
+        "comment": " Functions for converting moves and variations to and from textual\nrepresentations.\n\n\n# Functions\n\n@docs fromSan, toSan, variationToSan, fromUci, toUci\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fromSan",
+                "comment": " Tries to convert a move string in short algebraic notation to a move.\nReturns `Nothing` on failure.\n",
+                "type": "String.String -> Position.Position -> Maybe.Maybe Move.Move"
+            },
+            {
+                "name": "fromUci",
+                "comment": " Tries to convert a move string in Universal Chess Interface notation to a\nmove. Returns Nothing on failure.\n",
+                "type": "String.String -> Position.Position -> Maybe.Maybe Move.Move"
+            },
+            {
+                "name": "toSan",
+                "comment": " Converts a move to a string in short algebraic notation .\n",
+                "type": "Move.Move -> Position.Position -> String.String"
+            },
+            {
+                "name": "toUci",
+                "comment": " Convert a move to a string in Universal Chess Interface notation.\n",
+                "type": "Move.Move -> String.String"
+            },
+            {
+                "name": "variationToSan",
+                "comment": " Exports a variation to a string with move numbers and moves in short\nalgebraic notation.\n",
+                "type": "Move.Variation -> Position.Position -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Piece",
+        "comment": "\n\n\n# Types\n\n@docs Piece\n\n\n# Creating and Manipulating Pieces\n\n@docs make, color, kind\n\n\n# Useful Constants\n\n@docs all, whitePawn, whiteKnight, whiteBishop, whiteRook, whiteQueen, whiteKing, blackPawn, blackKnight, blackBishop, blackRook, blackQueen, blackKing\n\n\n# Converting Pieces to/from Chars and Strings\n\n@docs fromChar, fromString, toChar, toString\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Piece",
+                "comment": " Type representing a chess piece, with a color (white or black) and a type\n(pawn, bishop, knight, etc.).\n",
+                "args": [],
+                "type": "Internal.Piece.Piece"
+            }
+        ],
+        "values": [
+            {
+                "name": "all",
+                "comment": " List of all pieces\n",
+                "type": "List.List Piece.Piece"
+            },
+            {
+                "name": "blackBishop",
+                "comment": " A black bishop.\n",
+                "type": "Piece.Piece"
+            },
+            {
+                "name": "blackKing",
+                "comment": " A black king.\n",
+                "type": "Piece.Piece"
+            },
+            {
+                "name": "blackKnight",
+                "comment": " A black knight.\n",
+                "type": "Piece.Piece"
+            },
+            {
+                "name": "blackPawn",
+                "comment": " A black pawn.\n",
+                "type": "Piece.Piece"
+            },
+            {
+                "name": "blackQueen",
+                "comment": " A black queen.\n",
+                "type": "Piece.Piece"
+            },
+            {
+                "name": "blackRook",
+                "comment": " A black rook.\n",
+                "type": "Piece.Piece"
+            },
+            {
+                "name": "color",
+                "comment": " Get the color of a piece.\n\n    color whiteBishop == PieceColor.white\n\n    color blackQueen == PieceColor.black\n\n",
+                "type": "Piece.Piece -> PieceColor.PieceColor"
+            },
+            {
+                "name": "fromChar",
+                "comment": " Tries to convert a character to a piece, using Forsyth-Edwards notation.\nUppercase letters become white pieces, lowercase letters become black pieces.\nIf the character is not a valid piece letter, returns `Nothing`.\n\n    fromChar 'R' == Just whiteRook\n\n    fromChar 'q' == Just blackQueen\n\n    fromChar 'x' == Nothing\n\n",
+                "type": "Char.Char -> Maybe.Maybe Piece.Piece"
+            },
+            {
+                "name": "fromString",
+                "comment": " Tries to convert a string to a piece by inspecting the first character and\nusing Forsyth-Edwards notation. Uppercase letters become white pieces, lowercase\nletters become black pieces. If the character is not a valid piece letter, or\nif the string is empty, returns `Nothing`.\n\n    fromString \"R\" == Just whiteRook\n\n    fromString \"Kbb\" == Just whiteKing\n\n    fromString \"q\" == Just blackQueen\n\n    fromString \"x\" == Nothing\n\n",
+                "type": "String.String -> Maybe.Maybe Piece.Piece"
+            },
+            {
+                "name": "kind",
+                "comment": " Get the type of a piece. Unfortunately, the name `type` is taken, so we\nhave to use an awkward name.\n\n    kind whiteBishop == PieceType.bishop\n\n    kind blackQueen == PieceType.queen\n\n",
+                "type": "Piece.Piece -> PieceType.PieceType"
+            },
+            {
+                "name": "make",
+                "comment": " Create a piece with the given color and type.\n\n    make PieceColor.white PieceType.queen == whiteQueen\n\n    make PieceColor.black PieceType.knight == blackKnight\n\n",
+                "type": "PieceColor.PieceColor -> PieceType.PieceType -> Piece.Piece"
+            },
+            {
+                "name": "toChar",
+                "comment": " Converts a piece to its corresponding character in Forsyth-Edwards notation.\nWhite pieces become uppercase letters, black pieces become lowercase letters.\n\n    toChar whiteRook == 'R'\n\n    toChar blackQueen == 'q'\n\n",
+                "type": "Piece.Piece -> Char.Char"
+            },
+            {
+                "name": "toString",
+                "comment": " Converts a piece to a single-character string containing the pices's\ncorresponding character in Forsyth-Edwards notation. White pieces become\nuppercase letters, black pieces become lowercase letters.\n\n    toString whiteRook == \"R\"\n\n    toString blackQueen == \"q\"\n\n",
+                "type": "Piece.Piece -> String.String"
+            },
+            {
+                "name": "whiteBishop",
+                "comment": " A white bishop.\n",
+                "type": "Piece.Piece"
+            },
+            {
+                "name": "whiteKing",
+                "comment": " A white king.\n",
+                "type": "Piece.Piece"
+            },
+            {
+                "name": "whiteKnight",
+                "comment": " A white knight.\n",
+                "type": "Piece.Piece"
+            },
+            {
+                "name": "whitePawn",
+                "comment": " A white pawn.\n",
+                "type": "Piece.Piece"
+            },
+            {
+                "name": "whiteQueen",
+                "comment": " A white queen.\n",
+                "type": "Piece.Piece"
+            },
+            {
+                "name": "whiteRook",
+                "comment": " A white rook.\n",
+                "type": "Piece.Piece"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "PieceColor",
+        "comment": " This module defines the PieceColor type and related functions.\n\n\n# Types\n\n@docs PieceColor\n\n\n# Useful Constants\n\n@docs white, black, all\n\n\n# Inverting a Color\n\n@docs opposite\n\n\n# Converting to Strings and Characters\n\n@docs fromChar, fromString, toChar, toString\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "PieceColor",
+                "comment": " Type representing the color of a chess piece, or one of the two players.\n",
+                "args": [],
+                "type": "Internal.PieceColor.PieceColor"
+            }
+        ],
+        "values": [
+            {
+                "name": "all",
+                "comment": " List of all piece colors.\n\n    all == [ white, black ]\n\n",
+                "type": "List.List PieceColor.PieceColor"
+            },
+            {
+                "name": "black",
+                "comment": " The color of a black piece.\n",
+                "type": "PieceColor.PieceColor"
+            },
+            {
+                "name": "fromChar",
+                "comment": " Tries to convert a character to a `PieceColor`, using Forsyth-Edwards\nencoding.\nfromChar 'w' == Just white\nfromChar 'b' == Just black\nfromChar ch == Nothing -- for all ch not equal to 'w' or 'b'\n",
+                "type": "Char.Char -> Maybe.Maybe PieceColor.PieceColor"
+            },
+            {
+                "name": "fromString",
+                "comment": " Tries to convert a string to a `PieceColor`, using Forsyth-Edwards\nencoding.\nfromString \"w\" == Just white\nfromString \"b\" == Just black\nfromString str == Nothing -- for all str not starting with \"w\" or \"b\"\n",
+                "type": "String.String -> Maybe.Maybe PieceColor.PieceColor"
+            },
+            {
+                "name": "opposite",
+                "comment": " The opposite of a color.\n\n    opposite white == black\n\n    opposite black == white\n\n",
+                "type": "PieceColor.PieceColor -> PieceColor.PieceColor"
+            },
+            {
+                "name": "toChar",
+                "comment": " Convert a `PieceColor` to a `Char` of the form used when representing a\nboard in Forsyth-Edwards notation.\n\n    toChar white == 'w'\n\n    toChar black == 'b'\n\n",
+                "type": "PieceColor.PieceColor -> Char.Char"
+            },
+            {
+                "name": "toString",
+                "comment": " Convert a `PieceColor` to a single-character `String` containing a\n`Char` of the form used when representing a board in Forsyth-Edwards notation.\n\n    toChar white == \"w\"\n\n    toChar black == \"b\"\n\n",
+                "type": "PieceColor.PieceColor -> String.String"
+            },
+            {
+                "name": "white",
+                "comment": " The color of a white piece.\n",
+                "type": "PieceColor.PieceColor"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "PieceType",
+        "comment": " This module defines the `PieceType` type and related functions. A\n`PieceType` value is basically an uncolored chess piece.\n\n\n# Types\n\n@docs PieceType\n\n\n# Useful Constants\n\n@docs pawn, knight, bishop, rook, queen, king, all, promotionPieces\n\n\n# Conversion to and from Strings and Chars\n\n@docs fromChar, fromString, toChar, toString\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "PieceType",
+                "comment": " A type representing the type of a chess piece, i.e. pawn, knight, bishop,\netc. It's essentially a chess piece without information about its color.\n",
+                "args": [],
+                "type": "Internal.PieceType.PieceType"
+            }
+        ],
+        "values": [
+            {
+                "name": "all",
+                "comment": " List of all piece types.\n\n    all =\n        [ pawn, knight, bishop, rook, queen, king ]\n\n",
+                "type": "List.List PieceType.PieceType"
+            },
+            {
+                "name": "bishop",
+                "comment": " Value representing a bishop.\n",
+                "type": "PieceType.PieceType"
+            },
+            {
+                "name": "fromChar",
+                "comment": " Tries to convert a character to a `PieceType`. Accepts both uppercase\nand lowercase letters; returns `Nothing` if the character is not one of the\npiece letters used in English algebraic notation.\n\n    fromChar 'P' == Just pawn\n\n    fromChar 'r' == Just rook\n\n    fromChar 'x' == Nothing\n\n",
+                "type": "Char.Char -> Maybe.Maybe PieceType.PieceType"
+            },
+            {
+                "name": "fromString",
+                "comment": " Tries to convert a string to a `PieceType`, based on the first character\nin the string. Accepts both uppercase and lowercase letters; returns\n`Nothing` if the character is not one of the piece letters used in English\nalgebraic notation.\n\n    fromString \"k\" == Just king\n\n    fromString \"Qa4+\" == Just queen\n\n    fromString \"x\" == Nothing\n\n",
+                "type": "String.String -> Maybe.Maybe PieceType.PieceType"
+            },
+            {
+                "name": "king",
+                "comment": " Value representing a king.\n",
+                "type": "PieceType.PieceType"
+            },
+            {
+                "name": "knight",
+                "comment": " Value representing a knight.\n",
+                "type": "PieceType.PieceType"
+            },
+            {
+                "name": "pawn",
+                "comment": " Value representing a pawn.\n",
+                "type": "PieceType.PieceType"
+            },
+            {
+                "name": "promotionPieces",
+                "comment": " List of all piece types to which a pawn can promote.\n\n    promotionPieces =\n        [ queen, rook, bishop, knight ]\n\n",
+                "type": "List.List PieceType.PieceType"
+            },
+            {
+                "name": "queen",
+                "comment": " Value representing a queen.\n",
+                "type": "PieceType.PieceType"
+            },
+            {
+                "name": "rook",
+                "comment": " Value representing a rook.\n",
+                "type": "PieceType.PieceType"
+            },
+            {
+                "name": "toChar",
+                "comment": " Converts a `PieceType` to the corresponding character used in English\nalgebraic notation.\n\n    toChar pawn == 'P'\n\n    toChar knight == 'N'\n\n    toChar bishop == 'B'\n\n    toChar rook == 'R'\n\n    toChar queen == 'Q'\n\n    toChar king == 'K'\n\n",
+                "type": "PieceType.PieceType -> Char.Char"
+            },
+            {
+                "name": "toString",
+                "comment": " Converts a `PieceType` to the a single-character string containing the\ncorresponding piece letter used in English algebraic notation.\n\n    toString pawn == \"P\"\n\n    toString knight == \"N\"\n\n    toString bishop == \"B\"\n\n    toString rook == \"R\"\n\n    toString queen == \"Q\"\n\n    toString king == \"K\"\n\n",
+                "type": "PieceType.PieceType -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Position",
+        "comment": " This module defines the `Position` data type, which is used to model\nchess positions.\n\n\n# Types\n\n@docs Position\n\n\n# Useful Constants\n\n@docs initial\n\n\n# Properties of Positions\n\n@docs sideToMove, pieceOn, colorOn, isEmpty, epSquare, moveNumber, sideAttacksSquare, isCheck, isCheckmate\n\n\n# Generating and Making Moves\n\n@docs moves, movesFrom, doMove\n\n\n# Converting to and from UCI/FEN Strings\n\n@docs fromFen, toFen, toUci\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Position",
+                "comment": " Type representing a chess position.\n",
+                "args": [],
+                "type": "Internal.Position.Position"
+            }
+        ],
+        "values": [
+            {
+                "name": "colorOn",
+                "comment": " The color of the piece on the given square, or `Nothing` if the square is\nempty.\n",
+                "type": "Square.Square -> Position.Position -> Maybe.Maybe PieceColor.PieceColor"
+            },
+            {
+                "name": "doMove",
+                "comment": " Do a move on the board, returning the resulting position.\n",
+                "type": "Move.Move -> Position.Position -> Position.Position"
+            },
+            {
+                "name": "epSquare",
+                "comment": " The en passant square, or `Nothing` if no en passant capture is possible.\n",
+                "type": "Position.Position -> Maybe.Maybe Square.Square"
+            },
+            {
+                "name": "fromFen",
+                "comment": " Tries to initialize a position from a FEN string. Returns `Nothing` on\nfailure.\n",
+                "type": "String.String -> Maybe.Maybe Position.Position"
+            },
+            {
+                "name": "initial",
+                "comment": " The standard starting position.\n",
+                "type": "Position.Position"
+            },
+            {
+                "name": "isCheck",
+                "comment": " Tests whether the side to move is in check.\n",
+                "type": "Position.Position -> Basics.Bool"
+            },
+            {
+                "name": "isCheckmate",
+                "comment": " Tests whether the side to move is checkmated.\n",
+                "type": "Position.Position -> Basics.Bool"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Tests whether the given square on the board is empty.\n",
+                "type": "Square.Square -> Position.Position -> Basics.Bool"
+            },
+            {
+                "name": "moveNumber",
+                "comment": " Current move number in the game.\n",
+                "type": "Position.Position -> Basics.Int"
+            },
+            {
+                "name": "moves",
+                "comment": " A list of all legal moves.\n",
+                "type": "Position.Position -> List.List Move.Move"
+            },
+            {
+                "name": "movesFrom",
+                "comment": " A list of all legal moves from the given square.\n",
+                "type": "Square.Square -> Position.Position -> List.List Move.Move"
+            },
+            {
+                "name": "pieceOn",
+                "comment": " The piece on the given square, or `Nothing` if the square is empty.\n",
+                "type": "Square.Square -> Position.Position -> Maybe.Maybe Piece.Piece"
+            },
+            {
+                "name": "sideAttacksSquare",
+                "comment": " Tests whether the given side attacks the given square.\n",
+                "type": "PieceColor.PieceColor -> Square.Square -> Position.Position -> Basics.Bool"
+            },
+            {
+                "name": "sideToMove",
+                "comment": " The current side to move.\n",
+                "type": "Position.Position -> PieceColor.PieceColor"
+            },
+            {
+                "name": "toFen",
+                "comment": " Converts a position to a `String` in FEN notation.\n",
+                "type": "Position.Position -> String.String"
+            },
+            {
+                "name": "toUci",
+                "comment": " Converts a position to UCI notation, for sending it to a chess engine with\na `position fen <fen> moves ...` command.\n",
+                "type": "Position.Position -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Square",
+        "comment": " The `Square` data type and related functions and definitions.\n\n\n# Types\n\n@docs Square\n\n\n# Manipulating Squares\n\n@docs make, file, rank\n\n\n# Converting to and from Strings and Ints\n\n@docs fromString, toString, fromInt, toInt\n\n\n# Distances between Squares\n\n@docs fileDistance, rankDistance, distance\n\n\n# Useful Constants\n\n@docs all, a1, b1, c1, d1, e1, f1, g1, h1, a2, b2, c2, d2, e2, f2, g2, h2, a3, b3, c3, d3, e3, f3, g3, h3, a4, b4, c4, d4, e4, f4, g4, h4, a5, b5, c5, d5, e5, f5, g5, h5, a6, b6, c6, d6, e6, f6, g6, h6, a7, b7, c7, d7, e7, f7, g7, h7, a8, b8, c8, d8, e8, f8, g8, h8\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Square",
+                "comment": " Type representing one of the 64 squares of the board.\n",
+                "args": [],
+                "type": "Internal.Square.Square"
+            }
+        ],
+        "values": [
+            {
+                "name": "a1",
+                "comment": " The a1 square.\n",
+                "type": "Square.Square"
+            },
+            {
+                "name": "a2",
+                "comment": " The a2 square.\n",
+                "type": "Square.Square"
+            },
+            {
+                "name": "a3",
+                "comment": " The a3 square.\n",
+                "type": "Square.Square"
+            },
+            {
+                "name": "a4",
+                "comment": " The a4 square.\n",
+                "type": "Square.Square"
+            },
+            {
+                "name": "a5",
+                "comment": " The a5 square.\n",
+                "type": "Square.Square"
+            },
+            {
+                "name": "a6",
+                "comment": " The a6 square.\n",
+                "type": "Square.Square"
+            },
+            {
+                "name": "a7",
+                "comment": " The a7 square.\n",
+                "type": "Square.Square"
+            },
+            {
+                "name": "a8",
+                "comment": " The a8 square.\n",
+                "type": "Square.Square"
+            },
+            {
+                "name": "all",
+                "comment": " A list of all squares on the board.\n",
+                "type": "List.List Square.Square"
+            },
+            {
+                "name": "b1",
+                "comment": " The b1 square.\n",
+                "type": "Square.Square"
+            },
+            {
+                "name": "b2",
+                "comment": " The b2 square.\n",
+                "type": "Square.Square"
+            },
+            {
+                "name": "b3",
+                "comment": " The b3 square.\n",
+                "type": "Square.Square"
+            },
+            {
+                "name": "b4",
+                "comment": " The b4 square.\n",
+                "type": "Square.Square"
+            },
+            {
+                "name": "b5",
+                "comment": " The b5 square.\n",
+                "type": "Square.Square"
+            },
+            {
+                "name": "b6",
+                "comment": " The b6 square.\n",
+                "type": "Square.Square"
+            },
+            {
+                "name": "b7",
+                "comment": " The b7 square.\n",
+                "type": "Square.Square"
+            },
+            {
+                "name": "b8",
+                "comment": " The b8 square.\n",
+                "type": "Square.Square"
+            },
+            {
+                "name": "c1",
+                "comment": " The c1 square.\n",
+                "type": "Square.Square"
+            },
+            {
+                "name": "c2",
+                "comment": " The c2 square.\n",
+                "type": "Square.Square"
+            },
+            {
+                "name": "c3",
+                "comment": " The c3 square.\n",
+                "type": "Square.Square"
+            },
+            {
+                "name": "c4",
+                "comment": " The c4 square.\n",
+                "type": "Square.Square"
+            },
+            {
+                "name": "c5",
+                "comment": " The c5 square.\n",
+                "type": "Square.Square"
+            },
+            {
+                "name": "c6",
+                "comment": " The c6 square.\n",
+                "type": "Square.Square"
+            },
+            {
+                "name": "c7",
+                "comment": " The c7 square.\n",
+                "type": "Square.Square"
+            },
+            {
+                "name": "c8",
+                "comment": " The c8 square.\n",
+                "type": "Square.Square"
+            },
+            {
+                "name": "d1",
+                "comment": " The d1 square.\n",
+                "type": "Square.Square"
+            },
+            {
+                "name": "d2",
+                "comment": " The d2 square.\n",
+                "type": "Square.Square"
+            },
+            {
+                "name": "d3",
+                "comment": " The d3 square.\n",
+                "type": "Square.Square"
+            },
+            {
+                "name": "d4",
+                "comment": " The d4 square.\n",
+                "type": "Square.Square"
+            },
+            {
+                "name": "d5",
+                "comment": " The d5 square.\n",
+                "type": "Square.Square"
+            },
+            {
+                "name": "d6",
+                "comment": " The d6 square.\n",
+                "type": "Square.Square"
+            },
+            {
+                "name": "d7",
+                "comment": " The d7 square.\n",
+                "type": "Square.Square"
+            },
+            {
+                "name": "d8",
+                "comment": " The d8 square.\n",
+                "type": "Square.Square"
+            },
+            {
+                "name": "distance",
+                "comment": " The distance between two squares, measured as the maximum of the vertical\nand horizontal distances, or the number of king moves required to get from\none square to the other on an empty board.\n\n    distance a1 b4 == 3\n\n    distance h8 b1 == 7\n\n    distance f3 e4 == 1\n\n",
+                "type": "Square.Square -> Square.Square -> Basics.Int"
+            },
+            {
+                "name": "e1",
+                "comment": " The e1 square.\n",
+                "type": "Square.Square"
+            },
+            {
+                "name": "e2",
+                "comment": " The e2 square.\n",
+                "type": "Square.Square"
+            },
+            {
+                "name": "e3",
+                "comment": " The e3 square.\n",
+                "type": "Square.Square"
+            },
+            {
+                "name": "e4",
+                "comment": " The e4 square.\n",
+                "type": "Square.Square"
+            },
+            {
+                "name": "e5",
+                "comment": " The e5 square.\n",
+                "type": "Square.Square"
+            },
+            {
+                "name": "e6",
+                "comment": " The e6 square.\n",
+                "type": "Square.Square"
+            },
+            {
+                "name": "e7",
+                "comment": " The e7 square.\n",
+                "type": "Square.Square"
+            },
+            {
+                "name": "e8",
+                "comment": " The e8 square.\n",
+                "type": "Square.Square"
+            },
+            {
+                "name": "f1",
+                "comment": " The f1 square.\n",
+                "type": "Square.Square"
+            },
+            {
+                "name": "f2",
+                "comment": " The f2 square.\n",
+                "type": "Square.Square"
+            },
+            {
+                "name": "f3",
+                "comment": " The f3 square.\n",
+                "type": "Square.Square"
+            },
+            {
+                "name": "f4",
+                "comment": " The f4 square.\n",
+                "type": "Square.Square"
+            },
+            {
+                "name": "f5",
+                "comment": " The f5 square.\n",
+                "type": "Square.Square"
+            },
+            {
+                "name": "f6",
+                "comment": " The f6 square.\n",
+                "type": "Square.Square"
+            },
+            {
+                "name": "f7",
+                "comment": " The f7 square.\n",
+                "type": "Square.Square"
+            },
+            {
+                "name": "f8",
+                "comment": " The f8 square.\n",
+                "type": "Square.Square"
+            },
+            {
+                "name": "file",
+                "comment": " The file of a square.\n",
+                "type": "Square.Square -> SquareFile.SquareFile"
+            },
+            {
+                "name": "fileDistance",
+                "comment": " The horizontal distance between two squares.\n\n    fileDistance a1 d3 == 3\n\n    fileDistance c1 c7 == 0\n\n    fileDistance h8 a3 == 7\n\n",
+                "type": "Square.Square -> Square.Square -> Basics.Int"
+            },
+            {
+                "name": "fromInt",
+                "comment": " Tries to convert an `Int` to a `Square`, using the mapping a1 <-> 0,\nb1 <-> 1, ..., h8 <-> 63.\n\n    fromInt 0 == Just a1\n\n    fromInt 1 == Just b1\n\n    fromInt 63 == Just h8\n\n    fromInt -1 == Nothing\n\n    fromInt 100 == Nothing\n\n",
+                "type": "Basics.Int -> Maybe.Maybe Square.Square"
+            },
+            {
+                "name": "fromString",
+                "comment": " Tries to convert a `String` to a `Square`, by looking at the first two\ncharacters of the string. If the two first characters are not a valid square\nstring, returns `Nothing`.\n\n    fromString \"g8\" == Just g8\n\n    fromString \"b1d3\" == Just b1\n\n    fromString \"Donald Trump\" == Nothing\n\n",
+                "type": "String.String -> Maybe.Maybe Square.Square"
+            },
+            {
+                "name": "g1",
+                "comment": " The g1 square.\n",
+                "type": "Square.Square"
+            },
+            {
+                "name": "g2",
+                "comment": " The g2 square.\n",
+                "type": "Square.Square"
+            },
+            {
+                "name": "g3",
+                "comment": " The g3 square.\n",
+                "type": "Square.Square"
+            },
+            {
+                "name": "g4",
+                "comment": " The g4 square.\n",
+                "type": "Square.Square"
+            },
+            {
+                "name": "g5",
+                "comment": " The g5 square.\n",
+                "type": "Square.Square"
+            },
+            {
+                "name": "g6",
+                "comment": " The g6 square.\n",
+                "type": "Square.Square"
+            },
+            {
+                "name": "g7",
+                "comment": " The g7 square.\n",
+                "type": "Square.Square"
+            },
+            {
+                "name": "g8",
+                "comment": " The g8 square.\n",
+                "type": "Square.Square"
+            },
+            {
+                "name": "h1",
+                "comment": " The h1 square.\n",
+                "type": "Square.Square"
+            },
+            {
+                "name": "h2",
+                "comment": " The h2 square.\n",
+                "type": "Square.Square"
+            },
+            {
+                "name": "h3",
+                "comment": " The h3 square.\n",
+                "type": "Square.Square"
+            },
+            {
+                "name": "h4",
+                "comment": " The h4 square.\n",
+                "type": "Square.Square"
+            },
+            {
+                "name": "h5",
+                "comment": " The h5 square.\n",
+                "type": "Square.Square"
+            },
+            {
+                "name": "h6",
+                "comment": " The h6 square.\n",
+                "type": "Square.Square"
+            },
+            {
+                "name": "h7",
+                "comment": " The h7 square.\n",
+                "type": "Square.Square"
+            },
+            {
+                "name": "h8",
+                "comment": " The h8 square.\n",
+                "type": "Square.Square"
+            },
+            {
+                "name": "make",
+                "comment": " Create a square from a `SquareFile` and a `SquareRank`.\n",
+                "type": "SquareFile.SquareFile -> SquareRank.SquareRank -> Square.Square"
+            },
+            {
+                "name": "rank",
+                "comment": " The rank of a square.\n",
+                "type": "Square.Square -> SquareRank.SquareRank"
+            },
+            {
+                "name": "rankDistance",
+                "comment": " The vertical distance between two squares.\n\n    rankDistance a1 b4 == 3\n\n    rankDistance c2 h2 == 0\n\n    rankDistance a8 c1 == 7\n\n",
+                "type": "Square.Square -> Square.Square -> Basics.Int"
+            },
+            {
+                "name": "toInt",
+                "comment": " Converts a `Square` to an `Int` in the 0..63 range, using the mapping\na1 <-> 0, b1 <-> 1, ..., h8 <-> 63.\n\n    toInt a1 == 0\n\n    toInt b1 == 1\n\n    toInt a2 == 8\n\n    toInt h8 == 63\n\n",
+                "type": "Square.Square -> Basics.Int"
+            },
+            {
+                "name": "toString",
+                "comment": " Converts a `Square` to a `String` in standard algebraic notation\n\n    toString e4 == \"e4\"\n\n",
+                "type": "Square.Square -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "SquareFile",
+        "comment": " The `SquareFile` data type and related functions and definitions.\n\n\n# Types\n\n@docs SquareFile\n\n\n# Converting to and from Strings and Characters\n\n@docs fromChar, fromString, toChar, toString\n\n\n# Miscellaneous Useful Constants\n\n@docs all, a, b, c, d, e, f, g, h\n\n\n# Miscellaneous Functions\n\n@docs distance, toIndex\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "SquareFile",
+                "comment": " `SquareFile` is a type representing a file on a chess board, i.e. one of\nthe vertical columns labeled a-h.\n",
+                "args": [],
+                "type": "Internal.SquareFile.SquareFile"
+            }
+        ],
+        "values": [
+            {
+                "name": "a",
+                "comment": " The 'a' file, the first file from the left, from white's point of view.\n",
+                "type": "SquareFile.SquareFile"
+            },
+            {
+                "name": "all",
+                "comment": " List of all files on the board.\n",
+                "type": "List.List SquareFile.SquareFile"
+            },
+            {
+                "name": "b",
+                "comment": " The 'b' file, the second file from the left, from white's point of view.\n",
+                "type": "SquareFile.SquareFile"
+            },
+            {
+                "name": "c",
+                "comment": " The 'c' file, the third file from the left, from white's point of view.\n",
+                "type": "SquareFile.SquareFile"
+            },
+            {
+                "name": "d",
+                "comment": " The 'd' file, the fourth file from the left, from white's point of view.\n",
+                "type": "SquareFile.SquareFile"
+            },
+            {
+                "name": "distance",
+                "comment": " The horizontal distance between two files.\n\n    distance a h == 7\n\n    distance e c == 2\n\n",
+                "type": "SquareFile.SquareFile -> SquareFile.SquareFile -> Basics.Int"
+            },
+            {
+                "name": "e",
+                "comment": " The 'e' file, the fifth file from the left, from white's point of view.\n",
+                "type": "SquareFile.SquareFile"
+            },
+            {
+                "name": "f",
+                "comment": " The 'f' file, the sixth file from the left, from white's point of view.\n",
+                "type": "SquareFile.SquareFile"
+            },
+            {
+                "name": "fromChar",
+                "comment": " Tries to convert a `Char` to a `SquareFile`. Returns `Nothing` if the\ncharacter is not a lowercase letter in the range a-h.\n\n    fromChar 'e' == Just e\n\n    List.map fromChar [ 'a', 'x', 'h' ] == [ Just a, Nothing, Just h ]\n\n",
+                "type": "Char.Char -> Maybe.Maybe SquareFile.SquareFile"
+            },
+            {
+                "name": "fromString",
+                "comment": " Tries to convert a `String` to a `SquareFile` by looking at the first\ncharacter of the string. Returns `Nothing` if the first character is not a\nlowercase letter in the range a-h.\n\n    fromString \"e\" == Just e\n\n    List.map fromChar [ \"a\", \"x\", \"h\" ] == [ Just a, Nothing, Just h ]\n\n",
+                "type": "String.String -> Maybe.Maybe SquareFile.SquareFile"
+            },
+            {
+                "name": "g",
+                "comment": " The 'g' file, the seventh file from the left, from white's point of view.\n",
+                "type": "SquareFile.SquareFile"
+            },
+            {
+                "name": "h",
+                "comment": " The 'h' file, the eighth file from the left, from white's point of view.\n",
+                "type": "SquareFile.SquareFile"
+            },
+            {
+                "name": "toChar",
+                "comment": " Converts a `SquareFile` to a `Char` in the range a-h.\n\n    toChar c == 'c'\n\n    List.map toChar all == [ 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h' ]\n\n",
+                "type": "SquareFile.SquareFile -> Char.Char"
+            },
+            {
+                "name": "toIndex",
+                "comment": " Convert a file to an index in the range 0 (for the 'a' file) to 7 (for the\n'h' file).\n",
+                "type": "SquareFile.SquareFile -> Basics.Int"
+            },
+            {
+                "name": "toString",
+                "comment": " Converts a `SquareFile` to a single-character `String` consisting of a\nletter in the range a-h.\n\n    toString c == \"c\"\n\n    List.map toString all == [ \"a\", \"b\", \"c\", \"d\", \"e\", \"f\", \"g\", \"h\" ]\n\n",
+                "type": "SquareFile.SquareFile -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "SquareRank",
+        "comment": " The `SquareRank` data type and related functions and definitions.\n\n\n# Types\n\n@docs SquareRank\n\n\n# Converting to and from Strings and Characters\n\n@docs fromChar, fromString, toChar, toString\n\n\n# Miscellaneous Useful Constants\n\n@docs all, one, two, three, four, five, six, seven, eight\n\n\n# Miscellaneous Functions\n\n@docs distance, toIndex\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "SquareRank",
+                "comment": " A `SquareRank` is a type representing a rank on a chess board, i.e. one of\nthe horizontal rows labeled 1-8.\n",
+                "args": [],
+                "type": "Internal.SquareRank.SquareRank"
+            }
+        ],
+        "values": [
+            {
+                "name": "all",
+                "comment": " List of all ranks on the board.\n",
+                "type": "List.List SquareRank.SquareRank"
+            },
+            {
+                "name": "distance",
+                "comment": " The vertical distance between two ranks.\n\n    distance one eight == 7\n\n    distance five three == 2\n\n",
+                "type": "SquareRank.SquareRank -> SquareRank.SquareRank -> Basics.Int"
+            },
+            {
+                "name": "eight",
+                "comment": " The eighth rank, seen from white's point of view.\n",
+                "type": "SquareRank.SquareRank"
+            },
+            {
+                "name": "five",
+                "comment": " The fifth rank, seen from white's point of view.\n",
+                "type": "SquareRank.SquareRank"
+            },
+            {
+                "name": "four",
+                "comment": " The fourth rank, seen from white's point of view.\n",
+                "type": "SquareRank.SquareRank"
+            },
+            {
+                "name": "fromChar",
+                "comment": " Tries to convert a `Char` to a `SquareRank`. Returns `Nothing` if the\ncharacter is not a digit in the range 1-8.\n\n    fromChar '5' == Just five\n\n    List.map fromChar [ '1', 'x', '8' ] == [ Just one, Nothing, Just eight ]\n\n",
+                "type": "Char.Char -> Maybe.Maybe SquareRank.SquareRank"
+            },
+            {
+                "name": "fromString",
+                "comment": " Tries to convert a `String` to a `SquareRank` by looking at the first\ncharacter of the string. Returns `Nothing` if the first character is not a\ndigit in the range 1-8.\n\n    fromChar '5' == Just five\n\n    List.map fromChar [ '1', 'x', '8' ] == [ Just one, Nothing, Just eight ]\n\n",
+                "type": "String.String -> Maybe.Maybe SquareRank.SquareRank"
+            },
+            {
+                "name": "one",
+                "comment": " The first rank, seen from white's point of view.\n",
+                "type": "SquareRank.SquareRank"
+            },
+            {
+                "name": "seven",
+                "comment": " The seventh rank, seen from white's point of view.\n",
+                "type": "SquareRank.SquareRank"
+            },
+            {
+                "name": "six",
+                "comment": " The sixth rank, seen from white's point of view.\n",
+                "type": "SquareRank.SquareRank"
+            },
+            {
+                "name": "three",
+                "comment": " The third rank, seen from white's point of view.\n",
+                "type": "SquareRank.SquareRank"
+            },
+            {
+                "name": "toChar",
+                "comment": " Converts a `SquareRank` to a `Char` in the range 1-8.\n\n    toChar three == '3'\n\n    List.map toChar all == [ '1', '2', '3', '4', '5', '6', '7', '8' ]\n\n",
+                "type": "SquareRank.SquareRank -> Char.Char"
+            },
+            {
+                "name": "toIndex",
+                "comment": " Convert a rank to an index in the range 0 (for the first rank) to 7 (for the\nlast rank).\n",
+                "type": "SquareRank.SquareRank -> Basics.Int"
+            },
+            {
+                "name": "toString",
+                "comment": " Converts a `SquareRank` to a single-character `String` consisting of a\nletter in the range 1-8.\n\n    toString three == \"3\"\n\n    List.map toString all == [ \"1\", \"2\", \"3\", \"4\", \"5\", \"6\", \"7\", \"8\" ]\n\n",
+                "type": "SquareRank.SquareRank -> String.String"
+            },
+            {
+                "name": "two",
+                "comment": " The second rank, seen from white's point of view.\n",
+                "type": "SquareRank.SquareRank"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,824 @@
+[
+    {
+        "name": "Twitch.Helix",
+        "comment": " Types and JSON Decoders for common Helix types\n\nMost ids are numbers as strings; the library uses an aliased string with a custom name for documentation purposes, but treats the ids as opaque tokens.\n\n# Id aliases\n@docs UserId, userId, ClipId, clipId, VideoId, videoId, GameId, gameId, StreamId, streamId\n\n# Time decoders\n@docs timeStamp, duration\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "ClipId",
+                "comment": " Clip id\nUnlike most ids, these are not numbers but slugs witha couple of words.\n",
+                "args": [],
+                "type": "String.String"
+            },
+            {
+                "name": "GameId",
+                "comment": " Game id\n",
+                "args": [],
+                "type": "String.String"
+            },
+            {
+                "name": "StreamId",
+                "comment": " Stream id\n",
+                "args": [],
+                "type": "String.String"
+            },
+            {
+                "name": "UserId",
+                "comment": " User id\n",
+                "args": [],
+                "type": "String.String"
+            },
+            {
+                "name": "VideoId",
+                "comment": " Video id\n",
+                "args": [],
+                "type": "String.String"
+            }
+        ],
+        "values": [
+            {
+                "name": "clipId",
+                "comment": " Clip id decoder\n",
+                "type": "Json.Decode.Decoder Twitch.Helix.ClipId"
+            },
+            {
+                "name": "duration",
+                "comment": " Decode a duration value of the form 1h23m45s\n",
+                "type": "Json.Decode.Decoder Basics.Int"
+            },
+            {
+                "name": "gameId",
+                "comment": " Game id decoder\n",
+                "type": "Json.Decode.Decoder Twitch.Helix.GameId"
+            },
+            {
+                "name": "streamId",
+                "comment": " Stream id decoder\n",
+                "type": "Json.Decode.Decoder Twitch.Helix.StreamId"
+            },
+            {
+                "name": "timeStamp",
+                "comment": " Decode a timestamp value\nTwitch timestamps are ISO 8601 values, we decode them as Time.Posix\n",
+                "type": "Json.Decode.Decoder Time.Posix"
+            },
+            {
+                "name": "userId",
+                "comment": " User id decoder\n",
+                "type": "Json.Decode.Decoder Twitch.Helix.UserId"
+            },
+            {
+                "name": "videoId",
+                "comment": " Video id decoder\n",
+                "type": "Json.Decode.Decoder Twitch.Helix.VideoId"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Twitch.Helix.BitsLeaderboard",
+        "comment": " JSON Decoders for Helix Bits Leaderboard responses.\n\nUse these pieces to pull out the parts your application needs.\n\n    import Twitch.Helix.BitsLeaderboard as BitsLeaderboard\n    import Json.Decode exposing (..)\n\n    bitsLeaderboard : Decoder (List Cheer)\n    bitsLeaderboard = BitsLeaderboard.response bitsLeader\n\n    bitsLeader : Decoder Cheer\n    bitsLeader =\n      map3 Cheer\n        BitsLeaderboard.userId\n        BitsLeaderboard.userName\n        BitsLeaderboard.score\n\n# Field decoders\n@docs userId, userName, score, rank\n\n# Response decoder\n@docs response\n\n# Sample Data\n@docs sampleBitsLeaderboard\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rank",
+                "comment": " Leaderboard position\n",
+                "type": "Json.Decode.Decoder Basics.Int"
+            },
+            {
+                "name": "response",
+                "comment": " Decode individual records from the api response using the specified decoder\n",
+                "type": "Json.Decode.Decoder a -> Json.Decode.Decoder (List.List a)"
+            },
+            {
+                "name": "sampleBitsLeaderboard",
+                "comment": " sample data for bootstrapping and testing\n",
+                "type": "String.String"
+            },
+            {
+                "name": "score",
+                "comment": " Score or bit value\n",
+                "type": "Json.Decode.Decoder Basics.Int"
+            },
+            {
+                "name": "userId",
+                "comment": " Id of the user on the leaderboard\n",
+                "type": "Json.Decode.Decoder Twitch.Helix.UserId"
+            },
+            {
+                "name": "userName",
+                "comment": " Name of the user on the leaderboard\n",
+                "type": "Json.Decode.Decoder String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Twitch.Helix.Clip",
+        "comment": " JSON Decoders for Helix Clips responses.\n\nUse these pieces to pull out the parts your application needs.\n\n    import Twitch.Helix.Clip as Clip\n    import Json.Decode exposing (..)\n\n    clips : Decoder (List Clip)\n    clips = Clip.response clip\n\n    clip : Decoder Clip\n    clip =\n      succeed Clip\n        |> map2 (|>) Clip.id\n        |> map2 (|>) Clip.url\n        |> map2 (|>) Clip.embedUrl\n        |> map2 (|>) Clip.broadcasterId\n        |> map2 (|>) Clip.thumbnailUrl\n\n# Field decoders\n@docs id, url, embedUrl, broadcasterId, broadcasterName, creatorId, creatorName, videoId, gameId, language, title, viewCount, createdAt, thumbnailUrl\n\n# Response decoder\n@docs response\n\n# Sample Data\n@docs sampleClip\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "broadcasterId",
+                "comment": " User id of the channel where the clip is from\n",
+                "type": "Json.Decode.Decoder Twitch.Helix.UserId"
+            },
+            {
+                "name": "broadcasterName",
+                "comment": " User name of the channel where the clip is from\n",
+                "type": "Json.Decode.Decoder String.String"
+            },
+            {
+                "name": "createdAt",
+                "comment": " Time the clip was created\n",
+                "type": "Json.Decode.Decoder Time.Posix"
+            },
+            {
+                "name": "creatorId",
+                "comment": " User id who clipped it\n",
+                "type": "Json.Decode.Decoder Twitch.Helix.UserId"
+            },
+            {
+                "name": "creatorName",
+                "comment": " User name who clipped it\n",
+                "type": "Json.Decode.Decoder String.String"
+            },
+            {
+                "name": "embedUrl",
+                "comment": " Url to embend the clip\n",
+                "type": "Json.Decode.Decoder String.String"
+            },
+            {
+                "name": "gameId",
+                "comment": " Id of the game on record when the clip was created\n",
+                "type": "Json.Decode.Decoder Twitch.Helix.GameId"
+            },
+            {
+                "name": "id",
+                "comment": " Slug id for the clip\n",
+                "type": "Json.Decode.Decoder Twitch.Helix.ClipId"
+            },
+            {
+                "name": "language",
+                "comment": " Language code of the stream\n",
+                "type": "Json.Decode.Decoder String.String"
+            },
+            {
+                "name": "response",
+                "comment": " Decode individual records from the api response using the specified decoder\n",
+                "type": "Json.Decode.Decoder a -> Json.Decode.Decoder (List.List a)"
+            },
+            {
+                "name": "sampleClip",
+                "comment": " sample data for bootstrapping and testing\n",
+                "type": "String.String"
+            },
+            {
+                "name": "thumbnailUrl",
+                "comment": " Thumbnail url\n",
+                "type": "Json.Decode.Decoder String.String"
+            },
+            {
+                "name": "title",
+                "comment": " Title of the clip\n",
+                "type": "Json.Decode.Decoder String.String"
+            },
+            {
+                "name": "url",
+                "comment": " Url to view the clip\n",
+                "type": "Json.Decode.Decoder String.String"
+            },
+            {
+                "name": "videoId",
+                "comment": " Id of the video from which the clip was created\n",
+                "type": "Json.Decode.Decoder Twitch.Helix.VideoId"
+            },
+            {
+                "name": "viewCount",
+                "comment": " Times the clip was viewed\n",
+                "type": "Json.Decode.Decoder Basics.Int"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Twitch.Helix.Follow",
+        "comment": " JSON Decoders for Helix Follow responses\n\nUse these pieces to pull out the parts your application needs.\n\n    import Twitch.Helix.Follow as Follow\n    import Json.Decode exposing (..)\n\n    follows : Decoder (List Follow)\n    follows = Follow.response follow\n\n    follow : Decoder Follow\n    follow =\n      map2 Follow\n        Follow.fromName\n        (map Time.posixToMillis Follow.followedAt)\n\n# Field decoders\n@docs fromId, fromName, toId, toName, followedAt\n\n# Response decoder\n@docs response\n\n# Sample Data\n@docs sampleFollow\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "followedAt",
+                "comment": " Time at which the follow began\n",
+                "type": "Json.Decode.Decoder Time.Posix"
+            },
+            {
+                "name": "fromId",
+                "comment": " Id of the user following\n",
+                "type": "Json.Decode.Decoder Twitch.Helix.UserId"
+            },
+            {
+                "name": "fromName",
+                "comment": " Name of the user following\n",
+                "type": "Json.Decode.Decoder String.String"
+            },
+            {
+                "name": "response",
+                "comment": " Decode individual records from the api response using the specified decoder\n",
+                "type": "Json.Decode.Decoder a -> Json.Decode.Decoder (List.List a)"
+            },
+            {
+                "name": "sampleFollow",
+                "comment": " Sample data for follows\n",
+                "type": "String.String"
+            },
+            {
+                "name": "toId",
+                "comment": " Id of the user being followed\n",
+                "type": "Json.Decode.Decoder Twitch.Helix.UserId"
+            },
+            {
+                "name": "toName",
+                "comment": " Name of the user being followed\n",
+                "type": "Json.Decode.Decoder String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Twitch.Helix.Game",
+        "comment": " JSON Decoders for Helix Game responses\n\nUse these pieces to pull out the parts your application needs.\n\n    import Twitch.Helix.Game as Game\n    import Json.Decode exposing (..)\n\n    games : Decoder (List Persist.Game)\n    games = Game.response game\n\n    game : Decoder Game\n    game =\n      map3 Game\n        Game.id\n        Game.name\n        Game.boxArtUrl\n\n# Field decoders\n@docs id, name, boxArtUrl\n\n# Response decoder\n@docs response\n\n# Sample Data\n@docs sampleGame\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "boxArtUrl",
+                "comment": " Url for box art images\n",
+                "type": "Json.Decode.Decoder String.String"
+            },
+            {
+                "name": "id",
+                "comment": " Id of the game\n",
+                "type": "Json.Decode.Decoder Twitch.Helix.GameId"
+            },
+            {
+                "name": "name",
+                "comment": " Name of the game\n",
+                "type": "Json.Decode.Decoder String.String"
+            },
+            {
+                "name": "response",
+                "comment": " Decode individual records from the api response using the specified decoder\n",
+                "type": "Json.Decode.Decoder a -> Json.Decode.Decoder (List.List a)"
+            },
+            {
+                "name": "sampleGame",
+                "comment": " Sample data for games\n",
+                "type": "String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Twitch.Helix.Request",
+        "comment": " Helpers for sending Http requests to the Twitch Helix (\"new Twitch API\") endpoints.\n\n# Send a Request\n@docs send\n\n# Header Helpers\nUseful if you need to make your own Http call with additional headers.\n@docs twitchHeaders\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "send",
+                "comment": " Send a basic request to the Twitch Helix (\"new Twitch API\") endpoints. Lightweight wrapper around Http, so you can go back to basics if something else is needed. Auth is a token received from an oauth loop.\n\n    fetchUserByNameUrl : String -> String\n    fetchUserByNameUrl login =\n      \"https://api.twitch.tv/helix/users?login=\" ++ login\n\n    fetchUserByName : String -> String -> Cmd Msg\n    fetchUserByName auth login =\n      Twitch.Helix.Request.send <|\n        { clientId = TwitchId.clientId\n        , auth = auth\n        , decoder = Twitch.Helix.Decode.users\n        , tagger = User\n        , url = (fetchUserByNameUrl login)\n        }\n",
+                "type": "{ clientId : String.String, auth : String.String, decoder : Json.Decode.Decoder a, tagger : Result.Result Http.Error a -> msg, url : String.String } -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "twitchHeaders",
+                "comment": " Creates the client-id and outh headers.\n\n    Twitch.Helix.twitchHeaders clientId auth\n",
+                "type": "String.String -> String.String -> List.List Http.Header"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Twitch.Helix.Stream",
+        "comment": " JSON Decoders for Helix Stream responses\n\nUse these pieces to pull out the parts your application needs.\n\n    import Twitch.Helix.Stream as Stream\n    import Json.Decode exposing (..)\n\n    streams : Decoder (List Stream)\n    streams = User.response stream\n\n    stream : Decoder Stream\n    stream =\n      succeed Stream\n        |> map2 (|>) Stream.id\n        |> map2 (|>) Stream.userId\n        |> map2 (|>) Stream.userName\n        |> map2 (|>) Stream.gameId\n        |> map2 (|>) Stream.viewerCount\n        |> map2 (|>) Stream.thumbnailUrl\n        |> map2 (|>) Stream.title\n\n# Field decoders\n@docs id, userId, userLogin, userName, gameId, gameName, title, viewerCount, startedAt, language, thumbnailUrl, tagIds\n\n# Response decoder\n@docs response\n\n# Sample Data\n@docs sampleStream\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "gameId",
+                "comment": " Id of the game currently listed on the stream\n",
+                "type": "Json.Decode.Decoder Twitch.Helix.GameId"
+            },
+            {
+                "name": "gameName",
+                "comment": " Name of the game currently listed on the stream\n",
+                "type": "Json.Decode.Decoder String.String"
+            },
+            {
+                "name": "id",
+                "comment": " Id of the stream\n",
+                "type": "Json.Decode.Decoder Twitch.Helix.StreamId"
+            },
+            {
+                "name": "language",
+                "comment": " Language code listed on the stream\n",
+                "type": "Json.Decode.Decoder String.String"
+            },
+            {
+                "name": "response",
+                "comment": " Decode individual records from the api response using the specified decoder\n",
+                "type": "Json.Decode.Decoder a -> Json.Decode.Decoder (List.List a)"
+            },
+            {
+                "name": "sampleStream",
+                "comment": " Sample data for streams\n",
+                "type": "String.String"
+            },
+            {
+                "name": "startedAt",
+                "comment": " Time the stream started\n",
+                "type": "Json.Decode.Decoder Time.Posix"
+            },
+            {
+                "name": "tagIds",
+                "comment": " List of tag ids\n",
+                "type": "Json.Decode.Decoder (List.List String.String)"
+            },
+            {
+                "name": "thumbnailUrl",
+                "comment": " Current thumbnail image\n",
+                "type": "Json.Decode.Decoder String.String"
+            },
+            {
+                "name": "title",
+                "comment": " Title of the stream\n",
+                "type": "Json.Decode.Decoder String.String"
+            },
+            {
+                "name": "userId",
+                "comment": " Id of the channel the stream is on\n",
+                "type": "Json.Decode.Decoder Twitch.Helix.UserId"
+            },
+            {
+                "name": "userLogin",
+                "comment": " Login of the channel the stream is on\n",
+                "type": "Json.Decode.Decoder String.String"
+            },
+            {
+                "name": "userName",
+                "comment": " Name of the channel the stream is on\n",
+                "type": "Json.Decode.Decoder String.String"
+            },
+            {
+                "name": "viewerCount",
+                "comment": " Viewer count\n",
+                "type": "Json.Decode.Decoder Basics.Int"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Twitch.Helix.Subscription",
+        "comment": " JSON Decoders for Helix Subscription responses\n\nUse these pieces to pull out the parts your application needs.\n\n    import Twitch.Helix.Subscription as Subscription\n    import Json.Decode exposing (..)\n\n    subs : Decoder (List Sub)\n    subs = Follow.response sub\n\n    sub : Decoder Sub\n    sub =\n      map3 Sub\n        Subscription.userId\n        Subscription.userName\n        (map planPoints Subscription.tier)\n\n# Field decoders\n@docs broadcasterId, broadcasterLogin, broadcasterName, gifterId, gifterLogin, gifterName, isGift, tier, planName, userId, userName, userLogin\n\n# Response decoder\n@docs response\n\n# Sample Data\n@docs sampleSubscription\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "broadcasterId",
+                "comment": " Id channel subscribed to\n",
+                "type": "Json.Decode.Decoder Twitch.Helix.UserId"
+            },
+            {
+                "name": "broadcasterLogin",
+                "comment": " Login channel subscribed to\n",
+                "type": "Json.Decode.Decoder String.String"
+            },
+            {
+                "name": "broadcasterName",
+                "comment": " Name channel subscribed to\n",
+                "type": "Json.Decode.Decoder String.String"
+            },
+            {
+                "name": "gifterId",
+                "comment": " Id person who gifted the sub, if this is a gift sub\n",
+                "type": "Json.Decode.Decoder (Maybe.Maybe Twitch.Helix.UserId)"
+            },
+            {
+                "name": "gifterLogin",
+                "comment": " Login person who gifted the sub, if this is a gift sub\n",
+                "type": "Json.Decode.Decoder (Maybe.Maybe String.String)"
+            },
+            {
+                "name": "gifterName",
+                "comment": " Name person who gifted the sub, if this is a gift sub\n",
+                "type": "Json.Decode.Decoder (Maybe.Maybe String.String)"
+            },
+            {
+                "name": "isGift",
+                "comment": " Whether the sub is a gift\n",
+                "type": "Json.Decode.Decoder Basics.Bool"
+            },
+            {
+                "name": "planName",
+                "comment": " Name of the sub tier\n",
+                "type": "Json.Decode.Decoder String.String"
+            },
+            {
+                "name": "response",
+                "comment": " Decode individual records from the api response using the specified decoder\n",
+                "type": "Json.Decode.Decoder a -> Json.Decode.Decoder (List.List a)"
+            },
+            {
+                "name": "sampleSubscription",
+                "comment": " Sample data for subscriptions\n",
+                "type": "String.String"
+            },
+            {
+                "name": "tier",
+                "comment": " Sub tier, as received from Twitch; we don't do any further translation.\n",
+                "type": "Json.Decode.Decoder String.String"
+            },
+            {
+                "name": "userId",
+                "comment": " Id of the user subscribed\n",
+                "type": "Json.Decode.Decoder Twitch.Helix.UserId"
+            },
+            {
+                "name": "userLogin",
+                "comment": " Login of the user subscribed\n",
+                "type": "Json.Decode.Decoder String.String"
+            },
+            {
+                "name": "userName",
+                "comment": " Name of the user subscribed\n",
+                "type": "Json.Decode.Decoder String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Twitch.Helix.User",
+        "comment": " JSON Decoders for Helix User responses\n\nUse these pieces to pull out the parts your application needs.\n\n    import Twitch.Helix.User as User\n    import Json.Decode exposing (..)\n\n    users : Decoder (List User)\n    users = User.response user\n\n    user : Decoder User\n    user =\n      map3 User\n        User.id\n        User.login\n        User.displayName\n\n# Field decoders\n@docs id, login, displayName, userType, broadcasterType, description, profileImageUrl, offlineImageUrl, viewCount, email, createdAt\n\n# Response decoder\n@docs response\n\n# Sample Data\n@docs sampleUser\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "broadcasterType",
+                "comment": " Broadcaster type of the user, e.g. affiliate/partner\n",
+                "type": "Json.Decode.Decoder String.String"
+            },
+            {
+                "name": "createdAt",
+                "comment": " Time account created\n",
+                "type": "Json.Decode.Decoder Time.Posix"
+            },
+            {
+                "name": "description",
+                "comment": " User's profile description\n",
+                "type": "Json.Decode.Decoder String.String"
+            },
+            {
+                "name": "displayName",
+                "comment": " Name of the user\n",
+                "type": "Json.Decode.Decoder String.String"
+            },
+            {
+                "name": "email",
+                "comment": " Users's email, if the request had appropriate scope to read it\n",
+                "type": "Json.Decode.Decoder (Maybe.Maybe String.String)"
+            },
+            {
+                "name": "id",
+                "comment": " Id of the user\n",
+                "type": "Json.Decode.Decoder Twitch.Helix.UserId"
+            },
+            {
+                "name": "login",
+                "comment": " Login of the user\n",
+                "type": "Json.Decode.Decoder String.String"
+            },
+            {
+                "name": "offlineImageUrl",
+                "comment": " Channel offline image\n",
+                "type": "Json.Decode.Decoder String.String"
+            },
+            {
+                "name": "profileImageUrl",
+                "comment": " Profile image url\n",
+                "type": "Json.Decode.Decoder String.String"
+            },
+            {
+                "name": "response",
+                "comment": " Decode individual records from the api response using the specified decoder\n",
+                "type": "Json.Decode.Decoder a -> Json.Decode.Decoder (List.List a)"
+            },
+            {
+                "name": "sampleUser",
+                "comment": " Sample data for a user\n",
+                "type": "String.String"
+            },
+            {
+                "name": "userType",
+                "comment": " Type of the user, e.g. staff\n",
+                "type": "Json.Decode.Decoder String.String"
+            },
+            {
+                "name": "viewCount",
+                "comment": " Channel view count\n",
+                "type": "Json.Decode.Decoder Basics.Int"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Twitch.Helix.Video",
+        "comment": " JSON Decoders for Helix Video responses\n\nUse these pieces to pull out the parts your application needs.\n\n    import Twitch.Helix.Video as Video\n    import Json.Decode exposing (..)\n\n    events : Decoder (List Event)\n    events =\n      Video.response video\n        |> map (List.filterMap (\\(videoType, ev) -> if videoType == Video.Archive then Just ev else Nothing))\n\n    video : Decoder (Video.VideoType, Event)\n    video =\n      map2 Tuple.pair\n        Video.videoType\n        event\n\n    event : Decoder Event\n    event =\n      map2 Event\n        Video.createdAt\n        Video.duration\n\n# Field decoders\n@docs id, userId, userLogin, userName, title, description, createdAt, publishedAt, url, thumbnailUrl, language, Viewable, viewable, viewCount, videoType, VideoType, duration\n\n# Response decoder\n@docs response\n\n# Sample Data\n@docs sampleVideo\n",
+        "unions": [
+            {
+                "name": "VideoType",
+                "comment": " Enumerated type for video_type attribute, does include an escape hatch in case other types are added in the future.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Upload",
+                        []
+                    ],
+                    [
+                        "Archive",
+                        []
+                    ],
+                    [
+                        "Highlight",
+                        []
+                    ],
+                    [
+                        "Other",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Viewable",
+                "comment": " Enumerted type for the viewable status\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Public",
+                        []
+                    ],
+                    [
+                        "Private",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "createdAt",
+                "comment": " Time the video was created\n",
+                "type": "Json.Decode.Decoder Time.Posix"
+            },
+            {
+                "name": "description",
+                "comment": " Description of the video\n",
+                "type": "Json.Decode.Decoder String.String"
+            },
+            {
+                "name": "duration",
+                "comment": " Number of milliseconds, with second accuracy\n",
+                "type": "Json.Decode.Decoder Basics.Int"
+            },
+            {
+                "name": "id",
+                "comment": " Id of the video\n",
+                "type": "Json.Decode.Decoder Twitch.Helix.VideoId"
+            },
+            {
+                "name": "language",
+                "comment": " Language code\n",
+                "type": "Json.Decode.Decoder String.String"
+            },
+            {
+                "name": "publishedAt",
+                "comment": " Time the video was published\n",
+                "type": "Json.Decode.Decoder Time.Posix"
+            },
+            {
+                "name": "response",
+                "comment": " Decode individual records from the api response using the specified decoder\n",
+                "type": "Json.Decode.Decoder a -> Json.Decode.Decoder (List.List a)"
+            },
+            {
+                "name": "sampleVideo",
+                "comment": " Sample response for a video\n",
+                "type": "String.String"
+            },
+            {
+                "name": "thumbnailUrl",
+                "comment": " Thumbnail\n",
+                "type": "Json.Decode.Decoder String.String"
+            },
+            {
+                "name": "title",
+                "comment": " Title of the video\n",
+                "type": "Json.Decode.Decoder String.String"
+            },
+            {
+                "name": "url",
+                "comment": " Url to view the video\n",
+                "type": "Json.Decode.Decoder String.String"
+            },
+            {
+                "name": "userId",
+                "comment": " Id of the channel the video is from\n",
+                "type": "Json.Decode.Decoder Twitch.Helix.UserId"
+            },
+            {
+                "name": "userLogin",
+                "comment": " Login of the channel the video is from\n",
+                "type": "Json.Decode.Decoder String.String"
+            },
+            {
+                "name": "userName",
+                "comment": " Name of the channel the video is from\n",
+                "type": "Json.Decode.Decoder String.String"
+            },
+            {
+                "name": "videoType",
+                "comment": " Type of the video\n",
+                "type": "Json.Decode.Decoder Twitch.Helix.Video.VideoType"
+            },
+            {
+                "name": "viewCount",
+                "comment": " Number of views on the video\n",
+                "type": "Json.Decode.Decoder Basics.Int"
+            },
+            {
+                "name": "viewable",
+                "comment": " Whether the video is public or private\n",
+                "type": "Json.Decode.Decoder Twitch.Helix.Video.Viewable"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Twitch.Id.OAuth",
+        "comment": " JSON Decoders for Twitch OAuth \n\nUse these pieces to pull out the parts your application needs.\n\n    import Twitch.Id.OAuth as OAuth\n    import Json.Decode as Decode\n\n    decodeToken : Decode.Decoder Secret\n    decodeToken =\n      OAuth.accessToken\n        |> Decode.map Secret.fromString\n\n# Field decoders\n@docs accessToken, refreshToken, expiresIn, scope, tokenType\n\n# Sample Data\n@docs sampleAppOAuth, sampleClientOAuth\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "accessToken",
+                "comment": " Access token for api requests\n",
+                "type": "Json.Decode.Decoder String.String"
+            },
+            {
+                "name": "expiresIn",
+                "comment": " Expire time in seconds\n",
+                "type": "Json.Decode.Decoder Basics.Int"
+            },
+            {
+                "name": "refreshToken",
+                "comment": " Refresh token for app oauth\n",
+                "type": "Json.Decode.Decoder String.String"
+            },
+            {
+                "name": "sampleAppOAuth",
+                "comment": " Sample data for App OAuth access token\n",
+                "type": "String.String"
+            },
+            {
+                "name": "sampleClientOAuth",
+                "comment": " Sample data for Client OAuth access token\n",
+                "type": "String.String"
+            },
+            {
+                "name": "scope",
+                "comment": " Scopes (permissions) provided by the token\n",
+                "type": "Json.Decode.Decoder (List.List String.String)"
+            },
+            {
+                "name": "tokenType",
+                "comment": " Type of the accessToken\n",
+                "type": "Json.Decode.Decoder String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Twitch.Id.Token",
+        "comment": " Json Decoders for OAuth tokens.\n\nUse these pieces to pull out the parts your application needs.\n\n    userId = token\n      |> Maybe.andThen (Result.toMaybe << Jwt.decodeToken Twitch.Helix.Token.sub)\n\n# Field decoders\n@docs sub, iss, aud, exp, iat\n\n# Sample Data\n@docs sampleToken\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "aud",
+                "comment": " Audience\n",
+                "type": "Json.Decode.Decoder String.String"
+            },
+            {
+                "name": "exp",
+                "comment": " Expires timestamp\n",
+                "type": "Json.Decode.Decoder Time.Posix"
+            },
+            {
+                "name": "iat",
+                "comment": " Issued-at timestamp\n",
+                "type": "Json.Decode.Decoder Time.Posix"
+            },
+            {
+                "name": "iss",
+                "comment": " Issuier, e.g. Twitch\n",
+                "type": "Json.Decode.Decoder String.String"
+            },
+            {
+                "name": "sampleToken",
+                "comment": " Sample OAuth token.\n",
+                "type": "String.String"
+            },
+            {
+                "name": "sub",
+                "comment": " Subject; e.g. a user id\n",
+                "type": "Json.Decode.Decoder Twitch.Helix.UserId"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Twitch.Kraken.Host",
+        "comment": " JSON Decoders for the Kraken API at `https://api.twitch.tv/kraken/channels/CHANNELID/hosts` Note that this is an unofficial API\n\nUse these pieces to pull out the parts your application needs.\n\n    import Twitch.Kraken.Host as Host\n    import Json.Decode exposing (..)\n\n    hosts : Decoder (List UserId)\n    hosts = Host.response Host.hostId\n\n# Field decoders\n@docs hostId, targetId\n\n# Response decoder\n@docs response\n\n# Sample Data\n@docs sampleHost\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "hostId",
+                "comment": " Id of the channel hosting\n",
+                "type": "Json.Decode.Decoder Twitch.Kraken.Host.UserId"
+            },
+            {
+                "name": "response",
+                "comment": " Decode individual records from the api response using the specified decoder\n",
+                "type": "Json.Decode.Decoder a -> Json.Decode.Decoder (List.List a)"
+            },
+            {
+                "name": "sampleHost",
+                "comment": " sample data for bootstrapping and testing\n",
+                "type": "String.String"
+            },
+            {
+                "name": "targetId",
+                "comment": " Id of the channel being hosted\n",
+                "type": "Json.Decode.Decoder Twitch.Kraken.Host.UserId"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Twitch.Kraken.Request",
+        "comment": " Helpers for sending Http requests to the Twitch Kraken (\"V5\") endpoints.\n\n# Send a Request\n@docs send\n\n# Header Helpers\nUseful if you need to make your own Http call with additional headers.\n@docs twitchHeaders, authHeaders\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "authHeaders",
+                "comment": " Creates the oauth header, given an oauth token.\n",
+                "type": "Maybe.Maybe String.String -> List.List Http.Header"
+            },
+            {
+                "name": "send",
+                "comment": " Send a basic request to the Twitch Kraken (\"V5\") endpoints. Lightweight wrapper around Http, so you can go back to basics if something else is needed. Auth is a token received from an oauth loop.\n\n    fetchHostsUrl : String -> String\n    fetchHostsUrl id =\n      \"https://api.twitch.tv/kraken/channels/\"++id++\"/hosts\"\n\n    fetchHosts : String -> Cmd Msg\n    fetchHosts id =\n      Twitch.Kraken.Request.send <|\n        { clientId = TwitchId.clientId\n        , auth = Nothing\n        , decoder = hostsDecoder\n        , tagger = Hosts\n        , url = (fetchHostsUrl id)\n        }\n\n",
+                "type": "{ clientId : String.String, auth : Maybe.Maybe String.String, decoder : Json.Decode.Decoder a, tagger : Result.Result Http.Error a -> msg, url : String.String } -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "twitchHeaders",
+                "comment": " Creates the client-id and outh headers.\n\n    Twitch.Kraken.Request.twitchHeaders clientId auth\n",
+                "type": "String.String -> Maybe.Maybe String.String -> List.List Http.Header"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Twitch.Template",
+        "comment": " Helpers for filling in image and url templates received from API responses.\n\n@docs imageTemplateUrl, imagePercentTemplateUrl\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "imagePercentTemplateUrl",
+                "comment": " Fills in templates with %{width} and %{height}.\n\n    Twitch.Template.imagePercentTemplateUrl 320 180 video.thumbnailUrl\n",
+                "type": "Basics.Int -> Basics.Int -> String.String -> String.String"
+            },
+            {
+                "name": "imageTemplateUrl",
+                "comment": " Fills in templates with {width} and {height}.\n\n    Twitch.Template.imageTemplateUrl 168 95 stream.thumbnailUrl\n",
+                "type": "Basics.Int -> Basics.Int -> String.String -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

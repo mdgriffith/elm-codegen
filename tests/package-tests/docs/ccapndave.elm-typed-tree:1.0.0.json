@@ -1,0 +1,3173 @@
+[
+    {
+        "name": "TreePath.Data",
+        "comment": " This module represents the data held at the node of a tree. Each node can\nhave either branch or leafdata, so this data can be either of those.\n\n\n# Definition\n\n@docs Data\n\n\n# Unwrappers\n\n@docs getBranchData, getLeafData\n\n",
+        "unions": [
+            {
+                "name": "Data",
+                "comment": " Represent a value that may either be `Branch` of `Leaf` data (where each has\nits own type, parameterised by `b` and `l`.\n",
+                "args": [
+                    "b",
+                    "l"
+                ],
+                "cases": [
+                    [
+                        "BranchData",
+                        [
+                            "b"
+                        ]
+                    ],
+                    [
+                        "LeafData",
+                        [
+                            "l"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "getBranchData",
+                "comment": " If the given data is branch data then unwrap it.\n",
+                "type": "TreePath.Data.Data b l -> Maybe.Maybe b"
+            },
+            {
+                "name": "getLeafData",
+                "comment": " If the given data is leaf data then unwrap it.\n",
+                "type": "TreePath.Data.Data b l -> Maybe.Maybe l"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "TreePath.Tree10",
+        "comment": " This module provides types and functions for managing a strongly typed tree\nof depth 10. Each level of the tree can have its own type, and each level can\ncontain Data either of that type, or the leaf type.\n\n\n# Definition\n\n@docs Tree, TreePath1, TreePath2, TreePath3, TreePath4, TreePath5, TreePath6, TreePath7, TreePath8, TreePath9, TreePath10\n\n\n# Encoders and decoders\n\n@docs DecoderConfig, decoder, pathDecoder, pathEncode1, pathEncode2, pathEncode3, pathEncode4, pathEncode5, pathEncode6, pathEncode7, pathEncode8, pathEncode9, pathEncode10\n\n\n# Path constructor\n\n@docs toRootPath\n\n\n# Data\n\n@docs data1, data2, data3, data4, data5, data6, data7, data8, data9, data10\n\n\n# Navigation\n\n@docs top1, up1, offset1, down1, downs1, top2, up2, offset2, down2, downs2, top3, up3, offset3, down3, downs3, top4, up4, offset4, down4, downs4, top5, up5, offset5, down5, downs5, top6, up6, offset6, down6, downs6, top7, up7, offset7, down7, downs7, top8, up8, offset8, down8, downs8, top9, up9, offset9, down9, downs9, top10, up10, offset10, down10, downs10\n\n",
+        "unions": [
+            {
+                "name": "TreePath1",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "f",
+                    "g",
+                    "h",
+                    "i",
+                    "leaf"
+                ],
+                "cases": []
+            },
+            {
+                "name": "TreePath10",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "f",
+                    "g",
+                    "h",
+                    "i",
+                    "leaf"
+                ],
+                "cases": []
+            },
+            {
+                "name": "TreePath2",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "f",
+                    "g",
+                    "h",
+                    "i",
+                    "leaf"
+                ],
+                "cases": []
+            },
+            {
+                "name": "TreePath3",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "f",
+                    "g",
+                    "h",
+                    "i",
+                    "leaf"
+                ],
+                "cases": []
+            },
+            {
+                "name": "TreePath4",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "f",
+                    "g",
+                    "h",
+                    "i",
+                    "leaf"
+                ],
+                "cases": []
+            },
+            {
+                "name": "TreePath5",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "f",
+                    "g",
+                    "h",
+                    "i",
+                    "leaf"
+                ],
+                "cases": []
+            },
+            {
+                "name": "TreePath6",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "f",
+                    "g",
+                    "h",
+                    "i",
+                    "leaf"
+                ],
+                "cases": []
+            },
+            {
+                "name": "TreePath7",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "f",
+                    "g",
+                    "h",
+                    "i",
+                    "leaf"
+                ],
+                "cases": []
+            },
+            {
+                "name": "TreePath8",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "f",
+                    "g",
+                    "h",
+                    "i",
+                    "leaf"
+                ],
+                "cases": []
+            },
+            {
+                "name": "TreePath9",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "f",
+                    "g",
+                    "h",
+                    "i",
+                    "leaf"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "DecoderConfig",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "f",
+                    "g",
+                    "h",
+                    "i",
+                    "leaf",
+                    "path"
+                ],
+                "type": "{ level10 : { decoder : Json.Decode.Decoder a, encoders : a -> List.List ( String.String, Json.Encode.Value ), pathType : TreePath.Tree10.TreePath10 a b c d e f g h i leaf -> path, childrenField : String.String }, level9 : { decoder : Json.Decode.Decoder b, encoders : b -> List.List ( String.String, Json.Encode.Value ), pathType : TreePath.Tree10.TreePath9 a b c d e f g h i leaf -> path, childrenField : String.String }, level8 : { decoder : Json.Decode.Decoder c, encoders : c -> List.List ( String.String, Json.Encode.Value ), pathType : TreePath.Tree10.TreePath8 a b c d e f g h i leaf -> path, childrenField : String.String }, level7 : { decoder : Json.Decode.Decoder d, encoders : d -> List.List ( String.String, Json.Encode.Value ), pathType : TreePath.Tree10.TreePath7 a b c d e f g h i leaf -> path, childrenField : String.String }, level6 : { decoder : Json.Decode.Decoder e, encoders : e -> List.List ( String.String, Json.Encode.Value ), pathType : TreePath.Tree10.TreePath6 a b c d e f g h i leaf -> path, childrenField : String.String }, level5 : { decoder : Json.Decode.Decoder f, encoders : f -> List.List ( String.String, Json.Encode.Value ), pathType : TreePath.Tree10.TreePath5 a b c d e f g h i leaf -> path, childrenField : String.String }, level4 : { decoder : Json.Decode.Decoder g, encoders : g -> List.List ( String.String, Json.Encode.Value ), pathType : TreePath.Tree10.TreePath4 a b c d e f g h i leaf -> path, childrenField : String.String }, level3 : { decoder : Json.Decode.Decoder h, encoders : h -> List.List ( String.String, Json.Encode.Value ), pathType : TreePath.Tree10.TreePath3 a b c d e f g h i leaf -> path, childrenField : String.String }, level2 : { decoder : Json.Decode.Decoder i, encoders : i -> List.List ( String.String, Json.Encode.Value ), pathType : TreePath.Tree10.TreePath2 a b c d e f g h i leaf -> path, childrenField : String.String }, leaf : { decoder : Json.Decode.Decoder leaf, encode : leaf -> Json.Encode.Value, pathType : TreePath.Tree10.TreePath1 a b c d e f g h i leaf -> path } }"
+            },
+            {
+                "name": "Tree",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "f",
+                    "g",
+                    "h",
+                    "i",
+                    "leaf"
+                ],
+                "type": "TreePath.Tree10.Tree10 a b c d e f g h i leaf"
+            }
+        ],
+        "values": [
+            {
+                "name": "data1",
+                "comment": " ",
+                "type": "TreePath.Tree10.TreePath1 a b c d e f g h i leaf -> leaf"
+            },
+            {
+                "name": "data10",
+                "comment": " ",
+                "type": "TreePath.Tree10.TreePath10 a b c d e f g h i leaf -> TreePath.Data.Data a leaf"
+            },
+            {
+                "name": "data2",
+                "comment": " ",
+                "type": "TreePath.Tree10.TreePath2 a b c d e f g h i leaf -> TreePath.Data.Data i leaf"
+            },
+            {
+                "name": "data3",
+                "comment": " ",
+                "type": "TreePath.Tree10.TreePath3 a b c d e f g h i leaf -> TreePath.Data.Data h leaf"
+            },
+            {
+                "name": "data4",
+                "comment": " ",
+                "type": "TreePath.Tree10.TreePath4 a b c d e f g h i leaf -> TreePath.Data.Data g leaf"
+            },
+            {
+                "name": "data5",
+                "comment": " ",
+                "type": "TreePath.Tree10.TreePath5 a b c d e f g h i leaf -> TreePath.Data.Data f leaf"
+            },
+            {
+                "name": "data6",
+                "comment": " ",
+                "type": "TreePath.Tree10.TreePath6 a b c d e f g h i leaf -> TreePath.Data.Data e leaf"
+            },
+            {
+                "name": "data7",
+                "comment": " ",
+                "type": "TreePath.Tree10.TreePath7 a b c d e f g h i leaf -> TreePath.Data.Data d leaf"
+            },
+            {
+                "name": "data8",
+                "comment": " ",
+                "type": "TreePath.Tree10.TreePath8 a b c d e f g h i leaf -> TreePath.Data.Data c leaf"
+            },
+            {
+                "name": "data9",
+                "comment": " ",
+                "type": "TreePath.Tree10.TreePath9 a b c d e f g h i leaf -> TreePath.Data.Data b leaf"
+            },
+            {
+                "name": "decoder",
+                "comment": " ",
+                "type": "TreePath.Tree10.DecoderConfig a b c d e f g h i leaf path -> Json.Decode.Decoder (TreePath.Tree10.Tree10 a b c d e f g h i leaf)"
+            },
+            {
+                "name": "down1",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree10.TreePath1 a b c d e f g h i leaf -> Maybe.Maybe Basics.Never"
+            },
+            {
+                "name": "down10",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree10.TreePath10 a b c d e f g h i leaf -> Maybe.Maybe (TreePath.Tree10.TreePath9 a b c d e f g h i leaf)"
+            },
+            {
+                "name": "down2",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree10.TreePath2 a b c d e f g h i leaf -> Maybe.Maybe (TreePath.Tree10.TreePath1 a b c d e f g h i leaf)"
+            },
+            {
+                "name": "down3",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree10.TreePath3 a b c d e f g h i leaf -> Maybe.Maybe (TreePath.Tree10.TreePath2 a b c d e f g h i leaf)"
+            },
+            {
+                "name": "down4",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree10.TreePath4 a b c d e f g h i leaf -> Maybe.Maybe (TreePath.Tree10.TreePath3 a b c d e f g h i leaf)"
+            },
+            {
+                "name": "down5",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree10.TreePath5 a b c d e f g h i leaf -> Maybe.Maybe (TreePath.Tree10.TreePath4 a b c d e f g h i leaf)"
+            },
+            {
+                "name": "down6",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree10.TreePath6 a b c d e f g h i leaf -> Maybe.Maybe (TreePath.Tree10.TreePath5 a b c d e f g h i leaf)"
+            },
+            {
+                "name": "down7",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree10.TreePath7 a b c d e f g h i leaf -> Maybe.Maybe (TreePath.Tree10.TreePath6 a b c d e f g h i leaf)"
+            },
+            {
+                "name": "down8",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree10.TreePath8 a b c d e f g h i leaf -> Maybe.Maybe (TreePath.Tree10.TreePath7 a b c d e f g h i leaf)"
+            },
+            {
+                "name": "down9",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree10.TreePath9 a b c d e f g h i leaf -> Maybe.Maybe (TreePath.Tree10.TreePath8 a b c d e f g h i leaf)"
+            },
+            {
+                "name": "downs1",
+                "comment": " ",
+                "type": "TreePath.Tree10.TreePath1 a b c d e f g h i leaf -> List.List Basics.Never"
+            },
+            {
+                "name": "downs10",
+                "comment": " ",
+                "type": "TreePath.Tree10.TreePath10 a b c d e f g h i leaf -> List.List (TreePath.Tree10.TreePath9 a b c d e f g h i leaf)"
+            },
+            {
+                "name": "downs2",
+                "comment": " ",
+                "type": "TreePath.Tree10.TreePath2 a b c d e f g h i leaf -> List.List (TreePath.Tree10.TreePath1 a b c d e f g h i leaf)"
+            },
+            {
+                "name": "downs3",
+                "comment": " ",
+                "type": "TreePath.Tree10.TreePath3 a b c d e f g h i leaf -> List.List (TreePath.Tree10.TreePath2 a b c d e f g h i leaf)"
+            },
+            {
+                "name": "downs4",
+                "comment": " ",
+                "type": "TreePath.Tree10.TreePath4 a b c d e f g h i leaf -> List.List (TreePath.Tree10.TreePath3 a b c d e f g h i leaf)"
+            },
+            {
+                "name": "downs5",
+                "comment": " ",
+                "type": "TreePath.Tree10.TreePath5 a b c d e f g h i leaf -> List.List (TreePath.Tree10.TreePath4 a b c d e f g h i leaf)"
+            },
+            {
+                "name": "downs6",
+                "comment": " ",
+                "type": "TreePath.Tree10.TreePath6 a b c d e f g h i leaf -> List.List (TreePath.Tree10.TreePath5 a b c d e f g h i leaf)"
+            },
+            {
+                "name": "downs7",
+                "comment": " ",
+                "type": "TreePath.Tree10.TreePath7 a b c d e f g h i leaf -> List.List (TreePath.Tree10.TreePath6 a b c d e f g h i leaf)"
+            },
+            {
+                "name": "downs8",
+                "comment": " ",
+                "type": "TreePath.Tree10.TreePath8 a b c d e f g h i leaf -> List.List (TreePath.Tree10.TreePath7 a b c d e f g h i leaf)"
+            },
+            {
+                "name": "downs9",
+                "comment": " ",
+                "type": "TreePath.Tree10.TreePath9 a b c d e f g h i leaf -> List.List (TreePath.Tree10.TreePath8 a b c d e f g h i leaf)"
+            },
+            {
+                "name": "offset1",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree10.TreePath1 a b c d e f g h i leaf -> Maybe.Maybe (TreePath.Tree10.TreePath1 a b c d e f g h i leaf)"
+            },
+            {
+                "name": "offset10",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree10.TreePath10 a b c d e f g h i leaf -> Maybe.Maybe (TreePath.Tree10.TreePath10 a b c d e f g h i leaf)"
+            },
+            {
+                "name": "offset2",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree10.TreePath2 a b c d e f g h i leaf -> Maybe.Maybe (TreePath.Tree10.TreePath2 a b c d e f g h i leaf)"
+            },
+            {
+                "name": "offset3",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree10.TreePath3 a b c d e f g h i leaf -> Maybe.Maybe (TreePath.Tree10.TreePath3 a b c d e f g h i leaf)"
+            },
+            {
+                "name": "offset4",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree10.TreePath4 a b c d e f g h i leaf -> Maybe.Maybe (TreePath.Tree10.TreePath4 a b c d e f g h i leaf)"
+            },
+            {
+                "name": "offset5",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree10.TreePath5 a b c d e f g h i leaf -> Maybe.Maybe (TreePath.Tree10.TreePath5 a b c d e f g h i leaf)"
+            },
+            {
+                "name": "offset6",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree10.TreePath6 a b c d e f g h i leaf -> Maybe.Maybe (TreePath.Tree10.TreePath6 a b c d e f g h i leaf)"
+            },
+            {
+                "name": "offset7",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree10.TreePath7 a b c d e f g h i leaf -> Maybe.Maybe (TreePath.Tree10.TreePath7 a b c d e f g h i leaf)"
+            },
+            {
+                "name": "offset8",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree10.TreePath8 a b c d e f g h i leaf -> Maybe.Maybe (TreePath.Tree10.TreePath8 a b c d e f g h i leaf)"
+            },
+            {
+                "name": "offset9",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree10.TreePath9 a b c d e f g h i leaf -> Maybe.Maybe (TreePath.Tree10.TreePath9 a b c d e f g h i leaf)"
+            },
+            {
+                "name": "pathDecoder",
+                "comment": " ",
+                "type": "TreePath.Tree10.DecoderConfig a b c d e f g h i leaf path -> Json.Decode.Decoder path"
+            },
+            {
+                "name": "pathEncode1",
+                "comment": " ",
+                "type": "TreePath.Tree10.DecoderConfig a b c d e f g h i leaf path -> TreePath.Tree10.TreePath1 a b c d e f g h i leaf -> Json.Encode.Value"
+            },
+            {
+                "name": "pathEncode10",
+                "comment": " ",
+                "type": "TreePath.Tree10.DecoderConfig a b c d e f g h i leaf path -> TreePath.Tree10.TreePath10 a b c d e f g h i leaf -> Json.Encode.Value"
+            },
+            {
+                "name": "pathEncode2",
+                "comment": " ",
+                "type": "TreePath.Tree10.DecoderConfig a b c d e f g h i leaf path -> TreePath.Tree10.TreePath2 a b c d e f g h i leaf -> Json.Encode.Value"
+            },
+            {
+                "name": "pathEncode3",
+                "comment": " ",
+                "type": "TreePath.Tree10.DecoderConfig a b c d e f g h i leaf path -> TreePath.Tree10.TreePath3 a b c d e f g h i leaf -> Json.Encode.Value"
+            },
+            {
+                "name": "pathEncode4",
+                "comment": " ",
+                "type": "TreePath.Tree10.DecoderConfig a b c d e f g h i leaf path -> TreePath.Tree10.TreePath4 a b c d e f g h i leaf -> Json.Encode.Value"
+            },
+            {
+                "name": "pathEncode5",
+                "comment": " ",
+                "type": "TreePath.Tree10.DecoderConfig a b c d e f g h i leaf path -> TreePath.Tree10.TreePath5 a b c d e f g h i leaf -> Json.Encode.Value"
+            },
+            {
+                "name": "pathEncode6",
+                "comment": " ",
+                "type": "TreePath.Tree10.DecoderConfig a b c d e f g h i leaf path -> TreePath.Tree10.TreePath6 a b c d e f g h i leaf -> Json.Encode.Value"
+            },
+            {
+                "name": "pathEncode7",
+                "comment": " ",
+                "type": "TreePath.Tree10.DecoderConfig a b c d e f g h i leaf path -> TreePath.Tree10.TreePath7 a b c d e f g h i leaf -> Json.Encode.Value"
+            },
+            {
+                "name": "pathEncode8",
+                "comment": " ",
+                "type": "TreePath.Tree10.DecoderConfig a b c d e f g h i leaf path -> TreePath.Tree10.TreePath8 a b c d e f g h i leaf -> Json.Encode.Value"
+            },
+            {
+                "name": "pathEncode9",
+                "comment": " ",
+                "type": "TreePath.Tree10.DecoderConfig a b c d e f g h i leaf path -> TreePath.Tree10.TreePath9 a b c d e f g h i leaf -> Json.Encode.Value"
+            },
+            {
+                "name": "toRootPath",
+                "comment": " ",
+                "type": "TreePath.Tree10.Tree10 a b c d e f g h i leaf -> TreePath.Tree10.TreePath10 a b c d e f g h i leaf"
+            },
+            {
+                "name": "top1",
+                "comment": " ",
+                "type": "TreePath.Tree10.TreePath1 a b c d e f g h i leaf -> TreePath.Tree10.TreePath10 a b c d e f g h i leaf"
+            },
+            {
+                "name": "top10",
+                "comment": " ",
+                "type": "TreePath.Tree10.TreePath10 a b c d e f g h i leaf -> TreePath.Tree10.TreePath10 a b c d e f g h i leaf"
+            },
+            {
+                "name": "top2",
+                "comment": " ",
+                "type": "TreePath.Tree10.TreePath2 a b c d e f g h i leaf -> TreePath.Tree10.TreePath10 a b c d e f g h i leaf"
+            },
+            {
+                "name": "top3",
+                "comment": " ",
+                "type": "TreePath.Tree10.TreePath3 a b c d e f g h i leaf -> TreePath.Tree10.TreePath10 a b c d e f g h i leaf"
+            },
+            {
+                "name": "top4",
+                "comment": " ",
+                "type": "TreePath.Tree10.TreePath4 a b c d e f g h i leaf -> TreePath.Tree10.TreePath10 a b c d e f g h i leaf"
+            },
+            {
+                "name": "top5",
+                "comment": " ",
+                "type": "TreePath.Tree10.TreePath5 a b c d e f g h i leaf -> TreePath.Tree10.TreePath10 a b c d e f g h i leaf"
+            },
+            {
+                "name": "top6",
+                "comment": " ",
+                "type": "TreePath.Tree10.TreePath6 a b c d e f g h i leaf -> TreePath.Tree10.TreePath10 a b c d e f g h i leaf"
+            },
+            {
+                "name": "top7",
+                "comment": " ",
+                "type": "TreePath.Tree10.TreePath7 a b c d e f g h i leaf -> TreePath.Tree10.TreePath10 a b c d e f g h i leaf"
+            },
+            {
+                "name": "top8",
+                "comment": " ",
+                "type": "TreePath.Tree10.TreePath8 a b c d e f g h i leaf -> TreePath.Tree10.TreePath10 a b c d e f g h i leaf"
+            },
+            {
+                "name": "top9",
+                "comment": " ",
+                "type": "TreePath.Tree10.TreePath9 a b c d e f g h i leaf -> TreePath.Tree10.TreePath10 a b c d e f g h i leaf"
+            },
+            {
+                "name": "up1",
+                "comment": " ",
+                "type": "TreePath.Tree10.TreePath1 a b c d e f g h i leaf -> Maybe.Maybe (TreePath.Tree10.TreePath2 a b c d e f g h i leaf)"
+            },
+            {
+                "name": "up10",
+                "comment": " ",
+                "type": "TreePath.Tree10.TreePath10 a b c d e f g h i leaf -> Maybe.Maybe Basics.Never"
+            },
+            {
+                "name": "up2",
+                "comment": " ",
+                "type": "TreePath.Tree10.TreePath2 a b c d e f g h i leaf -> Maybe.Maybe (TreePath.Tree10.TreePath3 a b c d e f g h i leaf)"
+            },
+            {
+                "name": "up3",
+                "comment": " ",
+                "type": "TreePath.Tree10.TreePath3 a b c d e f g h i leaf -> Maybe.Maybe (TreePath.Tree10.TreePath4 a b c d e f g h i leaf)"
+            },
+            {
+                "name": "up4",
+                "comment": " ",
+                "type": "TreePath.Tree10.TreePath4 a b c d e f g h i leaf -> Maybe.Maybe (TreePath.Tree10.TreePath5 a b c d e f g h i leaf)"
+            },
+            {
+                "name": "up5",
+                "comment": " ",
+                "type": "TreePath.Tree10.TreePath5 a b c d e f g h i leaf -> Maybe.Maybe (TreePath.Tree10.TreePath6 a b c d e f g h i leaf)"
+            },
+            {
+                "name": "up6",
+                "comment": " ",
+                "type": "TreePath.Tree10.TreePath6 a b c d e f g h i leaf -> Maybe.Maybe (TreePath.Tree10.TreePath7 a b c d e f g h i leaf)"
+            },
+            {
+                "name": "up7",
+                "comment": " ",
+                "type": "TreePath.Tree10.TreePath7 a b c d e f g h i leaf -> Maybe.Maybe (TreePath.Tree10.TreePath8 a b c d e f g h i leaf)"
+            },
+            {
+                "name": "up8",
+                "comment": " ",
+                "type": "TreePath.Tree10.TreePath8 a b c d e f g h i leaf -> Maybe.Maybe (TreePath.Tree10.TreePath9 a b c d e f g h i leaf)"
+            },
+            {
+                "name": "up9",
+                "comment": " ",
+                "type": "TreePath.Tree10.TreePath9 a b c d e f g h i leaf -> Maybe.Maybe (TreePath.Tree10.TreePath10 a b c d e f g h i leaf)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "TreePath.Tree2",
+        "comment": " This module provides types and functions for managing a strongly typed tree\nof depth 2. Each level of the tree can have its own type, and each level can\ncontain Data either of that type, or the leaf type.\n\n\n# Definition\n\n@docs Tree, TreePath1, TreePath2\n\n\n# Encoders and decoders\n\n@docs DecoderConfig, decoder, pathDecoder, pathEncode1, pathEncode2\n\n\n# Path constructor\n\n@docs toRootPath\n\n\n# Data\n\n@docs data1, data2\n\n\n# Navigation\n\n@docs top1, up1, offset1, down1, downs1, top2, up2, offset2, down2, downs2\n\n",
+        "unions": [
+            {
+                "name": "TreePath1",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "leaf"
+                ],
+                "cases": []
+            },
+            {
+                "name": "TreePath2",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "leaf"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "DecoderConfig",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "leaf",
+                    "path"
+                ],
+                "type": "{ level2 : { decoder : Json.Decode.Decoder a, encoders : a -> List.List ( String.String, Json.Encode.Value ), pathType : TreePath.Tree2.TreePath2 a leaf -> path, childrenField : String.String }, leaf : { decoder : Json.Decode.Decoder leaf, encode : leaf -> Json.Encode.Value, pathType : TreePath.Tree2.TreePath1 a leaf -> path } }"
+            },
+            {
+                "name": "Tree",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "leaf"
+                ],
+                "type": "TreePath.Tree2.Tree2 a leaf"
+            }
+        ],
+        "values": [
+            {
+                "name": "data1",
+                "comment": " ",
+                "type": "TreePath.Tree2.TreePath1 a leaf -> leaf"
+            },
+            {
+                "name": "data2",
+                "comment": " ",
+                "type": "TreePath.Tree2.TreePath2 a leaf -> TreePath.Data.Data a leaf"
+            },
+            {
+                "name": "decoder",
+                "comment": " ",
+                "type": "TreePath.Tree2.DecoderConfig a leaf path -> Json.Decode.Decoder (TreePath.Tree2.Tree2 a leaf)"
+            },
+            {
+                "name": "down1",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree2.TreePath1 a leaf -> Maybe.Maybe Basics.Never"
+            },
+            {
+                "name": "down2",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree2.TreePath2 a leaf -> Maybe.Maybe (TreePath.Tree2.TreePath1 a leaf)"
+            },
+            {
+                "name": "downs1",
+                "comment": " ",
+                "type": "TreePath.Tree2.TreePath1 a leaf -> List.List Basics.Never"
+            },
+            {
+                "name": "downs2",
+                "comment": " ",
+                "type": "TreePath.Tree2.TreePath2 a leaf -> List.List (TreePath.Tree2.TreePath1 a leaf)"
+            },
+            {
+                "name": "offset1",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree2.TreePath1 a leaf -> Maybe.Maybe (TreePath.Tree2.TreePath1 a leaf)"
+            },
+            {
+                "name": "offset2",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree2.TreePath2 a leaf -> Maybe.Maybe (TreePath.Tree2.TreePath2 a leaf)"
+            },
+            {
+                "name": "pathDecoder",
+                "comment": " ",
+                "type": "TreePath.Tree2.DecoderConfig a leaf path -> Json.Decode.Decoder path"
+            },
+            {
+                "name": "pathEncode1",
+                "comment": " ",
+                "type": "TreePath.Tree2.DecoderConfig a leaf path -> TreePath.Tree2.TreePath1 a leaf -> Json.Encode.Value"
+            },
+            {
+                "name": "pathEncode2",
+                "comment": " ",
+                "type": "TreePath.Tree2.DecoderConfig a leaf path -> TreePath.Tree2.TreePath2 a leaf -> Json.Encode.Value"
+            },
+            {
+                "name": "toRootPath",
+                "comment": " ",
+                "type": "TreePath.Tree2.Tree2 a leaf -> TreePath.Tree2.TreePath2 a leaf"
+            },
+            {
+                "name": "top1",
+                "comment": " ",
+                "type": "TreePath.Tree2.TreePath1 a leaf -> TreePath.Tree2.TreePath2 a leaf"
+            },
+            {
+                "name": "top2",
+                "comment": " ",
+                "type": "TreePath.Tree2.TreePath2 a leaf -> TreePath.Tree2.TreePath2 a leaf"
+            },
+            {
+                "name": "up1",
+                "comment": " ",
+                "type": "TreePath.Tree2.TreePath1 a leaf -> Maybe.Maybe (TreePath.Tree2.TreePath2 a leaf)"
+            },
+            {
+                "name": "up2",
+                "comment": " ",
+                "type": "TreePath.Tree2.TreePath2 a leaf -> Maybe.Maybe Basics.Never"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "TreePath.Tree3",
+        "comment": " This module provides types and functions for managing a strongly typed tree\nof depth 3. Each level of the tree can have its own type, and each level can\ncontain Data either of that type, or the leaf type.\n\n\n# Definition\n\n@docs Tree, TreePath1, TreePath2, TreePath3\n\n\n# Encoders and decoders\n\n@docs DecoderConfig, decoder, pathDecoder, pathEncode1, pathEncode2, pathEncode3\n\n\n# Path constructor\n\n@docs toRootPath\n\n\n# Data\n\n@docs data1, data2, data3\n\n\n# Navigation\n\n@docs top1, up1, offset1, down1, downs1, top2, up2, offset2, down2, downs2, top3, up3, offset3, down3, downs3\n\n",
+        "unions": [
+            {
+                "name": "TreePath1",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "leaf"
+                ],
+                "cases": []
+            },
+            {
+                "name": "TreePath2",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "leaf"
+                ],
+                "cases": []
+            },
+            {
+                "name": "TreePath3",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "leaf"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "DecoderConfig",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "leaf",
+                    "path"
+                ],
+                "type": "{ level3 : { decoder : Json.Decode.Decoder a, encoders : a -> List.List ( String.String, Json.Encode.Value ), pathType : TreePath.Tree3.TreePath3 a b leaf -> path, childrenField : String.String }, level2 : { decoder : Json.Decode.Decoder b, encoders : b -> List.List ( String.String, Json.Encode.Value ), pathType : TreePath.Tree3.TreePath2 a b leaf -> path, childrenField : String.String }, leaf : { decoder : Json.Decode.Decoder leaf, encode : leaf -> Json.Encode.Value, pathType : TreePath.Tree3.TreePath1 a b leaf -> path } }"
+            },
+            {
+                "name": "Tree",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "leaf"
+                ],
+                "type": "TreePath.Tree3.Tree3 a b leaf"
+            }
+        ],
+        "values": [
+            {
+                "name": "data1",
+                "comment": " ",
+                "type": "TreePath.Tree3.TreePath1 a b leaf -> leaf"
+            },
+            {
+                "name": "data2",
+                "comment": " ",
+                "type": "TreePath.Tree3.TreePath2 a b leaf -> TreePath.Data.Data b leaf"
+            },
+            {
+                "name": "data3",
+                "comment": " ",
+                "type": "TreePath.Tree3.TreePath3 a b leaf -> TreePath.Data.Data a leaf"
+            },
+            {
+                "name": "decoder",
+                "comment": " ",
+                "type": "TreePath.Tree3.DecoderConfig a b leaf path -> Json.Decode.Decoder (TreePath.Tree3.Tree3 a b leaf)"
+            },
+            {
+                "name": "down1",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree3.TreePath1 a b leaf -> Maybe.Maybe Basics.Never"
+            },
+            {
+                "name": "down2",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree3.TreePath2 a b leaf -> Maybe.Maybe (TreePath.Tree3.TreePath1 a b leaf)"
+            },
+            {
+                "name": "down3",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree3.TreePath3 a b leaf -> Maybe.Maybe (TreePath.Tree3.TreePath2 a b leaf)"
+            },
+            {
+                "name": "downs1",
+                "comment": " ",
+                "type": "TreePath.Tree3.TreePath1 a b leaf -> List.List Basics.Never"
+            },
+            {
+                "name": "downs2",
+                "comment": " ",
+                "type": "TreePath.Tree3.TreePath2 a b leaf -> List.List (TreePath.Tree3.TreePath1 a b leaf)"
+            },
+            {
+                "name": "downs3",
+                "comment": " ",
+                "type": "TreePath.Tree3.TreePath3 a b leaf -> List.List (TreePath.Tree3.TreePath2 a b leaf)"
+            },
+            {
+                "name": "offset1",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree3.TreePath1 a b leaf -> Maybe.Maybe (TreePath.Tree3.TreePath1 a b leaf)"
+            },
+            {
+                "name": "offset2",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree3.TreePath2 a b leaf -> Maybe.Maybe (TreePath.Tree3.TreePath2 a b leaf)"
+            },
+            {
+                "name": "offset3",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree3.TreePath3 a b leaf -> Maybe.Maybe (TreePath.Tree3.TreePath3 a b leaf)"
+            },
+            {
+                "name": "pathDecoder",
+                "comment": " ",
+                "type": "TreePath.Tree3.DecoderConfig a b leaf path -> Json.Decode.Decoder path"
+            },
+            {
+                "name": "pathEncode1",
+                "comment": " ",
+                "type": "TreePath.Tree3.DecoderConfig a b leaf path -> TreePath.Tree3.TreePath1 a b leaf -> Json.Encode.Value"
+            },
+            {
+                "name": "pathEncode2",
+                "comment": " ",
+                "type": "TreePath.Tree3.DecoderConfig a b leaf path -> TreePath.Tree3.TreePath2 a b leaf -> Json.Encode.Value"
+            },
+            {
+                "name": "pathEncode3",
+                "comment": " ",
+                "type": "TreePath.Tree3.DecoderConfig a b leaf path -> TreePath.Tree3.TreePath3 a b leaf -> Json.Encode.Value"
+            },
+            {
+                "name": "toRootPath",
+                "comment": " ",
+                "type": "TreePath.Tree3.Tree3 a b leaf -> TreePath.Tree3.TreePath3 a b leaf"
+            },
+            {
+                "name": "top1",
+                "comment": " ",
+                "type": "TreePath.Tree3.TreePath1 a b leaf -> TreePath.Tree3.TreePath3 a b leaf"
+            },
+            {
+                "name": "top2",
+                "comment": " ",
+                "type": "TreePath.Tree3.TreePath2 a b leaf -> TreePath.Tree3.TreePath3 a b leaf"
+            },
+            {
+                "name": "top3",
+                "comment": " ",
+                "type": "TreePath.Tree3.TreePath3 a b leaf -> TreePath.Tree3.TreePath3 a b leaf"
+            },
+            {
+                "name": "up1",
+                "comment": " ",
+                "type": "TreePath.Tree3.TreePath1 a b leaf -> Maybe.Maybe (TreePath.Tree3.TreePath2 a b leaf)"
+            },
+            {
+                "name": "up2",
+                "comment": " ",
+                "type": "TreePath.Tree3.TreePath2 a b leaf -> Maybe.Maybe (TreePath.Tree3.TreePath3 a b leaf)"
+            },
+            {
+                "name": "up3",
+                "comment": " ",
+                "type": "TreePath.Tree3.TreePath3 a b leaf -> Maybe.Maybe Basics.Never"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "TreePath.Tree4",
+        "comment": " This module provides types and functions for managing a strongly typed tree\nof depth 4. Each level of the tree can have its own type, and each level can\ncontain Data either of that type, or the leaf type.\n\n\n# Definition\n\n@docs Tree, TreePath1, TreePath2, TreePath3, TreePath4\n\n\n# Encoders and decoders\n\n@docs DecoderConfig, decoder, pathDecoder, pathEncode1, pathEncode2, pathEncode3, pathEncode4\n\n\n# Path constructor\n\n@docs toRootPath\n\n\n# Data\n\n@docs data1, data2, data3, data4\n\n\n# Navigation\n\n@docs top1, up1, offset1, down1, downs1, top2, up2, offset2, down2, downs2, top3, up3, offset3, down3, downs3, top4, up4, offset4, down4, downs4\n\n",
+        "unions": [
+            {
+                "name": "TreePath1",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "leaf"
+                ],
+                "cases": []
+            },
+            {
+                "name": "TreePath2",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "leaf"
+                ],
+                "cases": []
+            },
+            {
+                "name": "TreePath3",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "leaf"
+                ],
+                "cases": []
+            },
+            {
+                "name": "TreePath4",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "leaf"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "DecoderConfig",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "leaf",
+                    "path"
+                ],
+                "type": "{ level4 : { decoder : Json.Decode.Decoder a, encoders : a -> List.List ( String.String, Json.Encode.Value ), pathType : TreePath.Tree4.TreePath4 a b c leaf -> path, childrenField : String.String }, level3 : { decoder : Json.Decode.Decoder b, encoders : b -> List.List ( String.String, Json.Encode.Value ), pathType : TreePath.Tree4.TreePath3 a b c leaf -> path, childrenField : String.String }, level2 : { decoder : Json.Decode.Decoder c, encoders : c -> List.List ( String.String, Json.Encode.Value ), pathType : TreePath.Tree4.TreePath2 a b c leaf -> path, childrenField : String.String }, leaf : { decoder : Json.Decode.Decoder leaf, encode : leaf -> Json.Encode.Value, pathType : TreePath.Tree4.TreePath1 a b c leaf -> path } }"
+            },
+            {
+                "name": "Tree",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "leaf"
+                ],
+                "type": "TreePath.Tree4.Tree4 a b c leaf"
+            }
+        ],
+        "values": [
+            {
+                "name": "data1",
+                "comment": " ",
+                "type": "TreePath.Tree4.TreePath1 a b c leaf -> leaf"
+            },
+            {
+                "name": "data2",
+                "comment": " ",
+                "type": "TreePath.Tree4.TreePath2 a b c leaf -> TreePath.Data.Data c leaf"
+            },
+            {
+                "name": "data3",
+                "comment": " ",
+                "type": "TreePath.Tree4.TreePath3 a b c leaf -> TreePath.Data.Data b leaf"
+            },
+            {
+                "name": "data4",
+                "comment": " ",
+                "type": "TreePath.Tree4.TreePath4 a b c leaf -> TreePath.Data.Data a leaf"
+            },
+            {
+                "name": "decoder",
+                "comment": " ",
+                "type": "TreePath.Tree4.DecoderConfig a b c leaf path -> Json.Decode.Decoder (TreePath.Tree4.Tree4 a b c leaf)"
+            },
+            {
+                "name": "down1",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree4.TreePath1 a b c leaf -> Maybe.Maybe Basics.Never"
+            },
+            {
+                "name": "down2",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree4.TreePath2 a b c leaf -> Maybe.Maybe (TreePath.Tree4.TreePath1 a b c leaf)"
+            },
+            {
+                "name": "down3",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree4.TreePath3 a b c leaf -> Maybe.Maybe (TreePath.Tree4.TreePath2 a b c leaf)"
+            },
+            {
+                "name": "down4",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree4.TreePath4 a b c leaf -> Maybe.Maybe (TreePath.Tree4.TreePath3 a b c leaf)"
+            },
+            {
+                "name": "downs1",
+                "comment": " ",
+                "type": "TreePath.Tree4.TreePath1 a b c leaf -> List.List Basics.Never"
+            },
+            {
+                "name": "downs2",
+                "comment": " ",
+                "type": "TreePath.Tree4.TreePath2 a b c leaf -> List.List (TreePath.Tree4.TreePath1 a b c leaf)"
+            },
+            {
+                "name": "downs3",
+                "comment": " ",
+                "type": "TreePath.Tree4.TreePath3 a b c leaf -> List.List (TreePath.Tree4.TreePath2 a b c leaf)"
+            },
+            {
+                "name": "downs4",
+                "comment": " ",
+                "type": "TreePath.Tree4.TreePath4 a b c leaf -> List.List (TreePath.Tree4.TreePath3 a b c leaf)"
+            },
+            {
+                "name": "offset1",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree4.TreePath1 a b c leaf -> Maybe.Maybe (TreePath.Tree4.TreePath1 a b c leaf)"
+            },
+            {
+                "name": "offset2",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree4.TreePath2 a b c leaf -> Maybe.Maybe (TreePath.Tree4.TreePath2 a b c leaf)"
+            },
+            {
+                "name": "offset3",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree4.TreePath3 a b c leaf -> Maybe.Maybe (TreePath.Tree4.TreePath3 a b c leaf)"
+            },
+            {
+                "name": "offset4",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree4.TreePath4 a b c leaf -> Maybe.Maybe (TreePath.Tree4.TreePath4 a b c leaf)"
+            },
+            {
+                "name": "pathDecoder",
+                "comment": " ",
+                "type": "TreePath.Tree4.DecoderConfig a b c leaf path -> Json.Decode.Decoder path"
+            },
+            {
+                "name": "pathEncode1",
+                "comment": " ",
+                "type": "TreePath.Tree4.DecoderConfig a b c leaf path -> TreePath.Tree4.TreePath1 a b c leaf -> Json.Encode.Value"
+            },
+            {
+                "name": "pathEncode2",
+                "comment": " ",
+                "type": "TreePath.Tree4.DecoderConfig a b c leaf path -> TreePath.Tree4.TreePath2 a b c leaf -> Json.Encode.Value"
+            },
+            {
+                "name": "pathEncode3",
+                "comment": " ",
+                "type": "TreePath.Tree4.DecoderConfig a b c leaf path -> TreePath.Tree4.TreePath3 a b c leaf -> Json.Encode.Value"
+            },
+            {
+                "name": "pathEncode4",
+                "comment": " ",
+                "type": "TreePath.Tree4.DecoderConfig a b c leaf path -> TreePath.Tree4.TreePath4 a b c leaf -> Json.Encode.Value"
+            },
+            {
+                "name": "toRootPath",
+                "comment": " ",
+                "type": "TreePath.Tree4.Tree4 a b c leaf -> TreePath.Tree4.TreePath4 a b c leaf"
+            },
+            {
+                "name": "top1",
+                "comment": " ",
+                "type": "TreePath.Tree4.TreePath1 a b c leaf -> TreePath.Tree4.TreePath4 a b c leaf"
+            },
+            {
+                "name": "top2",
+                "comment": " ",
+                "type": "TreePath.Tree4.TreePath2 a b c leaf -> TreePath.Tree4.TreePath4 a b c leaf"
+            },
+            {
+                "name": "top3",
+                "comment": " ",
+                "type": "TreePath.Tree4.TreePath3 a b c leaf -> TreePath.Tree4.TreePath4 a b c leaf"
+            },
+            {
+                "name": "top4",
+                "comment": " ",
+                "type": "TreePath.Tree4.TreePath4 a b c leaf -> TreePath.Tree4.TreePath4 a b c leaf"
+            },
+            {
+                "name": "up1",
+                "comment": " ",
+                "type": "TreePath.Tree4.TreePath1 a b c leaf -> Maybe.Maybe (TreePath.Tree4.TreePath2 a b c leaf)"
+            },
+            {
+                "name": "up2",
+                "comment": " ",
+                "type": "TreePath.Tree4.TreePath2 a b c leaf -> Maybe.Maybe (TreePath.Tree4.TreePath3 a b c leaf)"
+            },
+            {
+                "name": "up3",
+                "comment": " ",
+                "type": "TreePath.Tree4.TreePath3 a b c leaf -> Maybe.Maybe (TreePath.Tree4.TreePath4 a b c leaf)"
+            },
+            {
+                "name": "up4",
+                "comment": " ",
+                "type": "TreePath.Tree4.TreePath4 a b c leaf -> Maybe.Maybe Basics.Never"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "TreePath.Tree5",
+        "comment": " This module provides types and functions for managing a strongly typed tree\nof depth 5. Each level of the tree can have its own type, and each level can\ncontain Data either of that type, or the leaf type.\n\n\n# Definition\n\n@docs Tree, TreePath1, TreePath2, TreePath3, TreePath4, TreePath5\n\n\n# Encoders and decoders\n\n@docs DecoderConfig, decoder, pathDecoder, pathEncode1, pathEncode2, pathEncode3, pathEncode4, pathEncode5\n\n\n# Path constructor\n\n@docs toRootPath\n\n\n# Data\n\n@docs data1, data2, data3, data4, data5\n\n\n# Navigation\n\n@docs top1, up1, offset1, down1, downs1, top2, up2, offset2, down2, downs2, top3, up3, offset3, down3, downs3, top4, up4, offset4, down4, downs4, top5, up5, offset5, down5, downs5\n\n",
+        "unions": [
+            {
+                "name": "TreePath1",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "leaf"
+                ],
+                "cases": []
+            },
+            {
+                "name": "TreePath2",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "leaf"
+                ],
+                "cases": []
+            },
+            {
+                "name": "TreePath3",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "leaf"
+                ],
+                "cases": []
+            },
+            {
+                "name": "TreePath4",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "leaf"
+                ],
+                "cases": []
+            },
+            {
+                "name": "TreePath5",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "leaf"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "DecoderConfig",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "leaf",
+                    "path"
+                ],
+                "type": "{ level5 : { decoder : Json.Decode.Decoder a, encoders : a -> List.List ( String.String, Json.Encode.Value ), pathType : TreePath.Tree5.TreePath5 a b c d leaf -> path, childrenField : String.String }, level4 : { decoder : Json.Decode.Decoder b, encoders : b -> List.List ( String.String, Json.Encode.Value ), pathType : TreePath.Tree5.TreePath4 a b c d leaf -> path, childrenField : String.String }, level3 : { decoder : Json.Decode.Decoder c, encoders : c -> List.List ( String.String, Json.Encode.Value ), pathType : TreePath.Tree5.TreePath3 a b c d leaf -> path, childrenField : String.String }, level2 : { decoder : Json.Decode.Decoder d, encoders : d -> List.List ( String.String, Json.Encode.Value ), pathType : TreePath.Tree5.TreePath2 a b c d leaf -> path, childrenField : String.String }, leaf : { decoder : Json.Decode.Decoder leaf, encode : leaf -> Json.Encode.Value, pathType : TreePath.Tree5.TreePath1 a b c d leaf -> path } }"
+            },
+            {
+                "name": "Tree",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "leaf"
+                ],
+                "type": "TreePath.Tree5.Tree5 a b c d leaf"
+            }
+        ],
+        "values": [
+            {
+                "name": "data1",
+                "comment": " ",
+                "type": "TreePath.Tree5.TreePath1 a b c d leaf -> leaf"
+            },
+            {
+                "name": "data2",
+                "comment": " ",
+                "type": "TreePath.Tree5.TreePath2 a b c d leaf -> TreePath.Data.Data d leaf"
+            },
+            {
+                "name": "data3",
+                "comment": " ",
+                "type": "TreePath.Tree5.TreePath3 a b c d leaf -> TreePath.Data.Data c leaf"
+            },
+            {
+                "name": "data4",
+                "comment": " ",
+                "type": "TreePath.Tree5.TreePath4 a b c d leaf -> TreePath.Data.Data b leaf"
+            },
+            {
+                "name": "data5",
+                "comment": " ",
+                "type": "TreePath.Tree5.TreePath5 a b c d leaf -> TreePath.Data.Data a leaf"
+            },
+            {
+                "name": "decoder",
+                "comment": " ",
+                "type": "TreePath.Tree5.DecoderConfig a b c d leaf path -> Json.Decode.Decoder (TreePath.Tree5.Tree5 a b c d leaf)"
+            },
+            {
+                "name": "down1",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree5.TreePath1 a b c d leaf -> Maybe.Maybe Basics.Never"
+            },
+            {
+                "name": "down2",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree5.TreePath2 a b c d leaf -> Maybe.Maybe (TreePath.Tree5.TreePath1 a b c d leaf)"
+            },
+            {
+                "name": "down3",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree5.TreePath3 a b c d leaf -> Maybe.Maybe (TreePath.Tree5.TreePath2 a b c d leaf)"
+            },
+            {
+                "name": "down4",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree5.TreePath4 a b c d leaf -> Maybe.Maybe (TreePath.Tree5.TreePath3 a b c d leaf)"
+            },
+            {
+                "name": "down5",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree5.TreePath5 a b c d leaf -> Maybe.Maybe (TreePath.Tree5.TreePath4 a b c d leaf)"
+            },
+            {
+                "name": "downs1",
+                "comment": " ",
+                "type": "TreePath.Tree5.TreePath1 a b c d leaf -> List.List Basics.Never"
+            },
+            {
+                "name": "downs2",
+                "comment": " ",
+                "type": "TreePath.Tree5.TreePath2 a b c d leaf -> List.List (TreePath.Tree5.TreePath1 a b c d leaf)"
+            },
+            {
+                "name": "downs3",
+                "comment": " ",
+                "type": "TreePath.Tree5.TreePath3 a b c d leaf -> List.List (TreePath.Tree5.TreePath2 a b c d leaf)"
+            },
+            {
+                "name": "downs4",
+                "comment": " ",
+                "type": "TreePath.Tree5.TreePath4 a b c d leaf -> List.List (TreePath.Tree5.TreePath3 a b c d leaf)"
+            },
+            {
+                "name": "downs5",
+                "comment": " ",
+                "type": "TreePath.Tree5.TreePath5 a b c d leaf -> List.List (TreePath.Tree5.TreePath4 a b c d leaf)"
+            },
+            {
+                "name": "offset1",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree5.TreePath1 a b c d leaf -> Maybe.Maybe (TreePath.Tree5.TreePath1 a b c d leaf)"
+            },
+            {
+                "name": "offset2",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree5.TreePath2 a b c d leaf -> Maybe.Maybe (TreePath.Tree5.TreePath2 a b c d leaf)"
+            },
+            {
+                "name": "offset3",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree5.TreePath3 a b c d leaf -> Maybe.Maybe (TreePath.Tree5.TreePath3 a b c d leaf)"
+            },
+            {
+                "name": "offset4",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree5.TreePath4 a b c d leaf -> Maybe.Maybe (TreePath.Tree5.TreePath4 a b c d leaf)"
+            },
+            {
+                "name": "offset5",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree5.TreePath5 a b c d leaf -> Maybe.Maybe (TreePath.Tree5.TreePath5 a b c d leaf)"
+            },
+            {
+                "name": "pathDecoder",
+                "comment": " ",
+                "type": "TreePath.Tree5.DecoderConfig a b c d leaf path -> Json.Decode.Decoder path"
+            },
+            {
+                "name": "pathEncode1",
+                "comment": " ",
+                "type": "TreePath.Tree5.DecoderConfig a b c d leaf path -> TreePath.Tree5.TreePath1 a b c d leaf -> Json.Encode.Value"
+            },
+            {
+                "name": "pathEncode2",
+                "comment": " ",
+                "type": "TreePath.Tree5.DecoderConfig a b c d leaf path -> TreePath.Tree5.TreePath2 a b c d leaf -> Json.Encode.Value"
+            },
+            {
+                "name": "pathEncode3",
+                "comment": " ",
+                "type": "TreePath.Tree5.DecoderConfig a b c d leaf path -> TreePath.Tree5.TreePath3 a b c d leaf -> Json.Encode.Value"
+            },
+            {
+                "name": "pathEncode4",
+                "comment": " ",
+                "type": "TreePath.Tree5.DecoderConfig a b c d leaf path -> TreePath.Tree5.TreePath4 a b c d leaf -> Json.Encode.Value"
+            },
+            {
+                "name": "pathEncode5",
+                "comment": " ",
+                "type": "TreePath.Tree5.DecoderConfig a b c d leaf path -> TreePath.Tree5.TreePath5 a b c d leaf -> Json.Encode.Value"
+            },
+            {
+                "name": "toRootPath",
+                "comment": " ",
+                "type": "TreePath.Tree5.Tree5 a b c d leaf -> TreePath.Tree5.TreePath5 a b c d leaf"
+            },
+            {
+                "name": "top1",
+                "comment": " ",
+                "type": "TreePath.Tree5.TreePath1 a b c d leaf -> TreePath.Tree5.TreePath5 a b c d leaf"
+            },
+            {
+                "name": "top2",
+                "comment": " ",
+                "type": "TreePath.Tree5.TreePath2 a b c d leaf -> TreePath.Tree5.TreePath5 a b c d leaf"
+            },
+            {
+                "name": "top3",
+                "comment": " ",
+                "type": "TreePath.Tree5.TreePath3 a b c d leaf -> TreePath.Tree5.TreePath5 a b c d leaf"
+            },
+            {
+                "name": "top4",
+                "comment": " ",
+                "type": "TreePath.Tree5.TreePath4 a b c d leaf -> TreePath.Tree5.TreePath5 a b c d leaf"
+            },
+            {
+                "name": "top5",
+                "comment": " ",
+                "type": "TreePath.Tree5.TreePath5 a b c d leaf -> TreePath.Tree5.TreePath5 a b c d leaf"
+            },
+            {
+                "name": "up1",
+                "comment": " ",
+                "type": "TreePath.Tree5.TreePath1 a b c d leaf -> Maybe.Maybe (TreePath.Tree5.TreePath2 a b c d leaf)"
+            },
+            {
+                "name": "up2",
+                "comment": " ",
+                "type": "TreePath.Tree5.TreePath2 a b c d leaf -> Maybe.Maybe (TreePath.Tree5.TreePath3 a b c d leaf)"
+            },
+            {
+                "name": "up3",
+                "comment": " ",
+                "type": "TreePath.Tree5.TreePath3 a b c d leaf -> Maybe.Maybe (TreePath.Tree5.TreePath4 a b c d leaf)"
+            },
+            {
+                "name": "up4",
+                "comment": " ",
+                "type": "TreePath.Tree5.TreePath4 a b c d leaf -> Maybe.Maybe (TreePath.Tree5.TreePath5 a b c d leaf)"
+            },
+            {
+                "name": "up5",
+                "comment": " ",
+                "type": "TreePath.Tree5.TreePath5 a b c d leaf -> Maybe.Maybe Basics.Never"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "TreePath.Tree6",
+        "comment": " This module provides types and functions for managing a strongly typed tree\nof depth 6. Each level of the tree can have its own type, and each level can\ncontain Data either of that type, or the leaf type.\n\n\n# Definition\n\n@docs Tree, TreePath1, TreePath2, TreePath3, TreePath4, TreePath5, TreePath6\n\n\n# Encoders and decoders\n\n@docs DecoderConfig, decoder, pathDecoder, pathEncode1, pathEncode2, pathEncode3, pathEncode4, pathEncode5, pathEncode6\n\n\n# Path constructor\n\n@docs toRootPath\n\n\n# Data\n\n@docs data1, data2, data3, data4, data5, data6\n\n\n# Navigation\n\n@docs top1, up1, offset1, down1, downs1, top2, up2, offset2, down2, downs2, top3, up3, offset3, down3, downs3, top4, up4, offset4, down4, downs4, top5, up5, offset5, down5, downs5, top6, up6, offset6, down6, downs6\n\n",
+        "unions": [
+            {
+                "name": "TreePath1",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "leaf"
+                ],
+                "cases": []
+            },
+            {
+                "name": "TreePath2",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "leaf"
+                ],
+                "cases": []
+            },
+            {
+                "name": "TreePath3",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "leaf"
+                ],
+                "cases": []
+            },
+            {
+                "name": "TreePath4",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "leaf"
+                ],
+                "cases": []
+            },
+            {
+                "name": "TreePath5",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "leaf"
+                ],
+                "cases": []
+            },
+            {
+                "name": "TreePath6",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "leaf"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "DecoderConfig",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "leaf",
+                    "path"
+                ],
+                "type": "{ level6 : { decoder : Json.Decode.Decoder a, encoders : a -> List.List ( String.String, Json.Encode.Value ), pathType : TreePath.Tree6.TreePath6 a b c d e leaf -> path, childrenField : String.String }, level5 : { decoder : Json.Decode.Decoder b, encoders : b -> List.List ( String.String, Json.Encode.Value ), pathType : TreePath.Tree6.TreePath5 a b c d e leaf -> path, childrenField : String.String }, level4 : { decoder : Json.Decode.Decoder c, encoders : c -> List.List ( String.String, Json.Encode.Value ), pathType : TreePath.Tree6.TreePath4 a b c d e leaf -> path, childrenField : String.String }, level3 : { decoder : Json.Decode.Decoder d, encoders : d -> List.List ( String.String, Json.Encode.Value ), pathType : TreePath.Tree6.TreePath3 a b c d e leaf -> path, childrenField : String.String }, level2 : { decoder : Json.Decode.Decoder e, encoders : e -> List.List ( String.String, Json.Encode.Value ), pathType : TreePath.Tree6.TreePath2 a b c d e leaf -> path, childrenField : String.String }, leaf : { decoder : Json.Decode.Decoder leaf, encode : leaf -> Json.Encode.Value, pathType : TreePath.Tree6.TreePath1 a b c d e leaf -> path } }"
+            },
+            {
+                "name": "Tree",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "leaf"
+                ],
+                "type": "TreePath.Tree6.Tree6 a b c d e leaf"
+            }
+        ],
+        "values": [
+            {
+                "name": "data1",
+                "comment": " ",
+                "type": "TreePath.Tree6.TreePath1 a b c d e leaf -> leaf"
+            },
+            {
+                "name": "data2",
+                "comment": " ",
+                "type": "TreePath.Tree6.TreePath2 a b c d e leaf -> TreePath.Data.Data e leaf"
+            },
+            {
+                "name": "data3",
+                "comment": " ",
+                "type": "TreePath.Tree6.TreePath3 a b c d e leaf -> TreePath.Data.Data d leaf"
+            },
+            {
+                "name": "data4",
+                "comment": " ",
+                "type": "TreePath.Tree6.TreePath4 a b c d e leaf -> TreePath.Data.Data c leaf"
+            },
+            {
+                "name": "data5",
+                "comment": " ",
+                "type": "TreePath.Tree6.TreePath5 a b c d e leaf -> TreePath.Data.Data b leaf"
+            },
+            {
+                "name": "data6",
+                "comment": " ",
+                "type": "TreePath.Tree6.TreePath6 a b c d e leaf -> TreePath.Data.Data a leaf"
+            },
+            {
+                "name": "decoder",
+                "comment": " ",
+                "type": "TreePath.Tree6.DecoderConfig a b c d e leaf path -> Json.Decode.Decoder (TreePath.Tree6.Tree6 a b c d e leaf)"
+            },
+            {
+                "name": "down1",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree6.TreePath1 a b c d e leaf -> Maybe.Maybe Basics.Never"
+            },
+            {
+                "name": "down2",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree6.TreePath2 a b c d e leaf -> Maybe.Maybe (TreePath.Tree6.TreePath1 a b c d e leaf)"
+            },
+            {
+                "name": "down3",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree6.TreePath3 a b c d e leaf -> Maybe.Maybe (TreePath.Tree6.TreePath2 a b c d e leaf)"
+            },
+            {
+                "name": "down4",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree6.TreePath4 a b c d e leaf -> Maybe.Maybe (TreePath.Tree6.TreePath3 a b c d e leaf)"
+            },
+            {
+                "name": "down5",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree6.TreePath5 a b c d e leaf -> Maybe.Maybe (TreePath.Tree6.TreePath4 a b c d e leaf)"
+            },
+            {
+                "name": "down6",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree6.TreePath6 a b c d e leaf -> Maybe.Maybe (TreePath.Tree6.TreePath5 a b c d e leaf)"
+            },
+            {
+                "name": "downs1",
+                "comment": " ",
+                "type": "TreePath.Tree6.TreePath1 a b c d e leaf -> List.List Basics.Never"
+            },
+            {
+                "name": "downs2",
+                "comment": " ",
+                "type": "TreePath.Tree6.TreePath2 a b c d e leaf -> List.List (TreePath.Tree6.TreePath1 a b c d e leaf)"
+            },
+            {
+                "name": "downs3",
+                "comment": " ",
+                "type": "TreePath.Tree6.TreePath3 a b c d e leaf -> List.List (TreePath.Tree6.TreePath2 a b c d e leaf)"
+            },
+            {
+                "name": "downs4",
+                "comment": " ",
+                "type": "TreePath.Tree6.TreePath4 a b c d e leaf -> List.List (TreePath.Tree6.TreePath3 a b c d e leaf)"
+            },
+            {
+                "name": "downs5",
+                "comment": " ",
+                "type": "TreePath.Tree6.TreePath5 a b c d e leaf -> List.List (TreePath.Tree6.TreePath4 a b c d e leaf)"
+            },
+            {
+                "name": "downs6",
+                "comment": " ",
+                "type": "TreePath.Tree6.TreePath6 a b c d e leaf -> List.List (TreePath.Tree6.TreePath5 a b c d e leaf)"
+            },
+            {
+                "name": "offset1",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree6.TreePath1 a b c d e leaf -> Maybe.Maybe (TreePath.Tree6.TreePath1 a b c d e leaf)"
+            },
+            {
+                "name": "offset2",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree6.TreePath2 a b c d e leaf -> Maybe.Maybe (TreePath.Tree6.TreePath2 a b c d e leaf)"
+            },
+            {
+                "name": "offset3",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree6.TreePath3 a b c d e leaf -> Maybe.Maybe (TreePath.Tree6.TreePath3 a b c d e leaf)"
+            },
+            {
+                "name": "offset4",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree6.TreePath4 a b c d e leaf -> Maybe.Maybe (TreePath.Tree6.TreePath4 a b c d e leaf)"
+            },
+            {
+                "name": "offset5",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree6.TreePath5 a b c d e leaf -> Maybe.Maybe (TreePath.Tree6.TreePath5 a b c d e leaf)"
+            },
+            {
+                "name": "offset6",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree6.TreePath6 a b c d e leaf -> Maybe.Maybe (TreePath.Tree6.TreePath6 a b c d e leaf)"
+            },
+            {
+                "name": "pathDecoder",
+                "comment": " ",
+                "type": "TreePath.Tree6.DecoderConfig a b c d e leaf path -> Json.Decode.Decoder path"
+            },
+            {
+                "name": "pathEncode1",
+                "comment": " ",
+                "type": "TreePath.Tree6.DecoderConfig a b c d e leaf path -> TreePath.Tree6.TreePath1 a b c d e leaf -> Json.Encode.Value"
+            },
+            {
+                "name": "pathEncode2",
+                "comment": " ",
+                "type": "TreePath.Tree6.DecoderConfig a b c d e leaf path -> TreePath.Tree6.TreePath2 a b c d e leaf -> Json.Encode.Value"
+            },
+            {
+                "name": "pathEncode3",
+                "comment": " ",
+                "type": "TreePath.Tree6.DecoderConfig a b c d e leaf path -> TreePath.Tree6.TreePath3 a b c d e leaf -> Json.Encode.Value"
+            },
+            {
+                "name": "pathEncode4",
+                "comment": " ",
+                "type": "TreePath.Tree6.DecoderConfig a b c d e leaf path -> TreePath.Tree6.TreePath4 a b c d e leaf -> Json.Encode.Value"
+            },
+            {
+                "name": "pathEncode5",
+                "comment": " ",
+                "type": "TreePath.Tree6.DecoderConfig a b c d e leaf path -> TreePath.Tree6.TreePath5 a b c d e leaf -> Json.Encode.Value"
+            },
+            {
+                "name": "pathEncode6",
+                "comment": " ",
+                "type": "TreePath.Tree6.DecoderConfig a b c d e leaf path -> TreePath.Tree6.TreePath6 a b c d e leaf -> Json.Encode.Value"
+            },
+            {
+                "name": "toRootPath",
+                "comment": " ",
+                "type": "TreePath.Tree6.Tree6 a b c d e leaf -> TreePath.Tree6.TreePath6 a b c d e leaf"
+            },
+            {
+                "name": "top1",
+                "comment": " ",
+                "type": "TreePath.Tree6.TreePath1 a b c d e leaf -> TreePath.Tree6.TreePath6 a b c d e leaf"
+            },
+            {
+                "name": "top2",
+                "comment": " ",
+                "type": "TreePath.Tree6.TreePath2 a b c d e leaf -> TreePath.Tree6.TreePath6 a b c d e leaf"
+            },
+            {
+                "name": "top3",
+                "comment": " ",
+                "type": "TreePath.Tree6.TreePath3 a b c d e leaf -> TreePath.Tree6.TreePath6 a b c d e leaf"
+            },
+            {
+                "name": "top4",
+                "comment": " ",
+                "type": "TreePath.Tree6.TreePath4 a b c d e leaf -> TreePath.Tree6.TreePath6 a b c d e leaf"
+            },
+            {
+                "name": "top5",
+                "comment": " ",
+                "type": "TreePath.Tree6.TreePath5 a b c d e leaf -> TreePath.Tree6.TreePath6 a b c d e leaf"
+            },
+            {
+                "name": "top6",
+                "comment": " ",
+                "type": "TreePath.Tree6.TreePath6 a b c d e leaf -> TreePath.Tree6.TreePath6 a b c d e leaf"
+            },
+            {
+                "name": "up1",
+                "comment": " ",
+                "type": "TreePath.Tree6.TreePath1 a b c d e leaf -> Maybe.Maybe (TreePath.Tree6.TreePath2 a b c d e leaf)"
+            },
+            {
+                "name": "up2",
+                "comment": " ",
+                "type": "TreePath.Tree6.TreePath2 a b c d e leaf -> Maybe.Maybe (TreePath.Tree6.TreePath3 a b c d e leaf)"
+            },
+            {
+                "name": "up3",
+                "comment": " ",
+                "type": "TreePath.Tree6.TreePath3 a b c d e leaf -> Maybe.Maybe (TreePath.Tree6.TreePath4 a b c d e leaf)"
+            },
+            {
+                "name": "up4",
+                "comment": " ",
+                "type": "TreePath.Tree6.TreePath4 a b c d e leaf -> Maybe.Maybe (TreePath.Tree6.TreePath5 a b c d e leaf)"
+            },
+            {
+                "name": "up5",
+                "comment": " ",
+                "type": "TreePath.Tree6.TreePath5 a b c d e leaf -> Maybe.Maybe (TreePath.Tree6.TreePath6 a b c d e leaf)"
+            },
+            {
+                "name": "up6",
+                "comment": " ",
+                "type": "TreePath.Tree6.TreePath6 a b c d e leaf -> Maybe.Maybe Basics.Never"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "TreePath.Tree7",
+        "comment": " This module provides types and functions for managing a strongly typed tree\nof depth 7. Each level of the tree can have its own type, and each level can\ncontain Data either of that type, or the leaf type.\n\n\n# Definition\n\n@docs Tree, TreePath1, TreePath2, TreePath3, TreePath4, TreePath5, TreePath6, TreePath7\n\n\n# Encoders and decoders\n\n@docs DecoderConfig, decoder, pathDecoder, pathEncode1, pathEncode2, pathEncode3, pathEncode4, pathEncode5, pathEncode6, pathEncode7\n\n\n# Path constructor\n\n@docs toRootPath\n\n\n# Data\n\n@docs data1, data2, data3, data4, data5, data6, data7\n\n\n# Navigation\n\n@docs top1, up1, offset1, down1, downs1, top2, up2, offset2, down2, downs2, top3, up3, offset3, down3, downs3, top4, up4, offset4, down4, downs4, top5, up5, offset5, down5, downs5, top6, up6, offset6, down6, downs6, top7, up7, offset7, down7, downs7\n\n",
+        "unions": [
+            {
+                "name": "TreePath1",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "f",
+                    "leaf"
+                ],
+                "cases": []
+            },
+            {
+                "name": "TreePath2",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "f",
+                    "leaf"
+                ],
+                "cases": []
+            },
+            {
+                "name": "TreePath3",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "f",
+                    "leaf"
+                ],
+                "cases": []
+            },
+            {
+                "name": "TreePath4",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "f",
+                    "leaf"
+                ],
+                "cases": []
+            },
+            {
+                "name": "TreePath5",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "f",
+                    "leaf"
+                ],
+                "cases": []
+            },
+            {
+                "name": "TreePath6",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "f",
+                    "leaf"
+                ],
+                "cases": []
+            },
+            {
+                "name": "TreePath7",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "f",
+                    "leaf"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "DecoderConfig",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "f",
+                    "leaf",
+                    "path"
+                ],
+                "type": "{ level7 : { decoder : Json.Decode.Decoder a, encoders : a -> List.List ( String.String, Json.Encode.Value ), pathType : TreePath.Tree7.TreePath7 a b c d e f leaf -> path, childrenField : String.String }, level6 : { decoder : Json.Decode.Decoder b, encoders : b -> List.List ( String.String, Json.Encode.Value ), pathType : TreePath.Tree7.TreePath6 a b c d e f leaf -> path, childrenField : String.String }, level5 : { decoder : Json.Decode.Decoder c, encoders : c -> List.List ( String.String, Json.Encode.Value ), pathType : TreePath.Tree7.TreePath5 a b c d e f leaf -> path, childrenField : String.String }, level4 : { decoder : Json.Decode.Decoder d, encoders : d -> List.List ( String.String, Json.Encode.Value ), pathType : TreePath.Tree7.TreePath4 a b c d e f leaf -> path, childrenField : String.String }, level3 : { decoder : Json.Decode.Decoder e, encoders : e -> List.List ( String.String, Json.Encode.Value ), pathType : TreePath.Tree7.TreePath3 a b c d e f leaf -> path, childrenField : String.String }, level2 : { decoder : Json.Decode.Decoder f, encoders : f -> List.List ( String.String, Json.Encode.Value ), pathType : TreePath.Tree7.TreePath2 a b c d e f leaf -> path, childrenField : String.String }, leaf : { decoder : Json.Decode.Decoder leaf, encode : leaf -> Json.Encode.Value, pathType : TreePath.Tree7.TreePath1 a b c d e f leaf -> path } }"
+            },
+            {
+                "name": "Tree",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "f",
+                    "leaf"
+                ],
+                "type": "TreePath.Tree7.Tree7 a b c d e f leaf"
+            }
+        ],
+        "values": [
+            {
+                "name": "data1",
+                "comment": " ",
+                "type": "TreePath.Tree7.TreePath1 a b c d e f leaf -> leaf"
+            },
+            {
+                "name": "data2",
+                "comment": " ",
+                "type": "TreePath.Tree7.TreePath2 a b c d e f leaf -> TreePath.Data.Data f leaf"
+            },
+            {
+                "name": "data3",
+                "comment": " ",
+                "type": "TreePath.Tree7.TreePath3 a b c d e f leaf -> TreePath.Data.Data e leaf"
+            },
+            {
+                "name": "data4",
+                "comment": " ",
+                "type": "TreePath.Tree7.TreePath4 a b c d e f leaf -> TreePath.Data.Data d leaf"
+            },
+            {
+                "name": "data5",
+                "comment": " ",
+                "type": "TreePath.Tree7.TreePath5 a b c d e f leaf -> TreePath.Data.Data c leaf"
+            },
+            {
+                "name": "data6",
+                "comment": " ",
+                "type": "TreePath.Tree7.TreePath6 a b c d e f leaf -> TreePath.Data.Data b leaf"
+            },
+            {
+                "name": "data7",
+                "comment": " ",
+                "type": "TreePath.Tree7.TreePath7 a b c d e f leaf -> TreePath.Data.Data a leaf"
+            },
+            {
+                "name": "decoder",
+                "comment": " ",
+                "type": "TreePath.Tree7.DecoderConfig a b c d e f leaf path -> Json.Decode.Decoder (TreePath.Tree7.Tree7 a b c d e f leaf)"
+            },
+            {
+                "name": "down1",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree7.TreePath1 a b c d e f leaf -> Maybe.Maybe Basics.Never"
+            },
+            {
+                "name": "down2",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree7.TreePath2 a b c d e f leaf -> Maybe.Maybe (TreePath.Tree7.TreePath1 a b c d e f leaf)"
+            },
+            {
+                "name": "down3",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree7.TreePath3 a b c d e f leaf -> Maybe.Maybe (TreePath.Tree7.TreePath2 a b c d e f leaf)"
+            },
+            {
+                "name": "down4",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree7.TreePath4 a b c d e f leaf -> Maybe.Maybe (TreePath.Tree7.TreePath3 a b c d e f leaf)"
+            },
+            {
+                "name": "down5",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree7.TreePath5 a b c d e f leaf -> Maybe.Maybe (TreePath.Tree7.TreePath4 a b c d e f leaf)"
+            },
+            {
+                "name": "down6",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree7.TreePath6 a b c d e f leaf -> Maybe.Maybe (TreePath.Tree7.TreePath5 a b c d e f leaf)"
+            },
+            {
+                "name": "down7",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree7.TreePath7 a b c d e f leaf -> Maybe.Maybe (TreePath.Tree7.TreePath6 a b c d e f leaf)"
+            },
+            {
+                "name": "downs1",
+                "comment": " ",
+                "type": "TreePath.Tree7.TreePath1 a b c d e f leaf -> List.List Basics.Never"
+            },
+            {
+                "name": "downs2",
+                "comment": " ",
+                "type": "TreePath.Tree7.TreePath2 a b c d e f leaf -> List.List (TreePath.Tree7.TreePath1 a b c d e f leaf)"
+            },
+            {
+                "name": "downs3",
+                "comment": " ",
+                "type": "TreePath.Tree7.TreePath3 a b c d e f leaf -> List.List (TreePath.Tree7.TreePath2 a b c d e f leaf)"
+            },
+            {
+                "name": "downs4",
+                "comment": " ",
+                "type": "TreePath.Tree7.TreePath4 a b c d e f leaf -> List.List (TreePath.Tree7.TreePath3 a b c d e f leaf)"
+            },
+            {
+                "name": "downs5",
+                "comment": " ",
+                "type": "TreePath.Tree7.TreePath5 a b c d e f leaf -> List.List (TreePath.Tree7.TreePath4 a b c d e f leaf)"
+            },
+            {
+                "name": "downs6",
+                "comment": " ",
+                "type": "TreePath.Tree7.TreePath6 a b c d e f leaf -> List.List (TreePath.Tree7.TreePath5 a b c d e f leaf)"
+            },
+            {
+                "name": "downs7",
+                "comment": " ",
+                "type": "TreePath.Tree7.TreePath7 a b c d e f leaf -> List.List (TreePath.Tree7.TreePath6 a b c d e f leaf)"
+            },
+            {
+                "name": "offset1",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree7.TreePath1 a b c d e f leaf -> Maybe.Maybe (TreePath.Tree7.TreePath1 a b c d e f leaf)"
+            },
+            {
+                "name": "offset2",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree7.TreePath2 a b c d e f leaf -> Maybe.Maybe (TreePath.Tree7.TreePath2 a b c d e f leaf)"
+            },
+            {
+                "name": "offset3",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree7.TreePath3 a b c d e f leaf -> Maybe.Maybe (TreePath.Tree7.TreePath3 a b c d e f leaf)"
+            },
+            {
+                "name": "offset4",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree7.TreePath4 a b c d e f leaf -> Maybe.Maybe (TreePath.Tree7.TreePath4 a b c d e f leaf)"
+            },
+            {
+                "name": "offset5",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree7.TreePath5 a b c d e f leaf -> Maybe.Maybe (TreePath.Tree7.TreePath5 a b c d e f leaf)"
+            },
+            {
+                "name": "offset6",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree7.TreePath6 a b c d e f leaf -> Maybe.Maybe (TreePath.Tree7.TreePath6 a b c d e f leaf)"
+            },
+            {
+                "name": "offset7",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree7.TreePath7 a b c d e f leaf -> Maybe.Maybe (TreePath.Tree7.TreePath7 a b c d e f leaf)"
+            },
+            {
+                "name": "pathDecoder",
+                "comment": " ",
+                "type": "TreePath.Tree7.DecoderConfig a b c d e f leaf path -> Json.Decode.Decoder path"
+            },
+            {
+                "name": "pathEncode1",
+                "comment": " ",
+                "type": "TreePath.Tree7.DecoderConfig a b c d e f leaf path -> TreePath.Tree7.TreePath1 a b c d e f leaf -> Json.Encode.Value"
+            },
+            {
+                "name": "pathEncode2",
+                "comment": " ",
+                "type": "TreePath.Tree7.DecoderConfig a b c d e f leaf path -> TreePath.Tree7.TreePath2 a b c d e f leaf -> Json.Encode.Value"
+            },
+            {
+                "name": "pathEncode3",
+                "comment": " ",
+                "type": "TreePath.Tree7.DecoderConfig a b c d e f leaf path -> TreePath.Tree7.TreePath3 a b c d e f leaf -> Json.Encode.Value"
+            },
+            {
+                "name": "pathEncode4",
+                "comment": " ",
+                "type": "TreePath.Tree7.DecoderConfig a b c d e f leaf path -> TreePath.Tree7.TreePath4 a b c d e f leaf -> Json.Encode.Value"
+            },
+            {
+                "name": "pathEncode5",
+                "comment": " ",
+                "type": "TreePath.Tree7.DecoderConfig a b c d e f leaf path -> TreePath.Tree7.TreePath5 a b c d e f leaf -> Json.Encode.Value"
+            },
+            {
+                "name": "pathEncode6",
+                "comment": " ",
+                "type": "TreePath.Tree7.DecoderConfig a b c d e f leaf path -> TreePath.Tree7.TreePath6 a b c d e f leaf -> Json.Encode.Value"
+            },
+            {
+                "name": "pathEncode7",
+                "comment": " ",
+                "type": "TreePath.Tree7.DecoderConfig a b c d e f leaf path -> TreePath.Tree7.TreePath7 a b c d e f leaf -> Json.Encode.Value"
+            },
+            {
+                "name": "toRootPath",
+                "comment": " ",
+                "type": "TreePath.Tree7.Tree7 a b c d e f leaf -> TreePath.Tree7.TreePath7 a b c d e f leaf"
+            },
+            {
+                "name": "top1",
+                "comment": " ",
+                "type": "TreePath.Tree7.TreePath1 a b c d e f leaf -> TreePath.Tree7.TreePath7 a b c d e f leaf"
+            },
+            {
+                "name": "top2",
+                "comment": " ",
+                "type": "TreePath.Tree7.TreePath2 a b c d e f leaf -> TreePath.Tree7.TreePath7 a b c d e f leaf"
+            },
+            {
+                "name": "top3",
+                "comment": " ",
+                "type": "TreePath.Tree7.TreePath3 a b c d e f leaf -> TreePath.Tree7.TreePath7 a b c d e f leaf"
+            },
+            {
+                "name": "top4",
+                "comment": " ",
+                "type": "TreePath.Tree7.TreePath4 a b c d e f leaf -> TreePath.Tree7.TreePath7 a b c d e f leaf"
+            },
+            {
+                "name": "top5",
+                "comment": " ",
+                "type": "TreePath.Tree7.TreePath5 a b c d e f leaf -> TreePath.Tree7.TreePath7 a b c d e f leaf"
+            },
+            {
+                "name": "top6",
+                "comment": " ",
+                "type": "TreePath.Tree7.TreePath6 a b c d e f leaf -> TreePath.Tree7.TreePath7 a b c d e f leaf"
+            },
+            {
+                "name": "top7",
+                "comment": " ",
+                "type": "TreePath.Tree7.TreePath7 a b c d e f leaf -> TreePath.Tree7.TreePath7 a b c d e f leaf"
+            },
+            {
+                "name": "up1",
+                "comment": " ",
+                "type": "TreePath.Tree7.TreePath1 a b c d e f leaf -> Maybe.Maybe (TreePath.Tree7.TreePath2 a b c d e f leaf)"
+            },
+            {
+                "name": "up2",
+                "comment": " ",
+                "type": "TreePath.Tree7.TreePath2 a b c d e f leaf -> Maybe.Maybe (TreePath.Tree7.TreePath3 a b c d e f leaf)"
+            },
+            {
+                "name": "up3",
+                "comment": " ",
+                "type": "TreePath.Tree7.TreePath3 a b c d e f leaf -> Maybe.Maybe (TreePath.Tree7.TreePath4 a b c d e f leaf)"
+            },
+            {
+                "name": "up4",
+                "comment": " ",
+                "type": "TreePath.Tree7.TreePath4 a b c d e f leaf -> Maybe.Maybe (TreePath.Tree7.TreePath5 a b c d e f leaf)"
+            },
+            {
+                "name": "up5",
+                "comment": " ",
+                "type": "TreePath.Tree7.TreePath5 a b c d e f leaf -> Maybe.Maybe (TreePath.Tree7.TreePath6 a b c d e f leaf)"
+            },
+            {
+                "name": "up6",
+                "comment": " ",
+                "type": "TreePath.Tree7.TreePath6 a b c d e f leaf -> Maybe.Maybe (TreePath.Tree7.TreePath7 a b c d e f leaf)"
+            },
+            {
+                "name": "up7",
+                "comment": " ",
+                "type": "TreePath.Tree7.TreePath7 a b c d e f leaf -> Maybe.Maybe Basics.Never"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "TreePath.Tree8",
+        "comment": " This module provides types and functions for managing a strongly typed tree\nof depth 8. Each level of the tree can have its own type, and each level can\ncontain Data either of that type, or the leaf type.\n\n\n# Definition\n\n@docs Tree, TreePath1, TreePath2, TreePath3, TreePath4, TreePath5, TreePath6, TreePath7, TreePath8\n\n\n# Encoders and decoders\n\n@docs DecoderConfig, decoder, pathDecoder, pathEncode1, pathEncode2, pathEncode3, pathEncode4, pathEncode5, pathEncode6, pathEncode7, pathEncode8\n\n\n# Path constructor\n\n@docs toRootPath\n\n\n# Data\n\n@docs data1, data2, data3, data4, data5, data6, data7, data8\n\n\n# Navigation\n\n@docs top1, up1, offset1, down1, downs1, top2, up2, offset2, down2, downs2, top3, up3, offset3, down3, downs3, top4, up4, offset4, down4, downs4, top5, up5, offset5, down5, downs5, top6, up6, offset6, down6, downs6, top7, up7, offset7, down7, downs7, top8, up8, offset8, down8, downs8\n\n",
+        "unions": [
+            {
+                "name": "TreePath1",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "f",
+                    "g",
+                    "leaf"
+                ],
+                "cases": []
+            },
+            {
+                "name": "TreePath2",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "f",
+                    "g",
+                    "leaf"
+                ],
+                "cases": []
+            },
+            {
+                "name": "TreePath3",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "f",
+                    "g",
+                    "leaf"
+                ],
+                "cases": []
+            },
+            {
+                "name": "TreePath4",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "f",
+                    "g",
+                    "leaf"
+                ],
+                "cases": []
+            },
+            {
+                "name": "TreePath5",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "f",
+                    "g",
+                    "leaf"
+                ],
+                "cases": []
+            },
+            {
+                "name": "TreePath6",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "f",
+                    "g",
+                    "leaf"
+                ],
+                "cases": []
+            },
+            {
+                "name": "TreePath7",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "f",
+                    "g",
+                    "leaf"
+                ],
+                "cases": []
+            },
+            {
+                "name": "TreePath8",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "f",
+                    "g",
+                    "leaf"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "DecoderConfig",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "f",
+                    "g",
+                    "leaf",
+                    "path"
+                ],
+                "type": "{ level8 : { decoder : Json.Decode.Decoder a, encoders : a -> List.List ( String.String, Json.Encode.Value ), pathType : TreePath.Tree8.TreePath8 a b c d e f g leaf -> path, childrenField : String.String }, level7 : { decoder : Json.Decode.Decoder b, encoders : b -> List.List ( String.String, Json.Encode.Value ), pathType : TreePath.Tree8.TreePath7 a b c d e f g leaf -> path, childrenField : String.String }, level6 : { decoder : Json.Decode.Decoder c, encoders : c -> List.List ( String.String, Json.Encode.Value ), pathType : TreePath.Tree8.TreePath6 a b c d e f g leaf -> path, childrenField : String.String }, level5 : { decoder : Json.Decode.Decoder d, encoders : d -> List.List ( String.String, Json.Encode.Value ), pathType : TreePath.Tree8.TreePath5 a b c d e f g leaf -> path, childrenField : String.String }, level4 : { decoder : Json.Decode.Decoder e, encoders : e -> List.List ( String.String, Json.Encode.Value ), pathType : TreePath.Tree8.TreePath4 a b c d e f g leaf -> path, childrenField : String.String }, level3 : { decoder : Json.Decode.Decoder f, encoders : f -> List.List ( String.String, Json.Encode.Value ), pathType : TreePath.Tree8.TreePath3 a b c d e f g leaf -> path, childrenField : String.String }, level2 : { decoder : Json.Decode.Decoder g, encoders : g -> List.List ( String.String, Json.Encode.Value ), pathType : TreePath.Tree8.TreePath2 a b c d e f g leaf -> path, childrenField : String.String }, leaf : { decoder : Json.Decode.Decoder leaf, encode : leaf -> Json.Encode.Value, pathType : TreePath.Tree8.TreePath1 a b c d e f g leaf -> path } }"
+            },
+            {
+                "name": "Tree",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "f",
+                    "g",
+                    "leaf"
+                ],
+                "type": "TreePath.Tree8.Tree8 a b c d e f g leaf"
+            }
+        ],
+        "values": [
+            {
+                "name": "data1",
+                "comment": " ",
+                "type": "TreePath.Tree8.TreePath1 a b c d e f g leaf -> leaf"
+            },
+            {
+                "name": "data2",
+                "comment": " ",
+                "type": "TreePath.Tree8.TreePath2 a b c d e f g leaf -> TreePath.Data.Data g leaf"
+            },
+            {
+                "name": "data3",
+                "comment": " ",
+                "type": "TreePath.Tree8.TreePath3 a b c d e f g leaf -> TreePath.Data.Data f leaf"
+            },
+            {
+                "name": "data4",
+                "comment": " ",
+                "type": "TreePath.Tree8.TreePath4 a b c d e f g leaf -> TreePath.Data.Data e leaf"
+            },
+            {
+                "name": "data5",
+                "comment": " ",
+                "type": "TreePath.Tree8.TreePath5 a b c d e f g leaf -> TreePath.Data.Data d leaf"
+            },
+            {
+                "name": "data6",
+                "comment": " ",
+                "type": "TreePath.Tree8.TreePath6 a b c d e f g leaf -> TreePath.Data.Data c leaf"
+            },
+            {
+                "name": "data7",
+                "comment": " ",
+                "type": "TreePath.Tree8.TreePath7 a b c d e f g leaf -> TreePath.Data.Data b leaf"
+            },
+            {
+                "name": "data8",
+                "comment": " ",
+                "type": "TreePath.Tree8.TreePath8 a b c d e f g leaf -> TreePath.Data.Data a leaf"
+            },
+            {
+                "name": "decoder",
+                "comment": " ",
+                "type": "TreePath.Tree8.DecoderConfig a b c d e f g leaf path -> Json.Decode.Decoder (TreePath.Tree8.Tree8 a b c d e f g leaf)"
+            },
+            {
+                "name": "down1",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree8.TreePath1 a b c d e f g leaf -> Maybe.Maybe Basics.Never"
+            },
+            {
+                "name": "down2",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree8.TreePath2 a b c d e f g leaf -> Maybe.Maybe (TreePath.Tree8.TreePath1 a b c d e f g leaf)"
+            },
+            {
+                "name": "down3",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree8.TreePath3 a b c d e f g leaf -> Maybe.Maybe (TreePath.Tree8.TreePath2 a b c d e f g leaf)"
+            },
+            {
+                "name": "down4",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree8.TreePath4 a b c d e f g leaf -> Maybe.Maybe (TreePath.Tree8.TreePath3 a b c d e f g leaf)"
+            },
+            {
+                "name": "down5",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree8.TreePath5 a b c d e f g leaf -> Maybe.Maybe (TreePath.Tree8.TreePath4 a b c d e f g leaf)"
+            },
+            {
+                "name": "down6",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree8.TreePath6 a b c d e f g leaf -> Maybe.Maybe (TreePath.Tree8.TreePath5 a b c d e f g leaf)"
+            },
+            {
+                "name": "down7",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree8.TreePath7 a b c d e f g leaf -> Maybe.Maybe (TreePath.Tree8.TreePath6 a b c d e f g leaf)"
+            },
+            {
+                "name": "down8",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree8.TreePath8 a b c d e f g leaf -> Maybe.Maybe (TreePath.Tree8.TreePath7 a b c d e f g leaf)"
+            },
+            {
+                "name": "downs1",
+                "comment": " ",
+                "type": "TreePath.Tree8.TreePath1 a b c d e f g leaf -> List.List Basics.Never"
+            },
+            {
+                "name": "downs2",
+                "comment": " ",
+                "type": "TreePath.Tree8.TreePath2 a b c d e f g leaf -> List.List (TreePath.Tree8.TreePath1 a b c d e f g leaf)"
+            },
+            {
+                "name": "downs3",
+                "comment": " ",
+                "type": "TreePath.Tree8.TreePath3 a b c d e f g leaf -> List.List (TreePath.Tree8.TreePath2 a b c d e f g leaf)"
+            },
+            {
+                "name": "downs4",
+                "comment": " ",
+                "type": "TreePath.Tree8.TreePath4 a b c d e f g leaf -> List.List (TreePath.Tree8.TreePath3 a b c d e f g leaf)"
+            },
+            {
+                "name": "downs5",
+                "comment": " ",
+                "type": "TreePath.Tree8.TreePath5 a b c d e f g leaf -> List.List (TreePath.Tree8.TreePath4 a b c d e f g leaf)"
+            },
+            {
+                "name": "downs6",
+                "comment": " ",
+                "type": "TreePath.Tree8.TreePath6 a b c d e f g leaf -> List.List (TreePath.Tree8.TreePath5 a b c d e f g leaf)"
+            },
+            {
+                "name": "downs7",
+                "comment": " ",
+                "type": "TreePath.Tree8.TreePath7 a b c d e f g leaf -> List.List (TreePath.Tree8.TreePath6 a b c d e f g leaf)"
+            },
+            {
+                "name": "downs8",
+                "comment": " ",
+                "type": "TreePath.Tree8.TreePath8 a b c d e f g leaf -> List.List (TreePath.Tree8.TreePath7 a b c d e f g leaf)"
+            },
+            {
+                "name": "offset1",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree8.TreePath1 a b c d e f g leaf -> Maybe.Maybe (TreePath.Tree8.TreePath1 a b c d e f g leaf)"
+            },
+            {
+                "name": "offset2",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree8.TreePath2 a b c d e f g leaf -> Maybe.Maybe (TreePath.Tree8.TreePath2 a b c d e f g leaf)"
+            },
+            {
+                "name": "offset3",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree8.TreePath3 a b c d e f g leaf -> Maybe.Maybe (TreePath.Tree8.TreePath3 a b c d e f g leaf)"
+            },
+            {
+                "name": "offset4",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree8.TreePath4 a b c d e f g leaf -> Maybe.Maybe (TreePath.Tree8.TreePath4 a b c d e f g leaf)"
+            },
+            {
+                "name": "offset5",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree8.TreePath5 a b c d e f g leaf -> Maybe.Maybe (TreePath.Tree8.TreePath5 a b c d e f g leaf)"
+            },
+            {
+                "name": "offset6",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree8.TreePath6 a b c d e f g leaf -> Maybe.Maybe (TreePath.Tree8.TreePath6 a b c d e f g leaf)"
+            },
+            {
+                "name": "offset7",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree8.TreePath7 a b c d e f g leaf -> Maybe.Maybe (TreePath.Tree8.TreePath7 a b c d e f g leaf)"
+            },
+            {
+                "name": "offset8",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree8.TreePath8 a b c d e f g leaf -> Maybe.Maybe (TreePath.Tree8.TreePath8 a b c d e f g leaf)"
+            },
+            {
+                "name": "pathDecoder",
+                "comment": " ",
+                "type": "TreePath.Tree8.DecoderConfig a b c d e f g leaf path -> Json.Decode.Decoder path"
+            },
+            {
+                "name": "pathEncode1",
+                "comment": " ",
+                "type": "TreePath.Tree8.DecoderConfig a b c d e f g leaf path -> TreePath.Tree8.TreePath1 a b c d e f g leaf -> Json.Encode.Value"
+            },
+            {
+                "name": "pathEncode2",
+                "comment": " ",
+                "type": "TreePath.Tree8.DecoderConfig a b c d e f g leaf path -> TreePath.Tree8.TreePath2 a b c d e f g leaf -> Json.Encode.Value"
+            },
+            {
+                "name": "pathEncode3",
+                "comment": " ",
+                "type": "TreePath.Tree8.DecoderConfig a b c d e f g leaf path -> TreePath.Tree8.TreePath3 a b c d e f g leaf -> Json.Encode.Value"
+            },
+            {
+                "name": "pathEncode4",
+                "comment": " ",
+                "type": "TreePath.Tree8.DecoderConfig a b c d e f g leaf path -> TreePath.Tree8.TreePath4 a b c d e f g leaf -> Json.Encode.Value"
+            },
+            {
+                "name": "pathEncode5",
+                "comment": " ",
+                "type": "TreePath.Tree8.DecoderConfig a b c d e f g leaf path -> TreePath.Tree8.TreePath5 a b c d e f g leaf -> Json.Encode.Value"
+            },
+            {
+                "name": "pathEncode6",
+                "comment": " ",
+                "type": "TreePath.Tree8.DecoderConfig a b c d e f g leaf path -> TreePath.Tree8.TreePath6 a b c d e f g leaf -> Json.Encode.Value"
+            },
+            {
+                "name": "pathEncode7",
+                "comment": " ",
+                "type": "TreePath.Tree8.DecoderConfig a b c d e f g leaf path -> TreePath.Tree8.TreePath7 a b c d e f g leaf -> Json.Encode.Value"
+            },
+            {
+                "name": "pathEncode8",
+                "comment": " ",
+                "type": "TreePath.Tree8.DecoderConfig a b c d e f g leaf path -> TreePath.Tree8.TreePath8 a b c d e f g leaf -> Json.Encode.Value"
+            },
+            {
+                "name": "toRootPath",
+                "comment": " ",
+                "type": "TreePath.Tree8.Tree8 a b c d e f g leaf -> TreePath.Tree8.TreePath8 a b c d e f g leaf"
+            },
+            {
+                "name": "top1",
+                "comment": " ",
+                "type": "TreePath.Tree8.TreePath1 a b c d e f g leaf -> TreePath.Tree8.TreePath8 a b c d e f g leaf"
+            },
+            {
+                "name": "top2",
+                "comment": " ",
+                "type": "TreePath.Tree8.TreePath2 a b c d e f g leaf -> TreePath.Tree8.TreePath8 a b c d e f g leaf"
+            },
+            {
+                "name": "top3",
+                "comment": " ",
+                "type": "TreePath.Tree8.TreePath3 a b c d e f g leaf -> TreePath.Tree8.TreePath8 a b c d e f g leaf"
+            },
+            {
+                "name": "top4",
+                "comment": " ",
+                "type": "TreePath.Tree8.TreePath4 a b c d e f g leaf -> TreePath.Tree8.TreePath8 a b c d e f g leaf"
+            },
+            {
+                "name": "top5",
+                "comment": " ",
+                "type": "TreePath.Tree8.TreePath5 a b c d e f g leaf -> TreePath.Tree8.TreePath8 a b c d e f g leaf"
+            },
+            {
+                "name": "top6",
+                "comment": " ",
+                "type": "TreePath.Tree8.TreePath6 a b c d e f g leaf -> TreePath.Tree8.TreePath8 a b c d e f g leaf"
+            },
+            {
+                "name": "top7",
+                "comment": " ",
+                "type": "TreePath.Tree8.TreePath7 a b c d e f g leaf -> TreePath.Tree8.TreePath8 a b c d e f g leaf"
+            },
+            {
+                "name": "top8",
+                "comment": " ",
+                "type": "TreePath.Tree8.TreePath8 a b c d e f g leaf -> TreePath.Tree8.TreePath8 a b c d e f g leaf"
+            },
+            {
+                "name": "up1",
+                "comment": " ",
+                "type": "TreePath.Tree8.TreePath1 a b c d e f g leaf -> Maybe.Maybe (TreePath.Tree8.TreePath2 a b c d e f g leaf)"
+            },
+            {
+                "name": "up2",
+                "comment": " ",
+                "type": "TreePath.Tree8.TreePath2 a b c d e f g leaf -> Maybe.Maybe (TreePath.Tree8.TreePath3 a b c d e f g leaf)"
+            },
+            {
+                "name": "up3",
+                "comment": " ",
+                "type": "TreePath.Tree8.TreePath3 a b c d e f g leaf -> Maybe.Maybe (TreePath.Tree8.TreePath4 a b c d e f g leaf)"
+            },
+            {
+                "name": "up4",
+                "comment": " ",
+                "type": "TreePath.Tree8.TreePath4 a b c d e f g leaf -> Maybe.Maybe (TreePath.Tree8.TreePath5 a b c d e f g leaf)"
+            },
+            {
+                "name": "up5",
+                "comment": " ",
+                "type": "TreePath.Tree8.TreePath5 a b c d e f g leaf -> Maybe.Maybe (TreePath.Tree8.TreePath6 a b c d e f g leaf)"
+            },
+            {
+                "name": "up6",
+                "comment": " ",
+                "type": "TreePath.Tree8.TreePath6 a b c d e f g leaf -> Maybe.Maybe (TreePath.Tree8.TreePath7 a b c d e f g leaf)"
+            },
+            {
+                "name": "up7",
+                "comment": " ",
+                "type": "TreePath.Tree8.TreePath7 a b c d e f g leaf -> Maybe.Maybe (TreePath.Tree8.TreePath8 a b c d e f g leaf)"
+            },
+            {
+                "name": "up8",
+                "comment": " ",
+                "type": "TreePath.Tree8.TreePath8 a b c d e f g leaf -> Maybe.Maybe Basics.Never"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "TreePath.Tree9",
+        "comment": " This module provides types and functions for managing a strongly typed tree\nof depth 9. Each level of the tree can have its own type, and each level can\ncontain Data either of that type, or the leaf type.\n\n\n# Definition\n\n@docs Tree, TreePath1, TreePath2, TreePath3, TreePath4, TreePath5, TreePath6, TreePath7, TreePath8, TreePath9\n\n\n# Encoders and decoders\n\n@docs DecoderConfig, decoder, pathDecoder, pathEncode1, pathEncode2, pathEncode3, pathEncode4, pathEncode5, pathEncode6, pathEncode7, pathEncode8, pathEncode9\n\n\n# Path constructor\n\n@docs toRootPath\n\n\n# Data\n\n@docs data1, data2, data3, data4, data5, data6, data7, data8, data9\n\n\n# Navigation\n\n@docs top1, up1, offset1, down1, downs1, top2, up2, offset2, down2, downs2, top3, up3, offset3, down3, downs3, top4, up4, offset4, down4, downs4, top5, up5, offset5, down5, downs5, top6, up6, offset6, down6, downs6, top7, up7, offset7, down7, downs7, top8, up8, offset8, down8, downs8, top9, up9, offset9, down9, downs9\n\n",
+        "unions": [
+            {
+                "name": "TreePath1",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "f",
+                    "g",
+                    "h",
+                    "leaf"
+                ],
+                "cases": []
+            },
+            {
+                "name": "TreePath2",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "f",
+                    "g",
+                    "h",
+                    "leaf"
+                ],
+                "cases": []
+            },
+            {
+                "name": "TreePath3",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "f",
+                    "g",
+                    "h",
+                    "leaf"
+                ],
+                "cases": []
+            },
+            {
+                "name": "TreePath4",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "f",
+                    "g",
+                    "h",
+                    "leaf"
+                ],
+                "cases": []
+            },
+            {
+                "name": "TreePath5",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "f",
+                    "g",
+                    "h",
+                    "leaf"
+                ],
+                "cases": []
+            },
+            {
+                "name": "TreePath6",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "f",
+                    "g",
+                    "h",
+                    "leaf"
+                ],
+                "cases": []
+            },
+            {
+                "name": "TreePath7",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "f",
+                    "g",
+                    "h",
+                    "leaf"
+                ],
+                "cases": []
+            },
+            {
+                "name": "TreePath8",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "f",
+                    "g",
+                    "h",
+                    "leaf"
+                ],
+                "cases": []
+            },
+            {
+                "name": "TreePath9",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "f",
+                    "g",
+                    "h",
+                    "leaf"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "DecoderConfig",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "f",
+                    "g",
+                    "h",
+                    "leaf",
+                    "path"
+                ],
+                "type": "{ level9 : { decoder : Json.Decode.Decoder a, encoders : a -> List.List ( String.String, Json.Encode.Value ), pathType : TreePath.Tree9.TreePath9 a b c d e f g h leaf -> path, childrenField : String.String }, level8 : { decoder : Json.Decode.Decoder b, encoders : b -> List.List ( String.String, Json.Encode.Value ), pathType : TreePath.Tree9.TreePath8 a b c d e f g h leaf -> path, childrenField : String.String }, level7 : { decoder : Json.Decode.Decoder c, encoders : c -> List.List ( String.String, Json.Encode.Value ), pathType : TreePath.Tree9.TreePath7 a b c d e f g h leaf -> path, childrenField : String.String }, level6 : { decoder : Json.Decode.Decoder d, encoders : d -> List.List ( String.String, Json.Encode.Value ), pathType : TreePath.Tree9.TreePath6 a b c d e f g h leaf -> path, childrenField : String.String }, level5 : { decoder : Json.Decode.Decoder e, encoders : e -> List.List ( String.String, Json.Encode.Value ), pathType : TreePath.Tree9.TreePath5 a b c d e f g h leaf -> path, childrenField : String.String }, level4 : { decoder : Json.Decode.Decoder f, encoders : f -> List.List ( String.String, Json.Encode.Value ), pathType : TreePath.Tree9.TreePath4 a b c d e f g h leaf -> path, childrenField : String.String }, level3 : { decoder : Json.Decode.Decoder g, encoders : g -> List.List ( String.String, Json.Encode.Value ), pathType : TreePath.Tree9.TreePath3 a b c d e f g h leaf -> path, childrenField : String.String }, level2 : { decoder : Json.Decode.Decoder h, encoders : h -> List.List ( String.String, Json.Encode.Value ), pathType : TreePath.Tree9.TreePath2 a b c d e f g h leaf -> path, childrenField : String.String }, leaf : { decoder : Json.Decode.Decoder leaf, encode : leaf -> Json.Encode.Value, pathType : TreePath.Tree9.TreePath1 a b c d e f g h leaf -> path } }"
+            },
+            {
+                "name": "Tree",
+                "comment": " ",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "f",
+                    "g",
+                    "h",
+                    "leaf"
+                ],
+                "type": "TreePath.Tree9.Tree9 a b c d e f g h leaf"
+            }
+        ],
+        "values": [
+            {
+                "name": "data1",
+                "comment": " ",
+                "type": "TreePath.Tree9.TreePath1 a b c d e f g h leaf -> leaf"
+            },
+            {
+                "name": "data2",
+                "comment": " ",
+                "type": "TreePath.Tree9.TreePath2 a b c d e f g h leaf -> TreePath.Data.Data h leaf"
+            },
+            {
+                "name": "data3",
+                "comment": " ",
+                "type": "TreePath.Tree9.TreePath3 a b c d e f g h leaf -> TreePath.Data.Data g leaf"
+            },
+            {
+                "name": "data4",
+                "comment": " ",
+                "type": "TreePath.Tree9.TreePath4 a b c d e f g h leaf -> TreePath.Data.Data f leaf"
+            },
+            {
+                "name": "data5",
+                "comment": " ",
+                "type": "TreePath.Tree9.TreePath5 a b c d e f g h leaf -> TreePath.Data.Data e leaf"
+            },
+            {
+                "name": "data6",
+                "comment": " ",
+                "type": "TreePath.Tree9.TreePath6 a b c d e f g h leaf -> TreePath.Data.Data d leaf"
+            },
+            {
+                "name": "data7",
+                "comment": " ",
+                "type": "TreePath.Tree9.TreePath7 a b c d e f g h leaf -> TreePath.Data.Data c leaf"
+            },
+            {
+                "name": "data8",
+                "comment": " ",
+                "type": "TreePath.Tree9.TreePath8 a b c d e f g h leaf -> TreePath.Data.Data b leaf"
+            },
+            {
+                "name": "data9",
+                "comment": " ",
+                "type": "TreePath.Tree9.TreePath9 a b c d e f g h leaf -> TreePath.Data.Data a leaf"
+            },
+            {
+                "name": "decoder",
+                "comment": " ",
+                "type": "TreePath.Tree9.DecoderConfig a b c d e f g h leaf path -> Json.Decode.Decoder (TreePath.Tree9.Tree9 a b c d e f g h leaf)"
+            },
+            {
+                "name": "down1",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree9.TreePath1 a b c d e f g h leaf -> Maybe.Maybe Basics.Never"
+            },
+            {
+                "name": "down2",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree9.TreePath2 a b c d e f g h leaf -> Maybe.Maybe (TreePath.Tree9.TreePath1 a b c d e f g h leaf)"
+            },
+            {
+                "name": "down3",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree9.TreePath3 a b c d e f g h leaf -> Maybe.Maybe (TreePath.Tree9.TreePath2 a b c d e f g h leaf)"
+            },
+            {
+                "name": "down4",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree9.TreePath4 a b c d e f g h leaf -> Maybe.Maybe (TreePath.Tree9.TreePath3 a b c d e f g h leaf)"
+            },
+            {
+                "name": "down5",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree9.TreePath5 a b c d e f g h leaf -> Maybe.Maybe (TreePath.Tree9.TreePath4 a b c d e f g h leaf)"
+            },
+            {
+                "name": "down6",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree9.TreePath6 a b c d e f g h leaf -> Maybe.Maybe (TreePath.Tree9.TreePath5 a b c d e f g h leaf)"
+            },
+            {
+                "name": "down7",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree9.TreePath7 a b c d e f g h leaf -> Maybe.Maybe (TreePath.Tree9.TreePath6 a b c d e f g h leaf)"
+            },
+            {
+                "name": "down8",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree9.TreePath8 a b c d e f g h leaf -> Maybe.Maybe (TreePath.Tree9.TreePath7 a b c d e f g h leaf)"
+            },
+            {
+                "name": "down9",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree9.TreePath9 a b c d e f g h leaf -> Maybe.Maybe (TreePath.Tree9.TreePath8 a b c d e f g h leaf)"
+            },
+            {
+                "name": "downs1",
+                "comment": " ",
+                "type": "TreePath.Tree9.TreePath1 a b c d e f g h leaf -> List.List Basics.Never"
+            },
+            {
+                "name": "downs2",
+                "comment": " ",
+                "type": "TreePath.Tree9.TreePath2 a b c d e f g h leaf -> List.List (TreePath.Tree9.TreePath1 a b c d e f g h leaf)"
+            },
+            {
+                "name": "downs3",
+                "comment": " ",
+                "type": "TreePath.Tree9.TreePath3 a b c d e f g h leaf -> List.List (TreePath.Tree9.TreePath2 a b c d e f g h leaf)"
+            },
+            {
+                "name": "downs4",
+                "comment": " ",
+                "type": "TreePath.Tree9.TreePath4 a b c d e f g h leaf -> List.List (TreePath.Tree9.TreePath3 a b c d e f g h leaf)"
+            },
+            {
+                "name": "downs5",
+                "comment": " ",
+                "type": "TreePath.Tree9.TreePath5 a b c d e f g h leaf -> List.List (TreePath.Tree9.TreePath4 a b c d e f g h leaf)"
+            },
+            {
+                "name": "downs6",
+                "comment": " ",
+                "type": "TreePath.Tree9.TreePath6 a b c d e f g h leaf -> List.List (TreePath.Tree9.TreePath5 a b c d e f g h leaf)"
+            },
+            {
+                "name": "downs7",
+                "comment": " ",
+                "type": "TreePath.Tree9.TreePath7 a b c d e f g h leaf -> List.List (TreePath.Tree9.TreePath6 a b c d e f g h leaf)"
+            },
+            {
+                "name": "downs8",
+                "comment": " ",
+                "type": "TreePath.Tree9.TreePath8 a b c d e f g h leaf -> List.List (TreePath.Tree9.TreePath7 a b c d e f g h leaf)"
+            },
+            {
+                "name": "downs9",
+                "comment": " ",
+                "type": "TreePath.Tree9.TreePath9 a b c d e f g h leaf -> List.List (TreePath.Tree9.TreePath8 a b c d e f g h leaf)"
+            },
+            {
+                "name": "offset1",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree9.TreePath1 a b c d e f g h leaf -> Maybe.Maybe (TreePath.Tree9.TreePath1 a b c d e f g h leaf)"
+            },
+            {
+                "name": "offset2",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree9.TreePath2 a b c d e f g h leaf -> Maybe.Maybe (TreePath.Tree9.TreePath2 a b c d e f g h leaf)"
+            },
+            {
+                "name": "offset3",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree9.TreePath3 a b c d e f g h leaf -> Maybe.Maybe (TreePath.Tree9.TreePath3 a b c d e f g h leaf)"
+            },
+            {
+                "name": "offset4",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree9.TreePath4 a b c d e f g h leaf -> Maybe.Maybe (TreePath.Tree9.TreePath4 a b c d e f g h leaf)"
+            },
+            {
+                "name": "offset5",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree9.TreePath5 a b c d e f g h leaf -> Maybe.Maybe (TreePath.Tree9.TreePath5 a b c d e f g h leaf)"
+            },
+            {
+                "name": "offset6",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree9.TreePath6 a b c d e f g h leaf -> Maybe.Maybe (TreePath.Tree9.TreePath6 a b c d e f g h leaf)"
+            },
+            {
+                "name": "offset7",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree9.TreePath7 a b c d e f g h leaf -> Maybe.Maybe (TreePath.Tree9.TreePath7 a b c d e f g h leaf)"
+            },
+            {
+                "name": "offset8",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree9.TreePath8 a b c d e f g h leaf -> Maybe.Maybe (TreePath.Tree9.TreePath8 a b c d e f g h leaf)"
+            },
+            {
+                "name": "offset9",
+                "comment": " ",
+                "type": "Basics.Int -> TreePath.Tree9.TreePath9 a b c d e f g h leaf -> Maybe.Maybe (TreePath.Tree9.TreePath9 a b c d e f g h leaf)"
+            },
+            {
+                "name": "pathDecoder",
+                "comment": " ",
+                "type": "TreePath.Tree9.DecoderConfig a b c d e f g h leaf path -> Json.Decode.Decoder path"
+            },
+            {
+                "name": "pathEncode1",
+                "comment": " ",
+                "type": "TreePath.Tree9.DecoderConfig a b c d e f g h leaf path -> TreePath.Tree9.TreePath1 a b c d e f g h leaf -> Json.Encode.Value"
+            },
+            {
+                "name": "pathEncode2",
+                "comment": " ",
+                "type": "TreePath.Tree9.DecoderConfig a b c d e f g h leaf path -> TreePath.Tree9.TreePath2 a b c d e f g h leaf -> Json.Encode.Value"
+            },
+            {
+                "name": "pathEncode3",
+                "comment": " ",
+                "type": "TreePath.Tree9.DecoderConfig a b c d e f g h leaf path -> TreePath.Tree9.TreePath3 a b c d e f g h leaf -> Json.Encode.Value"
+            },
+            {
+                "name": "pathEncode4",
+                "comment": " ",
+                "type": "TreePath.Tree9.DecoderConfig a b c d e f g h leaf path -> TreePath.Tree9.TreePath4 a b c d e f g h leaf -> Json.Encode.Value"
+            },
+            {
+                "name": "pathEncode5",
+                "comment": " ",
+                "type": "TreePath.Tree9.DecoderConfig a b c d e f g h leaf path -> TreePath.Tree9.TreePath5 a b c d e f g h leaf -> Json.Encode.Value"
+            },
+            {
+                "name": "pathEncode6",
+                "comment": " ",
+                "type": "TreePath.Tree9.DecoderConfig a b c d e f g h leaf path -> TreePath.Tree9.TreePath6 a b c d e f g h leaf -> Json.Encode.Value"
+            },
+            {
+                "name": "pathEncode7",
+                "comment": " ",
+                "type": "TreePath.Tree9.DecoderConfig a b c d e f g h leaf path -> TreePath.Tree9.TreePath7 a b c d e f g h leaf -> Json.Encode.Value"
+            },
+            {
+                "name": "pathEncode8",
+                "comment": " ",
+                "type": "TreePath.Tree9.DecoderConfig a b c d e f g h leaf path -> TreePath.Tree9.TreePath8 a b c d e f g h leaf -> Json.Encode.Value"
+            },
+            {
+                "name": "pathEncode9",
+                "comment": " ",
+                "type": "TreePath.Tree9.DecoderConfig a b c d e f g h leaf path -> TreePath.Tree9.TreePath9 a b c d e f g h leaf -> Json.Encode.Value"
+            },
+            {
+                "name": "toRootPath",
+                "comment": " ",
+                "type": "TreePath.Tree9.Tree9 a b c d e f g h leaf -> TreePath.Tree9.TreePath9 a b c d e f g h leaf"
+            },
+            {
+                "name": "top1",
+                "comment": " ",
+                "type": "TreePath.Tree9.TreePath1 a b c d e f g h leaf -> TreePath.Tree9.TreePath9 a b c d e f g h leaf"
+            },
+            {
+                "name": "top2",
+                "comment": " ",
+                "type": "TreePath.Tree9.TreePath2 a b c d e f g h leaf -> TreePath.Tree9.TreePath9 a b c d e f g h leaf"
+            },
+            {
+                "name": "top3",
+                "comment": " ",
+                "type": "TreePath.Tree9.TreePath3 a b c d e f g h leaf -> TreePath.Tree9.TreePath9 a b c d e f g h leaf"
+            },
+            {
+                "name": "top4",
+                "comment": " ",
+                "type": "TreePath.Tree9.TreePath4 a b c d e f g h leaf -> TreePath.Tree9.TreePath9 a b c d e f g h leaf"
+            },
+            {
+                "name": "top5",
+                "comment": " ",
+                "type": "TreePath.Tree9.TreePath5 a b c d e f g h leaf -> TreePath.Tree9.TreePath9 a b c d e f g h leaf"
+            },
+            {
+                "name": "top6",
+                "comment": " ",
+                "type": "TreePath.Tree9.TreePath6 a b c d e f g h leaf -> TreePath.Tree9.TreePath9 a b c d e f g h leaf"
+            },
+            {
+                "name": "top7",
+                "comment": " ",
+                "type": "TreePath.Tree9.TreePath7 a b c d e f g h leaf -> TreePath.Tree9.TreePath9 a b c d e f g h leaf"
+            },
+            {
+                "name": "top8",
+                "comment": " ",
+                "type": "TreePath.Tree9.TreePath8 a b c d e f g h leaf -> TreePath.Tree9.TreePath9 a b c d e f g h leaf"
+            },
+            {
+                "name": "top9",
+                "comment": " ",
+                "type": "TreePath.Tree9.TreePath9 a b c d e f g h leaf -> TreePath.Tree9.TreePath9 a b c d e f g h leaf"
+            },
+            {
+                "name": "up1",
+                "comment": " ",
+                "type": "TreePath.Tree9.TreePath1 a b c d e f g h leaf -> Maybe.Maybe (TreePath.Tree9.TreePath2 a b c d e f g h leaf)"
+            },
+            {
+                "name": "up2",
+                "comment": " ",
+                "type": "TreePath.Tree9.TreePath2 a b c d e f g h leaf -> Maybe.Maybe (TreePath.Tree9.TreePath3 a b c d e f g h leaf)"
+            },
+            {
+                "name": "up3",
+                "comment": " ",
+                "type": "TreePath.Tree9.TreePath3 a b c d e f g h leaf -> Maybe.Maybe (TreePath.Tree9.TreePath4 a b c d e f g h leaf)"
+            },
+            {
+                "name": "up4",
+                "comment": " ",
+                "type": "TreePath.Tree9.TreePath4 a b c d e f g h leaf -> Maybe.Maybe (TreePath.Tree9.TreePath5 a b c d e f g h leaf)"
+            },
+            {
+                "name": "up5",
+                "comment": " ",
+                "type": "TreePath.Tree9.TreePath5 a b c d e f g h leaf -> Maybe.Maybe (TreePath.Tree9.TreePath6 a b c d e f g h leaf)"
+            },
+            {
+                "name": "up6",
+                "comment": " ",
+                "type": "TreePath.Tree9.TreePath6 a b c d e f g h leaf -> Maybe.Maybe (TreePath.Tree9.TreePath7 a b c d e f g h leaf)"
+            },
+            {
+                "name": "up7",
+                "comment": " ",
+                "type": "TreePath.Tree9.TreePath7 a b c d e f g h leaf -> Maybe.Maybe (TreePath.Tree9.TreePath8 a b c d e f g h leaf)"
+            },
+            {
+                "name": "up8",
+                "comment": " ",
+                "type": "TreePath.Tree9.TreePath8 a b c d e f g h leaf -> Maybe.Maybe (TreePath.Tree9.TreePath9 a b c d e f g h leaf)"
+            },
+            {
+                "name": "up9",
+                "comment": " ",
+                "type": "TreePath.Tree9.TreePath9 a b c d e f g h leaf -> Maybe.Maybe Basics.Never"
+            }
+        ],
+        "binops": []
+    }
+]

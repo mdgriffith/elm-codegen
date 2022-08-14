@@ -1,0 +1,238 @@
+[
+    {
+        "name": "Generic",
+        "comment": " This module defines a basic type system, as it is known from JavaScript. The\nbasic idea is that you can use generic types of decoders that can translate into\nthis format, so you are not forces anymore to write custom decoders if your are\nonly interested in some basic values.\n\nThe type system should also behave similarly the one we know from JavaScript.\n\n\n## Types\n\n@docs Value, typeOf\n\n\n## Getting & Setting\n\n@docs get, set\n\n\n## Transformations\n\n@docs toBool, toInt, toFloat, toString, toList, toDict, toSet, toDate, toDateTime\n\n\n## Helpers\n\n@docs dictFromList\n\n",
+        "unions": [
+            {
+                "name": "Value",
+                "comment": " Supported basic types. In contrast to JSON types, this covers also types\nsuch as `Set`, `Date`, and `DateTime`.\n\nIn the future it would also be interesting to have a general binary type that\ncan be used with any kind of transformation function, i.e. `toFloat` or for\nserializing streams of data (lists, sets, etc.).\n\n`Set`s and `Dict`s use different types than the Base elm-types, so that they\ncan cope with more complex values that `Int`, `String`, etc. Thus, a\n`Generic.Dict` can also have keys of type integer or list, nested ones are\nalso allowed.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Null",
+                        []
+                    ],
+                    [
+                        "Bool",
+                        [
+                            "Basics.Bool"
+                        ]
+                    ],
+                    [
+                        "Int",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "Float",
+                        [
+                            "Basics.Float"
+                        ]
+                    ],
+                    [
+                        "String",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "List",
+                        [
+                            "List.List Generic.Value"
+                        ]
+                    ],
+                    [
+                        "Set",
+                        [
+                            "EverySet.EverySet Generic.Value"
+                        ]
+                    ],
+                    [
+                        "Dict",
+                        [
+                            "GenericDict.Dict Generic.Value Generic.Value"
+                        ]
+                    ],
+                    [
+                        "Date",
+                        [
+                            "Time.Posix"
+                        ]
+                    ],
+                    [
+                        "DateTime",
+                        [
+                            "Time.Posix"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "dictFromList",
+                "comment": " Turns a list of tuples of generic values into a generic dictionary.\n\n    [ ( Int 12, String \"foo\" ), ( Null, List [ Float 12.0, Null ] ) ]\n        |> dictFromList\n\n",
+                "type": "List.List ( Generic.Value, Generic.Value ) -> Generic.Value"
+            },
+            {
+                "name": "get",
+                "comment": " Generic getter, the first parameter defines a sequence of how the generic type\nshould be traversed. The result is a `Maybe Value` that needs to be converted into\nyour desired elm-type:\n\n    import Generic.Decoder exposing (decode)\n\n    \"{\\\"type\\\": [1, [2, \\\"tada\\\"] ]}\"\n        |> decode\n        |> Result.withDefault Null\n        |> get [String \"type\", Int 1, Int 1]\n        |> Maybe.andThen toString\n        |> (==) (Just \"tada\") --> True\n\n    \"{\\\"type\\\": [1, [2, \\\"tada\\\"] ]}\"\n        |> decode\n        |> Result.withDefault Null\n        |> get [Int 99]\n        |> Maybe.andThen toString\n        |> (==) Nothing --> True\n\n",
+                "type": "List.List Generic.Value -> Generic.Value -> Maybe.Maybe Generic.Value"
+            },
+            {
+                "name": "set",
+                "comment": " Generic setter, the first parameter defines a sequence of how the generic\ntype should be traversed and the second the new value\n\n    import Generic.Json as Json\n    import Generic as Gen\n\n    \"{\\\"type\\\": [1, [2, \\\"tada\\\"] ]}\"\n        |> Json.decodeString\n        |> Gen.set [Gen.String \"type\", Gen.Int 1, Gen.Int 1] (Gen.Int 9999)\n        |> Json.encode\n        |> Json.toString 0\n        |> (==) \"{\\\"type\\\":[1,[2,9999]]}\"\n        --> True\n\n    \"{\\\"type\\\": [1, [2, \\\"tada\\\"] ]}\"\n        |> Json.decodeString\n        |> Gen.set [Gen.String \"type\", Gen.Int 11, Gen.Int 11] (Gen.Int 9999)\n        |> Json.encode\n        |> Json.toString 0\n        |> (==) \"{\\\"type\\\":[1,[2,\\\"tada\\\"]]}\"\n        --> True\n\n",
+                "type": "List.List Generic.Value -> Generic.Value -> Generic.Value -> Generic.Value"
+            },
+            {
+                "name": "toBool",
+                "comment": " Same as in JavaScript, tries to make a bool from every type\n\n    toBool Null --> False\n\n    toBool (Bool True) --> True\n\n    toBool (Bool False) --> False\n\n    toBool (Int 0) --> False\n\n    toBool (Int -1) --> True\n\n    toBool (Float 0.0) --> False\n\n    toBool (Float 3.141592) --> True\n\n    toBool (String \"\") --> False\n\n    toBool (String \"misc\") --> True\n\n    toBool (List []) --> True\n\n",
+                "type": "Generic.Value -> Basics.Bool"
+            },
+            {
+                "name": "toDate",
+                "comment": " Try to get a `Date` value in Posix Format.\n",
+                "type": "Generic.Value -> Maybe.Maybe Time.Posix"
+            },
+            {
+                "name": "toDateTime",
+                "comment": " Try to get a `DateTime` value in Posix Format.\n",
+                "type": "Generic.Value -> Maybe.Maybe Time.Posix"
+            },
+            {
+                "name": "toDict",
+                "comment": " Returns an elm Dict from a Generic.Dict, if possible\n",
+                "type": "Generic.Value -> Maybe.Maybe (Dict.Dict String.String Generic.Value)"
+            },
+            {
+                "name": "toFloat",
+                "comment": " Convert a generic type to Float, if possible\n\n    import Generic as Gen\n\n    Gen.toFloat Null --> Nothing\n\n    Gen.toFloat (Bool True) --> Just 1.0\n\n    Gen.toFloat (Bool False) --> Just 0.0\n\n    Gen.toFloat (Int 2) --> Just 2.0\n\n    Gen.toFloat (Int -1) --> Just -1.0\n\n    Gen.toFloat (Float 0.0) --> Just 0.0\n\n    Gen.toFloat (Float 3.141592) --> Just 3.141592\n\n    Gen.toFloat (String \"\") --> Nothing\n\n    Gen.toFloat (String \"33\") --> Just 33\n\n    Gen.toFloat (String \"33 m\") --> Nothing\n\n    Gen.toFloat (String \"33.33\") --> Just 33.33\n\n",
+                "type": "Generic.Value -> Maybe.Maybe Basics.Float"
+            },
+            {
+                "name": "toInt",
+                "comment": " Convert a generic toy to Int, if possible\n\n    toInt Null --> Nothing\n\n    toInt (Bool True) --> Just 1\n\n    toInt (Bool False) --> Just 0\n\n    toInt (Int 0) --> Just 0\n\n    toInt (Int -1) --> Just -1\n\n    toInt (Float 0.0) --> Just 0\n\n    toInt (Float 3.141592) --> Just 3\n\n    toInt (String \"\") --> Nothing\n\n    toInt (String \"33\") --> Just 33\n\n    toInt (String \"33.33\") --> Just 33\n\n",
+                "type": "Generic.Value -> Maybe.Maybe Basics.Int"
+            },
+            {
+                "name": "toList",
+                "comment": " Tries to turn every type into a list\n\n    import Generic as Gen\n\n    List [ Null, Int 12 ] |> toList --> Just [Null, Int 12]\n\n    List [ Null, Int 12, Int 12]\n        |> toSet\n        |> Set\n        |> toList --> Just [Int 12, Null]\n\n",
+                "type": "Generic.Value -> Maybe.Maybe (List.List Generic.Value)"
+            },
+            {
+                "name": "toSet",
+                "comment": " Turns everything into a set of type `EverySet`, if possible. Passing a `Dict` will result in a set of dict values.\n",
+                "type": "Generic.Value -> EverySet.EverySet Generic.Value"
+            },
+            {
+                "name": "toString",
+                "comment": " Convert a generic type to a string representation. Actually this works for any value, except for `Null`:\n\n    toString Null --> Nothing\n\n    toString (Bool True) --> Just \"true\"\n\n    toString (Bool False) --> Just \"false\"\n\n    toString (Int 2) --> Just \"2\"\n\n    toString (Int -1) --> Just \"-1\"\n\n    toString (Float 0.0) --> Just \"0\"\n\n    toString (Float 3.141592) --> Just \"3.141592\"\n\n    toString (String \"\") --> Just \"\"\n\n    toString (String \"33\") --> Just \"33\"\n\n    toString (String \"33 m\") --> Just \"33 m\"\n\n    toString (String \"33.33\") --> Just \"33.33\"\n\n    toString (List [ String \"33.33\", Null ]) --> Just \"[\\\"33.33\\\",null]\"\n\n",
+                "type": "Generic.Value -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "typeOf",
+                "comment": " Clone of the JavaScript function `typeof` that returns a String:\n\n    typeOf Null --> \"null\"\n\n    typeOf (Bool True) --> \"bool\"\n\n    typeOf (Int -99) --> \"int\"\n\n    typeOf (Float 1.234) --> \"float\"\n\n    typeOf (String \"foo\") --> \"string\"\n\n",
+                "type": "Generic.Value -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Generic.Decoder",
+        "comment": "\n\n@docs decode\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decode",
+                "comment": " Use this general type of decoder, it will try out at first to parse a JSON format, then XML, and finally YAML\n\n    import Generic\n\n    \"\"\"\n    <verzeichnis>\n        <titel>Wikipedia Städteverzeichnis</titel>\n        <eintrag>\n            <stichwort>Genf</stichwort>\n            <eintragstext>Genf ist der Sitz von ...</eintragstext>\n        </eintrag>\n        <eintrag>\n            <stichwort>Köln</stichwort>\n            <eintragstext>Köln ist eine Stadt, die ...</eintragstext>\n        </eintrag>\n    </verzeichnis>\n    \"\"\"\n        |> decode\n        |> Result.withDefault Generic.Null\n        |> Generic.toString\n        --> Just \"[{\\\"verzeichnis\\\":[{\\\"titel\\\":\\\"Wikipedia Städteverzeichnis\\\"},{\\\"eintrag\\\":[{\\\"stichwort\\\":\\\"Genf\\\"},{\\\"eintragstext\\\":\\\"Genf ist der Sitz von ...\\\"}]},{\\\"eintrag\\\":[{\\\"stichwort\\\":\\\"Köln\\\"},{\\\"eintragstext\\\":\\\"Köln ist eine Stadt, die ...\\\"}]}]}]\"\n\n\n    \"\"\"\n    [\n        {\n            \"verzeichnis\": [\n            {\n                \"titel\": \"Wikipedia Städteverzeichnis\"\n            },\n            {\n                \"eintrag\": [\n                {\n                    \"stichwort\": \"Genf\"\n                },\n                {\n                    \"eintragstext\": \"Genf ist der Sitz von ...\"\n                }\n                ]\n            },\n            {\n                \"eintrag\": [\n                {\n                    \"stichwort\": \"Köln\"\n                },\n                {\n                    \"eintragstext\": \"Köln ist eine Stadt, die ...\"\n                }\n                ]\n            }\n            ]\n        }\n    ]\n    \"\"\"\n        |> decode\n        |> Result.withDefault Generic.Null\n        |> Generic.toString\n        --> Just \"[{\\\"verzeichnis\\\":[{\\\"titel\\\":\\\"Wikipedia Städteverzeichnis\\\"},{\\\"eintrag\\\":[{\\\"stichwort\\\":\\\"Genf\\\"},{\\\"eintragstext\\\":\\\"Genf ist der Sitz von ...\\\"}]},{\\\"eintrag\\\":[{\\\"stichwort\\\":\\\"Köln\\\"},{\\\"eintragstext\\\":\\\"Köln ist eine Stadt, die ...\\\"}]}]}]\"\n\n",
+                "type": "String.String -> Result.Result String.String Generic.Value"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Generic.Json",
+        "comment": "\n\n@docs decode, encode, toString\n\n@docs decodeString, decodeValue\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decode",
+                "comment": " Generic decoder function for any kind of Json value.\n\n    import Generic as Gen\n    import Generic.Json as Json\n\n    \"\"\"{\n        \"Herausgeber\": \"Xema\",\n        \"Nummer\": \"1234-5678-9012-3456\",\n        \"Deckung\": 2e+6,\n        \"Waehrung\": \"EURO\",\n        \"Inhaber\":\n        {\n            \"Name\": \"Mustermann\",\n            \"Vorname\": \"Max\",\n            \"maennlich\": true,\n            \"Hobbys\": [\"Reiten\", \"Golfen\", \"Lesen\"],\n            \"Alter\": 42,\n            \"Kinder\": [],\n            \"Partner\": null\n        }\n    }\"\"\"\n        |> Json.decode\n        |> Result.withDefault Gen.Null\n        |> Gen.get [Gen.String \"Inhaber\", Gen.String \"maennlich\"]\n        |> Maybe.map (Gen.toBool)\n        --> Just True\n\n",
+                "type": "String.String -> Result.Result String.String Generic.Value"
+            },
+            {
+                "name": "decodeString",
+                "comment": " Just a convenience functions, that decodes a Json string. If not possible, the result will be a generic `Null`.\n",
+                "type": "String.String -> Generic.Value"
+            },
+            {
+                "name": "decodeValue",
+                "comment": " Just a convenience functions, that decodes a Json value. If not possible, the result will be a generic `Null`.\n",
+                "type": "Json.Decode.Value -> Generic.Value"
+            },
+            {
+                "name": "encode",
+                "comment": " Generic encoder, which will translate any kind of `Generic.Value` back into a Json value.\n\n    import Generic as Gen\n    import Generic.Json as Json\n\n    \"\"\"{\n        \"Herausgeber\": \"Xema\",\n        \"Nummer\": \"1234-5678-9012-3456\",\n        \"Deckung\": 2e+6,\n        \"Waehrung\": \"EURO\",\n        \"Inhaber\":\n        {\n            \"Name\": \"Mustermann\",\n            \"Vorname\": \"Max\",\n            \"maennlich\": true,\n            \"Hobbys\": [\"Reiten\", \"Golfen\", \"Lesen\"],\n            \"Alter\": 42,\n            \"Kinder\": [],\n            \"Partner\": null\n        }\n    }\"\"\"\n        |> Json.decode\n        |> Result.withDefault Gen.Null\n        |> Gen.set [Gen.String \"Inhaber\", Gen.String \"maennlich\"] (Gen.String \"divers\")\n        |> Json.encode\n        |> Json.toString 2\n        --> \"{\\n  \\\"Deckung\\\": 2000000,\\n  \\\"Herausgeber\\\": \\\"Xema\\\",\\n  \\\"Inhaber\\\": {\\n    \\\"Alter\\\": 42,\\n    \\\"Hobbys\\\": [\\n      \\\"Reiten\\\",\\n      \\\"Golfen\\\",\\n      \\\"Lesen\\\"\\n    ],\\n    \\\"Kinder\\\": [],\\n    \\\"Name\\\": \\\"Mustermann\\\",\\n    \\\"Partner\\\": null,\\n    \\\"Vorname\\\": \\\"Max\\\",\\n    \\\"maennlich\\\": \\\"divers\\\"\\n  },\\n  \\\"Nummer\\\": \\\"1234-5678-9012-3456\\\",\\n  \\\"Waehrung\\\": \\\"EURO\\\"\\n}\"\n\n",
+                "type": "Generic.Value -> Json.Encode.Value"
+            },
+            {
+                "name": "toString",
+                "comment": " A simple alias for `Json.Encode.encode` that outputs a String fo every Json value.\n",
+                "type": "Basics.Int -> Json.Encode.Value -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Generic.Xml",
+        "comment": "\n\n@docs decode, encode, toString\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decode",
+                "comment": " A generic decoder that will translate any XML string into the Generic representation.\n",
+                "type": "String.String -> Result.Result String.String Generic.Value"
+            },
+            {
+                "name": "encode",
+                "comment": " A generic encoder that will translate any generic value into an XML value.\n",
+                "type": "Generic.Value -> Xml.Value"
+            },
+            {
+                "name": "toString",
+                "comment": " Will return a String representation for any kind of XML value.\n",
+                "type": "Basics.Int -> Xml.Value -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Generic.Yaml",
+        "comment": "\n\n@docs decode, encode, toString\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decode",
+                "comment": " Generic YAML decoder\n",
+                "type": "String.String -> Result.Result Yaml.Decode.Error Generic.Value"
+            },
+            {
+                "name": "encode",
+                "comment": " Generic YAML encoder\n",
+                "type": "Generic.Value -> Yaml.Encode.Encoder"
+            },
+            {
+                "name": "toString",
+                "comment": " Will return a String representation for any kind of YAML value.\n",
+                "type": "Basics.Int -> Yaml.Encode.Encoder -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

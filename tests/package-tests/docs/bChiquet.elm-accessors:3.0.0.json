@@ -1,0 +1,95 @@
+[
+    {
+        "name": "Accessors",
+        "comment": " Relations are interfaces to document the relation between two data\nstructures. For convenience, we'll call the containing structure `super`, and\nthe contained structure `sub`. What a `Relation` claims is that a `super` is\nreferencing a `sub` in some way.\n\nRelations are the building blocks of accessors. An accessor is a function that\nexpects a `Relation` and builds a new relation with it. Accessors are\ncomposable, which means you can build a chain of relations to manipulate nested\nstructures without handling the packing and the unpacking.\n\n# Action functions\n\nAction functions are functions that take an accessor and let you perform a\nspecific action on data using that accessor. \n\n@docs get, set, over\n\n# Build accessors\n\nAccessors are built using these functions:\n\n@docs makeOneToOne, makeOneToN\n\n# Relation\n\n@docs Relation\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Relation",
+                "comment": " A `Relation super sub wrap` is a type describing how to interact with a\n`sub` data when given a `super` data.\n\nThe `wrap` exists because some types can't ensure that `get` will return a\n`sub`. For instance, `Maybe sub` may not actually contain a `sub`. Therefore,\n`get` returns a `wrap` which, in that example, will be `Maybe sub`\n\nImplementation: A relation is a banal record storing a `get` function and an\n`over` function.\n",
+                "args": [
+                    "super",
+                    "sub",
+                    "wrap"
+                ],
+                "type": "Accessors.Internal.Relation super sub wrap"
+            }
+        ],
+        "values": [
+            {
+                "name": "get",
+                "comment": " The get function takes:\n* An accessor,\n* A datastructure with type `super`\nand returns the value accessed by that combinator.\n```\nget (foo << bar) myRecord \n```\n",
+                "type": "(Accessors.Relation sub sub sub -> Accessors.Relation super sub wrap) -> super -> wrap"
+            },
+            {
+                "name": "makeOneToN",
+                "comment": " This function lets you build an accessor for containers that have\na 1:N relation with what they contain, such as `List` (0-N cardinality) or\n`Maybe` (0-1). E.g.:\n```\nonEach : Relation elem sub wrap -> Relation (List elem) sub (List wrap)\nonEach =\n  makeOneToN\n    List.map\n    List.map\n```\nn.b. implementing those is usually considerably simpler than the type suggests.\n",
+                "type": "((sub -> subWrap) -> super -> superWrap) -> ((sub -> sub) -> super -> super) -> Accessors.Relation sub reachable subWrap -> Accessors.Relation super reachable superWrap"
+            },
+            {
+                "name": "makeOneToOne",
+                "comment": " This function lets you build an accessor for containers that have\na 1:1 relation with what they contain, such as a record and one of its fields:\n\n```\nfoo : Relation field sub wrap -> Relation {rec | foo : field} sub wrap\nfoo =\n  makeOneToOne\n    .foo\n    (\\change rec -> {rec | foo = change rec.foo })\n```\n",
+                "type": "(super -> sub) -> ((sub -> sub) -> super -> super) -> Accessors.Relation sub reachable wrap -> Accessors.Relation super reachable wrap"
+            },
+            {
+                "name": "over",
+                "comment": "The over function takes:\n* An accessor, \n* A function `(sub -> sub)`,\n* A datastructure with type `super`\nand it returns the data structure, with the accessible field changed by applying\nthe function to the existing value.\n```\nover (foo << qux) ((+) 1) myRecord\n```\n",
+                "type": "(Accessors.Relation sub sub sub -> Accessors.Relation super sub wrap) -> (sub -> sub) -> super -> super"
+            },
+            {
+                "name": "set",
+                "comment": "The set function takes:\n* An accessor, \n* A value of the type `sub`,\n* A datastructure with type `super`\nand it returns the data structure, with the accessible field changed to be\nthe set value.\n```\nset (foo << bar) \"Hi!\" myRecord\n```\n",
+                "type": "(Accessors.Relation sub sub sub -> Accessors.Relation super sub wrap) -> sub -> super -> super"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Accessors.Lazy",
+        "comment": " Lazy versions of set, over.\n\nThese actions check that the old and the new version are different before writing. \nThey are useful when used together with `Html.lazy`, because it uses reference\nequality for complex structures. Therefore, using lazy `set` and `over` will\nnot prevent `Html.lazy` from doing its work.\n\nget is also reexported for convenience.\n\n@docs get, set, over\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "get",
+                "comment": " The get function takes:\n* An accessor,\n* A datastructure with type `super`\nand returns the value accessed by that combinator.\n```\nget (foo << bar) myRecord \n```\n",
+                "type": "(Accessors.Internal.Relation sub sub sub -> Accessors.Internal.Relation super sub wrap) -> super -> wrap"
+            },
+            {
+                "name": "over",
+                "comment": "The over function takes:\n* An accessor, \n* A function `(sub -> sub)`,\n* A datastructure with type `super`\nand it returns the data structure, with the accessible field changed by applying\nthe function to the existing value.\nThe structure is changed only if the new field is different from the old one.\n```\nover (foo << qux) ((+) 1) myRecord\n```\n",
+                "type": "(Accessors.Internal.Relation sub sub sub -> Accessors.Internal.Relation super sub wrap) -> (sub -> sub) -> super -> super"
+            },
+            {
+                "name": "set",
+                "comment": "The set function takes:\n* An accessor, \n* A value of the type `sub`,\n* A datastructure with type `super`\nand it returns the data structure, with the accessible field changed to the set value.\nThe structure is changed only if the new field is different from the old one.\n```\nset (foo << bar) \"Hi!\" myRecord\n```\n",
+                "type": "(Accessors.Internal.Relation sub sub sub -> Accessors.Internal.Relation super sub wrap) -> sub -> super -> super"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Accessors.Library",
+        "comment": " This library contains common accessors.\n\n@docs onEach, try, dictEntry\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "dictEntry",
+                "comment": " This accessor combinator lets you access Dict members.\n\nIn terms of accessors, think of Dicts as records where each field is a Maybe.\n\n    dict = Dict.fromList [(\"foo\", {bar = 2})]\n\n    get (dictEntry \"foo\") dict\n    -- returns Just {bar = 2}\n\n    get (dictEntry \"baz\" dict)\n    -- returns Nothing\n\n    get (dictEntry \"foo\" << try << bar) dict\n    -- returns Just 2\n\n    set (dictEntry \"foo\") Nothing dict\n    -- returns Dict.remove \"foo\" dict\n\n    set (dictEntry \"baz\" << try << bar) 3 dict\n    -- returns dict\n",
+                "type": "comparable -> Accessors.Relation (Maybe.Maybe v) reachable wrap -> Accessors.Relation (Dict.Dict comparable v) reachable wrap"
+            },
+            {
+                "name": "onEach",
+                "comment": " This accessor combinator lets you access values inside lists.\n\n    listRecord = { foo = [ {bar = 2}\n                         , {bar = 3}\n                         , {bar = 4}\n                         ]\n                 }\n\n    get (foo << onEach << bar) listRecord\n    -- returns [2, 3, 4] \n\n    over (foo << onEach << bar) ((+) 1) listRecord\n    -- returns {foo = [{bar = 3}, {bar = 4}, {bar = 5}]}\n",
+                "type": "Accessors.Relation super sub wrap -> Accessors.Relation (List.List super) sub (List.List wrap)"
+            },
+            {
+                "name": "try",
+                "comment": " This accessor combinator lets you access values inside Maybe.\n\n    maybeRecord = { foo = Just {bar = 2}\n                  , qux = Nothing\n                  }\n\n    get (foo << try << bar) maybeRecord\n    -- returns Just 2\n\n    get (qux << try << bar) maybeRecord\n    -- returns Nothing\n\n    over (foo << try << bar) ((+) 1) maybeRecord\n    -- returns {foo = Just {bar = 3}, qux = Nothing}\n\n    over (qux << try << bar) ((+) 1) maybeRecord\n    -- returns {foo = Just {bar = 2}, qux = Nothing}\n",
+                "type": "Accessors.Relation super sub wrap -> Accessors.Relation (Maybe.Maybe super) sub (Maybe.Maybe wrap)"
+            }
+        ],
+        "binops": []
+    }
+]

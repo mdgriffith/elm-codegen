@@ -1,0 +1,47 @@
+[
+    {
+        "name": "Phace",
+        "comment": "\n\n\n# Making Phaces\n\n@docs fromEthAddress, fromHexString, Error, errorToString, faceColorFromAddress\n\n",
+        "unions": [
+            {
+                "name": "Error",
+                "comment": " Phace generation will fail if the provided source is too short or not composed of hex characters.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NotHexString",
+                        []
+                    ],
+                    [
+                        "SourceTooSmall",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "errorToString",
+                "comment": " Get an explanation from an error type.\n",
+                "type": "Phace.Error -> String.String"
+            },
+            {
+                "name": "faceColorFromAddress",
+                "comment": " Just get the primary color of the Phace. Can be used to make a unique \"character color\" that matches the Phace.\n",
+                "type": "Eth.Types.Address -> Result.Result Phace.Error ( Basics.Float, Basics.Float, Basics.Float )"
+            },
+            {
+                "name": "fromEthAddress",
+                "comment": " Generate a phace from an Ethereum `Address`. Uses 32 chraracters, leaving 6 characters near the middle unused.\n\nSpecify svg width and height (Note that values other than 100x100 have only been minimally tested)\n\nCAUTION: If you supply a malformed Eth address (maybe you were mucking about with `Eth.Utils.unsafeToAddress`?),\nthis will produce a plain div with an error message in it.\n\n",
+                "type": "Eth.Types.Address -> Basics.Int -> Basics.Int -> Html.Html msg"
+            },
+            {
+                "name": "fromHexString",
+                "comment": " Generate a phace from a hexadecimal `String`. Make sure to remove any \"0x\" from the source first.\nSpecify svg width and height\n",
+                "type": "String.String -> Basics.Int -> Basics.Int -> Result.Result Phace.Error (Html.Html msg)"
+            }
+        ],
+        "binops": []
+    }
+]

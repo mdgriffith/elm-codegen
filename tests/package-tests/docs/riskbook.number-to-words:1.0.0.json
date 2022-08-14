@@ -1,0 +1,68 @@
+[
+    {
+        "name": "NumberToWords.Error",
+        "comment": " This module contains a type that allows you to determine the type of error that may occur during conversion.\n\n# Type and Constructors\n@docs NTWError\n\n",
+        "unions": [
+            {
+                "name": "NTWError",
+                "comment": " A `NTWError` is either `NaNOrInfinty` meaning the computation failed because user pass `NaN` or `Infinite`, or it is an\n`TooBig` meaning that user pass number that more than max safe int.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NaNOrInfinty",
+                        []
+                    ],
+                    [
+                        "TooBig",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "NumberToWords.ToOrdinal",
+        "comment": " This module contains a function that allows you to get ordinal from numbers.\n\n@docs toOrdinal\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toOrdinal",
+                "comment": " Convert number into ordinal numbers.\n\n    toOrdinal 0   == Ok \"0th\"\n    toOrdinal 10  == Ok \"10th\"\n    toOrdinal -10 == Ok \"-10th\"\n    toOrdinal NaN == Err NaNOrInfinty\n    toOrdinal 0.7 == OK \"1st\"\n",
+                "type": "Basics.Float -> Result.Result NumberToWords.Error.NTWError String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "NumberToWords.ToWords",
+        "comment": " This module contains a function that allows you to get words from numbers.\n\n@docs toWords\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toWords",
+                "comment": " Convert number into words.\n\n    toWords 0    == Ok \"zero\"\n    toWords 1.9  == Ok \"two\"\n    toWords 2222 == Ok \"two thousand, two hundred twenty-two\"\n    toWords NaN  == Err NaNOrInfinty\n    toWords -19   == Ok \"minus nineteen\"\n",
+                "type": "Basics.Float -> Result.Result NumberToWords.Error.NTWError String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "NumberToWords.ToWordsOrdinal",
+        "comment": " This module contains a function that allows you to get ordinal number words from numbers\n\n@docs toWordsOrdinal\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toWordsOrdinal",
+                "comment": " Convert number into ordinal number words.\n\n    toWordsOrdinal 0    == Ok \"zeroth\"\n    toWordsOrdinal 1.9  == Ok \"second\"\n    toWordsOrdinal 1000 == Ok \"one thousandth\"\n    toWordsOrdinal NaN  == Err NaNOrInfinty\n    toWordsOrdinal -10  == Ok \"minus tenth\"\n",
+                "type": "Basics.Float -> Result.Result NumberToWords.Error.NTWError String.String"
+            }
+        ],
+        "binops": []
+    }
+]

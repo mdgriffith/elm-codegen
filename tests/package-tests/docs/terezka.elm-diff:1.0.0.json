@@ -1,0 +1,203 @@
+[
+    {
+        "name": "Diff",
+        "comment": "\n\nThis is a library to assist the parsing of `git diff` output and subsequent display.\n\n## Parser\n@docs fromString\n\n## Data model\n@docs Diff, NewFile, DeletedFile, EditedFile, RenamedFile, Chunk, Word, Action, Hash, Path, Error\n\n## Helpers\n@docs toPath, toChunks\n\n",
+        "unions": [
+            {
+                "name": "Action",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "None",
+                        []
+                    ],
+                    [
+                        "Added",
+                        []
+                    ],
+                    [
+                        "Removed",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Diff",
+                "comment": " A diff for a single file. There may be several\nof these in a single `git diff` output.\n\n_Note_: This does not include all possible modes,\nlike changing permissions of file, symlinks etc. If you\nneed that though, you're welcome to add it.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "New",
+                        [
+                            "Diff.NewFile"
+                        ]
+                    ],
+                    [
+                        "Deleted",
+                        [
+                            "Diff.DeletedFile"
+                        ]
+                    ],
+                    [
+                        "Edited",
+                        [
+                            "Diff.EditedFile"
+                        ]
+                    ],
+                    [
+                        "Renamed",
+                        [
+                            "Diff.RenamedFile"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Word",
+                "comment": " The diff is parsed as Elm code. This incidentally\nalso works fairly well for JSON. For any other file extensions\nother than .elm and .json, the line of code is just left in its\nentirety in the `Other` type.\n\nSince we're working with diffs, this is meant to parse\nincomplete code. There are thus certain limits for highlighting\nas we don't have access to the full code. E.g. it is difficult\n(sometimes impossible) to highlight multiline comments / quotes\ncorrectly. This has thus been omitted.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Keyword",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Constant",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "CustomType",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Definiton",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "BuildIn",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Comment",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Other",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Chunk",
+                "comment": " ",
+                "args": [],
+                "type": "{ lineNum1 : Basics.Int, lineCount1 : Basics.Int, lineNum2 : Basics.Int, lineCount2 : Basics.Int, changes : List.List ( Diff.Action, List.List Diff.Word ) }"
+            },
+            {
+                "name": "DeletedFile",
+                "comment": " ",
+                "args": [],
+                "type": "{ path : Diff.Path, commit : Diff.Hash, chunks : List.List Diff.Chunk }"
+            },
+            {
+                "name": "EditedFile",
+                "comment": " ",
+                "args": [],
+                "type": "{ path : Diff.Path, commit1 : Diff.Hash, commit2 : Diff.Hash, chunks : List.List Diff.Chunk }"
+            },
+            {
+                "name": "Error",
+                "comment": " The parser error. The `subject` is what has\nbeen parsed, and the message is what went wrong.\n\nYou shouldn't run into this if you're parsing correct\ndiffs, but if there are any bugs in the parser, this\noutput is helpful.\n\nYou can display it using `Ui.Diff.viewError`.\n\n",
+                "args": [],
+                "type": "{ subject : String.String, message : String.String }"
+            },
+            {
+                "name": "Hash",
+                "comment": " ",
+                "args": [],
+                "type": "String.String"
+            },
+            {
+                "name": "NewFile",
+                "comment": " ",
+                "args": [],
+                "type": "{ path : Diff.Path, commit : Diff.Hash, chunks : List.List Diff.Chunk }"
+            },
+            {
+                "name": "Path",
+                "comment": " ",
+                "args": [],
+                "type": "String.String"
+            },
+            {
+                "name": "RenamedFile",
+                "comment": " ",
+                "args": [],
+                "type": "{ from : Diff.Path, to : Diff.Path, similarity : Basics.Int, commit1 : Diff.Hash, commit2 : Diff.Hash, chunks : List.List Diff.Chunk }"
+            }
+        ],
+        "values": [
+            {
+                "name": "fromString",
+                "comment": " Parse the full output of `git diff`.\n\n",
+                "type": "String.String -> Result.Result Diff.Error (List.List Diff.Diff)"
+            },
+            {
+                "name": "toChunks",
+                "comment": " Helper to get the diff chunks.\n\n",
+                "type": "Diff.Diff -> List.List Diff.Chunk"
+            },
+            {
+                "name": "toPath",
+                "comment": " Helper to get the path for the diff. In the case\nof renames, this is the latest path.\n\n",
+                "type": "Diff.Diff -> Diff.Path"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Ui.Diff",
+        "comment": "\n\nThis is a library to assist the parsing of `git diff` output and subsequent display.\n\n@docs Config, viewChunks\n\n## Helper\n@docs viewError\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ container : List.List (Html.Attribute msg), line : List.List (Html.Attribute msg), lineNumber : List.List (Html.Attribute msg), deleted : List.List (Html.Attribute msg), added : List.List (Html.Attribute msg), keyword : List.List (Html.Attribute msg), constant : List.List (Html.Attribute msg), customType : List.List (Html.Attribute msg), definition : List.List (Html.Attribute msg), buildIn : List.List (Html.Attribute msg), comment : List.List (Html.Attribute msg), other : List.List (Html.Attribute msg) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "viewChunks",
+                "comment": " Display diff chunks. By default it adds two rows of line\nnumbers on the left, and colors the the line base on whether\nthe line has been added or removed.\n\n",
+                "type": "Ui.Diff.Config msg -> List.List Diff.Chunk -> Html.Html msg"
+            },
+            {
+                "name": "viewError",
+                "comment": " Helper to view parsing errors.\n\n",
+                "type": "Diff.Error -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

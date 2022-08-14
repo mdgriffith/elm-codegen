@@ -1,0 +1,16 @@
+[
+    {
+        "name": "TZif",
+        "comment": "\n\n@docs decode\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decode",
+                "comment": " Decode a TZif file into a `Time.Zone` value.\n\n    import Bytes.Decode\n    import TZif\n    import Time\n\n    zone : Maybe Time.Zone\n    zone =\n        Bytes.Decode.decode TZif.decode tzif\n\n",
+                "type": "Bytes.Decode.Decoder Time.Zone"
+            }
+        ],
+        "binops": []
+    }
+]

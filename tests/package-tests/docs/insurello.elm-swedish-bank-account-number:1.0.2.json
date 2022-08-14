@@ -1,0 +1,119 @@
+[
+    {
+        "name": "SwedishBankAccountNumber",
+        "comment": " This library lets you validate Swedish bank account numbers.\n\nFirst, validate a clearing number using [SwedishBankAccountNumber.ClearingNumber.fromString](./SwedishBankAccountNumber-ClearingNumber#fromString).\n\nThen, validate an account number using [SwedishBankAccountNumber.create](#create).\n\n\n# Main\n\n@docs SwedishBankAccountNumber, Error, create, toRecord\n\n\n# Helpers\n\n@docs AccountNumberLength, getAccountNumberLength\n\n",
+        "unions": [
+            {
+                "name": "AccountNumberLength",
+                "comment": " Represents the length constraints of an account number.\n\nThe most common value is `FixedLength 7`, which all modern “type 1” accounts have.\n\nOlder “type 2” accounts usually have `FixedLength 10`.\n\nThen there are some special cases:\n\n  - Handelsbanken uses `FixedLength 9`.\n  - Swedbank accounts with clearing numbers starting with `8` have 6-10 digits (`Range 6 10`).\n  - Nordea Plusgirot use 7-10 digits (`Range 7 10`).\n\nSee <https://github.com/jop-io/kontonummer.js/issues/6> for more information.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "FixedLength",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "Range",
+                        [
+                            "Basics.Int",
+                            "Basics.Int"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Error",
+                "comment": " Trying to construct a `SwedishBankAccountNumber` can fail in two ways:\n\n  - The account number is too short or too long. `BadAccountNumberLength`\n    contains how many digits were actually passed;\n    [getAccountNumberLength](#getAccountNumberLength) lets you know how many are valid.\n  - The checksum of the bank account number is invalid (the last digit of\n    account numbers is a control digit that is supposed to make the checksum\n    add up).\n\n(Constructing a `ClearingNumber` can fail in its own ways – see\n[SwedishBankAccountNumber.ClearingNumber.Error](./SwedishBankAccountNumber-ClearingNumber#Error).)\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "BadAccountNumberLength",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "BadChecksum",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "SwedishBankAccountNumber",
+                "comment": " Represents a Swedish bank account number.\n\nThis is an example of a valid Swedish bank account number:\n\n    9420 - 4172385\n\nA bank account number consists of two parts:\n\n1.  The clearing number: 9420\n2.  The account number: 4172385\n\nThe only way to create a value of the `SwedishBankAccountNumber` type is by\ncalling `create`. This way, if you encounter a `SwedishBankAccountNumber` you\nalways know that it’s valid.\n\n`SwedishBankAccountNumber` also contains information about which Swedish bank\nthe bank account number is for.\n\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "create",
+                "comment": " Validate and construct a `SwedishBankAccountNumber`.\n\nFirst, you need to get a `ClearingNumber` via\n[SwedishBankAccountNumber.ClearingNumber.fromString](./SwedishBankAccountNumber-ClearingNumber#fromString).\n\nThen, pass the validated `ClearingNumber` and an unvalidated account number\nstring to get a full bank account number.\n\nThe account number string is allowed to have any kind of crazy formatting.\nThe function simply takes all the digits of the string and discards all other\ncharacters. The following all mean the same thing:\n\n    4172385\n    417 23 85\n    417,23,85\n    abc417-23#85!\n\nIf you have a form field for the account number, you might want to normalize\nit on blur. You can use `String.filter Char.isDigit myString` to do so.\n\n",
+                "type": "SwedishBankAccountNumber.ClearingNumber.ClearingNumber -> String.String -> Result.Result SwedishBankAccountNumber.Error SwedishBankAccountNumber.SwedishBankAccountNumber"
+            },
+            {
+                "name": "getAccountNumberLength",
+                "comment": " Get the length constraints of an account number. Since banks have different\nrules this depends on the clearing number.\n\nLet’s say you have two form fields – one for the clearing number, and one for the\naccount number. After the clearing number has been filled, you might want to show\nhow long the account number is expected to be. Then this function will come in handy.\n\nBy the way – clearing numbers are always 4 digits, except Swedbank clearing\nnumbers starting with `8` which are 5 digits.\n\n",
+                "type": "SwedishBankAccountNumber.ClearingNumber.ClearingNumber -> SwedishBankAccountNumber.AccountNumberLength"
+            },
+            {
+                "name": "toRecord",
+                "comment": " When you need to display a `SwedishBankAccountNumber` or send it via HTTP to\nyour backend, use this function to get all of its data.\n\n  - `bankName` is a human readable string name of the bank identified from the\n    clearing number, such as “Länsförsäkringar Bank”.\n  - `clearingNumber` and `accountNumber` are strings containing digits only\n    (no hyphens or spaces or anything), such as “9420“ and “4172385”, respectively.\n\n",
+                "type": "SwedishBankAccountNumber.SwedishBankAccountNumber -> { bankName : String.String, clearingNumber : String.String, accountNumber : String.String }"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "SwedishBankAccountNumber.ClearingNumber",
+        "comment": " Validating a bank account number is a two-step process: First you need to\nvalidate the clearing number. Why?\n\n  - To know which bank the bank account number is for, and as such which\n    validation rules to use.\n  - Newer “type 1” accounts include the clearing number in the checksum calculation.\n\nThis module lets you validate clearing numbers.\n\n@docs ClearingNumber, Error, fromString, toString, getBankName\n\n",
+        "unions": [
+            {
+                "name": "Error",
+                "comment": " Trying to construct a `ClearingNumber` can fail in two ways:\n\n  - The clearing number is too short or too long. `BadLength`\n    contains how many digits were actually passed. Clearing numbers are\n    always 4 or 5 digits long.\n  - The clearing number is unknown.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "BadLength",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "Unknown",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "ClearingNumber",
+                "comment": " Represents a Swedish clearing number.\n\nThe only way to create a value of the `ClearingNumber` type is by calling\n`fromString`. This way, if you encounter a `ClearingNumber`, you know that it\nis always valid.\n\n`ClearingNumber` also contains information about which Swedish bank\nthe bank account number is for.\n\n",
+                "args": [],
+                "type": "SwedishBankAccountNumber.ClearingNumberInternal.ClearingNumberInternal"
+            }
+        ],
+        "values": [
+            {
+                "name": "fromString",
+                "comment": " Validate and construct a `ClearingNumber`.\n\nThe clearing number string is allowed to have any kind of crazy formatting.\nThe function simply takes all the digits of the string and discards all other\ncharacters. The following all mean the same thing:\n\n    9420\n    94 20\n    94,20\n    abc94-2#0!\n\nIf you have a form field for the clearing number, you might want to normalize\nit on blur. You can use `String.filter Char.isDigit myString` to do so.\n\n",
+                "type": "String.String -> Result.Result SwedishBankAccountNumber.ClearingNumber.Error SwedishBankAccountNumber.ClearingNumber.ClearingNumber"
+            },
+            {
+                "name": "getBankName",
+                "comment": " Get a human readable string name of the bank identified from the clearing\nnumber, such as “Länsförsäkringar Bank”.\n",
+                "type": "SwedishBankAccountNumber.ClearingNumber.ClearingNumber -> String.String"
+            },
+            {
+                "name": "toString",
+                "comment": " Get a string containing digits only (no hyphens or spaces or anything),\nsuch as “9420”.\n",
+                "type": "SwedishBankAccountNumber.ClearingNumber.ClearingNumber -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

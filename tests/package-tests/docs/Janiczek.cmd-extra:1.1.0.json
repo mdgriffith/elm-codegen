@@ -1,0 +1,41 @@
+[
+    {
+        "name": "Cmd.Extra",
+        "comment": " A library providing pipeline-friendly Cmd operators.\n\n\n# Cmds\n\n@docs withNoCmd, withCmd, withCmds, addCmd, addCmds, andThen\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "addCmd",
+                "comment": " Adds a new `Cmd` to an existing model-Cmd tuple.\n\n    ( model, cmd )\n        |> addCmd ping\n\n",
+                "type": "Platform.Cmd.Cmd msg -> ( model, Platform.Cmd.Cmd msg ) -> ( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "addCmds",
+                "comment": " Adds new `Cmd`s to an existing model-Cmd tuple.\n\n    ( model, cmd )\n        |> addCmds [ ping 1, ping 2 ]\n\n",
+                "type": "List.List (Platform.Cmd.Cmd msg) -> ( model, Platform.Cmd.Cmd msg ) -> ( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "andThen",
+                "comment": " Allows your function that works on `Model` to work on `(Model, Cmd Msg)`.\n\n    doFoo : Model -> (Model, Cmd Msg)\n    doBar : Model -> (Model, Cmd Msg)\n\n    model\n        |> doFoo\n        -- we have `(Model, Cmd Msg)` now, but `doBar` needs a `Model`\n        -- so we use...\n        |> andThen doBar\n\n",
+                "type": "(model -> ( model, Platform.Cmd.Cmd msg )) -> ( model, Platform.Cmd.Cmd msg ) -> ( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "withCmd",
+                "comment": " Wraps the model with given `Cmd`.\n\n    incrementAndPing : Model -> ( Model, Cmd Msg )\n    incrementAndPing model =\n        { model | counter = model.counter + 1 }\n            |> withCmd ping\n\n",
+                "type": "Platform.Cmd.Cmd msg -> model -> ( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "withCmds",
+                "comment": " Wraps the model with given `Cmd`s.\n\n    incrementAndPingTwice : Model -> ( Model, Cmd Msg )\n    incrementAndPingTwice model =\n        { model | counter = model.counter + 1 }\n            |> withCmds [ ping 1, ping 2 ]\n\n",
+                "type": "List.List (Platform.Cmd.Cmd msg) -> model -> ( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "withNoCmd",
+                "comment": " Wraps the model with `Cmd.none`.\n\n    init : ( Model, Cmd Msg )\n    init =\n        myModel\n            |> withNoCmd\n\n",
+                "type": "model -> ( model, Platform.Cmd.Cmd msg )"
+            }
+        ],
+        "binops": []
+    }
+]

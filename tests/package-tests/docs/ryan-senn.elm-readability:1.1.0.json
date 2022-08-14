@@ -1,0 +1,87 @@
+[
+    {
+        "name": "ColemanLiau",
+        "comment": " Coleman-Liau readability formula. See <https://en.wikipedia.org/wiki/Coleman-Liau_index>\n\n@docs Config, configFromText, score\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " Record that hold the required data to calculate a score.\n",
+                "args": [],
+                "type": "{ words : Basics.Float, sentences : Basics.Float, letters : Basics.Float }"
+            }
+        ],
+        "values": [
+            {
+                "name": "configFromText",
+                "comment": " Generate a Config record from a text string.\n",
+                "type": "String.String -> ColemanLiau.Config"
+            },
+            {
+                "name": "score",
+                "comment": " Get the Coleman-Liau score for a Config record.\n",
+                "type": "ColemanLiau.Config -> Basics.Float"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "DaleChall",
+        "comment": " Dale-Chall readability formula. See <https://en.wikipedia.org/wiki/Dale-Chall_readability_formula>\n\n@docs Config, configFromText, score, gradeLevel\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " Record that hold the required data to calculate a score.\n",
+                "args": [],
+                "type": "{ words : Basics.Float, difficultWords : Basics.Float, sentences : Basics.Float }"
+            }
+        ],
+        "values": [
+            {
+                "name": "configFromText",
+                "comment": " Generate a Config record from a text string.\n",
+                "type": "String.String -> DaleChall.Config"
+            },
+            {
+                "name": "gradeLevel",
+                "comment": " Get the grade level for a Dale-Chall score.\n",
+                "type": "Basics.Float -> String.String"
+            },
+            {
+                "name": "score",
+                "comment": " Get the Dale-Chall score for a Config record.\n",
+                "type": "DaleChall.Config -> Basics.Float"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "DaleChallList",
+        "comment": " Dale-Chall list of simple words including plurals. Generated with /build/index.js. See README.md for more info.\n\n@docs simpleWords\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "simpleWords",
+                "comment": " List of simple words, including the plural form.\n",
+                "type": "List.List String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Utility",
+        "comment": " Utility\n\n@docs sentenceCount\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "sentenceCount",
+                "comment": " Count the number of sentences in a text string.\n",
+                "type": "String.String -> Basics.Int"
+            }
+        ],
+        "binops": []
+    }
+]

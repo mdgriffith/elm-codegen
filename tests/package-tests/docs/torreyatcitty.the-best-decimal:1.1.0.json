@@ -1,0 +1,153 @@
+[
+    {
+        "name": "Decimal",
+        "comment": "\n\n\n# The datatype\n\n@docs Decimal\n\n\n# From stuff\n\n@docs fromInt\n@docs fromIntWithExponent\n@docs fromString\n@docs fromFloat\n@docs fromBigInt\n@docs fromBigIntWithExponent\n\n\n# To stuff\n\n@docs toString\n@docs toFloat\n\n\n# Arithmetic operations\n\n@docs add\n@docs sub\n@docs negate\n@docs mul\n@docs fastdiv\n\n\n# Rounding\n\n@docs truncate\n@docs round\n\n\n# Comparing\n\n@docs gt\n@docs gte\n@docs eq\n@docs neq\n@docs lt\n@docs lte\n@docs compare\n\n\n# Misc operations\n\n@docs abs\n@docs getDigit\n\n\n# Common numbers\n\n@docs zero\n@docs one\n@docs minusOne\n\n",
+        "unions": [
+            {
+                "name": "Decimal",
+                "comment": " The Decimal data type\nIt is represented as mantissa \\* 10 ^ exponent\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "abs",
+                "comment": " Absolute value (sets the sign as positive)\n",
+                "type": "Decimal.Decimal -> Decimal.Decimal"
+            },
+            {
+                "name": "add",
+                "comment": " Addition\n",
+                "type": "Decimal.Decimal -> Decimal.Decimal -> Decimal.Decimal"
+            },
+            {
+                "name": "compare",
+                "comment": " Compares two Decimals\n",
+                "type": "Decimal.Decimal -> Decimal.Decimal -> Basics.Order"
+            },
+            {
+                "name": "eq",
+                "comment": " Equals\n",
+                "type": "Decimal.Decimal -> Decimal.Decimal -> Basics.Bool"
+            },
+            {
+                "name": "fastdiv",
+                "comment": " Fast and dirty division. Don't expect too much precision from this division. Dividing by zero is bad, and Nothing will be returned.\n",
+                "type": "Decimal.Decimal -> Decimal.Decimal -> Maybe.Maybe Decimal.Decimal"
+            },
+            {
+                "name": "fromBigInt",
+                "comment": " Converts an BigInt to a Decimal\n",
+                "type": "BigInt.BigInt -> Decimal.Decimal"
+            },
+            {
+                "name": "fromBigIntWithExponent",
+                "comment": " Converts an BigInt to a Decimal\n",
+                "type": "Basics.Int -> BigInt.BigInt -> Decimal.Decimal"
+            },
+            {
+                "name": "fromFloat",
+                "comment": " Converts a Float to a Decimal\n",
+                "type": "Basics.Float -> Maybe.Maybe Decimal.Decimal"
+            },
+            {
+                "name": "fromInt",
+                "comment": " Converts an Int to a Decimal\n",
+                "type": "Basics.Int -> Decimal.Decimal"
+            },
+            {
+                "name": "fromIntWithExponent",
+                "comment": " Converts an Int to a Decimal, but specifying the exponent\n",
+                "type": "Basics.Int -> Basics.Int -> Decimal.Decimal"
+            },
+            {
+                "name": "fromString",
+                "comment": " Converts a String to a Maybe Decimal. The string shall be in the format [<sign>]<numbers>[.<numbers>][e<numbers>]\n",
+                "type": "String.String -> Maybe.Maybe Decimal.Decimal"
+            },
+            {
+                "name": "getDigit",
+                "comment": " Gets the specified digit from a Decimal. The digits are:\n0 -> units\n1 -> tens\n2 -> hundreds\nand so on\n-1 -> tenths\n-2 -> hundredths\nand so on\n",
+                "type": "Basics.Int -> Decimal.Decimal -> Basics.Int"
+            },
+            {
+                "name": "gt",
+                "comment": " Greater than\n",
+                "type": "Decimal.Decimal -> Decimal.Decimal -> Basics.Bool"
+            },
+            {
+                "name": "gte",
+                "comment": " Greater than or equals\n",
+                "type": "Decimal.Decimal -> Decimal.Decimal -> Basics.Bool"
+            },
+            {
+                "name": "lt",
+                "comment": " Less than\n",
+                "type": "Decimal.Decimal -> Decimal.Decimal -> Basics.Bool"
+            },
+            {
+                "name": "lte",
+                "comment": " Less than or equals\n",
+                "type": "Decimal.Decimal -> Decimal.Decimal -> Basics.Bool"
+            },
+            {
+                "name": "minusOne",
+                "comment": " The number -1\n",
+                "type": "Decimal.Decimal"
+            },
+            {
+                "name": "mul",
+                "comment": " Multiplication\n",
+                "type": "Decimal.Decimal -> Decimal.Decimal -> Decimal.Decimal"
+            },
+            {
+                "name": "negate",
+                "comment": " Changes the sign of a Decimal\n",
+                "type": "Decimal.Decimal -> Decimal.Decimal"
+            },
+            {
+                "name": "neq",
+                "comment": " Not equals\n",
+                "type": "Decimal.Decimal -> Decimal.Decimal -> Basics.Bool"
+            },
+            {
+                "name": "one",
+                "comment": " The number 1\n",
+                "type": "Decimal.Decimal"
+            },
+            {
+                "name": "round",
+                "comment": " Rounds the Decimal to the specified decimal places\n",
+                "type": "Basics.Int -> Decimal.Decimal -> Decimal.Decimal"
+            },
+            {
+                "name": "sub",
+                "comment": " Substraction\n",
+                "type": "Decimal.Decimal -> Decimal.Decimal -> Decimal.Decimal"
+            },
+            {
+                "name": "toFloat",
+                "comment": " Converts a Decimal to a Float\n",
+                "type": "Decimal.Decimal -> Basics.Float"
+            },
+            {
+                "name": "toString",
+                "comment": " Converts a Decimal to a String\n",
+                "type": "Decimal.Decimal -> String.String"
+            },
+            {
+                "name": "truncate",
+                "comment": " Truncates the Decimal to the specified decimal places\n",
+                "type": "Basics.Int -> Decimal.Decimal -> Decimal.Decimal"
+            },
+            {
+                "name": "zero",
+                "comment": " The number 0\n",
+                "type": "Decimal.Decimal"
+            }
+        ],
+        "binops": []
+    }
+]

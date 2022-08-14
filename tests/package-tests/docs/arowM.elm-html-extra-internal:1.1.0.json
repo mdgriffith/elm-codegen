@@ -1,0 +1,189 @@
+[
+    {
+        "name": "Batchable.Html.Attributes.Extra",
+        "comment": " Additional attributes for html\n\n\n# Embedding static attributes\n\n@docs static\n\n\n# Inputs\n\n@docs valueAsFloat, valueAsInt\n\n\n# Semantic web\n\n@docs role\n\n\n# Meter element\n\n@docs low, high, optimum\n\n\n# Media element\n\n@docs volume\n\n\n# Custom Attributes\n\n@docs stringProperty\n@docs boolProperty\n@docs floatProperty\n@docs intProperty\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "boolProperty",
+                "comment": " Create arbitrary bool _properties_.\n",
+                "type": "String.String -> Basics.Bool -> Batchable.Html.Attribute msg"
+            },
+            {
+                "name": "floatProperty",
+                "comment": " Create arbitrary floating-point _properties_.\n",
+                "type": "String.String -> Basics.Float -> Batchable.Html.Attribute msg"
+            },
+            {
+                "name": "high",
+                "comment": " The lower numeric bound of the high end of the measured range, used with the meter element.\n",
+                "type": "String.String -> Batchable.Html.Attribute msg"
+            },
+            {
+                "name": "intProperty",
+                "comment": " Create arbitrary integer _properties_.\n",
+                "type": "String.String -> Basics.Int -> Batchable.Html.Attribute msg"
+            },
+            {
+                "name": "low",
+                "comment": " The upper numeric bound of the low end of the measured range, used with the meter element.\n",
+                "type": "String.String -> Batchable.Html.Attribute msg"
+            },
+            {
+                "name": "optimum",
+                "comment": " This attribute indicates the optimal numeric value, used with the meter element.\n",
+                "type": "String.String -> Batchable.Html.Attribute msg"
+            },
+            {
+                "name": "role",
+                "comment": " Used to annotate markup languages with machine-extractable semantic information about the purpose of an element.\nSee the [official specs](http://www.w3.org/TR/role-attribute/).\n",
+                "type": "String.String -> Batchable.Html.Attribute msg"
+            },
+            {
+                "name": "static",
+                "comment": " Embedding static attributes.\n\nWorks alike to [`Html.Extra.static`](Html-Extra#static).\n\n",
+                "type": "Batchable.Html.Attribute Basics.Never -> Batchable.Html.Attribute msg"
+            },
+            {
+                "name": "stringProperty",
+                "comment": " Create arbitrary string _properties_.\n",
+                "type": "String.String -> String.String -> Batchable.Html.Attribute msg"
+            },
+            {
+                "name": "valueAsFloat",
+                "comment": " Uses `valueAsNumber` to update an input with a floating-point value.\nThis should only be used on &lt;input&gt; of type `number`, `range`, or `date`.\nIt differs from `value` in that a floating point value will not necessarily overwrite the contents on an input element.\n\n    valueAsFloat 2.5 -- e.g. will not change the displayed value for input showing \"2.5000\"\n\n    valueAsFloat 0.4 -- e.g. will not change the displayed value for input showing \".4\"\n\n",
+                "type": "Basics.Float -> Batchable.Html.Attribute msg"
+            },
+            {
+                "name": "valueAsInt",
+                "comment": " Uses `valueAsNumber` to update an input with an integer value.\nThis should only be used on &lt;input&gt; of type `number`, `range`, or `date`.\nIt differs from `value` in that an integer value will not necessarily overwrite the contents on an input element.\n\n    valueAsInt 18 -- e.g. will not change the displayed value for input showing \"00018\"\n\n",
+                "type": "Basics.Int -> Batchable.Html.Attribute msg"
+            },
+            {
+                "name": "volume",
+                "comment": " Audio volume, starting from 0.0 (silent) up to 1.0 (loudest).\n",
+                "type": "Basics.Float -> Batchable.Html.Attribute msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Batchable.Html.Events.Extra",
+        "comment": " Additional decoders for use with event handlers in html.\n\n\n# Event decoders\n\n  - TODO: `key`\n\n  - TODO: `code`\n\n  - TODO: `KeyEvent`, `keyEvent`\n\n@docs charCode\n\n\n# Typed event decoders\n\n@docs targetValueFloat, targetValueInt, targetValueMaybe, targetValueMaybeFloat, targetValueMaybeInt\n@docs targetValueFloatParse, targetValueIntParse, targetValueMaybeFloatParse, targetValueMaybeIntParse\n@docs targetSelectedIndex\n\n\n# Event Handlers\n\n@docs onClickPreventDefault, onClickStopPropagation, onClickPreventDefaultAndStopPropagation, onEnter, onChange\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "charCode",
+                "comment": " Character code for key board events.\nThis is being deprecated, but support for DOM3 Keyboard events is not yet present in most browsers.\n",
+                "type": "Json.Decode.Decoder (Maybe.Maybe Char.Char)"
+            },
+            {
+                "name": "onChange",
+                "comment": " An HTML Event attribute that passes the `event.target.value` to a `msg`\nconstructor when an `input`, `select`, or `textarea` element has changed.\n",
+                "type": "(String.String -> msg) -> Batchable.Html.Attribute msg"
+            },
+            {
+                "name": "onClickPreventDefault",
+                "comment": " Always send `msg` upon click, preventing the browser's default behavior.\n",
+                "type": "msg -> Batchable.Html.Attribute msg"
+            },
+            {
+                "name": "onClickPreventDefaultAndStopPropagation",
+                "comment": " Always send `msg` upon click, preventing the browser's default behavior and propagation\n",
+                "type": "msg -> Batchable.Html.Attribute msg"
+            },
+            {
+                "name": "onClickStopPropagation",
+                "comment": " Always send `msg` upon click, preventing click propagation.\n",
+                "type": "msg -> Batchable.Html.Attribute msg"
+            },
+            {
+                "name": "onEnter",
+                "comment": " When the enter key is released, send the `msg`.\nOtherwise, do nothing.\n",
+                "type": "msg -> Batchable.Html.Attribute msg"
+            },
+            {
+                "name": "targetSelectedIndex",
+                "comment": " Parse the index of the selected option of a select.\nReturns Nothing in place of the spec's magic value -1.\n",
+                "type": "Json.Decode.Decoder (Maybe.Maybe Basics.Int)"
+            },
+            {
+                "name": "targetValueFloat",
+                "comment": " Floating-point target value.\n",
+                "type": "Json.Decode.Decoder Basics.Float"
+            },
+            {
+                "name": "targetValueFloatParse",
+                "comment": " Parse a floating-point value from the input instead of using `valueAsNumber`.\nUse this with inputs that do not have a `number` type.\n",
+                "type": "Json.Decode.Decoder Basics.Float"
+            },
+            {
+                "name": "targetValueInt",
+                "comment": " Integer target value.\n",
+                "type": "Json.Decode.Decoder Basics.Int"
+            },
+            {
+                "name": "targetValueIntParse",
+                "comment": " Parse an integer value from the input instead of using `valueAsNumber`.\nUse this with inputs that do not have a `number` type.\n",
+                "type": "Json.Decode.Decoder Basics.Int"
+            },
+            {
+                "name": "targetValueMaybe",
+                "comment": " String or empty target value.\n",
+                "type": "Json.Decode.Decoder (Maybe.Maybe String.String)"
+            },
+            {
+                "name": "targetValueMaybeFloat",
+                "comment": " Floating-point or empty target value.\n",
+                "type": "Json.Decode.Decoder (Maybe.Maybe Basics.Float)"
+            },
+            {
+                "name": "targetValueMaybeFloatParse",
+                "comment": " Parse an optional floating-point value from the input instead of using `valueAsNumber`.\nUse this with inputs that do not have a `number` type.\n",
+                "type": "Json.Decode.Decoder (Maybe.Maybe Basics.Float)"
+            },
+            {
+                "name": "targetValueMaybeInt",
+                "comment": " Integer or empty target value.\n",
+                "type": "Json.Decode.Decoder (Maybe.Maybe Basics.Int)"
+            },
+            {
+                "name": "targetValueMaybeIntParse",
+                "comment": " Parse an optional integer value from the input instead of using `valueAsNumber`.\nUse this with inputs that do not have a `number` type.\n",
+                "type": "Json.Decode.Decoder (Maybe.Maybe Basics.Int)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Batchable.Html.Extra",
+        "comment": " Convenience functionality on\n[`Html`](http://package.elm-lang.org/packages/elm-lang/html/latest/Html#Html)\n\n@docs static, nothing, viewIf, viewIfLazy\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "nothing",
+                "comment": " Render nothing.\n\nA more idiomatic way of rendering nothing compared to using\n`Html.text \"\"` directly.\n\n",
+                "type": "Html.Html msg"
+            },
+            {
+                "name": "static",
+                "comment": " Embedding static html.\n\nThe type argument\n[`Never`](http://package.elm-lang.org/packages/elm-lang/core/latest/Basics#Never)\nin `Html Never` tells us that the html has no event handlers attached,\nit will not generate any messages. We may want to embed such static\nhtml into arbitrary views, while using types to enforce the\nstaticness. That is what this function provides.\n\n_Note:_ To call this function, the argument need not be literally of type\n`Html Never`. It suffices if it is a fully polymorphic (in the message type)\n`Html` value. For example, this works: `static (Html.text \"abcdef\")`.\n\n",
+                "type": "Html.Html Basics.Never -> Html.Html msg"
+            },
+            {
+                "name": "viewIf",
+                "comment": " A function to only render html under a certain condition\n\n    fieldView : Model -> Html Msg\n    fieldView model =\n        div\n            []\n            [ fieldInput model\n            , viewIf\n                (not <| List.isEmpty model.errors)\n                errorsView\n            ]\n\n",
+                "type": "Basics.Bool -> Html.Html msg -> Html.Html msg"
+            },
+            {
+                "name": "viewIfLazy",
+                "comment": " Just like `viewIf` except its more performant. In viewIf, the html is always evaluated, even if its not rendered. `viewIfLazy` only evaluates your view function if it needs to. The trade off is your view function needs to accept a unit type (`()`) as its final parameter\n\n    fieldView : Model -> Html Msg\n    fieldView model =\n        div\n            []\n            [ fieldInput model\n            , viewIf\n                (not <| List.isEmpty model.errors)\n                errorsView\n            ]\n\n",
+                "type": "Basics.Bool -> (() -> Html.Html msg) -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,184 @@
+[
+    {
+        "name": "Unicode",
+        "comment": " Unicode aware functions for working with characters.\n\n\n# Letters\n\n@docs isUpper, isLower, isAlpha, isAlphaNum\n\n\n# Digits\n\n@docs isDigit\n\n\n# Categories\n\n@docs Category, getCategory, categoryFromString, categoryToString, categoryToDescription\n\n",
+        "unions": [
+            {
+                "name": "Category",
+                "comment": " A category as defined by the Unicode standard.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "LetterUppercase",
+                        []
+                    ],
+                    [
+                        "LetterLowercase",
+                        []
+                    ],
+                    [
+                        "LetterTitlecase",
+                        []
+                    ],
+                    [
+                        "MarkNonSpacing",
+                        []
+                    ],
+                    [
+                        "MarkSpacingCombining",
+                        []
+                    ],
+                    [
+                        "MarkEnclosing",
+                        []
+                    ],
+                    [
+                        "NumberDecimalDigit",
+                        []
+                    ],
+                    [
+                        "NumberLetter",
+                        []
+                    ],
+                    [
+                        "NumberOther",
+                        []
+                    ],
+                    [
+                        "SeparatorSpace",
+                        []
+                    ],
+                    [
+                        "SeparatorLine",
+                        []
+                    ],
+                    [
+                        "SeparatorParagraph",
+                        []
+                    ],
+                    [
+                        "OtherControl",
+                        []
+                    ],
+                    [
+                        "OtherFormat",
+                        []
+                    ],
+                    [
+                        "OtherSurrogate",
+                        []
+                    ],
+                    [
+                        "OtherPrivateUse",
+                        []
+                    ],
+                    [
+                        "OtherNotAssigned",
+                        []
+                    ],
+                    [
+                        "LetterModifier",
+                        []
+                    ],
+                    [
+                        "LetterOther",
+                        []
+                    ],
+                    [
+                        "PunctuationConnector",
+                        []
+                    ],
+                    [
+                        "PunctuationDash",
+                        []
+                    ],
+                    [
+                        "PunctuationOpen",
+                        []
+                    ],
+                    [
+                        "PunctuationClose",
+                        []
+                    ],
+                    [
+                        "PunctuationInitialQuote",
+                        []
+                    ],
+                    [
+                        "PunctuationFinalQuote",
+                        []
+                    ],
+                    [
+                        "PunctuationOther",
+                        []
+                    ],
+                    [
+                        "SymbolMath",
+                        []
+                    ],
+                    [
+                        "SymbolCurrency",
+                        []
+                    ],
+                    [
+                        "SymbolModifier",
+                        []
+                    ],
+                    [
+                        "SymbolOther",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "categoryFromString",
+                "comment": " Parses a category name (Lu, Ll, Lt, ...).\n",
+                "type": "String.String -> Maybe.Maybe Unicode.Category"
+            },
+            {
+                "name": "categoryToDescription",
+                "comment": " Converts a category to its English description. Mostly useful for debugging purposes.\n",
+                "type": "Unicode.Category -> String.String"
+            },
+            {
+                "name": "categoryToString",
+                "comment": " Convert a category to its short category name (Lu, Ll, Lt, ...)\n",
+                "type": "Unicode.Category -> String.String"
+            },
+            {
+                "name": "getCategory",
+                "comment": " Get the Unicode category. Warning: this function is very big. You should usually use one of the `isXXX` ones instead.\n",
+                "type": "Char.Char -> Maybe.Maybe Unicode.Category"
+            },
+            {
+                "name": "isAlpha",
+                "comment": " Detect letters (Unicode categories Lu, Ll, Lt, Lm, Lo)\n",
+                "type": "Char.Char -> Basics.Bool"
+            },
+            {
+                "name": "isAlphaNum",
+                "comment": " Detect letters or digits (Unicode categories Lu, Ll, Lt, Lm, Lo, Nd, Nl, No)\n",
+                "type": "Char.Char -> Basics.Bool"
+            },
+            {
+                "name": "isDigit",
+                "comment": " Detect digits (Unicode categories Nd, Nl, No)\n",
+                "type": "Char.Char -> Basics.Bool"
+            },
+            {
+                "name": "isLower",
+                "comment": " Detect lower case characters (Unicode category Ll)\n",
+                "type": "Char.Char -> Basics.Bool"
+            },
+            {
+                "name": "isUpper",
+                "comment": " Detect upper case characters (Unicode category Lu)\n",
+                "type": "Char.Char -> Basics.Bool"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,90 @@
+[
+    {
+        "name": "WaveFunctionCollapse",
+        "comment": " This library allows user to create a random two dimensional map/grid/board\nbased on custom \"tiles\". The user has to specify what \"sockets\" each tile\nis exposing at each edge/direction to determine whether they can be placed next to each other.\n\n\n# Definition\n\n@docs TilesDefinition, Direction, Model, TileId\n\n\n# Solving\n\n@docs init, solve\n\n\n# Stepping, Visualizing\n\n@docs pickTile, propagate, done, viewPropGrid\n\n",
+        "unions": [
+            {
+                "name": "Direction",
+                "comment": " Specifies direction in which another tile can be placed relative to the current tile\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Top",
+                        []
+                    ],
+                    [
+                        "Left",
+                        []
+                    ],
+                    [
+                        "Bottom",
+                        []
+                    ],
+                    [
+                        "Right",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Model",
+                "comment": " Represents the working state of a two dimensional map/board.\nUnless it's `done` this will have positions that have not been\nassigned to a tile yet.\n\n`tileT` is the type for the tiles used to \"fill\" the map.\n`socketT` is a type that describes the \"edge\" of a tile in a certain `Direction`.\nThe sockets have to match in order for two tiles to be positioned next to each other.\n\n",
+                "args": [
+                    "tileT",
+                    "socketT"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "TileId",
+                "comment": " The position/index of a tile in the initial list of tiles (given with the `TilesDefinition`)\n",
+                "args": [],
+                "type": "Basics.Int"
+            },
+            {
+                "name": "TilesDefinition",
+                "comment": " A `TilesDefinition` contains all the necessary information to\ndescribe what kind of map/grid/board is to be generated.\nUser can user their own type of `tiles`. But they must provide a\n`getSocketIn` function that returns what kind of `socket` each tile\nexposes in a certain direction.\n\nThe `initialSeed` determines the generation of the pseudo random numbers\nused to pick tiles. So to get different results you can seed it for example\nwith the current timestamp.\n\n",
+                "args": [
+                    "tileT",
+                    "socketT"
+                ],
+                "type": "{ defaultTile : tileT, tiles : List.List tileT, width : Basics.Int, height : Basics.Int, getSocketIn : tileT -> WaveFunctionCollapse.Direction -> socketT, initialSeed : Random.Seed }"
+            }
+        ],
+        "values": [
+            {
+                "name": "done",
+                "comment": " Returns true if all positions in the grid have a tile assigned\n",
+                "type": "WaveFunctionCollapse.Model tileT socketT -> Basics.Bool"
+            },
+            {
+                "name": "init",
+                "comment": " The init function creates an empty model based on the given `TilesDefinition`.\nThis model can then either be populated step by step with `propagate` or\nfilled in one call with the `solve` function.\n",
+                "type": "WaveFunctionCollapse.TilesDefinition tileT socketT -> WaveFunctionCollapse.Model tileT socketT"
+            },
+            {
+                "name": "pickTile",
+                "comment": " Adds a step to pick a specific tile at a specific position\n",
+                "type": "WaveFunctionCollapse.Pos -> WaveFunctionCollapse.TileId -> WaveFunctionCollapse.Model tileT socketT -> WaveFunctionCollapse.Model tileT socketT"
+            },
+            {
+                "name": "propagate",
+                "comment": " Execute a single step. This can mean picking the next random tile\nor propagating restrictions resulting from the last placement of a tile.\n",
+                "type": "WaveFunctionCollapse.Model tileT socketT -> WaveFunctionCollapse.Model tileT socketT"
+            },
+            {
+                "name": "solve",
+                "comment": " Tries to solve/fill the whole grid in one go by assigning a tile to each position.\n",
+                "type": "WaveFunctionCollapse.TilesDefinition tileT socketT -> Grid.Grid tileT"
+            },
+            {
+                "name": "viewPropGrid",
+                "comment": " Returns a Html representation of the internal state while assigning the tiles\nIt will let the user pick tiles manually and requires a function to generate a message for that.\nIt also needs a function to render a Html representation of a tile (since it's type is only known\nto the app).\nFor positions that have not been assigned a tile yet this will show which tile (ids) can still be picked.\n",
+                "type": "(WaveFunctionCollapse.Pos -> WaveFunctionCollapse.TileId -> msg) -> (tileT -> Html.Html msg) -> WaveFunctionCollapse.Model tileT socketT -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

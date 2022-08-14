@@ -1,0 +1,51 @@
+[
+    {
+        "name": "Transform",
+        "comment": " Transform your data structures recursively from the bottom up. Very useful\neg. for writing compiler passes.\n\n---\n\nConceptually, it's a spiritual equivalent of [`Control.Lens.Plated`](https://hackage.haskell.org/package/lens-4.15.4/docs/Control-Lens-Plated.html) from Haskell.\n\nBecause we don't have auto-derived lenses, it needs you to give it a function\nthat encapsulates where your data structure recurses in addition to the actual\ntransformation function you want to run at all levels of the data structure.\n\n\n# Running transformations recursively\n\n@docs transformOnce, transformAll\n\n\n# Getting all children\n\n@docs children\n\n\n# Combining transformations\n\n@docs or, orList, orList_\n\n\n# Converting transformations\n\n@docs toMaybe, fromMaybe\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "children",
+                "comment": " Gets all the children of the value.\n\nNeeds a function to tell it which children can be recursed to.\nNote this function is similar in function but different in type from the\n`recurse` function you'd give to `transformOnce` or `transformAll`.\n\nThis is how it could look:\n\n    recursiveChildren : (Expr -> List Expr) -> Expr -> List Expr\n    recursiveChildren fn expr =\n        case expr of\n            Int_ int ->\n                []\n\n            Negate e ->\n                fn e\n\n            Plus left right ->\n                fn left ++ fn right\n\n            List_ es ->\n                List.concatMap fn es\n\n    children\n        recursiveChildren\n        (Plus (Int_ 1) (Negate (Int_ 10)))\n    -->\n        [ Plus (Int_ 1) (Int_ -10)\n        , Int_ 1\n        , Negate (Int_ 2)\n        , Int_ 2\n        ]\n\n",
+                "type": "((a -> List.List a) -> a -> List.List a) -> a -> List.List a"
+            },
+            {
+                "name": "fromMaybe",
+                "comment": " Modifies the transformation to return the original input if it returns Nothing.\n\n    maybeSimplifyNegate : Expr -> Maybe Expr\n    maybeSimplifyNegate expr =\n        case expr of\n            Negate (Int_ int) ->\n                Just (Int_ (negate int))\n\n            _ ->\n                Nothing\n\n    simplifyNegate : Expr -> Expr\n    simplifyNegate =\n        fromMaybe maybeSimplifyNegate\n\n    maybeSimplifyNegate (Int_ 42) --> Nothing\n    simplifyNegate      (Int_ 42) --> Int_ 42\n\n    maybeSimplifyNegate (Negate (Int_ 42)) --> Just (Int_ -42)\n    simplifyNegate      (Negate (Int_ 42)) --> Int_ -42\n\n",
+                "type": "(a -> Maybe.Maybe a) -> a -> a"
+            },
+            {
+                "name": "or",
+                "comment": " [`Maybe.Extra.or`](https://package.elm-lang.org/packages/elm-community/maybe-extra/latest/Maybe-Extra#or) made to work with the type signatures `transformAll` expects.\n\n**The argument order** (and thus, whether you use this function in a pipeline or not)\n**doesn't matter** because `transformAll` literally tries to run the given\ntransformation as long as it changes stuff (ie. until the fixed point is reached).\n\nThe way the transformations are combined makes sure that Nothing is returned only\nif **no** transformation can be applied anymore.\n\n    simplifyNegateOrPlus : Expr -> Maybe Expr\n    simplifyNegateOrPlus =\n        or\n            maybeSimplifyNegate\n            maybeSimplifyPlus\n\n---\n\nConceptually, this is `mplus` of the `Alternative` instance for `(a -> Maybe a)`.\n\n",
+                "type": "(a -> Maybe.Maybe a) -> (a -> Maybe.Maybe a) -> a -> Maybe.Maybe a"
+            },
+            {
+                "name": "orList",
+                "comment": " A nicer way to combine transformations for `transformAll`.\n\nAs with `transformAll`, the argument order (and thus, whether you use this\nfunction in a pipeline or not) doesn't matter because `transformAll` literally\ntries to run the given transformation as long as it changes stuff (ie. until\nthe fixed point is reached).\n\nThe way the transformations are combined makes sure that Nothing is returned only\nif **no** transformation can be applied anymore.\n\n    simplifyAll : Expr -> Maybe Expr\n    simplifyAll =\n        orList\n            [ maybeSimplifyDoubleNegate\n            , maybeSimplifyNegate\n            , maybeSimplifyPlus\n            ]\n\n---\n\nAgain, conceptually, this is the `mplus` of the `Alternative` instance\nfor `(a -> Maybe a)`, combined with a fold.\n\n",
+                "type": "List.List (a -> Maybe.Maybe a) -> a -> Maybe.Maybe a"
+            },
+            {
+                "name": "orList_",
+                "comment": " A variant of `orList` for non-Maybe transformations.\n\n    orList_ : List (a -> a) -> a -> Maybe a\n    orList_ fns =\n        orList (List.map toMaybe fns)\n\n    simplifyAll : Expr -> Maybe Expr\n    simplifyAll =\n        orList_\n            [ simplifyDoubleNegate\n            , simplifyNegate\n            , simplifyPlus\n            ]\n\n",
+                "type": "List.List (a -> a) -> a -> Maybe.Maybe a"
+            },
+            {
+                "name": "toMaybe",
+                "comment": " Modifies the transformation to return Nothing if it doesn't change the value.\n\n    simplifyNegate : Expr -> Expr\n    simplifyNegate expr =\n        case expr of\n            Negate (Int_ int) ->\n                Int_ (negate int)\n\n            _ ->\n                expr\n\n    maybeSimplifyNegate : Expr -> Maybe Expr\n    maybeSimplifyNegate =\n        toMaybe simplifyNegate\n\n    simplifyNegate      (Int_ 42) --> Int_ 42\n    maybeSimplifyNegate (Int_ 42) --> Nothing\n\n    simplifyNegate      (Negate (Int_ 42)) --> Int_ -42\n    maybeSimplifyNegate (Negate (Int_ 42)) --> Just (Int_ -42)\n\n",
+                "type": "(a -> a) -> a -> Maybe.Maybe a"
+            },
+            {
+                "name": "transformAll",
+                "comment": " Runs the transformation function on **all** the nodes of your recursive\ndata structure **from the bottom up,** stopping only when there's no more\ntransformations applicable anywhere in the tree.\n\n**The transformation function has to return `Nothing` if there's nothing\nto be done.** It's possible to create an infinite loop with a transformation\nthat always returns `Just`!\n\n    transformAll\n        recurse\n        maybeSimplifyNegate\n        (Plus (Int_ 1) (Negate (Int_ 10)))\n    --> Plus (Int_ 3) (Int_ -10)\n\n    transformAll\n        recurse\n        (orList_ [simplifyNegate, simplifyPlus])\n        (Plus (Int_ 1) (Negate (Int_ 10)))\n    --> Int_ -7\n\n---\n\nAn equivalent of [`Control.Lens.Plated.rewrite`](https://hackage.haskell.org/package/lens-4.15.4/docs/Control-Lens-Plated.html#v:rewrite). (Hopefully.)\n\n",
+                "type": "((a -> a) -> a -> a) -> (a -> Maybe.Maybe a) -> a -> a"
+            },
+            {
+                "name": "transformOnce",
+                "comment": " Runs the transformation function on **all** the nodes of your recursive\ndata structure **from the bottom up.** Runs only once, hence the name!\n\n    transformOnce\n        recurse\n        simplifyNegate\n        (Plus (Int_ 1) (Negate (Int_ 10)))\n    --> Plus (Int_ 1) (Int_ -10)\n\nThe `recurse` function tells the `transform*` functions which children\nto recurse to. In our example it looks like this:\n\n    recurse : (Expr -> Expr) -> Expr -> Expr\n    recurse fn expr =\n        case expr of\n            Int_ int ->\n                Int_ int\n\n            Negate e ->\n                Negate (fn e)\n\n            Plus left right ->\n                Plus (fn left) (fn right)\n\n            List_ es ->\n                List_ (List.map fn es)\n\nBut you could of course make it skip some of the children by not applying the function on them.\n\n---\n\n**WARNING:** I'm not 100% sure but I think using this function with composed\ntransformations (`simplifyNegate >> simplifyPlus`) _that don't just shrink but\nalso expand_ might not always lead to the fixpoint. To be sure, **use\n`transformAll`** and transformations combined with `orList` or a similar helper\nfunction.\n\n---\n\nAn equivalent of [`Control.Lens.Plated.transform`](https://hackage.haskell.org/package/lens-4.15.4/docs/Control-Lens-Plated.html#v:transform). (Hopefully.)\n\n",
+                "type": "((a -> a) -> a -> a) -> (a -> a) -> a -> a"
+            }
+        ],
+        "binops": []
+    }
+]

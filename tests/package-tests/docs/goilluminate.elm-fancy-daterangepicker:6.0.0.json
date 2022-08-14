@@ -1,0 +1,446 @@
+[
+    {
+        "name": "DateRangePicker",
+        "comment": " A customizable daterangepicker component.\r\n\r\n@docs Msg, DateRangePicker\r\n@docs init, update, subscriptions, isOpen, setOpen, view, getDateRange, setDateRange, getToday, CalendarDisplay, DateRange, RestrictedDateRange, daysInRange, inRange, mkDateRange, mkEnabledDateRangeFromRestrictedDateRange, monthAbbr, monthsInRange, setDisableRange, startOfQuarter, weeksInRange, yearsInRange\r\n\r\n\r\n# Settings\r\n\r\n@docs Settings, defaultSettings, setSettings, setDateRangeFormat, setPlaceholder, setInputName, setInputText, setInputId, setInputIcon, setInputAttributes, setPresetOptions, setRestrictedDateRange, formatDateRange, getMinDate, getMaxDate, setCalendarDisplay, setInputView\r\n\r\n\r\n## Presets\r\n\r\n@docs PresetOptions, PresetOption, Preset, PresetSetting, PresetInterval, PresetRelativeToToday, defaultPresetOptions, defaultPresets, mkPresetFromDateRange, mkPresetFromDates, getPresets, PresetType, defaultSingleSelectPresets, getSelectedPreset\r\n\r\n",
+        "unions": [
+            {
+                "name": "CalendarDisplay",
+                "comment": " A type representing how the calendar will be displayed\r\n\r\n  - _FullCalendar_ = the datepicker displays all 12 months when open\r\n  - _ThreeMonths_ = the datepicker displays 3 months at a time\r\n  - _TwoMonths_ = the datepicker displays 2 months at a time\r\n  - _OneMonth_ = the datepicker displays 1 month at a time\r\n\r\n",
+                "args": [],
+                "cases": [
+                    [
+                        "FullCalendar",
+                        []
+                    ],
+                    [
+                        "ThreeMonths",
+                        []
+                    ],
+                    [
+                        "TwoMonths",
+                        []
+                    ],
+                    [
+                        "OneMonth",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "DateRangePicker",
+                "comment": " The DateRangePicker model.\r\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Msg",
+                "comment": " A type representing msgs that are fired from the update function.\r\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "PresetInterval",
+                "comment": " A type representing what the value in PresetSettings is measured in.\r\n\r\n  - Ex. value = 1 and PresetInterval = Days, this is interpretted as 1 Days.\r\n  - Ex. value = 4 and PresetI:nterval = Months, this is interpretted as 4 Months.\r\n\r\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Days",
+                        []
+                    ],
+                    [
+                        "Months",
+                        []
+                    ],
+                    [
+                        "Years",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "PresetOption",
+                "comment": " A type representing which presets to use.\r\n\r\n  - _DefaultPresets_ = Use the default presets from defaultPresets only.\r\n  - _CustomPresetsFromSettings_ = Use only your custom built presets from a list of PresetSetting only.\r\n  - _CustomPresets_ = Use only your custom built Presets.\r\n  - _CustomOnly_ = Use only your custom build presets build from PresetSetting and your custom presets.\r\n  - _AllPresets_ = Use all presets (default, customFromSettings, custom).\r\n  - _NoPresets_ = Turn off Presets.\r\n\r\n",
+                "args": [],
+                "cases": [
+                    [
+                        "DefaultPresets",
+                        []
+                    ],
+                    [
+                        "CustomPresetsFromSettings",
+                        []
+                    ],
+                    [
+                        "CustomPresets",
+                        []
+                    ],
+                    [
+                        "CustomOnly",
+                        []
+                    ],
+                    [
+                        "AllPresets",
+                        []
+                    ],
+                    [
+                        "NoPresets",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "PresetRelativeToToday",
+                "comment": " A type representing how the preset is relative to today.\r\n\r\n  - If using ToToday, the preset daterange would use today as the end date, and the date from your PresetSettings as the end date.\r\n  - If using FromToday, the preset daterange would use today as the start date and the date from your PresetSettings as the end date.\r\n\r\n",
+                "args": [],
+                "cases": [
+                    [
+                        "ToToday",
+                        []
+                    ],
+                    [
+                        "FromToday",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "PresetType",
+                "comment": " A type that can be used for calculating relative presets outside of the daterangepicker.\r\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Today",
+                        []
+                    ],
+                    [
+                        "Yesterday",
+                        []
+                    ],
+                    [
+                        "PastWeek",
+                        []
+                    ],
+                    [
+                        "PastMonth",
+                        []
+                    ],
+                    [
+                        "PastYear",
+                        []
+                    ],
+                    [
+                        "WeeksFromToday",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "MonthsFromToday",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "EndOfTime",
+                        []
+                    ],
+                    [
+                        "NoneSelected",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "RestrictedDateRange",
+                "comment": " A type representing a restricted range for the datepicker. All dates not within the restricted date range will be disabled.\r\n\r\n  - _Off_ = no restrictions, any date to any date can be chosen.\r\n  - _ToPresent_ = from any date in the past up to today (including today)\r\n  - _FromPresent_ = from today to any date in the future\r\n  - _Past_ = from any date in the past up to yesterday (excluding today)\r\n  - _Future_ = from tomorrow up to any date in the future\r\n  - _Between_ date date = only between the two given dates [start - end] (inclusive)\r\n  - _To_ date = from any date in the past up to the given date (inclusive)\r\n  - _From_ date = from the given date up to any date in the future (inclusive)\r\n\r\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Off",
+                        []
+                    ],
+                    [
+                        "ToPresent",
+                        []
+                    ],
+                    [
+                        "FromPresent",
+                        []
+                    ],
+                    [
+                        "Past",
+                        []
+                    ],
+                    [
+                        "Future",
+                        []
+                    ],
+                    [
+                        "Between",
+                        [
+                            "Date.Date",
+                            "Date.Date"
+                        ]
+                    ],
+                    [
+                        "To",
+                        [
+                            "Date.Date"
+                        ]
+                    ],
+                    [
+                        "From",
+                        [
+                            "Date.Date"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "DateRange",
+                "comment": " A type representing a date range with a start date and end date.\r\n",
+                "args": [],
+                "type": "DateRangePicker.Types.DateRange"
+            },
+            {
+                "name": "Preset",
+                "comment": " A type that represents a preset daterange.\r\n\r\n  - _name_ = Name of the preset. i.e. \"Past Month\"\r\n  - _dateRange_ = The daterange that is selected when selecting the preset.\r\n\r\n",
+                "args": [],
+                "type": "{ name : String.String, dateRange : DateRangePicker.DateRange, presetDateOption : DateRangePicker.PresetType }"
+            },
+            {
+                "name": "PresetOptions",
+                "comment": " A type representing your preset options for your date range picker.\r\n",
+                "args": [],
+                "type": "{ presetOption : DateRangePicker.PresetOption, presetSettings : List.List DateRangePicker.PresetSetting, presets : List.List DateRangePicker.Preset }"
+            },
+            {
+                "name": "PresetSetting",
+                "comment": " A type used to generate preset dateranges.\r\n\r\n  - _name_ = The name that you want to give the preset. i.e. \"Past Month\"\r\n  - _interval_ = The interval in which you want to add/subtract the value from today.\r\n  - _presetRelativeToToday_ = whether it is a range from [past - present] (ToToday) or [present - future] (FromToday)\r\n  - _value_ = the number of your @interval that you are adding/subtracting.\r\n\r\n\r\n## Example\r\n\r\n    { name = \"Past Month\"\r\n    , interval = Months\r\n    , presetRelativeToday = ToToday\r\n    , value = 1\r\n    }\r\n\r\n",
+                "args": [],
+                "type": "{ name : String.String, interval : DateRangePicker.PresetInterval, presetRelativeToToday : DateRangePicker.PresetRelativeToToday, value : Basics.Int }"
+            },
+            {
+                "name": "Settings",
+                "comment": " The settings that the DateRangePicker uses.\r\n",
+                "args": [],
+                "type": "{ placeholder : String.String, inputName : Maybe.Maybe String.String, inputId : Maybe.Maybe String.String, inputIcon : Maybe.Maybe (Html.Html DateRangePicker.Msg), inputAttributes : List.List (Html.Attribute DateRangePicker.Msg), presetOptions : DateRangePicker.PresetOptions, restrictedDateRange : DateRangePicker.RestrictedDateRange, formatDateRange : DateRangePicker.DateRange -> String.String, calendarDisplay : DateRangePicker.CalendarDisplay, inputView : Maybe.Maybe (String.String -> List.List (Html.Html DateRangePicker.Msg)), disableRange : Basics.Bool }"
+            }
+        ],
+        "values": [
+            {
+                "name": "daysInRange",
+                "comment": " A function that returns the number of days as a whole number in the daterange\r\n",
+                "type": "DateRangePicker.DateRange -> Basics.Int"
+            },
+            {
+                "name": "defaultPresetOptions",
+                "comment": " A record of default preset options for the daterangepicker.\r\n",
+                "type": "DateRangePicker.PresetOptions"
+            },
+            {
+                "name": "defaultPresets",
+                "comment": " An opaque function used to make the default presets\r\n",
+                "type": "Date.Date -> List.List DateRangePicker.Preset"
+            },
+            {
+                "name": "defaultSettings",
+                "comment": " A record of default settings for the daterangepicker.\r\n",
+                "type": "DateRangePicker.Settings"
+            },
+            {
+                "name": "defaultSingleSelectPresets",
+                "comment": " An opaque function used to make the default presets\r\n",
+                "type": "Date.Date -> List.List DateRangePicker.Preset"
+            },
+            {
+                "name": "formatDateRange",
+                "comment": " A function that formats a daterange to a string.\r\n",
+                "type": "DateRangePicker.DateRange -> String.String"
+            },
+            {
+                "name": "getDateRange",
+                "comment": " Expose the current selected daterange.\r\n",
+                "type": "DateRangePicker.DateRangePicker -> Maybe.Maybe DateRangePicker.DateRange"
+            },
+            {
+                "name": "getMaxDate",
+                "comment": " Expose the max date in the enabled date range.\r\n",
+                "type": "DateRangePicker.DateRangePicker -> Maybe.Maybe Date.Date"
+            },
+            {
+                "name": "getMinDate",
+                "comment": " Expose the min date in the enabled date range.\r\n",
+                "type": "DateRangePicker.DateRangePicker -> Maybe.Maybe Date.Date"
+            },
+            {
+                "name": "getPresets",
+                "comment": " Expose the current presets.\r\n",
+                "type": "DateRangePicker.DateRangePicker -> List.List DateRangePicker.Preset"
+            },
+            {
+                "name": "getSelectedPreset",
+                "comment": " Expose the currently selected preset.\r\n",
+                "type": "DateRangePicker.DateRangePicker -> DateRangePicker.PresetType"
+            },
+            {
+                "name": "getToday",
+                "comment": " Expose today's date.\r\n",
+                "type": "DateRangePicker.DateRangePicker -> Date.Date"
+            },
+            {
+                "name": "inRange",
+                "comment": " A function to check if a given date is within a\r\ngiven dateRange.\r\n",
+                "type": "Date.Date -> DateRangePicker.DateRange -> Basics.Bool"
+            },
+            {
+                "name": "init",
+                "comment": " The default initial state of the DateRangePicker. You must execute\r\nthe returned command in order to set the current date and for the\r\ndaterangepicker to behave correctly.\r\n",
+                "type": "( DateRangePicker.DateRangePicker, Platform.Cmd.Cmd DateRangePicker.Msg )"
+            },
+            {
+                "name": "isOpen",
+                "comment": " Expose if the daterange picker is open\r\n",
+                "type": "DateRangePicker.DateRangePicker -> Basics.Bool"
+            },
+            {
+                "name": "mkDateRange",
+                "comment": " A function that creates a DateRange by taking in two dates (start and end).\r\nThis function assumes that start <= end\r\n",
+                "type": "Date.Date -> Date.Date -> DateRangePicker.DateRange"
+            },
+            {
+                "name": "mkEnabledDateRangeFromRestrictedDateRange",
+                "comment": " An opaque function that makes the EnabledDateRange from settings.\r\n\r\n\r\n## EnabledDateRange is Nothing if RestrictedDateRange is Off\r\n\r\n",
+                "type": "DateRangePicker.RestrictedDateRange -> Date.Date -> Maybe.Maybe DateRangePicker.Types.EnabledDateRange"
+            },
+            {
+                "name": "mkPresetFromDateRange",
+                "comment": " A function that creates a Preset from a name and a dateRange\r\n",
+                "type": "String.String -> DateRangePicker.DateRange -> DateRangePicker.PresetType -> DateRangePicker.Preset"
+            },
+            {
+                "name": "mkPresetFromDates",
+                "comment": " A function that creates a Preset from a name, startDate, and endDate\r\n",
+                "type": "String.String -> Date.Date -> Date.Date -> DateRangePicker.PresetType -> DateRangePicker.Preset"
+            },
+            {
+                "name": "monthAbbr",
+                "comment": " A function that formats a Month into the abbreviated string.\r\n\r\n  - Ex. Jan -> \"Jan\"\r\n\r\n",
+                "type": "Time.Month -> String.String"
+            },
+            {
+                "name": "monthsInRange",
+                "comment": " A function that returns the number of months as a whole number in the daterange\r\n",
+                "type": "DateRangePicker.DateRange -> Basics.Int"
+            },
+            {
+                "name": "setCalendarDisplay",
+                "comment": " Sets the CalendarDisplay for the daterangepicker\r\n",
+                "type": "DateRangePicker.CalendarDisplay -> DateRangePicker.DateRangePicker -> DateRangePicker.DateRangePicker"
+            },
+            {
+                "name": "setDateRange",
+                "comment": " Sets the current daterange for the daterangepicker.\r\n",
+                "type": "Maybe.Maybe DateRangePicker.DateRange -> DateRangePicker.DateRangePicker -> DateRangePicker.DateRangePicker"
+            },
+            {
+                "name": "setDateRangeFormat",
+                "comment": " Sets the date range formatter for the daterangepicker.\r\n",
+                "type": "(DateRangePicker.DateRange -> String.String) -> DateRangePicker.DateRangePicker -> DateRangePicker.DateRangePicker"
+            },
+            {
+                "name": "setDisableRange",
+                "comment": " Sets whether range selection is disabled for the daterangepicker.\r\n",
+                "type": "Basics.Bool -> DateRangePicker.DateRangePicker -> DateRangePicker.DateRangePicker"
+            },
+            {
+                "name": "setInputAttributes",
+                "comment": " Sets the input attributes for the daterangepicker.\r\n",
+                "type": "List.List (Html.Attribute DateRangePicker.Msg) -> DateRangePicker.DateRangePicker -> DateRangePicker.DateRangePicker"
+            },
+            {
+                "name": "setInputIcon",
+                "comment": " Sets the input icon for the daterangepicker.\r\n",
+                "type": "Html.Html DateRangePicker.Msg -> DateRangePicker.DateRangePicker -> DateRangePicker.DateRangePicker"
+            },
+            {
+                "name": "setInputId",
+                "comment": " Sets the id for the daterangepicker.\r\n",
+                "type": "String.String -> DateRangePicker.DateRangePicker -> DateRangePicker.DateRangePicker"
+            },
+            {
+                "name": "setInputName",
+                "comment": " Sets the name for the daterangepicker.\r\n",
+                "type": "String.String -> DateRangePicker.DateRangePicker -> DateRangePicker.DateRangePicker"
+            },
+            {
+                "name": "setInputText",
+                "comment": " Sets the inputText for the daterangepicker.\r\n",
+                "type": "Maybe.Maybe String.String -> DateRangePicker.DateRangePicker -> DateRangePicker.DateRangePicker"
+            },
+            {
+                "name": "setInputView",
+                "comment": " Sets the inputView function for the daterangepicker\r\n",
+                "type": "Maybe.Maybe (String.String -> List.List (Html.Html DateRangePicker.Msg)) -> DateRangePicker.DateRangePicker -> DateRangePicker.DateRangePicker"
+            },
+            {
+                "name": "setOpen",
+                "comment": " Sets the the open state of the DateRangePicker\r\n",
+                "type": "Basics.Bool -> DateRangePicker.DateRangePicker -> DateRangePicker.DateRangePicker"
+            },
+            {
+                "name": "setPlaceholder",
+                "comment": " Sets the placeholder for the daterangepicker.\r\n",
+                "type": "String.String -> DateRangePicker.DateRangePicker -> DateRangePicker.DateRangePicker"
+            },
+            {
+                "name": "setPresetOptions",
+                "comment": " Sets the preset options for the daterangepicker.\r\n",
+                "type": "DateRangePicker.PresetOptions -> DateRangePicker.DateRangePicker -> DateRangePicker.DateRangePicker"
+            },
+            {
+                "name": "setRestrictedDateRange",
+                "comment": " Sets the restricted date range for the daterangepicker.\r\n",
+                "type": "DateRangePicker.RestrictedDateRange -> DateRangePicker.DateRangePicker -> DateRangePicker.DateRangePicker"
+            },
+            {
+                "name": "setSettings",
+                "comment": " Sets the settings for the daterange picker\r\n",
+                "type": "DateRangePicker.Settings -> DateRangePicker.DateRangePicker -> DateRangePicker.DateRangePicker"
+            },
+            {
+                "name": "startOfQuarter",
+                "comment": " A function that takes a Date and returns the date representing the first date of the quarter that the passed in date belongs to.\r\n",
+                "type": "Date.Date -> Date.Date"
+            },
+            {
+                "name": "subscriptions",
+                "comment": " Subscribes to a mouse click\r\n",
+                "type": "DateRangePicker.DateRangePicker -> Platform.Sub.Sub DateRangePicker.Msg"
+            },
+            {
+                "name": "update",
+                "comment": " The daterangepicker update function.\r\n",
+                "type": "DateRangePicker.Msg -> DateRangePicker.DateRangePicker -> ( DateRangePicker.DateRangePicker, Platform.Cmd.Cmd DateRangePicker.Msg )"
+            },
+            {
+                "name": "view",
+                "comment": " The daterange picker view. The date range passed is whatever date range it should treat as selected.\r\n",
+                "type": "DateRangePicker.DateRangePicker -> Html.Html DateRangePicker.Msg"
+            },
+            {
+                "name": "weeksInRange",
+                "comment": " A function that returns the number of weeks as a whole number in the daterange\r\n",
+                "type": "DateRangePicker.DateRange -> Basics.Int"
+            },
+            {
+                "name": "yearsInRange",
+                "comment": " A function that returns the number of years as a whole number in the daterange\r\n",
+                "type": "DateRangePicker.DateRange -> Basics.Int"
+            }
+        ],
+        "binops": []
+    }
+]

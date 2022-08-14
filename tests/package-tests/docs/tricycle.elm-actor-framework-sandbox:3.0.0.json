@@ -1,0 +1,123 @@
+[
+    {
+        "name": "Framework.Sandbox",
+        "comment": "\n\n@docs SandboxComponent, fromComponent\n\n\n# Tests\n\n@docs addTestCase, updateTestCase, toTest\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "SandboxComponent",
+                "comment": " ",
+                "args": [
+                    "appFlags",
+                    "componentModel",
+                    "componentMsgIn",
+                    "componentMsgOut",
+                    "output"
+                ],
+                "type": "Framework.Sandbox.Internal.SandboxComponent.SandboxComponent appFlags componentModel componentMsgIn componentMsgOut output"
+            }
+        ],
+        "values": [
+            {
+                "name": "addTestCase",
+                "comment": " Add A TestCase to your SandboxComponent\n\nThe title of a TestCase has to be unique for your Sandbox.\n\n    fromComponent () component\n        |> addTestCase\n            (TestCase.make\n                { title = \"Increment\"\n                , description = \"Increment the counters value by one.\"\n                , test = \\_ a b -> Expect (b - a) 1\n                }\n                |> TestCase.setActions [ Increment ]\n            )\n\n",
+                "type": "Framework.Sandbox.Internal.TestCases.TestCase.TestCase appFlags componentModel componentMsgIn componentMsgOut output -> Framework.Sandbox.SandboxComponent appFlags componentModel componentMsgIn componentMsgOut output -> Framework.Sandbox.SandboxComponent appFlags componentModel componentMsgIn componentMsgOut output"
+            },
+            {
+                "name": "fromComponent",
+                "comment": " Turn your Framework.Actor.Component into a SandboxComponent.\n\nYou'll have to supply it with a default (mocked) `appFlags` value so that we can\nrender an initial output (See `Framework.Sandbox.Browser` for more info.)\n\n    fromComponent \"Some Flags\" component\n\n",
+                "type": "appFlags -> Framework.Actor.Component appFlags componentModel componentMsgIn componentMsgOut output componentMsgIn -> Framework.Sandbox.SandboxComponent appFlags componentModel componentMsgIn componentMsgOut output"
+            },
+            {
+                "name": "toTest",
+                "comment": " Give your tests a description and turn them into Elm tests!\n\n    fromComponent () component\n        |> addTestCase\n            (TestCase.make\n                { title = \"Increment\"\n                , description = \"Increment the counters value by one.\"\n                , test = \\_ a b -> Expect (b - a) 1\n                }\n                |> TestCase.setActions [ Increment ]\n            )\n        |> toTest \"My Counter Component\"\n\n",
+                "type": "String.String -> Framework.Sandbox.SandboxComponent appFlags componentModel componentMsgIn componentMsgOut output -> Test.Test"
+            },
+            {
+                "name": "updateTestCase",
+                "comment": " Updates a TestCase based on its title (This is an alias of addTestCase (!))\n",
+                "type": "Framework.Sandbox.Internal.TestCases.TestCase.TestCase appFlags componentModel componentMsgIn componentMsgOut output -> Framework.Sandbox.SandboxComponent appFlags componentModel componentMsgIn componentMsgOut output -> Framework.Sandbox.SandboxComponent appFlags componentModel componentMsgIn componentMsgOut output"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Framework.Sandbox.Browser",
+        "comment": "\n\n@docs document\n\n@docs Program\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Program",
+                "comment": " The signature of the program that gets created using `document`\n",
+                "args": [
+                    "appFlags",
+                    "componentModel",
+                    "componentMsgIn",
+                    "componentMsgOut",
+                    "output"
+                ],
+                "type": "Framework.Sandbox.Internal.Browser.Program appFlags componentModel componentMsgIn componentMsgOut output"
+            }
+        ],
+        "values": [
+            {
+                "name": "document",
+                "comment": " Turn your component into an Elm Program (!)\n\n**Tip** On your components module create an exposed `main` function on which you invode this function.\nYou can then `elm reactor` to directly navigate to your components file and get a preview of your components output + test results\n\n",
+                "type": "(output -> Html.Html componentMsgIn) -> Framework.Sandbox.Internal.SandboxComponent.SandboxComponent appFlags componentModel componentMsgIn componentMsgOut output -> Framework.Sandbox.Browser.Program appFlags componentModel componentMsgIn componentMsgOut output"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Framework.Sandbox.TestCase",
+        "comment": "\n\n@docs TestCase, make\n\n@docs addActions, setActions\n\n@docs onInit\n\n@docs mockMsgOut, mockRenderPid\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "TestCase",
+                "comment": " ",
+                "args": [
+                    "appFlags",
+                    "componentModel",
+                    "componentMsgIn",
+                    "componentMsgOut",
+                    "output"
+                ],
+                "type": "Framework.Sandbox.Internal.TestCases.TestCase.TestCase appFlags componentModel componentMsgIn componentMsgOut output"
+            }
+        ],
+        "values": [
+            {
+                "name": "addActions",
+                "comment": " Append a list of actions to your current actions in place.\n",
+                "type": "List.List componentMsgIn -> Framework.Sandbox.TestCase.TestCase appFlags componentModel componentMsgIn componentMsgOut output -> Framework.Sandbox.TestCase.TestCase appFlags componentModel componentMsgIn componentMsgOut output"
+            },
+            {
+                "name": "make",
+                "comment": " Create a new TestCase\n",
+                "type": "{ title : String.String, description : String.String, test : (componentModel -> output) -> componentModel -> componentModel -> Expect.Expectation } -> Framework.Sandbox.TestCase.TestCase appFlags componentModel componentMsgIn componentMsgOut output"
+            },
+            {
+                "name": "mockMsgOut",
+                "comment": " Mock a list of response messages whenever a msgOut gets called\n",
+                "type": "(Basics.Int -> componentMsgOut -> List.List componentMsgIn) -> Framework.Sandbox.TestCase.TestCase appFlags componentModel componentMsgIn componentMsgOut output -> Framework.Sandbox.TestCase.TestCase appFlags componentModel componentMsgIn componentMsgOut output"
+            },
+            {
+                "name": "mockRenderPid",
+                "comment": " Mock the function that is used to render your internal Pid's\n",
+                "type": "(Framework.Actor.Pid -> Maybe.Maybe output) -> Framework.Sandbox.TestCase.TestCase appFlags componentModel componentMsgIn componentMsgOut output -> Framework.Sandbox.TestCase.TestCase appFlags componentModel componentMsgIn componentMsgOut output"
+            },
+            {
+                "name": "onInit",
+                "comment": " Supply an alternative intial value\n(alternative to your SandboxComponent)\n",
+                "type": "appFlags -> Framework.Sandbox.TestCase.TestCase appFlags componentModel componentMsgIn componentMsgOut output -> Framework.Sandbox.TestCase.TestCase appFlags componentModel componentMsgIn componentMsgOut output"
+            },
+            {
+                "name": "setActions",
+                "comment": " Replace all current actions with a new list of actions\n",
+                "type": "List.List componentMsgIn -> Framework.Sandbox.TestCase.TestCase appFlags componentModel componentMsgIn componentMsgOut output -> Framework.Sandbox.TestCase.TestCase appFlags componentModel componentMsgIn componentMsgOut output"
+            }
+        ],
+        "binops": []
+    }
+]

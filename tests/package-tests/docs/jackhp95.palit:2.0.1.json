@@ -1,0 +1,1256 @@
+[
+    {
+        "name": "Palit",
+        "comment": " Please do not use this package yet\n\nThis is still being developed. Changes will happen. I'll announce on slack once this package is ready.\n\n\n# WIP\n\n@docs absolute, absoluteFill, act, appearanceNone, aspectRatio, aspectRatio16x9, aspectRatio1x1, aspectRatio3x4, aspectRatio4x3, aspectRatio4x6, aspectRatio5x7, aspectRatio5x8, aspectRatio6x4, aspectRatio7x5, aspectRatio8x5, aspectRatio9x16, aspectRatioObject, b, bDashed, bDotted, bInherit, bNone, bSolid, ba, bb, bb0, bg, bgBottom, bgCenter, bgInherit, bgLeft, bgRight, bgTop, bl, bl0, black, bn, bold, bottom, br, br0, bt, bt0, bullet, bw, bwScale, c, center, chMin, clip, co, code, collapse, contain, contentAround, contentBetween, contentBox, contentCenter, contentEnd, contentStart, contentStretch, courier, cover, cr, cr100, crBottom, crLeft, crPill, crRight, crScale, crTop, db, di, dib, dit, dn, dt, dtColumn, dtColumnGroup, dtFixed, dtRow, dtRowGroup, dtc, f, fillMin, fixed, flex, flexAuto, flexColumn, flexColumnReverse, flexNone, flexNowrap, flexRow, flexRowReverse, flexWrap, flexWrapReverse, fsNormal, fw, gap, gpu, grid, hAuto, hInherit, hp, hpMin, hs, hsMin, hsluvToCssString, i, indent, inlineFlex, itemsBaseline, itemsCenter, itemsEnd, itemsStart, itemsStretch, palit, justifyAround, justifyBetween, justifyCenter, justifyEnd, justifyStart, l, leadingScale, left, lengthScale, lh, link, m, ma, mb, measure, measureNarrow, measureWide, mh, ml, mlAuto, mr, mrAuto, mt, mv, mwNone, mwch, mwp, mws, na, nb, nh, nl, noUnderline, normal, nowrap, nr, nt, number, nv, o, order, outline, outline0, outlineTransparent, overflowAuto, overflowContainer, overflowHidden, overflowScroll, overflowVisible, overflowXauto, overflowXhidden, overflowXscroll, overflowXvisible, overflowYauto, overflowYhidden, overflowYscroll, overflowYvisible, pa, pb, percent, ph, pl, pointer, pr, pre, pt, pv, recursiveAdding, reg, relative, right, rotate, sansSerif, selfBaseline, selfCenter, selfEnd, selfStart, selfStretch, serif, shadow, shadowScale, smallCaps, spacingScale, static, sticky, strike, stripeDark, stripeLight, systemSansSerif, systemSerif, tc, textShadow, tj, tl, top, tr, track, trackScale, transparent, truncate, ttc, ttl, ttn, ttu, typeScale, underline, vBase, vBtm, vMid, vTop, vh, vhMax, vhMin, wAuto, wThird, wTwoThirds, wch, white, wp, wpMin, ws, wsMin, wsNormal, z, zInherit, zInitial, zMax, zUnset, flexGrow, flexShrink, pointerNone, style\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "absolute",
+                "comment": " `absolute` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "absoluteFill",
+                "comment": " `absoluteFill` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "act",
+                "comment": " `act` IS A WORK IN PROGRESS\n",
+                "type": "List.List Css.Style -> Css.Style"
+            },
+            {
+                "name": "appearanceNone",
+                "comment": " `appearanceNone` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "aspectRatio",
+                "comment": " `aspectRatio` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "aspectRatio16x9",
+                "comment": " `aspectRatio16x9` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "aspectRatio1x1",
+                "comment": " `aspectRatio1x1` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "aspectRatio3x4",
+                "comment": " `aspectRatio3x4` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "aspectRatio4x3",
+                "comment": " `aspectRatio4x3` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "aspectRatio4x6",
+                "comment": " `aspectRatio4x6` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "aspectRatio5x7",
+                "comment": " `aspectRatio5x7` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "aspectRatio5x8",
+                "comment": " `aspectRatio5x8` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "aspectRatio6x4",
+                "comment": " `aspectRatio6x4` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "aspectRatio7x5",
+                "comment": " `aspectRatio7x5` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "aspectRatio8x5",
+                "comment": " `aspectRatio8x5` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "aspectRatio9x16",
+                "comment": " `aspectRatio9x16` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "aspectRatioObject",
+                "comment": " `aspectRatioObject` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "b",
+                "comment": " `b` IS A WORK IN PROGRESS\n",
+                "type": "HSLuv.HSLuv -> Css.Style"
+            },
+            {
+                "name": "bDashed",
+                "comment": " `bDashed` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "bDotted",
+                "comment": " `bDotted` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "bInherit",
+                "comment": " `bInherit` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "bNone",
+                "comment": " `bNone` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "bSolid",
+                "comment": " `bSolid` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "ba",
+                "comment": " `ba` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "bb",
+                "comment": " `bb` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "bb0",
+                "comment": " `bb0` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "bg",
+                "comment": " `bg` IS A WORK IN PROGRESS\n",
+                "type": "HSLuv.HSLuv -> Css.Style"
+            },
+            {
+                "name": "bgBottom",
+                "comment": " `bgBottom` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "bgCenter",
+                "comment": " `bgCenter` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "bgInherit",
+                "comment": " `bgInherit` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "bgLeft",
+                "comment": " `bgLeft` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "bgRight",
+                "comment": " `bgRight` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "bgTop",
+                "comment": " `bgTop` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "bl",
+                "comment": " `bl` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "bl0",
+                "comment": " `bl0` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "black",
+                "comment": " `black` IS A WORK IN PROGRESS\n",
+                "type": "HSLuv.HSLuv"
+            },
+            {
+                "name": "bn",
+                "comment": " `bn` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "bold",
+                "comment": " `bold` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "bottom",
+                "comment": " `bottom` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Int -> Css.Style"
+            },
+            {
+                "name": "br",
+                "comment": " `br` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "br0",
+                "comment": " `br0` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "bt",
+                "comment": " `bt` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "bt0",
+                "comment": " `bt0` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "bullet",
+                "comment": " `bullet` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "bw",
+                "comment": " `bw` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Int -> Css.Style"
+            },
+            {
+                "name": "bwScale",
+                "comment": " `bwScale` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Int -> String.String"
+            },
+            {
+                "name": "c",
+                "comment": " `c` IS A WORK IN PROGRESS\n",
+                "type": "HSLuv.HSLuv -> Css.Style"
+            },
+            {
+                "name": "center",
+                "comment": " `center` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "chMin",
+                "comment": " `chMin` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Int -> Css.Style"
+            },
+            {
+                "name": "clip",
+                "comment": " `clip` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "co",
+                "comment": " `co` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Float -> HSLuv.HSLuv -> HSLuv.HSLuv"
+            },
+            {
+                "name": "code",
+                "comment": " `code` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "collapse",
+                "comment": " `collapse` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "contain",
+                "comment": " `contain` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "contentAround",
+                "comment": " `contentAround` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "contentBetween",
+                "comment": " `contentBetween` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "contentBox",
+                "comment": " `contentBox` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "contentCenter",
+                "comment": " `contentCenter` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "contentEnd",
+                "comment": " `contentEnd` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "contentStart",
+                "comment": " `contentStart` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "contentStretch",
+                "comment": " `contentStretch` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "courier",
+                "comment": " `courier` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "cover",
+                "comment": " `cover` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "cr",
+                "comment": " `cr` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Int -> Css.Style"
+            },
+            {
+                "name": "cr100",
+                "comment": " `cr100` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "crBottom",
+                "comment": " `crBottom` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "crLeft",
+                "comment": " `crLeft` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "crPill",
+                "comment": " `crPill` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "crRight",
+                "comment": " `crRight` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "crScale",
+                "comment": " `crScale` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Int -> String.String"
+            },
+            {
+                "name": "crTop",
+                "comment": " `crTop` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "db",
+                "comment": " `db` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "di",
+                "comment": " `di` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "dib",
+                "comment": " `dib` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "dit",
+                "comment": " `dit` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "dn",
+                "comment": " `dn` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "dt",
+                "comment": " `dt` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "dtColumn",
+                "comment": " `dtColumn` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "dtColumnGroup",
+                "comment": " `dtColumnGroup` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "dtFixed",
+                "comment": " `dtFixed` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "dtRow",
+                "comment": " `dtRow` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "dtRowGroup",
+                "comment": " `dtRowGroup` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "dtc",
+                "comment": " `dtc` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "f",
+                "comment": " `f` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Int -> Css.Style"
+            },
+            {
+                "name": "fillMin",
+                "comment": " `fillMin` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "fixed",
+                "comment": " `fixed` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "flex",
+                "comment": " `flex` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "flexAuto",
+                "comment": " `flexAuto` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "flexColumn",
+                "comment": " `flexColumn` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "flexColumnReverse",
+                "comment": " `flexColumnReverse` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "flexGrow",
+                "comment": " `flexGrow` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Int -> Css.Style"
+            },
+            {
+                "name": "flexNone",
+                "comment": " `flexNone` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "flexNowrap",
+                "comment": " `flexNowrap` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "flexRow",
+                "comment": " `flexRow` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "flexRowReverse",
+                "comment": " `flexRowReverse` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "flexShrink",
+                "comment": " `flexShrink` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Int -> Css.Style"
+            },
+            {
+                "name": "flexWrap",
+                "comment": " `flexWrap` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "flexWrapReverse",
+                "comment": " `flexWrapReverse` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "fsNormal",
+                "comment": " `fsNormal` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "fw",
+                "comment": " `fw` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Int -> Css.Style"
+            },
+            {
+                "name": "gap",
+                "comment": " `gap` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Int -> Css.Style"
+            },
+            {
+                "name": "gpu",
+                "comment": " `gpu` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "grid",
+                "comment": " `grid` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Int -> Css.Style"
+            },
+            {
+                "name": "hAuto",
+                "comment": " `hAuto` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "hInherit",
+                "comment": " `hInherit` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "hp",
+                "comment": " `hp` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Int -> Css.Style"
+            },
+            {
+                "name": "hpMin",
+                "comment": " `hpMin` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Int -> Css.Style"
+            },
+            {
+                "name": "hs",
+                "comment": " `hs` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Int -> Css.Style"
+            },
+            {
+                "name": "hsMin",
+                "comment": " `hsMin` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Int -> Css.Style"
+            },
+            {
+                "name": "hsluvToCssString",
+                "comment": " `hsluvToCssString` IS A WORK IN PROGRESS\n",
+                "type": "HSLuv.HSLuv -> String.String"
+            },
+            {
+                "name": "i",
+                "comment": " `i` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "indent",
+                "comment": " `indent` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "inlineFlex",
+                "comment": " `inlineFlex` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "itemsBaseline",
+                "comment": " `itemsBaseline` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "itemsCenter",
+                "comment": " `itemsCenter` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "itemsEnd",
+                "comment": " `itemsEnd` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "itemsStart",
+                "comment": " `itemsStart` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "itemsStretch",
+                "comment": " `itemsStretch` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "justifyAround",
+                "comment": " `justifyAround` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "justifyBetween",
+                "comment": " `justifyBetween` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "justifyCenter",
+                "comment": " `justifyCenter` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "justifyEnd",
+                "comment": " `justifyEnd` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "justifyStart",
+                "comment": " `justifyStart` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "l",
+                "comment": " `l` IS A WORK IN PROGRESS\n",
+                "type": "List.List Css.Style -> Css.Style"
+            },
+            {
+                "name": "leadingScale",
+                "comment": " `leadingScale` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Int -> String.String"
+            },
+            {
+                "name": "left",
+                "comment": " `left` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Int -> Css.Style"
+            },
+            {
+                "name": "lengthScale",
+                "comment": " `lengthScale` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Int -> String.String"
+            },
+            {
+                "name": "lh",
+                "comment": " `lh` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Int -> Css.Style"
+            },
+            {
+                "name": "link",
+                "comment": " `link` IS A WORK IN PROGRESS\n",
+                "type": "HSLuv.HSLuv -> Css.Style"
+            },
+            {
+                "name": "m",
+                "comment": " `m` IS A WORK IN PROGRESS\n",
+                "type": "List.List Css.Style -> Css.Style"
+            },
+            {
+                "name": "ma",
+                "comment": " `ma` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Int -> Css.Style"
+            },
+            {
+                "name": "mb",
+                "comment": " `mb` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Int -> Css.Style"
+            },
+            {
+                "name": "measure",
+                "comment": " `measure` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "measureNarrow",
+                "comment": " `measureNarrow` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "measureWide",
+                "comment": " `measureWide` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "mh",
+                "comment": " `mh` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Int -> Css.Style"
+            },
+            {
+                "name": "ml",
+                "comment": " `ml` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Int -> Css.Style"
+            },
+            {
+                "name": "mlAuto",
+                "comment": " `mlAuto` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "mr",
+                "comment": " `mr` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Int -> Css.Style"
+            },
+            {
+                "name": "mrAuto",
+                "comment": " `mrAuto` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "mt",
+                "comment": " `mt` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Int -> Css.Style"
+            },
+            {
+                "name": "mv",
+                "comment": " `mv` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Int -> Css.Style"
+            },
+            {
+                "name": "mwNone",
+                "comment": " `mwNone` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "mwch",
+                "comment": " `mwch` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Int -> Css.Style"
+            },
+            {
+                "name": "mwp",
+                "comment": " `mwp` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Int -> Css.Style"
+            },
+            {
+                "name": "mws",
+                "comment": " `mws` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Int -> Css.Style"
+            },
+            {
+                "name": "na",
+                "comment": " `na` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Int -> Css.Style"
+            },
+            {
+                "name": "nb",
+                "comment": " `nb` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Int -> Css.Style"
+            },
+            {
+                "name": "nh",
+                "comment": " `nh` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Int -> Css.Style"
+            },
+            {
+                "name": "nl",
+                "comment": " `nl` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Int -> Css.Style"
+            },
+            {
+                "name": "noUnderline",
+                "comment": " `noUnderline` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "normal",
+                "comment": " `normal` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "nowrap",
+                "comment": " `nowrap` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "nr",
+                "comment": " `nr` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Int -> Css.Style"
+            },
+            {
+                "name": "nt",
+                "comment": " `nt` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Int -> Css.Style"
+            },
+            {
+                "name": "number",
+                "comment": " `number` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "nv",
+                "comment": " `nv` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Int -> Css.Style"
+            },
+            {
+                "name": "o",
+                "comment": " `o` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Float -> Css.Style"
+            },
+            {
+                "name": "order",
+                "comment": " `order` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Int -> Css.Style"
+            },
+            {
+                "name": "outline",
+                "comment": " `outline` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "outline0",
+                "comment": " `outline0` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "outlineTransparent",
+                "comment": " `outlineTransparent` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "overflowAuto",
+                "comment": " `overflowAuto` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "overflowContainer",
+                "comment": " `overflowContainer` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "overflowHidden",
+                "comment": " `overflowHidden` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "overflowScroll",
+                "comment": " `overflowScroll` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "overflowVisible",
+                "comment": " `overflowVisible` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "overflowXauto",
+                "comment": " `overflowXauto` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "overflowXhidden",
+                "comment": " `overflowXhidden` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "overflowXscroll",
+                "comment": " `overflowXscroll` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "overflowXvisible",
+                "comment": " `overflowXvisible` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "overflowYauto",
+                "comment": " `overflowYauto` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "overflowYhidden",
+                "comment": " `overflowYhidden` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "overflowYscroll",
+                "comment": " `overflowYscroll` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "overflowYvisible",
+                "comment": " `overflowYvisible` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "pa",
+                "comment": " `pa` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Int -> Css.Style"
+            },
+            {
+                "name": "palit",
+                "comment": " `palit` IS A WORK IN PROGRESS\n",
+                "type": "List.List Css.Style -> Html.Styled.Attribute msg"
+            },
+            {
+                "name": "pb",
+                "comment": " `pb` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Int -> Css.Style"
+            },
+            {
+                "name": "percent",
+                "comment": " `percent` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Int -> String.String"
+            },
+            {
+                "name": "ph",
+                "comment": " `ph` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Int -> Css.Style"
+            },
+            {
+                "name": "pl",
+                "comment": " `pl` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Int -> Css.Style"
+            },
+            {
+                "name": "pointer",
+                "comment": " `pointer` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "pointerNone",
+                "comment": " `pointerNone` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "pr",
+                "comment": " `pr` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Int -> Css.Style"
+            },
+            {
+                "name": "pre",
+                "comment": " `pre` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "pt",
+                "comment": " `pt` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Int -> Css.Style"
+            },
+            {
+                "name": "pv",
+                "comment": " `pv` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Int -> Css.Style"
+            },
+            {
+                "name": "recursiveAdding",
+                "comment": " `recursiveAdding` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Float -> Basics.Int -> Basics.Float"
+            },
+            {
+                "name": "reg",
+                "comment": " `reg` IS A WORK IN PROGRESS\n",
+                "type": "List.List Css.Style -> Css.Style"
+            },
+            {
+                "name": "relative",
+                "comment": " `relative` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "right",
+                "comment": " `right` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Int -> Css.Style"
+            },
+            {
+                "name": "rotate",
+                "comment": " `rotate` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Float -> Css.Style"
+            },
+            {
+                "name": "sansSerif",
+                "comment": " `sansSerif` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "selfBaseline",
+                "comment": " `selfBaseline` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "selfCenter",
+                "comment": " `selfCenter` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "selfEnd",
+                "comment": " `selfEnd` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "selfStart",
+                "comment": " `selfStart` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "selfStretch",
+                "comment": " `selfStretch` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "serif",
+                "comment": " `serif` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "shadow",
+                "comment": " `shadow` IS A WORK IN PROGRESS\n",
+                "type": "HSLuv.HSLuv -> Basics.Int -> Css.Style"
+            },
+            {
+                "name": "shadowScale",
+                "comment": " `shadowScale` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Float -> HSLuv.HSLuv -> Basics.Int -> String.String"
+            },
+            {
+                "name": "smallCaps",
+                "comment": " `smallCaps` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "spacingScale",
+                "comment": " `spacingScale` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Int -> String.String"
+            },
+            {
+                "name": "static",
+                "comment": " `static` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "sticky",
+                "comment": " `sticky` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "strike",
+                "comment": " `strike` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "stripeDark",
+                "comment": " `stripeDark` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "stripeLight",
+                "comment": " `stripeLight` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "style",
+                "comment": " `style` IS A WORK IN PROGRESS\n",
+                "type": "String.String -> String.String -> Css.Style"
+            },
+            {
+                "name": "systemSansSerif",
+                "comment": " `systemSansSerif` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "systemSerif",
+                "comment": " `systemSerif` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "tc",
+                "comment": " `tc` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "textShadow",
+                "comment": " `textShadow` IS A WORK IN PROGRESS\n",
+                "type": "HSLuv.HSLuv -> Basics.Int -> Css.Style"
+            },
+            {
+                "name": "tj",
+                "comment": " `tj` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "tl",
+                "comment": " `tl` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "top",
+                "comment": " `top` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Int -> Css.Style"
+            },
+            {
+                "name": "tr",
+                "comment": " `tr` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "track",
+                "comment": " `track` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Int -> Css.Style"
+            },
+            {
+                "name": "trackScale",
+                "comment": " `trackScale` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Int -> String.String"
+            },
+            {
+                "name": "transparent",
+                "comment": " `transparent` IS A WORK IN PROGRESS\n",
+                "type": "HSLuv.HSLuv"
+            },
+            {
+                "name": "truncate",
+                "comment": " `truncate` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "ttc",
+                "comment": " `ttc` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "ttl",
+                "comment": " `ttl` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "ttn",
+                "comment": " `ttn` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "ttu",
+                "comment": " `ttu` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "typeScale",
+                "comment": " `typeScale` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Int -> String.String"
+            },
+            {
+                "name": "underline",
+                "comment": " `underline` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "vBase",
+                "comment": " `vBase` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "vBtm",
+                "comment": " `vBtm` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "vMid",
+                "comment": " `vMid` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "vTop",
+                "comment": " `vTop` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "vh",
+                "comment": " `vh` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Int -> Css.Style"
+            },
+            {
+                "name": "vhMax",
+                "comment": " `vhMax` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Int -> Css.Style"
+            },
+            {
+                "name": "vhMin",
+                "comment": " `vhMin` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Int -> Css.Style"
+            },
+            {
+                "name": "wAuto",
+                "comment": " `wAuto` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "wThird",
+                "comment": " `wThird` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "wTwoThirds",
+                "comment": " `wTwoThirds` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "wch",
+                "comment": " `wch` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Int -> Css.Style"
+            },
+            {
+                "name": "white",
+                "comment": " `white` IS A WORK IN PROGRESS\n",
+                "type": "HSLuv.HSLuv"
+            },
+            {
+                "name": "wp",
+                "comment": " `wp` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Int -> Css.Style"
+            },
+            {
+                "name": "wpMin",
+                "comment": " `wpMin` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Int -> Css.Style"
+            },
+            {
+                "name": "ws",
+                "comment": " `ws` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Int -> Css.Style"
+            },
+            {
+                "name": "wsMin",
+                "comment": " `wsMin` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Int -> Css.Style"
+            },
+            {
+                "name": "wsNormal",
+                "comment": " `wsNormal` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "z",
+                "comment": " `z` IS A WORK IN PROGRESS\n",
+                "type": "Basics.Int -> Css.Style"
+            },
+            {
+                "name": "zInherit",
+                "comment": " `zInherit` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "zInitial",
+                "comment": " `zInitial` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "zMax",
+                "comment": " `zMax` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            },
+            {
+                "name": "zUnset",
+                "comment": " `zUnset` IS A WORK IN PROGRESS\n",
+                "type": "Css.Style"
+            }
+        ],
+        "binops": []
+    }
+]

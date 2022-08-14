@@ -1,0 +1,181 @@
+[
+    {
+        "name": "Particle",
+        "comment": "\n\n\n# Particle\n\nThis module lets you particles! You'll need to define:\n\n1.  **how it acts**, using things like [`withLocation`](#withLocation) and\n    [`withDirection`](#withDirection).\n2.  **what it looks like**, which you'll provide in the type parameter to\n    [`Particle`](#Particle).\n\nFor example, maybe you want to show some confetti when a student finishes a\nquiz. Hooray! Time to celebrate! 🎉 🎊 We'll model each little piece as having\nboth a color and a shape, like this:\n\n    type alias Confetti =\n        { color : Color -- Red, Green, Blue\n        , shape : Shape -- Square, Star, Streamer\n        }\n\nThen a `Particle` of confetti—just one of those little pieces—would be `Particle\nConfetti`. Boring, but in the best way possible! Now, we _could_ construct our\nconfetti by hand, like this:\n\n    { color = Red, shape = Square }\n\n… but that's boring! Not only do we have to do every piece we want by hand, but\nsince all functions in Elm are pure we will never get any variation! Boo!\nInstead, we'll generate Confetti randomly using [`elm/random`][random]. If you\nhaven't used this package before, check out [The Elm Guide's explanation][teg],\nor [Chandrika Achar's appearance on Elm Town][chandrika-achar]. We'll use\n`Random.map2` and `Random.uniform` to generate particles of a random color and\nshape:\n\n  - `Random.uniform` takes a bunch of items, and chooses between them evenly.\n  - `Random.map2` takes the random stuff you generate, and gives it as two\n    arguments to a function.\n\nThe code ends up looking like this:\n\n    confetti : Random.Generator Confetti\n    confetti =\n        Random.map2 Confetti\n            (Random.uniform Red [ Green, Blue ])\n            (Random.uniform Square [ Star, Streamer ])\n\nSo that's the data for rendering your particles, but how do you get them to\nbehave how you like? When using `Particle`, you'll create a particle with\n[`init`](#init), and then use functions like [`withLocation`](#withLocation) and\n[`withDirection`](#withDirection) to define that. Read on for what they do!\n\nYou should also read the documentation on `Particle.System` for a managed way to\nrender these—you don't have to worry about animation yourself!\n\nOne last thing before we get into the documentation in earnest: this page only\nscratches the surface of what you can do with particle generators. There are a\nfew fully-worked-out and documented examples in the [`examples`][examples]\nfolder of the source on GitHub. Go check those out!\n\n[teg]: https://guide.elm-lang.org/effects/random.html\n[random]: https://package.elm-lang.org/packages/elm/random/latest/\n[chandrika-achar]: https://elmtown.simplecast.fm/randomness-chandrika\n[examples]: https://github.com/BrianHicks/elm-particle/tree/master/examples\n\n\n# Constructing Particles\n\n@docs Particle, init, withLifetime, withDelay, withLocation, withDirection, withSpeed, withGravity, withDrag\n\n\n# Rendering Particles\n\n@docs view, viewHtml, data, lifetimePercent, lifetime, direction, directionDegrees, speed, leftPixels, topPixels\n\n\n# Simulation\n\n@docs update\n\n",
+        "unions": [
+            {
+                "name": "Particle",
+                "comment": " A single particle, doing... something? Who knows! You get to define that!\nSee the top of the module docs for how this all fits together.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "data",
+                "comment": " Get the data you passed in out of a particle, for use in view functions.\n",
+                "type": "Particle.Particle a -> a"
+            },
+            {
+                "name": "direction",
+                "comment": " Get the direction the particle is currently facing. This is useful for\nparticles whose shape implies a direction, like arrows or boxes.\n\n**Heads up!** The most common use of this function is probably to set rotation\non the particle. That's fine, but the `rotate` transformation can only use\ndegrees, and this function returns radians. Use\n[`directionDegrees`](#directionDegrees) instead so you can avoid doing the math\nyourself.\n\n",
+                "type": "Particle.Particle a -> Basics.Float"
+            },
+            {
+                "name": "directionDegrees",
+                "comment": " Like `direction` but returns the angle in degrees instead of radians to make\nSVG transformations easier.\n",
+                "type": "Particle.Particle a -> Basics.Float"
+            },
+            {
+                "name": "init",
+                "comment": " Start making a particle, given a generator for the data you want to use to\nrender your particle.\n\n    init confetti\n\n",
+                "type": "Random.Generator a -> Random.Generator (Particle.Particle a)"
+            },
+            {
+                "name": "leftPixels",
+                "comment": " Get the position from the left side of the screen in pixels. You only\nneed this when using `Particle.System.viewCustom`.\n",
+                "type": "Particle.Particle a -> Basics.Float"
+            },
+            {
+                "name": "lifetime",
+                "comment": " Get how long a particle has been alive, in seconds. This is mostly useful\nfor deciding whether or not to display a particle (if it's been delayed,\nthis value will be a countdown to when it should show up.) In most cases,\n[`lifetimePercent`](#lifetimePercent) will be much more useful!\n",
+                "type": "Particle.Particle a -> Basics.Float"
+            },
+            {
+                "name": "lifetimePercent",
+                "comment": " Get the remaining lifetime of a particle, for use in view functions. This\nreturns a number between 0 and 1, which is useful for setting opacity to\nsmoothly fade a particle out instead of having it just disappear.\n",
+                "type": "Particle.Particle a -> Basics.Float"
+            },
+            {
+                "name": "speed",
+                "comment": " Get the speed the particle is currently traveling. This is useful for doing\nthings like stretching or squashing the shape in response to changes in motion.\n",
+                "type": "Particle.Particle a -> Basics.Float"
+            },
+            {
+                "name": "topPixels",
+                "comment": " Get the position from the top side of the screen in pixels. You only\nneed this when using `Particle.System.viewCustom`.\n",
+                "type": "Particle.Particle a -> Basics.Float"
+            },
+            {
+                "name": "update",
+                "comment": " **Hey!** You probably shouldn't use this! Instead, manage all your particles\nat once with the functions in `Particle.System`!\n\nThat said, this updates a single particle, given a delta in milliseconds.\n\n",
+                "type": "Basics.Float -> Particle.Particle a -> Maybe.Maybe (Particle.Particle a)"
+            },
+            {
+                "name": "view",
+                "comment": " **Hey!** You should probably be looking at the docs for\n`Particle.System.view`, which has the same signature but works with all your\nparticles at once.\n\nRender the particle as SVG. I'll give you the particle, and you use functions\nlike [`data`](#data) and [`lifetimePercent`](#lifetimePercent) to get the data\nyou need for rendering. It might look like this:\n\n    view <|\n        \\particle ->\n            case Particle.data particle of\n                Square { color } ->\n                    Svg.rect\n                        [ Svg.Attributes.width \"10\"\n                        , Svg.Attributes.height \"10\"\n                        , Svg.Attributes.fill (Color.toHex color)\n                        ]\n                        []\n\n                _ ->\n                    -- other shapes here\n\nYou don't need to set the location of the particle, as it'll be done for you by\nwrapping whatever you pass in a `<g>` element.\n\n",
+                "type": "(Particle.Particle a -> Svg.Svg msg) -> Particle.Particle a -> Svg.Svg msg"
+            },
+            {
+                "name": "viewHtml",
+                "comment": " Do the same thing as [`view`](#view) but render HTML instead of SVG.\n",
+                "type": "(Particle.Particle a -> Html.Html msg) -> Particle.Particle a -> Html.Html msg"
+            },
+            {
+                "name": "withDelay",
+                "comment": " You might want your particles to appear over a little time, instead of\nall at once. This is how you get that effect without doing a lot of Elm\nArchitecture plumbing. Like [`withLifetime`](#withLifetime), this uses\nseconds instead of milliseconds.\n\nThis code will produce particles that live 1 second, but don't show up until\nbetween 0 and 1 seconds after the initial event:\n\n    init confetti\n        |> withLifetime (Random.constant 1)\n        |> withDelay (Random.float 0 1)\n\nIt's OK if your generator produces negative values; we'll just call `abs` on\nthem before rendering. This makes it way easier to use `Random.Float.normal`\nto get a bunch of particles to show up at once but trail off over time\n(e.g. `normal 0 0.25` would be centered around 0 with a standard deviation\nof 0.25 seconds.)\n\n",
+                "type": "Random.Generator Basics.Float -> Random.Generator (Particle.Particle a) -> Random.Generator (Particle.Particle a)"
+            },
+            {
+                "name": "withDirection",
+                "comment": " In what direction is this particle traveling, to start?\n\n`withDirection` uses Elm Standard Units™ (radians.) `0` is straight up, and\nrotation goes clockwise. You can, of course, substitute `degrees 45` or `turns\n0.125` if that's easier for you to reason about—I prefer degrees, myself!\n\n    init confetti\n        |> withDirection (Random.Float.normal (degrees 45) (degrees 10))\n\n",
+                "type": "Random.Generator Basics.Float -> Random.Generator (Particle.Particle a) -> Random.Generator (Particle.Particle a)"
+            },
+            {
+                "name": "withDrag",
+                "comment": " How is this particle affected by the surrounding environment? Is there air?\nWater? Setting the right resistance will help your particles look more\nrealistic! You'll have to tweak these numbers to get something you like; here's\nwhat they mean:\n\n  - **density** is the density of whatever fluid the particles are in. The\n    higher this is, the more particles will be slowed down. Think about trying\n    to run on land versus in the water—you're slowed down much more by the water\n    than the air, and you experience more resistance the faster you try to\n    move. Air will be around 0.001275 (g/cm³). Water will be around 1.\n\n  - **area** is the area of the front surface. For a square, that'd be the side\n    facing into the flow. The bigger this is, the more drag happens. When\n    setting this, remember that this is a 2-dimensional simulation, so you\n    mostly just provide a single dimension's length! In a _real_ simulation,\n    we'd calculate this on every frame to account for rotation. But we can get\n    acceptable results without that, so it's fine to just give a rough number\n    here!\n\n  - **coefficient** is how easily air/water/whatever flows over the surface\n    facing into the flow. A higher number means that you will face more\n    resistance. [Wikipedia][coefficients] has a nice chart of sample\n    coefficients for various surface shapes; choosing one of those will probably\n    get you most of the way there.\n\nThis function is a bit different from others because it's really convenient to\nbe able to generate whatever kind of particle and set drag separately. You could\nstructure your code so that this would not be a concern, but it gets annoying to\nhave to care about it it in multiple places. So, if we have these shapes in our\n`Particle Shape`:\n\n    type Shape\n        = Circle Float\n        | Square Float\n\nWe'd call `withDrag` like this:\n\n    init shapeGenerator\n        |> withDrag\n            (\\shape ->\n                { density = 0.001275\n                , coefficient =\n                    case shape of\n                        Circle _ ->\n                            0.47\n\n                        Square _ ->\n                            1.05\n                , area =\n                    case shape of\n                        Circle radius ->\n                            radius * 2\n\n                        Square side ->\n                            side\n                }\n            )\n\n[coefficients](https://en.wikipedia.org/wiki/Drag_coefficient#/media/File:14ilf1l.svg)\n\n",
+                "type": "(a -> { density : Basics.Float, area : Basics.Float, coefficient : Basics.Float }) -> Random.Generator (Particle.Particle a) -> Random.Generator (Particle.Particle a)"
+            },
+            {
+                "name": "withGravity",
+                "comment": " Is this particle affected by gravity?\n\nThe unit here ends up being pixels per second per second. If you want something\nearthlike, you'll probably want `9.8 * dots/meter`. Buuut that's also super\nfast, and you probably want something slightly slower and more cartoony. `980`\nworks well!\n\n    init confetti\n        |> withGravity 980\n\nThis takes a constant, while its siblings take generators. Why is this? Well,\nunlike position, heading, or lifetime, you probably _do_ want all your particles\nto have the same gravity! (Or at least, you want a few groupings of gravity, not\nevery particle being affected differently.)\n\n**Note:** under the covers, this is really modeling acceleration over time, so\nit's not _only_ gravity. But, I can't think of anything offhand I need this for\nother than gravity! So if you have a concrete use case for going sideways or up,\n[open an issue][issue] and let me know!\n\n[issue]: https://github.com/BrianHicks/elm-particle/issues\n\n",
+                "type": "Basics.Float -> Random.Generator (Particle.Particle a) -> Random.Generator (Particle.Particle a)"
+            },
+            {
+                "name": "withLifetime",
+                "comment": " You don't normally want particles to live forever. It means calculating a\nlot of deltas that you don't care about, and which the person using your\nsoftware will never see. So, let's give them some lifetimes! The unit here is\nseconds.\n\n    init confetti\n        |> withLifetime (Random.constant 1)\n\nWe use another `Random.Generator` here, since it looks nicer for particles which\nhave been introduced in a burst all at once to fade out progressively instead of\nall at once. You can use `Random.Float.normal` from\n[`elm-community/random-extra`][random-extra] to do this. For example: `normal 1\n0.1`. This generates a normal distribution with a mean of the first number and a\nstandard deviation of the second, so it will not be _precisely_ 0.9 to 1.1\nseconds, but `normal` tends to produce pretty good results!\n\n**Note:** In the future, it may be possible for `Particle.System.System` to\nautomatically remove particles which have gone off screen. For now, lifetimes\nare the best system we have for this!\n\n[random-extra]: https://package.elm-lang.org/packages/elm-community/random-extra/latest\n\n",
+                "type": "Random.Generator Basics.Float -> Random.Generator (Particle.Particle a) -> Random.Generator (Particle.Particle a)"
+            },
+            {
+                "name": "withLocation",
+                "comment": " Where should this particle start it's life? `{ x = 0, y = 0}` is at the top\nleft of the image. So we can render in the center like this:\n\n    init confetti\n        |> withLocation (Random.constant { x = width / 2, y = height / 2 })\n\nOr at a random location on screen like this:\n\n    init confetti\n        |> withLocation\n            (Random.map2 (\\x y -> { x = x, y = y })\n                (Random.map (modBy width << abs) Random.float)\n                (Random.map (modBy height << abs) Random.float)\n            )\n\n",
+                "type": "Random.Generator { x : Basics.Float, y : Basics.Float } -> Random.Generator (Particle.Particle a) -> Random.Generator (Particle.Particle a)"
+            },
+            {
+                "name": "withSpeed",
+                "comment": " How fast is this particle traveling traveling, to start?\n\nIn this case, speed is a rough measurement—it's close to but not exactly pixels\nper second, so you'll have to experiment to make it look good for your use case.\n\n    init confetti\n        |> withSpeed (Random.Float.normal 300 100)\n\n",
+                "type": "Random.Generator Basics.Float -> Random.Generator (Particle.Particle a) -> Random.Generator (Particle.Particle a)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Particle.System",
+        "comment": "\n\n@docs System, init, hasParticles\n\n\n# Gimme some particles!\n\n@docs burst\n\n\n# Simulate Particles\n\n@docs Msg, update, view, viewHtml, viewCustom, sub\n\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " Get me from [`sub`](#sub) and pass me to [`update`](#update)!\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            },
+            {
+                "name": "System",
+                "comment": " Hold and simulate all your particles at once! This is a whole lot easier\nthan managing all the subscriptions and emitters yourself.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "burst",
+                "comment": " Make a burst of a bunch of particles at once! Use this for things like\nconfetti or fireworks. We use randomness here because 100 particles all doing\nexactly the same thing tends to be uninteresting.\n\nIf you haven't used the `Random` library before, check the docs at the top of\n`Particle`.\n\nWe could make a burst of 50 confetti particles like this:\n\n    burst (Random.list 50 confettiParticles) system\n\n",
+                "type": "Random.Generator (List.List (Particle.Particle a)) -> Particle.System.System a -> Particle.System.System a"
+            },
+            {
+                "name": "hasParticles",
+                "comment": " Are there any living particles in the system? Useful for conditionally\nshowing or hiding the view, or letting effects finish gracefully before\nmoving on to the next part of your app.\n",
+                "type": "Particle.System.System a -> Basics.Bool"
+            },
+            {
+                "name": "init",
+                "comment": " Get a `System` given a seed. So, why do I need that? Well, it's much nicer\nto generate random particles if we can do it synchronously, so I keep track of a\nseed so we can do everything in one call to your `update`! If you don't really\ncare about the seed, you can initialize it like this:\n\n    init (Random.initialSeed 0)\n\nIf you want one that's actually pseudo-random, get a random seed with the\n`Random.independentSeed` generator or pass the current time in when you\ninitialize your app from JavaScript.\n\n",
+                "type": "Random.Seed -> Particle.System.System a"
+            },
+            {
+                "name": "sub",
+                "comment": " Subscribe to the right events in the browser. In this case, that's\n`requestAnimationFrame` deltas. You don't have to worry about how to hook up the\nright functions, just stick this in the subscriptions of your app and call\n`update` with the `Msg` you get.\n\nThe first parameter here is a list of emitters. These are different than bursts\nin that they continuously spout particles. This can create particle effects like\nwater or fire. They live in the subscription so that we can manage our\nsubscriptions intelligently. It also means that you don't have to store\ngenerators—which contain functions—in your model. So maybe you want to turn a\nstream of water on and off, or control the pressure? That's great! You can store\nthose parameters in your model, and use them to make your generators.\n\nEach emitter gets the time since the last frame in milliseconds so that it can\ncalculate how many particles to emit. So, for example, a water emitter that\nemitted 60 drops per second may look like this:\n\n    waterEmitter : Float -> Generator (List (Particle Droplet))\n    waterEmitter delta =\n        Random.list (ceiling (delta * (60 / 1000))) dropletGenerator\n\nThen you'd use this in your subscription like this:\n\n    sub [ waterEmitter ] ParticleMsg model.system\n\nIf this doesn't make sense, go read the [`Water.elm`][water] example, which ties\nall of this together.\n\n[water]: https://brianhicks.github.io/elm-particle/Water.html\n\n",
+                "type": "List.List (Basics.Float -> Random.Generator (List.List (Particle.Particle a))) -> (Particle.System.Msg a -> msg) -> Particle.System.System a -> Platform.Sub.Sub msg"
+            },
+            {
+                "name": "update",
+                "comment": " Update all the particles by one step. Use it in your `update` function\nwhenever you get a [`Msg`](#Msg). Probably like this:\n\n    update msg model.system\n\n",
+                "type": "Particle.System.Msg a -> Particle.System.System a -> Particle.System.System a"
+            },
+            {
+                "name": "view",
+                "comment": " View all the particles in the system. You'll need to provide a rendering\nfunction for each particle—the same one you'd give to `Particle.view`—as well as\na list of attributes on the SVG element itself.\n\nFor example, if you wanted a full-screen particle display, it would look like\nthis:\n\n    view viewConfetti\n        [ Html.Attributes.style \"width\" \"100%\"\n        , Html.Attributes.style \"height\" \"100vh\"\n        ]\n        system\n\n",
+                "type": "(Particle.Particle a -> Svg.Svg msg) -> List.List (Html.Attribute msg) -> Particle.System.System a -> Html.Html msg"
+            },
+            {
+                "name": "viewCustom",
+                "comment": " Do the same thing as [`view`](#view) but render your own custom wrapper type\ninstead of SVG. You will want this if you are using something like\n[`Html.Styled`](https://package.elm-lang.org/packages/rtfeldman/elm-css/latest/Html-Styled)\nor [`TypedSvg`](https://package.elm-lang.org/packages/elm-community/typed-svg/latest/),\nfor example.\n\nIf you use this we do not know how to position the particle. Please use\n`Particle.leftPixels` and `Particle.topPixels` to do that yourself.\n\n",
+                "type": "(Particle.Particle a -> renderedParticle) -> (List.List renderedParticle -> wrapper) -> Particle.System.System a -> wrapper"
+            },
+            {
+                "name": "viewHtml",
+                "comment": " Do the same thing as [`view`](#view) but render HTML instead of SVG.\n",
+                "type": "(Particle.Particle a -> Html.Html msg) -> List.List (Html.Attribute msg) -> Particle.System.System a -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,21 @@
+[
+    {
+        "name": "Element.HexColor",
+        "comment": "\n\n@docs hex\n@docs hexa\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "hex",
+                "comment": "\n\n    hex \"000000\" -- Just (rgba 0 0 0 1)\n\n    hex \"000000\" -- Just (rgba 0 0 0 1)\n\n    hex \"FFFFFF\" -- Just (rgba 1 1 1 1)\n\n    hex \"#FFFFFF\" -- Just (rgba 1 1 1 1)\n\n    hex \"FFF\" -- Nothing\n\n",
+                "type": "String.String -> Maybe.Maybe Element.Color"
+            },
+            {
+                "name": "hexa",
+                "comment": "\n\n    hexa ( \"000000\", 0 ) -- Just (rgba 0 0 0 0)\n\n    hexa ( \"FFFFFF\", 1 ) -- Just (rgba 1 1 1 1)\n\n    hexa ( \"#FFFFFF\", 0 ) -- Just (rgba 1 1 1 0)\n\n    hexa ( \"FFFFFF\", 10 ) -- Nothing\n\n    hexa ( \"FFFFFF\", -1 ) -- Nothing\n\n",
+                "type": "( String.String, Basics.Float ) -> Maybe.Maybe Element.Color"
+            }
+        ],
+        "binops": []
+    }
+]

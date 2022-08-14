@@ -1,0 +1,232 @@
+[
+    {
+        "name": "Http.Error",
+        "comment": " The `Http.Error` module defines a new kind of http error related to json api\n\n\n# Definitions\n\n@docs RequestError, ErrorConfig\n\n\n# Functions\n\n@docs displayError, getErrorForField, getJsonApiErrors\n\n",
+        "unions": [
+            {
+                "name": "RequestError",
+                "comment": " You can have:\n\n  - `HttpError`: a normal http error\n  - `JsonApiError`: an error related to the json api specification\n  - `CustomError`: a custom error\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "HttpError",
+                        [
+                            "Http.Error"
+                        ]
+                    ],
+                    [
+                        "JsonApiError",
+                        [
+                            "List.List JsonApi.Decode.Error"
+                        ]
+                    ],
+                    [
+                        "CustomError",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "ErrorConfig",
+                "comment": " Configuration used to display a `RequestError`\n\n  - `httpErrortoString` is the function used to display a string from an http error\n  - `errorClass` is an additionnal class you can add to the main container of the error\n  - `detailClass` is an additionnal class you can add to children of the main container of the error\n\n",
+                "args": [],
+                "type": "{ httpErrorToString : Http.Error -> String.String, errorClass : Maybe.Maybe String.String, detailClass : Maybe.Maybe String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "displayError",
+                "comment": " Displays a `RequestError`. You must provide a configuration to be able to display\ncorrectly any kind of error.\n\nErrors are displayed like this:\n\n    <span class=\"error\">\n        <span class \"error-detail error-detail-username1\">Error on username</span>\n        <span class \"error-detail error-detail-password2\">Error on password</span>\n    </span>\n\n",
+                "type": "Http.Error.ErrorConfig -> Http.Error.RequestError -> Html.Html msg"
+            },
+            {
+                "name": "getErrorForField",
+                "comment": " Returns the jsonapi error message for the given field name\n\nLet's say you have the following json api error:\n\n    {\n       \"errors\":[\n          {\n             \"detail\":\"Password should be at least 8 character(s)\",\n             \"source\":{\n                \"pointer\":\"/data/attributes/password\"\n             },\n             \"title\":\"should be at least 8 character(s)\"\n          }\n       ],\n       \"jsonapi\":{\n          \"version\":\"1.0\"\n       }\n    }\n\nYou can get the detail error message _\"Password should be at least 8 character(s)\"_ like this:\n\n    getErrorForField \"password\" error\n\n",
+                "type": "String.String -> List.List JsonApi.Decode.Error -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "getJsonApiErrors",
+                "comment": " Retuens a list of the json api errors or an empty list if there is no error.\n\nLet's say you have the following json api errors:\n\n    {\n       \"errors\":[\n          {\n             \"detail\":\"Password should be at least 8 character(s)\",\n             \"source\":{\n                \"pointer\":\"/data/attributes/password\"\n             },\n             \"title\":\"should be at least 8 character(s)\"\n          },\n          {\n             \"detail\":\"Username must no be empty\",\n             \"source\":{\n                \"pointer\":\"/data/attributes/username\"\n             },\n             \"title\":\"should not be empty\"\n          }\n       ],\n       \"jsonapi\":{\n          \"version\":\"1.0\"\n       }\n    }\n\nCalling `getJsonApiErrors errors` will return:\n\n    [ ( \"password\", \"Password should be at least 8 character(s)\" )\n    , ( \"username\", \"Username must no be empty\" )\n    ]\n\n",
+                "type": "Http.Error.RequestError -> List.List ( String.String, String.String )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Http.Methods",
+        "comment": " Http methods, to use with requests and urls\n\n\n# Definitions\n\n@docs Method\n\n\n# Functions\n\n@docs toString\n\n",
+        "unions": [
+            {
+                "name": "Method",
+                "comment": " Defines http verbs\n",
+                "args": [],
+                "cases": [
+                    [
+                        "POST",
+                        []
+                    ],
+                    [
+                        "PUT",
+                        []
+                    ],
+                    [
+                        "DELETE",
+                        []
+                    ],
+                    [
+                        "GET",
+                        []
+                    ],
+                    [
+                        "PATCH",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toString",
+                "comment": " Transforms an http verb to a string\n",
+                "type": "Http.Methods.Method -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Http.Request",
+        "comment": " `Http.Request` allows you to create http requests with [`jsonapi`](https://package.elm-lang.org/packages/FabienHenon/jsonapi/latest/) objects.\n\nThe request functions will return a [`RemoteData`](https://package.elm-lang.org/packages/krisajenkins/remotedata/latest/) with a jsonapi `Document`.\nThe `content-type` used in the request headers is `application/vnd.api+json` according to the jsonapi specification.\n\n\n# Definitions\n\n@docs Request, RequestCustomData, RequestNoContent, RequestFiles, RequestEx, RequestCustomDataEx, RequestNoContentEx, RequestFilesEx\n\n\n# Requests\n\n@docs request, requestCustomData, requestNoContent, requestFiles, requestEx, requestCustomDataEx, requestNoContentEx, requestFilesEx\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Request",
+                "comment": " Defines a `Request` with a url, some headers, a body, and a jsonapi document decoder.\n`meta`and `data` are types used by the jsonapi document that represent the `meta` object you would like to decode, and the `data` object you would\nlike to decode\n",
+                "args": [
+                    "meta",
+                    "data"
+                ],
+                "type": "{ url : Http.Url.Url, headers : List.List Http.Header, body : Json.Encode.Value, documentDecoder : Json.Decode.Decoder (Result.Result (List.List JsonApi.Decode.Error) (JsonApi.Document.Document meta data)) }"
+            },
+            {
+                "name": "RequestCustomData",
+                "comment": " Defines a `Request` with a url, some headers, a body, and a custom decoder.\n`data` is the type of the object you would like to decode.\n",
+                "args": [
+                    "data"
+                ],
+                "type": "{ url : Http.Url.Url, headers : List.List Http.Header, body : Json.Encode.Value, documentDecoder : Json.Decode.Decoder (Result.Result (List.List JsonApi.Decode.Error) data) }"
+            },
+            {
+                "name": "RequestCustomDataEx",
+                "comment": " Defines a `Request` with a url, some headers, a body, and a custom decoder.\n`data` is the type of the object you would like to decode.\nYou can also extract some response headers to use them later\n",
+                "args": [
+                    "data"
+                ],
+                "type": "{ url : Http.Url.Url, headers : List.List Http.Header, body : Json.Encode.Value, documentDecoder : Json.Decode.Decoder (Result.Result (List.List JsonApi.Decode.Error) data), extractHeaders : List.List String.String }"
+            },
+            {
+                "name": "RequestEx",
+                "comment": " Defines a `RequestEx` with a url, some headers, a body, and a jsonapi document decoder.\n`meta`and `data` are types used by the jsonapi document that represent the `meta` object you would like to decode, and the `data` object you would\nlike to decode.\nYou can also extract some response headers to use them later\n",
+                "args": [
+                    "meta",
+                    "data"
+                ],
+                "type": "{ url : Http.Url.Url, headers : List.List Http.Header, body : Json.Encode.Value, documentDecoder : Json.Decode.Decoder (Result.Result (List.List JsonApi.Decode.Error) (JsonApi.Document.Document meta data)), extractHeaders : List.List String.String }"
+            },
+            {
+                "name": "RequestFiles",
+                "comment": " Defines a `Request` with a url, some headers, a list of files, and a custom decoder.\n`data` is the type of the object you would like to decode.\n",
+                "args": [
+                    "meta",
+                    "data",
+                    "msg"
+                ],
+                "type": "{ url : Http.Url.Url, headers : List.List Http.Header, multipartNames : List.List String.String, files : List.List File.File, multipartEncoder : String.String -> File.File -> Http.Part, documentDecoder : Json.Decode.Decoder (Result.Result (List.List JsonApi.Decode.Error) (JsonApi.Document.Document meta data)), tracker : Maybe.Maybe String.String, msg : RemoteData.RemoteData Http.Error.RequestError (JsonApi.Document.Document meta data) -> msg }"
+            },
+            {
+                "name": "RequestFilesEx",
+                "comment": " Defines a `Request` with a url, some headers, a list of files, and a custom decoder.\n`data` is the type of the object you would like to decode.\nYou can also extract some response headers to use them later\n",
+                "args": [
+                    "meta",
+                    "data",
+                    "msg"
+                ],
+                "type": "{ url : Http.Url.Url, headers : List.List Http.Header, multipartNames : List.List String.String, files : List.List File.File, multipartEncoder : String.String -> File.File -> Http.Part, documentDecoder : Json.Decode.Decoder (Result.Result (List.List JsonApi.Decode.Error) (JsonApi.Document.Document meta data)), tracker : Maybe.Maybe String.String, extractHeaders : List.List String.String, msg : RemoteData.RemoteData ( Http.Error.RequestError, List.List ( String.String, String.String ) ) ( JsonApi.Document.Document meta data, List.List ( String.String, String.String ) ) -> msg }"
+            },
+            {
+                "name": "RequestNoContent",
+                "comment": " Defines a `Request` with a url, some headers, and a body. There is no content decoder.\nUseful for `DELETE` requests for instance.\n",
+                "args": [],
+                "type": "{ url : Http.Url.Url, headers : List.List Http.Header, body : Json.Encode.Value }"
+            },
+            {
+                "name": "RequestNoContentEx",
+                "comment": " Defines a `Request` with a url, some headers, and a body. There is no content decoder.\nUseful for `DELETE` requests for instance.\nYou can also extract some response headers to use them later\n",
+                "args": [],
+                "type": "{ url : Http.Url.Url, headers : List.List Http.Header, body : Json.Encode.Value, extractHeaders : List.List String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "request",
+                "comment": " Create a request task that will decode a jsonapi object\n",
+                "type": "Http.Request.Request meta data -> Task.Task Basics.Never (RemoteData.RemoteData Http.Error.RequestError (JsonApi.Document.Document meta data))"
+            },
+            {
+                "name": "requestCustomData",
+                "comment": " Create a request task that will decode a custom object\n",
+                "type": "Http.Request.RequestCustomData data -> Task.Task Basics.Never (RemoteData.RemoteData Http.Error.RequestError data)"
+            },
+            {
+                "name": "requestCustomDataEx",
+                "comment": " Create a request task that will decode a custom object. It will also return in the msg the list of extracted headers.\n",
+                "type": "Http.Request.RequestCustomDataEx data -> Task.Task Basics.Never (RemoteData.RemoteData ( Http.Error.RequestError, List.List ( String.String, String.String ) ) ( data, List.List ( String.String, String.String ) ))"
+            },
+            {
+                "name": "requestEx",
+                "comment": " Create a request task that will decode a jsonapi object. It will also return in the msg the list of extracted headers.\n",
+                "type": "Http.Request.RequestEx meta data -> Task.Task Basics.Never (RemoteData.RemoteData ( Http.Error.RequestError, List.List ( String.String, String.String ) ) ( JsonApi.Document.Document meta data, List.List ( String.String, String.String ) ))"
+            },
+            {
+                "name": "requestFiles",
+                "comment": " Create a request files that will decode a jsonapi object\n",
+                "type": "Http.Request.RequestFiles meta data msg -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "requestFilesEx",
+                "comment": " Create a request files that will decode a jsonapi object. It will also return in the msg the list of extracted headers.\n",
+                "type": "Http.Request.RequestFilesEx meta data msg -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "requestNoContent",
+                "comment": " Create a request task that will expect nothing to decode\n",
+                "type": "Http.Request.RequestNoContent -> Task.Task Basics.Never (RemoteData.RemoteData Http.Error.RequestError ())"
+            },
+            {
+                "name": "requestNoContentEx",
+                "comment": " Create a request task that will expect nothing to decode. It will also return in the msg the list of extracted headers.\n",
+                "type": "Http.Request.RequestNoContentEx -> Task.Task Basics.Never (RemoteData.RemoteData ( Http.Error.RequestError, List.List ( String.String, String.String ) ) (List.List ( String.String, String.String )))"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Http.Url",
+        "comment": " Defines the `Url`type to be used with http requests\n\n\n# Definitions\n\n@docs Url\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Url",
+                "comment": " An url is composed of a url string and a method\n",
+                "args": [],
+                "type": "{ url : String.String, method : Http.Methods.Method }"
+            }
+        ],
+        "values": [],
+        "binops": []
+    }
+]

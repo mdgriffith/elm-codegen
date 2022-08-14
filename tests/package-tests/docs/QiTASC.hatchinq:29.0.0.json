@@ -1,0 +1,1672 @@
+[
+    {
+        "name": "Hatchinq.AppBar",
+        "comment": "\n\n\n# Exposed\n\n@docs AppBarButton, AppBarIcon, Config, Message, State, View\n@docs appBarHeight, configure, elevate, init, navigate, placeholder, update\n\n",
+        "unions": [
+            {
+                "name": "AppBarIcon",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "MaterialIcon",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Avatar",
+                        [
+                            "String.String",
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Message",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "State",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "AppBarButton",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ id : Maybe.Maybe String.String, icon : Hatchinq.AppBar.AppBarIcon, message : msg, attributes : List.List (Element.Attribute msg) }"
+            },
+            {
+                "name": "Config",
+                "comment": " ",
+                "args": [],
+                "type": "{ theme : Hatchinq.Theme.Theme }"
+            },
+            {
+                "name": "View",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ title : Element.Element msg, buttons : List.List (Hatchinq.AppBar.AppBarButton msg) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "appBarHeight",
+                "comment": " ",
+                "type": "Basics.Int"
+            },
+            {
+                "name": "configure",
+                "comment": " ",
+                "type": "Hatchinq.AppBar.Config -> List.List (Hatchinq.Attribute.Attribute (Hatchinq.AppBar.InternalView msg)) -> Hatchinq.AppBar.View msg -> Element.Element msg"
+            },
+            {
+                "name": "elevate",
+                "comment": " ",
+                "type": "Basics.Bool -> Hatchinq.Attribute.Attribute (Hatchinq.AppBar.InternalView msg)"
+            },
+            {
+                "name": "init",
+                "comment": " ",
+                "type": "Hatchinq.AppBar.State"
+            },
+            {
+                "name": "navigate",
+                "comment": " ",
+                "type": "msg -> Hatchinq.Attribute.Attribute (Hatchinq.AppBar.InternalView msg)"
+            },
+            {
+                "name": "placeholder",
+                "comment": " ",
+                "type": "List.List (Hatchinq.Attribute.Attribute (Hatchinq.AppBar.InternalView msg)) -> Element.Element msg"
+            },
+            {
+                "name": "update",
+                "comment": " ",
+                "type": "Hatchinq.AppBar.Message -> Hatchinq.AppBar.State -> Hatchinq.AppBar.State"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Hatchinq.Attribute",
+        "comment": "\n\n\n# Exposed\n\n@docs Attribute\n@docs custom, height, id, none, toElement, toInternalConfig, toId, toWidth, width, withAttributes, toHeight\n\n",
+        "unions": [
+            {
+                "name": "Attribute",
+                "comment": " ",
+                "args": [
+                    "v"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "custom",
+                "comment": " ",
+                "type": "(v -> v) -> Hatchinq.Attribute.Attribute v"
+            },
+            {
+                "name": "height",
+                "comment": " ",
+                "type": "Element.Length -> Hatchinq.Attribute.Attribute v"
+            },
+            {
+                "name": "id",
+                "comment": " ",
+                "type": "String.String -> Hatchinq.Attribute.Attribute v"
+            },
+            {
+                "name": "none",
+                "comment": " ",
+                "type": "Hatchinq.Attribute.Attribute v"
+            },
+            {
+                "name": "toElement",
+                "comment": " ",
+                "type": "List.List (Hatchinq.Attribute.Attribute v) -> List.List (Element.Attribute msg)"
+            },
+            {
+                "name": "toHeight",
+                "comment": " ",
+                "type": "List.List (Hatchinq.Attribute.Attribute v) -> Maybe.Maybe Element.Length"
+            },
+            {
+                "name": "toId",
+                "comment": " ",
+                "type": "List.List (Hatchinq.Attribute.Attribute v) -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "toInternalConfig",
+                "comment": " ",
+                "type": "List.List (Hatchinq.Attribute.Attribute v) -> v -> v"
+            },
+            {
+                "name": "toWidth",
+                "comment": " ",
+                "type": "List.List (Hatchinq.Attribute.Attribute v) -> Maybe.Maybe Element.Length"
+            },
+            {
+                "name": "width",
+                "comment": " ",
+                "type": "Element.Length -> Hatchinq.Attribute.Attribute v"
+            },
+            {
+                "name": "withAttributes",
+                "comment": " ",
+                "type": "List.List (Hatchinq.Attribute.Attribute internal) -> (List.List (Hatchinq.Attribute.Attribute internal) -> view -> Element.Element msg) -> List.List (Hatchinq.Attribute.Attribute internal) -> view -> Element.Element msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Hatchinq.Button",
+        "comment": "\n\n\n# Exposed\n\n@docs Config, View, configure, contained, outlined, text\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " ",
+                "args": [],
+                "type": "{ theme : Hatchinq.Theme.Theme }"
+            },
+            {
+                "name": "View",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ label : String.String, onPress : Maybe.Maybe msg }"
+            }
+        ],
+        "values": [
+            {
+                "name": "configure",
+                "comment": " ",
+                "type": "Hatchinq.Button.Config -> List.List (Hatchinq.Attribute.Attribute (Hatchinq.Button.InternalConfig msg)) -> Hatchinq.Button.View msg -> Element.Element msg"
+            },
+            {
+                "name": "contained",
+                "comment": " ",
+                "type": "Hatchinq.Attribute.Attribute (Hatchinq.Button.InternalConfig msg)"
+            },
+            {
+                "name": "outlined",
+                "comment": " ",
+                "type": "Hatchinq.Attribute.Attribute (Hatchinq.Button.InternalConfig msg)"
+            },
+            {
+                "name": "text",
+                "comment": " ",
+                "type": "Hatchinq.Attribute.Attribute (Hatchinq.Button.InternalConfig msg)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Hatchinq.Card",
+        "comment": "\n\n\n# Exposed\n\n@docs Config, Layout, Message, State, Thumbnail, Title, View, configure, expandable, init, layout, update\n\n",
+        "unions": [
+            {
+                "name": "Layout",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "MediaTop",
+                        []
+                    ],
+                    [
+                        "MediaCenter",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Message",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "cases": [
+                    [
+                        "ToggleExpanded",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Thumbnail",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Icon",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Image",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ theme : Hatchinq.Theme.Theme, lift : Hatchinq.Card.Message msg -> msg }"
+            },
+            {
+                "name": "State",
+                "comment": " ",
+                "args": [],
+                "type": "{ contentExpanded : Basics.Bool }"
+            },
+            {
+                "name": "Title",
+                "comment": " ",
+                "args": [],
+                "type": "{ head : String.String, subHead : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "View",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ media : Element.Element msg, titles : Hatchinq.Card.Title, thumbnail : Hatchinq.Card.Thumbnail, content : Element.Element msg, actions : List.List ( String.String, msg ), state : Hatchinq.Card.State }"
+            }
+        ],
+        "values": [
+            {
+                "name": "configure",
+                "comment": " ",
+                "type": "Hatchinq.Card.Config msg -> List.List (Hatchinq.Attribute.Attribute Hatchinq.Card.InternalConfig) -> Hatchinq.Card.View msg -> Element.Element msg"
+            },
+            {
+                "name": "expandable",
+                "comment": " ",
+                "type": "Hatchinq.Attribute.Attribute Hatchinq.Card.InternalConfig"
+            },
+            {
+                "name": "init",
+                "comment": " ",
+                "type": "Hatchinq.Card.State"
+            },
+            {
+                "name": "layout",
+                "comment": " ",
+                "type": "Hatchinq.Card.Layout -> Hatchinq.Attribute.Attribute Hatchinq.Card.InternalConfig"
+            },
+            {
+                "name": "update",
+                "comment": " ",
+                "type": "(Hatchinq.Card.Message msg -> msg) -> Hatchinq.Card.Message msg -> Hatchinq.Card.State -> ( Hatchinq.Card.State, Platform.Cmd.Cmd msg )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Hatchinq.Checkbox",
+        "comment": "\n\n\n# Exposed\n\n@docs Config, configure, stopPropagation\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " ",
+                "args": [],
+                "type": "{ theme : Hatchinq.Theme.Theme }"
+            }
+        ],
+        "values": [
+            {
+                "name": "configure",
+                "comment": " ",
+                "type": "Hatchinq.Checkbox.Config -> List.List (Hatchinq.Attribute.Attribute Hatchinq.Checkbox.InternalConfig) -> Hatchinq.Checkbox.View msg -> Element.Element msg"
+            },
+            {
+                "name": "stopPropagation",
+                "comment": " ",
+                "type": "Hatchinq.Attribute.Attribute Hatchinq.Checkbox.InternalConfig"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Hatchinq.Chip",
+        "comment": "\n\n\n# Exposed\n\n@docs Config, configure, withError, coloring, icon, maxWidth\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " ",
+                "args": [],
+                "type": "{ theme : Hatchinq.Theme.Theme }"
+            }
+        ],
+        "values": [
+            {
+                "name": "coloring",
+                "comment": " ",
+                "type": "(item -> Element.Color) -> Hatchinq.Attribute.Attribute (Hatchinq.Chip.InternalConfig item msg)"
+            },
+            {
+                "name": "configure",
+                "comment": " ",
+                "type": "Hatchinq.Chip.Config -> List.List (Hatchinq.Attribute.Attribute (Hatchinq.Chip.InternalConfig item msg)) -> Hatchinq.Chip.View item msg -> Element.Element msg"
+            },
+            {
+                "name": "icon",
+                "comment": " ",
+                "type": "Element.Element msg -> Hatchinq.Attribute.Attribute (Hatchinq.Chip.InternalConfig item msg)"
+            },
+            {
+                "name": "maxWidth",
+                "comment": " ",
+                "type": "Basics.Int -> Hatchinq.Attribute.Attribute (Hatchinq.Chip.InternalConfig item msg)"
+            },
+            {
+                "name": "withError",
+                "comment": " ",
+                "type": "Basics.Bool -> Hatchinq.Attribute.Attribute (Hatchinq.Chip.InternalConfig item msg)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Hatchinq.Color",
+        "comment": "\n\n\n# Exposed\n\n@docs Color, alpha, blue, green, isBrighter, isDarker, red, rgb, rgba, toElement, withAlpha, textColor\n\n",
+        "unions": [
+            {
+                "name": "Color",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "alpha",
+                "comment": " ",
+                "type": "Hatchinq.Color.Color -> Basics.Float"
+            },
+            {
+                "name": "blue",
+                "comment": " ",
+                "type": "Hatchinq.Color.Color -> Basics.Int"
+            },
+            {
+                "name": "green",
+                "comment": " ",
+                "type": "Hatchinq.Color.Color -> Basics.Int"
+            },
+            {
+                "name": "isBrighter",
+                "comment": " ",
+                "type": "Hatchinq.Color.Color -> Hatchinq.Color.Color -> Basics.Bool"
+            },
+            {
+                "name": "isDarker",
+                "comment": " ",
+                "type": "Hatchinq.Color.Color -> Hatchinq.Color.Color -> Basics.Bool"
+            },
+            {
+                "name": "red",
+                "comment": " ",
+                "type": "Hatchinq.Color.Color -> Basics.Int"
+            },
+            {
+                "name": "rgb",
+                "comment": " ",
+                "type": "Basics.Int -> Basics.Int -> Basics.Int -> Hatchinq.Color.Color"
+            },
+            {
+                "name": "rgba",
+                "comment": " ",
+                "type": "Basics.Int -> Basics.Int -> Basics.Int -> Basics.Float -> Hatchinq.Color.Color"
+            },
+            {
+                "name": "textColor",
+                "comment": " ",
+                "type": "Hatchinq.Color.Color -> Hatchinq.Color.Color"
+            },
+            {
+                "name": "toElement",
+                "comment": " ",
+                "type": "Hatchinq.Color.Color -> Element.Color"
+            },
+            {
+                "name": "withAlpha",
+                "comment": " ",
+                "type": "Basics.Float -> Hatchinq.Color.Color -> Hatchinq.Color.Color"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Hatchinq.DataTable",
+        "comment": "\n\n\n# Exposed\n\n@docs Config, InfiniteView, LoadingDirection, Message, State, View\n@docs column, configure, expansion, infinite, init, lightenOrDarkenOnHover, nonScrollable, plain, rowColor, selection, sortableColumn, externalSortableColumn, update, calculateRowHeight, onClick, selectable, onMouseEnter, onMouseExit\n\n",
+        "unions": [
+            {
+                "name": "LoadingDirection",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Up",
+                        []
+                    ],
+                    [
+                        "Down",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Message",
+                "comment": " ",
+                "args": [
+                    "item",
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " ",
+                "args": [
+                    "item",
+                    "msg"
+                ],
+                "type": "{ theme : Hatchinq.Theme.Theme, lift : Hatchinq.DataTable.Message item msg -> msg }"
+            },
+            {
+                "name": "InfiniteView",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ loadingTop : Maybe.Maybe Basics.Int, loadingBottom : Maybe.Maybe Basics.Int, loadExtraItems : Hatchinq.DataTable.LoadingDirection -> Maybe.Maybe { loadCount : Basics.Int, excessCount : Basics.Int, loadMsg : msg } }"
+            },
+            {
+                "name": "State",
+                "comment": " ",
+                "args": [
+                    "item"
+                ],
+                "type": "{ hoveredHeader : Maybe.Maybe Basics.Int, sort : Hatchinq.DataTable.Sort item, scrollPos : Hatchinq.DataTable.ScrollPos, firstVisible : Maybe.Maybe Basics.Int, lastVisible : Maybe.Maybe Basics.Int, rowHeights : Dict.Dict String.String Basics.Int, selectedItem : Maybe.Maybe item, hoveredItem : Maybe.Maybe item }"
+            },
+            {
+                "name": "View",
+                "comment": " ",
+                "args": [
+                    "item",
+                    "msg"
+                ],
+                "type": "{ columns : List.List (Hatchinq.DataTable.Column item msg), items : List.List item, state : Hatchinq.DataTable.State item }"
+            }
+        ],
+        "values": [
+            {
+                "name": "calculateRowHeight",
+                "comment": " Use this to inform the table that the height of a row has changed\n",
+                "type": "Basics.Int -> String.String -> Platform.Cmd.Cmd (Hatchinq.DataTable.Message item msg)"
+            },
+            {
+                "name": "column",
+                "comment": " ",
+                "type": "Element.Element msg -> Element.Length -> (Basics.Int -> item -> Element.Element msg) -> Hatchinq.DataTable.Column item msg"
+            },
+            {
+                "name": "configure",
+                "comment": " ",
+                "type": "Hatchinq.DataTable.Config item msg -> List.List (Hatchinq.Attribute.Attribute (Hatchinq.DataTable.InternalConfig item msg)) -> Hatchinq.DataTable.View item msg -> Element.Element msg"
+            },
+            {
+                "name": "expansion",
+                "comment": " ",
+                "type": "(item -> Basics.Bool) -> (item -> Basics.Bool -> msg) -> (item -> Element.Element msg) -> Hatchinq.Attribute.Attribute (Hatchinq.DataTable.InternalConfig item msg)"
+            },
+            {
+                "name": "externalSortableColumn",
+                "comment": " ",
+                "type": "Element.Element msg -> Element.Length -> (Basics.Int -> item -> Element.Element msg) -> (Basics.Int -> Maybe.Maybe Basics.Bool -> msg) -> Hatchinq.DataTable.Column item msg"
+            },
+            {
+                "name": "infinite",
+                "comment": " ",
+                "type": "Hatchinq.DataTable.InfiniteView msg -> Hatchinq.Attribute.Attribute (Hatchinq.DataTable.InternalConfig item msg)"
+            },
+            {
+                "name": "init",
+                "comment": " ",
+                "type": "Hatchinq.DataTable.State item"
+            },
+            {
+                "name": "lightenOrDarkenOnHover",
+                "comment": " ",
+                "type": "Basics.Float -> Hatchinq.Attribute.Attribute (Hatchinq.DataTable.InternalConfig item msg)"
+            },
+            {
+                "name": "nonScrollable",
+                "comment": " ",
+                "type": "Hatchinq.Attribute.Attribute (Hatchinq.DataTable.InternalConfig item msg)"
+            },
+            {
+                "name": "onClick",
+                "comment": " ",
+                "type": "(item -> msg) -> Hatchinq.Attribute.Attribute (Hatchinq.DataTable.InternalConfig item msg)"
+            },
+            {
+                "name": "onMouseEnter",
+                "comment": " ",
+                "type": "(item -> msg) -> Hatchinq.Attribute.Attribute (Hatchinq.DataTable.InternalConfig item msg)"
+            },
+            {
+                "name": "onMouseExit",
+                "comment": " ",
+                "type": "(item -> msg) -> Hatchinq.Attribute.Attribute (Hatchinq.DataTable.InternalConfig item msg)"
+            },
+            {
+                "name": "plain",
+                "comment": " ",
+                "type": "Hatchinq.Attribute.Attribute (Hatchinq.DataTable.InternalConfig item msg)"
+            },
+            {
+                "name": "rowColor",
+                "comment": " ",
+                "type": "(item -> Maybe.Maybe Element.Color) -> Hatchinq.Attribute.Attribute (Hatchinq.DataTable.InternalConfig item msg)"
+            },
+            {
+                "name": "selectable",
+                "comment": " ",
+                "type": "Hatchinq.Attribute.Attribute (Hatchinq.DataTable.InternalConfig item msg)"
+            },
+            {
+                "name": "selection",
+                "comment": " ",
+                "type": "(item -> Basics.Bool) -> (item -> Basics.Bool -> msg) -> (Basics.Bool -> msg) -> Hatchinq.Attribute.Attribute (Hatchinq.DataTable.InternalConfig item msg)"
+            },
+            {
+                "name": "sortableColumn",
+                "comment": " ",
+                "type": "Element.Element msg -> Element.Length -> (Basics.Int -> item -> Element.Element msg) -> (List.List item -> List.List item) -> Hatchinq.DataTable.Column item msg"
+            },
+            {
+                "name": "update",
+                "comment": " ",
+                "type": "Hatchinq.DataTable.Message item msg -> Hatchinq.DataTable.State item -> ( Hatchinq.DataTable.State item, Platform.Cmd.Cmd msg )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Hatchinq.Divider",
+        "comment": "\n\n\n# Exposed\n\n@docs Config, configure, view, withColor\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " ",
+                "args": [],
+                "type": "{ theme : Hatchinq.Theme.Theme }"
+            }
+        ],
+        "values": [
+            {
+                "name": "configure",
+                "comment": " ",
+                "type": "Hatchinq.Divider.Config -> List.List (Hatchinq.Attribute.Attribute Hatchinq.Divider.InternalConfig) -> Element.Element msg"
+            },
+            {
+                "name": "view",
+                "comment": " ",
+                "type": "Hatchinq.Divider.Config -> List.List (Hatchinq.Attribute.Attribute Hatchinq.Divider.InternalConfig) -> Element.Element msg"
+            },
+            {
+                "name": "withColor",
+                "comment": " ",
+                "type": "Element.Color -> Hatchinq.Attribute.Attribute Hatchinq.Divider.InternalConfig"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Hatchinq.DropDown",
+        "comment": "\n\n\n# Exposed\n\n@docs Config, Message, State, configure, dropDownCount, filled, init, label, outlined, searchable, update\n\n",
+        "unions": [
+            {
+                "name": "Message",
+                "comment": " ",
+                "args": [
+                    "item",
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " ",
+                "args": [
+                    "item",
+                    "msg"
+                ],
+                "type": "{ theme : Hatchinq.Theme.Theme, lift : Hatchinq.DropDown.Message item msg -> msg }"
+            },
+            {
+                "name": "State",
+                "comment": " ",
+                "args": [],
+                "type": "{ uiState : Hatchinq.DropDown.UiState, focusedItem : Maybe.Maybe Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "configure",
+                "comment": " ",
+                "type": "Hatchinq.DropDown.Config item msg -> List.List (Hatchinq.Attribute.Attribute Hatchinq.DropDown.InternalConfig) -> Hatchinq.DropDown.View item msg -> Element.Element msg"
+            },
+            {
+                "name": "dropDownCount",
+                "comment": " ",
+                "type": "Basics.Int -> Hatchinq.Attribute.Attribute Hatchinq.DropDown.InternalConfig"
+            },
+            {
+                "name": "filled",
+                "comment": " ",
+                "type": "Hatchinq.Attribute.Attribute Hatchinq.DropDown.InternalConfig"
+            },
+            {
+                "name": "init",
+                "comment": " ",
+                "type": "Hatchinq.DropDown.State"
+            },
+            {
+                "name": "label",
+                "comment": " ",
+                "type": "String.String -> Hatchinq.Attribute.Attribute Hatchinq.DropDown.InternalConfig"
+            },
+            {
+                "name": "outlined",
+                "comment": " ",
+                "type": "Hatchinq.Attribute.Attribute Hatchinq.DropDown.InternalConfig"
+            },
+            {
+                "name": "searchable",
+                "comment": " ",
+                "type": "Hatchinq.Attribute.Attribute Hatchinq.DropDown.InternalConfig"
+            },
+            {
+                "name": "update",
+                "comment": " ",
+                "type": "Hatchinq.DropDown.Message item msg -> Hatchinq.DropDown.State -> ( Hatchinq.DropDown.State, Platform.Cmd.Cmd msg )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Hatchinq.Examples",
+        "comment": " Exposed\n\n@docs main\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "main",
+                "comment": " ",
+                "type": "Platform.Program {} Hatchinq.Examples.Model Hatchinq.Examples.Msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Hatchinq.IconButton",
+        "comment": "\n\n\n# Exposed\n\n@docs Config, View, configure, filled, stopPropagation, withTextColor, white\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " ",
+                "args": [],
+                "type": "{ theme : Hatchinq.Theme.Theme }"
+            },
+            {
+                "name": "View",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ icon : String.String, onPress : Maybe.Maybe msg }"
+            }
+        ],
+        "values": [
+            {
+                "name": "configure",
+                "comment": " ",
+                "type": "Hatchinq.IconButton.Config -> List.List (Hatchinq.Attribute.Attribute Hatchinq.IconButton.InternalConfig) -> Hatchinq.IconButton.View msg -> Element.Element msg"
+            },
+            {
+                "name": "filled",
+                "comment": " ",
+                "type": "Hatchinq.Attribute.Attribute Hatchinq.IconButton.InternalConfig"
+            },
+            {
+                "name": "stopPropagation",
+                "comment": " ",
+                "type": "Hatchinq.Attribute.Attribute Hatchinq.IconButton.InternalConfig"
+            },
+            {
+                "name": "white",
+                "comment": " ",
+                "type": "Hatchinq.Attribute.Attribute Hatchinq.IconButton.InternalConfig"
+            },
+            {
+                "name": "withTextColor",
+                "comment": " ",
+                "type": "Element.Color -> Hatchinq.Attribute.Attribute Hatchinq.IconButton.InternalConfig"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Hatchinq.List",
+        "comment": "\n\n\n# Exposed\n\n@docs Config, Message, State, View, configure, control, imageSrc, init, itemsCount, secondaryText, update\n\n",
+        "unions": [
+            {
+                "name": "Message",
+                "comment": " ",
+                "args": [
+                    "item",
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " ",
+                "args": [
+                    "item",
+                    "msg"
+                ],
+                "type": "{ theme : Hatchinq.Theme.Theme, lift : Hatchinq.List.Message item msg -> msg }"
+            },
+            {
+                "name": "State",
+                "comment": " ",
+                "args": [
+                    "item"
+                ],
+                "type": "{ id : Maybe.Maybe String.String, selected : Maybe.Maybe item }"
+            },
+            {
+                "name": "View",
+                "comment": " ",
+                "args": [
+                    "item",
+                    "msg"
+                ],
+                "type": "{ items : List.List item, toPrimaryText : item -> String.String, onSelect : Maybe.Maybe (item -> msg), activated : Maybe.Maybe item, state : Hatchinq.List.State item }"
+            }
+        ],
+        "values": [
+            {
+                "name": "configure",
+                "comment": " ",
+                "type": "Hatchinq.List.Config item msg -> List.List (Hatchinq.Attribute.Attribute (Hatchinq.List.InternalConfig item msg)) -> Hatchinq.List.View item msg -> Element.Element msg"
+            },
+            {
+                "name": "control",
+                "comment": " ",
+                "type": "(item -> Element.Element msg) -> Hatchinq.Attribute.Attribute (Hatchinq.List.InternalConfig item msg)"
+            },
+            {
+                "name": "imageSrc",
+                "comment": " ",
+                "type": "(item -> String.String) -> Hatchinq.Attribute.Attribute (Hatchinq.List.InternalConfig item msg)"
+            },
+            {
+                "name": "init",
+                "comment": " ",
+                "type": "Hatchinq.List.State item"
+            },
+            {
+                "name": "itemsCount",
+                "comment": " ",
+                "type": "Basics.Int -> Hatchinq.Attribute.Attribute (Hatchinq.List.InternalConfig item msg)"
+            },
+            {
+                "name": "secondaryText",
+                "comment": " ",
+                "type": "(item -> String.String) -> Hatchinq.Attribute.Attribute (Hatchinq.List.InternalConfig item msg)"
+            },
+            {
+                "name": "update",
+                "comment": " ",
+                "type": "Hatchinq.List.Message item msg -> Hatchinq.List.State item -> ( Hatchinq.List.State item, Platform.Cmd.Cmd msg )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Hatchinq.Menu",
+        "comment": "\n\n\n# Exposed\n\n@docs MenuItem, Message, State, View, configure, init, subscriptions, update\n\n",
+        "unions": [
+            {
+                "name": "MenuItem",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "cases": [
+                    [
+                        "TextItem",
+                        [
+                            "String.String",
+                            "msg"
+                        ]
+                    ],
+                    [
+                        "IconItem",
+                        [
+                            "String.String",
+                            "String.String",
+                            "msg"
+                        ]
+                    ],
+                    [
+                        "DividerItem",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Message",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "cases": [
+                    [
+                        "OpenMenu",
+                        []
+                    ],
+                    [
+                        "CloseMenu",
+                        [
+                            "Maybe.Maybe msg"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "State",
+                "comment": " ",
+                "args": [],
+                "type": "{ isOpen : Basics.Bool }"
+            },
+            {
+                "name": "View",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ id : String.String, items : List.List (Hatchinq.Menu.MenuItem msg), state : Hatchinq.Menu.State }"
+            }
+        ],
+        "values": [
+            {
+                "name": "configure",
+                "comment": " ",
+                "type": "Hatchinq.Menu.Config msg -> List.List (Hatchinq.Attribute.Attribute msg) -> Hatchinq.Menu.View msg -> Element.Element msg"
+            },
+            {
+                "name": "init",
+                "comment": " ",
+                "type": "Hatchinq.Menu.State"
+            },
+            {
+                "name": "subscriptions",
+                "comment": " ",
+                "type": "String.String -> Hatchinq.Menu.State -> (Hatchinq.Menu.Message msg -> msg) -> Platform.Sub.Sub msg"
+            },
+            {
+                "name": "update",
+                "comment": " ",
+                "type": "Hatchinq.Menu.Message msg -> Hatchinq.Menu.State -> ( Hatchinq.Menu.State, Platform.Cmd.Cmd msg )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Hatchinq.Paginator",
+        "comment": "\n\n\n# Exposed\n\n@docs Config, View, configure\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " ",
+                "args": [],
+                "type": "{ theme : Hatchinq.Theme.Theme }"
+            },
+            {
+                "name": "View",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ rowsPerPage : Basics.Int, offset : Basics.Int, total : Basics.Int, nextPage : msg, previousPage : msg }"
+            }
+        ],
+        "values": [
+            {
+                "name": "configure",
+                "comment": " ",
+                "type": "Hatchinq.Paginator.Config -> List.List (Hatchinq.Attribute.Attribute v) -> Hatchinq.Paginator.View msg -> Element.Element msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Hatchinq.ProgressIndicator",
+        "comment": "\n\n\n# Exposed\n\n@docs Config, Progress, GrowthDirection, circular, configure, linear, startDelaySeconds, visibility\n\n",
+        "unions": [
+            {
+                "name": "GrowthDirection",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "TopDown",
+                        []
+                    ],
+                    [
+                        "BottomUp",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Progress",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Indeterminate",
+                        []
+                    ],
+                    [
+                        "Determinate",
+                        [
+                            "Basics.Float"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " ",
+                "args": [],
+                "type": "{ theme : Hatchinq.Theme.Theme }"
+            }
+        ],
+        "values": [
+            {
+                "name": "circular",
+                "comment": " ",
+                "type": "Hatchinq.Attribute.Attribute Hatchinq.ProgressIndicator.InternalConfig"
+            },
+            {
+                "name": "configure",
+                "comment": " ",
+                "type": "Hatchinq.ProgressIndicator.Config -> List.List (Hatchinq.Attribute.Attribute Hatchinq.ProgressIndicator.InternalConfig) -> Hatchinq.ProgressIndicator.View -> Element.Element msg"
+            },
+            {
+                "name": "linear",
+                "comment": " ",
+                "type": "Hatchinq.ProgressIndicator.GrowthDirection -> Hatchinq.Attribute.Attribute Hatchinq.ProgressIndicator.InternalConfig"
+            },
+            {
+                "name": "startDelaySeconds",
+                "comment": " ",
+                "type": "Basics.Float -> Hatchinq.Attribute.Attribute Hatchinq.ProgressIndicator.InternalConfig"
+            },
+            {
+                "name": "visibility",
+                "comment": " ",
+                "type": "Basics.Bool -> Hatchinq.Attribute.Attribute Hatchinq.ProgressIndicator.InternalConfig"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Hatchinq.RadioButton",
+        "comment": "\n\n\n# Exposed\n\n@docs Config, configure, stopPropagation\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " ",
+                "args": [],
+                "type": "{ theme : Hatchinq.Theme.Theme }"
+            }
+        ],
+        "values": [
+            {
+                "name": "configure",
+                "comment": " ",
+                "type": "Hatchinq.RadioButton.Config -> List.List (Hatchinq.Attribute.Attribute Hatchinq.RadioButton.InternalConfig) -> Hatchinq.RadioButton.View msg -> Element.Element msg"
+            },
+            {
+                "name": "stopPropagation",
+                "comment": " ",
+                "type": "Hatchinq.Attribute.Attribute Hatchinq.RadioButton.InternalConfig"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Hatchinq.RoundImage",
+        "comment": "\n\n\n# Exposed\n\n@docs roundImage\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "roundImage",
+                "comment": " ",
+                "type": "Basics.Int -> Basics.Int -> List.List (Element.Attribute msg) -> String.String -> Element.Element msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Hatchinq.SidePanel",
+        "comment": "\n\n\n# Exposed\n\n@docs Config, SidePanelOrientation, State, View, configure, init, minWidth, subscriptions\n\n",
+        "unions": [
+            {
+                "name": "SidePanelOrientation",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "LeftHand",
+                        []
+                    ],
+                    [
+                        "RightHand",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ theme : Hatchinq.Theme.Theme, lift : Hatchinq.SidePanel.State -> msg, orientation : Hatchinq.SidePanel.SidePanelOrientation, resizeMaxWidth : Maybe.Maybe Basics.Int, initialWidth : Basics.Int }"
+            },
+            {
+                "name": "State",
+                "comment": " ",
+                "args": [],
+                "type": "{ openedContainerId : Basics.Int, containerWidth : Basics.Int, containerWidths : Dict.Dict Basics.Int Basics.Int, beingDragged : Basics.Bool, windowSize : Hatchinq.SidePanel.WindowSize }"
+            },
+            {
+                "name": "View",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ buttons : List.List (Hatchinq.SidePanel.SidePanelButton msg), state : Hatchinq.SidePanel.State, topPageOffset : Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "configure",
+                "comment": " ",
+                "type": "Hatchinq.SidePanel.Config msg -> List.List (Hatchinq.Attribute.Attribute Hatchinq.SidePanel.InternalConfig) -> Hatchinq.SidePanel.View msg -> Element.Element msg"
+            },
+            {
+                "name": "init",
+                "comment": " ",
+                "type": "Basics.Int -> Hatchinq.SidePanel.Config msg -> ( Hatchinq.SidePanel.State, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "minWidth",
+                "comment": " ",
+                "type": "Basics.Int -> Hatchinq.Attribute.Attribute Hatchinq.SidePanel.InternalConfig"
+            },
+            {
+                "name": "subscriptions",
+                "comment": " ",
+                "type": "Hatchinq.SidePanel.Config msg -> Hatchinq.SidePanel.State -> Platform.Sub.Sub msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Hatchinq.Snackbar",
+        "comment": "\n\n\n# Exposed\n\n@docs Config, Content, Message, State, View, alert, configure, dismissible, maximumWidth, maximumActionButtonWidth, init, update, icon, fontColor, backgroundColor\n\n",
+        "unions": [
+            {
+                "name": "Content",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "cases": [
+                    [
+                        "Plain",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "WithAction",
+                        [
+                            "String.String",
+                            "String.String",
+                            "msg"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Message",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ theme : Hatchinq.Theme.Theme, lift : Hatchinq.Snackbar.Message msg -> msg }"
+            },
+            {
+                "name": "State",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ values : List.List (Hatchinq.Snackbar.Content msg), currentValue : Maybe.Maybe (Hatchinq.Snackbar.Content msg), id : Basics.Int, isOpen : Basics.Bool }"
+            },
+            {
+                "name": "View",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ state : Hatchinq.Snackbar.State msg }"
+            }
+        ],
+        "values": [
+            {
+                "name": "alert",
+                "comment": " ",
+                "type": "(Hatchinq.Snackbar.Message msg -> msg) -> Hatchinq.Snackbar.Content msg -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "backgroundColor",
+                "comment": " ",
+                "type": "Element.Color -> Hatchinq.Attribute.Attribute Hatchinq.Snackbar.InternalConfig"
+            },
+            {
+                "name": "configure",
+                "comment": " ",
+                "type": "Hatchinq.Snackbar.Config msg -> List.List (Hatchinq.Attribute.Attribute Hatchinq.Snackbar.InternalConfig) -> Hatchinq.Snackbar.View msg -> Element.Element msg"
+            },
+            {
+                "name": "dismissible",
+                "comment": " ",
+                "type": "Hatchinq.Attribute.Attribute Hatchinq.Snackbar.InternalConfig"
+            },
+            {
+                "name": "fontColor",
+                "comment": " ",
+                "type": "Element.Color -> Hatchinq.Attribute.Attribute Hatchinq.Snackbar.InternalConfig"
+            },
+            {
+                "name": "icon",
+                "comment": " ",
+                "type": "String.String -> Hatchinq.Attribute.Attribute Hatchinq.Snackbar.InternalConfig"
+            },
+            {
+                "name": "init",
+                "comment": " ",
+                "type": "Hatchinq.Snackbar.State msg"
+            },
+            {
+                "name": "maximumActionButtonWidth",
+                "comment": " ",
+                "type": "Basics.Int -> Hatchinq.Attribute.Attribute Hatchinq.Snackbar.InternalConfig"
+            },
+            {
+                "name": "maximumWidth",
+                "comment": " ",
+                "type": "Basics.Int -> Hatchinq.Attribute.Attribute Hatchinq.Snackbar.InternalConfig"
+            },
+            {
+                "name": "update",
+                "comment": " ",
+                "type": "(Hatchinq.Snackbar.Message msg -> msg) -> Hatchinq.Snackbar.Message msg -> Hatchinq.Snackbar.State msg -> ( Hatchinq.Snackbar.State msg, Platform.Cmd.Cmd msg )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Hatchinq.TabBar",
+        "comment": "\n\n\n# Exposed\n\n@docs Config, Message, State, TabButtons, View, configure, init, scrollable, update\n\n",
+        "unions": [
+            {
+                "name": "Message",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "TabButtons",
+                "comment": " ",
+                "args": [
+                    "tab"
+                ],
+                "cases": [
+                    [
+                        "TextOnly",
+                        [
+                            "List.List ( String.String, tab )"
+                        ]
+                    ],
+                    [
+                        "IconOnly",
+                        [
+                            "List.List ( String.String, tab )"
+                        ]
+                    ],
+                    [
+                        "IconAndText",
+                        [
+                            "List.List ( String.String, String.String, tab )"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ theme : Hatchinq.Theme.Theme, lift : Hatchinq.TabBar.Message msg -> msg }"
+            },
+            {
+                "name": "State",
+                "comment": " ",
+                "args": [],
+                "type": "{ focused : Basics.Int }"
+            },
+            {
+                "name": "View",
+                "comment": " ",
+                "args": [
+                    "tab",
+                    "msg"
+                ],
+                "type": "{ state : Hatchinq.TabBar.State, tabButtons : Hatchinq.TabBar.TabButtons tab, selectedTab : tab, onTabSelect : tab -> msg }"
+            }
+        ],
+        "values": [
+            {
+                "name": "configure",
+                "comment": " ",
+                "type": "Hatchinq.TabBar.Config msg -> List.List (Hatchinq.Attribute.Attribute Hatchinq.TabBar.InternalConfig) -> Hatchinq.TabBar.View tab msg -> Element.Element msg"
+            },
+            {
+                "name": "init",
+                "comment": " ",
+                "type": "Hatchinq.TabBar.State"
+            },
+            {
+                "name": "scrollable",
+                "comment": " ",
+                "type": "Hatchinq.Attribute.Attribute Hatchinq.TabBar.InternalConfig"
+            },
+            {
+                "name": "update",
+                "comment": " ",
+                "type": "(Hatchinq.TabBar.Message msg -> msg) -> Hatchinq.TabBar.Message msg -> Hatchinq.TabBar.State -> ( Hatchinq.TabBar.State, Platform.Cmd.Cmd msg )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Hatchinq.TextField",
+        "comment": "\n\n\n# Exposed\n\n@docs Config, Message, State, View, configure, init, multiline, onFocus, onLoseFocus, password, update, withError\n\n",
+        "unions": [
+            {
+                "name": "Message",
+                "comment": " ",
+                "args": [
+                    "msg",
+                    "id"
+                ],
+                "cases": []
+            },
+            {
+                "name": "State",
+                "comment": " ",
+                "args": [
+                    "id"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " ",
+                "args": [
+                    "id",
+                    "msg"
+                ],
+                "type": "{ theme : Hatchinq.Theme.Theme, lift : Hatchinq.TextField.Message msg id -> msg }"
+            },
+            {
+                "name": "View",
+                "comment": " ",
+                "args": [
+                    "id",
+                    "msg"
+                ],
+                "type": "{ id : id, label : String.String, value : String.String, state : Hatchinq.TextField.State id, onChange : Maybe.Maybe (String.String -> msg), onKeyDown : Maybe.Maybe (Json.Decode.Decoder msg) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "configure",
+                "comment": " ",
+                "type": "Hatchinq.TextField.Config id msg -> List.List (Hatchinq.Attribute.Attribute (Hatchinq.TextField.InternalConfig msg)) -> Hatchinq.TextField.View id msg -> Element.Element msg"
+            },
+            {
+                "name": "init",
+                "comment": " ",
+                "type": "Hatchinq.TextField.State id"
+            },
+            {
+                "name": "multiline",
+                "comment": " ",
+                "type": "Hatchinq.Attribute.Attribute (Hatchinq.TextField.InternalConfig msg)"
+            },
+            {
+                "name": "onFocus",
+                "comment": " ",
+                "type": "msg -> Hatchinq.Attribute.Attribute (Hatchinq.TextField.InternalConfig msg)"
+            },
+            {
+                "name": "onLoseFocus",
+                "comment": " ",
+                "type": "msg -> Hatchinq.Attribute.Attribute (Hatchinq.TextField.InternalConfig msg)"
+            },
+            {
+                "name": "password",
+                "comment": " ",
+                "type": "Hatchinq.Attribute.Attribute (Hatchinq.TextField.InternalConfig msg)"
+            },
+            {
+                "name": "update",
+                "comment": " ",
+                "type": "Hatchinq.TextField.Message msg id -> Hatchinq.TextField.State id -> ( Hatchinq.TextField.State id, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "withError",
+                "comment": " ",
+                "type": "{ default : String.String, error : Maybe.Maybe String.String } -> Hatchinq.Attribute.Attribute (Hatchinq.TextField.InternalConfig msg)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Hatchinq.Theme",
+        "comment": "\n\n\n# Exposed\n\n@docs ColorTheme, ColorType, FontTheme, IconsResource, Theme\n@docs arrowTransition, textWithEllipsisCustomTooltip, black, default, dense, font, icon, lightenOrDarken, stylesheet, textWithEllipsis, transition, transparent, white, withColors, withIcons\n\n",
+        "unions": [
+            {
+                "name": "IconsResource",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "External",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Css",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "ColorTheme",
+                "comment": " ",
+                "args": [],
+                "type": "{ primary : Hatchinq.Theme.ColorType, secondary : Hatchinq.Theme.ColorType, gray : Hatchinq.Theme.ColorType }"
+            },
+            {
+                "name": "ColorType",
+                "comment": " ",
+                "args": [],
+                "type": "{ original : Hatchinq.Color.Color, color : Element.Color, textColor : Element.Color, lightest : Element.Color, lighter : Element.Color, light : Element.Color, dark : Element.Color, withAlpha : Basics.Float -> Element.Color }"
+            },
+            {
+                "name": "FontTheme",
+                "comment": " ",
+                "args": [],
+                "type": "{ main : Element.Font.Font, defaultSize : Basics.Int, smallSize : Basics.Int, smallerSize : Basics.Int, smallestSize : Basics.Int }"
+            },
+            {
+                "name": "Theme",
+                "comment": " ",
+                "args": [],
+                "type": "{ font : Hatchinq.Theme.FontTheme, colors : Hatchinq.Theme.ColorTheme, sizes : Hatchinq.Theme.Sizes, icons : Hatchinq.Theme.IconsResource }"
+            }
+        ],
+        "values": [
+            {
+                "name": "arrowTransition",
+                "comment": " ",
+                "type": "Html.Attribute msg"
+            },
+            {
+                "name": "black",
+                "comment": " ",
+                "type": "Element.Color"
+            },
+            {
+                "name": "default",
+                "comment": " ",
+                "type": "Hatchinq.Theme.Theme"
+            },
+            {
+                "name": "dense",
+                "comment": " ",
+                "type": "Hatchinq.Theme.Theme -> Hatchinq.Theme.Theme"
+            },
+            {
+                "name": "font",
+                "comment": " ",
+                "type": "Element.Font.Font"
+            },
+            {
+                "name": "icon",
+                "comment": " ",
+                "type": "String.String -> Element.Element msg"
+            },
+            {
+                "name": "lightenOrDarken",
+                "comment": " ",
+                "type": "Element.Color -> Basics.Float -> Element.Color"
+            },
+            {
+                "name": "stylesheet",
+                "comment": " ",
+                "type": "Hatchinq.Theme.Theme -> Element.Element msg"
+            },
+            {
+                "name": "textWithEllipsis",
+                "comment": " ",
+                "type": "String.String -> Element.Element msg"
+            },
+            {
+                "name": "textWithEllipsisCustomTooltip",
+                "comment": " ",
+                "type": "String.String -> String.String -> Element.Element msg"
+            },
+            {
+                "name": "transition",
+                "comment": " ",
+                "type": "Html.Attribute msg"
+            },
+            {
+                "name": "transparent",
+                "comment": " ",
+                "type": "Element.Color"
+            },
+            {
+                "name": "white",
+                "comment": " ",
+                "type": "Element.Color"
+            },
+            {
+                "name": "withColors",
+                "comment": " ",
+                "type": "Hatchinq.Color.Color -> Hatchinq.Color.Color -> Hatchinq.Theme.Theme -> Hatchinq.Theme.Theme"
+            },
+            {
+                "name": "withIcons",
+                "comment": " ",
+                "type": "Hatchinq.Theme.IconsResource -> Hatchinq.Theme.Theme -> Hatchinq.Theme.Theme"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Hatchinq.Tree",
+        "comment": "\n\n\n# Exposed\n\n@docs Config, Message, State, TreeNode, View, configure, expandableCollapsibleOnNodeClick, init, node, update\n\n",
+        "unions": [
+            {
+                "name": "Message",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "TreeNode",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ theme : Hatchinq.Theme.Theme, lift : Hatchinq.Tree.Message -> msg }"
+            },
+            {
+                "name": "State",
+                "comment": " ",
+                "args": [],
+                "type": "{ rootExpandedNode : Hatchinq.Tree.ExpandedNode }"
+            },
+            {
+                "name": "View",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ state : Hatchinq.Tree.State, data : List.List (Hatchinq.Tree.TreeNode msg) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "configure",
+                "comment": " ",
+                "type": "Hatchinq.Tree.Config msg -> List.List (Hatchinq.Attribute.Attribute Hatchinq.Tree.InternalConfig) -> Hatchinq.Tree.View msg -> Element.Element msg"
+            },
+            {
+                "name": "expandableCollapsibleOnNodeClick",
+                "comment": " ",
+                "type": "Hatchinq.Attribute.Attribute Hatchinq.Tree.InternalConfig"
+            },
+            {
+                "name": "init",
+                "comment": " ",
+                "type": "Hatchinq.Tree.State"
+            },
+            {
+                "name": "node",
+                "comment": " ",
+                "type": "{ element : Element.Element msg, onClick : msg, children : List.List (Hatchinq.Tree.TreeNode msg) } -> Hatchinq.Tree.TreeNode msg"
+            },
+            {
+                "name": "update",
+                "comment": " ",
+                "type": "Hatchinq.Tree.Message -> Hatchinq.Tree.State -> Hatchinq.Tree.State"
+            }
+        ],
+        "binops": []
+    }
+]

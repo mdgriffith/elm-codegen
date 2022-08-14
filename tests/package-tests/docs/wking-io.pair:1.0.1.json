@@ -1,0 +1,141 @@
+[
+    {
+        "name": "Pair",
+        "comment": " This library makes working with two different related types easier.\n\n\n# Definition\n\n@docs Pair\n\n\n# Constructor Functions\n\n@docs from, branch, branchWith\n\n\n# Extracting Functions\n\n@docs left, right, merge\n\n\n# Mapping Functions\n\n@docs map, andMap, map2, mapBoth, andMapBoth, mapBoth2, extend, modify, swap\n\n\n# Chaining Functions\n\n@docs andThen, andThenBoth\n\n\n# Traversable Functions\n\n@docs mapMaybe, unwrapMaybe, mapResult, unwrapResult, mapTask, unwrapTask\n\n\n# Boolean Functions\n\n@docs equals\n\n",
+        "unions": [
+            {
+                "name": "Pair",
+                "comment": " Represent two values that can computed in parallel. Similar to `Maybe` and `Result` it has a natural bias to the type on the right. However, it also includes functions like [`mapBoth`](Pair#mapBoth) to map functions to both types.\n\n    computeThenCombine :: Int -> Int\n    computeThenCombine int =\n        int\n            |> branch -- Split value into Pair\n            |> mapBoth ((+) 2) ((*) 4) -- Map both sides\n            |> merge (+) -- Combine both sides\n\n    computeThenCombine 2 -- > 12\n    computeThenCombine 3 -- > 17\n\n",
+                "args": [
+                    "a",
+                    "b"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "andMap",
+                "comment": " Apply a functions that is on the right side of a `Pair` to the right value of another `Pair`. This is how to build [`map2`](Pair#map2) and can be used to build `mapN` that can take as many `Pair`s as you want.\n\n    branch 0 (-)\n        |> andMap (from 4 8)\n        |> andMap (from 2 4)\n    -- > Pair 2 4\n\n",
+                "type": "Pair.Pair a b -> Pair.Pair c (b -> d) -> Pair.Pair a d"
+            },
+            {
+                "name": "andMapBoth",
+                "comment": " Apply functions that are on both sides of a `Pair` to the values of another `Pair`. This is how to build [`mapBoth2`](Pair#mapBoth2) and can be used to build `mapBothN` that can take as many `Pair`s as you want.\n\n    branch (+) (-)\n        |> andMapBoth (from 4 8)\n        |> andMapBoth (from 2 4\n     -- > Pair 6 4\n\n",
+                "type": "Pair.Pair a b -> Pair.Pair (a -> c) (b -> d) -> Pair.Pair c d"
+            },
+            {
+                "name": "andThen",
+                "comment": " Map over a `Pair` with a function that takes in the right value and returns a new `Pair`. The left value returned from the passed in function will replace the previous left value. If you want to have control over how the left value changes check out [`andThenBoth`](Pair#andThenBoth).\n\n    -- Reverse a string but save the original state\n    reverseSave : String -> Pair String String\n    reverseSave str =\n        from str (String.reverse str)\n\n    from \"Left\" \"Right\"\n        |> andThen reverseSave\n    -- > Pair \"Right\" \"thgiR\"\n\n",
+                "type": "(b -> Pair.Pair c d) -> Pair.Pair a b -> Pair.Pair c d"
+            },
+            {
+                "name": "andThenBoth",
+                "comment": " Map over a `Pair` with a function that takes in the left and right values and returns a new `Pair`.\n\n    -- Multiply two numbers and keep track of original values\n    multipleSave : Int -> Int -> Pair (List Int) Int\n    multiplySave a b =\n        from [ a, b ] (a * b)\n\n\n    from 5 8\n        |> andThenBoth multiplySave\n    -- > Pair [ 5, 8 ] 40\n\n",
+                "type": "(a -> b -> Pair.Pair c d) -> Pair.Pair a b -> Pair.Pair c d"
+            },
+            {
+                "name": "branch",
+                "comment": " Construct a `Pair` by splitting one value of any type.\n\n    branch [ \"Elm\" ]\n    -- > Pair [ \"Elm\" ] [ \"Elm\" ]\n\n",
+                "type": "a -> Pair.Pair a a"
+            },
+            {
+                "name": "branchWith",
+                "comment": " Construct a `Pair` by splitting one value of any type and mapping the passed in functions for each side. Think of this as composing [`branch`](Pair#branch) and [`mapBoth`](Pair#mapBoth).\n\n    branchWith String.reverse String.length \"Elm\"\n    -- > Pair \"mlE\" 3\n\n",
+                "type": "(a -> b) -> (a -> c) -> a -> Pair.Pair b c"
+            },
+            {
+                "name": "equals",
+                "comment": " Compare two `Pair` types for equality based on passed in predicate function.\n\n    -- Basic comparison function\n    basic : Int -> Int -> Int -> Int -> Bool\n    basic a1 b1 a2 b2 =\n        a1 == a2 && b1 == b2\n\n    equals basic (from 1 2) (from 1 2) -- > True\n    equals basic (from 1 2) (from 1 3) -- > False\n\n    -- Complex comparison function\n    complex : Int -> Int -> Int -> Int -> Bool\n    complex a1 b1 a2 b2 =\n        a1 * b1 && a2 / b2\n\n    equals complex (from 1 2) (from 4 2) -- > True\n    equals complex (from 1 2) (from 6 2) -- > False\n\n",
+                "type": "(a1 -> b1 -> a2 -> b2 -> Basics.Bool) -> Pair.Pair a1 b1 -> Pair.Pair a2 b2 -> Basics.Bool"
+            },
+            {
+                "name": "extend",
+                "comment": " Apply a function that will be passed both the left and right values of a `Pair` to transform the right side of that `Pair`.\n\n    branch 4\n        |> extend (+)\n    -- > Pair 4 8\n\n",
+                "type": "(a -> b -> c) -> Pair.Pair a b -> Pair.Pair a c"
+            },
+            {
+                "name": "from",
+                "comment": " Construct a `Pair` from two values of any type.\n\n    from [ \"Elm\" ] \"Is the best\"\n    -- > Pair [ \"Elm\" ] \"Is the best\"\n\n",
+                "type": "a -> b -> Pair.Pair a b"
+            },
+            {
+                "name": "left",
+                "comment": " Get the value on the left side of the `Pair`.\n\n    from 2 4\n        |> mapBoth ((+) 2) ((+) 2)\n        |> left\n    -- > 3\n\n",
+                "type": "Pair.Pair a b -> a"
+            },
+            {
+                "name": "map",
+                "comment": " Apply a function to the right side of a `Pair`.\n\n    branch 4\n        |> map sqrt\n    -- > Pair 4 2\n\n",
+                "type": "(b -> c) -> Pair.Pair a b -> Pair.Pair a c"
+            },
+            {
+                "name": "map2",
+                "comment": " Apply a function that takes two values to the right side of two `Pair`s.\n\n    map2 max (from 8 6) (from 2 4)\n    -- > Pair 2 6\n\n",
+                "type": "(b -> d -> e) -> Pair.Pair a b -> Pair.Pair c d -> Pair.Pair c e"
+            },
+            {
+                "name": "mapBoth",
+                "comment": " Apply a function to both the left and the right side of a `Pair`.\n\n    branch 4\n        |> mapBoth ((\\*) 2) sqrt\n    -- > Pair 8 2\n\n",
+                "type": "(a -> c) -> (b -> d) -> Pair.Pair a b -> Pair.Pair c d"
+            },
+            {
+                "name": "mapBoth2",
+                "comment": " Apply a function that takes two values to both the left and the right side of two `Pair`s.\n\n    mapBoth2 min max (from 2 4) (from 4 6)\n    -- > Pair 2 6\n\n",
+                "type": "(a -> c -> e) -> (b -> d -> f) -> Pair.Pair a b -> Pair.Pair c d -> Pair.Pair e f"
+            },
+            {
+                "name": "mapMaybe",
+                "comment": " Map over the right value in a `Pair` with a function that returns a `Maybe` and return a `Maybe` with the mapped `Pair` inside instead a `Pair` with a `Maybe` inside.\n\n    -- With regular map.\n    branch [ 1, 2, 3 ]\n        |> map List.head -- > Pair [ 1, 2, 3 ] (Just 1)\n\n    -- With maybeMap.\n    branch [ 1, 2, 3 ]\n        |> mapMaybe List.head -- > Just (Pair [ 1, 2, 3 ] 1)\n\n",
+                "type": "(b -> Maybe.Maybe c) -> Pair.Pair a b -> Maybe.Maybe (Pair.Pair a c)"
+            },
+            {
+                "name": "mapResult",
+                "comment": " Works the same as [`mapMaybe`](Pair#mapMaybe) but with functions that return a `Result`.\n",
+                "type": "(b -> Result.Result err c) -> Pair.Pair a b -> Result.Result err (Pair.Pair a c)"
+            },
+            {
+                "name": "mapTask",
+                "comment": " Works the same as [`mapMaybe`](Pair#mapMaybe) but with functions that return a `Task`.\n",
+                "type": "(b -> Task.Task err c) -> Pair.Pair a b -> Task.Task err (Pair.Pair a c)"
+            },
+            {
+                "name": "merge",
+                "comment": " Get a value from a `Pair` by passing both sides of the `Pair` into one function.\n\n    from 2 4\n        |> merge (+)\n    -- > 6\n\n",
+                "type": "(a -> b -> c) -> Pair.Pair a b -> c"
+            },
+            {
+                "name": "modify",
+                "comment": " Apply a function that will be passed both the left and right values of a `Pair` to transform the left side of that `Pair`.\n\n    branch 4\n        |> extend (+)\n    -- > Pair 8 4\n\n",
+                "type": "(a -> b -> c) -> Pair.Pair a b -> Pair.Pair c b"
+            },
+            {
+                "name": "right",
+                "comment": " Get the value on the right side of the `Pair`.\n\n    from 2 4\n        |> mapBoth ((+) 1) ((+) 1)\n        |> left\n    -- > 5\n\n",
+                "type": "Pair.Pair a b -> b"
+            },
+            {
+                "name": "swap",
+                "comment": " Swap both sides of a `Pair`.\n\n    from \"Left\" \"Right\"\n        |> swap\n    -- > Pair \"Right\" \"Left\"\n\n",
+                "type": "Pair.Pair a b -> Pair.Pair b a"
+            },
+            {
+                "name": "unwrapMaybe",
+                "comment": " Unwrap a `Pair` whose right value is a `Maybe` to be a `Maybe` whose value is a `Pair`. This is just an alias for using [`mapMaybe`](Pair#mapMaybe) with the `identity` function\n\n    branch [ 1, 2, 3 ]   -- > Pair [ 1, 2, 3] [ 1, 2, 3]\n        |> map List.head -- > Pair [ 1, 2, 3] (Just 1)\n        |> unwrapMaybe   -- > Just (Pair [ 1, 2, 3 ] 1)\n\n",
+                "type": "Pair.Pair a (Maybe.Maybe b) -> Maybe.Maybe (Pair.Pair a b)"
+            },
+            {
+                "name": "unwrapResult",
+                "comment": " Same as [`unwrapMaybe`](Pair#unwrapMaybe) except it unwraps a `Result`.\n",
+                "type": "Pair.Pair a (Result.Result err b) -> Result.Result err (Pair.Pair a b)"
+            },
+            {
+                "name": "unwrapTask",
+                "comment": " Same as [`unwrapMaybe`](Pair#unwrapMaybe) except it unwraps a `Task`.\n",
+                "type": "Pair.Pair a (Task.Task err b) -> Task.Task err (Pair.Pair a b)"
+            }
+        ],
+        "binops": []
+    }
+]

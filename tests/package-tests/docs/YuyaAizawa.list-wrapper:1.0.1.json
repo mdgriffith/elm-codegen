@@ -1,0 +1,229 @@
+[
+    {
+        "name": "ListWrapper.Dict",
+        "comment": " A dictionary implementation using `List`. The keys can be any type includes\r\nrecodes and custom type. This module provides all functions does `Dict`, except\r\n'foldl', 'foldr', 'merge'.\r\n\r\nInsert, remove, and query operations all take *O(n)* time. Only for a few\r\nelements.\r\n\r\nTo determine equality, use 'eq' instead of '(==)'.\r\n\r\n# Dictionaries\r\n@docs Dict\r\n\r\n# Build\r\n@docs empty, singleton, insert, update, remove\r\n\r\n# Query\r\n@docs isEmpty, member, get, size, eq\r\n\r\n# Lists\r\n@docs keys, values, toList, fromList\r\n\r\n# Transform\r\n@docs map, fold, filter, partition\r\n\r\n# Combine\r\n@docs union, intersect, diff\r\n\r\n",
+        "unions": [
+            {
+                "name": "Dict",
+                "comment": " A dictionary of keys and values. ",
+                "args": [
+                    "k",
+                    "v"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "diff",
+                "comment": " Keep a key-value pair when its key does not appear in the second dictionary.\r\n",
+                "type": "ListWrapper.Dict.Dict k a -> ListWrapper.Dict.Dict k b -> ListWrapper.Dict.Dict k a"
+            },
+            {
+                "name": "empty",
+                "comment": " Create an empty dictionary. ",
+                "type": "ListWrapper.Dict.Dict k v"
+            },
+            {
+                "name": "eq",
+                "comment": " Determine if given two dictionary are the same. ",
+                "type": "ListWrapper.Dict.Dict k v -> ListWrapper.Dict.Dict k v -> Basics.Bool"
+            },
+            {
+                "name": "filter",
+                "comment": " Keep only the key-value pairs that pass the given test. ",
+                "type": "(k -> v -> Basics.Bool) -> ListWrapper.Dict.Dict k v -> ListWrapper.Dict.Dict k v"
+            },
+            {
+                "name": "fold",
+                "comment": " Fold over the key-value pairs in a dictionary. The order is not fixed. ",
+                "type": "(k -> v -> b -> b) -> b -> ListWrapper.Dict.Dict k v -> b"
+            },
+            {
+                "name": "fromList",
+                "comment": " Convert an association list into a dictionary. This function takes *O(n^2)*\r\nfor n-element list.\r\n",
+                "type": "List.List ( k, v ) -> ListWrapper.Dict.Dict k v"
+            },
+            {
+                "name": "get",
+                "comment": " Get the value associated with a key. ",
+                "type": "k -> ListWrapper.Dict.Dict k v -> Maybe.Maybe v"
+            },
+            {
+                "name": "insert",
+                "comment": " Insert a key-value pair into a dictionary. Replaces value when there is\r\na collision. ",
+                "type": "k -> v -> ListWrapper.Dict.Dict k v -> ListWrapper.Dict.Dict k v"
+            },
+            {
+                "name": "intersect",
+                "comment": " Keep a key-value pair when its key appears in the second dictionary.\r\nPreference is given to values in the first dictionary.\r\n",
+                "type": "ListWrapper.Dict.Dict k v -> ListWrapper.Dict.Dict k v -> ListWrapper.Dict.Dict k v"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Determine if a dictionary is empty. ",
+                "type": "ListWrapper.Dict.Dict k v -> Basics.Bool"
+            },
+            {
+                "name": "keys",
+                "comment": " Get all of the keys in a dictionary. The order is not Fixed. ",
+                "type": "ListWrapper.Dict.Dict k v -> List.List k"
+            },
+            {
+                "name": "map",
+                "comment": " Apply a function to all values in a dictionary. ",
+                "type": "(k -> a -> b) -> ListWrapper.Dict.Dict k a -> ListWrapper.Dict.Dict k b"
+            },
+            {
+                "name": "member",
+                "comment": " Determine if a key is in a dictionary. ",
+                "type": "k -> ListWrapper.Dict.Dict k v -> Basics.Bool"
+            },
+            {
+                "name": "partition",
+                "comment": " Partition a dictionary according to some test. The first dictionary\r\ncontains all key-value pairs which passed the test, and the second contains\r\nthe pairs that did not.\r\n",
+                "type": "(k -> v -> Basics.Bool) -> ListWrapper.Dict.Dict k v -> ( ListWrapper.Dict.Dict k v, ListWrapper.Dict.Dict k v )"
+            },
+            {
+                "name": "remove",
+                "comment": " Remove a key-value pair from a dictionary. If the key is not found,\r\nno changes are made. ",
+                "type": "k -> ListWrapper.Dict.Dict k v -> ListWrapper.Dict.Dict k v"
+            },
+            {
+                "name": "singleton",
+                "comment": " Create a dictionary with one key-value pair. ",
+                "type": "k -> v -> ListWrapper.Dict.Dict k v"
+            },
+            {
+                "name": "size",
+                "comment": " Determine the number of key-value pairs in the dictionary. ",
+                "type": "ListWrapper.Dict.Dict k v -> Basics.Int"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert a dictionary into an association list of key-value pairs.\r\nThe order is not Fixed.\r\n",
+                "type": "ListWrapper.Dict.Dict k v -> List.List ( k, v )"
+            },
+            {
+                "name": "union",
+                "comment": " Combine two dictionaries. If there is a collision, preference is given\r\nto the first dictionary.\r\n",
+                "type": "ListWrapper.Dict.Dict k v -> ListWrapper.Dict.Dict k v -> ListWrapper.Dict.Dict k v"
+            },
+            {
+                "name": "update",
+                "comment": " Update the value of a dictionary for a specific key\r\nwith a given function.\r\n",
+                "type": "k -> (Maybe.Maybe v -> Maybe.Maybe v) -> ListWrapper.Dict.Dict k v -> ListWrapper.Dict.Dict k v"
+            },
+            {
+                "name": "values",
+                "comment": " Get all of the values in a dictionary. The order is not Fixed. ",
+                "type": "ListWrapper.Dict.Dict k v -> List.List v"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ListWrapper.Set",
+        "comment": " A set implementation using `List`. The elements can be any type includes\r\nrecodes and custom type. This module provides all functions does `Set`, except\r\n'foldl', 'foldr', 'merge'.\r\n\r\nInsert, remove, and query operations all take *O(n)* time. Only for a few\r\nelements.\r\n\r\nTo determine equality, use 'eq' instead of '(==)'.\r\n\r\n# Sets\r\n@docs Set\r\n\r\n# Build\r\n@docs empty, singleton, insert, remove\r\n\r\n# Query\r\n@docs isEmpty, member, size, eq\r\n\r\n# Combine\r\n@docs union, intersect, diff\r\n\r\n# Lists\r\n@docs toList, fromList\r\n\r\n# Transform\r\n@docs map, fold, filter, partition\r\n\r\n",
+        "unions": [
+            {
+                "name": "Set",
+                "comment": " A set of unique values. ",
+                "args": [
+                    "e"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "diff",
+                "comment": " Get the difference between the first set and the second. Keeps values\r\nthat do not appear in the second set.\r\n",
+                "type": "ListWrapper.Set.Set e -> ListWrapper.Set.Set e -> ListWrapper.Set.Set e"
+            },
+            {
+                "name": "empty",
+                "comment": " Create an empty set. ",
+                "type": "ListWrapper.Set.Set e"
+            },
+            {
+                "name": "eq",
+                "comment": " Determine if given two dictionary are the same. ",
+                "type": "ListWrapper.Set.Set e -> ListWrapper.Set.Set e -> Basics.Bool"
+            },
+            {
+                "name": "filter",
+                "comment": " Only keep elements that pass the given test. ",
+                "type": "(e -> Basics.Bool) -> ListWrapper.Set.Set e -> ListWrapper.Set.Set e"
+            },
+            {
+                "name": "fold",
+                "comment": " Fold over the key-value pairs in a dictionary. The order is not fixed. ",
+                "type": "(e -> a -> a) -> a -> ListWrapper.Set.Set e -> a"
+            },
+            {
+                "name": "fromList",
+                "comment": " Convert a list into a set, removing any duplicates. ",
+                "type": "List.List e -> ListWrapper.Set.Set e"
+            },
+            {
+                "name": "insert",
+                "comment": " Insert a value into a set. ",
+                "type": "e -> ListWrapper.Set.Set e -> ListWrapper.Set.Set e"
+            },
+            {
+                "name": "intersect",
+                "comment": " Get the intersection of two sets. Keeps values that appear in both sets. ",
+                "type": "ListWrapper.Set.Set e -> ListWrapper.Set.Set e -> ListWrapper.Set.Set e"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Determine if a set is empty.\r\n",
+                "type": "ListWrapper.Set.Set e -> Basics.Bool"
+            },
+            {
+                "name": "map",
+                "comment": " Map a function onto a set, creating a new set with no duplicates. ",
+                "type": "(e1 -> e2) -> ListWrapper.Set.Set e1 -> ListWrapper.Set.Set e2"
+            },
+            {
+                "name": "member",
+                "comment": " Determine if a value is in a set. ",
+                "type": "e -> ListWrapper.Set.Set e -> Basics.Bool"
+            },
+            {
+                "name": "partition",
+                "comment": " Create two new sets. The first contains all the elements that passed the\r\ngiven test, and the second contains all the elements that did not. ",
+                "type": "(e -> Basics.Bool) -> ListWrapper.Set.Set e -> ( ListWrapper.Set.Set e, ListWrapper.Set.Set e )"
+            },
+            {
+                "name": "remove",
+                "comment": " Remove a value from a set. If the value is not found, no changes are made.\r\n",
+                "type": "e -> ListWrapper.Set.Set e -> ListWrapper.Set.Set e"
+            },
+            {
+                "name": "singleton",
+                "comment": " Create a set with one value. ",
+                "type": "e -> ListWrapper.Set.Set e"
+            },
+            {
+                "name": "size",
+                "comment": " Determine the number of elements in a set.\r\n",
+                "type": "ListWrapper.Set.Set e -> Basics.Int"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert a set into a list. The order is not Fixed. ",
+                "type": "ListWrapper.Set.Set a -> List.List a"
+            },
+            {
+                "name": "union",
+                "comment": " Get the union of two sets. Keep all values.\r\n",
+                "type": "ListWrapper.Set.Set e -> ListWrapper.Set.Set e -> ListWrapper.Set.Set e"
+            }
+        ],
+        "binops": []
+    }
+]

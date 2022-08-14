@@ -1,0 +1,26 @@
+[
+    {
+        "name": "Imf.DateTime",
+        "comment": " Convert\n[Internet Message Format](https://tools.ietf.org/html/rfc5322#section-3.3)\ndate and time strings to and from\n[POSIX times](https://package.elm-lang.org/packages/elm/time/latest/Time#Posix).\n\nSupported Internet Message Format specifications are\n[RFC5322](https://tools.ietf.org/html/rfc5322#section-3.3),\nas well as the obsolete\n[RFC2822](https://tools.ietf.org/html/rfc2822#section-3.3)\nand\n[RFC822](https://www.w3.org/Protocols/rfc822/#z28).\n\n@docs toPosix, fromPosix\n@docs parser\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fromPosix",
+                "comment": " Convert a\n[`Time.Zone`](https://package.elm-lang.org/packages/elm/time/latest/Time#Zone)\nand a\n[`Time.Posix`](https://package.elm-lang.org/packages/elm/time/latest/Time#Posix)\nto an\n[Internet Message Format](https://tools.ietf.org/html/rfc5322#section-3.3)\ndate and time string.\n\n  - The day of week abbreviation will always be prefixed.\n  - A four digit year is always used.\n  - A signed four digit numerical UTC offset is always used.\n\nExamples:\n\n    import Time\n\n    epoch : Time.Posix\n    epoch =\n        Time.millisToPosix 0\n\n    Imf.DateTime.fromPosix Time.utc epoch\n    --> \"Thu, 01 Jan 1970 00:00:00 +0000\"\n\n    Imf.DateTime.fromPosix (Time.customZone 60 []) epoch\n    --> \"Thu, 01 Jan 1970 01:00:00 +0100\"\n\n    Imf.DateTime.fromPosix\n        (Time.customZone -300 [])\n        (Time.millisToPosix 1357891860000)\n    --> \"Fri, 11 Jan 2013 03:11:00 -0500\"\n\n",
+                "type": "Time.Zone -> Time.Posix -> String.String"
+            },
+            {
+                "name": "parser",
+                "comment": " Internet Message Format date and time\n[Parser](https://package.elm-lang.org/packages/elm/parser/latest/Parser#Parser)\nfor [`elm/parser`](https://package.elm-lang.org/packages/elm/parser/latest/).\n",
+                "type": "Parser.Parser Time.Posix"
+            },
+            {
+                "name": "toPosix",
+                "comment": " Convert from an Internet Message Format date and time string to a\n[POSIX time](https://package.elm-lang.org/packages/elm/time/latest/Time#Posix).\n\nRegardless of which time zone the string uses, this function normalizes it and\nreturns a time in UTC.\n\nIn accordance to\n[RFC2822](https://tools.ietf.org/html/rfc2822#section-4.3)\nthen\n[RFC5322](https://tools.ietf.org/html/rfc5322#section-4.3):\n\n  - Military time zones as defined in\n    [RFC822](https://www.w3.org/Protocols/rfc822/#z28) and unknown uppercase\n    alphabetic ones are considered equivalent to `-0000` UTC offset.\n  - Two digit years between 50 and 99 or three digits years are interpreted by\n    adding 1900. Two digit years between 00 and 49 are interpreted by\n    adding 2000.\n\nIf parsing fails, a `List Parser.DeadEnd` is returned. Install `elm/parser` and\nsee [`Parser.DeadEnd`](https://package.elm-lang.org/packages/elm/parser/latest/Parser#DeadEnd)\nfor producing helpful error messages.\n\nExamples:\n\n    import Time\n\n    Imf.DateTime.toPosix \"1 Jan 70 00:00:00 GMT\"\n    --> Ok (Time.millisToPosix 0)\n\n\n    Imf.DateTime.toPosix \"Wed, 31 Dec 69 19:00:00 EST\"\n    --> Ok (Time.millisToPosix 0)\n\n",
+                "type": "String.String -> Result.Result (List.List Parser.DeadEnd) Time.Posix"
+            }
+        ],
+        "binops": []
+    }
+]

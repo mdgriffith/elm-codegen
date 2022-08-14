@@ -1,0 +1,76 @@
+[
+    {
+        "name": "Cmd.Extra",
+        "comment": " Extra functions for working with Cmds.\n\n\n# Constructors\n\n@docs perform, attempt, maybe, fromResult, fromMaybe\n\n\n# Chaining in update\n\n@docs pure, with, add, withTrigger, addTrigger, addIf, addTriggerMaybe, addMaybe\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "add",
+                "comment": " Add new cmd to an existing pair.\n",
+                "type": "Platform.Cmd.Cmd msg -> ( model, Platform.Cmd.Cmd msg ) -> ( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "addIf",
+                "comment": " Add new cmd to an existing pair under a certain condition.\n\n    prevCmd : Cmd String\n    prevCmd =\n        perform \"foo\"\n\n    newCmd : Cmd String\n    newCmd =\n        perform \"bar\"\n\n    ( \"model\", prevCmd )\n      |> addIf False newCmd\n      |> Tuple.second\n      |> ((==) prevCmd)\n    --> True\n\n",
+                "type": "Basics.Bool -> Platform.Cmd.Cmd msg -> ( model, Platform.Cmd.Cmd msg ) -> ( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "addMaybe",
+                "comment": " Add new cmd to an existing pair based on the Maybe value\n\n    prevCmd : Cmd String\n    prevCmd =\n        perform \"prev\"\n\n    ( \"model\", prevCmd )\n      |> addMaybe identity Nothing\n      |> Tuple.second\n      |> ((==) prevCmd)\n    --> True\n\n",
+                "type": "(a -> Platform.Cmd.Cmd msg) -> Maybe.Maybe a -> ( model, Platform.Cmd.Cmd msg ) -> ( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "addTrigger",
+                "comment": " Add new trigger of Msg to an existing pair.\n",
+                "type": "msg -> ( model, Platform.Cmd.Cmd msg ) -> ( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "addTriggerMaybe",
+                "comment": " `addTrigger` if Just, do nothing if Nothing\n",
+                "type": "Maybe.Maybe msg -> ( model, Platform.Cmd.Cmd msg ) -> ( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "attempt",
+                "comment": " Similar to perform but takes `Result msg` and performs action only on `Ok`.\n\n    attempted : Cmd String\n    attempted =\n      attempt <| Ok \"I'm fine\"\n\n    attempt (Err \"Failed\") == Cmd.none\n    --> True\n\n",
+                "type": "Result.Result x msg -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "fromMaybe",
+                "comment": " Construct from Maybe.\n\n    maybeCmd : Cmd (Maybe Int)\n    maybeCmd =\n      identity (Just 1)\n\n    fromMaybe identity Nothing\n    --> Cmd.none\n\n",
+                "type": "(a -> msg) -> Maybe.Maybe a -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "fromResult",
+                "comment": " Construct from Result.\n\n    resultCmd : Cmd (Result Never Int)\n    resultCmd =\n      fromResult identity (Ok 1)\n\n    fromResult identity (Err ())\n    --> Cmd.none\n\n",
+                "type": "(a -> msg) -> Result.Result x a -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "maybe",
+                "comment": " Similar to attempt but works with `Maybe` instead\n\n    maybeCmd : Cmd Int\n    maybeCmd =\n        maybe <| Just 1\n\n    maybe Nothing == Cmd.none\n    --> True\n\n",
+                "type": "Maybe.Maybe msg -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "perform",
+                "comment": " Cmd costructor.\nUseful when you want to artificially emit Cmd from update function.\n\n    performed : Cmd String\n    performed =\n        perform \"foo\"\n\n\"real world\" example:\n\n    type alias Model =\n        ()\n\n    type Msg\n        = Fire\n        | FireRockets\n\n    update : Msg -> Model -> ( Model, Cmd Msg )\n    update msg () =\n        case msg of\n            Fire ->\n                ( (), perform FireRockets )\n\n            FireRockets ->\n                Debug.crash \"World ended:(\"\n\n",
+                "type": "msg -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "pure",
+                "comment": " Creates pair `model` with `Cmd.none`\n\n    pair : ( String, Cmd msg )\n    pair = pure \"foo\"\n\n    pair\n      |> Tuple.second\n      |> ((==) Cmd.none)\n    --> True\n\n",
+                "type": "model -> ( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "with",
+                "comment": " Add Cmd to model to create a pair.\n",
+                "type": "Platform.Cmd.Cmd msg -> model -> ( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "withTrigger",
+                "comment": " Trigger Cmd from Msg and create a pair\n",
+                "type": "msg -> model -> ( model, Platform.Cmd.Cmd msg )"
+            }
+        ],
+        "binops": []
+    }
+]

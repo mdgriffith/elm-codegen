@@ -1,0 +1,52 @@
+[
+    {
+        "name": "WindowKeys",
+        "comment": " This WindowKeys Elm module lets you encode and decode messages to pass to javascript,\nwhere the actual websocket sending and receiving will take place. See the README for more.\n\n@docs Key\n@docs WindowKeyCmd\n@docs decodeKey\n@docs encodeKey\n@docs receive\n@docs send\n",
+        "unions": [
+            {
+                "name": "WindowKeyCmd",
+                "comment": " Only one WindowKeyCmd for now, SetWindowKeys.  Use an empty list to stop all key messages. ",
+                "args": [],
+                "cases": [
+                    [
+                        "SetWindowKeys",
+                        [
+                            "List.List WindowKeys.Key"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Key",
+                "comment": " Key struct - both outgoing \"SetWindowKeys\" and incoming keypress messages. ",
+                "args": [],
+                "type": "{ key : String.String, ctrl : Basics.Bool, alt : Basics.Bool, shift : Basics.Bool, preventDefault : Basics.Bool }"
+            }
+        ],
+        "values": [
+            {
+                "name": "decodeKey",
+                "comment": " json to Key struct ",
+                "type": "Json.Decode.Decoder WindowKeys.Key"
+            },
+            {
+                "name": "encodeKey",
+                "comment": " Key struct to json ",
+                "type": "WindowKeys.Key -> Json.Encode.Value"
+            },
+            {
+                "name": "receive",
+                "comment": " make a subscription function with receive and a port, like so:\n\n    port receiveKeyMsg : (JD.Value -> msg) -> Sub msg\n    keyreceive =\n        receiveKeyMsg <| WindowKey.receive WsMsg\n\nWhere WkMsg is defined in your app like this:\n\n    type Msg\n        = WkMsg (Result JD.Error WindowKey.WindowKeyMsg)\n        | <other message types>\n\nthen in your application subscriptions:\n\n    subscriptions =\n       \\_ -> keyreceive\n",
+                "type": "(Result.Result Json.Decode.Error WindowKeys.WindowKeyMsg -> msg) -> Json.Decode.Value -> msg"
+            },
+            {
+                "name": "send",
+                "comment": " use send to make a convenience function, like so:\n\n    port sendKeyCommand : JE.Value -> Cmd msg\n    wksend =\n       WindowKey.send sendKeyCommand\n\nthen you can call (makes a Cmd):\n\n    wksend <|\n        SetWindowKeys\n            [ { key = \"s\"\n              , ctrl = True\n              , alt = False\n              , shift = False\n              , preventDefault = True }\n            , { key = \"Enter\"\n              , ctrl = False\n              , alt = False\n              , shift = False\n              , preventDefault = False }\n            ]\n",
+                "type": "(Json.Encode.Value -> Platform.Cmd.Cmd msg) -> WindowKeys.WindowKeyCmd -> Platform.Cmd.Cmd msg"
+            }
+        ],
+        "binops": []
+    }
+]

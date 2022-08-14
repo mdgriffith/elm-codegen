@@ -1,0 +1,130 @@
+[
+    {
+        "name": "Jwt",
+        "comment": " Helper functions for working with Jwt tokens\n\n\n# Token reading\n\n@docs decodeToken, tokenDecoder, checkTokenExpiry, getTokenExpirationMillis, isExpired, getTokenHeader\n\n\n# Errors\n\n@docs JwtError, errorToString\n\n",
+        "unions": [
+            {
+                "name": "JwtError",
+                "comment": " The following errors are modeled\n\n  - `TokenProcessingError` - something wrong with the the raw token (e.g. length, base64 encoding)\n  - `TokenDecodeError` - the token is not valid JSON or the decoder provided could not decode the body\n  - `TokenHeaderError` - the header is corrupted in some way\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "TokenProcessingError",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "TokenDecodeError",
+                        [
+                            "Json.Decode.Error"
+                        ]
+                    ],
+                    [
+                        "TokenHeaderError",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "checkTokenExpiry",
+                "comment": " Checks a token for Expiry (used the \"exp\" field). Returns expiry or any error that occurred in processing.\n",
+                "type": "String.String -> Task.Task Jwt.JwtError Basics.Bool"
+            },
+            {
+                "name": "decodeToken",
+                "comment": " Parses the token, checking that it meets the Jwt standards. In the event of success, `decodeToken` returns result of the JSON Decoder.\n\n    decodeToken dec token\n\n",
+                "type": "Json.Decode.Decoder a -> String.String -> Result.Result Jwt.JwtError a"
+            },
+            {
+                "name": "errorToString",
+                "comment": " Provides a default conversion of a JwtError to a string\n",
+                "type": "Jwt.JwtError -> String.String"
+            },
+            {
+                "name": "getTokenExpirationMillis",
+                "comment": " Extracts the token expiration timestamp from the JWT \"exp\" field.\nReturns the timestamp in milliseconds since epoch, or any error that\noccurred while processing the token.\n",
+                "type": "String.String -> Result.Result Jwt.JwtError Basics.Int"
+            },
+            {
+                "name": "getTokenHeader",
+                "comment": " Returns stringified json of the token's header\n",
+                "type": "String.String -> Result.Result Jwt.JwtError String.String"
+            },
+            {
+                "name": "isExpired",
+                "comment": " Checks whether a token has expired, and returns True or False, or\nany error that occurred while processing the token.\n",
+                "type": "Time.Posix -> String.String -> Result.Result Jwt.JwtError Basics.Bool"
+            },
+            {
+                "name": "tokenDecoder",
+                "comment": " All the token parsing goodness in the form of a Json Decoder\n\n    firebaseToken =\n        Json.Decode.decodeString (tokenDecoder Jwt.Decoders.firebase) tokenString\n\n",
+                "type": "Json.Decode.Decoder a -> Json.Decode.Decoder a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Jwt.Decoders",
+        "comment": " Helper functions for working with Jwt tokens and authenticated CRUD APIs.\n\nThis package provides functions for reading tokens, and for using them to make\nauthenticated Http requests.\n\n\n# Decoders for popular Jwt tokens\n\n@docs JwtToken, firebase, phoenixGuardian\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "JwtToken",
+                "comment": " Generic constructor for commonly found fields in a Jwt token\n",
+                "args": [],
+                "type": "{ iat : Basics.Int, exp : Basics.Int, userId : Maybe.Maybe String.String, email : Maybe.Maybe String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "firebase",
+                "comment": " Decoder for Firebase Jwt\n",
+                "type": "Json.Decode.Decoder Jwt.Decoders.JwtToken"
+            },
+            {
+                "name": "phoenixGuardian",
+                "comment": " Decoder for Guardian\n<https://github.com/ueberauth/guardian>\n",
+                "type": "Json.Decode.Decoder Jwt.Decoders.JwtToken"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Jwt.Http",
+        "comment": "\n\n\n# Authenticated Http requests\n\n@docs get, post, put, delete, is401\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "delete",
+                "comment": " Create a `DELETE` command with a token attached to the headers.\n",
+                "type": "String.String -> { url : String.String, expect : Http.Expect msg } -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "get",
+                "comment": " A replacement for `Http.get` that also takes a token, which is attached to the headers.\n\n    getData : String -> Cmd Msg\n    getData token =\n        Jwt.Http.get token\n            { url = serverUrl ++ \"/api/data\"\n            , expect = Http.expectJson OnDataResponse dataDecoder\n            }\n\n",
+                "type": "String.String -> { url : String.String, expect : Http.Expect msg } -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "is401",
+                "comment": " Helper that checks an Http.Error for a 401\n",
+                "type": "Http.Error -> Basics.Bool"
+            },
+            {
+                "name": "post",
+                "comment": " A replacement for `Http.post` that also takes a token, which is attached to the headers.\nNOTE that is important to use `jsonBody` to ensure that the 'application/json' is added to the headers\n\n    sendToServer : String -> String -> Json.Decode.Decoder a -> Json.Encode.Value -> Cmd msg\n    sendToServer token url dec value =\n        Jwt.Http.post token\n            { url = url\n            , body = Http.jsonBody value\n            , expect = Http.expectJson ContentResult (phoenixDecoder dec)\n            }\n\n",
+                "type": "String.String -> { url : String.String, body : Http.Body, expect : Http.Expect msg } -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "put",
+                "comment": " Create a `PUT` command with a token attached to the headers.\n",
+                "type": "String.String -> { url : String.String, body : Http.Body, expect : Http.Expect msg } -> Platform.Cmd.Cmd msg"
+            }
+        ],
+        "binops": []
+    }
+]

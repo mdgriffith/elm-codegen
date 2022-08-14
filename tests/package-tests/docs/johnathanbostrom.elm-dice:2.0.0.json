@@ -1,0 +1,175 @@
+[
+    {
+        "name": "Dice",
+        "comment": " A Dice Roller Package based on elm/random that allows you to build customizable dice rolling functions in a readable way.\n\n\n# Definition\n\n@docs roll, Dice, RollResult, ChildrenRolls\n\n\n# Combining and Transforming Rolls\n\n@docs dropLowest, countSuccessesIf, explodeIf, rerollIf, andThen, Keep, plus, mapValue\n\n\n# Common Helpers\n\n@docs toRollResultGenerator\n\n",
+        "unions": [
+            {
+                "name": "ChildrenRolls",
+                "comment": " represents the children of a RollResult.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Empty",
+                        []
+                    ],
+                    [
+                        "RollResults",
+                        [
+                            "List.List Dice.RollResult"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Dice",
+                "comment": " Represents a Die or pool of dice. Most common dice are built in, but you can also create your own.\n\n    -- A 5 sided die.\n    d5 =\n        DX 5\n\n    -- A custom die\n    customDie =\n        CustomDie \"EvenRoller\" [ 2, 2, 2, 2, 4, 4, 4, 6, 6, 8 ]\n\n    -- A weighted die. Effectively the same as the customDie above.\n    weightedDie =\n        WeightedDie \"EvenRoller\"\n            [ ( 4, 2 )\n            , ( 3, 4 )\n            , ( 2, 6 )\n            , ( 1, 8 )\n            ]\n\n    -- A Constant Value\n    always4 =\n        Constant \"Four\" 4\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "D4",
+                        []
+                    ],
+                    [
+                        "D6",
+                        []
+                    ],
+                    [
+                        "D8",
+                        []
+                    ],
+                    [
+                        "D10",
+                        []
+                    ],
+                    [
+                        "D12",
+                        []
+                    ],
+                    [
+                        "D20",
+                        []
+                    ],
+                    [
+                        "D100",
+                        []
+                    ],
+                    [
+                        "DX",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "DicePool",
+                        [
+                            "String.String",
+                            "Random.Generator Dice.RollResult"
+                        ]
+                    ],
+                    [
+                        "CustomDie",
+                        [
+                            "String.String",
+                            "List.List Basics.Int"
+                        ]
+                    ],
+                    [
+                        "WeightedDie",
+                        [
+                            "String.String",
+                            "List.List ( Basics.Float, Basics.Int )"
+                        ]
+                    ],
+                    [
+                        "Constant",
+                        [
+                            "String.String",
+                            "Basics.Int"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Keep",
+                "comment": " Represents how we decide when choosing between multiple die results. see RerollIf\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Low",
+                        []
+                    ],
+                    [
+                        "High",
+                        []
+                    ],
+                    [
+                        "New",
+                        []
+                    ],
+                    [
+                        "KeepCustom",
+                        [
+                            "List.List Dice.RollResult -> Dice.RollResult"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "RollResult",
+                "comment": " Represents the results of a roll.\n\n    --possible result of `roll 1 D6`:\n    { descripion = \"1D6\"\n    , value = 4\n    , children = Empty\n    }\n\n    --possible result of `roll 2 D6`:\n    { description = \"3D6\"\n    , value = 8\n    , children =\n        RollResults\n            [ { description = \"1D6\", value = 3, children = Empty }\n            , { description = \"1D6\", value = 5, children = Empty }\n            ]\n    }\n\n",
+                "args": [],
+                "type": "{ description : String.String, value : Basics.Int, children : Dice.ChildrenRolls }"
+            }
+        ],
+        "values": [
+            {
+                "name": "andThen",
+                "comment": " used to apply transformations to RollResult generators.\n",
+                "type": "(Dice.RollResult -> Random.Generator Dice.RollResult) -> Random.Generator Dice.RollResult -> Random.Generator Dice.RollResult"
+            },
+            {
+                "name": "countSuccessesIf",
+                "comment": " Recalculates the value of a RollResult by counting the number of children that pass the test.\n\n        roll 3 D10\n            |> countSuccessesIf (\\r -> r > 7)\n\n",
+                "type": "(Dice.RollResult -> Basics.Bool) -> Random.Generator Dice.RollResult -> Random.Generator Dice.RollResult"
+            },
+            {
+                "name": "dropLowest",
+                "comment": " Recalculates the value of a RollResult by dropping the lowest value of its children.\nIf the RollResult had no children (because it was the result of a single die roll or constant value),\nThen dropLowest will set the value to zero.\n\n    statGenerator =\n        roll 4 D6 |> dropLowest\n\n",
+                "type": "Random.Generator Dice.RollResult -> Random.Generator Dice.RollResult"
+            },
+            {
+                "name": "explodeIf",
+                "comment": " \"explodes\" a RollResult. An exploding die will keep rolling as long as it satisfies the predicate. For instance, if you roll a 10 on the following D10, you will roll again and add the rolls together. If your reroll is another D10, you repeat this process.\n\n    --defines a ten sided die that \"explodes\" on a 10.\n    explodingDie =\n        roll 1 D10\n            |> ExplodeIf (\\r -> r == 10)\n\nCurrently, all dice are limited to 100 explosions.\n\n",
+                "type": "(Dice.RollResult -> Basics.Bool) -> Random.Generator Dice.RollResult -> Random.Generator Dice.RollResult"
+            },
+            {
+                "name": "mapValue",
+                "comment": " Recomputes the value of a RollResult given the rule provided.\n\n    --rules for computing RollResult value\n    multiplyRolls rollResult =\n        case rollResult.children of\n            Empty ->\n                0\n            RollResults rolls ->\n                gatherEqualsBy .value rolls\n                    |> map (\\x -> x.left.value * (List.length x.right + 1))\n                    |> sum\n\n    -- rolls 4 D6, multiplying each result by the number of times it was rolled.\n    roll 4 D6\n        |> mapValue multiplyRolls\n\n",
+                "type": "(Dice.RollResult -> Basics.Int) -> Random.Generator Dice.RollResult -> Random.Generator Dice.RollResult"
+            },
+            {
+                "name": "plus",
+                "comment": " combine the results of two rolls. The value of the resulting roll will be the sum of the values of those two rolls.\n\n    d6PlusD4 =\n        roll 1 D6\n            |> plus (roll 1 D4)\n                --one possible result:\n                { description = \"1D6 + 1D4\"\n                , value = 8\n                , children =\n                    RollResults\n                        [ { description = \"1D6\", value = 6, children = Empty }\n                        , { description = \"1D4\", value = 2, children = Empty }\n                        ]\n                }\n\n",
+                "type": "Random.Generator Dice.RollResult -> Random.Generator Dice.RollResult -> Random.Generator Dice.RollResult"
+            },
+            {
+                "name": "rerollIf",
+                "comment": " Rerolls a RollResult if it satisfies the given predicate.\nThe value of one roll will be kept using the Keep rules specified.\n\n    -- rerolls any ones or twos, keeping the new result even if lower.\n        roll 2 D6\n        |> RerollIf (\\r -> r.value < 2) New\n\n",
+                "type": "(Dice.RollResult -> Basics.Bool) -> Dice.Keep -> Random.Generator Dice.RollResult -> Random.Generator Dice.RollResult"
+            },
+            {
+                "name": "roll",
+                "comment": " make a Random.Generator for a roll of n dice. if n < 1, this will return `Constant \"No Dice\" 0`\n\n    roll 3 D6\n\n",
+                "type": "Basics.Int -> Dice.Dice -> Random.Generator Dice.RollResult"
+            },
+            {
+                "name": "toRollResultGenerator",
+                "comment": " Converts a Random.Generator Int into a Random.Generator RollResult.\n",
+                "type": "String.String -> Random.Generator Basics.Int -> Random.Generator Dice.RollResult"
+            }
+        ],
+        "binops": []
+    }
+]

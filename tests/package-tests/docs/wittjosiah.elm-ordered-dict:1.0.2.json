@@ -1,0 +1,56 @@
+[
+    {
+        "name": "OrderedDict",
+        "comment": " A dictionary mapping unique keys to values preserving insert order.\n\n\n# Dictionaries\n\n@docs OrderedDict\n\n\n# Build\n\n@docs empty, singleton, insert, insertAt, update, remove\n\n\n# Lists\n\n@docs orderedValues\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "OrderedDict",
+                "comment": " A dictionary of keys and values with order.\n",
+                "args": [
+                    "k",
+                    "v"
+                ],
+                "type": "{ order : List.List k, dict : Dict.Dict k v }"
+            }
+        ],
+        "values": [
+            {
+                "name": "empty",
+                "comment": " Create an empty ordered dictionary.\n",
+                "type": "OrderedDict.OrderedDict k v"
+            },
+            {
+                "name": "insert",
+                "comment": " Insert a key-value pair into an ordered dictionary. Replaces value when there is a collision.\n",
+                "type": "comparable -> v -> OrderedDict.OrderedDict comparable v -> OrderedDict.OrderedDict comparable v"
+            },
+            {
+                "name": "insertAt",
+                "comment": " Insert a key-value pair into a specific location in the order of an ordered dictionary. Replaces value when there is a collision.\n",
+                "type": "Basics.Int -> comparable -> v -> OrderedDict.OrderedDict comparable v -> OrderedDict.OrderedDict comparable v"
+            },
+            {
+                "name": "orderedValues",
+                "comment": " Return a list of items based on their order\n\n    empty\n        |> insert 33 \"Hello\"\n        |> insert 45 \"World\"\n        |> insertAt 1 39 \"Elm\"\n        |> toList\n        == [ \"Hello\", \"Elm\", \"World\" ]\n\n",
+                "type": "OrderedDict.OrderedDict comparable v -> List.List v"
+            },
+            {
+                "name": "remove",
+                "comment": " Remove a key-value pair from an ordered dictionary. If the key is not found, no changes are made.\n",
+                "type": "comparable -> OrderedDict.OrderedDict comparable v -> OrderedDict.OrderedDict comparable v"
+            },
+            {
+                "name": "singleton",
+                "comment": " Create an ordered dictionary with one key-value pair.\n",
+                "type": "comparable -> v -> OrderedDict.OrderedDict comparable v"
+            },
+            {
+                "name": "update",
+                "comment": " Update the value of an ordered dictionary for a specific key with a given function.\n",
+                "type": "comparable -> (Maybe.Maybe v -> Maybe.Maybe v) -> OrderedDict.OrderedDict comparable v -> OrderedDict.OrderedDict comparable v"
+            }
+        ],
+        "binops": []
+    }
+]

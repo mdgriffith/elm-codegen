@@ -1,0 +1,61 @@
+[
+    {
+        "name": "Zipper",
+        "comment": "\n\n\n# Definition\n\n@docs Zipper\n\n\n# Creating & returning\n\n@docs zip, unzip, value\n\n\n# Traversing\n\nTraverse into a structure, maintaining a focus which can be mapped,\nand maintaining a way to \"unzip\" out of the zipper having the focused operations\naffect the structure.\n\n@docs into, intoMaybe, andThenInto\n\n\n# Mapping\n\n@docs map, mapMaybe\n\n",
+        "unions": [
+            {
+                "name": "Zipper",
+                "comment": " Represents a Zipper that started at a `root` but has traversed into the\nstructure and is now at `focus`\n\nFor example, here we traverse into `.a` so are focused on the value there.\n\n    example : Zipper { b : number } { a : { b : number } }\n    example =\n        { a = { b = True } }\n            |> zip\n            |> into .a (\\a parent -> { parent | a = a })\n\n",
+                "args": [
+                    "focus",
+                    "root"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "andThenInto",
+                "comment": " Borrowing from the name and idea of `Maybe.andThen`,\nthis function is useful for when the current focus is a `Maybe focus` and\nthe traversal function is `(focus -> Maybe newFocus)`. As you traverse deeper\ninto your structure you'll choose between `intoMaybe` or `andThenInto` based on\nwhether your\n",
+                "type": "(focus -> Maybe.Maybe newFocus) -> (Maybe.Maybe newFocus -> focus -> focus) -> Zipper.Zipper (Maybe.Maybe focus) root -> Zipper.Zipper (Maybe.Maybe newFocus) root"
+            },
+            {
+                "name": "into",
+                "comment": " Traverses into a a structure. You need to provide a way into the new focus\n\n        (focus -> newFocus)\n\nand a way to apply an updated newFocus to the current focus.\n\n        (newFocus -> focus -> focus)\n\nTypically the boilerplate will follow this pattern:\n\n        {a = someNestedData }\n            |> zip\n            |> into .a (\\a parent -> { parent | a = a})\n\n",
+                "type": "(focus -> newFocus) -> (newFocus -> focus -> focus) -> Zipper.Zipper focus root -> Zipper.Zipper newFocus root"
+            },
+            {
+                "name": "intoMaybe",
+                "comment": " Like `into`, but for when your focus is a `Maybe focus`.\nNote the new focus will also be a maybe. Continue using `intoMaybe` as\nyou traverse into your structure (until you need `andThenInto`).\n",
+                "type": "(focus -> newFocus) -> (newFocus -> focus -> focus) -> Zipper.Zipper (Maybe.Maybe focus) root -> Zipper.Zipper (Maybe.Maybe newFocus) root"
+            },
+            {
+                "name": "map",
+                "comment": " Map the focused value. When this zipper is unzipped, the new value will\nreplace the old.\n",
+                "type": "(focus -> focus) -> Zipper.Zipper focus root -> Zipper.Zipper focus root"
+            },
+            {
+                "name": "mapMaybe",
+                "comment": " Like `map`, but for when the focus is a Maybe.\n",
+                "type": "(focus -> focus) -> Zipper.Zipper (Maybe.Maybe focus) root -> Zipper.Zipper (Maybe.Maybe focus) root"
+            },
+            {
+                "name": "unzip",
+                "comment": " Return the root of the zipper, with all updates that have occurred to\nfocused parts of the zipper.\n\ne.g.\n\n    { a = { b = 1 } }\n        |> zip\n        |> into .a (\\a parent -> { parent | a = a })\n        |> into .b (\\b parent -> { parent | b = b })\n        |> map (\\n -> n + 1)\n        |> unzip\n        == { a = { b = 2 } }\n\n",
+                "type": "Zipper.Zipper focus root -> root"
+            },
+            {
+                "name": "value",
+                "comment": " Return the value of the current focus.\n\n    { a = { b = True } }\n        |> zip\n        |> into .a (\\a parent -> { parent | a = a })\n        |> value\n        == { b = True }\n\n",
+                "type": "Zipper.Zipper focus root -> focus"
+            },
+            {
+                "name": "zip",
+                "comment": " Create a zipper from a value, focused on that value.\n",
+                "type": "root -> Zipper.Zipper root root"
+            }
+        ],
+        "binops": []
+    }
+]

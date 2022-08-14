@@ -1,0 +1,387 @@
+[
+    {
+        "name": "Charset",
+        "comment": " The Charset maps glyph identifiers to glyph names\n\n@docs Charset, decode\n@docs glyphNameIdentifier\n\n",
+        "unions": [
+            {
+                "name": "Charset",
+                "comment": " The Charset maps glyph identifiers to string identifiers.\n\nThe string identifiers can then be used as indices into the string INDEX to get the actual name of a glyph.\n\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decode",
+                "comment": " Decode a `Charset`. The `offset` is (a)bused to indicate use of a predefined charset\n\n  - **offset = 0**: the ISOAdobe charset will be used\n  - **offset = 1**: the Expert charset will be used\n  - **offset = 2**: the ExpertSubset charset will be used\n  - **otherwise** the charset has to be decoded\n\nWhen a predefined charset is used the charset is not encoded.\n\n",
+                "type": "{ offset : Basics.Int, numberOfGlyphs : Basics.Int } -> Bytes.Decode.Decoder Charset.Charset"
+            },
+            {
+                "name": "glyphNameIdentifier",
+                "comment": " Find the string identifier for a glyph identifier.\n",
+                "type": "Basics.Int -> Charset.Charset -> Basics.Int"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Charstring",
+        "comment": " A charstring is a sequence of numbers that encodes the shape of a glyph with drawing and layout operators like moveto, lineto, and curveto.\n\nBecause both operators and their arguments are numbers, we have to differentiate the two.\nThe operators use the numbers 0..31 (as unsignedInt8) and arguments use all other values.\nTo be able to use 0..31 as arguments too, the arguments are shifted (specifics are in `Charstring.Number`).\n\nThe arguments come first and are pushed onto a stack (or really a dequeue, we mostly use first in first out).\nWhen an operator is found, the arguments and the operator are bundled together.\n\nA tricky thing is that while most operators only take these arguments, the mask operators can also chomp some bytes after\nthe operator token. This means that we have to decode from left to right, one full operation at a time.\n\n@docs Charstring\n\n@docs Operation, Point\n\n@docs decode, Subroutines\n\n",
+        "unions": [
+            {
+                "name": "Operation",
+                "comment": " The drawing operations. For the full details see the [charstring 2 spec][spec].\n\n  - **HintMask** and **CounterMask**: masks to turn on stem hints\n  - **HStem** and **VStem** definition of stems\n  - **Width**: optional value that gives the width of the charstring\n  - **MoveTo**: move the drawing cursor\n  - **LineTo** and **CurveTo**: draw a line (resp. a cubic curve) from the current drawing cursor\n\n[spec]: https://www.adobe.com/content/dam/acom/en/devnet/font/pdfs/5177.Type2.pdf\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "HintMask",
+                        [
+                            "List.List Basics.Int"
+                        ]
+                    ],
+                    [
+                        "CounterMask",
+                        [
+                            "List.List Basics.Int"
+                        ]
+                    ],
+                    [
+                        "HStem",
+                        [
+                            "Basics.Int",
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "VStem",
+                        [
+                            "Basics.Int",
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "Width",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "MoveTo",
+                        [
+                            "Charstring.Point"
+                        ]
+                    ],
+                    [
+                        "LineTo",
+                        [
+                            "Charstring.Point"
+                        ]
+                    ],
+                    [
+                        "CurveTo",
+                        [
+                            "Charstring.Point",
+                            "Charstring.Point",
+                            "Charstring.Point"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Charstring",
+                "comment": " The `Charstring` is what defines the actual shape of a glyph. It is a list of drawing instructions (like moveto, lineto, and curveto).\n",
+                "args": [],
+                "type": "List.List Charstring.Operation"
+            },
+            {
+                "name": "Point",
+                "comment": " A 2D point with integer coordinates\n",
+                "args": [],
+                "type": "{ x : Basics.Int, y : Basics.Int }"
+            },
+            {
+                "name": "Subroutines",
+                "comment": " Subroutines are initially stored as an array of `Bytes` objects. Global subroutines are a CFF table, local subroutines are part of the PRIVATE table.\n\nAt any point between operators in a charstring, a subroutine can be invoked.\nSubroutines are pieces of charstrings that occur often and are therfore abstracted to save space.\n\nSubroutines can be either global (used by all fonts in a fontset) or local (used only in this particular font).\nDecoding subroutines correctly is tricky because the decoding depends on the current `State`, in particular\nthe arguments on the stack (`State.argumentStack`).\n\nThe solution I've settled on is to store the subroutines as `Bytes`, and when a subroutine is called, we evaluate the normal charstring decoder with the subroutine bytes.\nThe storage of the subroutines in this way is cheap, because a `Bytes` slice really only stores an offset and a length. It doesn't copy the underlying `Bytes`.\n\n",
+                "args": [],
+                "type": "Array.Array Bytes.Bytes"
+            }
+        ],
+        "values": [
+            {
+                "name": "decode",
+                "comment": " Decode a `Charstring` given global and local subroutines.\n",
+                "type": "{ global : Charstring.Subroutines, local : Maybe.Maybe Charstring.Subroutines } -> Bytes.Decode.Decoder Charstring.Charstring"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "CompactFontFormat",
+        "comment": " Decoding Compact Font Format (CFF) tables.\n\n@docs CompactFont, parse\n\n\n## Utility functions\n\n@docs characterToName\n\n\n## Lowlevel helpers\n\n@docs CompactFontSet, pickFont\n@docs decodeCompactFont, decodeCompactFontSet\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "CompactFont",
+                "comment": " A single compact font\n\nA single font is much easier to work with than a fontset, so it is the main abstraction.\n\n  - **version**: font version\n  - **name**: font name\n  - **tops**: top-level dictionary\n  - **strings**: glyph names\n  - **subroutines**: global subroutines\n\n",
+                "args": [],
+                "type": "{ version : { major : Basics.Int, minor : Basics.Int }, name : String.String, topLevelDict : Dict.Top.Top, strings : Strings.Strings, subroutines : Charstring.Subroutines, glyphs : Glyphs.Glyphs }"
+            },
+            {
+                "name": "CompactFontSet",
+                "comment": " A compact font set\n\nThis is the raw decoded data. This means little safety and convenience, but maximum flexibility.\n\n  - **version**: font set version\n  - **name**: font names\n  - **tops**: top-level dictionaries\n  - **strings**: glyph names of all fonts\n  - **subroutines**: global subroutines\n\n",
+                "args": [],
+                "type": "{ version : { major : Basics.Int, minor : Basics.Int }, names : Array.Array String.String, tops : Array.Array Dict.Top.Top, strings : Array.Array String.String, subroutines : Charstring.Subroutines }"
+            }
+        ],
+        "values": [
+            {
+                "name": "characterToName",
+                "comment": " Find the name of a character in this font\n",
+                "type": "CompactFontFormat.CompactFont -> (Char.Char -> Basics.Int) -> Char.Char -> String.String"
+            },
+            {
+                "name": "decodeCompactFont",
+                "comment": " The CFF table decoder\n",
+                "type": "Bytes.Bytes -> Bytes.Decode.Decoder CompactFontFormat.CompactFont"
+            },
+            {
+                "name": "decodeCompactFontSet",
+                "comment": " The CFF table decoder\n",
+                "type": "Bytes.Decode.Decoder CompactFontFormat.CompactFontSet"
+            },
+            {
+                "name": "parse",
+                "comment": " Parse `Bytes` into a CFF font.\n\nThis function is defined in terms of `decodeCompactFontSet` and picks the first font in the font set.\nIn most cases, there is only one font in the font set.\n\n",
+                "type": "Bytes.Bytes -> Maybe.Maybe CompactFontFormat.CompactFont"
+            },
+            {
+                "name": "pickFont",
+                "comment": " Pick a font from a fontset\n",
+                "type": "Bytes.Bytes -> CompactFontFormat.CompactFontSet -> Basics.Int -> Maybe.Maybe CompactFontFormat.CompactFont"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "CompactFontFormat.Svg",
+        "comment": " Convert the CFF drawing instructions into SVG drawing instructions\n\nNot all CFF instructions are relevant for svg drawing. For instance the hints are not used\nbecause these are signals to the rasterizer. With SVG, the browser rasterizer will take care of the rasterization automatically.\nIt cannot be influenced from SVG path instructions.\n\nThe functions in this module will automatically close the path.\n\n\n## Functions\n\n@docs glyph\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "glyph",
+                "comment": " Convert a list of drawing operations into SVG path syntax instructions\n\nThe resulting string can be plugged into an svg `d` attribute.\n\n",
+                "type": "List.List Charstring.Operation -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Dict.Operator",
+        "comment": "\n\n@docs Operator, Argument\n\n@docs decode\n\n@docs argumentToInt, argumentToFloat\n\n",
+        "unions": [
+            {
+                "name": "Argument",
+                "comment": " Dict Operator arguments\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Operator",
+                "comment": " Operators used in DICT structures\n\n  - **opcode**: the code of the operator\n  - **arguments**: arguments for the operator\n  - **size**: the size in bytes of the whole operator\n\n",
+                "args": [],
+                "type": "{ opcode : Basics.Int, arguments : List.List Dict.Operator.Argument, size : Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "argumentToFloat",
+                "comment": " ",
+                "type": "Dict.Operator.Argument -> Basics.Float"
+            },
+            {
+                "name": "argumentToInt",
+                "comment": " ",
+                "type": "Dict.Operator.Argument -> Basics.Int"
+            },
+            {
+                "name": "decode",
+                "comment": " Decode an `Operator`.\n",
+                "type": "Bytes.Decode.Decoder Dict.Operator.Operator"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Dict.Private",
+        "comment": "\n\n@docs Private, default, decode\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Private",
+                "comment": " The private dict.\n",
+                "args": [],
+                "type": "{ blues : List.List Dict.Operator.Argument, other_blues : List.List Dict.Operator.Argument, family_blues : List.List Dict.Operator.Argument, family_other_blues : List.List Dict.Operator.Argument, blue_scale : Basics.Float, blue_shift : Basics.Float, blue_fuzz : Basics.Float, std_hw : Maybe.Maybe Basics.Float, std_vw : Maybe.Maybe Basics.Float, stem_snap_h : List.List Dict.Operator.Argument, stem_snap_v : List.List Dict.Operator.Argument, force_bold : Basics.Bool, language_group : Basics.Int, expansion_factor : Basics.Float, initial_random_seed : Basics.Int, subroutines : Maybe.Maybe Basics.Int, default_width_x : Basics.Int, nominal_width_x : Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "decode",
+                "comment": " Decode the private dict given its size in bytes\n",
+                "type": "Basics.Int -> Bytes.Decode.Decoder Dict.Private.Private"
+            },
+            {
+                "name": "default",
+                "comment": " The default values for the `Private` dict.\n",
+                "type": "Dict.Private.Private"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Dict.Top",
+        "comment": " The top-level dictionaries of all fonts in the file.\n\n@docs Top, Cid\n\n@docs decode\n\n@docs Point, FontBoundingBox, FontMatrix\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Cid",
+                "comment": " Additional operators used in CIDFonts\n",
+                "args": [],
+                "type": "{ ros : ( Basics.Int, Basics.Int, Basics.Int ), font_version : Basics.Float, font_revision : Basics.Float, font_type : Basics.Int, count : Basics.Int, uid_base : Maybe.Maybe Basics.Int, fd_array : Basics.Int, fd_select : Basics.Int, font_name : Maybe.Maybe Basics.Int }"
+            },
+            {
+                "name": "FontBoundingBox",
+                "comment": " The font bounding box\n",
+                "args": [],
+                "type": "{ bottomLeft : Dict.Top.Point, topRight : Dict.Top.Point }"
+            },
+            {
+                "name": "FontMatrix",
+                "comment": " The font matrix\n",
+                "args": [],
+                "type": "{ a : Basics.Float, b : Basics.Float, c : Basics.Float, d : Basics.Float, e : Basics.Float, f : Basics.Float }"
+            },
+            {
+                "name": "Point",
+                "comment": " A 2d point\n",
+                "args": [],
+                "type": "{ x : Basics.Int, y : Basics.Int }"
+            },
+            {
+                "name": "Top",
+                "comment": " The TOP dict\n",
+                "args": [],
+                "type": "{ version : Maybe.Maybe Basics.Int, notice : Maybe.Maybe Basics.Int, copyright : Maybe.Maybe Basics.Int, full_name : Maybe.Maybe Basics.Int, family_name : Maybe.Maybe Basics.Int, weight : Maybe.Maybe Basics.Int, is_fixed_pitch : Basics.Bool, italic_angle : Basics.Int, underline_position : Basics.Int, underline_thickness : Basics.Int, paint_type : Basics.Int, charstring_type : Basics.Int, font_matrix : Dict.Top.FontMatrix, unique_id : Maybe.Maybe Basics.Int, font_bounding_box : Dict.Top.FontBoundingBox, stroke_width : Basics.Int, xuid : Maybe.Maybe (List.List Dict.Operator.Argument), charset : Basics.Int, encoding : Basics.Int, charstrings : Maybe.Maybe Basics.Int, private : Maybe.Maybe { size : Basics.Int, offset : Basics.Int }, synthetic_base : Maybe.Maybe Basics.Int, post_script : Maybe.Maybe Basics.Int, base_font_name : Maybe.Maybe Basics.Int, base_font_blend : Maybe.Maybe (List.List Dict.Operator.Argument), cid : Maybe.Maybe Dict.Top.Cid }"
+            }
+        ],
+        "values": [
+            {
+                "name": "decode",
+                "comment": " Decode the top dict given its size (in bytes)\n",
+                "type": "Basics.Int -> Bytes.Decode.Decoder Dict.Top.Top"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Encoding",
+        "comment": " The Encoding maps character codes to glyph identifiers\n\n> **Note:** CFF is seldomly used on its own. For instance in OpenType fonts, there is a separate character map (`cmap`) table that does the encoding.\n> Therefore, the code in this module is untested. If you have a font file actually uses the CFF encodings that you can share, please open an issue on the repository.\n\n@docs Encoding\n\n@docs forChar, forIndex\n\n@docs decode\n\n",
+        "unions": [
+            {
+                "name": "Encoding",
+                "comment": " The `Encoding` maps a character code to a glyph identifier.\n\nThe character code can be found using `Char.toCode : Char -> Int`. The glyph identifier is used as an index into the array of charstrings.\nIt can also be used to get a character's name from the `Charset`.\n\nA pseudo-code example:\n\n    charstrings : Array Charstring\n\n    encoding : Encoding\n\n    toGlyph : Char -> Maybe Charstring\n    toGlyph character =\n        let\n            gid =\n                Encoding.forChar character\n        in\n        Array.get gid charstrings\n\n**Note:** In most cases the CFF encoding is not used. For instance, OpenType fonts define their own encoding in the `cmap` table.\nIn those cases, the encoding is still present in the CFF (it often defaults to `0`, the standard encoding) but using it will give wrong results.\n\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decode",
+                "comment": " Decode and encoding given the encoding format\n\nThe offset value is (a)bused to indicate the encoding format.\n\n  - **offset = 0**: the _standard_ encoding will be used\n  - **offset = 1**: the _expert_ encoding will be used\n  - **otherwise** the encoding will be decoded\n\nWhen the offset is 0 or 1 the encoding is not encoded at all.\n\n",
+                "type": "{ offset : Basics.Int } -> Bytes.Decode.Decoder Encoding.Encoding"
+            },
+            {
+                "name": "forChar",
+                "comment": " Returns the glyph identifier for a character\n",
+                "type": "Encoding.Encoding -> Char.Char -> Basics.Int"
+            },
+            {
+                "name": "forIndex",
+                "comment": " Returns the glyph identifier for an index\n\nDefaults to `0` (`.notdef`).\n\n",
+                "type": "Encoding.Encoding -> Basics.Int -> Basics.Int"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Glyphs",
+        "comment": " The set of glyphs in the font\n\n@docs Glyphs\n@docs parse\n@docs charstring\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Glyphs",
+                "comment": " Set of glyphs in the font\n",
+                "args": [],
+                "type": "{ top : Dict.Top.Top, private : Dict.Private.Private, encoding : Encoding.Encoding, charset : Charset.Charset, charstrings : Array.Array Charstring.Charstring }"
+            }
+        ],
+        "values": [
+            {
+                "name": "charstring",
+                "comment": " Get the charstring of a particular glyph\n",
+                "type": "Basics.Int -> Glyphs.Glyphs -> Charstring.Charstring"
+            },
+            {
+                "name": "parse",
+                "comment": " Parse a `Glyphs`\n",
+                "type": "Bytes.Bytes -> Dict.Top.Top -> Charstring.Subroutines -> Maybe.Maybe Glyphs.Glyphs"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Index",
+        "comment": " Decoders for CFF Index structures\n\n@docs top, subroutines, name, string\n@docs charstring, charstringWithOptions\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "charstring",
+                "comment": " Decode a charstring INDEX\n",
+                "type": "Bytes.Decode.Decoder (Array.Array Charstring.Charstring)"
+            },
+            {
+                "name": "charstringWithOptions",
+                "comment": " Decode a charstring INDEX with custom global and local subroutines\n",
+                "type": "{ global : Charstring.Subroutines, local : Maybe.Maybe Charstring.Subroutines } -> Bytes.Decode.Decoder (Array.Array Charstring.Charstring)"
+            },
+            {
+                "name": "name",
+                "comment": " Decode the name INDEX.\n\nThe name index contains the names of the fonts in the fontset\n\n",
+                "type": "Bytes.Decode.Decoder (Array.Array String.String)"
+            },
+            {
+                "name": "string",
+                "comment": " Decode the string INDEX\n\nAll the strings, with the exception of the FontName and CIDFontName strings (which appear in the Name INDEX), used by different fonts in the fontset\n\n",
+                "type": "Bytes.Decode.Decoder (Array.Array String.String)"
+            },
+            {
+                "name": "subroutines",
+                "comment": " Decode a subroutine INDEX\n",
+                "type": "Bytes.Decode.Decoder Charstring.Subroutines"
+            },
+            {
+                "name": "top",
+                "comment": " Decode the top-level dicts for all fonts in the fontset\n",
+                "type": "Bytes.Decode.Decoder (Array.Array Dict.Top.Top)"
+            }
+        ],
+        "binops": []
+    }
+]

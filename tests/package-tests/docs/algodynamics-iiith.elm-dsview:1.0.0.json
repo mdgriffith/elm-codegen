@@ -1,0 +1,229 @@
+[
+    {
+        "name": "ArrayView",
+        "comment": " This module is utilized to render the visualization of the array.\n\n\n# Drawers\n\nThis type represents a function that translates element/Node Attributes\nto Svg.\n\n\n# Configuration Attributes\n\n@docs draw, runArrayLayout, ArrayLayout\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "ArrayLayout",
+                "comment": " This type defines array layout ",
+                "args": [],
+                "type": "{ width : Basics.Float, height : Basics.Float, coordDict : Dict.Dict Basics.Int ( Basics.Float, Basics.Float ), dagreAttr : List.List Dagre.Attributes.Attribute }"
+            }
+        ],
+        "values": [
+            {
+                "name": "draw",
+                "comment": " This function draws the Array as SVG using the elm-dagre library.\nIt takes List of LayoutConfig attributes as the first argument, and drawers/styles as\nthe second attribute and the Array as the third. The standard drawers are\nused as the default drawers.\n\n    -- The simplest example of its usage is\n    draw [] [] arr\n\n",
+                "type": "List.List (Render.StandardDrawers.Attributes.Attribute Layout.Attributes.LayoutConfig) -> List.List (Render.StandardDrawers.Attributes.Attribute (Render.Attributes.DrawConfig n e msg)) -> Array.Array n -> Html.Html msg"
+            },
+            {
+                "name": "runArrayLayout",
+                "comment": " This function computes the layout for the elements of array using runLayout API exposed\nby elm-dagre.\n\nThis function takes list of LayoutConfig attributes and an array and outputs the ArrayLayout\n\n    runArrayLayout [] arr\n\n",
+                "type": "List.List (Render.StandardDrawers.Attributes.Attribute Layout.Attributes.LayoutConfig) -> Array.Array n -> ArrayView.ArrayLayout"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Layout.Attributes",
+        "comment": " Layout Configuration Attributes\n\n\n# Types\n\n@docs Direction, LayoutConfig\n\n\n# Attributes\n\nThese function set the respective attributes for the algorithm\n\n@docs widthDict, heightDict, width, height, marginX, marginY, elemDistX, elemDistY, direction, wrapVal\n\n",
+        "unions": [
+            {
+                "name": "Direction",
+                "comment": " This type represents the directions of representation , wherein TB stands for Top-to-Bottom, BT stands for Bottom-to-Top, LR stands for Left-to-Right and RL stands for Right-to-Left",
+                "args": [],
+                "cases": [
+                    [
+                        "TB",
+                        []
+                    ],
+                    [
+                        "BT",
+                        []
+                    ],
+                    [
+                        "LR",
+                        []
+                    ],
+                    [
+                        "RL",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "LayoutConfig",
+                "comment": " This type represents the layout configurations of the drawer ",
+                "args": [],
+                "type": "{ widthDict : Dict.Dict Basics.Int Basics.Float, heightDict : Dict.Dict Basics.Int Basics.Float, width : Basics.Float, height : Basics.Float, marginX : Basics.Float, marginY : Basics.Float, elemDistX : Basics.Float, elemDistY : Basics.Float, direction : Layout.Attributes.Direction, wrapVal : Maybe.Maybe Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "direction",
+                "comment": " Defines array layout direction i.e LR, RL, TB, BT\n\nThe default value is LR\n",
+                "type": "Layout.Attributes.Direction -> Render.StandardDrawers.Attributes.Attribute { b | direction : Layout.Attributes.Direction }"
+            },
+            {
+                "name": "elemDistX",
+                "comment": " Defines Relative distance between elements of array in x-axis direction\n\nThe default value is 50 pixels\n",
+                "type": "Basics.Float -> Render.StandardDrawers.Attributes.Attribute { b | elemDistX : Basics.Float }"
+            },
+            {
+                "name": "elemDistY",
+                "comment": " Defines Relative distance between elements of array in y-axis direction\n\nThe default value is 50 pixels\n",
+                "type": "Basics.Float -> Render.StandardDrawers.Attributes.Attribute { b | elemDistY : Basics.Float }"
+            },
+            {
+                "name": "height",
+                "comment": " Defines the default height that will be used during the layout.\nThis value will be used when no value is available in heightDict for some node.\n\nThe default value is 60 pixels\n",
+                "type": "Basics.Float -> Render.StandardDrawers.Attributes.Attribute { b | height : Basics.Float }"
+            },
+            {
+                "name": "heightDict",
+                "comment": " The heightDict associates nodes with a height that will be used during the layout.\n\nThe default value is Dict.empty\n",
+                "type": "Dict.Dict Basics.Int Basics.Float -> Render.StandardDrawers.Attributes.Attribute { b | heightDict : Dict.Dict Basics.Int Basics.Float }"
+            },
+            {
+                "name": "marginX",
+                "comment": " Defines the number of pixels to use as a margin around the left and right\nof the Array.\n\nThe default value is 50 pixels\n",
+                "type": "Basics.Float -> Render.StandardDrawers.Attributes.Attribute { b | marginX : Basics.Float }"
+            },
+            {
+                "name": "marginY",
+                "comment": " Defines the number of pixels to use as a margin around the top and bottom\nof the Array.\n\nThe default value is 50 pixels\n",
+                "type": "Basics.Float -> Render.StandardDrawers.Attributes.Attribute { b | marginY : Basics.Float }"
+            },
+            {
+                "name": "width",
+                "comment": " Defines the default width that will be used during the layout.\nThis value will be used when no value is available in widthDict for some node.\n\nThe default value is 60 pixels\n",
+                "type": "Basics.Float -> Render.StandardDrawers.Attributes.Attribute { b | width : Basics.Float }"
+            },
+            {
+                "name": "widthDict",
+                "comment": " The widthDict associates nodes with a width that will be used during the layout.\n\nThe default value is Dict.empty\n",
+                "type": "Dict.Dict Basics.Int Basics.Float -> Render.StandardDrawers.Attributes.Attribute { b | widthDict : Dict.Dict Basics.Int Basics.Float }"
+            },
+            {
+                "name": "wrapVal",
+                "comment": " Defines the number of nodes to be wrapped in a row before moving to next row \n\nThe default value is Nothing\n",
+                "type": "Maybe.Maybe Basics.Int -> Render.StandardDrawers.Attributes.Attribute { b | wrapVal : Maybe.Maybe Basics.Int }"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Render.Attributes",
+        "comment": " This module provides attributes for configuring draw, svgDrawNode\nand elemDrawer\n\n\n# Type\n\n@docs Shape, elemDrawer, svgDrawNode, DrawConfig\n\n\n\n# elemDrawer Attributes\n\n@docs label, onClick, strokeColor, strokeWidth, strokeDashArray, style,\ntitle, shape, fill, xLabel, xLabelPos\n\n",
+        "unions": [
+            {
+                "name": "Shape",
+                "comment": " Used to configure the shape of array container ",
+                "args": [],
+                "cases": [
+                    [
+                        "Circle",
+                        []
+                    ],
+                    [
+                        "Ellipse",
+                        []
+                    ],
+                    [
+                        "Box",
+                        []
+                    ],
+                    [
+                        "RoundedBox",
+                        [
+                            "Basics.Float"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "DrawConfig",
+                "comment": " Configuration for array drawer ",
+                "args": [
+                    "n",
+                    "e",
+                    "msg"
+                ],
+                "type": "{ edgeDrawer : Render.Types.EdgeDrawer e msg, nodeDrawer : Render.Types.NodeDrawer n msg, style : String.String, id : String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "elemDrawer",
+                "comment": " Used to draw the array elements with given configurations ",
+                "type": "Render.Types.NodeDrawer n msg -> Render.Attributes.DrawConfig n e msg -> Render.Attributes.DrawConfig n e msg"
+            },
+            {
+                "name": "fill",
+                "comment": " To add fill color to Node ",
+                "type": "(a -> Color.Color) -> Render.StandardDrawers.Attributes.Attribute { c | fill : a -> Color.Color }"
+            },
+            {
+                "name": "label",
+                "comment": " The following attribute can be used to set label on both Nodes and Edges.\n",
+                "type": "(a -> String.String) -> Render.StandardDrawers.Attributes.Attribute { c | label : a -> String.String }"
+            },
+            {
+                "name": "onClick",
+                "comment": " To add event handlers to Nodes and Edges\n",
+                "type": "(a -> msg) -> Render.StandardDrawers.Attributes.Attribute { c | onClick : Maybe.Maybe (a -> msg) }"
+            },
+            {
+                "name": "shape",
+                "comment": " This attributes sets the type of arrow head used for drawing the edge.\nThe possible values are None, Triangle, Vee.\n",
+                "type": "Render.Attributes.Shape -> Render.StandardDrawers.Attributes.Attribute (Render.Attributes.NodeDrawerConfig n msg)"
+            },
+            {
+                "name": "strokeColor",
+                "comment": " To set the stroke color of a node/edge\n",
+                "type": "(a -> Color.Color) -> Render.StandardDrawers.Attributes.Attribute { c | strokeColor : a -> Color.Color }"
+            },
+            {
+                "name": "strokeDashArray",
+                "comment": " To set the stroke dash array of a node/edge\n",
+                "type": "(a -> String.String) -> Render.StandardDrawers.Attributes.Attribute { c | strokeDashArray : a -> String.String }"
+            },
+            {
+                "name": "strokeWidth",
+                "comment": " To set the stroke width of a node/edge\n",
+                "type": "(a -> Basics.Float) -> Render.StandardDrawers.Attributes.Attribute { c | strokeWidth : a -> Basics.Float }"
+            },
+            {
+                "name": "style",
+                "comment": " To add any inline css to path element of the edge, or polygon of node.\n",
+                "type": "(a -> String.String) -> Render.StandardDrawers.Attributes.Attribute { c | style : a -> String.String }"
+            },
+            {
+                "name": "svgDrawNode",
+                "comment": " Used to generate SVG for each individual array element ",
+                "type": "List.List (Render.StandardDrawers.Attributes.Attribute (Render.Attributes.NodeDrawerConfig n msg)) -> Render.Types.NodeAttributes n -> TypedSvg.Core.Svg msg"
+            },
+            {
+                "name": "title",
+                "comment": " To set the title (appears as a tooltip) of a node/edge\n",
+                "type": "(a -> String.String) -> Render.StandardDrawers.Attributes.Attribute { c | title : a -> String.String }"
+            },
+            {
+                "name": "xLabel",
+                "comment": " Set the Extra Label for a node. ",
+                "type": "(Graph.Node n -> String.String) -> Render.StandardDrawers.Attributes.Attribute (Render.Attributes.NodeDrawerConfig n msg)"
+            },
+            {
+                "name": "xLabelPos",
+                "comment": " Set the position of xLabel of a node\n",
+                "type": "(Graph.Node n -> Basics.Float -> Basics.Float -> ( Basics.Float, Basics.Float )) -> Render.StandardDrawers.Attributes.Attribute (Render.Attributes.NodeDrawerConfig n msg)"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,360 @@
+[
+    {
+        "name": "StringTrie",
+        "comment": " A trie mapping unique strings to values.\n\n\n# Data structure\n\n@docs Trie\n\n\n# Build\n\n@docs empty, singleton, insert, update, remove\n\n\n# Query\n\n@docs isEmpty, member, get, size\n\n\n# Lists\n\n@docs keys, values, toList, fromList\n\n\n# Transform\n\n@docs map, foldl, foldr, filter, partition\n\n\n# Combine\n\n@docs union, intersect, diff, merge\n\n\n# Trie specific search operations\n\n@docs Match, break, wildcard, continueIf, continueIfOneOf, match, expand, isPrefix, subtrie\n\n\n# String specific operations\n\n@docs expandIgnoreCase\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Match",
+                "comment": " `Match` describes how a flexible search over a trie will proceed.\n\n  - `Break` - do not explore any more below the current prefix.\n  - `Wildcard` - continue with all possible next keys below the current prefix.\n  - `ContinueIf` - continue with the next key provided it exactly matches the comparable specified.\n  - `ContinueIfOneOf` - continue with the next key provided it matches one of the comparables specified.\n\nThe `Break`, `ContinueIf` and `ContinueIfOneOf` options allow a trie to be\ntraversed efficiently without exploring unnecessary keys.\n\nThe `Wildcard` and `ContinueIfOneOf` options allow flexible matching within a\ntrie. Functions such as case-insensitive matching, fuzzy matching or regular\nexpression matching can be implemented using these options.\n\n",
+                "args": [
+                    "comparable"
+                ],
+                "type": "Trie.Match comparable"
+            },
+            {
+                "name": "Trie",
+                "comment": " A trie mapping keys to values, where the keys are `String`.\n\nThis version of `Trie` is a lot like a `Dict` except the keys are must be\nstrings. Keys that have common prefixes share space, and it is possible to\nefficiently search for keys matching a particular prefix.\n\n",
+                "args": [
+                    "a"
+                ],
+                "type": "Trie.Trie Char.Char a"
+            }
+        ],
+        "values": [
+            {
+                "name": "break",
+                "comment": " A match step that breaks on the current node.\n",
+                "type": "StringTrie.Match comparable"
+            },
+            {
+                "name": "continueIf",
+                "comment": " A match step that follows only one node that exactly matches the next\ncomparable in the key.\n",
+                "type": "comparable -> StringTrie.Match comparable"
+            },
+            {
+                "name": "continueIfOneOf",
+                "comment": " A match step that follows one or more nodes that exactly match the specified\nnext comparables in the key.\n",
+                "type": "List.List comparable -> StringTrie.Match comparable"
+            },
+            {
+                "name": "diff",
+                "comment": " Keep a key-value pair when its key does not appear in the second trie.\n",
+                "type": "StringTrie.Trie a -> StringTrie.Trie b -> StringTrie.Trie a"
+            },
+            {
+                "name": "empty",
+                "comment": " Create an empty trie.\n",
+                "type": "StringTrie.Trie a"
+            },
+            {
+                "name": "expand",
+                "comment": " Given a prefix, finds all keys that begin with that prefix.\n",
+                "type": "String.String -> StringTrie.Trie a -> List.List ( String.String, a )"
+            },
+            {
+                "name": "expandIgnoreCase",
+                "comment": " Given a prefix, finds all keys that begin with that prefix ignoring the case\nof characters in the prefix or in the trie.\n",
+                "type": "String.String -> StringTrie.Trie a -> List.List ( String.String, a )"
+            },
+            {
+                "name": "filter",
+                "comment": " Keep only the key-value pairs that pass the given test.\n",
+                "type": "(String.String -> a -> Basics.Bool) -> StringTrie.Trie a -> StringTrie.Trie a"
+            },
+            {
+                "name": "foldl",
+                "comment": " Fold over the key-value pairs in a trie from lowest key to highest key.\n",
+                "type": "(String.String -> a -> b -> b) -> b -> StringTrie.Trie a -> b"
+            },
+            {
+                "name": "foldr",
+                "comment": " Fold over the key-value pairs in a trie from highest key to lowest key.\n\nDue to the way shorter keys are nearer the top of the trie this fold function\nhas to hold more pending nodes in memory in order to fold in order from the\nhighest key to the lowest key. For this reason it is less efficient than `foldl`\nand `foldl` should be preferred unless the ordering is important.\n\n",
+                "type": "(String.String -> a -> b -> b) -> b -> StringTrie.Trie a -> b"
+            },
+            {
+                "name": "fromList",
+                "comment": " Convert an association list into a trie.\n",
+                "type": "List.List ( String.String, a ) -> StringTrie.Trie a"
+            },
+            {
+                "name": "get",
+                "comment": " Get the value associated with a key. If the key is not found, return\n`Nothing`.\n",
+                "type": "String.String -> StringTrie.Trie a -> Maybe.Maybe a"
+            },
+            {
+                "name": "insert",
+                "comment": " Insert a key-value pair into a trie. Replaces value when there is\na collision.\n",
+                "type": "String.String -> a -> StringTrie.Trie a -> StringTrie.Trie a"
+            },
+            {
+                "name": "intersect",
+                "comment": " Keep a key-value pair when its key appears in the second trie. Preference is\ngiven to values in the first dictionary.\n",
+                "type": "StringTrie.Trie a -> StringTrie.Trie a -> StringTrie.Trie a"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Determine if a trie is empty.\n\n    `isEmpty empty == True`\n\n",
+                "type": "StringTrie.Trie a -> Basics.Bool"
+            },
+            {
+                "name": "isPrefix",
+                "comment": " Given a prefix, checks if there are keys that begin with that prefix.\n",
+                "type": "String.String -> StringTrie.Trie a -> Basics.Bool"
+            },
+            {
+                "name": "keys",
+                "comment": " Get all of the keys in a trie, sorted from lowest to highest.\n",
+                "type": "StringTrie.Trie a -> List.List String.String"
+            },
+            {
+                "name": "map",
+                "comment": " Apply a function to all values in a trie.\n",
+                "type": "(String.String -> a -> b) -> StringTrie.Trie a -> StringTrie.Trie b"
+            },
+            {
+                "name": "match",
+                "comment": " Performs a flexible matching fold over a trie from the lowest to the highest\nkey in order.\n\nSuppose the function passed in has this form:\n\n`searchFn maybeKeyPart maybeValue context accum = ...`\n\nThe `maybeKeyPart` parameter will be set to the next item from the key being\nscanned as a list. This is a `Maybe` as the empty list can be a key in a trie.\nIn practice the value `Nothing` will only be passed to this function on the\nfirst call when the empty key is present.\n\nThe `maybeValue` parameter will be set to any value found at the current position\nin the trie.\n\nThe `context` parameter will be held against the particular node in the trie\nbeing explored. When and if that node is returned to in order to explore other\nkey paths in the trie, the context for that node will be restored. The trie is\nexplored using a depth first search, and the contexts are held in a stack of\npending nodes to explore. An example use of the context might be to hold the\nremaining portion of a key to be matched.\n\nThe `accum` parameter is used like the accumulator in a fold, it can be updated\non each node explored.\n\nThe `context` parameter is restored when back-tracking to explore other possible\nkeys, but the `accum` parameter is carried accross the whole search. In that\nsense `context` is like a local variable and `accum` is like a global variable.\n\n",
+                "type": "(Maybe.Maybe Char.Char -> Maybe.Maybe a -> context -> b -> ( b, context, StringTrie.Match Char.Char )) -> b -> context -> StringTrie.Trie a -> b"
+            },
+            {
+                "name": "member",
+                "comment": " Determine if a whole key is in a trie.\n",
+                "type": "String.String -> StringTrie.Trie a -> Basics.Bool"
+            },
+            {
+                "name": "merge",
+                "comment": " The most general way of combining two tries. You provide three accumulators\nfor when a given key appears:\n\n1.  Only in the left trie.\n2.  In both tries.\n3.  Only in the right trie.\n\nYou then traverse all the keys from lowest to highest, building up whatever you\nwant.\n\n",
+                "type": "(String.String -> a -> result -> result) -> (String.String -> a -> b -> result -> result) -> (String.String -> b -> result -> result) -> StringTrie.Trie a -> StringTrie.Trie b -> result -> result"
+            },
+            {
+                "name": "partition",
+                "comment": " Partition a trie according to some test. The first trie contains all\nkey-value pairs which passed the test, and the second contains the pairs that\ndid not.\n",
+                "type": "(String.String -> a -> Basics.Bool) -> StringTrie.Trie a -> ( StringTrie.Trie a, StringTrie.Trie a )"
+            },
+            {
+                "name": "remove",
+                "comment": " Remove a key-value pair from a trie. If the key is not found,\nno changes are made.\n",
+                "type": "String.String -> StringTrie.Trie a -> StringTrie.Trie a"
+            },
+            {
+                "name": "singleton",
+                "comment": " Create a trie with one key-value pair.\n",
+                "type": "String.String -> a -> StringTrie.Trie a"
+            },
+            {
+                "name": "size",
+                "comment": " Determine the number of key-value pairs in the trie.\n",
+                "type": "StringTrie.Trie a -> Basics.Int"
+            },
+            {
+                "name": "subtrie",
+                "comment": " Given a prefix, finds any sub-trie containing the key-value pairs where the\noriginal keys begin with that prefix. The keys in the sub-trie will only consist\nof the remaining portion of the key after the prefix.\n",
+                "type": "String.String -> StringTrie.Trie a -> Maybe.Maybe (StringTrie.Trie a)"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert a trie into an association list of key-value pairs, sorted by keys.\n",
+                "type": "StringTrie.Trie a -> List.List ( String.String, a )"
+            },
+            {
+                "name": "union",
+                "comment": " Combine two tries. If there is a collision, preference is given to the first\ntrie.\n",
+                "type": "StringTrie.Trie a -> StringTrie.Trie a -> StringTrie.Trie a"
+            },
+            {
+                "name": "update",
+                "comment": " Update the value of a trie for a specific key with a given function.\n",
+                "type": "String.String -> (Maybe.Maybe a -> Maybe.Maybe a) -> StringTrie.Trie a -> StringTrie.Trie a"
+            },
+            {
+                "name": "values",
+                "comment": " Get all of the values in a trie, in the order of their keys.\n",
+                "type": "StringTrie.Trie a -> List.List a"
+            },
+            {
+                "name": "wildcard",
+                "comment": " A match step follows all nodes after the current node.\n",
+                "type": "StringTrie.Match comparable"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Trie",
+        "comment": " A trie mapping unique strings to values.\n\n\n# Data structure\n\n@docs Trie\n\n\n# Build\n\n@docs empty, singleton, insert, update, remove\n\n\n# Query\n\n@docs isEmpty, member, get, size\n\n\n# Lists\n\n@docs keys, values, toList, fromList\n\n\n# Transform\n\n@docs map, foldl, foldr, filter, partition\n\n\n# Combine\n\n@docs union, intersect, diff, merge\n\n\n# Trie specific search operations.\n\n@docs Match, break, wildcard, continueIf, continueIfOneOf, match, expand, isPrefix, subtrie\n\n",
+        "unions": [
+            {
+                "name": "Match",
+                "comment": " `Match` describes how a flexible search over a trie will proceed.\n\n  - `Break` - do not explore any more below the current prefix.\n  - `Wildcard` - continue with all possible next keys below the current prefix.\n  - `ContinueIf` - continue with the next key provided it exactly matches the comparable specified.\n  - `ContinueIfOneOf` - continue with the next key provided it matches one of the comparables specified.\n\nThe `Break`, `ContinueIf` and `ContinueIfOneOf` options allow a trie to be\ntraversed efficiently without exploring unnecessary keys.\n\nThe `Wildcard` and `ContinueIfOneOf` options allow flexible matching within a\ntrie. Functions such as case-insensitive matching, fuzzy matching or regular\nexpression matching can be implemented using these options.\n\n",
+                "args": [
+                    "comparable"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Trie",
+                "comment": " A trie mapping keys to values, where the keys are `List comparable`.\n\nA `Trie` is a lot like a `Dict` except the keys are expanded into lists. Keys\nthat have common lists as prefixes share space, and it is possible to efficiently\nsearch for keys matching a particular prefix.\n\n",
+                "args": [
+                    "comparable",
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "break",
+                "comment": " A match step that breaks on the current node.\n",
+                "type": "Trie.Match comparable"
+            },
+            {
+                "name": "continueIf",
+                "comment": " A match step that follows only one node that exactly matches the next\ncomparable in the key.\n",
+                "type": "comparable -> Trie.Match comparable"
+            },
+            {
+                "name": "continueIfOneOf",
+                "comment": " A match step that follows one or more nodes that exactly match the specified\nnext comparables in the key.\n",
+                "type": "List.List comparable -> Trie.Match comparable"
+            },
+            {
+                "name": "diff",
+                "comment": " Keep a key-value pair when its key does not appear in the second trie.\n",
+                "type": "Trie.Trie comparable a -> Trie.Trie comparable b -> Trie.Trie comparable a"
+            },
+            {
+                "name": "empty",
+                "comment": " Create an empty trie.\n",
+                "type": "Trie.Trie comparable a"
+            },
+            {
+                "name": "expand",
+                "comment": " Given a prefix, finds all keys that begin with that prefix.\n",
+                "type": "List.List comparable -> Trie.Trie comparable a -> List.List ( List.List comparable, a )"
+            },
+            {
+                "name": "filter",
+                "comment": " Keep only the key-value pairs that pass the given test.\n",
+                "type": "(List.List comparable -> a -> Basics.Bool) -> Trie.Trie comparable a -> Trie.Trie comparable a"
+            },
+            {
+                "name": "foldl",
+                "comment": " Fold over the key-value pairs in a trie from lowest key to highest key.\n",
+                "type": "(List.List comparable -> a -> b -> b) -> b -> Trie.Trie comparable a -> b"
+            },
+            {
+                "name": "foldr",
+                "comment": " Fold over the key-value pairs in a trie from highest key to lowest key.\n\nDue to the way shorter keys are nearer the top of the trie this fold function\nhas to hold more pending nodes in memory in order to fold in order from the\nhighest key to the lowest key. For this reason it is less efficient than `foldl`\nand `foldl` should be preferred unless the ordering is important.\n\n",
+                "type": "(List.List comparable -> a -> b -> b) -> b -> Trie.Trie comparable a -> b"
+            },
+            {
+                "name": "fromList",
+                "comment": " Convert an association list into a trie.\n",
+                "type": "List.List ( List.List comparable, a ) -> Trie.Trie comparable a"
+            },
+            {
+                "name": "get",
+                "comment": " Get the value associated with a key. If the key is not found, return\n`Nothing`.\n",
+                "type": "List.List comparable -> Trie.Trie comparable a -> Maybe.Maybe a"
+            },
+            {
+                "name": "insert",
+                "comment": " Insert a key-value pair into a trie. Replaces value when there is\na collision.\n",
+                "type": "List.List comparable -> a -> Trie.Trie comparable a -> Trie.Trie comparable a"
+            },
+            {
+                "name": "intersect",
+                "comment": " Keep a key-value pair when its key appears in the second trie. Preference is\ngiven to values in the first dictionary.\n",
+                "type": "Trie.Trie comparable a -> Trie.Trie comparable a -> Trie.Trie comparable a"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Determine if a trie is empty.\n\n    `isEmpty empty == True`\n\n",
+                "type": "Trie.Trie comparable a -> Basics.Bool"
+            },
+            {
+                "name": "isPrefix",
+                "comment": " Given a prefix, checks if there are keys that begin with that prefix.\n",
+                "type": "List.List comparable -> Trie.Trie comparable a -> Basics.Bool"
+            },
+            {
+                "name": "keys",
+                "comment": " Get all of the keys in a trie, sorted from lowest to highest.\n",
+                "type": "Trie.Trie comparable a -> List.List (List.List comparable)"
+            },
+            {
+                "name": "map",
+                "comment": " Apply a function to all values in a trie.\n",
+                "type": "(List.List comparable -> a -> b) -> Trie.Trie comparable a -> Trie.Trie comparable b"
+            },
+            {
+                "name": "match",
+                "comment": " Performs a flexible matching fold over a trie from the lowest to the highest\nkey in order.\n\nSuppose the function passed in has this form:\n\n`searchFn maybeKeyPart maybeValue context accum = ...`\n\nThe `maybeKeyPart` parameter will be set to the next item from the key being\nscanned as a list. This is a `Maybe` as the empty list can be a key in a trie.\nIn practice the value `Nothing` will only be passed to this function on the\nfirst call when the empty key is present.\n\nThe `maybeValue` parameter will be set to any value found at the current position\nin the trie.\n\nThe `context` parameter will be held against the particular node in the trie\nbeing explored. When and if that node is returned to in order to explore other\nkey paths in the trie, the context for that node will be restored. The trie is\nexplored using a depth first search, and the contexts are held in a stack of\npending nodes to explore. An example use of the context might be to hold the\nremaining portion of a key to be matched.\n\nThe `accum` parameter is used like the accumulator in a fold, it can be updated\non each node explored.\n\nThe `context` parameter is restored when back-tracking to explore other possible\nkeys, but the `accum` parameter is carried accross the whole search. In that\nsense `context` is like a local variable and `accum` is like a global variable.\n\n",
+                "type": "(Maybe.Maybe comparable -> Maybe.Maybe a -> context -> b -> ( b, context, Trie.Match comparable )) -> b -> context -> Trie.Trie comparable a -> b"
+            },
+            {
+                "name": "member",
+                "comment": " TODO: I think this will match key prefixes? Probably should not for the Dict API.\n",
+                "type": "List.List comparable -> Trie.Trie comparable a -> Basics.Bool"
+            },
+            {
+                "name": "merge",
+                "comment": " The most general way of combining two tries. You provide three accumulators\nfor when a given key appears:\n\n1.  Only in the left trie.\n2.  In both tries.\n3.  Only in the right trie.\n\nYou then traverse all the keys from lowest to highest, building up whatever you\nwant.\n\n",
+                "type": "(List.List comparable -> a -> result -> result) -> (List.List comparable -> a -> b -> result -> result) -> (List.List comparable -> b -> result -> result) -> Trie.Trie comparable a -> Trie.Trie comparable b -> result -> result"
+            },
+            {
+                "name": "partition",
+                "comment": " Partition a trie according to some test. The first trie contains all\nkey-value pairs which passed the test, and the second contains the pairs that\ndid not.\n",
+                "type": "(List.List comparable -> a -> Basics.Bool) -> Trie.Trie comparable a -> ( Trie.Trie comparable a, Trie.Trie comparable a )"
+            },
+            {
+                "name": "remove",
+                "comment": " Remove a key-value pair from a trie. If the key is not found,\nno changes are made.\n",
+                "type": "List.List comparable -> Trie.Trie comparable a -> Trie.Trie comparable a"
+            },
+            {
+                "name": "singleton",
+                "comment": " Create a trie with one key-value pair.\n",
+                "type": "List.List comparable -> a -> Trie.Trie comparable a"
+            },
+            {
+                "name": "size",
+                "comment": " Determine the number of key-value pairs in the trie.\n",
+                "type": "Trie.Trie comparable a -> Basics.Int"
+            },
+            {
+                "name": "subtrie",
+                "comment": " Given a prefix, finds any sub-trie containing the key-value pairs where the\noriginal keys begin with that prefix. The keys in the sub-trie will only consist\nof the remaining portion of the key after the prefix.\n",
+                "type": "List.List comparable -> Trie.Trie comparable a -> Maybe.Maybe (Trie.Trie comparable a)"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert a trie into an association list of key-value pairs, sorted by keys.\n",
+                "type": "Trie.Trie comparable a -> List.List ( List.List comparable, a )"
+            },
+            {
+                "name": "union",
+                "comment": " Combine two tries. If there is a collision, preference is given to the first\ntrie.\n",
+                "type": "Trie.Trie comparable a -> Trie.Trie comparable a -> Trie.Trie comparable a"
+            },
+            {
+                "name": "update",
+                "comment": " Update the value of a trie for a specific key with a given function.\n",
+                "type": "List.List comparable -> (Maybe.Maybe a -> Maybe.Maybe a) -> Trie.Trie comparable a -> Trie.Trie comparable a"
+            },
+            {
+                "name": "values",
+                "comment": " Get all of the values in a trie, in the order of their keys.\n",
+                "type": "Trie.Trie comparable a -> List.List a"
+            },
+            {
+                "name": "wildcard",
+                "comment": " A match step follows all nodes after the current node.\n",
+                "type": "Trie.Match comparable"
+            }
+        ],
+        "binops": []
+    }
+]

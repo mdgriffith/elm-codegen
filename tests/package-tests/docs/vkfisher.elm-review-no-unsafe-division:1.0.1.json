@@ -1,0 +1,16 @@
+[
+    {
+        "name": "NoUnsafeDivision",
+        "comment": " This module contains rules that have to do with forbidding unsafe division operations\n\n\n# Rules\n\n@docs rule\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": " Forbids unsafe usages of `(/)`, `(//)`, `modBy` and `remainderBy`\n",
+                "type": "Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    }
+]

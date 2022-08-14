@@ -1,0 +1,53 @@
+[
+    {
+        "name": "AStar",
+        "comment": " The A-Star pathfinding algorithm.\n\n@docs Position\n@docs Path\n@docs findPath\n@docs straightLineCost\n@docs pythagoreanCost\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Path",
+                "comment": " A path is a `List` of `Position`s.\n",
+                "args": [],
+                "type": "List.List AStar.Position"
+            },
+            {
+                "name": "Position",
+                "comment": " A position is just a pair of (x,y) coordinates.\n",
+                "args": [],
+                "type": "( Basics.Int, Basics.Int )"
+            }
+        ],
+        "values": [
+            {
+                "name": "findPath",
+                "comment": " Find a path between the `start` and `end` `Position`s. You must\nsupply a cost function and a move function.\n\nThe cost function must estimate the distance between any two\npositions. It doesn't really matter how accurate this estimate is,\nas long as it _never_ overestimates.\n\nThe move function takes a `Position` and returns a `Set` of possible\nplaces you can move to in one step.\n\nIf this function returns `Nothing`, there is no path between the two\npoints. Otherwise it returns `Just` a `List` of steps from `start`\nto `end`.\n\nExample usage.\n\n     import AStar exposing (..)\n\n\n     type World =\n         ...your custom code...\n\n\n     movesFrom : World -> Position -> Set Position\n     movesFrom world (x,y) =\n         ...your custom code...\n\n\n     findPath\n         straightLineCost\n         (movesFrom currentWorld)\n         ( 0, 0 ) ( 2, 0 )\n     --> Just [ ( 1, 0 ), ( 2, 0 ) ]\n\n",
+                "type": "(AStar.Position -> AStar.Position -> Basics.Float) -> (AStar.Position -> Set.Set AStar.Position) -> AStar.Position -> AStar.Position -> Maybe.Maybe AStar.Path"
+            },
+            {
+                "name": "pythagoreanCost",
+                "comment": " An alternative costing algorithm, which calculates pythagorean distance.\n",
+                "type": "AStar.Position -> AStar.Position -> Basics.Float"
+            },
+            {
+                "name": "straightLineCost",
+                "comment": " A simple costing algorithm. Think of it as the number of moves a\nrook/castle would have to make on a chessboard.\n",
+                "type": "AStar.Position -> AStar.Position -> Basics.Float"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "AStar.Generalised",
+        "comment": " This is the real algorithm. The types are generalised here.\n\nWe publish simple types to the user which assume they're working with\na 2D grid.\n\nBut in reality, we aren't tied to (x,y) positions and we don't care\nwhat the terrain model is. Positions can be any type you like (as long\nas it's `comparable` so that we can use it as a dictionary\nkey).\n\nBut...that makes the type signatures pretty unintuitive to newer\nusers, so we hide them away here.\n\n@docs findPath\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "findPath",
+                "comment": " Find a path between the `start` and `end` `Position`s. You must\nsupply a cost function and a move function.\n\nSee `AStar.findPath` for a getting-started guide. This is a more\ngeneral version of that same function.\n\n",
+                "type": "(comparable -> comparable -> Basics.Float) -> (comparable -> Set.Set comparable) -> comparable -> comparable -> Maybe.Maybe (List.List comparable)"
+            }
+        ],
+        "binops": []
+    }
+]

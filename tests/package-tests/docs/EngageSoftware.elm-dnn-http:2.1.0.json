@@ -1,0 +1,113 @@
+[
+    {
+        "name": "Engage.Http",
+        "comment": " Helpers for working with DNN Web API\n\n\n# Types\n\n@docs Config, Error\n\n\n# HTTP Verbs\n\n@docs get, post, patch, put, delete\n\n\n# Raw requests\n\n@docs requestJson, requestString\n\n\n# Helper functions\n\n@docs getErrorMessage\n\n\n# Decoders\n\n@docs configDecoder, serverErrorDecoder, multipleServerErrorDecoder, nullDecoder\n\n",
+        "unions": [
+            {
+                "name": "Error",
+                "comment": " When a request fails, the `Failure` value will be one of these. Most of these are copied from `Http.Error` in the `elm/http` module.\n\nWhen there is a `BadStatus`, both the status code and the body of the response are included. This allows `getErrorMessage` to retrieve any error message in the response, if they are available.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "BadUrl",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Timeout",
+                        []
+                    ],
+                    [
+                        "NetworkError",
+                        []
+                    ],
+                    [
+                        "BadStatus",
+                        [
+                            "Basics.Int",
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "BadBody",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " Configuration type\n\n  - `baseUrl` the base URL for the HTTP requests\n  - `headers`: list of the headers for the HTTP requests\n\n",
+                "args": [],
+                "type": "{ baseUrl : String.String, headers : List.List Http.Header }"
+            }
+        ],
+        "values": [
+            {
+                "name": "configDecoder",
+                "comment": " Json decoder for `Config`\n",
+                "type": "Json.Decode.Decoder Engage.Http.Config"
+            },
+            {
+                "name": "delete",
+                "comment": " HTTP DELETE\n",
+                "type": "Engage.Http.Config -> (RemoteData.RemoteData Engage.Http.Error success -> msg) -> Json.Decode.Decoder success -> { methodName : String.String, value : Json.Encode.Value } -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "get",
+                "comment": " HTTP GET\n",
+                "type": "Engage.Http.Config -> (RemoteData.RemoteData Engage.Http.Error success -> msg) -> Json.Decode.Decoder success -> { methodName : String.String, queryStringParams : List.List ( String.String, String.String ) } -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "getErrorMessage",
+                "comment": " Get the localized error message from the `Error`\n",
+                "type": "{ a | localization : Engage.Localization.Localization } -> Engage.Http.Error -> String.String"
+            },
+            {
+                "name": "multipleServerErrorDecoder",
+                "comment": " JSON decoder for multiple server error messages, localized.\n\nThe messages come from a string array field named \"ExceptionMessage\", \"exceptionMessage\", \"Messages\", or \"message\".\nThese values are then concatenated with spaces.\n\n",
+                "type": "{ a | localization : Engage.Localization.Localization } -> Json.Decode.Decoder String.String"
+            },
+            {
+                "name": "nullDecoder",
+                "comment": " Null decoder. Useful for when the server doesn't return any value.\n",
+                "type": "Json.Decode.Decoder ()"
+            },
+            {
+                "name": "patch",
+                "comment": " HTTP PATCH\n",
+                "type": "Engage.Http.Config -> (RemoteData.RemoteData Engage.Http.Error success -> msg) -> Json.Decode.Decoder success -> { methodName : String.String, value : Json.Encode.Value } -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "post",
+                "comment": " HTTP POST\n",
+                "type": "Engage.Http.Config -> (RemoteData.RemoteData Engage.Http.Error success -> msg) -> Json.Decode.Decoder success -> { methodName : String.String, value : Json.Encode.Value } -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "put",
+                "comment": " HTTP PUT\n",
+                "type": "Engage.Http.Config -> (RemoteData.RemoteData Engage.Http.Error success -> msg) -> Json.Decode.Decoder success -> { methodName : String.String, value : Json.Encode.Value } -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "requestJson",
+                "comment": " Raw request that expects a JSON response.\n\nThis version can use any method and accepts any body (e.g. `Http.fileBody`, `Http.bytesBody`, or `Http.emptyBody`).\n\n",
+                "type": "String.String -> List.List Http.Header -> String.String -> Http.Body -> (RemoteData.RemoteData Engage.Http.Error success -> msg) -> Json.Decode.Decoder success -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "requestString",
+                "comment": " Raw request that expects a `String` response (but not necessarily a valid JSON `String`).\n\nThis version can use any method and accepts any body (e.g. `Http.fileBody`, `Http.bytesBody`, or `Http.emptyBody`).\nAdditionally, instead of providing a `Json.Decode.Decoder` to handle the response, you provide a function which can\ntransform the `String` response body (and response metadata) however you need.\n\n",
+                "type": "String.String -> List.List Http.Header -> String.String -> Http.Body -> (RemoteData.RemoteData Engage.Http.Error success -> msg) -> (Http.Metadata -> String.String -> Result.Result Engage.Http.Error success) -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "serverErrorDecoder",
+                "comment": " JSON decoder for server error, localized.\n\nThe error comes from a string field named \"ExceptionMessage\", \"exceptionMessage\", \"Message\", \"message\", or otherwise `multipleServerErrorDecoder`.\n\n",
+                "type": "{ a | localization : Engage.Localization.Localization } -> Json.Decode.Decoder String.String"
+            }
+        ],
+        "binops": []
+    }
+]

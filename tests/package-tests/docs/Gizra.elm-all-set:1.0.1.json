@@ -1,0 +1,105 @@
+[
+    {
+        "name": "EverySet",
+        "comment": " A set of unique values. The values can be any type, as the implementation is\nbased on [AssocList](https://package.elm-lang.org/packages/pzp1997/assoc-list/latest)\n\n\n# Sets\n\n@docs EverySet\n\n\n# Build\n\n@docs empty, singleton, insert, remove\n\n\n# Query\n\n@docs isEmpty, member, size\n\n\n# Combine\n\n@docs union, intersect, diff\n\n\n# Lists\n\n@docs toList, fromList\n\n\n# Transform\n\n@docs map, foldl, foldr, filter, partition\n\n",
+        "unions": [
+            {
+                "name": "EverySet",
+                "comment": " Represents a set of unique values. So `(Set Int)` is a set of integers and\n`(Set String)` is a set of strings.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "diff",
+                "comment": " Get the difference between the first set and the second. Keeps values\nthat do not appear in the second set.\n",
+                "type": "EverySet.EverySet a -> EverySet.EverySet a -> EverySet.EverySet a"
+            },
+            {
+                "name": "empty",
+                "comment": " Create an empty set.\n",
+                "type": "EverySet.EverySet a"
+            },
+            {
+                "name": "filter",
+                "comment": " Create a new set consisting only of elements which satisfy a predicate.\n",
+                "type": "(a -> Basics.Bool) -> EverySet.EverySet a -> EverySet.EverySet a"
+            },
+            {
+                "name": "foldl",
+                "comment": " Fold over the values in a set, in order from lowest to highest.\n",
+                "type": "(a -> b -> b) -> b -> EverySet.EverySet a -> b"
+            },
+            {
+                "name": "foldr",
+                "comment": " Fold over the values in a set, in order from highest to lowest.\n",
+                "type": "(a -> b -> b) -> b -> EverySet.EverySet a -> b"
+            },
+            {
+                "name": "fromList",
+                "comment": " Convert a list into a set, removing any duplicates.\n",
+                "type": "List.List a -> EverySet.EverySet a"
+            },
+            {
+                "name": "insert",
+                "comment": " Insert a value into a set.\n",
+                "type": "a -> EverySet.EverySet a -> EverySet.EverySet a"
+            },
+            {
+                "name": "intersect",
+                "comment": " Get the intersection of two sets. Keeps values that appear in both sets.\n",
+                "type": "EverySet.EverySet a -> EverySet.EverySet a -> EverySet.EverySet a"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Determine if a set is empty.\n",
+                "type": "EverySet.EverySet a -> Basics.Bool"
+            },
+            {
+                "name": "map",
+                "comment": " Map a function onto a set, creating a new set with no duplicates.\n",
+                "type": "(a -> a2) -> EverySet.EverySet a -> EverySet.EverySet a2"
+            },
+            {
+                "name": "member",
+                "comment": " Determine if a value is in a set.\n",
+                "type": "a -> EverySet.EverySet a -> Basics.Bool"
+            },
+            {
+                "name": "partition",
+                "comment": " Create two new sets; the first consisting of elements which satisfy a\npredicate, the second consisting of elements which do not.\n",
+                "type": "(a -> Basics.Bool) -> EverySet.EverySet a -> ( EverySet.EverySet a, EverySet.EverySet a )"
+            },
+            {
+                "name": "remove",
+                "comment": " Remove a value from a set. If the value is not found, no changes are made.\n",
+                "type": "a -> EverySet.EverySet a -> EverySet.EverySet a"
+            },
+            {
+                "name": "singleton",
+                "comment": " Create a set with one value.\n",
+                "type": "a -> EverySet.EverySet a"
+            },
+            {
+                "name": "size",
+                "comment": " Determine the number of elements in a set.\n",
+                "type": "EverySet.EverySet a -> Basics.Int"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert a set into a list, sorted from lowest to highest.\n",
+                "type": "EverySet.EverySet a -> List.List a"
+            },
+            {
+                "name": "union",
+                "comment": " Get the union of two sets. Keep all values.\n",
+                "type": "EverySet.EverySet a -> EverySet.EverySet a -> EverySet.EverySet a"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,91 @@
+[
+    {
+        "name": "RangeSlider",
+        "comment": " A slider built natively in Elm\n\n\n# Model\n\n@docs RangeSlider, getValues, getSelectedValues\n\n\n# Update\n\n@docs Msg, update, subscriptions\n\n\n# Configuring the slider\n\n@docs init, AxisTick, setDimensions, setExtents, setFormatter, setStepSize, setAxisTicks, setValues\n\n\n# View\n\n@docs view\n\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " The basic type accepted by the update\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "RangeSlider",
+                "comment": " The base model for the slider\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "AxisTick",
+                "comment": " Represents a tick that goes along the X axis.\nThe value determines where it should go,\nisLabeled determines if the it should have a label below.\nThe label is formatted by the formatter.\n",
+                "args": [],
+                "type": "{ value : Basics.Float, isLabeled : Basics.Bool }"
+            }
+        ],
+        "values": [
+            {
+                "name": "getSelectedValues",
+                "comment": " Gets the last selected from and to values (from, to)\n",
+                "type": "RangeSlider.RangeSlider -> ( Basics.Float, Basics.Float )"
+            },
+            {
+                "name": "getValues",
+                "comment": " Gets the current from and to values (from, to)\n",
+                "type": "RangeSlider.RangeSlider -> ( Basics.Float, Basics.Float )"
+            },
+            {
+                "name": "init",
+                "comment": " Returns a default range slider\n",
+                "type": "RangeSlider.RangeSlider"
+            },
+            {
+                "name": "setAxisTicks",
+                "comment": " Sets the ticks that will appear in the x-axis.\n",
+                "type": "List.List RangeSlider.AxisTick -> RangeSlider.RangeSlider -> RangeSlider.RangeSlider"
+            },
+            {
+                "name": "setDimensions",
+                "comment": " Sets the width and height of the range slider when rendered\n",
+                "type": "Basics.Float -> Basics.Float -> RangeSlider.RangeSlider -> RangeSlider.RangeSlider"
+            },
+            {
+                "name": "setExtents",
+                "comment": " Sets the minimum and maximum values possible to select\n",
+                "type": "Basics.Float -> Basics.Float -> RangeSlider.RangeSlider -> RangeSlider.RangeSlider"
+            },
+            {
+                "name": "setFormatter",
+                "comment": " Formats the value displayed above the handles and for axis ticks\n",
+                "type": "(Basics.Float -> String.String) -> RangeSlider.RangeSlider -> RangeSlider.RangeSlider"
+            },
+            {
+                "name": "setStepSize",
+                "comment": " Sets the step size which determines the interval for possible values\n",
+                "type": "Maybe.Maybe Basics.Float -> RangeSlider.RangeSlider -> RangeSlider.RangeSlider"
+            },
+            {
+                "name": "setValues",
+                "comment": " Sets the position of the 'from' handle and the 'to' handle.\nNot intended to be used after the initial setup - it may not act as expected if the sliders are currently being moved.\n",
+                "type": "Basics.Float -> Basics.Float -> RangeSlider.RangeSlider -> RangeSlider.RangeSlider"
+            },
+            {
+                "name": "subscriptions",
+                "comment": " Returns the subscriptions necessary to run\n",
+                "type": "RangeSlider.RangeSlider -> Platform.Sub.Sub RangeSlider.Msg"
+            },
+            {
+                "name": "update",
+                "comment": " Takes a Msg and a RangeSlider and applies it to create an updated RangeSlider\n",
+                "type": "RangeSlider.Msg -> RangeSlider.RangeSlider -> RangeSlider.RangeSlider"
+            },
+            {
+                "name": "view",
+                "comment": " Displays the range slider\n",
+                "type": "RangeSlider.RangeSlider -> Html.Html RangeSlider.Msg"
+            }
+        ],
+        "binops": []
+    }
+]

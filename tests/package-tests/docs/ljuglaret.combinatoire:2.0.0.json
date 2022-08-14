@@ -1,0 +1,21 @@
+[
+    {
+        "name": "Combinatoire",
+        "comment": "\r\n# Elm.Combinatoire\r\n## Fonctions\r\n@docs split ,choices \r\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "choices",
+                "comment": "toutes les combinaisons possibles d'une suite d'entiers",
+                "type": "List.List a -> List.List (List.List a)"
+            },
+            {
+                "name": "split",
+                "comment": " ",
+                "type": "List.List a -> List.List ( List.List a, List.List a )"
+            }
+        ],
+        "binops": []
+    }
+]

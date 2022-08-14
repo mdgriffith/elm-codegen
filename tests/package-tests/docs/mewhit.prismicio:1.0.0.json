@@ -1,0 +1,572 @@
+[
+    {
+        "name": "Prismic",
+        "comment": " An Elm SDK for [Prismic.io](https://prismic.io).\n\n\n# Initialisation\n\n@docs init, initWith, Options, defaultOptions\n\n\n# Initiating a request\n\n@docs Request, api, form, bookmark\n\n\n# Customising the request\n\n@docs ref, lang, query\n\n\n# Sending the request\n\n@docs submit\n\n\n# Handle the response\n\n@docs Response, cache\n\n\n# Predicates\n\n@docs Predicate, at, atL, any, fulltext\n\n\n# Types\n\n\n## Models\n\n@docs Model\n\n\n## Errors\n\n@docs PrismicError\n\n\n## Api\n\n@docs Api, RefProperties, Ref, Form, FormField, FieldType, Experiments\n\n\n# Decoders\n\nHelpers for decoding various parts of a Document.\n\n@docs Decoder\n\n\n## Decoder combinators\n\nThe following combinators can be used with any `Decoder`.\n\n@docs succeed, fail, map, apply, andThen\n\n\n## Pipeline decoders\n\n@docs decode, custom\n\n\n## Decoding documents\n\n@docs Document\n@docs id, href, linkedDocuments, slugs, tags, uid\n\n\n### Decoding custom fields\n\n@docs requiredField, optionalField\n@docs groupField, sliceZoneField\n\n\n### Pipeline decoders\n\n@docs required, optional\n@docs group, sliceZone\n\n",
+        "unions": [
+            {
+                "name": "FieldType",
+                "comment": " The type of values for a Prismic form field.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Model",
+                "comment": " The Prismic Model keeps track of configuration and holds the response cache.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Predicate",
+                "comment": " The type representing Prismic query predicates.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "PrismicError",
+                "comment": " The possible errors elm-prismicio raises.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "FormDoesNotExist",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "RefDoesNotExist",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "BookmarkDoesNotExist",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "FetchApiError",
+                        [
+                            "Http.Error"
+                        ]
+                    ],
+                    [
+                        "SubmitRequestError",
+                        [
+                            "Http.Error"
+                        ]
+                    ],
+                    [
+                        "DecodeDocumentError",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Ref",
+                "comment": " A type to disambiguate `Ref`s from other `String`s.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Request",
+                "comment": " Represents a Prismic request.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Api",
+                "comment": " The `Api` for your Prismic repository.\n\nYour app can look things up in this if you need to (for example, to resolve\nlinks using the bookmarks `Dict`).\n\n",
+                "args": [],
+                "type": "{ refs : List.List Prismic.RefProperties, bookmarks : Dict.Dict String.String String.String, types : Dict.Dict String.String String.String, tags : List.List String.String, version : String.String, forms : Dict.Dict String.String Prismic.Form, oauthInitiate : String.String, oauthToken : String.String, license : String.String, experiments : Prismic.Experiments }"
+            },
+            {
+                "name": "Decoder",
+                "comment": " Decoders are parameterized by the input type `val` (`Document`, `Field`,\n`Group` or `Slice`) and the result type `a` -- your type representing your\ncustom Prismic document type.\n",
+                "args": [
+                    "val",
+                    "a"
+                ],
+                "type": "Prismic.Internal.Decoder val a"
+            },
+            {
+                "name": "Document",
+                "comment": " Holds the Prismic document.\n\n`Documents` consist of basic `Fields`, `Groups` and `Slices`.\n\nYou will decode this into your own document type by passing a `Decoder Document\nMyDocType` to `submit`.\n\n",
+                "args": [],
+                "type": "Prismic.Internal.Document"
+            },
+            {
+                "name": "Experiments",
+                "comment": " TODO: Experiments are not Strings. Fill out this type.\n",
+                "args": [],
+                "type": "{ draft : List.List String.String, running : List.List String.String }"
+            },
+            {
+                "name": "Form",
+                "comment": " Properties representing a Prismic form.\n\nThese are used to construct a default query.\n\n",
+                "args": [],
+                "type": "{ method : String.String, enctype : String.String, action : String.String, fields : Dict.Dict String.String Prismic.FormField, rel : Maybe.Maybe String.String, name : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "FormField",
+                "comment": " A field in a Prismic form.\n\nThese are combined to construct query parameters for the eventual Http request.\n\n",
+                "args": [],
+                "type": "{ fieldType : Prismic.FieldType, multiple : Basics.Bool, default : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "Options",
+                "comment": " ",
+                "args": [],
+                "type": "{ defaultRef : String.String }"
+            },
+            {
+                "name": "RefProperties",
+                "comment": " Properties representing a Prismic ref.\n\nMost of the time you will be working with the `master` ref, which is added to\nall requests by default.\n\n",
+                "args": [],
+                "type": "{ id : String.String, ref : Prismic.Ref, label : String.String, isMasterRef : Basics.Bool }"
+            },
+            {
+                "name": "Response",
+                "comment": " Represents a Prismic response.\n\nThis type is parameterized by `docType`, which is determined by the `Decoder`\nyou pass to `submit`.\n\n",
+                "args": [
+                    "docType"
+                ],
+                "type": "{ license : String.String, nextPage : Maybe.Maybe String.String, page : Basics.Int, prevPage : Maybe.Maybe String.String, results : List.List docType, resultsPerPage : Basics.Int, resultsSize : Basics.Int, totalPages : Basics.Int, totalResultsSize : Basics.Int, version : String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "andThen",
+                "comment": " ",
+                "type": "(a -> Prismic.Decoder val b) -> Prismic.Decoder val a -> Prismic.Decoder val b"
+            },
+            {
+                "name": "any",
+                "comment": " `any fragment values` matches documents having any of `values` at `fragment`.\n",
+                "type": "String.String -> List.List String.String -> Prismic.Predicate"
+            },
+            {
+                "name": "api",
+                "comment": " Go and fetch the Prismic `Api` metadata, if it has not already been fetched.\n\nThe `Api` is cached in the returned `Model`, so we don't have to fetch it next\ntime.\n\nYou start every Prismic request with this function.\n\n",
+                "type": "Prismic.Model -> Task.Task Prismic.PrismicError ( Prismic.Model, Prismic.Api )"
+            },
+            {
+                "name": "apply",
+                "comment": " ",
+                "type": "Prismic.Decoder val (a -> b) -> Prismic.Decoder val a -> Prismic.Decoder val b"
+            },
+            {
+                "name": "at",
+                "comment": " `at fragment value` matches documents having `value` at `fragment`.\n",
+                "type": "String.String -> String.String -> Prismic.Predicate"
+            },
+            {
+                "name": "atL",
+                "comment": " `atL fragment values` matches documents having a list of `values` at `fragment`.\n",
+                "type": "String.String -> List.List String.String -> Prismic.Predicate"
+            },
+            {
+                "name": "bookmark",
+                "comment": " Convenience function for fetching a bookmarked document.\n",
+                "type": "String.String -> Task.Task Prismic.PrismicError ( Prismic.Model, Prismic.Api ) -> Task.Task Prismic.PrismicError Prismic.Request"
+            },
+            {
+                "name": "cache",
+                "comment": " The `submit` `Task` returns an updated Prismic `Model` with the request and\nresponse cached.\n\nIn your app's `update` function, you should merge this with the existing cache\nusing `cache`.\n\n    update msg model =\n        case msg of\n            MyPrismicMsg (Ok ( prismic, response )) ->\n                { model\n                    | prismic =\n                        cache model.prismic prismic\n                }\n\n",
+                "type": "Prismic.Model -> Prismic.Model -> Prismic.Model"
+            },
+            {
+                "name": "custom",
+                "comment": " Use a standard decoder in a pipeline.\n\nThe following is equivalent to the example using `required`:\n\n    myDocDecoder : Decoder Document MyDoc\n    myDocDecoder =\n        decode MyDoc\n            |> custom (requiredField \"title\" structuredText)\n\n",
+                "type": "Prismic.Decoder val a -> Prismic.Decoder val (a -> b) -> Prismic.Decoder val b"
+            },
+            {
+                "name": "decode",
+                "comment": " Begin a decoding pipeline.\n\n    type alias MyDoc =\n        { title : StructuredText }\n\n    myDocDecoder : Decoder Document MyDoc\n    myDocDecoder =\n        decode MyDoc\n            |> required \"title\" structuredText\n\n",
+                "type": "a -> Prismic.Decoder val a"
+            },
+            {
+                "name": "defaultOptions",
+                "comment": " ",
+                "type": "Prismic.Options"
+            },
+            {
+                "name": "fail",
+                "comment": " ",
+                "type": "String.String -> Prismic.Decoder val a"
+            },
+            {
+                "name": "form",
+                "comment": " Choose a form on which to base the rest of the Prismic request.\n",
+                "type": "String.String -> Task.Task Prismic.PrismicError ( Prismic.Model, Prismic.Api ) -> Task.Task Prismic.PrismicError Prismic.Request"
+            },
+            {
+                "name": "fulltext",
+                "comment": " `fulltext fragment value` matches documents with a full text search at `fragment`.\n",
+                "type": "String.String -> String.String -> Prismic.Predicate"
+            },
+            {
+                "name": "group",
+                "comment": " Pipeline version of `groupField`.\n",
+                "type": "String.String -> Prismic.Decoder Prismic.Group.Group a -> Prismic.Decoder Prismic.Document (List.List a -> b) -> Prismic.Decoder Prismic.Document b"
+            },
+            {
+                "name": "groupField",
+                "comment": " Decode a group.\n\nPass this function a `Decoder Group a` from the `Prismic.Group` module.\n\nGroups can contain Fields, but not other Groups or Slices.\n\nHere is an example with a document containing a group:\n\n    type alias MyDoc =\n        { albums : List Album }\n\n    type alias Album =\n        { title : String\n        , cover : Field.ImageViews\n        }\n\n    albumDecoder : Decoder Group Album\n    albumDecoder =\n        Prismic.decode Album\n            |> Group.required \"title\" Field.text\n            |> Group.required \"cover\" Field.image\n\n    myDocDecoder : Decoder Document MyDoc\n    myDocDecoder =\n        Prismic.map MyDoc\n            (Prismic.groupField \"albums\" albumDecoder)\n\n",
+                "type": "String.String -> Prismic.Decoder Prismic.Group.Group a -> Prismic.Decoder Prismic.Document (List.List a)"
+            },
+            {
+                "name": "href",
+                "comment": " The document's href.\n",
+                "type": "Prismic.Decoder Prismic.Document String.String"
+            },
+            {
+                "name": "id",
+                "comment": " The document's ID.\n",
+                "type": "Prismic.Decoder Prismic.Document String.String"
+            },
+            {
+                "name": "init",
+                "comment": " Initialise the Prismic model with the URL for your Prismic repository. Save\nthis in your application's Model somewhere.\n\n    type alias Model =\n        { prismic : Prismic.Model }\n\n    init =\n        { prismic =\n            Prismic.init \"https://lesbonneschoses.prismic.io/api\"\n        }\n\n",
+                "type": "String.String -> Prismic.Model"
+            },
+            {
+                "name": "initWith",
+                "comment": " Initialise with custom options.\n",
+                "type": "String.String -> Prismic.Options -> Prismic.Model"
+            },
+            {
+                "name": "lang",
+                "comment": " Override a Form's default lang.\n",
+                "type": "String.String -> Task.Task Prismic.PrismicError Prismic.Request -> Task.Task Prismic.PrismicError Prismic.Request"
+            },
+            {
+                "name": "linkedDocuments",
+                "comment": " The document's linked documents.\n",
+                "type": "Prismic.Decoder Prismic.Document (List.List Prismic.Field.DocumentReference)"
+            },
+            {
+                "name": "map",
+                "comment": " Transform a decoder.\n",
+                "type": "(a -> b) -> Prismic.Decoder val a -> Prismic.Decoder val b"
+            },
+            {
+                "name": "optional",
+                "comment": " Decode a field that might be missing.\n",
+                "type": "String.String -> Prismic.Decoder Prismic.Field.Field a -> a -> Prismic.Decoder Prismic.Document (a -> b) -> Prismic.Decoder Prismic.Document b"
+            },
+            {
+                "name": "optionalField",
+                "comment": " Decode a field that might be missing.\n",
+                "type": "String.String -> Prismic.Decoder Prismic.Field.Field a -> a -> Prismic.Decoder Prismic.Document a"
+            },
+            {
+                "name": "query",
+                "comment": " Override a Form's default query.\n\nSee the section on `Predicate`s below for how to construct a `Predicate`.\n\n",
+                "type": "List.List Prismic.Predicate -> Task.Task Prismic.PrismicError Prismic.Request -> Task.Task Prismic.PrismicError Prismic.Request"
+            },
+            {
+                "name": "ref",
+                "comment": " Override a Form's default ref\n",
+                "type": "String.String -> Task.Task Prismic.PrismicError Prismic.Request -> Task.Task Prismic.PrismicError Prismic.Request"
+            },
+            {
+                "name": "required",
+                "comment": " Decode a required field.\n",
+                "type": "String.String -> Prismic.Decoder Prismic.Field.Field a -> Prismic.Decoder Prismic.Document (a -> b) -> Prismic.Decoder Prismic.Document b"
+            },
+            {
+                "name": "requiredField",
+                "comment": " Decode a field.\n\nPass this function a `Decoder Field a` from the `Prismic.Field` module.\n\n",
+                "type": "String.String -> Prismic.Decoder Prismic.Field.Field a -> Prismic.Decoder Prismic.Document a"
+            },
+            {
+                "name": "sliceZone",
+                "comment": " Pipeline version of `sliceZoneField`.\n",
+                "type": "String.String -> Prismic.Decoder Prismic.Slice.Slice a -> Prismic.Decoder Prismic.Document (List.List a -> b) -> Prismic.Decoder Prismic.Document b"
+            },
+            {
+                "name": "sliceZoneField",
+                "comment": " Decode a SliceZone.\n\nPass this function a `Decoder Slice a` from the `Prismic.Slice` module.\n\nSlices can contain Fields and Groups, but not other Slices.\n\n    type alias MyDoc =\n        { sections : List Section }\n\n    type Section\n        = -- The \"my-content\" slice has a non-repeating zone.\n          MyContent Field.StructuredText\n        | -- The \"my-image-gallery\" slice has a repeating zone.\n          MyImageGallery (List Field.ImageViews)\n        | -- The \"my-links-section\" slice has both non-repeating and repeating\n          -- zones.\n          MyLinksSection LinksSection\n\n    type alias LinksSection =\n        { title : Field.StructuredText\n        , links : List Field.Link\n        }\n\n    myDocDecoder : Decoder Document MyDoc\n    myDocDecoder =\n        Prismic.map MyDoc\n            (Prismic.sliceZoneField \"sections\" sectionDecoder)\n\n    sectionDecoder : Decoder Slice Section\n    sectionDecoder =\n        Slice.oneOf\n            [ Slice.slice \"my-content\"\n                -- Decode the non-repeating zone and ignore the repeating zone.\n                (Group.field \"text\" Field.structuredText)\n                (Prismic.succeed ())\n                |> Prismic.map (\\( content, _ ) -> MyContent content)\n            , Slice.slice \"my-image-gallery\"\n                -- Ignore the non-repeating zone and decode the repeating zone.\n                (Prismic.succeed ())\n                (Group.field \"image\" Field.image)\n                |> Prismic.map (\\( _, images ) -> MyImageGallery images)\n            , Slice.slice \"my-links-section\"\n                -- Decode both the non-repeating and repeating zones.\n                (Group.field \"title\" Field.structuredText)\n                (Group.field \"link\" Field.link)\n                |> Prismic.map\n                    (\\( title, links ) -> MyLinksSection (LinksSection title links))\n            ]\n\n",
+                "type": "String.String -> Prismic.Decoder Prismic.Slice.Slice a -> Prismic.Decoder Prismic.Document (List.List a)"
+            },
+            {
+                "name": "slugs",
+                "comment": " The document's slugs.\n",
+                "type": "Prismic.Decoder Prismic.Document (List.List String.String)"
+            },
+            {
+                "name": "submit",
+                "comment": " Submit the request.\n\nPass this function a `Decoder` to decode each document in the response into your\nown Elm document type.\n\n",
+                "type": "Prismic.Decoder Prismic.Document docType -> Task.Task Prismic.PrismicError Prismic.Request -> Task.Task Prismic.PrismicError ( Prismic.Model, Prismic.Response docType )"
+            },
+            {
+                "name": "succeed",
+                "comment": " ",
+                "type": "a -> Prismic.Decoder val a"
+            },
+            {
+                "name": "tags",
+                "comment": " The document's tags.\n",
+                "type": "Prismic.Decoder Prismic.Document (List.List String.String)"
+            },
+            {
+                "name": "uid",
+                "comment": " The document's UID.\n",
+                "type": "Prismic.Decoder Prismic.Document (Maybe.Maybe String.String)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Prismic.Field",
+        "comment": "\n\n\n## Field types\n\nYou can create your own Elm types to represent your documents using the\nfollowing components.\n\n@docs Field\n\n\n### Structured Text\n\n@docs StructuredText, StructuredTextBlock\n\n\n### Images\n\n@docs ImageViews, ImageView, ImageDimensions\n\n\n### Embeds\n\n@docs Embed\n\n\n### Links\n\n@docs Link, DocumentReference\n\n\n## Decoding fields\n\n@docs text, structuredText, image, date, link\n\n\n## Viewing fields\n\n@docs structuredTextAsHtml, structuredTextBlockAsHtml\n@docs imageAsHtml, embedAsHtml, linkAsHtml\n@docs LinkResolver, defaultLinkResolver, resolveLink\n\n\n## `StructuredText` helpers\n\n@docs getTitle, getFirstImage, getFirstParagraph, getText, getTexts\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "DocumentReference",
+                "comment": " A reference to a Prismic document.\n",
+                "args": [],
+                "type": "Prismic.Internal.DocumentReference"
+            },
+            {
+                "name": "Embed",
+                "comment": " Embed elements.\n",
+                "args": [],
+                "type": "Prismic.Internal.Embed"
+            },
+            {
+                "name": "Field",
+                "comment": " A field in the `Document`.\n",
+                "args": [],
+                "type": "Prismic.Internal.Field"
+            },
+            {
+                "name": "ImageDimensions",
+                "comment": " Dimensions of an image view.\n",
+                "args": [],
+                "type": "Prismic.Internal.ImageDimensions"
+            },
+            {
+                "name": "ImageView",
+                "comment": " Properties for a single image view.\n",
+                "args": [],
+                "type": "Prismic.Internal.ImageView"
+            },
+            {
+                "name": "ImageViews",
+                "comment": " A collection of image views.\n",
+                "args": [],
+                "type": "Prismic.Internal.ImageViews"
+            },
+            {
+                "name": "Link",
+                "comment": " Links to other documents or to the web.\n",
+                "args": [],
+                "type": "Prismic.Internal.Link"
+            },
+            {
+                "name": "LinkResolver",
+                "comment": " A `LinkResolver` simply converts a Prismic `DocumentReference` to a list of\n`Html.Attribute`s. `structuredTextAsHtml` and friends add these attributes to\nlinks in the text.\n\nFor example, you can use this to add `onClick` handlers to links:\n\n    type Msg\n        = NavigateTo DocumentReference\n\n    myLinkResolver : LinkResolver Msg\n    myLinkResolver docRef =\n        [ Html.Attributes.href \"\"\n        , Html.Events.onClick (NavigateTo docRef)\n        ]\n\n    view : StructuredText -> Html Msg\n    view myStructuredText =\n        structuredTextAsHtml myLinkResolver myStructuredText\n\nYour `update` function would handle the `NavigateTo` message and perform the\nappropriate routing.\n\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ resolveDocumentReference : Prismic.Field.DocumentReference -> List.List (Html.Attribute msg), resolveUrl : String.String -> List.List (Html.Attribute msg) }"
+            },
+            {
+                "name": "StructuredText",
+                "comment": " `StructuredText` can be rendered to HTML using `structuredTextAsHtml`.\n",
+                "args": [],
+                "type": "Prismic.Internal.StructuredText"
+            },
+            {
+                "name": "StructuredTextBlock",
+                "comment": " An element of `StructuredText`.\n",
+                "args": [],
+                "type": "Prismic.Internal.StructuredTextBlock"
+            }
+        ],
+        "values": [
+            {
+                "name": "date",
+                "comment": " Decode a Date field.\n",
+                "type": "Prismic.Internal.Decoder Prismic.Field.Field Date.Date"
+            },
+            {
+                "name": "defaultLinkResolver",
+                "comment": " Adds a default `href` attribute to links:\n[ href \"documents/{doc.id}/{doc.slug}\" ]\n",
+                "type": "Prismic.Field.LinkResolver msg"
+            },
+            {
+                "name": "embedAsHtml",
+                "comment": " ",
+                "type": "Prismic.Field.Embed -> Html.Html msg"
+            },
+            {
+                "name": "getFirstImage",
+                "comment": " Get the first image out of some `StructuredText`, if there is one.\n",
+                "type": "Prismic.Field.StructuredText -> Maybe.Maybe Prismic.Field.ImageView"
+            },
+            {
+                "name": "getFirstParagraph",
+                "comment": " Get the first paragraph out of some `StructuredText`, if there is one.\n",
+                "type": "Prismic.Field.StructuredText -> Maybe.Maybe Prismic.Field.StructuredTextBlock"
+            },
+            {
+                "name": "getText",
+                "comment": " Get the contents of a single `StructuredText` element as a `String`.\n",
+                "type": "Prismic.Field.StructuredTextBlock -> String.String"
+            },
+            {
+                "name": "getTexts",
+                "comment": " Get the contents of a some `StructuredText` as a `String`.\n",
+                "type": "Prismic.Field.StructuredText -> String.String"
+            },
+            {
+                "name": "getTitle",
+                "comment": " Get the first title out of some `StructuredText`, if there is one.\n",
+                "type": "Prismic.Field.StructuredText -> Maybe.Maybe Prismic.Field.StructuredTextBlock"
+            },
+            {
+                "name": "image",
+                "comment": " Decode an Image field.\n",
+                "type": "Prismic.Internal.Decoder Prismic.Field.Field Prismic.Field.ImageViews"
+            },
+            {
+                "name": "imageAsHtml",
+                "comment": " ",
+                "type": "Prismic.Field.ImageView -> Html.Html msg"
+            },
+            {
+                "name": "link",
+                "comment": " Decode a Link field.\n",
+                "type": "Prismic.Internal.Decoder Prismic.Field.Field Prismic.Field.Link"
+            },
+            {
+                "name": "linkAsHtml",
+                "comment": " ",
+                "type": "Prismic.Field.LinkResolver msg -> Prismic.Field.Link -> Html.Html msg"
+            },
+            {
+                "name": "resolveLink",
+                "comment": " ",
+                "type": "Prismic.Field.LinkResolver msg -> Prismic.Field.Link -> List.List (Html.Attribute msg)"
+            },
+            {
+                "name": "structuredText",
+                "comment": " Decode a StructuredText field.\n",
+                "type": "Prismic.Internal.Decoder Prismic.Field.Field Prismic.Field.StructuredText"
+            },
+            {
+                "name": "structuredTextAsHtml",
+                "comment": " Render some `StructuredText` as HTML.\n\nYou must supply a `LinkResolver` to resolve any links in the `StructuredText`.\nIf you don't care about this, you can use the `defaultLinkResolver`.\n\n",
+                "type": "Prismic.Field.LinkResolver msg -> Prismic.Field.StructuredText -> List.List (Html.Html msg)"
+            },
+            {
+                "name": "structuredTextBlockAsHtml",
+                "comment": " Render a single block of `StructuredText` as HTML.\n",
+                "type": "Prismic.Field.LinkResolver msg -> Prismic.Field.StructuredTextBlock -> Html.Html msg"
+            },
+            {
+                "name": "text",
+                "comment": " Decode a Text field.\n",
+                "type": "Prismic.Internal.Decoder Prismic.Field.Field String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Prismic.Group",
+        "comment": "\n\n@docs Group\n\n\n## Decoders\n\n@docs field, optionalField\n\n\n## Pipeline decoders\n\n@docs optional, required\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Group",
+                "comment": " A `Group` is a collection of basic `Fields`.\n\n`Groups` cannot contain `Slices` or other `Groups`.\n\n",
+                "args": [],
+                "type": "Prismic.Internal.Group"
+            }
+        ],
+        "values": [
+            {
+                "name": "field",
+                "comment": " Decode a field\n",
+                "type": "String.String -> Prismic.Internal.Decoder Prismic.Internal.Field a -> Prismic.Internal.Decoder Prismic.Group.Group a"
+            },
+            {
+                "name": "optional",
+                "comment": " ",
+                "type": "String.String -> Prismic.Internal.Decoder Prismic.Internal.Field a -> a -> Prismic.Internal.Decoder Prismic.Group.Group (a -> b) -> Prismic.Internal.Decoder Prismic.Group.Group b"
+            },
+            {
+                "name": "optionalField",
+                "comment": " Decode a field that might be missing.\n",
+                "type": "String.String -> Prismic.Internal.Decoder Prismic.Internal.Field a -> a -> Prismic.Internal.Decoder Prismic.Group.Group a"
+            },
+            {
+                "name": "required",
+                "comment": " ",
+                "type": "String.String -> Prismic.Internal.Decoder Prismic.Internal.Field a -> Prismic.Internal.Decoder Prismic.Group.Group (a -> b) -> Prismic.Internal.Decoder Prismic.Group.Group b"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Prismic.Slice",
+        "comment": "\n\n@docs Slice\n\n@docs oneOf, slice\n\n\n## Deprecated Slices\n\n@docs FieldDecoder, field, group, labelledV1Slice, v1Slice\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "FieldDecoder",
+                "comment": " ",
+                "args": [
+                    "a"
+                ],
+                "type": "Prismic.Internal.Decoder Prismic.Internal.SliceContentV1 a"
+            },
+            {
+                "name": "Slice",
+                "comment": " ",
+                "args": [],
+                "type": "Prismic.Internal.Slice"
+            }
+        ],
+        "values": [
+            {
+                "name": "field",
+                "comment": " ",
+                "type": "Prismic.Internal.Decoder Prismic.Internal.Field a -> Prismic.Slice.FieldDecoder a"
+            },
+            {
+                "name": "group",
+                "comment": " ",
+                "type": "Prismic.Internal.Decoder Prismic.Internal.Group a -> Prismic.Slice.FieldDecoder (List.List a)"
+            },
+            {
+                "name": "labelledV1Slice",
+                "comment": " Decode a (deprecated) old-style slice in a slice zone. The tagger is also passed the slice label.\n\nTODO: custom label decoders?\n\n",
+                "type": "String.String -> (Maybe.Maybe String.String -> a -> b) -> Prismic.Slice.FieldDecoder a -> Prismic.Internal.Decoder Prismic.Slice.Slice b"
+            },
+            {
+                "name": "oneOf",
+                "comment": " ",
+                "type": "List.List (Prismic.Internal.Decoder Prismic.Slice.Slice a) -> Prismic.Internal.Decoder Prismic.Slice.Slice a"
+            },
+            {
+                "name": "slice",
+                "comment": " Decode a slice in a slice zone.\n\nSlices contain a non-repeating zone and a repeating zone. To decode a Slice, you\npass a `Decoder Group a` (for the non-repeating zone) and a `Decoder Group b`\n(for the repeating zone), and you'll get back a `Decoder Slice (a, List b)`.\n\nIf your slice doesn't have one of the zones, you can just ignore it by passing a\ndecoder that always succeeds: `succeed ()`.\n\n",
+                "type": "String.String -> Prismic.Internal.Decoder Prismic.Internal.Group a -> Prismic.Internal.Decoder Prismic.Internal.Group b -> Prismic.Internal.Decoder Prismic.Slice.Slice ( a, List.List b )"
+            },
+            {
+                "name": "v1Slice",
+                "comment": " Decode a (deprecated) old-style slice in a slice zone.\n",
+                "type": "String.String -> (a -> b) -> Prismic.Slice.FieldDecoder a -> Prismic.Internal.Decoder Prismic.Slice.Slice b"
+            }
+        ],
+        "binops": []
+    }
+]

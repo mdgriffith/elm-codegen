@@ -1,0 +1,778 @@
+[
+    {
+        "name": "Chart.Annotation",
+        "comment": " The annotation module from [elm-chart-builder](https://github.com/data-viz-lab/elm-chart-builder).\n\nIt defines the data formats that need to be passed to a chart in order to draw extra annotations on top of it.\n\n\n# Data Formats\n\n@docs Hint\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Hint",
+                "comment": " A Hint\nUse it for example in conjuction with some event data to draw the dots on chart hover.\n\nIt'a a tuple made of a Event.Hint with list of style definitions.\n\n",
+                "args": [],
+                "type": "( Chart.Internal.Event.Hint, List.List ( String.String, String.String ) )"
+            }
+        ],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "Chart.Bar",
+        "comment": " ![barchart](https://raw.githubusercontent.com/data-viz-lab/elm-chart-builder/master/images/elm-chart-builder-barchart.png)\n\nThis is the bar chart module from [elm-chart-builder](https://github.com/data-viz-lab/elm-chart-builder).\n\nThe Bar module expects the X axis to plot ordinal data and the Y axis to plot continuous data. The data can be grouped by passing an `xGroup` accessor, or it can be flat by making the accessor `always Nothing`.\n\nThe X and Y axis are determined by the default vertical orientation. If the orientatin changes, X and Y also change.\n\n\n# Data Format\n\n@docs Accessor\n\n\n# Initialization\n\n@docs init\n\n\n# Rendering\n\n@docs render\n\n\n# Configuration\n\n@docs Config, RequiredConfig\n\n\n# Optional Configuration Setters\n\n@docs withBarStyle, withBarStyleFrom, withBottomPadding, withColorInterpolator, withColorPalette, withColumnTitle, withDesc, withGroupedLayout, withLabels, withLeftPadding, withLogYScale, withOrientation, withStackedLayout, withSymbols, withTableFloatFormat, withTitle, withXDomain, withXGroupDomain, withXLabels, withYDomain, withoutTable\n\n\n# Axis\n\n&#9888; axisLeft & axisRight apply to a vertical chart context. If you change the chart orientation to horizontal, the axis positioning will always change to bottom.\n\n@docs XAxis, YAxis, axisBottom, axisGrid, axisLeft, axisRight, axisTop, hideAxis, hideXAxis, hideYAxis, withXAxis, withYAxis\n\n\n# Configuration arguments\n\n@docs diverging, horizontal, noDirection, stackedColumnTitle, vertical, xGroupLabel, xLabel, xOrdinalColumnTitle, yColumnTitle, yLabel\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Accessor",
+                "comment": " The data accessors\n",
+                "args": [
+                    "data"
+                ],
+                "type": "{ xGroup : data -> Maybe.Maybe String.String, xValue : data -> String.String, yValue : data -> Basics.Float }"
+            },
+            {
+                "name": "Config",
+                "comment": " The Config opaque type\n",
+                "args": [
+                    "msg",
+                    "validation"
+                ],
+                "type": "Chart.Internal.Type.Config msg validation"
+            },
+            {
+                "name": "RequiredConfig",
+                "comment": " The required config, passed as an argument to the `init` function\n",
+                "args": [],
+                "type": "Chart.Internal.Type.RequiredConfig"
+            },
+            {
+                "name": "XAxis",
+                "comment": " The XAxis type\n",
+                "args": [
+                    "value"
+                ],
+                "type": "Chart.Internal.Axis.XAxis value"
+            },
+            {
+                "name": "YAxis",
+                "comment": " The YAxis type\n",
+                "args": [
+                    "value"
+                ],
+                "type": "Chart.Internal.Axis.YAxis value"
+            }
+        ],
+        "values": [
+            {
+                "name": "axisBottom",
+                "comment": " It returns an XAxis Bottom type\n\n    Bar.axisBottom [ Axis.tickCount 5 ]\n\n",
+                "type": "List.List (Axis.Attribute value) -> Chart.Internal.Axis.XAxis value"
+            },
+            {
+                "name": "axisGrid",
+                "comment": " It returns an YAxis Grid type\n\n    Bar.axisGrid [ Axis.tickCount 5 ]\n\n",
+                "type": "List.List (Axis.Attribute value) -> Chart.Internal.Axis.YAxis value"
+            },
+            {
+                "name": "axisLeft",
+                "comment": " It returns an YAxis Left type\n\nOnly relevant if the chart orientation is vertical.\n\n    Bar.axisLeft [ Axis.tickCount 5 ]\n\n",
+                "type": "List.List (Axis.Attribute value) -> Chart.Internal.Axis.YAxis value"
+            },
+            {
+                "name": "axisRight",
+                "comment": " It returns an YAxis Right type\n\nOnly relevant if the chart orientation is vertical.\n\n    Bar.axisRight [ Axis.tickCount 5 ]\n\n",
+                "type": "List.List (Axis.Attribute value) -> Chart.Internal.Axis.YAxis value"
+            },
+            {
+                "name": "axisTop",
+                "comment": " It returns an XAxis Top type\n\n    Bar.axisTop [ Axis.tickCount 5 ]\n\n",
+                "type": "List.List (Axis.Attribute value) -> Chart.Internal.Axis.XAxis value"
+            },
+            {
+                "name": "diverging",
+                "comment": " Diverging layout for stacked bar charts.\n\nAn example can be a population pyramid chart.\n\n    Bar.init requiredConfig\n        |> Bar.withStackedLayout Bar.diverging\n        |> Bar.render ( data, accessor )\n\n",
+                "type": "Chart.Internal.Type.Direction"
+            },
+            {
+                "name": "hideAxis",
+                "comment": " Hide all axis.\n\n    Bar.init requiredConfig\n        |> Bar.hideAxis\n        |> Bar.render ( data, accessor )\n\n",
+                "type": "Chart.Bar.Config msg validation -> Chart.Bar.Config msg validation"
+            },
+            {
+                "name": "hideXAxis",
+                "comment": " Hide the X aixs.\n\nThe X axis depends from the layout:\n\n  - With a vertical layout the X axis is the horizontal axis.\n\n  - With a horizontal layout the X axis is the vertical axis.\n\n```\nBar.init requiredConfig\n    |> Bar.hideXAxis\n    |> Bar.render ( data, accessor )\n```\n\n",
+                "type": "Chart.Bar.Config msg validation -> Chart.Bar.Config msg validation"
+            },
+            {
+                "name": "hideYAxis",
+                "comment": " Hide the Y aixs.\n\nThe Y axis depends from the layout:\n\n  - With a vertical layout the Y axis is the vertical axis.\n\n  - With a horizontal layout the Y axis is the horizontal axis.\n\n```\nBar.init requiredConfig\n    |> Bar.hideYAxis\n    |> Bar.render ( data, accessor )\n```\n\n",
+                "type": "Chart.Bar.Config msg validation -> Chart.Bar.Config msg validation"
+            },
+            {
+                "name": "horizontal",
+                "comment": " Horizontal layout type.\n\nUsed as argument to `Bar.withOrientation`.\n\n    Bar.init requiredConfig\n        |> Bar.withOrientation horizontal\n        |> Bar.render ( data, accessor )\n\n",
+                "type": "Chart.Internal.Type.Orientation"
+            },
+            {
+                "name": "init",
+                "comment": " Initializes the bar chart with the required config.\n\n    data :\n        List\n            { groupLabel : String\n            , x : String\n            , y : Float\n            }\n    data =\n        [ { groupLabel = \"A\"\n          , x = \"a\"\n          , y = 10\n          }\n        , { groupLabel = \"B\"\n          , x = \"a\"\n          , y = 11\n          }\n        ]\n\n    accessor =\n        Bar.Accessor (.groupLabel >> Just) .x .y\n\n    Bar.init\n        { margin =\n            { top = 10\n            , right = 10\n            , bottom = 30\n            , left = 30\n            }\n        , width = 500\n        , height = 200\n        }\n        |> Bar.render ( data, accessor )\n\n",
+                "type": "Chart.Bar.RequiredConfig -> Chart.Bar.Config msg { canHaveSymbols : (), canHaveStackedLayout : () }"
+            },
+            {
+                "name": "noDirection",
+                "comment": " Default layout for stacked bar charts, where the bars are sequentially stacked\none upon another.\n\n    Bar.init requiredConfig\n        |> Bar.withStackedLayout Bar.noDirection\n        |> Bar.render ( data, accessor )\n\n",
+                "type": "Chart.Internal.Type.Direction"
+            },
+            {
+                "name": "render",
+                "comment": " Renders the bar chart, after initialisation and optional customisations.\n\n    Bar.init requiredConfig\n        |> Bar.render ( data, accessor )\n\n",
+                "type": "( List.List data, Chart.Bar.Accessor data ) -> Chart.Bar.Config msg validation -> Html.Html msg"
+            },
+            {
+                "name": "stackedColumnTitle",
+                "comment": " ",
+                "type": "(Basics.Float -> String.String) -> Chart.Internal.Type.ColumnTitle"
+            },
+            {
+                "name": "vertical",
+                "comment": " Vertical layout type.\n\nUsed as argument to `Bar.withOrientation`.\nThis is the default layout.\n\n    Bar.init requiredConfig\n        |> Bar.withOrientation vertical\n        |> Bar.render ( data, accessor )\n\n",
+                "type": "Chart.Internal.Type.Orientation"
+            },
+            {
+                "name": "withBarStyle",
+                "comment": " Sets the style for the bars\nThe styles set here have precedence over `withColorPalette`, `withColorInterpolator` and css.\n\n    Bar.init requiredConfig\n        |> Bar.withBarStyle [ ( \"fill\", \"none\" ), ( \"stroke-width\", \"2\" ) ]\n        |> Bar.render ( data, accessor )\n\n",
+                "type": "List.List ( String.String, String.String ) -> Chart.Bar.Config msg validation -> Chart.Bar.Config msg validation"
+            },
+            {
+                "name": "withBarStyleFrom",
+                "comment": " Sets the style for the bars depending on the x value\nThe styles set here have precedence over [withBarStyle](#withBarStyle), [withColorPalette](#withColorPalette), [withColorInterpolator](#withColorInterpolator) and css rules.\n\n    Bar.init requiredConfig\n        |> Bar.withBarStyleFrom\n            (\\xValue ->\n                if xValue == \"X\" then\n                    [ ( \"fill\", \"none\" ), ( \"stroke-width\", \"2\" ) ]\n\n                else\n                    []\n            )\n        |> Bar.render ( data, accessor )\n\n",
+                "type": "(String.String -> List.List ( String.String, String.String )) -> Chart.Bar.Config msg validation -> Chart.Bar.Config msg validation"
+            },
+            {
+                "name": "withBottomPadding",
+                "comment": " Sets the bottom padding for the chart component.\nThe higher the padding, the bigger the gap between the chart and the axis.\n\n    Bar.init requiredConfig\n        |> Bar.withBottomPadding 4\n        |> Bar.render ( data, accessor )\n\n",
+                "type": "Basics.Float -> Chart.Bar.Config msg validation -> Chart.Bar.Config msg validation"
+            },
+            {
+                "name": "withColorInterpolator",
+                "comment": " Sets the color interpolator for the chart.\n\nThis option is not supported for stacked bar charts and will have no effect on them.\n\n    Bar.init requiredConfig\n        |> Bar.withColorInterpolator Scale.Color.plasmaInterpolator\n        |> Bar.render ( data, accessor )\n\n",
+                "type": "(Basics.Float -> Color.Color) -> Chart.Bar.Config msg validation -> Chart.Bar.Config msg validation"
+            },
+            {
+                "name": "withColorPalette",
+                "comment": " Sets the color palette for the chart.\nIf a palette with a single color is passed all bars will have the same colour.\nIf the bars in a group are more then the colours in the palette, the colours will be repeted.\n\n    palette =\n        Scale.Color.tableau10\n\n    Bar.init requiredConfig\n        |> Bar.withColorPalette palette\n        |> Bar.render (data, accessor)\n\n",
+                "type": "List.List Color.Color -> Chart.Bar.Config msg validation -> Chart.Bar.Config msg validation"
+            },
+            {
+                "name": "withColumnTitle",
+                "comment": " Set the chart columns title value\n\nIt takes one of: stackedColumnTitle, xOrdinalColumnTitle, yColumnTitle\n\n    defaultLayoutConfig\n        |> Bar.withColumnTitle (Bar.yColumnTitle String.fromFloat)\n\n",
+                "type": "Chart.Internal.Type.ColumnTitle -> Chart.Bar.Config msg validation -> Chart.Bar.Config msg validation"
+            },
+            {
+                "name": "withDesc",
+                "comment": " Sets an accessible, long-text description for the svg chart.\n\nIt defaults to an empty string.\nThis shuld be set if no title nor description exists for the chart, for example in a sparkline.\n\n    Bar.init requiredConfig\n        |> Bar.withDesc \"This is an accessible chart, with a desc element\"\n        |> Bar.render ( data, accessor )\n\n",
+                "type": "String.String -> Chart.Bar.Config msg validation -> Chart.Bar.Config msg validation"
+            },
+            {
+                "name": "withGroupedLayout",
+                "comment": " Creates a grouped bar chart.\n\n    Bar.init requiredConfig\n        |> Bar.withGroupedLayout\n        |> Bar.render ( data, accessor )\n\n",
+                "type": "Chart.Bar.Config msg { validation | canHaveSymbols : () } -> Chart.Bar.Config msg { validation | canHaveSymbols : () }"
+            },
+            {
+                "name": "withLabels",
+                "comment": " Show a label at the end of the bars.\n\nIt takes one of: yLabel, xLabel, xGroupLabel\n\nIf used together with symbols, the label will be drawn after the symbol.\n\n&#9888; Use with caution, there is no knowledge of text wrapping!\n\n    defaultLayoutConfig\n        |> Bar.withLabels (Bar.yLabel String.fromFloat)\n\n",
+                "type": "Chart.Internal.Type.Label -> Chart.Bar.Config msg validation -> Chart.Bar.Config msg validation"
+            },
+            {
+                "name": "withLeftPadding",
+                "comment": " Sets the left padding for the chart component.\nThe higher the padding, the bigger the gap between the chart and the axis.\n\n    Bar.init requiredConfig\n        |> Bar.withLeftPadding 4\n        |> Bar.render ( data, accessor )\n\n",
+                "type": "Basics.Float -> Chart.Bar.Config msg validation -> Chart.Bar.Config msg validation"
+            },
+            {
+                "name": "withLogYScale",
+                "comment": " Set the Y scale to logaritmic, passing a base\n\n    Bar.init requiredConfig\n        |> Bar.withLogYScale 10\n        |> Bar.render ( data, accessor )\n\n",
+                "type": "Basics.Float -> Chart.Bar.Config msg validation -> Chart.Bar.Config msg validation"
+            },
+            {
+                "name": "withOrientation",
+                "comment": " Sets the orientation value.\n\nAccepts: `horizontal` or `vertical`.\nDefault value: `vertical`.\n\n    Bar.init requiredConfig\n        |> Bar.withOrientation Bar.horizontal\n        |> Bar.render ( data, accessor )\n\n",
+                "type": "Chart.Internal.Type.Orientation -> Chart.Bar.Config msg validation -> Chart.Bar.Config msg validation"
+            },
+            {
+                "name": "withStackedLayout",
+                "comment": " Creates a stacked bar chart.\nStacked Charts do not support symbols.\n\nIt takes a direction: `diverging` or `noDirection`.\n\n    Bar.init requiredConfig\n        |> Bar.withStackedLayout Bar.diverging\n        |> Bar.render ( data, accessor )\n\n",
+                "type": "Chart.Internal.Type.Direction -> Chart.Bar.Config msg { validation | canHaveSymbols : (), canHaveStackedLayout : () } -> Chart.Bar.Config msg validation"
+            },
+            {
+                "name": "withSymbols",
+                "comment": " Pass a list of symbols to be rendered at the end of the bars.\n\nDefault value: []\n\nUsefull for facilitating accessibility.\n\n    Bar.init requiredConfig\n        |> withSymbols [ Circle, Corner, Triangle ]\n        |> Bar.render ( data, accessor )\n\n",
+                "type": "List.List Chart.Internal.Symbol.Symbol -> Chart.Bar.Config msg { validation | canHaveSymbols : () } -> Chart.Bar.Config msg validation"
+            },
+            {
+                "name": "withTableFloatFormat",
+                "comment": " An optional formatter for all float values in the alternative table content for accessibility.\n\nDefaults to `String.fromFloat`\n\n    Bar.init requiredConfig\n        |> Bar.withTableFloatFormat String.fromFloat\n        |> Bar.render ( data, accessor )\n\n",
+                "type": "(Basics.Float -> String.String) -> Chart.Bar.Config msg validation -> Chart.Bar.Config msg validation"
+            },
+            {
+                "name": "withTitle",
+                "comment": " Sets an accessible title for the whole svg chart.\n\nIt defaults to an empty string.\nThis shuld be set if no title nor description exists for the chart, for example in a sparkline.\n\n    Bar.init requiredConfig\n        |> Bar.withTitle \"This is a chart\"\n        |> Bar.render ( data, accessor )\n\n",
+                "type": "String.String -> Chart.Bar.Config msg validation -> Chart.Bar.Config msg validation"
+            },
+            {
+                "name": "withXAxis",
+                "comment": " Customise the xAxis\n\n    Bar.init requiredConfig\n        |> Bar.withXAxis (Bar.axisBottom [ Axis.tickCount 5 ])\n        |> Bar.render ( data, accessor )\n\n",
+                "type": "Chart.Internal.Axis.XAxis String.String -> Chart.Bar.Config msg validation -> Chart.Bar.Config msg validation"
+            },
+            {
+                "name": "withXDomain",
+                "comment": " Sets the band domain explicitly. The data relates to the `xValue` accessor.\n\n    Bar.init requiredConfig\n        |> Bar.withXDomain [ \"a\", \"b\" ]\n        |> Bar.render ( data, accessor )\n\n",
+                "type": "List.List String.String -> Chart.Bar.Config msg validation -> Chart.Bar.Config msg validation"
+            },
+            {
+                "name": "withXGroupDomain",
+                "comment": " Sets the group band domain explicitly. The group data relates to the `xGoup` accessor.\n\n    Bar.init requiredConfig\n        |> Bar.withXGroupDomain [ \"0\" ]\n        |> Bar.render ( data, accessor )\n\n",
+                "type": "List.List String.String -> Chart.Bar.Config msg validation -> Chart.Bar.Config msg validation"
+            },
+            {
+                "name": "withXLabels",
+                "comment": " Show the X ordinal values at the end of the bars.\n\nIf used together with symbols, the label will be drawn on top of the symbol.\n\n&#9888; Use with caution, there is no knowledge of text wrapping!\n\n    Bar.init requiredConfig\n        |> Bar.withXLabels\n        |> Bar.render ( data, accessor )\n\n",
+                "type": "Chart.Bar.Config msg validation -> Chart.Bar.Config msg validation"
+            },
+            {
+                "name": "withYAxis",
+                "comment": " Customise the yAxis\n\n    Bar.init requiredConfig\n        |> Bar.withYAxis (Bar.axisRight [ Axis.tickCount 5 ])\n        |> Bar.render ( data, accessor )\n\n",
+                "type": "Chart.Internal.Axis.YAxis Basics.Float -> Chart.Bar.Config msg validation -> Chart.Bar.Config msg validation"
+            },
+            {
+                "name": "withYDomain",
+                "comment": " Sets the continuous domain explicitly. The data relates to the `yValue` accessor.\n\n    Bar.init requiredConfig\n        |> Bar.withYDomain ( 0, 0.55 )\n        |> Bar.render ( data, accessor )\n\n",
+                "type": "( Basics.Float, Basics.Float ) -> Chart.Bar.Config msg validation -> Chart.Bar.Config msg validation"
+            },
+            {
+                "name": "withoutTable",
+                "comment": " Do **not** build an alternative table content for accessibility\n\n&#9888; By default an alternative table is always being rendered.\nUse this option to not build the table.\n\n    Bar.init requiredConfig\n        |> Bar.withoutTable\n        |> Bar.render ( data, accessor )\n\n",
+                "type": "Chart.Bar.Config msg validation -> Chart.Bar.Config msg validation"
+            },
+            {
+                "name": "xGroupLabel",
+                "comment": " ",
+                "type": "Chart.Internal.Type.Label"
+            },
+            {
+                "name": "xLabel",
+                "comment": " ",
+                "type": "Chart.Internal.Type.Label"
+            },
+            {
+                "name": "xOrdinalColumnTitle",
+                "comment": " ",
+                "type": "Chart.Internal.Type.ColumnTitle"
+            },
+            {
+                "name": "yColumnTitle",
+                "comment": " ",
+                "type": "(Basics.Float -> String.String) -> Chart.Internal.Type.ColumnTitle"
+            },
+            {
+                "name": "yLabel",
+                "comment": " ",
+                "type": "(Basics.Float -> String.String) -> Chart.Internal.Type.Label"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chart.HistogramBar",
+        "comment": " This is the histogram chart module from [elm-chart-builder](https://github.com/data-viz-lab/elm-chart-builder).\n\nThe histogram bar chart can both generate the histogram data automatically or accept preprocessed data.\n\n\n# Data Accessors\n\n@docs dataAccessor, preProcessedDataAccessor\n\n\n# Chart Initialization\n\n@docs init\n\n\n# Chart Rendering\n\n@docs render\n\n\n# Configuration\n\n@docs Config, RequiredConfig\n\n\n# Configuration setters\n\n@docs withBarStyle, withColor, withColumnTitle, withDesc, withDomain, withTableFloatFormat, withoutTable, withTitle\n\n\n# Axis\n\n@docs XAxis, YAxis, axisBottom, axisLeft, axisRight, hideAxis, hideXAxis, hideYAxis, withXAxis, withYAxis\n\n\n# Configuration arguments\n\n@docs yColumnTitle\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " The Config opaque type\n",
+                "args": [
+                    "msg",
+                    "validation"
+                ],
+                "type": "Chart.Internal.Type.Config msg validation"
+            },
+            {
+                "name": "RequiredConfig",
+                "comment": " The required config, passed as an argument to the `init` function\n",
+                "args": [],
+                "type": "{ margin : Chart.Internal.Type.Margin, width : Basics.Float, height : Basics.Float }"
+            },
+            {
+                "name": "XAxis",
+                "comment": " The XAxis type\n",
+                "args": [
+                    "value"
+                ],
+                "type": "Chart.Internal.Axis.XAxis value"
+            },
+            {
+                "name": "YAxis",
+                "comment": " The YAxis type\n",
+                "args": [
+                    "value"
+                ],
+                "type": "Chart.Internal.Axis.YAxis value"
+            }
+        ],
+        "values": [
+            {
+                "name": "axisBottom",
+                "comment": " It returns an XAxis Bottom type\n\n    Histo.axisBottom [ Axis.tickCount 5 ]\n\n",
+                "type": "List.List (Axis.Attribute value) -> Chart.Internal.Axis.XAxis value"
+            },
+            {
+                "name": "axisLeft",
+                "comment": " A YAxis Left type\n\n    Histo.axisLeft [ Axis.tickCount 5 ]\n\n",
+                "type": "List.List (Axis.Attribute value) -> Chart.Internal.Axis.YAxis value"
+            },
+            {
+                "name": "axisRight",
+                "comment": " It returns an YAxis Right type\n\n    Histo.axisRight [ Axis.tickCount 5 ]\n\n",
+                "type": "List.List (Axis.Attribute value) -> Chart.Internal.Axis.YAxis value"
+            },
+            {
+                "name": "dataAccessor",
+                "comment": " The data accessor for generating a histogram.\nIt takes a config that is separate from the general config,\nbecause it is only used when generating a histogram and not for bucketed pre-processed data.\n\n    steps : Steps\n    steps =\n        [ 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1 ]\n\n    dataAccessor =\n        Histo.dataAccessor steps accessor\n\n",
+                "type": "Chart.HistogramBar.Steps -> (data -> Basics.Float) -> Chart.Internal.Type.AccessorHistogram data"
+            },
+            {
+                "name": "hideAxis",
+                "comment": " Hide all axis.\n\n    Histo.init requiredConfig\n        |> Histo.hideAxis\n        |> Histo.render ( data, accessor )\n\n",
+                "type": "Chart.HistogramBar.Config msg validation -> Chart.HistogramBar.Config msg validation"
+            },
+            {
+                "name": "hideXAxis",
+                "comment": " Hide the X aixs.\n\n    Histo.init requiredConfig\n        |> Histo.hideXAxis\n        |> Histo.render ( data, accessor )\n\n",
+                "type": "Chart.HistogramBar.Config msg validation -> Chart.HistogramBar.Config msg validation"
+            },
+            {
+                "name": "hideYAxis",
+                "comment": " Hide the Y aixs.\n\n    Histo.init requiredConfig\n        |> Histo.hideYAxis\n        |> Histo.render ( data, accessor )\n\n",
+                "type": "Chart.HistogramBar.Config msg validation -> Chart.HistogramBar.Config msg validation"
+            },
+            {
+                "name": "init",
+                "comment": " Initializes the histogram bar chart with a default config.\n\n    Histo.init requiredConfig\n        |> Histo.render ( data, accessor )\n\n",
+                "type": "Chart.HistogramBar.RequiredConfig -> Chart.HistogramBar.Config msg validation"
+            },
+            {
+                "name": "preProcessedDataAccessor",
+                "comment": " The data accessor for generating a histogram from pre-processed data.\nMeaning the data has already been bucketed and counted.\n`values` here is not used and always passed as an empty array.\n\n    preProcessedDataAccessor =\n        Histo.preProcessedDataAccessor\n            (\\d ->\n                { x0 = d.bucket\n                , x1 = d.bucket + 0.1\n                , values = []\n                , length = d.count\n                }\n            )\n\n",
+                "type": "(data -> Histogram.Bin Basics.Float Basics.Float) -> Chart.Internal.Type.AccessorHistogram data"
+            },
+            {
+                "name": "render",
+                "comment": " Renders the histogram\n\n    Histo.init requiredConfig\n        |> Histo.render ( data, accessor )\n\n",
+                "type": "( List.List data, Chart.Internal.Type.AccessorHistogram data ) -> Chart.HistogramBar.Config msg validation -> Html.Html msg"
+            },
+            {
+                "name": "withBarStyle",
+                "comment": " Sets the style for the bars\nThe styles set here have precedence over css.\n\n    Histo.init requiredConfig\n        |> Histo.withBarStyle [ ( \"fill\", \"none\" ), ( \"stroke-width\", \"2\" ) ]\n        |> Histo.render ( data, accessor )\n\n",
+                "type": "List.List ( String.String, String.String ) -> Chart.HistogramBar.Config msg validation -> Chart.HistogramBar.Config msg validation"
+            },
+            {
+                "name": "withColor",
+                "comment": " Set the histogram color\n\n    Histo.init requiredConfig\n        |> Histo.withColor (Color.rgb255 240 59 32)\n        |> Histo.render ( data, accessor )\n\n",
+                "type": "Color.Color -> Chart.HistogramBar.Config msg validation -> Chart.HistogramBar.Config msg validation"
+            },
+            {
+                "name": "withColumnTitle",
+                "comment": " Set the chart columns title value\n\nIt takes one of: yColumnTitle\n\nIt takes a formatter function.\n\n    defaultLayoutConfig\n        |> Bar.withColumnTitle (Bar.yColumnTitle String.fromFloat)\n\n",
+                "type": "Chart.Internal.Type.ColumnTitle -> Chart.HistogramBar.Config msg validation -> Chart.HistogramBar.Config msg validation"
+            },
+            {
+                "name": "withDesc",
+                "comment": " Sets an accessible, long-text description for the svg chart.\nDefault value: \"\"\n\n    Histo.init requiredConfig\n        |> Histo.withDesc \"This is an accessible chart, with a desc element\"\n        |> Histo.render ( data, accessor )\n\n",
+                "type": "String.String -> Chart.HistogramBar.Config msg validation -> Chart.HistogramBar.Config msg validation"
+            },
+            {
+                "name": "withDomain",
+                "comment": " Set the domain for the HistogramGenerator.\nAll values falling outside the domain will be ignored.\n\n    Histo.init requiredConfig\n        |> Histo.withDomain ( 0, 1 )\n        |> Histo.render ( data, accessor )\n\n",
+                "type": "( Basics.Float, Basics.Float ) -> Chart.HistogramBar.Config msg validation -> Chart.HistogramBar.Config msg validation"
+            },
+            {
+                "name": "withTableFloatFormat",
+                "comment": " An optional formatter for all float values in the alternative table content for accessibility.\n\nDefaults to `String.fromFloat`\n\n    Histo.init requiredConfig\n        |> Histo.withTableFloatFormat String.fromFloat\n        |> Histo.render ( data, accessor )\n\n",
+                "type": "(Basics.Float -> String.String) -> Chart.HistogramBar.Config msg validation -> Chart.HistogramBar.Config msg validation"
+            },
+            {
+                "name": "withTitle",
+                "comment": " Sets an accessible title for the svg chart.\nDefault value: \"\"\n\n    Histo.init requiredConfig\n        |> Histo.withTitle \"This is a chart\"\n        |> Histo.render ( data, accessor )\n\n",
+                "type": "String.String -> Chart.HistogramBar.Config msg validation -> Chart.HistogramBar.Config msg validation"
+            },
+            {
+                "name": "withXAxis",
+                "comment": " Customise the xAxis\n\n    Histo.init requiredConfig\n        |> Histo.withXAxis (Histo.axisBottom [ Axis.tickCount 5 ])\n        |> Histo.render ( data, accessor )\n\n",
+                "type": "Chart.Internal.Axis.XAxis Basics.Float -> Chart.HistogramBar.Config msg validation -> Chart.HistogramBar.Config msg validation"
+            },
+            {
+                "name": "withYAxis",
+                "comment": " Customise the yAxis\n\n    Histo.init requiredConfig\n        |> Histo.withYAxis (Histo.axisRight [ Axis.tickCount 5 ])\n        |> Histo.render ( data, accessor )\n\n",
+                "type": "Chart.Internal.Axis.YAxis Basics.Float -> Chart.HistogramBar.Config msg validation -> Chart.HistogramBar.Config msg validation"
+            },
+            {
+                "name": "withoutTable",
+                "comment": " Do **not** build an alternative table content for accessibility\n\n&#9888; By default an alternative table is always being rendered.\nUse this option to not build the table.\n\n    Histo.init requiredConfig\n        |> Histo.withoutTable\n        |> Histo.render ( data, accessor )\n\n",
+                "type": "Chart.HistogramBar.Config msg validation -> Chart.HistogramBar.Config msg validation"
+            },
+            {
+                "name": "yColumnTitle",
+                "comment": " ",
+                "type": "(Basics.Float -> String.String) -> Chart.Internal.Type.ColumnTitle"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chart.Line",
+        "comment": " This is the line chart module from [elm-chart-builder](https://github.com/data-viz-lab/elm-chart-builder).\n\nIt expects the X axis to plot time or continuous data and the Y axis to plot continuous data.\n\n\n# Chart Data Format\n\n@docs Accessor, AccessorCont, AccessorContinuous, AccessorTime, continuous, cont, time\n\n\n# Chart Initialization\n\n@docs init\n\n\n# Chart Rendering\n\n@docs render\n\n\n# Configuration\n\n@docs Config, RequiredConfig\n\n\n# Optional Configuration setters\n\n@docs asArea, withBottomPadding, withColorPalette, withCurve, withDesc, withEvent, withGroupedLayout, withLabels, withLeftPadding, withLineStyle, withLogYScale, withPointAnnotation, withStackedLayout, withSymbols, withTableFloatFormat, withTablePosixFormat, withTitle, withVLineAnnotation, withXContDomain, withXContinuousDomain, withXTimeDomain, withYDomain, withoutTable\n\n\n# Configuration arguments\n\n@docs axisBottom, axisGrid, axisLeft, axisRight, xGroupLabel\n\n\n# Axis\n\n@docs XAxis, YAxis, hideAxis, hideXAxis, hideYAxis, withXAxisCont, withXAxisContinuous, withXAxisTime, withYAxis\n\n\n# Events\n\n@docs Hint, hoverAll, hoverOne\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Accessor",
+                "comment": " The data accessors\n\nA line chart can have the X axis as continuous or time data.\n\n    type Accessor data\n        = AccessorContinuous (accessorContinuous data)\n        | AccessorTime (accessorTime data)\n\n",
+                "args": [
+                    "data"
+                ],
+                "type": "Chart.Internal.Type.AccessorContinuousOrTime data"
+            },
+            {
+                "name": "AccessorCont",
+                "comment": " An alias for AccessorContinuous\n",
+                "args": [
+                    "data"
+                ],
+                "type": "{ xGroup : data -> Maybe.Maybe String.String, xValue : data -> Basics.Float, yValue : data -> Basics.Float }"
+            },
+            {
+                "name": "AccessorContinuous",
+                "comment": " The accessor structure for x continuous lines.\n",
+                "args": [
+                    "data"
+                ],
+                "type": "{ xGroup : data -> Maybe.Maybe String.String, xValue : data -> Basics.Float, yValue : data -> Basics.Float }"
+            },
+            {
+                "name": "AccessorTime",
+                "comment": " The accessor structure for x time lines.\n",
+                "args": [
+                    "data"
+                ],
+                "type": "{ xGroup : data -> Maybe.Maybe String.String, xValue : data -> Time.Posix, yValue : data -> Basics.Float }"
+            },
+            {
+                "name": "Config",
+                "comment": " The Config opaque type\n",
+                "args": [
+                    "msg",
+                    "validation"
+                ],
+                "type": "Chart.Internal.Type.Config msg validation"
+            },
+            {
+                "name": "Hint",
+                "comment": " The data format returned by an event.\nInternaly defined as:\n\n    type alias Hint =\n        { groupLabel : Maybe String\n        , xChart : Float\n        , yChart : List Float\n        , xData : Float\n        , yData : List Float\n        }\n\n  - xChart is the cursor's x coordinate in the chart's svg space.\n  - yChart is the cursor's y coordinate in the chart's svg space.\n  - xData is the list of all x line values within the tolerance of the xChart cursor's position.\n  - yData is the list of all y line values within the tolerance of the yChart cursor's position. For a [hoverOne](#hoverOne) event, the yChart will always only have one value.\n\n",
+                "args": [],
+                "type": "Chart.Internal.Event.Hint"
+            },
+            {
+                "name": "RequiredConfig",
+                "comment": " The required config, passed as an argument to the `init` function\n\n    { margin =\n        { top = Float\n        , right = Float\n        , bottom = Float\n        , left = Float\n        }\n    , width = Float\n    , height = Float\n    }\n\n",
+                "args": [],
+                "type": "Chart.Internal.Type.RequiredConfig"
+            },
+            {
+                "name": "XAxis",
+                "comment": " The XAxis type\n",
+                "args": [
+                    "value"
+                ],
+                "type": "Chart.Internal.Axis.XAxis value"
+            },
+            {
+                "name": "YAxis",
+                "comment": " The YAxis type\n",
+                "args": [
+                    "value"
+                ],
+                "type": "Chart.Internal.Axis.YAxis value"
+            }
+        ],
+        "values": [
+            {
+                "name": "asArea",
+                "comment": " Draw the line chart as an area\n\n    Line.init requiredConfig\n        |> Line.asArea\n        |> Line.render ( data, accessor )\n\n",
+                "type": "Chart.Line.Config msg validation -> Chart.Line.Config msg validation"
+            },
+            {
+                "name": "axisBottom",
+                "comment": " It returns an XAxis bottom type\n\n    Line.axisBottom [ Axis.tickCount 5 ]\n\n",
+                "type": "List.List (Axis.Attribute value) -> Chart.Internal.Axis.XAxis value"
+            },
+            {
+                "name": "axisGrid",
+                "comment": " It returns an YAxis Grid type\n\n    Line.axisGrid [ Axis.tickCount 5 ]\n\n",
+                "type": "List.List (Axis.Attribute value) -> Chart.Internal.Axis.YAxis value"
+            },
+            {
+                "name": "axisLeft",
+                "comment": " It returns an YAxis Left type\n\n    Line.axisLeft [ Axis.tickCount 5 ]\n\n",
+                "type": "List.List (Axis.Attribute value) -> Chart.Internal.Axis.YAxis value"
+            },
+            {
+                "name": "axisRight",
+                "comment": " It returns an YAxis right type\n\n    Line.axisRight [ Axis.tickCount 5 ]\n\n",
+                "type": "List.List (Axis.Attribute value) -> Chart.Internal.Axis.YAxis value"
+            },
+            {
+                "name": "cont",
+                "comment": " An alias for Line.continuous\n\n    Line.cont (Line.AccessorCont .groupLabel .x .y)\n\n",
+                "type": "Chart.Internal.Type.AccessorContinuousStruct data -> Chart.Line.Accessor data"
+            },
+            {
+                "name": "continuous",
+                "comment": " The accessor constructor for x continuous lines.\n\n    Line.continuous (Line.AccessorContinuous .groupLabel .x .y)\n\n",
+                "type": "Chart.Internal.Type.AccessorContinuousStruct data -> Chart.Line.Accessor data"
+            },
+            {
+                "name": "hideAxis",
+                "comment": " Hide all axis. Useful, for example, when drawing a sparkline.\n\n    Line.init requiredConfig\n        |> Line.hideAxis\n        |> Line.render ( data, accessor )\n\n",
+                "type": "Chart.Line.Config msg validation -> Chart.Line.Config msg validation"
+            },
+            {
+                "name": "hideXAxis",
+                "comment": " Hide the X axis\n\nThe X axis depends from the layout:\n\n  - With a vertical layout the X axis is the horizontal axis.\n  - With a horizontal layout the X axis is the vertical axis.\n\n```\nLine.init requiredConfig\n    |> Line.hideXAxis\n    |> Line.render ( data, accessor )\n```\n\n",
+                "type": "Chart.Line.Config msg validation -> Chart.Line.Config msg validation"
+            },
+            {
+                "name": "hideYAxis",
+                "comment": " Hide the Y aixs\n\nThe Y axis depends from the layout:\n\n  - With a vertical layout the Y axis is the vertical axis.\n\n  - With a horizontal layout the Y axis is the horizontal axis.\n\n```\nLine.init requiredConfig\n    |> Line.hideYAxis\n    |> Line.render ( data, accessor )\n```\n\n",
+                "type": "Chart.Line.Config msg validation -> Chart.Line.Config msg validation"
+            },
+            {
+                "name": "hoverAll",
+                "comment": " An event listener for all elements along the same x-value.\n\n    Line.init requiredConfig\n        |> Line.withEvent (Line.hoverAll OnHover)\n        |> Line.render ( data, accessor )\n\n",
+                "type": "(Maybe.Maybe Chart.Internal.Event.Hint -> msg) -> Chart.Internal.Event.Event msg"
+            },
+            {
+                "name": "hoverOne",
+                "comment": " An event listener for a single element at a time.\n\n    Line.init requiredConfig\n        |> Line.withEvent (Line.hoverOne OnHover)\n        |> Line.render ( data, accessor )\n\n",
+                "type": "(Maybe.Maybe Chart.Internal.Event.Hint -> msg) -> Chart.Internal.Event.Event msg"
+            },
+            {
+                "name": "init",
+                "comment": " Initializes the line chart with a default config\n\n    data : List Data\n    data =\n        [ { groupLabel = \"A\"\n          , x = Time.millisToPosix 1579275175634\n          , y = 10\n          }\n        , { groupLabel = \"A\"\n          , x = Time.millisToPosix 1579285175634\n          , y = 16\n          }\n        , { groupLabel = \"B\"\n          , x = Time.millisToPosix 1579275175634\n          , y = 13\n          }\n        , { groupLabel = \"B\"\n          , x = Time.millisToPosix 1579285175634\n          , y = 23\n          }\n        ]\n\n    accessor : Line.Accessor data\n    accessor =\n        Line.time (Line.accessorTime .groupLabel .x .y)\n\n    Line.init\n        { margin =\n            { top = 10\n            , right = 10\n            , bottom = 30\n            , left = 30\n            }\n        , width = 500\n        , height = 200\n        }\n        |> Line.render (data, accessor)\n\n",
+                "type": "Chart.Line.RequiredConfig -> Chart.Line.Config msg validation"
+            },
+            {
+                "name": "render",
+                "comment": " Renders the line chart, after initialisation and optional customisations.\n\n    Line.init requiredConfig\n        |> Line.render ( data, accessor )\n\n",
+                "type": "( List.List data, Chart.Line.Accessor data ) -> Chart.Line.Config msg validation -> Html.Html msg"
+            },
+            {
+                "name": "time",
+                "comment": " The accessor constructor for x time lines.\n\n    Line.time (Line.AccessorTime .groupLabel .x .y)\n\n",
+                "type": "Chart.Internal.Type.AccessorTimeStruct data -> Chart.Line.Accessor data"
+            },
+            {
+                "name": "withBottomPadding",
+                "comment": " Sets the bottom padding for the chart component.\nThe higher the padding, the bigger the gap between the chart and the axis.\n\n    Line.init requiredConfig\n        |> Line.withBottomPadding 4\n        |> Line.render ( data, accessor )\n\n",
+                "type": "Basics.Float -> Chart.Line.Config msg validation -> Chart.Line.Config msg validation"
+            },
+            {
+                "name": "withColorPalette",
+                "comment": " Sets the color palette for the chart.\n\n    palette =\n        -- From elm-visualization\n        Scale.Color.tableau10\n\n    Line.init requiredConfig\n        |> Line.withColorPalette palette\n        |> Line.render (data, accessor)\n\n",
+                "type": "List.List Color.Color -> Chart.Line.Config msg validation -> Chart.Line.Config msg validation"
+            },
+            {
+                "name": "withCurve",
+                "comment": " Sets the line curve shape\n\nDefaults to `Shape.continuousCurve`\n\nSee [elm-visualization/latest/Shape](https://package.elm-lang.org/packages/gampleman/elm-visualization/latest/Shape)\nCurves section for more info.\n\n    Line.init requiredConfig\n        |> Line.withCurve Shape.monotoneInXCurve\n        |> Line.render ( data, accessor )\n\n",
+                "type": "(List.List ( Basics.Float, Basics.Float ) -> SubPath.SubPath) -> Chart.Line.Config msg validation -> Chart.Line.Config msg validation"
+            },
+            {
+                "name": "withDesc",
+                "comment": " Sets an accessible, long-text description for the svg chart.\n\nIt defaults to an empty string.\nThis shuld be set if no title nor description exists for the chart, for example in a sparkline.\n\n    Line.init requiredConfig\n        |> Line.withDesc \"This is an accessible chart\"\n        |> Line.render ( data, accessor )\n\n",
+                "type": "String.String -> Chart.Line.Config msg validation -> Chart.Line.Config msg validation"
+            },
+            {
+                "name": "withEvent",
+                "comment": " Add an event with a msg to handle the returned Hint data.\nOne of:\n\n  - [hoverOne](#hoverOne)\n\n  - [hoverAll](#hoverAll)\n\n```\nLine.init requiredConfig\n    |> Line.withEvent (Line.hoverOne OnHover)\n    |> Line.render ( data, accessor )\n```\n\n",
+                "type": "Chart.Internal.Event.Event msg -> Chart.Line.Config msg validation -> Chart.Line.Config msg validation"
+            },
+            {
+                "name": "withGroupedLayout",
+                "comment": " Creates a grouped line chart. This option is already set by default.\n\n    Line.init requiredConfig\n        |> Line.withGroupedLayout\n        |> Line.render ( data, accessor )\n\n",
+                "type": "Chart.Line.Config msg validation -> Chart.Line.Config msg validation"
+            },
+            {
+                "name": "withLabels",
+                "comment": " Show a label at the end of the lines.\n\nCurrently only takes an [xGroupLabel](#xGroupLabel)\n\n&#9888; Use with caution, there is no knowledge of text wrapping!\n\n    defaultLayoutConfig\n        |> Line.withLabels Line.xGroupLabel\n\n",
+                "type": "Chart.Internal.Type.Label -> Chart.Line.Config msg validation -> Chart.Line.Config msg validation"
+            },
+            {
+                "name": "withLeftPadding",
+                "comment": " Sets the left padding for the chart component.\nThe higher the padding, the bigger the gap between the chart and the axis.\n\n    Line.init requiredConfig\n        |> Line.withLeftPadding 4\n        |> Line.render ( data, accessor )\n\n",
+                "type": "Basics.Float -> Chart.Line.Config msg validation -> Chart.Line.Config msg validation"
+            },
+            {
+                "name": "withLineStyle",
+                "comment": " Sets the style for the lines\nThe styles set here have precedence over [withColorPalette](#withColorPalette) and css rules.\n\n    Line.init requiredConfig\n        |> Line.withLineStyle [ ( \"stroke-width\", \"2\" ) ]\n        |> Line.render ( data, accessor )\n\n",
+                "type": "List.List ( String.String, String.String ) -> Chart.Line.Config msg validation -> Chart.Line.Config msg validation"
+            },
+            {
+                "name": "withLogYScale",
+                "comment": " Set the Y scale to logaritmic, passing a base\n\n    Line.init requiredConfig\n        |> Line.withLogYScale 10\n        |> Line.render ( data, accessor )\n\n",
+                "type": "Basics.Float -> Chart.Line.Config msg validation -> Chart.Line.Config msg validation"
+            },
+            {
+                "name": "withPointAnnotation",
+                "comment": " A predefined point annotation, in the format of `Chart.Annotation.Point`\nTypically used to draw points on hover.\n\n    Line.init requiredConfig\n        |> Line.withEvent (Line.hoverOne OnHover)\n        |> Line.withPointAnnotation annotations\n        |> Line.render ( data, accessor )\n\n",
+                "type": "Maybe.Maybe Chart.Annotation.Hint -> Chart.Line.Config msg validation -> Chart.Line.Config msg validation"
+            },
+            {
+                "name": "withStackedLayout",
+                "comment": " Creates a stacked line chart.\n\nIt takes an option to draw stacked lines or stacked areas\n\n    Line.init requiredConfig\n        |> Line.withStackedLayout Shape.stackOffsetSilhouette\n        |> Line.render ( data, accessor )\n\n",
+                "type": "Chart.Internal.Type.StackOffset -> Chart.Line.Config msg validation -> Chart.Line.Config msg validation"
+            },
+            {
+                "name": "withSymbols",
+                "comment": " Pass a list of symbols to the line chart, one per data group.\nIf the list is empty, no symbols are rendered. It defaults to empty List.\n\n    defaultLayoutConfig\n        |> withSymbols [ Circle, Corner, Triangle ]\n\n",
+                "type": "List.List Chart.Internal.Symbol.Symbol -> Chart.Line.Config msg validation -> Chart.Line.Config msg validation"
+            },
+            {
+                "name": "withTableFloatFormat",
+                "comment": " An optional formatter for all float values in the alternative table content for accessibility.\n\nDefaults to `String.fromFloat`\n\n    Line.init requiredConfig\n        |> Line.withTableFloatFormat String.fromFloat\n        |> Line.render ( data, accessor )\n\n",
+                "type": "(Basics.Float -> String.String) -> Chart.Line.Config msg validation -> Chart.Line.Config msg validation"
+            },
+            {
+                "name": "withTablePosixFormat",
+                "comment": " An optional formatter for all posix values in the alternative table content for accessibility.\n\nDefaults to `Time.posixToMillis >> String.fromInt`\n\n    Line.init requiredConfig\n        |> Line.withTablePosixFormat (Time.posixToMillis >> String.fromInt)\n        |> Line.render ( data, accessor )\n\n",
+                "type": "(Time.Posix -> String.String) -> Chart.Line.Config msg validation -> Chart.Line.Config msg validation"
+            },
+            {
+                "name": "withTitle",
+                "comment": " Sets an accessible title for the svg chart.\n\nIt defaults to an empty string.\nThis shuld be set if no title nor description exists for the chart, for example in a sparkline.\n\n    Line.init required\n        |> Line.withTitle \"Line chart\"\n        |> Line.render ( data, accessor )\n\n",
+                "type": "String.String -> Chart.Line.Config msg validation -> Chart.Line.Config msg validation"
+            },
+            {
+                "name": "withVLineAnnotation",
+                "comment": " A predefined x-bar annotation, in the format of `Chart.Annotation.Point`\nTypically used to draw a vertical bar on hover.\n\n    Line.init requiredConfig\n        |> Line.withEvent (Line.hoverOne OnHover)\n        |> Line.VerticalLine annotations\n        |> Line.render ( data, accessor )\n\n",
+                "type": "Maybe.Maybe Chart.Annotation.Hint -> Chart.Line.Config msg validation -> Chart.Line.Config msg validation"
+            },
+            {
+                "name": "withXAxisCont",
+                "comment": " An alias for withXAxisContinuous\n\n    Line.init requiredConfig\n        |> Line.withXAxisCont (Line.axisBottom [ Axis.tickCount 5 ])\n        |> Line.render ( data, accessor )\n\n",
+                "type": "Chart.Internal.Axis.XAxis Basics.Float -> Chart.Line.Config msg validation -> Chart.Line.Config msg validation"
+            },
+            {
+                "name": "withXAxisContinuous",
+                "comment": " Customise the continuous xAxis\n\n    Line.init requiredConfig\n        |> Line.withXAxisContinuous (Line.axisBottom [ Axis.tickCount 5 ])\n        |> Line.render ( data, accessor )\n\n",
+                "type": "Chart.Internal.Axis.XAxis Basics.Float -> Chart.Line.Config msg validation -> Chart.Line.Config msg validation"
+            },
+            {
+                "name": "withXAxisTime",
+                "comment": " Customise the time xAxis\n\n    Line.init requiredConfig\n        |> Line.withXAxisTime (Line.axisBottom [ Axis.tickCount 5 ])\n        |> Line.render ( data, accessor )\n\n",
+                "type": "Chart.Internal.Axis.XAxis Time.Posix -> Chart.Line.Config msg validation -> Chart.Line.Config msg validation"
+            },
+            {
+                "name": "withXContDomain",
+                "comment": " An alias for withXContinuousDomain\n\nIf not set, the domain is calculated from the data.\nIf set on a continuous line chart this setting will have no effect.\n\n    Line.init requiredConfig\n        |> Line.withXContDomain ( 0, 10 )\n        |> Line.render ( data, accessor )\n\n",
+                "type": "( Basics.Float, Basics.Float ) -> Chart.Line.Config msg validation -> Chart.Line.Config msg validation"
+            },
+            {
+                "name": "withXContinuousDomain",
+                "comment": " Sets the Y domain of a continuous line chart\n\nIf not set, the domain is calculated from the data.\nIf set on a continuous line chart this setting will have no effect.\n\n    Line.init requiredConfig\n        |> Line.withXContinuousDomain ( 0, 10 )\n        |> Line.render ( data, accessor )\n\n",
+                "type": "( Basics.Float, Basics.Float ) -> Chart.Line.Config msg validation -> Chart.Line.Config msg validation"
+            },
+            {
+                "name": "withXTimeDomain",
+                "comment": " Sets the Y domain of a time line chart\n\nIf not set, the domain is calculated from the data.\nIf set on a continuous line chart this setting will have no effect.\n\n    Line.init requiredConfig\n        |> Line.withXTimeDomain ( Time.millisToPosix 1579275175634, 10 )\n        |> Line.render ( data, accessor )\n\n",
+                "type": "( Time.Posix, Time.Posix ) -> Chart.Line.Config msg validation -> Chart.Line.Config msg validation"
+            },
+            {
+                "name": "withYAxis",
+                "comment": " Customise the yAxis\n\n    Line.init requiredConfig\n        |> Line.withYAxis (Line.axisRight [ Axis.tickCount 5 ])\n        |> Line.render ( data, accessor )\n\n",
+                "type": "Chart.Internal.Axis.YAxis Basics.Float -> Chart.Line.Config msg validation -> Chart.Line.Config msg validation"
+            },
+            {
+                "name": "withYDomain",
+                "comment": " Sets the Y domain of a line chart\n\nThis is always a continuous domain, not a time domain.\nIf not set, the domain is calculated from the data.\nIf set on a continuous line chart this setting will have no effect.\n\n    Line.init required\n        |> Line.withYDomain ( Time.millisToPosix 1579275175634, Time.millisToPosix 1579375175634 )\n        |> Line.render ( data, accessor )\n\n",
+                "type": "( Basics.Float, Basics.Float ) -> Chart.Line.Config msg validation -> Chart.Line.Config msg validation"
+            },
+            {
+                "name": "withoutTable",
+                "comment": " Do **not** build an alternative table content for accessibility\n\n&#9888; By default an alternative table is always being rendered.\nUse this option to not build the table.\n\n    Line.init requiredConfig\n        |> Line.withoutTable\n        |> Line.render ( data, accessor )\n\n",
+                "type": "Chart.Line.Config msg validation -> Chart.Line.Config msg validation"
+            },
+            {
+                "name": "xGroupLabel",
+                "comment": " The xGroup label type.\n",
+                "type": "Chart.Internal.Type.Label"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chart.Symbol",
+        "comment": " Symbols can be added to charts to improve understanding and accessibility.\nCurrently stacked bar charts do not support symbols.\n\n\n# Symbols\n\n@docs Symbol\n@docs circle, corner, custom, triangle\n\n\n# Required Configuration for custom symbols\n\n@docs RequiredCustomConfig\n\n\n# Customisation\n\n@docs withGap, withIdentifier, withSize, withStyle\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "RequiredCustomConfig",
+                "comment": " The required configuration for the custom symbol.\n\n`viewBoxDimensions` is a tuple with viewBox width and height. These values are usually copied from the 3rd and 4th arguments of the viewBox attribute on the svg icon.\n\n`paths` is a list of strings for the d attribute of an svg path element.\n\n",
+                "args": [],
+                "type": "{ viewBoxDimensions : ( Basics.Float, Basics.Float ), paths : List.List String.String }"
+            },
+            {
+                "name": "Symbol",
+                "comment": " The Symbol type\n",
+                "args": [],
+                "type": "Chart.Internal.Symbol.Symbol"
+            }
+        ],
+        "values": [
+            {
+                "name": "circle",
+                "comment": " A circle symbol type\n\n    symbol : Symbol\n    symbol =\n        Symbol.circle\n\n",
+                "type": "Chart.Symbol.Symbol"
+            },
+            {
+                "name": "corner",
+                "comment": " A corner symbol type\n\n    symbol : Symbol\n    symbol =\n        Symbol.corner\n\n",
+                "type": "Chart.Symbol.Symbol"
+            },
+            {
+                "name": "custom",
+                "comment": " A custom symbol type\n\n    symbol =\n    Symbol.custom\n    { viewBoxDimensions = ( 640, 512 )\n    , paths = [ bicycleSymbol ]\n    }\n\n",
+                "type": "Chart.Symbol.RequiredCustomConfig -> Chart.Symbol.Symbol"
+            },
+            {
+                "name": "triangle",
+                "comment": " A triangle symbol type\n\n    symbol : Symbol\n    symbol =\n        Symbol.triangle\n\n",
+                "type": "Chart.Symbol.Symbol"
+            },
+            {
+                "name": "withGap",
+                "comment": " Sets the useGap boolean flag. It defaults to True.\nOnly for custom symbols on bar charts, where icons are drawn with a gap from the bar rectangles.\nBeware that, depending on the custom icon shape and on the orientation of the chart,\nthe icon could already have a gap and we do not want to add other space.\n\n    symbol : Bool -> Symbol -> Symbol\n    symbol =\n        Symbol.triangle\n            |> Symbol.withGap False\n\n",
+                "type": "Basics.Bool -> Chart.Symbol.Symbol -> Chart.Symbol.Symbol"
+            },
+            {
+                "name": "withIdentifier",
+                "comment": " Sets the symbol identifier used in the [xlink:href](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/xlink:href)\nIt can be omitted if the page has only one chart.\n\n    symbol : String -> Symbol -> Symbol\n    symbol =\n        Symbol.triangle\n            |> Symbol.withIdentifier \"chart-a-triangle-symbol\"\n\n",
+                "type": "String.String -> Chart.Symbol.Symbol -> Chart.Symbol.Symbol"
+            },
+            {
+                "name": "withSize",
+                "comment": " Sets the size of the built-in symbols\nIt has no effect on custom symbols.\n\n    symbol : Float -> Symbol -> Symbol\n    symbol =\n        Symbol.triangle\n            |> Symbol.withSize\n\n",
+                "type": "Basics.Float -> Chart.Symbol.Symbol -> Chart.Symbol.Symbol"
+            },
+            {
+                "name": "withStyle",
+                "comment": " Sets additional styles to symbol\nThe style precedence is: withStyle, withColor in the chart config, css rules.\nSo passing a color style here will override the chart and css color rules.\nThere is no compiler level validation here, any tuple of strings can be passed and if invalid will be ignored.\n\n    symbol : List ( String, String ) -> Symbol -> Symbol\n    symbol =\n        Symbol.triangle\n            |> Symbol.withStyle [ ( \"fill\", \"none\" ) ]\n\n",
+                "type": "List.List ( String.String, String.String ) -> Chart.Symbol.Symbol -> Chart.Symbol.Symbol"
+            }
+        ],
+        "binops": []
+    }
+]

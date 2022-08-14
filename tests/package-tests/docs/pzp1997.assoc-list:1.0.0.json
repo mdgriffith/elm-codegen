@@ -1,0 +1,136 @@
+[
+    {
+        "name": "AssocList",
+        "comment": " An [association list](https://en.wikipedia.org/wiki/Association_list) is a\nlist of tuples that map unique keys to values. The keys can be of any type (so\nlong as it has a reasonable definition for equality). This includes pretty\nmuch everything except for functions and things that contain functions.\n\nAll functions in this module are \"stack safe,\" which means that your program\nwon't crash from recursing over large association lists. You can read\nEvan Czaplicki's\n[document on tail-call elimination](https://github.com/evancz/functional-programming-in-elm/blob/master/recursion/tail-call-elimination.md)\nfor more information about this topic.\n\n\n# Dictionaries\n\n@docs Dict\n\n\n# Build\n\n@docs empty, singleton, insert, update, remove\n\n\n# Query\n\n@docs isEmpty, member, get, size, eq\n\n\n# Lists\n\n@docs keys, values, toList, fromList\n\n\n# Transform\n\n@docs map, foldl, foldr, filter, partition\n\n\n# Combine\n\n@docs union, intersect, diff, merge\n\n",
+        "unions": [
+            {
+                "name": "Dict",
+                "comment": " A dictionary of keys and values. So a `Dict String User` is a dictionary\nthat lets you look up a `String` (such as user names) and find the associated\n`User`.\n\n    import AssocList as Dict exposing (Dict)\n\n    users : Dict String User\n    users =\n        Dict.fromList\n            [ ( \"Alice\", User \"Alice\" 28 1.65 )\n            , ( \"Bob\", User \"Bob\" 19 1.82 )\n            , ( \"Chuck\", User \"Chuck\" 33 1.75 )\n            ]\n\n    type alias User =\n        { name : String\n        , age : Int\n        , height : Float\n        }\n\n",
+                "args": [
+                    "a",
+                    "b"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "diff",
+                "comment": " Keep a key-value pair when its key does not appear in the second dictionary.\n",
+                "type": "AssocList.Dict k a -> AssocList.Dict k b -> AssocList.Dict k a"
+            },
+            {
+                "name": "empty",
+                "comment": " Create an empty dictionary.\n",
+                "type": "AssocList.Dict k v"
+            },
+            {
+                "name": "eq",
+                "comment": " Compare two dictionaries for equality, ignoring insertion order.\nDictionaries are defined to be equal when they have identical key-value pairs\nwhere keys and values are compared using the built-in equality operator.\n\nYou should almost never use the built-in equality operator to compare\ndictionaries from this module since association lists have no canonical form.\n\n    eq\n        (fromList [ ( \"a\", 1 ), ( \"b\", 2 ) ])\n        (fromList [ ( \"b\", 2 ), ( \"a\", 1 ) ])\n    --> True\n\n",
+                "type": "AssocList.Dict k v -> AssocList.Dict k v -> Basics.Bool"
+            },
+            {
+                "name": "filter",
+                "comment": " Keep only the key-value pairs that pass the given test.\n",
+                "type": "(k -> v -> Basics.Bool) -> AssocList.Dict k v -> AssocList.Dict k v"
+            },
+            {
+                "name": "foldl",
+                "comment": " Fold over the key-value pairs in a dictionary from most recently inserted\nto least recently inserted.\n\n    users : Dict String Int\n    users =\n        empty\n            |> insert \"Alice\" 28\n            |> insert \"Bob\" 19\n            |> insert \"Chuck\" 33\n\n    foldl (\\name age result -> age :: result) [] users\n    --> [28,19,33]\n\n",
+                "type": "(k -> v -> b -> b) -> b -> AssocList.Dict k v -> b"
+            },
+            {
+                "name": "foldr",
+                "comment": " Fold over the key-value pairs in a dictionary from least recently inserted\nto most recently insered.\n\n    users : Dict String Int\n    users =\n        empty\n            |> insert \"Alice\" 28\n            |> insert \"Bob\" 19\n            |> insert \"Chuck\" 33\n\n    foldr (\\name age result -> age :: result) [] users\n    --> [33,19,28]\n\n",
+                "type": "(k -> v -> b -> b) -> b -> AssocList.Dict k v -> b"
+            },
+            {
+                "name": "fromList",
+                "comment": " Convert an association list into a dictionary. The elements are inserted\nfrom left to right. (If you want to insert the elements from right to left, you\ncan simply call `List.reverse` on the input before passing it to `fromList`.)\n",
+                "type": "List.List ( k, v ) -> AssocList.Dict k v"
+            },
+            {
+                "name": "get",
+                "comment": " Get the value associated with a key. If the key is not found, return\n`Nothing`. This is useful when you are not sure if a key will be in the\ndictionary.\n\n    type Animal\n        = Cat\n        | Mouse\n\n    animals : Dict String Animal\n    animals = fromList [ (\"Tom\", Cat), (\"Jerry\", Mouse) ]\n\n    get \"Tom\" animals\n    --> Just Cat\n\n    get \"Jerry\" animals\n    --> Just Mouse\n\n    get \"Spike\" animals\n    --> Nothing\n\n",
+                "type": "k -> AssocList.Dict k v -> Maybe.Maybe v"
+            },
+            {
+                "name": "insert",
+                "comment": " Insert a key-value pair into a dictionary. Replaces value when there is\na collision.\n",
+                "type": "k -> v -> AssocList.Dict k v -> AssocList.Dict k v"
+            },
+            {
+                "name": "intersect",
+                "comment": " Keep a key-value pair when its key appears in the second dictionary.\nPreference is given to values in the first dictionary.\n",
+                "type": "AssocList.Dict k v -> AssocList.Dict k v -> AssocList.Dict k v"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Determine if a dictionary is empty.\n\n    isEmpty empty\n    --> True\n\n",
+                "type": "AssocList.Dict k v -> Basics.Bool"
+            },
+            {
+                "name": "keys",
+                "comment": " Get all of the keys in a dictionary, in the order that they were inserted\nwith the most recently inserted key at the head of the list.\n\n    keys (fromList [ ( 0, \"Alice\" ), ( 1, \"Bob\" ) ])\n    --> [ 1, 0 ]\n\n",
+                "type": "AssocList.Dict k v -> List.List k"
+            },
+            {
+                "name": "map",
+                "comment": " Apply a function to all values in a dictionary.\n",
+                "type": "(k -> a -> b) -> AssocList.Dict k a -> AssocList.Dict k b"
+            },
+            {
+                "name": "member",
+                "comment": " Determine if a key is in a dictionary.\n",
+                "type": "k -> AssocList.Dict k v -> Basics.Bool"
+            },
+            {
+                "name": "merge",
+                "comment": " The most general way of combining two dictionaries. You provide three\naccumulators for when a given key appears:\n\n1.  Only in the left dictionary.\n2.  In both dictionaries.\n3.  Only in the right dictionary.\n\nYou then traverse all the keys in the following order, building up whatever\nyou want:\n\n1.  All the keys that appear only in the right dictionary from least\n    recently inserted to most recently inserted.\n2.  All the keys in the left dictionary from least recently inserted to most\n    recently inserted (without regard to whether they appear only in the left\n    dictionary or in both dictionaries).\n\n",
+                "type": "(k -> a -> result -> result) -> (k -> a -> b -> result -> result) -> (k -> b -> result -> result) -> AssocList.Dict k a -> AssocList.Dict k b -> result -> result"
+            },
+            {
+                "name": "partition",
+                "comment": " Partition a dictionary according to some test. The first dictionary\ncontains all key-value pairs which passed the test, and the second contains\nthe pairs that did not.\n",
+                "type": "(k -> v -> Basics.Bool) -> AssocList.Dict k v -> ( AssocList.Dict k v, AssocList.Dict k v )"
+            },
+            {
+                "name": "remove",
+                "comment": " Remove a key-value pair from a dictionary. If the key is not found,\nno changes are made.\n",
+                "type": "k -> AssocList.Dict k v -> AssocList.Dict k v"
+            },
+            {
+                "name": "singleton",
+                "comment": " Create a dictionary with one key-value pair.\n",
+                "type": "k -> v -> AssocList.Dict k v"
+            },
+            {
+                "name": "size",
+                "comment": " Determine the number of key-value pairs in the dictionary.\n\n    size (fromList [ ( \"a\", 1 ), ( \"b\", 2 ), ( \"c\", 3 ) ])\n    --> 3\n\n    size (insert 1 \"b\" (singleton 1 \"a\"))\n    --> 1\n\n",
+                "type": "AssocList.Dict k v -> Basics.Int"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert a dictionary into an association list of key-value pairs, in the\norder that they were inserted with the most recently inserted entry at the\nhead of the list.\n",
+                "type": "AssocList.Dict k v -> List.List ( k, v )"
+            },
+            {
+                "name": "union",
+                "comment": " Combine two dictionaries. If there is a collision, preference is given\nto the first dictionary.\n\nIf you are using this module as an ordered dictionary, the ordering of the\noutput dictionary will be all the entries of the first dictionary (from most\nrecently inserted to least recently inserted) followed by all the entries of\nthe second dictionary (from most recently inserted to least recently inserted).\n\n",
+                "type": "AssocList.Dict k v -> AssocList.Dict k v -> AssocList.Dict k v"
+            },
+            {
+                "name": "update",
+                "comment": " Update the value of a dictionary for a specific key with a given function.\n\nIf you are using this module as an ordered dictionary, please note that if you\nare replacing the value of an existing entry, the entry will remain where it\nis in the insertion order. (If you do want to change the insertion order,\nconsider using `get` in conjunction with `insert` instead.)\n\n",
+                "type": "k -> (Maybe.Maybe v -> Maybe.Maybe v) -> AssocList.Dict k v -> AssocList.Dict k v"
+            },
+            {
+                "name": "values",
+                "comment": " Get all of the values in a dictionary, in the order that they were inserted\nwith the most recently inserted value at the head of the list.\n\n    values (fromList [ ( 0, \"Alice\" ), ( 1, \"Bob\" ) ])\n    --> [ \"Bob\", \"Alice\" ]\n\n",
+                "type": "AssocList.Dict k v -> List.List v"
+            }
+        ],
+        "binops": []
+    }
+]

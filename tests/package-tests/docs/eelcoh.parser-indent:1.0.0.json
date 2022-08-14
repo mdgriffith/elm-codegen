@@ -1,0 +1,16 @@
+[
+    {
+        "name": "Parser.Indent",
+        "comment": " This library provides a parser for indented text.\n\n\n# Definition\n\n@docs list\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "list",
+                "comment": " Parse a list with the same indentation, for a given parser.\n",
+                "type": "Parser.Parser a -> Parser.Parser (List.List a)"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,264 @@
+[
+    {
+        "name": "Bytes",
+        "comment": "\n\n# Bytes\n@docs Bytes, width\n\n# Endianness\n@docs Endianness, getHostEndianness\n\n",
+        "unions": [
+            {
+                "name": "Bytes",
+                "comment": " A sequence of bytes.\n\nA byte is a chunk of eight bits. For example, the letter `j` is usually\nrepresented as the byte `01101010`, and the letter `k` is `01101011`.\n\nSeeing each byte as a stream of zeros and ones can be quite confusing though,\nso it is common to use hexidecimal numbers instead:\n\n```\n| Binary | Hex |\n+--------+-----+\n|  0000  |  0  |\n|  0001  |  1  |\n|  0010  |  2  |\n|  0011  |  3  |     j = 01101010\n|  0100  |  4  |         \\__/\\__/\n|  0101  |  5  |           |   |\n|  0110  |  6  |           6   A\n|  0111  |  7  |\n|  1000  |  8  |     k = 01101011\n|  1001  |  9  |         \\__/\\__/\n|  1010  |  A  |           |   |\n|  1011  |  B  |           6   B\n|  1100  |  C  |\n|  1101  |  D  |\n|  1110  |  E  |\n|  1111  |  F  |\n```\n\nSo `j` is `6A` and `k` is `6B` in hexidecimal. This more compact representation\nis great when you have a sequence of bytes. You can see this even in a short\nstring like `\"jazz\"`:\n\n```\nbinary                                 hexidecimal\n01101010 01100001 01111010 01111010 => 6A 61 7A 7A\n```\n\nAnyway, the point is that `Bytes` is a sequence of bytes!\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Endianness",
+                "comment": " Different computers store integers and floats slightly differently in\nmemory. Say we have the integer `0x1A2B3C4D` in our program. It needs four\nbytes (32 bits) in memory. It may seem reasonable to lay them out in order:\n\n```\n   Big-Endian (BE)      (Obvious Order)\n+----+----+----+----+\n| 1A | 2B | 3C | 4D |\n+----+----+----+----+\n```\n\nBut some people thought it would be better to store the bytes in the opposite\norder:\n\n```\n  Little-Endian (LE)    (Shuffled Order)\n+----+----+----+----+\n| 4D | 3C | 2B | 1A |\n+----+----+----+----+\n```\n\nNotice that **the _bytes_ are shuffled, not the bits.** It is like if you cut a\nphoto into four strips and shuffled the strips. It is not a mirror image.\nThe theory seems to be that an 8-bit `0x1A` and a 32-bit `0x0000001A` both have\n`1A` as the first byte in this scheme. Maybe this was helpful when processors\nhandled one byte at a time.\n\n**Most processors use little-endian (LE) layout.** This seems to be because\nIntel did it this way, and other chip manufactures followed their convention.\n**Most network protocols use big-endian (BE) layout.** I suspect this is\nbecause if you are trying to debug a network protocol, it is nice if your\nintegers are not all shuffled.\n\n**Note:** Endianness is relevant for integers and floats, but not strings.\nUTF-8 specifies the order of bytes explicitly.\n\n**Note:** The terms little-endian and big-endian are a reference to an egg joke\nin Gulliver's Travels. They first appeared in 1980 in [this essay][essay], and\nyou can decide for yourself if they stood the test of time. I personally find\nthese terms quite unhelpful, so I say “Obvious Order” and “Shuffled Order” in\nmy head. I remember which is more common by asking myself, “if things were\nobvious, would I have to ask this question?”\n\n[essay]: http://www.ietf.org/rfc/ien/ien137.txt\n",
+                "args": [],
+                "cases": [
+                    [
+                        "LE",
+                        []
+                    ],
+                    [
+                        "BE",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "getHostEndianness",
+                "comment": " Is this program running on a big-endian or little-endian machine?\n",
+                "type": "Task.Task x Bytes.Endianness"
+            },
+            {
+                "name": "width",
+                "comment": " Get the width of a sequence of bytes.\n\nSo if a sequence has four-hundred bytes, then `width bytes` would give back\n`400`. That may be 400 unsigned 8-bit integers, 100 signed 32-bit integers, or\neven a UTF-8 string. The content does not matter. This is just figuring out\nhow many bytes there are!\n",
+                "type": "Bytes.Bytes -> Basics.Int"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Bytes.Decode",
+        "comment": "\n\n# Decoders\n@docs Decoder, decode\n\n# Integers\n@docs signedInt8, signedInt16, signedInt32,\n  unsignedInt8, unsignedInt16, unsignedInt32\n\n# Floats\n@docs float32, float64\n\n# Bytes\n@docs bytes\n\n# Strings\n@docs string\n\n# Map\n@docs map, map2, map3, map4, map5\n\n# And Then\n@docs andThen, succeed, fail\n\n# Loop\n@docs Step, loop\n",
+        "unions": [
+            {
+                "name": "Decoder",
+                "comment": " Describes how to turn a sequence of bytes into a nice Elm value.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Step",
+                "comment": " Decide what steps to take next in your [`loop`](#loop).\n\nIf you are `Done`, you give the result of the whole `loop`. If you decide to\n`Loop` around again, you give a new state to work from. Maybe you need to add\nan item to a list? Or maybe you need to track some information about what you\njust saw?\n\n**Note:** It may be helpful to learn about [finite-state machines][fsm] to get\na broader intuition about using `state`. I.e. You may want to create a `type`\nthat describes four possible states, and then use `Loop` to transition between\nthem as you consume characters.\n\n[fsm]: https://en.wikipedia.org/wiki/Finite-state_machine\n",
+                "args": [
+                    "state",
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Loop",
+                        [
+                            "state"
+                        ]
+                    ],
+                    [
+                        "Done",
+                        [
+                            "a"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "andThen",
+                "comment": " Decode something **and then** use that information to decode something\nelse. This is most common with strings or sequences where you need to read\nhow long the value is going to be:\n\n    import Bytes exposing (Endianness(..))\n    import Bytes.Decode as Decode\n\n    string : Decoder String\n    string =\n      Decode.unsignedInt32 BE\n        |> Decode.andThen Decode.string\n\nCheck out the docs for [`succeed`](#succeed), [`fail`](#fail), and\n[`loop`](#loop) to see `andThen` used in more ways!\n",
+                "type": "(a -> Bytes.Decode.Decoder b) -> Bytes.Decode.Decoder a -> Bytes.Decode.Decoder b"
+            },
+            {
+                "name": "bytes",
+                "comment": " Copy a given number of bytes into a new `Bytes` sequence.\n",
+                "type": "Basics.Int -> Bytes.Decode.Decoder Bytes.Bytes"
+            },
+            {
+                "name": "decode",
+                "comment": " Turn a sequence of bytes into a nice Elm value.\n\n    -- decode (unsignedInt16 BE) <0007> == Just 7\n    -- decode (unsignedInt16 LE) <0700> == Just 7\n    -- decode (unsignedInt16 BE) <0700> == Just 1792\n    -- decode (unsignedInt32 BE) <0700> == Nothing\n\nThe `Decoder` specifies exactly how this should happen. This process may fail\nif the sequence of bytes is corrupted or unexpected somehow. The examples above\nshow a case where there are not enough bytes.\n",
+                "type": "Bytes.Decode.Decoder a -> Bytes.Bytes -> Maybe.Maybe a"
+            },
+            {
+                "name": "fail",
+                "comment": " A decoder that always fails. This can be useful when using `andThen` to\ndecode custom types:\n\n    import Bytes exposing (Endianness(..))\n    import Bytes.Encode as Encode\n    import Bytes.Decode as Decode\n\n    type Distance = Yards Float | Meters Float\n\n    toEncoder : Distance -> Encode.Encoder\n    toEncoder distance =\n      case distance of\n        Yards n -> Encode.sequence [ Encode.unsignedInt8 0, Encode.float32 BE n ]\n        Meters n -> Encode.sequence [ Encode.unsignedInt8 1, Encode.float32 BE n ]\n\n    decoder : Decode.Decoder Distance\n    decoder =\n      Decode.unsignedInt8\n        |> Decode.andThen pickDecoder\n\n    pickDecoder : Int -> Decode.Decoder Distance\n    pickDecoder tag =\n      case tag of\n        0 -> Decode.map Yards (Decode.float32 BE)\n        1 -> Decode.map Meters (Decode.float32 BE)\n        _ -> Decode.fail\n\nThe encoding chosen here uses an 8-bit unsigned integer to indicate which\nvariant we are working with. If we are working with yards do this, if we are\nworking with meters do that, and otherwise something went wrong!\n",
+                "type": "Bytes.Decode.Decoder a"
+            },
+            {
+                "name": "float32",
+                "comment": " Decode four bytes into a floating point number.\n",
+                "type": "Bytes.Endianness -> Bytes.Decode.Decoder Basics.Float"
+            },
+            {
+                "name": "float64",
+                "comment": " Decode eight bytes into a floating point number.\n",
+                "type": "Bytes.Endianness -> Bytes.Decode.Decoder Basics.Float"
+            },
+            {
+                "name": "loop",
+                "comment": " A decoder that can loop indefinitely. This can be helpful when parsing\nrepeated structures, like a list:\n\n    import Bytes exposing (Endianness(..))\n    import Bytes.Decode as Decode exposing (..)\n\n    list : Decoder a -> Decoder (List a)\n    list decoder =\n      unsignedInt32 BE\n        |> andThen (\\len -> loop (len, []) (listStep decoder))\n\n    listStep : Decoder a -> (Int, List a) -> Decoder (Step (Int, List a) (List a))\n    listStep decoder (n, xs) =\n      if n <= 0 then\n        succeed (Done xs)\n      else\n        map (\\x -> Loop (n - 1, x :: xs)) decoder\n\nThe `list` decoder first reads a 32-bit unsigned integer. That determines how\nmany items will be decoded. From there we use [`loop`](#loop) to track all the\nitems we have parsed so far and figure out when to stop.\n",
+                "type": "state -> (state -> Bytes.Decode.Decoder (Bytes.Decode.Step state a)) -> Bytes.Decode.Decoder a"
+            },
+            {
+                "name": "map",
+                "comment": " Transform the value produced by a decoder. If you encode negative numbers\nin a special way, you can say something like this:\n\n    negativeInt8 : Decoder Int\n    negativeInt8 =\n      map negate unsignedInt8\n\nIn practice you may see something like ProtoBuf’s [ZigZag encoding][zz] which\ndecreases the size of small negative numbers.\n\n[zz]: https://developers.google.com/protocol-buffers/docs/encoding#types\n",
+                "type": "(a -> b) -> Bytes.Decode.Decoder a -> Bytes.Decode.Decoder b"
+            },
+            {
+                "name": "map2",
+                "comment": " Combine two decoders.\n\n    import Bytes exposing (Endiannness(..))\n    import Bytes.Decode as Decode\n\n    type alias Point = { x : Float, y : Float }\n\n    decoder : Decode.Decoder Point\n    decoder =\n      Decode.map2 Point\n        (Decode.float32 BE)\n        (Decode.float32 BE)\n",
+                "type": "(a -> b -> result) -> Bytes.Decode.Decoder a -> Bytes.Decode.Decoder b -> Bytes.Decode.Decoder result"
+            },
+            {
+                "name": "map3",
+                "comment": " Combine three decoders.\n",
+                "type": "(a -> b -> c -> result) -> Bytes.Decode.Decoder a -> Bytes.Decode.Decoder b -> Bytes.Decode.Decoder c -> Bytes.Decode.Decoder result"
+            },
+            {
+                "name": "map4",
+                "comment": " Combine four decoders.\n",
+                "type": "(a -> b -> c -> d -> result) -> Bytes.Decode.Decoder a -> Bytes.Decode.Decoder b -> Bytes.Decode.Decoder c -> Bytes.Decode.Decoder d -> Bytes.Decode.Decoder result"
+            },
+            {
+                "name": "map5",
+                "comment": " Combine five decoders. If you need to combine more things, it is possible\nto define more of these with `map2` or `andThen`.\n",
+                "type": "(a -> b -> c -> d -> e -> result) -> Bytes.Decode.Decoder a -> Bytes.Decode.Decoder b -> Bytes.Decode.Decoder c -> Bytes.Decode.Decoder d -> Bytes.Decode.Decoder e -> Bytes.Decode.Decoder result"
+            },
+            {
+                "name": "signedInt16",
+                "comment": " Decode two bytes into an integer from `-32768` to `32767`.\n",
+                "type": "Bytes.Endianness -> Bytes.Decode.Decoder Basics.Int"
+            },
+            {
+                "name": "signedInt32",
+                "comment": " Decode four bytes into an integer from `-2147483648` to `2147483647`.\n",
+                "type": "Bytes.Endianness -> Bytes.Decode.Decoder Basics.Int"
+            },
+            {
+                "name": "signedInt8",
+                "comment": " Decode one byte into an integer from `-128` to `127`.\n",
+                "type": "Bytes.Decode.Decoder Basics.Int"
+            },
+            {
+                "name": "string",
+                "comment": " Decode a given number of UTF-8 bytes into a `String`.\n\nMost protocols store the width of the string right before the content, so you\nwill probably write things like this:\n\n    import Bytes exposing (Endianness(..))\n    import Bytes.Decode as Decode\n\n    sizedString : Decode.Decoder String\n    sizedString =\n      Decode.unsignedInt32 BE\n        |> Decode.andThen Decode.string\n\nIn this case we read the width as a 32-bit unsigned integer, but you have the\nleeway to read the width as a [Base 128 Varint][pb] for ProtoBuf, a\n[Variable-Length Integer][sql] for SQLite, or whatever else they dream up.\n\n[pb]: https://developers.google.com/protocol-buffers/docs/encoding#varints\n[sql]: https://www.sqlite.org/src4/doc/trunk/www/varint.wiki\n",
+                "type": "Basics.Int -> Bytes.Decode.Decoder String.String"
+            },
+            {
+                "name": "succeed",
+                "comment": " A decoder that always succeeds with a certain value. Maybe we are making\na `Maybe` decoder:\n\n    import Bytes.Decode as Decode exposing (Decoder)\n\n    maybe : Decoder a -> Decoder (Maybe a)\n    maybe decoder =\n      let\n        helper n =\n          if n == 0 then\n            Decode.succeed Nothing\n          else\n            Decode.map Just decoder\n      in\n      Decode.unsignedInt8\n        |> Decode.andThen helper\n\nIf the first byte is `00000000` then it is `Nothing`, otherwise we start\ndecoding the value and put it in a `Just`.\n",
+                "type": "a -> Bytes.Decode.Decoder a"
+            },
+            {
+                "name": "unsignedInt16",
+                "comment": " Decode two bytes into an integer from `0` to `65535`.\n",
+                "type": "Bytes.Endianness -> Bytes.Decode.Decoder Basics.Int"
+            },
+            {
+                "name": "unsignedInt32",
+                "comment": " Decode four bytes into an integer from `0` to `4294967295`.\n",
+                "type": "Bytes.Endianness -> Bytes.Decode.Decoder Basics.Int"
+            },
+            {
+                "name": "unsignedInt8",
+                "comment": " Decode one byte into an integer from `0` to `255`.\n",
+                "type": "Bytes.Decode.Decoder Basics.Int"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Bytes.Encode",
+        "comment": "\n\n# Encoders\n@docs encode, Encoder, sequence\n\n# Integers\n@docs signedInt8, signedInt16, signedInt32,\n  unsignedInt8, unsignedInt16, unsignedInt32\n\n# Floats\n@docs float32, float64\n\n# Bytes\n@docs bytes\n\n# Strings\n@docs string, getStringWidth\n\n",
+        "unions": [
+            {
+                "name": "Encoder",
+                "comment": " Describes how to generate a sequence of bytes.\n\nThese encoders snap together with [`sequence`](#sequence) so you can start with\nsmall building blocks and put them together into a more complex encoding.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "bytes",
+                "comment": " Copy bytes directly into the new `Bytes` sequence. This does not record the\nwidth though! You usually want to say something like this:\n\n    import Bytes exposing (Bytes, Endianness(..))\n    import Bytes.Encode as Encode\n\n    png : Bytes -> Encode.Encoder\n    png imageData =\n      Encode.sequence\n        [ Encode.unsignedInt32 BE (Bytes.width imageData)\n        , Encode.bytes imageData\n        ]\n\nThis allows you to represent the width however is necessary for your protocol.\nFor example, you can use [Base 128 Varints][pb] for ProtoBuf,\n[Variable-Length Integers][sql] for SQLite, or whatever else they dream up.\n\n[pb]: https://developers.google.com/protocol-buffers/docs/encoding#varints\n[sql]: https://www.sqlite.org/src4/doc/trunk/www/varint.wiki\n",
+                "type": "Bytes.Bytes -> Bytes.Encode.Encoder"
+            },
+            {
+                "name": "encode",
+                "comment": " Turn an `Encoder` into `Bytes`.\n\n    encode (unsignedInt8     7) -- <07>\n    encode (unsignedInt16 BE 7) -- <0007>\n    encode (unsignedInt16 LE 7) -- <0700>\n\nThe `encode` function is designed to minimize allocation. It figures out the\nexact width necessary to fit everything in `Bytes` and then generate that\nvalue directly. This is valuable when you are encoding more elaborate data:\n\n    import Bytes exposing (Endianness(..))\n    import Bytes.Encode as Encode\n\n    type alias Person =\n      { age : Int\n      , name : String\n      }\n\n    toEncoder : Person -> Encode.Encoder\n    toEncoder person =\n      Encode.sequence\n        [ Encode.unsignedInt16 BE person.age\n        , Encode.unsignedInt16 BE (Encode.getStringWidth person.name)\n        , Encode.string person.name\n        ]\n\n    -- encode (toEncoder (Person 33 \"Tom\")) == <00210003546F6D>\n\nDid you know it was going to be seven bytes? How about when you have a hundred\npeople to serialize? And when some have Japanese and Norwegian names? Having\nthis intermediate `Encoder` can help reduce allocation quite a lot!\n",
+                "type": "Bytes.Encode.Encoder -> Bytes.Bytes"
+            },
+            {
+                "name": "float32",
+                "comment": " Encode 32-bit floating point numbers in four bytes.\n",
+                "type": "Bytes.Endianness -> Basics.Float -> Bytes.Encode.Encoder"
+            },
+            {
+                "name": "float64",
+                "comment": " Encode 64-bit floating point numbers in eight bytes.\n",
+                "type": "Bytes.Endianness -> Basics.Float -> Bytes.Encode.Encoder"
+            },
+            {
+                "name": "getStringWidth",
+                "comment": " Get the width of a `String` in UTF-8 bytes.\n\n    getStringWidth \"$20\"   == 3\n    getStringWidth \"£20\"   == 4\n    getStringWidth \"€20\"   == 5\n    getStringWidth \"bread\" == 5\n    getStringWidth \"brød\"  == 5\n\nMost protocols need this number to come directly before a chunk of UTF-8 bytes\nas a way to know where the string ends!\n\nRead more about how UTF-8 works [here](https://en.wikipedia.org/wiki/UTF-8).\n",
+                "type": "String.String -> Basics.Int"
+            },
+            {
+                "name": "sequence",
+                "comment": " Put together a bunch of builders. So if you wanted to encode three `Float`\nvalues for the position of a ball in 3D space, you could say:\n\n    import Bytes exposing (Endianness(..))\n    import Bytes.Encode as Encode\n\n    type alias Ball = { x : Float, y : Float, z : Float }\n\n    ball : Ball -> Encode.Encoder\n    ball {x,y,z} =\n      Encode.sequence\n        [ Encode.float32 BE x\n        , Encode.float32 BE y\n        , Encode.float32 BE z\n        ]\n\n",
+                "type": "List.List Bytes.Encode.Encoder -> Bytes.Encode.Encoder"
+            },
+            {
+                "name": "signedInt16",
+                "comment": " Encode integers from `-32768` to `32767` in two bytes.\n",
+                "type": "Bytes.Endianness -> Basics.Int -> Bytes.Encode.Encoder"
+            },
+            {
+                "name": "signedInt32",
+                "comment": " Encode integers from `-2147483648` to `2147483647` in four bytes.\n",
+                "type": "Bytes.Endianness -> Basics.Int -> Bytes.Encode.Encoder"
+            },
+            {
+                "name": "signedInt8",
+                "comment": " Encode integers from `-128` to `127` in one byte.\n",
+                "type": "Basics.Int -> Bytes.Encode.Encoder"
+            },
+            {
+                "name": "string",
+                "comment": " Encode a `String` as a bunch of UTF-8 bytes.\n\n    encode (string \"$20\")   -- <24 32 30>\n    encode (string \"£20\")   -- <C2A3 32 30>\n    encode (string \"€20\")   -- <E282AC 32 30>\n    encode (string \"bread\") -- <62 72 65 61 64>\n    encode (string \"brød\")  -- <62 72 C3B8 64>\n\nSome characters take one byte, while others can take up to four. Read more\nabout [UTF-8](https://en.wikipedia.org/wiki/UTF-8) to learn the details!\n\nBut if you just encode UTF-8 directly, how can you know when you get to the end\nof the string when you are decoding? So most protocols have an integer saying\nhow many bytes follow, like this:\n\n    sizedString : String -> Encoder\n    sizedString str =\n      sequence\n        [ unsignedInt32 BE (getStringWidth str)\n        , string str\n        ]\n\nYou can choose whatever representation you want for the width, which is helpful\nbecause many protocols use different integer representations to save space. For\nexample:\n\n- ProtoBuf uses [Base 128 Varints](https://developers.google.com/protocol-buffers/docs/encoding#varints)\n- SQLite uses [Variable-Length Integers](https://www.sqlite.org/src4/doc/trunk/www/varint.wiki)\n\nIn both cases, small numbers can fit just one byte, saving some space. (The\nSQLite encoding has the benefit that the first byte tells you how long the\nnumber is, making it faster to decode.) In both cases, it is sort of tricky\nto make negative numbers small.\n",
+                "type": "String.String -> Bytes.Encode.Encoder"
+            },
+            {
+                "name": "unsignedInt16",
+                "comment": " Encode integers from `0` to `65535` in two bytes.\n",
+                "type": "Bytes.Endianness -> Basics.Int -> Bytes.Encode.Encoder"
+            },
+            {
+                "name": "unsignedInt32",
+                "comment": " Encode integers from `0` to `4294967295` in four bytes.\n",
+                "type": "Bytes.Endianness -> Basics.Int -> Bytes.Encode.Encoder"
+            },
+            {
+                "name": "unsignedInt8",
+                "comment": " Encode integers from `0` to `255` in one byte.\n",
+                "type": "Basics.Int -> Bytes.Encode.Encoder"
+            }
+        ],
+        "binops": []
+    }
+]

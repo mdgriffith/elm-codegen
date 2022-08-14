@@ -1,0 +1,75 @@
+[
+    {
+        "name": "Matrix",
+        "comment": " Two-dimensional matrix backed by Array from the Elm core, the fast immutable array\nimplementation.\n\n\n# Definition\n\n@docs Matrix\n\n\n# Creation\n\n@docs empty, initialize, repeat\n\n\n# Query\n\n@docs size, get, getXs, getYs, neighbours\n\n\n# Manipulate\n\n@docs set\n\n\n# Transform\n\n@docs map, indexedMap\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Matrix",
+                "comment": " Representation of immutable, two dimensional matrix. You can create a matrix of integers\n(`Matrix Int`) or strings (`Matrix String`) or any other type of value you can dream up.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "Array.Array (Array.Array a)"
+            }
+        ],
+        "values": [
+            {
+                "name": "empty",
+                "comment": " Return an empty matrix.\n\n    size empty == ( 0, 0 )\n\n",
+                "type": "Matrix.Matrix a"
+            },
+            {
+                "name": "get",
+                "comment": " Maybe get the value of the cell at (x,y).\n",
+                "type": "Matrix.Matrix a -> Basics.Int -> Basics.Int -> Maybe.Maybe a"
+            },
+            {
+                "name": "getXs",
+                "comment": " Get all values along a given x as an array. If x is out of bounds, return an empty array.\n",
+                "type": "Matrix.Matrix a -> Basics.Int -> Array.Array a"
+            },
+            {
+                "name": "getYs",
+                "comment": " Get all values along a given y as an array. If y is out of bounds, return an empty array.\n",
+                "type": "Matrix.Matrix a -> Basics.Int -> Array.Array a"
+            },
+            {
+                "name": "indexedMap",
+                "comment": " Apply a function on every element with its x and y as first arguments.\n\n    Matrix.indexedMap (\\\\x y \\_ -> (String.fromInt x + \",\" + String.fromInt y)(Matrix.repeat 2 3 \"\")\n    => [[ \"0,0\", \"0,1\", \"0,2\" ],[ \"1,0\", \"1,1\", \"1,2\" ] ]\n\n",
+                "type": "(Basics.Int -> Basics.Int -> a -> b) -> Matrix.Matrix a -> Matrix.Matrix b"
+            },
+            {
+                "name": "initialize",
+                "comment": " Initialize a matrix, given desired size and a function for the value of a cell,\ngiven its x and y.\n\n    Matrix.initialize 100 100 (\\x y -> String.fromInt x ++ \",\" ++ String.fromInt y)\n\n",
+                "type": "Basics.Int -> Basics.Int -> (Basics.Int -> Basics.Int -> a) -> Matrix.Matrix a"
+            },
+            {
+                "name": "map",
+                "comment": " Apply a function on every element in a matrix.\n\n    Matrix.map (\\\\n -> n \\* 2) [ [ 0, 0, 0 ], [ 0, 1, 2 ] ] => [ [ 0, 0, 0 ], [ 0, 2, 4 ] ]\n\n",
+                "type": "(a -> b) -> Matrix.Matrix a -> Matrix.Matrix b"
+            },
+            {
+                "name": "neighbours",
+                "comment": " Return an array of possible neighbour cells for a given cell.\nIt is an array of Maybe, compare the get function that is a single Maybe.\n",
+                "type": "Matrix.Matrix a -> Basics.Int -> Basics.Int -> Array.Array (Maybe.Maybe a)"
+            },
+            {
+                "name": "repeat",
+                "comment": " Initialize a matrix, given desired size and the value for every cell.\n\n    Matrix.repeat 100 100 InitialValue\n\n",
+                "type": "Basics.Int -> Basics.Int -> a -> Matrix.Matrix a"
+            },
+            {
+                "name": "set",
+                "comment": " Set the cell at (x,y) to a new value. If the (x,y) is out of bounds, silently do nothing,\n",
+                "type": "Matrix.Matrix a -> Basics.Int -> Basics.Int -> a -> Matrix.Matrix a"
+            },
+            {
+                "name": "size",
+                "comment": " Return the size of a matrix in the form of a tuple, (sizeX, sizeY).\n",
+                "type": "Matrix.Matrix a -> ( Basics.Int, Basics.Int )"
+            }
+        ],
+        "binops": []
+    }
+]

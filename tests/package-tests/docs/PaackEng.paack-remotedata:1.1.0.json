@@ -1,0 +1,468 @@
+[
+    {
+        "name": "Remote.Data",
+        "comment": " A datatype representing fetched data in five different states.\nBased on [Kris's `RemoteData`][original].\n\nFor the same motivations that are presented in Kris' version,\nwith the small addition of always using [transport and custom errors](Remote-Errors),\nand aliasing `GraphqlError` instead of `Http.Error`.\n\n[original]: /packages/krisajenkins/remotedata/latest/RemoteData\n\n\n# Types\n\n@docs RemoteData, GraphqlHttpData\n\n\n# Update\n\n@docs fromResponse\n\n\n# Identity crisis\n\n@docs isSuccess, isError, isCustomError, isTransportError, isLoading, isNotAsked\n\n\n# Common transformations\n\n@docs toError\n@docs map, mapCustomError, mapTransportError, mapErrors\n@docs withDefault, merge\n\n",
+        "unions": [
+            {
+                "name": "RemoteData",
+                "comment": " Frequently when you're fetching data from an API, you want to represent five different states:\n\n  - `NotAsked` - We haven't asked for the data yet.\n  - `Loading` - We've asked, but haven't got an answer yet.\n  - `Failure (Custom error)` - We asked, but we received one of the custom-defined errors instead. Here's the error.\n  - `Failure (Transport error)` - We asked, but something went wrong on the network-side. Here's the error.\n  - `Success data` - Everything worked, and here's the data.\n\nBased on [Kris's `RemoteData`][original].\n\n[original]: /packages/krisajenkins/remotedata/latest/RemoteData#RemoteData\n\n",
+                "args": [
+                    "transportError",
+                    "customError",
+                    "object"
+                ],
+                "cases": [
+                    [
+                        "NotAsked",
+                        []
+                    ],
+                    [
+                        "Loading",
+                        []
+                    ],
+                    [
+                        "Failure",
+                        [
+                            "Remote.Errors.RemoteError transportError customError"
+                        ]
+                    ],
+                    [
+                        "Success",
+                        [
+                            "object"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "GraphqlHttpData",
+                "comment": " While [`RemoteData`](#RemoteData) can model any type of errors,\nthe most common one Paack has encountered is when fetching data from a Graphql query,\nand getting back a [`GraphqlError`][GraphqlError].\nBecause of that, `GraphqlHttpData` is provided as a useful alias.\n\nBased on [Kris's `WebData`][original].\n\n[GraphqlError]: /packages/dillonkearns/elm-graphql/latest/Graphql-Http-GraphqlError\n[original]: /packages/krisajenkins/remotedata/latest/RemoteData#WebData\n\n",
+                "args": [
+                    "error",
+                    "object"
+                ],
+                "type": "Remote.Data.RemoteData (Graphql.Http.RawError () Graphql.Http.HttpError) error object"
+            }
+        ],
+        "values": [
+            {
+                "name": "fromResponse",
+                "comment": " Convert a `Response`, probably produced from a query result, to a `RemoteData` value.\n\nBased on [Kris's `fromResult`][original].\n\n[original]: /packages/krisajenkins/remotedata/latest/RemoteData#fromResult\n\n",
+                "type": "Remote.Response.Response transportError customError object -> Remote.Data.RemoteData transportError customError object"
+            },
+            {
+                "name": "isCustomError",
+                "comment": " `True` when `Failure (isCustomError _)`.\n\n**NOTE**: This function opposes the purpose of this package by eliminating not aimed states. Always evaluate using a switch-case instead.\n\n",
+                "type": "Remote.Data.RemoteData transportError customError object -> Basics.Bool"
+            },
+            {
+                "name": "isError",
+                "comment": " `True` when `Failure _`.\n\n**NOTE**: This function opposes the purpose of this package by eliminating not aimed states. Always evaluate using a switch-case instead.\n\n",
+                "type": "Remote.Data.RemoteData transportError customError object -> Basics.Bool"
+            },
+            {
+                "name": "isLoading",
+                "comment": " `True` when `Loading _`.\n\n**NOTE**: This function opposes the purpose of this package by eliminating not aimed states. Always evaluate using a switch-case instead.\n\n",
+                "type": "Remote.Data.RemoteData transportError customError object -> Basics.Bool"
+            },
+            {
+                "name": "isNotAsked",
+                "comment": " `True` when `NotAsked`.\n\n**NOTE**: This function opposes the purpose of this package by eliminating not aimed states. Always evaluate using a switch-case instead.\n\n",
+                "type": "Remote.Data.RemoteData transportError customError object -> Basics.Bool"
+            },
+            {
+                "name": "isSuccess",
+                "comment": " `True` when `Success _`.\n\n**NOTE**: This function opposes the purpose of this package by eliminating not aimed states. Always evaluate using a switch-case instead.\n\n",
+                "type": "Remote.Data.RemoteData transportError customError object -> Basics.Bool"
+            },
+            {
+                "name": "isTransportError",
+                "comment": " `True` when `Failure (Transport _)`.\n\n**NOTE**: This function opposes the purpose of this package by eliminating not aimed states. Always evaluate using a switch-case instead.\n\n",
+                "type": "Remote.Data.RemoteData transportError customError object -> Basics.Bool"
+            },
+            {
+                "name": "map",
+                "comment": " Apply a function to a `RemoteData.Success`. If the data is `Success`, it will be converted.\nIf the data is anything else, the same value will propagate through.\n",
+                "type": "(a -> b) -> Remote.Data.RemoteData transportError customError a -> Remote.Data.RemoteData transportError customError b"
+            },
+            {
+                "name": "mapCustomError",
+                "comment": " Transform a `Failure (Custom a)` value. If the data is `Failure (Custom a)`, it will be converted.\nIf the data is anything else, the same value will propagate through.\n",
+                "type": "(customError -> a) -> Remote.Data.RemoteData transportError customError object -> Remote.Data.RemoteData transportError a object"
+            },
+            {
+                "name": "mapErrors",
+                "comment": " Transform a `Failure` value. If the data is `Failure`, it will be converted.\nIf the data is anything else, the same value will propagate through.\n",
+                "type": "(Remote.Errors.RemoteError transportError customError -> a) -> Remote.Data.RemoteData transportError customError b -> Remote.Data.RemoteData a a b"
+            },
+            {
+                "name": "mapTransportError",
+                "comment": " Transform a `Failure (Transport a)` value. If the data is `Failure (Transport a)`, it will be converted.\nIf the data is anything else, the same value will propagate through.\n",
+                "type": "(transportError -> a) -> Remote.Data.RemoteData transportError customError object -> Remote.Data.RemoteData a customError object"
+            },
+            {
+                "name": "merge",
+                "comment": " For doing pipes instead of switch-case.\n\n    someData\n        |> RemoteData.map (always \"Success\")\n        |> RemoteData.mapCustomError (always \"Expected failure\")\n        |> RemoteData.mapTransportError (always \"Network error\")\n        |> RemoteData.merge \"Loading or never asked\"\n\n",
+                "type": "object -> Remote.Data.RemoteData object object object -> object"
+            },
+            {
+                "name": "toError",
+                "comment": " Transforms `Failure error` into `Just error`, and anything else into `Nothing`.\n\n**NOTE**: This function opposes the purpose of this package by eliminating not aimed states. Always evaluate using a switch-case instead.\n\n",
+                "type": "Remote.Data.RemoteData transportError customError object -> Maybe.Maybe (Remote.Errors.RemoteError transportError customError)"
+            },
+            {
+                "name": "withDefault",
+                "comment": " If the data is `Success` return its value,\nbut if the data is anything else then return a given default alternative.\n\n**NOTE**: This function opposes the purpose of this package by eliminating not aimed states. Always evaluate using a switch-case instead.\n\n",
+                "type": "object -> Remote.Data.RemoteData transportError customError object -> object"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Remote.Dict.Recyclable",
+        "comment": " This module is composed of helper functions for handling [`Recyclables`](Remote-Recyclable) inside [Elm's `Dict`][elm-dict].\n\n\n# Building\n\n@docs update, mergeResponse, toLoading\n\n\n# Query\n\n@docs get\n\n[elm-dict]: /packages/elm/core/latest/Dict\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "get",
+                "comment": " Reduce the result of a [`Dict.get`][dict-get] operation by transforming `Nothing` in [`NeverAsked`](Remote-Recyclable#Recyclable).\n\n[dict-get]: /packages/elm/core/latest/Dict#get\n\n",
+                "type": "comparable -> Dict.Dict comparable (Remote.Recyclable.Recyclable a b c) -> Remote.Recyclable.Recyclable a b c"
+            },
+            {
+                "name": "mergeResponse",
+                "comment": " Shortcut for merging a new freshily-fetched response to the current state.\n\nSee [`Recyclable.mergeResponse`]((Remote-Recyclable#mergeResponse) for the operation description.\n\n",
+                "type": "comparable -> Remote.Response.Response a b c -> Dict.Dict comparable (Remote.Recyclable.Recyclable a b c) -> Dict.Dict comparable (Remote.Recyclable.Recyclable a b c)"
+            },
+            {
+                "name": "toLoading",
+                "comment": " Shortcut for updating one value back to its loading state.\n\nSee [`Recyclable.toLoading`]((Remote-Recyclable#toLoading) for the operation description.\n\n",
+                "type": "comparable -> Dict.Dict comparable (Remote.Recyclable.Recyclable a b c) -> Dict.Dict comparable (Remote.Recyclable.Recyclable a b c)"
+            },
+            {
+                "name": "update",
+                "comment": " Similar to [`Dict.update`][dict-update], but using [`NeverAsked`](Remote-Recyclable#Recyclable) for not-found keys and also for dropping updated values.\n\n[dict-update]: /packages/elm/core/latest/Dict#update\n\n",
+                "type": "comparable -> (Remote.Recyclable.Recyclable a b c -> Remote.Recyclable.Recyclable a b c) -> Dict.Dict comparable (Remote.Recyclable.Recyclable a b c) -> Dict.Dict comparable (Remote.Recyclable.Recyclable a b c)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Remote.Errors",
+        "comment": "\n\n@docs RemoteError, GraphqlHttpError\n\n",
+        "unions": [
+            {
+                "name": "RemoteError",
+                "comment": " Abstract union for merging transport errors with custom decoder errors.\n",
+                "args": [
+                    "transportError",
+                    "customError"
+                ],
+                "cases": [
+                    [
+                        "Custom",
+                        [
+                            "customError"
+                        ]
+                    ],
+                    [
+                        "Transport",
+                        [
+                            "transportError"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "GraphqlHttpError",
+                "comment": " Implementation of [`RemoteError`](#RemoteError) for failures containing [`Graphql.Http.GraphqlError`][GraphqlError]\n\n[GraphqlError]: /dillonkearns/elm-graphql/latest/Graphql-Http-GraphqlError\n\n",
+                "args": [
+                    "customError"
+                ],
+                "type": "Remote.Errors.RemoteError (Graphql.Http.RawError () Graphql.Http.HttpError) customError"
+            }
+        ],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "Remote.Recyclable",
+        "comment": " This module extends [`Data`](Remote-Data) preserving the information when reloading the same source.\n\nIt helps in scenarios like the following routine:\n\n1.  Data was never requested\n      - Start it with `Recyclable.NeverAsked`\n\n2.  Request was sent\n      - Pipe it into:\n\n            |> Recyclable.toLoading\n\n      - At this point, it will be:\n\n            Recyclable.Loading\n\n3.  Request's `Response` was received (a `Failure error`)\n      - Pipe it into:\n\n            |> Recyclable.mergeResponse response\n\n      - At this point, it will be:\n\n            Recyclable.Failure error\n\n4.  User press \"Retry\" button, a new request was sent\n      - Pipe it into:\n\n            |> Recyclable.toLoading\n\n      - At this point, it will be:\n\n            Recyclable.Loading\n\n5.  Request's `Response` was received (a `Success data`)\n      - Pipe it into:\n\n            |> Recyclable.mergeResponse response\n\n      - At this point, it will be:\n\n            Recyclable.Ready data\n\n6.  User press \"Refresh\" button, a new request was sent\n      - Pipe it into:\n\n            |> Recyclable.toLoading\n\n      - At this point, it will be:\n\n            Recyclable.Recycling data Recyclable.Loading\n\n7.  Request's `Response` was received (a `Failure error`)\n      - Pipe it into:\n\n            |> Recyclable.mergeResponse response\n\n      - At this point, it will be:\n\n            Recyclable.Ready (Recyclable.Recycling data (Recyclable.Failure error))\n\n8.  User press \"Refresh\" button, a new request was sent\n      - Pipe it into:\n\n            |> Recyclable.toLoading\n\n      - At this point, it will be:\n\n            Recyclable.Recycling data Recyclable.Loading\n\n9.  Request's `Response` was received (a `Success data`)\n      - Pipe it into:\n\n            |> Recyclable.mergeResponse response\n\n      - At this point, it will be:\n\n            Recyclable.Ready data\n\n\n# Types\n\n@docs Recyclable, RecyclingStage, GraphqlHttpRecyclable\n\n\n# Model\n\nFirst, when initializing a \"Model\", you will use either:\n\n  - `Recyclable.NeverAsked`\n\n  - `(Recyclable.firstLoading, modelRequestCmd)`\n\n@docs firstLoading\n\n\n# Update\n\nThen, on \"update\" you're gonna be using either:\n\n@docs mergeResponse, toLoading, fromResponse\n\n\n# Identity crisis\n\n@docs isReady, isError, isCustomError, isTransportError, isLoading, isNeverAsked\n\n\n# Common transformations\n\n@docs toError\n@docs map, mapCustomError, mapTransportError, mapErrors\n@docs withDefault, merge\n\n",
+        "unions": [
+            {
+                "name": "Recyclable",
+                "comment": " A representation for fetchable data with eight states:\n\nFirst routine states:\n\n  - `NotAsked`\n      - We haven't asked for the data yet.\n  - `Loading`\n      - We've asked, but haven't got an answer yet.\n  - `Failure (Custom error)`\n      - We asked, but we received one of the custom-defined errors instead.\n        Here's the error.\n  - `Failure (Transport error)`\n      - We asked, but something went wrong on the network-side.\n        Here's the error.\n  - `Ready data`\n      - Everything worked, and here's the data.\n\nFuture cycles states:\n\n  - `Recycling data LoadingStage`\n      - We asked once more, and didn't got the new answer yet. Here's the previous data.\n  - `Recycling data (FailureStage (Custom error))`\n      - We asked once more, but the new answer was one of the custom-defined errors instead.\n        Here's the previous data and the current error.\n  - `Recycling data (FailureStage (Transport error))`\n      - We asked once more, but the new request got lost on the network-side.\n        Here's the previous data and the current error.\n\n",
+                "args": [
+                    "transportError",
+                    "customError",
+                    "object"
+                ],
+                "cases": [
+                    [
+                        "NeverAsked",
+                        []
+                    ],
+                    [
+                        "Loading",
+                        []
+                    ],
+                    [
+                        "Failure",
+                        [
+                            "Remote.Errors.RemoteError transportError customError"
+                        ]
+                    ],
+                    [
+                        "Ready",
+                        [
+                            "object"
+                        ]
+                    ],
+                    [
+                        "Recycling",
+                        [
+                            "object",
+                            "Remote.Recyclable.RecyclingStage transportError customError"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "RecyclingStage",
+                "comment": " Indicates `FailureStage` and `LoadingStage` stage when data is/was being fetched.\n",
+                "args": [
+                    "transportError",
+                    "customError"
+                ],
+                "cases": [
+                    [
+                        "LoadingStage",
+                        []
+                    ],
+                    [
+                        "FailureStage",
+                        [
+                            "Remote.Errors.RemoteError transportError customError"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "GraphqlHttpRecyclable",
+                "comment": " While [`Recyclable`](#Recyclable) can model any type of errors,\nthe most common one Paack has encountered is when fetching data from a Graphql query,\nand getting back a [`GraphqlError`][GraphqlError].\nBecause of that, `GraphqlHttpRecyclable` is provided as a useful alias.\n\n[GraphqlError]: /packages/dillonkearns/elm-graphql/latest/Graphql-Http-GraphqlError\n[original]: /packages/krisajenkins/remotedata/latest/RemoteData#WebData\n\n",
+                "args": [
+                    "error",
+                    "object"
+                ],
+                "type": "Remote.Recyclable.Recyclable (Graphql.Http.RawError () Graphql.Http.HttpError) error object"
+            }
+        ],
+        "values": [
+            {
+                "name": "firstLoading",
+                "comment": " It's very common to initialize the model already requesting the data,\nuse `firstLoading` in this case. Like this:\n\n    init : RequestConfig -> ( Model, Cmd Msg )\n    init requestConfig =\n        ( Recyclable.firstLoading\n        , modelRequestCmd requestConfig\n        )\n\n",
+                "type": "Remote.Recyclable.Recyclable transportError customError object"
+            },
+            {
+                "name": "fromResponse",
+                "comment": " Convert a `Response`, probably produced from a query result, to a `Recyclable` value.\n\n**NOTE**: As this function discards the previous information,\nin most cases you should be using `mergeResponse` instead.\n\n",
+                "type": "Remote.Response.Response transportError customError object -> Remote.Recyclable.Recyclable transportError customError object"
+            },
+            {
+                "name": "isCustomError",
+                "comment": " `True` when `_ (Failure (Custom _))`.\n\n**NOTE**: This function opposes the purpose of this package by eliminating not aimed states. Always evaluate using a switch-case instead.\n\n",
+                "type": "Remote.Recyclable.Recyclable transportError customError object -> Basics.Bool"
+            },
+            {
+                "name": "isError",
+                "comment": " `True` when `_ (Failure _)`.\n\n**NOTE**: This function opposes the purpose of this package by eliminating not aimed states. Always evaluate using a switch-case instead.\n\n",
+                "type": "Remote.Recyclable.Recyclable transportError customError object -> Basics.Bool"
+            },
+            {
+                "name": "isLoading",
+                "comment": " `True` when `_ Loading`.\n\n**NOTE**: This function opposes the purpose of this package by eliminating not aimed states. Always evaluate using a switch-case instead.\n\n",
+                "type": "Remote.Recyclable.Recyclable transportError customError object -> Basics.Bool"
+            },
+            {
+                "name": "isNeverAsked",
+                "comment": " `True` when `NeverAsked`.\n\n**NOTE**: This function opposes the purpose of this package by eliminating not aimed states. Always evaluate using a switch-case instead.\n\n",
+                "type": "Remote.Recyclable.Recyclable transportError customError object -> Basics.Bool"
+            },
+            {
+                "name": "isReady",
+                "comment": " `True` when `Ready _`.\n\n**NOTE**: This function opposes the purpose of this package by eliminating not aimed states. Always evaluate using a switch-case instead.\n\n",
+                "type": "Remote.Recyclable.Recyclable transportError customError object -> Basics.Bool"
+            },
+            {
+                "name": "isTransportError",
+                "comment": " `True` when `_ (Failure (Transport _))`.\n\n**NOTE**: This function opposes the purpose of this package by eliminating not aimed states. Always evaluate using a switch-case instead.\n\n",
+                "type": "Remote.Recyclable.Recyclable transportError customError object -> Basics.Bool"
+            },
+            {
+                "name": "map",
+                "comment": " Apply a function to the values in `Recycling value _` and `Ready value`.\nIf the data is anything else, the same value will propagate through.\n",
+                "type": "(a -> b) -> Remote.Recyclable.Recyclable transportError customError a -> Remote.Recyclable.Recyclable transportError customError b"
+            },
+            {
+                "name": "mapCustomError",
+                "comment": " Transform a `Failure (Custom a)` value. If the data is `Failure (Custom a)`, it will be converted.\nIf the data is anything else, the same value will propagate through.\n",
+                "type": "(customError -> a) -> Remote.Recyclable.Recyclable transportError customError object -> Remote.Recyclable.Recyclable transportError a object"
+            },
+            {
+                "name": "mapErrors",
+                "comment": " Transform a `Failure` value. If the data is `Failure`, it will be converted.\nIf the data is anything else, the same value will propagate through.\n",
+                "type": "(Remote.Errors.RemoteError transportError customError -> a) -> Remote.Recyclable.Recyclable transportError customError b -> Remote.Recyclable.Recyclable a a b"
+            },
+            {
+                "name": "mapTransportError",
+                "comment": " Transform a `Failure (Transport a)` value. If the data is `Failure (Transport a)`, it will be converted.\nIf the data is anything else, the same value will propagate through.\n",
+                "type": "(transportError -> a) -> Remote.Recyclable.Recyclable transportError customError object -> Remote.Recyclable.Recyclable a customError object"
+            },
+            {
+                "name": "merge",
+                "comment": " For doing pipes instead of switch-case\n",
+                "type": "object -> Remote.Recyclable.Recyclable object object object -> object"
+            },
+            {
+                "name": "mergeResponse",
+                "comment": " This is the update routine for when overwriting the current\ndata with a new freshily-fetched response.\n\n    update msg model =\n        case msg of\n            CardFetched response ->\n                { model\n                    | card =\n                        Recyclable.mergeResponse response model.card\n                }\n\n",
+                "type": "Remote.Response.Response transportError customError object -> Remote.Recyclable.Recyclable transportError customError object -> Remote.Recyclable.Recyclable transportError customError object"
+            },
+            {
+                "name": "toError",
+                "comment": " Transforms `Failure error` into `Just error`, and anything else into `Nothing`.\n\n**NOTE**: This function opposes the purpose of this package by eliminating not aimed states. Always evaluate using a switch-case instead.\n\n",
+                "type": "Remote.Recyclable.Recyclable transportError customError object -> Maybe.Maybe (Remote.Errors.RemoteError transportError customError)"
+            },
+            {
+                "name": "toLoading",
+                "comment": " Returns a `Recyclable` to its loading state.\nKeeping the information when available.\n",
+                "type": "Remote.Recyclable.Recyclable transportError customError object -> Remote.Recyclable.Recyclable transportError customError object"
+            },
+            {
+                "name": "withDefault",
+                "comment": " If the recyclable is `Success` return the value,\nbut if the recyclable is anything else, then return a given default value.\n\n**NOTE**: This function opposes the purpose of this package by eliminating not aimed states. Always evaluate using a switch-case instead.\n\n",
+                "type": "object -> Remote.Recyclable.Recyclable transportError customError object -> object"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Remote.Response",
+        "comment": " This module exists for harmonizing queries results with the rest of this package.\n\nWithout it, the type of these results would need to be something like `Response transportError (Response customError object)`.\n\n\n# Types\n\n@docs Response, GraphqlHttpResponse\n\n\n# Creation\n\n@docs fromResults, graphqlHttpToMsg\n\n\n# Identity crisis\n\n@docs isSuccess, isFailure, isCustomError, isTransportError\n\n\n# Common transformations\n\n@docs toMaybe, toError\n\n\n# Generic transformations\n\n@docs map, mapCustomError, mapTransportError, mapErrors\n@docs withDefault, merge\n\n",
+        "unions": [
+            {
+                "name": "Response",
+                "comment": " A `Remote.Result` is either `Success` meaning the query succeeded,\nor it is an `Failure` meaning that there was some failure.\n\nA `Failure` is then sub-divided accordingly to [`Remote.Errors`](Remote-Errors).\n\n",
+                "args": [
+                    "transportError",
+                    "customError",
+                    "object"
+                ],
+                "cases": [
+                    [
+                        "Failure",
+                        [
+                            "Remote.Errors.RemoteError transportError customError"
+                        ]
+                    ],
+                    [
+                        "Success",
+                        [
+                            "object"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "GraphqlHttpResponse",
+                "comment": " While [`Response`](#Response) can model any type of errors,\nthe most common one Paack has encountered is when fetching data from a Graphql query,\nand getting back a [`GraphqlError`][GraphqlError].\nBecause of that, `GraphqlHttpResponse` is provided as a useful alias.\n\n[GraphqlError]: /packages/dillonkearns/elm-graphql/latest/Graphql-Http-GraphqlError\n[original]: /packages/krisajenkins/remotedata/latest/RemoteData#RemoteData\n\n",
+                "args": [
+                    "customError",
+                    "object"
+                ],
+                "type": "Remote.Response.Response (Graphql.Http.RawError () Graphql.Http.HttpError) customError object"
+            }
+        ],
+        "values": [
+            {
+                "name": "fromResults",
+                "comment": " Tranforms `Response transportError (Response customError object)`,\nreceived from a query result, into a `Response transportError customError object`.\n\n**NOTE**: Prefer [`graphqlHttpToMsg`](#graphqlHttpToMsg) and get `Response` directly in the resulting message.\n\n",
+                "type": "Result.Result transportError (Result.Result customError object) -> Remote.Response.Response transportError customError object"
+            },
+            {
+                "name": "graphqlHttpToMsg",
+                "comment": " Prepares a message that will return `GraphqlHttpResponse` for Graphql usage.\n\n    query\n        |> Graphql.Http.queryRequest \"https://...\"\n        |> Graphql.Http.send\n            (Response.graphqlHttpToMsg Msg.BookingFetched)\n\n",
+                "type": "(Remote.Response.GraphqlHttpResponse customError object -> msg) -> Result.Result (Graphql.Http.Error (Result.Result customError object)) (Result.Result customError object) -> msg"
+            },
+            {
+                "name": "isCustomError",
+                "comment": " `True` when `Failure (Custom _)`.\n\n**NOTE**: This function opposes the purpose of this package by eliminating not aimed states. Always evaluate using a switch-case instead.\n\n",
+                "type": "Remote.Response.Response transportError customError object -> Basics.Bool"
+            },
+            {
+                "name": "isFailure",
+                "comment": " `True` when `Failure _`.\n\n**NOTE**: This function opposes the purpose of this package by eliminating not aimed states. Always evaluate using a switch-case instead.\n\n",
+                "type": "Remote.Response.Response transportError customError object -> Basics.Bool"
+            },
+            {
+                "name": "isSuccess",
+                "comment": " `True` when `Success _`.\n\n**NOTE**: This function opposes the purpose of this package by eliminating not aimed states. Always evaluate using a switch-case instead.\n\n",
+                "type": "Remote.Response.Response transportError customError object -> Basics.Bool"
+            },
+            {
+                "name": "isTransportError",
+                "comment": " `True` when `Failure (Transport _)`.\n\n**NOTE**: This function opposes the purpose of this package by eliminating not aimed states. Always evaluate using a switch-case instead.\n\n",
+                "type": "Remote.Response.Response transportError customError object -> Basics.Bool"
+            },
+            {
+                "name": "map",
+                "comment": " Apply a function to a successful value. If the result is `Success`, it will be converted.\nIf the result is a `Failure`, the same error value will propagate through.\n",
+                "type": "(a -> b) -> Remote.Response.Response transportError customError a -> Remote.Response.Response transportError customError b"
+            },
+            {
+                "name": "mapCustomError",
+                "comment": " Transform a `Failure (Custom a)` value. If the result is `Failure (Custom a)`, it will be converted.\nIf the result is a `Success _` or `Failure (Transport _)`, the same value will propagate through.\n",
+                "type": "(customError -> a) -> Remote.Response.Response transportError customError object -> Remote.Response.Response transportError a object"
+            },
+            {
+                "name": "mapErrors",
+                "comment": " Transform a `Failure` value. If the result is `Failure`, it will be converted.\nIf the result is a `Success`, the same value will propagate through.\n",
+                "type": "(Remote.Errors.RemoteError transportError customError -> a) -> Remote.Response.Response transportError customError b -> Remote.Response.Response a a b"
+            },
+            {
+                "name": "mapTransportError",
+                "comment": " Transform a `Failure (Transport a)` value. If the result is `Failure (Transport a)`, it will be converted.\nIf the result is a `Success _` or `Failure (Custom _)`, the same value will propagate through.\n",
+                "type": "(transportError -> a) -> Remote.Response.Response transportError customError object -> Remote.Response.Response a customError object"
+            },
+            {
+                "name": "merge",
+                "comment": " For doing pipes instead of switch-case.\n\n    someResponse\n        |> Response.map (always \"Success\")\n        |> Response.mapCustomError (always \"Expected failure\")\n        |> Response.mapTransportError (always \"Network error\")\n        |> Response.merge\n\n",
+                "type": "Remote.Response.Response object object object -> object"
+            },
+            {
+                "name": "toError",
+                "comment": " Transforms `Failure error` into `Just error`, and `Success _` into `Nothing`.\n\n**NOTE**: This function opposes the purpose of this package by eliminating not aimed states. Always evaluate using a switch-case instead.\n\n",
+                "type": "Remote.Response.Response transportError customError object -> Maybe.Maybe (Remote.Errors.RemoteError transportError customError)"
+            },
+            {
+                "name": "toMaybe",
+                "comment": " Convert to a simpler `Maybe` if the actual error message is not needed or\nyou need to interact with some code that primarily uses maybes.\n\n**NOTE**: This function opposes the purpose of this package by eliminating not aimed states. Always evaluate using a switch-case instead.\n\n",
+                "type": "Remote.Response.Response transportError customError object -> Maybe.Maybe object"
+            },
+            {
+                "name": "withDefault",
+                "comment": " If the result is `Success` return the value,\nbut if the result is a `Failure` then return a given default value.\n\n**NOTE**: This function opposes the purpose of this package by eliminating not aimed states. Always evaluate using a switch-case instead.\n\n",
+                "type": "object -> Remote.Response.Response transportError customError object -> object"
+            }
+        ],
+        "binops": []
+    }
+]

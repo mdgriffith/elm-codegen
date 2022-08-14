@@ -1,0 +1,64 @@
+[
+    {
+        "name": "Ipfs",
+        "comment": "\r\n\r\n\r\n# Writing to IPFS\r\n\r\n@docs add\r\n\r\n\r\n# Ipfs files and hashes\r\n\r\n@docs File, Hash, hash, getHash\r\n\r\n\r\n# Reading from IPFS\r\n\r\n@docs cat, version\r\n\r\n\r\n# Helpers\r\n\r\n@docs postGeneric, getGeneric, generic\r\n\r\n",
+        "unions": [
+            {
+                "name": "File",
+                "comment": " Represents a content-addressable (immutable) file, stored on IPFS.\r\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Hash",
+                "comment": " A hash value representing the address of a file on IPFS.\r\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "add",
+                "comment": " Store a string as a content-addressable file on IPFS.\r\n",
+                "type": "String.String -> String.String -> Task.Task Http.Error Ipfs.File"
+            },
+            {
+                "name": "cat",
+                "comment": " Retrieve a string from a content-addressable file on IPFS.\r\n",
+                "type": "String.String -> Ipfs.Hash -> Task.Task Http.Error String.String"
+            },
+            {
+                "name": "generic",
+                "comment": " If you want to implement your own custom IPFS calls, this might get you\r\nstarted.\r\n",
+                "type": "{ method : String.String, url : String.String, body : Http.Body, resolver : String.String -> Result.Result String.String a } -> Task.Task Http.Error a"
+            },
+            {
+                "name": "getGeneric",
+                "comment": " A general method for getting information from IPFS.\r\n",
+                "type": "{ url : String.String, resolver : String.String -> Result.Result String.String a } -> Task.Task Http.Error a"
+            },
+            {
+                "name": "getHash",
+                "comment": " Get the hash value from a File data structure.\r\n",
+                "type": "Ipfs.File -> Ipfs.Hash"
+            },
+            {
+                "name": "hash",
+                "comment": " Turn an IPFS hash string into the suitable type for retrieving a file.\r\n",
+                "type": "String.String -> Maybe.Maybe Ipfs.Hash"
+            },
+            {
+                "name": "postGeneric",
+                "comment": " A general method for posting information to IPFS.\r\n",
+                "type": "{ url : String.String, body : Http.Body, resolver : String.String -> Result.Result String.String a } -> Task.Task Http.Error a"
+            },
+            {
+                "name": "version",
+                "comment": " Retrieve the version information for the IPFS node.\r\n",
+                "type": "String.String -> Task.Task Http.Error String.String"
+            }
+        ],
+        "binops": []
+    }
+]

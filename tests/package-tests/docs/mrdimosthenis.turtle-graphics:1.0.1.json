@@ -1,0 +1,78 @@
+[
+    {
+        "name": "TurtleGraphics",
+        "comment": " This is an Elm library that enables us command a relative cursor (\"turtle\") to draw vector graphics!\n\n# Definition\n@docs Command\n\n# Commands\n@docs move, turn, increaseWidth, rotateHue, increaseSaturation, increaseLightness, increaseAlpha, increaseRed, increaseGreen, increaseBlue, branch\n\n# Render\n@docs render\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Command",
+                "comment": " `Command` is the building block of the turtle graphics.\nEvery function, except `render` and branch, is a command that change the\nlocation, direction, width and color of the relative cursor (\"turtle\").\n",
+                "args": [],
+                "type": "TurtleGraphics.Core.Command"
+            }
+        ],
+        "values": [
+            {
+                "name": "branch",
+                "comment": " Turns a list of commands into a single `Command`.\n",
+                "type": "List.List TurtleGraphics.Command -> TurtleGraphics.Command"
+            },
+            {
+                "name": "increaseAlpha",
+                "comment": " Increases the alpha value of the turtle's pen by `x`.\nAlpha ranges between `0.0` and `1.0`.\nThe initial alpha value of the pen is `1.0`).\nProviding a negative number will increase the transparency.\n",
+                "type": "Basics.Float -> TurtleGraphics.Command"
+            },
+            {
+                "name": "increaseBlue",
+                "comment": " Increases the percentage of blue by `x`.\nThe percentage of blue ranges between `0.0` and `1.0`.\nThe initial color of the pen is black (blue pct = `0.0`).\nProviding a negative number will decrease the percentage of blue.\n",
+                "type": "Basics.Float -> TurtleGraphics.Command"
+            },
+            {
+                "name": "increaseGreen",
+                "comment": " Increases the percentage of green by `x`.\nThe percentage of green ranges between `0.0` and `1.0`.\nThe initial color of the pen is black (green pct = `0.0`).\nProviding a negative number will decrease the percentage of green.\n",
+                "type": "Basics.Float -> TurtleGraphics.Command"
+            },
+            {
+                "name": "increaseLightness",
+                "comment": " Increases the lightness of the turtle's pen by `x`.\nLightness values range between `0.0` and `1.0`.\nThe initial color of the pen is black (lightness = `0.0`).\nProviding a negative number will decrease the saturation.\n",
+                "type": "Basics.Float -> TurtleGraphics.Command"
+            },
+            {
+                "name": "increaseRed",
+                "comment": " Increases the percentage of red by `x`.\nThe percentage of red ranges between `0.0` and `1.0`.\nThe initial color of the pen is black (red pct = `0.0`).\nProviding a negative number will decrease the percentage of red.\n",
+                "type": "Basics.Float -> TurtleGraphics.Command"
+            },
+            {
+                "name": "increaseSaturation",
+                "comment": " Increases the saturation of the turtle's pen by `x`.\nSaturation values range between `0.0` and `1.0`.\nThe initial color of the pen is black (saturation = `0.0`).\nProviding a negative number will decrease the saturation.\n",
+                "type": "Basics.Float -> TurtleGraphics.Command"
+            },
+            {
+                "name": "increaseWidth",
+                "comment": " Changes the stroke width of the turtle's pen by `x` pixels.\nThe initial value is `1.0` pixel.\nProviding a negative number will decrease the stroke width.\n",
+                "type": "Basics.Float -> TurtleGraphics.Command"
+            },
+            {
+                "name": "move",
+                "comment": " Moves the turtle forward by `x` pixels.\n",
+                "type": "Basics.Float -> TurtleGraphics.Command"
+            },
+            {
+                "name": "render",
+                "comment": " Takes a background color and a `Command` (usually a `branch` of commands)\nand renders it to Html using Svg.\n",
+                "type": "Color.Color -> TurtleGraphics.Command -> Html.Html msg"
+            },
+            {
+                "name": "rotateHue",
+                "comment": " Rotates the hue of the turtle's pen by `x`.\nHue values range between `0.0` and `1.0`.\nThe initial color of the pen is black (hue = `0.0`).\n",
+                "type": "Basics.Float -> TurtleGraphics.Command"
+            },
+            {
+                "name": "turn",
+                "comment": " Changes the turtle's direction by `x` degrees (counterclockwise).\nThe initial direction is \"left-to-right\".\n",
+                "type": "Basics.Float -> TurtleGraphics.Command"
+            }
+        ],
+        "binops": []
+    }
+]

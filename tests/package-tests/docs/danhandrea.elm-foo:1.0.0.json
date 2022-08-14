@@ -1,0 +1,16 @@
+[
+    {
+        "name": "Foo",
+        "comment": " Foo\r\n\r\n@docs foo\r\n\r\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "foo",
+                "comment": " foo\r\n",
+                "type": "String.String"
+            }
+        ],
+        "binops": []
+    }
+]

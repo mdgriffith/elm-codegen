@@ -1,0 +1,48 @@
+[
+    {
+        "name": "Json.Encode.Optional",
+        "comment": " Support for encoding optional fields in JSON.\n\nIf a record has `Maybe` fields in it, they could be encoded either as `null` or\nleft out altogether.\n\nA good HTTP API will usually treat `null` or missing in the same way. But there are\nunstable APIs out there that treat them differently. For example, a PUT request that\ntreats `null` as meaning set something to null, but missing to mean leave something\nas it currently is.\n\nThis API lets you choose easily whether to use nulls or skip optional fields. It is\nalso designed to keep the encoder looking clean with ( \"fieldName\", value ) tuples\nin a list.\n\n\n# Make fields.\n\n@docs Field, field, optionalField, nullableField, skippableField\n\n\n# Make objects.\n\n@docs objectMaySkip, objectMayNullify\n\n",
+        "unions": [
+            {
+                "name": "Field",
+                "comment": " Fields of JSON object that can be optional.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "field",
+                "comment": " Creates a field that must always have a value.\n",
+                "type": "(a -> Json.Encode.Value) -> ( String.String, a ) -> Json.Encode.Optional.Field"
+            },
+            {
+                "name": "nullableField",
+                "comment": " Creates a field that may have a value. When no value is set, this field will\nalways be encoded as `null`, ignoring any default behaviour requested when building\nthe object.\n",
+                "type": "(a -> Json.Encode.Value) -> ( String.String, Maybe.Maybe a ) -> Json.Encode.Optional.Field"
+            },
+            {
+                "name": "objectMayNullify",
+                "comment": " Encodes a JSON object. Any `optionalField` that is `Nothing` is output as\n`null`.\n",
+                "type": "List.List Json.Encode.Optional.Field -> Json.Encode.Value"
+            },
+            {
+                "name": "objectMaySkip",
+                "comment": " Encodes a JSON object. Any `optionalField` that is `Nothing` is skipped in\nthe output.\n",
+                "type": "List.List Json.Encode.Optional.Field -> Json.Encode.Value"
+            },
+            {
+                "name": "optionalField",
+                "comment": " Creates a field that may have a value. When no value is set, this field will\nbe encoded as `null` or skipped, depending on what behaviour is requested when\nbuilding the object.\n",
+                "type": "(a -> Json.Encode.Value) -> ( String.String, Maybe.Maybe a ) -> Json.Encode.Optional.Field"
+            },
+            {
+                "name": "skippableField",
+                "comment": " Creates a field that may have a value. When no value is set, this field will\nalways be skipped, ignoring any default behaviour requested when building\nthe object.\n",
+                "type": "(a -> Json.Encode.Value) -> ( String.String, Maybe.Maybe a ) -> Json.Encode.Optional.Field"
+            }
+        ],
+        "binops": []
+    }
+]

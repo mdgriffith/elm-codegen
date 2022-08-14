@@ -1,0 +1,305 @@
+[
+    {
+        "name": "Yajson",
+        "comment": " Yet another JSON library\ninspired by OCaml [Yojson](https://github.com/mjambon/yojson).\n\n\n# Data structure\n\n@docs Json\n\n\n# Decoding\n\n@docs decoder, fromValue, fromString\n\n\n# Encoding\n\n@docs encode\n\n\n# Util\n\n@docs member, at, index, flatten\n\n\n# Filter\n\n@docs filterMember, filterAt, filterIndex, filterAssoc, filterList\n@docs filterBool, filterInt, filterFloat, filterString\n\n\n# Conversion\n\n@docs toMaybeAssoc, toAssoc, toMaybeList, toList\n@docs toString, toFloat, toInt, toBool\n\n",
+        "unions": [
+            {
+                "name": "Json",
+                "comment": " JSON representation with Elm's union types.\n`String`s and `Json.Encode.Value`s can both be converted in\nthis data structure or can be used to represent a JSON in Elm.\n\n    person : Json\n    person =\n        Object\n            [ ( \"name\", String \"Fred\" )\n            , ( \"age\", Number 20 )\n            , ( \"favorite_colors\"\n              , Array [ String \"red\", String \"green\" ]\n              )\n            ]\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Object",
+                        [
+                            "List.List ( String.String, Yajson.Json )"
+                        ]
+                    ],
+                    [
+                        "Array",
+                        [
+                            "List.List Yajson.Json"
+                        ]
+                    ],
+                    [
+                        "String",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Number",
+                        [
+                            "Basics.Float"
+                        ]
+                    ],
+                    [
+                        "Bool",
+                        [
+                            "Basics.Bool"
+                        ]
+                    ],
+                    [
+                        "Null",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "at",
+                "comment": " Works like [`member`](#member), but with nested objects.\n\n    nested : Json\n    nested =\n        \"\"\"{ \"foo\": { \"bar\" : \"baz\" } }\"\"\"\n            |> fromString\n            |> Result.withDefault Null\n\n    at [ \"foo\", \"bar\" ] Null == Nothing\n    at [ \"foo\", \"baz\" ] nested == Nothing\n    at [ \"foo\", \"bar\" ] nested == Just (String \"baz\")\n\n",
+                "type": "List.List String.String -> Yajson.Json -> Maybe.Maybe Yajson.Json"
+            },
+            {
+                "name": "decoder",
+                "comment": " Decoder for converting values in `Yajson.Json` data.\n\n    Json.Decode.decodeValue decoder jsonValue\n\n",
+                "type": "Json.Decode.Decoder Yajson.Json"
+            },
+            {
+                "name": "encode",
+                "comment": " Encode `Json` in `Json.Encode.Value`.\n\n    encode (String \"hello there\")\n\n",
+                "type": "Yajson.Json -> Json.Encode.Value"
+            },
+            {
+                "name": "filterAssoc",
+                "comment": " Expects a list of json objects and unwraps them.\n\n    min : Maybe Int\n    min =\n        [ Object [ ( \"key_3\", Number 10 ) ]\n        , Object [ ( \"key_1\", Number -1 ) ]\n        , Object [ ( \"key_2\", Number 11 ) ]\n        ]\n            |> filterAssoc\n            |> List.concatMap (List.map Tuple.second)\n            |> filterInt\n            |> List.minimum\n\n    min == Just -1\n\n",
+                "type": "List.List Yajson.Json -> List.List (List.List ( String.String, Yajson.Json ))"
+            },
+            {
+                "name": "filterAt",
+                "comment": " Works like [`filterMember`](#filterMember),\nbut with nested objects.\n\n    joe : Json\n    joe =\n        \"\"\"\n            { \"name\": \"Joe\"\n            , \"father\": { \"name\": \"Bob\" }\n            }\n        \"\"\"\n            |> fromString\n            |> Result.withDefault Null\n\n    jill : Json\n    jill =\n        \"\"\"\n            { \"name\": \"Jill\"\n            , \"father\": { \"name\": \"Vincent\" }\n            }\n        \"\"\"\n            |> fromString\n            |> Result.withDefault Null\n\n    fatherNames : List String\n    fatherNames =\n        [ joe, jill ]\n            |> filterAt [ \"father\", \"name\" ]\n            |> filterString\n\n    fatherNames == [ \"Bob\", \"Vincent\" ]\n\n",
+                "type": "List.List String.String -> List.List Yajson.Json -> List.List Yajson.Json"
+            },
+            {
+                "name": "filterBool",
+                "comment": " Expects a list of json booleans and unwraps them.\n\n    filterBool [ Bool False, Bool True ]\n        == [ False, True ]\n\n",
+                "type": "List.List Yajson.Json -> List.List Basics.Bool"
+            },
+            {
+                "name": "filterFloat",
+                "comment": " Expects a list of json floats and unwraps them.\n\n    filterFloat [ Bool True, Number 1, Number 1.2 ]\n        == [ 1, 1.2 ]\n\n",
+                "type": "List.List Yajson.Json -> List.List Basics.Float"
+            },
+            {
+                "name": "filterIndex",
+                "comment": " Expects a list of json array and returns\nall their elements existing at the given position.\n\n    additives : Json\n    additives =\n        \"\"\"[ \"red\", \"green\", \"blue\" ]\"\"\"\n            |> fromString\n            |> Result.withDefault Null\n\n    subtractives : Json\n    subtractives =\n        \"\"\"[ \"cyan\", \"magenta\", \"yellow\" ]\"\"\"\n            |> fromString\n            |> Result.withDefault Null\n\n    lasts : List String\n    lasts =\n        [ additives, subtractives ]\n            |> filterIndex -1\n            |> filterString\n\n    lasts == [ \"blue\", \"yellow\" ]\n\n",
+                "type": "Basics.Int -> List.List Yajson.Json -> List.List Yajson.Json"
+            },
+            {
+                "name": "filterInt",
+                "comment": " Expects a list of json ints and unwraps them.\n\n    filterInt [ Number 1, Number 2, Number 1.2 ]\n        == [ 1, 2 ]\n\n",
+                "type": "List.List Yajson.Json -> List.List Basics.Int"
+            },
+            {
+                "name": "filterList",
+                "comment": " Expects a list of json array and unwraps them.\n\n    firsts : List Int\n    firsts =\n        [ Array [ Number 1, Number 2 ]\n        , Array [ Number 3, Number 4 ]\n        , Array [ String \"hey\", Number 5 ]\n        ]\n            |> filterList\n            |> List.filterMap List.head\n            |> filterInt\n\n    firsts == [1,3]\n\n",
+                "type": "List.List Yajson.Json -> List.List (List.List Yajson.Json)"
+            },
+            {
+                "name": "filterMember",
+                "comment": " Expects a list of json objects and returns\nall the fields with the given name.\n\n    joe : Json\n    joe =\n        \"\"\"{ \"name\": \"Joe\" }\"\"\"\n            |> fromString\n            |> Result.withDefault Null\n\n    jill : Json\n    jill =\n        \"\"\"{ \"name\": \"Jill\" }\"\"\"\n            |> fromString\n            |> Result.withDefault Null\n\n    names : List String\n    names =\n        [ joe, jill ]\n            |> filterMember \"name\"\n            |> filterString\n\n    names == [ \"Joe\", \"Jill\" ]\n\n",
+                "type": "String.String -> List.List Yajson.Json -> List.List Yajson.Json"
+            },
+            {
+                "name": "filterString",
+                "comment": " Expects a list of json strings and unwraps them.\n\n    filterString [ Number 0, String \"str\" ]\n        == [ \"str\" ]\n\n",
+                "type": "List.List Yajson.Json -> List.List String.String"
+            },
+            {
+                "name": "flatten",
+                "comment": " Expects a list of json array and returns\nall their elements as a single list.\n\n    ints : List Int\n    ints =\n        [ Array [ Number 1, Number 2.3 ]\n        , Array [ Number 3, Bool False ]\n        , Array [ String \"hey\", Number 4 ]\n        ]\n            |> flatten\n            |> filterInt\n\n    ints == [1,3,4]\n\n",
+                "type": "List.List Yajson.Json -> List.List Yajson.Json"
+            },
+            {
+                "name": "fromString",
+                "comment": " Shortcut for `Json.Decode.decodeString decoder`.\n\n    fromString \"\"\"{ \"hello\": \"world\" }\"\"\"\n\n",
+                "type": "String.String -> Result.Result Json.Decode.Error Yajson.Json"
+            },
+            {
+                "name": "fromValue",
+                "comment": " Shortcut for `Json.Decode.decodeValue decoder`.\n\n    fromValue jsonValue\n\n",
+                "type": "Json.Encode.Value -> Result.Result Json.Decode.Error Yajson.Json"
+            },
+            {
+                "name": "index",
+                "comment": " Returns the value at index `i` in a json array.\nIndices start at 0 and negative ones count from the end,\nso `-1` is the last element.\n\n    array : Json\n    array =\n        Array [ Number 1, Number 2, Number 3 ]\n\n    index 0 Null == Nothing\n    index 0 (Array []) == Nothing\n    index 1 array == Just (Number 2)\n    index -1 array == Just (Number 3)\n\n",
+                "type": "Basics.Int -> Yajson.Json -> Maybe.Maybe Yajson.Json"
+            },
+            {
+                "name": "member",
+                "comment": " Returns the value associated with the given\nkey in a json object, or `Nothing` if the key\nisn't present in object or the json value isn't an object.\n\n    member \"anything\" Null == Nothing\n\n    member \"a_key\" (Object [ ( \"a_key\", String \"a_value\" ) ])\n        == Just (String \"a_value\")\n\n",
+                "type": "String.String -> Yajson.Json -> Maybe.Maybe Yajson.Json"
+            },
+            {
+                "name": "toAssoc",
+                "comment": " Extracts object representation from a `Json`.\nIf the json value isn't an object returns an empty list.\n\n    toAssoc Null == []\n\n    toAssoc (Object [ ( \"key\", String \"value\" ) ])\n        == [ ( \"key\", String \"value\" ) ]\n\n",
+                "type": "Yajson.Json -> List.List ( String.String, Yajson.Json )"
+            },
+            {
+                "name": "toBool",
+                "comment": " Extracts a boolean from a json, returns `Nothing` if\nthe value doesn't contain a boolean.\n\n    toBool Null == Nothing\n    toBool (Bool False) == Just False\n\n",
+                "type": "Yajson.Json -> Maybe.Maybe Basics.Bool"
+            },
+            {
+                "name": "toFloat",
+                "comment": " Extracts a float from a json, returns `Nothing` if\nthe value doesn't contain a float.\n\n    toFloat Null == Nothing\n    toFloat (Number 1) == Just 1\n\n",
+                "type": "Yajson.Json -> Maybe.Maybe Basics.Float"
+            },
+            {
+                "name": "toInt",
+                "comment": " Extracts an int from a json, returns `Nothing` if\nthe value doesn't contain an int.\n\n    toInt (Number 0.1) == Nothing\n    toInt (Number 1) == Just 1\n\n",
+                "type": "Yajson.Json -> Maybe.Maybe Basics.Int"
+            },
+            {
+                "name": "toList",
+                "comment": " Extracts array representation from a `Json`.\nIf the json value isn't an array returns an empty list.\n\n    toList Null == []\n\n    toList (Array [ Number 1, Number 2 ])\n        == [ Number 1, Number 2 ]\n\n",
+                "type": "Yajson.Json -> List.List Yajson.Json"
+            },
+            {
+                "name": "toMaybeAssoc",
+                "comment": " Extracts object representation from a `Json`\nand wraps it in a `Maybe`. If the json isn't an object\nreturns `Nothing`.\n\n    toMaybeAssoc Null == Nothing\n\n    toMaybeAssoc (Object [ ( \"key\", String \"value\" ) ])\n        == Just [ ( \"key\", String \"value\" ) ]\n\n",
+                "type": "Yajson.Json -> Maybe.Maybe (List.List ( String.String, Yajson.Json ))"
+            },
+            {
+                "name": "toMaybeList",
+                "comment": " Extracts array representation from a `Json`\nand wraps it in a `Maybe`. If the json isn't an array\nreturns `Nothing`.\n\n    toMaybeList Null == Nothing\n\n    toMaybeList (Array [ Number 1, Number 2 ])\n        == Just [ Number 1, Number 2 ]\n\n",
+                "type": "Yajson.Json -> Maybe.Maybe (List.List Yajson.Json)"
+            },
+            {
+                "name": "toString",
+                "comment": " Extracts a string from a json, returns `Nothing` if\nthe value doesn't contain a string.\n\n    toString Null == Nothing\n    toString (String \"hey\") == Just \"hey\"\n\n",
+                "type": "Yajson.Json -> Maybe.Maybe String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Yajson.Array",
+        "comment": " Module for array specific helpers.\n\n\n# Map\n\n@docs map, filterMap\n\n\n# Creation\n\n@docs ofString, ofFloat, ofInt, ofBool\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "filterMap",
+                "comment": " Given a funcion `fn : Json -> Maybe a` maps\na json array, removes `Nothing`s and returns a list.\n\nIf the json value is not an array returns an empty list.\n\n    inc : Json -> Maybe Float\n    inc json =\n        case json of\n            Number n ->\n                Just (n + 1)\n\n            _ ->\n                Nothing\n\n    json : Json\n    json =\n        Array [ Number 0, Number 1, Bool True ]\n\n    filterMap inc json == [ 1, 2 ]\n\n",
+                "type": "(Yajson.Json -> Maybe.Maybe a) -> Yajson.Json -> List.List a"
+            },
+            {
+                "name": "map",
+                "comment": " Maps json arrays. Returns an empty list if\njson value is not an array.\n\n    json : Json\n    json =\n        Array [ Number 0, Bool False ]\n\n    map Yajson.Stringify.compact json == [ \"0\", \"false\" ]\n\n",
+                "type": "(Yajson.Json -> a) -> Yajson.Json -> List.List a"
+            },
+            {
+                "name": "ofBool",
+                "comment": " Wraps a list of booleans in a json value.\n\n    ofBool [ False, True ]\n        == Array [ Bool False, Bool True ]\n\n",
+                "type": "List.List Basics.Bool -> Yajson.Json"
+            },
+            {
+                "name": "ofFloat",
+                "comment": " Wraps a list of floats in a json value.\n\n    ofFloat [ 3.14, 2.718 ]\n        == Array [ Number 3.14, Number 2.718 ]\n\n",
+                "type": "List.List Basics.Float -> Yajson.Json"
+            },
+            {
+                "name": "ofInt",
+                "comment": " Wraps a list of ints in a json value.\n\n    ofInt [ 3, 4 ]\n        == Array [ Number 3, Number 4 ]\n\n",
+                "type": "List.List Basics.Int -> Yajson.Json"
+            },
+            {
+                "name": "ofString",
+                "comment": " Wraps a list of strings in a json value.\n\n    ofString [ \"hello\", \"world\" ]\n        == Array [ String \"hello\", String \"world\" ]\n\n",
+                "type": "List.List String.String -> Yajson.Json"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Yajson.Object",
+        "comment": " Module for object specific helpers.\n\n\n# Access\n\n@docs keys, values\n\n\n# Map\n\n@docs map, mapKeys, mapValues\n@docs filterMap, filterMapKeys, filterMapValues\n\n\n# Creation\n\n@docs ofString, ofFloat, ofInt, ofBool\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "filterMap",
+                "comment": " Given a funcion `fn : String -> Json -> Maybe a`\nmaps a json object, removes `Nothing`s and returns a list.\n\nIf the json value is not an object returns an empty list.\n\n",
+                "type": "(String.String -> Yajson.Json -> Maybe.Maybe a) -> Yajson.Json -> List.List a"
+            },
+            {
+                "name": "filterMapKeys",
+                "comment": " Like [`filterMap`](#filterMap), but `fn` maps only the keys.\n",
+                "type": "(String.String -> Maybe.Maybe a) -> Yajson.Json -> List.List ( a, Yajson.Json )"
+            },
+            {
+                "name": "filterMapValues",
+                "comment": " Like [`filterMap`](#filterMap), but `fn` maps only the values.\n",
+                "type": "(Yajson.Json -> Maybe.Maybe a) -> Yajson.Json -> List.List ( String.String, a )"
+            },
+            {
+                "name": "keys",
+                "comment": " Takes a json object and returns its keys as list of strings.\nReturns an empty list if the value isn't an object.\n\n    keys (ofInt [ ( \"I\", 1 ), ( \"II\", 2 ), ( \"III\", 3 ) ])\n        == [ \"I\", \"II\", \"III\" ]\n\n",
+                "type": "Yajson.Json -> List.List String.String"
+            },
+            {
+                "name": "map",
+                "comment": " Maps a json object.\n",
+                "type": "(String.String -> Yajson.Json -> a) -> Yajson.Json -> List.List a"
+            },
+            {
+                "name": "mapKeys",
+                "comment": " Like [`map`](#map), but maps only the keys.\n",
+                "type": "(String.String -> a) -> Yajson.Json -> List.List ( a, Yajson.Json )"
+            },
+            {
+                "name": "mapValues",
+                "comment": " Like [`map`](#map), but maps only the values.\n",
+                "type": "(Yajson.Json -> a) -> Yajson.Json -> List.List ( String.String, a )"
+            },
+            {
+                "name": "ofBool",
+                "comment": " Wraps a list of pairs of string and bool in a json object.\n\n    ofBool [ ( \"hot\", True ), ( \"cold\", False ) ]\n        == Object [ ( \"hot\", Bool True ), ( \"cold\", Bool False ) ]\n\n",
+                "type": "List.List ( String.String, Basics.Bool ) -> Yajson.Json"
+            },
+            {
+                "name": "ofFloat",
+                "comment": " Wraps a list of pairs of string and float in a json object.\n\n    ofFloat [ ( \"pi\", 3.14 ), ( \"e\", 2.718 ) ]\n        == Object [ ( \"pi\", Number 3.14 ), ( \"e\", Number 2.718 ) ]\n\n",
+                "type": "List.List ( String.String, Basics.Float ) -> Yajson.Json"
+            },
+            {
+                "name": "ofInt",
+                "comment": " Wraps a list of pairs of string and int in a json object.\n\n    ofInt [ ( \"I\", 1 ), ( \"II\", 2 ) ]\n        == Object [ ( \"I\", Number 1 ), ( \"II\", Number 2 ) ]\n\n",
+                "type": "List.List ( String.String, Basics.Int ) -> Yajson.Json"
+            },
+            {
+                "name": "ofString",
+                "comment": " Wraps a list of string pairs in a json object.\n\n    ofString [ ( \"name\", \"value\" ) ]\n        == Object [ ( \"name\", String \"value\" ) ]\n\n",
+                "type": "List.List ( String.String, String.String ) -> Yajson.Json"
+            },
+            {
+                "name": "values",
+                "comment": " Takes a json object and returns its values as list of strings.\nReturns an empty list if the value isn't an object.\n\n    values (ofInt [ ( \"I\" ), 1, ( \"II\" ), 2, ( \"III\" ), 3 ])\n        == [ Number 1, Number 2, Number 3 ]\n\n",
+                "type": "Yajson.Json -> List.List Yajson.Json"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Yajson.Stringify",
+        "comment": " Module for converting `Yajson.Json` to string.\nMay be useful for debugging purpose.\n\n@docs compact, pretty\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "compact",
+                "comment": " Json to string, no newlines, no spaces.\n\n    str : String\n    str =\n        compact <| Array\n            [ Object [ ( \"name\", String \"Hugo\" ) ]\n            , Object [ ( \"name\", String \"Manuel\" ) ]\n            , Object [ ( \"name\", String \"Eva\" ) ]\n            ]\n\n    str == \"\"\"[{\"name\":\"Hugo\"},{\"name\":\"Manuel\"},{\"name\":\"Eva\"}]\"\"\"\n\n",
+                "type": "Yajson.Json -> String.String"
+            },
+            {
+                "name": "pretty",
+                "comment": " Json to string, with an indentation style close to elm-format's.\n\n    str : String\n    str =\n        \"\"\"[{\"name\":\"Hugo\"},{\"name\":\"Manuel\"},{\"name\":\"Eva\"}]\"\"\"\n            |> fromString\n            |> Result.withDefault Null\n            |> pretty\n\n    str ==\n        \"\"\"[\n            { \"name\": \"Hugo\"\n            }\n        ,\n            { \"name\": \"Manuel\"\n            }\n        ,\n            { \"name\": \"Eva\"\n            }\n        ]\"\"\"\n\n",
+                "type": "Yajson.Json -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

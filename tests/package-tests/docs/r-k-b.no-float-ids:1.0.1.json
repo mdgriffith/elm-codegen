@@ -1,0 +1,16 @@
+[
+    {
+        "name": "NoFloatIds",
+        "comment": " In the rare situation that generated Elm code isn't of the highest quality,\nthe `NoFloatIds` rule will help to enforce record properties that look like IDs\nfrom being assigned `Float` types.\n\n\n# Usage\n\nAfter adding [`elm-review`][elm-review] to your project, import this rule from\nyour `ReviewConfig.elm` file and add it to the config. E.g.:\n\n    import NoFloatIds\n    import Review.Rule exposing (Rule)\n\n    config : List Rule\n    config =\n        [ NoFloatIds.rule ]\n\n[elm-review]: https://package.elm-lang.org/packages/jfmengels/elm-review/latest/\n\n@docs rule\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": " A rule for elm-review that discourages the use of Float types for \"Id\"\nproperties of records.\n\nFor example, the rule would return an error for the first two aliases:\n\n    type alias Foo =\n        { qux : Qux\n        , someId : Float\n        }\n\n    type alias Bar =\n        { qux : Qux\n        , id : Float\n        }\n\nBut not the third:\n\n    type alias Baz =\n        { qux : Qux\n        , id : Int\n        }\n\n",
+                "type": "Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    }
+]

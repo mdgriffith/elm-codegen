@@ -1,0 +1,974 @@
+[
+    {
+        "name": "Avataaars",
+        "comment": " An `Avataaar` contains all the information to draw a cute avatar\n\n\n# Definition\n\n@docs Avataaar\n\n\n# View\n\n@docs view\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Avataaar",
+                "comment": " An `Avataaar` is a description of how to draw an avataaar.\n\nExample:\n\n    avataaar : Avataaar\n    avataaar =\n        { circleBg = True\n        , skinTone = SkinTone.black\n        , clothes = Clothes.BlazerShirt\n        , face =\n            { mouth = Mouth.Default\n            , eyes = Eyes.Default\n            , eyebrow = Eyebrow.Default\n            }\n        , top = Top.TopAccessoryFacialHair Top.NoHair Accessory.Blank FacialHair.Blank\n        }\n\n",
+                "args": [],
+                "type": "{ circleBg : Basics.Bool, skinTone : Avataaars.SkinTone.SkinTone, clothes : Avataaars.Clothes.Clothes, face : Avataaars.Face.Face, top : Avataaars.Top.Top }"
+            }
+        ],
+        "values": [
+            {
+                "name": "view",
+                "comment": " Transform an `Avataaar` into an `Svg msg`.\n",
+                "type": "{ width : Basics.Int, height : Basics.Int } -> Avataaars.Avataaar -> Svg.Svg msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Avataaars.Accessory",
+        "comment": "\n\n\n# Definition\n\n@docs Accessory\n\n",
+        "unions": [
+            {
+                "name": "Accessory",
+                "comment": " An `Accessory` is something you put on your face (for now, glasses only).\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Blank",
+                        []
+                    ],
+                    [
+                        "Kurt",
+                        []
+                    ],
+                    [
+                        "Prescription01",
+                        []
+                    ],
+                    [
+                        "Prescription02",
+                        []
+                    ],
+                    [
+                        "Round",
+                        []
+                    ],
+                    [
+                        "Sunglasses",
+                        []
+                    ],
+                    [
+                        "Wayfarers",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "Avataaars.Clothes",
+        "comment": "\n\n\n# Clothes\n\n@docs Clothes\n\n\n# Colors\n\nThese are just `String`s, so feel free to define others, and _do_ let your users choose their own.\n\n@docs Color, black, blue01, blue02, blue03, gray01, gray02, heather, pastelBlue, pastelGreen, pastelOrange, pastelRed, pastelYellow, pink, red, white\n\n",
+        "unions": [
+            {
+                "name": "Clothes",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "BlazerShirt",
+                        []
+                    ],
+                    [
+                        "BlazerSweater",
+                        []
+                    ],
+                    [
+                        "CollarSweater",
+                        [
+                            "Avataaars.Clothes.Color"
+                        ]
+                    ],
+                    [
+                        "GraphicShirt",
+                        [
+                            "Avataaars.Clothes.Color",
+                            "Avataaars.Graphics.Graphics"
+                        ]
+                    ],
+                    [
+                        "Hoodie",
+                        [
+                            "Avataaars.Clothes.Color"
+                        ]
+                    ],
+                    [
+                        "Overall",
+                        [
+                            "Avataaars.Clothes.Color"
+                        ]
+                    ],
+                    [
+                        "ShirtCrewNeck",
+                        [
+                            "Avataaars.Clothes.Color"
+                        ]
+                    ],
+                    [
+                        "ShirtScoopNeck",
+                        [
+                            "Avataaars.Clothes.Color"
+                        ]
+                    ],
+                    [
+                        "ShirtVNeck",
+                        [
+                            "Avataaars.Clothes.Color"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Color",
+                "comment": " ",
+                "args": [],
+                "type": "String.String"
+            }
+        ],
+        "values": [
+            {
+                "name": "black",
+                "comment": " #262E33\n",
+                "type": "Avataaars.Clothes.Color"
+            },
+            {
+                "name": "blue01",
+                "comment": " #65C9FF\n",
+                "type": "Avataaars.Clothes.Color"
+            },
+            {
+                "name": "blue02",
+                "comment": " #5199E4\n",
+                "type": "Avataaars.Clothes.Color"
+            },
+            {
+                "name": "blue03",
+                "comment": " #25557C\n",
+                "type": "Avataaars.Clothes.Color"
+            },
+            {
+                "name": "gray01",
+                "comment": " #E6E6E6\n",
+                "type": "Avataaars.Clothes.Color"
+            },
+            {
+                "name": "gray02",
+                "comment": " #929598\n",
+                "type": "Avataaars.Clothes.Color"
+            },
+            {
+                "name": "heather",
+                "comment": " #3C4F5C\n",
+                "type": "Avataaars.Clothes.Color"
+            },
+            {
+                "name": "pastelBlue",
+                "comment": " #B1E2FF\n",
+                "type": "Avataaars.Clothes.Color"
+            },
+            {
+                "name": "pastelGreen",
+                "comment": " #A7FFC4\n",
+                "type": "Avataaars.Clothes.Color"
+            },
+            {
+                "name": "pastelOrange",
+                "comment": " #FFDEB5\n",
+                "type": "Avataaars.Clothes.Color"
+            },
+            {
+                "name": "pastelRed",
+                "comment": " #FFAFB9\n",
+                "type": "Avataaars.Clothes.Color"
+            },
+            {
+                "name": "pastelYellow",
+                "comment": " #FFFFB1\n",
+                "type": "Avataaars.Clothes.Color"
+            },
+            {
+                "name": "pink",
+                "comment": " #FF488E\n",
+                "type": "Avataaars.Clothes.Color"
+            },
+            {
+                "name": "red",
+                "comment": " #FF5C5C\n",
+                "type": "Avataaars.Clothes.Color"
+            },
+            {
+                "name": "white",
+                "comment": " #FFFFFF\n",
+                "type": "Avataaars.Clothes.Color"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Avataaars.Eyebrow",
+        "comment": "\n\n\n# Eyebrow\n\n@docs Eyebrow\n\n",
+        "unions": [
+            {
+                "name": "Eyebrow",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Angry",
+                        []
+                    ],
+                    [
+                        "AngryNatural",
+                        []
+                    ],
+                    [
+                        "Default",
+                        []
+                    ],
+                    [
+                        "DefaultNatural",
+                        []
+                    ],
+                    [
+                        "FlatNatural",
+                        []
+                    ],
+                    [
+                        "RaisedExcited",
+                        []
+                    ],
+                    [
+                        "RaisedExcitedNatural",
+                        []
+                    ],
+                    [
+                        "SadConcerned",
+                        []
+                    ],
+                    [
+                        "SadConcernedNatural",
+                        []
+                    ],
+                    [
+                        "UnibrowNatural",
+                        []
+                    ],
+                    [
+                        "UpDown",
+                        []
+                    ],
+                    [
+                        "UpDownNatural",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "Avataaars.Eyes",
+        "comment": "\n\n\n# Eyes\n\n@docs Eyes\n\n",
+        "unions": [
+            {
+                "name": "Eyes",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Close",
+                        []
+                    ],
+                    [
+                        "Cry",
+                        []
+                    ],
+                    [
+                        "Default",
+                        []
+                    ],
+                    [
+                        "Dizzy",
+                        []
+                    ],
+                    [
+                        "EyeRoll",
+                        []
+                    ],
+                    [
+                        "Happy",
+                        []
+                    ],
+                    [
+                        "Hearts",
+                        []
+                    ],
+                    [
+                        "Side",
+                        []
+                    ],
+                    [
+                        "Squint",
+                        []
+                    ],
+                    [
+                        "Surprised",
+                        []
+                    ],
+                    [
+                        "Wink",
+                        []
+                    ],
+                    [
+                        "WinkWacky",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "Avataaars.Face",
+        "comment": "\n\n\n# Face\n\n@docs Face\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Face",
+                "comment": " ",
+                "args": [],
+                "type": "{ mouth : Avataaars.Mouth.Mouth, eyes : Avataaars.Eyes.Eyes, eyebrow : Avataaars.Eyebrow.Eyebrow }"
+            }
+        ],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "Avataaars.FacialHair",
+        "comment": "\n\n\n# Facial Hair\n\n@docs FacialHair\n\n",
+        "unions": [
+            {
+                "name": "FacialHair",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Blank",
+                        []
+                    ],
+                    [
+                        "BeardMedium",
+                        [
+                            "Avataaars.HairColor.HairColor"
+                        ]
+                    ],
+                    [
+                        "BeardLight",
+                        [
+                            "Avataaars.HairColor.HairColor"
+                        ]
+                    ],
+                    [
+                        "BeardMajestic",
+                        [
+                            "Avataaars.HairColor.HairColor"
+                        ]
+                    ],
+                    [
+                        "MoustacheFancy",
+                        [
+                            "Avataaars.HairColor.HairColor"
+                        ]
+                    ],
+                    [
+                        "MoustacheMagnum",
+                        [
+                            "Avataaars.HairColor.HairColor"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "Avataaars.Graphics",
+        "comment": " Graphics for the \"Graphics Shirt\".\n\n\n# Graphics\n\n@docs Graphics\n\n",
+        "unions": [
+            {
+                "name": "Graphics",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Bat",
+                        []
+                    ],
+                    [
+                        "Cumbia",
+                        []
+                    ],
+                    [
+                        "Deer",
+                        []
+                    ],
+                    [
+                        "Diamond",
+                        []
+                    ],
+                    [
+                        "Hola",
+                        []
+                    ],
+                    [
+                        "Pizza",
+                        []
+                    ],
+                    [
+                        "Resist",
+                        []
+                    ],
+                    [
+                        "Selena",
+                        []
+                    ],
+                    [
+                        "Bear",
+                        []
+                    ],
+                    [
+                        "SkullOutline",
+                        []
+                    ],
+                    [
+                        "Skull",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "Avataaars.HairColor",
+        "comment": "\n\n\n# Definition\n\n@docs HairColor\n\n\n# Default colors\n\nThese are just `String`s, so feel free to define others, and _do_ let your users choose their own.\n\n@docs auburn, black, blonde, blondeGolden, brown, brownDark, pastelPink, platinum, red, silverGray\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "HairColor",
+                "comment": " ",
+                "args": [],
+                "type": "String.String"
+            }
+        ],
+        "values": [
+            {
+                "name": "auburn",
+                "comment": " #A55728\n",
+                "type": "Avataaars.HairColor.HairColor"
+            },
+            {
+                "name": "black",
+                "comment": " #2C1B18\n",
+                "type": "Avataaars.HairColor.HairColor"
+            },
+            {
+                "name": "blonde",
+                "comment": " #B58143\n",
+                "type": "Avataaars.HairColor.HairColor"
+            },
+            {
+                "name": "blondeGolden",
+                "comment": " #D6B370\n",
+                "type": "Avataaars.HairColor.HairColor"
+            },
+            {
+                "name": "brown",
+                "comment": " #724133\n",
+                "type": "Avataaars.HairColor.HairColor"
+            },
+            {
+                "name": "brownDark",
+                "comment": " #4A312C\n",
+                "type": "Avataaars.HairColor.HairColor"
+            },
+            {
+                "name": "pastelPink",
+                "comment": " #F59797\n",
+                "type": "Avataaars.HairColor.HairColor"
+            },
+            {
+                "name": "platinum",
+                "comment": " #ECDCBF\n",
+                "type": "Avataaars.HairColor.HairColor"
+            },
+            {
+                "name": "red",
+                "comment": " #C93305\n",
+                "type": "Avataaars.HairColor.HairColor"
+            },
+            {
+                "name": "silverGray",
+                "comment": " #E8E1E1\n",
+                "type": "Avataaars.HairColor.HairColor"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Avataaars.HatColor",
+        "comment": "\n\n\n# HatColor\n\n@docs HatColor\n\n\n# Default colors\n\nThese are just `String`s, so feel free to define others, and _do_ let your users choose their own.\n\n@docs black, blue01, blue02, blue03, gray01, gray02, heather, pastelBlue, pastelGreen, pastelOrange, pastelRed, pastelYellow, pink, red, white\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "HatColor",
+                "comment": " ",
+                "args": [],
+                "type": "String.String"
+            }
+        ],
+        "values": [
+            {
+                "name": "black",
+                "comment": " #262E33\n",
+                "type": "Avataaars.HatColor.HatColor"
+            },
+            {
+                "name": "blue01",
+                "comment": " #65C9FF\n",
+                "type": "Avataaars.HatColor.HatColor"
+            },
+            {
+                "name": "blue02",
+                "comment": " #5199E4\n",
+                "type": "Avataaars.HatColor.HatColor"
+            },
+            {
+                "name": "blue03",
+                "comment": " #25557C\n",
+                "type": "Avataaars.HatColor.HatColor"
+            },
+            {
+                "name": "gray01",
+                "comment": " #E6E6E6\n",
+                "type": "Avataaars.HatColor.HatColor"
+            },
+            {
+                "name": "gray02",
+                "comment": " #929598\n",
+                "type": "Avataaars.HatColor.HatColor"
+            },
+            {
+                "name": "heather",
+                "comment": " #3C4F5C\n",
+                "type": "Avataaars.HatColor.HatColor"
+            },
+            {
+                "name": "pastelBlue",
+                "comment": " #B1E2FF\n",
+                "type": "Avataaars.HatColor.HatColor"
+            },
+            {
+                "name": "pastelGreen",
+                "comment": " #A7FFC4\n",
+                "type": "Avataaars.HatColor.HatColor"
+            },
+            {
+                "name": "pastelOrange",
+                "comment": " #FFDEB5\n",
+                "type": "Avataaars.HatColor.HatColor"
+            },
+            {
+                "name": "pastelRed",
+                "comment": " #FFAFB9\n",
+                "type": "Avataaars.HatColor.HatColor"
+            },
+            {
+                "name": "pastelYellow",
+                "comment": " #FFFFB1\n",
+                "type": "Avataaars.HatColor.HatColor"
+            },
+            {
+                "name": "pink",
+                "comment": " #FF488E\n",
+                "type": "Avataaars.HatColor.HatColor"
+            },
+            {
+                "name": "red",
+                "comment": " #FF5C5C\n",
+                "type": "Avataaars.HatColor.HatColor"
+            },
+            {
+                "name": "white",
+                "comment": " #FFFFFF\n",
+                "type": "Avataaars.HatColor.HatColor"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Avataaars.Mouth",
+        "comment": "\n\n\n# Definition\n\n@docs Mouth\n\n",
+        "unions": [
+            {
+                "name": "Mouth",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Concerned",
+                        []
+                    ],
+                    [
+                        "Default",
+                        []
+                    ],
+                    [
+                        "Disbelief",
+                        []
+                    ],
+                    [
+                        "Eating",
+                        []
+                    ],
+                    [
+                        "Grimace",
+                        []
+                    ],
+                    [
+                        "Sad",
+                        []
+                    ],
+                    [
+                        "ScreamOpen",
+                        []
+                    ],
+                    [
+                        "Serious",
+                        []
+                    ],
+                    [
+                        "Smile",
+                        []
+                    ],
+                    [
+                        "Tongue",
+                        []
+                    ],
+                    [
+                        "Twinkle",
+                        []
+                    ],
+                    [
+                        "Vomit",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "Avataaars.SkinTone",
+        "comment": "\n\n\n# Definition\n\n@docs SkinTone\n\n\n# Default tones\n\nThese are just `String`s, so feel free to define others, and _do_ let your users choose their own.\n\n@docs black, brown, darkBrown, light, pale, tanned, yellow\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "SkinTone",
+                "comment": " ",
+                "args": [],
+                "type": "String.String"
+            }
+        ],
+        "values": [
+            {
+                "name": "black",
+                "comment": " #614335\n",
+                "type": "Avataaars.SkinTone.SkinTone"
+            },
+            {
+                "name": "brown",
+                "comment": " #D08B5B\n",
+                "type": "Avataaars.SkinTone.SkinTone"
+            },
+            {
+                "name": "darkBrown",
+                "comment": " #AE5D29\n",
+                "type": "Avataaars.SkinTone.SkinTone"
+            },
+            {
+                "name": "light",
+                "comment": " #EDB98A\n",
+                "type": "Avataaars.SkinTone.SkinTone"
+            },
+            {
+                "name": "pale",
+                "comment": " #FFDBB4\n",
+                "type": "Avataaars.SkinTone.SkinTone"
+            },
+            {
+                "name": "tanned",
+                "comment": " #FD9841\n",
+                "type": "Avataaars.SkinTone.SkinTone"
+            },
+            {
+                "name": "yellow",
+                "comment": " #F8D25C\n",
+                "type": "Avataaars.SkinTone.SkinTone"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Avataaars.Top",
+        "comment": "\n\n\n# Types\n\n@docs Top, TopFacialHair, TopHatColorAccessory, TopAccessoryFacialHair, TopHatColorAccessoryFacialHair, TopHairColorAccessoryFacialHair\n\n",
+        "unions": [
+            {
+                "name": "Top",
+                "comment": " A type represeting an hair/hat/accessory combo\n",
+                "args": [],
+                "cases": [
+                    [
+                        "TopFacialHair",
+                        [
+                            "Avataaars.Top.TopFacialHair",
+                            "Avataaars.FacialHair.FacialHair"
+                        ]
+                    ],
+                    [
+                        "TopHatColorAccessory",
+                        [
+                            "Avataaars.Top.TopHatColorAccessory",
+                            "Avataaars.HatColor.HatColor",
+                            "Avataaars.Accessory.Accessory"
+                        ]
+                    ],
+                    [
+                        "TopAccessoryFacialHair",
+                        [
+                            "Avataaars.Top.TopAccessoryFacialHair",
+                            "Avataaars.Accessory.Accessory",
+                            "Avataaars.FacialHair.FacialHair"
+                        ]
+                    ],
+                    [
+                        "TopHatColorAccessoryFacialHair",
+                        [
+                            "Avataaars.Top.TopHatColorAccessoryFacialHair",
+                            "Avataaars.HatColor.HatColor",
+                            "Avataaars.Accessory.Accessory",
+                            "Avataaars.FacialHair.FacialHair"
+                        ]
+                    ],
+                    [
+                        "TopHairColorAccessoryFacialHair",
+                        [
+                            "Avataaars.Top.TopHairColorAccessoryFacialHair",
+                            "Avataaars.HairColor.HairColor",
+                            "Avataaars.Accessory.Accessory",
+                            "Avataaars.FacialHair.FacialHair"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "TopAccessoryFacialHair",
+                "comment": " A `Top` supporting `Accessory` and `FacialHair` only.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NoHair",
+                        []
+                    ],
+                    [
+                        "Hat",
+                        []
+                    ],
+                    [
+                        "LongHairFrida",
+                        []
+                    ],
+                    [
+                        "LongHairShavedSides",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "TopFacialHair",
+                "comment": " A `Top` supporting `FacialHair` only.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Eyepatch",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "TopHairColorAccessoryFacialHair",
+                "comment": " A `Top` supporting `HairColor`, `Accessory` and `FacialHair`.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "LongHairBigHair",
+                        []
+                    ],
+                    [
+                        "LongHairBob",
+                        []
+                    ],
+                    [
+                        "LongHairBun",
+                        []
+                    ],
+                    [
+                        "LongHairCurly",
+                        []
+                    ],
+                    [
+                        "LongHairCurvy",
+                        []
+                    ],
+                    [
+                        "LongHairDreads",
+                        []
+                    ],
+                    [
+                        "LongHairFro",
+                        []
+                    ],
+                    [
+                        "LongHairFroBand",
+                        []
+                    ],
+                    [
+                        "LongHairNotTooLong",
+                        []
+                    ],
+                    [
+                        "LongHairMiaWallace",
+                        []
+                    ],
+                    [
+                        "LongHairStraight",
+                        []
+                    ],
+                    [
+                        "LongHairStraight2",
+                        []
+                    ],
+                    [
+                        "LongHairStraightStrand",
+                        []
+                    ],
+                    [
+                        "ShortHairDreads01",
+                        []
+                    ],
+                    [
+                        "ShortHairDreads02",
+                        []
+                    ],
+                    [
+                        "ShortHairFrizzle",
+                        []
+                    ],
+                    [
+                        "ShortHairShaggyMullet",
+                        []
+                    ],
+                    [
+                        "ShortHairShortCurly",
+                        []
+                    ],
+                    [
+                        "ShortHairShortFlat",
+                        []
+                    ],
+                    [
+                        "ShortHairShortRound",
+                        []
+                    ],
+                    [
+                        "ShortHairShortWaved",
+                        []
+                    ],
+                    [
+                        "ShortHairSides",
+                        []
+                    ],
+                    [
+                        "ShortHairTheCaesar",
+                        []
+                    ],
+                    [
+                        "ShortHairTheCaesarSidePart",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "TopHatColorAccessory",
+                "comment": " A `Top` supporting `HatColor` and `Accessory` only.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Hijab",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "TopHatColorAccessoryFacialHair",
+                "comment": " A `Top` supporting `HatColor`, `Accessory` and `FacialHair`.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Turban",
+                        []
+                    ],
+                    [
+                        "WinterHat1",
+                        []
+                    ],
+                    [
+                        "WinterHat2",
+                        []
+                    ],
+                    [
+                        "WinterHat3",
+                        []
+                    ],
+                    [
+                        "WinterHat4",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [],
+        "binops": []
+    }
+]

@@ -1,0 +1,141 @@
+[
+    {
+        "name": "RedBlackTrees",
+        "comment": "\n\n\n# Types\n\n@docs RedBlackTree, Colour\n\n\n# Building and Modifying\n\n@docs empty, singleton, fromList, insert, delete\n\n\n# Searching\n\n\n## Depth First\n\n@docs preOrder, inOrder, postOrder\n\n\n## Breadth First\n\n@docs levelOrder\n\n\n# Utilities\n\n@docs isMember, size, blackHeight, height, maximum, flatten\n\n\n# Validation\n\n@docs isValid\n\n",
+        "unions": [
+            {
+                "name": "Colour",
+                "comment": " Since this is a red black tree representation, we ignore the green brown convention.\n\nThe additional `DoubleBlack` and `NegativeBlack` colours are required for deletion\npurposes, thus aren't usually used when building trees.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Red",
+                        []
+                    ],
+                    [
+                        "Black",
+                        []
+                    ],
+                    [
+                        "DoubleBlack",
+                        []
+                    ],
+                    [
+                        "NegativeBlack",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "RedBlackTree",
+                "comment": " Trees can be comprised of either empty leaves or nodes containing a value,\na represesentative colour and two child branches.\n\nThe `DoubleEmpty` value is only used when deleting, so isn't needed when constructing trees manually.\n\n",
+                "args": [
+                    "comparable"
+                ],
+                "cases": [
+                    [
+                        "Empty",
+                        []
+                    ],
+                    [
+                        "DoubleEmpty",
+                        []
+                    ],
+                    [
+                        "Node",
+                        [
+                            "comparable",
+                            "RedBlackTrees.Colour",
+                            "RedBlackTrees.RedBlackTree comparable",
+                            "RedBlackTrees.RedBlackTree comparable"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "blackHeight",
+                "comment": " Every path from the root to the leaves of a red black tree must contain\nthe same number of black nodes. The `blackHeight` is the value of this path length.\nNotably, this is also the shortest path from root to leaf.\n\n    fromList [ 2, 7, 4, 9, 1, 3, 18, 10 ] |> blackHeight\n    --> Just 2\n\nCalling `blackHeight` on a valid red black tree will return a count, but if\nthe tree is not correctly balanced, this function will return `Nothing`.\n\n",
+                "type": "RedBlackTrees.RedBlackTree comparable -> Maybe.Maybe Basics.Int"
+            },
+            {
+                "name": "delete",
+                "comment": " Remove a node from the tree. Most of the time this is a straightforward\nmatter, except for when a black node with no children is removed. This\nultimately changes the (`blackHeight`)[#blackHeight] and thus the entire\ntree must be rebalanced and recoloured.\n\n    tree = fromList [1,2,3,4]\n    --> Node 2 Black (Node 1 Black Empty Empty) (Node 3 Black Empty (Node 4 Red Empty Empty))\n\n    delete 1 tree\n    --> Node 3 Black (Node 2 Black Empty Empty) (Node 4 Black Empty Empty)\n\n    delete 2 tree\n    --> Node 3 Black (Node 1 Black Empty Empty) (Node 4 Black Empty Empty)\n\n    delete 3 tree\n    --> Node 2 Black (Node 1 Black Empty Empty) (Node 4 Black Empty Empty)\n\n    delete 4 tree\n    --> Node 2 Black (Node 1 Black Empty Empty) (Node 3 Black Empty Empty)\n\n",
+                "type": "comparable -> RedBlackTrees.RedBlackTree comparable -> RedBlackTrees.RedBlackTree comparable"
+            },
+            {
+                "name": "empty",
+                "comment": " An empty tree for ease of use when constructing trees.\n\n    empty\n    --> Empty\n\n",
+                "type": "RedBlackTrees.RedBlackTree comparable"
+            },
+            {
+                "name": "flatten",
+                "comment": " Generate a list of values contained in the tree. Since\nRed Black trees are an extention of Binary Search Trees, the\nresultant list will be sorted. Colour is ignored in this operation.\n\n    tree = fromList [ 8, 1, 2, 6, 29, 42, 7, 22, 18, 36 ]\n    --> Node 7 Black (Node 2 Black (Node 1 Black Empty Empty) (Node 6 Black Empty Empty)) (Node 29 Black (Node 18 Red (Node 8 Black Empty Empty) (Node 22 Black Empty Empty)) (Node 42 Black (Node 36 Red Empty Empty) Empty))\n\n    flatten tree\n    --> [ 1, 2, 6, 7, 8, 18, 22, 29, 36, 42 ]\n\n",
+                "type": "RedBlackTrees.RedBlackTree comparable -> List.List comparable"
+            },
+            {
+                "name": "fromList",
+                "comment": " Generate a Red Black representation of a list.\n\n    fromList [ 2, 7, 8, 3, 9, 1, 5, 10 ]\n    --> Node 7 Black (Node 3 Red (Node 2 Black (Node 1 Red Empty Empty) Empty) (Node 5 Black Empty Empty)) (Node 9 Red (Node 8 Black Empty Empty) (Node 10 Black Empty Empty))\n\n",
+                "type": "List.List comparable -> RedBlackTrees.RedBlackTree comparable"
+            },
+            {
+                "name": "height",
+                "comment": " Calculate the height of the tree.\n\n    fromList [ 8, 24, 17, 32, 9, 1, 12, 7 ] |> height\n    --> 4\n\nThe longest path from the root to a leaf is at most twice the length of\nthe shortest path.\n\n    height tree <= 2 * (Maybe.withDefault 0 <| blackHeight tree)\n    --> True\n\n",
+                "type": "RedBlackTrees.RedBlackTree comparable -> Basics.Int"
+            },
+            {
+                "name": "inOrder",
+                "comment": " An in-order depth-first search: traverse the left branch,\nadd the root, then finish with the right branch. This ordering\nis sorted by convention.\n\n    fromList [ 2, 5, 6, 7, 1, 8, 4, 3 ] |> inOrder\n    --> [ 1, 2, 3, 4, 5, 6, 7, 8 ]\n\n",
+                "type": "RedBlackTrees.RedBlackTree comparable -> List.List comparable"
+            },
+            {
+                "name": "insert",
+                "comment": " Adds a new value to the tree. Since this may cause on of the four\nred black constraints to be broken, there may be a need to recolour nodes\nor rebalance the tree.\n\n    singleton 8 |> insert 1\n    --> Node 8 Black (Node 1 Red Empty Empty) Empty\n\n",
+                "type": "comparable -> RedBlackTrees.RedBlackTree comparable -> RedBlackTrees.RedBlackTree comparable"
+            },
+            {
+                "name": "isMember",
+                "comment": " Check if a value currently exists within in a tree.\n\n    fromList [ 1, 2, 3 ] |> isMember 72\n    --> False\n\n",
+                "type": "comparable -> RedBlackTrees.RedBlackTree comparable -> Basics.Bool"
+            },
+            {
+                "name": "isValid",
+                "comment": " Verifies that a given tree is a valid red black tree by checking\n\n1.  It satisfies the binary search order property\n2.  The root node is coloured `Black`\n3.  No red node has a child node that is also red\n4.  Every path from the root to a leaf contains the same number of black nodes\n\n```\nfromList [ 1, 2, 3, 4 ] |> isValid\n--> True\n```\n\n",
+                "type": "RedBlackTrees.RedBlackTree comparable -> Basics.Bool"
+            },
+            {
+                "name": "levelOrder",
+                "comment": " A breadth-first search traversing the tree in level order,\nstarting from the root and travering down.\n\n    fromList [ 2, 5, 6, 7, 1, 8, 4, 3 ] |> levelOrder\n    --> [ 5, 3, 7, 2, 4, 6, 8, 1 ]\n\n",
+                "type": "RedBlackTrees.RedBlackTree comparable -> List.List comparable"
+            },
+            {
+                "name": "maximum",
+                "comment": " Finds largest element in tree. Returns `Nothing`\nif tree is `Empty`.\n\n    fromList [1,9,2,7] |> maximum\n    --> Just 9\n\n",
+                "type": "RedBlackTrees.RedBlackTree comparable -> Maybe.Maybe comparable"
+            },
+            {
+                "name": "postOrder",
+                "comment": " A post-order depth-first search: traverse the left branch followed by\nthe right branch and finishing with the root.\n\n    fromList [ 2, 5, 6, 7, 1, 8, 4, 3 ] |> postOrder\n    --> [ 1, 2, 4, 3, 6, 8, 7, 5 ]\n\n",
+                "type": "RedBlackTrees.RedBlackTree comparable -> List.List comparable"
+            },
+            {
+                "name": "preOrder",
+                "comment": " A pre-order depth-first search: start at the root, then\ntraverse the left branch followed by the right branch.\n\n    fromList [ 2, 5, 6, 7, 1, 8, 4, 3 ] |> preOrder\n    --> [ 5, 3, 2, 1, 4, 7, 6, 8 ]\n\n",
+                "type": "RedBlackTrees.RedBlackTree comparable -> List.List comparable"
+            },
+            {
+                "name": "singleton",
+                "comment": " A tree with a single value inserted into it. Since this\nis a single node tree, it's colour is black by definition.\n\n    singleton 5\n    --> Node 5 Black Empty Empty\n\n",
+                "type": "comparable -> RedBlackTrees.RedBlackTree comparable"
+            },
+            {
+                "name": "size",
+                "comment": " Count the number of elements in the tree.\n\n    fromList [ 3, 8, 16 ] |> size\n    --> 3\n\n",
+                "type": "RedBlackTrees.RedBlackTree comparable -> Basics.Int"
+            }
+        ],
+        "binops": []
+    }
+]

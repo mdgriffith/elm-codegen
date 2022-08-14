@@ -1,0 +1,229 @@
+[
+    {
+        "name": "Storage",
+        "comment": "\n\n@docs Storage\n\n\n# Build\n\n    empty\n        |> insert \"foo\" (Value.string \"bar\")\n    --> fromList [ ( \"foo\", Value.string \"bar\" ) ]\n\n@docs empty, singleton, insert, update, remove\n\n\n# Query\n\n@docs isEmpty, member, size, get, getBool, getFloat, getInt, getString, getJson, getStringUnsafe\n\n\n# Lists\n\n@docs keys, values, toList, fromList\n\n\n# Combine\n\n@docs union, intersect, diff, merge\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Storage",
+                "comment": " A storage container of keys and values.\n\n    import Storage exposing (Storage)\n    import Storage.Value as Value\n\n    configuration: Storage\n    configuration =\n        Storage.fromList [\n        (\"config.item.a\", Value.string \"some value\")\n        , (\"config.item.b\", Value.float 1.5)\n        ]\n\n\n    Storage.getString \"config.item.a\" configuration\n    --> Just \"some value\"\n\n    Storage.getString \"config.item.b\" configuration\n    --> Nothing\n\n    Storage.getStringUnsafe \"config.item.a\" configuration\n    --> \"some value\"\n\n    Storage.getStringUnsafe \"config.item.b\" configuration\n    --> \"1.5\"\n\n    Storage.getFloat \"config.item.a\" configuration\n    --> Nothing\n\n    Storage.getFloat \"config.item.b\" configuration\n    --> Just \"1.5\"\n\n",
+                "args": [],
+                "type": "Internal.Storage.Storage"
+            }
+        ],
+        "values": [
+            {
+                "name": "diff",
+                "comment": " Keep a String-value pair when its key does not appear in the second Storage container.\n\n    diff\n        ( fromList [(\"a\", Value.string \"a1\"), (\"c\", Value.string \"c1\")] )\n        ( fromList [(\"a\", Value.string \"a2\"), (\"b2\", Value.string \"b2\")] )\n    --> fromList [ (\"c\", Value.string \"c1\") ]\n\n",
+                "type": "Storage.Storage -> Storage.Storage -> Storage.Storage"
+            },
+            {
+                "name": "empty",
+                "comment": " Create an empty Storage container\n",
+                "type": "Storage.Storage"
+            },
+            {
+                "name": "fromList",
+                "comment": " Convert an association list into a Storage container.\n\n    fromList [\n        ( \"fruit\", Value.string \"apple\" )\n    ]\n    --> insert \"fruit\" (Value.string \"apple\") empty\n\n",
+                "type": "List.List ( String.String, Internal.Storage.Value.Value ) -> Storage.Storage"
+            },
+            {
+                "name": "get",
+                "comment": " Get the Value associated with a key. If the key is not found, return Nothing.\nThis is useful when you are not sure if a key will be in the Storage.\n\n    empty\n        |> insert \"fruit\" (Value.string \"apple\")\n        |> get \"fruit\"\n    --> Just (Value.string \"apple\")\n\n    empty\n        |> insert \"fruit\" (Value.string \"apple\")\n        |> get \"apple\"\n    --> Nothing\n\n",
+                "type": "String.String -> Storage.Storage -> Maybe.Maybe Internal.Storage.Value.Value"
+            },
+            {
+                "name": "getBool",
+                "comment": " Safely get the Bool associated with a key. If the key is not found OR if\nthe value is not a Bool, return Nothing.\n\n    empty\n        |> insert \"is.cool\" (Value.bool True)\n        |> getBool \"is.cool\"\n        --> Just True\n\n",
+                "type": "String.String -> Storage.Storage -> Maybe.Maybe Basics.Bool"
+            },
+            {
+                "name": "getFloat",
+                "comment": " Safely get the Float associated with a key. If the key is not found OR if\nthe value is not a Float, return Nothing.\n\n    empty\n        |> insert \"velocity\" (Value.float 1.6)\n        |> getFloat \"velocity\"\n        --> Just 1.6\n\n",
+                "type": "String.String -> Storage.Storage -> Maybe.Maybe Basics.Float"
+            },
+            {
+                "name": "getInt",
+                "comment": " Safely get the Int associated with a key. If the key is not found OR if\nthe value is not a Int, return Nothing.\n\n    empty\n        |> insert \"moons\" (Value.int 1)\n        |> getInt \"moons\"\n        --> Just 1\n\n",
+                "type": "String.String -> Storage.Storage -> Maybe.Maybe Basics.Int"
+            },
+            {
+                "name": "getJson",
+                "comment": " Safely get the Json associated with a key. If the key is not found OR if\nthe value is not a Json, return Nothing.\n",
+                "type": "String.String -> Storage.Storage -> Maybe.Maybe Json.Encode.Value"
+            },
+            {
+                "name": "getString",
+                "comment": " Safely get the String associated with a key. If the key is not found OR if\nthe value is not a String, return Nothing.\n\n    empty\n        |> insert \"fruit\" (Value.string \"apple\")\n        |> getString \"fruit\"\n        --> Just \"apple\"\n\n",
+                "type": "String.String -> Storage.Storage -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "getStringUnsafe",
+                "comment": " Unsafely get **a** String associated with a key. If the key is not found\nreturn an empty String (\"\")\n",
+                "type": "String.String -> Storage.Storage -> String.String"
+            },
+            {
+                "name": "insert",
+                "comment": " Insert a String-Value pair into a Storage container. Replaces value when there is a collision.\n\n    empty\n        |> insert \"fruit\" (Value.string \"apple\")\n        |> insert \"fruit\" (Value.string \"banana\")\n    --> fromList [ ( \"fruit\", Value.string \"banana\" ) ]\n\n",
+                "type": "String.String -> Internal.Storage.Value.Value -> Storage.Storage -> Storage.Storage"
+            },
+            {
+                "name": "intersect",
+                "comment": " Keep a String-value pair when its key appears in the second Storage container. Preference is given to values in the first Storage container.\n\n    intersect\n        ( fromList [(\"a\", Value.string \"a1\"), (\"c\", Value.string \"c1\")] )\n        ( fromList [(\"a\", Value.string \"a2\"), (\"b2\", Value.string \"b2\")] )\n    --> fromList [ ( \"a\", Value.string \"a1\" )]\n\n",
+                "type": "Storage.Storage -> Storage.Storage -> Storage.Storage"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Determine if a Storage container is empty.\n\n    isEmpty empty\n    --> True\n\n    isEmpty (fromList [])\n    --> True\n\n    empty\n        |> insert \"fruit\" (Value.string \"apple\")\n        |> isEmpty\n    --> False\n\n    empty\n        |> insert \"fruit\" (Value.string \"apple\")\n        |> remove \"fruit\"\n        |> isEmpty\n    --> True\n\n",
+                "type": "Storage.Storage -> Basics.Bool"
+            },
+            {
+                "name": "keys",
+                "comment": " Get all of the keys in a Storage container, sorted from lowest to highest.\n\n    fromList [(\"foo\", Value.empty), (\"bar\", Value.empty)]\n        |> keys\n    --> [\"bar\", \"foo\"]\n\n",
+                "type": "Storage.Storage -> List.List String.String"
+            },
+            {
+                "name": "member",
+                "comment": " Determine if a key is in a Storage.\n\n    empty\n        |> insert \"fruit\" (Value.string \"apple\")\n        |> member \"fruit\"\n    --> True\n\n    empty\n        |> insert \"fruit\" (Value.string \"apple\")\n        |> member \"apple\"\n    --> False\n\n",
+                "type": "String.String -> Storage.Storage -> Basics.Bool"
+            },
+            {
+                "name": "merge",
+                "comment": " The most general way of combining two Storage containers. You provide three accumulators for when a given key appears:\n\n  - Only in the left Storage container.\n  - In both Storage containers.\n  - Only in the right Storage container.\n\nYou then traverse all the keys from lowest to highest, building up whatever you want.\n\n",
+                "type": "(String.String -> Internal.Storage.Value.Value -> result -> result) -> (String.String -> Internal.Storage.Value.Value -> Internal.Storage.Value.Value -> result -> result) -> (String.String -> Internal.Storage.Value.Value -> result -> result) -> Storage.Storage -> Storage.Storage -> result -> result"
+            },
+            {
+                "name": "remove",
+                "comment": " Remove a String-Value pair from a Storage container. If the key is not found, no changes are made.\n\n    empty\n        |> insert \"fruit\" (Value.string \"apple\")\n        |> remove \"fruit\"\n    --> empty\n\n",
+                "type": "String.String -> Storage.Storage -> Storage.Storage"
+            },
+            {
+                "name": "singleton",
+                "comment": " Create a Storage container with one String-Value pair.\n\n    singleton \"fruit\" (Value.string \"apple\")\n    --> fromList [ ( \"fruit\", Value.string \"apple\" ) ]\n\n",
+                "type": "String.String -> Internal.Storage.Value.Value -> Storage.Storage"
+            },
+            {
+                "name": "size",
+                "comment": " Determine the number of String-Value pairs in the Storage container.\n\n    fromList [(\"foo\", Value.empty)]\n    |> size\n    --> 1\n\n",
+                "type": "Storage.Storage -> Basics.Int"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert a dictionary into an Storage container list of key-StoageItem pairs, sorted by keys.\n\n    insert \"fruit\" (Value.string \"apple\") empty\n    |> toList\n    --> [ ( \"fruit\", Value.string \"apple\" ) ]\n\n",
+                "type": "Storage.Storage -> List.List ( String.String, Internal.Storage.Value.Value )"
+            },
+            {
+                "name": "union",
+                "comment": " Combine two Storage containers. If there is a collision, preference is given to the first Storage container.\n\n    union\n        ( fromList [(\"a\", Value.string \"a1\"), (\"c\", Value.string \"c1\")] )\n        ( fromList [(\"a\", Value.string \"a2\"), (\"b2\", Value.string \"b2\")] )\n    --> fromList [ ( \"a\", Value.string \"a1\" ), ( \"b\", Value.string \"b2\" ), ( \"c\", Value.string \"c1\" ) ]\n\n",
+                "type": "Storage.Storage -> Storage.Storage -> Storage.Storage"
+            },
+            {
+                "name": "update",
+                "comment": " Update a Value for a specific key with a given function.\n\n    empty\n        |> insert \"fruit\" (Value.string \"apple\")\n        |> update \"fruit\" (Maybe.map (\\_ -> Value.string \"banana\"))\n    --> fromList [ ( \"fruit\", Value.string \"banana\" ) ]\n\n",
+                "type": "String.String -> (Maybe.Maybe Internal.Storage.Value.Value -> Maybe.Maybe Internal.Storage.Value.Value) -> Storage.Storage -> Storage.Storage"
+            },
+            {
+                "name": "values",
+                "comment": " Get all of the values in a Storage container, in the order of their keys.\n\n    fromList [(\"foo\", Value.string \"a\"), (\"bar\", Value.string \"b\")]\n        |> values\n    --> [Value.string \"b\", Value.string \"a\"]\n\n",
+                "type": "Storage.Storage -> List.List Internal.Storage.Value.Value"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Storage.Value",
+        "comment": "\n\n@docs Value\n\n\n# Build\n\n@docs empty, string, int, float, bool, json\n\n\n# Helpers\n\n@docs compare, equals\n\n\n# JSON\n\n@docs encode, decode\n\n\n# Convert\n\n@docs toString, toBool, toFloat, toInt, toJson, toStringUnsafe\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Value",
+                "comment": " A Storage Value\n",
+                "args": [],
+                "type": "Internal.Storage.Value.Value"
+            }
+        ],
+        "values": [
+            {
+                "name": "bool",
+                "comment": " Create a Value from a Bool\n",
+                "type": "Basics.Bool -> Storage.Value.Value"
+            },
+            {
+                "name": "compare",
+                "comment": " Compare two Values\n",
+                "type": "Storage.Value.Value -> Storage.Value.Value -> Basics.Order"
+            },
+            {
+                "name": "decode",
+                "comment": " Decode a Json.Encode.Value into a Json.Value\n",
+                "type": "Json.Decode.Decoder Storage.Value.Value"
+            },
+            {
+                "name": "empty",
+                "comment": " Create an empty Value\n",
+                "type": "Storage.Value.Value"
+            },
+            {
+                "name": "encode",
+                "comment": " Encode a Storage.Value as a Json.Encode.Value\n",
+                "type": "Storage.Value.Value -> Json.Decode.Value"
+            },
+            {
+                "name": "equals",
+                "comment": " Are two values the same?\n",
+                "type": "Storage.Value.Value -> Storage.Value.Value -> Basics.Bool"
+            },
+            {
+                "name": "float",
+                "comment": " Create a Value from a Float\n",
+                "type": "Basics.Float -> Storage.Value.Value"
+            },
+            {
+                "name": "int",
+                "comment": " Create a Value from an Int\n",
+                "type": "Basics.Int -> Storage.Value.Value"
+            },
+            {
+                "name": "json",
+                "comment": " Create a Value from a Json.Encode.Value\n",
+                "type": "Json.Decode.Value -> Storage.Value.Value"
+            },
+            {
+                "name": "string",
+                "comment": " Create a Value from a String\n",
+                "type": "String.String -> Storage.Value.Value"
+            },
+            {
+                "name": "toBool",
+                "comment": " Safely convert Value to a Bool\n\n    toBool (bool True)\n    --> Just True\n\n    toBool (string \"foo\")\n    --> Nothing\n\n",
+                "type": "Storage.Value.Value -> Maybe.Maybe Basics.Bool"
+            },
+            {
+                "name": "toFloat",
+                "comment": " Safely convert Value to a Float\n\n    toFloat (float 1.6  )\n    --> Just 1.6\n\n    toFloat (int 1)\n    --> Nothing\n\n",
+                "type": "Storage.Value.Value -> Maybe.Maybe Basics.Float"
+            },
+            {
+                "name": "toInt",
+                "comment": " Safely convert Value to an Int\n\n    toInt (int 1  )\n    --> Just 1\n\n    toInt (float 1.0)\n    --> Nothing\n\n",
+                "type": "Storage.Value.Value -> Maybe.Maybe Basics.Int"
+            },
+            {
+                "name": "toJson",
+                "comment": " Safely convert Value to a Json.Encode.Value\ntoJson (json Encode.null )\n--> Just Encode.null\n\n    toJson (bool True)\n    --> Nothing\n\n",
+                "type": "Storage.Value.Value -> Maybe.Maybe Json.Decode.Value"
+            },
+            {
+                "name": "toString",
+                "comment": " Safely convert Value to a String\n\n    toString (string \"foo\")\n    --> Just \"foo\"\n\n    toString (bool True)\n    --> Nothing\n\n",
+                "type": "Storage.Value.Value -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "toStringUnsafe",
+                "comment": " Return a String representation of a Value.\n\n    toStringUnsafe empty\n    --> \"\"\n\n    toStringUnsafe (bool True)\n    --> \"true\"\n\n    toStringUnsafe (float 1.6)\n    --> \"1.6\"\n\n    toStringUnsafe (int 2)\n    --> \"2\"\n\n    toStringUnsafe (string \"foo\")\n    --> \"foo\"\n\n    toStringUnsafe (json (Encode.object [ (\"foo\", Encode.string \"bar\" ) ]))\n    --> \"{\\\"foo\\\":\\\"bar\\\"}\"\n\n",
+                "type": "Storage.Value.Value -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,71 @@
+[
+    {
+        "name": "Loaders",
+        "comment": " This Package is the Sam Herbert [https://github.com/SamHerbert/SVG-Loaders](pure svg loaders) implementation for elm\n\nThe Loaders can be previewed at:\n\n<http://elm-loaders.surge.sh/>\n\n\n## Example\n\n    import Loaders\n\n    view : Html msg\n    view =\n        div [] [ Loaders.TailSpin 40 \"#ff0000\" ]\n\nPS. all the loaders receives the width as float and the color as string\n\n\n## Loaders\n\n@docs audio, ballTriangle, bars, circles, grid, hearts, oval, puff, rings, spinningCircles, tailSpin, threeDots\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "audio",
+                "comment": " ",
+                "type": "Basics.Float -> String.String -> Html.Html msg"
+            },
+            {
+                "name": "ballTriangle",
+                "comment": " ",
+                "type": "Basics.Float -> String.String -> Html.Html msg"
+            },
+            {
+                "name": "bars",
+                "comment": " ",
+                "type": "Basics.Float -> String.String -> Html.Html msg"
+            },
+            {
+                "name": "circles",
+                "comment": " ",
+                "type": "Basics.Float -> String.String -> Html.Html msg"
+            },
+            {
+                "name": "grid",
+                "comment": " ",
+                "type": "Basics.Float -> String.String -> Html.Html msg"
+            },
+            {
+                "name": "hearts",
+                "comment": " ",
+                "type": "Basics.Float -> String.String -> Html.Html msg"
+            },
+            {
+                "name": "oval",
+                "comment": " ",
+                "type": "Basics.Float -> String.String -> Html.Html msg"
+            },
+            {
+                "name": "puff",
+                "comment": " ",
+                "type": "Basics.Float -> String.String -> Html.Html msg"
+            },
+            {
+                "name": "rings",
+                "comment": " ",
+                "type": "Basics.Float -> String.String -> Html.Html msg"
+            },
+            {
+                "name": "spinningCircles",
+                "comment": " ",
+                "type": "Basics.Float -> String.String -> Html.Html msg"
+            },
+            {
+                "name": "tailSpin",
+                "comment": " ",
+                "type": "Basics.Float -> String.String -> Html.Html msg"
+            },
+            {
+                "name": "threeDots",
+                "comment": " ",
+                "type": "Basics.Float -> String.String -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

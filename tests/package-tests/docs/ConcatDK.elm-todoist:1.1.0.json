@@ -1,0 +1,77 @@
+[
+    {
+        "name": "TodoistRest",
+        "comment": " This library provides functions for integration with the Todoist rest Api.\n\n\n# Data types\n\n@docs Token, Project, Task, Due, Label\n\n\n# Api calls\n\n\n## Projects\n\n@docs getAllProjects, getProject\n\n\n## Tasks\n\n@docs getActiveTasks, getActiveTask, getActiveTasksWithFilter\n\n\n## Labels\n\n@docs getLabel, getAllLabels\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Due",
+                "comment": " The Due type represents a due date.\nIt has the following values:\n\n    * date : String - This is a String telling when the due time is.\n    * string : String - A human readable representation of the due date\n    * datetime : String - A datetime representing the die date\n    * timezone : String - The timezone the datetime is set in\n\n",
+                "args": [],
+                "type": "{ date : String.String, string : String.String, datetime : Maybe.Maybe String.String, timezone : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "Label",
+                "comment": " The label type represents a Todoist label.\nIt has the following values:\n\n    * id : Int - The label unique id in Todoist\n    * name : String - The label name\n    * order : Int - The order number of the label in the list of all labels.\n\n",
+                "args": [],
+                "type": "{ id : Basics.Int, name : String.String, order : Basics.Int }"
+            },
+            {
+                "name": "Project",
+                "comment": " The Todoist Project type represents a project in todoist. It has the\nfollowing values:\n\n    * id: Integer - The project unique id on the Todoist platform\n    * name: String - The name of the project\n    * order: Int - The order of the projects in the users setup\n    * indent: Int - An int ranging from 1 to 4 for the project indentation level.\n    * commentCount: Int - The amount of comments on a project.\n\n",
+                "args": [],
+                "type": "{ id : Basics.Int, name : String.String, order : Basics.Int, indent : Basics.Int, commentCount : Basics.Int }"
+            },
+            {
+                "name": "Task",
+                "comment": " The task type represents a todoist task.\nIt has the following values:\n\n    * id : Int - The task unique id in Todoist\n    * projectId : Int - The id of the project the task is in\n    * completed : Bool - If the task is completed or not\n    * labelIds : List Int - A list of all associated label ids\n    * order : Int - The order of the task in the project it is in\n    * indent : Int - Indention level of the task in the project\n    * priority : Int - The priority of the task, takes on a value from 1 to 4.\n    * due : Maybe Due - A due object telling when the task is due, Nothing if no due date is specified\n    * url : String - The permanent link to the task page on Todoist.com\n    * commentCount : Int - The amount of comments on the task.\n\n",
+                "args": [],
+                "type": "{ id : Basics.Int, projectId : Basics.Int, completed : Basics.Bool, content : String.String, labelIds : List.List Basics.Int, order : Basics.Int, indent : Basics.Int, priority : Basics.Int, due : Maybe.Maybe TodoistRest.Due, url : String.String, commentCount : Basics.Int }"
+            },
+            {
+                "name": "Token",
+                "comment": " A todoist access token. This is needed for all calls to the api.\nThis can be found on: <https://todoist.com/prefs/integrations> at the very bottom of the page.\n",
+                "args": [],
+                "type": "String.String"
+            }
+        ],
+        "values": [
+            {
+                "name": "getActiveTask",
+                "comment": " Makes a get request for the task associated with the provided id.\n",
+                "type": "(Result.Result Http.Error (List.List TodoistRest.Task) -> msg) -> Basics.Int -> TodoistRest.Token -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "getActiveTasks",
+                "comment": " Makes a get request for all the active tasks associated with the provided token.\n",
+                "type": "(Result.Result Http.Error (List.List TodoistRest.Task) -> msg) -> TodoistRest.Token -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "getActiveTasksWithFilter",
+                "comment": " Gets all active tasks that satisfies a todoist query\n(for help visit: <https://get.todoist.help/hc/en-us/articles/205248842-Filters>)\n\n    getActiveTasksWithFilter FetchShoppingTasks \"@buy | #Shopping\" myToken\n\n",
+                "type": "(Result.Result Http.Error (List.List TodoistRest.Task) -> msg) -> String.String -> TodoistRest.Token -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "getAllLabels",
+                "comment": " Makes a get request for all the labels associated with the provided token.\n",
+                "type": "(Result.Result Http.Error (List.List TodoistRest.Label) -> msg) -> TodoistRest.Token -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "getAllProjects",
+                "comment": " Makes a get request for all the projects associated with the provided token.\n",
+                "type": "(Result.Result Http.Error (List.List TodoistRest.Project) -> msg) -> TodoistRest.Token -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "getLabel",
+                "comment": " Makes a get request for the label associated with the provided id.\n",
+                "type": "(Result.Result Http.Error TodoistRest.Label -> msg) -> Basics.Int -> TodoistRest.Token -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "getProject",
+                "comment": " Makes a get request for the project associated with the provided id.\nWill fail if the provided token does not grant access to the project.\n",
+                "type": "(Result.Result Http.Error TodoistRest.Project -> msg) -> Basics.Int -> TodoistRest.Token -> Platform.Cmd.Cmd msg"
+            }
+        ],
+        "binops": []
+    }
+]

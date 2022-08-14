@@ -1,0 +1,291 @@
+[
+    {
+        "name": "UIBook",
+        "comment": " A book that tells the story of the UI elements of your Elm application.\n\n\n# Start with a chapter.\n\nYou can create one chapter for each one of your UI elements and split it in sections to showcase all of their possible variants.\n\n    buttonsChapter : UIChapter x\n    buttonsChapter =\n        chapter \"Buttons\"\n            |> withSections\n                [ ( \"Default\", button [] [] )\n                , ( \"Disabled\", button [ disabled True ] [] )\n                ]\n\nDon't be limited by this pattern though. A chapter and its sections may be used however you want. For instance, if it's useful to have a catalog of possible colors or typographic styles in your documentation, why not dedicate a chapter to it?\n\n@docs chapter, withSection, withSections, withBackgroundColor, withDescription, withTwoColumns, UIChapter\n\n\n# Then, create your book.\n\nYour UIBook is a collection of chapters.\n\n    book : UIBook ()\n    book =\n        book \"MyApp\" ()\n            |> withChapters\n                [ colorsChapter\n                , buttonsChapter\n                , inputsChapter\n                , chartsChapter\n                ]\n\n**Important**: Please note that you always need to use the `withChapters` functions as the final step of your setup.\n\nThis returns a standard `Browser.application`. You can choose to use it just as you would any Elm application – however, this package can also be added as a NPM dependency to be used as zero-config dev server to get things started.\n\nIf you want to use our zero-config dev server, just install `elm-ui-book` as a devDependency then run `npx elm-ui-book {MyBookModule}.elm` and you should see your brand new Book running on your browser.\n\n@docs book, withChapters, withChapterGroups, UIBook\n\n\n# Customize the book's style.\n\nYou can configure your book with a few extra settings to make it more personalized. Want to change the theme color so it's more fitting to your brand? Sure. Want to use your app's logo as the header? Go crazy.\n\n    book \"MyApp\" ()\n        |> withColor \"#007\"\n        |> withSubtitle \"Design System\"\n        |> withChapters [ ... ]\n\n@docs withLogo, withSubtitle, withHeader, withGlobals, withThemeBackground, withThemeBackgroundAlt, withThemeAccent, withThemeAccentAlt, themeBackground, themeBackgroundAlt, themeAccent, themeAccentAlt, withColor\n\n\n# Integrate it with elm-css, elm-ui and others.\n\nIf you're using one of these two common ways of styling your Elm app, just import the proper definitions and you're good to go.\n\n    import UIBook exposing (withChapters)\n    import UIBook.ElmCSS exposing (UIBook, book)\n\n    main : UIBook ()\n    main =\n        book \"MyElmCSSApp\" ()\n            |> withChapters []\n\nIf you're using other packages that also work with a custom html, don't worry , defining a custom setup is pretty simple as well:\n\n    module UIBookCustom exposing (UIBook, UIChapter, book)\n\n    import MyCustomHtmlLibrary exposing (CustomHtml, toHtml)\n    import UIBook\n\n    type alias UIBookHtml state =\n        CustomHtml (UIBook.UIBookMsg state)\n\n    type alias UIChapter state =\n        UIBook.UIChapterCustom state (UIBookHtml state)\n\n    type alias UIBook state =\n        UIBook.UIBookCustom state (UIBookHtml state)\n\n    book : String -> state -> UIBook.UIBookBuilder state (UIBookHtml state)\n    book title state =\n        UIBook.customBook\n            { title = title\n            , state = state\n            , toHtml = toHtml\n            }\n\nThen you can `import UIBookCustom exposing (UIBook, UIChapter, book)` just as you would with `UIBook.ElmCSS`.\n\n@docs UIChapterCustom, UIBookCustom, UIBookBuilder, UIBookMsg, customBook\n\n\n# Interact with it.\n\nLog your action intents to showcase how your components would react to interactions.\n\n@docs logAction, logActionWithString, logActionWithInt, logActionWithFloat, logActionMap\n\n\n# Showcase stateful widgets\n\nSometimes it's useful to display a complex component so people can understand how it works on an isolated environment, not only see their possible static states. But how to accomplish this with Elm's static typing? Simply provide your own custom \"state\" that can be used and updated by your own elements.\n\n    type alias MyState =\n        { input : String, counter : Int }\n\n    initialState : MyState\n    initialState =\n        { input = \"\", counter = 0 }\n\n    main : UIBook MyState\n    main =\n        book \"MyStatefulApp\" initialState\n            |> withChapters\n                [ inputChapter\n                , counterChapter\n                ]\n\n    counterChapter : UIChapter { x | counter : Int }\n    counterChapter =\n        let\n            updateCounter state =\n                { state | counter = state.counter + 1 }\n        in\n        chapter \"Counter\"\n            |> withStatefulSection\n                (\\state ->\n                    button\n                        [ onClick (updateState updateCounter) ]\n                        [ text <| String.fromInt state.counter ]\n                )\n\n    inputChapter : UIChapter { x | input : String }\n    inputChapter =\n        let\n            updateInput value state =\n                { state | input = value }\n        in\n        chapter \"Input\"\n            |> withStatefulSection\n                (\\state ->\n                    input\n                        [ value state.input\n                        , onInput (updateState1 updateInput)\n                        ]\n                        []\n                )\n\n@docs withStatefulSection, withStatefulSections, toStateful, updateState, updateState1\n\n",
+        "unions": [
+            {
+                "name": "UIBookBuilder",
+                "comment": " ",
+                "args": [
+                    "state",
+                    "html"
+                ],
+                "cases": []
+            },
+            {
+                "name": "UIChapterCustom",
+                "comment": " ",
+                "args": [
+                    "state",
+                    "html"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "UIBook",
+                "comment": " ",
+                "args": [
+                    "state"
+                ],
+                "type": "UIBook.UIBookCustom state (Html.Html (UIBook.UIBookMsg state))"
+            },
+            {
+                "name": "UIBookCustom",
+                "comment": " ",
+                "args": [
+                    "state",
+                    "html"
+                ],
+                "type": "Platform.Program () (UIBook.Model state html) (UIBook.Msg state)"
+            },
+            {
+                "name": "UIBookMsg",
+                "comment": " ",
+                "args": [
+                    "state"
+                ],
+                "type": "UIBook.Msg state"
+            },
+            {
+                "name": "UIChapter",
+                "comment": " ",
+                "args": [
+                    "state"
+                ],
+                "type": "UIBook.UIChapterCustom state (Html.Html (UIBook.UIBookMsg state))"
+            }
+        ],
+        "values": [
+            {
+                "name": "book",
+                "comment": " Kickoff the creation of an UIBook application.\n",
+                "type": "String.String -> state -> UIBook.UIBookBuilder state (Html.Html (UIBook.Msg state))"
+            },
+            {
+                "name": "chapter",
+                "comment": " Creates a chapter with some title.\n",
+                "type": "String.String -> UIBook.UIChapterBuilder state html"
+            },
+            {
+                "name": "customBook",
+                "comment": " ",
+                "type": "{ title : String.String, state : state, toHtml : html -> Html.Html (UIBook.Msg state) } -> UIBook.UIBookBuilder state html"
+            },
+            {
+                "name": "logAction",
+                "comment": " Logs an action that takes no inputs.\n\n    -- Will log \"Clicked!\" after pressing the button\n    button [ onClick <| logAction \"Clicked!\" ] []\n\n",
+                "type": "String.String -> UIBook.Msg state"
+            },
+            {
+                "name": "logActionMap",
+                "comment": " Logs an action that takes one generic input that can be transformed into a String.\n\n    eventToString : Event -> String\n    eventToString event =\n        case event of\n            Start ->\n                \"Start\"\n\n            Finish ->\n                \"Finish\"\n\n    myCustomElement {\n        onEvent =\n            logActionMap \"My Custom Element: \" eventToString\n    }\n\n",
+                "type": "String.String -> (value -> String.String) -> value -> UIBook.Msg state"
+            },
+            {
+                "name": "logActionWithFloat",
+                "comment": " Logs an action that takes one `Float` input.\n",
+                "type": "String.String -> String.String -> UIBook.Msg state"
+            },
+            {
+                "name": "logActionWithInt",
+                "comment": " Logs an action that takes one `Int` input.\n",
+                "type": "String.String -> String.String -> UIBook.Msg state"
+            },
+            {
+                "name": "logActionWithString",
+                "comment": " Logs an action that takes one `String` input.\n\n    -- Will log \"Input: x\" after pressing the \"x\" key\n    input [ onInput <| logActionWithString \"Input: \" ] []\n\n",
+                "type": "String.String -> String.String -> UIBook.Msg state"
+            },
+            {
+                "name": "themeAccent",
+                "comment": " Use your theme accent color on other parts of your book.\n\n    chapter : UIChapter x\n    chapter\n        |> withSection\n            (p\n                [ style \"color\" themeAccent ]\n                [ text \"Hello.\" ]\n            )\n\n",
+                "type": "String.String"
+            },
+            {
+                "name": "themeAccentAlt",
+                "comment": " Use your theme accent alt color on other parts of your book.\n",
+                "type": "String.String"
+            },
+            {
+                "name": "themeBackground",
+                "comment": " Use your theme background color on other parts of your book.\n\n    chapter : UIChapter x\n    chapter\n        |> withSection\n            (p\n                [ style \"background\" themeBackground ]\n                [ text \"Hello.\" ]\n            )\n\n",
+                "type": "String.String"
+            },
+            {
+                "name": "themeBackgroundAlt",
+                "comment": " Use your theme background alt color on other parts of your book.\n",
+                "type": "String.String"
+            },
+            {
+                "name": "toStateful",
+                "comment": " Use this to make your life easier when mixing stateful and static sections.\n\n    chapter \"ComplexWidget\"\n        |> withStatefulSections\n            [ ( \"Interactive\", (\\state -> ... ) )\n            , toStateful ( \"State1\", widgetInState1 )\n            , toStateful ( \"State2\", widgetInState1 )\n            ]\n\n",
+                "type": "( String.String, html ) -> UIBook.UIChapterSection state html"
+            },
+            {
+                "name": "updateState",
+                "comment": " Updates the state of your stateful book.\n\n    counterChapter : UIChapter { x | counter : Int }\n    counterChapter =\n        let\n            update state =\n                { state | counter = state.counter + 1 }\n        in\n        chapter \"Counter\"\n            |> withStatefulSection\n                (\\state ->\n                    button\n                        [ onClick (updateState update) ]\n                        [ text <| String.fromInt state.counter ]\n                )\n\n",
+                "type": "(state -> state) -> UIBook.Msg state"
+            },
+            {
+                "name": "updateState1",
+                "comment": " Used when updating the state based on an argument.\n\n    inputChapter : UIChapter { x | input : String }\n    inputChapter =\n        let\n            updateInput value state =\n                { state | input = value }\n        in\n        chapter \"Input\"\n            |> withStatefulSection\n                (\\state ->\n                    input\n                        [ value state.input\n                        , onInput (updateState1 updateInput)\n                        ]\n                        []\n                )\n\n",
+                "type": "(a -> state -> state) -> a -> UIBook.Msg state"
+            },
+            {
+                "name": "withBackgroundColor",
+                "comment": " Used for customizing the background color of a chapter's sections.\n\n    buttonsChapter : UIChapter x\n    buttonsChapter =\n        chapter \"Buttons\"\n            |> withBackgroundColor \"#F0F\"\n            |> withSections\n                [ ( \"Default\", button [] [] )\n                , ( \"Disabled\", button [ disabled True ] [] )\n                ]\n\n",
+                "type": "String.String -> UIBook.UIChapterBuilder state html -> UIBook.UIChapterBuilder state html"
+            },
+            {
+                "name": "withChapterGroups",
+                "comment": " List the chapters, divided by groups, that should be displayed on your book.\n\n    book \"MyApp\"\n        |> withChapterGroups\n            [ ( \"Guides\"\n              , [ gettingStartedChapter\n                , sendingRequestsChapter\n                ]\n              )\n            , ( \"UI Widgets\"\n              , [ buttonsChapter\n                , formsChapter\n                , ...\n                ]\n              )\n            ]\n\n**Should be used as the final step on your setup.**\n\n",
+                "type": "List.List ( String.String, List.List (UIBook.UIChapterCustom state html) ) -> UIBook.UIBookBuilder state html -> UIBook.UIBookCustom state html"
+            },
+            {
+                "name": "withChapters",
+                "comment": " List the chapters that should be displayed on your book.\n\n**Should be used as the final step on your setup.**\n\n",
+                "type": "List.List (UIBook.UIChapterCustom state html) -> UIBook.UIBookBuilder state html -> UIBook.UIBookCustom state html"
+            },
+            {
+                "name": "withColor",
+                "comment": " [DEPRECATED] This has the same effect as `withThemeBackground`.\n",
+                "type": "String.String -> UIBook.UIBookBuilder state html -> UIBook.UIBookBuilder state html"
+            },
+            {
+                "name": "withDescription",
+                "comment": " Used for adding a markdown description to your chapter.\n",
+                "type": "String.String -> UIBook.UIChapterBuilder state html -> UIBook.UIChapterBuilder state html"
+            },
+            {
+                "name": "withGlobals",
+                "comment": " Add global elements to your book. This can be helpful for things like CSS resets.\n\nFor instance, if you're using elm-tailwind-modules, this would be really helpful:\n\n    import Css.Global exposing (global)\n    import Tailwind.Utilities exposing (globalStyles)\n    import UIBook.ElmCSS exposing (book)\n\n    book \"MyApp\"\n        |> withGlobals [\n            global globalStyles\n        ]\n\n",
+                "type": "List.List html -> UIBook.UIBookBuilder state html -> UIBook.UIBookBuilder state html"
+            },
+            {
+                "name": "withHeader",
+                "comment": " Replace the entire header with a custom one.\n\n    book \"MyApp\"\n        |> withHeader (h1 [ style \"color\" \"crimson\" ] [ text \"My App\" ])\n        |> withChapters []\n\nNote that your header must use the same type of html as your chapters. So if you're using `elm-ui`, then your header would need to be typed as `Element msg`.\n\n",
+                "type": "html -> UIBook.UIBookBuilder state html -> UIBook.UIBookBuilder state html"
+            },
+            {
+                "name": "withLogo",
+                "comment": " Customize the header logo to match your brand.\n",
+                "type": "html -> UIBook.UIBookBuilder state html -> UIBook.UIBookBuilder state html"
+            },
+            {
+                "name": "withSection",
+                "comment": " Used for chapters with a single section.\n\n    inputChapter : UIChapter x\n    inputChapter =\n        chapter \"Input\"\n            |> withSection (input [] [])\n\n",
+                "type": "html -> UIBook.UIChapterBuilder state html -> UIBook.UIChapterCustom state html"
+            },
+            {
+                "name": "withSections",
+                "comment": " Used for chapters with multiple sections.\n\n    buttonsChapter : UIChapter x\n    buttonsChapter =\n        chapter \"Buttons\"\n            |> withSections\n                [ ( \"Default\", button [] [] )\n                , ( \"Disabled\", button [ disabled True ] [] )\n                ]\n\n",
+                "type": "List.List ( String.String, html ) -> UIBook.UIChapterBuilder state html -> UIBook.UIChapterCustom state html"
+            },
+            {
+                "name": "withStatefulSection",
+                "comment": " Used for chapters with a single stateful section.\n",
+                "type": "(state -> html) -> UIBook.UIChapterBuilder state html -> UIBook.UIChapterCustom state html"
+            },
+            {
+                "name": "withStatefulSections",
+                "comment": " Used for chapters with multiple stateful sections.\n\nThis is often used for displaying one interactive section and then multiple sections showcasing static states. Check `toStateful` if you are instered in this setup.\n\n",
+                "type": "List.List ( String.String, state -> html ) -> UIBook.UIChapterBuilder state html -> UIBook.UIChapterCustom state html"
+            },
+            {
+                "name": "withSubtitle",
+                "comment": " Replace the default \"UI Docs\" subtitle with a custom one.\n",
+                "type": "String.String -> UIBook.UIBookBuilder state html -> UIBook.UIBookBuilder state html"
+            },
+            {
+                "name": "withThemeAccent",
+                "comment": " Customize your book's accent color. Any valid CSS `color` value can be used.\n",
+                "type": "String.String -> UIBook.UIBookBuilder state html -> UIBook.UIBookBuilder state html"
+            },
+            {
+                "name": "withThemeAccentAlt",
+                "comment": " Customize your book's accent alt color. Any valid CSS `color` value can be used.\n",
+                "type": "String.String -> UIBook.UIBookBuilder state html -> UIBook.UIBookBuilder state html"
+            },
+            {
+                "name": "withThemeBackground",
+                "comment": " Customize your book's background color. Any valid CSS `background` value can be used.\n",
+                "type": "String.String -> UIBook.UIBookBuilder state html -> UIBook.UIBookBuilder state html"
+            },
+            {
+                "name": "withThemeBackgroundAlt",
+                "comment": " Customize your book's background alt color. Any valid CSS `background` value can be used.\n",
+                "type": "String.String -> UIBook.UIBookBuilder state html -> UIBook.UIBookBuilder state html"
+            },
+            {
+                "name": "withTwoColumns",
+                "comment": " Used to customize your chapter with a two column layout.\n",
+                "type": "UIBook.UIChapterBuilder state html -> UIBook.UIChapterBuilder state html"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "UIBook.ElmCSS",
+        "comment": " When using [elm-css](https://package.elm-lang.org/packages/rtfeldman/elm-css/latest), use these as replacements for the same types and functions found on `UIBook`. Everything else should work just the same.\n\n@docs UIBook, UIChapter, book\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "UIBook",
+                "comment": " ",
+                "args": [
+                    "state"
+                ],
+                "type": "UIBook.UIBookCustom state (UIBook.ElmCSS.UIBookHtml state)"
+            },
+            {
+                "name": "UIChapter",
+                "comment": " ",
+                "args": [
+                    "state"
+                ],
+                "type": "UIBook.UIChapterCustom state (UIBook.ElmCSS.UIBookHtml state)"
+            }
+        ],
+        "values": [
+            {
+                "name": "book",
+                "comment": " ",
+                "type": "String.String -> state -> UIBook.UIBookBuilder state (UIBook.ElmCSS.UIBookHtml state)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "UIBook.ElmUI",
+        "comment": " When using [elm-ui](https://package.elm-lang.org/packages/mdgriffith/elm-ui/latest/), use these as replacements for the same types and functions found on `UIBook`. Everything else should work just the same.\n\n@docs UIBook, UIChapter, book\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "UIBook",
+                "comment": " ",
+                "args": [
+                    "state"
+                ],
+                "type": "UIBook.UIBookCustom state (UIBook.ElmUI.UIBookHtml state)"
+            },
+            {
+                "name": "UIChapter",
+                "comment": " ",
+                "args": [
+                    "state"
+                ],
+                "type": "UIBook.UIChapterCustom state (UIBook.ElmUI.UIBookHtml state)"
+            }
+        ],
+        "values": [
+            {
+                "name": "book",
+                "comment": " ",
+                "type": "String.String -> state -> UIBook.UIBookBuilder state (UIBook.ElmUI.UIBookHtml state)"
+            }
+        ],
+        "binops": []
+    }
+]

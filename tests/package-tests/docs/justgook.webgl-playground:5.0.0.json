@@ -1,0 +1,437 @@
+[
+    {
+        "name": "Playground",
+        "comment": "\n\n\n# Playgrounds\n\n@docs picture, animation, game\n\n\n# Shapes\n\n@docs Shape, circle, oval, square, rectangle, triangle, pentagon, hexagon, octagon, polygon\n\n\n# Words\n\n@docs words\n\n\n# Images\n\n@docs image\n\n\n# Move Shapes\n\n@docs move, moveUp, moveDown, moveLeft, moveRight, moveX, moveY, moveZ\n\n\n# Customize Shapes\n\n@docs rotate, fade, scale, scaleX, scaleY, flipY, flipX\n\n\n# Groups\n\n@docs group\n\n\n# Time\n\n@docs Time, spin, wave, zigzag\n\n\n# Computer\n\n@docs Computer, Mouse, Screen, Keyboard, toX, toY, toXY\n\n\n# Colors\n\n@docs Color, rgb, red, orange, yellow, green, blue, purple, brown\n\n\n### Light Colors\n\n@docs lightRed, lightOrange, lightYellow, lightGreen, lightBlue, lightPurple, lightBrown\n\n\n### Dark Colors\n\n@docs darkRed, darkOrange, darkYellow, darkGreen, darkBlue, darkPurple, darkBrown\n\n\n### Shades of Grey\n\n@docs white, lightGrey, grey, darkGrey, lightCharcoal, charcoal, darkCharcoal, black\n\n\n### Alternate Spellings of Gray\n\n@docs lightGray, gray, darkGray\n\n\n### Helpers Types\n\n@docs Playground, Msg\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Color",
+                "comment": " Represents a color.\n\nThe colors below, like `red` and `green`, come from the [Tango palette][tango].\nIt provides a bunch of aesthetically reasonable colors. Each color comes with a\nlight and dark version, so you always get a set like `lightYellow`, `yellow`,\nand `darkYellow`.\n\n[tango]: https://en.wikipedia.org/wiki/Tango_Desktop_Project\n\n",
+                "args": [],
+                "type": "Math.Vector3.Vec3"
+            },
+            {
+                "name": "Computer",
+                "comment": " When writing a [`game`](#game), you can look up all sorts of information\nabout your computer:\n\n  - [`Mouse`](#Mouse) - Where is the mouse right now?\n  - [`Keyboard`](#Keyboard) - Are the arrow keys down?\n  - [`Screen`](#Screen) - How wide is the screen?\n  - [`Time`](#Time) - What time is it right now?\n\nSo you can use expressions like `computer.mouse.x` and `computer.keyboard.enter`\nin games where you want some mouse or keyboard interaction.\n\n",
+                "args": [],
+                "type": "{ mouse : Playground.Mouse, keyboard : Playground.Keyboard, screen : Playground.Screen, time : Playground.Time }"
+            },
+            {
+                "name": "Keyboard",
+                "comment": " Figure out what is going on with the keyboard.\n\nIf someone is pressing the UP and RIGHT arrows, you will see a value like this:\n\n    { up = True\n    , down = False\n    , left = False\n    , right = True\n    , space = False\n    , enter = False\n    , shift = False\n    , backspace = False\n    , keys = Set.fromList [ \"ArrowUp\", \"ArrowRight\" ]\n    }\n\nSo if you want to move a character based on arrows, you could write an update\nlike this:\n\n    update computer y =\n        if computer.keyboard.up then\n            y + 1\n\n        else\n            y\n\nCheck out [`toX`](#toX) and [`toY`](#toY) which make this even easier!\n\n**Note:** The `keys` set will be filled with the `code` of all keys which are\ndown right now. So you will see things like `\"KeyA\"`, `\"KeyB\"`, `\"KeyC\"`, `\"Digit1\"`, `\"Digit2\"`,\n`\"Space\"`, and `\"ControlLeft\"` in there.\nFor example, the code is `\"KeyQ\"` for the `Q` key on a QWERTY layout keyboard,\nbut the same code value also represents the `'` key on Dvorak keyboards and the `A` key on AZERTY keyboards.\n\nCheck out [this list][list] to see the\nnames used for all the different keys! From there, you can use\n[`Set.member`][member] to check for whichever key you want. E.g.\n`Set.member \"Control\" computer.keyboard.keys`.\n\n[list]: https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/code/code_values\n[member]: /packages/elm/core/latest/Set#member\n\n",
+                "args": [],
+                "type": "{ up : Basics.Bool, down : Basics.Bool, left : Basics.Bool, right : Basics.Bool, space : Basics.Bool, enter : Basics.Bool, shift : Basics.Bool, backspace : Basics.Bool, keys : Set.Set String.String }"
+            },
+            {
+                "name": "Mouse",
+                "comment": " Figure out what is going on with the mouse.\n\nYou could draw a circle around the mouse with a program like this:\n\n    import Playground exposing (..)\n\n    main =\n        game view update 0\n\n    view computer memory =\n        [ circle yellow 40\n            |> moveX computer.mouse.x\n            |> moveY computer.mouse.y\n        ]\n\n    update computer memory =\n        memory\n\nYou could also use `computer.mouse.down` to change the color of the circle\nwhile the mouse button is down.\n\n",
+                "args": [],
+                "type": "{ x : Basics.Float, y : Basics.Float, down : Basics.Bool, click : Basics.Bool }"
+            },
+            {
+                "name": "Msg",
+                "comment": " ",
+                "args": [],
+                "type": "Playground.Internal.Msg"
+            },
+            {
+                "name": "Playground",
+                "comment": " Playground State\n",
+                "args": [
+                    "memory"
+                ],
+                "type": "Playground.Internal.Playground memory"
+            },
+            {
+                "name": "Screen",
+                "comment": " Get the dimensions of the screen. If the screen is 800 by 600, you will see\na value like this:\n\n    { width = 800\n    , height = 600\n    , top = 300\n    , left = -400\n    , right = 400\n    , bottom = -300\n    }\n\nThis can be nice when used with [`moveY`](#moveY) if you want to put something\non the bottom of the screen, no matter the dimensions.\n\n",
+                "args": [],
+                "type": "{ width : Basics.Float, height : Basics.Float, top : Basics.Float, left : Basics.Float, right : Basics.Float, bottom : Basics.Float }"
+            },
+            {
+                "name": "Shape",
+                "comment": " Shapes help you make a `picture`, `animation`, or `game`.\n\nRead on to see examples of [`circle`](#circle), [`rectangle`](#rectangle),\n[`words`](#words), [`image`](#image), and many more!\n\n",
+                "args": [],
+                "type": "WebGL.Shape2d.TexturedShape.TexturedShape String.String"
+            },
+            {
+                "name": "Time",
+                "comment": " The current time.\n\nHelpful when making an [`animation`](#animation) with functions like\n[`spin`](#spin), [`wave`](#wave), and [`zigzag`](#zigzag).\n\n`Time` is defined as:\n\n    type alias Time =\n        { now : Int\n        , delta : Int\n        }\n\nWhere `now` is the number of milliseconds since 1970 January 1 at 00:00:00 UTC,\nand `delta` is the number of milliseconds since the previous animation frame.\n\n",
+                "args": [],
+                "type": "WebGL.Shape2d.Time"
+            }
+        ],
+        "values": [
+            {
+                "name": "animation",
+                "comment": " Create an animation!\n\nOnce you get comfortable using [`picture`](#picture) to layout shapes, you can\ntry out an `animation`. Here is square that zigzags back and forth:\n\n    import Playground exposing (..)\n\n    main =\n        animation view\n\n    view time =\n        [ square blue 40\n            |> moveX (zigzag -100 100 2 time)\n        ]\n\nWe need to define a `view` to make our animation work.\n\nWithin `view` we can use functions like [`spin`](#spin), [`wave`](#wave),\nand [`zigzag`](#zigzag) to move and rotate our shapes.\n\n",
+                "type": "(Playground.Time -> List.List Playground.Shape) -> Platform.Program () (Playground.Playground ()) Playground.Msg"
+            },
+            {
+                "name": "black",
+                "comment": " ",
+                "type": "Playground.Color"
+            },
+            {
+                "name": "blue",
+                "comment": " ",
+                "type": "Playground.Color"
+            },
+            {
+                "name": "brown",
+                "comment": " ",
+                "type": "Playground.Color"
+            },
+            {
+                "name": "charcoal",
+                "comment": " ",
+                "type": "Playground.Color"
+            },
+            {
+                "name": "circle",
+                "comment": " Make circles:\n\n    dot =\n        circle red 10\n\n    sun =\n        circle yellow 300\n\nYou give color and then the radius. So the higher the Float, the larger\nthe circle.\n\n",
+                "type": "Playground.Color -> Basics.Float -> Playground.Shape"
+            },
+            {
+                "name": "darkBlue",
+                "comment": " ",
+                "type": "Playground.Color"
+            },
+            {
+                "name": "darkBrown",
+                "comment": " ",
+                "type": "Playground.Color"
+            },
+            {
+                "name": "darkCharcoal",
+                "comment": " ",
+                "type": "Playground.Color"
+            },
+            {
+                "name": "darkGray",
+                "comment": " ",
+                "type": "Playground.Color"
+            },
+            {
+                "name": "darkGreen",
+                "comment": " ",
+                "type": "Playground.Color"
+            },
+            {
+                "name": "darkGrey",
+                "comment": " ",
+                "type": "Playground.Color"
+            },
+            {
+                "name": "darkOrange",
+                "comment": " ",
+                "type": "Playground.Color"
+            },
+            {
+                "name": "darkPurple",
+                "comment": " ",
+                "type": "Playground.Color"
+            },
+            {
+                "name": "darkRed",
+                "comment": " ",
+                "type": "Playground.Color"
+            },
+            {
+                "name": "darkYellow",
+                "comment": " ",
+                "type": "Playground.Color"
+            },
+            {
+                "name": "fade",
+                "comment": " Fade a shape. This lets you make shapes see-through or even completely\ninvisible. Here is a shape that fades in and out:\n\n    import Playground exposing (..)\n\n    main =\n        animation view\n\n    view time =\n        [ square orange 30\n        , square blue 200\n            |> fade (zigzag 0 1 3 time)\n        ]\n\nThe Float has to be between `0` and `1`, where `0` is totally transparent\nand `1` is completely solid.\n\n",
+                "type": "Basics.Float -> Playground.Shape -> Playground.Shape"
+            },
+            {
+                "name": "flipX",
+                "comment": " Mirror shape horizontally.\n\n    tile 20 27 0 \"character.png\" 1\n        |> flipX\n\n",
+                "type": "Playground.Shape -> Playground.Shape"
+            },
+            {
+                "name": "flipY",
+                "comment": " Mirror shape vertically.\n\n    tile 20 27 0 \"character.png\" 1\n        |> flipY\n\n",
+                "type": "Playground.Shape -> Playground.Shape"
+            },
+            {
+                "name": "game",
+                "comment": " Create a game!\n\nOnce you get comfortable with [`animation`](#animation), you can try making a\ngame with the keyboard and mouse. Here is an example of a green square that\njust moves to the right:\n\n    import Playground exposing (..)\n\n    main =\n        game view update 0\n\n    view computer offset =\n        [ square green 40\n            |> moveRight offset\n        ]\n\n    update computer offset =\n        offset + 0.03\n\nThis shows the three important parts of a game:\n\n1.  `memory` - makes it possible to store information. So with our green square,\n    we save the `offset` in memory. It starts out at `0`.\n2.  `view` - lets us say which shapes to put on screen. So here we move our\n    square right by the `offset` saved in memory.\n3.  `update` - lets us update the memory. We are incrementing the `offset` by\n    a tiny amount on each frame.\n\nThe `update` function is called about 60 times per second, so our little\nchanges to `offset` start to add up pretty quickly!\n\nThis game is not very fun though! Making a `game` also gives you access to the\n[`Computer`](#Computer), so you can use information about the [`Mouse`](#Mouse)\nand [`Keyboard`](#Keyboard) to make it interactive! So here is a red square that\nmoves based on the arrow keys:\n\n    import Playground exposing (..)\n\n    main =\n        game view update ( 0, 0 )\n\n    view computer ( x, y ) =\n        [ square red 40\n            |> move x y\n        ]\n\n    update computer ( x, y ) =\n        ( x + toX computer.keyboard\n        , y + toY computer.keyboard\n        )\n\nNotice that in the `update` we use information from the keyboard to update the\n`x` and `y` values. These building blocks let you make pretty fancy games!\n\n",
+                "type": "(Playground.Computer -> memory -> List.List Playground.Shape) -> (Playground.Computer -> memory -> memory) -> memory -> Platform.Program () (Playground.Playground memory) Playground.Msg"
+            },
+            {
+                "name": "gray",
+                "comment": " ",
+                "type": "Playground.Color"
+            },
+            {
+                "name": "green",
+                "comment": " ",
+                "type": "Playground.Color"
+            },
+            {
+                "name": "grey",
+                "comment": " ",
+                "type": "Playground.Color"
+            },
+            {
+                "name": "group",
+                "comment": " Put shapes together so you can [`move`](#move) and [`rotate`](#rotate)\nthem as a group. Maybe you want to put a bunch of stars in the sky:\n\n    import Playground exposing (..)\n\n    main =\n        picture\n            [ star\n                |> move 100 100\n                |> rotate 5\n            , star\n                |> move -120 40\n                |> rotate 20\n            , star\n                |> move 80 -150\n                |> rotate 32\n            , star\n                |> move -90 -30\n                |> rotate -16\n            ]\n\n    star =\n        group\n            [ triangle yellow 20\n            , triangle yellow 20\n                |> rotate 180\n            ]\n\n",
+                "type": "List.List Playground.Shape -> Playground.Shape"
+            },
+            {
+                "name": "hexagon",
+                "comment": " Make hexagons:\n\n    import Playground exposing (..)\n\n    main =\n        picture\n            [ hexagon lightYellow 50\n            ]\n\nThe Float is the radius, the distance from the center to each point.\n\nIf you made more hexagons, you could [`move`](#move) them around to make a\nhoneycomb pattern!\n\n",
+                "type": "Playground.Color -> Basics.Float -> Playground.Shape"
+            },
+            {
+                "name": "image",
+                "comment": " Add some image from the internet:\n\n    import Playground exposing (..)\n\n    main =\n        picture\n            [ image 96 96 \"https://elm-lang.org/images/turtle.gif\"\n            ]\n\nYou provide the width, height, and then the URL of the image you want to show.\n\n",
+                "type": "Basics.Float -> Basics.Float -> String.String -> Playground.Shape"
+            },
+            {
+                "name": "lightBlue",
+                "comment": " ",
+                "type": "Playground.Color"
+            },
+            {
+                "name": "lightBrown",
+                "comment": " ",
+                "type": "Playground.Color"
+            },
+            {
+                "name": "lightCharcoal",
+                "comment": " ",
+                "type": "Playground.Color"
+            },
+            {
+                "name": "lightGray",
+                "comment": " ",
+                "type": "Playground.Color"
+            },
+            {
+                "name": "lightGreen",
+                "comment": " ",
+                "type": "Playground.Color"
+            },
+            {
+                "name": "lightGrey",
+                "comment": " ",
+                "type": "Playground.Color"
+            },
+            {
+                "name": "lightOrange",
+                "comment": " ",
+                "type": "Playground.Color"
+            },
+            {
+                "name": "lightPurple",
+                "comment": " ",
+                "type": "Playground.Color"
+            },
+            {
+                "name": "lightRed",
+                "comment": " ",
+                "type": "Playground.Color"
+            },
+            {
+                "name": "lightYellow",
+                "comment": " ",
+                "type": "Playground.Color"
+            },
+            {
+                "name": "move",
+                "comment": " Move a shape by some Float of pixels:\n\n    import Playground exposing (..)\n\n    main =\n        picture\n            [ square red 100\n                |> move -60 60\n            , square yellow 100\n                |> move 60 60\n            , square green 100\n                |> move 60 -60\n            , square blue 100\n                |> move -60 -60\n            ]\n\n",
+                "type": "Basics.Float -> Basics.Float -> Playground.Shape -> Playground.Shape"
+            },
+            {
+                "name": "moveDown",
+                "comment": " Move a shape down by some Float of pixels. So if you wanted to put the sky\nabove the ground, you could move the sky up and the ground down:\n\n    import Playground exposing (..)\n\n    main =\n        picture\n            [ rectangle lightBlue 200 100\n                |> moveUp 50\n            , rectangle lightGreen 200 100\n                |> moveDown 50\n            ]\n\n",
+                "type": "Basics.Float -> Playground.Shape -> Playground.Shape"
+            },
+            {
+                "name": "moveLeft",
+                "comment": " Move shapes to the left.\n\n    import Playground exposing (..)\n\n    main =\n        picture\n            [ circle yellow 10\n                |> moveLeft 80\n                |> moveUp 30\n            ]\n\n",
+                "type": "Basics.Float -> Playground.Shape -> Playground.Shape"
+            },
+            {
+                "name": "moveRight",
+                "comment": " Move shapes to the right.\n\n    import Playground exposing (..)\n\n    main =\n        picture\n            [ square purple 20\n                |> moveRight 80\n                |> moveDown 100\n            ]\n\n",
+                "type": "Basics.Float -> Playground.Shape -> Playground.Shape"
+            },
+            {
+                "name": "moveUp",
+                "comment": " Move a shape up by some Float of pixels. So if you wanted to make a tree\nyou could move the leaves up above the trunk:\n\n    import Playground exposing (..)\n\n    main =\n        picture\n            [ rectangle brown 40 200\n            , circle green 100\n                |> moveUp 180\n            ]\n\n",
+                "type": "Basics.Float -> Playground.Shape -> Playground.Shape"
+            },
+            {
+                "name": "moveX",
+                "comment": " Move the `x` coordinate of shape by some amount. Here is a square that\nmoves back and forth:\n\n    import Playground exposing (..)\n\n    main =\n        animation view\n\n    view time =\n        [ square purple 20\n            |> moveX (wave 4 -200 200 time)\n        ]\n\nUsing `moveX` feels a bit nicer here because the movement may be positive or negative.\n\n",
+                "type": "Basics.Float -> Playground.Shape -> Playground.Shape"
+            },
+            {
+                "name": "moveY",
+                "comment": " Move the `y` coordinate of shape by some amount. Maybe you want to make grass along the bottom of the screen:\n\n    import Playground exposing (..)\n\n    main =\n        game view update 0\n\n    update computer memory =\n        memory\n\n    view computer count =\n        [ rectangle green computer.screen.width 100\n            |> moveY computer.screen.bottom\n        ]\n\nUsing `moveY` feels a bit nicer when setting things relative to the bottom or\ntop of the screen, since the values are negative sometimes.\n\n",
+                "type": "Basics.Float -> Playground.Shape -> Playground.Shape"
+            },
+            {
+                "name": "moveZ",
+                "comment": " The `moveZ` specifies the stack order of a shapes.\n\nA shape with greater stack order is always in front of an element with a lower stack order.\n\n**Note:** be aware z-indexing will mess up semi-transparent shapes,\nif you need both (z ordering and semi-transparency) better sort shapes.\n\n",
+                "type": "Basics.Int -> Playground.Shape -> Playground.Shape"
+            },
+            {
+                "name": "octagon",
+                "comment": " Make octagons:\n\n    import Playground exposing (..)\n\n    main =\n        picture [ octagon red 100 ]\n\nYou give the color and radius, so each point of this stop sign is 100 pixels\nfrom the center.\n\n",
+                "type": "Playground.Color -> Basics.Float -> Playground.Shape"
+            },
+            {
+                "name": "orange",
+                "comment": " ",
+                "type": "Playground.Color"
+            },
+            {
+                "name": "oval",
+                "comment": " Make ovals:\n\n    football =\n        oval brown 200 100\n\nYou give the color, and then the width and height. So our `football` example is 200 pixels wide and 100 pixels tall\n\n",
+                "type": "Playground.Color -> Basics.Float -> Basics.Float -> Playground.Shape"
+            },
+            {
+                "name": "pentagon",
+                "comment": " Make pentagons:\n\n    import Playground exposing (..)\n\n    main =\n        picture\n            [ pentagon darkGrey 100\n            ]\n\nYou give the color and then the radius. So the distance from the center to each\nof the five points is 100 pixels.\n\n",
+                "type": "Playground.Color -> Basics.Float -> Playground.Shape"
+            },
+            {
+                "name": "picture",
+                "comment": " Make a picture! Here is a picture of a triangle with an eyeball:\n\n    import Playground exposing (..)\n\n    main =\n        picture\n            [ triangle green 150\n            , circle white 40\n            , circle black 10\n            ]\n\n",
+                "type": "List.List Playground.Shape -> Platform.Program () (Playground.Playground ()) Playground.Msg"
+            },
+            {
+                "name": "polygon",
+                "comment": " Make any shape you want! Here is a very thin triangle:\n\n    import Playground exposing (..)\n\n    main =\n        picture\n            [ polygon red [ ( -10, -20 ), ( 0, 100 ), ( 10, -20 ) ]\n            ]\n\n**Note:** If you [`rotate`](#rotate) a polygon, it will always rotate around\n`(0,0)`. So it is best to build your shapes around that point, and then use\n[`move`](#move) or [`group`](#group) so that rotation makes more sense.\n\n",
+                "type": "Playground.Color -> List.List ( Basics.Float, Basics.Float ) -> Playground.Shape"
+            },
+            {
+                "name": "purple",
+                "comment": " ",
+                "type": "Playground.Color"
+            },
+            {
+                "name": "rectangle",
+                "comment": " Make rectangles. This example makes a red cross:\n\n    import Playground exposing (..)\n\n    main =\n        picture\n            [ rectangle red 20 60\n            , rectangle red 60 20\n            ]\n\nYou give the color, width, and then height. So the first shape is vertical\npart of the cross, the thinner and taller part.\n\n",
+                "type": "Playground.Color -> Basics.Float -> Basics.Float -> Playground.Shape"
+            },
+            {
+                "name": "red",
+                "comment": " ",
+                "type": "Playground.Color"
+            },
+            {
+                "name": "rgb",
+                "comment": " RGB stands for Red-Green-Blue. With these three parts, you can create any\ncolor you want. For example:\n\n    brightBlue =\n        rgb 18 147 216\n\n    brightGreen =\n        rgb 119 244 8\n\n    brightPurple =\n        rgb 94 28 221\n\nEach Float needs to be between 0 and 255.\n\nIt can be hard to figure out what Floats to pick, so try using a color picker\nlike [paletton] to find colors that look nice together. Once you find nice\ncolors, click on the color previews to get their RGB values.\n\n[paletton]: http://paletton.com/\n\n",
+                "type": "Basics.Float -> Basics.Float -> Basics.Float -> Playground.Color"
+            },
+            {
+                "name": "rotate",
+                "comment": " Rotate shapes in degrees.\n\n    import Playground exposing (..)\n\n    main =\n        picture\n            [ words black \"These words are tilted!\"\n                |> rotate 10\n            ]\n\nThe degrees go _counter-clockwise_ to match the direction of the\n[unit circle](https://en.wikipedia.org/wiki/Unit_circle).\n\n",
+                "type": "Basics.Float -> Playground.Shape -> Playground.Shape"
+            },
+            {
+                "name": "scale",
+                "comment": " Make a shape bigger or smaller. So if you wanted some [`words`](#words) to\nbe larger, you could say:\n\n    import Playground exposing (..)\n\n    main =\n        picture\n            [ words black \"Hello, nice to see you!\"\n                |> scale 3\n            ]\n\n",
+                "type": "Basics.Float -> Playground.Shape -> Playground.Shape"
+            },
+            {
+                "name": "scaleX",
+                "comment": " Make a shape _horizontally_ bigger or smaller.\nAlso, passing a negative value mirrors a shape:\n\n    tile 20 27 0 \"character.png\" 1\n        |> scaleX -1\n\n**Note**: If you just need to mirror a shape horizontally use `flipX`.\n\n",
+                "type": "Basics.Float -> Playground.Shape -> Playground.Shape"
+            },
+            {
+                "name": "scaleY",
+                "comment": " Make a shape _vertically_ bigger or smaller.\nAlso, passing a negative value mirrors a shape:\n\n    tile 20 27 0 \"character.png\" 1\n        |> scaleY -1\n\n**Note**: If you just need to mirror a shape vertically use `flipY`.\n\n",
+                "type": "Basics.Float -> Playground.Shape -> Playground.Shape"
+            },
+            {
+                "name": "spin",
+                "comment": " Create an angle that cycles from 0 to 360 degrees over time.\n\nHere is an [`animation`](#animation) with a spinning triangle:\n\n    import Playground exposing (..)\n\n    main =\n        animation view\n\n    view time =\n        [ triangle orange 50\n            |> rotate (spin 8 time)\n        ]\n\nIt will do a full rotation once every eight seconds. Try changing the `8` to\na `2` to make it do a full rotation every two seconds. It moves a lot faster!\n\n",
+                "type": "Basics.Float -> Playground.Time -> Basics.Float"
+            },
+            {
+                "name": "square",
+                "comment": " Make squares. Here are two squares combined to look like an empty box:\n\n    import Playground exposing (..)\n\n    main =\n        picture\n            [ square purple 80\n            , square white 60\n            ]\n\nThe Float you give is the dimension of each side. So that purple square would\nbe 80 pixels by 80 pixels.\n\n",
+                "type": "Playground.Color -> Basics.Float -> Playground.Shape"
+            },
+            {
+                "name": "toX",
+                "comment": " Turn the LEFT and RIGHT arrows into a Float.\n\n    toX { left = False, right = False, ... } == 0\n    toX { left = True , right = False, ... } == -1\n    toX { left = False, right = True , ... } == 1\n    toX { left = True , right = True , ... } == 0\n\nSo to make a square move left and right based on the arrow keys, we could say:\n\n    import Playground exposing (..)\n\n    main =\n        game view update 0\n\n    view computer x =\n        [ square green 40\n            |> moveX x\n        ]\n\n    update computer x =\n        x + toX computer.keyboard\n\n",
+                "type": "Playground.Keyboard -> Basics.Float"
+            },
+            {
+                "name": "toXY",
+                "comment": " If you just use `toX` and `toY`, you will move diagonal too fast. You will go\nright at 1 pixel per update, but you will go up/right at 1.41421 pixels per\nupdate.\n\nSo `toXY` turns the arrow keys into an `(x,y)` pair such that the distance is\nnormalized:\n\n    toXY { up = True , down = False, left = False, right = False, ... } == (1, 0)\n    toXY { up = True , down = False, left = False, right = True , ... } == (0.707, 0.707)\n    toXY { up = False, down = False, left = False, right = True , ... } == (0, 1)\n\nNow when you go up/right, you are still going 1 pixel per update.\n\n    import Playground exposing (..)\n\n    main =\n        game view update ( 0, 0 )\n\n    view computer ( x, y ) =\n        [ square green 40\n            |> move x y\n        ]\n\n    update computer ( x, y ) =\n        let\n            ( dx, dy ) =\n                toXY computer.keyboard\n        in\n        ( x + dx, y + dy )\n\n",
+                "type": "Playground.Keyboard -> ( Basics.Float, Basics.Float )"
+            },
+            {
+                "name": "toY",
+                "comment": " Turn the UP and DOWN arrows into a Float.\n\n    toY { up = False, down = False, ... } == 0\n    toY { up = True , down = False, ... } == 1\n    toY { up = False, down = True , ... } == -1\n    toY { up = True , down = True , ... } == 0\n\nThis can be used to move characters around in games just like [`toX`](#toX):\n\n    import Playground exposing (..)\n\n    main =\n        game view update ( 0, 0 )\n\n    view computer ( x, y ) =\n        [ square blue 40\n            |> move x y\n        ]\n\n    update computer ( x, y ) =\n        ( x + toX computer.keyboard\n        , y + toY computer.keyboard\n        )\n\n",
+                "type": "Playground.Keyboard -> Basics.Float"
+            },
+            {
+                "name": "triangle",
+                "comment": " Make triangles. So if you wanted to draw the Egyptian pyramids, you could\ndo a simple version like this:\n\n    import Playground exposing (..)\n\n    main =\n        picture\n            [ triangle darkYellow 200\n            ]\n\nThe `Float` is the \"radius\", so the distance from the center to each point of\nthe pyramid is `200`. Pretty big!\n\n",
+                "type": "Playground.Color -> Basics.Float -> Playground.Shape"
+            },
+            {
+                "name": "wave",
+                "comment": " Smoothly wave between two Floats.\n\nHere is an [`animation`](#animation) with a circle that resizes:\n\n    import Playground exposing (..)\n\n    main =\n        animation view\n\n    view time =\n        [ circle lightBlue (wave 50 90 7 time)\n        ]\n\nThe radius of the circle will cycles between 50 and 90 every seven seconds.\nIt kind of looks like it is breathing.\n\n",
+                "type": "Basics.Float -> Basics.Float -> Basics.Float -> Playground.Time -> Basics.Float"
+            },
+            {
+                "name": "white",
+                "comment": " ",
+                "type": "Playground.Color"
+            },
+            {
+                "name": "words",
+                "comment": " Show some words!\n\n    import Playground exposing (..)\n\n    main =\n        picture\n            [ words black \"Hello! How are you?\"\n            ]\n\nYou can use [`scale`](#scale) to make the words bigger or smaller.\n\n",
+                "type": "Playground.Color -> String.String -> Playground.Shape"
+            },
+            {
+                "name": "yellow",
+                "comment": " ",
+                "type": "Playground.Color"
+            },
+            {
+                "name": "zigzag",
+                "comment": " Zig zag between two Floats.\n\nHere is an [`animation`](#animation) with a rectangle that tips back and forth:\n\n    import Playground exposing (..)\n\n    main =\n        animation view\n\n    view time =\n        [ rectangle lightGreen 20 100\n            |> rotate (zigzag -20 20 4 time)\n        ]\n\nIt gets rotated by an angle. The angle cycles from -20 degrees to 20 degrees\nevery four seconds.\n\n",
+                "type": "Basics.Float -> Basics.Float -> Basics.Float -> Playground.Time -> Basics.Float"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Playground.Extra",
+        "comment": "\n\n\n# Shapes\n\n@docs tile, sprite\n\n\n# Batch renders\n\n@docs tilemap\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "sprite",
+                "comment": " Show sprite from a sprite sheet.\n\nSprites can be placed anywhere in the sprite sheet and each can have different sizes.\n\nExample: this draws a sprite of 16x24 pixels taking it from a sprite sheet,\nstarting at position `16,0` up to _including_ pixels at `31,23`\n\n    sprite \"sprites.png\" { xmin = 16, xmax = 31, ymin = 0, ymax = 23 }\n\n",
+                "type": "String.String -> { xmin : Basics.Float, xmax : Basics.Float, ymin : Basics.Float, ymax : Basics.Float } -> Playground.Shape"
+            },
+            {
+                "name": "tile",
+                "comment": " Show tile from a tileset.\n\nAll tiles are fixed size and placed into a grid, where the _first tile has a 0 index_\nincreasing left to right and top to bottom.\n\nExample: having a 3x3 tileset with each tile of 16x24 pixels\n\n    | 0 1 2 |\n    | 3 4 5 |\n    | 6 7 8 |\n\nthis draws the first tile of the second row\n\n    tile 16 24 \"sprites.png\" 3\n\n",
+                "type": "Basics.Float -> Basics.Float -> String.String -> Basics.Int -> Playground.Shape"
+            },
+            {
+                "name": "tilemap",
+                "comment": " Show tilemap from a tileset and a corresponding lookup table stored as a texture.\n\nFor example, this lookup table is used to draw a T-shaped platform:\n\n    | 2 2 2 |\n    | 0 1 0 |\n    | 0 1 0 |\n\nwhich in turn uses this 3x3 tileset with each tile 16x24px.\n\n    | 1 2 3 |\n    | 4 5 6 |\n    | 7 8 9 |\n\nFinally, the function is used as follows:\n\n    tilemap 16 24 \"sprites.png\" \"lookuptable.png\"\n\n**Note:** tileset indexing starts from 1 when used in lookup table, since 0 is used to communicate \"no tile here\".\n\n\n## Why\n\nFor tiny maps `tile` function is enough. However, when the game map grows in size performance issues creep in.\nThe underlying issue is that for each `tile` the WebGL rendering engine uses what is called an [Entity][1].\nWebGL can handle a few thousands of such entities thus having a map with 100x100 tiles means to draw 10.000\nentities for each frame - that’s way too much for WebGL.\n\n\n## How it works\n\nTo avoid performance issues the idea is to draw a single WebGL `Entity` for each `tilemap` call by pushing\nthe composition of the map down the rendering pipeline.\n\nTo do that we need to pass to playground both the tileset and a 2D array of tile indices. The latter will\nbe used to look-up the correct tile.\n\nYou can visualize the lookup table like those mini-maps you see on video games HUD. Each lookup table pixel\nrepresents a tile in the final tilemap, while the color _value_ of that pixel is an index telling which tile\nto pick from the tileset.\n\nAll tiles are fixed size and placed into a grid, with indices increasing left to right and top to bottom. Notice\nthat a fully black but transparent pixel (`0x00000000`) means \"no tile here\" and nothing is rendered.\nHence, unlike `tile` function, this makes the lookup table indices to _start from 1_.\n\nMore details about this rendering technique can be found in [Brandon Jones’ blog][2].\n\n[1]: https://package.elm-lang.org/packages/elm-community/webgl/latest/WebGL#Entity\n[2]: https://blog.tojicode.com/2012/07/sprite-tile-maps-on-gpu.html\n\n",
+                "type": "Basics.Float -> Basics.Float -> String.String -> String.String -> Playground.Shape"
+            }
+        ],
+        "binops": []
+    }
+]

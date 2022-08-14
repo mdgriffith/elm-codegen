@@ -1,0 +1,16 @@
+[
+    {
+        "name": "NoMissingTypeConstructor",
+        "comment": " Imagine you have a type like this:\n\n    type Color\n        = Red\n        | Green\n        | Blue\n\nAnd a definition like this:\n\n    allColors : List Color\n    allColors =\n        [ Red, Green ]\n\nThis elm-review rule will report a warning because `allColors` does not have all the possible constructors, since it's missing the `Blue` variant.\n\n\n# Rule\n\n@docs rule\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": "\n\n\n## Usage\n\nAfter adding [elm-review](https://package.elm-lang.org/packages/jfmengels/elm-review/latest/) to your project,\nimport this rule to `ReviewConfig.elm` file and add it to the config.\n\n\n## Example configuration\n\n    import NoMissingTypeConstructor\n    import Review.Rule exposing (Rule)\n\n    config : List Rule\n    config =\n        [ NoMissingTypeConstructor.rule ]\n\n",
+                "type": "Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    }
+]

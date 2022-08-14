@@ -1,0 +1,87 @@
+[
+    {
+        "name": "Drag",
+        "comment": "\n@docs State, Msg, onMouseDownWithOptions, subscriptions, update, init, delta, getLocation\n\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " ",
+                "args": [
+                    "interactionLocation"
+                ],
+                "cases": [
+                    [
+                        "Start",
+                        [
+                            "interactionLocation",
+                            "Drag.Position"
+                        ]
+                    ],
+                    [
+                        "Moved",
+                        [
+                            "interactionLocation",
+                            "Drag.Position"
+                        ]
+                    ],
+                    [
+                        "End",
+                        [
+                            "interactionLocation",
+                            "Drag.Position"
+                        ]
+                    ],
+                    [
+                        "Click",
+                        [
+                            "interactionLocation",
+                            "Drag.Position"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "State",
+                "comment": " ",
+                "args": [
+                    "interactionLocation"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "delta",
+                "comment": " ",
+                "type": "Drag.Msg interactionLocation -> Drag.State interactionLocation -> ( Basics.Int, Basics.Int )"
+            },
+            {
+                "name": "getLocation",
+                "comment": " ",
+                "type": "Drag.State interactionLocation -> Maybe.Maybe interactionLocation"
+            },
+            {
+                "name": "init",
+                "comment": " ",
+                "type": "Drag.State interactionLocation"
+            },
+            {
+                "name": "onMouseDownWithOptions",
+                "comment": " ",
+                "type": "{ stopPropagation : Basics.Bool, preventDefault : Basics.Bool } -> location -> VirtualDom.Attribute (Drag.Msg location)"
+            },
+            {
+                "name": "subscriptions",
+                "comment": " ",
+                "type": "Drag.State interactionLocation -> Platform.Sub.Sub (Drag.Msg interactionLocation)"
+            },
+            {
+                "name": "update",
+                "comment": " ",
+                "type": "Drag.Msg interactionLocation -> Drag.State interactionLocation -> Drag.State interactionLocation"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,343 @@
+[
+    {
+        "name": "Objecthash",
+        "comment": " Objecthash implementation.\n\nBased on the implementation from Ben Laurie <https://github.com/benlaurie/objecthash>\n\n@docs objecthash, fromJson\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fromJson",
+                "comment": " Hash a Common JSON blob and return it as a hexadecimal string\nrepresentation.\n\nIf you need more control over the JSON decoder, check the `Objecthash.Json`\nmodule.\n\n",
+                "type": "String.String -> Result.Result Json.Decode.Error String.String"
+            },
+            {
+                "name": "objecthash",
+                "comment": " Hash an `Objecthash.Value` and return it as a hexadecimal string\nrepresentation.\n\nIf you need more control over the hash, `Objecthash.Hash` offers a range of\nfunctions to operate on elm values and lists of bytes.\n\n",
+                "type": "Objecthash.Value.Value -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Objecthash.Hash",
+        "comment": " Functions to hash values.\n\n\n# Types\n\n@docs ByteList\n\n\n# Convert from and to lists of bytes.\n\n@docs bytes, toHex\n\n\n# Primitives\n\n@docs unicode, redacted, null, int, float, bool, raw, pair\n\n\n# Collection primitives\n\n@docs list, set, dict, bag, untagged\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "ByteList",
+                "comment": " A list of bytes.\n",
+                "args": [],
+                "type": "List.List Basics.Int"
+            }
+        ],
+        "values": [
+            {
+                "name": "bag",
+                "comment": " Hashes collections of bytes\n",
+                "type": "Objecthash.Tag.Tag -> List.List Objecthash.Hash.ByteList -> Objecthash.Hash.ByteList"
+            },
+            {
+                "name": "bool",
+                "comment": " Hashes a boolean.\n\n    toHex (bool True) == \"7dc96f776c8423e57a2785489a3f9c43fb6e756876d6ad9a9cac4aa4e72ec193\"\n\n",
+                "type": "Basics.Bool -> Objecthash.Hash.ByteList"
+            },
+            {
+                "name": "bytes",
+                "comment": " Hash an Objecthash Value.\n\n    bytes VNull == [ 27, 22, 177, 223, 83, 139, 161, 45, 195, 249, 126, 219, 184, 92, 170, 112, 80, 212, 108, 20, 129, 52, 41, 15, 235, 168, 15, 130, 54, 200, 61, 185 ]\n\n",
+                "type": "Objecthash.Value.Value -> Objecthash.Hash.ByteList"
+            },
+            {
+                "name": "dict",
+                "comment": " Hahes a dictionary of ByteList.\n\n    Dict.fromList [ ( \"foo\", int 1 ) ]\n        |> dict\n        |> toHex\n        == \"bf4c58f5e308e31e2cd64bdbf7a01b9b595a13602438be5e912c7d94f6d8177a\"\n\n",
+                "type": "Dict.Dict String.String Objecthash.Hash.ByteList -> Objecthash.Hash.ByteList"
+            },
+            {
+                "name": "float",
+                "comment": " Hashes a float number. Note this function normalises values following the\nsame algorithm implemented in the original Objecthash implementation.\n\n    toHex (float 6.1) == \"43f5ebd1617989a69b819ed3a246c9e59468d6db90c29abdd3c8c1f17ffc365a\"\n\n",
+                "type": "Basics.Float -> Objecthash.Hash.ByteList"
+            },
+            {
+                "name": "int",
+                "comment": " Hashes an integer.\n\n    toHex (int 6) == \"396ee89382efc154e95d7875976cce373a797fe93687ca8a27589116644c4bcd\"\n\n",
+                "type": "Basics.Int -> Objecthash.Hash.ByteList"
+            },
+            {
+                "name": "list",
+                "comment": " Hashes a list of ByteList.\n\n    [ unicode \"foo\", int 6 ]\n        |> list\n        |> toHex\n        == \"28dbb78890fb7b0462c62de04bcf165c69bd65b9f992f2edd89ae7369afa7005\"\n\n",
+                "type": "List.List Objecthash.Hash.ByteList -> Objecthash.Hash.ByteList"
+            },
+            {
+                "name": "null",
+                "comment": " Hashes a null value.\n\n    toHex null == \"1b16b1df538ba12dc3f97edbb85caa7050d46c148134290feba80f8236c83db9\"\n\n",
+                "type": "Objecthash.Hash.ByteList"
+            },
+            {
+                "name": "pair",
+                "comment": " ",
+                "type": "( String.String, Objecthash.Hash.ByteList ) -> Objecthash.Hash.ByteList"
+            },
+            {
+                "name": "raw",
+                "comment": " Hashes a raw hash.\n\n    toHex (raw \"7dc96f776c8423e57a2785489a3f9c43fb6e756876d6ad9a9cac4aa4e72ec193\") == \"72e68c48e6e01b3d898bf9d907938459cb80d6abec2078df7f19271ff9eb19e4\"\n\n",
+                "type": "String.String -> Objecthash.Hash.ByteList"
+            },
+            {
+                "name": "redacted",
+                "comment": " Hashes a redacted stringified list of bytes.\n\n    toHex (redacted \"**REDACTED**480499ec4efe0e177793c217c8227d4096d2352beee2d6816ba8f4e8a421a138\") == \"480499ec4efe0e177793c217c8227d4096d2352beee2d6816ba8f4e8a421a138\"\n\n",
+                "type": "String.String -> Objecthash.Hash.ByteList"
+            },
+            {
+                "name": "set",
+                "comment": " Hashes a set of ByteList. Note that this function receives a `List` but\ntreats it as a Set (i.e. removes duplicates).\n\n    [ unicode \"foo\", int 6 ]\n        |> set\n        |> toHex\n        == \"cf38664185ed5377fee384d0a37bdb36681a16d72480f21336e38a493a8851b9\"\n\n",
+                "type": "List.List Objecthash.Hash.ByteList -> Objecthash.Hash.ByteList"
+            },
+            {
+                "name": "toHex",
+                "comment": " Transform a list of bytes into its hexadecimal string representation.\n\n    toHex [ 27, 22, 177, 223, 83, 139, 161, 45, 195, 249, 126, 219, 184, 92, 170, 112, 80, 212, 108, 20, 129, 52, 41, 15, 235, 168, 15, 130, 54, 200, 61, 185 ] == \"1b16b1df538ba12dc3f97edbb85caa7050d46c148134290feba80f8236c83db9\"\n\n",
+                "type": "Objecthash.Hash.ByteList -> String.String"
+            },
+            {
+                "name": "unicode",
+                "comment": " Hashes a unicode string.\n\n    toHex (unicode \"foo\") == \"a6a6e5e783c363cd95693ec189c2682315d956869397738679b56305f2095038\"\n\n",
+                "type": "String.String -> Objecthash.Hash.ByteList"
+            },
+            {
+                "name": "untagged",
+                "comment": " Hashes a raw list of bytes, untagged\n",
+                "type": "List.List Objecthash.Hash.ByteList -> Objecthash.Hash.ByteList"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Objecthash.Json",
+        "comment": " Helper functions to transform JSON to the Objecthash values.\n\n@docs decode, decodeWith\n\n\n# Decoders\n\n@docs dict, list, bool, float, int, null, set, string\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "bool",
+                "comment": " ",
+                "type": "Json.Decode.Decoder Objecthash.Value.Value"
+            },
+            {
+                "name": "decode",
+                "comment": " Expects a JSON string and returns the result of attempting to decode it\ninto an AST of `Objecthash.Value`.\n",
+                "type": "String.String -> Result.Result Json.Decode.Error Objecthash.Value.Value"
+            },
+            {
+                "name": "decodeWith",
+                "comment": " Decodes a JSON string with the given decoder.\n",
+                "type": "Json.Decode.Decoder Objecthash.Value.Value -> String.String -> Result.Result Json.Decode.Error Objecthash.Value.Value"
+            },
+            {
+                "name": "dict",
+                "comment": " TODO: Parametrise internal decoder\n",
+                "type": "Json.Decode.Decoder Objecthash.Value.Value"
+            },
+            {
+                "name": "float",
+                "comment": " ",
+                "type": "Json.Decode.Decoder Objecthash.Value.Value"
+            },
+            {
+                "name": "int",
+                "comment": " ",
+                "type": "Json.Decode.Decoder Objecthash.Value.Value"
+            },
+            {
+                "name": "list",
+                "comment": " TODO: Parametrise internal decoder\n",
+                "type": "Json.Decode.Decoder Objecthash.Value.Value"
+            },
+            {
+                "name": "null",
+                "comment": " ",
+                "type": "Json.Decode.Decoder Objecthash.Value.Value"
+            },
+            {
+                "name": "set",
+                "comment": " TODO: Parametrise internal decoder\n",
+                "type": "Json.Decode.Decoder Objecthash.Value.Value"
+            },
+            {
+                "name": "string",
+                "comment": " ",
+                "type": "Json.Decode.Decoder Objecthash.Value.Value"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Objecthash.Tag",
+        "comment": " Functions to operate Tags.\n\n\n# Types\n\n@docs Tag\n\n\n# Transformers\n\n@docs toChar, toByte\n\n",
+        "unions": [
+            {
+                "name": "Tag",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Bool",
+                        []
+                    ],
+                    [
+                        "Dict",
+                        []
+                    ],
+                    [
+                        "Float",
+                        []
+                    ],
+                    [
+                        "Integer",
+                        []
+                    ],
+                    [
+                        "List",
+                        []
+                    ],
+                    [
+                        "Null",
+                        []
+                    ],
+                    [
+                        "Set",
+                        []
+                    ],
+                    [
+                        "Unicode",
+                        []
+                    ],
+                    [
+                        "Raw",
+                        []
+                    ],
+                    [
+                        "Custom",
+                        [
+                            "Basics.Int"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toByte",
+                "comment": " ",
+                "type": "Objecthash.Tag.Tag -> Basics.Int"
+            },
+            {
+                "name": "toChar",
+                "comment": " ",
+                "type": "Objecthash.Tag.Tag -> Char.Char"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Objecthash.Value",
+        "comment": " Value operations.\n\n@docs Value\n\n@docs toJsonValue\n\n@docs null, list, int, float, string, dict, bool\n\n",
+        "unions": [
+            {
+                "name": "Value",
+                "comment": " Objecthash Value.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "VBool",
+                        [
+                            "Basics.Bool"
+                        ]
+                    ],
+                    [
+                        "VDict",
+                        [
+                            "Dict.Dict String.String Objecthash.Value.Value"
+                        ]
+                    ],
+                    [
+                        "VFloat",
+                        [
+                            "Basics.Float"
+                        ]
+                    ],
+                    [
+                        "VInteger",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "VList",
+                        [
+                            "List.List Objecthash.Value.Value"
+                        ]
+                    ],
+                    [
+                        "VNull",
+                        []
+                    ],
+                    [
+                        "VSet",
+                        [
+                            "List.List Objecthash.Value.Value"
+                        ]
+                    ],
+                    [
+                        "VString",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "bool",
+                "comment": " ",
+                "type": "Basics.Bool -> Objecthash.Value.Value"
+            },
+            {
+                "name": "dict",
+                "comment": " ",
+                "type": "Dict.Dict String.String Objecthash.Value.Value -> Objecthash.Value.Value"
+            },
+            {
+                "name": "float",
+                "comment": " ",
+                "type": "Basics.Float -> Objecthash.Value.Value"
+            },
+            {
+                "name": "int",
+                "comment": " ",
+                "type": "Basics.Int -> Objecthash.Value.Value"
+            },
+            {
+                "name": "list",
+                "comment": " ",
+                "type": "List.List Objecthash.Value.Value -> Objecthash.Value.Value"
+            },
+            {
+                "name": "null",
+                "comment": " ",
+                "type": "Objecthash.Value.Value"
+            },
+            {
+                "name": "string",
+                "comment": " ",
+                "type": "String.String -> Objecthash.Value.Value"
+            },
+            {
+                "name": "toJsonValue",
+                "comment": " ",
+                "type": "Objecthash.Value.Value -> Json.Encode.Value"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,117 @@
+[
+    {
+        "name": "Accessibility.Tabs",
+        "comment": "\n\n@docs viewStarter\n\n@docs view\n@docs Label, labelledby, label, Tab, Activation, Orientation\n\n\n# View customization\n\n@docs Views, html\n\n\n## Advanced customization\n\n@docs custom, TabsAttrs, TabAttrs, PanelAttrs\n\n",
+        "unions": [
+            {
+                "name": "Activation",
+                "comment": " From the [WAI-ARIA Authoring\nPractices](https://w3c.github.io/aria-practices/#examples-13):\n\n  - Tabs With `Automatic` Activation: A tabs widget where tabs are\n    automatically activated and their panel is displayed when they receive focus.\n  - Tabs With `Manual` Activation: A tabs widget where users activate a tab and\n    display its panel by pressing Space or Enter.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Automatic",
+                        []
+                    ],
+                    [
+                        "Manual",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Label",
+                "comment": " There are two ways to label tabs: it can be\n[`labelledby`](Accessibility-Tabs#labelledby) by another DOM element with the\ngiven id or it can provide its own [`label`](Accessibility-Tabs#label).\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Orientation",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Horizontal",
+                        []
+                    ],
+                    [
+                        "Vertical",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Views",
+                "comment": " Opaque type for providing view customization of the tabs widget.\n",
+                "args": [
+                    "node",
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "PanelAttrs",
+                "comment": " Make sure to add HTML attributes for all attributes in this record to the\npanel.\n\n  - **role**: The `role` HTML attribute.\n  - **id**: The CSS id.\n  - **ariaLabelledby**: The `aria-labelledby` HTML attribute.\n  - **tabindex**: The `tabindex` HTML attribute.\n  - **hidden**: Is the panel hidden? One way to hide it, is by adding `display:\n    none;`.\n\n",
+                "args": [],
+                "type": "{ role : String.String, id : String.String, ariaLabelledby : String.String, tabindex : Maybe.Maybe Basics.Int, hidden : Basics.Bool }"
+            },
+            {
+                "name": "Tab",
+                "comment": "\n\n  - **tag**: Unique tag to show the currently active tab.\n  - **id**: This is used to generate CSS ids of the tab and its panel. This\n    must be unique within your page.\n  - **label**: Displayed label of the tab within the tab list.\n  - **panel**: Content of the tab panel associated to the tab.\n  - **focusable**: Indicate whether the panel itself can receive focus. Is is\n    best practice to to make the panel focusable if it does not contain any other\n    elements which can receive focus.\n\n",
+                "args": [
+                    "node",
+                    "tag"
+                ],
+                "type": "{ tag : tag, id : String.String, label : node, panel : node, focusable : Basics.Bool }"
+            },
+            {
+                "name": "TabAttrs",
+                "comment": " Make sure to add HTML attributes and event handlers for all attributes in\nthis record to the tab.\n\n  - **role**: The `role` HTML attribute.\n  - **ariaSelected**: The `aria-selected` HTML attribute.\n  - **ariaControls**: The `aria-controls` HTML attribute.\n  - **id**: The CSS id.\n  - **onClick**: Attach this to an `onclick` event handler.\n  - **preventDefaultOnKeydown**: Attach this to an `onkeydown` event handler\n    which can prevent default.\n  - **tabindex**: The `tabindex` HTML attribute.\n\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ role : String.String, ariaSelected : Basics.Bool, ariaControls : String.String, id : String.String, onClick : msg, preventDefaultOnKeydown : Json.Decode.Decoder ( msg, Basics.Bool ), tabindex : Basics.Int }"
+            },
+            {
+                "name": "TabsAttrs",
+                "comment": " Make sure to add HTML attributes for all attributes in this record to the\ntabs list container.\n\n  - **role**: The `role` HTML attribute.\n  - **ariaLabel**: The `aria-label` HTML attribute.\n  - **ariaLabel**: The `aria-labelledby` HTML attribute.\n\n",
+                "args": [],
+                "type": "{ role : String.String, ariaLabel : Maybe.Maybe String.String, ariaLabelledBy : Maybe.Maybe String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "custom",
+                "comment": " If you want to use other UI libraries like\n[`rtfeldman/elm-css`](https://package.elm-lang.org/packages/rtfeldman/elm-css/latest/)\nor\n[`mdgriffith/elm-ui`](https://package.elm-lang.org/packages/mdgriffith/elm-ui/latest/)\nyou have to generate [`Views`](Accessibility-Tabs#Views) using this function.\nTake a look at the implementation of [`html`](Accessibility-Tabs#html) for\na starting point. The\n[`examples/`](https://github.com/kirchner/elm-wai-aria-tabs/tree/main/examples)\nfolder of the package repository contains an implementation for\n[`mdgriffith/elm-ui`](https://package.elm-lang.org/packages/mdgriffith/elm-ui/latest/).\n",
+                "type": "{ tabs : Accessibility.Tabs.TabsAttrs -> { tabs : List.List node, panels : List.List node } -> node, tab : Accessibility.Tabs.TabAttrs msg -> { label : node, active : Basics.Bool } -> node, panel : Accessibility.Tabs.PanelAttrs -> { panel : node, active : Basics.Bool } -> node } -> Accessibility.Tabs.Views node msg"
+            },
+            {
+                "name": "html",
+                "comment": " Generate view customization the standard\n[`elm/html`](https://package.elm-lang.org/packages/elm/html/latest/) package.\n\nThe DOM structure of the tabs will be something like this:\n\n    tabs =\n        Html.div\n            [ ... ] -- container attributes\n            [ Html.div\n                [ ... ] -- tabList attributes\n                [ tabs ]\n            , panels\n            ]\n\n    tab =\n        Html.button\n            [ ... ] -- tab attributes\n            [ tabLabel ]\n\n    panel =\n        Html.div\n            [ ... ] -- panel attributes\n            [ panelContent ]\n\n",
+                "type": "{ container : List.List (Html.Attribute msg), tabList : List.List (Html.Attribute msg), tab : Basics.Bool -> List.List (Html.Attribute msg), panel : Basics.Bool -> List.List (Html.Attribute msg) } -> Accessibility.Tabs.Views (Html.Html msg) msg"
+            },
+            {
+                "name": "label",
+                "comment": " ",
+                "type": "String.String -> Accessibility.Tabs.Label"
+            },
+            {
+                "name": "labelledby",
+                "comment": " ",
+                "type": "String.String -> Accessibility.Tabs.Label"
+            },
+            {
+                "name": "view",
+                "comment": " Render a (customized) tabs widget. You must provide\n[`Views`](Accessibility-Tabs#Views)\nfor rendering and the following configuration fields:\n\n  - **label**: Specify how the tabs are labelled. See\n    [`Label`](Accessibility-Tabs#Label) for possible options.\n  - **tabs**: A list of all tabs with its panels. See\n    [`Tab`](Accessibility-Tabs#Tab) for a description of its fields.\n  - **active**: The currently active tab.\n  - **onChange**: Message handler for changing the active tab. You must\n    [`Task.attempt`](https://package.elm-lang.org/packages/elm/core/latest/Task#attempt)\n    the second argument in your update function to make sure the correct tab\n    receives focus.\n  - **orientation**: Indicate if the tab list is oriented horizontally or\n    vertically, this should match the actual layout.\n  - **activation**: How are tabs activated? See\n    [`Activation`](Accessibility-Tabs#Activation) for possible options.\n\n",
+                "type": "Accessibility.Tabs.Views node msg -> { label : Accessibility.Tabs.Label, tabs : List.List (Accessibility.Tabs.Tab node tab), active : tab, onChange : tab -> Task.Task Browser.Dom.Error () -> msg, orientation : Accessibility.Tabs.Orientation, activation : Accessibility.Tabs.Activation } -> node"
+            },
+            {
+                "name": "viewStarter",
+                "comment": " Render a tabs widget with default styling. You have to provide the\nfollowing fields:\n\n  - **label**: The label of the tabs used by screen readers.\n  - **tabs**: A list of all tabs with its panels. The **label** field is used\n    for the entry in the tablist, as well as for tagging the currently active\n    tab.\n  - **active**: The currently active tab.\n  - **onChange**: Message handler for changing the active tab. You must\n    [`Task.attempt`](https://package.elm-lang.org/packages/elm/core/latest/Task#attempt)\n    the second argument in your update function to make sure the correct tab\n    receives focus.\n\n**NOTE**: This function is meant to get you started with this package. If you\nneed more then one tabs widget on your page or want custom styling and\ninteraction, you should take a look at the [`view`](Accessibility-Tabs#view) function below.\n\n",
+                "type": "{ label : String.String, tabs : List.List { label : String.String, panel : Html.Html msg }, active : String.String, onChange : String.String -> Task.Task Browser.Dom.Error () -> msg } -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

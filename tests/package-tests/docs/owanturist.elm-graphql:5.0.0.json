@@ -1,0 +1,477 @@
+[
+    {
+        "name": "GraphQL",
+        "comment": " Building and sending GraphQL.\n\nBuilding of HTTP request has been based on [`elm-http-builder`](http://package.elm-lang.org/packages/lukewestby/elm-http-builder/latest).\n\n\n# Build a GraphQL\n\n@docs GraphQL, query, mutation, subscription, render, toDecoder\n\n\n# Build a Request\n\n@docs Request, get, post\n\n@docs withHeader, withHeaders, withBearerToken\n\n@docs withQueryParam, withQueryParams, withTimeout, withCredentials, withDataPath\n\n\n# Make a Request\n\n@docs Error, send, sendCancelable, cancel, toTask, toTaskWithCacheBuster\n\n",
+        "unions": [
+            {
+                "name": "Error",
+                "comment": " A Request can fail in a couple ways:\n\n  - BadUrl means you did not provide a valid URL.\n  - Timeout means it took too long to get a response.\n  - NetworkError means the user turned off their wifi, went in a cave, etc.\n  - BadStatus means you got a response back, but the status code indicates failure.\n  - BadPayload means you got a response back with a nice status code,\n    but the body of the response was something unexpected.\n    The String in this case is a debugging message that\n    explains what went wrong with your JSON decoder or whatever.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "BadUrl",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Timeout",
+                        []
+                    ],
+                    [
+                        "NetworkError",
+                        []
+                    ],
+                    [
+                        "BadStatus",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "BadBody",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "GraphQL",
+                "comment": " ",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Request",
+                "comment": " A type for chaining request configuration.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "cancel",
+                "comment": " Try to cancel an ongoing cancelable Http request.\n",
+                "type": "String.String -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "get",
+                "comment": " Start building a GET request with a given URL.\n\n    GraphQL.Selector.succeed Tuple.pair\n        |> GraphQL.Selector.field \"me\" [] userSelector\n        |> GraphQL.Selector.field \"articles\" [] (GraphQL.Selector.list articleSelector)\n        |> query \"InitialData\"\n        |> get \"https://example.com/graphql\"\n\n",
+                "type": "String.String -> GraphQL.GraphQL a -> GraphQL.Request a"
+            },
+            {
+                "name": "mutation",
+                "comment": " Build a GraphQL named mutation.\n\n    GraphQL.Selector.succeed identity\n        |> GraphQL.Selector.field \"updateMe\"\n            [ ( \"firstName\", GraphQL.Argument.string \"Tom\" )\n            ]\n            (GraphQL.Selector.succeed User\n                |> GraphQL.Selector.field \"id\" [] GraphQL.Selector.string\n                |> GraphQL.Selector.field \"firstName\" [] GraphQL.Selector.string\n                |> GraphQL.Selector.field \"lastName\" [] GraphQL.Selector.string\n            )\n        |> mutation \"RenameUser\"\n\nIt collects a GraphQL which is equal to:\n\n    \"\"\"\n    mutation RenameUser {\n        updateMe(\"firstName\": \"Tom\") {\n            id\n            firstName\n            lastName\n        }\n    }\n    \"\"\"\n\nand decoder is equal to:\n\n    Decode.field \"updateMe\"\n        (Decode.map3\n            (Decode.field \"id\" Decode.string)\n            (Decode.field \"firstName\" Decode.string)\n            (Decode.field \"lastName\" Decode.string)\n        )\n\n",
+                "type": "String.String -> GraphQL.Selector.Selector a -> GraphQL.GraphQL a"
+            },
+            {
+                "name": "post",
+                "comment": " Start building a POST request with a given URL.\n\n    GraphQL.Selector.succeed Tuple.pair\n        |> GraphQL.Selector.field \"me\" [] userSelector\n        |> GraphQL.Selector.field \"articles\" [] (GraphQL.Selector.list articleSelector)\n        |> query \"InitialData\"\n        |> post \"https://example.com/graphql\"\n\n",
+                "type": "String.String -> GraphQL.GraphQL a -> GraphQL.Request a"
+            },
+            {
+                "name": "query",
+                "comment": " Build a GraphQL named query.\n\n    GraphQL.Selector.succeed identity\n        |> GraphQL.Selector.field \"me\"\n            []\n            (GraphQL.Selector.succeed User\n                |> GraphQL.Selector.field \"id\" [] GraphQL.Selector.string\n                |> GraphQL.Selector.field \"firstName\" [] GraphQL.Selector.string\n                |> GraphQL.Selector.field \"lastName\" [] GraphQL.Selector.string\n            )\n        |> query \"Me\"\n\nIt collects a GraphQL which is equal to:\n\n    \"\"\"\n    query Me {\n        me {\n            id\n            firstName\n            lastName\n        }\n    }\n    \"\"\"\n\nand decoder is equal to:\n\n    Decode.field \"me\"\n        (Decode.map3\n            (Decode.field \"id\" Decode.string)\n            (Decode.field \"firstName\" Decode.string)\n            (Decode.field \"lastName\" Decode.string)\n        )\n\n",
+                "type": "String.String -> GraphQL.Selector.Selector a -> GraphQL.GraphQL a"
+            },
+            {
+                "name": "render",
+                "comment": " Render GraphQL string representation from a GraphQL.\n",
+                "type": "GraphQL.GraphQL a -> String.String"
+            },
+            {
+                "name": "send",
+                "comment": " Send the Http request.\n",
+                "type": "(Result.Result GraphQL.Error a -> msg) -> GraphQL.Request a -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "sendCancelable",
+                "comment": " Send the cancelable Http request.\n",
+                "type": "String.String -> (Result.Result GraphQL.Error a -> msg) -> GraphQL.Request a -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "subscription",
+                "comment": " Build a GraphQL named subscription.\n\n    GraphQL.Selector.succeed identity\n        |> GraphQL.Selector.field \"onUpdateMe\"\n            []\n            (GraphQL.Selector.succeed User\n                |> GraphQL.Selector.field \"id\" [] GraphQL.Selector.string\n                |> GraphQL.Selector.field \"firstName\" [] GraphQL.Selector.string\n                |> GraphQL.Selector.field \"lastName\" [] GraphQL.Selector.string\n            )\n        |> subscription \"OnUpdateUser\"\n\nIt collects a GraphQL which is equal to:\n\n    \"\"\"\n    subscription OnUpdateUser {\n        onUpdateMe {\n            id\n            firstName\n            lastName\n        }\n    }\n    \"\"\"\n\nand decoder is equal to:\n\n    Decode.field \"onUpdateMe\"\n        (Decode.map3\n            (Decode.field \"id\" Decode.string)\n            (Decode.field \"firstName\" Decode.string)\n            (Decode.field \"lastName\" Decode.string)\n        )\n\n",
+                "type": "String.String -> GraphQL.Selector.Selector a -> GraphQL.GraphQL a"
+            },
+            {
+                "name": "toDecoder",
+                "comment": " Build a Decoder from a GraphQL.\n",
+                "type": "GraphQL.GraphQL a -> Json.Decode.Decoder a"
+            },
+            {
+                "name": "toTask",
+                "comment": " Convert the `Request` to a `Task` with all options applied.\n\n    GraphQL.Selector.succeed Tuple.pair\n        |> GraphQL.Selector.field \"me\" [] userSelector\n        |> GraphQL.Selector.field \"articles\" [] (GraphQL.Selector.list articleSelector)\n        |> query \"InitialData\"\n        |> get \"https://example.com/graphql\"\n        |> toTask\n\n    -- makes a task of request to https://example.com/graphql\n\n",
+                "type": "GraphQL.Request a -> Task.Task GraphQL.Error a"
+            },
+            {
+                "name": "toTaskWithCacheBuster",
+                "comment": " Convert the `Request` to a `Task` with a Time based cache buster added to the URL.\nYou provide a key for an extra query param, and when the request is sent that\nquery param will be given a value with the current timestamp.\n\n    GraphQL.Selector.succeed Tuple.pair\n        |> GraphQL.Selector.field \"me\" [] userSelector\n        |> GraphQL.Selector.field \"articles\" [] (GraphQL.Selector.list articleSelector)\n        |> query \"InitialData\"\n        |> get \"https://example.com/graphql\"\n        |> toTaskWithCacheBuster \"cache_buster\"\n\n    -- makes a task of request to https://example.com/graphql?cache_buster=1481633217383\n\n",
+                "type": "String.String -> GraphQL.Request a -> Task.Task GraphQL.Error a"
+            },
+            {
+                "name": "withBearerToken",
+                "comment": " Add a bearer token to a request.\n\n    GraphQL.Selector.succeed Tuple.pair\n        |> GraphQL.Selector.field \"me\" [] userSelector\n        |> GraphQL.Selector.field \"articles\" [] (GraphQL.Selector.list articleSelector)\n        |> query \"InitialData\"\n        |> get \"https://example.com/graphql\"\n        |> withBearerToken \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhIjoiYSJ9.MvhYYpYBuN1rUaV0GGnQGvr889zY0xSc20Lnt8nMTfE\"\n\n",
+                "type": "String.String -> GraphQL.Request a -> GraphQL.Request a"
+            },
+            {
+                "name": "withCredentials",
+                "comment": " Set the `withCredentials` flag on the request to True. Works via\n[`XMLHttpRequest#withCredentials`](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/withCredentials).\n\n    GraphQL.Selector.succeed Tuple.pair\n        |> GraphQL.Selector.field \"me\" [] userSelector\n        |> GraphQL.Selector.field \"articles\" [] (GraphQL.Selector.list articleSelector)\n        |> query \"InitialData\"\n        |> get \"https://example.com/graphql\"\n        |> withCredentials True\n\n",
+                "type": "Basics.Bool -> GraphQL.Request a -> GraphQL.Request a"
+            },
+            {
+                "name": "withDataPath",
+                "comment": " Set a path of graphql data. Default value is `[ \"data\" ]`.\n\n    GraphQL.Selector.succeed Tuple.pair\n        |> GraphQL.Selector.field \"me\" [] userSelector\n        |> GraphQL.Selector.field \"articles\" [] (GraphQL.Selector.list articleSelector)\n        |> query \"InitialData\"\n        |> get \"https://example.com/graphql\"\n        |> withDataPath [ \"my\", \"custom\", \"data\", \"path\" ]\n\n",
+                "type": "List.List String.String -> GraphQL.Request a -> GraphQL.Request a"
+            },
+            {
+                "name": "withHeader",
+                "comment": " Add a single header to a request.\n\n    GraphQL.Selector.succeed Tuple.pair\n        |> GraphQL.Selector.field \"me\" [] userSelector\n        |> GraphQL.Selector.field \"articles\" [] (GraphQL.Selector.list articleSelector)\n        |> query \"InitialData\"\n        |> get \"https://example.com/graphql\"\n        |> withHeader \"Content-Type\" \"application/json\"\n        |> withHeader \"Accept\" \"application/json\"\n\n",
+                "type": "String.String -> String.String -> GraphQL.Request a -> GraphQL.Request a"
+            },
+            {
+                "name": "withHeaders",
+                "comment": " Add many headers to a request.\n\n    GraphQL.Selector.succeed Tuple.pair\n        |> GraphQL.Selector.field \"me\" [] userSelector\n        |> GraphQL.Selector.field \"articles\" [] (GraphQL.Selector.list articleSelector)\n        |> query \"InitialData\"\n        |> get \"https://example.com/graphql\"\n        |> withHeaders\n            [ ( \"Content-Type\", \"application/json\" )\n            , ( \"Accept\", \"application/json\" )\n            ]\n\n",
+                "type": "List.List ( String.String, String.String ) -> GraphQL.Request a -> GraphQL.Request a"
+            },
+            {
+                "name": "withQueryParam",
+                "comment": " Add a query param to the url for the request.\n\n    GraphQL.Selector.succeed Tuple.pair\n        |> GraphQL.Selector.field \"me\" [] userSelector\n        |> GraphQL.Selector.field \"articles\" [] (GraphQL.Selector.list articleSelector)\n        |> query \"InitialData\"\n        |> get \"https://example.com/graphql\"\n        |> withQueryParams \"hello\" \"world\"\n        |> withQueryParams \"baz\" \"qux\"\n\n    -- sends a request to https://example.com/graphql?hello=world&baz=qux\n\n",
+                "type": "String.String -> String.String -> GraphQL.Request a -> GraphQL.Request a"
+            },
+            {
+                "name": "withQueryParams",
+                "comment": " Add some query params to the url for the request.\n\n    GraphQL.Selector.succeed Tuple.pair\n        |> GraphQL.Selector.field \"me\" [] userSelector\n        |> GraphQL.Selector.field \"articles\" [] (GraphQL.Selector.list articleSelector)\n        |> query \"InitialData\"\n        |> get \"https://example.com/graphql\"\n        |> withQueryParams [ ( \"hello\", \"world\" ), ( \"foo\", \"bar\" ) ]\n        |> withQueryParams [ ( \"baz\", \"qux\" ) ]\n\n    -- sends a request to https://example.com/graphql?hello=world&foo=bar&baz=qux\n\n",
+                "type": "List.List ( String.String, String.String ) -> GraphQL.Request a -> GraphQL.Request a"
+            },
+            {
+                "name": "withTimeout",
+                "comment": " Set the `timeout` setting on the request.\n\n    GraphQL.Selector.succeed Tuple.pair\n        |> GraphQL.Selector.field \"me\" [] userSelector\n        |> GraphQL.Selector.field \"articles\" [] (GraphQL.Selector.list articleSelector)\n        |> query \"InitialData\"\n        |> get \"https://example.com/graphql\"\n        |> withTimeout (10 * Time.second)\n\n",
+                "type": "Basics.Float -> GraphQL.Request a -> GraphQL.Request a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "GraphQL.Argument",
+        "comment": " Define GraphQL inputs in Elm\n\n\n# Primitives\n\n@docs Argument, Value\n@docs string, int, float, bool, null, nullable\n\n\n# Arrays\n\n@docs list, listOf, array, arrayOf, setOf\n\n\n# Objects\n\n@docs object, dictOf\n\n\n# Conversions\n\n@docs toValue\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Argument",
+                "comment": " Represents a GraphQL argument values.\n",
+                "args": [],
+                "type": "Internal.Argument"
+            },
+            {
+                "name": "Value",
+                "comment": " Represents a JavaScript value.\n",
+                "args": [],
+                "type": "Json.Encode.Value"
+            }
+        ],
+        "values": [
+            {
+                "name": "array",
+                "comment": " Pass array of arguments into a graph.\n\n    GraphQL.Selector.field \"fieldName\"\n        [ ( \"asInConsistentArray\"\n          , GraphQL.Argument.array\n                (Array.fromList\n                    [ GraphQL.Argument.string \"foo\"\n                    , GraphQL.Argument.int 0\n                    , GraphQL.Argument.array (Array.fromList [ GraphQL.Argument.bool False ])\n                    ]\n                )\n          )\n        , ( \"asConsistentArray\"\n          , GraphQL.Argument.array\n                (Array.fromList\n                    [ GraphQL.Argument.int 0\n                    , GraphQL.Argument.int 1\n                    , GraphQL.Argument.int 2\n                    ]\n                )\n          )\n        ]\n        GraphQL.Selector.int\n\nEquals to:\n\n    \"\"\"\n    fieldName(\n        asInConsistentArray: [\"foo\", 0, [false]],\n        asConsistentArray: [0, 1, 2]\n    )\n    \"\"\"\n\n",
+                "type": "Array.Array GraphQL.Argument.Argument -> GraphQL.Argument.Argument"
+            },
+            {
+                "name": "arrayOf",
+                "comment": " Pass array of specific arguments into a graph.\n\n    GraphQL.Selector.field \"fieldName\"\n        [ ( \"asArray\"\n          , GraphQL.Argument.arrayOf GraphQL.Argument.int (Array.fromList [ 0, 1, 2 ])\n          )\n        ]\n        GraphQL.Selector.int\n\nEquals to:\n\n    \"\"\"\n    fieldName(\n        asArray: [0, 1, 2]\n    )\n    \"\"\"\n\n",
+                "type": "(a -> GraphQL.Argument.Argument) -> Array.Array a -> GraphQL.Argument.Argument"
+            },
+            {
+                "name": "bool",
+                "comment": " Pass bool argument into a graph.\n\n    GraphQL.Selector.field \"fieldName\"\n        [ ( \"asBool\", GraphQL.Argument.bool True )\n        ]\n        GraphQL.Selector.int\n\nEquals to:\n\n    \"\"\"\n    fieldName(asBool: true)\n    \"\"\"\n\n",
+                "type": "Basics.Bool -> GraphQL.Argument.Argument"
+            },
+            {
+                "name": "dictOf",
+                "comment": " Pass dict of arguments into a graph.\n\n    GraphQL.Selector.field \"fieldName\"\n        [ ( \"asObject\"\n          , GraphQL.Argument.dictOf\n                String.fromInt\n                GraphQL.Argument.string\n                (Dict.fromList\n                    [ ( 2, \"second\" )\n                    , ( 1, \"first\" )\n                    , ( 3, \"third\" )\n                    ]\n                )\n          )\n        ]\n        GraphQL.Selector.int\n\nEquals to:\n\n    \"\"\"\n    fieldName(asObject: {\n        1: \"first\",\n        2: \"second\",\n        3: \"third\"\n    })\n    \"\"\"\n\n",
+                "type": "(k -> String.String) -> (v -> GraphQL.Argument.Argument) -> Dict.Dict k v -> GraphQL.Argument.Argument"
+            },
+            {
+                "name": "float",
+                "comment": " Pass float argument into a graph.\n\n    GraphQL.Selector.field \"fieldName\"\n        [ ( \"asFloat\", GraphQL.Argument.float 3.14 )\n        ]\n        GraphQL.Selector.int\n\nEquals to:\n\n    \"\"\"\n    fieldName(asFloat: 3.14)\n    \"\"\"\n\n",
+                "type": "Basics.Float -> GraphQL.Argument.Argument"
+            },
+            {
+                "name": "int",
+                "comment": " Pass int argument into a graph.\n\n    GraphQL.Selector.field \"fieldName\"\n        [ ( \"asInt\", GraphQL.Argument.int 1 )\n        ]\n        GraphQL.Selector.int\n\nEquals to:\n\n    \"\"\"\n    fieldName(asInt: 1)\n    \"\"\"\n\n",
+                "type": "Basics.Int -> GraphQL.Argument.Argument"
+            },
+            {
+                "name": "list",
+                "comment": " Pass list of arguments into a graph.\n\n    GraphQL.Selector.field \"fieldName\"\n        [ ( \"asInConsistentArray\"\n          , GraphQL.Argument.list\n                [ GraphQL.Argument.string \"foo\"\n                , GraphQL.Argument.int 0\n                , GraphQL.Argument.list [ GraphQL.Argument.bool False ]\n                ]\n          )\n        , ( \"asConsistentArray\"\n          , GraphQL.Argument.list\n                [ GraphQL.Argument.int 0\n                , GraphQL.Argument.int 1\n                , GraphQL.Argument.int 2\n                ]\n          )\n        ]\n        GraphQL.Selector.int\n\nEquals to:\n\n    \"\"\"\n    fieldName(\n        asInConsistentArray: [\"foo\", 0, [false]],\n        asConsistentArray: [0, 1, 2]\n    )\n    \"\"\"\n\n",
+                "type": "List.List GraphQL.Argument.Argument -> GraphQL.Argument.Argument"
+            },
+            {
+                "name": "listOf",
+                "comment": " Pass list of specific arguments into a graph.\n\n    GraphQL.Selector.field \"fieldName\"\n        [ ( \"asArray\"\n          , GraphQL.Argument.listOf GraphQL.Argument.int [ 0, 1, 2 ]\n          )\n        ]\n        GraphQL.Selector.int\n\nEquals to:\n\n    \"\"\"\n    fieldName(\n        asArray: [0, 1, 2]\n    )\n    \"\"\"\n\n",
+                "type": "(a -> GraphQL.Argument.Argument) -> List.List a -> GraphQL.Argument.Argument"
+            },
+            {
+                "name": "null",
+                "comment": " Pass null argument into a graph.\n\n    GraphQL.Selector.field \"fieldName\"\n        [ ( \"asNull\", GraphQL.Argument.null )\n        ]\n        GraphQL.Selector.int\n\nEquals to:\n\n    \"\"\"\n    fieldName(asNull: null)\n    \"\"\"\n\n",
+                "type": "GraphQL.Argument.Argument"
+            },
+            {
+                "name": "nullable",
+                "comment": " Pass nullable argument into a graph.\n\n    GraphQL.Selector.field \"fieldName\"\n        [ ( \"asString\", GraphQL.Argument.nullable GraphQL.Argument.string (Just \"foo\") )\n        , ( \"asNull\", GraphQL.Argument.nullable GraphQL.Argument.string Nothing )\n        ]\n        GraphQL.Selector.int\n\nEquals to:\n\n    \"\"\"\n    fieldName(\n        asString: \"foo\",\n        asNull: null\n    )\n    \"\"\"\n\n",
+                "type": "(a -> GraphQL.Argument.Argument) -> Maybe.Maybe a -> GraphQL.Argument.Argument"
+            },
+            {
+                "name": "object",
+                "comment": " Pass object of arguments into a graph.\n\n    GraphQL.Selector.field \"fieldName\"\n        [ ( \"asObject\"\n          , GraphQL.Argument.object\n                [ ( \"asString\", GraphQL.Argument.string \"foo\" )\n                , ( \"asInt\", GraphQL.Argument.int 1 )\n                , ( \"asFloat\", GraphQL.Argument.float 3.14 )\n                , ( \"asBool\", GraphQL.Argument.bool True )\n                , ( \"asNull\", GraphQL.Argument.null )\n                ]\n          )\n        ]\n        GraphQL.Selector.int\n\nEquals to:\n\n    \"\"\"\n    fieldName(asObject: {\n        asString: \"foo\",\n        asInt: 1,\n        asFloat: 3.14,\n        asBool: true,\n        asNull: null\n    })\n    \"\"\"\n\n",
+                "type": "List.List ( String.String, GraphQL.Argument.Argument ) -> GraphQL.Argument.Argument"
+            },
+            {
+                "name": "setOf",
+                "comment": " Pass set of specific arguments into a graph.\n\n    GraphQL.Selector.field \"fieldName\"\n        [ ( \"asArray\"\n          , GraphQL.Argument.setOf GraphQL.Argument.int (Set.fromList [ 0, 2, 1, 0 ])\n          )\n        ]\n        GraphQL.Selector.int\n\nEquals to:\n\n    \"\"\"\n    fieldName(\n        asArray: [0, 1, 2]\n    )\n    \"\"\"\n\n",
+                "type": "(a -> GraphQL.Argument.Argument) -> Set.Set a -> GraphQL.Argument.Argument"
+            },
+            {
+                "name": "string",
+                "comment": " Pass string argument into a graph.\n\n    GraphQL.Selector.field \"fieldName\"\n        [ ( \"asString\", GraphQL.Argument.string \"foo\" )\n        ]\n        GraphQL.Selector.int\n\nEquals to:\n\n    \"\"\"\n    fieldName(asString: \"foo\")\n    \"\"\"\n\n",
+                "type": "String.String -> GraphQL.Argument.Argument"
+            },
+            {
+                "name": "toValue",
+                "comment": " Convert `Argument` into `Value`.\n\n    GraphQL.Argument.toValue (GraphQL.Argument.string \"hello\") == Json.Encode.string \"hello\"\n\n    GraphQL.Argument.toValue (GraphQL.Argument.bool True) == Json.Encode.bool True\n\n    GraphQL.Argument.toValue GraphQL.Argument.null == Json.Encode.null\n\n    GraphQL.Argument.toValue (GraphQL.Argument.listOf GraphQL.Argument.int [ 0, 1, 2 ])\n        == Json.Encode.listOf Json.Encode.int [ 0, 1, 2 ]\n\n",
+                "type": "GraphQL.Argument.Argument -> GraphQL.Argument.Value"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "GraphQL.Selector",
+        "comment": " Build GraphQL with decoders for turning JSON values into Elm values.\n\n\n# Primitives\n\n@docs Selector, string, bool, int, float\n\n\n# Data Structures\n\n@docs nullable, list, array\n\n\n# Object Primitives\n\n@docs field, fieldWithAlias, at, index, on\n\n\n# Inconsistent Structure\n\n@docs maybe, oneOf\n\n\n# Mapping\n\n@docs map, map2, map3, map4, map5, map6, map7, map8\n\n\n# Chaining\n\n@docs select, selectWithAlias\n\n\n# Run Selectors\n\n@docs Value, render, toDecoder, decodeString, decodeValue\n\n\n# Errors\n\n@docs Error, errorToString\n\n\n# Fancy Decoding\n\n@docs andThen, succeed, fail, null\n\n",
+        "unions": [
+            {
+                "name": "Error",
+                "comment": " A structured error describing exactly how the selector failed.\nYou can use this to create more elaborate visualizations of a selector problem.\nFor example, you could show the entire JSON object\nand show the part causing the failure in red.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Field",
+                        [
+                            "String.String",
+                            "GraphQL.Selector.Error"
+                        ]
+                    ],
+                    [
+                        "Index",
+                        [
+                            "Basics.Int",
+                            "GraphQL.Selector.Error"
+                        ]
+                    ],
+                    [
+                        "OneOf",
+                        [
+                            "List.List GraphQL.Selector.Error"
+                        ]
+                    ],
+                    [
+                        "Failure",
+                        [
+                            "String.String",
+                            "GraphQL.Selector.Value"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Selector",
+                "comment": " A value that knows how to select (receive and decode) a GraphQL values.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Value",
+                "comment": " A JSON value.\n",
+                "args": [],
+                "type": "Json.Decode.Value"
+            }
+        ],
+        "values": [
+            {
+                "name": "andThen",
+                "comment": " Create a selector that depend on previous results.\nDoesn't create depended Selector.\n",
+                "type": "(a -> GraphQL.Selector.Selector b) -> GraphQL.Selector.Selector a -> GraphQL.Selector.Selector b"
+            },
+            {
+                "name": "array",
+                "comment": " Decode a JSON array into an Elm `Array`.\n\n    decodeString (array int) \"[1,2,3]\" == Ok (Array.fromList [ 1, 2, 3 ])\n\n    decodeString (array bool) \"[true,false]\" == Ok (Array.fromList [ True, False ])\n\n",
+                "type": "GraphQL.Selector.Selector a -> GraphQL.Selector.Selector (Array.Array a)"
+            },
+            {
+                "name": "at",
+                "comment": " Decode a nested JSON object, requiring certain fields.\n\n    json = \"\"\"{ \"person\": { \"name\": \"tom\", \"age\": 42 } }\"\"\"\n\n    decodeString (at [\"person\", \"name\"] string) json  == Ok \"tom\"\n    decodeString (at [\"person\", \"age\" ] int   ) json  == Ok \"42\n\nThis is really just a shorthand for saying things like:\n\n    field \"person\" [] (field \"name\" [] string) == at [ \"person\", \"name\" ] string\n\n",
+                "type": "List.List String.String -> GraphQL.Selector.Selector a -> GraphQL.Selector.Selector a"
+            },
+            {
+                "name": "bool",
+                "comment": " Decode a JSON string into an Elm `Bool`.\n\n    decodeString bool \"true\"              == Ok True\n    decodeString bool \"42\"                == Err ...\n    decodeString bool \"3.14\"              == Err ...\n    decodeString bool \"\\\"hello\\\"\"         == Err ...\n    decodeString bool \"{ \\\"hello\\\": 42 }\" == Err ...\n\n",
+                "type": "GraphQL.Selector.Selector Basics.Bool"
+            },
+            {
+                "name": "decodeString",
+                "comment": " Parse the given string into a JSON value and then run the Decoder on it.\nThis will fail if the string is not well-formed JSON or if the Decoder fails for some reason.\n\n    decodeString int \"4\"     == Ok 4\n    decodeString int \"1 + 2\" == Err ...\n\n",
+                "type": "GraphQL.Selector.Selector a -> String.String -> Result.Result GraphQL.Selector.Error a"
+            },
+            {
+                "name": "decodeValue",
+                "comment": " Run a Decoder on some JSON Value.\nYou can send these JSON values through ports,\nso that is probably the main time you would use this function.\n",
+                "type": "GraphQL.Selector.Selector a -> GraphQL.Selector.Value -> Result.Result GraphQL.Selector.Error a"
+            },
+            {
+                "name": "errorToString",
+                "comment": " Convert a decoding error into a String that is nice for debugging.\nIt produces multiple lines of output, so you may want to peek at it with something like this:\n\n    import Html\n    import Json.Decode as Decode\n\n    errorToHtml : Decode.Error -> Html.Html msg\n    errorToHtml error =\n        Html.pre [] [ Html.text (Decode.errorToString error) ]\n\n**Note:** It would be cool to do nicer coloring and fancier HTML, but we\ncannot have any HTML dependencies in `elm/core`. It is totally possible\nto crawl the `Error` structure and create this separately though!\n\n",
+                "type": "GraphQL.Selector.Error -> String.String"
+            },
+            {
+                "name": "fail",
+                "comment": " Ignore the JSON and make the selector fail. This is handy when used with\n`oneOf` or `andThen` where you want to give a custom error message in some\ncase.\n\nSee the [`andThen`](#andThen) docs for an example.\n\n",
+                "type": "String.String -> GraphQL.Selector.Selector a"
+            },
+            {
+                "name": "field",
+                "comment": " ",
+                "type": "String.String -> List.List ( String.String, Internal.Argument ) -> GraphQL.Selector.Selector a -> GraphQL.Selector.Selector a"
+            },
+            {
+                "name": "fieldWithAlias",
+                "comment": " ",
+                "type": "String.String -> String.String -> List.List ( String.String, Internal.Argument ) -> GraphQL.Selector.Selector a -> GraphQL.Selector.Selector a"
+            },
+            {
+                "name": "float",
+                "comment": " Decode a JSON number into an Elm `Float`.\n\n    decodeString float \"true\"              == Err ..\n    decodeString float \"42\"                == Ok 42\n    decodeString float \"3.14\"              == Ok 3.14\n    decodeString float \"\\\"hello\\\"\"         == Err ...\n    decodeString float \"{ \\\"hello\\\": 42 }\" == Err ...\n\n",
+                "type": "GraphQL.Selector.Selector Basics.Float"
+            },
+            {
+                "name": "index",
+                "comment": " Decode a JSON array, requiring a particular index.\n\n    json = \"\"\"[ \"alice\", \"bob\", \"chuck\" ]\"\"\"\n\n    decodeString (index 0 string) json  == Ok \"alice\"\n    decodeString (index 1 string) json  == Ok \"bob\"\n    decodeString (index 2 string) json  == Ok \"chuck\"\n    decodeString (index 3 string) json  == Err ...\n\n",
+                "type": "Basics.Int -> GraphQL.Selector.Selector a -> GraphQL.Selector.Selector a"
+            },
+            {
+                "name": "int",
+                "comment": " Decode a JSON number into an Elm `Int`.\n\n    decodeString int \"true\"              == Err ...\n    decodeString int \"42\"                == Ok 42\n    decodeString int \"3.14\"              == Err ...\n    decodeString int \"\\\"hello\\\"\"         == Err ...\n    decodeString int \"{ \\\"hello\\\": 42 }\" == Err ...\n\n",
+                "type": "GraphQL.Selector.Selector Basics.Int"
+            },
+            {
+                "name": "list",
+                "comment": " Decode a JSON array into an Elm `List`.\n\n    decodeString (list int) \"[1,2,3]\" == Ok [ 1, 2, 3 ]\n\n    decodeString (list bool) \"[true,false]\" == Ok [ True, False ]\n\n",
+                "type": "GraphQL.Selector.Selector a -> GraphQL.Selector.Selector (List.List a)"
+            },
+            {
+                "name": "map",
+                "comment": " Transform a selector. Maybe you just want to know the length of a string:\n\n    stringLength : Selector Int\n    stringLength =\n        map String.length string\n\nIt is often helpful to use `map` with `oneOf`, like when defining `nullable`:\n\n    nullable : Selector a -> Selector (Maybe a)\n    nullable selector =\n        oneOf\n            [ null Nothing\n            , map Just selector\n            ]\n\n",
+                "type": "(a -> b) -> GraphQL.Selector.Selector a -> GraphQL.Selector.Selector b"
+            },
+            {
+                "name": "map2",
+                "comment": " Try two selectors and then combine the result\nWe can use this to select objects with many fields:\n\n\n    type alias Point =\n        { x : Float, y : Float }\n\n    point : Selector Point\n    point =\n        map2 Point\n            (field \"x\" [] float)\n            (field \"y\" [] float)\n\n    -- decodeString point \"\"\"{ \"x\": 3, \"y\": 4 }\"\"\" == Ok { x = 3, y = 4 }\n\nIt tries each individual decoder and puts the result together with the `Point`\nconstructor.\n\n",
+                "type": "(a -> b -> c) -> GraphQL.Selector.Selector a -> GraphQL.Selector.Selector b -> GraphQL.Selector.Selector c"
+            },
+            {
+                "name": "map3",
+                "comment": " Try three selectors and then combine the result.\nWe can use this to select objects with many fields:\n\n    type alias Person =\n        { name : String, age : Int, height : Float }\n\n    person : Selector Person\n    person =\n        succeed Person\n            |> select \"name\" [] string\n            |> select age\" [] int\n            |> select \"height\" [] float\n\n\n    -- json = \"\"\"{ \"name\": \"tom\", \"info\": { \"age\": 42, \"height\": 1.8 } }\"\"\"\n    -- decodeString person json == Ok { name = \"tom\", age = 42, height = 1.8 }\n\nLike `map2` it tries each decoder in order and then give the results to the\n`Person` constructor. That can be any function though!\n\n",
+                "type": "(a -> b -> c -> d) -> GraphQL.Selector.Selector a -> GraphQL.Selector.Selector b -> GraphQL.Selector.Selector c -> GraphQL.Selector.Selector d"
+            },
+            {
+                "name": "map4",
+                "comment": " ",
+                "type": "(a -> b -> c -> d -> e) -> GraphQL.Selector.Selector a -> GraphQL.Selector.Selector b -> GraphQL.Selector.Selector c -> GraphQL.Selector.Selector d -> GraphQL.Selector.Selector e"
+            },
+            {
+                "name": "map5",
+                "comment": " ",
+                "type": "(a -> b -> c -> d -> e -> f) -> GraphQL.Selector.Selector a -> GraphQL.Selector.Selector b -> GraphQL.Selector.Selector c -> GraphQL.Selector.Selector d -> GraphQL.Selector.Selector e -> GraphQL.Selector.Selector f"
+            },
+            {
+                "name": "map6",
+                "comment": " ",
+                "type": "(a -> b -> c -> d -> e -> f -> g) -> GraphQL.Selector.Selector a -> GraphQL.Selector.Selector b -> GraphQL.Selector.Selector c -> GraphQL.Selector.Selector d -> GraphQL.Selector.Selector e -> GraphQL.Selector.Selector f -> GraphQL.Selector.Selector g"
+            },
+            {
+                "name": "map7",
+                "comment": " ",
+                "type": "(a -> b -> c -> d -> e -> f -> g -> h) -> GraphQL.Selector.Selector a -> GraphQL.Selector.Selector b -> GraphQL.Selector.Selector c -> GraphQL.Selector.Selector d -> GraphQL.Selector.Selector e -> GraphQL.Selector.Selector f -> GraphQL.Selector.Selector g -> GraphQL.Selector.Selector h"
+            },
+            {
+                "name": "map8",
+                "comment": " ",
+                "type": "(a -> b -> c -> d -> e -> f -> g -> h -> i) -> GraphQL.Selector.Selector a -> GraphQL.Selector.Selector b -> GraphQL.Selector.Selector c -> GraphQL.Selector.Selector d -> GraphQL.Selector.Selector e -> GraphQL.Selector.Selector f -> GraphQL.Selector.Selector g -> GraphQL.Selector.Selector h -> GraphQL.Selector.Selector i"
+            },
+            {
+                "name": "maybe",
+                "comment": " Helpful for dealing with optional fields. Here are a few slightly different examples:\n\n    json = \"\"\"{ \"name\": \"tom\", \"age\": 42 }\"\"\"\n\n    decodeString (field \"age\" [] (maybe int)) json    == Ok (Just 42)\n    decodeString (field \"name\" [] (maybe int)) json   == Ok Nothing\n    decodeString (field \"height\" [] (maybe int)) json == Err ...\n\nNotice the last example!\nIt is saying we must have a field named `height` and the content may be a float.\nThere is no `height` field, so the decoder fails.\n\nPoint is, `maybe` will make exactly what it contains conditional.\nFor optional fields, this means you probably want it outside a use of `field` or `at`.\n\n",
+                "type": "GraphQL.Selector.Selector a -> GraphQL.Selector.Selector (Maybe.Maybe a)"
+            },
+            {
+                "name": "null",
+                "comment": " Decode a `null` value into some Elm value.\n\n    decodeString (null False) \"null\" == Ok False\n    decodeString (null 42) \"null\"    == Ok 42\n    decodeString (null 42) \"42\"      == Err ..\n    decodeString (null 42) \"false\"   == Err ..\n\nSo if you ever see a `null`, this will return whatever value you specified.\n\n",
+                "type": "a -> GraphQL.Selector.Selector a"
+            },
+            {
+                "name": "nullable",
+                "comment": " Decode a nullable JSON value into an Elm value.\n\n    decodeString (nullable int) \"13\"    == Ok (Just 13)\n    decodeString (nullable int) \"42\"    == Ok (Just 42)\n    decodeString (nullable int) \"null\"  == Ok Nothing\n    decodeString (nullable int) \"true\"  == Err ...\n\n",
+                "type": "GraphQL.Selector.Selector a -> GraphQL.Selector.Selector (Maybe.Maybe a)"
+            },
+            {
+                "name": "on",
+                "comment": " ",
+                "type": "List.List ( String.String, GraphQL.Selector.Selector a ) -> GraphQL.Selector.Selector a"
+            },
+            {
+                "name": "oneOf",
+                "comment": " Try a bunch of different selectors. This can be useful if the JSON may come\nin a couple different formats. For example, say you want to read an array of\nnumbers, but some of them are `null`.\n\n\n    badInt : Decoder Int\n    badInt =\n        oneOf [ int, null 0 ]\n\n    -- decodeString (list badInt) \"[1,2,null,4]\" == Ok [1,2,0,4]\n\nWhy would someone generate JSON like this? Questions like this are not good\nfor your health. The point is that you can use `oneOf` to handle situations\nlike this!\n\nYou could also use `oneOf` to help version your data. Try the latest format,\nthen a few older ones that you still support. You could use `andThen` to be\neven more particular if you wanted.\n\n",
+                "type": "List.List (GraphQL.Selector.Selector a) -> GraphQL.Selector.Selector a"
+            },
+            {
+                "name": "render",
+                "comment": " Render GraphQL representation of Selector.\n",
+                "type": "GraphQL.Selector.Selector a -> String.String"
+            },
+            {
+                "name": "select",
+                "comment": " ",
+                "type": "String.String -> List.List ( String.String, Internal.Argument ) -> GraphQL.Selector.Selector a -> GraphQL.Selector.Selector (a -> b) -> GraphQL.Selector.Selector b"
+            },
+            {
+                "name": "selectWithAlias",
+                "comment": " ",
+                "type": "String.String -> String.String -> List.List ( String.String, Internal.Argument ) -> GraphQL.Selector.Selector a -> GraphQL.Selector.Selector (a -> b) -> GraphQL.Selector.Selector b"
+            },
+            {
+                "name": "string",
+                "comment": " Decode a JSON string into an Elm `String`.\n\n    decodeString string \"true\"              == Err ...\n    decodeString string \"42\"                == Err ...\n    decodeString string \"3.14\"              == Err ...\n    decodeString string \"\\\"hello\\\"\"         == Ok \"hello\"\n    decodeString string \"{ \\\"hello\\\": 42 }\" == Err ...\n\n",
+                "type": "GraphQL.Selector.Selector String.String"
+            },
+            {
+                "name": "succeed",
+                "comment": " Ignore the JSON and produce a certain Elm value.\n\n    decodeString (succeed 42) \"true\"    == Ok 42\n    decodeString (succeed 42) \"[1,2,3]\" == Ok 42\n    decodeString (succeed 42) \"hello\"   == Err ... -- this is not a valid JSON string\n\n    This is handy when used with `oneOf` or `andThen`.\n\n",
+                "type": "a -> GraphQL.Selector.Selector a"
+            },
+            {
+                "name": "toDecoder",
+                "comment": " Build a Decoder of Selector.\n",
+                "type": "GraphQL.Selector.Selector a -> Json.Decode.Decoder a"
+            }
+        ],
+        "binops": []
+    }
+]

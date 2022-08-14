@@ -1,0 +1,70 @@
+[
+    {
+        "name": "List.Cartesian",
+        "comment": " Cartesian product version of List `andMap` and `mapN` functions.\n\nThis module's functions behave differently from the \"common\" ones in\n[`elm/core`](https://package.elm-lang.org/packages/elm/core/1.0.5/)\nand\n[`elm-community/list-extra`](https://package.elm-lang.org/packages/elm-community/list-extra/8.4.0/)\nin that instead of zipping they will run through all combinations of the lists\nyou provide:\n\n    List.Cartesian.map2 (+) [ 1, 2 ] [ 100, 200, 300 ]\n    --> [ 101, 201, 301, 102, 202, 302 ]\n\nCompare that with the default zipping behaviour:\n\n    List.map2 (+) [ 1, 2 ] [ 100, 200, 300 ]\n    --> [ 101, 202 ]\n\n@docs andMap, map2, map3, map4, map5\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "andMap",
+                "comment": " A building block for arbitrary `mapN` functions. See [`map5`](#map5) for more\ninfo.\n\nNote that [`andMap`](#andMap) allows you to do stuff you might not realize is\npossible with [`map2`](#map2) etc.:\n\n    [ (+), (*) ]\n        |> List.Cartesian.andMap [ 1, 2 ]\n        |> List.Cartesian.andMap [ 90, 93, 96 ]\n    --> [ 91, 94, 97, 92, 95, 98, 90, 93, 96, 180, 186, 192 ]\n\n",
+                "type": "List.List a -> List.List (a -> b) -> List.List b"
+            },
+            {
+                "name": "map2",
+                "comment": " Equivalent to\n\n    [ fn ]\n        |> List.Cartesian.andMap xs\n        |> List.Cartesian.andMap ys\n\nAlso equivalent to [`List.Extra.lift2`](https://package.elm-lang.org/packages/elm-community/list-extra/8.4.0/List-Extra#lift2).\n\n    List.Cartesian.map2 (*) [ 10, 100 ] [ 1, 2, 3 ]\n    --> [ 10, 20, 30, 100, 200, 300 ]\n\n",
+                "type": "(a -> b -> c) -> List.List a -> List.List b -> List.List c"
+            },
+            {
+                "name": "map3",
+                "comment": " Equivalent to\n\n    [ fn ]\n        |> List.Cartesian.andMap xs\n        |> List.Cartesian.andMap ys\n        |> List.Cartesian.andMap zs\n\nAlso equivalent to [`List.Extra.lift3`](https://package.elm-lang.org/packages/elm-community/list-extra/8.4.0/List-Extra#lift3).\n\n",
+                "type": "(a -> b -> c -> d) -> List.List a -> List.List b -> List.List c -> List.List d"
+            },
+            {
+                "name": "map4",
+                "comment": " Equivalent to\n\n    [ fn ]\n        |> List.Cartesian.andMap xs\n        |> List.Cartesian.andMap ys\n        |> List.Cartesian.andMap zs\n        |> List.Cartesian.andMap ws\n\nAlso equivalent to [`List.Extra.lift4`](https://package.elm-lang.org/packages/elm-community/list-extra/8.4.0/List-Extra#lift4).\n\n",
+                "type": "(a -> b -> c -> d -> e) -> List.List a -> List.List b -> List.List c -> List.List d -> List.List e"
+            },
+            {
+                "name": "map5",
+                "comment": " Equivalent to\n\n    [ fn ]\n        |> List.Cartesian.andMap xs\n        |> List.Cartesian.andMap ys\n        |> List.Cartesian.andMap zs\n        |> List.Cartesian.andMap ws\n        |> List.Cartesian.andMap vs\n\nIn case you're looking for `map6` etc., you can use the above [`andMap`](#andMap)\npattern to map as many lists you want.\n\n",
+                "type": "(a -> b -> c -> d -> e -> f) -> List.List a -> List.List b -> List.List c -> List.List d -> List.List e -> List.List f"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "List.Zip",
+        "comment": " Zipping version of List `andMap` and `mapN` functions.\n\nThis module exists mainly to illustrate the difference between the\n[`List.Cartesian`](https://package.elm-lang.org/packages/Janiczek/elm-list-cartesian/1.0.2/List-Cartesian)\nfunctions and the \"common\" ones from [`elm/core`](https://package.elm-lang.org/packages/elm/core/1.0.5/)\nand [`elm-community/list-extra`](https://package.elm-lang.org/packages/elm-community/list-extra/8.4.0/).\n\nThe `mapN` functions in this module are aliases of the functions found in\n[`List`](https://package.elm-lang.org/packages/elm/core/1.0.5/List):\n[`List.Zip.map2`](#map2) = [`List.map2`](https://package.elm-lang.org/packages/elm/core/1.0.5/List#map2)\nand so on.\n\n@docs andMap, map2, map3, map4, map5\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "andMap",
+                "comment": " Same as [`List.Extra.andMap`](https://package.elm-lang.org/packages/elm-community/list-extra/8.4.0/List-Extra#andMap).\n\nA building block for arbitrary `mapN` functions, but beware: there is a gotcha.\nSee [`map5`](#map5) for more info.\n\nNote that the zipping behaviour will drop items if your lists aren't of the same\nlength.\n\n",
+                "type": "List.List a -> List.List (a -> b) -> List.List b"
+            },
+            {
+                "name": "map2",
+                "comment": " Same as [`List.map2`](https://package.elm-lang.org/packages/elm-community/list-extra/8.4.0/List-Extra#map2).\n\nNote that the zipping behaviour will drop items if your lists aren't of the same\nlength.\n\n    List.Zip.map2 (*) [ 10, 100 ] [ 1, 2, 3 ]\n    --> [ 10, 200 ]\n\n",
+                "type": "(a -> b -> c) -> List.List a -> List.List b -> List.List c"
+            },
+            {
+                "name": "map3",
+                "comment": " Same as [`List.map3`](https://package.elm-lang.org/packages/elm-community/list-extra/8.4.0/List-Extra#map3).\n\nNote that the zipping behaviour will drop items if your lists aren't of the same\nlength.\n\n",
+                "type": "(a -> b -> c -> d) -> List.List a -> List.List b -> List.List c -> List.List d"
+            },
+            {
+                "name": "map4",
+                "comment": " Same as [`List.map4`](https://package.elm-lang.org/packages/elm-community/list-extra/8.4.0/List-Extra#map4).\n\nNote that the zipping behaviour will drop items if your lists aren't of the same\nlength.\n\n",
+                "type": "(a -> b -> c -> d -> e) -> List.List a -> List.List b -> List.List c -> List.List d -> List.List e"
+            },
+            {
+                "name": "map5",
+                "comment": " Same as [`List.map5`](https://package.elm-lang.org/packages/elm-community/list-extra/8.4.0/List-Extra#map5).\n\nNote that the zipping behaviour will drop items if your lists aren't of the same\nlength.\n\nIn case you're looking for `map6` etc., you can use this [`andMap`](#andMap) pattern to map\nas many lists you want:\n\n    List.repeat listLength fn\n        |> List.Zip.andMap list1\n        |> List.Zip.andMap list2\n        |> List.Zip.andMap list3\n        |> List.Zip.andMap list4\n        |> List.Zip.andMap list5\n        |> List.Zip.andMap list6\n        |> ...\n\nThe gotcha is in that you need to provide the function repeated: `[fn] |> ...`\nwould not work correctly, as it would return a list with at most 1 item inside.\n\n",
+                "type": "(a -> b -> c -> d -> e -> f) -> List.List a -> List.List b -> List.List c -> List.List d -> List.List e -> List.List f"
+            }
+        ],
+        "binops": []
+    }
+]

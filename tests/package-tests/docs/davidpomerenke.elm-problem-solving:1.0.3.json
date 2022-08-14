@@ -1,0 +1,439 @@
+[
+    {
+        "name": "Problem",
+        "comment": " Let's formalize the problem!\n\nIn order to solve our problem with this library, we need to formalize it using the following three concepts:\n\n  - The **initial state** of the problem.\n  - The **actions** that are available from the initial state. These actions lead us to new exciting states. And then from these new states there might be more actions, leading us to even more states. This can go on further and further.\n  - A **goal test** that tells us when we have reached a solution.\n\nThis all sounds very abstract, so I recommend checking out some examples from the [`Problem.Example`](Problem-Example) module.\n\n@docs Problem\n\nThat's it! Once we have specified all these parameters, the algorithms from [`Problem.Search`](Problem-Search) will solve our problem for us (or at least try their best).\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Problem",
+                "comment": " We use the `Problem` type to formalize our problem. We can then use the search algorithms in [`Problem.Search`](Problem-Search) to search for a solution to the `Problem`.\n\nFirst, we need to think of a suitable data structure to represent the states that can occur in our problem. Then, we can think of the parameters that are necessary to formalize our problem:\n\n\n## `initialState`\n\nSimply the initial state from where we start exploring solutions.\n\n\n## `actions`\n\nActions explain which states are reachable from any given state. Each action consists of a`result`, that is the state which is reached by the action, and of a`stepCost` between the current state and the result state.\n\nFor example, in some route-finding problem there might exist direct connections from Abuja to Accra (933 kilometers) and from Abuja to Lagos (536 kilometers). We could formalize these facts like so:\n\n    actions =\n        \\state ->\n            [ ( \"Abuja\"\n              , [ { state = \"Accra\", stepCost = 933 }\n                , { state = \"Lagos\", stepCost = 536 }\n                ]\n              )\n            , -- more connections, starting at other cities\n              Debug.todo\n            ]\n                |> Dict.fromList\n                |> Dict.get state\n                |> Maybe.withDefault []\n\nFor toy problems, the step cost of every step will often be `1`; Any action takes some effort, but the effort is always the same:\n\n    stepCost =\n        \\_ -> 1\n\nSometimes, we do not care at all about how many steps are taken to solve a problem:\n\n    stepCost =\n        \\_ -> 0\n\nYou might be worrying about avoiding redundant states. That is very reasonable, but don't worry! The search algorithms will avoid them automatically, in a smart way.\n\n\n## `goalTest`\n\nDescribes under which conditions a state is a solution to the problem.\n\nSometimes we know exactly which state is a solution. Thus, if our goal state is Abidjan:\n\n    goalTest =\n        (==) \"Abidjan\"\n\nBut at other times we only know which conditions to pose, so we will write a more sophisticated function here.\n\n\n## `heuristic`\n\nA heuristic is an estimate about the path cost (the sum of step costs of all actions involved) between a state and the nearest goal state.\n\nIf we can think of such an estimate, this is great, because we can then use faster search algorithms ­— `greedySearch` and `bestFirstSearch`!\n\nOften, however, we do not know a heuristic. In that case:\n\n    heuristic =\n        \\_ -> 0\n\n(Or choose any other arbitrary fixed value instead of `0`).\n\n\n## `stateToString`\n\nA function that _uniquely (!)_ converts any state to a string. It will be used for some optimizations.\n\nFor prototyping, we can just use:\n\n    stateToString =\n        Debug.toString\n\nOtherwise, we will need to come up with a custom function. [JSON encoders](https://package.elm-lang.org/packages/elm/json/latest/Json-Encode) might be helpful for coverting more complex states to strings.\n\nThis parameter may appear a bit tedious, but it is necessary for two different kinds of optimizations:\n\n1.  Using [keyed nodes](https://guide.elm-lang.org/optimization/keyed.html) in visualizations. This needs a `String` state representation.\n\n2.  Storing states in dictionaries to access them in logarithmic rather than linear time. This needs a `comparable` state representation. As a `String` happens to be `comparable`, there is no need for a separate `stateToComparable` function.\n\nThere are reasons why `Debug.toString` cannot be part of published packages, so the stringification needs to be done by the library user, sorry.\n\n",
+                "args": [
+                    "state"
+                ],
+                "type": "{ initialState : state, actions : state -> List.List { stepCost : Basics.Float, result : state }, goalTest : state -> Basics.Bool, heuristic : state -> Basics.Float, stateToString : state -> String.String }"
+            }
+        ],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "Problem.Example",
+        "comment": " Examples\n\n\n# Toy Problems\n\n\n## Vacuum World\n\n@docs VacuumWorld, vacuumWorld\n\n\n## Sliding Puzzle\n\n@docs SlidingPuzzle, slidingPuzzle, simpleEightPuzzle, mediumEightPuzzle, complexEightPuzzle, slidingPuzzleVisual\n\n\n## N-Queens Problem\n\n@docs Queens, queens\n\n\n## Knuth Conjecture\n\n@docs Knuth, knuth, simpleKnuth, complexKnuth\n\n\n# Real-world problems\n\n\n## Graph search\n\nIn order to solve any problem, we use search techniques that create a graph. But we can also use these search techniques to search not an abstract problem, but a concrete graph.\n\n@docs Graph, romania, routeFinding, simpleRouteFinding\n\n\n## Motion planning\n\n@docs MotionPlanning, motionPlanning, simpleMotionPlanning\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Graph",
+                "comment": " A graph is represented as a dictionary for our purposes. The keys are the start nodes, and the values are lists of all the reachable end nodes and the distance between the start and end node.\n",
+                "args": [
+                    "comparable"
+                ],
+                "type": "Dict.Dict comparable (List.List { stepCost : Basics.Float, result : comparable })"
+            },
+            {
+                "name": "Knuth",
+                "comment": " ",
+                "args": [],
+                "type": "Problem.Example.KnuthConjecture.State"
+            },
+            {
+                "name": "MotionPlanning",
+                "comment": " ",
+                "args": [],
+                "type": "Problem.Example.MotionPlanning.State"
+            },
+            {
+                "name": "Queens",
+                "comment": " ",
+                "args": [],
+                "type": "Problem.Example.Queens.State"
+            },
+            {
+                "name": "SlidingPuzzle",
+                "comment": " ",
+                "args": [],
+                "type": "Problem.Example.SlidingPuzzle.State"
+            },
+            {
+                "name": "VacuumWorld",
+                "comment": " ",
+                "args": [],
+                "type": "Problem.Example.VacuumWorld.State"
+            }
+        ],
+        "values": [
+            {
+                "name": "complexEightPuzzle",
+                "comment": " Complicated eight puzzle.\n\n    complexEightPuzzle =\n        slidingPuzzle <|\n            concat\n                [ [ 7, 2, 4 ]\n                , [ 5, 0, 6 ]\n                , [ 8, 3, 1 ]\n                ]\n\n",
+                "type": "Problem.Problem Problem.Example.SlidingPuzzle"
+            },
+            {
+                "name": "complexKnuth",
+                "comment": "\n\n    complexKnuth =\n        knuth 5\n\n",
+                "type": "Problem.Problem Problem.Example.Knuth"
+            },
+            {
+                "name": "knuth",
+                "comment": " Knuth conjecture.\n\nThis is an artificial problem devised by Donald Knuth. (Donald Knuth is the person who is writing the book with all the algorithms in it, of which, if you understand it completely, you have high chances of getting a nice job.)\n\nThe idea is that every number can be represented by starting from 4 and then repeatedly applying one of these three functions:\n\n  - Factorial!\n  - √Square Root\n  - ⌊Floor operation⌋ (that is, rounding downwards)\n\nWe want to find the sequence of concatenated functions to arrive at a given number.\n\nInternally, this looks like so:\n\n    type alias State =\n        Float\n\n    actions =\n        \\n ->\n            if toFloat (round n) == n then\n                [ { stepCost = 1, result = sqrt n }\n                , { stepCost = 1, result = toFloat (factorial (round n)) }\n                ]\n\n            else\n                [ { stepCost = 1, result = toFloat (floor n) }\n                , { stepCost = 1, result = sqrt n }\n                ]\n\n",
+                "type": "Basics.Float -> Problem.Problem Problem.Example.Knuth"
+            },
+            {
+                "name": "mediumEightPuzzle",
+                "comment": "\n\n    mediumEightPuzzle =\n        slidingPuzzle <|\n            concat\n                [ [ 1, 4, 2 ]\n                , [ 3, 5, 8 ]\n                , [ 0, 6, 7 ]\n                ]\n\n",
+                "type": "Problem.Problem Problem.Example.SlidingPuzzle"
+            },
+            {
+                "name": "motionPlanning",
+                "comment": " Planning a movement on a rectangular grid. (Such as they occur in old computer games, for example.)\n\n    type alias Config =\n        { size : Position\n        , obstacles : List Obstacle\n        , start : Position\n        , goal : Position\n        }\n\n    type alias Obstacle =\n        List Position\n\n    type alias Position =\n        ( Int, Int )\n\n[On improving grid representations.](https://www.redblobgames.com/pathfinding/grids/algorithms.html)\n\n",
+                "type": "Problem.Example.MotionPlanning.Config -> Problem.Problem Problem.Example.MotionPlanning"
+            },
+            {
+                "name": "queens",
+                "comment": " On an n times n chess board, place 8 queens without any queen attacking another.\n\n    type alias State =\n        List ( Int, Int )\n\n",
+                "type": "Basics.Int -> Problem.Problem Problem.Example.Queens"
+            },
+            {
+                "name": "romania",
+                "comment": " Map of cities in Romania. Contains a graph of the distances between all connected cities, and a graph of the straight line distance.\n\n![Romanian cities. From Stuart Russell and Peter Norvig, 2010. Artificial intelligence: a modern approach, p. 68.](https://github.com/davidpomerenke/elm-problem-solving/raw/main/src/Problem/Example/Romania.png)\n\n(Unfortunately, we only have data for the straight line distance between Bucharest and the other cities, and not mutually between the other cities; so we call it `bucharestDistance` instead of `straightLineDistance`.)\n\n",
+                "type": "{ distance : Problem.Example.Graph String.String, bucharestDistance : String.String -> Basics.Float }"
+            },
+            {
+                "name": "routeFinding",
+                "comment": " Find a route of nodes in a graph.\n\nThe implementation is very straightforward:\n\n    routeFinding nodeToString root goal graph =\n        { initialState = root\n        , actions = \\a -> Dict.get a graph |> Maybe.withDefault []\n        , heuristic = \\_ -> 0\n        , goalTest = (==) goal\n        , stateToString = nodeToString\n        }\n\nHeuristics are not yet supported, unfortunately. (The reason is that I am not sure how best to deal with heuristics that are only defined for a subset of nodes, such as `romania.bucharestDistance`.)\n\n",
+                "type": "(comparable -> String.String) -> comparable -> comparable -> Problem.Example.Graph comparable -> Problem.Problem comparable"
+            },
+            {
+                "name": "simpleEightPuzzle",
+                "comment": "\n\n    simpleEightPuzzle =\n        slidingPuzzle <|\n            concat\n                [ [ 1, 4, 2 ]\n                , [ 3, 0, 5 ]\n                , [ 6, 7, 8 ]\n                ]\n\n",
+                "type": "Problem.Problem Problem.Example.SlidingPuzzle"
+            },
+            {
+                "name": "simpleKnuth",
+                "comment": "\n\n    simpleKnuth =\n        knuth 1\n\n",
+                "type": "Problem.Problem Problem.Example.Knuth"
+            },
+            {
+                "name": "simpleMotionPlanning",
+                "comment": " This example is inspired by an animation by user Subh83 [on Wikimedia](https://commons.wikimedia.org/wiki/File:Astar_progress_animation.gif). The animation is licensed under a Creative Commons Attribution 3.0 Unported license. It shows the problem configuration, and how the problem is solved by using A\\* search.\n\n![Motion planning visualization](https://commons.wikimedia.org/wiki/File:Astar_progress_animation.gif)\n\n",
+                "type": "Problem.Problem Problem.Example.MotionPlanning"
+            },
+            {
+                "name": "simpleRouteFinding",
+                "comment": " Find a route from Arad to Bucharest.\n\n    simpleRouteFinding =\n        routeFinding identity \"Arad\" \"Bucharest\" romania.distance\n\n",
+                "type": "Problem.Problem String.String"
+            },
+            {
+                "name": "slidingPuzzle",
+                "comment": " Sliding Puzzle\n\nA quadratic grid with n²-1 numbers. They are in a disturbed order and should be brought back to their natural order, by only moving around the tile with number 0. A (4²-1)-puzzle = 15-puzzle looks like this:\n\n![15-Puzzle (public domain)](https://github.com/davidpomerenke/elm-problem-solving/raw/main/src/Problem/Example/15puzzle.png)\n\nA sliding puzzle is represented internally as a simple list. The positions where a new line begins are determined by the square root of the length of the list.\n\n    type alias State =\n        List Int\n\nIt could be represented as a list of lists of equal lengths alternatively. (Then it is harder to deal with the equal-length assumption, though.)\n\n",
+                "type": "Problem.Example.SlidingPuzzle -> Problem.Problem Problem.Example.SlidingPuzzle"
+            },
+            {
+                "name": "slidingPuzzleVisual",
+                "comment": " ",
+                "type": "Problem.Example.SlidingPuzzle -> Html.Html msg"
+            },
+            {
+                "name": "vacuumWorld",
+                "comment": " This is the simplest example problem: The world of a vacuum cleaner.\n\nLet's have a complete look at how it works internally:\n\nThere are two locations, A and B, and each of them can be either clean or dirty.\n\n    type alias State =\n        { location : Location\n        , a : Condition\n        , b : Condition\n        }\n\n    type Location\n        = A\n        | B\n\n    type Condition\n        = Clean\n        | Dirty\n\n\n### `initialState`\n\nAt the start, both are dirty:\n\n    initialState =\n        { location = A\n        , a = Dirty\n        , b = Dirty\n        }\n\n\n### `actions`\n\nThere are three actions: Moving left, moving right, and sucking:\n\n    type alias Action =\n        State -> State\n\n    left : Action\n    left state =\n        { state | location = A }\n\n    right : Action\n    right state =\n        { state | location = B }\n\n    suck : Action\n    suck state =\n        case state.location of\n            A ->\n                { state | a = Clean }\n\n            B ->\n                { state | b = Clean }\n\nWe also need to specify a step cost for each action. Let's just set it at 1 for every action. We can add the step cost to all actions like this:\n\n    actions =\n        \\state ->\n            List.map\n                (\\action -> { stepCost = 1, result = action state })\n                [ left, right, suck ]\n\n\n### `heuristic`\n\nWe could provide a heuristic for each state. This can speed up the search algorithms a lot when we are dealing with complex problems. Our present problem is not very complex, so we just set it at 0 for every state:\n\n    heuristic =\n        \\_ -> 0\n\n\n### `goalTest`\n\nThe objective of our vacuum cleaner robot is to clean both locations:\n\n    goalTest =\n        \\state -> state.a == Clean && state.b == Clean\n\n",
+                "type": "Problem.Problem Problem.Example.VacuumWorld"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Problem.Search",
+        "comment": " These search algorithms will solve our `Problem`, if it's soluble and not too hard. They all have different advantages and drawbacks.\n\n[For an introduction to search algorithms, read through this wonderful interactive visualization.](https://www.redblobgames.com/pathfinding/a-star/introduction.html)\n\n(I plan to add some precise information about their runtime complexity and space complexity.)\n\n\n# Graph Search\n\nGraph search means that the algorithm assumes that the search space looks like a graph. This means that there might be multiple ways to arrive at a state. The algorithm therefore takes care of this and avoids visiting the same state twice.\n\n\n## Uninformed search\n\n@docs breadthFirst, depthFirst, uniformCost\n\n\n## Informed search\n\n@docs greedy, bestFirst\n\n\n# Tree Search\n\nTree search means that the algorithm assumes that the search space looks like a tree. This means that there will always be just a single way to arrive at a state.\n\nTree search is usually slightly more efficient than graph search (how much exactly?), but:\n\n  - If we run tree search on a problem where the search space is not a tree, the algorithm might get stuck in cycles. Even if not, it will probably be less efficient than the corresponding graph search algorithm.\n  - Unlike \"real\" tree search algorithms, the tree search algorithms in this library do also track all the explored states, because we want to have them available for visualization. There is still some performance advantage with tree search, but it is smaller than in \"real\" tree search, and might be asymptotically negligible. (I need to check this.)\n\n@docs treeBreadthFirst, treeDepthFirst, treeUniformCost, treeGreedy, treeBestFirst\n\n\n# Performing the search\n\nThe functions above only initialize a search model. We can use one of the functions in here to run the search model.\n\n@docs Model, next, nextN, solve, exhaust, exhaustBoundary\n\n\n# Inspecting the Result\n\n@docs Result, mapResult, resultWithDefault, resultHasState\n\n\n# Internal infrastructure\n\nUse these for building you own visualizations. First, check out the ready-made visualizations in the `Problem.Search.Visual` submodule.\n\n@docs Node, expand, path, reversePathWithPosition, unestrangedChildren\n\n",
+        "unions": [
+            {
+                "name": "Result",
+                "comment": " The current result of any search.\n\n  - `Pending`: No solution has been found, but the search has not yet exhausted the state space and more search steps can be performed.\n  - `Solution a`: A solution has been found\n  - `Failure`: The complete search space has been searched, but no solution could be found.\n\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Pending",
+                        []
+                    ],
+                    [
+                        "Solution",
+                        [
+                            "a"
+                        ]
+                    ],
+                    [
+                        "Failure",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Model",
+                "comment": " This record represents the inner state of the search algorithm. You can integrate it into the model of your web application.\n\nThe type parameter `a` refers to the `State` type of the search problem. For example, if you want to search a sliding puzzle, you can import it with `import Problem.Search.SlidingPuzzle exposing (State)`.\n\nInitialize your model with `searchInit` (see below).\n\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ strategy : Problem.Search.Strategy a, queue : Problem.Search.QueuePopper a, problem : Problem.Problem a, explored : Dict.Dict String.String (Problem.Search.Node a), frontier : List.List a, result : Problem.Search.Result (Problem.Search.Node a), maxPathCost : Basics.Float }"
+            },
+            {
+                "name": "Node",
+                "comment": " ",
+                "args": [
+                    "a"
+                ],
+                "type": "{ state : a, parent : Maybe.Maybe a, pathCost : Basics.Float, children : Maybe.Maybe (List.List { pathCost : Basics.Float, state : a }) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "bestFirst",
+                "comment": " A\\* search.\n",
+                "type": "Problem.Problem a -> Problem.Search.Model a"
+            },
+            {
+                "name": "breadthFirst",
+                "comment": " ",
+                "type": "Problem.Problem a -> Problem.Search.Model a"
+            },
+            {
+                "name": "depthFirst",
+                "comment": " ",
+                "type": "Problem.Problem a -> Problem.Search.Model a"
+            },
+            {
+                "name": "exhaust",
+                "comment": " Searches through the complete search space without stopping at solutions. Returns a new search model. Note that the complete search space is usually very large.\n",
+                "type": "Problem.Search.Model a -> Problem.Search.Model a"
+            },
+            {
+                "name": "exhaustBoundary",
+                "comment": " Searches through the search space until the boundary condition is no longer fulfilled. Returns a new search model. Could perhaps be used to implement IDA\\*, but I have not yet attempted that. __Experimental.__\n",
+                "type": "(Problem.Search.Node a -> Basics.Bool) -> Problem.Search.Model a -> Problem.Search.Model a"
+            },
+            {
+                "name": "expand",
+                "comment": " ",
+                "type": "Problem.Problem a -> Problem.Search.Node a -> { updatedParent : Problem.Search.Node a, children : List.List (Problem.Search.Node a) }"
+            },
+            {
+                "name": "greedy",
+                "comment": " ",
+                "type": "Problem.Problem a -> Problem.Search.Model a"
+            },
+            {
+                "name": "mapResult",
+                "comment": " ",
+                "type": "(a -> b) -> Problem.Search.Result a -> Problem.Search.Result b"
+            },
+            {
+                "name": "next",
+                "comment": " Performs a single step of the search algorithm. Returns a new search model.\n",
+                "type": "Problem.Search.Model a -> Problem.Search.Model a"
+            },
+            {
+                "name": "nextN",
+                "comment": " Performs n steps of the search algorithm. Returns a new search model.\n",
+                "type": "Basics.Int -> Problem.Search.Model a -> Problem.Search.Model a"
+            },
+            {
+                "name": "path",
+                "comment": " ",
+                "type": "Problem.Search.Model a -> Problem.Search.Node a -> List.List ( Basics.Float, a )"
+            },
+            {
+                "name": "resultHasState",
+                "comment": " ",
+                "type": "a -> Problem.Search.Result (Problem.Search.Node a) -> Basics.Bool"
+            },
+            {
+                "name": "resultWithDefault",
+                "comment": " ",
+                "type": "a -> Problem.Search.Result a -> a"
+            },
+            {
+                "name": "reversePathWithPosition",
+                "comment": " ",
+                "type": "Problem.Search.Model a -> Problem.Search.Node a -> List.List ( Basics.Float, a, ( Basics.Int, Basics.Int ) )"
+            },
+            {
+                "name": "solve",
+                "comment": " Tries to solve the search. Returns a pair of the result (if it can find one), and the search model.\n",
+                "type": "Problem.Search.Model a -> ( Maybe.Maybe (Problem.Search.Node a), Problem.Search.Model a )"
+            },
+            {
+                "name": "treeBestFirst",
+                "comment": " ",
+                "type": "Problem.Problem a -> Problem.Search.Model a"
+            },
+            {
+                "name": "treeBreadthFirst",
+                "comment": " ",
+                "type": "Problem.Problem a -> Problem.Search.Model a"
+            },
+            {
+                "name": "treeDepthFirst",
+                "comment": " ",
+                "type": "Problem.Problem a -> Problem.Search.Model a"
+            },
+            {
+                "name": "treeGreedy",
+                "comment": " ",
+                "type": "Problem.Problem a -> Problem.Search.Model a"
+            },
+            {
+                "name": "treeUniformCost",
+                "comment": " ",
+                "type": "Problem.Problem a -> Problem.Search.Model a"
+            },
+            {
+                "name": "unestrangedChildren",
+                "comment": " ",
+                "type": "Problem.Search.Model a -> Problem.Search.Node a -> Maybe.Maybe (List.List a)"
+            },
+            {
+                "name": "uniformCost",
+                "comment": " Dijkstra's algorithm.\n",
+                "type": "Problem.Problem a -> Problem.Search.Model a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Problem.Search.Dashboard",
+        "comment": "\n\n@docs document, Search, Visual\n\n",
+        "unions": [
+            {
+                "name": "Search",
+                "comment": " Helper type for easily creating a visual dashboard.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "DepthFirst",
+                        []
+                    ],
+                    [
+                        "BreadthFirst",
+                        []
+                    ],
+                    [
+                        "UniformCost",
+                        []
+                    ],
+                    [
+                        "Greedy",
+                        []
+                    ],
+                    [
+                        "BestFirst",
+                        []
+                    ],
+                    [
+                        "TreeDepthFirst",
+                        []
+                    ],
+                    [
+                        "TreeBreadthFirst",
+                        []
+                    ],
+                    [
+                        "TreeUniformCost",
+                        []
+                    ],
+                    [
+                        "TreeGreedy",
+                        []
+                    ],
+                    [
+                        "TreeBestFirst",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Visual",
+                "comment": " Helper type for easily creating a visual dashboard.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Scatter",
+                        []
+                    ],
+                    [
+                        "Tree",
+                        []
+                    ],
+                    [
+                        "TreeMap",
+                        []
+                    ],
+                    [
+                        "Graph",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "document",
+                "comment": " Visual dashboard. We can use this as the `main` function in our application.\n\nA whole appliaction could thus just look like this:\n\n    module Main exposing (..)\n\n    import Problem.Example exposing (..)\n    import Problem.Search.Dashboard as Dashboard exposing (Search(..), Visual(..))\n\n    main =\n        Dashboard.document\n            { problem = mediumEightPuzzle\n            , problemStateToHtml = Just slidingPuzzleVisual\n            , searches = [ UniformCost, BestFirst, Greedy ]\n            , visuals = [ Scatter, Tree, TreeMap, Graph ]\n            }\n\nThis is the complete [code](https://github.com/davidpomerenke/elm-problem-solving/blob/main/docs/1-dashboard/src/Main.elm) for the [first example](https://davidpomerenke.github.io/elm-problem-solving/1-dashboard/index.html).\n\n",
+                "type": "{ problem : Problem.Problem a, searches : List.List Problem.Search.Dashboard.Search, visuals : List.List Problem.Search.Dashboard.Visual, problemStateToHtml : Maybe.Maybe (a -> Html.Html (Problem.Search.Dashboard.Msg a)) } -> Platform.Program () (Problem.Search.Dashboard.Model a) (Problem.Search.Dashboard.Msg a)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Problem.Search.Visual",
+        "comment": "\n\n\n# Search progress\n\n@docs scatter\n\n\n# Search tree\n\nThese two visualizations present the search graph in the form of a tree or a tree map. These visualizations neglects that the search graph is actually not a tree but a graph. They are very neat and compact.\n\n@docs tree, treeMap\n\n\n# Search graph\n\nThis visualizes the graph as it is: A network graph.\n\n@docs GraphModel, graph\n\nI recommend having a look at [this example](https://github.com/davidpomerenke/elm-problem-solving/blob/main/examples/3-graph-example) of how the graph data model can be embedded into an application.\n\n\n# Tooltip\n\nA tooltip is an info box displayed when hovering over an element with the mouse. It shows a visualization of the search state, and some basic information about its position in the search tree.\n\n@docs TooltipModel, tooltip\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "GraphModel",
+                "comment": " A good graph visualization is computationally a bit more complicated, and therefore this visualization has its own data model that needs to be updated and queried. We need to embed it as a kind of sub-model into our application.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "Problem.Search.Visual.Graph.Model a"
+            },
+            {
+                "name": "TooltipModel",
+                "comment": " ",
+                "args": [
+                    "msg",
+                    "a"
+                ],
+                "type": "Problem.Search.Visual.Tooltip.Model msg a"
+            }
+        ],
+        "values": [
+            {
+                "name": "graph",
+                "comment": " We use these three functions to initialize and update the graph data model, and finally, to display the actual graph.\n",
+                "type": "{ init : Problem.Problem a -> Problem.Search.Visual.GraphModel a, update : Problem.Search.Visual.GraphModel a -> Problem.Search.Model a -> Problem.Search.Visual.GraphModel a, view : Maybe.Maybe (Problem.Search.Visual.TooltipModel msg a) -> Problem.Search.Visual.GraphModel a -> Html.Html msg }"
+            },
+            {
+                "name": "scatter",
+                "comment": " Scatterplot.\n- X-Axis: Search depth\n- Y-Axis: Heuristic\n- Size of dot: Number of explored search states\n\nWhen the search is finished, also displays the path from the root to the goal state.\n",
+                "type": "Maybe.Maybe (Problem.Search.Visual.TooltipModel msg a) -> Problem.Search.Model a -> Svg.Svg msg"
+            },
+            {
+                "name": "tooltip",
+                "comment": " ",
+                "type": "{ init : Problem.Problem a -> (Maybe.Maybe (Problem.Search.Node a) -> msg) -> Maybe.Maybe (a -> Html.Html msg) -> Problem.Search.Visual.TooltipModel msg a, view : Problem.Search.Visual.TooltipModel msg a -> Html.Html msg, sub : ({ x : Basics.Float, y : Basics.Float } -> msg) -> Platform.Sub.Sub msg }"
+            },
+            {
+                "name": "tree",
+                "comment": " Tree of the searched states. Similar to `treeMap` but simpler layout.\n",
+                "type": "Maybe.Maybe (Problem.Search.Visual.TooltipModel msg a) -> Problem.Search.Model a -> Svg.Svg msg"
+            },
+            {
+                "name": "treeMap",
+                "comment": " Treemap of the searched states. Similar to `tree` but more compact.\n",
+                "type": "Maybe.Maybe (Problem.Search.Visual.TooltipModel msg a) -> Problem.Search.Model a -> Svg.Svg msg"
+            }
+        ],
+        "binops": []
+    }
+]

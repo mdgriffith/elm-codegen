@@ -1,0 +1,126 @@
+[
+    {
+        "name": "Validator",
+        "comment": " This module provides a scalable way to validate a form by combining primitive validators.\n\nFor example, let's assume a form having two inputs as follows.\n\n    type alias Form =\n        { sampleInput : Maybe Int\n        , anotherInput : Maybe String\n        }\n\nThe first step is to define a validator for each input.\n\n    import Regex\n\n    type SampleError\n        = SampleBoundError\n        | SampleRequiredError\n\n    sampleValidator : Validator (Maybe Int) SampleError\n    sampleValidator =\n        required SampleRequiredError <|\n            concat\n                [ minBound SampleBoundError 10\n                , maxBound SampleBoundError 20\n                ]\n\n    errors sampleValidator (Just 15)\n    --> []\n\n    errors sampleValidator (Just 30)\n    --> [ SampleBoundError ]\n\n    errors sampleValidator Nothing\n    --> [ SampleRequiredError ]\n\n    isValid sampleValidator (Just 15)\n    --> True\n\n    isValid sampleValidator (Just 30)\n    --> False\n\n\n    type AnotherError\n        = AnotherLengthError\n        | AnotherPatternError\n\n    anotherValidator : Validator (Maybe String) AnotherError\n    anotherValidator =\n        optional <|\n            concat\n                [ maxLength AnotherLengthError 20\n                , pattern AnotherPatternError <| Maybe.withDefault Regex.never <| Regex.fromString \"^(http://|https://)\"\n                ]\n\n    errors anotherValidator Nothing\n    --> []\n\n    errors anotherValidator (Just \"foo\")\n    --> [ AnotherPatternError ]\n\n    errors anotherValidator (Just \"https://foo\")\n    --> []\n\n    errors anotherValidator (Just \"https://tooooooooooolong\")\n    --> [ AnotherLengthError ]\n\n    errors anotherValidator (Just \"ftp://tooooooooooolong\")\n    --> [ AnotherLengthError, AnotherPatternError ]\n\n    isValid anotherValidator Nothing\n    --> True\n\n    isValid anotherValidator (Just \"foo\")\n    --> False\n\nThe next step is combining these validators to create a validator for the entire form.\n\n    type FormError\n        = SampleError SampleError\n        | AnotherError AnotherError\n\n    formValidator : Validator Form FormError\n    formValidator =\n        concat\n            [ liftMap SampleError .sampleInput sampleValidator\n            , liftMap AnotherError .anotherInput anotherValidator\n            ]\n\n    errors formValidator\n        { sampleInput = Just 15\n        , anotherInput = Just \"https://foo\"\n        }\n    --> []\n\n    errors formValidator\n        { sampleInput = Nothing\n        , anotherInput = Nothing\n        }\n    --> [ SampleError SampleRequiredError ]\n\n    errors formValidator\n        { sampleInput = Nothing\n        , anotherInput = Just \"foo\"\n        }\n    --> [ SampleError SampleRequiredError\n    --> , AnotherError AnotherPatternError\n    --> ]\n\n    displayFormError : FormError -> String\n    displayFormError err =\n        case err of\n            SampleError SampleRequiredError ->\n                \"Sample Input cannot be empty\"\n            SampleError SampleBoundError ->\n                \"Sample Input is out of bounds\"\n            AnotherError AnotherLengthError ->\n                \"Length of Another Input is toooo long\"\n            AnotherError AnotherPatternError ->\n                \"Another Input must begin with `http://` or `https://`\"\n\n    List.map displayFormError <|\n        errors formValidator\n            { sampleInput = Nothing\n            , anotherInput = Nothing\n            }\n    --> [ \"Sample Input cannot be empty\" ]\n\n\n# Types\n\n@docs Validator\n\n\n# Functions to run Validator\n\n@docs errors\n@docs isValid\n\n\n# Primitive Validators\n\n@docs succeed\n@docs fail\n@docs minBound\n@docs maxBound\n@docs maxLength\n@docs minLength\n@docs pattern\n@docs custom\n\n\n# Combinators\n\n@docs concat\n@docs or\n@docs oneOf\n\n\n# Helper functions\n\n@docs required\n@docs optional\n@docs when\n@docs unless\n@docs with\n\n\n# Operators\n\n@docs map\n@docs lift\n@docs liftMap\n\n",
+        "unions": [
+            {
+                "name": "Validator",
+                "comment": " An opaque type representing validator for value of type `a`.\n",
+                "args": [
+                    "a",
+                    "err"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "concat",
+                "comment": " Concatnate list of validators.\n\n    import Regex\n\n    errors (concat [ minBound \"Too small\" 10, maxBound \"Too large\" 100 ]) 8\n    --> [ \"Too small\" ]\n\n    errors (concat [ minBound \"Too small\" 10, maxBound \"Too large\" 100 ]) 20\n    --> []\n\n    errors (concat [ minLength \"Too short\" 10, pattern \"Does not match pattern\" (Regex.fromString \"^foo\" |> Maybe.withDefault Regex.never) ]) \"bar\"\n    --> [ \"Too short\", \"Does not match pattern\" ]\n\n",
+                "type": "List.List (Validator.Validator a err) -> Validator.Validator a err"
+            },
+            {
+                "name": "custom",
+                "comment": " A constructor for `Validator` from a function.\n\n    errors (custom (\\n -> if n < 10 then Just \"Too small\" else Nothing)) 8\n    --> [ \"Too small\" ]\n\n",
+                "type": "(a -> Maybe.Maybe err) -> Validator.Validator a err"
+            },
+            {
+                "name": "errors",
+                "comment": " Run validator to a target value and returns all validation errors.\n",
+                "type": "Validator.Validator a err -> a -> List.List err"
+            },
+            {
+                "name": "fail",
+                "comment": " A constructor for `Validator` which always results to invalid.\n\n    errors (fail \"error\") \"foo\"\n    --> [ \"error\" ]\n\n    errors (fail \"error\") <| Just 34\n    --> [ \"error\" ]\n\n    errors (when (\\n -> n < 0) <| fail \"error\") -1\n    --> [ \"error\" ]\n\n",
+                "type": "err -> Validator.Validator a err"
+            },
+            {
+                "name": "isValid",
+                "comment": " The `isValid` only checks if a target value is valid or not.\n",
+                "type": "Validator.Validator a err -> a -> Basics.Bool"
+            },
+            {
+                "name": "lift",
+                "comment": " `lift` is mainly used for accessing sub model of target value.\n\n    errors (lift .str <| minLength \"Too short\" 10) { str = \"foo\", int = 5 }\n    --> [ \"Too short\" ]\n\n",
+                "type": "(a -> b) -> Validator.Validator b err -> Validator.Validator a err"
+            },
+            {
+                "name": "liftMap",
+                "comment": " `liftMap` can convert a validator by `lift` and `map` at one time for convenience.\n",
+                "type": "(suberr -> err) -> (a -> b) -> Validator.Validator b suberr -> Validator.Validator a err"
+            },
+            {
+                "name": "map",
+                "comment": " Convert `err` type.\n",
+                "type": "(suberr -> err) -> Validator.Validator a suberr -> Validator.Validator a err"
+            },
+            {
+                "name": "maxBound",
+                "comment": " A constructor for `Validator` providing maximum bound.\n\n    errors (maxBound \"Too large\" 100) 200\n    --> [ \"Too large\" ]\n\n",
+                "type": "err -> comparable -> Validator.Validator comparable err"
+            },
+            {
+                "name": "maxLength",
+                "comment": " A constructor for `Validator` providing maximum length.\n\n    errors (maxLength \"Too long\" 10) \"tooooooooo long\"\n    --> [ \"Too long\" ]\n\n",
+                "type": "err -> Basics.Int -> Validator.Validator String.String err"
+            },
+            {
+                "name": "minBound",
+                "comment": " A constructor for `Validator` providing minimum bound.\n\n    errors (minBound \"Too small\" 10) 2\n    --> [ \"Too small\" ]\n\n",
+                "type": "err -> comparable -> Validator.Validator comparable err"
+            },
+            {
+                "name": "minLength",
+                "comment": " A constructor for `Validator` providing minimum length.\n\n    errors (minLength \"Too short\" 10) \"short\"\n    --> [ \"Too short\" ]\n\n",
+                "type": "err -> Basics.Int -> Validator.Validator String.String err"
+            },
+            {
+                "name": "oneOf",
+                "comment": " An alternative way to combine multiple validators by OR rule.\nIf provided list is empty, resulting validator always succeeds.\n\n    or validatorA validatorB == oneOf [ validatorA, validatorB ]\n\n    or (or validatorA validatorB) validatorC == oneOf [ validatorA, validatorB, validatorC ]\n\n    oneOf [] == succeed\n",
+                "type": "List.List (Validator.Validator a err) -> Validator.Validator a err"
+            },
+            {
+                "name": "optional",
+                "comment": " A convenient wrapper for validating optional values.\n    It assumes input values are stored as `Maybe a` instead of just `a`.\n    This function is just a helper function, so you could declare your own for your situation.\n\n    errors (optional <| minLength \"Too small\" 10) Nothing\n    --> []\n\n    errors (optional <| minLength \"Too small\" 10) <| Just \"enough long\"\n    --> []\n\n    errors (optional <| minLength \"Too small\" 10) <| Just \"short\"\n    --> [ \"Too small\" ]\n\n",
+                "type": "Validator.Validator a err -> Validator.Validator (Maybe.Maybe a) err"
+            },
+            {
+                "name": "or",
+                "comment": " Combine two validators on OR condition.\n\n    import Regex\n\n    errors\n        (or\n            (minLength \"Too short\" 10)\n            (pattern \"Does not match pattern\"\n                (Regex.fromString \"^foo\"\n                    |> Maybe.withDefault Regex.never\n                )\n            )\n        )\n        \"foobar\"\n    --> []\n\n    errors\n        (or\n            (minLength \"Too short\" 10)\n            (pattern \"Does not match pattern\"\n                (Regex.fromString \"^foo\"\n                    |> Maybe.withDefault Regex.never\n                )\n            )\n        )\n        \"enough long\"\n    --> []\n\n    errors\n        (or (minLength \"Too short\" 10)\n            (pattern \"Does not match pattern\"\n                (Regex.fromString \"^foo\"\n                    |> Maybe.withDefault Regex.never\n                )\n            )\n        )\n        \"short\"\n    --> [ \"Does not match pattern\" ]\n\n",
+                "type": "Validator.Validator a err -> Validator.Validator a err -> Validator.Validator a err"
+            },
+            {
+                "name": "pattern",
+                "comment": " A constructor for `Validator` from a regular expression.\n\n    import Regex\n\n    errors (pattern \"Pattern error\" (Regex.fromString \"^foo\" |> Maybe.withDefault Regex.never)) \"foobar\"\n    --> []\n\n    errors (pattern \"Pattern error\" (Regex.fromString \"^foo\" |> Maybe.withDefault Regex.never)) \"barfoo\"\n    --> [ \"Pattern error\" ]\n\n",
+                "type": "err -> Regex.Regex -> Validator.Validator String.String err"
+            },
+            {
+                "name": "required",
+                "comment": " A convenient wrapper for validating required values.\n    It assumes input values are stored as `Maybe a` instead of just `a`.\n    This function is just a helper function, so you could declare your own for your situation.\n\n    errors (required \"Cannot be empty\" <| minBound \"Too small\" 10) Nothing\n    --> [ \"Cannot be empty\" ]\n\n    errors (required \"Cannot be empty\" <| minBound \"Too small\" 10) <| Just 100\n    --> []\n\n    errors (required \"Cannot be empty\" <| minBound \"Too small\" 10) <| Just 2\n    --> [ \"Too small\" ]\n\n",
+                "type": "err -> Validator.Validator a err -> Validator.Validator (Maybe.Maybe a) err"
+            },
+            {
+                "name": "succeed",
+                "comment": " A constructor for `Validator` which always results to valid.\n\n    isValid succeed \"foo\"\n    --> True\n\n    isValid succeed <| Just 34\n    --> True\n\n    errors (required \"Required error\" succeed) <| Nothing\n    --> [ \"Required error\" ]\n\n",
+                "type": "Validator.Validator a err"
+            },
+            {
+                "name": "unless",
+                "comment": " Only checks validity unless a condition is `True`.\n\n    import Regex\n\n    checkPrefix : Validator String String\n    checkPrefix = pattern \"Incorrect format\" (Regex.fromString \"^foo\" |> Maybe.withDefault Regex.never)\n\n    errors (unless (\\str -> String.length str < 3) checkPrefix) \"ba\"\n    --> []\n\n    errors (unless (\\str -> String.length str < 3) checkPrefix) \"bar\"\n    --> [ \"Incorrect format\" ]\n\n",
+                "type": "(a -> Basics.Bool) -> Validator.Validator a err -> Validator.Validator a err"
+            },
+            {
+                "name": "when",
+                "comment": " Only checks validity if a condition is `True`.\n\n    import Regex\n\n    checkPrefix : Validator String String\n    checkPrefix = pattern \"Incorrect format\" (Regex.fromString \"^foo\" |> Maybe.withDefault Regex.never)\n\n    errors (when (\\str -> String.length str > 2) checkPrefix) \"ba\"\n    --> []\n\n    errors (when (\\str -> String.length str > 2) checkPrefix) \"bar\"\n    --> [ \"Incorrect format\" ]\n\n",
+                "type": "(a -> Basics.Bool) -> Validator.Validator a err -> Validator.Validator a err"
+            },
+            {
+                "name": "with",
+                "comment": "\n\n    import Regex\n\n    checkPrefix : Validator String String\n    checkPrefix = pattern \"Incorrect format\" (Regex.fromString \"^foo\" |> Maybe.withDefault Regex.never)\n\n    type alias Form =\n        { foo : Maybe String\n        , isRequired : Bool\n        }\n\n    form : Validator Form String\n    form =\n        with <| \\{ isRequired } ->\n            lift .foo <|\n                (if isRequired then required \"Required\" else optional)\n                    checkPrefix\n\n    errors form { foo = Nothing, isRequired = False }\n    --> []\n\n    errors form { foo = Nothing, isRequired = True }\n    --> [ \"Required\" ]\n\n    errors form { foo = Just \"bar\" , isRequired = True }\n    --> [ \"Incorrect format\" ]\n\n",
+                "type": "(a -> Validator.Validator a err) -> Validator.Validator a err"
+            }
+        ],
+        "binops": []
+    }
+]

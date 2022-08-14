@@ -1,0 +1,19 @@
+[
+    {
+        "name": "RecordWithoutConstructorFunction",
+        "comment": "\n\n> trick: no record `type alias` constructor function\n\n@docs RecordWithoutConstructorFunction\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "RecordWithoutConstructorFunction",
+                "comment": " Every directly aliased record type gets its default constructor function:\n\n    type alias Point =\n        { x : Float, y : Float }\n\n    Point 4 2\n    --> { x = 4, y = 2 }\n\nyou can avoid this by using\n\n    type alias Record =\n        RecordWithoutConstructorFunction\n            { yourCurrentRecord }\n\n\n## why\n\nAutomatic record constructor functions come with countless problems:\n\n  - order matters\n\n    example from [elm-review-record-alias-constructor](https://dark.elm.dmy.fr/packages/lue-bird/elm-review-record-alias-constructor/latest/)\n\n        type alias User =\n            { status : String\n            , name : String\n            }\n\n        decodeUser =\n            map2 User\n                (field \"name\" string)\n                (field \"status\" string)\n\n    Did you spot the mistake?\n\n  - possible name clashes\n\n        type Declaration\n          = Function Function\n          | ...\n\n        type alias Function =\n            { expression : Expression, ... }\n\n  - patterns like record `succeed`/`constant` are encouraged\n\n  - patterns like using a `type` are discouraged\n\n  - doesn't work for indirect or extensible aliases\n\n  - **read more in the [readme](https://dark.elm.dmy.fr/packages/lue-bird/elm-no-record-type-alias-constructor-function/latest/)!**\n\n\n### tips\n\n  - find & fix your current _usages_ of record `type alias` constructor functions: [`elm-review` rule `NoRecordAliasConstructor`](https://dark.elm.dmy.fr/packages/lue-bird/elm-review-record-alias-constructor/latest/NoRecordAliasConstructor)\n\n  - insert `RecordWithoutConstructorFunction`/... where necessary: [`elm-review` rule `NoRecordAliasWithConstructor`](https://dark.elm.dmy.fr/packages/lue-bird/elm-review-record-alias-constructor/latest/NoRecordAliasWithConstructor)\n\n",
+                "args": [
+                    "record"
+                ],
+                "type": "record"
+            }
+        ],
+        "values": [],
+        "binops": []
+    }
+]

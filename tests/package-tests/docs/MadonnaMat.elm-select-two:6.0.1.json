@@ -1,0 +1,247 @@
+[
+    {
+        "name": "SelectTwo",
+        "comment": " This library is the basic controls for your model's select2 object and some helper methods\n\n#Basic Controls\n\n@docs update, new, map, setSearch\n\n\n# Ajax Methods\n\n@docs setLoading, setList\n\n\n# Helper Methods\n\n@docs basicSelectOptions, basicGroupSelectOptions, defaultsFromList, send\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "basicGroupSelectOptions",
+                "comment": " turn a list of Tuples3 into a list of GroupSelectTwoOptions with actual grouping. The first parameter is their shared trigger message, the\nsecond parameter is the list of tuples which are formatted as (Key, \"Display\", \"Group Name\"), and the return can be used in the list option of the config\n\n    [ ( Just \"a\", \"a\", \"Group 1\" )\n    , ( Just \"b\", \"b\", \"Group 1\" )\n    , ( Just \"c\", \"c\", \"Group 2\" )\n    ]\n        |> SelectTwo.basicSelectOptions Test\n\n",
+                "type": "(a -> msg) -> List.List ( a, String.String, String.String ) -> List.List (SelectTwo.Types.GroupSelectTwoOption msg)"
+            },
+            {
+                "name": "basicSelectOptions",
+                "comment": " turn a list of Tuples into a list of GroupSelectTwoOptions with one group. The first parameter is their shared trigger message, the\nsecond parameter is the list of tuples which are formatted as (Key, \"Display\"), and the return can be used in the list option of the config\n\n    [ ( Just \"a\", \"a\" )\n    , ( Just \"b\", \"b\" )\n    , ( Just \"c\", \"c\" )\n    ]\n        |> SelectTwo.basicSelectOptions Test\n\n",
+                "type": "(a -> msg) -> List.List ( a, String.String ) -> List.List (SelectTwo.Types.GroupSelectTwoOption msg)"
+            },
+            {
+                "name": "defaultsFromList",
+                "comment": " Quick helper way of getting defaults list from a GroupSelectTwoOption list\n",
+                "type": "List.List msg -> List.List (SelectTwo.Types.GroupSelectTwoOption msg) -> List.List (SelectTwo.Types.SelectTwoOption msg)"
+            },
+            {
+                "name": "map",
+                "comment": " modify selectTwo record in your model\n",
+                "type": "(SelectTwo.Types.SelectTwo msg -> SelectTwo.Types.SelectTwo msg) -> SelectTwo.Types.Model b msg -> SelectTwo.Types.Model b msg"
+            },
+            {
+                "name": "new",
+                "comment": " Create a new instance of the selectTwo record in your model\n",
+                "type": "SelectTwo.Types.SelectTwoDropdown msg -> SelectTwo.Types.Model b msg -> SelectTwo.Types.Model b msg"
+            },
+            {
+                "name": "send",
+                "comment": " Quick helper method for sending a message and running through your update function agian\n\n    update msg model =\n        case msg of\n            Test1 ->\n                ( model\n                , SelectTwo.send Test2\n                )\n\n            Test2 ->\n                ( model\n                , Cmd.none\n                )\n\n",
+                "type": "msg -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "setList",
+                "comment": " Set the list from the return of your ajax command\n\n        TestRes params (Ok str) ->\n            let\n                ( list, newParams ) =\n                    processResult Test str params\n            in\n                SelectTwo.setList list newParams model ! []\n\n",
+                "type": "List.List (SelectTwo.Types.GroupSelectTwoOption msg) -> SelectTwo.Types.AjaxParams -> SelectTwo.Types.Model b msg -> SelectTwo.Types.Model b msg"
+            },
+            {
+                "name": "setLoading",
+                "comment": " To be used in your ajax functions to set loading state before sending\n\n        TestAjax params reset ->\n            let\n                url =\n                    \"//api.github.com/search/repositories\"\n\n                buildUrl =\n                    let\n                        term =\n                            if params.term == \"\" then\n                                \"test\"\n                            else\n                                params.term\n                    in\n                        (url ++ \"?q=\" ++ term ++ \"&page=\" ++ (toString params.page))\n            in\n                SelectTwo.setLoading params reset model ! [ sendAjax buildUrl (TestRes params) ]\n\n",
+                "type": "SelectTwo.Types.AjaxParams -> Basics.Bool -> SelectTwo.Types.Model b msg -> SelectTwo.Types.Model b msg"
+            },
+            {
+                "name": "setSearch",
+                "comment": " set the search parameter in your selectTwo record\n",
+                "type": "String.String -> SelectTwo.Types.Model b msg -> SelectTwo.Types.Model b msg"
+            },
+            {
+                "name": "update",
+                "comment": " used in your elm project's update as a way to control the select two boxes on screen it is used by\n\n    yourUpdate : Msg -> Model -> ( Model, Cmd Msg )\n    yourUpdate msg model =\n        let\n            ajaxSend =\n                Just\n                    (\\id_ params reset ->\n                        case id_ of\n                            \"test-4\" ->\n                                ( model\n                                , SelectTwo.send <| TestAjax params reset\n                                )\n\n                            _ ->\n                                ( model\n                                , Cmd.none\n                                )\n                    )\n        in\n        SelectTwo.update SelectTwo stmsg ajaxSend model\n\n",
+                "type": "(SelectTwo.Types.SelectTwoMsg msg -> msg) -> SelectTwo.Types.SelectTwoMsg msg -> Maybe.Maybe (String.String -> SelectTwo.Types.AjaxParams -> Basics.Bool -> ( SelectTwo.Types.Model b msg, Platform.Cmd.Cmd msg )) -> SelectTwo.Types.Model b msg -> ( SelectTwo.Types.Model b msg, Platform.Cmd.Cmd msg )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "SelectTwo.Html",
+        "comment": " this file is for all things related to select2 in the view. this will build your html and has a few helpers for some other areas\n\n\n# Essentials\n\n@docs select2Css, select2, select2Dropdown, select2Close\n\n\n# Helpers\n\n@docs preventScrolling, widthGuess\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "preventScrolling",
+                "comment": " Select2 only works when a parent div is not scrollable, this makes divs not scrollable while the dropdown is open\nfirst argument is a list of select2 ids you don't want to scroll by\n",
+                "type": "List.List String.String -> SelectTwo.Types.Model b msg -> List.List ( String.String, String.String )"
+            },
+            {
+                "name": "select2",
+                "comment": " This the select2 dropdown itself, you pass it a sender and a config and you get back a select2 dropdown. Example:\n\n    let\n        testList msg =\n            [ ( Just \"a\", \"a\" )\n            , ( Just \"b\", \"b\" )\n            , ( Just \"c\", \"c\" )\n            ]\n                |> SelectTwo.basicSelectOptions msg\n    in\n    select2 SelectTwo\n        { defaults = SelectTwo.defaultsFromList [ Test model.test ] <| testList Test\n        , id_ = \"test-1\"\n        , list = testList Test\n        , clearMsg = Just (\\_ -> Test Nothing)\n        , width = \"300px\"\n        , placeholder = \"Select Test\"\n        , disabled = False\n        , showSearch = True\n        , multiSelect = False\n        , ajax = False\n        , delay = 0\n        }\n\n",
+                "type": "(SelectTwo.Types.SelectTwoMsg msg -> msg) -> SelectTwo.Types.SelectTwoConfig msg -> Html.Html msg"
+            },
+            {
+                "name": "select2Close",
+                "comment": " This is an event you put on the body of your elm view, so when a user click away it closes the dropdown\n",
+                "type": "(SelectTwo.Types.SelectTwoMsg msg -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "select2Css",
+                "comment": " This is a stylesheet link tag to the select2 minified css, use this while developing, but it is more recommended that you use it in your head once\nyou compile the code instead\n",
+                "type": "Html.Html msg"
+            },
+            {
+                "name": "select2Dropdown",
+                "comment": " The dropdown to be shown on the page, this needs to be placed somewhere on the bottome of the view\nThe second option can be a custom html builder\n",
+                "type": "(SelectTwo.Types.SelectTwoMsg msg -> msg) -> Maybe.Maybe (SelectTwo.Types.SelectTwoOption msg -> Maybe.Maybe (Html.Html msg)) -> SelectTwo.Types.Model b msg -> Html.Html msg"
+            },
+            {
+                "name": "widthGuess",
+                "comment": " Use this helper method in the select2 config in order to get select2's width resolve functionality\n",
+                "type": "Basics.Float -> List.List (SelectTwo.Types.GroupSelectTwoOption msg) -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "SelectTwo.Types",
+        "comment": " SelectTwo Types\n\n\n# Types\n\n@docs SelectTwoConfig, SelectTwoMsg, Model, SelectTwo, SelectTwoDropdown, GroupSelectTwoOption, SelectTwoOption, AjaxParams, ScrollInfo\n\n",
+        "unions": [
+            {
+                "name": "SelectTwoMsg",
+                "comment": " Command Messages for SelectTwo\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": [
+                    [
+                        "SelectTwoTrigger",
+                        [
+                            "SelectTwo.Types.SelectTwoDropdown msg"
+                        ]
+                    ],
+                    [
+                        "SelectTwoOpen",
+                        [
+                            "SelectTwo.Types.SelectTwoDropdown msg",
+                            "Result.Result Browser.Dom.Error Browser.Dom.Element"
+                        ]
+                    ],
+                    [
+                        "SelectTwoHovered",
+                        [
+                            "Maybe.Maybe msg"
+                        ]
+                    ],
+                    [
+                        "SelectTwoSelected",
+                        [
+                            "Maybe.Maybe msg"
+                        ]
+                    ],
+                    [
+                        "SetSelectTwoSearch",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "DelayedSelectTwoAjax",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "STRes",
+                        [
+                            "Result.Result Browser.Dom.Error ()"
+                        ]
+                    ],
+                    [
+                        "STMsg",
+                        [
+                            "msg"
+                        ]
+                    ],
+                    [
+                        "STNull",
+                        []
+                    ],
+                    [
+                        "SentAjax",
+                        [
+                            "String.String",
+                            "SelectTwo.Types.AjaxParams",
+                            "Basics.Bool"
+                        ]
+                    ],
+                    [
+                        "ResultScroll",
+                        [
+                            "SelectTwo.Types.ScrollInfo"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "AjaxParams",
+                "comment": " Parameters used in ajax calls\n",
+                "args": [],
+                "type": "{ page : Basics.Int, term : String.String, more : Basics.Bool, loading : Basics.Bool }"
+            },
+            {
+                "name": "GroupSelectTwoOption",
+                "comment": " Grouped SelectTwoOption, first option in the tuple is the name of the group\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "( String.String, List.List (SelectTwo.Types.SelectTwoOption msg) )"
+            },
+            {
+                "name": "Model",
+                "comment": " Model structure needed for selectTwo, all records using selectTwo should have this structure\n",
+                "args": [
+                    "model",
+                    "msg"
+                ],
+                "type": "{ model | selectTwo : Maybe.Maybe (SelectTwo.Types.SelectTwo msg) }"
+            },
+            {
+                "name": "ScrollInfo",
+                "comment": " ",
+                "args": [],
+                "type": "{ scrollHeight : Basics.Int, scrollTop : Basics.Int }"
+            },
+            {
+                "name": "SelectTwo",
+                "comment": " Structure created in users model when select2 is activated\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ dropdown : SelectTwo.Types.SelectTwoDropdown msg, hovered : Maybe.Maybe msg, search : Maybe.Maybe String.String, list : List.List (SelectTwo.Types.GroupSelectTwoOption msg), ajax : Basics.Bool, id_ : String.String, ajaxParams : Maybe.Maybe SelectTwo.Types.AjaxParams }"
+            },
+            {
+                "name": "SelectTwoConfig",
+                "comment": " Config for SelectTwo used when initializing your select2 box\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ defaults : List.List (SelectTwo.Types.SelectTwoOption msg), id_ : String.String, list : List.List (SelectTwo.Types.GroupSelectTwoOption msg), clearMsg : Maybe.Maybe (Maybe.Maybe msg -> msg), showSearch : Basics.Bool, width : String.String, placeholder : String.String, disabled : Basics.Bool, multiSelect : Basics.Bool, noResultsMessage : Maybe.Maybe String.String, ajax : Basics.Bool, delay : Basics.Float, closeOnClear : Basics.Bool }"
+            },
+            {
+                "name": "SelectTwoDropdown",
+                "comment": " Data to generate the dropdown\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ id_ : String.String, defaults : List.List (SelectTwo.Types.SelectTwoOption msg), list : List.List (SelectTwo.Types.GroupSelectTwoOption msg), showSearch : Basics.Bool, x : Basics.Float, y : Basics.Float, width : Basics.Float, ajax : Basics.Bool, delay : Basics.Float, noResultsMessage : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "SelectTwoOption",
+                "comment": " Rows in a select table, first option is the command message to be sent, second is the html to be displayed and the string to search on, and the third is if it is disabled or not\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "( Maybe.Maybe msg, String.String, Basics.Bool )"
+            }
+        ],
+        "values": [],
+        "binops": []
+    }
+]

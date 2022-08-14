@@ -1,0 +1,28 @@
+[
+    {
+        "name": "Csv",
+        "comment": " A CSV parser that supports different separators, quoted fields, and multiline values.\nThe results are provided as lists.\n\n\n## Definitions\n\n@docs Csv\n\n\n## Parsing functions\n\n@docs parseWith, parse\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Csv",
+                "comment": " The `Csv` type structure.\n",
+                "args": [],
+                "type": "{ headers : List.List String.String, records : List.List (List.List String.String) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "parse",
+                "comment": " \n\nParse the input string into a CSV Structure \n\n    parse \"value\\n\\\"Here is a multiline \\nvalue - 1,2,3\\\"\\nsingle line value\"  =\n\n        { headers = [ \"value\" ]\n        , records =\n            [ [ \"Here is a multiline \\nvalue - 1,2,3\" ]\n            , [ \"single line value\" ]\n            ]\n        }\n",
+                "type": "String.String -> Csv.Csv"
+            },
+            {
+                "name": "parseWith",
+                "comment": " \n\nParse the input string into a CSV Structure using a custom delimiter \n\n    parseWith '☃' \"id☃value\\n1☃one\\n2☃two\" =\n                        \n        { headers = [ \"id\", \"value\" ]\n        , records =\n            [ [ \"1\", \"one\" ]\n            , [ \"2\", \"two\" ]\n            ]\n        }\n\n",
+                "type": "Char.Char -> String.String -> Csv.Csv"
+            }
+        ],
+        "binops": []
+    }
+]

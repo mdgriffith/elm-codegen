@@ -1,0 +1,43 @@
+[
+    {
+        "name": "Bloom",
+        "comment": " Elm [Bloom filter](https://en.wikipedia.org/wiki/Bloom_filter) implementation using [Murmur3](https://en.wikipedia.org/wiki/MurmurHash). It may not be the fastest implementation, but it is simple and easy to use. This [blog post](https://corte.si/posts/code/bloom-filter-rules-of-thumb/index.html) with rules of thumb for choosing m and k might be helpful. \n\nUse it as follows:\n\n    import Bloom exposing (empty, add, test)\n\n    -- create an empty filter with m elements and k hashes\n    emptyFilter = empty 1000 4\n\n    -- add elements to the filter\n    filter = \n      List.foldr \n        add\n        emptyFilter \n        [\"foo\", \"bar\", \"baz\", ... ]\n\n    -- check if elements are recognized by the filter\n    test \"bar\" filter == True\n    test \"barr\" filter == False\n\n# Data\n\n@docs Filter\n\n# Create, manipulate and test\n\n@docs empty, add, test\n\n# JSON\n\n@docs decoder, encoder\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Filter",
+                "comment": " The Filter struct holds an array containing the actual filter, but also the values for m and k (for simplicity).\n",
+                "args": [],
+                "type": "{ set : Array.Array Basics.Int, m : Basics.Int, k : Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "add",
+                "comment": " Adds elements to an existing Filter.\n\n    import Bloom exposing (add, empty)\n\n    t = List.foldr add (empty 20 3) [\"foo\", \"bar\", \"baz\"]\n",
+                "type": "String.String -> Bloom.Filter -> Bloom.Filter"
+            },
+            {
+                "name": "decoder",
+                "comment": " JSON decoder for a Filter\n",
+                "type": "Json.Decode.Decoder Bloom.Filter"
+            },
+            {
+                "name": "empty",
+                "comment": " Creates an empty Filter, containing m elements and using k hashes.\n\n    import Bloom\n\n    Bloom.empty 10 3 |> Array.toList\n\n    -- {m=10, k=3, set=[0,0,0,0,0,0,0,0,0,0]}\n",
+                "type": "Basics.Int -> Basics.Int -> Bloom.Filter"
+            },
+            {
+                "name": "encoder",
+                "comment": " Encodes a filter into a JSON value.\n",
+                "type": "Bloom.Filter -> Json.Encode.Value"
+            },
+            {
+                "name": "test",
+                "comment": " Tests if a filter contains an element. By its probalistic nature this function may yield false positive results.\n\n    import Bloom exposing (add, empty)\n\n    -- create filter t\n    \n    test \"foo\" t == True\n    test \"fou\" t == False\n",
+                "type": "String.String -> Bloom.Filter -> Basics.Bool"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,57 @@
+[
+    {
+        "name": "Debounce",
+        "comment": " This provides a component that can \"debounce\" a changing value: monitor a\ntime-varying sequence of values and output the latest value every time there is\nno further change for some minimum interval.\n\nThis implementation attempts to minimize the number of `update` calls by using\n`Process.sleep` to manage the settling time (rather than recalculating elapsed\ninterval on every fine-grained tick). An added tuple element in the `update`\nfunction's return value provides the notification to the parent of the settled\nvalue. It's also possible to poll the settled value.\n\n\n# Types\n\n@docs Model, Msg\n\n\n# Update\n\n@docs init, update\n\n\n# Read\n\n@docs settled\n\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " Use the `Change` message to pass a new value to debouncer.\n",
+                "args": [
+                    "datatype"
+                ],
+                "cases": [
+                    [
+                        "Change",
+                        [
+                            "datatype"
+                        ]
+                    ],
+                    [
+                        "Timeout",
+                        [
+                            "Basics.Int"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Model",
+                "comment": " Debouncer model. Each instance handles a single time-varying sequence of the\nsame type (the `datatype`).\n",
+                "args": [
+                    "datatype"
+                ],
+                "type": "{ data : datatype, settled : datatype, sleepCount : Basics.Int, settleTime : Basics.Float }"
+            }
+        ],
+        "values": [
+            {
+                "name": "init",
+                "comment": " Initialize the debouncer with the time interval (in milliseconds) to wait\nfor changing values to settle and the initial settled value.\n",
+                "type": "Basics.Float -> datatype -> Debounce.Model datatype"
+            },
+            {
+                "name": "settled",
+                "comment": " Access the settled value.\n",
+                "type": "Debounce.Model datatype -> datatype"
+            },
+            {
+                "name": "update",
+                "comment": " Update the debouncer as a typical TEA component. The return value adds a\nfinal tuple element that is `Nothing` while the value is still changing and\n`Just x` when the value has settled to `x`.\n",
+                "type": "Debounce.Msg datatype -> Debounce.Model datatype -> ( Debounce.Model datatype, Platform.Cmd.Cmd (Debounce.Msg datatype), Maybe.Maybe datatype )"
+            }
+        ],
+        "binops": []
+    }
+]

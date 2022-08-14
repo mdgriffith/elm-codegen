@@ -1,0 +1,38 @@
+[
+    {
+        "name": "Crypto.AES",
+        "comment": " A pure Elm implementation of Rijndael, the Advanced Encryption Standard (AES).\n\nBased on [cl-cryto](https://github.com/billstclair/cl-crypto)'s [aes16.lisp](https://github.com/billstclair/cl-crypto/blob/master/source/aes16.lisp).\n\n\n# Types\n\n@docs Keys\n\n\n# Functions\n\n@docs expandKey, expandKeyString, encrypt, decrypt\n\n",
+        "unions": [
+            {
+                "name": "Keys",
+                "comment": " Expanded AES encryption and decryption keys.\n\nCreated by `expandKey` and `expandKeyString`. Passed to `encryt` and `decrypt`.\n\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decrypt",
+                "comment": " Decrypt the 16-element Array with the Keys\n\nIf the array has other than 16 elements, or any of them are not in the range 0-255, you'll get unexpected results.\n\n",
+                "type": "Crypto.AES.Keys -> Array.Array Basics.Int -> Array.Array Basics.Int"
+            },
+            {
+                "name": "encrypt",
+                "comment": " Encrypt the 16-element Array with the Keys.\n\nIf the array has other than 16 elements, or any of them are not in the range 0-255, you'll get unexpected results.\n\n",
+                "type": "Crypto.AES.Keys -> Array.Array Basics.Int -> Array.Array Basics.Int"
+            },
+            {
+                "name": "expandKey",
+                "comment": " Expand a raw key array.\n\nThe array's length must be 16, 24, or 32 (128, 192, or 256 bits), and its elements must all be between 0 and 255 inclusive, or you'll get an error.\n\n",
+                "type": "Array.Array Basics.Int -> Result.Result String.String Crypto.AES.Keys"
+            },
+            {
+                "name": "expandKeyString",
+                "comment": " Expand a raw key represented as a string of Hex characters.\n\nAll the characters must be in the ranges 0-9, A-F (a-f), and there must be 32, 48, or 64 of them, or your'll get an error.\n\n",
+                "type": "String.String -> Result.Result String.String Crypto.AES.Keys"
+            }
+        ],
+        "binops": []
+    }
+]

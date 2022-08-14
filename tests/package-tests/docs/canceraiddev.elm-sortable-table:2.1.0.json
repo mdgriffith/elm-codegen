@@ -1,0 +1,488 @@
+[
+    {
+        "name": "Table",
+        "comment": " This library helps you create sortable tables. The crucial feature is that it\nlets you own your data separately and keep it in whatever format is best for\nyou. This way you are free to change your data without worrying about the table\n&ldquo;getting out of sync&rdquo; with the data. Having a single source of\ntruth is pretty great!\n\nWe recommend checking out the [examples] to get a feel for how it works.\n\n[examples]: https://github.com/canceraiddev/elm-sortable-table/tree/main/examples\n\n\n# View\n\n@docs view\n\n\n# Configuration\n\n@docs config, stringColumn, intColumn, floatColumn, dateColumn, posixColumn\n\n\n# State\n\n@docs State, initialSort\n\n\n# Crazy Customization\n\nIf you are new to this library, you can probably stop reading here. After this\npoint are a bunch of ways to customize your table further. If it does not\nprovide what you need, you may just want to write a custom table yourself. It\nis not that crazy.\n\n\n## Custom Columns\n\n@docs Column, customColumn, veryCustomColumn, DateColumnConfig, PosixColumnConfig\n@docs Sorter, unsortable, increasingBy, decreasingBy\n@docs increasingOrDecreasingBy, decreasingOrIncreasingBy\n\n\n## Custom Tables\n\n@docs Config, customConfig, Customizations, HtmlDetails, htmlDetails, Status\n@docs defaultCustomizations\n\n",
+        "unions": [
+            {
+                "name": "Column",
+                "comment": " Describes how to turn `data` into a column in your table.\n",
+                "args": [
+                    "data",
+                    "msg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Config",
+                "comment": " Configuration for your table, describing your columns.\n\n**Note:** Your `Config` should _never_ be held in your model.\nIt should only appear in `view` code.\n\n",
+                "args": [
+                    "data",
+                    "msg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Sorter",
+                "comment": " Specifies a particular way of sorting data.\n",
+                "args": [
+                    "data"
+                ],
+                "cases": []
+            },
+            {
+                "name": "State",
+                "comment": " Tracks which column to sort by.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Status",
+                "comment": " The status of a particular column, for use in the `thead` field of your\n`Customizations`.\n\n  - If the column is unsortable, the status will always be `Unsortable`.\n  - If the column can be sorted in one direction, the status will be `Sortable`.\n    The associated boolean represents whether this column is selected. So it is\n    `True` if the table is currently sorted by this column, and `False` otherwise.\n  - If the column can be sorted in either direction, the status will be `Reversible`.\n    The associated maybe tells you whether this column is selected. It is\n    `Just isReversed` if the table is currently sorted by this column, and\n    `Nothing` otherwise. The `isReversed` boolean lets you know which way it\n    is sorted.\n\nThis information lets you do custom header decorations for each scenario.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Unsortable",
+                        []
+                    ],
+                    [
+                        "Sortable",
+                        [
+                            "Basics.Bool"
+                        ]
+                    ],
+                    [
+                        "Reversible",
+                        [
+                            "Maybe.Maybe Basics.Bool"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Customizations",
+                "comment": " There are quite a lot of ways to customize the `<table>` tag. You can add\na `<caption>` which can be styled via CSS. You can do crazy stuff with\n`<thead>` to group columns in weird ways. You can have a `<tfoot>` tag for\nsummaries of various columns. And maybe you want to put attributes on `<tbody>`\nor on particular rows in the body. All these customizations are available to you.\n\n**Note:** The level of craziness possible in `<thead>` and `<tfoot>` are so\nhigh that I could not see how to provide the full functionality _and_ make it\nimpossible to do bad stuff. So just be aware of that, and share any stories\nyou have. Stories make it possible to design better!\n\n",
+                "args": [
+                    "data",
+                    "msg"
+                ],
+                "type": "{ tableAttrs : List.List (Html.Attribute msg), caption : Maybe.Maybe (Table.HtmlDetails msg), thead : List.List ( String.String, Table.Status, Html.Attribute msg ) -> Table.HtmlDetails msg, tfoot : Maybe.Maybe (Table.HtmlDetails msg), tbodyAttrs : List.List (Html.Attribute msg), rowAttrs : data -> List.List (Html.Attribute msg) }"
+            },
+            {
+                "name": "DateColumnConfig",
+                "comment": " ",
+                "args": [
+                    "data"
+                ],
+                "type": "{ name : String.String, toIsoDate : data -> String.String, default : String.String, formatString : String.String }"
+            },
+            {
+                "name": "HtmlDetails",
+                "comment": " Sometimes you must use a `<td>` tag, but the attributes and children are up\nto you. This type lets you specify all the details of an HTML node except the\ntag name.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ attributes : List.List (Html.Attribute msg), children : List.List (Html.Html msg) }"
+            },
+            {
+                "name": "PosixColumnConfig",
+                "comment": " ",
+                "args": [
+                    "data"
+                ],
+                "type": "{ name : String.String, toPosix : data -> Maybe.Maybe Time.Posix, default : String.String, timeZone : Time.Zone, formatString : String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "config",
+                "comment": " Create the `Config` for your `view` function. Everything you need to\nrender your columns efficiently and handle selection of columns.\n\nSay we have a `List Person` that we want to show as a table. The table should\nhave a column for name and age. We would create a `Config` like this:\n\n    import Table\n\n    type Msg = NewTableState State | ...\n\n    config : Table.Config Person Msg\n    config =\n      Table.config\n        { toId = .name\n        , toMsg = NewTableState\n        , columns =\n            [ Table.stringColumn \"Name\" .name\n            , Table.intColumn \"Age\" .age\n            ]\n        }\n\nYou provide the following information in your table configuration:\n\n  - `toId` &mdash; turn a `Person` into a unique ID. This lets us use\n    [`Html.Keyed`][keyed] under the hood to make resorts faster.\n  - `columns` &mdash; specify some columns to show.\n  - `toMsg` &mdash; a way to send new table states to your app as messages.\n\nSee the [examples] to get a better feel for this!\n\n[keyed]: http://package.elm-lang.org/packages/elm-lang/html/latest/Html-Keyed\n[examples]: https://github.com/canceraiddev/elm-sortable-table/tree/main/examples\n\n",
+                "type": "{ toId : data -> String.String, toMsg : Table.State -> msg, columns : List.List (Table.Column data msg) } -> Table.Config data msg"
+            },
+            {
+                "name": "customColumn",
+                "comment": " Perhaps the basic columns are not quite what you want. Maybe you want to\ndisplay monetary values in thousands of dollars, and `floatColumn` does not\nquite cut it. You could define a custom column like this:\n\n    import Table\n\n    dollarColumn : String -> (data -> Float) -> Column data msg\n    dollarColumn name toDollars =\n        Table.customColumn\n            { name = name\n            , viewData = \\data -> viewDollars (toDollars data)\n            , sorter = Table.decreasingBy toDollars\n            }\n\n    viewDollars : Float -> String\n    viewDollars dollars =\n        \"$\" ++ String.fromInt (round (dollars / 1000)) ++ \"k\"\n\nThe `viewData` field means we will displays the number `12345.67` as `$12k`.\n\nThe `sorter` field specifies how the column can be sorted. In `dollarColumn` we\nare saying that it can _only_ be shown from highest-to-lowest monetary value.\nMore about sorters soon!\n\n",
+                "type": "{ name : String.String, viewData : data -> String.String, sorter : Table.Sorter data } -> Table.Column data msg"
+            },
+            {
+                "name": "customConfig",
+                "comment": " Just like `config` but you can specify a bunch of table customizations.\n",
+                "type": "{ toId : data -> String.String, toMsg : Table.State -> msg, columns : List.List (Table.Column data msg), customizations : Table.Customizations data msg } -> Table.Config data msg"
+            },
+            {
+                "name": "dateColumn",
+                "comment": " ",
+                "type": "Table.DateColumnConfig data -> Table.Column data msg"
+            },
+            {
+                "name": "decreasingBy",
+                "comment": " Create a sorter that can only display the data in decreasing order. If we\nwant a table of countries, sorted by population from highest to lowest, we\nwould say this:\n\n    sorter : Sorter { a | population : comparable }\n    sorter =\n        decreasingBy .population\n\n",
+                "type": "(data -> comparable) -> Table.Sorter data"
+            },
+            {
+                "name": "decreasingOrIncreasingBy",
+                "comment": " Sometimes you want to be able to sort data in increasing _or_ decreasing\norder. Maybe you have a bunch of data about orange juice, and you want to know\nboth which has the most sugar, and which has the least sugar. Both interesting!\nThis function lets you see both, starting with decreasing order.\n\n    sorter : Sorter { a | sugar : comparable }\n    sorter =\n        decreasingOrIncreasingBy .sugar\n\n",
+                "type": "(data -> comparable) -> Table.Sorter data"
+            },
+            {
+                "name": "defaultCustomizations",
+                "comment": " The customizations used in `config` by default.\n",
+                "type": "Table.Customizations data msg"
+            },
+            {
+                "name": "floatColumn",
+                "comment": " ",
+                "type": "String.String -> (data -> Basics.Float) -> Table.Column data msg"
+            },
+            {
+                "name": "htmlDetails",
+                "comment": " ",
+                "type": "Html.Html msg -> Table.HtmlDetails msg"
+            },
+            {
+                "name": "increasingBy",
+                "comment": " Create a sorter that can only display the data in increasing order. If we\nwant a table of people, sorted alphabetically by name, we would say this:\n\n    sorter : Sorter { a | name : comparable }\n    sorter =\n        increasingBy .name\n\n",
+                "type": "(data -> comparable) -> Table.Sorter data"
+            },
+            {
+                "name": "increasingOrDecreasingBy",
+                "comment": " Sometimes you want to be able to sort data in increasing _or_ decreasing\norder. Maybe you have race times for the 100 meter sprint. This function lets\nsort by best time by default, but also see the other order.\n\n    sorter : Sorter { a | time : comparable }\n    sorter =\n        increasingOrDecreasingBy .time\n\n",
+                "type": "(data -> comparable) -> Table.Sorter data"
+            },
+            {
+                "name": "initialSort",
+                "comment": " Create a table state. By providing a column name, you determine which\ncolumn should be used for sorting by default. So if you want your table of\nyachts to be sorted by length by default, you might say:\n\n    import Table\n\n    Table.initialSort \"Length\"\n\n",
+                "type": "String.String -> Table.State"
+            },
+            {
+                "name": "intColumn",
+                "comment": " ",
+                "type": "String.String -> (data -> Basics.Int) -> Table.Column data msg"
+            },
+            {
+                "name": "posixColumn",
+                "comment": " ",
+                "type": "Table.PosixColumnConfig data -> Table.Column data msg"
+            },
+            {
+                "name": "stringColumn",
+                "comment": " ",
+                "type": "String.String -> (data -> String.String) -> Table.Column data msg"
+            },
+            {
+                "name": "unsortable",
+                "comment": " A sorter for columns that are unsortable. Maybe you have a column in your\ntable for delete buttons that delete the row. It would not make any sense to\nsort based on that column.\n",
+                "type": "Table.Sorter data"
+            },
+            {
+                "name": "veryCustomColumn",
+                "comment": " It is _possible_ that you want something crazier than `customColumn`. In\nthat unlikely scenario, this function lets you have full control over the\nattributes and children of each `<td>` cell in this column.\n\nSo maybe you want to a dollars column, and the dollar signs should be green.\n\n    import Html exposing (Attribute, Html, span, text)\n    import Html.Attributes exposing (style)\n    import Table\n\n    dollarColumn : String -> (data -> Float) -> Column data msg\n    dollarColumn name toDollars =\n        Table.veryCustomColumn\n            { name = name\n            , viewData = \\data -> viewDollars (toDollars data)\n            , sorter = Table.decreasingBy toDollars\n            }\n\n    viewDollars : Float -> Table.HtmlDetails msg\n    viewDollars dollars =\n        Table.HtmlDetails []\n            [ span [ style \"color\" \"green\" ] [ text \"$\" ]\n            , text (String.fromInt (round (dollars / 1000)) ++ \"k\")\n            ]\n\n",
+                "type": "{ name : String.String, viewData : data -> Table.HtmlDetails msg, sorter : Table.Sorter data } -> Table.Column data msg"
+            },
+            {
+                "name": "view",
+                "comment": " Take a list of data and turn it into a table. The `Config` argument is the\nconfiguration for the table. It describes the columns that we want to show. The\n`State` argument describes which column we are sorting by at the moment.\n\n**Note:** The `State` and `List data` should live in your `Model`. The `Config`\nfor the table belongs in your `view` code. I very strongly recommend against\nputting `Config` in your model. Describe any potential table configurations\nstatically, and look for a different library if you need something crazier than\nthat.\n\n",
+                "type": "Table.Config data msg -> Table.State -> List.List data -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Table.Bulma",
+        "comment": " [Bulma](https://bulma.io) specific customizations for `Table` and `Table.Paginated`.\n\nWe recommend checking out the [examples] to get a feel for how it works.\n\n[examples]: https://github.com/canceraiddev/elm-sortable-table/tree/main/examples\n\n\n# Customization\n\n\n## Custom Tables\n\n@docs defaultCustomizations, defaultCustomizationsPaginated\n\n\n## Pagination\n\n@docs pagination\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "defaultCustomizations",
+                "comment": " Default `Table` customizations for Bulma.\n",
+                "type": "Table.Customizations data msg"
+            },
+            {
+                "name": "defaultCustomizationsPaginated",
+                "comment": " Default `Table.Paginated` customizations for Bulma.\n",
+                "type": "Table.Paginated.Customizations data msg"
+            },
+            {
+                "name": "pagination",
+                "comment": " Pagination view component using Bulma structure and classes. See Bulma\n[docs](https://bulma.io/documentation/components/pagination/).\n\nFor customization pass in attributes as required. E.g.\n\n    { defaultCustomizations | pagination = pagination [ class \"is-centered\" ] }\n\n",
+                "type": "Table.Paginated.RenderSettings -> List.List (Html.Attribute msg) -> (Table.Paginated.State -> msg) -> Table.Paginated.State -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Table.Paginated",
+        "comment": " Variant of Table for paginated remote data that is sorted before being given\nto the view. The Sorter type is only used for visually representing the sort\nstate of the table data that is sorted elsewhere (e.g. sorted paginated data\nfrom a server).\n\nThis library helps you create sortable tables. The crucial feature is that it\nlets you own your data separately and keep it in whatever format is best for\nyou. This way you are free to change your data without worrying about the table\n&ldquo;getting out of sync&rdquo; with the data. Having a single source of\ntruth is pretty great!\n\nWe recommend checking out the [examples] to get a feel for how it works.\n\n[examples]: https://github.com/canceraiddev/elm-sortable-table/tree/main/examples\n\n\n# View\n\n@docs view\n\n\n# Configuration\n\n@docs config, stringColumn, intColumn, floatColumn, dateColumn, posixColumn\n\n\n# State\n\n@docs State, initialState, initialStateDirected\n@docs getSortColumn, getCurrentPage, setCurrentPage, getPageSize, setPageSize, setTotal, getPageCount, getIsReversed\n@docs nextPage, previousPage\n\n\n# Sort Order\n\n@docs SortOrder, sortOrder\n\n\n# Crazy Customization\n\nIf you are new to this library, you can probably stop reading here. After this\npoint are a bunch of ways to customize your table further. If it does not\nprovide what you need, you may just want to write a custom table yourself. It\nis not that crazy.\n\n\n## Custom Columns\n\n@docs Column, customColumn, veryCustomColumn, DateColumnConfig, PosixColumnConfig\n@docs Sorter, unsortable, increasingBy, decreasingBy\n@docs increasingOrDecreasingBy, decreasingOrIncreasingBy\n\n\n## Custom Tables\n\n@docs Config, customConfig, Customizations, HtmlDetails, htmlDetails, Status\n@docs defaultCustomizations\n\n\n## Render Settings\n\n@docs RenderSettings, renderPageButton\n\n",
+        "unions": [
+            {
+                "name": "Column",
+                "comment": " Describes how to turn `data` into a column in your table.\n",
+                "args": [
+                    "data",
+                    "msg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Config",
+                "comment": " Configuration for your table, describing your columns.\n\n**Note:** Your `Config` should _never_ be held in your model.\nIt should only appear in `view` code.\n\n",
+                "args": [
+                    "data",
+                    "msg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "SortOrder",
+                "comment": " Sort Order data type corresponding to SQL order by.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Asc",
+                        []
+                    ],
+                    [
+                        "Desc",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Sorter",
+                "comment": " Specifies a particular way of sorting data.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "State",
+                "comment": " Tracks pagination state of table.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Status",
+                "comment": " The status of a particular column, for use in the `thead` field of your\n`Customizations`.\n\n  - If the column is unsortable, the status will always be `Unsortable`.\n  - If the column can be sorted in one direction, the status will be `Sortable`.\n    The associated boolean represents whether this column is selected. So it is\n    `True` if the table is currently sorted by this column, and `False` otherwise.\n  - If the column can be sorted in either direction, the status will be `Reversible`.\n    The associated maybe tells you whether this column is selected. It is\n    `Just isReversed` if the table is currently sorted by this column, and\n    `Nothing` otherwise. The `isReversed` boolean lets you know which way it\n    is sorted.\n\nThis information lets you do custom header decorations for each scenario.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Unsortable",
+                        []
+                    ],
+                    [
+                        "Sortable",
+                        [
+                            "Basics.Bool"
+                        ]
+                    ],
+                    [
+                        "Reversible",
+                        [
+                            "Maybe.Maybe Basics.Bool"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Customizations",
+                "comment": " There are quite a lot of ways to customize the `<table>` tag. You can add\na `<caption>` which can be styled via CSS. You can do crazy stuff with\n`<thead>` to group columns in weird ways. You can have a `<tfoot>` tag for\nsummaries of various columns. And maybe you want to put attributes on `<tbody>`\nor on particular rows in the body. All these customizations are available to you.\n\n**Note:** The level of craziness possible in `<thead>` and `<tfoot>` are so\nhigh that I could not see how to provide the full functionality _and_ make it\nimpossible to do bad stuff. So just be aware of that, and share any stories\nyou have. Stories make it possible to design better!\n\n",
+                "args": [
+                    "data",
+                    "msg"
+                ],
+                "type": "{ tableAttrs : List.List (Html.Attribute msg), caption : Maybe.Maybe (Table.Paginated.HtmlDetails msg), thead : List.List ( String.String, Table.Paginated.Status, Html.Attribute msg ) -> Table.Paginated.HtmlDetails msg, tfoot : Maybe.Maybe (Table.Paginated.HtmlDetails msg), tbodyAttrs : List.List (Html.Attribute msg), rowAttrs : data -> List.List (Html.Attribute msg), pagination : (Table.Paginated.State -> msg) -> Table.Paginated.State -> Html.Html msg }"
+            },
+            {
+                "name": "DateColumnConfig",
+                "comment": " ",
+                "args": [
+                    "data"
+                ],
+                "type": "{ name : String.String, toIsoDate : data -> String.String, default : String.String, formatString : String.String }"
+            },
+            {
+                "name": "HtmlDetails",
+                "comment": " Sometimes you must use a `<td>` tag, but the attributes and children are up\nto you. This type lets you specify all the details of an HTML node except the\ntag name.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ attributes : List.List (Html.Attribute msg), children : List.List (Html.Html msg) }"
+            },
+            {
+                "name": "PosixColumnConfig",
+                "comment": " ",
+                "args": [
+                    "data"
+                ],
+                "type": "{ name : String.String, toPosix : data -> Maybe.Maybe Time.Posix, default : String.String, timeZone : Time.Zone, formatString : String.String }"
+            },
+            {
+                "name": "RenderSettings",
+                "comment": " Render settings.\n",
+                "args": [],
+                "type": "{ windowSize : Basics.Int, minPages : Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "config",
+                "comment": " Create the `Config` for your `view` function. Everything you need to\nrender your columns efficiently and handle selection of columns.\n\nSay we have a `List Person` that we want to show as a table. The table should\nhave a column for name and age. We would create a `Config` like this:\n\n    import Table\n\n    type Msg = NewTableState State | ...\n\n    config : Table.Config Person Msg\n    config =\n      Table.config\n        { toId = .name\n        , toMsg = NewTableState\n        , columns =\n            [ Table.stringColumn \"Name\" .name\n            , Table.intColumn \"Age\" .age\n            ]\n        }\n\nYou provide the following information in your table configuration:\n\n  - `toId` &mdash; turn a `Person` into a unique ID. This lets us use\n    [`Html.Keyed`][keyed] under the hood to make resorts faster.\n  - `columns` &mdash; specify some columns to show.\n  - `toMsg` &mdash; a way to send new table states to your app as messages.\n\nSee the [examples] to get a better feel for this!\n\n[keyed]: http://package.elm-lang.org/packages/elm-lang/html/latest/Html-Keyed\n[examples]: https://github.com/canceraiddev/elm-sortable-table/tree/main/examples\n\n",
+                "type": "{ toId : data -> String.String, toMsg : Table.Paginated.State -> msg, columns : List.List (Table.Paginated.Column data msg) } -> Table.Paginated.Config data msg"
+            },
+            {
+                "name": "customColumn",
+                "comment": " Perhaps the basic columns are not quite what you want. Maybe you want to\ndisplay monetary values in thousands of dollars, and `floatColumn` does not\nquite cut it. You could define a custom column like this:\n\n    import Table\n\n    dollarColumn : String -> (data -> Float) -> Column data msg\n    dollarColumn name toDollars =\n        Table.customColumn\n            { name = name\n            , viewData = \\data -> viewDollars (toDollars data)\n            , sorter = Table.decreasingBy toDollars\n            }\n\n    viewDollars : Float -> String\n    viewDollars dollars =\n        \"$\" ++ String.fromInt (round (dollars / 1000)) ++ \"k\"\n\nThe `viewData` field means we will displays the number `12345.67` as `$12k`.\n\nThe `sorter` field specifies how the column can be sorted. In `dollarColumn` we\nare saying that it can _only_ be shown from highest-to-lowest monetary value.\nMore about sorters soon!\n\n",
+                "type": "{ id : String.String, name : String.String, viewData : data -> String.String, sorter : Table.Paginated.Sorter } -> Table.Paginated.Column data msg"
+            },
+            {
+                "name": "customConfig",
+                "comment": " Just like `config` but you can specify a bunch of table customizations.\n",
+                "type": "{ toId : data -> String.String, toMsg : Table.Paginated.State -> msg, columns : List.List (Table.Paginated.Column data msg), customizations : Table.Paginated.Customizations data msg } -> Table.Paginated.Config data msg"
+            },
+            {
+                "name": "dateColumn",
+                "comment": " ",
+                "type": "String.String -> Table.Paginated.DateColumnConfig data -> Table.Paginated.Column data msg"
+            },
+            {
+                "name": "decreasingBy",
+                "comment": " Create a sorter that can only display the data in decreasing order. If we\nwant a table of countries, sorted by population from highest to lowest, we\nwould say this:\n",
+                "type": "Table.Paginated.Sorter"
+            },
+            {
+                "name": "decreasingOrIncreasingBy",
+                "comment": " Sometimes you want to be able to sort data in increasing _or_ decreasing\norder. Maybe you have a bunch of data about orange juice, and you want to know\nboth which has the most sugar, and which has the least sugar. Both interesting!\nThis function lets you see both, starting with decreasing order.\n",
+                "type": "Table.Paginated.Sorter"
+            },
+            {
+                "name": "defaultCustomizations",
+                "comment": " The customizations used in `config` by default.\n\nPagination controls are not included as there is not a standard way to layout\nthese components. See Table.Bulma for an configuration of pagination controls\nusing the bulma UI framework.\n\n",
+                "type": "Table.Paginated.Customizations data msg"
+            },
+            {
+                "name": "floatColumn",
+                "comment": " ",
+                "type": "String.String -> String.String -> (data -> Basics.Float) -> Table.Paginated.Column data msg"
+            },
+            {
+                "name": "getCurrentPage",
+                "comment": " Get the current page number.\n",
+                "type": "Table.Paginated.State -> Basics.Int"
+            },
+            {
+                "name": "getIsReversed",
+                "comment": " Get whether the current sortable column is set to be sorted in ascending or descending order.\n",
+                "type": "Table.Paginated.State -> Basics.Bool"
+            },
+            {
+                "name": "getPageCount",
+                "comment": " Get the page count (i.e. the total number of pages that can be displayed).\n",
+                "type": "Table.Paginated.State -> Basics.Int"
+            },
+            {
+                "name": "getPageSize",
+                "comment": " Get the page size (i.e. the max number of items shown in the table\nat one time).\n",
+                "type": "Table.Paginated.State -> Basics.Int"
+            },
+            {
+                "name": "getSortColumn",
+                "comment": " Get the column currently sorted by.\n",
+                "type": "Table.Paginated.State -> String.String"
+            },
+            {
+                "name": "htmlDetails",
+                "comment": " ",
+                "type": "Html.Html msg -> Table.Paginated.HtmlDetails msg"
+            },
+            {
+                "name": "increasingBy",
+                "comment": " Create a sorter that can only display the data in increasing order. If we\nwant a table of people, sorted alphabetically by name, we would say this:\n",
+                "type": "Table.Paginated.Sorter"
+            },
+            {
+                "name": "increasingOrDecreasingBy",
+                "comment": " Sometimes you want to be able to sort data in increasing _or_ decreasing\norder. Maybe you have race times for the 100 meter sprint. This function lets\nsort by best time by default, but also see the other order.\n",
+                "type": "Table.Paginated.Sorter"
+            },
+            {
+                "name": "initialState",
+                "comment": " Create a table state. By providing a column name, you determine which\ncolumn should be used for sorting, defaulting to an ascending sort.\nSo if you want your table of yachts to be sorted by length by default, you might say:\n\n    import Table\n\n    Table.initialState \"Length\" pageSize\n\n",
+                "type": "String.String -> Basics.Int -> Table.Paginated.State"
+            },
+            {
+                "name": "initialStateDirected",
+                "comment": " Create a table state with the ability to specify the direction of sort on the specified column\nin the form of an isReversed Bool.\nFor a descending sort on your table of yachts by length, use\n\n    import Table\n\n    Table.initialStateDirected \"Length\" True pageSize\n\n",
+                "type": "String.String -> Basics.Bool -> Basics.Int -> Table.Paginated.State"
+            },
+            {
+                "name": "intColumn",
+                "comment": " ",
+                "type": "String.String -> String.String -> (data -> Basics.Int) -> Table.Paginated.Column data msg"
+            },
+            {
+                "name": "nextPage",
+                "comment": " Move to the next page. Do nothing if the currentPage is the last page.\n",
+                "type": "Table.Paginated.State -> Table.Paginated.State"
+            },
+            {
+                "name": "posixColumn",
+                "comment": " ",
+                "type": "String.String -> Table.Paginated.PosixColumnConfig data -> Table.Paginated.Column data msg"
+            },
+            {
+                "name": "previousPage",
+                "comment": " Move to the previous page. Do nothing if the currentPage is the first page.\n",
+                "type": "Table.Paginated.State -> Table.Paginated.State"
+            },
+            {
+                "name": "renderPageButton",
+                "comment": " Check if a page button should rendered.\n",
+                "type": "Table.Paginated.RenderSettings -> Table.Paginated.State -> Basics.Int -> Basics.Bool"
+            },
+            {
+                "name": "setCurrentPage",
+                "comment": " Set the current page number.\n\nUseful for setting the page number base on URL query parameters.\n\n",
+                "type": "Basics.Int -> Table.Paginated.State -> Table.Paginated.State"
+            },
+            {
+                "name": "setPageSize",
+                "comment": " Set the page size.\n",
+                "type": "Basics.Int -> Table.Paginated.State -> Table.Paginated.State"
+            },
+            {
+                "name": "setTotal",
+                "comment": " Set the total number of items that can be viewed in the table.\n\nYou will probably find this out when you do the first request for data and this\nvalue maybe change on subsequent requests.\n\nE.g. if there are 20 rows of data and the page size is 5, the total parameter is\n20 (while the number of pages will be 4)\n\n",
+                "type": "Basics.Int -> Table.Paginated.State -> Table.Paginated.State"
+            },
+            {
+                "name": "sortOrder",
+                "comment": " Get the sort order for the table. Used to request sorting of remote data.\n",
+                "type": "Table.Paginated.Config data msg -> Table.Paginated.State -> Maybe.Maybe Table.Paginated.SortOrder"
+            },
+            {
+                "name": "stringColumn",
+                "comment": " ",
+                "type": "String.String -> String.String -> (data -> String.String) -> Table.Paginated.Column data msg"
+            },
+            {
+                "name": "unsortable",
+                "comment": " A sorter for columns that are unsortable. Maybe you have a column in your\ntable for delete buttons that delete the row. It would not make any sense to\nsort based on that column.\n",
+                "type": "Table.Paginated.Sorter"
+            },
+            {
+                "name": "veryCustomColumn",
+                "comment": " It is _possible_ that you want something crazier than `customColumn`. In\nthat unlikely scenario, this function lets you have full control over the\nattributes and children of each `<td>` cell in this column.\n\nSo maybe you want to a dollars column, and the dollar signs should be green.\n\n    import Html exposing (Attribute, Html, span, text)\n    import Html.Attributes exposing (style)\n    import Table\n\n    dollarColumn : String -> (data -> Float) -> Column data msg\n    dollarColumn name toDollars =\n        Table.veryCustomColumn\n            { name = name\n            , viewData = \\data -> viewDollars (toDollars data)\n            , sorter = Table.decreasingBy toDollars\n            }\n\n    viewDollars : Float -> Table.HtmlDetails msg\n    viewDollars dollars =\n        Table.HtmlDetails []\n            [ span [ style \"color\" \"green\" ] [ text \"$\" ]\n            , text (String.fromInt (round (dollars / 1000)) ++ \"k\")\n            ]\n\n",
+                "type": "{ id : String.String, name : String.String, viewData : data -> Table.Paginated.HtmlDetails msg, sorter : Table.Paginated.Sorter } -> Table.Paginated.Column data msg"
+            },
+            {
+                "name": "view",
+                "comment": " Take a list of data and turn it into a table. The `Config` argument is the\nconfiguration for the table. It describes the columns that we want to show. The\n`State` argument describes which column we are sorting by at the moment.\n\n**Note:** The `State` and `List data` should live in your `Model`. The `Config`\nfor the table belongs in your `view` code. I very strongly recommend against\nputting `Config` in your model. Describe any potential table configurations\nstatically, and look for a different library if you need something crazier than\nthat.\n\n",
+                "type": "Table.Paginated.Config data msg -> Table.Paginated.State -> List.List data -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

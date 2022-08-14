@@ -1,0 +1,179 @@
+[
+    {
+        "name": "Multilingual",
+        "comment": " Display text copy in multiple languages.\n\n\n# Definition\n\n@docs Multilingual, Code\n\n\n# Output\n\n@docs print\n\n\n# Decode\n\n@docs decode\n\n",
+        "unions": [
+            {
+                "name": "Code",
+                "comment": " Language Codes according to ISO 639-1\n\nThis list is not complete.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Bg",
+                        []
+                    ],
+                    [
+                        "Cs",
+                        []
+                    ],
+                    [
+                        "Da",
+                        []
+                    ],
+                    [
+                        "De",
+                        []
+                    ],
+                    [
+                        "El",
+                        []
+                    ],
+                    [
+                        "En",
+                        []
+                    ],
+                    [
+                        "Es",
+                        []
+                    ],
+                    [
+                        "Et",
+                        []
+                    ],
+                    [
+                        "Fi",
+                        []
+                    ],
+                    [
+                        "Fr",
+                        []
+                    ],
+                    [
+                        "Ga",
+                        []
+                    ],
+                    [
+                        "He",
+                        []
+                    ],
+                    [
+                        "Hr",
+                        []
+                    ],
+                    [
+                        "Hu",
+                        []
+                    ],
+                    [
+                        "Hy",
+                        []
+                    ],
+                    [
+                        "It",
+                        []
+                    ],
+                    [
+                        "Ja",
+                        []
+                    ],
+                    [
+                        "Ka",
+                        []
+                    ],
+                    [
+                        "Ko",
+                        []
+                    ],
+                    [
+                        "Lt",
+                        []
+                    ],
+                    [
+                        "Lv",
+                        []
+                    ],
+                    [
+                        "Mt",
+                        []
+                    ],
+                    [
+                        "Nl",
+                        []
+                    ],
+                    [
+                        "No",
+                        []
+                    ],
+                    [
+                        "Pl",
+                        []
+                    ],
+                    [
+                        "Pt",
+                        []
+                    ],
+                    [
+                        "Ro",
+                        []
+                    ],
+                    [
+                        "Ru",
+                        []
+                    ],
+                    [
+                        "Sk",
+                        []
+                    ],
+                    [
+                        "Sl",
+                        []
+                    ],
+                    [
+                        "Sr",
+                        []
+                    ],
+                    [
+                        "Sv",
+                        []
+                    ],
+                    [
+                        "Tr",
+                        []
+                    ],
+                    [
+                        "Uk",
+                        []
+                    ],
+                    [
+                        "Zh",
+                        []
+                    ],
+                    [
+                        "Zu",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Multilingual",
+                "comment": " Describe original text copy and available translations.\n\nIf translation is not found for given ISO `Code` output defaults to `copy`.\n\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decode",
+                "comment": " Decode Json data to Multilingual type\n\n    Decode.decodeString decode \"\"\"\n                {\n                    \"copy\":\"Prevedi me\",\n                    \"translations\": {\n                        \"en\":\"Translate me\",\n                        \"fr\":\"Traduis-moi\"\n                    }\n                }\n            \"\"\"\n\n",
+                "type": "Json.Decode.Decoder Multilingual.Multilingual"
+            },
+            {
+                "name": "print",
+                "comment": " Render Multilingual copy to given language code.\n\n    Html.p []\n        [ Multilingual.print Jp copy\n            |> Html.map (always NoOp)\n        ]\n\nAbove example renders Multilingual `copy` in Japanese.\n\n",
+                "type": "Multilingual.Code -> Multilingual.Multilingual -> Html.Html Basics.Never"
+            }
+        ],
+        "binops": []
+    }
+]

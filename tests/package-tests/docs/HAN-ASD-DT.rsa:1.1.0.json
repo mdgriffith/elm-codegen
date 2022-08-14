@@ -1,0 +1,95 @@
+[
+    {
+        "name": "Primes",
+        "comment": " Provides a lazy, infinite list of primes.\n\n\n# Definition\n\n@docs primes, LazyList\n\n\n# Helpers\n\n@docs take, isPrime\n\nThe following code snippets will result in the same list. Notice that with the `primes` example we do not need to know the upper bound.\n\n    take 50 primes\n\nreturns the same list as\n\n    List.filter isPrime <| List.range 2 230\n\n# Primality Test\n@docs IsPrime, isProbablePrime\n\nthe `isPrime` function is expansive. Especially for large numbers you want to avoid using it. Instead you want to check if a number is a probably prime.\n\n    isProbablyPrime 52439\n\nWill answer `Composite <| Just 41`\n",
+        "unions": [
+            {
+                "name": "IsPrime",
+                "comment": " Type to determine in which category a number falls.\n\nA number is either a `Prime`, a `Composite` number or a `Probable` prime.\n\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "LazyList",
+                "comment": " A lazy list. Makes it possible to create infinite lists.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "isPrime",
+                "comment": " Determines if the argument is prime.\n",
+                "type": "Basics.Int -> Basics.Bool"
+            },
+            {
+                "name": "isProbablePrime",
+                "comment": " Determines if the input is a prime, a composite or a probably prime.\n",
+                "type": "Basics.Int -> Primes.IsPrime"
+            },
+            {
+                "name": "primes",
+                "comment": " A lazy list of prime numbers.\n",
+                "type": "Primes.LazyList Basics.Int"
+            },
+            {
+                "name": "take",
+                "comment": " Like `List.take` but for `LazyList`.\n",
+                "type": "Basics.Int -> Primes.LazyList a -> List.List a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "RSA",
+        "comment": " The RSA crypto-system in Elm.\n\n\n# Constructors\n\n@docs generate, PrivateKey, PublicKey\n\n\n# Usage\n\n@docs encrypt, decrypt\n\n\n# Error Handling\n\n@docs GenerationError, errorString\n\n\n# Usage\n\n    let\n        ( public, private ) =\n            generate 37 79\n    in\n    encrypt public value\n\n",
+        "unions": [
+            {
+                "name": "GenerationError",
+                "comment": " The reason why a key-pair generation can go wrong.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "PrivateKey",
+                "comment": " The private keys of the RSA crypto-system.\n\nUses to `decrypt` a message.\n\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "PublicKey",
+                "comment": " The public keys of the RSA crypto-system.\n\nUsed to `encrypt` a message.\n\n",
+                "args": [],
+                "type": "{ n : Basics.Int, e : Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "decrypt",
+                "comment": " Decrypts a message.\n",
+                "type": "RSA.PrivateKey -> Basics.Int -> Basics.Int"
+            },
+            {
+                "name": "encrypt",
+                "comment": " Encrypts a message.\n",
+                "type": "RSA.PublicKey -> Basics.Int -> Basics.Int"
+            },
+            {
+                "name": "errorString",
+                "comment": " Returns a `String` detailing why the key-pair generation failed.\n",
+                "type": "RSA.GenerationError -> String.String"
+            },
+            {
+                "name": "generate",
+                "comment": " Generates a key-pair for the RSA crypto-system.\n\nThe arguments should be two primes. Note that the primes should remain private.\n\n",
+                "type": "Basics.Int -> Basics.Int -> Result.Result RSA.GenerationError ( RSA.PublicKey, RSA.PrivateKey )"
+            }
+        ],
+        "binops": []
+    }
+]

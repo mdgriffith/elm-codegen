@@ -1,0 +1,21 @@
+[
+    {
+        "name": "Base85",
+        "comment": " Library for base85 encoding and decoding of strings.\nUses 5 ascii characters to represent 4 bytes of binary data.\n\n[Wikipedia](https://en.wikipedia.org/wiki/Ascii85) page for\nmore information.\n\n\n# Functions\n\n@docs encode, decode\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decode",
+                "comment": " Decodes a string of ascii characters into the original chars.\nCan only be codepoints between 33 - 117 as well as 'z' for compression.\nString to be decoded must include the two delimiters at the start and end of the string\n\n    decode \"<~ARTY*~>\" == \"easy\"\n\n",
+                "type": "String.String -> Result.Result String.String String.String"
+            },
+            {
+                "name": "encode",
+                "comment": " Encodes a string into ascii85 (base85)\n\n    encode \"easy\" == \"<~ARTY*~>\"\n\n",
+                "type": "String.String -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

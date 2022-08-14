@@ -1,0 +1,210 @@
+[
+    {
+        "name": "Interval",
+        "comment": "\n\n@docs Interval\n\n\n# Constructors\n\n@docs from, fromEndpoints, singleton\n\n\n## Booleans\n\n@docs union, intersection\n\n\n## Hull\n\nThese functions let you construct an `Interval` containing one or more input\nnumbers.\n\n@docs hull, hullN, hullOf, hullOfN, hull3\n\n\n## Aggregation\n\nThese functions let you 'aggregate' one or more intervals into a single larger\ninterval that contains all of them.\n\n@docs aggregate, aggregateN, aggregateOf, aggregateOfN, aggregate3\n\n\n# Properties\n\n@docs endpoints, minValue, maxValue, midpoint, width\n\n\n# Queries\n\n@docs contains, isContainedIn, intersects, isSingleton\n\n\n# Interpolation\n\n@docs interpolate, interpolationParameter\n\n\n# Arithmetic\n\nThese functions let you do math with `Interval` values, following the rules of\n[interval arithmetic](https://en.wikipedia.org/wiki/Interval_arithmetic).\n\n@docs negate, add, subtract, multiplyBy, divideBy, half, twice\n@docs plus, minus, times, sin, cos\n\n",
+        "unions": [
+            {
+                "name": "Interval",
+                "comment": " Represents a finite, closed interval with a minimum and maximum value, for\nexample the interval from 3 to 5. An `Interval Int` represents a range of\nintegers and an `Interval Float` represents a range of floating-point values.\n",
+                "args": [
+                    "number"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "add",
+                "comment": " Add the given amount to an interval.\n\n    Interval.from -1 5 |> Interval.add 3\n    --> Interval.from 2 8\n\n",
+                "type": "number -> Interval.Interval number -> Interval.Interval number"
+            },
+            {
+                "name": "aggregate",
+                "comment": " Construct an interval containing one or more given intervals:\n\n    Interval.aggregate\n        (Interval.singleton 2)\n        [ Interval.singleton 4\n        , Interval.singleton 3\n        ]\n    --> Interval.from 2 4\n\nWorks much like [`hull`](#hull). See also [`aggregateN`](#aggregateN).\n\n",
+                "type": "Interval.Interval number -> List.List (Interval.Interval number) -> Interval.Interval number"
+            },
+            {
+                "name": "aggregate3",
+                "comment": " Special case of [`aggregate`](#aggregate) for the case of three intervals;\n\n    Interval.aggregate3 first second third\n\nis equivalent to\n\n    Interval.aggregate first [ second, third ]\n\nbut is more efficient. (If you're looking for an `aggregate2` function,\n[`union`](#union) should do what you want.)\n\n",
+                "type": "Interval.Interval number -> Interval.Interval number -> Interval.Interval number -> Interval.Interval number"
+            },
+            {
+                "name": "aggregateN",
+                "comment": " Attemp to construct an interval containing all of the intervals in the given\nlist. If the list is empty, returns `Nothing`. If you know you have at least one\ninterval, you can use [`aggregate`](#aggregate) instead.\n",
+                "type": "List.List (Interval.Interval number) -> Maybe.Maybe (Interval.Interval number)"
+            },
+            {
+                "name": "aggregateOf",
+                "comment": " Like [`aggregate`](#aggregate), but lets you work on any kind of item as\nlong as an interval can be generated from it (similar to [`hullOf`](#hullOf)).\n",
+                "type": "(a -> Interval.Interval number) -> a -> List.List a -> Interval.Interval number"
+            },
+            {
+                "name": "aggregateOfN",
+                "comment": " Combination of [`aggregateOf`](#aggregateOf) and [`aggregateN`](#aggregateN).\n",
+                "type": "(a -> Interval.Interval number) -> List.List a -> Maybe.Maybe (Interval.Interval number)"
+            },
+            {
+                "name": "contains",
+                "comment": " Check if an interval contains a given value.\n\n    Interval.contains 0 (Interval.from -1 3)\n    --> True\n\n    Interval.contains 5 (Interval.from -1 3)\n    --> False\n\nThe minimum and maximum values of an interval are considered to be contained in\nthe interval:\n\n    Interval.contains 3 (Interval.from -1 3)\n    --> True\n\n",
+                "type": "number -> Interval.Interval number -> Basics.Bool"
+            },
+            {
+                "name": "cos",
+                "comment": " Get the image of cos(x) applied on the interval.\n\n    Interval.cos (Interval.from 0 (degrees 45))\n    --> Interval.from 0.7071 1\n\n    Interval.cos (Interval.from 0 pi)\n    --> Interval.from -1 1\n\n",
+                "type": "Interval.Interval Basics.Float -> Interval.Interval Basics.Float"
+            },
+            {
+                "name": "divideBy",
+                "comment": " Divide an interval by a given value. Note that this will flip the order\nof the interval's endpoints if the given value is negative.\n\n    Interval.divideBy 2 (Interval.from 2 3)\n    --> Interval.from 1 1.5\n\n    Interval.divideBy -2 (Interval.from 2 3)\n    --> Interval.from -1.5 -1\n\n",
+                "type": "Basics.Float -> Interval.Interval Basics.Float -> Interval.Interval Basics.Float"
+            },
+            {
+                "name": "endpoints",
+                "comment": " Get the endpoints of an interval (its minimum and maximum values) as a\ntuple. The first value will always be less than or equal to the second.\n\n    ( minValue, maxValue ) =\n        Interval.endpoints someInterval\n\nFor any interval,\n\n    Interval.endpoints interval\n\nis equivalent to (but more efficient than)\n\n    ( Interval.minValue interval\n    , Interval.maxValue interval\n    )\n\n",
+                "type": "Interval.Interval number -> ( number, number )"
+            },
+            {
+                "name": "from",
+                "comment": " Construct an interval containing the two given values (which can be provided\nin either order).\n\n    Interval.endpoints (Interval.from 2 5)\n    --> ( 2, 5 )\n\n    Interval.endpoints (Interval.from 5 2)\n    --> ( 2, 5 )\n\n",
+                "type": "number -> number -> Interval.Interval number"
+            },
+            {
+                "name": "fromEndpoints",
+                "comment": " Construct an interval from its endpoints (the minimum and maximum values of\nthe interval).\n\n    rgbRange =\n        Interval.fromEndpoints ( 0, 255 )\n\n    alphaRange =\n        Interval.fromEndpoints ( 0, 1 )\n\nThe two values should be given in order but will be swapped if\nnecessary to ensure a valid interval is returned:\n\n    Interval.endpoints (Interval.fromEndpoints ( 3, 2 ))\n    --> ( 2, 3 )\n\n",
+                "type": "( number, number ) -> Interval.Interval number"
+            },
+            {
+                "name": "half",
+                "comment": " Shorthand for `multiplyBy 0.5`.\n",
+                "type": "Interval.Interval Basics.Float -> Interval.Interval Basics.Float"
+            },
+            {
+                "name": "hull",
+                "comment": " Find the interval containing one or more input values:\n\n    Interval.hull 5 [ 3, 2, 4 ]\n    --> Interval.from 2 5\n\nOften ends up being used within a `case` expression:\n\n    case values of\n        [] ->\n            -- some default behavior\n\n        first :: rest ->\n            let\n                interval =\n                    Interval.hull first rest\n            in\n            -- normal behavior using 'interval'\n\nSee also [`hullN`](#hullN).\n\n",
+                "type": "number -> List.List number -> Interval.Interval number"
+            },
+            {
+                "name": "hull3",
+                "comment": " Construct an interval containing the three given values;\n\n    Interval.hull3 a b c\n\nis equivalent to\n\n    Interval.hull a [ b, c ]\n\nbut is more efficient. (If you're looking for a `hull2` function, [`from`](#from)\nshould do what you want.)\n\n",
+                "type": "number -> number -> number -> Interval.Interval number"
+            },
+            {
+                "name": "hullN",
+                "comment": " Attempt to construct an interval containing all _N_ values in the given\nlist. If the list is empty, returns `Nothing`. If you know you have at least one\nvalue, you can use [`hull`](#hull) instead.\n\n    Interval.hullN [ 2, 1, 3 ]\n    --> Just (Interval.from 1 3)\n\n    Interval.hullN [ -3 ]\n    --> Just (Interval.singleton -3)\n\n    Interval.hullN []\n    --> Nothing\n\n",
+                "type": "List.List number -> Maybe.Maybe (Interval.Interval number)"
+            },
+            {
+                "name": "hullOf",
+                "comment": " Like [`hull`](#hull), but lets you work on any kind of item as long as a\nnumber can be extracted from it. For example, if you had\n\n    type alias Person =\n        { name : String\n        , age : Float\n        }\n\nthen given some people you could find their range of ages as an `Interval`\nusing\n\n    Interval.hullOf .age\n        firstPerson\n        [ secondPerson\n        , thirdPerson\n        , fourthPerson\n        ]\n\nSee also [`hullOfN`](#hullOfN).\n\n",
+                "type": "(a -> number) -> a -> List.List a -> Interval.Interval number"
+            },
+            {
+                "name": "hullOfN",
+                "comment": " Combination of [`hullOf`](#hullOf) and [`hullN`](#hullN).\n",
+                "type": "(a -> number) -> List.List a -> Maybe.Maybe (Interval.Interval number)"
+            },
+            {
+                "name": "interpolate",
+                "comment": " Interpolate between an interval's endpoints based on a parameter value that\nwill generally be between 0.0 and 1.0. A value of 0.0 corresponds to the minimum\nvalue of the interval, a value of 0.5 corresponds to its midpoint and a value of\n1.0 corresponds to its maximum value:\n\n    Interval.interpolate (Interval.from 1 5) 0\n    --> 1\n\n    Interval.interpolate (Interval.from 1 5) 0.75\n    --> 4\n\nValues less than 0.0 or greater than 1.0 can be used to extrapolate:\n\n    Interval.interpolate (Interval.from 1 5) 1.5\n    --> 7\n\nNote that because of how [`Interval.from`](#from) works, the interpolation is in\nfact from the minimum value to the maximum, _not_ \"from the first\n`Interval.from` argument to the second\":\n\n    Interval.interpolate (Interval.from 0 10) 0.2\n    --> 2\n\n    Interval.interpolate (Interval.from 10 0) 0.2\n    --> 2 -- not 8!\n\nIf you want the interpolate from one number down to another, you can use\n[`Float.Extra.interpolateFrom`](https://package.elm-lang.org/packages/ianmackenzie/elm-float-extra/latest/Float-Extra#interpolateFrom)\nfrom the `elm-float-extra` package.\n\n",
+                "type": "Interval.Interval Basics.Float -> Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "interpolationParameter",
+                "comment": " Given an interval and a given value, determine the corresponding\ninterpolation parameter (the parameter that you would pass to [`interpolate`](#interpolate)\nto get the given value):\n\n    Interval.interpolationParameter\n        (Interval.from 10 15)\n        12\n    --> 0.4\n\nThe result will be between 0 and 1 if (and only if) the given value is within\nthe given interval:\n\n    Interval.interpolationParameter\n        (Interval.from 10 15)\n        18\n    --> 1.6\n\n    Interval.interpolationParameter\n        (Interval.from 10 15)\n        9\n    --> -0.2\n\nThis is the inverse of `interpolate`; for any non-zero-width `interval`,\n\n    Interval.interpolationParameter interval value\n        |> Interval.interpolate interval\n\nshould be equal to the original `value` (within numerical roundoff).\n\n",
+                "type": "Interval.Interval Basics.Float -> Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "intersection",
+                "comment": " Attempt to construct an interval containing all the values common to both\ngiven intervals. If the intervals do not intersect, returns `Nothing`.\n\n    Interval.intersection\n        (Interval.from 1 3)\n        (Interval.from 2 5)\n    --> Just (Interval.from 2 3)\n\n    Interval.intersection\n        (Interval.from 1 3)\n        (Interval.from 4 7)\n    --> Nothing\n\nIf the two intervals just touch, a singleton interval will be returned:\n\n    Interval.intersection\n        (Interval.from 1 3)\n        (Interval.from 3 5)\n    --> Just (Interval.singleton 3)\n\n",
+                "type": "Interval.Interval number -> Interval.Interval number -> Maybe.Maybe (Interval.Interval number)"
+            },
+            {
+                "name": "intersects",
+                "comment": " Check if two intervals touch or overlap (have any values in common).\n\n    Interval.from -5 5\n        |> Interval.intersects (Interval.from 0 10)\n    --> True\n\n    Interval.from -5 5\n        |> Interval.intersects (Interval.from 10 20)\n    --> False\n\nIntervals that just touch each other are considered to intersect (this is\nconsistent with `intersection` which will return a zero-width interval for the\nintersection of two just-touching intervals):\n\n    Interval.from -5 5\n        |> Interval.intersects (Interval.from 5 10)\n    --> True\n\n",
+                "type": "Interval.Interval number -> Interval.Interval number -> Basics.Bool"
+            },
+            {
+                "name": "isContainedIn",
+                "comment": " Check if the second interval is fully contained in the first.\n\n    Interval.from -5 5\n        |> Interval.isContainedIn (Interval.from 0 10)\n    --> False\n\n    Interval.from -5 5\n        |> Interval.isContainedIn (Interval.from -10 10)\n    --> True\n\nBe careful with the argument order! If not using the `|>` operator, the second\nexample would be written as:\n\n    Interval.isContainedIn (Interval.from -10 10)\n        (Interval.from -5 5)\n    --> True\n\n",
+                "type": "Interval.Interval number -> Interval.Interval number -> Basics.Bool"
+            },
+            {
+                "name": "isSingleton",
+                "comment": " Check if the interval is a singleton (the minimum and maximum values are the\nsame).\n\n    Interval.isSingleton (Interval.from 2 2)\n    --> True\n\n    Interval.isSingleton (Interval.from 2 3)\n    --> False\n\n",
+                "type": "Interval.Interval number -> Basics.Bool"
+            },
+            {
+                "name": "maxValue",
+                "comment": " Get the maximum value of an interval.\n\n    Interval.maxValue (Interval.from 1 3)\n    --> 3\n\n",
+                "type": "Interval.Interval number -> number"
+            },
+            {
+                "name": "midpoint",
+                "comment": " Get the midpoint of an interval.\n\n    Interval.midpoint (Interval.from 1 4)\n    --> 2.5\n\n",
+                "type": "Interval.Interval Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "minValue",
+                "comment": " Get the minimum value of an interval.\n\n    Interval.minValue (Interval.from 1 3)\n    --> 1\n\n",
+                "type": "Interval.Interval number -> number"
+            },
+            {
+                "name": "minus",
+                "comment": " Subtract the first interval from the second. This means that `minus` makes\nthe most sense when using `|>`:\n\n    Interval.from 5 10\n        |> Interval.minus (Interval.from 2 3)\n    --> Interval.from 2 8\n\nWithout the pipe operator, the above would be written as:\n\n    Interval.minus (Interval.from 2 3)\n        (Interval.from 5 10)\n    --> Interval.from 2 8\n\n",
+                "type": "Interval.Interval number -> Interval.Interval number -> Interval.Interval number"
+            },
+            {
+                "name": "multiplyBy",
+                "comment": " Multiply an interval by a given value. Note that this will flip the order\nof the interval's endpoints if the given value is negative.\n\n    Interval.multiplyBy 5 (Interval.from 2 3)\n    --> Interval.from 10 15\n\n    Interval.multiplyBy -2 (Interval.from 2 3)\n    --> Interval.from -6 -4\n\n",
+                "type": "number -> Interval.Interval number -> Interval.Interval number"
+            },
+            {
+                "name": "negate",
+                "comment": " Negate an interval. Note that this will flip the order of the endpoints.\n\n    Interval.negate (Interval.from 2 3)\n    --> Interval.from -3 -2\n\n",
+                "type": "Interval.Interval number -> Interval.Interval number"
+            },
+            {
+                "name": "plus",
+                "comment": " Add two intervals together.\n\n    Interval.from 5 10\n        |> Interval.plus (Interval.from 2 3)\n    --> Interval.from 7 13\n\n",
+                "type": "Interval.Interval number -> Interval.Interval number -> Interval.Interval number"
+            },
+            {
+                "name": "sin",
+                "comment": " Get the image of sin(x) applied on the interval.\n\n    Interval.sin (Interval.from 0 (degrees 45))\n    --> Interval.from 0 0.7071\n\n    Interval.sin (Interval.from 0 pi)\n    --> Interval.from 0 1\n\n",
+                "type": "Interval.Interval Basics.Float -> Interval.Interval Basics.Float"
+            },
+            {
+                "name": "singleton",
+                "comment": " Construct a zero-width interval containing a single value.\n\n    Interval.singleton 3\n    --> Interval.fromEndpoints ( 3, 3 )\n\n",
+                "type": "number -> Interval.Interval number"
+            },
+            {
+                "name": "subtract",
+                "comment": " Subtract the given amount from an interval.\n\n    Interval.from -1 5 |> Interval.subtract 3\n    --> Interval.from -4 2\n\n",
+                "type": "number -> Interval.Interval number -> Interval.Interval number"
+            },
+            {
+                "name": "times",
+                "comment": " Multiply the two given intervals.\n\n    Interval.from 10 12\n        |> Interval.times\n            (Interval.from 5 6)\n    --> Interval.from 50 72\n\n",
+                "type": "Interval.Interval number -> Interval.Interval number -> Interval.Interval number"
+            },
+            {
+                "name": "twice",
+                "comment": " Shorthand for `multiplyBy 2`.\n",
+                "type": "Interval.Interval number -> Interval.Interval number"
+            },
+            {
+                "name": "union",
+                "comment": " Construct an interval containing both of the given intervals.\n\n    firstInterval =\n        Interval.from 1 2\n\n    secondInterval =\n        Interval.from 3 6\n\n    Interval.union firstInterval secondInterval\n    --> Interval.from 1 6\n\n(Note that this is not strictly speaking a 'union' in the precise mathematical\nsense, since the result will contain values that are _in between_ the two given\nintervals and not actually _in_ either of them if those two intervals do not\noverlap.)\n\n",
+                "type": "Interval.Interval number -> Interval.Interval number -> Interval.Interval number"
+            },
+            {
+                "name": "width",
+                "comment": " Get the width of an interval.\n\n    Interval.width (Interval.from 1 5)\n    --> 4\n\n",
+                "type": "Interval.Interval number -> number"
+            }
+        ],
+        "binops": []
+    }
+]

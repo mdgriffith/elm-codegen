@@ -1,0 +1,410 @@
+[
+    {
+        "name": "Frame",
+        "comment": " A Frame describes the difference between two coordinate systems -- the position and orientation of one reference frame relative to another.\n\n# Definition\n\n@docs Frame, identity, equal\n\n# Coordinate Transformations\n@docs transformInto, transformOutOf, mul, compose, inverse\n\n# Mutating Frames\n@docs setPosition, intrinsicNudge, extrinsicNudge, setOrientation, intrinsicRotate, extrinsicRotate\n\n# Interop\n@docs encode, decode, toMat4\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Frame",
+                "comment": " Frame consists of a position and an orientation.\n",
+                "args": [],
+                "type": "{ position : Vector.Vector, orientation : Quaternion.Quaternion }"
+            }
+        ],
+        "values": [
+            {
+                "name": "compose",
+                "comment": " Given a frame A to B, and another frame B to C, return the frame A to C.\n\n    transformOutOf (compose a b) == transformOutOf b >> transformOutOf a\n    transformInto (compose a b) == transformInto a >> transformInto b\n",
+                "type": "Frame.Frame -> Frame.Frame -> Frame.Frame"
+            },
+            {
+                "name": "decode",
+                "comment": " A [Json Decoder](http://package.elm-lang.org/packages/elm-lang/core/latest/Json-Decode) for frames encoded with `encode`.\n",
+                "type": "Json.Decode.Decoder Frame.Frame"
+            },
+            {
+                "name": "encode",
+                "comment": " Convert a frame into a [Json Value](http://package.elm-lang.org/packages/elm-lang/core/latest/Json-Encode).\n",
+                "type": "Frame.Frame -> Json.Encode.Value"
+            },
+            {
+                "name": "equal",
+                "comment": " Two frames are equal if their positions and orientations match.\n",
+                "type": "Frame.Frame -> Frame.Frame -> Basics.Bool"
+            },
+            {
+                "name": "extrinsicNudge",
+                "comment": " Translate a frame by a displacement definined outside the frame.\n",
+                "type": "Vector.Vector -> Frame.Frame -> Frame.Frame"
+            },
+            {
+                "name": "extrinsicRotate",
+                "comment": " Rotate a frame by a rotation defined outside the frame.\n",
+                "type": "Quaternion.Quaternion -> Frame.Frame -> Frame.Frame"
+            },
+            {
+                "name": "identity",
+                "comment": " The identity frame corresponds to no transformation.\n",
+                "type": "Frame.Frame"
+            },
+            {
+                "name": "intrinsicNudge",
+                "comment": " Translate a frame by a displacement definined within the frame.\n",
+                "type": "Vector.Vector -> Frame.Frame -> Frame.Frame"
+            },
+            {
+                "name": "intrinsicRotate",
+                "comment": " Rotate a frame by a rotation defined within the frame.\n",
+                "type": "Quaternion.Quaternion -> Frame.Frame -> Frame.Frame"
+            },
+            {
+                "name": "inverse",
+                "comment": " Given a frame A to B, return the frame B to A\n",
+                "type": "Frame.Frame -> Frame.Frame"
+            },
+            {
+                "name": "mul",
+                "comment": " Given a frame B to C, and another frame A to B, return the frame A to C.\n",
+                "type": "Frame.Frame -> Frame.Frame -> Frame.Frame"
+            },
+            {
+                "name": "setOrientation",
+                "comment": " Set the orientation of a frame.\n",
+                "type": "Quaternion.Quaternion -> Frame.Frame -> Frame.Frame"
+            },
+            {
+                "name": "setPosition",
+                "comment": " Set the position of a frame.\n",
+                "type": "Vector.Vector -> Frame.Frame -> Frame.Frame"
+            },
+            {
+                "name": "toMat4",
+                "comment": " Convert to an [elm-linear-algebra Mat4](http://package.elm-lang.org/packages/elm-community/elm-linear-algebra/latest)\n",
+                "type": "Frame.Frame -> Math.Matrix4.Mat4"
+            },
+            {
+                "name": "transformInto",
+                "comment": " Given a frame and an extrinsic vector, return the corresponding intrinsic vector.\n",
+                "type": "Frame.Frame -> Vector.Vector -> Vector.Vector"
+            },
+            {
+                "name": "transformOutOf",
+                "comment": " Given a frame and an intrinsic vector, return the corresponding extrinsic vector.\n",
+                "type": "Frame.Frame -> Vector.Vector -> Vector.Vector"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Quaternion",
+        "comment": " A quaternion type. Used for rotations in three dimensions.\n\n# Building\n@docs Quaternion, quaternion, identity, xRotation, yRotation, zRotation, rotationFor, fromAxisAngle, fromVector, toVector\n\n# Working With Rotations\n@docs similar, mul, compose, conjugate, rotate, reverseRotate\n\n# Interop\n@docs encode, decode, toMat4\n\n# Lesser Math\n\nThese functions are not as useful if you are just using quaternions to handle 3D rotations.\n\n@docs equal, getW, getX, getY, getZ, normalize, lengthSquared, length, add, scale\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Quaternion",
+                "comment": " Quaternion is a combination of a 3-vector and a scalar.\n",
+                "args": [],
+                "type": "{ vector : Vector.Vector, scalar : Basics.Float }"
+            }
+        ],
+        "values": [
+            {
+                "name": "add",
+                "comment": " Add two quaternions.\n\nIf you are trying to combine rotations, you should to use `mul` or `compose` instead.\n",
+                "type": "Quaternion.Quaternion -> Quaternion.Quaternion -> Quaternion.Quaternion"
+            },
+            {
+                "name": "compose",
+                "comment": " Multiplication with the operands flipped.\n\nThis can make multiplication easier to use along with the pipe operators `|>` and `<|`\n\n    compose p q == mul q p\n",
+                "type": "Quaternion.Quaternion -> Quaternion.Quaternion -> Quaternion.Quaternion"
+            },
+            {
+                "name": "conjugate",
+                "comment": " The conjugate of a quaternion.\n",
+                "type": "Quaternion.Quaternion -> Quaternion.Quaternion"
+            },
+            {
+                "name": "decode",
+                "comment": " A [Json Decoder](http://package.elm-lang.org/packages/elm-lang/core/4.0.5/Json-Decode) for vectors encoded with `encode`.\n",
+                "type": "Json.Decode.Decoder Quaternion.Quaternion"
+            },
+            {
+                "name": "encode",
+                "comment": " Convert to a [Json Value](http://package.elm-lang.org/packages/elm-lang/core/4.0.5/Json-Encode).\n",
+                "type": "Quaternion.Quaternion -> Json.Encode.Value"
+            },
+            {
+                "name": "equal",
+                "comment": " Returns true when two quaternions are about equal (within 10^-5).\n",
+                "type": "Quaternion.Quaternion -> Quaternion.Quaternion -> Basics.Bool"
+            },
+            {
+                "name": "fromAxisAngle",
+                "comment": " Create a quaternion given an axis and angle of rotation. The length of the axis is ignored, but returns Nothing if the axis is the zero vector.\n",
+                "type": "Vector.Vector -> Basics.Float -> Maybe.Maybe Quaternion.Quaternion"
+            },
+            {
+                "name": "fromVector",
+                "comment": " Convert a rotation vector to a quaternion. A rotation vector's direction is the axis of rotation, and its length is the angle of rotation.\n",
+                "type": "Vector.Vector -> Quaternion.Quaternion"
+            },
+            {
+                "name": "getW",
+                "comment": " Get scalar component.\n",
+                "type": "Quaternion.Quaternion -> Basics.Float"
+            },
+            {
+                "name": "getX",
+                "comment": " Get first vector component.\n",
+                "type": "Quaternion.Quaternion -> Basics.Float"
+            },
+            {
+                "name": "getY",
+                "comment": " Get second vector component.\n",
+                "type": "Quaternion.Quaternion -> Basics.Float"
+            },
+            {
+                "name": "getZ",
+                "comment": " Get third vector component.\n",
+                "type": "Quaternion.Quaternion -> Basics.Float"
+            },
+            {
+                "name": "identity",
+                "comment": " The identity quaternion corresponds to no rotation.\n\n    identity == quaternion 1 0 0 0\n",
+                "type": "Quaternion.Quaternion"
+            },
+            {
+                "name": "length",
+                "comment": " The length, or norm, of the quaternion.\n",
+                "type": "Quaternion.Quaternion -> Basics.Float"
+            },
+            {
+                "name": "lengthSquared",
+                "comment": " The square of the length.\n",
+                "type": "Quaternion.Quaternion -> Basics.Float"
+            },
+            {
+                "name": "mul",
+                "comment": " Multiply two quaternions.\n",
+                "type": "Quaternion.Quaternion -> Quaternion.Quaternion -> Quaternion.Quaternion"
+            },
+            {
+                "name": "normalize",
+                "comment": " Return the unit quaternion that points in the same direction as the given quaternion. Return Nothing if given the zero quaternion.\n",
+                "type": "Quaternion.Quaternion -> Maybe.Maybe Quaternion.Quaternion"
+            },
+            {
+                "name": "quaternion",
+                "comment": " Construct a quaternion given its four components. The first argument is the scalar component, the rest are the vector components.\n",
+                "type": "Basics.Float -> Basics.Float -> Basics.Float -> Basics.Float -> Quaternion.Quaternion"
+            },
+            {
+                "name": "reverseRotate",
+                "comment": " Rotate vector in the opposite direction.\n    reverseRotate q v == rotate (conjugate q) v\n",
+                "type": "Quaternion.Quaternion -> Vector.Vector -> Vector.Vector"
+            },
+            {
+                "name": "rotate",
+                "comment": " Rotate a vector by a quaternion.\n\nThe quaternion does not have to be a unit quaternion. The vector length will be preserved.\n\nIf given the zero quaternion, no rotation will be performed.\n",
+                "type": "Quaternion.Quaternion -> Vector.Vector -> Vector.Vector"
+            },
+            {
+                "name": "rotationFor",
+                "comment": " Given two vectors, return a quaternion that would rotate the first vector to the second vector. The lengths of the vectors are ignored. If one or both vectors are zero, return the identity quaternion.\n",
+                "type": "Vector.Vector -> Vector.Vector -> Quaternion.Quaternion"
+            },
+            {
+                "name": "scale",
+                "comment": " Multiply all of the quaternion's components by a factor.\n",
+                "type": "Basics.Float -> Quaternion.Quaternion -> Quaternion.Quaternion"
+            },
+            {
+                "name": "similar",
+                "comment": " Returns true if two quaternions represent the same rotation.\n\nRotation depends on the direction that a quaternion points in, but not its length.\n\nThe zero quaternion is only similar to itself.\n",
+                "type": "Quaternion.Quaternion -> Quaternion.Quaternion -> Basics.Bool"
+            },
+            {
+                "name": "toMat4",
+                "comment": " Convert to an [elm-linear-algebra Mat4](http://package.elm-lang.org/packages/elm-community/elm-linear-algebra/latest)\n",
+                "type": "Quaternion.Quaternion -> Math.Matrix4.Mat4"
+            },
+            {
+                "name": "toVector",
+                "comment": " Convert a quaternion to a rotation vector.\n",
+                "type": "Quaternion.Quaternion -> Vector.Vector"
+            },
+            {
+                "name": "xRotation",
+                "comment": " Create a quaternion corresponding to a rotation about the x axis by the given angle. Rotation is counter-clockwise.\n\n    q = xRotation (degrees 90)\n    v = vector 0 1 0 -- y axis\n\n    rotate q v == vector 0 0 1 -- rotated into z axis\n",
+                "type": "Basics.Float -> Quaternion.Quaternion"
+            },
+            {
+                "name": "yRotation",
+                "comment": " Create a quaternion corresponding to a rotation about the y axis by the given angle.\n",
+                "type": "Basics.Float -> Quaternion.Quaternion"
+            },
+            {
+                "name": "zRotation",
+                "comment": " Create a quaternion corresponding to a rotation about the z axis by the given angle.\n",
+                "type": "Basics.Float -> Quaternion.Quaternion"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Vector",
+        "comment": " Three-dimensional vector type.\n\n# Building\n@docs Vector, vector, zero, identity, xAxis, yAxis, zAxis\n\n# Math\n@docs getX, getY, getZ, equal, add, sub, negate, scale, dot, cross, normalize, length, lengthSquared, direction, distance, distanceSquared\n\n# Interop\n@docs fromTuple, toTuple, encode, decode, fromVec3, toVec3\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Vector",
+                "comment": " Vector is just a type alias for a record.\n",
+                "args": [],
+                "type": "{ x : Basics.Float, y : Basics.Float, z : Basics.Float }"
+            }
+        ],
+        "values": [
+            {
+                "name": "add",
+                "comment": " Add two vectors.\n",
+                "type": "Vector.Vector -> Vector.Vector -> Vector.Vector"
+            },
+            {
+                "name": "cross",
+                "comment": " Compute the [cross product](https://en.wikipedia.org/wiki/Cross_product) of two vectors.\n",
+                "type": "Vector.Vector -> Vector.Vector -> Vector.Vector"
+            },
+            {
+                "name": "decode",
+                "comment": " A [Json Decoder](http://package.elm-lang.org/packages/elm-lang/core/latest/Json-Decode) for vectors encoded with `encode`.\n",
+                "type": "Json.Decode.Decoder Vector.Vector"
+            },
+            {
+                "name": "direction",
+                "comment": " Return the unit vector that points from the second vector to the first vector. Return Nothing if the vectors are the same.\n\n    direction (vector 1 1 0) (vector -1 1 0) == Just (vector 1 0 0)\n    direction a b == normalize (a `sub` b)\n",
+                "type": "Vector.Vector -> Vector.Vector -> Maybe.Maybe Vector.Vector"
+            },
+            {
+                "name": "distance",
+                "comment": " Distance from one vector to another. Always greater than or equal to zero.\n\n    direction (vector 1 1 0) (vector -1 1 0) == 2\n    direction a b == length (a `sub` b)\n",
+                "type": "Vector.Vector -> Vector.Vector -> Basics.Float"
+            },
+            {
+                "name": "distanceSquared",
+                "comment": " Square of the distance between two vectors.\n",
+                "type": "Vector.Vector -> Vector.Vector -> Basics.Float"
+            },
+            {
+                "name": "dot",
+                "comment": " Compute the [dot product](https://en.wikipedia.org/wiki/Dot_product) of two vectors.\n",
+                "type": "Vector.Vector -> Vector.Vector -> Basics.Float"
+            },
+            {
+                "name": "encode",
+                "comment": " Convert a vector into a [Json Value](http://package.elm-lang.org/packages/elm-lang/core/latest/Json-Encode).\n",
+                "type": "Vector.Vector -> Json.Encode.Value"
+            },
+            {
+                "name": "equal",
+                "comment": " Returns true when two vectors are about equal (within 10^-5).\n",
+                "type": "Vector.Vector -> Vector.Vector -> Basics.Bool"
+            },
+            {
+                "name": "fromTuple",
+                "comment": " Convert a 3-tuple to a vector.\n\n    fromTuple (1, 2, 3) == vector 1 2 3\n",
+                "type": "( Basics.Float, Basics.Float, Basics.Float ) -> Vector.Vector"
+            },
+            {
+                "name": "fromVec3",
+                "comment": " Convert from an [elm-linear-algebra Vec3](http://package.elm-lang.org/packages/elm-community/elm-linear-algebra/latest)\n",
+                "type": "Math.Vector3.Vec3 -> Vector.Vector"
+            },
+            {
+                "name": "getX",
+                "comment": " Get the x component of a vector.\n\n    getX (vector 1 2 3) == 1\n",
+                "type": "Vector.Vector -> Basics.Float"
+            },
+            {
+                "name": "getY",
+                "comment": " Get the y component of a vector.\n\n    getY (vector 1 2 3) == 2\n",
+                "type": "Vector.Vector -> Basics.Float"
+            },
+            {
+                "name": "getZ",
+                "comment": " Get the z component of a vector.\n\n    getZ (vector 1 2 3) == 3\n",
+                "type": "Vector.Vector -> Basics.Float"
+            },
+            {
+                "name": "identity",
+                "comment": " Alias for zero.\n",
+                "type": "Vector.Vector"
+            },
+            {
+                "name": "length",
+                "comment": " Length of a vector. Always greater than or equal to zero.\n",
+                "type": "Vector.Vector -> Basics.Float"
+            },
+            {
+                "name": "lengthSquared",
+                "comment": " Square of the length of a vector.\n",
+                "type": "Vector.Vector -> Basics.Float"
+            },
+            {
+                "name": "negate",
+                "comment": " Negate a vector.\n",
+                "type": "Vector.Vector -> Vector.Vector"
+            },
+            {
+                "name": "normalize",
+                "comment": " Return the unit vector that points in the same direction as the given vector. Return Nothing if given the zero vector.\n\n    normalize (vector 0 3 0) == Just (vector 0 1 0)\n    normalize (vector 0 0 0) == Nothing\n    normalize (vector 1 1 1) == Just (scale (1/sqrt 3) (vector 1 1 1))\n",
+                "type": "Vector.Vector -> Maybe.Maybe Vector.Vector"
+            },
+            {
+                "name": "scale",
+                "comment": " Multiply a vector by a number.\n",
+                "type": "Basics.Float -> Vector.Vector -> Vector.Vector"
+            },
+            {
+                "name": "sub",
+                "comment": " Subtract two vectors.\n",
+                "type": "Vector.Vector -> Vector.Vector -> Vector.Vector"
+            },
+            {
+                "name": "toTuple",
+                "comment": " Convert a vector to a 3-tuple.\n\n    toTuple (vector 1 2 3) == (1, 2, 3)\n",
+                "type": "Vector.Vector -> ( Basics.Float, Basics.Float, Basics.Float )"
+            },
+            {
+                "name": "toVec3",
+                "comment": " Convert to an [elm-linear-algebra Vec3](http://package.elm-lang.org/packages/elm-community/elm-linear-algebra/latest)\n",
+                "type": "Vector.Vector -> Math.Vector3.Vec3"
+            },
+            {
+                "name": "vector",
+                "comment": " Construct a vector from x, y, and z coordinates.\n",
+                "type": "Basics.Float -> Basics.Float -> Basics.Float -> Vector.Vector"
+            },
+            {
+                "name": "xAxis",
+                "comment": " Normal vector along the x axis.\n\n    xAxis == vector 1 0 0\n",
+                "type": "Vector.Vector"
+            },
+            {
+                "name": "yAxis",
+                "comment": " Normal vector along the y axis.\n\n    yAxis == vector 0 1 0\n",
+                "type": "Vector.Vector"
+            },
+            {
+                "name": "zAxis",
+                "comment": " Normal vector along the z axis.\n\n    zAxis == vector 0 0 1\n",
+                "type": "Vector.Vector"
+            },
+            {
+                "name": "zero",
+                "comment": " The zero vector.\n    zero == vector 0 0 0\n",
+                "type": "Vector.Vector"
+            }
+        ],
+        "binops": []
+    }
+]

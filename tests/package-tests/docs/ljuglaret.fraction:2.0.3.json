@@ -1,0 +1,63 @@
+[
+    {
+        "name": "Fraction",
+        "comment": "\r\n# Definition\r\n@docs Fraction\r\n# Fonctions\r\n@docs addition , multiplication , simplify,createFraction, getNumerator, getDenominator, sup, eq,inf\r\n",
+        "unions": [
+            {
+                "name": "Fraction",
+                "comment": "",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "addition",
+                "comment": "  fraction1+fraction2  ",
+                "type": "Fraction.Fraction -> Fraction.Fraction -> Fraction.Fraction"
+            },
+            {
+                "name": "createFraction",
+                "comment": " Create a Fraction ",
+                "type": "( Basics.Int, Basics.Int ) -> Maybe.Maybe Fraction.Fraction"
+            },
+            {
+                "name": "eq",
+                "comment": " fraction1 == fraction 2 ",
+                "type": "Fraction.Fraction -> Fraction.Fraction -> Basics.Bool"
+            },
+            {
+                "name": "getDenominator",
+                "comment": " Access to the denominator ",
+                "type": "Fraction.Fraction -> Basics.Int"
+            },
+            {
+                "name": "getNumerator",
+                "comment": " Access to the numerator",
+                "type": "Fraction.Fraction -> Basics.Int"
+            },
+            {
+                "name": "inf",
+                "comment": " fraction1 < fraction 2 ",
+                "type": "Fraction.Fraction -> Fraction.Fraction -> Basics.Bool"
+            },
+            {
+                "name": "multiplication",
+                "comment": " fraction1*fraction2  ",
+                "type": "Fraction.Fraction -> Fraction.Fraction -> Fraction.Fraction"
+            },
+            {
+                "name": "simplify",
+                "comment": "",
+                "type": "Fraction.Fraction -> Fraction.Fraction"
+            },
+            {
+                "name": "sup",
+                "comment": " fraction1 > fraction 2 ",
+                "type": "Fraction.Fraction -> Fraction.Fraction -> Basics.Bool"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,120 @@
+[
+    {
+        "name": "OBJ",
+        "comment": "\n\n\n# .obj file loader\n\nThe returned models can be rendered using `indexedTriangles` from `WebGL`.\n\n    WebGL.indexedTriangles mesh.vertices mesh.indices\n\n\n## From URL\n\nAll these methods take an URL as the first parameter.\n\n\n### Single model\n\nUse the methods from here if you know whats in your file\nand if they only contain a single object with a single material.\nThese are just provided for convenience.\n\n@docs loadMeshWithoutTexture, loadMesh, loadMeshWithTangent\n\n\n### General\n\nUse these methods if you don't know what kind of files you'll get or\nif your files contain multiple groups or materials.\n\n@docs loadObjFile, loadObjFileWith, Settings, defaultSettings\n\n\n## From String\n\n@docs parseObjStringWith\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Settings",
+                "comment": " withTangents : If true, vertex tangents will be calculated for meshes with texture coordinates.\nThis is needed if you want to do tangent space normal mapping.\n",
+                "args": [],
+                "type": "{ withTangents : Basics.Bool }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultSettings",
+                "comment": " ",
+                "type": "OBJ.Settings"
+            },
+            {
+                "name": "loadMesh",
+                "comment": " Load a model with texture coordinates.\n",
+                "type": "String.String -> (Result.Result String.String (OBJ.Types.MeshWith OBJ.Types.VertexWithTexture) -> msg) -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "loadMeshWithTangent",
+                "comment": " Load a model with texture coordinate and calculate vertex tangents.\nThis is needed if you want to do tangent space normal mapping.\n",
+                "type": "String.String -> (Result.Result String.String (OBJ.Types.MeshWith OBJ.Types.VertexWithTextureAndTangent) -> msg) -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "loadMeshWithoutTexture",
+                "comment": " Load a model that doesn't have texture coordinates.\n",
+                "type": "String.String -> (Result.Result String.String (OBJ.Types.MeshWith OBJ.Types.Vertex) -> msg) -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "loadObjFile",
+                "comment": " Load a .obj file from an URL\n\n    loadObjFile url ObjFileLoaded\n\n",
+                "type": "String.String -> (Result.Result String.String OBJ.Types.ObjFile -> msg) -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "loadObjFileWith",
+                "comment": " ",
+                "type": "OBJ.Settings -> String.String -> (Result.Result String.String OBJ.Types.ObjFile -> msg) -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "parseObjStringWith",
+                "comment": " Same as `loadObjFile`, but works on a string.\n",
+                "type": "OBJ.Settings -> String.String -> Result.Result String.String OBJ.Types.ObjFile"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "OBJ.Types",
+        "comment": " These are the types used by the obj loader.\n\n@docs ObjFile, Mesh, MeshWith\n\n--\n\n@docs Vertex, VertexWithTexture, VertexWithTextureAndTangent\n\n",
+        "unions": [
+            {
+                "name": "Mesh",
+                "comment": " A `Mesh` loaded by the obj loader is a record with a list of vertices and a list of indices.\nDepending on the mesh type and the loading options you get a different kind of mesh.\nThey differ on what information a vertex contains.\n\nThese meshes are meant to be used with `WebGL.indexedTriangles mesh.vertices mesh.indices`.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "WithoutTexture",
+                        [
+                            "OBJ.Types.MeshWith OBJ.Types.Vertex"
+                        ]
+                    ],
+                    [
+                        "WithTexture",
+                        [
+                            "OBJ.Types.MeshWith OBJ.Types.VertexWithTexture"
+                        ]
+                    ],
+                    [
+                        "WithTextureAndTangent",
+                        [
+                            "OBJ.Types.MeshWith OBJ.Types.VertexWithTextureAndTangent"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "MeshWith",
+                "comment": " Defines a mesh: vertices of any type, and a list of their integer indices\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ vertices : List.List a, indices : List.List ( Basics.Int, Basics.Int, Basics.Int ) }"
+            },
+            {
+                "name": "ObjFile",
+                "comment": " A .obj file is optionally divided into different groups/objects.\nEach group/object is optionally made up of different meshes, each with it's own material.\n\nSo the keys of this dictionary are:\n\n    Dict GroupNameOrObjectName (Dict MaterialName Mesh)\n\nIf no name is specified in the input file, \"__default__\" will be used instead.\n\n",
+                "args": [],
+                "type": "Dict.Dict String.String (Dict.Dict String.String OBJ.Types.Mesh)"
+            },
+            {
+                "name": "Vertex",
+                "comment": " A 3D position with a normal\n",
+                "args": [],
+                "type": "{ position : Math.Vector3.Vec3, normal : Math.Vector3.Vec3 }"
+            },
+            {
+                "name": "VertexWithTexture",
+                "comment": " A 3D position with a normal and a 2D texture position.\n",
+                "args": [],
+                "type": "{ position : Math.Vector3.Vec3, texCoord : Math.Vector2.Vec2, normal : Math.Vector3.Vec3 }"
+            },
+            {
+                "name": "VertexWithTextureAndTangent",
+                "comment": " The `tangent` is a vector pointing tangential to the object surface, in the direction of the `u` texture coordinate.\nThis is needed for doing tangent space normal mapping.\nThe 4th component is either 1 or -1 and has to be used to get the bitangent in the glsl shader,\ne.g: `vec3 bitangent = cross(normal, tangent.xyz) * tangent.w`\n\nmore info here:\n<https://web.archive.org/web/20160409104130/http://www.terathon.com/code/tangent.html>\n\n",
+                "args": [],
+                "type": "{ position : Math.Vector3.Vec3, texCoord : Math.Vector2.Vec2, normal : Math.Vector3.Vec3, tangent : Math.Vector4.Vec4 }"
+            }
+        ],
+        "values": [],
+        "binops": []
+    }
+]

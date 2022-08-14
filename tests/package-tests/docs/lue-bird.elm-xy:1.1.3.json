@@ -1,0 +1,120 @@
+[
+    {
+        "name": "Xy",
+        "comment": " @deprecated, see readme\n\n@docs Xy\n\n\n## create\n\n@docs xy, both, zero, one, direction\n\n\n### from record\n\n@docs fromXY, fromSize\n\n\n## scan\n\n@docs x, y, length\n\n\n## modify\n\n@docs mapX, mapY\n\n\n## transform\n\n@docs map, mapXY, map2, toAngle, to, normalize\n\n\n## extra\n\n@docs serialize, random\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Xy",
+                "comment": " A tuple, containing 2 coordinates of the same type.\n",
+                "args": [
+                    "coordinate"
+                ],
+                "type": "( coordinate, coordinate )"
+            }
+        ],
+        "values": [
+            {
+                "name": "both",
+                "comment": " Construct a `Xy` from the same value for the x & y coordinates.\n\n    Xy.both 0 --> ( 0, 0 )\n\n",
+                "type": "coordinate -> Xy.Xy coordinate"
+            },
+            {
+                "name": "direction",
+                "comment": " Express the angle as a unit vector.\n\n    Xy.direction (turns (1/6))\n    --> ( 0.5000000000000001, 0.8660254037844386 )\n\n    fromLengthAndRotation length rotation =\n        Xy.direction rotation\n            >> Xy.map ((*) length)\n\n",
+                "type": "Basics.Float -> Xy.Xy Basics.Float"
+            },
+            {
+                "name": "fromSize",
+                "comment": " Construct a `Xy` from the `width` and `height` fields contained in a record.\n\n    initialSize : Xy Float\n    initialSize =\n        Browser.getViewport\n            |> Task.perform (.viewport >> Xy.fromSize)\n\n[Browser.getViewport link](https://package.elm-lang.org/packages/elm/browser/latest/Browser-Dom#getViewport).\n\n",
+                "type": "{ record | width : coordinate, height : coordinate } -> Xy.Xy coordinate"
+            },
+            {
+                "name": "fromXY",
+                "comment": " Construct a `Xy` from the `x` and `y` fields contained in a record.\n\n    initialPosition : Xy Float\n    initialPosition =\n        Browser.getViewport\n            |> Task.perform (.viewport >> Xy.fromXY)\n\n[Browser.getViewport link](https://package.elm-lang.org/packages/elm/browser/latest/Browser-Dom#getViewport).\n\n",
+                "type": "{ record | x : coordinate, y : coordinate } -> Xy.Xy coordinate"
+            },
+            {
+                "name": "length",
+                "comment": " The length of the hypotenuse\n\n```noformatingples\n ^\ny|\\\n | \\ length\n |  \\\n 0--->\n    x\n```\n\n",
+                "type": "Xy.Xy Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "map",
+                "comment": " Apply the same function to both coordinates.\n\n    ( 4.567, 4.321 ) |> Xy.map round\n    --> ( 5, 4 ) : Xy Int\n\n    opposite =\n        Xy.map (\\coord -> -coord)\n\n    scale factor =\n        Xy.map ((*) factor)\n\n",
+                "type": "(coordinate -> mappedCoordinate) -> Xy.Xy coordinate -> Xy.Xy mappedCoordinate"
+            },
+            {
+                "name": "map2",
+                "comment": " Apply a function combining the x & y coordinates of 2 `Xy`s.\n\n    Xy.map2 (\\a b -> a - b) ( 10, 5 ) ( 5, 1 )\n    --> ( 5, 4 )\n\n    Xy.map2 (+) ( 10, 5 ) ( 5, 1 )\n    --> ( 15, 6 )\n\n",
+                "type": "(aCoordinate -> bCoordinate -> combinedCoordinate) -> Xy.Xy aCoordinate -> Xy.Xy bCoordinate -> Xy.Xy combinedCoordinate"
+            },
+            {
+                "name": "mapX",
+                "comment": " Update the x coordinate based on its current value.\n\n    flipX =\n        XY.mapX (\\x -> -x)\n\n",
+                "type": "(coordinate -> coordinate) -> Xy.Xy coordinate -> Xy.Xy coordinate"
+            },
+            {
+                "name": "mapXY",
+                "comment": " Apply a different function to the x & y coordinate.\n\n    ( 4.567, 4.321 ) |> Xy.mapXY floor ceiling\n    --> ( 4, 5 ) : Xy Int\n\n",
+                "type": "(coordinate -> mappedCoordinate) -> (coordinate -> mappedCoordinate) -> Xy.Xy coordinate -> Xy.Xy mappedCoordinate"
+            },
+            {
+                "name": "mapY",
+                "comment": " Update the y coordinate based on its current value.\n\n    flipY =\n        XY.mapY (\\y -> -y)\n\n",
+                "type": "(coordinate -> coordinate) -> Xy.Xy coordinate -> Xy.Xy coordinate"
+            },
+            {
+                "name": "normalize",
+                "comment": " Convert to a unit vector.\n\n    ( 3, 4 ) |> Xy.normalize\n    --> ( 3/5, 4/5 )\n\n",
+                "type": "Xy.Xy Basics.Float -> Xy.Xy Basics.Float"
+            },
+            {
+                "name": "one",
+                "comment": " Construct a `Xy` where the x & y coordinates are 1.\n\n    Xy.one --> ( 1, 1 )\n\n",
+                "type": "Xy.Xy numberCoordinate"
+            },
+            {
+                "name": "random",
+                "comment": " A `Generator` for random `Xy`s.\n\n    randomSpeed =\n        Xy.random (XY.both (Random.float -1 1))\n\n    randomPoint =\n        Xy.random\n            ( Random.float left right\n            , Random.float bottom top\n            )\n\n",
+                "type": "Xy.Xy (Random.Generator coordinate) -> Random.Generator (Xy.Xy coordinate)"
+            },
+            {
+                "name": "serialize",
+                "comment": " A [`Codec`](https://package.elm-lang.org/packages/MartinSStewart/elm-serialize/latest/) to serialize `Xy`s.\n\n    serializePoint : Serialize.Codec error (Xy Int)\n    serializePoint =\n        Xy.serialize Serialize.int\n\n",
+                "type": "Serialize.Codec error coordinate -> Serialize.Codec error (Xy.Xy coordinate)"
+            },
+            {
+                "name": "to",
+                "comment": " Use the x and the y coordinate to return a result.\n\n    ( 3, 4 ) |> Xy.to max --> 4\n\n",
+                "type": "(coordinate -> coordinate -> result) -> Xy.Xy coordinate -> result"
+            },
+            {
+                "name": "toAngle",
+                "comment": " The angle (in radians).\n\n```noformatingples\n     ^\n    /|y\n   / |\n  /⍺ |\n 0--->\n    x\n```\n\n    Xy.toAngle ( 1, 1 ) --> pi/4 radians or 45°\n\n    Xy.toAngle ( -1, 1 ) --> 3*pi/4 radians or 135°\n\n    Xy.toAngle ( -1, -1 ) --> -3*pi/4 radians or 225°\n\n    Xy.toAngle ( 1, -1 ) --> -pi/4 radians or 315°\n\n",
+                "type": "Xy.Xy Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "x",
+                "comment": " The x coordinate.\n\n    ( 3, 5 ) |> Xy.x --> 3\n\n",
+                "type": "Xy.Xy coordinate -> coordinate"
+            },
+            {
+                "name": "xy",
+                "comment": " Construct a `Xy` from first the x, the the y coordinate.\n",
+                "type": "coordinate -> coordinate -> Xy.Xy coordinate"
+            },
+            {
+                "name": "y",
+                "comment": " The y coordinate.\n\n    ( 3, 5 ) |> Xy.y --> 5\n\n",
+                "type": "Xy.Xy coordinate -> coordinate"
+            },
+            {
+                "name": "zero",
+                "comment": " Construct a `Xy` where the x & y coordinates are 0.\n\n    Xy.zero --> ( 0, 0 )\n\n",
+                "type": "Xy.Xy numberCoordinate"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,320 @@
+[
+    {
+        "name": "Cellme.ArrayCellme",
+        "comment": " implementation of cellme for a 2D Array of cells - spreadsheet style.\n\n@docs CellArray\n@docs ArrayCell\n@docs arrayCcr\n@docs getCa\n@docs mkCc\n\n",
+        "unions": [
+            {
+                "name": "CellArray",
+                "comment": " a 2D array of Cells.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "CellArray",
+                        [
+                            "Array.Array (Array.Array Cellme.ArrayCellme.ArrayCell)"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "ArrayCell",
+                "comment": " a Cell with a CellArray id and CellArray in its run state.\n",
+                "args": [],
+                "type": "Cellme.Cellme.Cell ( Basics.Int, Basics.Int ) (Cellme.Cellme.CellState ( Basics.Int, Basics.Int ) Cellme.ArrayCellme.CellArray)"
+            }
+        ],
+        "values": [
+            {
+                "name": "arrayCcr",
+                "comment": " a CcRecord with functions implemented for CellArray and ArrayCell.\n",
+                "type": "Cellme.Cellme.CcRecord ( Basics.Int, Basics.Int ) Cellme.ArrayCellme.CellArray"
+            },
+            {
+                "name": "getCa",
+                "comment": " get the CellArray from a CellContainer.\n",
+                "type": "Cellme.Cellme.CellContainer ( Basics.Int, Basics.Int ) Cellme.ArrayCellme.CellArray -> Cellme.ArrayCellme.CellArray"
+            },
+            {
+                "name": "mkCc",
+                "comment": " make a CellContainer from a CellArray.\n",
+                "type": "Cellme.ArrayCellme.CellArray -> Cellme.Cellme.CellContainer ( Basics.Int, Basics.Int ) Cellme.ArrayCellme.CellArray"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Cellme.Cellme",
+        "comment": " Cellme\n\n@docs Cell\n@docs CcRecord\n@docs CellContainer\n@docs CellState\n@docs CellStatus\n@docs FullEvalResult\n@docs PRes\n@docs PSideEffectorFn\n@docs RunState\n@docs cellVal\n@docs cellme\n@docs compileCells\n@docs compileError\n@docs continueCell\n@docs evalArgsPSideEffector\n@docs evalCell\n@docs evalCellsFully\n@docs evalCellsOnce\n@docs runCell\n@docs runCellBody\n\n",
+        "unions": [
+            {
+                "name": "CellContainer",
+                "comment": " a type that contains a CcRecord.\n",
+                "args": [
+                    "id",
+                    "cc"
+                ],
+                "cases": [
+                    [
+                        "CellContainer",
+                        [
+                            "Cellme.Cellme.CcRecord id cc"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "CellState",
+                "comment": " when a cell program runs, it has access to CellState, the state of all cells.\n",
+                "args": [
+                    "id",
+                    "cc"
+                ],
+                "cases": [
+                    [
+                        "CellState",
+                        [
+                            "{ cells : Cellme.Cellme.CellContainer id cc, cellstatus : Cellme.Cellme.CellStatus id }"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "CellStatus",
+                "comment": " cell status may indicate that a cell is blocked because of another cell that needs to\nfinish its program.\n",
+                "args": [
+                    "id"
+                ],
+                "cases": [
+                    [
+                        "AllGood",
+                        []
+                    ],
+                    [
+                        "Blocked",
+                        [
+                            "id"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "FullEvalResult",
+                "comment": " the possible outcomes of running all cell programs to completion.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "FeOk",
+                        []
+                    ],
+                    [
+                        "FeLoop",
+                        []
+                    ],
+                    [
+                        "FeEvalError",
+                        []
+                    ],
+                    [
+                        "FeCompileError",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "PRes",
+                "comment": " possible results from a PSideEffectorFn\n",
+                "args": [
+                    "id",
+                    "cc"
+                ],
+                "cases": [
+                    [
+                        "PrOk",
+                        [
+                            "( Schelme.EvalStep.NameSpace (Cellme.Cellme.CellState id cc), Cellme.Cellme.CellState id cc, Schelme.EvalStep.Term (Cellme.Cellme.CellState id cc) )"
+                        ]
+                    ],
+                    [
+                        "PrPause",
+                        [
+                            "Cellme.Cellme.CellState id cc"
+                        ]
+                    ],
+                    [
+                        "PrErr",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "RunState",
+                "comment": " the possible run states for a cell program.\n",
+                "args": [
+                    "id",
+                    "cs"
+                ],
+                "cases": [
+                    [
+                        "RsBlocked",
+                        [
+                            "Schelme.EvalStep.EvalBodyStep cs",
+                            "id"
+                        ]
+                    ],
+                    [
+                        "RsErr",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "RsUnevaled",
+                        []
+                    ],
+                    [
+                        "RsOk",
+                        [
+                            "Schelme.EvalStep.Term cs"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "CcRecord",
+                "comment": " The record type for CellContainer - a CcRecord should contain an id type, a\ncontainer type 'cc', and implementations of all these functions.\n",
+                "args": [
+                    "id",
+                    "cc"
+                ],
+                "type": "{ getCell : id -> Cellme.Cellme.CellContainer id cc -> Maybe.Maybe (Cellme.Cellme.Cell id (Cellme.Cellme.CellState id cc)), setCell : id -> Cellme.Cellme.Cell id (Cellme.Cellme.CellState id cc) -> Cellme.Cellme.CellContainer id cc -> Result.Result String.String (Cellme.Cellme.CellContainer id cc), map : (Cellme.Cellme.Cell id (Cellme.Cellme.CellState id cc) -> Cellme.Cellme.Cell id (Cellme.Cellme.CellState id cc)) -> Cellme.Cellme.CellContainer id cc -> Cellme.Cellme.CellContainer id cc, has : (Cellme.Cellme.Cell id (Cellme.Cellme.CellState id cc) -> Basics.Bool) -> Cellme.Cellme.CellContainer id cc -> Basics.Bool, makeId : List.List (Schelme.EvalStep.Term (Cellme.Cellme.CellState id cc)) -> Result.Result String.String id, showId : id -> String.String, cells : cc }"
+            },
+            {
+                "name": "Cell",
+                "comment": " a cell is a text-form schelme program,\nthe compiled version of same, and the program's RunState.\n",
+                "args": [
+                    "id",
+                    "cs"
+                ],
+                "type": "{ code : String.String, prog : Result.Result String.String (List.List (Schelme.EvalStep.Term cs)), runstate : Cellme.Cellme.RunState id cs }"
+            },
+            {
+                "name": "PSideEffectorFn",
+                "comment": " The type signature of side effector functions in our cellme language.\nFor now there's only one, 'cv'.\n",
+                "args": [
+                    "id",
+                    "cc"
+                ],
+                "type": "Schelme.EvalStep.NameSpace (Cellme.Cellme.CellState id cc) -> Cellme.Cellme.CellState id cc -> List.List (Schelme.EvalStep.Term (Cellme.Cellme.CellState id cc)) -> Cellme.Cellme.PRes id cc"
+            }
+        ],
+        "values": [
+            {
+                "name": "cellVal",
+                "comment": " the 'cv' function in our schelme script language.\ngiven a cell id, attempt to get the value of that cell from the CellState.\n",
+                "type": "Schelme.EvalStep.NameSpace (Cellme.Cellme.CellState id cc) -> Cellme.Cellme.CellState id cc -> List.List (Schelme.EvalStep.Term (Cellme.Cellme.CellState id cc)) -> Cellme.Cellme.PRes id cc"
+            },
+            {
+                "name": "cellme",
+                "comment": " the cell language is schelme plus 'cv'\n",
+                "type": "Schelme.EvalStep.NameSpace (Cellme.Cellme.CellState id cc)"
+            },
+            {
+                "name": "compileCells",
+                "comment": " compile all cell programs.\n",
+                "type": "Cellme.Cellme.CellContainer id cc -> Cellme.Cellme.CellContainer id cc"
+            },
+            {
+                "name": "compileError",
+                "comment": " does any cell have a compile error?\n",
+                "type": "Cellme.Cellme.CellContainer id cc -> Basics.Bool"
+            },
+            {
+                "name": "continueCell",
+                "comment": " continue running a cell program.\n",
+                "type": "Cellme.Cellme.CellContainer id cc -> Cellme.Cellme.Cell id (Cellme.Cellme.CellState id cc) -> Cellme.Cellme.Cell id (Cellme.Cellme.CellState id cc)"
+            },
+            {
+                "name": "evalArgsPSideEffector",
+                "comment": " just like the regular evalArgsSideEffector, except checks for PrPause from the fn.\n",
+                "type": "Cellme.Cellme.PSideEffectorFn id cc -> Schelme.EvalStep.SideEffector (Cellme.Cellme.CellState id cc)"
+            },
+            {
+                "name": "evalCell",
+                "comment": " reset the cell program, then run to completion (or blockage, anyway)\n",
+                "type": "Cellme.Cellme.CellContainer id cc -> Cellme.Cellme.Cell id (Cellme.Cellme.CellState id cc) -> Cellme.Cellme.Cell id (Cellme.Cellme.CellState id cc)"
+            },
+            {
+                "name": "evalCellsFully",
+                "comment": " should eval all cells from the start, resulting in an updated array and result type.\n",
+                "type": "Cellme.Cellme.CellContainer id cc -> ( Cellme.Cellme.CellContainer id cc, Cellme.Cellme.FullEvalResult )"
+            },
+            {
+                "name": "evalCellsOnce",
+                "comment": " eval all cells, resulting in an updated array.\n",
+                "type": "Cellme.Cellme.CellContainer id cc -> Cellme.Cellme.CellContainer id cc"
+            },
+            {
+                "name": "runCell",
+                "comment": " run a cell from its current state to completion.\n",
+                "type": "Cellme.Cellme.CellContainer id cc -> Cellme.Cellme.Cell id (Cellme.Cellme.CellState id cc) -> Cellme.Cellme.Cell id (Cellme.Cellme.CellState id cc)"
+            },
+            {
+                "name": "runCellBody",
+                "comment": " run the cell program to completion\n",
+                "type": "Schelme.EvalStep.EvalBodyStep (Cellme.Cellme.CellState id cc) -> Cellme.Cellme.RunState id (Cellme.Cellme.CellState id cc)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Cellme.DictCellme",
+        "comment": " implementation of cellme for a Dict of cells with String ids.\n\n@docs CellDict\n@docs DictCell\n@docs dictCcr\n@docs getCd\n@docs mkCc\n\n",
+        "unions": [
+            {
+                "name": "CellDict",
+                "comment": " a Dict from String to Cell.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "CellDict",
+                        [
+                            "Dict.Dict String.String Cellme.DictCellme.DictCell"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "DictCell",
+                "comment": " a Cell specialized for CellDict.\n",
+                "args": [],
+                "type": "Cellme.Cellme.Cell String.String (Cellme.Cellme.CellState String.String Cellme.DictCellme.CellDict)"
+            }
+        ],
+        "values": [
+            {
+                "name": "dictCcr",
+                "comment": " a CcRecord with functions implemented for CellDict and DictCell.\n",
+                "type": "Cellme.Cellme.CcRecord String.String Cellme.DictCellme.CellDict"
+            },
+            {
+                "name": "getCd",
+                "comment": " get CellDict from a CellContainer.\n",
+                "type": "Cellme.Cellme.CellContainer String.String Cellme.DictCellme.CellDict -> Cellme.DictCellme.CellDict"
+            },
+            {
+                "name": "mkCc",
+                "comment": " make a CellContainer from a CellDict.\n",
+                "type": "Cellme.DictCellme.CellDict -> Cellme.Cellme.CellContainer String.String Cellme.DictCellme.CellDict"
+            }
+        ],
+        "binops": []
+    }
+]

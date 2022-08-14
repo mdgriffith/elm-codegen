@@ -1,0 +1,75 @@
+[
+    {
+        "name": "Loading",
+        "comment": "\n\n\n# Config\n\n@docs Config\n\n\n# Loader types\n\nYou can choose one of these loaders:\n\n@docs LoaderType\n\n\n# Loading states\n\nThe loaders will be rendered according on the LoadingState. If you pass `Loading.On` loader will be displayed, if `Loading.Off` loader will be hidden (will not be hidden by css, only node will be removed).\n\n@docs LoadingState\n\n\n# Default config\n\n@docs defaultConfig\n\n\n# Render loader\n\n`Loading.render` takes 3 arguments: `LoaderType`, `Config`, `LoadingState`.\n\n@docs render\n\n",
+        "unions": [
+            {
+                "name": "LoaderType",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "DoubleBounce",
+                        []
+                    ],
+                    [
+                        "Spinner",
+                        []
+                    ],
+                    [
+                        "BouncingBalls",
+                        []
+                    ],
+                    [
+                        "Bars",
+                        []
+                    ],
+                    [
+                        "Circle",
+                        []
+                    ],
+                    [
+                        "Sonar",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "LoadingState",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "On",
+                        []
+                    ],
+                    [
+                        "Off",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " ",
+                "args": [],
+                "type": "{ size : Basics.Float, color : String.String, className : String.String, speed : Basics.Float }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultConfig",
+                "comment": " ",
+                "type": "Loading.Config"
+            },
+            {
+                "name": "render",
+                "comment": "\n\n    view : Model -> Html Msg\n    view model =\n        div []\n            [ Loading.render\n                DoubleBounce\n                { defaultConfig | color = \"#333\" }\n                Loading.On\n            ]\n\n",
+                "type": "Loading.LoaderType -> Loading.Config -> Loading.LoadingState -> Html.Html a"
+            }
+        ],
+        "binops": []
+    }
+]

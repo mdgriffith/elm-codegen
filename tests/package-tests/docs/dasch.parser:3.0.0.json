@@ -1,0 +1,261 @@
+[
+    {
+        "name": "Parser",
+        "comment": " Easy to use text parsing.\n\n\n# Definitions\n\n@docs Parser, Error\n\n\n# Core\n\n@docs parse, inContext, succeed, fail, lazy\n\n\n# Matching Specific Text\n\n@docs char, string\n\n\n# Matching with Patterns\n\n@docs anyChar, when, except, end, chomp\n\n\n# Matching Multiple Different Patterns\n\n@docs oneOf\n\n\n# Matching Sequences\n\n@docs maybe, zeroOrMore, oneOrMore, sequence, repeat, until\n\n\n# Chaining Parsers\n\n@docs andThen, orElse, followedBy\n\n\n# Pipelines\n\n@docs into, grab, ignore\n\n\n# Transforming Parsed Values\n\n@docs map, map2, withError, stringWith, matchedString\n\n\n# High Level Parsers\n\n@docs separatedBy\n\n",
+        "unions": [
+            {
+                "name": "Parser",
+                "comment": " A `Parser a` is an instruction for how to take some input text and turn it\ninto an `a` value.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Error",
+                "comment": " Describes an error during parsing, i.e. what caused a parser to fail, and at\nwhat position into the input text it failed.\n",
+                "args": [],
+                "type": "{ message : String.String, position : Basics.Int, context : Maybe.Maybe String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "andThen",
+                "comment": " Create a parser that depends on the previous parser's result.\n\nFor example, you can support two different versions of a format if there's\na version number included:\n\n    spec : Parser Spec\n    spec =\n        let\n            specByVersion version =\n                case version of\n                    1 ->\n                        v1\n\n                    -- assume v1 is a Parser Spec\n                    2 ->\n                        v2\n\n                    -- assume v2 is a Parser Spec\n                    x ->\n                        fail (\"unknown spec version \" ++ String.fromInt x)\n        in\n        string \"version=\"\n            |> followedBy int\n            |> andThen specByVersion\n\n",
+                "type": "(a -> Parser.Parser b) -> Parser.Parser a -> Parser.Parser b"
+            },
+            {
+                "name": "anyChar",
+                "comment": " Matches any character.\n",
+                "type": "Parser.Parser Char.Char"
+            },
+            {
+                "name": "char",
+                "comment": " Matches a specific character.\n\n    parse \"hello\" (char 'h') -- Ok 'h'\n\n",
+                "type": "Char.Char -> Parser.Parser Char.Char"
+            },
+            {
+                "name": "chomp",
+                "comment": " A parser that simply reads a specific number of characters from the\ninput.\n\n    parse \"xyz\" (chomp 2) -- Ok \"xy\"\n\n",
+                "type": "Basics.Int -> Parser.Parser String.String"
+            },
+            {
+                "name": "end",
+                "comment": " Matches the end of the input.\n\n    char 'x'\n        |> followedBy end\n        |> parse \"x\" -- Ok ()\n\n",
+                "type": "Parser.Parser ()"
+            },
+            {
+                "name": "except",
+                "comment": " Matches a character if the specified parser _fails_.\n\n    parse \"xyz\" (except (char 'a')) -- Ok 'x'\n\n    parse \"xyz\" (except (char 'x')) -- Err { message = \"expected to not match\", ... }\n\n",
+                "type": "Parser.Parser Char.Char -> Parser.Parser Char.Char"
+            },
+            {
+                "name": "fail",
+                "comment": " A parser that always fails with a specified error message without reading any\ninput.\n\n    parse \"xyz\" (fail \"nope\") -- Err { message = \"nope\", position = 0 }\n\n",
+                "type": "String.String -> Parser.Parser a"
+            },
+            {
+                "name": "followedBy",
+                "comment": " Create a parser that depends on a previous parser succeeding. Unlike\n[`andThen`](#andThen), this does not preserve the value of the first parser,\nso it's only useful when you want to discard that value.\n\n    atMention : Parser String\n    atMention =\n        char '@'\n            |> followedBy username\n\n",
+                "type": "Parser.Parser a -> Parser.Parser b -> Parser.Parser a"
+            },
+            {
+                "name": "grab",
+                "comment": " Grabs a value and feeds it into a function in a pipeline.\n\nSee [`into`](#into).\n\n",
+                "type": "Parser.Parser a -> Parser.Parser (a -> b) -> Parser.Parser b"
+            },
+            {
+                "name": "ignore",
+                "comment": " Ignores a matched value, preserving the previous value in a pipeline.\n\nSee [`into`](#into).\n\n",
+                "type": "Parser.Parser a -> Parser.Parser b -> Parser.Parser b"
+            },
+            {
+                "name": "inContext",
+                "comment": " Sets the context of the parser. Useful for providing better error messages.\n",
+                "type": "String.String -> Parser.Parser a -> Parser.Parser a"
+            },
+            {
+                "name": "into",
+                "comment": " Start a parser pipeline that feeds values into a function.\n\nTypically used to build up complex values.\n\n    type Operation = Binary Int Char Int\n\n    operation : Parser Operation\n    operation =\n        into Operation\n            |> grab int\n            |> ignore blanks\n            |> grab (oneOf [ char '+', char '-', char '*' ])\n            |> ignore blanks\n            |> grab int\n\n    parse \"42 * 13\" operation -- Binary 42 '*' 13\n\nHere we feed three values into `Operation` while ignoring blank characters between\nthe values.\n\n",
+                "type": "(a -> b) -> Parser.Parser (a -> b)"
+            },
+            {
+                "name": "lazy",
+                "comment": " In order to support self-referential parsers, you need to introduce lazy\nevaluation.\n\n    type Tree = Leaf | Node Tree Tree\n\n    tree : Parser Tree\n    tree =\n        oneOf [ leaf, node ]\n\n    leaf : Parser Tree\n    leaf =\n        map (always Leaf) (char 'x')\n\n    node : Parser Tree\n    node =\n        into Node\n            |> ignore (char '@')\n            |> grab (lazy (\\_ -> tree))\n            |> grab (lazy (\\_ -> tree))\n\n    parse \"x\" tree -- Ok Leaf\n    parse \"@x@xx\" tree -- Ok (Node Leaf (Node Leaf Leaf))\n\nWithout `lazy`, this example would fail due to a circular reference.\n\n",
+                "type": "(() -> Parser.Parser a) -> Parser.Parser a"
+            },
+            {
+                "name": "map",
+                "comment": " Map the value of a parser.\n\n    map (\\x -> x * x) int\n\n",
+                "type": "(a -> b) -> Parser.Parser a -> Parser.Parser b"
+            },
+            {
+                "name": "map2",
+                "comment": " Matches two parsers and combines the result.\n\n    map2 (\\x y -> (x, y)) anyChar anyChar\n        |> parse \"xy\" -- Ok ('x', 'y')\n\n",
+                "type": "(a -> b -> c) -> Parser.Parser a -> Parser.Parser b -> Parser.Parser c"
+            },
+            {
+                "name": "matchedString",
+                "comment": " Maps a parser to include all the matched input as a String.\n\n    matchedString (sequence [ word, string \"@\", word ])\n        |> parse \"hello@world!\" -- Ok \"hello@world\"\n\n",
+                "type": "Parser.Parser a -> Parser.Parser String.String"
+            },
+            {
+                "name": "maybe",
+                "comment": " Maybe match a value. If the parser succeeds with `x`, we'll succeed with\n`Just x`. If if fails, we'll succeed with `Nothing`.\n\n    parse \"42\" (maybe int) -- Just 42\n\n    parse \"hello\" (maybe int) -- Nothing\n\n",
+                "type": "Parser.Parser a -> Parser.Parser (Maybe.Maybe a)"
+            },
+            {
+                "name": "oneOf",
+                "comment": " Matches one of a list of parsers.\n\n    parse \"y\" (oneOf [ char 'x', char 'y' ]) -- Ok 'y'\n\n",
+                "type": "List.List (Parser.Parser a) -> Parser.Parser a"
+            },
+            {
+                "name": "oneOrMore",
+                "comment": " Matches one or more successive occurrences of a value. Fails if\nthere are no occurrences.\n\n    parse \"xxy\" (oneOrMore (char 'x')) -- Ok [ 'x', 'x' ]\n\n    parse \"yyy\" (oneOrMore (char 'x')) -- Err { message = \"expected char `x`\", position = 0 }\n\n",
+                "type": "Parser.Parser a -> Parser.Parser (List.List a)"
+            },
+            {
+                "name": "orElse",
+                "comment": " Create a fallback for when a parser fails.\n",
+                "type": "Parser.Parser a -> Parser.Parser a -> Parser.Parser a"
+            },
+            {
+                "name": "parse",
+                "comment": " Parse an input string using a specific parser, returning a result containing\neither the parsed value or an error.\n\n    parse \"xyz\" (char 'x') -- Ok 'x'\n\n    parse \"xyz\" (char 'w') -- Err { message = \"expected char w\", position = 0 }\n\n",
+                "type": "String.String -> Parser.Parser a -> Result.Result Parser.Error a"
+            },
+            {
+                "name": "repeat",
+                "comment": " Matches a specific number of occurrences of a parser, succeeding with a list\nof values.\n\n    parse \"xxxx\" (repeat 3 (char 'x')) -- Ok [ 'x', 'x', 'x' ]\n\n",
+                "type": "Basics.Int -> Parser.Parser a -> Parser.Parser (List.List a)"
+            },
+            {
+                "name": "separatedBy",
+                "comment": " Matches zero or more values separated by a specified parser.\n\n    separatedBy (char ',') int\n        |> parse \"42,13,99\" -- Ok [ 42, 13, 99 ]\n\n",
+                "type": "Parser.Parser s -> Parser.Parser a -> Parser.Parser (List.List a)"
+            },
+            {
+                "name": "sequence",
+                "comment": " Matches a sequence of parsers in turn, succeeding with a list of\ntheir values if they _all_ succeed.\n\n    parse \"helloworld\" (sequence [ string \"hello\", string \"world\" ]) -- Ok [ \"hello\", \"world\" ]\n\n",
+                "type": "List.List (Parser.Parser a) -> Parser.Parser (List.List a)"
+            },
+            {
+                "name": "string",
+                "comment": " Matches a specific string.\n\n    parse \"hello world\" (string \"hello\") -- Ok \"hello\"\n\n",
+                "type": "String.String -> Parser.Parser String.String"
+            },
+            {
+                "name": "stringWith",
+                "comment": " Turns a parser that returns a list of characters into a parser that\nreturns a String.\n\n    parse \"xyz\" (stringWith (sequence [ char 'x', anyChar, char 'z' ])) -- Ok \"xyz\"\n\n",
+                "type": "Parser.Parser (List.List Char.Char) -> Parser.Parser String.String"
+            },
+            {
+                "name": "succeed",
+                "comment": " A parser that always succeeds with a specified value without reading any input.\n\n    parse \"xyz\" (succeed 42) -- Ok 42\n\n",
+                "type": "a -> Parser.Parser a"
+            },
+            {
+                "name": "until",
+                "comment": " Matches zero or more values until a \"stop\" parser matches.\n\n    char '['\n        |> followedBy (until (char ']') anyChar)\n        |> parse \"[abc]\" -- Ok [ 'a', 'b', 'c' ]\n\n",
+                "type": "Parser.Parser a -> Parser.Parser b -> Parser.Parser (List.List b)"
+            },
+            {
+                "name": "when",
+                "comment": " Matches a character if some predicate holds.\n\n    parse \"123\" (when Char.isDigit) -- Ok '1'\n\n",
+                "type": "(Char.Char -> Basics.Bool) -> Parser.Parser Char.Char"
+            },
+            {
+                "name": "withError",
+                "comment": " Use the specified error message when the parser fails.\n\n    string \"</div>\"\n        |> withError \"expected closing tag\"\n\n",
+                "type": "String.String -> Parser.Parser a -> Parser.Parser a"
+            },
+            {
+                "name": "zeroOrMore",
+                "comment": " Matches zero or more successive occurrences of a value. Succeeds with\nan empty list if there are no occurrences.\n\n    parse \"xxy\" (zeroOrMore (char 'x')) -- Ok [ 'x', 'x' ]\n\n    parse \"yyy\" (zeroOrMore (char 'x')) -- Ok []\n\n",
+                "type": "Parser.Parser a -> Parser.Parser (List.List a)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Parser.Common",
+        "comment": " Common parsers that can be used in many contexts.\n\n\n# High Level Parsers\n\n@docs int, float, word\n\n\n# Date & Time\n\n@docs iso8601\n\n\n# Single-Character Parsers\n\n@docs alpha, alphaNum, digit, upper, lower\n\n\n# Whitespace\n\n@docs space, tab, blank, blanks, newline\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "alpha",
+                "comment": " Matches an alphabetic character.\n",
+                "type": "Parser.Parser Char.Char"
+            },
+            {
+                "name": "alphaNum",
+                "comment": " Matches an alphanumeric character.\n",
+                "type": "Parser.Parser Char.Char"
+            },
+            {
+                "name": "blank",
+                "comment": " Matches either a space or a tab.\n",
+                "type": "Parser.Parser Char.Char"
+            },
+            {
+                "name": "blanks",
+                "comment": " Matches zero or more [`blank`](#blank) characters.\n",
+                "type": "Parser.Parser String.String"
+            },
+            {
+                "name": "digit",
+                "comment": " Matches a digit, e.g. `8`.\n",
+                "type": "Parser.Parser Char.Char"
+            },
+            {
+                "name": "float",
+                "comment": " Matches a float.\n\n    parse \"4.2\" float -- Ok 4.2\n\n",
+                "type": "Parser.Parser Basics.Float"
+            },
+            {
+                "name": "int",
+                "comment": " Matches an integer.\n\n    parse \"42\" int -- Ok 42\n\n",
+                "type": "Parser.Parser Basics.Int"
+            },
+            {
+                "name": "iso8601",
+                "comment": " Matches valid [ISO8601](https://en.wikipedia.org/wiki/ISO_8601)\ndatetimes.\n",
+                "type": "Parser.Parser String.String"
+            },
+            {
+                "name": "lower",
+                "comment": " Matches a lowercase alphabetic characters, e.g. `z`.\n",
+                "type": "Parser.Parser Char.Char"
+            },
+            {
+                "name": "newline",
+                "comment": " Matches a newline character.\n",
+                "type": "Parser.Parser Char.Char"
+            },
+            {
+                "name": "space",
+                "comment": " Matches the space character, \\`\\`.\n",
+                "type": "Parser.Parser Char.Char"
+            },
+            {
+                "name": "tab",
+                "comment": " Matches the tab character, `\\t`.\n",
+                "type": "Parser.Parser Char.Char"
+            },
+            {
+                "name": "upper",
+                "comment": " Matches an uppercase alphabetic characters, e.g. `A`.\n",
+                "type": "Parser.Parser Char.Char"
+            },
+            {
+                "name": "word",
+                "comment": " Matches a \"word\", comprised of alphanumeric characters and `_`.\n\n    parse \"hello world\" word -- Ok \"hello\"\n\n",
+                "type": "Parser.Parser String.String"
+            }
+        ],
+        "binops": []
+    }
+]

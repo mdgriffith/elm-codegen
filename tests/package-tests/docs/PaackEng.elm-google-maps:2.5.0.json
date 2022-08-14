@@ -1,0 +1,393 @@
+[
+    {
+        "name": "GoogleMaps.Map",
+        "comment": " This module allows you to create maps using Google maps webcomponent behind the scene\n\n> Note that the map has 100% height, so you would resize the map based on the parent view\n\n\n# Simple Example\n\n    import GoogleMaps.Map as Map\n\n    mapView : String -> Html Msg\n    mapView apiKey =\n        Map.init apiKey\n            |> Map.toHtml\n\n\n# Complex Example\n\n    import GoogleMaps.Map as Map\n\n    mapView : String -> Html Msg\n    mapView apiKey =\n        Map.init apiKey\n            |> Map.withZoom 12\n            |> Map.withMapType Map.satellite\n            |> Map.onMapReady MyMsg\n            |> Map.withCenter -3.7715105 -38.5724269\n            |> Map.withDefaultUIControls False\n            |> Map.toHtml\n\n\n# Types\n\n@docs Map, MapType, ApiKey, Latitude, Longitude\n\n\n# Basics\n\n@docs init, toHtml\n\n\n# UI Controls\n\nYou can use those functions in order to enable/disable UI controls such as StreetView button, zoom and etc\n\nBy default all the controls are enabled\n\n@docs withDefaultUIControls, withMapTypeControls, withStreetViewControls, withZoomActions\n\n\n# MapType\n\n@docs withMapType, hybrid, roadmap, satellite, terrain\n\n\n# Journey Sharing\n\n@docs JourneySharing, LocationProvider\n@docs withJourneySharing, journeySharing, locationProvider\n\n\n# Other Modifiers\n\n@docs withCenter, withCustomStyle, withFitToMarkers, withMarkers, withMaxZoom, withMinZoom, withPolygons, withZoom\n\n\n# Events\n\n@docs onMapClick, onMapReady\n\n\n# Plugins\n\n@docs withDrawingTool\n\n",
+        "unions": [
+            {
+                "name": "JourneySharing",
+                "comment": " Handles the fleet-engine's journey-sharing feature.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "LocationProvider",
+                "comment": " Handles the fleet-engine's location provider.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Map",
+                "comment": " Opaque type that upholds the map description.\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "MapType",
+                "comment": " Upholds the possible types of surface for viewing the map.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "ApiKey",
+                "comment": " API key provided by Google for accessing their maps' services.\n",
+                "args": [],
+                "type": "String.String"
+            },
+            {
+                "name": "Latitude",
+                "comment": " This type is latitude in float format as expected by Google Maps.\n",
+                "args": [],
+                "type": "Basics.Float"
+            },
+            {
+                "name": "Longitude",
+                "comment": " This type is longitude in float format as expected by Google Maps.\n",
+                "args": [],
+                "type": "Basics.Float"
+            }
+        ],
+        "values": [
+            {
+                "name": "hybrid",
+                "comment": " Map with the actual photos of the terrain surface like [satellite](#satellite).\nWhile including the roads, and names from [roadmap](#roadmap)\n",
+                "type": "GoogleMaps.Map.MapType"
+            },
+            {
+                "name": "init",
+                "comment": " It requires the api key whose type is String\n",
+                "type": "GoogleMaps.Map.ApiKey -> GoogleMaps.Map.Map msg"
+            },
+            {
+                "name": "journeySharing",
+                "comment": " Specifies the journey-sharing feature.\n",
+                "type": "String.String -> GoogleMaps.Map.LocationProvider -> GoogleMaps.Map.JourneySharing"
+            },
+            {
+                "name": "locationProvider",
+                "comment": " Specifies a location provider for the fleet-engine.\n",
+                "type": "String.String -> String.String -> GoogleMaps.Map.LocationProvider"
+            },
+            {
+                "name": "onMapClick",
+                "comment": " Triggers with every click on the map.\n",
+                "type": "msg -> GoogleMaps.Map.Map msg -> GoogleMaps.Map.Map msg"
+            },
+            {
+                "name": "onMapReady",
+                "comment": " Triggers once the map is loaded.\n",
+                "type": "msg -> GoogleMaps.Map.Map msg -> GoogleMaps.Map.Map msg"
+            },
+            {
+                "name": "roadmap",
+                "comment": " Map focusing on a presentation of the available driveable paths.\n",
+                "type": "GoogleMaps.Map.MapType"
+            },
+            {
+                "name": "satellite",
+                "comment": " Map with actual photos of the terrain surface.\n",
+                "type": "GoogleMaps.Map.MapType"
+            },
+            {
+                "name": "terrain",
+                "comment": " Map with terrain specifications, mountains, rivers, and other geospatial information.\n",
+                "type": "GoogleMaps.Map.MapType"
+            },
+            {
+                "name": "toHtml",
+                "comment": " The final function to generate the final html\n",
+                "type": "GoogleMaps.Map.Map msg -> Html.Html msg"
+            },
+            {
+                "name": "withCenter",
+                "comment": " Sets the center of the map\n",
+                "type": "GoogleMaps.Map.Latitude -> GoogleMaps.Map.Longitude -> GoogleMaps.Map.Map msg -> GoogleMaps.Map.Map msg"
+            },
+            {
+                "name": "withCustomStyle",
+                "comment": " The idea is make it typed, but right know you should pass the JSON as string\n\nReference: <https://developers.google.com/maps/documentation/javascript/styling>\n\n",
+                "type": "String.String -> GoogleMaps.Map.Map msg -> GoogleMaps.Map.Map msg"
+            },
+            {
+                "name": "withDefaultUIControls",
+                "comment": " Embeds buttons for controlling the map viewing.\n",
+                "type": "Basics.Bool -> GoogleMaps.Map.Map msg -> GoogleMaps.Map.Map msg"
+            },
+            {
+                "name": "withDrawingTool",
+                "comment": " Provides a controllable feature of allowing the user to draw polygons on the map.\n",
+                "type": "GoogleMaps.Plugins.DrawingTool.State -> GoogleMaps.Plugins.DrawingTool.Events msg -> GoogleMaps.Map.Map msg -> GoogleMaps.Map.Map msg"
+            },
+            {
+                "name": "withFitToMarkers",
+                "comment": " This option is diesabled by default. If the option is enabled the map bounds change in order to fit all the markers. If there is 1 marker only then the map will be centered to the marker position.\n",
+                "type": "Basics.Bool -> GoogleMaps.Map.Map msg -> GoogleMaps.Map.Map msg"
+            },
+            {
+                "name": "withJourneySharing",
+                "comment": " Sets the journey-sharing feature.\n",
+                "type": "GoogleMaps.Map.JourneySharing -> GoogleMaps.Map.Map msg -> GoogleMaps.Map.Map msg"
+            },
+            {
+                "name": "withMapType",
+                "comment": " Sets the mapType.\n\nThe default type is roadmap.\n\nPossible options:\n\nsatellite, roadmap, hybrid, terrain\n\nExample:\n\n    import GoogleMaps.Map as Map\n\n    mapView : String -> Html Msg\n    mapView apiKey =\n        Map.init apiKey\n            |> Map.withMapType Map.satellite\n            |> Map.toHtml\n\n",
+                "type": "GoogleMaps.Map.MapType -> GoogleMaps.Map.Map msg -> GoogleMaps.Map.Map msg"
+            },
+            {
+                "name": "withMapTypeControls",
+                "comment": " Embeds buttons for the user to change the map type in runtime.\n",
+                "type": "Basics.Bool -> GoogleMaps.Map.Map msg -> GoogleMaps.Map.Map msg"
+            },
+            {
+                "name": "withMarkers",
+                "comment": "\n\n    import GoogleMaps.Map as Map\n    import GoogleMaps.Marker as Marker\n\n    myMarker : Marker.Marker Msg\n    myMarker =\n        Marker.init -3.7344654 -38.5057405\n\n    mapView : String -> Html Msg\n    mapView apiKey =\n        Map.init apiKey\n            |> Map.withMarkers [ myMarker ]\n            |> Map.toHtml\n\n",
+                "type": "List.List (GoogleMaps.Marker.Marker msg) -> GoogleMaps.Map.Map msg -> GoogleMaps.Map.Map msg"
+            },
+            {
+                "name": "withMaxZoom",
+                "comment": " Default value is 20\n",
+                "type": "Basics.Int -> GoogleMaps.Map.Map msg -> GoogleMaps.Map.Map msg"
+            },
+            {
+                "name": "withMinZoom",
+                "comment": " Default value is 0\n",
+                "type": "Basics.Int -> GoogleMaps.Map.Map msg -> GoogleMaps.Map.Map msg"
+            },
+            {
+                "name": "withPolygons",
+                "comment": "\n\n    import GoogleMaps.Map as Map\n    import GoogleMaps.Polygon as Polygon\n\n    myPolygon : Polygon.Polygon Msg\n    myPolygon =\n        Polygon.init\n            [ ( -3.7344654, -38.5057405 )\n            , ( -3.7366108, -38.5188557 )\n            , ( -3.7374002, -38.5195225 )\n            , ( -3.7474947, -38.5153675 )\n            ]\n            |> Polygon.withStrokeColor \"red\"\n            |> Polygon.withFillColor \"orange\"\n            |> Polygon.withFillOpacity 0.25\n            |> Polygon.withClosedMode\n\n    mapView : String -> Html Msg\n    mapView apiKey =\n        Map.init apiKey\n            |> Map.withPolygons [ myPolygon ]\n            |> Map.toHtml\n\n",
+                "type": "List.List (GoogleMaps.Polygon.Polygon msg) -> GoogleMaps.Map.Map msg -> GoogleMaps.Map.Map msg"
+            },
+            {
+                "name": "withStreetViewControls",
+                "comment": " Provides a button for entering the Street View mode.\n",
+                "type": "Basics.Bool -> GoogleMaps.Map.Map msg -> GoogleMaps.Map.Map msg"
+            },
+            {
+                "name": "withZoom",
+                "comment": " Default zoom is 14\n",
+                "type": "Basics.Int -> GoogleMaps.Map.Map msg -> GoogleMaps.Map.Map msg"
+            },
+            {
+                "name": "withZoomActions",
+                "comment": " Provides a scrolling bar for controlling the current zooming in the map.\n",
+                "type": "Basics.Bool -> GoogleMaps.Map.Map msg -> GoogleMaps.Map.Map msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "GoogleMaps.Marker",
+        "comment": " This module allows you to create markers to be used along with GoogleMaps.Map\n\n    import GoogleMaps.Map as Map\n    import GoogleMaps.Marker as Marker\n\n    myMarker : Marker Msg\n    myMarker =\n        Marker.init -3.7344654 -38.5057405\n            |> Marker.onClick MyClickMsg\n\n    mapView : String -> Html Msg\n    mapView apiKey =\n        Map.init apiKey\n            |> Map.withMarkers [ myMarker ]\n            |> Map.toHtml\n\n@docs Marker, Latitude, Longitude, init, Animation\n\n\n# Modifiers\n\n@docs withCursor, withIcon, withDraggableMode, withTitle, withAnimation, withInfoWindow\n\n\n# Animations\n\n@docs bounce, drop\n\n\n# Events\n\n@docs onClick, withInfoWindowOnMouseOver\n\n",
+        "unions": [
+            {
+                "name": "Animation",
+                "comment": " This type wraps the available animations for markers in Google Maps, \"DROP\" or \"BOUNCE\" or nothing.\n\n  - See <https://developers.google.com/maps/documentation/javascript/examples/marker-animations>.\n\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Latitude",
+                "comment": " This type is latitude in float format as expected by Google Maps.\n",
+                "args": [],
+                "type": "Basics.Float"
+            },
+            {
+                "name": "Longitude",
+                "comment": " This type is longitude in float format as expected by Google Maps.\n",
+                "args": [],
+                "type": "Basics.Float"
+            },
+            {
+                "name": "Marker",
+                "comment": " Opaque type that upholds the marker description.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "Internals.Marker.Marker msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "bounce",
+                "comment": " Get Bounce animation\n",
+                "type": "GoogleMaps.Marker.Animation"
+            },
+            {
+                "name": "drop",
+                "comment": " Get Drop animation\n",
+                "type": "GoogleMaps.Marker.Animation"
+            },
+            {
+                "name": "init",
+                "comment": " It requires the latitude and longitude (both are floats)\n",
+                "type": "GoogleMaps.Marker.Latitude -> GoogleMaps.Marker.Longitude -> GoogleMaps.Marker.Marker msg"
+            },
+            {
+                "name": "onClick",
+                "comment": " Sets a click event handler\n",
+                "type": "msg -> GoogleMaps.Marker.Marker msg -> GoogleMaps.Marker.Marker msg"
+            },
+            {
+                "name": "withAnimation",
+                "comment": " Sets the animation for the marker.\n",
+                "type": "GoogleMaps.Marker.Animation -> GoogleMaps.Marker.Marker msg -> GoogleMaps.Marker.Marker msg"
+            },
+            {
+                "name": "withCursor",
+                "comment": " Sets cursor to the marker\n",
+                "type": "String.String -> GoogleMaps.Marker.Marker msg -> GoogleMaps.Marker.Marker msg"
+            },
+            {
+                "name": "withDraggableMode",
+                "comment": " Makes the marker draggable\n",
+                "type": "GoogleMaps.Marker.Marker msg -> GoogleMaps.Marker.Marker msg"
+            },
+            {
+                "name": "withIcon",
+                "comment": " Sets a custom image to the marker\n",
+                "type": "String.String -> GoogleMaps.Marker.Marker msg -> GoogleMaps.Marker.Marker msg"
+            },
+            {
+                "name": "withInfoWindow",
+                "comment": " Sets the content of the Info Window.\n\nWhen empty, disables the info window.\n\n",
+                "type": "List.List (Html.Html msg) -> GoogleMaps.Marker.Marker msg -> GoogleMaps.Marker.Marker msg"
+            },
+            {
+                "name": "withInfoWindowOnMouseOver",
+                "comment": " Allows to enter/leave a Info Window specified in [`withInfoWindow`](#withInfoWindow)\n",
+                "type": "GoogleMaps.Marker.Marker msg -> GoogleMaps.Marker.Marker msg"
+            },
+            {
+                "name": "withTitle",
+                "comment": " Sets an on hover title for the marker\n",
+                "type": "String.String -> GoogleMaps.Marker.Marker msg -> GoogleMaps.Marker.Marker msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "GoogleMaps.Plugins.DrawingTool",
+        "comment": " This module allows you to draw polygons on the map\n\nThis documentation it's WIP\n\n\n# Types\n\n@docs Events, State\n\n\n# Events\n\n@docs events\n\n\n# Initialize State\n\n@docs initState\n\n\n# Updating state\n\n@docs startDrawing, stopDrawing\n\n\n# Utilities\n\n@docs isDrawingEnabled\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Events",
+                "comment": " Opaque type that lists the message(s) that will be triggered with actions while drawing.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "Internals.Plugins.DrawingTool.Events msg"
+            },
+            {
+                "name": "State",
+                "comment": " Opaque type that upholds the data required to know if drawing mode is enabled or disabled.\n",
+                "args": [],
+                "type": "Internals.Plugins.DrawingTool.State"
+            }
+        ],
+        "values": [
+            {
+                "name": "events",
+                "comment": " Initializer for [Events](#Events). Requires a message that will trigger once the user closes a polygon.\n",
+                "type": "(List.List ( Basics.Float, Basics.Float ) -> msg) -> GoogleMaps.Plugins.DrawingTool.Events msg"
+            },
+            {
+                "name": "initState",
+                "comment": " Initializer for [State](#State).\n",
+                "type": "GoogleMaps.Plugins.DrawingTool.State"
+            },
+            {
+                "name": "isDrawingEnabled",
+                "comment": " Queries if the drawing mode is currently active.\n",
+                "type": "GoogleMaps.Plugins.DrawingTool.State -> Basics.Bool"
+            },
+            {
+                "name": "startDrawing",
+                "comment": " Enters the drawing mode. (Allows the user to draw polygons on the map)\n",
+                "type": "GoogleMaps.Plugins.DrawingTool.State -> GoogleMaps.Plugins.DrawingTool.State"
+            },
+            {
+                "name": "stopDrawing",
+                "comment": " Leaves the drawing mode. (Does not allows the user to draw on the map)\n",
+                "type": "GoogleMaps.Plugins.DrawingTool.State -> GoogleMaps.Plugins.DrawingTool.State"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "GoogleMaps.Polygon",
+        "comment": " This module allows you to create polygons to be used along with GoogleMaps.Map\n\n    import GoogleMaps.Map as Map\n    import GoogleMaps.Polygon as Polygon\n\n    myPolygon : Polygon.Polygon Msg\n    myPolygon =\n        Polygon.init\n            [ ( -3.7344654, -38.5057405 )\n            , ( -3.7366108, -38.5188557 )\n            , ( -3.7374002, -38.5195225 )\n            , ( -3.7474947, -38.5153675 )\n            ]\n            |> Polygon.withStrokeColor \"red\"\n            |> Polygon.withFillColor \"orange\"\n            |> Polygon.withFillOpacity 0.25\n            |> Polygon.onClick OnMarkerClicked\n            |> Polygon.withClosedMode\n\n    mapView : String -> Html Msg\n    mapView apiKey =\n        Map.init apiKey\n            |> Map.withPolygons [ myPolygon ]\n            |> Map.toHtml\n\n\n# Types\n\n@docs Polygon, Latitude, Longitude\n\n\n# Basics\n\n@docs init\n\n\n# Modifiers\n\n@docs withClosedMode, withFillColor, withFillOpacity, withStrokeColor, withStrokeWeight, withZIndex\n\n\n# Events\n\n@docs onClick\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Latitude",
+                "comment": " This type is latitude in float format as expected by Google Maps.\n",
+                "args": [],
+                "type": "Basics.Float"
+            },
+            {
+                "name": "Longitude",
+                "comment": " This type is longitude in float format as expected by Google Maps.\n",
+                "args": [],
+                "type": "Basics.Float"
+            },
+            {
+                "name": "Polygon",
+                "comment": " Opaque type that upholds the polygon description.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "Internals.Polygon.Polygon msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "init",
+                "comment": " Creates a polygon from a list of coordinates.\n",
+                "type": "List.List ( GoogleMaps.Polygon.Latitude, GoogleMaps.Polygon.Latitude ) -> GoogleMaps.Polygon.Polygon msg"
+            },
+            {
+                "name": "onClick",
+                "comment": " Specify a message which is triggered when the user clicks over the polygon.\n",
+                "type": "msg -> GoogleMaps.Polygon.Polygon msg -> GoogleMaps.Polygon.Polygon msg"
+            },
+            {
+                "name": "withClosedMode",
+                "comment": " It forces the polygon to be a closed shape\n",
+                "type": "GoogleMaps.Polygon.Polygon msg -> GoogleMaps.Polygon.Polygon msg"
+            },
+            {
+                "name": "withFillColor",
+                "comment": " There is no default color\n\nthis function accepts the same formats as the CSS color values\n\nE.g `\"rbg(255,255,0)\", \"orange\" or \"#ff00ff\"`\n\n",
+                "type": "String.String -> GoogleMaps.Polygon.Polygon msg -> GoogleMaps.Polygon.Polygon msg"
+            },
+            {
+                "name": "withFillOpacity",
+                "comment": " The default is 0\n",
+                "type": "Basics.Float -> GoogleMaps.Polygon.Polygon msg -> GoogleMaps.Polygon.Polygon msg"
+            },
+            {
+                "name": "withStrokeColor",
+                "comment": " The default is black\n\nthis function accepts the same formats as the CSS color values\n\nE.g `\"rbg(255,255,0)\", \"orange\" or \"#ff00ff\"`\n\n",
+                "type": "String.String -> GoogleMaps.Polygon.Polygon msg -> GoogleMaps.Polygon.Polygon msg"
+            },
+            {
+                "name": "withStrokeWeight",
+                "comment": " The default is 3\n",
+                "type": "Basics.Int -> GoogleMaps.Polygon.Polygon msg -> GoogleMaps.Polygon.Polygon msg"
+            },
+            {
+                "name": "withZIndex",
+                "comment": " Positions the polygon in an integer-numbered third-dimension.\n",
+                "type": "Basics.Int -> GoogleMaps.Polygon.Polygon msg -> GoogleMaps.Polygon.Polygon msg"
+            }
+        ],
+        "binops": []
+    }
+]

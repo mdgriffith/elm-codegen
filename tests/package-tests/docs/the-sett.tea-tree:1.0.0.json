@@ -1,0 +1,144 @@
+[
+    {
+        "name": "TeaTree",
+        "comment": " Todo:\nIt will be a multiway Tree implementation, not a binary tree.\n\nWill save this for an optimized version:\n\n    type alias NodeArray a =\n        Array Int a\n\nNeed to add API for simpler read-only walking of the tree. Zippers will churn\nthe heap, but a read only pass for rendering the view does not need them so\ncan be made more efficient.\n\n\n## Types\n\n@docs Tree, Zipper, Path\n\n\n## Tree operations\n\n@docs singleton, zipper, map\n\n\n## Zipper operations\n\n@docs goToChild, goToRightMostChild, goUp, goLeft, goRight, goToRoot, goToNext, goToPrevious\n@docs goTo, updateFocusDatum, datum, insertChild, appendChild, getPath, toTree, depth\n\n\n## Path operations\n\n@docs goToPath, updateDatum\n\n\n## Sorting\n\n@docs sortBy\n\n",
+        "unions": [
+            {
+                "name": "Path",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Tree",
+                "comment": " ",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Zipper",
+                "comment": " ",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "appendChild",
+                "comment": " ",
+                "type": "a -> TeaTree.Zipper a -> TeaTree.Zipper a"
+            },
+            {
+                "name": "datum",
+                "comment": " ",
+                "type": "TeaTree.Zipper a -> a"
+            },
+            {
+                "name": "depth",
+                "comment": " ",
+                "type": "TeaTree.Zipper a -> Basics.Int"
+            },
+            {
+                "name": "getPath",
+                "comment": " ",
+                "type": "TeaTree.Zipper a -> TeaTree.Path"
+            },
+            {
+                "name": "goLeft",
+                "comment": " ",
+                "type": "TeaTree.Zipper a -> Maybe.Maybe (TeaTree.Zipper a)"
+            },
+            {
+                "name": "goRight",
+                "comment": " ",
+                "type": "TeaTree.Zipper a -> Maybe.Maybe (TeaTree.Zipper a)"
+            },
+            {
+                "name": "goTo",
+                "comment": " ",
+                "type": "(a -> Basics.Bool) -> TeaTree.Zipper a -> Maybe.Maybe (TeaTree.Zipper a)"
+            },
+            {
+                "name": "goToChild",
+                "comment": " ",
+                "type": "Basics.Int -> TeaTree.Zipper a -> Maybe.Maybe (TeaTree.Zipper a)"
+            },
+            {
+                "name": "goToNext",
+                "comment": " ",
+                "type": "TeaTree.Zipper a -> Maybe.Maybe (TeaTree.Zipper a)"
+            },
+            {
+                "name": "goToPath",
+                "comment": " The Path and Tree can be recombined to recover a previous position in the tree.\nwalkPath : Path -> Tree a -> Maybe (Zipper a)\n\nEvery node will be marked with a unique id, so that re-walking the tree from a Path\ncan be confirmed as correct. Walking a Path will produce a Maybe.\n\nThis allows events to be tagged with Paths which describe a return to a\npreviously visited position within a tree, without capturing any other data\nassociated with that node. This is to circumvent the stale data issue when\na user is interacting with a tree.\n\n",
+                "type": "TeaTree.Path -> TeaTree.Tree a -> Maybe.Maybe (TeaTree.Zipper a)"
+            },
+            {
+                "name": "goToPrevious",
+                "comment": " ",
+                "type": "TeaTree.Zipper a -> Maybe.Maybe (TeaTree.Zipper a)"
+            },
+            {
+                "name": "goToRightMostChild",
+                "comment": " ",
+                "type": "TeaTree.Zipper a -> Maybe.Maybe (TeaTree.Zipper a)"
+            },
+            {
+                "name": "goToRoot",
+                "comment": " Walking the zipper context back to the root will produce a Tree with any\nupdates made as the zipper was walked over the tree, folded back in to the\nnew Tree.\n",
+                "type": "TeaTree.Zipper a -> TeaTree.Zipper a"
+            },
+            {
+                "name": "goUp",
+                "comment": " ",
+                "type": "TeaTree.Zipper a -> Maybe.Maybe (TeaTree.Zipper a)"
+            },
+            {
+                "name": "insertChild",
+                "comment": " ",
+                "type": "a -> TeaTree.Zipper a -> TeaTree.Zipper a"
+            },
+            {
+                "name": "map",
+                "comment": " ",
+                "type": "(a -> b) -> TeaTree.Tree a -> TeaTree.Tree b"
+            },
+            {
+                "name": "singleton",
+                "comment": " ",
+                "type": "a -> TeaTree.Zipper a"
+            },
+            {
+                "name": "sortBy",
+                "comment": " ",
+                "type": "(a -> comparable) -> TeaTree.Tree a -> TeaTree.Tree a"
+            },
+            {
+                "name": "toTree",
+                "comment": " ",
+                "type": "TeaTree.Zipper a -> TeaTree.Tree a"
+            },
+            {
+                "name": "updateDatum",
+                "comment": " The contents of nodes in the tree will be held in an `Array Id a`. Ids will be assigned\nsequentially. This will allow mapping by id without re-walking a Path possible. It will\nonly be necessary to re-walk paths when adding new nodes into the tree, as this is the only\nsituation when fresh ids will need to be generated.\n",
+                "type": "TeaTree.Path -> (a -> a) -> TeaTree.Tree a -> TeaTree.Tree a"
+            },
+            {
+                "name": "updateFocusDatum",
+                "comment": " ",
+                "type": "(a -> a) -> TeaTree.Zipper a -> TeaTree.Zipper a"
+            },
+            {
+                "name": "zipper",
+                "comment": " ",
+                "type": "TeaTree.Tree a -> TeaTree.Zipper a"
+            }
+        ],
+        "binops": []
+    }
+]

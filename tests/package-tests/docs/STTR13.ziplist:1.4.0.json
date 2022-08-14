@@ -1,0 +1,219 @@
+[
+    {
+        "name": "ZipList",
+        "comment": " A `ZipList` is a list that has a single selected element. We call it current as \"the one that is currently selected\".\n\nTo get more explicit examples, I'm gona represent `ZipList`s as `List`s that have the selected element between \"<...>\":\n\n    Zipper [] 0 [1, 2, 3, 4]  == [<0>, 1, 2, 3, 4]\n    Zipper [2, 1, 0] 3 [4]    == [0, 1, 2, <3>, 4]\n\nThis **pseudocode** will make the documentation way more enjoyable.\n\n# ZipLists\n@docs ZipList\n\n# Create\n@docs new, fromList, singleton\n\n# Consult\n@docs current, toList, length, currentIndex, isCurrent, isFirst, isLast\n\n# Edit\n@docs remove, replace, insert, insertAfter, insertBefore, filter, reverse, removeAllPrevious, removeAllFolowing\n\n# Move\n@docs forward, backward, jumpForward, jumpBackward, maybeJumpForward, maybeJumpBackward\n\n# GoTo's\n@docs goToStart, goToEnd, goToIndex, goToFirst, goToNext, goToLast, goToPrevious\n\n# Mapping\n@docs map, indexedMap, selectedMap, indexedSelectedMap\n\n# Encode / Decode\n@docs encode, decode\n\n",
+        "unions": [
+            {
+                "name": "ZipList",
+                "comment": " A `ZipList` is a list that has a single selected element. We call it current as \"the one that is currently selected\".\n\n    type ZipList a\n      = Zipper (List a) a (List a)\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Zipper",
+                        [
+                            "List.List a",
+                            "a",
+                            "List.List a"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "backward",
+                "comment": " Move current backward. Current will not move if it is at the begining of the `ZipList`.\n\n    backward [0, 1, <2>, 3, 4] == [0, <1>, 2, 3, 4]\n    backward [<0>, 1, 2]       == [<0>, 1, 2]\n",
+                "type": "ZipList.ZipList a -> ZipList.ZipList a"
+            },
+            {
+                "name": "current",
+                "comment": " Return the current element of a `ZipList`.\n",
+                "type": "ZipList.ZipList a -> a"
+            },
+            {
+                "name": "currentIndex",
+                "comment": " Return the index (starting at zero) of the current element.\n\n    currentIndex [0, 1, <2>, 3, 4]  == Just 2\n    currentIndex [<0>, 1, 2]        == Just 0\n",
+                "type": "ZipList.ZipList a -> Basics.Int"
+            },
+            {
+                "name": "decode",
+                "comment": " Decode a `ZipList`\n",
+                "type": "Json.Decode.Decoder a -> Json.Decode.Decoder (ZipList.ZipList a)"
+            },
+            {
+                "name": "encode",
+                "comment": " Encode a `ZipList`\n",
+                "type": "(a -> Json.Encode.Value) -> ZipList.ZipList a -> Json.Encode.Value"
+            },
+            {
+                "name": "filter",
+                "comment": " Keep elements that satisfy the test.\n\n    filter ((!=) 3) [0, 3, 3, 1, 3, <2>, 3, 4] == Just [0, 1, <2>, 4]\n    filter ((!=) 2) [0, 1, <2>, 3, 4] == Just [0, 1, <3>, 4]\n    filter ((!=) 4) [0, 1, 2, 3, <4>] == Just [0, 1, 2, <3>]\n    filter ((!=) 4) [4, <4>, 4, 4] == Nothing\n",
+                "type": "(a -> Basics.Bool) -> ZipList.ZipList a -> Maybe.Maybe (ZipList.ZipList a)"
+            },
+            {
+                "name": "forward",
+                "comment": " Move current forward. Current will not move if it is at the end of the `ZipList`.\n\n    forward [0, 1, <2>, 3, 4] == [0, 1, 2, <3>, 4]\n    forward [0, 1, <2>]       == [0, 1, <2>]\n",
+                "type": "ZipList.ZipList a -> ZipList.ZipList a"
+            },
+            {
+                "name": "fromList",
+                "comment": " Craft a new `ZipList` out of a `List`. Current is the first element of the `List`. Return `Nothing` if an empty list is given.\n",
+                "type": "List.List a -> Maybe.Maybe (ZipList.ZipList a)"
+            },
+            {
+                "name": "goToEnd",
+                "comment": " Move current to the end of the `ZipList`.\n\n    goToEnd [0, 1, 2, 3, <4>]   == [0, 1, 2, 3, <4>]\n    goToEnd [<0>, 1, 2]         == [0, 1, <2>]\n    goToEnd [0, <1>, 2]         == [0, 1, <2>]\n",
+                "type": "ZipList.ZipList a -> ZipList.ZipList a"
+            },
+            {
+                "name": "goToFirst",
+                "comment": " Move current to the first element of a `ZipList` fulfilling a condition. Return `Nothing` if no matching element.\n\n    goToFirst isEven [8, 1, 2, 3, <4>] == Just [<8>, 1, 2, 3, 4]\n    goToFirst isEven [5, <1>, 2]       == Just [5, 1, <2>]\n    goToFirst isEven [1, <1>, 7]       == Nothing\n",
+                "type": "(a -> Basics.Bool) -> ZipList.ZipList a -> Maybe.Maybe (ZipList.ZipList a)"
+            },
+            {
+                "name": "goToIndex",
+                "comment": " Move current to an index (starting at zero). Return `Nothing` if the index is too low and it will be the last element if the index is too high.\n\n    goToIndex 2 [0, 1, 2, 3, <4>] == Just [0, 1, <2>, 3, 4]\n    goToIndex 5 [0, <1>, 2]       == Nothing\n    goToIndex 1 [0, <1>, 2]       == Just [0, <1>, 2]\n",
+                "type": "Basics.Int -> ZipList.ZipList a -> Maybe.Maybe (ZipList.ZipList a)"
+            },
+            {
+                "name": "goToLast",
+                "comment": " Move current to the last element of a `ZipList` fulfilling a condition. Return `Nothing` if there is no matching element.\n\n    goToLast isOdd [0, 1, <2>, 3, 4] == Just [0, 1, 2, <3>, 4]\n    goToLast isOdd [8, 2, <1>, 3, 7] == Just [8, 2, 1, 3, <7>]\n    goToLast isOdd [2, <4>, 6, 8]    == Nothing\n",
+                "type": "(a -> Basics.Bool) -> ZipList.ZipList a -> Maybe.Maybe (ZipList.ZipList a)"
+            },
+            {
+                "name": "goToNext",
+                "comment": " Move current to the next element fulfilling a condition. Return `Nothing` if there is no matching element after current.\n\n    goToNext isEven [0, 1, <2>, 3, 4] == Just [0, 1, 2, 3, <4>]\n    goToNext isEven [8, 2, <1>, 3, 7] == Nothing\n    goToNext isEven [5, <1>, 2, 3]    == Just [5, 1, <2>, 3]\n",
+                "type": "(a -> Basics.Bool) -> ZipList.ZipList a -> Maybe.Maybe (ZipList.ZipList a)"
+            },
+            {
+                "name": "goToPrevious",
+                "comment": " Move current to the previous element fulfilling a condition. Return `Nothing` if there is no matching element before current.\n\n    goToPrevious isOdd [0, 1, <2>, 3, 4] == Just [0, <1>, 2, 3, 4]\n    goToPrevious isOdd [8, 2, 1, 4, <7>] == Just [8, 2, <1>, 4, 7]\n    goToPrevious isOdd [2, <4>, 3, 5]    == Nothing\n",
+                "type": "(a -> Basics.Bool) -> ZipList.ZipList a -> Maybe.Maybe (ZipList.ZipList a)"
+            },
+            {
+                "name": "goToStart",
+                "comment": " Move current to index 0.\n\n    goToStart [0, 1, 2, 3, <4>] == [<0>, 1, 2, 3, 4]\n    goToStart [<0>, 1, 2]       == [<0>, 1, 2]\n    goToStart [0, <1>, 2]       == [<0>, 1, 2]\n",
+                "type": "ZipList.ZipList a -> ZipList.ZipList a"
+            },
+            {
+                "name": "indexedMap",
+                "comment": " Same as `map` but the function is also applied to the index of each element (starting at zero).\n\n    indexedMap Tuple.pair [1, <2>, 4]     == [(0, 1), <(1, 2)>, (2, 4)]\n    indexedMap Tuple.pair [\"hi\", <\"wow\">] == [(0, \"hi\"), <(1, \"wow\")>]\n",
+                "type": "(Basics.Int -> a -> b) -> ZipList.ZipList a -> ZipList.ZipList b"
+            },
+            {
+                "name": "indexedSelectedMap",
+                "comment": " Same as `map` but the function also takes the index of the element (starting at zero) and a boolean indicating wether it is current/the selected element.\n\n    let\n      myFun =\n        (\\ index isCurrent elem ->\n          (index, isCurrent, String.fromInt elem)\n        )\n    in\n      selectedMap myFun [1, <2>, 4] == [(0, False, \"1\"), <(1, True, \"2\")>, (2, False, \"4\")]\n",
+                "type": "(Basics.Int -> Basics.Bool -> a -> b) -> ZipList.ZipList a -> ZipList.ZipList b"
+            },
+            {
+                "name": "insert",
+                "comment": " Insert a new value in a `ZipList`. The current will be pushed backward to let the new value take its place.\n\n    insert 9 [0, 1, <2>, 3, 4] == [0, 1, 2, <9>, 3, 4]\n    insert 9 [0, 1, <2>]       == [0, 1, 2, <9>]\n",
+                "type": "a -> ZipList.ZipList a -> ZipList.ZipList a"
+            },
+            {
+                "name": "insertAfter",
+                "comment": " Insert a new value in a `ZipList` right after current.\n\n    insertAfter 9 [0, 1, <2>, 3, 4] == [0, 1, <2>, 9, 3, 4]\n    insertAfter 9 [0, 1, <2>]       == [0, 1, <2>, 9]\n",
+                "type": "a -> ZipList.ZipList a -> ZipList.ZipList a"
+            },
+            {
+                "name": "insertBefore",
+                "comment": " Insert a new value in a `ZipList` right before current.\n\n    insertBefore 9 [0, 1, <2>, 3, 4] == [0, 1, 9, <2>, 3, 4]\n",
+                "type": "a -> ZipList.ZipList a -> ZipList.ZipList a"
+            },
+            {
+                "name": "isCurrent",
+                "comment": " Test wether current passes a condition.\n\n    isCurren odd [0, <1>, 2]  == True\n    isCurren odd [0, <5>, 2]  == False\n",
+                "type": "(a -> Basics.Bool) -> ZipList.ZipList a -> Basics.Bool"
+            },
+            {
+                "name": "isFirst",
+                "comment": " Test wether the first element of the `ZipList` passes a condition.\n\n    isFirst odd [1, <1>, 2]  == True\n    isFirst odd [4, <5>, 2]  == False\n",
+                "type": "(a -> Basics.Bool) -> ZipList.ZipList a -> Basics.Bool"
+            },
+            {
+                "name": "isLast",
+                "comment": " Test wether the last element of the `ZipList` passes a condition.\n\n    isLast odd [1, <1>, 3]  == True\n    isLast odd [4, <5>, 2]  == False\n",
+                "type": "(a -> Basics.Bool) -> ZipList.ZipList a -> Basics.Bool"
+            },
+            {
+                "name": "jumpBackward",
+                "comment": " Move current backward a given amout of times. Current will be the first element of the `ZipList` if the jump size is too big.\n\n    jumpBackward 2 [0, 1, 2, <3>, 4] == [0, <1>, 2, 3, 4]\n    jumpBackward 2 [0, <1>, 2]       == [<0>, 1, 2]\n",
+                "type": "Basics.Int -> ZipList.ZipList a -> ZipList.ZipList a"
+            },
+            {
+                "name": "jumpForward",
+                "comment": " Move current forward a given amout of times. Current will be the last element of the `ZipList` if the jump size is too big.\n\n    jumpForward 2 [0, <1>, 2, 3, 4] == [0, 1, 2, <3>, 4]\n    jumpForward 2 [0, <1>, 2]       == [0, 1, <2>]\n",
+                "type": "Basics.Int -> ZipList.ZipList a -> ZipList.ZipList a"
+            },
+            {
+                "name": "length",
+                "comment": " Return a `ZipList` length.\n\n    length [0, 1, <2>, 3, 4]  == 5\n    length [<0>, 1, 2]        == 3\n",
+                "type": "ZipList.ZipList a -> Basics.Int"
+            },
+            {
+                "name": "map",
+                "comment": " Apply a function to every element of a `ZipList`.\n\n    map String.fromInt [0, 1, <2>, 3, 4] == [\"0\", \"1\", <\"2\">, \"3\", \"4\"]\n    map String.fromInt [2, <4>, 3, 5]    == [\"2\", <\"4\">, \"3\", \"5\"]\n",
+                "type": "(a -> b) -> ZipList.ZipList a -> ZipList.ZipList b"
+            },
+            {
+                "name": "maybeJumpBackward",
+                "comment": " Move current backward a given amout of times. Return `Nothing` if the jump size is too big.\n\n    maybeJumpBackward 2 [0, 1, 2, <3>, 4] == Just [0, <1>, 2, 3, 4]\n    maybeJumpBackward 2 [0, <1>, 2]       == Nothing\n",
+                "type": "Basics.Int -> ZipList.ZipList a -> Maybe.Maybe (ZipList.ZipList a)"
+            },
+            {
+                "name": "maybeJumpForward",
+                "comment": " Move current forward a given amout of times. Return `Nothing` if the jump size is too big.\n\n    maybeJumpForward 2 [0, <1>, 2, 3, 4] == Just [0, 1, 2, <3>, 4]\n    maybeJumpForward 2 [0, <1>, 2]       == Nothing\n",
+                "type": "Basics.Int -> ZipList.ZipList a -> Maybe.Maybe (ZipList.ZipList a)"
+            },
+            {
+                "name": "new",
+                "comment": " Craft a new `ZipList` out of a `List` and an element.\n\n    new \"a\" [\"b\", \"c\"] == [<\"a\">, \"b\", \"c\"]\n",
+                "type": "a -> List.List a -> ZipList.ZipList a"
+            },
+            {
+                "name": "remove",
+                "comment": " Remove current from a `ZipList`. The new current is in priority the `ZipList`'s next element.\n\n    remove [0, 1, <2>, 3, 4] == Just [0, 1, <3>, 4]\n    remove [0, 1, <2>]       == Just [0, <1>]\n    remove [<\"hello!\">]      == Nothing\n",
+                "type": "ZipList.ZipList a -> Maybe.Maybe (ZipList.ZipList a)"
+            },
+            {
+                "name": "removeAllFolowing",
+                "comment": ".\n\n    removeAllFolowing [1, <2>, 3, 4] == [1, <2>]\n",
+                "type": "ZipList.ZipList a -> ZipList.ZipList a"
+            },
+            {
+                "name": "removeAllPrevious",
+                "comment": ".\n\n    removeAllPrevious [0, 1, <2>, 3, 4] == [<2>, 3, 4]\n",
+                "type": "ZipList.ZipList a -> ZipList.ZipList a"
+            },
+            {
+                "name": "replace",
+                "comment": " Replace current from a `ZipList` with a new value.\n\n    replace 9 [0, 1, <2>, 3, 4] == [0, 1, <9>, 3, 4]\n    replace 9 [0, 1, <2>]       == [0, 1, <9>]\n",
+                "type": "a -> ZipList.ZipList a -> ZipList.ZipList a"
+            },
+            {
+                "name": "reverse",
+                "comment": " Reverse `ZipList` order.\n\n    filter [1, <2>, 3] == [3, <2>, 1]\n",
+                "type": "ZipList.ZipList a -> ZipList.ZipList a"
+            },
+            {
+                "name": "selectedMap",
+                "comment": " Same as `map` but the function also takes a boolean indicating wether it is current/the selected element.\n\n    selectedMap Tuple.pair [<2>, 4]             == [<(True, 2)>, (False, 4)]\n    selectedMap Tuple.pair [\"en\", \"fr\", <\"ge\">] == [(False, \"en\"), (False, \"fr\"), <(True, \"ge\")>]\n",
+                "type": "(Basics.Bool -> a -> b) -> ZipList.ZipList a -> ZipList.ZipList b"
+            },
+            {
+                "name": "singleton",
+                "comment": " Create a new `ZipList` with a single element in it.\n\n    current (singleton \"my element\")  == \"my element\"\n    length (singleton \"my element\")   == 1\n",
+                "type": "a -> ZipList.ZipList a"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert a `ZipList` into a `List`.\n\n    toList [\"a\", <\"b\">, \"c\"] == [\"a\", \"b\", \"c\"]\n",
+                "type": "ZipList.ZipList a -> List.List a"
+            }
+        ],
+        "binops": []
+    }
+]

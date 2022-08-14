@@ -1,0 +1,43 @@
+[
+    {
+        "name": "TimeTravel.Browser",
+        "comment": " Each functions in this module has the same interface as [Browser.App](https://package.elm-lang.org/packages/elm/browser/latest/Browser)\n\n# Start your Program\n@docs sandbox, element, document, application\n@docs defaultConfig, TimeTravelConfig\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "TimeTravelConfig",
+                "comment": " Record annotation if you want to please elm-format\n",
+                "args": [],
+                "type": "{ startMinimized : Basics.Bool, startToLeft : Basics.Bool }"
+            }
+        ],
+        "values": [
+            {
+                "name": "application",
+                "comment": " See [Browser.application](https://package.elm-lang.org/packages/elm/browser/latest/Browser#application)\n",
+                "type": "(model -> String.String) -> (msg -> String.String) -> TimeTravel.Browser.TimeTravelConfig -> { init : flags -> Url.Url -> Browser.Navigation.Key -> ( model, Platform.Cmd.Cmd msg ), view : model -> Browser.Document msg, update : msg -> model -> ( model, Platform.Cmd.Cmd msg ), subscriptions : model -> Platform.Sub.Sub msg, onUrlRequest : Browser.UrlRequest -> msg, onUrlChange : Url.Url -> msg } -> Platform.Program flags (TimeTravel.Internal.Model.Model model msg) (TimeTravel.Browser.Msg msg)"
+            },
+            {
+                "name": "defaultConfig",
+                "comment": " Default configuration record\n",
+                "type": "TimeTravel.Browser.TimeTravelConfig"
+            },
+            {
+                "name": "document",
+                "comment": " See [Browser.document](https://package.elm-lang.org/packages/elm/browser/latest/Browser#document)\n",
+                "type": "(model -> String.String) -> (msg -> String.String) -> TimeTravel.Browser.TimeTravelConfig -> { init : flags -> ( model, Platform.Cmd.Cmd msg ), view : model -> Browser.Document msg, update : msg -> model -> ( model, Platform.Cmd.Cmd msg ), subscriptions : model -> Platform.Sub.Sub msg } -> Platform.Program flags (TimeTravel.Internal.Model.Model model msg) (TimeTravel.Browser.Msg msg)"
+            },
+            {
+                "name": "element",
+                "comment": " See [Browser.element](https://package.elm-lang.org/packages/elm/browser/latest/Browser#element)\n",
+                "type": "(model -> String.String) -> (msg -> String.String) -> TimeTravel.Browser.TimeTravelConfig -> { init : flags -> ( model, Platform.Cmd.Cmd msg ), view : model -> Html.Html msg, update : msg -> model -> ( model, Platform.Cmd.Cmd msg ), subscriptions : model -> Platform.Sub.Sub msg } -> Platform.Program flags (TimeTravel.Internal.Model.Model model msg) (TimeTravel.Browser.Msg msg)"
+            },
+            {
+                "name": "sandbox",
+                "comment": " See [Browser.sandbox](https://package.elm-lang.org/packages/elm/browser/latest/Browser#sandbox)\n",
+                "type": "(model -> String.String) -> (msg -> String.String) -> TimeTravel.Browser.TimeTravelConfig -> { init : model, view : model -> Html.Html msg, update : msg -> model -> model } -> Platform.Program () (TimeTravel.Internal.Model.Model model msg) (TimeTravel.Browser.Msg msg)"
+            }
+        ],
+        "binops": []
+    }
+]

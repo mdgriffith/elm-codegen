@@ -1,0 +1,959 @@
+[
+    {
+        "name": "Expect",
+        "comment": " A library to create `Expectation`s, which describe a claim to be tested.\n\n\n## Quick Reference\n\n  - [`equal`](#equal) `(arg2 == arg1)`\n  - [`notEqual`](#notEqual) `(arg2 /= arg1)`\n  - [`lessThan`](#lessThan) `(arg2 < arg1)`\n  - [`atMost`](#atMost) `(arg2 <= arg1)`\n  - [`greaterThan`](#greaterThan) `(arg2 > arg1)`\n  - [`atLeast`](#atLeast) `(arg2 >= arg1)`\n  - [`true`](#true) `(arg == True)`\n  - [`false`](#false) `(arg == False)`\n  - [Floating Point Comparisons](#floating-point-comparisons)\n\n\n## Basic Expectations\n\n@docs Expectation, equal, notEqual, all\n\n\n## Numeric Comparisons\n\n@docs lessThan, atMost, greaterThan, atLeast\n\n\n## Floating Point Comparisons\n\nThese functions allow you to compare `Float` values up to a specified rounding error, which may be relative, absolute,\nor both. For an in-depth look, see our [Guide to Floating Point Comparison](#guide-to-floating-point-comparison).\n\n@docs FloatingPointTolerance, within, notWithin\n\n\n## Booleans\n\n@docs true, false\n\n\n## Collections\n\n@docs ok, err, equalLists, equalDicts, equalSets\n\n\n## Customizing\n\nThese functions will let you build your own expectations.\n\n@docs pass, fail, onFail\n\n\n## Guide to Floating Point Comparison\n\nIn general, if you are multiplying, you want relative tolerance, and if you're adding,\nyou want absolute tolerance. If you are doing both, you want both kinds of tolerance,\nor to split the calculation into smaller parts for testing.\n\n\n### Absolute Tolerance\n\nLet's say we want to figure out if our estimation of pi is precise enough.\n\nIs `3.14` within `0.01` of `pi`? Yes, because `3.13 < pi < 3.15`.\n\n    test \"3.14 approximates pi with absolute precision\" <|\n        \\_ ->\n            3.14 |> Expect.within (Absolute 0.01) pi\n\n\n### Relative Tolerance\n\nWhat if we also want to know if our circle circumference estimation is close enough?\n\nLet's say our circle has a radius of `r` meters. The formula for circle circumference is `C=2*r*pi`.\nTo make the calculations a bit easier ([ahem](https://tauday.com/tau-manifesto)), we'll look at half the circumference; `C/2=r*pi`.\nIs `r * 3.14` within `0.01` of `r * pi`?\nThat depends, what does `r` equal? If `r` is `0.01`mm, or `0.00001` meters, we're comparing\n`0.00001 * 3.14 - 0.01 < r * pi < 0.00001 * 3.14 + 0.01` or `-0.0099686 < 0.0000314159 < 0.0100314`.\nThat's a huge tolerance! A circumference that is _a thousand times longer_ than we expected would pass that test!\n\nOn the other hand, if `r` is very large, we're going to need many more digits of pi.\nFor an absolute tolerance of `0.01` and a pi estimation of `3.14`, this expectation only passes if `r < 2*pi`.\n\nIf we use a relative tolerance of `0.01` instead, the circle area comparison becomes much better. Is `r * 3.14` within\n`1%` of `r * pi`? Yes! In fact, three digits of pi approximation is always good enough for a 0.1% relative tolerance,\nas long as `r` isn't [too close to zero](https://en.wikipedia.org/wiki/Denormal_number).\n\n    fuzz\n        (floatRange 0.000001 100000)\n        \"Circle half-circumference with relative tolerance\"\n        (\\r -> r * 3.14 |> Expect.within (Relative 0.001) (r * pi))\n\n\n### Trouble with Numbers Near Zero\n\nIf you are adding things near zero, you probably want absolute tolerance. If you're comparing values between `-1` and `1`, you should consider using absolute tolerance.\n\nFor example: Is `1 + 2 - 3` within `1%` of `0`? Well, if `1`, `2` and `3` have any amount of rounding error, you might not get exactly zero. What is `1%` above and below `0`? Zero. We just lost all tolerance. Even if we hard-code the numbers, we might not get exactly zero; `0.1 + 0.2` rounds to a value just above `0.3`, since computers, counting in binary, cannot write down any of those three numbers using a finite number of digits, just like we cannot write `0.333...` exactly in base 10.\n\nAnother example is comparing values that are on either side of zero. `0.0001` is more than `100%` away from `-0.0001`. In fact, `infinity` is closer to `0.0001` than `0.0001` is to `-0.0001`, if you are using a relative tolerance. Twice as close, actually. So even though both `0.0001` and `-0.0001` could be considered very close to zero, they are very far apart relative to each other. The same argument applies for any number of zeroes.\n\n",
+        "unions": [
+            {
+                "name": "FloatingPointTolerance",
+                "comment": " A type to describe how close a floating point number must be to the expected value for the test to pass. This may be\nspecified as absolute or relative.\n\n`AbsoluteOrRelative` tolerance uses a logical OR between the absolute (specified first) and relative tolerance. If you\nwant a logical AND, use [`Expect.all`](#all).\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Absolute",
+                        [
+                            "Basics.Float"
+                        ]
+                    ],
+                    [
+                        "Relative",
+                        [
+                            "Basics.Float"
+                        ]
+                    ],
+                    [
+                        "AbsoluteOrRelative",
+                        [
+                            "Basics.Float",
+                            "Basics.Float"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Expectation",
+                "comment": " The result of a single test run: either a [`pass`](#pass) or a\n[`fail`](#fail).\n",
+                "args": [],
+                "type": "Test.Expectation.Expectation"
+            }
+        ],
+        "values": [
+            {
+                "name": "all",
+                "comment": " Passes if each of the given functions passes when applied to the subject.\n\nPassing an empty list is assumed to be a mistake, so `Expect.all []`\nwill always return a failed expectation no matter what else it is passed.\n\n    Expect.all\n        [ Expect.greaterThan -2\n        , Expect.lessThan 5\n        ]\n        (List.length [])\n    -- Passes because (0 > -2) is True and (0 < 5) is also True\n\nFailures resemble code written in pipeline style, so you can tell\nwhich argument is which:\n\n    -- Fails because (0 < -10) is False\n    List.length []\n        |> Expect.all\n            [ Expect.greaterThan -2\n            , Expect.lessThan -10\n            , Expect.equal 0\n            ]\n    {-\n    0\n    ╷\n    │ Expect.lessThan\n    ╵\n    -10\n    -}\n\n",
+                "type": "List.List (subject -> Expect.Expectation) -> subject -> Expect.Expectation"
+            },
+            {
+                "name": "atLeast",
+                "comment": " Passes if the second argument is greater than or equal to the first.\n\n    Expect.atLeast -2 (List.length [])\n\n    -- Passes because (0 >= -2) is True\n\nFailures resemble code written in pipeline style, so you can tell\nwhich argument is which:\n\n    -- Fails because (0 >= 3) is False\n    List.length []\n        |> Expect.atLeast 3\n\n    {-\n\n    0\n    ╷\n    │ Expect.atLeast\n    ╵\n    3\n\n    -}\n\n",
+                "type": "comparable -> comparable -> Expect.Expectation"
+            },
+            {
+                "name": "atMost",
+                "comment": " Passes if the second argument is less than or equal to the first.\n\n    Expect.atMost 1 (List.length [])\n\n    -- Passes because (0 <= 1) is True\n\nFailures resemble code written in pipeline style, so you can tell\nwhich argument is which:\n\n    -- Fails because (0 <= -3) is False\n    List.length []\n        |> Expect.atMost -3\n\n    {-\n\n    0\n    ╷\n    │ Expect.atMost\n    ╵\n    -3\n\n    -}\n\n",
+                "type": "comparable -> comparable -> Expect.Expectation"
+            },
+            {
+                "name": "equal",
+                "comment": " Passes if the arguments are equal.\n\n    Expect.equal 0 (List.length [])\n\n    -- Passes because (0 == 0) is True\n\nFailures resemble code written in pipeline style, so you can tell\nwhich argument is which:\n\n    -- Fails because the expected value didn't split the space in \"Betty Botter\"\n    String.split \" \" \"Betty Botter bought some butter\"\n        |> Expect.equal [ \"Betty Botter\", \"bought\", \"some\", \"butter\" ]\n\n    {-\n\n    [ \"Betty\", \"Botter\", \"bought\", \"some\", \"butter\" ]\n    ╷\n    │ Expect.equal\n    ╵\n    [ \"Betty Botter\", \"bought\", \"some\", \"butter\" ]\n\n    -}\n\nDo not equate `Float` values; use [`within`](#within) instead.\n\n",
+                "type": "a -> a -> Expect.Expectation"
+            },
+            {
+                "name": "equalDicts",
+                "comment": " Passes if the arguments are equal dicts.\n\n    -- Passes\n    Dict.fromList [ ( 1, \"one\" ), ( 2, \"two\" ) ]\n        |> Expect.equalDicts (Dict.fromList [ ( 1, \"one\" ), ( 2, \"two\" ) ])\n\nFailures resemble code written in pipeline style, so you can tell\nwhich argument is which, and reports which keys were missing from\nor added to each dict:\n\n    -- Fails\n    (Dict.fromList [ ( 1, \"one\" ), ( 2, \"too\" ) ])\n        |> Expect.equalDicts (Dict.fromList [ ( 1, \"one\" ), ( 2, \"two\" ), ( 3, \"three\" ) ])\n\n    {-\n\n    Dict.fromList [(1,\"one\"),(2,\"too\")]\n    diff: -[ (2,\"two\"), (3,\"three\") ] +[ (2,\"too\") ]\n    ╷\n    │ Expect.equalDicts\n    ╵\n    diff: +[ (2,\"two\"), (3,\"three\") ] -[ (2,\"too\") ]\n    Dict.fromList [(1,\"one\"),(2,\"two\"),(3,\"three\")]\n\n    -}\n\n",
+                "type": "Dict.Dict comparable a -> Dict.Dict comparable a -> Expect.Expectation"
+            },
+            {
+                "name": "equalLists",
+                "comment": " Passes if the arguments are equal lists.\n\n    -- Passes\n    [ 1, 2, 3 ]\n        |> Expect.equalLists [ 1, 2, 3 ]\n\nFailures resemble code written in pipeline style, so you can tell\nwhich argument is which, and reports which index the lists first\ndiffered at or which list was longer:\n\n    -- Fails\n    [ 1, 2, 4, 6 ]\n        |> Expect.equalLists [ 1, 2, 5 ]\n\n    {-\n\n    [1,2,4,6]\n    first diff at index index 2: +`4`, -`5`\n    ╷\n    │ Expect.equalLists\n    ╵\n    first diff at index index 2: +`5`, -`4`\n    [1,2,5]\n\n    -}\n\n",
+                "type": "List.List a -> List.List a -> Expect.Expectation"
+            },
+            {
+                "name": "equalSets",
+                "comment": " Passes if the arguments are equal sets.\n\n    -- Passes\n    Set.fromList [ 1, 2 ]\n        |> Expect.equalSets (Set.fromList [ 1, 2 ])\n\nFailures resemble code written in pipeline style, so you can tell\nwhich argument is which, and reports which keys were missing from\nor added to each set:\n\n    -- Fails\n    (Set.fromList [ 1, 2, 4, 6 ])\n        |> Expect.equalSets (Set.fromList [ 1, 2, 5 ])\n\n    {-\n\n    Set.fromList [1,2,4,6]\n    diff: -[ 5 ] +[ 4, 6 ]\n    ╷\n    │ Expect.equalSets\n    ╵\n    diff: +[ 5 ] -[ 4, 6 ]\n    Set.fromList [1,2,5]\n\n    -}\n\n",
+                "type": "Set.Set comparable -> Set.Set comparable -> Expect.Expectation"
+            },
+            {
+                "name": "err",
+                "comment": " Passes if the\n[`Result`](http://package.elm-lang.org/packages/elm-lang/core/latest/Result) is\nan `Err` rather than `Ok`. This is useful for tests where you expect to get an\nerror but you don't care what the actual error is.\n\n_(Tip: If your function returns a `Maybe` instead, consider `Expect.equal Nothing`.)_\n\n    -- Passes\n    String.toInt \"not an int\"\n        |> Expect.err\n\nTest failures will be printed with the unexpected `Ok` value contrasting with\nany `Err`.\n\n    -- Fails\n    String.toInt \"20\"\n        |> Expect.err\n\n    {-\n\n    Ok 20\n    ╷\n    │ Expect.err\n    ╵\n    Err _\n\n    -}\n\n",
+                "type": "Result.Result a b -> Expect.Expectation"
+            },
+            {
+                "name": "fail",
+                "comment": " Fails with the given message.\n\n    import Json.Decode exposing (decodeString, int)\n    import Test exposing (test)\n    import Expect\n\n\n    test \"Json.Decode.int can decode the number 42.\" <|\n        \\_ ->\n            case decodeString int \"42\" of\n                Ok _ ->\n                    Expect.pass\n\n                Err err ->\n                    Expect.fail err\n\n",
+                "type": "String.String -> Expect.Expectation"
+            },
+            {
+                "name": "false",
+                "comment": " Passes if the argument is 'False', and otherwise fails with the given message.\n\n    Expect.false \"Expected the list not to be empty.\" (List.isEmpty [ 42 ])\n\n    -- Passes because (List.isEmpty [ 42 ]) is False\n\nFailures resemble code written in pipeline style, so you can tell\nwhich argument is which:\n\n    -- Fails because (List.isEmpty []) is True\n    List.isEmpty []\n        |> Expect.false \"Expected the list not to be empty.\"\n\n    {-\n\n    Expected the list not to be empty.\n\n    -}\n\n",
+                "type": "String.String -> Basics.Bool -> Expect.Expectation"
+            },
+            {
+                "name": "greaterThan",
+                "comment": " Passes if the second argument is greater than the first.\n\n    Expect.greaterThan -2 List.length []\n\n    -- Passes because (0 > -2) is True\n\nFailures resemble code written in pipeline style, so you can tell\nwhich argument is which:\n\n    -- Fails because (0 > 1) is False\n    List.length []\n        |> Expect.greaterThan 1\n\n    {-\n\n    0\n    ╷\n    │ Expect.greaterThan\n    ╵\n    1\n\n    -}\n\n",
+                "type": "comparable -> comparable -> Expect.Expectation"
+            },
+            {
+                "name": "lessThan",
+                "comment": " Passes if the second argument is less than the first.\n\n    Expect.lessThan 1 (List.length [])\n\n    -- Passes because (0 < 1) is True\n\nFailures resemble code written in pipeline style, so you can tell\nwhich argument is which:\n\n    -- Fails because (0 < -1) is False\n    List.length []\n        |> Expect.lessThan -1\n\n\n    {-\n\n    0\n    ╷\n    │ Expect.lessThan\n    ╵\n    -1\n\n    -}\n\nDo not equate `Float` values; use [`notWithin`](#notWithin) instead.\n\n",
+                "type": "comparable -> comparable -> Expect.Expectation"
+            },
+            {
+                "name": "notEqual",
+                "comment": " Passes if the arguments are not equal.\n\n    -- Passes because (11 /= 100) is True\n    90 + 10\n        |> Expect.notEqual 11\n\n\n    -- Fails because (100 /= 100) is False\n    90 + 10\n        |> Expect.notEqual 100\n\n    {-\n\n    100\n    ╷\n    │ Expect.notEqual\n    ╵\n    100\n\n    -}\n\n",
+                "type": "a -> a -> Expect.Expectation"
+            },
+            {
+                "name": "notWithin",
+                "comment": " Passes if (and only if) a call to `within` with the same arguments would have failed.\n",
+                "type": "Expect.FloatingPointTolerance -> Basics.Float -> Basics.Float -> Expect.Expectation"
+            },
+            {
+                "name": "ok",
+                "comment": " Passes if the\n[`Result`](https://package.elm-lang.org/packages/lang/core/latest/Result) is\nan `Ok` rather than `Err`. This is useful for tests where you expect not to see\nan error, but you don't care what the actual result is.\n\n_(Tip: If your function returns a `Maybe` instead, consider `Expect.notEqual Nothing`.)_\n\n    -- Passes\n    String.toInt \"not an int\"\n        |> Expect.err\n\nTest failures will be printed with the unexpected `Ok` value contrasting with\nany `Err`.\n\n    -- Fails\n    String.toInt \"20\"\n        |> Expect.err\n\n    {-\n\n    Ok 20\n    ╷\n    │ Expect.err\n    ╵\n    Err _\n\n    -}\n\n",
+                "type": "Result.Result a b -> Expect.Expectation"
+            },
+            {
+                "name": "onFail",
+                "comment": " If the given expectation fails, replace its failure message with a custom one.\n\n    \"something\"\n        |> Expect.equal \"something else\"\n        |> Expect.onFail \"thought those two strings would be the same\"\n\n",
+                "type": "String.String -> Expect.Expectation -> Expect.Expectation"
+            },
+            {
+                "name": "pass",
+                "comment": " Always passes.\n\n    import Json.Decode exposing (decodeString, int)\n    import Test exposing (test)\n    import Expect\n\n\n    test \"Json.Decode.int can decode the number 42.\" <|\n        \\_ ->\n            case decodeString int \"42\" of\n                Ok _ ->\n                    Expect.pass\n\n                Err err ->\n                    Expect.fail err\n\n",
+                "type": "Expect.Expectation"
+            },
+            {
+                "name": "true",
+                "comment": " Passes if the argument is 'True', and otherwise fails with the given message.\n\n    Expect.true \"Expected the list to be empty.\" (List.isEmpty [])\n\n    -- Passes because (List.isEmpty []) is True\n\nFailures resemble code written in pipeline style, so you can tell\nwhich argument is which:\n\n    -- Fails because List.isEmpty returns False, but we expect True.\n    List.isEmpty [ 42 ]\n        |> Expect.true \"Expected the list to be empty.\"\n\n    {-\n\n    Expected the list to be empty.\n\n    -}\n\n",
+                "type": "String.String -> Basics.Bool -> Expect.Expectation"
+            },
+            {
+                "name": "within",
+                "comment": " Passes if the second and third arguments are equal within a tolerance\nspecified by the first argument. This is intended to avoid failing because of\nminor inaccuracies introduced by floating point arithmetic.\n\n    -- Fails because 0.1 + 0.2 == 0.30000000000000004 (0.1 is non-terminating in base 2)\n    0.1 + 0.2 |> Expect.equal 0.3\n\n    -- So instead write this test, which passes\n    0.1 + 0.2 |> Expect.within (Absolute 0.000000001) 0.3\n\nFailures resemble code written in pipeline style, so you can tell\nwhich argument is which:\n\n    -- Fails because 3.14 is not close enough to pi\n    3.14 |> Expect.within (Absolute 0.0001) pi\n\n    {-\n\n    3.14\n    ╷\n    │ Expect.within Absolute 0.0001\n    ╵\n    3.141592653589793\n\n    -}\n\n",
+                "type": "Expect.FloatingPointTolerance -> Basics.Float -> Basics.Float -> Expect.Expectation"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Fuzz",
+        "comment": " This is a library of _fuzzers_ you can use to supply values to your fuzz\ntests. You can typically pick out which ones you need according to their types.\n\nA `Fuzzer a` knows how to create values of type `a` in two different ways. It\ncan create them randomly, so that your test's expectations are run against many\nvalues. Fuzzers will often generate edge cases likely to find bugs. If the\nfuzzer can make your test fail, it also knows how to \"shrink\" that failing input\ninto more minimal examples, some of which might also cause the tests to fail. In\nthis way, fuzzers can usually find the smallest or simplest input that\nreproduces a bug.\n\n\n## Common Fuzzers\n\n@docs int, intRange, float, floatRange, percentage, string, bool, maybe, result, list, array\n\n\n## Working with Fuzzers\n\n@docs Fuzzer, oneOf, constant, map, map2, map3, map4, map5, andMap, frequency\n\n\n## Tuple Fuzzers\n\nInstead of using a tuple, consider using `fuzzN`.\n\n@docs tuple, tuple3\n\n\n## Uncommon Fuzzers\n\n@docs custom, char, unit, order, invalid\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Fuzzer",
+                "comment": " The representation of fuzzers is opaque. Conceptually, a `Fuzzer a`\nconsists of a way to randomly generate values of type `a`, and a way to shrink\nthose values.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "Fuzz.Internal.Fuzzer a"
+            }
+        ],
+        "values": [
+            {
+                "name": "andMap",
+                "comment": " Map over many fuzzers. This can act as `mapN` for `N > 5`.\nThe argument order is meant to accommodate chaining:\n\n    map f aFuzzer\n        |> andMap anotherFuzzer\n        |> andMap aThirdFuzzer\n\nNote that shrinking may be better using `mapN`.\n\n",
+                "type": "Fuzz.Fuzzer a -> Fuzz.Fuzzer (a -> b) -> Fuzz.Fuzzer b"
+            },
+            {
+                "name": "array",
+                "comment": " Given a fuzzer of a type, create a fuzzer of an array of that type.\nGenerates random arrays of varying length, favoring shorter arrays.\n",
+                "type": "Fuzz.Fuzzer a -> Fuzz.Fuzzer (Array.Array a)"
+            },
+            {
+                "name": "bool",
+                "comment": " A fuzzer for boolean values. It's useful when building up fuzzers of complex\ntypes that contain a boolean somewhere.\n\nWe recommend against writing tests fuzzing over booleans. Write a unit test for\nthe true and false cases explicitly.\n\n",
+                "type": "Fuzz.Fuzzer Basics.Bool"
+            },
+            {
+                "name": "char",
+                "comment": " A fuzzer for char values. Generates random ascii chars disregarding the control\ncharacters and the extended character set.\n",
+                "type": "Fuzz.Fuzzer Char.Char"
+            },
+            {
+                "name": "constant",
+                "comment": " Create a fuzzer that only and always returns the value provided, and performs no shrinking. This is hardly random,\nand so this function is best used as a helper when creating more complicated fuzzers.\n",
+                "type": "a -> Fuzz.Fuzzer a"
+            },
+            {
+                "name": "custom",
+                "comment": " Build a custom `Fuzzer a` by providing a `Generator a` and a `Shrinker a`. Generators are defined in\n[`elm/random`](http://package.elm-lang.org/packages/elm/random/latest). Shrinkers are defined in the [`Shrink`\nmodule](https://package.elm-lang.org/packages/elm-explorations/test/latest/Shrink). It is not possible to extract the\ngenerator and shrinker from an existing fuzzer.\n\nThis function should be considered for advanced uses. It's often easier to use `map` and other functions in this\nmodule to create a fuzzer.\n\nHere is an example for a record:\n\n    import Random\n    import Shrink\n\n    type alias Position =\n        { x : Int, y : Int }\n\n    position : Fuzzer Position\n    position =\n        Fuzz.custom\n            (Random.map2 Position (Random.int -100 100) (Random.int -100 100))\n            (\\{ x, y } -> Shrink.map Position (Shrink.int x) |> Shrink.andMap (Shrink.int y))\n\nHere is an example for a custom union type, assuming there is already a `genName : Generator String` defined:\n\n    type Question\n        = Name String\n        | Age Int\n\n    question =\n        let\n            generator =\n                Random.bool\n                    |> Random.andThen\n                        (\\b ->\n                            if b then\n                                Random.map Name genName\n\n                            else\n                                Random.map Age (Random.int 0 120)\n                        )\n\n            shrinker question =\n                case question of\n                    Name n ->\n                        Shrink.string n |> Shrink.map Name\n\n                    Age i ->\n                        Shrink.int i |> Shrink.map Age\n        in\n        Fuzz.custom generator shrinker\n\n",
+                "type": "Random.Generator a -> Shrink.Shrinker a -> Fuzz.Fuzzer a"
+            },
+            {
+                "name": "float",
+                "comment": " A fuzzer for float values. It will never produce `NaN`, `Infinity`, or `-Infinity`.\n\nIt's possible for this fuzzer to generate any other floating-point value, but it\nfavors numbers between -50 and 50, numbers between -1 and 1, and especially zero.\n\n",
+                "type": "Fuzz.Fuzzer Basics.Float"
+            },
+            {
+                "name": "floatRange",
+                "comment": " A fuzzer for float values within between a given minimum and maximum\nvalue, inclusive. Shrunken values will also be within the range.\n",
+                "type": "Basics.Float -> Basics.Float -> Fuzz.Fuzzer Basics.Float"
+            },
+            {
+                "name": "frequency",
+                "comment": " Create a new `Fuzzer` by providing a list of probabilistic weights to use\nwith other fuzzers.\nFor example, to create a `Fuzzer` that has a 1/4 chance of generating an int\nbetween -1 and -100, and a 3/4 chance of generating one between 1 and 100,\nyou could do this:\n\n    Fuzz.frequency\n        [ ( 1, Fuzz.intRange -100 -1 )\n        , ( 3, Fuzz.intRange 1 100 )\n        ]\n\nThere are a few circumstances in which this function will return an invalid\nfuzzer, which causes it to fail any test that uses it:\n\n  - If you provide an empty list of frequencies\n  - If any of the weights are less than 0\n  - If the weights sum to 0\n\nBe careful recursively using this fuzzer in its arguments. Often using `map`\nis a better way to do what you want. If you are fuzzing a tree-like data\nstructure, you should include a depth limit so to avoid infinite recursion, like\nso:\n\n    type Tree\n        = Leaf\n        | Branch Tree Tree\n\n    tree : Int -> Fuzzer Tree\n    tree i =\n        if i <= 0 then\n            Fuzz.constant Leaf\n\n        else\n            Fuzz.frequency\n                [ ( 1, Fuzz.constant Leaf )\n                , ( 2, Fuzz.map2 Branch (tree (i - 1)) (tree (i - 1)) )\n                ]\n\n",
+                "type": "List.List ( Basics.Float, Fuzz.Fuzzer a ) -> Fuzz.Fuzzer a"
+            },
+            {
+                "name": "int",
+                "comment": " A fuzzer for int values. It will never produce `NaN`, `Infinity`, or `-Infinity`.\n\nIt's possible for this fuzzer to generate any 32-bit integer, signed or unsigned, but it favors\nnumbers between -50 and 50 and especially zero.\n\n",
+                "type": "Fuzz.Fuzzer Basics.Int"
+            },
+            {
+                "name": "intRange",
+                "comment": " A fuzzer for int values between a given minimum and maximum value,\ninclusive. Shrunken values will also be within the range.\n\nRemember that [Random.maxInt](http://package.elm-lang.org/packages/elm-lang/core/latest/Random#maxInt)\nis the maximum possible int value, so you can do `intRange x Random.maxInt` to get all\nthe ints x or bigger.\n\n",
+                "type": "Basics.Int -> Basics.Int -> Fuzz.Fuzzer Basics.Int"
+            },
+            {
+                "name": "invalid",
+                "comment": " A fuzzer that is invalid for the provided reason. Any fuzzers built with it\nare also invalid. Any tests using an invalid fuzzer fail.\n",
+                "type": "String.String -> Fuzz.Fuzzer a"
+            },
+            {
+                "name": "list",
+                "comment": " Given a fuzzer of a type, create a fuzzer of a list of that type.\nGenerates random lists of varying length, favoring shorter lists.\n",
+                "type": "Fuzz.Fuzzer a -> Fuzz.Fuzzer (List.List a)"
+            },
+            {
+                "name": "map",
+                "comment": " Map a function over a fuzzer. This applies to both the generated and the shrunken values.\n",
+                "type": "(a -> b) -> Fuzz.Fuzzer a -> Fuzz.Fuzzer b"
+            },
+            {
+                "name": "map2",
+                "comment": " Map over two fuzzers.\n",
+                "type": "(a -> b -> c) -> Fuzz.Fuzzer a -> Fuzz.Fuzzer b -> Fuzz.Fuzzer c"
+            },
+            {
+                "name": "map3",
+                "comment": " Map over three fuzzers.\n",
+                "type": "(a -> b -> c -> d) -> Fuzz.Fuzzer a -> Fuzz.Fuzzer b -> Fuzz.Fuzzer c -> Fuzz.Fuzzer d"
+            },
+            {
+                "name": "map4",
+                "comment": " Map over four fuzzers.\n",
+                "type": "(a -> b -> c -> d -> e) -> Fuzz.Fuzzer a -> Fuzz.Fuzzer b -> Fuzz.Fuzzer c -> Fuzz.Fuzzer d -> Fuzz.Fuzzer e"
+            },
+            {
+                "name": "map5",
+                "comment": " Map over five fuzzers.\n",
+                "type": "(a -> b -> c -> d -> e -> f) -> Fuzz.Fuzzer a -> Fuzz.Fuzzer b -> Fuzz.Fuzzer c -> Fuzz.Fuzzer d -> Fuzz.Fuzzer e -> Fuzz.Fuzzer f"
+            },
+            {
+                "name": "maybe",
+                "comment": " Given a fuzzer of a type, create a fuzzer of a maybe for that type.\n",
+                "type": "Fuzz.Fuzzer a -> Fuzz.Fuzzer (Maybe.Maybe a)"
+            },
+            {
+                "name": "oneOf",
+                "comment": " Choose one of the given fuzzers at random. Each fuzzer has an equal chance\nof being chosen; to customize the probabilities, use [`frequency`](#frequency).\n\n    Fuzz.oneOf\n        [ Fuzz.intRange 0 3\n        , Fuzz.intRange 7 9\n        ]\n\n",
+                "type": "List.List (Fuzz.Fuzzer a) -> Fuzz.Fuzzer a"
+            },
+            {
+                "name": "order",
+                "comment": " A fuzzer for order values.\n",
+                "type": "Fuzz.Fuzzer Basics.Order"
+            },
+            {
+                "name": "percentage",
+                "comment": " A fuzzer for percentage values. Generates random floats between `0.0` and\n`1.0`. It will test zero and one about 10% of the time each.\n",
+                "type": "Fuzz.Fuzzer Basics.Float"
+            },
+            {
+                "name": "result",
+                "comment": " Given fuzzers for an error type and a success type, create a fuzzer for\na result.\n",
+                "type": "Fuzz.Fuzzer error -> Fuzz.Fuzzer value -> Fuzz.Fuzzer (Result.Result error value)"
+            },
+            {
+                "name": "string",
+                "comment": " Generates random printable ASCII strings of up to 1000 characters.\n\nShorter strings are more common, especially the empty string.\n\n",
+                "type": "Fuzz.Fuzzer String.String"
+            },
+            {
+                "name": "tuple",
+                "comment": " Turn a tuple of fuzzers into a fuzzer of tuples.\n",
+                "type": "( Fuzz.Fuzzer a, Fuzz.Fuzzer b ) -> Fuzz.Fuzzer ( a, b )"
+            },
+            {
+                "name": "tuple3",
+                "comment": " Turn a 3-tuple of fuzzers into a fuzzer of 3-tuples.\n",
+                "type": "( Fuzz.Fuzzer a, Fuzz.Fuzzer b, Fuzz.Fuzzer c ) -> Fuzz.Fuzzer ( a, b, c )"
+            },
+            {
+                "name": "unit",
+                "comment": " A fuzzer for the unit value. Unit is a type with only one value, commonly\nused as a placeholder.\n",
+                "type": "Fuzz.Fuzzer ()"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Shrink",
+        "comment": " Library containing a collection of basic shrinkers and helper functions to\nmake your own.\n\nShrinking is part of fuzzing, and the provided fuzzers have shrinkers already\nbuilt into them. You really only have to write your own shrinkers if you use\n`Fuzz.custom`.\n\n\n## Quick Reference\n\n  - [Shrinking Basics](#shrinking-basics)\n  - [Readymade Shrinkers](#readymade-shrinkers)\n  - [Functions on Shrinkers](#functions-on-shrinkers)\n  - [What are Shrinkers and why do we need them?](#what-are-shrinkers-and-why-do-we-need-them)\n\n\n## Shrinking Basics\n\n@docs Shrinker, shrink\n\n\n## Readymade Shrinkers\n\n@docs noShrink, unit, bool, order, int, atLeastInt, float, atLeastFloat, char, atLeastChar, character, string, maybe, result, lazylist, list, array, tuple, tuple3\n\n\n## Functions on Shrinkers\n\n@docs convert, keepIf, dropIf, merge, map, andMap\n\n\n## What are Shrinkers and why do we need them?\n\nFuzzers consist of two parts; a Generator and a Shrinker.\n\nThe Generator takes a random Seed as input and returns a random value of\nthe desired type, based on the Seed. When a test fails on one of those random\nvalues, the shrinker takes the failing value and makes it smaller/simpler for\nyou so you can guess more easily what property of that value caused the test\nto fail.\n\nShrinking is a way to try and find the \"smallest\", \"simplest\" example that\nfails, in order to give the tester better feedback on what went wrong.\n\nShrinkers are functions that, given a failing value, offer \"smaller\", \"simpler\"\nvalues to test against.\n\n\n### What is \"small\" (or \"simple\")?\n\nThat's kind of arbitrary, and depends on what kind of values you're fuzzing.\nWhen you write your own Shrinker, you decide what is small for the kind of data\nyou're testing with.\n\nLet's say I'm writing a Fuzzer for binary trees:\n\n    -- randomly-generated binary trees might soon become unreadable\n    type Tree a\n        = Node (Tree a) (Tree a)\n        | Leaf a\n\nNow let's say its random Generator produced the following tree that makes the\ntest fail:\n\n    Node\n        (Node\n            (Node\n                (Node\n                    (Leaf 888)\n                    (Leaf 9090)\n                )\n                (Node\n                    (Leaf -1)\n                    (Node\n                        (Leaf 731)\n                        (Node\n                            (Leaf 9621)\n                            (Leaf -12)\n                        )\n                    )\n                )\n            )\n            (Node\n                (Leaf -350)\n                (Leaf 124)\n            )\n        )\n        (Node\n            (Leaf 45)\n            (Node\n                (Leaf 123)\n                (Node\n                    (Leaf 999111)\n                    (Leaf -148148)\n                )\n            )\n        )\n\nThis is a pretty big tree, there are many nodes and leaves, and it's difficult\nto tell which is responsible for the failing. If we don't attempt to shrink it,\nthe developer will have a hard time pointing out why it fails.\n\nNow let's pass it through a shrinker, and test the resulting value until we find\nthis new value that still fails the test:\n\n    Leaf -1\n\nNice, looks like a negative number in a `Leaf` could be the issue.\n\n\n### How does shrinking work?\n\nA shrinker takes a value and returns a short list of smaller values.\n\nOnce elm-test finds a failing fuzz test, it tries to shrink the input using\nthe shrinker. We'll then try the smaller values as inputs to that test. If one\nof the smaller values also fail, we continue shrinking from there instead.\nOnce the shrinker says that there are no smaller values, or no smaller values\nfail the fuzz test, we stop shrinking.\n\nIt's helpful to think of Shrinkers as returning simpler values rather than\nsmaller values. For example, 1 is smaller/simpler than 47142, and -1 is\nsmaller/simpler than -47142.\n\nWhether or not the shrunken value is actually smaller isn't that important,\nas long as we aren't shrinking in a loop. The bool shrinker shrinks True to\nFalse, but not vice versa. If it did, and your test failed no matter if this\nvariable was True or False, there would always be a smaller/simpler value, so\nwe'd never stop shrinking! We would just re-test the same values over and over\nagain, forever!\n\n\n### How do I make my own Shrinkers?\n\nShrinkers are deterministic, since they do not have access to a random number\ngenerator. It's the generator part of the fuzzer that's meant to find the rare\nedge cases; it's the shrinkers job to make the failures as understandable as\npossible.\n\nShrinkers have to return a LazyList, something that works a bit like a list.\nThat LazyList may or may not have another element each time we ask for one,\nand doesn't necessarily have them all committed to memory. That allows it to\ntake less space (interesting since there may be quite a lot of elements).\n\nThat LazyList should also provide a finite number of shrunk values (if it\nprovided an infinite number of them, tests using it might continue indefinitely\nat the shrinking phase).\n\nShrinkers must never shrink values in a circle, like:\n\n    loopinBooleanShrinker True == [ False ]\n\n    loopinBooleanShrinker False == [ True ]\n\nDoing so will also result in tests looping indefinitely, testing and re-testing\nthe same values in a circle.\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Shrinker",
+                "comment": " The shrinker type.\nA shrinker is a function that takes a value and returns a lazy list of values\nthat are in some sense \"smaller\" than the given value. If no such values exist,\nthen the shrinker should just return the empty list.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "a -> Lazy.List.LazyList a"
+            }
+        ],
+        "values": [
+            {
+                "name": "andMap",
+                "comment": " Apply a lazy list of functions on a lazy list of values.\n\nThe argument order is so that it is easy to use in `|>` chains.\n\n",
+                "type": "Lazy.List.LazyList a -> Lazy.List.LazyList (a -> b) -> Lazy.List.LazyList b"
+            },
+            {
+                "name": "array",
+                "comment": " Array shrinker constructor.\nTakes a shrinker of values and returns a shrinker of Arrays.\n",
+                "type": "Shrink.Shrinker a -> Shrink.Shrinker (Array.Array a)"
+            },
+            {
+                "name": "atLeastChar",
+                "comment": " Construct a shrinker of chars which considers the given char to\nbe most minimal.\n",
+                "type": "Char.Char -> Shrink.Shrinker Char.Char"
+            },
+            {
+                "name": "atLeastFloat",
+                "comment": " Construct a shrinker of floats which considers the given float to\nbe most minimal.\n",
+                "type": "Basics.Float -> Basics.Float -> Lazy.List.LazyList Basics.Float"
+            },
+            {
+                "name": "atLeastInt",
+                "comment": " Construct a shrinker of ints which considers the given int to\nbe most minimal.\n",
+                "type": "Basics.Int -> Basics.Int -> Lazy.List.LazyList Basics.Int"
+            },
+            {
+                "name": "bool",
+                "comment": " Shrinker of bools.\n",
+                "type": "Basics.Bool -> Lazy.List.LazyList Basics.Bool"
+            },
+            {
+                "name": "char",
+                "comment": " Shrinker of chars.\n",
+                "type": "Shrink.Shrinker Char.Char"
+            },
+            {
+                "name": "character",
+                "comment": " Shrinker of chars which considers the empty space as the most\nminimal char and omits the control key codes.\n\nEquivalent to:\n\n    atLeastChar (Char.fromCode 32)\n\n",
+                "type": "Shrink.Shrinker Char.Char"
+            },
+            {
+                "name": "convert",
+                "comment": " Convert a Shrinker of a's into a Shrinker of b's using two inverse functions.\n)\nIf you use this function as follows:\n\n    shrinkerB =\n        convert f g shrinkerA\n\nMake sure that:\n\n    `f(g(x)) == x` for all x\n    -- (putting something into g then feeding the output into f must give back\n    -- just that original something, whatever it is)\n\nOr else this process will generate garbage.\n\n",
+                "type": "(a -> b) -> (b -> a) -> Shrink.Shrinker a -> b -> Lazy.List.LazyList b"
+            },
+            {
+                "name": "dropIf",
+                "comment": " Filter out the results of a shrinker. The resulting shrinker\nwill only throw away shrinks which satisfy the given predicate.\n",
+                "type": "(a -> Basics.Bool) -> Shrink.Shrinker a -> Shrink.Shrinker a"
+            },
+            {
+                "name": "float",
+                "comment": " Shrinker of floats.\n",
+                "type": "Basics.Float -> Lazy.List.LazyList Basics.Float"
+            },
+            {
+                "name": "int",
+                "comment": " Shrinker of integers.\n",
+                "type": "Basics.Int -> Lazy.List.LazyList Basics.Int"
+            },
+            {
+                "name": "keepIf",
+                "comment": " Filter out the results of a shrinker. The resulting shrinker\nwill only produce shrinks which satisfy the given predicate.\n",
+                "type": "(a -> Basics.Bool) -> Shrink.Shrinker a -> a -> Lazy.List.LazyList a"
+            },
+            {
+                "name": "lazylist",
+                "comment": " Lazy List shrinker constructor. Takes a shrinker of values and returns a\nshrinker of Lazy Lists. The lazy list being shrunk must be finite. (I mean\nreally, how do you shrink infinity?)\n",
+                "type": "Shrink.Shrinker a -> Lazy.List.LazyList a -> Lazy.List.LazyList (Lazy.List.LazyList a)"
+            },
+            {
+                "name": "list",
+                "comment": " List shrinker constructor.\nTakes a shrinker of values and returns a shrinker of Lists.\n",
+                "type": "Shrink.Shrinker a -> Shrink.Shrinker (List.List a)"
+            },
+            {
+                "name": "map",
+                "comment": " Re-export of `Lazy.List.map`\nThis is useful in order to compose shrinkers, especially when used in\nconjunction with `andMap`. For example:\n\n    type alias Vector =\n        { x : Float\n        , y : Float\n        , z : Float\n        }\n\n    vector : Shrinker Vector\n    vector { x, y, z } =\n        Vector\n            |> map (float x)\n            |> andMap (float y)\n            |> andMap (float z)\n\n",
+                "type": "(a -> b) -> Lazy.List.LazyList a -> Lazy.List.LazyList b"
+            },
+            {
+                "name": "maybe",
+                "comment": " Maybe shrinker constructor.\nTakes a shrinker of values and returns a shrinker of Maybes.\n",
+                "type": "Shrink.Shrinker a -> Maybe.Maybe a -> Lazy.List.LazyList (Maybe.Maybe a)"
+            },
+            {
+                "name": "merge",
+                "comment": " Merge two shrinkers. Generates all the values in the first\nshrinker, and then all the non-duplicated values in the second\nshrinker.\n",
+                "type": "Shrink.Shrinker a -> Shrink.Shrinker a -> a -> Lazy.List.LazyList a"
+            },
+            {
+                "name": "noShrink",
+                "comment": " Perform no shrinking. Equivalent to the empty lazy list.\n",
+                "type": "a -> Lazy.List.LazyList a"
+            },
+            {
+                "name": "order",
+                "comment": " Shrinker of `Order` values.\n",
+                "type": "Basics.Order -> Lazy.List.LazyList Basics.Order"
+            },
+            {
+                "name": "result",
+                "comment": " Result shrinker constructor. Takes a shrinker of errors and a shrinker of\nvalues and returns a shrinker of Results.\n",
+                "type": "Shrink.Shrinker error -> Shrink.Shrinker value -> Result.Result error value -> Lazy.List.LazyList (Result.Result error value)"
+            },
+            {
+                "name": "shrink",
+                "comment": " Perform shrinking. Takes a predicate that returns `True` if you want\nshrinking to continue (most likely the failing test for which we are attempting\nto shrink the value). Also takes the shrinker and the value to shrink.\n\nIt returns the shrunken value, or the input value if no shrunken values that\nsatisfy the predicate are found.\n\n",
+                "type": "(a -> Basics.Bool) -> Shrink.Shrinker a -> a -> a"
+            },
+            {
+                "name": "string",
+                "comment": " Shrinker of strings. Considers the empty string to be the most\nminimal string and the space to be the most minimal char.\n\nEquivalent to:\n\n    convert String.fromList String.toList (list character)\n\n",
+                "type": "Shrink.Shrinker String.String"
+            },
+            {
+                "name": "tuple",
+                "comment": " 2-Tuple shrinker constructor.\nTakes a tuple of shrinkers and returns a shrinker of tuples.\n",
+                "type": "( Shrink.Shrinker a, Shrink.Shrinker b ) -> ( a, b ) -> Lazy.List.LazyList ( a, b )"
+            },
+            {
+                "name": "tuple3",
+                "comment": " 3-Tuple shrinker constructor.\nTakes a tuple of shrinkers and returns a shrinker of tuples.\n",
+                "type": "( Shrink.Shrinker a, Shrink.Shrinker b, Shrink.Shrinker c ) -> ( a, b, c ) -> Lazy.List.LazyList ( a, b, c )"
+            },
+            {
+                "name": "unit",
+                "comment": " Shrink the empty tuple. Equivalent to `noShrink`.\n",
+                "type": "Shrink.Shrinker ()"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Test",
+        "comment": " A module containing functions for creating and managing tests.\n\n@docs Test, test\n\n\n## Organizing Tests\n\n@docs describe, concat, todo, skip, only\n\n\n## Fuzz Testing\n\n@docs fuzz, fuzz2, fuzz3, fuzzWith, FuzzOptions\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "FuzzOptions",
+                "comment": " Options [`fuzzWith`](#fuzzWith) accepts. Currently there is only one but this\nAPI is designed so that it can accept more in the future.\n\n\n### `runs`\n\nThe number of times to run each fuzz test. (Default is 100.)\n\n    import Test exposing (fuzzWith)\n    import Fuzz exposing (list, int)\n    import Expect\n\n\n    fuzzWith { runs = 350 } (list int) \"List.length should always be positive\" <|\n        -- This anonymous function will be run 350 times, each time with a\n        -- randomly-generated fuzzList value. (It will always be a list of ints\n        -- because of (list int) above.)\n        \\fuzzList ->\n            fuzzList\n                |> List.length\n                |> Expect.atLeast 0\n\n",
+                "args": [],
+                "type": "{ runs : Basics.Int }"
+            },
+            {
+                "name": "Test",
+                "comment": " A test which has yet to be evaluated. When evaluated, it produces one\nor more [`Expectation`](../Expect#Expectation)s.\n\nSee [`test`](#test) and [`fuzz`](#fuzz) for some ways to create a `Test`.\n\n",
+                "args": [],
+                "type": "Test.Internal.Test"
+            }
+        ],
+        "values": [
+            {
+                "name": "concat",
+                "comment": " Run each of the given tests.\n\n    concat [ testDecoder, testSorting ]\n\n",
+                "type": "List.List Test.Test -> Test.Test"
+            },
+            {
+                "name": "describe",
+                "comment": " Apply a description to a list of tests.\n\n    import Test exposing (describe, test, fuzz)\n    import Fuzz exposing (int)\n    import Expect\n\n\n    describe \"List\"\n        [ describe \"reverse\"\n            [ test \"has no effect on an empty list\" <|\n                \\_ ->\n                    List.reverse []\n                        |> Expect.equal []\n            , fuzz int \"has no effect on a one-item list\" <|\n                \\num ->\n                     List.reverse [ num ]\n                        |> Expect.equal [ num ]\n            ]\n        ]\n\nPassing an empty list will result in a failing test, because you either made a\nmistake or are creating a placeholder.\n\n",
+                "type": "String.String -> List.List Test.Test -> Test.Test"
+            },
+            {
+                "name": "fuzz",
+                "comment": " Take a function that produces a test, and calls it several (usually 100) times, using a randomly-generated input\nfrom a [`Fuzzer`](http://package.elm-lang.org/packages/elm-community/elm-test/latest/Fuzz) each time. This allows you to\ntest that a property that should always be true is indeed true under a wide variety of conditions. The function also\ntakes a string describing the test.\n\nThese are called \"[fuzz tests](https://en.wikipedia.org/wiki/Fuzz_testing)\" because of the randomness.\nYou may find them elsewhere called [property-based tests](http://blog.jessitron.com/2013/04/property-based-testing-what-is-it.html),\n[generative tests](http://www.pivotaltracker.com/community/tracker-blog/generative-testing), or\n[QuickCheck-style tests](https://en.wikipedia.org/wiki/QuickCheck).\n\n    import Test exposing (fuzz)\n    import Fuzz exposing (list, int)\n    import Expect\n\n\n    fuzz (list int) \"List.length should always be positive\" <|\n        -- This anonymous function will be run 100 times, each time with a\n        -- randomly-generated fuzzList value.\n        \\fuzzList ->\n            fuzzList\n                |> List.length\n                |> Expect.atLeast 0\n\n",
+                "type": "Fuzz.Fuzzer a -> String.String -> (a -> Expect.Expectation) -> Test.Test"
+            },
+            {
+                "name": "fuzz2",
+                "comment": " Run a [fuzz test](#fuzz) using two random inputs.\n\nThis is a convenience function that lets you skip calling [`Fuzz.tuple`](Fuzz#tuple).\n\nSee [`fuzzWith`](#fuzzWith) for an example of writing this in tuple style.\n\n    import Test exposing (fuzz2)\n    import Fuzz exposing (list, int)\n\n\n    fuzz2 (list int) int \"List.reverse never influences List.member\" <|\n        \\nums target ->\n            List.member target (List.reverse nums)\n                |> Expect.equal (List.member target nums)\n\n",
+                "type": "Fuzz.Fuzzer a -> Fuzz.Fuzzer b -> String.String -> (a -> b -> Expect.Expectation) -> Test.Test"
+            },
+            {
+                "name": "fuzz3",
+                "comment": " Run a [fuzz test](#fuzz) using three random inputs.\n\nThis is a convenience function that lets you skip calling [`Fuzz.tuple3`](Fuzz#tuple3).\n\n",
+                "type": "Fuzz.Fuzzer a -> Fuzz.Fuzzer b -> Fuzz.Fuzzer c -> String.String -> (a -> b -> c -> Expect.Expectation) -> Test.Test"
+            },
+            {
+                "name": "fuzzWith",
+                "comment": " Run a [`fuzz`](#fuzz) test with the given [`FuzzOptions`](#FuzzOptions).\n\nNote that there is no `fuzzWith2`, but you can always pass more fuzz values in\nusing [`Fuzz.tuple`](Fuzz#tuple), [`Fuzz.tuple3`](Fuzz#tuple3),\nfor example like this:\n\n    import Test exposing (fuzzWith)\n    import Fuzz exposing (tuple, list, int)\n    import Expect\n\n\n    fuzzWith { runs = 4200 }\n        (tuple ( list int, int ))\n        \"List.reverse never influences List.member\" <|\n            \\(nums, target) ->\n                List.member target (List.reverse nums)\n                    |> Expect.equal (List.member target nums)\n\n",
+                "type": "Test.FuzzOptions -> Fuzz.Fuzzer a -> String.String -> (a -> Expect.Expectation) -> Test.Test"
+            },
+            {
+                "name": "only",
+                "comment": " Returns a [`Test`](#Test) that causes other tests to be skipped, and\nonly runs the given one.\n\nCalls to `only` aren't meant to be committed to version control. Instead, use\nthem when you want to focus on getting a particular subset of your tests to pass.\nIf you use `only`, your entire test suite will fail, even if\neach of the individual tests pass. This is to help avoid accidentally\ncommitting a `only` to version control.\n\nIf you you use `only` on multiple tests, only those tests will run. If you\nput a `only` inside another `only`, only the outermost `only`\nwill affect which tests gets run.\n\nSee also [`skip`](#skip). Note that `skip` takes precedence over `only`;\nif you use a `skip` inside an `only`, it will still get skipped, and if you use\nan `only` inside a `skip`, it will also get skipped.\n\n    describe \"List\"\n        [ only <|\n            describe \"reverse\"\n                [ test \"has no effect on an empty list\" <|\n                    \\_ ->\n                        List.reverse []\n                            |> Expect.equal []\n                , fuzz int \"has no effect on a one-item list\" <|\n                    \\num ->\n                        List.reverse [ num ]\n                            |> Expect.equal [ num ]\n                ]\n        , test \"This will not get run, because of the `only` above!\" <|\n            \\_ ->\n                List.length []\n                    |> Expect.equal 0\n        ]\n\n",
+                "type": "Test.Test -> Test.Test"
+            },
+            {
+                "name": "skip",
+                "comment": " Returns a [`Test`](#Test) that gets skipped.\n\nCalls to `skip` aren't meant to be committed to version control. Instead, use\nit when you want to focus on getting a particular subset of your tests to\npass. If you use `skip`, your entire test suite will fail, even if\neach of the individual tests pass. This is to help avoid accidentally\ncommitting a `skip` to version control.\n\nSee also [`only`](#only). Note that `skip` takes precedence over `only`;\nif you use a `skip` inside an `only`, it will still get skipped, and if you use\nan `only` inside a `skip`, it will also get skipped.\n\n    describe \"List\"\n        [ skip <|\n            describe \"reverse\"\n                [ test \"has no effect on an empty list\" <|\n                    \\_ ->\n                        List.reverse []\n                            |> Expect.equal []\n                , fuzz int \"has no effect on a one-item list\" <|\n                    \\num ->\n                        List.reverse [ num ]\n                            |> Expect.equal [ num ]\n                ]\n        , test \"This is the only test that will get run; the other was skipped!\" <|\n            \\_ ->\n                List.length []\n                    |> Expect.equal 0\n        ]\n\n",
+                "type": "Test.Test -> Test.Test"
+            },
+            {
+                "name": "test",
+                "comment": " Return a [`Test`](#Test) that evaluates a single\n[`Expectation`](../Expect#Expectation).\n\n    import Test exposing (fuzz)\n    import Expect\n\n\n    test \"the empty list has 0 length\" <|\n        \\_ ->\n            List.length []\n                |> Expect.equal 0\n\n",
+                "type": "String.String -> (() -> Expect.Expectation) -> Test.Test"
+            },
+            {
+                "name": "todo",
+                "comment": " Returns a [`Test`](#Test) that is \"TODO\" (not yet implemented). These tests\nalways fail, but test runners will only include them in their output if there\nare no other failures.\n\nThese tests aren't meant to be committed to version control. Instead, use them\nwhen you're brainstorming lots of tests you'd like to write, but you can't\nimplement them all at once. When you replace `todo` with a real test, you'll be\nable to see if it fails without clutter from tests still not implemented. But,\nunlike leaving yourself comments, you'll be prompted to implement these tests\nbecause your suite will fail.\n\n    describe \"a new thing\"\n        [ todo \"does what is expected in the common case\"\n        , todo \"correctly handles an edge case I just thought of\"\n        ]\n\nThis functionality is similar to \"pending\" tests in other frameworks, except\nthat a TODO test is considered failing but a pending test often is not.\n\n",
+                "type": "String.String -> Test.Test"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Test.Html.Event",
+        "comment": " This module lets you simulate events on `Html` values and expect that\nthey result in certain `Msg` values being sent to `update`.\n\n\n## Simulating Events\n\n@docs Event, simulate, expect, toResult\n\n\n## Event Builders\n\n@docs custom, click, doubleClick, mouseDown, mouseUp, mouseEnter, mouseLeave, mouseOver, mouseOut, input, check, submit, blur, focus\n\n",
+        "unions": [
+            {
+                "name": "Event",
+                "comment": " A simulated event.\n\nSee [`simulate`](#simulate).\n\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "blur",
+                "comment": " A [`blur`](https://developer.mozilla.org/en-US/docs/Web/Events/blur) event.\n",
+                "type": "( String.String, Json.Encode.Value )"
+            },
+            {
+                "name": "check",
+                "comment": " A [`change`](https://developer.mozilla.org/en-US/docs/Web/Events/change) event\nwhere `event.target.checked` is set to the given `Bool` value.\n",
+                "type": "Basics.Bool -> ( String.String, Json.Encode.Value )"
+            },
+            {
+                "name": "click",
+                "comment": " A [`click`](https://developer.mozilla.org/en-US/docs/Web/Events/click) event.\n",
+                "type": "( String.String, Json.Encode.Value )"
+            },
+            {
+                "name": "custom",
+                "comment": " Simulate a custom event. The `String` is the event name, and the `Value` is the event object\nthe browser would send to the event listener callback.\n\n    import Test.Html.Event as Event\n    import Json.Encode as Encode exposing (Value)\n\n\n    type Msg\n        = Change String\n\n\n    test \"Input produces expected Msg\" <|\n        \\() ->\n            let\n                simulatedEventObject : Value\n                simulatedEventObject =\n                    Encode.object\n                        [ ( \"target\"\n                          , Encode.object [ ( \"value\", Encode.string \"cats\" ) ]\n                          )\n                        ]\n            in\n                Html.input [ onInput Change ] [ ]\n                    |> Query.fromHtml\n                    |> Event.simulate (Event.custom \"input\" simulatedEventObject)\n                    |> Event.expect (Change \"cats\")\n\n",
+                "type": "String.String -> Json.Encode.Value -> ( String.String, Json.Encode.Value )"
+            },
+            {
+                "name": "doubleClick",
+                "comment": " A [`dblclick`](https://developer.mozilla.org/en-US/docs/Web/Events/dblclick) event.\n",
+                "type": "( String.String, Json.Encode.Value )"
+            },
+            {
+                "name": "expect",
+                "comment": " Passes if the given message is triggered by the simulated event.\n\n    import Test.Html.Event as Event\n\n    type Msg\n        = Change String\n\n\n    test \"Input produces expected Msg\" <|\n        \\() ->\n            Html.input [ onInput Change ] [ ]\n                |> Query.fromHtml\n                |> Event.simulate (Event.input \"cats\")\n                |> Event.expect (Change \"cats\")\n\n",
+                "type": "msg -> Test.Html.Event.Event msg -> Expect.Expectation"
+            },
+            {
+                "name": "focus",
+                "comment": " A [`focus`](https://developer.mozilla.org/en-US/docs/Web/Events/focus) event.\n",
+                "type": "( String.String, Json.Encode.Value )"
+            },
+            {
+                "name": "input",
+                "comment": " An [`input`](https://developer.mozilla.org/en-US/docs/Web/Events/input) event.\n",
+                "type": "String.String -> ( String.String, Json.Encode.Value )"
+            },
+            {
+                "name": "mouseDown",
+                "comment": " A [`mousedown`](https://developer.mozilla.org/en-US/docs/Web/Events/mousedown) event.\n",
+                "type": "( String.String, Json.Encode.Value )"
+            },
+            {
+                "name": "mouseEnter",
+                "comment": " A [`mouseenter`](https://developer.mozilla.org/en-US/docs/Web/Events/mouseenter) event.\n",
+                "type": "( String.String, Json.Encode.Value )"
+            },
+            {
+                "name": "mouseLeave",
+                "comment": " A [`mouseleave`](https://developer.mozilla.org/en-US/docs/Web/Events/mouseleave) event.\n",
+                "type": "( String.String, Json.Encode.Value )"
+            },
+            {
+                "name": "mouseOut",
+                "comment": " A [`mouseout`](https://developer.mozilla.org/en-US/docs/Web/Events/mouseout) event.\n",
+                "type": "( String.String, Json.Encode.Value )"
+            },
+            {
+                "name": "mouseOver",
+                "comment": " A [`mouseover`](https://developer.mozilla.org/en-US/docs/Web/Events/mouseover) event.\n",
+                "type": "( String.String, Json.Encode.Value )"
+            },
+            {
+                "name": "mouseUp",
+                "comment": " A [`mouseup`](https://developer.mozilla.org/en-US/docs/Web/Events/mouseup) event.\n",
+                "type": "( String.String, Json.Encode.Value )"
+            },
+            {
+                "name": "simulate",
+                "comment": " Simulate an event on a node.\n\n    import Test.Html.Event as Event\n\n    type Msg\n        = Change String\n\n\n    test \"Input produces expected Msg\" <|\n        \\() ->\n            Html.input [ onInput Change ] [ ]\n                |> Query.fromHtml\n                |> Event.simulate (Event.input \"cats\")\n                |> Event.expect (Change \"cats\")\n\n",
+                "type": "( String.String, Json.Encode.Value ) -> Test.Html.Query.Single msg -> Test.Html.Event.Event msg"
+            },
+            {
+                "name": "submit",
+                "comment": " A [`submit`](https://developer.mozilla.org/en-US/docs/Web/Events/submit) event.\n",
+                "type": "( String.String, Json.Encode.Value )"
+            },
+            {
+                "name": "toResult",
+                "comment": " Returns a Result with the Msg produced by the event simulated on a node.\nNote that Event.expect gives nicer messages; this is generally more useful\nwhen testing that an event handler is _not_ present.\n\n    import Test.Html.Event as Event\n\n\n    test \"Input produces expected Msg\" <|\n        \\() ->\n            Html.input [ onInput Change ] [ ]\n                |> Query.fromHtml\n                |> Event.simulate (Event.input \"cats\")\n                |> Event.toResult\n                |> Expect.equal (Ok (Change \"cats\"))\n\n",
+                "type": "Test.Html.Event.Event msg -> Result.Result String.String msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Test.Html.Query",
+        "comment": " Querying HTML structure.\n\n@docs Single, Multiple, fromHtml\n\n\n## Querying\n\n@docs find, findAll, children, first, index, keep\n\n\n## Expecting\n\n@docs count, contains, has, hasNot, each\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Multiple",
+                "comment": " A query that may find any number of elements, including zero.\n\nContrast with [`Single`](#Single).\n\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "Test.Html.Query.Internal.Multiple msg"
+            },
+            {
+                "name": "Single",
+                "comment": " A query that expects to find exactly one element.\n\nContrast with [`Multiple`](#Multiple).\n\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "Test.Html.Query.Internal.Single msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "children",
+                "comment": " Return the matched element's immediate child elements.\n\n    import Html exposing (div, ul, li)\n    import Html.Attributes exposing (class)\n    import Test.Html.Query as Query\n    import Test exposing (test)\n    import Test.Html.Selector exposing (tag, classes)\n\n\n    test \"The <ul> only has <li> children\" <|\n        \\() ->\n            div []\n                [ ul [ class \"items active\" ]\n                    [ li [ class \"item\"] [ text \"first item\" ]\n                    , li [ class \"item selected\"] [ text \"second item\" ]\n                    , li [ class \"item\"] [ text \"third item\" ]\n                    ]\n                ]\n                |> Query.fromHtml\n                |> Query.find [ class \"items\" ]\n                |> Query.children [ class \"selected\" ]\n                |> Query.count (Expect.equal 1)\n\n",
+                "type": "List.List Test.Html.Selector.Internal.Selector -> Test.Html.Query.Single msg -> Test.Html.Query.Multiple msg"
+            },
+            {
+                "name": "contains",
+                "comment": " Expect the element to have at least one descendant matching\n\n    import Html exposing (div, ul, li)\n    import Html.Attributes exposing (class)\n    import Test.Html.Query as Query\n    import Test exposing (test)\n    import Test.Html.Selector exposing (tag, classes)\n\n\n    test \"The list has two li: one with the text \\\"third item\\\" and \\\n        another one with \\\"first item\\\"\" <|\n        \\() ->\n            div []\n                [ ul [ class \"items active\" ]\n                    [ li [] [ text \"first item\" ]\n                    , li [] [ text \"second item\" ]\n                    , li [] [ text \"third item\" ]\n                    ]\n                ]\n                |> Query.fromHtml\n                |> Query.contains\n                    [ li [] [ text \"third item\" ]\n                    , li [] [ text \"first item\" ]\n                    ]\n\n",
+                "type": "List.List (Html.Html msg) -> Test.Html.Query.Single msg -> Expect.Expectation"
+            },
+            {
+                "name": "count",
+                "comment": " Expect the number of elements matching the query fits the given expectation.\n\n    import Html exposing (div, ul, li)\n    import Html.Attributes exposing (class)\n    import Test.Html.Query as Query\n    import Test exposing (test)\n    import Test.Html.Selector exposing (tag)\n    import Expect\n\n\n    test \"The list has three items\" <|\n        \\() ->\n            div []\n                [ ul [ class \"items active\" ]\n                    [ li [] [ text \"first item\" ]\n                    , li [] [ text \"second item\" ]\n                    , li [] [ text \"third item\" ]\n                    ]\n                ]\n                |> Query.fromHtml\n                |> Query.findAll [ tag \"li\" ]\n                |> Query.count (Expect.equal 3)\n\n",
+                "type": "(Basics.Int -> Expect.Expectation) -> Test.Html.Query.Multiple msg -> Expect.Expectation"
+            },
+            {
+                "name": "each",
+                "comment": " Expect that a [`Single`](#Single) expectation will hold true for each of the\n[`Multiple`](#Multiple) matched elements.\n\n    import Html exposing (div, ul, li)\n    import Html.Attributes exposing (class)\n    import Test.Html.Query as Query\n    import Test exposing (test)\n    import Test.Html.Selector exposing (tag, classes)\n\n\n    test \"The list has both the classes 'items' and 'active'\" <|\n        \\() ->\n            div []\n                [ ul [ class \"items active\" ]\n                    [ li [] [ text \"first item\" ]\n                    , li [] [ text \"second item\" ]\n                    , li [] [ text \"third item\" ]\n                    ]\n                ]\n                |> Query.fromHtml\n                |> Query.findAll [ tag \"ul\" ]\n                |> Query.each\n                    (Expect.all\n                        [ Query.has [ tag \"ul\" ]\n                        , Query.has [ classes [ \"items\", \"active\" ] ]\n                        ]\n                    )\n\n",
+                "type": "(Test.Html.Query.Single msg -> Expect.Expectation) -> Test.Html.Query.Multiple msg -> Expect.Expectation"
+            },
+            {
+                "name": "find",
+                "comment": " Find exactly one descendant element which matches all the given selectors.\nIf no descendants match, or if more than one matches, the test will fail.\n\n    import Html exposing (div, ul, li)\n    import Html.Attributes exposing (class)\n    import Test.Html.Query as Query\n    import Test exposing (test)\n    import Test.Html.Selector exposing (tag, classes)\n\n\n    test \"The list has both the classes 'items' and 'active'\" <|\n        \\() ->\n            div []\n                [ ul [ class \"items active\" ]\n                    [ li [] [ text \"first item\" ]\n                    , li [] [ text \"second item\" ]\n                    , li [] [ text \"third item\" ]\n                    ]\n                ]\n                |> Query.fromHtml\n                |> Query.find [ tag \"ul\" ]\n                |> Query.has [ classes [ \"items\", \"active\" ] ]\n\n",
+                "type": "List.List Test.Html.Selector.Internal.Selector -> Test.Html.Query.Single msg -> Test.Html.Query.Single msg"
+            },
+            {
+                "name": "findAll",
+                "comment": " Find the descendant elements which match all the given selectors.\n\n    import Html exposing (div, ul, li)\n    import Html.Attributes exposing (class)\n    import Test.Html.Query as Query\n    import Test exposing (test)\n    import Test.Html.Selector exposing (tag)\n    import Expect\n\n\n    test \"The list has three items\" <|\n        \\() ->\n            div []\n                [ ul [ class \"items active\" ]\n                    [ li [] [ text \"first item\" ]\n                    , li [] [ text \"second item\" ]\n                    , li [] [ text \"third item\" ]\n                    ]\n                ]\n                |> Query.fromHtml\n                |> Query.findAll [ tag \"li\" ]\n                |> Query.count (Expect.equal 3)\n\n",
+                "type": "List.List Test.Html.Selector.Internal.Selector -> Test.Html.Query.Single msg -> Test.Html.Query.Multiple msg"
+            },
+            {
+                "name": "first",
+                "comment": " Return the first element in a match. If there were no matches, the test\nwill fail.\n\n`Query.first` is a shorthand for `Query.index 0` - they do the same thing.\n\n    import Html exposing (div, ul, li)\n    import Html.Attributes exposing (class)\n    import Test.Html.Query as Query\n    import Test exposing (test)\n    import Test.Html.Selector exposing (tag, classes)\n\n\n    test \"The first <li> is called 'first item'\" <|\n        \\() ->\n            div []\n                [ ul [ class \"items active\" ]\n                    [ li [] [ text \"first item\" ]\n                    , li [] [ text \"second item\" ]\n                    , li [] [ text \"third item\" ]\n                    ]\n                ]\n                |> Query.fromHtml\n                |> Query.findAll [ tag \"li\" ]\n                |> Query.first\n                |> Query.has [ text \"first item\" ]\n\n",
+                "type": "Test.Html.Query.Multiple msg -> Test.Html.Query.Single msg"
+            },
+            {
+                "name": "fromHtml",
+                "comment": " Translate a `Html` value into a `Single` query. This is how queries\ntypically begin.\n\n    import Html\n    import Test.Html.Query as Query\n    import Test exposing (test)\n    import Test.Html.Selector exposing (text)\n\n\n    test \"Button has the expected text\" <|\n        \\() ->\n            Html.button [] [ Html.text \"I'm a button!\" ]\n                |> Query.fromHtml\n                |> Query.has [ text \"I'm a button!\" ]\n\n",
+                "type": "Html.Html msg -> Test.Html.Query.Single msg"
+            },
+            {
+                "name": "has",
+                "comment": " Expect the element to match all of the given selectors.\n\n    import Html exposing (div, ul, li)\n    import Html.Attributes exposing (class)\n    import Test.Html.Query as Query\n    import Test exposing (test)\n    import Test.Html.Selector exposing (tag, classes)\n\n\n    test \"The list has both the classes 'items' and 'active'\" <|\n        \\() ->\n            div []\n                [ ul [ class \"items active\" ]\n                    [ li [] [ text \"first item\" ]\n                    , li [] [ text \"second item\" ]\n                    , li [] [ text \"third item\" ]\n                    ]\n                ]\n                |> Query.fromHtml\n                |> Query.find [ tag \"ul\" ]\n                |> Query.has [ tag \"ul\", classes [ \"items\", \"active\" ] ]\n\n",
+                "type": "List.List Test.Html.Selector.Internal.Selector -> Test.Html.Query.Single msg -> Expect.Expectation"
+            },
+            {
+                "name": "hasNot",
+                "comment": " Expect the element to **not** match all of the given selectors.\n\n    import Html exposing (div)\n    import Html.Attributes as Attributes\n    import Test.Html.Query as Query\n    import Test exposing (test)\n    import Test.Html.Selector exposing (tag, class)\n\n\n    test \"The div element has no progress-bar class\" <|\n        \\() ->\n            div [ Attributes.class \"button\" ] []\n                |> Query.fromHtml\n                |> Query.find [ tag \"div\" ]\n                |> Query.hasNot [ tag \"div\", class \"progress-bar\" ]\n\n",
+                "type": "List.List Test.Html.Selector.Internal.Selector -> Test.Html.Query.Single msg -> Expect.Expectation"
+            },
+            {
+                "name": "index",
+                "comment": " Return the element in a match at the given index. For example,\n`Query.index 0` would match the first element, and `Query.index 1` would match\nthe second element.\n\nYou can pass negative numbers to get elements from the end - for example, `Query.index -1`\nwill match the last element, and `Query.index -2` will match the second-to-last.\n\nIf the index falls outside the bounds of the match, the test will fail.\n\n    import Html exposing (div, ul, li)\n    import Html.Attributes exposing (class)\n    import Test.Html.Query as Query\n    import Test exposing (test)\n    import Test.Html.Selector exposing (tag, classes)\n\n\n    test \"The second <li> is called 'second item'\" <|\n        \\() ->\n            div []\n                [ ul [ class \"items active\" ]\n                    [ li [] [ text \"first item\" ]\n                    , li [] [ text \"second item\" ]\n                    , li [] [ text \"third item\" ]\n                    ]\n                ]\n                |> Query.fromHtml\n                |> Query.findAll [ tag \"li\" ]\n                |> Query.index 1\n                |> Query.has [ text \"second item\" ]\n\n",
+                "type": "Basics.Int -> Test.Html.Query.Multiple msg -> Test.Html.Query.Single msg"
+            },
+            {
+                "name": "keep",
+                "comment": " Find the descendant elements of the result of `findAll` which match all the given selectors.\n\n    import Html exposing (div, ul, li)\n    import Html.Attributes exposing (class)\n    import Test.Html.Query as Query\n    import Test exposing (test)\n    import Test.Html.Selector exposing (tag)\n    import Expect\n\n\n    test \"The list has three items\" <|\n        \\() ->\n            div []\n                [ ul [ class \"items active\" ]\n                    [ li [] [ a [] [ text \"first item\" ]]\n                    , li [] [ a [] [ text \"second item\" ]]\n                    , li [] [ a [] [ text \"third item\" ]]\n                    , li [] [ button [] [ text \"button\" ]]\n                    ]\n                ]\n                |> Query.fromHtml\n                |> Query.findAll [ tag \"li\" ]\n                |> Query.keep ( tag \"a\" )\n                |> Expect.all\n                    [ Query.each (Query.has [ tag \"a\" ])\n                    , Query.first >> Query.has [ text \"first item\" ]\n                    ]\n\n",
+                "type": "Test.Html.Selector.Internal.Selector -> Test.Html.Query.Multiple msg -> Test.Html.Query.Multiple msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Test.Html.Selector",
+        "comment": " Selecting HTML elements.\n\n@docs Selector\n\n\n## General Selectors\n\n@docs tag, text, containing, attribute, all\n\n\n## Attributes\n\n@docs id, class, classes, exactClassName, style, checked, selected, disabled\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Selector",
+                "comment": " A selector used to filter sets of elements.\n",
+                "args": [],
+                "type": "Test.Html.Selector.Internal.Selector"
+            }
+        ],
+        "values": [
+            {
+                "name": "all",
+                "comment": " Combine the given selectors into one which requires all of them to match.\n\n    import Html\n    import Html.Attributes as Attr\n    import Test.Html.Query as Query\n    import Test exposing (test)\n    import Test.Html.Selector exposing (class, text, all, Selector)\n\n\n    replyBtnSelector : Selector\n    replyBtnSelector =\n        all [ class \"btn\", text \"Reply\" ]\n\n\n    test \"Button has the class 'btn' and the text 'Reply'\" <|\n        \\() ->\n            Html.button [ Attr.class \"btn btn-large\" ] [ Html.text \"Reply\" ]\n                |> Query.fromHtml\n                |> Query.has [ replyBtnSelector ]\n\n",
+                "type": "List.List Test.Html.Selector.Selector -> Test.Html.Selector.Selector"
+            },
+            {
+                "name": "attribute",
+                "comment": " Matches elements that have the given attribute in a way that makes sense\ngiven their semantics in `Html`.\n",
+                "type": "Html.Attribute Basics.Never -> Test.Html.Selector.Selector"
+            },
+            {
+                "name": "checked",
+                "comment": " Matches elements that have a\n[`checked`](http://package.elm-lang.org/packages/elm-lang/html/latest/Html-Attributes#checked)\nattribute with the given value.\n",
+                "type": "Basics.Bool -> Test.Html.Selector.Selector"
+            },
+            {
+                "name": "class",
+                "comment": " Matches elements that have the given class (and possibly others as well).\n\nTo match multiple classes at once, use [`classes`](#classes) instead.\n\nTo match the element's exact class attribute string, use [`exactClassName`](#exactClassName).\n\n    import Html\n    import Html.Attributes as Attr\n    import Test.Html.Query as Query\n    import Test exposing (test)\n    import Test.Html.Selector exposing (class)\n\n\n    test \"Button has the class btn-large\" <|\n        \\() ->\n            Html.button [ Attr.class \"btn btn-large\" ] [ Html.text \"Reply\" ]\n                |> Query.fromHtml\n                |> Query.has [ class \"btn-large\" ]\n\n",
+                "type": "String.String -> Test.Html.Selector.Selector"
+            },
+            {
+                "name": "classes",
+                "comment": " Matches elements that have all the given classes (and possibly others as well).\n\nWhen you only care about one class instead of several, you can use\n[`class`](#class) instead of passing this function a list with one value in it.\n\nTo match the element's exact class attribute string, use [`exactClassName`](#exactClassName).\n\n    import Html\n    import Html.Attributes as Attr\n    import Test.Html.Query as Query\n    import Test exposing (test)\n    import Test.Html.Selector exposing (classes)\n\n\n    test \"Button has the classes btn and btn-large\" <|\n        \\() ->\n            Html.button [ Attr.class \"btn btn-large\" ] [ Html.text \"Reply\" ]\n                |> Query.fromHtml\n                |> Query.has [ classes [ \"btn\", \"btn-large\" ] ]\n\n",
+                "type": "List.List String.String -> Test.Html.Selector.Selector"
+            },
+            {
+                "name": "containing",
+                "comment": " Matches elements whose descendants match the given selectors.\n\n(You will get the element and **not** the descendant.)\n\nThis is especially useful to find elements which contain specific\ntext somewhere in their descendants.\n\n    import Html\n    import Html.Events exposing (onClick)\n    import Test exposing (test)\n    import Test.Html.Event as Event\n    import Test.Html.Query as Query\n    import Test.Html.Selector exposing (containing, tag)\n\n    test : Test\n    test =\n        test \"...\" <|\n            Html.div []\n                [ Html.button [ onClick NopeMsg ] [ Html.text \"not me\" ]\n                , Html.button [ onClick ClickedMsg ] [ Html.text \"click me\" ]\n                ]\n                |> Query.find\n                    [ tag \"button\"\n                    , containing [ text \"click me\" ]\n                    ]\n                |> Event.simulate Event.click\n                |> Event.expect ClickedMsg\n\n",
+                "type": "List.List Test.Html.Selector.Selector -> Test.Html.Selector.Selector"
+            },
+            {
+                "name": "disabled",
+                "comment": " Matches elements that have a\n[`disabled`](http://package.elm-lang.org/packages/elm-lang/html/latest/Html-Attributes#disabled)\nattribute with the given value.\n",
+                "type": "Basics.Bool -> Test.Html.Selector.Selector"
+            },
+            {
+                "name": "exactClassName",
+                "comment": " Matches the element's exact class attribute string.\n\nThis is used less often than [`class`](#class), [`classes`](#classes) or\n[`attribute`](#attribute), which check for the _presence_ of a class as opposed\nto matching the entire class attribute exactly.\n\n    import Html\n    import Html.Attributes as Attr\n    import Test.Html.Query as Query\n    import Test exposing (test)\n    import Test.Html.Selector exposing (exactClassName)\n\n\n    test \"Button has the exact class 'btn btn-large'\" <|\n        \\() ->\n            Html.button [ Attr.class \"btn btn-large\" ] [ Html.text \"Reply\" ]\n                |> Query.fromHtml\n                |> Query.has [ exactClassName \"btn btn-large\" ]\n\n",
+                "type": "String.String -> Test.Html.Selector.Selector"
+            },
+            {
+                "name": "id",
+                "comment": " Matches elements that have the given `id` attribute.\n\n    import Html\n    import Html.Attributes as Attr\n    import Test.Html.Query as Query\n    import Test exposing (test)\n    import Test.Html.Selector exposing (id, text)\n\n\n    test \"the welcome <h1> says hello!\" <|\n        \\() ->\n            Html.div []\n                [ Html.h1 [ Attr.id \"welcome\" ] [ Html.text \"Hello!\" ] ]\n                |> Query.fromHtml\n                |> Query.find [ id \"welcome\" ]\n                |> Query.has [ text \"Hello!\" ]\n\n",
+                "type": "String.String -> Test.Html.Selector.Selector"
+            },
+            {
+                "name": "selected",
+                "comment": " Matches elements that have a\n[`selected`](http://package.elm-lang.org/packages/elm-lang/html/latest/Html-Attributes#selected)\nattribute with the given value.\n",
+                "type": "Basics.Bool -> Test.Html.Selector.Selector"
+            },
+            {
+                "name": "style",
+                "comment": " Matches elements that have the given style properties (and possibly others as well).\n\n    import Html\n    import Html.Attributes as Attr\n    import Test.Html.Query as Query\n    import Test exposing (test)\n    import Test.Html.Selector exposing (classes)\n\n\n    test \"the Reply button has red text\" <|\n        \\() ->\n            Html.div []\n                [ Html.button\n                    [ Attr.style \"color\" \"red\" ]\n                    [ Html.text \"Reply\" ]\n                ]\n                |> Query.has [ style \"color\" \"red\" ]\n\n",
+                "type": "String.String -> String.String -> Test.Html.Selector.Selector"
+            },
+            {
+                "name": "tag",
+                "comment": " Matches elements that have the given tag.\n\n    import Html\n    import Html.Attributes as Attr\n    import Test.Html.Query as Query\n    import Test exposing (test)\n    import Test.Html.Selector exposing (tag, text)\n\n\n    test \"the welcome <h1> says hello!\" <|\n        \\() ->\n            Html.div []\n                [ Html.h1 [ Attr.id \"welcome\" ] [ Html.text \"Hello!\" ] ]\n                |> Query.fromHtml\n                |> Query.find [ tag \"h1\" ]\n                |> Query.has [ text \"Hello!\" ]\n\n",
+                "type": "String.String -> Test.Html.Selector.Selector"
+            },
+            {
+                "name": "text",
+                "comment": " Matches elements that have a\n[`text`](http://package.elm-lang.org/packages/elm-lang/html/latest/Html-Attributes#text)\nattribute with the given value.\n",
+                "type": "String.String -> Test.Html.Selector.Selector"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Test.Runner",
+        "comment": " This is an \"experts only\" module that exposes functions needed to run and\ndisplay tests. A typical user will use an existing runner library for Node or\nthe browser, which is implemented using this interface. A list of these runners\ncan be found in the `README`.\n\n\n## Runner\n\n@docs Runner, SeededRunners, fromTest\n\n\n## Expectations\n\n@docs getFailureReason, isTodo\n\n\n## Formatting\n\n@docs formatLabels\n\n\n## Fuzzers\n\nThese functions give you the ability to run fuzzers separate of running fuzz tests.\n\n@docs Shrinkable, fuzz, shrink\n\n",
+        "unions": [
+            {
+                "name": "SeededRunners",
+                "comment": " Test Runners which have had seeds distributed to them, and which are now\neither invalid or are ready to run. Seeded runners include some metadata:\n\n  - `Invalid` runners had a problem (e.g. two sibling tests had the same description) making them un-runnable.\n  - `Only` runners can be run, but `Test.only` was used somewhere, so ultimately they will lead to a failed test run even if each test that gets run passes.\n  - `Skipping` runners can be run, but `Test.skip` was used somewhere, so ultimately they will lead to a failed test run even if each test that gets run passes.\n  - `Plain` runners are ready to run, and have none of these issues.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Plain",
+                        [
+                            "List.List Test.Runner.Runner"
+                        ]
+                    ],
+                    [
+                        "Only",
+                        [
+                            "List.List Test.Runner.Runner"
+                        ]
+                    ],
+                    [
+                        "Skipping",
+                        [
+                            "List.List Test.Runner.Runner"
+                        ]
+                    ],
+                    [
+                        "Invalid",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Shrinkable",
+                "comment": " A `Shrinkable a` is an opaque type that allows you to obtain a value of type\n`a` that is smaller than the one you've previously obtained.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Runner",
+                "comment": " A function which, when evaluated, produces a list of expectations. Also a\nlist of labels which apply to this outcome.\n",
+                "args": [],
+                "type": "{ run : () -> List.List Expect.Expectation, labels : List.List String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "formatLabels",
+                "comment": " A standard way to format descriptions and test labels, to keep things\nconsistent across test runner implementations.\n\nThe HTML, Node, String, and Log runners all use this.\n\nWhat it does:\n\n  - drop any labels that are empty strings\n  - format the first label differently from the others\n  - reverse the resulting list\n\nExample:\n\n    [ \"the actual test that failed\"\n    , \"nested description failure\"\n    , \"top-level description failure\"\n    ]\n    |> formatLabels ((++) \"↓ \") ((++) \"✗ \")\n\n    {-\n    [ \"↓ top-level description failure\"\n    , \"↓ nested description failure\"\n    , \"✗ the actual test that failed\"\n    ]\n    -}\n\n",
+                "type": "(String.String -> format) -> (String.String -> format) -> List.List String.String -> List.List format"
+            },
+            {
+                "name": "fromTest",
+                "comment": " Convert a `Test` into `SeededRunners`.\n\nIn order to run any fuzz tests that the `Test` may have, it requires a default run count as well\nas an initial `Random.Seed`. `100` is a good run count. To obtain a good random seed, pass a\nrandom 32-bit integer to `Random.initialSeed`. You can obtain such an integer by running\n`Math.floor(Math.random()*0xFFFFFFFF)` in Node. It's typically fine to hard-code this value into\nyour Elm code; it's easy and makes your tests reproducible.\n\n",
+                "type": "Basics.Int -> Random.Seed -> Test.Test -> Test.Runner.SeededRunners"
+            },
+            {
+                "name": "fuzz",
+                "comment": " Given a fuzzer, return a random generator to produce a value and a\nShrinkable. The value is what a fuzz test would have received as input.\n",
+                "type": "Fuzz.Fuzzer a -> Result.Result String.String (Random.Generator ( a, Test.Runner.Shrinkable a ))"
+            },
+            {
+                "name": "getFailureReason",
+                "comment": " Return `Nothing` if the given [`Expectation`](#Expectation) is a [`pass`](#pass).\n\nIf it is a [`fail`](#fail), return a record containing the expectation\ndescription, the [`Reason`](#Reason) the test failed, and the given inputs if\nit was a fuzz test. (If it was not a fuzz test, the record's `given` field\nwill be `Nothing`).\n\nFor example:\n\n    getFailureReason (Expect.equal 1 2)\n    -- Just { reason = Equal 1 2, description = \"Expect.equal\", given = Nothing }\n\n    getFailureReason (Expect.equal 1 1)\n    -- Nothing\n\n",
+                "type": "Expect.Expectation -> Maybe.Maybe { given : Maybe.Maybe String.String, description : String.String, reason : Test.Runner.Failure.Reason }"
+            },
+            {
+                "name": "isTodo",
+                "comment": " Determine if an expectation was created by a call to `Test.todo`. Runners\nmay treat these tests differently in their output.\n",
+                "type": "Expect.Expectation -> Basics.Bool"
+            },
+            {
+                "name": "shrink",
+                "comment": " Given a Shrinkable, attempt to shrink the value further. Pass `False` to\nindicate that the last value you've seen (from either `fuzz` or this function)\ncaused the test to **fail**. This will attempt to find a smaller value. Pass\n`True` if the test passed. If you have already seen a failure, this will attempt\nto shrink that failure in another way. In both cases, it may be impossible to\nshrink the value, represented by `Nothing`.\n",
+                "type": "Basics.Bool -> Test.Runner.Shrinkable a -> Maybe.Maybe ( a, Test.Runner.Shrinkable a )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Test.Runner.Failure",
+        "comment": " The reason a test failed.\n\n@docs Reason, InvalidReason, format\n\n",
+        "unions": [
+            {
+                "name": "InvalidReason",
+                "comment": " The reason a test run was invalid.\n\nTest runners should report these to the user in whatever format is appropriate.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "EmptyList",
+                        []
+                    ],
+                    [
+                        "NonpositiveFuzzCount",
+                        []
+                    ],
+                    [
+                        "InvalidFuzzer",
+                        []
+                    ],
+                    [
+                        "BadDescription",
+                        []
+                    ],
+                    [
+                        "DuplicatedName",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Reason",
+                "comment": " The reason a test failed.\n\nTest runners can use this to provide nice output, e.g. by doing diffs on the\ntwo parts of an `Expect.equal` failure.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Custom",
+                        []
+                    ],
+                    [
+                        "Equality",
+                        [
+                            "String.String",
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Comparison",
+                        [
+                            "String.String",
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "ListDiff",
+                        [
+                            "List.List String.String",
+                            "List.List String.String"
+                        ]
+                    ],
+                    [
+                        "CollectionDiff",
+                        [
+                            "{ expected : String.String, actual : String.String, extra : List.List String.String, missing : List.List String.String }"
+                        ]
+                    ],
+                    [
+                        "TODO",
+                        []
+                    ],
+                    [
+                        "Invalid",
+                        [
+                            "Test.Runner.Failure.InvalidReason"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "format",
+                "comment": " DEPRECATED. In the future, test runners should implement versions of this\nthat make sense for their own environments.\n\nFormat test run failures in a reasonable way.\n\n",
+                "type": "String.String -> Test.Runner.Failure.Reason -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,33 @@
+[
+    {
+        "name": "ElmBook.ElmCSS",
+        "comment": "\n\n@docs Book, book, Chapter\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Book",
+                "comment": " Replaces `ElmBook.Book`\n",
+                "args": [
+                    "state"
+                ],
+                "type": "ElmBook.Custom.Book state (ElmBook.ElmCSS.Html state)"
+            },
+            {
+                "name": "Chapter",
+                "comment": " Replaces `ElmBook.Chapter`\n",
+                "args": [
+                    "state"
+                ],
+                "type": "ElmBook.Custom.Chapter state (ElmBook.ElmCSS.Html state)"
+            }
+        ],
+        "values": [
+            {
+                "name": "book",
+                "comment": " Replaces `ElmBook.book`\n",
+                "type": "String.String -> ElmBook.ElmCSS.BookBuilder state"
+            }
+        ],
+        "binops": []
+    }
+]

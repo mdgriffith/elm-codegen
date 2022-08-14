@@ -1,0 +1,30 @@
+[
+    {
+        "name": "Bytes.Floating.Decode",
+        "comment": " Extra Floating-point binary representation for Elm\n\n@docs float16\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "float16",
+                "comment": " Decode 2 bytes into a floating point number.\n",
+                "type": "Bytes.Endianness -> Bytes.Decode.Decoder Basics.Float"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Bytes.Floating.Encode",
+        "comment": " Extra Floating-point binary representation for Elm\n\n@docs float16\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "float16",
+                "comment": " Encode 16-bit floating point numbers in two bytes.\n",
+                "type": "Bytes.Endianness -> Basics.Float -> Bytes.Encode.Encoder"
+            }
+        ],
+        "binops": []
+    }
+]

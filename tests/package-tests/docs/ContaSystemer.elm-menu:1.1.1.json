@@ -1,0 +1,304 @@
+[
+    {
+        "name": "Menu",
+        "comment": " This library helps you create a menu.\nYour data is stored separately; keep it in whatever shape makes the most sense for your application.\nA menu has a lot of uses: form input, mentions, search, etc.\n\nI have (hopefully!) given the users of this library a large amount of customizability.\n\nI recommend looking at the [`examples`][examples] before diving into the API or source code.\n\n[examples]: https://github.com/ContaSystemer/elm-menu/tree/main/examples\n\n\n# View\n\n@docs view\n\n\n# Update\n\n@docs update, subscription\n\n\n# Configuration\n\n@docs viewConfig, updateConfig\n\n\n# State\n\n@docs State, current, empty, reset, resetToFirstItem, resetToLastItem, KeySelected, MouseSelected\n\n\n# Definitions\n\n@docs Msg, ViewConfig, UpdateConfig, HtmlDetails\n\n\n# Sections\n\nSections require a separate view and configuration since another type of data must be\nprovided: sections.\n\n**Note:** Section data can have any shape: your static configuration will\njust tell the menu how to grab an ID for a section and its related data.\n\n\n# View\n\n@docs viewWithSections\n\n\n# Configuration\n\n@docs sectionConfig, viewWithSectionsConfig\n\n\n# Definitions\n\n@docs SectionNode, SectionConfig, ViewWithSectionsConfig\n\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " A message type for the menu to update.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "SectionConfig",
+                "comment": " The configuration for a section of the menu.\n\n**Note:** This should never live in your model.\n\n",
+                "args": [
+                    "data",
+                    "sectionData"
+                ],
+                "cases": []
+            },
+            {
+                "name": "State",
+                "comment": " Tracks keyboard and mouse selection within the menu.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "UpdateConfig",
+                "comment": " Configuration for updates\n",
+                "args": [
+                    "msg",
+                    "data"
+                ],
+                "cases": []
+            },
+            {
+                "name": "ViewConfig",
+                "comment": " Configuration for your menu, describing your menu and its items.\n\n**Note:** Your `ViewConfig` should never be held in your model. It should only appear in view code.\n\n",
+                "args": [
+                    "data"
+                ],
+                "cases": []
+            },
+            {
+                "name": "ViewWithSectionsConfig",
+                "comment": " Configuration for your menu, describing your menu, its sections, and its items.\n\n**Note:** This should never live in your model.\n\n",
+                "args": [
+                    "data",
+                    "sectionData"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "HtmlDetails",
+                "comment": " HTML lists require `li` tags as children, so we allow you to specify everything about `li` HTML node except the nodeType.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ attributes : List.List (Html.Attribute msg), children : List.List (Html.Html msg) }"
+            },
+            {
+                "name": "KeySelected",
+                "comment": " True if the element has been selected via keyboard navigation.\n",
+                "args": [],
+                "type": "Basics.Bool"
+            },
+            {
+                "name": "MouseSelected",
+                "comment": " True if the element has been selected via mouse hover.\n",
+                "args": [],
+                "type": "Basics.Bool"
+            },
+            {
+                "name": "SectionNode",
+                "comment": " Describe everything about a Section HTML node.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ nodeType : String.String, attributes : List.List (Html.Attribute msg), children : List.List (Html.Html msg) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "current",
+                "comment": " Current State.\n",
+                "type": "Menu.State -> ( Maybe.Maybe String.String, Maybe.Maybe String.String )"
+            },
+            {
+                "name": "empty",
+                "comment": " A State with nothing selected.\n",
+                "type": "Menu.State"
+            },
+            {
+                "name": "reset",
+                "comment": " Reset the keyboard navigation but leave the mouse state alone.\nConvenient when the two selections are represented separately.\n",
+                "type": "Menu.UpdateConfig msg data -> Menu.State -> Menu.State"
+            },
+            {
+                "name": "resetToFirstItem",
+                "comment": " Like `reset` but defaults to a keyboard selection of the first item.\n",
+                "type": "Menu.UpdateConfig msg data -> List.List data -> Basics.Int -> Menu.State -> Menu.State"
+            },
+            {
+                "name": "resetToLastItem",
+                "comment": " Like `reset` but defaults to a keyboard selection of the last item.\n",
+                "type": "Menu.UpdateConfig msg data -> List.List data -> Basics.Int -> Menu.State -> Menu.State"
+            },
+            {
+                "name": "sectionConfig",
+                "comment": " Create the `SectionConfig` for your `view` function.\nSay we have a `List Century` that we want to show as a series of sections.\nWe would create a `SectionConfig` like so:\n\n    type alias Century =\n      { title : String\n      , people : List Person\n      }\n\n    import Menu\n\n    sectionConfig : Menu.SectionConfig Person Century\n    sectionConfig =\n        Menu.sectionConfig\n            { toId = .title\n            , getData = .people\n            , ul = [ class \"menu-section-list\" ]\n            , li =\n                \\section ->\n                    { nodeType = \"div\"\n                    , attributes = [ class \"menu-section-item\" ]\n                    , children =\n                        [ div [ class \"menu-section-box\" ]\n                            [ strong [ class \"menu-section-text\" ] [ text section.title ]\n                            ]\n                        ]\n                    }\n            }\n\nYou provide the following information in your menu configuration:\n\n  - `toId` &mdash; turn a `Century` into a unique ID.\n  - `getData` &mdash; extract the data from `Century`, in this case: `List Person`.\n  - `ul` &mdash; specify any non-behavioral attributes you'd like for the section list.\n  - `li` &mdash; specify any non-behavioral attributes and children for a section.\n\n",
+                "type": "{ toId : sectionData -> String.String, getData : sectionData -> List.List data, ul : List.List (Html.Attribute Basics.Never), li : sectionData -> Menu.SectionNode Basics.Never } -> Menu.SectionConfig data sectionData"
+            },
+            {
+                "name": "subscription",
+                "comment": " Add this to your `program`'s subscriptions so the menu will respond to keyboard input.\n",
+                "type": "Platform.Sub.Sub Menu.Msg"
+            },
+            {
+                "name": "update",
+                "comment": " Use this function to update the menu's `State`.\nProvide the same data as your view.\nThe `Int` argument is how many results you would like to show.\n",
+                "type": "Menu.UpdateConfig msg data -> Menu.Msg -> Basics.Int -> Menu.State -> List.List data -> ( Menu.State, Maybe.Maybe msg )"
+            },
+            {
+                "name": "updateConfig",
+                "comment": " Create the configuration for your `update` function (`UpdateConfig`).\nSay we have a `List Person` that we want to show as a series of options.\nWe would create an `UpdateConfig` like so:\n\n    import Menu\n\n    updateConfig : Menu.UpdateConfig Msg Person\n    updateConfig =\n        Menu.updateConfig\n            { toId = .name\n            , onKeyDown =\n                \\code maybeId ->\n                    if code == 38 || code == 40 then\n                        Nothing\n\n                    else if code == 13 then\n                        Maybe.map SelectPerson maybeId\n\n                    else\n                        Just Reset\n            , onTooLow = Nothing\n            , onTooHigh = Nothing\n            , onMouseEnter = \\_ -> Nothing\n            , onMouseLeave = \\_ -> Nothing\n            , onMouseClick = \\id -> Just (SelectPerson id)\n            , separateSelections = False\n            }\n\nYou provide the following information in your menu configuration:\n\n  - `toId` &mdash; turn a `Person` into a unique ID.\n  - `ul` &mdash; specify any non-behavioral attributes you'd like for the list menu.\n  - `li` &mdash; specify any non-behavioral attributes and children for a list item: both selection states are provided.\n\n",
+                "type": "{ toId : data -> String.String, onKeyDown : Basics.Int -> Maybe.Maybe String.String -> Maybe.Maybe msg, onTooLow : Maybe.Maybe msg, onTooHigh : Maybe.Maybe msg, onMouseEnter : String.String -> Maybe.Maybe msg, onMouseLeave : String.String -> Maybe.Maybe msg, onMouseClick : String.String -> Maybe.Maybe msg, separateSelections : Basics.Bool } -> Menu.UpdateConfig msg data"
+            },
+            {
+                "name": "view",
+                "comment": " Take a list of `data` and turn it into a menu.\nThe `ViewConfig` argument is the configuration for the menu view.\n`ViewConfig` describes the HTML we want to show for each item and the list.\nThe `Int` argument is how many results you would like to show.\nThe `State` argument describes what is selected via mouse and keyboard.\n\n**Note:** The `State` and `List data` should live in your Model.\nThe `ViewConfig` for the menu belongs in your view code.\n`ViewConfig` should never exist in your model.\nDescribe any potential menu configurations statically.\nThis pattern has been inspired by [Elm Sortable Table](http://package.elm-lang.org/packages/evancz/elm-sortable-table/latest).\n\n",
+                "type": "Menu.ViewConfig data -> Basics.Int -> Menu.State -> List.List data -> Html.Html Menu.Msg"
+            },
+            {
+                "name": "viewConfig",
+                "comment": " Create the configuration for your `view` function (`ViewConfig`).\nSay we have a `List Person` that we want to show as a series of options.\nWe would create a `ViewConfig` like so:\n\n    import Menu\n\n    viewConfig : Menu.ViewConfig Person\n    viewConfig =\n        let\n            customizedLi keySelected mouseSelected person =\n                { attributes =\n                    [ classList\n                        [ ( \"menu-item\", True )\n                        , ( \"key-selected\", keySelected )\n                        , ( \"mouse-selected\", mouseSelected )\n                        ]\n                    ]\n                , children = [ Html.text person.name ]\n                }\n        in\n        Menu.viewConfig\n            { toId = .name\n            , ul = [ class \"menu-list\" ]\n            , li = customizedLi\n            }\n\nYou provide the following information in your menu configuration:\n\n  - `toId` &mdash; turn a `Person` into a unique ID. This lets us use\n    [`Html.Keyed`][keyed] under the hood to make sorting faster.\n  - `ul` &mdash; specify any non-behavioral attributes you'd like for the list menu.\n  - `li` &mdash; specify any non-behavioral attributes and children for a list item: both selection states are provided.\n    See the [examples] to get a better understanding!\n\n[keyed]: http://package.elm-lang.org/packages/elm-lang/html/latest/Html-Keyed\n[examples]: https://github.com/ContaSystemer/elm-menu/tree/main/examples\n\n",
+                "type": "{ toId : data -> String.String, ul : List.List (Html.Attribute Basics.Never), li : Menu.KeySelected -> Menu.MouseSelected -> data -> Menu.HtmlDetails Basics.Never } -> Menu.ViewConfig data"
+            },
+            {
+                "name": "viewWithSections",
+                "comment": " Presents a menu with sections.\nYou can follow the same instructions as described for `view`, providing a more advanced configuration and different data shape.\n`ViewWithSectionsConfig` sets up your menu to handle sectioned data.\nThe sectioned data becomes the new data argument for `viewWithSections`.\n",
+                "type": "Menu.ViewWithSectionsConfig data sectionData -> Basics.Int -> Menu.State -> List.List sectionData -> Html.Html Menu.Msg"
+            },
+            {
+                "name": "viewWithSectionsConfig",
+                "comment": " The same configuration as viewConfig, but provide a section configuration as well.\n",
+                "type": "{ toId : data -> String.String, ul : List.List (Html.Attribute Basics.Never), li : Menu.KeySelected -> Menu.MouseSelected -> data -> Menu.HtmlDetails Basics.Never, section : Menu.SectionConfig data sectionData } -> Menu.ViewWithSectionsConfig data sectionData"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Menu.Styled",
+        "comment": " This library helps you create a menu.\nYour data is stored separately; keep it in whatever shape makes the most sense for your application.\nA menu has a lot of uses: form input, mentions, search, etc.\n\nI have (hopefully!) given the users of this library a large amount of customizability.\n\nI recommend looking at the [`examples`][examples] before diving into the API or source code.\n\n[examples]: https://github.com/ContaSystemer/elm-menu/tree/master/examples\n\n\n# View\n\n@docs view\n\n\n# Update\n\n@docs update, subscription\n\n\n# Configuration\n\n@docs viewConfig, updateConfig\n\n\n# State\n\n@docs State, current, empty, reset, resetToFirstItem, resetToLastItem, KeySelected, MouseSelected\n\n\n# Definitions\n\n@docs Msg, ViewConfig, UpdateConfig, HtmlDetails\n\n\n# Sections\n\nSections require a separate view and configuration since another type of data must be\nprovided: sections.\n\n**Note:** Section data can have any shape: your static configuration will\njust tell the menu how to grab an ID for a section and its related data.\n\n\n# View\n\n@docs viewWithSections\n\n\n# Configuration\n\n@docs sectionConfig, viewWithSectionsConfig\n\n\n# Definitions\n\n@docs SectionNode, SectionConfig, ViewWithSectionsConfig\n\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " A message type for the menu to update.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "SectionConfig",
+                "comment": " The configuration for a section of the menu.\n\n**Note:** This should never live in your model.\n\n",
+                "args": [
+                    "data",
+                    "sectionData"
+                ],
+                "cases": []
+            },
+            {
+                "name": "State",
+                "comment": " Tracks keyboard and mouse selection within the menu.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "UpdateConfig",
+                "comment": " Configuration for updates\n",
+                "args": [
+                    "msg",
+                    "data"
+                ],
+                "cases": []
+            },
+            {
+                "name": "ViewConfig",
+                "comment": " Configuration for your menu, describing your menu and its items.\n\n**Note:** Your `ViewConfig` should never be held in your model. It should only appear in view code.\n\n",
+                "args": [
+                    "data"
+                ],
+                "cases": []
+            },
+            {
+                "name": "ViewWithSectionsConfig",
+                "comment": " Configuration for your menu, describing your menu, its sections, and its items.\n\n**Note:** This should never live in your model.\n\n",
+                "args": [
+                    "data",
+                    "sectionData"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "HtmlDetails",
+                "comment": " HTML lists require `li` tags as children, so we allow you to specify everything about `li` HTML node except the nodeType.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ attributes : List.List (Html.Styled.Attribute msg), children : List.List (Html.Styled.Html msg) }"
+            },
+            {
+                "name": "KeySelected",
+                "comment": " True if the element has been selected via keyboard navigation.\n",
+                "args": [],
+                "type": "Basics.Bool"
+            },
+            {
+                "name": "MouseSelected",
+                "comment": " True if the element has been selected via mouse hover.\n",
+                "args": [],
+                "type": "Basics.Bool"
+            },
+            {
+                "name": "SectionNode",
+                "comment": " Describe everything about a Section HTML node.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ nodeType : String.String, attributes : List.List (Html.Styled.Attribute msg), children : List.List (Html.Styled.Html msg) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "current",
+                "comment": " Current State.\n",
+                "type": "Menu.Styled.State -> ( Maybe.Maybe String.String, Maybe.Maybe String.String )"
+            },
+            {
+                "name": "empty",
+                "comment": " A State with nothing selected.\n",
+                "type": "Menu.Styled.State"
+            },
+            {
+                "name": "reset",
+                "comment": " Reset the keyboard navigation but leave the mouse state alone.\nConvenient when the two selections are represented separately.\n",
+                "type": "Menu.Styled.UpdateConfig msg data -> Menu.Styled.State -> Menu.Styled.State"
+            },
+            {
+                "name": "resetToFirstItem",
+                "comment": " Like `reset` but defaults to a keyboard selection of the first item.\n",
+                "type": "Menu.Styled.UpdateConfig msg data -> List.List data -> Basics.Int -> Menu.Styled.State -> Menu.Styled.State"
+            },
+            {
+                "name": "resetToLastItem",
+                "comment": " Like `reset` but defaults to a keyboard selection of the last item.\n",
+                "type": "Menu.Styled.UpdateConfig msg data -> List.List data -> Basics.Int -> Menu.Styled.State -> Menu.Styled.State"
+            },
+            {
+                "name": "sectionConfig",
+                "comment": " Create the `SectionConfig` for your `view` function.\nSay we have a `List Century` that we want to show as a series of sections.\nWe would create a `SectionConfig` like so:\n\n    type alias Century =\n      { title : String\n      , people : List Person\n      }\n\n    import Menu\n\n    sectionConfig : Menu.SectionConfig Person Century\n    sectionConfig =\n        Menu.sectionConfig\n            { toId = .title\n            , getData = .people\n            , ul = [ class \"menu-section-list\" ]\n            , li =\n                \\section ->\n                    { nodeType = \"div\"\n                    , attributes = [ class \"menu-section-item\" ]\n                    , children =\n                        [ div [ class \"menu-section-box\" ]\n                            [ strong [ class \"menu-section-text\" ] [ text section.title ]\n                            ]\n                        ]\n                    }\n            }\n\nYou provide the following information in your menu configuration:\n\n  - `toId` &mdash; turn a `Century` into a unique ID.\n  - `getData` &mdash; extract the data from `Century`, in this case: `List Person`.\n  - `ul` &mdash; specify any non-behavioral attributes you'd like for the section list.\n  - `li` &mdash; specify any non-behavioral attributes and children for a section.\n\n",
+                "type": "{ toId : sectionData -> String.String, getData : sectionData -> List.List data, ul : List.List (Html.Styled.Attribute Basics.Never), li : sectionData -> Menu.Styled.SectionNode Basics.Never } -> Menu.Styled.SectionConfig data sectionData"
+            },
+            {
+                "name": "subscription",
+                "comment": " Add this to your `program`'s subscriptions so the menu will respond to keyboard input.\n",
+                "type": "Platform.Sub.Sub Menu.Styled.Msg"
+            },
+            {
+                "name": "update",
+                "comment": " Use this function to update the menu's `State`.\nProvide the same data as your view.\nThe `Int` argument is how many results you would like to show.\n",
+                "type": "Menu.Styled.UpdateConfig msg data -> Menu.Styled.Msg -> Basics.Int -> Menu.Styled.State -> List.List data -> ( Menu.Styled.State, Maybe.Maybe msg )"
+            },
+            {
+                "name": "updateConfig",
+                "comment": " Create the configuration for your `update` function (`UpdateConfig`).\nSay we have a `List Person` that we want to show as a series of options.\nWe would create an `UpdateConfig` like so:\n\n    import Menu\n\n    updateConfig : Menu.UpdateConfig Msg Person\n    updateConfig =\n        Menu.updateConfig\n            { toId = .name\n            , onKeyDown =\n                \\code maybeId ->\n                    if code == 38 || code == 40 then\n                        Nothing\n\n                    else if code == 13 then\n                        Maybe.map SelectPerson maybeId\n\n                    else\n                        Just Reset\n            , onTooLow = Nothing\n            , onTooHigh = Nothing\n            , onMouseEnter = \\_ -> Nothing\n            , onMouseLeave = \\_ -> Nothing\n            , onMouseClick = \\id -> Just (SelectPerson id)\n            , separateSelections = False\n            }\n\nYou provide the following information in your menu configuration:\n\n  - `toId` &mdash; turn a `Person` into a unique ID.\n  - `ul` &mdash; specify any non-behavioral attributes you'd like for the list menu.\n  - `li` &mdash; specify any non-behavioral attributes and children for a list item: both selection states are provided.\n\n",
+                "type": "{ toId : data -> String.String, onKeyDown : Basics.Int -> Maybe.Maybe String.String -> Maybe.Maybe msg, onTooLow : Maybe.Maybe msg, onTooHigh : Maybe.Maybe msg, onMouseEnter : String.String -> Maybe.Maybe msg, onMouseLeave : String.String -> Maybe.Maybe msg, onMouseClick : String.String -> Maybe.Maybe msg, separateSelections : Basics.Bool } -> Menu.Styled.UpdateConfig msg data"
+            },
+            {
+                "name": "view",
+                "comment": " Take a list of `data` and turn it into a menu.\nThe `ViewConfig` argument is the configuration for the menu view.\n`ViewConfig` describes the HTML we want to show for each item and the list.\nThe `Int` argument is how many results you would like to show.\nThe `State` argument describes what is selected via mouse and keyboard.\n\n**Note:** The `State` and `List data` should live in your Model.\nThe `ViewConfig` for the menu belongs in your view code.\n`ViewConfig` should never exist in your model.\nDescribe any potential menu configurations statically.\nThis pattern has been inspired by [Elm Sortable Table](http://package.elm-lang.org/packages/evancz/elm-sortable-table/latest).\n\n",
+                "type": "Menu.Styled.ViewConfig data -> Basics.Int -> Menu.Styled.State -> List.List data -> Html.Styled.Html Menu.Styled.Msg"
+            },
+            {
+                "name": "viewConfig",
+                "comment": " Create the configuration for your `view` function (`ViewConfig`).\nSay we have a `List Person` that we want to show as a series of options.\nWe would create a `ViewConfig` like so:\n\n    import Menu\n\n    viewConfig : Menu.ViewConfig Person\n    viewConfig =\n        let\n            customizedLi keySelected mouseSelected person =\n                { attributes =\n                    [ classList\n                        [ ( \"menu-item\", True )\n                        , ( \"key-selected\", keySelected )\n                        , ( \"mouse-selected\", mouseSelected )\n                        ]\n                    ]\n                , children = [ Html.text person.name ]\n                }\n        in\n        Menu.viewConfig\n            { toId = .name\n            , ul = [ class \"menu-list\" ]\n            , li = customizedLi\n            }\n\nYou provide the following information in your menu configuration:\n\n  - `toId` &mdash; turn a `Person` into a unique ID. This lets us use\n    [`Html.Keyed`][keyed] under the hood to make sorting faster.\n  - `ul` &mdash; specify any non-behavioral attributes you'd like for the list menu.\n  - `li` &mdash; specify any non-behavioral attributes and children for a list item: both selection states are provided.\n    See the [examples] to get a better understanding!\n\n[keyed]: http://package.elm-lang.org/packages/elm-lang/html/latest/Html-Keyed\n[examples]: https://github.com/ContaSystemer/elm-menu/tree/master/examples\n\n",
+                "type": "{ toId : data -> String.String, ul : List.List (Html.Styled.Attribute Basics.Never), li : Menu.Styled.KeySelected -> Menu.Styled.MouseSelected -> data -> Menu.Styled.HtmlDetails Basics.Never } -> Menu.Styled.ViewConfig data"
+            },
+            {
+                "name": "viewWithSections",
+                "comment": " Presents a menu with sections.\nYou can follow the same instructions as described for `view`, providing a more advanced configuration and different data shape.\n`ViewWithSectionsConfig` sets up your menu to handle sectioned data.\nThe sectioned data becomes the new data argument for `viewWithSections`.\n",
+                "type": "Menu.Styled.ViewWithSectionsConfig data sectionData -> Basics.Int -> Menu.Styled.State -> List.List sectionData -> Html.Styled.Html Menu.Styled.Msg"
+            },
+            {
+                "name": "viewWithSectionsConfig",
+                "comment": " The same configuration as viewConfig, but provide a section configuration as well.\n",
+                "type": "{ toId : data -> String.String, ul : List.List (Html.Styled.Attribute Basics.Never), li : Menu.Styled.KeySelected -> Menu.Styled.MouseSelected -> data -> Menu.Styled.HtmlDetails Basics.Never, section : Menu.Styled.SectionConfig data sectionData } -> Menu.Styled.ViewWithSectionsConfig data sectionData"
+            }
+        ],
+        "binops": []
+    }
+]

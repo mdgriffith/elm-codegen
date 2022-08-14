@@ -1,0 +1,587 @@
+[
+    {
+        "name": "List.NonEmpty",
+        "comment": "\n\n@docs NonEmpty\n\n\n# Create\n\n@docs singleton, cons, fromList, fromCons, unfoldl, unfoldr\n\n\n# Transform\n\n@docs map, indexedMap, foldl, foldl1, foldr, foldr1, filter, filterMap, partition\n\n\n# Utilities\n\n@docs length, reverse, member, all, any, maximum, minimum, sum, product, last, find, unique\n\n\n# Combine\n\n@docs append, concat, concatMap, intersperse, map2, andMap\n\n\n# Sort\n\n@docs sort, sortBy, sortWith\n\n\n# Deconstruct\n\n@docs isSingleton, head, tail, take, dropHead, drop, uncons, toList\n\n\n# Expand\n\n@docs duplicate, extend\n\n\n# JSON\n\n@docs decodeList, decode, encodeList\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "NonEmpty",
+                "comment": " `NonEmpty` list is an alias for a pair of `a` and `List a`.\n\nThis makes it possible to construct value of non empty List\nwithout relying on any specific implementation of this type.\n\n",
+                "args": [
+                    "a"
+                ],
+                "type": "( a, List.List a )"
+            }
+        ],
+        "values": [
+            {
+                "name": "all",
+                "comment": " Determine if all elements satisfy the test.\n\n    all Char.isUpper ( 'A', [ 'B' ] )\n    --> True\n\n    all Char.isUpper ( 'a', [ 'B' ] )\n    --> False\n\n",
+                "type": "(a -> Basics.Bool) -> List.NonEmpty.NonEmpty a -> Basics.Bool"
+            },
+            {
+                "name": "andMap",
+                "comment": " Map over multiple `NonEmpty` lists.\n\n    map (+) (1, [2])\n    |> andMap (1, [1])\n    --> (2, [3])\n\n    type alias User =\n        { name : String\n        , age : Int\n        , admin : Bool\n        }\n\n    ( User, [ User, User ] )\n    |> andMap ( \"Alice\", [ \"Bob\", \"Charlie\"] )\n    |> andMap ( 30, [ 50, 19 ] )\n    |> andMap ( True, [ False, False ])\n    --> ( User \"Alice\" 30 True\n    --> , [ User \"Bob\" 50 False, User \"Charlie\" 19 False ]\n    --> )\n\n",
+                "type": "List.NonEmpty.NonEmpty a -> List.NonEmpty.NonEmpty (a -> b) -> List.NonEmpty.NonEmpty b"
+            },
+            {
+                "name": "any",
+                "comment": " Determine if any elements satisfies the test.\n\n    any Char.isUpper ( 'a', [ 'B' ] )\n    --> True\n\n    any Char.isUpper ( 'a', [ 'b' ] )\n    --> False\n\n",
+                "type": "(a -> Basics.Bool) -> List.NonEmpty.NonEmpty a -> Basics.Bool"
+            },
+            {
+                "name": "append",
+                "comment": " Put two lists together.\n\n    append ( 1, [ 2, 3 ] ) ( 4, [ 5 ] )\n    --> ( 1, [ 2, 3, 4, 5 ] )\n\n",
+                "type": "List.NonEmpty.NonEmpty a -> List.NonEmpty.NonEmpty a -> List.NonEmpty.NonEmpty a"
+            },
+            {
+                "name": "concat",
+                "comment": " Concatenate a bunch of lists into a single list.\n\n    concat ((1, [2, 3]), [(4, [5, 6]), (7, [8]), (9, []), (10, [11])])\n    --> (1,[2,3,4,5,6,7,8,9,10,11])\n\n",
+                "type": "List.NonEmpty.NonEmpty (List.NonEmpty.NonEmpty a) -> List.NonEmpty.NonEmpty a"
+            },
+            {
+                "name": "concatMap",
+                "comment": " Map a given function onto a list and flatten the resulting lists.\n\n    concatMap singleton ( 1, [ 2 ] )\n    -->  ( 1, [ 2 ] )\n\n    concatMap (\\x -> ( x + 1, [ x + 1 ] )) ( 1, [ 2 ] )\n    --> ( 2, [ 2, 3, 3 ] )\n\n",
+                "type": "(a -> List.NonEmpty.NonEmpty b) -> List.NonEmpty.NonEmpty a -> List.NonEmpty.NonEmpty b"
+            },
+            {
+                "name": "cons",
+                "comment": " Add element to the beginning of `NonEmpty` list.\n\n    cons 2 ( 1, [] )\n    --> (2, [ 1 ])\n\n",
+                "type": "a -> List.NonEmpty.NonEmpty a -> List.NonEmpty.NonEmpty a"
+            },
+            {
+                "name": "decode",
+                "comment": " Helper for creating custom `Decoder`.\n\n    import Json.Decode as JD exposing (Decoder)\n    import Json.Encode as JE\n    import Json.Decode.Extra as JDE\n    import Json.Decode.Pipeline as JDP\n\n    -- Decoding from custom object\n\n    objectDecoder : Decoder (NonEmpty Int)\n    objectDecoder =\n        decode\n         |> JDP.required \"head\" JD.int\n         |> JDP.required \"tail\" (JD.list JD.int)\n\n\n    JD.decodeString objectDecoder \"{\\\"head\\\":1,\\\"tail\\\":[2,3]}\"\n    --> Ok (1, [ 2, 3 ])\n\n    JD.decodeString objectDecoder \"{\\\"head\\\":true}\"\n    --> Err <| JD.Failure \"Expecting an OBJECT with a field named `tail`\" <|\n    -->     JE.object [ (\"head\", JE.bool True) ]\n\n    -- Decoding from Array of Arrays\n\n    nestedArrayDecoder : Decoder (NonEmpty Bool)\n    nestedArrayDecoder =\n        decode\n        |> JDE.andMap (JD.index 0 JD.bool)\n        |> JDE.andMap (JD.index 1 <| JD.list JD.bool)\n\n    JD.decodeString nestedArrayDecoder \"[true, [false, true]]\"\n    --> Ok (True, [False, True])\n\n    JD.decodeString nestedArrayDecoder \"[false]\"\n    --> Err <| JD.Failure \"Expecting a LONGER array. Need index 1 but only see 1 entries\" <|\n    -->     JE.list JE.bool [False]\n\n",
+                "type": "Json.Decode.Decoder (a -> List.List a -> List.NonEmpty.NonEmpty a)"
+            },
+            {
+                "name": "decodeList",
+                "comment": " Decode JSON array to `NonEmpty`.\n\n    import Json.Decode as JD exposing (Decoder)\n    import Json.Encode as JE\n\n    strings : Decoder (NonEmpty String)\n    strings =\n        decodeList JD.string\n\n    JD.decodeString strings \"[\\\"foo\\\",\\\"bar\\\",\\\"baz\\\"]\"\n    --> Ok ( \"foo\", [ \"bar\", \"baz\" ])\n\n    JD.decodeString strings \"[]\"\n    --> Err <| JD.Failure \"Expecting at least ONE ELEMENT array\" <|\n    -->     JE.list identity []\n\n    JD.decodeString strings \"{}\"\n    --> Err <| JD.Failure \"Expecting a LIST\" <|\n    -->      JE.object []\n\n",
+                "type": "Json.Decode.Decoder a -> Json.Decode.Decoder (List.NonEmpty.NonEmpty a)"
+            },
+            {
+                "name": "drop",
+                "comment": " Drop the first n elements of `NonEmpty` list.\n\n    drop 2 ( 1, [ 2, 3, 4 ] )\n    --> Just ( 3, [4] )\n\n",
+                "type": "Basics.Int -> List.NonEmpty.NonEmpty a -> Maybe.Maybe (List.NonEmpty.NonEmpty a)"
+            },
+            {
+                "name": "dropHead",
+                "comment": " Removes first element of the `NonEmpty` list.\n\n    dropHead ( 1, [ 2 ] )\n    --> Just (2, [])\n\n    dropHead ( 1, [] )\n    --> Nothing\n\n",
+                "type": "List.NonEmpty.NonEmpty a -> Maybe.Maybe (List.NonEmpty.NonEmpty a)"
+            },
+            {
+                "name": "duplicate",
+                "comment": " Create `NonEmpty` containing sub `NoneEmpty` lists.\n\nThis is a more advanced function following [`Comonad`](https://hackage.haskell.org/package/comonad)\n\n    duplicate ( 1, [ 2, 3 ] )\n    --> ( ( 1, [ 2, 3 ] ), [ ( 2, [ 3 ] ), ( 3, [] ) ] )\n\n    duplicate ( \"alone\", [] )\n    --> ( ( \"alone\", [] ), [] )\n\n",
+                "type": "List.NonEmpty.NonEmpty a -> List.NonEmpty.NonEmpty (List.NonEmpty.NonEmpty a)"
+            },
+            {
+                "name": "encodeList",
+                "comment": " Encode `NonEmpty` as JSON array.\n",
+                "type": "(a -> Json.Encode.Value) -> List.NonEmpty.NonEmpty a -> Json.Encode.Value"
+            },
+            {
+                "name": "extend",
+                "comment": " Map value to a new value based on tail of a list.\n\nThis is a more advanced function following [`Comonad`](https://hackage.haskell.org/package/comonad)\n\n    -- for each element sum all elements till the end\n    extend sum ( 1, [ 2, 3 ] )\n    --> ( 6, [ 5, 3 ] )\n\n    -- calculate length at each point of NonEmpty list\n    extend length (\"foo\", [ \"bar\", \"baz\", \"EOF\"] )\n    --> ( 4, [ 3, 2, 1 ])\n\n",
+                "type": "(List.NonEmpty.NonEmpty a -> b) -> List.NonEmpty.NonEmpty a -> List.NonEmpty.NonEmpty b"
+            },
+            {
+                "name": "filter",
+                "comment": " Keep elements that satisfy the test\n\n    isEven : Int -> Bool\n    isEven n = (n |> modBy 2) == 0\n\n    filter isEven (1,[2,3,4,5])\n    --> Just (2, [4] )\n\n",
+                "type": "(a -> Basics.Bool) -> List.NonEmpty.NonEmpty a -> Maybe.Maybe (List.NonEmpty.NonEmpty a)"
+            },
+            {
+                "name": "filterMap",
+                "comment": " Apply function to each element of `NonEmpty` and leave out values that result in `Nothing`.\n\n    filterMap String.toInt (\"1\", [\"baz\", \"3rd\", \"4\"])\n    --> Just (1, [4])\n\n    filterMap String.toInt (\"foo\", [\"baz\", \"3rd\"])\n    --> Nothing\n\n",
+                "type": "(a -> Maybe.Maybe b) -> List.NonEmpty.NonEmpty a -> Maybe.Maybe (List.NonEmpty.NonEmpty b)"
+            },
+            {
+                "name": "find",
+                "comment": " Find the first element that satisfies a predicate and return\nJust that element. If none match, return Nothing.\n\n    find (\\num -> num > 5) (2, [ 4, 6, 8 ])\n    --> Just 6\n\n",
+                "type": "(a -> Basics.Bool) -> List.NonEmpty.NonEmpty a -> Maybe.Maybe a"
+            },
+            {
+                "name": "foldl",
+                "comment": " Reduce `NonEmpty` from left.\n\n    foldl (+) 0 (1, [2,3,4])\n    --> 10\n\n    foldl cons (0, []) (1, [2,3,4])\n    --> (4, [3,2,1,0])\n\n",
+                "type": "(a -> b -> b) -> b -> List.NonEmpty.NonEmpty a -> b"
+            },
+            {
+                "name": "foldl1",
+                "comment": " Collapse `NonEmpty a` into `a` value from left\n\n    foldl1 (+) (1, [2,3,4])\n    --> 10\n\n    foldl1 (++) (\"hello\", [\" \",\"world\"])\n    --> \"world hello\"\n\n",
+                "type": "(a -> a -> a) -> List.NonEmpty.NonEmpty a -> a"
+            },
+            {
+                "name": "foldr",
+                "comment": " Reduce `NonEmpty` from right.\n\n    foldr (+) 0 (1, [2,3,4])\n    --> 10\n\n    foldr cons (5, []) (1, [2,3,4])\n    --> (1, [2, 3, 4, 5])\n\n",
+                "type": "(a -> b -> b) -> b -> List.NonEmpty.NonEmpty a -> b"
+            },
+            {
+                "name": "foldr1",
+                "comment": " Collapse `NonEmpty a` into `a` value from right.\n\n    foldr1 (+) (1, [2,3,4])\n    --> 10\n\n    foldr1 (++) (\"hello\", [\" \",\"world\"])\n    --> \"hello world\"\n\n",
+                "type": "(a -> a -> a) -> List.NonEmpty.NonEmpty a -> a"
+            },
+            {
+                "name": "fromCons",
+                "comment": " Cons element onto `List` to create `NonEmpty`.\n\n    fromCons 0 [ 1, 2 ]\n    --> (0, [1, 2])\n\nThis function is just an alias for `Tuple.pair`\n\n",
+                "type": "a -> List.List a -> List.NonEmpty.NonEmpty a"
+            },
+            {
+                "name": "fromList",
+                "comment": " Converts List to `Maybe NonEmpty`.\n\n    fromList [ 1, 2 ]\n    --> Just ( 1, [ 2 ] )\n\n    fromList []\n    --> Nothing\n\n",
+                "type": "List.List a -> Maybe.Maybe (List.NonEmpty.NonEmpty a)"
+            },
+            {
+                "name": "head",
+                "comment": " Returns first element of the `NonEmpty`.\n\n    head ( 1, [ 2 ] )\n    --> 1\n\n",
+                "type": "List.NonEmpty.NonEmpty a -> a"
+            },
+            {
+                "name": "indexedMap",
+                "comment": " Same as `map` but an index is passed with each element.\n\nIndex starts at 0.\n\n    indexedMap (\\i x -> String.fromInt i ++ \" is \" ++ x) (\"a\", [\"b\", \"c\"])\n    --> (\"0 is a\",[\"1 is b\",\"2 is c\"])\n\n",
+                "type": "(Basics.Int -> a -> b) -> List.NonEmpty.NonEmpty a -> List.NonEmpty.NonEmpty b"
+            },
+            {
+                "name": "intersperse",
+                "comment": " Places the given value between all members of given list.\n\n    intersperse \"and\" ( \"1\", [ \"2\", \"3\" ] )\n    --> (\"1\", [\"and\", \"2\", \"and\", \"3\"])\n\n    intersperse \"and\" ( \"1\", [ \"2\" ] )\n    --> (\"1\", [\"and\", \"2\"])\n\n    intersperse \"and\" ( \"1\", [] )\n    --> (\"1\", [])\n\n",
+                "type": "a -> List.NonEmpty.NonEmpty a -> List.NonEmpty.NonEmpty a"
+            },
+            {
+                "name": "isSingleton",
+                "comment": " Is the nonempty list exactly one element?\n\n    isSingleton ( 1, [] )\n    --> True\n\n    isSingleton ( 1, [ 2 ] )\n    --> False\n\n",
+                "type": "List.NonEmpty.NonEmpty a -> Basics.Bool"
+            },
+            {
+                "name": "last",
+                "comment": " Returns last element of the `NonEmpty`.\n\n    last ( 1, [ 2 ] )\n    --> 2\n\n    last ( 1, [] )\n    --> 1\n\nThis function is _O(n)_\n\n",
+                "type": "List.NonEmpty.NonEmpty a -> a"
+            },
+            {
+                "name": "length",
+                "comment": " Calculate length of `NonEmpty` list.\n\n    length ( 1, [ 2, 3 ] )\n    --> 3\n\n    length ( 1, [] )\n    --> 1\n\n",
+                "type": "List.NonEmpty.NonEmpty a -> Basics.Int"
+            },
+            {
+                "name": "map",
+                "comment": " Map a function over `NonEmpty` list.\n\n    map (\\x -> x + 1) ( 1, [ 2, 3 ] )\n    --> ( 2, [3, 4] )\n\n    map String.fromInt ( 1, [ 2 ] )\n    --> ( \"1\", [ \"2\" ] )\n\n",
+                "type": "(a -> b) -> List.NonEmpty.NonEmpty a -> List.NonEmpty.NonEmpty b"
+            },
+            {
+                "name": "map2",
+                "comment": " Combine two lists with a given function.\nIn case where one of the two lists is longer the extra elements are ignored.\n\n    map2 (+) ( 1, [ 2 ] ) ( 1, [ 1 ] )\n    --> (2, [3])\n\n    map2 (+) ( 1, [] ) ( 1, [ 1 ] )\n    --> (2, [])\n\n    map2 (+) ( 1, [ 1 ] ) ( 1, [] )\n    --> (2, [])\n\n    map2 Tuple.pair ( 1, [ 2, 3 ]) (\"foo\", [ \"bar\" ])\n    --> ( ( 1, \"foo\"), [ ( 2, \"bar\" ) ] )\n\n",
+                "type": "(a -> b -> c) -> List.NonEmpty.NonEmpty a -> List.NonEmpty.NonEmpty b -> List.NonEmpty.NonEmpty c"
+            },
+            {
+                "name": "maximum",
+                "comment": " Find the maximum element.\n\n    maximum ( 3, [ 3, 5, 2 ] )\n    --> 5\n\n",
+                "type": "List.NonEmpty.NonEmpty comparable -> comparable"
+            },
+            {
+                "name": "member",
+                "comment": " Figure out whether a `NonEmpty` list contains a value.\n\n    member 2 ( 1, [ 2 ] )\n    --> True\n\n    member 3 ( 1, [ 2 ] )\n    --> False\n\n",
+                "type": "a -> List.NonEmpty.NonEmpty a -> Basics.Bool"
+            },
+            {
+                "name": "minimum",
+                "comment": " Find the minimum element.\n\n    minimum ( 3, [ 3, 5, 2 ] )\n    --> 2\n\n",
+                "type": "List.NonEmpty.NonEmpty comparable -> comparable"
+            },
+            {
+                "name": "partition",
+                "comment": " Partition a non empty list on some test. The first list contains all values\nthat satisfy the test, and the second list contains all the values that do not.\n\n    isEven : Int -> Bool\n    isEven n = (n |> modBy 2) == 0\n\n    partition isEven (0,[1,2,3,4,5])\n    --> ([0,2,4], [1,3,5])\n\n",
+                "type": "(a -> Basics.Bool) -> List.NonEmpty.NonEmpty a -> ( List.List a, List.List a )"
+            },
+            {
+                "name": "product",
+                "comment": " Get the product of the list elements.\n\n    product ( 2, [ 2, 2 ] )\n    --> 8\n\n",
+                "type": "List.NonEmpty.NonEmpty number -> number"
+            },
+            {
+                "name": "reverse",
+                "comment": " Reverse `NonEmpty` list.\n\n    reverse (1, [2, 3, 4])\n    --> (4, [3, 2, 1])\n\n",
+                "type": "List.NonEmpty.NonEmpty a -> List.NonEmpty.NonEmpty a"
+            },
+            {
+                "name": "singleton",
+                "comment": " Creates `NonEmpty` list with only one element.\n\n    singleton 1\n    --> ( 1, [] )\n\n",
+                "type": "a -> List.NonEmpty.NonEmpty a"
+            },
+            {
+                "name": "sort",
+                "comment": " Sort values from lowest to highest.\n\n    sort ( 3, [ 4, 1, 2 ] )\n    --> (1, [2, 3, 4])\n\n",
+                "type": "List.NonEmpty.NonEmpty comparable -> List.NonEmpty.NonEmpty comparable"
+            },
+            {
+                "name": "sortBy",
+                "comment": " Sort values by a derived property.\n\n    sortBy String.length ( \"333\", [ \"4444\", \"1\", \"22\" ] )\n    --> (\"1\", [\"22\", \"333\", \"4444\"])\n\n",
+                "type": "(a -> comparable) -> List.NonEmpty.NonEmpty a -> List.NonEmpty.NonEmpty a"
+            },
+            {
+                "name": "sortWith",
+                "comment": " Sort values with a custom comparison function.\n",
+                "type": "(a -> a -> Basics.Order) -> List.NonEmpty.NonEmpty a -> List.NonEmpty.NonEmpty a"
+            },
+            {
+                "name": "sum",
+                "comment": " Get the sum of the list elements.\n\n    sum ( 2, [ 2, 2 ] )\n    --> 6\n\n",
+                "type": "List.NonEmpty.NonEmpty number -> number"
+            },
+            {
+                "name": "tail",
+                "comment": " Returns tail of the `NonEmpty`.\nThe return type is List and may be empty.\n\n    tail ( 1, [ 2, 3 ] )\n    --> [2, 3]\n\nIf you're looking for function that produces\nanother `NonEmpty` see [`dropHead`](#dropHead)\n\n",
+                "type": "List.NonEmpty.NonEmpty a -> List.List a"
+            },
+            {
+                "name": "take",
+                "comment": " Take the first n elements of `NonEmpty`.\n\n    take 2 ( 1, [ 2, 3, 4 ] )\n    --> ( 1, [ 2 ] )\n\n    take 0 ( 1, [ 2, 3, 4 ] )\n    --> ( 1, [] )\n\n",
+                "type": "Basics.Int -> List.NonEmpty.NonEmpty a -> List.NonEmpty.NonEmpty a"
+            },
+            {
+                "name": "toList",
+                "comment": " Converts `NonEmpty` to `List`.\n\n    toList ( 1, [ 2 ] )\n    --> [1, 2]\n\n",
+                "type": "List.NonEmpty.NonEmpty a -> List.List a"
+            },
+            {
+                "name": "uncons",
+                "comment": " Remove first element form `NonEmpty` list.\n\n    uncons ( 3, [ 2, 1 ] )\n    --> ( 3, Just ( 2, [ 1 ] ) )\n\n    uncons ( \"hello!\", [] )\n    --> ( \"hello!\", Nothing )\n\n",
+                "type": "List.NonEmpty.NonEmpty a -> ( a, Maybe.Maybe (List.NonEmpty.NonEmpty a) )"
+            },
+            {
+                "name": "unfoldl",
+                "comment": " Create `NonEmpty` by unfolding other data from left.\n\nThis is more expert way of constructing `NonEmpty`.\nIt's useful in rare cases.\n\n    stepPrev : Int -> (String, Maybe Int)\n    stepPrev n =\n        ( String.fromInt n\n        , if n > 0 then\n            Just (n - 1)\n          else\n             Nothing\n         )\n\n    unfoldl stepPrev 5\n    --> (\"0\", [\"1\",\"2\",\"3\",\"4\", \"5\"])\n\n",
+                "type": "(a -> ( b, Maybe.Maybe a )) -> a -> List.NonEmpty.NonEmpty b"
+            },
+            {
+                "name": "unfoldr",
+                "comment": " Create `NonEmpty` by unfolding other data from right.\n\nThis is more expert way of constructing `NonEmpty`.\nIt's useful in rare cases.\n\n    stepNext : Int -> (String, Maybe Int)\n    stepNext n =\n        ( String.fromInt n\n        , if n < 5 then\n            Just (n + 1)\n          else\n             Nothing\n         )\n\n    unfoldr stepNext 0\n    --> (\"0\", [\"1\",\"2\",\"3\",\"4\", \"5\"])\n\n",
+                "type": "(a -> ( b, Maybe.Maybe a )) -> a -> List.NonEmpty.NonEmpty b"
+            },
+            {
+                "name": "unique",
+                "comment": " Remove duplicates of a `NonEmpty` list.\n\n    unique (0,[1,0,1,1,0])\n    --> (0,[1])\n\n",
+                "type": "List.NonEmpty.NonEmpty a -> List.NonEmpty.NonEmpty a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "List.NonEmpty.Zipper",
+        "comment": "\n\n@docs Zipper, singleton, fromNonEmpty, fromList, fromCons, fromConsList, custom\n\n\n## Query\n\nFunctions that query `Zipper` for additional data.\n\n@docs current, listPrev, listNext, hasPrev, hasNext, length\n\n\n# Insert new values\n\nFollowing function inserts new value into existing `Zipper`.\n\n\n## Insert without changing focus\n\nThese functions insert values without moving focus.\n\n@docs insertBefore, insertAfter, prepend, append\n\n\n## Insert and change focus\n\nThese functions insert value around focus while moving focus on newly inserted value.\n\n@docs consBefore, consAfter\n\n\n## Remove elements from Zipper\n\n@docs dropr, dropl, filterr, filterl, filter\n\n\n# Movement\n\nFunctions that move focus within `Zipper` around without losing data.\n\n\n## Bounded Movement\n\nThese function will return `Nothing` when moving out of bounds of `Zipper`.\n\n@docs next, prev, nextBy, prevBy\n\n\n## Direction Movement\n\nThese function will move in direction but won't reach out of bound.\nWhen end on any side is reached, the last value on this side is returned.\n\n@docs attemptNext, attemptPrev, attemptPrevBy, attemptNextBy\n\n\n## Bounds\n\nThese helper function will move from either side of a `Zipper`\n\n@docs start, end\n\n\n## Cycling Movement\n\nThese function move in cycles around the zipper. Value on a very start is preceded by\nvalue in the end. These function simply move in circle and never reach the end of a `Zipper`.\n\n@docs forward, backward, forwardBy, backwardBy\n\n\n## Free Movement\n\nThese fucntions let you shift the focus to the element which satisfy the predicate\n\n@docs focusr, focusl, focus, goToIndex\n\n\n# Transform\n\n@docs update, map, updateAtIndex, relativeIndexedMap, absoluteIndexedMap, foldl, foldr, foldl1, foldr1\n\n\n# Combine\n\n@docs map2, andMap\n\n\n# Expand\n\n@docs duplicate, extend, duplicateList\n\n\n# Convert\n\n@docs toNonEmpty, toList\n\n",
+        "unions": [
+            {
+                "name": "Zipper",
+                "comment": " Zipper type.\n\nThis can be thought of as `NonEmpty` which holds keeps track\nof unconsed data.\n\nUnlike `NonEmpty` this type is opaque as it needs to ensure\ninternal invariants.\n\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "absoluteIndexedMap",
+                "comment": " Indexed map. Starting with 0 from the beginning of the zipper\n\n    custom [\"a\", \"b\"] \"c\" [\"d\"]\n    |> absoluteIndexedMap (\\index el -> (index, el))\n    |> toList\n    --> [(0,\"a\"),(1,\"b\"), (2,\"c\"), (3,\"d\")]\n\n",
+                "type": "(Basics.Int -> a -> b) -> List.NonEmpty.Zipper.Zipper a -> List.NonEmpty.Zipper.Zipper b"
+            },
+            {
+                "name": "andMap",
+                "comment": " Map over multiple Zippers.\n\n    map (+) (custom [1] 2 [3])\n    |> andMap (custom [1] 2 [3])\n    |> toList\n    --> [2, 4, 6]\n\n",
+                "type": "List.NonEmpty.Zipper.Zipper a -> List.NonEmpty.Zipper.Zipper (a -> b) -> List.NonEmpty.Zipper.Zipper b"
+            },
+            {
+                "name": "append",
+                "comment": " Append `Zipper` with a `List` of values\n\nNote: This has a linear complexity, meaning that if the number\nof items after the current focus doubles, the time this function\ntakes also doubles.\n\n    fromConsList [1] (2, [3])\n    |> append [4, 5]\n    |> toList\n    --> [1,2,3,4,5]\n\n    fromConsList [1] (2, [3])\n    |> append [4, 5]\n    |> current\n    --> 2\n\n",
+                "type": "List.List a -> List.NonEmpty.Zipper.Zipper a -> List.NonEmpty.Zipper.Zipper a"
+            },
+            {
+                "name": "attemptNext",
+                "comment": " Move focus to next value if such value exists.\n\n    custom [] 1 [2,3]\n    |> attemptNext\n    |> current\n    |> 2\n\n    custom [] 1 []\n    |> attemptNext\n    |> current\n    --> 1\n\n",
+                "type": "List.NonEmpty.Zipper.Zipper a -> List.NonEmpty.Zipper.Zipper a"
+            },
+            {
+                "name": "attemptNextBy",
+                "comment": " Perform [`attemptNext`](#attemptNext) n times.\n",
+                "type": "Basics.Int -> List.NonEmpty.Zipper.Zipper a -> List.NonEmpty.Zipper.Zipper a"
+            },
+            {
+                "name": "attemptPrev",
+                "comment": " Move focus to previous value if such value exists.\n\n    custom [1] 2 [3]\n    |> attemptPrev\n    |> current\n    |> 1\n\n    custom [] 1 []\n    |> attemptPrev\n    |> current\n    --> 1\n\n",
+                "type": "List.NonEmpty.Zipper.Zipper a -> List.NonEmpty.Zipper.Zipper a"
+            },
+            {
+                "name": "attemptPrevBy",
+                "comment": " Perform [`attemptPrev`](#attemptPrev) n times.\n",
+                "type": "Basics.Int -> List.NonEmpty.Zipper.Zipper a -> List.NonEmpty.Zipper.Zipper a"
+            },
+            {
+                "name": "backward",
+                "comment": " Move focus to previous value, go to last value if current value is fist one.\n\n    custom [1, 2] 3 []\n    |> backward\n    |> current\n    |> 2\n\n    custom [] 1 [2,3]\n    |> backward\n    |> current\n    --> 3\n\n",
+                "type": "List.NonEmpty.Zipper.Zipper a -> List.NonEmpty.Zipper.Zipper a"
+            },
+            {
+                "name": "backwardBy",
+                "comment": " Move [`backward`](#backward) n times.\n",
+                "type": "Basics.Int -> List.NonEmpty.Zipper.Zipper a -> List.NonEmpty.Zipper.Zipper a"
+            },
+            {
+                "name": "consAfter",
+                "comment": " Insert new value after current focus and move focus to it.\n\n    fromConsList [1, 2] (3, [5])\n    |> consAfter 4\n    |> toList\n    --> [1,2,3,4,5]\n\n    fromConsList [1, 2] (3, [5])\n    |> consAfter 4\n    |> current\n    --> 4\n\n",
+                "type": "a -> List.NonEmpty.Zipper.Zipper a -> List.NonEmpty.Zipper.Zipper a"
+            },
+            {
+                "name": "consBefore",
+                "comment": " Insert value before current focus and move focus to it.\n\n    fromConsList [1, 2] (4, [5])\n    |> consBefore 3\n    |> toList\n    --> [1,2,3,4,5]\n\n    fromConsList [1, 2] (4, [5])\n    |> consBefore 3\n    |> current\n    --> 3\n\n",
+                "type": "a -> List.NonEmpty.Zipper.Zipper a -> List.NonEmpty.Zipper.Zipper a"
+            },
+            {
+                "name": "current",
+                "comment": " Get current focus\n\n    custom [1,2] 3 [4,5]\n    |> current\n    --> 3\n\n",
+                "type": "List.NonEmpty.Zipper.Zipper a -> a"
+            },
+            {
+                "name": "custom",
+                "comment": " Init `Zipper` from parts.\n\n    custom [1,2] 3 [4,5]\n    |> current\n    --> 3\n\n    custom [1,2] 3 [4,5]\n    |> prev\n    |> Maybe.map current\n    --> Just 2\n\n",
+                "type": "List.List a -> a -> List.List a -> List.NonEmpty.Zipper.Zipper a"
+            },
+            {
+                "name": "dropl",
+                "comment": " Drop currently focused item. This function shift focus to previous element\nif such element exists or focuses the last one. In case of singleton `Zipper`\nthis results to Nothing.\n\n    fromConsList [1, 2] (3, [4])\n    |> dropl\n    |> Maybe.map toList\n    --> Just [1, 2, 4]\n\n    fromConsList [1, 2] (3, [4])\n    |> dropl\n    |> Maybe.map current\n    --> Just 2\n\n    fromConsList [] (1, [2, 3])\n    |> dropl\n    |> Maybe.map current\n    --> Just 3\n\n    singleton 1\n    |> dropl\n    --> Nothing\n\n",
+                "type": "List.NonEmpty.Zipper.Zipper a -> Maybe.Maybe (List.NonEmpty.Zipper.Zipper a)"
+            },
+            {
+                "name": "dropr",
+                "comment": " Drop currently focused item. This function shift focus to next element\nif such element exists or focuses the first one. In case of singleton Zipper\nthis results to Nothing.\n\n    fromConsList [1, 2] (3, [4])\n    |> dropr\n    |> Maybe.map toList\n    --> Just [1, 2, 4]\n\n    fromConsList [1, 2] (3, [4])\n    |> dropr\n    |> Maybe.map current\n    --> Just 4\n\n    fromConsList [1, 2] (3, [])\n    |> dropr\n    |> Maybe.map current\n    --> Just 1\n\n    singleton 1\n    |> dropr\n    --> Nothing\n\n",
+                "type": "List.NonEmpty.Zipper.Zipper a -> Maybe.Maybe (List.NonEmpty.Zipper.Zipper a)"
+            },
+            {
+                "name": "duplicate",
+                "comment": " Create `Zipper` containing all possible variants of given Zipper.\nCurrent version is focused one.\n\n    custom [1] 2 [3]\n    |> duplicate\n    |> current\n    --> custom [1] 2 [3]\n\n\n    custom [1] 2 [3]\n    |> duplicate\n    |> forward\n    |> current\n    --> custom [1, 2] 3 []\n\n",
+                "type": "List.NonEmpty.Zipper.Zipper a -> List.NonEmpty.Zipper.Zipper (List.NonEmpty.Zipper.Zipper a)"
+            },
+            {
+                "name": "duplicateList",
+                "comment": " [`duplicate`](#duplicate) and covert to List.\n\nThis function might be useful in view code.\n\n",
+                "type": "List.NonEmpty.Zipper.Zipper a -> List.List (List.NonEmpty.Zipper.Zipper a)"
+            },
+            {
+                "name": "end",
+                "comment": " Move focus to the very last value\n\n    custom [ 1, 2, 3 ] 4 [ 5, 6, 7 ]\n    |> end\n    |> current\n    --> 7\n\n",
+                "type": "List.NonEmpty.Zipper.Zipper a -> List.NonEmpty.Zipper.Zipper a"
+            },
+            {
+                "name": "extend",
+                "comment": " Map value to a new value based on surrounding structure.\n\nThis is a more advanced function following [`Comonad`](https://hackage.haskell.org/package/comonad)\n\n    -- negate all True values which next value is not True itself\n    fromNonEmpty ( True, [ True, True, False, True, True ] )\n    |> extend (\\zipper ->\n                      let prev = current <| backward zipper\n                      in prev && current zipper\n                 )\n    |> toNonEmpty\n    --> (True, [True, True, False, False, True])\n\n",
+                "type": "(List.NonEmpty.Zipper.Zipper a -> b) -> List.NonEmpty.Zipper.Zipper a -> List.NonEmpty.Zipper.Zipper b"
+            },
+            {
+                "name": "filter",
+                "comment": " Filter `Zipper` while moving focus to next element\nin case the current focus doesn't satisfy the predicate.\nIf even that fails it tries to focus previes element which satisfies the predicate.\nIf predicate fails for all the elements, Nothing is returned.\n\n    fromConsList [1,2] (3, [4])\n    |> filter (\\x -> modBy 2 x == 0)\n    |> Maybe.map toList\n    --> Just [2,4]\n\n    fromConsList [1,2] (3, [4])\n    |> filter (\\x -> modBy 2 x == 0)\n    |> Maybe.map current\n    --> Just 4\n\n    fromConsList [1,2] (3, [])\n    |> filter (\\x -> modBy 2 x == 0)\n    |> Maybe.map current\n    --> Just 2\n\n    fromConsList [1,2] (3, [])\n    |> filter ((==) 10)\n    --> Nothing\n\n",
+                "type": "(a -> Basics.Bool) -> List.NonEmpty.Zipper.Zipper a -> Maybe.Maybe (List.NonEmpty.Zipper.Zipper a)"
+            },
+            {
+                "name": "filterl",
+                "comment": " Filter `Zipper` while moving focus to previous element\nin case the current focus doesn't satisfy the predicate.\nAll elements (including previous)\nare filtered by given predicate.\n\n    fromConsList [1,2] (3, [4])\n    |> filterl (\\x -> modBy 2 x == 0)\n    |> Maybe.map toList\n    --> Just [2,4]\n\n    fromConsList [1,2] (3, [4])\n    |> filterl (\\x -> modBy 2 x == 0)\n    |> Maybe.map current\n    --> Just 2\n\n    fromConsList [1] (3, [4])\n    |> filterl (\\x -> modBy 2 x == 0)\n    --> Nothing\n\n",
+                "type": "(a -> Basics.Bool) -> List.NonEmpty.Zipper.Zipper a -> Maybe.Maybe (List.NonEmpty.Zipper.Zipper a)"
+            },
+            {
+                "name": "filterr",
+                "comment": " Filter `Zipper` while moving focus to next element\nin case the current focus doesn't satisfy the predicate.\nAll elements (including previous)\nare filtered by given predicate.\n\n    fromConsList [1,2] (3, [4])\n    |> filterr (\\x -> modBy 2 x == 0)\n    |> Maybe.map toList\n    --> Just [2,4]\n\n    fromConsList [1,2] (3, [4])\n    |> filterr (\\x -> modBy 2 x == 0)\n    |> Maybe.map current\n    --> Just 4\n\n    fromConsList [1,2] (3, [])\n    |> filterr (\\x -> modBy 2 x == 0)\n    --> Nothing\n\n",
+                "type": "(a -> Basics.Bool) -> List.NonEmpty.Zipper.Zipper a -> Maybe.Maybe (List.NonEmpty.Zipper.Zipper a)"
+            },
+            {
+                "name": "focus",
+                "comment": " Focus next element by predicate. If no element satisfy predicate, try to\nselect previous element. If even previous element doesn't satisfy predicate, return nothing.\n\n    fromConsList [1,2] (3, [4])\n    |> focus (\\x -> modBy 2 x == 0)\n    |> Maybe.map current\n    --> Just 4\n\n    fromConsList [1,2] (3, [])\n    |> focus (\\x -> modBy 2 x == 0)\n    |> Maybe.map current\n    --> Just 2\n\n    fromConsList [1,2] (3, [4])\n    |> focus ((==) 5)\n    --> Nothing\n\n",
+                "type": "(a -> Basics.Bool) -> List.NonEmpty.Zipper.Zipper a -> Maybe.Maybe (List.NonEmpty.Zipper.Zipper a)"
+            },
+            {
+                "name": "focusl",
+                "comment": " Move focus to the first next element that satisfy the predicate\n\n    fromConsList [1,2] (3, [4, 5])\n    |> focusl ((==) 1)\n    |> Maybe.map current\n    --> Just 1\n\n    fromConsList [1,2] (3, [4, 5])\n    |> focusl ((==) 3)\n    |> Maybe.map current\n    --> Just 3\n\n    fromConsList [1,2] (3, [4, 5])\n    |> focusl ((==) 4)\n    |> Maybe.map current\n    --> Nothing\n\n",
+                "type": "(a -> Basics.Bool) -> List.NonEmpty.Zipper.Zipper a -> Maybe.Maybe (List.NonEmpty.Zipper.Zipper a)"
+            },
+            {
+                "name": "focusr",
+                "comment": " Move focus to the first next element that satisfy the predicate.\n\n    fromConsList [1,2] (3, [4, 5])\n    |> focusr ((==) 5)\n    |> Maybe.map current\n    --> Just 5\n\n    fromConsList [1,2] (3, [4, 5])\n    |> focusr ((==) 3)\n    |> Maybe.map current\n    --> Just 3\n\n    fromConsList [1,2] (3, [4, 5])\n    |> focusr ((==) 1)\n    |> Maybe.map current\n    --> Nothing\n\n",
+                "type": "(a -> Basics.Bool) -> List.NonEmpty.Zipper.Zipper a -> Maybe.Maybe (List.NonEmpty.Zipper.Zipper a)"
+            },
+            {
+                "name": "foldl",
+                "comment": " Reduce `Zipper` from left\n\n    foldl (+) 0 <| custom [1,2] 3 [4]\n    --> 10\n\n",
+                "type": "(a -> b -> b) -> b -> List.NonEmpty.Zipper.Zipper a -> b"
+            },
+            {
+                "name": "foldl1",
+                "comment": " Collapse `Zipper a` into `a` value from left\n\n    foldl1 (++) <| custom [\"hello\"] \" \" [\"world\"]\n    --> \"world hello\"\n\n",
+                "type": "(a -> a -> a) -> List.NonEmpty.Zipper.Zipper a -> a"
+            },
+            {
+                "name": "foldr",
+                "comment": " Reduce `Zipper` from right\n\n    foldr (+) 0 <| custom [1,2] 3 [4]\n    --> 10\n\n",
+                "type": "(a -> b -> b) -> b -> List.NonEmpty.Zipper.Zipper a -> b"
+            },
+            {
+                "name": "foldr1",
+                "comment": " Collapse `Zipper a` into `a` value from right\n\n    foldr1 (+) (custom [1,2] 3 [4])\n    --> 10\n\n    foldr1 (++) (custom [\"hello\"] \" \" [\"world\"])\n    --> \"hello world\"\n\n",
+                "type": "(a -> a -> a) -> List.NonEmpty.Zipper.Zipper a -> a"
+            },
+            {
+                "name": "forward",
+                "comment": " Move focus to next value, go back to fist value if current value is last.\n\n    custom [] 1 [2,3]\n    |> forward\n    |> current\n    |> 2\n\n    custom [1,2] 3 []\n    |> forward\n    |> current\n    --> 1\n\n",
+                "type": "List.NonEmpty.Zipper.Zipper a -> List.NonEmpty.Zipper.Zipper a"
+            },
+            {
+                "name": "forwardBy",
+                "comment": " Move [`forward`](#forward) n times.\n",
+                "type": "Basics.Int -> List.NonEmpty.Zipper.Zipper a -> List.NonEmpty.Zipper.Zipper a"
+            },
+            {
+                "name": "fromCons",
+                "comment": " Init `Zipper` by consing value onto the list.\n\n    fromCons 1 [ 2, 3 ]\n    |> current\n    --> 1\n\n",
+                "type": "a -> List.List a -> List.NonEmpty.Zipper.Zipper a"
+            },
+            {
+                "name": "fromConsList",
+                "comment": " Init `Zipper` by consing `List` onto `NonEmpty`.\n\nThe head of NonEmpty stays in focus while list is a list\nof previous heads.\n\n    fromConsList [] (1, [2])\n    |> current\n    --> 1\n\n    fromConsList [1, 2] (3, [4])\n    |> prev\n    |> Maybe.map current\n    --> Just 2\n\n",
+                "type": "List.List a -> List.NonEmpty.NonEmpty a -> List.NonEmpty.Zipper.Zipper a"
+            },
+            {
+                "name": "fromList",
+                "comment": " Init `Zipper` from `List`.\nThis operation is not successful for `[]`\n\n    fromList []\n    --> Nothing\n\n    fromList [1, 2, 3]\n    --> Just (custom [] 1 [2,3])\n\n",
+                "type": "List.List a -> Maybe.Maybe (List.NonEmpty.Zipper.Zipper a)"
+            },
+            {
+                "name": "fromNonEmpty",
+                "comment": " Init `Zipper` from `NonEmpty` list type.\n\n    fromNonEmpty ( 1, [ 2, 3 ] )\n    |> current\n    --> 1\n\n    fromNonEmpty ( 1, [ 2, 3 ] )\n    |> toList\n    --> [ 1, 2, 3 ]\n\n",
+                "type": "List.NonEmpty.NonEmpty a -> List.NonEmpty.Zipper.Zipper a"
+            },
+            {
+                "name": "goToIndex",
+                "comment": " Moves zipper to the given index.\n\nThis function can be potentially `O(n)` operation if at the last item and trying to go to last index.\n\n    custom ['A', 'B'] 'C' ['D', 'E', 'F']\n      |> goToIndex 3\n      --> Just <| custom ['A', 'B', 'C'] 'D' ['E', 'F']\n\n    custom ['A', 'B'] 'C' ['D', 'E', 'F']\n      |> goToIndex 6\n      --> Nothing\n\n",
+                "type": "Basics.Int -> List.NonEmpty.Zipper.Zipper a -> Maybe.Maybe (List.NonEmpty.Zipper.Zipper a)"
+            },
+            {
+                "name": "hasNext",
+                "comment": " Check if there is next value after current focus.\n\n    custom [1,2] 3 [4,5]\n    |> hasNext\n    --> True\n\n    custom [1,2] 3 []\n    |> hasNext\n    --> False\n\n",
+                "type": "List.NonEmpty.Zipper.Zipper a -> Basics.Bool"
+            },
+            {
+                "name": "hasPrev",
+                "comment": " Check if there is next value before current focus.\n\n    custom [1,2] 3 [4,5]\n    |> hasPrev\n    --> True\n\n    custom [] 1 [2,3]\n    |> hasPrev\n    --> False\n\n",
+                "type": "List.NonEmpty.Zipper.Zipper a -> Basics.Bool"
+            },
+            {
+                "name": "insertAfter",
+                "comment": " Insert new value after current focus.\n\n    fromConsList [1, 2] (3, [5])\n    |> insertAfter 4\n    |> toList\n    --> [1,2,3,4,5]\n\n    fromConsList [1, 2] (3, [5])\n    |> insertAfter 4\n    |> current\n    --> 3\n\n",
+                "type": "a -> List.NonEmpty.Zipper.Zipper a -> List.NonEmpty.Zipper.Zipper a"
+            },
+            {
+                "name": "insertBefore",
+                "comment": " Insert new value before current focus.\n\n    fromConsList [1, 2] (4, [5])\n    |> insertBefore 3\n    |> toList\n    --> [1,2,3,4,5]\n\n    fromConsList [1, 2] (4, [5])\n    |> insertBefore 3\n    |> current\n    --> 4\n\n",
+                "type": "a -> List.NonEmpty.Zipper.Zipper a -> List.NonEmpty.Zipper.Zipper a"
+            },
+            {
+                "name": "length",
+                "comment": " Get length of Zipper\n\n    custom [1,2] 3 [4]\n    |> length\n    --> 4\n\n",
+                "type": "List.NonEmpty.Zipper.Zipper a -> Basics.Int"
+            },
+            {
+                "name": "listNext",
+                "comment": " Get `List` of all values following current focus.\n\n    custom [1,2] 3 [4,5]\n    |> listNext\n    --> [4,5]\n\n",
+                "type": "List.NonEmpty.Zipper.Zipper a -> List.List a"
+            },
+            {
+                "name": "listPrev",
+                "comment": " Get `List` of all values preceding current focus.\n\n    custom [1,2] 3 [4,5]\n    |> listPrev\n    --> [1,2]\n\n",
+                "type": "List.NonEmpty.Zipper.Zipper a -> List.List a"
+            },
+            {
+                "name": "map",
+                "comment": " Map a function over Zipper\n\n    map String.fromInt (custom [1] 2 [3, 4])\n    |> toList\n    --> [\"1\", \"2\", \"3\", \"4\"]\n\n",
+                "type": "(a -> b) -> List.NonEmpty.Zipper.Zipper a -> List.NonEmpty.Zipper.Zipper b"
+            },
+            {
+                "name": "map2",
+                "comment": " Combine two Zippers with a given function.\nIn case where one of the two zippers is longer the extra elements are ignored\n\n    map2 (+) (custom [1] 2 []) (custom [1] 1 [])\n    |> toList\n    --> [2, 3]\n\n    map2 (+) (custom [1] 2 [3]) (custom [1] 1 [])\n    |> toList\n    --> [2, 3]\n\n",
+                "type": "(a -> b -> c) -> List.NonEmpty.Zipper.Zipper a -> List.NonEmpty.Zipper.Zipper b -> List.NonEmpty.Zipper.Zipper c"
+            },
+            {
+                "name": "next",
+                "comment": " Move focus to next value.\n\n    custom [] 1 [2,3]\n    |> next\n    |> Maybe.map current\n    |> Just 2\n\n    custom [] 1 []\n    |> next\n    --> Nothing\n\n",
+                "type": "List.NonEmpty.Zipper.Zipper a -> Maybe.Maybe (List.NonEmpty.Zipper.Zipper a)"
+            },
+            {
+                "name": "nextBy",
+                "comment": " Perform [`next`](#next) n times.\n",
+                "type": "Basics.Int -> List.NonEmpty.Zipper.Zipper a -> Maybe.Maybe (List.NonEmpty.Zipper.Zipper a)"
+            },
+            {
+                "name": "prepend",
+                "comment": " Prepend `Zipper` with a `List` of values\n\nNote: This has a linear complexity, meaning that if the number\nof items before the current focus doubles, the time this function\ntakes also doubles.\n\n    fromConsList [3] (4, [5])\n    |> prepend [1, 2]\n    |> toList\n    --> [1,2,3,4,5]\n\n    fromConsList [2, 3] (4, [5])\n    |> prepend [1]\n    |> current\n    --> 4\n\n",
+                "type": "List.List a -> List.NonEmpty.Zipper.Zipper a -> List.NonEmpty.Zipper.Zipper a"
+            },
+            {
+                "name": "prev",
+                "comment": " Move focus to next value.\n\n    custom [1, 2] 3 []\n    |> prev\n    |> Maybe.map current\n    |> Just 2\n\n    custom [] 1 []\n    |> prev\n    --> Nothing\n\n",
+                "type": "List.NonEmpty.Zipper.Zipper a -> Maybe.Maybe (List.NonEmpty.Zipper.Zipper a)"
+            },
+            {
+                "name": "prevBy",
+                "comment": " Perform [`prev`](#prev) n times.\n",
+                "type": "Basics.Int -> List.NonEmpty.Zipper.Zipper a -> Maybe.Maybe (List.NonEmpty.Zipper.Zipper a)"
+            },
+            {
+                "name": "relativeIndexedMap",
+                "comment": " Indexed map relative to the position in the zipper.\n\n    custom [\"a\", \"b\"] \"c\" [\"d\"]\n    |> relativeIndexedMap (\\index el -> (index, el))\n    |> toList\n    --> [(-2,\"a\"),(-1,\"b\"), (0,\"c\"), (1,\"d\")]\n\n",
+                "type": "(Basics.Int -> a -> b) -> List.NonEmpty.Zipper.Zipper a -> List.NonEmpty.Zipper.Zipper b"
+            },
+            {
+                "name": "singleton",
+                "comment": " Put single value into a `Zipper`.\n\n    singleton \"foo\"\n    |> current\n    --> \"foo\"\n\n",
+                "type": "a -> List.NonEmpty.Zipper.Zipper a"
+            },
+            {
+                "name": "start",
+                "comment": " Move focus to the very first value\n\n    custom [ 1, 2, 3 ] 4 [ 5, 6, 7 ]\n    |> start\n    |> current\n    --> 1\n\n",
+                "type": "List.NonEmpty.Zipper.Zipper a -> List.NonEmpty.Zipper.Zipper a"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert `Zipper` to `List`.\n\n    singleton 1\n    |> toList\n    --> [1]\n\n    custom [1,2] 3 []\n    |> toList\n    --> [1,2,3]\n\n",
+                "type": "List.NonEmpty.Zipper.Zipper a -> List.List a"
+            },
+            {
+                "name": "toNonEmpty",
+                "comment": " Convert `Zipper` back to `NonEmpty`.\n\nThis function won't loose data, all previous heads are added back.\n\n    fromCons 1 [2,3]\n    |> toNonEmpty\n    --> (1, [2, 3])\n\n\n    fromConsList [1,2] (3, [4])\n    |> toNonEmpty\n    --> (1, [2,3,4])\n\n",
+                "type": "List.NonEmpty.Zipper.Zipper a -> List.NonEmpty.NonEmpty a"
+            },
+            {
+                "name": "update",
+                "comment": " Update curently focused item by given function\n\n    fromConsList [1,2] (2, [3, 4])\n    |> update (\\x -> x * x)\n    |> toList\n    --> [1, 2, 4, 3, 4]\n\n",
+                "type": "(a -> a) -> List.NonEmpty.Zipper.Zipper a -> List.NonEmpty.Zipper.Zipper a"
+            },
+            {
+                "name": "updateAtIndex",
+                "comment": " Map only the element in the zipper at the given index.\n\n    custom ['A', 'B'] 'C' ['D', 'E', 'F']\n      |> updateAtIndex 1 Char.toLower\n      --> Just <| custom ['A', 'b'] 'C' ['D', 'E', 'F']\n\n",
+                "type": "Basics.Int -> (a -> a) -> List.NonEmpty.Zipper.Zipper a -> Maybe.Maybe (List.NonEmpty.Zipper.Zipper a)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Maybe.NonEmpty",
+        "comment": " Extensions to `Maybe` and `Maybe.Extra` modules\nproviding functions to work with `List.NoneEmpty.NonEmpty`.\n\nIt's safe to import this module as Maybe:\n\n    import Maybe.NonEmpty as Maybe\n\nall functions in this module use `Ne` suffix to prevent collisions with\n`List` based alternatives.\n\n\n# Traverse\n\n@docs combineNe, traverseNe\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "combineNe",
+                "comment": " If every `Maybe` in the none empty list is present, return all of the values unwrapped.\nIf there are any `Nothing`s, the whole function fails and returns `Nothing`.\n\n    combineNe ( Just 1, [] )\n    --> Just (1, [])\n\n    combineNe ( Just 1, [ Just 2, Just 3 ] )\n    --> Just ( 1, [ 2, 3 ] )\n\n    combineNe ( Just 1, [ Nothing, Just 3 ] )\n    --> Nothing\n\n",
+                "type": "List.NonEmpty.NonEmpty (Maybe.Maybe a) -> Maybe.Maybe (List.NonEmpty.NonEmpty a)"
+            },
+            {
+                "name": "traverseNe",
+                "comment": " Like [`combineNe`](#combineNe), but map a function over each element of the list first.\n\nIf every function call succeeds (returns `Just`), `traverseNe` will return a non empty list.\nIf any function call fails (returns `Nothing`), `traverse` will return `Nothing`.\n\n`combineNe` is equivalent to `traverseNe identity`.\n\n    traverseNe (\\x -> Just (x * 10)) ( 1, [ 2, 3, 4, 5 ] )\n    --> Just ( 10, [ 20, 30, 40, 50 ] )\n\n    traverseNe List.head ( [1], [ [2, 3], [] ] )\n    --> Nothing\n\n",
+                "type": "(a -> Maybe.Maybe b) -> List.NonEmpty.NonEmpty a -> Maybe.Maybe (List.NonEmpty.NonEmpty b)"
+            }
+        ],
+        "binops": []
+    }
+]

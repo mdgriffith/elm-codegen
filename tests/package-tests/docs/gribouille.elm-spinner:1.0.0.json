@@ -1,0 +1,16 @@
+[
+    {
+        "name": "Spinner",
+        "comment": " Spinner component.\n\n\n# View\n\n@docs view\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "view",
+                "comment": " Spinner view.\n",
+                "type": "Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

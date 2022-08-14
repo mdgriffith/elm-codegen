@@ -1,0 +1,1720 @@
+[
+    {
+        "name": "Tron",
+        "comment": " This is the `Tron msg`, which is, similarly to `Html msg` or `Svg msg`, may send your messages into the lifecycle of your application.\nIn this case, it represents the tree of your components with the associated handlers that produce messages.\n\nSee [Tutorial](https://github.com/shamansir/tron-gui/blob/main/Tutorial.md) for the details on how to use it.\n\nTo use Tron in your application, you'll need to specify this function:\n\n    for : Model -> Tron Msg\n\nSee `Tron.Build` for the helpers to define your own interface.\n\nSee `WithTron` for the ways to add `Tron` to your applcation.\n\n`Tron msg` is the same as `Tron.Tree (Control.Value -> Maybe msg)`, so it stores the value handler together with every control.\n\n# Tron\n\n@docs Tron, Set\n\n# Convert from and to\n\n@docs lift, toUnit, pathify, proxify, expose\n\n# Common helpers\n\n@docs map, mapSet, andThen, with, looseMap2, looseMap3, looseMap4, looseMap5\n\n# Special\n\n@docs perform\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Set",
+                "comment": " `Set msg` is just the list of controls' definitions together with their labels.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "List.List ( Tron.Path.Label, Tron.Tron a )"
+            },
+            {
+                "name": "Tron",
+                "comment": " `Tron a` is the tree of your controls or, recursively, any control in such tree.\n\nTo build your interface, use the helpers from the `Tron.Builder` module or any of its variants like\n`Tron.Build.Proxy`, `Tron.Build.Unit` or `Tron.Build.String`\n",
+                "args": [
+                    "a"
+                ],
+                "type": "Tron.Tree.Internals.Tree (Tron.Control.Value.Value -> Maybe.Maybe a)"
+            }
+        ],
+        "values": [
+            {
+                "name": "andThen",
+                "comment": " The usual `andThen` function which allows you to change the message type\n",
+                "type": "(a -> Tron.Tron b) -> Tron.Tron a -> Tron.Tron b"
+            },
+            {
+                "name": "expose",
+                "comment": " Make all the controls in the `Tron` tree return the current value, converted to the exposed JSON `Expose.Value`, themselves. In combination with `perform`, this helps to send values to ports or fire them as messages.\n\nUnder the hood, since `Tron a == Tree (Control.Value -> Maybe a)`, it becomes `Tree (Control.Value -> Maybe Exp.Value)` where it always `Just` with the same value, converted to JSON, given as argument.\n",
+                "type": "Tron.Tron a -> Tron.Tron Tron.Tree.Expose.Data.Value"
+            },
+            {
+                "name": "lift",
+                "comment": " lift `Tree a` to `Tree (Control.Value -> Maybe a)`, which is the alias of `Tron a`.",
+                "type": "Tron.Tree.Internals.Tree a -> Tron.Tron a"
+            },
+            {
+                "name": "looseMap2",
+                "comment": " maps two GUI trees with given `fn`; If some control exists only in one tree at the specific compared place, it is removed;\nNB: The control state is always taken from the second (right) variant, that's why this `map` is `loose` :). ",
+                "type": "(a -> b -> c) -> Tron.Tron a -> Tron.Tron b -> Tron.Tron c"
+            },
+            {
+                "name": "looseMap3",
+                "comment": " maps three GUI trees with given `fn`; If one of the trees lacks the control at the specific compared place, this place is empty in the resulting tree;\nNB: The control state is always taken from the most right variant, that's why this `map` is `loose` :). ",
+                "type": "(a -> b -> c -> d) -> Tron.Tron a -> Tron.Tron b -> Tron.Tron c -> Tron.Tron d"
+            },
+            {
+                "name": "looseMap4",
+                "comment": " maps four GUI trees with given `fn`; If one of the trees lacks the control at the specific compared place, this place is empty in the resulting tree;\nNB: The control state is always taken from the most right variant, that's why this `map` is `loose` :). ",
+                "type": "(a -> b -> c -> d -> e) -> Tron.Tron a -> Tron.Tron b -> Tron.Tron c -> Tron.Tron d -> Tron.Tron e"
+            },
+            {
+                "name": "looseMap5",
+                "comment": " maps five GUI trees with given `fn`; If one of the trees lacks the control at the specific compared place, this place is empty in the resulting tree;\nNB: The control state is always taken from the most right variant, that's why this `map` is `loose` :). ",
+                "type": "(a -> b -> c -> d -> e -> f) -> Tron.Tron a -> Tron.Tron b -> Tron.Tron c -> Tron.Tron d -> Tron.Tron e -> Tron.Tron f"
+            },
+            {
+                "name": "map",
+                "comment": " The usual `map` function which allows you to substitute the messages sent through the components.\n",
+                "type": "(a -> b) -> Tron.Tron a -> Tron.Tron b"
+            },
+            {
+                "name": "mapSet",
+                "comment": " The usual `map` function which allows you to substitute the messages sent through the components in a `Set`. For example, implementation of `Tron.Build.palette`:\n\n    Tron.choiceBy\n        (options\n            |> Tron.buttons\n            |> List.map (Tron.with (Tron.face << Tron.useColor << Tuple.second))\n            |> Tron.toSet Tuple.first\n            |> Tron.mapSet Tuple.second\n        )\n        current\n        (\\cv1 cv2 ->\n            case ( cv1 |> Color.toRgba, cv2 |> Color.toRgba ) of\n                ( c1, c2 ) ->\n                    (c1.red == c2.red) &&\n                    (c1.blue == c2.blue) &&\n                    (c1.green == c2.green) &&\n                    (c1.alpha == c2.alpha)\n        )\n        toMsg\n    |> cells CS.half\n",
+                "type": "(a -> b) -> Tron.Set a -> Tron.Set b"
+            },
+            {
+                "name": "pathify",
+                "comment": " Add the path representing the label-based way to reach the\nparticular control in the GUI tree.\n\nTip: to get `Tron (Path, a)`, use:\n\n```\npathify1 : Tron a -> Tron (Path, a)\npathify1 tron =\n    Tron.map2\n        Tuple.pair\n        (Tron.pathify tron)\n        tron\n```\n\nTo get `Tron (Path, Value)`, use:\n\n```\npathify2 : Tron a -> Tron (Path, Value)\npathify2 tron =\n    Tron.map2\n        Tuple.pair\n        (Tron.pathify tron)\n        (Tron.proxify tron)\n```\n\n",
+                "type": "Tron.Tron a -> Tron.Tron Tron.Path.Path"
+            },
+            {
+                "name": "perform",
+                "comment": " Apply the value of the given control (at the current level, no going deep) to the handler it holds (`Tron msg`  is `Tree (Control.Value -> Maybe msg)`),\nand this way get the current `msg`. Then fire it using `Cmd` as the side-effect, at least if it was determined. ",
+                "type": "Tron.Tron msg -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "proxify",
+                "comment": " Make all the controls in the `Tron` tree return the current value, projected to `Control.Value`, themselves. In combination with `perform` and `map`, this helps to send values or ports of fire them as messages.\n\nUnder the hood, since `Tron a == Tree (Control.Value -> Maybe a)`, it becomes `Tree (Control.Value -> Maybe Control.Value)` where it always `Just` with the same value given as argument.\n",
+                "type": "Tron.Tron a -> Tron.Tron Tron.Control.Value.Value"
+            },
+            {
+                "name": "toUnit",
+                "comment": " Store nothing, but values.\n",
+                "type": "Tron.Tron a -> Tron.Tron ()"
+            },
+            {
+                "name": "with",
+                "comment": " Same as `andThen`, but also gets current component as argument, it gets useful in mapping `Sets` or lists of controls:\n\n    Tron.choiceBy\n        (Product.all\n            |> List.filter Product.hasIcon\n            |> Tron.buttons\n            |> List.map (Tron.with (Tron.face << productIcon))\n            |> Tron.toSet Product.getName\n        )\n        Product.default\n        Product.compare\n    |> Tron.shape (rows 3)\n",
+                "type": "(a -> Tron.Tron a -> Tron.Tron a) -> Tron.Tron a -> Tron.Tron a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Tron.Build",
+        "comment": " The Builder helps you define the structure of your GUI. It is made as abstract from the representation as possible, so that any control could be changed to a better or alternative one without the requirement for you to change the definition. What you specify is the type of the value to be changed and the message to in the case of such change. Plus grouping, as deep as you want and as wide as the free space allows.\n\nSee [Tutorial](https://github.com/shamansir/tron-gui/blob/main/Tutorial.md) for the details on how to use it.\n\nThis way works the optional connection with `dat.gui`: `dat.gui` operates over the similar set of types of values — we can replace them with our controls and vice versa, groups are interchanged with folders. Of course, this definition also can be translated to plain HTML forms, as the set of possible `<input>`’s is limited to the same set of types.\n\nEvery control may:\n\n* have a setup to define how it behaves, for example min/max values and step for knobs;\n* have a default/current value, which is usually just taken from your model, from a correspodning field;\n* have a handler, which receives the new value and produces your message with it;\n* have a String label;\n* have a shape, which could be different from 1x1 in the grid;\n* be expandable to a group of any controls, contained in some shape;\n* if it's a group or nesting or choice, it can be detached if GUI configured so;\n\n# Shapes\n\nFor `choice...` and `nest...` items you may specify both the shape of the panel (in cells) and shape of every cell (they only can be all of one shape).\n\nShape of the panel may be requested to be calculated automatically (`Shape.auto`) or asked to have the desired number of rows (`Shape.rows 3`) or columns (`Shape.columns 1`) and so auto-calculate the other side, or specified manually using `by` function (`Shape.by 4 3`).\n\nCell shapes are usually just 1x1 (`CellShape.single`), but in some specific cases you may want controls to be twice smaller (`CellShape.half`) or horizontal (`CellShape.oneByTwice`) or vertical (`CellShape.twiceByOne`). Some controls take completely another form when their cell shape is changed.\n\n# The Naming\n\nIn the examples below, we use `Build.` as a prefix in the places where we reference functions from this module. This assumes that you did something like this in your code:\n\n    import Tron exposing (Tron)\n    import Tron.Build as Build exposing (..)\n\nHowever, it is ok to use any name you like, for sure. Be it `Tron.` or `Gui.` or `Def.` or whatever...\n\n# Defining your interface\n\nTo define the structure of your interface, you need to have the function with this type:\n\n    for : Model -> Tron Msg\n\nWhere `Msg` is the message of your application.\n\nThis module contains all the helpers you need to build your own interface. Here is the excerpt from `OneKnob` example:\n\n    type alias Amount = Float\n\n\n    type Msg\n        = AmountChanged Amount\n\n\n    type alias Model = Amount\n\n\n    for : Model -> Tron Msg\n    for amount =\n        Build.root\n            [\n                ( \"amount\"\n                , Build.float\n                    { min = 0, max = 1, step = 0.01 }\n                    amount\n                    AmountChanged\n                )\n            ]\n\n`Tron msg` is the type that represents any cell in your GUI. If it's a nesting, it also contains recursively other instances of `Tron msg`.\n\nUse the methods in the module as the helpers in building your own grid structure:\n\n    Build.root\n        [ ( \"int\", Build.int ... )\n        , ( \"float\", Build.float ... )\n        ,\n            ( \"nest\"\n            , Build.nest\n                [ ( \"button\", Build.button ... )\n                , ...\n                ]\n            )\n        ]\n\nUsing `Tron msg` together with `Tron.map` you may build your GUI from several modules with different messages.\n\n    Build.root\n        [ ( \"one\", ModuleOne.gui model.moduleOne |> Tron.map ModuleOne )\n        , ( \"two\", ModuleTwo.gui model.moduleTwo |> Tron.map ModuleTwo )\n        , ( \"three\", ModuleThree.gui model.moduleThree |> Tron.map ModuleThree )\n        ]\n\nFor more information, see the `examples` folder in the source code.\n\n# Sets\n\n`Set msg` is just the list of components' definitions together with their labels. It is what\n`Build.root`, `Build.nest` and `Build.choice` get as an argument. `Set msg` is exposed as a separate type to help you in the cases where you build your GUI from several modules, but want to join them in a single panel rather than nesting every module separately.\n\n    Build.nest\n        <| (ModuleOne.gui |> List.map (Tuple.mapSecond <| Tron.map ToModuleOne))\n            ++ (ModuleTwo.gui |> List.map (Tuple.mapSecond <| Tron.map ToModuleTwo))\n            ++ (ModuleThree.gui |> List.map (Tuple.mapSecond <| Tron.map ToModuleThree))\n\n# Sets\n@docs Set, mapSet, toSet\n\n# Root\n@docs root\n\n# Items\n@docs none, int, float, number, xy, coord, color, text, input, button, buttonWith, toggle, bool\n\n# Groups\n@docs nest, choice, choiceBy, strings, labels, palette\n\n# Buttons\n@docs buttons, useColor, face, Face\n\n# Icons\n@docs Icon, icon, iconAt, themedIcon, themedIconAt\n\n# Force expand / collapse for nesting\n@docs expand, collapse\n\n# Shape\n@docs shape, cells\n\n# Live\n\nUsually in your `for` function you set the default value to the control, but if you change the control with `live`, then you'll be able to pass some dynamic value from your model to it.\n\n@docs live\n\n# Conversion between types of controls + helpers\n@docs toChoice, toKnob, toSwitch, handleWith\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Face",
+                "comment": " ",
+                "args": [],
+                "type": "Tron.Control.Impl.Button.Face"
+            },
+            {
+                "name": "Icon",
+                "comment": " ",
+                "args": [],
+                "type": "Tron.Control.Impl.Button.Icon"
+            },
+            {
+                "name": "Set",
+                "comment": " `Set msg` is just the list of components' definitions together with their labels. It is what\n`Build.root` and `Build.nest` get as an argument. `Set msg` is exposed as a separate type to help you in the cases where you build your GUI from several modules, but want to join them in a single panel rather than nesting every module separately.\n\n    Build.nest\n        <| (ModuleOne.gui |> List.map (Tuple.mapSecond <| Build.map ToModuleOne))\n            ++ (ModuleTwo.gui |> List.map (Tuple.mapSecond <| Build.map ToModuleTwo))\n            ++ (ModuleThree.gui |> List.map (Tuple.mapSecond <| Build.map ToModuleThree))\n\nSee also: `Build.map`.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "List.List ( Tron.Build.Label, Tron.Build.Tron msg )"
+            }
+        ],
+        "values": [
+            {
+                "name": "bool",
+                "comment": " `bool` is the alias for `Build.toggle`\n",
+                "type": "Basics.Bool -> (Basics.Bool -> msg) -> Tron.Build.Tron msg"
+            },
+            {
+                "name": "button",
+                "comment": " `button` creates a control over a _unit_ `()` value. Type science aside, when you receive the unit value `()` in the handler, it just means that this button was pushed.\n\n    Build.button <| always DoABang\n",
+                "type": "(() -> msg) -> Tron.Build.Tron msg"
+            },
+            {
+                "name": "buttonWith",
+                "comment": " Create a button with a given face. Use `icon`, `iconAt`, `themedIcon`, `themedIconAt` to create faces.\n",
+                "type": "Tron.Build.Face -> (() -> msg) -> Tron.Build.Tron msg"
+            },
+            {
+                "name": "buttons",
+                "comment": " `buttons` is the helper to translate a list of anything to a list of buttons.\n\nIt could be useful to pass such list to `choice` or `nest`:\n\n    Build.choiceBy\n        ([ Sine, Square, Triangle, Saw ]\n            |> Build.buttons\n            |> Build.toSet waveToString\n        )\n        model.waveShape\n        compareWaves -- sometimes just (==) works, but it's better not to rely on it\n        ChangeWaveShape\n\nOr:\n\n    Build.nest\n        ([ Sine, Square, Triangle, Saw ]\n            |> Build.buttons\n            |> Build.toSet waveToString -- `toSet` is just another name for `addLabels`\n            |> Build.handleWith ChangeWaveShape\n        )\n\n",
+                "type": "List.List a -> List.List (Tron.Build.Tron a)"
+            },
+            {
+                "name": "cells",
+                "comment": " Changes cell shape for `nest` and `choice` panels:\n\n    Build.nest ... |> Buidler.cells PS.single\n\n    Build.choice ... |> Buidler.shape PS.halfByTwo\n\n    Build.choice ... |> Buidler.shape PS.halfByHalf\n",
+                "type": "Tron.Style.CellShape.CellShape -> Tron.Build.Tron msg -> Tron.Build.Tron msg"
+            },
+            {
+                "name": "choice",
+                "comment": " `choice` defines a list of options for user to choose between. Consider it as `<select>` tag with `<option>`s. When some option is chosen by user, the handler gets the corresponding value. Notice that we ask for `comparable` type here.\n\n    Build.choice\n        ([ 128, 256, 512 ]\n            |> Build.buttons\n            |> Build.toSet String.fromInt\n        )\n        model.bitrate\n        ChangeBitrate\n\n*NB*: If you don't want to use `comparable` types, but rather want to specify you own compare function, use `choiceBy`.\n\n*NB*: If you want to add icons to the buttons, use `buttons |> List.map (Tron.map (face << myIcon))`, where `myIcon : a -> Face`, for colors use `[ Color.white, Color.red, Color.yellow, ... ] |> buttons |> List.map (Tron.map (face << useColor))`.\n\nSee also: `Build.choiceBy`, `Build.strings`, `Build.palette`, `Style.Shape`, `Style.CellShape`\n",
+                "type": "Tron.Build.Set comparable -> comparable -> (comparable -> msg) -> Tron.Build.Tron msg"
+            },
+            {
+                "name": "choiceBy",
+                "comment": " `choiceBy` is identical to `choice`, but asks user for a custom comparison function instead of requiring `comparable` values.\n\n    Build.choiceBy\n        ([ Sine, Square, Triangle, Saw ]\n            |> Build.buttons\n            |> Build. waveToString\n        )\n        model.waveShape\n        compareWaves -- sometimes just (==) works, but it's better not to rely on it\n        ChangeWaveShape\n\nSee also: `Build.strings`, `Build.palette`, `Style.Shape`, `Style.CellShape`\n",
+                "type": "Tron.Build.Set a -> a -> (a -> a -> Basics.Bool) -> (a -> msg) -> Tron.Build.Tron msg"
+            },
+            {
+                "name": "collapse",
+                "comment": " Forcefully collapse the nesting:\n\n    Build.nest ... |> Build.collapse\n    Build.choice ... |> Build.collapse\n",
+                "type": "Tron.Build.Tron msg -> Tron.Build.Tron msg"
+            },
+            {
+                "name": "color",
+                "comment": " `color` creates a control over a color, for the moment it is Hue/Saturation in 2D space, same as `xy`, but with different representation, but we may improve it later. Or you may change it to `choice` with your own palette.\n\nThe `Color` type here is from `avh4/elm-color` module.\n\n    Build.color model.lightColor AdjustColor\n",
+                "type": "Color.Color -> (Color.Color -> msg) -> Tron.Build.Tron msg"
+            },
+            {
+                "name": "coord",
+                "comment": " `coord` is the alias for `Build.xy`\n",
+                "type": "( Axis.Axis, Axis.Axis ) -> ( Basics.Float, Basics.Float ) -> (( Basics.Float, Basics.Float ) -> msg) -> Tron.Build.Tron msg"
+            },
+            {
+                "name": "expand",
+                "comment": " Forcefully expand the nesting:\n\n    Build.nest ... |> Build.expand\n    Build.choice ... |> Build.expand\n",
+                "type": "Tron.Build.Tron msg -> Tron.Build.Tron msg"
+            },
+            {
+                "name": "face",
+                "comment": " Set face for the `button`, `nest`, or `choice`, it can be icon or color:\n\n    Build.button (always DoABang)\n        |> Build.face (Build.iconAt [ \"assets\", \"myIcon.svg\" ])\n\n    Build.nest\n        ... |> Build.face (Build.iconAt [ \"assets\", \"myIcon.svg\" ])\n\n    Build.choice\n        ... |> Build.face (Build.iconAt [ \"assets\", \"myIcon.svg\" ])\n\n    Build.buttons ...\n        |> Tron.map (Build.face << Build.icon)\n\n",
+                "type": "Tron.Build.Face -> Tron.Build.Tron msg -> Tron.Build.Tron msg"
+            },
+            {
+                "name": "float",
+                "comment": " `float` creates a control over a rational number value, with a minimum, maximum and a step.\n\n    Build.float { min = 0, max = 44000, step = 1 } myModel.frequency ChangeFrequency\n\n",
+                "type": "Axis.Axis -> Basics.Float -> (Basics.Float -> msg) -> Tron.Build.Tron msg"
+            },
+            {
+                "name": "handleWith",
+                "comment": " Handle a set of items with a converter of item to a message\n\n    Build.nest\n        ([ Sine, Square, Triangle, Saw ]\n            |> Build.buttons\n            |> Build.toSet waveToString -- `toSet` is just another name for `addLabels`\n            |> Build.handleWith ChangeWaveShape\n        )\n\nAlias for `Tron.mapSet`\n",
+                "type": "(a -> msg) -> Tron.Build.Set a -> Tron.Build.Set msg"
+            },
+            {
+                "name": "icon",
+                "comment": " Create an `Icon` from its URL or filename.\n\n    import Url.Builder as Url\n\n    Build.icon\n        <| makeUrl <| Url.relative [ \"assets\", \"myicon.svg\" ] []\n\nSee also: `Build.iconAt`, `Build.themedIcon`, `Build.themedIconAt`\n",
+                "type": "Url.Url -> Tron.Build.Face"
+            },
+            {
+                "name": "iconAt",
+                "comment": " Create an `Icon` using its relative local path.\n\n    Build.iconAt [ \"assets\", \"myicon.svg\" ]\n\nSee also: `Build.themedIconAt`\n",
+                "type": "List.List String.String -> Tron.Build.Face"
+            },
+            {
+                "name": "input",
+                "comment": " `input` creates a control over a value which can be translated to `String` and parsed from `String`. It is just a helper over `text` control.\n\n    Build.input\n        (\\color ->\n            case color of\n                Red -> \"red\"\n                Green -> \"green\"\n                Blue -> \"blue\"\n        )\n        (\\val ->\n            case val of\n                \"red\" -> Just Red\n                \"green\" -> Just Green\n                \"blue\" -> Just Blue\n                _ -> Nothing\n        )\n        model.selectedColor\n        ChangeColor\n",
+                "type": "(a -> String.String) -> (String.String -> Maybe.Maybe a) -> a -> (a -> msg) -> Tron.Build.Tron msg"
+            },
+            {
+                "name": "int",
+                "comment": " `int` creates a control over an integer number value, with a minimum, maximum and a step.\n\n    Build.int { min = 1, max = 8, step = 1 } myModel.octave ChangeOctave\n\n",
+                "type": "{ min : Basics.Int, max : Basics.Int, step : Basics.Int } -> Basics.Int -> (Basics.Int -> msg) -> Tron.Build.Tron msg"
+            },
+            {
+                "name": "labels",
+                "comment": " `labels` is a helper to create `choice` over the values that could be converted to string/labels and compared using those.\n\nRequires a message that is a fallback for a case when comparison failed.\n",
+                "type": "(a -> Tron.Build.Label) -> List.List a -> a -> msg -> (a -> msg) -> Tron.Build.Tron msg"
+            },
+            {
+                "name": "live",
+                "comment": " Convert any control to update its value live (i.e. on every change take them from you model)\n\n    Build.knob ... |> Build.live\n",
+                "type": "Tron.Build.Tron msg -> Tron.Build.Tron msg"
+            },
+            {
+                "name": "mapSet",
+                "comment": " map all the items in the set with one function. ",
+                "type": "(a -> b) -> Tron.Build.Set a -> Tron.Build.Set b"
+            },
+            {
+                "name": "nest",
+                "comment": " `nest` lets you group other controls (including other `nest`ings) under a button which expands a group. Also, this group can be _detached_ if GUI is confugured so.\n\nHandler receives the state of the group, like if it is exapanded or collapsed or detached, but usually it's fine just to make it `always NoOp`.\n\n    Build.nest\n        [\n            ( \"red\"\n            , Build.float { min = 0, max = 255, step = 0.1 } model.red <| AdjustColor Red\n            )\n        ,\n            ( \"green\"\n            , Build.float { min = 0, max = 255, step = 0.1 } model.blue <| AdjustColor Green\n            )\n        ,\n            ( \"blue\"\n            , Build.float { min = 0, max = 255, step = 0.1 } model.blue <| AdjustColor Blue\n            )\n        ]\n\nSee also: `Style.Shape`, `Style.CellShape`\n",
+                "type": "Tron.Build.Set msg -> Tron.Build.Tron msg"
+            },
+            {
+                "name": "none",
+                "comment": " Similar to `Cmd.none`, `Sub.none` etc., makes it easier to use expressions in the definition.\n\nFor example:\n\n    if user |> User.is Root then\n        Build.button RemoveAllFiles\n    else\n        Build.none\n\n",
+                "type": "Tron.Build.Tron msg"
+            },
+            {
+                "name": "number",
+                "comment": " `number` is the alias for `Builde.float`.\n\n    Build.number { min = 0, max = 44000, step = 1 } myModel.frequency ChangeFrequency\n",
+                "type": "Axis.Axis -> Basics.Float -> (Basics.Float -> msg) -> Tron.Build.Tron msg"
+            },
+            {
+                "name": "palette",
+                "comment": " `palette` is a helper to create `choice` over color values.\n\n    Build.palette\n        [ Color.aqua, Color.rouge, Color.vanilla ]\n        model.iceCreamColor\n        RepaintIceCream\n",
+                "type": "List.List ( Tron.Build.Label, Color.Color ) -> Color.Color -> (Color.Color -> msg) -> Tron.Build.Tron msg"
+            },
+            {
+                "name": "root",
+                "comment": " Use the root only once, to mark the first visible row of your UI, and put anything else inside.\n\nActually it is just an alias for the nested row of controls, always expanded.\n\n    for myModel =\n        Build.root\n            [\n                ( \"octave\"\n                , Build.int { min = 1, max = 8, step = 1 } myModel.octave ChangeOctave\n                )\n            ,\n                ( \"note\"\n                , Build.int { min = 1, max = 127, step = 1 } myModel.midiNote ChangeMidiNote\n                )\n            ,\n                ( \"shape\"\n                , Build.nest\n\n                    [\n                        ( \"sine\"\n                        , Build.button\n                            (always <| ChangeShape Sine)\n                            |> Build.face\n                                (Build.icon <| Url.Build.relative [ \"sawwave.svg\" ] [])\n\n                        )\n                    ,\n                        ( \"square\"\n                        , Build.button\n                            (always <| ChangeShape Square)\n                            |> Build.face\n                                (Build.icon <| Url.Build.relative [ \"sawwave.svg\" ] [])\n                        )\n                    ,\n                        ( \"saw\"\n                        , Build.button\n                            (always <| ChangeShape Saw)\n                            |> Build.face\n                                (Build.icon <| Url.Build.relative [ \"sawwave.svg\" ] [])\n\n                        )\n                    ]\n\n                )\n            ]\n\n",
+                "type": "Tron.Build.Set msg -> Tron.Build.Tron msg"
+            },
+            {
+                "name": "shape",
+                "comment": " Changes panel shape for `nest` and `choice` panels:\n\n    Build.nest ... |> Buidler.shape (CS.cols 2)\n\n    Build.choice ... |> Buidler.shape (CS.rows 1)\n\n    Build.choice ... |> Buidler.shape (CS.by 2 3)\n",
+                "type": "Tron.Style.PanelShape.PanelShape -> Tron.Build.Tron msg -> Tron.Build.Tron msg"
+            },
+            {
+                "name": "strings",
+                "comment": " `strings` is a helper to create `choice` over string values.\n\n    Build.strings\n        greekChildrenNames\n        model.currentChildName\n        ChangeChildName\n",
+                "type": "List.List String.String -> String.String -> (String.String -> msg) -> Tron.Build.Tron msg"
+            },
+            {
+                "name": "text",
+                "comment": " `text` creates a control over a `String` value.\n\n    Build.text model.elfName RenameElf\n",
+                "type": "String.String -> (String.String -> msg) -> Tron.Build.Tron msg"
+            },
+            {
+                "name": "themedIcon",
+                "comment": " Create a themed `Icon` from its URL or filename.\n\n    import Url.Builder as Url\n\n    Build.themedIcon\n        <| \\theme ->\n            makeUrl <| Url.relative [ \"assets\", \"myicon_\" ++ Theme.toString theme ++ \".svg\" ] []\n",
+                "type": "(Tron.Style.Theme.Theme -> Maybe.Maybe Url.Url) -> Tron.Build.Face"
+            },
+            {
+                "name": "themedIconAt",
+                "comment": " Create a themed `Icon` using its relative local path.\n\n    Build.themedIconAt\n        <| \\theme -> [ \"assets\", \"myicon_\" ++ Theme.toString theme ++ \".svg\" ]\n",
+                "type": "(Tron.Style.Theme.Theme -> List.List String.String) -> Tron.Build.Face"
+            },
+            {
+                "name": "toChoice",
+                "comment": " Convert a `nest` control to `choice` control. It can be done\neasily by specifying a handler:\n\n    Build.nest\n        ([ Sine, Square, Triangle, Saw ]\n            |> buttons\n            |> toSet waveToString -- `toSet` is just another name for `addLabels`\n            |> handleWith (always NoOp)\n        )\n    |> toChoice ChangeShapeById\n",
+                "type": "(Tron.Control.Impl.Nest.ItemId -> msg) -> Tron.Build.Tron msg -> Tron.Build.Tron msg"
+            },
+            {
+                "name": "toKnob",
+                "comment": " Convert choice control to the knob form:\n\n    Build.choice ... |> Build.toKnob\n",
+                "type": "Tron.Build.Tron msg -> Tron.Build.Tron msg"
+            },
+            {
+                "name": "toSet",
+                "comment": " Convert a list of components to a set by adding labels.\n",
+                "type": "(a -> Tron.Build.Label) -> List.List (Tron.Build.Tron a) -> Tron.Build.Set a"
+            },
+            {
+                "name": "toSwitch",
+                "comment": " Convert choice control to a switch by click form:\n\n    Build.choice ... |> Build.toSwitch\n",
+                "type": "Tron.Build.Tron msg -> Tron.Build.Tron msg"
+            },
+            {
+                "name": "toggle",
+                "comment": " `toggle` creates a control over a boolean value.\n\n    Build.toggle model.lightOn SwitchLight\n",
+                "type": "Basics.Bool -> (Basics.Bool -> msg) -> Tron.Build.Tron msg"
+            },
+            {
+                "name": "useColor",
+                "comment": " Create a button face representing a color:\n\n    Build.button (always NoOp) |> Build.face (Build.useColor Color.green)\n\n    [ Color.white, Color.red, Color.yellow ]\n        |> Build.buttons\n        |> List.map (Tron.with (Build.face << Build.useColor))\n        |> Build.toSet Color.colorToHexWithAlpha\n",
+                "type": "Color.Color -> Tron.Build.Face"
+            },
+            {
+                "name": "xy",
+                "comment": " `xy` creates a control over a pair of two number values or anything that can be translated to them.\n\n    Build.xy\n        ( { min = 0, max = scene.width, step = 0.1 }\n        , { min = 0, max = scene.height, step = 0.1 }\n        )\n        myModel.lightDirection\n        PointLightTo\n\n",
+                "type": "( Axis.Axis, Axis.Axis ) -> ( Basics.Float, Basics.Float ) -> (( Basics.Float, Basics.Float ) -> msg) -> Tron.Build.Tron msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Tron.Control.Value",
+        "comment": " The helper type to represent any value flowing through the GUI.\n\nUsed for converting values from controls to JSON;\n\nUse `Tron.proxify` or `Tree.proxify` function to make any GUI store its current values as the subjects. \nSince in case of `Tron.proxify` it is a function (`Just` is stored inside), `proxify` is safe in that sense, but keep in mind that for `Tree.proxify => Tree Control.Value` those values don't change, if one changes the inner control value after that.\n\n@docs Value\n\n# Encode and convert\n\n@docs encode, toString, getTypeString\n\n# Extract value\n\n@docs fromNumber, fromXY, fromText, fromChoice, fromChoiceOf, fromColor, fromToggle, fromAction\n",
+        "unions": [
+            {
+                "name": "Value",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "FromSlider",
+                        [
+                            "Basics.Float"
+                        ]
+                    ],
+                    [
+                        "FromXY",
+                        [
+                            "( Basics.Float, Basics.Float )"
+                        ]
+                    ],
+                    [
+                        "FromInput",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "FromChoice",
+                        [
+                            "( Tron.Control.Impl.Nest.ItemId, Maybe.Maybe Tron.Path.Label )"
+                        ]
+                    ],
+                    [
+                        "FromColor",
+                        [
+                            "Color.Color"
+                        ]
+                    ],
+                    [
+                        "FromToggle",
+                        [
+                            "Basics.Bool"
+                        ]
+                    ],
+                    [
+                        "FromButton",
+                        []
+                    ],
+                    [
+                        "FromGroup",
+                        []
+                    ],
+                    [
+                        "None",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "encode",
+                "comment": " Encode value to JSON. ",
+                "type": "Tron.Control.Value.Value -> Json.Encode.Value"
+            },
+            {
+                "name": "fromAction",
+                "comment": " ",
+                "type": "Tron.Control.Value.Value -> Maybe.Maybe ()"
+            },
+            {
+                "name": "fromChoice",
+                "comment": " ",
+                "type": "Tron.Control.Value.Value -> Maybe.Maybe ( Tron.Control.Impl.Nest.ItemId, Maybe.Maybe Tron.Path.Label )"
+            },
+            {
+                "name": "fromChoiceOf",
+                "comment": " ",
+                "type": "List.List a -> Tron.Control.Value.Value -> Maybe.Maybe a"
+            },
+            {
+                "name": "fromColor",
+                "comment": " ",
+                "type": "Tron.Control.Value.Value -> Maybe.Maybe Color.Color"
+            },
+            {
+                "name": "fromNumber",
+                "comment": " ",
+                "type": "Tron.Control.Value.Value -> Maybe.Maybe Basics.Float"
+            },
+            {
+                "name": "fromText",
+                "comment": " ",
+                "type": "Tron.Control.Value.Value -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "fromToggle",
+                "comment": " ",
+                "type": "Tron.Control.Value.Value -> Maybe.Maybe Basics.Bool"
+            },
+            {
+                "name": "fromXY",
+                "comment": " ",
+                "type": "Tron.Control.Value.Value -> Maybe.Maybe ( Basics.Float, Basics.Float )"
+            },
+            {
+                "name": "getTypeString",
+                "comment": " Get type of the value as string. ",
+                "type": "Tron.Control.Value.Value -> String.String"
+            },
+            {
+                "name": "toString",
+                "comment": " Encode value to string (regardless of the type). ",
+                "type": "Tron.Control.Value.Value -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Tron.Option.Communication",
+        "comment": " The communication configuration for the `WithTron` interface.\n\nPorts are meant to connect with real ports of your app, with the help of `map` you may convert the data flow to anything you like.\n\nSee [`Tron.Tree.Expose.Data`](https://package.elm-lang.org/packages/shamansir/tron-gui/latest/Tron-Tree-Expose-Data) for the types that are transferred here, such as `Exp.Out`, `Exp.In`, `Exp.Tree`, etc.\n\n    import Tron.Tree.Expose.Data as Exp\n\n# Ports\n\n@docs Ports, map, none\n\n# Prepared configurations\n\n@docs sendJson, sendReceiveJson, receiveJson, sendStrings, detachable, withDatGui\n\n# All the possible ports\n\n@docs connect\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Ports",
+                "comment": " If the GUI communicates with outside world using ports\n\n- It doesn't;\n- It sends JSON values to the given ports: see `example/ReportToJs` and `Tron.Tree.Expose.Data` module documentation for details;\n- It listens in JS for the updates: see `example/ListenFromJs` and `Tron.Tree.Expose.Data` module documentation for details;\n- It loads the UI definition from the given ports: see `example/BuildFromJs` and `Tron.Tree.Expose.Data` module documentation for details;\n- It is _detachable_, so part of the GUI may be moved to another tab/browser/device and they communicate using WebSocket server using given ports: see `example/Detachable` for details, ensure to run `example/start-server.sh` before running `start-example Detachable`;\n- It communicates with `dat.gui` using given ports: see `example/DatGui`for details;\n- ...\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ ack : Maybe.Maybe (Tron.Tree.Expose.Data.Ack -> Platform.Cmd.Cmd msg), transmit : Maybe.Maybe (Tron.Tree.Expose.Data.Out -> Platform.Cmd.Cmd msg), apply : Maybe.Maybe (Platform.Sub.Sub (List.List Tron.Tree.Expose.Data.DeduceIn)), receive : Maybe.Maybe (Platform.Sub.Sub Tron.Tree.Expose.Data.In), build : Maybe.Maybe (Platform.Sub.Sub Tron.Tree.Expose.Data.Tree) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "connect",
+                "comment": " Use all the communication you can imagine. ",
+                "type": "{ ack : Tron.Tree.Expose.Data.Ack -> Platform.Cmd.Cmd msg, transmit : Tron.Tree.Expose.Data.Out -> Platform.Cmd.Cmd msg, apply : Platform.Sub.Sub (List.List Tron.Tree.Expose.Data.DeduceIn), receive : Platform.Sub.Sub Tron.Tree.Expose.Data.In, build : Platform.Sub.Sub Tron.Tree.Expose.Data.Tree } -> Tron.Option.Communication.Ports msg"
+            },
+            {
+                "name": "detachable",
+                "comment": " Send information to WebSocket server and receive it from the server.\n\nOnly works with `.application` since needs URL access to store Client ID/Path:\n\n    main : WithTron.Program () Example.Model Example.Msg\n    main =\n        WithTron.application\n            (Render.toHtml Dock.center Theme.light)\n            (Communication.detachable\n                { ack = ack\n                , transmit = transmit\n                , receive = receieve identity\n                }\n            )\n            { for = ExampleGui.for\n            , init = always Example.init\n            , view =\n                \\model ->\n                    { title = \"Detachable Tron\"\n                    , body = [ Example.view model ]\n                    }\n            , update = Example.update\n            , subscriptions = always Sub.none\n            , onUrlChange = always Example.NoOp\n            , onUrlRequest = always Example.NoOp\n            }\n\n\n    port receive : (Exp.In -> msg) -> Sub msg\n\n    port transmit : Exp.Out -> Cmd msg\n\n    port ack : Exp.Ack -> Cmd msg\n\nThis needs `example/ws-client.js` and `example/ws-server.js` to exist. The server should be started before running the application with `node ./ws-server.js`, and `ws-client.js` just needs be included in your HTML, and then:\n\n    const app = Elm.YourApp.Main.init({\n        node : document.getElementById(\"elm-node\")\n    });\n\n    startWs(app.ports.ack, app.ports.receive, app.ports.transmit);\n\n\nSee `example/Detachable` for details.\n\n- `ack` sends the client ID if is new (randomly-generated) or the exising one (was specified in the URL);\n- `transmit` sends the JSON value and path to it, when value was changed;\n- `receive` receives the value updates from the clients with the same ID;\n ",
+                "type": "{ ack : Tron.Tree.Expose.Data.Ack -> Platform.Cmd.Cmd msg, transmit : Tron.Tree.Expose.Data.Out -> Platform.Cmd.Cmd msg, receive : Platform.Sub.Sub Tron.Tree.Expose.Data.In } -> Tron.Option.Communication.Ports msg"
+            },
+            {
+                "name": "map",
+                "comment": " ",
+                "type": "(msgA -> msgB) -> Tron.Option.Communication.Ports msgA -> Tron.Option.Communication.Ports msgB"
+            },
+            {
+                "name": "none",
+                "comment": " No communication with JS ",
+                "type": "Tron.Option.Communication.Ports msg"
+            },
+            {
+                "name": "receiveJson",
+                "comment": " Receive JSON tree and values and send updates using given ports:\n\nNB: for `build` port to work properly, you are required to set `for` to always return the previous tree,\nor at least the very same structure as the previous tree; E.g. if you use `WithTron.justUiAndCommunication`, just set `for` to `identity`:\n\n    WithTron.justUiAndCommunication\n        (Render.toHtml Dock.center Theme.light)\n        (Communication.receiveJson { build = build, transmit = transmit, apply = apply })\n        identity\n\nSee `BuildFromJs` example for reference.\n\n- `build` receives the tree structure to build UI from;\n- `transmit` sends the value and path to it to JS in JSON, when it was changed;\n- `apply` gets the list of label paths and values and tries to apply them to\n        the current state of the tree, if they match it;\n ",
+                "type": "{ build : Platform.Sub.Sub Tron.Tree.Expose.Data.Tree, transmit : Tron.Tree.Expose.Data.Out -> Platform.Cmd.Cmd msg, apply : Platform.Sub.Sub (List.List Tron.Tree.Expose.Data.DeduceIn) } -> Tron.Option.Communication.Ports msg"
+            },
+            {
+                "name": "sendJson",
+                "comment": " Send JSON values using given ports:\n\n- `ack` sends the encoded GUI structure at start of the application;\n- `transmit` sends the value and path to it in JSON, if it was changed;\n ",
+                "type": "{ ack : Tron.Tree.Expose.Data.Tree -> Platform.Cmd.Cmd msg, transmit : Tron.Tree.Expose.Data.Out -> Platform.Cmd.Cmd msg } -> Tron.Option.Communication.Ports msg"
+            },
+            {
+                "name": "sendReceiveJson",
+                "comment": " Send JSON values and receive updates using given ports:\n\n- `ack` sends the encoded GUI structure at start of the application;\n- `transmit` sends the value and path to it in JSON, if it was changed;\n- `apply` gets the list of label paths and values and tries to apply them to\n        the current state of the tree, if they match it;\n ",
+                "type": "{ ack : Tron.Tree.Expose.Data.Tree -> Platform.Cmd.Cmd msg, transmit : Tron.Tree.Expose.Data.Out -> Platform.Cmd.Cmd msg, apply : Platform.Sub.Sub (List.List Tron.Tree.Expose.Data.DeduceIn) } -> Tron.Option.Communication.Ports msg"
+            },
+            {
+                "name": "sendStrings",
+                "comment": " Send values as strings using given ports:\n\n- `transmit` sends the value and path to it, when value was changed;\n ",
+                "type": "{ transmit : ( List.List Tron.Path.Label, String.String ) -> Platform.Cmd.Cmd msg } -> Tron.Option.Communication.Ports msg"
+            },
+            {
+                "name": "withDatGui",
+                "comment": " Connect with `dat.gui` using given ports:\n\n- `ack` sends the encoded GUI structure at start of the application;\n- `receive` receives the value and path to it in JSON, if it was changed in `dat.gui`, and immediately applies it your program;\n\n`dat.gui` library should be included in your HTML file.\n\nSee `example/DatGui` for details.\n ",
+                "type": "{ ack : Tron.Tree.Expose.Data.Tree -> Platform.Cmd.Cmd msg, receive : Platform.Sub.Sub Tron.Tree.Expose.Data.In } -> Tron.Option.Communication.Ports msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Tron.Option.Render",
+        "comment": " The configuration of where to render Tron interface.\n\n@docs Target, hidden, toHtml, toVr, toDebug\n",
+        "unions": [
+            {
+                "name": "Target",
+                "comment": " Where to render the GUI:\n\n- Nowhere, the GUI is hidden;\n- To HTML, with given Dock and Theme;\n- To AFrame (VR), with given Theme (experimental);\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Html",
+                        [
+                            "Tron.Style.Dock.Dock",
+                            "Tron.Style.Theme.Theme"
+                        ]
+                    ],
+                    [
+                        "Aframe",
+                        [
+                            "Tron.Style.Theme.Theme"
+                        ]
+                    ],
+                    [
+                        "Debug",
+                        [
+                            "Tron.Style.Dock.Dock",
+                            "Tron.Style.Theme.Theme"
+                        ]
+                    ],
+                    [
+                        "Nowhere",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "hidden",
+                "comment": " GUI is hidden. For example, for the case of `dat.gui`, where your interface is on the JS side, but uses Tron definition in Elm.\n\nSee `example/DatGui` for details.\n",
+                "type": "Tron.Option.Render.Target"
+            },
+            {
+                "name": "toDebug",
+                "comment": " Render to Debug mode where all the controls are represented as text boxes with information.\n",
+                "type": "Tron.Style.Dock.Dock -> Tron.Style.Theme.Theme -> Tron.Option.Render.Target"
+            },
+            {
+                "name": "toHtml",
+                "comment": " Render to HTML using given theme (dark/light) and docked at the requested side (see `Tron.Style.Dock`). Most used option!\n",
+                "type": "Tron.Style.Dock.Dock -> Tron.Style.Theme.Theme -> Tron.Option.Render.Target"
+            },
+            {
+                "name": "toVr",
+                "comment": " Render to Virtual Reality using given theme (dark/light); Experimental. Uses `a-frame` library for render, so it should be included in your HTML;\n\nSee `example/AFrame` for details.\n",
+                "type": "Tron.Style.Theme.Theme -> Tron.Option.Render.Target"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Tron.Style.CellShape",
+        "comment": " # Cell Shape\n\nCell Shape is the place it takes in nested panels. Considering the default shape as 1x1 (`Full`), the meaning of each value is:\n\n* `single` — 1x1\n* `half` — 0.5x0.5\n* `halfByOne` — 0.5x1\n* `oneByHalf` — 1x0.5\n* `twiceByHalf` — 2x0.5\n* `halfByTwice` — 0.5x2\n* `twiceByTwice` - 2x2\n\n@docs CellShape, Unit\n\n# Values\n@docs default, single, half, halfByOne, oneByHalf, twiceByHalf, halfByTwice, twiceByTwice\n\n# Determine shape\n@docs isHorizontal, isVertical, isSquare, isSmallSquare, isLargeSquare\n\n# Other Helpers\n@docs numify, units, create, toString\n",
+        "unions": [
+            {
+                "name": "CellShape",
+                "comment": "\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Unit",
+                "comment": "\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Single",
+                        []
+                    ],
+                    [
+                        "Half",
+                        []
+                    ],
+                    [
+                        "Twice",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "create",
+                "comment": " Create cell shape from unit representation ",
+                "type": "( Tron.Style.CellShape.Unit, Tron.Style.CellShape.Unit ) -> Tron.Style.CellShape.CellShape"
+            },
+            {
+                "name": "default",
+                "comment": "\n",
+                "type": "Tron.Style.CellShape.CellShape"
+            },
+            {
+                "name": "half",
+                "comment": " 0.5x0.5\n",
+                "type": "Tron.Style.CellShape.CellShape"
+            },
+            {
+                "name": "halfByOne",
+                "comment": " 0.5x1\n",
+                "type": "Tron.Style.CellShape.CellShape"
+            },
+            {
+                "name": "halfByTwice",
+                "comment": " 0.5x2\n",
+                "type": "Tron.Style.CellShape.CellShape"
+            },
+            {
+                "name": "isHorizontal",
+                "comment": "\n",
+                "type": "Tron.Style.CellShape.CellShape -> Basics.Bool"
+            },
+            {
+                "name": "isLargeSquare",
+                "comment": "\n",
+                "type": "Tron.Style.CellShape.CellShape -> Basics.Bool"
+            },
+            {
+                "name": "isSmallSquare",
+                "comment": "\n",
+                "type": "Tron.Style.CellShape.CellShape -> Basics.Bool"
+            },
+            {
+                "name": "isSquare",
+                "comment": "\n",
+                "type": "Tron.Style.CellShape.CellShape -> Basics.Bool"
+            },
+            {
+                "name": "isVertical",
+                "comment": "\n",
+                "type": "Tron.Style.CellShape.CellShape -> Basics.Bool"
+            },
+            {
+                "name": "numify",
+                "comment": "\n",
+                "type": "Tron.Style.CellShape.CellShape -> ( Basics.Float, Basics.Float )"
+            },
+            {
+                "name": "oneByHalf",
+                "comment": " 1x0.5\n",
+                "type": "Tron.Style.CellShape.CellShape"
+            },
+            {
+                "name": "single",
+                "comment": " 1x1\n",
+                "type": "Tron.Style.CellShape.CellShape"
+            },
+            {
+                "name": "toString",
+                "comment": "\n",
+                "type": "Tron.Style.CellShape.CellShape -> String.String"
+            },
+            {
+                "name": "twiceByHalf",
+                "comment": " 2x0.5\n",
+                "type": "Tron.Style.CellShape.CellShape"
+            },
+            {
+                "name": "twiceByTwice",
+                "comment": " 2x2\n",
+                "type": "Tron.Style.CellShape.CellShape"
+            },
+            {
+                "name": "units",
+                "comment": " Get shape units as ( <horizontal-unit>, <vertical-unit> )\n",
+                "type": "Tron.Style.CellShape.CellShape -> ( Tron.Style.CellShape.Unit, Tron.Style.CellShape.Unit )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Tron.Style.Dock",
+        "comment": " # Dock\n@docs Dock\n\n# Values\n@docs topLeft, topCenter, topRight\n@docs middleLeft, center, middleRight\n@docs bottomLeft, bottomCenter, bottomRight\n\n# Anchors\n@docs HorzAnchor, VertAnchor, anchors, horzAnchor, vertAnchor\n\n# Helpers\n@docs toString\n",
+        "unions": [
+            {
+                "name": "Dock",
+                "comment": " `Dock` describes the direction in which GUI is oriented and to which corner or side of the page it is \"docked\".\n\nIf you are familiar with macOS Dock — here we have the similar concept.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "HorzAnchor",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Left",
+                        []
+                    ],
+                    [
+                        "Center",
+                        []
+                    ],
+                    [
+                        "Right",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "VertAnchor",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Top",
+                        []
+                    ],
+                    [
+                        "Middle",
+                        []
+                    ],
+                    [
+                        "Bottom",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "anchors",
+                "comment": " ",
+                "type": "Tron.Style.Dock.Dock -> ( Tron.Style.Dock.HorzAnchor, Tron.Style.Dock.VertAnchor )"
+            },
+            {
+                "name": "bottomCenter",
+                "comment": "\n",
+                "type": "Tron.Style.Dock.Dock"
+            },
+            {
+                "name": "bottomLeft",
+                "comment": "\n",
+                "type": "Tron.Style.Dock.Dock"
+            },
+            {
+                "name": "bottomRight",
+                "comment": "\n",
+                "type": "Tron.Style.Dock.Dock"
+            },
+            {
+                "name": "center",
+                "comment": "\n",
+                "type": "Tron.Style.Dock.Dock"
+            },
+            {
+                "name": "horzAnchor",
+                "comment": " ",
+                "type": "Tron.Style.Dock.Dock -> Tron.Style.Dock.HorzAnchor"
+            },
+            {
+                "name": "middleLeft",
+                "comment": "\n",
+                "type": "Tron.Style.Dock.Dock"
+            },
+            {
+                "name": "middleRight",
+                "comment": "\n",
+                "type": "Tron.Style.Dock.Dock"
+            },
+            {
+                "name": "toString",
+                "comment": " ",
+                "type": "Tron.Style.Dock.Dock -> String.String"
+            },
+            {
+                "name": "topCenter",
+                "comment": "\n",
+                "type": "Tron.Style.Dock.Dock"
+            },
+            {
+                "name": "topLeft",
+                "comment": "\n",
+                "type": "Tron.Style.Dock.Dock"
+            },
+            {
+                "name": "topRight",
+                "comment": "\n",
+                "type": "Tron.Style.Dock.Dock"
+            },
+            {
+                "name": "vertAnchor",
+                "comment": " ",
+                "type": "Tron.Style.Dock.Dock -> Tron.Style.Dock.VertAnchor"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Tron.Style.PanelShape",
+        "comment": " # Panel Shape\n\nPanel shape is how many cells the panel takes in the GUI grid (it is automatically calculated considering the fact that cells inside could be halflings or giants, see `CellShape`).\n\nYou are not required to specify both sides, just use `rows` or `cols` helpers to say how many rows or columns you want in the panel and other side will be calculated automatically. Or even use `auto` and both sides will be suggested, but this usually doesn't look good. To specify both sides manually, use `by`.\n\n@docs PanelShape, Pagination, Grouping\n\n# Automatic\n@docs auto, rows, cols\n\n# Manual\n@docs by\n\n# Pagination\n@docs distribute, singlePage, manyPages, pagesEnabled, togglePagination\n\n# Helpers\n@docs numify, create\n",
+        "unions": [
+            {
+                "name": "Grouping",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Pagination",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "PanelShape",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "auto",
+                "comment": " Calculate both rows and column numbers automatically, based on the number of cells inside. ",
+                "type": "Tron.Style.PanelShape.PanelShape"
+            },
+            {
+                "name": "by",
+                "comment": " Specify panel size manually, i.e. how many cells horizontally and how many vertically. ",
+                "type": "Basics.Int -> Basics.Int -> Tron.Style.PanelShape.PanelShape"
+            },
+            {
+                "name": "cols",
+                "comment": " Specify how many cell columns there should be in the panel, and calculate rows number automatically. ",
+                "type": "Basics.Int -> Tron.Style.PanelShape.PanelShape"
+            },
+            {
+                "name": "create",
+                "comment": " Create panel shape from its numeric representation. Put -1 for auto calculation.\n",
+                "type": "( Basics.Int, Basics.Int ) -> Tron.Style.PanelShape.PanelShape"
+            },
+            {
+                "name": "distribute",
+                "comment": " Get numeric size of a panel in cells, and a set of pages required, if there are overflows. Floats, since there could be half-cells. ",
+                "type": "Tron.Style.PanelShape.PanelShape -> Tron.Style.CellShape.CellShape -> List.List a -> ( Tron.Pages.Pages (List.List a), Size.SizeF Size.Cells )"
+            },
+            {
+                "name": "manyPages",
+                "comment": " Distribute items over pages automatically (when number of columns / rows overflows 3). Default condition. ",
+                "type": "Tron.Style.PanelShape.PanelShape -> Tron.Style.PanelShape.PanelShape"
+            },
+            {
+                "name": "numify",
+                "comment": " Returns columns and rows to take, and -1 is the value should be auto-calculated.\n",
+                "type": "Tron.Style.PanelShape.PanelShape -> ( Basics.Int, Basics.Int )"
+            },
+            {
+                "name": "pagesEnabled",
+                "comment": " Check if pagination is enabled. ",
+                "type": "Tron.Style.PanelShape.PanelShape -> Basics.Bool"
+            },
+            {
+                "name": "rows",
+                "comment": " Specify how many cell rows there should be in the panel, and calculate columns number automatically. ",
+                "type": "Basics.Int -> Tron.Style.PanelShape.PanelShape"
+            },
+            {
+                "name": "singlePage",
+                "comment": " Do not distribute items over pages ",
+                "type": "Tron.Style.PanelShape.PanelShape -> Tron.Style.PanelShape.PanelShape"
+            },
+            {
+                "name": "togglePagination",
+                "comment": " Turn pagination off or on. ",
+                "type": "Tron.Style.PanelShape.PanelShape -> Tron.Style.PanelShape.PanelShape"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Tron.Style.Theme",
+        "comment": " # Theme\n@docs Theme\n\n# Values\n@docs dark, light\n\n# Toggling\n@docs toggle\n\n# Name\n@docs toString\n",
+        "unions": [
+            {
+                "name": "Theme",
+                "comment": " Dark or Light theme, each of those could be useful for different situation.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Dark",
+                        []
+                    ],
+                    [
+                        "Light",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "dark",
+                "comment": "\n",
+                "type": "Tron.Style.Theme.Theme"
+            },
+            {
+                "name": "light",
+                "comment": "\n",
+                "type": "Tron.Style.Theme.Theme"
+            },
+            {
+                "name": "toString",
+                "comment": " ",
+                "type": "Tron.Style.Theme.Theme -> String.String"
+            },
+            {
+                "name": "toggle",
+                "comment": " Toggle theme from Light to Dark and vice-versa\n",
+                "type": "Tron.Style.Theme.Theme -> Tron.Style.Theme.Theme"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Tron.Tree",
+        "comment": " The `Tree a` is the structure of the components of your GUI. Also, it stores some `a` subject with every control.\n\nYou get the `Tree ()` as the previous state of controls in `for` and other functions like `update` and `view`, when you use `WithTron` helpers,\nso that you may get their previos values using `WithTron.ValueAt`.\n\n`Tron msg`, on the other side, is just `Tree (Control.Value -> Maybe msg)`, so every control strores the handler that convers its value to the messages.\nIt is the structure you return from `for` function so that the system knows what messages to produce in response.\n\nSee also: [`WithTron.ValueAt`](https://package.elm-lang.org/packages/shamansir/tron-gui/latest/WithTron-ValueAt).\n\n# Types\n\n@docs Tree\n\n# Empty\n\n@docs empty\n\n# Mappings, zips & folds\n\n@docs map, mapWithPath, mapWithValue, zip, fold, unfold\n\n# Bindings\n\n@docs andThen, with\n\n# Convert\n\n@docs toUnit, proxify, pathify\n\n# Get value\n\n@docs get, getValue\n\n# Apply value\n\n@docs apply\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Tree",
+                "comment": " ",
+                "args": [
+                    "a"
+                ],
+                "type": "Tron.Tree.Internals.Tree a"
+            }
+        ],
+        "values": [
+            {
+                "name": "andThen",
+                "comment": " ",
+                "type": "(a -> Tron.Tree.Tree b) -> Tron.Tree.Tree a -> Tron.Tree.Tree b"
+            },
+            {
+                "name": "apply",
+                "comment": " Take the `Tree` with a handler and call this handler for every control, storing the produced `a` as the subject.\nUsually, it is done to calculate `msg` at this place, as with `Tron msg == Tree (Control.Value -> Maybe msg)`. ",
+                "type": "Tron.Tree.Tree (Tron.Control.Value.Value -> Maybe.Maybe a) -> Tron.Tree.Tree (Maybe.Maybe a)"
+            },
+            {
+                "name": "empty",
+                "comment": " Create the empty tree. Has to store something though, let it be `()`. ",
+                "type": "Tron.Tree.Tree ()"
+            },
+            {
+                "name": "fold",
+                "comment": " Goes through all the inner components of the Tree (as deep as there is some non-nested component) and calls the function for every of those, folding them into one structure. ",
+                "type": "(Tron.Path.Path -> Tron.Tree.Tree a -> b -> b) -> b -> Tron.Tree.Tree a -> b"
+            },
+            {
+                "name": "get",
+                "comment": " Get the subject of the top-level component. ",
+                "type": "Tron.Tree.Tree a -> a"
+            },
+            {
+                "name": "getValue",
+                "comment": " get proxied value from `Tron` ",
+                "type": "Tron.Tree.Tree a -> Tron.Control.Value.Value"
+            },
+            {
+                "name": "map",
+                "comment": " ",
+                "type": "(a -> b) -> Tron.Tree.Tree a -> Tron.Tree.Tree b"
+            },
+            {
+                "name": "mapWithPath",
+                "comment": " ",
+                "type": "(Tron.Path.Path -> a -> b) -> Tron.Tree.Tree a -> Tron.Tree.Tree b"
+            },
+            {
+                "name": "mapWithValue",
+                "comment": " ",
+                "type": "(Tron.Path.Path -> Tron.Control.Value.Value -> a -> b) -> Tron.Tree.Tree a -> Tron.Tree.Tree b"
+            },
+            {
+                "name": "pathify",
+                "comment": " Replace the subject everywhere within Tron GUI tree with the associated `Control.Value`.\n",
+                "type": "Tron.Tree.Tree a -> Tron.Tree.Tree Tron.Path.Path"
+            },
+            {
+                "name": "proxify",
+                "comment": " Replace the subject everywhere within Tron GUI tree with the associated `Control.Value`.\n",
+                "type": "Tron.Tree.Tree a -> Tron.Tree.Tree Tron.Control.Value.Value"
+            },
+            {
+                "name": "toUnit",
+                "comment": " Replace the subject everywhere within Tron GUI tree with `()`, it is useful for truly a lot of cases when you don't care about what are the associated values.\n",
+                "type": "Tron.Tree.Tree a -> Tron.Tree.Tree ()"
+            },
+            {
+                "name": "unfold",
+                "comment": " Convert the tree to the full plane list of its components. So it goes as deep as there is some non-nested component and adds it to the list as well as its parent. ",
+                "type": "Tron.Tree.Tree a -> List.List ( Tron.Path.Path, Tron.Tree.Tree a )"
+            },
+            {
+                "name": "with",
+                "comment": " Same as `andThen`, but also passes the same current property to the function. It helps in chaining things in `Tree.Build.*` and `Tron.Build`. ",
+                "type": "(a -> Tron.Tree.Tree a -> Tron.Tree.Tree b) -> Tron.Tree.Tree a -> Tron.Tree.Tree b"
+            },
+            {
+                "name": "zip",
+                "comment": " `zip` maps two GUI trees with given `fn`; if tree structure doesn't match while zipping, the corresponding `Maybe`s\nbecome `Nothing`. NB: When two controls match at the same place in two given trees, the state is taken from the second (right) one. ",
+                "type": "(Maybe.Maybe a -> Maybe.Maybe b -> c) -> Tron.Tree.Tree a -> Tron.Tree.Tree b -> Tron.Tree.Tree c"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Tron.Tree.Build.Any",
+        "comment": "\n\nFor the detailed examples, see `Tron.Build`, it contains the same functions and types.\nThe difference is that `Tron msg` is the `Tree (Control.Value -> Maybe msg)` and so it produces messages in response to anything, but `Tree a` just\nstores the given `a` values along with the components.\n\nTo map over and manipulate such trees in different ways, use `Tron.Tree` module.\n\nUsing `Tron.lift` any `Tree a` may be lifted to `Tron a` (i.e. `Tree (Control.Value -> Maybe a)`).\n\n# Sets\n\n@docs Set, mapSet, toSet\n\n# Root\n@docs root\n\n# Items\n@docs none, int, float, number, xy, coord, color, text, input, button, buttonWith, toggle, bool\n\n# Groups\n@docs nest, choice, choiceBy, strings, labels, palette\n\n# Buttons\n@docs buttons, useColor, face, Face\n\n# Icons\n@docs Icon, icon, iconAt, themedIcon, themedIconAt\n\n# Force expand / collapse for nesting\n@docs expand, collapse\n\n# Shape\n@docs shape, cells\n\n# Live\n\nUsually in your `for` function you set the default value to the control, but if you change the control with `live`, then you'll be able to pass some dynamic value from your model to it.\n\n@docs live\n\n# Conversion between types of controls + helpers\n@docs toChoice, toKnob, toSwitch\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Face",
+                "comment": " Button face ",
+                "args": [],
+                "type": "Tron.Control.Impl.Button.Face"
+            },
+            {
+                "name": "Icon",
+                "comment": " Button icon ",
+                "args": [],
+                "type": "Tron.Control.Impl.Button.Icon"
+            },
+            {
+                "name": "Set",
+                "comment": " `Set a` is just the list of components' definitions together with their labels.\nIt is what `Build.root`, `Build.nest` and `Build.choice` get as an argument.\n`Set a` is exposed as a separate type to help you in the cases where you build your GUI from several modules,\nbut want to join them in a single panel rather than nesting every module separately.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "List.List ( Tron.Tree.Build.Any.Label, Tron.Tree.Build.Any.Tree a )"
+            }
+        ],
+        "values": [
+            {
+                "name": "bool",
+                "comment": " ",
+                "type": "Basics.Bool -> a -> Tron.Tree.Build.Any.Tree a"
+            },
+            {
+                "name": "button",
+                "comment": " ",
+                "type": "a -> Tron.Tree.Build.Any.Tree a"
+            },
+            {
+                "name": "buttonWith",
+                "comment": " ",
+                "type": "Tron.Tree.Build.Any.Face -> a -> Tron.Tree.Build.Any.Tree a"
+            },
+            {
+                "name": "buttons",
+                "comment": " ",
+                "type": "List.List a -> List.List (Tron.Tree.Build.Any.Tree a)"
+            },
+            {
+                "name": "cells",
+                "comment": " Changes cell shape for `nest` and `choice` panels:\n\n    Build.nest ... |> Buidler.cells single\n\n    Build.choice ... |> Buidler.shape halfByTwo\n\n    Build.choice ... |> Buidler.shape halfByHalf\n",
+                "type": "Tron.Style.CellShape.CellShape -> Tron.Tree.Build.Any.Tree a -> Tron.Tree.Build.Any.Tree a"
+            },
+            {
+                "name": "choice",
+                "comment": " ",
+                "type": "Tron.Tree.Build.Any.Set comparable -> comparable -> Tron.Tree.Build.Any.Tree ( Basics.Int, comparable )"
+            },
+            {
+                "name": "choiceBy",
+                "comment": " ",
+                "type": "Tron.Tree.Build.Any.Set a -> a -> (a -> a -> Basics.Bool) -> Tron.Tree.Build.Any.Tree ( Basics.Int, a )"
+            },
+            {
+                "name": "collapse",
+                "comment": " ",
+                "type": "Tron.Tree.Build.Any.Tree a -> Tron.Tree.Build.Any.Tree a"
+            },
+            {
+                "name": "color",
+                "comment": " ",
+                "type": "Color.Color -> a -> Tron.Tree.Build.Any.Tree a"
+            },
+            {
+                "name": "coord",
+                "comment": " ",
+                "type": "( Axis.Axis, Axis.Axis ) -> ( Basics.Float, Basics.Float ) -> a -> Tron.Tree.Build.Any.Tree a"
+            },
+            {
+                "name": "expand",
+                "comment": " ",
+                "type": "Tron.Tree.Build.Any.Tree a -> Tron.Tree.Build.Any.Tree a"
+            },
+            {
+                "name": "face",
+                "comment": " ",
+                "type": "Tron.Tree.Build.Any.Face -> Tron.Tree.Build.Any.Tree a -> Tron.Tree.Build.Any.Tree a"
+            },
+            {
+                "name": "float",
+                "comment": " ",
+                "type": "Axis.Axis -> Basics.Float -> a -> Tron.Tree.Build.Any.Tree a"
+            },
+            {
+                "name": "icon",
+                "comment": " ",
+                "type": "Url.Url -> Tron.Tree.Build.Any.Face"
+            },
+            {
+                "name": "iconAt",
+                "comment": " ",
+                "type": "List.List String.String -> Tron.Tree.Build.Any.Face"
+            },
+            {
+                "name": "input",
+                "comment": " ",
+                "type": "(x -> String.String) -> x -> a -> Tron.Tree.Build.Any.Tree a"
+            },
+            {
+                "name": "int",
+                "comment": " ",
+                "type": "{ min : Basics.Int, max : Basics.Int, step : Basics.Int } -> Basics.Int -> a -> Tron.Tree.Build.Any.Tree a"
+            },
+            {
+                "name": "labels",
+                "comment": " ",
+                "type": "(a -> Tron.Tree.Build.Any.Label) -> List.List a -> a -> Tron.Tree.Build.Any.Tree ( Basics.Int, Tron.Tree.Build.Any.Label )"
+            },
+            {
+                "name": "live",
+                "comment": " ",
+                "type": "Tron.Tree.Build.Any.Tree a -> Tron.Tree.Build.Any.Tree a"
+            },
+            {
+                "name": "mapSet",
+                "comment": " map all the items in the set with one function. ",
+                "type": "(a -> b) -> Tron.Tree.Build.Any.Set a -> Tron.Tree.Build.Any.Set b"
+            },
+            {
+                "name": "nest",
+                "comment": " ",
+                "type": "Tron.Tree.Build.Any.Set a -> a -> Tron.Tree.Build.Any.Tree a"
+            },
+            {
+                "name": "none",
+                "comment": " ",
+                "type": "a -> Tron.Tree.Build.Any.Tree a"
+            },
+            {
+                "name": "number",
+                "comment": " ",
+                "type": "Axis.Axis -> Basics.Float -> a -> Tron.Tree.Build.Any.Tree a"
+            },
+            {
+                "name": "palette",
+                "comment": " ",
+                "type": "List.List ( Tron.Tree.Build.Any.Label, Color.Color ) -> Color.Color -> Tron.Tree.Build.Any.Tree ( Basics.Int, Color.Color )"
+            },
+            {
+                "name": "root",
+                "comment": " ",
+                "type": "Tron.Tree.Build.Any.Set a -> a -> Tron.Tree.Build.Any.Tree a"
+            },
+            {
+                "name": "shape",
+                "comment": " Changes panel shape for `nest` and `choice` panels:\n\n    Build.nest ... |> Buidler.shape (cols 2)\n\n    Build.choice ... |> Buidler.shape (rows 1)\n\n    Build.choice ... |> Buidler.shape (by 2 3)\n",
+                "type": "Tron.Style.PanelShape.PanelShape -> Tron.Tree.Build.Any.Tree a -> Tron.Tree.Build.Any.Tree a"
+            },
+            {
+                "name": "strings",
+                "comment": " ",
+                "type": "List.List String.String -> String.String -> Tron.Tree.Build.Any.Tree ( Basics.Int, String.String )"
+            },
+            {
+                "name": "text",
+                "comment": " ",
+                "type": "String.String -> a -> Tron.Tree.Build.Any.Tree a"
+            },
+            {
+                "name": "themedIcon",
+                "comment": " ",
+                "type": "(Tron.Style.Theme.Theme -> Maybe.Maybe Url.Url) -> Tron.Tree.Build.Any.Face"
+            },
+            {
+                "name": "themedIconAt",
+                "comment": " ",
+                "type": "(Tron.Style.Theme.Theme -> List.List String.String) -> Tron.Tree.Build.Any.Face"
+            },
+            {
+                "name": "toChoice",
+                "comment": " ",
+                "type": "Tron.Tree.Build.Any.Tree a -> Tron.Tree.Build.Any.Tree a"
+            },
+            {
+                "name": "toKnob",
+                "comment": " Convert choice control to a switch by click form:\n\n    Build.choice ... |> Build.toSwitch\n",
+                "type": "Tron.Tree.Build.Any.Tree msg -> Tron.Tree.Build.Any.Tree msg"
+            },
+            {
+                "name": "toSet",
+                "comment": " ",
+                "type": "(a -> Tron.Tree.Build.Any.Label) -> List.List (Tron.Tree.Build.Any.Tree a) -> Tron.Tree.Build.Any.Set a"
+            },
+            {
+                "name": "toSwitch",
+                "comment": " Convert choice control to a switch by click form:\n\n    Build.choice ... |> Build.toSwitch\n",
+                "type": "Tron.Tree.Build.Any.Tree msg -> Tron.Tree.Build.Any.Tree msg"
+            },
+            {
+                "name": "toggle",
+                "comment": " ",
+                "type": "Basics.Bool -> a -> Tron.Tree.Build.Any.Tree a"
+            },
+            {
+                "name": "useColor",
+                "comment": " ",
+                "type": "Color.Color -> Tron.Tree.Build.Any.Face"
+            },
+            {
+                "name": "xy",
+                "comment": " ",
+                "type": "( Axis.Axis, Axis.Axis ) -> ( Basics.Float, Basics.Float ) -> a -> Tron.Tree.Build.Any.Tree a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Tron.Tree.Build.Unit",
+        "comment": "\n\nFor the detailed examples, see `Tron.Build`, it contains the same functions and types (most of them here are just functions from `Tron.Build.Any` where `a` is omitted since it's just `()` in this case).\nThe difference is that `Tron msg` is the `Tree (Control.Value -> Maybe msg)` and so it produces messages in response to anything, but `Tree ()` just\ndescribes the structure of the components, storing nothing sensitive inside.\n\nTo map over and manipulate such trees in different ways, use `Tron.Tree` module. For example,\nusing `Tree.proxify`, the `Tree ()` may be filled with current values and you would get `Tree Control.Value`.\n\nUse this builder to define _interfaces which don't produce any messages_ (to free yourself from specifying `()` value for every control) and then using `Tron.lift`\nany `Tree ()` may be lifted to `Tron ()` (i.e. `Tree (Control.Value -> Maybe ())`), so that it would fit the `for` function required for `WithTron` specifications.\n\nYou also get `Tree ()` as the storage for previous values in `for`, `update` and `view` from `WithTron` definitions.\n\n\n# Tree\n@docs Tree\n\n# Sets\n@docs Set, toSet\n\n# Root\n@docs root\n\n# Items\n@docs none, int, float, number, xy, coord, color, text, input, button, buttonWith, toggle, bool\n\n# Groups\n@docs nest, choice, choiceBy, strings, labels, palette\n\n# Buttons\n@docs buttons, useColor, face, Face\n\n# Icons\n@docs Icon, icon, iconAt, themedIcon, themedIconAt\n\n# Force expand / collapse for nesting\n@docs expand, collapse\n\n# Shape\n@docs shape, cells\n\n# Live\nUsually in your `for` function you set the default value to the control, but if you change the control with `live`, then you'll be able to pass some dynamic value from your model to it.\n\n@docs live\n\n# Conversion between types of controls + helpers\n@docs toChoice, toKnob, toSwitch\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Face",
+                "comment": " ",
+                "args": [],
+                "type": "Tron.Control.Impl.Button.Face"
+            },
+            {
+                "name": "Icon",
+                "comment": " ",
+                "args": [],
+                "type": "Tron.Control.Impl.Button.Icon"
+            },
+            {
+                "name": "Set",
+                "comment": " ",
+                "args": [],
+                "type": "List.List ( Tron.Tree.Build.Unit.Label, Tron.Tree.Build.Unit.Tree )"
+            },
+            {
+                "name": "Tree",
+                "comment": " The alias to the _unit_ Tree: `Tron.Tree.Tree ()`. ",
+                "args": [],
+                "type": "Tron.Tree.Tree ()"
+            }
+        ],
+        "values": [
+            {
+                "name": "bool",
+                "comment": " ",
+                "type": "Basics.Bool -> Tron.Tree.Build.Unit.Tree"
+            },
+            {
+                "name": "button",
+                "comment": " ",
+                "type": "Tron.Tree.Build.Unit.Tree"
+            },
+            {
+                "name": "buttonWith",
+                "comment": " ",
+                "type": "Tron.Tree.Build.Unit.Face -> Tron.Tree.Build.Unit.Tree"
+            },
+            {
+                "name": "buttons",
+                "comment": " ",
+                "type": "List.List a -> List.List (Tron.Tree.Tree a)"
+            },
+            {
+                "name": "cells",
+                "comment": " Changes cell shape for `nest` and `choice` panels:\n\n    Build.nest ... |> Buidler.cells single\n\n    Build.choice ... |> Buidler.shape halfByTwo\n\n    Build.choice ... |> Buidler.shape halfByHalf\n",
+                "type": "Tron.Style.CellShape.CellShape -> Tron.Tree.Build.Unit.Tree -> Tron.Tree.Build.Unit.Tree"
+            },
+            {
+                "name": "choice",
+                "comment": " ",
+                "type": "Tron.Tree.Build.Any.Set comparable -> comparable -> Tron.Tree.Build.Unit.Tree"
+            },
+            {
+                "name": "choiceBy",
+                "comment": " ",
+                "type": "Tron.Tree.Build.Any.Set a -> a -> (a -> a -> Basics.Bool) -> Tron.Tree.Build.Unit.Tree"
+            },
+            {
+                "name": "collapse",
+                "comment": " ",
+                "type": "Tron.Tree.Build.Unit.Tree -> Tron.Tree.Build.Unit.Tree"
+            },
+            {
+                "name": "color",
+                "comment": " ",
+                "type": "Color.Color -> Tron.Tree.Build.Unit.Tree"
+            },
+            {
+                "name": "coord",
+                "comment": " ",
+                "type": "( Axis.Axis, Axis.Axis ) -> ( Basics.Float, Basics.Float ) -> Tron.Tree.Build.Unit.Tree"
+            },
+            {
+                "name": "expand",
+                "comment": " ",
+                "type": "Tron.Tree.Build.Unit.Tree -> Tron.Tree.Build.Unit.Tree"
+            },
+            {
+                "name": "face",
+                "comment": " ",
+                "type": "Tron.Tree.Build.Unit.Face -> Tron.Tree.Tree a -> Tron.Tree.Tree a"
+            },
+            {
+                "name": "float",
+                "comment": " ",
+                "type": "Axis.Axis -> Basics.Float -> Tron.Tree.Build.Unit.Tree"
+            },
+            {
+                "name": "icon",
+                "comment": " ",
+                "type": "Url.Url -> Tron.Tree.Build.Unit.Face"
+            },
+            {
+                "name": "iconAt",
+                "comment": " ",
+                "type": "List.List String.String -> Tron.Tree.Build.Unit.Face"
+            },
+            {
+                "name": "input",
+                "comment": " ",
+                "type": "(x -> String.String) -> x -> Tron.Tree.Build.Unit.Tree"
+            },
+            {
+                "name": "int",
+                "comment": " ",
+                "type": "{ min : Basics.Int, max : Basics.Int, step : Basics.Int } -> Basics.Int -> Tron.Tree.Build.Unit.Tree"
+            },
+            {
+                "name": "labels",
+                "comment": " ",
+                "type": "(a -> Tron.Tree.Build.Unit.Label) -> List.List a -> a -> Tron.Tree.Build.Unit.Tree"
+            },
+            {
+                "name": "live",
+                "comment": " ",
+                "type": "Tron.Tree.Build.Unit.Tree -> Tron.Tree.Build.Unit.Tree"
+            },
+            {
+                "name": "nest",
+                "comment": " ",
+                "type": "Tron.Tree.Build.Unit.Set -> Tron.Tree.Build.Unit.Tree"
+            },
+            {
+                "name": "none",
+                "comment": " ",
+                "type": "Tron.Tree.Build.Unit.Tree"
+            },
+            {
+                "name": "number",
+                "comment": " ",
+                "type": "Axis.Axis -> Basics.Float -> Tron.Tree.Build.Unit.Tree"
+            },
+            {
+                "name": "palette",
+                "comment": " ",
+                "type": "List.List ( Tron.Tree.Build.Unit.Label, Color.Color ) -> Color.Color -> Tron.Tree.Build.Unit.Tree"
+            },
+            {
+                "name": "root",
+                "comment": " ",
+                "type": "Tron.Tree.Build.Unit.Set -> Tron.Tree.Build.Unit.Tree"
+            },
+            {
+                "name": "shape",
+                "comment": " Changes panel shape for `nest` and `choice` panels:\n\n    Build.nest ... |> Buidler.shape (cols 2)\n\n    Build.choice ... |> Buidler.shape (rows 1)\n\n    Build.choice ... |> Buidler.shape (by 2 3)\n",
+                "type": "Tron.Style.PanelShape.PanelShape -> Tron.Tree.Build.Unit.Tree -> Tron.Tree.Build.Unit.Tree"
+            },
+            {
+                "name": "strings",
+                "comment": " ",
+                "type": "List.List String.String -> String.String -> Tron.Tree.Build.Unit.Tree"
+            },
+            {
+                "name": "text",
+                "comment": " ",
+                "type": "String.String -> Tron.Tree.Build.Unit.Tree"
+            },
+            {
+                "name": "themedIcon",
+                "comment": " ",
+                "type": "(Tron.Style.Theme.Theme -> Maybe.Maybe Url.Url) -> Tron.Tree.Build.Unit.Face"
+            },
+            {
+                "name": "themedIconAt",
+                "comment": " ",
+                "type": "(Tron.Style.Theme.Theme -> List.List String.String) -> Tron.Tree.Build.Unit.Face"
+            },
+            {
+                "name": "toChoice",
+                "comment": " ",
+                "type": "Tron.Tree.Build.Unit.Tree -> Tron.Tree.Build.Unit.Tree"
+            },
+            {
+                "name": "toKnob",
+                "comment": " Convert choice control to a switch by click form:\n\n    Build.choice ... |> Build.toSwitch\n",
+                "type": "Tron.Tree.Build.Unit.Tree -> Tron.Tree.Build.Unit.Tree"
+            },
+            {
+                "name": "toSet",
+                "comment": " ",
+                "type": "(a -> Tron.Tree.Build.Unit.Label) -> List.List (Tron.Tree.Tree a) -> Tron.Tree.Build.Any.Set a"
+            },
+            {
+                "name": "toSwitch",
+                "comment": " Convert choice control to a switch by click form:\n\n    Build.choice ... |> Build.toSwitch\n",
+                "type": "Tron.Tree.Build.Unit.Tree -> Tron.Tree.Build.Unit.Tree"
+            },
+            {
+                "name": "toggle",
+                "comment": " ",
+                "type": "Basics.Bool -> Tron.Tree.Build.Unit.Tree"
+            },
+            {
+                "name": "useColor",
+                "comment": " ",
+                "type": "Color.Color -> Tron.Tree.Build.Unit.Face"
+            },
+            {
+                "name": "xy",
+                "comment": " ",
+                "type": "( Axis.Axis, Axis.Axis ) -> ( Basics.Float, Basics.Float ) -> Tron.Tree.Build.Unit.Tree"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Tron.Tree.Expose.Data",
+        "comment": " The types which are used to communicate b/w Tron and ports (and so JS and WebSockets and `dat.gui`).\n\nSee [`Option.Communication`](https://package.elm-lang.org/packages/shamansir/tron-gui/latest/Tron-Option-Communication) module for the usage.\n\n# Packages for ports\n\n@docs Ack, In, Out, DeduceIn, Tree\n\n# Helpers\n\n@docs ClientId, Value\n\n# No-value\n\n@docs nothingGoesIn, noAck, nothingGoesOut\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Ack",
+                "comment": " Acknowledge package, which lets the server know the current Client ID and the initial tree structure. ",
+                "args": [],
+                "type": "{ client : Tron.Tree.Expose.Data.ClientId, tree : Tron.Tree.Expose.Data.Tree }"
+            },
+            {
+                "name": "ClientId",
+                "comment": " Client ID as a JSON value ",
+                "args": [],
+                "type": "Json.Encode.Value"
+            },
+            {
+                "name": "DeduceIn",
+                "comment": " The JSON-friendly structure of updates which is received\nfrom the incoming ports by Tron. This one is intended to be deduced,\nso that the `type` of the value will be deduced from the\ncurrent tree condition. ",
+                "args": [],
+                "type": "{ path : List.List ( Tron.Path.Index, Tron.Path.Label ), value : Json.Encode.Value }"
+            },
+            {
+                "name": "In",
+                "comment": " The JSON-friendly structure of updates which is received\nfrom the incoming ports by Tron. ",
+                "args": [],
+                "type": "{ path : List.List ( Tron.Path.Index, Tron.Path.Label ), value : Json.Encode.Value, type_ : String.String }"
+            },
+            {
+                "name": "Out",
+                "comment": " The JSON-friendly structure of updates which is sent\nto the outgoing ports from Tron. ",
+                "args": [],
+                "type": "{ client : Tron.Tree.Expose.Data.ClientId, update : Tron.Tree.Expose.Data.Value }"
+            },
+            {
+                "name": "Tree",
+                "comment": " The GUI Tree converted to a JSON value. ",
+                "args": [],
+                "type": "Json.Encode.Value"
+            },
+            {
+                "name": "Value",
+                "comment": " The JSON-friendly representation of any value. ",
+                "args": [],
+                "type": "{ path : List.List ( Tron.Path.Index, Tron.Path.Label ), value : Json.Encode.Value, stringValue : String.String, type_ : String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "noAck",
+                "comment": " ",
+                "type": "Tron.Tree.Expose.Data.Ack"
+            },
+            {
+                "name": "nothingGoesIn",
+                "comment": " ",
+                "type": "Tron.Tree.Expose.Data.In"
+            },
+            {
+                "name": "nothingGoesOut",
+                "comment": " ",
+                "type": "Tron.Tree.Expose.Data.Out"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Tron.Tree.Random",
+        "comment": " Using this module, you may generate the random UI structure if you would ever want to. For testing purposes, for example.\n\n# Generate random UI\n\n@docs generator\n\nSee also: `Tron.Tree`, `Tron.Tree.lift`, `Tron.Tree.Build.Unit`\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "generator",
+                "comment": " ",
+                "type": "Random.Generator (Tron.Tree.Internals.Tree ())"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "WithTron",
+        "comment": " `WithTron` is the set of functions which wrap Elm `Browser.*` helpers and so\nlet you easily add your GUI to the usual Elm-driven flow.\n\nSee [Tutorial](https://github.com/shamansir/tron-gui/blob/main/Tutorial.md) for the details on how to use it.\n\nHere is the `OneKnob` example:\n\nThe only things that is different from usual `Elm` application is `for` function which allows you to build the Tron GUI using current state of the model:\n\n    import WithTron\n    import Tron.Tree exposing (Tree)\n\n    type alias Amount = Float\n\n    type Msg\n        = AmountChanged Amount\n\n    type alias Model = Amount\n\n    for : Tree () -> Model -> Tron Msg\n    for _ amount =\n        Build.root\n            [\n                ( \"amount\"\n                , Build.float\n                    { min = 0, max = 1, step = 0.01 }\n                    amount\n                    AmountChanged\n                )\n            ]\n\n    init _ =\n        ( 0, Cmd.none )\n\n    view _ amount =\n        Html.text\n            <| String.fromFloat amount\n\n    update msg _ curAmount =\n        case msg of\n\n            AmountChanged newAmount ->\n                ( newAmount\n                , Cmd.none\n                )\n\n    subscriptions _ = Sub.none\n\n    main : WithTron.Program () Model Msg\n    main =\n        WithTron.element\n            (Render.toHtml Dock.center Theme.dark)\n            Communication.none\n            { for = for\n            , init = init\n            , view = view\n            , update = update\n            , subscriptions = subscriptions\n            }\n\n*NB*: Please don't forget to add a copy of `src/Tron.css` to your application, or refer to one hosted at GitHub.\n\nFor help on how to define your interface with `for` function, see the detailed `Tron.Build` documentation.\n\nMore examples are in the `README`, and in the `example/*/Main.elm` modules.\n\nSee also: `Tron.Option.Render`, `Tron.Option.Communication`, `Tron.Build`.\n\n# Program\n@docs Program\n\n# Browser.* Wrappers\n@docs sandbox, element, document, application\n\n# Helpers to create configurations for `Browser.*`\n@docs overElement, overDocument, overApplication\n\n# Past dependent helpers\n@docs pastDependentOverElement, pastDependentOverDocument, pastDependentOverApplication\n\n# Just UI\n@docs justUi, justUiAndCommunication\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Program",
+                "comment": " Adds `Model msg` to the Elm `Program` and so controls all the required communication between usual App and GUI. ",
+                "args": [
+                    "flags",
+                    "model",
+                    "msg"
+                ],
+                "type": "Platform.Program flags ( model, Tron.Core.State, WithTron.Tree ) (WithTron.Architecture.WithTronMsg msg)"
+            }
+        ],
+        "values": [
+            {
+                "name": "application",
+                "comment": " Wrapper for `Program.application` with `for` function and `Tron` options.\n\nExample from `Detachable/Main.elm`:\n\n    import WithTron exposing (ProgramWithTron)\n    import Tron.Style.Theme as Theme exposing (Theme(..))\n    import Tron.Style.Dock as Dock\n    import Tron.Expose.Data as Exp\n    import Tron.Option.Render as Render\n    import Tron.Option.Communication as Communication\n    import WithTron\n\n    import Example.Goose.Main as Example\n    import Example.Goose.Model as Example\n    import Example.Goose.Msg as Example\n    import Example.Goose.Gui as ExampleGui\n\n    main : WithTron.Program () Example.Model Example.Msg\n    main =\n        WithTron.application\n            (Render.toHtml Dock.center Theme.light)\n            (Communication.detachable\n                { ack = ackToWs\n                , transmit = sendUpdateToWs\n                , receive = receieveUpdateFromWs identity\n                }\n            )\n            { for = ExampleGui.for\n            , init = always Example.init\n            , view =\n                \\model ->\n                    { title = \"Detachable Tron\"\n                    , body = [ Example.view model ]\n                    }\n            , update = Example.update\n            , subscriptions = always Sub.none\n            , onUrlChange = always Example.NoOp\n            , onUrlRequest = always Example.NoOp\n            }\n\n    port receieveUpdateFromWs : (Exp.RawInUpdate -> msg) -> Sub msg\n\n    port sendUpdateToWs : Exp.RawOutUpdate -> Cmd msg\n\n    port ackToWs : Exp.Ack -> Cmd msg\n\n ",
+                "type": "Tron.Option.Render.Target -> Tron.Option.Communication.Ports msg -> { init : flags -> Url.Url -> Browser.Navigation.Key -> ( model, Platform.Cmd.Cmd msg ), for : WithTron.Tree -> model -> Tron.Tron msg, subscriptions : WithTron.Tree -> model -> Platform.Sub.Sub msg, view : WithTron.Tree -> model -> Browser.Document msg, update : msg -> WithTron.Tree -> model -> ( model, Platform.Cmd.Cmd msg ), onUrlChange : Url.Url -> msg, onUrlRequest : Browser.UrlRequest -> msg } -> WithTron.Program flags model msg"
+            },
+            {
+                "name": "document",
+                "comment": " Wrapper for `Program.document` with `for` function and `Tron` options.\n\nFor example:\n\n    import WithTron\n    import Tron.Style.Theme as Theme exposing (Theme(..))\n    import Tron.Style.Dock as Dock\n    import Tron.Expose.Data as Exp\n    import Tron.Option.Render as Render\n    import Tron.Option.Communication as Communication\n    import WithTron\n\n    main : WithTron.Program () Example.Model Example.Msg\n    main =\n        WithTron.document\n            (Render.toHtml Dock.center Theme.light)\n            (Communication.detachable\n                { ack = ackToWs\n                , transmit = sendUpdateToWs\n                , receive = receieveUpdateFromWs identity\n                }\n            )\n            { for = ExampleGui.for\n            , init = always Example.init\n            , view =\n                \\model ->\n                    { title = \"Detachable Tron\"\n                    , body = [ Example.view model ]\n                    }\n            , update = Example.update\n            , subscriptions = always Sub.none\n            }\n\n ",
+                "type": "Tron.Option.Render.Target -> Tron.Option.Communication.Ports msg -> { init : flags -> ( model, Platform.Cmd.Cmd msg ), for : WithTron.Tree -> model -> Tron.Tron msg, subscriptions : WithTron.Tree -> model -> Platform.Sub.Sub msg, view : WithTron.Tree -> model -> Browser.Document msg, update : msg -> WithTron.Tree -> model -> ( model, Platform.Cmd.Cmd msg ) } -> WithTron.Program flags model msg"
+            },
+            {
+                "name": "element",
+                "comment": " Wrapper for `Program.element` with `for` function and `Tron` options.\n\nExample from `Basic/Main.elm`\n\n    import Tron.Style.Theme as Theme exposing (Theme(..))\n    import Tron.Style.Dock as Dock\n    import Tron.Option.Render as Render\n    import Tron.Option.Communication as Communication\n    import WithTron\n\n    import Example.Goose.Main as Example\n    import Example.Goose.Model as Example\n    import Example.Goose.Msg as Example\n    import Example.Goose.Gui as ExampleGui\n\n    main : WithTron.Program () Example.Model Example.Msg\n    main =\n        WithTron.element\n            (Render.toHtml Dock.center Theme.dark)\n            Communication.none\n            { for = ExampleGui.for\n            , init = always Example.init\n            , view = Example.view\n            , update = Example.update\n            , subscriptions = always Sub.none\n            }\n\n ",
+                "type": "Tron.Option.Render.Target -> Tron.Option.Communication.Ports msg -> { for : WithTron.Tree -> model -> Tron.Tron msg, init : flags -> ( model, Platform.Cmd.Cmd msg ), subscriptions : WithTron.Tree -> model -> Platform.Sub.Sub msg, view : WithTron.Tree -> model -> Html.Html msg, update : msg -> WithTron.Tree -> model -> ( model, Platform.Cmd.Cmd msg ) } -> WithTron.Program flags model msg"
+            },
+            {
+                "name": "justUi",
+                "comment": " ",
+                "type": "Tron.Option.Render.Target -> (WithTron.Tree -> WithTron.Tree) -> WithTron.ElementDef () () ()"
+            },
+            {
+                "name": "justUiAndCommunication",
+                "comment": " ",
+                "type": "Tron.Option.Render.Target -> Tron.Option.Communication.Ports () -> (WithTron.Tree -> WithTron.Tree) -> WithTron.ElementDef () () ()"
+            },
+            {
+                "name": "overApplication",
+                "comment": " Create the configuration that fits `Browser.application`.\n\n    Browser.application\n        <| WithTron.overApplication\n            { ... }\n",
+                "type": "Tron.Option.Render.Target -> Tron.Option.Communication.Ports msg -> { init : flags -> Url.Url -> Browser.Navigation.Key -> ( model, Platform.Cmd.Cmd msg ), for : model -> Tron.Tron msg, subscriptions : model -> Platform.Sub.Sub msg, view : model -> Browser.Document msg, update : msg -> model -> ( model, Platform.Cmd.Cmd msg ), onUrlChange : Url.Url -> msg, onUrlRequest : Browser.UrlRequest -> msg } -> WithTron.ApplicationDef flags model msg"
+            },
+            {
+                "name": "overDocument",
+                "comment": " Create the configuration that fits `Browser.document`.\n\n    Browser.document\n        <| WithTron.overDocument\n            { ... }\n",
+                "type": "Tron.Option.Render.Target -> Tron.Option.Communication.Ports msg -> { init : flags -> ( model, Platform.Cmd.Cmd msg ), for : model -> Tron.Tron msg, subscriptions : model -> Platform.Sub.Sub msg, view : model -> Browser.Document msg, update : msg -> model -> ( model, Platform.Cmd.Cmd msg ) } -> WithTron.DocumentDef flags model msg"
+            },
+            {
+                "name": "overElement",
+                "comment": " Create the configuration that fits `Browser.element`.\n\n    Browser.element\n        <| WithTron.overElement\n            { ... }\n",
+                "type": "Tron.Option.Render.Target -> Tron.Option.Communication.Ports msg -> { for : model -> Tron.Tron msg, init : flags -> ( model, Platform.Cmd.Cmd msg ), subscriptions : model -> Platform.Sub.Sub msg, view : model -> Html.Html msg, update : msg -> model -> ( model, Platform.Cmd.Cmd msg ) } -> WithTron.ElementDef flags model msg"
+            },
+            {
+                "name": "pastDependentOverApplication",
+                "comment": " Create the configuration that fits `Browser.application` with the ability to track the previous state of the values in the GUI (see `WithTron.ValueAt`).\n\n    Browser.element\n        <| WithTron.pastDependentOverElement\n            { ... }\n",
+                "type": "Tron.Option.Render.Target -> Tron.Option.Communication.Ports msg -> { init : flags -> Url.Url -> Browser.Navigation.Key -> ( model, Platform.Cmd.Cmd msg ), for : WithTron.Tree -> model -> Tron.Tron msg, subscriptions : WithTron.Tree -> model -> Platform.Sub.Sub msg, view : WithTron.Tree -> model -> Browser.Document msg, update : msg -> WithTron.Tree -> model -> ( model, Platform.Cmd.Cmd msg ), onUrlChange : Url.Url -> msg, onUrlRequest : Browser.UrlRequest -> msg } -> WithTron.ApplicationDef flags model msg"
+            },
+            {
+                "name": "pastDependentOverDocument",
+                "comment": " Create the configuration that fits `Browser.application` with the ability to track the previous state of the values in the GUI (see `WithTron.ValueAt`).\n\n    Browser.document\n        <| WithTron.pastDependentOverDocument\n            { ... }\n",
+                "type": "Tron.Option.Render.Target -> Tron.Option.Communication.Ports msg -> { init : flags -> ( model, Platform.Cmd.Cmd msg ), for : WithTron.Tree -> model -> Tron.Tron msg, subscriptions : WithTron.Tree -> model -> Platform.Sub.Sub msg, view : WithTron.Tree -> model -> Browser.Document msg, update : msg -> WithTron.Tree -> model -> ( model, Platform.Cmd.Cmd msg ) } -> WithTron.DocumentDef flags model msg"
+            },
+            {
+                "name": "pastDependentOverElement",
+                "comment": " Create the configuration that fits `Browser.element` with the ability to track the previous state of the values in the GUI (see `WithTron.ValueAt`).\n\n    Browser.element\n        <| WithTron.pastDependentOverElement\n            { ... }\n",
+                "type": "Tron.Option.Render.Target -> Tron.Option.Communication.Ports msg -> { for : WithTron.Tree -> model -> Tron.Tron msg, init : flags -> ( model, Platform.Cmd.Cmd msg ), subscriptions : WithTron.Tree -> model -> Platform.Sub.Sub msg, view : WithTron.Tree -> model -> Html.Html msg, update : msg -> WithTron.Tree -> model -> ( model, Platform.Cmd.Cmd msg ) } -> WithTron.ElementDef flags model msg"
+            },
+            {
+                "name": "sandbox",
+                "comment": " Wrapper for `Program.sandbox` with `for` function and `Tron` options.\n\nFor example:\n\n    import Tron.Style.Theme as Theme exposing (Theme(..))\n    import Tron.Style.Dock as Dock\n    import Tron.Option.Render as Render\n    import Tron.Option.Communication as Communication\n    import WithTron\n\n    main : WithTron.Program () Example.Model Example.Msg\n    main =\n        WithTron.sandbox\n            (Render.toHtml Dock.center Theme.dark)\n            Communication.none\n            { for = ExampleGui.for\n            , init = Example.init\n            , view = Example.view\n            , update = Example.update\n            }\n\n\n",
+                "type": "Tron.Option.Render.Target -> { for : model -> Tron.Tron msg, init : model, view : model -> Html.Html msg, update : msg -> model -> model } -> WithTron.Program () model msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "WithTron.ValueAt",
+        "comment": " `ValueAt` is the way to extract values from the `Tree x` or `Tron x`.\n\nUsing `ask` and any `Decoder` you don't have to worry what `Value` is, just do:\n\n    tree |> ask (xy [ \"Goose\", \"Eye\" ])\n\nAnd get `Maybe (Float, Float)` in response. Same works for any of the decoders below:\n\n    tree |> ask (toggle [ \"Goose\", \"Punk\" ]) -- returns `Maybe Bool`\n    tree |> ask (choice [ \"Color Scheme\", \"Product\" ]) -- returns `Maybe (ItemId, Path.Label)`\n    tree |> ask (choiceOf Products.all [ \"Color Scheme\", \"Product\" ]) -- returns `Maybe Product`\n        -- NB: Just ensure to use the very same list you used for creating the `choice` in this case\n    tree |> ask (color [ \"Feather\", \"Color\" ]) -- returns `Maybe Color`\n    -- and so on...\n\nFor the example of such, see `example/ForTiler`, where the structure/state of GUI is dependent on current values, but also doesn't store them in its own model, since mostly connects to JavaScript.\n\nSee also: [`Tron.Tree`](https://package.elm-lang.org/packages/shamansir/tron-gui/latest/Tron-Tree).\n\n# Asking values at path\n\n@docs at\n\n# Actually, all the possible ways to get your value as a common type:\n\n@docs atKnob, atXY, atText, atToggle, atColor, atChoice, atChoiceOf\n\n# Ask using decoders\n\n@docs ask, number, xy, text, toggle, color, action, choice, choiceOf\n\n# Decode\n\n@docs Decoder\n\n# Common helpers\n\n@docs map\n\n",
+        "unions": [
+            {
+                "name": "Decoder",
+                "comment": " The decoder that knows how to extract a value at the certain path.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "action",
+                "comment": " Has a little sense, but still there. Could be named `absurd`. Check, if button was pressed at least once. ",
+                "type": "List.List Tron.Path.Label -> WithTron.ValueAt.Decoder ()"
+            },
+            {
+                "name": "ask",
+                "comment": " Load value from the tree using the decoder, and if it's there, you'll get it:\n\n    tree |> ask (xy [ \"Goose\", \"Eye\" ]) -- returns `Maybe (Float, Float)`\n",
+                "type": "WithTron.ValueAt.Decoder a -> Tron.Tree.Tree x -> Maybe.Maybe a"
+            },
+            {
+                "name": "at",
+                "comment": " ",
+                "type": "List.List Tron.Path.Label -> Tron.Tree.Tree a -> Maybe.Maybe Tron.Control.Value.Value"
+            },
+            {
+                "name": "atChoice",
+                "comment": " ",
+                "type": "(( Tron.Control.Impl.Nest.ItemId, Maybe.Maybe Tron.Path.Label ) -> a) -> a -> List.List Tron.Path.Label -> Tron.Tree.Tree x -> a"
+            },
+            {
+                "name": "atChoiceOf",
+                "comment": " ",
+                "type": "List.List a -> a -> List.List Tron.Path.Label -> Tron.Tree.Tree x -> a"
+            },
+            {
+                "name": "atColor",
+                "comment": " ",
+                "type": "Color.Color -> List.List Tron.Path.Label -> Tron.Tree.Tree x -> Color.Color"
+            },
+            {
+                "name": "atKnob",
+                "comment": " ",
+                "type": "Basics.Float -> List.List Tron.Path.Label -> Tron.Tree.Tree x -> Basics.Float"
+            },
+            {
+                "name": "atText",
+                "comment": " ",
+                "type": "String.String -> List.List Tron.Path.Label -> Tron.Tree.Tree x -> String.String"
+            },
+            {
+                "name": "atToggle",
+                "comment": " ",
+                "type": "(Basics.Bool -> a) -> a -> List.List Tron.Path.Label -> Tron.Tree.Tree x -> a"
+            },
+            {
+                "name": "atXY",
+                "comment": " ",
+                "type": "( Basics.Float, Basics.Float ) -> List.List Tron.Path.Label -> Tron.Tree.Tree x -> ( Basics.Float, Basics.Float )"
+            },
+            {
+                "name": "choice",
+                "comment": " Load chosen item ID (which is `Int`) by path. Use `choiceOf` to get the actual value. ",
+                "type": "List.List Tron.Path.Label -> WithTron.ValueAt.Decoder ( Tron.Control.Impl.Nest.ItemId, Maybe.Maybe Tron.Path.Label )"
+            },
+            {
+                "name": "choiceOf",
+                "comment": " Load chosen value by path. NB: Ensure to use the very same list you used for creating the `choice` in this case. ",
+                "type": "List.List a -> List.List Tron.Path.Label -> WithTron.ValueAt.Decoder a"
+            },
+            {
+                "name": "color",
+                "comment": " Load color value by path. ",
+                "type": "List.List Tron.Path.Label -> WithTron.ValueAt.Decoder Color.Color"
+            },
+            {
+                "name": "map",
+                "comment": " Common `map` function for decoder.\n",
+                "type": "(a -> b) -> WithTron.ValueAt.Decoder a -> WithTron.ValueAt.Decoder b"
+            },
+            {
+                "name": "number",
+                "comment": " Load number value by path: works both for `Builr.int` & `Build.float` ",
+                "type": "List.List Tron.Path.Label -> WithTron.ValueAt.Decoder Basics.Float"
+            },
+            {
+                "name": "text",
+                "comment": " Load text value by path ",
+                "type": "List.List Tron.Path.Label -> WithTron.ValueAt.Decoder String.String"
+            },
+            {
+                "name": "toggle",
+                "comment": " Load Toggle value by path. ",
+                "type": "List.List Tron.Path.Label -> WithTron.ValueAt.Decoder Basics.Bool"
+            },
+            {
+                "name": "xy",
+                "comment": " Load XY value by path ",
+                "type": "List.List Tron.Path.Label -> WithTron.ValueAt.Decoder ( Basics.Float, Basics.Float )"
+            }
+        ],
+        "binops": []
+    }
+]

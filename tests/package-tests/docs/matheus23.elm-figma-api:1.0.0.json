@@ -1,0 +1,950 @@
+[
+    {
+        "name": "Figma",
+        "comment": " This module provides endpoints for the Figma web API.\n\n\n# Authentication\n\n@docs AuthenticationToken, personalToken, oauth2Token\n\n\n# Document file and versions\n\n@docs FileKey, File, getFile, ComponentMeta, VersionId, Version, getVersions, getFileWithVersion\n\n\n# Comments\n\n@docs Comment, CommentData, ReplyData, getComments, postComment\n\n\n# Export document nodes\n\n@docs exportNodesAsPng, exportNodesAsJpeg, exportNodesAsSvg, exportNodesWithOptions, ExportedImage\n\n\n# Team projects and files\n\n@docs TeamId, ProjectId, Project, getProjects, getFiles, FileMeta\n\n\n# User\n\n@docs User\n\n\n# Decoders\n\n@docs fileDecoder\n\n",
+        "unions": [
+            {
+                "name": "AuthenticationToken",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Comment",
+                "comment": " A comment is either a \"top comment\" or a reply to it.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Comment",
+                        [
+                            "Figma.CommentData"
+                        ]
+                    ],
+                    [
+                        "Reply",
+                        [
+                            "Figma.ReplyData"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "CommentData",
+                "comment": " A comment left by a user.\n",
+                "args": [],
+                "type": "{ id : String.String, message : String.String, fileKey : Figma.FileKey, position : Figma.Geometry.Position, user : Figma.User, createdAt : Time.Posix, resolvedAt : Maybe.Maybe Time.Posix, orderId : String.String }"
+            },
+            {
+                "name": "ComponentMeta",
+                "comment": " Metadata for a master component. Component data is stored in a `Document.Component` record.\n",
+                "args": [],
+                "type": "{ name : String.String, description : String.String }"
+            },
+            {
+                "name": "ExportedImage",
+                "comment": " A tuple made of the node ID and the image URL of its rendered representation.\n\nA `Nothing` value indicates that rendering of the specific node has failed. This may be due to\nthe node id not existing, or other reasons such has the node having no renderable components.\n\n",
+                "args": [],
+                "type": "( Figma.Document.NodeId, Maybe.Maybe String.String )"
+            },
+            {
+                "name": "File",
+                "comment": " The file data returned by the server. In particular:\n\n  - `document` is the root node of the document.\n  - `components` is a mapping from node ID's to component metadata. This helps you determine\n    which components each instance comes from.\n\n",
+                "args": [],
+                "type": "{ schemaVersion : Basics.Int, thumbnailUrl : String.String, document : Figma.Document.Tree, components : Dict.Dict Figma.Document.NodeId Figma.ComponentMeta }"
+            },
+            {
+                "name": "FileKey",
+                "comment": " A file key which univocally identifies Figma document on the server.\n\n**Note**: The _file key_ can be extracted from any Figma file URL: `https://www.figma.com/file/:key/:title`, or via the [`getFiles`][#getFiles] function.\n\n",
+                "args": [],
+                "type": "String.String"
+            },
+            {
+                "name": "FileMeta",
+                "comment": " Metadata for a project file.\n",
+                "args": [],
+                "type": "{ key : Figma.FileKey, name : String.String, thumbnailUrl : String.String, lastModified : Time.Posix }"
+            },
+            {
+                "name": "Project",
+                "comment": " A single team project.\n",
+                "args": [],
+                "type": "{ id : Figma.ProjectId, name : String.String }"
+            },
+            {
+                "name": "ProjectId",
+                "comment": " A value which uniquely identifies a project.\n",
+                "args": [],
+                "type": "Basics.Int"
+            },
+            {
+                "name": "ReplyData",
+                "comment": " A reply to a comment.\n",
+                "args": [],
+                "type": "{ id : String.String, message : String.String, fileKey : Figma.FileKey, parentId : String.String, user : Figma.User, createdAt : Time.Posix, resolvedAt : Maybe.Maybe Time.Posix }"
+            },
+            {
+                "name": "TeamId",
+                "comment": " A value which uniquely identifies a team.\n",
+                "args": [],
+                "type": "String.String"
+            },
+            {
+                "name": "User",
+                "comment": " A description of a user.\n",
+                "args": [],
+                "type": "{ handle : String.String, imageUrl : String.String }"
+            },
+            {
+                "name": "Version",
+                "comment": " A version of a file.\n",
+                "args": [],
+                "type": "{ id : String.String, createdAt : Time.Posix, label : String.String, description : String.String, user : Figma.User }"
+            },
+            {
+                "name": "VersionId",
+                "comment": " Unique identifier for file version.\n",
+                "args": [],
+                "type": "String.String"
+            }
+        ],
+        "values": [
+            {
+                "name": "exportNodesAsJpeg",
+                "comment": " Construct a web request to export a list of document nodes into JPEG files at 1x resolution.\n\nIf you need to specify a different scale value use `exportNodesWithOptions`.\n\n",
+                "type": "Figma.AuthenticationToken -> Figma.FileKey -> List.List Figma.Document.NodeId -> (Result.Result Http.Error (List.List Figma.ExportedImage) -> msg) -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "exportNodesAsPng",
+                "comment": " Construct a web request to export a list of document nodes into PNG files at 1x resolution.\n\nIf you need to specify a different scale value use `exportNodesWithOptions`.\n\n",
+                "type": "Figma.AuthenticationToken -> Figma.FileKey -> List.List Figma.Document.NodeId -> (Result.Result Http.Error (List.List Figma.ExportedImage) -> msg) -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "exportNodesAsSvg",
+                "comment": " Construct a web request to export a list of document nodes into SVG files at 1x resolution.\n\nIf you need to specify a different scale value use `exportNodesWithOptions`.\n\n",
+                "type": "Figma.AuthenticationToken -> Figma.FileKey -> List.List Figma.Document.NodeId -> (Result.Result Http.Error (List.List Figma.ExportedImage) -> msg) -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "exportNodesWithOptions",
+                "comment": " Construct a web request to export a list of document nodes into the given `format` files using\nthe given `scale` factor automatically clamped within the 0.01–4 range.\n",
+                "type": "Figma.AuthenticationToken -> Figma.FileKey -> { format : Figma.Document.ExportFormat, scale : Basics.Float } -> List.List Figma.Document.NodeId -> (Result.Result Http.Error (List.List Figma.ExportedImage) -> msg) -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "fileDecoder",
+                "comment": " ",
+                "type": "Json.Decode.Decoder Figma.File"
+            },
+            {
+                "name": "getComments",
+                "comment": " Construct a web request to return a list of comments left on the document.\n",
+                "type": "Figma.AuthenticationToken -> Figma.FileKey -> (Result.Result Http.Error (List.List Figma.Comment) -> msg) -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "getFile",
+                "comment": " Construct a web request to return the latest version of the file referred by _key_ and store it into a `File` record.\n\n    import Http\n    import Figma as F\n\n    F.getFile ( F.personalToken \"your-token\" ) \"your-file-key\"\n        |> Http.send FileReceived\n\nAlternatively `getFile` can be chained together with another request (or any other task) resulting in a single command.\n\n    F.getFile ( F.personalToken \"your-token\" ) \"your-file-key\"\n        |> Http.toTask\n        |> Task.andThen\n            (\\file ->\n                let\n                    options =\n                        { format = Document.JpegFormat\n                        , scale = 1.0\n                        }\n\n                    nodeIds =\n                        -- Extract your node ID's from file.document here\n                in\n                    F.exportNodesWithOptions authToken fileKey options nodeIds\n                        |> Http.toTask\n            )\n        |> Task.attempt NodesExported\n\n",
+                "type": "Figma.AuthenticationToken -> Figma.FileKey -> (Result.Result Http.Error Figma.File -> msg) -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "getFileWithVersion",
+                "comment": " Construct a web request to return specific file version.\n",
+                "type": "Figma.AuthenticationToken -> Figma.FileKey -> Figma.VersionId -> (Result.Result Http.Error Figma.File -> msg) -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "getFiles",
+                "comment": " Construct a web request to return the list of files of the given project.\n",
+                "type": "Figma.AuthenticationToken -> Figma.ProjectId -> (Result.Result Http.Error (List.List Figma.FileMeta) -> msg) -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "getProjects",
+                "comment": " Construct a web request and return the list of projects of the given team.\n\nNote that this will only return projects visible to the authenticated user\nor owner of the developer token.\n\n",
+                "type": "Figma.AuthenticationToken -> Figma.TeamId -> (Result.Result Http.Error (List.List Figma.Project) -> msg) -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "getVersions",
+                "comment": " Construct a web request to list the version history of a file. The version history\nconsists of versions, manually-saved additions to the version history of a file. If the\naccount is not on a paid team, version history is limited to the past 30 days.\n\nNote that version history will not include autosaved versions.\n\n",
+                "type": "Figma.AuthenticationToken -> Figma.FileKey -> (Result.Result Http.Error (List.List Figma.Version) -> msg) -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "oauth2Token",
+                "comment": " Create a token to be used with the OAuth 2 authentication method.\n[Read more](https://www.figma.com/developers/docs#auth-oauth).\n",
+                "type": "String.String -> Figma.AuthenticationToken"
+            },
+            {
+                "name": "personalToken",
+                "comment": " Create a token to be used with the Personal Access Token authentication method.\n[Read more](https://www.figma.com/developers/docs#auth-dev-token).\n",
+                "type": "String.String -> Figma.AuthenticationToken"
+            },
+            {
+                "name": "postComment",
+                "comment": " Construct a web request to add a new comment to the document.\nReturn the `Comment` that was successfully posted.\n",
+                "type": "Figma.AuthenticationToken -> Figma.FileKey -> { message : String.String, position : Figma.Geometry.Position } -> (Result.Result Http.Error Figma.Comment -> msg) -> Platform.Cmd.Cmd msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Figma.Appearance",
+        "comment": "\n\n\n# Fills and strokes\n\n@docs StrokeAlign, Paint, SolidColor, Image, ScaleMode, Gradient, ColorStop\n\n\n# Text styling\n\n@docs TextStyle, TextStyleOverride, TextHorizontalAlign, TextVerticalAlign\n\n\n# Blending modes and effetcs\n\n@docs BlendMode, Effect, Blur, Shadow\n\n",
+        "unions": [
+            {
+                "name": "BlendMode",
+                "comment": " How a layer blends with layers below.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NormalMode",
+                        []
+                    ],
+                    [
+                        "PassThroughMode",
+                        []
+                    ],
+                    [
+                        "DarkenMode",
+                        []
+                    ],
+                    [
+                        "MultiplyMode",
+                        []
+                    ],
+                    [
+                        "LinearBurnMode",
+                        []
+                    ],
+                    [
+                        "ColorBurnMode",
+                        []
+                    ],
+                    [
+                        "LightenMode",
+                        []
+                    ],
+                    [
+                        "ScreenMode",
+                        []
+                    ],
+                    [
+                        "LinearDodgeMode",
+                        []
+                    ],
+                    [
+                        "ColorDodgeMode",
+                        []
+                    ],
+                    [
+                        "OverlayMode",
+                        []
+                    ],
+                    [
+                        "SoftLightMode",
+                        []
+                    ],
+                    [
+                        "HardLightMode",
+                        []
+                    ],
+                    [
+                        "DifferenceMode",
+                        []
+                    ],
+                    [
+                        "ExclusionMode",
+                        []
+                    ],
+                    [
+                        "HueMode",
+                        []
+                    ],
+                    [
+                        "SaturationMode",
+                        []
+                    ],
+                    [
+                        "ColorMode",
+                        []
+                    ],
+                    [
+                        "LuminosityMode",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Effect",
+                "comment": " A visual effect such as a shadow or blur.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "InnerShadowEffect",
+                        [
+                            "Figma.Appearance.Shadow"
+                        ]
+                    ],
+                    [
+                        "DropShadowEffect",
+                        [
+                            "Figma.Appearance.Shadow"
+                        ]
+                    ],
+                    [
+                        "LayerBlurEffect",
+                        [
+                            "Figma.Appearance.Blur"
+                        ]
+                    ],
+                    [
+                        "BackgroundBlurEffect",
+                        [
+                            "Figma.Appearance.Blur"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Paint",
+                "comment": " A solid color, gradient, or image texture that can be applied as fills or strokes.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "ColorPaint",
+                        [
+                            "Figma.Appearance.SolidColor"
+                        ]
+                    ],
+                    [
+                        "ImagePaint",
+                        [
+                            "Figma.Appearance.Image"
+                        ]
+                    ],
+                    [
+                        "LinearGradientPaint",
+                        [
+                            "Figma.Appearance.Gradient"
+                        ]
+                    ],
+                    [
+                        "RadialGradientPaint",
+                        [
+                            "Figma.Appearance.Gradient"
+                        ]
+                    ],
+                    [
+                        "AngularGradientPaint",
+                        [
+                            "Figma.Appearance.Gradient"
+                        ]
+                    ],
+                    [
+                        "EmojiPaint",
+                        []
+                    ],
+                    [
+                        "DiamondGradientPaint",
+                        [
+                            "Figma.Appearance.Gradient"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "ScaleMode",
+                "comment": " Image scaling mode.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "FillMode",
+                        []
+                    ],
+                    [
+                        "FitMode",
+                        []
+                    ],
+                    [
+                        "TileMode",
+                        []
+                    ],
+                    [
+                        "StretchMode",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "StrokeAlign",
+                "comment": " Where stroke is drawn relative to the vector outline.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "InsideStroke",
+                        []
+                    ],
+                    [
+                        "OutsideStroke",
+                        []
+                    ],
+                    [
+                        "CenterStroke",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "TextHorizontalAlign",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "LeftAlign",
+                        []
+                    ],
+                    [
+                        "RightAlign",
+                        []
+                    ],
+                    [
+                        "CenterHorizontalAlign",
+                        []
+                    ],
+                    [
+                        "JustifiedAlign",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "TextVerticalAlign",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "TopAlign",
+                        []
+                    ],
+                    [
+                        "CenterVerticalAlign",
+                        []
+                    ],
+                    [
+                        "BottomAlign",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Blur",
+                "comment": " Blur visual effect.\n",
+                "args": [],
+                "type": "{ isVisible : Basics.Bool, radius : Basics.Float }"
+            },
+            {
+                "name": "ColorStop",
+                "comment": " A position color pair representing a gradient stop.\n",
+                "args": [],
+                "type": "{ position : Basics.Float, color : Color.Color }"
+            },
+            {
+                "name": "Gradient",
+                "comment": " A color gradient paint. In particular:\n\n  - `start`: position of the start handle for the gradient (value 0, for the purposes of calculating gradient stops)\n  - `stop`: position of the end handle for the gradient (value 1),\n  - `width`: width of the gradient (only relevant for non-linear gradients)\n\nThese three values are stored in normalized object space. Normalized object space is if the top left corner of the bounding box of the object is `0, 0` and the bottom right is `1,1`.\n\n  - `colorStops`: positions of key points along the gradient axis with the colors anchored there. Colors along the gradient are interpolated smoothly between neighboring gradient stops.\n\n",
+                "args": [],
+                "type": "{ isVisible : Basics.Bool, opacity : Basics.Float, start : Math.Vector2.Vec2, stop : Math.Vector2.Vec2, width : Math.Vector2.Vec2, colorStops : List.List Figma.Appearance.ColorStop, blendMode : Figma.Appearance.BlendMode }"
+            },
+            {
+                "name": "Image",
+                "comment": " A image-textured paint.\n",
+                "args": [],
+                "type": "{ isVisible : Basics.Bool, opacity : Basics.Float, scaleMode : Figma.Appearance.ScaleMode, blendMode : Figma.Appearance.BlendMode }"
+            },
+            {
+                "name": "Shadow",
+                "comment": " Shadow visual effect.\n",
+                "args": [],
+                "type": "{ isVisible : Basics.Bool, radius : Basics.Float, color : Color.Color, blendMode : Figma.Appearance.BlendMode, offset : Math.Vector2.Vec2 }"
+            },
+            {
+                "name": "SolidColor",
+                "comment": " Solid color paint.\n",
+                "args": [],
+                "type": "{ isVisible : Basics.Bool, opacity : Basics.Float, color : Color.Color, blendMode : Figma.Appearance.BlendMode }"
+            },
+            {
+                "name": "TextStyle",
+                "comment": " Character formatting.\n",
+                "args": [],
+                "type": "{ fontFamily : String.String, fontPostScriptName : String.String, isItalic : Basics.Bool, fontWeight : Basics.Int, fontSize : Basics.Float, horizontalAlign : Figma.Appearance.TextHorizontalAlign, verticalAlign : Figma.Appearance.TextVerticalAlign, letterSpacing : Basics.Float, fills : List.List Figma.Appearance.Paint, lineHeightPx : Basics.Float, lineHeightPercent : Basics.Float }"
+            },
+            {
+                "name": "TextStyleOverride",
+                "comment": " Character formatting overrides.\n\nOnly relevant fields are set while specifying an override. All other fields are supposed\nto be found in the master `TextStyle` record.\n\n",
+                "args": [],
+                "type": "{ fontFamily : Maybe.Maybe String.String, fontPostScriptName : Maybe.Maybe String.String, isItalic : Maybe.Maybe Basics.Bool, fontWeight : Maybe.Maybe Basics.Int, fontSize : Maybe.Maybe Basics.Float, horizontalAlign : Maybe.Maybe Figma.Appearance.TextHorizontalAlign, verticalAlign : Maybe.Maybe Figma.Appearance.TextVerticalAlign, letterSpacing : Maybe.Maybe Basics.Float, fills : Maybe.Maybe (List.List Figma.Appearance.Paint), lineHeightPx : Maybe.Maybe Basics.Float, lineHeightPercent : Maybe.Maybe Basics.Float }"
+            }
+        ],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "Figma.Document",
+        "comment": " This module provides several data structures to describe a Figma document\nand functions which operate on it.\n\n\n# Document node types\n\n@docs Node, Tree, NodeId, Document, Canvas, Frame, Group, BooleanGroup, BooleanOperation, Vector, Rectangle, Slice, Text, Component, Instance\n\n\n# Export constraints and settings\n\n@docs ExportConstraint, ExportSetting, ExportFormat\n\n\n# Tree creation and manipulation\n\n@docs singleton, tree, node, children, foldl, toRosetree\n\n",
+        "unions": [
+            {
+                "name": "BooleanOperation",
+                "comment": " Type of boolean operation applied to the boolean group children.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "UnionOperation",
+                        []
+                    ],
+                    [
+                        "IntersectOperation",
+                        []
+                    ],
+                    [
+                        "SubtractOperation",
+                        []
+                    ],
+                    [
+                        "ExcludeOperation",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "ExportConstraint",
+                "comment": " Sizing constraint for exports.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "ScaleConstraint",
+                        [
+                            "Basics.Float"
+                        ]
+                    ],
+                    [
+                        "WidthConstraint",
+                        [
+                            "Basics.Float"
+                        ]
+                    ],
+                    [
+                        "HeightConstraint",
+                        [
+                            "Basics.Float"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "ExportFormat",
+                "comment": " Format to export an asset to.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "PngFormat",
+                        []
+                    ],
+                    [
+                        "JpegFormat",
+                        []
+                    ],
+                    [
+                        "SvgFormat",
+                        []
+                    ],
+                    [
+                        "PdfFormat",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Node",
+                "comment": " A Figma document consists as tree of nodes. It starts with a\n`DocumentNode`, which has one or more `CanvasNode`'s children — called _Pages_ in the UI —\nwhich in turn contain nodes for frames, images, vector shapes, etc.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "DocumentNode",
+                        [
+                            "Figma.Document.Document"
+                        ]
+                    ],
+                    [
+                        "CanvasNode",
+                        [
+                            "Figma.Document.Canvas"
+                        ]
+                    ],
+                    [
+                        "FrameNode",
+                        [
+                            "Figma.Document.Frame"
+                        ]
+                    ],
+                    [
+                        "GroupNode",
+                        [
+                            "Figma.Document.Group"
+                        ]
+                    ],
+                    [
+                        "BooleanGroupNode",
+                        [
+                            "Figma.Document.BooleanGroup"
+                        ]
+                    ],
+                    [
+                        "VectorNode",
+                        [
+                            "Figma.Document.Vector"
+                        ]
+                    ],
+                    [
+                        "StarNode",
+                        [
+                            "Figma.Document.Vector"
+                        ]
+                    ],
+                    [
+                        "LineNode",
+                        [
+                            "Figma.Document.Vector"
+                        ]
+                    ],
+                    [
+                        "EllipseNode",
+                        [
+                            "Figma.Document.Vector"
+                        ]
+                    ],
+                    [
+                        "RegularPolygonNode",
+                        [
+                            "Figma.Document.Vector"
+                        ]
+                    ],
+                    [
+                        "RectangleNode",
+                        [
+                            "Figma.Document.Rectangle"
+                        ]
+                    ],
+                    [
+                        "SliceNode",
+                        [
+                            "Figma.Document.Slice"
+                        ]
+                    ],
+                    [
+                        "TextNode",
+                        [
+                            "Figma.Document.Text"
+                        ]
+                    ],
+                    [
+                        "ComponentNode",
+                        [
+                            "Figma.Document.Component"
+                        ]
+                    ],
+                    [
+                        "InstanceNode",
+                        [
+                            "Figma.Document.Instance"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Tree",
+                "comment": " Represents a multiway tree made of `Node`'s.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "BooleanGroup",
+                "comment": " A group that has a boolean operation (union, intersection, subtraction and exlusion) applied to it.\n",
+                "args": [],
+                "type": "{ id : Figma.Document.NodeId, name : String.String, isVisible : Basics.Bool, exportSettings : List.List Figma.Document.ExportSetting, blendMode : Figma.Appearance.BlendMode, preserveRatio : Basics.Bool, horizontalConstraint : Figma.Layout.LayoutHorizontalConstraint, verticalConstraint : Figma.Layout.LayoutVerticalConstraint, transitionTo : Maybe.Maybe Figma.Document.NodeId, opacity : Basics.Float, boundingBox : Figma.Geometry.BoundingBox, effects : List.List Figma.Appearance.Effect, isMask : Basics.Bool, fills : List.List Figma.Appearance.Paint, strokes : List.List Figma.Appearance.Paint, strokeWeight : Basics.Float, strokeAlign : Figma.Appearance.StrokeAlign, operation : Figma.Document.BooleanOperation }"
+            },
+            {
+                "name": "Canvas",
+                "comment": " A single page in a document.\n",
+                "args": [],
+                "type": "{ id : Figma.Document.NodeId, name : String.String, isVisible : Basics.Bool, backgroundColor : Color.Color, exportSettings : List.List Figma.Document.ExportSetting }"
+            },
+            {
+                "name": "Component",
+                "comment": " A reusable component node. It has the same fields of `Frame`.\n",
+                "args": [],
+                "type": "Figma.Document.Frame"
+            },
+            {
+                "name": "Document",
+                "comment": " The root node of a document.\n",
+                "args": [],
+                "type": "{ id : Figma.Document.NodeId, name : String.String, isVisible : Basics.Bool }"
+            },
+            {
+                "name": "ExportSetting",
+                "comment": " Format and size to export an asset at.\n",
+                "args": [],
+                "type": "{ suffix : String.String, format : Figma.Document.ExportFormat, constraint : Figma.Document.ExportConstraint }"
+            },
+            {
+                "name": "Frame",
+                "comment": " A node of fixed size containing other nodes.\n",
+                "args": [],
+                "type": "{ id : Figma.Document.NodeId, name : String.String, isVisible : Basics.Bool, backgroundColor : Color.Color, exportSettings : List.List Figma.Document.ExportSetting, blendMode : Figma.Appearance.BlendMode, preserveRatio : Basics.Bool, horizontalConstraint : Figma.Layout.LayoutHorizontalConstraint, verticalConstraint : Figma.Layout.LayoutVerticalConstraint, transitionTo : Maybe.Maybe Figma.Document.NodeId, opacity : Basics.Float, boundingBox : Figma.Geometry.BoundingBox, clipContent : Basics.Bool, layoutGrids : List.List Figma.Layout.LayoutGrid, effects : List.List Figma.Appearance.Effect, isMask : Basics.Bool }"
+            },
+            {
+                "name": "Group",
+                "comment": " A logical grouping of nodes.\n",
+                "args": [],
+                "type": "{ id : Figma.Document.NodeId, name : String.String, isVisible : Basics.Bool, backgroundColor : Color.Color, exportSettings : List.List Figma.Document.ExportSetting, blendMode : Figma.Appearance.BlendMode, preserveRatio : Basics.Bool, horizontalConstraint : Figma.Layout.LayoutHorizontalConstraint, verticalConstraint : Figma.Layout.LayoutVerticalConstraint, transitionTo : Maybe.Maybe Figma.Document.NodeId, opacity : Basics.Float, boundingBox : Figma.Geometry.BoundingBox, clipContent : Basics.Bool, layoutGrids : List.List Figma.Layout.LayoutGrid, effects : List.List Figma.Appearance.Effect, isMask : Basics.Bool }"
+            },
+            {
+                "name": "Instance",
+                "comment": " An instance of a component. Changes to the original component result\nin the same changes applied to the instance.\n",
+                "args": [],
+                "type": "{ id : Figma.Document.NodeId, name : String.String, isVisible : Basics.Bool, backgroundColor : Color.Color, exportSettings : List.List Figma.Document.ExportSetting, blendMode : Figma.Appearance.BlendMode, preserveRatio : Basics.Bool, horizontalConstraint : Figma.Layout.LayoutHorizontalConstraint, verticalConstraint : Figma.Layout.LayoutVerticalConstraint, transitionTo : Maybe.Maybe Figma.Document.NodeId, opacity : Basics.Float, boundingBox : Figma.Geometry.BoundingBox, clipContent : Basics.Bool, layoutGrids : List.List Figma.Layout.LayoutGrid, effects : List.List Figma.Appearance.Effect, isMask : Basics.Bool, componentId : Figma.Document.NodeId }"
+            },
+            {
+                "name": "NodeId",
+                "comment": " A value which uniquely identifies a node in the document.\n",
+                "args": [],
+                "type": "String.String"
+            },
+            {
+                "name": "Rectangle",
+                "comment": " A rectangular vector shape.\n",
+                "args": [],
+                "type": "{ id : Figma.Document.NodeId, name : String.String, isVisible : Basics.Bool, exportSettings : List.List Figma.Document.ExportSetting, blendMode : Figma.Appearance.BlendMode, preserveRatio : Basics.Bool, horizontalConstraint : Figma.Layout.LayoutHorizontalConstraint, verticalConstraint : Figma.Layout.LayoutVerticalConstraint, transitionTo : Maybe.Maybe Figma.Document.NodeId, opacity : Basics.Float, boundingBox : Figma.Geometry.BoundingBox, effects : List.List Figma.Appearance.Effect, isMask : Basics.Bool, fills : List.List Figma.Appearance.Paint, strokes : List.List Figma.Appearance.Paint, strokeWeight : Basics.Float, strokeAlign : Figma.Appearance.StrokeAlign, cornerRadius : Basics.Float }"
+            },
+            {
+                "name": "Slice",
+                "comment": " A rectangular region of the canvas that can be exported.\n",
+                "args": [],
+                "type": "{ id : Figma.Document.NodeId, name : String.String, isVisible : Basics.Bool, exportSettings : List.List Figma.Document.ExportSetting, boundingBox : Figma.Geometry.BoundingBox }"
+            },
+            {
+                "name": "Text",
+                "comment": " A text box.\n",
+                "args": [],
+                "type": "{ id : Figma.Document.NodeId, name : String.String, isVisible : Basics.Bool, exportSettings : List.List Figma.Document.ExportSetting, blendMode : Figma.Appearance.BlendMode, preserveRatio : Basics.Bool, horizontalConstraint : Figma.Layout.LayoutHorizontalConstraint, verticalConstraint : Figma.Layout.LayoutVerticalConstraint, transitionTo : Maybe.Maybe Figma.Document.NodeId, opacity : Basics.Float, boundingBox : Figma.Geometry.BoundingBox, effects : List.List Figma.Appearance.Effect, isMask : Basics.Bool, fills : List.List Figma.Appearance.Paint, strokes : List.List Figma.Appearance.Paint, strokeWeight : Basics.Float, strokeAlign : Figma.Appearance.StrokeAlign, characters : String.String, style : Figma.Appearance.TextStyle, characterStyleOverrides : List.List Basics.Int, styleOverrides : Dict.Dict Basics.Int Figma.Appearance.TextStyleOverride }"
+            },
+            {
+                "name": "Vector",
+                "comment": " A vector network, consisting of vertices and edges. This data structure\nis reused multiple times to represent lines, regular polygons, stars and other\ndocument elements.\n",
+                "args": [],
+                "type": "{ id : Figma.Document.NodeId, name : String.String, isVisible : Basics.Bool, exportSettings : List.List Figma.Document.ExportSetting, blendMode : Figma.Appearance.BlendMode, preserveRatio : Basics.Bool, horizontalConstraint : Figma.Layout.LayoutHorizontalConstraint, verticalConstraint : Figma.Layout.LayoutVerticalConstraint, transitionTo : Maybe.Maybe Figma.Document.NodeId, opacity : Basics.Float, boundingBox : Figma.Geometry.BoundingBox, effects : List.List Figma.Appearance.Effect, isMask : Basics.Bool, fills : List.List Figma.Appearance.Paint, strokes : List.List Figma.Appearance.Paint, strokeWeight : Basics.Float, strokeAlign : Figma.Appearance.StrokeAlign }"
+            }
+        ],
+        "values": [
+            {
+                "name": "children",
+                "comment": " Return the children of a tree as a list.\n",
+                "type": "Figma.Document.Tree -> List.List Figma.Document.Tree"
+            },
+            {
+                "name": "foldl",
+                "comment": " Fold over all the nodes in a tree, left to right, depth first.\n",
+                "type": "(Figma.Document.Node -> b -> b) -> b -> Figma.Document.Tree -> b"
+            },
+            {
+                "name": "node",
+                "comment": " Return the node of a tree.\n",
+                "type": "Figma.Document.Tree -> Figma.Document.Node"
+            },
+            {
+                "name": "singleton",
+                "comment": " Creates a singleton tree. This corresponds to `tree v []`.\n",
+                "type": "Figma.Document.Node -> Figma.Document.Tree"
+            },
+            {
+                "name": "toRosetree",
+                "comment": " Return a Rosetree data structure, which can be used with\nthe [Elm Rosetree package](http://package.elm-lang.org/packages/zwilias/elm-rosetree/latest).\n",
+                "type": "Figma.Document.Tree -> Tree.Tree Figma.Document.Node"
+            },
+            {
+                "name": "tree",
+                "comment": " Construct a tree from a node and a list of children.\n",
+                "type": "Figma.Document.Node -> List.List Figma.Document.Tree -> Figma.Document.Tree"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Figma.Geometry",
+        "comment": "\n\n@docs BoundingBox, Point, Position\n\n",
+        "unions": [
+            {
+                "name": "Position",
+                "comment": " Specify a position: either the absolute coordinates on the canvas\nor a relative offset within a frame.\n\nCurently used only for comments.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "AbsolutePosition",
+                        [
+                            "Figma.Geometry.Point"
+                        ]
+                    ],
+                    [
+                        "RelativePositionTo",
+                        [
+                            "Figma.Geometry.NodeId",
+                            "Figma.Geometry.Point"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "BoundingBox",
+                "comment": " A rectangle expressing a bounding box in absolute coordinates.\n",
+                "args": [],
+                "type": "{ x : Basics.Float, y : Basics.Float, width : Basics.Float, height : Basics.Float }"
+            },
+            {
+                "name": "Point",
+                "comment": " A 2D point.\n",
+                "args": [],
+                "type": "{ x : Basics.Float, y : Basics.Float }"
+            }
+        ],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "Figma.Layout",
+        "comment": "\n\n\n# Layout constraints\n\n@docs LayoutHorizontalConstraint, LayoutVerticalConstraint\n\n\n# Grids\n\n@docs LayoutGrid, Columns, Rows, Grid, GridAlign\n\n",
+        "unions": [
+            {
+                "name": "GridAlign",
+                "comment": " Positioning of grid within the parent container.\n\n  - `MinAlign`: grid starts at the top (or left) of the container, filling the minimun space possible. The margin is applied before the grid.\n  - `CenterAlign`: grid is center aligned. Margin value is ignored.\n  - `MaxAlign`: grid stretches from the top (or left) to the bottom (or right) of the container, filling the maximun space possible. The margin is applied before and after the grid.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "MinAlign",
+                        []
+                    ],
+                    [
+                        "CenterAlign",
+                        []
+                    ],
+                    [
+                        "MaxAlign",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "LayoutGrid",
+                "comment": " Guides to align and place objects within a parent container.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "ColumnsGrid",
+                        [
+                            "Figma.Layout.Columns"
+                        ]
+                    ],
+                    [
+                        "RowsGrid",
+                        [
+                            "Figma.Layout.Rows"
+                        ]
+                    ],
+                    [
+                        "SquareGrid",
+                        [
+                            "Figma.Layout.Grid"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "LayoutHorizontalConstraint",
+                "comment": " Horizontal constraint relative to containing frame.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "LeftConstraint",
+                        []
+                    ],
+                    [
+                        "RightConstraint",
+                        []
+                    ],
+                    [
+                        "LeftRightConstraint",
+                        []
+                    ],
+                    [
+                        "CenterHorizontalConstraint",
+                        []
+                    ],
+                    [
+                        "ScaleHorizontalConstraint",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "LayoutVerticalConstraint",
+                "comment": " Vertical constraint relative to containing frame.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "TopConstraint",
+                        []
+                    ],
+                    [
+                        "BottomConstraint",
+                        []
+                    ],
+                    [
+                        "TopBottomConstraint",
+                        []
+                    ],
+                    [
+                        "CenterVerticalConstraint",
+                        []
+                    ],
+                    [
+                        "ScaleVerticalConstraint",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Columns",
+                "comment": " A vertical grid made of columns.\n",
+                "args": [],
+                "type": "{ width : Basics.Float, isVisible : Basics.Bool, color : Color.Color, gutter : Basics.Float, margin : Basics.Float, count : Basics.Int, align : Figma.Layout.GridAlign }"
+            },
+            {
+                "name": "Grid",
+                "comment": " A square grid.\n",
+                "args": [],
+                "type": "{ width : Basics.Float, isVisible : Basics.Bool, color : Color.Color }"
+            },
+            {
+                "name": "Rows",
+                "comment": " A horizontal grid made of rows.\n",
+                "args": [],
+                "type": "{ height : Basics.Float, isVisible : Basics.Bool, color : Color.Color, gutter : Basics.Float, margin : Basics.Float, count : Basics.Int, align : Figma.Layout.GridAlign }"
+            }
+        ],
+        "values": [],
+        "binops": []
+    }
+]

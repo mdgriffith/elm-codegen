@@ -1,0 +1,59 @@
+[
+    {
+        "name": "Dashboard",
+        "comment": " A dashboard library for moving and resizing widgets.\n\n\n# Lifecycle\n\n@docs Model, init, subscriptions, Msg, update, view\n\n\n# Widgets\n\n@docs Widget, widget\n\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Widget",
+                "comment": " ",
+                "args": [
+                    "data",
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Model",
+                "comment": " ",
+                "args": [],
+                "type": "{ dragState : Maybe.Maybe Dashboard.DragState, windowWidth : Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "init",
+                "comment": " a Task that will give you the initial dashboard model.\n",
+                "type": "Task.Task Basics.Never Dashboard.Model"
+            },
+            {
+                "name": "subscriptions",
+                "comment": " ",
+                "type": "Dashboard.Model -> Platform.Sub.Sub Dashboard.Msg"
+            },
+            {
+                "name": "update",
+                "comment": " ",
+                "type": "Dashboard.DashboardConfig {} -> Dashboard.Internal.Layout.Config { toMsg : Dashboard.Msg -> msg } -> List.List (Dashboard.Widget data msg) -> Dashboard.Msg -> Dashboard.Model -> ( Dashboard.Model, Platform.Cmd.Cmd Dashboard.Msg, Maybe.Maybe (List.List ( String.String, { x : Basics.Int, y : Basics.Int, height : Basics.Int, width : Basics.Int } )) )"
+            },
+            {
+                "name": "view",
+                "comment": " ",
+                "type": "Dashboard.DashboardConfig {} -> Dashboard.Internal.Layout.Config { toMsg : Dashboard.Msg -> msg } -> Dashboard.Model -> List.List (Dashboard.Widget data msg) -> data -> Html.Html msg"
+            },
+            {
+                "name": "widget",
+                "comment": " Creates a widget.\nthe `id` must be unique. `frame` in the size of the widget in grid dimensions.\n`toContent` is a function that produces the widget's content. It is passed\nthe actual size of the widget so you can adjust the content.\n",
+                "type": "String.String -> Dashboard.Frame -> (data -> Dashboard.Size -> Html.Html msg) -> (data -> List.List (Html.Attribute msg)) -> Dashboard.Widget data msg"
+            }
+        ],
+        "binops": []
+    }
+]

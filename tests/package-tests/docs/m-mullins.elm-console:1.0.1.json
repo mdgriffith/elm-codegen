@@ -1,0 +1,106 @@
+[
+    {
+        "name": "Console",
+        "comment": " Module that wraps the _defacto_ set of features provided\nby the console object in most browsers\n\nsee: <https://developer.mozilla.org/en-US/docs/Web/API/console>\n\n\n# Utility\n\n@docs assert, clear, count, countReset\n\n\n# Logging\n\n@docs log, warn, debug, info, error\n\n\n# More logging\n\n@docs dir, dirxml, table, trace\n\n\n# Log group\n\n@docs group, groupCollapsed, groupEnd\n\n\n# Timing\n\n@docs time, timeEnd, timeLog\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "assert",
+                "comment": " Wrap the `console.assert` function\n<https://console.spec.whatwg.org/#assert>\n<https://developer.mozilla.org/en-US/docs/Web/API/Console/assert>\n\n    Console.assert (1 == 0) \"1 is not 0\"\n\n    Console.assert (1 == 0) ( 1, 0 )\n\n",
+                "type": "Basics.Bool -> a -> a"
+            },
+            {
+                "name": "clear",
+                "comment": " Wrap the `console.clear` function\n<https://console.spec.whatwg.org/#clear>\n<https://developer.mozilla.org/en-US/docs/Web/API/Console/clear>\n\n    Console.clear 1234\n\n",
+                "type": "a -> a"
+            },
+            {
+                "name": "count",
+                "comment": " Wrap the `console.count` function\n<https://console.spec.whatwg.org/#count>\n<https://developer.mozilla.org/en-US/docs/Web/API/Console/count>\n\n    Console.count \"Am i here?\"\n\n",
+                "type": "a -> a"
+            },
+            {
+                "name": "countReset",
+                "comment": " Wrap the `console.countReset` function\n<https://console.spec.whatwg.org/#countReset>\n<https://developer.mozilla.org/en-US/docs/Web/API/Console/countReset>\n\n    Console.countReset \"Am i here?\"\n\n",
+                "type": "a -> a"
+            },
+            {
+                "name": "debug",
+                "comment": " Wrap the `console.debug` function\n<https://console.spec.whatwg.org/#debug>\n<https://developer.mozilla.org/en-US/docs/Web/API/Console/debug>\n\n    Console.debug \"debug message\" ( 1, 0 )\n\n",
+                "type": "String.String -> a -> a"
+            },
+            {
+                "name": "dir",
+                "comment": " Wrap the `console.dir` function\n<https://console.spec.whatwg.org/#dir>\n<https://developer.mozilla.org/en-US/docs/Web/API/Console/dir>\n\n    Console.dir { x = 1 }\n\n",
+                "type": "a -> a"
+            },
+            {
+                "name": "dirxml",
+                "comment": " Wrap the `console.dirxml` function\n<https://console.spec.whatwg.org/#dirxml>\n<https://developer.mozilla.org/en-US/docs/Web/API/Console/dirxml>\n\n    Console.dirxml { x = 1 }\n\n",
+                "type": "a -> a"
+            },
+            {
+                "name": "error",
+                "comment": " Wrap the `console.error` function\n<https://console.spec.whatwg.org/#error>\n<https://developer.mozilla.org/en-US/docs/Web/API/Console/error>\n\n    Console.error \"error message\" ( 1, 0 )\n\n",
+                "type": "String.String -> a -> a"
+            },
+            {
+                "name": "group",
+                "comment": " Wrap the `console.group` function\n<https://console.spec.whatwg.org/#group>\n<https://developer.mozilla.org/en-US/docs/Web/API/Console/group>\n\n    Console.group 1234\n\n",
+                "type": "String.String -> a -> a"
+            },
+            {
+                "name": "groupCollapsed",
+                "comment": " Wrap the `console.groupCollapsed` function\n<https://console.spec.whatwg.org/#groupCollapsed>\n<https://developer.mozilla.org/en-US/docs/Web/API/Console/groupCollapsed>\n\n    Console.groupCollapsed 1234\n\n",
+                "type": "String.String -> a -> a"
+            },
+            {
+                "name": "groupEnd",
+                "comment": " Wrap the `console.groupEnd` function\n<https://console.spec.whatwg.org/#groupEnd>\n<https://developer.mozilla.org/en-US/docs/Web/API/Console/groupEnd>\n\n    Console.groupEnd 1234\n\n",
+                "type": "a -> a"
+            },
+            {
+                "name": "info",
+                "comment": " Wrap the `console.info` function\n<https://console.spec.whatwg.org/#info>\n<https://developer.mozilla.org/en-US/docs/Web/API/Console/info>\n\n    Console.info \"info message\" ( 1, 0 )\n\n",
+                "type": "String.String -> a -> a"
+            },
+            {
+                "name": "log",
+                "comment": " Wrap the `console.log` function\n<https://console.spec.whatwg.org/#log>\n<https://developer.mozilla.org/en-US/docs/Web/API/Console/log>\n\n    Console.log \"log message\" ( 1, 0 )\n\n",
+                "type": "String.String -> a -> a"
+            },
+            {
+                "name": "table",
+                "comment": " Wrap the `console.table` function\n<https://console.spec.whatwg.org/#table>\n<https://developer.mozilla.org/en-US/docs/Web/API/Console/table>\n\n    Console.table [ 1, 2, 3, 4 ]\n\n    Console.table { x = 1, y = 2 }\n\n",
+                "type": "a -> a"
+            },
+            {
+                "name": "time",
+                "comment": " Wrap the `console.time` function\n<https://console.spec.whatwg.org/#time>\n<https://developer.mozilla.org/en-US/docs/Web/API/Console/time>\n\n    Console.time \"timer1\" 123123\n\n",
+                "type": "String.String -> a -> a"
+            },
+            {
+                "name": "timeEnd",
+                "comment": " Wrap the `console.timeEnd` function\n<https://console.spec.whatwg.org/#timeEnd>\n<https://developer.mozilla.org/en-US/docs/Web/API/Console/timeEnd>\n\n    Console.timeEnd \"timer1\" 123123\n\n",
+                "type": "String.String -> a -> a"
+            },
+            {
+                "name": "timeLog",
+                "comment": " Wrap the `console.timeLog` function\n<https://console.spec.whatwg.org/#timeLog>\n<https://developer.mozilla.org/en-US/docs/Web/API/Console/timeLog>\n\n    Console.timeLog \"timer1\" 123123\n\n",
+                "type": "String.String -> a -> a"
+            },
+            {
+                "name": "trace",
+                "comment": " Wrap the `console.trace` function\n<https://console.spec.whatwg.org/#trace>\n<https://developer.mozilla.org/en-US/docs/Web/API/Console/trace>\n\n    Console.trace ()\n\n",
+                "type": "a -> a"
+            },
+            {
+                "name": "warn",
+                "comment": " Wrap the `console.warn` function\n<https://console.spec.whatwg.org/#warn>\n<https://developer.mozilla.org/en-US/docs/Web/API/Console/warn>\n\n    Console.warn \"warn message\" ( 1, 0 )\n\n",
+                "type": "String.String -> a -> a"
+            }
+        ],
+        "binops": []
+    }
+]

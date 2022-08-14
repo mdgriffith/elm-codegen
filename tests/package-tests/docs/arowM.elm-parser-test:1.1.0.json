@@ -1,0 +1,21 @@
+[
+    {
+        "name": "Parser.Test",
+        "comment": " Helper functions to develop/test your own parser using elm/parser.\n\n\n# Core\n\n@docs run\n@docs run_\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "run",
+                "comment": " Check if a parser is backtrackable or not.\n\n    import Parser\n\n    run (Parser.keyword \"import\") \"imp\" |> Tuple.mapFirst (Result.mapError (\\_ -> ()))\n    --> (Err (), True)\n\n    run (Parser.keyword \"import\") \"import\"\n    --> (Ok (), False)\n\n    run Parser.spaces \"  \"\n    --> (Ok (), False)\n\n    run (Parser.backtrackable Parser.spaces) \"  \"\n    --> (Ok (), True)\n\n",
+                "type": "Parser.Parser a -> String.String -> ( Result.Result (List.List Parser.DeadEnd) a, Basics.Bool )"
+            },
+            {
+                "name": "run_",
+                "comment": " Same as `run` but returns `Maybe a` instead.\nThis is useful to implement tests for your own parsers.\n\n    import Parser\n\n    run_ (Parser.keyword \"import\") \"imp\"\n    --> (Nothing, True)\n\n    run_ (Parser.keyword \"import\") \"import\"\n    --> (Just (), False)\n\n",
+                "type": "Parser.Parser a -> String.String -> ( Maybe.Maybe a, Basics.Bool )"
+            }
+        ],
+        "binops": []
+    }
+]

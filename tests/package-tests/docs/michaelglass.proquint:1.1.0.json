@@ -1,0 +1,53 @@
+[
+    {
+        "name": "Proquint",
+        "comment": " Basic usage:\n\n    Proquint.fromInt 1234\n        |> Maybe.map Proquint.toString\n\n    Proquint.fromString \"bonam-hohah\"\n        |> Maybe.map Proquint.toInt\n\n\n# Create\n\n@docs fromInt, fromString, minInt, maxInt, randomGenerator\n\n\n# Conversion\n\n@docs toInt, toString\n\n\n# Type\n\n@docs Proquint\n\n",
+        "unions": [
+            {
+                "name": "Proquint",
+                "comment": " Opaque type with a proquint inside\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fromInt",
+                "comment": " Accepts any int between 0 and 0xFFFFFFFF\n",
+                "type": "Basics.Int -> Maybe.Maybe Proquint.Proquint"
+            },
+            {
+                "name": "fromString",
+                "comment": " parses proquint-strings to Proquints\n",
+                "type": "String.String -> Maybe.Maybe Proquint.Proquint"
+            },
+            {
+                "name": "maxInt",
+                "comment": " maximum valid int-value of a proquint\n",
+                "type": "Basics.Int"
+            },
+            {
+                "name": "minInt",
+                "comment": " minimum valid int-value of a proquint\n",
+                "type": "Basics.Int"
+            },
+            {
+                "name": "randomGenerator",
+                "comment": " random generator for proquints\n",
+                "type": "Random.Generator Proquint.Proquint"
+            },
+            {
+                "name": "toInt",
+                "comment": " returns the int value of the proquint\n",
+                "type": "Proquint.Proquint -> Basics.Int"
+            },
+            {
+                "name": "toString",
+                "comment": " returns the string value of the proquint\n",
+                "type": "Proquint.Proquint -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

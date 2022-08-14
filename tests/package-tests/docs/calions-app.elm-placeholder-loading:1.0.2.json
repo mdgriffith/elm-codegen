@@ -1,0 +1,185 @@
+[
+    {
+        "name": "PlaceholderLoading",
+        "comment": " Placeholder loading allows you to display placeholder loaders like Facebook's cards loading.\n\nIn this module you will be able to set the configuration of your loader and to create custom loaders\n\n\n# Config\n\n@docs Config, config\n\n\n# Customization\n\n@docs addAttributes, animate, attributes, backgroundColor, backgroundOpacity, baseUrl, foregroundColor, foregroundOpacity, gradientRatio, interval, loaderAttributes, mainAttributes, repeat, rtl, speed, title, uniqueKey\n\n\n# Custom loaders\n\n@docs customView\n\n",
+        "unions": [
+            {
+                "name": "Config",
+                "comment": " Config type used to define loader configuration\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "addAttributes",
+                "comment": " Add attributes to the `svg` element, like a `viewBox` for custom loaders.\n\n    PlaceholderLoading.config |> PlaceholderLoading.addAttributes [ viewBox \"0 0 100 60\" ]\n\n",
+                "type": "List.List (Svg.Attribute msg) -> PlaceholderLoading.Config msg -> PlaceholderLoading.Config msg"
+            },
+            {
+                "name": "animate",
+                "comment": " Wether or not the loader should animate. Default to `True`\n\n    PlaceholderLoading.config |> PlaceholderLoading.animate True\n\n",
+                "type": "Basics.Bool -> PlaceholderLoading.Config msg -> PlaceholderLoading.Config msg"
+            },
+            {
+                "name": "attributes",
+                "comment": " SVG attributes to pass to the main `svg` element. Default to `[]`\n\n    PlaceholderLoading.config |> PlaceholderLoading.attributes []\n\n",
+                "type": "List.List (Svg.Attribute msg) -> PlaceholderLoading.Config msg -> PlaceholderLoading.Config msg"
+            },
+            {
+                "name": "backgroundColor",
+                "comment": " Color used as background of animation. Default to `#f5f6f7`\n\n    PlaceholderLoading.config |> PlaceholderLoading.backgroundColor \"#f5f6f7\"\n\n",
+                "type": "String.String -> PlaceholderLoading.Config msg -> PlaceholderLoading.Config msg"
+            },
+            {
+                "name": "backgroundOpacity",
+                "comment": " Background opacity. Default to `1`\n\n    PlaceholderLoading.config |> PlaceholderLoading.backgroundOpacity 1\n\n",
+                "type": "Basics.Float -> PlaceholderLoading.Config msg -> PlaceholderLoading.Config msg"
+            },
+            {
+                "name": "baseUrl",
+                "comment": " Required if you use `<base url=\"/\" />` document `<head />`. Used in `clipPath` and `fill` style. Default to `\"\"`\n\n    PlaceholderLoading.config |> PlaceholderLoading.baseUrl \"\"\n\n",
+                "type": "String.String -> PlaceholderLoading.Config msg -> PlaceholderLoading.Config msg"
+            },
+            {
+                "name": "config",
+                "comment": " Function to call to set a default configuration that you can then customize\n\n    FacebookLoader.view PlaceholderLoading.config\n\n",
+                "type": "PlaceholderLoading.Config msg"
+            },
+            {
+                "name": "customView",
+                "comment": " Display a custom loader.\n\n    PlaceholderLoading.customView\n        (PlaceholderLoading.config\n            |> PlaceholderLoading.uniqueKey \"custom\"\n            |> PlaceholderLoading.addAttributes [ SvgAttr.viewBox \"0 0 476 124\" ]\n        )\n        [ Svg.rect [ SvgAttr.x \"48\", SvgAttr.y \"8\", SvgAttr.width \"88\", SvgAttr.height \"6\", SvgAttr.rx \"3\" ] []\n        , Svg.rect [ SvgAttr.x \"48\", SvgAttr.y \"26\", SvgAttr.width \"52\", SvgAttr.height \"6\", SvgAttr.rx \"3\" ] []\n        , Svg.rect [ SvgAttr.x \"0\", SvgAttr.y \"56\", SvgAttr.width \"410\", SvgAttr.height \"6\", SvgAttr.rx \"3\" ] []\n        , Svg.rect [ SvgAttr.x \"0\", SvgAttr.y \"72\", SvgAttr.width \"380\", SvgAttr.height \"6\", SvgAttr.rx \"3\" ] []\n        , Svg.rect [ SvgAttr.x \"0\", SvgAttr.y \"88\", SvgAttr.width \"178\", SvgAttr.height \"6\", SvgAttr.rx \"3\" ] []\n        , Svg.circle [ SvgAttr.cx \"20\", SvgAttr.cy \"20\", SvgAttr.r \"20\" ] []\n        ]\n\n",
+                "type": "PlaceholderLoading.Config msg -> List.List (Svg.Svg msg) -> Html.Html msg"
+            },
+            {
+                "name": "foregroundColor",
+                "comment": " Color used as foreground of animation. Default to `#eee`\n\n    PlaceholderLoading.config |> PlaceholderLoading.foregroundColor \"#eee\"\n\n",
+                "type": "String.String -> PlaceholderLoading.Config msg -> PlaceholderLoading.Config msg"
+            },
+            {
+                "name": "foregroundOpacity",
+                "comment": " Animation opacity. Default to `1`\n\n    PlaceholderLoading.config |> PlaceholderLoading.foregroundOpacity 1\n\n",
+                "type": "Basics.Float -> PlaceholderLoading.Config msg -> PlaceholderLoading.Config msg"
+            },
+            {
+                "name": "gradientRatio",
+                "comment": " Width of the animated gradient as a raction of the view box width. Default to `2`\n\n    PlaceholderLoading.config |> PlaceholderLoading.gradientRatio 2\n\n",
+                "type": "Basics.Float -> PlaceholderLoading.Config msg -> PlaceholderLoading.Config msg"
+            },
+            {
+                "name": "interval",
+                "comment": " Interval of time between runs of the animation, as a fraction of the animation speed. Default to `0.25`\n\n    PlaceholderLoading.config |> PlaceholderLoading.interval 0.25\n\n",
+                "type": "Basics.Float -> PlaceholderLoading.Config msg -> PlaceholderLoading.Config msg"
+            },
+            {
+                "name": "loaderAttributes",
+                "comment": " Set the HTML attributes of the `div` encapsulating the `svg` element. Default to `[]`\n\n    PlaceholderLoading.config |> PlaceholderLoading.loaderAttributes []\n\n",
+                "type": "List.List (Html.Attribute msg) -> PlaceholderLoading.Config msg -> PlaceholderLoading.Config msg"
+            },
+            {
+                "name": "mainAttributes",
+                "comment": " Set the HTML attributes of the main encapsulating `div`. Default to `[]`\n\n    PlaceholderLoading.config |> PlaceholderLoading.mainAttributes []\n\n",
+                "type": "List.List (Html.Attribute msg) -> PlaceholderLoading.Config msg -> PlaceholderLoading.Config msg"
+            },
+            {
+                "name": "repeat",
+                "comment": " The number of times the loader should be displayed. Default to `1`\n\n    PlaceholderLoading.config |> PlaceholderLoading.repeat 1\n\n",
+                "type": "Basics.Int -> PlaceholderLoading.Config msg -> PlaceholderLoading.Config msg"
+            },
+            {
+                "name": "rtl",
+                "comment": " Wether or not the loader should be displayed for right-to-left. Default to `False`\n\n    PlaceholderLoading.config |> PlaceholderLoading.rtl False\n\n",
+                "type": "Basics.Bool -> PlaceholderLoading.Config msg -> PlaceholderLoading.Config msg"
+            },
+            {
+                "name": "speed",
+                "comment": " Animation speed in seconds. Default to `1.2`\n\n    PlaceholderLoading.config |> PlaceholderLoading.speed 1.2\n\n",
+                "type": "Basics.Float -> PlaceholderLoading.Config msg -> PlaceholderLoading.Config msg"
+            },
+            {
+                "name": "title",
+                "comment": " Ued to describe what element it is. Default to `Nothing`\n\n    PlaceholderLoading.config |> PlaceholderLoading.title \"My title\"\n\n",
+                "type": "String.String -> PlaceholderLoading.Config msg -> PlaceholderLoading.Config msg"
+            },
+            {
+                "name": "uniqueKey",
+                "comment": " Used to uniquely identify the loader. You must specify it if you display several loaders on the same page. Default to `placeholder-loading-unique-key`\n\n    PlaceholderLoading.config |> PlaceholderLoading.uniqueKey \"placeholder-loading-unique-key\"\n\n",
+                "type": "String.String -> PlaceholderLoading.Config msg -> PlaceholderLoading.Config msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "PlaceholderLoading.BulletList",
+        "comment": " Display a bullet list loader\n\n![Bullet list loader](https://raw.githubusercontent.com/calions-app/elm-placeholder-loading/master/bullet-list-loader.png)\n\n\n# View\n\n@docs view\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "view",
+                "comment": " Shows the loader with the specified configuration\n\n        Loader.view PlaceholderLoader.config\n\n",
+                "type": "PlaceholderLoading.Config msg -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "PlaceholderLoading.Code",
+        "comment": " Display a code loader\n\n![Code loader](https://raw.githubusercontent.com/calions-app/elm-placeholder-loading/master/code-loader.png)\n\n\n# View\n\n@docs view\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "view",
+                "comment": " Shows the loader with the specified configuration\n\n        Loader.view PlaceholderLoader.config\n\n",
+                "type": "PlaceholderLoading.Config msg -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "PlaceholderLoading.Facebook",
+        "comment": " Display a Facebook loader\n\n![Facebook loader](https://raw.githubusercontent.com/calions-app/elm-placeholder-loading/master/facebook-loader.png)\n\n\n# View\n\n@docs view\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "view",
+                "comment": " Shows the loader with the specified configuration\n\n        Loader.view PlaceholderLoader.config\n\n",
+                "type": "PlaceholderLoading.Config msg -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "PlaceholderLoading.Instagram",
+        "comment": " Display an Instagram loader\n\n![Instagram loader](https://raw.githubusercontent.com/calions-app/elm-placeholder-loading/master/instagram-loader.png)\n\n\n# View\n\n@docs view\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "view",
+                "comment": " Shows the loader with the specified configuration\n\n        Loader.view PlaceholderLoader.config\n\n",
+                "type": "PlaceholderLoading.Config msg -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "PlaceholderLoading.List",
+        "comment": " Display a list loader\n\n![List loader](https://raw.githubusercontent.com/calions-app/elm-placeholder-loading/master/list-loader.png)\n\n\n# View\n\n@docs view\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "view",
+                "comment": " Shows the loader with the specified configuration\n\n        Loader.view PlaceholderLoader.config\n\n",
+                "type": "PlaceholderLoading.Config msg -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

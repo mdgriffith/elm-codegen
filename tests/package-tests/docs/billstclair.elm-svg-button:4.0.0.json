@@ -1,0 +1,263 @@
+[
+    {
+        "name": "Svg.Button",
+        "comment": " The `Svg.Button` module makes it easy to create SVG buttons.\n\nCurrently, the buttons are rectangular, with a two-pixel wide black border, containing either text or Svg you provide for their body. They support single clicks or repeated clicks, and work on both regular computer browsers, with a mouse, or portable browsers, with a touch screen.\n\n\n# Types\n\n@docs Button, Content, Location, Size, Msg, RepeatTime, Colors\n\n\n# Constructors\n\n@docs simpleButton, repeatingButton\n\n\n# Events\n\n@docs update, checkSubscription\n\n\n# Triangular Buttons\n\n@docs TriangularButtonDirection, setTriangularButtonRenderers\n\n\n# Button state accessors\n\n@docs getState, setState, isTouchAware, setTouchAware, getSize, setSize\n@docs getColors, setColors\n@docs getRenderBorder, setRenderBorder\n@docs getRenderContent, setRenderContent\n@docs getRenderOverlay, setRenderOverlay\n\n\n# Constants\n\n@docs normalRepeatTime, defaultColors\n\n\n# Rendering\n\n@docs render, renderBorder, renderContent, renderOverlay\n@docs renderTriangularBorder, renderTriangularOverlay\n\n\n# Triangular Button Corners\n\n@docs triangularButtonCorners, triangularButtonPathString\n\n",
+        "unions": [
+            {
+                "name": "Button",
+                "comment": " An Svg Button.\n\nCreate one with `simpleButton` or `repeatingButton`.\n\n",
+                "args": [
+                    "state",
+                    "msg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Content",
+                "comment": " Three ways to draw the button content.\n\n`TextContent` encapsulates a `String`, which is sized to half the button height and centered.\n\n`SvgContent` allows you to render any `Svg` you wish.\n\n`NoContent` renders nothing.\n\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": [
+                    [
+                        "TextContent",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "SvgContent",
+                        [
+                            "Svg.Svg msg"
+                        ]
+                    ],
+                    [
+                        "NoContent",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Msg",
+                "comment": " Opaque internal message.\n\nYou wrap these with the `(Msg -> msg)` you pass to `render`, and pass them to `update`.\n\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "RepeatTime",
+                "comment": " First arg to `repeatingButton`.\n\nThe two `Float` args to `RepeatTimeWithInitialDelay` are the initial delay and the subsequent repeat period, in milliseconds.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NoRepeat",
+                        []
+                    ],
+                    [
+                        "RepeatTime",
+                        [
+                            "Basics.Float"
+                        ]
+                    ],
+                    [
+                        "RepeatTimeWithInitialDelay",
+                        [
+                            "Basics.Float",
+                            "Basics.Float"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "TriangularButtonDirection",
+                "comment": " The direction a triangular button points.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "UpButton",
+                        []
+                    ],
+                    [
+                        "DownButton",
+                        []
+                    ],
+                    [
+                        "RightButton",
+                        []
+                    ],
+                    [
+                        "LeftButton",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Colors",
+                "comment": " The Colors for a button.\n",
+                "args": [],
+                "type": "{ background : String.String, outline : String.String, text : String.String }"
+            },
+            {
+                "name": "Location",
+                "comment": " A two-dimensional location: (x, y)\n",
+                "args": [],
+                "type": "( Basics.Float, Basics.Float )"
+            },
+            {
+                "name": "Size",
+                "comment": " A two-dimensional size: (width, height)\n",
+                "args": [],
+                "type": "( Basics.Float, Basics.Float )"
+            }
+        ],
+        "values": [
+            {
+                "name": "checkSubscription",
+                "comment": " Subscriptions are one type of message you can get inside your wrapper.\n\nIn order to check if a message is a subscription, call `checkSubscription`. If it returns a time delay and Button message, you need to use that to create a time subscription for your application.\n\nSimple buttons don't need subscriptions. Only repeating buttons use them.\n\n",
+                "type": "Svg.Button.Msg -> Svg.Button.Button state msg -> Maybe.Maybe ( Basics.Float, Svg.Button.Msg )"
+            },
+            {
+                "name": "defaultColors",
+                "comment": " The defaut colors.\n",
+                "type": "Svg.Button.Colors"
+            },
+            {
+                "name": "getColors",
+                "comment": " Get the colors of a button.\n",
+                "type": "Svg.Button.Button state msg -> Svg.Button.Colors"
+            },
+            {
+                "name": "getRenderBorder",
+                "comment": " Get a button's border renderer.\n",
+                "type": "Svg.Button.Button state msg -> Svg.Button.Button state msg -> Svg.Svg msg"
+            },
+            {
+                "name": "getRenderContent",
+                "comment": " Get a button's content renderer.\n",
+                "type": "Svg.Button.Button state msg -> Svg.Button.Content msg -> Svg.Button.Button state msg -> Svg.Svg msg"
+            },
+            {
+                "name": "getRenderOverlay",
+                "comment": " Get a button's content renderer.\n",
+                "type": "Svg.Button.Button state msg -> (Svg.Button.Msg -> msg) -> Svg.Button.Button state msg -> Svg.Svg msg"
+            },
+            {
+                "name": "getSize",
+                "comment": " Read a button's size.\n",
+                "type": "Svg.Button.Button state msg -> Svg.Button.Size"
+            },
+            {
+                "name": "getState",
+                "comment": " Read a button's `state`.\n",
+                "type": "Svg.Button.Button state msg -> state"
+            },
+            {
+                "name": "isTouchAware",
+                "comment": " Return True if a Button is touch aware.\n",
+                "type": "Svg.Button.Button state msg -> Basics.Bool"
+            },
+            {
+                "name": "normalRepeatTime",
+                "comment": " This is the usual value used for the repeat time of a repeating button.\n\nIt has an initial delay of 1/2 second and a repeat period of 1/10 second.\n\n",
+                "type": "Svg.Button.RepeatTime"
+            },
+            {
+                "name": "render",
+                "comment": " Render a button's outline, your content, and the mouse-sensitive overlay.\n\nDoes this by sizing an SVG `g` element at the `Location` you pass and the size of the `Button`, and calling `renderBorder`, `renderContent`, and `renderOverlay` inside it.\n\n",
+                "type": "Svg.Button.Location -> Svg.Button.Content msg -> (Svg.Button.Msg -> msg) -> Svg.Button.Button state msg -> Svg.Svg msg"
+            },
+            {
+                "name": "renderBorder",
+                "comment": " Draw a button's border.\n\nThis is the default border renderer for a button.\n\nYou won't usually use this, letting `render` call it for you.\n\nYou should call this BEFORE drawing your button, so that its opaque body does not cover your beautiful drawing.\n\n",
+                "type": "Svg.Button.Button state msg -> Svg.Svg msg"
+            },
+            {
+                "name": "renderContent",
+                "comment": " Render the visible, non-border part of a button.\n\nThis is the default content renderer for a button.\n\nYou won't usually use this, letting `render` call it for you.\n\nBut you could use it for a non-button, if you just want some text centered in a rectangle.\n\n",
+                "type": "Svg.Button.Content msg -> Svg.Button.Button state msg -> Svg.Svg msg"
+            },
+            {
+                "name": "renderOverlay",
+                "comment": " Draw a button's transparent, mouse/touch-sensitive overlay.\n\nThis is the default overlay renderer for a button.\n\nYou won't usually use this, letting `render` call it for you.\n\nYou should call this AFTER drawing your button, so that the overlay is the last thing drawn. Otherwise, it may not get all the mouse/touch events.\n\n",
+                "type": "(Svg.Button.Msg -> msg) -> Svg.Button.Button state msg -> Svg.Svg msg"
+            },
+            {
+                "name": "renderTriangularBorder",
+                "comment": " Draw a triangular button's border.\n\nYou'll usually use this via setTriangularButtonRenderers.\n\nYou should call this BEFORE drawing your button, so that its opaque body does not cover your beautiful drawing.\n\n",
+                "type": "Svg.Button.TriangularButtonDirection -> Svg.Button.Button state msg -> Svg.Svg msg"
+            },
+            {
+                "name": "renderTriangularOverlay",
+                "comment": " Draw a triangular button's overlay.\n\nYou'll usually use this via setTriangularButtonRenderers.\n\nYou should call this AFTER drawing your button, so that the overlay is the last thing drawn. Otherwise, it may not get all the mouse/touch events.\n\n",
+                "type": "Svg.Button.TriangularButtonDirection -> (Svg.Button.Msg -> msg) -> Svg.Button.Button state msg -> Svg.Svg msg"
+            },
+            {
+                "name": "repeatingButton",
+                "comment": " Like `simpleButton`, but repeats the click or tap periodically, as long as the mouse or finger is held down.\n",
+                "type": "Svg.Button.RepeatTime -> Svg.Button.Size -> state -> Svg.Button.Button state msg"
+            },
+            {
+                "name": "setColors",
+                "comment": " Change the colors of a button.\n",
+                "type": "Svg.Button.Colors -> Svg.Button.Button state msg -> Svg.Button.Button state msg"
+            },
+            {
+                "name": "setRenderBorder",
+                "comment": " Replace a button's default `renderButton` function with your own.\n",
+                "type": "(Svg.Button.Button state msg -> Svg.Svg msg) -> Svg.Button.Button state msg -> Svg.Button.Button state msg"
+            },
+            {
+                "name": "setRenderContent",
+                "comment": " Replace a button's default `renderContent` function with your own.\n",
+                "type": "(Svg.Button.Content msg -> Svg.Button.Button state msg -> Svg.Svg msg) -> Svg.Button.Button state msg -> Svg.Button.Button state msg"
+            },
+            {
+                "name": "setRenderOverlay",
+                "comment": " Replace a button's default `renderOverlay` function with your own.\n",
+                "type": "((Svg.Button.Msg -> msg) -> Svg.Button.Button state msg -> Svg.Svg msg) -> Svg.Button.Button state msg -> Svg.Button.Button state msg"
+            },
+            {
+                "name": "setSize",
+                "comment": " Set a button's size.\n",
+                "type": "Svg.Button.Size -> Svg.Button.Button state msg -> Svg.Button.Button state msg"
+            },
+            {
+                "name": "setState",
+                "comment": " Set a button's `state`.\n",
+                "type": "state -> Svg.Button.Button state msg -> Svg.Button.Button state msg"
+            },
+            {
+                "name": "setTouchAware",
+                "comment": " Set whether a button is touch aware.\n\n`update` notices when it gets a touch event, and sets the `touchAware` state, but since you usually don't save updated simple buttons, the next event won't notice. Mobile browsers have a delay in generating a simulated click event. Knowing that the button is touch aware eliminates that delay, since the click is then generated by the `TouchEnd` event instead of the `MouseUp` event.\n\n",
+                "type": "Basics.Bool -> Svg.Button.Button state msg -> Svg.Button.Button state msg"
+            },
+            {
+                "name": "setTriangularButtonRenderers",
+                "comment": " Change the button to render as a triangle, instead of a rectangle.\n",
+                "type": "Svg.Button.TriangularButtonDirection -> Svg.Button.Button state msg -> Svg.Button.Button state msg"
+            },
+            {
+                "name": "simpleButton",
+                "comment": " Create a simple, rectanglar button.\n\nIt sends a `msg` when clicked or tapped.\n\nThe `view` function draws a two-pixel wide, black border around it. Your drawing function should leave room for that, or it will be overlaid.\n\n",
+                "type": "Svg.Button.Size -> state -> Svg.Button.Button state msg"
+            },
+            {
+                "name": "triangularButtonCorners",
+                "comment": " Return the three corners of a triangular button.\n",
+                "type": "Svg.Button.TriangularButtonDirection -> Svg.Button.Button state msg -> ( Svg.Button.Location, Svg.Button.Location, Svg.Button.Location )"
+            },
+            {
+                "name": "triangularButtonPathString",
+                "comment": " Return a path string to draw a triangular button.\nSuitable as the arg to `Svg.Attribute.d`.\n",
+                "type": "Svg.Button.TriangularButtonDirection -> Svg.Button.Button state msg -> String.String"
+            },
+            {
+                "name": "update",
+                "comment": " Call this to process a Button message from inside your wrapper.\n\nThe `Bool` in the return value is true if this message should be interpreted as a click on the button. Simple buttons never change the button or return a command you need to care about, but you'll need to call `getState` on the button to figure out what to do (unless your application has only a single button).\n\n",
+                "type": "(Svg.Button.Msg -> msg) -> Svg.Button.Msg -> Svg.Button.Button state msg -> ( Basics.Bool, Svg.Button.Button state msg, Platform.Cmd.Cmd msg )"
+            }
+        ],
+        "binops": []
+    }
+]

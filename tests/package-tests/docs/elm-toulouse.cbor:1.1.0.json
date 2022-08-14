@@ -1,0 +1,444 @@
+[
+    {
+        "name": "Cbor",
+        "comment": "\n\n@docs CborItem\n\n",
+        "unions": [
+            {
+                "name": "CborItem",
+                "comment": " A generic sum-type for representing any arbitrary CBOR item. See also\nCbor.Decode#any and Cbor.Encode#any\n",
+                "args": [],
+                "cases": [
+                    [
+                        "CborInt",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "CborBytes",
+                        [
+                            "Bytes.Bytes"
+                        ]
+                    ],
+                    [
+                        "CborString",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "CborList",
+                        [
+                            "List.List Cbor.CborItem"
+                        ]
+                    ],
+                    [
+                        "CborMap",
+                        [
+                            "List.List ( Cbor.CborItem, Cbor.CborItem )"
+                        ]
+                    ],
+                    [
+                        "CborTag",
+                        [
+                            "Cbor.Tag.Tag"
+                        ]
+                    ],
+                    [
+                        "CborBool",
+                        [
+                            "Basics.Bool"
+                        ]
+                    ],
+                    [
+                        "CborFloat",
+                        [
+                            "Basics.Float"
+                        ]
+                    ],
+                    [
+                        "CborNull",
+                        []
+                    ],
+                    [
+                        "CborUndefined",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "Cbor.Decode",
+        "comment": " The Concise Binary Object Representation (CBOR) is a data format whose design\ngoals include the possibility of extremely small code size, fairly small message\nsize, and extensibility without the need for version negotiation. These design\ngoals make it different from earlier binary serializations such as ASN.1 and\nMessagePack.\n\n\n## Decoder\n\n@docs Decoder, decode\n\n\n## Primitives\n\n@docs bool, int, float, string, bytes\n\n\n## Data Structures\n\n@docs list, array, dict, keyValueMap, record, pair, maybe\n\n\n## Mapping\n\n@docs succeed, fail, andThen, map, map2, map3, map4, map5\n\n\n## Tagging\n\n@docs tag, tagged\n\n\n## Debugging\n\n@docs any, raw\n\n",
+        "unions": [
+            {
+                "name": "Decoder",
+                "comment": " Describes how to turn a binary CBOR sequence of bytes into a nice Elm value.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "andThen",
+                "comment": " Decode something and then use that information to decode something else.\nThis is useful when a 'Decoder' depends on a value held by another decoder:\n\n    tagged : Tag -> Decoder a -> Decoder a\n    tagged expectedTag decodeA =\n        tag\n            |> andThen\n                (\\decodedTag ->\n                    if decodedTag == expectedTag then\n                        decodeA\n\n                    else\n                        fail\n                )\n\n",
+                "type": "(a -> Cbor.Decode.Decoder b) -> Cbor.Decode.Decoder a -> Cbor.Decode.Decoder b"
+            },
+            {
+                "name": "any",
+                "comment": " Decode remaining bytes as _any_ `CborItem`. This is useful for debugging\nor to inspect some unknown Cbor data.\n\n    D.decode D.any <| E.encode (E.int 14) == Just (CborUnsignedInteger 14)\n\n",
+                "type": "Cbor.Decode.Decoder Cbor.CborItem"
+            },
+            {
+                "name": "array",
+                "comment": " Decode an array or said differently, a list with heterogeneous elements\n(with different types).\n\nSince Elm (or statically typed languages in general) does not support hetegorenous arrays, we\nhave to resort to records when parsing. This parser works best with the `map`\nfamily of functions.\n\nFor example, to decode an array with 3 elements:\n\n    D.decode (D.array <| D.map3 MyRecord D.bool D.int D.string) (Bytes<0x83 0xF5 0x0E 0x61 0x61>)\n        == Just (MyRecord True 14 \"a\")\n\n",
+                "type": "Cbor.Decode.Decoder a -> Cbor.Decode.Decoder a"
+            },
+            {
+                "name": "bool",
+                "comment": " Decode a boolean.\n",
+                "type": "Cbor.Decode.Decoder Basics.Bool"
+            },
+            {
+                "name": "bytes",
+                "comment": " Decode a bunch bytes into 'Bytes'. In case of streaming, all\nbytes are decoded at once and concatenated as if they were one big byte string.\nSee also 'Cbor.Encode.beginBytes'\n",
+                "type": "Cbor.Decode.Decoder Bytes.Bytes"
+            },
+            {
+                "name": "decode",
+                "comment": " Turn a binary CBOR sequence of bytes into a nice Elm value.\n\n    import Cbor.Decode as D\n    import Url exposing (Url)\n\n    type alias Album =\n        { artist : String\n        , title : String\n        , year : Int\n        , tracks : List ( String, Duration )\n        , links : List Url\n        }\n\n    type Duration\n        = Duration Int\n\n    decodeAlbum : D.Decoder Album\n    decodeAlbum =\n        let\n            link =\n                D.string\n                    |> D.map Url.fromString\n                    |> D.andThen (Maybe.map D.succeed >> Maybe.withDefault D.fail)\n\n            track =\n                D.pair D.string (D.map Duration D.int)\n        in\n        D.map5 Album\n            D.string\n            D.string\n            D.int\n            (D.list track)\n            (D.list link)\n\n",
+                "type": "Cbor.Decode.Decoder a -> Bytes.Bytes -> Maybe.Maybe a"
+            },
+            {
+                "name": "dict",
+                "comment": " Decode an CBOR map of pairs of data-items into an Elm 'Dict'. The map can be\neither of finite length or indefinite length (see also _Streaming_ in Cbor.Encode).\n\n    D.decode (D.dict D.int D.int) Bytes<0xA1, 0x0E, 0x18, 0x2A>\n        == Dict.fromList [ ( 14, 42 ) ]\n\n    D.decode (D.dict D.string D.int) Bytes<0xBF, 0x61, 0x61, 0x0E, 0x61, 0x62, 0x18, 0x2A, 0xFF>\n        == Dict.fromList [ ( \"a\", 14 ), ( \"b\", 42 ) ]\n\n",
+                "type": "Cbor.Decode.Decoder comparable -> Cbor.Decode.Decoder a -> Cbor.Decode.Decoder (Dict.Dict comparable a)"
+            },
+            {
+                "name": "fail",
+                "comment": " A decoder that always fail.\n\n    D.decode D.fail Bytes<0x00> == Nothing\n\nThis is particularly handy when used in combination with `andThen`.\n\n",
+                "type": "Cbor.Decode.Decoder a"
+            },
+            {
+                "name": "float",
+                "comment": " Decode a floating point number, regardless of its precision. Because in Elm,\nthere exists only one 'Float' type, which is encoded in double-precision, we do\ndecode all floats into this double-precision number in Elm which may lead to\nsome precision gain and therefore, different representation than one would\nexpect.\n\n    D.decode D.float <| E.encode (E.float16 1.1) == Just 1.099609375\n\n    D.decode D.float <| E.encode (E.float64 1.1) == Just 1.1\n\n    E.Encode (E.float16 1.1) == Bytes<0xF9, 0x3C, 0x66>\n\n    E.Encode (E.float64 1.1) == Bytes<0xFB, 0x3F, 0xF1, 0x99, 0x99, 0x99, 0x99, 0x99, 0x9A>\n\n",
+                "type": "Cbor.Decode.Decoder Basics.Float"
+            },
+            {
+                "name": "int",
+                "comment": " Decode an integer. Note that there's no granular decoders (nor encoders) for\nintegers like 'unsignedInt8' or 'signedInt32' because, the CBOR encoding\nof an integers varies depending on the integer value. Therefore, at the\nCBOR-level, as in Elm, there's no notion of _smaller_ integers.\n",
+                "type": "Cbor.Decode.Decoder Basics.Int"
+            },
+            {
+                "name": "keyValueMap",
+                "comment": " Decode a CBOR (key, value) map, where keys can be potentially arbitrary CBOR.\n\nIf keys are `comparable`, you should prefer `dict` to this primitive.\n\n",
+                "type": "Cbor.Decode.Decoder k -> Cbor.Decode.Decoder v -> Cbor.Decode.Decoder (List.List ( k, v ))"
+            },
+            {
+                "name": "list",
+                "comment": " Decode a 'List' of items 'a'. The list can be finite or infinite (see also\n_Streaming_ in Cbor.Encode).\n\n    D.decode (D.list D.int) Bytes<0x82, 0x0E, 0x18, 0x2A> == Just [ 14, 42 ]\n\n    D.decode (D.list D.int) Bytes<0x9F, 0x01, 0x02, 0xFF> == Just [ 1, 1 ]\n\n    D.decode (D.list (D.list D.bool)) Bytes<0x81, 0x9F, 0xF4, 0xFF> == Just [ [ False ] ]\n\n",
+                "type": "Cbor.Decode.Decoder a -> Cbor.Decode.Decoder (List.List a)"
+            },
+            {
+                "name": "map",
+                "comment": " Transform a decoder.\n\nFor example, maybe you just want to know the length of a string:\n\n    import String\n\n    stringLength : Decoder Int\n    stringLength =\n        D.map String.length D.string\n\n",
+                "type": "(a -> value) -> Cbor.Decode.Decoder a -> Cbor.Decode.Decoder value"
+            },
+            {
+                "name": "map2",
+                "comment": " Try two decoders and then combine the result. Can be used to decode objects\nwith many fields:\n\n    type alias Point =\n        { x : Float, y : Float }\n\n    point : Decoder Point\n    point =\n        D.map2 Point D.float D.float\n\nIt tries each individual decoder and puts the result together with the Point\nconstructor.\n\n",
+                "type": "(a -> b -> value) -> Cbor.Decode.Decoder a -> Cbor.Decode.Decoder b -> Cbor.Decode.Decoder value"
+            },
+            {
+                "name": "map3",
+                "comment": " Try three decoders and then combine the result. Can be used to decode\nobjects with many fields:\n\n    type alias Person =\n        { name : String, age : Int, height : Float }\n\n    person : Decoder Person\n    person =\n        D.map3 Person D.string D.int D.float\n\nLike `map2` it tries each decoder in order and then give the results to the\n`Person` constructor. That can be any function though!\n\n",
+                "type": "(a -> b -> c -> value) -> Cbor.Decode.Decoder a -> Cbor.Decode.Decoder b -> Cbor.Decode.Decoder c -> Cbor.Decode.Decoder value"
+            },
+            {
+                "name": "map4",
+                "comment": " Try four decoders and then combine the result. See also 'map3' for some\nexamples.\n",
+                "type": "(a -> b -> c -> d -> value) -> Cbor.Decode.Decoder a -> Cbor.Decode.Decoder b -> Cbor.Decode.Decoder c -> Cbor.Decode.Decoder d -> Cbor.Decode.Decoder value"
+            },
+            {
+                "name": "map5",
+                "comment": " Try five decoders and then combine the result. See also 'map3' for some\nexamples.\n",
+                "type": "(a -> b -> c -> d -> e -> value) -> Cbor.Decode.Decoder a -> Cbor.Decode.Decoder b -> Cbor.Decode.Decoder c -> Cbor.Decode.Decoder d -> Cbor.Decode.Decoder e -> Cbor.Decode.Decoder value"
+            },
+            {
+                "name": "maybe",
+                "comment": " Helpful for dealing with optional fields. Turns `null` into `Nothing`.\n\n    D.decode (D.maybe D.bool) Bytes<0xF6> == Just Nothing\n\n    D.decode (D.maybe D.bool) Bytes<0xF4> == Just (Just False)\n\n",
+                "type": "Cbor.Decode.Decoder a -> Cbor.Decode.Decoder (Maybe.Maybe a)"
+            },
+            {
+                "name": "pair",
+                "comment": " Decode a 2-tuple. This is mostly a helper around a list decoder with 2\nelements, with non-uniform types.\n\n    D.decode (D.pair D.int D.bool) Bytes<0x0E, 0xF5> == Just ( 14, True )\n\n",
+                "type": "Cbor.Decode.Decoder a -> Cbor.Decode.Decoder b -> Cbor.Decode.Decoder ( a, b )"
+            },
+            {
+                "name": "raw",
+                "comment": " Decode the next cbor item as a raw sequence of `Bytes`. Note that this\nprimitive is innefficient since it needs to parse the underlying CBOR first, and\nre-encode it into a sequence afterwards. Use for debugging purpose only.\n",
+                "type": "Cbor.Decode.Decoder Bytes.Bytes"
+            },
+            {
+                "name": "record",
+                "comment": " Like 'array', but for heterogeneous dict.\n",
+                "type": "Cbor.Decode.Decoder a -> Cbor.Decode.Decoder a"
+            },
+            {
+                "name": "string",
+                "comment": " Decode a bunch UTF-8 bytes into a 'String'. In case of streaming, all\nstrings are decoded at once and concatenated as if they were one big string.\nSee also 'Cbor.Encode.beginStrings'\n",
+                "type": "Cbor.Decode.Decoder String.String"
+            },
+            {
+                "name": "succeed",
+                "comment": " Always succeed to produce a certain Elm value.\n\n    D.decode (D.succeed 14) Bytes<0x42, 0x28> == Just 14\n\n    D.decode (D.list (D.int |> D.andThen (\\_ -> D.succeed 1))) Bytes<0x83, 0x00, 0x00, 0x00>\n        == Just [ 1, 1, 1 ]\n\nThis particularly handy when used in combination with `andThen`.\n\n",
+                "type": "a -> Cbor.Decode.Decoder a"
+            },
+            {
+                "name": "tag",
+                "comment": " This implementation does little interpretation of the tags and is limited to\nonly decoding the tag's value. The tag's payload has to be specified as any\nother decoder. So, using the previous example, one could decode a bignum as:\n\n    D.decode (D.tag |> D.andThen (\\tag -> D.bytes)) input\n\nYou may also use @tagged@ if you as a helper to decode a tagged value, while\nverifying that the tag matches what you expect.\n\n    D.decode (D.tagged PositiveBigNum D.bytes) input\n\n",
+                "type": "Cbor.Decode.Decoder Cbor.Tag.Tag"
+            },
+            {
+                "name": "tagged",
+                "comment": " Decode a value that is tagged with the given 'Tag'. Fails if the value is\nnot tagged, or, tag with some other 'Tag'\n\n    D.decode (D.tagged Cbor D.int) Bytes<0xD8, 0x0E> == Just ( Cbor, 14 )\n\n    D.decode (D.tagged Base64 D.int) Bytes<0xD8, 0x0E> == Nothing\n\n    D.decode (D.tagged Cbor D.int) Bytes<0x0E> == Nothing\n\n",
+                "type": "Cbor.Tag.Tag -> Cbor.Decode.Decoder a -> Cbor.Decode.Decoder ( Cbor.Tag.Tag, a )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Cbor.Encode",
+        "comment": " The Concise Binary Object Representation (CBOR) is a data format whose design\ngoals include the possibility of extremely small code size, fairly small message\nsize, and extensibility without the need for version negotiation. These design\ngoals make it different from earlier binary serializations such as ASN.1 and\nMessagePack.\n\n\n## Encoder\n\n@docs Encoder, encode, sequence\n\n\n## Primitives\n\n@docs bool, int, float, string, bytes, null, undefined\n\n\n## Fancier Primitives\n\n@docs float16, float32, float64\n\n\n## Data Structures\n\n@docs list, dict, keyValueMap, pair\n\n\n## Streaming\n\nFour CBOR items (arrays, maps, byte strings, and text strings) can be encoded\nwith an indefinite length. This is useful if the encoding of the item needs to\nbegin before the number of items inside the array or map, or the total length\nof the string, is known. (The application of this is often referred to as\n\"streaming\" within a data item.)\n\n> NOTE:\n>\n> Indefinite-length arrays and maps are dealt with differently than\n> indefinite-length byte strings and text strings.\n\n@docs beginStrings, beginBytes, beginList, beginDict, break\n\n\n## Tagging\n\n@docs tag, tagged\n\n\n## Debugging\n\n@docs any, raw\n\n",
+        "unions": [
+            {
+                "name": "Encoder",
+                "comment": " Describes how to encode a data structure or a type into binary CBOR\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "any",
+                "comment": " Encode any generic CBOR item. This is particularly useful when dealing with\nheterogeneous data structures (e.g. tuples).\n\n    E.list E.any [ CborInt 42, CborBool True, CborString \"awesome!\" ]\n\n",
+                "type": "Cbor.CborItem -> Cbor.Encode.Encoder"
+            },
+            {
+                "name": "beginBytes",
+                "comment": " Encode a 'Bytes' of indefinite length. This indicates the beginning of\nmultiple calls to 'bytes', followed by a 'break' to signal the end of the\nstream. For example:\n\n    E.sequence\n        [ E.beginBytes\n        , E.bytes Bytes<0x01, 0x02>\n        , E.bytes Bytes<0x03, 0x04>\n        , E.break\n        ]\n\n",
+                "type": "Cbor.Encode.Encoder"
+            },
+            {
+                "name": "beginDict",
+                "comment": " Encode a 'Dict' of indefinite length. This indicates the beginning of\nmultiple calls for encoding pairs of elements, followed by a 'break' to signal\nthe end of the stream. For example:\n\n    E.sequence\n        [ E.beginDict\n        , E.pair E.int E.string ( 1, \"elm\" )\n        , E.pair E.int E.string ( 2, \"rocks\" )\n        , E.pair E.int E.string ( 3, \"!\" )\n        , E.break\n        ]\n\n",
+                "type": "Cbor.Encode.Encoder"
+            },
+            {
+                "name": "beginList",
+                "comment": " Encode a 'List' of indefinite length. This indicates the beginning of\nmultiple calls for encoding elements, followed by a 'break' to signal the end of the\nstream. For example:\n\n    E.sequence\n        [ E.beginList\n        , E.string \"elm\"\n        , E.string \"rocks\"\n        , E.string \"!\"\n        , E.break\n        ]\n\n",
+                "type": "Cbor.Encode.Encoder"
+            },
+            {
+                "name": "beginStrings",
+                "comment": " Encode a 'String' of indefinite length. This indicates the beginning of\nmultiple calls to 'string', followed by a 'break' to signal the end of the\nstream. For example:\n\n    E.sequence\n        [ E.beginStrings\n        , E.string \"elm\"\n        , E.string \"rocks\"\n        , E.string \"!\"\n        , E.break\n        ]\n\n",
+                "type": "Cbor.Encode.Encoder"
+            },
+            {
+                "name": "bool",
+                "comment": " Encode booleans.\n",
+                "type": "Basics.Bool -> Cbor.Encode.Encoder"
+            },
+            {
+                "name": "break",
+                "comment": " Encode termination of an indefinite structure.\n",
+                "type": "Cbor.Encode.Encoder"
+            },
+            {
+                "name": "bytes",
+                "comment": " Encode raw 'Bytes' of fixed size.\n",
+                "type": "Bytes.Bytes -> Cbor.Encode.Encoder"
+            },
+            {
+                "name": "dict",
+                "comment": " Turn a 'Dict' into a CBOR array\n\n    E.dict E.string E.int (Dict.fromList [ ( \"a\", 1 ), ( \"b\", 2 ) ])\n        == Bytes<0xA2, 0x61, 0x61, 0x01, 0x61, 0x62, 0x02>\n\nNote that in CBOR, every data-structure are mostly arrays of items. As a\nconsequence, dictionnaries are encoded as a list of pairs (key, value).\n\n",
+                "type": "(k -> Cbor.Encode.Encoder) -> (v -> Cbor.Encode.Encoder) -> Dict.Dict k v -> Cbor.Encode.Encoder"
+            },
+            {
+                "name": "encode",
+                "comment": " Turn a CBOR 'Encoder' into 'Bytes'.\n\n    import Cbor.Encode as E\n    import Url exposing (Url)\n\n    type alias Album =\n        { artist : String\n        , title : String\n        , year : Int\n        , tracks : List ( String, Duration )\n        , links : List Url\n        }\n\n    type Duration\n        = Duration Int\n\n    encodeAlbum : Album -> E.Encoder\n    encodeAlbum { artist, title, year, tracks, links } =\n        let\n            link =\n                Url.toString >> E.string\n\n            track =\n                E.pair E.string (\\(Duration d) -> E.int d)\n        in\n        E.sequence\n            [ E.string artist\n            , E.string title\n            , E.int year\n            , E.list track tracks\n            , E.list link links\n            ]\n\n",
+                "type": "Cbor.Encode.Encoder -> Bytes.Bytes"
+            },
+            {
+                "name": "float",
+                "comment": " Encode floating numbers with maximum precision (64-bit).\n\n> NOTE: This is an alias for 'float64'.\n\n",
+                "type": "Basics.Float -> Cbor.Encode.Encoder"
+            },
+            {
+                "name": "float16",
+                "comment": " Encode floating numbers with half-precision (16-bit).\n",
+                "type": "Basics.Float -> Cbor.Encode.Encoder"
+            },
+            {
+                "name": "float32",
+                "comment": " Encode floating numbers with simple precision (32-bit).\n",
+                "type": "Basics.Float -> Cbor.Encode.Encoder"
+            },
+            {
+                "name": "float64",
+                "comment": " Encode floating numbers with double precision (64-bit).\n",
+                "type": "Basics.Float -> Cbor.Encode.Encoder"
+            },
+            {
+                "name": "int",
+                "comment": " Encode integers from `-9007199254740992` (`-2⁵³`) to `9007199254740991` (`2⁵³ - 1`).\n",
+                "type": "Basics.Int -> Cbor.Encode.Encoder"
+            },
+            {
+                "name": "keyValueMap",
+                "comment": " Turn a (key, value) into a CBOR array. Note that, if keys are `comparable`,\nyou should consider using a `Dict` instead.\n",
+                "type": "(k -> Cbor.Encode.Encoder) -> (v -> Cbor.Encode.Encoder) -> List.List ( k, v ) -> Cbor.Encode.Encoder"
+            },
+            {
+                "name": "list",
+                "comment": " Turn a 'List' into a CBOR array\n\n    E.list E.int [1,2,3] == Bytes<0x83, 0x01, 0x02, 0x03>\n\n",
+                "type": "(a -> Cbor.Encode.Encoder) -> List.List a -> Cbor.Encode.Encoder"
+            },
+            {
+                "name": "null",
+                "comment": " Create a CBOR `null` value. This can be decoded using `maybe` from the\n'Cbor.Decode' module.\n",
+                "type": "Cbor.Encode.Encoder"
+            },
+            {
+                "name": "pair",
+                "comment": " Turn a 2-'Tuple' into a CBOR array\n\n    E.pair E.string E.int ( \"a\", 14 ) == Bytes<0x61, 0x61, 0x0E>\n\n",
+                "type": "(a -> Cbor.Encode.Encoder) -> (b -> Cbor.Encode.Encoder) -> ( a, b ) -> Cbor.Encode.Encoder"
+            },
+            {
+                "name": "raw",
+                "comment": " Unsafe encoder to inject any arbitrary bytes into the encoding sequence. **Do\nnot use** unless you know what you're doing, this may result in invalid CBOR\nencoding!\n",
+                "type": "Bytes.Bytes -> Cbor.Encode.Encoder"
+            },
+            {
+                "name": "sequence",
+                "comment": " Combine a bunch of encoders.\n",
+                "type": "List.List Cbor.Encode.Encoder -> Cbor.Encode.Encoder"
+            },
+            {
+                "name": "string",
+                "comment": " Encode a 'String' of fixed size.\n",
+                "type": "String.String -> Cbor.Encode.Encoder"
+            },
+            {
+                "name": "tag",
+                "comment": " Encode a particular 'Tag' to binary CBOR\n",
+                "type": "Cbor.Tag.Tag -> Cbor.Encode.Encoder"
+            },
+            {
+                "name": "tagged",
+                "comment": " Helper to quickly encode a tagged value\n\n    E.tagged t encodeA a == E.sequence [ E.tag t, encodeA a ]\n\n",
+                "type": "Cbor.Tag.Tag -> (a -> Cbor.Encode.Encoder) -> a -> Cbor.Encode.Encoder"
+            },
+            {
+                "name": "undefined",
+                "comment": " Create a CBOR `undefined` value. This can be decoded using `maybe` from the\n`Cbor.Decode` module\n",
+                "type": "Cbor.Encode.Encoder"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Cbor.Tag",
+        "comment": " Optional semantic tags as specified in the RFC 7049. Tags can be used to\ngive an extra meaning to a generic piece of data that follows it. For instance,\none could encode a bignum as a raw byte string and add a corresponding tag 0x02\nto indicates what meaning can be given to that bytestring.\n\n@docs Tag\n\n",
+        "unions": [
+            {
+                "name": "Tag",
+                "comment": " Known CBOR tag from the specification. For custom tags, use 'Unknown' as a\nconstructor\n",
+                "args": [],
+                "cases": [
+                    [
+                        "StandardDateTime",
+                        []
+                    ],
+                    [
+                        "EpochDateTime",
+                        []
+                    ],
+                    [
+                        "PositiveBigNum",
+                        []
+                    ],
+                    [
+                        "NegativeBigNum",
+                        []
+                    ],
+                    [
+                        "DecimalFraction",
+                        []
+                    ],
+                    [
+                        "BigFloat",
+                        []
+                    ],
+                    [
+                        "Base64UrlConversion",
+                        []
+                    ],
+                    [
+                        "Base64Conversion",
+                        []
+                    ],
+                    [
+                        "Base16Conversion",
+                        []
+                    ],
+                    [
+                        "Cbor",
+                        []
+                    ],
+                    [
+                        "Uri",
+                        []
+                    ],
+                    [
+                        "Base64Url",
+                        []
+                    ],
+                    [
+                        "Base64",
+                        []
+                    ],
+                    [
+                        "Regex",
+                        []
+                    ],
+                    [
+                        "Mime",
+                        []
+                    ],
+                    [
+                        "IsCbor",
+                        []
+                    ],
+                    [
+                        "Unknown",
+                        [
+                            "Basics.Int"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [],
+        "binops": []
+    }
+]

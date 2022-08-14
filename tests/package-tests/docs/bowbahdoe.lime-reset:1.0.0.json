@@ -1,0 +1,401 @@
+[
+    {
+        "name": "Lime",
+        "comment": "\n\n\n# Tags\n\n@docs a, abbr, acronym, address, article, aside, audio\n@docs b, big, blockquote\n@docs canvas, caption, center, cite, code\n@docs dd, del, details, dfn, div, dl, dt\n@docs em, embed\n@docs fieldset, figcaption, figure, footer, form\n@docs h1, h2, h3, h4, h5, h6, header, hgroup\n@docs i, iframe, img, ins\n@docs kbd\n@docs label, legend, li\n@docs mark, menu\n@docs nav\n@docs object, ol, output\n@docs p, pre\n@docs q\n@docs ruby\n@docs s, samp, section, small, span, strike, strong, sub, summary, sup\n@docs table, tbody, td, tfoot, th, thead, time, tr, tt\n@docs u, ul\n@docs var, video\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "a",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "abbr",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "acronym",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "address",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "article",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "aside",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "audio",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "b",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "big",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "blockquote",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "canvas",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "caption",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "center",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "cite",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "code",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "dd",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "del",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "details",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "dfn",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "div",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "dl",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "dt",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "em",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "embed",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "fieldset",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "figcaption",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "figure",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "footer",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "form",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "h1",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "h2",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "h3",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "h4",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "h5",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "h6",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "header",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "hgroup",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "i",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "iframe",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "img",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "ins",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "kbd",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "label",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "legend",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "li",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "mark",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "menu",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "nav",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "object",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "ol",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "output",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "p",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "pre",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "q",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "ruby",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "s",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "samp",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "section",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "small",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "span",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "strike",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "strong",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "sub",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "summary",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "sup",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "table",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "tbody",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "td",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "tfoot",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "th",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "thead",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "time",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "tr",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "tt",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "u",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "ul",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "var",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            },
+            {
+                "name": "video",
+                "comment": " ",
+                "type": "Lime.Tag msg"
+            }
+        ],
+        "binops": []
+    }
+]

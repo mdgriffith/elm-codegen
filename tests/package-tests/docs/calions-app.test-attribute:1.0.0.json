@@ -1,0 +1,21 @@
+[
+    {
+        "name": "TestAttribute",
+        "comment": " With the `TestAttribute` module you can add attributes to your html elements only for `Test` env.\nThis allows you to select DOM elements with these attributes for your end to end tests.\n\n\n# Attributes\n\n@docs addId, addClass\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "addClass",
+                "comment": " Adds a `data-test-class` attribute if the `Env` is `Test`\n\nConventionnally, classes can be used by several elements\n\n",
+                "type": "String.String -> Env.Env -> Html.Attribute msg"
+            },
+            {
+                "name": "addId",
+                "comment": " Adds a `data-test-id` attribute if the `Env` is `Test`\n\nConventionnally, ids can be used by only one element\n\n",
+                "type": "String.String -> Env.Env -> Html.Attribute msg"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,555 @@
+[
+    {
+        "name": "Html.Provider",
+        "comment": " This file is organized roughly in order of popularity. The tags which you'd\nexpect to use frequently will be closer to the top.\n\n\n# Provider\n\n@docs connect, render, fromStandardHtml, from\n\n\n# Primitives\n\n@docs Html, Attribute, text, node, map\n\n\n# Tags\n\n\n## Headers\n\n@docs h1, h2, h3, h4, h5, h6\n\n\n## Grouping Content\n\n@docs div, p, hr, pre, blockquote\n\n\n## Text\n\n@docs span, a, code, em, strong, i, b, u, sub, sup, br\n\n\n## Lists\n\n@docs ol, ul, li, dl, dt, dd\n\n\n## Emdedded Content\n\n@docs img, iframe, canvas, math\n\n\n## Inputs\n\n@docs form, input, textarea, button, select, option\n\n\n## Sections\n\n@docs section, nav, article, aside, header, footer, address, main_, body\n\n\n## Figures\n\n@docs figure, figcaption\n\n\n## Tables\n\n@docs table, caption, colgroup, col, tbody, thead, tfoot, tr, td, th\n\n\n## Less Common Elements\n\n\n### Less Common Inputs\n\n@docs fieldset, legend, label, datalist, optgroup, keygen, output, progress, meter\n\n\n### Audio and Video\n\n@docs audio, video, source, track\n\n\n### Embedded Objects\n\n@docs embed, object, param\n\n\n### Text Edits\n\n@docs ins, del\n\n\n### Semantic Text\n\n@docs small, cite, dfn, abbr, time, var, samp, kbd, s, q\n\n\n### Less Common Text Tags\n\n@docs mark, ruby, rt, rp, bdi, bdo, wbr\n\n\n## Interactive Elements\n\n@docs details, summary, menuitem, menu\n\n",
+        "unions": [
+            {
+                "name": "Html",
+                "comment": " The core building block used to build up HTML. Here we create an `Html`\nvalue with no attributes and one child:\n\n    hello : Html model msg\n    hello =\n        div [] [ text \"Hello!\" ]\n\n",
+                "args": [
+                    "model",
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Attribute",
+                "comment": " Set attributes on your `Html`. Learn more in the\n[`Html.Attributes`](Html-Attributes) module.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "Html.Attribute msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "a",
+                "comment": " Represents a hyperlink, linking to another resource.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "abbr",
+                "comment": " Represents an abbreviation or an acronym; the expansion of the\nabbreviation can be represented in the title attribute.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "address",
+                "comment": " Defines a section containing contact information.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "article",
+                "comment": " Defines self-contained content that could exist independently of the rest\nof the content.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "aside",
+                "comment": " Defines some content loosely related to the page content. If it is removed,\nthe remaining content still makes sense.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "audio",
+                "comment": " Represents a sound or audio stream.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "b",
+                "comment": " Represents a text which to which attention is drawn for utilitarian\npurposes. It doesn't convey extra importance and doesn't imply an alternate\nvoice.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "bdi",
+                "comment": " Represents text that must be isolated from its surrounding for\nbidirectional text formatting. It allows embedding a span of text with a\ndifferent, or unknown, directionality.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "bdo",
+                "comment": " Represents the directionality of its children, in order to explicitly\noverride the Unicode bidirectional algorithm.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "blockquote",
+                "comment": " Represents a content that is quoted from another source.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "body",
+                "comment": " Represents the content of an HTML document. There is only one `body`\nelement in a document.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "br",
+                "comment": " Represents a line break.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "button",
+                "comment": " Represents a button.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "canvas",
+                "comment": " Represents a bitmap area for graphics rendering.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "caption",
+                "comment": " Represents the title of a table.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "cite",
+                "comment": " Represents the title of a work.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "code",
+                "comment": " Represents computer code.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "col",
+                "comment": " Represents a column of a table.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "colgroup",
+                "comment": " Represents a set of one or more columns of a table.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "connect",
+                "comment": " `connect` is fairly simple, it takes a function that maps `model` to `props` and a function that needs those `props` to render `Html` and with those two pieces it makes that `Html`. This way your rendering and prop-building can be discrete steps.\n",
+                "type": "(props -> Html.Provider.Html model msg) -> (model -> props) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "datalist",
+                "comment": " Represents a set of predefined options for other controls.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "dd",
+                "comment": " Represents the definition of the terms immediately listed before it.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "del",
+                "comment": " Defines a removal from the document.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "details",
+                "comment": " Represents a widget from which the user can obtain additional information\nor controls.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "dfn",
+                "comment": " Represents a term whose definition is contained in its nearest ancestor\ncontent.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "div",
+                "comment": " Represents a generic container with no special meaning.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "dl",
+                "comment": " Defines a definition list, that is, a list of terms and their associated\ndefinitions.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "dt",
+                "comment": " Represents a term defined by the next `dd`.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "em",
+                "comment": " Represents emphasized text, like a stress accent.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "embed",
+                "comment": " Represents a integration point for an external, often non-HTML,\napplication or interactive content.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "fieldset",
+                "comment": " Represents a set of controls.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "figcaption",
+                "comment": " Represents the legend of a figure.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "figure",
+                "comment": " Represents a figure illustrated as part of the document.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "footer",
+                "comment": " Defines the footer for a page or section. It often contains a copyright\nnotice, some links to legal information, or addresses to give feedback.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "form",
+                "comment": " Represents a form, consisting of controls, that can be submitted to a\nserver for processing.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "from",
+                "comment": " You can target specific parts of your model with `from`\n\n    type alias Model =\n        { user : User }\n\n    view : Html Model Msg\n    view =\n        div\n            []\n            [ Html.Provider.from .user userView\n            -- ..\n            ]\n\n    userView : Html User Msg\n    userView =\n        -- ..\n\n",
+                "type": "(b -> a) -> Html.Provider.Html a msg -> Html.Provider.Html b msg"
+            },
+            {
+                "name": "fromStandardHtml",
+                "comment": " You will probably want to use `Html` from the standard Elm Html library. This function can help you slip standard html into an `Html.Provider.Html model msg`.\n",
+                "type": "Html.Html msg -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "h1",
+                "comment": " ",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "h2",
+                "comment": " ",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "h3",
+                "comment": " ",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "h4",
+                "comment": " ",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "h5",
+                "comment": " ",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "h6",
+                "comment": " ",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "header",
+                "comment": " Defines the header of a page or section. It often contains a logo, the\ntitle of the web site, and a navigational table of content.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "hr",
+                "comment": " Represents a thematic break between paragraphs of a section or article or\nany longer content.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "i",
+                "comment": " Represents some text in an alternate voice or mood, or at least of\ndifferent quality, such as a taxonomic designation, a technical term, an\nidiomatic phrase, a thought, or a ship name.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "iframe",
+                "comment": " Embedded an HTML document.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "img",
+                "comment": " Represents an image.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "input",
+                "comment": " Represents a typed data field allowing the user to edit the data.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "ins",
+                "comment": " Defines an addition to the document.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "kbd",
+                "comment": " Represents user input, often from the keyboard, but not necessarily; it\nmay represent other input, like transcribed voice commands.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "keygen",
+                "comment": " Represents a key-pair generator control.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "label",
+                "comment": " Represents the caption of a form control.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "legend",
+                "comment": " Represents the caption for a `fieldset`.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "li",
+                "comment": " Defines a item of an enumeration list.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "main_",
+                "comment": " Defines the main or important content in the document. There is only one\n`main` element in the document.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "map",
+                "comment": " Transform the messages produced by some `Html`. In the following example,\nwe have `viewButton` that produces `()` messages, and we transform those values\ninto `Msg` values in `view`.\n\n    type Msg\n        = Left\n        | Right\n\n    view : model -> Html Msg\n    view model =\n        div []\n            [ map (\\_ -> Left) (viewButton \"Left\")\n            , map (\\_ -> Right) (viewButton \"Right\")\n            ]\n\n    viewButton : String -> Html ()\n    viewButton name =\n        button [ onClick () ] [ text name ]\n\nThis should not come in handy too often. Definitely read [this][reuse] before\ndeciding if this is what you want.\n\n[reuse]: https://guide.elm-lang.org/reuse/\n\n",
+                "type": "(a -> msg) -> Html.Provider.Html model a -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "mark",
+                "comment": " Represents text highlighted for reference purposes, that is for its\nrelevance in another context.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "math",
+                "comment": " Defines a mathematical formula.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "menu",
+                "comment": " Represents a list of commands.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "menuitem",
+                "comment": " Represents a command that the user can invoke.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "meter",
+                "comment": " Represents a scalar measurement (or a fractional value), within a known\nrange.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "nav",
+                "comment": " Defines a section that contains only navigation links.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "node",
+                "comment": " General way to create HTML nodes. It is used to define all of the helper\nfunctions in this library.\n\n    div : List (Attribute msg) -> List (Html msg) -> Html msg\n    div attributes children =\n        node \"div\" attributes children\n\nYou can use this to create custom nodes if you need to create something that\nis not covered by the helper functions in this library.\n\n",
+                "type": "String.String -> List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "object",
+                "comment": " Represents an external resource, which is treated as an image, an HTML\nsub-document, or an external resource to be processed by a plug-in.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "ol",
+                "comment": " Defines an ordered list of items.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "optgroup",
+                "comment": " Represents a set of options, logically grouped.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "option",
+                "comment": " Represents an option in a `select` element or a suggestion of a `datalist`\nelement.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "output",
+                "comment": " Represents the result of a calculation.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "p",
+                "comment": " Defines a portion that should be displayed as a paragraph.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "param",
+                "comment": " Defines parameters for use by plug-ins invoked by `object` elements.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "pre",
+                "comment": " Indicates that its content is preformatted and that this format must be\npreserved.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "progress",
+                "comment": " Represents the completion progress of a task.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "q",
+                "comment": " Represents an inline quotation.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "render",
+                "comment": " `render` turns this packages custom `Html.Provier.Html` type into the standard `Html.Html` type used in Elm apps\n\n    view : Model -> Html.Html Msg\n    view model =\n        Html.div\n            []\n            [ Html.Provider.render container model ]\n\n    container : Html.Provider.Html Model Msg\n    container =\n        Html.Provider.p [] []\n\n",
+                "type": "Html.Provider.Html model msg -> model -> Html.Html msg"
+            },
+            {
+                "name": "rp",
+                "comment": " Represents parenthesis around a ruby annotation, used to display the\nannotation in an alternate way by browsers not supporting the standard display\nfor annotations.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "rt",
+                "comment": " Represents the text of a ruby annotation.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "ruby",
+                "comment": " Represents content to be marked with ruby annotations, short runs of text\npresented alongside the text. This is often used in conjunction with East Asian\nlanguage where the annotations act as a guide for pronunciation, like the\nJapanese furigana.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "s",
+                "comment": " Represents content that is no longer accurate or relevant.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "samp",
+                "comment": " Represents the output of a program or a computer.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "section",
+                "comment": " Defines a section in a document.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "select",
+                "comment": " Represents a control allowing selection among a set of options.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "small",
+                "comment": " Represents a side comment, that is, text like a disclaimer or a\ncopyright, which is not essential to the comprehension of the document.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "source",
+                "comment": " Allows authors to specify alternative media resources for media elements\nlike `video` or `audio`.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "span",
+                "comment": " Represents text with no specific meaning. This has to be used when no other\ntext-semantic element conveys an adequate meaning, which, in this case, is\noften brought by global attributes like `class`, `lang`, or `dir`.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "strong",
+                "comment": " Represents especially important text.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "sub",
+                "comment": " Represent a subscript.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "summary",
+                "comment": " Represents a summary, caption, or legend for a given `details`.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "sup",
+                "comment": " Represent a superscript.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "table",
+                "comment": " Represents data with more than one dimension.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "tbody",
+                "comment": " Represents the block of rows that describes the concrete data of a table.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "td",
+                "comment": " Represents a data cell in a table.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "text",
+                "comment": " Just put plain text in the DOM. It will escape the string so that it appears\nexactly as you specify.\n\n    text \"Hello World!\"\n\n",
+                "type": "String.String -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "textarea",
+                "comment": " Represents a multiline text edit control.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "tfoot",
+                "comment": " Represents the block of rows that describes the column summaries of a table.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "th",
+                "comment": " Represents a header cell in a table.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "thead",
+                "comment": " Represents the block of rows that describes the column labels of a table.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "time",
+                "comment": " Represents a date and time value; the machine-readable equivalent can be\nrepresented in the datetime attribute.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "tr",
+                "comment": " Represents a row of cells in a table.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "track",
+                "comment": " Allows authors to specify timed text track for media elements like `video`\nor `audio`.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "u",
+                "comment": " Represents a non-textual annoatation for which the conventional\npresentation is underlining, such labeling the text as being misspelt or\nlabeling a proper name in Chinese text.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "ul",
+                "comment": " Defines an unordered list of items.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "var",
+                "comment": " Represents a variable. Specific cases where it should be used include an\nactual mathematical expression or programming context, an identifier\nrepresenting a constant, a symbol identifying a physical quantity, a function\nparameter, or a mere placeholder in prose.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "video",
+                "comment": " Represents a video, the associated audio and captions, and controls.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            },
+            {
+                "name": "wbr",
+                "comment": " Represents a line break opportunity, that is a suggested point for\nwrapping text in order to improve readability of text split on several lines.\n",
+                "type": "List.List (Html.Provider.Attribute msg) -> List.List (Html.Provider.Html model msg) -> Html.Provider.Html model msg"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,502 @@
+[
+    {
+        "name": "Thumbor",
+        "comment": "\n\n\n# Core Functionality\n\n@docs url\n\n\n# Configuration\n\n@docs Config\n\n\n# Attributes\n\n@docs Attribute\n\n\n## Sizing\n\n@docs size, sizeFixed, Size\n\n\n## Cropping\n\n@docs manualCrop, horizontalAlign, HorizontalAlign, verticalAlign, VerticalAlign\n\n\n## Trimming\n\n@docs trim, trimSimple, TrimSource\n\n\n## Fitting\n\n@docs fitIn, FitInMode\n\n\n## Miscellaneous\n\n@docs filters, smart\n\n",
+        "unions": [
+            {
+                "name": "Attribute",
+                "comment": " Represents a Thumbor attribute, controlling how images are processed. See below for a list of available attribute constructors.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "FitInMode",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "NormalFitIn",
+                        []
+                    ],
+                    [
+                        "AdaptiveFitIn",
+                        []
+                    ],
+                    [
+                        "FullFitIn",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "HorizontalAlign",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Left",
+                        []
+                    ],
+                    [
+                        "Center",
+                        []
+                    ],
+                    [
+                        "Right",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Size",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Fixed",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "Proportional",
+                        []
+                    ],
+                    [
+                        "Original",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "TrimSource",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "TopLeft",
+                        []
+                    ],
+                    [
+                        "BottomRight",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "VerticalAlign",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Top",
+                        []
+                    ],
+                    [
+                        "Middle",
+                        []
+                    ],
+                    [
+                        "Bottom",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " Thumbor server configuration. The `baseUrl` configures the base URL your Thumbor instance is hosted on. It must contain at least an URL schema and host and can contain a custom port or path.\n\n`key` contains your key for [URL signing](https://thumbor.readthedocs.io/en/latest/security.html#security). If `Nothing` is provided, URL signing will be disabled.\n\n**Important Security Notice:** Since Elm is mostly used in front-end code, **your key will be exposed in clear-text to all clients**, nullifying the effect of this security measure.\n\n**Make sure you have an alternate concept to stop URL tampering!**\n\nExamples:\n\n    { baseUrl = \"https://example.com\"\n    , key = Just \"thefutureishere\"\n    }\n\n    { baseUrl = \"https://example.com/thumbor\"\n    , key = Just \"thefutureishere\"\n    }\n\n    { baseUrl = \"https://example.com:1138/thumbor\"\n    , key = Just \"thefutureishere\"\n    }\n\n",
+                "args": [],
+                "type": "{ baseUrl : String.String, key : Maybe.Maybe String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "filters",
+                "comment": " Sets a list of filters as a chain to be used. See [Thumbor.Filter](Thumbor-Filter) for available filters and their usage.\n\nThumbor docs: <https://thumbor.readthedocs.io/en/latest/usage.html#filters>\n\n",
+                "type": "List.List Thumbor.Filter.Filter -> Thumbor.Attribute"
+            },
+            {
+                "name": "fitIn",
+                "comment": " Specifies that the image should **not** be auto-cropped and auto-resized to be **exactly** the specified size, and\nshould be fit in an imaginary box (given by the [sizing](#sizing) argument) instead.\n\nThumbor docs: <https://thumbor.readthedocs.io/en/latest/usage.html#fit-in>\n\n",
+                "type": "Thumbor.FitInMode -> Thumbor.Attribute"
+            },
+            {
+                "name": "horizontalAlign",
+                "comment": " Controls where the cropping will occur if some width needs to be trimmed. The default is `Center`.\n\nThumbor docs: <https://thumbor.readthedocs.io/en/latest/usage.html#horizontal-align>\n\n",
+                "type": "Thumbor.HorizontalAlign -> Thumbor.Attribute"
+            },
+            {
+                "name": "manualCrop",
+                "comment": " Useful for applications that provide custom real-time cropping capabilities.\nThis crop is performed before the rest of the operations, so it can be used as a prepare step _before_ resizing and smart-cropping.\n\nThumbor docs: <https://thumbor.readthedocs.io/en/latest/usage.html#manual-crop>\n\n",
+                "type": "{ left : Basics.Int, top : Basics.Int, right : Basics.Int, bottom : Basics.Int } -> Thumbor.Attribute"
+            },
+            {
+                "name": "size",
+                "comment": " Specifies the size of the image that will be returned by the service.\n\nThumbor docs: <https://thumbor.readthedocs.io/en/latest/usage.html#image-size>\n\n",
+                "type": "Thumbor.Size -> Thumbor.Size -> Thumbor.Attribute"
+            },
+            {
+                "name": "sizeFixed",
+                "comment": " Same as [size](#size), but always uses `Fixed` sizing for convenience.\n",
+                "type": "Basics.Int -> Basics.Int -> Thumbor.Attribute"
+            },
+            {
+                "name": "smart",
+                "comment": " Thumbor uses some advanced techniques for obtaining important points of the image, called focal points.\n\nIf you use this attribute, smart cropping will be performed and will override both horizontal and vertical alignments\nif it finds any focal points.\n\nThumbor docs: <https://thumbor.readthedocs.io/en/latest/usage.html#smart-cropping>\n\n",
+                "type": "Thumbor.Attribute"
+            },
+            {
+                "name": "trim",
+                "comment": " Removes surrounding space in images based on its color. You can pass in the source where the color should be sampled\nwith a [TrimSource](#TrimSource). In addition, you can specify a color tolerance with the second parameter. The tolerance\nvalue will be clamped between `0` and `442`.\n\nThumbor docs: <https://thumbor.readthedocs.io/en/latest/usage.html#trim>\n\n",
+                "type": "Thumbor.TrimSource -> Basics.Int -> Thumbor.Attribute"
+            },
+            {
+                "name": "trimSimple",
+                "comment": " Same as [trim](#trim), but always uses `TopLeft` source and `0` tolerance.\n",
+                "type": "Thumbor.Attribute"
+            },
+            {
+                "name": "url",
+                "comment": " Creates a new image URL based on the given [`Config`](#Config), [`Attributes`](#Attribute) and original image URL.\n\nAttributes can occur in any order. If an attribute is specified multiple times, the last occurrence wins - very much\nlike how [`elm/html`](https://package.elm-lang.org/packages/elm/html/latest/) attributes work.\n\nYou might want to use currying to ease usage of this package:\n\n    thumbor : List Thumbor.Attribute -> String -> String\n    thumbor =\n        Thumbor.url\n            { host = \"https://example.com:1138\"\n            , key = Just \"thefutureishere\"\n            }\n\n    -- Prepare a common configuration for teaser images\n    prepareTeaserImage : String -> String\n    prepareTeaserImage =\n        thumbor [ Thumbor.scale 200 300 ]\n\n    -- Actually use this package to create a modified image\n    view : Model -> Html msg\n    view model =\n        img [ src (prepareTeaserImage \"https://example.com/image.jpg\") ] []\n\n",
+                "type": "Thumbor.Config -> List.List Thumbor.Attribute -> String.String -> String.String"
+            },
+            {
+                "name": "verticalAlign",
+                "comment": " Controls where the cropping will occur if some height needs to be trimmed. The default is `Middle`.\n\nThumbor docs: <https://thumbor.readthedocs.io/en/latest/usage.html#vertical-align>\n\n",
+                "type": "Thumbor.VerticalAlign -> Thumbor.Attribute"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Thumbor.Filter",
+        "comment": "\n\n@docs Filter\n\n\n# Implementations\n\nSome filters can be quite complex and their usage might not be obvious at first sight. This package documentation will\nnot to try to explain what the filters do in detail, but instead link to the official Thumbor documentation.\n\n\n## Background Color\n\n@docs backgroundColor, BackgroundColor\n\n\n## Watermark\n\n@docs watermark, WatermarkDefinition, WatermarkHorizontalPosition, WatermarkVerticalPosition\n\n\n## Round Corners\n\n@docs roundCorners, RoundCornersBackgroundColor\n\n\n## Image Format\n\n@docs format, ImageFormat\n\n\n## Fill\n\n@docs fill, FillMode\n\n\n## Miscellaneous\n\n@docs autoJpg, focal, blur, brightness, contrast, convolution, equalize, extractFocal, grayscale, maxBytes, noUpscale, noise, proportion, quality, rgb, rotate, sharpen, stretch, stripExif, stripIcc, upscale\n\n\n# Advanced\n\n@docs custom, toString\n\n",
+        "unions": [
+            {
+                "name": "BackgroundColor",
+                "comment": " Either a specific color given in RGB (`0` to `255` for each channel) or automatic detection by Thumbor.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "BackgroundColor",
+                        [
+                            "Basics.Int",
+                            "Basics.Int",
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "AutomaticBackgroundColor",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "FillMode",
+                "comment": " How to fill empty space:\n\n  - With a specific color given in RGB (`0` to `255` for each channel)\n  - With transparency, if supported by the output image format\n  - With an auto-detected color, based on the image\n  - With a blurred version of the image\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "FillModeColor",
+                        [
+                            "Basics.Int",
+                            "Basics.Int",
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "FillModeTransparent",
+                        []
+                    ],
+                    [
+                        "FillModeAuto",
+                        []
+                    ],
+                    [
+                        "FillModeBlur",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Filter",
+                "comment": " A filter that can be used with the [filters](Thumbor#filters) attribute. See the _Implementations_ section for details and available filters.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "ImageFormat",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "WebP",
+                        []
+                    ],
+                    [
+                        "Jpeg",
+                        []
+                    ],
+                    [
+                        "Gif",
+                        []
+                    ],
+                    [
+                        "Png",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "RoundCornersBackgroundColor",
+                "comment": " Either a specific color given in RGB (`0` to `255` for each channel) or transparent.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "RoundCornersBackgroundColor",
+                        [
+                            "Basics.Int",
+                            "Basics.Int",
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "RoundCornersTransparentBackground",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "WatermarkHorizontalPosition",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "LeftPixels",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "LeftPercentage",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "RightPixels",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "RightPercentage",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "HorizontalCenter",
+                        []
+                    ],
+                    [
+                        "HorizontalRepeat",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "WatermarkVerticalPosition",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "TopPixels",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "TopPercentage",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "BottomPixels",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "BottomPercentage",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "VerticalCenter",
+                        []
+                    ],
+                    [
+                        "VerticalRepeat",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "WatermarkDefinition",
+                "comment": " ",
+                "args": [],
+                "type": "{ imageUrl : String.String, horizontalPosition : Thumbor.Filter.WatermarkHorizontalPosition, verticalPosition : Thumbor.Filter.WatermarkVerticalPosition, alphaPercentage : Basics.Int, widthRatio : Maybe.Maybe Basics.Int, heightRatio : Maybe.Maybe Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "autoJpg",
+                "comment": " Overrides the `AUTO_PNG_TO_JPG` config variable in Thumbor.\n\nThumbor docs: <https://thumbor.readthedocs.io/en/latest/autojpg.html>\n\n",
+                "type": "Basics.Bool -> Thumbor.Filter.Filter"
+            },
+            {
+                "name": "backgroundColor",
+                "comment": " Sets the background layer to the specified color. This is specifically useful when converting transparent\nimages (i.e. PNG) to JPEG.\n\nThumbor docs: <https://thumbor.readthedocs.io/en/latest/background_color.html>\n\n",
+                "type": "Thumbor.Filter.BackgroundColor -> Thumbor.Filter.Filter"
+            },
+            {
+                "name": "blur",
+                "comment": " Applies a gaussian blur to the image, taking the radius as the first argument and an optional sigma as the second.\n\nThumbor docs: <https://thumbor.readthedocs.io/en/latest/blur.html>\n\n",
+                "type": "{ radius : Basics.Int, sigma : Maybe.Maybe Basics.Int } -> Thumbor.Filter.Filter"
+            },
+            {
+                "name": "brightness",
+                "comment": " Increases or decreases the image brightness in percent. Negative percentages decrease the brightness, positive ones\nincrease it.\n\nThumbor docs: <https://thumbor.readthedocs.io/en/latest/brightness.html>\n\n",
+                "type": "Basics.Int -> Thumbor.Filter.Filter"
+            },
+            {
+                "name": "contrast",
+                "comment": " Increases or decreases the image contrast in percent. Negative percentages decrease the contrast, positive ones\nincrease it.\n\nThumbor docs: <https://thumbor.readthedocs.io/en/latest/contrast.html>\n\n",
+                "type": "Basics.Int -> Thumbor.Filter.Filter"
+            },
+            {
+                "name": "convolution",
+                "comment": " Runs a convolution matrix (or kernel) on the image.\nSee [Kernel (image processing)](https://en.wikipedia.org/wiki/Kernel_%28image_processing%29) for details on the process.\n\nThumbor docs: <https://thumbor.readthedocs.io/en/latest/convolution.html>\n\n",
+                "type": "{ matrixItems : List.List Basics.Int, numberOfColumns : Basics.Int, shouldNormalize : Basics.Bool } -> Thumbor.Filter.Filter"
+            },
+            {
+                "name": "custom",
+                "comment": " Create a custom filter based on its name and arguments.\nIt is useful in case you have implemented your own Thumbor filters or to use any filters that are not supported by this package yet.\n\nBefore using this, check if there is a type safe implementation in this module and use that instead.\n\nExample usage:\n\n    custom \"noise\" [ \"40\" ]\n\n    custom \"sharpen\" [ \"2\", \"1.0\", \"true\" ]\n\n",
+                "type": "String.String -> List.List String.String -> Thumbor.Filter.Filter"
+            },
+            {
+                "name": "equalize",
+                "comment": " Equalizes the color distribution in the image.\n\nThumbor docs: <https://thumbor.readthedocs.io/en/latest/equalize.html>\n\n",
+                "type": "Thumbor.Filter.Filter"
+            },
+            {
+                "name": "extractFocal",
+                "comment": " Tries to detect focal points within the image.\nPlease refer to the Thumbor documentation for more details and prerequisites.\n\nThumbor docs: <https://thumbor.readthedocs.io/en/latest/extract_focal_points.html>\n\n",
+                "type": "Thumbor.Filter.Filter"
+            },
+            {
+                "name": "fill",
+                "comment": " Permits to return an image sized exactly as requested.\nEmpty space will be filled according to the given [FillMode](#FillMode).\nAdditionally, transparent areas of the source image can be filled as well.\n\nUsually used with `NormalFitIn` or `AdaptiveFitIn` [FitInMode](Thumbor#FitInMode).\n\nThumbor docs: <https://thumbor.readthedocs.io/en/latest/filling.html>\n\n",
+                "type": "{ mode : Thumbor.Filter.FillMode, fillTransparent : Basics.Bool } -> Thumbor.Filter.Filter"
+            },
+            {
+                "name": "focal",
+                "comment": " This filter adds a focal point, which is used in later transforms.\n\nThumbor docs: <https://thumbor.readthedocs.io/en/latest/focal.html>\n\n",
+                "type": "{ left : Basics.Int, top : Basics.Int, right : Basics.Int, bottom : Basics.Int } -> Thumbor.Filter.Filter"
+            },
+            {
+                "name": "format",
+                "comment": " Specifies the output format of the image.\n\nThumbor docs: <https://thumbor.readthedocs.io/en/latest/format.html>\n\n",
+                "type": "Thumbor.Filter.ImageFormat -> Thumbor.Filter.Filter"
+            },
+            {
+                "name": "grayscale",
+                "comment": " Changes the image to grayscale.\n\nThumbor docs: <https://thumbor.readthedocs.io/en/latest/grayscale.html>\n\n",
+                "type": "Thumbor.Filter.Filter"
+            },
+            {
+                "name": "maxBytes",
+                "comment": " Automatically degrades the quality of the image until the image is under the specified amount of bytes.\n\nThumbor docs: <https://thumbor.readthedocs.io/en/latest/max_bytes.html>\n\n",
+                "type": "Basics.Int -> Thumbor.Filter.Filter"
+            },
+            {
+                "name": "noUpscale",
+                "comment": " Tells Thumbor not to upscale your images.\n\nThumbor docs: <https://thumbor.readthedocs.io/en/latest/no_upscale.html>\n\n",
+                "type": "Thumbor.Filter.Filter"
+            },
+            {
+                "name": "noise",
+                "comment": " Adds noise to the image.\n\nThumbor docs: <https://thumbor.readthedocs.io/en/latest/noise.html>\n\n",
+                "type": "Basics.Int -> Thumbor.Filter.Filter"
+            },
+            {
+                "name": "proportion",
+                "comment": " Applies proportion to height and width passed for cropping.\n\nThumbor docs: <https://thumbor.readthedocs.io/en/latest/proportion.html>\n\n",
+                "type": "Basics.Float -> Thumbor.Filter.Filter"
+            },
+            {
+                "name": "quality",
+                "comment": " Changes the overall quality of the JPEG image (does nothing for PNGs or GIFs).\n\nThumbor docs: <https://thumbor.readthedocs.io/en/latest/quality.html>\n\n",
+                "type": "Basics.Int -> Thumbor.Filter.Filter"
+            },
+            {
+                "name": "rgb",
+                "comment": " Changes the amount of color in each of the three channels.\nThe given values are percentages (`-100` to `100`).\n\nThumbor docs: <https://thumbor.readthedocs.io/en/latest/rgb.html>\n\n",
+                "type": "Basics.Int -> Basics.Int -> Basics.Int -> Thumbor.Filter.Filter"
+            },
+            {
+                "name": "rotate",
+                "comment": " Rotates the given image according to the angle in degrees.\n\nThumbor docs: <https://thumbor.readthedocs.io/en/latest/rotate.html>\n\n",
+                "type": "Basics.Int -> Thumbor.Filter.Filter"
+            },
+            {
+                "name": "roundCorners",
+                "comment": " Adds rounded corners to the image using the specified color as background.\n\nThumbor docs: <https://thumbor.readthedocs.io/en/latest/round_corners.html>\n\n",
+                "type": "Basics.Int -> Thumbor.Filter.RoundCornersBackgroundColor -> Thumbor.Filter.Filter"
+            },
+            {
+                "name": "sharpen",
+                "comment": " Enhances apparent sharpness of the image.\n\nThumbor docs: <https://thumbor.readthedocs.io/en/latest/sharpen.html>\n\n",
+                "type": "{ amount : Basics.Float, radius : Basics.Float, luminanceOnly : Basics.Bool } -> Thumbor.Filter.Filter"
+            },
+            {
+                "name": "stretch",
+                "comment": " Applies resize without autocrop if fit-in option will be not passed in the arguments.\n\nThumbor docs: <https://thumbor.readthedocs.io/en/latest/stretch.html>\n\n",
+                "type": "Thumbor.Filter.Filter"
+            },
+            {
+                "name": "stripExif",
+                "comment": " Removes any Exif information in the resulting image.\n\nThumbor docs: <https://thumbor.readthedocs.io/en/latest/strip_exif.html>\n\n",
+                "type": "Thumbor.Filter.Filter"
+            },
+            {
+                "name": "stripIcc",
+                "comment": " Removes any ICC information in the resulting image.\n\nThumbor docs: <https://thumbor.readthedocs.io/en/latest/strip_icc.html>\n\n",
+                "type": "Thumbor.Filter.Filter"
+            },
+            {
+                "name": "toString",
+                "comment": " Transforms a `Filter` into its `String` representation for use inside a Thumbor compatible URL. There is usually\nno need to use this as a consumer of this package.\n",
+                "type": "Thumbor.Filter.Filter -> String.String"
+            },
+            {
+                "name": "upscale",
+                "comment": " Tells thumbor to upscale your images. This only makes sense with `NormalFitIn` or `AdaptiveFitIn` [FitInMode](Thumbor#FitInMode).\n\nThumbor docs: <https://thumbor.readthedocs.io/en/latest/upscale.html>\n\n",
+                "type": "Thumbor.Filter.Filter"
+            },
+            {
+                "name": "watermark",
+                "comment": " Adds a watermark to the image.\n\nExample for adding a watermark on the bottom left with a vertical and horizontal distance of 25 pixels to the border:\n\n    Thumbor.Filter.watermark\n        { imageUrl = \"https://example.com/watermark.png\"\n        , horizontalPosition = Thumbor.Filter.LeftPixels 25\n        , verticalPosition = Thumbor.Filter.BottomPixels 25\n        , alphaPercentage = 50\n        , widthRatio = Nothing\n        , heightRatio = Nothing\n        }\n\nThumbor docs: <https://thumbor.readthedocs.io/en/latest/watermark.html>\n\n",
+                "type": "Thumbor.Filter.WatermarkDefinition -> Thumbor.Filter.Filter"
+            }
+        ],
+        "binops": []
+    }
+]

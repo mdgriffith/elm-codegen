@@ -1,0 +1,196 @@
+[
+    {
+        "name": "Time.Extra",
+        "comment": " Library for manipulating the `Posix` type from `elm/time`.\n\n@docs addDays\n@docs addDaysZ\n@docs addHours\n@docs addMillis\n@docs addMinutes\n@docs addSeconds\n@docs anteMeridiem\n@docs compare\n@docs daysInMonth\n@docs endOfDay\n@docs endOfMonth\n@docs endOfWeek\n@docs epoch\n@docs fromDateTuple\n@docs fromIso8601Date\n@docs intToMonth\n@docs monthToInt\n@docs setDay\n@docs setHour\n@docs setMillis\n@docs setMinute\n@docs setMonth\n@docs setSecond\n@docs setYear\n@docs startOfDay\n@docs startOfHour\n@docs startOfMonth\n@docs startOfWeek\n@docs toDateTuple\n@docs toIso8601Date\n@docs toIso8601DateTime\n@docs toIso8601DateTimeUTC\n@docs toIso8601Time\n@docs toTimeTuple\n@docs weekdayFromInt\n@docs weekdayToInt\n@docs endOfHour\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "addDays",
+                "comment": " Adds 24 hours to a Posix. Note that this function does not account for\ndaylight savings time.\n\nMaybe you want the addDaysZ function?\n\n",
+                "type": "Basics.Int -> Time.Posix -> Time.Posix"
+            },
+            {
+                "name": "addDaysZ",
+                "comment": " Adds 24 hours to a `Posix`, attempting to correct for daylight savings time.\n",
+                "type": "Basics.Int -> Time.Zone -> Time.Posix -> Time.Posix"
+            },
+            {
+                "name": "addHours",
+                "comment": " Add the given hours to the `Posix` time.\n",
+                "type": "Basics.Int -> Time.Posix -> Time.Posix"
+            },
+            {
+                "name": "addMillis",
+                "comment": " Add the given milliseconds to the `Posix` time.\n",
+                "type": "Basics.Int -> Time.Posix -> Time.Posix"
+            },
+            {
+                "name": "addMinutes",
+                "comment": " Add the given minutes to the `Posix` time.\n",
+                "type": "Basics.Int -> Time.Posix -> Time.Posix"
+            },
+            {
+                "name": "addSeconds",
+                "comment": " Add the given seconds to the `Posix` time.\n",
+                "type": "Basics.Int -> Time.Posix -> Time.Posix"
+            },
+            {
+                "name": "anteMeridiem",
+                "comment": " Does the given `Posix` occure in the morning of a given `Zone`?\n",
+                "type": "Time.Zone -> Time.Posix -> Basics.Bool"
+            },
+            {
+                "name": "compare",
+                "comment": " Compares one `Posix` time to another.\n",
+                "type": "Time.Posix -> Time.Posix -> Basics.Order"
+            },
+            {
+                "name": "daysInMonth",
+                "comment": " The number of days in a given year and month.\n",
+                "type": "Basics.Int -> Time.Month -> Basics.Int"
+            },
+            {
+                "name": "endOfDay",
+                "comment": " Set the `Posix` to the end of the day in a given `Zone`.\n",
+                "type": "Time.Zone -> Time.Posix -> Time.Posix"
+            },
+            {
+                "name": "endOfHour",
+                "comment": " Set the `Posix` to the end of the hour in a given `Zone`.\n",
+                "type": "Time.Zone -> Time.Posix -> Time.Posix"
+            },
+            {
+                "name": "endOfMonth",
+                "comment": " Set the `Posix` to the end of the month in a given `Zone`.\n",
+                "type": "Time.Zone -> Time.Posix -> Time.Posix"
+            },
+            {
+                "name": "endOfWeek",
+                "comment": " Set the `Posix` to the end of the week in a given `Zone` and the start of the\nweek (a `Weekday`).\n",
+                "type": "Time.Zone -> Time.Weekday -> Time.Posix -> Time.Posix"
+            },
+            {
+                "name": "epoch",
+                "comment": " Unix epoch (1970-01-01T00:00:00Z).\n",
+                "type": "Time.Posix"
+            },
+            {
+                "name": "fromDateTuple",
+                "comment": " Converts a date tuple (year, month, day) to a `Posix` for a given `Zone`.\n",
+                "type": "Time.Zone -> ( Basics.Int, Time.Month, Basics.Int ) -> Time.Posix"
+            },
+            {
+                "name": "fromIso8601Date",
+                "comment": " Converts an ISO8601 date into a`Posix` for a given `Zone`.\n",
+                "type": "Time.Zone -> String.String -> Maybe.Maybe Time.Posix"
+            },
+            {
+                "name": "intToMonth",
+                "comment": " Convert an `Int` to a `Month`, with January being 1.\n",
+                "type": "Basics.Int -> Maybe.Maybe Time.Month"
+            },
+            {
+                "name": "monthToInt",
+                "comment": " Convert a `Month` to an `Int`, with January being 1.\n",
+                "type": "Time.Month -> Basics.Int"
+            },
+            {
+                "name": "setDay",
+                "comment": " Set the day of month for a given `Zone`. If the given day is greater then the\nnumber of days in the month it is set to the last day of the month.\n",
+                "type": "Time.Zone -> Basics.Int -> Time.Posix -> Time.Posix"
+            },
+            {
+                "name": "setHour",
+                "comment": " Set the hour of a `Posix` given a `Zone`.\n",
+                "type": "Time.Zone -> Basics.Int -> Time.Posix -> Time.Posix"
+            },
+            {
+                "name": "setMillis",
+                "comment": " Set the milliseconds of a `Posix` given a `Zone`.\n",
+                "type": "Time.Zone -> Basics.Int -> Time.Posix -> Time.Posix"
+            },
+            {
+                "name": "setMinute",
+                "comment": " Set the minutes of a `Posix` given a `Zone`.\n",
+                "type": "Time.Zone -> Basics.Int -> Time.Posix -> Time.Posix"
+            },
+            {
+                "name": "setMonth",
+                "comment": " Set the month of a `Posix` time for a given `Zone`.\n",
+                "type": "Time.Zone -> Time.Month -> Time.Posix -> Time.Posix"
+            },
+            {
+                "name": "setSecond",
+                "comment": " Set the seconds of a `Posix` given a `Zone`.\n",
+                "type": "Time.Zone -> Basics.Int -> Time.Posix -> Time.Posix"
+            },
+            {
+                "name": "setYear",
+                "comment": " Set the year of a `Posix` time for a given `Zone`.\n",
+                "type": "Time.Zone -> Basics.Int -> Time.Posix -> Time.Posix"
+            },
+            {
+                "name": "startOfDay",
+                "comment": " Set the `Posix` to the start of the day in a given `Zone`.\n",
+                "type": "Time.Zone -> Time.Posix -> Time.Posix"
+            },
+            {
+                "name": "startOfHour",
+                "comment": " Set the `Posix` to the start of the hour in a given `Zone`.\n",
+                "type": "Time.Zone -> Time.Posix -> Time.Posix"
+            },
+            {
+                "name": "startOfMonth",
+                "comment": " Set the `Posix` to the start of the month in a given `Zone`.\n",
+                "type": "Time.Zone -> Time.Posix -> Time.Posix"
+            },
+            {
+                "name": "startOfWeek",
+                "comment": " Set the `Posix` to the start of the week in a given `Zone` and the start of the\nweek (a `Weekday`).\n",
+                "type": "Time.Zone -> Time.Weekday -> Time.Posix -> Time.Posix"
+            },
+            {
+                "name": "toDateTuple",
+                "comment": " Converts a `Posix` into a date tuple (year, month, day) for a given `Zone`\n",
+                "type": "Time.Zone -> Time.Posix -> ( Basics.Int, Time.Month, Basics.Int )"
+            },
+            {
+                "name": "toIso8601Date",
+                "comment": " Converts a `Posix` into an ISO8601 date for a given `Zone`\n",
+                "type": "Time.Zone -> Time.Posix -> String.String"
+            },
+            {
+                "name": "toIso8601DateTime",
+                "comment": " Converts a `Posix` into an ISO8601 date and time for a given `Zone`\n",
+                "type": "Time.Zone -> Time.Posix -> String.String"
+            },
+            {
+                "name": "toIso8601DateTimeUTC",
+                "comment": " Converts a `Posix` into an ISO8601 date and time in UTC\n",
+                "type": "Time.Posix -> String.String"
+            },
+            {
+                "name": "toIso8601Time",
+                "comment": " Converts a `Posix` into an ISO8601 time for a given `Zone`\n",
+                "type": "Time.Zone -> Time.Posix -> String.String"
+            },
+            {
+                "name": "toTimeTuple",
+                "comment": " Converts a `Posix` into a time tuple (hour, minute, second) for a given `Zone`\n",
+                "type": "Time.Zone -> Time.Posix -> ( Basics.Int, Basics.Int, Basics.Int )"
+            },
+            {
+                "name": "weekdayFromInt",
+                "comment": " Convert an `Int` to a `Weekday`, with Monday being 1 and Sunday being 7.\n",
+                "type": "Basics.Int -> Result.Result String.String Time.Weekday"
+            },
+            {
+                "name": "weekdayToInt",
+                "comment": " Convert a `Weekday` to an `Int`, with Monday being 1 and Sunday being 7.\n",
+                "type": "Time.Weekday -> Basics.Int"
+            }
+        ],
+        "binops": []
+    }
+]

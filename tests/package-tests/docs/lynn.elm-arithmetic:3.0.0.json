@@ -1,0 +1,151 @@
+[
+    {
+        "name": "Arithmetic",
+        "comment": " A library that provides useful number-theoretical functions for dealing\nwith integers, primes, divisibility, et cetera.\n\n\n# Primes\n\n@docs isPrime, primesBelow, primeFactors, primeExponents\n\n\n# Parity\n\n@docs isEven, isOdd\n\n\n# Divisors\n\n@docs divides, divisors, properDivisors, divisorCount\n\n\n# GCD and LCM\n\n@docs gcd, lcm, isCoprimeTo, totient, extendedGcd\n\n\n# Base conversion\n\n@docs toBase, fromBase\n\n\n# Squares\n\n@docs safeSquareRoot, intSquareRoot, exactIntSquareRoot, isSquare\n\n\n# Cubes\n\n@docs cubeRoot, intCubeRoot, exactIntCubeRoot, isCube\n\n\n# Modular arithmetic\n\n@docs powerMod, modularInverse, chineseRemainder\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "chineseRemainder",
+                "comment": " Given a list of residue-modulus pairs `[(r1, m1), (r2, m2), ...]`, solve\nthe system of linear congruences:\n\n    x = r1 (mod m1)\n    x = r2 (mod m2)\n    ...\n\nLet `M` be the product of all moduli in the list. The [Chinese remainder\ntheorem](https://en.wikipedia.org/wiki/Chinese_remainder_theorem) tells us that\n\n  - if all of the moduli are pairwise coprime (their `gcd` is 1), there are\n    infinitely many solutions, all congruent `mod M`;\n  - if there is a pair of non-coprime moduli in the list, there is no solution.\n\nThe result is a solution `Just x` with `0 <= x < M` in the first case; or\n`Nothing` if the system is unsolvable.\n\n    chineseRemainder [] == Just 0\n        -- The trivial solution, modulo M = 1.\n\n    chineseRemainder [(2, 3), (4, 6)] == Nothing\n        -- 3 and 6 are not coprime, so there is no solution.\n\n    chineseRemainder [(10, 11), (4, 12), (12, 13)] == Just 1000\n        -- Solution to x = 10 (mod 11), x = 4 (mod 12), x = 12 (mod 13).\n\n",
+                "type": "List.List ( Basics.Int, Basics.Int ) -> Maybe.Maybe Basics.Int"
+            },
+            {
+                "name": "cubeRoot",
+                "comment": " Take the cube root of a number.\n\n    cubeRoot 15.625 == 2.5\n\n",
+                "type": "Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "divides",
+                "comment": " Test whether one number divides another.\n\n    divides 10 120 == True\n\n    divides 10 125 == False\n\n",
+                "type": "Basics.Int -> Basics.Int -> Basics.Bool"
+            },
+            {
+                "name": "divisorCount",
+                "comment": " Get the number of divisors of a number (counting itself).\n\n    divisorCount 20 =\n        6\n\n",
+                "type": "Basics.Int -> Basics.Int"
+            },
+            {
+                "name": "divisors",
+                "comment": " Get all divisors of a number, in ascending order.\n\n    divisors 20 == [ 1, 2, 4, 5, 10, 20 ]\n\n",
+                "type": "Basics.Int -> List.List Basics.Int"
+            },
+            {
+                "name": "exactIntCubeRoot",
+                "comment": " Return `Just s` if the given integer is a cube, and `s` is its cube root;\notherwise, return `Nothing`.\n\n    exactIntCubeRoot 800 == Nothing\n\n    exactIntCubeRoot 1000 == Just 10\n\n",
+                "type": "Basics.Int -> Maybe.Maybe Basics.Int"
+            },
+            {
+                "name": "exactIntSquareRoot",
+                "comment": " Return `Just s` if the given integer is a square, and `s` is its square\nroot; otherwise, return `Nothing`.\n\n    exactIntSquareRoot 20 == Nothing\n\n    exactIntSquareRoot 25 == Just 5\n\n",
+                "type": "Basics.Int -> Maybe.Maybe Basics.Int"
+            },
+            {
+                "name": "extendedGcd",
+                "comment": " Given `a` and `b`, compute integers `(d, u, v)` so that `a * u + b * v ==\nd` where `d == gcd a b`. (These are known as [Bézout coefficients](\n<https://en.wikipedia.org/wiki/B%C3%A9zout%27s_identity>). If the inputs are both\npositive, the solution returned satisfies `abs u <= b // gcd a b` and\n`abs v <= a // gcd a b`.)\n\n    extendedGcd 1215 465 == (15, -13, 34)\n        -- because gcd 1215 465 == 15 == -13 * 1215 + 34 * 465\n\n",
+                "type": "Basics.Int -> Basics.Int -> ( Basics.Int, Basics.Int, Basics.Int )"
+            },
+            {
+                "name": "fromBase",
+                "comment": " Interpret a list of digits as a number in the given base. The input is\nexpected to consist of integers `d` for which `0 <= d < base`.\n\n    fromBase 2 [ 1, 0, 1, 0, 1, 0 ] =\n        42\n\n",
+                "type": "Basics.Int -> List.List Basics.Int -> Basics.Int"
+            },
+            {
+                "name": "gcd",
+                "comment": " Calculate the greatest common divisor of two integers. `gcd x 0` and\n`gcd 0 x` both return `x`. Negative arguments are made positive first.\n\n    gcd 56 80 == 8\n\n",
+                "type": "Basics.Int -> Basics.Int -> Basics.Int"
+            },
+            {
+                "name": "intCubeRoot",
+                "comment": " Integer cube root, rounding down.\n\n    intCubeRoot 800 == 9\n\n    intCubeRoot 1000 == 10\n\n",
+                "type": "Basics.Int -> Basics.Int"
+            },
+            {
+                "name": "intSquareRoot",
+                "comment": " Take the square root, rounding down. Return `NaN` (not a number) for\nnegative arguments.\n\n    intSquareRoot 20 == 4\n\n    intSquareRoot 25 == 5\n\n",
+                "type": "Basics.Int -> Basics.Int"
+            },
+            {
+                "name": "isCoprimeTo",
+                "comment": " Test whether two integers are coprime.\n\n    isCoprimeTo 56 80 == False\n\n    isCoprimeTo 5 8 == True\n\n",
+                "type": "Basics.Int -> Basics.Int -> Basics.Bool"
+            },
+            {
+                "name": "isCube",
+                "comment": " Test whether a number is a cube.\n\n    isCube 800 == False\n\n    isCube 1000 == True\n\n",
+                "type": "Basics.Int -> Basics.Bool"
+            },
+            {
+                "name": "isEven",
+                "comment": " Test whether an integer is even.\n\n    isEven 2 == True\n\n    isEven 3 == False\n\n",
+                "type": "Basics.Int -> Basics.Bool"
+            },
+            {
+                "name": "isOdd",
+                "comment": " Test whether an integer is odd.\n\n    isOdd 2 == False\n\n    isOdd 3 == True\n\n",
+                "type": "Basics.Int -> Basics.Bool"
+            },
+            {
+                "name": "isPrime",
+                "comment": " Test whether an integer is a positive prime.\n\n    isPrime 2357 == True\n\n    isPrime 500 == False\n\n",
+                "type": "Basics.Int -> Basics.Bool"
+            },
+            {
+                "name": "isSquare",
+                "comment": " Test whether a number is a square.\n\n    isSquare 20 == False\n\n    isSquare 25 == True\n\n",
+                "type": "Basics.Int -> Basics.Bool"
+            },
+            {
+                "name": "lcm",
+                "comment": " Calculate the least common multiple of two integers. `lcm x 0` and\n`lcm 0 x` both return `0`. Negative arguments are made positive first.\n\n    lcm 56 80 == 560\n\n",
+                "type": "Basics.Int -> Basics.Int -> Basics.Int"
+            },
+            {
+                "name": "modularInverse",
+                "comment": " Given a number `a` and a modulus `n`, return the multiplicative inverse of\n`a` modulo `n`, if it exists. That is: try to return `Just b`, with\n`0 <= b < n`, so that `a * b == 1` modulo `n`, but return `Nothing` if no such\n`b` exists. (`b` exists precisely when `a` and the modulus `n` are coprime.)\n\n    modularInverse 3 11 == Just 4 -- 3 * 4 == 12 == 1 (mod 11)\n\n    modularInverse 3 15 == Nothing -- 3 and 15 aren't coprime\n\n",
+                "type": "Basics.Int -> Basics.Int -> Maybe.Maybe Basics.Int"
+            },
+            {
+                "name": "powerMod",
+                "comment": " `powerMod b e m` efficiently calculates `b ^ e` (modulo `m`). It assumes\n`b >= 0`, `e >= 0` and `m >= 1`.\n\nFor example, to compute `4147 ^ 8671 % 1000` efficiently:\n\n    powerMod 4147 8671 1000 == 803\n\n",
+                "type": "Basics.Int -> Basics.Int -> Basics.Int -> Basics.Int"
+            },
+            {
+                "name": "primeExponents",
+                "comment": " Return a list of all prime-exponent pairs for a given positive integer's\nprime decomposition, with the primes in ascending order. If the input is less\nthan 2, the empty list is returned.\n\n    primeExponents 24 == [ ( 2, 3 ), ( 3, 1 ) ] -- 2^3 * 3^1\n\n    primeExponents 531764 == [ ( 2, 2 ), ( 37, 1 ), ( 3593, 1 ) ] -- 2^2 * 37^1 * 37^1\n\n    primeExponents 1 == [] -- empty product\n\n",
+                "type": "Basics.Int -> List.List ( Basics.Int, Basics.Int )"
+            },
+            {
+                "name": "primeFactors",
+                "comment": " Return a list of all prime factors for a given positive integer, in\nascending order. If the input is less than 2, the empty list is returned.\n\n    primeFactors 24 == [ 2, 2, 2, 3 ]\n\n    primeFactors 767 == [ 13, 59 ]\n\n    primeFactors 1 == []\n\n",
+                "type": "Basics.Int -> List.List Basics.Int"
+            },
+            {
+                "name": "primesBelow",
+                "comment": " Get all primes in the given range `[0..n-1]`, using the Sieve of\nEratosthenes.\n\n    primesBelow 4 == [ 2, 3 ]\n\n    primesBelow 17 == [ 2, 3, 5, 7, 11, 13 ]\n\n",
+                "type": "Basics.Int -> List.List Basics.Int"
+            },
+            {
+                "name": "properDivisors",
+                "comment": " Get all proper divisors (i.e., divisors less than the input) of a number,\nin ascending order.\n\n    properDivisors 20 == [ 1, 2, 4, 5, 10 ]\n\n",
+                "type": "Basics.Int -> List.List Basics.Int"
+            },
+            {
+                "name": "safeSquareRoot",
+                "comment": " Safely take the square root of a number: return `Just (sqrt n)` if\nthe input `n` is nonnegative; otherwise, return `Nothing`.\n\n    sqrt 5.76 == Just 2.4\n\n    sqrt -1 == Nothing\n\n",
+                "type": "Basics.Float -> Maybe.Maybe Basics.Float"
+            },
+            {
+                "name": "toBase",
+                "comment": " Convert a number to a list of digits in the given base. The input number is\nmade positive first.\n\n\n    toBase 2 42 =\n        [ 1, 0, 1, 0, 1, 0 ]\n\n    -- 42 in binary\n\n",
+                "type": "Basics.Int -> Basics.Int -> List.List Basics.Int"
+            },
+            {
+                "name": "totient",
+                "comment": " Compute Euler's totient function `φ(n)`: the number of positive integers\n`1 <= k <= n` for which `gcd(n, k) == 1`. The input is made positive first.\n\n    totient 99 == 60\n\n    totient 1450 == 560\n\n",
+                "type": "Basics.Int -> Basics.Int"
+            }
+        ],
+        "binops": []
+    }
+]

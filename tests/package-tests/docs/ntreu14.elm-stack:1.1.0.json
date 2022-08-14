@@ -1,0 +1,85 @@
+[
+    {
+        "name": "Stack",
+        "comment": " A basic implementaion of a generic Stack data strucutre.\n\n@docs Stack, empty, isEmpty, size, toList, fromList, pop, push, peek, member, append, concat, map, filter\n",
+        "unions": [
+            {
+                "name": "Stack",
+                "comment": " A generic stack definition.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "append",
+                "comment": " Given two Stacks, create a new `Stack` where the second stack is\n    appended onto the end of the first `Stack`.\n\n      stack1 = Stack.fromList [1, 2]\n      stack2 = Stack.fromList [3, 4]\n\n      Stack.append stack1 stack2    => Stack [1, 2, 3, 4]\n",
+                "type": "Stack.Stack a -> Stack.Stack a -> Stack.Stack a"
+            },
+            {
+                "name": "concat",
+                "comment": " Given a list of stacks, join them together where the top of the first\n    `Stack` in the given list is the top of the returned `Stack`.\n\n      stacks =\n        [ Stack.fromList [1, 2]\n        , Stack.fromList [3, 4]\n        , Stack.fromList [5, 6]\n        ]\n\n      Stack.concat stacks      => Stack 6 [1, 2, 3, 4, 5, 6]\n",
+                "type": "List.List (Stack.Stack a) -> Stack.Stack a"
+            },
+            {
+                "name": "empty",
+                "comment": " Initialize an empty stack.\n",
+                "type": "Stack.Stack a"
+            },
+            {
+                "name": "filter",
+                "comment": " Given a predicate function `(a -> Bool)` and a `Stack a` return a new\n    `Stack a` with only the elements in which the predicate function returns `True`. Similar to `List.filter`.\n\n      Stack.fromList [1, 2, 3]\n        |> Stack.filter ((<) 1)      => Stack 2 [2, 3]\n\n",
+                "type": "(a -> Basics.Bool) -> Stack.Stack a -> Stack.Stack a"
+            },
+            {
+                "name": "fromList",
+                "comment": " Given a list, returns a `Stack` where the top of the stack\n    is the head of the list.\n\n      Stack.fromList []        => Stack []\n\n      Stack.fromList [1, 2, 3] => Stack 3 [1, 2, 3]\n",
+                "type": "List.List a -> Stack.Stack a"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Given a `Stack`, returns `True` if the `Stack` is empty\n    or `False` if `Stack` has one or more elements.\n\n      Stack.isEmpty Stack.empty => True\n\n      List.range 1 10\n        |> Stack.fromList\n        |> Stack.isEmpty        => False\n",
+                "type": "Stack.Stack a -> Basics.Bool"
+            },
+            {
+                "name": "map",
+                "comment": " Given a function `(a -> b)` and a `Stack a` return a new\n    `Stack b` with the function applied to every element of the stack. Similar to `List.map`\n\n      Stack.fromList [1, 2, 3]\n        |> Stack.map ((+) 1)      => Stack 3 [2, 3, 4]\n\n      Stack.fromList [1, 2, 3]\n        |> Stack.map String.fromInt      => Stack 3 [\"1\", \"2\", \"3\"]\n",
+                "type": "(a -> b) -> Stack.Stack a -> Stack.Stack b"
+            },
+            {
+                "name": "member",
+                "comment": " Given a value `a` and a `Stack a`, check if the value is in the\n    `Stack` returning `True` if it is and `False` if it isn't.\n\n      Stack.member \"foobar\" Stack.empty   => False\n\n      Stack.fromList [\"Mon\", \"Tues\", \"Wed\", \"Thurs\", \"Fri\"]\n        |> Stack.member \"Thurs\"           => True\n",
+                "type": "a -> Stack.Stack a -> Basics.Bool"
+            },
+            {
+                "name": "peek",
+                "comment": " Given a `Stack`, return `Just` the top of the `Stack` or\n    `Nothing` if the `Stack` is empty.\n\n      Stack.peek Stack.empty    => Nothing\n\n      Stack.fromList [1, 2, 3]\n        |> Stack.peek           => Just 1\n",
+                "type": "Stack.Stack a -> Maybe.Maybe a"
+            },
+            {
+                "name": "pop",
+                "comment": " Given a `Stack`, returns a `Tuple`.\n    The first element is `Just` the element on top of\n    the stack or `Nothing` if the stack is empty.\n    The second element is a new `Stack` without the top of the stack\n    or an empty `Stack` if the given `Stack` was empty.\n\n      Stack.pop Stack.empty     => (Nothing, Stack.empty)\n\n      Stack.fromList [1, 2, 3]\n        |> Stack.pop            => (Just 1, Stack 2 [2, 3])\n",
+                "type": "Stack.Stack a -> ( Maybe.Maybe a, Stack.Stack a )"
+            },
+            {
+                "name": "push",
+                "comment": " Given a value `a` and a `Stack a`, push the element onto\n    the top of the `Stack`.\n\n      Stack.push \"foo\" Stack.empty  => Stack 1 [\"foo\"]\n\n      Stack.fromList [\"foo\", \"bar\"]\n        |> Stack.push \"bazz\"        => Stack 3 [\"bazz\", \"foo\", \"bar\"]\n",
+                "type": "a -> Stack.Stack a -> Stack.Stack a"
+            },
+            {
+                "name": "size",
+                "comment": " Returns how many elements are in the `Stack` as an `Int`.\n\n      Stack.size Stack.empty     => 0\n\n      Stack.fromList [1, 2, 3]\n        |> Stack.size            => 3\n",
+                "type": "Stack.Stack a -> Basics.Int"
+            },
+            {
+                "name": "toList",
+                "comment": " Given a `Stack`, returns a list where the head of the list\n    is the first element on top of the stack.\n\n      Stack.toList Stack.empty => []\n\n      Stack.empty\n        |> Stack.push \"foo\"\n        |> Stack.push \"bar\"\n        |> Stack.toList        => [\"bar\", \"foo\"]\n",
+                "type": "Stack.Stack a -> List.List a"
+            }
+        ],
+        "binops": []
+    }
+]

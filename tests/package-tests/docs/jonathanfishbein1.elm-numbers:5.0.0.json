@@ -1,0 +1,563 @@
+[
+    {
+        "name": "ComplexNumbers",
+        "comment": " A module for complex numbers\n\n\n# Types\n\n@docs ComplexNumber\n\n\n# Values\n\n@docs i\n@docs zero\n@docs one\n@docs negativeOne\n@docs negativeI\n@docs eToTheIPiOver4\n\n\n# Arithmetic operations on complex numbers\n\n@docs real\n@docs imaginary\n@docs add\n@docs multiply\n@docs subtract\n@docs divide\n@docs modulus\n@docs conjugate\n@docs imaginaryAxisReflection\n@docs power\n@docs convertFromCartesianToPolar\n@docs convertFromPolarToCartesian\n@docs euler\n@docs round\n@docs roots\n\n\n# Semigroup, Monoid, Group, Ring, Field, Functor, Applicative Functor, and Monad\n\n@docs sumSemigroup, productSemigroup, sumCommutativeSemigroup, productCommutativeSemigroup\n@docs sumMonoid, productMonoid, sumCommutativeMonoid, productCommutativeMonoid\n@docs sumGroup, productGroup, abelianGroup\n@docs ring, divisionRing, commutativeRing, commutativeDivisionRing\n@docs field\n@docs map\n@docs pure\n@docs andMap\n@docs andThen\n\n#Equality\n\n@docs equal\n\n\n# Read and Print\n\n@docs parseComplexNumber\n@docs read\n@docs print\n@docs printiNotation\n@docs printNotationWithRounding\n\n",
+        "unions": [
+            {
+                "name": "ComplexNumber",
+                "comment": " Cartesian representation of a complex number\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "ComplexNumber",
+                        [
+                            "Real.Real a",
+                            "Imaginary.Imaginary a"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "abelianGroup",
+                "comment": " Group for Complex Numbers with addition as the operation\n",
+                "type": "AbelianGroup.AbelianGroup (ComplexNumbers.ComplexNumber number)"
+            },
+            {
+                "name": "add",
+                "comment": " Add two complex numbers together\n",
+                "type": "ComplexNumbers.ComplexNumber number -> ComplexNumbers.ComplexNumber number -> ComplexNumbers.ComplexNumber number"
+            },
+            {
+                "name": "andMap",
+                "comment": " Apply for Complex Number Cartesian representaiton applicative\n",
+                "type": "ComplexNumbers.ComplexNumber a -> ComplexNumbers.ComplexNumber (a -> b) -> ComplexNumbers.ComplexNumber b"
+            },
+            {
+                "name": "andThen",
+                "comment": " Monadic bind for Complex Number Cartesian representaiton\n",
+                "type": "(a -> ComplexNumbers.ComplexNumber b) -> ComplexNumbers.ComplexNumber a -> ComplexNumbers.ComplexNumber b"
+            },
+            {
+                "name": "commutativeDivisionRing",
+                "comment": " Commutative Division Ring for Complex Numbers\n",
+                "type": "CommutativeDivisionRing.CommutativeDivisionRing (ComplexNumbers.ComplexNumber Basics.Float)"
+            },
+            {
+                "name": "commutativeRing",
+                "comment": " Commutative Ring for Complex Numbers\n",
+                "type": "CommutativeRing.CommutativeRing (ComplexNumbers.ComplexNumber Basics.Float)"
+            },
+            {
+                "name": "conjugate",
+                "comment": " Calculate the conjugate of a complex number\n",
+                "type": "ComplexNumbers.ComplexNumber number -> ComplexNumbers.ComplexNumber number"
+            },
+            {
+                "name": "convertFromCartesianToPolar",
+                "comment": " Convert from the Cartesian representation of a complex number to the polar representation\n",
+                "type": "ComplexNumbers.ComplexNumber Basics.Float -> Internal.ComplexNumbers.ComplexNumber Basics.Float"
+            },
+            {
+                "name": "convertFromPolarToCartesian",
+                "comment": " Convert from the polar representation of a complex number to the Cartesian representation\n",
+                "type": "Internal.ComplexNumbers.ComplexNumber Basics.Float -> ComplexNumbers.ComplexNumber Basics.Float"
+            },
+            {
+                "name": "divide",
+                "comment": " Divide two complex numbers together\n",
+                "type": "ComplexNumbers.ComplexNumber Basics.Float -> ComplexNumbers.ComplexNumber Basics.Float -> ComplexNumbers.ComplexNumber Basics.Float"
+            },
+            {
+                "name": "divisionRing",
+                "comment": " Division Ring for Complex Numbers\n",
+                "type": "DivisionRing.DivisionRing (ComplexNumbers.ComplexNumber Basics.Float)"
+            },
+            {
+                "name": "eToTheIPiOver4",
+                "comment": " The number e^(i\\*pi/4)\n",
+                "type": "ComplexNumbers.ComplexNumber Basics.Float"
+            },
+            {
+                "name": "equal",
+                "comment": " `Equal` type for `ComplexNumber`.\n",
+                "type": "Typeclasses.Classes.Equality.Equality (ComplexNumbers.ComplexNumber Basics.Float)"
+            },
+            {
+                "name": "euler",
+                "comment": " Euler's equation\n",
+                "type": "Real.Real Basics.Float -> ComplexNumbers.ComplexNumber Basics.Float"
+            },
+            {
+                "name": "field",
+                "comment": " Field for Complex Numbers\n",
+                "type": "Field.Field (ComplexNumbers.ComplexNumber Basics.Float)"
+            },
+            {
+                "name": "i",
+                "comment": " The number i\n",
+                "type": "ComplexNumbers.ComplexNumber number"
+            },
+            {
+                "name": "imaginary",
+                "comment": " Extracts the imaginary part of a complex number\n",
+                "type": "ComplexNumbers.ComplexNumber a -> Imaginary.Imaginary a"
+            },
+            {
+                "name": "imaginaryAxisReflection",
+                "comment": " Calculate the imaginary axis reflection of a complex number\n",
+                "type": "ComplexNumbers.ComplexNumber number -> ComplexNumbers.ComplexNumber number"
+            },
+            {
+                "name": "map",
+                "comment": " Map over a complex number\n",
+                "type": "(a -> b) -> ComplexNumbers.ComplexNumber a -> ComplexNumbers.ComplexNumber b"
+            },
+            {
+                "name": "modulus",
+                "comment": " Calculate the modulus of a complex number\n",
+                "type": "ComplexNumbers.ComplexNumber Basics.Float -> Real.Real Basics.Float"
+            },
+            {
+                "name": "multiply",
+                "comment": " Multiply two complex numbers together\n",
+                "type": "ComplexNumbers.ComplexNumber Basics.Float -> ComplexNumbers.ComplexNumber Basics.Float -> ComplexNumbers.ComplexNumber Basics.Float"
+            },
+            {
+                "name": "negativeI",
+                "comment": " The number i\n",
+                "type": "ComplexNumbers.ComplexNumber number"
+            },
+            {
+                "name": "negativeOne",
+                "comment": " one\n",
+                "type": "ComplexNumbers.ComplexNumber number"
+            },
+            {
+                "name": "one",
+                "comment": " one\n",
+                "type": "ComplexNumbers.ComplexNumber number"
+            },
+            {
+                "name": "parseComplexNumber",
+                "comment": " Parse ComplexNumber\n",
+                "type": "Parser.Parser (ComplexNumbers.ComplexNumber Basics.Float)"
+            },
+            {
+                "name": "power",
+                "comment": " Calculate a complex number raised to a power\n",
+                "type": "Basics.Float -> ComplexNumbers.ComplexNumber Basics.Float -> ComplexNumbers.ComplexNumber Basics.Float"
+            },
+            {
+                "name": "print",
+                "comment": " Print ComplexNumber\n",
+                "type": "ComplexNumbers.ComplexNumber Basics.Float -> String.String"
+            },
+            {
+                "name": "printNotationWithRounding",
+                "comment": " Print ComplexNumber i notation with rounding function\n",
+                "type": "(Basics.Float -> String.String) -> ComplexNumbers.ComplexNumber Basics.Float -> String.String"
+            },
+            {
+                "name": "printiNotation",
+                "comment": " Print ComplexNumber i notation with two decimal places\n",
+                "type": "ComplexNumbers.ComplexNumber Basics.Float -> String.String"
+            },
+            {
+                "name": "productCommutativeMonoid",
+                "comment": " Monoid for Complex Numbers with multiplication as the operation\n",
+                "type": "CommutativeMonoid.CommutativeMonoid (ComplexNumbers.ComplexNumber Basics.Float)"
+            },
+            {
+                "name": "productCommutativeSemigroup",
+                "comment": " Semigroup for Complex Numbers with multiplicatoin as the operation\n",
+                "type": "CommutativeSemigroup.CommutativeSemigroup (ComplexNumbers.ComplexNumber Basics.Float)"
+            },
+            {
+                "name": "productGroup",
+                "comment": " Group for Complex Numbers with multiplication as the operation\n",
+                "type": "Group.Group (ComplexNumbers.ComplexNumber Basics.Float)"
+            },
+            {
+                "name": "productMonoid",
+                "comment": " Monoid for Complex Numbers with multiplication as the operation\n",
+                "type": "Monoid.Monoid (ComplexNumbers.ComplexNumber Basics.Float)"
+            },
+            {
+                "name": "productSemigroup",
+                "comment": " Semigroup for Complex Numbers with addition as the operation\n",
+                "type": "Semigroup.Semigroup (ComplexNumbers.ComplexNumber Basics.Float)"
+            },
+            {
+                "name": "pure",
+                "comment": " Place a value in the minimal Complex Number Cartesian context\n",
+                "type": "a -> ComplexNumbers.ComplexNumber a"
+            },
+            {
+                "name": "read",
+                "comment": " Read ComplexNumber\n",
+                "type": "String.String -> Result.Result (List.List Parser.DeadEnd) (ComplexNumbers.ComplexNumber Basics.Float)"
+            },
+            {
+                "name": "real",
+                "comment": " Extracts the real part of a complex number\n",
+                "type": "ComplexNumbers.ComplexNumber a -> Real.Real a"
+            },
+            {
+                "name": "ring",
+                "comment": " Ring for Complex Numbers\n",
+                "type": "Ring.Ring (ComplexNumbers.ComplexNumber Basics.Float)"
+            },
+            {
+                "name": "roots",
+                "comment": " Calculate the roots of a complex number\n",
+                "type": "Basics.Int -> ComplexNumbers.ComplexNumber Basics.Float -> List.List (ComplexNumbers.ComplexNumber Basics.Float)"
+            },
+            {
+                "name": "round",
+                "comment": " Round Complex Number\n",
+                "type": "Basics.Int -> ComplexNumbers.ComplexNumber Basics.Float -> ComplexNumbers.ComplexNumber Basics.Float"
+            },
+            {
+                "name": "subtract",
+                "comment": " Subtract two complex numbers together\n",
+                "type": "ComplexNumbers.ComplexNumber number -> ComplexNumbers.ComplexNumber number -> ComplexNumbers.ComplexNumber number"
+            },
+            {
+                "name": "sumCommutativeMonoid",
+                "comment": " Monoid for Complex Numbers with addition as the operation\n",
+                "type": "CommutativeMonoid.CommutativeMonoid (ComplexNumbers.ComplexNumber number)"
+            },
+            {
+                "name": "sumCommutativeSemigroup",
+                "comment": " Semigroup for Complex Numbers with addition as the operation\n",
+                "type": "CommutativeSemigroup.CommutativeSemigroup (ComplexNumbers.ComplexNumber number)"
+            },
+            {
+                "name": "sumGroup",
+                "comment": " Group for Complex Numbers with addition as the operation\n",
+                "type": "Group.Group (ComplexNumbers.ComplexNumber number)"
+            },
+            {
+                "name": "sumMonoid",
+                "comment": " Monoid for Complex Numbers with addition as the operation\n",
+                "type": "Monoid.Monoid (ComplexNumbers.ComplexNumber number)"
+            },
+            {
+                "name": "sumSemigroup",
+                "comment": " Semigroup for Complex Numbers with addition as the operation\n",
+                "type": "Semigroup.Semigroup (ComplexNumbers.ComplexNumber number)"
+            },
+            {
+                "name": "zero",
+                "comment": " zero\n",
+                "type": "ComplexNumbers.ComplexNumber number"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Imaginary",
+        "comment": " A module for Imaginary numbers\n\n\n# Types\n\n@docs Imaginary\n\n\n# Values\n\n@docs i\n@docs zero\n@docs negativeI\n\n\n# Arithmetic operations on imaginary numbers\n\n@docs imaginary\n@docs negate\n@docs round\n\n\n# Binary operations\n\n@docs multiply\n\n\n# Semigroup, Monoid, Group, Ring, Field, Functor, Applicative Functor, and Monad\n\n@docs map\n@docs pure\n@docs andMap\n@docs andThen\n\n#Equality\n\n@docs equal\n\n\n# Read and Print\n\n@docs parseImaginary\n@docs print\n@docs printNotationWithRounding\n\n",
+        "unions": [
+            {
+                "name": "Imaginary",
+                "comment": " Imaginary number\n",
+                "args": [
+                    "i"
+                ],
+                "cases": [
+                    [
+                        "Imaginary",
+                        [
+                            "Real.Real i"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "andMap",
+                "comment": " Apply for Imaginary representaiton applicative\n",
+                "type": "Imaginary.Imaginary a -> Imaginary.Imaginary (a -> b) -> Imaginary.Imaginary b"
+            },
+            {
+                "name": "andThen",
+                "comment": " Monadic bind for Imaginary Number representaiton\n",
+                "type": "(a -> Imaginary.Imaginary b) -> Imaginary.Imaginary a -> Imaginary.Imaginary b"
+            },
+            {
+                "name": "equal",
+                "comment": " `Equal` type for `Imaginary`.\n",
+                "type": "Typeclasses.Classes.Equality.Equality (Imaginary.Imaginary Basics.Float)"
+            },
+            {
+                "name": "i",
+                "comment": " i\n",
+                "type": "Imaginary.Imaginary number"
+            },
+            {
+                "name": "imaginary",
+                "comment": " Extracts the value of an Imaginary number\n",
+                "type": "Imaginary.Imaginary a -> Real.Real a"
+            },
+            {
+                "name": "map",
+                "comment": " Map over anImaginary Imaginary number\n",
+                "type": "(a -> b) -> Imaginary.Imaginary a -> Imaginary.Imaginary b"
+            },
+            {
+                "name": "multiply",
+                "comment": " Multiply two complex numbers together\n",
+                "type": "Imaginary.Imaginary number -> Imaginary.Imaginary number -> Imaginary.Imaginary number"
+            },
+            {
+                "name": "negate",
+                "comment": " Negate an Imaginary number\n",
+                "type": "Imaginary.Imaginary number -> Imaginary.Imaginary number"
+            },
+            {
+                "name": "negativeI",
+                "comment": " i\n",
+                "type": "Imaginary.Imaginary number"
+            },
+            {
+                "name": "parseImaginary",
+                "comment": " Parse Imaginary\n",
+                "type": "Parser.Parser (Imaginary.Imaginary Basics.Float)"
+            },
+            {
+                "name": "print",
+                "comment": " Print Imaginary Number\n",
+                "type": "Imaginary.Imaginary Basics.Float -> String.String"
+            },
+            {
+                "name": "printNotationWithRounding",
+                "comment": " Print Real i notation with rounding function\n",
+                "type": "(Basics.Float -> String.String) -> Imaginary.Imaginary Basics.Float -> String.String"
+            },
+            {
+                "name": "pure",
+                "comment": " Place a value in the minimal Imaginary context\n",
+                "type": "a -> Imaginary.Imaginary a"
+            },
+            {
+                "name": "round",
+                "comment": " Round Imaginary Number\n",
+                "type": "Basics.Int -> Imaginary.Imaginary Basics.Float -> Imaginary.Imaginary Basics.Float"
+            },
+            {
+                "name": "zero",
+                "comment": " zero\n",
+                "type": "Imaginary.Imaginary number"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Real",
+        "comment": " A module for Real numbers\n\n\n# Types\n\n@docs Real\n\n\n# Values\n\n@docs zero\n@docs one\n@docs negativeOne\n\n\n# Arithmetic operations on real numbers\n\n@docs real\n@docs negate\n@docs round\n\n\n# Binary operations\n\n@docs add, multiply, divide, greaterThan, power\n\n\n# Semigroup, Monoid, Group, Ring, Field, Functor, Applicative Functor, and Monad\n\n@docs sumSemigroup, productSemigroup, sumCommutativeSemigroup, productCommutativeSemigroup\n@docs sumMonoid, productMonoid, sumCommutativeMonoid, productCommutativeMonoid\n@docs sumGroup, productGroup, abelianGroup\n@docs ring, divisionRing, commutativeRing, commutativeDivisionRing\n@docs field\n@docs map\n@docs pure\n@docs andMap\n@docs andThen\n\n#Equality\n\n@docs equal\n\n\n# Read and Print\n\n@docs print\n@docs parseReal\n@docs printNotationWithRounding\n\n",
+        "unions": [
+            {
+                "name": "Real",
+                "comment": " Real portion\n",
+                "args": [
+                    "r"
+                ],
+                "cases": [
+                    [
+                        "Real",
+                        [
+                            "r"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "abelianGroup",
+                "comment": " Group for Real Numbers with addition as the operation\n",
+                "type": "AbelianGroup.AbelianGroup (Real.Real number)"
+            },
+            {
+                "name": "add",
+                "comment": " Add two complex numbers together\n",
+                "type": "Real.Real number -> Real.Real number -> Real.Real number"
+            },
+            {
+                "name": "andMap",
+                "comment": " Apply for Real Number representaiton applicative\n",
+                "type": "Real.Real a -> Real.Real (a -> b) -> Real.Real b"
+            },
+            {
+                "name": "andThen",
+                "comment": " Monadic bind for Real Number representaiton\n",
+                "type": "(a -> Real.Real b) -> Real.Real a -> Real.Real b"
+            },
+            {
+                "name": "commutativeDivisionRing",
+                "comment": " Commutative Division Ring for Real Numbers\n",
+                "type": "CommutativeDivisionRing.CommutativeDivisionRing (Real.Real Basics.Float)"
+            },
+            {
+                "name": "commutativeRing",
+                "comment": " Commutative Ring for Real Numbers\n",
+                "type": "CommutativeRing.CommutativeRing (Real.Real Basics.Float)"
+            },
+            {
+                "name": "divide",
+                "comment": " Divide two complex numbers together\n",
+                "type": "Real.Real Basics.Float -> Real.Real Basics.Float -> Real.Real Basics.Float"
+            },
+            {
+                "name": "divisionRing",
+                "comment": " Division Ring for Real Numbers\n",
+                "type": "DivisionRing.DivisionRing (Real.Real Basics.Float)"
+            },
+            {
+                "name": "equal",
+                "comment": " `Equal` type for `Real`.\n",
+                "type": "Typeclasses.Classes.Equality.Equality (Real.Real Basics.Float)"
+            },
+            {
+                "name": "field",
+                "comment": " Field for Real Numbers\n",
+                "type": "Field.Field (Real.Real Basics.Float)"
+            },
+            {
+                "name": "greaterThan",
+                "comment": " Greater than of Real Numbers\n",
+                "type": "Real.Real number -> Real.Real number -> Basics.Bool"
+            },
+            {
+                "name": "map",
+                "comment": " Map over a Real number\n",
+                "type": "(a -> b) -> Real.Real a -> Real.Real b"
+            },
+            {
+                "name": "multiply",
+                "comment": " Multiply two complex numbers together\n",
+                "type": "Real.Real number -> Real.Real number -> Real.Real number"
+            },
+            {
+                "name": "negate",
+                "comment": " Negate a Real number\n",
+                "type": "Real.Real number -> Real.Real number"
+            },
+            {
+                "name": "negativeOne",
+                "comment": " one\n",
+                "type": "Real.Real number"
+            },
+            {
+                "name": "one",
+                "comment": " one\n",
+                "type": "Real.Real number"
+            },
+            {
+                "name": "parseReal",
+                "comment": " Parse Real Number\n",
+                "type": "Parser.Parser (Real.Real Basics.Float)"
+            },
+            {
+                "name": "power",
+                "comment": " Multiply two complex numbers together\n",
+                "type": "Real.Real Basics.Float -> Real.Real Basics.Float -> Real.Real Basics.Float"
+            },
+            {
+                "name": "print",
+                "comment": " Print Real Number\n",
+                "type": "Real.Real Basics.Float -> String.String"
+            },
+            {
+                "name": "printNotationWithRounding",
+                "comment": " Print Real i notation with rounding function\n",
+                "type": "(Basics.Float -> String.String) -> Real.Real Basics.Float -> String.String"
+            },
+            {
+                "name": "productCommutativeMonoid",
+                "comment": " Monoid for Real Numbers with multiplication as the operation\n",
+                "type": "CommutativeMonoid.CommutativeMonoid (Real.Real number)"
+            },
+            {
+                "name": "productCommutativeSemigroup",
+                "comment": " Semigroup for Real Numbers with multiplicatoin as the operation\n",
+                "type": "CommutativeSemigroup.CommutativeSemigroup (Real.Real number)"
+            },
+            {
+                "name": "productGroup",
+                "comment": " Group for Real Numbers with multiplication as the operation\n",
+                "type": "Group.Group (Real.Real Basics.Float)"
+            },
+            {
+                "name": "productMonoid",
+                "comment": " Monoid for Real Numbers with multiplication as the operation\n",
+                "type": "Monoid.Monoid (Real.Real number)"
+            },
+            {
+                "name": "productSemigroup",
+                "comment": " Semigroup for Real Numbers with addition as the operation\n",
+                "type": "Semigroup.Semigroup (Real.Real number)"
+            },
+            {
+                "name": "pure",
+                "comment": " Place a value in the minimal Real Number context\n",
+                "type": "a -> Real.Real a"
+            },
+            {
+                "name": "real",
+                "comment": " Extracts the value of a Real number\n",
+                "type": "Real.Real a -> a"
+            },
+            {
+                "name": "ring",
+                "comment": " Ring for Real Numbers\n",
+                "type": "Ring.Ring (Real.Real Basics.Float)"
+            },
+            {
+                "name": "round",
+                "comment": " Round Real Number\n",
+                "type": "Basics.Int -> Real.Real Basics.Float -> Real.Real Basics.Float"
+            },
+            {
+                "name": "sumCommutativeMonoid",
+                "comment": " Monoid for Real Numbers with addition as the operation\n",
+                "type": "CommutativeMonoid.CommutativeMonoid (Real.Real number)"
+            },
+            {
+                "name": "sumCommutativeSemigroup",
+                "comment": " Semigroup for Real Numbers with addition as the operation\n",
+                "type": "CommutativeSemigroup.CommutativeSemigroup (Real.Real number)"
+            },
+            {
+                "name": "sumGroup",
+                "comment": " Group for Real Numbers with addition as the operation\n",
+                "type": "Group.Group (Real.Real number)"
+            },
+            {
+                "name": "sumMonoid",
+                "comment": " Monoid for Real Numbers with addition as the operation\n",
+                "type": "Monoid.Monoid (Real.Real number)"
+            },
+            {
+                "name": "sumSemigroup",
+                "comment": " Semigroup for Real Numbers with addition as the operation\n",
+                "type": "Semigroup.Semigroup (Real.Real number)"
+            },
+            {
+                "name": "zero",
+                "comment": " zero\n",
+                "type": "Real.Real number"
+            }
+        ],
+        "binops": []
+    }
+]

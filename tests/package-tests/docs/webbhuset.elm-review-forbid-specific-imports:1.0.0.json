@@ -1,0 +1,23 @@
+[
+    {
+        "name": "ForbidSpecificImports",
+        "comment": "\n\n@docs Config\n@docs rule\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": "",
+                "args": [],
+                "type": "List.List ( String.String, List.List String.String )"
+            }
+        ],
+        "values": [
+            {
+                "name": "rule",
+                "comment": " Reports when a module in a namespace imports from a list of other namespaces.\n\n    config : List Rule\n    config =\n        [ ForbidSpecificImports.rule\n            [ ( \"App.Data\", [ \"App.View\" ] )\n            ]\n        ]\n\n\n## Fail\n\nThis fails because we've forbidden modules in `App.Data` to import from `App.View`.\n\n    module App.Data.Image exposing (..)\n\n    import App.View.Image\n\n\n## Success\n\nThis passes because we've only forbidden modules in `App.Data` to import from `App.View`, not the\nother way around.\n\n    module App.View.Image exposing (..)\n\n    import App.Data.Image\n\n\n## When (not) to enable this rule\n\nThis rule is useful when you have set up a namespace structure where you want your module\ndependencies to form a [directed acyclic graph](https://en.wikipedia.org/wiki/Directed_acyclic_graph).\n\n",
+                "type": "ForbidSpecificImports.Config -> Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    }
+]

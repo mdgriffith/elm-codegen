@@ -1,0 +1,16 @@
+[
+    {
+        "name": "For",
+        "comment": " Give `for` function like that in other languages.\n\n\n# For\n\n@docs for\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "for",
+                "comment": " First `Int` (`i`) is to check how the for process.\n\nSecond `Int` (`n`) set the times of function `f`.\n\nType `outer` (`o`) is the data used.\n\n`( Int->  io -> io)`(`f`) set a function which use `i` as index of the `for` function to map from `io` to `io`.\n\nC++ style code :\n\n    for (int index = i ; index < n ; index++) o=f(index,o);\n\nExample :\n\n    For.for\n        0\n        10\n        (\\i ( list, added ) ->\n            ( (i\n                + added\n              )\n                :: list\n            , added\n            )\n        )\n        ( []\n        , 10\n        )\n        == ( [ 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10 ], 10 )\n\n",
+                "type": "Basics.Int -> Basics.Int -> (Basics.Int -> io -> io) -> io -> io"
+            }
+        ],
+        "binops": []
+    }
+]

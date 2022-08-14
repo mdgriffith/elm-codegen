@@ -1,0 +1,51 @@
+[
+    {
+        "name": "TimedCache",
+        "comment": " A module to help manage accessing values that are obtained remotely and are accessed more often than they are fetched\n\nAn example of this is maybe the notification count on your social feed which\nis a value you would need to fetch over HTTP and need in multiple places\nbut might not want to fetch as often as you use it.\n\n@docs Model,Msg,init,update,sub,clearErrors\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": "",
+                "args": [
+                    "e",
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Model",
+                "comment": "",
+                "args": [
+                    "e",
+                    "a"
+                ],
+                "type": "{ value : a, maxAge : Basics.Int, errors : List.List e, lastFetched : Maybe.Maybe Time.Posix, fetch : Task.Task e a }"
+            }
+        ],
+        "values": [
+            {
+                "name": "clearErrors",
+                "comment": "",
+                "type": "TimedCache.Msg e a"
+            },
+            {
+                "name": "init",
+                "comment": " Create the initial model and cmds\n\nThe arguments in order are:\n  + The task to fetch your value\n  + The maxAge; how old can a value get before needing to be refreshed. In ms\n  + An initial value\n",
+                "type": "Task.Task e a -> Basics.Int -> a -> ( TimedCache.Model e a, Platform.Cmd.Cmd (TimedCache.Msg e a) )"
+            },
+            {
+                "name": "sub",
+                "comment": "",
+                "type": "TimedCache.Model e a -> Platform.Sub.Sub (TimedCache.Msg e a)"
+            },
+            {
+                "name": "update",
+                "comment": "",
+                "type": "TimedCache.Model e a -> TimedCache.Msg e a -> ( TimedCache.Model e a, Platform.Cmd.Cmd (TimedCache.Msg e a) )"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,41 @@
+[
+    {
+        "name": "ElmDocs",
+        "comment": " A helper package to be used in elm REPL. By importing this package you can search all available\nElm packages directly from the REPL.\n\n\n# Usage\n\n@docs help, getPackageInfo, getPackageModuleValues, search, searchType, getAllPackageModules\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "getAllPackageModules",
+                "comment": " Get a list of all package modules - Generates a long list in REPL\n\n    import ElmDocs exposing (..)\n    getAllPackageModules\n\n",
+                "type": "List.List ElmDocs.FindPackageResult"
+            },
+            {
+                "name": "getPackageInfo",
+                "comment": " Get a list of all modues in a package\n\n    import ElmDocs exposing (..)\n    getPackageInfo \"elm/core\"\n\n",
+                "type": "String.String -> ElmDocs.FindPackageResult"
+            },
+            {
+                "name": "getPackageModuleValues",
+                "comment": " Get a list of all values for a specific module in a package\nrun getPackageInfo \"packageVendor/packageName\" first to get a list of available modules\n\n    import ElmDocs exposing (..)\n    getPackageModuleValues \"elm/core\" \"List\"\n\n",
+                "type": "String.String -> String.String -> ElmDocs.FindPackageResult"
+            },
+            {
+                "name": "help",
+                "comment": " Get available functions to run when using REPL\n\n    import ElmDocs exposing (..)\n    help\n\n",
+                "type": "List.List String.String"
+            },
+            {
+                "name": "search",
+                "comment": " Search all package module values/unions/aliases\n\n    import ElmDocs exposing (..)\n    search \"sqrt\"\n\n",
+                "type": "String.String -> ( String.String, List.List ElmDocs.Location )"
+            },
+            {
+                "name": "searchType",
+                "comment": " Search all package module values/unions/aliases for a type signature\n\n    import ElmDocs exposing (..)\n    searchType \"a - a\"\n    searchType \"Basics.Int -> Basics.Float\"\n\n",
+                "type": "String.String -> ( String.String, List.List ElmDocs.Location )"
+            }
+        ],
+        "binops": []
+    }
+]

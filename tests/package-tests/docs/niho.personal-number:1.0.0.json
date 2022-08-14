@@ -1,0 +1,76 @@
+[
+    {
+        "name": "PersonalNumber.Swedish",
+        "comment": " Parse Swedish personal numbers. Supports both ordinary \"personnummer\" and \"sammordningsnummer\" assigned to foreign temporary visitors.\n\n\n# Definition\n\n@docs PersonalNumber, isPNR, isSAM\n\n\n# Errors\n\n@docs ValidationError\n\n\n# Strings\n\n@docs fromString, toString, display\n\n\n# JSON\n\n@docs decoder, encode\n\n",
+        "unions": [
+            {
+                "name": "PersonalNumber",
+                "comment": " An opaque type representing a valid personal number.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "ValidationError",
+                "comment": " If the parsing fails an error of this type is returned.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "InvalidFormat",
+                        []
+                    ],
+                    [
+                        "InvalidLength",
+                        []
+                    ],
+                    [
+                        "InvalidDate",
+                        []
+                    ],
+                    [
+                        "InvalidChecksum",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decoder",
+                "comment": " Decode a personal number.\n",
+                "type": "Json.Decode.Decoder PersonalNumber.Swedish.PersonalNumber"
+            },
+            {
+                "name": "display",
+                "comment": " Format a personal number into a user readable string (YYYYMMDD-XXXX).\n",
+                "type": "PersonalNumber.Swedish.PersonalNumber -> String.String"
+            },
+            {
+                "name": "encode",
+                "comment": " Encode a personal number into a JSON value.\n",
+                "type": "PersonalNumber.Swedish.PersonalNumber -> Json.Encode.Value"
+            },
+            {
+                "name": "fromString",
+                "comment": " Parse a string into a personal number.\n",
+                "type": "String.String -> Result.Result PersonalNumber.Swedish.ValidationError PersonalNumber.Swedish.PersonalNumber"
+            },
+            {
+                "name": "isPNR",
+                "comment": " Check if the personal number is a \"personnummer\".\n",
+                "type": "PersonalNumber.Swedish.PersonalNumber -> Basics.Bool"
+            },
+            {
+                "name": "isSAM",
+                "comment": " Check if the personal number is a \"sammordningsnummer\".\n",
+                "type": "PersonalNumber.Swedish.PersonalNumber -> Basics.Bool"
+            },
+            {
+                "name": "toString",
+                "comment": " Converts a personal number to string representation in the long format that is commonly used for database storage (YYYYMMDDXXXX).\n",
+                "type": "PersonalNumber.Swedish.PersonalNumber -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

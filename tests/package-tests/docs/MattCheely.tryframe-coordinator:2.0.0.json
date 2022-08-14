@@ -1,0 +1,392 @@
+[
+    {
+        "name": "ClientProgram",
+        "comment": " The ClientProgram module is the Elm code that backs the client-side JS helper\nlibrary in the iframe-coordinator library. It message handles message validation\nand delivery to and from clients.\nThis module is not currently designed for stand-alone use. You should instead use the\nclient library defined in iframe-coordinator to create seamless iframe applications\n\n@docs create\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "create",
+                "comment": " Create a program to handle client messages. Takes an record of ports to send and\nreceive messages on. Communication with the parent application and the local client\ncode are handled through four ports, an input and output pair for the client\napplication and another pair for the host. Port bindings are handled and exposed\nvia the iframe-coordinator library.\n",
+                "type": "{ fromHost : (Json.Decode.Value -> ClientProgram.Msg) -> Platform.Sub.Sub ClientProgram.Msg, toHost : Json.Decode.Value -> Platform.Cmd.Cmd ClientProgram.Msg, fromClient : (Json.Decode.Value -> ClientProgram.Msg) -> Platform.Sub.Sub ClientProgram.Msg, toClient : Json.Decode.Value -> Platform.Cmd.Cmd ClientProgram.Msg } -> Platform.Program () ClientProgram.Model ClientProgram.Msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "HostProgram",
+        "comment": " The HostProgram module is the Elm code that backs the frame-router custom element\nused in host applications. It handles mapping application routes to clients displayed\nin a child frame as well as message validation and routing within the parent application.\n\n\n# Create a program\n\n@docs create\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "create",
+                "comment": " Create a program to handle routing. Takes an input port to listen to messages on\nand and outputPort to deliver messages to the js embedder.\nport binding is handled in the custom frame-router element in LINK\\_TO\\_JS\\_LIB\\_HERE\n",
+                "type": "{ fromHost : (Json.Decode.Value -> HostProgram.Msg) -> Platform.Sub.Sub HostProgram.Msg, toHost : Json.Decode.Value -> Platform.Cmd.Cmd HostProgram.Msg, toClient : Json.Decode.Value -> Platform.Cmd.Cmd HostProgram.Msg } -> Platform.Program Json.Decode.Value HostProgram.Model HostProgram.Msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Message.AppToClient",
+        "comment": " This module exposes a type representing all of the messages that can be\npassed from a client application to the client library. It's a fairly direct\nmapping to the client-facing API.\n\n@docs AppToClient, decodeFromApp\n\n",
+        "unions": [
+            {
+                "name": "AppToClient",
+                "comment": " This custom type is just a set of variants for each valid message the app\ncan send to the client library. See the individual type descriptions for more\ndetails on message structures.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NavRequest",
+                        [
+                            "Message.Navigation.Navigation"
+                        ]
+                    ],
+                    [
+                        "Publish",
+                        [
+                            "Message.PubSub.Publication"
+                        ]
+                    ],
+                    [
+                        "Subscribe",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Unsubscribe",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "ToastRequest",
+                        [
+                            "Message.Toast.Toast"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decodeFromApp",
+                "comment": " Decoder for parsing incoming messages from the application to the relevant\ntypes. Bad input from clients will produce nice console errors that describe the\nexact failure:\n\n    Could not parse incoming message: Json.Decode.oneOf failed in the following 5 ways:\n\n\n    (1) Problem with the given value:\n\n        {\n                \"msgType\": \"toastRequest\",\n                \"msg\": {\n                    \"title\": \"Hello iframe World\",\n                    \"custom\": {\n                        \"level\": \"success\"\n                    }\n                }\n            }\n\n        Unrecognized msg type: toastRequest\n\n\n\n    (2) Problem with the given value:\n\n        ...\n\n\n\n    (3) Problem with the given value:\n\n        ...\n\n\n\n    (4) Problem with the given value:\n\n        ...\n\n\n\n    (5) Problem with the value at json.msg:\n\n            {\n                \"title\": \"Hello iframe World\",\n                \"custom\": {\n                    \"level\": \"success\"\n                }\n            }\n\n        Expecting an OBJECT with a field named `message`: <internals>\n\n",
+                "type": "Json.Decode.Decoder Message.AppToClient.AppToClient"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Message.AppToHost",
+        "comment": " This module exposes a type representing all of the messages that can be\npassed from a host application to the host library. It's a fairly direct\nmapping to the host-facing API.\n\n@docs AppToHost, decodeFromApp\n\n",
+        "unions": [
+            {
+                "name": "AppToHost",
+                "comment": " This custom type is just a set of variants for each valid message the app\ncan send to the host library. See the individual type descriptions for more\ndetails on message structures.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Publish",
+                        [
+                            "Message.PubSub.Publication"
+                        ]
+                    ],
+                    [
+                        "Subscribe",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Unsubscribe",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "RouteChange",
+                        [
+                            "Path.Path"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decodeFromApp",
+                "comment": " Decoder for parsing incoming messages from the application to the relevant\ntypes. Bad input from apps will produce nice console errors that describe the\nexact failure.\n",
+                "type": "Json.Decode.Decoder Message.AppToHost.AppToHost"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Message.ClientToApp",
+        "comment": " This module exposes a type representing all of the messages that can be\npassed from the client library to a client application.\n\n@docs ClientToApp, encodeToApp\n\n",
+        "unions": [
+            {
+                "name": "ClientToApp",
+                "comment": " This custom type is just a set of variants for each valid message the client\nlibrary can send to the client application. See the individual type descriptions\nfor more details on message structures.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Publish",
+                        [
+                            "Message.PubSub.Publication"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "encodeToApp",
+                "comment": " Encodes a ClientToApp message for delivery to the client application\n",
+                "type": "Message.ClientToApp.ClientToApp -> Json.Encode.Value"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Message.ClientToHost",
+        "comment": " This module exposes a type representing all of the messages that can be\npassed from the client library to the host library via postMessage.\n\n@docs ClientToHost, encodeToHost, decodeFromClient\n\n",
+        "unions": [
+            {
+                "name": "ClientToHost",
+                "comment": " This custom type is just a set of variants for each valid message the client\nlibrary can send to the host library across the iframe boundary. See the\nindividual type descriptions for more details on message structures.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NavRequest",
+                        [
+                            "Message.Navigation.Navigation"
+                        ]
+                    ],
+                    [
+                        "Publish",
+                        [
+                            "Message.PubSub.Publication"
+                        ]
+                    ],
+                    [
+                        "ToastRequest",
+                        [
+                            "Message.Toast.Toast"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decodeFromClient",
+                "comment": " Decoder for parsing incoming messages from the client library to the host\nlibrary. Bad input from postMessage will produce nice console errors that\ndescribe the exact failure.\n",
+                "type": "Json.Decode.Decoder Message.ClientToHost.ClientToHost"
+            },
+            {
+                "name": "encodeToHost",
+                "comment": " Encodes a ClientToHost message for delivery to the host library via\npostMessage.\n",
+                "type": "Message.ClientToHost.ClientToHost -> Json.Encode.Value"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Message.HostToApp",
+        "comment": " This module exposes a type representing all of the messages that can be\npassed from the host library to a host application.\n\n@docs HostToApp, encodeToApp\n\n",
+        "unions": [
+            {
+                "name": "HostToApp",
+                "comment": " This custom type is just a set of variants for each valid message the host\nlibrary can send to the host application. See the individual type\ndescriptions for more details on message structures.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Publish",
+                        [
+                            "Message.PubSub.Publication"
+                        ]
+                    ],
+                    [
+                        "ToastRequest",
+                        [
+                            "Message.Toast.Toast"
+                        ]
+                    ],
+                    [
+                        "NavRequest",
+                        [
+                            "Message.Navigation.Navigation"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "encodeToApp",
+                "comment": " Encodes a HostToApp message for delivery to the host application\n",
+                "type": "Message.HostToApp.HostToApp -> Json.Encode.Value"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Message.HostToClient",
+        "comment": " This module exposes a type representing all of the messages that can be\npassed from the host library to the client library via postMessage.\n\n@docs HostToClient, encodeToClient, decodeFromHost\n\n",
+        "unions": [
+            {
+                "name": "HostToClient",
+                "comment": " This custom type is just a set of variants for each valid message the host\nlibrary can send to the client application. See the individual type\ndescriptions for more details on message structures.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Publish",
+                        [
+                            "Message.PubSub.Publication"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decodeFromHost",
+                "comment": " Decoder for parsing incoming messages from the host library to the client\nlibrary. Bad input from postMessage will produce nice console errors that\ndescribe the exact failure.\n",
+                "type": "Json.Decode.Decoder Message.HostToClient.HostToClient"
+            },
+            {
+                "name": "encodeToClient",
+                "comment": " Encodes a HostToClient message for delivery to the client application\n",
+                "type": "Message.HostToClient.HostToClient -> Json.Encode.Value"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Message.Navigation",
+        "comment": " The Message.Navigation module defines and handles messages for navigation\nrequests from the client app to the host app.\n\n@docs Navigation, encode, decoder, urlDecoder, label\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Navigation",
+                "comment": " Navigation requests are represented with an alias to the Url type.\n",
+                "args": [],
+                "type": "Url.Url"
+            }
+        ],
+        "values": [
+            {
+                "name": "decoder",
+                "comment": " Decodes a Navigation request from JSON, if it is tagged with `label`.\n",
+                "type": "Json.Decode.Decoder Message.Navigation.Navigation"
+            },
+            {
+                "name": "encode",
+                "comment": " Encodes a Navigation request to JSON and tags it with `label`.\n",
+                "type": "Message.Navigation.Navigation -> Json.Encode.Value"
+            },
+            {
+                "name": "label",
+                "comment": " This is the label that navigation events are tagged with when serialized\nto JSON. Other modules should not need to reference it, but it is exposed to\nforce a package version bump if it changes.\n",
+                "type": "String.String"
+            },
+            {
+                "name": "urlDecoder",
+                "comment": " Decodes a Navigation request from a URL string, if it is tagged with `label`.\n",
+                "type": "Json.Decode.Decoder Message.Navigation.Navigation"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Message.PubSub",
+        "comment": " The other messages in this library cover common use cases for coordination\nbetween host and client applications, but there is often some coordination\nrequired specific to the application domain. To that end, the Message.PubSub\nmodule provides a set of types for publishing to topics as well as subscribing\nand unsubscribing from them.\n\n\n# Publishing\n\n@docs Publication, encodePublication, publicationDecoder, publishLabel\n\n\n# Subscription Management\n\n@docs subscribeDecoder, subscribeLabel, unsubscribeDecoder, unsubscribeLabel\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Publication",
+                "comment": " This is the type used by host and client applications to publish any data\nto a topic.\n",
+                "args": [],
+                "type": "{ topic : String.String, payload : Json.Decode.Value }"
+            }
+        ],
+        "values": [
+            {
+                "name": "encodePublication",
+                "comment": " Encodes a Publication to JSON, tagging it with `publishLabel`\n",
+                "type": "Message.PubSub.Publication -> Json.Decode.Value"
+            },
+            {
+                "name": "publicationDecoder",
+                "comment": " Decoder for publication messages, which are expected to be tagged with\n`publishLabel`\n",
+                "type": "Json.Decode.Decoder Message.PubSub.Publication"
+            },
+            {
+                "name": "publishLabel",
+                "comment": " This is the label used to tag publish events in JSON. Other modules should\nnot need to reference it, but it is exposed to force a package version bump if\nit changes.\n",
+                "type": "String.String"
+            },
+            {
+                "name": "subscribeDecoder",
+                "comment": " Decoder for subscription requests, which are just a topic string\ntagged with `subscribeLabel`.\n",
+                "type": "Json.Decode.Decoder String.String"
+            },
+            {
+                "name": "subscribeLabel",
+                "comment": " This is the label used to tag subscribe requests in JSON. Other modules should\nnot need to reference it, but it is exposed to force a package version bump if\nit changes.\n",
+                "type": "String.String"
+            },
+            {
+                "name": "unsubscribeDecoder",
+                "comment": " Decoder for unsubscribe requests, which are just a topic string\ntagged with `unsubscribeLabel`.\n",
+                "type": "Json.Decode.Decoder String.String"
+            },
+            {
+                "name": "unsubscribeLabel",
+                "comment": " This is the label used to tag unsubscribe requests in JSON. Other modules\nshould not need to reference it, but it is exposed to force a package version\nbump if it changes.\n",
+                "type": "String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Message.Toast",
+        "comment": " Requesting the host application to show a notification of some sort is\na common use case for cross-frame messaging. The Message.Toast module defines\ntypes to support this use case.\n\n@docs Toast, encode, decoder, label\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Toast",
+                "comment": " The Toast type represents a request from a client to a host to display\na notification. It consists of an optional `title`, a `message` to display\nand a placeholder for custom pass-through data to support additional\napp-specific features. Common use cases for app-specific features are things\nlike timed auto-dismissal, notification levels or icons, etc.\n",
+                "args": [],
+                "type": "{ title : Maybe.Maybe String.String, message : String.String, custom : Maybe.Maybe Json.Decode.Value }"
+            }
+        ],
+        "values": [
+            {
+                "name": "decoder",
+                "comment": " Decoder for Toast messages, which are expected to be tagged with\n`label`\n",
+                "type": "Json.Decode.Decoder Message.Toast.Toast"
+            },
+            {
+                "name": "encode",
+                "comment": " Encodes a Toast to JSON, tagging it with `label`\n",
+                "type": "Message.Toast.Toast -> Json.Encode.Value"
+            },
+            {
+                "name": "label",
+                "comment": " This is the label used to tag toast requests in JSON. Other modules\nshould not need to reference it, but it is exposed to force a package version\nbump if it changes.\n",
+                "type": "String.String"
+            }
+        ],
+        "binops": []
+    }
+]

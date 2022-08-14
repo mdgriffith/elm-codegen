@@ -1,0 +1,194 @@
+[
+    {
+        "name": "Uniform",
+        "comment": " Build in-place editable [forms](#Form) comprised of [fields](#Field).\n\nAn in-place editable form is a form representing an existing entity where each individual field is in \"Displaying\" state\ninitially, but can be switched to \"Editing\" state by clicking on it.\nThe updated entity is usually being validated and returned `onBlur`.\n\nIf you're looking for a classic form which can represent a non-existing entity (like a sign up form) and which is\ncomprised of editable fields, take a look at `Uniform.Classic` module.\n\n\n# Form definition\n\n@docs Form, succeed\n\n\n# Fields\n\n@docs FormField, field, FieldConfig, append, TextField, textField, optional, dynamicField\n\n\n# Outputs\n\n@docs fill, Field, FieldState, Error, mapOutput\n\n\n# View\n\nThe form definition is completely decoupled from its view.\nYou are responsible for implementing views for your form; as there are no two identical forms,\nI don't even try to provide a \"universal, configurable\" solution to this problem.\n\nHowever, I _can_ provide some helpers so that it's **easy** to display the form's fields **properly**.\nIf these helpers don't work for you, opt-out and inspect the filled form's [`fields`](#Field) directly.\n\n@docs viewField, ViewConfig\n\n",
+        "unions": [
+            {
+                "name": "Error",
+                "comment": " This represents validation errors that may happen during `fill`ing a form.\nAgain, naming should be obvious. If not, submit a PR!\n",
+                "args": [],
+                "cases": [
+                    [
+                        "RequiredFieldIsEmpty",
+                        []
+                    ],
+                    [
+                        "ValidationFailed",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "FieldState",
+                "comment": " Each field in an in-place editable form can be either `Editing` or `Displaying`.\nI hope these names are obvious :) If not, submit a PR!\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Editing",
+                        []
+                    ],
+                    [
+                        "Displaying",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Form",
+                "comment": " Unsurprisingly, a `Form` is a collection of `fields` which produces an `output` when filled with `values`.\nOf course, this does nothing by itself. It needs to have some [`fields`](#append)!\n\n    type alias User =\n        { name : String\n        , age : Int\n        }\n\n    type alias Values =\n        { name : String\n        , nameState : Uniform.FieldState\n        , age : String\n        , ageState : Uniform.FieldState\n        }\n\n    type alias Fields =\n        { name : Uniform.Field String String Values\n        , age : Uniform.Field String Int Values\n        }\n\n    type alias UserForm =\n        Uniform.Form Values Fields User\n\n",
+                "args": [
+                    "values",
+                    "fields",
+                    "output"
+                ],
+                "cases": []
+            },
+            {
+                "name": "FormField",
+                "comment": " A value that knows how to fill a specific field with an appropriate value from `values`.\n\nYou shouldn't care about this type at all, it's exported so that `Uniform.Classic.field` can be implemented.\n\n",
+                "args": [
+                    "value",
+                    "output",
+                    "values"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Field",
+                "comment": " Represents a field filled with `values`.\n\n  - `value` contains the \"raw\" value that can be displayed in a view,\n  - `updateValue` is a function that is usually used in an `onInput` event,\n  - `state` contains the current [`state`](#FieldState) of the field,\n  - `updateState` is a function that is usually used in `onClick`/`onBlur` events,\n  - `output` contains either a successfully parsed `output` or an [`error`](#Error).\n\n",
+                "args": [
+                    "value",
+                    "output",
+                    "values"
+                ],
+                "type": "{ value : value, updateValue : value -> values, state : Uniform.FieldState, updateState : values, output : Result.Result Uniform.Error output }"
+            },
+            {
+                "name": "FieldConfig",
+                "comment": " Describe how to get, set, parse the field's value and state.\n\n  - `parser` specifies how to validate the value.\n    It needs a function that processes the value of the field and produces a `Result` of either:\n      - a `String` describing an error,\n      - a correct `output`.\n  - `value` specifies how to get the value and the state from `values`.\n    Most of the time it will be in a form of `.fieldName`.\n  - `update` specified how to update `values` with a new value and/or a new state.\n    Most of the time it will look like `\\values value -> { values | fieldName = value }`\n\n",
+                "args": [
+                    "value",
+                    "output",
+                    "values"
+                ],
+                "type": "{ parser : value -> Result.Result String.String output, value : values -> ( value, Uniform.FieldState ), update : values -> ( value, Uniform.FieldState ) -> values }"
+            },
+            {
+                "name": "TextField",
+                "comment": " Lots of fields, however, are just plain strings with custom validation.\nThis alias is not mandatory to use, but can help to shorten your fields definition a bit.\n\nIt is intentional that there are no other similar aliases in the library.\nI encourage you to define your own aliases for your custom value types.\n\n",
+                "args": [
+                    "output",
+                    "values"
+                ],
+                "type": "Uniform.Field String.String output values"
+            },
+            {
+                "name": "ViewConfig",
+                "comment": " Describe how to view a form's field in a proper state.\n\n  - `viewWhenDisplaying` is a function that is called when the field is in `Displaying` state.\n    Accepts the `value` to display and the `makeEditable` function that should be called in `onClick` handler like this:\n\n        viewWhenDisplaying { value, makeEditable } =\n            Html.div\n                [ Html.Events.onClick (FormUpdated makeEditable) ]\n                [ Html.text value ]\n\n  - `viewWhenEditing` is a function that is called when the field is in `Editing` state.\n    Accepts the `value` to display, the `updateValue` function that should be called in `onInput` handler,\n    and the `finishEditing` function that should be called in `onBlur` handler like this:\n\n        viewWhenEditing { value, updateValue, finishEditing } =\n            Html.input\n                [ Html.Events.onBlur (FormUpdated finishEditing)\n                , Html.Events.onInput (FormUpdated << updateValue)\n                , Html.Attributes.value value\n                , Html.Attributes.type\\_ \"text\"\n                []\n\n",
+                "args": [
+                    "value",
+                    "values",
+                    "element"
+                ],
+                "type": "{ viewWhenDisplaying : { value : value, makeEditable : values } -> element, viewWhenEditing : { value : value, updateValue : value -> values, finishEditing : values } -> element }"
+            }
+        ],
+        "values": [
+            {
+                "name": "append",
+                "comment": " Take a [`field`](#Field) and append it to the form.\n\n    userForm =\n        Uniform.succeed User Fields\n            |> Uniform.append nameField\n            |> Uniform.append ageField\n\n",
+                "type": "Uniform.FormField value fieldOutput values -> Uniform.Form values (Uniform.Field value fieldOutput values -> fields) (fieldOutput -> output) -> Uniform.Form values fields output"
+            },
+            {
+                "name": "dynamicField",
+                "comment": " This function allows fields to peek into other fields values.\n\nYou can use it for plenty different use cases:\n\n  - define different fields (with possibly different value types) depending on the value of an other field,\n  - extend parser capabilities with parsing dependent values\n  - extend parser capabilities with an external data (who said that `values` should _only_ represent form values?\n    Nothing stops you from defining an extra field that you can inspect later).\n\n```\nfieldWithComplexValidation =\n    Uniform.dynamicField\n        \\values ->\n            Uniform.textField\n                { parser = complexParser values\n                , ...\n                }\n```\n\n",
+                "type": "(values -> Uniform.FormField value output values) -> Uniform.FormField value output values"
+            },
+            {
+                "name": "field",
+                "comment": " Define an actual field. It is not tied to a specific form yet, go and [`append`](#append) it!\n\nFirst argument is a function telling if the given value is empty.\nUseful for custom field types, but if you find yourself working mostly with text fields, take a look at [`textField`](#textField).\n\nSecond argument is where you describe how to get and set the value, and how to parse it into the `output`.\n\n    ageField =\n        Uniform.field\n            String.isEmpty\n            { parser = Result.fromMaybe \"Not an integer\" String.toInt\n            , value = .age\n            , updateValue = \\values age -> { values | age = age }\n            , state = Uniform.Displaying\n            , updateState = \\values state -> { values | ageState = state }\n            }\n\n",
+                "type": "(value -> Basics.Bool) -> Uniform.FieldConfig value output values -> Uniform.FormField value output values"
+            },
+            {
+                "name": "fill",
+                "comment": " Once you have your form defined and fields appended, you can now `fill` it with `values`.\n\nIf all values are properly parsed into fields, the returned `output` field will contain `Just output`, otherwise `Nothing`.\nYou can inspect individual fields from the returned `fields`, each one will have a type of [`Field`](#Field).\n\nHowever, I would advise not to implement your `view` for the form by inspecting the returned `fields` directly.\nIt is error-prone: it is easy to forget to branch on the state, or to call wrong update functions.\n[`viewField`](#viewField) function is a type-safe way to view fields, it should cover all your needs.\n\n",
+                "type": "Uniform.Form values fields output -> values -> { fields : fields, output : Maybe.Maybe output }"
+            },
+            {
+                "name": "mapOutput",
+                "comment": " Transform the output of the form.\n\nThis function can help you to keep forms decoupled from specific view messages:\n\n    Uniform.mapOutput SignUp userForm\n\n",
+                "type": "(a -> b) -> Uniform.Form values fields a -> Uniform.Form values fields b"
+            },
+            {
+                "name": "optional",
+                "comment": " All fields are required by default, but you can make them `optional`.\n\n    Uniform.succeed SomeOutput SomeFields\n        |> Uniform.append field1\n        |> Uniform.append (optional field2)\n\nThe corresponding field in your output model must be `Maybe output` instead of just `output`.\n\n",
+                "type": "Uniform.FormField value output values -> Uniform.FormField value (Maybe.Maybe output) values"
+            },
+            {
+                "name": "succeed",
+                "comment": " Make a empty form with no fields that always successfully produces the given output.\n\nUseful as a starting point to which you can [`append`](#append) fields.\n\n",
+                "type": "fields -> output -> Uniform.Form values fields output"
+            },
+            {
+                "name": "textField",
+                "comment": " Define a text field. Not mandatory to use, but can help to shorten your fields definition a bit.\n\nAll it does is calling `field String.isEmpty`.\n\nIt is intentional that there are no other similar helpers in the library.\nI encourage you to implement similar helper functions for your custom value types.\n\n",
+                "type": "Uniform.FieldConfig String.String output values -> Uniform.FormField String.String output values"
+            },
+            {
+                "name": "viewField",
+                "comment": " A type-safe way to view a single field from the filled form's `fields`.\n\n    viewNameField =\n        Uniform.viewField\n            { viewWhenDisplaying = ...\n            , viewWhenEditing = ...\n            }\n\n    viewAgeField =\n        Uniform.viewField\n            { viewWhenDisplaying = ...\n            , viewWhenEditing = ...\n            }\n\n    viewForm model =\n        let\n            filled =\n                Uniform.fill userForm model.formValues\n        in\n        Html.div\n            []\n            [ viewNameField\n            , viewAgeField\n            ]\n\n",
+                "type": "Uniform.ViewConfig value values element -> Uniform.Field value output values -> element"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Uniform.Classic",
+        "comment": " This is a tiny wrapper around `Uniform.field` and `Uniform.viewField` that makes all fields editable by default,\nand does not require you to provide `valueState` in your `values`.\n\n\n# Fields\n\n@docs field, FieldConfig, textField\n\n\n# View\n\n@docs viewField, ViewConfig\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "FieldConfig",
+                "comment": " Describe how to get, set, parse the field's value.\n\n  - `parser` specifies how to validate the value.\n    It needs a function that processes the value of the field and produces a `Result` of either:\n      - a `String` describing an error,\n      - a correct `output`.\n  - `value` specifies how to get the value from `values`. Most of the time it will be in a form of `.fieldName`.\n  - `update` specified how to update `values` with a new value.\n    Unfortunately, elm does not provide a special syntax for functions-setters like for getters, that's why\n    most of the time it will look like `\\values value -> { values | fieldName = value }`\n\n",
+                "args": [
+                    "value",
+                    "output",
+                    "values"
+                ],
+                "type": "{ parser : value -> Result.Result String.String output, value : values -> value, update : values -> value -> values }"
+            },
+            {
+                "name": "ViewConfig",
+                "comment": " Describe how to view a form's field.\n\nIt is a function that accepts the `value` to display and the `update` function that should be called in `onInput` handler like this:\n\n        viewName { value, update } =\n            Html.input\n                [ Html.Events.onInput (FormUpdated << update) ]\n                , Html.Attributes.value value\n                ]\n                []\n\n",
+                "args": [
+                    "value",
+                    "values",
+                    "element"
+                ],
+                "type": "{ value : value, update : value -> values } -> element"
+            }
+        ],
+        "values": [
+            {
+                "name": "field",
+                "comment": " Define a \"classic\", always-editable form field.\n\nFirst argument is a function telling if the given value is empty.\nUseful for custom field types, but if you find yourself working mostly with text fields, take a look at [`textField`](#textField).\n\n",
+                "type": "(value -> Basics.Bool) -> Uniform.Classic.FieldConfig value output values -> Uniform.FormField value output values"
+            },
+            {
+                "name": "textField",
+                "comment": " Define a \"classic\" text field. Not mandatory to use, but can help to shorten your fields definition a bit.\n\nAll it does is calling `field String.isEmpty`.\n\nIt is intentional that there are no other similar helpers in the library.\nI encourage you to implement similar helper functions for your custom value types.\n\n",
+                "type": "Uniform.Classic.FieldConfig String.String output values -> Uniform.FormField String.String output values"
+            },
+            {
+                "name": "viewField",
+                "comment": " A type-safe way to view a single field from the filled form's `fields`.\n\n    viewNameField =\n        Uniform.viewField viewName\n\n    viewAgeField =\n        Uniform.viewField viewAge\n\n    viewForm model =\n        let\n            filled =\n                Uniform.fill userForm model.formValues\n        in\n        Html.div\n            []\n            [ viewNameField\n            , viewAgeField\n            ]\n\n",
+                "type": "Uniform.Classic.ViewConfig value values element -> Uniform.Field value output values -> element"
+            }
+        ],
+        "binops": []
+    }
+]

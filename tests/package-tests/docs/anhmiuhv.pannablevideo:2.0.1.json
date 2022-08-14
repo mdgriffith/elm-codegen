@@ -1,0 +1,56 @@
+[
+    {
+        "name": "PannableVideo",
+        "comment": " This library provide a pannable and zoomable video element.\n\nLook in [examples] to see how to use this library\n[examples]: <https://github.com/anhmiuhv/pannablevideo/tree/master/examples>\n\n\n# View\n\n@docs pannableVideo, advancedPannableVideo\n\n\n# Model\n\n@docs State, VideoInfo, initialState, simpleVideoInfo\n\n\n# Events\n\n@docs Msg, processEvent\n\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " Internal Event Manager. Should be sent to processEvent in the update\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "State",
+                "comment": " Internal state of the element. Should be part of model\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "VideoInfo",
+                "comment": " Represent the info of the video. This currently includes:\n\n  - videoSrc : the source of the video\n  - videoSize : the dimension of the video in pixel\n  - minScale : minimum zoom scale\n  - maxSCale : maximum zoom scale\n\n",
+                "args": [],
+                "type": "{ videoSrc : String.String, videoSize : ( Basics.Int, Basics.Int ), minScale : Basics.Float, maxScale : Basics.Float }"
+            }
+        ],
+        "values": [
+            {
+                "name": "advancedPannableVideo",
+                "comment": " More advanced video element if you want to style, or do something I can't think of\n",
+                "type": "(PannableVideo.Msg -> msg) -> PannableVideo.State -> PannableVideo.VideoInfo -> List.List (Html.Attribute msg) -> List.List (Html.Html msg) -> Html.Html msg"
+            },
+            {
+                "name": "initialState",
+                "comment": " The initial state to be put into init\n",
+                "type": "PannableVideo.State"
+            },
+            {
+                "name": "pannableVideo",
+                "comment": " The zoomable, pannable video element. Look for State and VideoInfo below\n",
+                "type": "(PannableVideo.Msg -> msg) -> PannableVideo.State -> PannableVideo.VideoInfo -> Html.Html msg"
+            },
+            {
+                "name": "processEvent",
+                "comment": " Process Msg in the update function\n",
+                "type": "PannableVideo.Msg -> PannableVideo.State -> PannableVideo.State"
+            },
+            {
+                "name": "simpleVideoInfo",
+                "comment": " Simple VideoInfo object.\n\nTake in: source of the video -> size in px\n\n",
+                "type": "String.String -> ( Basics.Int, Basics.Int ) -> PannableVideo.VideoInfo"
+            }
+        ],
+        "binops": []
+    }
+]

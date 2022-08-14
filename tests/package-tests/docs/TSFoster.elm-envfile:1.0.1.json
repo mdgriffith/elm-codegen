@@ -1,0 +1,21 @@
+[
+    {
+        "name": "Envfile",
+        "comment": " Convert `Dict String String` to envfile format and back.\n\n**Note:** This parser follows the simple rules laid out in [Docker's guide to its use of envfiles][docker-envfile].\n\n[docker-envfile]: https://docs.docker.com/compose/env-file/\n\n\n## Encode\n\n@docs encode\n\n\n## Parse\n\n@docs parser\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "encode",
+                "comment": " Take a `Dict String String`, ignore the keys that bash wouldn’t interpret as\na variable name and encode the rest as variable declarations, one on each line.\n\n    import Dict\n\n    [ (\"hello\", \"world\")\n    , (\"_john\", \"_WAYNE\")\n    , (\"234notavar\", \"Won’t be encoded\")\n    , (\"also not a var\", \"Also won’t be encoded\")\n    , (\"thing1\", \"thing\\n2\")\n    ]\n        |> Dict.fromList\n        |> encode\n        |> String.lines\n        |> List.sort\n    --> [ \"_john=_WAYNE\"\n    --> , \"hello=world\"\n    --> , \"thing1=thing\\\\n2\"\n    --> ]\n\n",
+                "type": "Dict.Dict String.String String.String -> String.String"
+            },
+            {
+                "name": "parser",
+                "comment": " A `Parser` to read an envfile as a `Dict String String`.\n\n    import Parser\n    import Dict\n\n    Parser.run parser <| String.join \"\\n\"\n        [ \"hello=world\"\n        , \"# this is a comment\"\n        , \"\"\n        , \"\"\n        , \"_abc=def\\\\nghi\"\n        ]\n    --> Ok (Dict.fromList [ (\"_abc\", \"def\\nghi\") , (\"hello\", \"world\") ])\n\n",
+                "type": "Parser.Parser (Dict.Dict String.String String.String)"
+            }
+        ],
+        "binops": []
+    }
+]

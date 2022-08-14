@@ -1,0 +1,16 @@
+[
+    {
+        "name": "OnlyImportOutside",
+        "comment": " Enforces that certain module prefixes, e.g. `Data`, can only import modules from outside your codebase\n\n@docs rule\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": " `constrainedModulePrefixes` refers to the modules that you want to enforce, e.g. `[ \"Data\" ]`\n\n`allowedModulePrefixes` should be `[]` unless there are special module prefixes within your\nown repository that you allow `constrainedModulePrefixes` modules to import from.\n\n    OnlyImportOutside.rule\n        { constrainedModulePrefixes = [ \"Data\" ]\n        , allowedModulePrefixes = []\n        }\n\n",
+                "type": "OnlyImportOutside.Params -> Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,110 @@
+[
+    {
+        "name": "JsonTree",
+        "comment": " This library provides a JSON tree view. You feed it JSON, and it transforms it into\ninteractive HTML.\n\nFeatures:\n\n  - show JSON as a tree of HTML\n  - expand/collapse nodes in the tree\n  - expand/collapse the entire tree\n  - select scalar values in the tree\n\n\n# Basic Usage\n\n@docs parseString, parseValue, view\n\n\n# Types\n\n@docs Config, State, defaultState, Node, TaggedValue, KeyPath\n\n\n# Expand/Collapse\n\n@docs expandAll, collapseToDepth\n\n",
+        "unions": [
+            {
+                "name": "State",
+                "comment": " The state of the JSON tree view. Note that this is just the runtime state needed to\nimplement things like expand/collapse--it is _not_ the tree data itself.\n\nYou should store the current state in your model.\n\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "TaggedValue",
+                "comment": " A tagged value\n",
+                "args": [],
+                "cases": [
+                    [
+                        "TString",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "TFloat",
+                        [
+                            "Basics.Float"
+                        ]
+                    ],
+                    [
+                        "TBool",
+                        [
+                            "Basics.Bool"
+                        ]
+                    ],
+                    [
+                        "TList",
+                        [
+                            "List.List JsonTree.Node"
+                        ]
+                    ],
+                    [
+                        "TDict",
+                        [
+                            "Dict.Dict String.String JsonTree.Node"
+                        ]
+                    ],
+                    [
+                        "TNull",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " Configuration of the JSON tree view. It describes how to map events in the tree view\ninto events that your app understands.\n\nSince the `Config` contains functions, it should never be held in your model. It should\nonly appear in your `view` code.\n\n`onSelect` should be set to `Nothing` for most users. However, if you want to make the\ntree's leaf nodes selectable, you should provide a function that takes the selected `KeyPath`\nand acts on it.\n\n`toMsg` provides an updated `State` to your application which you should use to overwrite\nthe previous state.\n\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ onSelect : Maybe.Maybe (JsonTree.KeyPath -> msg), toMsg : JsonTree.State -> msg }"
+            },
+            {
+                "name": "KeyPath",
+                "comment": " The path to a piece of data in the tree.\n",
+                "args": [],
+                "type": "String.String"
+            },
+            {
+                "name": "Node",
+                "comment": " A node in the tree\n",
+                "args": [],
+                "type": "{ value : JsonTree.TaggedValue, keyPath : JsonTree.KeyPath }"
+            }
+        ],
+        "values": [
+            {
+                "name": "collapseToDepth",
+                "comment": " Collapses any nodes deeper than `maxDepth`.\n",
+                "type": "Basics.Int -> JsonTree.Node -> JsonTree.State -> JsonTree.State"
+            },
+            {
+                "name": "defaultState",
+                "comment": " Initial state where the entire tree is fully expanded.\n",
+                "type": "JsonTree.State"
+            },
+            {
+                "name": "expandAll",
+                "comment": " Expand all nodes\n",
+                "type": "JsonTree.State -> JsonTree.State"
+            },
+            {
+                "name": "parseString",
+                "comment": " Parse a JSON string as a tree.\n",
+                "type": "String.String -> Result.Result Json.Decode.Error JsonTree.Node"
+            },
+            {
+                "name": "parseValue",
+                "comment": " Parse a JSON value as a tree.\n",
+                "type": "Json.Decode.Value -> Result.Result Json.Decode.Error JsonTree.Node"
+            },
+            {
+                "name": "view",
+                "comment": " Show a JSON tree.\n",
+                "type": "JsonTree.Node -> JsonTree.Config msg -> JsonTree.State -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

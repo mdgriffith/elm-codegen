@@ -1,0 +1,264 @@
+[
+    {
+        "name": "Derberos.Date.Calendar",
+        "comment": " Utils for working with ranges of dates.\n\n\n# Calendar\n\n@docs getFirstDayOfMonth\n@docs getLastDayOfMonth\n@docs getCurrentWeekDates\n@docs getCurrentMonthDates, getCurrentMonthDatesFullWeeks\n@docs getFirstDayOfYear, getLastDayOfYear\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "getCurrentMonthDates",
+                "comment": " Return a list of dates for the month where the time belongs.\n\nThis returns the days from `1` to `last day of the month`.\n\n",
+                "type": "Time.Zone -> Time.Posix -> List.List Time.Posix"
+            },
+            {
+                "name": "getCurrentMonthDatesFullWeeks",
+                "comment": " Return a list of dates for the month starting on Monday and ending on Sunday\n",
+                "type": "Time.Zone -> Time.Posix -> List.List Time.Posix"
+            },
+            {
+                "name": "getCurrentWeekDates",
+                "comment": " Get the week dates for a given time. It returns the week from Monday to Sunday\n",
+                "type": "Time.Zone -> Time.Posix -> List.List Time.Posix"
+            },
+            {
+                "name": "getFirstDayOfMonth",
+                "comment": " Get the first day of the month for a given time.\n",
+                "type": "Time.Zone -> Time.Posix -> Time.Posix"
+            },
+            {
+                "name": "getFirstDayOfYear",
+                "comment": " Get the first day of the year\n",
+                "type": "Time.Zone -> Time.Posix -> Time.Posix"
+            },
+            {
+                "name": "getLastDayOfMonth",
+                "comment": " Get the last day of the month at time 00:00:00\n",
+                "type": "Time.Zone -> Time.Posix -> Time.Posix"
+            },
+            {
+                "name": "getLastDayOfYear",
+                "comment": " Get the last day of the year\n",
+                "type": "Time.Zone -> Time.Posix -> Time.Posix"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Derberos.Date.Core",
+        "comment": " Core functions for working with dates\n\n@docs DateRecord, newDateRecord\n@docs civilToPosix, posixToCivil\n@docs Config\n\n\n## Timezones\n\n@docs getTzOffset\n@docs adjustMilliseconds\n@docs addTimezoneMilliseconds\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " Store the configuration for getting i18n and l10n formats.\n",
+                "args": [],
+                "type": "{ getMonthName : Time.Month -> String.String, getWeekName : Time.Weekday -> String.String, getCommonFormatDate : String.String -> Time.Zone -> Time.Posix -> String.String, getCommonFormatTime : Time.Zone -> Time.Posix -> String.String, getCommonFormatDateTime : String.String -> Time.Zone -> Time.Posix -> String.String }"
+            },
+            {
+                "name": "DateRecord",
+                "comment": " Store the date in a record.\n",
+                "args": [],
+                "type": "{ year : Basics.Int, month : Basics.Int, day : Basics.Int, hour : Basics.Int, minute : Basics.Int, second : Basics.Int, millis : Basics.Int, zone : Time.Zone }"
+            }
+        ],
+        "values": [
+            {
+                "name": "addTimezoneMilliseconds",
+                "comment": " Given a Zone and a Posix time, add the timezone\noffset to get the corrected date.\n",
+                "type": "Time.Zone -> Time.Posix -> Time.Posix"
+            },
+            {
+                "name": "adjustMilliseconds",
+                "comment": " Adjust the milliseconds of the posix time.\n\nThe time has the milliseconds as if it was using UTC\nbut it actually has a tz to be applied. So if we had\n2018/10/28T01:30:00 UTC we want to convert it to\n2018/10/28T01:30:00 zone so we have to substract\nthe offset.\n\n",
+                "type": "Time.Zone -> Time.Posix -> Time.Posix"
+            },
+            {
+                "name": "civilToPosix",
+                "comment": " Given a datetime, get the posix time.\n",
+                "type": "Derberos.Date.Core.DateRecord -> Time.Posix"
+            },
+            {
+                "name": "getTzOffset",
+                "comment": " Gets the difference in minutes given the current [Time Zone](https://package.elm-lang.org/packages/elm/time/latest/Time#Zone)\nand the utc time.\n",
+                "type": "Time.Zone -> Time.Posix -> Basics.Int"
+            },
+            {
+                "name": "newDateRecord",
+                "comment": " Generate a new DateRecord\n\n    newDateRecord 2018 2 13 19 45 0 0 == {\n        year = 2018\n        , month = 2\n        , day = 13\n        , hour = 19\n        , minute = 45\n        , second = 0\n        , millis = 0\n        }\n\n",
+                "type": "Basics.Int -> Basics.Int -> Basics.Int -> Basics.Int -> Basics.Int -> Basics.Int -> Basics.Int -> Time.Zone -> Derberos.Date.Core.DateRecord"
+            },
+            {
+                "name": "posixToCivil",
+                "comment": " Given a Posix time, get the human datetime.\n",
+                "type": "Time.Posix -> Derberos.Date.Core.DateRecord"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Derberos.Date.Delta",
+        "comment": " Utils for working with date deltas.\n\n@docs addSeconds, addMinutes, addHours, addDays, addMonths, addYears\n@docs prevWeekdayFromTime, nextWeekdayFromTime\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "addDays",
+                "comment": " Add days to the time\n",
+                "type": "Basics.Int -> Time.Posix -> Time.Posix"
+            },
+            {
+                "name": "addHours",
+                "comment": " Add hours to the time\n",
+                "type": "Basics.Int -> Time.Posix -> Time.Posix"
+            },
+            {
+                "name": "addMinutes",
+                "comment": " Add minutes to the time\n",
+                "type": "Basics.Int -> Time.Posix -> Time.Posix"
+            },
+            {
+                "name": "addMonths",
+                "comment": " Add months to the time.\n",
+                "type": "Basics.Int -> Time.Zone -> Time.Posix -> Time.Posix"
+            },
+            {
+                "name": "addSeconds",
+                "comment": " Add seconds to the time\n",
+                "type": "Basics.Int -> Time.Posix -> Time.Posix"
+            },
+            {
+                "name": "addYears",
+                "comment": " Add years to the time\n",
+                "type": "Basics.Int -> Time.Posix -> Time.Posix"
+            },
+            {
+                "name": "nextWeekdayFromTime",
+                "comment": " Given a time and a weekday, get the date of the next weekday\n",
+                "type": "Time.Weekday -> Time.Zone -> Time.Posix -> Time.Posix"
+            },
+            {
+                "name": "prevWeekdayFromTime",
+                "comment": " Given a time and a weekday, get the date of the previous weekday\n",
+                "type": "Time.Weekday -> Time.Zone -> Time.Posix -> Time.Posix"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Derberos.Date.L10n.EN_US",
+        "comment": " Functions for localized values in en_US.\n\n\n# en_US\n\n@docs config\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "config",
+                "comment": " Configuration for `es_ES`\n",
+                "type": "Derberos.Date.Core.Config"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Derberos.Date.L10n.ES_ES",
+        "comment": " Functions for localized values in ES_es.\n\n\n# Es_es\n\n@docs config\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "config",
+                "comment": " Configuration for `es_ES`\n",
+                "type": "Derberos.Date.Core.Config"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Derberos.Date.Utils",
+        "comment": " Utils for working with dates.\n\n\n# Functions\n\n\n## Related to years\n\n@docs isLeapYear\n\n\n## Related to months\n\n@docs getNextMonth, getPrevMonth\n@docs monthToNumber, monthToNumber1, numberToMonth\n@docs numberOfDaysInMonth\n\n\n## Related to weekdays\n\n@docs getWeekday\n@docs getNextWeekday, getPrevWeekday\n@docs weekdayToNumber, weekdayFromNumber\n@docs weekdayDiff, weekdayDiffBack\n\n\n## Related to time\n\n@docs resetTime\n\n\n## Formatting\n\n@docs getIsoFormat\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "getIsoFormat",
+                "comment": " Get the iso format of the date\n",
+                "type": "String.String -> Time.Zone -> Time.Posix -> String.String"
+            },
+            {
+                "name": "getNextMonth",
+                "comment": " Given a month, return the next month.\n\n    getNextMonth Apr == May\n\n",
+                "type": "Time.Month -> Time.Month"
+            },
+            {
+                "name": "getNextWeekday",
+                "comment": " Given a `Weekday`, get the next weekday.\ngetNextWeekday Sun == Mon\n",
+                "type": "Time.Weekday -> Time.Weekday"
+            },
+            {
+                "name": "getPrevMonth",
+                "comment": " Given a month, return the previous month.\n\n    getPrevMonth Apr == May\n\n",
+                "type": "Time.Month -> Time.Month"
+            },
+            {
+                "name": "getPrevWeekday",
+                "comment": " Given a `Weekday`, get the previous weekday.\ngetPrevWeekday Sun == Sat\n",
+                "type": "Time.Weekday -> Time.Weekday"
+            },
+            {
+                "name": "getWeekday",
+                "comment": " Given a Time, return the `Weekday`\n",
+                "type": "Time.Zone -> Time.Posix -> Time.Weekday"
+            },
+            {
+                "name": "isLeapYear",
+                "comment": " If the year is a leap year, return True. False otherwise.\n\n    isLeapYear 2018 == False\n    isLeapYear 2016 == True\n\n",
+                "type": "Basics.Int -> Basics.Bool"
+            },
+            {
+                "name": "monthToNumber",
+                "comment": " Convert the month to a number in the range [0, 11]\n",
+                "type": "Time.Month -> Basics.Int"
+            },
+            {
+                "name": "monthToNumber1",
+                "comment": " Convert the month to a number in the range [1, 12]\n",
+                "type": "Time.Month -> Basics.Int"
+            },
+            {
+                "name": "numberOfDaysInMonth",
+                "comment": " Return the number of days in a month.\n\n    numberOfDaysInMonth 2018 Feb == 28\n    numberOfDaysInMonth 2016 Feb == 29\n\n",
+                "type": "Basics.Int -> Time.Month -> Basics.Int"
+            },
+            {
+                "name": "numberToMonth",
+                "comment": " Given a number from 0 to 11, convert it to the corresponding month.\n",
+                "type": "Basics.Int -> Maybe.Maybe Time.Month"
+            },
+            {
+                "name": "resetTime",
+                "comment": " Given a datetime, set the time to 00:00:00.000\n",
+                "type": "Time.Posix -> Time.Posix"
+            },
+            {
+                "name": "weekdayDiff",
+                "comment": " Get the difference in days between two weekdays. Assume always forward direction.\nFor example, the returned value from Friday to Wednesday is 5.\n\n    weekdayDiff Fri Wed == 5\n    weekdayDiff Mon Wed == 2\n\n",
+                "type": "Time.Weekday -> Time.Weekday -> Basics.Int"
+            },
+            {
+                "name": "weekdayDiffBack",
+                "comment": " Get the difference in days between two weekdays. It works in the backwards direction.\nFor example, the returned value from Friday to Wednesday is 2.\n\n    weekdayDiffBack Fri Wed == 2\n    weekdayDiffBack Mon Wed == 5\n\n",
+                "type": "Time.Weekday -> Time.Weekday -> Basics.Int"
+            },
+            {
+                "name": "weekdayFromNumber",
+                "comment": " Convert a number to a weekday. 0 is for Monday.\n\n    weekdayFromNumber 0 == Just Mon\n    weekdayFromNumber 6 == Just Sun\n    weekdayFromNumber 8 == Nothing\n\n",
+                "type": "Basics.Int -> Maybe.Maybe Time.Weekday"
+            },
+            {
+                "name": "weekdayToNumber",
+                "comment": " Convert the Weekday to a number representation. Starts with 0 on Monday.\n\n    weekdayToNumber Mon == 0\n    weekdayToNumber Sun == 6\n\n",
+                "type": "Time.Weekday -> Basics.Int"
+            }
+        ],
+        "binops": []
+    }
+]

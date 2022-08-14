@@ -1,0 +1,171 @@
+[
+    {
+        "name": "Getto.Url.Query.Decode",
+        "comment": " decode url query string\n\n    value = \"count=4&position[]=captain&admin\" |> QueryDecode.split\n\n    value |> QueryDecode.entryAt [\"count\"]    QueryDecode.int\n    value |> QueryDecode.listAt  [\"position\"] QueryDecode.string\n    value |> QueryDecode.boolAt  [\"admin\"]\n\n# Definition\n@docs Value, Decoder\n\n# Decoders\n@docs string, int\n\n# Decode\n@docs entryAt, listAt, boolAt\n\n# Helper\n@docs split\n ",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Decoder",
+                "comment": " decoder : Value -> Maybe a\n ",
+                "args": [
+                    "a"
+                ],
+                "type": "Getto.Url.Query.Decode.Value -> Maybe.Maybe a"
+            },
+            {
+                "name": "Value",
+                "comment": " decode target : actually this is List String\n ",
+                "args": [],
+                "type": "List.List String.String"
+            }
+        ],
+        "values": [
+            {
+                "name": "boolAt",
+                "comment": " decode bool\n ",
+                "type": "Getto.Url.Query.Decode.Value -> Getto.Url.Query.Decode.Decoder Basics.Bool"
+            },
+            {
+                "name": "entryAt",
+                "comment": " decode entry\n ",
+                "type": "List.List String.String -> Getto.Url.Query.Decode.ValueDecoder a -> Getto.Url.Query.Decode.Decoder a"
+            },
+            {
+                "name": "int",
+                "comment": " int decoder\n ",
+                "type": "Getto.Url.Query.Decode.ValueDecoder Basics.Int"
+            },
+            {
+                "name": "listAt",
+                "comment": " decode list\n ",
+                "type": "List.List String.String -> Getto.Url.Query.Decode.ValueDecoder a -> Getto.Url.Query.Decode.Value -> Maybe.Maybe (List.List a)"
+            },
+            {
+                "name": "split",
+                "comment": " query string to Value\n\n    \"name=John&position=captain\" |> QueryDecode.split\n    -- [ \"name=John\", \"position=captain\" ]\n ",
+                "type": "String.String -> Getto.Url.Query.Decode.Value"
+            },
+            {
+                "name": "string",
+                "comment": " string decoder\n ",
+                "type": "Getto.Url.Query.Decode.ValueDecoder String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Getto.Url.Query.Encode",
+        "comment": " encode url query string\n\n    roles = [ \"admin\" ] |> Set.fromList\n    comments =\n      [ \"good\"\n      , \"great\"\n      ]\n\n    [ ( \"q\"\n      , [ ( \"name\", \"name\" |> QueryEncode.string )\n        , ( \"count\",     1 |> QueryEncode.int )\n        , ( \"active\", True |> QueryEncode.bool )\n        , ( \"roles\",   roles    |> QueryEncode.set  QueryEncode.string )\n        , ( \"comments\" comments |> QueryEncode.list QueryEncode.string )\n        ] |> QueryEncode.object\n      )\n    ] |> QueryEncode.object\n\n# Definition\n@docs Value\n\n# Encoders\n@docs string, int, bool, list, set, object, null\n\n# Encode\n@docs encode\n\n# Helper\n@docs toName\n ",
+        "unions": [
+            {
+                "name": "Value",
+                "comment": " encoded value\n ",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "bool",
+                "comment": " bool encoder\n ",
+                "type": "Basics.Bool -> Getto.Url.Query.Encode.Value"
+            },
+            {
+                "name": "encode",
+                "comment": " convert encoded value to string\n ",
+                "type": "Getto.Url.Query.Encode.Value -> String.String"
+            },
+            {
+                "name": "int",
+                "comment": " int encoder\n ",
+                "type": "Basics.Int -> Getto.Url.Query.Encode.Value"
+            },
+            {
+                "name": "list",
+                "comment": " list encoder\n ",
+                "type": "(a -> Getto.Url.Query.Encode.Value) -> List.List a -> Getto.Url.Query.Encode.Value"
+            },
+            {
+                "name": "null",
+                "comment": " null encoder\n ",
+                "type": "Getto.Url.Query.Encode.Value"
+            },
+            {
+                "name": "object",
+                "comment": " object encoder\n ",
+                "type": "List.List ( String.String, Getto.Url.Query.Encode.Value ) -> Getto.Url.Query.Encode.Value"
+            },
+            {
+                "name": "set",
+                "comment": " set encoder\n ",
+                "type": "(a -> Getto.Url.Query.Encode.Value) -> Set.Set a -> Getto.Url.Query.Encode.Value"
+            },
+            {
+                "name": "string",
+                "comment": " string encoder\n ",
+                "type": "String.String -> Getto.Url.Query.Encode.Value"
+            },
+            {
+                "name": "toName",
+                "comment": " encode name\n\n    [ \"q\", \"name\" ] |> QueryEncode.toName\n    -- \"q[name]\"\n ",
+                "type": "List.List String.String -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Getto.Url.Query.SafeDecode",
+        "comment": " decode url query string safety\n\n    value = \"count=4&position[]=captain&admin\" |> QuerySafeDecode.split\n\n    value |> QueryDecode.entryAt [\"count\"]    (QuerySafeDecode.int 0)\n    value |> QueryDecode.listAt  [\"position\"] (QuerySafeDecode.string \"\")\n    value |> QueryDecode.boolAt  [\"admin\"]\n\n# Definition\n@docs Value, Decoder\n\n# Decoders\n@docs string, int\n\n# Decode\n@docs entryAt, listAt, boolAt\n\n# Helper\n@docs split\n ",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Decoder",
+                "comment": " decoder : Value -> Maybe a\n ",
+                "args": [
+                    "a"
+                ],
+                "type": "Getto.Url.Query.SafeDecode.Value -> a"
+            },
+            {
+                "name": "Value",
+                "comment": " decode target : actually this is List String\n ",
+                "args": [],
+                "type": "Getto.Url.Query.Decode.Value"
+            }
+        ],
+        "values": [
+            {
+                "name": "boolAt",
+                "comment": " decode bool\n ",
+                "type": "List.List String.String -> Getto.Url.Query.SafeDecode.Decoder Basics.Bool"
+            },
+            {
+                "name": "entryAt",
+                "comment": " decode entry\n ",
+                "type": "List.List String.String -> Getto.Url.Query.SafeDecode.ValueDecoder a -> Getto.Url.Query.SafeDecode.Decoder a"
+            },
+            {
+                "name": "int",
+                "comment": " int decoder\n ",
+                "type": "Basics.Int -> Getto.Url.Query.SafeDecode.ValueDecoder Basics.Int"
+            },
+            {
+                "name": "listAt",
+                "comment": " decode list\n ",
+                "type": "List.List String.String -> Getto.Url.Query.SafeDecode.ValueDecoder a -> Getto.Url.Query.SafeDecode.Decoder (List.List a)"
+            },
+            {
+                "name": "split",
+                "comment": " query string to Value\n\n    \"name=John&position=captain\" |> QuerySafeDecode.split\n    -- [ \"name=John\", \"position=captain\" ]\n ",
+                "type": "String.String -> Getto.Url.Query.SafeDecode.Value"
+            },
+            {
+                "name": "string",
+                "comment": " string decoder\n ",
+                "type": "String.String -> Getto.Url.Query.SafeDecode.ValueDecoder String.String"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,45 @@
+[
+    {
+        "name": "RollingList",
+        "comment": " Module description\n\n\n## Functions\n\n@docs fromList, roll, rollBack, current, toList\n\n\n## Definition\n\n@docs RollingList\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "RollingList",
+                "comment": " The rolling list type.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ previous : List.List a, next : List.List a }"
+            }
+        ],
+        "values": [
+            {
+                "name": "current",
+                "comment": " Returns the currently selected element in the list\n\n    current (fromList [1,2,3])\n    --> Just 1\n\n    current (fromList [])\n    --> Nothing\n\n",
+                "type": "RollingList.RollingList a -> Maybe.Maybe a"
+            },
+            {
+                "name": "fromList",
+                "comment": " Create a rolling list from a normal list\n\n    toList (fromList [1,2,3])\n    --> [1,2,3]\n\n",
+                "type": "List.List a -> RollingList.RollingList a"
+            },
+            {
+                "name": "roll",
+                "comment": " Return a New RollingList, with the current element set to the next element\n\n    toList (roll (fromList [1,2,3]))\n    --> [2,3,1]\n\n    current (roll (fromList [1,2,3]))\n    --> Just 2\n\n    current (fromList [1, 2] |> roll |> roll)\n    --> Just 1\n\n    current (fromList [1] |> roll |> roll |> roll)\n    --> Just 1\n",
+                "type": "RollingList.RollingList a -> RollingList.RollingList a"
+            },
+            {
+                "name": "rollBack",
+                "comment": " Return a New RollingList, with the current element set to the previous element\n\n    toList (rollBack (fromList [1,2,3]))\n    --> [3,1,2]\n\n    current (rollBack (fromList [1,2,3]))\n    --> Just 3\n\n",
+                "type": "RollingList.RollingList a -> RollingList.RollingList a"
+            },
+            {
+                "name": "toList",
+                "comment": " Create a normal list from a rolling list\n\n    toList (fromList [1,2])\n    --> [1,2]\n\n",
+                "type": "RollingList.RollingList a -> List.List a"
+            }
+        ],
+        "binops": []
+    }
+]

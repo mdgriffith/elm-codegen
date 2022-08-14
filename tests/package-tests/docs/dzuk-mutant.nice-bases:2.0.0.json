@@ -1,0 +1,110 @@
+[
+    {
+        "name": "Base",
+        "comment": " Convert to, from and between positive numbers of different bases.\n\n# Bases\n@docs Base, b16, b32, b32rfc, b36, b58, b62, b64, b64url\n\n# Conversions\n@docs fromInt, toInt, convert\n\n# Errors\n@docs Err\n\n# Create your own\n@docs make, CaseSensitivity\n\n",
+        "unions": [
+            {
+                "name": "Base",
+                "comment": " A type that contains the instructions to convert Ints\ninto a string representing a non-decimal number and vice versa.\n\nIt's an opaque type.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "CaseSensitivity",
+                "comment": " Whether or not a base is case-sensitive. This affects whether cases\nare relevant when the `toInt` function is used.\n\n- CaseSensitive - Upper-case and lower-case letters are not interchangeable.\n- CaseAgnostic - Upper-case and lower-case letters are interchangeable.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "CaseSensitive",
+                        []
+                    ],
+                    [
+                        "CaseAgnostic",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Err",
+                "comment": " Errors that may occur from converting from Strings.\n\n    > Base.toInt b16 \"\"\n    Err EmptyString\n\n    > Base.toInt b16 \"owo\"\n    Err (BadChars [(0,'o'),(1,'w'),(2,'o')])\n\n- `EmptyString` - The given string is empty.\n- `BadChars` - There are characters in the given\nstring that don't match the spec of the base you used.\nIt provides a list of each char that failed along with their index in the input string.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "EmptyString",
+                        []
+                    ],
+                    [
+                        "BadChars",
+                        [
+                            "List.List ( Basics.Int, Char.Char )"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "b16",
+                "comment": " **base16.**\n\nClassic hexadecimal.\n\n    > Base.fromInt b16 44000\n    \"abe0\" : String\n\nThis is case insensitive, meaning that if you use `Base.toInt`\nit'll interpret upper and lower case input as the same.\n\n    > Base.toInt b16 \"fe0f\"\n    Ok 65039\n\n    > Base.toInt b16 \"FE0F\"\n    Ok 65039\n",
+                "type": "Base.Base"
+            },
+            {
+                "name": "b32",
+                "comment": " **base32.**\n\nThis is a slightly reduced subset of all numbers and letters,\nleaving out `w`, `x`, `y`, and `z`.\n\n    > Base.fromInt b32 44000\n    \"1av0\"\n\nThis is case insensitive, meaning that if you use `Base.toInt`\nit'll interpret upper and lower case input as the same.\n",
+                "type": "Base.Base"
+            },
+            {
+                "name": "b32rfc",
+                "comment": " **base32 in the RFC 4648 standard.**\n\nThis is a slightly reduced subset of all numbers and letters, leaving out\nvisually confusing combinations. The characters are ordered\ndifferently from normal b32.\n\n    > Base.fromInt b32rfc 44000\n    \"bk7a\" \nThis is case insensitive, meaning that if you use `Base.toInt`\nit'll interpret upper and lower case input as the same.\n",
+                "type": "Base.Base"
+            },
+            {
+                "name": "b36",
+                "comment": " **base36.**\n\nThis is all numbers and letters in any case, making it both relatively\ndense and easy to manually type in.\n\n    > Base.fromInt b36 44000\n    \"xy8\"\n\nThis is case insensitive, meaning that if you use `Base.toInt`\nit'll interpret upper and lower case input as the same.\n\n    > Base.toInt b36 \"jeff\"\n    Ok 905163\n\n    > Base.toInt b36 \"JEFF\"\n    Ok 905163\n",
+                "type": "Base.Base"
+            },
+            {
+                "name": "b58",
+                "comment": " **base58.**\n\nThis is all numbers and letters excluding visually confusing\ncombinations - there is no `0`, `O`, `I` or `l`, leaving only\n`o` and `1`.\n\n    > Base.fromInt b58 44000\n    \"E5d\"\n\n",
+                "type": "Base.Base"
+            },
+            {
+                "name": "b62",
+                "comment": " **base62.**\n\nAll numbers and all cases of letters.\n\n    > Base.fromInt b62 44000\n    \"BRg\"\n",
+                "type": "Base.Base"
+            },
+            {
+                "name": "b64",
+                "comment": " **base64 in the most common form for text.**\n\nAll numbers and all cases of letters, plus 62nd and 63rd characters,\nwhich are are `+` and `/` respectively.\n\n    > Base.fromInt b64 231166\n    \"4b+\"\n",
+                "type": "Base.Base"
+            },
+            {
+                "name": "b64url",
+                "comment": " **base64 in the RFC 4648 URL/filename-safe standard.**\n\nAll numbers and all cases of letters, plus 62nd and 63rd characters,\nwhich are are `-` and `_` respectively.\n\n    > Base.fromInt b64 231166\n    \"4b-\"\n",
+                "type": "Base.Base"
+            },
+            {
+                "name": "convert",
+                "comment": " Converts the string of one non-decimal base number to another.\n\n    > Base.convert b16 b58 \"8f0ce9\"\n    Ok \"q3r8\"\n\nIf your input string is invalid, it will return a `Err`.\n(See the docs for that type for more info.)\n",
+                "type": "Base.Base -> Base.Base -> String.String -> Result.Result Base.Err String.String"
+            },
+            {
+                "name": "fromInt",
+                "comment": " Converts a positive Int into non-decimal number string.\n\n    > Base.fromInt b36 69420\n    \"1hkc\"\n\nThis does not support negative numbers - \nany negative numbers will be converted\ninto positive numbers.\n\n    > Base.fromInt b36 -69420\n    \"1hkc\"\n",
+                "type": "Base.Base -> Basics.Int -> String.String"
+            },
+            {
+                "name": "make",
+                "comment": " Create a base for non-decimal conversion.\n\nThe string input is both the characters you're\nmapping digits to (starting from digit 0) and the\nbase of your resulting numbers (which will be the length of the string).\n\n    b16 : Base\n    b16 = make \n        \"0123456789abcdef\"\n        CaseAgnostic\n\n",
+                "type": "String.String -> Base.CaseSensitivity -> Base.Base"
+            },
+            {
+                "name": "toInt",
+                "comment": " Converts a positive non-decimal number string into an Int.\n\n    > Base.toInt b64 \"HAHA\"\n    Ok 4498506\n\nIf your input string is invalid, it will return a\n`Err`. (See the docs for that type for more info.)\n\nThis does not support negative values and will likely\nthrow an error if you introduce them (apart from b64,\nbecause '-' is one of it's characters.).\n",
+                "type": "Base.Base -> String.String -> Result.Result Base.Err Basics.Int"
+            }
+        ],
+        "binops": []
+    }
+]

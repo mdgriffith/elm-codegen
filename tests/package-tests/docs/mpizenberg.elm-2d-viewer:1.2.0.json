@@ -1,0 +1,121 @@
+[
+    {
+        "name": "Viewer",
+        "comment": " A 2D viewer, providing helper functions for zooming and translations.\n\n\n# The Viewer type\n\n@docs Viewer, withSize, resize\n\n\n# Viewer properties\n\n@docs coordinatesAt, coordinatesAtCenter, coordinatesInViewer\n\n\n# Viewer translations\n\n@docs centerAtCoordinates, translate, pan\n\n\n# Viewer scaling\n\n@docs fitImage, rescaleCentered, zoomIn, zoomOut, rescaleFixPoint, zoomToward, zoomAwayFrom\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Viewer",
+                "comment": " A viewer has:\n\n  - a size, provided by its context\n  - an origin, corresponding to the image coordinates at the top left corner\n  - a scale, which is a multiplier coefficient from viewer coordinates to image coordinates.\n\nIts size (or dimension) corresponds to the size, in CSS pixels that the viewer\nis taking in the DOM. It has to be kept up to date if the viewer dimensions change\ndue to responsive layout.\n\nContrary to the size, the origin is given in \"image\" coordinates,\ni.e. the coordinates sytem of the content displayed in the viewer.\n\nThe scale acts as a multiplier coefficient between the viewer coordinates\n(in CSS pixels) and the image coordinates. This means that for any two points,\nwith a distance of `d` pixels between each other in the web page, their distance\nin the image coordinates is actually `scale * d`.\n\n",
+                "args": [],
+                "type": "{ size : ( Basics.Float, Basics.Float ), origin : ( Basics.Float, Basics.Float ), scale : Basics.Float }"
+            }
+        ],
+        "values": [
+            {
+                "name": "centerAtCoordinates",
+                "comment": " Center the viewer at the given image coordinates.\n\n    Viewer.centerAtCoordinates ( x, y ) viewer\n        |> Viewer.coordinatesAtCenter\n        == ( x, y )\n\n",
+                "type": "( Basics.Float, Basics.Float ) -> Viewer.Viewer -> Viewer.Viewer"
+            },
+            {
+                "name": "coordinatesAt",
+                "comment": " Transform viewer coordinates into image coordinates.\n\n    Viewer.coordinatesAt ( 0, 0 ) viewer\n        == viewer.origin\n\n    Viewer.coordinatesAt ( x, y ) viewer\n        == (viewer.origin + viewer.scale * ( x, y ))\n\n",
+                "type": "( Basics.Float, Basics.Float ) -> Viewer.Viewer -> ( Basics.Float, Basics.Float )"
+            },
+            {
+                "name": "coordinatesAtCenter",
+                "comment": " Image coordinates at the center of the viewer.\n\n    Viewer.coordinatesAtCenter viewer\n        == Viewer.coordinatesAt (0.5 * viewer.size)\n\n",
+                "type": "Viewer.Viewer -> ( Basics.Float, Basics.Float )"
+            },
+            {
+                "name": "coordinatesInViewer",
+                "comment": " Transform image coordinates into viewer coordinates.\nInverse of `coordinatesAt`.\n\n    Viewer.coordinatesAt ( x, y ) viewer\n        |> Viewer.coordinatesInViewer viewer\n        == ( x, y )\n\n",
+                "type": "Viewer.Viewer -> ( Basics.Float, Basics.Float ) -> ( Basics.Float, Basics.Float )"
+            },
+            {
+                "name": "fitImage",
+                "comment": " Rescale the viewer such that it fits an image of a given dimension\n( width, height ). To get the full image perfectly centered and zoomed\nto fit in the viewer, you can use:\n\n    Viewer.fitImage 1.0 ( width, height ) viewer\n\nIf you want to have some margin around the image area,\nit means that you want the image a bit smaller, so the viewer\na bit bigger. For 10% margin, for example, you can use:\n\n    Viewer.fitImage 1.1 ( width, height ) viewer\n\n> Remarq: This does not resize the viewer or the image,\n> only changes the origin and scale of the viewer.\n\n",
+                "type": "Basics.Float -> ( Basics.Float, Basics.Float ) -> Viewer.Viewer -> Viewer.Viewer"
+            },
+            {
+                "name": "pan",
+                "comment": " Operate the translation on the viewer that would occur\nif you make a pan gesture (touch hold and move).\nLet (px, py) be the pan displacement in viewer coordinates, then:\n\n    Viewer.pan ( px, py ) viewer\n        == Viewer.translate (viewer.scale * ( -px, -py )) viewer\n\n",
+                "type": "( Basics.Float, Basics.Float ) -> Viewer.Viewer -> Viewer.Viewer"
+            },
+            {
+                "name": "rescaleCentered",
+                "comment": " Rescale the viewer, keeping the center point fix.\n",
+                "type": "Basics.Float -> Viewer.Viewer -> Viewer.Viewer"
+            },
+            {
+                "name": "rescaleFixPoint",
+                "comment": " Rescale the viewer about a given fix point.\nVery convenient to keep the point under the mouse fix for example.\nThis is equivalent to `rescaleCentered` if the fix point is the center point.\n\n    Viewer.rescaleFixPoint scale (Viewer.coordinatesAtCenter viewer) viewer\n        == Viewer.rescaleCentered scale viewer\n\n",
+                "type": "Basics.Float -> ( Basics.Float, Basics.Float ) -> Viewer.Viewer -> Viewer.Viewer"
+            },
+            {
+                "name": "resize",
+                "comment": " Update the viewer size while keeping its origin and scale.\n",
+                "type": "( Basics.Float, Basics.Float ) -> Viewer.Viewer -> Viewer.Viewer"
+            },
+            {
+                "name": "translate",
+                "comment": " Translate the viewer by the given image vector.\n\n    .origin (Viewer.translate ( tx, ty ) viewer)\n        == (viewer.origin + ( tx, ty ))\n\n",
+                "type": "( Basics.Float, Basics.Float ) -> Viewer.Viewer -> Viewer.Viewer"
+            },
+            {
+                "name": "withSize",
+                "comment": " Initialize a viewer of a given size.\nDefault origin is (0,0) and scale 1.0.\n",
+                "type": "( Basics.Float, Basics.Float ) -> Viewer.Viewer"
+            },
+            {
+                "name": "zoomAwayFrom",
+                "comment": " Zoom out, keeping a given fix point.\nVery convenient to keep the point under the mouse fix for example.\nThis is equivalent to `zoomOut` if the fix point is the center point.\n\n    Viewer.zoomAwayFrom (Viewer.coordinatesAtCenter viewer) viewer\n        == Viewer.zoomOut viewer\n\n",
+                "type": "( Basics.Float, Basics.Float ) -> Viewer.Viewer -> Viewer.Viewer"
+            },
+            {
+                "name": "zoomIn",
+                "comment": " Zoom in, keeping the center point fix.\n",
+                "type": "Viewer.Viewer -> Viewer.Viewer"
+            },
+            {
+                "name": "zoomOut",
+                "comment": " Zoom out, keeping the center point fix.\n",
+                "type": "Viewer.Viewer -> Viewer.Viewer"
+            },
+            {
+                "name": "zoomToward",
+                "comment": " Zoom in, keeping a given fix point.\nVery convenient to keep the point under the mouse fix for example.\nThis is equivalent to `zoomIn` if the fix point is the center point.\n\n    Viewer.zoomToward (Viewer.coordinatesAtCenter viewer) viewer\n        == Viewer.zoomIn viewer\n\n",
+                "type": "( Basics.Float, Basics.Float ) -> Viewer.Viewer -> Viewer.Viewer"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Viewer.Canvas",
+        "comment": " Helper module to transform Canvas drawings with a Viewer.\n\n@docs transform\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "transform",
+                "comment": " Generate the transform attribute from a viewer\n",
+                "type": "Viewer.Viewer -> Canvas.Settings.Setting"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Viewer.Svg",
+        "comment": " Helper module to transform SVG drawings with a Viewer.\n\n@docs transform\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "transform",
+                "comment": " Generate the transform attribute from a viewer\n",
+                "type": "Viewer.Viewer -> Svg.Attribute msg"
+            }
+        ],
+        "binops": []
+    }
+]

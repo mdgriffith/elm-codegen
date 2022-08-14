@@ -1,0 +1,77 @@
+[
+    {
+        "name": "Dom.DragDrop",
+        "comment": " This library makes it easy to implement HTML5 drag-and-drop operations with Elm and\n[@danielnarey's elm-dom framework](https://github.com/danielnarey/elm-modular-ui/).\n\nDom.Element nodes can be made draggable and droppable, with the state represented by an opaque object you can store in your model.\n\nEach draggable/droppable element should correspond to some kind of id. This could be an (id for an) item in a list, a tag value from a type representing the various draggable/droppable elements, or whatever you want.\n\nYour application must provide messages for each of the events triggered by this framework. The library provides helper methods to query and update the current state.\n\n\n# State\n\n@docs State\n\n\n# Querying State\n\n@docs isCurrentDropTarget, currentlyDraggedObject, dropTargetExists, initialState\n\n\n# Updating State\n\n@docs startDragging, stopDragging, updateDropTarget\n\n\n# Specifying Messages\n\n@docs Messages\n\n\n# Updating the UI\n\n@docs makeDraggable, makeDroppable\n\n",
+        "unions": [
+            {
+                "name": "State",
+                "comment": " An opaque container for state data.\n",
+                "args": [
+                    "draggableIdType",
+                    "dropTargetIdType"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Messages",
+                "comment": " Messages the Dom.DragDrop framework will send to your application as events occur. It is up to your application to call the appropriate Dom.DragDrop update function and store the result in your model.\n\nWe track four messages:\n\n  - dragStarted: when the user starts dragging an element\n  - dropTargetChanged: when the dragged element is moved over a droppable element\n  - dragEnded: when the user stops dragging outside a drop-receiving element\n  - dropped: when the user releases a dragged item onto a drop-receiving element\n\nLet's take a look at what this looks like for a sample set of types and messages:\n\n    -- some basic ID that each draggable element has\n    type Id\n        = Id Int\n\n\n    -- we can drop onto an existing element or at the end of the list\n    type DropTarget\n        = OntoElement Id\n        | EndOfList\n\n    type Msg\n        = MoveStarted Id\n        | MoveTargetChanged DropTarget\n        | MoveCanceled\n        | MoveCompleted Id DropTarget\n\n    dragDropMessages : Dom.DragDrop.Messages Id DropTarget\n    dragDropMessages =\n        { dragStarted = MoveStarted\n        , dropTargetChanged = MoveTargetChanged\n        , dragEnded = MoveCanceled\n        , dropped = MoveCompleted\n        }\n\n",
+                "args": [
+                    "msg",
+                    "draggableIdType",
+                    "dropTargetIdType"
+                ],
+                "type": "{ dragStarted : draggableIdType -> msg, dropTargetChanged : dropTargetIdType -> msg, dragEnded : msg, dropped : draggableIdType -> dropTargetIdType -> msg }"
+            }
+        ],
+        "values": [
+            {
+                "name": "currentlyDraggedObject",
+                "comment": " This method will return the currently dragged item (if any). Note that this will return the id (data) that corresponds to the Dom.Element node being dragged, rather than the actual DOM node itself.\n",
+                "type": "Dom.DragDrop.State draggableIdType dropTargetIdType -> Maybe.Maybe draggableIdType"
+            },
+            {
+                "name": "dropTargetExists",
+                "comment": " This method will tell you whether the dragged element (if any) is currently over a drop zone.\n",
+                "type": "Dom.DragDrop.State draggableIdType dropTargetIdType -> Basics.Bool"
+            },
+            {
+                "name": "initialState",
+                "comment": " The initial state on page load, with nothing being dragged or dropped.\n",
+                "type": "Dom.DragDrop.State draggableIdType dropTargetIdType"
+            },
+            {
+                "name": "isCurrentDropTarget",
+                "comment": " This method will tell you whether a given item is currently being hovered over to allow you to provide a visual hint.\n",
+                "type": "Dom.DragDrop.State draggableIdType dropTargetIdType -> dropTargetIdType -> Basics.Bool"
+            },
+            {
+                "name": "makeDraggable",
+                "comment": " makeDraggable makes an element draggable. When an element is being dragged, it will gain the \"being-dragged\" CSS class, with which you can control the display of the moving element.\n",
+                "type": "Dom.DragDrop.State draggableIdType dropTargetIdType -> draggableIdType -> Dom.DragDrop.Messages msg draggableIdType dropTargetIdType -> Dom.Element msg -> Dom.Element msg"
+            },
+            {
+                "name": "makeDroppable",
+                "comment": " makeDroppable marks an element as a place that a dragged object can be dropped onto. If the dragged object is currently hovering over the droppable element, it gains the CSS class \"drop-target\" to allow for appropriate visual indication.\n",
+                "type": "Dom.DragDrop.State draggableIdType dropTargetIdType -> dropTargetIdType -> Dom.DragDrop.Messages msg draggableIdType dropTargetIdType -> Dom.Element msg -> Dom.Element msg"
+            },
+            {
+                "name": "startDragging",
+                "comment": " When the dragStarted message is received by your app, call this method to update the state with the newly-dragged object.\n",
+                "type": "Dom.DragDrop.State draggableIdType dropTargetIdType -> draggableIdType -> Dom.DragDrop.State draggableIdType dropTargetIdType"
+            },
+            {
+                "name": "stopDragging",
+                "comment": " When dragging stops because either the dragEnded or dropped message were received or the user has done something else in your application, call this method to update the state appropriately.\n",
+                "type": "Dom.DragDrop.State draggableIdType dropTargetIdType -> Dom.DragDrop.State draggableIdType dropTargetIdType"
+            },
+            {
+                "name": "updateDropTarget",
+                "comment": " When the user drags an element over a potential drop zone and the dropTargetChanged message is received by your app, call this method to update the state with the currently targeted drop zone.\n",
+                "type": "Dom.DragDrop.State draggableIdType dropTargetIdType -> dropTargetIdType -> Dom.DragDrop.State draggableIdType dropTargetIdType"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,352 @@
+[
+    {
+        "name": "PixelEngine",
+        "comment": " This module takes care of the Graphics.\r\n\r\nYou will want to add [PixelEngine.Graphics.Image](PixelEngine-Graphics-Image)\r\nor [PixelEngine.Graphics.Tile](PixelEngine-Graphics-Tile) to\r\nactually draw something.\r\n\r\n\r\n# Area\r\n\r\nThe main idea of this graphic engine is to arrange the content into horizontal stripes,\r\nso called areas.\r\n\r\n@docs Area, tiledArea, imageArea, heightOf, mapArea\r\n\r\n\r\n# PixelEngine\r\n\r\n@docs PixelEngine\r\n\r\nIf one wants to use just use this module on its own, you can use `toHtml` instead\r\nof the `game` function from the main module.\r\n\r\n@docs toHtml, game, gameWithNoControls, gameWithCustomControls\r\n\r\n\r\n# Controls\r\n\r\nThe graphic engine provides a touch-controller for mobile devices.\r\n\r\n@docs Input, defaultInputs\r\n\r\n\r\n# Background\r\n\r\n@docs Background, imageBackground, colorBackground\r\n\r\n\r\n# Advanced\r\n\r\n@docs basicControls, customControls, withMobileSupport\r\n\r\n",
+        "unions": [
+            {
+                "name": "Input",
+                "comment": " all possible Inputs.\r\n",
+                "args": [],
+                "cases": [
+                    [
+                        "InputLeft",
+                        []
+                    ],
+                    [
+                        "InputRight",
+                        []
+                    ],
+                    [
+                        "InputUp",
+                        []
+                    ],
+                    [
+                        "InputDown",
+                        []
+                    ],
+                    [
+                        "InputA",
+                        []
+                    ],
+                    [
+                        "InputB",
+                        []
+                    ],
+                    [
+                        "InputX",
+                        []
+                    ],
+                    [
+                        "InputY",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Area",
+                "comment": " A horizontal area of the content.\r\nA `Area` defines how the content should be displayed.\r\n\r\n**Note:**\r\nAn area can only contain elements of the same type.\r\nSo either you have tiles or images.\r\n\r\n![A typical game](https://orasund.github.io/pixelengine/docs/img4.png \"A typical game\")\r\n\r\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "PixelEngine.Graphics.Data.Area.Area msg"
+            },
+            {
+                "name": "Background",
+                "comment": " Every area has a background.\r\n",
+                "args": [],
+                "type": "PixelEngine.Graphics.Data.Background"
+            },
+            {
+                "name": "PixelEngine",
+                "comment": " An alias for a PixelEngine program.\r\n\r\nYour `main` function will have this type.\r\n\r\n",
+                "args": [
+                    "flag",
+                    "model",
+                    "msg"
+                ],
+                "type": "Platform.Program flag (PixelEngine.Model model msg) (PixelEngine.Msg msg)"
+            }
+        ],
+        "values": [
+            {
+                "name": "basicControls",
+                "comment": " Subscribes to a keypress and sends the corresponding msg. This Function uses the default key layout.\r\n",
+                "type": "(PixelEngine.Input -> Maybe.Maybe msg) -> Platform.Sub.Sub (Maybe.Maybe msg)"
+            },
+            {
+                "name": "colorBackground",
+                "comment": " A single color background.\r\nIt uses [avh4/elm-color](https://package.elm-lang.org/packages/avh4/elm-color/latest).\r\n\r\n    colorBackground (Color.rgb255 20 12 28)\r\n\r\n",
+                "type": "Color.Color -> PixelEngine.Background"
+            },
+            {
+                "name": "customControls",
+                "comment": " Subscribes to a keypress using custom key layouts.\r\n\r\nIt uses [key values](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key) for the String.\r\nYou can use this [website](http://keycode.info) to find out the key value.\r\n\r\n",
+                "type": "(String.String -> Maybe.Maybe PixelEngine.Input) -> (PixelEngine.Input -> Maybe.Maybe msg) -> Platform.Sub.Sub (Maybe.Maybe msg)"
+            },
+            {
+                "name": "defaultInputs",
+                "comment": " The default layout:\r\n\r\n  - A/ArrowLeft - `InputLeft`\r\n  - W/ArrowUp - `InputUp`\r\n  - D/ArrowRight - `InputRight`\r\n  - S/ArrowDown - `InputDown`\r\n  - Space/Enter - `InputA`\r\n  - X/Backspace/Esc - `InputB`\r\n  - Q - `InputX`\r\n  - E - `InputY`\r\n\r\n",
+                "type": "String.String -> Maybe.Maybe PixelEngine.Input"
+            },
+            {
+                "name": "game",
+                "comment": " A pre-wired PixelEngine frame.\r\n\r\nUse it just like `document` from [elm/browser](https://package.elm-lang.org/packages/elm/browser/latest/Browser).\r\n\r\n",
+                "type": "{ init : flags -> ( model, Platform.Cmd.Cmd msg ), update : msg -> model -> ( model, Platform.Cmd.Cmd msg ), subscriptions : model -> Platform.Sub.Sub msg, view : model -> { title : String.String, options : Maybe.Maybe (PixelEngine.Options.Options msg), body : List.List (PixelEngine.Area msg) }, controls : PixelEngine.Input -> Maybe.Maybe msg, width : Basics.Float } -> Platform.Program flags (PixelEngine.Model model msg) (PixelEngine.Msg msg)"
+            },
+            {
+                "name": "gameWithCustomControls",
+                "comment": " A game using custom controls.\r\n\r\nThe default controls should be enough to start,\r\nbut maybe you want to write a spelling game,\r\nor its necessary that very specific keys are used?\r\n\r\n",
+                "type": "{ init : flags -> ( model, Platform.Cmd.Cmd msg ), update : msg -> model -> ( model, Platform.Cmd.Cmd msg ), subscriptions : model -> Platform.Sub.Sub msg, width : Basics.Float, view : model -> { title : String.String, options : Maybe.Maybe (PixelEngine.Options.Options msg), body : List.List (PixelEngine.Area msg) }, controls : ( String.String -> Maybe.Maybe PixelEngine.Input, PixelEngine.Input -> Maybe.Maybe msg ) } -> Platform.Program flags (PixelEngine.Model model msg) (PixelEngine.Msg msg)"
+            },
+            {
+                "name": "gameWithNoControls",
+                "comment": " A game with no controls.\r\n\r\nUse it just like `document` from [elm/browser](https://package.elm-lang.org/packages/elm/browser/latest/Browser).\r\n\r\n",
+                "type": "{ init : flags -> ( model, Platform.Cmd.Cmd msg ), update : msg -> model -> ( model, Platform.Cmd.Cmd msg ), subscriptions : model -> Platform.Sub.Sub msg, width : Basics.Float, view : model -> { title : String.String, options : Maybe.Maybe (PixelEngine.Options.Options msg), body : List.List (PixelEngine.Area msg) } } -> Platform.Program flags (PixelEngine.Model model msg) (PixelEngine.Msg msg)"
+            },
+            {
+                "name": "heightOf",
+                "comment": " Returns the height of a list of Areas\r\n\r\nThis can be used to return the height of a `tiledArea`.\r\nFor a `imageArea` this function is trivial.\r\n\r\n",
+                "type": "List.List (PixelEngine.Area msg) -> Basics.Float"
+            },
+            {
+                "name": "imageArea",
+                "comment": " An area containing images that can be arranged freely.\r\n\r\nThis is a complete contrast to the way how `tiledArea` is working.\r\nUseful applications are GUIs, menus or loading screens.\r\n\r\nCheckout [PixelEngine.Graphics.Image](PixelEngine-Graphics-Image) for more information.\r\n\r\nThis area has the following options:\r\n\r\n  - `height` - The height or the `Area` in pixels.\r\n  - `background` - The background of the `Area`.\r\n\r\n",
+                "type": "{ height : Basics.Float, background : PixelEngine.Background } -> List.List ( ( Basics.Float, Basics.Float ), PixelEngine.Image.Image msg ) -> PixelEngine.Area msg"
+            },
+            {
+                "name": "imageBackground",
+                "comment": " An image that gets repeated.\r\n\r\n    Image \"groundTile.png\"\r\n\r\n",
+                "type": "{ source : String.String, width : Basics.Float, height : Basics.Float } -> PixelEngine.Background"
+            },
+            {
+                "name": "mapArea",
+                "comment": " Maps the message of an Area\r\n",
+                "type": "(a -> b) -> PixelEngine.Area a -> PixelEngine.Area b"
+            },
+            {
+                "name": "tiledArea",
+                "comment": " An area for using tilesets.\r\n\r\nIt supports one tileset at a time,\r\nthat means all sprites must be of the same size and stored as a grid in one single file.\r\nThis area is useful for displaying the playing field of a game.\r\n\r\nCheckout [PixelEngine.Graphics.Tile](PixelEngine-Graphics-Image) for more information.\r\n\r\nThis area has the following options:\r\n\r\n  - `rows` - The amount of rows of the grid. This value defines the height of the `Area`.\r\n  - `tileset` - The tileset that will be used for all elements in the `Area`.\r\n  - `background` - The background of the `Area`.\r\n\r\n",
+                "type": "{ rows : Basics.Int, tileset : PixelEngine.Tile.Tileset, background : PixelEngine.Background } -> List.List ( ( Basics.Int, Basics.Int ), PixelEngine.Tile.Tile msg ) -> PixelEngine.Area msg"
+            },
+            {
+                "name": "toHtml",
+                "comment": " Displays content of the game.\r\n",
+                "type": "{ width : Basics.Float, options : Maybe.Maybe (PixelEngine.Options.Options msg) } -> List.List (PixelEngine.Area msg) -> Html.Html msg"
+            },
+            {
+                "name": "withMobileSupport",
+                "comment": " Adds mobile support to the options.\r\nIt needs the window size.\r\n\r\n<PixelEngine> provides a fully wired program that takes care of everything.\r\n\r\n",
+                "type": "{ windowSize : { width : Basics.Float, height : Basics.Float }, controls : PixelEngine.Input -> Maybe.Maybe msg } -> PixelEngine.Options.Options msg -> PixelEngine.Options.Options msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "PixelEngine.Image",
+        "comment": " This module contains functions for creating images.\r\nThese Images can then be used for the `imageArea` function from the <PixelEngine>\r\n\r\n\r\n## Image\r\n\r\n@docs Image, fromSrc, fromTile, fromText, fromTextWithSpacing, map\r\n\r\n\r\n## Configurate\r\n\r\n@docs movable, jumping, multipleImages, clickable, monochrome, withAttributes\r\n\r\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Image",
+                "comment": " A `Image` is actually a very general type: As we will see later,\r\neven tiles are essentially images.\r\nThe following functions are intended to be modular.\r\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "PixelEngine.Graphics.Data.Area.ContentElement msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "clickable",
+                "comment": " Makes an `Image` clickable\r\n\r\nUse this to create the `onClick` event from [Html.Events](https://package.elm-lang.org/packages/elm/html/latest/Html-Events#onClick).\r\n\r\n",
+                "type": "msg -> PixelEngine.Image.Image msg -> PixelEngine.Image.Image msg"
+            },
+            {
+                "name": "fromSrc",
+                "comment": " The basic image constructor.\r\nThe string contains the url to the image\r\n\r\n    fromSrc \"aStone.png\"\r\n\r\n",
+                "type": "String.String -> PixelEngine.Image.Image msg"
+            },
+            {
+                "name": "fromText",
+                "comment": " Created an Image from a text-string and the Tileset of the font.\r\n\r\nIt only supports Ascii characters.\r\n\r\nThis package comes with a [collection of Fonts](https://github.com/Orasund/pixelengine/wiki/Collection-of-Fonts)\r\nthat are free to use.\r\n\r\n",
+                "type": "String.String -> PixelEngine.Tile.Tileset -> PixelEngine.Image.Image msg"
+            },
+            {
+                "name": "fromTextWithSpacing",
+                "comment": " Created an Image from a text-string and the Tileset of the font.\r\n\r\nIt only supports Ascii characters.\r\n\r\nThe first argument is the spaceing between letters. Use negative values to place\r\nthe letters nearer to echother.\r\n\r\nThis package comes with a [collection of Fonts](https://github.com/Orasund/pixelengine/wiki/Collection-of-Fonts)\r\nthat are free to use.\r\n\r\n",
+                "type": "Basics.Float -> String.String -> PixelEngine.Tile.Tileset -> PixelEngine.Image.Image msg"
+            },
+            {
+                "name": "fromTile",
+                "comment": " `Tiles` are essentially also images,\r\ntherefore this constructor transforms a `Tile` and a `Tileset` into an `Image`.\r\n\r\n    fromTile (Tile.fromPosition ( 0, 0 ))\r\n        (Tile.tileset\r\n            { source = \"tiles.png\"\r\n            , spriteWidth = 80\r\n            , spriteHeight = 80\r\n            }\r\n        )\r\n    = fromSrc \"tiles.png\"\r\n\r\n**Note:**\r\n`fromTile` displays only the `width` and `height` of the image, that where given.\r\nThis means setting `width` and `height` to `0` would not display the image at all.\r\n\r\n    fromTile (Tile.fromPosition ( 0, 0 ) |> Tile.movable \"uniqueId\") tileset\r\n        == fromTile (Tile.fromPosition ( 0, 0 )) tileset\r\n        |> movable \"uniqueId\"\r\n\r\n**Note:**\r\nIf you want to animate an `Image` use this function instead.\r\n\r\n",
+                "type": "PixelEngine.Tile.Tile msg -> PixelEngine.Tile.Tileset -> PixelEngine.Image.Image msg"
+            },
+            {
+                "name": "jumping",
+                "comment": " Pauses a the transition of a `movable` image.\r\n\r\n**Only use in combination with `movable`:**\r\n\r\n    image \"teleportingEnemy.png\" |> movable \"name\" |> jumping\r\n\r\nUse this function if a tile has the `movable`-property, but you would like to\r\nremove it without causing any unwanted side effects.\r\n\r\n",
+                "type": "PixelEngine.Image.Image msg -> PixelEngine.Image.Image msg"
+            },
+            {
+                "name": "map",
+                "comment": " Maps the message of an Image\r\n",
+                "type": "(a -> b) -> PixelEngine.Image.Image a -> PixelEngine.Image.Image b"
+            },
+            {
+                "name": "monochrome",
+                "comment": " Adds a background color.\r\n\r\n\\*\\* This makes the the Image non-transparent \\*\\*\r\n\r\nThis can be used to simulate monochrome sprites or to implement team colors.\r\n\r\n",
+                "type": "Color.Color -> PixelEngine.Image.Image msg -> PixelEngine.Image.Image msg"
+            },
+            {
+                "name": "movable",
+                "comment": " Creates a image transition between positions.\r\nThis is useful for images that will change their position during the game.\r\n\r\n    image \"enemy.png\" |> movable \"name\"\r\n\r\n**Note:**\r\nThe string should be unique, if not the transition might fail every now and then.\r\n\r\n**Note:**\r\nThe string will be a id Attribute in a html node, so be careful not to use names that might be already taken.\r\n\r\n",
+                "type": "String.String -> PixelEngine.Image.Image msg -> PixelEngine.Image.Image msg"
+            },
+            {
+                "name": "multipleImages",
+                "comment": " It is possible to compose an `Image` from a set of other images.\r\nThe two `Floats` are relative coordinates.\r\n\r\n    ( ( 100, 100 ), fromSrc \"img.png\" )\r\n        == ( ( 20, 50 ), multipleImages [ ( ( 80, 50 ), fromSrc \"img.png\" ) ] )\r\n\r\nSub-images loose the ability to be movable:\r\n\r\n    multipleImages [((4,2),fromSrc \"img.png\" |> movable \"id\")]\r\n    --> multipleImages [((4,2),fromSrc \"img.png\")]\r\n\r\nInstead use the following:\r\n\r\n    fromSrc \"img.png\"\r\n        |> movable \"id\"\r\n        == multipleImages [ ( ( 0, 0 ), fromSrc \"img.png\" ) ]\r\n        |> movable \"id\"\r\n\r\n",
+                "type": "List.List ( ( Basics.Float, Basics.Float ), PixelEngine.Image.Image msg ) -> PixelEngine.Image.Image msg"
+            },
+            {
+                "name": "withAttributes",
+                "comment": " Adds custom attributes.\r\n\r\nUse the [Html.Attributes](https://package.elm-lang.org/packages/elm/html/latest/Html-Attributes).\r\n\r\n",
+                "type": "List.List (Html.Attribute msg) -> PixelEngine.Image.Image msg -> PixelEngine.Image.Image msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "PixelEngine.Options",
+        "comment": " Options tweak different aspects of your program.\r\n\r\n#Transitions\r\nAdding a transitions between screens.\r\n\r\nThe information for the transition will be written in the `Option` class from\r\n[PixelEngine.Graphics](PixelEngine-Graphics).\r\n\r\nTo get started, copy the following example:\r\n\r\n    options\r\n        |> Transition.withTransitionFrom\r\n            ListOfArea\r\n            (Transition.customTransition\r\n                \"death_transition\"\r\n                [ ( 0, \"opacity:1;filter:grayscale(0%) blur(0px);\" )\r\n                , ( 1, \"opacity:1;filter:grayscale(70%) blur(0px);\" )\r\n                , ( 3, \"opacity:0;filter:grayscale(70%) blur(5px);\" )\r\n            ])\r\n\r\n\r\n## Main Function\r\n\r\n@docs withTransitionFrom\r\n\r\n\r\n## Area\r\n\r\n@docs Transition, transition\r\n\r\n\r\n## Options\r\n\r\n@docs Options, default, withAnimationFPS, withMovementSpeed, withScale\r\n\r\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Options",
+                "comment": " Options for the render function\r\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "PixelEngine.Graphics.Data.Options.Options msg"
+            },
+            {
+                "name": "Transition",
+                "comment": " A transition between screens\r\n",
+                "args": [],
+                "type": "PixelEngine.Graphics.Data.Transition.Transition"
+            }
+        ],
+        "values": [
+            {
+                "name": "default",
+                "comment": " Defines the width of the game.\r\n",
+                "type": "PixelEngine.Options.Options msg"
+            },
+            {
+                "name": "transition",
+                "comment": " The default constructor for a `Transition`.\r\n\r\nFor the future I have planed to make transitions modular, similar to a `Msg` or a `Sub`.\r\n\r\n    Transition.transition\r\n        \"death_transition\"\r\n        [ ( 0, \"opacity:1;filter:grayscale(0%) blur(0px);\" )\r\n        , ( 1, \"opacity:1;filter:grayscale(70%) blur(0px);\" )\r\n        , ( 3, \"opacity:0;filter:grayscale(70%) blur(5px);\" )\r\n        ]\r\n\r\nThe first value is the duration of the effect, the second is the CSS-command at that point in time.\r\nSo the example will compile to something like this:\r\n\r\n    dealth_transition:\r\n    0% {opacity:1;filter:grayscale(0%) blur(0px);}\r\n    25% {opacity:1;filter:grayscale(70%) blur(0px);}\r\n    100% {opacity:0;filter:grayscale(70%) blur(5px);}\r\n\r\n**Note:**\r\nA screen will be automatically hidden after a transition,\r\nso the example would also work without the opacity-parameter.\r\n\r\n",
+                "type": "String.String -> { start : String.String, keyFrames : List.List (Maybe.Maybe String.String), end : String.String } -> PixelEngine.Options.Transition"
+            },
+            {
+                "name": "withAnimationFPS",
+                "comment": " Sets the Frames per Seconds for Animations.\r\n\r\nValue must be positv or else the function will be ignored.\r\n\r\n**Default value:** `1`\r\n\r\n",
+                "type": "Basics.Float -> PixelEngine.Options.Options msg -> PixelEngine.Options.Options msg"
+            },
+            {
+                "name": "withMovementSpeed",
+                "comment": " The speed of movement in seconds.\r\n\r\n**Default value:** `0.2`\r\n\r\n",
+                "type": "Basics.Float -> PixelEngine.Options.Options msg -> PixelEngine.Options.Options msg"
+            },
+            {
+                "name": "withScale",
+                "comment": " Scales up everything.\r\n\r\nUse only power of `2` as scale to ensure crisp pixels.\r\n\r\n**Default value:** `1`\r\n\r\n",
+                "type": "Basics.Int -> PixelEngine.Options.Options msg -> PixelEngine.Options.Options msg"
+            },
+            {
+                "name": "withTransitionFrom",
+                "comment": " adds the `Transition` to the `Options`.\r\n\r\nThe first argument is the List or Areas taken **before** the transition is applied.\r\n(e.g. the last state)\r\n\r\n",
+                "type": "List.List (PixelEngine.Graphics.Data.Area.Area msg) -> PixelEngine.Options.Transition -> PixelEngine.Options.Options msg -> PixelEngine.Options.Options msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "PixelEngine.Tile",
+        "comment": " This module contains functions for creating tiles.\r\nTiles are used for the `tiledArea` function from the main module.\r\n\r\n\r\n## Tile\r\n\r\n@docs Tile, fromPosition, fromText, multipleTiles, map\r\n\r\n\r\n## Configurate\r\n\r\n@docs movable, jumping, animated, clickable, monochrome, withAttributes\r\n\r\n\r\n## Tileset\r\n\r\n@docs Tileset, tileset\r\n\r\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Tile",
+                "comment": " A `Tile` defines a sprite in a `Tileset`.\r\nThe following functions are intended to be modular.\r\n\r\nA example for a `tile` could be:\r\n\r\n    tile ( 1, 2 ) |> animated 1 |> movable \"uniqueName\"\r\n\r\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "PixelEngine.Graphics.Data.Tile.Tile msg"
+            },
+            {
+                "name": "Tileset",
+                "comment": " A Tileset contains the actuall image that a `Tile` can reference.\r\n",
+                "args": [],
+                "type": "PixelEngine.Graphics.Data.Tile.Tileset"
+            }
+        ],
+        "values": [
+            {
+                "name": "animated",
+                "comment": " Adds animations to a `Tile`.\r\nThe sprites of the animation must be arranged horizontally in the `Tileset`.\r\n\r\nThe first argument give the amount of steps of the animation (one less then the number of sprites.)\r\n\r\nThe following code specifies a `Tile` with 3+1 frames\r\n\r\n    tile ( 0, 0 ) |> animated 3\r\n\r\n**Note:**\r\nSetting the steps to `0` describes a tile with no animation.\r\n\r\n    tile ( 0, 0 ) |> animated 0 == tile ( 0, 0 )\r\n\r\n![animation](https://orasund.github.io/pixelengine/docs/img2.png \"animation\")\r\n\r\n**Note:**\r\nNegaive steps are not supported, in this case no animation will be played.\r\n\r\n",
+                "type": "Basics.Int -> PixelEngine.Tile.Tile msg -> PixelEngine.Tile.Tile msg"
+            },
+            {
+                "name": "clickable",
+                "comment": " Makes an `Tile` clickable\r\n\r\nUse this to create the `onClick` event from [Html.Events](https://package.elm-lang.org/packages/elm/html/latest/Html-Events#onClick).\r\n\r\n",
+                "type": "msg -> PixelEngine.Tile.Tile msg -> PixelEngine.Tile.Tile msg"
+            },
+            {
+                "name": "fromPosition",
+                "comment": " The basic `Tile` constructor.\r\n\r\nThe first argument is the position of the sprite in the `tileset`.\r\n\r\nAs an example\r\n\r\n    tile ( 3, 2 )\r\n\r\nis the 3 row in the second column of the `Tileset`.\r\n\r\n![a tileset](https://orasund.github.io/pixelengine/docs/img3.png \"a tileset\")\r\n\r\n",
+                "type": "( Basics.Int, Basics.Int ) -> PixelEngine.Tile.Tile msg"
+            },
+            {
+                "name": "fromText",
+                "comment": " Created a List of Tiles from a String and a Offset.\r\n\r\nIt only supports ASCII characters.\r\n\r\nThe Offset `(Int,Int` should point to the sprite repesenting the space-character.\r\n\r\nThis package comes with a [collection of Fonts](https://github.com/Orasund/pixelengine/wiki/Collection-of-Fonts)\r\nthat are free to use.\r\n\r\n",
+                "type": "( Basics.Int, Basics.Int ) -> String.String -> List.List (PixelEngine.Tile.Tile msg)"
+            },
+            {
+                "name": "jumping",
+                "comment": " Pauses the transition of a `movable` tile.\r\n\r\n**Only use in combination with `movable`:**\r\n\r\n    tile ( 0, 0 ) |> movable \"name\" |> jumping\r\n\r\nUse this function if a `Tile` has the `movable`-property and you would like to\r\nremove it temporarily without causing any unwanted side effects.\r\n\r\n",
+                "type": "PixelEngine.Tile.Tile msg -> PixelEngine.Tile.Tile msg"
+            },
+            {
+                "name": "map",
+                "comment": " Maps the message of a Tile\r\n",
+                "type": "(a -> b) -> PixelEngine.Tile.Tile a -> PixelEngine.Tile.Tile b"
+            },
+            {
+                "name": "monochrome",
+                "comment": " Adds a background color.\r\n\r\n\\*\\* This makes the the Tile non-transparent \\*\\*\r\n\r\nThis can be used to simulate monochrome sprites or to implement team colors.\r\n\r\n",
+                "type": "Color.Color -> PixelEngine.Tile.Tile msg -> PixelEngine.Tile.Tile msg"
+            },
+            {
+                "name": "movable",
+                "comment": " Makes a `Tile` transition between positions.\r\nThis is useful for sprites that will change their position during the game.\r\n\r\n    tile ( 0, 0 ) |> movable \"name\"\r\n\r\n**Note:**\r\nOnce a `Tile` has this property, it can **NOT** be removed during the game.\r\n\r\n**Note:**\r\nThe string should be unique,. If not then the transition might fail every now and then.\r\n\r\n**Note:**\r\nThe string will be a id Attribute in a html node, so be careful not to use names that might be already taken.\r\n\r\n",
+                "type": "String.String -> PixelEngine.Tile.Tile msg -> PixelEngine.Tile.Tile msg"
+            },
+            {
+                "name": "multipleTiles",
+                "comment": " Allows multiple Tiles on top of each other.\r\n\r\nSub-tiles loose the ability to be movable:\r\n\r\n    multipleTiles [fromPosition (0,0) |> movable \"id\"]\r\n    --> fromPosition (0,0)\r\n\r\nInstead use\r\n\r\n    multipleTiles [fromPosition (0,0) ] |> movable \"id\"\r\n        --> fromPosition (0,0) |> movable \"id\"\r\n\r\n",
+                "type": "List.List (PixelEngine.Tile.Tile msg) -> PixelEngine.Tile.Tile msg"
+            },
+            {
+                "name": "tileset",
+                "comment": " The `Tileset` constructor has the following parameters:\r\n\r\n  - `source` - The adress to the file\r\n  - `spriteWidth` - The size of a single sprite in the `Tileset` (in pixels)\r\n  - `spriteHeight` - The height of a single sprite (also in pixels)\r\n\r\nFor the following defines the `Tileset` used in the examples of this module.\r\n\r\n    { width: 16\r\n    , height 16\r\n    , source: \"https://orasund.github.io/pixelengine/tileset.png\"\r\n    }\r\n\r\n",
+                "type": "{ source : String.String, spriteWidth : Basics.Int, spriteHeight : Basics.Int } -> PixelEngine.Tile.Tileset"
+            },
+            {
+                "name": "withAttributes",
+                "comment": " Adds custom attributes.\r\n\r\nuse the [Html.Attributes](https://package.elm-lang.org/packages/elm/html/latest/Html-Attributes).\r\n\r\n",
+                "type": "List.List (Html.Attribute msg) -> PixelEngine.Tile.Tile msg -> PixelEngine.Tile.Tile msg"
+            }
+        ],
+        "binops": []
+    }
+]

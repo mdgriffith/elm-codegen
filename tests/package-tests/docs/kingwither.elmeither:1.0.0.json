@@ -1,0 +1,104 @@
+[
+    {
+        "name": "Either",
+        "comment": " This module implements 'Either' like in Haskell.\n\n\n# Either\n\n@docs Either\n\n\n# Deconstructing\n\n@docs left, right, leftI, rightI\n\n\n# Sides\n\n@docs Side, side, isOnSide, sameSide, allSameSide\n\n\n# Lists\n\n@docs lefts, rights\n\n\n# Misc\n\n@docs flip\n\n",
+        "unions": [
+            {
+                "name": "Either",
+                "comment": " Actuall type declaration\n",
+                "args": [
+                    "a",
+                    "b"
+                ],
+                "cases": [
+                    [
+                        "Left",
+                        [
+                            "a"
+                        ]
+                    ],
+                    [
+                        "Right",
+                        [
+                            "b"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Side",
+                "comment": " This is like an enum declaration for which side is active in an Either variable.\nThey can not be `Left` and `Right`, because those constructors are already taken by\nthe above `Either` declaration.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Former",
+                        []
+                    ],
+                    [
+                        "Latter",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "allSameSide",
+                "comment": " Checks if ALL the Either variables are on the same side.\n",
+                "type": "List.List (Either.Either a b) -> Basics.Bool"
+            },
+            {
+                "name": "flip",
+                "comment": " Flips the sides around, so that a becomes b and b becomes a.\n",
+                "type": "Either.Either a b -> Either.Either b a"
+            },
+            {
+                "name": "isOnSide",
+                "comment": " Checks if the Either variable is on a given side.\n",
+                "type": "Either.Side -> Either.Either a b -> Basics.Bool"
+            },
+            {
+                "name": "left",
+                "comment": " Decodes the left side of an Either statement. Will return Nothing if the\nvariable is on the right.\n\nSimilar to [`right`](#right).\n\n",
+                "type": "Either.Either a b -> Maybe.Maybe a"
+            },
+            {
+                "name": "leftI",
+                "comment": " Like [`left`](#left), but insured. If the variable is on the right side, a given value will be returned instead.\n",
+                "type": "a -> Either.Either a b -> a"
+            },
+            {
+                "name": "lefts",
+                "comment": " Gets all the left values of a list of Either variables.\n",
+                "type": "List.List (Either.Either a b) -> List.List a"
+            },
+            {
+                "name": "right",
+                "comment": " Decodes the right side of an Either statement. Will return Nothing if the\nvariable is on the left.\n\nSimilar to [`left`](#left).\n\n",
+                "type": "Either.Either a b -> Maybe.Maybe b"
+            },
+            {
+                "name": "rightI",
+                "comment": " Like [`right`](#right), but insured. If the variable is on the left side, a given value will be returned instead.\n",
+                "type": "b -> Either.Either a b -> b"
+            },
+            {
+                "name": "rights",
+                "comment": " Gets all the right values of a list of Either variables.\n",
+                "type": "List.List (Either.Either a b) -> List.List b"
+            },
+            {
+                "name": "sameSide",
+                "comment": " Checks if two Either variables are active on the same side.\n",
+                "type": "Either.Either a b -> Either.Either c d -> Basics.Bool"
+            },
+            {
+                "name": "side",
+                "comment": " Returns which side of the variable is active.\n",
+                "type": "Either.Either a b -> Either.Side"
+            }
+        ],
+        "binops": []
+    }
+]

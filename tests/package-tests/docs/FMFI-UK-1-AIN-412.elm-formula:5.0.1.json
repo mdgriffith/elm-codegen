@@ -1,0 +1,306 @@
+[
+    {
+        "name": "Formula",
+        "comment": " This library exports formulas.\n\n\n# Definitions\n\n@docs Formula\n\n\n# Strings\n\n@docs toString\n\n\n# Tableau helpers\n\n@docs substitute, free, removeQuantifierAndSubstitute, isSubformulaOf\n\n",
+        "unions": [
+            {
+                "name": "Formula",
+                "comment": " Formula\n",
+                "args": [],
+                "cases": [
+                    [
+                        "PredAtom",
+                        [
+                            "String.String",
+                            "List.List Term.Term"
+                        ]
+                    ],
+                    [
+                        "EqAtom",
+                        [
+                            "Term.Term",
+                            "Term.Term"
+                        ]
+                    ],
+                    [
+                        "Neg",
+                        [
+                            "Formula.Formula"
+                        ]
+                    ],
+                    [
+                        "Disj",
+                        [
+                            "Formula.Formula",
+                            "Formula.Formula"
+                        ]
+                    ],
+                    [
+                        "Conj",
+                        [
+                            "Formula.Formula",
+                            "Formula.Formula"
+                        ]
+                    ],
+                    [
+                        "Impl",
+                        [
+                            "Formula.Formula",
+                            "Formula.Formula"
+                        ]
+                    ],
+                    [
+                        "Equiv",
+                        [
+                            "Formula.Formula",
+                            "Formula.Formula"
+                        ]
+                    ],
+                    [
+                        "ForAll",
+                        [
+                            "String.String",
+                            "Formula.Formula"
+                        ]
+                    ],
+                    [
+                        "Exists",
+                        [
+                            "String.String",
+                            "Formula.Formula"
+                        ]
+                    ],
+                    [
+                        "FF",
+                        []
+                    ],
+                    [
+                        "FT",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "free",
+                "comment": " Returns set of all free variables in given formula\n",
+                "type": "Formula.Formula -> Set.Set String.String"
+            },
+            {
+                "name": "isSubformulaOf",
+                "comment": " Is the first a subformula of the second\n",
+                "type": "Formula.Formula -> Formula.Formula -> Basics.Bool"
+            },
+            {
+                "name": "removeQuantifierAndSubstitute",
+                "comment": " Removes quantifier from given signed formula and returns formula after substitution or error\n",
+                "type": "Term.Substitution -> Formula.Formula -> Result.Result String.String Formula.Formula"
+            },
+            {
+                "name": "substitute",
+                "comment": " Checks if substitution is applicable and substitutes if yes. Returns Result.\nErrMessage or Formula after substitution\n",
+                "type": "Term.Substitution -> Formula.Formula -> Result.Result String.String Formula.Formula"
+            },
+            {
+                "name": "toString",
+                "comment": " String representation of a Formula\n",
+                "type": "Formula.Formula -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Formula.Parser",
+        "comment": " This library parses formulas.\n\n\n# Parsers\n\n@docs parse, parseSigned, parseTerm, parseSubstitution\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "parse",
+                "comment": " Parse string to Formula\n",
+                "type": "String.String -> Result.Result (List.List Parser.DeadEnd) Formula.Formula"
+            },
+            {
+                "name": "parseSigned",
+                "comment": " Parse string to Signed Formula\n",
+                "type": "String.String -> Result.Result (List.List Parser.DeadEnd) (Formula.Signed.Signed Formula.Formula)"
+            },
+            {
+                "name": "parseSubstitution",
+                "comment": " Parse string to Substitution\n",
+                "type": "String.String -> Result.Result (List.List Parser.DeadEnd) Term.Substitution"
+            },
+            {
+                "name": "parseTerm",
+                "comment": " Parses string to Term\n",
+                "type": "String.String -> Result.Result (List.List Parser.DeadEnd) Term.Term"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Formula.Signed",
+        "comment": " This library exports signed formulas.\n\n\n# Definitions\n\n@docs Signed\n\n\n# Strings\n\n@docs toString\n\n\n# Tableau helpers\n\n@docs isAlpha, isBeta, isGamma, isDelta, isComplementary, isSubformulaOf, getFormula, subformulas\n\n",
+        "unions": [
+            {
+                "name": "Signed",
+                "comment": " Signed with T[rue] or F[alse]\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "T",
+                        [
+                            "a"
+                        ]
+                    ],
+                    [
+                        "F",
+                        [
+                            "a"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "getFormula",
+                "comment": " Get Formula out of Signed Formula\n",
+                "type": "Formula.Signed.Signed Formula.Formula -> Formula.Formula"
+            },
+            {
+                "name": "isAlpha",
+                "comment": " Is the signed formula of type Alpha\n",
+                "type": "Formula.Signed.Signed Formula.Formula -> Basics.Bool"
+            },
+            {
+                "name": "isBeta",
+                "comment": " Is the signed formula of type Beta\n",
+                "type": "Formula.Signed.Signed Formula.Formula -> Basics.Bool"
+            },
+            {
+                "name": "isComplementary",
+                "comment": " Is the first Signed Formula complementary of the second Signed Formula\n",
+                "type": "Formula.Signed.Signed Formula.Formula -> Formula.Signed.Signed Formula.Formula -> Basics.Bool"
+            },
+            {
+                "name": "isDelta",
+                "comment": " Is the signed formula of type Delta\n",
+                "type": "Formula.Signed.Signed Formula.Formula -> Basics.Bool"
+            },
+            {
+                "name": "isGamma",
+                "comment": " Is the signed formula of type Gamma\n",
+                "type": "Formula.Signed.Signed Formula.Formula -> Basics.Bool"
+            },
+            {
+                "name": "isSubformulaOf",
+                "comment": " Is the first a Signed subformula of the second\n",
+                "type": "Formula.Signed.Signed Formula.Formula -> Formula.Signed.Signed Formula.Formula -> Basics.Bool"
+            },
+            {
+                "name": "subformulas",
+                "comment": " Get signed subformulas as a list of signed formulas\n",
+                "type": "Formula.Signed.Signed Formula.Formula -> List.List (Formula.Signed.Signed Formula.Formula)"
+            },
+            {
+                "name": "toString",
+                "comment": " String representation of a Signed Formula\n",
+                "type": "Formula.Signed.Signed Formula.Formula -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Term",
+        "comment": " This library exports Terms.\n\n\n# Definitions\n\n@docs Term, Substitution\n\n\n# Strings\n\n@docs toString, strSubstitution, argsToString\n\n\n# Tableau helpers\n\n@docs substitute, substs, subst\n\n\n# Symbol helpers\n\n@docs free, freeA, functionsA, variablesA\n\n",
+        "unions": [
+            {
+                "name": "Term",
+                "comment": " Type alias for term\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Var",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Fun",
+                        [
+                            "String.String",
+                            "List.List Term.Term"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Substitution",
+                "comment": " Type alias for substitution\n",
+                "args": [],
+                "type": "Dict.Dict String.String Term.Term"
+            }
+        ],
+        "values": [
+            {
+                "name": "argsToString",
+                "comment": " String represenation of multiple Terms\n",
+                "type": "List.List Term.Term -> String.String"
+            },
+            {
+                "name": "free",
+                "comment": " free\n",
+                "type": "Term.Term -> Set.Set String.String"
+            },
+            {
+                "name": "freeA",
+                "comment": " freeA\n",
+                "type": "Term.Term -> Set.Set String.String -> Set.Set String.String"
+            },
+            {
+                "name": "functionsA",
+                "comment": " functionsA\n",
+                "type": "Term.Term -> Set.Set String.String -> Set.Set String.String"
+            },
+            {
+                "name": "strSubstitution",
+                "comment": " String representation of a Substitution\n",
+                "type": "Term.Substitution -> String.String"
+            },
+            {
+                "name": "subst",
+                "comment": " subst\n",
+                "type": "Term.Substitution -> Set.Set String.String -> Term.Term -> Result.Result String.String Term.Term"
+            },
+            {
+                "name": "substitute",
+                "comment": " substitute\n",
+                "type": "Term.Substitution -> Term.Term -> Term.Term"
+            },
+            {
+                "name": "substs",
+                "comment": " substs\n",
+                "type": "Term.Substitution -> Set.Set String.String -> List.List Term.Term -> Result.Result String.String (List.List Term.Term)"
+            },
+            {
+                "name": "toString",
+                "comment": " String representation of a Term\n",
+                "type": "Term.Term -> String.String"
+            },
+            {
+                "name": "variablesA",
+                "comment": " variablesA\n",
+                "type": "Term.Term -> Set.Set String.String -> Set.Set String.String"
+            }
+        ],
+        "binops": []
+    }
+]

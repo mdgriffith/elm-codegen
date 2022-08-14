@@ -1,0 +1,31 @@
+[
+    {
+        "name": "SHA",
+        "comment": " An implementation of several [SHA](https://en.wikipedia.org/wiki/Secure_Hash_Algorithms) cryptographic hash functions. This package uses [icidasset/elm-binary](https://package.elm-lang.org/packages/icidasset/elm-binary/latest/) to work with binary numbers.\n\n@docs sha224, sha256, sha384, sha512\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "sha224",
+                "comment": " SHA-224.\n\n    >>> import Binary\n\n    >>> \"abc\"\n    ..>   |> Binary.fromStringAsUtf8\n    ..>   |> SHA.sha224\n    ..>   |> Binary.toHex\n    \"23097D223405D8228642A477BDA255B32AADBCE4BDA0B3F7E36C9DA7\"\n\n",
+                "type": "Binary.Bits -> Binary.Bits"
+            },
+            {
+                "name": "sha256",
+                "comment": " SHA-256.\n\n    >>> import Binary\n\n    >>> \"abc\"\n    ..>   |> Binary.fromStringAsUtf8\n    ..>   |> SHA.sha256\n    ..>   |> Binary.toHex\n    \"BA7816BF8F01CFEA414140DE5DAE2223B00361A396177A9CB410FF61F20015AD\"\n\n",
+                "type": "Binary.Bits -> Binary.Bits"
+            },
+            {
+                "name": "sha384",
+                "comment": " SHA-384.\n\n    >>> import Binary\n\n    >>> \"abc\"\n    ..>   |> Binary.fromStringAsUtf8\n    ..>   |> SHA.sha384\n    ..>   |> Binary.toHex\n    \"CB00753F45A35E8BB5A03D699AC65007272C32AB0EDED1631A8B605A43FF5BED8086072BA1E7CC2358BAECA134C825A7\"\n\n",
+                "type": "Binary.Bits -> Binary.Bits"
+            },
+            {
+                "name": "sha512",
+                "comment": " SHA-512.\n\n    >>> import Binary\n\n    >>> \"abc\"\n    ..>   |> Binary.fromStringAsUtf8\n    ..>   |> SHA.sha512\n    ..>   |> Binary.toHex\n    \"DDAF35A193617ABACC417349AE20413112E6FA4E89A97EA20A9EEEE64B55D39A2192992A274FC1A836BA3C23A3FEEBBD454D4423643CE80E2A9AC94FA54CA49F\"\n\n",
+                "type": "Binary.Bits -> Binary.Bits"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,114 @@
+[
+    {
+        "name": "NoUnused.CustomTypeConstructorArgs",
+        "comment": "\n\n@docs rule\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": " Reports arguments of custom type constructors that are never used.\n\n    config =\n        [ NoUnused.CustomTypeConstructorArgs.rule\n        ]\n\nCustom type constructors can contain data that is never extracted out of the constructor.\nThis rule will warn arguments that are always pattern matched using a wildcard (`_`).\n\nFor package projects, custom types whose constructors are exposed as part of the package API are not reported.\n\nNote that this rule **may report false positives** if you compare custom types with the `==` or `/=` operators\n(and never destructure the custom type), like when you do `value == Just 0`, or store them in lists for instance with\n[`assoc-list`](https://package.elm-lang.org/packages/pzp1997/assoc-list/latest).\nThis rule attempts to detect when the custom type is used in comparisons, but it may still result in false positives.\n\n\n## Fail\n\n    type CustomType\n      = CustomType Used Unused\n\n    case customType of\n      CustomType value _ -> value\n\n\n## Success\n\n    type CustomType\n      = CustomType Used Unused\n\n    case customType of\n      CustomType value maybeUsed -> value\n\n\n## When not to enable this rule?\n\nIf you like giving names to all arguments when pattern matching, then this rule will not find many problems.\nThis rule will work well when enabled along with [`NoUnused.Patterns`](./NoUnused-Patterns).\n\nAlso, if you like comparing custom types in the way described above, you might pass on this rule, or want to be very careful when enabling it.\n\n\n## Try it out\n\nYou can try this rule out by running the following command:\n\n```bash\nelm-review --template jfmengels/elm-review-unused/example --rules NoUnused.CustomTypeConstructorArgs\n```\n\n",
+                "type": "Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "NoUnused.CustomTypeConstructors",
+        "comment": " Forbid having unused custom type constructors inside the project.\n\n@docs rule\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": " Forbid having unused custom type constructors.\n\n🔧 Running with `--fix` will automatically remove most of the reported errors.\n\n    config =\n        [ NoUnused.CustomTypeConstructors.rule []\n        ]\n\nNote that this rule reports any custom type constructor that isn't used\nanywhere _in the project_.\n\nIf the project is a package and the module that declared the type is exposed and\nthe type's constructors are exposed, then the constructors will not be reported.\n\nThis does not prevent you from using phantom types.\nI highly suggest chaning your phantom types to the following shape: `type TypeName = ConstructorName Never`.\nThis shape makes it obvious to tooling and readers that the type can't be created, so if it is used, it must be as a phantom type.\n\n**Deprecated configuration for phantom types**\n\n_I recommend changing your types like mentioned right above, and to configure the rule like `NoUnused.CustomTypeConstructors.rule []`.\nI'll keep this section and configuration option around until the next major version comes out._\n\n**Note**: At the time of writing, there may be cases where phantom types are not well detected.\nWhen an opaque type is defined in a dependency, we don't know whether a type variable should be considered as a phantom type.\n\nTherefore, sometimes this rule will need some help, by having you tell it what type variables of which type is a phantom type variable.\nThat's what the argument to the rule is for.\n\nTo explain that the `a` in `type Id a = Id String` from the `IdModule` module\ncorresponds to a phantom type variable, you would configure the rule like this:\n\n    config =\n        [ NoUnused.CustomTypeConstructors.rule\n            [ { moduleName = \"IdModule\"\n              , typeName = \"Id\"\n              , index = 0 -- Position of the phantom variable in the type's arguments\n              }\n            ]\n        ]\n\nThis rule could do a much better job than it currently does at figuring this out,\nby following the definitions of custom types and type aliases, until it finds out that the type\nvariable is not used, or that it hits the limit related to dependencies described above.\nIn the meantime, you can configure the rule with all the phantom type exceptions.\n\n**End of deprecated section**\n\n\n## Fail\n\n    module A exposing (a)\n\n    type MyType\n        = UsedType\n        | UnusedType -- Will get reported\n\n    a =\n        UsedType\n\n\n## Success\n\n    module A exposing (ExposedType(..))\n\n    type MyType\n        = UsedType\n\n    a =\n        UsedType\n\n    type ExposedType\n        = A\n        | B\n        | C\n\n    -----------------------\n    module A exposing (..)\n\n    type ExposedType\n        = A\n        | B\n        | C\n\n\n## Try it out\n\nYou can try this rule out by running the following command:\n\n```bash\nelm-review --template jfmengels/elm-review-unused/example --rules NoUnused.CustomTypeConstructors\n```\n\n",
+                "type": "List.List { moduleName : String.String, typeName : String.String, index : Basics.Int } -> Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "NoUnused.Dependencies",
+        "comment": " Forbid the use of dependencies that are never used in your project.\n\n@docs rule\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": " Forbid the use of dependencies that are never used in your project.\n\n🔧 Running with `--fix` will automatically remove all the reported errors.\n\nA dependency is considered unused if none of its modules are imported in the project.\n\n    config =\n        [ NoUnused.Dependencies.rule\n        ]\n\n\n## Try it out\n\nYou can try this rule out by running the following command:\n\n```bash\nelm-review --template jfmengels/elm-review-unused/example --rules NoUnused.Dependencies\n```\n\n",
+                "type": "Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "NoUnused.Exports",
+        "comment": " Forbid the use of exposed elements that are never used in your project.\n\n@docs rule\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": " Report functions and types that are exposed from a module but that are never\nused in other modules.\n\n🔧 Running with `--fix` will automatically remove all the reported errors.\n\nIf the project is a package and the module that declared the element is exposed,\nthen nothing will be reported.\n\n    config =\n        [ NoUnused.Exports.rule\n        ]\n\n\n## Try it out\n\nYou can try this rule out by running the following command:\n\n```bash\nelm-review --template jfmengels/elm-review-unused/example --rules NoUnused.Exports\n```\n\n",
+                "type": "Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "NoUnused.Modules",
+        "comment": " Forbid the use of modules that are never used in your project.\n\n@docs rule\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": " Forbid the use of modules that are never used in your project.\n\nA module is considered used if\n\n  - it contains a `main` function (be it exposed or not)\n  - it imports the `Test` module\n  - it is imported in any other modules, even if it is not used.\n  - the project is a package and the module is part of the `elm.json`'s `exposed-modules`\n  - it is named `ReviewConfig`\n\n```elm\nconfig =\n    [ NoUnused.Modules.rule\n    ]\n```\n\n\n## Try it out\n\nYou can try this rule out by running the following command:\n\n```bash\nelm-review --template jfmengels/elm-review-unused/example --rules NoUnused.Modules\n```\n\n",
+                "type": "Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "NoUnused.Parameters",
+        "comment": " Report parameters that are not used.\n\n@docs rule\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": " Report parameters that are not used.\n\n🔧 Running with `--fix` will automatically remove some of the reported errors.\n\n    config =\n        [ NoUnused.Parameters.rule\n        ]\n\nThis rule looks within function arguments, let functions and lambdas to find any values that are unused. It will report any parameters that are not used.\n\n\n## Fixes for lambdas\n\nWe're only offering fixes for lambdas here because we believe unused parameters in functions are a code smell that should be refactored.\n\n\n## Fail\n\nValue `number` is not used:\n\n    add1 number =\n        1\n\nThe rule will also report parameters that are only used to be passed again to the containing recursive function:\n\n    last list unused =\n        case list of\n            [] ->\n                Nothing\n\n            [ a ] ->\n                Just a\n\n            _ :: rest ->\n                last rest unused\n\n\n## Success\n\n    add1 number =\n        number + 1\n\n\n## Try it out\n\nYou can try this rule out by running the following command:\n\n```bash\nelm-review --template jfmengels/elm-review-unused/example --rules NoUnused.Parameters\n```\n\n",
+                "type": "Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "NoUnused.Patterns",
+        "comment": " Report useless patterns and pattern values that are not used.\n\n@docs rule\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": " Report useless patterns and pattern values that are not used.\n\n🔧 Running with `--fix` will automatically remove all the reported errors.\n\n    config =\n        [ NoUnused.Patterns.rule\n        ]\n\nThis rule looks within let..in blocks and case branches to find any patterns that are unused. It will report any useless patterns as well as any pattern values that are not used.\n\n\n## Fail\n\nValue `something` is not used:\n\n    case maybe of\n        Just something ->\n            True\n\n        Nothing ->\n            False\n\n\n## Success\n\n    case maybe of\n        Just _ ->\n            True\n\n        Nothing ->\n            False\n\n\n## Try it out\n\nYou can try this rule out by running the following command:\n\n```bash\nelm-review --template jfmengels/elm-review-unused/example --rules NoUnused.Patterns\n```\n\n",
+                "type": "Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "NoUnused.Variables",
+        "comment": " Report variables or types that are declared or imported but never used inside of a module.\n\n@docs rule\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": " Report variables or types that are declared or imported but never used.\n\n🔧 Running with `--fix` will automatically remove all the reported errors.\n\n    config =\n        [ NoUnused.Variables.rule\n        ]\n\n\n## Fail\n\n    module A exposing (a, b)\n\n    import UnusedImport\n\n    a n =\n        n + 1\n\n    b =\n        let\n            unused =\n                some thing\n\n            _ =\n                someOther thing\n        in\n        2\n\n    c =\n        a 2\n\n\n## Success\n\n    module A exposing (a, b)\n\n    a n =\n        n + 1\n\n    b =\n        2\n\n\n## Exception\n\nTo avoid resorting to weird workarounds that are sometimes used in internal interactive examples, the rule won't report\nvalues assigned to `_` if a direct call to `Debug.log` is assigned to it.\n\n    a value =\n        let\n            _ =\n                Debug.log \"value\" value\n        in\n        value + 1\n\nIf you enable the [`NoDebug.Log`](https://package.elm-lang.org/packages/jfmengels/elm-review-debug/latest/NoDebug-Log) rule\nfrom the [`jfmengels/elm-review-debug`](https://package.elm-lang.org/packages/jfmengels/elm-review-debug/latest/) package,\nand configure it to ignore the locations where it's acceptable, then the combination of both rules will make sure to\nclean up code like the above in all the other locations.\n\n\n## Try it out\n\nYou can try this rule out by running the following command:\n\n```bash\nelm-review --template jfmengels/elm-review-unused/example --rules NoUnused.Variables\n```\n\n",
+                "type": "Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    }
+]

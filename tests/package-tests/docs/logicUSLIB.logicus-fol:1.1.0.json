@@ -1,0 +1,1118 @@
+[
+    {
+        "name": "LogicUS.FOL.Clauses",
+        "comment": " The module provides the tools for express formulas in their Clausal Form.\n\n\n# Types\n\n@docs ClauseFOLAtom, ClauseFOLLiteral, ClauseFOL, ClauseFOLSet\n\n\n# Work with clauses\n\n@docs cfolAtomVarSymbols, cfolVarSymbols, cfolAtomSymbol, cfolLiteralSymbols, cfolAtomApplySubstitution, cfolApplySubstitution, cfolSort, cfolUnion, cfolSubsumes, cfolIsTautology, cfolIsPositive, cfolIsNegative, csfolRemoveEqClauses, csfolRemoveTautClauses, csfolRemoveSubsumedClauses\n\n\n# Formulas and Clauses\n\n@docs clauseFOLAtomToAtom, clauseFOLLitToLiteral, cfolFromCNF, ffolToClauses, sfolToClauses\n\n\n# Clauses Parser\n\n@docs cfolReadFromString, cfolReadExtraction, cfolToInputString\n\n\n# Clauses Representation\n\n@docs cfolToString, cfolToMathString, csfolToString, csfolToMathString\n\n",
+        "unions": [
+            {
+                "name": "ClauseFOLAtom",
+                "comment": " It represent An Atom of a clause as a Predicate (P) or as a equality (E)\n",
+                "args": [],
+                "cases": [
+                    [
+                        "P",
+                        [
+                            "( String.String, List.List Basics.Int )",
+                            "List.List LogicUS.FOL.SyntaxSemantics.Term"
+                        ]
+                    ],
+                    [
+                        "Eq",
+                        [
+                            "LogicUS.FOL.SyntaxSemantics.Term",
+                            "LogicUS.FOL.SyntaxSemantics.Term"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "ClauseFOL",
+                "comment": " It represent a set of clause literals.\n",
+                "args": [],
+                "type": "List.List LogicUS.FOL.Clauses.ClauseFOLLiteral"
+            },
+            {
+                "name": "ClauseFOLLiteral",
+                "comment": " It represent a literal of a clause as a tuple with the symbol of the literal (string) and the sign of the literal (False:negative literal, True:positive literal).\n",
+                "args": [],
+                "type": "( LogicUS.FOL.Clauses.ClauseFOLAtom, Basics.Bool )"
+            },
+            {
+                "name": "ClauseFOLSet",
+                "comment": " It represent a set of ClauseFOL\n",
+                "args": [],
+                "type": "List.List LogicUS.FOL.Clauses.ClauseFOL"
+            }
+        ],
+        "values": [
+            {
+                "name": "cfolApplySubstitution",
+                "comment": " It applies a substitution over a clause\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.Substitution -> LogicUS.FOL.Clauses.ClauseFOL -> LogicUS.FOL.Clauses.ClauseFOL"
+            },
+            {
+                "name": "cfolAtomApplySubstitution",
+                "comment": " It applies a Substitution over a clause atom\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.Substitution -> LogicUS.FOL.Clauses.ClauseFOLAtom -> LogicUS.FOL.Clauses.ClauseFOLAtom"
+            },
+            {
+                "name": "cfolAtomSymbol",
+                "comment": " It gives the symbol of the predicate of the atom (\"=\" is reserved for equality)\n",
+                "type": "LogicUS.FOL.Clauses.ClauseFOLAtom -> ( String.String, List.List Basics.Int )"
+            },
+            {
+                "name": "cfolAtomVarSymbols",
+                "comment": " It gives the variables that appears in a clause atom\n",
+                "type": "LogicUS.FOL.Clauses.ClauseFOLAtom -> List.List LogicUS.FOL.SyntaxSemantics.Variable"
+            },
+            {
+                "name": "cfolFromCNF",
+                "comment": " It pass a CNF formula (opened) to a Set of clausses\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.FormulaFOL -> Maybe.Maybe LogicUS.FOL.Clauses.ClauseFOLSet"
+            },
+            {
+                "name": "cfolIsNegative",
+                "comment": " Indicates if the clause is enterly negative, this is with all its literals negative\n",
+                "type": "LogicUS.FOL.Clauses.ClauseFOL -> Basics.Bool"
+            },
+            {
+                "name": "cfolIsPositive",
+                "comment": " Indicates if the clause is enterly positive, this is with all its literals positive\n",
+                "type": "LogicUS.FOL.Clauses.ClauseFOL -> Basics.Bool"
+            },
+            {
+                "name": "cfolIsTautology",
+                "comment": " Indicates if the clause is a tautology, that is if it contains a literal and its complement.\n",
+                "type": "LogicUS.FOL.Clauses.ClauseFOL -> Basics.Bool"
+            },
+            {
+                "name": "cfolLiteralSymbols",
+                "comment": " It gives the symbols of literals that appears in a clause\n",
+                "type": "LogicUS.FOL.Clauses.ClauseFOL -> Set.Set ( String.String, List.List Basics.Int )"
+            },
+            {
+                "name": "cfolReadExtraction",
+                "comment": " It extracts the clause readed. If it is Nothing then it returns an empty clause\n",
+                "type": "( Maybe.Maybe LogicUS.FOL.Clauses.ClauseFOL, String.String, String.String ) -> LogicUS.FOL.Clauses.ClauseFOL"
+            },
+            {
+                "name": "cfolReadFromString",
+                "comment": " It reads the Cc from a string. It returns a tuple with may be a formula (if it can be read it) and a message of error it it cannot.\n",
+                "type": "String.String -> ( Maybe.Maybe LogicUS.FOL.Clauses.ClauseFOL, String.String, String.String )"
+            },
+            {
+                "name": "cfolSort",
+                "comment": " It sorts the literals of the clause by alphabetical order.\n",
+                "type": "LogicUS.FOL.Clauses.ClauseFOL -> LogicUS.FOL.Clauses.ClauseFOL"
+            },
+            {
+                "name": "cfolSubsumes",
+                "comment": " Indicates if the first clause subsumes the second, that is, if the first is entirely contained in the second.\n",
+                "type": "LogicUS.FOL.Clauses.ClauseFOL -> LogicUS.FOL.Clauses.ClauseFOL -> Basics.Bool"
+            },
+            {
+                "name": "cfolToInputString",
+                "comment": " It gives the corresponding input syntax of a clause\n",
+                "type": "LogicUS.FOL.Clauses.ClauseFOL -> String.String"
+            },
+            {
+                "name": "cfolToMathString",
+                "comment": " It generates the Latex string of a ClauseFOL. The result requires a math enviroment to be displayed.\n",
+                "type": "LogicUS.FOL.Clauses.ClauseFOL -> String.String"
+            },
+            {
+                "name": "cfolToString",
+                "comment": " It generates the String representation of a ClauseFOL using unicode symbols.\n",
+                "type": "LogicUS.FOL.Clauses.ClauseFOL -> String.String"
+            },
+            {
+                "name": "cfolUnion",
+                "comment": " It calculates the union of two clauses\n",
+                "type": "LogicUS.FOL.Clauses.ClauseFOL -> LogicUS.FOL.Clauses.ClauseFOL -> LogicUS.FOL.Clauses.ClauseFOL"
+            },
+            {
+                "name": "cfolVarSymbols",
+                "comment": " It gives the variables that appears in a clause\n",
+                "type": "LogicUS.FOL.Clauses.ClauseFOL -> Set.Set LogicUS.FOL.SyntaxSemantics.Variable"
+            },
+            {
+                "name": "clauseFOLAtomToAtom",
+                "comment": " It converts a ClauseFOLAtom to an Atom (FormulaFOL)\n",
+                "type": "LogicUS.FOL.Clauses.ClauseFOLAtom -> LogicUS.FOL.SyntaxSemantics.FormulaFOL"
+            },
+            {
+                "name": "clauseFOLLitToLiteral",
+                "comment": " It converts a ClauseFOLLiteral to a Literal (FormulaFOL)\n",
+                "type": "LogicUS.FOL.Clauses.ClauseFOLLiteral -> LogicUS.FOL.SyntaxSemantics.FormulaFOL"
+            },
+            {
+                "name": "csfolRemoveEqClauses",
+                "comment": " It removes clauses that are equal from a list of clauses\n",
+                "type": "LogicUS.FOL.Clauses.ClauseFOLSet -> LogicUS.FOL.Clauses.ClauseFOLSet"
+            },
+            {
+                "name": "csfolRemoveSubsumedClauses",
+                "comment": " It removes clauses that are subsumed by other from the list\n",
+                "type": "LogicUS.FOL.Clauses.ClauseFOLSet -> LogicUS.FOL.Clauses.ClauseFOLSet"
+            },
+            {
+                "name": "csfolRemoveTautClauses",
+                "comment": " It removes clauses that are tautological clauses\n",
+                "type": "LogicUS.FOL.Clauses.ClauseFOLSet -> LogicUS.FOL.Clauses.ClauseFOLSet"
+            },
+            {
+                "name": "csfolToMathString",
+                "comment": " It generates the Latex string of a Set of Clauses. The result requires a math enviroment to be displayed.\n",
+                "type": "LogicUS.FOL.Clauses.ClauseFOLSet -> String.String"
+            },
+            {
+                "name": "csfolToString",
+                "comment": " It generates the String representation of a Set of Clauses using unicode symbols.\n",
+                "type": "LogicUS.FOL.Clauses.ClauseFOLSet -> String.String"
+            },
+            {
+                "name": "ffolToClauses",
+                "comment": " Express a formula as a Set of clauses.\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.FormulaFOL -> LogicUS.FOL.Clauses.ClauseFOLSet"
+            },
+            {
+                "name": "sfolToClauses",
+                "comment": " Express a set of formulas as a Set of clauses.\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.SetFOL -> LogicUS.FOL.Clauses.ClauseFOLSet"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "LogicUS.FOL.Herbrand",
+        "comment": " The module provides the tools for applying Herbrand works over First Order Logic\n\n\n# Signatures\n\n@docs Signature, ffolSignature, sfolSignature\n\n\n# Herbrand Works\n\n@docs signatureHerbrandUniverse, ffolHerbrandUniverse, sfolHerbrandUniverse, signatureHerbrandBase, ffolHerbrandBase, sfolHerbrandBase, signatureHerbrandInterpretations, ffolHerbrandInterpretations, sfolHerbrandInterpretations, ffolInterpretsHerbrand, sfolInterpretsHerbrand, ffolHerbrandModels, sfolHerbrandModels, ffolHerbrandExtension, sfolHerbrandExtension\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Signature",
+                "comment": " A signature is a 3-tuple with the constants, the functions symbols with its arity and the predicate symbols with its arity that apears in one (or a set of) opened formula(s).\n",
+                "args": [],
+                "type": "( Set.Set ( String.String, List.List Basics.Int ), Dict.Dict ( String.String, List.List Basics.Int ) Basics.Int, Dict.Dict ( String.String, List.List Basics.Int ) Basics.Int )"
+            }
+        ],
+        "values": [
+            {
+                "name": "ffolHerbrandBase",
+                "comment": " It generates a the Herbrand Base of n-order from an opened formula. That is, a set of all posible atoms formed with the predicate symbosl of a formula, cosidering all the posible substitutions with the n-order Herbrand Unviverse elements.\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.FormulaFOL -> Basics.Int -> Maybe.Maybe (List.List LogicUS.FOL.SyntaxSemantics.FormulaFOL)"
+            },
+            {
+                "name": "ffolHerbrandExtension",
+                "comment": " It calculates the n-order Herbrand Extension vinculated to an opened formula. That is it gives a set of propositional formulas partially equiconsistent with the FOL formula\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.FormulaFOL -> Basics.Int -> Maybe.Maybe (List.List LogicUS.PL.SyntaxSemantics.FormulaPL)"
+            },
+            {
+                "name": "ffolHerbrandInterpretations",
+                "comment": " It generates all the possible Herbrand Interpretations of n-order from a opened formula. That is, all the possible subsets of the n-order Herbrand Basis associated to the formula\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.FormulaFOL -> Basics.Int -> Maybe.Maybe (List.List (List.List LogicUS.FOL.SyntaxSemantics.FormulaFOL))"
+            },
+            {
+                "name": "ffolHerbrandModels",
+                "comment": " It searches Herbrand Models of n-order from a opened formula.\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.FormulaFOL -> Basics.Int -> Maybe.Maybe ( List.List LogicUS.FOL.SyntaxSemantics.Term, List.List (List.List LogicUS.FOL.SyntaxSemantics.FormulaFOL) )"
+            },
+            {
+                "name": "ffolHerbrandUniverse",
+                "comment": " It generates the Herbrand Universe of an opened formula\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.FormulaFOL -> Basics.Int -> Maybe.Maybe (List.List LogicUS.FOL.SyntaxSemantics.Term)"
+            },
+            {
+                "name": "ffolInterpretsHerbrand",
+                "comment": " It valuates a Formula regarding to a Herbrand Interpretation and Herbrand Universe\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.FormulaFOL -> List.List LogicUS.FOL.SyntaxSemantics.FormulaFOL -> List.List LogicUS.FOL.SyntaxSemantics.Term -> Maybe.Maybe Basics.Bool"
+            },
+            {
+                "name": "ffolSignature",
+                "comment": " It calculates the signature of an opened formula\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.FormulaFOL -> Maybe.Maybe LogicUS.FOL.Herbrand.Signature"
+            },
+            {
+                "name": "sfolHerbrandBase",
+                "comment": " It generates a the Herbrand Base of n-order from a set of opened formulas. That is, a set of opened and closed formulas where all posible substitutions with the n-order Herbrand Unviverse elements.\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.SetFOL -> Basics.Int -> Maybe.Maybe (List.List LogicUS.FOL.SyntaxSemantics.FormulaFOL)"
+            },
+            {
+                "name": "sfolHerbrandExtension",
+                "comment": " It calculates the n-order Herbrand Extension vinculated to a set of opened formulas. That is it gives a set of propositional formulas partially equiconsistent with the FOL formula\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.SetFOL -> Basics.Int -> Maybe.Maybe (List.List LogicUS.PL.SyntaxSemantics.FormulaPL)"
+            },
+            {
+                "name": "sfolHerbrandInterpretations",
+                "comment": " It generates all the possible Herbrand Interpretations of n-order from a set of opened formulas. That is, all the possible subsets of the n-order Herbrand Basis associated to the formula\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.SetFOL -> Basics.Int -> Maybe.Maybe (List.List (List.List LogicUS.FOL.SyntaxSemantics.FormulaFOL))"
+            },
+            {
+                "name": "sfolHerbrandModels",
+                "comment": " It searches Herbrand Models of n-order from a set of opened formulas.\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.SetFOL -> Basics.Int -> Maybe.Maybe ( List.List LogicUS.FOL.SyntaxSemantics.Term, List.List (List.List LogicUS.FOL.SyntaxSemantics.FormulaFOL) )"
+            },
+            {
+                "name": "sfolHerbrandUniverse",
+                "comment": " It generates the Herbrand Universe of a set of opened formulas\n",
+                "type": "List.List LogicUS.FOL.SyntaxSemantics.FormulaFOL -> Basics.Int -> Maybe.Maybe (List.List LogicUS.FOL.SyntaxSemantics.Term)"
+            },
+            {
+                "name": "sfolInterpretsHerbrand",
+                "comment": " It valuates a set of opened formulas regarding to a Herbrand Interpretation and Herbrand Universe\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.SetFOL -> List.List LogicUS.FOL.SyntaxSemantics.FormulaFOL -> List.List LogicUS.FOL.SyntaxSemantics.Term -> Maybe.Maybe Basics.Bool"
+            },
+            {
+                "name": "sfolSignature",
+                "comment": " It calculates the signature of a set of opened formulas\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.SetFOL -> Maybe.Maybe LogicUS.FOL.Herbrand.Signature"
+            },
+            {
+                "name": "signatureHerbrandBase",
+                "comment": " It generates a the Herbrand Base of n-order from a signature. That is, the set of all possible atoms for a signature wich corresponds to the applicatiion of each symbol of predicate (of arity k) over each k-tuple of elements of n-order universe Herbrand\n",
+                "type": "LogicUS.FOL.Herbrand.Signature -> Basics.Int -> List.List LogicUS.FOL.SyntaxSemantics.FormulaFOL"
+            },
+            {
+                "name": "signatureHerbrandInterpretations",
+                "comment": " It generates all the possible Herbrand Interpretations of n-order from a signature. That is, all the possible subsets of the n-order Herbrand Basis associated to the signature.\n",
+                "type": "LogicUS.FOL.Herbrand.Signature -> Basics.Int -> List.List (List.List LogicUS.FOL.SyntaxSemantics.FormulaFOL)"
+            },
+            {
+                "name": "signatureHerbrandUniverse",
+                "comment": " It generates the Herbrand Universe of n-order according to a Signature\n",
+                "type": "LogicUS.FOL.Herbrand.Signature -> Basics.Int -> List.List LogicUS.FOL.SyntaxSemantics.Term"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "LogicUS.FOL.NormalForms",
+        "comment": " The module provides the tools for expressing formulas in Prenex, Skolem, CNF, DNF.\n\n\n# Defined types\n\n@docs Cuantifier\n\n\n# Formulas Equivalent Transformations\n\n@docs ffolRemoveAllEquiv, ffolRemoveAllImpl, ffolInteriorizeNeg, ffolInteriorizeDisj, ffolInteriorizeConj\n\n\n# Prenex Form\n\n@docs ffolToPrenex, ffolToPrenex2, ffolIsPrenex, prenexGraphToDOT\n\n\n# Skolem Form\n\n@docs extractHeaderCuantifiers, getSkolemSubs, ffolToSkolem, sfolToSkolem\n\n\n# NNF, CNF and DNF\n\n@docs ffolToNNF, ffolToCNF, ffolToDNF, sfolToNNF, sfolToCNF, sfolToDNF\n\n",
+        "unions": [
+            {
+                "name": "Cuantifier",
+                "comment": " It represents the universal (all) and existencial (exists) cuantifier with the associated variable\n",
+                "args": [],
+                "cases": [
+                    [
+                        "A",
+                        [
+                            "LogicUS.FOL.SyntaxSemantics.Variable"
+                        ]
+                    ],
+                    [
+                        "E",
+                        [
+                            "LogicUS.FOL.SyntaxSemantics.Variable"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "extractHeaderCuantifiers",
+                "comment": " It allows extract all the external cuantifiers, especially interesting for applying over Prenex Form Formulas\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.FormulaFOL -> ( List.List LogicUS.FOL.NormalForms.Cuantifier, LogicUS.FOL.SyntaxSemantics.FormulaFOL )"
+            },
+            {
+                "name": "ffolInteriorizeConj",
+                "comment": " It interiorizes the conjunctions by applying distributive rule\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.FormulaFOL -> LogicUS.FOL.SyntaxSemantics.FormulaFOL"
+            },
+            {
+                "name": "ffolInteriorizeDisj",
+                "comment": " It interiorizes the disjunctions by applying distributive rule\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.FormulaFOL -> LogicUS.FOL.SyntaxSemantics.FormulaFOL"
+            },
+            {
+                "name": "ffolInteriorizeNeg",
+                "comment": " It interiorizes negations applying the De Morgan Rule and the rule of negation of the cuantifier\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.FormulaFOL -> LogicUS.FOL.SyntaxSemantics.FormulaFOL"
+            },
+            {
+                "name": "ffolIsPrenex",
+                "comment": " It indicates if a formula is in Prenex Form\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.FormulaFOL -> Basics.Bool"
+            },
+            {
+                "name": "ffolRemoveAllEquiv",
+                "comment": " It removes all the equivalences by changing it by the conjuction of the implications\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.FormulaFOL -> LogicUS.FOL.SyntaxSemantics.FormulaFOL"
+            },
+            {
+                "name": "ffolRemoveAllImpl",
+                "comment": " It removes all the equivalences by changing it by the disjunction of the negation of the antecedent and the consecuent\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.FormulaFOL -> LogicUS.FOL.SyntaxSemantics.FormulaFOL"
+            },
+            {
+                "name": "ffolToCNF",
+                "comment": " It calculates a conjuctive normal form of a formula\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.FormulaFOL -> LogicUS.FOL.SyntaxSemantics.FormulaFOL"
+            },
+            {
+                "name": "ffolToDNF",
+                "comment": " It calculates a disjuntive normal form of a formula\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.FormulaFOL -> LogicUS.FOL.SyntaxSemantics.FormulaFOL"
+            },
+            {
+                "name": "ffolToNNF",
+                "comment": " It calculates a negative normal form of a formula\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.FormulaFOL -> LogicUS.FOL.SyntaxSemantics.FormulaFOL"
+            },
+            {
+                "name": "ffolToPrenex",
+                "comment": " It transforms a FOL Formula into one equivalent Prenex Form\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.FormulaFOL -> LogicUS.FOL.SyntaxSemantics.FormulaFOL"
+            },
+            {
+                "name": "ffolToPrenex2",
+                "comment": " It transforms a FOL Formula into one equivalent Prenex Form. It gives the list of cuantifiers and the open formula of the Prenex Form. It also gives a Graph with the Prenex form calculus\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.FormulaFOL -> ( List.List LogicUS.FOL.NormalForms.Cuantifier, LogicUS.FOL.SyntaxSemantics.FormulaFOL, Graph.Graph LogicUS.FOL.SyntaxSemantics.FormulaFOL ( Basics.Bool, List.List LogicUS.FOL.NormalForms.Cuantifier ) )"
+            },
+            {
+                "name": "ffolToSkolem",
+                "comment": " It calculates the Skolem Form of a Formula\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.FormulaFOL -> LogicUS.FOL.SyntaxSemantics.FormulaFOL"
+            },
+            {
+                "name": "getSkolemSubs",
+                "comment": " It gives the Skolem functions correspondence of a list of cuantifiers\n",
+                "type": "List.List LogicUS.FOL.NormalForms.Cuantifier -> LogicUS.FOL.SyntaxSemantics.Substitution"
+            },
+            {
+                "name": "prenexGraphToDOT",
+                "comment": " It allows represent the Prenex Calculus Graph as DOT string, which could be rendered by GraphViz\n",
+                "type": "Graph.Graph LogicUS.FOL.SyntaxSemantics.FormulaFOL ( Basics.Bool, List.List LogicUS.FOL.NormalForms.Cuantifier ) -> String.String"
+            },
+            {
+                "name": "sfolToCNF",
+                "comment": " It calculates conjuctive normal forms of formulas of a set\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.SetFOL -> LogicUS.FOL.SyntaxSemantics.SetFOL"
+            },
+            {
+                "name": "sfolToDNF",
+                "comment": " It calculates disjunctive normal forms of formulas of a set\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.SetFOL -> LogicUS.FOL.SyntaxSemantics.SetFOL"
+            },
+            {
+                "name": "sfolToNNF",
+                "comment": " It calculates negative normal forms of formulas of a set\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.SetFOL -> LogicUS.FOL.SyntaxSemantics.SetFOL"
+            },
+            {
+                "name": "sfolToSkolem",
+                "comment": " It calculates the Skolem Forms of the formulas of a set\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.SetFOL -> LogicUS.FOL.SyntaxSemantics.SetFOL"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "LogicUS.FOL.Resolution",
+        "comment": " The module provides the tools for aplying the differents resolution strategies to a set of propositional clauses for verifying its unfeasibility.\n\n\n# Resolvents\n\n@docs Resolvent, cfol2SeparationSubst, cfol2Separation, cfol2ContraryLiterals, cfol2AllResolvents.\n\n\n# Refutationally Resolution Tableau Algorithm and Strategies\n\n@docs ResolutionTableau, csfolSCFResolution, csfolSCFLinearResolution, csplSCFPositiveResolution, csplSCFNegativeResolution\n\n\n# Resolution Tableau Representation\n\n@docs resolutionTableauToString, resolutionTableauToDOT\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "ResolutionTableau",
+                "comment": " It represent the graph structure of the tableau\n",
+                "args": [],
+                "type": "Graph.Graph ( Basics.Bool, LogicUS.FOL.Clauses.ClauseFOL ) ( LogicUS.FOL.SyntaxSemantics.Substitution, LogicUS.FOL.SyntaxSemantics.Substitution )"
+            },
+            {
+                "name": "Resolvent",
+                "comment": " It represent the information of the resolvent, the clauses involved, the renames done, the maximum general unifier (mgu) and the result of the resolvent\n",
+                "args": [],
+                "type": "{ c1 : LogicUS.FOL.Clauses.ClauseFOL, c2 : LogicUS.FOL.Clauses.ClauseFOL, r : LogicUS.FOL.SyntaxSemantics.Substitution, mgu : LogicUS.FOL.SyntaxSemantics.Substitution, res : LogicUS.FOL.Clauses.ClauseFOL }"
+            }
+        ],
+        "values": [
+            {
+                "name": "cfol2AllResolvents",
+                "comment": " It searches all the pairs of literals from two clauses that have the same predicate and contrary sign\n",
+                "type": "LogicUS.FOL.Clauses.ClauseFOL -> LogicUS.FOL.Clauses.ClauseFOL -> List.List LogicUS.FOL.Resolution.Resolvent"
+            },
+            {
+                "name": "cfol2ContraryLiterals",
+                "comment": " It searches all the pairs of literals from two clauses that have the same predicate and contrary sign\n",
+                "type": "LogicUS.FOL.Clauses.ClauseFOL -> LogicUS.FOL.Clauses.ClauseFOL -> List.List ( LogicUS.FOL.Clauses.ClauseFOLLiteral, LogicUS.FOL.Clauses.ClauseFOLLiteral )"
+            },
+            {
+                "name": "cfol2Separation",
+                "comment": " It generates the appropriate substitutions for the separation of the clauses\n",
+                "type": "LogicUS.FOL.Clauses.ClauseFOL -> LogicUS.FOL.Clauses.ClauseFOL -> ( LogicUS.FOL.Clauses.ClauseFOL, LogicUS.FOL.Clauses.ClauseFOL )"
+            },
+            {
+                "name": "cfol2SeparationSubst",
+                "comment": " It generates the appropriate substitutions for the separation of the clauses\n",
+                "type": "LogicUS.FOL.Clauses.ClauseFOL -> LogicUS.FOL.Clauses.ClauseFOL -> LogicUS.FOL.SyntaxSemantics.Substitution"
+            },
+            {
+                "name": "csfolSCFLinearResolution",
+                "comment": " It uses linear resolution algorithm using shortest clause first heuristic for determining the feasibilibity of a set of clauses. It gives the insatisfactibility (True:Insat, False:Sat) and a graph with the resolution path to inconsitence. If clause set is feasible then a graph with only initial nodes is returned.\n\nNote: You can render the graph with GraphViz Viewer and _resolutionTableauToDOT_ described at the end.\n\n",
+                "type": "List.List LogicUS.FOL.Clauses.ClauseFOL -> ( Basics.Bool, LogicUS.FOL.Resolution.ResolutionTableau )"
+            },
+            {
+                "name": "csfolSCFResolution",
+                "comment": " It uses resolution algorithm using shorted clause first heuristic for determining the feasibilibity of a set of clauses. It gives the insatisfactibility and a graph with the resolution path to inconsitence. If clause set is feasible then a graph with only initial nodes is returned.\n\nNote: You can render the graph with GraphViz Viewer and _resolutionTableauToDOt_ as we show in the example above.\n\n",
+                "type": "List.List LogicUS.FOL.Clauses.ClauseFOL -> ( Basics.Bool, LogicUS.FOL.Resolution.ResolutionTableau )"
+            },
+            {
+                "name": "csplSCFNegativeResolution",
+                "comment": " It uses negative resolution algorithm using shortest clause first heuristic for determining the feasibilibity of a set of clauses. It gives the insatisfactibility (True:Insat, False:SAT) and a graph with the resolution path to inconsitence. If clause set is feasible then a graph with only initial nodes is returned.\n\nNote: You can render the graph with GraphViz Viewer and _resolutionTableauToDOT_ described at the end.\n\n",
+                "type": "List.List LogicUS.FOL.Clauses.ClauseFOL -> ( Basics.Bool, LogicUS.FOL.Resolution.ResolutionTableau )"
+            },
+            {
+                "name": "csplSCFPositiveResolution",
+                "comment": " It uses positive resolution algorithm using shortest clause first heuristic for determining the feasibilibity of a set of clauses. It gives the insatisfactibility (True:Insat, False:SAT) and a graph with the resolution path to inconsitence. If clause set is feasible then a graph with only initial nodes is returned.\n\nNote: You can render the graph with GraphViz Viewer and _resolutionTableauToDOT_ described at the end.\n\n",
+                "type": "List.List LogicUS.FOL.Clauses.ClauseFOL -> ( Basics.Bool, LogicUS.FOL.Resolution.ResolutionTableau )"
+            },
+            {
+                "name": "resolutionTableauToDOT",
+                "comment": " Express a Resolution Tableau as a string in DOT format that is viewable with a GraphViz Render.\n**Note:** If you are using elm repl, before introducing the code you must replace _\\\\n_ by _\\\\n_ and _\\\\\"_ by _\"_ in a simple text editor.\n",
+                "type": "LogicUS.FOL.Resolution.ResolutionTableau -> String.String"
+            },
+            {
+                "name": "resolutionTableauToString",
+                "comment": " Express a Resolution Tableau as a string.\n",
+                "type": "LogicUS.FOL.Resolution.ResolutionTableau -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "LogicUS.FOL.SemanticTableaux",
+        "comment": " The module provides the elementary tools for building the semantic tableau of a set of FOL formulas.\n\n\n# Definition Types\n\n@docs FormulaFOLType, FOLSemanticTableau, TableauNodeItem, TableauEdgeItem\n\n\n# Formulas types and components\n\n@docs ffolType, ffolUncuantifiedComponents, ffolCuantifiedComponents\n\n\n# Semantic Tableau Algorithm\n\n@docs semanticTableau, semanticTableauIsInsat, semanticTableauRUNII\n\n\n# Fuctions for representation\n\n@docs semanticTableauToString, semanticTableauToDOT\n\n",
+        "unions": [
+            {
+                "name": "FormulaFOLType",
+                "comment": " It defines the type of a PL formula which can be a _Literal_, _Double Negation_, _Alpha_, _Beta_, _Gamma_ (forall), _Delta_(exists) _Insat_ or _Taut_\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "FOLSemanticTableau",
+                "comment": " Defines the FOL Semantic Tableau type as a Graph whose node labels are pairs of an integer (0: internal node, 1: open leaf, -1: closed leaf) and a TableauNodeItem that contains some information for representation; and the edge labels are defined as TableauEdgeItem although some edges could not have any edge.\n",
+                "args": [],
+                "type": "Graph.Graph ( Basics.Int, LogicUS.FOL.SemanticTableaux.TableauNodeItem ) (Maybe.Maybe LogicUS.FOL.SemanticTableaux.TableauEdgeItem)"
+            },
+            {
+                "name": "TableauEdgeItem",
+                "comment": " Defines the TableauEdgeItem that is a record with the following features 'r' the rule applied in the deduction, 'id' the set of indices over that the rule is applied, 'br' the identifier of the branch (only used in beta bifurcations), 's' the substitution done over the formula (only in gamma and delta rules).\n",
+                "args": [],
+                "type": "{ r : LogicUS.FOL.SemanticTableaux.FormulaFOLType, is : List.List Basics.Int, br : Basics.Int, s : LogicUS.FOL.SyntaxSemantics.Substitution }"
+            },
+            {
+                "name": "TableauNodeItem",
+                "comment": " Defines the TableauNodeItem that is a record with the following features: 'f' the formula considered, 't' the type of the formula, 'u' the usability degree of the formula, 'ut': a list of terms with wich a gamma formula is solved, 'i':the index of the node (only for print the tableau), 'ps': the premises from which the formula is concluded\n",
+                "args": [],
+                "type": "{ f : LogicUS.FOL.SyntaxSemantics.FormulaFOL, t : LogicUS.FOL.SemanticTableaux.FormulaFOLType, u : Basics.Int, ut : List.List LogicUS.FOL.SyntaxSemantics.Term, i : Basics.Int, ps : List.List Basics.Int, ant : Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "ffolCuantifiedComponents",
+                "comment": " It gives the components of a cuantified formula for using them in the expansion of a semantic board\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.FormulaFOL -> Maybe.Maybe ( LogicUS.FOL.SyntaxSemantics.Variable, LogicUS.FOL.SyntaxSemantics.FormulaFOL )"
+            },
+            {
+                "name": "ffolType",
+                "comment": " It gives the class of a FOL formula. Atoms (predicates) and their negations are literals, double negation are typed as DN, conjunction, equivalence are classified as ALPHA, disjunction and implications are classified as BETA. forall-like formulas are classified as GAMMA and existencial-like ones as DELTA The negation of an alpha formula is a beta and vice versa, and the same happens with forall and exists like ones.\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.FormulaFOL -> LogicUS.FOL.SemanticTableaux.FormulaFOLType"
+            },
+            {
+                "name": "ffolUncuantifiedComponents",
+                "comment": " It gives the components of a uncuantified formula for using them in the expansion of a semantic board\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.FormulaFOL -> LogicUS.FOL.SyntaxSemantics.SetFOL"
+            },
+            {
+                "name": "semanticTableau",
+                "comment": " It performs the Semantic Tableaux algorithm on a set of FOL formulas. As the algorithm can be infinite, you must indicate the maximum depth allowed. Specifically, you must specify the maximum number of times a gamma formula can be used and the absolute limit for the depth of the tree.\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.SetFOL -> Basics.Int -> Basics.Int -> LogicUS.FOL.SemanticTableaux.FOLSemanticTableau"
+            },
+            {
+                "name": "semanticTableauIsInsat",
+                "comment": " It check if a tableau has all his branches closed\n",
+                "type": "LogicUS.FOL.SemanticTableaux.FOLSemanticTableau -> Basics.Bool"
+            },
+            {
+                "name": "semanticTableauRUNII",
+                "comment": " It Removes the Useless Nodes In Insatisfiable tableau, that are the nodes that don't participates in the way to lograte the insatifiability.\n",
+                "type": "LogicUS.FOL.SemanticTableaux.FOLSemanticTableau -> LogicUS.FOL.SemanticTableaux.FOLSemanticTableau"
+            },
+            {
+                "name": "semanticTableauToDOT",
+                "comment": " It allows to represent a FOL Semantic Tableau as a DOT String rederable by GraphViz\n",
+                "type": "LogicUS.FOL.SemanticTableaux.FOLSemanticTableau -> String.String"
+            },
+            {
+                "name": "semanticTableauToString",
+                "comment": " It allows to represent a FOL Semantic Tableau as a string\n",
+                "type": "LogicUS.FOL.SemanticTableaux.FOLSemanticTableau -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "LogicUS.FOL.SemanticTableauxEQ",
+        "comment": " The module provides the elementary tools for building the semantic tableau of a set of FOLEQ formulas.\n\n\n# Definition Types\n\n@docs SmullyanFOLType, STEQRule, FOLSemanticTableau, STEQNode\n\n\n# Formulas types and components\n\n@docs ffolType\n\n\n# Semantic Tableau Algorithm\n\n@docs semanticTableauEq\n\n\n# Fuctions for representation\n\n@docs semanticTableauToString, semanticTableauToDOT, semanticTableauToJSON\n\n",
+        "unions": [
+            {
+                "name": "STEQRule",
+                "comment": " The expansion rules (according to Smullyan Uniform Notation) and others for indicating initial formulas and unexplored branches.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "SmullyanFOLType",
+                "comment": " The Smullyan Uniform Notation for First Order formulas with equality\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "FOLSemanticTableau",
+                "comment": " The structure that represents a tableau, that is, a Tree of STEQNode\n",
+                "args": [],
+                "type": "Graph.Tree.Tree LogicUS.FOL.SemanticTableauxEQ.STEQNode"
+            },
+            {
+                "name": "STEQNode",
+                "comment": " The structure that represents a node of a tableau. It contains the information of the index of the node, its formula, the indices of nodes from it is derived, the substitution made (if it is derives from universal or existential formula), the simplifications made (with respect to equalities) and the expansion rule involved in the derivation\n",
+                "args": [],
+                "type": "{ i : Basics.Int, f : LogicUS.FOL.SyntaxSemantics.FormulaFOL, simp : List.List Basics.Int, p1 : Maybe.Maybe ( Basics.Int, List.List Basics.Int ), p2 : Maybe.Maybe ( Basics.Int, List.List Basics.Int ), subs : Maybe.Maybe ( LogicUS.FOL.SyntaxSemantics.Variable, LogicUS.FOL.SyntaxSemantics.Term ), r : LogicUS.FOL.SemanticTableauxEQ.STEQRule }"
+            }
+        ],
+        "values": [
+            {
+                "name": "ffolType",
+                "comment": " It gives the class of a FOLEQ formula (according to Smullyan Uniform Notation). Atoms (predicates) and their negations are literals, double negation are typed as DN, conjunction, equivalence are classified as ALPHA, disjunction and implications are classified as BETA. forall-like formulas are classified as GAMMA and existencial-like ones as DELTA The negation of an alpha formula is a beta and vice versa, and the same happens with forall and exists like ones.\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.FormulaFOL -> LogicUS.FOL.SemanticTableauxEQ.SmullyanFOLType"
+            },
+            {
+                "name": "semanticTableauEq",
+                "comment": " It allows construct the Semantic Tableau of a set of formulas. It recieves two additional parameters that corresponds to the maximum generated constants and the maximum size of terms allowed, respectively.\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.SetFOL -> Basics.Int -> Basics.Int -> LogicUS.FOL.SemanticTableauxEQ.FOLSemanticTableau"
+            },
+            {
+                "name": "semanticTableauToDOT",
+                "comment": " It gives a DOT representation for the tableau.\n",
+                "type": "LogicUS.FOL.SemanticTableauxEQ.FOLSemanticTableau -> String.String"
+            },
+            {
+                "name": "semanticTableauToJSON",
+                "comment": " It gives a JSON Tree representation for the tableau.\n",
+                "type": "LogicUS.FOL.SemanticTableauxEQ.FOLSemanticTableau -> Json.Encode.Value"
+            },
+            {
+                "name": "semanticTableauToString",
+                "comment": " It gives a String representation of a Semantic Tableau\n",
+                "type": "Graph.Tree.Tree { a | r : LogicUS.FOL.SemanticTableauxEQ.STEQRule, i : Basics.Int, f : LogicUS.FOL.SyntaxSemantics.FormulaFOL, p1 : Maybe.Maybe ( Basics.Int, List.List Basics.Int ), simp : List.List Basics.Int, subs : Maybe.Maybe ( LogicUS.FOL.SyntaxSemantics.Variable, LogicUS.FOL.SyntaxSemantics.Term ), p2 : Maybe.Maybe ( Basics.Int, List.List Basics.Int ) } -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "LogicUS.FOL.SyntaxSemantics",
+        "comment": " The module provides the elementary tools for working with first order logic. It allows defining both formulas and sets as well as performing some basic operations on them, such as evaluations regarding interpretations, performs substitutions, clausures, ...\n\n\n# FOL Formulas and Sets\n\n@docs Ident, Variable, Term, FormulaFOL, SetFOL, ffolNegation, termVarSymbols, termsVarSymbols, ffolVarSymbols, termConstSymbols, termsConstSymbols, ffolConstSymbols, termFuncSymbols, termsFuncSymbols, ffolFuncSymbols, ffolPredSymbols, ffolContainsEquality, ffolFormTree, ffolIsWellFormed, ffolHasInstanceOfVar, ffolHasFreeInstanceOfVar, ffolHasLinkedInstanceOfVar, ffolFreeVars, ffolLinkedVars, termIsClosed, termClosedTerms, termsClosedTerms, ffolAllClosedTerms, ffolIsOpen, ffolIsClosed\n\n\n# Substitutions, variable rename and clausure\n\n@docs Substitution, substitutionDomain, termApplySubstitution, ffolApplySubstitution, substitutionComposition, renameVars, ffolUniversalClausure, ffolExistencialClausure\n\n\n# L-structures and valuations\n\n@docs L_Structure, lStructureIsValid, termInterpretation, termsInterpretation, ffolValuation, sfolInterpretation\n\n\n# Parsers\n\n@docs ffolReadFromString, ffolReadExtraction, ffolRead, sfolRead, ffolToInputString, substitutionReadFromString, substitutionReadExtraction, substitutionToInputString\n\n\n# Representation\n\n@docs varToString, varsToString, varToMathString, varsToMathString, identToString, identsToString, identToMathString, identsToMathString, termToString, termsToString, termToMathString, termsToMathString, ffolToString, sfolToString, ffolToMathString, sfolToMathString, sfolToMathString2, formTreeToString, formTreeToDOT, substitutionToString, substitutionToMathString, l_StructureToString\n\n",
+        "unions": [
+            {
+                "name": "FormulaFOL",
+                "comment": " It is a recursive definition of a formula in First Order Logic. It could be a predicate, equality, universal cuantification, existencial cuantificacation, negation, conjuction, implication, equivalence and unsatisfiable formula\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Pred",
+                        [
+                            "LogicUS.FOL.SyntaxSemantics.Ident",
+                            "List.List LogicUS.FOL.SyntaxSemantics.Term"
+                        ]
+                    ],
+                    [
+                        "Equal",
+                        [
+                            "LogicUS.FOL.SyntaxSemantics.Term",
+                            "LogicUS.FOL.SyntaxSemantics.Term"
+                        ]
+                    ],
+                    [
+                        "Neg",
+                        [
+                            "LogicUS.FOL.SyntaxSemantics.FormulaFOL"
+                        ]
+                    ],
+                    [
+                        "Conj",
+                        [
+                            "LogicUS.FOL.SyntaxSemantics.FormulaFOL",
+                            "LogicUS.FOL.SyntaxSemantics.FormulaFOL"
+                        ]
+                    ],
+                    [
+                        "Disj",
+                        [
+                            "LogicUS.FOL.SyntaxSemantics.FormulaFOL",
+                            "LogicUS.FOL.SyntaxSemantics.FormulaFOL"
+                        ]
+                    ],
+                    [
+                        "Impl",
+                        [
+                            "LogicUS.FOL.SyntaxSemantics.FormulaFOL",
+                            "LogicUS.FOL.SyntaxSemantics.FormulaFOL"
+                        ]
+                    ],
+                    [
+                        "Equi",
+                        [
+                            "LogicUS.FOL.SyntaxSemantics.FormulaFOL",
+                            "LogicUS.FOL.SyntaxSemantics.FormulaFOL"
+                        ]
+                    ],
+                    [
+                        "Exists",
+                        [
+                            "LogicUS.FOL.SyntaxSemantics.Variable",
+                            "LogicUS.FOL.SyntaxSemantics.FormulaFOL"
+                        ]
+                    ],
+                    [
+                        "Forall",
+                        [
+                            "LogicUS.FOL.SyntaxSemantics.Variable",
+                            "LogicUS.FOL.SyntaxSemantics.FormulaFOL"
+                        ]
+                    ],
+                    [
+                        "Insat",
+                        []
+                    ],
+                    [
+                        "Taut",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Term",
+                "comment": " It is used to represent the terms in First Order Logic , these are variables, constants and functions. Note that constants are a particular case of functions, which are not dependent on any variable.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Var",
+                        [
+                            "LogicUS.FOL.SyntaxSemantics.Variable"
+                        ]
+                    ],
+                    [
+                        "Func",
+                        [
+                            "LogicUS.FOL.SyntaxSemantics.Ident",
+                            "List.List LogicUS.FOL.SyntaxSemantics.Term"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Ident",
+                "comment": " It represent an ident as a string and a list of subindices as integers\n",
+                "args": [],
+                "type": "( String.String, List.List Basics.Int )"
+            },
+            {
+                "name": "L_Structure",
+                "comment": " It defines an interpretation in First Order Logic, this is a pair of a set of elements (universe) and a record with the following keys and values:\n\n  - key:`const`, value: A dictionary that asigns to each constant symbol a element of the universe.\n\n  - key:`func`, value: A dictionary that asigns to each function symbol, $f$, a tuple whose first argument regards to the arity, $n$, and second one a dictionary (who emulates a total function) that assigns to each posible k-tuple (as a list) of elements of the universe an element of this universe.\n\n  - key:`pred`, value: A dictionary that asigns to each predicate symbol, $P$, a tuple whose first argument regards to the arity, $n$, and second one the set of k-tuples (as lists) of elements of the universe that verifies the predicate.\n\n",
+                "args": [
+                    "comparable"
+                ],
+                "type": "( Set.Set comparable, { const : Dict.Dict LogicUS.FOL.SyntaxSemantics.Ident comparable, func : Dict.Dict LogicUS.FOL.SyntaxSemantics.Ident ( Basics.Int, Dict.Dict (List.List comparable) comparable ), pred : Dict.Dict LogicUS.FOL.SyntaxSemantics.Ident ( Basics.Int, Set.Set (List.List comparable) ) } )"
+            },
+            {
+                "name": "SetFOL",
+                "comment": " It is used to define sets of formulas in First Order Logic.\n",
+                "args": [],
+                "type": "List.List LogicUS.FOL.SyntaxSemantics.FormulaFOL"
+            },
+            {
+                "name": "Substitution",
+                "comment": " It defines a substitution in First Order Logic\n",
+                "args": [],
+                "type": "Dict.Dict LogicUS.FOL.SyntaxSemantics.Variable LogicUS.FOL.SyntaxSemantics.Term"
+            },
+            {
+                "name": "Variable",
+                "comment": " It represent a variable as a string, a list of subindices as integers, and a superindex that must be a positive int.\n",
+                "args": [],
+                "type": "( String.String, List.List Basics.Int, Basics.Int )"
+            }
+        ],
+        "values": [
+            {
+                "name": "ffolAllClosedTerms",
+                "comment": " It gives the all the closed terms inside a formula\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.FormulaFOL -> List.List LogicUS.FOL.SyntaxSemantics.Term"
+            },
+            {
+                "name": "ffolApplySubstitution",
+                "comment": " It performes a substitution in a formula, replacing the variables according to the substitution.\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.Substitution -> LogicUS.FOL.SyntaxSemantics.FormulaFOL -> LogicUS.FOL.SyntaxSemantics.FormulaFOL"
+            },
+            {
+                "name": "ffolConstSymbols",
+                "comment": " It gets all the constant symbols that acts inside a formula\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.FormulaFOL -> List.List LogicUS.FOL.SyntaxSemantics.Ident"
+            },
+            {
+                "name": "ffolContainsEquality",
+                "comment": " It gets if a formual contains equal predicate or not\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.FormulaFOL -> Basics.Bool"
+            },
+            {
+                "name": "ffolExistencialClausure",
+                "comment": " It gives the existencial clausure of a formula\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.FormulaFOL -> LogicUS.FOL.SyntaxSemantics.FormulaFOL"
+            },
+            {
+                "name": "ffolFormTree",
+                "comment": " It gives a graph with the form tree of a formula. If you want visualize it you can use formTreeToDOT and visualize the result witn an online graphviz render. Don't forget change `\\\\n` by `\\n` and `\\\\\"` by `\"` in a code editor previously.\n\n    ffolFormTree f2 |> formTreeToDOT =\n        \"digraph G {\\n  rankdir=TB\\n  graph []\\n  node [shape=plaintext, color=black]\\n  edge [dir=none]\\n\\n  0 -> 1\\n  1 -> 2\\n  2 -> 3\\n  2 -> 9\\n  3 -> 4\\n  3 -> 5\\n  5 -> 6\\n  5 -> 8\\n  6 -> 7\\n\\n  0 [label=\\\"∀x ∀y ( ( M(x, y) → ( ∃z F(z, jhon) ∧ P(x, z) ) ) ∨ P(y, z) )\\\"]\\n  1 [label=\\\"∀y ( ( M(x, y) → ( ∃z F(z, jhon) ∧ P(x, z) ) ) ∨ P(y, z) )\\\"]\\n  2 [label=\\\"( ( M(x, y) → ( ∃z F(z, jhon) ∧ P(x, z) ) ) ∨ P(y, z) )\\\"]\\n  3 [label=\\\"( M(x, y) → ( ∃z F(z, jhon) ∧ P(x, z) ) )\\\"]\\n  4 [label=\\\"M(x, y)\\\"]\\n  5 [label=\\\"( ∃z F(z, jhon) ∧ P(x, z) )\\\"]\\n  6 [label=\\\"∃z F(z, jhon)\\\"]\\n  7 [label=\\\"F(z, jhon)\\\"]\\n  8 [label=\\\"P(x, z)\\\"]\\n  9 [label=\\\"P(y, z)\\\"]\\n}\"\n\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.FormulaFOL -> Graph.Graph LogicUS.FOL.SyntaxSemantics.FormulaFOL ()"
+            },
+            {
+                "name": "ffolFreeVars",
+                "comment": " It gives the variables of the formulas that are free. That is, variables that have a free instance in the formula\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.FormulaFOL -> List.List LogicUS.FOL.SyntaxSemantics.Variable"
+            },
+            {
+                "name": "ffolFuncSymbols",
+                "comment": " It gets all the function symbols that acts inside a formula\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.FormulaFOL -> List.List LogicUS.FOL.SyntaxSemantics.Ident"
+            },
+            {
+                "name": "ffolHasFreeInstanceOfVar",
+                "comment": " It checks if in one formula if it exists any free instance of a given variable\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.FormulaFOL -> LogicUS.FOL.SyntaxSemantics.Variable -> Basics.Bool"
+            },
+            {
+                "name": "ffolHasInstanceOfVar",
+                "comment": " It gives if a formula contains an instance of the variable given.\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.FormulaFOL -> LogicUS.FOL.SyntaxSemantics.Variable -> Basics.Bool"
+            },
+            {
+                "name": "ffolHasLinkedInstanceOfVar",
+                "comment": " It checks if in one formula if it exists any linked instance of a given variable\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.FormulaFOL -> LogicUS.FOL.SyntaxSemantics.Variable -> Basics.Bool"
+            },
+            {
+                "name": "ffolIsClosed",
+                "comment": " It checks if s formula is closed this is if it hasn't any free variables\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.FormulaFOL -> Basics.Bool"
+            },
+            {
+                "name": "ffolIsOpen",
+                "comment": " It determinates if a formula is opened this is if it doesn't contains any cuantifier\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.FormulaFOL -> Basics.Bool"
+            },
+            {
+                "name": "ffolIsWellFormed",
+                "comment": " It indicates if a formula is well formed or not. A formula is well formed if it doesn't contain two nested cuantifiers over the same variable\n\n    f3 = ffolReadExtraction <| ffolReadFromString \"!A[x] !A[y] (M(x,y) -> !E[x] F(x, _jhon) & P(x,x) | P(y,x))\"\n\n    ffolIsWellFormed f1 == True\n    ffolIsWellFormed f2 == True\n    ffolIsWellFormed f3 == False\n\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.FormulaFOL -> Basics.Bool"
+            },
+            {
+                "name": "ffolLinkedVars",
+                "comment": " It gives the variables of the formulas that are linked. That is, variables that have a linked instance in the formula\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.FormulaFOL -> List.List LogicUS.FOL.SyntaxSemantics.Variable"
+            },
+            {
+                "name": "ffolNegation",
+                "comment": " It gives the negarion of a formula applying idempotent rule or the insat/taut negation when corresponds.\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.FormulaFOL -> LogicUS.FOL.SyntaxSemantics.FormulaFOL"
+            },
+            {
+                "name": "ffolPredSymbols",
+                "comment": " It gets all the predicate symbols that acts inside a formula\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.FormulaFOL -> List.List LogicUS.FOL.SyntaxSemantics.Ident"
+            },
+            {
+                "name": "ffolRead",
+                "comment": " It reads the formula from a string. It returns the Formula if the string si correct, otherwise it returns Insat.\n",
+                "type": "String.String -> LogicUS.FOL.SyntaxSemantics.FormulaFOL"
+            },
+            {
+                "name": "ffolReadExtraction",
+                "comment": " It extract the formula readed. If it is Nothing it returns Insat\n",
+                "type": "( Maybe.Maybe LogicUS.FOL.SyntaxSemantics.FormulaFOL, String.String, String.String ) -> LogicUS.FOL.SyntaxSemantics.FormulaFOL"
+            },
+            {
+                "name": "ffolReadFromString",
+                "comment": " It reads the formula from a string. It returns a tuple with may be a formula (if it can be read it), the input considerated to parse and a message of error it it is not able to performs the parsing. The rules of the notation are:\n\n  - The variables correspond to strings of characters, the first in lowercase, and optionally indexed by natural numbers, which have been written between the symbols `_{` and `}` and separated by commas. For example: `x`,`y_{1}`, `xA_{1,1}`.\n  - The functions are described analogously to the variables but preceding the symbol `*`. In addition, the arguments, if any, are specified between parentheses and separated by commas. Examples of constants `*a`,`*b_{1}`,`*john`, and functions (not constants): `*f(x)`, `*g_{1}(x, *a)`,`*father(*john)`, ...\n  - Predicates are described in a similar way to functions, as strings of characters, the first in uppercase, and followed, if applicable, by a list of terms, specified in parentheses and separated by commas, in the same way as presented for functions. Examples of predicates `P`,`Q_{1}(x)`,`Uncle(*john, *paul)`, ...\n  - The use of connectives is equivalent proposed for propositional logic, using `&` for conjunction, `|` for disjunction, `->` for implication, `<->` for equivalence and `¬` or `-` for negation with classical priority(negation, conjunction, disjunction, implication, equivalence) and the use of parentheses to indicate another association priority.\n  - Quantifiers are described as `!E` for the existential`!A` for the universal, followed by the variable indicated in brackets, `[` and `]`, and by the quantized formula. As an example, the inductive property on a function (f) can be expressed as: `!A[x_{1}] !A[x_{2}](*f(x_{1}) = *f(x_{2}) -> *x_{1} = *f(x_{2}))`, or the membership of a value (a) to the range of a function (g) like `!E[x](*g(x) = *a))`.\n  - As in propositional logic, the valid formula is defined by `!T` and the unsatisfiable formula for`!F`.\n  - The external parentheses of the formulas should not be put, since the Parser will put them automatically, so their use or not is irrelevant.\n    Error messages are not perfect but we're working to improve it.\n\n",
+                "type": "String.String -> ( Maybe.Maybe LogicUS.FOL.SyntaxSemantics.FormulaFOL, String.String, String.String )"
+            },
+            {
+                "name": "ffolToInputString",
+                "comment": " It gives the corresponding input syntax of a formula\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.FormulaFOL -> String.String"
+            },
+            {
+                "name": "ffolToMathString",
+                "comment": " It generates the string of a First Order Logic Formula using latex notation\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.FormulaFOL -> String.String"
+            },
+            {
+                "name": "ffolToString",
+                "comment": " It generates the string of a First Order Logic Formula,\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.FormulaFOL -> String.String"
+            },
+            {
+                "name": "ffolUniversalClausure",
+                "comment": " It gives the universal clausure of a formula\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.FormulaFOL -> LogicUS.FOL.SyntaxSemantics.FormulaFOL"
+            },
+            {
+                "name": "ffolValuation",
+                "comment": " It calculates the valuation of a formula regarding to an interpretation. If the formula is not closed or any element is not interpretable it returns Nothing.\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.FormulaFOL -> LogicUS.FOL.SyntaxSemantics.L_Structure comparable -> Maybe.Maybe Basics.Bool"
+            },
+            {
+                "name": "ffolVarSymbols",
+                "comment": " It gets all the variables that acts inside a formula\n\n    f1 =\n        ffolReadExtraction <| ffolReadFromString \"_p(x,y)=_p(y,x)\"\n\n    f2 =\n        ffolReadExtraction <| ffolReadFromString \"!A[x] !A[y] (M(x,y) -> !E[z] F(z, _jhon) & P(x,z) | P(y,z))\"\n\n    ffolVarSymbols f1 =\n        [ \"x\", \"y\" ]\n    ffolVarSymbols f2 =\n        [ \"x\", \"y\", \"z\" ]\n\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.FormulaFOL -> List.List LogicUS.FOL.SyntaxSemantics.Variable"
+            },
+            {
+                "name": "formTreeToDOT",
+                "comment": " It gives a string representation of a form tree using DOT format\n",
+                "type": "Graph.Graph LogicUS.FOL.SyntaxSemantics.FormulaFOL () -> String.String"
+            },
+            {
+                "name": "formTreeToString",
+                "comment": " It gives a string representation of a form tree\n",
+                "type": "Graph.Graph LogicUS.FOL.SyntaxSemantics.FormulaFOL () -> String.String"
+            },
+            {
+                "name": "identToMathString",
+                "comment": " It generates the string of an identifier using Latex notation\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.Ident -> String.String"
+            },
+            {
+                "name": "identToString",
+                "comment": " It generates the string of an identifier\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.Ident -> String.String"
+            },
+            {
+                "name": "identsToMathString",
+                "comment": " It generates the string of a list of identifier\n",
+                "type": "List.List LogicUS.FOL.SyntaxSemantics.Ident -> String.String"
+            },
+            {
+                "name": "identsToString",
+                "comment": " It generates the string of a list of identifier\n",
+                "type": "List.List LogicUS.FOL.SyntaxSemantics.Ident -> String.String"
+            },
+            {
+                "name": "lStructureIsValid",
+                "comment": " It checks that a L\\_Structure is valid, that is:\n\n  - If all the values asigned to the constants are in the universe\n\n  - For each function symbol, of arity k, all the possible k-tuples (as lists) of elements for the universe must be in the associated dictionary, and all the elements of its range must be in the universe.\n\n  - For each predicate symbol, all the elements of the associated set must be lists whose length matches with the regarding arity and whose elements belongs to the universe\n\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.L_Structure comparable -> Basics.Bool"
+            },
+            {
+                "name": "l_StructureToString",
+                "comment": " It gives a L-structure as string. It needs a funtion that gives the string representation of the elements of the L-Structure\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.L_Structure comparable -> (comparable -> String.String) -> String.String"
+            },
+            {
+                "name": "renameVars",
+                "comment": " It renames variables in a formula if it is necessary. If a instance is linked to several cuantifiers (non well formed formula) it takes the nearest one as reference.\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.FormulaFOL -> LogicUS.FOL.SyntaxSemantics.FormulaFOL"
+            },
+            {
+                "name": "sfolInterpretation",
+                "comment": " It calculates the valuation of a set of closed formulas regarding to an interpretation. If any formula is interpretable it returns Nothing.\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.SetFOL -> LogicUS.FOL.SyntaxSemantics.L_Structure comparable -> Maybe.Maybe Basics.Bool"
+            },
+            {
+                "name": "sfolRead",
+                "comment": " It reads a set of formulas from a string. Each string that corresponds to each of the formulas of the set must be ended by a point `.`\n(the last formula can, optionally, not be ended by a point).\n",
+                "type": "String.String -> LogicUS.FOL.SyntaxSemantics.SetFOL"
+            },
+            {
+                "name": "sfolToMathString",
+                "comment": " It generates the string of a First Order Logic Set of formulas using latex notation as an array\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.SetFOL -> String.String"
+            },
+            {
+                "name": "sfolToMathString2",
+                "comment": " It generates the string of a First Order Logic Set of formulas using latex notation as an array\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.SetFOL -> String.String"
+            },
+            {
+                "name": "sfolToString",
+                "comment": " It generates the string of a First Order Logic Set of formulas,\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.SetFOL -> String.String"
+            },
+            {
+                "name": "substitutionComposition",
+                "comment": " It gives the composition of two substitutions (s1 ∘ s2)\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.Substitution -> LogicUS.FOL.SyntaxSemantics.Substitution -> LogicUS.FOL.SyntaxSemantics.Substitution"
+            },
+            {
+                "name": "substitutionDomain",
+                "comment": " It gets the variable domain of the substitution, that is variables symbols that participates in it.\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.Substitution -> List.List LogicUS.FOL.SyntaxSemantics.Variable"
+            },
+            {
+                "name": "substitutionReadExtraction",
+                "comment": " It extract the formula readed. If it is Nothing it returns Insat\n",
+                "type": "( Maybe.Maybe LogicUS.FOL.SyntaxSemantics.Substitution, String.String, String.String ) -> LogicUS.FOL.SyntaxSemantics.Substitution"
+            },
+            {
+                "name": "substitutionReadFromString",
+                "comment": " It returns a tuple with may be a substitution (if it can be read it), the input considerated to parse and a message of error if it is not able to performs the parsing.\n-- Messages are not perfect but we're working to improve it.\n",
+                "type": "String.String -> ( Maybe.Maybe LogicUS.FOL.SyntaxSemantics.Substitution, String.String, String.String )"
+            },
+            {
+                "name": "substitutionToInputString",
+                "comment": " It generates the corresponding string input of a substitution\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.Substitution -> String.String"
+            },
+            {
+                "name": "substitutionToMathString",
+                "comment": " It gives a string representation of a substitution using latex notation\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.Substitution -> String.String"
+            },
+            {
+                "name": "substitutionToString",
+                "comment": " It gives a string representation of a substitution using latex notation\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.Substitution -> String.String"
+            },
+            {
+                "name": "termApplySubstitution",
+                "comment": " It performes a substitution in a term, replacing the variables according to the substitution.\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.Substitution -> LogicUS.FOL.SyntaxSemantics.Term -> LogicUS.FOL.SyntaxSemantics.Term"
+            },
+            {
+                "name": "termClosedTerms",
+                "comment": " It gives the all the closed terms inside a term (including the entire term if it is closed)\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.Term -> List.List LogicUS.FOL.SyntaxSemantics.Term"
+            },
+            {
+                "name": "termConstSymbols",
+                "comment": " It gets all the constant symbols that acts inside a term\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.Term -> List.List LogicUS.FOL.SyntaxSemantics.Ident"
+            },
+            {
+                "name": "termFuncSymbols",
+                "comment": " It gets all the function symbols that acts inside a term\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.Term -> List.List LogicUS.FOL.SyntaxSemantics.Ident"
+            },
+            {
+                "name": "termInterpretation",
+                "comment": " It calculates the interpretation of a closed term regarding to a L\\_structure. If it is not interpretable by the L\\_struncture then it returns Nothing.\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.Term -> LogicUS.FOL.SyntaxSemantics.L_Structure comparable -> Maybe.Maybe comparable"
+            },
+            {
+                "name": "termIsClosed",
+                "comment": " It determinates if a term is closed this is if it doesn't contains any variable\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.Term -> Basics.Bool"
+            },
+            {
+                "name": "termToMathString",
+                "comment": " It generates the string of a term using latex notation\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.Term -> String.String"
+            },
+            {
+                "name": "termToString",
+                "comment": " It generates the string of a term\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.Term -> String.String"
+            },
+            {
+                "name": "termVarSymbols",
+                "comment": " It gets all the variable symbols that acts inside a term\n\n    termVarSymbols (Func \"f\" [ Var \"a\", Func \"c\" [], Func \"g\" [ Var \"b\", Var \"a\" ] ]) =\n        [ \"a\", \"b\" ]\n\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.Term -> List.List LogicUS.FOL.SyntaxSemantics.Variable"
+            },
+            {
+                "name": "termsClosedTerms",
+                "comment": " It gives all the closed terms inside a list of terms.\n",
+                "type": "List.List LogicUS.FOL.SyntaxSemantics.Term -> List.List LogicUS.FOL.SyntaxSemantics.Term"
+            },
+            {
+                "name": "termsConstSymbols",
+                "comment": " It gets all the constants symbols that acts inside a list of terms\n",
+                "type": "List.List LogicUS.FOL.SyntaxSemantics.Term -> List.List LogicUS.FOL.SyntaxSemantics.Ident"
+            },
+            {
+                "name": "termsFuncSymbols",
+                "comment": " It gets all the function symbols that acts inside a list of terms\n",
+                "type": "List.List LogicUS.FOL.SyntaxSemantics.Term -> List.List LogicUS.FOL.SyntaxSemantics.Ident"
+            },
+            {
+                "name": "termsInterpretation",
+                "comment": " It calculates the interpretations of a list of closed terms, if any of them is not interpretable then it returns Nothing.\n",
+                "type": "List.List LogicUS.FOL.SyntaxSemantics.Term -> LogicUS.FOL.SyntaxSemantics.L_Structure comparable -> Maybe.Maybe (List.List comparable)"
+            },
+            {
+                "name": "termsToMathString",
+                "comment": " It generates the string of a list of terms (parameters) using latex notation\n",
+                "type": "List.List LogicUS.FOL.SyntaxSemantics.Term -> String.String"
+            },
+            {
+                "name": "termsToString",
+                "comment": " It generates the string of a list of terms (parameters)\n",
+                "type": "List.List LogicUS.FOL.SyntaxSemantics.Term -> String.String"
+            },
+            {
+                "name": "termsVarSymbols",
+                "comment": " It gets all the variables that acts inside a list of terms\n\n    termsVarSymbols [ Func \"f\" [ Var \"a\", Func \"c\" [] ], Func \"g\" [ Var \"b\", Var \"c\" ] ] =\n        [ \"a\", \"b\", \"c\" ]\n\n",
+                "type": "List.List LogicUS.FOL.SyntaxSemantics.Term -> List.List LogicUS.FOL.SyntaxSemantics.Variable"
+            },
+            {
+                "name": "varToMathString",
+                "comment": " It generates the string of a variable using Latex Notation\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.Variable -> String.String"
+            },
+            {
+                "name": "varToString",
+                "comment": " It generates the string of a variable\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.Variable -> String.String"
+            },
+            {
+                "name": "varsToMathString",
+                "comment": " It generates the string of a list of identifier\n",
+                "type": "List.List LogicUS.FOL.SyntaxSemantics.Variable -> String.String"
+            },
+            {
+                "name": "varsToString",
+                "comment": " It generates the string of a list of variables\n",
+                "type": "List.List LogicUS.FOL.SyntaxSemantics.Variable -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "LogicUS.FOL.Unification",
+        "comment": " This module allows to calculate the Maximum General Unificator (MGU)\n\n\n# MGU\n\n@docs termMGU, termsMGU, atomsMGU\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "atomsMGU",
+                "comment": " It calculates a Maximum General Unificator for two atoms if it exists.\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.FormulaFOL -> LogicUS.FOL.SyntaxSemantics.FormulaFOL -> Maybe.Maybe LogicUS.FOL.SyntaxSemantics.Substitution"
+            },
+            {
+                "name": "termMGU",
+                "comment": " It calculates a Maximum General Unificator between two terms, if it exists.\n",
+                "type": "LogicUS.FOL.SyntaxSemantics.Term -> LogicUS.FOL.SyntaxSemantics.Term -> Maybe.Maybe LogicUS.FOL.SyntaxSemantics.Substitution"
+            },
+            {
+                "name": "termsMGU",
+                "comment": " It calculates a Maximum General Unificator for a list of terms if it exists.\n",
+                "type": "List.List LogicUS.FOL.SyntaxSemantics.Term -> List.List LogicUS.FOL.SyntaxSemantics.Term -> Maybe.Maybe LogicUS.FOL.SyntaxSemantics.Substitution"
+            }
+        ],
+        "binops": []
+    }
+]

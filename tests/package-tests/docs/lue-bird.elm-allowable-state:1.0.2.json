@@ -1,0 +1,22 @@
+[
+    {
+        "name": "Possibly",
+        "comment": " In short:\n\n  - `Never` marks states as impossible\n\n        top : Empty Never (StackFilled element) -> element\n\n  - [`Possibly`](#Possibly) marks states as possible\n\n        empty : Empty Possibly filling_\n\n  - → you can carry over non-emptiness-information\n\n        import Fillable exposing (Empty(..), toFillingOrIfEmpty)\n\n        type FocusHole possiblyOrNever item\n            = Item item\n            | Hole possiblyOrNever\n\n        toFocus :\n            Empty possiblyOrNever value\n            -> FocusHole possiblyOrNever value\n        toFocus =\n            \\fillable ->\n                case fillable of\n                    Empty possiblyOrNever ->\n                        Hole possiblyOrNever\n\n                    Filled value ->\n                        value |> Item\n\n    or\n\n        toFocus =\n            \\fillable ->\n                fillable\n                    |> Fillable.map Item\n                    |> toFillingOrIfEmpty Hole\n\n@docs Possibly\n\nIf you still have questions, check out the [readme](https://dark.elm.dmy.fr/packages/lue-bird/elm-allowable-state/latest/).\n\n",
+        "unions": [
+            {
+                "name": "Possibly",
+                "comment": " Marks a state as possible to occur.\n\n\n#### in results\n\n    fromMaybe : Maybe value -> Empty Possibly value\n\n    fromList : List element -> Empty Possibly (StackFilled element)\n\n\n#### in type declarations\n\n    type alias Model =\n        WithoutConstructorFunction\n            { selected : Empty Possibly Choice\n            , planets : Empty Possibly (StackFilled Planet)\n            , searchKeyWords : Empty Never (StackFilled String)\n            }\n\n    type alias WithoutConstructorFunction record =\n        record\n\nwhere `WithoutConstructorFunction` stops the compiler from creating a positional constructor function for `Model`.\n\nRead more about the general idea in the\n[module documentation](https://dark.elm.dmy.fr/packages/lue-bird/elm-allowable-state/latest/Possible).\nor [readme](https://dark.elm.dmy.fr/packages/lue-bird/elm-allowable-state/latest/).\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Possible",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [],
+        "binops": []
+    }
+]

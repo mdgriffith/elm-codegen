@@ -1,0 +1,80 @@
+[
+    {
+        "name": "Html.AttributeBuilder",
+        "comment": " Elm's [Html] module constructs HTML nodes by asking you to provide,\namong other things, a list of HTML attributes. So, you might typically\nsee something like:\n\n[Html]: http://package.elm-lang.org/packages/elm-lang/html/latest\n\n    div\n        [ class \"ui button primary\"\n        , onClick DoLogin\n        ]\n        [ text \"Login\" ]\n\nSometimes it is convenient to build up the list of attributes through\na series of computations. One can, of course, simply use functions\nthat return lists of attributes and combine them together ... perhaps\nsomething like this:\n\n    div\n        (List.concat\n            [ computation1 model\n            , computation2 user\n            , [ class \"another-class\"\n              , style \"position\" \"absolute\"\n              ]\n            ]\n        )\n        [ text \"Login\" ]\n\nAnd, in Elm 0.18, Elm does some things you might expect with this:\n\n  - If you provide multiple \"class\" attributes, they get combined appropriately.\n    (This wasn't the case in Elm 0.17, which was actually the original motivation\n    for this package).\n\n  - If you provide multiple \"style\" attributes, they are all used.\n\nHowever, sometimes you might want to build attributes up using types that\ngive you some more fine-tuned control. That is the purpose of this package.\nIt allows you to something like this:\n\n    import Html.AttributeBuilder as AB\n\n    AB.attributeBuilder\n        |> AB.union (computation1 model)\n        |> AB.union (computation2 user)\n        |> AB.addClass \"another-class\"\n        |> AB.removeClass \"unwanted-class\"\n        |> AB.addStyle \"position\" \"absolute\"\n        |> AB.toAttributes\n\nWhat you get at the end of such a pipeline is a `List Html.Attribute`,\nconstructed in a way that you might enjoy.\n\n@docs AttributeBuilder, attributeBuilder, union, toAttributes\n@docs addAttribute, addAttributes\n@docs addClass, removeClass, applyClassList, addClassList\n@docs addStyle, addStyles, removeStyle\n\n",
+        "unions": [
+            {
+                "name": "AttributeBuilder",
+                "comment": " An opaque type which you can use to gradually build up attributes for\nan `Html` element.\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "addAttribute",
+                "comment": " Add an attribute to an attribute builder.\n\nThis is particularly meant for event handlers (e.g. `on \"click\" ...`), for which\nwe don't provide any special support.\n\nWhere possible, you should prefer the more specific functions for classes and\nstyles, since they combine classes and styles in a more predictable manner.\n\n    attributeBuilder\n        |> addClass \"login\"\n        |> addAttribute (onClick Login)\n        |> toAttributes\n\n",
+                "type": "Html.Attribute msg -> Html.AttributeBuilder.AttributeBuilder msg -> Html.AttributeBuilder.AttributeBuilder msg"
+            },
+            {
+                "name": "addAttributes",
+                "comment": " Add a list of attributes to an attribute builder.\n\nThis is particularly meant for event handlers (e.g. `on \"click\" ...`), for which\nwe don't provide any special support.\n\nWhere possible, you should prefer the more specific functions for classes and\nstyles, since they combine classes and styles in a more predictable manner.\n\n",
+                "type": "List.List (Html.Attribute msg) -> Html.AttributeBuilder.AttributeBuilder msg -> Html.AttributeBuilder.AttributeBuilder msg"
+            },
+            {
+                "name": "addClass",
+                "comment": " Add a class to the `AttributeBuilder`.\n",
+                "type": "String.String -> Html.AttributeBuilder.AttributeBuilder msg -> Html.AttributeBuilder.AttributeBuilder msg"
+            },
+            {
+                "name": "addClassList",
+                "comment": " Like `applyClassList`, but only adds classes, never removes.\n",
+                "type": "List.List ( String.String, Basics.Bool ) -> Html.AttributeBuilder.AttributeBuilder msg -> Html.AttributeBuilder.AttributeBuilder msg"
+            },
+            {
+                "name": "addStyle",
+                "comment": " Add a value for a style, replacing any previous value for the style with that name.\nThe first parameter is the name of the style, and the second is its value.\n\n    attributeBuilder\n        |> addClass \"some-class\"\n        |> addStyle \"background-color\" \"red\"\n        |> toAttributes\n\n",
+                "type": "String.String -> String.String -> Html.AttributeBuilder.AttributeBuilder msg -> Html.AttributeBuilder.AttributeBuilder msg"
+            },
+            {
+                "name": "addStyles",
+                "comment": " Add several styles at once, analogous to `Html.Attribute.style`.\n",
+                "type": "List.List ( String.String, String.String ) -> Html.AttributeBuilder.AttributeBuilder msg -> Html.AttributeBuilder.AttributeBuilder msg"
+            },
+            {
+                "name": "applyClassList",
+                "comment": " Like `Html.Attributes.classList`, but also removes the classes in the\n`List` which are associated with a `False`, if already present.\n",
+                "type": "List.List ( String.String, Basics.Bool ) -> Html.AttributeBuilder.AttributeBuilder msg -> Html.AttributeBuilder.AttributeBuilder msg"
+            },
+            {
+                "name": "attributeBuilder",
+                "comment": " An empty `AttributeBuilder`, with no attributes yet. You will often\nwant to start with this.\n\n    attributeBuilder\n        |> addClass \"a-class\"\n        |> addStyle \"background-color\" \"red\"\n        |> toAttributes\n\n",
+                "type": "Html.AttributeBuilder.AttributeBuilder msg"
+            },
+            {
+                "name": "removeClass",
+                "comment": " Remove a class from the `AttributeBuilder`.\n",
+                "type": "String.String -> Html.AttributeBuilder.AttributeBuilder msg -> Html.AttributeBuilder.AttributeBuilder msg"
+            },
+            {
+                "name": "removeStyle",
+                "comment": " Remove a style from an `AttributeBuilder`.\n",
+                "type": "String.String -> Html.AttributeBuilder.AttributeBuilder msg -> Html.AttributeBuilder.AttributeBuilder msg"
+            },
+            {
+                "name": "toAttributes",
+                "comment": " Convert an `AttributeBuilder` to a list of attributes. This\nwill typically be your final step, when you have collected all\nthe attributes you need and want to supply the attributes to\nthe `Html` module.\n",
+                "type": "Html.AttributeBuilder.AttributeBuilder msg -> List.List (Html.Attribute msg)"
+            },
+            {
+                "name": "union",
+                "comment": " Combine two `AttributeBuilder` values. If the names of styles\ncollide, the values in the first `AttributeBuilder` will be preferred.\n",
+                "type": "Html.AttributeBuilder.AttributeBuilder msg -> Html.AttributeBuilder.AttributeBuilder msg -> Html.AttributeBuilder.AttributeBuilder msg"
+            }
+        ],
+        "binops": []
+    }
+]

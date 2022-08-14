@@ -1,0 +1,976 @@
+[
+    {
+        "name": "Ginger.Category",
+        "comment": "\n\n\n# Definition\n\n@docs Category\n\n\n# Conversions\n\n@docs toString\n@docs fromString\n\n\n# Decode\n\n@docs fromJson\n\n",
+        "unions": [
+            {
+                "name": "Category",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Agenda",
+                        []
+                    ],
+                    [
+                        "Article",
+                        []
+                    ],
+                    [
+                        "Artifact",
+                        []
+                    ],
+                    [
+                        "Audio",
+                        []
+                    ],
+                    [
+                        "Collection",
+                        []
+                    ],
+                    [
+                        "Document",
+                        []
+                    ],
+                    [
+                        "Event",
+                        []
+                    ],
+                    [
+                        "Image",
+                        []
+                    ],
+                    [
+                        "Location",
+                        []
+                    ],
+                    [
+                        "Media",
+                        []
+                    ],
+                    [
+                        "Meta",
+                        []
+                    ],
+                    [
+                        "News",
+                        []
+                    ],
+                    [
+                        "Person",
+                        []
+                    ],
+                    [
+                        "Text",
+                        []
+                    ],
+                    [
+                        "Video",
+                        []
+                    ],
+                    [
+                        "Website",
+                        []
+                    ],
+                    [
+                        "Custom",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fromJson",
+                "comment": " ",
+                "type": "Json.Decode.Decoder (List.NonEmpty.NonEmpty Ginger.Category.Category)"
+            },
+            {
+                "name": "fromString",
+                "comment": " ",
+                "type": "String.String -> Ginger.Category.Category"
+            },
+            {
+                "name": "toString",
+                "comment": " ",
+                "type": "Ginger.Category.Category -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Ginger.Id",
+        "comment": " The Ginger resource id. We 'tag' the resource id with type `Int`\nusing [elm-tagged](https://package.elm-lang.org/packages/joneshf/elm-tagged/2.1.1/).\nThis helps us to not mix up some other `Int` with a resource id by accident.\n\n_The only way to construct a `ResourceId` is by decoding one from some json or\nparsing it out of an url path. This is rather strict and there might be some times\nyou just need to create a random `ResourceId` for whatever reason, this hasn't\ncome up so far, but file an issue if it does._\n\n\n# Definition\n\n@docs ResourceId\n\n\n# Convert\n\n@docs toInt\n@docs toString\n\n\n# Decode and Encode\n\n@docs fromUrl\n@docs fromJson\n@docs toJson\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "ResourceId",
+                "comment": " ",
+                "args": [],
+                "type": "Tagged.Tagged Ginger.Id.Resource Basics.Int"
+            }
+        ],
+        "values": [
+            {
+                "name": "fromJson",
+                "comment": " ",
+                "type": "Json.Decode.Decoder Ginger.Id.ResourceId"
+            },
+            {
+                "name": "fromUrl",
+                "comment": " ",
+                "type": "Url.Parser.Parser (Ginger.Id.ResourceId -> a) a"
+            },
+            {
+                "name": "toInt",
+                "comment": " ",
+                "type": "Ginger.Id.ResourceId -> Basics.Int"
+            },
+            {
+                "name": "toJson",
+                "comment": " ",
+                "type": "Ginger.Id.ResourceId -> Json.Encode.Value"
+            },
+            {
+                "name": "toString",
+                "comment": " ",
+                "type": "Ginger.Id.ResourceId -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Ginger.Media",
+        "comment": "\n\n\n# Definitions\n\n@docs Media\n@docs MediaClass\n@docs VideoData\n\n\n# Build & Query\n\n@docs imageUrl\n@docs videoData\n@docs imageClassToString\n@docs empty\n\n\n# Decode\n\n@docs fromJson\n\n",
+        "unions": [
+            {
+                "name": "Media",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Image",
+                        [
+                            "Dict.Dict String.String String.String"
+                        ]
+                    ],
+                    [
+                        "Video",
+                        [
+                            "Ginger.Media.VideoData"
+                        ]
+                    ],
+                    [
+                        "Empty",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "MediaClass",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Avatar",
+                        []
+                    ],
+                    [
+                        "Thumbnail",
+                        []
+                    ],
+                    [
+                        "Card",
+                        []
+                    ],
+                    [
+                        "Small",
+                        []
+                    ],
+                    [
+                        "Medium",
+                        []
+                    ],
+                    [
+                        "Large",
+                        []
+                    ],
+                    [
+                        "Cinemascope",
+                        []
+                    ],
+                    [
+                        "Custom",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "VideoData",
+                "comment": " ",
+                "args": [],
+                "type": "{ embedCode : String.String, width : Basics.Int, height : Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "empty",
+                "comment": " ",
+                "type": "Ginger.Media.Media"
+            },
+            {
+                "name": "fromJson",
+                "comment": " Decode image and video data\n",
+                "type": "Json.Decode.Decoder Ginger.Media.Media"
+            },
+            {
+                "name": "imageClassToString",
+                "comment": " ",
+                "type": "Ginger.Media.MediaClass -> String.String"
+            },
+            {
+                "name": "imageUrl",
+                "comment": " The image url with a given `MediaClass`\n",
+                "type": "Ginger.Media.MediaClass -> Ginger.Media.Media -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "videoData",
+                "comment": " The video data.\n",
+                "type": "Ginger.Media.Media -> Maybe.Maybe Ginger.Media.VideoData"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Ginger.Menu",
+        "comment": "\n\n\n# Definitions\n\n@docs Menu\n@docs Item\n@docs Footer\n\n\n# Construct\n\n@docs empty\n\n\n# Decode\n\n@docs fromValue\n@docs fromJson\n@docs decodeMenuItems\n@docs decodeMenuItem\n@docs decodeFooter\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Footer",
+                "comment": " ",
+                "args": [],
+                "type": "{ title : Ginger.Translation.Translation, summary : Ginger.Translation.Translation, items : List.List Ginger.Menu.Item }"
+            },
+            {
+                "name": "Item",
+                "comment": " ",
+                "args": [],
+                "type": "{ id : Ginger.Id.ResourceId, title : Ginger.Translation.Translation, path : String.String }"
+            },
+            {
+                "name": "Menu",
+                "comment": " ",
+                "args": [],
+                "type": "{ main : List.List Ginger.Menu.Item, footer : Ginger.Menu.Footer }"
+            }
+        ],
+        "values": [
+            {
+                "name": "decodeFooter",
+                "comment": " ",
+                "type": "Json.Decode.Decoder Ginger.Menu.Footer"
+            },
+            {
+                "name": "decodeMenuItem",
+                "comment": " ",
+                "type": "Json.Decode.Decoder Ginger.Menu.Item"
+            },
+            {
+                "name": "decodeMenuItems",
+                "comment": " Build a custom menu `Decoder` re-using the decoders used in this module\n\n    type alias Menu =\n        { main : List Item\n        , mainExtra : List Item\n        , footer : List Item\n        , footerExtra : List Item\n        }\n\n    customFromJson : Decoder Menu\n    customFromJson =\n        Decode.succeed Menu\n            |> Pipeline.required \"main_menu\" decodeMenuItems\n            |> Pipeline.required \"main_menu_extra\" decodeMenuItems\n            |> Pipeline.required \"footer_menu\" decodeMenuItems\n            |> Pipeline.required \"footer_menu_extra\" decodeMenuItems\n\n",
+                "type": "Json.Decode.Decoder (List.List Ginger.Menu.Item)"
+            },
+            {
+                "name": "empty",
+                "comment": " A `Menu` containing no values\n",
+                "type": "Ginger.Menu.Menu"
+            },
+            {
+                "name": "fromJson",
+                "comment": " ",
+                "type": "Json.Decode.Decoder Ginger.Menu.Menu"
+            },
+            {
+                "name": "fromValue",
+                "comment": " Decode a `Menu` from a `Decode.Value`, defaults to an empty `Menu`\n\nYou can for example pass the menu as a flag and initialize you app like:\n\n    main : Program Decode.Value Model Msg\n    main =\n        Browser.application\n            { init = init << Ginger.Menu.fromValue\n            , view = view\n            , update = update\n            , subscriptions = subscriptions\n            , onUrlChange = OnUrlChange\n            , onUrlRequest = OnUrlRequest\n            }\n\n",
+                "type": "Json.Decode.Value -> Ginger.Menu.Menu"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Ginger.Predicate",
+        "comment": "\n\n\n# Definition\n\n@docs Predicate\n\n\n# Conversions\n\n@docs toString\n@docs fromString\n\n\n# Decode\n\n@docs fromJson\n\n",
+        "unions": [
+            {
+                "name": "Predicate",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "IsAbout",
+                        []
+                    ],
+                    [
+                        "HasAuthor",
+                        []
+                    ],
+                    [
+                        "HasDepiction",
+                        []
+                    ],
+                    [
+                        "HasDocument",
+                        []
+                    ],
+                    [
+                        "HasBanner",
+                        []
+                    ],
+                    [
+                        "HasPart",
+                        []
+                    ],
+                    [
+                        "HasRelation",
+                        []
+                    ],
+                    [
+                        "Custom",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fromJson",
+                "comment": " ",
+                "type": "Json.Decode.Decoder Ginger.Predicate.Predicate"
+            },
+            {
+                "name": "fromString",
+                "comment": " ",
+                "type": "String.String -> Ginger.Predicate.Predicate"
+            },
+            {
+                "name": "toString",
+                "comment": " ",
+                "type": "Ginger.Predicate.Predicate -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Ginger.Request",
+        "comment": "\n\n\n# Get\n\n@docs resourceById\n@docs resourceByPath\n@docs resourceByName\n\n\n## Delete\n\n@docs deleteResource\n\n\n## Edge\n\n@docs postEdge\n@docs deleteEdge\n\n\n## File\n\n@docs uploadFile\n@docs uploadFileAndPostEdge\n\n\n# Search\n\n@docs search\n@docs searchLocation\n\n@docs SearchResult\n\n@docs QueryParam\n@docs Ordering\n@docs SortField\n@docs Operator\n\n@docs queryParamsToBuilder\n\n",
+        "unions": [
+            {
+                "name": "Operator",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "EQ",
+                        []
+                    ],
+                    [
+                        "LTE",
+                        []
+                    ],
+                    [
+                        "LT",
+                        []
+                    ],
+                    [
+                        "GT",
+                        []
+                    ],
+                    [
+                        "GTE",
+                        []
+                    ],
+                    [
+                        "MatchPhrase",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Ordering",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Asc",
+                        []
+                    ],
+                    [
+                        "Desc",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "QueryParam",
+                "comment": " Some of these params only work if `mod_elasticsearch` is enabled\n",
+                "args": [],
+                "cases": [
+                    [
+                        "HasContentGroup",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "ExcludeCategory",
+                        [
+                            "Ginger.Category.Category"
+                        ]
+                    ],
+                    [
+                        "Facet",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Filter",
+                        [
+                            "String.String",
+                            "Ginger.Request.Operator",
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "HasCategory",
+                        [
+                            "Ginger.Category.Category"
+                        ]
+                    ],
+                    [
+                        "HasObjectId",
+                        [
+                            "Ginger.Id.ResourceId"
+                        ]
+                    ],
+                    [
+                        "HasObjectName",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "HasSubjectId",
+                        [
+                            "Ginger.Id.ResourceId"
+                        ]
+                    ],
+                    [
+                        "HasSubjectName",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "IsUnfinished",
+                        []
+                    ],
+                    [
+                        "IsUpcoming",
+                        []
+                    ],
+                    [
+                        "Limit",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "Offset",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "PromoteCategory",
+                        [
+                            "Ginger.Category.Category"
+                        ]
+                    ],
+                    [
+                        "SortBy",
+                        [
+                            "Ginger.Request.SortField",
+                            "Ginger.Request.Ordering"
+                        ]
+                    ],
+                    [
+                        "Text",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "SearchType",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Custom",
+                        [
+                            "String.String",
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "SortField",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "PublicationDate",
+                        []
+                    ],
+                    [
+                        "StartDate",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "SearchResult",
+                "comment": " ",
+                "args": [
+                    "a"
+                ],
+                "type": "{ results : List.List a, facets : Json.Decode.Value, total : Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "deleteEdge",
+                "comment": " ",
+                "type": "{ from : Ginger.Id.ResourceId, predicate : Ginger.Predicate.Predicate, to : Ginger.Id.ResourceId } -> Task.Task Http.Error ()"
+            },
+            {
+                "name": "deleteResource",
+                "comment": " Delete a resource by `ResourceId`\n",
+                "type": "(Result.Result Http.Error () -> msg) -> Ginger.Id.ResourceId -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "postEdge",
+                "comment": " ",
+                "type": "{ from : Ginger.Id.ResourceId, predicate : Ginger.Predicate.Predicate, to : Ginger.Id.ResourceId } -> Task.Task Http.Error ()"
+            },
+            {
+                "name": "queryParamsToBuilder",
+                "comment": " Convert this modules `QueryParm` to elm/url `QueryParameter` values\nto use with Url.Builder.\n",
+                "type": "List.List Ginger.Request.QueryParam -> List.List Url.Builder.QueryParameter"
+            },
+            {
+                "name": "resourceById",
+                "comment": " Request a resource by `ResourceId`\n",
+                "type": "(Result.Result Http.Error (Ginger.Resource.ResourceWith Ginger.Resource.Edges) -> msg) -> Ginger.Id.ResourceId -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "resourceByName",
+                "comment": " Request a resource by its unique name\n",
+                "type": "(Result.Result Http.Error (Ginger.Resource.ResourceWith Ginger.Resource.Edges) -> msg) -> String.String -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "resourceByPath",
+                "comment": " Request a resource by its `page_path`\n",
+                "type": "(Result.Result Http.Error (Ginger.Resource.ResourceWith Ginger.Resource.Edges) -> msg) -> String.String -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "search",
+                "comment": "\n\n    Request.search GotEvents\n        [ Request.Upcoming\n        , Request.HasCategory Event\n        , Request.SortBy Request.StartDate Request.Asc\n        ]\n\n",
+                "type": "(Result.Result Http.Error (Ginger.Request.SearchResult (Ginger.Resource.ResourceWith Ginger.Resource.Edges)) -> msg) -> List.List Ginger.Request.QueryParam -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "searchLocation",
+                "comment": "\n\n    Request.searchLocation GotLocations\n        [ Request.HasCategory Person ]\n\n",
+                "type": "(Result.Result Http.Error (Ginger.Request.SearchResult Ginger.Resource.Extra.Location) -> msg) -> List.List Ginger.Request.QueryParam -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "uploadFile",
+                "comment": " ",
+                "type": "File.File -> Task.Task Http.Error Ginger.Id.ResourceId"
+            },
+            {
+                "name": "uploadFileAndPostEdge",
+                "comment": " ",
+                "type": "{ from : Ginger.Id.ResourceId, predicate : Ginger.Predicate.Predicate, file : File.File } -> Task.Task Http.Error (Ginger.Resource.ResourceWith Ginger.Resource.Edges)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Ginger.Resource",
+        "comment": "\n\n\n# Definitions\n\n@docs ResourceWith\n\n@docs Edges\n@docs Edge\n@docs Resource\n@docs Block\n@docs BlockType\n\n\n# Access data\n\n@docs getCategory\n@docs getCategories\n@docs getDepiction\n@docs getDepictions\n@docs objectsOfPredicate\n\n\n# Decode\n\n@docs fromJsonWithEdges\n@docs fromJsonWithoutEdges\n\n",
+        "unions": [
+            {
+                "name": "BlockType",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Text",
+                        []
+                    ],
+                    [
+                        "Header",
+                        []
+                    ],
+                    [
+                        "Page",
+                        []
+                    ],
+                    [
+                        "Custom",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Block",
+                "comment": " ",
+                "args": [],
+                "type": "{ body : Ginger.Translation.Translation, name : String.String, type_ : Ginger.Resource.BlockType, relatedRscId : Maybe.Maybe Ginger.Id.ResourceId, properties : Json.Decode.Value }"
+            },
+            {
+                "name": "Edge",
+                "comment": " A connection to a resource named by `Predicate`\n",
+                "args": [],
+                "type": "{ predicate : Ginger.Predicate.Predicate, resource : Ginger.Resource.ResourceWith {} }"
+            },
+            {
+                "name": "Edges",
+                "comment": " The record we use to extend `ResourceWith a`.\n\nYou can render a list of resource depictions like so:\n\n    viewDepictions : ResourceWith Edges -> List (Html msg)\n    viewDepictions resource =\n        List.map viewImage <|\n            depictions Media.Medium resource\n\nThis next example won't compile because you need a `ResourceWith Edges`\nand this signature indicates they are missing.\n\n    viewDepictions : ResourceWith {} -> List (Html msg)\n    viewDepictions resource =\n        List.map viewImage <|\n            depictions Media.Medium resource\n\n",
+                "args": [],
+                "type": "{ edges : List.List Ginger.Resource.Edge }"
+            },
+            {
+                "name": "Resource",
+                "comment": " Alias for `ResourceWith Edges`\n",
+                "args": [],
+                "type": "Ginger.Resource.ResourceWith Ginger.Resource.Edges"
+            },
+            {
+                "name": "ResourceWith",
+                "comment": " An Elm representation of a Ginger resource.\n\nNote the `a` in the record definition, this an extensible record.\nThis means it includes _at least_ all of these fields but may have others\nas well. This lets us reason about whether the edges are included in the data,\ncompile time. The Ginger REST API includes edges nested only one level deep,\nbut since the edges are also resources we can re-use this datatype like\n`ResourceWith {}`. This tells use there are _no_ other fields besides the ones here.\n\nSo you'll see this used in function signatures like:\n\n    ResourceWith Edges -- has edges\n\n    ResourceWith {} -- does not have the edges\n\n    ResourceWith a -- might have them but the code that's using this doesn't really care\n\n_Note: the `ResourceWith {}` might actually have edges, they are just not fetched._\n\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ a | id : Ginger.Id.ResourceId, title : Ginger.Translation.Translation, body : Ginger.Translation.Translation, subtitle : Ginger.Translation.Translation, summary : Ginger.Translation.Translation, path : String.String, category : List.NonEmpty.NonEmpty Ginger.Category.Category, properties : Json.Decode.Value, publicationDate : Maybe.Maybe Time.Posix, media : Ginger.Media.Media, blocks : List.List Ginger.Resource.Block }"
+            }
+        ],
+        "values": [
+            {
+                "name": "fromJsonWithEdges",
+                "comment": " Decode a `ResourceWith` that has edges.\n",
+                "type": "Json.Decode.Decoder (Ginger.Resource.ResourceWith Ginger.Resource.Edges)"
+            },
+            {
+                "name": "fromJsonWithoutEdges",
+                "comment": " Decode a `ResourceWith` that does not have edges.\n",
+                "type": "Json.Decode.Decoder (Ginger.Resource.ResourceWith {})"
+            },
+            {
+                "name": "getCategories",
+                "comment": " Get the entire category tree of a `ResourceWith` starting from the parent\ncategory and ending with the smallest child. For example, in the case of a\n`news` resource, it will return [`text`, `news`].\n",
+                "type": "Ginger.Resource.ResourceWith a -> List.List Ginger.Category.Category"
+            },
+            {
+                "name": "getCategory",
+                "comment": " Get the category of a `ResourceWith`.\n\nEvery resource has a category, and that category can be part of a category tree.\nFor instance, the `news` category belongs to the category tree `text > news`.\nThis function will return only the category stored with the `ResourceWith`,\nso in this case `news`, but not its parent `text`.\n\n",
+                "type": "Ginger.Resource.ResourceWith a -> Ginger.Category.Category"
+            },
+            {
+                "name": "getDepiction",
+                "comment": " The image url of the `ResourceWith` depiction.\n\nReturns the image url if there is a depiction _and_ the mediaclass exists.\n\n",
+                "type": "Ginger.Media.MediaClass -> Ginger.Resource.ResourceWith Ginger.Resource.Edges -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "getDepictions",
+                "comment": " The image urls of the `ResourceWith` depictions\n\nReturns a list of image urls if there is a depiction _and_ the mediaclass exists.\n\n",
+                "type": "Ginger.Media.MediaClass -> Ginger.Resource.ResourceWith Ginger.Resource.Edges -> List.List String.String"
+            },
+            {
+                "name": "objectsOfPredicate",
+                "comment": " Return all resources with a given predicate.\n\nThe returned resources won't have any edges themselves, indicated by the `{}`\nin `ResourceWith {}`.\n\n",
+                "type": "Ginger.Predicate.Predicate -> { a | edges : List.List Ginger.Resource.Edge } -> List.List (Ginger.Resource.ResourceWith {})"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Ginger.Resource.Extra",
+        "comment": "\n\n\n# Location\n\n@docs Location\n@docs locationFromJson\n\n\n# Author\n\n@docs AuthorName\n@docs authorName\n@docs authorNameFromJson\n\n\n# Event\n\n@docs EventDate\n@docs eventDate\n@docs eventDateFromJson\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "AuthorName",
+                "comment": " ",
+                "args": [],
+                "type": "{ firstName : String.String, middleName : String.String, lastNamePrefix : String.String, lastName : String.String }"
+            },
+            {
+                "name": "EventDate",
+                "comment": " ",
+                "args": [],
+                "type": "{ dateStart : Maybe.Maybe Time.Posix, dateEnd : Maybe.Maybe Time.Posix }"
+            },
+            {
+                "name": "Location",
+                "comment": " ",
+                "args": [],
+                "type": "{ id : Ginger.Id.ResourceId, lat : Basics.Float, lng : Basics.Float }"
+            }
+        ],
+        "values": [
+            {
+                "name": "authorName",
+                "comment": " ",
+                "type": "Ginger.Resource.ResourceWith Ginger.Resource.Edges -> Maybe.Maybe Ginger.Resource.Extra.AuthorName"
+            },
+            {
+                "name": "authorNameFromJson",
+                "comment": " ",
+                "type": "Json.Decode.Decoder Ginger.Resource.Extra.AuthorName"
+            },
+            {
+                "name": "eventDate",
+                "comment": " ",
+                "type": "Ginger.Resource.ResourceWith a -> Maybe.Maybe Ginger.Resource.Extra.EventDate"
+            },
+            {
+                "name": "eventDateFromJson",
+                "comment": " ",
+                "type": "Json.Decode.Decoder Ginger.Resource.Extra.EventDate"
+            },
+            {
+                "name": "locationFromJson",
+                "comment": " ",
+                "type": "Json.Decode.Decoder Ginger.Resource.Extra.Location"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Ginger.Translation",
+        "comment": "\n\n\n# Definitions\n\n@docs Translation\n@docs Language\n\n\n# Construct\n\n@docs empty\n@docs fromList\n\n\n# Convert\n\n@docs toString\n@docs toStringEscaped\n@docs toNodes\n@docs withDefault\n@docs toIso639\n@docs isEmpty\n\n\n# Render as Html\n\n@docs text\n@docs html\n\n\n# Render in language\n\n@docs textNL\n@docs htmlNL\n@docs textEN\n@docs htmlEN\n\n\n# Decode\n\n@docs fromJson\n\n",
+        "unions": [
+            {
+                "name": "Language",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "AR",
+                        []
+                    ],
+                    [
+                        "DE",
+                        []
+                    ],
+                    [
+                        "EN",
+                        []
+                    ],
+                    [
+                        "ES",
+                        []
+                    ],
+                    [
+                        "ET",
+                        []
+                    ],
+                    [
+                        "FR",
+                        []
+                    ],
+                    [
+                        "ID",
+                        []
+                    ],
+                    [
+                        "NL",
+                        []
+                    ],
+                    [
+                        "PL",
+                        []
+                    ],
+                    [
+                        "RU",
+                        []
+                    ],
+                    [
+                        "SR",
+                        []
+                    ],
+                    [
+                        "TR",
+                        []
+                    ],
+                    [
+                        "ZH",
+                        []
+                    ],
+                    [
+                        "Custom",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Translation",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "empty",
+                "comment": " An empty 'Translation'\n",
+                "type": "Ginger.Translation.Translation"
+            },
+            {
+                "name": "fromJson",
+                "comment": " ",
+                "type": "Json.Decode.Decoder Ginger.Translation.Translation"
+            },
+            {
+                "name": "fromList",
+                "comment": " Construct a `Translation` from a list of `Language` and `String` value pairs\n\n_Empty Strings will be ignored_\n\n",
+                "type": "List.List ( Ginger.Translation.Language, String.String ) -> Ginger.Translation.Translation"
+            },
+            {
+                "name": "html",
+                "comment": " Translate and render as Html markup\n",
+                "type": "Ginger.Translation.Language -> Ginger.Translation.Translation -> List.List (Html.Html msg)"
+            },
+            {
+                "name": "htmlEN",
+                "comment": " Translate to English and render as Html markup\n",
+                "type": "Ginger.Translation.Translation -> List.List (Html.Html msg)"
+            },
+            {
+                "name": "htmlNL",
+                "comment": " Translate to Dutch and render as Html markup\n",
+                "type": "Ginger.Translation.Translation -> List.List (Html.Html msg)"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Checks if translated `String` is empty.\n",
+                "type": "Ginger.Translation.Language -> Ginger.Translation.Translation -> Basics.Bool"
+            },
+            {
+                "name": "text",
+                "comment": " Translate and render as Html text\n\nWe try to unescape the escaped characters but if that fails we'll render the `Translation` as is.\n\nHtml elements will be filtered out and the text will be concatenated.\n\n",
+                "type": "Ginger.Translation.Language -> Ginger.Translation.Translation -> Html.Html msg"
+            },
+            {
+                "name": "textEN",
+                "comment": " Translate to English and render as Html text\n",
+                "type": "Ginger.Translation.Translation -> Html.Html msg"
+            },
+            {
+                "name": "textNL",
+                "comment": " Translate to Dutch and render as Html text\n",
+                "type": "Ginger.Translation.Translation -> Html.Html msg"
+            },
+            {
+                "name": "toIso639",
+                "comment": " Convert a `Language` to an [Iso639](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) `String`\n",
+                "type": "Ginger.Translation.Language -> String.String"
+            },
+            {
+                "name": "toNodes",
+                "comment": " Get translated `String` as `hecrj/html-parser` `Node`s\n\n_Defaults to an empty `List` if parsing fails._\n\n",
+                "type": "Ginger.Translation.Language -> Ginger.Translation.Translation -> List.List Html.Parser.Node"
+            },
+            {
+                "name": "toString",
+                "comment": " Get the translated `String` value.\n\n_Unescapes character entity references, strips Html nodes and defaults to an empty String._\n\n",
+                "type": "Ginger.Translation.Language -> Ginger.Translation.Translation -> String.String"
+            },
+            {
+                "name": "toStringEscaped",
+                "comment": " Get the _original_ translated `String` value as returned by the REST api.\n\n_Defaults to an empty String._\n\n",
+                "type": "Ginger.Translation.Language -> Ginger.Translation.Translation -> String.String"
+            },
+            {
+                "name": "withDefault",
+                "comment": " Get the translated `String` value.\n\nThe first argument is the fallback `Language`.\n\n_Attempt fallback if translated value is missing, defaults to an empty String._\n\n",
+                "type": "Ginger.Translation.Language -> Ginger.Translation.Language -> Ginger.Translation.Translation -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Ginger.Util",
+        "comment": " This module contains some useful functions for parsing and rendering `Html`.\n\n\n# Conditional views\n\n@docs viewIf\n@docs viewIfNot\n\n\n# Optional views\n\n@docs viewMaybe\n\n\n# Parse Html\n\n@docs stripHtml\n@docs toHtml\n\n\n# String manipulation\n\n@docs truncate\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "stripHtml",
+                "comment": " Remove all Html nodes from a String\n\n    example :: String\n    example =\n        stripHtml \"<p>Hola!</p>\"\n\n    --> \"Hola!\"\n\n_This unescapes character entity references as well.\nIf parsing fails the original String is returned_\n\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "toHtml",
+                "comment": " Convert a String to Html\n\n_This unescapes character entity references as well_\n\n",
+                "type": "String.String -> List.List (Html.Html msg)"
+            },
+            {
+                "name": "truncate",
+                "comment": " Truncate a String and append `...` if the String is longer than provided length\n\n\n    example : String\n    example =\n        truncate 10 \"Truncate a String and append `...` if the String is longer than provided length\"\n\n    --> \"Truncate a...\"\n\n",
+                "type": "Basics.Int -> String.String -> String.String"
+            },
+            {
+                "name": "viewIf",
+                "comment": " Render some html if a boolean expression evaluates to `True`.\n\n    view : Model -> Html msg\n    view model =\n        article []\n            [ h1 [] [ text model.title ]\n            , viewIf\n                (model.category == Category.Article)\n                (\\_ -> p [] [ text \"article\" ])\n            ]\n\n",
+                "type": "Basics.Bool -> (() -> Html.Html msg) -> Html.Html msg"
+            },
+            {
+                "name": "viewIfNot",
+                "comment": " Render some html if a boolean expression evaluates to `False`.\n",
+                "type": "Basics.Bool -> (() -> Html.Html msg) -> Html.Html msg"
+            },
+            {
+                "name": "viewMaybe",
+                "comment": " Maybe, the resource has an author. Render what's in the `maybe`, or nothing.\n\n    view : Model -> Html msg\n    view model =\n        article []\n            [ h1 [] [ text \"Article\" ]\n            , viewMaybe model.author\n                (\\authorName -> p [] [ text authorName ])\n            ]\n\n",
+                "type": "Maybe.Maybe a -> (a -> Html.Html msg) -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

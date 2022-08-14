@@ -1,0 +1,115 @@
+[
+    {
+        "name": "Jsonstore",
+        "comment": "\n\n\n## Decoding and Encoding\n\n@docs Json, decode, encode, encodeList, decodeList, map\n\n\n## Basics\n\n@docs bool, int, float, string, dict\n\n\n## Dealing with Objects\n\n@docs object, toJson, with, withList, withMaybe\n\n\n## Http Requests\n\n@docs update, get, insert, delete\n\n",
+        "unions": [
+            {
+                "name": "Json",
+                "comment": " The Json type combines both the Json Decoder and Encoder.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "bool",
+                "comment": "\n\n    import Json.Decode as D\n\n    \"true\"\n    |> (bool |> decode |> D.decodeString)\n    --> Ok True\n\n",
+                "type": "Jsonstore.Json Basics.Bool"
+            },
+            {
+                "name": "decode",
+                "comment": " Returns the decoder of a Json type\n",
+                "type": "Jsonstore.Json a -> Json.Decode.Decoder a"
+            },
+            {
+                "name": "decodeList",
+                "comment": " Returns the decoder for a List of a Json type\n",
+                "type": "Jsonstore.Json a -> Json.Decode.Decoder (List.List a)"
+            },
+            {
+                "name": "delete",
+                "comment": " Deletes an Element.\n\nWill be successfull even if the content is empty.\n\n",
+                "type": "String.String -> Task.Task Http.Error ()"
+            },
+            {
+                "name": "dict",
+                "comment": "\n\n    import Json.Decode as D\n    import Dict exposing (Dict)\n\n    \"{\\\"value\\\":42}\"\n    |> (int |> dict |> decode |> D.decodeString)\n    --> Ok (Dict.singleton \"value\" 42)\n\n",
+                "type": "Jsonstore.Json a -> Jsonstore.Json (Dict.Dict String.String a)"
+            },
+            {
+                "name": "encode",
+                "comment": " Returns the encoder of a Json type\n",
+                "type": "Jsonstore.Json a -> a -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeList",
+                "comment": " Returns the encoder for a List of a Json type\n",
+                "type": "Jsonstore.Json a -> List.List a -> Json.Encode.Value"
+            },
+            {
+                "name": "float",
+                "comment": "\n\n    import Json.Decode as D\n\n    \"3.14\" |> (float |> decode |> D.decodeString) --> Ok 3.14\n\n",
+                "type": "Jsonstore.Json Basics.Float"
+            },
+            {
+                "name": "get",
+                "comment": " Gets an Element\n\nReturns `Nothing` if the element does not exist.\n\n",
+                "type": "String.String -> Json.Decode.Decoder a -> Task.Task Http.Error (Maybe.Maybe a)"
+            },
+            {
+                "name": "insert",
+                "comment": " Inserts a new Element.\n\nDo not use this function to update fields, use update instead.\n\nThere is a max limit of 100kb that can be inserted at once.\nTherefore never try to update a full list of object,\nrather send an seperate update/delete file for every entry of the list.\n\n",
+                "type": "String.String -> Json.Encode.Value -> Task.Task Http.Error ()"
+            },
+            {
+                "name": "int",
+                "comment": "\n\n    import Json.Decode as D\n\n    \"1\" |> (int |> decode |> D.decodeString) --> Ok 1\n\n",
+                "type": "Jsonstore.Json Basics.Int"
+            },
+            {
+                "name": "map",
+                "comment": " ",
+                "type": "(a -> b) -> (b -> a) -> Jsonstore.Json a -> Jsonstore.Json b"
+            },
+            {
+                "name": "object",
+                "comment": "\n\n    import Json.Decode as D\n\n    type alias Obj =\n        { value : Int\n        , name : String\n        }\n\n    \"{\\\"value\\\":42,\\\"name\\\":\\\"Elm\\\"}\"\n    |> ( object Obj\n        |> with \"value\" int .value\n        |> with \"name\" string .name\n        |> toJson\n        |> decode\n        |> D.decodeString\n        )\n    --> Ok {value=42,name=\"Elm\"}\n\n",
+                "type": "obj -> Jsonstore.JsonObject obj a"
+            },
+            {
+                "name": "string",
+                "comment": "\n\n    import Json.Decode as D\n\n    \"\\\"Hello World\\\"\"\n    |> (string |> decode |> D.decodeString)\n    --> Ok \"Hello World\"\n\n",
+                "type": "Jsonstore.Json String.String"
+            },
+            {
+                "name": "toJson",
+                "comment": " ",
+                "type": "Jsonstore.JsonObject obj obj -> Jsonstore.Json obj"
+            },
+            {
+                "name": "update",
+                "comment": " First gets the value, then either inserts a new value or does nothing\n\nUse delete if you want to delete an element.\n\nThere is a max limit of 100kb that can be inserted at once.\nTherefore never try to update a full list of object,\nrather send an seperate update/delete file for every entry of the list.\n\n",
+                "type": "String.String -> Jsonstore.Json a -> (a -> a) -> Task.Task Http.Error ()"
+            },
+            {
+                "name": "with",
+                "comment": " ",
+                "type": "String.String -> Jsonstore.Json a -> (obj -> a) -> Jsonstore.JsonObject (a -> fun) obj -> Jsonstore.JsonObject fun obj"
+            },
+            {
+                "name": "withList",
+                "comment": " ",
+                "type": "String.String -> Jsonstore.Json a -> (obj -> List.List a) -> Jsonstore.JsonObject (List.List a -> fun) obj -> Jsonstore.JsonObject fun obj"
+            },
+            {
+                "name": "withMaybe",
+                "comment": " ",
+                "type": "String.String -> Jsonstore.Json a -> (obj -> Maybe.Maybe a) -> Jsonstore.JsonObject (Maybe.Maybe a -> fun) obj -> Jsonstore.JsonObject fun obj"
+            }
+        ],
+        "binops": []
+    }
+]

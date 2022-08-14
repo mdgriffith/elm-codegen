@@ -1,0 +1,82 @@
+[
+    {
+        "name": "Typed",
+        "comment": "\n\n@docs Typed\n\n\n## who can create\n\n\n### tagging\n\n@docs Tagged, tag\n\n\n### checking\n\n@docs Checked, isChecked\n\n\n## who can access\n\n\n### public access\n\n@docs Public, untag\n\n\n### internal access\n\n@docs Internal, internal\n\n\n## transform\n\n@docs map, and, mapToTyped\n\n\n### [`serialize`](https://package.elm-lang.org/packages/MartinSStewart/elm-serialize/latest/) examples\n\n    module ListOptimized exposing (serialize)\n\n    type ListOptimizedTag\n        = ListOptimized\n\n    type alias ListOptimized element =\n        Typed\n            Checked\n            ListOptimizedTag\n            Internal\n            { list : List element, length : Int }\n\n    fromList =\n        \\list ->\n            { list = list\n            , length = length |> List.length\n            }\n                |> tag ListOptimized\n\n    serialize elementSerialize =\n        Serialize.list elementSerialize\n            |> Serialize.map\n                fromList\n                (\\listOptimized ->\n                    listOptimized\n                        |> internal ListOptimized\n                        |> .list\n                )\n\n\n#### don't trust decoded values\n\n    module Nat exposing (fromInt, serialize)\n\n    import Serialize\n    import Typed exposing (Checked, Internal, Typed, internal, tag)\n\n    type NatTag\n        = Nat\n\n    fromInt =\n        \\int ->\n            if int >= 0 then\n                Ok (tag Nat int)\n\n            else\n                Err \"Int was negative, so it couldn't be decoded as a Nat\"\n\n    serialize =\n        Serialize.int\n            |> Serialize.mapValid fromInt (internal Nat)\n\n",
+        "unions": [
+            {
+                "name": "Checked",
+                "comment": " Only someone with access to the `tag` constructor is able to create one of those.\n\nIn effect, this means that you can only let \"validated\" data be of this type.\n\nExample `... Checked ... NaturalNumberTag Int`\n\n→ **✓** not every `Int` can be called a `NumberNatural`, it must be checked!\n\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Internal",
+                "comment": " Only devs with access to the tag constructor can access the [`internal`](#internal).\n\n→ access can be limited to\n\n  - inside a module\n\n        module Special exposing (Special)\n\n        type alias Special =\n            Typed Tagged SpecialTag Internal SpecialValue\n\n  - inside a package\n\n        Internal exposing (Tag(..))\n        A exposing (A)\n            import Internal exposing (Tag(..))\n        B exposing (B)\n            import Internal exposing (Tag(..))\n\n    ```json\n    'exposed-modules' : [ \"A\", \"B\" ]\n    ```\n\nThis in combination with [`Checked`](#Checked) helps hiding the internal implementation just like a new `type`.\n\n    import RecordWithoutConstructorFunction exposing (RecordWithoutConstructorFunction)\n\n    type alias ListOptimized element =\n        Typed Checked ListOptimizedTag Internal (ListOptimizedInternal element)\n\n    type alias ListOptimizedInternal element =\n        RecordWithoutConstructorFunction\n            { list : List element, length : Int }\n\n[`RecordWithoutConstructorFunction`](https://dark.elm.dmy.fr/packages/lue-bird/elm-no-record-type-alias-constructor-function/latest/)\ntricks elm into not creating a `ListOptimizedInternal` constructor function.\n\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Public",
+                "comment": " Anyone is able to access the value.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Tagged",
+                "comment": " Anyone is able to create one of those.\n\nExample `Typed Tagged MetersTag ... Float`\n\n→ The right choice, as every `Float` is a valid description of `Meters`\n\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Typed",
+                "comment": " A value is wrapped in the `type Typed` with a phantom `tag`.\n\nA `Typed ... Meters ... Float` can't be called a `Typed ... Kilos ... Float` anymore!\n\nFor `type`s with just 1 constructor with a value a `Typed` can be a good replacement.\n\n\n### who can construct such a value\n\n  - [`Checked`](#Checked)\n  - [`Tagged`](#Tagged)\n\n\n### who can access the value\n\n  - [`Public`](#Public)\n  - [`Internal`](#Internal)\n\n\n### reading types\n\n    map :\n        (value -> valueMapped)\n        -> Typed whoCanCreate_ tag whoCanAccess value\n        -> Typed Tagged tag whoCanAccess valueMapped\n\nIs saying:\n\n  - works on any `Typed`\n  - returns a value that is [`Tagged`](#Tagged), not [`Checked`](#Checked)\n  - if the input is [`Public`](#Public) or [`Internal`](#Internal), the result will be the same\n\nNote: Calling `==` is still possible on [`Internal`](#Internal) `Typed`s to allow storing the value in the model, ...\n\nIf you really need to prevent users from finding out the inner value without using `untag` or `internal`, try\n\n  - → trick elm to always give `False` when checked for equality:\n      - `Typed ... ( value, Unique )` with [`harrysarson/`: `Unique`](https://dark.elm.dmy.fr/packages/harrysarson/elm-hacky-unique/latest/)\n  - → cause elm to crash when checked for equality:\n      - `Typed ... (() -> value)`\n      - `Typed ... ( value, Json.Encode.Value )`\n      - `Typed ... ( value, Regex )`\n      - ...\n\n",
+                "args": [
+                    "whoCanCreate",
+                    "tag",
+                    "whoCanAccess",
+                    "value"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "and",
+                "comment": "\n\n> You can map, combine, ... even [`Internal`](#Internal) values\n> as long as a `Typed` with the **same tag & access promises** are returned in the end\n\n\n#### feed [`map`](#map)\n\n    module Prime exposing (Prime, n3, n5)\n\n    import Typed exposing (Checked, Public, Typed, isChecked, mapToTyped)\n\n    type alias Prime =\n        Typed Checked PrimeTag Public Int\n\n    n3 =\n        tag 3 |> isChecked Prime\n\n    n5 =\n        tag 5 |> isChecked Prime\n\n\n    module NonPrime exposing (NonPrime)\n\n    import Prime exposing (Prime)\n\n    type alias NonPrime =\n        Typed Checked NonPrimeTag Public Int\n\n    fromMultiplyingPrimes : Prime -> Prime -> NonPrime\n    fromMultiplyingPrimes primeA primeB =\n        (primeA |> Typed.and primeB)\n            |> Typed.map (\\a b -> a * b)\n            |> isChecked NonPrime\n\n\n#### feed [`mapToTyped`](#mapToTyped)\n\n    min :\n        Typed whoCanCreate tag whoCanAccess Int\n        -> Typed whoCanCreate tag whoCanAccess Int\n        -> Typed whoCanCreate tag whoCanAccess Int\n    min =\n        \\comparable0 comparable1 ->\n            comparable0\n                |> Typed.and comparable1\n                |> Typed.mapToTyped\n                    (\\( c0, c1 ) ->\n                        if c0 < c1 then\n                            comparable1\n\n                        else\n                            comparable0\n                    )\n\n",
+                "type": "Typed.Typed whoCanCreateFood_ tag whoCanAccess valueFoodLater -> Typed.Typed whoCanCreate_ tag whoCanAccess valueFoodEarlier -> Typed.Typed Typed.Tagged tag whoCanAccess ( valueFoodEarlier, valueFoodLater )"
+            },
+            {
+                "name": "internal",
+                "comment": " If you have an [`Internal`](#Internal) value, its value can't be read by users.\n\nHowever, if you have access to the `tag` constructor, you can access this value.\n\n    import Typed exposing (Checked, Internal, Typed, internal)\n\n    type alias ListOptimized element =\n        Typed\n            Checked\n            ListOptimizedTag\n            Internal\n            { list : List (() -> element), length : Int }\n\n    type ListOptimizedTag\n        = ListOptimized\n\n    toList =\n        \\listOptimized ->\n            listOptimized\n                |> internal ListOptimized\n                |> .list\n                |> List.map (\\lazy -> lazy ())\n\n    type ListOptimizedTag\n        = ListOptimized\n\n    equal =\n        let\n            listLazyEqual =\n                \\( listA, listB ) ->\n                    case ( listA, listB ) of\n                        ( [], _ ) ->\n                            False\n\n                        ( _, [] ) ->\n                            False\n\n                        ( aHead :: aTail, bHead :: bTail ) ->\n                            (aHead () == bTail ())\n                                && (( aTail, bTail ) |> listLazyEqual)\n        in\n        \\( listOptimizedA, listOptimizedB ) ->\n            let\n                a =\n                    listOptimizedA |> internal ListOptimized\n\n                b =\n                    listOptimizedB |> internal ListOptimized\n            in\n            (a.length == b.length)\n                && (( a.list, b.list ) |> listLazyEqual)\n\nNote: this is not all that optimized.\n\n",
+                "type": "tag -> Typed.Typed whoCanCreate_ tag whoCanAccess_ value -> value"
+            },
+            {
+                "name": "isChecked",
+                "comment": " [Map](#map)ping a [`Checked`](#Checked) value only results in a [`Tagged`](#Tagged) value.\n\nTo confirm that the result is [`Checked`](#Checked), use `isChecked tag`.\n\nThe type of `tag` can change in that operation.\n\n    import Typed exposing (isChecked, mapToTyped)\n\n    oddAddOdd : Odd -> Odd -> Even\n    oddAddOdd oddToAdd =\n        \\odd ->\n            (\\o0 o1 -> o1 + o2)\n                |> Typed.mapEat odd\n                |> mapToTyped (Typed.mapEat oddToAdd)\n                |> isChecked Even\n\n",
+                "type": "tag -> Typed.Typed whoCanCreate_ tag_ whoCanAccess value -> Typed.Typed checked_ tag whoCanAccess value"
+            },
+            {
+                "name": "map",
+                "comment": " Change the value.\n\nIf it was [`Checked`](#Checked) before, it becomes just [`Tagged`](#Tagged).\n\n    import Typed exposing (Public, Tagged, Typed)\n\n    type alias Meters =\n        Typed Tagged MetersTag Public Int\n\n    add1km : Meters -> Meters\n    add1km =\n        Typed.map (\\m -> m + 1000)\n\n",
+                "type": "(value -> valueMapped) -> Typed.Typed whoCanCreate_ tag whoCanAccess value -> Typed.Typed Typed.Tagged tag whoCanAccess valueMapped"
+            },
+            {
+                "name": "mapToTyped",
+                "comment": " Use the value to return a `Typed` with the **same tag & access promise**.\n\n    module Cat exposing (feed)\n\n    import Typed exposing (mapToTyped)\n\n    type alias Cat =\n        Typed\n            Checked\n            CatTag\n            Internal\n            { mood : Mood, foodReserves : Float }\n\n    feed : Cat -> Cat\n    feed =\n        Typed.map\n            (\\cat ->\n                { cat | foodReserves = cat.foodReserves + 10 }\n            )\n\nin another `module`\n\n    module Home exposing (feedIfUnhappy)\n\n    import Typed exposing (mapToTyped)\n    import Cat\n\n    feedIfUnhappy : Cat -> Cat\n    feedIfUnhappy =\n        cat\n            |> mapToTyped\n                (\\cat ->\n                    case cat.mood of\n                        Unhappy ->\n                            cat |> Cat.feed\n\n                        Happy ->\n                            cat\n                )\n\n    🐱 |> meet 🐦 --> { 🐱, 🍗 }\n\nFeed multiple arguments with [`and`](#and)\n\n",
+                "type": "(value -> Typed.Typed whoCanCreateMapped tag whoCanAccess valueMapped) -> Typed.Typed whoCanCreate_ tag whoCanAccess value -> Typed.Typed whoCanCreateMapped tag whoCanAccess valueMapped"
+            },
+            {
+                "name": "tag",
+                "comment": " Create a new [`Tagged`](#Tagged) value.\n\n  - can be [`Checked`](#Checked) with [`isChecked`](#isChecked)\n  - becomes [`Internal`](#Internal)/[`Public`](#Public) when annotated that way\n\nModifying won't change the type.\n\n",
+                "type": "tag -> value -> Typed.Typed checked_ tag whoCanAccess_ value"
+            },
+            {
+                "name": "untag",
+                "comment": " The [`untag`](#untag)ged value inside a [`Public`](#Public) `Typed`.\n\n    module Prime exposing (Prime, n3, n5)\n\n    type alias Prime =\n        Typed Checked PrimeTag Public Int\n\n    n3 =\n        3 |> tag Prime\n\n    n5 =\n        5 |> tag Prime\n\nin another `module`\n\n    import Tuple.Extra as Tuple\n    import Typed exposing (untag)\n\n    ( Prime.n3, Prime.n5 ) |> Tuple.map untag\n    --> ( 3, 5 )\n\n    (Prime.n3 |> untag) + (Prime.n5 |> untag)\n    --> 8\n\n    (Prime.n3 |> untag) < (Prime.n5 |> untag)\n    --> True\n\n",
+                "type": "Typed.Typed tag_ whoCanCreate_ Typed.Public value -> value"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,50 @@
+[
+    {
+        "name": "IdSearch",
+        "comment": " Indexes a set of records by identifying strings.\n\n\n## Create a table\n\n@docs Table, makeTable\n\n\n## Insert and lookup\n\n@docs insert, insertList, lookup, remove\n\n\n## Utilities\n\n@docs findSubstrings\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Table",
+                "comment": " The table type.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ getIdentifiers : a -> List.List String.String, dictCount : Basics.Int, dicts : List.List (Dict.Dict String.String (List.List a)) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "findSubstrings",
+                "comment": " Get a string's substrings of a given length.\n\nIf the length is 1, returns only the first character in the string.\n\nNone of the substrings will contain spaces. Each element in the returned list will be unique.\n\n",
+                "type": "Basics.Int -> String.String -> List.List String.String"
+            },
+            {
+                "name": "insert",
+                "comment": " Insert a record in the table.\n",
+                "type": "a -> IdSearch.Table a -> IdSearch.Table a"
+            },
+            {
+                "name": "insertList",
+                "comment": " Insert multiple elements into a table.\n",
+                "type": "List.List a -> IdSearch.Table a -> IdSearch.Table a"
+            },
+            {
+                "name": "lookup",
+                "comment": " Lookup a string in a table.\n",
+                "type": "String.String -> IdSearch.Table a -> List.List a"
+            },
+            {
+                "name": "makeTable",
+                "comment": " Make a table.\n\n    makeTable dictCount getIdentifiers\n\n`dictCount` is the number of dictionaries to populate. The dictionaries map prefixes of the search string to matches. If the search string is longer than `dictCount`, then a linear search is done on the results from the final dictionary.\n\nThis provides a tradeoff between insertion speed, storage space, and lookup speed.\n\nA `dictCount` of 3 or 4 is probably right for most applications.\n\nThe list of strings returned by `getIdentifiers` are the indices for an inserted element. Usually, there will only be one.\n\n",
+                "type": "Basics.Int -> (a -> List.List String.String) -> IdSearch.Table a"
+            },
+            {
+                "name": "remove",
+                "comment": " Remove a record from a table.\n\nThis implementation is slow, looping over every element of every dictionary, since I don't expect it to be used much.\n\n",
+                "type": "a -> IdSearch.Table a -> IdSearch.Table a"
+            }
+        ],
+        "binops": []
+    }
+]

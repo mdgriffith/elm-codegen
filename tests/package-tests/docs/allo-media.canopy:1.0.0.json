@@ -1,0 +1,263 @@
+[
+    {
+        "name": "Canopy",
+        "comment": " A generic [Rose Tree](https://en.wikipedia.org/wiki/Rose_tree).\n\n**Note:** This library is designed to work with unique values attached to tree nodes.\nThis is usually achievable using records having a unique id, though unicity checks should\nbe performed by consumers of this library.\n\n@docs Node\n\n\n# Building a tree\n\n@docs node, leaf, append, prepend, remove, seed\n\n\n# Querying a tree\n\n@docs value, values, children, length, get, getAll, leaves, level, maximum, minimum, parent, path, seek, siblings\n\n\n# Checking a tree\n\n@docs all, any, member\n\n\n# Manipulating a tree\n\n\n## Single-level operations\n\n@docs mapChildren, replaceChildren, replaceValue, updateValue\n\n\n## Deep operations\n\n@docs mapChildrenAt, replaceAt, replaceChildrenAt, replaceValueAt, updateAt , updateValueAt\n\n\n## Common operations\n\n@docs filter, flatMap, flatten, foldl, foldr, map, refine, sortBy, sortWith, tuple\n\n\n# Importing and exporting\n\n@docs fromList, toList, decode, encode\n\n",
+        "unions": [
+            {
+                "name": "Node",
+                "comment": " A [Rose Tree](https://en.wikipedia.org/wiki/Rose_tree). Each node contains a\nvalue and children, which are themselves Nodes:\n\n    myTree : Tree Int\n    myTree =\n        Node 1\n            [ Node 2\n                [ Node 3 []\n                , Node 4 []\n                ]\n            , Node 5 []\n            ]\n\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Node",
+                        [
+                            "a",
+                            "List.List (Canopy.Node a)"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "all",
+                "comment": " Check that all values satisfy a test in a tree.\n\n    node 1 [ leaf 2 ]\n        |> all (\\x -> x > 0)\n    --> True\n\n    node 1 [leaf -2]\n        |> all (\\x -> x > 0)\n    --> False\n\n",
+                "type": "(a -> Basics.Bool) -> Canopy.Node a -> Basics.Bool"
+            },
+            {
+                "name": "any",
+                "comment": " Check that any value satisfy a test in a tree.\n\n    node 1 [ leaf -2 ]\n        |> any (\\x -> x > 0)\n    --> True\n\n    node -1 [ leaf -2 ]\n        |> any (\\x -> x > 0)\n    --> False\n\n",
+                "type": "(a -> Basics.Bool) -> Canopy.Node a -> Basics.Bool"
+            },
+            {
+                "name": "append",
+                "comment": " Append a new value to a Node identified by its value in a Tree.\n\n    node \"foo\" [ leaf \"bar\"]\n        |> append \"foo\" \"baz\"\n    --> node \"foo\" [ leaf \"bar\", leaf \"baz\" ]\n\n",
+                "type": "a -> a -> Canopy.Node a -> Canopy.Node a"
+            },
+            {
+                "name": "children",
+                "comment": " Extracts the children of a Node.\n\n    node \"foo\" [ leaf \"bar\" ]\n        |> children\n    --> [ leaf \"bar\" ]\n\n",
+                "type": "Canopy.Node a -> List.List (Canopy.Node a)"
+            },
+            {
+                "name": "decode",
+                "comment": " A JSON Node decoder. You must specify a decoder for values.\n\n    import Json.Decode as Decode\n\n    json : String\n    json = \"{\\\"value\\\":\\\"foo\\\",\\\"children\\\":[{\\\"value\\\":\\\"bar\\\",\\\"children\\\":[]}]}\"\n\n    Decode.decodeString (decode Decode.string) json\n    --> Ok (node \"foo\" [ leaf \"bar\" ])\n\n",
+                "type": "Json.Decode.Decoder a -> Json.Decode.Decoder (Canopy.Node a)"
+            },
+            {
+                "name": "encode",
+                "comment": " Encode a Node to JSON. You must provide an encoder for values.\n\n    import Json.Encode as Encode\n\n    node \"foo\" [ leaf \"bar\" ]\n        |> encode Encode.string\n        |> Encode.encode 0\n    --> \"{\\\"value\\\":\\\"foo\\\",\\\"children\\\":[{\\\"value\\\":\\\"bar\\\",\\\"children\\\":[]}]}\"\n\n",
+                "type": "(a -> Json.Encode.Value) -> Canopy.Node a -> Json.Encode.Value"
+            },
+            {
+                "name": "filter",
+                "comment": " Filter a Tree strictly, removing all nodes failing the provided value test,\nincluding root, hence the resulting Maybe.\n\n    node 0 [ leaf 1 ]\n        |> filter (\\x -> x > 0)\n    --> Nothing\n\n    node 2 [ leaf 3, leaf 4 ]\n        |> filter (\\x -> modBy 2 x == 0)\n    --> Just (node 2 [ leaf 4 ])\n\n",
+                "type": "(a -> Basics.Bool) -> Canopy.Node a -> Maybe.Maybe (Canopy.Node a)"
+            },
+            {
+                "name": "flatMap",
+                "comment": " Map each node using a mapping function then flatten the result into a new list.\n\n    node \"foo\" [ node \"bar\" [ leaf \"baz\" ] ]\n        |> flatMap (value >> String.toUpper)\n    --> [ \"FOO\", \"BAR\", \"BAZ\" ]\n\n",
+                "type": "(Canopy.Node a -> b) -> Canopy.Node a -> List.List b"
+            },
+            {
+                "name": "flatten",
+                "comment": " Flatten a Tree, from top to bottom and leftmost nodes to rightmost ones.\n\n    node \"root\" [ node \"foo\" [ leaf \"bar\", leaf \"baz\" ] ]\n        |> flatten\n    --> [ node \"root\" [ node \"foo\" [ leaf \"bar\", leaf \"baz\" ] ]\n    --> , node \"foo\" [ leaf \"bar\", leaf \"baz\" ]\n    --> , leaf \"bar\"\n    --> , leaf \"baz\"\n    --> ]\n\n",
+                "type": "Canopy.Node a -> List.List (Canopy.Node a)"
+            },
+            {
+                "name": "foldl",
+                "comment": " Reduce all tree values from top to bottom, left to right.\n\n    node 1 [ node 2 [ leaf 3 ] ]\n        |> foldl (+) 0\n    --> 6\n\n    node \"a\"\n        [ node \"b\" [ leaf \"c\" ]\n        , node \"d\" [ node \"e\" [ leaf \"f\" ] ]\n        , leaf \"g\"\n        ]\n        |> foldl (\\value acc -> acc ++ value) \"\"\n    --> \"abcdefg\"\n\n",
+                "type": "(a -> b -> b) -> b -> Canopy.Node a -> b"
+            },
+            {
+                "name": "foldr",
+                "comment": " Reduce all tree values from top to bottom, right to left.\n\n    node \"a\"\n        [ node \"b\" [ leaf \"c\" ]\n        , node \"d\" [ node \"e\" [ leaf \"f\" ] ]\n        , leaf \"g\"\n        ]\n        |> foldr (\\value acc -> acc ++ value) \"\"\n    --> \"gfedcba\"\n\n",
+                "type": "(a -> b -> b) -> b -> Canopy.Node a -> b"
+            },
+            {
+                "name": "fromList",
+                "comment": " Build a tree from a list of hierarchy descriptors, which are tuples of value\nand parent value, starting with the root.\n\n    [ ( \"root\", Nothing )\n    , ( \"foo\", Just \"root\" )\n    , ( \"bar\", Just \"foo\" )\n    ]\n        |> fromList\n    --> Just (node \"root\" [ node \"foo\" [ leaf \"bar\" ] ])\n\n",
+                "type": "List.List ( a, Maybe.Maybe a ) -> Maybe.Maybe (Canopy.Node a)"
+            },
+            {
+                "name": "get",
+                "comment": " Get a Node holding a value from a tree, picking the first node found starting\nfrom the left.\n\n    node \"root\" [ leaf \"bar\" ]\n        |> get \"bar\"\n    --> Just (leaf \"bar\")\n\n",
+                "type": "a -> Canopy.Node a -> Maybe.Maybe (Canopy.Node a)"
+            },
+            {
+                "name": "getAll",
+                "comment": " Get all nodes containing the provided value.\n\n    node 1 [ leaf 1 ]\n        |> getAll 1\n    --> [ node 1 [ leaf 1 ], leaf 1 ]\n\n",
+                "type": "a -> Canopy.Node a -> List.List (Canopy.Node a)"
+            },
+            {
+                "name": "leaf",
+                "comment": " Create a node having no children (singleton).\n\n    leaf \"foo\"\n    --> Node \"foo\" []\n\n",
+                "type": "a -> Canopy.Node a"
+            },
+            {
+                "name": "leaves",
+                "comment": " Retrieve all leaves (singletons) from a tree.\n\n    node \"root\"\n        [ leaf \"a leaf\"\n        , node \"branch\"\n            [ leaf \"another leaf\" ]\n        ]\n        |> leaves\n    --> [ \"a leaf\", \"another leaf\" ]\n\n",
+                "type": "Canopy.Node a -> List.List a"
+            },
+            {
+                "name": "length",
+                "comment": " Count nodes in a tree.\n\n    node 1 [node 2 [ node 3 [ leaf 4 ] ] ]\n    |> length\n    --> 4\n\n",
+                "type": "Canopy.Node a -> Basics.Int"
+            },
+            {
+                "name": "level",
+                "comment": " Retrieve all nodes at a given level in the tree.\n\n    node \"root\"\n        [ node \"1\" [ node \"1.1\" [ leaf \"1.1.1\" ] ]\n        , node \"2\" [ node \"2.1\" [ leaf \"2.1.1\" ] ]\n        ]\n        |> level 3\n    --> [ leaf \"1.1.1\"\n    --> , leaf \"2.1.1\"\n    --> ]\n\n    node \"root\"\n        [ node \"1\" [ node \"1.1\" [ leaf \"1.1.1\" ] ]\n        , node \"2\" [ node \"2.1\" [ leaf \"2.1.1\" ] ]\n        ]\n        |> level 2\n    --> [ node \"1.1\" [ leaf \"1.1.1\" ]\n    --> , node \"2.1\" [ leaf \"2.1.1\" ]\n    --> ]\n\n",
+                "type": "Basics.Int -> Canopy.Node a -> List.List (Canopy.Node a)"
+            },
+            {
+                "name": "map",
+                "comment": " Map all Node values in a Tree.\n\n    node \"root\" [ leaf \"foo\", node \"bar\" [ leaf \"baz\" ] ]\n        |> map String.toUpper\n    --> node \"ROOT\" [ leaf \"FOO\", node \"BAR\" [ leaf \"BAZ\" ] ]\n\n",
+                "type": "(a -> b) -> Canopy.Node a -> Canopy.Node b"
+            },
+            {
+                "name": "mapChildren",
+                "comment": " Map a Node's children.\n\n    node \"root\" [ leaf \"foo\", leaf \"bar\" ]\n        |> mapChildren (map String.toUpper)\n    --> node \"root\" [ leaf \"FOO\", leaf \"BAR\" ]\n\n",
+                "type": "(Canopy.Node a -> Canopy.Node a) -> Canopy.Node a -> Canopy.Node a"
+            },
+            {
+                "name": "mapChildrenAt",
+                "comment": " Map a targetted Node's children in a tree.\n\n    node 1 [ node 2 [ leaf 3, leaf 4 ] ]\n        |> mapChildrenAt 2 (updateValue ((*) 2))\n    --> node 1 [ node 2 [ leaf 6, leaf 8 ] ]\n\n",
+                "type": "a -> (Canopy.Node a -> Canopy.Node a) -> Canopy.Node a -> Canopy.Node a"
+            },
+            {
+                "name": "maximum",
+                "comment": " Compute the maximum value appearing in a tree.\n\n    node 1 [ leaf 100, node 2 [ leaf 3 ] ]\n        |> maximum\n    --> 100\n\n",
+                "type": "Canopy.Node comparable -> comparable"
+            },
+            {
+                "name": "member",
+                "comment": " Check if a tree contains a value.\n\n    node \"foo\" [ node \"bar\" [ leaf \"baz\" ] ]\n        |> member \"baz\"\n    --> True\n\n    leaf \"no\"\n        |> member \"yes\"\n    --> False\n\n",
+                "type": "a -> Canopy.Node a -> Basics.Bool"
+            },
+            {
+                "name": "minimum",
+                "comment": " Compute the minimum value appearing in a tree.\n\n    node 100 [ leaf 99, node 1 [ leaf 98 ] ]\n        |> minimum\n    --> 1\n\n",
+                "type": "Canopy.Node comparable -> comparable"
+            },
+            {
+                "name": "node",
+                "comment": " Create a Node. Basically just an alias for the `Node` constructor.\n",
+                "type": "a -> List.List (Canopy.Node a) -> Canopy.Node a"
+            },
+            {
+                "name": "parent",
+                "comment": " Retrieve the parent of a given node in a Tree, identified by its value.\n\n    node \"root\" [ node \"foo\" [ leaf \"bar\" ] ]\n        |> parent \"bar\"\n    --> Just (node \"foo\" [ leaf \"bar\" ])\n\n",
+                "type": "a -> Canopy.Node a -> Maybe.Maybe (Canopy.Node a)"
+            },
+            {
+                "name": "path",
+                "comment": " Compute the path to a the first node holding the target value, from the root.\n\n    node \"root\"\n        [ leaf \"qux\"\n        , node \"foo\"\n            [ node \"bar\"\n                [ leaf \"baz\" ]\n            ]\n        ]\n        |> path \"baz\"\n        |> List.map value\n    --> [ \"root\", \"foo\", \"bar\", \"baz\" ]\n\n",
+                "type": "a -> Canopy.Node a -> List.List (Canopy.Node a)"
+            },
+            {
+                "name": "prepend",
+                "comment": " Prepend a new value to a Node identified by its value in a Tree.\n\n    node \"foo\" [ leaf \"bar\"]\n        |> prepend \"foo\" \"baz\"\n    --> node \"foo\" [ leaf \"baz\", leaf \"bar\" ]\n\n",
+                "type": "a -> a -> Canopy.Node a -> Canopy.Node a"
+            },
+            {
+                "name": "refine",
+                "comment": " Filter a Tree, keeping only nodes which attached leaves satisfy the\nprovided test and preserving their ancestors, up to the tree root, which is\nalways kept.\n\n    node 2\n        [ node 4\n            [ leaf 6\n            , leaf 7\n            , node 8\n                [ leaf 10\n                , leaf 11\n                , leaf 12\n                , leaf 13\n                ]\n            ]\n        ]\n        |> refine (\\x -> modBy 2 x == 0)\n    --> node 2\n    -->    [ node 4\n    -->        [ leaf 6\n    -->        , node 8\n    -->            [ leaf 10\n    -->            , leaf 12\n    -->            ]\n    -->        ]\n    -->    ]\n\n",
+                "type": "(a -> Basics.Bool) -> Canopy.Node a -> Canopy.Node a"
+            },
+            {
+                "name": "remove",
+                "comment": " Deletes all occurrences of a value from a tree.\n\n    node \"root\" [ node \"foo\" [ leaf \"bar\" ] ]\n        |> remove \"bar\"\n    --> node \"root\" [ leaf \"foo\" ]\n\nNoop when the value doesn't exist in the tree:\n\n    node \"root\" [ leaf \"foo\" ]\n        |> remove \"non-existent\"\n    --> node \"root\" [ leaf \"foo\" ]\n\nOr when attempting to delete the tree itself:\n\n    leaf \"root\"\n        |> remove \"root\"\n    --> leaf \"root\"\n\n",
+                "type": "a -> Canopy.Node a -> Canopy.Node a"
+            },
+            {
+                "name": "replaceAt",
+                "comment": " Replace all Nodes holding a given value with a new Node in a Tree.\n\n    node \"root\" [ node \"foo\" [ leaf \"bar\" ] ]\n        |> replaceAt \"foo\" (leaf \"bar\")\n    --> node \"root\" [ leaf \"bar\" ]\n\n    node \"root\" [ leaf \"foo\", leaf \"foo\" ]\n        |> replaceAt \"foo\" (leaf \"bar\")\n    --> node \"root\" [ leaf \"bar\", leaf \"bar\" ]\n\n",
+                "type": "a -> Canopy.Node a -> Canopy.Node a -> Canopy.Node a"
+            },
+            {
+                "name": "replaceChildren",
+                "comment": " Replace the children of a Node.\n",
+                "type": "List.List (Canopy.Node a) -> Canopy.Node a -> Canopy.Node a"
+            },
+            {
+                "name": "replaceChildrenAt",
+                "comment": " Replace a targetted Node's children in a tree.\n\n    node 1 [ node 2 [ leaf 3, leaf 4 ] ]\n        |> replaceChildrenAt 2 [ leaf 5 ]\n    --> node 1 [ node 2 [ leaf 5 ] ]\n\n",
+                "type": "a -> List.List (Canopy.Node a) -> Canopy.Node a -> Canopy.Node a"
+            },
+            {
+                "name": "replaceValue",
+                "comment": " Replace the value of a Node.\n",
+                "type": "a -> Canopy.Node a -> Canopy.Node a"
+            },
+            {
+                "name": "replaceValueAt",
+                "comment": " Replace a targetted Node value with another one in a Tree.\n\n    node \"root\" [ node \"foo\" [ leaf \"bar\" ] ]\n        |> replaceValueAt \"foo\" \"baz\"\n    --> node \"root\" [ node \"baz\" [ leaf \"bar\" ] ]\n\n    node \"root\" [ leaf \"foo\", leaf \"foo\" ]\n        |> replaceValueAt \"foo\" \"bar\"\n    --> node \"root\" [ leaf \"bar\", leaf \"bar\" ]\n\n",
+                "type": "a -> a -> Canopy.Node a -> Canopy.Node a"
+            },
+            {
+                "name": "seed",
+                "comment": " Seed a tree.\n\n    seed (\\x -> List.range 1 (x - 1)) 4\n    --> node 4\n    -->   [ leaf 1\n    -->   , node 2 [ leaf 1 ]\n    -->   , node 3\n    -->       [ leaf 1\n    -->       , node 2 [ leaf 1 ]\n    -->       ]\n    -->   ]\n\n",
+                "type": "(a -> List.List a) -> a -> Canopy.Node a"
+            },
+            {
+                "name": "seek",
+                "comment": " Retrieve all values from nodes containing those satisfying a provided condition.\n\n    node 1 [ node 2 [ leaf 3, leaf 4, leaf 5 ] ]\n        |> seek (\\x -> x > 3)\n    --> [ leaf 4, leaf 5 ]\n\n",
+                "type": "(a -> Basics.Bool) -> Canopy.Node a -> List.List (Canopy.Node a)"
+            },
+            {
+                "name": "siblings",
+                "comment": " Retrieve siblings of a node identified by its value in a Tree.\n\n    node \"foo\" [ leaf \"a\", node \"b\" [ leaf \"x\" ], leaf \"c\" ]\n        |> siblings \"c\"\n    --> [ leaf \"a\", node \"b\" [ leaf \"x\" ] ]\n\n",
+                "type": "a -> Canopy.Node a -> List.List (Canopy.Node a)"
+            },
+            {
+                "name": "sortBy",
+                "comment": " Recursively sort node children from a tree using a sorter.\n\n    node 0 [ leaf 3, leaf 1, leaf 2 ]\n        |> sortBy identity\n    --> node 0 [ leaf 1, leaf 2, leaf 3 ]\n\n",
+                "type": "(a -> comparable) -> Canopy.Node a -> Canopy.Node a"
+            },
+            {
+                "name": "sortWith",
+                "comment": " Recursively sort node children from a tree using a comparator.\n\n    node 0 [ leaf 3, leaf 1, leaf 2 ]\n        |> sortWith (\\a b -> if a == b then EQ else if a < b then GT else LT)\n    --> node 0 [ leaf 3, leaf 2, leaf 1 ]\n\n",
+                "type": "(a -> a -> Basics.Order) -> Canopy.Node a -> Canopy.Node a"
+            },
+            {
+                "name": "toList",
+                "comment": " Turn a tree of node into a list of tuples.\n\n    node \"root\" [ node \"foo\" [ leaf \"bar\" ], leaf \"baz\" ]\n        |> toList\n    --> [ ( \"root\", Nothing )\n    --> , ( \"foo\", Just \"root\")\n    --> , ( \"bar\", Just \"foo\")\n    --> , ( \"baz\", Just \"root\")\n    --> ]\n\n",
+                "type": "Canopy.Node a -> List.List ( a, Maybe.Maybe a )"
+            },
+            {
+                "name": "tuple",
+                "comment": " Turn a Node into a tuple containing the value and the parent value, if any.\n",
+                "type": "Canopy.Node a -> Canopy.Node a -> ( a, Maybe.Maybe a )"
+            },
+            {
+                "name": "updateAt",
+                "comment": " Update a targetted Node in a tree, using an update function.\n\n    node 1 [ node 2 [ leaf 3 ] ]\n        |> updateAt 3 (always (leaf 42))\n    --> node 1 [ node 2 [ leaf 42 ] ]\n\n",
+                "type": "a -> (Canopy.Node a -> Canopy.Node a) -> Canopy.Node a -> Canopy.Node a"
+            },
+            {
+                "name": "updateValue",
+                "comment": " Update a Node value using an update function. This is especially useful for\nupdating record properties.\n\n    leaf { name = \"root\" }\n        |> updateValue (\\r -> { r | name = r.name ++ \"!\"})\n    --> leaf { name = \"root!\" }\n\n",
+                "type": "(a -> a) -> Canopy.Node a -> Canopy.Node a"
+            },
+            {
+                "name": "updateValueAt",
+                "comment": " Update a targetted Node value in a tree, using an update function.\n\n    node 1 [ node 2 [ leaf 3 ] ]\n        |> updateValueAt 3 ((*) 2)\n    --> node 1 [ node 2 [ leaf 6 ] ]\n\n",
+                "type": "a -> (a -> a) -> Canopy.Node a -> Canopy.Node a"
+            },
+            {
+                "name": "value",
+                "comment": " Extract the value of a Node.\n\n    leaf 2 |> value\n    --> 2\n\n",
+                "type": "Canopy.Node a -> a"
+            },
+            {
+                "name": "values",
+                "comment": " List all the values in a tree.\n\n    node 1 [ node 2 [ leaf 3 ] ]\n        |> values\n    --> [ 1, 2, 3 ]\n\n",
+                "type": "Canopy.Node a -> List.List a"
+            }
+        ],
+        "binops": []
+    }
+]

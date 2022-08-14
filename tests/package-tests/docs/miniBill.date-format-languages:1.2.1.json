@@ -1,0 +1,84 @@
+[
+    {
+        "name": "DateFormat.Languages",
+        "comment": "\n\n\n## Fun fact: Some people don't know english.\n\nThat's why it's important to include alternative date formatting options for other languages!\n\nThis module exposes `Language` (compatible with `ryannhg/date-format`) and `DateLanguage` (compatible with `justinmimbs/date`), along with a few implementations.\n\n(If you want to see `german` or `swahili`, please add them in! I'm happy to make your language a part of the package!)\n\n\n### Language\n\n@docs Language\n\n\n### Languages\n\n@docs english, spanish, dutch, swedish, portuguese, french, finnish, norwegian, greek, italian, slovenian\n\n\n### Compatibility\n\n@docs DateLanguage, toDateLanguage\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "DateLanguage",
+                "comment": " A record with options for your language. Compatible with `justinmimbs/date`.\n",
+                "args": [],
+                "type": "{ monthName : Time.Month -> String.String, monthNameShort : Time.Month -> String.String, weekdayName : Time.Weekday -> String.String, weekdayNameShort : Time.Weekday -> String.String, dayWithSuffix : Basics.Int -> String.String }"
+            },
+            {
+                "name": "Language",
+                "comment": " A record with options for your language. Compatible with `ryannhg/date-format`.\n",
+                "args": [],
+                "type": "{ toMonthName : Time.Month -> String.String, toMonthAbbreviation : Time.Month -> String.String, toWeekdayName : Time.Weekday -> String.String, toWeekdayAbbreviation : Time.Weekday -> String.String, toAmPm : Basics.Int -> String.String, toOrdinalSuffix : Basics.Int -> String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "dutch",
+                "comment": " The dutch language!\n",
+                "type": "DateFormat.Languages.Language"
+            },
+            {
+                "name": "english",
+                "comment": " The english language! (used by default)\n",
+                "type": "DateFormat.Languages.Language"
+            },
+            {
+                "name": "finnish",
+                "comment": " The Finnish language!\n",
+                "type": "DateFormat.Languages.Language"
+            },
+            {
+                "name": "french",
+                "comment": " The French language!\n",
+                "type": "DateFormat.Languages.Language"
+            },
+            {
+                "name": "greek",
+                "comment": " The greek language!\n",
+                "type": "DateFormat.Languages.Language"
+            },
+            {
+                "name": "italian",
+                "comment": " The italian language!\n",
+                "type": "DateFormat.Languages.Language"
+            },
+            {
+                "name": "norwegian",
+                "comment": " The Norwegian language!\n",
+                "type": "DateFormat.Languages.Language"
+            },
+            {
+                "name": "portuguese",
+                "comment": " The Portuguese language!\n",
+                "type": "DateFormat.Languages.Language"
+            },
+            {
+                "name": "slovenian",
+                "comment": " The slovenian language!\n",
+                "type": "DateFormat.Languages.Language"
+            },
+            {
+                "name": "spanish",
+                "comment": " The spanish language!\n",
+                "type": "DateFormat.Languages.Language"
+            },
+            {
+                "name": "swedish",
+                "comment": " The Swedish language!\n",
+                "type": "DateFormat.Languages.Language"
+            },
+            {
+                "name": "toDateLanguage",
+                "comment": " This converts a `Language` do a `DateLanguage`\n",
+                "type": "DateFormat.Languages.Language -> DateFormat.Languages.DateLanguage"
+            }
+        ],
+        "binops": []
+    }
+]

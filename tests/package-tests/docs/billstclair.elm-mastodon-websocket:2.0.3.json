@@ -1,0 +1,220 @@
+[
+    {
+        "name": "Mastodon.PortFunnels",
+        "comment": " Port Funnels\n\nThis is the interface to the JavaScript code for websockets and localStorage.\n\nYour application needs to provide the actual ports, or simulators. See the\nexample for details, and how to initialize the JavaScript code for the ports.\n\n\n# Types\n\n@docs FunnelDict, Handler, State\n\n\n# Initialization\n\n@docs getCmdPort, subscriptions, initialState, makeFunnelDict\n\n\n# Processing\n\n@docs processValue\n\n",
+        "unions": [
+            {
+                "name": "Handler",
+                "comment": " A `Handler` tags a function to handle responses from one funnel module.\n\nAdd a tag in this type for each funnel module you use.\n\n",
+                "args": [
+                    "model",
+                    "msg"
+                ],
+                "cases": [
+                    [
+                        "LocalStorageHandler",
+                        [
+                            "PortFunnel.LocalStorage.Response -> Mastodon.PortFunnels.State msg -> model -> ( model, Platform.Cmd.Cmd msg )"
+                        ]
+                    ],
+                    [
+                        "WebSocketHandler",
+                        [
+                            "PortFunnel.WebSocket.Response -> Mastodon.PortFunnels.State msg -> model -> ( model, Platform.Cmd.Cmd msg )"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "FunnelDict",
+                "comment": " A `Dict` that maps a module name to a concretized `FunnelSpec`.\n\nCreate one with `makeFunnelDict`. Pass it to `processValue`.\n\n",
+                "args": [
+                    "model",
+                    "msg"
+                ],
+                "type": "( Dict.Dict String.String (Mastodon.PortFunnels.Funnel model msg), Mastodon.PortFunnels.State msg -> String.String -> model -> Json.Encode.Value -> Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "State",
+                "comment": " Add a property to this type for each funnel module you use.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ storage : PortFunnel.LocalStorage.State, websocket : PortFunnel.WebSocket.State, cmdPort : Json.Encode.Value -> Platform.Cmd.Cmd msg, subPort : (Json.Encode.Value -> msg) -> Platform.Sub.Sub msg }"
+            }
+        ],
+        "values": [
+            {
+                "name": "getCmdPort",
+                "comment": " Turn the `moduleName` inside a `GenericMessage` into the output port.\n\n    getCmdPort tagger moduleName useSimulator\n\n`tagger` is the same `Msg` that processes input from the subscription port.\n\n`moduleName` will be ignored if `useSimulator` is `False`.\n\n",
+                "type": "Mastodon.PortFunnels.State msg -> (Json.Encode.Value -> msg) -> String.String -> Basics.Bool -> Json.Encode.Value -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "initialState",
+                "comment": " Create the initial state record.\n",
+                "type": "{ localStoragePrefix : String.String, cmdPort : Json.Encode.Value -> Platform.Cmd.Cmd msg, subPort : (Json.Encode.Value -> msg) -> Platform.Sub.Sub msg } -> Mastodon.PortFunnels.State msg"
+            },
+            {
+                "name": "makeFunnelDict",
+                "comment": " Make a `Dict` mapping `moduleName` to tagged concrete `FunnelSpec`.\n\nThe `Handler` list is a list of all of your handlers. E.g. for this example, it would be:\n\n    makeFunnelDict\n        [ LocalStorageHandler localStorageHandler\n        ]\n        getCmdPort\n\nWhere `echoHandler` and `addXYHandler` are functions in your main application module to handle responses.\n\n",
+                "type": "List.List (Mastodon.PortFunnels.Handler model msg) -> (Mastodon.PortFunnels.State msg -> String.String -> model -> Json.Encode.Value -> Platform.Cmd.Cmd msg) -> Mastodon.PortFunnels.FunnelDict model msg"
+            },
+            {
+                "name": "processValue",
+                "comment": " Process a value coming in through the `subPort`.\n\nThe `FunnelDict` is the result of calling `makeFunnelDict`.\n\n",
+                "type": "Mastodon.PortFunnels.FunnelDict model msg -> Json.Encode.Value -> Mastodon.PortFunnels.State msg -> model -> Result.Result String.String ( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "subscriptions",
+                "comment": " Create a subscription for the `subPort`, given a Msg wrapper.\n",
+                "type": "Mastodon.PortFunnels.State msg -> (Json.Encode.Value -> msg) -> model -> Platform.Sub.Sub msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Mastodon.WebSocket",
+        "comment": " The WebSocket API for the Mastodon Social Network.\n\n\n# Types\n\n@docs StreamType, Event\n\n\n# Functions\n\n@docs streamUrl, open, close, decodeEvent, eventDecoder\n\n",
+        "unions": [
+            {
+                "name": "Event",
+                "comment": " An event received over the websocket.\n\n`NoEvent`, `UpdateEvent`, `NotificationEvent`, `DeleteEvent`, and\n`FiltersChangedEvent` come over the wire as specified at\n<https://docs.joinmastodon.org/api/streaming>.\n\n`ConnectedEvent` is delivered as soon as the initial connection is made, right\nafter your send a `PortFunnels.WebSocket.makeOpen` message over the socket.\n\n`ReconnectedEvent` is delivered if the connection is lost and auto-reconnected.\n\n`ClosedEvent` is delivered if the reconnection fails, or you explicitly send\na `PortFunnels.WebSocket.makeClose` message.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NoEvent",
+                        []
+                    ],
+                    [
+                        "UpdateEvent",
+                        [
+                            "Mastodon.Entity.Status"
+                        ]
+                    ],
+                    [
+                        "NotificationEvent",
+                        [
+                            "Mastodon.Entity.Notification"
+                        ]
+                    ],
+                    [
+                        "DeleteEvent",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "FiltersChangedEvent",
+                        []
+                    ],
+                    [
+                        "ConnectedEvent",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "ReconnectedEvent",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "UnknownEvent",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "ClosedEvent",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "StreamType",
+                "comment": " Stream types.\n\nUse `streamingUrl` to convert one of these into a url string.\n\nThe `String` arg to `PublicHashtagStream` and `LocalHashtagStream` is a hashtag.\n\nThe `String` arg to `ListStream` is a list ID.\n\nThe `String` arg to `GroupStream` is a group ID.\nGroups are currently supported only by the Gab server code.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "UserStream",
+                        []
+                    ],
+                    [
+                        "PublicStream",
+                        []
+                    ],
+                    [
+                        "LocalStream",
+                        []
+                    ],
+                    [
+                        "ProStream",
+                        []
+                    ],
+                    [
+                        "PublicHashtagStream",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "LocalHashtagStream",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "ListStream",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "DirectStream",
+                        []
+                    ],
+                    [
+                        "GroupStream",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "close",
+                "comment": " Close a socket opened with `open`.\n\n    close state key\n\n",
+                "type": "Mastodon.PortFunnels.State msg -> String.String -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "decodeEvent",
+                "comment": " Decode a string from the WebSocket stream.\n",
+                "type": "String.String -> Result.Result Json.Decode.Error Mastodon.WebSocket.Event"
+            },
+            {
+                "name": "eventDecoder",
+                "comment": " The JSON decoder for a non-colon event.\n\nYou'll usually use `decodeEvent` on the string that comes over the WebSocket.\"\n\n",
+                "type": "Json.Decode.Decoder Mastodon.WebSocket.Event"
+            },
+            {
+                "name": "open",
+                "comment": " Open a WebSocket connection.\n\n    open state key url\n\n`state` is initially the result of `WebSocket.PortFunnels.initialState`.\n\n`key` is a unique key string.\n\n`url` is the result of a call to `streamUrl`.\n\n",
+                "type": "Mastodon.PortFunnels.State msg -> String.String -> String.String -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "streamUrl",
+                "comment": " Convert a streaming API (e.g. \"rss://mastodon.social\"), access token, and stream type into a URL for the WebSocket connection.\n\n    streamUrl streaming_api accessToken streamType\n\nIf `accessToken` is `Nothing`, will attempt to connect without authentication. This works for the following `StreamType`s: [TODO]\n\n",
+                "type": "String.String -> Maybe.Maybe String.String -> Mastodon.WebSocket.StreamType -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

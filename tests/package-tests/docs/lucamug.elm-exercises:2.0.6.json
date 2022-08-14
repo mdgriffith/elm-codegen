@@ -1,0 +1,228 @@
+[
+    {
+        "name": "Exercises",
+        "comment": "\n\n\n# Ellie Elements\n\nThese are the elements used inside Ellie to build an exercise.\n\n@docs exercise, exerciseWithView, exerciseWithTea, Flags, Model, Msg\n\n\n# ExerciseData\n\n@docs ExerciseData, Difficulty, difficulty\n\n\n# Helpers\n\n@docs attrsButton, yourImplementationGoesHere\n\n\n# Tests\n\nThese are the same tests of [elm-explorations/test](https://package.elm-lang.org/packages/elm-explorations/test/latest/Expect). Refer to that package for the documentation.\n\n@docs Test, equal, notEqual, all, lessThan, atMost, greaterThan, atLeast, FloatingPointTolerance, within, notWithin, true, false, ok, err, equalLists, equalDicts, equalSets, pass, fail, onFail\n\n\n# For internal use\n\n@docs update, viewElement, viewElementAttrs, init, TEA, Index\n\n\n## Codecs\n\n@docs codecIndex, codecExerciseData\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Difficulty",
+                "comment": " ",
+                "args": [],
+                "type": "Internal.Data.Difficulty"
+            },
+            {
+                "name": "ExerciseData",
+                "comment": " ",
+                "args": [],
+                "type": "Internal.Data.ExerciseData"
+            },
+            {
+                "name": "Flags",
+                "comment": " `Flags` are used to pass details about the exercises to the page.\n\nThey can be either loaded from external scripts, like in this example:\n\n_(HTML)_\n\n```html\n<script src=\"https://elm-exercises.netlify.app/js/index.js\"></script>\n<script src=\"https://elm-exercises.netlify.app/js/001.js\"></script>\n<script src=\"https://elm-exercises.netlify.app/start.js\"></script>\n```\n\nYou can check the forrmat of the data in these files as reference:\n\n  - <https://elm-exercises.netlify.app/js/index.js>\n  - <https://elm-exercises.netlify.app/js/001.js>\n  - <https://elm-exercises.netlify.app/start.js>\n\nOr they can be hard coded, like in this example (See [`ExerciseData`](#ExerciseData) for a detailed explanation of the fields):\n\n_(JavaScript)_\n\n```javascript\nvar app = Elm.Main.init({\n  node: document.getElementById(\"elm\"),\n  flags: {\n    index: JSON.stringify([]),\n    exercise: JSON.stringify(\n      { id: 1            // Exercise ID\n      , title: \"\"        // Title of the exercise\n      , difficulty: Easy // Easy | Medium | Hard | Undefined\n      , problem: \"\"      // Details of the problem to be solved\n      , tests: []        // List of tests\n      , hints: []        // List of hints\n      , solutions: []    // List of solutions\n      , ellie: \"\"        // Ellie ID\n      }\n    )\n  }\n});\n```\n\n",
+                "args": [],
+                "type": "Internal.Data.Flags"
+            },
+            {
+                "name": "FloatingPointTolerance",
+                "comment": " ",
+                "args": [],
+                "type": "Expect.FloatingPointTolerance"
+            },
+            {
+                "name": "Index",
+                "comment": " ",
+                "args": [],
+                "type": "Internal.Data.Index"
+            },
+            {
+                "name": "Model",
+                "comment": " Internal. Exposed to be used in type signatures\n",
+                "args": [
+                    "modelExercise"
+                ],
+                "type": "Internal.Data.Model modelExercise"
+            },
+            {
+                "name": "Msg",
+                "comment": " Internal. Exposed to be used in type signatures\n",
+                "args": [
+                    "msgExercise"
+                ],
+                "type": "Internal.Data.Msg msgExercise"
+            },
+            {
+                "name": "TEA",
+                "comment": " ",
+                "args": [
+                    "modelExercise",
+                    "msgExercise"
+                ],
+                "type": "Internal.Data.TEA modelExercise msgExercise"
+            },
+            {
+                "name": "Test",
+                "comment": " Rename `Expectation` to `Test` as they can be run immediately in this context\n",
+                "args": [],
+                "type": "Expect.Expectation"
+            }
+        ],
+        "values": [
+            {
+                "name": "all",
+                "comment": " ",
+                "type": "List.List (subject -> Exercises.Test) -> subject -> Exercises.Test"
+            },
+            {
+                "name": "atLeast",
+                "comment": " ",
+                "type": "comparable -> comparable -> Exercises.Test"
+            },
+            {
+                "name": "atMost",
+                "comment": " ",
+                "type": "comparable -> comparable -> Exercises.Test"
+            },
+            {
+                "name": "attrsButton",
+                "comment": " ",
+                "type": "List.List (Element.Attribute msg)"
+            },
+            {
+                "name": "codecExerciseData",
+                "comment": " ",
+                "type": "Codec.Codec Internal.Data.ExerciseData"
+            },
+            {
+                "name": "codecIndex",
+                "comment": " ",
+                "type": "Codec.Codec Internal.Data.Index"
+            },
+            {
+                "name": "difficulty",
+                "comment": " ",
+                "type": "{ easy : Internal.Data.Difficulty, hard : Internal.Data.Difficulty, medium : Internal.Data.Difficulty, undefined : Internal.Data.Difficulty }"
+            },
+            {
+                "name": "equal",
+                "comment": " ",
+                "type": "a -> a -> Exercises.Test"
+            },
+            {
+                "name": "equalDicts",
+                "comment": " ",
+                "type": "Dict.Dict comparable a -> Dict.Dict comparable a -> Exercises.Test"
+            },
+            {
+                "name": "equalLists",
+                "comment": " ",
+                "type": "List.List a -> List.List a -> Exercises.Test"
+            },
+            {
+                "name": "equalSets",
+                "comment": " ",
+                "type": "Set.Set comparable -> Set.Set comparable -> Exercises.Test"
+            },
+            {
+                "name": "err",
+                "comment": " ",
+                "type": "Result.Result a b -> Exercises.Test"
+            },
+            {
+                "name": "exercise",
+                "comment": "\n\n    import Exercises exposing (..)\n\n\n    -- Write a function `last` that returns\n    -- the last element of a list.\n    --\n    last : List a -> Maybe a\n    last xs =\n        -- Your implementation goes here\n        Nothing\n\n    tests : List Test\n    tests =\n        -- Your implementation should pass\n        -- these tests\n        [ last [ 1, 2, 3, 4 ] == Just 4\n        , last [ 1 ] == Just 1\n        , last [] == Nothing\n        , last [ 'a', 'b', 'c' ] == Just 'c'\n        ]\n\n    main : Program Flags (Model ()) (Msg ())\n    main =\n        exercise\n            { tests = tests\n            , portLocalStoragePop = portLocalStoragePop\n            , portLocalStoragePush = portLocalStoragePush\n            }\n\n    port portLocalStoragePop : (String -> msg) -> Sub msg\n\n    port portLocalStoragePush : String -> Cmd msg\n\n",
+                "type": "{ tests : List.List Exercises.Test, portLocalStoragePop : (String.String -> Exercises.Msg ()) -> Platform.Sub.Sub (Exercises.Msg ()), portLocalStoragePush : String.String -> Platform.Cmd.Cmd (Exercises.Msg ()) } -> Platform.Program Exercises.Flags (Exercises.Model ()) (Exercises.Msg ())"
+            },
+            {
+                "name": "exerciseWithTea",
+                "comment": " If the exercise require The Elm Architecure and tests need to access the Model, it is possible to use `exerciseWithTea` instead of the simpler `exercise`. It is the analogue of `Browser.element` but without flags.\n\n    import Exercises exposing (..)\n\n\n    -- Write a function `last` that returns\n    -- the last element of a list.\n    --\n    last : List a -> Maybe a\n    last xs =\n        -- Your implementation goes here\n        Nothing\n\n    main : Program Flags (Model ModelExercise) (Msg MsgExercise)\n    main =\n        exerciseWithTea\n            { tests =\n                -- Your implementation should pass\n                -- these tests\n                \\model ->\n                    [ last [ 1, 2, 3, 4 ] == Just 4\n                    , last [ 1 ] == Just 1\n                    , last [] == Nothing\n                    , last [ 'a', 'b', 'c' ] == Just 'c'\n                    ]\n            , init = init\n            , view = view\n            , update = update\n            , subscriptions = subscriptions\n            }\n\n    -- Following the definitions of\n    -- init, view, update, and subscriptions.\n\n",
+                "type": "{ init : ( modelExercise, Platform.Cmd.Cmd msgExercise ), view : Maybe.Maybe (modelExercise -> Element.Element msgExercise), update : msgExercise -> modelExercise -> ( modelExercise, Platform.Cmd.Cmd msgExercise ), subscriptions : modelExercise -> Platform.Sub.Sub msgExercise, tests : modelExercise -> List.List Exercises.Test, portLocalStoragePop : (String.String -> Exercises.Msg msgExercise) -> Platform.Sub.Sub (Exercises.Msg msgExercise), portLocalStoragePush : String.String -> Platform.Cmd.Cmd (Exercises.Msg msgExercise) } -> Platform.Program Internal.Data.Flags (Exercises.Model modelExercise) (Exercises.Msg msgExercise)"
+            },
+            {
+                "name": "exerciseWithView",
+                "comment": " ",
+                "type": "{ tests : List.List Exercises.Test, portLocalStoragePop : (String.String -> Exercises.Msg ()) -> Platform.Sub.Sub (Exercises.Msg ()), portLocalStoragePush : String.String -> Platform.Cmd.Cmd (Exercises.Msg ()), view : Element.Element () } -> Platform.Program Exercises.Flags (Exercises.Model ()) (Exercises.Msg ())"
+            },
+            {
+                "name": "fail",
+                "comment": " ",
+                "type": "String.String -> Exercises.Test"
+            },
+            {
+                "name": "false",
+                "comment": " ",
+                "type": "String.String -> Basics.Bool -> Exercises.Test"
+            },
+            {
+                "name": "greaterThan",
+                "comment": " ",
+                "type": "comparable -> comparable -> Exercises.Test"
+            },
+            {
+                "name": "init",
+                "comment": " ",
+                "type": "Exercises.TEA modelExercise msgExercise -> Internal.Data.Flags -> ( Exercises.Model modelExercise, Platform.Cmd.Cmd (Exercises.Msg msgExercise) )"
+            },
+            {
+                "name": "lessThan",
+                "comment": " ",
+                "type": "comparable -> comparable -> Exercises.Test"
+            },
+            {
+                "name": "notEqual",
+                "comment": " ",
+                "type": "a -> a -> Exercises.Test"
+            },
+            {
+                "name": "notWithin",
+                "comment": " ",
+                "type": "Exercises.FloatingPointTolerance -> Basics.Float -> Basics.Float -> Exercises.Test"
+            },
+            {
+                "name": "ok",
+                "comment": " ",
+                "type": "Result.Result a b -> Exercises.Test"
+            },
+            {
+                "name": "onFail",
+                "comment": " ",
+                "type": "String.String -> Exercises.Test -> Exercises.Test"
+            },
+            {
+                "name": "pass",
+                "comment": " ",
+                "type": "Exercises.Test"
+            },
+            {
+                "name": "true",
+                "comment": " ",
+                "type": "String.String -> Basics.Bool -> Exercises.Test"
+            },
+            {
+                "name": "update",
+                "comment": " ",
+                "type": "Exercises.TEA modelExercise msgExercise -> Exercises.Msg msgExercise -> Exercises.Model modelExercise -> ( Exercises.Model modelExercise, Platform.Cmd.Cmd (Exercises.Msg msgExercise) )"
+            },
+            {
+                "name": "viewElement",
+                "comment": " ",
+                "type": "Internal.Data.TEA modelExercise msgExercise -> Internal.Data.Model modelExercise -> Element.Element (Internal.Data.Msg msgExercise)"
+            },
+            {
+                "name": "viewElementAttrs",
+                "comment": " ",
+                "type": "Internal.Data.Model modelExercise -> List.List (Element.Attribute (Internal.Data.Msg msgExercise))"
+            },
+            {
+                "name": "within",
+                "comment": " ",
+                "type": "Exercises.FloatingPointTolerance -> Basics.Float -> Basics.Float -> Exercises.Test"
+            },
+            {
+                "name": "yourImplementationGoesHere",
+                "comment": " ",
+                "type": "String.String"
+            }
+        ],
+        "binops": []
+    }
+]

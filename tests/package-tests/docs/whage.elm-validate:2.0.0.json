@@ -1,0 +1,134 @@
+[
+    {
+        "name": "Validate",
+        "comment": " Convenience functions for validating data.\n\n    import Validate exposing (Validator, ifBlank, ifNotInt, validate)\n\n    type Field = Name | Email | Age\n\n    type alias Model = { name : String, email : String, age : String }\n\n    modelValidator : Validator String Model\n    modelValidator =\n        Validate.all\n            [ ifBlank .name \"Please enter a name.\"\n            , Validate.firstError\n                [ ifBlank .email \"Please enter an email address.\"\n                , ifInvalidEmail .email \"This is not a valid email address.\"\n                ]\n            , ifNotInt .age \"Age must be a whole number.\"\n            ]\n\n    validate modelValidator { name = \"Sam\", email = \"blah\", age = \"abc\" }\n        --> Err [ \"This is not a valid email address.\", \"Age must be a whole number.\" ]\n\n\n# Validating a subject\n\n@docs Validator, Valid, validate, fromValid\n\n\n# Creating validators\n\n@docs ifBlank, ifNotInt, ifNotFloat, ifEmptyList, ifEmptyDict, ifEmptySet, ifNoRegexMatch, ifNothing, ifInvalidEmail, ifTrue, ifFalse, fromErrors\n\n\n# Combining validators\n\n@docs all, any, firstError\n\n\n# Checking values directly\n\n@docs isBlank, isInt, isFloat, isValidEmail\n\n",
+        "unions": [
+            {
+                "name": "Valid",
+                "comment": " Guarantees that a subject has been run through a Validator which passed.\n\nThe only way to obtain one of these is to call `validate`, so if you have a\n`Valid Form`, you can be certain the wrapped `Form` value has been run through\na `Validator` that returned in no errors.\n\nOnce you have a `Valid Form`, you can unwrap the validated `Form` by calling\n[`fromValid`](#fromValid).\n\nThis lets you write functions like `sendToServer : Valid Form -> ...`\nwhich make it impossible to forget to run the form through a `Validator`\nbefore sending it off to the server!\n\n",
+                "args": [
+                    "subject"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Validator",
+                "comment": " A `Validator` contains a function which takes a subject and returns a list\nof errors describing anything invalid about that subject.\n\nPass it to [`validate`](#validate) to get the list of errors.\nAn empty error list means the subject was valid.\n\n",
+                "args": [
+                    "error",
+                    "subject"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "all",
+                "comment": " Run each of the given validators, in order, and return their concatenated\nerror lists.\n\n    import Validate exposing (Validator, ifBlank, ifNotInt)\n\n    modelValidator : Validator Model String\n    modelValidator =\n        Validate.all\n            [ ifBlank .name \"Please enter a name.\"\n            , ifBlank .email \"Please enter an email address.\"\n            , ifNotInt .age \"Age must be a whole number.\"\n            ]\n\n",
+                "type": "List.List (Validate.Validator error subject) -> Validate.Validator error subject"
+            },
+            {
+                "name": "any",
+                "comment": " Return `True` if none of the given validators returns any errors for the given\nsubject, and `False` if any validator returns one or more errors.\n",
+                "type": "List.List (Validate.Validator error subject) -> subject -> Basics.Bool"
+            },
+            {
+                "name": "firstError",
+                "comment": " Run each of the given validators, in order, stopping after the first error\nand returning it. If no errors are encountered, return `Nothing`.\n\n    import Validate exposing (Validator, ifBlank, ifInvalidEmail, ifNotInt)\n\n\n    type alias Model =\n        { email : String, age : String }\n\n\n    modelValidator : Validator String Model\n    modelValidator =\n        Validate.all\n            [ Validate.firstError\n                [ ifBlank .email \"Please enter an email address.\"\n                , ifInvalidEmail .email \"This is not a valid email address.\"\n                ]\n            , ifNotInt .age \"Age must be a whole number.\"\n            ]\n\n\n    validate modelValidator { email = \" \", age = \"5\" }\n        --> Err [ \"Please enter an email address.\" ]\n\n    validate modelValidator { email = \"blah\", age = \"5\" }\n        --> Err [ \"This is not a valid email address.\" ]\n\n    validate modelValidator { email = \"foo@bar.com\", age = \"5\" }\n        --> Ok (Valid { email = \"foo@bar.com\", age = \"5\" })\n\n",
+                "type": "List.List (Validate.Validator error subject) -> Validate.Validator error subject"
+            },
+            {
+                "name": "fromErrors",
+                "comment": " Create a custom validator, by providing a function that returns a list of\nerrors given a subject.\n\n    import Validate exposing (Validator, fromErrors)\n\n    modelValidator : Validator Model String\n    modelValidator =\n        fromErrors modelToErrors\n\n    modelToErrors : Model -> List String\n    modelToErrors model =\n        let\n            usernameLength =\n                String.length model.username\n        in\n        if usernameLength < minUsernameChars then\n            [ \"Username not long enough\" ]\n\n        else if usernameLength > maxUsernameChars then\n            [ \"Username too long\" ]\n\n        else\n            []\n\n",
+                "type": "(subject -> List.List error) -> Validate.Validator error subject"
+            },
+            {
+                "name": "fromValid",
+                "comment": " Extract the wrapped Valid value.\n",
+                "type": "Validate.Valid subject -> subject"
+            },
+            {
+                "name": "ifBlank",
+                "comment": " Return an error if the given `String` is empty, or if it contains only\nspaces, tabs, newlines, or carriage returns.\n\n    import Validate exposing (Validator, ifBlank)\n\n    modelValidator : Validator Model String\n    modelValidator =\n        Validate.all\n            [ ifBlank .name \"Please enter a name.\"\n            , ifBlank .email \"Please enter an email address.\"\n            ]\n\n",
+                "type": "(subject -> String.String) -> error -> Validate.Validator error subject"
+            },
+            {
+                "name": "ifEmptyDict",
+                "comment": " Return an error if a `Dict` is empty.\n",
+                "type": "(subject -> Dict.Dict comparable v) -> error -> Validate.Validator error subject"
+            },
+            {
+                "name": "ifEmptyList",
+                "comment": " Return an error if a `List` is empty.\n",
+                "type": "(subject -> List.List a) -> error -> Validate.Validator error subject"
+            },
+            {
+                "name": "ifEmptySet",
+                "comment": " Return an error if a `Set` is empty.\n",
+                "type": "(subject -> Set.Set comparable) -> error -> Validate.Validator error subject"
+            },
+            {
+                "name": "ifFalse",
+                "comment": " Return an error if a predicate returns `False` for the given\nsubject.\n\n    import Validate exposing (Validator, ifFalse)\n\n    modelValidator : Validator Model String\n    modelValidator =\n        ifFalse (\\model -> countSelected model >= 2)\n            \"Please select at least two.\"\n\n",
+                "type": "(subject -> Basics.Bool) -> error -> Validate.Validator error subject"
+            },
+            {
+                "name": "ifInvalidEmail",
+                "comment": " Return an error if an email address is malformed.\n\n    import Validate exposing (Validator, ifBlank, ifNotInt)\n\n    modelValidator : Validator Model String\n    modelValidator =\n        Validate.all\n            [ ifInvalidEmail .primaryEmail (\\_ -> \"Please enter a valid primary email address.\")\n            , ifInvalidEmail .superSecretEmail (\\email -> \"Unfortunately, \\\"\" ++ email ++ \"\\\" is not a valid Super Secret Email Address.\")\n            ]\n\n",
+                "type": "(subject -> String.String) -> (String.String -> error) -> Validate.Validator error subject"
+            },
+            {
+                "name": "ifNoRegexMatch",
+                "comment": " Return an error if the given pattern is not matched.\n\n    import Validate exposing (Validator, ifBlank, ifNotInt)\n\n    modelValidator : Validator Model String\n    modelValidator =\n        Validate.all\n            [ ifNoRegexMatch \"\\\\d{4}-\\\\d{2}-\\\\d{2}\" .patientBirthDate PatientBirthDate\n            ]\n\n",
+                "type": "String.String -> (subject -> String.String) -> error -> Validate.Validator error subject"
+            },
+            {
+                "name": "ifNotFloat",
+                "comment": " Return an error if a `String` cannot be parsed as an `Float`.\n",
+                "type": "(subject -> String.String) -> error -> Validate.Validator error subject"
+            },
+            {
+                "name": "ifNotInt",
+                "comment": " Return an error if the given `String` cannot be parsed as an `Int`.\n\n    import Validate exposing (Validator, ifNotInt)\n\n    modelValidator : Validator Model String\n    modelValidator =\n        Validate.all\n            [ ifNotInt .followers (\\_ -> \"Please enter a whole number for followers.\")\n            , ifNotInt .stars (\\stars -> \"Stars was \\\"\" ++ stars ++ \"\\\", but it needs to be a whole number.\")\"\n            ]\n\n",
+                "type": "(subject -> String.String) -> (String.String -> error) -> Validate.Validator error subject"
+            },
+            {
+                "name": "ifNothing",
+                "comment": " Return an error if a `Maybe` is `Nothing`.\n",
+                "type": "(subject -> Maybe.Maybe a) -> error -> Validate.Validator error subject"
+            },
+            {
+                "name": "ifTrue",
+                "comment": " Return an error if a predicate returns `True` for the given\nsubject.\n\n    import Validate exposing (Validator, ifTrue)\n\n    modelValidator : Validator Model String\n    modelValidator =\n        ifTrue (\\model -> countSelected model < 2)\n            \"Please select at least two.\"\n\n",
+                "type": "(subject -> Basics.Bool) -> error -> Validate.Validator error subject"
+            },
+            {
+                "name": "isBlank",
+                "comment": " Returns `True` if the given string is nothing but whitespace.\n\n[`ifBlank`](#ifBlank) uses this under the hood.\n\n",
+                "type": "String.String -> Basics.Bool"
+            },
+            {
+                "name": "isFloat",
+                "comment": " Returns `True` if `String.toFloat` on the given string returns an `Ok`.\n\n[`ifNotFloat`](#ifNotFloat) uses this under the hood.\n\n",
+                "type": "String.String -> Basics.Bool"
+            },
+            {
+                "name": "isInt",
+                "comment": " Returns `True` if `String.toInt` on the given string returns an `Ok`.\n\n[`ifNotInt`](#ifNotInt) uses this under the hood.\n\n",
+                "type": "String.String -> Basics.Bool"
+            },
+            {
+                "name": "isValidEmail",
+                "comment": " Returns `True` if the email is valid.\n\n[`ifInvalidEmail`](#ifInvalidEmail) uses this under the hood.\n\n",
+                "type": "String.String -> Basics.Bool"
+            },
+            {
+                "name": "validate",
+                "comment": " Return an error if the given predicate returns `True` for the given\nsubject.\n\n    import Validate exposing (Validator, ifBlank, ifNotInt, validate)\n\n    type Field = Name | Email | Age\n\n    type alias Model = { name : String, email : String, age : String }\n\n    modelValidator : Validator ( Field, String ) Model\n    modelValidator =\n        Validate.all\n            [ ifBlank .name ( Name, \"Please enter a name.\" )\n            , ifBlank .email ( Email, \"Please enter an email address.\" )\n            , ifNotInt .age ( Age, \"Age must be a whole number.\" )\n            ]\n\n    validate modelValidator { name = \"Sam\", email = \"\", age = \"abc\" }\n        --> Err [ ( Email, \"Please enter an email address.\" ), ( Age, \"Age must be a whole number.\" ) ]\n\n",
+                "type": "Validate.Validator error subject -> subject -> Result.Result (List.List error) (Validate.Valid subject)"
+            }
+        ],
+        "binops": []
+    }
+]

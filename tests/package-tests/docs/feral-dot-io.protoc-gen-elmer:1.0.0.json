@@ -1,0 +1,530 @@
+[
+    {
+        "name": "Protobuf.Elmer",
+        "comment": " Helper types and functions for `protoc-gen-elmer` codegen. This module should not be used directly.\n\nSee the project on how this may be used: <https://github.com/feral-dot-io/protoc-gen-elmer>\n\n\n# Well-known types\n\n@docs BoolValue, BytesValue, DoubleValue, FloatValue, Int32Value, Int64Value, StringValue, UInt32Value, UInt64Value\n\n\n# Empty (zero) vlaues\n\n@docs emptyAny, emptyApi, emptyBoolValue, emptyBytes, emptyBytesValue, emptyDoubleValue, emptyDuration, emptyEmpty, emptyEnum, emptyEnumValue, emptyField, emptyFieldMask, emptyField_Cardinality, emptyField_Kind, emptyFloatValue, emptyInt32Value, emptyInt64Value, emptyListValue, emptyMethod, emptyMixin, emptyNullValue, emptyOption, emptySourceContext, emptyStringValue, emptyStruct, emptySyntax, emptyTimestamp, emptyUInt32Value, emptyUInt64Value, emptyValue, emptyXType\n\n\n# Decoders\n\n@docs decodeBoolValue, decodeBytesValue, decodeDoubleValue, decodeFloatValue, decodeInt32Value, decodeInt64Value, decodeStringValue, decodeTimestamp, decodeUInt32Value, decodeUInt64Value, decodeValue\n\n\n# Encoders\n\n@docs encodeAny, encodeBoolValue, encodeBytesValue, encodeDoubleValue, encodeFloatValue, encodeInt32Value, encodeInt64Value, encodeStringValue, encodeTimestamp, encodeUInt32Value, encodeUInt64Value, encodeValue\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "BoolValue",
+                "comment": " ",
+                "args": [],
+                "type": "Maybe.Maybe Basics.Bool"
+            },
+            {
+                "name": "BytesValue",
+                "comment": " ",
+                "args": [],
+                "type": "Maybe.Maybe Bytes.Bytes"
+            },
+            {
+                "name": "DoubleValue",
+                "comment": " ",
+                "args": [],
+                "type": "Maybe.Maybe Basics.Float"
+            },
+            {
+                "name": "FloatValue",
+                "comment": " ",
+                "args": [],
+                "type": "Maybe.Maybe Basics.Float"
+            },
+            {
+                "name": "Int32Value",
+                "comment": " ",
+                "args": [],
+                "type": "Maybe.Maybe Basics.Int"
+            },
+            {
+                "name": "Int64Value",
+                "comment": " ",
+                "args": [],
+                "type": "Maybe.Maybe Basics.Int"
+            },
+            {
+                "name": "StringValue",
+                "comment": " ",
+                "args": [],
+                "type": "Maybe.Maybe String.String"
+            },
+            {
+                "name": "UInt32Value",
+                "comment": " ",
+                "args": [],
+                "type": "Maybe.Maybe Basics.Int"
+            },
+            {
+                "name": "UInt64Value",
+                "comment": " ",
+                "args": [],
+                "type": "Maybe.Maybe Basics.Int"
+            }
+        ],
+        "values": [
+            {
+                "name": "decodeBoolValue",
+                "comment": " ",
+                "type": "Protobuf.Decode.Decoder Protobuf.Elmer.BoolValue"
+            },
+            {
+                "name": "decodeBytesValue",
+                "comment": " ",
+                "type": "Protobuf.Decode.Decoder Protobuf.Elmer.BytesValue"
+            },
+            {
+                "name": "decodeDoubleValue",
+                "comment": " ",
+                "type": "Protobuf.Decode.Decoder Protobuf.Elmer.FloatValue"
+            },
+            {
+                "name": "decodeFloatValue",
+                "comment": " ",
+                "type": "Protobuf.Decode.Decoder Protobuf.Elmer.FloatValue"
+            },
+            {
+                "name": "decodeInt32Value",
+                "comment": " ",
+                "type": "Protobuf.Decode.Decoder Protobuf.Elmer.Int32Value"
+            },
+            {
+                "name": "decodeInt64Value",
+                "comment": " ",
+                "type": "Protobuf.Decode.Decoder Protobuf.Elmer.Int64Value"
+            },
+            {
+                "name": "decodeStringValue",
+                "comment": " ",
+                "type": "Protobuf.Decode.Decoder Protobuf.Elmer.StringValue"
+            },
+            {
+                "name": "decodeTimestamp",
+                "comment": " ",
+                "type": "Protobuf.Decode.Decoder Time.Posix"
+            },
+            {
+                "name": "decodeUInt32Value",
+                "comment": " ",
+                "type": "Protobuf.Decode.Decoder Protobuf.Elmer.UInt32Value"
+            },
+            {
+                "name": "decodeUInt64Value",
+                "comment": " ",
+                "type": "Protobuf.Decode.Decoder Protobuf.Elmer.UInt64Value"
+            },
+            {
+                "name": "decodeValue",
+                "comment": " ",
+                "type": "Protobuf.Decode.Decoder w -> Protobuf.Decode.Decoder (Maybe.Maybe w)"
+            },
+            {
+                "name": "emptyAny",
+                "comment": " ",
+                "type": "Google.Protobuf.Any"
+            },
+            {
+                "name": "emptyApi",
+                "comment": " ",
+                "type": "Google.Protobuf.Api"
+            },
+            {
+                "name": "emptyBoolValue",
+                "comment": " ",
+                "type": "Protobuf.Elmer.BoolValue"
+            },
+            {
+                "name": "emptyBytes",
+                "comment": " ",
+                "type": "Bytes.Bytes"
+            },
+            {
+                "name": "emptyBytesValue",
+                "comment": " ",
+                "type": "Protobuf.Elmer.BytesValue"
+            },
+            {
+                "name": "emptyDoubleValue",
+                "comment": " ",
+                "type": "Protobuf.Elmer.FloatValue"
+            },
+            {
+                "name": "emptyDuration",
+                "comment": " ",
+                "type": "Google.Protobuf.Duration"
+            },
+            {
+                "name": "emptyEmpty",
+                "comment": " ",
+                "type": "Google.Protobuf.Empty"
+            },
+            {
+                "name": "emptyEnum",
+                "comment": " ",
+                "type": "Google.Protobuf.Enum"
+            },
+            {
+                "name": "emptyEnumValue",
+                "comment": " ",
+                "type": "Google.Protobuf.EnumValue"
+            },
+            {
+                "name": "emptyField",
+                "comment": " ",
+                "type": "Google.Protobuf.Field"
+            },
+            {
+                "name": "emptyFieldMask",
+                "comment": " ",
+                "type": "Google.Protobuf.FieldMask"
+            },
+            {
+                "name": "emptyField_Cardinality",
+                "comment": " ",
+                "type": "Google.Protobuf.Cardinality"
+            },
+            {
+                "name": "emptyField_Kind",
+                "comment": " ",
+                "type": "Google.Protobuf.Kind"
+            },
+            {
+                "name": "emptyFloatValue",
+                "comment": " ",
+                "type": "Protobuf.Elmer.FloatValue"
+            },
+            {
+                "name": "emptyInt32Value",
+                "comment": " ",
+                "type": "Protobuf.Elmer.Int64Value"
+            },
+            {
+                "name": "emptyInt64Value",
+                "comment": " ",
+                "type": "Protobuf.Elmer.Int64Value"
+            },
+            {
+                "name": "emptyListValue",
+                "comment": " ",
+                "type": "Google.Protobuf.ListValue"
+            },
+            {
+                "name": "emptyMethod",
+                "comment": " ",
+                "type": "Google.Protobuf.Method"
+            },
+            {
+                "name": "emptyMixin",
+                "comment": " ",
+                "type": "Google.Protobuf.Mixin"
+            },
+            {
+                "name": "emptyNullValue",
+                "comment": " ",
+                "type": "Google.Protobuf.NullValue"
+            },
+            {
+                "name": "emptyOption",
+                "comment": " ",
+                "type": "Google.Protobuf.Option"
+            },
+            {
+                "name": "emptySourceContext",
+                "comment": " ",
+                "type": "Google.Protobuf.SourceContext"
+            },
+            {
+                "name": "emptyStringValue",
+                "comment": " ",
+                "type": "Protobuf.Elmer.StringValue"
+            },
+            {
+                "name": "emptyStruct",
+                "comment": " ",
+                "type": "Google.Protobuf.Struct"
+            },
+            {
+                "name": "emptySyntax",
+                "comment": " ",
+                "type": "Google.Protobuf.Syntax"
+            },
+            {
+                "name": "emptyTimestamp",
+                "comment": " ",
+                "type": "Time.Posix"
+            },
+            {
+                "name": "emptyUInt32Value",
+                "comment": " ",
+                "type": "Maybe.Maybe Basics.Int"
+            },
+            {
+                "name": "emptyUInt64Value",
+                "comment": " ",
+                "type": "Maybe.Maybe Basics.Int"
+            },
+            {
+                "name": "emptyValue",
+                "comment": " ",
+                "type": "Google.Protobuf.Value"
+            },
+            {
+                "name": "emptyXType",
+                "comment": " ",
+                "type": "Google.Protobuf.Type"
+            },
+            {
+                "name": "encodeAny",
+                "comment": " ",
+                "type": "Google.Protobuf.Any -> Protobuf.Encode.Encoder"
+            },
+            {
+                "name": "encodeBoolValue",
+                "comment": " ",
+                "type": "Protobuf.Elmer.BoolValue -> Protobuf.Encode.Encoder"
+            },
+            {
+                "name": "encodeBytesValue",
+                "comment": " ",
+                "type": "Protobuf.Elmer.BytesValue -> Protobuf.Encode.Encoder"
+            },
+            {
+                "name": "encodeDoubleValue",
+                "comment": " ",
+                "type": "Protobuf.Elmer.FloatValue -> Protobuf.Encode.Encoder"
+            },
+            {
+                "name": "encodeFloatValue",
+                "comment": " ",
+                "type": "Protobuf.Elmer.FloatValue -> Protobuf.Encode.Encoder"
+            },
+            {
+                "name": "encodeInt32Value",
+                "comment": " ",
+                "type": "Protobuf.Elmer.Int32Value -> Protobuf.Encode.Encoder"
+            },
+            {
+                "name": "encodeInt64Value",
+                "comment": " ",
+                "type": "Protobuf.Elmer.Int64Value -> Protobuf.Encode.Encoder"
+            },
+            {
+                "name": "encodeStringValue",
+                "comment": " ",
+                "type": "Protobuf.Elmer.StringValue -> Protobuf.Encode.Encoder"
+            },
+            {
+                "name": "encodeTimestamp",
+                "comment": " ",
+                "type": "Time.Posix -> Protobuf.Encode.Encoder"
+            },
+            {
+                "name": "encodeUInt32Value",
+                "comment": " ",
+                "type": "Protobuf.Elmer.UInt32Value -> Protobuf.Encode.Encoder"
+            },
+            {
+                "name": "encodeUInt64Value",
+                "comment": " ",
+                "type": "Protobuf.Elmer.UInt64Value -> Protobuf.Encode.Encoder"
+            },
+            {
+                "name": "encodeValue",
+                "comment": " ",
+                "type": "(v -> Protobuf.Encode.Encoder) -> Maybe.Maybe v -> Protobuf.Encode.Encoder"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Protobuf.ElmerTests",
+        "comment": " Helper types and functions for `protoc-gen-elmer` codegen. This module should not be used directly.\n\nSee the project on how this may be used: <https://github.com/feral-dot-io/protoc-gen-elmer>\n\n\n# Test runners\n\n@docs runTest\n\n\n# Fuzzers\n\n@docs fuzzAny, fuzzApi, fuzzBoolValue, fuzzBytes, fuzzBytesValue, fuzzDoubleValue, fuzzDuration, fuzzEmpty, fuzzEnum, fuzzEnumValue, fuzzField, fuzzFieldMask, fuzzField_Cardinality, fuzzField_Kind, fuzzFloat32, fuzzFloatValue, fuzzInt32, fuzzInt32Value, fuzzInt64Value, fuzzListValue, fuzzMethod, fuzzMinInt32, fuzzMixin, fuzzNullValue, fuzzOption, fuzzPosInt32, fuzzSourceContext, fuzzStringValue, fuzzStruct, fuzzSyntax, fuzzTimestamp, fuzzUInt32, fuzzUInt32Value, fuzzUInt64Value, fuzzValue, fuzzXType\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fuzzAny",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Google.Protobuf.Any"
+            },
+            {
+                "name": "fuzzApi",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Google.Protobuf.Api"
+            },
+            {
+                "name": "fuzzBoolValue",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Protobuf.Elmer.BoolValue"
+            },
+            {
+                "name": "fuzzBytes",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Bytes.Bytes"
+            },
+            {
+                "name": "fuzzBytesValue",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Protobuf.Elmer.BytesValue"
+            },
+            {
+                "name": "fuzzDoubleValue",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Protobuf.Elmer.FloatValue"
+            },
+            {
+                "name": "fuzzDuration",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Google.Protobuf.Duration"
+            },
+            {
+                "name": "fuzzEmpty",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Google.Protobuf.Empty"
+            },
+            {
+                "name": "fuzzEnum",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Google.Protobuf.Enum"
+            },
+            {
+                "name": "fuzzEnumValue",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Google.Protobuf.EnumValue"
+            },
+            {
+                "name": "fuzzField",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Google.Protobuf.Field"
+            },
+            {
+                "name": "fuzzFieldMask",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Google.Protobuf.FieldMask"
+            },
+            {
+                "name": "fuzzField_Cardinality",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Google.Protobuf.Cardinality"
+            },
+            {
+                "name": "fuzzField_Kind",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Google.Protobuf.Kind"
+            },
+            {
+                "name": "fuzzFloat32",
+                "comment": " Tests float32' exponent (8 bits).\nAvoids trying to robusly map float64 (JS) -> float32\n{-|-}\n",
+                "type": "Fuzz.Fuzzer Basics.Float"
+            },
+            {
+                "name": "fuzzFloatValue",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Protobuf.Elmer.FloatValue"
+            },
+            {
+                "name": "fuzzInt32",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Basics.Int"
+            },
+            {
+                "name": "fuzzInt32Value",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Protobuf.Elmer.Int32Value"
+            },
+            {
+                "name": "fuzzInt64Value",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Protobuf.Elmer.Int64Value"
+            },
+            {
+                "name": "fuzzListValue",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Google.Protobuf.ListValue"
+            },
+            {
+                "name": "fuzzMethod",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Google.Protobuf.Method"
+            },
+            {
+                "name": "fuzzMinInt32",
+                "comment": " ",
+                "type": "Basics.Int -> Fuzz.Fuzzer Basics.Int"
+            },
+            {
+                "name": "fuzzMixin",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Google.Protobuf.Mixin"
+            },
+            {
+                "name": "fuzzNullValue",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Google.Protobuf.NullValue"
+            },
+            {
+                "name": "fuzzOption",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Google.Protobuf.Option"
+            },
+            {
+                "name": "fuzzPosInt32",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Basics.Int"
+            },
+            {
+                "name": "fuzzSourceContext",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Google.Protobuf.SourceContext"
+            },
+            {
+                "name": "fuzzStringValue",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Protobuf.Elmer.StringValue"
+            },
+            {
+                "name": "fuzzStruct",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Google.Protobuf.Struct"
+            },
+            {
+                "name": "fuzzSyntax",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Google.Protobuf.Syntax"
+            },
+            {
+                "name": "fuzzTimestamp",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Time.Posix"
+            },
+            {
+                "name": "fuzzUInt32",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Basics.Int"
+            },
+            {
+                "name": "fuzzUInt32Value",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Protobuf.Elmer.UInt32Value"
+            },
+            {
+                "name": "fuzzUInt64Value",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Protobuf.Elmer.UInt64Value"
+            },
+            {
+                "name": "fuzzValue",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Google.Protobuf.Value"
+            },
+            {
+                "name": "fuzzXType",
+                "comment": " ",
+                "type": "Fuzz.Fuzzer Google.Protobuf.Type"
+            },
+            {
+                "name": "runTest",
+                "comment": " Executes a test that runs data through an encoder then decodes it. Expect the result to be equal.\n",
+                "type": "Protobuf.Decode.Decoder data -> (data -> Protobuf.Encode.Encoder) -> data -> Expect.Expectation"
+            }
+        ],
+        "binops": []
+    }
+]

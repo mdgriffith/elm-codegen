@@ -1,0 +1,151 @@
+[
+    {
+        "name": "Graph",
+        "comment": "\n\n\n# Construction\n\n@docs Graph, Edge, empty, fromVerticesAndEdges\n\n\n# Modification\n\n@docs addVertex, removeVertex, updateVertex, addEdge, removeEdge, updateEdge, mapVertices, mapEdges, reverseEdges\n\n\n# Predicates\n\n@docs isEmpty, hasVertex, hasEdge, areAdjacent\n\n\n# Querying\n\n@docs fold, size, vertices, edges, verticesAndEdges, outgoingEdges, outgoingEdgesWithData, getEdge, edgeToComparable\n\n",
+        "unions": [
+            {
+                "name": "Graph",
+                "comment": " A directed graph data structure.\n\n**The vertices** can hold any data, but you can't have two vertices holding the same data. (Think of it as of `Set`.)\n\n**The edges** can also hold any data, but you can't have two edges going from/to the same place.\n\n",
+                "args": [
+                    "vertex",
+                    "edge"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Edge",
+                "comment": " A representation of an edge between two vertices.\n",
+                "args": [
+                    "vertex",
+                    "edge"
+                ],
+                "type": "{ from : vertex, to : vertex, data : edge }"
+            }
+        ],
+        "values": [
+            {
+                "name": "addEdge",
+                "comment": " Add an edge to the graph, along with the associated data\n\nIf any of the vertices aren't present yet, this function **will add them** before\nadding the edge.\n\nDirected: the order of the vertices does matter.\n\n    Graph.empty\n        |> Graph.addEdge \"foo\" \"bar\" ()\n        |> Graph.vertices\n    --> [ \"foo\", \"bar\" ]\n\n    Graph.empty\n        |> Graph.addEdge \"foo\" \"bar\" 100\n        |> Graph.edges\n    --> [ { from = \"foo\", to = \"bar\", data = 100 } ]\n\n",
+                "type": "vertex -> vertex -> edge -> Graph.Graph vertex edge -> Graph.Graph vertex edge"
+            },
+            {
+                "name": "addVertex",
+                "comment": " Add the vertex to the graph. (Nothing happens if it's already present.)\n\nBy default it's not connected to any other vertex.\n\n    Graph.empty\n        |> Graph.addVertex \"foo\"\n        |> Graph.vertices\n    --> [ \"foo\" ]\n\n",
+                "type": "vertex -> Graph.Graph vertex edge -> Graph.Graph vertex edge"
+            },
+            {
+                "name": "areAdjacent",
+                "comment": " Does the graph contain an edge between these two vertices (in any direction)?\n\n    Graph.empty\n        |> Graph.areAdjacent \"x\" \"y\"\n    --> False\n\n    Graph.empty\n        |> Graph.addEdge \"x\" \"y\" ()\n        |> Graph.areAdjacent \"x\" \"y\"\n    --> True\n\n    Graph.empty\n        |> Graph.addEdge \"y\" \"x\" ()\n        |> Graph.areAdjacent \"x\" \"y\"\n    --> True\n\n",
+                "type": "vertex -> vertex -> Graph.Graph vertex edge -> Basics.Bool"
+            },
+            {
+                "name": "edgeToComparable",
+                "comment": " Transform the record into a `(from, to, data)` tuple.\n\n    Graph.edgeToComparable { from = \"foo\", to = \"bar\", data = 123 }\n    --> (\"foo\", \"bar\", 123)\n\n",
+                "type": "Graph.Edge comparableVertex comparableEdge -> ( comparableVertex, comparableVertex, comparableEdge )"
+            },
+            {
+                "name": "edges",
+                "comment": " Return a list of the edges.\n\n_Don't expect any sensible order - it's implementation defined._\n\n    Graph.empty\n        |> Graph.addEdge \"foo\" \"bar\" 100\n        |> Graph.addEdge \"bar\" \"quux\" 200\n        |> Graph.edges\n    --> [ { from = \"bar\", to = \"quux\", data = 200 }\n    --  , { from = \"foo\", to = \"bar\", data = 100 }\n    --  ]\n\n",
+                "type": "Graph.Graph vertex edge -> List.List (Graph.Edge vertex edge)"
+            },
+            {
+                "name": "empty",
+                "comment": " An empty graph. No vertices, no edges.\n",
+                "type": "Graph.Graph vertex edge"
+            },
+            {
+                "name": "fold",
+                "comment": " Fold a function over all the vertices, starting with the \"oldest\" vertices.\n\n    Graph.empty\n        |> Graph.addVertex \"foo\"\n        |> Graph.addVertex \"bar\"\n        |> Graph.fold (\\v acc -> acc ++ v) \"\"\n    --> \"foobar\"\n\n",
+                "type": "(vertex -> acc -> acc) -> acc -> Graph.Graph vertex edge -> acc"
+            },
+            {
+                "name": "fromVerticesAndEdges",
+                "comment": " Construct a graph from a list of vertices and a list of edges.\n\nImplicitly adds vertices that are present in the edges list, as if they were mentioned in the vertices list too.\n\n    Graph.fromVerticesAndEdges\n        [ \"x\", \"y\" ]\n        [ { from = \"x\", to = \"y\", data = 100 }\n        , { from = \"y\", to = \"z\", data = 200 }\n        , { from = \"z\", to = \"x\", data = 300 }\n        ]\n        |> Graph.vertices\n        |> List.length\n    --> 3\n\n",
+                "type": "List.List vertex -> List.List (Graph.Edge vertex edge) -> Graph.Graph vertex edge"
+            },
+            {
+                "name": "getEdge",
+                "comment": " Get the value associated with the edge.\n\n    Graph.empty\n        |> Graph.addEdge \"foo\" \"bar\" 100\n        |> Graph.getEdge \"foo\" \"bar\"\n    --> Just 100\n\n    Graph.empty\n        |> Graph.addEdge \"foo\" \"bar\" 100\n        |> Graph.getEdge \"bar\" \"quux\"\n    --> Nothing\n\n",
+                "type": "vertex -> vertex -> Graph.Graph vertex edge -> Maybe.Maybe edge"
+            },
+            {
+                "name": "hasEdge",
+                "comment": " Is this edge present in the graph?\n\n    Graph.empty\n        |> Graph.hasEdge \"x\" \"y\"\n    --> False\n\n    Graph.empty\n        |> Graph.addEdge \"x\" \"y\" ()\n        |> Graph.hasEdge \"x\" \"y\"\n    --> True\n\n    Graph.empty\n        |> Graph.addEdge \"y\" \"x\" ()\n        |> Graph.hasEdge \"x\" \"y\"\n    --> False\n\n",
+                "type": "vertex -> vertex -> Graph.Graph vertex edge -> Basics.Bool"
+            },
+            {
+                "name": "hasVertex",
+                "comment": " Is this vertex present in the graph?\n\n    Graph.empty\n        |> Graph.hasVertex \"x\"\n    --> False\n\n    Graph.empty\n        |> Graph.addVertex \"x\"\n        |> Graph.hasVertex \"x\"\n    --> True\n\n",
+                "type": "vertex -> Graph.Graph vertex edge -> Basics.Bool"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Is the graph empty?\n",
+                "type": "Graph.Graph vertex edge -> Basics.Bool"
+            },
+            {
+                "name": "mapEdges",
+                "comment": " Applies a function to all the edges.\n\n    Graph.empty\n        |> Graph.addEdge \"foo\" \"bar\" 100\n        |> Graph.addEdge \"bar\" \"baz\" 200\n        |> Graph.mapEdges (\\x -> x + 1000)\n        |> Graph.edges\n    --> [ { from = \"foo\", to = \"bar\", data = 1100 }\n    --  , { from = \"bar\", to = \"baz\", data = 1200 }\n    --  ]\n    --\n    --  (sans the ordering on the edges list, see the note in `edges`)\n\n",
+                "type": "(edge1 -> edge2) -> Graph.Graph vertex edge1 -> Graph.Graph vertex edge2"
+            },
+            {
+                "name": "mapVertices",
+                "comment": " Applies a function to all the vertices.\n\n    Graph.empty\n        |> Graph.addVertex \"foo\"\n        |> Graph.addVertex \"bar\"\n        |> Graph.mapVertices String.toUpper\n        |> Graph.vertices\n    --> [ \"FOO\", \"BAR\" ]\n\n",
+                "type": "(vertex1 -> vertex2) -> Graph.Graph vertex1 edge -> Graph.Graph vertex2 edge"
+            },
+            {
+                "name": "outgoingEdges",
+                "comment": " Lists all vertices this vertex has edges to.\n\nDirected - only lists the edges that go _from_ the given vertex.\n\n     Graph.empty\n         |> Graph.outgoingEdges \"foo\"\n     --> []\n\n     Graph.empty\n         |> Graph.addEdge \"foo\" \"bar\" ()\n         |> Graph.addEdge \"foo\" \"baz\" ()\n         |> Graph.addEdge \"quux\" \"foo\" ()\n         |> Graph.outgoingEdges \"foo\"\n     --> [ \"bar\", \"baz\" ]\n\n",
+                "type": "vertex -> Graph.Graph vertex edge -> List.List vertex"
+            },
+            {
+                "name": "outgoingEdgesWithData",
+                "comment": " Lists all vertices this vertex has edges to, along with the edge data.\n\nDirected - only lists the edges that go _from_ the given vertex.\n\n     Graph.empty\n         |> Graph.outgoingEdgesWithData \"foo\"\n     --> []\n\n     Graph.empty\n         |> Graph.addEdge \"foo\" \"bar\" 100\n         |> Graph.addEdge \"foo\" \"baz\" 200\n         |> Graph.addEdge \"quux\" \"foo\" 300\n         |> Graph.outgoingEdgesWithData \"foo\"\n     --> [ (\"bar\", 100)\n     --  , (\"baz\", 200)\n     --  ]\n\n",
+                "type": "vertex -> Graph.Graph vertex edge -> List.List ( vertex, edge )"
+            },
+            {
+                "name": "removeEdge",
+                "comment": " Remove an edge from the first vertex to the second one. Does nothing if the\nedge is not present.\n\nDirected: the order of the vertices does matter.\n\n    Graph.empty\n        |> Graph.addEdge \"foo\" \"bar\" 100\n        |> Graph.removeEdge \"foo\" \"bar\"\n        |> Graph.edges\n    --> []\n\n",
+                "type": "vertex -> vertex -> Graph.Graph vertex edge -> Graph.Graph vertex edge"
+            },
+            {
+                "name": "removeVertex",
+                "comment": " Remove the vertex from the graph. (Nothing happens if it's not present.)\n\n    Graph.empty\n        |> Graph.addVertex \"foo\"\n        |> Graph.removeVertex \"foo\"\n        |> Graph.isEmpty\n    --> True\n\n",
+                "type": "vertex -> Graph.Graph vertex edge -> Graph.Graph vertex edge"
+            },
+            {
+                "name": "reverseEdges",
+                "comment": " Reverse the direction of all the edges in the graph.\n\n    Graph.empty\n        |> Graph.addEdge \"foo\" \"bar\" 100\n        |> Graph.reverseEdges\n        |> Graph.edges\n    --> [ { from = \"bar\", to = \"foo\", data = 100 } ]\n\n",
+                "type": "Graph.Graph vertex edge -> Graph.Graph vertex edge"
+            },
+            {
+                "name": "size",
+                "comment": " Determine the number of vertices in the graph.\n\n    Graph.size Graph.empty\n    --> 0\n\n    Graph.empty\n        |> Graph.addVertex \"foo\"\n        |> Graph.addVertex \"bar\"\n        |> Graph.size\n    --> 2\n\n",
+                "type": "Graph.Graph vertex edge -> Basics.Int"
+            },
+            {
+                "name": "updateEdge",
+                "comment": " Updates the edge data. Does nothing if the edge is not present.\n\n    Graph.empty\n        |> Graph.addEdge \"foo\" \"bar\" 100\n        |> Graph.updateEdge \"foo\" \"bar\" (\\v -> v + 1000)\n        |> Graph.edges\n    --> [ { from = \"foo\", bar = \"bar\", data = 1100 } ]\n\n",
+                "type": "vertex -> vertex -> (edge -> edge) -> Graph.Graph vertex edge -> Graph.Graph vertex edge"
+            },
+            {
+                "name": "updateVertex",
+                "comment": " Updates the vertex data. Does nothing if the vertex is not present.\n\n    Graph.empty\n        |> Graph.addVertex \"foo\"\n        |> Graph.updateVertex \"foo\" String.toUpper\n        |> Graph.vertices\n    --> [ \"FOO\" ]\n\n",
+                "type": "vertex -> (vertex -> vertex) -> Graph.Graph vertex edge -> Graph.Graph vertex edge"
+            },
+            {
+                "name": "vertices",
+                "comment": " Return a list of the vertices, starting with the \"oldest\".\n\n    Graph.empty\n        |> Graph.addVertex \"foo\"\n        |> Graph.addVertex \"bar\"\n        |> Graph.vertices\n    --> [ \"foo\", \"bar\" ]\n\n",
+                "type": "Graph.Graph vertex edge -> List.List vertex"
+            },
+            {
+                "name": "verticesAndEdges",
+                "comment": " Return a record with a list of vertices and list of edges in the graph.\n\n    Graph.empty\n        |> Graph.addVertex \"foo\"\n        |> Graph.addEdge \"foo\" \"bar\" 100\n        |> Graph.verticesAndEdges\n    --> { vertices = [ \"foo\", \"bar\" ]\n    --  , edges = [ { from = \"foo\", to = \"bar\", data = 100 } ]\n    --  }\n\n",
+                "type": "Graph.Graph vertex edge -> { vertices : List.List vertex, edges : List.List (Graph.Edge vertex edge) }"
+            }
+        ],
+        "binops": []
+    }
+]

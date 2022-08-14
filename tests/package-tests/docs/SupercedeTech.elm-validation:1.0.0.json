@@ -1,0 +1,103 @@
+[
+    {
+        "name": "Validation",
+        "comment": " This module contains a set of functions for data validation.\n\n@docs Validation\n@docs pure\n@docs extract\n@docs andThen\n@docs withValidation\n@docs applyOrCollect\n@docs map\n@docs map2\n@docs map3\n@docs map4\n@docs map5\n@docs map6\n@docs map7\n@docs mapError\n@docs toMaybe\n@docs fromMaybe\n\n",
+        "unions": [
+            {
+                "name": "Validation",
+                "comment": " A type like result but accumulates errors.\n    normal usage would entail `map`, `pure` and `withValidation`.\n\n    `andThen` can be used if we depend on the result of a previous\n    validation, this will cause incremental error collection however.\n\n    This is inspired by the Haskell equivalent: https://hackage.haskell.org/package/validation\n",
+                "args": [
+                    "e",
+                    "r"
+                ],
+                "cases": [
+                    [
+                        "Validation",
+                        [
+                            "Result.Result e r"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "andThen",
+                "comment": " Chaining computations\n\n  Chain together many computations that may failed.\n\n    val1 = Validation <| Ok \"One\"\n    val2 = Validation <| Ok \"Two\"\n    val3 = Validation <| Ok \"Three\"\n    res = val1\n      |> andThen (\\v1 -> val2\n      |> andThen (\\v2 -> val3\n      |> andThen (\\v3 -> pure <| String.join \" \" [ v1, v2, v3 ]\n    )))\n    -- `res` is `Validation <| Ok \"One Two Three\"`\n\n  Note that if one of the values in the chain is an error, the result will be the first error encountered.\n  If you want to accumulate errors, then use the @withValidation function\n\n    type alias ValidatedPerson =\n      { firstName : String\n      , lastName : String\n      , age : Integer\n      , email : String\n      , ipAddress : String\n      }\n\n    let\n        validatedFirstName = Validation <| Ok \"John\"\n        validatedLastName  = Validation <| Err \"The last name field is missing\"\n        validatedAge       = Validation <| Ok 40\n        validatedEmail     = Validation <| Err \"Invalid email: johnwick.com\"\n        validatedIpAddress = Validation <| Ok \"70.235.93.79\"\n        res = validatedFirstName\n          |> andThen (\\vFn -> validatedLastName\n          |> andThen (\\fLn -> validatedAge\n          |> andThen (\\vAge -> validatedEmail\n          |> andThen (\\vEmail -> validatedIpAddress\n          |> andThen (\\vIp -> pure <| ValidatedPerson vId vFn vLn vAge vEmail vIp\n          )))))\n        -- `res` is equal to `Validation <| Err \"The last name field is missing\"\n",
+                "type": "(a -> Validation.Validation e b) -> Validation.Validation e a -> Validation.Validation e b"
+            },
+            {
+                "name": "applyOrCollect",
+                "comment": " Combines two validations into one, and gets an opportunity to\n    collect the errors with the given function.\n    This is preferable over `andThen` because you can collect errors.\n    typically usage trough `withValidation`, but `applyOrCollect`\n    is exposed to allow usage of different data structures. For example:\n\n        withValidationDict : Validation (Dict comparable e) (a -> b)\n        -> Validation (Dict comparable e) a\n        -> Validation (Dict comparable e) b\n        withValidationDict = applyOrCollect Dict.union\n\n",
+                "type": "(e -> e -> e) -> Validation.Validation e (a -> b) -> Validation.Validation e a -> Validation.Validation e b"
+            },
+            {
+                "name": "extract",
+                "comment": " Result extraction\n\n  Extract a Result from Validation\n\n    extract <| Validation <| Err \"Wrong number\" == Err \"Wrong number\"\n    extract <| Validation <| Ok \"John\" == Ok \"John\"\n\n",
+                "type": "Validation.Validation e r -> Result.Result e r"
+            },
+            {
+                "name": "fromMaybe",
+                "comment": " Converting Maybe to Validation\n\n    fromMaybe Nothing [\"The age field is missing\"] == Validation <| Err [\"The field age is missing\"]\n    fromMaybe (Just 48) [\"The age field is missing\"] == Validation <| Ok 48\n\n",
+                "type": "Maybe.Maybe a -> List.List e -> Validation.Validation (List.List e) a"
+            },
+            {
+                "name": "map",
+                "comment": " Validated value mapping\n\n  Mapping a validated value\n\n    map toUpper <| Validation <| Ok \"John\" == Validation <| Ok \"JOHN\"\n    map toUpper <| Validation <| Err \"Wrong number\" == Validation <| Err \"Wrong Number\"\n\n",
+                "type": "(a -> b) -> Validation.Validation e a -> Validation.Validation e b"
+            },
+            {
+                "name": "map2",
+                "comment": "\n",
+                "type": "(a1 -> a2 -> a3) -> Validation.Validation (List.List e) a1 -> Validation.Validation (List.List e) a2 -> Validation.Validation (List.List e) a3"
+            },
+            {
+                "name": "map3",
+                "comment": "\n",
+                "type": "(a1 -> a2 -> a3 -> a4) -> Validation.Validation (List.List e) a1 -> Validation.Validation (List.List e) a2 -> Validation.Validation (List.List e) a3 -> Validation.Validation (List.List e) a4"
+            },
+            {
+                "name": "map4",
+                "comment": "\n",
+                "type": "(a1 -> a2 -> a3 -> a4 -> a5) -> Validation.Validation (List.List e) a1 -> Validation.Validation (List.List e) a2 -> Validation.Validation (List.List e) a3 -> Validation.Validation (List.List e) a4 -> Validation.Validation (List.List e) a5"
+            },
+            {
+                "name": "map5",
+                "comment": "\n",
+                "type": "(a1 -> a2 -> a3 -> a4 -> a5 -> a6) -> Validation.Validation (List.List e) a1 -> Validation.Validation (List.List e) a2 -> Validation.Validation (List.List e) a3 -> Validation.Validation (List.List e) a4 -> Validation.Validation (List.List e) a5 -> Validation.Validation (List.List e) a6"
+            },
+            {
+                "name": "map6",
+                "comment": "\n",
+                "type": "(a1 -> a2 -> a3 -> a4 -> a5 -> a6 -> a7) -> Validation.Validation (List.List e) a1 -> Validation.Validation (List.List e) a2 -> Validation.Validation (List.List e) a3 -> Validation.Validation (List.List e) a4 -> Validation.Validation (List.List e) a5 -> Validation.Validation (List.List e) a6 -> Validation.Validation (List.List e) a7"
+            },
+            {
+                "name": "map7",
+                "comment": "\n",
+                "type": "(a1 -> a2 -> a3 -> a4 -> a5 -> a6 -> a7 -> a8) -> Validation.Validation (List.List e) a1 -> Validation.Validation (List.List e) a2 -> Validation.Validation (List.List e) a3 -> Validation.Validation (List.List e) a4 -> Validation.Validation (List.List e) a5 -> Validation.Validation (List.List e) a6 -> Validation.Validation (List.List e) a7 -> Validation.Validation (List.List e) a8"
+            },
+            {
+                "name": "mapError",
+                "comment": " Error mapping\n\n    mapError toUpper <| Validation <| Err \"Wrong number\" == Validation <| Err \"WRONG NUMBER\"\n    mapError toUpper <| Validation <| Ok \"John\" == Validation <| Ok \"John\"\n\n",
+                "type": "(e -> e1) -> Validation.Validation e a -> Validation.Validation e1 a"
+            },
+            {
+                "name": "pure",
+                "comment": " Wrap some value in Validation\n\n  Wrap in Validation data constructor\n\n    pure \"John\" == Validation <| Ok \"John\"\n\n",
+                "type": "a -> Validation.Validation e a"
+            },
+            {
+                "name": "toMaybe",
+                "comment": " Converting Validation to Maybe\n\n    toMaybe <| Validation <| Err [\"The field age is missing\"] == Nothing\n    toMaybe <| Validation <| Ok 48 == Just 48\n\n",
+                "type": "Validation.Validation (List.List e) a -> Maybe.Maybe a"
+            },
+            {
+                "name": "withValidation",
+                "comment": " Chaining computations with error accumulation\n\n  Chain together many computations that may failed. Errors are stored in a list.\n  If you want to display only the first encountered error, use `andThen`.\n  If you don't want to work with lists, you can create your own function to do a chain of calculations. To do this, see the `@applyOrCollect` function\n\n    type alias ValidatedPerson =\n      { firstName : String\n      , lastName : String\n      , age : Int\n      , email : String\n      , ipAddress : String\n      }\n\n    let firstName = Validation <| Ok \"John\"\n        lastName = Validation <| Ok \"Wick\"\n        age = Validation <| Ok 40\n        email = Validation <| Ok \"john@wick.com\"\n        ip = Validation <| Ok \"70.235.93.79\"\n        res = pure ValidatedPerson\n                |> withValidation firstName\n                |> withValidation lastName\n                |> withValidation age\n                |> withValidation email\n                |> withValidation ip\n        -- `res` is equal to `Validation <| Ok <| ValidatedPerson { ... }\n\n  If there are errors:\n\n    let firstName = Validation <| Ok \"John\"\n        lastName = Validation <| Ok \"Wick\"\n        age = Validation <| Err [\"Invalid age\"]\n        email = Validation <| Ok \"john@wick.com\"\n        ip = Validation <| Err [\"Invalid ip\"]\n        res = pure ValidatedPerson\n                |> withValidation firstName\n                |> withValidation lastName\n                |> withValidation age\n                |> withValidation email\n                |> withValidation ip\n        -- `res` is equal to `Validation <| Err [\"Invalid age\", \"Invalid ip\"]\n\n",
+                "type": "Validation.Validation (List.List e) a -> Validation.Validation (List.List e) (a -> b) -> Validation.Validation (List.List e) b"
+            }
+        ],
+        "binops": []
+    }
+]

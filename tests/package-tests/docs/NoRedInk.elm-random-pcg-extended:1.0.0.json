@@ -1,0 +1,167 @@
+[
+    {
+        "name": "Random.Pcg.Extended",
+        "comment": " This is an extended version of the Pcg random generator.\nIt offers k dimensional equidistributed random numbers.\n\nIt has a larger space cost than the normal Pcg version, but it also offers a much higher period\n\n@docs config\n\n\n# Getting Started\n\n@docs step, initialSeed\n\n\n# Basic Generators\n\n@docs Generator, bool, int, float, oneIn, sample\n\n\n# Combining Generators\n\n@docs pair, list, maybe, choice, choices, frequency\n\n\n# Custom Generators\n\n@docs constant, map, map2, map3, map4, map5, andMap, andThen, filter\n\n\n# Working With Seeds\n\n@docs Seed, independentSeed, toJson, fromJson\n\n\n# Constants\n\n@docs minInt, maxInt\n\n",
+        "unions": [
+            {
+                "name": "Seed",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Generator",
+                "comment": " ",
+                "args": [
+                    "a"
+                ],
+                "type": "Random.General.Generator Random.Pcg.Extended.Seed a"
+            }
+        ],
+        "values": [
+            {
+                "name": "andMap",
+                "comment": " ",
+                "type": "Random.Pcg.Extended.Generator a -> Random.Pcg.Extended.Generator (a -> b) -> Random.Pcg.Extended.Generator b"
+            },
+            {
+                "name": "andThen",
+                "comment": " ",
+                "type": "(a -> Random.Pcg.Extended.Generator b) -> Random.Pcg.Extended.Generator a -> Random.Pcg.Extended.Generator b"
+            },
+            {
+                "name": "bool",
+                "comment": " ",
+                "type": "Random.Pcg.Extended.Generator Basics.Bool"
+            },
+            {
+                "name": "choice",
+                "comment": " ",
+                "type": "a -> a -> Random.Pcg.Extended.Generator a"
+            },
+            {
+                "name": "choices",
+                "comment": " ",
+                "type": "Random.Pcg.Extended.Generator a -> List.List (Random.Pcg.Extended.Generator a) -> Random.Pcg.Extended.Generator a"
+            },
+            {
+                "name": "config",
+                "comment": " The config for the PCG-extended variant\n",
+                "type": "Random.General.Config Random.Pcg.Extended.Seed"
+            },
+            {
+                "name": "constant",
+                "comment": " ",
+                "type": "a -> Random.Pcg.Extended.Generator a"
+            },
+            {
+                "name": "filter",
+                "comment": " ",
+                "type": "(a -> Basics.Bool) -> Random.Pcg.Extended.Generator a -> Random.Pcg.Extended.Generator a"
+            },
+            {
+                "name": "float",
+                "comment": " ",
+                "type": "Basics.Float -> Basics.Float -> Random.Pcg.Extended.Generator Basics.Float"
+            },
+            {
+                "name": "frequency",
+                "comment": " ",
+                "type": "( Basics.Float, Random.Pcg.Extended.Generator a ) -> List.List ( Basics.Float, Random.Pcg.Extended.Generator a ) -> Random.Pcg.Extended.Generator a"
+            },
+            {
+                "name": "fromJson",
+                "comment": " ",
+                "type": "Json.Decode.Decoder Random.Pcg.Extended.Seed"
+            },
+            {
+                "name": "independentSeed",
+                "comment": " This gives you an independant seed.\n\nTODO: how sound is this function?\n\n",
+                "type": "Random.Pcg.Extended.Generator Random.Pcg.Extended.Seed"
+            },
+            {
+                "name": "initialSeed",
+                "comment": " Seed this generator with some random data.\nBest get this via a flag from `window.crypto.getRandomValues(..)`.\n\nThe more random integers you provide, the longer the period gets.\n\nThis is based on section 7.1 from [the PCG paper](http://www.pcg-random.org/paper.html)\nSince the PCG generator used as a base is the RXS-M-XS variant (section 6.3.4),\nThe extended generator will have a period of `2^((List.length extendedSeed + 1)*32)`\n\nIf your `extendedSeed` list has a length that is a power of two, the performance will be a bit better.\n\n",
+                "type": "Basics.Int -> List.List Basics.Int -> Random.Pcg.Extended.Seed"
+            },
+            {
+                "name": "int",
+                "comment": " ",
+                "type": "Basics.Int -> Basics.Int -> Random.Pcg.Extended.Generator Basics.Int"
+            },
+            {
+                "name": "list",
+                "comment": " ",
+                "type": "Basics.Int -> Random.Pcg.Extended.Generator a -> Random.Pcg.Extended.Generator (List.List a)"
+            },
+            {
+                "name": "map",
+                "comment": " ",
+                "type": "(a -> b) -> Random.Pcg.Extended.Generator a -> Random.Pcg.Extended.Generator b"
+            },
+            {
+                "name": "map2",
+                "comment": " ",
+                "type": "(a -> b -> c) -> Random.Pcg.Extended.Generator a -> Random.Pcg.Extended.Generator b -> Random.Pcg.Extended.Generator c"
+            },
+            {
+                "name": "map3",
+                "comment": " ",
+                "type": "(a -> b -> c -> d) -> Random.Pcg.Extended.Generator a -> Random.Pcg.Extended.Generator b -> Random.Pcg.Extended.Generator c -> Random.Pcg.Extended.Generator d"
+            },
+            {
+                "name": "map4",
+                "comment": " ",
+                "type": "(a -> b -> c -> d -> e) -> Random.Pcg.Extended.Generator a -> Random.Pcg.Extended.Generator b -> Random.Pcg.Extended.Generator c -> Random.Pcg.Extended.Generator d -> Random.Pcg.Extended.Generator e"
+            },
+            {
+                "name": "map5",
+                "comment": " ",
+                "type": "(a -> b -> c -> d -> e -> f) -> Random.Pcg.Extended.Generator a -> Random.Pcg.Extended.Generator b -> Random.Pcg.Extended.Generator c -> Random.Pcg.Extended.Generator d -> Random.Pcg.Extended.Generator e -> Random.Pcg.Extended.Generator f"
+            },
+            {
+                "name": "maxInt",
+                "comment": " ",
+                "type": "Basics.Int"
+            },
+            {
+                "name": "maybe",
+                "comment": " ",
+                "type": "Random.Pcg.Extended.Generator Basics.Bool -> Random.Pcg.Extended.Generator a -> Random.Pcg.Extended.Generator (Maybe.Maybe a)"
+            },
+            {
+                "name": "minInt",
+                "comment": " ",
+                "type": "Basics.Int"
+            },
+            {
+                "name": "oneIn",
+                "comment": " ",
+                "type": "Basics.Int -> Random.Pcg.Extended.Generator Basics.Bool"
+            },
+            {
+                "name": "pair",
+                "comment": " ",
+                "type": "Random.Pcg.Extended.Generator a -> Random.Pcg.Extended.Generator b -> Random.Pcg.Extended.Generator ( a, b )"
+            },
+            {
+                "name": "sample",
+                "comment": " ",
+                "type": "List.List a -> Random.Pcg.Extended.Generator (Maybe.Maybe a)"
+            },
+            {
+                "name": "step",
+                "comment": " ",
+                "type": "Random.Pcg.Extended.Generator a -> Random.Pcg.Extended.Seed -> ( a, Random.Pcg.Extended.Seed )"
+            },
+            {
+                "name": "toJson",
+                "comment": " ",
+                "type": "Random.Pcg.Extended.Seed -> Json.Encode.Value"
+            }
+        ],
+        "binops": []
+    }
+]

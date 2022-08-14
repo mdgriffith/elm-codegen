@@ -1,0 +1,83 @@
+[
+    {
+        "name": "AppObject",
+        "comment": " The `AppObject` is an object that encapsulates the `Model` and `Cmd Msg` of a component (returned in side effect functions like `init` or `update`) **plus** and `appData` object and a `Cmd appMsg`.\nThese new elements are a model and commands related to the entire application.\n\nLet's say for instance that you have a component that does something (whatever) and that needs to open a modal, or set the connected user, or set the user language of the application, ...\nAll of these states/effects are related to the application, not to the component.\nIndeed, the component itself can't open a modal because it's the application's responsibility.\nAlso, the component could save the connected user to its own state, but it's a data the entire application would like to know about and with the classic architecture of elm apps it's not\npossible for a component to tell the app that it should update its state.\n\nTo make it simpler: a component can't change the state of its parent component and can't send commands with its parent's messages.\n\nThis is what `AppObject` is for, it allows you to:\n\n  - define a model that any component in the application can read and update\n  - send commands that the root component can handle\n\n\n# Definitions\n\n@docs AppObject\n\n\n# Init\n\n@docs init, batchCmd, batchAppCmd\n\n\n# Mappers\n\n@docs map, mapAppData, mapAppMsg, mapModel, mapMsg\n\n\n# Advanced usage\n\n@docs merge, foldl, andThen\n\n\n# Usage\n\n@docs run\n\n",
+        "unions": [
+            {
+                "name": "AppObject",
+                "comment": " `AppObject` is the object you should return from your side effect functions (`init`, `update`) in your components.\n\n  - `appData` refers to the model you want to be global to your application. This model is usualy stored in your root state\n  - `appMsg` refers to the `msg` type you want to be global to your application. This `msg` is usually handle in your root `update` function\n  - `model` refers to the model of your current component\n  - `msg` refers to the `msg` type of your current component\n\nI suggest your create a module that defines your `appData` model and your `appMsg` message type, and you define a `type alias` of your own `AppObject` with\nthe `appData` and `appMsg` set :\n\n    type alias MyAppObject model msg =\n        AppObject.AppObject Data AppMsg model msg\n\n    type alias Data =\n        { isModalOpen : Bool\n        }\n\n    type AppMsg\n        = ToggleModal Bool\n\n",
+                "args": [
+                    "appData",
+                    "appMsg",
+                    "model",
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "andThen",
+                "comment": " Allows you to create a new `AppObject` from an existing one, using the `appData` and the `model`. The new `Cmd appMsg` and `Cmd msg` will be batched to the\nexisting ones\n",
+                "type": "(appDataA -> modelA -> AppObject.AppObject appDataB appMsg modelB msg) -> AppObject.AppObject appDataA appMsg modelA msg -> AppObject.AppObject appDataB appMsg modelB msg"
+            },
+            {
+                "name": "batchAppCmd",
+                "comment": " Adds a new global command to this `AppObject`\n",
+                "type": "Platform.Cmd.Cmd appMsg -> AppObject.AppObject appData appMsg model msg -> AppObject.AppObject appData appMsg model msg"
+            },
+            {
+                "name": "batchCmd",
+                "comment": " Adds a new component's command to this `AppObject`\n",
+                "type": "Platform.Cmd.Cmd msg -> AppObject.AppObject appData appMsg model msg -> AppObject.AppObject appData appMsg model msg"
+            },
+            {
+                "name": "foldl",
+                "comment": " Reducer that allows you to update or create an `AppObject` for each element of a list\n",
+                "type": "(a -> AppObject.AppObject appData appMsg model msg -> AppObject.AppObject appData appMsg model msg) -> List.List a -> AppObject.AppObject appData appMsg model msg -> AppObject.AppObject appData appMsg model msg"
+            },
+            {
+                "name": "init",
+                "comment": " Creates a new `AppObject` from the `appData` and your component's model\n",
+                "type": "appData -> model -> AppObject.AppObject appData appMsg model msg"
+            },
+            {
+                "name": "map",
+                "comment": " Maps your `AppObject` to change the types of `appData`, `appMsg`, `model` and `msg`\n",
+                "type": "(modelA -> modelB) -> (appDataA -> appDataB) -> (msgA -> msgB) -> (appMsgA -> appMsgB) -> AppObject.AppObject appDataA appMsgA modelA msgA -> AppObject.AppObject appDataB appMsgB modelB msgB"
+            },
+            {
+                "name": "mapAppData",
+                "comment": " Maps only your `appData`\n",
+                "type": "(a -> appData) -> AppObject.AppObject a appMsg model msg -> AppObject.AppObject appData appMsg model msg"
+            },
+            {
+                "name": "mapAppMsg",
+                "comment": " Maps only your `appMsg`\n",
+                "type": "(a -> appMsg) -> AppObject.AppObject appData a model msg -> AppObject.AppObject appData appMsg model msg"
+            },
+            {
+                "name": "mapModel",
+                "comment": " Maps only your `model`\n",
+                "type": "(a -> model) -> AppObject.AppObject appData appMsg a msg -> AppObject.AppObject appData appMsg model msg"
+            },
+            {
+                "name": "mapMsg",
+                "comment": " Maps only your `msg`\n",
+                "type": "(a -> msg) -> AppObject.AppObject appData appMsg model a -> AppObject.AppObject appData appMsg model msg"
+            },
+            {
+                "name": "merge",
+                "comment": " Merges 2 `AppObject`s together. You provide the functions used to:\n\n  - merge the `model`\n  - merge the `appData`\n  - map the `msg`\n  - map the `appMsg`\n\n",
+                "type": "(modelB -> modelA -> modelC) -> (appDataB -> appDataA -> appDataC) -> (msgA -> msgC) -> (msgB -> msgC) -> (appMsgA -> appMsgC) -> (appMsgB -> appMsgC) -> AppObject.AppObject appDataA appMsgA modelA msgA -> AppObject.AppObject appDataB appMsgB modelB msgB -> AppObject.AppObject appDataC appMsgC modelC msgC"
+            },
+            {
+                "name": "run",
+                "comment": " Executes your `AppObject`. That means that you will create a `( model, Cmd msg )` tuple from an `AppObject`, this allows you to run your side effects and model updates\nin your root `update` and `init` functions\n",
+                "type": "(appData -> model -> model) -> (appMsg -> msg) -> AppObject.AppObject appData appMsg model msg -> ( model, Platform.Cmd.Cmd msg )"
+            }
+        ],
+        "binops": []
+    }
+]

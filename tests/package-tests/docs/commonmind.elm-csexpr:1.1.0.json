@@ -1,0 +1,80 @@
+[
+    {
+        "name": "CSexpr",
+        "comment": " Canonical S-expressions.\n\nSee the README for general information.\n\n@docs CSexpr\n\n",
+        "unions": [
+            {
+                "name": "CSexpr",
+                "comment": " A parsed canonical s-expression\n",
+                "args": [],
+                "cases": [
+                    [
+                        "List",
+                        [
+                            "List.List CSexpr.CSexpr"
+                        ]
+                    ],
+                    [
+                        "Atom",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "CSexpr.Decode",
+        "comment": " Decode Canonical S-expressions.\n\n@docs decodeString\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decodeString",
+                "comment": " Parse a canonical s-expression from a string. Returns `Nothing` on failure.\n",
+                "type": "String.String -> Maybe.Maybe CSexpr.CSexpr"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "CSexpr.Encode",
+        "comment": " Encode Canonical S-expressions as `String`s.\n\n@docs Encoder\n\n\n# Emitting strings\n\n@docs encodeString\n\n\n# Assembling encoders\n\n@docs s, list, csexpr\n\n",
+        "unions": [
+            {
+                "name": "Encoder",
+                "comment": " An Encoder is a partially assembled s-expression. Build these with\n`s`, `list`, and `csexpr`, and convert them to strings with`encodeString`.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "csexpr",
+                "comment": " Encode an s-expression\n",
+                "type": "CSexpr.CSexpr -> CSexpr.Encode.Encoder"
+            },
+            {
+                "name": "encodeString",
+                "comment": " Convert an encoder to a string.\n",
+                "type": "CSexpr.Encode.Encoder -> String.String"
+            },
+            {
+                "name": "list",
+                "comment": " Encode a list.\n",
+                "type": "List.List CSexpr.Encode.Encoder -> CSexpr.Encode.Encoder"
+            },
+            {
+                "name": "s",
+                "comment": " Encode a string as an atom.\n",
+                "type": "String.String -> CSexpr.Encode.Encoder"
+            }
+        ],
+        "binops": []
+    }
+]

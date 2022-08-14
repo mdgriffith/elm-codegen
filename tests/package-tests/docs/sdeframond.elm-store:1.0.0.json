@@ -1,0 +1,96 @@
+[
+    {
+        "name": "Id",
+        "comment": "\n\n@docs Id, one, next, equalsInt, toInt, fromInt\n\n",
+        "unions": [
+            {
+                "name": "Id",
+                "comment": " An Id for a given value.\n\nTechnically just a wrapper around `Int` with a phantom type parameter.\n\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "equalsInt",
+                "comment": " Checks equality between an `Int` and an `Id`'s inner value.\n",
+                "type": "Basics.Int -> Id.Id a -> Basics.Bool"
+            },
+            {
+                "name": "fromInt",
+                "comment": " Wraps an Int into an Id.\n\nUse with caution. In most cases, `one`, `next` and `equalsInt` are enough.\n\nA possible use case would be to deserialize ids from JSON.\n\n",
+                "type": "Basics.Int -> Id.Id a"
+            },
+            {
+                "name": "next",
+                "comment": " Returns the next `Id`.\n",
+                "type": "Id.Id a -> Id.Id a"
+            },
+            {
+                "name": "one",
+                "comment": " The first possible `Id`.\n",
+                "type": "Id.Id a"
+            },
+            {
+                "name": "toInt",
+                "comment": " Unwrap the inner `Int` value.\n",
+                "type": "Id.Id a -> Basics.Int"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Store",
+        "comment": " A simple store with support for secondary indexes.\n\n\n# Main types\n\n@docs Store, System\n\n\n# Indices Configuration\n\n@docs Index, initConfig, withIndex, makeSystem\n\n",
+        "unions": [
+            {
+                "name": "Index",
+                "comment": " An index on stored values. For example if your store contains `MyValue` items, you could define\nyour indices like this:\n\n    type alias MyIndices =\n        { name : Index MyValue\n        , anyArbitraryIndexName : Index MyValue\n        }\n\nThe record constructor `MyIndices` would then be passed to `initConfig`.\n\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Store",
+                "comment": " A store. Basically like a `Dict (Id a) a` but that can be manipulated with\nthe functions in `System` in order to support indices.\n\nThis should appear in your model.\n\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "System",
+                "comment": " A set of functions to manipulate a `Store`.\n\nThis should NOT be part of your model.\n\nYou can generate one with `makeSystem`\n\nThe available functions are :\n\n  - `initStore` : creates an empty store.\n  - `get` : gets an item by its Id.\n  - `create` : creates a new item in the store and returns its `Id`. Fails if the new item breaks\n    unicity constraints.\n  - `insert` : insert an item at a given `id`. Fails if the new item breaks\n    unicity constraints.\n  - `toList` : returns all items in a store as a list of `(id, item)`.\n  - `getBy` : gets an item by a secondary key.\n    Example : `system.getBy .lowerCaseName \"john doe\" store`\n  - `getIdBy` : gets an item's `Id` by a secondary key.\n  - `remove` : deletes an item from the store.\n\n",
+                "args": [
+                    "a",
+                    "indices"
+                ],
+                "type": "{ initStore : Store.Store a, get : Id.Id a -> Store.Store a -> Maybe.Maybe a, create : a -> Store.Store a -> Maybe.Maybe ( Id.Id a, Store.Store a ), insert : Id.Id a -> a -> Store.Store a -> Maybe.Maybe (Store.Store a), toList : Store.Store a -> List.List ( Id.Id a, a ), getBy : (indices -> Store.Index a) -> String.String -> Store.Store a -> Maybe.Maybe a, getIdBy : (indices -> Store.Index a) -> String.String -> Store.Store a -> Maybe.Maybe (Id.Id a), remove : Id.Id a -> Store.Store a -> Store.Store a }"
+            }
+        ],
+        "values": [
+            {
+                "name": "initConfig",
+                "comment": " Creates a new system configuration.\n\nTypically `indices` should be a record constructor so that each index can be\nconfigured using `withIndex`.\n\n",
+                "type": "indices -> Store.Config a indices"
+            },
+            {
+                "name": "makeSystem",
+                "comment": " Makes a system from a given config.\n\n    Store.initConfig MyIndices\n        |> Store.withIndex .name\n        |> Store.withIndex (.age >> String.fromInt)\n        |> Store.makeSystem\n\n",
+                "type": "Store.Config a indices -> Store.System a indices"
+            },
+            {
+                "name": "withIndex",
+                "comment": " Configures an index on the stored items.\n\nThis index adds a unicity constraint : no two items can have the same indexed key.\n\nExample :\n\n    -- Given `type alias MyIndices = { lowerCaseName : Index MyValue }`\n    initConfig MyIndices\n        |> withIndex (.lowerCaseName >> String.toLower)\n\n",
+                "type": "(a -> String.String) -> Store.Config a (Store.Index a -> indices) -> Store.Config a indices"
+            }
+        ],
+        "binops": []
+    }
+]

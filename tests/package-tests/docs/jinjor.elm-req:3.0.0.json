@@ -1,0 +1,331 @@
+[
+    {
+        "name": "Req",
+        "comment": " An experimental alternative for [elm/http](https://github.com/elm/http).\n\nSee more details in [elm/http](https://package.elm-lang.org/packages/elm/http/latest/Http).\n\n\n# Types\n\n@docs Req, Body, Part, Error, Problem\n\n\n# Methods\n\n@docs init, get, post, put, patch, delete\n\n\n# Body\n\n@docs withStringBody, withJsonBody, withFileBody, withBytesBody, withMultipartBody\n@docs stringPart, filePart, bytesPart\n\n\n# Options\n\n@docs withHeader, withTimeout, allowCookiesFromOtherDomains\n\n\n# Task\n\n@docs stringCompatible, string, stringWithError\n@docs jsonCompatible, json, jsonWithError\n@docs bytesCompatible, bytes, bytesWithError\n@docs whatever, toTask\n\n\n# Tracking\n\n@docs trackStringCompatible, trackString, trackStringWithError\n@docs trackJsonCompatible, trackJson, trackJsonWithError\n@docs trackBytesCompatible, trackBytes, trackBytesWithError\n@docs trackWhatever, track\n\n",
+        "unions": [
+            {
+                "name": "Body",
+                "comment": " Body\n",
+                "args": [],
+                "cases": [
+                    [
+                        "EmptyBody",
+                        []
+                    ],
+                    [
+                        "StringBody",
+                        [
+                            "String.String",
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "JsonBody",
+                        [
+                            "Json.Encode.Value"
+                        ]
+                    ],
+                    [
+                        "FileBody",
+                        [
+                            "File.File"
+                        ]
+                    ],
+                    [
+                        "BytesBody",
+                        [
+                            "String.String",
+                            "Bytes.Bytes"
+                        ]
+                    ],
+                    [
+                        "MultipartBody",
+                        [
+                            "List.List Req.Part"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Part",
+                "comment": " Part\n",
+                "args": [],
+                "cases": [
+                    [
+                        "StringPart",
+                        [
+                            "String.String",
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "FilePart",
+                        [
+                            "String.String",
+                            "File.File"
+                        ]
+                    ],
+                    [
+                        "BytesPart",
+                        [
+                            "String.String",
+                            "String.String",
+                            "Bytes.Bytes"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Problem",
+                "comment": " Similar to `Http.Error` but have more informarion\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "BadUrl",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Timeout",
+                        []
+                    ],
+                    [
+                        "NetworkError",
+                        []
+                    ],
+                    [
+                        "BadStatus",
+                        [
+                            "Http.Metadata",
+                            "a"
+                        ]
+                    ],
+                    [
+                        "BadBody",
+                        [
+                            "Http.Metadata",
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Error",
+                "comment": " Req with Problem\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ request : Req.Req, problem : Req.Problem a }"
+            },
+            {
+                "name": "Req",
+                "comment": " Request\n",
+                "args": [],
+                "type": "{ method : String.String, url : String.String, headers : List.List ( String.String, String.String ), body : Req.Body, timeout : Maybe.Maybe Basics.Float, allowCookiesFromOtherDomains : Basics.Bool }"
+            }
+        ],
+        "values": [
+            {
+                "name": "allowCookiesFromOtherDomains",
+                "comment": " Allow cookies from other domains.\n",
+                "type": "Basics.Bool -> Req.Req -> Req.Req"
+            },
+            {
+                "name": "bytes",
+                "comment": " Make a task that returns an arbitrary data or `Req.Error`.\n",
+                "type": "Bytes.Decode.Decoder a -> Req.Req -> Task.Task (Req.Error String.String) a"
+            },
+            {
+                "name": "bytesCompatible",
+                "comment": " Make a task that returns an arbitrary data or `Http.Error`.\n",
+                "type": "Bytes.Decode.Decoder a -> Req.Req -> Task.Task Http.Error a"
+            },
+            {
+                "name": "bytesPart",
+                "comment": " Bytes part (key and mime and bytes)\n",
+                "type": "String.String -> String.String -> Bytes.Bytes -> Req.Part"
+            },
+            {
+                "name": "bytesWithError",
+                "comment": " Make a task that returns an arbitrary data or `Req.Error` with custom error.\n",
+                "type": "{ decoder : Bytes.Decode.Decoder a, errorDecoder : Http.Metadata -> Bytes.Decode.Decoder e } -> Req.Req -> Task.Task (Req.Error e) a"
+            },
+            {
+                "name": "delete",
+                "comment": " DELETE\n",
+                "type": "String.String -> Req.Req"
+            },
+            {
+                "name": "filePart",
+                "comment": " String part (key and file)\n",
+                "type": "String.String -> File.File -> Req.Part"
+            },
+            {
+                "name": "get",
+                "comment": " GET\n",
+                "type": "String.String -> Req.Req"
+            },
+            {
+                "name": "init",
+                "comment": " Arbitrary method\n",
+                "type": "String.String -> String.String -> Req.Req"
+            },
+            {
+                "name": "json",
+                "comment": " Make a task that returns an arbitrary data or `Req.Error`\n",
+                "type": "Json.Decode.Decoder a -> Req.Req -> Task.Task (Req.Error String.String) a"
+            },
+            {
+                "name": "jsonCompatible",
+                "comment": " Make a task that returns an arbitrary data or `Http.Error`\n",
+                "type": "Json.Decode.Decoder a -> Req.Req -> Task.Task Http.Error a"
+            },
+            {
+                "name": "jsonWithError",
+                "comment": " Make a task that returns an arbitrary data or `Req.Error` with custom error.\nDecoding errors will be a `BadBody` error.\n\nNote: This function assumes the error is always a JSON.\nIf you are not sure, use `json` instead and decode the body later.\n\n",
+                "type": "{ decoder : Json.Decode.Decoder a, errorDecoder : Http.Metadata -> Json.Decode.Decoder e } -> Req.Req -> Task.Task (Req.Error e) a"
+            },
+            {
+                "name": "patch",
+                "comment": " PATCH\n",
+                "type": "String.String -> Req.Req"
+            },
+            {
+                "name": "post",
+                "comment": " POST\n",
+                "type": "String.String -> Req.Req"
+            },
+            {
+                "name": "put",
+                "comment": " PUT\n",
+                "type": "String.String -> Req.Req"
+            },
+            {
+                "name": "string",
+                "comment": " Make a task that returns a string or `Req.Error`\n",
+                "type": "Req.Req -> Task.Task (Req.Error String.String) String.String"
+            },
+            {
+                "name": "stringCompatible",
+                "comment": " Make a task that returns a string or `Http.Error`\n",
+                "type": "Req.Req -> Task.Task Http.Error String.String"
+            },
+            {
+                "name": "stringPart",
+                "comment": " String part (key and value)\n",
+                "type": "String.String -> String.String -> Req.Part"
+            },
+            {
+                "name": "stringWithError",
+                "comment": " Make a task that returns a string or `Req.Error` with custom error.\nDecoding errors will be a `BadBody` error.\n\nNote: This function assumes the error is always a JSON.\nIf you are not sure, use `string` instead and decode the body later.\n\n",
+                "type": "(Http.Metadata -> Json.Decode.Decoder e) -> Req.Req -> Task.Task (Req.Error e) String.String"
+            },
+            {
+                "name": "toTask",
+                "comment": " Create a task with existing `Http.Resolver`.\n",
+                "type": "Http.Resolver x a -> Req.Req -> Task.Task x a"
+            },
+            {
+                "name": "track",
+                "comment": " Make a Cmd with tracker using existing `Http.Expect`.\n",
+                "type": "String.String -> Http.Expect msg -> Req.Req -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "trackBytes",
+                "comment": " Send a request for tracking, expecting an arbitrary data or `Req.Error`.\n",
+                "type": "String.String -> (Result.Result (Req.Error String.String) a -> msg) -> Bytes.Decode.Decoder a -> Req.Req -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "trackBytesCompatible",
+                "comment": " Send a request for tracking, expecting an arbitrary data or `Http.Error`.\n",
+                "type": "String.String -> (Result.Result Http.Error a -> msg) -> Bytes.Decode.Decoder a -> Req.Req -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "trackBytesWithError",
+                "comment": " Send a request for tracking, expecting an arbitrary data or `Req.Error` with custom error.\n",
+                "type": "String.String -> (Result.Result (Req.Error e) a -> msg) -> { decoder : Bytes.Decode.Decoder a, errorDecoder : Http.Metadata -> Bytes.Decode.Decoder e } -> Req.Req -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "trackJson",
+                "comment": " Send a request for tracking, expecting an arbitrary data or `Req.Error`.\n",
+                "type": "String.String -> (Result.Result (Req.Error String.String) a -> msg) -> Json.Decode.Decoder a -> Req.Req -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "trackJsonCompatible",
+                "comment": " Send a request for tracking, expecting an arbitrary data or `Http.Error`.\n",
+                "type": "String.String -> (Result.Result Http.Error a -> msg) -> Json.Decode.Decoder a -> Req.Req -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "trackJsonWithError",
+                "comment": " Send a request for tracking, expecting an arbitrary data or `Req.Error` with custom error.\nDecoding errors will be a `BadBody` error.\n\nNote: This function assumes the error is always a JSON.\nIf you are not sure, use `trackJson` instead and decode the body later.\n\n",
+                "type": "String.String -> (Result.Result (Req.Error e) a -> msg) -> { decoder : Json.Decode.Decoder a, errorDecoder : Http.Metadata -> Json.Decode.Decoder e } -> Req.Req -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "trackString",
+                "comment": " Send a request for tracking, expecting a string or `Req.Error`.\n",
+                "type": "String.String -> (Result.Result (Req.Error String.String) String.String -> msg) -> Req.Req -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "trackStringCompatible",
+                "comment": " Send a request for tracking, expecting a string or `Http.Error`.\n",
+                "type": "String.String -> (Result.Result Http.Error String.String -> msg) -> Req.Req -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "trackStringWithError",
+                "comment": " Send a request for tracking, expecting a string or `Req.Error` with custom error.\nDecoding errors will be a `BadBody` error.\n\nNote: This function assumes the error is always a JSON.\nIf you are not sure, use `trackString` instead and decode the body later.\n\n",
+                "type": "String.String -> (Result.Result (Req.Error e) String.String -> msg) -> (Http.Metadata -> Json.Decode.Decoder e) -> Req.Req -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "trackWhatever",
+                "comment": " Track something but ignore the result.\n",
+                "type": "String.String -> (Result.Result x () -> msg) -> Req.Req -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "whatever",
+                "comment": " Ignore the result.\n",
+                "type": "msg -> Req.Req -> Task.Task x msg"
+            },
+            {
+                "name": "withBytesBody",
+                "comment": " Add bytes with mime type.\n",
+                "type": "String.String -> Bytes.Bytes -> Req.Req -> Req.Req"
+            },
+            {
+                "name": "withFileBody",
+                "comment": " Add file to upload\n",
+                "type": "File.File -> Req.Req -> Req.Req"
+            },
+            {
+                "name": "withHeader",
+                "comment": " Add header\n",
+                "type": "String.String -> String.String -> Req.Req -> Req.Req"
+            },
+            {
+                "name": "withJsonBody",
+                "comment": " Add JSON for POST etc.\n",
+                "type": "Json.Encode.Value -> Req.Req -> Req.Req"
+            },
+            {
+                "name": "withMultipartBody",
+                "comment": " Add multipart body.\n",
+                "type": "List.List Req.Part -> Req.Req -> Req.Req"
+            },
+            {
+                "name": "withStringBody",
+                "comment": " Add text with mime type.\n",
+                "type": "String.String -> String.String -> Req.Req -> Req.Req"
+            },
+            {
+                "name": "withTimeout",
+                "comment": " Add timeout\n",
+                "type": "Basics.Float -> Req.Req -> Req.Req"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,442 @@
+[
+    {
+        "name": "StaticArray",
+        "comment": " This module introduces the `StaticArray`. A static array is a non empty array fix a fixed size.\nWe can check the size in compile-time and ensure that the array is about as fast as a usual (dynamic) array in run time.\n\n\n# Constructor\n\n@docs StaticArray, singleton, fromList, initialize\n\n\n# Operations\n\n@docs push, get, set, resize, length, map, indexedMap\n\n\n# Conversion\n\n@docs toArray, toList, toRecord, fromRecord\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "StaticArray",
+                "comment": " A static array is an array with a fixed length.\n\n    singleElement : StaticArray One Int\n    singleElement =\n        singleton 42\n\n    twoElements : StaticArray Two Int\n    twoElements =\n        singleElement\n            |> push 7\n\n",
+                "args": [
+                    "n",
+                    "a"
+                ],
+                "type": "StaticArray.Internal.StaticArray n a"
+            }
+        ],
+        "values": [
+            {
+                "name": "fromList",
+                "comment": " Constructs an array from a list\n\n    import StaticArray.Length as Length\n\n    fromList Length.five (0,[])\n        |> toList\n        --> [0,0,0,0,0]\n\n    fromList Length.five (0,[1,2,3,4])\n        |> toList\n        --> [0,1,2,3,4]\n\n",
+                "type": "StaticArray.Length.Length n -> ( a, List.List a ) -> StaticArray.StaticArray n a"
+            },
+            {
+                "name": "fromRecord",
+                "comment": " Constructs a static array from its components.\nIf the Length is bigger then the number of elements provided, the additional element will be filled with duplicates of head.\n\n    import StaticArray.Length as Length\n    import Array\n\n    fromRecord\n        { length = (Length.five |> Length.plus1)\n        , head = 0\n        , tail = Array.fromList [1,2,3,4,5]\n        }\n        --> fromList (Length.five |> Length.plus1) (0,[1,2,3,4,5])\n\n",
+                "type": "{ length : StaticArray.Length.Length n, head : a, tail : Array.Array a } -> StaticArray.StaticArray n a"
+            },
+            {
+                "name": "get",
+                "comment": " Gets an element of the array. Note that it only possible if the index is in bound. Therefore eliminating Off-by-one errors.\n",
+                "type": "StaticArray.Internal.Index n -> StaticArray.StaticArray n a -> a"
+            },
+            {
+                "name": "indexedMap",
+                "comment": " Same as map but with an index.\n",
+                "type": "(StaticArray.Internal.Index n -> a -> b) -> StaticArray.StaticArray n a -> StaticArray.StaticArray n b"
+            },
+            {
+                "name": "initialize",
+                "comment": " Initiate an array and fill it.\n\n    import StaticArray.Length as Length\n\n    initialize Length.five (\\i -> i*i)\n        --> fromList Length.five (0,[1,4,9,16])\n\n",
+                "type": "StaticArray.Length.Length n -> (Basics.Int -> a) -> StaticArray.StaticArray n a"
+            },
+            {
+                "name": "length",
+                "comment": " Returns the length of an array.\n",
+                "type": "StaticArray.StaticArray n a -> StaticArray.Length.Length n"
+            },
+            {
+                "name": "map",
+                "comment": " Updates all elements of an array.\n",
+                "type": "(a -> b) -> StaticArray.StaticArray n a -> StaticArray.StaticArray n b"
+            },
+            {
+                "name": "push",
+                "comment": " Adds an element to the end of the array.\n",
+                "type": "a -> StaticArray.StaticArray n a -> StaticArray.StaticArray (StaticArray.Index.OnePlus n) a"
+            },
+            {
+                "name": "resize",
+                "comment": " Changes the size of the array. If the array gets bigger, then the first element of the array gets used as default value.\n\n    import StaticArray.Length as Length\n    import Array\n\n    singleton 42\n        |> push 7\n        |> resize (Length.one |> Length.plus4)\n        |> toArray\n        |> Array.toList --> [42,7,42,42,42]\n\n",
+                "type": "StaticArray.Length.Length m -> StaticArray.StaticArray n a -> StaticArray.StaticArray m a"
+            },
+            {
+                "name": "set",
+                "comment": " Sets an element of the array.\n",
+                "type": "StaticArray.Internal.Index n -> a -> StaticArray.StaticArray n a -> StaticArray.StaticArray n a"
+            },
+            {
+                "name": "singleton",
+                "comment": " Constructs an array with a single item.\n",
+                "type": "a -> StaticArray.StaticArray StaticArray.Index.One a"
+            },
+            {
+                "name": "toArray",
+                "comment": " Transforms the static array into a dynamic array.\n",
+                "type": "StaticArray.StaticArray n a -> Array.Array a"
+            },
+            {
+                "name": "toList",
+                "comment": " Transforms the static array into a list.\n",
+                "type": "StaticArray.StaticArray n a -> List.List a"
+            },
+            {
+                "name": "toRecord",
+                "comment": " Exposes the underlying record of the array\n\n    import StaticArray.Length as Length\n    import StaticArray.Index exposing (Five,OnePlus)\n\n    array : StaticArray (OnePlus Five) Int\n    array =\n        fromList (Length.five |> Length.plus1) (0,[1,2,3,4,5])\n\n    array\n        |> toRecord\n        |> fromRecord\n        --> array\n\n",
+                "type": "StaticArray.StaticArray n a -> { length : StaticArray.Length.Length n, head : a, tail : Array.Array a }"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "StaticArray.Index",
+        "comment": " This module contains the `Index` type which can be though of as a range type.\nA value of type `Index n` is in between `0` and `n`.\n\nThis type will be replaced in compile type with an Int. Resulting in no performance loss.\n\n\n# Number Types\n\n@docs One, OnePlus\n\n\n# Constructor\n\n@docs Index, range, first, last, fromModBy, fromLessThen\n\n\n# Operations\n\n@docs increase, decrease, toInt, fromInt, setLength\n\n\n# Predefined Number Types\n\n@docs Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten, Twenty\n\n\n# Type Level Addition\n\n@docs TwoPlus, FourPlus, FivePlus, EightPlus, TenPlus, TwentyPlus\n\n",
+        "unions": [
+            {
+                "name": "One",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "One",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "OnePlus",
+                "comment": " ",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "OnePlus",
+                        [
+                            "a"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Eight",
+                "comment": " ",
+                "args": [],
+                "type": "StaticArray.Index.OnePlus StaticArray.Index.Seven"
+            },
+            {
+                "name": "EightPlus",
+                "comment": " ",
+                "args": [
+                    "a"
+                ],
+                "type": "StaticArray.Index.FourPlus (StaticArray.Index.FourPlus a)"
+            },
+            {
+                "name": "Five",
+                "comment": " ",
+                "args": [],
+                "type": "StaticArray.Index.OnePlus StaticArray.Index.Four"
+            },
+            {
+                "name": "FivePlus",
+                "comment": " ",
+                "args": [
+                    "a"
+                ],
+                "type": "StaticArray.Index.OnePlus (StaticArray.Index.FourPlus a)"
+            },
+            {
+                "name": "Four",
+                "comment": " ",
+                "args": [],
+                "type": "StaticArray.Index.OnePlus StaticArray.Index.Three"
+            },
+            {
+                "name": "FourPlus",
+                "comment": " ",
+                "args": [
+                    "a"
+                ],
+                "type": "StaticArray.Index.TwoPlus (StaticArray.Index.TwoPlus a)"
+            },
+            {
+                "name": "Index",
+                "comment": " An Index is integer between 0 and n-1\n",
+                "args": [
+                    "n"
+                ],
+                "type": "StaticArray.Internal.Index n"
+            },
+            {
+                "name": "Nine",
+                "comment": " ",
+                "args": [],
+                "type": "StaticArray.Index.OnePlus StaticArray.Index.Eight"
+            },
+            {
+                "name": "Seven",
+                "comment": " ",
+                "args": [],
+                "type": "StaticArray.Index.OnePlus StaticArray.Index.Six"
+            },
+            {
+                "name": "Six",
+                "comment": " ",
+                "args": [],
+                "type": "StaticArray.Index.OnePlus StaticArray.Index.Five"
+            },
+            {
+                "name": "Ten",
+                "comment": " ",
+                "args": [],
+                "type": "StaticArray.Index.OnePlus StaticArray.Index.Nine"
+            },
+            {
+                "name": "TenPlus",
+                "comment": " ",
+                "args": [
+                    "a"
+                ],
+                "type": "StaticArray.Index.FivePlus (StaticArray.Index.FivePlus a)"
+            },
+            {
+                "name": "Three",
+                "comment": " ",
+                "args": [],
+                "type": "StaticArray.Index.OnePlus StaticArray.Index.Two"
+            },
+            {
+                "name": "Twenty",
+                "comment": " ",
+                "args": [],
+                "type": "StaticArray.Index.TenPlus StaticArray.Index.Ten"
+            },
+            {
+                "name": "TwentyPlus",
+                "comment": " ",
+                "args": [
+                    "a"
+                ],
+                "type": "StaticArray.Index.TenPlus (StaticArray.Index.TenPlus a)"
+            },
+            {
+                "name": "Two",
+                "comment": " ",
+                "args": [],
+                "type": "StaticArray.Index.OnePlus StaticArray.Index.One"
+            },
+            {
+                "name": "TwoPlus",
+                "comment": " ",
+                "args": [
+                    "a"
+                ],
+                "type": "StaticArray.Index.OnePlus (StaticArray.Index.OnePlus a)"
+            }
+        ],
+        "values": [
+            {
+                "name": "decrease",
+                "comment": " Decreases the index by one. You can not decrease the first index.\n",
+                "type": "StaticArray.Index.Index n -> Maybe.Maybe (StaticArray.Index.Index n)"
+            },
+            {
+                "name": "first",
+                "comment": " The first index of an array\n",
+                "type": "StaticArray.Index.Index n"
+            },
+            {
+                "name": "fromInt",
+                "comment": " Turn a number into an Index and returns Nothing if the number is not in the range.\n\n    import StaticArray.Length as Length\n\n    fromInt Length.one -1 --> Nothing\n\n    fromInt Length.one 0 --> Just (fromLessThen Length.one 0)\n\n    fromInt Length.one 1 --> Nothing\n\n",
+                "type": "StaticArray.Internal.Length n -> Basics.Int -> Maybe.Maybe (StaticArray.Index.Index n)"
+            },
+            {
+                "name": "fromLessThen",
+                "comment": " Construct an Index by cutting off higher values\n\n    import StaticArray.Length as Length exposing (Length)\n    import StaticArray.Index exposing (OnePlus,Two)\n\n    length : Length (OnePlus Two)\n    length =\n        (Length.one |> Length.plus2)\n\n    fromLessThen length 3\n        --> last length --2\n\n",
+                "type": "StaticArray.Internal.Length n -> Basics.Int -> StaticArray.Index.Index n"
+            },
+            {
+                "name": "fromModBy",
+                "comment": " Construct an Index by wrapping higher values\n\n    import StaticArray.Length as Length\n\n    fromModBy (Length.one |> Length.plus2) 3\n        --> first --0\n\n",
+                "type": "StaticArray.Internal.Length n -> Basics.Int -> StaticArray.Index.Index n"
+            },
+            {
+                "name": "increase",
+                "comment": " Increases the index by one. You can not increase the last index.\n",
+                "type": "StaticArray.Internal.Length n -> StaticArray.Index.Index n -> Maybe.Maybe (StaticArray.Index.Index n)"
+            },
+            {
+                "name": "last",
+                "comment": " The last element of an array with length n\n\n    import StaticArray.Length as Length\n    import StaticArray.Index as Index\n\n    Length.five\n        |> last\n        |> Index.toInt\n        --> 4\n\n",
+                "type": "StaticArray.Internal.Length n -> StaticArray.Index.Index n"
+            },
+            {
+                "name": "range",
+                "comment": " Returns the list of all indexes of an array with length n\n",
+                "type": "StaticArray.Internal.Length n -> List.List (StaticArray.Index.Index n)"
+            },
+            {
+                "name": "setLength",
+                "comment": " Change the range of the index. If the length is smaller then the index, return Nothing.\n",
+                "type": "StaticArray.Internal.Length m -> StaticArray.Index.Index n -> Maybe.Maybe (StaticArray.Index.Index m)"
+            },
+            {
+                "name": "toInt",
+                "comment": " Convert to Integer. You can convert it back by using either `fromModBy` or `fromLessThen`\n",
+                "type": "StaticArray.Index.Index n -> Basics.Int"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "StaticArray.Length",
+        "comment": " This module introduces the `Length` type. The length type is an integer but its value is known in compile time.\nThis way we can ensure that no index out of bounds error occurs.\n\n\n# Basics\n\n@docs Length, one, plus1, minus1, toInt\n\n\n# Constructors\n\n@docs two, three, four, five, six, seven, eight, nine, ten, twenty\n\n\n# Addition\n\n@docs plus2, plus4, plus5, plus8, plus10, plus20\n\n\n# Subtraction\n\n@docs minus2, minus4, minus5, minus8, minus10, minus20\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Length",
+                "comment": " A length represents the length of a static array\n\n    import StaticArray\n\n    StaticArray.singleton 42\n        |> StaticArray.push 7\n        |> StaticArray.length\n        --> two\n\n",
+                "args": [
+                    "n"
+                ],
+                "type": "StaticArray.Internal.Length n"
+            }
+        ],
+        "values": [
+            {
+                "name": "eight",
+                "comment": " Length of an array with eight elements\n",
+                "type": "StaticArray.Length.Length StaticArray.Index.Eight"
+            },
+            {
+                "name": "five",
+                "comment": " Length of an array with five elements\n",
+                "type": "StaticArray.Length.Length StaticArray.Index.Five"
+            },
+            {
+                "name": "four",
+                "comment": " Length of an array with four elements\n",
+                "type": "StaticArray.Length.Length StaticArray.Index.Four"
+            },
+            {
+                "name": "minus1",
+                "comment": " Decreases the length by one\n",
+                "type": "StaticArray.Length.Length (StaticArray.Index.OnePlus n) -> StaticArray.Length.Length n"
+            },
+            {
+                "name": "minus10",
+                "comment": " Decreases the length by ten\n",
+                "type": "StaticArray.Length.Length (StaticArray.Index.TenPlus n) -> StaticArray.Length.Length n"
+            },
+            {
+                "name": "minus2",
+                "comment": " Decreases the length by two\n",
+                "type": "StaticArray.Length.Length (StaticArray.Index.TwoPlus n) -> StaticArray.Length.Length n"
+            },
+            {
+                "name": "minus20",
+                "comment": " Decreases the length by twenty\n",
+                "type": "StaticArray.Length.Length (StaticArray.Index.TwentyPlus n) -> StaticArray.Length.Length n"
+            },
+            {
+                "name": "minus4",
+                "comment": " Decreases the length by four\n",
+                "type": "StaticArray.Length.Length (StaticArray.Index.FourPlus n) -> StaticArray.Length.Length n"
+            },
+            {
+                "name": "minus5",
+                "comment": " Decreases the length by five\n",
+                "type": "StaticArray.Length.Length (StaticArray.Index.FivePlus n) -> StaticArray.Length.Length n"
+            },
+            {
+                "name": "minus8",
+                "comment": " Decreases the length by eight\n",
+                "type": "StaticArray.Length.Length (StaticArray.Index.EightPlus n) -> StaticArray.Length.Length n"
+            },
+            {
+                "name": "nine",
+                "comment": " Length of an array with nine elements\n",
+                "type": "StaticArray.Length.Length StaticArray.Index.Nine"
+            },
+            {
+                "name": "one",
+                "comment": " Length of an array with one element\n",
+                "type": "StaticArray.Length.Length StaticArray.Index.One"
+            },
+            {
+                "name": "plus1",
+                "comment": " Increases the length by one\n",
+                "type": "StaticArray.Length.Length n -> StaticArray.Length.Length (StaticArray.Index.OnePlus n)"
+            },
+            {
+                "name": "plus10",
+                "comment": " Increases the length by ten\n",
+                "type": "StaticArray.Length.Length n -> StaticArray.Length.Length (StaticArray.Index.TenPlus n)"
+            },
+            {
+                "name": "plus2",
+                "comment": " Increases the length by two\n",
+                "type": "StaticArray.Length.Length n -> StaticArray.Length.Length (StaticArray.Index.TwoPlus n)"
+            },
+            {
+                "name": "plus20",
+                "comment": " Increases the length by twenty\n",
+                "type": "StaticArray.Length.Length n -> StaticArray.Length.Length (StaticArray.Index.TwentyPlus n)"
+            },
+            {
+                "name": "plus4",
+                "comment": " Increases the length by four\n",
+                "type": "StaticArray.Length.Length n -> StaticArray.Length.Length (StaticArray.Index.FourPlus n)"
+            },
+            {
+                "name": "plus5",
+                "comment": " Increases the length by five\n",
+                "type": "StaticArray.Length.Length n -> StaticArray.Length.Length (StaticArray.Index.FivePlus n)"
+            },
+            {
+                "name": "plus8",
+                "comment": " Increases the length by eight\n",
+                "type": "StaticArray.Length.Length n -> StaticArray.Length.Length (StaticArray.Index.EightPlus n)"
+            },
+            {
+                "name": "seven",
+                "comment": " Length of an array with seven elements\n",
+                "type": "StaticArray.Length.Length StaticArray.Index.Seven"
+            },
+            {
+                "name": "six",
+                "comment": " Length of an array with six elements\n",
+                "type": "StaticArray.Length.Length StaticArray.Index.Six"
+            },
+            {
+                "name": "ten",
+                "comment": " Length of an array with ten elements\n",
+                "type": "StaticArray.Length.Length StaticArray.Index.Ten"
+            },
+            {
+                "name": "three",
+                "comment": " Length of an array with three elements\n",
+                "type": "StaticArray.Length.Length StaticArray.Index.Three"
+            },
+            {
+                "name": "toInt",
+                "comment": " Converts a length into int\n\n    four\n        |> toInt\n        --> 4\n\n",
+                "type": "StaticArray.Length.Length n -> Basics.Int"
+            },
+            {
+                "name": "twenty",
+                "comment": " Length of an array with twenty elements\n",
+                "type": "StaticArray.Length.Length StaticArray.Index.Twenty"
+            },
+            {
+                "name": "two",
+                "comment": " Length of an array with two elements\n",
+                "type": "StaticArray.Length.Length StaticArray.Index.Two"
+            }
+        ],
+        "binops": []
+    }
+]

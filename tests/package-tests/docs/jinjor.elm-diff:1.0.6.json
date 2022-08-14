@@ -1,0 +1,49 @@
+[
+    {
+        "name": "Diff",
+        "comment": " Compares two list and returns how they have changed.\nEach function internally uses Wu's [O(NP) algorithm](http://myerslab.mpi-cbg.de/wp-content/uploads/2014/06/np_diff.pdf).\n\n\n# Types\n\n@docs Change\n\n\n# Diffing\n\n@docs diff, diffLines\n\n",
+        "unions": [
+            {
+                "name": "Change",
+                "comment": " This describes how each line has changed and also contains its value.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Added",
+                        [
+                            "a"
+                        ]
+                    ],
+                    [
+                        "Removed",
+                        [
+                            "a"
+                        ]
+                    ],
+                    [
+                        "NoChange",
+                        [
+                            "a"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "diff",
+                "comment": " Compares general lists.\n\n    diff [1, 3] [2, 3] == [Removed 1, Added 2, NoChange 3] -- True\n\n",
+                "type": "List.List a -> List.List a -> List.List (Diff.Change a)"
+            },
+            {
+                "name": "diffLines",
+                "comment": " Compares two text.\n\nGiving the following text\n\n    a =\n        \"\"\"aaa\n    bbb\n    ddd\"\"\"\n\n    b =\n        \"\"\"zzz\n    aaa\n    ccc\n    ddd\"\"\"\n\nresults in\n\n    [ Added \"zzz\"\n    , NoChange \"aaa\"\n    , Removed \"bbb\"\n    , Added \"ccc\"\n    , NoChange \"ddd\"\n    ]\n\n.\n\n",
+                "type": "String.String -> String.String -> List.List (Diff.Change String.String)"
+            }
+        ],
+        "binops": []
+    }
+]

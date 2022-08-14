@@ -1,0 +1,423 @@
+[
+    {
+        "name": "Markdown.Block",
+        "comment": "\n\n@docs Block\n@docs HeadingLevel, headingLevelToInt\n\n\n### List Items\n\n@docs ListItem, Task, Alignment, ListSpacing\n\n\n## HTML\n\n@docs Html\n\nSee [`Markdown.Html`](Markdown.Html) for more.\n\n\n## Inlines\n\n@docs Inline\n@docs HtmlAttribute\n@docs extractInlineText\n\n\n## Transformations\n\n@docs walk, walkInlines, validateMapInlines, mapAndAccumulate, foldl, inlineFoldl\n\n",
+        "unions": [
+            {
+                "name": "Alignment",
+                "comment": " Alignment in a header cell in a markdown table. See the `Table` variant in the `Block` type.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "AlignLeft",
+                        []
+                    ],
+                    [
+                        "AlignRight",
+                        []
+                    ],
+                    [
+                        "AlignCenter",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Block",
+                "comment": " This is the AST (abstract syntax tree) that represents your parsed markdown.\n\nIn the simplest case, you can pass this directly to a renderer:\n\n    module Main exposing (main)\n\n    import Markdown.Block exposing (Block)\n    import Markdown.Parser\n    import Markdown.Renderer\n\n    markdown : String\n    markdown =\n        \"# This is a title!\\n\\nThis is the body.\"\n\n    astResult : Result (List (Advanced.DeadEnd String Parser.Problem)) (List Block)\n    astResult =\n        markdown\n            |> Markdown.Parser.parse\n\n    main : Html msg\n    main =\n        case\n            astResult\n                |> Result.mapError deadEndsToString\n                |> Result.andThen (\\ast -> Markdown.Renderer.render Markdown.Renderer.defaultHtmlRenderer ast)\n        of\n            Ok rendered ->\n                div [] rendered\n\n            Err errors ->\n                text errors\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "HtmlBlock",
+                        [
+                            "Markdown.Block.Html Markdown.Block.Block"
+                        ]
+                    ],
+                    [
+                        "UnorderedList",
+                        [
+                            "Markdown.Block.ListSpacing",
+                            "List.List (Markdown.Block.ListItem Markdown.Block.Block)"
+                        ]
+                    ],
+                    [
+                        "OrderedList",
+                        [
+                            "Markdown.Block.ListSpacing",
+                            "Basics.Int",
+                            "List.List (List.List Markdown.Block.Block)"
+                        ]
+                    ],
+                    [
+                        "BlockQuote",
+                        [
+                            "List.List Markdown.Block.Block"
+                        ]
+                    ],
+                    [
+                        "Heading",
+                        [
+                            "Markdown.Block.HeadingLevel",
+                            "List.List Markdown.Block.Inline"
+                        ]
+                    ],
+                    [
+                        "Paragraph",
+                        [
+                            "List.List Markdown.Block.Inline"
+                        ]
+                    ],
+                    [
+                        "Table",
+                        [
+                            "List.List { label : List.List Markdown.Block.Inline, alignment : Maybe.Maybe Markdown.Block.Alignment }",
+                            "List.List (List.List (List.List Markdown.Block.Inline))"
+                        ]
+                    ],
+                    [
+                        "CodeBlock",
+                        [
+                            "{ body : String.String, language : Maybe.Maybe String.String }"
+                        ]
+                    ],
+                    [
+                        "ThematicBreak",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "HeadingLevel",
+                "comment": " Markdown limits headings to level 6 or less. HTML does this, too (`<h7>` is not supported by most browsers).\nThis type represents the possible heading levels that a Markdown heading block may have.\n\nIf you do a heading level above 6, the `#` characters will be treated as literal `#`'s.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "H1",
+                        []
+                    ],
+                    [
+                        "H2",
+                        []
+                    ],
+                    [
+                        "H3",
+                        []
+                    ],
+                    [
+                        "H4",
+                        []
+                    ],
+                    [
+                        "H5",
+                        []
+                    ],
+                    [
+                        "H6",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Html",
+                "comment": " The way HTML is handled is one of the core ideas of this library.\n\nYou get the full HTML structure that you can use to process the Blocks before rendering them. Once you render them,\nall of the raw text within your HTML is parsed as Markdown.\n\n\n## `HtmlComment`s and metadata\n\n`HtmlComment`s contain the raw comment text, completely unprocessed. That means\nyou'll need to trim it if you want to strip the leading or trailing whitespace.\n\nRenderer's do not process `HtmlComment`s. If you want to do any special processing\nbased on HTML comments, you can inspect the `Markdown.Block.Block`s before rendering\nit and perform any special processing based on that. You could even add or remove\n`Block`s, for example, based on the presence of certain comment values.\n\n",
+                "args": [
+                    "children"
+                ],
+                "cases": [
+                    [
+                        "HtmlElement",
+                        [
+                            "String.String",
+                            "List.List Markdown.Block.HtmlAttribute",
+                            "List.List children"
+                        ]
+                    ],
+                    [
+                        "HtmlComment",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "ProcessingInstruction",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "HtmlDeclaration",
+                        [
+                            "String.String",
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Cdata",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Inline",
+                "comment": " An Inline block. Note that `HtmlInline`s can contain Blocks, not just nested `Inline`s.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "HtmlInline",
+                        [
+                            "Markdown.Block.Html Markdown.Block.Block"
+                        ]
+                    ],
+                    [
+                        "Link",
+                        [
+                            "String.String",
+                            "Maybe.Maybe String.String",
+                            "List.List Markdown.Block.Inline"
+                        ]
+                    ],
+                    [
+                        "Image",
+                        [
+                            "String.String",
+                            "Maybe.Maybe String.String",
+                            "List.List Markdown.Block.Inline"
+                        ]
+                    ],
+                    [
+                        "Emphasis",
+                        [
+                            "List.List Markdown.Block.Inline"
+                        ]
+                    ],
+                    [
+                        "Strong",
+                        [
+                            "List.List Markdown.Block.Inline"
+                        ]
+                    ],
+                    [
+                        "Strikethrough",
+                        [
+                            "List.List Markdown.Block.Inline"
+                        ]
+                    ],
+                    [
+                        "CodeSpan",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Text",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "HardLineBreak",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "ListItem",
+                "comment": " The value for an unordered list item, which may contain a task.\n",
+                "args": [
+                    "children"
+                ],
+                "cases": [
+                    [
+                        "ListItem",
+                        [
+                            "Markdown.Block.Task",
+                            "List.List children"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "ListSpacing",
+                "comment": " Based on the whitespace around lists, markdown will wrap each list item with a paragraph (if it's a `Loose` list) or it won't (if it's a `Tight` list).\n\n<https://github.github.com/gfm/#lists>\n\n> A list is loose if any of its constituent list items are separated by blank lines, or if any of its constituent list items directly contain two block-level elements with a blank line between them. Otherwise a list is tight. (The difference in HTML output is that paragraphs in a loose list are wrapped in <p> tags, while paragraphs in a tight list are not.)\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Loose",
+                        []
+                    ],
+                    [
+                        "Tight",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Task",
+                "comment": " A task (or no task), which may be contained in a ListItem.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NoTask",
+                        []
+                    ],
+                    [
+                        "IncompleteTask",
+                        []
+                    ],
+                    [
+                        "CompletedTask",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "HtmlAttribute",
+                "comment": " An Html attribute. In <div class=\"foo\">, you would have `{ name = \"class\", value = \"foo\" }`.\n",
+                "args": [],
+                "type": "{ name : String.String, value : String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "extractInlineText",
+                "comment": " Extract the text from a list of inlines.\n\n    -- Original string: \"Heading with *emphasis*\"\n\n    import Markdown.Block as Block exposing (..)\n\n    inlines : List (Inline)\n    inlines =\n        [ Text \"Heading with \"\n        , Emphasis [ Text \"emphasis\" ]\n        ]\n\n    Block.extractInlineText inlines\n    --> \"Heading with emphasis\"\n\n",
+                "type": "List.List Markdown.Block.Inline -> String.String"
+            },
+            {
+                "name": "foldl",
+                "comment": " Fold over all blocks to yield a value.\n\n    import Markdown.Block as Block exposing (..)\n\n    maximumHeadingLevel : List Block -> Maybe HeadingLevel\n    maximumHeadingLevel blocks =\n        blocks\n            |> Block.foldl\n                (\\block maxSoFar ->\n                    case block of\n                        Heading level _ ->\n                            if Block.headingLevelToInt level > (maxSoFar |> Maybe.map Block.headingLevelToInt |> Maybe.withDefault 0) then\n                                Just level\n                            else\n                                maxSoFar\n                        _ ->\n                            maxSoFar\n                )\n                Nothing\n\n    [ Heading H1 [ Text \"Document\" ]\n    , Heading H2 [ Text \"Section A\" ]\n    , Heading H3 [ Text \"Subsection\" ]\n    , Heading H2 [ Text \"Section B\" ]\n    ]\n        |> maximumHeadingLevel\n    -->  (Just H3)\n\n",
+                "type": "(Markdown.Block.Block -> acc -> acc) -> acc -> List.List Markdown.Block.Block -> acc"
+            },
+            {
+                "name": "headingLevelToInt",
+                "comment": " A convenience function so that you don't have to write a big case statement if you need a heading level as an Int.\n",
+                "type": "Markdown.Block.HeadingLevel -> Basics.Int"
+            },
+            {
+                "name": "inlineFoldl",
+                "comment": " Fold over all inlines within a list of blocks to yield a value.\n\n    import Markdown.Block as Block exposing (..)\n\n    pullLinks : List Block -> List String\n    pullLinks blocks =\n        blocks\n            |> inlineFoldl\n                (\\inline links ->\n                    case inline of\n                        Link str mbstr moreinlines ->\n                            str :: links\n                        _ ->\n                            links\n                )\n                []\n\n    [ Heading H1 [ Text \"Document\" ]\n    , Heading H2 [ Link \"/note/50\" (Just \"interesting document\") [] ]\n    , Heading H3 [ Text \"Subsection\" ]\n    , Heading H2 [ Link \"/note/51\" (Just \"more interesting document\") [] ]\n    ]\n        |> pullLinks\n    -->  [\"/note/51\", \"/note/50\"]\n\n",
+                "type": "(Markdown.Block.Inline -> acc -> acc) -> acc -> List.List Markdown.Block.Block -> acc"
+            },
+            {
+                "name": "mapAndAccumulate",
+                "comment": " Map values, while also tracking state while traversing every block. Think of it as a helper for `foldl` and `map`\nin a single handy function!\n\nIn this example, we need to keep track of the number of occurrences of a heading name so that we can\nuse a unique slug to link to (exactly like Github does for its heading links). We keep the occurences in a Dict,\nso this allows us to maintain state rather than just transforming blocks purely based on the current block.\n\nYou can see the full end-to-end code for this in `examples/src/Slugs.elm`.\n\n    import Markdown.Block as Block exposing (..)\n    import Dict\n    gatherHeadingOccurrences : List Block -> ( Dict.Dict String Int, List ( Block, Maybe String ) )\n    gatherHeadingOccurrences =\n        Block.mapAndAccumulate\n            (\\soFar block ->\n                case block of\n                    Heading level inlines ->\n                        let\n                            inlineText : String\n                            inlineText =\n                                Block.extractInlineText inlines\n                            occurenceModifier : String\n                            occurenceModifier =\n                                soFar\n                                    |> Dict.get inlineText\n                                    |> Maybe.map String.fromInt\n                                    |> Maybe.withDefault \"\"\n                        in\n                        ( soFar |> trackOccurence inlineText\n                        , ( Heading level inlines, Just (inlineText ++ occurenceModifier) )\n                        )\n                    _ ->\n                        ( soFar\n                        , ( block, Nothing )\n                        )\n            )\n            Dict.empty\n    trackOccurence : String -> Dict.Dict String Int -> Dict.Dict String Int\n    trackOccurence value occurences =\n        occurences\n            |> Dict.update value\n                (\\maybeOccurence ->\n                    case maybeOccurence of\n                        Just count ->\n                            Just <| count + 1\n                        Nothing ->\n                            Just 1\n                )\n\n    [ Heading H1 [ Text \"foo\" ]\n    , Heading H1 [ Text \"bar\" ]\n    , Heading H1 [ Text \"foo\" ]\n    ]\n    |> gatherHeadingOccurrences\n    --> ( Dict.fromList\n    -->        [ ( \"bar\", 1 )\n    -->        , ( \"foo\", 2 )\n    -->        ]\n    -->    , [ ( Heading H1 [ Text \"foo\" ], Just \"foo\" )\n    -->        , ( Heading H1 [ Text \"bar\" ], Just \"bar\" )\n    -->        , ( Heading H1 [ Text \"foo\" ], Just \"foo1\" )\n    -->        ]\n    -->    )\n\n",
+                "type": "(soFar -> Markdown.Block.Block -> ( soFar, mappedValue )) -> soFar -> List.List Markdown.Block.Block -> ( soFar, List.List mappedValue )"
+            },
+            {
+                "name": "validateMapInlines",
+                "comment": " Apply a function to transform each inline recursively.\nIf any of the values are `Err`s, the entire value will be an `Err`.\n\n    import Markdown.Block as Block exposing (..)\n\n    lookupLink : String -> Result String String\n    lookupLink key =\n        case key of\n            \"elm-lang\" ->\n                Ok \"https://elm-lang.org\"\n            _ ->\n                Err <| \"Couldn't find key \" ++ key\n\n    resolveLinkInInline : Inline -> Result String Inline\n    resolveLinkInInline inline =\n        case inline of\n            Link destination title inlines ->\n                destination\n                    |> lookupLink\n                    |> Result.map (\\resolvedLink -> Link resolvedLink title inlines)\n            _ ->\n                Ok inline\n\n    [ Paragraph\n        [ Link \"angular\" Nothing [ Text \"elm-lang homepage\" ]\n        ]\n    ]\n        |> Block.validateMapInlines resolveLinkInInline\n    -->  Err [ \"Couldn't find key angular\" ]\n\n",
+                "type": "(Markdown.Block.Inline -> Result.Result error Markdown.Block.Inline) -> List.List Markdown.Block.Block -> Result.Result (List.List error) (List.List Markdown.Block.Block)"
+            },
+            {
+                "name": "walk",
+                "comment": " Recursively apply a function to transform each Block.\n\nThis example bumps headings down by one level.\n\n    import Markdown.Block as Block exposing (..)\n\n    bumpHeadingLevel : HeadingLevel -> HeadingLevel\n    bumpHeadingLevel level =\n        case level of\n            H1 -> H2\n            H2 -> H3\n            H3 -> H4\n            H4 -> H5\n            H5 -> H6\n            H6 -> H6\n\n    [ Heading H1 [ Text \"First heading\" ]\n    , Paragraph [ Text \"Paragraph\" ]\n    , BlockQuote\n        [ Heading H2 [ Text \"Paragraph\" ]\n        ]\n    , Heading H1 [ Text \"Second heading\" ]\n    ]\n        |> List.map\n            (Block.walk\n                (\\block ->\n                    case block of\n                        Heading level children ->\n                            Heading (bumpHeadingLevel level) children\n                        _ ->\n                            block\n                )\n            )\n    --> [ Heading H2 [ Text \"First heading\" ]\n    --> , Paragraph [ Text \"Paragraph\" ]\n    --> , BlockQuote\n    --> [ Heading H3 [ Text \"Paragraph\" ]\n    --> ]\n    --> , Heading H2 [ Text \"Second heading\" ]\n    --> ]\n\n",
+                "type": "(Markdown.Block.Block -> Markdown.Block.Block) -> Markdown.Block.Block -> Markdown.Block.Block"
+            },
+            {
+                "name": "walkInlines",
+                "comment": "\n\n    import Markdown.Block as Block exposing (..)\n\n    [ Paragraph\n        [ Link \"http://elm-lang.org\" Nothing [ Text \"elm-lang homepage\" ]\n        ]\n    ]\n        |> List.map\n            (Block.walkInlines\n                (\\inline ->\n                    case inline of\n                        Link destination title inlines ->\n                            Link (String.replace \"http://\" \"https://\" destination) title inlines\n                        _ ->\n                            inline\n                )\n            )\n    -->        [ Paragraph\n    -->            [ Link \"https://elm-lang.org\" Nothing [ Text \"elm-lang homepage\" ]\n    -->            ]\n    -->        ]\n\n",
+                "type": "(Markdown.Block.Inline -> Markdown.Block.Inline) -> Markdown.Block.Block -> Markdown.Block.Block"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Markdown.Html",
+        "comment": "\n\n@docs Renderer\n\n\n## Creating an HTML renderer\n\n@docs tag, withAttribute, withOptionalAttribute\n@docs map, oneOf\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Renderer",
+                "comment": " A `Markdown.Html.Renderer` is how you register the list of\nvalid HTML tags that can be used in your markdown. A `Renderer`\nalso defines how to render those tags that it accepts.\n\nUsing an HTML renderer feels similar to building a JSON decoder.\nYou're describing what kind of data you expect to have. You\nalso provide functions that tell what to do with those bits of data.\n\nFor example, if you expect to have an attribute called `button-text` for the\n`<signup-form ...>` tags in your Markdown, you could use the value of the\n`button-text` attribute to render your `<signup-form` like so\n\n",
+                "args": [
+                    "a"
+                ],
+                "type": "Markdown.HtmlRenderer.HtmlRenderer a"
+            }
+        ],
+        "values": [
+            {
+                "name": "map",
+                "comment": " Map the value of a `Markdown.Html.Renderer`.\n",
+                "type": "(a -> b) -> Markdown.Html.Renderer a -> Markdown.Html.Renderer b"
+            },
+            {
+                "name": "oneOf",
+                "comment": " Usually you want to handle a list of possible HTML\ntags, not just a single one. So 99% of the time you'll\nbe using this function when you use this module.\n\n    htmlRenderer =\n        Markdown.Html.oneOf\n            [ Markdown.Html.tag \"contact-button\"\n                (\\children -> contactButtonView)\n            , Markdown.Html.tag \"signup-form\"\n                (\\children -> signupFormView children)\n            ]\n\n",
+                "type": "List.List (Markdown.Html.Renderer view) -> Markdown.Html.Renderer view"
+            },
+            {
+                "name": "tag",
+                "comment": " Start a Renderer by expecting a tag of a particular type.\n\n    Markdown.Html.tag \"contact-button\"\n        (\\children ->\n            -- we don't want to use any inner markdown\n            -- within <contact-button> tags, so we'll\n            -- ignore this argument\n            Html.button\n         -- ... fancy SVG and mailto links here\n        )\n\n",
+                "type": "String.String -> view -> Markdown.Html.Renderer view"
+            },
+            {
+                "name": "withAttribute",
+                "comment": " Expects an attribute. The `Renderer` will fail if that attribute doesn't\nexist on the tag. You can use the values of all the expected tags in the function\nyou define for the tag's renderer.\n\n    import Html\n    import Html.Attributes as Attr\n    import Markdown.Html\n\n    Markdown.Html.tag \"contact-button\"\n        (\\children buttonText color ->\n            Html.button\n                [ Attr.style \"background-color\" color ]\n                [ Html.text buttonText ]\n        )\n        |> Markdown.Html.withAttribute \"button-text\"\n        |> Markdown.Html.withAttribute \"color\"\n\n",
+                "type": "String.String -> Markdown.Html.Renderer (String.String -> view) -> Markdown.Html.Renderer view"
+            },
+            {
+                "name": "withOptionalAttribute",
+                "comment": " Same as `withAttribute`, but the Renderer won't fail if the attribute is missing.\nInstead, it just returns `Nothing` for missing attributes.\n\n    import Html\n    import Html.Attributes as Attr\n    import Markdown.Html\n\n    Markdown.Html.tag \"bio\"\n        (\\name twitter github children ->\n            bioView name twitter github children\n        )\n\n",
+                "type": "String.String -> Markdown.Html.Renderer (Maybe.Maybe String.String -> view) -> Markdown.Html.Renderer view"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Markdown.Parser",
+        "comment": "\n\n@docs parse, deadEndToString\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "deadEndToString",
+                "comment": " Turn a parsing problem into the default String representation.\n",
+                "type": "Parser.Advanced.DeadEnd String.String Parser.Problem -> String.String"
+            },
+            {
+                "name": "parse",
+                "comment": " Try parsing a markdown String into `Markdown.Block.Block`s.\n\nOften you'll want to render these `Block`s directly:\n\n    render renderer markdown =\n        markdown\n            |> Markdown.Parser.parse\n            |> Result.mapError deadEndsToString\n            |> Result.andThen (\\ast -> Markdown.Renderer.render renderer ast)\n\n    deadEndsToString deadEnds =\n        deadEnds\n            |> List.map Markdown.Parser.deadEndToString\n            |> String.join \"\\n\"\n\nBut you can also do a lot with the `Block`s before passing them through:\n\n  - Transform the `Block`s ([example: make each heading one level deeper](TODO))\n  - Use the blocks to gather metadata about the markdown document ([example: building a table of contents from `Block`s](TODO))\n\n",
+                "type": "String.String -> Result.Result (List.List (Parser.Advanced.DeadEnd String.String Parser.Problem)) (List.List Markdown.Block.Block)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Markdown.Renderer",
+        "comment": "\n\n@docs Renderer, render\n\n@docs defaultHtmlRenderer\n\n\n## Attaching Metadata to Blocks\n\n@docs renderWithMeta\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Renderer",
+                "comment": " A record with functions that define how to render all possible markdown blocks.\nThese renderers are composed together to give you the final rendered output.\n\nYou could render to any type you want. Here are some useful things you might render to:\n\n  - `Html` (using the `defaultHtmlRenderer` provided by this module)\n  - Custom `Html`\n  - `Element`s from [`mdgriffith/elm-ui`](https://package.elm-lang.org/packages/mdgriffith/elm-ui/latest/)\n  - Types from other custom HTML replacement libraries, like [`rtfeldman/elm-css`](https://package.elm-lang.org/packages/rtfeldman/elm-css/latest/) or [`tesk9/accessible-html`](https://package.elm-lang.org/packages/tesk9/accessible-html/latest/)\n  - Raw `String`s with [ANSI color codes](http://www.lihaoyi.com/post/BuildyourownCommandLinewithANSIescapecodes.html) for setting rich colors in terminal (CLI) output\n  - Plain text with any formatting stripped away (maybe for a String search feature)\n\n",
+                "args": [
+                    "view"
+                ],
+                "type": "{ heading : { level : Markdown.Block.HeadingLevel, rawText : String.String, children : List.List view } -> view, paragraph : List.List view -> view, blockQuote : List.List view -> view, html : Markdown.Html.Renderer (List.List view -> view), text : String.String -> view, codeSpan : String.String -> view, strong : List.List view -> view, emphasis : List.List view -> view, strikethrough : List.List view -> view, hardLineBreak : view, link : { title : Maybe.Maybe String.String, destination : String.String } -> List.List view -> view, image : { alt : String.String, src : String.String, title : Maybe.Maybe String.String } -> view, unorderedList : List.List (Markdown.Block.ListItem view) -> view, orderedList : Basics.Int -> List.List (List.List view) -> view, codeBlock : { body : String.String, language : Maybe.Maybe String.String } -> view, thematicBreak : view, table : List.List view -> view, tableHeader : List.List view -> view, tableBody : List.List view -> view, tableRow : List.List view -> view, tableCell : Maybe.Maybe Markdown.Block.Alignment -> List.List view -> view, tableHeaderCell : Maybe.Maybe Markdown.Block.Alignment -> List.List view -> view }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultHtmlRenderer",
+                "comment": " This renders `Html` in an attempt to be as close as possible to\nthe HTML output in <https://github.github.com/gfm/>.\n",
+                "type": "Markdown.Renderer.Renderer (Html.Html msg)"
+            },
+            {
+                "name": "render",
+                "comment": " Apply a `Renderer` to turn parsed `Markdown.Block`s into your rendered markdown view.\n",
+                "type": "Markdown.Renderer.Renderer view -> List.List Markdown.Block.Block -> Result.Result String.String (List.List view)"
+            },
+            {
+                "name": "renderWithMeta",
+                "comment": " Render Tuples of Blocks with arbitrary metadata. See `examples/src/Slugs.elm` for a full example that shows how to\nadd metadata to blocks.\n\n    import Markdown.Parser\n    import Markdown.Renderer exposing (defaultHtmlRenderer)\n\n    markdownInput\n        |> Markdown.Parser.parse\n        |> Result.map gatherHeadingOccurrences\n        |> Result.mapError deadEndsToString\n        |> Result.andThen\n            (\\ast ->\n                Markdown.Renderer.renderWithMeta\n                    (\\maybeSlug ->\n                        { defaultHtmlRenderer\n                            | heading =\n                                \\{ level, children } ->\n                                    Html.h1\n                                        [ Attr.id (maybeSlug |> Maybe.withDefault \"\")\n                                        ]\n                                        children\n                        }\n                    )\n                    ast\n            )\n\n",
+                "type": "(meta -> Markdown.Renderer.Renderer view) -> List.List ( Markdown.Block.Block, meta ) -> Result.Result String.String (List.List view)"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,135 @@
+[
+    {
+        "name": "BootstrapStarter",
+        "comment": "\r\n\r\n# Creating BootstrapStarter master view type\r\n@docs BootstrapStarter, NavBar,  NavBarLink, NavBarVanilla, LinkState, NavBarDropDown, NavBarDropDownItem, Search, PageContent\r\n\r\n",
+        "unions": [
+            {
+                "name": "LinkState",
+                "comment": " Represents the state of a link \r\n",
+                "args": [],
+                "cases": [
+                    [
+                        "LinkStateVanilla",
+                        []
+                    ],
+                    [
+                        "LinkStateSelected",
+                        []
+                    ],
+                    [
+                        "LinkStateDisabled",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "NavBarLink",
+                "comment": " Represents a NavBarLink \r\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": [
+                    [
+                        "Vanilla",
+                        [
+                            "BootstrapStarter.NavBarVanilla msg"
+                        ]
+                    ],
+                    [
+                        "DropDown",
+                        [
+                            "BootstrapStarter.NavBarDropDown msg"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "PageContent",
+                "comment": " Represents the body of a page, can be a list of strings (paragraphs), or a list of custom html\r\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": [
+                    [
+                        "Paragraphs",
+                        [
+                            "List.List String.String"
+                        ]
+                    ],
+                    [
+                        "Custom",
+                        [
+                            "List.List (Html.String.Html msg)"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "BootstrapStarter",
+                "comment": " A Master Page Type that represents the Bootstrap Starter Template (https://getbootstrap.com/docs/4.0/examples/starter-template/#)\r\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ navBar : BootstrapStarter.NavBar msg, pageTitle : String.String, pageContent : BootstrapStarter.PageContent msg }"
+            },
+            {
+                "name": "NavBar",
+                "comment": " Represents the NavBar\r\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ title : String.String, onClick : msg, navBarLinks : List.List (BootstrapStarter.NavBarLink msg), search : BootstrapStarter.Search msg }"
+            },
+            {
+                "name": "NavBarDropDown",
+                "comment": " Represents A NavBarLink drop down list\r\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ title : String.String, id : String.String, items : List.List (BootstrapStarter.NavBarDropDownItem msg) }"
+            },
+            {
+                "name": "NavBarDropDownItem",
+                "comment": " Represents A NavBarLink drop down list item\r\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ title : String.String, onClick : msg }"
+            },
+            {
+                "name": "NavBarVanilla",
+                "comment": " Represents a vanilla NavBarLink \r\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ title : String.String, onClick : msg, state : BootstrapStarter.LinkState }"
+            },
+            {
+                "name": "Search",
+                "comment": " Represents the search form\r\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ title : String.String, onInput : String.String -> msg, onClick : msg }"
+            }
+        ],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "BootstrapStarterToHtml",
+        "comment": "\r\n\r\n# Creating Html from a BootstrapStarter \r\n@docs toHtml\r\n\r\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toHtml",
+                "comment": " Convert a BootstrapStarter msg to Html msg\r\n",
+                "type": "BootstrapStarter.BootstrapStarter msg -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

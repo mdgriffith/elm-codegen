@@ -1,0 +1,181 @@
+[
+    {
+        "name": "Paginate",
+        "comment": " `Paginate` is used for querying & paginating API responses. Paginate will\nhandle fetching new pages of data, and caches already fetched data.\n\nTODO: Eventually:\n\n  - examples\n  - fetchRequest per-args cache?\n      - toString on args to get a (Dict String (Dict PageNumber Chunk))?\n\n\n# Model\n\n@docs Paginated, initial\n\n\n# Config\n\n@docs Config, FetchResponse, makeConfig\n\n\n# Retrieving Data\n\n@docs getCurrent, getPage, getPerPage, getTotalPages, getTotalItems, getError, getRequestData, getResponseData, getRemoteData\n\n\n# Rendering\n\n@docs getPagerSections, bootstrapPager\n\n\n# Querying Status\n\n@docs isLoading, hasNone, isFirst, isLast, hasPrevious, hasNext\n\n\n# Modifying Pagination\n\n@docs moveNext, movePrevious, jumpTo, updateData, updateAndResetData, updatePerPage\n\n\n# Updating / Messages\n\n@docs Msg, update\n\n",
+        "unions": [
+            {
+                "name": "Config",
+                "comment": " The `Config` type is used to build a Fetch Request, given the Paginated's\nRequest Data, a Page Number, & the Items per Page.\n",
+                "args": [
+                    "a",
+                    "b",
+                    "c"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Msg",
+                "comment": " Wrap an Http Response for a Page, to be handled in the `update` function.\n",
+                "args": [
+                    "a",
+                    "c"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Paginated",
+                "comment": " The `Paginated` type is responsible for storing the fetched items, current\npage number, total count, and additional data to pass to the fetch command..\n\nThe `a` type refers to the data that is paginated, `b` refers to any additional\ndata you need to make the API request, and `c` is any additional data you want\nto pull out of the API response.\n\n",
+                "args": [
+                    "a",
+                    "b",
+                    "c"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "FetchResponse",
+                "comment": " The result type of a Paginated Fetch Request. At the minimum, your API\nneeds to return the items & a total count of all items.\n\nIf any additional data is returned that you would like to have access to, you\ncan decode it to the `extraData` field and use `getResponseData` to pull it\nout of a `Paginated`.\n\n",
+                "args": [
+                    "a",
+                    "c"
+                ],
+                "type": "{ items : List.List a, totalCount : Basics.Int, extraData : Maybe.Maybe c }"
+            }
+        ],
+        "values": [
+            {
+                "name": "bootstrapPager",
+                "comment": " Render a split Pager with the standard Bootstrap4 classes.\n\nIt takes a function that takes a page number & generates attributes for an\nitem's `a` element, the number of pages to show at the ends of the pagination,\nthe number of middle pages to show in the middles of the pagination, and a\npagination.\n\nIt will split out a list of `li` elements for each page that should be shown,\nwith disabled dots(`...`) between each section. A list is returned so that you\ncan add previous/next buttons if you want them.\n\nSee the docs for `getPagerSections` to see how the splitting works.\n\n",
+                "type": "(Basics.Int -> List.List (Html.Attribute msg)) -> Basics.Int -> Basics.Int -> Paginate.Paginated a b c -> List.List (Html.Html msg)"
+            },
+            {
+                "name": "getCurrent",
+                "comment": " Get the current list of items.\n",
+                "type": "Paginate.Paginated a b c -> List.List a"
+            },
+            {
+                "name": "getError",
+                "comment": " Return the current page's fetch request's error if it has one.\n",
+                "type": "Paginate.Paginated a b c -> Maybe.Maybe Http.Error"
+            },
+            {
+                "name": "getPage",
+                "comment": " Get the current page number.\n",
+                "type": "Paginate.Paginated a b c -> Basics.Int"
+            },
+            {
+                "name": "getPagerSections",
+                "comment": " Generate sections of pages to show for a Pager. Depending on the current\npage & total number of pages, the sections may either be a single section, a\nbeginning & end section, or a beginning, middle, & end section.\n\nEach section's page is a tuple of `(pageNumber, isCurrentPage)`.\n\nThe sections are defined by the initial arguments, the first is the number of\npages to show at the end sections, while the second is the number of pages to\nshow around the current page if it is in the middle section.\n\nSome example of Pagers generated with 2 end & middle pages, with the current\npage marked by `*`:\n\n    *1*|2|3|4|5|6\n\n    *1*|2|3|4|5|...|49|50\n\n    1|2|3|4|*5*|...|49|50\n\n    1|2|...|4|5|*6*|7|8|...|49|50\n\n    1|2|...|9|10|*11*|12|13|...|49|50\n\n    1|2|...|*46*|47|48|49|50\n\nNo split is made if there are not enough pages to show a middle section. When\nat an end section, enough pages are shown that there must be something hidden\nbefore splitting off the middle section.\n\n",
+                "type": "Basics.Int -> Basics.Int -> Paginate.Paginated a b c -> List.List (List.List ( Basics.Int, Basics.Bool ))"
+            },
+            {
+                "name": "getPerPage",
+                "comment": " Get the number of items to show per page.\n",
+                "type": "Paginate.Paginated a b c -> Basics.Int"
+            },
+            {
+                "name": "getRemoteData",
+                "comment": " Return the raw `WebData` for the current page.\n",
+                "type": "Paginate.Paginated a b c -> RemoteData.WebData (List.List a)"
+            },
+            {
+                "name": "getRequestData",
+                "comment": " Return the Extra Request Data for the current Paginated.\n",
+                "type": "Paginate.Paginated a b c -> b"
+            },
+            {
+                "name": "getResponseData",
+                "comment": " Return any Extra Response Data for the current Paginated.\n",
+                "type": "Paginate.Paginated a b c -> Maybe.Maybe c"
+            },
+            {
+                "name": "getTotalItems",
+                "comment": " Get the total item count.\n",
+                "type": "Paginate.Paginated a b c -> Basics.Int"
+            },
+            {
+                "name": "getTotalPages",
+                "comment": " Get the total number of pages.\n",
+                "type": "Paginate.Paginated a b c -> Basics.Int"
+            },
+            {
+                "name": "hasNext",
+                "comment": " Are there page's after the current one?\n",
+                "type": "Paginate.Paginated a b c -> Basics.Bool"
+            },
+            {
+                "name": "hasNone",
+                "comment": " Did the current page load successfully but return no items?\n",
+                "type": "Paginate.Paginated a b c -> Basics.Bool"
+            },
+            {
+                "name": "hasPrevious",
+                "comment": " Are there page's before the current one?\n",
+                "type": "Paginate.Paginated a b c -> Basics.Bool"
+            },
+            {
+                "name": "initial",
+                "comment": " Get an initial Pagination & Fetch Commands from a `Config`, list of Filters,\n& Page Number.\n",
+                "type": "Paginate.Config a b c -> b -> Basics.Int -> Basics.Int -> ( Paginate.Paginated a b c, Platform.Cmd.Cmd (Paginate.Msg a c) )"
+            },
+            {
+                "name": "isFirst",
+                "comment": " Is the current page the first page?\n",
+                "type": "Paginate.Paginated a b c -> Basics.Bool"
+            },
+            {
+                "name": "isLast",
+                "comment": " Is the current page the last page?\n",
+                "type": "Paginate.Paginated a b c -> Basics.Bool"
+            },
+            {
+                "name": "isLoading",
+                "comment": " Is the current page's fetch request still loading?\n",
+                "type": "Paginate.Paginated a b c -> Basics.Bool"
+            },
+            {
+                "name": "jumpTo",
+                "comment": " Move to a specific page.\n",
+                "type": "Paginate.Config a b c -> Basics.Int -> Paginate.Paginated a b c -> ( Paginate.Paginated a b c, Platform.Cmd.Cmd (Paginate.Msg a c) )"
+            },
+            {
+                "name": "makeConfig",
+                "comment": " Make a `Config` from a function that takes a list of Parameters & a Page Number.\n",
+                "type": "(b -> Basics.Int -> Basics.Int -> Platform.Cmd.Cmd (RemoteData.WebData (Paginate.FetchResponse a c))) -> Paginate.Config a b c"
+            },
+            {
+                "name": "moveNext",
+                "comment": " Move to the next page.\nTODO: re-implement as call to `jumpTo`?\n",
+                "type": "Paginate.Config a b c -> Paginate.Paginated a b c -> ( Paginate.Paginated a b c, Platform.Cmd.Cmd (Paginate.Msg a c) )"
+            },
+            {
+                "name": "movePrevious",
+                "comment": " Move to the previous page.\nTODO: re-implement as call to `jumpTo`?\n",
+                "type": "Paginate.Config a b c -> Paginate.Paginated a b c -> ( Paginate.Paginated a b c, Platform.Cmd.Cmd (Paginate.Msg a c) )"
+            },
+            {
+                "name": "update",
+                "comment": " Update the Paginated Model on Fetch Completion.\n\nIf the Page Number of the Returned Model is Different than the Given Model,\nWe Were On a Page That Didn't Exist, So We Changed to the Last Page.\n\nYou Should Handle this Special Case in your Update Function, so that You can\nModify the Page URL.\n\n",
+                "type": "Paginate.Config a b c -> Paginate.Msg a c -> Paginate.Paginated a b c -> ( Paginate.Paginated a b c, Platform.Cmd.Cmd (Paginate.Msg a c) )"
+            },
+            {
+                "name": "updateAndResetData",
+                "comment": " Similar to the `updateData` function, but this will also reset the\n`ResponseData`.\n\nWhich you should pick depends on how the new request data affects your response\ndata. E.g., if the slug of the pagination container changes, you should reset\nthe response data as well, but if you're only changing the sorting order of the\nresults, you can just use the `updateData` function.\n\n",
+                "type": "Paginate.Config a b c -> b -> Paginate.Paginated a b c -> ( Paginate.Paginated a b c, Platform.Cmd.Cmd (Paginate.Msg a c) )"
+            },
+            {
+                "name": "updateData",
+                "comment": " Replace the current Extra Request Data, jumping to page 1 & performing new\nfetch requests. Does nothing if the Data is equal to existing Data.\n",
+                "type": "Paginate.Config a b c -> b -> Paginate.Paginated a b c -> ( Paginate.Paginated a b c, Platform.Cmd.Cmd (Paginate.Msg a c) )"
+            },
+            {
+                "name": "updatePerPage",
+                "comment": " Update the items per page, jumping to page 1 & performing new fetch\nrequests. Does nothing if the new value is the same as the current items per\npage.\n",
+                "type": "Paginate.Config a b c -> Basics.Int -> Paginate.Paginated a b c -> ( Paginate.Paginated a b c, Platform.Cmd.Cmd (Paginate.Msg a c) )"
+            }
+        ],
+        "binops": []
+    }
+]

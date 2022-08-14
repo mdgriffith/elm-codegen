@@ -1,0 +1,21 @@
+[
+    {
+        "name": "InputTextWithCount",
+        "comment": " This is a module useful when you want to make a inputText has the limited number of characters (not words).\n\n# NewConfig\n@docs newConfig\n\n# InputText\n@docs view\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "newConfig",
+                "comment": " With this function, you can make a Config.\nAnd then you can put it in the following view function.\n\n    config = newConfig {classPrefix = \"message\", maxLength = 400  }\n\n",
+                "type": "{ classPrefix : String.String, maxLength : Basics.Int } -> InputTextWithCount.Config"
+            },
+            {
+                "name": "view",
+                "comment": " Add a msg to receive a text which is input. And you can add attrs and elements if needed.\n",
+                "type": "InputTextWithCount.Config -> String.String -> (String.String -> msg) -> List.List (Html.Attribute msg) -> List.List (Html.Html msg) -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

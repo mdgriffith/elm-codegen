@@ -1,0 +1,100 @@
+[
+    {
+        "name": "Selectize",
+        "comment": " This is a dropdown menu whose entries can be filtered. You can\nselect entries using the mouse or with the keyboard (arrow up/down and\nenter).\n\nThe dropdown menu manages the keyboard and mouse focus, as well as the\nopen/closed state itself. The (unfiltered) list of possible entries and\nthe eventually selected entry have to live in the model of the\nactual application.\n\nIf you want to use it, your model should look something like this\n\n    type alias Model =\n        { selection : Maybe Tree\n        , menu : Selectize.State Tree\n        }\n\n    type alias Tree =\n        { name : String\n        , latinName : String\n        }\n\nThe state of the dropdown menu is instanciated via\n\n    menu =\n        Selectize.closed \"unique-menu-id\"\n            (\\tree -> tree.name ++ \" - \" ++ tree.latinName)\n            (trees |> List.map Selectize.entry)\n\nwith\n\n    trees : List Tree\n\nAnd you have to hook it up in your update function like so\n\n    type Msg\n        = MenuMsg (Selectize.Msg Tree)\n        | SelectTree (Maybe Tree)\n\n    update : Msg -> Model -> ( Model, Cmd Msg )\n    update msg model =\n        case msg of\n            MenuMsg selectizeMsg ->\n                let\n                    ( newMenu, menuCmd, maybeMsg ) =\n                        Selectize.update SelectTree\n                            model.selection\n                            model.menu\n                            selectizeMsg\n\n                    newModel =\n                        { model | menu = newMenu }\n\n                    cmd =\n                        menuCmd |> Cmd.map MenuMsg\n                in\n                case maybeMsg of\n                    Just nextMsg ->\n                        update nextMsg newModel\n                            |> andDo cmd\n\n                    Nothing ->\n                        ( newModel, cmd )\n\n            SelectTree newSelection ->\n                ( { model | selection = newSelection }, Cmd.none )\n\n    andDo : Cmd msg -> ( model, Cmd msg ) -> ( model, Cmd msg )\n    andDo cmd ( model, cmds ) =\n        ( model\n        , Cmd.batch [ cmd, cmds ]\n        )\n\nFinally, the menu can be rendered like this\n\n    view : Model -> Html Msg\n    view model =\n        Html.div []\n            [ Selectize.view viewConfig\n                model.selection\n                model.menu\n                |> Html.map MenuMsg\n            ]\n\nwith the view configuration given by\n\n    viewConfig : Selectize.ViewConfig Tree\n    viewConfig =\n        Selectize.viewConfig\n            { container =\n                [ Attributes.class \"selectize__container\" ]\n            , menu =\n                [ Attributes.class \"selectize__menu\" ]\n            , ul =\n                [ Attributes.class \"selectize__list\" ]\n            , entry =\n                \\tree mouseFocused keyboardFocused ->\n                    { attributes =\n                        [ Attributes.class \"selectize__item\"\n                        , Attributes.classList\n                            [ ( \"selectize__item--mouse-selected\"\n                              , mouseFocused\n                              )\n                            , ( \"selectize__item--key-selected\"\n                              , keyboardFocused\n                              )\n                            ]\n                        ]\n                    , children =\n                        [ Html.text\n                            (tree.name ++ \" - \" ++ tree.latinName)\n                        ]\n                    }\n            , divider =\n                \\title ->\n                    { attributes =\n                        [ Attributes.class \"selectize__divider\" ]\n                    , children =\n                        [ Html.text title ]\n                    }\n            , input = styledInput\n            }\n\nand an input given by, for example,\n\n    styledInput : Selectize.Input Tree\n    styledInput =\n        Selectize.autocomplete <|\n            { attrs =\n                \\sthSelected open ->\n                    [ Attributes.class \"selectize__textfield\"\n                    , Attributes.classList\n                        [ ( \"selectize__textfield--selection\", sthSelected )\n                        , ( \"selectize__textfield--no-selection\", not sthSelected )\n                        , ( \"selectize__textfield--menu-open\", open )\n                        ]\n                    ]\n            , toggleButton =\n                Just <|\n                    \\open ->\n                        Html.i\n                            [ Attributes.class \"material-icons\"\n                            , Attributes.class \"selectize__icon\"\n                            ]\n                            [ if open then\n                                Html.text \"arrow_drop_up\"\n                              else\n                                Html.text \"arrow_drop_down\"\n                            ]\n            , clearButton = Nothing\n            , placeholder = \"Select a Tree\"\n            }\n\n\n# Types\n\n@docs State, closed, Entry, entry, divider\n\n\n# Update\n\n@docs Msg, update\n\n\n# View\n\n@docs view, ViewConfig, viewConfig, HtmlDetails, Input, simple, autocomplete\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Entry",
+                "comment": " Each entry of the menu has to be wrapped in this type. We need this,\nas an entry can either be selectable (and therefore also focusable) or\nnot. You can construct these using `entry` and `divider`.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "Selectize.Selectize.Entry a"
+            },
+            {
+                "name": "HtmlDetails",
+                "comment": " `entry` and `divider` should return this.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ attributes : List.List (Html.Attribute msg), children : List.List (Html.Html msg) }"
+            },
+            {
+                "name": "Input",
+                "comment": " You have to choose an `Input` in your view configuration. This\ndecides if you have a simple dropdown or an autocompletion version.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "Selectize.Selectize.Input a"
+            },
+            {
+                "name": "Msg",
+                "comment": " The dropdown menu produces these messages.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "Selectize.Selectize.Msg a"
+            },
+            {
+                "name": "State",
+                "comment": " The internal state of the dropdown menu. This lives in your model.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "Selectize.Selectize.State a"
+            },
+            {
+                "name": "ViewConfig",
+                "comment": " The configuration for `Selectize.view`.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "Selectize.Selectize.ViewConfig a"
+            }
+        ],
+        "values": [
+            {
+                "name": "autocomplete",
+                "comment": " An input for an autocompletion dropdown.\n\n  - `attrs = \\sthSelected open -> [ ... ]` is used to style the actual\n    textfield (You probably need to overwrite the placeholder styling,\n    see the source code of the demo for an example stylesheet.)\n  - you can style optional buttons via `toggleButton` and `clearButton`,\n    for example `toggleButton = Just (\\open -> Html.div [ ... ] [ ... ])`\n  - tell us the `placeholder` if the selection is empty\n\n",
+                "type": "{ attrs : Basics.Bool -> Basics.Bool -> List.List (Html.Attribute Basics.Never), toggleButton : Maybe.Maybe (Basics.Bool -> Html.Html Basics.Never), clearButton : Maybe.Maybe (Html.Html Basics.Never), placeholder : String.String } -> Selectize.Input a"
+            },
+            {
+                "name": "closed",
+                "comment": " Use this function to initialize your dropdown menu, for example by\n\n    menu =\n        Selectize.closed \"unique-menu-id\"\n            entryToLabel\n            entries\n\nIt will have the provided entries and be closed. The provided id should\nbe unique. If for some reason the entries change, just reinstantiate\nyour dropdown state with this function.\n\n",
+                "type": "String.String -> (a -> String.String) -> List.List (Selectize.Entry a) -> Selectize.State a"
+            },
+            {
+                "name": "divider",
+                "comment": " Create a divider, which can neither be selected nor focused. It\nis therefore skipped while traversing the list via up/down keys.\n",
+                "type": "String.String -> Selectize.Entry a"
+            },
+            {
+                "name": "entry",
+                "comment": " Create a selectable `Entry a`.\n",
+                "type": "a -> Selectize.Entry a"
+            },
+            {
+                "name": "simple",
+                "comment": " An input for displaying a simple dropdown.\n\n  - `attrs = \\sthSelected open -> [ ... ]` is used to style the actual\n    button\n  - you can style optional buttons via `toggleButton` and `clearButton`,\n    for example `toggleButton = Just (\\open -> Html.div [ ... ] [ ... ])`\n  - tell us the `placeholder` if the selection is empty\n\n",
+                "type": "{ attrs : Basics.Bool -> Basics.Bool -> List.List (Html.Attribute Basics.Never), toggleButton : Maybe.Maybe (Basics.Bool -> Html.Html Basics.Never), clearButton : Maybe.Maybe (Html.Html Basics.Never), placeholder : String.String } -> Selectize.Input a"
+            },
+            {
+                "name": "update",
+                "comment": " The dropdown's update function. Take a look at the beginning of this\nmodule documentation to see what boilerplate is needed in your main\nupdate.\n",
+                "type": "(Maybe.Maybe a -> msg) -> Maybe.Maybe a -> Selectize.State a -> Selectize.Msg a -> ( Selectize.State a, Platform.Cmd.Cmd (Selectize.Msg a), Maybe.Maybe msg )"
+            },
+            {
+                "name": "view",
+                "comment": " The dropdown's view function. You have to provide the current\nselection (along with the configuration and the its actual state).\n",
+                "type": "Selectize.ViewConfig a -> Maybe.Maybe a -> Selectize.State a -> Html.Html (Selectize.Msg a)"
+            },
+            {
+                "name": "viewConfig",
+                "comment": " Create the view configuration, for example\n\n    viewConfig : Selectize.ViewConfig String\n    viewConfig =\n        Selectize.viewConfig\n            { container = [ ... ]\n            , menu = [ ... ]\n            , ul = [ ... ]\n            , entry =\n                \\entry mouseFocused keyboardFocused ->\n                    { attributes = ...\n                    , children = ...\n                    }\n            , divider =\n                \\title ->\n                    { attributes = ...\n                    , children = ...\n                    }\n            , input = someInput\n            }\n\n  - `container`, `menu`, `ul`, `entry` and `divider` can be\n    used to style the different parts of the dropdown view, c.f. the\n    modul documentation for an example.\n  - with `input` you can choose if you want autocompletion or just\n    a simple dropdown menu, you can choose for example\n    `Selectize.simple` or `Selectize.autocomplete`.\n\n",
+                "type": "{ container : List.List (Html.Attribute Basics.Never), menu : List.List (Html.Attribute Basics.Never), ul : List.List (Html.Attribute Basics.Never), entry : a -> Basics.Bool -> Basics.Bool -> Selectize.HtmlDetails Basics.Never, divider : String.String -> Selectize.HtmlDetails Basics.Never, input : Selectize.Input a } -> Selectize.ViewConfig a"
+            }
+        ],
+        "binops": []
+    }
+]

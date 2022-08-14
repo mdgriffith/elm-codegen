@@ -1,0 +1,130 @@
+[
+    {
+        "name": "TriangularMesh",
+        "comment": " This module provides functions for working with indexed triangular meshes.\nYou can:\n\n  - Construct meshes from vertices and face indices\n  - Extract vertices, faces and edges in various ways\n  - Combine multiple meshes into a single mesh\n\n@docs TriangularMesh\n\n\n# Constants\n\n@docs empty\n\n\n# Constructors\n\n@docs indexed, triangles, fan, radial, strip, grid\n\n\n## Special grids\n\nThese functions work similarly to `grid` but let you construct shapes like\ncylindrical tubes, spheres or toruses, where some edges of the grid 'wrap\naround' and join up with other edges. For example, a cylindrical tube (a\ncylinder without ends) can be thought of as a piece of paper curled around so\nthat one edge touches the other.\n\nThese functions ensure that in cases like a cylindrical tube, there's actually\nonly _one_ set of vertices along the shared edge that is then referenced by the\nfaces on either side. Roughly speaking, this is the difference between a\npolyline where the last vertex happens to be the same as the first (and so looks\nlike a closed polygon, but isn't actually connected) and a proper polygon where\nthe last vertex is actually connected back to the first.\n\nNote that these functions _can_ be used to create meshes that represent actual\ncylinders, spheres, and toruses, but they can also be used to make any mesh that\nis [topologically](https://en.wikipedia.org/wiki/Topology) equivalent to one of\nthose. For example, the `ball` function can be used to create meshes for both\nspheres and [ellipsoids](https://en.wikipedia.org/wiki/Ellipsoid).\n\n@docs tube, ring, ball\n\n\n## Indexed grids\n\nThese functions work like their non-`indexed` versions, but the function gets\npassed the _indices_ of individual vertices instead of their parameter values.\nFor example, given some function `f` that creates vertices,\n\n    TriangularMesh.indexedGrid 3 2 f\n\nwill produce a mesh like this:\n\n![Rectangular mesh](https://ianmackenzie.github.io/elm-triangular-mesh/1.1.0/indexedGrid.png)\n\n@docs indexedGrid, indexedTube, indexedRing, indexedBall\n\n\n# Combining meshes\n\n@docs combine\n\n\n# Properties\n\n@docs vertices, vertex, faceIndices, faceVertices, edgeIndices, edgeVertices\n\n\n# Transformations\n\n@docs mapVertices\n\n",
+        "unions": [
+            {
+                "name": "TriangularMesh",
+                "comment": " A `TriangularMesh` is a simple form of [face-vertex mesh](https://en.wikipedia.org/wiki/Polygon_mesh#Face-vertex_meshes)\ndefined by an array of vertices and a list of face indices. Each set of face\nindices consists of a tuple of three integer vertex indices.\n\nThe vertices themselves can be any type you want. For a 2D mesh, you might have\neach vertex be simply a point:\n\n    type alias Mesh2d =\n        TriangularMesh Point2d\n\nFor a 3D mesh, each vertex might be a (point, normal) tuple:\n\n    type alias Mesh3d =\n        TriangularMesh ( Point3d, Vector3d )\n\nIn more complex cases, each vertex might be a record:\n\n    type alias VertexData =\n        { position : Point3d\n        , normal : Vector3d\n        , color : Color\n        }\n\n    type alias RenderMesh =\n        TriangularMesh VertexData\n\n",
+                "args": [
+                    "vertex"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "ball",
+                "comment": " Construct a mesh that is topologically equivalent to a sphere; the\nresulting mesh will have the basic sphere structure as shown [here](http://www.songho.ca/opengl/gl_sphere.html)\nwith U corresponding to Θ and V corresponding to Φ (with V=0 meaning the bottom\npoint on the sphere or 'south pole' and V=1 meaning the top point on the\nsphere or 'north pole').\n",
+                "type": "Basics.Int -> Basics.Int -> (Basics.Float -> Basics.Float -> vertex) -> TriangularMesh.TriangularMesh vertex"
+            },
+            {
+                "name": "combine",
+                "comment": " Combine a list of meshes into a single mesh. This concatenates the vertex\narrays of each mesh and adjusts face indices to refer to the combined vertex\narray.\n\n    square =\n        TriangularMesh.with\n            { vertices = Array.fromList [ a, b, c, d ]\n            , faceIndices = [ ( 0, 1, 2 ), ( 0, 2, 3 ) ]\n            }\n\n    triangle =\n        TriangularMesh.with\n            { vertices = Array.fromList [ e, f, g ]\n            , faceIndices = [ ( 0, 1, 2 ) ]\n            }\n\n    TriangularMesh.combine [ square, triangle ]\n    --> TriangularMesh.with\n    -->     { vertices =\n    -->         Array.fromList [ a, b, c, d, e, f, g ]\n    -->     , faceIndices =\n    -->         [ ( 0, 1, 2 )\n    -->         , ( 0, 2, 3 )\n    -->         , ( 4, 5, 6 )\n    -->         ]\n    -->     }\n\n    TriangularMesh.combine [ triangle, square ]\n    --> TriangularMesh.with\n    -->     { vertices =\n    -->         Array.fromList [ e, f, g, a, b, c, d ]\n    -->     , faceIndices =\n    -->         [ ( 0, 1, 2 )\n    -->         , ( 3, 4, 5 )\n    -->         , ( 3, 5, 6 )\n    -->         ]\n    -->     }\n\n",
+                "type": "List.List (TriangularMesh.TriangularMesh a) -> TriangularMesh.TriangularMesh a"
+            },
+            {
+                "name": "edgeIndices",
+                "comment": " Get all of the edges of a mesh as pairs of vertex indices. Each edge will\nonly be returned once, with the lower-index vertex listed first, and will be\nreturned in sorted order.\n\n    TriangularMesh.edgeIndices square\n    --> [ ( 0, 1 )\n    --> , ( 0, 2 )\n    --> , ( 0, 3 )\n    --> , ( 1, 2 )\n    --> , ( 2, 3 )\n    --> ]\n\n",
+                "type": "TriangularMesh.TriangularMesh vertex -> List.List ( Basics.Int, Basics.Int )"
+            },
+            {
+                "name": "edgeVertices",
+                "comment": " Get all of the edges of a mesh as pairs of vertices. Each edge will only be\nreturned once, with the lower-index vertex listed first, and will be returned in\nsorted order.\n\n    TriangularMesh.edgeVertices square\n    --> [ ( a, b )\n    --> , ( a, c )\n    --> , ( a, d )\n    --> , ( b, c )\n    --> , ( c, d )\n    --> ]\n\n",
+                "type": "TriangularMesh.TriangularMesh vertex -> List.List ( vertex, vertex )"
+            },
+            {
+                "name": "empty",
+                "comment": " A mesh with no vertices or faces.\n",
+                "type": "TriangularMesh.TriangularMesh vertex"
+            },
+            {
+                "name": "faceIndices",
+                "comment": " Get the faces of a mesh as triples of vertex indices.\n\n    TriangularMesh.faceIndices square\n    --> [ ( 0, 1, 2 ), ( 0, 2, 3 ) ]\n\n",
+                "type": "TriangularMesh.TriangularMesh vertex -> List.List ( Basics.Int, Basics.Int, Basics.Int )"
+            },
+            {
+                "name": "faceVertices",
+                "comment": " Get the faces of a mesh as triples of vertices.\n\n    TriangularMesh.faceVertices square\n    --> [ ( a, b, c ), ( a, c, d ) ]\n\n",
+                "type": "TriangularMesh.TriangularMesh vertex -> List.List ( vertex, vertex, vertex )"
+            },
+            {
+                "name": "fan",
+                "comment": " Create a fan-shaped mesh from the first given vertex to all vertices in the\ngiven list. If the given list is empty or has only one element, then an empty\nmesh is returned. Otherwise, the first face will be from the first given vertex\nto the first and second list vertices, the second face will be from the first\ngiven vertex to the second and third list vertices, etc.\n\n    mesh =\n        TriangularMesh.fan a [ b, c, d, e ]\n\n    TriangularMesh.vertices mesh\n    --> Array.fromList [ a, b, c, d, e ]\n\n    TriangularMesh.faceVertices mesh\n    --> [ ( a, b, c ), ( a, c, d ), ( a, d, e ) ]\n\n",
+                "type": "vertex -> List.List vertex -> TriangularMesh.TriangularMesh vertex"
+            },
+            {
+                "name": "grid",
+                "comment": " Construct a mesh in the form of a rectangular grid. This is useful for\nconstructing things like terrain meshes given a height function, or a\n[parametric surface](https://services.math.duke.edu/education/ccp/materials/mvcalc/parasurfs/para1.html)\ngiven a function that computes a 3D point (and perhaps a normal vector) from\nU and V parameter values.\n\nThe arguments are the number of steps to take in the U and V directions, and a\nfunction that takes U and V values (which each range between 0 and 1) and\nreturns some sort of vertex value. A mesh will then be constructed will all\nvertices correctly connected to each other. For example, given some function `f`\nthat creates vertices,\n\n    TriangularMesh.grid 3 2 f\n\nwill produce a mesh like this:\n\n![Rectangular mesh](https://ianmackenzie.github.io/elm-triangular-mesh/1.1.0/grid.png)\n\n",
+                "type": "Basics.Int -> Basics.Int -> (Basics.Float -> Basics.Float -> vertex) -> TriangularMesh.TriangularMesh vertex"
+            },
+            {
+                "name": "indexed",
+                "comment": " Create a mesh from an array of vertices and list of face indices. For\nexample, to construct a square where `a` is the lower left corner, `b` is the\nlower right corner, `c` is the upper right corner and `d` is the upper left\ncorner:\n\n![Square mesh](https://ianmackenzie.github.io/elm-triangular-mesh/1.0.1/TriangularMesh/square.svg)\n\n    vertices =\n        Array.fromList [ a, b, c, d ]\n\n    faceIndices =\n        [ ( 0, 1, 2 ), ( 0, 2, 3 ) ]\n\n    square =\n        TriangularMesh.indexed vertices faceIndices\n\nInvalid face indices (triples where any one of the three indices is out of\nbounds) will be dropped.\n\n",
+                "type": "Array.Array vertex -> List.List ( Basics.Int, Basics.Int, Basics.Int ) -> TriangularMesh.TriangularMesh vertex"
+            },
+            {
+                "name": "indexedBall",
+                "comment": " ",
+                "type": "Basics.Int -> Basics.Int -> (Basics.Int -> Basics.Int -> vertex) -> TriangularMesh.TriangularMesh vertex"
+            },
+            {
+                "name": "indexedGrid",
+                "comment": " ",
+                "type": "Basics.Int -> Basics.Int -> (Basics.Int -> Basics.Int -> vertex) -> TriangularMesh.TriangularMesh vertex"
+            },
+            {
+                "name": "indexedRing",
+                "comment": " ",
+                "type": "Basics.Int -> Basics.Int -> (Basics.Int -> Basics.Int -> vertex) -> TriangularMesh.TriangularMesh vertex"
+            },
+            {
+                "name": "indexedTube",
+                "comment": " ",
+                "type": "Basics.Int -> Basics.Int -> (Basics.Int -> Basics.Int -> vertex) -> TriangularMesh.TriangularMesh vertex"
+            },
+            {
+                "name": "mapVertices",
+                "comment": " Transform a mesh by applying the given function to each of its vertices. For\nexample, if you had a 2D mesh where each vertex was an `( x, y )` tuple and you\nwanted to convert it to a 3D mesh on the XY plane, you might use\n\n    mesh2d : TriangularMesh ( Float, Float )\n    mesh2d =\n        ...\n\n    to3d : ( Float, Float ) -> ( Float, Float, Float )\n    to3d ( x, y ) =\n        ( x, y, 0 )\n\n    mesh3d : TriangularMesh ( Float, Float, Float )\n    mesh3d =\n        TriangularMesh.mapVertices to3d mesh2d\n\n",
+                "type": "(a -> b) -> TriangularMesh.TriangularMesh a -> TriangularMesh.TriangularMesh b"
+            },
+            {
+                "name": "radial",
+                "comment": " Like `fan`, but also connect the last vertex in the list back to the first.\nThis can be useful to create cones or cone-like shapes with a tip vertex\nconnected to a closed loop of other vertices.\n\n    mesh =\n        TriangularMesh.radial a [ b, c, d, e ]\n\n    TriangularMesh.vertices mesh\n    --> Array.fromList [ a, b, c, d, e ]\n\n    TriangularMesh.faceVertices mesh\n    --> [ ( a, b, c )\n    --> , ( a, c, d )\n    --> , ( a, d, e )\n    --> , ( a, e, b )\n    --> ]\n\n",
+                "type": "vertex -> List.List vertex -> TriangularMesh.TriangularMesh vertex"
+            },
+            {
+                "name": "ring",
+                "comment": " Construct a mesh that is topologically equivalent to a [torus](https://en.wikipedia.org/wiki/Torus).\nThis is similar to `tube` except that the mesh wraps in both the U _and_ V\ndirections.\n",
+                "type": "Basics.Int -> Basics.Int -> (Basics.Float -> Basics.Float -> vertex) -> TriangularMesh.TriangularMesh vertex"
+            },
+            {
+                "name": "strip",
+                "comment": " Create a strip-shaped mesh between two lists of vertices. The two lists\nshould be the same length; if one list is longer, the extra vertices will be\ndropped. To get triangles with counterclockwise winding order, the second list\nshould be to the left of the first; for example, for two left-to-right vertex\nlists, the second should be above the first.\n\n    mesh =\n        TriangularMesh.strip [ a, b, c ] [ d, e, f ]\n\n    TriangularMesh.faceVertices mesh\n    --> [ ( a, b, e )\n    --> , ( a, e, d )\n    --> , ( b, c, f )\n    --> , ( b, f, e )\n    --> ]\n\n",
+                "type": "List.List vertex -> List.List vertex -> TriangularMesh.TriangularMesh vertex"
+            },
+            {
+                "name": "triangles",
+                "comment": " Create a mesh from a list of triangular faces, where each face is given as a\ntuple of three vertices. Note that this will not perform any kind of vertex\ndeduplication, so if any vertices are shared between different triangles then\nthey will occur more than once in the resulting mesh's vertex array.\n\n    mesh =\n        TriangularMesh.triangles [ ( a, b, c ), ( a, c, d ) ]\n\n    TriangularMesh.vertices mesh\n    --> Array.fromList [ a, b, c, a, c, d ]\n\n    Array.faceIndices mesh\n    --> [ ( 0, 1, 2 ), ( 3, 4, 5 ) ]\n\n",
+                "type": "List.List ( vertex, vertex, vertex ) -> TriangularMesh.TriangularMesh vertex"
+            },
+            {
+                "name": "tube",
+                "comment": " Construct a mesh that is topologically equivalent to a cylinder, where the\nU parameter value is along the axis of the sphere and the V parameter value is\naround the circumference. The mesh will wrap in the V direction, so the provided\nfunction will never be called with V=1; instead, the last vertices in the V\ndirection will connect back to the first ones.\n\nIf you wanted to construct a 5 meter long, 2 meter radius cylindrical mesh along\nthe X axis, you might do something like\n\n    import TriangularMesh\n\n    TriangularMesh.tube 1 72 <|\n        \\u v ->\n            let\n                theta =\n                    2 * pi * v\n            in\n            { x = 5 * u\n            , y = 2 * sin theta\n            , z = 2 * cos theta\n            }\n\n",
+                "type": "Basics.Int -> Basics.Int -> (Basics.Float -> Basics.Float -> vertex) -> TriangularMesh.TriangularMesh vertex"
+            },
+            {
+                "name": "vertex",
+                "comment": " Get a particular vertex of a mesh by index. If the index is out of range,\nreturns `Nothing`.\n\n    TriangularMesh.vertex 1 square\n    --> Just b\n\n    TriangularMesh.vertex 4 square\n    --> Nothing\n\n",
+                "type": "Basics.Int -> TriangularMesh.TriangularMesh vertex -> Maybe.Maybe vertex"
+            },
+            {
+                "name": "vertices",
+                "comment": " Get the vertices of a mesh.\n\n    TriangularMesh.vertices square\n    --> Array.fromList [ a, b, c, d ]\n\n",
+                "type": "TriangularMesh.TriangularMesh vertex -> Array.Array vertex"
+            }
+        ],
+        "binops": []
+    }
+]

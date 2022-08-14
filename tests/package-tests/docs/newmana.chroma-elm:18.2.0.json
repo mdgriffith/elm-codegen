@@ -1,0 +1,2343 @@
+[
+    {
+        "name": "Chroma.Blend",
+        "comment": " [Blend Modes](https://en.wikipedia.org/wiki/Blend_modes) define how to combine two layers.\n\n\n# Definition\n\n@docs blend, BlendMode\n\n",
+        "unions": [
+            {
+                "name": "BlendMode",
+                "comment": " TBD\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Normal",
+                        []
+                    ],
+                    [
+                        "Multiply",
+                        []
+                    ],
+                    [
+                        "Darken",
+                        []
+                    ],
+                    [
+                        "Lighten",
+                        []
+                    ],
+                    [
+                        "Screen",
+                        []
+                    ],
+                    [
+                        "Overlay",
+                        []
+                    ],
+                    [
+                        "Burn",
+                        []
+                    ],
+                    [
+                        "Dodge",
+                        []
+                    ],
+                    [
+                        "Exclusion",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "blend",
+                "comment": " TBD\n",
+                "type": "Chroma.Blend.BlendMode -> Chroma.Types.ExtColor -> Chroma.Types.ExtColor -> Chroma.Types.ExtColor"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chroma.Chroma",
+        "comment": " The attempt here is to provide something similar to [Chroma.js](https://gka.github.io/chroma.js/) but also\nhas more features and is idiomatic Elm.\n\n\n# Color\n\n@docs chroma, name, mix, mixChroma, average, averageChroma, blend, blendChroma, contrast, contrastChroma, distance, distance255, limits\n\n\n# Color Scales\n\n@docs scale, scaleF, colors, colorsF, domain, domainF, classes, padding, paddingBoth\n\n\n# Color Scales Helpers\n\n@docs scaleDefault, scaleWith, colorsWith, domainWith, classesWithArray, paddingWith, paddingBothWith\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "average",
+                "comment": " Find the average of a non-empty list of colors, first converting them to the same color space.\n\nOnly supports RGBA, CYMK and LAB.\n\n    Chroma.average Types.RGBA (Nonempty.Nonempty (Types.RGBAColor W3CX11.red) [(Types.RGBAColor W3CX11.blue)])\n    --> Ok (RGBAColor (RgbaSpace 0.5 0 0.5 1)) : Result String Types.ExtColor\n\n",
+                "type": "Chroma.Types.Mode -> List.Nonempty.Nonempty Chroma.Types.ExtColor -> Result.Result String.String Chroma.Types.ExtColor"
+            },
+            {
+                "name": "averageChroma",
+                "comment": " Find the average of a non-empty list of colors defined as strings, first converting them to the same color space.\n\nOnly supports RGBA, CYMK and LAB.\n\n    Chroma.averageChroma Types.RGBA (Nonempty.Nonempty \"red\" [\"blue\"])\n    --> Ok (RGBAColor (RgbaSpace 0.5 0 0.5 1)) : Result String Types.ExtColor\n\n",
+                "type": "Chroma.Types.Mode -> List.Nonempty.Nonempty String.String -> Result.Result String.String Chroma.Types.ExtColor"
+            },
+            {
+                "name": "blend",
+                "comment": " Combine two colors using the given blend modes.\n\n    Chroma.blend Blend.Burn (Types.RGBAColor W3CX11.red) (Types.RGBAColor W3CX11.blue)\n    --> RGBAColor (RgbaSpace 0 0 1 1) : Types.ExtColor\n\n",
+                "type": "Chroma.Blend.BlendMode -> Chroma.Types.ExtColor -> Chroma.Types.ExtColor -> Chroma.Types.ExtColor"
+            },
+            {
+                "name": "blendChroma",
+                "comment": " Combine two colors, defined as strings, using the given blend modes.\n\n    Chroma.blendChroma Blend.Darken \"cyan\" \"magenta\"\n    --> Ok (RGBAColor (RgbaSpace 0 0 1 1)) : Result String Types.ExtColor\n\n",
+                "type": "Chroma.Blend.BlendMode -> String.String -> String.String -> Result.Result String.String Chroma.Types.ExtColor"
+            },
+            {
+                "name": "chroma",
+                "comment": " Given a valid hex string (8, 6 or 3) or [`W3CX11 Color`][w3cx11] name and produce an RGB Color.\n\n    Chroma.chroma \"magenta\"\n    --> Ok (RGBAColor (RgbaSpace 1 0 1 1)) : Result String Types.ExtColor\n\n    Chroma.chroma \"#c0c0c0\"\n    --> Ok (RGBAColor (RgbaSpace 0.7529411764705882 0.7529411764705882 0.7529411764705882 1)) : Result String Types.ExtColor\n\n[w3cx11]: Chroma-Colors-W3CX11\n\n",
+                "type": "String.String -> Result.Result String.String Chroma.Types.ExtColor"
+            },
+            {
+                "name": "classes",
+                "comment": " Return a new configuration and a function from a float to a color using the default configuration, the given\ncolors and the total number of colors (bins) to return.\n",
+                "type": "Basics.Int -> Chroma.Scale.Data -> ( Chroma.Scale.Data, Basics.Float -> Chroma.Types.ExtColor )"
+            },
+            {
+                "name": "classesWithArray",
+                "comment": " Return a new configuration and a function from a float to a color based on the given configuration values, the given\ncolors and a predefined set of breaks/classes.\n",
+                "type": "List.Nonempty.Nonempty Basics.Float -> Chroma.Scale.Data -> ( Chroma.Scale.Data, Basics.Float -> Chroma.Types.ExtColor )"
+            },
+            {
+                "name": "colors",
+                "comment": " Return a configuration and a list of colors based on the number of equal distance buckets to create and a\nlist of colors.\n",
+                "type": "Basics.Int -> List.Nonempty.Nonempty Chroma.Types.ExtColor -> ( Chroma.Scale.Data, List.Nonempty.Nonempty Chroma.Types.ExtColor )"
+            },
+            {
+                "name": "colorsF",
+                "comment": " Return a configuration and a list of colors based on the number of equal distance buckets to create\nand a function given a value from 0 -> 1 produces a new color.\n",
+                "type": "Basics.Int -> (Basics.Float -> Chroma.Types.ExtColor) -> ( Chroma.Scale.Data, List.Nonempty.Nonempty Chroma.Types.ExtColor )"
+            },
+            {
+                "name": "colorsWith",
+                "comment": " Return the data with the given colors and a new list of colors.\n",
+                "type": "Chroma.Scale.Data -> Basics.Int -> ( Chroma.Scale.Data, List.Nonempty.Nonempty Chroma.Types.ExtColor )"
+            },
+            {
+                "name": "contrast",
+                "comment": " [`WCGA contrast`](https://www.w3.org/TR/WCAG20-TECHS/) ratio between two colors.\n\n    Chroma.contrast (Types.RGBAColor W3CX11.pink) (Types.RGBAColor W3CX11.hotpink)\n    --> 1.7214765344592284 : Float\n\n",
+                "type": "Chroma.Types.ExtColor -> Chroma.Types.ExtColor -> Basics.Float"
+            },
+            {
+                "name": "contrastChroma",
+                "comment": " [`WCGA contrast`](https://www.w3.org/TR/WCAG20-TECHS/) ratio between two colors.\n\n    Chroma.contrastChroma \"pink\" \"hotpink\"\n    --> Ok 1.7214765344592284 : Result String Float\n\n",
+                "type": "String.String -> String.String -> Result.Result String.String Basics.Float"
+            },
+            {
+                "name": "distance",
+                "comment": " Calculate the distance for a given color space.\n\n    Chroma.distance Types.RGBA (Types.RGBAColor W3CX11.red) (Types.RGBAColor W3CX11.blue)\n    --> 1.4142135623730951 : Float\n\n",
+                "type": "Chroma.Types.Mode -> Chroma.Types.ExtColor -> Chroma.Types.ExtColor -> Basics.Float"
+            },
+            {
+                "name": "distance255",
+                "comment": " Calculate the distance in RGB 255 color space.\n\n    Chroma.distance255 (Types.RGBAColor W3CX11.red) (Types.RGBAColor W3CX11.blue)\n    --> 360.62445840513925 : Float\n\n",
+                "type": "Chroma.Types.ExtColor -> Chroma.Types.ExtColor -> Basics.Float"
+            },
+            {
+                "name": "domain",
+                "comment": " Return a new configuration and a function from a float to a color based on a new domain and list of colors.\nThe list of colors must be the same length as the domain or only the first and last values will be used.\n",
+                "type": "List.Nonempty.Nonempty Basics.Float -> List.Nonempty.Nonempty Chroma.Types.ExtColor -> ( Chroma.Scale.Data, Basics.Float -> Chroma.Types.ExtColor )"
+            },
+            {
+                "name": "domainF",
+                "comment": " Return a new configuration and a function from a float to a color based on a new domain and a function given a\nvalue from 0 -> 1 produces a new color.\n",
+                "type": "List.Nonempty.Nonempty Basics.Float -> (Basics.Float -> Chroma.Types.ExtColor) -> ( Chroma.Scale.Data, Basics.Float -> Chroma.Types.ExtColor )"
+            },
+            {
+                "name": "domainWith",
+                "comment": " Return a new configuration and a function from a float to a color based on an existing configuration and a new\ndomain. If using a list of colors, they must be the same length as the domain or only the first and last values will\nbe used.\n",
+                "type": "Chroma.Scale.Data -> List.Nonempty.Nonempty Basics.Float -> ( Chroma.Scale.Data, Basics.Float -> Chroma.Types.ExtColor )"
+            },
+            {
+                "name": "limits",
+                "comment": " Create breaks/classes based on the data given.\n\nSupports: CkMeans (a variant of kmeans), Equal, Head/Tail, Jenks, Logarithmic, and Quantile.\n\n    Chroma.limits Limits.Equal 5 (Nonempty.Nonempty 0 [ 10 ])\n    --> Nonempty 0 [2,4,6,8,10] : Nonempty.Nonempty Float\n\n    Chroma.limits Limits.CkMeans 3 (Nonempty.Nonempty 1 [ 2, 1, 4, 3, 5, 2, 5, 4 ])\n    --> Nonempty 1 [2,4] : Nonempty.Nonempty Float\n\n",
+                "type": "Chroma.Limits.Limits.LimitMode -> Basics.Int -> List.Nonempty.Nonempty Basics.Float -> List.Nonempty.Nonempty Basics.Float"
+            },
+            {
+                "name": "mix",
+                "comment": " Mix two colors, first converting them to the same color space and then interpolate them with the given ratio.\n\n    Chroma.mix Types.RGBA 0.25 (Types.RGBAColor W3CX11.red) (Types.RGBAColor W3CX11.blue)\n    --> RGBAColor (RgbaSpace 0.75 0 0.25 1) : Types.ExtColor\n\n",
+                "type": "Chroma.Types.Mode -> Basics.Float -> Chroma.Types.ExtColor -> Chroma.Types.ExtColor -> Chroma.Types.ExtColor"
+            },
+            {
+                "name": "mixChroma",
+                "comment": " Mix two colors defined as a string, first converting them to the same color space mode and then interpolate\nwith the given ratio.\n\n    Chroma.mixChroma Types.RGBA 0.25 \"red\" \"blue\"\n    --> Ok (RGBAColor (RgbaSpace 0.75 0 0.25 1)) : Result String Types.ExtColor\n\n",
+                "type": "Chroma.Types.Mode -> Basics.Float -> String.String -> String.String -> Result.Result String.String Chroma.Types.ExtColor"
+            },
+            {
+                "name": "name",
+                "comment": " Given a color turn it into a [`W3CX11 Color`][w3cx11] name or fall back to an RGB string.\n\n    Types.RGBAColor (Color.rgb255 255 0 255) |> Chroma.name\n    --> Ok \"magenta\" : Result String String\n\n[w3cx11]: Chroma-Colors-W3CX11\n\n",
+                "type": "Chroma.Types.ExtColor -> Result.Result String.String String.String"
+            },
+            {
+                "name": "padding",
+                "comment": " Remove a fraction of the color gradient (0 -> 1). Applies to both sides equally.\n",
+                "type": "Basics.Float -> List.Nonempty.Nonempty Chroma.Types.ExtColor -> ( Chroma.Scale.Data, Basics.Float -> Chroma.Types.ExtColor )"
+            },
+            {
+                "name": "paddingBoth",
+                "comment": " Remove a fraction of the color gradient (0 -> 1).\n",
+                "type": "( Basics.Float, Basics.Float ) -> List.Nonempty.Nonempty Chroma.Types.ExtColor -> ( Chroma.Scale.Data, Basics.Float -> Chroma.Types.ExtColor )"
+            },
+            {
+                "name": "paddingBothWith",
+                "comment": " Remove a fraction of the color gradient (0 -> 1).\n",
+                "type": "Chroma.Scale.Data -> ( Basics.Float, Basics.Float ) -> ( Chroma.Scale.Data, Basics.Float -> Chroma.Types.ExtColor )"
+            },
+            {
+                "name": "paddingWith",
+                "comment": " Remove a fraction of the color gradient (0 -> 1). Applies both sides equally.\n",
+                "type": "Chroma.Scale.Data -> Basics.Float -> ( Chroma.Scale.Data, Basics.Float -> Chroma.Types.ExtColor )"
+            },
+            {
+                "name": "scale",
+                "comment": " Return a configuration and a function from a float to a color based on default values and a list of colors.\n",
+                "type": "List.Nonempty.Nonempty Chroma.Types.ExtColor -> ( Chroma.Scale.Data, Basics.Float -> Chroma.Types.ExtColor )"
+            },
+            {
+                "name": "scaleDefault",
+                "comment": " Return a configuration and a function from a float to a color based on the default values - colors White to Black,\ndomain 0 - 1.\n",
+                "type": "( Chroma.Scale.Data, Basics.Float -> Chroma.Types.ExtColor )"
+            },
+            {
+                "name": "scaleF",
+                "comment": " Return a configuration and a function from a float to a color based on default values and a function given a\nvalue from 0 -> 1 produces a new color.\n",
+                "type": "(Basics.Float -> Chroma.Types.ExtColor) -> ( Chroma.Scale.Data, Basics.Float -> Chroma.Types.ExtColor )"
+            },
+            {
+                "name": "scaleWith",
+                "comment": " Return a new configuration and a function from a float to a color based on the given configuration values and\nthe given colors.\n",
+                "type": "Chroma.Scale.Data -> ( Chroma.Scale.Data, Basics.Float -> Chroma.Types.ExtColor )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chroma.Colors.Adobe",
+        "comment": " [Color for data visualization](https://spectrum.adobe.com/page/color-for-data-visualization/)\n\n\n# Sequential Multi-hue Color Map\n\n@docs rose, cerulean, forest\n\n\n# Qualitative Color Ramp\n\n@docs color6, color12\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "cerulean",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "color12",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "color6",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "forest",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "rose",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chroma.Colors.Brewer",
+        "comment": " [Colorbrewer 2.0 Colors](http://colorbrewer2.org/)\n\n\n# Sequential Multi-hue Color Map\n\n@docs buGn, buPu, gnBu, orRd, puBu, puBuGn, puRd, rdPu, ylGn, ylGnBu, ylOrBr, ylOrRd\n\n\n# Sequential Single Color Map\n\n@docs blues, greens, greys, oranges, purples, reds\n\n\n# Diverging Color Ramp\n\n@docs brBG, piYG, pRGn, puOr, rdBu, rdGy, rdYlBu, rdYlGn, spectral\n\n\n# Qualitative Color Ramp\n\n@docs accent, dark2, paired, pastel1, pastel2, set1, set2, set3\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "accent",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "blues",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "brBG",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "buGn",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "buPu",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "dark2",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "gnBu",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "greens",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "greys",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "orRd",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "oranges",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "pRGn",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "paired",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "pastel1",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "pastel2",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "piYG",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "puBu",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "puBuGn",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "puOr",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "puRd",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "purples",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "rdBu",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "rdGy",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "rdPu",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "rdYlBu",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "rdYlGn",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "reds",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "set1",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "set2",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "set3",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "spectral",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "ylGn",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "ylGnBu",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "ylOrBr",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "ylOrRd",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chroma.Colors.Cividis",
+        "comment": " [Cividis](https://github.com/marcosci/cividis)\n\nEnables nearly-identical visual-data interpretation to color vision deficiency (CVD) people. It is perceptually\nuniform in hue and brightness, and increases in brightness linearly.\n\n\n# Color Scale\n\n@docs getColor\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "getColor",
+                "comment": " TBD\n",
+                "type": "Basics.Float -> Color.Color"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chroma.Colors.Cmocean",
+        "comment": " [cmocean Colors](https://matplotlib.org/cmocean/)\n\nPerceptually uniform and to reflect the data they are representing in terms of being sequential, divergent, or\ncyclic (phase colormap), and to be intuitive. For example, the algae colormap is shades of green which could\nrepresent chlorophyll.\n\n\n# Sequential\n\n@docs algae, deep, dense, haline, ice, matter, oxy, solar, thermal, turbid, balance_blue, balance_red, curl_pink, curl_turquoise, delta_blue, delta_green\n\n\n# Diverging Color Ramp\n\n@docs balance, curl, delta\n\n\n# Circular Color Ramp\n\n@docs phase\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "algae",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "balance",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "balance_blue",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "balance_red",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "curl",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "curl_pink",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "curl_turquoise",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "deep",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "delta",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "delta_blue",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "delta_green",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "dense",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "haline",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "ice",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "matter",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "oxy",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "phase",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "solar",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "thermal",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "turbid",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chroma.Colors.Inferno",
+        "comment": " Inferno color scale.\n\n![Inferno](https://raw.githubusercontent.com/newmana/chroma-elm/master/images/inferno4.png)\n\n\n# Color Scale\n\n@docs inferno\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "inferno",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chroma.Colors.Magma",
+        "comment": " Magma color scale.\n\n![Magma](https://raw.githubusercontent.com/newmana/chroma-elm/master/images/magma4.png)\n\n\n# Color Scale\n\n@docs magma\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "magma",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chroma.Colors.Material",
+        "comment": " [Material 2014 Colours](https://material.io/design/color/the-color-system.html#tools-for-picking-colors)\n\n\n# Palettes\n\n@docs red, pink, purple, deepPurple, indigo, blue, lightBlue, cyan, teal, green, lightGreen, lime, yellow, amber, orange, deepOrange, brown, gray, blueGray\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "amber",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "blue",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "blueGray",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "brown",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "cyan",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "deepOrange",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "deepPurple",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "gray",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "green",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "indigo",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "lightBlue",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "lightGreen",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "lime",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "orange",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "pink",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "purple",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "red",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "teal",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            },
+            {
+                "name": "yellow",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chroma.Colors.Parula",
+        "comment": " Parula color scale.\n\n![Parula](https://raw.githubusercontent.com/newmana/chroma-elm/master/images/parula4.png)\n\n\n# Color Scale\n\n@docs parula\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "parula",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chroma.Colors.Plasma",
+        "comment": " Plasma color scale.\n\n![Inferno](https://raw.githubusercontent.com/newmana/chroma-elm/master/images/plasma4.png)\n\n\n# Color Scale\n\n@docs plasma\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "plasma",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chroma.Colors.Sinebow",
+        "comment": " [Sinebow](https://basecase.org/env/on-rainbows) color scale - sine generated rainbow.\n\n\n# Color Scale\n\n@docs getColor\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "getColor",
+                "comment": " TBD\n",
+                "type": "Basics.Float -> Color.Color"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chroma.Colors.Turbo",
+        "comment": " [Turbo](https://ai.googleblog.com/2019/08/turbo-improved-rainbow-colormap-for.html)\n\nA colormap that has the desirable properties of Jet while also addressing some of its shortcomings, such as\nfalse detail, banding and color blindness ambiguity.\n\n\n# Color Scale\n\n@docs getColor\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "getColor",
+                "comment": " TBD\n",
+                "type": "Basics.Float -> Color.Color"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chroma.Colors.Viridis",
+        "comment": " Viridis color scale.\n\n[Somewhere Over the Rainbow: An Empirical Assessment of Quantitative Colormaps](https://idl.cs.washington.edu/files/2018-QuantitativeColor-CHI.pdf).\n\n![Viridis](https://raw.githubusercontent.com/newmana/chroma-elm/master/images/viridis4.png)\n\n\n# Color Scale\n\n@docs viridis\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "viridis",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Color.Color"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chroma.Colors.W3CX11",
+        "comment": " All of the [X11 color names](https://en.wikipedia.org/wiki/X11_color_names)\n\n\n# Definition\n\n@docs color, named, w3cx11\n\n\n# Colors\n\n@docs aliceBlue, antiqueWhite, aqua, azure, aquamarine\n@docs beige, bisque, black, blanchedalmond, blue, blueviolet, brown, burlywood, cadetblue\n@docs chocolate, coral, cornflowerblue, cornsilk, crimson, cyan, chartreuse\n@docs darkolivegreen, darkseagreen, darkslategrey, dimgray, darkslategray, dodgerblue, darkgrey, darkturquoise, darkgreen, darkviolet, darkgray, darkslateblue, deeppink, darkmagenta, darkgoldenrod, dimgrey, darkblue, darkkhaki, darkcyan, darkorchid, deepskyblue, darkred, darkorange, darksalmon\n@docs firebrick, floralwhite, forestgreen, fuchsia\n@docs gainsboro, ghostwhite, gold, goldenrod, green, greenyellow, gray, grey\n@docs honeydew, hotpink\n@docs indianred, indigo, ivory\n@docs khaki\n@docs lavender, lavenderblush, lawngreen, lemonchiffon, lightblue, lightcoral, lightcyan, lightgoldenrodyellow, lightgreen, lightgray, lightgrey, lightpink, lightseagreen, lightsalmon, lightskyblue, lightslategray, lightslategrey, lightsteelblue, lightyellow, lime, limegreen, linen\n@docs magenta, maroon, mediumaquamarine, mediumblue, mediumpurple, mediumslateblue, mediumorchid, mediumspringgreen, mediumseagreen, mediumturquoise, mediumvioletred, midnightblue, mintcream, mistyrose, moccasin\n@docs navajowhite, navy\n@docs oldlace, olive, olivedrab, orange, orangered, orchid\n@docs palegoldenrod, palegreen, paleturquoise, papayawhip, peachpuff, palevioletred, peru, powderblue, pink, plum, purple\n@docs red, rebeccapurple, rosybrown, royalblue\n@docs sandybrown, salmon, seagreen, seashell, sienna, silver, skyblue, slateblue, slategray, slategrey, snow, springgreen, steelblue\n@docs tan, teal, thistle, tomato, turquoise\n@docs violet\n@docs wheat, white, whitesmoke\n@docs yellow, yellowgreen\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "aliceBlue",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "antiqueWhite",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "aqua",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "aquamarine",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "azure",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "beige",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "bisque",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "black",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "blanchedalmond",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "blue",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "blueviolet",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "brown",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "burlywood",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "cadetblue",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "chartreuse",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "chocolate",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "color",
+                "comment": " Lookup a color by value.\n\n    Color.rgb 0 255 255\n    --> Ok \"aqua\" : Result String String\n\n",
+                "type": "Color.Color -> Result.Result String.String String.String"
+            },
+            {
+                "name": "coral",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "cornflowerblue",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "cornsilk",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "crimson",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "cyan",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "darkblue",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "darkcyan",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "darkgoldenrod",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "darkgray",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "darkgreen",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "darkgrey",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "darkkhaki",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "darkmagenta",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "darkolivegreen",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "darkorange",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "darkorchid",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "darkred",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "darksalmon",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "darkseagreen",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "darkslateblue",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "darkslategray",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "darkslategrey",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "darkturquoise",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "darkviolet",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "deeppink",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "deepskyblue",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "dimgray",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "dimgrey",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "dodgerblue",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "firebrick",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "floralwhite",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "forestgreen",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "fuchsia",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "gainsboro",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "ghostwhite",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "gold",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "goldenrod",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "gray",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "green",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "greenyellow",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "grey",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "honeydew",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "hotpink",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "indianred",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "indigo",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "ivory",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "khaki",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lavender",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lavenderblush",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lawngreen",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lemonchiffon",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lightblue",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lightcoral",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lightcyan",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lightgoldenrodyellow",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lightgray",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lightgreen",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lightgrey",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lightpink",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lightsalmon",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lightseagreen",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lightskyblue",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lightslategray",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lightslategrey",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lightsteelblue",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lightyellow",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "lime",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "limegreen",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "linen",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "magenta",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "maroon",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "mediumaquamarine",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "mediumblue",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "mediumorchid",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "mediumpurple",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "mediumseagreen",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "mediumslateblue",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "mediumspringgreen",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "mediumturquoise",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "mediumvioletred",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "midnightblue",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "mintcream",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "mistyrose",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "moccasin",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "named",
+                "comment": " Lookup a color by name.\n\n    named \"cyan\"\n    --> Ok (RgbaSpace 0 1 1 1) : Result String Color.Color\n\n",
+                "type": "String.String -> Result.Result String.String Color.Color"
+            },
+            {
+                "name": "navajowhite",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "navy",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "oldlace",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "olive",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "olivedrab",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "orange",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "orangered",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "orchid",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "palegoldenrod",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "palegreen",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "paleturquoise",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "palevioletred",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "papayawhip",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "peachpuff",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "peru",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "pink",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "plum",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "powderblue",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "purple",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "rebeccapurple",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "red",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "rosybrown",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "royalblue",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "salmon",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "sandybrown",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "seagreen",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "seashell",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "sienna",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "silver",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "skyblue",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "slateblue",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "slategray",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "slategrey",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "snow",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "springgreen",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "steelblue",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "tan",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "teal",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "thistle",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "tomato",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "turquoise",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "violet",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "w3cx11",
+                "comment": " TBD\n",
+                "type": "Dict.Dict String.String Color.Color"
+            },
+            {
+                "name": "wheat",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "white",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "whitesmoke",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "yellow",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            },
+            {
+                "name": "yellowgreen",
+                "comment": " TBD\n",
+                "type": "Color.Color"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chroma.Converter.In.Cmyk2Rgb",
+        "comment": " Convert CMYK to RGB (floats)\n\n\n# Definition\n\n@docs cmyk2rgb\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "cmyk2rgb",
+                "comment": " TBD\n",
+                "type": "Chroma.Types.CymkColor -> Color.Color"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chroma.Converter.In.Hex2Rgb",
+        "comment": " Convert Hex String (like #ffffff and #fff) to RGB (floats)\n\n\n# Definition\n\n@docs hex2rgb\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "hex2rgb",
+                "comment": " TBD\n",
+                "type": "String.String -> Result.Result String.String Color.Color"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chroma.Converter.In.Hsla2Rgb",
+        "comment": " Convert HSL to RGB\n\n\n# Definition\n\n@docs hsla2rgb, hslaDegrees2rgb\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "hsla2rgb",
+                "comment": " Hue, Saturation and Lightness are clamped 0..1.\n",
+                "type": "Chroma.Types.HslaColor -> Color.Color"
+            },
+            {
+                "name": "hslaDegrees2rgb",
+                "comment": " Hue is measured in degrees and wrapped to the range 0..360. Saturation and Lightness are clamped 0..1.\n",
+                "type": "Chroma.Types.HslaDegreesColor -> Color.Color"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chroma.Converter.In.Lab2Lch",
+        "comment": " Convert LAB to LCH\n\n\n# Definition\n\n@docs lab2lch\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "lab2lch",
+                "comment": " TBD\n",
+                "type": "Chroma.Types.LabColor -> Chroma.Types.LchColor"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chroma.Converter.In.Lab2Rgb",
+        "comment": " Convert LAB to RGB (floats)\n\n\n# Definition\n\n@docs lab2rgb\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "lab2rgb",
+                "comment": " TBD\n",
+                "type": "Chroma.Types.LabColor -> Color.Color"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chroma.Converter.In.Lch2Lab",
+        "comment": " Convert LCH to LAB\n\n\n# Definition\n\n@docs lch2lab\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "lch2lab",
+                "comment": " TBD\n",
+                "type": "Chroma.Types.LchColor -> Chroma.Types.LabColor"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chroma.Converter.Out.ToCmyk",
+        "comment": " Convert ExtColor to CMYK\n\n\n# Definition\n\n@docs toCmyk, toCmykExt\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toCmyk",
+                "comment": " TBD\n",
+                "type": "Chroma.Types.ExtColor -> Chroma.Types.CymkColor"
+            },
+            {
+                "name": "toCmykExt",
+                "comment": " TBD\n",
+                "type": "Chroma.Types.ExtColor -> Chroma.Types.ExtColor"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chroma.Converter.Out.ToCss",
+        "comment": " Convert ExtColors to CSS string (#RGB) or CSS string with alpha channel (#RGBA)\n\n\n# Definition\n\n@docs toCss, toCssAlpha\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toCss",
+                "comment": " Returns an ExtColor as a RGB CSS string.\n",
+                "type": "Chroma.Types.ExtColor -> String.String"
+            },
+            {
+                "name": "toCssAlpha",
+                "comment": " Returns an ExtColor as a RGBA CSS string.\n",
+                "type": "Chroma.Types.ExtColor -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chroma.Converter.Out.ToHex",
+        "comment": " Convert ExtColors to hex string (#RGB) or hex string with alpha channel (#RGBA)\n\n\n# Definition\n\n@docs toHex, toHexAlpha\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toHex",
+                "comment": " Takes a result from getColor and returns Integer (0-255) RGB values.\n",
+                "type": "Chroma.Types.ExtColor -> String.String"
+            },
+            {
+                "name": "toHexAlpha",
+                "comment": " Takes a result from getColor and returns Integer (0-255) RGB and alpha values.\n",
+                "type": "Chroma.Types.ExtColor -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chroma.Converter.Out.ToHsla",
+        "comment": " Convert ExtColor to HSLA\n\n\n# Definition\n\n@docs toHsla, toHslaDegrees, toHslaExt, toHslaDegreesExt\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toHsla",
+                "comment": " TBD\n",
+                "type": "Chroma.Types.ExtColor -> Chroma.Types.HslaColor"
+            },
+            {
+                "name": "toHslaDegrees",
+                "comment": " TBD\n",
+                "type": "Chroma.Types.ExtColor -> Chroma.Types.HslaDegreesColor"
+            },
+            {
+                "name": "toHslaDegreesExt",
+                "comment": " TBD\n",
+                "type": "Chroma.Types.ExtColor -> Chroma.Types.ExtColor"
+            },
+            {
+                "name": "toHslaExt",
+                "comment": " TBD\n",
+                "type": "Chroma.Types.ExtColor -> Chroma.Types.ExtColor"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chroma.Converter.Out.ToLab",
+        "comment": " Convert RgbColor to LAB\n\n\n# Definition\n\n@docs toLab\n\n\n# Helper\n\n@docs toLabExt\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toLab",
+                "comment": " TBD\n",
+                "type": "Chroma.Types.ExtColor -> Chroma.Types.LabColor"
+            },
+            {
+                "name": "toLabExt",
+                "comment": " TBD\n",
+                "type": "Chroma.Types.ExtColor -> Chroma.Types.ExtColor"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chroma.Converter.Out.ToLch",
+        "comment": " Convert ExtColor to LCH\n\n\n# Definition\n\n@docs toLch, toLchExt\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toLch",
+                "comment": " TBD\n",
+                "type": "Chroma.Types.ExtColor -> Chroma.Types.LchColor"
+            },
+            {
+                "name": "toLchExt",
+                "comment": " TBD\n",
+                "type": "Chroma.Types.ExtColor -> Chroma.Types.ExtColor"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chroma.Converter.Out.ToRgba",
+        "comment": " Convert ExtColors to RGB record types or array\n\n\n# Definition\n\n@docs toRgba, toRgba255, toRgbaExt\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toRgba",
+                "comment": " Takes a result from getColor and returns Float (0-1) RGB values.\n",
+                "type": "Chroma.Types.ExtColor -> Chroma.Types.RgbaColor"
+            },
+            {
+                "name": "toRgba255",
+                "comment": " Takes a result from getColor and returns Integer (0-255) RGB values.\n",
+                "type": "Chroma.Types.ExtColor -> Chroma.Types.Rgba255Color"
+            },
+            {
+                "name": "toRgbaExt",
+                "comment": " TBD\n",
+                "type": "Chroma.Types.ExtColor -> Chroma.Types.ExtColor"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chroma.Interpolator",
+        "comment": " Provides interpolation between two colors of the same color space.\n\n\n# Definition\n\n@docs interpolate\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "interpolate",
+                "comment": " Return a new color based on interpolating on two colors and a weighting between them. Will return black if the\ntypes are not the same (if one is RGB and CMYK for example).\n",
+                "type": "Chroma.Types.ExtColor -> Chroma.Types.ExtColor -> Basics.Float -> Chroma.Types.ExtColor"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chroma.Limits.Analyze",
+        "comment": " Preprocessing of data values and helper data structures and functions.\n\n\n# Definition\n\n@docs analyze\n\n\n# Helpers\n\n@docs Scale, defaultScale, genericLimit\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Scale",
+                "comment": " TBD\n",
+                "args": [],
+                "type": "{ min : Basics.Float, max : Basics.Float, sum : Basics.Float, values : List.Nonempty.Nonempty Basics.Float, count : Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "analyze",
+                "comment": " Given data, create a Scale data structure (min, max, sum, sorted values and number of values).\n",
+                "type": "List.Nonempty.Nonempty Basics.Float -> Chroma.Limits.Analyze.Scale"
+            },
+            {
+                "name": "defaultScale",
+                "comment": " TBD\n",
+                "type": "Chroma.Limits.Analyze.Scale"
+            },
+            {
+                "name": "genericLimit",
+                "comment": " TBD\n",
+                "type": "Basics.Int -> Chroma.Limits.Analyze.Scale -> (Basics.Int -> Basics.Float) -> List.Nonempty.Nonempty Basics.Float"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chroma.Limits.CkMeans",
+        "comment": " A log linear implementation of [CkMeans](https://cran.r-project.org/web/packages/Ckmeans.1d.dp/index.html).\nIt uses a divide-and-conquer algorithm to compute a row in the dynamic programming matrix in O(n log n) time. The\n[Simple Statistic's implementation](https://simplestatistics.org/docs/#ckmeans) was used to validate this\nimplementation.\n\nThere is a better one (not implemented) using the [SMAWK](https://en.wikipedia.org/wiki/SMAWK_algorithm) optimisation.\n\nThe limit function produces class breaks like the other implementations and binned puts all data values into their\nbins.\n\n\n# Definition\n\n@docs binned, limit\n\n\n# Helpers\n\n@docs converge, defaultResult, fillRestOfMatrix, firstLine, getMatrixIndexes, getValues, BacktrackMatrixLine, CkRest, CkResult, MatrixLine\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "BacktrackMatrixLine",
+                "comment": " TBD\n",
+                "args": [],
+                "type": "Array.Array Basics.Int"
+            },
+            {
+                "name": "CkRest",
+                "comment": " TBD\n",
+                "args": [],
+                "type": "{ sums : Array.Array Basics.Float, sumsOfSquares : Array.Array Basics.Float, matrix : Array.Array Chroma.Limits.CkMeans.MatrixLine, previousMatrix : Chroma.Limits.CkMeans.MatrixLine, backmatrix : Array.Array Chroma.Limits.CkMeans.BacktrackMatrixLine, previousBackmatrix : Chroma.Limits.CkMeans.BacktrackMatrixLine }"
+            },
+            {
+                "name": "CkResult",
+                "comment": " TBD\n",
+                "args": [],
+                "type": "{ sums : Array.Array Basics.Float, sumsOfSquares : Array.Array Basics.Float, matrix : Array.Array Chroma.Limits.CkMeans.MatrixLine, backmatrix : Array.Array Chroma.Limits.CkMeans.BacktrackMatrixLine }"
+            },
+            {
+                "name": "MatrixLine",
+                "comment": " TBD\n",
+                "args": [],
+                "type": "Array.Array Basics.Float"
+            }
+        ],
+        "values": [
+            {
+                "name": "binned",
+                "comment": " Return the values in Scale into the given number of bins.\n\n    Analyze.analyze (Nonempty.Nonempty 3 [1,3,4,3])\n    |> binned 3\n    -->  Nonempty.Nonempty [1] [[3,3,3], [4]]\n\n",
+                "type": "Basics.Int -> Chroma.Limits.Analyze.Scale -> List.Nonempty.Nonempty (Array.Array Basics.Float)"
+            },
+            {
+                "name": "converge",
+                "comment": " TBD\n",
+                "type": "Basics.Int -> Basics.Int -> Basics.Int -> Basics.Float -> Chroma.Limits.CkMeans.CkRest -> ( Basics.Float, Basics.Int )"
+            },
+            {
+                "name": "defaultResult",
+                "comment": " TBD\n",
+                "type": "Basics.Int -> Basics.Int -> Chroma.Limits.CkMeans.CkResult"
+            },
+            {
+                "name": "fillRestOfMatrix",
+                "comment": " TBD\n",
+                "type": "Basics.Int -> Chroma.Limits.Analyze.Scale -> Chroma.Limits.CkMeans.CkRest -> Chroma.Limits.CkMeans.CkResult"
+            },
+            {
+                "name": "firstLine",
+                "comment": " TBD\n",
+                "type": "Basics.Int -> Chroma.Limits.Analyze.Scale -> Chroma.Limits.CkMeans.CkRest"
+            },
+            {
+                "name": "getMatrixIndexes",
+                "comment": " TBD\n",
+                "type": "Basics.Int -> List.List Basics.Int"
+            },
+            {
+                "name": "getValues",
+                "comment": " TBD\n",
+                "type": "Basics.Int -> Basics.Int -> List.List ( Basics.Int, Basics.Int )"
+            },
+            {
+                "name": "limit",
+                "comment": " Create up to bins number of results using the given scale.\n\n    Analyze.analyze (Nonempty.Nonempty 3 [1,3,4,3])\n    |> limit 3\n    -->  Nonempty.Nonempty 1 [3,4]\n\n",
+                "type": "Basics.Int -> Chroma.Limits.Analyze.Scale -> List.Nonempty.Nonempty Basics.Float"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chroma.Limits.Equal",
+        "comment": " Create equally spaced values.\n\n\n# Definition\n\n@docs limit\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "limit",
+                "comment": " Create bins number of results using the given scale.\n",
+                "type": "Basics.Int -> Chroma.Limits.Analyze.Scale -> List.Nonempty.Nonempty Basics.Float"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chroma.Limits.HeadTail",
+        "comment": " [Head/tail breaks](https://en.wikipedia.org/wiki/Head/tail_Breaks) is a clustering algorithm scheme for data\nwith a heavy-tailed distribution such as power laws and lognormal distributions.\n\nThis does not set a cutoff based on the percentage of data the head represents but rather you set the number of bins\nyou would like (like all the others), this is similar to\n[CartoDB's Postgresql implementation](]https://github.com/CartoDB/cartodb-postgresql/blob/master/scripts-available/CDB_HeadsTailsBins.sql).\n\n\n# Definition\n\n@docs limit\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "limit",
+                "comment": " Create bins number of results using the given scale.\n",
+                "type": "Basics.Int -> Chroma.Limits.Analyze.Scale -> List.Nonempty.Nonempty Basics.Float"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chroma.Limits.Jenks",
+        "comment": " [Jenks natural breaks optimization](https://en.wikipedia.org/wiki/Jenks_natural_breaks_optimization) is a\nclustering algorithm scheme for data to reduce the variance within classes and maximize the variance between classes.\n\n\n# Definition\n\n@docs binned, limit\n\n\n# Helpers\n\n@docs initVarianceCombinations, initLowerClassLimits, getMatrix, JenksResult\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "JenksResult",
+                "comment": " TBD\n",
+                "args": [],
+                "type": "{ lowerClassLimits : Array.Array (Array.Array Basics.Int), varianceCombinations : Array.Array (Array.Array Basics.Float) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "binned",
+                "comment": " Return the values in Scale into the given number of bins.\n\n    Analyze.analyze (Nonempty.Nonempty 3 [1,3,4,3])\n    |> binned 3\n    -->  Nonempty.Nonempty [1] [[3,3,3], [4]]\n\n",
+                "type": "Basics.Int -> Chroma.Limits.Analyze.Scale -> List.Nonempty.Nonempty (Array.Array Basics.Float)"
+            },
+            {
+                "name": "getMatrix",
+                "comment": " TBD\n",
+                "type": "Basics.Int -> Chroma.Limits.Analyze.Scale -> ( Basics.Int, Chroma.Limits.Jenks.JenksResult )"
+            },
+            {
+                "name": "initLowerClassLimits",
+                "comment": " TBD\n",
+                "type": "Basics.Int -> Basics.Int -> Basics.Int -> Basics.Int"
+            },
+            {
+                "name": "initVarianceCombinations",
+                "comment": " TBD\n",
+                "type": "Basics.Int -> Basics.Int -> Basics.Int -> Basics.Int -> Basics.Float"
+            },
+            {
+                "name": "limit",
+                "comment": " Create bins number of results using the given scale.\n\n    Analyze.analyze (Nonempty.Nonempty 3 [1,3,4,3])\n    |> limit 3\n    -->  Nonempty.Nonempty 1 [3,4]\n\n",
+                "type": "Basics.Int -> Chroma.Limits.Analyze.Scale -> List.Nonempty.Nonempty Basics.Float"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chroma.Limits.Limits",
+        "comment": " Main interface to Limits.\n\n\n# Definition\n\n@docs LimitMode, limits\n\n",
+        "unions": [
+            {
+                "name": "LimitMode",
+                "comment": " TBD\n",
+                "args": [],
+                "cases": [
+                    [
+                        "CkMeans",
+                        []
+                    ],
+                    [
+                        "Equal",
+                        []
+                    ],
+                    [
+                        "HeadTail",
+                        []
+                    ],
+                    [
+                        "Jenks",
+                        []
+                    ],
+                    [
+                        "Logarithmic",
+                        []
+                    ],
+                    [
+                        "Quantile",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "limits",
+                "comment": " Create bins number of results using the given scale, except for CkMeans which can produce fewer bins.\n",
+                "type": "Chroma.Limits.Limits.LimitMode -> Basics.Int -> List.Nonempty.Nonempty Basics.Float -> List.Nonempty.Nonempty Basics.Float"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chroma.Limits.Logarithmic",
+        "comment": " Create logarithimically spaced values.\n\n\n# Definition\n\n@docs limit\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "limit",
+                "comment": " Create bins number of results using the given scale.\n",
+                "type": "Basics.Int -> Chroma.Limits.Analyze.Scale -> List.Nonempty.Nonempty Basics.Float"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chroma.Limits.Quantile",
+        "comment": " Create groups that contain an equal number of values.\n\n\n# Definition\n\n@docs limit\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "limit",
+                "comment": " Create bins number of results using the given scale.\n",
+                "type": "Basics.Int -> Chroma.Limits.Analyze.Scale -> List.Nonempty.Nonempty Basics.Float"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chroma.Ops.Alpha",
+        "comment": " Get or change Alpha value\n\n\n# Definition\n\n@docs setAlpha, alpha\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "alpha",
+                "comment": " Return the alpha value\n",
+                "type": "Chroma.Types.ExtColor -> Basics.Float"
+            },
+            {
+                "name": "setAlpha",
+                "comment": " Return a new color based on the new alpha value using LAB color space.\n",
+                "type": "Basics.Float -> Chroma.Types.ExtColor -> Chroma.Types.ExtColor"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chroma.Ops.Lightness",
+        "comment": " Change the lightness of a color value.\n\n\n# Definition\n\n@docs darken, brighten\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "brighten",
+                "comment": " Brighten\n",
+                "type": "Basics.Float -> Chroma.Types.ExtColor -> Chroma.Types.ExtColor"
+            },
+            {
+                "name": "darken",
+                "comment": " Darken\n",
+                "type": "Basics.Float -> Chroma.Types.ExtColor -> Chroma.Types.ExtColor"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chroma.Ops.Luminance",
+        "comment": " Get/Set the luminance a color value and calculate the WCAG contrast ratio.\n\n\n# Definition\n\n@docs luminance, contrast, setLuminance\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "contrast",
+                "comment": " [`WCGA contrast`](https://www.w3.org/TR/WCAG20-TECHS/)\n",
+                "type": "Chroma.Types.ExtColor -> Chroma.Types.ExtColor -> Basics.Float"
+            },
+            {
+                "name": "luminance",
+                "comment": " Luminance\n",
+                "type": "Chroma.Types.ExtColor -> Basics.Float"
+            },
+            {
+                "name": "setLuminance",
+                "comment": " Set Luminance\n",
+                "type": "Basics.Float -> Chroma.Types.ExtColor -> Chroma.Types.ExtColor"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chroma.Ops.Numeric",
+        "comment": " Extensions to the Color library\n\n\n# Definition\n\n@docs num, calcDistance, colorToInt, intToColor\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "calcDistance",
+                "comment": " TBD\n",
+                "type": "List.Nonempty.Nonempty Basics.Float -> List.Nonempty.Nonempty Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "colorToInt",
+                "comment": " TBD\n",
+                "type": "Color.Color -> Basics.Int"
+            },
+            {
+                "name": "intToColor",
+                "comment": " TBD\n",
+                "type": "Basics.Int -> Color.Color"
+            },
+            {
+                "name": "num",
+                "comment": " Numeric representation of RGB.\n\n    Color.num (Types.RGBAColor (Color.rgb255 192 192 192))\n    --> 12632256 : Int\n\n",
+                "type": "Chroma.Types.ExtColor -> Basics.Int"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chroma.Ops.Saturate",
+        "comment": " Increase or decrease color saturation.\n\n\n# Definition\n\n@docs saturate, desaturate\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "desaturate",
+                "comment": " Desaturate\n",
+                "type": "Basics.Float -> Chroma.Types.ExtColor -> Chroma.Types.ExtColor"
+            },
+            {
+                "name": "saturate",
+                "comment": " Saturate\n",
+                "type": "Basics.Float -> Chroma.Types.ExtColor -> Chroma.Types.ExtColor"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chroma.Scale",
+        "comment": " Used by [`Chroma`][chroma]\n\n[chroma]: Chroma-Chroma\n\n\n# Definition\n\n@docs colors, getColor, domain, correctLightness, Data, SharedData, initSharedData, createDiscreteColorData, createContinuousColorData, defaultData, defaultColorList, defaultSharedData, CalculateColor\n\n",
+        "unions": [
+            {
+                "name": "CalculateColor",
+                "comment": " The two types of colors we accept - continuous (a function to color) or discrete (a list of colors).\n",
+                "args": [],
+                "cases": [
+                    [
+                        "ContinuousColor",
+                        [
+                            "Basics.Float -> Chroma.Types.ExtColor"
+                        ]
+                    ],
+                    [
+                        "DiscreteColor",
+                        [
+                            "List.Nonempty.Nonempty Chroma.Types.ExtColor"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Data",
+                "comment": " Configuration data used by most functions with color specific details.\n",
+                "args": [],
+                "type": "{ c : Chroma.Scale.CalculateColor, shared : Chroma.Scale.SharedData }"
+            },
+            {
+                "name": "SharedData",
+                "comment": " Shared configuration used by most functions.\n",
+                "args": [],
+                "type": "{ domainValues : ( Basics.Float, Basics.Float ), pos : List.Nonempty.Nonempty ( Basics.Float, Basics.Float ), paddingValues : ( Basics.Float, Basics.Float ), classes : Maybe.Maybe (List.Nonempty.Nonempty Basics.Float), useCorrectLightness : Basics.Bool, gammaValue : Basics.Float }"
+            }
+        ],
+        "values": [
+            {
+                "name": "colors",
+                "comment": " Interpolate a range of colors from the list of colors in the data.\n",
+                "type": "Basics.Int -> Chroma.Scale.Data -> List.Nonempty.Nonempty Chroma.Types.ExtColor"
+            },
+            {
+                "name": "correctLightness",
+                "comment": " Given a data change the lightness value (need to be LAB).\n",
+                "type": "Chroma.Scale.Data -> Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "createContinuousColorData",
+                "comment": " Create and init a continuous data configuration.\n",
+                "type": "(Basics.Float -> Chroma.Types.ExtColor) -> Chroma.Scale.SharedData -> Chroma.Scale.Data"
+            },
+            {
+                "name": "createDiscreteColorData",
+                "comment": " Create and init a discrete data configuration.\n",
+                "type": "List.Nonempty.Nonempty Chroma.Types.ExtColor -> Chroma.Scale.SharedData -> Chroma.Scale.Data"
+            },
+            {
+                "name": "defaultColorList",
+                "comment": " The default color map - black to white.\n",
+                "type": "List.Nonempty.Nonempty Chroma.Types.ExtColor"
+            },
+            {
+                "name": "defaultData",
+                "comment": " ",
+                "type": "Chroma.Scale.Data"
+            },
+            {
+                "name": "defaultSharedData",
+                "comment": " Sensible default configuration defaults: RGB, domain 0-1, pos 0, 1,and white and black color range.\n",
+                "type": "Chroma.Scale.SharedData"
+            },
+            {
+                "name": "domain",
+                "comment": " Set a new domain (like [0,100] rather than the default [0,1]) for all kinds of data.\n",
+                "type": "List.Nonempty.Nonempty Basics.Float -> Chroma.Scale.Data -> Chroma.Scale.Data"
+            },
+            {
+                "name": "getColor",
+                "comment": " ",
+                "type": "Chroma.Scale.Data -> Basics.Float -> Chroma.Types.ExtColor"
+            },
+            {
+                "name": "initSharedData",
+                "comment": " Setup new configuration with the given colors.\n",
+                "type": "Chroma.Scale.Data -> Chroma.Scale.Data"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chroma.Types",
+        "comment": " Types\n\n\n# Definition\n\n@docs CymkColor, ExtColor, HslaColor, HslaDegreesColor, LabColor, Mode, Rgba255Color, RgbaColor, LchColor\n\n",
+        "unions": [
+            {
+                "name": "ExtColor",
+                "comment": " Type wrapping possible color spaces.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "RGBAColor",
+                        [
+                            "Color.Color"
+                        ]
+                    ],
+                    [
+                        "CMYKColor",
+                        [
+                            "Chroma.Types.CymkColor"
+                        ]
+                    ],
+                    [
+                        "LABColor",
+                        [
+                            "Chroma.Types.LabColor"
+                        ]
+                    ],
+                    [
+                        "LCHColor",
+                        [
+                            "Chroma.Types.LchColor"
+                        ]
+                    ],
+                    [
+                        "HSLAColor",
+                        [
+                            "Chroma.Types.HslaColor"
+                        ]
+                    ],
+                    [
+                        "HSLADegreesColor",
+                        [
+                            "Chroma.Types.HslaDegreesColor"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Mode",
+                "comment": " Possible color spaces.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "RGBA",
+                        []
+                    ],
+                    [
+                        "CMYK",
+                        []
+                    ],
+                    [
+                        "LAB",
+                        []
+                    ],
+                    [
+                        "LCH",
+                        []
+                    ],
+                    [
+                        "HSLA",
+                        []
+                    ],
+                    [
+                        "HSLADegrees",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "CymkColor",
+                "comment": " ['CMYK color space'](https://en.wikipedia.org/wiki/CMYK_color_model)\n",
+                "args": [],
+                "type": "{ cyan : Basics.Float, magenta : Basics.Float, yellow : Basics.Float, black : Basics.Float }"
+            },
+            {
+                "name": "HslaColor",
+                "comment": " HSLA where the Hue, Saturation, Lightness and Alpha 0..1.\n",
+                "args": [],
+                "type": "{ hue : Basics.Float, saturation : Basics.Float, lightness : Basics.Float, alpha : Basics.Float }"
+            },
+            {
+                "name": "HslaDegreesColor",
+                "comment": " HSLA where the Hue is 0..360, ann Saturation, Lightness and Alpha 0..1.\n",
+                "args": [],
+                "type": "{ hueDegrees : Basics.Float, saturation : Basics.Float, lightness : Basics.Float, alpha : Basics.Float }"
+            },
+            {
+                "name": "LabColor",
+                "comment": " [`LAB color space`](https://en.wikipedia.org/wiki/CIELAB_color_space)\n",
+                "args": [],
+                "type": "{ lightness : Basics.Float, labA : Basics.Float, labB : Basics.Float }"
+            },
+            {
+                "name": "LchColor",
+                "comment": " LCH where Luminance is 0..100, Chroma is 0..230, and Hue is 0..360.\n",
+                "args": [],
+                "type": "{ luminance : Basics.Float, chroma : Basics.Float, hue : Basics.Float }"
+            },
+            {
+                "name": "Rgba255Color",
+                "comment": " RGBA color space where numbers are RGB are 1-255, and Alpha 0..1.\n",
+                "args": [],
+                "type": "{ red : Basics.Int, green : Basics.Int, blue : Basics.Int, alpha : Basics.Float }"
+            },
+            {
+                "name": "RgbaColor",
+                "comment": " RGBA color space where numbers are RGB and Alpha 0..1.\n",
+                "args": [],
+                "type": "{ red : Basics.Float, green : Basics.Float, blue : Basics.Float, alpha : Basics.Float }"
+            }
+        ],
+        "values": [],
+        "binops": []
+    }
+]

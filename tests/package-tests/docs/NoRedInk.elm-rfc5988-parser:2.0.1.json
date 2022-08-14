@@ -1,0 +1,33 @@
+[
+    {
+        "name": "RFC5988",
+        "comment": " A parser for [the draft for the replacement of RFC5988](https://mnot.github.io/I-D/rfc5988bis/)\n\n@docs Link\n\n\n# Constructing links\n\n@docs emptyLink\n\n\n# Parsers\n\n@docs rfc5988, rfc5988s\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Link",
+                "comment": " Defined here: <https://mnot.github.io/I-D/rfc5988bis/>\n",
+                "args": [],
+                "type": "{ context : RFC5988.IRI, target : RFC5988.IRI, relationType : String.String, targetAttributes : Dict.Dict String.String String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "emptyLink",
+                "comment": " Produce an empty link.\n",
+                "type": "RFC5988.Link"
+            },
+            {
+                "name": "rfc5988",
+                "comment": " Parser for a link\n\n      parse rfc5988 \"<http://noredink.com>; rel=\\\"start\\\"\" ==\n      ( Ok { context = \"\", target = \"http://noredink.com\", relationType = \"start\", targetAttributes = Dict.empty }\n      , { input = \"\", position = 31 }\n      )\n\n",
+                "type": "Parser.Parser RFC5988.Link"
+            },
+            {
+                "name": "rfc5988s",
+                "comment": " Parser for a list of links\n",
+                "type": "Parser.Parser (List.List RFC5988.Link)"
+            }
+        ],
+        "binops": []
+    }
+]

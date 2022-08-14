@@ -1,0 +1,31 @@
+[
+    {
+        "name": "Return.Optics",
+        "comment": "\n`Return.Optics` is a utility library extending `Return` with\n`Monocle` making a clean, concise API for doing Elm component updates\nin the context of other updates.\n\nThe signatures abbreviations\n\n- `pmod` is Parent Model\n- `pmsg` is Parent Msg\n- `cmod` is Child Model\n- `cmsg` is Child Msg\n\n# Optics\n@docs modell, msgl\n\n# Utilities\n@docs refractl, refracto\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "modell",
+                "comment": " `Lens` to the model, the first element of the `Return` tuple.\n",
+                "type": "Monocle.Lens.Lens (Return.Return x model) model"
+            },
+            {
+                "name": "msgl",
+                "comment": " `Lens` to the msg, the second element of the `Return` tuple.\n",
+                "type": "Monocle.Lens.Lens (Return.Return msg x) (Platform.Cmd.Cmd msg)"
+            },
+            {
+                "name": "refractl",
+                "comment": " Refract in a component's update via a `Lens` and a way to merge\nthe message back along a parent return in the update function.\n\n    Return.singleton model\n        |> case msg of\n            ...\n\n            MyComponentMsg msg ->\n                refractl Model.myComponent MyComponentMsg <|\n                    MyComponent.update msg\n\n",
+                "type": "Monocle.Lens.Lens pmod cmod -> (cmsg -> pmsg) -> (cmod -> Return.Return cmsg cmod) -> Return.Return pmsg pmod -> Return.Return pmsg pmod"
+            },
+            {
+                "name": "refracto",
+                "comment": " Refract in a component's update via an `Optional` and a way to merge\nthe message back along a parent return in the update function. If the\ngetter returns `Nothing` then the `Return` will not be modified.\n\n    Return.singleton model\n        |> case msg of\n            ...\n\n            MyComponentMsg msg ->\n                refracto Model.myComponent MyComponentMsg <|\n                    MyComponent.update msg\n",
+                "type": "Monocle.Optional.Optional pmod cmod -> (cmsg -> pmsg) -> (cmod -> Return.Return cmsg cmod) -> Return.Return pmsg pmod -> Return.Return pmsg pmod"
+            }
+        ],
+        "binops": []
+    }
+]

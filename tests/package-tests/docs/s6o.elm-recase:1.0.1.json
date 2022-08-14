@@ -1,0 +1,204 @@
+[
+    {
+        "name": "ReCase",
+        "comment": " Convert a string from a case to any other case.\n\n\n## Generic API\n\n@docs ReCase, recase\n\n\n## More Explicitly Typed API\n\n@docs CamelCase, fromCamel, toCamel\n\n@docs ConstantCase, fromConstant, toConstant\n\n@docs DotCase, fromDot, toDot\n\n@docs KebabCase, fromKebab, toKebab\n\n@docs PascalCase, fromPascal, toPascal\n\n@docs PathCase, fromPath, toPath\n\n@docs SentenceCase, fromSentence, toSentence\n\n@docs SnakeCase, fromSnake, toSnake\n\n@docs TitleCase, fromTitle, toTitle\n\n",
+        "unions": [
+            {
+                "name": "CamelCase",
+                "comment": " A camelCase `String`.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "ConstantCase",
+                "comment": " A CONSTANT\\_CASE `String`.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "DotCase",
+                "comment": " A dot.case `String`.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "KebabCase",
+                "comment": " A kebab-case `String`.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "PascalCase",
+                "comment": " A PascalCase aka UpperCase `String`.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "PathCase",
+                "comment": " A path/case `String`.\nConversions to path/case are case-sensitive, that is input's case is not changed,\nonly the path separator / (slash) is inserted.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "ReCase",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "ToCamel",
+                        []
+                    ],
+                    [
+                        "ToConstant",
+                        []
+                    ],
+                    [
+                        "ToDot",
+                        []
+                    ],
+                    [
+                        "ToKebab",
+                        []
+                    ],
+                    [
+                        "ToPascal",
+                        []
+                    ],
+                    [
+                        "ToPath",
+                        []
+                    ],
+                    [
+                        "ToSentence",
+                        []
+                    ],
+                    [
+                        "ToSnake",
+                        []
+                    ],
+                    [
+                        "ToTitle",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "SentenceCase",
+                "comment": " A Sentence case `String`.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "SnakeCase",
+                "comment": " A snake\\_case `String`.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "TitleCase",
+                "comment": " A Title Case `String`.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fromCamel",
+                "comment": " Convert from the specific `CamelCase` type to the generic `String` type.\n",
+                "type": "ReCase.CamelCase -> String.String"
+            },
+            {
+                "name": "fromConstant",
+                "comment": " Convert from the specific `ConstantCase` type to the generic `String` type.\n",
+                "type": "ReCase.ConstantCase -> String.String"
+            },
+            {
+                "name": "fromDot",
+                "comment": " Convert from the specific `DotCase` type to the generic `String` type.\n",
+                "type": "ReCase.DotCase -> String.String"
+            },
+            {
+                "name": "fromKebab",
+                "comment": " Convert from the specific `KebabCase` type to the generic `String` type.\n",
+                "type": "ReCase.KebabCase -> String.String"
+            },
+            {
+                "name": "fromPascal",
+                "comment": " Convert from the specific `PascalCase` type to the generic `String` type.\n",
+                "type": "ReCase.PascalCase -> String.String"
+            },
+            {
+                "name": "fromPath",
+                "comment": " Convert from the specific `PathCase` type to the generic `String` type.\n",
+                "type": "ReCase.PathCase -> String.String"
+            },
+            {
+                "name": "fromSentence",
+                "comment": " Convert from the specific `SentenceCase` type to the generic `String` type.\n",
+                "type": "ReCase.SentenceCase -> String.String"
+            },
+            {
+                "name": "fromSnake",
+                "comment": " Convert from the specific `SnakeCase` type to the generic `String` type.\n",
+                "type": "ReCase.SnakeCase -> String.String"
+            },
+            {
+                "name": "fromTitle",
+                "comment": " Convert from the specific `TitleCase` type to the generic `String` type.\n",
+                "type": "ReCase.TitleCase -> String.String"
+            },
+            {
+                "name": "recase",
+                "comment": " Recase input to specified case.\n",
+                "type": "ReCase.ReCase -> String.String -> String.String"
+            },
+            {
+                "name": "toCamel",
+                "comment": " Convert `String` to `CamelCase`.\n",
+                "type": "String.String -> ReCase.CamelCase"
+            },
+            {
+                "name": "toConstant",
+                "comment": " Convert `String` to `ConstantCase`.\n",
+                "type": "String.String -> ReCase.ConstantCase"
+            },
+            {
+                "name": "toDot",
+                "comment": " Convert `String` to `DotCase`.\n",
+                "type": "String.String -> ReCase.DotCase"
+            },
+            {
+                "name": "toKebab",
+                "comment": " Convert `String` to `KebabCase`.\n",
+                "type": "String.String -> ReCase.KebabCase"
+            },
+            {
+                "name": "toPascal",
+                "comment": " Convert `String` to `PacalCase`.\n",
+                "type": "String.String -> ReCase.PascalCase"
+            },
+            {
+                "name": "toPath",
+                "comment": " Convert `String` to `PathCase`.\n",
+                "type": "String.String -> ReCase.PathCase"
+            },
+            {
+                "name": "toSentence",
+                "comment": " Convert `String` to `SentenceCase`.\n",
+                "type": "String.String -> ReCase.SentenceCase"
+            },
+            {
+                "name": "toSnake",
+                "comment": " Convert `String` to `SnakeCase`.\n",
+                "type": "String.String -> ReCase.SnakeCase"
+            },
+            {
+                "name": "toTitle",
+                "comment": " Convert `String` to `TitleCase`.\n",
+                "type": "String.String -> ReCase.TitleCase"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,410 @@
+[
+    {
+        "name": "GraphQL.Batch",
+        "comment": " Batch operations together.\n\n    batch (\\a b c -> ( a, b, c ))\n        |> query operation1\n        |> query operation2\n        |> mutation operation3\n\n\n# Batch\n\n@docs Batch, batch, query, mutation\n\n\n# Mapping\n\n@docs map, mapError\n\n\n# JSON\n\n@docs encode, decoder\n\n",
+        "unions": [
+            {
+                "name": "Batch",
+                "comment": " ",
+                "args": [
+                    "e",
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "batch",
+                "comment": " ",
+                "type": "(a -> b) -> GraphQL.Batch.Batch e (a -> b)"
+            },
+            {
+                "name": "decoder",
+                "comment": " Decoder for the response of a batch request.\n",
+                "type": "GraphQL.Batch.Batch e a -> Json.Decode.Decoder (Result.Result e a)"
+            },
+            {
+                "name": "encode",
+                "comment": " Encode the batch operations for a request.\n",
+                "type": "GraphQL.Batch.Batch e a -> Json.Encode.Value"
+            },
+            {
+                "name": "map",
+                "comment": " Convert the batch data value.\n",
+                "type": "(a -> b) -> GraphQL.Batch.Batch e a -> GraphQL.Batch.Batch e b"
+            },
+            {
+                "name": "mapError",
+                "comment": " Convert the batch error value.\n",
+                "type": "(e1 -> e2) -> GraphQL.Batch.Batch e1 a -> GraphQL.Batch.Batch e2 a"
+            },
+            {
+                "name": "mutation",
+                "comment": " ",
+                "type": "GraphQL.Operation.Operation GraphQL.Operation.Mutation e a -> GraphQL.Batch.Batch e (a -> b) -> GraphQL.Batch.Batch e b"
+            },
+            {
+                "name": "query",
+                "comment": " ",
+                "type": "GraphQL.Operation.Operation GraphQL.Operation.Query e a -> GraphQL.Batch.Batch e (a -> b) -> GraphQL.Batch.Batch e b"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "GraphQL.Errors",
+        "comment": " Types and decoder for the errors field in the GraphQL response.\nSee <http://spec.graphql.org/June2018/#sec-Errors>.\n\n@docs Errors, Error, Location, PathSegment\n@docs decoder, errorDecoder, locationDecoder, pathSegmentDecoder\n\n",
+        "unions": [
+            {
+                "name": "PathSegment",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "FieldName",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "ListIndex",
+                        [
+                            "Basics.Int"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Error",
+                "comment": " ",
+                "args": [],
+                "type": "{ message : String.String, locations : Maybe.Maybe (List.List GraphQL.Errors.Location), path : Maybe.Maybe (List.List GraphQL.Errors.PathSegment) }"
+            },
+            {
+                "name": "Errors",
+                "comment": " ",
+                "args": [],
+                "type": "List.List GraphQL.Errors.Error"
+            },
+            {
+                "name": "Location",
+                "comment": " ",
+                "args": [],
+                "type": "{ line : Basics.Int, column : Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "decoder",
+                "comment": " ",
+                "type": "Json.Decode.Decoder GraphQL.Errors.Errors"
+            },
+            {
+                "name": "errorDecoder",
+                "comment": " ",
+                "type": "Json.Decode.Decoder GraphQL.Errors.Error"
+            },
+            {
+                "name": "locationDecoder",
+                "comment": " ",
+                "type": "Json.Decode.Decoder GraphQL.Errors.Location"
+            },
+            {
+                "name": "pathSegmentDecoder",
+                "comment": " ",
+                "type": "Json.Decode.Decoder GraphQL.Errors.PathSegment"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "GraphQL.Helpers.Decode",
+        "comment": " Some additional functions that help with decoding JSON.\n\n@docs andMap, fromResult, constantString, emptyObject\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "andMap",
+                "comment": " Provide a pipeline for mapping decoders.\nCan be used for decoding large records.\n",
+                "type": "Json.Decode.Decoder a -> Json.Decode.Decoder (a -> b) -> Json.Decode.Decoder b"
+            },
+            {
+                "name": "constantString",
+                "comment": " Decode a constant string.\n",
+                "type": "String.String -> Json.Decode.Decoder String.String"
+            },
+            {
+                "name": "emptyObject",
+                "comment": " Decode an empty object `{}`.\n",
+                "type": "a -> Json.Decode.Decoder a"
+            },
+            {
+                "name": "fromResult",
+                "comment": " Turn a decode result into a decoder.\n",
+                "type": "Result.Result Json.Decode.Error a -> Json.Decode.Decoder a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "GraphQL.Operation",
+        "comment": " A GraphQL operation.\n\n@docs Operation, Query, Mutation, Subscription\n\n@docs withName, withQuery\n\n@docs encode\n\n@docs queryParameters\n\n@docs dataDecoder, errorsDecoder\n\n@docs mapData, mapErrors\n\n",
+        "unions": [
+            {
+                "name": "Mutation",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Operation",
+                "comment": " ",
+                "args": [
+                    "t",
+                    "e",
+                    "a"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Query",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Subscription",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "dataDecoder",
+                "comment": " ",
+                "type": "GraphQL.Operation.Operation t e a -> Json.Decode.Decoder a"
+            },
+            {
+                "name": "encode",
+                "comment": " ",
+                "type": "GraphQL.Operation.Operation t e a -> Json.Encode.Value"
+            },
+            {
+                "name": "errorsDecoder",
+                "comment": " ",
+                "type": "GraphQL.Operation.Operation t e a -> Json.Decode.Decoder e"
+            },
+            {
+                "name": "mapData",
+                "comment": " ",
+                "type": "(a -> b) -> GraphQL.Operation.Operation t e a -> GraphQL.Operation.Operation t e b"
+            },
+            {
+                "name": "mapErrors",
+                "comment": " ",
+                "type": "(e1 -> e2) -> GraphQL.Operation.Operation t e1 a -> GraphQL.Operation.Operation t e2 a"
+            },
+            {
+                "name": "queryParameters",
+                "comment": " ",
+                "type": "GraphQL.Operation.Operation t e a -> List.List Url.Builder.QueryParameter"
+            },
+            {
+                "name": "withName",
+                "comment": " ",
+                "type": "String.String -> Maybe.Maybe Json.Encode.Value -> Json.Decode.Decoder a -> Json.Decode.Decoder e -> GraphQL.Operation.Operation t e a"
+            },
+            {
+                "name": "withQuery",
+                "comment": " ",
+                "type": "String.String -> Maybe.Maybe Json.Encode.Value -> Json.Decode.Decoder a -> Json.Decode.Decoder e -> GraphQL.Operation.Operation t e a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "GraphQL.Optional",
+        "comment": " An `Optional` can be `Present`, `Null` or `Absent`.\n\n@docs Optional, map, withDefault, toMaybe, fromMaybe\n\n\n# Encode\n\n@docs encode, encodeList, encodeObject\n\n\n# Decode\n\n@docs fieldDecoder, nonNullFieldDecoder\n\n",
+        "unions": [
+            {
+                "name": "Optional",
+                "comment": " ",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Present",
+                        [
+                            "a"
+                        ]
+                    ],
+                    [
+                        "Null",
+                        []
+                    ],
+                    [
+                        "Absent",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "encode",
+                "comment": " Encode an `Optional` value.\n",
+                "type": "(a -> Json.Encode.Value) -> GraphQL.Optional.Optional a -> Maybe.Maybe Json.Encode.Value"
+            },
+            {
+                "name": "encodeList",
+                "comment": " Encode a list of `Optional` values. Absent values are omitted.\n",
+                "type": "(a -> Json.Encode.Value) -> List.List (GraphQL.Optional.Optional a) -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeObject",
+                "comment": " Encode a object of `Optional` fields. Absent fields are omitted.\n",
+                "type": "List.List ( String.String, GraphQL.Optional.Optional Json.Encode.Value ) -> Json.Encode.Value"
+            },
+            {
+                "name": "fieldDecoder",
+                "comment": " Decode a JSON object with a `Optional` field.\n",
+                "type": "String.String -> Json.Decode.Decoder a -> Json.Decode.Decoder (GraphQL.Optional.Optional a)"
+            },
+            {
+                "name": "fromMaybe",
+                "comment": " ",
+                "type": "GraphQL.Optional.Optional a -> Maybe.Maybe a -> GraphQL.Optional.Optional a"
+            },
+            {
+                "name": "map",
+                "comment": " ",
+                "type": "(a -> b) -> GraphQL.Optional.Optional a -> GraphQL.Optional.Optional b"
+            },
+            {
+                "name": "nonNullFieldDecoder",
+                "comment": " Decode a JSON object with a `Optional` field that can be present or absent\nbut not `null`.\n",
+                "type": "String.String -> Json.Decode.Decoder a -> Json.Decode.Decoder (Maybe.Maybe a)"
+            },
+            {
+                "name": "toMaybe",
+                "comment": " ",
+                "type": "GraphQL.Optional.Optional a -> Maybe.Maybe a"
+            },
+            {
+                "name": "withDefault",
+                "comment": " ",
+                "type": "a -> GraphQL.Optional.Optional a -> a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "GraphQL.PlainBatch",
+        "comment": " Batch operations together in one request.\nReturns a `Response` for every operation.\n\n    batch (\\a b c -> ( a, b, c ))\n        |> query operation1\n        |> query operation2\n        |> mutation operation3\n\n@docs Batch, batch, query, mutation\n\n\n# Mapping\n\n@docs map\n\n\n# JSON\n\n@docs encode, decoder\n\n",
+        "unions": [
+            {
+                "name": "Batch",
+                "comment": " ",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "batch",
+                "comment": " ",
+                "type": "(GraphQL.Response.Response e a -> b) -> GraphQL.PlainBatch.Batch (GraphQL.Response.Response e a -> b)"
+            },
+            {
+                "name": "decoder",
+                "comment": " Decoder for the response of a batch request.\n",
+                "type": "GraphQL.PlainBatch.Batch a -> Json.Decode.Decoder a"
+            },
+            {
+                "name": "encode",
+                "comment": " Encode the batch operations for a request.\n",
+                "type": "GraphQL.PlainBatch.Batch a -> Json.Encode.Value"
+            },
+            {
+                "name": "map",
+                "comment": " Convert the batch value.\n",
+                "type": "(a -> b) -> GraphQL.PlainBatch.Batch a -> GraphQL.PlainBatch.Batch b"
+            },
+            {
+                "name": "mutation",
+                "comment": " ",
+                "type": "GraphQL.Operation.Operation GraphQL.Operation.Mutation e a -> GraphQL.PlainBatch.Batch (GraphQL.Response.Response e a -> b) -> GraphQL.PlainBatch.Batch b"
+            },
+            {
+                "name": "query",
+                "comment": " ",
+                "type": "GraphQL.Operation.Operation GraphQL.Operation.Query e a -> GraphQL.PlainBatch.Batch (GraphQL.Response.Response e a -> b) -> GraphQL.PlainBatch.Batch b"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "GraphQL.Response",
+        "comment": " The GraphQL response type.\nSee <http://spec.graphql.org/June2018/#sec-Response>.\n\n@docs Response, mapData, mapErrors, toResult, decoder\n\n",
+        "unions": [
+            {
+                "name": "Response",
+                "comment": " ",
+                "args": [
+                    "e",
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Data",
+                        [
+                            "a"
+                        ]
+                    ],
+                    [
+                        "Errors",
+                        [
+                            "e",
+                            "GraphQL.Optional.Optional a"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decoder",
+                "comment": " Decoder for the response of an operation.\n",
+                "type": "GraphQL.Operation.Operation t e a -> Json.Decode.Decoder (GraphQL.Response.Response e a)"
+            },
+            {
+                "name": "mapData",
+                "comment": " Converts the data type of the response.\n",
+                "type": "(a -> b) -> GraphQL.Response.Response e a -> GraphQL.Response.Response e b"
+            },
+            {
+                "name": "mapErrors",
+                "comment": " Converts the errors type of the response.\n",
+                "type": "(e1 -> e2) -> GraphQL.Response.Response e1 a -> GraphQL.Response.Response e2 a"
+            },
+            {
+                "name": "toResult",
+                "comment": " Converts a `Response` to a `Result`.\nNote that the optional data in the `Errors` case will be lost.\n",
+                "type": "GraphQL.Response.Response e a -> Result.Result e a"
+            }
+        ],
+        "binops": []
+    }
+]

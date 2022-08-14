@@ -1,0 +1,278 @@
+[
+    {
+        "name": "Hexagons.Hex",
+        "comment": " We treat Cube and Axial systems separately. Cube coordinates are a plane in x,y,z space, where x+y+z = 0. Axial coordinates have two axes q,r that are 60° or 120° apart.\n\nSee <http://www.redblobgames.com/grids/hexagons/implementation.html>\n\n\n# Types\n\n@docs Hex, Direction\n\n\n# Helpers\n\n@docs q, intQ, r, intR, s, intS, intFactory, floatFactory, toIntHex, toFloatHex\n\n\n# Equality\n\n@docs eq, noteq\n\n\n# Coordinate arithmetic\n\n@docs add, sub, mul\n\n\n# Distance\n\n@docs length, distance\n\n\n# Neighbors\n\n@docs direction, neighbor\n\n",
+        "unions": [
+            {
+                "name": "Direction",
+                "comment": " Direction ranges from 0 to 5 by sides of the hexagon, we use North, South, West, East definitions for simplicity\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NE",
+                        []
+                    ],
+                    [
+                        "E",
+                        []
+                    ],
+                    [
+                        "SE",
+                        []
+                    ],
+                    [
+                        "SW",
+                        []
+                    ],
+                    [
+                        "W",
+                        []
+                    ],
+                    [
+                        "NW",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Hex",
+                "comment": " Generic hex field definition\n",
+                "args": [],
+                "cases": [
+                    [
+                        "FloatCubeHex",
+                        [
+                            "Hexagons.Hex.FloatCubeCoords"
+                        ]
+                    ],
+                    [
+                        "IntCubeHex",
+                        [
+                            "Hexagons.Hex.IntCubeCoords"
+                        ]
+                    ],
+                    [
+                        "AxialHex",
+                        [
+                            "Hexagons.Hex.AxialCoords"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "add",
+                "comment": " Since cube coordinates come from 3d cartesian coordinates, I automatically get things like addition, subtraction, multiplication, and division. For example, you can have Hex(2, 0, -2) that represents two steps northeast, and add that to location Hex(3, -5, 2) the obvious way: Hex(2 + 3, 0 + -5, -2 + -2). With other coordinate systems like offset coordinates, you can’t do that and get what you want. These operations are just what you’d implement with 3d cartesian vectors, but I am using q, r, s names in this class instead of x, y, z\n\n    IntCubeHex ( 2, 3, -5 )\n        |> add (IntCubeHex ( 1, 2, -3 ))\n        |> eq (IntCubeHex ( 3, 5, -8 ))\n\n",
+                "type": "Hexagons.Hex.Hex -> Hexagons.Hex.Hex -> Hexagons.Hex.Hex"
+            },
+            {
+                "name": "direction",
+                "comment": " Direction relative to Hex polygon lines, we used shortcuts for the mix of North, East, South, West directions\n",
+                "type": "Hexagons.Hex.Direction -> Hexagons.Hex.Hex"
+            },
+            {
+                "name": "distance",
+                "comment": " The distance between two hexes is the length of the line between them.\n\n    distance (IntCubeHex ( 2, 3, -5 )) (FloatCubeHex ( 3.2, 4.3, -7.5 )) == 2\n\n",
+                "type": "Hexagons.Hex.Hex -> Hexagons.Hex.Hex -> Basics.Int"
+            },
+            {
+                "name": "eq",
+                "comment": " Compare two Hex definitions, support both axial and cubic coordinates.\n\nNot a strict comparation, FloatCubeHex is converted to IntCubeHex.\n\n    IntCubeHex ( 2, 3, -5 )\n        |> eq (IntCubeHex ( 2, 3, -5 ))\n\n    AxialHex ( 2, 3 )\n        |> eq (AxialHex ( 2, 3 ))\n\n",
+                "type": "Hexagons.Hex.Hex -> Hexagons.Hex.Hex -> Basics.Bool"
+            },
+            {
+                "name": "floatFactory",
+                "comment": " Build Hex object from Float coordinates\n\n    floatFactory ( 2.5, 3.5 )\n        |> eq (FloatCubeHex ( 2.5, 3.5, -6.0 ))\n\n",
+                "type": "( Basics.Float, Basics.Float ) -> Hexagons.Hex.Hex"
+            },
+            {
+                "name": "intFactory",
+                "comment": " Build Hex object from Int coordinates\n\n    intFactory ( 2, 3 )\n        |> eq (IntCubeHex ( 2, 3, -5 ))\n\n",
+                "type": "( Basics.Int, Basics.Int ) -> Hexagons.Hex.Hex"
+            },
+            {
+                "name": "intQ",
+                "comment": " Get q coordinate for Hex as Int value, its generally not recommended to use on FloatCubeHex\n\n    intQ IntCubeHex ( 2, 3, -5 ) == 2\n\n",
+                "type": "Hexagons.Hex.Hex -> Basics.Int"
+            },
+            {
+                "name": "intR",
+                "comment": " Get r coordinate for Hex as Int value, its generally not recommended to use on FloatCubeHex\n\n    intR IntCubeHex ( 2, 3, -5 ) == 3\n\n",
+                "type": "Hexagons.Hex.Hex -> Basics.Int"
+            },
+            {
+                "name": "intS",
+                "comment": " Get s coordinate for Hex as Int value, its generally not recommended to use on FloatCubeHex\n\n    intS IntCubeHex ( 2, 3, -5 ) == 3\n\n",
+                "type": "Hexagons.Hex.Hex -> Basics.Int"
+            },
+            {
+                "name": "length",
+                "comment": " Length of Hex.\n\n    length (IntCubeHex ( 2, 3, -5 )) == 5\n\n    length (FloatCubeHex ( 2.2, 3.3, -5.5 )) == 5\n\n",
+                "type": "Hexagons.Hex.Hex -> Basics.Int"
+            },
+            {
+                "name": "mul",
+                "comment": " Multiplication of Hexes, more info in `sum` description\n\n    IntCubeHex ( 2, 3, -5 )\n        |> mult 5\n        |> eq (IntCubeHex ( 10, 15, -25 ))\n\n",
+                "type": "Basics.Int -> Hexagons.Hex.Hex -> Hexagons.Hex.Hex"
+            },
+            {
+                "name": "neighbor",
+                "comment": " With distance, we defined two functions: length works on one argument and distance works with two. The same is true with neighbors. The direction function is with one argument and the neighbor function is with two.\n\n    neighbor (IntCubeHex ( 2, 3, -5 )) NW\n        |> eq (IntCubeHex ( 2, 4, -6 ))\n\n",
+                "type": "Hexagons.Hex.Hex -> Hexagons.Hex.Direction -> Hexagons.Hex.Hex"
+            },
+            {
+                "name": "noteq",
+                "comment": " Compare two Hex definitions, if they are not equal, inversion of `eq`\n\n    IntCubeHex ( 2, 3, -5 )\n        |> noteq (IntCubeHex ( 1, 1, -2 ))\n\n    AxialHex ( 2, 3 )\n        |> noteq (AxialHex ( 2, 1 ))\n\n",
+                "type": "Hexagons.Hex.Hex -> Hexagons.Hex.Hex -> Basics.Bool"
+            },
+            {
+                "name": "q",
+                "comment": " Get q coordinate for Hex as Float value\n\n    q IntCubeHex ( 2, 3, -5 ) == 2.0\n\n",
+                "type": "Hexagons.Hex.Hex -> Basics.Float"
+            },
+            {
+                "name": "r",
+                "comment": " Get r coordinate for Hex as Float value\n\n    r IntCubeHex ( 2, 3, -5 ) == 3.0\n\n",
+                "type": "Hexagons.Hex.Hex -> Basics.Float"
+            },
+            {
+                "name": "s",
+                "comment": " Get s coordinate for Hex as Float value\n\n    s IntCubeHex ( 2, 3, -5 ) == -5.0\n\n",
+                "type": "Hexagons.Hex.Hex -> Basics.Float"
+            },
+            {
+                "name": "sub",
+                "comment": " Subtraction of Hexes, more info in `sum` description\n\n    IntCubeHex ( 1, 2, -3 )\n        |> sub (IntCubeHex ( 2, 3, -5 ))\n        |> eq (IntCubeHex ( 1, 1, -2 ))\n\n",
+                "type": "Hexagons.Hex.Hex -> Hexagons.Hex.Hex -> Hexagons.Hex.Hex"
+            },
+            {
+                "name": "toFloatHex",
+                "comment": " Convert Hex to FloatCubeHex coordinate systems\n\n    IntCubeHex ( 2, 3, -5 )\n        |> toFloatHex\n        |> eq (FloatCubeHex ( 2.0, 3.0, -5.0 ))\n\n",
+                "type": "Hexagons.Hex.Hex -> Hexagons.Hex.Hex"
+            },
+            {
+                "name": "toIntHex",
+                "comment": " Convert Hex to IntCubeHex coordinate systems\n\n    FloatCubeHex ( 2.5, 3.5, -6.0 )\n        |> toIntHex\n        |> eq (IntCubeHex ( 2, 4, -6 ))\n\n",
+                "type": "Hexagons.Hex.Hex -> Hexagons.Hex.Hex"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Hexagons.Layout",
+        "comment": " The next major piece of functionality we need is a way to convert between hex coordinates and screen coordinates. There’s a pointy top layout and a flat top hex layout. The conversion uses a matrix as well as the inverse of the matrix, so we need a way to store those. Also, for drawing the corners, pointy top starts at 30° and flat top starts at 0°, so we need a place to store that too.\n\nSee <http://www.redblobgames.com/grids/hexagons/implementation.html> for reference.\n\n\n# Types\n\n@docs Point, Orientation, Layout\n\n\n# Constants\n\n@docs orientationLayoutPointy, orientationLayoutFlat\n\n\n# Hex to point and point to hex conversions\n\n@docs hexToPoint, pointToHex\n\n\n# Hex to offset and offset to hex coordinate conversions\n\n@docs hexToOffset, offsetToHex\n\n\n# Hex corner coordinates\n\n@docs polygonCorners\n\n\n# Drawing\n\n@docs drawLine, drawCircle\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Layout",
+                "comment": " Composite layout definition\n",
+                "args": [],
+                "type": "{ orientation : Hexagons.Layout.Orientation, size : Hexagons.Layout.Point, origin : Hexagons.Layout.Point }"
+            },
+            {
+                "name": "Orientation",
+                "comment": " Orientation helper type to store these: the 2×2 forward matrix, the 2×2 inverse matrix, and the starting angle\n",
+                "args": [],
+                "type": "{ forward_matrix : Hexagons.Layout.Square2Matrix, inverse_matrix : Hexagons.Layout.Square2Matrix, start_angle : Basics.Float }"
+            },
+            {
+                "name": "Point",
+                "comment": " Point on screen (pixel)\n",
+                "args": [],
+                "type": "( Basics.Float, Basics.Float )"
+            }
+        ],
+        "values": [
+            {
+                "name": "drawCircle",
+                "comment": " Draw the circle of a defined redius with the hex in a center\n",
+                "type": "Hexagons.Hex.Hex -> Basics.Int -> List.List Hexagons.Hex.Hex"
+            },
+            {
+                "name": "drawLine",
+                "comment": " Draw the line between hexes using the linear interpolation\n",
+                "type": "Hexagons.Hex.Hex -> Hexagons.Hex.Hex -> List.List Hexagons.Hex.Hex"
+            },
+            {
+                "name": "hexToOffset",
+                "comment": " Convert Hex coordinates to offset\n",
+                "type": "Hexagons.Hex.Hex -> Hexagons.Layout.OffsetCoord"
+            },
+            {
+                "name": "hexToPoint",
+                "comment": " Turn Hex coordinates into a Point location on a Layout\n",
+                "type": "Hexagons.Layout.Layout -> Hexagons.Hex.Hex -> Hexagons.Layout.Point"
+            },
+            {
+                "name": "offsetToHex",
+                "comment": " Convert offset coordinates to hex\n",
+                "type": "Hexagons.Layout.OffsetCoord -> Hexagons.Hex.Hex"
+            },
+            {
+                "name": "orientationLayoutFlat",
+                "comment": " Constant definition for flat-top hexagon orientation ",
+                "type": "Hexagons.Layout.Orientation"
+            },
+            {
+                "name": "orientationLayoutPointy",
+                "comment": " Constant definition of pointy hexagon orientation\n",
+                "type": "Hexagons.Layout.Orientation"
+            },
+            {
+                "name": "pointToHex",
+                "comment": " Turn Point coordinates on a Layout into a Hex coordinates\n",
+                "type": "Hexagons.Layout.Layout -> Hexagons.Layout.Point -> Hexagons.Hex.Hex"
+            },
+            {
+                "name": "polygonCorners",
+                "comment": " Once we know where the corners are relative to the center, we can calculate the corners in screen locations by adding the center to each corner, and putting the coordinates into a list.\n",
+                "type": "Hexagons.Layout.Layout -> Hexagons.Hex.Hex -> List.List Hexagons.Layout.Point"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Hexagons.Map",
+        "comment": " This module solves the problem of generating and storing the Map data. We are using Elm dictionary as the Map storage engine with Hex coordinate tuple as the key.\n\nSee <http://www.redblobgames.com/grids/hexagons/implementation.html> for reference.\n\n\n# Types\n\n@docs Map, Hash\n\n\n# Accessing map storage\n\n@docs hashHex\n@docs getHex\n\n\n# Map generators\n\n@docs rectangularPointyTopMap, rectangularFlatTopMap\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Hash",
+                "comment": " Hash key to access Map cell\n",
+                "args": [],
+                "type": "( Basics.Int, Basics.Int, Basics.Int )"
+            },
+            {
+                "name": "Map",
+                "comment": " Dictionary storage to keep map of hexes\n",
+                "args": [],
+                "type": "Dict.Dict Hexagons.Map.Hash Hexagons.Hex.Hex"
+            }
+        ],
+        "values": [
+            {
+                "name": "getHex",
+                "comment": " Fetch hex from map storage, using a default value in case of missing Hex\n",
+                "type": "Hexagons.Hex.Hex -> Hexagons.Map.Map -> Hexagons.Map.Hash -> Hexagons.Hex.Hex"
+            },
+            {
+                "name": "hashHex",
+                "comment": " Hash function to get a uniform token to address stored hex Hex\n",
+                "type": "Hexagons.Hex.Hex -> ( Basics.Int, Basics.Int, Basics.Int )"
+            },
+            {
+                "name": "rectangularFlatTopMap",
+                "comment": " Generate Map of rectangular shape given its height and width\n",
+                "type": "Basics.Int -> Basics.Int -> Hexagons.Map.Map"
+            },
+            {
+                "name": "rectangularPointyTopMap",
+                "comment": " Generate Map of rectangular shape given its height and width\n",
+                "type": "Basics.Int -> Basics.Int -> Hexagons.Map.Map"
+            }
+        ],
+        "binops": []
+    }
+]

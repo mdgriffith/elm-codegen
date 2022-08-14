@@ -1,0 +1,2759 @@
+[
+    {
+        "name": "AWS.Pinpoint",
+        "comment": " Doc Engage API - Amazon Pinpoint API\n\n\n# Service definition.\n\n@docs service\n\n\n# Service endpoints.\n\n@docs createApp, createCampaign, createExportJob, createImportJob, createSegment, deleteAdmChannel, deleteApnsChannel\n@docs deleteApnsSandboxChannel, deleteApnsVoipChannel, deleteApnsVoipSandboxChannel, deleteApp, deleteBaiduChannel, deleteCampaign\n@docs deleteEmailChannel, deleteEndpoint, deleteEventStream, deleteGcmChannel, deleteSegment, deleteSmsChannel, deleteUserEndpoints\n@docs deleteVoiceChannel, getAdmChannel, getApnsChannel, getApnsSandboxChannel, getApnsVoipChannel, getApnsVoipSandboxChannel, getApp\n@docs getApplicationDateRangeKpi, getApplicationSettings, getApps, getBaiduChannel, getCampaign, getCampaignActivities\n@docs getCampaignDateRangeKpi, getCampaignVersion, getCampaignVersions, getCampaigns, getChannels, getEmailChannel, getEndpoint\n@docs getEventStream, getExportJob, getExportJobs, getGcmChannel, getImportJob, getImportJobs, getSegment, getSegmentExportJobs\n@docs getSegmentImportJobs, getSegmentVersion, getSegmentVersions, getSegments, getSmsChannel, getUserEndpoints, getVoiceChannel\n@docs listTagsForResource, phoneNumberValidate, putEventStream, putEvents, removeAttributes, sendMessages, sendUsersMessages, tagResource\n@docs untagResource, updateAdmChannel, updateApnsChannel, updateApnsSandboxChannel, updateApnsVoipChannel, updateApnsVoipSandboxChannel\n@docs updateApplicationSettings, updateBaiduChannel, updateCampaign, updateEmailChannel, updateEndpoint, updateEndpointsBatch\n@docs updateGcmChannel, updateSegment, updateSmsChannel, updateVoiceChannel\n\n\n# API data model.\n\n@docs Action, ActivitiesResponse, ActivityResponse, AddressConfiguration, AdmchannelRequest, AdmchannelResponse, Admmessage\n@docs ApnschannelRequest, ApnschannelResponse, Apnsmessage, ApnssandboxChannelRequest, ApnssandboxChannelResponse\n@docs ApnsvoipChannelRequest, ApnsvoipChannelResponse, ApnsvoipSandboxChannelRequest, ApnsvoipSandboxChannelResponse\n@docs ApplicationDateRangeKpiResponse, ApplicationResponse, ApplicationSettingsResource, ApplicationsResponse, AttributeDimension\n@docs AttributeType, AttributesResource, BaiduChannelRequest, BaiduChannelResponse, BaiduMessage, BaseKpiResult\n@docs CampaignDateRangeKpiResponse, CampaignEmailMessage, CampaignEventFilter, CampaignHook, CampaignLimits, CampaignResponse\n@docs CampaignSmsMessage, CampaignState, CampaignStatus, CampaignsResponse, ChannelResponse, ChannelType, ChannelsResponse, CreateAppRequest\n@docs CreateAppResponse, CreateApplicationRequest, CreateCampaignRequest, CreateCampaignResponse, CreateExportJobRequest\n@docs CreateExportJobResponse, CreateImportJobRequest, CreateImportJobResponse, CreateSegmentRequest, CreateSegmentResponse\n@docs DefaultMessage, DefaultPushNotificationMessage, DeleteAdmChannelRequest, DeleteAdmChannelResponse, DeleteApnsChannelRequest\n@docs DeleteApnsChannelResponse, DeleteApnsSandboxChannelRequest, DeleteApnsSandboxChannelResponse, DeleteApnsVoipChannelRequest\n@docs DeleteApnsVoipChannelResponse, DeleteApnsVoipSandboxChannelRequest, DeleteApnsVoipSandboxChannelResponse, DeleteAppRequest\n@docs DeleteAppResponse, DeleteBaiduChannelRequest, DeleteBaiduChannelResponse, DeleteCampaignRequest, DeleteCampaignResponse\n@docs DeleteEmailChannelRequest, DeleteEmailChannelResponse, DeleteEndpointRequest, DeleteEndpointResponse, DeleteEventStreamRequest\n@docs DeleteEventStreamResponse, DeleteGcmChannelRequest, DeleteGcmChannelResponse, DeleteSegmentRequest, DeleteSegmentResponse\n@docs DeleteSmsChannelRequest, DeleteSmsChannelResponse, DeleteUserEndpointsRequest, DeleteUserEndpointsResponse\n@docs DeleteVoiceChannelRequest, DeleteVoiceChannelResponse, DeliveryStatus, DimensionType, DirectMessageConfiguration, Duration\n@docs EmailChannelRequest, EmailChannelResponse, EmailMessage, EndpointBatchItem, EndpointBatchRequest, EndpointDemographic\n@docs EndpointItemResponse, EndpointLocation, EndpointMessageResult, EndpointRequest, EndpointResponse, EndpointSendConfiguration\n@docs EndpointUser, EndpointsResponse, Event, EventDimensions, EventItemResponse, EventStream, EventsBatch, EventsRequest, EventsResponse\n@docs ExportJobRequest, ExportJobResource, ExportJobResponse, ExportJobsResponse, FilterType, Format, Frequency, GcmchannelRequest\n@docs GcmchannelResponse, Gcmmessage, GetAdmChannelRequest, GetAdmChannelResponse, GetApnsChannelRequest, GetApnsChannelResponse\n@docs GetApnsSandboxChannelRequest, GetApnsSandboxChannelResponse, GetApnsVoipChannelRequest, GetApnsVoipChannelResponse\n@docs GetApnsVoipSandboxChannelRequest, GetApnsVoipSandboxChannelResponse, GetAppRequest, GetAppResponse\n@docs GetApplicationDateRangeKpiRequest, GetApplicationDateRangeKpiResponse, GetApplicationSettingsRequest\n@docs GetApplicationSettingsResponse, GetAppsRequest, GetAppsResponse, GetBaiduChannelRequest, GetBaiduChannelResponse\n@docs GetCampaignActivitiesRequest, GetCampaignActivitiesResponse, GetCampaignDateRangeKpiRequest, GetCampaignDateRangeKpiResponse\n@docs GetCampaignRequest, GetCampaignResponse, GetCampaignVersionRequest, GetCampaignVersionResponse, GetCampaignVersionsRequest\n@docs GetCampaignVersionsResponse, GetCampaignsRequest, GetCampaignsResponse, GetChannelsRequest, GetChannelsResponse\n@docs GetEmailChannelRequest, GetEmailChannelResponse, GetEndpointRequest, GetEndpointResponse, GetEventStreamRequest\n@docs GetEventStreamResponse, GetExportJobRequest, GetExportJobResponse, GetExportJobsRequest, GetExportJobsResponse\n@docs GetGcmChannelRequest, GetGcmChannelResponse, GetImportJobRequest, GetImportJobResponse, GetImportJobsRequest\n@docs GetImportJobsResponse, GetSegmentExportJobsRequest, GetSegmentExportJobsResponse, GetSegmentImportJobsRequest\n@docs GetSegmentImportJobsResponse, GetSegmentRequest, GetSegmentResponse, GetSegmentVersionRequest, GetSegmentVersionResponse\n@docs GetSegmentVersionsRequest, GetSegmentVersionsResponse, GetSegmentsRequest, GetSegmentsResponse, GetSmsChannelRequest\n@docs GetSmsChannelResponse, GetUserEndpointsRequest, GetUserEndpointsResponse, GetVoiceChannelRequest, GetVoiceChannelResponse\n@docs Gpscoordinates, GpspointDimension, ImportJobRequest, ImportJobResource, ImportJobResponse, ImportJobsResponse, Include, ItemResponse\n@docs JobStatus, ListOfActivityResponse, ListOfApplicationResponse, ListOfCampaignResponse, ListOfEndpointBatchItem\n@docs ListOfEndpointResponse, ListOfExportJobResponse, ListOfImportJobResponse, ListOfResultRow, ListOfResultRowValue\n@docs ListOfSegmentDimensions, ListOfSegmentGroup, ListOfSegmentReference, ListOfSegmentResponse, ListOfString, ListOfTreatmentResource\n@docs ListOfWriteTreatmentResource, ListTagsForResourceRequest, ListTagsForResourceResponse, MapOfAddressConfiguration\n@docs MapOfAttributeDimension, MapOfChannelResponse, MapOfDouble, MapOfEndpointMessageResult, MapOfEndpointSendConfiguration, MapOfEvent\n@docs MapOfEventItemResponse, MapOfEventsBatch, MapOfInteger, MapOfItemResponse, MapOfListOfString, MapOfMapOfEndpointMessageResult\n@docs MapOfMessageResult, MapOfMetricDimension, MapOfString, Message, MessageBody, MessageConfiguration, MessageRequest, MessageResponse\n@docs MessageResult, MessageType, MetricDimension, Mode, NumberValidateRequest, NumberValidateResponse, PhoneNumberValidateRequest\n@docs PhoneNumberValidateResponse, PublicEndpoint, PutEventStreamRequest, PutEventStreamResponse, PutEventsRequest, PutEventsResponse\n@docs QuietTime, RawEmail, RecencyDimension, RecencyType, RemoveAttributesRequest, RemoveAttributesResponse, ResultRow, ResultRowValue\n@docs Schedule, SegmentBehaviors, SegmentDemographics, SegmentDimensions, SegmentGroup, SegmentGroupList, SegmentImportResource\n@docs SegmentLocation, SegmentReference, SegmentResponse, SegmentType, SegmentsResponse, SendMessagesRequest, SendMessagesResponse\n@docs SendUsersMessageRequest, SendUsersMessageResponse, SendUsersMessagesRequest, SendUsersMessagesResponse, Session, SetDimension\n@docs SimpleEmail, SimpleEmailPart, SmschannelRequest, SmschannelResponse, Smsmessage, SourceType, TagResourceRequest, TagsModel\n@docs TreatmentResource, Type, UntagResourceRequest, UpdateAdmChannelRequest, UpdateAdmChannelResponse, UpdateApnsChannelRequest\n@docs UpdateApnsChannelResponse, UpdateApnsSandboxChannelRequest, UpdateApnsSandboxChannelResponse, UpdateApnsVoipChannelRequest\n@docs UpdateApnsVoipChannelResponse, UpdateApnsVoipSandboxChannelRequest, UpdateApnsVoipSandboxChannelResponse\n@docs UpdateApplicationSettingsRequest, UpdateApplicationSettingsResponse, UpdateAttributesRequest, UpdateBaiduChannelRequest\n@docs UpdateBaiduChannelResponse, UpdateCampaignRequest, UpdateCampaignResponse, UpdateEmailChannelRequest, UpdateEmailChannelResponse\n@docs UpdateEndpointRequest, UpdateEndpointResponse, UpdateEndpointsBatchRequest, UpdateEndpointsBatchResponse\n@docs UpdateGcmChannelRequest, UpdateGcmChannelResponse, UpdateSegmentRequest, UpdateSegmentResponse, UpdateSmsChannelRequest\n@docs UpdateSmsChannelResponse, UpdateVoiceChannelRequest, UpdateVoiceChannelResponse, VoiceChannelRequest, VoiceChannelResponse\n@docs VoiceMessage, WriteApplicationSettingsRequest, WriteCampaignRequest, WriteEventStream, WriteSegmentRequest, WriteTreatmentResource\n@docs action, attributeType, campaignStatus, channelType, deliveryStatus, dimensionType, duration, filterType, format, frequency, include, jobStatus\n@docs messageType, mode, recencyType, segmentType, sourceType, type_\n\n",
+        "unions": [
+            {
+                "name": "Action",
+                "comment": " The Action data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "ActionOpenApp",
+                        []
+                    ],
+                    [
+                        "ActionDeepLink",
+                        []
+                    ],
+                    [
+                        "ActionUrl",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "AttributeType",
+                "comment": " The AttributeType data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "AttributeTypeInclusive",
+                        []
+                    ],
+                    [
+                        "AttributeTypeExclusive",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "CampaignStatus",
+                "comment": " The CampaignStatus data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "CampaignStatusScheduled",
+                        []
+                    ],
+                    [
+                        "CampaignStatusExecuting",
+                        []
+                    ],
+                    [
+                        "CampaignStatusPendingNextRun",
+                        []
+                    ],
+                    [
+                        "CampaignStatusCompleted",
+                        []
+                    ],
+                    [
+                        "CampaignStatusPaused",
+                        []
+                    ],
+                    [
+                        "CampaignStatusDeleted",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "ChannelType",
+                "comment": " The ChannelType data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "ChannelTypeGcm",
+                        []
+                    ],
+                    [
+                        "ChannelTypeApns",
+                        []
+                    ],
+                    [
+                        "ChannelTypeApnsSandbox",
+                        []
+                    ],
+                    [
+                        "ChannelTypeApnsVoip",
+                        []
+                    ],
+                    [
+                        "ChannelTypeApnsVoipSandbox",
+                        []
+                    ],
+                    [
+                        "ChannelTypeAdm",
+                        []
+                    ],
+                    [
+                        "ChannelTypeSms",
+                        []
+                    ],
+                    [
+                        "ChannelTypeVoice",
+                        []
+                    ],
+                    [
+                        "ChannelTypeEmail",
+                        []
+                    ],
+                    [
+                        "ChannelTypeBaidu",
+                        []
+                    ],
+                    [
+                        "ChannelTypeCustom",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "DeliveryStatus",
+                "comment": " The DeliveryStatus data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "DeliveryStatusSuccessful",
+                        []
+                    ],
+                    [
+                        "DeliveryStatusThrottled",
+                        []
+                    ],
+                    [
+                        "DeliveryStatusTemporaryFailure",
+                        []
+                    ],
+                    [
+                        "DeliveryStatusPermanentFailure",
+                        []
+                    ],
+                    [
+                        "DeliveryStatusUnknownFailure",
+                        []
+                    ],
+                    [
+                        "DeliveryStatusOptOut",
+                        []
+                    ],
+                    [
+                        "DeliveryStatusDuplicate",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "DimensionType",
+                "comment": " The DimensionType data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "DimensionTypeInclusive",
+                        []
+                    ],
+                    [
+                        "DimensionTypeExclusive",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Duration",
+                "comment": " The Duration data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "DurationHr24",
+                        []
+                    ],
+                    [
+                        "DurationDay7",
+                        []
+                    ],
+                    [
+                        "DurationDay14",
+                        []
+                    ],
+                    [
+                        "DurationDay30",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "FilterType",
+                "comment": " The FilterType data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "FilterTypeSystem",
+                        []
+                    ],
+                    [
+                        "FilterTypeEndpoint",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Format",
+                "comment": " The Format data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "FormatCsv",
+                        []
+                    ],
+                    [
+                        "FormatJson",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Frequency",
+                "comment": " The Frequency data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "FrequencyOnce",
+                        []
+                    ],
+                    [
+                        "FrequencyHourly",
+                        []
+                    ],
+                    [
+                        "FrequencyDaily",
+                        []
+                    ],
+                    [
+                        "FrequencyWeekly",
+                        []
+                    ],
+                    [
+                        "FrequencyMonthly",
+                        []
+                    ],
+                    [
+                        "FrequencyEvent",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Include",
+                "comment": " The Include data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "IncludeAll",
+                        []
+                    ],
+                    [
+                        "IncludeAny",
+                        []
+                    ],
+                    [
+                        "IncludeNone",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "JobStatus",
+                "comment": " The JobStatus data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "JobStatusCreated",
+                        []
+                    ],
+                    [
+                        "JobStatusInitializing",
+                        []
+                    ],
+                    [
+                        "JobStatusProcessing",
+                        []
+                    ],
+                    [
+                        "JobStatusCompleting",
+                        []
+                    ],
+                    [
+                        "JobStatusCompleted",
+                        []
+                    ],
+                    [
+                        "JobStatusFailing",
+                        []
+                    ],
+                    [
+                        "JobStatusFailed",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "MessageType",
+                "comment": " The MessageType data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "MessageTypeTransactional",
+                        []
+                    ],
+                    [
+                        "MessageTypePromotional",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Mode",
+                "comment": " The Mode data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "ModeDelivery",
+                        []
+                    ],
+                    [
+                        "ModeFilter",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "RecencyType",
+                "comment": " The RecencyType data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "RecencyTypeActive",
+                        []
+                    ],
+                    [
+                        "RecencyTypeInactive",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "SegmentType",
+                "comment": " The SegmentType data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "SegmentTypeDimensional",
+                        []
+                    ],
+                    [
+                        "SegmentTypeImport",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "SourceType",
+                "comment": " The SourceType data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "SourceTypeAll",
+                        []
+                    ],
+                    [
+                        "SourceTypeAny",
+                        []
+                    ],
+                    [
+                        "SourceTypeNone",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Type",
+                "comment": " The Type data model.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "TypeAll",
+                        []
+                    ],
+                    [
+                        "TypeAny",
+                        []
+                    ],
+                    [
+                        "TypeNone",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "ActivitiesResponse",
+                "comment": " The ActivitiesResponse data model.\n",
+                "args": [],
+                "type": "{ item : AWS.Pinpoint.ListOfActivityResponse, nextToken : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "ActivityResponse",
+                "comment": " The ActivityResponse data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String, campaignId : String.String, end : Maybe.Maybe String.String, id : String.String, result : Maybe.Maybe String.String, scheduledStart : Maybe.Maybe String.String, start : Maybe.Maybe String.String, state : Maybe.Maybe String.String, successfulEndpointCount : Maybe.Maybe Basics.Int, timezonesCompletedCount : Maybe.Maybe Basics.Int, timezonesTotalCount : Maybe.Maybe Basics.Int, totalEndpointCount : Maybe.Maybe Basics.Int, treatmentId : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "AddressConfiguration",
+                "comment": " The AddressConfiguration data model.\n",
+                "args": [],
+                "type": "{ bodyOverride : Maybe.Maybe String.String, channelType : Maybe.Maybe AWS.Pinpoint.ChannelType, context : Maybe.Maybe AWS.Pinpoint.MapOfString, rawContent : Maybe.Maybe String.String, substitutions : Maybe.Maybe AWS.Pinpoint.MapOfListOfString, titleOverride : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "AdmchannelRequest",
+                "comment": " The AdmchannelRequest data model.\n",
+                "args": [],
+                "type": "{ clientId : String.String, clientSecret : String.String, enabled : Maybe.Maybe Basics.Bool }"
+            },
+            {
+                "name": "AdmchannelResponse",
+                "comment": " The AdmchannelResponse data model.\n",
+                "args": [],
+                "type": "{ applicationId : Maybe.Maybe String.String, creationDate : Maybe.Maybe String.String, enabled : Maybe.Maybe Basics.Bool, hasCredential : Maybe.Maybe Basics.Bool, id : Maybe.Maybe String.String, isArchived : Maybe.Maybe Basics.Bool, lastModifiedBy : Maybe.Maybe String.String, lastModifiedDate : Maybe.Maybe String.String, platform : String.String, version : Maybe.Maybe Basics.Int }"
+            },
+            {
+                "name": "Admmessage",
+                "comment": " The Admmessage data model.\n",
+                "args": [],
+                "type": "{ action : Maybe.Maybe AWS.Pinpoint.Action, body : Maybe.Maybe String.String, consolidationKey : Maybe.Maybe String.String, data : Maybe.Maybe AWS.Pinpoint.MapOfString, expiresAfter : Maybe.Maybe String.String, iconReference : Maybe.Maybe String.String, imageIconUrl : Maybe.Maybe String.String, imageUrl : Maybe.Maybe String.String, md5 : Maybe.Maybe String.String, rawContent : Maybe.Maybe String.String, silentPush : Maybe.Maybe Basics.Bool, smallImageIconUrl : Maybe.Maybe String.String, sound : Maybe.Maybe String.String, substitutions : Maybe.Maybe AWS.Pinpoint.MapOfListOfString, title : Maybe.Maybe String.String, url : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "ApnschannelRequest",
+                "comment": " The ApnschannelRequest data model.\n",
+                "args": [],
+                "type": "{ bundleId : Maybe.Maybe String.String, certificate : Maybe.Maybe String.String, defaultAuthenticationMethod : Maybe.Maybe String.String, enabled : Maybe.Maybe Basics.Bool, privateKey : Maybe.Maybe String.String, teamId : Maybe.Maybe String.String, tokenKey : Maybe.Maybe String.String, tokenKeyId : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "ApnschannelResponse",
+                "comment": " The ApnschannelResponse data model.\n",
+                "args": [],
+                "type": "{ applicationId : Maybe.Maybe String.String, creationDate : Maybe.Maybe String.String, defaultAuthenticationMethod : Maybe.Maybe String.String, enabled : Maybe.Maybe Basics.Bool, hasCredential : Maybe.Maybe Basics.Bool, hasTokenKey : Maybe.Maybe Basics.Bool, id : Maybe.Maybe String.String, isArchived : Maybe.Maybe Basics.Bool, lastModifiedBy : Maybe.Maybe String.String, lastModifiedDate : Maybe.Maybe String.String, platform : String.String, version : Maybe.Maybe Basics.Int }"
+            },
+            {
+                "name": "Apnsmessage",
+                "comment": " The Apnsmessage data model.\n",
+                "args": [],
+                "type": "{ action : Maybe.Maybe AWS.Pinpoint.Action, badge : Maybe.Maybe Basics.Int, body : Maybe.Maybe String.String, category : Maybe.Maybe String.String, collapseId : Maybe.Maybe String.String, data : Maybe.Maybe AWS.Pinpoint.MapOfString, mediaUrl : Maybe.Maybe String.String, preferredAuthenticationMethod : Maybe.Maybe String.String, priority : Maybe.Maybe String.String, rawContent : Maybe.Maybe String.String, silentPush : Maybe.Maybe Basics.Bool, sound : Maybe.Maybe String.String, substitutions : Maybe.Maybe AWS.Pinpoint.MapOfListOfString, threadId : Maybe.Maybe String.String, timeToLive : Maybe.Maybe Basics.Int, title : Maybe.Maybe String.String, url : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "ApnssandboxChannelRequest",
+                "comment": " The ApnssandboxChannelRequest data model.\n",
+                "args": [],
+                "type": "{ bundleId : Maybe.Maybe String.String, certificate : Maybe.Maybe String.String, defaultAuthenticationMethod : Maybe.Maybe String.String, enabled : Maybe.Maybe Basics.Bool, privateKey : Maybe.Maybe String.String, teamId : Maybe.Maybe String.String, tokenKey : Maybe.Maybe String.String, tokenKeyId : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "ApnssandboxChannelResponse",
+                "comment": " The ApnssandboxChannelResponse data model.\n",
+                "args": [],
+                "type": "{ applicationId : Maybe.Maybe String.String, creationDate : Maybe.Maybe String.String, defaultAuthenticationMethod : Maybe.Maybe String.String, enabled : Maybe.Maybe Basics.Bool, hasCredential : Maybe.Maybe Basics.Bool, hasTokenKey : Maybe.Maybe Basics.Bool, id : Maybe.Maybe String.String, isArchived : Maybe.Maybe Basics.Bool, lastModifiedBy : Maybe.Maybe String.String, lastModifiedDate : Maybe.Maybe String.String, platform : String.String, version : Maybe.Maybe Basics.Int }"
+            },
+            {
+                "name": "ApnsvoipChannelRequest",
+                "comment": " The ApnsvoipChannelRequest data model.\n",
+                "args": [],
+                "type": "{ bundleId : Maybe.Maybe String.String, certificate : Maybe.Maybe String.String, defaultAuthenticationMethod : Maybe.Maybe String.String, enabled : Maybe.Maybe Basics.Bool, privateKey : Maybe.Maybe String.String, teamId : Maybe.Maybe String.String, tokenKey : Maybe.Maybe String.String, tokenKeyId : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "ApnsvoipChannelResponse",
+                "comment": " The ApnsvoipChannelResponse data model.\n",
+                "args": [],
+                "type": "{ applicationId : Maybe.Maybe String.String, creationDate : Maybe.Maybe String.String, defaultAuthenticationMethod : Maybe.Maybe String.String, enabled : Maybe.Maybe Basics.Bool, hasCredential : Maybe.Maybe Basics.Bool, hasTokenKey : Maybe.Maybe Basics.Bool, id : Maybe.Maybe String.String, isArchived : Maybe.Maybe Basics.Bool, lastModifiedBy : Maybe.Maybe String.String, lastModifiedDate : Maybe.Maybe String.String, platform : String.String, version : Maybe.Maybe Basics.Int }"
+            },
+            {
+                "name": "ApnsvoipSandboxChannelRequest",
+                "comment": " The ApnsvoipSandboxChannelRequest data model.\n",
+                "args": [],
+                "type": "{ bundleId : Maybe.Maybe String.String, certificate : Maybe.Maybe String.String, defaultAuthenticationMethod : Maybe.Maybe String.String, enabled : Maybe.Maybe Basics.Bool, privateKey : Maybe.Maybe String.String, teamId : Maybe.Maybe String.String, tokenKey : Maybe.Maybe String.String, tokenKeyId : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "ApnsvoipSandboxChannelResponse",
+                "comment": " The ApnsvoipSandboxChannelResponse data model.\n",
+                "args": [],
+                "type": "{ applicationId : Maybe.Maybe String.String, creationDate : Maybe.Maybe String.String, defaultAuthenticationMethod : Maybe.Maybe String.String, enabled : Maybe.Maybe Basics.Bool, hasCredential : Maybe.Maybe Basics.Bool, hasTokenKey : Maybe.Maybe Basics.Bool, id : Maybe.Maybe String.String, isArchived : Maybe.Maybe Basics.Bool, lastModifiedBy : Maybe.Maybe String.String, lastModifiedDate : Maybe.Maybe String.String, platform : String.String, version : Maybe.Maybe Basics.Int }"
+            },
+            {
+                "name": "ApplicationDateRangeKpiResponse",
+                "comment": " The ApplicationDateRangeKpiResponse data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String, endTime : String.String, kpiName : String.String, kpiResult : AWS.Pinpoint.BaseKpiResult, nextToken : Maybe.Maybe String.String, startTime : String.String }"
+            },
+            {
+                "name": "ApplicationResponse",
+                "comment": " The ApplicationResponse data model.\n",
+                "args": [],
+                "type": "{ arn : String.String, id : String.String, name : String.String, tags : Maybe.Maybe AWS.Pinpoint.MapOfString }"
+            },
+            {
+                "name": "ApplicationSettingsResource",
+                "comment": " The ApplicationSettingsResource data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String, campaignHook : Maybe.Maybe AWS.Pinpoint.CampaignHook, lastModifiedDate : Maybe.Maybe String.String, limits : Maybe.Maybe AWS.Pinpoint.CampaignLimits, quietTime : Maybe.Maybe AWS.Pinpoint.QuietTime }"
+            },
+            {
+                "name": "ApplicationsResponse",
+                "comment": " The ApplicationsResponse data model.\n",
+                "args": [],
+                "type": "{ item : Maybe.Maybe AWS.Pinpoint.ListOfApplicationResponse, nextToken : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "AttributeDimension",
+                "comment": " The AttributeDimension data model.\n",
+                "args": [],
+                "type": "{ attributeType : Maybe.Maybe AWS.Pinpoint.AttributeType, values : AWS.Pinpoint.ListOfString }"
+            },
+            {
+                "name": "AttributesResource",
+                "comment": " The AttributesResource data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String, attributeType : String.String, attributes : Maybe.Maybe AWS.Pinpoint.ListOfString }"
+            },
+            {
+                "name": "BaiduChannelRequest",
+                "comment": " The BaiduChannelRequest data model.\n",
+                "args": [],
+                "type": "{ apiKey : String.String, enabled : Maybe.Maybe Basics.Bool, secretKey : String.String }"
+            },
+            {
+                "name": "BaiduChannelResponse",
+                "comment": " The BaiduChannelResponse data model.\n",
+                "args": [],
+                "type": "{ applicationId : Maybe.Maybe String.String, creationDate : Maybe.Maybe String.String, credential : String.String, enabled : Maybe.Maybe Basics.Bool, hasCredential : Maybe.Maybe Basics.Bool, id : Maybe.Maybe String.String, isArchived : Maybe.Maybe Basics.Bool, lastModifiedBy : Maybe.Maybe String.String, lastModifiedDate : Maybe.Maybe String.String, platform : String.String, version : Maybe.Maybe Basics.Int }"
+            },
+            {
+                "name": "BaiduMessage",
+                "comment": " The BaiduMessage data model.\n",
+                "args": [],
+                "type": "{ action : Maybe.Maybe AWS.Pinpoint.Action, body : Maybe.Maybe String.String, data : Maybe.Maybe AWS.Pinpoint.MapOfString, iconReference : Maybe.Maybe String.String, imageIconUrl : Maybe.Maybe String.String, imageUrl : Maybe.Maybe String.String, rawContent : Maybe.Maybe String.String, silentPush : Maybe.Maybe Basics.Bool, smallImageIconUrl : Maybe.Maybe String.String, sound : Maybe.Maybe String.String, substitutions : Maybe.Maybe AWS.Pinpoint.MapOfListOfString, timeToLive : Maybe.Maybe Basics.Int, title : Maybe.Maybe String.String, url : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "BaseKpiResult",
+                "comment": " The BaseKpiResult data model.\n",
+                "args": [],
+                "type": "{ rows : AWS.Pinpoint.ListOfResultRow }"
+            },
+            {
+                "name": "CampaignDateRangeKpiResponse",
+                "comment": " The CampaignDateRangeKpiResponse data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String, campaignId : String.String, endTime : String.String, kpiName : String.String, kpiResult : AWS.Pinpoint.BaseKpiResult, nextToken : Maybe.Maybe String.String, startTime : String.String }"
+            },
+            {
+                "name": "CampaignEmailMessage",
+                "comment": " The CampaignEmailMessage data model.\n",
+                "args": [],
+                "type": "{ body : Maybe.Maybe String.String, fromAddress : Maybe.Maybe String.String, htmlBody : Maybe.Maybe String.String, title : String.String }"
+            },
+            {
+                "name": "CampaignEventFilter",
+                "comment": " The CampaignEventFilter data model.\n",
+                "args": [],
+                "type": "{ dimensions : AWS.Pinpoint.EventDimensions, filterType : AWS.Pinpoint.FilterType }"
+            },
+            {
+                "name": "CampaignHook",
+                "comment": " The CampaignHook data model.\n",
+                "args": [],
+                "type": "{ lambdaFunctionName : Maybe.Maybe String.String, mode : Maybe.Maybe AWS.Pinpoint.Mode, webUrl : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "CampaignLimits",
+                "comment": " The CampaignLimits data model.\n",
+                "args": [],
+                "type": "{ daily : Maybe.Maybe Basics.Int, maximumDuration : Maybe.Maybe Basics.Int, messagesPerSecond : Maybe.Maybe Basics.Int, total : Maybe.Maybe Basics.Int }"
+            },
+            {
+                "name": "CampaignResponse",
+                "comment": " The CampaignResponse data model.\n",
+                "args": [],
+                "type": "{ additionalTreatments : Maybe.Maybe AWS.Pinpoint.ListOfTreatmentResource, applicationId : String.String, arn : String.String, creationDate : String.String, defaultState : Maybe.Maybe AWS.Pinpoint.CampaignState, description : Maybe.Maybe String.String, holdoutPercent : Maybe.Maybe Basics.Int, hook : Maybe.Maybe AWS.Pinpoint.CampaignHook, id : String.String, isPaused : Maybe.Maybe Basics.Bool, lastModifiedDate : String.String, limits : Maybe.Maybe AWS.Pinpoint.CampaignLimits, messageConfiguration : Maybe.Maybe AWS.Pinpoint.MessageConfiguration, name : Maybe.Maybe String.String, schedule : Maybe.Maybe AWS.Pinpoint.Schedule, segmentId : String.String, segmentVersion : Basics.Int, state : Maybe.Maybe AWS.Pinpoint.CampaignState, treatmentDescription : Maybe.Maybe String.String, treatmentName : Maybe.Maybe String.String, version : Maybe.Maybe Basics.Int, tags : Maybe.Maybe AWS.Pinpoint.MapOfString }"
+            },
+            {
+                "name": "CampaignSmsMessage",
+                "comment": " The CampaignSmsMessage data model.\n",
+                "args": [],
+                "type": "{ body : Maybe.Maybe String.String, messageType : Maybe.Maybe AWS.Pinpoint.MessageType, senderId : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "CampaignState",
+                "comment": " The CampaignState data model.\n",
+                "args": [],
+                "type": "{ campaignStatus : Maybe.Maybe AWS.Pinpoint.CampaignStatus }"
+            },
+            {
+                "name": "CampaignsResponse",
+                "comment": " The CampaignsResponse data model.\n",
+                "args": [],
+                "type": "{ item : AWS.Pinpoint.ListOfCampaignResponse, nextToken : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "ChannelResponse",
+                "comment": " The ChannelResponse data model.\n",
+                "args": [],
+                "type": "{ applicationId : Maybe.Maybe String.String, creationDate : Maybe.Maybe String.String, enabled : Maybe.Maybe Basics.Bool, hasCredential : Maybe.Maybe Basics.Bool, id : Maybe.Maybe String.String, isArchived : Maybe.Maybe Basics.Bool, lastModifiedBy : Maybe.Maybe String.String, lastModifiedDate : Maybe.Maybe String.String, version : Maybe.Maybe Basics.Int }"
+            },
+            {
+                "name": "ChannelsResponse",
+                "comment": " The ChannelsResponse data model.\n",
+                "args": [],
+                "type": "{ channels : AWS.Pinpoint.MapOfChannelResponse }"
+            },
+            {
+                "name": "CreateAppRequest",
+                "comment": " The CreateAppRequest data model.\n",
+                "args": [],
+                "type": "{ createApplicationRequest : AWS.Pinpoint.CreateApplicationRequest }"
+            },
+            {
+                "name": "CreateAppResponse",
+                "comment": " The CreateAppResponse data model.\n",
+                "args": [],
+                "type": "{ applicationResponse : AWS.Pinpoint.ApplicationResponse }"
+            },
+            {
+                "name": "CreateApplicationRequest",
+                "comment": " The CreateApplicationRequest data model.\n",
+                "args": [],
+                "type": "{ name : String.String, tags : Maybe.Maybe AWS.Pinpoint.MapOfString }"
+            },
+            {
+                "name": "CreateCampaignRequest",
+                "comment": " The CreateCampaignRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String, writeCampaignRequest : AWS.Pinpoint.WriteCampaignRequest }"
+            },
+            {
+                "name": "CreateCampaignResponse",
+                "comment": " The CreateCampaignResponse data model.\n",
+                "args": [],
+                "type": "{ campaignResponse : AWS.Pinpoint.CampaignResponse }"
+            },
+            {
+                "name": "CreateExportJobRequest",
+                "comment": " The CreateExportJobRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String, exportJobRequest : AWS.Pinpoint.ExportJobRequest }"
+            },
+            {
+                "name": "CreateExportJobResponse",
+                "comment": " The CreateExportJobResponse data model.\n",
+                "args": [],
+                "type": "{ exportJobResponse : AWS.Pinpoint.ExportJobResponse }"
+            },
+            {
+                "name": "CreateImportJobRequest",
+                "comment": " The CreateImportJobRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String, importJobRequest : AWS.Pinpoint.ImportJobRequest }"
+            },
+            {
+                "name": "CreateImportJobResponse",
+                "comment": " The CreateImportJobResponse data model.\n",
+                "args": [],
+                "type": "{ importJobResponse : AWS.Pinpoint.ImportJobResponse }"
+            },
+            {
+                "name": "CreateSegmentRequest",
+                "comment": " The CreateSegmentRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String, writeSegmentRequest : AWS.Pinpoint.WriteSegmentRequest }"
+            },
+            {
+                "name": "CreateSegmentResponse",
+                "comment": " The CreateSegmentResponse data model.\n",
+                "args": [],
+                "type": "{ segmentResponse : AWS.Pinpoint.SegmentResponse }"
+            },
+            {
+                "name": "DefaultMessage",
+                "comment": " The DefaultMessage data model.\n",
+                "args": [],
+                "type": "{ body : Maybe.Maybe String.String, substitutions : Maybe.Maybe AWS.Pinpoint.MapOfListOfString }"
+            },
+            {
+                "name": "DefaultPushNotificationMessage",
+                "comment": " The DefaultPushNotificationMessage data model.\n",
+                "args": [],
+                "type": "{ action : Maybe.Maybe AWS.Pinpoint.Action, body : Maybe.Maybe String.String, data : Maybe.Maybe AWS.Pinpoint.MapOfString, silentPush : Maybe.Maybe Basics.Bool, substitutions : Maybe.Maybe AWS.Pinpoint.MapOfListOfString, title : Maybe.Maybe String.String, url : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "DeleteAdmChannelRequest",
+                "comment": " The DeleteAdmChannelRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String }"
+            },
+            {
+                "name": "DeleteAdmChannelResponse",
+                "comment": " The DeleteAdmChannelResponse data model.\n",
+                "args": [],
+                "type": "{ admchannelResponse : AWS.Pinpoint.AdmchannelResponse }"
+            },
+            {
+                "name": "DeleteApnsChannelRequest",
+                "comment": " The DeleteApnsChannelRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String }"
+            },
+            {
+                "name": "DeleteApnsChannelResponse",
+                "comment": " The DeleteApnsChannelResponse data model.\n",
+                "args": [],
+                "type": "{ apnschannelResponse : AWS.Pinpoint.ApnschannelResponse }"
+            },
+            {
+                "name": "DeleteApnsSandboxChannelRequest",
+                "comment": " The DeleteApnsSandboxChannelRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String }"
+            },
+            {
+                "name": "DeleteApnsSandboxChannelResponse",
+                "comment": " The DeleteApnsSandboxChannelResponse data model.\n",
+                "args": [],
+                "type": "{ apnssandboxChannelResponse : AWS.Pinpoint.ApnssandboxChannelResponse }"
+            },
+            {
+                "name": "DeleteApnsVoipChannelRequest",
+                "comment": " The DeleteApnsVoipChannelRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String }"
+            },
+            {
+                "name": "DeleteApnsVoipChannelResponse",
+                "comment": " The DeleteApnsVoipChannelResponse data model.\n",
+                "args": [],
+                "type": "{ apnsvoipChannelResponse : AWS.Pinpoint.ApnsvoipChannelResponse }"
+            },
+            {
+                "name": "DeleteApnsVoipSandboxChannelRequest",
+                "comment": " The DeleteApnsVoipSandboxChannelRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String }"
+            },
+            {
+                "name": "DeleteApnsVoipSandboxChannelResponse",
+                "comment": " The DeleteApnsVoipSandboxChannelResponse data model.\n",
+                "args": [],
+                "type": "{ apnsvoipSandboxChannelResponse : AWS.Pinpoint.ApnsvoipSandboxChannelResponse }"
+            },
+            {
+                "name": "DeleteAppRequest",
+                "comment": " The DeleteAppRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String }"
+            },
+            {
+                "name": "DeleteAppResponse",
+                "comment": " The DeleteAppResponse data model.\n",
+                "args": [],
+                "type": "{ applicationResponse : AWS.Pinpoint.ApplicationResponse }"
+            },
+            {
+                "name": "DeleteBaiduChannelRequest",
+                "comment": " The DeleteBaiduChannelRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String }"
+            },
+            {
+                "name": "DeleteBaiduChannelResponse",
+                "comment": " The DeleteBaiduChannelResponse data model.\n",
+                "args": [],
+                "type": "{ baiduChannelResponse : AWS.Pinpoint.BaiduChannelResponse }"
+            },
+            {
+                "name": "DeleteCampaignRequest",
+                "comment": " The DeleteCampaignRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String, campaignId : String.String }"
+            },
+            {
+                "name": "DeleteCampaignResponse",
+                "comment": " The DeleteCampaignResponse data model.\n",
+                "args": [],
+                "type": "{ campaignResponse : AWS.Pinpoint.CampaignResponse }"
+            },
+            {
+                "name": "DeleteEmailChannelRequest",
+                "comment": " The DeleteEmailChannelRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String }"
+            },
+            {
+                "name": "DeleteEmailChannelResponse",
+                "comment": " The DeleteEmailChannelResponse data model.\n",
+                "args": [],
+                "type": "{ emailChannelResponse : AWS.Pinpoint.EmailChannelResponse }"
+            },
+            {
+                "name": "DeleteEndpointRequest",
+                "comment": " The DeleteEndpointRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String, endpointId : String.String }"
+            },
+            {
+                "name": "DeleteEndpointResponse",
+                "comment": " The DeleteEndpointResponse data model.\n",
+                "args": [],
+                "type": "{ endpointResponse : AWS.Pinpoint.EndpointResponse }"
+            },
+            {
+                "name": "DeleteEventStreamRequest",
+                "comment": " The DeleteEventStreamRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String }"
+            },
+            {
+                "name": "DeleteEventStreamResponse",
+                "comment": " The DeleteEventStreamResponse data model.\n",
+                "args": [],
+                "type": "{ eventStream : AWS.Pinpoint.EventStream }"
+            },
+            {
+                "name": "DeleteGcmChannelRequest",
+                "comment": " The DeleteGcmChannelRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String }"
+            },
+            {
+                "name": "DeleteGcmChannelResponse",
+                "comment": " The DeleteGcmChannelResponse data model.\n",
+                "args": [],
+                "type": "{ gcmchannelResponse : AWS.Pinpoint.GcmchannelResponse }"
+            },
+            {
+                "name": "DeleteSegmentRequest",
+                "comment": " The DeleteSegmentRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String, segmentId : String.String }"
+            },
+            {
+                "name": "DeleteSegmentResponse",
+                "comment": " The DeleteSegmentResponse data model.\n",
+                "args": [],
+                "type": "{ segmentResponse : AWS.Pinpoint.SegmentResponse }"
+            },
+            {
+                "name": "DeleteSmsChannelRequest",
+                "comment": " The DeleteSmsChannelRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String }"
+            },
+            {
+                "name": "DeleteSmsChannelResponse",
+                "comment": " The DeleteSmsChannelResponse data model.\n",
+                "args": [],
+                "type": "{ smschannelResponse : AWS.Pinpoint.SmschannelResponse }"
+            },
+            {
+                "name": "DeleteUserEndpointsRequest",
+                "comment": " The DeleteUserEndpointsRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String, userId : String.String }"
+            },
+            {
+                "name": "DeleteUserEndpointsResponse",
+                "comment": " The DeleteUserEndpointsResponse data model.\n",
+                "args": [],
+                "type": "{ endpointsResponse : AWS.Pinpoint.EndpointsResponse }"
+            },
+            {
+                "name": "DeleteVoiceChannelRequest",
+                "comment": " The DeleteVoiceChannelRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String }"
+            },
+            {
+                "name": "DeleteVoiceChannelResponse",
+                "comment": " The DeleteVoiceChannelResponse data model.\n",
+                "args": [],
+                "type": "{ voiceChannelResponse : AWS.Pinpoint.VoiceChannelResponse }"
+            },
+            {
+                "name": "DirectMessageConfiguration",
+                "comment": " The DirectMessageConfiguration data model.\n",
+                "args": [],
+                "type": "{ admmessage : Maybe.Maybe AWS.Pinpoint.Admmessage, apnsmessage : Maybe.Maybe AWS.Pinpoint.Apnsmessage, baiduMessage : Maybe.Maybe AWS.Pinpoint.BaiduMessage, defaultMessage : Maybe.Maybe AWS.Pinpoint.DefaultMessage, defaultPushNotificationMessage : Maybe.Maybe AWS.Pinpoint.DefaultPushNotificationMessage, emailMessage : Maybe.Maybe AWS.Pinpoint.EmailMessage, gcmmessage : Maybe.Maybe AWS.Pinpoint.Gcmmessage, smsmessage : Maybe.Maybe AWS.Pinpoint.Smsmessage, voiceMessage : Maybe.Maybe AWS.Pinpoint.VoiceMessage }"
+            },
+            {
+                "name": "EmailChannelRequest",
+                "comment": " The EmailChannelRequest data model.\n",
+                "args": [],
+                "type": "{ configurationSet : Maybe.Maybe String.String, enabled : Maybe.Maybe Basics.Bool, fromAddress : String.String, identity : String.String, roleArn : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "EmailChannelResponse",
+                "comment": " The EmailChannelResponse data model.\n",
+                "args": [],
+                "type": "{ applicationId : Maybe.Maybe String.String, configurationSet : Maybe.Maybe String.String, creationDate : Maybe.Maybe String.String, enabled : Maybe.Maybe Basics.Bool, fromAddress : Maybe.Maybe String.String, hasCredential : Maybe.Maybe Basics.Bool, id : Maybe.Maybe String.String, identity : Maybe.Maybe String.String, isArchived : Maybe.Maybe Basics.Bool, lastModifiedBy : Maybe.Maybe String.String, lastModifiedDate : Maybe.Maybe String.String, messagesPerSecond : Maybe.Maybe Basics.Int, platform : String.String, roleArn : Maybe.Maybe String.String, version : Maybe.Maybe Basics.Int }"
+            },
+            {
+                "name": "EmailMessage",
+                "comment": " The EmailMessage data model.\n",
+                "args": [],
+                "type": "{ body : Maybe.Maybe String.String, feedbackForwardingAddress : Maybe.Maybe String.String, fromAddress : Maybe.Maybe String.String, rawEmail : Maybe.Maybe AWS.Pinpoint.RawEmail, replyToAddresses : Maybe.Maybe AWS.Pinpoint.ListOfString, simpleEmail : Maybe.Maybe AWS.Pinpoint.SimpleEmail, substitutions : Maybe.Maybe AWS.Pinpoint.MapOfListOfString }"
+            },
+            {
+                "name": "EndpointBatchItem",
+                "comment": " The EndpointBatchItem data model.\n",
+                "args": [],
+                "type": "{ address : Maybe.Maybe String.String, attributes : Maybe.Maybe AWS.Pinpoint.MapOfListOfString, channelType : Maybe.Maybe AWS.Pinpoint.ChannelType, demographic : Maybe.Maybe AWS.Pinpoint.EndpointDemographic, effectiveDate : Maybe.Maybe String.String, endpointStatus : Maybe.Maybe String.String, id : Maybe.Maybe String.String, location : Maybe.Maybe AWS.Pinpoint.EndpointLocation, metrics : Maybe.Maybe AWS.Pinpoint.MapOfDouble, optOut : Maybe.Maybe String.String, requestId : Maybe.Maybe String.String, user : Maybe.Maybe AWS.Pinpoint.EndpointUser }"
+            },
+            {
+                "name": "EndpointBatchRequest",
+                "comment": " The EndpointBatchRequest data model.\n",
+                "args": [],
+                "type": "{ item : AWS.Pinpoint.ListOfEndpointBatchItem }"
+            },
+            {
+                "name": "EndpointDemographic",
+                "comment": " The EndpointDemographic data model.\n",
+                "args": [],
+                "type": "{ appVersion : Maybe.Maybe String.String, locale : Maybe.Maybe String.String, make : Maybe.Maybe String.String, model : Maybe.Maybe String.String, modelVersion : Maybe.Maybe String.String, platform : Maybe.Maybe String.String, platformVersion : Maybe.Maybe String.String, timezone : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "EndpointItemResponse",
+                "comment": " The EndpointItemResponse data model.\n",
+                "args": [],
+                "type": "{ message : Maybe.Maybe String.String, statusCode : Maybe.Maybe Basics.Int }"
+            },
+            {
+                "name": "EndpointLocation",
+                "comment": " The EndpointLocation data model.\n",
+                "args": [],
+                "type": "{ city : Maybe.Maybe String.String, country : Maybe.Maybe String.String, latitude : Maybe.Maybe Basics.Float, longitude : Maybe.Maybe Basics.Float, postalCode : Maybe.Maybe String.String, region : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "EndpointMessageResult",
+                "comment": " The EndpointMessageResult data model.\n",
+                "args": [],
+                "type": "{ address : Maybe.Maybe String.String, deliveryStatus : AWS.Pinpoint.DeliveryStatus, messageId : Maybe.Maybe String.String, statusCode : Basics.Int, statusMessage : Maybe.Maybe String.String, updatedToken : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "EndpointRequest",
+                "comment": " The EndpointRequest data model.\n",
+                "args": [],
+                "type": "{ address : Maybe.Maybe String.String, attributes : Maybe.Maybe AWS.Pinpoint.MapOfListOfString, channelType : Maybe.Maybe AWS.Pinpoint.ChannelType, demographic : Maybe.Maybe AWS.Pinpoint.EndpointDemographic, effectiveDate : Maybe.Maybe String.String, endpointStatus : Maybe.Maybe String.String, location : Maybe.Maybe AWS.Pinpoint.EndpointLocation, metrics : Maybe.Maybe AWS.Pinpoint.MapOfDouble, optOut : Maybe.Maybe String.String, requestId : Maybe.Maybe String.String, user : Maybe.Maybe AWS.Pinpoint.EndpointUser }"
+            },
+            {
+                "name": "EndpointResponse",
+                "comment": " The EndpointResponse data model.\n",
+                "args": [],
+                "type": "{ address : Maybe.Maybe String.String, applicationId : Maybe.Maybe String.String, attributes : Maybe.Maybe AWS.Pinpoint.MapOfListOfString, channelType : Maybe.Maybe AWS.Pinpoint.ChannelType, cohortId : Maybe.Maybe String.String, creationDate : Maybe.Maybe String.String, demographic : Maybe.Maybe AWS.Pinpoint.EndpointDemographic, effectiveDate : Maybe.Maybe String.String, endpointStatus : Maybe.Maybe String.String, id : Maybe.Maybe String.String, location : Maybe.Maybe AWS.Pinpoint.EndpointLocation, metrics : Maybe.Maybe AWS.Pinpoint.MapOfDouble, optOut : Maybe.Maybe String.String, requestId : Maybe.Maybe String.String, user : Maybe.Maybe AWS.Pinpoint.EndpointUser }"
+            },
+            {
+                "name": "EndpointSendConfiguration",
+                "comment": " The EndpointSendConfiguration data model.\n",
+                "args": [],
+                "type": "{ bodyOverride : Maybe.Maybe String.String, context : Maybe.Maybe AWS.Pinpoint.MapOfString, rawContent : Maybe.Maybe String.String, substitutions : Maybe.Maybe AWS.Pinpoint.MapOfListOfString, titleOverride : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "EndpointUser",
+                "comment": " The EndpointUser data model.\n",
+                "args": [],
+                "type": "{ userAttributes : Maybe.Maybe AWS.Pinpoint.MapOfListOfString, userId : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "EndpointsResponse",
+                "comment": " The EndpointsResponse data model.\n",
+                "args": [],
+                "type": "{ item : AWS.Pinpoint.ListOfEndpointResponse }"
+            },
+            {
+                "name": "Event",
+                "comment": " The Event data model.\n",
+                "args": [],
+                "type": "{ appPackageName : Maybe.Maybe String.String, appTitle : Maybe.Maybe String.String, appVersionCode : Maybe.Maybe String.String, attributes : Maybe.Maybe AWS.Pinpoint.MapOfString, clientSdkVersion : Maybe.Maybe String.String, eventType : String.String, metrics : Maybe.Maybe AWS.Pinpoint.MapOfDouble, sdkName : Maybe.Maybe String.String, session : Maybe.Maybe AWS.Pinpoint.Session, timestamp : String.String }"
+            },
+            {
+                "name": "EventDimensions",
+                "comment": " The EventDimensions data model.\n",
+                "args": [],
+                "type": "{ attributes : Maybe.Maybe AWS.Pinpoint.MapOfAttributeDimension, eventType : Maybe.Maybe AWS.Pinpoint.SetDimension, metrics : Maybe.Maybe AWS.Pinpoint.MapOfMetricDimension }"
+            },
+            {
+                "name": "EventItemResponse",
+                "comment": " The EventItemResponse data model.\n",
+                "args": [],
+                "type": "{ message : Maybe.Maybe String.String, statusCode : Maybe.Maybe Basics.Int }"
+            },
+            {
+                "name": "EventStream",
+                "comment": " The EventStream data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String, destinationStreamArn : String.String, externalId : Maybe.Maybe String.String, lastModifiedDate : Maybe.Maybe String.String, lastUpdatedBy : Maybe.Maybe String.String, roleArn : String.String }"
+            },
+            {
+                "name": "EventsBatch",
+                "comment": " The EventsBatch data model.\n",
+                "args": [],
+                "type": "{ endpoint : AWS.Pinpoint.PublicEndpoint, events : AWS.Pinpoint.MapOfEvent }"
+            },
+            {
+                "name": "EventsRequest",
+                "comment": " The EventsRequest data model.\n",
+                "args": [],
+                "type": "{ batchItem : AWS.Pinpoint.MapOfEventsBatch }"
+            },
+            {
+                "name": "EventsResponse",
+                "comment": " The EventsResponse data model.\n",
+                "args": [],
+                "type": "{ results : Maybe.Maybe AWS.Pinpoint.MapOfItemResponse }"
+            },
+            {
+                "name": "ExportJobRequest",
+                "comment": " The ExportJobRequest data model.\n",
+                "args": [],
+                "type": "{ roleArn : String.String, s3UrlPrefix : String.String, segmentId : Maybe.Maybe String.String, segmentVersion : Maybe.Maybe Basics.Int }"
+            },
+            {
+                "name": "ExportJobResource",
+                "comment": " The ExportJobResource data model.\n",
+                "args": [],
+                "type": "{ roleArn : String.String, s3UrlPrefix : String.String, segmentId : Maybe.Maybe String.String, segmentVersion : Maybe.Maybe Basics.Int }"
+            },
+            {
+                "name": "ExportJobResponse",
+                "comment": " The ExportJobResponse data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String, completedPieces : Maybe.Maybe Basics.Int, completionDate : Maybe.Maybe String.String, creationDate : String.String, definition : AWS.Pinpoint.ExportJobResource, failedPieces : Maybe.Maybe Basics.Int, failures : Maybe.Maybe AWS.Pinpoint.ListOfString, id : String.String, jobStatus : AWS.Pinpoint.JobStatus, totalFailures : Maybe.Maybe Basics.Int, totalPieces : Maybe.Maybe Basics.Int, totalProcessed : Maybe.Maybe Basics.Int, type_ : String.String }"
+            },
+            {
+                "name": "ExportJobsResponse",
+                "comment": " The ExportJobsResponse data model.\n",
+                "args": [],
+                "type": "{ item : AWS.Pinpoint.ListOfExportJobResponse, nextToken : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "GcmchannelRequest",
+                "comment": " The GcmchannelRequest data model.\n",
+                "args": [],
+                "type": "{ apiKey : String.String, enabled : Maybe.Maybe Basics.Bool }"
+            },
+            {
+                "name": "GcmchannelResponse",
+                "comment": " The GcmchannelResponse data model.\n",
+                "args": [],
+                "type": "{ applicationId : Maybe.Maybe String.String, creationDate : Maybe.Maybe String.String, credential : String.String, enabled : Maybe.Maybe Basics.Bool, hasCredential : Maybe.Maybe Basics.Bool, id : Maybe.Maybe String.String, isArchived : Maybe.Maybe Basics.Bool, lastModifiedBy : Maybe.Maybe String.String, lastModifiedDate : Maybe.Maybe String.String, platform : String.String, version : Maybe.Maybe Basics.Int }"
+            },
+            {
+                "name": "Gcmmessage",
+                "comment": " The Gcmmessage data model.\n",
+                "args": [],
+                "type": "{ action : Maybe.Maybe AWS.Pinpoint.Action, body : Maybe.Maybe String.String, collapseKey : Maybe.Maybe String.String, data : Maybe.Maybe AWS.Pinpoint.MapOfString, iconReference : Maybe.Maybe String.String, imageIconUrl : Maybe.Maybe String.String, imageUrl : Maybe.Maybe String.String, priority : Maybe.Maybe String.String, rawContent : Maybe.Maybe String.String, restrictedPackageName : Maybe.Maybe String.String, silentPush : Maybe.Maybe Basics.Bool, smallImageIconUrl : Maybe.Maybe String.String, sound : Maybe.Maybe String.String, substitutions : Maybe.Maybe AWS.Pinpoint.MapOfListOfString, timeToLive : Maybe.Maybe Basics.Int, title : Maybe.Maybe String.String, url : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "GetAdmChannelRequest",
+                "comment": " The GetAdmChannelRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String }"
+            },
+            {
+                "name": "GetAdmChannelResponse",
+                "comment": " The GetAdmChannelResponse data model.\n",
+                "args": [],
+                "type": "{ admchannelResponse : AWS.Pinpoint.AdmchannelResponse }"
+            },
+            {
+                "name": "GetApnsChannelRequest",
+                "comment": " The GetApnsChannelRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String }"
+            },
+            {
+                "name": "GetApnsChannelResponse",
+                "comment": " The GetApnsChannelResponse data model.\n",
+                "args": [],
+                "type": "{ apnschannelResponse : AWS.Pinpoint.ApnschannelResponse }"
+            },
+            {
+                "name": "GetApnsSandboxChannelRequest",
+                "comment": " The GetApnsSandboxChannelRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String }"
+            },
+            {
+                "name": "GetApnsSandboxChannelResponse",
+                "comment": " The GetApnsSandboxChannelResponse data model.\n",
+                "args": [],
+                "type": "{ apnssandboxChannelResponse : AWS.Pinpoint.ApnssandboxChannelResponse }"
+            },
+            {
+                "name": "GetApnsVoipChannelRequest",
+                "comment": " The GetApnsVoipChannelRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String }"
+            },
+            {
+                "name": "GetApnsVoipChannelResponse",
+                "comment": " The GetApnsVoipChannelResponse data model.\n",
+                "args": [],
+                "type": "{ apnsvoipChannelResponse : AWS.Pinpoint.ApnsvoipChannelResponse }"
+            },
+            {
+                "name": "GetApnsVoipSandboxChannelRequest",
+                "comment": " The GetApnsVoipSandboxChannelRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String }"
+            },
+            {
+                "name": "GetApnsVoipSandboxChannelResponse",
+                "comment": " The GetApnsVoipSandboxChannelResponse data model.\n",
+                "args": [],
+                "type": "{ apnsvoipSandboxChannelResponse : AWS.Pinpoint.ApnsvoipSandboxChannelResponse }"
+            },
+            {
+                "name": "GetAppRequest",
+                "comment": " The GetAppRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String }"
+            },
+            {
+                "name": "GetAppResponse",
+                "comment": " The GetAppResponse data model.\n",
+                "args": [],
+                "type": "{ applicationResponse : AWS.Pinpoint.ApplicationResponse }"
+            },
+            {
+                "name": "GetApplicationDateRangeKpiRequest",
+                "comment": " The GetApplicationDateRangeKpiRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String, endTime : Maybe.Maybe String.String, kpiName : String.String, nextToken : Maybe.Maybe String.String, pageSize : Maybe.Maybe String.String, startTime : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "GetApplicationDateRangeKpiResponse",
+                "comment": " The GetApplicationDateRangeKpiResponse data model.\n",
+                "args": [],
+                "type": "{ applicationDateRangeKpiResponse : AWS.Pinpoint.ApplicationDateRangeKpiResponse }"
+            },
+            {
+                "name": "GetApplicationSettingsRequest",
+                "comment": " The GetApplicationSettingsRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String }"
+            },
+            {
+                "name": "GetApplicationSettingsResponse",
+                "comment": " The GetApplicationSettingsResponse data model.\n",
+                "args": [],
+                "type": "{ applicationSettingsResource : AWS.Pinpoint.ApplicationSettingsResource }"
+            },
+            {
+                "name": "GetAppsRequest",
+                "comment": " The GetAppsRequest data model.\n",
+                "args": [],
+                "type": "{ pageSize : Maybe.Maybe String.String, token : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "GetAppsResponse",
+                "comment": " The GetAppsResponse data model.\n",
+                "args": [],
+                "type": "{ applicationsResponse : AWS.Pinpoint.ApplicationsResponse }"
+            },
+            {
+                "name": "GetBaiduChannelRequest",
+                "comment": " The GetBaiduChannelRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String }"
+            },
+            {
+                "name": "GetBaiduChannelResponse",
+                "comment": " The GetBaiduChannelResponse data model.\n",
+                "args": [],
+                "type": "{ baiduChannelResponse : AWS.Pinpoint.BaiduChannelResponse }"
+            },
+            {
+                "name": "GetCampaignActivitiesRequest",
+                "comment": " The GetCampaignActivitiesRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String, campaignId : String.String, pageSize : Maybe.Maybe String.String, token : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "GetCampaignActivitiesResponse",
+                "comment": " The GetCampaignActivitiesResponse data model.\n",
+                "args": [],
+                "type": "{ activitiesResponse : AWS.Pinpoint.ActivitiesResponse }"
+            },
+            {
+                "name": "GetCampaignDateRangeKpiRequest",
+                "comment": " The GetCampaignDateRangeKpiRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String, campaignId : String.String, endTime : Maybe.Maybe String.String, kpiName : String.String, nextToken : Maybe.Maybe String.String, pageSize : Maybe.Maybe String.String, startTime : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "GetCampaignDateRangeKpiResponse",
+                "comment": " The GetCampaignDateRangeKpiResponse data model.\n",
+                "args": [],
+                "type": "{ campaignDateRangeKpiResponse : AWS.Pinpoint.CampaignDateRangeKpiResponse }"
+            },
+            {
+                "name": "GetCampaignRequest",
+                "comment": " The GetCampaignRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String, campaignId : String.String }"
+            },
+            {
+                "name": "GetCampaignResponse",
+                "comment": " The GetCampaignResponse data model.\n",
+                "args": [],
+                "type": "{ campaignResponse : AWS.Pinpoint.CampaignResponse }"
+            },
+            {
+                "name": "GetCampaignVersionRequest",
+                "comment": " The GetCampaignVersionRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String, campaignId : String.String, version : String.String }"
+            },
+            {
+                "name": "GetCampaignVersionResponse",
+                "comment": " The GetCampaignVersionResponse data model.\n",
+                "args": [],
+                "type": "{ campaignResponse : AWS.Pinpoint.CampaignResponse }"
+            },
+            {
+                "name": "GetCampaignVersionsRequest",
+                "comment": " The GetCampaignVersionsRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String, campaignId : String.String, pageSize : Maybe.Maybe String.String, token : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "GetCampaignVersionsResponse",
+                "comment": " The GetCampaignVersionsResponse data model.\n",
+                "args": [],
+                "type": "{ campaignsResponse : AWS.Pinpoint.CampaignsResponse }"
+            },
+            {
+                "name": "GetCampaignsRequest",
+                "comment": " The GetCampaignsRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String, pageSize : Maybe.Maybe String.String, token : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "GetCampaignsResponse",
+                "comment": " The GetCampaignsResponse data model.\n",
+                "args": [],
+                "type": "{ campaignsResponse : AWS.Pinpoint.CampaignsResponse }"
+            },
+            {
+                "name": "GetChannelsRequest",
+                "comment": " The GetChannelsRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String }"
+            },
+            {
+                "name": "GetChannelsResponse",
+                "comment": " The GetChannelsResponse data model.\n",
+                "args": [],
+                "type": "{ channelsResponse : AWS.Pinpoint.ChannelsResponse }"
+            },
+            {
+                "name": "GetEmailChannelRequest",
+                "comment": " The GetEmailChannelRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String }"
+            },
+            {
+                "name": "GetEmailChannelResponse",
+                "comment": " The GetEmailChannelResponse data model.\n",
+                "args": [],
+                "type": "{ emailChannelResponse : AWS.Pinpoint.EmailChannelResponse }"
+            },
+            {
+                "name": "GetEndpointRequest",
+                "comment": " The GetEndpointRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String, endpointId : String.String }"
+            },
+            {
+                "name": "GetEndpointResponse",
+                "comment": " The GetEndpointResponse data model.\n",
+                "args": [],
+                "type": "{ endpointResponse : AWS.Pinpoint.EndpointResponse }"
+            },
+            {
+                "name": "GetEventStreamRequest",
+                "comment": " The GetEventStreamRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String }"
+            },
+            {
+                "name": "GetEventStreamResponse",
+                "comment": " The GetEventStreamResponse data model.\n",
+                "args": [],
+                "type": "{ eventStream : AWS.Pinpoint.EventStream }"
+            },
+            {
+                "name": "GetExportJobRequest",
+                "comment": " The GetExportJobRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String, jobId : String.String }"
+            },
+            {
+                "name": "GetExportJobResponse",
+                "comment": " The GetExportJobResponse data model.\n",
+                "args": [],
+                "type": "{ exportJobResponse : AWS.Pinpoint.ExportJobResponse }"
+            },
+            {
+                "name": "GetExportJobsRequest",
+                "comment": " The GetExportJobsRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String, pageSize : Maybe.Maybe String.String, token : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "GetExportJobsResponse",
+                "comment": " The GetExportJobsResponse data model.\n",
+                "args": [],
+                "type": "{ exportJobsResponse : AWS.Pinpoint.ExportJobsResponse }"
+            },
+            {
+                "name": "GetGcmChannelRequest",
+                "comment": " The GetGcmChannelRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String }"
+            },
+            {
+                "name": "GetGcmChannelResponse",
+                "comment": " The GetGcmChannelResponse data model.\n",
+                "args": [],
+                "type": "{ gcmchannelResponse : AWS.Pinpoint.GcmchannelResponse }"
+            },
+            {
+                "name": "GetImportJobRequest",
+                "comment": " The GetImportJobRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String, jobId : String.String }"
+            },
+            {
+                "name": "GetImportJobResponse",
+                "comment": " The GetImportJobResponse data model.\n",
+                "args": [],
+                "type": "{ importJobResponse : AWS.Pinpoint.ImportJobResponse }"
+            },
+            {
+                "name": "GetImportJobsRequest",
+                "comment": " The GetImportJobsRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String, pageSize : Maybe.Maybe String.String, token : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "GetImportJobsResponse",
+                "comment": " The GetImportJobsResponse data model.\n",
+                "args": [],
+                "type": "{ importJobsResponse : AWS.Pinpoint.ImportJobsResponse }"
+            },
+            {
+                "name": "GetSegmentExportJobsRequest",
+                "comment": " The GetSegmentExportJobsRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String, pageSize : Maybe.Maybe String.String, segmentId : String.String, token : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "GetSegmentExportJobsResponse",
+                "comment": " The GetSegmentExportJobsResponse data model.\n",
+                "args": [],
+                "type": "{ exportJobsResponse : AWS.Pinpoint.ExportJobsResponse }"
+            },
+            {
+                "name": "GetSegmentImportJobsRequest",
+                "comment": " The GetSegmentImportJobsRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String, pageSize : Maybe.Maybe String.String, segmentId : String.String, token : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "GetSegmentImportJobsResponse",
+                "comment": " The GetSegmentImportJobsResponse data model.\n",
+                "args": [],
+                "type": "{ importJobsResponse : AWS.Pinpoint.ImportJobsResponse }"
+            },
+            {
+                "name": "GetSegmentRequest",
+                "comment": " The GetSegmentRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String, segmentId : String.String }"
+            },
+            {
+                "name": "GetSegmentResponse",
+                "comment": " The GetSegmentResponse data model.\n",
+                "args": [],
+                "type": "{ segmentResponse : AWS.Pinpoint.SegmentResponse }"
+            },
+            {
+                "name": "GetSegmentVersionRequest",
+                "comment": " The GetSegmentVersionRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String, segmentId : String.String, version : String.String }"
+            },
+            {
+                "name": "GetSegmentVersionResponse",
+                "comment": " The GetSegmentVersionResponse data model.\n",
+                "args": [],
+                "type": "{ segmentResponse : AWS.Pinpoint.SegmentResponse }"
+            },
+            {
+                "name": "GetSegmentVersionsRequest",
+                "comment": " The GetSegmentVersionsRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String, pageSize : Maybe.Maybe String.String, segmentId : String.String, token : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "GetSegmentVersionsResponse",
+                "comment": " The GetSegmentVersionsResponse data model.\n",
+                "args": [],
+                "type": "{ segmentsResponse : AWS.Pinpoint.SegmentsResponse }"
+            },
+            {
+                "name": "GetSegmentsRequest",
+                "comment": " The GetSegmentsRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String, pageSize : Maybe.Maybe String.String, token : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "GetSegmentsResponse",
+                "comment": " The GetSegmentsResponse data model.\n",
+                "args": [],
+                "type": "{ segmentsResponse : AWS.Pinpoint.SegmentsResponse }"
+            },
+            {
+                "name": "GetSmsChannelRequest",
+                "comment": " The GetSmsChannelRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String }"
+            },
+            {
+                "name": "GetSmsChannelResponse",
+                "comment": " The GetSmsChannelResponse data model.\n",
+                "args": [],
+                "type": "{ smschannelResponse : AWS.Pinpoint.SmschannelResponse }"
+            },
+            {
+                "name": "GetUserEndpointsRequest",
+                "comment": " The GetUserEndpointsRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String, userId : String.String }"
+            },
+            {
+                "name": "GetUserEndpointsResponse",
+                "comment": " The GetUserEndpointsResponse data model.\n",
+                "args": [],
+                "type": "{ endpointsResponse : AWS.Pinpoint.EndpointsResponse }"
+            },
+            {
+                "name": "GetVoiceChannelRequest",
+                "comment": " The GetVoiceChannelRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String }"
+            },
+            {
+                "name": "GetVoiceChannelResponse",
+                "comment": " The GetVoiceChannelResponse data model.\n",
+                "args": [],
+                "type": "{ voiceChannelResponse : AWS.Pinpoint.VoiceChannelResponse }"
+            },
+            {
+                "name": "Gpscoordinates",
+                "comment": " The Gpscoordinates data model.\n",
+                "args": [],
+                "type": "{ latitude : Basics.Float, longitude : Basics.Float }"
+            },
+            {
+                "name": "GpspointDimension",
+                "comment": " The GpspointDimension data model.\n",
+                "args": [],
+                "type": "{ coordinates : AWS.Pinpoint.Gpscoordinates, rangeInKilometers : Maybe.Maybe Basics.Float }"
+            },
+            {
+                "name": "ImportJobRequest",
+                "comment": " The ImportJobRequest data model.\n",
+                "args": [],
+                "type": "{ defineSegment : Maybe.Maybe Basics.Bool, externalId : Maybe.Maybe String.String, format : AWS.Pinpoint.Format, registerEndpoints : Maybe.Maybe Basics.Bool, roleArn : String.String, s3Url : String.String, segmentId : Maybe.Maybe String.String, segmentName : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "ImportJobResource",
+                "comment": " The ImportJobResource data model.\n",
+                "args": [],
+                "type": "{ defineSegment : Maybe.Maybe Basics.Bool, externalId : Maybe.Maybe String.String, format : AWS.Pinpoint.Format, registerEndpoints : Maybe.Maybe Basics.Bool, roleArn : String.String, s3Url : String.String, segmentId : Maybe.Maybe String.String, segmentName : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "ImportJobResponse",
+                "comment": " The ImportJobResponse data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String, completedPieces : Maybe.Maybe Basics.Int, completionDate : Maybe.Maybe String.String, creationDate : String.String, definition : AWS.Pinpoint.ImportJobResource, failedPieces : Maybe.Maybe Basics.Int, failures : Maybe.Maybe AWS.Pinpoint.ListOfString, id : String.String, jobStatus : AWS.Pinpoint.JobStatus, totalFailures : Maybe.Maybe Basics.Int, totalPieces : Maybe.Maybe Basics.Int, totalProcessed : Maybe.Maybe Basics.Int, type_ : String.String }"
+            },
+            {
+                "name": "ImportJobsResponse",
+                "comment": " The ImportJobsResponse data model.\n",
+                "args": [],
+                "type": "{ item : AWS.Pinpoint.ListOfImportJobResponse, nextToken : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "ItemResponse",
+                "comment": " The ItemResponse data model.\n",
+                "args": [],
+                "type": "{ endpointItemResponse : Maybe.Maybe AWS.Pinpoint.EndpointItemResponse, eventsItemResponse : Maybe.Maybe AWS.Pinpoint.MapOfEventItemResponse }"
+            },
+            {
+                "name": "ListOfActivityResponse",
+                "comment": " The ListOfActivityResponse data model.\n",
+                "args": [],
+                "type": "List.List AWS.Pinpoint.ActivityResponse"
+            },
+            {
+                "name": "ListOfApplicationResponse",
+                "comment": " The ListOfApplicationResponse data model.\n",
+                "args": [],
+                "type": "List.List AWS.Pinpoint.ApplicationResponse"
+            },
+            {
+                "name": "ListOfCampaignResponse",
+                "comment": " The ListOfCampaignResponse data model.\n",
+                "args": [],
+                "type": "List.List AWS.Pinpoint.CampaignResponse"
+            },
+            {
+                "name": "ListOfEndpointBatchItem",
+                "comment": " The ListOfEndpointBatchItem data model.\n",
+                "args": [],
+                "type": "List.List AWS.Pinpoint.EndpointBatchItem"
+            },
+            {
+                "name": "ListOfEndpointResponse",
+                "comment": " The ListOfEndpointResponse data model.\n",
+                "args": [],
+                "type": "List.List AWS.Pinpoint.EndpointResponse"
+            },
+            {
+                "name": "ListOfExportJobResponse",
+                "comment": " The ListOfExportJobResponse data model.\n",
+                "args": [],
+                "type": "List.List AWS.Pinpoint.ExportJobResponse"
+            },
+            {
+                "name": "ListOfImportJobResponse",
+                "comment": " The ListOfImportJobResponse data model.\n",
+                "args": [],
+                "type": "List.List AWS.Pinpoint.ImportJobResponse"
+            },
+            {
+                "name": "ListOfResultRow",
+                "comment": " The ListOfResultRow data model.\n",
+                "args": [],
+                "type": "List.List AWS.Pinpoint.ResultRow"
+            },
+            {
+                "name": "ListOfResultRowValue",
+                "comment": " The ListOfResultRowValue data model.\n",
+                "args": [],
+                "type": "List.List AWS.Pinpoint.ResultRowValue"
+            },
+            {
+                "name": "ListOfSegmentDimensions",
+                "comment": " The ListOfSegmentDimensions data model.\n",
+                "args": [],
+                "type": "List.List AWS.Pinpoint.SegmentDimensions"
+            },
+            {
+                "name": "ListOfSegmentGroup",
+                "comment": " The ListOfSegmentGroup data model.\n",
+                "args": [],
+                "type": "List.List AWS.Pinpoint.SegmentGroup"
+            },
+            {
+                "name": "ListOfSegmentReference",
+                "comment": " The ListOfSegmentReference data model.\n",
+                "args": [],
+                "type": "List.List AWS.Pinpoint.SegmentReference"
+            },
+            {
+                "name": "ListOfSegmentResponse",
+                "comment": " The ListOfSegmentResponse data model.\n",
+                "args": [],
+                "type": "List.List AWS.Pinpoint.SegmentResponse"
+            },
+            {
+                "name": "ListOfString",
+                "comment": " The ListOfString data model.\n",
+                "args": [],
+                "type": "List.List String.String"
+            },
+            {
+                "name": "ListOfTreatmentResource",
+                "comment": " The ListOfTreatmentResource data model.\n",
+                "args": [],
+                "type": "List.List AWS.Pinpoint.TreatmentResource"
+            },
+            {
+                "name": "ListOfWriteTreatmentResource",
+                "comment": " The ListOfWriteTreatmentResource data model.\n",
+                "args": [],
+                "type": "List.List AWS.Pinpoint.WriteTreatmentResource"
+            },
+            {
+                "name": "ListTagsForResourceRequest",
+                "comment": " The ListTagsForResourceRequest data model.\n",
+                "args": [],
+                "type": "{ resourceArn : String.String }"
+            },
+            {
+                "name": "ListTagsForResourceResponse",
+                "comment": " The ListTagsForResourceResponse data model.\n",
+                "args": [],
+                "type": "{ tagsModel : AWS.Pinpoint.TagsModel }"
+            },
+            {
+                "name": "MapOfAddressConfiguration",
+                "comment": " The MapOfAddressConfiguration data model.\n",
+                "args": [],
+                "type": "Dict.Dict String.String AWS.Pinpoint.AddressConfiguration"
+            },
+            {
+                "name": "MapOfAttributeDimension",
+                "comment": " The MapOfAttributeDimension data model.\n",
+                "args": [],
+                "type": "Dict.Dict String.String AWS.Pinpoint.AttributeDimension"
+            },
+            {
+                "name": "MapOfChannelResponse",
+                "comment": " The MapOfChannelResponse data model.\n",
+                "args": [],
+                "type": "Dict.Dict String.String AWS.Pinpoint.ChannelResponse"
+            },
+            {
+                "name": "MapOfDouble",
+                "comment": " The MapOfDouble data model.\n",
+                "args": [],
+                "type": "Dict.Dict String.String Basics.Float"
+            },
+            {
+                "name": "MapOfEndpointMessageResult",
+                "comment": " The MapOfEndpointMessageResult data model.\n",
+                "args": [],
+                "type": "Dict.Dict String.String AWS.Pinpoint.EndpointMessageResult"
+            },
+            {
+                "name": "MapOfEndpointSendConfiguration",
+                "comment": " The MapOfEndpointSendConfiguration data model.\n",
+                "args": [],
+                "type": "Dict.Dict String.String AWS.Pinpoint.EndpointSendConfiguration"
+            },
+            {
+                "name": "MapOfEvent",
+                "comment": " The MapOfEvent data model.\n",
+                "args": [],
+                "type": "Dict.Dict String.String AWS.Pinpoint.Event"
+            },
+            {
+                "name": "MapOfEventItemResponse",
+                "comment": " The MapOfEventItemResponse data model.\n",
+                "args": [],
+                "type": "Dict.Dict String.String AWS.Pinpoint.EventItemResponse"
+            },
+            {
+                "name": "MapOfEventsBatch",
+                "comment": " The MapOfEventsBatch data model.\n",
+                "args": [],
+                "type": "Dict.Dict String.String AWS.Pinpoint.EventsBatch"
+            },
+            {
+                "name": "MapOfInteger",
+                "comment": " The MapOfInteger data model.\n",
+                "args": [],
+                "type": "Dict.Dict String.String Basics.Int"
+            },
+            {
+                "name": "MapOfItemResponse",
+                "comment": " The MapOfItemResponse data model.\n",
+                "args": [],
+                "type": "Dict.Dict String.String AWS.Pinpoint.ItemResponse"
+            },
+            {
+                "name": "MapOfListOfString",
+                "comment": " The MapOfListOfString data model.\n",
+                "args": [],
+                "type": "Dict.Dict String.String AWS.Pinpoint.ListOfString"
+            },
+            {
+                "name": "MapOfMapOfEndpointMessageResult",
+                "comment": " The MapOfMapOfEndpointMessageResult data model.\n",
+                "args": [],
+                "type": "Dict.Dict String.String AWS.Pinpoint.MapOfEndpointMessageResult"
+            },
+            {
+                "name": "MapOfMessageResult",
+                "comment": " The MapOfMessageResult data model.\n",
+                "args": [],
+                "type": "Dict.Dict String.String AWS.Pinpoint.MessageResult"
+            },
+            {
+                "name": "MapOfMetricDimension",
+                "comment": " The MapOfMetricDimension data model.\n",
+                "args": [],
+                "type": "Dict.Dict String.String AWS.Pinpoint.MetricDimension"
+            },
+            {
+                "name": "MapOfString",
+                "comment": " The MapOfString data model.\n",
+                "args": [],
+                "type": "Dict.Dict String.String String.String"
+            },
+            {
+                "name": "Message",
+                "comment": " The Message data model.\n",
+                "args": [],
+                "type": "{ action : Maybe.Maybe AWS.Pinpoint.Action, body : Maybe.Maybe String.String, imageIconUrl : Maybe.Maybe String.String, imageSmallIconUrl : Maybe.Maybe String.String, imageUrl : Maybe.Maybe String.String, jsonBody : Maybe.Maybe String.String, mediaUrl : Maybe.Maybe String.String, rawContent : Maybe.Maybe String.String, silentPush : Maybe.Maybe Basics.Bool, timeToLive : Maybe.Maybe Basics.Int, title : Maybe.Maybe String.String, url : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "MessageBody",
+                "comment": " The MessageBody data model.\n",
+                "args": [],
+                "type": "{ message : Maybe.Maybe String.String, requestId : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "MessageConfiguration",
+                "comment": " The MessageConfiguration data model.\n",
+                "args": [],
+                "type": "{ admmessage : Maybe.Maybe AWS.Pinpoint.Message, apnsmessage : Maybe.Maybe AWS.Pinpoint.Message, baiduMessage : Maybe.Maybe AWS.Pinpoint.Message, defaultMessage : Maybe.Maybe AWS.Pinpoint.Message, emailMessage : Maybe.Maybe AWS.Pinpoint.CampaignEmailMessage, gcmmessage : Maybe.Maybe AWS.Pinpoint.Message, smsmessage : Maybe.Maybe AWS.Pinpoint.CampaignSmsMessage }"
+            },
+            {
+                "name": "MessageRequest",
+                "comment": " The MessageRequest data model.\n",
+                "args": [],
+                "type": "{ addresses : Maybe.Maybe AWS.Pinpoint.MapOfAddressConfiguration, context : Maybe.Maybe AWS.Pinpoint.MapOfString, endpoints : Maybe.Maybe AWS.Pinpoint.MapOfEndpointSendConfiguration, messageConfiguration : AWS.Pinpoint.DirectMessageConfiguration, traceId : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "MessageResponse",
+                "comment": " The MessageResponse data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String, endpointResult : Maybe.Maybe AWS.Pinpoint.MapOfEndpointMessageResult, requestId : Maybe.Maybe String.String, result : Maybe.Maybe AWS.Pinpoint.MapOfMessageResult }"
+            },
+            {
+                "name": "MessageResult",
+                "comment": " The MessageResult data model.\n",
+                "args": [],
+                "type": "{ deliveryStatus : AWS.Pinpoint.DeliveryStatus, messageId : Maybe.Maybe String.String, statusCode : Basics.Int, statusMessage : Maybe.Maybe String.String, updatedToken : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "MetricDimension",
+                "comment": " The MetricDimension data model.\n",
+                "args": [],
+                "type": "{ comparisonOperator : String.String, value : Basics.Float }"
+            },
+            {
+                "name": "NumberValidateRequest",
+                "comment": " The NumberValidateRequest data model.\n",
+                "args": [],
+                "type": "{ isoCountryCode : Maybe.Maybe String.String, phoneNumber : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "NumberValidateResponse",
+                "comment": " The NumberValidateResponse data model.\n",
+                "args": [],
+                "type": "{ carrier : Maybe.Maybe String.String, city : Maybe.Maybe String.String, cleansedPhoneNumberE164 : Maybe.Maybe String.String, cleansedPhoneNumberNational : Maybe.Maybe String.String, country : Maybe.Maybe String.String, countryCodeIso2 : Maybe.Maybe String.String, countryCodeNumeric : Maybe.Maybe String.String, county : Maybe.Maybe String.String, originalCountryCodeIso2 : Maybe.Maybe String.String, originalPhoneNumber : Maybe.Maybe String.String, phoneType : Maybe.Maybe String.String, phoneTypeCode : Maybe.Maybe Basics.Int, timezone : Maybe.Maybe String.String, zipCode : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "PhoneNumberValidateRequest",
+                "comment": " The PhoneNumberValidateRequest data model.\n",
+                "args": [],
+                "type": "{ numberValidateRequest : AWS.Pinpoint.NumberValidateRequest }"
+            },
+            {
+                "name": "PhoneNumberValidateResponse",
+                "comment": " The PhoneNumberValidateResponse data model.\n",
+                "args": [],
+                "type": "{ numberValidateResponse : AWS.Pinpoint.NumberValidateResponse }"
+            },
+            {
+                "name": "PublicEndpoint",
+                "comment": " The PublicEndpoint data model.\n",
+                "args": [],
+                "type": "{ address : Maybe.Maybe String.String, attributes : Maybe.Maybe AWS.Pinpoint.MapOfListOfString, channelType : Maybe.Maybe AWS.Pinpoint.ChannelType, demographic : Maybe.Maybe AWS.Pinpoint.EndpointDemographic, effectiveDate : Maybe.Maybe String.String, endpointStatus : Maybe.Maybe String.String, location : Maybe.Maybe AWS.Pinpoint.EndpointLocation, metrics : Maybe.Maybe AWS.Pinpoint.MapOfDouble, optOut : Maybe.Maybe String.String, requestId : Maybe.Maybe String.String, user : Maybe.Maybe AWS.Pinpoint.EndpointUser }"
+            },
+            {
+                "name": "PutEventStreamRequest",
+                "comment": " The PutEventStreamRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String, writeEventStream : AWS.Pinpoint.WriteEventStream }"
+            },
+            {
+                "name": "PutEventStreamResponse",
+                "comment": " The PutEventStreamResponse data model.\n",
+                "args": [],
+                "type": "{ eventStream : AWS.Pinpoint.EventStream }"
+            },
+            {
+                "name": "PutEventsRequest",
+                "comment": " The PutEventsRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String, eventsRequest : AWS.Pinpoint.EventsRequest }"
+            },
+            {
+                "name": "PutEventsResponse",
+                "comment": " The PutEventsResponse data model.\n",
+                "args": [],
+                "type": "{ eventsResponse : AWS.Pinpoint.EventsResponse }"
+            },
+            {
+                "name": "QuietTime",
+                "comment": " The QuietTime data model.\n",
+                "args": [],
+                "type": "{ end : Maybe.Maybe String.String, start : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "RawEmail",
+                "comment": " The RawEmail data model.\n",
+                "args": [],
+                "type": "{ data : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "RecencyDimension",
+                "comment": " The RecencyDimension data model.\n",
+                "args": [],
+                "type": "{ duration : AWS.Pinpoint.Duration, recencyType : AWS.Pinpoint.RecencyType }"
+            },
+            {
+                "name": "RemoveAttributesRequest",
+                "comment": " The RemoveAttributesRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String, attributeType : String.String, updateAttributesRequest : AWS.Pinpoint.UpdateAttributesRequest }"
+            },
+            {
+                "name": "RemoveAttributesResponse",
+                "comment": " The RemoveAttributesResponse data model.\n",
+                "args": [],
+                "type": "{ attributesResource : AWS.Pinpoint.AttributesResource }"
+            },
+            {
+                "name": "ResultRow",
+                "comment": " The ResultRow data model.\n",
+                "args": [],
+                "type": "{ groupedBys : AWS.Pinpoint.ListOfResultRowValue, values : AWS.Pinpoint.ListOfResultRowValue }"
+            },
+            {
+                "name": "ResultRowValue",
+                "comment": " The ResultRowValue data model.\n",
+                "args": [],
+                "type": "{ key : String.String, type_ : String.String, value : String.String }"
+            },
+            {
+                "name": "Schedule",
+                "comment": " The Schedule data model.\n",
+                "args": [],
+                "type": "{ endTime : Maybe.Maybe String.String, eventFilter : Maybe.Maybe AWS.Pinpoint.CampaignEventFilter, frequency : Maybe.Maybe AWS.Pinpoint.Frequency, isLocalTime : Maybe.Maybe Basics.Bool, quietTime : Maybe.Maybe AWS.Pinpoint.QuietTime, startTime : String.String, timezone : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "SegmentBehaviors",
+                "comment": " The SegmentBehaviors data model.\n",
+                "args": [],
+                "type": "{ recency : Maybe.Maybe AWS.Pinpoint.RecencyDimension }"
+            },
+            {
+                "name": "SegmentDemographics",
+                "comment": " The SegmentDemographics data model.\n",
+                "args": [],
+                "type": "{ appVersion : Maybe.Maybe AWS.Pinpoint.SetDimension, channel : Maybe.Maybe AWS.Pinpoint.SetDimension, deviceType : Maybe.Maybe AWS.Pinpoint.SetDimension, make : Maybe.Maybe AWS.Pinpoint.SetDimension, model : Maybe.Maybe AWS.Pinpoint.SetDimension, platform : Maybe.Maybe AWS.Pinpoint.SetDimension }"
+            },
+            {
+                "name": "SegmentDimensions",
+                "comment": " The SegmentDimensions data model.\n",
+                "args": [],
+                "type": "{ attributes : Maybe.Maybe AWS.Pinpoint.MapOfAttributeDimension, behavior : Maybe.Maybe AWS.Pinpoint.SegmentBehaviors, demographic : Maybe.Maybe AWS.Pinpoint.SegmentDemographics, location : Maybe.Maybe AWS.Pinpoint.SegmentLocation, metrics : Maybe.Maybe AWS.Pinpoint.MapOfMetricDimension, userAttributes : Maybe.Maybe AWS.Pinpoint.MapOfAttributeDimension }"
+            },
+            {
+                "name": "SegmentGroup",
+                "comment": " The SegmentGroup data model.\n",
+                "args": [],
+                "type": "{ dimensions : Maybe.Maybe AWS.Pinpoint.ListOfSegmentDimensions, sourceSegments : Maybe.Maybe AWS.Pinpoint.ListOfSegmentReference, sourceType : Maybe.Maybe AWS.Pinpoint.SourceType, type_ : Maybe.Maybe AWS.Pinpoint.Type }"
+            },
+            {
+                "name": "SegmentGroupList",
+                "comment": " The SegmentGroupList data model.\n",
+                "args": [],
+                "type": "{ groups : Maybe.Maybe AWS.Pinpoint.ListOfSegmentGroup, include : Maybe.Maybe AWS.Pinpoint.Include }"
+            },
+            {
+                "name": "SegmentImportResource",
+                "comment": " The SegmentImportResource data model.\n",
+                "args": [],
+                "type": "{ channelCounts : Maybe.Maybe AWS.Pinpoint.MapOfInteger, externalId : String.String, format : AWS.Pinpoint.Format, roleArn : String.String, s3Url : String.String, size : Basics.Int }"
+            },
+            {
+                "name": "SegmentLocation",
+                "comment": " The SegmentLocation data model.\n",
+                "args": [],
+                "type": "{ country : Maybe.Maybe AWS.Pinpoint.SetDimension, gpspoint : Maybe.Maybe AWS.Pinpoint.GpspointDimension }"
+            },
+            {
+                "name": "SegmentReference",
+                "comment": " The SegmentReference data model.\n",
+                "args": [],
+                "type": "{ id : String.String, version : Maybe.Maybe Basics.Int }"
+            },
+            {
+                "name": "SegmentResponse",
+                "comment": " The SegmentResponse data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String, arn : String.String, creationDate : String.String, dimensions : Maybe.Maybe AWS.Pinpoint.SegmentDimensions, id : String.String, importDefinition : Maybe.Maybe AWS.Pinpoint.SegmentImportResource, lastModifiedDate : Maybe.Maybe String.String, name : Maybe.Maybe String.String, segmentGroups : Maybe.Maybe AWS.Pinpoint.SegmentGroupList, segmentType : AWS.Pinpoint.SegmentType, version : Maybe.Maybe Basics.Int, tags : Maybe.Maybe AWS.Pinpoint.MapOfString }"
+            },
+            {
+                "name": "SegmentsResponse",
+                "comment": " The SegmentsResponse data model.\n",
+                "args": [],
+                "type": "{ item : AWS.Pinpoint.ListOfSegmentResponse, nextToken : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "SendMessagesRequest",
+                "comment": " The SendMessagesRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String, messageRequest : AWS.Pinpoint.MessageRequest }"
+            },
+            {
+                "name": "SendMessagesResponse",
+                "comment": " The SendMessagesResponse data model.\n",
+                "args": [],
+                "type": "{ messageResponse : AWS.Pinpoint.MessageResponse }"
+            },
+            {
+                "name": "SendUsersMessageRequest",
+                "comment": " The SendUsersMessageRequest data model.\n",
+                "args": [],
+                "type": "{ context : Maybe.Maybe AWS.Pinpoint.MapOfString, messageConfiguration : AWS.Pinpoint.DirectMessageConfiguration, traceId : Maybe.Maybe String.String, users : AWS.Pinpoint.MapOfEndpointSendConfiguration }"
+            },
+            {
+                "name": "SendUsersMessageResponse",
+                "comment": " The SendUsersMessageResponse data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String, requestId : Maybe.Maybe String.String, result : Maybe.Maybe AWS.Pinpoint.MapOfMapOfEndpointMessageResult }"
+            },
+            {
+                "name": "SendUsersMessagesRequest",
+                "comment": " The SendUsersMessagesRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String, sendUsersMessageRequest : AWS.Pinpoint.SendUsersMessageRequest }"
+            },
+            {
+                "name": "SendUsersMessagesResponse",
+                "comment": " The SendUsersMessagesResponse data model.\n",
+                "args": [],
+                "type": "{ sendUsersMessageResponse : AWS.Pinpoint.SendUsersMessageResponse }"
+            },
+            {
+                "name": "Session",
+                "comment": " The Session data model.\n",
+                "args": [],
+                "type": "{ duration : Maybe.Maybe Basics.Int, id : String.String, startTimestamp : String.String, stopTimestamp : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "SetDimension",
+                "comment": " The SetDimension data model.\n",
+                "args": [],
+                "type": "{ dimensionType : Maybe.Maybe AWS.Pinpoint.DimensionType, values : AWS.Pinpoint.ListOfString }"
+            },
+            {
+                "name": "SimpleEmail",
+                "comment": " The SimpleEmail data model.\n",
+                "args": [],
+                "type": "{ htmlPart : Maybe.Maybe AWS.Pinpoint.SimpleEmailPart, subject : Maybe.Maybe AWS.Pinpoint.SimpleEmailPart, textPart : Maybe.Maybe AWS.Pinpoint.SimpleEmailPart }"
+            },
+            {
+                "name": "SimpleEmailPart",
+                "comment": " The SimpleEmailPart data model.\n",
+                "args": [],
+                "type": "{ charset : Maybe.Maybe String.String, data : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "SmschannelRequest",
+                "comment": " The SmschannelRequest data model.\n",
+                "args": [],
+                "type": "{ enabled : Maybe.Maybe Basics.Bool, senderId : Maybe.Maybe String.String, shortCode : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "SmschannelResponse",
+                "comment": " The SmschannelResponse data model.\n",
+                "args": [],
+                "type": "{ applicationId : Maybe.Maybe String.String, creationDate : Maybe.Maybe String.String, enabled : Maybe.Maybe Basics.Bool, hasCredential : Maybe.Maybe Basics.Bool, id : Maybe.Maybe String.String, isArchived : Maybe.Maybe Basics.Bool, lastModifiedBy : Maybe.Maybe String.String, lastModifiedDate : Maybe.Maybe String.String, platform : String.String, promotionalMessagesPerSecond : Maybe.Maybe Basics.Int, senderId : Maybe.Maybe String.String, shortCode : Maybe.Maybe String.String, transactionalMessagesPerSecond : Maybe.Maybe Basics.Int, version : Maybe.Maybe Basics.Int }"
+            },
+            {
+                "name": "Smsmessage",
+                "comment": " The Smsmessage data model.\n",
+                "args": [],
+                "type": "{ body : Maybe.Maybe String.String, keyword : Maybe.Maybe String.String, messageType : Maybe.Maybe AWS.Pinpoint.MessageType, originationNumber : Maybe.Maybe String.String, senderId : Maybe.Maybe String.String, substitutions : Maybe.Maybe AWS.Pinpoint.MapOfListOfString }"
+            },
+            {
+                "name": "TagResourceRequest",
+                "comment": " The TagResourceRequest data model.\n",
+                "args": [],
+                "type": "{ resourceArn : String.String, tagsModel : AWS.Pinpoint.TagsModel }"
+            },
+            {
+                "name": "TagsModel",
+                "comment": " The TagsModel data model.\n",
+                "args": [],
+                "type": "{ tags : AWS.Pinpoint.MapOfString }"
+            },
+            {
+                "name": "TreatmentResource",
+                "comment": " The TreatmentResource data model.\n",
+                "args": [],
+                "type": "{ id : String.String, messageConfiguration : Maybe.Maybe AWS.Pinpoint.MessageConfiguration, schedule : Maybe.Maybe AWS.Pinpoint.Schedule, sizePercent : Basics.Int, state : Maybe.Maybe AWS.Pinpoint.CampaignState, treatmentDescription : Maybe.Maybe String.String, treatmentName : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "UntagResourceRequest",
+                "comment": " The UntagResourceRequest data model.\n",
+                "args": [],
+                "type": "{ resourceArn : String.String, tagKeys : AWS.Pinpoint.ListOfString }"
+            },
+            {
+                "name": "UpdateAdmChannelRequest",
+                "comment": " The UpdateAdmChannelRequest data model.\n",
+                "args": [],
+                "type": "{ admchannelRequest : AWS.Pinpoint.AdmchannelRequest, applicationId : String.String }"
+            },
+            {
+                "name": "UpdateAdmChannelResponse",
+                "comment": " The UpdateAdmChannelResponse data model.\n",
+                "args": [],
+                "type": "{ admchannelResponse : AWS.Pinpoint.AdmchannelResponse }"
+            },
+            {
+                "name": "UpdateApnsChannelRequest",
+                "comment": " The UpdateApnsChannelRequest data model.\n",
+                "args": [],
+                "type": "{ apnschannelRequest : AWS.Pinpoint.ApnschannelRequest, applicationId : String.String }"
+            },
+            {
+                "name": "UpdateApnsChannelResponse",
+                "comment": " The UpdateApnsChannelResponse data model.\n",
+                "args": [],
+                "type": "{ apnschannelResponse : AWS.Pinpoint.ApnschannelResponse }"
+            },
+            {
+                "name": "UpdateApnsSandboxChannelRequest",
+                "comment": " The UpdateApnsSandboxChannelRequest data model.\n",
+                "args": [],
+                "type": "{ apnssandboxChannelRequest : AWS.Pinpoint.ApnssandboxChannelRequest, applicationId : String.String }"
+            },
+            {
+                "name": "UpdateApnsSandboxChannelResponse",
+                "comment": " The UpdateApnsSandboxChannelResponse data model.\n",
+                "args": [],
+                "type": "{ apnssandboxChannelResponse : AWS.Pinpoint.ApnssandboxChannelResponse }"
+            },
+            {
+                "name": "UpdateApnsVoipChannelRequest",
+                "comment": " The UpdateApnsVoipChannelRequest data model.\n",
+                "args": [],
+                "type": "{ apnsvoipChannelRequest : AWS.Pinpoint.ApnsvoipChannelRequest, applicationId : String.String }"
+            },
+            {
+                "name": "UpdateApnsVoipChannelResponse",
+                "comment": " The UpdateApnsVoipChannelResponse data model.\n",
+                "args": [],
+                "type": "{ apnsvoipChannelResponse : AWS.Pinpoint.ApnsvoipChannelResponse }"
+            },
+            {
+                "name": "UpdateApnsVoipSandboxChannelRequest",
+                "comment": " The UpdateApnsVoipSandboxChannelRequest data model.\n",
+                "args": [],
+                "type": "{ apnsvoipSandboxChannelRequest : AWS.Pinpoint.ApnsvoipSandboxChannelRequest, applicationId : String.String }"
+            },
+            {
+                "name": "UpdateApnsVoipSandboxChannelResponse",
+                "comment": " The UpdateApnsVoipSandboxChannelResponse data model.\n",
+                "args": [],
+                "type": "{ apnsvoipSandboxChannelResponse : AWS.Pinpoint.ApnsvoipSandboxChannelResponse }"
+            },
+            {
+                "name": "UpdateApplicationSettingsRequest",
+                "comment": " The UpdateApplicationSettingsRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String, writeApplicationSettingsRequest : AWS.Pinpoint.WriteApplicationSettingsRequest }"
+            },
+            {
+                "name": "UpdateApplicationSettingsResponse",
+                "comment": " The UpdateApplicationSettingsResponse data model.\n",
+                "args": [],
+                "type": "{ applicationSettingsResource : AWS.Pinpoint.ApplicationSettingsResource }"
+            },
+            {
+                "name": "UpdateAttributesRequest",
+                "comment": " The UpdateAttributesRequest data model.\n",
+                "args": [],
+                "type": "{ blacklist : Maybe.Maybe AWS.Pinpoint.ListOfString }"
+            },
+            {
+                "name": "UpdateBaiduChannelRequest",
+                "comment": " The UpdateBaiduChannelRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String, baiduChannelRequest : AWS.Pinpoint.BaiduChannelRequest }"
+            },
+            {
+                "name": "UpdateBaiduChannelResponse",
+                "comment": " The UpdateBaiduChannelResponse data model.\n",
+                "args": [],
+                "type": "{ baiduChannelResponse : AWS.Pinpoint.BaiduChannelResponse }"
+            },
+            {
+                "name": "UpdateCampaignRequest",
+                "comment": " The UpdateCampaignRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String, campaignId : String.String, writeCampaignRequest : AWS.Pinpoint.WriteCampaignRequest }"
+            },
+            {
+                "name": "UpdateCampaignResponse",
+                "comment": " The UpdateCampaignResponse data model.\n",
+                "args": [],
+                "type": "{ campaignResponse : AWS.Pinpoint.CampaignResponse }"
+            },
+            {
+                "name": "UpdateEmailChannelRequest",
+                "comment": " The UpdateEmailChannelRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String, emailChannelRequest : AWS.Pinpoint.EmailChannelRequest }"
+            },
+            {
+                "name": "UpdateEmailChannelResponse",
+                "comment": " The UpdateEmailChannelResponse data model.\n",
+                "args": [],
+                "type": "{ emailChannelResponse : AWS.Pinpoint.EmailChannelResponse }"
+            },
+            {
+                "name": "UpdateEndpointRequest",
+                "comment": " The UpdateEndpointRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String, endpointId : String.String, endpointRequest : AWS.Pinpoint.EndpointRequest }"
+            },
+            {
+                "name": "UpdateEndpointResponse",
+                "comment": " The UpdateEndpointResponse data model.\n",
+                "args": [],
+                "type": "{ messageBody : AWS.Pinpoint.MessageBody }"
+            },
+            {
+                "name": "UpdateEndpointsBatchRequest",
+                "comment": " The UpdateEndpointsBatchRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String, endpointBatchRequest : AWS.Pinpoint.EndpointBatchRequest }"
+            },
+            {
+                "name": "UpdateEndpointsBatchResponse",
+                "comment": " The UpdateEndpointsBatchResponse data model.\n",
+                "args": [],
+                "type": "{ messageBody : AWS.Pinpoint.MessageBody }"
+            },
+            {
+                "name": "UpdateGcmChannelRequest",
+                "comment": " The UpdateGcmChannelRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String, gcmchannelRequest : AWS.Pinpoint.GcmchannelRequest }"
+            },
+            {
+                "name": "UpdateGcmChannelResponse",
+                "comment": " The UpdateGcmChannelResponse data model.\n",
+                "args": [],
+                "type": "{ gcmchannelResponse : AWS.Pinpoint.GcmchannelResponse }"
+            },
+            {
+                "name": "UpdateSegmentRequest",
+                "comment": " The UpdateSegmentRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String, segmentId : String.String, writeSegmentRequest : AWS.Pinpoint.WriteSegmentRequest }"
+            },
+            {
+                "name": "UpdateSegmentResponse",
+                "comment": " The UpdateSegmentResponse data model.\n",
+                "args": [],
+                "type": "{ segmentResponse : AWS.Pinpoint.SegmentResponse }"
+            },
+            {
+                "name": "UpdateSmsChannelRequest",
+                "comment": " The UpdateSmsChannelRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String, smschannelRequest : AWS.Pinpoint.SmschannelRequest }"
+            },
+            {
+                "name": "UpdateSmsChannelResponse",
+                "comment": " The UpdateSmsChannelResponse data model.\n",
+                "args": [],
+                "type": "{ smschannelResponse : AWS.Pinpoint.SmschannelResponse }"
+            },
+            {
+                "name": "UpdateVoiceChannelRequest",
+                "comment": " The UpdateVoiceChannelRequest data model.\n",
+                "args": [],
+                "type": "{ applicationId : String.String, voiceChannelRequest : AWS.Pinpoint.VoiceChannelRequest }"
+            },
+            {
+                "name": "UpdateVoiceChannelResponse",
+                "comment": " The UpdateVoiceChannelResponse data model.\n",
+                "args": [],
+                "type": "{ voiceChannelResponse : AWS.Pinpoint.VoiceChannelResponse }"
+            },
+            {
+                "name": "VoiceChannelRequest",
+                "comment": " The VoiceChannelRequest data model.\n",
+                "args": [],
+                "type": "{ enabled : Maybe.Maybe Basics.Bool }"
+            },
+            {
+                "name": "VoiceChannelResponse",
+                "comment": " The VoiceChannelResponse data model.\n",
+                "args": [],
+                "type": "{ applicationId : Maybe.Maybe String.String, creationDate : Maybe.Maybe String.String, enabled : Maybe.Maybe Basics.Bool, hasCredential : Maybe.Maybe Basics.Bool, id : Maybe.Maybe String.String, isArchived : Maybe.Maybe Basics.Bool, lastModifiedBy : Maybe.Maybe String.String, lastModifiedDate : Maybe.Maybe String.String, platform : String.String, version : Maybe.Maybe Basics.Int }"
+            },
+            {
+                "name": "VoiceMessage",
+                "comment": " The VoiceMessage data model.\n",
+                "args": [],
+                "type": "{ body : Maybe.Maybe String.String, languageCode : Maybe.Maybe String.String, originationNumber : Maybe.Maybe String.String, substitutions : Maybe.Maybe AWS.Pinpoint.MapOfListOfString, voiceId : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "WriteApplicationSettingsRequest",
+                "comment": " The WriteApplicationSettingsRequest data model.\n",
+                "args": [],
+                "type": "{ campaignHook : Maybe.Maybe AWS.Pinpoint.CampaignHook, cloudWatchMetricsEnabled : Maybe.Maybe Basics.Bool, limits : Maybe.Maybe AWS.Pinpoint.CampaignLimits, quietTime : Maybe.Maybe AWS.Pinpoint.QuietTime }"
+            },
+            {
+                "name": "WriteCampaignRequest",
+                "comment": " The WriteCampaignRequest data model.\n",
+                "args": [],
+                "type": "{ additionalTreatments : Maybe.Maybe AWS.Pinpoint.ListOfWriteTreatmentResource, description : Maybe.Maybe String.String, holdoutPercent : Maybe.Maybe Basics.Int, hook : Maybe.Maybe AWS.Pinpoint.CampaignHook, isPaused : Maybe.Maybe Basics.Bool, limits : Maybe.Maybe AWS.Pinpoint.CampaignLimits, messageConfiguration : Maybe.Maybe AWS.Pinpoint.MessageConfiguration, name : Maybe.Maybe String.String, schedule : Maybe.Maybe AWS.Pinpoint.Schedule, segmentId : Maybe.Maybe String.String, segmentVersion : Maybe.Maybe Basics.Int, treatmentDescription : Maybe.Maybe String.String, treatmentName : Maybe.Maybe String.String, tags : Maybe.Maybe AWS.Pinpoint.MapOfString }"
+            },
+            {
+                "name": "WriteEventStream",
+                "comment": " The WriteEventStream data model.\n",
+                "args": [],
+                "type": "{ destinationStreamArn : String.String, roleArn : String.String }"
+            },
+            {
+                "name": "WriteSegmentRequest",
+                "comment": " The WriteSegmentRequest data model.\n",
+                "args": [],
+                "type": "{ dimensions : Maybe.Maybe AWS.Pinpoint.SegmentDimensions, name : Maybe.Maybe String.String, segmentGroups : Maybe.Maybe AWS.Pinpoint.SegmentGroupList, tags : Maybe.Maybe AWS.Pinpoint.MapOfString }"
+            },
+            {
+                "name": "WriteTreatmentResource",
+                "comment": " The WriteTreatmentResource data model.\n",
+                "args": [],
+                "type": "{ messageConfiguration : Maybe.Maybe AWS.Pinpoint.MessageConfiguration, schedule : Maybe.Maybe AWS.Pinpoint.Schedule, sizePercent : Basics.Int, treatmentDescription : Maybe.Maybe String.String, treatmentName : Maybe.Maybe String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "action",
+                "comment": " The Action data model.\n",
+                "type": "Enum.Enum AWS.Pinpoint.Action"
+            },
+            {
+                "name": "attributeType",
+                "comment": " The AttributeType data model.\n",
+                "type": "Enum.Enum AWS.Pinpoint.AttributeType"
+            },
+            {
+                "name": "campaignStatus",
+                "comment": " The CampaignStatus data model.\n",
+                "type": "Enum.Enum AWS.Pinpoint.CampaignStatus"
+            },
+            {
+                "name": "channelType",
+                "comment": " The ChannelType data model.\n",
+                "type": "Enum.Enum AWS.Pinpoint.ChannelType"
+            },
+            {
+                "name": "createApp",
+                "comment": " Creates an application.\n",
+                "type": "AWS.Pinpoint.CreateAppRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.CreateAppResponse"
+            },
+            {
+                "name": "createCampaign",
+                "comment": " Creates a new campaign for an application or updates the settings of an existing campaign for an application.\n",
+                "type": "AWS.Pinpoint.CreateCampaignRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.CreateCampaignResponse"
+            },
+            {
+                "name": "createExportJob",
+                "comment": " Creates a new export job for an application.\n",
+                "type": "AWS.Pinpoint.CreateExportJobRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.CreateExportJobResponse"
+            },
+            {
+                "name": "createImportJob",
+                "comment": " Creates a new import job for an application.\n",
+                "type": "AWS.Pinpoint.CreateImportJobRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.CreateImportJobResponse"
+            },
+            {
+                "name": "createSegment",
+                "comment": " Creates a new segment for an application or updates the configuration, dimension, and other settings for an existing segment that's associated with an application.\n",
+                "type": "AWS.Pinpoint.CreateSegmentRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.CreateSegmentResponse"
+            },
+            {
+                "name": "deleteAdmChannel",
+                "comment": " Disables the ADM channel for an application and deletes any existing settings for the channel.\n",
+                "type": "AWS.Pinpoint.DeleteAdmChannelRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.DeleteAdmChannelResponse"
+            },
+            {
+                "name": "deleteApnsChannel",
+                "comment": " Disables the APNs channel for an application and deletes any existing settings for the channel.\n",
+                "type": "AWS.Pinpoint.DeleteApnsChannelRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.DeleteApnsChannelResponse"
+            },
+            {
+                "name": "deleteApnsSandboxChannel",
+                "comment": " Disables the APNs sandbox channel for an application and deletes any existing settings for the channel.\n",
+                "type": "AWS.Pinpoint.DeleteApnsSandboxChannelRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.DeleteApnsSandboxChannelResponse"
+            },
+            {
+                "name": "deleteApnsVoipChannel",
+                "comment": " Disables the APNs VoIP channel for an application and deletes any existing settings for the channel.\n",
+                "type": "AWS.Pinpoint.DeleteApnsVoipChannelRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.DeleteApnsVoipChannelResponse"
+            },
+            {
+                "name": "deleteApnsVoipSandboxChannel",
+                "comment": " Disables the APNs VoIP sandbox channel for an application and deletes any existing settings for the channel.\n",
+                "type": "AWS.Pinpoint.DeleteApnsVoipSandboxChannelRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.DeleteApnsVoipSandboxChannelResponse"
+            },
+            {
+                "name": "deleteApp",
+                "comment": " Deletes an application.\n",
+                "type": "AWS.Pinpoint.DeleteAppRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.DeleteAppResponse"
+            },
+            {
+                "name": "deleteBaiduChannel",
+                "comment": " Disables the Baidu channel for an application and deletes any existing settings for the channel.\n",
+                "type": "AWS.Pinpoint.DeleteBaiduChannelRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.DeleteBaiduChannelResponse"
+            },
+            {
+                "name": "deleteCampaign",
+                "comment": " Deletes a campaign from an application.\n",
+                "type": "AWS.Pinpoint.DeleteCampaignRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.DeleteCampaignResponse"
+            },
+            {
+                "name": "deleteEmailChannel",
+                "comment": " Disables the email channel for an application and deletes any existing settings for the channel.\n",
+                "type": "AWS.Pinpoint.DeleteEmailChannelRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.DeleteEmailChannelResponse"
+            },
+            {
+                "name": "deleteEndpoint",
+                "comment": " Deletes an endpoint from an application.\n",
+                "type": "AWS.Pinpoint.DeleteEndpointRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.DeleteEndpointResponse"
+            },
+            {
+                "name": "deleteEventStream",
+                "comment": " Deletes the event stream for an application.\n",
+                "type": "AWS.Pinpoint.DeleteEventStreamRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.DeleteEventStreamResponse"
+            },
+            {
+                "name": "deleteGcmChannel",
+                "comment": " Disables the GCM channel for an application and deletes any existing settings for the channel.\n",
+                "type": "AWS.Pinpoint.DeleteGcmChannelRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.DeleteGcmChannelResponse"
+            },
+            {
+                "name": "deleteSegment",
+                "comment": " Deletes a segment from an application.\n",
+                "type": "AWS.Pinpoint.DeleteSegmentRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.DeleteSegmentResponse"
+            },
+            {
+                "name": "deleteSmsChannel",
+                "comment": " Disables the SMS channel for an application and deletes any existing settings for the channel.\n",
+                "type": "AWS.Pinpoint.DeleteSmsChannelRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.DeleteSmsChannelResponse"
+            },
+            {
+                "name": "deleteUserEndpoints",
+                "comment": " Deletes all the endpoints that are associated with a specific user ID.\n",
+                "type": "AWS.Pinpoint.DeleteUserEndpointsRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.DeleteUserEndpointsResponse"
+            },
+            {
+                "name": "deleteVoiceChannel",
+                "comment": " Disables the voice channel for an application and deletes any existing settings for the channel.\n",
+                "type": "AWS.Pinpoint.DeleteVoiceChannelRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.DeleteVoiceChannelResponse"
+            },
+            {
+                "name": "deliveryStatus",
+                "comment": " The DeliveryStatus data model.\n",
+                "type": "Enum.Enum AWS.Pinpoint.DeliveryStatus"
+            },
+            {
+                "name": "dimensionType",
+                "comment": " The DimensionType data model.\n",
+                "type": "Enum.Enum AWS.Pinpoint.DimensionType"
+            },
+            {
+                "name": "duration",
+                "comment": " The Duration data model.\n",
+                "type": "Enum.Enum AWS.Pinpoint.Duration"
+            },
+            {
+                "name": "filterType",
+                "comment": " The FilterType data model.\n",
+                "type": "Enum.Enum AWS.Pinpoint.FilterType"
+            },
+            {
+                "name": "format",
+                "comment": " The Format data model.\n",
+                "type": "Enum.Enum AWS.Pinpoint.Format"
+            },
+            {
+                "name": "frequency",
+                "comment": " The Frequency data model.\n",
+                "type": "Enum.Enum AWS.Pinpoint.Frequency"
+            },
+            {
+                "name": "getAdmChannel",
+                "comment": " Retrieves information about the status and settings of the ADM channel for an application.\n",
+                "type": "AWS.Pinpoint.GetAdmChannelRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.GetAdmChannelResponse"
+            },
+            {
+                "name": "getApnsChannel",
+                "comment": " Retrieves information about the status and settings of the APNs channel for an application.\n",
+                "type": "AWS.Pinpoint.GetApnsChannelRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.GetApnsChannelResponse"
+            },
+            {
+                "name": "getApnsSandboxChannel",
+                "comment": " Retrieves information about the status and settings of the APNs sandbox channel for an application.\n",
+                "type": "AWS.Pinpoint.GetApnsSandboxChannelRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.GetApnsSandboxChannelResponse"
+            },
+            {
+                "name": "getApnsVoipChannel",
+                "comment": " Retrieves information about the status and settings of the APNs VoIP channel for an application.\n",
+                "type": "AWS.Pinpoint.GetApnsVoipChannelRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.GetApnsVoipChannelResponse"
+            },
+            {
+                "name": "getApnsVoipSandboxChannel",
+                "comment": " Retrieves information about the status and settings of the APNs VoIP sandbox channel for an application.\n",
+                "type": "AWS.Pinpoint.GetApnsVoipSandboxChannelRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.GetApnsVoipSandboxChannelResponse"
+            },
+            {
+                "name": "getApp",
+                "comment": " Retrieves information about an application.\n",
+                "type": "AWS.Pinpoint.GetAppRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.GetAppResponse"
+            },
+            {
+                "name": "getApplicationDateRangeKpi",
+                "comment": " Retrieves (queries) pre-aggregated data for a standard metric that applies to an application.\n",
+                "type": "AWS.Pinpoint.GetApplicationDateRangeKpiRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.GetApplicationDateRangeKpiResponse"
+            },
+            {
+                "name": "getApplicationSettings",
+                "comment": " Retrieves information about the settings for an application.\n",
+                "type": "AWS.Pinpoint.GetApplicationSettingsRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.GetApplicationSettingsResponse"
+            },
+            {
+                "name": "getApps",
+                "comment": " Retrieves information about all of your applications.\n",
+                "type": "AWS.Pinpoint.GetAppsRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.GetAppsResponse"
+            },
+            {
+                "name": "getBaiduChannel",
+                "comment": " Retrieves information about the status and settings of the Baidu Cloud Push channel for an application.\n",
+                "type": "AWS.Pinpoint.GetBaiduChannelRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.GetBaiduChannelResponse"
+            },
+            {
+                "name": "getCampaign",
+                "comment": " Retrieves information about the status, configuration, and other settings for a campaign.\n",
+                "type": "AWS.Pinpoint.GetCampaignRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.GetCampaignResponse"
+            },
+            {
+                "name": "getCampaignActivities",
+                "comment": " Retrieves information about the activity performed by a campaign.\n",
+                "type": "AWS.Pinpoint.GetCampaignActivitiesRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.GetCampaignActivitiesResponse"
+            },
+            {
+                "name": "getCampaignDateRangeKpi",
+                "comment": " Retrieves (queries) pre-aggregated data for a standard metric that applies to a campaign.\n",
+                "type": "AWS.Pinpoint.GetCampaignDateRangeKpiRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.GetCampaignDateRangeKpiResponse"
+            },
+            {
+                "name": "getCampaignVersion",
+                "comment": " Retrieves information about the status, configuration, and other settings for a specific version of a campaign.\n",
+                "type": "AWS.Pinpoint.GetCampaignVersionRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.GetCampaignVersionResponse"
+            },
+            {
+                "name": "getCampaignVersions",
+                "comment": " Retrieves information about the status, configuration, and other settings for all versions of a specific campaign.\n",
+                "type": "AWS.Pinpoint.GetCampaignVersionsRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.GetCampaignVersionsResponse"
+            },
+            {
+                "name": "getCampaigns",
+                "comment": " Retrieves information about the status, configuration, and other settings for all the campaigns that are associated with an application.\n",
+                "type": "AWS.Pinpoint.GetCampaignsRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.GetCampaignsResponse"
+            },
+            {
+                "name": "getChannels",
+                "comment": " Retrieves information about the history and status of each channel for an application.\n",
+                "type": "AWS.Pinpoint.GetChannelsRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.GetChannelsResponse"
+            },
+            {
+                "name": "getEmailChannel",
+                "comment": " Retrieves information about the status and settings of the email channel for an application.\n",
+                "type": "AWS.Pinpoint.GetEmailChannelRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.GetEmailChannelResponse"
+            },
+            {
+                "name": "getEndpoint",
+                "comment": " Retrieves information about the settings and attributes of a specific endpoint for an application.\n",
+                "type": "AWS.Pinpoint.GetEndpointRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.GetEndpointResponse"
+            },
+            {
+                "name": "getEventStream",
+                "comment": " Retrieves information about the event stream settings for an application.\n",
+                "type": "AWS.Pinpoint.GetEventStreamRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.GetEventStreamResponse"
+            },
+            {
+                "name": "getExportJob",
+                "comment": " Retrieves information about the status and settings of a specific export job for an application.\n",
+                "type": "AWS.Pinpoint.GetExportJobRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.GetExportJobResponse"
+            },
+            {
+                "name": "getExportJobs",
+                "comment": " Retrieves information about the status and settings of all the export jobs for an application.\n",
+                "type": "AWS.Pinpoint.GetExportJobsRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.GetExportJobsResponse"
+            },
+            {
+                "name": "getGcmChannel",
+                "comment": " Retrieves information about the status and settings of the GCM channel for an application.\n",
+                "type": "AWS.Pinpoint.GetGcmChannelRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.GetGcmChannelResponse"
+            },
+            {
+                "name": "getImportJob",
+                "comment": " Retrieves information about the status and settings of a specific import job for an application.\n",
+                "type": "AWS.Pinpoint.GetImportJobRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.GetImportJobResponse"
+            },
+            {
+                "name": "getImportJobs",
+                "comment": " Retrieves information about the status and settings of all the import jobs for an application.\n",
+                "type": "AWS.Pinpoint.GetImportJobsRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.GetImportJobsResponse"
+            },
+            {
+                "name": "getSegment",
+                "comment": " Retrieves information about the configuration, dimension, and other settings for a specific segment that's associated with an application.\n",
+                "type": "AWS.Pinpoint.GetSegmentRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.GetSegmentResponse"
+            },
+            {
+                "name": "getSegmentExportJobs",
+                "comment": " Retrieves information about the status and settings of the export jobs for a segment.\n",
+                "type": "AWS.Pinpoint.GetSegmentExportJobsRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.GetSegmentExportJobsResponse"
+            },
+            {
+                "name": "getSegmentImportJobs",
+                "comment": " Retrieves information about the status and settings of the import jobs for a segment.\n",
+                "type": "AWS.Pinpoint.GetSegmentImportJobsRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.GetSegmentImportJobsResponse"
+            },
+            {
+                "name": "getSegmentVersion",
+                "comment": " Retrieves information about the configuration, dimension, and other settings for a specific version of a segment that's associated with an application.\n",
+                "type": "AWS.Pinpoint.GetSegmentVersionRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.GetSegmentVersionResponse"
+            },
+            {
+                "name": "getSegmentVersions",
+                "comment": " Retrieves information about the configuration, dimension, and other settings for all versions of a specific segment that's associated with an application.\n",
+                "type": "AWS.Pinpoint.GetSegmentVersionsRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.GetSegmentVersionsResponse"
+            },
+            {
+                "name": "getSegments",
+                "comment": " Retrieves information about the configuration, dimension, and other settings for all the segments that are associated with an application.\n",
+                "type": "AWS.Pinpoint.GetSegmentsRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.GetSegmentsResponse"
+            },
+            {
+                "name": "getSmsChannel",
+                "comment": " Retrieves information about the status and settings of the SMS channel for an application.\n",
+                "type": "AWS.Pinpoint.GetSmsChannelRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.GetSmsChannelResponse"
+            },
+            {
+                "name": "getUserEndpoints",
+                "comment": " Retrieves information about all the endpoints that are associated with a specific user ID.\n",
+                "type": "AWS.Pinpoint.GetUserEndpointsRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.GetUserEndpointsResponse"
+            },
+            {
+                "name": "getVoiceChannel",
+                "comment": " Retrieves information about the status and settings of the voice channel for an application.\n",
+                "type": "AWS.Pinpoint.GetVoiceChannelRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.GetVoiceChannelResponse"
+            },
+            {
+                "name": "include",
+                "comment": " The Include data model.\n",
+                "type": "Enum.Enum AWS.Pinpoint.Include"
+            },
+            {
+                "name": "jobStatus",
+                "comment": " The JobStatus data model.\n",
+                "type": "Enum.Enum AWS.Pinpoint.JobStatus"
+            },
+            {
+                "name": "listTagsForResource",
+                "comment": " Retrieves all the tags (keys and values) that are associated with an application, campaign, or segment.\n",
+                "type": "AWS.Pinpoint.ListTagsForResourceRequest -> AWS.Http.Request Basics.Never AWS.Pinpoint.ListTagsForResourceResponse"
+            },
+            {
+                "name": "messageType",
+                "comment": " The MessageType data model.\n",
+                "type": "Enum.Enum AWS.Pinpoint.MessageType"
+            },
+            {
+                "name": "mode",
+                "comment": " The Mode data model.\n",
+                "type": "Enum.Enum AWS.Pinpoint.Mode"
+            },
+            {
+                "name": "phoneNumberValidate",
+                "comment": " Retrieves information about a phone number.\n",
+                "type": "AWS.Pinpoint.PhoneNumberValidateRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.PhoneNumberValidateResponse"
+            },
+            {
+                "name": "putEventStream",
+                "comment": " Creates a new event stream for an application or updates the settings of an existing event stream for an application.\n",
+                "type": "AWS.Pinpoint.PutEventStreamRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.PutEventStreamResponse"
+            },
+            {
+                "name": "putEvents",
+                "comment": " Creates a new event to record for endpoints, or creates or updates endpoint data that existing events are associated with.\n",
+                "type": "AWS.Pinpoint.PutEventsRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.PutEventsResponse"
+            },
+            {
+                "name": "recencyType",
+                "comment": " The RecencyType data model.\n",
+                "type": "Enum.Enum AWS.Pinpoint.RecencyType"
+            },
+            {
+                "name": "removeAttributes",
+                "comment": " Removes one or more attributes, of the same attribute type, from all the endpoints that are associated with an application.\n",
+                "type": "AWS.Pinpoint.RemoveAttributesRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.RemoveAttributesResponse"
+            },
+            {
+                "name": "segmentType",
+                "comment": " The SegmentType data model.\n",
+                "type": "Enum.Enum AWS.Pinpoint.SegmentType"
+            },
+            {
+                "name": "sendMessages",
+                "comment": " Creates and sends a direct message.\n",
+                "type": "AWS.Pinpoint.SendMessagesRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.SendMessagesResponse"
+            },
+            {
+                "name": "sendUsersMessages",
+                "comment": " Creates and sends a message to a list of users.\n",
+                "type": "AWS.Pinpoint.SendUsersMessagesRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.SendUsersMessagesResponse"
+            },
+            {
+                "name": "service",
+                "comment": " Configuration for this service.\n",
+                "type": "AWS.Config.Region -> AWS.Service.Service"
+            },
+            {
+                "name": "sourceType",
+                "comment": " The SourceType data model.\n",
+                "type": "Enum.Enum AWS.Pinpoint.SourceType"
+            },
+            {
+                "name": "tagResource",
+                "comment": " Adds one or more tags (keys and values) to an application, campaign, or segment.\n",
+                "type": "AWS.Pinpoint.TagResourceRequest -> AWS.Http.Request Basics.Never ()"
+            },
+            {
+                "name": "type_",
+                "comment": " The Type data model.\n",
+                "type": "Enum.Enum AWS.Pinpoint.Type"
+            },
+            {
+                "name": "untagResource",
+                "comment": " Removes one or more tags (keys and values) from an application, campaign, or segment.\n",
+                "type": "AWS.Pinpoint.UntagResourceRequest -> AWS.Http.Request Basics.Never ()"
+            },
+            {
+                "name": "updateAdmChannel",
+                "comment": " Updates the ADM channel settings for an application.\n",
+                "type": "AWS.Pinpoint.UpdateAdmChannelRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.UpdateAdmChannelResponse"
+            },
+            {
+                "name": "updateApnsChannel",
+                "comment": " Updates the APNs channel settings for an application.\n",
+                "type": "AWS.Pinpoint.UpdateApnsChannelRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.UpdateApnsChannelResponse"
+            },
+            {
+                "name": "updateApnsSandboxChannel",
+                "comment": " Updates the APNs sandbox channel settings for an application.\n",
+                "type": "AWS.Pinpoint.UpdateApnsSandboxChannelRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.UpdateApnsSandboxChannelResponse"
+            },
+            {
+                "name": "updateApnsVoipChannel",
+                "comment": " Updates the APNs VoIP channel settings for an application.\n",
+                "type": "AWS.Pinpoint.UpdateApnsVoipChannelRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.UpdateApnsVoipChannelResponse"
+            },
+            {
+                "name": "updateApnsVoipSandboxChannel",
+                "comment": " Updates the settings for the APNs VoIP sandbox channel for an application.\n",
+                "type": "AWS.Pinpoint.UpdateApnsVoipSandboxChannelRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.UpdateApnsVoipSandboxChannelResponse"
+            },
+            {
+                "name": "updateApplicationSettings",
+                "comment": " Updates the settings for an application.\n",
+                "type": "AWS.Pinpoint.UpdateApplicationSettingsRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.UpdateApplicationSettingsResponse"
+            },
+            {
+                "name": "updateBaiduChannel",
+                "comment": " Updates the settings of the Baidu channel for an application.\n",
+                "type": "AWS.Pinpoint.UpdateBaiduChannelRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.UpdateBaiduChannelResponse"
+            },
+            {
+                "name": "updateCampaign",
+                "comment": " Updates the settings for a campaign.\n",
+                "type": "AWS.Pinpoint.UpdateCampaignRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.UpdateCampaignResponse"
+            },
+            {
+                "name": "updateEmailChannel",
+                "comment": " Updates the status and settings of the email channel for an application.\n",
+                "type": "AWS.Pinpoint.UpdateEmailChannelRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.UpdateEmailChannelResponse"
+            },
+            {
+                "name": "updateEndpoint",
+                "comment": " Creates a new endpoint for an application or updates the settings and attributes of an existing endpoint for an application. You can also use this operation to define custom attributes (Attributes, Metrics, and UserAttributes properties) for an endpoint.\n",
+                "type": "AWS.Pinpoint.UpdateEndpointRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.UpdateEndpointResponse"
+            },
+            {
+                "name": "updateEndpointsBatch",
+                "comment": " Creates a new batch of endpoints for an application or updates the settings and attributes of a batch of existing endpoints for an application. You can also use this operation to define custom attributes (Attributes, Metrics, and UserAttributes properties) for a batch of endpoints.\n",
+                "type": "AWS.Pinpoint.UpdateEndpointsBatchRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.UpdateEndpointsBatchResponse"
+            },
+            {
+                "name": "updateGcmChannel",
+                "comment": " Updates the status and settings of the GCM channel for an application.\n",
+                "type": "AWS.Pinpoint.UpdateGcmChannelRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.UpdateGcmChannelResponse"
+            },
+            {
+                "name": "updateSegment",
+                "comment": " Creates a new segment for an application or updates the configuration, dimension, and other settings for an existing segment that's associated with an application.\n",
+                "type": "AWS.Pinpoint.UpdateSegmentRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.UpdateSegmentResponse"
+            },
+            {
+                "name": "updateSmsChannel",
+                "comment": " Updates the status and settings of the SMS channel for an application.\n",
+                "type": "AWS.Pinpoint.UpdateSmsChannelRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.UpdateSmsChannelResponse"
+            },
+            {
+                "name": "updateVoiceChannel",
+                "comment": " Updates the status and settings of the voice channel for an application.\n",
+                "type": "AWS.Pinpoint.UpdateVoiceChannelRequest -> AWS.Http.Request AWS.Http.AWSAppError AWS.Pinpoint.UpdateVoiceChannelResponse"
+            }
+        ],
+        "binops": []
+    }
+]

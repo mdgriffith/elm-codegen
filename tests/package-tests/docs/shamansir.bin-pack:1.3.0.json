@@ -1,0 +1,92 @@
+[
+    {
+        "name": "BinPack",
+        "comment": " Simple bin packing for rectangles.\n\nBased on [the version in Haskell](https://github.com/bflyblue/binpack/blob/master/Data/BinPack/R2.hs).\n\n[The demo of a similar algorithm](https://observablehq.com/@mourner/simple-rectangle-packing).\n\n[The article on how it works](https://codeincomplete.com/articles/bin-packing/).\n\nCreate one with `container <width> <height>` and then add rectangles and values using `pack` or `carelessPack`:\n\n    -- :: BinPack Color\n    BinPack.container 300 250\n        |> BinPack.carelessPack ( { width = 10, height = 30 }, Color.black )\n        |> BinPack.carelessPack ( { width = 20, height = 15 }, Color.red )\n        |> BinPack.carelessPack ( { width = 5, height = 25 }, Color.blue )\n        |> ...\n\n    -- :: BinPack String\n    BinPack.container 300 250\n        |> BinPack.carelessPack ( { width = 10, height = 30 }, \"Martha\" )\n        |> BinPack.carelessPack ( { width = 20, height = 15 }, \"Ben\" )\n        |> BinPack.carelessPack ( { width = 5, height = 25 }, \"John\" )\n        |> ...\n\n    -- :: BinPack Color\n    BinPack.container 300 250\n        |> BinPack.packAllIn\n            [ ( { width = 10, height = 30 }, Color.black )\n            , ( { width = 20, height = 15 }, Color.red )\n            , ( { width = 5, height = 25 }, Color.blue )\n            ]\n\n    -- :: BinPack Color\n    BinPack.container 300 250\n        |> BinPack.pack ( { width = 10, height = 30 }, Color.black )\n        |> Maybe.andThen (BinPack.pack ( { width = 20, height = 15 }, Color.red ))\n        |> Maybe.andThen (BinPack.pack ( { width = 5, height = 25 }, Color.blue ))\n        |> ...\n        |> Maybe.withDefault (BinPack.container 300 250)\n\n# Core type\n\n@docs BinPack\n\n# Bounds\n\n@docs Bounds\n\n# Create container\n\n@docs container\n\n# Packing\n\n@docs pack, carelessPack, packAll, packAllIn\n\n# Search\n\n@docs find\n\n# Folding\n\n@docs fold, foldWithFreeSpace, foldGeometry, foldGeometryWithFreeSpace\n\n# Lists\n\n@docs toList, toListWithFreeSpace\n\n# Mapping\n\n@docs map\n\n",
+        "unions": [
+            {
+                "name": "BinPack",
+                "comment": " `BinPack a`, where `a` is the type of what every rectangle is associated with (what lies in every cell). For example, it could be `Color`.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Bounds",
+                "comment": " The bounds, top left corner and width/height. ",
+                "args": [],
+                "type": "{ x : Basics.Float, y : Basics.Float, width : Basics.Float, height : Basics.Float }"
+            }
+        ],
+        "values": [
+            {
+                "name": "carelessPack",
+                "comment": " Try to pack the value in a rectangle with given width and height. If the rectangle doesn't fit, ignore that fact and return previous condition of `BinPack`. ",
+                "type": "( { width : Basics.Float, height : Basics.Float }, a ) -> BinPack.BinPack a -> BinPack.BinPack a"
+            },
+            {
+                "name": "container",
+                "comment": " Create an empty container with given height and width.\n",
+                "type": "Basics.Float -> Basics.Float -> BinPack.BinPack a"
+            },
+            {
+                "name": "find",
+                "comment": " Try to find a value in a structure using given coordinates. ",
+                "type": "{ x : Basics.Float, y : Basics.Float } -> BinPack.BinPack a -> Maybe.Maybe ( a, BinPack.Bounds )"
+            },
+            {
+                "name": "fold",
+                "comment": " Fold the `BinPack a` to any other type, for example:\n\n    BinPack.container 300 250\n        |> carelessPack ( { width = 10, height = 30 }, Color.black )\n        |> carelessPack ( { width = 20, height = 15 }, Color.red )\n        |> carelessPack ( { width = 5, height = 25 }, Color.blue )\n        |> fold (::) []\n\n    -- == [ Color.black, Color.red, Color.blue ]\n\n ",
+                "type": "(a -> b -> b) -> b -> BinPack.BinPack a -> b"
+            },
+            {
+                "name": "foldGeometry",
+                "comment": " Fold the structure, using both the values and their bounds:\n\n    BinPack.container 20 100\n        |> carelessPack ( { width = 10, height = 30 }, Color.black )\n        |> carelessPack ( { width = 20, height = 15 }, Color.red )\n        |> carelessPack ( { width = 5, height = 25 }, Color.blue )\n        |> carelessPack ( { width = 12, height = 25 }, Color.green )\n        |> foldGeometry (::) []\n\n    -- ==\n    --    [ ( Color.black, { x = 0, y = 0, width = 10, height = 30 } )\n    --    , ( Color.red, { x = 0, y = 30, width = 20, height = 15 } )\n    --    , ( Color.blue, { x = 10, y = 0, width = 5, height = 25 } )\n    --    , ( Color.green, { x = 0, y = 45, width = 12, height = 25 } )\n    --    ]\n ",
+                "type": "(( a, BinPack.Bounds ) -> k -> k) -> k -> BinPack.BinPack a -> k"
+            },
+            {
+                "name": "foldGeometryWithFreeSpace",
+                "comment": " Fold with the information if it's a free space (`Nothing`) or a node (`Just a`), including bounds.\n ",
+                "type": "(( Maybe.Maybe a, BinPack.Bounds ) -> k -> k) -> k -> BinPack.BinPack a -> k"
+            },
+            {
+                "name": "foldWithFreeSpace",
+                "comment": " Fold the `BinPack` using the information about if it's a free space (`Nothing`) or a node (`Maybe a`).\n ",
+                "type": "(Maybe.Maybe a -> b -> b) -> b -> BinPack.BinPack a -> b"
+            },
+            {
+                "name": "map",
+                "comment": " Substitute all of the cells with different ones, using the previous ones as the source. ",
+                "type": "(a -> b) -> BinPack.BinPack a -> BinPack.BinPack b"
+            },
+            {
+                "name": "pack",
+                "comment": " Try to pack the value in a rectangle with given width and height. If the rect doesn't fit, `Nothing` is returned.\n",
+                "type": "( { width : Basics.Float, height : Basics.Float }, a ) -> BinPack.BinPack a -> Maybe.Maybe (BinPack.BinPack a)"
+            },
+            {
+                "name": "packAll",
+                "comment": " Try to pack all the values with given dimensions in a `BinPack` container with given width and height, ignore the item when it doesn't fit.\n",
+                "type": "Basics.Float -> Basics.Float -> List.List ( { width : Basics.Float, height : Basics.Float }, a ) -> BinPack.BinPack a"
+            },
+            {
+                "name": "packAllIn",
+                "comment": " Try to pack all the values with given dimensions in the given `BinPack` container.\n",
+                "type": "List.List ( { width : Basics.Float, height : Basics.Float }, a ) -> BinPack.BinPack a -> BinPack.BinPack a"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert the structure to the list of values and their bounds\n",
+                "type": "BinPack.BinPack a -> List.List ( a, BinPack.Bounds )"
+            },
+            {
+                "name": "toListWithFreeSpace",
+                "comment": " Convert the structure to the list of values and their bounds + information if it's a free space or a node.\n",
+                "type": "BinPack.BinPack a -> List.List ( Maybe.Maybe a, BinPack.Bounds )"
+            }
+        ],
+        "binops": []
+    }
+]

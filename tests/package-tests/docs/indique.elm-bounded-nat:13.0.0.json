@@ -1,0 +1,16 @@
+[
+    {
+        "name": "Moved",
+        "comment": " A package must contain one module. Never use it.\n\n@docs moved\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "moved",
+                "comment": " A module must contain a member. Never use it.\n",
+                "type": "()"
+            }
+        ],
+        "binops": []
+    }
+]

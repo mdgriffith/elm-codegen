@@ -1,0 +1,108 @@
+[
+    {
+        "name": "ComponentResult",
+        "comment": " This library helps move data between components, where\n\nA Component is a `model` that can be initialized, and updated.\nIn addition to returning a `model` from `init` or `update`, a component can\n\n  - optionally dispatch a `Cmd msg`\n  - optionally return an `externalMsg` for the parent/caller to use.\n\nImportantly, a component's `init`/`update` may instead return just an `error` , and let the parent/caller decide how to deal with it.\n\nThis is most helpful in large apps where you have constructs like \"sub-pages\" and component-style\nmodules (i.e. having model + init + update + view).\n\nThe purpose of this library is to standardize boilerplate within one's app,\nnot necessarily to reduce it.\n\n\n# Definition\n\n@docs ComponentResult\n\n\n# Creating\n\n@docs withModel, justError\n\n\n# Augmenting\n\nAdd Cmds and external messages to a ComponentResult.\n\n@docs withCmd, withCmds, withExternalMsg\n\n\n# Basic Mapping\n\nTransform the `model`, `error`, or `(Cmd) msg` of a ComponentResult.\n\n@docs mapError, mapModel, mapMsg\n\n\n# Advanced\n\n@docs map2Model, applyExternalMsg, discardExternalMsg, sequence\n\n\n# Consuming\n\n@docs resolve, resolveError\n\n\n# Other\n\n@docs escape, tapModel, tapError\n\n",
+        "unions": [
+            {
+                "name": "ComponentResult",
+                "comment": " A ComponentResult is an encapsulation of the typicall results of updating a component.\nIt can represent model state, as well as dispatched `Cmd msg`, external messages and errors.\n",
+                "args": [
+                    "model",
+                    "msg",
+                    "externalMsg",
+                    "err"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "applyExternalMsg",
+                "comment": " Apply the internal externalMsg (if any).\nThe caller therefore has the opportuinity to remove the bound externalMsg type\n(and optionally replace it).\n\nIn general, the idea is that the caller is an `update` function calling into another (sub-component's)\n`update` function. The caller will get back a `ComponentResult` and needs to transform that\ninto the `ComponentResult` it will return to it's caller.\n\nAn `externalMsg` is used to inform the caller that it may need to augment it's processing.\ne.g.\n\n    update : Msg -> Model -> ComponentResult Model Msg externalMsg err\n    update model msg =\n        case ( msg, pageModel ) of\n            ( AccountPageMsg pageMsg, AccountPageModel pageModel ) ->\n                AccountPage.update pageMsg pageModel\n                    |> ComponentResult.mapModel (\\newPageModel -> { model | pageModel = AccountPageModel newPageModel })\n                    |> ComponentResult.mapCmd AccountPageMsg\n                    |> ComponentResult.applyExternalMsg\n                        (\\externalMsg result ->\n                            case externalMsg of\n                                AccountPage.LoggedOut ->\n                                    result\n                                        |> ComponentResult.withCmd (Ports.logout ())\n                        )\n\n",
+                "type": "(externalMsg -> ComponentResult.ComponentResult model msg never err -> ComponentResult.ComponentResult model msg newExternalMessage err) -> ComponentResult.ComponentResult model msg externalMsg err -> ComponentResult.ComponentResult model msg newExternalMessage err"
+            },
+            {
+                "name": "discardExternalMsg",
+                "comment": " Discard the externalMsg of a `ComponentResult` (if one is present).\n",
+                "type": "ComponentResult.ComponentResult model msg externalMsg err -> ComponentResult.ComponentResult model msg neverExternalMsg err"
+            },
+            {
+                "name": "escape",
+                "comment": " \"Escape\" out of the `ComponentResult` format, and into Core Elm types.\nDoing this loses the benifits of the `ComponentResult` type and related functions.\n\nThis shouldn't typically be required in production, but might be handy for debugging/testing/prototyping.\n\n",
+                "type": "ComponentResult.ComponentResult model msg externalMsg err -> Result.Result err ( model, Platform.Cmd.Cmd msg, Maybe.Maybe externalMsg )"
+            },
+            {
+                "name": "justError",
+                "comment": " An error-state ComponentResult may be created with an error parameter.\nNote that `withCmd`, `withExternalMsg` etc have no effect on an error-state component result.\n",
+                "type": "err -> ComponentResult.ComponentResult model msg externalMsg err"
+            },
+            {
+                "name": "map2Model",
+                "comment": " Given a function to map 2 models into a new model, and 2 ComponentResults with such models,\nmap the ComponentResults into a new one, maintinaing error state, if any, and batching `Cmd msg`\nif any.\n\n    init : ComponentResult Model Cmd externalMsg err\n    init =\n        map2Model (\\modelA modelB -> { a = modelA, b = modelB , sort = Default, ...})\n            (SubComponentA.init |> ComponentResult.mapCmd ComponentACmd)\n            (SubComponentB.init |> ComponentResult.mapCmd ComponentBCmd)\n\n",
+                "type": "(model1 -> model2 -> newModel) -> ComponentResult.ComponentResult model1 msg externalMsg err -> ComponentResult.ComponentResult model2 msg Basics.Never err -> ComponentResult.ComponentResult newModel msg externalMsg err"
+            },
+            {
+                "name": "mapError",
+                "comment": " Transform a `ComponentResult`'s error value, if it is in an error state.\n",
+                "type": "(err -> newErr) -> ComponentResult.ComponentResult model msg externalMsg err -> ComponentResult.ComponentResult model msg externalMsg newErr"
+            },
+            {
+                "name": "mapModel",
+                "comment": " Transform a `ComponentResult`'s model, if it exists (i.e. it is not a [`justError`](#justError)).\nTypical usage:\n\n    update : Msg -> Model -> ComponentResult Msg Model externMsg err\n    update msg model =\n        case msg of\n            PageMsg pageMsg ->\n                Page.update pageMsg model.pageModel\n                    |> ComponentResult.mapModel (\\newPageModel -> { model | pageModel = newPageModel })\n                    |> ComponentResult.mapCmd PageMsg\n\n",
+                "type": "(model -> newModel) -> ComponentResult.ComponentResult model msg externalMsg err -> ComponentResult.ComponentResult newModel msg externalMsg err"
+            },
+            {
+                "name": "mapMsg",
+                "comment": " Transform a `ComponentResult`'s cmds, if it has any.\nTypical usage:\n\n    update : Msg -> Model -> ComponentResult Msg Model externMsg err\n    update msg model =\n        case msg of\n            PageMsg pageMsg ->\n                Page.update pageMsg model.pageModel\n                    |> ComponentResult.mapModel (\\newPageModel -> { model | pageModel = newPageModel })\n                    |> ComponentResult.mapCmd PageMsg\n\n",
+                "type": "(msg -> newMsg) -> ComponentResult.ComponentResult model msg externalMsg err -> ComponentResult.ComponentResult model newMsg externalMsg err"
+            },
+            {
+                "name": "resolve",
+                "comment": " Given a non-error `ComponentResult` with no external message, transorfm it into the familiar\n`( model, Cmd msg )` type.\n\nThis is useful at the top-level `update` function, because the Browser package\nrequires a return of ( model, Cmd msg ).\n\n",
+                "type": "ComponentResult.ComponentResult model msg Basics.Never Basics.Never -> ( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "resolveError",
+                "comment": " Provided a function that can map an error to a non-error-state ComponentResult,\nwe can accept any `ComponentResult` and guarantee a return of a non-error `ComponentResult`.\n",
+                "type": "(err -> ComponentResult.ComponentResult model msg externalMsg Basics.Never) -> ComponentResult.ComponentResult model msg externalMsg err -> ComponentResult.ComponentResult model msg externalMsg never"
+            },
+            {
+                "name": "sequence",
+                "comment": " Sequence several `ComponentResult` returning operations. E.g. suppose we need to\ninitialize a model and immediately update it as well:\n\n    DataStore.init credentials\n        |> sequence\n            [ \\model -> DataStore.update (DataStore.DeleteUserPosts user) model\n            , \\model -> DataStore.update (DataStore.DeleteUser user) model\n            ]\n\nNOTE: Elm docs say \"there are no ordering guarantees\" for batched Cmds and the same is true here.\n`update` calls are processed in sequence but the resulting batched commands are not.\n\n",
+                "type": "List.List (model -> ComponentResult.ComponentResult model msg Basics.Never err) -> ComponentResult.ComponentResult model msg Basics.Never err -> ComponentResult.ComponentResult model msg neverExternalMsg err"
+            },
+            {
+                "name": "tapError",
+                "comment": " \"Taps\" into a ComponentResult when an error is available.\nThe only (useful) thing one can do with the error is use Debug to log info.\nThe ComponentResult supplied will be returned as is\n\n    someComponentResult\n        |> ComponentResult.tapError (\\err -> Debug.log \"error occurred: \" err)\n        |> ComponentResult.withExternalMsg SomeMsg\n\n",
+                "type": "(err -> any) -> ComponentResult.ComponentResult model msg externalMsg err -> ComponentResult.ComponentResult model msg externalMsg err"
+            },
+            {
+                "name": "tapModel",
+                "comment": " \"Taps\" into a ComponentResult when a model is available.\nThe only (useful) thing one can do with the model is use Debug to log info.\n\n    ComponentResult.withModel { myModel | user = newUser }\n        |> ComponentResult.tapModel (\\model -> Debug.log \"user is \" model.user)\n        |> ComponentResult.withExternalMsg SomeMsg\n\n",
+                "type": "(model -> any) -> ComponentResult.ComponentResult model msg externalMsg err -> ComponentResult.ComponentResult model msg externalMsg err"
+            },
+            {
+                "name": "withCmd",
+                "comment": " Add a `Cmd msg` to a `ComponentResult`. This is a noop for error-state `ComponentResult`.\nBatches cmd with any existing ones.\n\n    withModel myModel\n        |> withCmd myHttpGet\n        |> withCmd myPortCmd\n\n",
+                "type": "Platform.Cmd.Cmd msg -> ComponentResult.ComponentResult model msg externalMsg err -> ComponentResult.ComponentResult model msg externalMsg err"
+            },
+            {
+                "name": "withCmds",
+                "comment": " Add a list of `Cmd msg` to a `ComponentResult`. This is a noop for error-state `ComponentResult`.\nBatches cmd with any existing ones.\n\n    withModel myModel\n        |> withCmds myHttpGets\n        |> withCmds myPortCmds\n\n",
+                "type": "List.List (Platform.Cmd.Cmd msg) -> ComponentResult.ComponentResult model msg externalMsg err -> ComponentResult.ComponentResult model msg externalMsg err"
+            },
+            {
+                "name": "withExternalMsg",
+                "comment": " Add an external message (intended for the caller to interpret) to a `ComponentResult` which\ndoes not yet have an external message. This is a noop for error-state `ComponentResult`.\n\n    withModel myModel\n        |> withCmd myHttpGet\n        |> withExternalMsg LoadingData\n\n",
+                "type": "externalMsg -> ComponentResult.ComponentResult model msg Basics.Never err -> ComponentResult.ComponentResult model msg externalMsg err"
+            },
+            {
+                "name": "withModel",
+                "comment": " At minimum, a non-error-state ComponentResult must always have a model.\nThis creates a ComponentResult with a model.\n\nUse [`withCmd`](#withCmd), [`withExternalMsg`](#withExternalMsg), etc, to augment.\n\n",
+                "type": "model -> ComponentResult.ComponentResult model msg externalMsg err"
+            }
+        ],
+        "binops": []
+    }
+]

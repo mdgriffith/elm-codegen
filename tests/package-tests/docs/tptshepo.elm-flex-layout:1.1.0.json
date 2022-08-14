@@ -1,0 +1,89 @@
+[
+    {
+        "name": "Flex",
+        "comment": " Flex provides a layout API for using Flexbox CSS.\n\nDemo\n<https://tptshepo.github.io/elm-flex-layout>\n\n\n# API\n\n@docs fxLayout, fxRow, fxColumn, alignmentToString\n\n\n# Direction\n\n@docs Direction, row, column\n\n\n# Alignment\n\n@docs Alignment, start, end, center, stretch, spaceBetween, spaceAround, spaceEvenly\n\n",
+        "unions": [
+            {
+                "name": "Alignment",
+                "comment": " This defines the alignment along the main axis. It helps distribute extra free space leftover when either all the flex items on a line are inflexible, or are flexible but have reached their maximum size. It also exerts some control over the alignment of items when they overflow the line.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Direction",
+                "comment": " This establishes the main-axis, thus defining the direction flex items are placed in the flex container.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "alignmentToString",
+                "comment": " Return a string version of the `Alignment` type\n",
+                "type": "Flex.Alignment -> String.String"
+            },
+            {
+                "name": "center",
+                "comment": " `center` items are centered in the cross-axis.\n",
+                "type": "Flex.Alignment"
+            },
+            {
+                "name": "column",
+                "comment": " `column`: Same as row but top to bottom\n",
+                "type": "Flex.Direction"
+            },
+            {
+                "name": "end",
+                "comment": " `flex-end` items are placed at the end of the cross axis. The difference again is subtle and is about respecting flex-direction rules.\n",
+                "type": "Flex.Alignment"
+            },
+            {
+                "name": "fxColumn",
+                "comment": " Shorthad for `fxLayout Flex.column`.\n\n    Example\n\n    div ([] ++ fxColumn Flex.spaceAround Flex.center)\n        [ div [] [ text \"1\" ]\n        , div [] [ text \"2\" ]\n        , div [] [ text \"3\" ]\n        , div [] [ text \"4\" ]\n        , div [] [ text \"5\" ]\n        ]\n\n",
+                "type": "Flex.Alignment -> Flex.Alignment -> List.List (Html.Attribute msg)"
+            },
+            {
+                "name": "fxLayout",
+                "comment": " Returns an array of `Html.Attributes.style` required to align the child items.\n\n    Usage\n\n    fxLayout Direction Alignment Alignment\n\n    Example\n\n    div ([] ++ fxLayout Flex.row Flex.spaceAround Flex.center)\n        [ div [] [ text \"1\" ]\n        , div [] [ text \"2\" ]\n        , div [] [ text \"3\" ]\n        , div [] [ text \"4\" ]\n        , div [] [ text \"5\" ]\n        ]\n\n",
+                "type": "Flex.Direction -> Flex.Alignment -> Flex.Alignment -> List.List (Html.Attribute msg)"
+            },
+            {
+                "name": "fxRow",
+                "comment": " Shorthad for `fxLayout Flex.row`.\n\n    Example\n\n    div ([] ++ fxRow Flex.spaceAround Flex.center)\n        [ div [] [ text \"1\" ]\n        , div [] [ text \"2\" ]\n        , div [] [ text \"3\" ]\n        , div [] [ text \"4\" ]\n        , div [] [ text \"5\" ]\n        ]\n\n",
+                "type": "Flex.Alignment -> Flex.Alignment -> List.List (Html.Attribute msg)"
+            },
+            {
+                "name": "row",
+                "comment": " `row`: This establishes the main-axis, thus defining the direction flex items are placed in the flex container.\n",
+                "type": "Flex.Direction"
+            },
+            {
+                "name": "spaceAround",
+                "comment": " `space-around` items are evenly distributed in the line with equal space around them. Note that visually the spaces aren’t equal, since all the items have equal space on both sides. The first item will have one unit of space against the container edge, but two units of space between the next item because that next item has its own spacing that applies.\n",
+                "type": "Flex.Alignment"
+            },
+            {
+                "name": "spaceBetween",
+                "comment": " `space-between` items are evenly distributed in the line; first item is on the start line, last item on the end line.\n",
+                "type": "Flex.Alignment"
+            },
+            {
+                "name": "spaceEvenly",
+                "comment": " `space-evenly` items are distributed so that the spacing between any two items (and the space to the edges) is equal.\n",
+                "type": "Flex.Alignment"
+            },
+            {
+                "name": "start",
+                "comment": " `flex-start` items are placed at the start of the cross axis. The difference between these is subtle, and is about respecting the flex-direction rules.\n",
+                "type": "Flex.Alignment"
+            },
+            {
+                "name": "stretch",
+                "comment": " `stretch` to fill the container (still respect min-width/max-width)\n",
+                "type": "Flex.Alignment"
+            }
+        ],
+        "binops": []
+    }
+]

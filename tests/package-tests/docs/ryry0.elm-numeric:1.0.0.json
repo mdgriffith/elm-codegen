@@ -1,0 +1,248 @@
+[
+    {
+        "name": "Matrix",
+        "comment": " A matrix library written completely in Elm.\nThis library aims to be a reasonably complete suite of linear algebra tools.\n\nSome highlights are that this library has generic sized matrices,\ntransposes, multiplication, and inversion.\n\n    import Matrix as Mt\n\n\n    --and program away!\n\n\n# The Matrix Type\n\n@docs Matrix\n\n\n# Creating Matrices\n\n@docs fromList, from2DList, mat, fromString, mats, zeroes, ones, eye, upper, lower, strictLower, strictUpper\n\n\n# Creating Vectors\n\n@docs cvecFromList, rvecFromList, cvec, rvec, vec\n\n\n# Vector Operations\n\n@docs cross, dot\n\n\n# Matrix Element-wise Operations\n\n@docs add, equivalent, sMul, sDiv, map, map2, eMul\n\n\n# Matrix Operations\n\n@docs mul, vcat, hcat, get, set, transpose, determinant, det, solveV, solve, invert, inv, luDecomp, getRows, getColumns, size\n\n\n# Matrix Display\n\n@docs toString, debugPrint\n\n\n# Interop\n\n@docs to2DList, toFlatList\n\n",
+        "unions": [
+            {
+                "name": "Matrix",
+                "comment": " The Matrix type. It can either be an actual matrix or an error string.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "add",
+                "comment": " Add two matrices of identical dimensions together\n\n    a =\n        Matrix.add (Matrix.zeroes ( 2, 2 )) (Matrix.ones ( 2, 2 ))\n\n",
+                "type": "Matrix.Matrix -> Matrix.Matrix -> Matrix.Matrix"
+            },
+            {
+                "name": "cross",
+                "comment": " Get the cross product of two 3d vectors. a >< b\n\n    x =\n        Matrix.vec [ 1, 0, 0 ]\n\n    y =\n        Matrix.vec [ 0, 1, 0 ]\n\n    z =\n        Matrix.cross x y\n\n",
+                "type": "Matrix.Matrix -> Matrix.Matrix -> Matrix.Matrix"
+            },
+            {
+                "name": "cvec",
+                "comment": " Create a column vector from a list.\n",
+                "type": "List.List Basics.Float -> Matrix.Matrix"
+            },
+            {
+                "name": "cvecFromList",
+                "comment": " Create a column vector from a list.\n\n    column =\n        Matrix.cvecFromList [ 1, 2, 3, 4 ]\n\n",
+                "type": "List.List Basics.Float -> Matrix.Matrix"
+            },
+            {
+                "name": "debugPrint",
+                "comment": " Helper to debug print. Most useful in repl.\n\n    > Matrix.debugPrint (Matrix.eye 3)\n    (3, 3) Matrix\n     1 0 0\n     0 1 0\n     0 0 1\n     : \"\"\n     \"\"\n\n",
+                "type": "Matrix.Matrix -> String.String"
+            },
+            {
+                "name": "det",
+                "comment": " Shorthand for determinant.\n",
+                "type": "Matrix.Matrix -> Maybe.Maybe Basics.Float"
+            },
+            {
+                "name": "determinant",
+                "comment": " Get the determinant of a square matrix.\n\n    a =\n        Matrix.mats \"[1 2 3; 4 5 6; 7 8 9]\"\n\n    is_singular =\n        if determinant a == 0 then\n            \"Matrix is singular\"\n\n        else\n            \"Matrix is not singular\"\n\n",
+                "type": "Matrix.Matrix -> Maybe.Maybe Basics.Float"
+            },
+            {
+                "name": "dot",
+                "comment": " Performs the dot product of two nxn vectors\n\n    x =\n        Matrix.vec [ 1, 0, 0 ]\n\n    y =\n        Matrix.vec [ 0, 1, 0 ]\n\n    zero =\n        Matrix.dot x y\n\n",
+                "type": "Matrix.Matrix -> Matrix.Matrix -> Maybe.Maybe Basics.Float"
+            },
+            {
+                "name": "eMul",
+                "comment": " Perform element by element multiplication on a matrix.\n",
+                "type": "Matrix.Matrix -> Matrix.Matrix -> Matrix.Matrix"
+            },
+            {
+                "name": "equivalent",
+                "comment": " Checks if two matrices are equivalent within some epsilon.\n\n    epsilon =\n        10 ^ -4\n\n    is_equivalent =\n        equivalent epsilon a b\n\n",
+                "type": "Basics.Float -> Matrix.Matrix -> Matrix.Matrix -> Basics.Bool"
+            },
+            {
+                "name": "eye",
+                "comment": " Create an nxn identity matrix.\n\n    identity =\n        Matrix.eye 3\n\n",
+                "type": "Basics.Int -> Matrix.Matrix"
+            },
+            {
+                "name": "from2DList",
+                "comment": " Create a (n x m) matrix with inner lists being rows.\nThe following is a 2 x 3 matrix:\n\n    matrix =\n        Matrix.from2DList\n            [ [ 2, 2, 2 ]\n            , [ 3, 3, 3 ]\n            ]\n\n",
+                "type": "List.List (List.List Basics.Float) -> Matrix.Matrix"
+            },
+            {
+                "name": "fromList",
+                "comment": " Create a (n rows x m columns) matrix with the list as the elements.\nFails if dimension mismatch. Elements need to be specified in row-major order.\n\n    matrix =\n        Matrix.fromList ( 2, 3 ) [ 2, 2, 2, 3, 3, 3 ]\n\n",
+                "type": "( Basics.Int, Basics.Int ) -> List.List Basics.Float -> Matrix.Matrix"
+            },
+            {
+                "name": "fromString",
+                "comment": " Create a (n x m) matrix with inner lists being rows.\nIn string format you can use Matlab/Julia-esque syntax.\nSpaces denote elements in a row.\nSemicolons denote elements in a column.\nThe string must begin with [ and end with ].\n\nThe following is a 2 x 3 matrix:\n\n    matrix =\n        Matrix.fromString \"[ 2 2 2; 3 3 3]\"\n\nAny alpha/garbage characters will be set to zero.\n\n",
+                "type": "String.String -> Matrix.Matrix"
+            },
+            {
+                "name": "get",
+                "comment": " Get an item at index (row, column). Indices are 1-indexed.\n\n    a =\n        Matrix.mats \"[3 4; 5 6]\"\n\n    b =\n        -- equals 4\n        get ( 1, 2 ) a\n\n",
+                "type": "( Basics.Int, Basics.Int ) -> Matrix.Matrix -> Maybe.Maybe Basics.Float"
+            },
+            {
+                "name": "getColumns",
+                "comment": " Returns the columns of a matrix in a list.\n",
+                "type": "Matrix.Matrix -> List.List Matrix.Matrix"
+            },
+            {
+                "name": "getRows",
+                "comment": " Returns the rows of a matrix in a list.\n",
+                "type": "Matrix.Matrix -> List.List Matrix.Matrix"
+            },
+            {
+                "name": "hcat",
+                "comment": " Concatenate two matrices horizontally.\n",
+                "type": "Matrix.Matrix -> Matrix.Matrix -> Matrix.Matrix"
+            },
+            {
+                "name": "inv",
+                "comment": " Shorthand for invert.\n",
+                "type": "Matrix.Matrix -> Matrix.Matrix"
+            },
+            {
+                "name": "invert",
+                "comment": " Invert a square matrix.\n\n    a =\n        \"[ 2 5; 6 7]\"\n\n    inva =\n        invert a\n\n    identity =\n        mul a inva\n\n",
+                "type": "Matrix.Matrix -> Matrix.Matrix"
+            },
+            {
+                "name": "lower",
+                "comment": " Create an nxn lower triangular matrix.\n\n    ltriangle =\n        Matrix.lower 4\n\n",
+                "type": "Basics.Int -> Matrix.Matrix"
+            },
+            {
+                "name": "luDecomp",
+                "comment": " Get the lu decomposition of a matrix\nSince pivoting isn't implemented, watch out for numerical instability\n",
+                "type": "Matrix.Matrix -> ( Matrix.Matrix, Matrix.Matrix )"
+            },
+            {
+                "name": "map",
+                "comment": " Map a function over all elements individually\n",
+                "type": "(Basics.Float -> Basics.Float) -> Matrix.Matrix -> Matrix.Matrix"
+            },
+            {
+                "name": "map2",
+                "comment": " Map a function over elements of same index between matrices\n",
+                "type": "(Basics.Float -> Basics.Float -> Basics.Float) -> Matrix.Matrix -> Matrix.Matrix -> Matrix.Matrix"
+            },
+            {
+                "name": "mat",
+                "comment": " Create a (n x m) matrix with inner lists being rows.\nThe following is a 2 x 3 matrix:\n\n    matrix =\n        Matrix.mat\n            [ [ 2, 2, 2 ]\n            , [ 3, 3, 3 ]\n            ]\n\n",
+                "type": "List.List (List.List Basics.Float) -> Matrix.Matrix"
+            },
+            {
+                "name": "mats",
+                "comment": " Shorthand for fromString\n",
+                "type": "String.String -> Matrix.Matrix"
+            },
+            {
+                "name": "mul",
+                "comment": " Perform matrix multiplication\n\n    A * B\n\n    a =\n        Matrix.eye (2, 2)\n\n    b =\n        Matrix.mats \"[2, 3; 4 5]\"\n\n    c =\n        mul a b\n\n",
+                "type": "Matrix.Matrix -> Matrix.Matrix -> Matrix.Matrix"
+            },
+            {
+                "name": "ones",
+                "comment": " Generate a matrix of ones.\n\n    lots_of_ones =\n        Matrix.ones ( 4, 3 )\n\n",
+                "type": "( Basics.Int, Basics.Int ) -> Matrix.Matrix"
+            },
+            {
+                "name": "rvec",
+                "comment": " Create a row vector from a list.\n",
+                "type": "List.List Basics.Float -> Matrix.Matrix"
+            },
+            {
+                "name": "rvecFromList",
+                "comment": " Create a row vector from a list.\n",
+                "type": "List.List Basics.Float -> Matrix.Matrix"
+            },
+            {
+                "name": "sDiv",
+                "comment": " Perform scalar division on a matrix.\n",
+                "type": "Basics.Float -> Matrix.Matrix -> Matrix.Matrix"
+            },
+            {
+                "name": "sMul",
+                "comment": " Perform scalar multiplication on a matrix.\n",
+                "type": "Basics.Float -> Matrix.Matrix -> Matrix.Matrix"
+            },
+            {
+                "name": "set",
+                "comment": " Get an item at index (row, column). Indices are 1-indexed.\n",
+                "type": "( Basics.Int, Basics.Int ) -> Basics.Float -> Matrix.Matrix -> Matrix.Matrix"
+            },
+            {
+                "name": "size",
+                "comment": " Returns size of matrix, (rows, columns)\n",
+                "type": "Matrix.Matrix -> ( Basics.Int, Basics.Int )"
+            },
+            {
+                "name": "solve",
+                "comment": " Solve a system of equations of the form\nAX = B. You provide A and b and get back x\nWhere A, B, X are matrices\nB is a matrix of solution vectors horizontally concatenated.\n\n    a =\n        Matrix.eye 3\n\n    b =\n        Matrix.hcat (Matrix.vec [ 3, 2, 1 ]) (Matrix.vec [ 1, 2, 3 ])\n\n    x =\n        Matrix.solve a b\n\n",
+                "type": "Matrix.Matrix -> Matrix.Matrix -> Matrix.Matrix"
+            },
+            {
+                "name": "solveV",
+                "comment": " Solve a system of equations of the form\nAx = b. You provide A and b and get back x\nWhere A is a matrix, and b and x are vectors\n\n    a =\n        Matrix.eye 3\n\n    b =\n        Matrix.vec [ 3, 2, 1 ]\n\n    x =\n        Matrix.solve a b\n\n",
+                "type": "Matrix.Matrix -> Matrix.Matrix -> Matrix.Matrix"
+            },
+            {
+                "name": "strictLower",
+                "comment": " Create an nxn strict lower triangular matrix.\nThis means that elements along the diagonal are zero.\n\n    sltriangle =\n        Matrix.strictLower 4\n\n",
+                "type": "Basics.Int -> Matrix.Matrix"
+            },
+            {
+                "name": "strictUpper",
+                "comment": " Create an nxn strict upper triangular matrix.\nThis means that elements along the diagonal are zero.\n\n    striangle =\n        Matrix.strictUpper 4\n\n",
+                "type": "Basics.Int -> Matrix.Matrix"
+            },
+            {
+                "name": "to2DList",
+                "comment": " Returns matrix as 2d list.\nReturns empty list if Matrix is in error.\n\n    Matrix.to2DList (Matrix.eye 2) == [ [ 1, 0 ], [ 0, 1 ] ]\n\n",
+                "type": "Matrix.Matrix -> List.List (List.List Basics.Float)"
+            },
+            {
+                "name": "toFlatList",
+                "comment": " Returns matrix as flat list\n\n    Matrix.toFlatList (Matrix.eye 2) == [ 1, 0, 0, 1 ]\n\n",
+                "type": "Matrix.Matrix -> List.List Basics.Float"
+            },
+            {
+                "name": "toString",
+                "comment": " Change matrix into string form, such as what would be displayed in the terminal.\n\n    Matrix.toString (Matrix.eye 3) == \" 1 0 0\\n 0 1 0\\n 0 0 1\"\n\n",
+                "type": "Matrix.Matrix -> String.String"
+            },
+            {
+                "name": "transpose",
+                "comment": " Transpose a matrix.\n",
+                "type": "Matrix.Matrix -> Matrix.Matrix"
+            },
+            {
+                "name": "upper",
+                "comment": " Create an nxn upper triangular matrix.\n\n    triangle =\n        Matrix.upper 4\n\n",
+                "type": "Basics.Int -> Matrix.Matrix"
+            },
+            {
+                "name": "vcat",
+                "comment": " Concatenate two matrices vertically.\n",
+                "type": "Matrix.Matrix -> Matrix.Matrix -> Matrix.Matrix"
+            },
+            {
+                "name": "vec",
+                "comment": " Create a column vector from a list.\n",
+                "type": "List.List Basics.Float -> Matrix.Matrix"
+            },
+            {
+                "name": "zeroes",
+                "comment": " Generate a matrix of zeroes.\n\n    lots_of_zeroes =\n        Matrix.zeroes ( 3, 4 )\n\n",
+                "type": "( Basics.Int, Basics.Int ) -> Matrix.Matrix"
+            }
+        ],
+        "binops": []
+    }
+]

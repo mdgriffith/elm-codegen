@@ -1,0 +1,35 @@
+[
+    {
+        "name": "RTTL",
+        "comment": " Parse ringtones written using RTTL and Nokia Composer\n\n@docs Ringtone\n\n\n# Parsing\n\n@docs parseComposer\n\n\n# Encoding\n\n@docs encode\n\n",
+        "unions": [
+            {
+                "name": "Ringtone",
+                "comment": " A ringtone has a well-defined tempo in BPM (beats-per-minute) and is\ncomposed by multiple tones, which can be either pitches or pauses.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Ringtone",
+                        [
+                            "{ tempo : RTTL.BPM, tones : List.List RTTL.Tone.Tone }"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "encode",
+                "comment": " Encode ringtone as a list of { frequency, duration } objects\n",
+                "type": "RTTL.Ringtone -> Json.Encode.Value"
+            },
+            {
+                "name": "parseComposer",
+                "comment": " Parse a ringtone expressed in the Nokia Composer format. It is a less\ngeneric format compared to RTTL since you can only express 3 octaves.\nSince the format does not specify a tempo, you will need to choose one.\n\nHere's an example: 4c2 4d2 4e2 16- 8.#a3\n\n",
+                "type": "{ tempo : Basics.Int } -> String.String -> Result.Result (List.List Parser.DeadEnd) RTTL.Ringtone"
+            }
+        ],
+        "binops": []
+    }
+]

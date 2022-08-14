@@ -1,0 +1,76 @@
+[
+    {
+        "name": "StringUtil",
+        "comment": "\n\n@docs caseInsensitiveContains, containsIgnoreCase, dasherize, ellipsis, humanize, nonBreakingSpace, nonEmpty, pluralize, present, smartCaseContains, spacer, toTitleCase, underscored\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "caseInsensitiveContains",
+                "comment": " ",
+                "type": "String.String -> String.String -> Basics.Bool"
+            },
+            {
+                "name": "containsIgnoreCase",
+                "comment": " ",
+                "type": "String.String -> String.String -> Basics.Bool"
+            },
+            {
+                "name": "dasherize",
+                "comment": " Return a string joined by dashes after separating it by its uppercase characters.\n\nAny sequence of spaces or underscores will also be converted to a single dash.\nThe final string will be lowercased.\n\n    dasherize \"SomeClassName\" == \"-some-class-name\"\n    dasherize \"some\\_class\\_name\" == \"some-class-name\"\n    dasherize \"someClass name\" == \"some-class-name\"\n\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "ellipsis",
+                "comment": " ",
+                "type": "Basics.Int -> String.String -> String.String"
+            },
+            {
+                "name": "humanize",
+                "comment": " ",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "nonBreakingSpace",
+                "comment": " This is a non-shrinking space character\n",
+                "type": "String.String"
+            },
+            {
+                "name": "nonEmpty",
+                "comment": " ",
+                "type": "String.String -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "pluralize",
+                "comment": " ",
+                "type": "String.String -> String.String -> Basics.Int -> String.String"
+            },
+            {
+                "name": "present",
+                "comment": " ",
+                "type": "String.String -> Basics.Bool"
+            },
+            {
+                "name": "smartCaseContains",
+                "comment": " ",
+                "type": "String.String -> String.String -> Basics.Bool"
+            },
+            {
+                "name": "spacer",
+                "comment": " This is an empty char that has no width but a height\n",
+                "type": "String.String"
+            },
+            {
+                "name": "toTitleCase",
+                "comment": " ",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "underscored",
+                "comment": " I swiped this from elm-community/string-extra -- Chad Aug 26 2020\n\nReturn a string joined by underscores after separating it by its uppercase characters.\nAny sequence of spaces or dashes will also be converted to a single underscore.\nThe final string will be lowercased.\n\n    underscored \"SomeClassName\" == \"some\\_class\\_name\"\n    underscored \"some-class-name\" == \"some\\_class\\_name\"\n    underscored \"SomeClass name\" == \"some\\_class\\_name\n\n",
+                "type": "String.String -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

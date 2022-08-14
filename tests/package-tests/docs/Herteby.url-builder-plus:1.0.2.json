@@ -1,0 +1,104 @@
+[
+    {
+        "name": "UrlBuilderPlus",
+        "comment": " This module is identical to [Url.Builder](/packages/elm/url/latest/Url-Builder) found in [elm/url](/packages/elm/url/latest/), except that it has been extended with the following functions:\n\n  - [`nonEmptyString`](#nonEmptyString)\n  - [`float`](#float)\n  - [`bool`](#bool)\n  - [`maybe`](#maybe)\n  - [`list`](#list)\n  - [`bracketedList`](#bracketedList)\n\n\n# Builders\n\n@docs absolute, relative, crossOrigin, custom, Root\n\n\n# Queries\n\n@docs QueryParameter, string, nonEmptyString, int, float, bool, maybe, list, bracketedList, toQuery\n\n",
+        "unions": [
+            {
+                "name": "QueryParameter",
+                "comment": " Represents query parameter. Builder functions like `absolute` percent-encode\nall the query parameters they get, so you do not need to worry about it!\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Root",
+                "comment": " Specify whether a [`custom`](#custom) URL is absolute, relative, or\ncross-origin.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Absolute",
+                        []
+                    ],
+                    [
+                        "Relative",
+                        []
+                    ],
+                    [
+                        "CrossOrigin",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "absolute",
+                "comment": " Create an absolute URL:\n\n    absolute [] []\n    -- \"/\"\n\n    absolute [ \"packages\", \"elm\", \"core\" ] []\n    -- \"/packages/elm/core\"\n\n    absolute [ \"blog\", String.fromInt 42 ] []\n    -- \"/blog/42\"\n\n    absolute [ \"products\" ] [ string \"search\" \"hat\", int \"page\" 2 ]\n    -- \"/products?search=hat&page=2\"\n\nNotice that the URLs start with a slash!\n\n",
+                "type": "List.List String.String -> List.List UrlBuilderPlus.QueryParameter -> String.String"
+            },
+            {
+                "name": "bool",
+                "comment": " `True` becomes \"true\" and `False` becomes \"false\"\n\n    absolute [\"products\"] [ string \"search\" \"hat\", bool \"discounted\" True ]\n    -- \"/products?search=hat&discounted=true\"\n\n",
+                "type": "String.String -> Basics.Bool -> UrlBuilderPlus.QueryParameter"
+            },
+            {
+                "name": "bracketedList",
+                "comment": " Make a comma-separated list surrounded by brackets (in case your API uses this alternate syntax).\nIf the list is empty, the parameter is omitted\n\n    absolute [\"products\"] [ string \"search\" \"hat\", list int \"sizes\" [1,2,3] ]\n    -- \"/products?search=hat&sizes=[1,2,3]\"\n    -- actually it becomes \"/products?search=hat&sizes=[1%2C2%2C3]\" since it's url-encoded, but don't worry about it\n\n    absolute [\"products\"] [ string \"search\" \"hat\", list int \"sizes\" [] ]\n    -- \"/products?search=hat\"\n\n",
+                "type": "(String.String -> a -> UrlBuilderPlus.QueryParameter) -> String.String -> List.List a -> UrlBuilderPlus.QueryParameter"
+            },
+            {
+                "name": "crossOrigin",
+                "comment": " Create a cross-origin URL.\n\n    crossOrigin \"https://example.com\" [ \"products\" ] []\n    -- \"https://example.com/products\"\n\n    crossOrigin \"https://example.com\" [] []\n    -- \"https://example.com/\"\n\n    crossOrigin\n      \"https://example.com:8042\"\n      [ \"over\", \"there\" ]\n      [ string \"name\" \"ferret\" ]\n    -- \"https://example.com:8042/over/there?name=ferret\"\n\n**Note:** Cross-origin requests are slightly restricted for security.\nFor example, the [same-origin policy][sop] applies when sending HTTP requests,\nso the appropriate `Access-Control-Allow-Origin` header must be enabled on the\n_server_ to get things working. Read more about the security rules [here][cors].\n\n[sop]: https://developer.mozilla.org/en-US/docs/Web/Security/Same-origin_policy\n[cors]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS\n\n",
+                "type": "String.String -> List.List String.String -> List.List UrlBuilderPlus.QueryParameter -> String.String"
+            },
+            {
+                "name": "custom",
+                "comment": " Create custom URLs that may have a hash on the end:\n\n    custom Absolute\n      [ \"packages\", \"elm\", \"core\", \"latest\", \"String\" ]\n      []\n      (Just \"length\")\n    -- \"/packages/elm/core/latest/String#length\"\n\n    custom Relative [ \"there\" ] [ string \"name\" \"ferret\" ] Nothing\n    -- \"there?name=ferret\"\n\n    custom\n      (CrossOrigin \"https://example.com:8042\")\n      [ \"over\", \"there\" ]\n      [ string \"name\" \"ferret\" ]\n      (Just \"nose\")\n    -- \"https://example.com:8042/over/there?name=ferret#nose\"\n\n",
+                "type": "UrlBuilderPlus.Root -> List.List String.String -> List.List UrlBuilderPlus.QueryParameter -> Maybe.Maybe String.String -> String.String"
+            },
+            {
+                "name": "float",
+                "comment": " Create a percent-encoded query parameter from a `float`.\n\n    absolute [\"products\"] [ string \"search\" \"hat\", float \"maxprice\" 9.99 ]\n    -- \"/products?search=hat&maxprice=9.99\"\n\n",
+                "type": "String.String -> Basics.Float -> UrlBuilderPlus.QueryParameter"
+            },
+            {
+                "name": "int",
+                "comment": " Create a percent-encoded query parameter from an `Int`.\n\n    absolute [\"products\"] [ string \"search\" \"hat\", int \"page\" 2 ]\n    -- \"/products?search=hat&page=2\"\n\n",
+                "type": "String.String -> Basics.Int -> UrlBuilderPlus.QueryParameter"
+            },
+            {
+                "name": "list",
+                "comment": " Make a comma-separated list. If the list is empty, the parameter is omitted\n\n    absolute [\"products\"] [ string \"search\" \"hat\", list int \"sizes\" [1,2,3] ]\n    -- \"/products?search=hat&sizes=1,2,3\"\n    -- actually it becomes \"/products?search=hat&sizes=1%2C2%2C3\" since it's url-encoded, but don't worry about it\n\n    absolute [\"products\"] [ string \"search\" \"hat\", list int \"sizes\" [] ]\n    -- \"/products?search=hat\"\n\n",
+                "type": "(String.String -> a -> UrlBuilderPlus.QueryParameter) -> String.String -> List.List a -> UrlBuilderPlus.QueryParameter"
+            },
+            {
+                "name": "maybe",
+                "comment": " Takes a `-> QueryParameter` function, for example [float](#float), and a value.\n    If the value is Nothing, the parameter is omitted\n\n    absolute [\"products\"] [ string \"search\" \"hat\", maybe float \"maxprice\" (Just 9.99) ]\n    -- \"/products?search=hat&maxprice=9.99\"\n\n    absolute [\"products\"] [ string \"search\" \"hat\", maybe float \"maxprice\" Nothing ]\n    -- \"/products?search=hat\"\n\n",
+                "type": "(String.String -> a -> UrlBuilderPlus.QueryParameter) -> String.String -> Maybe.Maybe a -> UrlBuilderPlus.QueryParameter"
+            },
+            {
+                "name": "nonEmptyString",
+                "comment": " Same as `string`, except if the string is empty, the parameter is omitted\n\n    absolute [\"products\"] [ string \"search\" \"hat\" ]\n    -- \"/products?search=hat\"\n\n    absolute [\"products\"] [ string \"search\" \"\" ]\n    -- \"/products\"\n\n",
+                "type": "String.String -> String.String -> UrlBuilderPlus.QueryParameter"
+            },
+            {
+                "name": "relative",
+                "comment": " Create a relative URL:\n\n    relative [] []\n    -- \"\"\n\n    relative [ \"elm\", \"core\" ] []\n    -- \"elm/core\"\n\n    relative [ \"blog\", String.fromInt 42 ] []\n    -- \"blog/42\"\n\n    relative [ \"products\" ] [ string \"search\" \"hat\", int \"page\" 2 ]\n    -- \"products?search=hat&page=2\"\n\nNotice that the URLs **do not** start with a slash!\n\n",
+                "type": "List.List String.String -> List.List UrlBuilderPlus.QueryParameter -> String.String"
+            },
+            {
+                "name": "string",
+                "comment": " Create a percent-encoded query parameter.\n\n    absolute [\"products\"] [ string \"search\" \"hat\" ]\n    -- \"/products?search=hat\"\n\n    absolute [\"products\"] [ string \"search\" \"coffee table\" ]\n    -- \"/products?search=coffee%20table\"\n\n",
+                "type": "String.String -> String.String -> UrlBuilderPlus.QueryParameter"
+            },
+            {
+                "name": "toQuery",
+                "comment": " Convert a list of query parameters to a percent-encoded query. This\nfunction is used by `absolute`, `relative`, etc.\n\n    toQuery [ string \"search\" \"hat\" ]\n    -- \"?search=hat\"\n\n    toQuery [ string \"search\" \"coffee table\" ]\n    -- \"?search=coffee%20table\"\n\n    toQuery [ string \"search\" \"hat\", int \"page\" 2 ]\n    -- \"?search=hat&page=2\"\n\n    toQuery []\n    -- \"\"\n\n",
+                "type": "List.List UrlBuilderPlus.QueryParameter -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,61 @@
+[
+    {
+        "name": "Autocomplete",
+        "comment": " An opinionated autocomplete component that fits our needs. It's broken into its own package because we need to use it in multiple applications. The autocomplete waits for at least 3 characters and 200 milliseconds before any command is triggered.\n\n\n# State\n\n@docs Autocomplete, Config\n\n\n# Initialize\n\n@docs init\n\n\n# Update\n\n@docs update, setSuggestions, Msg\n\n\n# View\n\n@docs input, toView\n\n",
+        "unions": [
+            {
+                "name": "Autocomplete",
+                "comment": " The components internal state, the parameter `a` is the type of suggestions that you would like the autocomplete to return. It could be as simple as a string och any other type you'd like.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Msg",
+                "comment": " Opaque type for internal messages\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " The Autocomplete needs a config:\n\n  - **transform**: Into what Msg should be encode all internal autocomplete messages to?\n\n  - **fetch**: The autocomplete let your application handle the fetching of suggestions. Supply a function that takes a string and returns a Command. To store the suggestions, call `setSuggestions` when the command completes with an OK.\n\n  - **submit**: The message that will be triggered when the user submits a query. Perhaps you want to send the user to a search result page? This does not means that there is a matching suggestion. Imagine the user enters \"Karls\" and the suggestions return \"Karlstad\" and \"Karlshamn\" but the user really want to search for \"Karlslund\"\n\n  - **chose**: The message that will be triggered when the user chooses a suggestion\n\n  - **focus**: The message what will be triggered when the user focuses in the input element.\n\n",
+                "args": [
+                    "a",
+                    "msg"
+                ],
+                "type": "{ transform : Autocomplete.Msg -> msg, fetch : String.String -> Platform.Cmd.Cmd msg, submit : String.String -> msg, chose : a -> msg, focus : msg }"
+            }
+        ],
+        "values": [
+            {
+                "name": "init",
+                "comment": " Initialize the component with an optional query\n",
+                "type": "String.String -> Autocomplete.Autocomplete a"
+            },
+            {
+                "name": "input",
+                "comment": " View the input tag\n",
+                "type": "Autocomplete.Config a msg -> List.List (Html.Attribute Basics.Never) -> Autocomplete.Autocomplete a -> Html.Html msg"
+            },
+            {
+                "name": "setSuggestions",
+                "comment": " Update the component with your suggestions\n",
+                "type": "List.List a -> Autocomplete.Autocomplete a -> Autocomplete.Autocomplete a"
+            },
+            {
+                "name": "toView",
+                "comment": " Retrieve values intented for the view. The index field potentially holds the index of the selected suggestion.\n",
+                "type": "Autocomplete.Autocomplete a -> { query : String.String, suggestions : List.List a, index : Maybe.Maybe Basics.Int }"
+            },
+            {
+                "name": "update",
+                "comment": " Update the Autocomplete and optionally return a Msg that the parent function should issue.\n\nNOTE: If the maybeMsg is Just, than the cmd must be Cmd.none and ignored by the parent function.\n\n",
+                "type": "Autocomplete.Config a msg -> Autocomplete.Msg -> Autocomplete.Autocomplete a -> { newAutocomplete : Autocomplete.Autocomplete a, maybeMsg : Maybe.Maybe msg, cmd : Platform.Cmd.Cmd msg }"
+            }
+        ],
+        "binops": []
+    }
+]

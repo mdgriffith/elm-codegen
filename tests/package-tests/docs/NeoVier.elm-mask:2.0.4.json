@@ -1,0 +1,66 @@
+[
+    {
+        "name": "Mask",
+        "comment": " This library helps you mask `String`s and `Float`s\n\n\n# Strings\n\n@docs string, remove\n\n\n# Floats\n\n@docs DecimalDigits, float, floatString, removeFloat, defaultSeparators, updateFloatString\n\n",
+        "unions": [
+            {
+                "name": "DecimalDigits",
+                "comment": " When formatting with [`float`](#float) and [`floatString`](#floatString), it can be useful to either use\nexactly an amount of decimal digits, or just to limit it to a certain amount.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Precisely",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "AtMost",
+                        [
+                            "Basics.Int"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "defaultSeparators",
+                "comment": " A default value you can use for [`float`](#float) and [`floatString`](#floatString).\n",
+                "type": "{ decimalSeparator : String.String, thousandsSeparator : String.String }"
+            },
+            {
+                "name": "float",
+                "comment": " Mask a float to have a certain amount of [`DecimalDigits`](#DecimalDigits).\n\n    float (Precisely 2) { decimalSeparator = \".\", thousandsSeparator = \"\" } 1234\n    --> \"1234.00\"\n\n    float (Precisely 2) { decimalSeparator = \",\", thousandsSeparator = \" \" } 1234.5\n    --> \"1 234,50\"\n\n    float (Precisely 2) { decimalSeparator = \",\", thousandsSeparator = \"\" } 123.4567\n    --> \"123,45\"\n\n    float (AtMost 2) { decimalSeparator = \".\", thousandsSeparator = \",\" } 123\n    --> \"123\"\n\n    float (AtMost 2) { decimalSeparator = \".\", thousandsSeparator = \",\" } 123.4\n    --> \"123.4\"\n\n    float (AtMost 2) { decimalSeparator = \".\", thousandsSeparator = \",\" } 123.4567\n    --> \"123.45\"\n\n",
+                "type": "Mask.DecimalDigits -> { decimalSeparator : String.String, thousandsSeparator : String.String } -> Basics.Float -> String.String"
+            },
+            {
+                "name": "floatString",
+                "comment": " Mask a float to have a certain amount of [`DecimalDigits`](#DecimalDigits),\nbut using a `String` as an input. This is useful for input fields, where the\n`onInput` event returns a `String` that can be run through `floatString`. In\ncase the input `String` is not a valid `Float`, this function returns `Nothing`,\nand an empty `String` is automatically converted to `0`.\n\n    floatString (Precisely 2) { decimalSeparator = \",\", thousandsSeparator = \" \" } \"1234.5\"\n    --> Just \"1 234,50\"\n\n    floatString (Precisely 2) { decimalSeparator = \".\", thousandsSeparator = \",\" } \"12a.4\"\n    --> Nothing\n\n    floatString (Precisely 2) { decimalSeparator = \",\", thousandsSeparator = \".\" } \"\"\n    --> Just \"0,00\"\n\nUsually you'll want to use this function in your `update` like this:\n\n    update msg model =\n        case msg of\n            EnteredPrice price ->\n                { model\n                    | price =\n                        price\n                            |> Mask.floatString (Mask.Precisely 2)\n                            |> Maybe.withDefault model.price\n                }\n\n",
+                "type": "Mask.DecimalDigits -> { decimalSeparator : String.String, thousandsSeparator : String.String } -> String.String -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "remove",
+                "comment": " Remove a mask applied by [`string`](#string). This is often needed if you\nwant to save just the value, and not the formatted/masked `String`.\n\n    remove { mask = \"+1 ### ### ####\", replace = '#' } \"+1 123 456 7890\"\n    --> \"1234567890\"\n\n    remove { mask = \"+1 ### ### ####\", replace = '#' } \"1234567890\"\n    -->\"1234567890\"\n\n",
+                "type": "{ mask : String.String, replace : Char.Char } -> String.String -> String.String"
+            },
+            {
+                "name": "removeFloat",
+                "comment": " Remove a mask applied by [`float`](#float) or [`floatString`](#floatString)\n\n    removeFloat { decimalSeparator = \",\", thousandsSeparator = \" \" } \"1 234,56\"\n    --> \"1234.56\"\n\n",
+                "type": "{ decimalSeparator : String.String, thousandsSeparator : String.String } -> String.String -> String.String"
+            },
+            {
+                "name": "string",
+                "comment": " Apply a simple mask to a `String`. You can customize the mask template and\nwhich `Char` to replace.\n\n    string { mask = \"+1 ### ### ####\", replace = '#' } \"1234567890\"\n    --> \"+1 123 456 7890\"\n\n",
+                "type": "{ mask : String.String, replace : Char.Char } -> String.String -> String.String"
+            },
+            {
+                "name": "updateFloatString",
+                "comment": " Update a masked value you store in your `Model`. This is useful to provide a\nbetter UX when using masked input fields. For more details, check out\n[this example on GitHub](https://github.com/NeoVier/elm-mask/tree/main/examples/WithHelper)\nor in this [Ellie link](https://ellie-app.com/fjCTFLnfJ64a1), which uses a\n[custom element](https://guide.elm-lang.org/interop/custom_elements.html) to\nmake it even better!\n",
+                "type": "Mask.DecimalDigits -> { decimalSeparator : String.String, thousandsSeparator : String.String } -> { previousValue : String.String, newValue : String.String } -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

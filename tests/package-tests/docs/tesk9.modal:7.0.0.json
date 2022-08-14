@@ -1,0 +1,92 @@
+[
+    {
+        "name": "Accessibility.Modal",
+        "comment": "\n\n    import Accessibility.Modal as Modal\n    import Html.Styled exposing (..)\n    import Html.Styled.Events exposing (onClick)\n\n    view : Html Modal.Msg\n    view =\n        Modal.view identity\n            \"Example modal\"\n            [ Modal.onlyFocusableElementView\n                (\\onlyFocusableElementAttributes ->\n                    div []\n                        [ text \"Welcome to this modal! I'm so happy to have you here with me.\"\n                        , button\n                            (onClick Modal.close :: onlyFocusableElementAttributes)\n                            [ text \"Close Modal\" ]\n                        ]\n                )\n            ]\n            modal\n\n@docs Model, init, subscriptions\n@docs update, Msg, close, open\n@docs view\n\n@docs Attribute\n@docs multipleFocusableElementView, onlyFocusableElementView\n@docs autofocusOnLastElement\n@docs overlayColor, custom, titleStyles\n\n",
+        "unions": [
+            {
+                "name": "Attribute",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Model",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Msg",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "autofocusOnLastElement",
+                "comment": " ",
+                "type": "Accessibility.Modal.Attribute msg"
+            },
+            {
+                "name": "close",
+                "comment": " ",
+                "type": "Accessibility.Modal.Msg"
+            },
+            {
+                "name": "custom",
+                "comment": " ",
+                "type": "List.List Css.Style -> Accessibility.Modal.Attribute msg"
+            },
+            {
+                "name": "init",
+                "comment": " ",
+                "type": "Accessibility.Modal.Model"
+            },
+            {
+                "name": "multipleFocusableElementView",
+                "comment": " ",
+                "type": "({ firstFocusableElement : List.List (Accessibility.Styled.Attribute msg), lastFocusableElement : List.List (Accessibility.Styled.Attribute msg), autofocusElement : Accessibility.Styled.Attribute msg } -> Accessibility.Styled.Html msg) -> Accessibility.Modal.Attribute msg"
+            },
+            {
+                "name": "onlyFocusableElementView",
+                "comment": " ",
+                "type": "(List.List (Accessibility.Styled.Attribute msg) -> Accessibility.Styled.Html msg) -> Accessibility.Modal.Attribute msg"
+            },
+            {
+                "name": "open",
+                "comment": " Pass the id of the element that should receive focus when the modal closes.\n",
+                "type": "String.String -> Accessibility.Modal.Msg"
+            },
+            {
+                "name": "overlayColor",
+                "comment": " ",
+                "type": "Css.Color -> Accessibility.Modal.Attribute msg"
+            },
+            {
+                "name": "subscriptions",
+                "comment": " ",
+                "type": "Accessibility.Modal.Model -> Platform.Sub.Sub Accessibility.Modal.Msg"
+            },
+            {
+                "name": "titleStyles",
+                "comment": " ",
+                "type": "List.List Css.Style -> Accessibility.Modal.Attribute msg"
+            },
+            {
+                "name": "update",
+                "comment": " ",
+                "type": "{ dismissOnEscAndOverlayClick : Basics.Bool } -> Accessibility.Modal.Msg -> Accessibility.Modal.Model -> ( Accessibility.Modal.Model, Platform.Cmd.Cmd Accessibility.Modal.Msg )"
+            },
+            {
+                "name": "view",
+                "comment": " ",
+                "type": "(Accessibility.Modal.Msg -> msg) -> String.String -> List.List (Accessibility.Modal.Attribute msg) -> Accessibility.Modal.Model -> Accessibility.Styled.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

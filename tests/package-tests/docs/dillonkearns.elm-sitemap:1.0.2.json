@@ -1,0 +1,23 @@
+[
+    {
+        "name": "Sitemap",
+        "comment": " <https://www.sitemaps.org/protocol.html>\n\nIncluding a sitemap can boost your SEO by making it easier for webcrawlers to efficiently crawl your site. It also helps\nweb crawlers detect when a change has been made on your site faster, so changes to your site can be reflected sooner\nin search results.\n\nBe sure to exclude pages from your site map that you don't want to be indexed. This is a good resource\nthat explains which pages should be included and which should be excluded: <https://blog.spotibo.com/sitemap-guide/#which-urls-should-be-put-in-a-sitemap>.\n\nIt's important that you not include duplicate pages in your sitemap as this can result in a serious SEO penalty or\nflag your site as spam.\n\nHere's another reference with more best practices: <https://support.google.com/webmasters/answer/183668?hl=en>\n\n@docs Entry, build\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Entry",
+                "comment": " The data for a single entry in your sitemap.\n",
+                "args": [],
+                "type": "{ path : String.String, lastMod : Maybe.Maybe String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "build",
+                "comment": " Generate a String in XML format for your sitemap.\n",
+                "type": "{ siteUrl : String.String } -> List.List Sitemap.Entry -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

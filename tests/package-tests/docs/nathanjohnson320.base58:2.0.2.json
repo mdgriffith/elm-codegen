@@ -1,0 +1,21 @@
+[
+    {
+        "name": "Base58",
+        "comment": " Handles encoding/decoding base58 data\n\n\n# Transformations\n\n@docs decode, encode\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decode",
+                "comment": " Decodes a string into a BigInt\n\n    \"ANYBx47k26vP81XFbQXh6XKUj7ptQRJMLt\"\n        |> Base58.decode\n        |> Result.toMaybe\n        == BigInt.fromString \"146192635802076751054841979942155177482410195601230638449945\"\n\n",
+                "type": "String.String -> Result.Result String.String BigInt.BigInt"
+            },
+            {
+                "name": "encode",
+                "comment": " Encodes a BigInt into a string\n\n    BigInt.fromIntString \"146192635802076751054841979942155177482410195601230638449945\"\n        |> Maybe.map Base58.encode\n        == Ok \"ANYBx47k26vP81XFbQXh6XKUj7ptQRJMLt\"\n\n",
+                "type": "BigInt.BigInt -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

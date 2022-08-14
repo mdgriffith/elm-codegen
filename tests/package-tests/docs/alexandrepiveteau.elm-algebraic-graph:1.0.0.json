@@ -1,0 +1,85 @@
+[
+    {
+        "name": "AlgebraicGraph.Graph",
+        "comment": " Graphs can be represented as an algebraic data type through four different primitives : `empty`,\n`singleton`, `union` and `product`. Graphs produced with these primitives have the particularity\nthat they will never be in an inconsistent state, at the expense of possibly including some extra\nmeta-data that is not really needed. This module has a bunch of functions to help you work with\nthem!\n\n\n# Types\n\n@docs Graph\n\n\n# Construct\n\n@docs empty\n@docs singleton\n@docs union\n@docs product\n@docs fromList\n\n\n# Contents\n\n@docs isEmpty\n@docs member\n@docs edges\n@docs vertices\n\n\n# Transform\n\n@docs map\n@docs concatMap\n@docs fold\n@docs compact\n\n",
+        "unions": [
+            {
+                "name": "Graph",
+                "comment": " Represents a directed graph of values. So `Graph (String)` is a graph of strings and\n`Graph (Int)` is a graph of ints.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "compact",
+                "comment": " Compact a graph, using the intuition that each vertex should result in a new vertex, and each\ninferred edge can be compacted into its own small sub-graph.\n\nThis removes duplicated edges, and does not find a minimal algebraic graph for a given set of edges\nandvertices.\n\n",
+                "type": "AlgebraicGraph.Graph.Graph comparable -> AlgebraicGraph.Graph.Graph comparable"
+            },
+            {
+                "name": "concatMap",
+                "comment": " Map a function onto a graph, and flatten the resulting graphs.\n",
+                "type": "(a -> AlgebraicGraph.Graph.Graph b) -> AlgebraicGraph.Graph.Graph a -> AlgebraicGraph.Graph.Graph b"
+            },
+            {
+                "name": "edges",
+                "comment": " Expand this graph to forlm a set of all edges.\n",
+                "type": "AlgebraicGraph.Graph.Graph comparable -> Set.Set ( comparable, comparable )"
+            },
+            {
+                "name": "empty",
+                "comment": " Create an empty graph.\n",
+                "type": "AlgebraicGraph.Graph.Graph a"
+            },
+            {
+                "name": "fold",
+                "comment": " Reduce the vertices of a graph.\n\n    fold (+) 0 (fromList [ 1, 2, 3 ]) == 6\n\n",
+                "type": "(a -> b -> b) -> b -> AlgebraicGraph.Graph.Graph a -> b"
+            },
+            {
+                "name": "fromList",
+                "comment": " Create a graph with no edges from a list of vertex.\n",
+                "type": "List.List a -> AlgebraicGraph.Graph.Graph a"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Determine if a graph is empty.\n",
+                "type": "AlgebraicGraph.Graph.Graph a -> Basics.Bool"
+            },
+            {
+                "name": "map",
+                "comment": " Map a function onto a graph, creating a graph with transformed vertices.\n",
+                "type": "(a -> b) -> AlgebraicGraph.Graph.Graph a -> AlgebraicGraph.Graph.Graph b"
+            },
+            {
+                "name": "member",
+                "comment": " Determine if a vertex is in a graph.\n",
+                "type": "a -> AlgebraicGraph.Graph.Graph a -> Basics.Bool"
+            },
+            {
+                "name": "product",
+                "comment": " Perform the product of two graphs. Vertices will be unioned, and edges will be created from\neach vertex of the left graph to each vertex of the right graph.\n",
+                "type": "AlgebraicGraph.Graph.Graph a -> AlgebraicGraph.Graph.Graph a -> AlgebraicGraph.Graph.Graph a"
+            },
+            {
+                "name": "singleton",
+                "comment": " Create a graph with one value.\n",
+                "type": "a -> AlgebraicGraph.Graph.Graph a"
+            },
+            {
+                "name": "union",
+                "comment": " Perform the union of two graphs. Vertices and edges will be unioned.\n",
+                "type": "AlgebraicGraph.Graph.Graph a -> AlgebraicGraph.Graph.Graph a -> AlgebraicGraph.Graph.Graph a"
+            },
+            {
+                "name": "vertices",
+                "comment": " Expand this graph to forlm a set of all vertices.\n",
+                "type": "AlgebraicGraph.Graph.Graph comparable -> Set.Set comparable"
+            }
+        ],
+        "binops": []
+    }
+]

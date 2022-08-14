@@ -1,0 +1,78 @@
+[
+    {
+        "name": "NativeForm",
+        "comment": "\n\n@docs decoder\n\n@docs Value\n\n@docs valuesDict, valuesAppend\n\n\n## Helpers for `OneValue`\n\nExample usage\n\n    toColor : Maybe (NativeForm.Value String) -> Result String Color\n    toColor maybeV =\n        maybeV\n            |> Maybe.map (NativeForm.oneMap colorFromString)\n            |> Maybe.andThen (NativeForm.oneWithDefault Nothing)\n            |> Result.fromMaybe \"invalid color\"\n\n@docs oneMap, oneWithDefault\n\n\n## Helpers for `ManyValues`\n\nExample usage\n\n    toHobbies : Maybe (NativeForm.Value String) -> Result String (List Hobby)\n    toHobbies maybeV =\n        maybeV\n            |> Maybe.map (NativeForm.manyMap (List.filterMap hobbyFromString))\n            |> Maybe.map (NativeForm.manyWithDefault [])\n            |> Result.fromMaybe \"invalid hobby\"\n\n@docs manyMap, manyWithDefault\n\n\n## Parsing form values into desired types\n\n@docs field, toNonEmptyString\n\nSee [example/src/Main.elm](https://github.com/choonkeat/nativeform/blob/main/example/src/Main.elm) for more functions\n\n",
+        "unions": [
+            {
+                "name": "Value",
+                "comment": " Values from form fields are either `String` or `List String`\n\ne.g. values for `input [ type_ \"number\" ] []` will still be a `String` since\nand is entirely up to your application to convert and validate it with\n`String.toInt` or `String.toFloat`\n\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "OneValue",
+                        [
+                            "a"
+                        ]
+                    ],
+                    [
+                        "ManyValues",
+                        [
+                            "List.List a"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decoder",
+                "comment": " Given the `id` attribute of a `<form>` tag, we can decode the current\nform values from the browser `document.forms` and into a List of key values.\n\n    view model =\n        -- form with `id` attribute\n        form [ id \"edituserform123\" ]\n            -- fields with `name` attribute\n            []\n\n    update msg model =\n        ( { model\n            | formFields =\n                -- decode model.document.forms to obtain a list of\n                -- form field values anytime\n                model.documentForms\n                    |> Json.Decode.decodeValue (NativeForm.decoder \"edituserform123\")\n                    |> Result.withDefault []\n          }\n        , Cmd.none\n        )\n\nWe are returning a `List` instead of `Dict` because on form submit, duplicate\nnames are preserved. So we are preserving them here too.\n\nIf a `Dict` is desired, pipe to the [`valuesDict`](#valuesDict) helper function\n\n        update msg model =\n        ( { model\n            | formFields =\n                -- decode model.document.forms to obtain a list of\n                -- form field values anytime\n                model.documentForms\n                    |> Json.Decode.decodeValue (NativeForm.decoder \"edituserform123\")\n    +               |> Result.map NativeForm.valuesDict\n                    |> Result.withDefault []\n          }\n        , Cmd.none\n        )\n\n",
+                "type": "String.String -> Json.Decode.Decoder (List.List ( String.String, NativeForm.Value String.String ))"
+            },
+            {
+                "name": "field",
+                "comment": " Pipe friendly builder of values that accumulates errors. Useful for writing\nyour `parseDontValidate` functions\n\n    parseDontValidate : Time.Zone -> List ( String, NativeForm.Value String ) -> Result Errors ParsedInfo\n    parseDontValidate tz list =\n        let\n            dict =\n                NativeForm.valuesDict list\n        in\n        Ok ParsedInfo\n            |> field \"myselect\" (toRating (Dict.get \"myselect\" dict))\n            |> field \"myselectmulti\" (toCharacteristics (Dict.get \"myselectmulti\" dict))\n            |> field \"mycheckbox\" (toHobbies (Dict.get \"mycheckbox\" dict))\n            |> field \"mytext\" (toNonEmptyString (Dict.get \"mytext\" dict))\n            |> field \"mynumber\" (toInt (Dict.get \"mynumber\" dict))\n            |> field \"myurl\" (toUrl (Dict.get \"myurl\" dict))\n            |> field \"mycolor\" (toColor (Dict.get \"mycolor\" dict))\n            |> field \"mydate\" (toTimePosix TypeDate tz (Dict.get \"mydate\" dict))\n            |> field \"mydatetime-local\" (toTimePosix TypeDateTimeLocal tz (Dict.get \"mydatetime-local\" dict))\n\n",
+                "type": "comparable -> Result.Result err a -> Result.Result (Dict.Dict comparable err) (a -> b) -> Result.Result (Dict.Dict comparable err) b"
+            },
+            {
+                "name": "manyMap",
+                "comment": "\n\n    OneValue 3\n    |> manyMap ((++) [ 2 ])\n    --> ManyValues []\n\n    ManyValues [ 3 ]\n    |> manyMap ((++) [ 2 ])\n    --> ManyValues [ 2, 3 ]\n\n",
+                "type": "(List.List a -> List.List b) -> NativeForm.Value a -> NativeForm.Value b"
+            },
+            {
+                "name": "manyWithDefault",
+                "comment": "\n\n    OneValue 42\n    |> manyWithDefault [3]\n    --> [3]\n\n    ManyValues [42]\n    |> manyWithDefault [3]\n    --> [42]\n\n",
+                "type": "List.List a -> NativeForm.Value a -> List.List a"
+            },
+            {
+                "name": "oneMap",
+                "comment": "\n\n    OneValue 3\n    |> oneMap ((+) 2)\n    --> OneValue 5\n\n    ManyValues [ 3 ]\n    |> oneMap ((+) 2)\n    --> ManyValues []\n\n",
+                "type": "(a -> b) -> NativeForm.Value a -> NativeForm.Value b"
+            },
+            {
+                "name": "oneWithDefault",
+                "comment": "\n\n    OneValue 42\n    |> oneWithDefault 3\n    --> 42\n\n    ManyValues [42]\n    |> oneWithDefault 3\n    --> 3\n\n",
+                "type": "a -> NativeForm.Value a -> a"
+            },
+            {
+                "name": "toNonEmptyString",
+                "comment": " parse a form field value into a String\n",
+                "type": "Maybe.Maybe (NativeForm.Value String.String) -> Result.Result String.String String.String"
+            },
+            {
+                "name": "valuesAppend",
+                "comment": " Given 2 [`Value`](#Value), return a [`ManyValues`](#Value)\n\n    valuesAppend (OneValue \"1\") (OneValue \"a\")\n    --> ManyValues [\"1\",\"a\"]\n\n    valuesAppend (OneValue \"1\") (ManyValues [\"a\",\"b\"])\n    --> ManyValues [\"1\",\"a\",\"b\"]\n\n    valuesAppend (ManyValues [\"1\",\"2\"]) (ManyValues [\"a\",\"b\"])\n    --> ManyValues [\"1\",\"2\",\"a\",\"b\"]\n\n    valuesAppend (ManyValues [\"1\",\"2\"]) (OneValue \"a\")\n    --> ManyValues [\"1\",\"2\",\"a\"]\n\n",
+                "type": "NativeForm.Value a -> NativeForm.Value a -> NativeForm.Value a"
+            },
+            {
+                "name": "valuesDict",
+                "comment": " Given a list of key values, combine the values of duplicate keys\n\n    import Dict exposing (Dict)\n\n    valuesDict\n        [ (1, OneValue \"1\")\n        , (2, OneValue \"a\")\n        , (2, ManyValues [\"b\",\"c\"])\n        , (3, ManyValues [\"yes\",\"no\"])\n        ]\n    --> Dict.fromList\n    -->     [ (1, OneValue \"1\")\n    -->     , (2, ManyValues [\"a\",\"b\",\"c\"])\n    -->     , (3, ManyValues [\"yes\",\"no\"])\n    -->     ]\n\n",
+                "type": "List.List ( comparable, NativeForm.Value a ) -> Dict.Dict comparable (NativeForm.Value a)"
+            }
+        ],
+        "binops": []
+    }
+]

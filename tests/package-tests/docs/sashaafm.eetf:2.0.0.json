@@ -1,0 +1,337 @@
+[
+    {
+        "name": "Eetf.Decode",
+        "comment": " Turn Erlang External Term Format (ETF) values into Elm values. Check out the\nofficial [documentation][docs] to better understand how this library and the\nErlang side work.\n\n[docs]: http://erlang.org/doc/apps/erts/erl_ext_dist.html\n\n# Primitives\n@docs Decoder, string, bool, int, float\n\n# Data structures\n@docs list, array, dict, keyValuePairs, tuple, tuple2, tuple3, tupleN, record\n\n# Object Primitives\n@docs field, at, index\n\n# Incosistent Structure\n@docs maybe, oneOf\n\n# Run Decoders\n@docs decodeBytes, decodeValue, Value, Error\n\n# Mapping\n\n@docs map, map2, map3, map4, map5, map6, map7, map8\n\n# Fancy Decoding\n@docs succeed, fail, andThen, andMap\n",
+        "unions": [
+            {
+                "name": "Decoder",
+                "comment": " A value that knows how to decode ETF values.\n\nThis whole API is similar to `elm/json`. Maybe check the section about decoders\nin `guide.elm-lang.org` to better undestand how to use this module.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Error",
+                "comment": " A structured error describing exactly how the decoder failed. This is meant\nto help you understand and inform of the problem occurred during the decoding\nprocess.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "WrongType",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "InvalidTupleSize",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "MapFieldNotFound",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "IndexOutOfBounds",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "IndexLesserThanZero",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "NoMatchingDecoder",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "UnableToDecode",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "InvalidTerm",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Value",
+                "comment": " Represents an External Term Format value.\n",
+                "args": [],
+                "type": "Eetf.Term"
+            }
+        ],
+        "values": [
+            {
+                "name": "andMap",
+                "comment": " Chain Decoders together to continually decode terms and mapping into a\nsingle value. Meant to be used alongside `record` to achieve something like\nthis:\n\n    person =\n      record \"person\" Person\n      |> andMap (tupleN 1 string)\n      |> andMap (tupleN 2 int)\n",
+                "type": "Eetf.Decode.Decoder a -> Eetf.Decode.Decoder (a -> c) -> Eetf.Decode.Decoder c"
+            },
+            {
+                "name": "andThen",
+                "comment": " Create decoders that depend on previous results.\n",
+                "type": "(a -> Eetf.Decode.Decoder b) -> Eetf.Decode.Decoder a -> Eetf.Decode.Decoder b"
+            },
+            {
+                "name": "array",
+                "comment": " Decode an Erlang list into an Elm `Array`.\n",
+                "type": "Eetf.Decode.Decoder a -> Eetf.Decode.Decoder (Array.Array a)"
+            },
+            {
+                "name": "at",
+                "comment": " Decode a nested Erlang map, requiring certain fields.\n",
+                "type": "List.List String.String -> Eetf.Decode.Decoder a -> Eetf.Decode.Decoder a"
+            },
+            {
+                "name": "bool",
+                "comment": " Decode an Erlang boolean into an Elm `Bool`.\n\nEither the Erlang atom `true` or `false` will be decoded sucessfully.\n",
+                "type": "Eetf.Decode.Decoder Basics.Bool"
+            },
+            {
+                "name": "decodeBytes",
+                "comment": " Parse the given `Bytes` sequence into an Erlang Term `Value` and then run\nthe `Decoder` on it. This will fail if the `Bytes` sequence is not a valid\nErlang Term.\n",
+                "type": "Eetf.Decode.Decoder a -> Bytes.Bytes -> Result.Result Eetf.Decode.Error a"
+            },
+            {
+                "name": "decodeValue",
+                "comment": " Run a `Decoder` on some Erlang Term `Value`.\n",
+                "type": "Eetf.Decode.Decoder a -> Eetf.Decode.Value -> Result.Result Eetf.Decode.Error a"
+            },
+            {
+                "name": "dict",
+                "comment": " Decode an Erlang map into an Elm `Dict`.\n\nThe map's keys must be decoded into an Elm `comparable` due to `Dict`'s\nlimitations regarding the possible type for its keys.\n",
+                "type": "Eetf.Decode.Decoder ( comparable, a ) -> Eetf.Decode.Decoder (Dict.Dict comparable a)"
+            },
+            {
+                "name": "fail",
+                "comment": " A decoder that always fails. This can be useful when using `andThen` to\ndecode custom types.\n",
+                "type": "String.String -> Eetf.Decode.Decoder a"
+            },
+            {
+                "name": "field",
+                "comment": " Decode an Erlang key-value pair list (usually called a `proplist` in Erlang,\nor a `Keyword` list in Elixir) into an Elm `List` of pairs.\n",
+                "type": "String.String -> Eetf.Decode.Decoder a -> Eetf.Decode.Decoder a"
+            },
+            {
+                "name": "float",
+                "comment": " Decode an Erlang float into an Elm `Float`.\n",
+                "type": "Eetf.Decode.Decoder Basics.Float"
+            },
+            {
+                "name": "index",
+                "comment": " Decode an Erlang list, requiring a particular index.\n",
+                "type": "Basics.Int -> Eetf.Decode.Decoder a -> Eetf.Decode.Decoder a"
+            },
+            {
+                "name": "int",
+                "comment": " Decode an Erlang integer into an Elm `Int`.\n",
+                "type": "Eetf.Decode.Decoder Basics.Int"
+            },
+            {
+                "name": "keyValuePairs",
+                "comment": " Decode an Erlang key-value pair list (usually called a `proplist` in Erlang,\nor a `Keyword` list in Elixir) into an Elm `List` of pairs.\n",
+                "type": "Eetf.Decode.Decoder ( a, b ) -> Eetf.Decode.Decoder (List.List ( a, b ))"
+            },
+            {
+                "name": "list",
+                "comment": " Decode an Erlang list into an Elm `List`.\n",
+                "type": "Eetf.Decode.Decoder a -> Eetf.Decode.Decoder (List.List a)"
+            },
+            {
+                "name": "map",
+                "comment": " Transform a decoder.\n",
+                "type": "(a -> b) -> Eetf.Decode.Decoder a -> Eetf.Decode.Decoder b"
+            },
+            {
+                "name": "map2",
+                "comment": " Transform two decoders and then combine the result. This is useful to decode\nan Erlang map into an Elm `Record`.\n",
+                "type": "(a -> b -> c) -> Eetf.Decode.Decoder a -> Eetf.Decode.Decoder b -> Eetf.Decode.Decoder c"
+            },
+            {
+                "name": "map3",
+                "comment": " Transform three decoders and then combine the result. This is useful to\ndecode an Erlang map into an Elm `Record`.\n",
+                "type": "(a -> b -> c -> d) -> Eetf.Decode.Decoder a -> Eetf.Decode.Decoder b -> Eetf.Decode.Decoder c -> Eetf.Decode.Decoder d"
+            },
+            {
+                "name": "map4",
+                "comment": " Transform four decoders and then combine the result. This is useful to\ndecode an Erlang map into an Elm `Record`.\n",
+                "type": "(a -> b -> c -> d -> e) -> Eetf.Decode.Decoder a -> Eetf.Decode.Decoder b -> Eetf.Decode.Decoder c -> Eetf.Decode.Decoder d -> Eetf.Decode.Decoder e"
+            },
+            {
+                "name": "map5",
+                "comment": " Transform five decoders and then combine the result. This is useful to\ndecode an Erlang map into an Elm `Record`.\n",
+                "type": "(a -> b -> c -> d -> e -> f) -> Eetf.Decode.Decoder a -> Eetf.Decode.Decoder b -> Eetf.Decode.Decoder c -> Eetf.Decode.Decoder d -> Eetf.Decode.Decoder e -> Eetf.Decode.Decoder f"
+            },
+            {
+                "name": "map6",
+                "comment": " Transform six decoders and then combine the result. This is useful to\ndecode an Erlang map into an Elm `Record`.\n",
+                "type": "(a -> b -> c -> d -> e -> f -> g) -> Eetf.Decode.Decoder a -> Eetf.Decode.Decoder b -> Eetf.Decode.Decoder c -> Eetf.Decode.Decoder d -> Eetf.Decode.Decoder e -> Eetf.Decode.Decoder f -> Eetf.Decode.Decoder g"
+            },
+            {
+                "name": "map7",
+                "comment": " Transform seven decoders and then combine the result. This is useful to\ndecode an Erlang map into an Elm `Record`.\n",
+                "type": "(a -> b -> c -> d -> e -> f -> g -> h) -> Eetf.Decode.Decoder a -> Eetf.Decode.Decoder b -> Eetf.Decode.Decoder c -> Eetf.Decode.Decoder d -> Eetf.Decode.Decoder e -> Eetf.Decode.Decoder f -> Eetf.Decode.Decoder g -> Eetf.Decode.Decoder h"
+            },
+            {
+                "name": "map8",
+                "comment": " Transform eight decoders and then combine the result. This is useful to\ndecode an Erlang map into an Elm `Record`.\n",
+                "type": "(a -> b -> c -> d -> e -> f -> g -> h -> i) -> Eetf.Decode.Decoder a -> Eetf.Decode.Decoder b -> Eetf.Decode.Decoder c -> Eetf.Decode.Decoder d -> Eetf.Decode.Decoder e -> Eetf.Decode.Decoder f -> Eetf.Decode.Decoder g -> Eetf.Decode.Decoder h -> Eetf.Decode.Decoder i"
+            },
+            {
+                "name": "maybe",
+                "comment": " Helpful for dealing with optional fields.\n",
+                "type": "Eetf.Decode.Decoder a -> Eetf.Decode.Decoder (Maybe.Maybe a)"
+            },
+            {
+                "name": "oneOf",
+                "comment": " Try a bunch of different decoders. This can be useful if the Erlang Term may\ncome in a couple of different formats.\n\nA common use-case may be to handle Erlang's dynamic nature more easily. For\nexample, certain function may have different return types (`ok` vs. `{error,\nReason}`).\n",
+                "type": "List.List (Eetf.Decode.Decoder a) -> Eetf.Decode.Decoder a"
+            },
+            {
+                "name": "record",
+                "comment": " Decode[Erlang records][erl_recs] into [Elm records][elm_recs]. This function\nis meant to be used with the `andMap` function like so:\n\n    person =\n      record \"person\" Person\n      |> andMap (tupleN 1 string)\n      |> andMap (tupleN 2 int)\n\nWhere the record on the Erlang side is:\n\n    -record(person, {name = \"Robert\", age = 64}).\n\n[erl_recs]: http://erlang.org/doc/reference_manual/records.html\n[elm_recs]: https://elm-lang.org/docs/records\n",
+                "type": "String.String -> (a -> b) -> Eetf.Decode.Decoder (a -> b)"
+            },
+            {
+                "name": "string",
+                "comment": " Decode an Erlang string into an Elm `String`.\n\nAny Erlang atom or binary will be decoded successfully.\n",
+                "type": "Eetf.Decode.Decoder String.String"
+            },
+            {
+                "name": "succeed",
+                "comment": " Ignore the Erlang Term and produce a certain Elm value.\n",
+                "type": "a -> Eetf.Decode.Decoder a"
+            },
+            {
+                "name": "tuple",
+                "comment": " Decode an Erlang tuple of size 1 into an Elm `Tuple`.\n",
+                "type": "Eetf.Decode.Decoder a -> Eetf.Decode.Decoder a"
+            },
+            {
+                "name": "tuple2",
+                "comment": " Decode an Erlang tuple of size 2 into an Elm `Tuple`.\n",
+                "type": "Eetf.Decode.Decoder a -> Eetf.Decode.Decoder b -> Eetf.Decode.Decoder ( a, b )"
+            },
+            {
+                "name": "tuple3",
+                "comment": " Decode an Erlang tuple of size 3 into an Elm `Tuple`.\n",
+                "type": "Eetf.Decode.Decoder a -> Eetf.Decode.Decoder b -> Eetf.Decode.Decoder c -> Eetf.Decode.Decoder ( a, b, c )"
+            },
+            {
+                "name": "tupleN",
+                "comment": " Decode an Erlang tuple, requiring a particular index.\n",
+                "type": "Basics.Int -> Eetf.Decode.Decoder a -> Eetf.Decode.Decoder a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Eetf.Encode",
+        "comment": " Turns Elm values into Erlang External Term Format (ETF) values. Check out\nthe official [documentation][docs] to better understand how this library and the\nErlang side work.\n\n[docs]: http://erlang.org/doc/apps/erts/erl_ext_dist.html\n\n# Encoding\n@docs encode, Value\n\n# Primitives\n@docs string, int, float, bool\n\n# Data Structures\n@docs list, array, set, dict, object, tuple, tuple2, tuple3\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Value",
+                "comment": " Represents an External Term Format value.\n",
+                "args": [],
+                "type": "Eetf.Term"
+            }
+        ],
+        "values": [
+            {
+                "name": "array",
+                "comment": " Turn an `Array` into an Erlang `list` in External Term Format.\n",
+                "type": "(a -> Eetf.Encode.Value) -> Array.Array a -> Eetf.Encode.Value"
+            },
+            {
+                "name": "bool",
+                "comment": " Turn a `Bool` into an Erlang `boolean` in External Term Format.\n",
+                "type": "Basics.Bool -> Eetf.Encode.Value"
+            },
+            {
+                "name": "dict",
+                "comment": " Turn a `Dict` into an Erlang `map` in External Term Format.\n",
+                "type": "(k -> String.String) -> (v -> Eetf.Encode.Value) -> Dict.Dict k v -> Eetf.Encode.Value"
+            },
+            {
+                "name": "encode",
+                "comment": " Convert a `Value` into a `Bytes` sequence.\n",
+                "type": "Eetf.Encode.Value -> Bytes.Bytes"
+            },
+            {
+                "name": "float",
+                "comment": " Turn a `Float` into an Erlang `float` in External Term Format.\n",
+                "type": "Basics.Float -> Eetf.Encode.Value"
+            },
+            {
+                "name": "int",
+                "comment": " Turn an `Int` into an Erlang `integer` in External Term Format.\n",
+                "type": "Basics.Int -> Eetf.Encode.Value"
+            },
+            {
+                "name": "list",
+                "comment": " Turn a `List` into an Erlang `list` in External Term Format.\n",
+                "type": "(a -> Eetf.Encode.Value) -> List.List a -> Eetf.Encode.Value"
+            },
+            {
+                "name": "object",
+                "comment": " Turn a `List (String, Value)` into an Erlang `map` in External Term Format.\n\nThis function exists to provide an API similar to the one in `elm/json` namely\nthe `Json.Encode.object` function. To better undestand how to use it you can\nconsult the `Json.Encode.object` documentation\n[here][https://package.elm-lang.org/packages/elm/json/latest/Json-Encode#object]\n.\n",
+                "type": "List.List ( String.String, Eetf.Encode.Value ) -> Eetf.Encode.Value"
+            },
+            {
+                "name": "set",
+                "comment": " Turn a `Set` into an Erlang `list` in External Term Format.\n",
+                "type": "(a -> Eetf.Encode.Value) -> Set.Set a -> Eetf.Encode.Value"
+            },
+            {
+                "name": "string",
+                "comment": " Turn a `String` into an Erlang `binary` (UTF-8 encoded byte sequence) in\nExternal Term Format.\n",
+                "type": "String.String -> Eetf.Encode.Value"
+            },
+            {
+                "name": "tuple",
+                "comment": " Turn a `Tuple` of arity 1 into an Erlang `tuple` of arity 1 in External Term\nFormat.\n",
+                "type": "(e -> Eetf.Encode.Value) -> e -> Eetf.Encode.Value"
+            },
+            {
+                "name": "tuple2",
+                "comment": " Turn a `Tuple` of arity 2 into an Erlang `tuple` of arity 2 in External Term\nFormat.\n",
+                "type": "(e1 -> Eetf.Encode.Value) -> (e2 -> Eetf.Encode.Value) -> ( e1, e2 ) -> Eetf.Encode.Value"
+            },
+            {
+                "name": "tuple3",
+                "comment": " Turn a `Tuple` of arity 3 into an Erlang `tuple` of arity 3 in External Term\nFormat.\n",
+                "type": "(e1 -> Eetf.Encode.Value) -> (e2 -> Eetf.Encode.Value) -> (e3 -> Eetf.Encode.Value) -> ( e1, e2, e3 ) -> Eetf.Encode.Value"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Eetf.Http",
+        "comment": " Receive HTTP responses in Erlang's External Term Format.\n\n# Expect\n@docs expectTerm\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "expectTerm",
+                "comment": " Expect the response body to be an Erlang term encoded in the External Term\nFormat. This function is meant to be used like the `expectString` or\n`expectJson` functions in the `elm/http` package:\n\n    import Eetf.Decode\n    import Eetf.Http\n    import Http\n\n    type Msg\n      = GotText (Result Http.Error String)\n\n    getRandomText : Cmd Msg\n    getRandomText =\n      Http.get\n        { url = \"https://example.com/texts/123\"\n        , expect = Eetf.Http.expectTerm GotText Eetf.Decode.string\n        }\n\nThe response is a sequence of bytes encoded in the External Term Format, but in\nthis case we expect it to be encoded text that can be turned into a `String`.\n",
+                "type": "(Result.Result Http.Error a -> msg) -> Eetf.Decode.Decoder a -> Http.Expect msg"
+            }
+        ],
+        "binops": []
+    }
+]

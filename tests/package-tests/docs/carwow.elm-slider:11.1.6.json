@@ -1,0 +1,133 @@
+[
+    {
+        "name": "DoubleSlider",
+        "comment": " A slider component, with two track thumbs.\n\n\n# Definition\n\n@docs DoubleSlider\n\n\n# Init\n\n@docs init\n\n\n# View\n\n@docs view\n\n\n# Updaters\n\n@docs updateHighValue, updateLowValue\n\n\n# Config\n\n@docs withCurrentRangeFormatter, withHighValueFormatter, withLowValueFormatter, withMaxFormatter, withMinFormatter, withOverlapThreshold\n\n\n# Helper\n\n@docs fetchLowValue, fetchHighValue\n\n",
+        "unions": [
+            {
+                "name": "DoubleSlider",
+                "comment": " Type representing the DoubleSlider component\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fetchHighValue",
+                "comment": " Fetch DoubleSlider's High value\n",
+                "type": "DoubleSlider.DoubleSlider msg -> Basics.Float"
+            },
+            {
+                "name": "fetchLowValue",
+                "comment": " Fetch DoubleSlider's Low value\n",
+                "type": "DoubleSlider.DoubleSlider msg -> Basics.Float"
+            },
+            {
+                "name": "init",
+                "comment": " Initializes a DoubleSlider\n",
+                "type": "{ min : Basics.Float, max : Basics.Float, step : Basics.Float, lowValue : Basics.Float, highValue : Basics.Float, onLowChange : Basics.Float -> msg, onHighChange : Basics.Float -> msg } -> DoubleSlider.DoubleSlider msg"
+            },
+            {
+                "name": "updateHighValue",
+                "comment": " Update the slider's value\n",
+                "type": "Basics.Float -> DoubleSlider.DoubleSlider msg -> DoubleSlider.DoubleSlider msg"
+            },
+            {
+                "name": "updateLowValue",
+                "comment": " Update the slider's low value\n",
+                "type": "Basics.Float -> DoubleSlider.DoubleSlider msg -> DoubleSlider.DoubleSlider msg"
+            },
+            {
+                "name": "view",
+                "comment": " DoubleSlider view\n",
+                "type": "DoubleSlider.DoubleSlider msg -> Html.Html msg"
+            },
+            {
+                "name": "withCurrentRangeFormatter",
+                "comment": " Allows for customization of the slider's range label\n",
+                "type": "({ lowValue : Basics.Float, highValue : Basics.Float, min : Basics.Float, max : Basics.Float } -> String.String) -> DoubleSlider.DoubleSlider msg -> DoubleSlider.DoubleSlider msg"
+            },
+            {
+                "name": "withHighValueFormatter",
+                "comment": " Allows for customization of the current high value label\n",
+                "type": "(Basics.Float -> Basics.Float -> String.String) -> DoubleSlider.DoubleSlider msg -> DoubleSlider.DoubleSlider msg"
+            },
+            {
+                "name": "withLowValueFormatter",
+                "comment": " Allows for customization of the current low value label\n",
+                "type": "(Basics.Float -> Basics.Float -> String.String) -> DoubleSlider.DoubleSlider msg -> DoubleSlider.DoubleSlider msg"
+            },
+            {
+                "name": "withMaxFormatter",
+                "comment": " Allows for customization of the maximum value label\n",
+                "type": "(Basics.Float -> String.String) -> DoubleSlider.DoubleSlider msg -> DoubleSlider.DoubleSlider msg"
+            },
+            {
+                "name": "withMinFormatter",
+                "comment": " Allows for customization of the minimum value label\n",
+                "type": "(Basics.Float -> String.String) -> DoubleSlider.DoubleSlider msg -> DoubleSlider.DoubleSlider msg"
+            },
+            {
+                "name": "withOverlapThreshold",
+                "comment": " The overlap threshold determines the minimum difference between the two thumbs. By default it is set to 1.0\n",
+                "type": "Basics.Float -> DoubleSlider.DoubleSlider msg -> DoubleSlider.DoubleSlider msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "SingleSlider",
+        "comment": " A slider component, with one track thumb.\n\n\n# Definition\n\n@docs SingleSlider\n\n\n# Init\n\n@docs init\n\n\n# View\n\n@docs view\n\n\n# Update\n\n@docs update\n\n\n# Config\n\n@docs withMaxFormatter, withMinFormatter, withValueFormatter\n\n\n# Helper\n\n@docs fetchValue\n\n",
+        "unions": [
+            {
+                "name": "SingleSlider",
+                "comment": " Type representing the SingleSlider component\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fetchValue",
+                "comment": " Fetch SingleSlider's value\n",
+                "type": "SingleSlider.SingleSlider msg -> Basics.Float"
+            },
+            {
+                "name": "init",
+                "comment": " Initializes a SingleSlider\n",
+                "type": "{ min : Basics.Float, max : Basics.Float, step : Basics.Float, value : Basics.Float, onChange : Basics.Float -> msg } -> SingleSlider.SingleSlider msg"
+            },
+            {
+                "name": "update",
+                "comment": " Update the slider's value\n",
+                "type": "Basics.Float -> SingleSlider.SingleSlider msg -> SingleSlider.SingleSlider msg"
+            },
+            {
+                "name": "view",
+                "comment": " SingleSlider view\n",
+                "type": "SingleSlider.SingleSlider msg -> Html.Html msg"
+            },
+            {
+                "name": "withMaxFormatter",
+                "comment": " Allows for customization of the maximum value label\n",
+                "type": "(Basics.Float -> String.String) -> SingleSlider.SingleSlider msg -> SingleSlider.SingleSlider msg"
+            },
+            {
+                "name": "withMinFormatter",
+                "comment": " Allows for customization of the minimum value label\n",
+                "type": "(Basics.Float -> String.String) -> SingleSlider.SingleSlider msg -> SingleSlider.SingleSlider msg"
+            },
+            {
+                "name": "withValueFormatter",
+                "comment": " Allows for customization of the current value label\n",
+                "type": "(Basics.Float -> Basics.Float -> String.String) -> SingleSlider.SingleSlider msg -> SingleSlider.SingleSlider msg"
+            }
+        ],
+        "binops": []
+    }
+]

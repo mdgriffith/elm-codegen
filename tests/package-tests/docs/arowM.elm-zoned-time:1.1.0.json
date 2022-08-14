@@ -1,0 +1,158 @@
+[
+    {
+        "name": "ZonedTime",
+        "comment": " A module to handle zoned time.\n\n\n# Core\n\n@docs ZonedTime\n@docs fromPosix\n@docs fromGregorianUtc\n@docs now\n@docs toPosix\n@docs toZone\n\n\n# Operators\n\n@docs overwriteZone\n@docs mapPosix\n@docs setToMidnight\n@docs addDays\n@docs addHours\n@docs addMinutes\n@docs addSeconds\n@docs addMillis\n\n\n# Getters\n\n@docs getYear\n@docs getMonth\n@docs getDay\n@docs getWeekday\n@docs getHour\n@docs getMinute\n@docs getSecond\n@docs getMillis\n\n\n# Reset functions\n\n@docs resetHour\n@docs resetMinute\n@docs resetSecond\n@docs resetMillis\n\n\n# Utilities\n\n@docs isLeapYear\n@docs daysInYear\n@docs daysInMonth\n\n",
+        "unions": [
+            {
+                "name": "ZonedTime",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "addDays",
+                "comment": " ",
+                "type": "Basics.Int -> ZonedTime.ZonedTime -> ZonedTime.ZonedTime"
+            },
+            {
+                "name": "addHours",
+                "comment": " ",
+                "type": "Basics.Int -> ZonedTime.ZonedTime -> ZonedTime.ZonedTime"
+            },
+            {
+                "name": "addMillis",
+                "comment": " ",
+                "type": "Basics.Int -> ZonedTime.ZonedTime -> ZonedTime.ZonedTime"
+            },
+            {
+                "name": "addMinutes",
+                "comment": " ",
+                "type": "Basics.Int -> ZonedTime.ZonedTime -> ZonedTime.ZonedTime"
+            },
+            {
+                "name": "addSeconds",
+                "comment": " ",
+                "type": "Basics.Int -> ZonedTime.ZonedTime -> ZonedTime.ZonedTime"
+            },
+            {
+                "name": "daysInMonth",
+                "comment": " Return the number of days in the month specified by the given year and month arguments.\n",
+                "type": "Basics.Int -> Time.Month -> Basics.Int"
+            },
+            {
+                "name": "daysInYear",
+                "comment": " Return the number of days in the year specified as an argument.\n",
+                "type": "Basics.Int -> Basics.Int"
+            },
+            {
+                "name": "fromGregorianUtc",
+                "comment": " Construct `ZonedTime` from proleptic Gregorian calendar day in UTC.\nInvalid values will return `Nothing`.\n\n    import Time\n\n    sample : Maybe ZonedTime\n    sample =\n        fromGregorianUtc\n            { year = 2000\n            , month = Time.Jun\n            , day = 10\n            }\n            |> Maybe.map (addHours 22)\n            |> Maybe.map (addMinutes 33)\n            |> Maybe.map (addSeconds 44)\n            |> Maybe.map (addMillis 55)\n\n    Maybe.map toZone sample\n    --> Just Time.utc\n\n    Maybe.map getYear sample\n    --> Just 2000\n\n    Maybe.map getMonth sample\n    --> Just Time.Jun\n\n    Maybe.map getDay sample\n    --> Just 10\n\n    Maybe.map getHour sample\n    --> Just 22\n\n    Maybe.map getMinute sample\n    --> Just 33\n\n    Maybe.map getSecond sample\n    --> Just 44\n\n    Maybe.map getMillis sample\n    --> Just 55\n\n    fromGregorianUtc\n        { year = 1999\n        , month = Time.Feb\n        , day = 29\n        }\n    --> Nothing\n\n",
+                "type": "{ year : Basics.Int, month : Time.Month, day : Basics.Int } -> Maybe.Maybe ZonedTime.ZonedTime"
+            },
+            {
+                "name": "fromPosix",
+                "comment": " ",
+                "type": "Time.Zone -> Time.Posix -> ZonedTime.ZonedTime"
+            },
+            {
+                "name": "getDay",
+                "comment": " ",
+                "type": "ZonedTime.ZonedTime -> Basics.Int"
+            },
+            {
+                "name": "getHour",
+                "comment": " ",
+                "type": "ZonedTime.ZonedTime -> Basics.Int"
+            },
+            {
+                "name": "getMillis",
+                "comment": " ",
+                "type": "ZonedTime.ZonedTime -> Basics.Int"
+            },
+            {
+                "name": "getMinute",
+                "comment": " ",
+                "type": "ZonedTime.ZonedTime -> Basics.Int"
+            },
+            {
+                "name": "getMonth",
+                "comment": " ",
+                "type": "ZonedTime.ZonedTime -> Time.Month"
+            },
+            {
+                "name": "getSecond",
+                "comment": " ",
+                "type": "ZonedTime.ZonedTime -> Basics.Int"
+            },
+            {
+                "name": "getWeekday",
+                "comment": " ",
+                "type": "ZonedTime.ZonedTime -> Time.Weekday"
+            },
+            {
+                "name": "getYear",
+                "comment": " ",
+                "type": "ZonedTime.ZonedTime -> Basics.Int"
+            },
+            {
+                "name": "isLeapYear",
+                "comment": " Check if the year of given number is a leap year.\n",
+                "type": "Basics.Int -> Basics.Bool"
+            },
+            {
+                "name": "mapPosix",
+                "comment": " Modify internal POSIX time value.\n",
+                "type": "(Time.Posix -> Time.Posix) -> ZonedTime.ZonedTime -> ZonedTime.ZonedTime"
+            },
+            {
+                "name": "now",
+                "comment": " ",
+                "type": "Task.Task x ZonedTime.ZonedTime"
+            },
+            {
+                "name": "overwriteZone",
+                "comment": " Overwrite time zone.\nMake sure it will not change internal POSIX time value.\n\n    import Time\n\n    -- 1970-01-04T13:54:12.123Z\n    original : ZonedTime\n    original = fromPosix Time.utc (Time.millisToPosix 309252123)\n\n    fooZone : Time.Zone\n    fooZone = Time.customZone (9 * 60) []\n\n    sample1 : ZonedTime\n    sample1 =\n        original\n            |> overwriteZone fooZone\n\n    sample2 : ZonedTime\n    sample2 =\n        original\n            |> addHours -9\n            |> overwriteZone fooZone\n\n    toZone sample1\n    --> fooZone\n\n    toZone sample2\n    --> fooZone\n\n    getHour sample1\n    --> 22\n\n    getHour sample2\n    --> 13\n\n",
+                "type": "Time.Zone -> ZonedTime.ZonedTime -> ZonedTime.ZonedTime"
+            },
+            {
+                "name": "resetHour",
+                "comment": " Reset the hour part of `ZonedTime` to zero.\n\nShorthand for `\\time -> addHours (negate <| getHour time) time`.\n\n",
+                "type": "ZonedTime.ZonedTime -> ZonedTime.ZonedTime"
+            },
+            {
+                "name": "resetMillis",
+                "comment": " Reset the millis part of `ZonedTime` to zero.\n\nShorthand for `\\time -> addMillis (negate <| getMillis time) time`.\n\n",
+                "type": "ZonedTime.ZonedTime -> ZonedTime.ZonedTime"
+            },
+            {
+                "name": "resetMinute",
+                "comment": " Reset the minute part of `ZonedTime` to zero.\n\nShorthand for `\\time -> addMinutes (negate <| getMinute time) time`.\n\n",
+                "type": "ZonedTime.ZonedTime -> ZonedTime.ZonedTime"
+            },
+            {
+                "name": "resetSecond",
+                "comment": " Reset the second part of `ZonedTime` to zero.\n\nShorthand for `\\time -> addSeconds (negate <| getSecond time) time`.\n\n",
+                "type": "ZonedTime.ZonedTime -> ZonedTime.ZonedTime"
+            },
+            {
+                "name": "setToMidnight",
+                "comment": " Set time to midnight of the day in the time zone.\nShorthand for `resetMillis >> resetSecond >> resetMinute >> resetHour`.\n\n    import Time\n\n    -- 1970-01-04T13:54:12.123Z\n    original : ZonedTime\n    original = fromPosix Time.utc (Time.millisToPosix 309252123)\n\n    midnight : ZonedTime\n    midnight =\n        setToMidnight original\n\n    getYear original\n    --> 1970\n\n    getYear midnight\n    --> 1970\n\n    getMonth original\n    --> Time.Jan\n\n    getMonth midnight\n    --> Time.Jan\n\n    getDay original\n    --> 4\n\n    getDay midnight\n    --> 4\n\n    getHour midnight\n    --> 0\n\n    getMinute midnight\n    --> 0\n\n    getSecond midnight\n    --> 0\n\n    getMillis midnight\n    --> 0\n\n",
+                "type": "ZonedTime.ZonedTime -> ZonedTime.ZonedTime"
+            },
+            {
+                "name": "toPosix",
+                "comment": " ",
+                "type": "ZonedTime.ZonedTime -> Time.Posix"
+            },
+            {
+                "name": "toZone",
+                "comment": " ",
+                "type": "ZonedTime.ZonedTime -> Time.Zone"
+            }
+        ],
+        "binops": []
+    }
+]

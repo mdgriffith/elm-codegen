@@ -1,0 +1,534 @@
+[
+    {
+        "name": "Debouncer.Basic",
+        "comment": " This module allows you to manage inputs that occur over time, so that they\nget handed back to you, at future moments, grouped in a way that you have\nconfigured. Depending on the configuration you provide, you can use this to\nimplemented debouncing, throttling, or other ways of managing inputs that occur\nover time.\n\nThis module provides the most general, comprehensive interface. You can choose:\n\n  - the type of the inputs you provide\n  - the type of the outputs the debouncer will emit\n  - how the debouncer should accumulate inputs to form the output\n  - the times at which outputs will be emitted\n  - what you do with the outputs when you receive them\n\nFor a simpler module that is focused on debouncing or throttling a `Msg`\ntype, see the `Debouncer.Messages` module.\n\nA quick note on terminology: the debouncer is said to be \"unsettled\" while it\nis collecting inputs and considering when to emit output. It becomes \"settled\"\nagain once a specified period has passed without any inputs (see\n`settleWhenQuietFor`).\n\nTo use this module, you will need to integrate it into your `Model` and `Msg`\ntype, and handle it in your `update` function. Here's one example, where the\n\"input\" you're providing is your own `Msg` type, and the output is also your\n`Msg` type. (To avoid some of the verbosity below, you can use the\n`Debouncer.Messages` module).\n\n    import Browser\n    import Debouncer.Basic as Debouncer exposing (Debouncer, fromSeconds, provideInput, settleWhenQuietFor, toDebouncer)\n    import Html exposing (..)\n    import Html.Attributes exposing (..)\n    import Html.Events exposing (..)\n\n    type alias Model =\n        { quietForOneSecond : Debouncer Msg Msg\n        , messages : List String\n        }\n\n    init : ( Model, Cmd Msg )\n    init =\n        ( { quietForOneSecond =\n                Debouncer.manual\n                    |> settleWhenQuietFor (Just <| fromSeconds 1)\n                    |> toDebouncer\n          , messages = []\n          }\n        , Cmd.none\n        )\n\n    type Msg\n        = MsgQuietForOneSecond (Debouncer.Msg Msg)\n        | DoSomething\n\n    update : Msg -> Model -> ( Model, Cmd Msg )\n    update msg model =\n        case msg of\n            MsgQuietForOneSecond subMsg ->\n                let\n                    ( subModel, subCmd, emittedMsg ) =\n                        Debouncer.update subMsg model.quietForOneSecond\n\n                    mappedCmd =\n                        Cmd.map MsgQuietForOneSecond subCmd\n\n                    updatedModel =\n                        { model | quietForOneSecond = subModel }\n                in\n                case emittedMsg of\n                    Just emitted ->\n                        update emitted updatedModel\n                            |> Tuple.mapSecond (\\cmd -> Cmd.batch [ cmd, mappedCmd ])\n\n                    Nothing ->\n                        ( updatedModel, mappedCmd )\n\n            DoSomething ->\n                ( { model | messages = model.messages ++ [ \"I did something\" ] }\n                , Cmd.none\n                )\n\n    view : Model -> Html Msg\n    view model =\n        div [ style \"margin\" \"1em\" ]\n            [ button\n                [ DoSomething\n                    |> provideInput\n                    |> MsgQuietForOneSecond\n                    |> onClick\n                ]\n                [ text \"Click here repeatedly.\" ]\n            , p [] [ text \" I'll add a message below once you stop clicking for one second.\" ]\n            , model.messages\n                |> List.map (\\message -> p [] [ text message ])\n                |> div []\n            ]\n\n    main : Program () Model Msg\n    main =\n        Browser.element\n            { init = always init\n            , view = view\n            , update = update\n            , subscriptions = always Sub.none\n            }\n\nBut, remember that you get to choose the types of the inputs and outputs. So,\nyou can do something quite different from this example if you like.\n\n\n## Creating a debouncer\n\n@docs Debouncer, Config, toDebouncer\n\n\n## Creating a configuration\n\n@docs manual, debounce, throttle\n@docs Milliseconds, fromSeconds\n@docs settleWhenQuietFor, emitWhenUnsettled, emitFirstInput, emitWhileUnsettled\n@docs Accumulator, accumulateWith\n\n\n## Pre-built accumulators\n\n@docs lastInput, firstInput, allInputs, addInputs, appendInputToOutput, appendOutputToInput\n\n\n## Running a debouncer\n\n@docs Msg, provideInput, emitNow, settleNow, cancel, cancelNow, update\n\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " Messages which the debouncer handles.\n\nYou will need to integrate this into your own `Msg` type, and then handle it\nin your `update` function (see code example above).\n\nThe type parameter represents the type of the input to be provided to\nthe debouncer. Thus, it should match the `i` in `Debouncer i o`.\n\nYou can construct a message with `provideInput`, `emitNow`, `cancelNow`, or\n`settleNow`.\n\nThe only message you will typically need to send to the debouncer explicitly\nis the message that provides input. You can construct such a message with the\n`provideInput` function. Other messages are used internally by the debouncer.\n\n",
+                "args": [
+                    "i"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Accumulator",
+                "comment": " A function with the signature `i -> Maybe o -> Maybe o`.\n\nThis function will be used to accumulate each provided input with the output so\nfar. (If this is the first input since we've emitted something, the output so\nfar will be `Nothing`).\n\nFor some standard accumulators, see `lastInput`, `firstInput`, `allInputs`,\n`addInputs`, `appendInputToOutput` and `appendOutputToInput`. But you're\nwelcome to write your own, if none of those suit you.\n\n",
+                "args": [
+                    "i",
+                    "o"
+                ],
+                "type": "Debouncer.Internal.Accumulator i o"
+            },
+            {
+                "name": "Config",
+                "comment": " An opaque type representing the configuration needed for a debouncer.\n\nTo create a debouncer:\n\n  - start with `manual`, `debounce` or `throttle`\n  - modify it as needed\n  - `toDebouncer`.\n\nFor instance:\n\n    manual\n        |> settleWhenQuietFor (Just (fromSeconds 2.0))\n        |> emitWhileUnsettled (Just (fromSeconds 0.5))\n        |> toDebouncer\n\n",
+                "args": [
+                    "i",
+                    "o"
+                ],
+                "type": "Debouncer.Internal.Config i o"
+            },
+            {
+                "name": "Debouncer",
+                "comment": " An opaque type which holds the state of a debouncer. You will need to\nintegrate this into your `Model` type to keep the state.\n\nThe `i` type parameter represents the type of the inputs that you will provide.\nOne common case will be that your inputs will be your `Msg` type -- that is,\nyou'll be providing messages to \"smooth out\" over time. However, you're not\nlimited to that -- you can provide any kind of input you like.\n\nThe `o` type parameter represents the type of the output which will be emitted\nby the debouncer. In many cases, this will be the same thing as your input type\n-- for instance, you might provide your `Msg` type and get your `Msg` type\nback. However, you're not limited to that -- you can get a different type back\nif you like. (You just have to provide an `Accumulator` function to accumulate\nyour inputs into an output).\n\nTo create a `Debouncer`:\n\n  - start with `manual`, `debounce` or `throttle`\n  - modify the config as needed,\n  - use `toDebouncer`\n\nFor instance:\n\n    manual\n        |> settleWhenQuietFor (Just (fromSeconds 0.5))\n        |> toDebouncer\n\n... or, the equivalent:\n\n    debounce (fromSeconds 0.5)\n        |> toDebouncer\n\n",
+                "args": [
+                    "i",
+                    "o"
+                ],
+                "type": "Debouncer.Internal.Debouncer i o"
+            },
+            {
+                "name": "Milliseconds",
+                "comment": " This is a handy type alias to note that we work in millisecond intervals.\n",
+                "args": [],
+                "type": "Basics.Int"
+            }
+        ],
+        "values": [
+            {
+                "name": "accumulateWith",
+                "comment": " How should the debouncer combine new input with the output collected\nso far?\n\nYou can use several pre-built accumulators:\n\n  - `lastInput` (the default)\n  - `firstInput`\n  - `allInputs`\n  - `addInputs`\n  - `appendInputToOutput`\n  - `appendOutputToInput`\n\nOr, if none of those suit, you can provide your own function of the form\n\n    i -> Maybe o -> Maybe o\n\nThe `o` will be `Nothing` if this is the first input since the debouncer\nhas become unsettled.\n\n",
+                "type": "Debouncer.Basic.Accumulator i o -> Debouncer.Basic.Config a b -> Debouncer.Basic.Config i o"
+            },
+            {
+                "name": "addInputs",
+                "comment": " An accumulator which adds numeric inputs.\n",
+                "type": "Debouncer.Basic.Accumulator number number"
+            },
+            {
+                "name": "allInputs",
+                "comment": " An accumulator which keeps all the inputs in a `List`. You can use this\nif you want the whole list once the deouncer emits its output. Note that the\noutput list will have the most recent input first.\n",
+                "type": "Debouncer.Basic.Accumulator i (List.List i)"
+            },
+            {
+                "name": "appendInputToOutput",
+                "comment": " An accumulator which appends the input to the output so far.\n",
+                "type": "Debouncer.Basic.Accumulator appendable appendable"
+            },
+            {
+                "name": "appendOutputToInput",
+                "comment": " An accumulator which appends the output so far to the input.\n",
+                "type": "Debouncer.Basic.Accumulator appendable appendable"
+            },
+            {
+                "name": "cancel",
+                "comment": " Cancel any input collected so far (and not yet emitted). This throws away\nwhatever input has been provided in the past, and forces the debouncer back to\na \"settled\" state (without emitting anything).\n",
+                "type": "Debouncer.Basic.Debouncer i o -> Debouncer.Basic.Debouncer i o"
+            },
+            {
+                "name": "cancelNow",
+                "comment": " Like `cancel`, but operates via a message instead of acting directly on\nthe debouncer. This is a convenience for cases where you'd like to cancel\nvia a message.\n",
+                "type": "Debouncer.Basic.Msg i"
+            },
+            {
+                "name": "debounce",
+                "comment": " A starting point for configuring a debouncer which **debounces**--\nthat is, which will emit once quiet for the time you specify.\n\nSo, `debounce (fromSeconds 2)` is equivalent to\n\n    manual\n        |> settleWhenQuietFor (Just (fromSeconds 2))\n\nIf you also want to emit using the first input, then you can use\n`emitWhenSettled`. For instance, the following configuration would emit the\nfirst input immediately when becoming unsettled, and then emit any\nsubsequent input once the debouncer was quiet for 2 seconds.\n\n    debounce (fromSeconds 2)\n        |> emitWhenUnsettled (Just 0)\n\n",
+                "type": "Debouncer.Basic.Milliseconds -> Debouncer.Basic.Config i i"
+            },
+            {
+                "name": "emitFirstInput",
+                "comment": " Modify a `Config` by controlling whether to emit the first\ninput when becoming unsettled.\n\n`emitFirstInput True config` is equivalent to\n\n    emitWhenUnsettled (Just 0) config\n\n`emitFirstInput False config` is equivalent to\n\n    emitWhenUnsettled Nothing config\n\nFor more complex cases, where you want to emit the first input on\na different interval than others, but not immediately, you can\nuse `emitWhenSettled` directly.\n\n",
+                "type": "Basics.Bool -> Debouncer.Basic.Config i o -> Debouncer.Basic.Config i o"
+            },
+            {
+                "name": "emitNow",
+                "comment": " Construct a message which will emit any accumulated output. This doesn't\naffect whether the debouncer is \"settled\" or not. If you'd like to emit output\nand force the debouncer to be settled, then use `settleNow` instead.\n",
+                "type": "Debouncer.Basic.Msg i"
+            },
+            {
+                "name": "emitWhenUnsettled",
+                "comment": " Should the debouncer do something special when it becomes unsettled?\n\nIf `Nothing` (the default), the debouncer emits only on the \"trailing edge.\"\nThat is, it won't do anything special with the first input -- it will just\naccumulate it and eventually emit according to the other configuration\nparameters.\n\nIf `Just 0`, the debouncer will immediately emit the first input when becoming\nunsettled. It will then remain unsettled, accumulating further input and\neventually emitting it.\n\nIf `Just interval`, the debouncer will use the provided interval to emit after\nbecoming unsettled. It will then remain unsettled, collecting further input and\neventually emitting it.\n\n",
+                "type": "Maybe.Maybe Debouncer.Basic.Milliseconds -> Debouncer.Basic.Config i o -> Debouncer.Basic.Config i o"
+            },
+            {
+                "name": "emitWhileUnsettled",
+                "comment": " Should the debouncer emit while it is unsettled?\n\nIf `Nothing` (the default), the debouncer will wait until it becomes settled\nagain before emitting. This is what you might refer to as \"debouncing\".\n\nIf `Just interval`, the debouncer will emit at the provided interval while it\nis unsettled. This is what you might refer to as \"throttling\".\n\n",
+                "type": "Maybe.Maybe Debouncer.Basic.Milliseconds -> Debouncer.Basic.Config i o -> Debouncer.Basic.Config i o"
+            },
+            {
+                "name": "firstInput",
+                "comment": " An accumulator which just keeps the first provided input. Thus, the\nremaining inputs are only used for timing purposes -- their values aren't\nactually remembered.\n",
+                "type": "Debouncer.Basic.Accumulator i i"
+            },
+            {
+                "name": "fromSeconds",
+                "comment": " A convenience when you'd rather think in seconds than milliseconds.\n\n    fromSeconds 0.5 --> 500\n\n",
+                "type": "Basics.Float -> Debouncer.Basic.Milliseconds"
+            },
+            {
+                "name": "lastInput",
+                "comment": " An accumulator which just keeps the last provided input. This is\nprobably the one you'll want most often (and is the default), but you do have\nother choices.\n",
+                "type": "Debouncer.Basic.Accumulator i i"
+            },
+            {
+                "name": "manual",
+                "comment": " A starting point for configuring a debouncer that only emits when you tell\nit to, via `emitNow`.\n\nBy default, it:\n\n  - never settles\n  - does not emit when it becomes unsettled\n  - does not emit while unsettled\n  - accumulates only the last input\n\nSo, without more, you would need to tell this debouncer when to emit something\n(via `emitNow`) -- it would never happen automatically.\n\nTo change any of those parameters, use the various functions that alter a\n`Config` (i.e. `settleWhenQuietFor`, `emitWhenUnsettled`, `emitWhileUnsettled`).\n\nBy default, the output type is the same as the input type. However, you can\nchange that by using the `accumulateWith` function to provide a different\naccumulator.\n\n",
+                "type": "Debouncer.Basic.Config i i"
+            },
+            {
+                "name": "provideInput",
+                "comment": " Construct a message that provides input to a debouncer.\n\nThe type parameter represents the type of the input to be provided. One typical\nexample would be your own `Msg` type, but it can be anything you like. It will\nneed to match the `i` in your `Debouncer i o` type.\n\n",
+                "type": "i -> Debouncer.Basic.Msg i"
+            },
+            {
+                "name": "settleNow",
+                "comment": " Construct a message which settles the debouncer now, even if it wouldn't\notherwise settle at this time.\n\nAny accumulated output will be emitted. If you want to settle without emitting\nany output, use `cancel` or `cancelNow` instead.\n\n",
+                "type": "Debouncer.Basic.Msg i"
+            },
+            {
+                "name": "settleWhenQuietFor",
+                "comment": " How long should the debouncer wait without input before becoming \"settled\"\nagain?\n\nIf you are \"debouncing\" (i.e. `emitWhileUnsettled` is `Nothing`), then this is\nthe key parameter controlling when you receive output -- you'll receive\nthe output after no inputs have been provided for the specified time.\n\nIf you are \"throttling\" (i.e. `emitWhileUnsettled` is not `Nothing`), then this\nparameter won't make much difference, unless you are also specifying\n`emitWhenUnsettled` in order to do something with the initial input.\n\n",
+                "type": "Maybe.Maybe Debouncer.Basic.Milliseconds -> Debouncer.Basic.Config i o -> Debouncer.Basic.Config i o"
+            },
+            {
+                "name": "throttle",
+                "comment": " A starting point for configuring a debouncer which throttles -- that is,\nwhich will emit the first input immediately, and then accumulate and\nemit no more often than the specified interval.\n\nSo, `throttle (fromSeconds 2)` is equivalent to\n\n    manual\n        |> emitWhileUnsettled (Just (fromSeconds 2))\n        |> emitWhenUnsettled (Just 0)\n\n",
+                "type": "Debouncer.Basic.Milliseconds -> Debouncer.Basic.Config i i"
+            },
+            {
+                "name": "toDebouncer",
+                "comment": " Initialize a `Debouncer` using the supplied `Config`.\n\nFor now, a debouncer's configuration cannot be changed once the debouncer is\ncreated. (This is a feature that could be provided in future, if desirable).\n\n",
+                "type": "Debouncer.Basic.Config i o -> Debouncer.Basic.Debouncer i o"
+            },
+            {
+                "name": "update",
+                "comment": " Handle a message for the debouncer.\n\nYou will need to integrate this into your `update` function, so that the debouncer\ncan act on its messages. (There is a code example at the top of the module docs).\n\nIf we have arrived at a time for output to be emitted, then the extra return\nparameter will be the output. So, you should do whatever it is you want to do\nwith that output. For instance, if the output is your `Msg` type, you should\nrecursively feed it into your `update` function. (Again, see the example above\nfor that case). But that is just one example -- the output type can be whatever\nyou wish, and you can decide what to do with it.\n\n",
+                "type": "Debouncer.Basic.Msg i -> Debouncer.Basic.Debouncer i o -> ( Debouncer.Basic.Debouncer i o, Platform.Cmd.Cmd (Debouncer.Basic.Msg i), Maybe.Maybe o )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Debouncer.Internal",
+        "comment": " The purpose of this module is to expose the \"guts\" of the logic so that it\ncan be tested. It is not in the \"exposed-modules\" of the elm.json file,\nso it's not directly accessible to clients of the package.\n\nTesting just the things exposed to clients of the package would be awkward,\nsince it would require asynchronous tests. Here, we don't do anything actually\nasynchronous:\n\n  - You provide the `Time` with all messages (so it's just data).\n\n  - When we want to schedule a `Check`, we just return a `List Time` ... it's\n    the caller's job to actually schedule it.\n\nThe user-facing documentation for these types is in `Debouncer.Basic` and\n`Debouncer.Messages`, since those are the exposed modules.\n\n@docs Accumulator, Config, ConfigRecord, Debouncer\n@docs Milliseconds, Msg, State, UnsettledState\n@docs accumulateWith, addInputs, allInputs, appendInputToOutput\n@docs appendOutputToInput, cancel, debounce, emitFirstInput\n@docs emitWhenUnsettled, emitWhileUnsettled, firstInput, fromSeconds\n@docs lastInput, manual, nothingIfNegative, sanitizeConfig\n@docs settleWhenQuietFor, throttle, toDebouncer, update\n\n",
+        "unions": [
+            {
+                "name": "Config",
+                "comment": " An opaque type representing the configuration for a debouncer.\n\n  - We provide various \"constructor\" functions (rather than exposing the\n    type to clients) so that we can change the type in future without\n    a major version bump.\n\n  - We require a `Config` that is separate from the `Debouncer` itself,\n    because changes to the configuration once the debouncer is actually\n    operating would need to be handled specially, via messages.\n\n",
+                "args": [
+                    "i",
+                    "o"
+                ],
+                "cases": [
+                    [
+                        "Config",
+                        [
+                            "Debouncer.Internal.ConfigRecord i o"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Debouncer",
+                "comment": " Our basic type. Pairs a configuration with some state that changes as\ninputs are received and outputs are provided.\n",
+                "args": [
+                    "i",
+                    "o"
+                ],
+                "cases": [
+                    [
+                        "Debouncer",
+                        [
+                            "Debouncer.Internal.Config i o",
+                            "Debouncer.Internal.State o"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Msg",
+                "comment": " Docs docs docs.\n",
+                "args": [
+                    "i"
+                ],
+                "cases": [
+                    [
+                        "InputProvidedAt",
+                        [
+                            "i",
+                            "Debouncer.Internal.Milliseconds"
+                        ]
+                    ],
+                    [
+                        "ManualCancel",
+                        []
+                    ],
+                    [
+                        "ManualSettle",
+                        []
+                    ],
+                    [
+                        "ManualEmitAt",
+                        [
+                            "Debouncer.Internal.Milliseconds"
+                        ]
+                    ],
+                    [
+                        "Check",
+                        [
+                            "Debouncer.Internal.Milliseconds"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "State",
+                "comment": " Docs docs docs.\n",
+                "args": [
+                    "o"
+                ],
+                "cases": [
+                    [
+                        "Settled",
+                        []
+                    ],
+                    [
+                        "Unsettled",
+                        [
+                            "Debouncer.Internal.UnsettledState o"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Accumulator",
+                "comment": " A type which represents a function which incorporates an input into\nthe output so far.\n",
+                "args": [
+                    "i",
+                    "o"
+                ],
+                "type": "i -> Maybe.Maybe o -> Maybe.Maybe o"
+            },
+            {
+                "name": "ConfigRecord",
+                "comment": " Each of the items is a `Maybe`, since you don't necessarily want to\nautomatically emit at all for one kind of event or another.\n\nIf all three are `Nothing`, then the debouncer will never automatically\nemit -- you would have to tell it to emit at some point, based on some\nexternal event.\n\n",
+                "args": [
+                    "i",
+                    "o"
+                ],
+                "type": "{ emitWhenUnsettled : Maybe.Maybe Debouncer.Internal.Milliseconds, emitWhileUnsettled : Maybe.Maybe Debouncer.Internal.Milliseconds, settleWhenQuietFor : Maybe.Maybe Debouncer.Internal.Milliseconds, accumulator : Debouncer.Internal.Accumulator i o }"
+            },
+            {
+                "name": "Milliseconds",
+                "comment": " A useful reminder of what our intervals mean.\n",
+                "args": [],
+                "type": "Basics.Int"
+            },
+            {
+                "name": "UnsettledState",
+                "comment": " `output` needs to be a `Maybe` because we may have emitted while\nunsettled, due to `emitWhileUnsettled`. And, we could arrive at\n`settleWhenQuietFor` without any further input, so we don't\nnecessarily emit anything when we become settled.\n",
+                "args": [
+                    "o"
+                ],
+                "type": "{ unsettledAt : Debouncer.Internal.Milliseconds, lastInputProvidedAt : Debouncer.Internal.Milliseconds, lastEmittedAt : Maybe.Maybe Debouncer.Internal.Milliseconds, output : Maybe.Maybe o }"
+            }
+        ],
+        "values": [
+            {
+                "name": "accumulateWith",
+                "comment": " Note that this changes the type of the `Config` to match the\ntype of the acummulator provided.\n",
+                "type": "Debouncer.Internal.Accumulator i o -> Debouncer.Internal.Config a b -> Debouncer.Internal.Config i o"
+            },
+            {
+                "name": "addInputs",
+                "comment": " Accumulates by taking a sum of the inputs.\n",
+                "type": "number -> Maybe.Maybe number -> Maybe.Maybe number"
+            },
+            {
+                "name": "allInputs",
+                "comment": " Accumulates all inputs in a list.\n\nNote that the output list will have the most recent input first.\n\n",
+                "type": "i -> Maybe.Maybe (List.List i) -> Maybe.Maybe (List.List i)"
+            },
+            {
+                "name": "appendInputToOutput",
+                "comment": " Accumulates by appending the input to the output.\n",
+                "type": "appendable -> Maybe.Maybe appendable -> Maybe.Maybe appendable"
+            },
+            {
+                "name": "appendOutputToInput",
+                "comment": " Accumulates by appending the output to the input.\n",
+                "type": "appendable -> Maybe.Maybe appendable -> Maybe.Maybe appendable"
+            },
+            {
+                "name": "cancel",
+                "comment": " Cancellation is one way we can directly modify a debouncer. Basically, we\njust forget our state. There may be future `Check ...` messages coming, but\nthey will consider what to do based solely on our state at that time. So,\nforgetting our state is sufficient to \"cancel\" any pending output.\n",
+                "type": "Debouncer.Internal.Debouncer i o -> Debouncer.Internal.Debouncer i o"
+            },
+            {
+                "name": "debounce",
+                "comment": " A starting point for a configuration which debounces -- that is,\nwhich will emit once quiet for the time you specify.\n\nSo, `debounce (2 * Time.second)` is equivalent to\n\n    manual\n        |> settleWhenQuietFor (Just (2 * Time.second))\n\nIf you also want to emit using the first input, then you can use\n`emitWhenSettled`. For instance, the following configuration would\nemit the first input immediately when becoming unsettled, and then\nemit any subsequent input once the debouncer was quiet for 2 seconds.\n\n    debounce (2 * Time.second)\n        |> emitWhenUnsettled (Just 0)\n\n",
+                "type": "Debouncer.Internal.Milliseconds -> Debouncer.Internal.Config i i"
+            },
+            {
+                "name": "emitFirstInput",
+                "comment": " Modify a `Config` by controlling whether to emit the first\ninput when becoming unsettled.\n\n`emitFirstInput True config` is equivalent to\n\n    emitWhenUnsettled (Just 0) config\n\n`emitFirstInput False config` is equivalent to\n\n    emitWhenUnsettled Nothing config\n\nFor more complex cases, where you want to emit the first input on\na different interval than others, but not immediately, you can\nuse `emitWhenSettled` directly.\n\n",
+                "type": "Basics.Bool -> Debouncer.Internal.Config i o -> Debouncer.Internal.Config i o"
+            },
+            {
+                "name": "emitWhenUnsettled",
+                "comment": " Docs docs docs.\n",
+                "type": "Maybe.Maybe Debouncer.Internal.Milliseconds -> Debouncer.Internal.Config i o -> Debouncer.Internal.Config i o"
+            },
+            {
+                "name": "emitWhileUnsettled",
+                "comment": " Docs docs docs.\n",
+                "type": "Maybe.Maybe Debouncer.Internal.Milliseconds -> Debouncer.Internal.Config i o -> Debouncer.Internal.Config i o"
+            },
+            {
+                "name": "firstInput",
+                "comment": " Accumulates by just keeping the first input.\n",
+                "type": "i -> Maybe.Maybe i -> Maybe.Maybe i"
+            },
+            {
+                "name": "fromSeconds",
+                "comment": " A convenience when you'd rather think in seconds than milliseconds.\n\n    fromSeconds 0.5 --> 500\n\n",
+                "type": "Basics.Float -> Debouncer.Internal.Milliseconds"
+            },
+            {
+                "name": "lastInput",
+                "comment": " Accumulates by just keeping the last input.\n",
+                "type": "i -> Maybe.Maybe i -> Maybe.Maybe i"
+            },
+            {
+                "name": "manual",
+                "comment": " A starting point for a \"manual\" configuration.\n\nBy default, it:\n\n  - never settles\n  - does not emit when unsettled\n  - does not emit while unsettled\n  - accumulates only the last input\n\nSo, without more, you would need to tell this debouncer when to emit something\n-- it would never happen automatically.\n\nTo change any of those parameters, use the various functions that alter a\n`Config` (i.e. `settleWhenQuietFor`, `emitWhenUnsettled`, `emitWhileUnsettled`).\n\nBy default, the output type is the same as the input type. However, you can\nchange that by using the `accumulateWith` function to provide a different\naccumulator.\n\n",
+                "type": "Debouncer.Internal.Config i i"
+            },
+            {
+                "name": "nothingIfNegative",
+                "comment": " Docs docs docs.\n",
+                "type": "Maybe.Maybe number -> Maybe.Maybe number"
+            },
+            {
+                "name": "sanitizeConfig",
+                "comment": " Sanitize the config to simplify some of the logic.\n",
+                "type": "Debouncer.Internal.Config i o -> Debouncer.Internal.Config i o"
+            },
+            {
+                "name": "settleWhenQuietFor",
+                "comment": " Docs docs docs.\n",
+                "type": "Maybe.Maybe Debouncer.Internal.Milliseconds -> Debouncer.Internal.Config i o -> Debouncer.Internal.Config i o"
+            },
+            {
+                "name": "throttle",
+                "comment": " A starting point for a configuration which throttles -- that is,\nwhich will emit the first input immediately, and then accmulate and\nemit no more often than the specified interval.\n\nSo, `throttle (2 * Time.second)` is equivalent to\n\n    manual\n        |> emitWhileUnsettled (Just (2 * Time.second))\n        |> emitWhenUnsettled (Just 0)\n\n",
+                "type": "Debouncer.Internal.Milliseconds -> Debouncer.Internal.Config i i"
+            },
+            {
+                "name": "toDebouncer",
+                "comment": " Docs docs docs.\n",
+                "type": "Debouncer.Internal.Config i o -> Debouncer.Internal.Debouncer i o"
+            },
+            {
+                "name": "update",
+                "comment": " The second return parameter is not a `Cmd`, but instead a list of intervals\nat which we ought to check whether to emit something. This assists with\ntestability (since we can test whether that list is correct). The caller is\nresponsible for actually turning that list into commands.\n",
+                "type": "Debouncer.Internal.Msg i -> Debouncer.Internal.Debouncer i o -> ( Debouncer.Internal.Debouncer i o, List.List Debouncer.Internal.Milliseconds, Maybe.Maybe o )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Debouncer.Messages",
+        "comment": " This module allows you to \"smooth out\" messages over time, so that they\ndon't get applied immediately -- instead, they are applied at a future moment.\nDepending on the configuration you provide, you can use this to implemented\ndebouncing, throttling, or other ways of managing messages.\n\nThis module is simpler than `Debouncer.Basic`, because it is specialized for\nthe common case where the \"input\" is your `Msg` type, and what you ultimately\nwant do do is have the messages applied. You can use `Debouncer.Basic` instead\nif you want to do something more complex.\n\nA quick note on terminology: the debouncer is said to be \"unsettled\" while it\nis collecting inputs and considering when to emit output. It becomes \"settled\"\nagain once a specified period has passed without any inputs (see\n`settleWhenQuietFor`).\n\nTo use this module, you will need to integrate it into your `Model` and `Msg`\ntype, and handle it in your `update` function. Here's one example -- it's the\nsame example as given in `Debouncer.Basic`, but you can see that it's simpler\nhere.\n\n    import Browser\n    import Debouncer.Messages as Debouncer exposing (Debouncer, fromSeconds, provideInput, settleWhenQuietFor, toDebouncer)\n    import Html exposing (..)\n    import Html.Attributes exposing (..)\n    import Html.Events exposing (..)\n\n    type alias Model =\n        { quietForOneSecond : Debouncer Msg\n        , messages : List String\n        }\n\n    init : ( Model, Cmd Msg )\n    init =\n        ( { quietForOneSecond =\n                Debouncer.manual\n                    |> settleWhenQuietFor (Just <| fromSeconds 1)\n                    |> toDebouncer\n          , messages = []\n          }\n        , Cmd.none\n        )\n\n    type Msg\n        = MsgQuietForOneSecond (Debouncer.Msg Msg)\n        | DoSomething\n\n    updateDebouncer : Debouncer.UpdateConfig Msg Model\n    updateDebouncer =\n        { mapMsg = MsgQuietForOneSecond\n        , getDebouncer = .quietForOneSecond\n        , setDebouncer = \\debouncer model -> { model | quietForOneSecond = debouncer }\n        }\n\n    update : Msg -> Model -> ( Model, Cmd Msg )\n    update msg model =\n        case msg of\n            MsgQuietForOneSecond subMsg ->\n                Debouncer.update update updateDebouncer subMsg model\n\n            DoSomething ->\n                ( { model | messages = model.messages ++ [ \"I did something\" ] }\n                , Cmd.none\n                )\n\n    view : Model -> Html Msg\n    view model =\n        div [ style \"margin\" \"1em\" ]\n            [ button\n                [ DoSomething\n                    |> provideInput\n                    |> MsgQuietForOneSecond\n                    |> onClick\n                ]\n                [ text \"Click here repeatedly.\" ]\n            , p [] [ text \" I'll add a message below once you stop clicking for one second.\" ]\n            , model.messages\n                |> List.map (\\message -> p [] [ text message ])\n                |> div []\n            ]\n\n    main : Program () Model Msg\n    main =\n        Browser.element\n            { init = always init\n            , view = view\n            , update = update\n            , subscriptions = always Sub.none\n            }\n\n\n## Creating a debouncer\n\n@docs Debouncer, DebouncerConfig, toDebouncer\n\n\n## Creating a configuration\n\n@docs manual, debounce, throttle\n@docs Milliseconds, fromSeconds\n@docs settleWhenQuietFor, emitWhenUnsettled, emitFirstInput, emitWhileUnsettled\n@docs accumulateWith, lastInput, firstInput\n\n\n## Running a debouncer\n\n@docs Msg, provideInput, emitNow, settleNow, cancel, cancelNow, UpdateConfig, update\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Debouncer",
+                "comment": " An opaque type which holds the state of a debouncer. You will need to\nintegrate this into your `Model` type to keep the state.\n\nThe type parameter represents your `Msg` type, which will be used both\nfor the inputs and the outputs. If that doesn't suit you, `Debouncer.Basic`\nallows you to use any input or output type you wish.\n\nTo create a `Debouncer`, start with a `config`, modify the config as needed,\nand then use `toDebouncer`. For instance:\n\n    config\n        |> settleWhenQuietFor (fromSeconds 0.5)\n        |> toDebouncer\n\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "Debouncer.Basic.Debouncer msg msg"
+            },
+            {
+                "name": "DebouncerConfig",
+                "comment": " An opaque type representing the configuration needed for a debouncer.\n\nTo create a debouncer, start with `config`, modify it as needed, and then\nuse `toDebouncer`. For instance:\n\n    config\n        |> settleWhenQuietFor (fromSeconds 2.0)\n        |> emitWhileUnsettled (fromSeconds 0.5)\n        |> toDebouncer\n\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "Debouncer.Basic.Config msg msg"
+            },
+            {
+                "name": "Milliseconds",
+                "comment": " This is a handy type alias to note that we work in millisecond intervals.\n",
+                "args": [],
+                "type": "Basics.Int"
+            },
+            {
+                "name": "Msg",
+                "comment": " Messages which the debouncer handles.\n\nYou will need to integrate this into your own `Msg` type, and then handle it\nin your `update` function (see code example above).\n\nThe type parameter represents the type of your own `Msg` type. Thus, it should\nmatch the `msg` in `Debouncer msg`.\n\nThe only message you will typically need to send to the debouncer explicitly\nis the message that provides input. You can construct such a message with the\n`provideInput` function. Other messages are used internally by the debouncer.\n\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "Debouncer.Basic.Msg msg"
+            },
+            {
+                "name": "UpdateConfig",
+                "comment": " Configuration that simplifies how your `update` function calls our `update`\nfunction.\n\nThis module handles the case where the input to the debouncer is your `Msg`\ntype, and what you want to happen when output is emitted is that the `Msg` gets\napplied. So, the debouncer is basically delaying some messages, according to\nyour configuration.\n\nOur `update` function is simplified (compared to `Debouncer.Basic.update`), so\nthat you can call it (from your update function) like this:\n\n    update : Msg -> Model -> ( Model, Cmd Msg )\n    update msg model =\n        case msg of\n            MsgQuietForOneSecond subMsg ->\n                Debouncer.Messages.update update updateDebouncer subMsg model\n\nThis way, you don't have to \"massage\" what our `update` function returns. You\nprovide the debouncer and your model, and we return the standard tuple that\nyour update function also needs to return.\n\nTo make this work, we need some configuration:\n\n  - `mapMsg` is the tag, in your `Msg` type, that wraps our `Msg` type\n  - `getDebouncer` is a function we can use to get the debouncer from your `model` type\n  - `setDebouncer` is a function we can use to update your model with an updated debouncer\n\nIn practice, it is pretty straight-forward to specify these things -- see the\n`updateDebouncer` example in the module docs for one example:\n\n    updateDebouncer : Debouncer.UpdateConfig Msg Model\n    updateDebouncer =\n        { mapMsg = MsgQuietForOneSecond\n        , getDebouncer = .quietForOneSecond\n        , setDebouncer = \\debouncer model -> { model | quietForOneSecond = debouncer }\n        }\n\n",
+                "args": [
+                    "msg",
+                    "model"
+                ],
+                "type": "{ mapMsg : Debouncer.Messages.Msg msg -> msg, getDebouncer : model -> Debouncer.Messages.Debouncer msg, setDebouncer : Debouncer.Messages.Debouncer msg -> model -> model }"
+            }
+        ],
+        "values": [
+            {
+                "name": "accumulateWith",
+                "comment": " How should the debouncer combine new input with the output collected\nso far?\n\nYou can use one of the pre-built accumulators:\n\n  - `lastInput` (the default)\n  - `firstInput`\n\nOr, if you need to do something more complex, you can provide your own function\nof the form\n\n    msg -> Maybe msg -> Maybe msg\n\n",
+                "type": "Debouncer.Basic.Accumulator msg msg -> Debouncer.Messages.DebouncerConfig a -> Debouncer.Messages.DebouncerConfig msg"
+            },
+            {
+                "name": "cancel",
+                "comment": " Cancel any input collected so far (and not yet emitted). This throws away\nwhatever input has been provided in the past, and forces the debouncer back to\na \"settled\" state (without emitting anything).\n",
+                "type": "Debouncer.Messages.Debouncer msg -> Debouncer.Messages.Debouncer msg"
+            },
+            {
+                "name": "cancelNow",
+                "comment": " Like `cancel`, but operates via a message instead of acting directly on\nthe debouncer. This is a convenience for cases where you'd like to cancel\nvia a message.\n",
+                "type": "Debouncer.Messages.Msg msg"
+            },
+            {
+                "name": "debounce",
+                "comment": " A starting point for a configuring a debouncer which **debounces**--\nthat is, which will emit once quiet for the time you specify.\n\nSo, `debounce (fromSeconds 2)` is equivalent to\n\n    manual\n        |> settleWhenQuietFor (Just (fromSeconds 2))\n\nIf you also want to emit using the first input, then you can use\n`emitWhenSettled`. For instance, the following configuration would emit the\nfirst input immediately when becoming unsettled, and then emit any\nsubsequent input once the debouncer was quiet for 2 seconds.\n\n    debounce (fromSeconds 2)\n        |> emitWhenUnsettled (Just 0)\n\n",
+                "type": "Debouncer.Messages.Milliseconds -> Debouncer.Messages.DebouncerConfig msg"
+            },
+            {
+                "name": "emitFirstInput",
+                "comment": " Modify a `Config` by controlling whether to emit the first\ninput when becoming unsettled.\n\n`emitFirstInput True config` is equivalent to\n\n    emitWhenUnsettled (Just 0) config\n\n`emitFirstInput False config` is equivalent to\n\n    emitWhenUnsettled Nothing config\n\nFor more complex cases, where you want to emit the first input on\na different interval than others, but not immediately, you can\nuse `emitWhenSettled` directly.\n\n",
+                "type": "Basics.Bool -> Debouncer.Messages.DebouncerConfig msg -> Debouncer.Messages.DebouncerConfig msg"
+            },
+            {
+                "name": "emitNow",
+                "comment": " Construct a message which will emit any accumulated output. This doesn't\naffect whether the debouncer is \"settled\" or not. If you'd like to emit output\nand force the debouncer to be settled, then use `settleNow` instead.\n",
+                "type": "Debouncer.Messages.Msg msg"
+            },
+            {
+                "name": "emitWhenUnsettled",
+                "comment": " What should the debouncer do with the first input when it becomes unsettled?\n\nIf `Nothing` (the default), the debouncer emits only on the \"trailing edge.\"\nThat is, it won't do anything special with the first input -- it will just\nkeep it and do something with it later.\n\nIf `Just 0`, the debouncer will immediately emit the first input when becoming\nunsettled. It will then remain unsettled, accumulating further input and\neventually emitting it.\n\nIf `Just interval`, the debouncer will use the provided interval to emit after\nbecoming unsettled. It will then remain unsettled, collecting further input and\neventually emitting it.\n\n",
+                "type": "Maybe.Maybe Debouncer.Messages.Milliseconds -> Debouncer.Messages.DebouncerConfig msg -> Debouncer.Messages.DebouncerConfig msg"
+            },
+            {
+                "name": "emitWhileUnsettled",
+                "comment": " Should the debouncer emit while it is unsettled?\n\nIf `Nothing` (the default), the debouncer will wait until it becomes settled\nagain before emitting. This is what you might refer to as \"debouncing\".\n\nIf `Just interval`, the debouncer will emit at the provided interval while it\nis unsettled. This is what you might refer to as \"throttling\".\n\n",
+                "type": "Maybe.Maybe Debouncer.Messages.Milliseconds -> Debouncer.Messages.DebouncerConfig msg -> Debouncer.Messages.DebouncerConfig msg"
+            },
+            {
+                "name": "firstInput",
+                "comment": " An accumulator which just keeps the first provided input. Thus, the\nremaining inputs are only used for timing purposes -- their values aren't\nactually remembered.\n",
+                "type": "Debouncer.Basic.Accumulator msg msg"
+            },
+            {
+                "name": "fromSeconds",
+                "comment": " A convenience when you'd rather think in seconds than milliseconds.\n\n    fromSeconds 0.5 --> 500\n\n",
+                "type": "Basics.Float -> Debouncer.Messages.Milliseconds"
+            },
+            {
+                "name": "lastInput",
+                "comment": " An accumulator which just keeps the last provided input. This is\nprobably the one you'll want most often (and is the default), but you do have\nother choices.\n",
+                "type": "Debouncer.Basic.Accumulator msg msg"
+            },
+            {
+                "name": "manual",
+                "comment": " A starting point for configuring a debouncer that only emits when you tell\nit to, via `emitNow`.\n\nBy default, it:\n\n  - never settles\n  - does not emit when it becomes unsettled\n  - does not emit while unsettled\n  - accumulates only the last input\n\nSo, without more, you would need to tell this debouncer when to emit something\n(via `emitNow`) -- it would never happen automatically.\n\nTo change any of those parameters, use the various functions that alter a\n`Config` (i.e. `settleWhenQuietFor`, `emitWhenUnsettled`, `emitWhileUnsettled`).\n\nBy default, the output type is the same as the input type. However, you can\nchange that by using the `accumulateWith` function to provide a different\naccumulator.\n\n",
+                "type": "Debouncer.Messages.DebouncerConfig msg"
+            },
+            {
+                "name": "provideInput",
+                "comment": " Construct a message that provides input to a debouncer.\n\nThe type parameter represents your own `Msg` type.\n\n",
+                "type": "msg -> Debouncer.Messages.Msg msg"
+            },
+            {
+                "name": "settleNow",
+                "comment": " Construct a message which settles the debouncer now, even if it wouldn't\notherwise settle at this time.\n\nAny accumulated output will be emitted. If you want to settle without emitting\nany output, use `cancel` or `cancelNow` instead.\n\n",
+                "type": "Debouncer.Messages.Msg msg"
+            },
+            {
+                "name": "settleWhenQuietFor",
+                "comment": " How long should the debouncer wait without input before becoming \"settled\"\nagain?\n\nIf you are \"debouncing\" (i.e. `emitWhileUnsettled` is `Nothing`), then this is\nthe key parameter controlling when you will receive output -- you'll receive\nthe output after no inputs have been provided for the specified time.\n\nIf you are \"throttling\" (i.e. `emitWhileUnsettled` is not `Nothing`), then this\nparameter won't make much difference, unless you are also specifying\n`emitWhenUnsettled` in order to do something with the initial input.\n\n",
+                "type": "Maybe.Maybe Debouncer.Messages.Milliseconds -> Debouncer.Messages.DebouncerConfig msg -> Debouncer.Messages.DebouncerConfig msg"
+            },
+            {
+                "name": "throttle",
+                "comment": " A starting point for configuring a debouncer which throttles -- that is,\nwhich will emit the first input immediately, and then accmulate and\nemit no more often than the specified interval.\n\nSo, `throttle (fromSeconds 2)` is equivalent to\n\n    manual\n        |> emitWhileUnsettled (Just (fromSeconds 2))\n        |> emitWhenUnsettled (Just 0)\n\n",
+                "type": "Debouncer.Messages.Milliseconds -> Debouncer.Messages.DebouncerConfig msg"
+            },
+            {
+                "name": "toDebouncer",
+                "comment": " Initialize a `Debouncer` using the supplied `Config`.\n\nFor now, a debouncer's configuration cannot be changed once the debouncer is\ncreated. (This is a feature that could be provided in future, if desirable).\n\n",
+                "type": "Debouncer.Messages.DebouncerConfig msg -> Debouncer.Messages.Debouncer msg"
+            },
+            {
+                "name": "update",
+                "comment": " Handle a message for the debouncer.\n\nYou will need to integrate this into your `update` function, so that the debouncer\ncan act on its messages. (There is a code example at the top of the module docs).\n\nNote that we actually return your own `(model, Cmd msg)` type. This simplifies\nyour `update` function, since you don't need to massage what we return in order\nto make things work -- we return exactly what your `update` function will need\nto return.\n\nTo make that work, you need to provide a couple of additional parameters.\n\n  - The first parameter is essentially your own `update` function. If your\n    `update` function takes additional parameters, you will need to partially\n    apply them. This allows us to immediately execute an emitted message at\n    the appropriate time, without you needing to handle it specially.\n\n  - The second parameter allows us to update your model with the new debouncer\n    state, without you needing to handle it specially.\n\n",
+                "type": "(msg -> model -> ( model, Platform.Cmd.Cmd msg )) -> Debouncer.Messages.UpdateConfig msg model -> Debouncer.Messages.Msg msg -> model -> ( model, Platform.Cmd.Cmd msg )"
+            }
+        ],
+        "binops": []
+    }
+]

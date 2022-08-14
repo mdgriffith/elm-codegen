@@ -1,0 +1,16 @@
+[
+    {
+        "name": "NoIndirectInternal",
+        "comment": " Blocks import to indirect `Internal` modules.\n\n\n# Rules\n\n@docs rule\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": " The `elm-review` rule.\n",
+                "type": "Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    }
+]

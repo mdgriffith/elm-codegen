@@ -1,0 +1,105 @@
+[
+    {
+        "name": "InfiniteList",
+        "comment": " Displays a virtual infinite list of items by only showing visible items on screen. This is very useful for\nvery long list of items.\n\nThis way, instead of showing you 100+ items, with this package you will only be shown maybe 20 depending on their height\nand your configuration.\n\n**How it works**: A div element is using the full height of your entire list so that the scroll bar shows a long content.\nInside this element we show a few items to fill the parent element and we move them so that they are visible. Which items to show\nis computed using the `scrollTop` value from the scroll event.\n\n\n# Initialization\n\n@docs init\n\n\n# Configuration\n\n@docs config, withConstantHeight, withVariableHeight, withKeepFirst\n\n\n# Scroll\n\n@docs onScroll\n\n\n# View\n\n@docs view\n\n\n# Customization\n\n@docs withOffset, withCustomContainer, withClass, withStyles, withId\n\n\n# Advanced\n\n@docs updateScroll, scrollToNthItem\n\n\n# Types\n\n@docs Model, Config, ItemHeight\n\n",
+        "unions": [
+            {
+                "name": "Config",
+                "comment": " Configuration for your infinite list, describing the look and feel.\n**Note:** Your `Config` should _never_ be held in your model.\nIt should only appear in `view` code.\n",
+                "args": [
+                    "item",
+                    "msg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "ItemHeight",
+                "comment": " Item height description\n",
+                "args": [
+                    "item"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Model",
+                "comment": " Model of the infinite list module. You need to create a new one using `init` function.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "config",
+                "comment": " Creates a new `Config`. This function will need a few mandatory parameters\nand you will be able to customize it more with `with...` functions\n\n    config : InfiniteList.Config String msg\n    config =\n        InfiniteList.config\n            { itemView = itemView\n            , itemHeight = InfiniteList.withConstantHeight 20\n            , containerHeight = 300\n            }\n\n    itemView : Int -> Int -> String -> Html Msg\n    itemView idx listIdx item =\n        -- view code\n\nThe `itemView` parameter is the function used to render each item of your list.\nParameters of this function are\n\n  - current index of the element currently displayed\n  - index of the item in the entire list (their real index in your entire list)\n  - item to render\n\n**Note**: If you can't know the exact container's height it's not a problem. Just\nspecify a height you are sure is greater than the maximum possible container's height.\nYou can also specify the window's height.\nHaving a height greater than the actual container's height will just make you show a little more items than\nif you specified the exact container's height.\n\n",
+                "type": "{ itemView : Basics.Int -> Basics.Int -> item -> Html.Html msg, itemHeight : InfiniteList.ItemHeight item, containerHeight : Basics.Int } -> InfiniteList.Config item msg"
+            },
+            {
+                "name": "init",
+                "comment": " Creates a new `Model`.\n\n    initModel : Model\n    initModel =\n        { infiniteList = InfiniteList.init }\n\n",
+                "type": "InfiniteList.Model"
+            },
+            {
+                "name": "onScroll",
+                "comment": " This function returns the `onScroll` attribute to be added to the attributes of\nyour infinite list container.\n\n    type Msg\n        = InfiniteListMsg InfiniteList.Model\n\n    view : Model -> Html Msg\n    view model =\n        div\n            [ style \"width\" \"100%\"\n            , style \"height\" \"100%\"\n            , style \"overflow-x\" \"hidden\"\n            , style \"overflow-y\" \"auto\"\n            , style \"-webkit-overflow-scrolling\" \"touch\"\n            , InfiniteList.onScroll InfiniteListMsg\n            ]\n            [ InfiniteList.view config model.infiniteList list ]\n\n",
+                "type": "(InfiniteList.Model -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "scrollToNthItem",
+                "comment": " Function used to change the list scrolling from your program, so that the nth item of the list is displayed on top\n",
+                "type": "{ postScrollMessage : msg, listHtmlId : String.String, itemIndex : Basics.Int, configValue : InfiniteList.Config item msg, items : List.List item } -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "updateScroll",
+                "comment": " **Only use this function if you handle `on \"scroll\"` event yourself**\n_(for instance if another package is also using the scroll event on the same node)_\n\nYou have to pass it a `Json.Decode.Value` directly coming from `on \"scroll\"` event you handle, and the `Model`.\nIt returns the updated `Model`\n\n    type Msg\n        = OnScroll JsonDecoder.Value\n\n    view : Model -> Html Msg\n    view model =\n        div\n            [ style \"width\" \"100%\"\n            , style \"height\" \"100%\"\n            , style \"overflow-x\" \"hidden\"\n            , style \"overflow-y\" \"auto\"\n            , style \"-webkit-overflow-scrolling\" \"touch\"\n            , on \"scroll\" (JsonDecoder.map OnScroll JsonDecoder.value)\n            ]\n            [ InfiniteList.view config model.infiniteList list ]\n\n    update : Msg -> Model -> ( Model, Cmd Msg )\n    update msg model =\n        case msg of\n            -- ... --\n            OnScroll value ->\n                ( { model | infiniteList = InfList.updateScroll value model.infiniteList }, Cmd.none )\n\n",
+                "type": "Json.Decode.Value -> InfiniteList.Model -> InfiniteList.Model"
+            },
+            {
+                "name": "view",
+                "comment": " Function used to display your long list\n\n**The element's height must be explicitly set, otherwise scroll event won't be triggered**\n\n    config : InfiniteList.Config String Msg\n    config =\n        InfiniteList.config\n            { itemView = itemView\n            , itemHeight = InfiniteList.withConstantHeight 20\n            , containerHeight = 300\n            }\n\n    itemView : Int -> Int -> String -> Html Msg\n    itemView idx listIdx item =\n        div [] [ text item ]\n\n    view : Model -> Html Msg\n    view model =\n        div\n            [ style \"width\" \"100%\"\n            , style \"height\" \"100%\"\n            , style \"overflow-x\" \"hidden\"\n            , style \"overflow-y\" \"auto\"\n            , style \"-webkit-overflow-scrolling\" \"touch\"\n            , InfiniteList.onScroll InfiniteListMsg\n            , id \"myslist\" -- set an HTML id if you want to use scrollToNthItem later\n            ]\n            [ InfiniteList.view config model.infiniteList list ]\n\n",
+                "type": "InfiniteList.Config item msg -> InfiniteList.Model -> List.List item -> Html.Html msg"
+            },
+            {
+                "name": "withClass",
+                "comment": " Specifies a class to set to the top container `div`.\n",
+                "type": "String.String -> InfiniteList.Config item msg -> InfiniteList.Config item msg"
+            },
+            {
+                "name": "withConstantHeight",
+                "comment": " Specifies that the items' height will always be the same.\nThis function needs the height of the items\n\n    config : InfiniteList.Config String msg\n    config =\n        InfiniteList.config\n            { itemView = itemView\n            , itemHeight = InfiniteList.withConstantHeight 20\n            , containerHeight = 300\n            }\n\n",
+                "type": "Basics.Int -> InfiniteList.ItemHeight item"
+            },
+            {
+                "name": "withCustomContainer",
+                "comment": " Specifies a custom container to use instead of the default `div` one inside the top `div` container.\nThe function to pass takes a list of styles you will have to apply, and a list of children (your items) you will have to display (See example below).\n\nThe default structure of this infinite list is:\n\n    div\n        -- Top container --\n        []\n        [ div\n            -- Items container --\n            []\n            [ items ]\n        ]\n\nFor instance, if you want to display a list (`li` elements) you prably want to replace the default `div` container\nby an `ul` element.\nHere is how to do:\n\n    InfiniteList.withCustomContainer customContainer config\n\n    customContainer : List (String, String) -> List (Html msg) -> Html msg\n    customContainer styles children =\n        ul [ style styles ] children\n\n",
+                "type": "(List.List ( String.String, String.String ) -> List.List (Html.Html msg) -> Html.Html msg) -> InfiniteList.Config item msg -> InfiniteList.Config item msg"
+            },
+            {
+                "name": "withId",
+                "comment": " Specifies an id to set to the top container `div`.\n",
+                "type": "String.String -> InfiniteList.Config item msg -> InfiniteList.Config item msg"
+            },
+            {
+                "name": "withKeepFirst",
+                "comment": " Specifies the number of elements on the top of the list to always render.\n\nThis can be used if the first element is a header which is shown sticky for example.\n\nThe default is 0, removing all items from the top when scrolling down.\n",
+                "type": "Basics.Int -> InfiniteList.Config item msg -> InfiniteList.Config item msg"
+            },
+            {
+                "name": "withOffset",
+                "comment": " Changes the default offset.\n\nThe offset is a value that represents a _margin_ at the top and bottom of the container so that\nitems will be displayed up to these margins.\n\nThis avoids showing blank spaces as you scroll.\n\nThe default value is 200px. If you want more margin, you can specify a greater value, but be careful as it will\ndisplay more items on screen.\n\n",
+                "type": "Basics.Int -> InfiniteList.Config item msg -> InfiniteList.Config item msg"
+            },
+            {
+                "name": "withStyles",
+                "comment": " Specifies styles to set to the top container `div`.\n\nThis module also specified styles that may override yours.\n\n",
+                "type": "List.List ( String.String, String.String ) -> InfiniteList.Config item msg -> InfiniteList.Config item msg"
+            },
+            {
+                "name": "withVariableHeight",
+                "comment": " Specifies that the items' height will change according to the item.\nThis function needs a function taking the index of the item in your list of items, and the current item.\nIt must return the item's height\n\n    config : InfiniteList.Config String msg\n    config =\n        InfiniteList.config\n            { itemView = itemView\n            , itemHeight = InfiniteList.withVariableHeight getItemHeight\n            , containerHeight = 300\n            }\n\n    getItemHeight : Int -> String -> Int\n    getItemHeight idx item =\n        if remainderBy 2 idx == 0 then\n            20\n\n        else\n            40\n\n",
+                "type": "(Basics.Int -> item -> Basics.Int) -> InfiniteList.ItemHeight item"
+            }
+        ],
+        "binops": []
+    }
+]

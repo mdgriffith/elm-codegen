@@ -1,0 +1,658 @@
+[
+    {
+        "name": "Grid",
+        "comment": " Responsive grids based on flexbox. This module provides a DSL for building\nsuch grids.\n\n\n# Grid constructors\n\n@docs grid, row, col\n\n\n# Column size and offset\n\n@docs auto, columns, offset\n\n\n# Justify content\n\n@docs start, end, center, between, around\n\n\n# Align Items\n\n@docs top, middle, bottom, stretch, baseline\n\n\n# Ordering and direction\n\n@docs first, last, reverse\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "around",
+                "comment": " Pad spacing around items in a row, with space on the left and right hand sides.\n",
+                "type": "ResponsiveDSL.StyleBuilder { a | grid : Basics.Never, col : Basics.Never } Grid.Grid"
+            },
+            {
+                "name": "auto",
+                "comment": " Auto column width means that a column expands to fill the available width.\n",
+                "type": "ResponsiveDSL.StyleBuilder { a | row : Basics.Never } Grid.Grid"
+            },
+            {
+                "name": "baseline",
+                "comment": " Aligns items so their balines align at the top of a row.\n",
+                "type": "ResponsiveDSL.StyleBuilder { a | grid : Basics.Never, column : Basics.Never } Grid.Grid"
+            },
+            {
+                "name": "between",
+                "comment": " Only pad spacing between items in a row.\n",
+                "type": "ResponsiveDSL.StyleBuilder { a | grid : Basics.Never, col : Basics.Never } Grid.Grid"
+            },
+            {
+                "name": "bottom",
+                "comment": " Aligns items at the bottom of a row.\n",
+                "type": "ResponsiveDSL.StyleBuilder { a | grid : Basics.Never, column : Basics.Never } Grid.Grid"
+            },
+            {
+                "name": "center",
+                "comment": " Centers a row or column.\n",
+                "type": "ResponsiveDSL.StyleBuilder { a | grid : Basics.Never } Grid.Grid"
+            },
+            {
+                "name": "col",
+                "comment": " The column builder for a responsive grid, on which column compatible properties can be defined.\n",
+                "type": "List.List (List.List (Grid.Grid -> ResponsiveDSL.Builder { a | col : ResponsiveDSL.Compatible } Grid.Grid)) -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Grid.Grid -> Responsive.ResponsiveStyle -> Html.Styled.Html msg"
+            },
+            {
+                "name": "columns",
+                "comment": " Defines how many column widths a column will take up. Zero means use 'auto'\nwidth and expand to fill available space.\n\nWhen applied to a row or grid, this sets the total number of columns available.\nWhen applied to a column, this sets the number of columns taken up out of the\ntotal available.\n\n",
+                "type": "Basics.Float -> Responsive.Device -> Grid.Grid -> ResponsiveDSL.Builder { a | row : Basics.Never } Grid.Grid"
+            },
+            {
+                "name": "end",
+                "comment": " Puts the content of a row or column at the end.\n",
+                "type": "ResponsiveDSL.StyleBuilder { a | grid : Basics.Never } Grid.Grid"
+            },
+            {
+                "name": "first",
+                "comment": " Orders a row or column so it comes first.\n",
+                "type": "ResponsiveDSL.StyleBuilder { a | grid : Basics.Never } Grid.Grid"
+            },
+            {
+                "name": "grid",
+                "comment": " The outer builder of a responsive grid.\n",
+                "type": "List.List (List.List (Grid.Grid -> ResponsiveDSL.Builder { a | grid : ResponsiveDSL.Compatible } Grid.Grid)) -> List.List (Html.Styled.Attribute msg) -> List.List (Grid.Grid -> Responsive.ResponsiveStyle -> Html.Styled.Html msg) -> Responsive.ResponsiveStyle -> Html.Styled.Html msg"
+            },
+            {
+                "name": "last",
+                "comment": " Orders a row or column so it comes last.\n",
+                "type": "ResponsiveDSL.StyleBuilder { a | grid : Basics.Never } Grid.Grid"
+            },
+            {
+                "name": "middle",
+                "comment": " Aligns items in the middle of a row.\n",
+                "type": "ResponsiveDSL.StyleBuilder { a | grid : Basics.Never, column : Basics.Never } Grid.Grid"
+            },
+            {
+                "name": "offset",
+                "comment": " Defines how many column widths a column is offset from the left hand side by.\n",
+                "type": "Basics.Float -> Responsive.Device -> Grid.Grid -> ResponsiveDSL.Builder { a | grid : Basics.Never, row : Basics.Never } Grid.Grid"
+            },
+            {
+                "name": "reverse",
+                "comment": " Reverses the order of items in a column or row.\n",
+                "type": "Responsive.Device -> Grid.Grid -> ResponsiveDSL.Builder { a | grid : Basics.Never } Grid.Grid"
+            },
+            {
+                "name": "row",
+                "comment": " The row builder for a responsive grid, on which row compatible properties can be defined.\n",
+                "type": "List.List (List.List (Grid.Grid -> ResponsiveDSL.Builder { a | row : ResponsiveDSL.Compatible } Grid.Grid)) -> List.List (Html.Styled.Attribute msg) -> List.List (Grid.Grid -> Responsive.ResponsiveStyle -> Html.Styled.Html msg) -> Grid.Grid -> Responsive.ResponsiveStyle -> Html.Styled.Html msg"
+            },
+            {
+                "name": "start",
+                "comment": " Puts the content of a row or column at the start.\n",
+                "type": "ResponsiveDSL.StyleBuilder { a | grid : Basics.Never } Grid.Grid"
+            },
+            {
+                "name": "stretch",
+                "comment": " Stretches items to fill the row height-wise.\n",
+                "type": "ResponsiveDSL.StyleBuilder { a | grid : Basics.Never, column : Basics.Never } Grid.Grid"
+            },
+            {
+                "name": "top",
+                "comment": " Aligns items at the top of a row.\n",
+                "type": "ResponsiveDSL.StyleBuilder { a | grid : Basics.Never, column : Basics.Never } Grid.Grid"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Responsive",
+        "comment": " The Responsive module provides a way of specifying sizing configurations for different devices,\nand for applying those to create CSS with media queries.\n\n\n# Global Style Snippet\n\n@docs global\n\n\n# Models for specifying devices and their basic responsive properties.\n\n@docs CommonStyle, DeviceProps, Device, DeviceSpec, ResponsiveStyle\n\n\n# Device dependant styling functions.\n\n@docs ResponsiveFn, deviceStyle, deviceStyles\n\n\n# Vertical rhythm\n\n@docs rhythm, rhythmPx, rhythmSplit\n\n\n# Functions for responsively scaling fonts\n\n@docs fontMediaStyles\n\n",
+        "unions": [
+            {
+                "name": "Device",
+                "comment": " Defines the possible classes of device; \"small\", \"medium\", \"large\" or \"extra large\".\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Sm",
+                        []
+                    ],
+                    [
+                        "Md",
+                        []
+                    ],
+                    [
+                        "Lg",
+                        []
+                    ],
+                    [
+                        "Xl",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "CommonStyle",
+                "comment": " Defines the style parameters that are common accross all devices.\n",
+                "args": [],
+                "type": "{ lineHeightRatio : Basics.Float, typeScale : TypeScale.TypeScale }"
+            },
+            {
+                "name": "DeviceProps",
+                "comment": " Defines the style parameters that are device specific.\n",
+                "args": [],
+                "type": "{ device : Responsive.Device, baseFontSize : Basics.Float, breakWidth : Basics.Float, wrapperWidth : Basics.Float }"
+            },
+            {
+                "name": "DeviceSpec",
+                "comment": " Defines a mapping from devices to something else, that must always include a definition\nfor each device size.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ sm : a, md : a, lg : a, xl : a }"
+            },
+            {
+                "name": "ResponsiveFn",
+                "comment": " A responsive styling function takes the common style properties and the style\nproperties that are specific to a device, and produces some style related value.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "Responsive.DeviceStyle -> a"
+            },
+            {
+                "name": "ResponsiveStyle",
+                "comment": " Specifies the base styling properties accross all devices.\n",
+                "args": [],
+                "type": "{ commonStyle : Responsive.CommonStyle, deviceStyles : Responsive.DeviceSpec Responsive.DeviceProps }"
+            }
+        ],
+        "values": [
+            {
+                "name": "deviceStyle",
+                "comment": " Creates a single CSS property with media queries. Media queries will be\ngenerated for each of the devices specified.\n",
+                "type": "Responsive.ResponsiveStyle -> Responsive.ResponsiveFn Css.Style -> Css.Style"
+            },
+            {
+                "name": "deviceStyles",
+                "comment": " Creates a set of CSS properties with media queries. Media queries will be\ngenerated for each of the devices specified.\n",
+                "type": "Responsive.ResponsiveStyle -> Responsive.ResponsiveFn (List.List Css.Style) -> Css.Style"
+            },
+            {
+                "name": "fontMediaStyles",
+                "comment": " Creates font-size and line-height accross all media devices using media queries,\nfor a supplied font size level. These font sizings will be in keeping with the\nvertical rhythm.\n",
+                "type": "TypeScale.FontSizeLevel -> Responsive.ResponsiveStyle -> List.List Css.Style"
+            },
+            {
+                "name": "global",
+                "comment": " A global CSS style sheet that sets up basic spaing for text, with single\ndirection margins.\n",
+                "type": "Responsive.ResponsiveStyle -> List.List Css.Global.Snippet"
+            },
+            {
+                "name": "rhythm",
+                "comment": " Calculates a multiple of the line height for a base font.\n\nThis produces a float which is the size in pixels.\n\n",
+                "type": "Basics.Float -> Responsive.DeviceStyle -> Basics.Float"
+            },
+            {
+                "name": "rhythmPx",
+                "comment": " Calculates a multiple of the line height for a base font.\n\nThis produces a result in px, which works the most accurately.\n\n",
+                "type": "Basics.Float -> Responsive.DeviceStyle -> Css.Px"
+            },
+            {
+                "name": "rhythmSplit",
+                "comment": " This function helps to get the vertical rhythm right in situations where\nrounding errors are not allowing things to be positioned accurately, or where browsers\ninsert extra padding around certain elements, such as buttons.\n\nInstead of setting a line-height for the rhythm, the requested rhythm is split into a\nheight and a margin which together add up to the correct size.\n\n",
+                "type": "Basics.Float -> Basics.Float -> Responsive.DeviceStyle -> List.List Css.Style"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Styles",
+        "comment": " The Devices module provides device specific styling builders.\n\n\n# Injecting constant CSS styles\n\n@docs styles, empty\n\n\n# Constant by device style builders\n\n@docs sm, md, lg, xl\n\n\n# Responsive by device properties style builders.\n\n@docs height\n\n\n# Generic styles\n\n@docs visible, hidden\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "empty",
+                "comment": " An empty style, for convenience when sketching out DSLs.\n",
+                "type": "ResponsiveDSL.StyleBuilder a ctx"
+            },
+            {
+                "name": "height",
+                "comment": " Sets the height property in rhythm units.\n",
+                "type": "Basics.Float -> ResponsiveDSL.ByDeviceBuilder a ctx"
+            },
+            {
+                "name": "hidden",
+                "comment": " Content is hidden\n",
+                "type": "ResponsiveDSL.StyleBuilder a ctx"
+            },
+            {
+                "name": "lg",
+                "comment": " Large device grid property builder.\n",
+                "type": "List.List (Responsive.Device -> ctx -> ResponsiveDSL.Builder a ctx) -> List.List (ctx -> ResponsiveDSL.Builder a ctx)"
+            },
+            {
+                "name": "md",
+                "comment": " Medium device grid property builder.\n",
+                "type": "List.List (Responsive.Device -> ctx -> ResponsiveDSL.Builder a ctx) -> List.List (ctx -> ResponsiveDSL.Builder a ctx)"
+            },
+            {
+                "name": "sm",
+                "comment": " Small device grid property builder.\n",
+                "type": "List.List (Responsive.Device -> ctx -> ResponsiveDSL.Builder a ctx) -> List.List (ctx -> ResponsiveDSL.Builder a ctx)"
+            },
+            {
+                "name": "styles",
+                "comment": " Adds any CSS style you like to a grid element.\n",
+                "type": "List.List Css.Style -> Responsive.Device -> ctx -> ResponsiveDSL.Builder a ctx"
+            },
+            {
+                "name": "visible",
+                "comment": " Content is visible.\n",
+                "type": "ResponsiveDSL.StyleBuilder a ctx"
+            },
+            {
+                "name": "xl",
+                "comment": " Extra large device grid property builder.\n",
+                "type": "List.List (Responsive.Device -> ctx -> ResponsiveDSL.Builder a ctx) -> List.List (ctx -> ResponsiveDSL.Builder a ctx)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "TheSett.Buttons",
+        "comment": " Defines some button styles.\n\n\n# Button constructors.\n\n@docs button\n\n\n# Button stylings\n\n@docs raised\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "button",
+                "comment": " Creates a button.\n",
+                "type": "List.List (List.List (TheSett.Buttons.Button -> ResponsiveDSL.Builder { a | button : ResponsiveDSL.Compatible } TheSett.Buttons.Button)) -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Responsive.ResponsiveStyle -> Html.Styled.Html msg"
+            },
+            {
+                "name": "raised",
+                "comment": " Makes a button look raised, with a shadow.\n",
+                "type": "ResponsiveDSL.StyleBuilder { a | button : ResponsiveDSL.Compatible } TheSett.Buttons.Button"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "TheSett.Cards",
+        "comment": " For building parts of a card:\n\n@docs card, image, title, body, controls\n\nFor styling parts of a card:\n\n@docs src\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "body",
+                "comment": " Defines the body of the card.\n",
+                "type": "List.List (Html.Styled.Html msg) -> TheSett.Cards.Card -> Responsive.ResponsiveStyle -> Html.Styled.Html msg"
+            },
+            {
+                "name": "card",
+                "comment": " Creates a Card container.\n",
+                "type": "List.List (List.List (TheSett.Cards.Card -> ResponsiveDSL.Builder { a | card : ResponsiveDSL.Compatible } TheSett.Cards.Card)) -> List.List (Html.Styled.Attribute msg) -> List.List (TheSett.Cards.Card -> Responsive.ResponsiveStyle -> Html.Styled.Html msg) -> Responsive.ResponsiveStyle -> Html.Styled.Html msg"
+            },
+            {
+                "name": "controls",
+                "comment": " Defines the controls on the card\n",
+                "type": "List.List (Html.Styled.Html msg) -> TheSett.Cards.Card -> Responsive.ResponsiveStyle -> Html.Styled.Html msg"
+            },
+            {
+                "name": "image",
+                "comment": " Creates an image on the card.\n",
+                "type": "List.List (List.List (TheSett.Cards.Card -> ResponsiveDSL.Builder { a | image : ResponsiveDSL.Compatible } TheSett.Cards.Card)) -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> TheSett.Cards.Card -> Responsive.ResponsiveStyle -> Html.Styled.Html msg"
+            },
+            {
+                "name": "src",
+                "comment": " Sets the URL of the image.\n",
+                "type": "String.String -> ResponsiveDSL.StyleBuilder { a | card : Basics.Never } TheSett.Cards.Card"
+            },
+            {
+                "name": "title",
+                "comment": " Creates a title on the card.\n",
+                "type": "String.String -> TheSett.Cards.Card -> Responsive.ResponsiveStyle -> Html.Styled.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "TheSett.Colors",
+        "comment": " Defines some standard colors.\n\n@docs highlight, midGrey, paperWhite, softGrey\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "highlight",
+                "comment": " The primary highlight color\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "midGrey",
+                "comment": " A mig grey.\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "paperWhite",
+                "comment": " An off-white for a more readable background.\n",
+                "type": "Css.Color"
+            },
+            {
+                "name": "softGrey",
+                "comment": " A soft grey.\n",
+                "type": "Css.Color"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "TheSett.Debug",
+        "comment": " DebugStyle provides a debug stylesheet.\n\nThis stylesheet uses repeating background image functions in CSS to display borders\naround different elements of a page in different colors, without chaging the size they\nare rendered at (as setting a border 1px would do).\n\nThe vertical rhtythm is also drawn in as fitn background lines.\n\n\n# The CSS snippet to add to the global style.\n\n@docs global\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "global",
+                "comment": " The debug CSS.\n",
+                "type": "Responsive.ResponsiveStyle -> List.List Css.Global.Snippet"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "TheSett.Laf",
+        "comment": " The Sett Look and Feel\n\n@docs style, fonts, responsiveMeta, devices, wrapper\n\n\n# TEA pattern for managing UI elements with internal state.\n\n@docs Model, Msg, init, update\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Model",
+                "comment": " A model that holds the states for all stateful components by their indexes.\n",
+                "args": [],
+                "type": "TheSett.Textfield.Model {}"
+            },
+            {
+                "name": "Msg",
+                "comment": " Brings together all of the internal messages that stateful components can use.\n",
+                "args": [],
+                "type": "TheSett.Component.Msg TheSett.Textfield.Msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "devices",
+                "comment": " The responsive device configuration.\n",
+                "type": "Responsive.ResponsiveStyle"
+            },
+            {
+                "name": "fonts",
+                "comment": " Links for loading fonts.\n",
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "init",
+                "comment": " Initial empty state for all stateful components.\n",
+                "type": "TheSett.Laf.Model"
+            },
+            {
+                "name": "responsiveMeta",
+                "comment": " Meta tag to include to indiciate that the layout is reponsive.\n",
+                "type": "Html.Styled.Html msg"
+            },
+            {
+                "name": "style",
+                "comment": " The CSS as an HTML <style> element.\n",
+                "type": "Responsive.ResponsiveStyle -> Html.Styled.Html msg"
+            },
+            {
+                "name": "update",
+                "comment": " Processes internal messages for all stateful component types.\n",
+                "type": "(TheSett.Laf.Msg -> m) -> TheSett.Laf.Msg -> TheSett.Laf.Model -> ( TheSett.Laf.Model, Platform.Cmd.Cmd m )"
+            },
+            {
+                "name": "wrapper",
+                "comment": " A responsive wrapper div.\n",
+                "type": "Responsive.ResponsiveStyle -> Css.Style"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "TheSett.Logo",
+        "comment": " The Sett logo as SVG.\n\n@docs logo\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "logo",
+                "comment": " The Sett logo as SVG.\n",
+                "type": "Svg.Svg msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "TheSett.Reset",
+        "comment": " Provides a standard CSS reset stylesheet, aimed at getting consitent\nbehaviour accross browsers.\n\n\n# The CSS snippet to add to the global style.\n\n@docs global\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "global",
+                "comment": " The CSS reset.\n",
+                "type": "List.List Css.Global.Snippet"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "TheSett.Textfield",
+        "comment": " For building text inputs.\n\n\n# Global Snippet to add to the stylesheet.\n\n@docs global\n\n\n# Builders for building different kinds of textfields.\n\n@docs text, password\n\n\n# Builders for configuring textfields.\n\n@docs labelText, labelFloat, error, value, disabled, autocomplete\n\n\n# TEA model for the textfield (internal use).\n\n@docs Model, Msg, update\n\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " The events that text fields produce and consume to maintain their internal state.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Focus",
+                        []
+                    ],
+                    [
+                        "Unfocus",
+                        []
+                    ],
+                    [
+                        "Input",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Model",
+                "comment": " Holds a mapping from ids to textfield state.\n",
+                "args": [
+                    "s"
+                ],
+                "type": "{ s | textfield : TheSett.Component.Indexed TheSett.Textfield.State }"
+            }
+        ],
+        "values": [
+            {
+                "name": "autocomplete",
+                "comment": " Sets autocomplete=off on the input.\n",
+                "type": "Basics.Bool -> ResponsiveDSL.ByDeviceBuilder { a | textfield : ResponsiveDSL.Compatible } TheSett.Textfield.Textfield"
+            },
+            {
+                "name": "disabled",
+                "comment": " Makes the input disabled.\n",
+                "type": "ResponsiveDSL.ByDeviceBuilder { a | textfield : ResponsiveDSL.Compatible } TheSett.Textfield.Textfield"
+            },
+            {
+                "name": "error",
+                "comment": " Sets the error text for the input.\n",
+                "type": "String.String -> ResponsiveDSL.ByDeviceBuilder { a | textfield : ResponsiveDSL.Compatible } TheSett.Textfield.Textfield"
+            },
+            {
+                "name": "global",
+                "comment": " The global style snippet for text fields.\n",
+                "type": "Responsive.ResponsiveStyle -> List.List Css.Global.Snippet"
+            },
+            {
+                "name": "labelFloat",
+                "comment": " Makes the label float on focus or when the textfield contains some value.\n",
+                "type": "ResponsiveDSL.ByDeviceBuilder { a | textfield : ResponsiveDSL.Compatible } TheSett.Textfield.Textfield"
+            },
+            {
+                "name": "labelText",
+                "comment": " Sets the text for the label.\n",
+                "type": "String.String -> ResponsiveDSL.ByDeviceBuilder { a | textfield : ResponsiveDSL.Compatible } TheSett.Textfield.Textfield"
+            },
+            {
+                "name": "password",
+                "comment": " Creates a password text field.\n",
+                "type": "(TheSett.Component.Msg TheSett.Textfield.Msg -> msg) -> TheSett.Component.Index -> TheSett.Textfield.Model s -> ResponsiveDSL.SimpleElementBuilder { a | textfield : ResponsiveDSL.Compatible } TheSett.Textfield.Textfield msg"
+            },
+            {
+                "name": "text",
+                "comment": " Creates a plain text field.\n",
+                "type": "(TheSett.Component.Msg TheSett.Textfield.Msg -> msg) -> TheSett.Component.Index -> TheSett.Textfield.Model s -> ResponsiveDSL.SimpleElementBuilder { a | textfield : ResponsiveDSL.Compatible } TheSett.Textfield.Textfield msg"
+            },
+            {
+                "name": "update",
+                "comment": " Deals with text field messages, by locating a text field by its id, or creating a\nnew default state for that text field is one does not exist yet.\n\nThe internal message is then processed against that text fields state.\n\n",
+                "type": "(TheSett.Component.Msg TheSett.Textfield.Msg -> msg) -> TheSett.Textfield.Msg -> TheSett.Component.Index -> TheSett.Textfield.Model s -> ( Maybe.Maybe (TheSett.Textfield.Model s), Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "value",
+                "comment": " Sets the initial value for the input.\n",
+                "type": "String.String -> ResponsiveDSL.ByDeviceBuilder { a | textfield : ResponsiveDSL.Compatible } TheSett.Textfield.Textfield"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "TheSett.TopHeader",
+        "comment": " Standardizing the top banner and its variations.\n\n@docs topHeader\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "topHeader",
+                "comment": " Standard top header.\n",
+                "type": "Responsive.ResponsiveStyle -> Html.Styled.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "TypeScale",
+        "comment": "\n\n\n# For specifying the type scale and descibing font sizes in levels.\n\n@docs TypeScale, FontSizeLevel, typeScale\n\n\n# Type scales.\n\n@docs minorSecond, majorSecond, minorThird, majorThird, perfectFourth, augmentedFourth\n@docs perfectFifth, goldenRatio\n\n\n# Font size levels.\n\n@docs milli, base, h1, h2, h3, h4\n\n",
+        "unions": [
+            {
+                "name": "FontSizeLevel",
+                "comment": " Describes font sizes as a 'level'. The level is the number of steps from the base\nlevel at 1. A minimum number of rhythm lines is also specified, to aid vertical spacing.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "FontSizeLevel",
+                        [
+                            "{ level : Basics.Int, minLines : Basics.Int }"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "TypeScale",
+                "comment": " A function that maps a font 'level' to a scaling from the default size.\n",
+                "args": [],
+                "type": "Basics.Int -> Basics.Float"
+            }
+        ],
+        "values": [
+            {
+                "name": "augmentedFourth",
+                "comment": " The augmented fourth ratio.\n",
+                "type": "TypeScale.TypeScale"
+            },
+            {
+                "name": "base",
+                "comment": " The base level\n",
+                "type": "TypeScale.FontSizeLevel"
+            },
+            {
+                "name": "goldenRatio",
+                "comment": " The golden ratio.\n",
+                "type": "TypeScale.TypeScale"
+            },
+            {
+                "name": "h1",
+                "comment": " The h1 level\n",
+                "type": "TypeScale.FontSizeLevel"
+            },
+            {
+                "name": "h2",
+                "comment": " The h2 level\n",
+                "type": "TypeScale.FontSizeLevel"
+            },
+            {
+                "name": "h3",
+                "comment": " The h3 level\n",
+                "type": "TypeScale.FontSizeLevel"
+            },
+            {
+                "name": "h4",
+                "comment": " The h4 level\n",
+                "type": "TypeScale.FontSizeLevel"
+            },
+            {
+                "name": "majorSecond",
+                "comment": " The major second ratio.\n",
+                "type": "TypeScale.TypeScale"
+            },
+            {
+                "name": "majorThird",
+                "comment": " The major third ratio.\n",
+                "type": "TypeScale.TypeScale"
+            },
+            {
+                "name": "milli",
+                "comment": " A level down from the base level.\n",
+                "type": "TypeScale.FontSizeLevel"
+            },
+            {
+                "name": "minorSecond",
+                "comment": " The minor second ratio.\n",
+                "type": "TypeScale.TypeScale"
+            },
+            {
+                "name": "minorThird",
+                "comment": " The minor third ratio.\n",
+                "type": "TypeScale.TypeScale"
+            },
+            {
+                "name": "perfectFifth",
+                "comment": " The perfect fifth ratio.\n",
+                "type": "TypeScale.TypeScale"
+            },
+            {
+                "name": "perfectFourth",
+                "comment": " The perfect fourth ratio.\n",
+                "type": "TypeScale.TypeScale"
+            },
+            {
+                "name": "typeScale",
+                "comment": " Build a TypeScale function from a ratio between font levels.\n",
+                "type": "Basics.Float -> Basics.Int -> Basics.Float"
+            }
+        ],
+        "binops": []
+    }
+]

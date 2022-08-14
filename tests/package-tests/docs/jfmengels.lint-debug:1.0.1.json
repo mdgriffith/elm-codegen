@@ -1,0 +1,16 @@
+[
+    {
+        "name": "NoDebug",
+        "comment": " Forbid the use of the [`Debug`](https://package.elm-lang.org/packages/elm/core/latest/Debug) module before it goes into production or fails in the CI.\n\n\n# Rule\n\n@docs rule\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": " Forbid the use of the [`Debug`](https://package.elm-lang.org/packages/elm/core/latest/Debug) module before it goes into production or fails in the CI.\n\n    config =\n        [ NoDebug.rule\n        ]\n\n\n## Fail\n\n    if Debug.log \"condition\" condition then\n        a\n\n    else\n        b\n\n    if condition then\n        Debug.todo \"Nooo!\"\n\n    else\n        value\n\n\n## Success\n\n    if condition then\n        a\n\n    else\n        b\n\n\n# When (not) to use this rule\n\nYou should use this rule if you're developing a package meant to be published,\nor an application that is put into production, and wish to know about the use of\nthe [`Debug`](https://package.elm-lang.org/packages/elm/core/latest/Debug)\nmodule before committing your changes.\n\nYou should not use this rule if you are developing an application that is not\nput into production, and you do not care about having stray debug logs or\nruntime exceptions caused by [`Debug.todo`](https://package.elm-lang.org/packages/elm/core/latest/Debug#todo),\nand you do not ship to production.\n\n",
+                "type": "Lint.Rule.Rule"
+            }
+        ],
+        "binops": []
+    }
+]

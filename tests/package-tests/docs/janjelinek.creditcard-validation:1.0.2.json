@@ -1,0 +1,16 @@
+[
+    {
+        "name": "Payment.CreditCard.Validation",
+        "comment": " This library can be used to validate a credit card number. It implements\nthe Luhn algorithm which checks for the checksum of the card. In general it\nworks with credit card numbers of all types (Visa, Mastercard, Maestro,\nAmerican Express, ...).\n\nBehind the scenes it transforms the given number into a list of strings to\ncreate single digits. This implementation may change in future. API will stay\nas is.\n\nThe main use case is the validation of credit card numbers entered by users in\nan input field. To avoid dependencies to parser libraries there is no\nfunction with the signature of String -> Bool.\n\n\n# Definition\n\n@docs isValid\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "isValid",
+                "comment": " Check the given credit card number for validity\n",
+                "type": "String.String -> Basics.Bool"
+            }
+        ],
+        "binops": []
+    }
+]

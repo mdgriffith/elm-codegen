@@ -1,0 +1,2174 @@
+[
+    {
+        "name": "TimeZone",
+        "comment": " This library provides time zone data from the `2022b` release of the IANA\nTime Zone Database.\n\n@docs version\n\n\n## Local zone\n\n@docs getZone, Error\n\n\n## Zones\n\n@docs zones\n\n---\n\nEach unevaluated zone is named after its zone name (e.g.\n`America/New_York`), where slashes are replaced by `__`, dashes are replaced\nby `_`, and the name is lowercased. For example, `America/Port-au-Prince`\nbecomes `america__port_au_prince`.\n\n@docs africa__abidjan, africa__accra, africa__addis_ababa, africa__algiers, africa__asmara, africa__bamako, africa__bangui, africa__banjul, africa__bissau, africa__blantyre, africa__brazzaville, africa__bujumbura, africa__cairo, africa__casablanca, africa__ceuta, africa__conakry, africa__dakar, africa__dar_es_salaam, africa__djibouti, africa__douala, africa__el_aaiun, africa__freetown, africa__gaborone, africa__harare, africa__johannesburg, africa__juba, africa__kampala, africa__khartoum, africa__kigali, africa__kinshasa, africa__lagos, africa__libreville, africa__lome, africa__luanda, africa__lubumbashi, africa__lusaka, africa__malabo, africa__maputo, africa__maseru, africa__mbabane, africa__mogadishu, africa__monrovia, africa__nairobi, africa__ndjamena, africa__niamey, africa__nouakchott, africa__ouagadougou, africa__porto_novo, africa__sao_tome, africa__tripoli, africa__tunis, africa__windhoek, america__adak, america__anchorage, america__anguilla, america__antigua, america__araguaina, america__argentina__buenos_aires, america__argentina__catamarca, america__argentina__cordoba, america__argentina__jujuy, america__argentina__la_rioja, america__argentina__mendoza, america__argentina__rio_gallegos, america__argentina__salta, america__argentina__san_juan, america__argentina__san_luis, america__argentina__tucuman, america__argentina__ushuaia, america__aruba, america__asuncion, america__atikokan, america__bahia, america__bahia_banderas, america__barbados, america__belem, america__belize, america__blanc_sablon, america__boa_vista, america__bogota, america__boise, america__cambridge_bay, america__campo_grande, america__cancun, america__caracas, america__cayenne, america__cayman, america__chicago, america__chihuahua, america__costa_rica, america__creston, america__cuiaba, america__curacao, america__danmarkshavn, america__dawson, america__dawson_creek, america__denver, america__detroit, america__dominica, america__edmonton, america__eirunepe, america__el_salvador, america__fort_nelson, america__fortaleza, america__glace_bay, america__goose_bay, america__grand_turk, america__grenada, america__guadeloupe, america__guatemala, america__guayaquil, america__guyana, america__halifax, america__havana, america__hermosillo, america__indiana__indianapolis, america__indiana__knox, america__indiana__marengo, america__indiana__petersburg, america__indiana__tell_city, america__indiana__vevay, america__indiana__vincennes, america__indiana__winamac, america__inuvik, america__iqaluit, america__jamaica, america__juneau, america__kentucky__louisville, america__kentucky__monticello, america__kralendijk, america__la_paz, america__lima, america__los_angeles, america__lower_princes, america__maceio, america__managua, america__manaus, america__marigot, america__martinique, america__matamoros, america__mazatlan, america__menominee, america__merida, america__metlakatla, america__mexico_city, america__miquelon, america__moncton, america__monterrey, america__montevideo, america__montserrat, america__nassau, america__new_york, america__nipigon, america__nome, america__noronha, america__north_dakota__beulah, america__north_dakota__center, america__north_dakota__new_salem, america__nuuk, america__ojinaga, america__panama, america__pangnirtung, america__paramaribo, america__phoenix, america__port_au_prince, america__port_of_spain, america__porto_velho, america__puerto_rico, america__punta_arenas, america__rainy_river, america__rankin_inlet, america__recife, america__regina, america__resolute, america__rio_branco, america__santarem, america__santiago, america__santo_domingo, america__sao_paulo, america__scoresbysund, america__sitka, america__st_barthelemy, america__st_johns, america__st_kitts, america__st_lucia, america__st_thomas, america__st_vincent, america__swift_current, america__tegucigalpa, america__thule, america__thunder_bay, america__tijuana, america__toronto, america__tortola, america__vancouver, america__whitehorse, america__winnipeg, america__yakutat, america__yellowknife, antarctica__casey, antarctica__davis, antarctica__dumontdurville, antarctica__macquarie, antarctica__mawson, antarctica__mcmurdo, antarctica__palmer, antarctica__rothera, antarctica__syowa, antarctica__troll, antarctica__vostok, arctic__longyearbyen, asia__aden, asia__almaty, asia__amman, asia__anadyr, asia__aqtau, asia__aqtobe, asia__ashgabat, asia__atyrau, asia__baghdad, asia__bahrain, asia__baku, asia__bangkok, asia__barnaul, asia__beirut, asia__bishkek, asia__brunei, asia__chita, asia__choibalsan, asia__colombo, asia__damascus, asia__dhaka, asia__dili, asia__dubai, asia__dushanbe, asia__famagusta, asia__gaza, asia__hebron, asia__ho_chi_minh, asia__hong_kong, asia__hovd, asia__irkutsk, asia__istanbul, asia__jakarta, asia__jayapura, asia__jerusalem, asia__kabul, asia__kamchatka, asia__karachi, asia__kathmandu, asia__khandyga, asia__kolkata, asia__krasnoyarsk, asia__kuala_lumpur, asia__kuching, asia__kuwait, asia__macau, asia__magadan, asia__makassar, asia__manila, asia__muscat, asia__nicosia, asia__novokuznetsk, asia__novosibirsk, asia__omsk, asia__oral, asia__phnom_penh, asia__pontianak, asia__pyongyang, asia__qatar, asia__qostanay, asia__qyzylorda, asia__riyadh, asia__sakhalin, asia__samarkand, asia__seoul, asia__shanghai, asia__singapore, asia__srednekolymsk, asia__taipei, asia__tashkent, asia__tbilisi, asia__tehran, asia__thimphu, asia__tokyo, asia__tomsk, asia__ulaanbaatar, asia__urumqi, asia__ust_nera, asia__vientiane, asia__vladivostok, asia__yakutsk, asia__yangon, asia__yekaterinburg, asia__yerevan, atlantic__azores, atlantic__bermuda, atlantic__canary, atlantic__cape_verde, atlantic__faroe, atlantic__madeira, atlantic__reykjavik, atlantic__south_georgia, atlantic__st_helena, atlantic__stanley, australia__adelaide, australia__brisbane, australia__broken_hill, australia__darwin, australia__eucla, australia__hobart, australia__lindeman, australia__lord_howe, australia__melbourne, australia__perth, australia__sydney, europe__amsterdam, europe__andorra, europe__astrakhan, europe__athens, europe__belgrade, europe__berlin, europe__bratislava, europe__brussels, europe__bucharest, europe__budapest, europe__busingen, europe__chisinau, europe__copenhagen, europe__dublin, europe__gibraltar, europe__guernsey, europe__helsinki, europe__isle_of_man, europe__istanbul, europe__jersey, europe__kaliningrad, europe__kirov, europe__kyiv, europe__lisbon, europe__ljubljana, europe__london, europe__luxembourg, europe__madrid, europe__malta, europe__mariehamn, europe__minsk, europe__monaco, europe__moscow, europe__nicosia, europe__oslo, europe__paris, europe__podgorica, europe__prague, europe__riga, europe__rome, europe__samara, europe__san_marino, europe__sarajevo, europe__saratov, europe__simferopol, europe__skopje, europe__sofia, europe__stockholm, europe__tallinn, europe__tirane, europe__ulyanovsk, europe__uzhgorod, europe__vaduz, europe__vatican, europe__vienna, europe__vilnius, europe__volgograd, europe__warsaw, europe__zagreb, europe__zaporozhye, europe__zurich, indian__antananarivo, indian__chagos, indian__christmas, indian__cocos, indian__comoro, indian__kerguelen, indian__mahe, indian__maldives, indian__mauritius, indian__mayotte, indian__reunion, pacific__apia, pacific__auckland, pacific__bougainville, pacific__chatham, pacific__chuuk, pacific__easter, pacific__efate, pacific__fakaofo, pacific__fiji, pacific__funafuti, pacific__galapagos, pacific__gambier, pacific__guadalcanal, pacific__guam, pacific__honolulu, pacific__kanton, pacific__kiritimati, pacific__kosrae, pacific__kwajalein, pacific__majuro, pacific__marquesas, pacific__midway, pacific__nauru, pacific__niue, pacific__norfolk, pacific__noumea, pacific__pago_pago, pacific__palau, pacific__pitcairn, pacific__pohnpei, pacific__port_moresby, pacific__rarotonga, pacific__saipan, pacific__tahiti, pacific__tarawa, pacific__tongatapu, pacific__wake, pacific__wallis\n\n",
+        "unions": [
+            {
+                "name": "Error",
+                "comment": " Represents an error that may occur when trying to get the local zone.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NoZoneName",
+                        []
+                    ],
+                    [
+                        "NoDataForZoneName",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "africa__abidjan",
+                "comment": " `Africa/Abidjan`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "africa__accra",
+                "comment": " `Africa/Accra` (alias of `Africa/Abidjan`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "africa__addis_ababa",
+                "comment": " `Africa/Addis_Ababa` (alias of `Africa/Nairobi`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "africa__algiers",
+                "comment": " `Africa/Algiers`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "africa__asmara",
+                "comment": " `Africa/Asmara` (alias of `Africa/Nairobi`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "africa__bamako",
+                "comment": " `Africa/Bamako` (alias of `Africa/Abidjan`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "africa__bangui",
+                "comment": " `Africa/Bangui` (alias of `Africa/Lagos`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "africa__banjul",
+                "comment": " `Africa/Banjul` (alias of `Africa/Abidjan`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "africa__bissau",
+                "comment": " `Africa/Bissau`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "africa__blantyre",
+                "comment": " `Africa/Blantyre` (alias of `Africa/Maputo`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "africa__brazzaville",
+                "comment": " `Africa/Brazzaville` (alias of `Africa/Lagos`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "africa__bujumbura",
+                "comment": " `Africa/Bujumbura` (alias of `Africa/Maputo`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "africa__cairo",
+                "comment": " `Africa/Cairo`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "africa__casablanca",
+                "comment": " `Africa/Casablanca`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "africa__ceuta",
+                "comment": " `Africa/Ceuta`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "africa__conakry",
+                "comment": " `Africa/Conakry` (alias of `Africa/Abidjan`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "africa__dakar",
+                "comment": " `Africa/Dakar` (alias of `Africa/Abidjan`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "africa__dar_es_salaam",
+                "comment": " `Africa/Dar_es_Salaam` (alias of `Africa/Nairobi`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "africa__djibouti",
+                "comment": " `Africa/Djibouti` (alias of `Africa/Nairobi`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "africa__douala",
+                "comment": " `Africa/Douala` (alias of `Africa/Lagos`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "africa__el_aaiun",
+                "comment": " `Africa/El_Aaiun`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "africa__freetown",
+                "comment": " `Africa/Freetown` (alias of `Africa/Abidjan`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "africa__gaborone",
+                "comment": " `Africa/Gaborone` (alias of `Africa/Maputo`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "africa__harare",
+                "comment": " `Africa/Harare` (alias of `Africa/Maputo`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "africa__johannesburg",
+                "comment": " `Africa/Johannesburg`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "africa__juba",
+                "comment": " `Africa/Juba`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "africa__kampala",
+                "comment": " `Africa/Kampala` (alias of `Africa/Nairobi`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "africa__khartoum",
+                "comment": " `Africa/Khartoum`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "africa__kigali",
+                "comment": " `Africa/Kigali` (alias of `Africa/Maputo`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "africa__kinshasa",
+                "comment": " `Africa/Kinshasa` (alias of `Africa/Lagos`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "africa__lagos",
+                "comment": " `Africa/Lagos`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "africa__libreville",
+                "comment": " `Africa/Libreville` (alias of `Africa/Lagos`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "africa__lome",
+                "comment": " `Africa/Lome` (alias of `Africa/Abidjan`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "africa__luanda",
+                "comment": " `Africa/Luanda` (alias of `Africa/Lagos`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "africa__lubumbashi",
+                "comment": " `Africa/Lubumbashi` (alias of `Africa/Maputo`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "africa__lusaka",
+                "comment": " `Africa/Lusaka` (alias of `Africa/Maputo`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "africa__malabo",
+                "comment": " `Africa/Malabo` (alias of `Africa/Lagos`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "africa__maputo",
+                "comment": " `Africa/Maputo`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "africa__maseru",
+                "comment": " `Africa/Maseru` (alias of `Africa/Johannesburg`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "africa__mbabane",
+                "comment": " `Africa/Mbabane` (alias of `Africa/Johannesburg`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "africa__mogadishu",
+                "comment": " `Africa/Mogadishu` (alias of `Africa/Nairobi`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "africa__monrovia",
+                "comment": " `Africa/Monrovia`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "africa__nairobi",
+                "comment": " `Africa/Nairobi`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "africa__ndjamena",
+                "comment": " `Africa/Ndjamena`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "africa__niamey",
+                "comment": " `Africa/Niamey` (alias of `Africa/Lagos`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "africa__nouakchott",
+                "comment": " `Africa/Nouakchott` (alias of `Africa/Abidjan`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "africa__ouagadougou",
+                "comment": " `Africa/Ouagadougou` (alias of `Africa/Abidjan`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "africa__porto_novo",
+                "comment": " `Africa/Porto-Novo` (alias of `Africa/Lagos`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "africa__sao_tome",
+                "comment": " `Africa/Sao_Tome`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "africa__tripoli",
+                "comment": " `Africa/Tripoli`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "africa__tunis",
+                "comment": " `Africa/Tunis`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "africa__windhoek",
+                "comment": " `Africa/Windhoek`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__adak",
+                "comment": " `America/Adak`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__anchorage",
+                "comment": " `America/Anchorage`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__anguilla",
+                "comment": " `America/Anguilla` (alias of `America/Puerto_Rico`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__antigua",
+                "comment": " `America/Antigua` (alias of `America/Puerto_Rico`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__araguaina",
+                "comment": " `America/Araguaina`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__argentina__buenos_aires",
+                "comment": " `America/Argentina/Buenos_Aires`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__argentina__catamarca",
+                "comment": " `America/Argentina/Catamarca`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__argentina__cordoba",
+                "comment": " `America/Argentina/Cordoba`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__argentina__jujuy",
+                "comment": " `America/Argentina/Jujuy`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__argentina__la_rioja",
+                "comment": " `America/Argentina/La_Rioja`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__argentina__mendoza",
+                "comment": " `America/Argentina/Mendoza`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__argentina__rio_gallegos",
+                "comment": " `America/Argentina/Rio_Gallegos`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__argentina__salta",
+                "comment": " `America/Argentina/Salta`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__argentina__san_juan",
+                "comment": " `America/Argentina/San_Juan`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__argentina__san_luis",
+                "comment": " `America/Argentina/San_Luis`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__argentina__tucuman",
+                "comment": " `America/Argentina/Tucuman`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__argentina__ushuaia",
+                "comment": " `America/Argentina/Ushuaia`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__aruba",
+                "comment": " `America/Aruba` (alias of `America/Puerto_Rico`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__asuncion",
+                "comment": " `America/Asuncion`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__atikokan",
+                "comment": " `America/Atikokan` (alias of `America/Panama`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__bahia",
+                "comment": " `America/Bahia`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__bahia_banderas",
+                "comment": " `America/Bahia_Banderas`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__barbados",
+                "comment": " `America/Barbados`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__belem",
+                "comment": " `America/Belem`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__belize",
+                "comment": " `America/Belize`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__blanc_sablon",
+                "comment": " `America/Blanc-Sablon` (alias of `America/Puerto_Rico`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__boa_vista",
+                "comment": " `America/Boa_Vista`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__bogota",
+                "comment": " `America/Bogota`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__boise",
+                "comment": " `America/Boise`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__cambridge_bay",
+                "comment": " `America/Cambridge_Bay`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__campo_grande",
+                "comment": " `America/Campo_Grande`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__cancun",
+                "comment": " `America/Cancun`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__caracas",
+                "comment": " `America/Caracas`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__cayenne",
+                "comment": " `America/Cayenne`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__cayman",
+                "comment": " `America/Cayman` (alias of `America/Panama`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__chicago",
+                "comment": " `America/Chicago`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__chihuahua",
+                "comment": " `America/Chihuahua`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__costa_rica",
+                "comment": " `America/Costa_Rica`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__creston",
+                "comment": " `America/Creston` (alias of `America/Phoenix`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__cuiaba",
+                "comment": " `America/Cuiaba`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__curacao",
+                "comment": " `America/Curacao` (alias of `America/Puerto_Rico`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__danmarkshavn",
+                "comment": " `America/Danmarkshavn`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__dawson",
+                "comment": " `America/Dawson`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__dawson_creek",
+                "comment": " `America/Dawson_Creek`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__denver",
+                "comment": " `America/Denver`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__detroit",
+                "comment": " `America/Detroit`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__dominica",
+                "comment": " `America/Dominica` (alias of `America/Puerto_Rico`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__edmonton",
+                "comment": " `America/Edmonton`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__eirunepe",
+                "comment": " `America/Eirunepe`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__el_salvador",
+                "comment": " `America/El_Salvador`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__fort_nelson",
+                "comment": " `America/Fort_Nelson`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__fortaleza",
+                "comment": " `America/Fortaleza`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__glace_bay",
+                "comment": " `America/Glace_Bay`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__goose_bay",
+                "comment": " `America/Goose_Bay`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__grand_turk",
+                "comment": " `America/Grand_Turk`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__grenada",
+                "comment": " `America/Grenada` (alias of `America/Puerto_Rico`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__guadeloupe",
+                "comment": " `America/Guadeloupe` (alias of `America/Puerto_Rico`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__guatemala",
+                "comment": " `America/Guatemala`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__guayaquil",
+                "comment": " `America/Guayaquil`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__guyana",
+                "comment": " `America/Guyana`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__halifax",
+                "comment": " `America/Halifax`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__havana",
+                "comment": " `America/Havana`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__hermosillo",
+                "comment": " `America/Hermosillo`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__indiana__indianapolis",
+                "comment": " `America/Indiana/Indianapolis`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__indiana__knox",
+                "comment": " `America/Indiana/Knox`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__indiana__marengo",
+                "comment": " `America/Indiana/Marengo`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__indiana__petersburg",
+                "comment": " `America/Indiana/Petersburg`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__indiana__tell_city",
+                "comment": " `America/Indiana/Tell_City`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__indiana__vevay",
+                "comment": " `America/Indiana/Vevay`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__indiana__vincennes",
+                "comment": " `America/Indiana/Vincennes`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__indiana__winamac",
+                "comment": " `America/Indiana/Winamac`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__inuvik",
+                "comment": " `America/Inuvik`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__iqaluit",
+                "comment": " `America/Iqaluit`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__jamaica",
+                "comment": " `America/Jamaica`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__juneau",
+                "comment": " `America/Juneau`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__kentucky__louisville",
+                "comment": " `America/Kentucky/Louisville`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__kentucky__monticello",
+                "comment": " `America/Kentucky/Monticello`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__kralendijk",
+                "comment": " `America/Kralendijk` (alias of `America/Puerto_Rico`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__la_paz",
+                "comment": " `America/La_Paz`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__lima",
+                "comment": " `America/Lima`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__los_angeles",
+                "comment": " `America/Los_Angeles`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__lower_princes",
+                "comment": " `America/Lower_Princes` (alias of `America/Puerto_Rico`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__maceio",
+                "comment": " `America/Maceio`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__managua",
+                "comment": " `America/Managua`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__manaus",
+                "comment": " `America/Manaus`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__marigot",
+                "comment": " `America/Marigot` (alias of `America/Puerto_Rico`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__martinique",
+                "comment": " `America/Martinique`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__matamoros",
+                "comment": " `America/Matamoros`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__mazatlan",
+                "comment": " `America/Mazatlan`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__menominee",
+                "comment": " `America/Menominee`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__merida",
+                "comment": " `America/Merida`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__metlakatla",
+                "comment": " `America/Metlakatla`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__mexico_city",
+                "comment": " `America/Mexico_City`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__miquelon",
+                "comment": " `America/Miquelon`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__moncton",
+                "comment": " `America/Moncton`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__monterrey",
+                "comment": " `America/Monterrey`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__montevideo",
+                "comment": " `America/Montevideo`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__montserrat",
+                "comment": " `America/Montserrat` (alias of `America/Puerto_Rico`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__nassau",
+                "comment": " `America/Nassau` (alias of `America/Toronto`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__new_york",
+                "comment": " `America/New_York`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__nipigon",
+                "comment": " `America/Nipigon`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__nome",
+                "comment": " `America/Nome`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__noronha",
+                "comment": " `America/Noronha`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__north_dakota__beulah",
+                "comment": " `America/North_Dakota/Beulah`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__north_dakota__center",
+                "comment": " `America/North_Dakota/Center`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__north_dakota__new_salem",
+                "comment": " `America/North_Dakota/New_Salem`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__nuuk",
+                "comment": " `America/Nuuk`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__ojinaga",
+                "comment": " `America/Ojinaga`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__panama",
+                "comment": " `America/Panama`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__pangnirtung",
+                "comment": " `America/Pangnirtung`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__paramaribo",
+                "comment": " `America/Paramaribo`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__phoenix",
+                "comment": " `America/Phoenix`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__port_au_prince",
+                "comment": " `America/Port-au-Prince`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__port_of_spain",
+                "comment": " `America/Port_of_Spain` (alias of `America/Puerto_Rico`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__porto_velho",
+                "comment": " `America/Porto_Velho`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__puerto_rico",
+                "comment": " `America/Puerto_Rico`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__punta_arenas",
+                "comment": " `America/Punta_Arenas`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__rainy_river",
+                "comment": " `America/Rainy_River`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__rankin_inlet",
+                "comment": " `America/Rankin_Inlet`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__recife",
+                "comment": " `America/Recife`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__regina",
+                "comment": " `America/Regina`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__resolute",
+                "comment": " `America/Resolute`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__rio_branco",
+                "comment": " `America/Rio_Branco`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__santarem",
+                "comment": " `America/Santarem`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__santiago",
+                "comment": " `America/Santiago`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__santo_domingo",
+                "comment": " `America/Santo_Domingo`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__sao_paulo",
+                "comment": " `America/Sao_Paulo`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__scoresbysund",
+                "comment": " `America/Scoresbysund`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__sitka",
+                "comment": " `America/Sitka`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__st_barthelemy",
+                "comment": " `America/St_Barthelemy` (alias of `America/Puerto_Rico`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__st_johns",
+                "comment": " `America/St_Johns`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__st_kitts",
+                "comment": " `America/St_Kitts` (alias of `America/Puerto_Rico`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__st_lucia",
+                "comment": " `America/St_Lucia` (alias of `America/Puerto_Rico`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__st_thomas",
+                "comment": " `America/St_Thomas` (alias of `America/Puerto_Rico`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__st_vincent",
+                "comment": " `America/St_Vincent` (alias of `America/Puerto_Rico`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__swift_current",
+                "comment": " `America/Swift_Current`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__tegucigalpa",
+                "comment": " `America/Tegucigalpa`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__thule",
+                "comment": " `America/Thule`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__thunder_bay",
+                "comment": " `America/Thunder_Bay`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__tijuana",
+                "comment": " `America/Tijuana`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__toronto",
+                "comment": " `America/Toronto`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__tortola",
+                "comment": " `America/Tortola` (alias of `America/Puerto_Rico`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__vancouver",
+                "comment": " `America/Vancouver`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__whitehorse",
+                "comment": " `America/Whitehorse`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__winnipeg",
+                "comment": " `America/Winnipeg`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__yakutat",
+                "comment": " `America/Yakutat`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "america__yellowknife",
+                "comment": " `America/Yellowknife`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "antarctica__casey",
+                "comment": " `Antarctica/Casey`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "antarctica__davis",
+                "comment": " `Antarctica/Davis`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "antarctica__dumontdurville",
+                "comment": " `Antarctica/DumontDUrville` (alias of `Pacific/Port_Moresby`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "antarctica__macquarie",
+                "comment": " `Antarctica/Macquarie`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "antarctica__mawson",
+                "comment": " `Antarctica/Mawson`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "antarctica__mcmurdo",
+                "comment": " `Antarctica/McMurdo` (alias of `Pacific/Auckland`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "antarctica__palmer",
+                "comment": " `Antarctica/Palmer`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "antarctica__rothera",
+                "comment": " `Antarctica/Rothera`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "antarctica__syowa",
+                "comment": " `Antarctica/Syowa` (alias of `Asia/Riyadh`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "antarctica__troll",
+                "comment": " `Antarctica/Troll`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "antarctica__vostok",
+                "comment": " `Antarctica/Vostok` (alias of `Asia/Urumqi`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "arctic__longyearbyen",
+                "comment": " `Arctic/Longyearbyen` (alias of `Europe/Berlin`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__aden",
+                "comment": " `Asia/Aden` (alias of `Asia/Riyadh`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__almaty",
+                "comment": " `Asia/Almaty`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__amman",
+                "comment": " `Asia/Amman`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__anadyr",
+                "comment": " `Asia/Anadyr`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__aqtau",
+                "comment": " `Asia/Aqtau`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__aqtobe",
+                "comment": " `Asia/Aqtobe`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__ashgabat",
+                "comment": " `Asia/Ashgabat`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__atyrau",
+                "comment": " `Asia/Atyrau`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__baghdad",
+                "comment": " `Asia/Baghdad`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__bahrain",
+                "comment": " `Asia/Bahrain` (alias of `Asia/Qatar`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__baku",
+                "comment": " `Asia/Baku`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__bangkok",
+                "comment": " `Asia/Bangkok`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__barnaul",
+                "comment": " `Asia/Barnaul`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__beirut",
+                "comment": " `Asia/Beirut`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__bishkek",
+                "comment": " `Asia/Bishkek`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__brunei",
+                "comment": " `Asia/Brunei` (alias of `Asia/Kuching`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__chita",
+                "comment": " `Asia/Chita`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__choibalsan",
+                "comment": " `Asia/Choibalsan`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__colombo",
+                "comment": " `Asia/Colombo`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__damascus",
+                "comment": " `Asia/Damascus`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__dhaka",
+                "comment": " `Asia/Dhaka`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__dili",
+                "comment": " `Asia/Dili`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__dubai",
+                "comment": " `Asia/Dubai`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__dushanbe",
+                "comment": " `Asia/Dushanbe`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__famagusta",
+                "comment": " `Asia/Famagusta`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__gaza",
+                "comment": " `Asia/Gaza`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__hebron",
+                "comment": " `Asia/Hebron`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__ho_chi_minh",
+                "comment": " `Asia/Ho_Chi_Minh`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__hong_kong",
+                "comment": " `Asia/Hong_Kong`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__hovd",
+                "comment": " `Asia/Hovd`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__irkutsk",
+                "comment": " `Asia/Irkutsk`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__istanbul",
+                "comment": " `Asia/Istanbul` (alias of `Europe/Istanbul`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__jakarta",
+                "comment": " `Asia/Jakarta`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__jayapura",
+                "comment": " `Asia/Jayapura`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__jerusalem",
+                "comment": " `Asia/Jerusalem`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__kabul",
+                "comment": " `Asia/Kabul`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__kamchatka",
+                "comment": " `Asia/Kamchatka`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__karachi",
+                "comment": " `Asia/Karachi`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__kathmandu",
+                "comment": " `Asia/Kathmandu`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__khandyga",
+                "comment": " `Asia/Khandyga`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__kolkata",
+                "comment": " `Asia/Kolkata`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__krasnoyarsk",
+                "comment": " `Asia/Krasnoyarsk`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__kuala_lumpur",
+                "comment": " `Asia/Kuala_Lumpur` (alias of `Asia/Singapore`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__kuching",
+                "comment": " `Asia/Kuching`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__kuwait",
+                "comment": " `Asia/Kuwait` (alias of `Asia/Riyadh`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__macau",
+                "comment": " `Asia/Macau`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__magadan",
+                "comment": " `Asia/Magadan`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__makassar",
+                "comment": " `Asia/Makassar`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__manila",
+                "comment": " `Asia/Manila`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__muscat",
+                "comment": " `Asia/Muscat` (alias of `Asia/Dubai`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__nicosia",
+                "comment": " `Asia/Nicosia`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__novokuznetsk",
+                "comment": " `Asia/Novokuznetsk`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__novosibirsk",
+                "comment": " `Asia/Novosibirsk`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__omsk",
+                "comment": " `Asia/Omsk`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__oral",
+                "comment": " `Asia/Oral`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__phnom_penh",
+                "comment": " `Asia/Phnom_Penh` (alias of `Asia/Bangkok`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__pontianak",
+                "comment": " `Asia/Pontianak`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__pyongyang",
+                "comment": " `Asia/Pyongyang`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__qatar",
+                "comment": " `Asia/Qatar`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__qostanay",
+                "comment": " `Asia/Qostanay`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__qyzylorda",
+                "comment": " `Asia/Qyzylorda`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__riyadh",
+                "comment": " `Asia/Riyadh`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__sakhalin",
+                "comment": " `Asia/Sakhalin`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__samarkand",
+                "comment": " `Asia/Samarkand`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__seoul",
+                "comment": " `Asia/Seoul`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__shanghai",
+                "comment": " `Asia/Shanghai`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__singapore",
+                "comment": " `Asia/Singapore`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__srednekolymsk",
+                "comment": " `Asia/Srednekolymsk`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__taipei",
+                "comment": " `Asia/Taipei`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__tashkent",
+                "comment": " `Asia/Tashkent`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__tbilisi",
+                "comment": " `Asia/Tbilisi`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__tehran",
+                "comment": " `Asia/Tehran`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__thimphu",
+                "comment": " `Asia/Thimphu`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__tokyo",
+                "comment": " `Asia/Tokyo`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__tomsk",
+                "comment": " `Asia/Tomsk`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__ulaanbaatar",
+                "comment": " `Asia/Ulaanbaatar`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__urumqi",
+                "comment": " `Asia/Urumqi`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__ust_nera",
+                "comment": " `Asia/Ust-Nera`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__vientiane",
+                "comment": " `Asia/Vientiane` (alias of `Asia/Bangkok`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__vladivostok",
+                "comment": " `Asia/Vladivostok`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__yakutsk",
+                "comment": " `Asia/Yakutsk`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__yangon",
+                "comment": " `Asia/Yangon`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__yekaterinburg",
+                "comment": " `Asia/Yekaterinburg`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "asia__yerevan",
+                "comment": " `Asia/Yerevan`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "atlantic__azores",
+                "comment": " `Atlantic/Azores`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "atlantic__bermuda",
+                "comment": " `Atlantic/Bermuda`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "atlantic__canary",
+                "comment": " `Atlantic/Canary`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "atlantic__cape_verde",
+                "comment": " `Atlantic/Cape_Verde`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "atlantic__faroe",
+                "comment": " `Atlantic/Faroe`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "atlantic__madeira",
+                "comment": " `Atlantic/Madeira`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "atlantic__reykjavik",
+                "comment": " `Atlantic/Reykjavik` (alias of `Africa/Abidjan`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "atlantic__south_georgia",
+                "comment": " `Atlantic/South_Georgia`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "atlantic__st_helena",
+                "comment": " `Atlantic/St_Helena` (alias of `Africa/Abidjan`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "atlantic__stanley",
+                "comment": " `Atlantic/Stanley`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "australia__adelaide",
+                "comment": " `Australia/Adelaide`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "australia__brisbane",
+                "comment": " `Australia/Brisbane`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "australia__broken_hill",
+                "comment": " `Australia/Broken_Hill`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "australia__darwin",
+                "comment": " `Australia/Darwin`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "australia__eucla",
+                "comment": " `Australia/Eucla`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "australia__hobart",
+                "comment": " `Australia/Hobart`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "australia__lindeman",
+                "comment": " `Australia/Lindeman`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "australia__lord_howe",
+                "comment": " `Australia/Lord_Howe`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "australia__melbourne",
+                "comment": " `Australia/Melbourne`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "australia__perth",
+                "comment": " `Australia/Perth`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "australia__sydney",
+                "comment": " `Australia/Sydney`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "europe__amsterdam",
+                "comment": " `Europe/Amsterdam` (alias of `Europe/Brussels`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "europe__andorra",
+                "comment": " `Europe/Andorra`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "europe__astrakhan",
+                "comment": " `Europe/Astrakhan`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "europe__athens",
+                "comment": " `Europe/Athens`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "europe__belgrade",
+                "comment": " `Europe/Belgrade`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "europe__berlin",
+                "comment": " `Europe/Berlin`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "europe__bratislava",
+                "comment": " `Europe/Bratislava` (alias of `Europe/Prague`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "europe__brussels",
+                "comment": " `Europe/Brussels`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "europe__bucharest",
+                "comment": " `Europe/Bucharest`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "europe__budapest",
+                "comment": " `Europe/Budapest`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "europe__busingen",
+                "comment": " `Europe/Busingen` (alias of `Europe/Zurich`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "europe__chisinau",
+                "comment": " `Europe/Chisinau`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "europe__copenhagen",
+                "comment": " `Europe/Copenhagen` (alias of `Europe/Berlin`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "europe__dublin",
+                "comment": " `Europe/Dublin`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "europe__gibraltar",
+                "comment": " `Europe/Gibraltar`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "europe__guernsey",
+                "comment": " `Europe/Guernsey` (alias of `Europe/London`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "europe__helsinki",
+                "comment": " `Europe/Helsinki`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "europe__isle_of_man",
+                "comment": " `Europe/Isle_of_Man` (alias of `Europe/London`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "europe__istanbul",
+                "comment": " `Europe/Istanbul`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "europe__jersey",
+                "comment": " `Europe/Jersey` (alias of `Europe/London`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "europe__kaliningrad",
+                "comment": " `Europe/Kaliningrad`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "europe__kirov",
+                "comment": " `Europe/Kirov`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "europe__kyiv",
+                "comment": " `Europe/Kyiv`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "europe__lisbon",
+                "comment": " `Europe/Lisbon`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "europe__ljubljana",
+                "comment": " `Europe/Ljubljana` (alias of `Europe/Belgrade`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "europe__london",
+                "comment": " `Europe/London`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "europe__luxembourg",
+                "comment": " `Europe/Luxembourg` (alias of `Europe/Brussels`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "europe__madrid",
+                "comment": " `Europe/Madrid`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "europe__malta",
+                "comment": " `Europe/Malta`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "europe__mariehamn",
+                "comment": " `Europe/Mariehamn` (alias of `Europe/Helsinki`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "europe__minsk",
+                "comment": " `Europe/Minsk`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "europe__monaco",
+                "comment": " `Europe/Monaco` (alias of `Europe/Paris`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "europe__moscow",
+                "comment": " `Europe/Moscow`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "europe__nicosia",
+                "comment": " `Europe/Nicosia` (alias of `Asia/Nicosia`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "europe__oslo",
+                "comment": " `Europe/Oslo` (alias of `Europe/Berlin`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "europe__paris",
+                "comment": " `Europe/Paris`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "europe__podgorica",
+                "comment": " `Europe/Podgorica` (alias of `Europe/Belgrade`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "europe__prague",
+                "comment": " `Europe/Prague`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "europe__riga",
+                "comment": " `Europe/Riga`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "europe__rome",
+                "comment": " `Europe/Rome`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "europe__samara",
+                "comment": " `Europe/Samara`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "europe__san_marino",
+                "comment": " `Europe/San_Marino` (alias of `Europe/Rome`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "europe__sarajevo",
+                "comment": " `Europe/Sarajevo` (alias of `Europe/Belgrade`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "europe__saratov",
+                "comment": " `Europe/Saratov`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "europe__simferopol",
+                "comment": " `Europe/Simferopol`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "europe__skopje",
+                "comment": " `Europe/Skopje` (alias of `Europe/Belgrade`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "europe__sofia",
+                "comment": " `Europe/Sofia`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "europe__stockholm",
+                "comment": " `Europe/Stockholm` (alias of `Europe/Berlin`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "europe__tallinn",
+                "comment": " `Europe/Tallinn`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "europe__tirane",
+                "comment": " `Europe/Tirane`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "europe__ulyanovsk",
+                "comment": " `Europe/Ulyanovsk`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "europe__uzhgorod",
+                "comment": " `Europe/Uzhgorod`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "europe__vaduz",
+                "comment": " `Europe/Vaduz` (alias of `Europe/Zurich`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "europe__vatican",
+                "comment": " `Europe/Vatican` (alias of `Europe/Rome`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "europe__vienna",
+                "comment": " `Europe/Vienna`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "europe__vilnius",
+                "comment": " `Europe/Vilnius`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "europe__volgograd",
+                "comment": " `Europe/Volgograd`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "europe__warsaw",
+                "comment": " `Europe/Warsaw`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "europe__zagreb",
+                "comment": " `Europe/Zagreb` (alias of `Europe/Belgrade`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "europe__zaporozhye",
+                "comment": " `Europe/Zaporozhye`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "europe__zurich",
+                "comment": " `Europe/Zurich`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "getZone",
+                "comment": " Try to get the local time zone. If the task succeeds, then you get the zone\nname along with the `Time.Zone`.\n",
+                "type": "Task.Task TimeZone.Error ( String.String, Time.Zone )"
+            },
+            {
+                "name": "indian__antananarivo",
+                "comment": " `Indian/Antananarivo` (alias of `Africa/Nairobi`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "indian__chagos",
+                "comment": " `Indian/Chagos`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "indian__christmas",
+                "comment": " `Indian/Christmas` (alias of `Asia/Bangkok`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "indian__cocos",
+                "comment": " `Indian/Cocos` (alias of `Asia/Yangon`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "indian__comoro",
+                "comment": " `Indian/Comoro` (alias of `Africa/Nairobi`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "indian__kerguelen",
+                "comment": " `Indian/Kerguelen` (alias of `Indian/Maldives`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "indian__mahe",
+                "comment": " `Indian/Mahe` (alias of `Asia/Dubai`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "indian__maldives",
+                "comment": " `Indian/Maldives`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "indian__mauritius",
+                "comment": " `Indian/Mauritius`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "indian__mayotte",
+                "comment": " `Indian/Mayotte` (alias of `Africa/Nairobi`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "indian__reunion",
+                "comment": " `Indian/Reunion` (alias of `Asia/Dubai`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "pacific__apia",
+                "comment": " `Pacific/Apia`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "pacific__auckland",
+                "comment": " `Pacific/Auckland`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "pacific__bougainville",
+                "comment": " `Pacific/Bougainville`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "pacific__chatham",
+                "comment": " `Pacific/Chatham`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "pacific__chuuk",
+                "comment": " `Pacific/Chuuk` (alias of `Pacific/Port_Moresby`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "pacific__easter",
+                "comment": " `Pacific/Easter`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "pacific__efate",
+                "comment": " `Pacific/Efate`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "pacific__fakaofo",
+                "comment": " `Pacific/Fakaofo`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "pacific__fiji",
+                "comment": " `Pacific/Fiji`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "pacific__funafuti",
+                "comment": " `Pacific/Funafuti` (alias of `Pacific/Tarawa`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "pacific__galapagos",
+                "comment": " `Pacific/Galapagos`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "pacific__gambier",
+                "comment": " `Pacific/Gambier`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "pacific__guadalcanal",
+                "comment": " `Pacific/Guadalcanal`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "pacific__guam",
+                "comment": " `Pacific/Guam`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "pacific__honolulu",
+                "comment": " `Pacific/Honolulu`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "pacific__kanton",
+                "comment": " `Pacific/Kanton`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "pacific__kiritimati",
+                "comment": " `Pacific/Kiritimati`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "pacific__kosrae",
+                "comment": " `Pacific/Kosrae`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "pacific__kwajalein",
+                "comment": " `Pacific/Kwajalein`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "pacific__majuro",
+                "comment": " `Pacific/Majuro` (alias of `Pacific/Tarawa`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "pacific__marquesas",
+                "comment": " `Pacific/Marquesas`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "pacific__midway",
+                "comment": " `Pacific/Midway` (alias of `Pacific/Pago_Pago`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "pacific__nauru",
+                "comment": " `Pacific/Nauru`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "pacific__niue",
+                "comment": " `Pacific/Niue`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "pacific__norfolk",
+                "comment": " `Pacific/Norfolk`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "pacific__noumea",
+                "comment": " `Pacific/Noumea`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "pacific__pago_pago",
+                "comment": " `Pacific/Pago_Pago`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "pacific__palau",
+                "comment": " `Pacific/Palau`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "pacific__pitcairn",
+                "comment": " `Pacific/Pitcairn`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "pacific__pohnpei",
+                "comment": " `Pacific/Pohnpei` (alias of `Pacific/Guadalcanal`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "pacific__port_moresby",
+                "comment": " `Pacific/Port_Moresby`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "pacific__rarotonga",
+                "comment": " `Pacific/Rarotonga`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "pacific__saipan",
+                "comment": " `Pacific/Saipan` (alias of `Pacific/Guam`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "pacific__tahiti",
+                "comment": " `Pacific/Tahiti`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "pacific__tarawa",
+                "comment": " `Pacific/Tarawa`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "pacific__tongatapu",
+                "comment": " `Pacific/Tongatapu`\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "pacific__wake",
+                "comment": " `Pacific/Wake` (alias of `Pacific/Tarawa`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "pacific__wallis",
+                "comment": " `Pacific/Wallis` (alias of `Pacific/Tarawa`)\n",
+                "type": "() -> Time.Zone"
+            },
+            {
+                "name": "version",
+                "comment": " What release of the IANA Time Zone Database is this data from?\n",
+                "type": "String.String"
+            },
+            {
+                "name": "zones",
+                "comment": " You can look up an unevaluated zone by its zone name in the `zones` dictionary.\n\n    import Dict\n    import TimeZone exposing (zones, america__new_york)\n\n\n    Dict.get \"America/New_York\" zones\n\n    -- Just america__new_york\n\n",
+                "type": "Dict.Dict String.String (() -> Time.Zone)"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,174 @@
+[
+    {
+        "name": "Ordt.Weave",
+        "comment": " Weaves are collections specifically designed to handle wefts and operations. They keep causality\ninformation about events in a distributed system, and offer some methods to replicate, `merge` and\nedit parts of the history.\n\nThe site identifiers can be any comparable type. This includes `Int`, `Float`, `Time`, `Char`,\n`String`, and tuples or lists of comparable types.\n\n\n# Weaves\n\n@docs Weave, defaultIndex\n\n\n# Build\n\n@docs empty, singleton, push\n\n\n# Query\n\n@docs isEmpty, size, yarn, weft\n\n\n# Transform\n\n@docs map, foldl, foldr, filter, filterMap\n\n\n# Encoders\n\n@docs encode, decoder\n\n",
+        "unions": [
+            {
+                "name": "Weave",
+                "comment": " Represents a weave of operations. Each operation has some extra information about knowledge it\nhad from other sites when it was integrated.\n",
+                "args": [
+                    "comparable",
+                    "o"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decoder",
+                "comment": " Decode a JSON value into a `Weave`.\n",
+                "type": "Json.Decode.Decoder comparable -> Json.Decode.Decoder o -> Json.Decode.Decoder (Ordt.Weave.Weave comparable o)"
+            },
+            {
+                "name": "defaultIndex",
+                "comment": " Default index when writing an operation.\n\nIndices could be set to smaller than this, but for all the methods that require the insertion of a\nnew operation at the start of a yarn, this is the index that will be used.\n\n",
+                "type": "Basics.Int"
+            },
+            {
+                "name": "empty",
+                "comment": " Create a weave that will indicate that no events have occured yet in the distributed system.\n\n    -- size empty == 0\n    -- isEmpty empty == True\n\n\n\n",
+                "type": "Ordt.Weave.Weave comparable o"
+            },
+            {
+                "name": "encode",
+                "comment": " Turn a `Weave` into a JSON value.\n",
+                "type": "(comparable -> Json.Encode.Value) -> (o -> Json.Encode.Value) -> Ordt.Weave.Weave comparable o -> Json.Encode.Value"
+            },
+            {
+                "name": "filter",
+                "comment": " Keep operations that satisfy the test.\n",
+                "type": "(Ordt.Weft.Weft comparable -> o -> Basics.Bool) -> Ordt.Weave.Weave comparable o -> Ordt.Weave.Weave comparable o"
+            },
+            {
+                "name": "filterMap",
+                "comment": " Filter out certain operations. For example, you might want to exclude some unnecessary or\nillegal operations from the weave.\n",
+                "type": "(Ordt.Weft.Weft comparable -> a -> Maybe.Maybe b) -> Ordt.Weave.Weave comparable a -> Ordt.Weave.Weave comparable b"
+            },
+            {
+                "name": "foldl",
+                "comment": " Reduce the topologically sorted operations of a weave, starting with the most recent one.\n\n\n    type Operation\n        = Increment\n        | Decrement\n\n    acc weft op count =\n        case op of\n            Increment ->\n                count + 1\n\n            Decrement ->\n                count - 1\n\n    -- foldr acc 0 (Weave.singleton \"Alice\" Increment) == 1\n\n",
+                "type": "(Ordt.Weft.Weft comparable -> o -> b -> b) -> b -> Ordt.Weave.Weave comparable o -> b"
+            },
+            {
+                "name": "foldr",
+                "comment": " Reduce the topologically sorted operations of a weave, starting with the oldest one.\n\n\n    type GrowableSetOperation a\n        = AddValue a\n\n    acc weft op (SetValue v) =\n        Set.insert v acc\n\n    -- foldl acc Set.empty (Weave.singleton \"Alice\" (AddValue 3)) == Set.singleton 3\n\n",
+                "type": "(Ordt.Weft.Weft comparable -> o -> b -> b) -> b -> Ordt.Weave.Weave comparable o -> b"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Determine if a weave is empty.\n",
+                "type": "Ordt.Weave.Weave comparable o -> Basics.Bool"
+            },
+            {
+                "name": "map",
+                "comment": " Map a function onto a weave, creating a weave with transformed operations.\n",
+                "type": "(Ordt.Weft.Weft comparable -> a -> b) -> Ordt.Weave.Weave comparable a -> Ordt.Weave.Weave comparable b"
+            },
+            {
+                "name": "push",
+                "comment": " Append an operation to a certain site, and indicate with a `Dict` the operations that are\nexplicitly acknowledged by this push.\n\n**This is not for arbitrary insertions in the past !**\n\nThis function appends your operation **at the end** of the yarn you specify.\n\nInternally, some implicit references will be added if necessary, for transitive acknowledgements or\nacknowledgements of the previous operations of this site. If you add at a certain `site`, the index\nfor this particular site will use `max(get weft site, nextWeaveIndexFor site)`.\n\nAn important note - you can not reference the future in an operation you're adding now. Indeed, this\ncould otherwise lead to some pretty severe inconsitencies - what if you reference the future of your\nfriend, and he references yours ? You don't have a directed acyclic graph anymore !\n\n    type CounterOperation\n        = Increment\n        | Decrement\n\n    ack =\n        Weft.singleton \"Alice\" Weave.defaultIndex\n\n    weave =\n        Weave.empty\n            |> Weave.push \"Alice\" Increment Weft.empty\n            |> Weave.push \"Bob\" Decrement Weft.empty\n            |> Weave.push \"Charlie\" Increment ack\n\n",
+                "type": "comparable -> o -> Set.Set comparable -> Ordt.Weave.Weave comparable o -> Ordt.Weave.Weave comparable o"
+            },
+            {
+                "name": "singleton",
+                "comment": " Create a weave that will contain only a single operation, with no dependencies and knowledge of\nthe rest of the weave.\n\n    -- size singleton \"Alice\" \"Hello\" == 1\n\n\n\n",
+                "type": "comparable -> o -> Ordt.Weave.Weave comparable o"
+            },
+            {
+                "name": "size",
+                "comment": " Determine the number of operations in this weave.\n",
+                "type": "Ordt.Weave.Weave comparable o -> Basics.Int"
+            },
+            {
+                "name": "weft",
+                "comment": " Get the weft representing the knowledge that this weave has of the whole distributed system.\nThis does not necessarily mean that this weave has access to all the prior operations though, as\nsome site-specific garbage collection might have occurred.\n",
+                "type": "Ordt.Weave.Weave comparable o -> Ordt.Weft.Weft comparable"
+            },
+            {
+                "name": "yarn",
+                "comment": " Get the yarn associated with a certain site identifier.\n",
+                "type": "comparable -> Ordt.Weave.Weave comparable o -> List.List o"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Ordt.Weft",
+        "comment": " Wefts are like vector clocks – they offer causality information across different events in a\ndistributed system. A new weft is `empty`. Each site is then associated with an index, indicating\nthe index of the last operation received for that particular site.\n\nFor any two instances of `Weft`, an upper bound as well as a lower bound can be found. The lower\nbound is the last known state to both wefts. The upper bound is the minimal state that could know\nboth wefts. This ability to find an upper or/and a lower bound is often referred to as a\n[semi-lattice](https://en.wikipedia.org/wiki/Semilattice).\n\nUsually, these clocks are associated with some operations. There is, in general, no guarantee that\na specific instance of weft is associated to an operation though.\n\nTo manage the operation indices for any site, use the `get` and `insert` functions.\n\nThe site identifiers can be any comparable type. This includes `Int`, `Float`, `Time`, `Char`,\n`String`, and tuples or lists of comparable types.\n\n\n# Wefts\n\n@docs Weft\n\n\n# Build\n\n@docs empty, singleton, insert, remove\n\n\n# Query\n\n@docs get, compare\n\n\n# Semi-lattice\n\n@docs joinLower, joinUpper\n\n\n# Dicts\n\n@docs fromDict, toDict\n\n\n# Encoders\n\n@docs encode, decoder\n\n",
+        "unions": [
+            {
+                "name": "Weft",
+                "comment": " Represents a weft in a distributed system. So `Weft (Int)` means that each site is identified by\nan `Int`, and `Weft (String)` that each site is identified by a `String`.\n",
+                "args": [
+                    "comparable"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "compare",
+                "comment": " Compare any two `Weft` instances. This comparison takes in consideration that two wefts might\nnot be comparable, in which case `Order.EQ` will be returned.\n\n\n    alice =\n        insert \"Alice 3\" empty\n\n    bob =\n        insert \"Bob\" 2 empty\n\n    -- compare empty alice == Order.LT\n    -- compare empty empty == Order.EQ\n    -- compare alice bob == Order.EQ\n    -- compare bob empty == Order.GT\n\n",
+                "type": "Ordt.Weft.Weft comparable -> Ordt.Weft.Weft comparable -> Basics.Order"
+            },
+            {
+                "name": "decoder",
+                "comment": " Decode a JSON value into a `Weft`.\n",
+                "type": "Json.Decode.Decoder comparable -> Json.Decode.Decoder (Ordt.Weft.Weft comparable)"
+            },
+            {
+                "name": "empty",
+                "comment": " Create a baseline that will always act as a proper lower bound for all the possible instances\nof an `Ordt.Weft`.\n\n    -- joinLower clock empty == empty\n    -- joinUpper clock empty == clock\n\n\n\n",
+                "type": "Ordt.Weft.Weft comparable"
+            },
+            {
+                "name": "encode",
+                "comment": " Turn a `Weft` into a JSON value.\n",
+                "type": "(comparable -> Json.Encode.Value) -> Ordt.Weft.Weft comparable -> Json.Encode.Value"
+            },
+            {
+                "name": "fromDict",
+                "comment": " Turn a `Dict` into a weft.\n",
+                "type": "Dict.Dict comparable Basics.Int -> Ordt.Weft.Weft comparable"
+            },
+            {
+                "name": "get",
+                "comment": " Get the last operation index for a certain site.\n",
+                "type": "comparable -> Ordt.Weft.Weft comparable -> Maybe.Maybe Basics.Int"
+            },
+            {
+                "name": "insert",
+                "comment": " Set the last operation index for a certain yarn.\n",
+                "type": "comparable -> Basics.Int -> Ordt.Weft.Weft comparable -> Ordt.Weft.Weft comparable"
+            },
+            {
+                "name": "joinLower",
+                "comment": " Perform a semi-lattice join on the lower bound of the two wefts.\n",
+                "type": "Ordt.Weft.Weft comparable -> Ordt.Weft.Weft comparable -> Ordt.Weft.Weft comparable"
+            },
+            {
+                "name": "joinUpper",
+                "comment": " Perform a semi-lattice join on the upper bound of the two wefts.\n",
+                "type": "Ordt.Weft.Weft comparable -> Ordt.Weft.Weft comparable -> Ordt.Weft.Weft comparable"
+            },
+            {
+                "name": "remove",
+                "comment": " Remove a yarn from a weft. If the key is not found, no changes are made.\n",
+                "type": "comparable -> Ordt.Weft.Weft comparable -> Ordt.Weft.Weft comparable"
+            },
+            {
+                "name": "singleton",
+                "comment": " Create a weft that will contain only a single index for a given site.\n\n    -- joinLower (singleton \"Alice\" 1) empty == empty\n    -- joinUpper (singleton \"Alice\" 1) empty == singleton \"Alice\" 1\n\n\n\n",
+                "type": "comparable -> Basics.Int -> Ordt.Weft.Weft comparable"
+            },
+            {
+                "name": "toDict",
+                "comment": " Turn a weft into a `Dict`.\n",
+                "type": "Ordt.Weft.Weft comparable -> Dict.Dict comparable Basics.Int"
+            }
+        ],
+        "binops": []
+    }
+]

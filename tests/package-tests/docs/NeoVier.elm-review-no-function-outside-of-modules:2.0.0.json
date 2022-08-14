@@ -1,0 +1,16 @@
+[
+    {
+        "name": "NoFunctionOutsideOfModules",
+        "comment": "\n\n@docs rule\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": " Reports uses of certain functions outside of certain modules.\n\n    config =\n        [ NoFunctionOutsideOfModules.rule [ ( [ \"Html.input\" ], [ \"View.Input\" ] ) ]\n        ]\n\n\n## Fail\n\nUsing a qualified name outside of module\n\n    module Main exposing (main)\n\n    import Html\n\n    main : Html.Html a\n    main =\n        Html.input [] []\n\nUsing an exposed name outside of module\n\n    module Main exposing (main)\n\n    import Html exposing (input)\n\n    main : Html.Html a\n    main =\n        input [] []\n\n\n## Success\n\n    module View.Input exposing (customInput)\n\n    import Html\n\n    customInput : Html.Html a\n    customInput =\n        Html.input [] []\n\n\n## When (not) to enable this rule\n\nThis rule is useful when you want people to only use a certain function in\ncertain modules. This is useful especially for input fields or design elements,\nso your app looks consistent overall.\nThis rule is not useful when you don't think it's worth it to trade consistency\nover flexibility.\n\n\n## Try it out\n\nYou can try this rule out by running the following command:\n\n```bash\nelm-review --template NeoVier/elm-review-no-function-outside-of-modules/example-with-no-html-input-outside-of-view --rules NoFunctionOutsideOfModules\n```\n\n",
+                "type": "List.List ( List.List String.String, List.List String.String ) -> Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    }
+]

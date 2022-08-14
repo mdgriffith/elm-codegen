@@ -1,0 +1,396 @@
+[
+    {
+        "name": "FormElements.CheckBox",
+        "comment": " A simple checkbox\n\n\n# Definitions\n\n@docs view, Props\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Props",
+                "comment": " Configurable properties for rendering the view\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ selected : Basics.Bool, label : String.String, handleToggle : Basics.Bool -> a }"
+            }
+        ],
+        "values": [
+            {
+                "name": "view",
+                "comment": " The view for displaying the element.\n",
+                "type": "FormElements.CheckBox.Props a -> Html.Html a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "FormElements.DatePicker",
+        "comment": " A \"Date Picker\" control for selecting dates from a calendar-like interface.\n\n\n# Definitions\n\n@docs view, init, update, defaultProps, Msg, Model, Props, DatePickerResult, ExternalMsg\n\n",
+        "unions": [
+            {
+                "name": "ExternalMsg",
+                "comment": " The external message type for the [Component Result type](https://package.elm-lang.org/packages/z5h/component-result/latest/)\n",
+                "args": [],
+                "cases": [
+                    [
+                        "DateSelected",
+                        [
+                            "Date.Date"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Msg",
+                "comment": " Messages return from the view\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NoOp",
+                        []
+                    ],
+                    [
+                        "ToggleShowDatePicker",
+                        [
+                            "Basics.Bool"
+                        ]
+                    ],
+                    [
+                        "GetToday",
+                        [
+                            "Date.Date"
+                        ]
+                    ],
+                    [
+                        "OnDateSelected",
+                        [
+                            "Date.Date"
+                        ]
+                    ],
+                    [
+                        "NextMonth",
+                        [
+                            "Date.Date"
+                        ]
+                    ],
+                    [
+                        "PreviousMonth",
+                        [
+                            "Date.Date"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "DatePickerResult",
+                "comment": " Alias for the element's [Component Result type](https://package.elm-lang.org/packages/z5h/component-result/latest/) type.\n",
+                "args": [],
+                "type": "ComponentResult.ComponentResult FormElements.DatePicker.Model FormElements.DatePicker.Msg FormElements.DatePicker.ExternalMsg Basics.Never"
+            },
+            {
+                "name": "Model",
+                "comment": " The model the element uses to render itself.\n",
+                "args": [],
+                "type": "{ showDatePicker : Basics.Bool, today : Date.Date, monthMap : FormElements.DatePicker.MonthMap, outroMonthMap : Maybe.Maybe FormElements.DatePicker.MonthMap }"
+            },
+            {
+                "name": "Props",
+                "comment": " Configurable properties for rendering the view\n",
+                "args": [],
+                "type": "{ id : String.String, label : String.String, selectedDateDisplay : Date.Date -> String.String, selectedDate : Maybe.Maybe Date.Date, weekdayDisplay : Time.Weekday -> String.String, monthDisplay : Time.Month -> String.String, dateIsHighlighted : Date.Date -> Basics.Bool, canSelectDate : Date.Date -> Basics.Bool, canSelectMonth : ( Time.Month, Basics.Int ) -> Basics.Bool }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultProps",
+                "comment": " Convenience function for getting a default `Props` record. Requires that\nthe element's id be passed in.\n",
+                "type": "String.String -> FormElements.DatePicker.Props"
+            },
+            {
+                "name": "init",
+                "comment": " Creates the initial model for the element, using an \"index date\" to determine what\nstarting date the calendar opens up to. This does not have to be `Date.today`\n",
+                "type": "Date.Date -> ( FormElements.DatePicker.Model, Platform.Cmd.Cmd FormElements.DatePicker.Msg )"
+            },
+            {
+                "name": "update",
+                "comment": " The main function for updating the element in response to `Msg`\n",
+                "type": "FormElements.DatePicker.Msg -> FormElements.DatePicker.Model -> FormElements.DatePicker.Props -> FormElements.DatePicker.DatePickerResult"
+            },
+            {
+                "name": "view",
+                "comment": " The view for displaying the element.\n",
+                "type": "FormElements.DatePicker.Model -> FormElements.DatePicker.Props -> Html.Html FormElements.DatePicker.Msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "FormElements.RadioButtons",
+        "comment": " A group of radio buttons\n\n\n# Definitions\n\n@docs view, Props\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Props",
+                "comment": " Configurable properties for rendering the view\n",
+                "args": [
+                    "x",
+                    "y"
+                ],
+                "type": "{ selected : x, options : List.List ( String.String, x ), onSelect : x -> y }"
+            }
+        ],
+        "values": [
+            {
+                "name": "view",
+                "comment": " The view for displaying the element.\n",
+                "type": "FormElements.RadioButtons.Props x y -> Html.Html y"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "FormElements.SuperSelect",
+        "comment": " A \"select\" control that uses auto-complete to assist users.\n\n\n# Definitions\n\n@docs view, init, update, subscriptions, defaultProps, Msg, Model, Props, Option, SuperSelectResult, ExternalMsg\n\n",
+        "unions": [
+            {
+                "name": "ExternalMsg",
+                "comment": " The external message type for the [Component Result](https://package.elm-lang.org/packages/z5h/component-result/latest/)\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "ValueChanged",
+                        [
+                            "String.String",
+                            "Maybe.Maybe a"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Msg",
+                "comment": " Messages output from the `view` in the Elm runtime. Combine these with `update`\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "NoOp",
+                        []
+                    ],
+                    [
+                        "Clear",
+                        []
+                    ],
+                    [
+                        "TextInputMsg",
+                        [
+                            "FormElements.TextInput.Msg"
+                        ]
+                    ],
+                    [
+                        "UnsetFocusedOption",
+                        []
+                    ],
+                    [
+                        "SetFocusedOption",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "OptionSelected",
+                        [
+                            "FormElements.SuperSelect.Option a"
+                        ]
+                    ],
+                    [
+                        "KeyPress",
+                        [
+                            "FormElements.SuperSelect.Props a",
+                            "Basics.Int"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Model",
+                "comment": " The model the element uses to render itself.\n",
+                "args": [],
+                "type": "{ id : String.String, textInputData : FormElements.TextInput.Model, focusedOption : Maybe.Maybe Basics.Int, hasFocus : Basics.Bool }"
+            },
+            {
+                "name": "Option",
+                "comment": " An \"option\" for the menu. Each option has a label, and an associated value of whatever type.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "( String.String, a )"
+            },
+            {
+                "name": "Props",
+                "comment": " Configurable properties for rendering the view\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ id : String.String, options : List.List (FormElements.SuperSelect.Option a), errorText : Maybe.Maybe String.String, helperText : Maybe.Maybe String.String, label : String.String, value : Maybe.Maybe a, inputValue : String.String }"
+            },
+            {
+                "name": "SuperSelectResult",
+                "comment": " Alias for the element's [Component Result](https://package.elm-lang.org/packages/z5h/component-result/latest/) type.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "ComponentResult.ComponentResult FormElements.SuperSelect.Model (FormElements.SuperSelect.Msg a) (FormElements.SuperSelect.ExternalMsg a) Basics.Never"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultProps",
+                "comment": " Default properties for the element. The props actually passed in should generally have `label` set to\na non-empty string\n",
+                "type": "FormElements.SuperSelect.Props a"
+            },
+            {
+                "name": "init",
+                "comment": " Creates the initial model for the element. `id` should be a _unique_ string identifier.\n",
+                "type": "String.String -> FormElements.SuperSelect.Model"
+            },
+            {
+                "name": "subscriptions",
+                "comment": " subscriptions\nAs this element requires listening to keyboard events, the subscriptions must be added\nto your main function so it may do so. For each instance of this element in your application,\nwire up the subscriptions along with the associated `Props` you would give to that instance's `view`\nfunction\n",
+                "type": "FormElements.SuperSelect.Props a -> Platform.Sub.Sub (FormElements.SuperSelect.Msg a)"
+            },
+            {
+                "name": "update",
+                "comment": " The main function for updating the element in response to `Msg`\n",
+                "type": "FormElements.SuperSelect.Msg a -> FormElements.SuperSelect.Model -> FormElements.SuperSelect.Props a -> FormElements.SuperSelect.SuperSelectResult a"
+            },
+            {
+                "name": "view",
+                "comment": " The view for displaying the element.\n",
+                "type": "FormElements.SuperSelect.Model -> FormElements.SuperSelect.Props a -> Html.Html (FormElements.SuperSelect.Msg a)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "FormElements.Switch",
+        "comment": " A simple on/off switch. Use for cases where the user has one option out of a binary selection\n\n\n# Definitions\n\n@docs view, Props\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Props",
+                "comment": " Configurable properties for rendering the view\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ isOn : Basics.Bool, label : String.String, handleToggle : Basics.Bool -> a }"
+            }
+        ],
+        "values": [
+            {
+                "name": "view",
+                "comment": " The view for displaying the element.\n",
+                "type": "FormElements.Switch.Props a -> Html.Html a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "FormElements.TextInput",
+        "comment": " A text input widget for Elm\n\n\n# TEA\n\n@docs view, init, update, defaultProps, Msg, Model, Props, TextInputResult, ExternalMsg\n\n",
+        "unions": [
+            {
+                "name": "ExternalMsg",
+                "comment": " ExternalMsg\n\n  - `ValueChanged String`\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "ValueChanged",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Msg",
+                "comment": " Msg\n\n  - `OnInput`\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NoOp",
+                        []
+                    ],
+                    [
+                        "OnInput",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "OnFocus",
+                        []
+                    ],
+                    [
+                        "OnBlur",
+                        []
+                    ],
+                    [
+                        "OnInputKeyPress",
+                        [
+                            "Basics.Int"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Model",
+                "comment": " Model\nTracks the internal foxus state of the element\n",
+                "args": [],
+                "type": "{ id : String.String, hasFocus : Basics.Bool }"
+            },
+            {
+                "name": "Props",
+                "comment": " Configurable properties for rendering the view\n",
+                "args": [],
+                "type": "{ id : String.String, label : String.String, value : String.String, errorText : Maybe.Maybe String.String, helperText : Maybe.Maybe String.String, fieldType : FormElements.TextInput.FieldType }"
+            },
+            {
+                "name": "TextInputResult",
+                "comment": " Type alias for the [Component Result](https://package.elm-lang.org/packages/z5h/component-result/latest/) of this elements\n",
+                "args": [],
+                "type": "ComponentResult.ComponentResult FormElements.TextInput.Model FormElements.TextInput.Msg FormElements.TextInput.ExternalMsg Basics.Never"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultProps",
+                "comment": " Useful default props to extend off when supplying props to the element.\n",
+                "type": "FormElements.TextInput.Props"
+            },
+            {
+                "name": "init",
+                "comment": " Initialization for the text input model. The `id` passed in _must be unique_\n",
+                "type": "String.String -> FormElements.TextInput.Model"
+            },
+            {
+                "name": "update",
+                "comment": " The main update function for the text input element\n",
+                "type": "FormElements.TextInput.Msg -> FormElements.TextInput.Model -> FormElements.TextInput.TextInputResult"
+            },
+            {
+                "name": "view",
+                "comment": " The view for displaying the element.\n",
+                "type": "FormElements.TextInput.Model -> FormElements.TextInput.Props -> Html.Html FormElements.TextInput.Msg"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,98 @@
+[
+    {
+        "name": "Trie",
+        "comment": " A Trie data structure.\n\nA trie is an ordered tree data structure that is used to store a dynamic\nset or associative array where the keys are usually strings.\n\nIn this implementation they key is a String.\n\nIn this implementation unique reference stored in the value\ndictionary for a given key is a String.\n\n\n## Data Model\n\n@docs Trie\n\n\n## Create\n\n@docs empty\n\n\n## Modify\n\n@docs add\n@docs remove\n\n\n## Query\n\n@docs has\n@docs get\n@docs getNode\n@docs valueCount\n@docs expand\n@docs isEmpty\n\n\n## Get data values from node\n\n@docs getValues\n\nCopyright (c) 2015 Robin Luiten\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Trie",
+                "comment": " Trie data model.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "TrieModel.Trie a"
+            }
+        ],
+        "values": [
+            {
+                "name": "add",
+                "comment": " Add reference and values with key to Trie.\n\n    updatedTrie =\n        Trie.add ( \"refid123\", ( \"ValueStored\", 42.34 ) ) \"someword\" Trie.empty\n\n",
+                "type": "( String.String, a ) -> String.String -> Trie.Trie a -> Trie.Trie a"
+            },
+            {
+                "name": "empty",
+                "comment": " An empty Trie\n",
+                "type": "Trie.Trie a"
+            },
+            {
+                "name": "expand",
+                "comment": " Find all the possible suffixes of the passed key using keys\ncurrently in the store.\n\nThis returns a List of all keys from starting key down.\nThe definition of a key that exists is one that has documents defined for it.\n\nGiven this setup\n\n        trie1 = Trie.add (\"refid121\", 1) \"ab\" Trie.empty\n        trie2 = Trie.add (\"refid122\", 2) \"ac\" trie1\n        trie3 = Trie.add (\"refid123\", 3) \"acd\" trie2\n\nThis\n\n        Trie.expand \"a\" trie3\n\nReturns\n\n    [ \"ab\", \"acd\", \"ac\" ]\n\nThis\n\n        Trie.expand \"ac\" trie3\n\nReturns\n\n    [ \"acd\", \"ac\" ]\n\n",
+                "type": "String.String -> Trie.Trie a -> List.List String.String"
+            },
+            {
+                "name": "get",
+                "comment": " Return values for a key if found.\n",
+                "type": "String.String -> Trie.Trie a -> Maybe.Maybe (Dict.Dict String.String a)"
+            },
+            {
+                "name": "getNode",
+                "comment": " Return Trie node if found.\n\nThis will return Nothing.\n\n    maybeNode =\n        Trie.getNode \"for\" Trie.empty\n\nThis will return the node containing the values for the word \"someword\".\nIt will contains \"refid123\" in the dictionary point at (\"ValueStored\", 42.34).\n\n    trie1 =\n        Trie.add ( \"refid123\", ( \"ValueStored\", 42.34 ) ) \"someword\" Trie.empty\n\n    maybeNode =\n        Trie.getNode \"someword\" trie1\n\n",
+                "type": "String.String -> Trie.Trie a -> Maybe.Maybe (Trie.Trie a)"
+            },
+            {
+                "name": "getValues",
+                "comment": " Return the values stored if there are any\n",
+                "type": "Trie.Trie a -> Maybe.Maybe (Dict.Dict String.String a)"
+            },
+            {
+                "name": "has",
+                "comment": " Checks whether key is contained within a Trie.\n\nA key must have values for it be considered present in Trie.\n\n",
+                "type": "String.String -> Trie.Trie a -> Basics.Bool"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Returns True if Trie is empty\n",
+                "type": "Trie.Trie a -> Basics.Bool"
+            },
+            {
+                "name": "remove",
+                "comment": " Remove values for key and reference from Trie.\n\nThis removes the reference from the correct values list.\nIf the key does not exist nothing changes.\nIf the ref is not found in the values for the key nothing changes.\n\nAn example but does not do anything.\n\n    updatedTrie =\n        Trie.remove \"for\" \"refid125\" Trie.empty\n\nAn example that adds something then removes it.\n\n    trie1 =\n        Trie.add ( \"refid123\", ( \"ValueStored\", 42.34 ) ) \"someword\" Trie.empty\n\n    trie2 =\n        Trie.remove \"someword\" \"refid123\" Trie.trie1\n\nIf you remove all references you add the trie will become empty again.\n\n",
+                "type": "String.String -> String.String -> Trie.Trie a -> Trie.Trie a"
+            },
+            {
+                "name": "valueCount",
+                "comment": " Return number of values stored at Trie location.\n",
+                "type": "String.String -> Trie.Trie a -> Basics.Int"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Trie.Json.Decoder",
+        "comment": " Json Decoder for Trie\n\n@docs decoder\n\nCopyright (c) 2015 Robin Luiten\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decoder",
+                "comment": " A Trie Decoder\n",
+                "type": "Json.Decode.Decoder a -> Json.Decode.Decoder (TrieModel.Trie a)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Trie.Json.Encoder",
+        "comment": " Json Encoder for Trie\n\n@docs encoder\n\nCopyright (c) 2015 Robin Luiten\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "encoder",
+                "comment": " Encoder for Trie.\n",
+                "type": "(f -> Json.Encode.Value) -> TrieModel.Trie f -> Json.Encode.Value"
+            }
+        ],
+        "binops": []
+    }
+]

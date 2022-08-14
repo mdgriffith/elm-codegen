@@ -1,0 +1,70 @@
+[
+    {
+        "name": "SvgParser",
+        "comment": " String to SVG parser\n\n\n# Primitives\n\n@docs SvgNode, Element, SvgAttribute\n\n\n# Parsing\n\n@docs parse, parseToNode, nodeToSvg, toAttribute\n\n",
+        "unions": [
+            {
+                "name": "SvgNode",
+                "comment": " A SVG node can be one of the three: SvgElement, SvgText or SvgComment.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "SvgElement",
+                        [
+                            "SvgParser.Element"
+                        ]
+                    ],
+                    [
+                        "SvgText",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "SvgComment",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Element",
+                "comment": " An Element consists of a tag name, a list of attributes, a list of children nodes.\n\n    <svg xmlns=\"http://www.w3.org/2000/svg\"></svg>\n\nwill be parsed as\n\n    Element \"svg\" [ ( \"xmlns\", \"http://www.w3.org/2000/svg\" ) ] []\n\n",
+                "args": [],
+                "type": "{ name : String.String, attributes : List.List SvgParser.SvgAttribute, children : List.List SvgParser.SvgNode }"
+            },
+            {
+                "name": "SvgAttribute",
+                "comment": " A name/value pair to denote attribute.\n",
+                "args": [],
+                "type": "( String.String, String.String )"
+            }
+        ],
+        "values": [
+            {
+                "name": "nodeToSvg",
+                "comment": " Convert `SvgNode` to `Svg msg`. This is useful when you want to manipulate `SvgNode` before conveting to `Html msg`.\n",
+                "type": "SvgParser.SvgNode -> Svg.Svg msg"
+            },
+            {
+                "name": "parse",
+                "comment": " Parses `String` to `Html msg`. Usually this is the only function you need.\n",
+                "type": "String.String -> Result.Result String.String (Html.Html msg)"
+            },
+            {
+                "name": "parseToNode",
+                "comment": " Parses `String` to `SvgNode`. Normally you will use `parse` instead of this.\n\n    parse \"<svg xmlns=\\\"http://www.w3.org/2000/svg\\\"></svg>\"\n        == Ok (SvgElement (Element \"svg\" [ ( \"xmlns\", \"http://www.w3.org/2000/svg\" ) ] []))\n\n",
+                "type": "String.String -> Result.Result String.String SvgParser.SvgNode"
+            },
+            {
+                "name": "toAttribute",
+                "comment": " Convert `SvgAttribute` to `Attribute msg`. This is useful when you want to manipulate `SvgAttribute` before converting to `Html msg`.\n",
+                "type": "SvgParser.SvgAttribute -> Svg.Attribute msg"
+            }
+        ],
+        "binops": []
+    }
+]

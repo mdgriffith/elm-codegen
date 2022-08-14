@@ -1,0 +1,58 @@
+[
+    {
+        "name": "NoEtaReducibleLambdas",
+        "comment": " Provides [`elm-review`](https://package.elm-lang.org/packages/jfmengels/elm-review/latest/) rules to detect reducible lambda expressions using different techniques.\n\n@docs rule, LambdaReduceStrategy, Config\n@docs canRemoveLambda, canRemoveSomeArguments, reducesToIdentity\n\n",
+        "unions": [
+            {
+                "name": "LambdaReduceStrategy",
+                "comment": " Control how aggressively lambda expressions are reduced.\n\n  - OnlyWhenSingleArgument has the least impact on performance and will reduce the least.\n      - This will reduce `\\a -> f a` to `f`.\n      - It will not reduce `\\a b -> f a b` because there are two arguments.\n      - It will not reduce `\\a -> (getFunction 10) a` because there is a function application to get the function.\n\n  - RemoveLambdaWhenNoCallsInApplication should have minimal impact on performance and reduces most of the functions you would want to reduce.\n      - This will reduce `\\a -> f a` to `f`.\n      - This will reduce `\\a b -> f a b` to `f`.\n      - This will reduce `\\a b -> f [1, 2, 3] a b` to `f [1, 2, 3]`\n      - This will reduce `\\a b -> f (g 10) a b` to `\\a -> f (g 10) a` but it will not remove the lambda outright because of the `(g 10)` call.\n      - This will reduce `\\a b c -> a b c` to `identity`.\n      - This will **not** reduce `\\a -> f (g 10) a` due to the `(g 10)` call.\n\n  - AlwaysRemoveLambdaWhenPossible is the most aggressive.\n      - This will reduce `\\a -> f a` to `f`.\n      - This will reduce `\\a b -> f a b` to `f`.\n      - This will reduce `\\a b -> f [1, 2, 3] a b` to `f [1, 2, 3]`\n      - This will reduce `\\a b -> f (g 10) a b` to `f (g 10)`.\n      - This will reduce `\\a b c -> a b c` to `identity`.\n      - This will reduce `\\a -> (getFunction 10) a` to `(getFunction 10)`.\n\nSee the module documentation.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "RemoveLambdaWhenNoCallsInApplication",
+                        []
+                    ],
+                    [
+                        "OnlyWhenSingleArgument",
+                        []
+                    ],
+                    [
+                        "AlwaysRemoveLambdaWhenPossible",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " Configuration options for determining under what circumstances this rule will perform a reduction.\n\n  - argumentNamePredicate can be used to do things like\n      - restrict reduction to only single letter argument names ex. `\\argumentName -> String.length argumentName == 1`.\n      - if you do not wish to restrict then assign `always True`.\n  - lambdaReduceStrategy considers the impact on evaluation. See the documentation for that type.\n\n",
+                "args": [],
+                "type": "{ argumentNamePredicate : String.String -> Basics.Bool, lambdaReduceStrategy : NoEtaReducibleLambdas.LambdaReduceStrategy }"
+            }
+        ],
+        "values": [
+            {
+                "name": "canRemoveLambda",
+                "comment": " Error message when the lambda can be removed (for unit testing only).\n",
+                "type": "NoEtaReducibleLambdas.ErrorMessage"
+            },
+            {
+                "name": "canRemoveSomeArguments",
+                "comment": " Error message when arguments can be removed (for unit testing only).\n",
+                "type": "NoEtaReducibleLambdas.ErrorMessage"
+            },
+            {
+                "name": "reducesToIdentity",
+                "comment": " Error message when the lambda reduces to identity (for unit testing only).\n",
+                "type": "NoEtaReducibleLambdas.ErrorMessage"
+            },
+            {
+                "name": "rule",
+                "comment": " This rule detect reducible lambda expressions using different techniques.\n\n\n## Fail\n\n    example1 =\n        List.map (\\a -> f a)\n\n    example2 =\n        List.map (\\a -> f (g 10) a)\n\n\n## Success\n\n    example1 =\n        List.map f\n\n    example2 =\n        List.map (f (g 10))\n\n\n## When (not) to enable this rule\n\nThis rule can change the performance characteristics of your program which is why LambdaReduceStrategy offers different levels of reduction.\n\n  - Reducing `\\\\a b -> f a b` to `f`\n      - If `f` does work on first argument\n      - Then this modification will cause that work to be done immediately on first application\n      - Whereas behind the lambda it would wait until the second argument.\n\n  - Reducing `\\\\a b -> f g a b` to `f g`\n      - Causes an immediate application but no computation on arguments.\n      - If `f` does work on first argument\n      - Then this will cause that work to be done **immediately** at this location\n      - And if `f` does work on second argument\n      - Then this reduction will cause this work to be done on application of second argument.\n      - Whereas behind this lambda the application of `g` and `a` to `f` would wait until `b` had been applied.\n\n  - Reducing `\\\\a b -> f (g 10) a b` to `f (g 10)`\n      - Causes `g 10` to evaluate immediately which could be costly\n      - In addition to every other change indicated in the prior reduction example.\n\n\n## Configuration\n\n    module ReviewConfig exposing (config)\n\n    import NoEtaReducibleLambdas\n    import Review.Rule exposing (Rule)\n\n\n    -- Below is an example of the strongest configuration. It will reduce the most.\n    config : List Rule\n    config =\n        [ NoEtaReducibleLambdas.rule\n            { lambdaReduceStrategy = NoEtaReducibleLambdas.AlwaysRemoveLambdaWhenPossible\n            , argumentNamePredicate = always True\n            }\n        ]\n\n    -- Conservative configuration: Only reduces single argument lambdas with a single letter argument name.\n    conservativeConfig : List Rule\n    conservativeConfig =\n        [ NoEtaReducibleLambdas.rule\n            { lambdaReduceStrategy = NoEtaReducibleLambdas.OnlyWhenSingleArgument\n            , argumentNamePredicate = \\argumentName -> String.length argumentName <= 1\n            }\n        ]\n\n\n## Try it out\n\nYou can try this rule out by running the following command:\n\n```bash\nelm-review --template jsuder-xx/elm-review-eta-reduction/example --rules NoEtaReducibleLambdas\n```\n\n",
+                "type": "NoEtaReducibleLambdas.Config -> Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    }
+]

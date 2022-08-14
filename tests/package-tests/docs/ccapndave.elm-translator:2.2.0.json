@@ -1,0 +1,100 @@
+[
+    {
+        "name": "Translations",
+        "comment": " This represents a set of translations in a language.\n\n@docs Translations, decoder, encode\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Translations",
+                "comment": " ",
+                "args": [],
+                "type": "Dict.Dict String.String String.String"
+            }
+        ],
+        "values": [
+            {
+                "name": "decoder",
+                "comment": " ",
+                "type": "Json.Decode.Decoder Translations.Translations"
+            },
+            {
+                "name": "encode",
+                "comment": " ",
+                "type": "Translations.Translations -> Json.Encode.Value"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Translator",
+        "comment": " This is package to provide type safe internationalisation, where translations can be loaded at\nruntime. Default translations, substitutions and pluralization are supported.\n\nSubstitutions are implemented by surrounding the literal in braces:\n\n    {\n      \"MyNameIs\": \"Je m'appelle {name}\"\n    }\n\nPluralization is implemented by having the singular case on the left of the pipe symbol, and all\nother cases on the right. The number can be substituted using `{count}`.\n\n    {\n      \"MyAge\": \"I am only one year old|I'm {count} years old\"\n    }\n\n@docs Translator, decoder, encode\n@docs Literal, makeLiteral, makeLiteralWithOptions\n@docs defaultTranslator, addTranslations, updateTranslations\n@docs trans, text, placeholder\n\n",
+        "unions": [
+            {
+                "name": "Literal",
+                "comment": " This represents a literal that can be translated.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Translator",
+                "comment": " The translator contains the translation stack. This probably belongs in the model.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "addTranslations",
+                "comment": " Add a translation dictionary to a translator.\n",
+                "type": "Translations.Translations -> Translator.Translator -> Translator.Translator"
+            },
+            {
+                "name": "decoder",
+                "comment": " A Json decoder for a translator\n",
+                "type": "Json.Decode.Decoder Translator.Translator"
+            },
+            {
+                "name": "defaultTranslator",
+                "comment": " An empty translator. The only translations this will be able to do are the defaults\nspecified in the literals (hence why it is called `defaultTranslator`).\n",
+                "type": "Translator.Translator"
+            },
+            {
+                "name": "encode",
+                "comment": " A Json encoder for a translator\n",
+                "type": "Translator.Translator -> Json.Encode.Value"
+            },
+            {
+                "name": "makeLiteral",
+                "comment": " Given the id of the literal in the translations, make a Literal that can be used\nfor doing a translation.\n",
+                "type": "String.String -> Translator.Literal"
+            },
+            {
+                "name": "makeLiteralWithOptions",
+                "comment": " Given the id of the literal in the translations, make a Literal that can be used\nfor doing a translation. This also allows you to specify a default translation, substitutions\nand a count for pluralisation.\n",
+                "type": "String.String -> Maybe.Maybe String.String -> Dict.Dict String.String String.String -> Maybe.Maybe Basics.Int -> Translator.Literal"
+            },
+            {
+                "name": "placeholder",
+                "comment": " A translated version of Html.Attributes.placeholder for use directly in an Elm view\n",
+                "type": "Translator.Translator -> Translator.Literal -> Html.Attribute msg"
+            },
+            {
+                "name": "text",
+                "comment": " A translated version of Html.text for use directly in an Elm view\n",
+                "type": "Translator.Translator -> Translator.Literal -> Html.Html msg"
+            },
+            {
+                "name": "trans",
+                "comment": " Given a Literal, translate to a String. This can never fail, and in the event\nof being unable to match in either the loaded or default literals this will fall back to \"...\".\nThis supports substitutions and pluralization.\n",
+                "type": "Translator.Literal -> Translator.Translator -> String.String"
+            },
+            {
+                "name": "updateTranslations",
+                "comment": " Update the translation dictionary at the head of the stack. If there are none\nthen set this as the only translation dictionary.\n",
+                "type": "Translations.Translations -> Translator.Translator -> Translator.Translator"
+            }
+        ],
+        "binops": []
+    }
+]

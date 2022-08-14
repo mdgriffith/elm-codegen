@@ -1,0 +1,117 @@
+[
+    {
+        "name": "ElmSpa.Page",
+        "comment": "\n\n\n# **Pages**\n\n@docs Page, static, sandbox, element, advanced\n\n\n# **User Authentication**\n\n@docs Protected, protected\n\n\n# For generated code\n\n@docs Bundle, bundle\n\n",
+        "unions": [
+            {
+                "name": "Page",
+                "comment": " Pages are the building blocks of **elm-spa**.\n\nInstead of importing this module, your project will have a `Page` module with a much simpler type:\n\n    module Page exposing (Page, ...)\n\n    type Page model msg\n\nThis makes all the generic `route`, `effect`, and `view` arguments disappear!\n\n",
+                "args": [
+                    "shared",
+                    "route",
+                    "effect",
+                    "view",
+                    "model",
+                    "msg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Protected",
+                "comment": " Actions to take when a user visits a `protected` page\n\n    import Gen.Route as Route exposing (Route)\n\n    beforeProtectedInit : Shared.Model -> Request () -> Protected User Route\n    beforeProtectedInit shared _ =\n        case shared.user of\n            Just user ->\n                Provide user\n\n            Nothing ->\n                RedirectTo Route.SignIn\n\n",
+                "args": [
+                    "user",
+                    "route"
+                ],
+                "cases": [
+                    [
+                        "Provide",
+                        [
+                            "user"
+                        ]
+                    ],
+                    [
+                        "RedirectTo",
+                        [
+                            "route"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Bundle",
+                "comment": " A convenient function for use within generated code. Makes it easy to handle `init`, `update`, `view`, and `subscriptions` for each page!\n",
+                "args": [
+                    "params",
+                    "model",
+                    "msg",
+                    "shared",
+                    "effect",
+                    "pagesModel",
+                    "pagesMsg",
+                    "pagesView"
+                ],
+                "type": "{ init : params -> shared -> Url.Url -> Browser.Navigation.Key -> ( pagesModel, effect ), update : params -> msg -> model -> shared -> Url.Url -> Browser.Navigation.Key -> ( pagesModel, effect ), view : params -> model -> shared -> Url.Url -> Browser.Navigation.Key -> pagesView, subscriptions : params -> model -> shared -> Url.Url -> Browser.Navigation.Key -> Platform.Sub.Sub pagesMsg }"
+            }
+        ],
+        "values": [
+            {
+                "name": "advanced",
+                "comment": " A page that can handles **custom** effects like sending a `Shared.Msg` or other general user-defined effects.\n\n    import Effect\n    import Page\n\n    page : Page Model Msg\n    page =\n        Page.advanced\n            { init = init\n            , update = update\n            , view = view\n            , subscriptions = subscriptions\n            }\n\n    -- init : ( Model, Effect Msg )\n    -- update : Msg -> Model -> ( Model, Effect Msg )\n    -- view : Model -> View Msg\n    -- subscriptions : Model -> Sub Msg\n\n",
+                "type": "{ init : ( model, effect ), update : msg -> model -> ( model, effect ), view : model -> view, subscriptions : model -> Platform.Sub.Sub msg } -> ElmSpa.Page.Page shared route effect view model msg"
+            },
+            {
+                "name": "bundle",
+                "comment": " This function is used by the generated code to connect your pages together.\n\nIt's big, spooky, and makes writing **elm-spa** pages really nice!\n\n",
+                "type": "{ redirecting : { model : pagesModel, view : pagesView }, toRoute : Url.Url -> route, toUrl : route -> String.String, fromCmd : Platform.Cmd.Cmd any -> pagesEffect, mapEffect : effect -> pagesEffect, mapView : view -> pagesView, page : shared -> ElmSpa.Page.Request route params -> ElmSpa.Page.Page shared route effect view model msg, toModel : params -> model -> pagesModel, toMsg : msg -> pagesMsg } -> ElmSpa.Page.Bundle params model msg shared pagesEffect pagesModel pagesMsg pagesView"
+            },
+            {
+                "name": "element",
+                "comment": " A page that can handle effects like [HTTP requests or subscriptions](https://guide.elm-lang.org/effects/).\n\n( Inspired by [`Browser.element`](https://package.elm-lang.org/packages/elm/browser/latest/Browser#element) )\n\n    import Page\n\n    page : Page Model Msg\n    page =\n        Page.element\n            { init = init\n            , update = update\n            , view = view\n            , subscriptions = subscriptions\n            }\n\n    -- init : ( Model, Cmd Msg )\n    -- update : Msg -> Model -> ( Model, Cmd Msg )\n    -- view : Model -> View Msg\n    -- subscriptions : Model -> Sub Msg\n\n",
+                "type": "(Platform.Cmd.Cmd msg -> effect) -> { init : ( model, Platform.Cmd.Cmd msg ), update : msg -> model -> ( model, Platform.Cmd.Cmd msg ), view : model -> view, subscriptions : model -> Platform.Sub.Sub msg } -> ElmSpa.Page.Page shared route effect view model msg"
+            },
+            {
+                "name": "protected",
+                "comment": " Prefixing any of the four functions above with `protected` will guarantee that the page has access to a user. Here's an example with `sandbox`:\n\n    -- before\n    Page.sandbox\n        { init = init\n        , update = update\n        , view = view\n        }\n\n    -- after\n    Page.protected.sandbox\n        (\\user ->\n            { init = init\n            , update = update\n            , view = view\n            }\n        )\n\n    -- other functions have same API\n    init : Model\n    update : Msg -> Model -> Model\n    view : Model -> View Msg\n\n",
+                "type": "{ effectNone : effect, fromCmd : Platform.Cmd.Cmd msg -> effect, beforeInit : shared -> ElmSpa.Page.Request route () -> ElmSpa.Page.Protected user route } -> { static : (user -> { view : view }) -> ElmSpa.Page.Page shared route effect view () msg, sandbox : (user -> { init : model, update : msg -> model -> model, view : model -> view }) -> ElmSpa.Page.Page shared route effect view model msg, element : (user -> { init : ( model, Platform.Cmd.Cmd msg ), update : msg -> model -> ( model, Platform.Cmd.Cmd msg ), view : model -> view, subscriptions : model -> Platform.Sub.Sub msg }) -> ElmSpa.Page.Page shared route effect view model msg, advanced : (user -> { init : ( model, effect ), update : msg -> model -> ( model, effect ), view : model -> view, subscriptions : model -> Platform.Sub.Sub msg }) -> ElmSpa.Page.Page shared route effect view model msg }"
+            },
+            {
+                "name": "sandbox",
+                "comment": " A page that can keep track of application state.\n\n( Inspired by [`Browser.sandbox`](https://package.elm-lang.org/packages/elm/browser/latest/Browser#sandbox) )\n\n    import Page\n\n    page : Page Model Msg\n    page =\n        Page.sandbox\n            { init = init\n            , update = update\n            , view = view\n            }\n\n    -- init : Model\n    -- update : Msg -> Model -> Model\n    -- view : Model -> View Msg\n\n",
+                "type": "effect -> { init : model, update : msg -> model -> model, view : model -> view } -> ElmSpa.Page.Page shared route effect view model msg"
+            },
+            {
+                "name": "static",
+                "comment": " A page that only needs to render a static view.\n\n    import Page\n\n    page : Page () Never\n    page =\n        Page.static\n            { view = view\n            }\n\n    -- view : View Never\n\n",
+                "type": "effect -> { view : view } -> ElmSpa.Page.Page shared route effect view () msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ElmSpa.Request",
+        "comment": "\n\n\n# **( These docs are for CLI contributors )**\n\n\n### If you are using **elm-spa**, check out [the official guide](https://elm-spa.dev/guide) instead!\n\n---\n\nEvery page gets access to a **request**, which has information about the\ncurrent URL, route parameters, query parameters etc.\n\n    page : Shared.Model -> Request Params -> Page Model Msg\n    page _ request =\n        Page.element\n            { init = init\n            , update = update\n            , view = view request\n            }\n\nYou can choose to pass this request into `init`,`update`, or any other function\nthat might need access to URL-related information.\n\n\n# Requests\n\n@docs Request, create\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Request",
+                "comment": " Here is an example request for the route `/people/:name`\n\n    -- /people/ryan\n    req.route == Route.People__Detail_ { name = \"ryan\" }\n\n    req.params == { name = \"ryan\" }\n\n    req.params.name == \"ryan\"\n\n    req.query == Dict.empty\n\nAnd another example with a some query parameters:\n\n    -- /people/scott?allowed=false\n    req.route == Route.People__Detail_ { name = \"scott\" }\n\n    req.params == { name = \"scott\" }\n\n    req.params.name == \"scott\"\n\n    Dict.get \"allowed\" req.query == Just \"false\"\n\n",
+                "args": [
+                    "route",
+                    "params"
+                ],
+                "type": "{ url : Url.Url, key : Browser.Navigation.Key, route : route, params : params, query : Dict.Dict String.String String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "create",
+                "comment": " A convenience function for creating requests, used by elm-spa internally.\n\n    request : Request Route { name : String }\n    request =\n        Request.create (Route.fromUrl url)\n            { name = \"ryan\" }\n            url\n            key\n\n",
+                "type": "route -> params -> Url.Url -> Browser.Navigation.Key -> ElmSpa.Request.Request route params"
+            }
+        ],
+        "binops": []
+    }
+]

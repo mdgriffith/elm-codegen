@@ -1,0 +1,173 @@
+[
+    {
+        "name": "Katex",
+        "comment": " You should use this module if this is your first time using this package, or if you don't need special configurations.\n\n\n# Types\n\n@docs Latex\n\n\n# Create LaTeX instance\n\n@docs human, inline, display\n\n\n# Process LaTeX instances\n\n@docs print, generate\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Latex",
+                "comment": " A LaTeX instance.\n",
+                "args": [],
+                "type": "Katex.Configs.Latex String.String String.String"
+            }
+        ],
+        "values": [
+            {
+                "name": "display",
+                "comment": " Use `display` when writing LaTeX code for display math environment.\n",
+                "type": "String.String -> Katex.Latex"
+            },
+            {
+                "name": "generate",
+                "comment": " Generate a function over LaTeX values. The boolean value represents whether the math is in display mode, i.e.\n\n  - `Nothing` for human\n  - `Just False` for inline\n  - `Just True` for display\n\nFor example, let's say you want an `Html a` emitting function which puts display math in a `div`, but inline math and human text in a `span`.\n\n    view : Latex -> Html a\n    view =\n        let\n            htmlGenerator isDisplayMode stringLatex =\n                case isDisplayMode of\n                    Just True ->\n                        H.div [] [ H.text stringLatex ]\n\n                    _ ->\n                        H.span [] [ H.text stringLatex ]\n        in\n        generate htmlGenerator\n\nAnother example is the built-in `print` function.\n\n    print : Latex -> String\n    print =\n        generate (\\_ stringLatex -> stringLatex)\n\n",
+                "type": "(Maybe.Maybe Basics.Bool -> String.String -> a) -> Katex.Latex -> a"
+            },
+            {
+                "name": "human",
+                "comment": " Use `human` when writing regular text.\n",
+                "type": "String.String -> Katex.Latex"
+            },
+            {
+                "name": "inline",
+                "comment": " Use `inline` when writing LaTeX code for inline math environment.\n",
+                "type": "String.String -> Katex.Latex"
+            },
+            {
+                "name": "print",
+                "comment": " Turn a LaTeX instance into a string that the KaTeX library recognizes.\n",
+                "type": "Katex.Latex -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Katex.Configs",
+        "comment": " You should use this module only if you need both `m`ath and `h`uman configurations.\n\n_Understand `Katex.Configs.Math` and `Katex.Configs.Human` before reading on._\n\n\n### Why is this module necessary?\n\nYou may need both types of configurations (`m`ath and `h`uman).\n\n\n# Types\n\n@docs Latex\n\n\n# Create LaTeX instance\n\n@docs human, inline, display\n\n\n# Process LaTeX instances\n\n@docs print, generate\n\n",
+        "unions": [
+            {
+                "name": "Latex",
+                "comment": " A LaTeX instance.\n",
+                "args": [
+                    "m",
+                    "h"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "display",
+                "comment": " Like `Katex.Configs.Math.display`.\n",
+                "type": "(m -> String.String) -> Katex.Configs.Latex m h"
+            },
+            {
+                "name": "generate",
+                "comment": " Like `Katex.generate`, but depends on the `m`ath and `h`uman configurations. The generating function has access to the `m`ath and `h`uman configurations, but this is usually unnecessary, in which case simply use a generating function which ignores its first arguments.\n",
+                "type": "(m -> h -> Maybe.Maybe Basics.Bool -> String.String -> a) -> m -> h -> Katex.Configs.Latex m h -> a"
+            },
+            {
+                "name": "human",
+                "comment": " Like `Katex.Configs.Human.human`.\n",
+                "type": "(h -> String.String) -> Katex.Configs.Latex m h"
+            },
+            {
+                "name": "inline",
+                "comment": " Like `Katex.Configs.Math.inline`.\n",
+                "type": "(m -> String.String) -> Katex.Configs.Latex m h"
+            },
+            {
+                "name": "print",
+                "comment": " Like `Katex.print`, but depends on the `m`ath and `h`uman configurations.\n",
+                "type": "m -> h -> Katex.Configs.Latex m h -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Katex.Configs.Human",
+        "comment": " You should use this module only if you need `h`uman configurations.\n\n_Understand `Katex` before reading on._\n\n\n### Why is this module necessary?\n\nFor example, let's say you want your lecture notes in both English and Hebrew. In this case, you can write both and show whichever you want, depending on the state of your app. See _§Katex.Configs.Human_ in the README for this example in action.\n\n\n# Types\n\n@docs Latex\n\n\n# Create LaTeX instance\n\n@docs human, inline, display\n\n\n# Process LaTeX instances\n\n@docs print, generate\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Latex",
+                "comment": " A LaTeX instance.\n",
+                "args": [
+                    "h"
+                ],
+                "type": "Katex.Configs.Latex String.String h"
+            }
+        ],
+        "values": [
+            {
+                "name": "display",
+                "comment": " Like `Katex.display`.\n",
+                "type": "String.String -> Katex.Configs.Human.Latex h"
+            },
+            {
+                "name": "generate",
+                "comment": " Like `Katex.generate`, but depends on the `h`uman configurations. The generating function has access to the `h`uman configurations, but this is usually unnecessary, in which case simply use a generating function which ignores its first argument.\n",
+                "type": "(h -> Maybe.Maybe Basics.Bool -> String.String -> a) -> h -> Katex.Configs.Human.Latex h -> a"
+            },
+            {
+                "name": "human",
+                "comment": " Like `Katex.human`, but instead of feeding it a string, you feed it a `h`uman-dependent string.\n",
+                "type": "(h -> String.String) -> Katex.Configs.Human.Latex h"
+            },
+            {
+                "name": "inline",
+                "comment": " Like `Katex.inline`.\n",
+                "type": "String.String -> Katex.Configs.Human.Latex h"
+            },
+            {
+                "name": "print",
+                "comment": " Like `Katex.print`, but depends on the `h`uman configurations.\n",
+                "type": "h -> Katex.Configs.Human.Latex h -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Katex.Configs.Math",
+        "comment": " You should use this module only if you need `m`ath configurations.\n\n_Understand `Katex` before reading on._\n\n\n### Why is this module necessary?\n\nFor example, let's say you are not sure which of `\\phi` and `\\varphi` you prefer.\nIn this case, you can write code with `\\phi` which may be replaced depending on your configuration. See _§Katex.Configs.Math_ in the README for this example in action.\n\n\n# Types\n\n@docs Latex\n\n\n# Create LaTeX instance\n\n@docs human, inline, display\n\n\n# Process LaTeX instances\n\n@docs print, generate\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Latex",
+                "comment": " A LaTeX instance.\n",
+                "args": [
+                    "m"
+                ],
+                "type": "Katex.Configs.Latex m String.String"
+            }
+        ],
+        "values": [
+            {
+                "name": "display",
+                "comment": " Like `Katex.display`, but instead of feeding it a string, you feed it a `m`ath-dependent string.\n",
+                "type": "(m -> String.String) -> Katex.Configs.Math.Latex m"
+            },
+            {
+                "name": "generate",
+                "comment": " Like `Katex.generate`, but depends on the `m`ath configurations. The generating function has access to the `m`ath configurations, but this is usually unnecessary, in which case simply use a generating function which ignores its first argument.\n",
+                "type": "(m -> Maybe.Maybe Basics.Bool -> String.String -> a) -> m -> Katex.Configs.Math.Latex m -> a"
+            },
+            {
+                "name": "human",
+                "comment": " Like `Katex.human`.\n",
+                "type": "String.String -> Katex.Configs.Math.Latex m"
+            },
+            {
+                "name": "inline",
+                "comment": " Like `Katex.inline`, but instead of feeding it a string, you feed it a `m`ath-dependent string.\n",
+                "type": "(m -> String.String) -> Katex.Configs.Math.Latex m"
+            },
+            {
+                "name": "print",
+                "comment": " Like `Katex.print`, but depends on the `m`ath configurations.\n",
+                "type": "m -> Katex.Configs.Math.Latex m -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

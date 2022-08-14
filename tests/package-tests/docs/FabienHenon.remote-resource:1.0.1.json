@@ -1,0 +1,101 @@
+[
+    {
+        "name": "RemoteResource",
+        "comment": " Remote Resource alllows you to handle foreground and background resources, using [https://package.elm-lang.org/packages/krisajenkins/remotedata/latest/](RemoteData).\n\nFor instance, let's say you want to retrieve a list of posts. You are using the RemoteData package, thus you can handle the state of your request (Loading, Success, etc...).\nYou will probably display a loading icon while your request is in progress, and once it has been fully retrieved you will display your posts.\nBut now, let's say you know your posts have changed and you would like to update them. You will probably want to send another request to your webservice with the same Elm RemoteData you\nused when you first retrieved your posts. That means your users will see your posts disapear for a few milliseconds (depending on the latency and network speed),\nreplaced by a loading icon, to be finally updated and displayed again to your users.\n\nNow, with `RemoteResource` you can refresh your posts in the background. Than means that you keep displaying your \"old\" posts to your users,\nand when the new data has been retrieved you can replace your old posts by the new ones without your users seeing some loading icon!\n\n\n# Definitions\n\n@docs RemoteDataResource, RemoteResource\n\n\n# Initialization\n\n@docs init, loading, reloading\n\n\n# Updating state\n\n@docs setResource, setOnlyResource, setBackground, setOnlyBackground, replaceResourceByBackground\n\n\n# Getters\n\n@docs resource, backgroundResource, resourceAndBackgroundWithDefault\n\n\n# Advanced\n\n@docs map, mapBackground, hasNewResource\n\n",
+        "unions": [
+            {
+                "name": "RemoteResource",
+                "comment": " Definition of the `RemoteResource`.\n\n  - `error` is the error type, usually a `Http.Error`\n  - `res` is your final resource, the one you are trying to retrieve\n\n",
+                "args": [
+                    "error",
+                    "res"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "RemoteDataResource",
+                "comment": " This is just an alias for `RemoteData error res`\n",
+                "args": [
+                    "error",
+                    "res"
+                ],
+                "type": "RemoteData.RemoteData error res"
+            }
+        ],
+        "values": [
+            {
+                "name": "backgroundResource",
+                "comment": " Get the current background resource\n",
+                "type": "RemoteResource.RemoteResource error res -> RemoteResource.RemoteDataResource error res"
+            },
+            {
+                "name": "hasNewResource",
+                "comment": " Compare the foreground and the background resources to check if there are different (In this case you could tell your users new resources have arrived).\n\n  - If background resource is not in `Success` state this will return false.\n  - If background resource is in `Success` state but foreground resource is not in `Success` state this will return true\n  - If both foreground and background resources are in `Success` state the compare function you provide will be used to determine if the resources are different\n\n",
+                "type": "(res -> res -> Basics.Bool) -> RemoteResource.RemoteResource error res -> Basics.Bool"
+            },
+            {
+                "name": "init",
+                "comment": " Initializes the remote resource. This is the first thing to do to get a brand new `RemoteResource`.\n",
+                "type": "RemoteResource.RemoteResource error res"
+            },
+            {
+                "name": "loading",
+                "comment": " To mark you foreground resource as `Loading`.\nYour background resource will be reset to `NotAsked`.\n\n        RemoteResource.init |> RemoteResource.loading\n\n",
+                "type": "RemoteResource.RemoteResource error res -> RemoteResource.RemoteResource error res"
+            },
+            {
+                "name": "map",
+                "comment": " Map your foreground resource (`RemoteData.map` is applied to the foreground resource)\n",
+                "type": "(res -> res) -> RemoteResource.RemoteResource error res -> RemoteResource.RemoteResource error res"
+            },
+            {
+                "name": "mapBackground",
+                "comment": " Map your background resource (`RemoteData.map` is applied to the background resource)\n",
+                "type": "(res -> res) -> RemoteResource.RemoteResource error res -> RemoteResource.RemoteResource error res"
+            },
+            {
+                "name": "reloading",
+                "comment": " To mark your background resource as `Loading`\nThis does not change your foreground resource.\n\n        RefreshPosts ->\n            ( posts |> RemoteResource.reloading, Cmd.none )\n\n",
+                "type": "RemoteResource.RemoteResource error res -> RemoteResource.RemoteResource error res"
+            },
+            {
+                "name": "replaceResourceByBackground",
+                "comment": " If the current background resource is in `Success` state, then we replace the foreground resource by the background resource and\nwe set the background resource to `NotAsked`\n",
+                "type": "RemoteResource.RemoteResource error res -> RemoteResource.RemoteResource error res"
+            },
+            {
+                "name": "resource",
+                "comment": " Get the current foreground resource\n",
+                "type": "RemoteResource.RemoteResource error res -> RemoteResource.RemoteDataResource error res"
+            },
+            {
+                "name": "resourceAndBackgroundWithDefault",
+                "comment": " Get a tuple with the foreground resource and the background resource.\nYou will retrieve the final resource, thus, if the resource is not in `Success` state, the default resource will be returned.\n",
+                "type": "res -> RemoteResource.RemoteResource error res -> ( res, res )"
+            },
+            {
+                "name": "setBackground",
+                "comment": " If the foreground resource is in `Loading` state, this function will update the foreground resource.\nOtherwise, this will update the background resource without changing the foreground resource.\n\nThat means that you can use this function both when this is the first time you retrieve your resources (in this case you want to set the foreground resource),\nand when you want to refresh your resources and you already have foreground resources (in this case, maybe you want to store your background resources and tell your\nusers there are new resources awailable before replacing the foreground resources))\n\n",
+                "type": "RemoteResource.RemoteDataResource error res -> RemoteResource.RemoteResource error res -> RemoteResource.RemoteResource error res"
+            },
+            {
+                "name": "setOnlyBackground",
+                "comment": " Directly update the background resource without changing the foreground resource\n",
+                "type": "RemoteResource.RemoteDataResource error res -> RemoteResource.RemoteResource error res -> RemoteResource.RemoteResource error res"
+            },
+            {
+                "name": "setOnlyResource",
+                "comment": " Set the foreground resource without resetting the background resource.\n",
+                "type": "RemoteResource.RemoteDataResource error res -> RemoteResource.RemoteResource error res -> RemoteResource.RemoteResource error res"
+            },
+            {
+                "name": "setResource",
+                "comment": " Set the foreground resource. This will reset the background resource to `NotAsked`.\n",
+                "type": "RemoteResource.RemoteDataResource error res -> RemoteResource.RemoteResource error res -> RemoteResource.RemoteResource error res"
+            }
+        ],
+        "binops": []
+    }
+]

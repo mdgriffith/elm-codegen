@@ -1,0 +1,88 @@
+[
+    {
+        "name": "DateFormat",
+        "comment": " DateFormat\n\nInspired by C# Date formatting\n\n\n# format\n\n@docs format\n\n\n# Specifiers\n\n    \"d\"     - The day of the month, from 1 through 31.\n    \"dd\"    - The day of the month, from 01 through 31.\n    \"ddd\"   - The abbreviated name of the day of the week.\n    \"dddd\"  - The full name of the day of the week.\n    \"h\"     - The hour, using a 12-hour clock from 1 to 12.\n    \"hh\"    - The hour, using a 12-hour clock from 01 to 12.\n    \"H\"     - The hour, using a 24-hour clock from 0 to 23.\n    \"HH\"    - The hour, using a 24-hour clock from 00 to 23.\n    \"m\"     - The minute, from 0 through 59.\n    \"mm\"    - The minute, from 00 through 59.\n    \"M\"     - The month, from 1 through 12.\n    \"MM\"    - The month, from 01 through 12.\n    \"MMM\"   - The abbreviated name of the month.\n    \"MMMM\"  - The full name of the month.\n    \"s\"     - The second, from 0 through 59.\n    \"ss\"    - The second, from 00 through 59.\n    \"t\"     - The first character of the AM/PM designator.\n    \"tt\"    - The AM/PM designator.\n    \"yy\"    - The year, from 00 to 99.\n    \"yyyy\"  - The year as a four-digit number.\n    \"f\"     - The tenths of a second in a date and time value.\n    \"ff\"    - The hundredths of a second in a date and time value.\n    \"fff\"   - The milliseconds in a date and time value.\n\n\n# formatI18n\n\n@docs formatI18n\n\n\n# Languages\n\n@docs Language, english, french, spanish, dutch, finnish, greek, italian, norwegian, portuguese, swedish, german, russian\n\n",
+        "unions": [
+            {
+                "name": "Language",
+                "comment": " Languages currently supported\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "dutch",
+                "comment": " Dutch\n",
+                "type": "DateFormat.Language"
+            },
+            {
+                "name": "english",
+                "comment": " English\n",
+                "type": "DateFormat.Language"
+            },
+            {
+                "name": "finnish",
+                "comment": " Finnish\n",
+                "type": "DateFormat.Language"
+            },
+            {
+                "name": "format",
+                "comment": " format posix date and zone using a string format\n\n    format \"MM/dd/yyyy\" Time.utc (Time.millisToPosix 1575021804192)\n    == \"11/29/2019\"\n\n    format \"dddd, dd MMMM yyyy\" Time.utc (Time.millisToPosix 1575021804192)\n    == \"Friday, 29 November 2019\"\n\n    format \"dddd, dd MMMM yyyy HH:mm:ss\" Time.utc (Time.millisToPosix 1575021804192)\n    == \"Friday, 29 November 2019 10:03:24\"\n\n    format \"hh:mm tt\" Time.utc (Time.millisToPosix 1575021804192)\n    == \"10:03 AM\"\n\n",
+                "type": "String.String -> Time.Zone -> Time.Posix -> String.String"
+            },
+            {
+                "name": "formatI18n",
+                "comment": " format multilanguage\n\n    Only applies to weekdays and months\n\n    formatI18n french \"dddd, dd MMMM yyyy\" Time.utc (Time.millisToPosix 1575021804192)\n    == \"Vendredi, 29 Novembre 2019\"\n\n    formatI18n spanish \"dddd, dd MMMM yyyy HH:mm:ss\" Time.utc (Time.millisToPosix 1575021804192)\n    == \"Viernes, 29 Noviembre 2019 10:03:24\"\n\n",
+                "type": "DateFormat.Language -> String.String -> Time.Zone -> Time.Posix -> String.String"
+            },
+            {
+                "name": "french",
+                "comment": " French\n",
+                "type": "DateFormat.Language"
+            },
+            {
+                "name": "german",
+                "comment": " German\n",
+                "type": "DateFormat.Language"
+            },
+            {
+                "name": "greek",
+                "comment": " Greek\n",
+                "type": "DateFormat.Language"
+            },
+            {
+                "name": "italian",
+                "comment": " Italian\n",
+                "type": "DateFormat.Language"
+            },
+            {
+                "name": "norwegian",
+                "comment": " Norwegian\n",
+                "type": "DateFormat.Language"
+            },
+            {
+                "name": "portuguese",
+                "comment": " Portuguese\n",
+                "type": "DateFormat.Language"
+            },
+            {
+                "name": "russian",
+                "comment": " Russian\n",
+                "type": "DateFormat.Language"
+            },
+            {
+                "name": "spanish",
+                "comment": " Spanish\n",
+                "type": "DateFormat.Language"
+            },
+            {
+                "name": "swedish",
+                "comment": " Swedish\n",
+                "type": "DateFormat.Language"
+            }
+        ],
+        "binops": []
+    }
+]

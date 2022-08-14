@@ -1,0 +1,347 @@
+[
+    {
+        "name": "Cli.Option",
+        "comment": " Here is the terminology used for building up Command-Line parsers with this library.\n\n![Terminology Legend](https://raw.githubusercontent.com/dillonkearns/elm-cli-options-parser/master/terminology.png)\n\nSee the README and the [`examples`](https://github.com/dillonkearns/elm-cli-options-parser/tree/master/examples/src) folder for more in-depth examples of building\nand using `Cli.Option`s.\n\n\n## Positional Arguments\n\n@docs requiredPositionalArg\n\n\n## Keyword Arguments\n\n@docs optionalKeywordArg, requiredKeywordArg, keywordArgList\n\n\n## Flags\n\n@docs flag\n\n\n## Ending Options\n\nSee note in `Cli.OptionsParser` docs.\n\n@docs optionalPositionalArg, restArgs\n\n\n## Transformations\n\n\n### Mutually Exclusive Values\n\n@docs oneOf\n\n\n### Validation\n\nValidations allow you to guarantee that if you receive the data in Elm, it\nmeets a set of preconditions. If it doesn't, the User will see an error message\ndescribing the validation error, which option it came from, and the value the\noption had.\n\nNote that failing a validation will not cause the next `OptionsParser` in\nyour `Cli.Program.Config` to be run. Instead,\nif the OptionsParser is a match except for validation errors, you will get an\nerror message regardless.\n\nExample:\n\n\n    capitalizedNameRegex =\n        \"[A-Z][A-Za-z]*\"\n\n    validateParser =\n        OptionsParser.build (\\a b -> ( a, b ))\n            |> with\n                (Option.requiredKeywordArg \"name\"\n                    |> Option.validate (Cli.Validate.regex capitalizedNameRegex)\n                )\n            |> with\n                (Option.optionalKeywordArg \"age\"\n                    |> Option.validateMapIfPresent String.toInt\n                )\n\n    {-\n       $ ./validation --name Mozart --age 262\n       Mozart is 262 years old\n\n       $ ./validation --name Mozart --age \"Two-hundred and sixty-two\"\n       Validation errors:\n\n       `age` failed a validation. could not convert string 'Two-hundred and sixty-two' to an Int\n       Value was:\n       Just \"Two-hundred and sixty-two\"\n    -}\n\nSee `Cli.Validate` for some validation helpers that can be used in conjunction\nwith the following functions.\n\n@docs validate, validateIfPresent, validateMap, validateMapIfPresent\n\n\n### Mapping/Defaults\n\n@docs map, mapFlag, withDefault\n\n\n## Types\n\n@docs Option, BeginningOption, OptionalPositionalArgOption, RestArgsOption\n\n",
+        "unions": [
+            {
+                "name": "BeginningOption",
+                "comment": " `BeginningOption`s can only be used with `OptionsParser.with`.\n\n`OptionalPositionalArgOption`s can only be used with `OptionsParser.withOptionalPositionalArg`.\n\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Option",
+                "comment": " ",
+                "args": [
+                    "from",
+                    "to",
+                    "middleOrEnding"
+                ],
+                "cases": [
+                    [
+                        "Option",
+                        [
+                            "Cli.Option.InnerOption from to"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "OptionalPositionalArgOption",
+                "comment": " `BeginningOption`s can only be used with `OptionsParser.with`.\n\n`OptionalPositionalArgOption`s can only be used with `OptionsParser.withOptionalPositionalArg`.\n\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "RestArgsOption",
+                "comment": " `RestArgsOption`s can only be used with `OptionsParser.withRestArgs`.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "flag",
+                "comment": " ",
+                "type": "String.String -> Cli.Option.Option Basics.Bool Basics.Bool Cli.Option.BeginningOption"
+            },
+            {
+                "name": "keywordArgList",
+                "comment": " ",
+                "type": "String.String -> Cli.Option.Option (List.List String.String) (List.List String.String) Cli.Option.BeginningOption"
+            },
+            {
+                "name": "map",
+                "comment": " Transform an `Option`. For example, you may want to map an option from the\nraw `String` that comes from the command line into a `Regex`, as in this code snippet.\n\n    import Cli.Option as Option\n    import Cli.OptionsParser as OptionsParser\n    import Cli.Program as Program\n    import Regex exposing (Regex)\n\n    type alias CliOptions =\n        { pattern : Regex }\n\n    programConfig : Program.Config CliOptions\n    programConfig =\n        Program.config\n            |> Program.add\n                (OptionsParser.build buildCliOptions\n                    |> OptionsParser.with\n                        (Option.requiredPositionalArg \"pattern\"\n                            |> Option.map Regex.regex\n                        )\n                )\n\n",
+                "type": "(toRaw -> toMapped) -> Cli.Option.Option from toRaw builderState -> Cli.Option.Option from toMapped builderState"
+            },
+            {
+                "name": "mapFlag",
+                "comment": " Useful for using a custom union type for a flag instead of a `Bool`.\n\n    import Cli.Option as Option\n    import Cli.OptionsParser as OptionsParser\n    import Cli.Program as Program\n\n    type Verbosity\n        = Quiet\n        | Verbose\n\n    type alias CliOptions =\n        { verbosity : Verbosity\n        }\n\n    programConfig : Program.Config CliOptions\n    programConfig =\n        Program.config\n            |> Program.add\n                (OptionsParser.build CliOptions\n                    |> OptionsParser.with\n                        (Option.flag \"verbose\"\n                            |> Option.mapFlag\n                                { present = Verbose\n                                , absent = Quiet\n                                }\n                        )\n                )\n\n",
+                "type": "{ present : union, absent : union } -> Cli.Option.Option from Basics.Bool builderState -> Cli.Option.Option from union builderState"
+            },
+            {
+                "name": "oneOf",
+                "comment": " Mutually exclusive option values.\n\n    type ReportFormat\n        = Json\n        | Junit\n        | Console\n\n    type alias CliOptions =\n        { reportFormat : ReportFormat\n        , testFiles : List String\n        }\n\n    program : Program.Config CliOptions\n    program =\n        Program.config\n            |> Program.add\n                (OptionsParser.build CliOptions\n                    |> with\n                        (Option.optionalKeywordArg \"report\"\n                            |> Option.withDefault \"console\"\n                            |> Option.oneOf Console\n                                [ \"json\" => Json\n                                , \"junit\" => Junit\n                                , \"console\" => Console\n                                ]\n                        )\n                    |> OptionsParser.withRestArgs (Option.restArgs \"TESTFILES\")\n                )\n\nNow when you run it, you get the following in your help text:\n\n```shell\n$ ./elm-test --help\nelm-test [--report <json|junit|console>] <TESTFILES>...\n```\n\nAnd if you run it with an unrecognized value, you get a validation error:\n\n```shell\n$ ./elm-test --report xml\nValidation errors:\n\n`report` failed a validation. Must be one of [json, junit, console]\nValue was:\n\"xml\"\n```\n\n",
+                "type": "value -> List.List (Cli.Option.MutuallyExclusiveValue value) -> Cli.Option.Option from String.String builderState -> Cli.Option.Option from value builderState"
+            },
+            {
+                "name": "optionalKeywordArg",
+                "comment": " ",
+                "type": "String.String -> Cli.Option.Option (Maybe.Maybe String.String) (Maybe.Maybe String.String) Cli.Option.BeginningOption"
+            },
+            {
+                "name": "optionalPositionalArg",
+                "comment": " Note that this must be used with `OptionsParser.withOptionalPositionalArg`.\n",
+                "type": "String.String -> Cli.Option.Option (Maybe.Maybe String.String) (Maybe.Maybe String.String) Cli.Option.OptionalPositionalArgOption"
+            },
+            {
+                "name": "requiredKeywordArg",
+                "comment": " ",
+                "type": "String.String -> Cli.Option.Option String.String String.String Cli.Option.BeginningOption"
+            },
+            {
+                "name": "requiredPositionalArg",
+                "comment": " ",
+                "type": "String.String -> Cli.Option.Option String.String String.String Cli.Option.BeginningOption"
+            },
+            {
+                "name": "restArgs",
+                "comment": " Note that this must be used with `OptionsParser.withRestArgs`.\n",
+                "type": "String.String -> Cli.Option.Option (List.List String.String) (List.List String.String) Cli.Option.RestArgsOption"
+            },
+            {
+                "name": "validate",
+                "comment": " Run a validation. (See an example in the Validation section above, or\nin the [`examples`](https://github.com/dillonkearns/elm-cli-options-parser/tree/master/examples/src) folder).\n",
+                "type": "(to -> Cli.Validate.ValidationResult) -> Cli.Option.Option from to builderState -> Cli.Option.Option from to builderState"
+            },
+            {
+                "name": "validateIfPresent",
+                "comment": " Run a validation if the value is `Just someValue`. Or do nothing if the value is `Nothing`.\n(See an example in the Validation section above, or in the [`examples`](https://github.com/dillonkearns/elm-cli-options-parser/tree/master/examples/src) folder).\n",
+                "type": "(to -> Cli.Validate.ValidationResult) -> Cli.Option.Option from (Maybe.Maybe to) builderState -> Cli.Option.Option from (Maybe.Maybe to) builderState"
+            },
+            {
+                "name": "validateMap",
+                "comment": " Transform the value through a map function. If it returns `Ok someValue` then\nthe `Option` will be transformed into `someValue`. If it returns `Err someError`\nthen the User of the Command-Line Interface will see `someError` with details\nabout the `Option` that had the validation error.\n\n(See an example in the Validation section above, or\nin the [`examples`](https://github.com/dillonkearns/elm-cli-options-parser/tree/master/examples/src) folder).\n\n",
+                "type": "(to -> Result.Result String.String toMapped) -> Cli.Option.Option from to builderState -> Cli.Option.Option from toMapped builderState"
+            },
+            {
+                "name": "validateMapIfPresent",
+                "comment": " Same as `validateMap` if the value is `Just someValue`. Does nothing if\nthe value is `Nothing`.\n\n(See an example in the Validation section above, or\nin the [`examples`](https://github.com/dillonkearns/elm-cli-options-parser/tree/master/examples/src) folder).\n\n",
+                "type": "(to -> Result.Result String.String toMapped) -> Cli.Option.Option (Maybe.Maybe from) (Maybe.Maybe to) builderState -> Cli.Option.Option (Maybe.Maybe from) (Maybe.Maybe toMapped) builderState"
+            },
+            {
+                "name": "withDefault",
+                "comment": " Provide a default value for the `Option`.\n",
+                "type": "to -> Cli.Option.Option from (Maybe.Maybe to) builderState -> Cli.Option.Option from to builderState"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Cli.OptionsParser",
+        "comment": "\n\n\n## Types\n\n@docs OptionsParser\n\n\n## Start the Pipeline\n\nYou build up an `OptionsParser` similarly to the way you build a decoder using the\n[elm-decode-pipeline](http://package.elm-lang.org/packages/NoRedInk/elm-decode-pipeline/latest)\npattern. That is, you start the pipeline by giving it a constructor function,\nand then for each argument of your constructor function, you have a corresponding\n\n    |> with (Option.someKindOfOption)\n\nin the exact same order.\n\nFor example, if we define a type alias for a record with two attributes,\nElm generates a 2-argument constructor function for that record type. Here\nElm gives us a `GreetOptions` function of the type `String -> Maybe String -> GreetOptions`\n(this is just a core Elm language feature). That is, if we pass in a `String` and\na `Maybe String` as the 1st and 2nd arguments to the `GreetOptions` function,\nit will build up a record of that type.\n\nSo in this example, we call `OptionsParser.build` with our `GreetOptions`\nconstructor function. Then we chain on `with` once for each of those two arguments.\nNote that the first `with` will give us a `String`, and the second will give us\na `Maybe String`, so it matches up perfectly with the order of our constructor's\narguments.\n\n    import Cli.Option as Option\n    import Cli.OptionsParser as OptionsParser exposing (with)\n    import Cli.Program as Program\n\n    type alias GreetOptions =\n        { name : String\n        , maybeGreeting : Maybe String\n        }\n\n    programConfig : Program.Config GreetOptions\n    programConfig =\n        Program.config\n            |> Program.add\n                (OptionsParser.build GreetOptions\n                    |> with (Option.requiredKeywordArg \"name\")\n                    |> with (Option.optionalKeywordArg \"greeting\")\n                )\n\n@docs build, buildSubCommand\n\n\n## Adding `Cli.Option.Option`s To The Pipeline\n\nMost options can be chained on using `with`. There are two exceptions,\n`restArgs` and `optionalPositionalArg`s. `elm-cli-options-parser` enforces that\nthey are added in an unambiguous order (see the `Cli.OptionsParser.BuilderState` docs).\nSo instead of using `with`, you add them with their corresponding `with...`\nfunctions.\n\n    import Cli.Option\n    import Cli.OptionsParser as OptionsParser exposing (with)\n\n    type GitOptionsParser\n        = Init\n        | Log LogOptions -- ...\n\n    type alias LogOptions =\n        { maybeAuthorPattern : Maybe String\n        , maybeNumberToDisplay : Maybe Int\n        }\n\n    logOptionsParser =\n        OptionsParser.buildSubCommand \"log\" LogOptions\n            |> with (Option.optionalKeywordArg \"author\")\n            |> with\n                (Option.optionalKeywordArg \"max-count\"\n                    |> Option.validateMapIfPresent String.toInt\n                )\n            |> with (Option.flag \"stat\")\n            |> OptionsParser.withOptionalPositionalArg\n                (Option.optionalPositionalArg \"revision range\")\n            |> OptionsParser.withRestArgs\n                (Option.restArgs \"rest args\")\n\n\n### User Error Message on Invalid Number of Positional Args\n\nThe User of the Command-Line Interface will get an error message if there is no\n`OptionsParser` that succeeds. And an `OptionsParser` will only succeed if\na valid number of positional arguments is passed in, as defined by these rules:\n\n  - At least the number of required arguments\n  - Can be any number greater than that if there are `restArgs`\n  - Could be up to as many as (the number of required arguments) + (the number of optional arguments) if there are no rest args\n\n@docs with\n@docs withOptionalPositionalArg, withRestArgs\n\n@docs expectFlag\n\n\n## Mapping and Transforming\n\n@docs map\n@docs hardcoded\n\n\n## Meta-Data\n\n@docs withDoc\n\n\n## Low-Level Functions\n\nYou shouldn't need to use these functions to build a command line utility.\n\n@docs getSubCommand, getUsageSpecs, synopsis, tryMatch, end\n\n",
+        "unions": [
+            {
+                "name": "OptionsParser",
+                "comment": " An `OptionsParser` represents one possible way to interpret command line arguments.\nA `Cli.Program.Config` can be built up using one or more `OptionsParser`s. It will\ntry each parser in order until one succeeds. If none succeed, it will print\nan error message with information for the user of the Command-Line Interface.\n",
+                "args": [
+                    "cliOptions",
+                    "builderState"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "build",
+                "comment": " Start an `OptionsParser` pipeline with no sub-command (see\n[the OptionsParser terminilogy legend](https://github.com/dillonkearns/elm-cli-options-parser#options-parser-terminology)).\n",
+                "type": "cliOptions -> Cli.OptionsParser.OptionsParser cliOptions Cli.OptionsParser.BuilderState.AnyOptions"
+            },
+            {
+                "name": "buildSubCommand",
+                "comment": " Start an `OptionsParser` pipeline with a sub-command (see\n[the OptionsParser terminilogy legend](https://github.com/dillonkearns/elm-cli-options-parser#options-parser-terminology)).\n",
+                "type": "String.String -> cliOptions -> Cli.OptionsParser.OptionsParser cliOptions Cli.OptionsParser.BuilderState.AnyOptions"
+            },
+            {
+                "name": "end",
+                "comment": " Low-level function, for internal use.\n",
+                "type": "Cli.OptionsParser.OptionsParser cliOptions builderState -> Cli.OptionsParser.OptionsParser cliOptions Cli.OptionsParser.BuilderState.NoMoreOptions"
+            },
+            {
+                "name": "expectFlag",
+                "comment": " The `OptionsParser` will only match if the given flag is present. Often its\nbest to use a subcommand in these cases.\n",
+                "type": "String.String -> Cli.OptionsParser.OptionsParser cliOptions Cli.OptionsParser.BuilderState.AnyOptions -> Cli.OptionsParser.OptionsParser cliOptions Cli.OptionsParser.BuilderState.AnyOptions"
+            },
+            {
+                "name": "getSubCommand",
+                "comment": " Low-level function, for internal use.\n",
+                "type": "Cli.OptionsParser.OptionsParser cliOptions builderState -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "getUsageSpecs",
+                "comment": " Low-level function, for internal use.\n",
+                "type": "Cli.OptionsParser.OptionsParser decodesTo builderState -> List.List Cli.UsageSpec.UsageSpec"
+            },
+            {
+                "name": "hardcoded",
+                "comment": " Use a fixed value for the next step in the pipeline. This doesn't use\nany input from the user, it just passes the supplied value through in the chain.\n\n    import Cli.Option as Option\n    import Cli.OptionsParser as OptionsParser\n    import Cli.Program as Program\n\n    type alias GreetOptions =\n        { name : String\n        , maybeGreeting : Maybe String\n        , hardcodedValue : String\n        }\n\n    programConfig : Program.Config GreetOptions\n    programConfig =\n        Program.config\n            |> Program.add\n                (OptionsParser.build GreetOptions\n                    |> OptionsParser.with (Option.requiredKeywordArg \"name\")\n                    |> OptionsParser.with (Option.optionalKeywordArg \"greeting\")\n                    |> OptionsParser.hardcoded \"any hardcoded value\"\n                )\n\n",
+                "type": "value -> Cli.OptionsParser.OptionsParser (value -> cliOptions) Cli.OptionsParser.BuilderState.AnyOptions -> Cli.OptionsParser.OptionsParser cliOptions Cli.OptionsParser.BuilderState.AnyOptions"
+            },
+            {
+                "name": "map",
+                "comment": " Map the CLI options returned in the `OptionsParser` using the supplied map function.\n\nThis is very handy when you want a type alias for a record with options for a\na given `OptionsParser`, but you need all of your `OptionsParser` to map into\na single union type.\n\n    import Cli.Option as Option\n    import Cli.OptionsParser as OptionsParser\n    import Cli.Program as Program\n    import Ports\n\n    type CliOptions\n        = Hello HelloOptions\n        | Goodbye GoodbyeOptions\n\n    type alias HelloOptions =\n        { name : String\n        , maybeHello : Maybe String\n        }\n\n    type alias GoodbyeOptions =\n        { name : String\n        , maybeGoodbye : Maybe String\n        }\n\n    programConfig : Program.Config CliOptions\n    programConfig =\n        Program.config\n            |> Program.add\n                (OptionsParser.buildSubCommand \"hello\" HelloOptions\n                    |> OptionsParser.with (Option.requiredKeywordArg \"name\")\n                    |> OptionsParser.with (Option.optionalKeywordArg \"greeting\")\n                    |> OptionsParser.map Hello\n                )\n            |> Program.add\n                (OptionsParser.buildSubCommand \"goodbye\" GoodbyeOptions\n                    |> OptionsParser.with (Option.requiredKeywordArg \"name\")\n                    |> OptionsParser.with (Option.optionalKeywordArg \"goodbye\")\n                    |> OptionsParser.map Goodbye\n                )\n\n",
+                "type": "(cliOptions -> mappedCliOptions) -> Cli.OptionsParser.OptionsParser cliOptions builderState -> Cli.OptionsParser.OptionsParser mappedCliOptions builderState"
+            },
+            {
+                "name": "synopsis",
+                "comment": " Low-level function, for internal use.\n",
+                "type": "String.String -> Cli.OptionsParser.OptionsParser decodesTo builderState -> String.String"
+            },
+            {
+                "name": "tryMatch",
+                "comment": " Low-level function, for internal use.\n",
+                "type": "List.List String.String -> Cli.OptionsParser.OptionsParser cliOptions builderState -> Cli.OptionsParser.MatchResult.MatchResult cliOptions"
+            },
+            {
+                "name": "with",
+                "comment": " For chaining on any `Cli.Option.Option` besides a `restArg` or an `optionalPositionalArg`.\nSee the `Cli.Option` module.\n",
+                "type": "Cli.Option.Option from to Cli.Option.BeginningOption -> Cli.OptionsParser.OptionsParser (to -> cliOptions) Cli.OptionsParser.BuilderState.AnyOptions -> Cli.OptionsParser.OptionsParser cliOptions Cli.OptionsParser.BuilderState.AnyOptions"
+            },
+            {
+                "name": "withDoc",
+                "comment": " Add documentation for the optionsParser.\nThe output shows up after a `#` in the help output:\n\n```bash\n$ git --help\ngit init # initialize a git repository\n...\n```\n\n      import Cli.OptionsParser as OptionsParser exposing (OptionsParser, with)\n\n      type GitOptionsParser =\n        Init\n        | Clone String\n\n      gitInitOptionsParser : OptionsParser GitOptionsParser\n      gitInitOptionsParser =\n        OptionsParser.build Init\n         |> OptionsParser.end\n         |> OptionsParser.withDoc \"initialize a git repository\"\n\n",
+                "type": "String.String -> Cli.OptionsParser.OptionsParser cliOptions anything -> Cli.OptionsParser.OptionsParser cliOptions anything"
+            },
+            {
+                "name": "withOptionalPositionalArg",
+                "comment": " For chaining on `Cli.Option.optionalPositionalArg`s.\n",
+                "type": "Cli.Option.Option from to Cli.Option.OptionalPositionalArgOption -> Cli.OptionsParser.OptionsParser (to -> cliOptions) Cli.OptionsParser.BuilderState.AnyOptions -> Cli.OptionsParser.OptionsParser cliOptions Cli.OptionsParser.BuilderState.NoBeginningOptions"
+            },
+            {
+                "name": "withRestArgs",
+                "comment": " For chaining on `Cli.Option.restArgs`.\n",
+                "type": "Cli.Option.Option from to Cli.Option.RestArgsOption -> Cli.OptionsParser.OptionsParser (to -> cliOptions) startingBuilderState -> Cli.OptionsParser.OptionsParser cliOptions Cli.OptionsParser.BuilderState.NoMoreOptions"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Cli.OptionsParser.BuilderState",
+        "comment": " A BuilderState is used to ensure that no ambiguous OptionsParsers are built.\nFor example, if you were to build an OptionsParser that had optional positional\narguments after required positional arguments, it would be amgiguous.\n\n```bash\ngreet <greeting1> [name1][name2] <greeting2> [farewell]\n\ngreet Hi Hello Goodbye\n```\n\nShould `\"Goodbye\"` be set as `[name1]` or `[farewell]`? You could certainly come\nup with some rules, but they're not obvious, and you'd have to think really hard!\nSo we just completely eliminate those confusing corner cases by making it impossible\nto express!\n\nThe `BuilderState` guarantees that nothing will come after rest args (i.e. `[args]...`,\nor 0 or more args that you get as a `List` of values).\nAnd it also guarantees that Optional Positional Arguments will come after everything\nbut rest args.\n\nIf you're interested in the low-level details of how this Elm type trick is done,\ntake a look at\n[this article on Phantom Types](https://medium.com/@ckoster22/advanced-types-in-elm-phantom-types-808044c5946d).\n\n@docs AnyOptions, NoBeginningOptions, NoMoreOptions\n\n",
+        "unions": [
+            {
+                "name": "AnyOptions",
+                "comment": " A state where you can add any options (beginning, middle, or terminal)\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "NoBeginningOptions",
+                "comment": " A state where you can add anything but beginning options (i.e. middle or terminal)\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "NoMoreOptions",
+                "comment": " A state where you can no longer add any options\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "Cli.Program",
+        "comment": "\n\n\n## Config\n\nA `Cli.Program.Config` is created with `Cli.Program.config`. Then `OptionsParser`s are added\nto it with `Cli.Program.add`. Finally, you create a `Cli.Program.StatelessProgram`\nusing `stateless` or a `Cli.Program.StatefulProgram` using `stateful`.\n\n    import Cli.Option as Option\n    import Cli.OptionsParser as OptionsParser\n    import Cli.Program as Program\n    import Ports\n\n    programConfig : Program.Config GreetOptions\n    programConfig =\n        Program.config\n            |> Program.add\n                (OptionsParser.build GreetOptions\n                    |> OptionsParser.with (Option.requiredKeywordArg \"name\")\n                    |> OptionsParser.with (Option.optionalKeywordArg \"greeting\")\n                )\n\n    type alias GreetOptions =\n        { name : String\n        , maybeGreeting : Maybe String\n        }\n\n    init : Flags -> GreetOptions -> Cmd Never\n    init flags { name, maybeGreeting } =\n        maybeGreeting\n            |> Maybe.withDefault \"Hello\"\n            |> (\\greeting -> greeting ++ \" \" ++ name ++ \"!\")\n            |> Ports.print\n\n    type alias Flags =\n        Program.FlagsIncludingArgv {}\n\n    main : Program.StatelessProgram Never\n    main =\n        Program.stateless\n            { printAndExitFailure = Ports.printAndExitFailure\n            , printAndExitSuccess = Ports.printAndExitSuccess\n            , init = init\n            , config = programConfig\n            }\n\nSee the [`examples`](https://github.com/dillonkearns/elm-cli-options-parser/tree/master/examples/src) for some end-to-end examples.\n\n@docs config, Config, add\n\n\n## `Program`s\n\n@docs stateless, stateful\n@docs StatelessProgram, StatefulProgram\n@docs FlagsIncludingArgv\n\n",
+        "unions": [
+            {
+                "name": "Config",
+                "comment": " A `Cli.Program.Config` is used to build up a set of `OptionsParser`s for your\nCommand-Line Interface, as well as its meta-data such as version number.\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "FlagsIncludingArgv",
+                "comment": " Flags in Cli Programs can contain any data as long as it is a record\nat the top-level which contains an `argv` field of type `List String`.\nIn other words, it must be a record of type `FlagsIncludingArgv`\n(if you aren't familiar with them, you can [read more about extensible records here](https://medium.com/@ckoster22/advanced-types-in-elm-extensible-records-67e9d804030d)).\n\nYou pass in the flags like this (see the [`examples`](https://github.com/dillonkearns/elm-cli-options-parser/tree/master/examples/src) folder for more):\n\n```javascript\n#!/usr/bin/env node\n\nlet program = require(\"./elm.js\").Elm.Main.init({\n  flags: { argv: process.argv, versionMessage: \"1.2.3\" }\n});\n```\n\n",
+                "args": [
+                    "flagsRecord"
+                ],
+                "type": "{ flagsRecord | argv : List.List String.String, versionMessage : String.String }"
+            },
+            {
+                "name": "StatefulProgram",
+                "comment": " ",
+                "args": [
+                    "model",
+                    "msg",
+                    "cliOptions",
+                    "flags"
+                ],
+                "type": "Platform.Program (Cli.Program.FlagsIncludingArgv flags) (Cli.Program.StatefulProgramModel model cliOptions) msg"
+            },
+            {
+                "name": "StatelessProgram",
+                "comment": " ",
+                "args": [
+                    "msg",
+                    "flags"
+                ],
+                "type": "Platform.Program (Cli.Program.FlagsIncludingArgv flags) () msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "add",
+                "comment": " Add an `OptionsParser` to your `Cli.Program.Config`.\n",
+                "type": "Cli.OptionsParser.OptionsParser msg anything -> Cli.Program.Config msg -> Cli.Program.Config msg"
+            },
+            {
+                "name": "config",
+                "comment": " Create a `Config` with no `OptionsParser`s. Use `Cli.Program.add` to add\n`OptionsParser`s.\n",
+                "type": "Cli.Program.Config decodesTo"
+            },
+            {
+                "name": "stateful",
+                "comment": " A `stateful` program can have a model that it creates and updates via `init`\nand `update`. It also has `subscriptions`. See\n[the `Curl.elm` example](https://github.com/dillonkearns/elm-cli-options-parser/blob/master/examples/src/Curl.elm).\n",
+                "type": "Cli.Program.StatefulOptions msg model cliOptions flags -> Platform.Program (Cli.Program.FlagsIncludingArgv flags) (Cli.Program.StatefulProgramModel model cliOptions) msg"
+            },
+            {
+                "name": "stateless",
+                "comment": " ",
+                "type": "Cli.Program.ProgramOptions msg options flags -> Cli.Program.StatelessProgram msg flags"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Cli.Validate",
+        "comment": " This module contains helper functions for performing validations (see the\n\"validate...\" functions in `Cli.Option`).\n\n@docs predicate, ValidationResult, regex, regexWithMessage\n\n",
+        "unions": [
+            {
+                "name": "ValidationResult",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Valid",
+                        []
+                    ],
+                    [
+                        "Invalid",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "predicate",
+                "comment": " Turns a predicate function into a validate function.\n\n    import Cli.Option as Option\n    import Cli.Validate as Validate\n\n    isEven : Int -> Bool\n    isEven n =\n        modBy 2 n == 0\n\n    pairsOption : Option.Option (Maybe String) (Maybe Int)\n    pairsOption =\n        Option.optionalKeywordArg \"pair-programmers\"\n            |> Option.validateMapIfPresent String.toInt\n            |> Option.validateIfPresent\n                (Validate.predicate \"Must be even\" isEven)\n\n",
+                "type": "String.String -> (a -> Basics.Bool) -> a -> Cli.Validate.ValidationResult"
+            },
+            {
+                "name": "regex",
+                "comment": " A helper for regex validations.\n\n    programConfig : Program.Config String\n    programConfig =\n        Program.config\n            |> Program.add\n                (OptionsParser.build identity\n                    |> OptionsParser.with\n                        (Option.requiredKeywordArg \"name\"\n                            |> Option.validate\n                                (Cli.Validate.regex \"^[A-Z][A-Za-z_]*\")\n                        )\n                )\n\nIf the validation fails, the user gets output like this:\n\n```shell\n$ ./greet --name john\nValidation errors:\n\n`name` failed a validation. Must be of form /^[A-Z][A-Za-z_]*/\nValue was:\n\"john\"\n```\n\n",
+                "type": "String.String -> String.String -> Cli.Validate.ValidationResult"
+            },
+            {
+                "name": "regexWithMessage",
+                "comment": " A helper for regex validations with an additional message.\n\n    programConfig : Program.Config String\n    programConfig =\n        Program.config\n            |> Program.add\n                (OptionsParser.build identity\n                    |> OptionsParser.with\n                        (Option.requiredKeywordArg \"name\"\n                            |> Option.validate\n                                (Cli.Validate.regexWithMessage \"I expected this to be\" \"^[A-Z][A-Za-z_]*\")\n                        )\n                )\n\nIf the validation fails, the user gets output like this:\n\n```shell\n$ ./greet --name john\nValidation errors:\n\n`name` failed a validation. I expected this to be matching \"^[A-Z][A-Za-z_]*\" but got 'john'\nValue was:\n\"john\"\n```\n\n",
+                "type": "String.String -> String.String -> String.String -> Cli.Validate.ValidationResult"
+            }
+        ],
+        "binops": []
+    }
+]

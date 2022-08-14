@@ -1,0 +1,481 @@
+[
+    {
+        "name": "PostgRestAdmin",
+        "comment": "\n\n@docs Program\n\n\n# Init\n\n@docs application\n@docs breadcrumbs\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Program",
+                "comment": " An alias to elm's Platform.Program providing the type signature for a\nPostgRestAdmin program.\n",
+                "args": [
+                    "model",
+                    "msg"
+                ],
+                "type": "Platform.Program Json.Decode.Value (PostgRestAdmin.Model model msg) (PostgRestAdmin.Msg model msg)"
+            }
+        ],
+        "values": [
+            {
+                "name": "application",
+                "comment": " Takes a Config and creates a PostgRestAdmin application.\n\nSee [Config](PostgRestAdmin.Config) to check all configuration\noptions.\n\n      main : PostgRestAdmin.Program Never Never\n      main =\n          PostgRestAdmin.application Config.init\n\n",
+                "type": "Json.Decode.Decoder (Internal.Config.Config m msg) -> PostgRestAdmin.Program m msg"
+            },
+            {
+                "name": "breadcrumbs",
+                "comment": " ",
+                "type": "String.String -> List.List ( String.String, Maybe.Maybe String.String ) -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "PostgRestAdmin.Client",
+        "comment": "\n\n\n# Client\n\n@docs Client\n@docs toHostUrl\n\n\n# Table\n\n@docs Table\n@docs getTable\n@docs tableName\n\n\n# Requests\n\nNote that the request functions **do not produce a vanilla Elm\n[Cmd](https://package.elm-lang.org/packages/elm/core/latest/Platform-Cmd#Cmd)**\nbut a [PostgRestAdmin.Cmd](PostgRestAdmin.Cmd).\n\n@docs fetchRecord\n@docs fetchRecordList\n@docs saveRecord\n@docs deleteRecord\n@docs request\n@docs requestMany\n@docs Collection\n\n@docs Error\n@docs errorToString\n\n@docs oneResolver\n\n@docs manyResolver\n@docs noneResolver\n\n@docs task\n@docs attempt\n@docs decodeOne\n@docs decodeMany\n\n\n# Authentication\n\n@docs isAuthenticated\n@docs toJwtString\n@docs authHeader\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Client",
+                "comment": " Represents a client for a PostgREST instance, including authentication\nparams.\n\nSee [Config](PostgRestAdmin.Config) and\n[Config.FormAuth](PostgRestAdmin.Config.FormAuth) for authentication\nconfiguration options.\n\n",
+                "args": [],
+                "type": "Internal.Client.Client"
+            },
+            {
+                "name": "Collection",
+                "comment": " ",
+                "args": [
+                    "a"
+                ],
+                "type": "{ from : Basics.Int, to : Basics.Int, total : Basics.Int, list : List.List a }"
+            },
+            {
+                "name": "Error",
+                "comment": " Request error.\n",
+                "args": [],
+                "type": "Internal.Http.Error"
+            },
+            {
+                "name": "Table",
+                "comment": " Represents a PostgREST table.\n",
+                "args": [],
+                "type": "Internal.Schema.Table"
+            }
+        ],
+        "values": [
+            {
+                "name": "attempt",
+                "comment": " ",
+                "type": "(Result.Result PostgRestAdmin.Client.Error Internal.Http.Response -> msg) -> Task.Task PostgRestAdmin.Client.Error Internal.Http.Response -> Internal.Cmd.Cmd msg"
+            },
+            {
+                "name": "authHeader",
+                "comment": " Generate an authorization header.\n",
+                "type": "PostgRestAdmin.Client.Client -> Maybe.Maybe Http.Header"
+            },
+            {
+                "name": "decodeMany",
+                "comment": " ",
+                "type": "Json.Decode.Decoder a -> Result.Result PostgRestAdmin.Client.Error Internal.Http.Response -> Result.Result PostgRestAdmin.Client.Error (PostgRestAdmin.Client.Collection a)"
+            },
+            {
+                "name": "decodeOne",
+                "comment": " ",
+                "type": "Json.Decode.Decoder a -> Result.Result PostgRestAdmin.Client.Error Internal.Http.Response -> Result.Result PostgRestAdmin.Client.Error a"
+            },
+            {
+                "name": "deleteRecord",
+                "comment": " Deletes a record.\n`expect` param requires a function that returns a `Msg`.\n\n    import PostgRestAdmin.Cmd as AppCmd\n\n    delete : (Result Error Record -> Msg) -> Record -> Client -> AppCmd.Cmd Msg\n    delete tagger record client =\n        deleteRecord\n            { client = client\n            , record = record\n            , expect = tagger\n            }\n\n",
+                "type": "{ record : PostgRestAdmin.Record.Record, expect : Result.Result PostgRestAdmin.Client.Error () -> msg } -> PostgRestAdmin.Client.Client -> PostgRestAdmin.Cmd.Cmd msg"
+            },
+            {
+                "name": "errorToString",
+                "comment": " Transform [Error](#Error) to an error explanation.\n",
+                "type": "PostgRestAdmin.Client.Error -> String.String"
+            },
+            {
+                "name": "fetchRecord",
+                "comment": " Fetches a record for a given table.\n`expect` param requires a function that returns a `Msg`.\n\n    import PostgRestAdmin.Cmd as AppCmd\n\n    fetchOne : (Result Error Record -> msg) -> String -> Client -> AppCmd.Cmd Msg\n    fetchOne tagger tableName client =\n        case getTable tableName client of\n            Just table ->\n                fetchRecord\n                    { client = client\n                    , table = table\n                    , params = []\n                    , expect = tagger\n                    }\n\n            Nothing ->\n                AppCmd.none\n\n",
+                "type": "{ client : PostgRestAdmin.Client.Client, table : PostgRestAdmin.Client.Table, id : String.String, expect : Result.Result PostgRestAdmin.Client.Error PostgRestAdmin.Record.Record -> msg } -> PostgRestAdmin.Cmd.Cmd msg"
+            },
+            {
+                "name": "fetchRecordList",
+                "comment": " Fetches a list of records for a given table.\n`expect` param requires a function that returns a `Msg`.\n\n    import PostgRestAdmin.Cmd as AppCmd\n\n    fetchList : (Result Error (List Record) -> Msg) -> String -> Client -> AppCmd.Cmd Msg\n    fetchList tagger tableName client =\n        case getTable tableName client of\n            Just table ->\n                fetchRecordList\n                    { client = client\n                    , table = table\n                    , params = []\n                    , expect = tagger\n                    }\n\n            Nothing ->\n                AppCmd.none\n\n",
+                "type": "{ client : PostgRestAdmin.Client.Client, table : PostgRestAdmin.Client.Table, queryString : String.String, expect : Result.Result PostgRestAdmin.Client.Error (PostgRestAdmin.Client.Collection PostgRestAdmin.Record.Record) -> msg } -> PostgRestAdmin.Cmd.Cmd msg"
+            },
+            {
+                "name": "getTable",
+                "comment": " Obtain a table from the table name.\n",
+                "type": "String.String -> PostgRestAdmin.Client.Client -> Maybe.Maybe PostgRestAdmin.Client.Table"
+            },
+            {
+                "name": "isAuthenticated",
+                "comment": " Does the client has a valid JWT?\n",
+                "type": "PostgRestAdmin.Client.Client -> Basics.Bool"
+            },
+            {
+                "name": "manyResolver",
+                "comment": " ",
+                "type": "Http.Resolver PostgRestAdmin.Client.Error Internal.Http.Response"
+            },
+            {
+                "name": "noneResolver",
+                "comment": " ",
+                "type": "Http.Resolver PostgRestAdmin.Client.Error Internal.Http.Response"
+            },
+            {
+                "name": "oneResolver",
+                "comment": " ",
+                "type": "Http.Resolver PostgRestAdmin.Client.Error Internal.Http.Response"
+            },
+            {
+                "name": "request",
+                "comment": " Perform a request\n",
+                "type": "{ client : PostgRestAdmin.Client.Client, method : String.String, headers : List.List Http.Header, path : String.String, body : Http.Body, decoder : Json.Decode.Decoder a, expect : Result.Result PostgRestAdmin.Client.Error a -> msg } -> PostgRestAdmin.Cmd.Cmd msg"
+            },
+            {
+                "name": "requestMany",
+                "comment": " ",
+                "type": "{ client : PostgRestAdmin.Client.Client, method : String.String, headers : List.List Http.Header, path : String.String, body : Http.Body, decoder : Json.Decode.Decoder a, expect : Result.Result PostgRestAdmin.Client.Error (PostgRestAdmin.Client.Collection a) -> msg } -> PostgRestAdmin.Cmd.Cmd msg"
+            },
+            {
+                "name": "saveRecord",
+                "comment": " Saves a record.\n`expect` param requires a function that returns a `Msg`.\n\nYou can use [expectRecord](#expectRecord) to interpret the result as a\n[Record](PostgRestAdmin.Record).\n\n    import PostgRestAdmin.Cmd as AppCmd\n\n    save : (Result Error () -> Msg) -> Record -> Maybe String -> Client -> AppCmd.Cmd Msg\n    save tagger record id client =\n        saveRecord\n            { client = client\n            , record = record\n            , id = id\n            , expect = tagger\n            }\n\n",
+                "type": "{ client : PostgRestAdmin.Client.Client, record : PostgRestAdmin.Record.Record, id : Maybe.Maybe String.String, expect : Result.Result PostgRestAdmin.Client.Error PostgRestAdmin.Record.Record -> msg } -> PostgRestAdmin.Cmd.Cmd msg"
+            },
+            {
+                "name": "tableName",
+                "comment": " Obtain the name of a table\n",
+                "type": "PostgRestAdmin.Client.Table -> String.String"
+            },
+            {
+                "name": "task",
+                "comment": " Task to perform a request to a PostgREST instance resource.\n",
+                "type": "{ client : PostgRestAdmin.Client.Client, method : String.String, headers : List.List Http.Header, path : String.String, body : Http.Body, resolver : Http.Resolver PostgRestAdmin.Client.Error body, timeout : Maybe.Maybe Basics.Float } -> Task.Task PostgRestAdmin.Client.Error body"
+            },
+            {
+                "name": "toHostUrl",
+                "comment": " Obtain the PostgREST instance url.\n",
+                "type": "PostgRestAdmin.Client.Client -> Url.Url"
+            },
+            {
+                "name": "toJwtString",
+                "comment": " Obtain the JWT as a string.\n",
+                "type": "PostgRestAdmin.Client.Client -> Maybe.Maybe String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "PostgRestAdmin.Cmd",
+        "comment": " Program configuration\n\n@docs Cmd\n@docs wrap\n@docs none\n@docs batch\n@docs map\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Cmd",
+                "comment": " Wrapper around the vanilla Elm\n[Cmd](https://package.elm-lang.org/packages/elm/core/latest/Platform-Cmd#Cmd)\nfor internal communication.\n\nWhen mounting an application via [Config.withMountPoint](PostgRestAdmin.Config#withMountPoint),\nyour app should use this type instead of\n[Platform.Cmd](https://package.elm-lang.org/packages/elm/core/latest/Platform-Cmd#Cmd),\nthen it's just matter of using [wrap](#wrap) to wrap the Cmd.\n\n[PostgRestAdmin.Client](PostgRestAdmin.Client) speaks this language.\n\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "Internal.Cmd.Cmd msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "batch",
+                "comment": " Pass a bunch of commands to the runtime, execution order is not guaranteed.\n\nEquivalent to\n[Platform.Cmd.batch](https://package.elm-lang.org/packages/elm/core/latest/Platform-Cmd#batch).\n\n",
+                "type": "List.List (PostgRestAdmin.Cmd.Cmd msg) -> PostgRestAdmin.Cmd.Cmd msg"
+            },
+            {
+                "name": "map",
+                "comment": " Transform the messages produced by a command.\n\nEquivalent to\n[Platform.Cmd.map](https://package.elm-lang.org/packages/elm/core/latest/Platform-Cmd#map).\n\n",
+                "type": "(a -> b) -> PostgRestAdmin.Cmd.Cmd a -> PostgRestAdmin.Cmd.Cmd b"
+            },
+            {
+                "name": "none",
+                "comment": " Do nothing.\n\n    wrap Platform.Cmd.none == none\n\n",
+                "type": "PostgRestAdmin.Cmd.Cmd msg"
+            },
+            {
+                "name": "wrap",
+                "comment": " Wraps the [Platform.Cmd](https://package.elm-lang.org/packages/elm/core/latest/Platform-Cmd#Cmd).\n\n      import Time exposing (Posix)\n\n      getNewTime : (Posix -> Msg) -> PostgRestAdmin.Cmd Msg\n      getNewTime tagger =\n        Task.perform tagger Time.now\n            |> PostgRestAdmin.Cmd.wrap\n\n",
+                "type": "Platform.Cmd.Cmd msg -> PostgRestAdmin.Cmd.Cmd msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "PostgRestAdmin.Config",
+        "comment": " Program configuration\n\n@docs Config\n\n\n# Init\n\n@docs init\n\n\n# Basics\n\n@docs withHost\n@docs withFormFields\n@docs withDetailActions\n@docs withTables\n\n\n# Auth\n\n@docs withFormAuth\n@docs withJwt\n@docs withOnLogin\n\n\n# Application mounting\n\n@docs withMountPoint\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " [PostgRestAdmin.application](PostgRestAdmin#application) configuration\nparams.\n",
+                "args": [
+                    "m",
+                    "msg"
+                ],
+                "type": "Json.Decode.Decoder (Internal.Config.Config m msg)"
+            }
+        ],
+        "values": [
+            {
+                "name": "init",
+                "comment": " [PostgRestAdmin.application](PostgRestAdmin#application) decoder with\ndefaults.\n\n    main : PostgRestAdmin.Program Never Never\n    main =\n        PostgRestAdmin.application Config.init\n\n",
+                "type": "PostgRestAdmin.Config.Config m msg"
+            },
+            {
+                "name": "withDetailActions",
+                "comment": " Specify a number of actions buttons to be shown in the detail page of a\nrecord along with Edit and Delete buttons.\n\n`withDetailActions` expect a dict where the keys correspond with the name of a\ntable and the values are a list of tuples, the first element of the tuple\ncorresponds to the button text and the second is a function that takes the id of\nthe resource and returns a url string.\n\n      import Url.Builder as Url\n\n      main : PostgRestAdmin.Program Never Never\n      main =\n          Config.init\n              |> Config.withDetailActions \"posts\"\n                  [ ( \"View Comments\"\n                    , \\_ id -> Url.absolute [ \"posts\", id, \"comments\" ] []\n                    )\n                  ]\n\n          |> PostgRestAdmin.application\n\n",
+                "type": "String.String -> List.List ( String.String, PostgRestAdmin.Record.Record -> String.String -> String.String ) -> PostgRestAdmin.Config.Config m msg -> PostgRestAdmin.Config.Config m msg"
+            },
+            {
+                "name": "withFormAuth",
+                "comment": " Enable user credentials form and configure the parameters. Credentials\nare be used to obtain a JWT.\n\nSee [FormAuth](PostgRestAdmin.FormAuth) for configuration options.\n\n      import PostgRestAdmin.Config.FormAuth as FormAuth\n\n      main : PostgRestAdmin.Program Never Never\n      main =\n          Config.init\n              |> Config.withFormAuth FormAuth.config\n              |> PostgRestAdmin.application\n\n",
+                "type": "PostgRestAdmin.Config.FormAuth.FormAuth -> PostgRestAdmin.Config.Config m msg -> PostgRestAdmin.Config.Config m msg"
+            },
+            {
+                "name": "withFormFields",
+                "comment": " Specify which fields should be present in the the edit and create forms,\noverriding the table schema. By default a primary key field is not present in\nthe forms.\n\n      main : PostgRestAdmin.Program Never Never\n      main =\n          Config.init\n              |> Config.withFormFields \"posts\" [\"id\", \"title\", \"content\"]\n              |> PostgRestAdmin.application\n\nAlternatively this parameter can be configured using flags, configuring using\n`withFormFields`. Program flags take precedence.\n\n      Elm.Main.init({\n          flags: { formFields: { posts: [ \"id\", \"title\", \"content\" ]} }\n      })\n\n",
+                "type": "String.String -> List.List String.String -> PostgRestAdmin.Config.Config m msg -> PostgRestAdmin.Config.Config m msg"
+            },
+            {
+                "name": "withHost",
+                "comment": " Specify the postgREST host.\n\n      main : PostgRestAdmin.Program Never Never\n      main =\n          Config.init\n              |> Config.withHost \"http://localhost:3000\"\n              |> PostgRestAdmin.application\n\nAlternatively the host can be specified using flags, configuring using `withHost`.\nProgram flags take precedence.\n\n      Elm.Main.init({\n          flags: { host: \"http://localhost:3000\" }\n      })\n\n",
+                "type": "String.String -> PostgRestAdmin.Config.Config m msg -> PostgRestAdmin.Config.Config m msg"
+            },
+            {
+                "name": "withJwt",
+                "comment": " Set a JWT to authenticate postgREST requests. Even when using\n[withFormAuth](#withFormAuth) it's possible to set an initial JWT.\n\n      main : PostgRestAdmin.Program Never Never\n      main =\n          Config.init\n              |> Config.withJwt \"8abf3a...9ac36d\"\n              |> PostgRestAdmin.application\n\nAlternatively the token can be passed using flags, configuring using `withJwt`.\nProgram flags take precedence.\n\n      Elm.Main.init({\n          flags: { jwt: sessionStorage.getItem(\"jwt\") }\n      })\n\n",
+                "type": "String.String -> PostgRestAdmin.Config.Config m msg -> PostgRestAdmin.Config.Config m msg"
+            },
+            {
+                "name": "withMountPoint",
+                "comment": " Mount an application on a give path using\n[Url.Parser](https://package.elm-lang.org/packages/elm/url/latest/Url.Parser).\nThis is usefull if you want to override an existing page or add additional\nbehaviour.\n\nThe component specification is similar to the specification for\n[Browser.element](https://package.elm-lang.org/packages/elm/browser/latest/Browser#element),\nwith the addition of `onLogin` param for which a msg should be provided to be\nsent on successful login.\n\nNote that the type signature changes from\n`PostgRestAdmin.Program Nothing Nothing`.\n`Model` and `Msg` are defined by your application.\n\nThe url parser should map to a Msg to be used to `update` your application when\nnavigating to this route built the parameters that the parser defines, you can\nuse\n[Url.Parser.oneOf](https://package.elm-lang.org/packages/elm/url/latest/Url.Parser#oneOf)\nto parse many routes.\n\n    main : PostgRestAdmin.Program Model Msg\n    main =\n        Config.init\n            |> Config.withMountPoint\n                { view = view\n                , update = update\n                , init = init\n                , onLogin = LoggedIn\n                }\n                (Parser.map MyPostLoadedMsg\n                    (s \"posts\" </> Parser.string </> s \"comments\")\n                )\n            |> PostgRestAdmin.application\n\nThe `application` is initialized with a [Client](PostgRestAdmin-Client) you can\nuse to perform requests.\n\n",
+                "type": "{ init : PostgRestAdmin.Client.Client -> Browser.Navigation.Key -> ( model, Internal.Cmd.Cmd msg ), view : model -> Html.Html msg, update : msg -> model -> ( model, Internal.Cmd.Cmd msg ), subscriptions : model -> Platform.Sub.Sub msg, onLogin : PostgRestAdmin.Client.Client -> msg } -> Url.Parser.Parser (msg -> msg) msg -> PostgRestAdmin.Config.Config model msg -> PostgRestAdmin.Config.Config model msg"
+            },
+            {
+                "name": "withOnLogin",
+                "comment": " Callback triggered with a JWT string on successful login.\nTipically used to persist the JWT to session storage.\n\n          port loginSuccess : String -> Cmd msg\n\n          main : PostgRestAdmin.Program Never Never\n          main =\n              Config.init\n                  |> Config.withOnLogin loginSuccess\n                  |> PostgRestAdmin.application\n\nElm init\n\n        app = Elm.Main.init({\n          flags: { jwt: sessionStorage.getItem(\"jwt\") }\n        })\n\n        app.ports.loginSuccess.subscribe(jwt => {\n          sessionStorage.setItem(\"jwt\", jwt)\n        });\n\n",
+                "type": "(String.String -> Platform.Cmd.Cmd msg) -> PostgRestAdmin.Config.Config m msg -> PostgRestAdmin.Config.Config m msg"
+            },
+            {
+                "name": "withTables",
+                "comment": " Pass a list of table names to restrict the editable resources, also sets the\norder of the left resources menu.\n\n      main : PostgRestAdmin.Program Never Never\n      main =\n          Config.init\n              |> Config.withTables [\"posts\", \"comments\"]\n              |> PostgRestAdmin.application\n\nAlternatively the host can be specified using flags, configuring using\n`withTables`.\nProgram flags take precedence.\n\n      Elm.Main.init({\n          tables: [\"posts\", \"comments\"]\n      })\n\n",
+                "type": "List.List String.String -> PostgRestAdmin.Config.Config m msg -> PostgRestAdmin.Config.Config m msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "PostgRestAdmin.Config.FormAuth",
+        "comment": " Configuration for form based authentication.\n\nTipically user credentials are exchanged for a\n[JWT](https://en.wikipedia.org/wiki/JSON_Web_Token), to the PostgREST instance\nor to an external authentication provided.\n\nThis module provides configuration functions for defining what is the\nauthentication form POST url, how the credentials are to be encoded and how the\nJWT is to be decoded.\n\nSee\n[PostgREST documentation](https://postgrest.org/en/stable/auth.html?highlight=authentication#)\nto get a better understanding of JWT and roles in PostgREST.\n\n\n# Config\n\n@docs FormAuth\n@docs config\n\n\n# Host\n\n@docs withAuthUrl\n\n\n# Encode/Decode\n\n@docs withEncoder\n@docs withDecoder\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "FormAuth",
+                "comment": " Basic authentication configuration.\n",
+                "args": [],
+                "type": "Json.Decode.Decoder Internal.FormAuth.FormAuth"
+            }
+        ],
+        "values": [
+            {
+                "name": "config",
+                "comment": " Create a authentication configuration.\n",
+                "type": "PostgRestAdmin.Config.FormAuth.FormAuth"
+            },
+            {
+                "name": "withAuthUrl",
+                "comment": " Set authentication request login url. Credentials are to be exchanged for a\nJWT via a post request.\n\n      config\n          |> withAuthUrl \"http://localhost:3000/rpc/login\"\n\nAlternatively the host can be specified using flags, configuring using\n`withAuthUrl`. Program flags take precedence.\n\n      Elm.Main.init({\n          flags: { authUrl: \"http://localhost:3000/rpc/login\" }\n      })\n\n",
+                "type": "String.String -> PostgRestAdmin.Config.FormAuth.FormAuth -> PostgRestAdmin.Config.FormAuth.FormAuth"
+            },
+            {
+                "name": "withDecoder",
+                "comment": " Override the JSON decoder used to obtain the JWT from the login response.\n\n      config\n        |> withDecoder\n            (Decode.at [\"auth\", \"jwt\"] Decode.string)\n\n",
+                "type": "Json.Decode.Decoder String.String -> PostgRestAdmin.Config.FormAuth.FormAuth -> PostgRestAdmin.Config.FormAuth.FormAuth"
+            },
+            {
+                "name": "withEncoder",
+                "comment": " Override the credentials JSON encoder to be used when posting to the login\nurl.\n\n      config\n        |> withEncoder\n              (\\creds ->\n                  Encode.object\n                      [ ( \"credentials\"\n                        , Encode.dict identity Encode.string creds\n                        )\n                      ]\n              )\n\n",
+                "type": "(Dict.Dict String.String String.String -> Json.Encode.Value) -> PostgRestAdmin.Config.FormAuth.FormAuth -> PostgRestAdmin.Config.FormAuth.FormAuth"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "PostgRestAdmin.Detail",
+        "comment": " Detail\n\n@docs Detail\n@docs Msg\n\n\n# Init\n\n@docs init\n@docs update\n@docs view\n\n",
+        "unions": [
+            {
+                "name": "Detail",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Msg",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "init",
+                "comment": " ",
+                "type": "{ client : PostgRestAdmin.Client.Client, table : Internal.Schema.Table, id : String.String, detailActions : List.List ( String.String, PostgRestAdmin.Record.Record -> String.String -> String.String ) } -> Browser.Navigation.Key -> ( PostgRestAdmin.Detail.Detail, PostgRestAdmin.Cmd.Cmd PostgRestAdmin.Detail.Msg )"
+            },
+            {
+                "name": "update",
+                "comment": " ",
+                "type": "PostgRestAdmin.Detail.Msg -> PostgRestAdmin.Detail.Detail -> ( PostgRestAdmin.Detail.Detail, PostgRestAdmin.Cmd.Cmd PostgRestAdmin.Detail.Msg )"
+            },
+            {
+                "name": "view",
+                "comment": " ",
+                "type": "PostgRestAdmin.Detail.Detail -> Html.Html PostgRestAdmin.Detail.Msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "PostgRestAdmin.Notification",
+        "comment": " Display notifications and errors.\n\nNote that this functions produce a [PostgRestAdmin.Cmd](PostgRestAdmin.Cmd) and\nnot a vanilla Elm Cmd.\n\n@docs confirm\n@docs error\n@docs dismiss\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "confirm",
+                "comment": " Display an confirmation notification.\n",
+                "type": "String.String -> PostgRestAdmin.Cmd.Cmd msg"
+            },
+            {
+                "name": "dismiss",
+                "comment": " Dismiss notification.\n",
+                "type": "PostgRestAdmin.Cmd.Cmd msg"
+            },
+            {
+                "name": "error",
+                "comment": " Display an error.\n",
+                "type": "String.String -> PostgRestAdmin.Cmd.Cmd msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "PostgRestAdmin.Record",
+        "comment": "\n\n\n# Record\n\n@docs Record\n@docs fromTable\n\n\n# Record Values\n\n@docs Value\n@docs value\n\n\n# Properties\n\n@docs id\n@docs location\n@docs label\n\n\n# Errors\n\n@docs errors\n@docs hasErrors\n\n\n# Decode/Encode\n\n@docs decoder\n@docs encode\n\n\n# Table\n\n@docs getTable\n@docs tableName\n\n",
+        "unions": [
+            {
+                "name": "Value",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "RFloat",
+                        [
+                            "Basics.Float"
+                        ]
+                    ],
+                    [
+                        "RInt",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "RString",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "RBool",
+                        [
+                            "Basics.Bool"
+                        ]
+                    ],
+                    [
+                        "RPosix",
+                        [
+                            "Time.Posix"
+                        ]
+                    ],
+                    [
+                        "RValue",
+                        [
+                            "Json.Decode.Value"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Record",
+                "comment": " A Record.\n",
+                "args": [],
+                "type": "Internal.Record.Record"
+            }
+        ],
+        "values": [
+            {
+                "name": "decoder",
+                "comment": " A decoder for a Record.\n",
+                "type": "Internal.Schema.Table -> Json.Decode.Decoder PostgRestAdmin.Record.Record"
+            },
+            {
+                "name": "encode",
+                "comment": " Encode a Record.\n",
+                "type": "PostgRestAdmin.Record.Record -> Json.Encode.Value"
+            },
+            {
+                "name": "errors",
+                "comment": " Get the Record errors after [saving](PostgRestAdmin.Client#saveRecord).\n",
+                "type": "PostgRestAdmin.Record.Record -> Dict.Dict String.String (Maybe.Maybe String.String)"
+            },
+            {
+                "name": "fromTable",
+                "comment": " Create a blank record from a [Table](PostgRestAdmin.Client#Table).\n",
+                "type": "Internal.Schema.Table -> PostgRestAdmin.Record.Record"
+            },
+            {
+                "name": "getTable",
+                "comment": " Get the [Table](PostgRestAdmin.Client#Table) for the Record.\n",
+                "type": "PostgRestAdmin.Record.Record -> Internal.Schema.Table"
+            },
+            {
+                "name": "hasErrors",
+                "comment": " Check if the Record has errors after\n[saving](PostgRestAdmin.Client#saveRecord).\n",
+                "type": "PostgRestAdmin.Record.Record -> Basics.Bool"
+            },
+            {
+                "name": "id",
+                "comment": " Get the Record id.\n",
+                "type": "PostgRestAdmin.Record.Record -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "label",
+                "comment": " Obtain a label identifying the record, could be the title or name attribute.\n",
+                "type": "PostgRestAdmin.Record.Record -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "location",
+                "comment": " Obtain the location for a record\n\n    tableName record == \"posts\"\n    -- True\n    id record == Just 1\n    -- True\n    location record == Just \"/posts?id=eq.1\"\n    -- True\n\n",
+                "type": "PostgRestAdmin.Record.Record -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "tableName",
+                "comment": " Get the Record [Table](PostgRestAdmin.Client#Table) name.\n",
+                "type": "PostgRestAdmin.Record.Record -> String.String"
+            },
+            {
+                "name": "value",
+                "comment": " ",
+                "type": "String.String -> PostgRestAdmin.Record.Record -> Maybe.Maybe PostgRestAdmin.Record.Value"
+            }
+        ],
+        "binops": []
+    }
+]

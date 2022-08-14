@@ -1,0 +1,60 @@
+[
+    {
+        "name": "BugsnagElm",
+        "comment": " Send error reports to bugsnag.\n\n### General example\n\n    import BugsnagElm exposing (Bugsnag)\n    import Task exposing (Task)\n\n    -- initialize bugsnag. You will probably need to pull values from the env or flags\n    bugsnag : Bugsnag\n    bugsnug =\n        BugsnagElm.start\n            { apiKey = \"abcdef1234....\"\n            , appVersion = \"xyz0101010......\"\n            , releaseStage = \"test\"\n            , enabledReleaseStages = [\"production\", \"staging\", \"test\"]\n            , user =\n                Just\n                    { id = flags.currentUserId\n                    , username = flags.username\n                    , email = flags.email\n                    }\n            }\n\n    -- send error reports within your app's update function\n    update msg model =\n        .... ->\n            -- log some debug info\n            ( model\n            , bugsnag.info\n                \"Hitting the slothNinja API.\"\n                \"Page.Customer.Login.Main\"\n                Dict.empty\n                |> Task.attempt (\\() -> NoOp) -- convert the Task into a Cmd\n            )\n\n        .... ->\n            -- log an error\n            ( model\n            , [ ( \"Payload\", toString payload ) ]\n                |> Dict.fromList\n                |> bugsnag.error\n                    \"Unexpected payload from the slothNinja API.\"\n                    \"Page.Customer.Login.Main\"\n                |> Task.attempt (\\() -> NoOp) -- convert the Task into a Cmd\n            )\n\n\n## Basic Usage\n\n@docs start, Bugsnag, BugsnagConfig, User, Severity\n\n## Customized Usage\n@docs notify\n\n\n",
+        "unions": [
+            {
+                "name": "Severity",
+                "comment": " Severity levels - bugsnag only accepts [these three](https://docs.bugsnag.com/product/severity-indicator/#severity).\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Error",
+                        []
+                    ],
+                    [
+                        "Warning",
+                        []
+                    ],
+                    [
+                        "Info",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Bugsnag",
+                "comment": " Functions preapplied with apiKey, code version, user info and releaseStage,\nseparated by [`Severity`](#Severity).\n\nCreate one using [`start`](#start), and then throughout your app you can call `bugsnag.error` to send the error report.\n\nWhen calling any of the functions herein, it will return `Task.succeed ()` if the message was successfully sent to Bugsnag. Otherwise it fails with the [`Http.Error`](http://package.elm-lang.org/packages/elm-lang/http/latest/Http#Error)\nresponsible. I recommend you ignore the error in your code; although it is possible for the bugsnag api to go down, it is exceedingly rare, and not something worth disrupting your user's experience for.\n\n        bugsnag.error \"problem accessing the database.\" \"Page.Checkout\" Dict.empty\n            |> Task.attempt (\\() -> NoOp) -- convert the Task into a Cmd\n\n\n",
+                "args": [],
+                "type": "{ error : String.String -> String.String -> Dict.Dict String.String Json.Encode.Value -> Task.Task Http.Error (), warning : String.String -> String.String -> Dict.Dict String.String Json.Encode.Value -> Task.Task Http.Error (), info : String.String -> String.String -> Dict.Dict String.String Json.Encode.Value -> Task.Task Http.Error () }"
+            },
+            {
+                "name": "BugsnagConfig",
+                "comment": " Basic data needed to define the local client for a BugsnagElm instance.\nApplies to all error reports that may occur in the app,\nwith error-specific data added later in `notify`\n\n  - `apiKey` - The [Bugsnag API apiKey](https://Bugsnag.com/docs/api/#authentication) required to authenticate the request.\n  - `appVersion` - However your app identifies its versions, include it here as a string\n  - `releaseStage` - usually `\"production\"`, `\"development\"`, `\"staging\"`, etc., but bugsnag accepts any value\n  - `enabledReleaseStages` - explictly define which stages you want to report, omitting any you'd prefer to drop (e.g. \"development\"). Empty list will report ALL error stages.\n  - `user` - if available, report default user data (id, name, email)\n\n",
+                "args": [],
+                "type": "{ apiKey : String.String, appVersion : String.String, releaseStage : String.String, enabledReleaseStages : List.List String.String, user : Maybe.Maybe BugsnagElm.User }"
+            },
+            {
+                "name": "User",
+                "comment": " A record of datapoints bugsnag's api can accept for user data.\nTo display additional custom user data alongside these standard fields on the Bugsnag website,\nthe custom data should be included in the 'metadata' object in a `user` object.\n[learn more](https://docs.bugsnag.com/platforms/javascript/#identifying-users)\n",
+                "args": [],
+                "type": "{ id : String.String, username : String.String, email : String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "notify",
+                "comment": " Send a message to bugsnag. [`start`](#start)\nprovides a nice wrapper around this.\n\nArguments:\n\n  - `BugsnagConfig`\n  - `Severity` - severity, one of: `Error`, `Warning`, or `Info`\n  - `String` - message, e.g. \"Auth server was down when user tried to sign in.\"\n  - `String` - context, where the error occurred e.g. module or file name \"Page.Customer.Login.Main\"\n  - `Dict String Value` - arbitrary metadata, e.g. `{\"accountType\": \"premium\", \"region\": \"NW\"}\n\nIf the message was successfully sent to Bugsnag, it returns `Task.succeed ()` Otherwise it fails with the [`Http.Error`](http://package.elm-lang.org/packages/elm-lang/http/latest/Http#Error)\nresponsible. I recommend you ignore this error in your code; although it is possible for the bugsnag api to go down, it is exceedingly rare, and not something worth disrupting your user's experience for.\n\n    notify bugsnagConfig Error \"cannot connect to database\" \"Page.Login\" Dict.empty\n\n",
+                "type": "BugsnagElm.BugsnagConfig -> BugsnagElm.Severity -> String.String -> String.String -> Dict.Dict String.String Json.Encode.Value -> Task.Task Http.Error ()"
+            },
+            {
+                "name": "start",
+                "comment": " Return a [`Bugsnag`](#Bugsnag) record configured with the given BugsnagConfig details.\n\n    bugsnag = BugsnagElm.start\n        { apiKey = \"abcdef1234....\"\n        , appVersion = \"xyz0101010......\"\n        , releaseStage = \"test\"\n        , enabledReleaseStages = [\"production\", \"staging\", \"test\"]\n        , user =\n            Just\n                { id = \"42\"\n                , username = \"Grace Hopper\"\n                , email = \"support@bugsnag.com\"\n                }\n        }\n\n",
+                "type": "BugsnagElm.BugsnagConfig -> BugsnagElm.Bugsnag"
+            }
+        ],
+        "binops": []
+    }
+]

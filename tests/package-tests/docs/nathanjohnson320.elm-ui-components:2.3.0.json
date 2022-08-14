@@ -1,0 +1,528 @@
+[
+    {
+        "name": "ElmUIC.Arrow",
+        "comment": " A directional arrow\n\n@docs Arrow\n\n@docs Direction\n\n@docs defaultArrow\n\n@docs arrow\n\n",
+        "unions": [
+            {
+                "name": "Direction",
+                "comment": " The possible directions you want the arrow to point\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Up",
+                        []
+                    ],
+                    [
+                        "Down",
+                        []
+                    ],
+                    [
+                        "Left",
+                        []
+                    ],
+                    [
+                        "Right",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Arrow",
+                "comment": " Base model for an arrow\n",
+                "args": [],
+                "type": "{ direction : ElmUIC.Arrow.Direction, size : ElmUIC.Theme.Size }"
+            }
+        ],
+        "values": [
+            {
+                "name": "arrow",
+                "comment": " A styled arrow\n\n    arrow defaultTheme defaultArrow [] []\n\n",
+                "type": "ElmUIC.Theme.Theme -> ElmUIC.Arrow.Arrow -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Html.Styled.Html msg"
+            },
+            {
+                "name": "defaultArrow",
+                "comment": " Instantiates the default properties of an arrow\n\n    { defaultArrow | direction = Right }\n\n",
+                "type": "ElmUIC.Arrow.Arrow"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ElmUIC.Button",
+        "comment": " A styled button\n\n@docs Button\n\n@docs defaultButton\n\n@docs button\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Button",
+                "comment": " Base model for a button\n",
+                "args": [],
+                "type": "{ kind : ElmUIC.Theme.ColorSetting, size : ElmUIC.Theme.Size, text : Css.Color }"
+            }
+        ],
+        "values": [
+            {
+                "name": "button",
+                "comment": " A styled button\n\n    button defaultTheme defaultButton [] []\n\n",
+                "type": "ElmUIC.Theme.Theme -> ElmUIC.Button.Button -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Html.Styled.Html msg"
+            },
+            {
+                "name": "defaultButton",
+                "comment": " Instantiates the default properties of a button\n\n    { defaultButton | text = hex \"#000\" }\n\n",
+                "type": "ElmUIC.Button.Button"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ElmUIC.Checkbox",
+        "comment": " A styled checkbox\n\n@docs Checkbox\n\n@docs defaultCheckbox\n\n@docs checkbox\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Checkbox",
+                "comment": " Base model for a checkbox\n",
+                "args": [],
+                "type": "{ checked : Basics.Bool, kind : ElmUIC.Theme.ColorSetting, size : ElmUIC.Theme.Size }"
+            }
+        ],
+        "values": [
+            {
+                "name": "checkbox",
+                "comment": " A styled checkbox\n\n    checkbox defaultTheme\n        { defaultCheckbox | size = Medium, checked = model.checked }\n        [ onClick Check ]\n        []\n\n",
+                "type": "ElmUIC.Theme.Theme -> ElmUIC.Checkbox.Checkbox -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Html.Styled.Html msg"
+            },
+            {
+                "name": "defaultCheckbox",
+                "comment": " Instantiates the default properties of a checkbox\n\n    { defaultCheckbox | checked = model.checked }\n\n",
+                "type": "ElmUIC.Checkbox.Checkbox"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ElmUIC.Container",
+        "comment": " A container for content\n\n@docs Container\n\n@docs defaultContainer\n\n@docs container\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Container",
+                "comment": " Base model for the container\n",
+                "args": [],
+                "type": "{ kind : ElmUIC.Theme.ColorSetting, text : Css.Color }"
+            }
+        ],
+        "values": [
+            {
+                "name": "container",
+                "comment": " A styled container\n\n    container defaultTheme defaultContainer [] []\n\n",
+                "type": "ElmUIC.Theme.Theme -> ElmUIC.Container.Container -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Html.Styled.Html msg"
+            },
+            {
+                "name": "defaultContainer",
+                "comment": " Instantiates the default properties of a container\n\n    { defaultContainer | text = hex \"#F00\" }\n\n",
+                "type": "ElmUIC.Container.Container"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ElmUIC.Content",
+        "comment": " A block of content\n\n@docs Content\n\n@docs defaultContent\n\n@docs content\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Content",
+                "comment": " Base model for the content\n",
+                "args": [],
+                "type": "{ kind : ElmUIC.Theme.ColorSetting, text : Css.Color, background : Css.Color, shadow : Css.Color }"
+            }
+        ],
+        "values": [
+            {
+                "name": "content",
+                "comment": " A styled content block\n\n    content defaultTheme defaultContent [] []\n\n",
+                "type": "ElmUIC.Theme.Theme -> ElmUIC.Content.Content -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Html.Styled.Html msg"
+            },
+            {
+                "name": "defaultContent",
+                "comment": " Instantiates the default properties of the content\n\n    { defaultContent | kind = Warning }\n\n",
+                "type": "ElmUIC.Content.Content"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ElmUIC.FileInput",
+        "comment": " A styled FileInput element\n\n@docs FileInput\n\n@docs defaultFileInput\n\n@docs fileInput\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "FileInput",
+                "comment": " Base model for a fileInput\n",
+                "args": [],
+                "type": "{ kind : ElmUIC.Theme.ColorSetting, size : ElmUIC.Theme.Size, text : Css.Color, file : Maybe.Maybe File.File }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultFileInput",
+                "comment": " Instantiates the default properties of the fileInput\n\n    { defaultFileInput | kind = Warning }\n\n",
+                "type": "ElmUIC.FileInput.FileInput"
+            },
+            {
+                "name": "fileInput",
+                "comment": " A styled file input\n\n    fileInput defaultTheme\n        { defaultFileInput | file = model.selectedFile, kind = Danger }\n        [ onClick SelectFile ]\n        []\n\n",
+                "type": "ElmUIC.Theme.Theme -> ElmUIC.FileInput.FileInput -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Html.Styled.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ElmUIC.Heading",
+        "comment": " A heading for your sections\n\n@docs Heading\n\n@docs defaultHeading\n\n@docs heading\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Heading",
+                "comment": " Base model for the heading\n",
+                "args": [],
+                "type": "{ text : Css.Color }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultHeading",
+                "comment": " Instantiates the default properties of the heading\n\n    { defaultHeading | text = hex \"#C00\" }\n\n",
+                "type": "ElmUIC.Heading.Heading"
+            },
+            {
+                "name": "heading",
+                "comment": " A styled header\n\n    heading defaultTheme defaultHeading [] []\n\n",
+                "type": "ElmUIC.Theme.Theme -> ElmUIC.Heading.Heading -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Html.Styled.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ElmUIC.Input",
+        "comment": " A styled input\n\n@docs Input\n\n@docs defaultInput\n\n@docs input\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Input",
+                "comment": " Base model for an input\n",
+                "args": [],
+                "type": "{}"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultInput",
+                "comment": " Instantiates the default properties of a input\n\n    defaultInput\n\n",
+                "type": "ElmUIC.Input.Input"
+            },
+            {
+                "name": "input",
+                "comment": " A styled input\n\n    input\n        defaultTheme\n        defaultInput\n        [ onInput Input, value model.input, placeholder \"Input things\" ]\n        []\n\n",
+                "type": "ElmUIC.Theme.Theme -> ElmUIC.Input.Input -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Html.Styled.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ElmUIC.Label",
+        "comment": " A styled label for use in forms\n\n@docs Label\n\n@docs defaultLabel\n\n@docs label\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Label",
+                "comment": " Base model for a label\n",
+                "args": [],
+                "type": "{ text : Css.Color }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultLabel",
+                "comment": " Instantiates the default properties of the label\n\n    { defaultLabel | text = hex \"#C00\" }\n\n",
+                "type": "ElmUIC.Label.Label"
+            },
+            {
+                "name": "label",
+                "comment": " A styled label\n\n    label defaultTheme defaultLabel [] []\n\n",
+                "type": "ElmUIC.Theme.Theme -> ElmUIC.Label.Label -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Html.Styled.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ElmUIC.Modal",
+        "comment": " A styled full page Modal\n\n@docs Modal\n\n@docs defaultModal\n\n@docs modal\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Modal",
+                "comment": " Base model for a Modal\n",
+                "args": [],
+                "type": "{ kind : ElmUIC.Theme.ColorSetting, size : ElmUIC.Theme.Size, text : Css.Color, open : Basics.Bool, closeOnOverlay : Basics.Bool }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultModal",
+                "comment": " Instantiates the default properties of a modal\n\n    { defaultModal | open = True }\n\n",
+                "type": "ElmUIC.Modal.Modal"
+            },
+            {
+                "name": "modal",
+                "comment": " A styled modal\n\n    modal\n        defaultTheme\n        { defaultModal\n            | open = model.modalOpen\n        }\n        ToggleModal\n        [ css [ width (px 400), height (px 400) ] ]\n        [ button\n            defaultTheme\n            defaultButton\n            [ onClick <| ToggleModal False ]\n            [ text \"Close it!\" ]\n        ]\n\n",
+                "type": "ElmUIC.Theme.Theme -> ElmUIC.Modal.Modal -> (Basics.Bool -> msg) -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Html.Styled.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ElmUIC.Navbar",
+        "comment": " A styled navbar\n\n@docs Navbar\n\n@docs defaultNavbar\n\n@docs item\n\n@docs separator\n\n@docs navbar\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Navbar",
+                "comment": " Base model for a navbar\n",
+                "args": [],
+                "type": "{ kind : ElmUIC.Theme.ColorSetting, size : ElmUIC.Theme.Size, text : Css.Color, title : String.String, redirectHome : Basics.Bool }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultNavbar",
+                "comment": " Instantiates the default properties of a nav\n\n    { defaultNavbar | title = \"Hello, world!\" }\n\n",
+                "type": "ElmUIC.Navbar.Navbar"
+            },
+            {
+                "name": "item",
+                "comment": " An inidivual item in the navbar\n\n    item defaultTheme [] [ text \"Click me!\" ]\n\n",
+                "type": "ElmUIC.Theme.Theme -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Html.Styled.Html msg"
+            },
+            {
+                "name": "navbar",
+                "comment": " A styled nav using items and separators\n\n    navbar defaultTheme\n        { defaultNavbar | title = \"Hello, WORLD\" }\n        [ css [ width (px 600) ] ]\n        [ item defaultTheme [] [ text \"One\" ]\n        , separator defaultTheme [] []\n        , item defaultTheme [] [ text \"Two\" ]\n        , separator defaultTheme [] []\n        , item defaultTheme [] [ text \"Three\" ]\n        ]\n\n",
+                "type": "ElmUIC.Theme.Theme -> ElmUIC.Navbar.Navbar -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Html.Styled.Html msg"
+            },
+            {
+                "name": "separator",
+                "comment": " A vertical separator to place between items\n\n    item defaultTheme [] [ text \"One!\" ]\n            , separator defaultTheme [] []\n            , item defaultTheme [] [ text \"Two!\" ]\n\n",
+                "type": "ElmUIC.Theme.Theme -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Html.Styled.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ElmUIC.Selector",
+        "comment": " A styled selector\n\n@docs Selector\n\n@docs Option\n\n@docs defaultSelector\n\n@docs selector\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Option",
+                "comment": " Individual items that display in the selector\n",
+                "args": [],
+                "type": "{ key : String.String, value : String.String }"
+            },
+            {
+                "name": "Selector",
+                "comment": " Base model for a selector\n",
+                "args": [],
+                "type": "{ kind : ElmUIC.Theme.ColorSetting, size : ElmUIC.Theme.Size, placeholder : String.String, open : Basics.Bool, options : List.List ElmUIC.Selector.Option, selected : ElmUIC.Selector.Option }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultSelector",
+                "comment": " Instantiates the default properties of a selector\n\n    { defaultNavbar | kind = Danger }\n\n",
+                "type": "ElmUIC.Selector.Selector"
+            },
+            {
+                "name": "selector",
+                "comment": " A styled nav using items and separators\n\n    selector defaultTheme\n        { defaultSelector\n            | placeholder = \"Select a choice\"\n            , open = model.selectedOpen\n            , options = model.options\n            , selected = model.selected\n            , kind = Theme.Danger\n        }\n        Select\n        [ css\n            [ width (px 200) ]\n        ]\n        []\n\n",
+                "type": "ElmUIC.Theme.Theme -> ElmUIC.Selector.Selector -> (ElmUIC.Selector.Option -> msg) -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Html.Styled.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ElmUIC.Textarea",
+        "comment": " A styled text area\n\n@docs Textarea\n\n@docs defaultTextarea\n\n@docs textarea\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Textarea",
+                "comment": " Base model for an textarea\n",
+                "args": [],
+                "type": "{}"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultTextarea",
+                "comment": " Instantiates the default properties of a textarea\n\n    defaultTextarea\n\n",
+                "type": "ElmUIC.Textarea.Textarea"
+            },
+            {
+                "name": "textarea",
+                "comment": " A styled textarea\n\n    textarea\n        defaultTheme\n        defaultTextarea\n        [ onInput Input, value model.input, placeholder \"Lots and lots of text\" ]\n        []\n\n",
+                "type": "ElmUIC.Theme.Theme -> ElmUIC.Textarea.Textarea -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Html.Styled.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ElmUIC.Theme",
+        "comment": " Basic theming functions for components\n\n@docs Size\n\n@docs ColorSetting\n\n@docs Theme\n\n@docs defaultTheme\n\n",
+        "unions": [
+            {
+                "name": "ColorSetting",
+                "comment": " Basic color options for components\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Primary",
+                        []
+                    ],
+                    [
+                        "Secondary",
+                        []
+                    ],
+                    [
+                        "Success",
+                        []
+                    ],
+                    [
+                        "Warning",
+                        []
+                    ],
+                    [
+                        "Danger",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Size",
+                "comment": " Used to standardize the size of your component\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Small",
+                        []
+                    ],
+                    [
+                        "Medium",
+                        []
+                    ],
+                    [
+                        "Large",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Theme",
+                "comment": " Colors used to map to each ColorSetting\n",
+                "args": [],
+                "type": "{ primary : Css.Color, secondary : Css.Color, success : Css.Color, warning : Css.Color, danger : Css.Color, font : List.List String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultTheme",
+                "comment": " The default theme for elm-ui-components\n",
+                "type": "ElmUIC.Theme.Theme"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ElmUIC.Toast",
+        "comment": " A styled toast notification\n\n@docs Toast\n\n@docs Position\n\n@docs defaultToast\n\n@docs toast\n\n",
+        "unions": [
+            {
+                "name": "Position",
+                "comment": " Possible screen positions for the toast\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Top",
+                        []
+                    ],
+                    [
+                        "Left",
+                        []
+                    ],
+                    [
+                        "Bottom",
+                        []
+                    ],
+                    [
+                        "Right",
+                        []
+                    ],
+                    [
+                        "TopLeft",
+                        []
+                    ],
+                    [
+                        "TopRight",
+                        []
+                    ],
+                    [
+                        "BottomLeft",
+                        []
+                    ],
+                    [
+                        "BottomRight",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Toast",
+                "comment": " Base model for a toast\n",
+                "args": [],
+                "type": "{ kind : ElmUIC.Theme.ColorSetting, size : ElmUIC.Theme.Size, text : Css.Color, z : Basics.Int, position : ElmUIC.Toast.Position, visible : Basics.Bool, transitionDirection : ElmUIC.Toast.Position }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultToast",
+                "comment": " Instantiates the default properties of the toast\n\n    { defaultToast | position = Top, visible = True }\n\n",
+                "type": "ElmUIC.Toast.Toast"
+            },
+            {
+                "name": "toast",
+                "comment": " A styled toast notification\n\n    toast\n        defaultTheme\n        { defaultToast\n            | position = TopRight\n            , transitionDirection = TopRight\n            , visible = model.checked\n        }\n        []\n        [ text \"Notify things!\" ]\n\n",
+                "type": "ElmUIC.Theme.Theme -> ElmUIC.Toast.Toast -> List.List (Html.Styled.Attribute msg) -> List.List (Html.Styled.Html msg) -> Html.Styled.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ElmUIC.Util",
+        "comment": " Utility functions to help with styling other functions\n\n@docs lighten\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "lighten",
+                "comment": " Lightens a given color by a certain ratio\n\n    lighten (hex \"#F00\") 1.0\n\n",
+                "type": "Css.Color -> Basics.Float -> Css.Color"
+            }
+        ],
+        "binops": []
+    }
+]

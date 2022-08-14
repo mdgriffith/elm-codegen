@@ -1,0 +1,16 @@
+[
+    {
+        "name": "Murmur3",
+        "comment": " Murmur 3 hash function for hashing strings\n\n@docs hashString\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "hashString",
+                "comment": " Takes a seed and a string. Produces a hash (integer).\nGiven the same seed and string, it will always produce the same hash.\n\n    hashString 1234 \"Turn me into a hash\" == 4138100590\n\n",
+                "type": "Basics.Int -> String.String -> Basics.Int"
+            }
+        ],
+        "binops": []
+    }
+]

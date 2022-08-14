@@ -1,0 +1,35 @@
+[
+    {
+        "name": "Dialog",
+        "comment": " Elm Modal Dialogs.\n\n@docs Config, view, map, mapMaybe\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " The configuration for the dialog you display. The `header`, `body`\nand `footer` are all `Maybe (Element msg)` blocks. Those `(Element msg)` blocks can\nbe as simple or as complex as any other view function.\n\nUse only the ones you want and set the others to `Nothing`.\n\nThe `closeMessage` is an optional `Signal.Message` we will send when the user\nclicks the 'X' in the top right. If you don't want that X displayed, use `Nothing`.\n\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ closeMessage : Maybe.Maybe msg, maskAttributes : List.List (Element.Attribute msg), containerAttributes : List.List (Element.Attribute msg), headerAttributes : List.List (Element.Attribute msg), bodyAttributes : List.List (Element.Attribute msg), footerAttributes : List.List (Element.Attribute msg), header : Maybe.Maybe (Element.Element msg), body : Maybe.Maybe (Element.Element msg), footer : Maybe.Maybe (Element.Element msg) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "map",
+                "comment": " This function is useful when nesting components with the Elm\nArchitecture. It lets you transform the messages produced by a\nsubtree.\n",
+                "type": "(a -> b) -> Dialog.Config a -> Dialog.Config b"
+            },
+            {
+                "name": "mapMaybe",
+                "comment": " For convenience, a varient of `map` which assumes you're dealing with a `Maybe (Config a)`, which is often the case.\n",
+                "type": "(a -> b) -> Maybe.Maybe (Dialog.Config a) -> Maybe.Maybe (Dialog.Config b)"
+            },
+            {
+                "name": "view",
+                "comment": " Renders a modal dialog whenever you supply a `Config msg`.\n\nTo use this, include this view in your _top-level_ view function,\nright at the top of the DOM tree, like so:\n\n    type Msg\n      = ...\n      | ...\n      | CloseDialog\n\n\n    view : -> Model -> Element Msg\n    view model =\n        let\n            config =\n                { closeMessage = Just CloseDialog\n                , maskAttributes = []\n                , containerAttributes = [ padding 10 ]\n                , headerAttributes = []\n                , bodyAttributes = []\n                , footerAttributes = []\n                , header = Just (text \"Hello world\")\n                , body = Nothing\n                , footer = Nothing\n                }\n\n            dialogConfig =\n                if model.showDialog then\n                    Just config\n\n                else\n                    Nothing\n        in\n        Element.layout\n            [ inFront (Dialog.view dialogConfig)\n            ]\n            contentView\n\nIt's then up to you to replace `model.showDialog` with whatever\nlogic should cause the dialog to be displayed, and to handle an\n`CloseDialog` message with whatever logic should occur when the user\ncloses the dialog.\n\nSee the `examples/` directory for examples of how this works for apps\nlarge and small.\n\n",
+                "type": "Maybe.Maybe (Dialog.Config msg) -> Element.Element msg"
+            }
+        ],
+        "binops": []
+    }
+]

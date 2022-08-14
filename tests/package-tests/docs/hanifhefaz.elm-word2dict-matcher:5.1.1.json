@@ -1,0 +1,62 @@
+[
+    {
+        "name": "QuestionsBank",
+        "comment": "\n\n\n# Questions Data\n\n@docs data\n\n\n# Answer Model\n\n@docs Answer\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Answer",
+                "comment": " This model defines the question and the answer.\n",
+                "args": [],
+                "type": "{ answer : String.String, question : String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "data",
+                "comment": " Here you can define all your questions and answers.\n",
+                "type": "List.List QuestionsBank.Answer"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Word2DictMatcher",
+        "comment": "\n\n\n# Result\n\n@docs findRelevantDict\n\n\n# Words Dictionary\n\n@docs wordsDict\n\n\n# Sentence Histograms\n\n@docs sentenceHistograms\n\n\n# Tokenization\n\n@docs tokenize\n\n\n# StopWords\n\n@docs stopWords\n\n\n# ToHistogram\n\n@docs toHistogram\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "findRelevantDict",
+                "comment": " Finds the sentences with the most occurances from a search string\nReturns the related answer for the returned quesiton in the data.\n",
+                "type": "Dict.Dict String.String Basics.Int -> List.List QuestionsBank.Answer -> Maybe.Maybe QuestionsBank.Answer"
+            },
+            {
+                "name": "sentenceHistograms",
+                "comment": " This will make a dictionary from data and do some tokenization as well.\n",
+                "type": "List.List Word2DictMatcher.Sentence -> List.List Word2DictMatcher.Histogram"
+            },
+            {
+                "name": "stopWords",
+                "comment": " This will remove all stopWords from the data, which are mentioned here.\n",
+                "type": "Word2DictMatcher.Tokens"
+            },
+            {
+                "name": "toHistogram",
+                "comment": " This will convert sentences to words histograms.\n",
+                "type": "Word2DictMatcher.Tokens -> Word2DictMatcher.Histogram"
+            },
+            {
+                "name": "tokenize",
+                "comment": " This will tokenize the words and remove symbols.\n",
+                "type": "Word2DictMatcher.Sentence -> Word2DictMatcher.Tokens"
+            },
+            {
+                "name": "wordsDict",
+                "comment": " This will make a dictionary from a sentence\n",
+                "type": "Word2DictMatcher.Tokens -> Word2DictMatcher.Histogram"
+            }
+        ],
+        "binops": []
+    }
+]

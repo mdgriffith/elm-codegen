@@ -1,0 +1,21 @@
+[
+    {
+        "name": "List.Split",
+        "comment": " Split lists into chunks\n\n\n# Splitters\n\n@docs chunksOfLeft, chunksOfRight\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "chunksOfLeft",
+                "comment": " Split list into smaller lists of length `k`, starting from the left.\n\n    chunksOfLeft  3 (List.range 1 9) == [ [ 1, 2, 3 ], [ 4, 5, 6 ], [ 7, 8, 9 ] ]\n    chunksOfLeft  3 [1,2,3,4,5,6,7,8] == [ [ 1, 2, 3 ], [ 4, 5, 6 ], [ 7, 8 ] ]\n    chunksOfLeft  3 [] == [[]]\n    chunksOfLeft  0 xs == [[]]\n    chunksOfLeft -1 xs == []\n\n",
+                "type": "Basics.Int -> List.List a -> List.List (List.List a)"
+            },
+            {
+                "name": "chunksOfRight",
+                "comment": " Split list into smaller lists of length `k`, starting from the right.\n\n    chunksOfRight  3 (List.range 1 9) == [ [ 7, 8, 9 ], [ 4, 5, 6 ], [ 1, 2, 3 ] ]\n    chunksOfRight  3 [1,2,3,4,5,6,7,8] == [ [ 6, 7, 8 ], [ 3, 4, 5 ], [ 1, 2 ] ]\n    chunksOfRight  3 [] == [[]]\n    chunksOfRight  0 xs == [[]]\n    chunksOfRight -1 xs == []\n\n",
+                "type": "Basics.Int -> List.List a -> List.List (List.List a)"
+            }
+        ],
+        "binops": []
+    }
+]

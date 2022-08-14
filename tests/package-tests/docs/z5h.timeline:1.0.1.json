@@ -1,0 +1,118 @@
+[
+    {
+        "name": "Timeline",
+        "comment": "\n\n\n# Animating\n\nAs seen, given a `timeline` of your model, you can get the current value via:\n\n    Timeline.value timeline\n\nYou can also ask something like:\n\n     Timeline.transition 500 timeline\n\nthis says: suppose transitions between different states take 500ms. Where am I at?\nThe answer is of type `Status` which is either:\n\n1.  `At t int`: there is no current transition, we have been at this value for `int` milliseconds\n2.  `Transitioning t t float`: we are transitioning from an old `t` to a new one, and float goes from `1.0 -> 0.0`\n    as we approach\n\nNow that you know if you are statically at a state, or transitioning to that\nstate from a previous one, you can use the transition factor to do animations.\n\n\n# Important types\n\n@docs Timeline, Msg, Status\n\n\n# Integration helpers\n\n@docs init, update, subscriptions, view, viewDocument, msg\n\n\n# Rendering and animating during view\n\n@docs value, transition, map, withDefault, sequence\n\n\n# Utility\n\n@docs currentTime\n\n\n# Other\n\n@docs push\n\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " A timeline Msg.\n",
+                "args": [
+                    "m"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Status",
+                "comment": " A transition status. Either `At` a value for a specific number of milliseconds,\nor `Transitioning` from one value to another, with a \"remaining\" float value.\n\nNote that during a transition, the float value goes from `1.0 -> 0.0`.\nThe \"remaining\" float value returned is not linear, but a dampened-spring\neased value. Use it directly (with a multiplier) to fade, scale, translate\nwith a natural and pleasant effect.\n\n",
+                "args": [
+                    "t"
+                ],
+                "cases": [
+                    [
+                        "At",
+                        [
+                            "t",
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "Transitioning",
+                        [
+                            "t",
+                            "t",
+                            "Basics.Float"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Timeline",
+                "comment": " A timeline of your model's history.\nHistory is only held long enough to ensure smooth transitions,\nbased on the maximum transition duration value supplied to `init`.\nYou never need to create these directly.\n",
+                "args": [
+                    "t"
+                ],
+                "type": "{ current : Timeline.Event t, history : List.List (Timeline.Event t), limit : Basics.Int, now : Time.Posix, start : Time.Posix }"
+            }
+        ],
+        "values": [
+            {
+                "name": "currentTime",
+                "comment": " Get the current time from a timeline.\nUpdated internally via `Browser.Events.onAnimationFrame`, thus inheriting its\nresolution.\n\nHaving this prevents the need from tracking a high resolution time value in your model,\nbecause doing such a thing would prohibit use of Timeline due to GC issues.\n\n",
+                "type": "Timeline.Timeline t -> Time.Posix"
+            },
+            {
+                "name": "init",
+                "comment": " Converts the output of your existing `init` to a Timeline compatible `init`.\n\n    limit =\n        500\n\n    now =\n        Time.millisToPosix 0\n\n    timelineInit =\n        \\flags -> myInit flags |> Timeline.init limit now\n\nThe `limit` parameter is the duration your longest animation (transition) will take.\nThis helps Timeline know when to throw away history it no longer needs.\nWhen you do `timeline |> Timeline.transition 500` you are creating a 500ms transition.\nIf that's the longest transition in your app, then `limit` in `init` should be `500`.\n\nThe `now` parameter will become the timestamp for the initial model state.\nIt's perfectly safe to set this to any time in history (e.g. `Time.millisToPosix 0`).\nThe only caveat is if you later inquire how long a state has been at rest, you won't\nget a correct answer for your initial state. This probably doesn't matter in\nmost use cases. But seeing as you can animate a static state based on it's age,\nthis is important to know.\n\n",
+                "type": "Basics.Int -> Time.Posix -> ( model, Platform.Cmd.Cmd msg ) -> ( Timeline.Timeline model, Platform.Cmd.Cmd (Timeline.Msg msg) )"
+            },
+            {
+                "name": "map",
+                "comment": " Maps a timeline. **Very importantly** the new timeline can have a different change history.\n\nIf\n\n    type alias Model =\n        { a : Int, b : Int }\n\nthen\n\n    modelTimeline |> Timeline.map .a\n\nreturns a timeline of the history of `a` irrespective of `b`.\n\n    modelTimeline |> Timeline.map .b\n\nreturns a timeline of the history of `b` irrespective of `a`.\n\nOne can thus animate transitions of `a` and `b` (or any other model properties)\nindependently.\n\n",
+                "type": "(t -> s) -> Timeline.Timeline t -> Timeline.Timeline s"
+            },
+            {
+                "name": "msg",
+                "comment": " Maps a `msg` to a `Timeline.Msg msg`.\n\nUseful in your `main` when defining things such as:\n\n    onUrlChange =\n        Timeline.msg << OnUrlChange\n\n",
+                "type": "m -> Timeline.Msg m"
+            },
+            {
+                "name": "push",
+                "comment": " Exposed for testing. You don't need this.\n",
+                "type": "Timeline.Event t -> Timeline.Timeline t -> Timeline.Timeline t"
+            },
+            {
+                "name": "sequence",
+                "comment": " Turns a `Timeline (List a)` to a `List (Timeline (Maybe a))`.\n\nWhen we look at a changing list, typically that list is changing because\nvalues are being inserted or removed or modified.\nSo, if we are rendering a list into a list-like view, we want to know\nwhat the Timeline is for **each slot**. That's what this is for.\n\nBecause a slot (in this visualisation) might start as empty and have\nsomething inserted, or vice versa, we return a `Timeline` of `Maybe a`.\n\nThe initial parameter is an `id` function which allows us to track an\nentry's index in the list as it's value changes over time.\n\n",
+                "type": "(a -> id) -> Timeline.Timeline (List.List a) -> List.List (Timeline.Timeline (Maybe.Maybe a))"
+            },
+            {
+                "name": "subscriptions",
+                "comment": " Converts your existing `subscriptions` to a Timeline compatible `subscriptions`.\n\nSee Basic Setup.\n\n",
+                "type": "(model -> Platform.Sub.Sub msg) -> Timeline.Timeline model -> Platform.Sub.Sub (Timeline.Msg msg)"
+            },
+            {
+                "name": "transition",
+                "comment": " Given a duration for how long a transition on a timeline takes,\nwhat's the status of our timeline?\nAre we transitioning between values, or statically at a value?\n\n    let\n    hamburgerMenuStatus =\n        modelTimeline\n        |> Timeline.map .hamburgerMenuState\n        |> transition 300\n    in\n        case hamburgerMenuState of\n            At state t ->\n                -- our menu is fully open/closed, and has been for `t` ms\n\n            Transitioning from to remaining ->\n                -- our menu is transitioning.\n                -- `remaining` goes `1.0 -> 0.0` as `from -> to`\n\nThe `remaining` float value returned is not linear, but a dampened-spring\neased value. Use it directly (with a multiplier) to fade, scale, translate\nwith a natural and pleasant effect.\n\n",
+                "type": "Basics.Int -> Timeline.Timeline t -> Timeline.Status t"
+            },
+            {
+                "name": "update",
+                "comment": " Converts your existing `update` to a Timeline compatible `update`.\n\nSee Basic Setup.\n\n",
+                "type": "(msg -> model -> ( model, Platform.Cmd.Cmd msg )) -> Timeline.Msg msg -> Timeline.Timeline model -> ( Timeline.Timeline model, Platform.Cmd.Cmd (Timeline.Msg msg) )"
+            },
+            {
+                "name": "value",
+                "comment": " Extract the current (most recent) value from the timeline.\n",
+                "type": "Timeline.Timeline t -> t"
+            },
+            {
+                "name": "view",
+                "comment": " Convenience function.\n\nConverts your `view : Timeline model -> Html msg` to\na `Timeline model -> Html (Timeline.Msg msg)` for use in your `main`.\n\n",
+                "type": "(Timeline.Timeline model -> Html.Html msg) -> Timeline.Timeline model -> Html.Html (Timeline.Msg msg)"
+            },
+            {
+                "name": "viewDocument",
+                "comment": " Convenience function.\n\nConverts your `view : Timeline model -> Browser.Document msg` to\na `Timeline model -> Browser.Document (Timeline.Msg msg)` for use in your\n`main`.\n\n",
+                "type": "(Timeline.Timeline model -> Browser.Document msg) -> Timeline.Timeline model -> Browser.Document (Timeline.Msg msg)"
+            },
+            {
+                "name": "withDefault",
+                "comment": " This is for treating non-continuous Timelines as continuous. Usually occurs\nwhen mapping your model (and hence Timeline) can result in unwanted maybes.\n\ne.g.\n\n    type alias PageAModel =\n        { a : Bool }\n\n    type alias PageBModel =\n        { b : Bool }\n\n    type Model\n        = PageA PageAModel\n        | PageB PageBModel\n\nHere, the state of the page models are not continuous. They don't always exist.\nElm's type system will remind us that we cannot animate a thing that might not exist.\n\nTo animate `PageA` and `PageB` views, the following is required:\n\n1.  have functions to extract `Maybe Page?Model` values from `Model`\n2.  create a timeline of Maybe values and use withDefault\n\ne.g.\n\n    pageAModel : Model -> Maybe PageAModel\n    pageAModel model =\n        case model of\n            PageA pageAModel_ ->\n                Just pageAModel_\n\n            _ ->\n                Nothing\n\n\n    pageBModel : Model -> Maybe PageBModel\n    pageBModel model =\n        ...\n\n    view : Timeline Model -> Html Msg\n    view timeline =\n        let\n            model =\n                Timeline.value timeline\n        in\n        case model of\n            PageA currentPageAModel ->\n                let\n                    continuousPageATimeline : Timeline PageAModel\n                    continuousPageATimeline =\n                        timeline\n                            |> Timeline.map pageAModel\n                            |> Timeline.withDefault currentPageAModel\n                in\n                    renderPageA continuousPageATimeline\n\n            PageB currentPageBModel ->\n                ...\n\n",
+                "type": "t -> Timeline.Timeline (Maybe.Maybe t) -> Timeline.Timeline t"
+            }
+        ],
+        "binops": []
+    }
+]

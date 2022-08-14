@@ -1,0 +1,91 @@
+[
+    {
+        "name": "Docs.NoMissing",
+        "comment": "\n\n@docs rule\n\n\n## Configuration\n\n@docs What, everything, onlyExposed\n@docs From, allModules, exposedModules\n\n\n## When (not) to enable this rule\n\nThis rule is useful when you care about having a thoroughly or increasingly documented project.\nIt is also useful when you write Elm packages, in order to know about missing documentation before you publish.\n\n\n## Try it out\n\nYou can try this rule out by running the following command:\n\n```bash\nelm-review --template jfmengels/elm-review-documentation/example --rules Docs.NoMissing\n```\n\n",
+        "unions": [
+            {
+                "name": "From",
+                "comment": " Which modules should be documented. Possible options are [`allModules`](#allModules) of a project or\nonly the [`exposedModules`](#exposedModules) (only for packages).\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "What",
+                "comment": " Which elements from a module should be documented. Possible options are [`everything`](#everything) in a module or\nonly the exposed elements of a module ([`onlyExposed`](#onlyExposed)).\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "allModules",
+                "comment": " All modules from the project should be documented.\n",
+                "type": "Docs.NoMissing.From"
+            },
+            {
+                "name": "everything",
+                "comment": " Every function and type from a module should be documented. The module definition should also be documented.\n",
+                "type": "Docs.NoMissing.What"
+            },
+            {
+                "name": "exposedModules",
+                "comment": " Only exposed modules from the project will need to be documented.\n\nIf your project is an application, you should not use this option. An application does not expose modules which would\nmean there isn't any module to report errors for.\n\n",
+                "type": "Docs.NoMissing.From"
+            },
+            {
+                "name": "onlyExposed",
+                "comment": " Only exposed functions and types from a module should be documented. The module definition should also be documented.\n",
+                "type": "Docs.NoMissing.What"
+            },
+            {
+                "name": "rule",
+                "comment": " Reports missing or empty documentation for functions and types.\n\n    import Docs.NoMissing exposing (exposedModules, onlyExposed)\n\n    config =\n        [ Docs.NoMissing.rule\n            { document = onlyExposed\n            , from = exposedModules\n            }\n        ]\n\n\n## Fail\n\nThe rule will report when documentation is missing\n\n    someFunction =\n        great Things\n\nor when documentation is present but empty.\n\n    {-| -}\n    someOtherFunction =\n        other (great Things)\n\nThe reasoning for not allowing empty documentation is because of how people consume documentation can vary, and for some\nof those ways, empty documentation doesn't lead to a nice experience. For instance, if you are looking at Elm code in\nyour IDE and want to lookup the definition of a function, an empty documentation will give you no information beyond the\ntype annotation.\n\nWhen I write documentation for a module, I try to tell a story or somehow phrase it as a tutorial, so that people can\nlearn the easier concepts first, and gradually as they read more and learn more about the ideas and concepts, I will\nassume that they read most of the documentation above.\n\nBut for every function or type, I also imagine that they'll be read on their own from an IDE for instance, and therefore\ntry to make the documentation as light as possible while giving a helpful description and an example, without relying\ntoo much on the assumption that the user has read the rest of the module.\n\nA common case where people don't give an example is when exposing functions such as `map2`, `map3`, `map4`, etc., usually\ndocumented in that order and next to each other. While `map2` is usually properly documented, the following ones would\nhave empty documentation, which I believe would be because the author assumes that the user went through the documentation on\nthe package registry and has read the documentation for `map2`. But if someone unfamiliar with Elm or an API looks up\n`map3`, they may have trouble finding the information they were looking for.\n\nI would recommend to make the documentation for each element as understandable out of context as possible. At the very least,\nI would advise to say something like \"This function is like `map2` but with X arguments\" with a link to `map2`, so that\nrelevant information _can_ be found without too much effort.\n\n\n## Success\n\n    {-| someFunction does great things\n    -}\n    someFunction =\n        great Things\n\n",
+                "type": "{ document : Docs.NoMissing.What, from : Docs.NoMissing.From } -> Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Docs.ReviewAtDocs",
+        "comment": "\n\n@docs rule\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": " Reports problems with the usages of `@docs`.\n\n    config =\n        [ Docs.ReviewAtDocs.rule\n        ]\n\nThe aim of this rule is to report problems for documentation in packages that the Elm compiler doesn't report but that\nbreak documentation, and to replicate the same checks for applications so that you can write documentation without\nworrying about them getting stale.\n\nThe rule will report issues with malformed `@docs` directives that will cause the documentation to not be displayed properly once published.\n\n  - `@docs` on the first line\n\n```elm\n{-|\n\n@docs a\n\n-}\n```\n\n  - Indented `@docs`\n\n```elm\n{-|\n\n    @docs a\n\n-}\n```\n\nOnce there are no more issues of malformed `@docs`, the rule will report about:\n\n  - Missing `@docs` for exposed elements\n\n  - `@docs` for non-exposed or missing elements\n\n  - Duplicate `@docs` references\n\n  - Usage of `@docs` outside of the module documentation\n\nIf a module does not have _any_ usage of `@docs`, then the rule will not report anything, as the rule will assume the\nmodule is not meant to be documented at this moment in time. An exception is made for exposed modules of a package.\n\n\n## When (not) to enable this rule\n\nThis rule will not be useful if your project is an application and no-one in the team has the habit of writing\npackage-like documentation.\n\n\n## Try it out\n\nYou can try this rule out by running the following command:\n\n```bash\nelm-review --template jfmengels/elm-review-documentation/example --rules Docs.ReviewAtDocs\n```\n\n",
+                "type": "Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Docs.ReviewLinksAndSections",
+        "comment": "\n\n@docs rule\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": " Reports problems with links and sections in Elm projects.\n\n    config =\n        [ Docs.ReviewLinksAndSections.rule\n        ]\n\n\n## Fail\n\nLinks to missing modules or sections are reported.\n\n    {-| Link to [missing module](Unknown-Module).\n    -}\n    a =\n        1\n\n    {-| Link to [missing section](#unknown).\n    -}\n    a =\n        1\n\nIn packages, links that would appear in the public documentation and that link to sections not part of the public documentation are reported.\n\n    module Exposed exposing (a)\n\n    import Internal\n\n    {-| Link to [internal details](Internal#section).\n    -}\n    a =\n        1\n\nSections that would have the same generated id are reported,\nso that links don't inadvertently point to the wrong location.\n\n    module A exposing (element, section)\n\n    {-|\n\n\n    # Section\n\n    The above conflicts with the id generated\n    for the `section` value.\n\n    -}\n\n    element =\n        1\n\n    section =\n        1\n\n\n## Success\n\n    module Exposed exposing (a, b)\n\n    import Internal\n\n    {-| Link to [exposed b](#b).\n    -}\n    a =\n        1\n\n    b =\n        2\n\n\n## When (not) to enable this rule\n\nFor packages, this rule will be useful to prevent having dead links in the package documentation.\n\nFor applications, this rule will be useful if you have the habit of writing documentation the way you do in Elm packages,\nand want to prevent it from going out of date.\n\nThis rule will not be useful if your project is an application and no-one in the team has the habit of writing\npackage-like documentation.\n\n\n## Try it out\n\nYou can try this rule out by running the following command:\n\n```bash\nelm-review --template jfmengels/elm-review-documentation/example --rules Docs.ReviewLinksAndSections\n```\n\n\n## Thanks\n\nThanks to @lue-bird for helping out with this rule.\n\n",
+                "type": "Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Docs.UpToDateReadmeLinks",
+        "comment": "\n\n@docs rule\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": " Reports links in the `README.md` that point to this project's package documentation on <https://package.elm-lang.org/>,\nwhere the version is set to `latest` or a different version than the current version of the package.\n\n🔧 Running with `--fix` will automatically remove all the reported errors.\n\n    config =\n        [ Docs.UpToDateReadmeLinks.rule\n        ]\n\nThe problem with linking to `latest` is that if you release a new version later,\nthe users who read the README for the older version will be directed to a version\nwhere the module/function/section you pointed to may not exist anymore.\n\nThis rule ensures that you always use the correct version in all of your releases,\nand that you do not forget to update the links.\n\nThis rule provides automatic fixes, so you won't to do the tedious job of updating\nthe links yourself.\n\n**NOTE**: Just make sure to run tests between bumping the version of the package\nand publishing the package. Otherwise the link for a given version could link to a previous one.\n\n**NOTE**: A similar rule would be useful for links inside the modules. I'll be working on that too!\n\n\n## Try it out\n\nYou can try this rule out by running the following command:\n\n```bash\nelm-review --template jfmengels/elm-review-documentation/example --rules Docs.UpToDateReadmeLinks\n```\n\n",
+                "type": "Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    }
+]

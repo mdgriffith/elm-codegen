@@ -1,0 +1,149 @@
+[
+    {
+        "name": "Emusic",
+        "comment": " DSL that implements the music patterns and functions to make it easy\nto write music and parse its structures to send to browser.\n\n\n# Instrument type\n@docs Instrument\n\n# MAction type\n@docs MAction\n\n# MPattern type\n@docs MPattern\n\n# Song type\n@docs Song\n\n# Track type\n@docs Track\n\n# SongData type\n@docs SongData\n\n# SongIdentifier type\n@docs SongIdentifier\n\n# SongName type\n@docs SongName\n\n# TrackObject type\n@docs TrackObject\n\n# Msg type\n@docs Msg\n\n# Model type\n@docs Model\n\n# Exposed methods\n@docs init, update, repeat\n",
+        "unions": [
+            {
+                "name": "Instrument",
+                "comment": " Intrument type\n",
+                "args": [],
+                "cases": [
+                    [
+                        "AMSynth",
+                        []
+                    ],
+                    [
+                        "FMSynth",
+                        []
+                    ],
+                    [
+                        "MBSynth",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "MAction",
+                "comment": " Music action\n",
+                "args": [],
+                "cases": [
+                    [
+                        "X",
+                        []
+                    ],
+                    [
+                        "O",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "MPattern",
+                "comment": " Music pattern\n",
+                "args": [],
+                "cases": [
+                    [
+                        "MPattern",
+                        [
+                            "List.List Emusic.MAction"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Msg",
+                "comment": " Msg type\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Play",
+                        [
+                            "Emusic.SongName"
+                        ]
+                    ],
+                    [
+                        "Stop",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Song",
+                "comment": " Song type\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Song",
+                        [
+                            "List.List Emusic.Track"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Track",
+                "comment": " Track type\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Track",
+                        [
+                            "Emusic.Instrument",
+                            "Emusic.MPattern"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Model",
+                "comment": " Model type\n",
+                "args": [],
+                "type": "{ songs : List.List Emusic.SongIdentifier, currentSong : Emusic.SongName }"
+            },
+            {
+                "name": "SongData",
+                "comment": " Song data to send to JS\n",
+                "args": [],
+                "type": "List.List Emusic.TrackObject"
+            },
+            {
+                "name": "SongIdentifier",
+                "comment": " Song identifier type\n",
+                "args": [],
+                "type": "{ songName : Emusic.SongName, song : Emusic.Song }"
+            },
+            {
+                "name": "SongName",
+                "comment": " Song name type\n",
+                "args": [],
+                "type": "String.String"
+            },
+            {
+                "name": "TrackObject",
+                "comment": " Track data to send to JS\n",
+                "args": [],
+                "type": "{ instrument : Basics.Int, actions : List.List String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "init",
+                "comment": " Init program with a list of song identifiers\n",
+                "type": "List.List Emusic.SongIdentifier -> ( Emusic.Model, Platform.Cmd.Cmd Emusic.Msg )"
+            },
+            {
+                "name": "repeat",
+                "comment": " Repeat action lists\n",
+                "type": "Basics.Int -> List.List Emusic.MAction -> List.List Emusic.MAction"
+            },
+            {
+                "name": "update",
+                "comment": " Update program\n",
+                "type": "Emusic.Msg -> Emusic.Model -> (Emusic.SongData -> Platform.Cmd.Cmd Emusic.Msg) -> ( Emusic.Model, Platform.Cmd.Cmd Emusic.Msg )"
+            }
+        ],
+        "binops": []
+    }
+]

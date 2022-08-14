@@ -1,0 +1,451 @@
+[
+    {
+        "name": "Boolean",
+        "comment": "\nBoolean data type has two possible truth values to represent logic.\\\n📦 [Package](https://package.elm-lang.org/packages/elmw/extra-boolean/latest/),\n📘 [Wiki](https://github.com/elmw/extra-boolean/wiki).\n\n@docs parse\n@docs not, eq, neq, imply, nimply\n@docs eqv, imp\n@docs and, and0, and1, and2, and3, and4, and5, and6, and7, and8\n@docs or, or0, or1, or2, or3, or4, or5, or6, or7, or8\n@docs xor, xor0, xor1, xor2, xor3, xor4, xor5, xor6, xor7, xor8\n@docs count, count0, count1, count2, count3, count4, count5, count6, count7, count8\n@docs nand, nand0, nand1, nand2, nand3, nand4, nand5, nand6, nand7, nand8\n@docs nor, nor0, nor1, nor2, nor3, nor4, nor5, nor6, nor7, nor8\n@docs xnor, xnor0, xnor1, xnor2, xnor3, xnor4, xnor5, xnor6, xnor7, xnor8\n@docs select, select0, select1, select2, select3, select4, select5, select6, select7, select8\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "and",
+                "comment": "\nChecks if all values are true.\n[📘](https://github.com/elmw/extra-boolean/wiki/and)\n\n    -- and[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    and True True             == True\n    and True False            == False\n    and4 True True True True  == True\n    and4 True False True True == False\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "and0",
+                "comment": "\nChecks if all values are true.\n[📘](https://github.com/elmw/extra-boolean/wiki/and)\n\n    -- and[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    and True True             == True\n    and True False            == False\n    and4 True True True True  == True\n    and4 True False True True == False\n",
+                "type": "Basics.Bool"
+            },
+            {
+                "name": "and1",
+                "comment": "\nChecks if all values are true.\n[📘](https://github.com/elmw/extra-boolean/wiki/and)\n\n    -- and[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    and True True             == True\n    and True False            == False\n    and4 True True True True  == True\n    and4 True False True True == False\n",
+                "type": "Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "and2",
+                "comment": "\nChecks if all values are true.\n[📘](https://github.com/elmw/extra-boolean/wiki/and)\n\n    -- and[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    and True True             == True\n    and True False            == False\n    and4 True True True True  == True\n    and4 True False True True == False\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "and3",
+                "comment": "\nChecks if all values are true.\n[📘](https://github.com/elmw/extra-boolean/wiki/and)\n\n    -- and[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    and True True             == True\n    and True False            == False\n    and4 True True True True  == True\n    and4 True False True True == False\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "and4",
+                "comment": "\nChecks if all values are true.\n[📘](https://github.com/elmw/extra-boolean/wiki/and)\n\n    -- and[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    and True True             == True\n    and True False            == False\n    and4 True True True True  == True\n    and4 True False True True == False\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "and5",
+                "comment": "\nChecks if all values are true.\n[📘](https://github.com/elmw/extra-boolean/wiki/and)\n\n    -- and[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    and True True             == True\n    and True False            == False\n    and4 True True True True  == True\n    and4 True False True True == False\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "and6",
+                "comment": "\nChecks if all values are true.\n[📘](https://github.com/elmw/extra-boolean/wiki/and)\n\n    -- and[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    and True True             == True\n    and True False            == False\n    and4 True True True True  == True\n    and4 True False True True == False\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "and7",
+                "comment": "\nChecks if all values are true.\n[📘](https://github.com/elmw/extra-boolean/wiki/and)\n\n    -- and[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    and True True             == True\n    and True False            == False\n    and4 True True True True  == True\n    and4 True False True True == False\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "and8",
+                "comment": "\nChecks if all values are true.\n[📘](https://github.com/elmw/extra-boolean/wiki/and)\n\n    -- and[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    and True True             == True\n    and True False            == False\n    and4 True True True True  == True\n    and4 True False True True == False\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "count",
+                "comment": "\nCounts no. of true values.\n[📘](https://github.com/elmw/extra-boolean/wiki/count)\n\n    -- count[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    count True True               == 2\n    count True False              == 1\n    count4 True True True False   == 3\n    count4 False True False False == 1\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Int"
+            },
+            {
+                "name": "count0",
+                "comment": "\nCounts no. of true values.\n[📘](https://github.com/elmw/extra-boolean/wiki/count)\n\n    -- count[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    count True True               == 2\n    count True False              == 1\n    count4 True True True False   == 3\n    count4 False True False False == 1\n",
+                "type": "Basics.Int"
+            },
+            {
+                "name": "count1",
+                "comment": "\nCounts no. of true values.\n[📘](https://github.com/elmw/extra-boolean/wiki/count)\n\n    -- count[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    count True True               == 2\n    count True False              == 1\n    count4 True True True False   == 3\n    count4 False True False False == 1\n",
+                "type": "Basics.Bool -> Basics.Int"
+            },
+            {
+                "name": "count2",
+                "comment": "\nCounts no. of true values.\n[📘](https://github.com/elmw/extra-boolean/wiki/count)\n\n    -- count[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    count True True               == 2\n    count True False              == 1\n    count4 True True True False   == 3\n    count4 False True False False == 1\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Int"
+            },
+            {
+                "name": "count3",
+                "comment": "\nCounts no. of true values.\n[📘](https://github.com/elmw/extra-boolean/wiki/count)\n\n    -- count[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    count True True               == 2\n    count True False              == 1\n    count4 True True True False   == 3\n    count4 False True False False == 1\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Int"
+            },
+            {
+                "name": "count4",
+                "comment": "\nCounts no. of true values.\n[📘](https://github.com/elmw/extra-boolean/wiki/count)\n\n    -- count[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    count True True               == 2\n    count True False              == 1\n    count4 True True True False   == 3\n    count4 False True False False == 1\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Int"
+            },
+            {
+                "name": "count5",
+                "comment": "\nCounts no. of true values.\n[📘](https://github.com/elmw/extra-boolean/wiki/count)\n\n    -- count[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    count True True               == 2\n    count True False              == 1\n    count4 True True True False   == 3\n    count4 False True False False == 1\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Int"
+            },
+            {
+                "name": "count6",
+                "comment": "\nCounts no. of true values.\n[📘](https://github.com/elmw/extra-boolean/wiki/count)\n\n    -- count[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    count True True               == 2\n    count True False              == 1\n    count4 True True True False   == 3\n    count4 False True False False == 1\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Int"
+            },
+            {
+                "name": "count7",
+                "comment": "\nCounts no. of true values.\n[📘](https://github.com/elmw/extra-boolean/wiki/count)\n\n    -- count[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    count True True               == 2\n    count True False              == 1\n    count4 True True True False   == 3\n    count4 False True False False == 1\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Int"
+            },
+            {
+                "name": "count8",
+                "comment": "\nCounts no. of true values.\n[📘](https://github.com/elmw/extra-boolean/wiki/count)\n\n    -- count[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    count True True               == 2\n    count True False              == 1\n    count4 True True True False   == 3\n    count4 False True False False == 1\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Int"
+            },
+            {
+                "name": "eq",
+                "comment": "\nChecks if antecedent ⇔ consequent (a ⇔ b).\n[📘](https://github.com/elmw/extra-boolean/wiki/eq)\n\n    -- eq a b\n    -- a: antecedent\n    -- b: consequent\n    eq True True   == True\n    eq False False == True\n    eq True False  == False\n    eq False True  == False\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "eqv",
+                "comment": "\nChecks if antecedent ⇔ consequent (a ⇔ b).\n[📘](https://github.com/elmw/extra-boolean/wiki/eqv)\n\n    -- eqv a b\n    -- a: antecedent\n    -- b: consequent\n    eqv True True   == True\n    eqv False False == True\n    eqv True False  == False\n    eqv False True  == False\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "imp",
+                "comment": "\nChecks if antecedent ⇒ consequent (a ⇒ b).\n[📘](https://github.com/elmw/extra-boolean/wiki/imp)\n\n    -- imp a b\n    -- a: antecedent\n    -- b: consequent\n    imp True True   == True\n    imp False True  == True\n    imp False False == True\n    imp True False  == False\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "imply",
+                "comment": "\nChecks if antecedent ⇒ consequent (a ⇒ b).\n[📘](https://github.com/elmw/extra-boolean/wiki/imply)\n\n    -- imply a b\n    -- a: antecedent\n    -- b: consequent\n    imply True True   == True\n    imply False True  == True\n    imply False False == True\n    imply True False  == False\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "nand",
+                "comment": "\nChecks if any value is false.\n[📘](https://github.com/elmw/extra-boolean/wiki/nand)\n\n    -- nand[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    nand True False            == True\n    nand True True             == False\n    nand4 True True False True == True\n    nand4 True True True True  == False\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "nand0",
+                "comment": "\nChecks if any value is false.\n[📘](https://github.com/elmw/extra-boolean/wiki/nand)\n\n    -- nand[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    nand True False            == True\n    nand True True             == False\n    nand4 True True False True == True\n    nand4 True True True True  == False\n",
+                "type": "Basics.Bool"
+            },
+            {
+                "name": "nand1",
+                "comment": "\nChecks if any value is false.\n[📘](https://github.com/elmw/extra-boolean/wiki/nand)\n\n    -- nand[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    nand True False            == True\n    nand True True             == False\n    nand4 True True False True == True\n    nand4 True True True True  == False\n",
+                "type": "Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "nand2",
+                "comment": "\nChecks if any value is false.\n[📘](https://github.com/elmw/extra-boolean/wiki/nand)\n\n    -- nand[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    nand True False            == True\n    nand True True             == False\n    nand4 True True False True == True\n    nand4 True True True True  == False\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "nand3",
+                "comment": "\nChecks if any value is false.\n[📘](https://github.com/elmw/extra-boolean/wiki/nand)\n\n    -- nand[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    nand True False            == True\n    nand True True             == False\n    nand4 True True False True == True\n    nand4 True True True True  == False\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "nand4",
+                "comment": "\nChecks if any value is false.\n[📘](https://github.com/elmw/extra-boolean/wiki/nand)\n\n    -- nand[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    nand True False            == True\n    nand True True             == False\n    nand4 True True False True == True\n    nand4 True True True True  == False\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "nand5",
+                "comment": "\nChecks if any value is false.\n[📘](https://github.com/elmw/extra-boolean/wiki/nand)\n\n    -- nand[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    nand True False            == True\n    nand True True             == False\n    nand4 True True False True == True\n    nand4 True True True True  == False\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "nand6",
+                "comment": "\nChecks if any value is false.\n[📘](https://github.com/elmw/extra-boolean/wiki/nand)\n\n    -- nand[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    nand True False            == True\n    nand True True             == False\n    nand4 True True False True == True\n    nand4 True True True True  == False\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "nand7",
+                "comment": "\nChecks if any value is false.\n[📘](https://github.com/elmw/extra-boolean/wiki/nand)\n\n    -- nand[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    nand True False            == True\n    nand True True             == False\n    nand4 True True False True == True\n    nand4 True True True True  == False\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "nand8",
+                "comment": "\nChecks if any value is false.\n[📘](https://github.com/elmw/extra-boolean/wiki/nand)\n\n    -- nand[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    nand True False            == True\n    nand True True             == False\n    nand4 True True False True == True\n    nand4 True True True True  == False\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "neq",
+                "comment": "\nChecks if antecedent ⇎ consequent (a ⇎ b).\n[📘](https://github.com/elmw/extra-boolean/wiki/neq)\n\n    -- neq a b\n    -- a: antecedent\n    -- b: consequent\n    neq True False  == True\n    neq False True  == True\n    neq True True   == False\n    neq False False == False\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "nimply",
+                "comment": "\nChecks if antecedent ⇏ consequent (a ⇏ b).\n[📘](https://github.com/elmw/extra-boolean/wiki/nimply)\n\n    -- nimply a b\n    -- a: antecedent\n    -- b: consequent\n    nimply True False  == True\n    nimply True True   == False\n    nimply False True  == False\n    nimply False False == False\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "nor",
+                "comment": "\nChecks if all values are false.\n[📘](https://github.com/elmw/extra-boolean/wiki/nor)\n\n    -- nor[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    nor False False              == True\n    nor True False               == False\n    nor4 False False False False == True\n    nor4 False False True False  == False\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "nor0",
+                "comment": "\nChecks if all values are false.\n[📘](https://github.com/elmw/extra-boolean/wiki/nor)\n\n    -- nor[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    nor False False              == True\n    nor True False               == False\n    nor4 False False False False == True\n    nor4 False False True False  == False\n",
+                "type": "Basics.Bool"
+            },
+            {
+                "name": "nor1",
+                "comment": "\nChecks if all values are false.\n[📘](https://github.com/elmw/extra-boolean/wiki/nor)\n\n    -- nor[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    nor False False              == True\n    nor True False               == False\n    nor4 False False False False == True\n    nor4 False False True False  == False\n",
+                "type": "Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "nor2",
+                "comment": "\nChecks if all values are false.\n[📘](https://github.com/elmw/extra-boolean/wiki/nor)\n\n    -- nor[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    nor False False              == True\n    nor True False               == False\n    nor4 False False False False == True\n    nor4 False False True False  == False\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "nor3",
+                "comment": "\nChecks if all values are false.\n[📘](https://github.com/elmw/extra-boolean/wiki/nor)\n\n    -- nor[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    nor False False              == True\n    nor True False               == False\n    nor4 False False False False == True\n    nor4 False False True False  == False\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "nor4",
+                "comment": "\nChecks if all values are false.\n[📘](https://github.com/elmw/extra-boolean/wiki/nor)\n\n    -- nor[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    nor False False              == True\n    nor True False               == False\n    nor4 False False False False == True\n    nor4 False False True False  == False\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "nor5",
+                "comment": "\nChecks if all values are false.\n[📘](https://github.com/elmw/extra-boolean/wiki/nor)\n\n    -- nor[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    nor False False              == True\n    nor True False               == False\n    nor4 False False False False == True\n    nor4 False False True False  == False\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "nor6",
+                "comment": "\nChecks if all values are false.\n[📘](https://github.com/elmw/extra-boolean/wiki/nor)\n\n    -- nor[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    nor False False              == True\n    nor True False               == False\n    nor4 False False False False == True\n    nor4 False False True False  == False\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "nor7",
+                "comment": "\nChecks if all values are false.\n[📘](https://github.com/elmw/extra-boolean/wiki/nor)\n\n    -- nor[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    nor False False              == True\n    nor True False               == False\n    nor4 False False False False == True\n    nor4 False False True False  == False\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "nor8",
+                "comment": "\nChecks if all values are false.\n[📘](https://github.com/elmw/extra-boolean/wiki/nor)\n\n    -- nor[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    nor False False              == True\n    nor True False               == False\n    nor4 False False False False == True\n    nor4 False False True False  == False\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "not",
+                "comment": "\nChecks if value is false.\n[📘](https://github.com/elmw/extra-boolean/wiki/not)\n\n    -- not a\n    -- a: a boolean\n    not False == True\n    not True  == False\n",
+                "type": "Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "or",
+                "comment": "\nChecks if any value is true.\n[📘](https://github.com/elmw/extra-boolean/wiki/or)\n\n    -- or[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    or True False               == True\n    or False False              == False\n    or4 False True False True   == True\n    or4 False False False False == False\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "or0",
+                "comment": "\nChecks if any value is true.\n[📘](https://github.com/elmw/extra-boolean/wiki/or)\n\n    -- or[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    or True False               == True\n    or False False              == False\n    or4 False True False True   == True\n    or4 False False False False == False\n",
+                "type": "Basics.Bool"
+            },
+            {
+                "name": "or1",
+                "comment": "\nChecks if any value is true.\n[📘](https://github.com/elmw/extra-boolean/wiki/or)\n\n    -- or[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    or True False               == True\n    or False False              == False\n    or4 False True False True   == True\n    or4 False False False False == False\n",
+                "type": "Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "or2",
+                "comment": "\nChecks if any value is true.\n[📘](https://github.com/elmw/extra-boolean/wiki/or)\n\n    -- or[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    or True False               == True\n    or False False              == False\n    or4 False True False True   == True\n    or4 False False False False == False\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "or3",
+                "comment": "\nChecks if any value is true.\n[📘](https://github.com/elmw/extra-boolean/wiki/or)\n\n    -- or[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    or True False               == True\n    or False False              == False\n    or4 False True False True   == True\n    or4 False False False False == False\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "or4",
+                "comment": "\nChecks if any value is true.\n[📘](https://github.com/elmw/extra-boolean/wiki/or)\n\n    -- or[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    or True False               == True\n    or False False              == False\n    or4 False True False True   == True\n    or4 False False False False == False\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "or5",
+                "comment": "\nChecks if any value is true.\n[📘](https://github.com/elmw/extra-boolean/wiki/or)\n\n    -- or[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    or True False               == True\n    or False False              == False\n    or4 False True False True   == True\n    or4 False False False False == False\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "or6",
+                "comment": "\nChecks if any value is true.\n[📘](https://github.com/elmw/extra-boolean/wiki/or)\n\n    -- or[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    or True False               == True\n    or False False              == False\n    or4 False True False True   == True\n    or4 False False False False == False\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "or7",
+                "comment": "\nChecks if any value is true.\n[📘](https://github.com/elmw/extra-boolean/wiki/or)\n\n    -- or[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    or True False               == True\n    or False False              == False\n    or4 False True False True   == True\n    or4 False False False False == False\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "or8",
+                "comment": "\nChecks if any value is true.\n[📘](https://github.com/elmw/extra-boolean/wiki/or)\n\n    -- or[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    or True False               == True\n    or False False              == False\n    or4 False True False True   == True\n    or4 False False False False == False\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "parse",
+                "comment": "\nConverts string to boolean.\n[📘](https://github.com/elmw/extra-boolean/wiki/parse)\n\n    -- parse s\n    -- s: a string\n    parse \"1\"            == True\n    parse \"truthy\"       == True\n    parse \"Not Off\"      == True\n    parse \"Not Inactive\" == True\n    parse \"cold\"         == False\n    parse \"inactive\"     == False\n    parse \"Negative Yes\" == False\n    parse \"Negative Aye\" == False\n",
+                "type": "String.String -> Basics.Bool"
+            },
+            {
+                "name": "select",
+                "comment": "\nChecks if ith value is true.\n[📘](https://github.com/elmw/extra-boolean/wiki/select)\n\n    -- select[n] i a b ...\n    -- i: index\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    select 0 True False             == True\n    select 1 True False             == False\n    select4 1 True True False False == True\n    select4 2 True True False False == False\n",
+                "type": "Basics.Int -> Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "select0",
+                "comment": "\nChecks if ith value is true.\n[📘](https://github.com/elmw/extra-boolean/wiki/select)\n\n    -- select[n] i a b ...\n    -- i: index\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    select 0 True False             == True\n    select 1 True False             == False\n    select4 1 True True False False == True\n    select4 2 True True False False == False\n",
+                "type": "Basics.Int -> Basics.Bool"
+            },
+            {
+                "name": "select1",
+                "comment": "\nChecks if ith value is true.\n[📘](https://github.com/elmw/extra-boolean/wiki/select)\n\n    -- select[n] i a b ...\n    -- i: index\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    select 0 True False             == True\n    select 1 True False             == False\n    select4 1 True True False False == True\n    select4 2 True True False False == False\n",
+                "type": "Basics.Int -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "select2",
+                "comment": "\nChecks if ith value is true.\n[📘](https://github.com/elmw/extra-boolean/wiki/select)\n\n    -- select[n] i a b ...\n    -- i: index\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    select 0 True False             == True\n    select 1 True False             == False\n    select4 1 True True False False == True\n    select4 2 True True False False == False\n",
+                "type": "Basics.Int -> Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "select3",
+                "comment": "\nChecks if ith value is true.\n[📘](https://github.com/elmw/extra-boolean/wiki/select)\n\n    -- select[n] i a b ...\n    -- i: index\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    select 0 True False             == True\n    select 1 True False             == False\n    select4 1 True True False False == True\n    select4 2 True True False False == False\n",
+                "type": "Basics.Int -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "select4",
+                "comment": "\nChecks if ith value is true.\n[📘](https://github.com/elmw/extra-boolean/wiki/select)\n\n    -- select[n] i a b ...\n    -- i: index\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    select 0 True False             == True\n    select 1 True False             == False\n    select4 1 True True False False == True\n    select4 2 True True False False == False\n",
+                "type": "Basics.Int -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "select5",
+                "comment": "\nChecks if ith value is true.\n[📘](https://github.com/elmw/extra-boolean/wiki/select)\n\n    -- select[n] i a b ...\n    -- i: index\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    select 0 True False             == True\n    select 1 True False             == False\n    select4 1 True True False False == True\n    select4 2 True True False False == False\n",
+                "type": "Basics.Int -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "select6",
+                "comment": "\nChecks if ith value is true.\n[📘](https://github.com/elmw/extra-boolean/wiki/select)\n\n    -- select[n] i a b ...\n    -- i: index\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    select 0 True False             == True\n    select 1 True False             == False\n    select4 1 True True False False == True\n    select4 2 True True False False == False\n",
+                "type": "Basics.Int -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "select7",
+                "comment": "\nChecks if ith value is true.\n[📘](https://github.com/elmw/extra-boolean/wiki/select)\n\n    -- select[n] i a b ...\n    -- i: index\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    select 0 True False             == True\n    select 1 True False             == False\n    select4 1 True True False False == True\n    select4 2 True True False False == False\n",
+                "type": "Basics.Int -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "select8",
+                "comment": "\nChecks if ith value is true.\n[📘](https://github.com/elmw/extra-boolean/wiki/select)\n\n    -- select[n] i a b ...\n    -- i: index\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    select 0 True False             == True\n    select 1 True False             == False\n    select4 1 True True False False == True\n    select4 2 True True False False == False\n",
+                "type": "Basics.Int -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "xnor",
+                "comment": "\nChecks if even no. of values are true.\n[📘](https://github.com/elmw/extra-boolean/wiki/xnor)\n\n    -- xnor[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    xnor True True              == True\n    xnor False True             == False\n    xnor4 True True False False == True\n    xnor4 True True True False  == False\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "xnor0",
+                "comment": "\nChecks if even no. of values are true.\n[📘](https://github.com/elmw/extra-boolean/wiki/xnor)\n\n    -- xnor[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    xnor True True              == True\n    xnor False True             == False\n    xnor4 True True False False == True\n    xnor4 True True True False  == False\n",
+                "type": "Basics.Bool"
+            },
+            {
+                "name": "xnor1",
+                "comment": "\nChecks if even no. of values are true.\n[📘](https://github.com/elmw/extra-boolean/wiki/xnor)\n\n    -- xnor[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    xnor True True              == True\n    xnor False True             == False\n    xnor4 True True False False == True\n    xnor4 True True True False  == False\n",
+                "type": "Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "xnor2",
+                "comment": "\nChecks if even no. of values are true.\n[📘](https://github.com/elmw/extra-boolean/wiki/xnor)\n\n    -- xnor[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    xnor True True              == True\n    xnor False True             == False\n    xnor4 True True False False == True\n    xnor4 True True True False  == False\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "xnor3",
+                "comment": "\nChecks if even no. of values are true.\n[📘](https://github.com/elmw/extra-boolean/wiki/xnor)\n\n    -- xnor[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    xnor True True              == True\n    xnor False True             == False\n    xnor4 True True False False == True\n    xnor4 True True True False  == False\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "xnor4",
+                "comment": "\nChecks if even no. of values are true.\n[📘](https://github.com/elmw/extra-boolean/wiki/xnor)\n\n    -- xnor[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    xnor True True              == True\n    xnor False True             == False\n    xnor4 True True False False == True\n    xnor4 True True True False  == False\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "xnor5",
+                "comment": "\nChecks if even no. of values are true.\n[📘](https://github.com/elmw/extra-boolean/wiki/xnor)\n\n    -- xnor[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    xnor True True              == True\n    xnor False True             == False\n    xnor4 True True False False == True\n    xnor4 True True True False  == False\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "xnor6",
+                "comment": "\nChecks if even no. of values are true.\n[📘](https://github.com/elmw/extra-boolean/wiki/xnor)\n\n    -- xnor[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    xnor True True              == True\n    xnor False True             == False\n    xnor4 True True False False == True\n    xnor4 True True True False  == False\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "xnor7",
+                "comment": "\nChecks if even no. of values are true.\n[📘](https://github.com/elmw/extra-boolean/wiki/xnor)\n\n    -- xnor[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    xnor True True              == True\n    xnor False True             == False\n    xnor4 True True False False == True\n    xnor4 True True True False  == False\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "xnor8",
+                "comment": "\nChecks if even no. of values are true.\n[📘](https://github.com/elmw/extra-boolean/wiki/xnor)\n\n    -- xnor[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    xnor True True              == True\n    xnor False True             == False\n    xnor4 True True False False == True\n    xnor4 True True True False  == False\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "xor",
+                "comment": "\nChecks if odd no. of values are true.\n[📘](https://github.com/elmw/extra-boolean/wiki/xor)\n\n    -- xor[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    xor True False            == True\n    xor True True             == False\n    xor4 True True True False == True\n    xor4 True True True True  == False\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "xor0",
+                "comment": "\nChecks if odd no. of values are true.\n[📘](https://github.com/elmw/extra-boolean/wiki/xor)\n\n    -- xor[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    xor True False            == True\n    xor True True             == False\n    xor4 True True True False == True\n    xor4 True True True True  == False\n",
+                "type": "Basics.Bool"
+            },
+            {
+                "name": "xor1",
+                "comment": "\nChecks if odd no. of values are true.\n[📘](https://github.com/elmw/extra-boolean/wiki/xor)\n\n    -- xor[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    xor True False            == True\n    xor True True             == False\n    xor4 True True True False == True\n    xor4 True True True True  == False\n",
+                "type": "Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "xor2",
+                "comment": "\nChecks if odd no. of values are true.\n[📘](https://github.com/elmw/extra-boolean/wiki/xor)\n\n    -- xor[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    xor True False            == True\n    xor True True             == False\n    xor4 True True True False == True\n    xor4 True True True True  == False\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "xor3",
+                "comment": "\nChecks if odd no. of values are true.\n[📘](https://github.com/elmw/extra-boolean/wiki/xor)\n\n    -- xor[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    xor True False            == True\n    xor True True             == False\n    xor4 True True True False == True\n    xor4 True True True True  == False\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "xor4",
+                "comment": "\nChecks if odd no. of values are true.\n[📘](https://github.com/elmw/extra-boolean/wiki/xor)\n\n    -- xor[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    xor True False            == True\n    xor True True             == False\n    xor4 True True True False == True\n    xor4 True True True True  == False\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "xor5",
+                "comment": "\nChecks if odd no. of values are true.\n[📘](https://github.com/elmw/extra-boolean/wiki/xor)\n\n    -- xor[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    xor True False            == True\n    xor True True             == False\n    xor4 True True True False == True\n    xor4 True True True True  == False\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "xor6",
+                "comment": "\nChecks if odd no. of values are true.\n[📘](https://github.com/elmw/extra-boolean/wiki/xor)\n\n    -- xor[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    xor True False            == True\n    xor True True             == False\n    xor4 True True True False == True\n    xor4 True True True True  == False\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "xor7",
+                "comment": "\nChecks if odd no. of values are true.\n[📘](https://github.com/elmw/extra-boolean/wiki/xor)\n\n    -- xor[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    xor True False            == True\n    xor True True             == False\n    xor4 True True True False == True\n    xor4 True True True True  == False\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool"
+            },
+            {
+                "name": "xor8",
+                "comment": "\nChecks if odd no. of values are true.\n[📘](https://github.com/elmw/extra-boolean/wiki/xor)\n\n    -- xor[n] a b ...\n    -- a: 1st boolean\n    -- b: 2nd boolean\n    xor True False            == True\n    xor True True             == False\n    xor4 True True True False == True\n    xor4 True True True True  == False\n",
+                "type": "Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool -> Basics.Bool"
+            }
+        ],
+        "binops": []
+    }
+]

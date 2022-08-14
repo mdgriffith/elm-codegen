@@ -1,0 +1,2642 @@
+[
+    {
+        "name": "Ganja.C",
+        "comment": " Clifford Algebra: C\n\nGenerated with ganja.js written by enki.\n\n# Basis\n@docs CBasis, basisList, basisCount, basisName\n\n# Multivector\n@docs C, zero, get, set, new\n\n# Basis multivectors\n@docs  unitScalar, e1\n\n# Conversion\n@docs toString, fromList, toList\n\n# Unary Operators\n@docs reverse, dual, conjugate, involute\n\n# Binary Operators\n@docs mul, wedge, vee, dot, add, sub, smul, muls, sadd, adds, ssub, subs\n\n# Norm\n@docs norm, inorm, normalized\n",
+        "unions": [
+            {
+                "name": "C",
+                "comment": " Multivector ",
+                "args": [],
+                "cases": [
+                    [
+                        "C",
+                        [
+                            "Basics.Float",
+                            "Basics.Float"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "CBasis",
+                "comment": " Basis type ",
+                "args": [],
+                "cases": [
+                    [
+                        "Scalar",
+                        []
+                    ],
+                    [
+                        "E1",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "add",
+                "comment": " Multivector addition ",
+                "type": "Ganja.C.C -> Ganja.C.C -> Ganja.C.C"
+            },
+            {
+                "name": "adds",
+                "comment": " multivector/scalar addition ",
+                "type": "Ganja.C.C -> Basics.Float -> Ganja.C.C"
+            },
+            {
+                "name": "basisCount",
+                "comment": " Number of coefficients ",
+                "type": "Basics.Int"
+            },
+            {
+                "name": "basisList",
+                "comment": " Basis list ",
+                "type": "List.List Ganja.C.CBasis"
+            },
+            {
+                "name": "basisName",
+                "comment": " Basis name ",
+                "type": "Ganja.C.CBasis -> String.String"
+            },
+            {
+                "name": "conjugate",
+                "comment": " Clifford Conjugation ",
+                "type": "Ganja.C.C -> Ganja.C.C"
+            },
+            {
+                "name": "dot",
+                "comment": " The inner product. ",
+                "type": "Ganja.C.C -> Ganja.C.C -> Ganja.C.C"
+            },
+            {
+                "name": "dual",
+                "comment": " Poincare duality operator. ",
+                "type": "Ganja.C.C -> Ganja.C.C"
+            },
+            {
+                "name": "e1",
+                "comment": " Basis multivector ",
+                "type": "Ganja.C.C"
+            },
+            {
+                "name": "fromList",
+                "comment": " Convert list of coefficients to multivector ",
+                "type": "List.List Basics.Float -> Maybe.Maybe Ganja.C.C"
+            },
+            {
+                "name": "get",
+                "comment": " Get coefficient ",
+                "type": "Ganja.C.CBasis -> Ganja.C.C -> Basics.Float"
+            },
+            {
+                "name": "inorm",
+                "comment": " Norm of dual ",
+                "type": "Ganja.C.C -> Basics.Float"
+            },
+            {
+                "name": "involute",
+                "comment": " Main involution ",
+                "type": "Ganja.C.C -> Ganja.C.C"
+            },
+            {
+                "name": "mul",
+                "comment": " The geometric product. ",
+                "type": "Ganja.C.C -> Ganja.C.C -> Ganja.C.C"
+            },
+            {
+                "name": "muls",
+                "comment": " multivector/scalar multiplication ",
+                "type": "Ganja.C.C -> Basics.Float -> Ganja.C.C"
+            },
+            {
+                "name": "new",
+                "comment": " Multivector with one coefficient ",
+                "type": "Basics.Float -> Ganja.C.CBasis -> Ganja.C.C"
+            },
+            {
+                "name": "norm",
+                "comment": " Norm ",
+                "type": "Ganja.C.C -> Basics.Float"
+            },
+            {
+                "name": "normalized",
+                "comment": " Normalized multivector ",
+                "type": "Ganja.C.C -> Ganja.C.C"
+            },
+            {
+                "name": "reverse",
+                "comment": " Reverse the order of the basis blades. ",
+                "type": "Ganja.C.C -> Ganja.C.C"
+            },
+            {
+                "name": "sadd",
+                "comment": " scalar/multivector addition ",
+                "type": "Basics.Float -> Ganja.C.C -> Ganja.C.C"
+            },
+            {
+                "name": "set",
+                "comment": " Update coefficient ",
+                "type": "Ganja.C.CBasis -> Basics.Float -> Ganja.C.C -> Ganja.C.C"
+            },
+            {
+                "name": "smul",
+                "comment": " scalar/multivector multiplication ",
+                "type": "Basics.Float -> Ganja.C.C -> Ganja.C.C"
+            },
+            {
+                "name": "ssub",
+                "comment": " scalar/multivector subtraction ",
+                "type": "Basics.Float -> Ganja.C.C -> Ganja.C.C"
+            },
+            {
+                "name": "sub",
+                "comment": " Multivector subtraction ",
+                "type": "Ganja.C.C -> Ganja.C.C -> Ganja.C.C"
+            },
+            {
+                "name": "subs",
+                "comment": " multivector/scalar subtraction ",
+                "type": "Ganja.C.C -> Basics.Float -> Ganja.C.C"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert multivector to list of coefficients ",
+                "type": "Ganja.C.C -> List.List Basics.Float"
+            },
+            {
+                "name": "toString",
+                "comment": " Convert multivector to string ",
+                "type": "Ganja.C.C -> String.String"
+            },
+            {
+                "name": "unitScalar",
+                "comment": " Basis multivector ",
+                "type": "Ganja.C.C"
+            },
+            {
+                "name": "vee",
+                "comment": " The regressive product. (JOIN) ",
+                "type": "Ganja.C.C -> Ganja.C.C -> Ganja.C.C"
+            },
+            {
+                "name": "wedge",
+                "comment": " The outer product. (MEET) ",
+                "type": "Ganja.C.C -> Ganja.C.C -> Ganja.C.C"
+            },
+            {
+                "name": "zero",
+                "comment": " Zero value ",
+                "type": "Ganja.C.C"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Ganja.Cga",
+        "comment": " Clifford Algebra: Cga\n\nGenerated with ganja.js written by enki.\n\n# Basis\n@docs CgaBasis, basisList, basisCount, basisName\n\n# Multivector\n@docs Cga, zero, get, set, new\n\n# Basis multivectors\n@docs  unitScalar, e1, e2, e3, e4, e5, e12, e13, e14, e15, e23, e24, e25, e34, e35, e45, e123, e124, e125, e134, e135, e145, e234, e235, e245, e345, e1234, e1235, e1245, e1345, e2345, e12345\n\n# Conversion\n@docs toString, fromList, toList\n\n# Unary Operators\n@docs reverse, dual, conjugate, involute\n\n# Binary Operators\n@docs mul, wedge, vee, dot, add, sub, smul, muls, sadd, adds, ssub, subs\n\n# Norm\n@docs norm, inorm, normalized\n",
+        "unions": [
+            {
+                "name": "Cga",
+                "comment": " Multivector ",
+                "args": [],
+                "cases": [
+                    [
+                        "Cga",
+                        [
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "CgaBasis",
+                "comment": " Basis type ",
+                "args": [],
+                "cases": [
+                    [
+                        "Scalar",
+                        []
+                    ],
+                    [
+                        "E1",
+                        []
+                    ],
+                    [
+                        "E2",
+                        []
+                    ],
+                    [
+                        "E3",
+                        []
+                    ],
+                    [
+                        "E4",
+                        []
+                    ],
+                    [
+                        "E5",
+                        []
+                    ],
+                    [
+                        "E12",
+                        []
+                    ],
+                    [
+                        "E13",
+                        []
+                    ],
+                    [
+                        "E14",
+                        []
+                    ],
+                    [
+                        "E15",
+                        []
+                    ],
+                    [
+                        "E23",
+                        []
+                    ],
+                    [
+                        "E24",
+                        []
+                    ],
+                    [
+                        "E25",
+                        []
+                    ],
+                    [
+                        "E34",
+                        []
+                    ],
+                    [
+                        "E35",
+                        []
+                    ],
+                    [
+                        "E45",
+                        []
+                    ],
+                    [
+                        "E123",
+                        []
+                    ],
+                    [
+                        "E124",
+                        []
+                    ],
+                    [
+                        "E125",
+                        []
+                    ],
+                    [
+                        "E134",
+                        []
+                    ],
+                    [
+                        "E135",
+                        []
+                    ],
+                    [
+                        "E145",
+                        []
+                    ],
+                    [
+                        "E234",
+                        []
+                    ],
+                    [
+                        "E235",
+                        []
+                    ],
+                    [
+                        "E245",
+                        []
+                    ],
+                    [
+                        "E345",
+                        []
+                    ],
+                    [
+                        "E1234",
+                        []
+                    ],
+                    [
+                        "E1235",
+                        []
+                    ],
+                    [
+                        "E1245",
+                        []
+                    ],
+                    [
+                        "E1345",
+                        []
+                    ],
+                    [
+                        "E2345",
+                        []
+                    ],
+                    [
+                        "E12345",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "add",
+                "comment": " Multivector addition ",
+                "type": "Ganja.Cga.Cga -> Ganja.Cga.Cga -> Ganja.Cga.Cga"
+            },
+            {
+                "name": "adds",
+                "comment": " multivector/scalar addition ",
+                "type": "Ganja.Cga.Cga -> Basics.Float -> Ganja.Cga.Cga"
+            },
+            {
+                "name": "basisCount",
+                "comment": " Number of coefficients ",
+                "type": "Basics.Int"
+            },
+            {
+                "name": "basisList",
+                "comment": " Basis list ",
+                "type": "List.List Ganja.Cga.CgaBasis"
+            },
+            {
+                "name": "basisName",
+                "comment": " Basis name ",
+                "type": "Ganja.Cga.CgaBasis -> String.String"
+            },
+            {
+                "name": "conjugate",
+                "comment": " Clifford Conjugation ",
+                "type": "Ganja.Cga.Cga -> Ganja.Cga.Cga"
+            },
+            {
+                "name": "dot",
+                "comment": " The inner product. ",
+                "type": "Ganja.Cga.Cga -> Ganja.Cga.Cga -> Ganja.Cga.Cga"
+            },
+            {
+                "name": "dual",
+                "comment": " Poincare duality operator. ",
+                "type": "Ganja.Cga.Cga -> Ganja.Cga.Cga"
+            },
+            {
+                "name": "e1",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Cga.Cga"
+            },
+            {
+                "name": "e12",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Cga.Cga"
+            },
+            {
+                "name": "e123",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Cga.Cga"
+            },
+            {
+                "name": "e1234",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Cga.Cga"
+            },
+            {
+                "name": "e12345",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Cga.Cga"
+            },
+            {
+                "name": "e1235",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Cga.Cga"
+            },
+            {
+                "name": "e124",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Cga.Cga"
+            },
+            {
+                "name": "e1245",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Cga.Cga"
+            },
+            {
+                "name": "e125",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Cga.Cga"
+            },
+            {
+                "name": "e13",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Cga.Cga"
+            },
+            {
+                "name": "e134",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Cga.Cga"
+            },
+            {
+                "name": "e1345",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Cga.Cga"
+            },
+            {
+                "name": "e135",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Cga.Cga"
+            },
+            {
+                "name": "e14",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Cga.Cga"
+            },
+            {
+                "name": "e145",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Cga.Cga"
+            },
+            {
+                "name": "e15",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Cga.Cga"
+            },
+            {
+                "name": "e2",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Cga.Cga"
+            },
+            {
+                "name": "e23",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Cga.Cga"
+            },
+            {
+                "name": "e234",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Cga.Cga"
+            },
+            {
+                "name": "e2345",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Cga.Cga"
+            },
+            {
+                "name": "e235",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Cga.Cga"
+            },
+            {
+                "name": "e24",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Cga.Cga"
+            },
+            {
+                "name": "e245",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Cga.Cga"
+            },
+            {
+                "name": "e25",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Cga.Cga"
+            },
+            {
+                "name": "e3",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Cga.Cga"
+            },
+            {
+                "name": "e34",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Cga.Cga"
+            },
+            {
+                "name": "e345",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Cga.Cga"
+            },
+            {
+                "name": "e35",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Cga.Cga"
+            },
+            {
+                "name": "e4",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Cga.Cga"
+            },
+            {
+                "name": "e45",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Cga.Cga"
+            },
+            {
+                "name": "e5",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Cga.Cga"
+            },
+            {
+                "name": "fromList",
+                "comment": " Convert list of coefficients to multivector ",
+                "type": "List.List Basics.Float -> Maybe.Maybe Ganja.Cga.Cga"
+            },
+            {
+                "name": "get",
+                "comment": " Get coefficient ",
+                "type": "Ganja.Cga.CgaBasis -> Ganja.Cga.Cga -> Basics.Float"
+            },
+            {
+                "name": "inorm",
+                "comment": " Norm of dual ",
+                "type": "Ganja.Cga.Cga -> Basics.Float"
+            },
+            {
+                "name": "involute",
+                "comment": " Main involution ",
+                "type": "Ganja.Cga.Cga -> Ganja.Cga.Cga"
+            },
+            {
+                "name": "mul",
+                "comment": " The geometric product. ",
+                "type": "Ganja.Cga.Cga -> Ganja.Cga.Cga -> Ganja.Cga.Cga"
+            },
+            {
+                "name": "muls",
+                "comment": " multivector/scalar multiplication ",
+                "type": "Ganja.Cga.Cga -> Basics.Float -> Ganja.Cga.Cga"
+            },
+            {
+                "name": "new",
+                "comment": " Multivector with one coefficient ",
+                "type": "Basics.Float -> Ganja.Cga.CgaBasis -> Ganja.Cga.Cga"
+            },
+            {
+                "name": "norm",
+                "comment": " Norm ",
+                "type": "Ganja.Cga.Cga -> Basics.Float"
+            },
+            {
+                "name": "normalized",
+                "comment": " Normalized multivector ",
+                "type": "Ganja.Cga.Cga -> Ganja.Cga.Cga"
+            },
+            {
+                "name": "reverse",
+                "comment": " Reverse the order of the basis blades. ",
+                "type": "Ganja.Cga.Cga -> Ganja.Cga.Cga"
+            },
+            {
+                "name": "sadd",
+                "comment": " scalar/multivector addition ",
+                "type": "Basics.Float -> Ganja.Cga.Cga -> Ganja.Cga.Cga"
+            },
+            {
+                "name": "set",
+                "comment": " Update coefficient ",
+                "type": "Ganja.Cga.CgaBasis -> Basics.Float -> Ganja.Cga.Cga -> Ganja.Cga.Cga"
+            },
+            {
+                "name": "smul",
+                "comment": " scalar/multivector multiplication ",
+                "type": "Basics.Float -> Ganja.Cga.Cga -> Ganja.Cga.Cga"
+            },
+            {
+                "name": "ssub",
+                "comment": " scalar/multivector subtraction ",
+                "type": "Basics.Float -> Ganja.Cga.Cga -> Ganja.Cga.Cga"
+            },
+            {
+                "name": "sub",
+                "comment": " Multivector subtraction ",
+                "type": "Ganja.Cga.Cga -> Ganja.Cga.Cga -> Ganja.Cga.Cga"
+            },
+            {
+                "name": "subs",
+                "comment": " multivector/scalar subtraction ",
+                "type": "Ganja.Cga.Cga -> Basics.Float -> Ganja.Cga.Cga"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert multivector to list of coefficients ",
+                "type": "Ganja.Cga.Cga -> List.List Basics.Float"
+            },
+            {
+                "name": "toString",
+                "comment": " Convert multivector to string ",
+                "type": "Ganja.Cga.Cga -> String.String"
+            },
+            {
+                "name": "unitScalar",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Cga.Cga"
+            },
+            {
+                "name": "vee",
+                "comment": " The regressive product. (JOIN) ",
+                "type": "Ganja.Cga.Cga -> Ganja.Cga.Cga -> Ganja.Cga.Cga"
+            },
+            {
+                "name": "wedge",
+                "comment": " The outer product. (MEET) ",
+                "type": "Ganja.Cga.Cga -> Ganja.Cga.Cga -> Ganja.Cga.Cga"
+            },
+            {
+                "name": "zero",
+                "comment": " Zero value ",
+                "type": "Ganja.Cga.Cga"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Ganja.Dual",
+        "comment": " Clifford Algebra: Dual\n\nGenerated with ganja.js written by enki.\n\n# Basis\n@docs DualBasis, basisList, basisCount, basisName\n\n# Multivector\n@docs Dual, zero, get, set, new\n\n# Basis multivectors\n@docs  unitScalar, e0\n\n# Conversion\n@docs toString, fromList, toList\n\n# Unary Operators\n@docs reverse, dual, conjugate, involute\n\n# Binary Operators\n@docs mul, wedge, vee, dot, add, sub, smul, muls, sadd, adds, ssub, subs\n\n# Norm\n@docs norm, inorm, normalized\n",
+        "unions": [
+            {
+                "name": "Dual",
+                "comment": " Multivector ",
+                "args": [],
+                "cases": [
+                    [
+                        "Dual",
+                        [
+                            "Basics.Float",
+                            "Basics.Float"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "DualBasis",
+                "comment": " Basis type ",
+                "args": [],
+                "cases": [
+                    [
+                        "Scalar",
+                        []
+                    ],
+                    [
+                        "E0",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "add",
+                "comment": " Multivector addition ",
+                "type": "Ganja.Dual.Dual -> Ganja.Dual.Dual -> Ganja.Dual.Dual"
+            },
+            {
+                "name": "adds",
+                "comment": " multivector/scalar addition ",
+                "type": "Ganja.Dual.Dual -> Basics.Float -> Ganja.Dual.Dual"
+            },
+            {
+                "name": "basisCount",
+                "comment": " Number of coefficients ",
+                "type": "Basics.Int"
+            },
+            {
+                "name": "basisList",
+                "comment": " Basis list ",
+                "type": "List.List Ganja.Dual.DualBasis"
+            },
+            {
+                "name": "basisName",
+                "comment": " Basis name ",
+                "type": "Ganja.Dual.DualBasis -> String.String"
+            },
+            {
+                "name": "conjugate",
+                "comment": " Clifford Conjugation ",
+                "type": "Ganja.Dual.Dual -> Ganja.Dual.Dual"
+            },
+            {
+                "name": "dot",
+                "comment": " The inner product. ",
+                "type": "Ganja.Dual.Dual -> Ganja.Dual.Dual -> Ganja.Dual.Dual"
+            },
+            {
+                "name": "dual",
+                "comment": " Poincare duality operator. ",
+                "type": "Ganja.Dual.Dual -> Ganja.Dual.Dual"
+            },
+            {
+                "name": "e0",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Dual.Dual"
+            },
+            {
+                "name": "fromList",
+                "comment": " Convert list of coefficients to multivector ",
+                "type": "List.List Basics.Float -> Maybe.Maybe Ganja.Dual.Dual"
+            },
+            {
+                "name": "get",
+                "comment": " Get coefficient ",
+                "type": "Ganja.Dual.DualBasis -> Ganja.Dual.Dual -> Basics.Float"
+            },
+            {
+                "name": "inorm",
+                "comment": " Norm of dual ",
+                "type": "Ganja.Dual.Dual -> Basics.Float"
+            },
+            {
+                "name": "involute",
+                "comment": " Main involution ",
+                "type": "Ganja.Dual.Dual -> Ganja.Dual.Dual"
+            },
+            {
+                "name": "mul",
+                "comment": " The geometric product. ",
+                "type": "Ganja.Dual.Dual -> Ganja.Dual.Dual -> Ganja.Dual.Dual"
+            },
+            {
+                "name": "muls",
+                "comment": " multivector/scalar multiplication ",
+                "type": "Ganja.Dual.Dual -> Basics.Float -> Ganja.Dual.Dual"
+            },
+            {
+                "name": "new",
+                "comment": " Multivector with one coefficient ",
+                "type": "Basics.Float -> Ganja.Dual.DualBasis -> Ganja.Dual.Dual"
+            },
+            {
+                "name": "norm",
+                "comment": " Norm ",
+                "type": "Ganja.Dual.Dual -> Basics.Float"
+            },
+            {
+                "name": "normalized",
+                "comment": " Normalized multivector ",
+                "type": "Ganja.Dual.Dual -> Ganja.Dual.Dual"
+            },
+            {
+                "name": "reverse",
+                "comment": " Reverse the order of the basis blades. ",
+                "type": "Ganja.Dual.Dual -> Ganja.Dual.Dual"
+            },
+            {
+                "name": "sadd",
+                "comment": " scalar/multivector addition ",
+                "type": "Basics.Float -> Ganja.Dual.Dual -> Ganja.Dual.Dual"
+            },
+            {
+                "name": "set",
+                "comment": " Update coefficient ",
+                "type": "Ganja.Dual.DualBasis -> Basics.Float -> Ganja.Dual.Dual -> Ganja.Dual.Dual"
+            },
+            {
+                "name": "smul",
+                "comment": " scalar/multivector multiplication ",
+                "type": "Basics.Float -> Ganja.Dual.Dual -> Ganja.Dual.Dual"
+            },
+            {
+                "name": "ssub",
+                "comment": " scalar/multivector subtraction ",
+                "type": "Basics.Float -> Ganja.Dual.Dual -> Ganja.Dual.Dual"
+            },
+            {
+                "name": "sub",
+                "comment": " Multivector subtraction ",
+                "type": "Ganja.Dual.Dual -> Ganja.Dual.Dual -> Ganja.Dual.Dual"
+            },
+            {
+                "name": "subs",
+                "comment": " multivector/scalar subtraction ",
+                "type": "Ganja.Dual.Dual -> Basics.Float -> Ganja.Dual.Dual"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert multivector to list of coefficients ",
+                "type": "Ganja.Dual.Dual -> List.List Basics.Float"
+            },
+            {
+                "name": "toString",
+                "comment": " Convert multivector to string ",
+                "type": "Ganja.Dual.Dual -> String.String"
+            },
+            {
+                "name": "unitScalar",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Dual.Dual"
+            },
+            {
+                "name": "vee",
+                "comment": " The regressive product. (JOIN) ",
+                "type": "Ganja.Dual.Dual -> Ganja.Dual.Dual -> Ganja.Dual.Dual"
+            },
+            {
+                "name": "wedge",
+                "comment": " The outer product. (MEET) ",
+                "type": "Ganja.Dual.Dual -> Ganja.Dual.Dual -> Ganja.Dual.Dual"
+            },
+            {
+                "name": "zero",
+                "comment": " Zero value ",
+                "type": "Ganja.Dual.Dual"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Ganja.Hyperbolic",
+        "comment": " Clifford Algebra: Hyperbolic\n\nGenerated with ganja.js written by enki.\n\n# Basis\n@docs HyperbolicBasis, basisList, basisCount, basisName\n\n# Multivector\n@docs Hyperbolic, zero, get, set, new\n\n# Basis multivectors\n@docs  unitScalar, e1\n\n# Conversion\n@docs toString, fromList, toList\n\n# Unary Operators\n@docs reverse, dual, conjugate, involute\n\n# Binary Operators\n@docs mul, wedge, vee, dot, add, sub, smul, muls, sadd, adds, ssub, subs\n\n# Norm\n@docs norm, inorm, normalized\n",
+        "unions": [
+            {
+                "name": "Hyperbolic",
+                "comment": " Multivector ",
+                "args": [],
+                "cases": [
+                    [
+                        "Hyperbolic",
+                        [
+                            "Basics.Float",
+                            "Basics.Float"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "HyperbolicBasis",
+                "comment": " Basis type ",
+                "args": [],
+                "cases": [
+                    [
+                        "Scalar",
+                        []
+                    ],
+                    [
+                        "E1",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "add",
+                "comment": " Multivector addition ",
+                "type": "Ganja.Hyperbolic.Hyperbolic -> Ganja.Hyperbolic.Hyperbolic -> Ganja.Hyperbolic.Hyperbolic"
+            },
+            {
+                "name": "adds",
+                "comment": " multivector/scalar addition ",
+                "type": "Ganja.Hyperbolic.Hyperbolic -> Basics.Float -> Ganja.Hyperbolic.Hyperbolic"
+            },
+            {
+                "name": "basisCount",
+                "comment": " Number of coefficients ",
+                "type": "Basics.Int"
+            },
+            {
+                "name": "basisList",
+                "comment": " Basis list ",
+                "type": "List.List Ganja.Hyperbolic.HyperbolicBasis"
+            },
+            {
+                "name": "basisName",
+                "comment": " Basis name ",
+                "type": "Ganja.Hyperbolic.HyperbolicBasis -> String.String"
+            },
+            {
+                "name": "conjugate",
+                "comment": " Clifford Conjugation ",
+                "type": "Ganja.Hyperbolic.Hyperbolic -> Ganja.Hyperbolic.Hyperbolic"
+            },
+            {
+                "name": "dot",
+                "comment": " The inner product. ",
+                "type": "Ganja.Hyperbolic.Hyperbolic -> Ganja.Hyperbolic.Hyperbolic -> Ganja.Hyperbolic.Hyperbolic"
+            },
+            {
+                "name": "dual",
+                "comment": " Poincare duality operator. ",
+                "type": "Ganja.Hyperbolic.Hyperbolic -> Ganja.Hyperbolic.Hyperbolic"
+            },
+            {
+                "name": "e1",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Hyperbolic.Hyperbolic"
+            },
+            {
+                "name": "fromList",
+                "comment": " Convert list of coefficients to multivector ",
+                "type": "List.List Basics.Float -> Maybe.Maybe Ganja.Hyperbolic.Hyperbolic"
+            },
+            {
+                "name": "get",
+                "comment": " Get coefficient ",
+                "type": "Ganja.Hyperbolic.HyperbolicBasis -> Ganja.Hyperbolic.Hyperbolic -> Basics.Float"
+            },
+            {
+                "name": "inorm",
+                "comment": " Norm of dual ",
+                "type": "Ganja.Hyperbolic.Hyperbolic -> Basics.Float"
+            },
+            {
+                "name": "involute",
+                "comment": " Main involution ",
+                "type": "Ganja.Hyperbolic.Hyperbolic -> Ganja.Hyperbolic.Hyperbolic"
+            },
+            {
+                "name": "mul",
+                "comment": " The geometric product. ",
+                "type": "Ganja.Hyperbolic.Hyperbolic -> Ganja.Hyperbolic.Hyperbolic -> Ganja.Hyperbolic.Hyperbolic"
+            },
+            {
+                "name": "muls",
+                "comment": " multivector/scalar multiplication ",
+                "type": "Ganja.Hyperbolic.Hyperbolic -> Basics.Float -> Ganja.Hyperbolic.Hyperbolic"
+            },
+            {
+                "name": "new",
+                "comment": " Multivector with one coefficient ",
+                "type": "Basics.Float -> Ganja.Hyperbolic.HyperbolicBasis -> Ganja.Hyperbolic.Hyperbolic"
+            },
+            {
+                "name": "norm",
+                "comment": " Norm ",
+                "type": "Ganja.Hyperbolic.Hyperbolic -> Basics.Float"
+            },
+            {
+                "name": "normalized",
+                "comment": " Normalized multivector ",
+                "type": "Ganja.Hyperbolic.Hyperbolic -> Ganja.Hyperbolic.Hyperbolic"
+            },
+            {
+                "name": "reverse",
+                "comment": " Reverse the order of the basis blades. ",
+                "type": "Ganja.Hyperbolic.Hyperbolic -> Ganja.Hyperbolic.Hyperbolic"
+            },
+            {
+                "name": "sadd",
+                "comment": " scalar/multivector addition ",
+                "type": "Basics.Float -> Ganja.Hyperbolic.Hyperbolic -> Ganja.Hyperbolic.Hyperbolic"
+            },
+            {
+                "name": "set",
+                "comment": " Update coefficient ",
+                "type": "Ganja.Hyperbolic.HyperbolicBasis -> Basics.Float -> Ganja.Hyperbolic.Hyperbolic -> Ganja.Hyperbolic.Hyperbolic"
+            },
+            {
+                "name": "smul",
+                "comment": " scalar/multivector multiplication ",
+                "type": "Basics.Float -> Ganja.Hyperbolic.Hyperbolic -> Ganja.Hyperbolic.Hyperbolic"
+            },
+            {
+                "name": "ssub",
+                "comment": " scalar/multivector subtraction ",
+                "type": "Basics.Float -> Ganja.Hyperbolic.Hyperbolic -> Ganja.Hyperbolic.Hyperbolic"
+            },
+            {
+                "name": "sub",
+                "comment": " Multivector subtraction ",
+                "type": "Ganja.Hyperbolic.Hyperbolic -> Ganja.Hyperbolic.Hyperbolic -> Ganja.Hyperbolic.Hyperbolic"
+            },
+            {
+                "name": "subs",
+                "comment": " multivector/scalar subtraction ",
+                "type": "Ganja.Hyperbolic.Hyperbolic -> Basics.Float -> Ganja.Hyperbolic.Hyperbolic"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert multivector to list of coefficients ",
+                "type": "Ganja.Hyperbolic.Hyperbolic -> List.List Basics.Float"
+            },
+            {
+                "name": "toString",
+                "comment": " Convert multivector to string ",
+                "type": "Ganja.Hyperbolic.Hyperbolic -> String.String"
+            },
+            {
+                "name": "unitScalar",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Hyperbolic.Hyperbolic"
+            },
+            {
+                "name": "vee",
+                "comment": " The regressive product. (JOIN) ",
+                "type": "Ganja.Hyperbolic.Hyperbolic -> Ganja.Hyperbolic.Hyperbolic -> Ganja.Hyperbolic.Hyperbolic"
+            },
+            {
+                "name": "wedge",
+                "comment": " The outer product. (MEET) ",
+                "type": "Ganja.Hyperbolic.Hyperbolic -> Ganja.Hyperbolic.Hyperbolic -> Ganja.Hyperbolic.Hyperbolic"
+            },
+            {
+                "name": "zero",
+                "comment": " Zero value ",
+                "type": "Ganja.Hyperbolic.Hyperbolic"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Ganja.Mink",
+        "comment": " Clifford Algebra: Mink\n\nGenerated with ganja.js written by enki.\n\n# Basis\n@docs MinkBasis, basisList, basisCount, basisName\n\n# Multivector\n@docs Mink, zero, get, set, new\n\n# Basis multivectors\n@docs  unitScalar, e1, e2, e12\n\n# Conversion\n@docs toString, fromList, toList\n\n# Unary Operators\n@docs reverse, dual, conjugate, involute\n\n# Binary Operators\n@docs mul, wedge, vee, dot, add, sub, smul, muls, sadd, adds, ssub, subs\n\n# Norm\n@docs norm, inorm, normalized\n",
+        "unions": [
+            {
+                "name": "Mink",
+                "comment": " Multivector ",
+                "args": [],
+                "cases": [
+                    [
+                        "Mink",
+                        [
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "MinkBasis",
+                "comment": " Basis type ",
+                "args": [],
+                "cases": [
+                    [
+                        "Scalar",
+                        []
+                    ],
+                    [
+                        "E1",
+                        []
+                    ],
+                    [
+                        "E2",
+                        []
+                    ],
+                    [
+                        "E12",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "add",
+                "comment": " Multivector addition ",
+                "type": "Ganja.Mink.Mink -> Ganja.Mink.Mink -> Ganja.Mink.Mink"
+            },
+            {
+                "name": "adds",
+                "comment": " multivector/scalar addition ",
+                "type": "Ganja.Mink.Mink -> Basics.Float -> Ganja.Mink.Mink"
+            },
+            {
+                "name": "basisCount",
+                "comment": " Number of coefficients ",
+                "type": "Basics.Int"
+            },
+            {
+                "name": "basisList",
+                "comment": " Basis list ",
+                "type": "List.List Ganja.Mink.MinkBasis"
+            },
+            {
+                "name": "basisName",
+                "comment": " Basis name ",
+                "type": "Ganja.Mink.MinkBasis -> String.String"
+            },
+            {
+                "name": "conjugate",
+                "comment": " Clifford Conjugation ",
+                "type": "Ganja.Mink.Mink -> Ganja.Mink.Mink"
+            },
+            {
+                "name": "dot",
+                "comment": " The inner product. ",
+                "type": "Ganja.Mink.Mink -> Ganja.Mink.Mink -> Ganja.Mink.Mink"
+            },
+            {
+                "name": "dual",
+                "comment": " Poincare duality operator. ",
+                "type": "Ganja.Mink.Mink -> Ganja.Mink.Mink"
+            },
+            {
+                "name": "e1",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Mink.Mink"
+            },
+            {
+                "name": "e12",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Mink.Mink"
+            },
+            {
+                "name": "e2",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Mink.Mink"
+            },
+            {
+                "name": "fromList",
+                "comment": " Convert list of coefficients to multivector ",
+                "type": "List.List Basics.Float -> Maybe.Maybe Ganja.Mink.Mink"
+            },
+            {
+                "name": "get",
+                "comment": " Get coefficient ",
+                "type": "Ganja.Mink.MinkBasis -> Ganja.Mink.Mink -> Basics.Float"
+            },
+            {
+                "name": "inorm",
+                "comment": " Norm of dual ",
+                "type": "Ganja.Mink.Mink -> Basics.Float"
+            },
+            {
+                "name": "involute",
+                "comment": " Main involution ",
+                "type": "Ganja.Mink.Mink -> Ganja.Mink.Mink"
+            },
+            {
+                "name": "mul",
+                "comment": " The geometric product. ",
+                "type": "Ganja.Mink.Mink -> Ganja.Mink.Mink -> Ganja.Mink.Mink"
+            },
+            {
+                "name": "muls",
+                "comment": " multivector/scalar multiplication ",
+                "type": "Ganja.Mink.Mink -> Basics.Float -> Ganja.Mink.Mink"
+            },
+            {
+                "name": "new",
+                "comment": " Multivector with one coefficient ",
+                "type": "Basics.Float -> Ganja.Mink.MinkBasis -> Ganja.Mink.Mink"
+            },
+            {
+                "name": "norm",
+                "comment": " Norm ",
+                "type": "Ganja.Mink.Mink -> Basics.Float"
+            },
+            {
+                "name": "normalized",
+                "comment": " Normalized multivector ",
+                "type": "Ganja.Mink.Mink -> Ganja.Mink.Mink"
+            },
+            {
+                "name": "reverse",
+                "comment": " Reverse the order of the basis blades. ",
+                "type": "Ganja.Mink.Mink -> Ganja.Mink.Mink"
+            },
+            {
+                "name": "sadd",
+                "comment": " scalar/multivector addition ",
+                "type": "Basics.Float -> Ganja.Mink.Mink -> Ganja.Mink.Mink"
+            },
+            {
+                "name": "set",
+                "comment": " Update coefficient ",
+                "type": "Ganja.Mink.MinkBasis -> Basics.Float -> Ganja.Mink.Mink -> Ganja.Mink.Mink"
+            },
+            {
+                "name": "smul",
+                "comment": " scalar/multivector multiplication ",
+                "type": "Basics.Float -> Ganja.Mink.Mink -> Ganja.Mink.Mink"
+            },
+            {
+                "name": "ssub",
+                "comment": " scalar/multivector subtraction ",
+                "type": "Basics.Float -> Ganja.Mink.Mink -> Ganja.Mink.Mink"
+            },
+            {
+                "name": "sub",
+                "comment": " Multivector subtraction ",
+                "type": "Ganja.Mink.Mink -> Ganja.Mink.Mink -> Ganja.Mink.Mink"
+            },
+            {
+                "name": "subs",
+                "comment": " multivector/scalar subtraction ",
+                "type": "Ganja.Mink.Mink -> Basics.Float -> Ganja.Mink.Mink"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert multivector to list of coefficients ",
+                "type": "Ganja.Mink.Mink -> List.List Basics.Float"
+            },
+            {
+                "name": "toString",
+                "comment": " Convert multivector to string ",
+                "type": "Ganja.Mink.Mink -> String.String"
+            },
+            {
+                "name": "unitScalar",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Mink.Mink"
+            },
+            {
+                "name": "vee",
+                "comment": " The regressive product. (JOIN) ",
+                "type": "Ganja.Mink.Mink -> Ganja.Mink.Mink -> Ganja.Mink.Mink"
+            },
+            {
+                "name": "wedge",
+                "comment": " The outer product. (MEET) ",
+                "type": "Ganja.Mink.Mink -> Ganja.Mink.Mink -> Ganja.Mink.Mink"
+            },
+            {
+                "name": "zero",
+                "comment": " Zero value ",
+                "type": "Ganja.Mink.Mink"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Ganja.Pga3d",
+        "comment": " Clifford Algebra: Pga3d\n\nGenerated with ganja.js written by enki.\n\n# Basis\n@docs Pga3dBasis, basisList, basisCount, basisName\n\n# Multivector\n@docs Pga3d, zero, get, set, new\n\n# Basis multivectors\n@docs  unitScalar, e0, e1, e2, e3, e01, e02, e03, e12, e31, e23, e021, e013, e032, e123, e0123\n\n# Conversion\n@docs toString, fromList, toList\n\n# Unary Operators\n@docs reverse, dual, conjugate, involute\n\n# Binary Operators\n@docs mul, wedge, vee, dot, add, sub, smul, muls, sadd, adds, ssub, subs\n\n# Norm\n@docs norm, inorm, normalized\n",
+        "unions": [
+            {
+                "name": "Pga3d",
+                "comment": " Multivector ",
+                "args": [],
+                "cases": [
+                    [
+                        "Pga3d",
+                        [
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Pga3dBasis",
+                "comment": " Basis type ",
+                "args": [],
+                "cases": [
+                    [
+                        "Scalar",
+                        []
+                    ],
+                    [
+                        "E0",
+                        []
+                    ],
+                    [
+                        "E1",
+                        []
+                    ],
+                    [
+                        "E2",
+                        []
+                    ],
+                    [
+                        "E3",
+                        []
+                    ],
+                    [
+                        "E01",
+                        []
+                    ],
+                    [
+                        "E02",
+                        []
+                    ],
+                    [
+                        "E03",
+                        []
+                    ],
+                    [
+                        "E12",
+                        []
+                    ],
+                    [
+                        "E31",
+                        []
+                    ],
+                    [
+                        "E23",
+                        []
+                    ],
+                    [
+                        "E021",
+                        []
+                    ],
+                    [
+                        "E013",
+                        []
+                    ],
+                    [
+                        "E032",
+                        []
+                    ],
+                    [
+                        "E123",
+                        []
+                    ],
+                    [
+                        "E0123",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "add",
+                "comment": " Multivector addition ",
+                "type": "Ganja.Pga3d.Pga3d -> Ganja.Pga3d.Pga3d -> Ganja.Pga3d.Pga3d"
+            },
+            {
+                "name": "adds",
+                "comment": " multivector/scalar addition ",
+                "type": "Ganja.Pga3d.Pga3d -> Basics.Float -> Ganja.Pga3d.Pga3d"
+            },
+            {
+                "name": "basisCount",
+                "comment": " Number of coefficients ",
+                "type": "Basics.Int"
+            },
+            {
+                "name": "basisList",
+                "comment": " Basis list ",
+                "type": "List.List Ganja.Pga3d.Pga3dBasis"
+            },
+            {
+                "name": "basisName",
+                "comment": " Basis name ",
+                "type": "Ganja.Pga3d.Pga3dBasis -> String.String"
+            },
+            {
+                "name": "conjugate",
+                "comment": " Clifford Conjugation ",
+                "type": "Ganja.Pga3d.Pga3d -> Ganja.Pga3d.Pga3d"
+            },
+            {
+                "name": "dot",
+                "comment": " The inner product. ",
+                "type": "Ganja.Pga3d.Pga3d -> Ganja.Pga3d.Pga3d -> Ganja.Pga3d.Pga3d"
+            },
+            {
+                "name": "dual",
+                "comment": " Poincare duality operator. ",
+                "type": "Ganja.Pga3d.Pga3d -> Ganja.Pga3d.Pga3d"
+            },
+            {
+                "name": "e0",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Pga3d.Pga3d"
+            },
+            {
+                "name": "e01",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Pga3d.Pga3d"
+            },
+            {
+                "name": "e0123",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Pga3d.Pga3d"
+            },
+            {
+                "name": "e013",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Pga3d.Pga3d"
+            },
+            {
+                "name": "e02",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Pga3d.Pga3d"
+            },
+            {
+                "name": "e021",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Pga3d.Pga3d"
+            },
+            {
+                "name": "e03",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Pga3d.Pga3d"
+            },
+            {
+                "name": "e032",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Pga3d.Pga3d"
+            },
+            {
+                "name": "e1",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Pga3d.Pga3d"
+            },
+            {
+                "name": "e12",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Pga3d.Pga3d"
+            },
+            {
+                "name": "e123",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Pga3d.Pga3d"
+            },
+            {
+                "name": "e2",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Pga3d.Pga3d"
+            },
+            {
+                "name": "e23",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Pga3d.Pga3d"
+            },
+            {
+                "name": "e3",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Pga3d.Pga3d"
+            },
+            {
+                "name": "e31",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Pga3d.Pga3d"
+            },
+            {
+                "name": "fromList",
+                "comment": " Convert list of coefficients to multivector ",
+                "type": "List.List Basics.Float -> Maybe.Maybe Ganja.Pga3d.Pga3d"
+            },
+            {
+                "name": "get",
+                "comment": " Get coefficient ",
+                "type": "Ganja.Pga3d.Pga3dBasis -> Ganja.Pga3d.Pga3d -> Basics.Float"
+            },
+            {
+                "name": "inorm",
+                "comment": " Norm of dual ",
+                "type": "Ganja.Pga3d.Pga3d -> Basics.Float"
+            },
+            {
+                "name": "involute",
+                "comment": " Main involution ",
+                "type": "Ganja.Pga3d.Pga3d -> Ganja.Pga3d.Pga3d"
+            },
+            {
+                "name": "mul",
+                "comment": " The geometric product. ",
+                "type": "Ganja.Pga3d.Pga3d -> Ganja.Pga3d.Pga3d -> Ganja.Pga3d.Pga3d"
+            },
+            {
+                "name": "muls",
+                "comment": " multivector/scalar multiplication ",
+                "type": "Ganja.Pga3d.Pga3d -> Basics.Float -> Ganja.Pga3d.Pga3d"
+            },
+            {
+                "name": "new",
+                "comment": " Multivector with one coefficient ",
+                "type": "Basics.Float -> Ganja.Pga3d.Pga3dBasis -> Ganja.Pga3d.Pga3d"
+            },
+            {
+                "name": "norm",
+                "comment": " Norm ",
+                "type": "Ganja.Pga3d.Pga3d -> Basics.Float"
+            },
+            {
+                "name": "normalized",
+                "comment": " Normalized multivector ",
+                "type": "Ganja.Pga3d.Pga3d -> Ganja.Pga3d.Pga3d"
+            },
+            {
+                "name": "reverse",
+                "comment": " Reverse the order of the basis blades. ",
+                "type": "Ganja.Pga3d.Pga3d -> Ganja.Pga3d.Pga3d"
+            },
+            {
+                "name": "sadd",
+                "comment": " scalar/multivector addition ",
+                "type": "Basics.Float -> Ganja.Pga3d.Pga3d -> Ganja.Pga3d.Pga3d"
+            },
+            {
+                "name": "set",
+                "comment": " Update coefficient ",
+                "type": "Ganja.Pga3d.Pga3dBasis -> Basics.Float -> Ganja.Pga3d.Pga3d -> Ganja.Pga3d.Pga3d"
+            },
+            {
+                "name": "smul",
+                "comment": " scalar/multivector multiplication ",
+                "type": "Basics.Float -> Ganja.Pga3d.Pga3d -> Ganja.Pga3d.Pga3d"
+            },
+            {
+                "name": "ssub",
+                "comment": " scalar/multivector subtraction ",
+                "type": "Basics.Float -> Ganja.Pga3d.Pga3d -> Ganja.Pga3d.Pga3d"
+            },
+            {
+                "name": "sub",
+                "comment": " Multivector subtraction ",
+                "type": "Ganja.Pga3d.Pga3d -> Ganja.Pga3d.Pga3d -> Ganja.Pga3d.Pga3d"
+            },
+            {
+                "name": "subs",
+                "comment": " multivector/scalar subtraction ",
+                "type": "Ganja.Pga3d.Pga3d -> Basics.Float -> Ganja.Pga3d.Pga3d"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert multivector to list of coefficients ",
+                "type": "Ganja.Pga3d.Pga3d -> List.List Basics.Float"
+            },
+            {
+                "name": "toString",
+                "comment": " Convert multivector to string ",
+                "type": "Ganja.Pga3d.Pga3d -> String.String"
+            },
+            {
+                "name": "unitScalar",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Pga3d.Pga3d"
+            },
+            {
+                "name": "vee",
+                "comment": " The regressive product. (JOIN) ",
+                "type": "Ganja.Pga3d.Pga3d -> Ganja.Pga3d.Pga3d -> Ganja.Pga3d.Pga3d"
+            },
+            {
+                "name": "wedge",
+                "comment": " The outer product. (MEET) ",
+                "type": "Ganja.Pga3d.Pga3d -> Ganja.Pga3d.Pga3d -> Ganja.Pga3d.Pga3d"
+            },
+            {
+                "name": "zero",
+                "comment": " Zero value ",
+                "type": "Ganja.Pga3d.Pga3d"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Ganja.Quat",
+        "comment": " Clifford Algebra: Quat\n\nGenerated with ganja.js written by enki.\n\n# Basis\n@docs QuatBasis, basisList, basisCount, basisName\n\n# Multivector\n@docs Quat, zero, get, set, new\n\n# Basis multivectors\n@docs  unitScalar, e1, e2, e12\n\n# Conversion\n@docs toString, fromList, toList\n\n# Unary Operators\n@docs reverse, dual, conjugate, involute\n\n# Binary Operators\n@docs mul, wedge, vee, dot, add, sub, smul, muls, sadd, adds, ssub, subs\n\n# Norm\n@docs norm, inorm, normalized\n",
+        "unions": [
+            {
+                "name": "Quat",
+                "comment": " Multivector ",
+                "args": [],
+                "cases": [
+                    [
+                        "Quat",
+                        [
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "QuatBasis",
+                "comment": " Basis type ",
+                "args": [],
+                "cases": [
+                    [
+                        "Scalar",
+                        []
+                    ],
+                    [
+                        "E1",
+                        []
+                    ],
+                    [
+                        "E2",
+                        []
+                    ],
+                    [
+                        "E12",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "add",
+                "comment": " Multivector addition ",
+                "type": "Ganja.Quat.Quat -> Ganja.Quat.Quat -> Ganja.Quat.Quat"
+            },
+            {
+                "name": "adds",
+                "comment": " multivector/scalar addition ",
+                "type": "Ganja.Quat.Quat -> Basics.Float -> Ganja.Quat.Quat"
+            },
+            {
+                "name": "basisCount",
+                "comment": " Number of coefficients ",
+                "type": "Basics.Int"
+            },
+            {
+                "name": "basisList",
+                "comment": " Basis list ",
+                "type": "List.List Ganja.Quat.QuatBasis"
+            },
+            {
+                "name": "basisName",
+                "comment": " Basis name ",
+                "type": "Ganja.Quat.QuatBasis -> String.String"
+            },
+            {
+                "name": "conjugate",
+                "comment": " Clifford Conjugation ",
+                "type": "Ganja.Quat.Quat -> Ganja.Quat.Quat"
+            },
+            {
+                "name": "dot",
+                "comment": " The inner product. ",
+                "type": "Ganja.Quat.Quat -> Ganja.Quat.Quat -> Ganja.Quat.Quat"
+            },
+            {
+                "name": "dual",
+                "comment": " Poincare duality operator. ",
+                "type": "Ganja.Quat.Quat -> Ganja.Quat.Quat"
+            },
+            {
+                "name": "e1",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Quat.Quat"
+            },
+            {
+                "name": "e12",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Quat.Quat"
+            },
+            {
+                "name": "e2",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Quat.Quat"
+            },
+            {
+                "name": "fromList",
+                "comment": " Convert list of coefficients to multivector ",
+                "type": "List.List Basics.Float -> Maybe.Maybe Ganja.Quat.Quat"
+            },
+            {
+                "name": "get",
+                "comment": " Get coefficient ",
+                "type": "Ganja.Quat.QuatBasis -> Ganja.Quat.Quat -> Basics.Float"
+            },
+            {
+                "name": "inorm",
+                "comment": " Norm of dual ",
+                "type": "Ganja.Quat.Quat -> Basics.Float"
+            },
+            {
+                "name": "involute",
+                "comment": " Main involution ",
+                "type": "Ganja.Quat.Quat -> Ganja.Quat.Quat"
+            },
+            {
+                "name": "mul",
+                "comment": " The geometric product. ",
+                "type": "Ganja.Quat.Quat -> Ganja.Quat.Quat -> Ganja.Quat.Quat"
+            },
+            {
+                "name": "muls",
+                "comment": " multivector/scalar multiplication ",
+                "type": "Ganja.Quat.Quat -> Basics.Float -> Ganja.Quat.Quat"
+            },
+            {
+                "name": "new",
+                "comment": " Multivector with one coefficient ",
+                "type": "Basics.Float -> Ganja.Quat.QuatBasis -> Ganja.Quat.Quat"
+            },
+            {
+                "name": "norm",
+                "comment": " Norm ",
+                "type": "Ganja.Quat.Quat -> Basics.Float"
+            },
+            {
+                "name": "normalized",
+                "comment": " Normalized multivector ",
+                "type": "Ganja.Quat.Quat -> Ganja.Quat.Quat"
+            },
+            {
+                "name": "reverse",
+                "comment": " Reverse the order of the basis blades. ",
+                "type": "Ganja.Quat.Quat -> Ganja.Quat.Quat"
+            },
+            {
+                "name": "sadd",
+                "comment": " scalar/multivector addition ",
+                "type": "Basics.Float -> Ganja.Quat.Quat -> Ganja.Quat.Quat"
+            },
+            {
+                "name": "set",
+                "comment": " Update coefficient ",
+                "type": "Ganja.Quat.QuatBasis -> Basics.Float -> Ganja.Quat.Quat -> Ganja.Quat.Quat"
+            },
+            {
+                "name": "smul",
+                "comment": " scalar/multivector multiplication ",
+                "type": "Basics.Float -> Ganja.Quat.Quat -> Ganja.Quat.Quat"
+            },
+            {
+                "name": "ssub",
+                "comment": " scalar/multivector subtraction ",
+                "type": "Basics.Float -> Ganja.Quat.Quat -> Ganja.Quat.Quat"
+            },
+            {
+                "name": "sub",
+                "comment": " Multivector subtraction ",
+                "type": "Ganja.Quat.Quat -> Ganja.Quat.Quat -> Ganja.Quat.Quat"
+            },
+            {
+                "name": "subs",
+                "comment": " multivector/scalar subtraction ",
+                "type": "Ganja.Quat.Quat -> Basics.Float -> Ganja.Quat.Quat"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert multivector to list of coefficients ",
+                "type": "Ganja.Quat.Quat -> List.List Basics.Float"
+            },
+            {
+                "name": "toString",
+                "comment": " Convert multivector to string ",
+                "type": "Ganja.Quat.Quat -> String.String"
+            },
+            {
+                "name": "unitScalar",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Quat.Quat"
+            },
+            {
+                "name": "vee",
+                "comment": " The regressive product. (JOIN) ",
+                "type": "Ganja.Quat.Quat -> Ganja.Quat.Quat -> Ganja.Quat.Quat"
+            },
+            {
+                "name": "wedge",
+                "comment": " The outer product. (MEET) ",
+                "type": "Ganja.Quat.Quat -> Ganja.Quat.Quat -> Ganja.Quat.Quat"
+            },
+            {
+                "name": "zero",
+                "comment": " Zero value ",
+                "type": "Ganja.Quat.Quat"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Ganja.R2",
+        "comment": " Clifford Algebra: R2\n\nGenerated with ganja.js written by enki.\n\n# Basis\n@docs R2Basis, basisList, basisCount, basisName\n\n# Multivector\n@docs R2, zero, get, set, new\n\n# Basis multivectors\n@docs  unitScalar, e1, e2, e12\n\n# Conversion\n@docs toString, fromList, toList\n\n# Unary Operators\n@docs reverse, dual, conjugate, involute\n\n# Binary Operators\n@docs mul, wedge, vee, dot, add, sub, smul, muls, sadd, adds, ssub, subs\n\n# Norm\n@docs norm, inorm, normalized\n",
+        "unions": [
+            {
+                "name": "R2",
+                "comment": " Multivector ",
+                "args": [],
+                "cases": [
+                    [
+                        "R2",
+                        [
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "R2Basis",
+                "comment": " Basis type ",
+                "args": [],
+                "cases": [
+                    [
+                        "Scalar",
+                        []
+                    ],
+                    [
+                        "E1",
+                        []
+                    ],
+                    [
+                        "E2",
+                        []
+                    ],
+                    [
+                        "E12",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "add",
+                "comment": " Multivector addition ",
+                "type": "Ganja.R2.R2 -> Ganja.R2.R2 -> Ganja.R2.R2"
+            },
+            {
+                "name": "adds",
+                "comment": " multivector/scalar addition ",
+                "type": "Ganja.R2.R2 -> Basics.Float -> Ganja.R2.R2"
+            },
+            {
+                "name": "basisCount",
+                "comment": " Number of coefficients ",
+                "type": "Basics.Int"
+            },
+            {
+                "name": "basisList",
+                "comment": " Basis list ",
+                "type": "List.List Ganja.R2.R2Basis"
+            },
+            {
+                "name": "basisName",
+                "comment": " Basis name ",
+                "type": "Ganja.R2.R2Basis -> String.String"
+            },
+            {
+                "name": "conjugate",
+                "comment": " Clifford Conjugation ",
+                "type": "Ganja.R2.R2 -> Ganja.R2.R2"
+            },
+            {
+                "name": "dot",
+                "comment": " The inner product. ",
+                "type": "Ganja.R2.R2 -> Ganja.R2.R2 -> Ganja.R2.R2"
+            },
+            {
+                "name": "dual",
+                "comment": " Poincare duality operator. ",
+                "type": "Ganja.R2.R2 -> Ganja.R2.R2"
+            },
+            {
+                "name": "e1",
+                "comment": " Basis multivector ",
+                "type": "Ganja.R2.R2"
+            },
+            {
+                "name": "e12",
+                "comment": " Basis multivector ",
+                "type": "Ganja.R2.R2"
+            },
+            {
+                "name": "e2",
+                "comment": " Basis multivector ",
+                "type": "Ganja.R2.R2"
+            },
+            {
+                "name": "fromList",
+                "comment": " Convert list of coefficients to multivector ",
+                "type": "List.List Basics.Float -> Maybe.Maybe Ganja.R2.R2"
+            },
+            {
+                "name": "get",
+                "comment": " Get coefficient ",
+                "type": "Ganja.R2.R2Basis -> Ganja.R2.R2 -> Basics.Float"
+            },
+            {
+                "name": "inorm",
+                "comment": " Norm of dual ",
+                "type": "Ganja.R2.R2 -> Basics.Float"
+            },
+            {
+                "name": "involute",
+                "comment": " Main involution ",
+                "type": "Ganja.R2.R2 -> Ganja.R2.R2"
+            },
+            {
+                "name": "mul",
+                "comment": " The geometric product. ",
+                "type": "Ganja.R2.R2 -> Ganja.R2.R2 -> Ganja.R2.R2"
+            },
+            {
+                "name": "muls",
+                "comment": " multivector/scalar multiplication ",
+                "type": "Ganja.R2.R2 -> Basics.Float -> Ganja.R2.R2"
+            },
+            {
+                "name": "new",
+                "comment": " Multivector with one coefficient ",
+                "type": "Basics.Float -> Ganja.R2.R2Basis -> Ganja.R2.R2"
+            },
+            {
+                "name": "norm",
+                "comment": " Norm ",
+                "type": "Ganja.R2.R2 -> Basics.Float"
+            },
+            {
+                "name": "normalized",
+                "comment": " Normalized multivector ",
+                "type": "Ganja.R2.R2 -> Ganja.R2.R2"
+            },
+            {
+                "name": "reverse",
+                "comment": " Reverse the order of the basis blades. ",
+                "type": "Ganja.R2.R2 -> Ganja.R2.R2"
+            },
+            {
+                "name": "sadd",
+                "comment": " scalar/multivector addition ",
+                "type": "Basics.Float -> Ganja.R2.R2 -> Ganja.R2.R2"
+            },
+            {
+                "name": "set",
+                "comment": " Update coefficient ",
+                "type": "Ganja.R2.R2Basis -> Basics.Float -> Ganja.R2.R2 -> Ganja.R2.R2"
+            },
+            {
+                "name": "smul",
+                "comment": " scalar/multivector multiplication ",
+                "type": "Basics.Float -> Ganja.R2.R2 -> Ganja.R2.R2"
+            },
+            {
+                "name": "ssub",
+                "comment": " scalar/multivector subtraction ",
+                "type": "Basics.Float -> Ganja.R2.R2 -> Ganja.R2.R2"
+            },
+            {
+                "name": "sub",
+                "comment": " Multivector subtraction ",
+                "type": "Ganja.R2.R2 -> Ganja.R2.R2 -> Ganja.R2.R2"
+            },
+            {
+                "name": "subs",
+                "comment": " multivector/scalar subtraction ",
+                "type": "Ganja.R2.R2 -> Basics.Float -> Ganja.R2.R2"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert multivector to list of coefficients ",
+                "type": "Ganja.R2.R2 -> List.List Basics.Float"
+            },
+            {
+                "name": "toString",
+                "comment": " Convert multivector to string ",
+                "type": "Ganja.R2.R2 -> String.String"
+            },
+            {
+                "name": "unitScalar",
+                "comment": " Basis multivector ",
+                "type": "Ganja.R2.R2"
+            },
+            {
+                "name": "vee",
+                "comment": " The regressive product. (JOIN) ",
+                "type": "Ganja.R2.R2 -> Ganja.R2.R2 -> Ganja.R2.R2"
+            },
+            {
+                "name": "wedge",
+                "comment": " The outer product. (MEET) ",
+                "type": "Ganja.R2.R2 -> Ganja.R2.R2 -> Ganja.R2.R2"
+            },
+            {
+                "name": "zero",
+                "comment": " Zero value ",
+                "type": "Ganja.R2.R2"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Ganja.R3",
+        "comment": " Clifford Algebra: R3\n\nGenerated with ganja.js written by enki.\n\n# Basis\n@docs R3Basis, basisList, basisCount, basisName\n\n# Multivector\n@docs R3, zero, get, set, new\n\n# Basis multivectors\n@docs  unitScalar, e1, e2, e3, e12, e13, e23, e123\n\n# Conversion\n@docs toString, fromList, toList\n\n# Unary Operators\n@docs reverse, dual, conjugate, involute\n\n# Binary Operators\n@docs mul, wedge, vee, dot, add, sub, smul, muls, sadd, adds, ssub, subs\n\n# Norm\n@docs norm, inorm, normalized\n",
+        "unions": [
+            {
+                "name": "R3",
+                "comment": " Multivector ",
+                "args": [],
+                "cases": [
+                    [
+                        "R3",
+                        [
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "R3Basis",
+                "comment": " Basis type ",
+                "args": [],
+                "cases": [
+                    [
+                        "Scalar",
+                        []
+                    ],
+                    [
+                        "E1",
+                        []
+                    ],
+                    [
+                        "E2",
+                        []
+                    ],
+                    [
+                        "E3",
+                        []
+                    ],
+                    [
+                        "E12",
+                        []
+                    ],
+                    [
+                        "E13",
+                        []
+                    ],
+                    [
+                        "E23",
+                        []
+                    ],
+                    [
+                        "E123",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "add",
+                "comment": " Multivector addition ",
+                "type": "Ganja.R3.R3 -> Ganja.R3.R3 -> Ganja.R3.R3"
+            },
+            {
+                "name": "adds",
+                "comment": " multivector/scalar addition ",
+                "type": "Ganja.R3.R3 -> Basics.Float -> Ganja.R3.R3"
+            },
+            {
+                "name": "basisCount",
+                "comment": " Number of coefficients ",
+                "type": "Basics.Int"
+            },
+            {
+                "name": "basisList",
+                "comment": " Basis list ",
+                "type": "List.List Ganja.R3.R3Basis"
+            },
+            {
+                "name": "basisName",
+                "comment": " Basis name ",
+                "type": "Ganja.R3.R3Basis -> String.String"
+            },
+            {
+                "name": "conjugate",
+                "comment": " Clifford Conjugation ",
+                "type": "Ganja.R3.R3 -> Ganja.R3.R3"
+            },
+            {
+                "name": "dot",
+                "comment": " The inner product. ",
+                "type": "Ganja.R3.R3 -> Ganja.R3.R3 -> Ganja.R3.R3"
+            },
+            {
+                "name": "dual",
+                "comment": " Poincare duality operator. ",
+                "type": "Ganja.R3.R3 -> Ganja.R3.R3"
+            },
+            {
+                "name": "e1",
+                "comment": " Basis multivector ",
+                "type": "Ganja.R3.R3"
+            },
+            {
+                "name": "e12",
+                "comment": " Basis multivector ",
+                "type": "Ganja.R3.R3"
+            },
+            {
+                "name": "e123",
+                "comment": " Basis multivector ",
+                "type": "Ganja.R3.R3"
+            },
+            {
+                "name": "e13",
+                "comment": " Basis multivector ",
+                "type": "Ganja.R3.R3"
+            },
+            {
+                "name": "e2",
+                "comment": " Basis multivector ",
+                "type": "Ganja.R3.R3"
+            },
+            {
+                "name": "e23",
+                "comment": " Basis multivector ",
+                "type": "Ganja.R3.R3"
+            },
+            {
+                "name": "e3",
+                "comment": " Basis multivector ",
+                "type": "Ganja.R3.R3"
+            },
+            {
+                "name": "fromList",
+                "comment": " Convert list of coefficients to multivector ",
+                "type": "List.List Basics.Float -> Maybe.Maybe Ganja.R3.R3"
+            },
+            {
+                "name": "get",
+                "comment": " Get coefficient ",
+                "type": "Ganja.R3.R3Basis -> Ganja.R3.R3 -> Basics.Float"
+            },
+            {
+                "name": "inorm",
+                "comment": " Norm of dual ",
+                "type": "Ganja.R3.R3 -> Basics.Float"
+            },
+            {
+                "name": "involute",
+                "comment": " Main involution ",
+                "type": "Ganja.R3.R3 -> Ganja.R3.R3"
+            },
+            {
+                "name": "mul",
+                "comment": " The geometric product. ",
+                "type": "Ganja.R3.R3 -> Ganja.R3.R3 -> Ganja.R3.R3"
+            },
+            {
+                "name": "muls",
+                "comment": " multivector/scalar multiplication ",
+                "type": "Ganja.R3.R3 -> Basics.Float -> Ganja.R3.R3"
+            },
+            {
+                "name": "new",
+                "comment": " Multivector with one coefficient ",
+                "type": "Basics.Float -> Ganja.R3.R3Basis -> Ganja.R3.R3"
+            },
+            {
+                "name": "norm",
+                "comment": " Norm ",
+                "type": "Ganja.R3.R3 -> Basics.Float"
+            },
+            {
+                "name": "normalized",
+                "comment": " Normalized multivector ",
+                "type": "Ganja.R3.R3 -> Ganja.R3.R3"
+            },
+            {
+                "name": "reverse",
+                "comment": " Reverse the order of the basis blades. ",
+                "type": "Ganja.R3.R3 -> Ganja.R3.R3"
+            },
+            {
+                "name": "sadd",
+                "comment": " scalar/multivector addition ",
+                "type": "Basics.Float -> Ganja.R3.R3 -> Ganja.R3.R3"
+            },
+            {
+                "name": "set",
+                "comment": " Update coefficient ",
+                "type": "Ganja.R3.R3Basis -> Basics.Float -> Ganja.R3.R3 -> Ganja.R3.R3"
+            },
+            {
+                "name": "smul",
+                "comment": " scalar/multivector multiplication ",
+                "type": "Basics.Float -> Ganja.R3.R3 -> Ganja.R3.R3"
+            },
+            {
+                "name": "ssub",
+                "comment": " scalar/multivector subtraction ",
+                "type": "Basics.Float -> Ganja.R3.R3 -> Ganja.R3.R3"
+            },
+            {
+                "name": "sub",
+                "comment": " Multivector subtraction ",
+                "type": "Ganja.R3.R3 -> Ganja.R3.R3 -> Ganja.R3.R3"
+            },
+            {
+                "name": "subs",
+                "comment": " multivector/scalar subtraction ",
+                "type": "Ganja.R3.R3 -> Basics.Float -> Ganja.R3.R3"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert multivector to list of coefficients ",
+                "type": "Ganja.R3.R3 -> List.List Basics.Float"
+            },
+            {
+                "name": "toString",
+                "comment": " Convert multivector to string ",
+                "type": "Ganja.R3.R3 -> String.String"
+            },
+            {
+                "name": "unitScalar",
+                "comment": " Basis multivector ",
+                "type": "Ganja.R3.R3"
+            },
+            {
+                "name": "vee",
+                "comment": " The regressive product. (JOIN) ",
+                "type": "Ganja.R3.R3 -> Ganja.R3.R3 -> Ganja.R3.R3"
+            },
+            {
+                "name": "wedge",
+                "comment": " The outer product. (MEET) ",
+                "type": "Ganja.R3.R3 -> Ganja.R3.R3 -> Ganja.R3.R3"
+            },
+            {
+                "name": "zero",
+                "comment": " Zero value ",
+                "type": "Ganja.R3.R3"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Ganja.Spacetime",
+        "comment": " Clifford Algebra: Spacetime\n\nGenerated with ganja.js written by enki.\n\n# Basis\n@docs SpacetimeBasis, basisList, basisCount, basisName\n\n# Multivector\n@docs Spacetime, zero, get, set, new\n\n# Basis multivectors\n@docs  unitScalar, e1, e2, e3, e4, e12, e13, e14, e23, e24, e34, e123, e124, e134, e234, e1234\n\n# Conversion\n@docs toString, fromList, toList\n\n# Unary Operators\n@docs reverse, dual, conjugate, involute\n\n# Binary Operators\n@docs mul, wedge, vee, dot, add, sub, smul, muls, sadd, adds, ssub, subs\n\n# Norm\n@docs norm, inorm, normalized\n",
+        "unions": [
+            {
+                "name": "Spacetime",
+                "comment": " Multivector ",
+                "args": [],
+                "cases": [
+                    [
+                        "Spacetime",
+                        [
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float",
+                            "Basics.Float"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "SpacetimeBasis",
+                "comment": " Basis type ",
+                "args": [],
+                "cases": [
+                    [
+                        "Scalar",
+                        []
+                    ],
+                    [
+                        "E1",
+                        []
+                    ],
+                    [
+                        "E2",
+                        []
+                    ],
+                    [
+                        "E3",
+                        []
+                    ],
+                    [
+                        "E4",
+                        []
+                    ],
+                    [
+                        "E12",
+                        []
+                    ],
+                    [
+                        "E13",
+                        []
+                    ],
+                    [
+                        "E14",
+                        []
+                    ],
+                    [
+                        "E23",
+                        []
+                    ],
+                    [
+                        "E24",
+                        []
+                    ],
+                    [
+                        "E34",
+                        []
+                    ],
+                    [
+                        "E123",
+                        []
+                    ],
+                    [
+                        "E124",
+                        []
+                    ],
+                    [
+                        "E134",
+                        []
+                    ],
+                    [
+                        "E234",
+                        []
+                    ],
+                    [
+                        "E1234",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "add",
+                "comment": " Multivector addition ",
+                "type": "Ganja.Spacetime.Spacetime -> Ganja.Spacetime.Spacetime -> Ganja.Spacetime.Spacetime"
+            },
+            {
+                "name": "adds",
+                "comment": " multivector/scalar addition ",
+                "type": "Ganja.Spacetime.Spacetime -> Basics.Float -> Ganja.Spacetime.Spacetime"
+            },
+            {
+                "name": "basisCount",
+                "comment": " Number of coefficients ",
+                "type": "Basics.Int"
+            },
+            {
+                "name": "basisList",
+                "comment": " Basis list ",
+                "type": "List.List Ganja.Spacetime.SpacetimeBasis"
+            },
+            {
+                "name": "basisName",
+                "comment": " Basis name ",
+                "type": "Ganja.Spacetime.SpacetimeBasis -> String.String"
+            },
+            {
+                "name": "conjugate",
+                "comment": " Clifford Conjugation ",
+                "type": "Ganja.Spacetime.Spacetime -> Ganja.Spacetime.Spacetime"
+            },
+            {
+                "name": "dot",
+                "comment": " The inner product. ",
+                "type": "Ganja.Spacetime.Spacetime -> Ganja.Spacetime.Spacetime -> Ganja.Spacetime.Spacetime"
+            },
+            {
+                "name": "dual",
+                "comment": " Poincare duality operator. ",
+                "type": "Ganja.Spacetime.Spacetime -> Ganja.Spacetime.Spacetime"
+            },
+            {
+                "name": "e1",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Spacetime.Spacetime"
+            },
+            {
+                "name": "e12",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Spacetime.Spacetime"
+            },
+            {
+                "name": "e123",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Spacetime.Spacetime"
+            },
+            {
+                "name": "e1234",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Spacetime.Spacetime"
+            },
+            {
+                "name": "e124",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Spacetime.Spacetime"
+            },
+            {
+                "name": "e13",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Spacetime.Spacetime"
+            },
+            {
+                "name": "e134",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Spacetime.Spacetime"
+            },
+            {
+                "name": "e14",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Spacetime.Spacetime"
+            },
+            {
+                "name": "e2",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Spacetime.Spacetime"
+            },
+            {
+                "name": "e23",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Spacetime.Spacetime"
+            },
+            {
+                "name": "e234",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Spacetime.Spacetime"
+            },
+            {
+                "name": "e24",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Spacetime.Spacetime"
+            },
+            {
+                "name": "e3",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Spacetime.Spacetime"
+            },
+            {
+                "name": "e34",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Spacetime.Spacetime"
+            },
+            {
+                "name": "e4",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Spacetime.Spacetime"
+            },
+            {
+                "name": "fromList",
+                "comment": " Convert list of coefficients to multivector ",
+                "type": "List.List Basics.Float -> Maybe.Maybe Ganja.Spacetime.Spacetime"
+            },
+            {
+                "name": "get",
+                "comment": " Get coefficient ",
+                "type": "Ganja.Spacetime.SpacetimeBasis -> Ganja.Spacetime.Spacetime -> Basics.Float"
+            },
+            {
+                "name": "inorm",
+                "comment": " Norm of dual ",
+                "type": "Ganja.Spacetime.Spacetime -> Basics.Float"
+            },
+            {
+                "name": "involute",
+                "comment": " Main involution ",
+                "type": "Ganja.Spacetime.Spacetime -> Ganja.Spacetime.Spacetime"
+            },
+            {
+                "name": "mul",
+                "comment": " The geometric product. ",
+                "type": "Ganja.Spacetime.Spacetime -> Ganja.Spacetime.Spacetime -> Ganja.Spacetime.Spacetime"
+            },
+            {
+                "name": "muls",
+                "comment": " multivector/scalar multiplication ",
+                "type": "Ganja.Spacetime.Spacetime -> Basics.Float -> Ganja.Spacetime.Spacetime"
+            },
+            {
+                "name": "new",
+                "comment": " Multivector with one coefficient ",
+                "type": "Basics.Float -> Ganja.Spacetime.SpacetimeBasis -> Ganja.Spacetime.Spacetime"
+            },
+            {
+                "name": "norm",
+                "comment": " Norm ",
+                "type": "Ganja.Spacetime.Spacetime -> Basics.Float"
+            },
+            {
+                "name": "normalized",
+                "comment": " Normalized multivector ",
+                "type": "Ganja.Spacetime.Spacetime -> Ganja.Spacetime.Spacetime"
+            },
+            {
+                "name": "reverse",
+                "comment": " Reverse the order of the basis blades. ",
+                "type": "Ganja.Spacetime.Spacetime -> Ganja.Spacetime.Spacetime"
+            },
+            {
+                "name": "sadd",
+                "comment": " scalar/multivector addition ",
+                "type": "Basics.Float -> Ganja.Spacetime.Spacetime -> Ganja.Spacetime.Spacetime"
+            },
+            {
+                "name": "set",
+                "comment": " Update coefficient ",
+                "type": "Ganja.Spacetime.SpacetimeBasis -> Basics.Float -> Ganja.Spacetime.Spacetime -> Ganja.Spacetime.Spacetime"
+            },
+            {
+                "name": "smul",
+                "comment": " scalar/multivector multiplication ",
+                "type": "Basics.Float -> Ganja.Spacetime.Spacetime -> Ganja.Spacetime.Spacetime"
+            },
+            {
+                "name": "ssub",
+                "comment": " scalar/multivector subtraction ",
+                "type": "Basics.Float -> Ganja.Spacetime.Spacetime -> Ganja.Spacetime.Spacetime"
+            },
+            {
+                "name": "sub",
+                "comment": " Multivector subtraction ",
+                "type": "Ganja.Spacetime.Spacetime -> Ganja.Spacetime.Spacetime -> Ganja.Spacetime.Spacetime"
+            },
+            {
+                "name": "subs",
+                "comment": " multivector/scalar subtraction ",
+                "type": "Ganja.Spacetime.Spacetime -> Basics.Float -> Ganja.Spacetime.Spacetime"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert multivector to list of coefficients ",
+                "type": "Ganja.Spacetime.Spacetime -> List.List Basics.Float"
+            },
+            {
+                "name": "toString",
+                "comment": " Convert multivector to string ",
+                "type": "Ganja.Spacetime.Spacetime -> String.String"
+            },
+            {
+                "name": "unitScalar",
+                "comment": " Basis multivector ",
+                "type": "Ganja.Spacetime.Spacetime"
+            },
+            {
+                "name": "vee",
+                "comment": " The regressive product. (JOIN) ",
+                "type": "Ganja.Spacetime.Spacetime -> Ganja.Spacetime.Spacetime -> Ganja.Spacetime.Spacetime"
+            },
+            {
+                "name": "wedge",
+                "comment": " The outer product. (MEET) ",
+                "type": "Ganja.Spacetime.Spacetime -> Ganja.Spacetime.Spacetime -> Ganja.Spacetime.Spacetime"
+            },
+            {
+                "name": "zero",
+                "comment": " Zero value ",
+                "type": "Ganja.Spacetime.Spacetime"
+            }
+        ],
+        "binops": []
+    }
+]

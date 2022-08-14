@@ -1,0 +1,30 @@
+[
+    {
+        "name": "Airtable",
+        "comment": " \n\n    Based on https://github.com/altjsus/elmtable. Intended as a read-only GET/HTTPS based Airtable-as-CMS. Only reads multiple records\n\n    @docs getRecords\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "getRecords",
+                "comment": " \n\n    GET a list of records from an Airtable Table, by passing it a Base, View, and an Http.ExpectJSON\n\n",
+                "type": "Airtable.DB -> String.String -> Http.Expect msg -> Platform.Cmd.Cmd msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Main",
+        "comment": " \n\n    Simple Elm wrapper around the Airtable API.\n\n    @docs main \n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "main",
+                "comment": " \n\n    main\n     \n\n",
+                "type": "Platform.Program () Main.Model Main.Msg"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,4148 @@
+[
+    {
+        "name": "Engage.Bool",
+        "comment": " Bool helpers\n\n@docs true\n\n@docs false\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "false",
+                "comment": " Get a Bool value from FancyBool\n",
+                "type": "a -> Engage.Bool.FancyBool a -> a"
+            },
+            {
+                "name": "true",
+                "comment": " Get a FancyBool from a Bool value\n",
+                "type": "a -> Basics.Bool -> Engage.Bool.FancyBool a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Engage.Color",
+        "comment": " Color helpers\n\n@docs darken\n\n@docs lighten\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "darken",
+                "comment": " Darken a color by an amount\n",
+                "type": "Basics.Float -> Css.Color -> Css.Color"
+            },
+            {
+                "name": "lighten",
+                "comment": " Lighten a color by an amount\n",
+                "type": "Basics.Float -> Css.Color -> Css.Color"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Engage.CreditCard.Ports",
+        "comment": " CreditCard.Ports\n\n@docs InKey, OutKey\n\n@docs inKeyDecoder, toInKey\n\n",
+        "unions": [
+            {
+                "name": "InKey",
+                "comment": " The InKey Type\n",
+                "args": [],
+                "cases": [
+                    [
+                        "StripeCardError",
+                        []
+                    ],
+                    [
+                        "StripeCardReady",
+                        []
+                    ],
+                    [
+                        "GetStripeTokenCompleted",
+                        []
+                    ],
+                    [
+                        "GeneralError",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "OutKey",
+                "comment": " The OutKey type\n",
+                "args": [],
+                "cases": [
+                    [
+                        "DomReady",
+                        []
+                    ],
+                    [
+                        "GetStripeToken",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "inKeyDecoder",
+                "comment": " The InKey Decoder\n",
+                "type": "Json.Decode.Decoder Engage.CreditCard.Ports.InKey"
+            },
+            {
+                "name": "toInKey",
+                "comment": " Convert a String to an InKey Decoder\n",
+                "type": "String.String -> Json.Decode.Decoder Engage.CreditCard.Ports.InKey"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Engage.CssHelpers",
+        "comment": " CssHelpers\n\n@docs withNamespace\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "withNamespace",
+                "comment": " Get a class function that appends a namespace\n",
+                "type": "String.String -> List.List String.String -> Html.Attribute msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Engage.Currency",
+        "comment": " Currency helpers\n\n@docs format\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "format",
+                "comment": " Format a currency\n",
+                "type": "{ a | localization : Engage.Localization.Localization } -> Language.Language -> Basics.Float -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Engage.Custom.Field.Json",
+        "comment": " Custom.Field.Json\n\n@docs encoder, fieldDecoder, fieldGroupDecoder, fileEntryDataEncoder, fileUploadEncoder\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "encoder",
+                "comment": " The Field encoder\n",
+                "type": "Engage.Custom.Types.Field -> Json.Encode.Value"
+            },
+            {
+                "name": "fieldDecoder",
+                "comment": " The Field decoder\n",
+                "type": "Date.Date -> Json.Decode.Decoder Engage.Custom.Types.Field"
+            },
+            {
+                "name": "fieldGroupDecoder",
+                "comment": " The FieldGroup decoder\n",
+                "type": "Date.Date -> Json.Decode.Decoder ( Basics.Int, Engage.Custom.Types.FieldGroup )"
+            },
+            {
+                "name": "fileEntryDataEncoder",
+                "comment": " The FieldEntryData encoder\n",
+                "type": "Engage.Custom.Types.FileEntryData -> ( String.String, Json.Encode.Value )"
+            },
+            {
+                "name": "fileUploadEncoder",
+                "comment": " The file upload encoder\n",
+                "type": "{ a | registrationId : Maybe.Maybe Basics.Int, participantId : Basics.Int, fieldId : Basics.Int, formFilloutId : Maybe.Maybe Basics.Int, domId : String.String } -> Json.Encode.Value"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Engage.Custom.Form",
+        "comment": " Custom.Form\n\n@docs allFields, completedView, findField, formView, isValid, update, updateFileEntryData, validate, validateAll, view\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "allFields",
+                "comment": " Get all fields of the Form\n",
+                "type": "Engage.Custom.Types.Form -> List.List Engage.Custom.Field.FieldData"
+            },
+            {
+                "name": "completedView",
+                "comment": " Get the completed view\n",
+                "type": "Engage.Custom.Types.Config msg -> Engage.Custom.Types.Form -> Html.Html msg"
+            },
+            {
+                "name": "findField",
+                "comment": " Field a Form field\n",
+                "type": "{ a | formId : Basics.Int, sectionId : Basics.Int, fieldGroupId : Basics.Int, fieldId : Basics.Int } -> Engage.Custom.Types.Form -> Maybe.Maybe Engage.Custom.Field.FieldData"
+            },
+            {
+                "name": "formView",
+                "comment": " Get the form view\n",
+                "type": "Engage.Custom.Types.Config msg -> Engage.Custom.Types.Form -> Html.Html msg"
+            },
+            {
+                "name": "isValid",
+                "comment": " Check if the Form is valid\n",
+                "type": "Engage.Custom.Types.Form -> Basics.Bool"
+            },
+            {
+                "name": "update",
+                "comment": " Update a Form field\n",
+                "type": "Engage.Custom.Form.Query a -> (Engage.Custom.Types.Field -> Engage.Custom.Types.Field) -> Engage.Custom.Types.Form -> Engage.Custom.Types.Form"
+            },
+            {
+                "name": "updateFileEntryData",
+                "comment": " Update a Form FileEntryData\n",
+                "type": "Engage.Custom.Form.Query a -> (Engage.Custom.Types.FileEntryData -> Engage.Custom.Types.FileEntryData) -> Engage.Custom.Types.Form -> Engage.Custom.Types.Form"
+            },
+            {
+                "name": "validate",
+                "comment": " Validate a Form\n",
+                "type": "{ a | fieldId : Basics.Int } -> Engage.Custom.Types.Form -> Engage.Custom.Types.Form"
+            },
+            {
+                "name": "validateAll",
+                "comment": " Validate all fields\n",
+                "type": "Engage.Custom.Types.Form -> Engage.Custom.Types.Form"
+            },
+            {
+                "name": "view",
+                "comment": " Get the view\n",
+                "type": "Engage.Custom.Types.Config msg -> Engage.Custom.Types.Form -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Engage.Custom.Form.Json",
+        "comment": " Custom.Form.Json\n\n@docs decoder, encoder\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decoder",
+                "comment": " Get the Form decoder\n",
+                "type": "Date.Date -> Engage.Custom.Types.Level -> Basics.Int -> Json.Decode.Decoder Engage.Custom.Types.Form"
+            },
+            {
+                "name": "encoder",
+                "comment": " Get the Form encoder\n",
+                "type": "Engage.Custom.Types.Form -> Json.Encode.Value"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Engage.Custom.Types",
+        "comment": " Custom.Types\n\n@docs Answer, AnswerData, BoolEntryData, ChangeArgs, Config, Disable, Entry, EntryData, Field, FieldChoice, FieldGroup, FieldType, FileEntryData, FileStatus, FileUploadError, FileUploadProgress, FileUploadStatus, Form, Level, MultipleEntryData, Section, StaticFormType, UpdateOptions\n\n@docs defaultCompanyForm, defaultConfig, defaultParticipantForm\n\n",
+        "unions": [
+            {
+                "name": "Answer",
+                "comment": " The Answer type\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Answer",
+                        [
+                            "Engage.Custom.Types.AnswerData"
+                        ]
+                    ],
+                    [
+                        "MultipleAnswer",
+                        [
+                            "Set.Set String.String"
+                        ]
+                    ],
+                    [
+                        "BoolAnswer",
+                        [
+                            "Basics.Bool"
+                        ]
+                    ],
+                    [
+                        "FileAnswer",
+                        [
+                            "Engage.UI.Input.FileInfo"
+                        ]
+                    ],
+                    [
+                        "MembershipTypeAnswer",
+                        [
+                            "Maybe.Maybe Engage.Form.MembershipTypeList.MembershipType"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Disable",
+                "comment": " The Disable type\n",
+                "args": [],
+                "cases": [
+                    [
+                        "None",
+                        []
+                    ],
+                    [
+                        "Disabled",
+                        []
+                    ],
+                    [
+                        "Hidden",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Entry",
+                "comment": " The Entry type\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Entry",
+                        [
+                            "Engage.Custom.Types.EntryData"
+                        ]
+                    ],
+                    [
+                        "BoolEntry",
+                        [
+                            "Engage.Custom.Types.BoolEntryData"
+                        ]
+                    ],
+                    [
+                        "FileEntry",
+                        [
+                            "Engage.Custom.Types.FileEntryData"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "FieldType",
+                "comment": " The FieldType type\n",
+                "args": [],
+                "cases": [
+                    [
+                        "TextBox",
+                        [
+                            "{ entry : Engage.Custom.Types.EntryData, state : Engage.UI.Input.State }"
+                        ]
+                    ],
+                    [
+                        "LargeTextBox",
+                        [
+                            "{ entry : Engage.Custom.Types.EntryData, state : Engage.UI.Input.State }"
+                        ]
+                    ],
+                    [
+                        "TextArea",
+                        [
+                            "{ entry : Engage.Custom.Types.EntryData, state : Engage.UI.Input.State }"
+                        ]
+                    ],
+                    [
+                        "CheckBox",
+                        [
+                            "{ entry : Engage.Custom.Types.BoolEntryData, state : Engage.UI.Input.State }"
+                        ]
+                    ],
+                    [
+                        "DropDown",
+                        [
+                            "{ entry : Engage.Custom.Types.EntryData, state : Engage.UI.Dropdown.State, fieldChoices : List.List Engage.Custom.Types.FieldChoice }"
+                        ]
+                    ],
+                    [
+                        "RadioList",
+                        [
+                            "{ entry : Engage.Custom.Types.EntryData, state : Engage.UI.Input.State, fieldChoices : List.List Engage.Custom.Types.FieldChoice }"
+                        ]
+                    ],
+                    [
+                        "CheckBoxList",
+                        [
+                            "{ entry : Engage.Custom.Types.MultipleEntryData, state : Engage.UI.Input.State, fieldChoices : List.List Engage.Custom.Types.FieldChoice }"
+                        ]
+                    ],
+                    [
+                        "Quantity",
+                        [
+                            "{ entry : Engage.Custom.Types.EntryData, state : Engage.UI.Input.State }"
+                        ]
+                    ],
+                    [
+                        "Date",
+                        [
+                            "{ entry : Engage.Custom.Types.EntryData, state : Engage.UI.Input.State }"
+                        ]
+                    ],
+                    [
+                        "Email",
+                        []
+                    ],
+                    [
+                        "Phone",
+                        []
+                    ],
+                    [
+                        "ZipCode",
+                        []
+                    ],
+                    [
+                        "USState",
+                        []
+                    ],
+                    [
+                        "File",
+                        [
+                            "{ entry : Engage.Custom.Types.FileEntryData, state : Engage.UI.Input.State }"
+                        ]
+                    ],
+                    [
+                        "Region",
+                        [
+                            "{ entry : Engage.Custom.Types.EntryData, state : Engage.UI.Dropdown.State }"
+                        ]
+                    ],
+                    [
+                        "Country",
+                        [
+                            "{ entry : Engage.Custom.Types.EntryData, state : Engage.UI.Dropdown.State }"
+                        ]
+                    ],
+                    [
+                        "Text",
+                        []
+                    ],
+                    [
+                        "StaticForm",
+                        [
+                            "Engage.Custom.Types.StaticFormType"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "FileStatus",
+                "comment": " The FileStatus type\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NoFile",
+                        []
+                    ],
+                    [
+                        "Uploading",
+                        [
+                            "{ progressPercentage : Basics.Float }"
+                        ]
+                    ],
+                    [
+                        "Uploaded",
+                        []
+                    ],
+                    [
+                        "Error",
+                        [
+                            "{ message : String.String }"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Level",
+                "comment": " The Level type\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Participant",
+                        []
+                    ],
+                    [
+                        "Registration",
+                        []
+                    ],
+                    [
+                        "Company",
+                        []
+                    ],
+                    [
+                        "Additional",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "StaticFormType",
+                "comment": " The StaticFormType type\n",
+                "args": [],
+                "cases": [
+                    [
+                        "ParticipantForm",
+                        []
+                    ],
+                    [
+                        "MembershipTypeList",
+                        [
+                            "{ state : Engage.UI.Accordion.State, membershipTypeList : List.List Engage.Form.MembershipTypeList.MembershipType, entry : Maybe.Maybe Engage.Form.MembershipTypeList.MembershipType }"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "UpdateOptions",
+                "comment": " The UpdateOptions type\n",
+                "args": [],
+                "cases": [
+                    [
+                        "AlwaysUpdate",
+                        []
+                    ],
+                    [
+                        "Update",
+                        []
+                    ],
+                    [
+                        "DontUpdate",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "AnswerData",
+                "comment": " The AnswerData type\n",
+                "args": [],
+                "type": "{ value : String.String }"
+            },
+            {
+                "name": "BoolEntryData",
+                "comment": " The BoolEntryData type\n",
+                "args": [],
+                "type": "{ value : Basics.Bool }"
+            },
+            {
+                "name": "ChangeArgs",
+                "comment": " The ChargeArgs type\n",
+                "args": [],
+                "type": "{ formId : Basics.Int, sectionId : Basics.Int, fieldGroupId : Basics.Int, fieldId : Basics.Int, fieldType : Engage.Custom.Types.FieldType, domId : String.String, onlyStateChange : Basics.Bool }"
+            },
+            {
+                "name": "Config",
+                "comment": " The Config type\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ onChange : Engage.Custom.Types.ChangeArgs -> Engage.Custom.Types.Answer -> msg, onEnter : msg, dateFormatter : Date.Date -> String.String, onGotoPage : { pageId : Basics.Int } -> msg, localization : Engage.Localization.Localization, countries : Engage.Entity.Address.Countries, regions : Engage.Entity.Address.RegionsCountry }"
+            },
+            {
+                "name": "EntryData",
+                "comment": " The EntryData type\n",
+                "args": [],
+                "type": "{ value : String.String }"
+            },
+            {
+                "name": "Field",
+                "comment": " The Field type\n",
+                "args": [],
+                "type": "{ fieldId : Basics.Int, relativeOrder : Basics.Int, label : String.String, description : String.String, fieldType : Engage.Custom.Types.FieldType, required : Basics.Bool, errorMessage : String.String, disable : Engage.Custom.Types.Disable, valueMin : String.String, valueMax : String.String, valueStep : String.String, updateOptions : Engage.Custom.Types.UpdateOptions }"
+            },
+            {
+                "name": "FieldChoice",
+                "comment": " The FieldChoice type\n",
+                "args": [],
+                "type": "{ fieldChoiceId : Maybe.Maybe Basics.Int, name : String.String, value : String.String, relativeOrder : Basics.Int }"
+            },
+            {
+                "name": "FieldGroup",
+                "comment": " The FieldGroup type\n",
+                "args": [],
+                "type": "{ fieldGroupId : Basics.Int, fields : Dict.Dict Basics.Int Engage.Custom.Types.Field, relativeOrder : Basics.Int }"
+            },
+            {
+                "name": "FileEntryData",
+                "comment": " The FileEntryData type\n",
+                "args": [],
+                "type": "{ name : String.String, fileType : String.String, status : Engage.Custom.Types.FileStatus }"
+            },
+            {
+                "name": "FileUploadError",
+                "comment": " The FileUploadError type\n",
+                "args": [],
+                "type": "{ formId : Basics.Int, sectionId : Basics.Int, fieldGroupId : Basics.Int, fieldId : Basics.Int, errorMessage : String.String }"
+            },
+            {
+                "name": "FileUploadProgress",
+                "comment": " The FileUploadProgress type\n",
+                "args": [],
+                "type": "{ formId : Basics.Int, sectionId : Basics.Int, fieldGroupId : Basics.Int, fieldId : Basics.Int, progressPercentage : Basics.Float }"
+            },
+            {
+                "name": "FileUploadStatus",
+                "comment": " The FileUploadStatus type\n",
+                "args": [],
+                "type": "{ formId : Basics.Int, sectionId : Basics.Int, fieldGroupId : Basics.Int, fieldId : Basics.Int, formFilloutId : Basics.Int }"
+            },
+            {
+                "name": "Form",
+                "comment": " The Form type\n",
+                "args": [],
+                "type": "{ formId : Basics.Int, formFilloutId : Maybe.Maybe Basics.Int, name : String.String, sections : Dict.Dict Basics.Int Engage.Custom.Types.Section, formLevel : Engage.Custom.Types.Level, relativeOrder : Basics.Int, validations : Engage.Validation.ValidationErrors { fieldId : Basics.Int } }"
+            },
+            {
+                "name": "MultipleEntryData",
+                "comment": " The MultipleEntryData type\n",
+                "args": [],
+                "type": "{ values : Set.Set String.String }"
+            },
+            {
+                "name": "Section",
+                "comment": " The Section type\n",
+                "args": [],
+                "type": "{ sectionId : Basics.Int, name : String.String, relativeOrder : Basics.Int, optional : Basics.Bool, optionalLabel : String.String, adminOnly : Basics.Bool, fieldGroups : Dict.Dict Basics.Int Engage.Custom.Types.FieldGroup }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultCompanyForm",
+                "comment": " Get the default Company Form\n",
+                "type": "Engage.Custom.Types.Form"
+            },
+            {
+                "name": "defaultConfig",
+                "comment": " Get the default Config\n",
+                "type": "{ onChange : Engage.Custom.Types.ChangeArgs -> Engage.Custom.Types.Answer -> msg, onEnter : msg, onGotoPage : { pageId : Basics.Int } -> msg, localization : Engage.Localization.Localization } -> Engage.Custom.Types.Config msg"
+            },
+            {
+                "name": "defaultParticipantForm",
+                "comment": " Get the default Participant Form\n",
+                "type": "Engage.Custom.Types.Form"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Engage.Custom.Update",
+        "comment": " Custom.Update\n\n@docs updateAnswer, updateFileUploadError, updateFileUploadProgress, updateFileUploadStatus, updateMembershipEventId\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "updateAnswer",
+                "comment": " Update an Answer\n",
+                "type": "Engage.Custom.Update.Query { a | onlyStateChange : Basics.Bool } -> Engage.Custom.Types.FieldType -> Engage.Custom.Types.Answer -> Engage.Custom.Types.Form -> Engage.Custom.Types.Form"
+            },
+            {
+                "name": "updateFileUploadError",
+                "comment": " Update FileUploadError\n",
+                "type": "Engage.Custom.Types.FileUploadError -> Engage.Custom.Types.Form -> Engage.Custom.Types.Form"
+            },
+            {
+                "name": "updateFileUploadProgress",
+                "comment": " Update FileUploadProgress\n",
+                "type": "Engage.Custom.Types.FileUploadProgress -> Engage.Custom.Types.Form -> Engage.Custom.Types.Form"
+            },
+            {
+                "name": "updateFileUploadStatus",
+                "comment": " Update FileUploadStatus\n",
+                "type": "Engage.Custom.Types.FileUploadStatus -> Engage.Custom.Types.Form -> Engage.Custom.Types.Form"
+            },
+            {
+                "name": "updateMembershipEventId",
+                "comment": " Update membership event id\n",
+                "type": "Basics.Int -> Engage.Custom.Types.Form -> Engage.Custom.Types.Form"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Engage.Decode",
+        "comment": " Engage.Decode\n\n@docs isoDateDecoder\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "isoDateDecoder",
+                "comment": " ISO8601 Date Decoder\n\nFor example:\n2020-05-22\n\n",
+                "type": "Json.Decode.Decoder Date.Date"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Engage.Entity.Account",
+        "comment": " Entity.Account\n\n@docs Account\n\n@docs decoder, empty, encoder, encoderWith\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Account",
+                "comment": " The Account type\n",
+                "args": [],
+                "type": "{ accountId : Maybe.Maybe Basics.Int, name : String.String, description : String.String, address : String.String, address2 : String.String, city : String.String, region : Maybe.Maybe Engage.ListItem.ListItem, country : Maybe.Maybe Engage.ListItem.ListItem, postalCode : String.String, phone : Engage.Entity.PhoneNumber.PhoneNumber }"
+            }
+        ],
+        "values": [
+            {
+                "name": "decoder",
+                "comment": " The Account decoder\n",
+                "type": "Json.Decode.Decoder Engage.Entity.Account.Account"
+            },
+            {
+                "name": "empty",
+                "comment": " Get an empty account\n",
+                "type": "Engage.Entity.Account.Account"
+            },
+            {
+                "name": "encoder",
+                "comment": " The Account encoder\n",
+                "type": "Engage.Entity.Account.Account -> Json.Encode.Value"
+            },
+            {
+                "name": "encoderWith",
+                "comment": " The Account encoder with fields\n",
+                "type": "List.List ( String.String, Json.Encode.Value ) -> Engage.Entity.Account.Account -> Json.Encode.Value"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Engage.Entity.Address",
+        "comment": " Entity.Address\n\n@docs Address, AddressLike, AddressType, AddressTypes, Countries, CountryId, RegionId, Regions, RegionsCountry\n\n@docs addressTypeDecoder, addressTypesDecoder, countriesDecoder, decoder, empty, emptyAddressType, emptyPrimaryAddress, encoder, encoderWith, getRegionsForCountry, regionsCountryDecoder\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Address",
+                "comment": " The Address type\n",
+                "args": [],
+                "type": "{ addressType : Maybe.Maybe Engage.Entity.Address.AddressType, addressId : Maybe.Maybe Basics.Int, name : String.String, address1 : String.String, address2 : String.String, country : Maybe.Maybe Engage.ListItem.ListItem, region : Maybe.Maybe Engage.ListItem.ListItem, city : String.String, postalCode : String.String, phone : Engage.Entity.PhoneNumber.PhoneNumber, fax : Engage.Entity.PhoneNumber.PhoneNumber, website : String.String, relativeOrder : Basics.Int, isPrimaryAddress : Basics.Bool, includeInInternalDirectory : Basics.Bool, includeInExternalDirectory : Basics.Bool }"
+            },
+            {
+                "name": "AddressLike",
+                "comment": " The AddressLike type\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ a | address1 : String.String, address2 : String.String, country : Maybe.Maybe Engage.ListItem.ListItem, region : Maybe.Maybe Engage.ListItem.ListItem, city : String.String, postalCode : String.String }"
+            },
+            {
+                "name": "AddressType",
+                "comment": " The AddressType type\n",
+                "args": [],
+                "type": "{ addressTypeId : Basics.Int, shortDescription : String.String, longDescription : String.String }"
+            },
+            {
+                "name": "AddressTypes",
+                "comment": " The AddressTypes type\n",
+                "args": [],
+                "type": "Dict.Dict Engage.Entity.Address.AddressTypeId Engage.Entity.Address.AddressType"
+            },
+            {
+                "name": "Countries",
+                "comment": " The Countries type\n",
+                "args": [],
+                "type": "Dict.Dict Engage.Entity.Address.CountryId Engage.Entity.Address.CountryData"
+            },
+            {
+                "name": "CountryId",
+                "comment": " The CountryId type\n",
+                "args": [],
+                "type": "Basics.Int"
+            },
+            {
+                "name": "RegionId",
+                "comment": " The RegionId type\n",
+                "args": [],
+                "type": "Basics.Int"
+            },
+            {
+                "name": "Regions",
+                "comment": " The Regions type\n",
+                "args": [],
+                "type": "Dict.Dict Engage.Entity.Address.RegionId Engage.Entity.Address.RegionData"
+            },
+            {
+                "name": "RegionsCountry",
+                "comment": " The RegionsCountry type\n",
+                "args": [],
+                "type": "Dict.Dict Engage.Entity.Address.CountryId Engage.Entity.Address.Regions"
+            }
+        ],
+        "values": [
+            {
+                "name": "addressTypeDecoder",
+                "comment": " An AddressType decoder\n",
+                "type": "Json.Decode.Decoder Engage.Entity.Address.AddressType"
+            },
+            {
+                "name": "addressTypesDecoder",
+                "comment": " An AddressTypes decoder\n",
+                "type": "Json.Decode.Decoder Engage.Entity.Address.AddressTypes"
+            },
+            {
+                "name": "countriesDecoder",
+                "comment": " The Countries decoder\n",
+                "type": "Json.Decode.Decoder Engage.Entity.Address.Countries"
+            },
+            {
+                "name": "decoder",
+                "comment": " The Address decoder\n",
+                "type": "Json.Decode.Decoder Engage.Entity.Address.Address"
+            },
+            {
+                "name": "empty",
+                "comment": " Get an empty Address\n",
+                "type": "Engage.Entity.Address.Address"
+            },
+            {
+                "name": "emptyAddressType",
+                "comment": " Get an empty AddressType\n",
+                "type": "Engage.Entity.Address.AddressType"
+            },
+            {
+                "name": "emptyPrimaryAddress",
+                "comment": " Get an empty primary Address\n",
+                "type": "Engage.Entity.Address.Address"
+            },
+            {
+                "name": "encoder",
+                "comment": " The Address encoder\n",
+                "type": "Engage.Entity.Address.Address -> Json.Encode.Value"
+            },
+            {
+                "name": "encoderWith",
+                "comment": " The Address encoder with fields\n",
+                "type": "List.List ( String.String, Json.Encode.Value ) -> Engage.Entity.Address.Address -> Json.Encode.Value"
+            },
+            {
+                "name": "getRegionsForCountry",
+                "comment": " Get Regions for a country\n",
+                "type": "Engage.Entity.Address.CountryId -> Engage.Entity.Address.RegionsCountry -> Engage.Entity.Address.Regions"
+            },
+            {
+                "name": "regionsCountryDecoder",
+                "comment": " The RegionsCountry decoder\n",
+                "type": "Json.Decode.Decoder Engage.Entity.Address.RegionsCountry"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Engage.Entity.Contact",
+        "comment": " Entity.Contact\n\n@docs Contact, ContactType, ContactTypes\n\n@docs contactTypeDecoder, contactTypesDecoder, decoder, empty, encoder, encoderWith\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Contact",
+                "comment": " The Contact type\n",
+                "args": [],
+                "type": "{ contactType : Maybe.Maybe Engage.Entity.Contact.ContactType, contactId : Maybe.Maybe Basics.Int, prefix : String.String, firstName : String.String, middleName : String.String, lastName : String.String, suffix : String.String, addressName : String.String, address1 : String.String, address2 : String.String, city : String.String, postalCode : String.String, region : Maybe.Maybe Engage.ListItem.ListItem, country : Maybe.Maybe Engage.ListItem.ListItem, phone : Engage.Entity.PhoneNumber.PhoneNumber, mobilePhone : Engage.Entity.PhoneNumber.PhoneNumber, fax : Engage.Entity.PhoneNumber.PhoneNumber, email : String.String, notes : String.String, isPrimaryContact : Basics.Bool, isBillingContact : Basics.Bool, relativeOrder : Basics.Int }"
+            },
+            {
+                "name": "ContactType",
+                "comment": " The ContactType type\n",
+                "args": [],
+                "type": "{ contactTypeId : Basics.Int, shortDescription : String.String, longDescription : String.String }"
+            },
+            {
+                "name": "ContactTypes",
+                "comment": " The ContactTypes type\n",
+                "args": [],
+                "type": "Dict.Dict Basics.Int Engage.Entity.Contact.ContactType"
+            }
+        ],
+        "values": [
+            {
+                "name": "contactTypeDecoder",
+                "comment": " The ContactType decoder\n",
+                "type": "Json.Decode.Decoder Engage.Entity.Contact.ContactType"
+            },
+            {
+                "name": "contactTypesDecoder",
+                "comment": " The ContactTypes decoder\n",
+                "type": "Json.Decode.Decoder Engage.Entity.Contact.ContactTypes"
+            },
+            {
+                "name": "decoder",
+                "comment": " The Contact decoder\n",
+                "type": "Json.Decode.Decoder Engage.Entity.Contact.Contact"
+            },
+            {
+                "name": "empty",
+                "comment": " Get an empty Contact\n",
+                "type": "Engage.Entity.Contact.Contact"
+            },
+            {
+                "name": "encoder",
+                "comment": " The Contact encoder\n",
+                "type": "Engage.Entity.Contact.Contact -> Json.Encode.Value"
+            },
+            {
+                "name": "encoderWith",
+                "comment": " The Contact encoder with values\n",
+                "type": "List.List ( String.String, Json.Encode.Value ) -> Engage.Entity.Contact.Contact -> Json.Encode.Value"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Engage.Entity.Gender",
+        "comment": " Entity.Gender\n\n@docs Gender\n\n@docs decoder, encoder, fromString, toString\n\n",
+        "unions": [
+            {
+                "name": "Gender",
+                "comment": " The Gender type\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Male",
+                        []
+                    ],
+                    [
+                        "Female",
+                        []
+                    ],
+                    [
+                        "Other",
+                        []
+                    ],
+                    [
+                        "Unspecified",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decoder",
+                "comment": " The Gender decoder\n",
+                "type": "Json.Decode.Decoder Engage.Entity.Gender.Gender"
+            },
+            {
+                "name": "encoder",
+                "comment": " The Gender encoder\n",
+                "type": "Engage.Entity.Gender.Gender -> Json.Encode.Value"
+            },
+            {
+                "name": "fromString",
+                "comment": " Convert a String to a Gender\n",
+                "type": "String.String -> Engage.Entity.Gender.Gender"
+            },
+            {
+                "name": "toString",
+                "comment": " Convert a Gender to a String\n",
+                "type": "Engage.Entity.Gender.Gender -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Engage.Entity.Participant",
+        "comment": " Entity.Participant\n\n@docs Participant\n\n@docs decoder, empty, encoder, encoderWith, toParticipant\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Participant",
+                "comment": " The Participant type\n",
+                "args": [],
+                "type": "{ participantId : Maybe.Maybe Basics.Int, firstName : String.String, lastName : String.String, middleName : String.String, email : String.String, primaryAddress : Maybe.Maybe Engage.Entity.Address.Address, phone : Engage.Entity.PhoneNumber.PhoneNumber, mobilePhone : Engage.Entity.PhoneNumber.PhoneNumber, profilePicture : String.String, gender : Engage.Entity.Gender.Gender, birthDate : Maybe.Maybe Date.Date, birthDateYear : Maybe.Maybe Engage.ListItem.ListItem, birthDateMonth : Maybe.Maybe Engage.ListItem.ListItem, account : Maybe.Maybe Engage.Entity.Account.Account, username : Maybe.Maybe String.String, password : Maybe.Maybe String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "decoder",
+                "comment": " A Participant decoder\n",
+                "type": "Json.Decode.Decoder Engage.Entity.Participant.Participant"
+            },
+            {
+                "name": "empty",
+                "comment": " Get an empty Participant\n",
+                "type": "Engage.Entity.Participant.Participant"
+            },
+            {
+                "name": "encoder",
+                "comment": " A Participant encoder\n",
+                "type": "Engage.Entity.Participant.ParticipantLike a -> Json.Encode.Value"
+            },
+            {
+                "name": "encoderWith",
+                "comment": " A Participant with fields encoder\n",
+                "type": "List.List ( String.String, Json.Encode.Value ) -> Engage.Entity.Participant.ParticipantLike a -> Json.Encode.Value"
+            },
+            {
+                "name": "toParticipant",
+                "comment": " Get a Participant from a partial\n",
+                "type": "Engage.Entity.Participant.ParticipantLike a -> Engage.Entity.Participant.Participant"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Engage.Entity.PhoneNumber",
+        "comment": " Entity.PhoneNumber\n\n@docs PhoneNumber\n\n@docs decoder, defaultIsoCode, empty, encoder, format\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "PhoneNumber",
+                "comment": " The PhoneNumber type\n",
+                "args": [],
+                "type": "IntlPhoneInput.Type.PhoneNumber"
+            }
+        ],
+        "values": [
+            {
+                "name": "decoder",
+                "comment": " The PhoneNumber decoder\n",
+                "type": "Json.Decode.Decoder Engage.Entity.PhoneNumber.PhoneNumber"
+            },
+            {
+                "name": "defaultIsoCode",
+                "comment": " Get the default iso code\n",
+                "type": "Engage.Entity.PhoneNumber.PhoneNumber -> Engage.Entity.PhoneNumber.PhoneNumber"
+            },
+            {
+                "name": "empty",
+                "comment": " Get an empty phone number\n",
+                "type": "Engage.Entity.PhoneNumber.PhoneNumber"
+            },
+            {
+                "name": "encoder",
+                "comment": " The PhoneNumber encoder\n",
+                "type": "Engage.Entity.PhoneNumber.PhoneNumber -> Json.Encode.Value"
+            },
+            {
+                "name": "format",
+                "comment": " Format a phone number\n",
+                "type": "IntlPhoneInput.Config.Config msg -> Engage.Entity.PhoneNumber.PhoneNumber -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Engage.Form.Account",
+        "comment": " Form.Account\n\n@docs Attribute\n\n@docs address, edit, name, none, phone, phoneNumber, view\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Attribute",
+                "comment": " The Attribute type\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "Engage.Form.Account.InternalAttribute msg -> Engage.Form.Account.InternalAttribute msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "address",
+                "comment": " Get the address Attribute\n",
+                "type": "String.String -> Engage.Entity.Address.Address -> Engage.Form.Account.Attribute msg"
+            },
+            {
+                "name": "edit",
+                "comment": " Get the edit Attribute\n",
+                "type": "String.String -> msg -> Engage.Form.Account.Attribute msg"
+            },
+            {
+                "name": "name",
+                "comment": " Get the name Attribute\n",
+                "type": "String.String -> Engage.Form.Account.Attribute msg"
+            },
+            {
+                "name": "none",
+                "comment": " Get the none Attribute\n",
+                "type": "Engage.Form.Account.Attribute msg"
+            },
+            {
+                "name": "phone",
+                "comment": " Get the phone Attribute\n",
+                "type": "String.String -> String.String -> Engage.Form.Account.Attribute msg"
+            },
+            {
+                "name": "phoneNumber",
+                "comment": " Get the phone number Attribute\n",
+                "type": "String.String -> Engage.Entity.PhoneNumber.PhoneNumber -> Engage.Form.Account.Attribute msg"
+            },
+            {
+                "name": "view",
+                "comment": " Get the view\n",
+                "type": "{ args | namespace : Engage.Namespace.Namespace, localization : Engage.Localization.Localization, countries : Engage.Entity.Address.Countries, regions : Engage.Entity.Address.RegionsCountry } -> List.List (Engage.Form.Account.Attribute msg) -> List.List (Html.Html msg) -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Engage.Form.Address",
+        "comment": " Form.Address\n\n@docs Attribute, Msg, State, ValidationField\n\n@docs addressTypes, completedView, completedViewWithAdditional, countriesToItems, form, initialState, isEmpty, isValid, regionsToItems, toAllRegions, update, validateAll, validateAllWith, validateFieldWith, view\n\n\n# Attributes\n\n@docs countries, hideFax, hideAddressName, hideAddressPhone, hidePrimaryAddressCheckbox, hideWebsite, regions, required, showIncludeInExternalDirectory, showIncludeInInternalDirectory, phoneNumberRequired\n\n@docs countryModifier\n\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " The Msg type\n",
+                "args": [
+                    "field"
+                ],
+                "cases": []
+            },
+            {
+                "name": "State",
+                "comment": " The State type\n",
+                "args": [
+                    "parentField"
+                ],
+                "cases": []
+            },
+            {
+                "name": "ValidationField",
+                "comment": " The ValidationField type\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Name",
+                        []
+                    ],
+                    [
+                        "Address",
+                        []
+                    ],
+                    [
+                        "Unit",
+                        []
+                    ],
+                    [
+                        "Country",
+                        []
+                    ],
+                    [
+                        "Region",
+                        []
+                    ],
+                    [
+                        "ZipCode",
+                        []
+                    ],
+                    [
+                        "City",
+                        []
+                    ],
+                    [
+                        "AddressType",
+                        []
+                    ],
+                    [
+                        "Phone",
+                        []
+                    ],
+                    [
+                        "PhoneIsoCode",
+                        []
+                    ],
+                    [
+                        "Fax",
+                        []
+                    ],
+                    [
+                        "FaxIsoCode",
+                        []
+                    ],
+                    [
+                        "Website",
+                        []
+                    ],
+                    [
+                        "IsPrimaryAddress",
+                        []
+                    ],
+                    [
+                        "IncludeInExternalDirectory",
+                        []
+                    ],
+                    [
+                        "IncludeInInternalDirectory",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Attribute",
+                "comment": " The Attribute type\n",
+                "args": [],
+                "type": "Engage.Form.Address.InternalAttribute -> Engage.Form.Address.InternalAttribute"
+            }
+        ],
+        "values": [
+            {
+                "name": "addressTypes",
+                "comment": " Get the address types Attribute\n",
+                "type": "Engage.Entity.Address.AddressTypes -> Engage.Form.Address.Attribute"
+            },
+            {
+                "name": "completedView",
+                "comment": " Get the completed view\n",
+                "type": "{ a | namespace : Engage.Namespace.Namespace, localization : Engage.Localization.Localization } -> Engage.Entity.Address.Address -> Html.Html msg"
+            },
+            {
+                "name": "completedViewWithAdditional",
+                "comment": " Get the completed view with additional\n",
+                "type": "{ a | namespace : Engage.Namespace.Namespace, localization : Engage.Localization.Localization } -> List.List String.String -> Engage.Entity.Address.Address -> Html.Html msg"
+            },
+            {
+                "name": "countries",
+                "comment": " Get the countries Attribute\n",
+                "type": "Engage.Entity.Address.Countries -> Engage.Form.Address.Attribute"
+            },
+            {
+                "name": "countriesToItems",
+                "comment": " Convert Countries to items dropdown\n",
+                "type": "Engage.Entity.Address.Countries -> Dict.Dict String.String Engage.UI.Dropdown.Item"
+            },
+            {
+                "name": "countryModifier",
+                "comment": " Get the country modifier\n",
+                "type": "{ a | country : Maybe.Maybe Engage.ListItem.ListItem } -> String.String"
+            },
+            {
+                "name": "form",
+                "comment": " Get the form view\n",
+                "type": "Engage.Namespace.Namespace -> Engage.Localization.Localization -> (Engage.Form.Address.ValidationField -> parentField) -> String.String -> List.List Engage.Form.Address.Attribute -> Engage.Form.Address.State parentField -> Engage.Form.HideOrShow.HideOrShow -> Engage.Entity.Address.Address -> Html.Html (Engage.Form.Address.Msg parentField)"
+            },
+            {
+                "name": "hideAddressName",
+                "comment": " Get the hide address name Attribute\n",
+                "type": "Engage.Form.Address.Attribute"
+            },
+            {
+                "name": "hideAddressPhone",
+                "comment": " Get the hide address phone Attribute\n",
+                "type": "Engage.Form.Address.Attribute"
+            },
+            {
+                "name": "hideFax",
+                "comment": " Get the hide fax Attribute\n",
+                "type": "Engage.Form.Address.Attribute"
+            },
+            {
+                "name": "hidePrimaryAddressCheckbox",
+                "comment": " Get the hide primary address checkbox Attribute\n",
+                "type": "Engage.Form.Address.Attribute"
+            },
+            {
+                "name": "hideWebsite",
+                "comment": " Get the hide website Attribute\n",
+                "type": "Engage.Form.Address.Attribute"
+            },
+            {
+                "name": "initialState",
+                "comment": " Get the initial State\n",
+                "type": "Engage.Form.Address.State parentField"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Check if the address is empty\n",
+                "type": "Engage.Entity.Address.AddressLike a -> Basics.Bool"
+            },
+            {
+                "name": "isValid",
+                "comment": " Check if the state is valid\n",
+                "type": "Engage.Form.Address.State parentField -> Basics.Bool"
+            },
+            {
+                "name": "phoneNumberRequired",
+                "comment": " Get the phone number required Attribute\n",
+                "type": "Basics.Bool -> Engage.Form.Address.Attribute"
+            },
+            {
+                "name": "regions",
+                "comment": " Get the regions Attribute\n",
+                "type": "Engage.Entity.Address.RegionsCountry -> Engage.Form.Address.Attribute"
+            },
+            {
+                "name": "regionsToItems",
+                "comment": " Convert Regions to items dropdown\n",
+                "type": "Engage.Entity.Address.Regions -> Dict.Dict String.String Engage.UI.Dropdown.Item"
+            },
+            {
+                "name": "required",
+                "comment": " Get the required Attribute\n",
+                "type": "Basics.Bool -> Engage.Form.Address.Attribute"
+            },
+            {
+                "name": "showIncludeInExternalDirectory",
+                "comment": " Get the show include in external directory Attribute\n",
+                "type": "Engage.Form.Address.Attribute"
+            },
+            {
+                "name": "showIncludeInInternalDirectory",
+                "comment": " Get the show include in internal directory Attribute\n",
+                "type": "Engage.Form.Address.Attribute"
+            },
+            {
+                "name": "toAllRegions",
+                "comment": " Convert RegionsCountry to Regions\n",
+                "type": "Engage.Entity.Address.RegionsCountry -> Engage.Entity.Address.Regions"
+            },
+            {
+                "name": "update",
+                "comment": " Update the address\n",
+                "type": "Engage.Form.Address.Msg parentField -> Engage.Form.Address.State parentField -> Engage.Entity.Address.Address -> { state : Engage.Form.Address.State parentField, data : Engage.Entity.Address.Address, cmd : Platform.Cmd.Cmd (Engage.Form.Address.Msg parentField) }"
+            },
+            {
+                "name": "validateAll",
+                "comment": " Validate all fields\n",
+                "type": "(Engage.Form.Address.ValidationField -> parentField) -> String.String -> Engage.Form.Address.State parentField -> Engage.Entity.Address.RegionsCountry -> Engage.Entity.Address.Address -> Engage.Form.Address.State parentField"
+            },
+            {
+                "name": "validateAllWith",
+                "comment": " Validate all fields with a function\n",
+                "type": "List.List (Validate.Validator ( parentField, Engage.Validation.ValidationStatus ) Engage.Entity.Address.Address) -> (Engage.Form.Address.ValidationField -> parentField) -> String.String -> Engage.Form.Address.State parentField -> Engage.Entity.Address.RegionsCountry -> Engage.Entity.Address.Address -> Engage.Form.Address.State parentField"
+            },
+            {
+                "name": "validateFieldWith",
+                "comment": " Validate a field with a function\n",
+                "type": "List.List (Validate.Validator ( parentField, Engage.Validation.ValidationStatus ) Engage.Entity.Address.Address) -> (Engage.Form.Address.ValidationField -> parentField) -> String.String -> Engage.Entity.Address.RegionsCountry -> Engage.Entity.Address.Address -> Engage.Validation.ValidationErrors parentField"
+            },
+            {
+                "name": "view",
+                "comment": " Get the view\n",
+                "type": "{ a | namespace : Engage.Namespace.Namespace, localization : Engage.Localization.Localization, countries : Engage.Entity.Address.Countries, regions : Engage.Entity.Address.RegionsCountry } -> Engage.Entity.Address.AddressLike address -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Engage.Form.Company",
+        "comment": " Form.Company\n\n@docs Msg, State\n\n@docs cast, completedView, emptyForm, form, initialState, isValid, update, validateAll\n\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " The Msg type\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "State",
+                "comment": " The State type\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "cast",
+                "comment": " Cast a CompaniesData\n",
+                "type": "Engage.Form.Company.Types.CompaniesData other -> Engage.Form.Company.Types.CompaniesData {}"
+            },
+            {
+                "name": "completedView",
+                "comment": " Get a completed view\n",
+                "type": "{ a | localization : Engage.Localization.Localization } -> Engage.Form.Company.Types.CompaniesData data -> Html.Html msg"
+            },
+            {
+                "name": "emptyForm",
+                "comment": " Get an empty form\n",
+                "type": "Basics.Int -> String.String -> { id : Basics.Int, name : String.String, stepResponse : Engage.RemoteData.WebData a, companies : Engage.Form.Company.Types.CompaniesData {}, state : Engage.Form.Company.State }"
+            },
+            {
+                "name": "form",
+                "comment": " Get the form view\n",
+                "type": "Engage.Form.Company.FormArgs a -> Engage.Form.Company.State -> Engage.Form.Company.Types.CompaniesData data -> Html.Html Engage.Form.Company.Msg"
+            },
+            {
+                "name": "initialState",
+                "comment": " Get the initial state\n",
+                "type": "Engage.Form.Company.State"
+            },
+            {
+                "name": "isValid",
+                "comment": " Check if the State is valid\n",
+                "type": "Engage.Form.Company.State -> Basics.Bool"
+            },
+            {
+                "name": "update",
+                "comment": " Update a CompaniesData\n",
+                "type": "Engage.Form.Company.Msg -> Engage.Form.Company.State -> Engage.Form.Company.Types.CompaniesData data -> ( Engage.Form.Company.State, Engage.Form.Company.Types.CompaniesData data, Platform.Cmd.Cmd Engage.Form.Company.Msg )"
+            },
+            {
+                "name": "validateAll",
+                "comment": " Validate all fields\n",
+                "type": "Engage.Form.Company.State -> Engage.Entity.Address.RegionsCountry -> Engage.Form.Company.Types.CompaniesData data -> Engage.Form.Company.State"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Engage.Form.Company.Json",
+        "comment": " Form.Company.Json\n\n@docs decoder, emptyCompanies, emptyCompany, encoder, encoderWith\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decoder",
+                "comment": " The CompaniesData decoder\n",
+                "type": "Json.Decode.Decoder (Engage.Form.Company.Types.CompaniesData {})"
+            },
+            {
+                "name": "emptyCompanies",
+                "comment": " Get an empty CompaniesData\n",
+                "type": "Engage.Form.Company.Types.CompaniesData {}"
+            },
+            {
+                "name": "emptyCompany",
+                "comment": " Get an empty CompanyData\n",
+                "type": "Engage.Form.Company.Types.CompanyData"
+            },
+            {
+                "name": "encoder",
+                "comment": " Get the encoder\n",
+                "type": "{ a | participantId : Basics.Int, companies : Engage.Form.Company.Types.CompaniesData {} } -> Json.Encode.Value"
+            },
+            {
+                "name": "encoderWith",
+                "comment": " Get the encoder with data\n",
+                "type": "List.List ( String.String, Json.Encode.Value ) -> { a | participantId : Basics.Int, companies : Engage.Form.Company.Types.CompaniesData {} } -> Json.Encode.Value"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Engage.Form.Company.Types",
+        "comment": " Form.Company.Types\n\n@docs CompaniesData, CompanyData\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "CompaniesData",
+                "comment": " A CompaniesData type\n",
+                "args": [
+                    "data"
+                ],
+                "type": "{ data | currentCompany : Engage.Form.Company.Types.CompanyData, previousCompany : Engage.Form.Company.Types.CompanyData }"
+            },
+            {
+                "name": "CompanyData",
+                "comment": " A CompanyData type\n",
+                "args": [],
+                "type": "{ companyId : Maybe.Maybe Basics.Int, participantCompanyId : Maybe.Maybe Basics.Int, name : String.String, position : String.String, startDate : Maybe.Maybe Date.Date, endDate : Maybe.Maybe Date.Date, address : Engage.Entity.Address.Address }"
+            }
+        ],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "Engage.Form.Contact",
+        "comment": " Form.Contact\n\n@docs Attribute, Msg, State, ValidationField\n\n@docs completedView, completedViewWithAdditional, contactTypes, countries, countriesToItems, form, initialState, isEmpty, isValid, regions, regionsToItems, required, update, validateAll, validateAllWith, validateFieldWith, view\n\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " The Msg type\n",
+                "args": [
+                    "field"
+                ],
+                "cases": []
+            },
+            {
+                "name": "State",
+                "comment": " The State type\n",
+                "args": [
+                    "parentField"
+                ],
+                "cases": []
+            },
+            {
+                "name": "ValidationField",
+                "comment": " The ValidationField type\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Prefix",
+                        []
+                    ],
+                    [
+                        "FirstName",
+                        []
+                    ],
+                    [
+                        "MiddleName",
+                        []
+                    ],
+                    [
+                        "LastName",
+                        []
+                    ],
+                    [
+                        "Suffix",
+                        []
+                    ],
+                    [
+                        "Email",
+                        []
+                    ],
+                    [
+                        "AddressName",
+                        []
+                    ],
+                    [
+                        "Address1",
+                        []
+                    ],
+                    [
+                        "Address2",
+                        []
+                    ],
+                    [
+                        "Country",
+                        []
+                    ],
+                    [
+                        "Region",
+                        []
+                    ],
+                    [
+                        "PostalCode",
+                        []
+                    ],
+                    [
+                        "City",
+                        []
+                    ],
+                    [
+                        "ContactType",
+                        []
+                    ],
+                    [
+                        "Phone",
+                        []
+                    ],
+                    [
+                        "PhoneIsoCode",
+                        []
+                    ],
+                    [
+                        "MobilePhone",
+                        []
+                    ],
+                    [
+                        "MobilePhoneIsoCode",
+                        []
+                    ],
+                    [
+                        "Fax",
+                        []
+                    ],
+                    [
+                        "FaxIsoCode",
+                        []
+                    ],
+                    [
+                        "Notes",
+                        []
+                    ],
+                    [
+                        "IsPrimaryContact",
+                        []
+                    ],
+                    [
+                        "IsBillingContact",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Attribute",
+                "comment": " The Attribute type\n",
+                "args": [],
+                "type": "Engage.Form.Contact.InternalAttribute -> Engage.Form.Contact.InternalAttribute"
+            }
+        ],
+        "values": [
+            {
+                "name": "completedView",
+                "comment": " Get the completed view\n",
+                "type": "Engage.Namespace.Namespace -> Engage.Localization.Localization -> Engage.Entity.Contact.Contact -> Html.Html msg"
+            },
+            {
+                "name": "completedViewWithAdditional",
+                "comment": " Get the completed view with additional data\n",
+                "type": "Engage.Namespace.Namespace -> Engage.Localization.Localization -> List.List String.String -> Engage.Entity.Contact.Contact -> Html.Html msg"
+            },
+            {
+                "name": "contactTypes",
+                "comment": " Get the contact types Attribute\n",
+                "type": "Engage.Entity.Contact.ContactTypes -> Engage.Form.Contact.Attribute"
+            },
+            {
+                "name": "countries",
+                "comment": " Get the countries Attribute\n",
+                "type": "Engage.Entity.Address.Countries -> Engage.Form.Contact.Attribute"
+            },
+            {
+                "name": "countriesToItems",
+                "comment": " Convert Countries to an dropdown\n",
+                "type": "Engage.Entity.Address.Countries -> Dict.Dict String.String Engage.UI.Dropdown.Item"
+            },
+            {
+                "name": "form",
+                "comment": " Get the form view\n",
+                "type": "Engage.Namespace.Namespace -> Engage.Localization.Localization -> (Engage.Form.Contact.ValidationField -> parentField) -> String.String -> List.List Engage.Form.Contact.Attribute -> Engage.Form.Contact.State parentField -> Engage.Entity.Contact.Contact -> Html.Html (Engage.Form.Contact.Msg parentField)"
+            },
+            {
+                "name": "initialState",
+                "comment": " Get the initial state\n",
+                "type": "Engage.Form.Contact.State parentField"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Check if the Contact is empty\n",
+                "type": "Engage.Entity.Contact.Contact -> Basics.Bool"
+            },
+            {
+                "name": "isValid",
+                "comment": " Check if the State is valid\n",
+                "type": "Engage.Form.Contact.State parentField -> Basics.Bool"
+            },
+            {
+                "name": "regions",
+                "comment": " Get the regions Attribute\n",
+                "type": "Engage.Entity.Address.RegionsCountry -> Engage.Form.Contact.Attribute"
+            },
+            {
+                "name": "regionsToItems",
+                "comment": " Convert Regions to an dropdown\n",
+                "type": "Engage.Entity.Address.Regions -> Dict.Dict String.String Engage.UI.Dropdown.Item"
+            },
+            {
+                "name": "required",
+                "comment": " Get the required Attribute\n",
+                "type": "Basics.Bool -> Engage.Form.Contact.Attribute"
+            },
+            {
+                "name": "update",
+                "comment": " Update the Contact\n",
+                "type": "Engage.Form.Contact.Msg parentField -> Engage.Form.Contact.State parentField -> Engage.Entity.Contact.Contact -> ( Engage.Form.Contact.State parentField, Engage.Entity.Contact.Contact, Platform.Cmd.Cmd (Engage.Form.Contact.Msg parentField) )"
+            },
+            {
+                "name": "validateAll",
+                "comment": " Validate all of the fields\n",
+                "type": "(Engage.Form.Contact.ValidationField -> parentField) -> String.String -> Engage.Form.Contact.State parentField -> Engage.Entity.Contact.Contact -> Engage.Form.Contact.State parentField"
+            },
+            {
+                "name": "validateAllWith",
+                "comment": " Validate all of the fields with a function\n",
+                "type": "List.List (Validate.Validator ( parentField, Engage.Validation.ValidationStatus ) Engage.Entity.Contact.Contact) -> (Engage.Form.Contact.ValidationField -> parentField) -> String.String -> Engage.Form.Contact.State parentField -> Engage.Entity.Contact.Contact -> Engage.Form.Contact.State parentField"
+            },
+            {
+                "name": "validateFieldWith",
+                "comment": " Validate a field with a function\n",
+                "type": "List.List (Validate.Validator ( parentField, Engage.Validation.ValidationStatus ) Engage.Entity.Contact.Contact) -> (Engage.Form.Contact.ValidationField -> parentField) -> String.String -> Engage.Entity.Contact.Contact -> Engage.Validation.ValidationErrors parentField"
+            },
+            {
+                "name": "view",
+                "comment": " Get the view\n",
+                "type": "Engage.Namespace.Namespace -> Engage.Localization.Localization -> Engage.Entity.Address.Countries -> Engage.Entity.Address.RegionsCountry -> Engage.Entity.Contact.Contact -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Engage.Form.Field",
+        "comment": " Form.Field\n\nForm fields with validation\n\n\n## Text\n\n@docs textField, textFieldWithAttributes\n\n\n## Password\n\n@docs passwordField, passwordFieldWithAttributes\n\n\n## Checkbox\n\n@docs checkbox, checkboxWithAttributes\n\n\n## Date\n\n@docs dateInputField\n\n\n## Dropdown\n\n@docs dropdownField, dropdownFieldValueSort, dropdownFieldWithAttributes\n\n\n## Phone number\n\n@docs phoneField\n\n\n## Radio list\n\n@docs radioListField\n\n\n## Localization helpers\n\n@docs localizeHelp, localizeLabel, localizeInvalid, withParentFieldKey\n\n\n## Validation helpers\n\n@docs validate, fieldId\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "checkbox",
+                "comment": " Get the checkbox view\n",
+                "type": "Engage.Form.Field.CheckboxFieldArgs field msg -> Engage.Validation.ValidationErrors field -> Engage.UI.Input.State -> Basics.Bool -> Html.Html msg"
+            },
+            {
+                "name": "checkboxWithAttributes",
+                "comment": " Get the checkbox with attributes view\n",
+                "type": "Engage.Form.Field.CheckboxFieldArgs field msg -> Engage.Validation.ValidationErrors field -> List.List (Html.Attribute msg) -> Engage.UI.Input.State -> Basics.Bool -> Html.Html msg"
+            },
+            {
+                "name": "dateInputField",
+                "comment": " Get the date input field view\n",
+                "type": "Engage.Form.Field.DateInputFieldArgs field msg -> Engage.Validation.ValidationErrors field -> Engage.UI.Input.State -> Maybe.Maybe Date.Date -> Html.Html msg"
+            },
+            {
+                "name": "dropdownField",
+                "comment": " Get the dropdown field view\n",
+                "type": "Engage.Form.Field.DropdownFieldArgs field msg -> Engage.Validation.ValidationErrors field -> Engage.UI.Dropdown.State -> Maybe.Maybe String.String -> Html.Html msg"
+            },
+            {
+                "name": "dropdownFieldValueSort",
+                "comment": " Get the dropdown field value sort view\n",
+                "type": "Engage.Form.Field.DropdownFieldArgs field msg -> Engage.Validation.ValidationErrors field -> Engage.UI.Dropdown.State -> Maybe.Maybe String.String -> Basics.Bool -> Html.Html msg"
+            },
+            {
+                "name": "dropdownFieldWithAttributes",
+                "comment": " Get the dropdown field with attributes view\n",
+                "type": "Engage.Form.Field.DropdownFieldArgs field msg -> Engage.Validation.ValidationErrors field -> List.List (Html.Attribute msg) -> Engage.UI.Dropdown.State -> Maybe.Maybe String.String -> Html.Html msg"
+            },
+            {
+                "name": "fieldId",
+                "comment": " Get the fieldId\n",
+                "type": "Engage.Namespace.Namespace -> String.String -> String.String"
+            },
+            {
+                "name": "localizeHelp",
+                "comment": " Localize a help String\n",
+                "type": "{ a | fieldKey : String.String, localization : Engage.Localization.Localization } -> String.String"
+            },
+            {
+                "name": "localizeInvalid",
+                "comment": " Localize a invalid String\n",
+                "type": "{ a | fieldKey : String.String, localization : Engage.Localization.Localization } -> String.String"
+            },
+            {
+                "name": "localizeLabel",
+                "comment": " Localize a label String\n",
+                "type": "{ a | fieldKey : String.String, localization : Engage.Localization.Localization } -> String.String"
+            },
+            {
+                "name": "passwordField",
+                "comment": " Get the password field view\n",
+                "type": "Engage.Form.Field.InputFieldArgs field msg (Engage.Form.Field.PasswordFieldArgs field msg) -> Engage.Validation.ValidationErrors field -> Engage.UI.Input.State -> String.String -> Html.Html msg"
+            },
+            {
+                "name": "passwordFieldWithAttributes",
+                "comment": " Get the password field with attributes view\n",
+                "type": "Engage.Form.Field.InputFieldArgs field msg (Engage.Form.Field.PasswordFieldArgs field msg) -> Engage.Validation.ValidationErrors field -> List.List (Html.Attribute msg) -> Engage.UI.Input.State -> String.String -> Html.Html msg"
+            },
+            {
+                "name": "phoneField",
+                "comment": " Get the phone field view\n",
+                "type": "Engage.Form.Field.PhoneFieldArgs field msg -> Engage.Validation.ValidationErrors field -> Engage.UI.Input.PhoneState -> Engage.Entity.PhoneNumber.PhoneNumber -> Html.Html msg"
+            },
+            {
+                "name": "radioListField",
+                "comment": " Get the radio field view\n",
+                "type": "Engage.Form.Field.RadioListFieldArgs field msg -> Engage.Validation.ValidationErrors field -> Engage.UI.Input.State -> String.String -> Html.Html msg"
+            },
+            {
+                "name": "textField",
+                "comment": " Get the text field view\n",
+                "type": "Engage.Form.Field.InputFieldArgs field msg {} -> Engage.Validation.ValidationErrors field -> Engage.UI.Input.State -> String.String -> Html.Html msg"
+            },
+            {
+                "name": "textFieldWithAttributes",
+                "comment": " Get the text field with attributes view\n",
+                "type": "Engage.Form.Field.InputFieldArgs field msg {} -> Engage.Validation.ValidationErrors field -> List.List (Html.Attribute msg) -> Engage.UI.Input.State -> String.String -> Html.Html msg"
+            },
+            {
+                "name": "validate",
+                "comment": " Validate a field\n",
+                "type": "field -> String.String -> String.String -> Engage.Validation.ValidationErrors field -> Engage.Validation.ValidationErrors field"
+            },
+            {
+                "name": "withParentFieldKey",
+                "comment": " Get a field key with the parent field key\n",
+                "type": "String.String -> String.String -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Engage.Form.FormAction",
+        "comment": " Form.FormAction\n\n@docs formAction\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "formAction",
+                "comment": " Get a form action Html\n",
+                "type": "Engage.Namespace.Namespace -> List.List (Html.Html msg) -> List.List (Html.Html msg) -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Engage.Form.Gender",
+        "comment": " Form.Gender\n\n@docs Attribute\n\n@docs field, fieldKey, form, localization, onChange\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Attribute",
+                "comment": " The Attribute type\n",
+                "args": [
+                    "field",
+                    "msg"
+                ],
+                "type": "Engage.Form.Gender.InternalAttribute field msg -> Engage.Form.Gender.InternalAttribute field msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "field",
+                "comment": " Get the field Attribute\n",
+                "type": "field -> Engage.Form.Gender.Attribute field msg"
+            },
+            {
+                "name": "fieldKey",
+                "comment": " Get the fieldKey Attribute\n",
+                "type": "String.String -> Engage.Form.Gender.Attribute field msg"
+            },
+            {
+                "name": "form",
+                "comment": " Get the form view\n",
+                "type": "List.List (Engage.Form.Gender.Attribute field msg) -> Engage.Validation.ValidationErrors field -> Engage.UI.Input.State -> Engage.Entity.Gender.Gender -> Html.Html msg"
+            },
+            {
+                "name": "localization",
+                "comment": " Get the localization Attribute\n",
+                "type": "Engage.Localization.Localization -> Engage.Form.Gender.Attribute field msg"
+            },
+            {
+                "name": "onChange",
+                "comment": " Get the onChange Attribute\n",
+                "type": "(Engage.Validation.ValidationErrors field -> { onlyStateChange : Basics.Bool } -> Engage.UI.Input.State -> Engage.Entity.Gender.Gender -> msg) -> Engage.Form.Gender.Attribute field msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Engage.Form.HideOrShow",
+        "comment": " HideOrShow\n\n@docs HideOrShow, Visibility\n\n@docs fromHideBool, fromShowBool, showAll\n\n",
+        "unions": [
+            {
+                "name": "Visibility",
+                "comment": " The Visibility type\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Hide",
+                        []
+                    ],
+                    [
+                        "Show",
+                        []
+                    ],
+                    [
+                        "ReadOnly",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "HideOrShow",
+                "comment": " The HideOrShow type\n",
+                "args": [],
+                "type": "{ birthDate : String.String, birthDateYears : List.List Basics.Int, birthDateMonths : List.List String.String, birthDateRequired : Basics.Bool, gender : Engage.Form.HideOrShow.Visibility, account : Engage.Form.HideOrShow.Visibility, fax : Engage.Form.HideOrShow.Visibility, website : Engage.Form.HideOrShow.Visibility, headshot : Engage.Form.HideOrShow.Visibility, addressTypeId : Maybe.Maybe Basics.Int, addressPhone : Engage.Form.HideOrShow.Visibility, addressName : Engage.Form.HideOrShow.Visibility, username : Engage.Form.HideOrShow.Visibility, password : Engage.Form.HideOrShow.Visibility }"
+            }
+        ],
+        "values": [
+            {
+                "name": "fromHideBool",
+                "comment": " Convert a hide bool into a Visibility\n",
+                "type": "Basics.Bool -> Engage.Form.HideOrShow.Visibility"
+            },
+            {
+                "name": "fromShowBool",
+                "comment": " Convert a show bool into a Visibility\n",
+                "type": "Basics.Bool -> Engage.Form.HideOrShow.Visibility"
+            },
+            {
+                "name": "showAll",
+                "comment": " Show all\n",
+                "type": "Engage.Form.HideOrShow.HideOrShow"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Engage.Form.MembershipTypeList",
+        "comment": " Form.MembershipTypeList\n\n@docs MembershipType\n\n@docs form\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "MembershipType",
+                "comment": " The MembershipType type\n",
+                "args": [],
+                "type": "{ name : String.String, value : Basics.Int, description : String.String, price : String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "form",
+                "comment": " Get a form view\n",
+                "type": "Engage.Form.MembershipTypeList.Args a msg -> Engage.UI.Accordion.State -> Maybe.Maybe Engage.Form.MembershipTypeList.MembershipType -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Engage.Form.Password",
+        "comment": " Form.Password\n\n@docs PasswordSettings, passwordSettingsDecoder, validatePasswordField\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "PasswordSettings",
+                "comment": " The password settings type\n",
+                "args": [],
+                "type": "{ minLength : Basics.Int, minNonAlphaNumCharacters : Basics.Int, validationRegex : String.String, showStrengthBar : Basics.Bool }"
+            }
+        ],
+        "values": [
+            {
+                "name": "passwordSettingsDecoder",
+                "comment": " The password settings decoder\n",
+                "type": "Json.Decode.Decoder Engage.Form.Password.PasswordSettings"
+            },
+            {
+                "name": "validatePasswordField",
+                "comment": " Validate a password field\n",
+                "type": "Engage.Form.Password.PasswordSettings -> String.String -> field -> (model -> String.String) -> Validate.Validator ( field, Engage.Validation.ValidationStatus ) model"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Engage.Form.Profile",
+        "comment": " Form.Profile\n\n\n# View\n\n@docs view\n\n\n# Attributes\n\n@docs address, avatar, birthDate, birthDateMonth, birthDateYear, none, phone, email, fax, firstName, gender, lastName, mobilePhone, edit, editAccountLink, title, changePassword\n\n#Types\n\n@docs Attribute\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Attribute",
+                "comment": " The Attribute type\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "Engage.Form.Profile.InternalAttribute msg -> Engage.Form.Profile.InternalAttribute msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "address",
+                "comment": " Get the address Attribute\n",
+                "type": "String.String -> Engage.Entity.Address.Address -> Engage.Form.Profile.Attribute msg"
+            },
+            {
+                "name": "avatar",
+                "comment": " Get the avatar Attribute\n",
+                "type": "String.String -> Engage.Form.Profile.Attribute msg"
+            },
+            {
+                "name": "birthDate",
+                "comment": " Get the birth date Attribute\n",
+                "type": "String.String -> Maybe.Maybe Date.Date -> Basics.Bool -> Engage.Form.Profile.Attribute msg"
+            },
+            {
+                "name": "birthDateMonth",
+                "comment": " Get the birth date month Attribute\n",
+                "type": "String.String -> Maybe.Maybe Engage.ListItem.ListItem -> Engage.Form.Profile.Attribute msg"
+            },
+            {
+                "name": "birthDateYear",
+                "comment": " Get the birth date year Attribute\n",
+                "type": "String.String -> Maybe.Maybe Engage.ListItem.ListItem -> Engage.Form.Profile.Attribute msg"
+            },
+            {
+                "name": "changePassword",
+                "comment": " Get the change password Attribute\n",
+                "type": "String.String -> msg -> Engage.Form.Profile.Attribute msg"
+            },
+            {
+                "name": "edit",
+                "comment": " Get the edit Attribute\n",
+                "type": "String.String -> msg -> Engage.Form.Profile.Attribute msg"
+            },
+            {
+                "name": "editAccountLink",
+                "comment": " Get the edit account link Attribute\n",
+                "type": "String.String -> String.String -> Engage.Form.Profile.Attribute msg"
+            },
+            {
+                "name": "email",
+                "comment": " Get the email Attribute\n",
+                "type": "String.String -> String.String -> Engage.Form.Profile.Attribute msg"
+            },
+            {
+                "name": "fax",
+                "comment": " Get the fax Attribute\n",
+                "type": "String.String -> String.String -> Engage.Form.Profile.Attribute msg"
+            },
+            {
+                "name": "firstName",
+                "comment": " Get the first name Attribute\n",
+                "type": "String.String -> Engage.Form.Profile.Attribute msg"
+            },
+            {
+                "name": "gender",
+                "comment": " Get the gender Attribute\n",
+                "type": "String.String -> Engage.Entity.Gender.Gender -> Engage.Form.Profile.Attribute msg"
+            },
+            {
+                "name": "lastName",
+                "comment": " Get the last name Attribute\n",
+                "type": "String.String -> Engage.Form.Profile.Attribute msg"
+            },
+            {
+                "name": "mobilePhone",
+                "comment": " Get the mobile phone Attribute\n",
+                "type": "String.String -> String.String -> Engage.Form.Profile.Attribute msg"
+            },
+            {
+                "name": "none",
+                "comment": " Get the none Attribute\n",
+                "type": "Engage.Form.Profile.Attribute msg"
+            },
+            {
+                "name": "phone",
+                "comment": " Get the phone Attribute\n",
+                "type": "String.String -> String.String -> Engage.Form.Profile.Attribute msg"
+            },
+            {
+                "name": "title",
+                "comment": " Get the title Attribute\n",
+                "type": "String.String -> Engage.Form.Profile.Attribute msg"
+            },
+            {
+                "name": "view",
+                "comment": " Get the view\n",
+                "type": "{ args | namespace : Engage.Namespace.Namespace, localization : Engage.Localization.Localization, countries : Engage.Entity.Address.Countries, regions : Engage.Entity.Address.RegionsCountry } -> List.List (Engage.Form.Profile.Attribute msg) -> List.List (Html.Html msg) -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Engage.Html.Extra",
+        "comment": " Html.Extra\n\n@docs domLoadNotifier, none, stylesheet\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "domLoadNotifier",
+                "comment": " Get a dom load notifier\n",
+                "type": "msg -> Html.Html msg"
+            },
+            {
+                "name": "none",
+                "comment": " DEPRECATED: To be removed in 9.0.0\n",
+                "type": "Html.Html msg"
+            },
+            {
+                "name": "stylesheet",
+                "comment": " DEPRECATED: To be removed in 9.0.0\n",
+                "type": "String.String -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Engage.ListData",
+        "comment": " ListData\n\n@docs ListData, Edit\n\n@docs cancelEdit, decoder, getDict, editView, empty, fromList, getEdit, isEditing, isEmpty, mapEdit, newData, setEdit, setState, view\n\n",
+        "unions": [
+            {
+                "name": "Edit",
+                "comment": " An Edit type\n",
+                "args": [
+                    "state",
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "NoEdit",
+                        []
+                    ],
+                    [
+                        "Edit",
+                        [
+                            "state",
+                            "a"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "ListData",
+                "comment": " A ListData type\n",
+                "args": [
+                    "state",
+                    "a",
+                    "comparable"
+                ],
+                "cases": [
+                    [
+                        "ListData",
+                        [
+                            "Dict.Dict comparable a",
+                            "Engage.ListData.Edit state a"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "cancelEdit",
+                "comment": " Cancel an edit\n",
+                "type": "Engage.ListData.ListData state a comparable -> Engage.ListData.ListData state a comparable"
+            },
+            {
+                "name": "decoder",
+                "comment": " ListData decoder\n",
+                "type": "(a -> comparable) -> Json.Decode.Decoder (List.List a) -> Json.Decode.Decoder (Engage.ListData.ListData state a comparable)"
+            },
+            {
+                "name": "editView",
+                "comment": " Edit view helper\n",
+                "type": "(state -> a -> Html.Html msg) -> Engage.ListData.ListData state a comparable -> Html.Html msg"
+            },
+            {
+                "name": "empty",
+                "comment": " Get an empty ListData\n",
+                "type": "Engage.ListData.ListData state a comparable"
+            },
+            {
+                "name": "fromList",
+                "comment": " Get a ListData from a List\n",
+                "type": "(a -> comparable) -> List.List a -> Engage.ListData.ListData state a comparable"
+            },
+            {
+                "name": "getDict",
+                "comment": " Get the dict from the list data\n",
+                "type": "Engage.ListData.ListData state a comparable -> Dict.Dict comparable a"
+            },
+            {
+                "name": "getEdit",
+                "comment": " Get the edit of the ListData\n",
+                "type": "Engage.ListData.ListData state a comparable -> Maybe.Maybe ( state, a )"
+            },
+            {
+                "name": "isEditing",
+                "comment": " Check if the ListData is editing\n",
+                "type": "Engage.ListData.ListData state a comparable -> Basics.Bool"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Check if the list is empty\n",
+                "type": "Engage.ListData.ListData state a comparable -> Basics.Bool"
+            },
+            {
+                "name": "mapEdit",
+                "comment": " Map an edit to a ListData\n",
+                "type": "(state -> a -> ( state, a )) -> Engage.ListData.ListData state a comparable -> Engage.ListData.ListData state a comparable"
+            },
+            {
+                "name": "newData",
+                "comment": " Get a new list data from new data\n",
+                "type": "state -> a -> Engage.ListData.ListData state a comparable -> Engage.ListData.ListData state a comparable"
+            },
+            {
+                "name": "setEdit",
+                "comment": " Set the edit of the ListData\n",
+                "type": "state -> comparable -> Engage.ListData.ListData state a comparable -> Engage.ListData.ListData state a comparable"
+            },
+            {
+                "name": "setState",
+                "comment": " Set the editing state\n",
+                "type": "state -> Engage.ListData.ListData state a comparable -> Engage.ListData.ListData state a comparable"
+            },
+            {
+                "name": "view",
+                "comment": " View helper for a ListData\n",
+                "type": "(a -> comparable) -> (a -> comparable) -> (a -> Html.Html msg) -> Engage.ListData.ListData state a comparable -> List.List (Html.Html msg)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Engage.ListItem",
+        "comment": " ListItem\n\n@docs ListItem\n\n@docs decoder, fromDropdownItem\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "ListItem",
+                "comment": " A ListItem type\n",
+                "args": [],
+                "type": "( Basics.Int, String.String )"
+            }
+        ],
+        "values": [
+            {
+                "name": "decoder",
+                "comment": " A ListItem decoder\n",
+                "type": "Json.Decode.Decoder ( Basics.Int, String.String )"
+            },
+            {
+                "name": "fromDropdownItem",
+                "comment": " Get a ListItem from a dropdown item\n",
+                "type": "( String.String, String.String ) -> Maybe.Maybe Engage.ListItem.ListItem"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Engage.Mode",
+        "comment": " Mode helpers\n\n@docs Mode\n\n@docs fromBool\n\n@docs isReactor\n\n@docs decoder\n\n",
+        "unions": [
+            {
+                "name": "Mode",
+                "comment": " A mode that the application is running\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Reactor",
+                        []
+                    ],
+                    [
+                        "Development",
+                        []
+                    ],
+                    [
+                        "Production",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decoder",
+                "comment": " Mode decoder\n",
+                "type": "Json.Decode.Decoder Engage.Mode.Mode"
+            },
+            {
+                "name": "fromBool",
+                "comment": " Convert a bool to a Mode\n",
+                "type": "Basics.Bool -> Engage.Mode.Mode"
+            },
+            {
+                "name": "isReactor",
+                "comment": " Check if the mode is reactor\n",
+                "type": "Engage.Mode.Mode -> Basics.Bool"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Engage.Namespace",
+        "comment": " Namespace\n\n@docs Namespace\n\n@docs engagecore, namespace, toString\n\n",
+        "unions": [
+            {
+                "name": "Namespace",
+                "comment": " A Namespace type\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "engagecore",
+                "comment": " The engagecore Namespace\n",
+                "type": "Engage.Namespace.Namespace"
+            },
+            {
+                "name": "namespace",
+                "comment": " Get a Namespace from a String\n",
+                "type": "String.String -> Engage.Namespace.Namespace"
+            },
+            {
+                "name": "toString",
+                "comment": " Get a String from a Namespace\n",
+                "type": "Engage.Namespace.Namespace -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Engage.Pattern.CardCollector",
+        "comment": " Pattern.CardCollector\n\n@docs Attribute\n\n@docs addButton, none, title, view\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Attribute",
+                "comment": " The Attribute type\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "Engage.Pattern.CardCollector.InternalAttribute msg -> Engage.Pattern.CardCollector.InternalAttribute msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "addButton",
+                "comment": " Get the addButton attribute\n",
+                "type": "String.String -> msg -> Engage.Pattern.CardCollector.Attribute msg"
+            },
+            {
+                "name": "none",
+                "comment": " Get the none attribute\n",
+                "type": "Engage.Pattern.CardCollector.Attribute msg"
+            },
+            {
+                "name": "title",
+                "comment": " Get the title attribute\n",
+                "type": "String.String -> Engage.Pattern.CardCollector.Attribute msg"
+            },
+            {
+                "name": "view",
+                "comment": " Get the view\n",
+                "type": "Engage.Namespace.Namespace -> List.List (Engage.Pattern.CardCollector.Attribute msg) -> List.List (Html.Html msg) -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Engage.RemoteData",
+        "comment": " RemoteData\n\n@docs RemoteData, WebData\n\n@docs downgrade, fail, isLoading, isSuccess, loading, map, mapError, toError, toMaybe, upgrade\n\n",
+        "unions": [
+            {
+                "name": "RemoteData",
+                "comment": " The RemoteData type\n",
+                "args": [
+                    "e",
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "NotAsked",
+                        []
+                    ],
+                    [
+                        "Failure",
+                        [
+                            "e"
+                        ]
+                    ],
+                    [
+                        "Loading",
+                        []
+                    ],
+                    [
+                        "Reloading",
+                        [
+                            "a"
+                        ]
+                    ],
+                    [
+                        "FailureWithData",
+                        [
+                            "e",
+                            "a"
+                        ]
+                    ],
+                    [
+                        "Success",
+                        [
+                            "a"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "WebData",
+                "comment": " The WebData type\n",
+                "args": [
+                    "a"
+                ],
+                "type": "Engage.RemoteData.RemoteData Engage.Http.Error a"
+            }
+        ],
+        "values": [
+            {
+                "name": "downgrade",
+                "comment": " Downgrade the RemoteData\n\n    Use this with caution, you lose some information with this\n\n",
+                "type": "Engage.RemoteData.RemoteData e a -> RemoteData.RemoteData e a"
+            },
+            {
+                "name": "fail",
+                "comment": " Fail a RemoteData\n",
+                "type": "e -> Engage.RemoteData.RemoteData e a -> Engage.RemoteData.RemoteData e a"
+            },
+            {
+                "name": "isLoading",
+                "comment": " Check if the RemoteData is loading\n",
+                "type": "Engage.RemoteData.RemoteData e a -> Basics.Bool"
+            },
+            {
+                "name": "isSuccess",
+                "comment": " Check if the RemoteData is a success\n",
+                "type": "Engage.RemoteData.RemoteData e a -> Basics.Bool"
+            },
+            {
+                "name": "loading",
+                "comment": " Get a loading RemoteData\n",
+                "type": "Engage.RemoteData.RemoteData e a -> Engage.RemoteData.RemoteData e a"
+            },
+            {
+                "name": "map",
+                "comment": " Map onto the RemoteData\n",
+                "type": "(a -> b) -> Engage.RemoteData.RemoteData e a -> Engage.RemoteData.RemoteData e b"
+            },
+            {
+                "name": "mapError",
+                "comment": " Map the error of RemoteData\n",
+                "type": "(e -> ee) -> Engage.RemoteData.RemoteData e a -> Engage.RemoteData.RemoteData ee a"
+            },
+            {
+                "name": "toError",
+                "comment": " Get the error of RemoteData\n",
+                "type": "Engage.RemoteData.RemoteData e a -> Maybe.Maybe e"
+            },
+            {
+                "name": "toMaybe",
+                "comment": " Get the Maybe value of RemoteData\n",
+                "type": "Engage.RemoteData.RemoteData e a -> Maybe.Maybe a"
+            },
+            {
+                "name": "upgrade",
+                "comment": " Upgrade the RemoteData\n",
+                "type": "RemoteData.RemoteData e a -> Engage.RemoteData.RemoteData e a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Engage.RemoteValidation",
+        "comment": " RemoteValidation\n\n@docs RemoteValidationErrors\n\n@docs httpErrorToValidationResult, isValid, isValidWebData, serverErrorDecoder, toValidationResult, webDataToError\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "RemoteValidationErrors",
+                "comment": " A RemoteValidationErrors type\n",
+                "args": [],
+                "type": "List.List String.String"
+            }
+        ],
+        "values": [
+            {
+                "name": "httpErrorToValidationResult",
+                "comment": " Convert a Http.Error to a Status\n",
+                "type": "Engage.Http.Error -> Engage.UI.Error.Status"
+            },
+            {
+                "name": "isValid",
+                "comment": " Check if RemoteValidationErrors is valid\n",
+                "type": "Engage.RemoteValidation.RemoteValidationErrors -> Basics.Bool"
+            },
+            {
+                "name": "isValidWebData",
+                "comment": " Check if WebData is valid\n",
+                "type": "Engage.RemoteData.WebData data -> Basics.Bool"
+            },
+            {
+                "name": "serverErrorDecoder",
+                "comment": " A ServerError decoder\n",
+                "type": "Json.Decode.Decoder Engage.RemoteValidation.ServerError"
+            },
+            {
+                "name": "toValidationResult",
+                "comment": " Convert a RemoteValidationErrors to a Status\n",
+                "type": "Engage.RemoteValidation.RemoteValidationErrors -> Engage.UI.Error.Status"
+            },
+            {
+                "name": "webDataToError",
+                "comment": " Convert a WebData to a Status\n",
+                "type": "Engage.RemoteData.WebData data -> Engage.UI.Error.Status"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Engage.Scroll",
+        "comment": " Engage.Scroll\n\nScrolling helper functions\n\n@docs scrollTo, scrollToWithConfig\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "scrollTo",
+                "comment": " Scroll to a element with the id\n",
+                "type": "String.String -> msg -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "scrollToWithConfig",
+                "comment": " Scroll to a element with the id with a scroll config\n",
+                "type": "SmoothScroll.Config -> String.String -> msg -> Platform.Cmd.Cmd msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Engage.SelectDict",
+        "comment": " SelectDict\n\n@docs SelectDict\n\n@docs getAfter, getBefore, fromDicts, insertAfter, insertBefore, keys, map, next, prev, segments, select, getSelected, selectedKey, selectedValue, size, toDict, toSelectList, updateSelected, values\n\n",
+        "unions": [
+            {
+                "name": "SelectDict",
+                "comment": " A SelectDict type\n",
+                "args": [
+                    "comparable",
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fromDicts",
+                "comment": " Convert a normal Dict into a SelectDict\n",
+                "type": "Dict.Dict comparable a -> ( comparable, a ) -> Dict.Dict comparable a -> Engage.SelectDict.SelectDict comparable a"
+            },
+            {
+                "name": "getAfter",
+                "comment": " Get the after Dict\n",
+                "type": "Engage.SelectDict.SelectDict comparable a -> Dict.Dict comparable a"
+            },
+            {
+                "name": "getBefore",
+                "comment": " Get the before Dict\n",
+                "type": "Engage.SelectDict.SelectDict comparable a -> Dict.Dict comparable a"
+            },
+            {
+                "name": "getSelected",
+                "comment": " Get the selected Dict\n",
+                "type": "Engage.SelectDict.SelectDict comparable a -> ( comparable, a )"
+            },
+            {
+                "name": "insertAfter",
+                "comment": " Insert into the after Dict\n",
+                "type": "comparable -> a -> Engage.SelectDict.SelectDict comparable a -> Engage.SelectDict.SelectDict comparable a"
+            },
+            {
+                "name": "insertBefore",
+                "comment": " Insert into the before Dict\n",
+                "type": "comparable -> a -> Engage.SelectDict.SelectDict comparable a -> Engage.SelectDict.SelectDict comparable a"
+            },
+            {
+                "name": "keys",
+                "comment": " Get the keys of the SelectDict\n",
+                "type": "Engage.SelectDict.SelectDict comparable a -> List.List comparable"
+            },
+            {
+                "name": "map",
+                "comment": " Map a SelectDict\n",
+                "type": "(comparable -> a -> b) -> Engage.SelectDict.SelectDict comparable a -> Engage.SelectDict.SelectDict comparable b"
+            },
+            {
+                "name": "next",
+                "comment": " Get the next SelectDict\n",
+                "type": "Engage.SelectDict.SelectDict comparable a -> Engage.SelectDict.SelectDict comparable a"
+            },
+            {
+                "name": "prev",
+                "comment": " Get the previous SelectDict\n",
+                "type": "Engage.SelectDict.SelectDict comparable a -> Engage.SelectDict.SelectDict comparable a"
+            },
+            {
+                "name": "segments",
+                "comment": " Get the segments of the SelectDict\n",
+                "type": "Engage.SelectDict.SelectDict comparable a -> ( Dict.Dict comparable a, ( comparable, a ), Dict.Dict comparable a )"
+            },
+            {
+                "name": "select",
+                "comment": " Select something from the SelectDict\n",
+                "type": "comparable -> Engage.SelectDict.SelectDict comparable a -> Engage.SelectDict.SelectDict comparable a"
+            },
+            {
+                "name": "selectedKey",
+                "comment": " Get the selected key\n",
+                "type": "Engage.SelectDict.SelectDict comparable a -> comparable"
+            },
+            {
+                "name": "selectedValue",
+                "comment": " Get the selected value\n",
+                "type": "Engage.SelectDict.SelectDict comparable a -> a"
+            },
+            {
+                "name": "size",
+                "comment": " Get the size of the SelectDict\n",
+                "type": "Engage.SelectDict.SelectDict comparable a -> Basics.Int"
+            },
+            {
+                "name": "toDict",
+                "comment": " Get a normal Dict from a SelectDict\n",
+                "type": "Engage.SelectDict.SelectDict comparable a -> Dict.Dict comparable a"
+            },
+            {
+                "name": "toSelectList",
+                "comment": " Get a SelectList from a SelectDict\n",
+                "type": "Engage.SelectDict.SelectDict comparable a -> SelectList.SelectList a"
+            },
+            {
+                "name": "updateSelected",
+                "comment": " Update the selected SelectDict\n",
+                "type": "(comparable -> a -> a) -> Engage.SelectDict.SelectDict comparable a -> Engage.SelectDict.SelectDict comparable a"
+            },
+            {
+                "name": "values",
+                "comment": " Get the values of the SelectDict\n",
+                "type": "Engage.SelectDict.SelectDict comparable a -> List.List a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Engage.String",
+        "comment": " String helpers\n\n@docs append\n\n@docs comma\n\n@docs space\n\n@docs toSafeCssClassName\n\n@docs toSafeId\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "append",
+                "comment": " Append two strings with a delimeter\n",
+                "type": "String.String -> String.String -> String.String -> String.String"
+            },
+            {
+                "name": "comma",
+                "comment": " Add a comma between two strings\n",
+                "type": "String.String -> String.String -> String.String"
+            },
+            {
+                "name": "space",
+                "comment": " Add a space between two strings\n",
+                "type": "String.String -> String.String -> String.String"
+            },
+            {
+                "name": "toSafeCssClassName",
+                "comment": " Convert to a safe CSS class name\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "toSafeId",
+                "comment": " Convert to a safe ID\n",
+                "type": "String.String -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Engage.Styles.Class",
+        "comment": " Styles.Class\n\n@docs Class, Importance, MessageType, Size, Visibility\n\n@docs getSizeString\n\n",
+        "unions": [
+            {
+                "name": "Class",
+                "comment": " The Class type\n",
+                "args": [],
+                "cases": [
+                    [
+                        "FormControl",
+                        [
+                            "Engage.Styles.Class.Size"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Importance",
+                "comment": " The Importance type\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Standard",
+                        []
+                    ],
+                    [
+                        "Primary",
+                        []
+                    ],
+                    [
+                        "Divert",
+                        []
+                    ],
+                    [
+                        "Negative",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "MessageType",
+                "comment": " The MessageType type\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Confirmation",
+                        []
+                    ],
+                    [
+                        "Error",
+                        []
+                    ],
+                    [
+                        "Warning",
+                        []
+                    ],
+                    [
+                        "Info",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Size",
+                "comment": " The Size type\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Small",
+                        []
+                    ],
+                    [
+                        "Large",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Visibility",
+                "comment": " The Visibility type\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Visible",
+                        []
+                    ],
+                    [
+                        "Hidden",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "getSizeString",
+                "comment": " The String value of a Size\n",
+                "type": "Engage.Styles.Class.Size -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Engage.Svg.CssHelpers",
+        "comment": " Svg.CssHelpers\n\n@docs withNamespace\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "withNamespace",
+                "comment": " Get a class function that appends a namespace\n",
+                "type": "String.String -> List.List String.String -> Svg.Attribute msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Engage.Theme",
+        "comment": " Basic Theme types\n\n\n# Types\n\n@docs ColorPalette, Decoration, DecorationOnly, LabelTypography, LabelTypographyOnly, Palette, Spacing, SpacingData, Style, Theme, ThemeData, Typography, TypographyOnly, WithLabel, WithLabelOnly\n\n\n# Helpers\n\n@docs fromString, toDropdownItem, toString\n\n",
+        "unions": [
+            {
+                "name": "Theme",
+                "comment": " A theme\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Light",
+                        []
+                    ],
+                    [
+                        "Dark",
+                        []
+                    ],
+                    [
+                        "ISMA",
+                        []
+                    ],
+                    [
+                        "None",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "ColorPalette",
+                "comment": " A color palette\n",
+                "args": [],
+                "type": "{ base : Engage.Unit.Color.Color, contrast : Engage.Unit.Color.Color, tertiary : Engage.Unit.Color.Color }"
+            },
+            {
+                "name": "Decoration",
+                "comment": " A decoration type\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ a | border : Engage.Unit.Border.Border }"
+            },
+            {
+                "name": "DecorationOnly",
+                "comment": " A decoration only type\n",
+                "args": [],
+                "type": "Engage.Theme.Decoration {}"
+            },
+            {
+                "name": "LabelTypography",
+                "comment": " A label typography type\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ a | labelFontFamily : Engage.Unit.FontFamily.FontFamily, labelFontSize : { base : Engage.Unit.Size.Size, small : Engage.Unit.Relative.Relative } }"
+            },
+            {
+                "name": "LabelTypographyOnly",
+                "comment": " A label typography only type\n",
+                "args": [],
+                "type": "Engage.Theme.LabelTypography {}"
+            },
+            {
+                "name": "Palette",
+                "comment": " A theme palatte\n",
+                "args": [],
+                "type": "{ buttonPrimary : Engage.Theme.ColorPalette, buttonPrimaryHover : Engage.Theme.ColorPalette, buttonStandard : Engage.Theme.ColorPalette, buttonStandardHover : Engage.Theme.ColorPalette, buttonDivert : Engage.Theme.ColorPalette, buttonDivertHover : Engage.Theme.ColorPalette, input : Engage.Theme.ColorPalette, dropdown : Engage.Theme.ColorPalette, error : Engage.Theme.ColorPalette, warning : Engage.Theme.ColorPalette, confirmation : Engage.Theme.ColorPalette, info : Engage.Theme.ColorPalette, wizardHeader : Engage.Theme.ColorPalette }"
+            },
+            {
+                "name": "Spacing",
+                "comment": " A spacing type\n",
+                "args": [],
+                "type": "Engage.Theme.ThemeData Engage.Theme.SpacingDataOnly (Engage.Theme.SpacingData Engage.Theme.WithLabelOnly) (Engage.Theme.SpacingData Engage.Theme.WithLabelOnly) Engage.Theme.SpacingDataOnly Engage.Theme.SpacingDataOnly"
+            },
+            {
+                "name": "SpacingData",
+                "comment": " A spacing data type\n",
+                "args": [
+                    "modifier"
+                ],
+                "type": "{ modifier | padding : { base : Engage.Unit.Padding.Padding, small : Engage.Unit.Relative.Relative }, margin : { base : Engage.Unit.Margin.Margin, small : Engage.Unit.Relative.Relative } }"
+            },
+            {
+                "name": "Style",
+                "comment": " A style type\n",
+                "args": [],
+                "type": "Engage.Theme.ThemeData (Engage.Theme.Typography (Engage.Theme.LabelTypography Engage.Theme.DecorationOnly)) (Engage.Theme.Typography (Engage.Theme.LabelTypography Engage.Theme.DecorationOnly)) (Engage.Theme.Typography (Engage.Theme.LabelTypography Engage.Theme.DecorationOnly)) (Engage.Theme.Typography Engage.Theme.DecorationOnly) (Engage.Theme.Typography Engage.Theme.DecorationOnly)"
+            },
+            {
+                "name": "ThemeData",
+                "comment": " A theme data type\n",
+                "args": [
+                    "button",
+                    "input",
+                    "dropdown",
+                    "wizard",
+                    "wizardHeader"
+                ],
+                "type": "{ button : button, input : input, dropdown : dropdown, wizard : wizard, wizardHeader : wizardHeader }"
+            },
+            {
+                "name": "Typography",
+                "comment": " A typography type\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ a | fontFamily : Engage.Unit.FontFamily.FontFamily, fontSize : { base : Engage.Unit.Size.Size, small : Engage.Unit.Relative.Relative } }"
+            },
+            {
+                "name": "TypographyOnly",
+                "comment": " A typography only type\n",
+                "args": [],
+                "type": "Engage.Theme.Typography {}"
+            },
+            {
+                "name": "WithLabel",
+                "comment": " A with label type\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ a | labelMargin : { base : Engage.Unit.Margin.Margin, small : Engage.Unit.Relative.Relative }, labelPadding : { base : Engage.Unit.Padding.Padding, small : Engage.Unit.Relative.Relative } }"
+            },
+            {
+                "name": "WithLabelOnly",
+                "comment": " A with label only type\n",
+                "args": [],
+                "type": "Engage.Theme.WithLabel {}"
+            }
+        ],
+        "values": [
+            {
+                "name": "fromString",
+                "comment": " Get a theme from a string\n",
+                "type": "Engage.Theme.Theme -> String.String -> Engage.Theme.Theme"
+            },
+            {
+                "name": "toDropdownItem",
+                "comment": " Get a dropdown item for the theme\n",
+                "type": "Engage.Theme.Theme -> Dropdown.Item"
+            },
+            {
+                "name": "toString",
+                "comment": " Get the string value of a theme\n",
+                "type": "Engage.Theme.Theme -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Engage.ThemeHelper",
+        "comment": " ThemeHelper\n\n@docs backgroundColor\n\n@docs border3, borderBottom3, borderLeft3, borderRight3, borderTop3\n\n@docs color, fill, fontFamily, fontSize\n\n@docs margin, messagePalette, padding, palette, spacing\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "backgroundColor",
+                "comment": " Get the background color from the theme\n",
+                "type": "Engage.Unit.Color.Color -> Css.Style"
+            },
+            {
+                "name": "border3",
+                "comment": " Get a Css border 3\n",
+                "type": "Css.Length compatibleA unitsA -> Css.BorderStyle compatibleB -> Engage.Unit.Color.Color -> Css.Style"
+            },
+            {
+                "name": "borderBottom3",
+                "comment": " Get a Css border bottom 3\n",
+                "type": "Css.Length compatibleA unitsA -> Css.BorderStyle compatibleB -> Engage.Unit.Color.Color -> Css.Style"
+            },
+            {
+                "name": "borderLeft3",
+                "comment": " Get a Css border left 3\n",
+                "type": "Css.Length compatibleA unitsA -> Css.BorderStyle compatibleB -> Engage.Unit.Color.Color -> Css.Style"
+            },
+            {
+                "name": "borderRight3",
+                "comment": " Get a Css border right 3\n",
+                "type": "Css.Length compatibleA unitsA -> Css.BorderStyle compatibleB -> Engage.Unit.Color.Color -> Css.Style"
+            },
+            {
+                "name": "borderTop3",
+                "comment": " Get a Css border top 3\n",
+                "type": "Css.Length compatibleA unitsA -> Css.BorderStyle compatibleB -> Engage.Unit.Color.Color -> Css.Style"
+            },
+            {
+                "name": "color",
+                "comment": " Get the color from the theme\n",
+                "type": "Engage.Unit.Color.Color -> Css.Style"
+            },
+            {
+                "name": "fill",
+                "comment": " Get the fill from the theme\n",
+                "type": "Engage.Unit.Color.Color -> Css.Style"
+            },
+            {
+                "name": "fontFamily",
+                "comment": " Get the font family from the theme\n",
+                "type": "Engage.Theme.Theme -> (Engage.Theme.Style -> Engage.Unit.FontFamily.FontFamily) -> Css.Style"
+            },
+            {
+                "name": "fontSize",
+                "comment": " Get the font size from the theme\n",
+                "type": "Engage.Theme.Theme -> (Engage.Theme.Style -> { base : Engage.Unit.Size.Size, small : Engage.Unit.Relative.Relative }) -> { base : Css.Style, small : Css.Style, baseSize : String.String, smallSize : String.String }"
+            },
+            {
+                "name": "margin",
+                "comment": " Get the margin from the theme\n",
+                "type": "Engage.Theme.Theme -> (Engage.Theme.Spacing -> { base : Engage.Unit.Margin.Margin, small : Engage.Unit.Relative.Relative }) -> { base : Css.Style, small : Css.Style }"
+            },
+            {
+                "name": "messagePalette",
+                "comment": " Get the ColorPalette from the theme\n",
+                "type": "Engage.Styles.Class.MessageType -> Engage.Theme.Theme -> Engage.Theme.ColorPalette"
+            },
+            {
+                "name": "padding",
+                "comment": " Get the padding from the theme\n",
+                "type": "Engage.Theme.Theme -> (Engage.Theme.Spacing -> { base : Engage.Unit.Padding.Padding, small : Engage.Unit.Relative.Relative }) -> { base : Css.Style, small : Css.Style }"
+            },
+            {
+                "name": "palette",
+                "comment": " Get the Palette from the theme\n",
+                "type": "Engage.Theme.Theme -> Engage.Theme.Palette"
+            },
+            {
+                "name": "spacing",
+                "comment": " Get the Spacing from the theme\n",
+                "type": "Engage.Theme.Theme -> Engage.Theme.Spacing"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Engage.UI.Attribute",
+        "comment": " UI.Attribute\n\n@docs process\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "process",
+                "comment": " Process an attribute\n",
+                "type": "config -> List.List (config -> config) -> config"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Engage.UI.Button",
+        "comment": " UI.Button\n\n@docs custom, divert, divertSmall, negative, negativeSmall, primary, primarySmall, standard, standardSmall\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "custom",
+                "comment": " Get a custom Button\n",
+                "type": "{ namespace : Engage.Namespace.Namespace, class : String.String, attributes : List.List (Html.Attribute msg), contents : List.List (Html.Html msg) } -> Html.Html msg"
+            },
+            {
+                "name": "divert",
+                "comment": " Get a divert Button\n",
+                "type": "{ namespace : Engage.Namespace.Namespace, attributes : List.List (Html.Attribute msg), text : String.String } -> Html.Html msg"
+            },
+            {
+                "name": "divertSmall",
+                "comment": " Get a divert small Button\n",
+                "type": "{ namespace : Engage.Namespace.Namespace, attributes : List.List (Html.Attribute msg), text : String.String } -> Html.Html msg"
+            },
+            {
+                "name": "negative",
+                "comment": " Get a negative Button\n",
+                "type": "{ namespace : Engage.Namespace.Namespace, attributes : List.List (Html.Attribute msg), text : String.String } -> Html.Html msg"
+            },
+            {
+                "name": "negativeSmall",
+                "comment": " Get a negative small Button\n",
+                "type": "{ namespace : Engage.Namespace.Namespace, attributes : List.List (Html.Attribute msg), text : String.String } -> Html.Html msg"
+            },
+            {
+                "name": "primary",
+                "comment": " Get a primary Button\n",
+                "type": "{ namespace : Engage.Namespace.Namespace, attributes : List.List (Html.Attribute msg), text : String.String } -> Html.Html msg"
+            },
+            {
+                "name": "primarySmall",
+                "comment": " Get a primary small Button\n",
+                "type": "{ namespace : Engage.Namespace.Namespace, attributes : List.List (Html.Attribute msg), text : String.String } -> Html.Html msg"
+            },
+            {
+                "name": "standard",
+                "comment": " Get a standard Button\n",
+                "type": "{ namespace : Engage.Namespace.Namespace, attributes : List.List (Html.Attribute msg), text : String.String } -> Html.Html msg"
+            },
+            {
+                "name": "standardSmall",
+                "comment": " Get a standard small Button\n",
+                "type": "{ namespace : Engage.Namespace.Namespace, attributes : List.List (Html.Attribute msg), text : String.String } -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Engage.UI.Card",
+        "comment": " UI.Card\n\n@docs attributes, card, successCard, edit, none, subtitle, title\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "attributes",
+                "comment": " Get the attributes attribute\n",
+                "type": "List.List (Html.Attribute msg) -> Engage.UI.Card.Attribute msg"
+            },
+            {
+                "name": "card",
+                "comment": " Get the card view\n",
+                "type": "Engage.Namespace.Namespace -> List.List (Engage.UI.Card.Attribute msg) -> List.List (Html.Html msg) -> Html.Html msg"
+            },
+            {
+                "name": "edit",
+                "comment": " Get the edit attribute\n",
+                "type": "String.String -> msg -> Engage.UI.Card.Attribute msg"
+            },
+            {
+                "name": "none",
+                "comment": " Get the none attribute\n",
+                "type": "Engage.UI.Card.Attribute msg"
+            },
+            {
+                "name": "subtitle",
+                "comment": " Get the subtitle attribute\n",
+                "type": "String.String -> Engage.UI.Card.Attribute msg"
+            },
+            {
+                "name": "successCard",
+                "comment": " Get the success card view\n",
+                "type": "Engage.Namespace.Namespace -> Html.Html msg -> List.List (Engage.UI.Card.Attribute msg) -> List.List (Html.Html msg) -> Html.Html msg"
+            },
+            {
+                "name": "title",
+                "comment": " Get the title attribute\n",
+                "type": "String.String -> Engage.UI.Card.Attribute msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Engage.UI.Dialog",
+        "comment": " UI.Dialog\n\n@docs Attribute, State\n\n@docs cancelText, confirm, hide, initialState, okText, onCancel, onOk, show\n\n",
+        "unions": [
+            {
+                "name": "State",
+                "comment": " The State type\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Attribute",
+                "comment": " The Attribute type\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "Engage.UI.Dialog.InternalAttribute msg -> Engage.UI.Dialog.InternalAttribute msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "cancelText",
+                "comment": " Get the cancelText message\n",
+                "type": "String.String -> Engage.UI.Dialog.Attribute msg"
+            },
+            {
+                "name": "confirm",
+                "comment": " Get the confirm view\n",
+                "type": "Engage.Namespace.Namespace -> Engage.UI.Dialog.State -> List.List (Engage.UI.Dialog.Attribute msg) -> List.List (Html.Html msg) -> Html.Html msg"
+            },
+            {
+                "name": "hide",
+                "comment": " Hide the dialog\n",
+                "type": "Engage.UI.Dialog.State -> Engage.UI.Dialog.State"
+            },
+            {
+                "name": "initialState",
+                "comment": " Get the initial State\n",
+                "type": "Engage.UI.Dialog.State"
+            },
+            {
+                "name": "okText",
+                "comment": " Get the okText message\n",
+                "type": "String.String -> Engage.UI.Dialog.Attribute msg"
+            },
+            {
+                "name": "onCancel",
+                "comment": " Get the onCancel message\n",
+                "type": "(Engage.UI.Dialog.State -> msg) -> Engage.UI.Dialog.Attribute msg"
+            },
+            {
+                "name": "onOk",
+                "comment": " Get the onOk message\n",
+                "type": "(Engage.UI.Dialog.State -> msg) -> Engage.UI.Dialog.Attribute msg"
+            },
+            {
+                "name": "show",
+                "comment": " Show the dialog\n",
+                "type": "Engage.UI.Dialog.State -> ( Engage.UI.Dialog.State, Task.Task Browser.Dom.Error () )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Engage.UI.Dropdown",
+        "comment": " UI.Dropdown\n\n@docs Item, State\n\n@docs dropdown, dropdownWithAttributes, initialState, reset\n\n",
+        "unions": [
+            {
+                "name": "State",
+                "comment": " The State type\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Item",
+                "comment": " The Item type\n",
+                "args": [],
+                "type": "{ value : String.String, text : String.String, enabled : Basics.Bool }"
+            }
+        ],
+        "values": [
+            {
+                "name": "dropdown",
+                "comment": " Get the dropdown view\n",
+                "type": "{ id : String.String, labelText : String.String, requiredText : Maybe.Maybe String.String, items : List.List Engage.UI.Dropdown.Item, onChange : { onlyStateChange : Basics.Bool } -> Engage.UI.Dropdown.State -> Maybe.Maybe String.String -> msg, status : Engage.UI.Error.Status, namespace : Engage.Namespace.Namespace, withEmptyItem : Basics.Bool } -> Engage.UI.Dropdown.State -> Maybe.Maybe String.String -> Html.Html msg"
+            },
+            {
+                "name": "dropdownWithAttributes",
+                "comment": " Get the dropdown with attributes view\n",
+                "type": "{ id : String.String, labelText : String.String, requiredText : Maybe.Maybe String.String, items : List.List Engage.UI.Dropdown.Item, onChange : { onlyStateChange : Basics.Bool } -> Engage.UI.Dropdown.State -> Maybe.Maybe String.String -> msg, status : Engage.UI.Error.Status, namespace : Engage.Namespace.Namespace, withEmptyItem : Basics.Bool } -> List.List (Html.Attribute msg) -> Engage.UI.Dropdown.State -> Maybe.Maybe String.String -> Html.Html msg"
+            },
+            {
+                "name": "initialState",
+                "comment": " Get the initial State\n",
+                "type": "Engage.UI.Dropdown.State"
+            },
+            {
+                "name": "reset",
+                "comment": " Reset the State\n",
+                "type": "Engage.UI.Dropdown.State -> Engage.UI.Dropdown.State"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Engage.UI.Error",
+        "comment": " UI.Error\n\n@docs Status\n\n@docs error, errorLocalized, inlineError, isError, isNone, localizeStatus, merge\n\n",
+        "unions": [
+            {
+                "name": "Status",
+                "comment": " The Status type\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Unknown",
+                        []
+                    ],
+                    [
+                        "None",
+                        [
+                            "{ infos : List.List String.String }"
+                        ]
+                    ],
+                    [
+                        "Error",
+                        [
+                            "{ reasons : List.List String.String }"
+                        ]
+                    ],
+                    [
+                        "Ok",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "error",
+                "comment": " Get the error view\n",
+                "type": "{ namespace : Engage.Namespace.Namespace } -> Engage.UI.Error.Status -> Html.Html msg"
+            },
+            {
+                "name": "errorLocalized",
+                "comment": " Get the error localized view\n",
+                "type": "{ namespace : Engage.Namespace.Namespace, localize : String.String -> String.String } -> Engage.UI.Error.Status -> Html.Html msg"
+            },
+            {
+                "name": "inlineError",
+                "comment": " Get the inline error view\n",
+                "type": "{ namespace : Engage.Namespace.Namespace, status : Engage.UI.Error.Status, onChange : Engage.UI.Message.State -> msg } -> Engage.UI.Message.State -> Html.Html msg"
+            },
+            {
+                "name": "isError",
+                "comment": " Check if the Status is Error\n",
+                "type": "Engage.UI.Error.Status -> Maybe.Maybe Basics.Bool"
+            },
+            {
+                "name": "isNone",
+                "comment": " Check if the Status is None\n",
+                "type": "Engage.UI.Error.Status -> Maybe.Maybe Basics.Bool"
+            },
+            {
+                "name": "localizeStatus",
+                "comment": " Localize the Status\n",
+                "type": "(String.String -> String.String) -> Engage.UI.Error.Status -> Engage.UI.Error.Status"
+            },
+            {
+                "name": "merge",
+                "comment": " Merge two statuses\n",
+                "type": "Engage.UI.Error.Status -> Engage.UI.Error.Status -> Engage.UI.Error.Status"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Engage.UI.FormControl",
+        "comment": " UI.FormControl\n\n@docs formControl, groupFormControl, labelWrapped\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "formControl",
+                "comment": " Get the form control view\n",
+                "type": "Engage.UI.FormControl.Args a msg -> Engage.UI.Message.State -> Html.Html msg -> Html.Html msg"
+            },
+            {
+                "name": "groupFormControl",
+                "comment": " Get the group form control view\n",
+                "type": "Engage.UI.FormControl.Args a msg -> Engage.UI.Message.State -> Html.Html msg -> Html.Html msg"
+            },
+            {
+                "name": "labelWrapped",
+                "comment": " Get the label wrapped view\n",
+                "type": "Engage.UI.FormControl.Args a msg -> Engage.UI.Message.State -> Html.Html msg -> Html.Html msg -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Engage.UI.Info",
+        "comment": " UI.Info\n\n@docs bool, email, fax, group, info, getLabel, mobilePhone, multiple, phone\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "bool",
+                "comment": " Get the bool view\n",
+                "type": "Engage.Namespace.Namespace -> Engage.UI.Info.Label -> Basics.Bool -> Html.Html msg"
+            },
+            {
+                "name": "email",
+                "comment": " Get the email view\n",
+                "type": "Engage.Namespace.Namespace -> Engage.UI.Info.Label -> String.String -> Html.Html msg"
+            },
+            {
+                "name": "fax",
+                "comment": " Get the fax view\n",
+                "type": "Engage.Namespace.Namespace -> Engage.UI.Info.Label -> String.String -> Html.Html msg"
+            },
+            {
+                "name": "getLabel",
+                "comment": " Get a Label from a String\n",
+                "type": "String.String -> Engage.UI.Info.Label"
+            },
+            {
+                "name": "group",
+                "comment": " Get the group view\n",
+                "type": "Engage.Namespace.Namespace -> List.List (Html.Html msg) -> Html.Html msg"
+            },
+            {
+                "name": "info",
+                "comment": " Get the info view\n",
+                "type": "Engage.Namespace.Namespace -> Engage.UI.Info.Label -> String.String -> Html.Html msg"
+            },
+            {
+                "name": "mobilePhone",
+                "comment": " Get the mobilePhone view\n",
+                "type": "Engage.Namespace.Namespace -> Engage.UI.Info.Label -> String.String -> Html.Html msg"
+            },
+            {
+                "name": "multiple",
+                "comment": " Get the mutlitple view\n",
+                "type": "Engage.Namespace.Namespace -> Engage.UI.Info.Label -> List.List (Html.Html msg) -> Html.Html msg"
+            },
+            {
+                "name": "phone",
+                "comment": " Get the phone view\n",
+                "type": "Engage.Namespace.Namespace -> Engage.UI.Info.Label -> String.String -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Engage.UI.Input",
+        "comment": " UI.Input\n\n\n## Text\n\n@docs text, textArea, textWithAttributes, textWithSize\n\n\n## Password\n\n@docs password, passwordWithAttributes\n\n\n## Numbers\n\n@docs number, smallNumber, bigNumber\n\n\n## Checkboxes\n\n@docs checkBoxList, checkbox, checkboxWithAttributes\n\n\n## File\n\n@docs file, FileInfo\n\n\n## Phone\n\n@docs phone, PhoneState, initialPhoneState\n\n\n## Misc\n\n@docs radioList, reset, date\n\n\n## State\n\n@docs State, initialState\n\n",
+        "unions": [
+            {
+                "name": "State",
+                "comment": " A State type\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "FileInfo",
+                "comment": " The FileInfo type\n",
+                "args": [],
+                "type": "{ name : String.String, fileType : String.String, progressPercentage : Maybe.Maybe Basics.Float }"
+            },
+            {
+                "name": "PhoneState",
+                "comment": " A PhoneState type\n",
+                "args": [],
+                "type": "{ message : Engage.UI.Message.State, phoneInput : IntlPhoneInput.State }"
+            }
+        ],
+        "values": [
+            {
+                "name": "bigNumber",
+                "comment": " Get a big number view\n",
+                "type": "{ namespace : Engage.Namespace.Namespace, id : String.String, labelText : String.String, helpText : String.String, onChange : Engage.UI.Input.State -> String.String -> msg, maxLength : Maybe.Maybe Basics.Int, status : Engage.UI.Error.Status, requiredText : Maybe.Maybe String.String } -> Engage.UI.Input.State -> String.String -> Html.Html msg"
+            },
+            {
+                "name": "checkBoxList",
+                "comment": " Get a checkbox list view\n",
+                "type": "{ namespace : Engage.Namespace.Namespace, id : String.String, labelText : String.String, helpText : String.String, onChange : { onlyStateChange : Basics.Bool } -> Engage.UI.Input.State -> Set.Set String.String -> msg, status : Engage.UI.Error.Status, items : List.List { id : String.String, content : Html.Html msg }, requiredText : Maybe.Maybe String.String } -> Engage.UI.Input.State -> Set.Set String.String -> Html.Html msg"
+            },
+            {
+                "name": "checkbox",
+                "comment": " Get a checkbox view\n",
+                "type": "{ namespace : Engage.Namespace.Namespace, labelText : String.String, helpText : String.String, onCheck : { onlyStateChange : Basics.Bool } -> Engage.UI.Input.State -> Basics.Bool -> msg, status : Engage.UI.Error.Status, state : Engage.UI.Input.State, requiredText : Maybe.Maybe String.String } -> Basics.Bool -> Html.Html msg"
+            },
+            {
+                "name": "checkboxWithAttributes",
+                "comment": " Get a checkbox with attributes view\n",
+                "type": "{ namespace : Engage.Namespace.Namespace, labelText : String.String, helpText : String.String, onCheck : { onlyStateChange : Basics.Bool } -> Engage.UI.Input.State -> Basics.Bool -> msg, status : Engage.UI.Error.Status, state : Engage.UI.Input.State, requiredText : Maybe.Maybe String.String } -> List.List (Html.Attribute msg) -> Basics.Bool -> Html.Html msg"
+            },
+            {
+                "name": "date",
+                "comment": " Get the date input view\n",
+                "type": "{ namespace : Engage.Namespace.Namespace, id : String.String, labelText : String.String, helpText : String.String, onChange : Engage.UI.Input.State -> Maybe.Maybe Date.Date -> msg, onFocusChange : Maybe.Maybe (Basics.Bool -> msg), status : Engage.UI.Error.Status, requiredText : Maybe.Maybe String.String } -> Engage.UI.Input.State -> Maybe.Maybe Date.Date -> Html.Html msg"
+            },
+            {
+                "name": "file",
+                "comment": " Get a file view\n",
+                "type": "{ namespace : Engage.Namespace.Namespace, id : String.String, labelText : String.String, browseText : String.String, helpText : String.String, onChange : { onlyStateChange : Basics.Bool } -> Engage.UI.Input.State -> Engage.UI.Input.FileInfo -> msg, status : Engage.UI.Error.Status, requiredText : Maybe.Maybe String.String } -> Engage.UI.Input.State -> Engage.UI.Input.FileInfo -> Html.Html msg"
+            },
+            {
+                "name": "initialPhoneState",
+                "comment": " Get the initial PhoneState\n",
+                "type": "Engage.UI.Input.PhoneState"
+            },
+            {
+                "name": "initialState",
+                "comment": " Get the initial State\n",
+                "type": "Engage.UI.Input.State"
+            },
+            {
+                "name": "number",
+                "comment": " Get a number input\n",
+                "type": "{ namespace : Engage.Namespace.Namespace, id : String.String, labelText : String.String, helpText : String.String, onChange : { onlyStateChange : Basics.Bool } -> Engage.UI.Input.State -> Maybe.Maybe Basics.Int -> msg, status : Engage.UI.Error.Status, maxValue : Maybe.Maybe Basics.Int, minValue : Maybe.Maybe Basics.Int, requiredText : Maybe.Maybe String.String } -> Engage.UI.Input.State -> Maybe.Maybe Basics.Int -> Html.Html msg"
+            },
+            {
+                "name": "password",
+                "comment": " Get a password input\n",
+                "type": "{ namespace : Engage.Namespace.Namespace, id : String.String, labelText : String.String, helpText : String.String, onChange : { onlyStateChange : Basics.Bool } -> Engage.UI.Input.State -> String.String -> msg, status : Engage.UI.Error.Status, requiredText : Maybe.Maybe String.String, strengthMeter : Maybe.Maybe (List.List String.String), hasFocus : Maybe.Maybe (Basics.Bool -> msg) } -> Engage.UI.Input.State -> String.String -> Html.Html msg"
+            },
+            {
+                "name": "passwordWithAttributes",
+                "comment": " Get a password with attributes input\n",
+                "type": "{ namespace : Engage.Namespace.Namespace, id : String.String, labelText : String.String, helpText : String.String, onChange : { onlyStateChange : Basics.Bool } -> Engage.UI.Input.State -> String.String -> msg, status : Engage.UI.Error.Status, requiredText : Maybe.Maybe String.String, strengthMeter : Maybe.Maybe (List.List String.String), hasFocus : Maybe.Maybe (Basics.Bool -> msg) } -> List.List (Html.Attribute msg) -> Engage.UI.Input.State -> String.String -> Html.Html msg"
+            },
+            {
+                "name": "phone",
+                "comment": " Get the phone view\n",
+                "type": "{ namespace : Engage.Namespace.Namespace, id : String.String, labelText : String.String, helpText : String.String, onChange : { onlyStateChange : Basics.Bool } -> Engage.UI.Input.PhoneState -> Engage.Entity.PhoneNumber.PhoneNumber -> Platform.Cmd.Cmd msg -> msg, status : Engage.UI.Error.Status, requiredText : Maybe.Maybe String.String } -> Engage.UI.Input.PhoneState -> Engage.Entity.PhoneNumber.PhoneNumber -> Html.Html msg"
+            },
+            {
+                "name": "radioList",
+                "comment": " Get a radio list view\n",
+                "type": "{ namespace : Engage.Namespace.Namespace, id : String.String, labelText : String.String, helpText : String.String, onChange : { onlyStateChange : Basics.Bool } -> Engage.UI.Input.State -> String.String -> msg, status : Engage.UI.Error.Status, items : List.List { id : String.String, content : Html.Html msg }, requiredText : Maybe.Maybe String.String } -> Engage.UI.Input.State -> String.String -> Html.Html msg"
+            },
+            {
+                "name": "reset",
+                "comment": " Reset the State\n",
+                "type": "Engage.UI.Input.State"
+            },
+            {
+                "name": "smallNumber",
+                "comment": " Get a small number view\n",
+                "type": "{ namespace : Engage.Namespace.Namespace, id : String.String, labelText : String.String, helpText : String.String, onChange : { onlyStateChange : Basics.Bool } -> Engage.UI.Input.State -> Maybe.Maybe Basics.Int -> msg, status : Engage.UI.Error.Status, maxValue : Maybe.Maybe Basics.Int, minValue : Maybe.Maybe Basics.Int, requiredText : Maybe.Maybe String.String } -> Engage.UI.Input.State -> Maybe.Maybe Basics.Int -> Html.Html msg"
+            },
+            {
+                "name": "text",
+                "comment": " Get a text view\n",
+                "type": "{ namespace : Engage.Namespace.Namespace, id : String.String, labelText : String.String, helpText : String.String, onChange : { onlyStateChange : Basics.Bool } -> Engage.UI.Input.State -> String.String -> msg, status : Engage.UI.Error.Status, requiredText : Maybe.Maybe String.String } -> Engage.UI.Input.State -> String.String -> Html.Html msg"
+            },
+            {
+                "name": "textArea",
+                "comment": " Get a text area view\n",
+                "type": "{ namespace : Engage.Namespace.Namespace, id : String.String, helpText : String.String, labelText : String.String, onChange : { onlyStateChange : Basics.Bool } -> Engage.UI.Input.State -> String.String -> msg, status : Engage.UI.Error.Status, requiredText : Maybe.Maybe String.String } -> Engage.UI.Input.State -> String.String -> Html.Html msg"
+            },
+            {
+                "name": "textWithAttributes",
+                "comment": " Get a text with attributes view\n",
+                "type": "{ namespace : Engage.Namespace.Namespace, id : String.String, labelText : String.String, helpText : String.String, onChange : { onlyStateChange : Basics.Bool } -> Engage.UI.Input.State -> String.String -> msg, status : Engage.UI.Error.Status, requiredText : Maybe.Maybe String.String } -> List.List (Html.Attribute msg) -> Engage.UI.Input.State -> String.String -> Html.Html msg"
+            },
+            {
+                "name": "textWithSize",
+                "comment": " Get a text with size view\n",
+                "type": "{ namespace : Engage.Namespace.Namespace, id : String.String, labelText : String.String, helpText : String.String, onChange : { onlyStateChange : Basics.Bool } -> Engage.UI.Input.State -> String.String -> msg, status : Engage.UI.Error.Status, size : Engage.Styles.Class.Size, requiredText : Maybe.Maybe String.String } -> Engage.UI.Input.State -> String.String -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Engage.UI.Loading",
+        "comment": " UI.Loading\n\n@docs LoadingIcon\n\n@docs loading, loadingOverlay, progress\n\n",
+        "unions": [
+            {
+                "name": "LoadingIcon",
+                "comment": " The LoadingIcon type\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Ring",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "loading",
+                "comment": " Get the loading view\n",
+                "type": "{ a | namespace : Engage.Namespace.Namespace } -> Engage.UI.Loading.LoadingIcon -> String.String -> List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "loadingOverlay",
+                "comment": " Get the loading overlay view\n",
+                "type": "{ a | namespace : Engage.Namespace.Namespace } -> Engage.UI.Loading.LoadingIcon -> String.String -> List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "progress",
+                "comment": " Get the progress view\n",
+                "type": "{ a | namespace : Engage.Namespace.Namespace } -> { max : Basics.Float, value : Basics.Float } -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Engage.UI.Message",
+        "comment": " UI.Message\n\n@docs State\n\n@docs controlMessage, initialState, inlineMessage, message\n\n",
+        "unions": [
+            {
+                "name": "State",
+                "comment": " The State type\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "controlMessage",
+                "comment": " Get a control message\n",
+                "type": "Engage.UI.Message.Config msg -> Engage.UI.Message.State -> Html.Html msg -> Html.Html msg"
+            },
+            {
+                "name": "initialState",
+                "comment": " Get the initial State\n",
+                "type": "Engage.UI.Message.State"
+            },
+            {
+                "name": "inlineMessage",
+                "comment": " Get an inline message\n",
+                "type": "{ namespace : Engage.Namespace.Namespace, messageType : Engage.UI.MessageType.MessageType } -> List.List (Html.Html msg) -> Html.Html msg"
+            },
+            {
+                "name": "message",
+                "comment": " Get a message\n",
+                "type": "{ namespace : Engage.Namespace.Namespace, messageType : Engage.UI.MessageType.MessageType } -> List.List (Html.Html msg) -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Engage.UI.MessageType",
+        "comment": " MessageType\n\n@docs MessageType\n\n@docs toClass, toString\n\n",
+        "unions": [
+            {
+                "name": "MessageType",
+                "comment": " The MessageType type\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Confirmation",
+                        []
+                    ],
+                    [
+                        "Error",
+                        []
+                    ],
+                    [
+                        "Warning",
+                        []
+                    ],
+                    [
+                        "Info",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toClass",
+                "comment": " Convert a MesssageType into a class\n",
+                "type": "Engage.UI.MessageType.MessageType -> Engage.Styles.Class.MessageType"
+            },
+            {
+                "name": "toString",
+                "comment": " Convert a MesssageType into a string\n",
+                "type": "Engage.UI.MessageType.MessageType -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Engage.UI.PictureUpload",
+        "comment": " UI.PictureUpload\n\n@docs Attribute, File, PortOutKey\n\n@docs browse, dropZone, onFiles, onLoad, picture, hidePicture, pictureUpload, remove\n\n",
+        "unions": [
+            {
+                "name": "PortOutKey",
+                "comment": " The PortOutKey type\n",
+                "args": [],
+                "cases": [
+                    [
+                        "PictureUploadLoaded",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Attribute",
+                "comment": " The Attribute type\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "Engage.UI.PictureUpload.InternalAttribute msg -> Engage.UI.PictureUpload.InternalAttribute msg"
+            },
+            {
+                "name": "File",
+                "comment": " The File type\n",
+                "args": [],
+                "type": "{ lastModified : Maybe.Maybe Time.Posix, name : String.String, size : Basics.Int, mimeType : String.String, dataURL : String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "browse",
+                "comment": " Get the browse Attribute\n",
+                "type": "String.String -> msg -> Engage.UI.PictureUpload.Attribute msg"
+            },
+            {
+                "name": "dropZone",
+                "comment": " Get the drop zone Attribute\n",
+                "type": "String.String -> Engage.UI.PictureUpload.Attribute msg"
+            },
+            {
+                "name": "hidePicture",
+                "comment": " Get the hide picture Attribute\n",
+                "type": "Engage.UI.PictureUpload.Attribute msg"
+            },
+            {
+                "name": "onFiles",
+                "comment": " Get the onFiles Attribute\n",
+                "type": "(List.List Engage.UI.PictureUpload.File -> msg) -> Engage.UI.PictureUpload.Attribute msg"
+            },
+            {
+                "name": "onLoad",
+                "comment": " Get the onLoad Attribute\n",
+                "type": "(String.String -> msg) -> Engage.UI.PictureUpload.Attribute msg"
+            },
+            {
+                "name": "picture",
+                "comment": " Get the picture Attribute\n",
+                "type": "String.String -> Engage.UI.PictureUpload.Attribute msg"
+            },
+            {
+                "name": "pictureUpload",
+                "comment": " Get the picture upload view\n",
+                "type": "Engage.Namespace.Namespace -> String.String -> List.List (Engage.UI.PictureUpload.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "remove",
+                "comment": " Get the remove Attribute\n",
+                "type": "String.String -> msg -> Engage.UI.PictureUpload.Attribute msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Engage.UI.Svg",
+        "comment": " UI.Svg\n\n@docs chevron, confirmation, error, fax, info, mail, mobilePhone, phone, remove, upload, warning\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "chevron",
+                "comment": " Get the chevron svg\n",
+                "type": "{ a | namespace : Engage.Namespace.Namespace } -> List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "confirmation",
+                "comment": " Get the confirmation svg\n",
+                "type": "{ a | namespace : Engage.Namespace.Namespace } -> List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "error",
+                "comment": " Get the error svg\n",
+                "type": "{ a | namespace : Engage.Namespace.Namespace } -> List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "fax",
+                "comment": " Get the fax svg\n",
+                "type": "Engage.Namespace.Namespace -> String.String -> List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "info",
+                "comment": " Get the info svg\n",
+                "type": "{ a | namespace : Engage.Namespace.Namespace } -> List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "mail",
+                "comment": " Get the mail svg\n",
+                "type": "Engage.Namespace.Namespace -> String.String -> List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "mobilePhone",
+                "comment": " Get the mobile phone svg\n",
+                "type": "Engage.Namespace.Namespace -> String.String -> List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "phone",
+                "comment": " Get the phone svg\n",
+                "type": "Engage.Namespace.Namespace -> String.String -> List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "remove",
+                "comment": " Get the remove svg\n",
+                "type": "Engage.Namespace.Namespace -> String.String -> List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "upload",
+                "comment": " Get the upload svg\n",
+                "type": "Engage.Namespace.Namespace -> String.String -> List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "warning",
+                "comment": " Get the warning svg\n",
+                "type": "{ a | namespace : Engage.Namespace.Namespace } -> List.List (Html.Attribute msg) -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Engage.UI.Table",
+        "comment": " UI.Table\n\n@docs ActionColumnDetails, Column, ColumnAction, Config, State\n\n@docs actionsColumn, customColumn, dateColumn, decreasingBy, decreasingOrIncreasingBy, floatColumn, formattedNumberColumn, formattedNumberWithLanguageColumn, increasingBy, increasingOrDecreasingBy, initialSort, intColumn, linkColumn, maybeColumn, stringColumn, table, unsortable, withCustomSorter\n\n",
+        "unions": [
+            {
+                "name": "Column",
+                "comment": " The Column type\n",
+                "args": [
+                    "data",
+                    "msg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "ColumnAction",
+                "comment": " The ColumnAction type\n",
+                "args": [
+                    "data",
+                    "msg"
+                ],
+                "cases": [
+                    [
+                        "PrimaryButton",
+                        [
+                            "String.String",
+                            "data -> msg",
+                            "List.List (Html.Attribute msg)"
+                        ]
+                    ],
+                    [
+                        "StandardButton",
+                        [
+                            "String.String",
+                            "data -> msg",
+                            "List.List (Html.Attribute msg)"
+                        ]
+                    ],
+                    [
+                        "DivertButton",
+                        [
+                            "String.String",
+                            "data -> msg",
+                            "List.List (Html.Attribute msg)"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "ActionColumnDetails",
+                "comment": " The ActionColumnDetails type\n",
+                "args": [
+                    "data",
+                    "msg"
+                ],
+                "type": "{ text : String.String, toMsg : data -> msg, importance : Engage.Styles.Class.Importance, attributes : List.List (Html.Attribute msg) }"
+            },
+            {
+                "name": "Config",
+                "comment": " The Config type\n",
+                "args": [
+                    "data",
+                    "msg"
+                ],
+                "type": "{ namespace : Engage.Namespace.Namespace, toId : data -> String.String, toMsg : Engage.UI.Table.State -> msg, columns : List.List (Engage.UI.Table.Column data msg) }"
+            },
+            {
+                "name": "State",
+                "comment": " The State type\n",
+                "args": [],
+                "type": "Table.State"
+            }
+        ],
+        "values": [
+            {
+                "name": "actionsColumn",
+                "comment": " Get an actions column\n",
+                "type": "List.List (Engage.UI.Table.ColumnAction data msg) -> Engage.UI.Table.Column data msg"
+            },
+            {
+                "name": "customColumn",
+                "comment": " Get a custom column\n",
+                "type": "String.String -> (data -> List.List (Html.Html msg)) -> Engage.UI.Table.Column data msg"
+            },
+            {
+                "name": "dateColumn",
+                "comment": " Get a date column\n",
+                "type": "String.String -> (data -> Date.Date) -> String.String -> String.String -> Engage.UI.Table.Column data msg"
+            },
+            {
+                "name": "decreasingBy",
+                "comment": " Get the decreasing by Sorter\n",
+                "type": "(data -> comparable) -> Engage.UI.Table.Sorter data"
+            },
+            {
+                "name": "decreasingOrIncreasingBy",
+                "comment": " Get the decreasing or increasing by Sorter\n",
+                "type": "(data -> comparable) -> Engage.UI.Table.Sorter data"
+            },
+            {
+                "name": "floatColumn",
+                "comment": " Get a Float column\n",
+                "type": "String.String -> (data -> Basics.Float) -> Engage.UI.Table.Column data msg"
+            },
+            {
+                "name": "formattedNumberColumn",
+                "comment": " Get a formatted number column\n",
+                "type": "String.String -> (data -> Basics.Float) -> String.String -> Engage.UI.Table.Column data msg"
+            },
+            {
+                "name": "formattedNumberWithLanguageColumn",
+                "comment": " Get a formatted number with language column\n",
+                "type": "String.String -> (data -> Basics.Float) -> Language.Language -> String.String -> Engage.UI.Table.Column data msg"
+            },
+            {
+                "name": "increasingBy",
+                "comment": " Get the increasing by Sorter\n",
+                "type": "(data -> comparable) -> Engage.UI.Table.Sorter data"
+            },
+            {
+                "name": "increasingOrDecreasingBy",
+                "comment": " Get the increasing or decreasing by Sorter\n",
+                "type": "(data -> comparable) -> Engage.UI.Table.Sorter data"
+            },
+            {
+                "name": "initialSort",
+                "comment": " Get the initial sort State\n",
+                "type": "String.String -> Engage.UI.Table.State"
+            },
+            {
+                "name": "intColumn",
+                "comment": " Get a Int column\n",
+                "type": "String.String -> (data -> Basics.Int) -> Engage.UI.Table.Column data msg"
+            },
+            {
+                "name": "linkColumn",
+                "comment": " Get a link column\n",
+                "type": "String.String -> (data -> String.String) -> (data -> String.String) -> (data -> List.List (Html.Attribute msg)) -> Engage.UI.Table.Column data msg"
+            },
+            {
+                "name": "maybeColumn",
+                "comment": " Get a Maybe column\n",
+                "type": "String.String -> (data -> Maybe.Maybe a) -> (a -> String.String) -> String.String -> Engage.UI.Table.Sorter data -> Engage.UI.Table.Column data msg"
+            },
+            {
+                "name": "stringColumn",
+                "comment": " Get a String column\n",
+                "type": "String.String -> (data -> String.String) -> Engage.UI.Table.Column data msg"
+            },
+            {
+                "name": "table",
+                "comment": " Get the table view\n",
+                "type": "Engage.UI.Table.Config data msg -> Engage.UI.Table.State -> List.List data -> Html.Html msg"
+            },
+            {
+                "name": "unsortable",
+                "comment": " Get the unsortable Sorter\n",
+                "type": "Engage.UI.Table.Sorter data"
+            },
+            {
+                "name": "withCustomSorter",
+                "comment": " Get a Column with a custom Sorter\n",
+                "type": "Engage.UI.Table.Sorter data -> Engage.UI.Table.Column data msg -> Engage.UI.Table.Column data msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Engage.UI.Wizard",
+        "comment": " UI.Wizard\n\n@docs Config, Page, ShoppingCart, SinglePageType, State, Step\n\n@docs defaultConfig, getStepError, getStepModel, getStepTitle, initialState, multiPages, singlePage, wizard\n\n",
+        "unions": [
+            {
+                "name": "SinglePageType",
+                "comment": " A SinglePageType type\n",
+                "args": [],
+                "cases": [
+                    [
+                        "SinglePageInfo",
+                        []
+                    ],
+                    [
+                        "SinglePageForm",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "State",
+                "comment": " A State type\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Step",
+                "comment": " Wizard Step data\n",
+                "args": [
+                    "model"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " Configuration for the Wizard.\n\n  - pageIndicatorTemplate: uses mustache templates. Default: \"Page {{ current }} of {{ total }}\"\n  - onState: callback function for when internal state of the wizard changes.\n\n",
+                "args": [
+                    "msg",
+                    "model"
+                ],
+                "type": "{ pageIndicatorTemplate : String.String, nextButtonTemplate : String.String, prevButtonTemplate : String.String, finishButtonTemplate : String.String, reviewButtonTemplate : String.String, title : String.String, onNextStep : Engage.UI.Wizard.State -> msg, onGotoStep : { stepId : Basics.Int } -> Engage.UI.Wizard.State -> msg, onNextPage : Engage.UI.Wizard.State -> msg, onState : Engage.UI.Wizard.State -> msg, onFinish : Engage.UI.Wizard.State -> msg, onReview : Engage.UI.Wizard.State -> msg, stepRenderer : model -> List.List (Html.Html msg), currentPageRenderer : model -> List.List (Html.Html msg), beforePageRenderer : model -> List.List (Html.Html msg), afterPageRenderer : model -> List.List (Html.Html msg), showReview : Basics.Bool }"
+            },
+            {
+                "name": "Page",
+                "comment": " A Page type\n",
+                "args": [
+                    "model"
+                ],
+                "type": "{ title : String.String, status : Engage.UI.Error.Status, model : model }"
+            },
+            {
+                "name": "ShoppingCart",
+                "comment": " A ShoppingCart type\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ content : Html.Html msg }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultConfig",
+                "comment": " Get the default config\n",
+                "type": "{ onState : Engage.UI.Wizard.State -> msg, onNextStep : Engage.UI.Wizard.State -> msg, onGotoStep : { stepId : Basics.Int } -> Engage.UI.Wizard.State -> msg, onNextPage : Engage.UI.Wizard.State -> msg, onFinish : Engage.UI.Wizard.State -> msg, onReview : Engage.UI.Wizard.State -> msg } -> Engage.UI.Wizard.Config msg model"
+            },
+            {
+                "name": "getStepError",
+                "comment": " Get the Step error Status\n",
+                "type": "Engage.UI.Wizard.Step model -> Engage.UI.Error.Status"
+            },
+            {
+                "name": "getStepModel",
+                "comment": " Get the Step model\n",
+                "type": "Engage.UI.Wizard.Step model -> model"
+            },
+            {
+                "name": "getStepTitle",
+                "comment": " Get the Step title\n",
+                "type": "Engage.UI.Wizard.Step model -> String.String"
+            },
+            {
+                "name": "initialState",
+                "comment": " Get the initial State\n",
+                "type": "Engage.UI.Wizard.State"
+            },
+            {
+                "name": "multiPages",
+                "comment": " Get a multi pages Step\n",
+                "type": "{ title : String.String, pages : Engage.SelectDict.SelectDict Basics.Int (Engage.UI.Wizard.Page model) } -> Engage.UI.Wizard.Step model"
+            },
+            {
+                "name": "singlePage",
+                "comment": " Get a single page Step\n",
+                "type": "{ singlePageType : Engage.UI.Wizard.SinglePageType, title : String.String, status : Engage.UI.Error.Status, model : model } -> Engage.UI.Wizard.Step model"
+            },
+            {
+                "name": "wizard",
+                "comment": " Get the wizard view\n",
+                "type": "{ namespace : Engage.Namespace.Namespace, config : Engage.UI.Wizard.Config msg model, state : Engage.UI.Wizard.State, shoppingCart : Engage.UI.Wizard.ShoppingCart msg, isLoading : Basics.Bool, localize : String.String -> String.String } -> Engage.SelectDict.SelectDict Basics.Int (Engage.UI.Wizard.Step model) -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Engage.Validation",
+        "comment": " Validation\n\n@docs RemoteValidationErrors, ValidationErrors, ValidationStatus\n\n@docs validateBoolField, validateDependentMaybeField, validateDependentStringField, validateField, validateListNotEmptyField, validateMaybeField, validateMaybeStringField, validateStringField, validateEmailField\n\n@docs getErrors, fieldError, getFields, filter, findErrorMessage, isInvalid, isInvalidField, isValid, isValidField, localizeRequired, merge, toError\n\n",
+        "unions": [
+            {
+                "name": "ValidationStatus",
+                "comment": " A ValidationStatus type\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Valid",
+                        []
+                    ],
+                    [
+                        "Invalid",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Ignored",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "RemoteValidationErrors",
+                "comment": " A RemoteValidationErrors type\n",
+                "args": [],
+                "type": "RemoteData.WebData (List.List String.String)"
+            },
+            {
+                "name": "ValidationErrors",
+                "comment": " A ValidationErrors type\n",
+                "args": [
+                    "field"
+                ],
+                "type": "List.List ( field, Engage.Validation.ValidationStatus )"
+            }
+        ],
+        "values": [
+            {
+                "name": "fieldError",
+                "comment": " Get a field error Status\n",
+                "type": "Engage.Localization.Localization -> field -> Engage.Validation.ValidationErrors field -> Engage.UI.Error.Status"
+            },
+            {
+                "name": "filter",
+                "comment": " Filter ValidationErrors using a List of fields\n",
+                "type": "List.List field -> Engage.Validation.ValidationErrors field -> Engage.Validation.ValidationErrors field"
+            },
+            {
+                "name": "findErrorMessage",
+                "comment": " Find an error message for a field\n",
+                "type": "field -> Engage.Validation.ValidationErrors field -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "getErrors",
+                "comment": " Convert ValidationErrors to a List\n",
+                "type": "Engage.Validation.ValidationErrors field -> List.List String.String"
+            },
+            {
+                "name": "getFields",
+                "comment": " Get the fields from the ValidationErrors\n",
+                "type": "Engage.Validation.ValidationErrors field -> List.List field"
+            },
+            {
+                "name": "isInvalid",
+                "comment": " Check if a ValidationErrors is invalid\n",
+                "type": "Engage.Validation.ValidationErrors field -> Basics.Bool"
+            },
+            {
+                "name": "isInvalidField",
+                "comment": " Check if a ValidationErrors field is invalid\n",
+                "type": "field -> Engage.Validation.ValidationErrors field -> Basics.Bool"
+            },
+            {
+                "name": "isValid",
+                "comment": " Check if a ValidationErrors is valid\n",
+                "type": "Engage.Validation.ValidationErrors field -> Basics.Bool"
+            },
+            {
+                "name": "isValidField",
+                "comment": " Check if a ValidationErrors field is valid\n",
+                "type": "field -> Engage.Validation.ValidationErrors field -> Basics.Bool"
+            },
+            {
+                "name": "localizeRequired",
+                "comment": " Localize a field to a String\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "merge",
+                "comment": " Merge two ValidationErrors\n",
+                "type": "(( field, Engage.Validation.ValidationStatus ) -> comparable) -> Engage.Validation.ValidationErrors field -> Engage.Validation.ValidationErrors field -> Engage.Validation.ValidationErrors field"
+            },
+            {
+                "name": "toError",
+                "comment": " Convert a ValidationErrors to a Status\n",
+                "type": "Engage.Validation.ValidationErrors a -> Engage.UI.Error.Status"
+            },
+            {
+                "name": "validateBoolField",
+                "comment": " Validate a Bool field\n",
+                "type": "String.String -> field -> (model -> Basics.Bool) -> Validate.Validator ( field, Engage.Validation.ValidationStatus ) model"
+            },
+            {
+                "name": "validateDependentMaybeField",
+                "comment": " Validate a dependent Maybe field\n",
+                "type": "(model -> Basics.Bool) -> String.String -> field -> (model -> Maybe.Maybe a) -> Validate.Validator ( field, Engage.Validation.ValidationStatus ) model"
+            },
+            {
+                "name": "validateDependentStringField",
+                "comment": " Validate a dependent String field\n",
+                "type": "(model -> Basics.Bool) -> String.String -> field -> (model -> String.String) -> Validate.Validator ( field, Engage.Validation.ValidationStatus ) model"
+            },
+            {
+                "name": "validateEmailField",
+                "comment": " Validate an email field\n",
+                "type": "String.String -> field -> (model -> String.String) -> Validate.Validator ( field, Engage.Validation.ValidationStatus ) model"
+            },
+            {
+                "name": "validateField",
+                "comment": " Validate a field\n",
+                "type": "List.List (Validate.Validator ( field, Engage.Validation.ValidationStatus ) model) -> model -> Engage.Validation.ValidationErrors field"
+            },
+            {
+                "name": "validateListNotEmptyField",
+                "comment": " Validate a List not empty field\n",
+                "type": "String.String -> field -> (model -> List.List a) -> Validate.Validator ( field, Engage.Validation.ValidationStatus ) model"
+            },
+            {
+                "name": "validateMaybeField",
+                "comment": " Validate a Maybe field\n",
+                "type": "String.String -> field -> (model -> Maybe.Maybe a) -> Validate.Validator ( field, Engage.Validation.ValidationStatus ) model"
+            },
+            {
+                "name": "validateMaybeStringField",
+                "comment": " Validate a Maybe String field\n",
+                "type": "String.String -> field -> (model -> Maybe.Maybe String.String) -> Validate.Validator ( field, Engage.Validation.ValidationStatus ) model"
+            },
+            {
+                "name": "validateStringField",
+                "comment": " Validate a String field\n",
+                "type": "String.String -> field -> (model -> String.String) -> Validate.Validator ( field, Engage.Validation.ValidationStatus ) model"
+            }
+        ],
+        "binops": []
+    }
+]

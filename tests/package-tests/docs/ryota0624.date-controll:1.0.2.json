@@ -1,0 +1,112 @@
+[
+    {
+        "name": "DateControll",
+        "comment": " manipulate\n\n    DATE\n\n    @docs Year, addDays, addHour, addHours, daysInMonth, isLeapYear, modifyHour, modifyHours, oneHourUnixtime, substractDays, substractHours, subtractHour\n\n|\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Year",
+                "comment": " ",
+                "args": [],
+                "type": "Basics.Int"
+            }
+        ],
+        "values": [
+            {
+                "name": "addDays",
+                "comment": " ",
+                "type": "Basics.Int -> Time.Posix -> Time.Posix"
+            },
+            {
+                "name": "addHour",
+                "comment": " ",
+                "type": "Time.Posix -> Time.Posix"
+            },
+            {
+                "name": "addHours",
+                "comment": " ",
+                "type": "Basics.Int -> Time.Posix -> Time.Posix"
+            },
+            {
+                "name": "daysInMonth",
+                "comment": " ",
+                "type": "DateControll.Year -> Time.Month -> Basics.Int"
+            },
+            {
+                "name": "isLeapYear",
+                "comment": " ",
+                "type": "DateControll.Year -> Basics.Bool"
+            },
+            {
+                "name": "modifyHour",
+                "comment": " ",
+                "type": "(Basics.Int -> Basics.Int -> Basics.Int) -> Time.Posix -> Time.Posix"
+            },
+            {
+                "name": "modifyHours",
+                "comment": " ",
+                "type": "Basics.Int -> Time.Posix -> Time.Posix"
+            },
+            {
+                "name": "oneHourUnixtime",
+                "comment": " ",
+                "type": "Basics.Int"
+            },
+            {
+                "name": "substractDays",
+                "comment": " ",
+                "type": "Basics.Int -> Time.Posix -> Time.Posix"
+            },
+            {
+                "name": "substractHours",
+                "comment": " ",
+                "type": "Basics.Int -> Time.Posix -> Time.Posix"
+            },
+            {
+                "name": "subtractHour",
+                "comment": " ",
+                "type": "Time.Posix -> Time.Posix"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "TimeEx",
+        "comment": " \n    @docs formatYMd, formatYMdHm, fromString, fromYMd, monthFromInt, toIntMonth\n|",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "formatYMd",
+                "comment": " |",
+                "type": "Time.Zone -> Time.Posix -> String.String"
+            },
+            {
+                "name": "formatYMdHm",
+                "comment": " |",
+                "type": "Time.Zone -> Time.Posix -> String.String"
+            },
+            {
+                "name": "fromString",
+                "comment": " |",
+                "type": "Time.Zone -> String.String -> Maybe.Maybe Time.Posix"
+            },
+            {
+                "name": "fromYMd",
+                "comment": " |",
+                "type": "Time.Zone -> Basics.Int -> Time.Month -> Basics.Int -> Maybe.Maybe Time.Posix"
+            },
+            {
+                "name": "monthFromInt",
+                "comment": " |",
+                "type": "Basics.Int -> Maybe.Maybe Time.Month"
+            },
+            {
+                "name": "toIntMonth",
+                "comment": " |",
+                "type": "Time.Month -> Basics.Int"
+            }
+        ],
+        "binops": []
+    }
+]

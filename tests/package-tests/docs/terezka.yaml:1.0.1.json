@@ -1,0 +1,156 @@
+[
+    {
+        "name": "Yaml.Decode",
+        "comment": "\n\nTurn YAML values into Elm values. The library is structured the same way\nas a `Json.Decode` in `elm/json`, so if you haven't worked with decoders \nbefore, reading through [the guide](https://guide.elm-lang.org/effects/json.html)\nmaybe be helpful.\n\n@docs Decoder, Error, fromString\n\n# Primitives\n@docs string, bool, int, float\n\n# Data Structures\n@docs nullable, list\n\n# Object Primitives\n@docs field, at\n\n# Maps\n@docs map, map2, map3, map4, map5, map6, map7, map8\n\n# Special\n@docs Value, value, sometimes, fail, succeed, andThen\n\n\n",
+        "unions": [
+            {
+                "name": "Decoder",
+                "comment": " A value that knows how to decode YAML values.\n\nThere is a whole section in guide.elm-lang.org about decoders, \nso [check it out](https://guide.elm-lang.org/effects/json.html) \nfor a more comprehensive introduction!\n\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Error",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Parsing",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Decoding",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Value",
+                "comment": " Represents a YAML value.\n",
+                "args": [],
+                "type": "Yaml.Parser.Value"
+            }
+        ],
+        "values": [
+            {
+                "name": "andThen",
+                "comment": " Create decoders that depend on previous results.\n",
+                "type": "(a -> Yaml.Decode.Decoder b) -> Yaml.Decode.Decoder a -> Yaml.Decode.Decoder b"
+            },
+            {
+                "name": "at",
+                "comment": " Decode a nested YAML object, requiring certain fields. \n",
+                "type": "List.List String.String -> Yaml.Decode.Decoder a -> Yaml.Decode.Decoder a"
+            },
+            {
+                "name": "bool",
+                "comment": " Decode a YAML boolean into an Elm `Bool`.\n",
+                "type": "Yaml.Decode.Decoder Basics.Bool"
+            },
+            {
+                "name": "fail",
+                "comment": " Ignore the YAML and make the decoder fail. This is handy \nwhen used with `oneOf` or `andThen` where you want to give a \ncustom error message in some case.\n\nSee the [andThen](#andThen) docs for an example.\n\n",
+                "type": "String.String -> Yaml.Decode.Decoder a"
+            },
+            {
+                "name": "field",
+                "comment": " Decode a YAML object, requiring a particular field.\n\nThe object can have other fields. Lots of them! The only thing this decoder \ncares about is if x is present and that the value there is an Int.\n\nCheck out [map2](#map2) to see how to decode multiple fields!\n\n",
+                "type": "String.String -> Yaml.Decode.Decoder a -> Yaml.Decode.Decoder a"
+            },
+            {
+                "name": "float",
+                "comment": " Decode a YAML number into an Elm `Float`.\n",
+                "type": "Yaml.Decode.Decoder Basics.Float"
+            },
+            {
+                "name": "fromString",
+                "comment": " ",
+                "type": "Yaml.Decode.Decoder a -> String.String -> Result.Result Yaml.Decode.Error a"
+            },
+            {
+                "name": "int",
+                "comment": " Decode a YAML number into an Elm `Int`.\n",
+                "type": "Yaml.Decode.Decoder Basics.Int"
+            },
+            {
+                "name": "list",
+                "comment": " Decode a YAML array into an Elm `List`.\n",
+                "type": "Yaml.Decode.Decoder a -> Yaml.Decode.Decoder (List.List a)"
+            },
+            {
+                "name": "map",
+                "comment": " Transform a decoder.\n",
+                "type": "(a -> b) -> Yaml.Decode.Decoder a -> Yaml.Decode.Decoder b"
+            },
+            {
+                "name": "map2",
+                "comment": " Try two decoders and then combine the result.\n",
+                "type": "(a -> b -> c) -> Yaml.Decode.Decoder a -> Yaml.Decode.Decoder b -> Yaml.Decode.Decoder c"
+            },
+            {
+                "name": "map3",
+                "comment": " Try three decoders and then combine the result.\n",
+                "type": "(a -> b -> c -> d) -> Yaml.Decode.Decoder a -> Yaml.Decode.Decoder b -> Yaml.Decode.Decoder c -> Yaml.Decode.Decoder d"
+            },
+            {
+                "name": "map4",
+                "comment": " Try four decoders and then combine the result.\n",
+                "type": "(a -> b -> c -> d -> e) -> Yaml.Decode.Decoder a -> Yaml.Decode.Decoder b -> Yaml.Decode.Decoder c -> Yaml.Decode.Decoder d -> Yaml.Decode.Decoder e"
+            },
+            {
+                "name": "map5",
+                "comment": " Try five decoders and then combine the result.\n",
+                "type": "(a -> b -> c -> d -> e -> f) -> Yaml.Decode.Decoder a -> Yaml.Decode.Decoder b -> Yaml.Decode.Decoder c -> Yaml.Decode.Decoder d -> Yaml.Decode.Decoder e -> Yaml.Decode.Decoder f"
+            },
+            {
+                "name": "map6",
+                "comment": " Try six decoders and then combine the result.\n",
+                "type": "(a -> b -> c -> d -> e -> f -> g) -> Yaml.Decode.Decoder a -> Yaml.Decode.Decoder b -> Yaml.Decode.Decoder c -> Yaml.Decode.Decoder d -> Yaml.Decode.Decoder e -> Yaml.Decode.Decoder f -> Yaml.Decode.Decoder g"
+            },
+            {
+                "name": "map7",
+                "comment": " Try seven decoders and then combine the result.\n",
+                "type": "(a -> b -> c -> d -> e -> f -> g -> h) -> Yaml.Decode.Decoder a -> Yaml.Decode.Decoder b -> Yaml.Decode.Decoder c -> Yaml.Decode.Decoder d -> Yaml.Decode.Decoder e -> Yaml.Decode.Decoder f -> Yaml.Decode.Decoder g -> Yaml.Decode.Decoder h"
+            },
+            {
+                "name": "map8",
+                "comment": " Try seven decoders and then combine the result.\n",
+                "type": "(a -> b -> c -> d -> e -> f -> g -> h -> i) -> Yaml.Decode.Decoder a -> Yaml.Decode.Decoder b -> Yaml.Decode.Decoder c -> Yaml.Decode.Decoder d -> Yaml.Decode.Decoder e -> Yaml.Decode.Decoder f -> Yaml.Decode.Decoder g -> Yaml.Decode.Decoder h -> Yaml.Decode.Decoder i"
+            },
+            {
+                "name": "nullable",
+                "comment": " Decode a nullable YAML value into an Elm value.\n",
+                "type": "Yaml.Decode.Decoder a -> Yaml.Decode.Decoder (Maybe.Maybe a)"
+            },
+            {
+                "name": "sometimes",
+                "comment": " A decoder which returns `Nothing` when it fails.\n\nNote: This is equivalent to `maybe` from `Json.Decode`.\n",
+                "type": "Yaml.Decode.Decoder a -> Yaml.Decode.Decoder (Maybe.Maybe a)"
+            },
+            {
+                "name": "string",
+                "comment": " Decode a YAML string into an Elm `String`. \n",
+                "type": "Yaml.Decode.Decoder String.String"
+            },
+            {
+                "name": "succeed",
+                "comment": " Ignore the YAML and produce a certain Elm value.\n",
+                "type": "a -> Yaml.Decode.Decoder a"
+            },
+            {
+                "name": "value",
+                "comment": " Do not do anything with a YAML value, just bring it into \nElm as a `Value`. This can be useful if you have particularly \ncomplex data that you would like to deal with later.\n",
+                "type": "Yaml.Decode.Decoder Yaml.Decode.Value"
+            }
+        ],
+        "binops": []
+    }
+]

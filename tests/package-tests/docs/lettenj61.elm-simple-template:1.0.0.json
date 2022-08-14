@@ -1,0 +1,86 @@
+[
+    {
+        "name": "Template",
+        "comment": " This module provides Mustache (or Handlebars) like template syntax.\n\n# Template\n@docs Template, Options, compile, defaultOptions\n\n# Rendering\n@docs run, render, renderWithDefault\n",
+        "unions": [
+            {
+                "name": "Template",
+                "comment": " A compiled template function, accepts [`Params`](./Template-Params#Params) and render string.\n\nCan be configured by [`Options`](#Options).\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Options",
+                "comment": " An `Options` value is used to configure rendering of a template.\n\nCurrently supports:\n\n* `trim` - Trim spaces around interpolated value. Defaults to `True`\n* `placeholder` - Specify placeholder text when no associated value is found in\ntemplate parameter. Defaults to empty string (`\"\"`).\n",
+                "args": [],
+                "type": "{ trim : Basics.Bool, placeholder : String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "compile",
+                "comment": " Compiles string into a template function.\n\nTo render template with some parameters, use `run`.\n\n```elm\ntmpl : Template\ntmpl =\n    compile defaultOptions <|\n        \"Hello, {{name}}\"\n```\n",
+                "type": "Template.Options -> String.String -> Template.Template"
+            },
+            {
+                "name": "defaultOptions",
+                "comment": " The default configuration for a template. ",
+                "type": "Template.Options"
+            },
+            {
+                "name": "render",
+                "comment": " Render template string directly with given parameters and options.\n\nUseful when you do not need the compiled function. A quicker way to run!\n\n```elm\nrender\n    (Params.fromList [( \"food\", \"Okonomiyaki\" )])\n    defaultOptions\n    \"Give me some {{food}}\"\n```\n",
+                "type": "Template.Params.Params -> Template.Options -> String.String -> String.String"
+            },
+            {
+                "name": "renderWithDefault",
+                "comment": " Same as `render` but uses default options.\n\nThe quickest way to run!\n\n```elm\nrenderWithDefault\n    (Params.fromList [( \"animal\", \"dog\" )])\n    \"How this {{animal}} sleep?\"\n```\n",
+                "type": "Template.Params.Params -> String.String -> String.String"
+            },
+            {
+                "name": "run",
+                "comment": " Apply template function to some parameters and get rendered text.\n\nSee [`Template.Params`](./Template-Params) module to how you can interact with `Params` value.\n\n```elm\nparams : Params\nparams =\n    Params.fromList\n        [ ( \"browser\", \"Firefox\" )\n        , ( \"language\", \"JavaScript\" )\n        ]\n\nt : Template\nt =\n    compile defaultOptions \"My favorite is {{browser}} and I can use {{language}}!\"\n\nstr : String\nstr =\n    run params t\n    -- \"My favorite is Firefox and I can use JavaScript!\"\n```\n",
+                "type": "Template.Params.Params -> Template.Template -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Template.Params",
+        "comment": " `Params` is some \"newtype\" wrapper of `Dict String String`, designed to be\nused especially for rendering templates.\n\nYou usually don't need to use functions defined here directly except when\ngetting `Params` value with [`fromDict`](#fromDict) or [`fromList`](#fromList).\n\n# Params\n@docs Params\n\n# Construction\n@docs fromDict, fromList\n\n# Interpolate\n@docs interpolate\n\n# Query\n@docs get\n",
+        "unions": [
+            {
+                "name": "Params",
+                "comment": " A set of parameters for template function. ",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fromDict",
+                "comment": " Wrap a `Dict` into `Params`.\n\n```elm\nparams =\n    fromDict <|\n        Dict.fromList\n            [ ( \"css\", \"Cascading Style Sheet\" )\n            , ( \"html\", \"Hyper Text Markup Language\" )\n            ]\n```\n",
+                "type": "Dict.Dict String.String String.String -> Template.Params.Params"
+            },
+            {
+                "name": "fromList",
+                "comment": " Create `Params` by converting given `List`.\n\n```elm\nparams =\n    fromList\n        [ ( \"domain\", \"web development\" )\n        , ( \"type\", \"static\" )\n        ]\n```\n",
+                "type": "List.List ( String.String, String.String ) -> Template.Params.Params"
+            },
+            {
+                "name": "get",
+                "comment": " Try to get a value associated with given key from `Params`. ",
+                "type": "String.String -> Template.Params.Params -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "interpolate",
+                "comment": " Takes key and default value, returns associated value if one is found.\nOtherwise returns default value.\n\n```elm\nparams =\n    fromList\n        [ ( \"database\", \"MySQL\" )\n        , ( \"protocol\", \"HTTPS\" )\n        ]\n\nparams |> interpolate \"protocol\" \"???\"      -- => \"HTTPS\"\nparams |> interpolate \"size\" \"NOT FOUND\"    -- => \"NOT FOUND\"\n```\n",
+                "type": "String.String -> String.String -> Template.Params.Params -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

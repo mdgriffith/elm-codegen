@@ -1,0 +1,31 @@
+[
+    {
+        "name": "Lorem",
+        "comment": " This package provides placeholder text for Elm apps.\n\n\n# Plain text\n\n@docs words, sentence, paragraphs\n\n\n# Html\n\n@docs wrapInHtml\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "paragraphs",
+                "comment": " Gives a list of paragraphs of lorem ipsum. They will repeat after a few.\n\n    paragraphs 3\n\n    --> [ \"Lorem ipsum dolor sit amet, his viris voluptaria ut. Sea ad iusto labitur constituam, viris persius nonumes pro at, detraxit expetendis eu sed. Ut perpetua consequat complectitur sea, eam reque graeci et. Dignissim euripidis intellegat sed ex.\"\n        , \"Ei legere accumsan sit. Id meis intellegat nec, modo habeo error cum eu. Illud ubique in ius. Meliore nostrum eos an, facilisis reformidans quo in. Ne eruditi assueverit vix, graece eleifend mandamus ut usu. Vis nulla splendide ad.\"\n        , \"Officiis tractatos at sed. Vim ad ipsum ceteros. Posse adolescens ei eos, meliore albucius facilisi id vel, et vel tractatos partiendo. Cu has insolens constituam, sint ubique sit te, vim an legimus elaboraret. Omnes possim mei et. Equidem contentiones vituperatoribus ut vel, duis veri platonem vel ei, an integre consequat democritum qui.\"\n        ]\n\n",
+                "type": "Basics.Int -> List.List String.String"
+            },
+            {
+                "name": "sentence",
+                "comment": " Gives a sentence (a long string) of words of lorem ipsum.\n\n    sentence 10\n\n    --> \"Lorem ipsum dolor sit amet, his viris voluptaria ut. Sea\"\n\n",
+                "type": "Basics.Int -> String.String"
+            },
+            {
+                "name": "words",
+                "comment": " Gives a list of single words of lorem ipsum.\n\n    words 5\n\n    --> [ \"Lorem\", \"ipsum\", \"dolor\", \"sit\", \"amet,\" ]\n\n",
+                "type": "Basics.Int -> List.List String.String"
+            },
+            {
+                "name": "wrapInHtml",
+                "comment": " Gives single words of lorem ipsum wrapped with the given Html node.\n\n    import Html exposing (p, text)\n\n    words 3\n         |> wrapInHtml (p [])\n\n    --> [ p [] [ text \"Lorem\" ], p [] [ text \"ipsum\" ], p [] [ text \"dolor\" ] ]\n\n",
+                "type": "(List.List (Html.Html msg) -> Html.Html msg) -> List.List String.String -> List.List (Html.Html msg)"
+            }
+        ],
+        "binops": []
+    }
+]

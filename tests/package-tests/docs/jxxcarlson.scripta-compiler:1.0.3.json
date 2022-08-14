@@ -1,0 +1,119 @@
+[
+    {
+        "name": "Scripta.API",
+        "comment": " Scripta.API provides the functions you will need for an application\nthat compiles source text in L0, microLaTeX, or XMarkdown to HTML.\n\n\n# Simple compilation\n\n@docs compile, DisplaySettings\n\n\n## Example\n\n`compile (displaySettings 0) \"Pythagorean formula: $a^2 + b^2 = c^2$\"` where\nwe define\n\n    displaySettings : Int -> Scripta.API.DisplaySettings\n    displaySettings counter =\n        { windowWidth = 500\n        , counter = counter\n        , selectedId = \"--\"\n        , selectedSlug = Nothing\n        , scale = 0.8\n        }\n\nThe counter field must be updated on each edit.\nThis is needed for the rendered text to be\nproperly updated. See the demo app in\nfolder `Example1`.\n\n\n# Differential Compilation\n\nCompilation can be sped up by keeping track of which blocks\nof source text have changed and ony reparsing those blocks.\nAn `EditRecord` is used to keep track of what has changed\nand what has not. In this setup, the `EditRecord` is\ninitialized with the source text using the `init` function.\nOn each document change it brought up to date by the\n`update` function. The `render` function transforms\nthe current `EditRecord` into HTML.\n\n@docs EditRecord, init, update, render, makeSettings, defaultSettings\n\n\n# Export\n\nThe `export` and `fileNameForExport` are functions used to transform source\ntext in a given markup language to standard LaTeX. The transformed text\ncan be used to produce a PDF file or a tar files that contains both the\nstandare LaTeX source and a folder of images used in the documents.\nSee the code in modules `PDF` and `Main` of `Example2` for more details.\nThe Elm app sends data to `https://pdfServ.app`, a small server\n(165 lines of Haskell code) where it is turned into a PDF file or\ntar archive where it is then accessible by a GET request.\nSee [pdfServer2@Github](https://github.com/jxxcarlson/pdfServer2).\n\n@docs fileNameForExport, prepareContentForExport, getImageUrls, Settings\n\n\n# Compatibility\n\nThe PDF module in Example2 requires these.\n\n@docs Msg, SyntaxTree\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "DisplaySettings",
+                "comment": "\n\n  - windowWidth: set this to agree with the width\n    of the window in pixels in which the rendered\n    text is displayed.\n\n  - counter: This is updated on each edit.\n    For technical reasons (virtual Dom)\n    this is needed for the text to display properly.\n\n  - selectedId and selectedSlug: useful for interactive editing.\n\n  - scale: a fudge factor\n\n",
+                "args": [],
+                "type": "{ windowWidth : Basics.Int, counter : Basics.Int, selectedId : String.String, selectedSlug : Maybe.Maybe String.String, scale : Basics.Float }"
+            },
+            {
+                "name": "EditRecord",
+                "comment": " ",
+                "args": [],
+                "type": "Compiler.AbstractDifferentialParser.EditRecord (Tree.Tree Parser.PrimitiveBlock.PrimitiveBlock) (Tree.Tree Parser.Block.ExpressionBlock) Compiler.Acc.Accumulator"
+            },
+            {
+                "name": "Msg",
+                "comment": " ",
+                "args": [],
+                "type": "Render.Msg.MarkupMsg"
+            },
+            {
+                "name": "Settings",
+                "comment": " Settings used by render\n",
+                "args": [],
+                "type": "{ paragraphSpacing : Basics.Int, selectedId : String.String, selectedSlug : Maybe.Maybe String.String, showErrorMessages : Basics.Bool, showTOC : Basics.Bool, titleSize : Basics.Int, width : Basics.Int, backgroundColor : Element.Color, titlePrefix : String.String, isStandaloneDocument : Basics.Bool }"
+            },
+            {
+                "name": "SyntaxTree",
+                "comment": " ",
+                "args": [],
+                "type": "Parser.Forest.Forest Parser.Block.ExpressionBlock"
+            }
+        ],
+        "values": [
+            {
+                "name": "compile",
+                "comment": " Compile source text in the given language using the given display settings.\n",
+                "type": "Scripta.API.DisplaySettings -> Scripta.Language.Language -> String.String -> List.List (Element.Element Render.Msg.MarkupMsg)"
+            },
+            {
+                "name": "defaultSettings",
+                "comment": " ",
+                "type": "Render.Settings.Settings"
+            },
+            {
+                "name": "fileNameForExport",
+                "comment": " ",
+                "type": "Parser.Forest.Forest Parser.Block.ExpressionBlock -> String.String"
+            },
+            {
+                "name": "getImageUrls",
+                "comment": " ",
+                "type": "Parser.Forest.Forest Parser.Block.ExpressionBlock -> List.List String.String"
+            },
+            {
+                "name": "init",
+                "comment": " ",
+                "type": "Dict.Dict String.String String.String -> Scripta.Language.Language -> String.String -> Compiler.DifferentialParser.EditRecord"
+            },
+            {
+                "name": "makeSettings",
+                "comment": " ",
+                "type": "String.String -> Maybe.Maybe String.String -> Basics.Float -> Basics.Int -> Render.Settings.Settings"
+            },
+            {
+                "name": "prepareContentForExport",
+                "comment": " ",
+                "type": "Time.Posix -> Scripta.API.Settings -> Parser.Forest.Forest Parser.Block.ExpressionBlock -> String.String"
+            },
+            {
+                "name": "render",
+                "comment": " ",
+                "type": "Scripta.API.DisplaySettings -> Compiler.DifferentialParser.EditRecord -> List.List (Element.Element Render.Msg.MarkupMsg)"
+            },
+            {
+                "name": "update",
+                "comment": " ",
+                "type": "Scripta.API.EditRecord -> String.String -> Scripta.API.EditRecord"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Scripta.Language",
+        "comment": " Scripta.Language defines the markup languages accepted by the compiler.\n\n@docs Language\n\n",
+        "unions": [
+            {
+                "name": "Language",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "L0Lang",
+                        []
+                    ],
+                    [
+                        "MicroLaTeXLang",
+                        []
+                    ],
+                    [
+                        "PlainTextLang",
+                        []
+                    ],
+                    [
+                        "XMarkdownLang",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [],
+        "binops": []
+    }
+]

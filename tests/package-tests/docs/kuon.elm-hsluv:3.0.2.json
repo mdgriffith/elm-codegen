@@ -1,0 +1,237 @@
+[
+    {
+        "name": "HSLuv",
+        "comment": " Convert color between HSLuv and RGB spaces\n\nThis package uses an internal color representation to limit the number of\nconversion to the minimum.\n\nIf you create a color with the `hsluv` constructor and then manipulate it with\nthe `HSLuv.Manipulate` module, there will be no new conversion.\n\n\n# Colors\n\n@docs HSLuv\n\n\n# Create colors (constructors)\n\n@docs hsluv, hsluv360, rgba, color\n\n\n# Convert colors (extractors)\n\n@docs toHsluv, toColor, toRgba\n\n\n# Low level functions\n\n@docs hsluvToRgb, hpluvToRgb, rgbToHsluv, rgbToHpluv\n\n\n# Low level intermediate conversion functions\n\n@docs lchToLuv, luvToLch, xyzToRgb, rgbToXyz, xyzToLuv, luvToXyz\n@docs hsluvToLch, lchToHsluv, hpluvToLch, lchToHpluv\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "HSLuv",
+                "comment": " Opaque color type\n",
+                "args": [],
+                "type": "HSLuv.Color.HSLuv"
+            }
+        ],
+        "values": [
+            {
+                "name": "color",
+                "comment": " `color` creates an HSLuv with a Color\n",
+                "type": "Color.Color -> HSLuv.HSLuv"
+            },
+            {
+                "name": "hpluvToLch",
+                "comment": " `hpluvToLch` convert HPLuv components to LCH\n",
+                "type": "HSLuv.Vec3 -> HSLuv.Vec3"
+            },
+            {
+                "name": "hpluvToRgb",
+                "comment": " `hpluvToRgb` convert HSLuv components to RGB\n",
+                "type": "HSLuv.Vec3 -> HSLuv.Vec3"
+            },
+            {
+                "name": "hsluv",
+                "comment": " `hsluv` create a Color with normalized HSLuv\ncomponents (0->1) and an alpha channel\n",
+                "type": "{ hue : Basics.Float, saturation : Basics.Float, lightness : Basics.Float, alpha : Basics.Float } -> HSLuv.HSLuv"
+            },
+            {
+                "name": "hsluv360",
+                "comment": " `hsluv360` creates an HSLuv with\ncomponents and an alpha channel\n\n    - hue range is 0->360\n    - saturation range is 0->100\n    - lightness range is 0->100\n    - alpha range is 0->1\n\n",
+                "type": "{ hue : Basics.Float, saturation : Basics.Float, lightness : Basics.Float, alpha : Basics.Float } -> HSLuv.HSLuv"
+            },
+            {
+                "name": "hsluvToLch",
+                "comment": " `hsluvToLch` convert HSLuv components to LCH\n",
+                "type": "HSLuv.Vec3 -> HSLuv.Vec3"
+            },
+            {
+                "name": "hsluvToRgb",
+                "comment": " `hsluvToRgb` convert HSLuv components to RGB\n",
+                "type": "HSLuv.Vec3 -> HSLuv.Vec3"
+            },
+            {
+                "name": "lchToHpluv",
+                "comment": " `lchToHpluv` convert LCH components to HPLuv\n",
+                "type": "HSLuv.Vec3 -> HSLuv.Vec3"
+            },
+            {
+                "name": "lchToHsluv",
+                "comment": " `lchToHsluv` convert LCH components to HSLuv\n",
+                "type": "HSLuv.Vec3 -> HSLuv.Vec3"
+            },
+            {
+                "name": "lchToLuv",
+                "comment": " `lchToLuv` convert LCH components to LUV\n",
+                "type": "HSLuv.Vec3 -> HSLuv.Vec3"
+            },
+            {
+                "name": "luvToLch",
+                "comment": " `luvToLch` convert LUV components to LCH\n",
+                "type": "HSLuv.Vec3 -> HSLuv.Vec3"
+            },
+            {
+                "name": "luvToXyz",
+                "comment": " `luvToXyz` convert LUV components to XYZ\n",
+                "type": "HSLuv.Vec3 -> HSLuv.Vec3"
+            },
+            {
+                "name": "rgbToHpluv",
+                "comment": " `rgbToHpluv` convert RGB components to HSLuv\n",
+                "type": "HSLuv.Vec3 -> HSLuv.Vec3"
+            },
+            {
+                "name": "rgbToHsluv",
+                "comment": " `rgbToHsluv` convert RGB components to HSLuv\n",
+                "type": "HSLuv.Vec3 -> HSLuv.Vec3"
+            },
+            {
+                "name": "rgbToXyz",
+                "comment": " `rgbToXyz` convert RGB components to XYZ\n",
+                "type": "HSLuv.Vec3 -> HSLuv.Vec3"
+            },
+            {
+                "name": "rgba",
+                "comment": " `rgba` creates an HSLuv with normalized RGB components (0->1)\nand an alpha channel\n",
+                "type": "{ red : Basics.Float, green : Basics.Float, blue : Basics.Float, alpha : Basics.Float } -> HSLuv.HSLuv"
+            },
+            {
+                "name": "toColor",
+                "comment": " `toColor` convert an HSLuv color to a Color\n",
+                "type": "HSLuv.HSLuv -> Color.Color"
+            },
+            {
+                "name": "toHsluv",
+                "comment": " `toHsluv` extract the normalized components of an HSLuv\n",
+                "type": "HSLuv.HSLuv -> { hue : Basics.Float, saturation : Basics.Float, lightness : Basics.Float, alpha : Basics.Float }"
+            },
+            {
+                "name": "toRgba",
+                "comment": " `toRgb` extract the normalized components of a color in the RGBA format\n",
+                "type": "HSLuv.HSLuv -> { red : Basics.Float, green : Basics.Float, blue : Basics.Float, alpha : Basics.Float }"
+            },
+            {
+                "name": "xyzToLuv",
+                "comment": " `xyzToLuv` convert XYZ components to LUV\n",
+                "type": "HSLuv.Vec3 -> HSLuv.Vec3"
+            },
+            {
+                "name": "xyzToRgb",
+                "comment": " `xyzToRgb` convert XYZ components to RGB\n",
+                "type": "HSLuv.Vec3 -> HSLuv.Vec3"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "HSLuv.Manipulate",
+        "comment": " Manipulate colors\n\nThis module let you manipulate the `HSLuv` type.\n\n\n# Set components\n\n@docs setRed, setGreen, setBlue, setHue, setLightness, setSaturation\n@docs setAlpha\n\n\n# Multiply components\n\n@docs multRed, multGreen, multBlue, multHue, multLightness\n@docs multSaturation, multAlpha\n\n\n# Map components\n\n@docs mapRed, mapGreen, mapBlue, mapHue, mapLightness\n@docs mapSaturation, mapAlpha\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "mapAlpha",
+                "comment": " Map the alpha with the given function. The result is clamped in the\n0->1 range.\n",
+                "type": "(Basics.Float -> Basics.Float) -> HSLuv.Color.HSLuv -> HSLuv.Color.HSLuv"
+            },
+            {
+                "name": "mapBlue",
+                "comment": " Map the blue channel with the given function. The result is clamped in the\n0->1 range.\n",
+                "type": "(Basics.Float -> Basics.Float) -> HSLuv.Color.HSLuv -> HSLuv.Color.HSLuv"
+            },
+            {
+                "name": "mapGreen",
+                "comment": " Map the green channel with the given function. The result is clamped in the\n0->1 range.\n",
+                "type": "(Basics.Float -> Basics.Float) -> HSLuv.Color.HSLuv -> HSLuv.Color.HSLuv"
+            },
+            {
+                "name": "mapHue",
+                "comment": " Map the hue with the given function. The result is clamped in the\n0->1 range.\n",
+                "type": "(Basics.Float -> Basics.Float) -> HSLuv.Color.HSLuv -> HSLuv.Color.HSLuv"
+            },
+            {
+                "name": "mapLightness",
+                "comment": " Map the lightness with the given function. The result is clamped in the\n0->1 range.\n",
+                "type": "(Basics.Float -> Basics.Float) -> HSLuv.Color.HSLuv -> HSLuv.Color.HSLuv"
+            },
+            {
+                "name": "mapRed",
+                "comment": " Map the red channel with the given function. The result is clamped in the\n0->1 range.\n",
+                "type": "(Basics.Float -> Basics.Float) -> HSLuv.Color.HSLuv -> HSLuv.Color.HSLuv"
+            },
+            {
+                "name": "mapSaturation",
+                "comment": " Map the saturation with the given function. The result is clamped in the\n0->1 range.\n",
+                "type": "(Basics.Float -> Basics.Float) -> HSLuv.Color.HSLuv -> HSLuv.Color.HSLuv"
+            },
+            {
+                "name": "multAlpha",
+                "comment": " Multiply the alpha by the give factor. The result is clamped in the\n0->1 range.\n",
+                "type": "Basics.Float -> HSLuv.Color.HSLuv -> HSLuv.Color.HSLuv"
+            },
+            {
+                "name": "multBlue",
+                "comment": " Multiply the blue channel by the give factor. The result is clamped in the\n0->1 range.\n",
+                "type": "Basics.Float -> HSLuv.Color.HSLuv -> HSLuv.Color.HSLuv"
+            },
+            {
+                "name": "multGreen",
+                "comment": " Multiply the green channel by the give factor. The result is clamped in the\n0->1 range.\n",
+                "type": "Basics.Float -> HSLuv.Color.HSLuv -> HSLuv.Color.HSLuv"
+            },
+            {
+                "name": "multHue",
+                "comment": " Multiply the hue by the give factor. The result is clamped in the\n0->1 range.\n",
+                "type": "Basics.Float -> HSLuv.Color.HSLuv -> HSLuv.Color.HSLuv"
+            },
+            {
+                "name": "multLightness",
+                "comment": " Multiply the lightness by the give factor. The result is clamped in the\n0->1 range.\n",
+                "type": "Basics.Float -> HSLuv.Color.HSLuv -> HSLuv.Color.HSLuv"
+            },
+            {
+                "name": "multRed",
+                "comment": " Multiply the red channel by the give factor. The result is clamped in the\n0->1 range.\n",
+                "type": "Basics.Float -> HSLuv.Color.HSLuv -> HSLuv.Color.HSLuv"
+            },
+            {
+                "name": "multSaturation",
+                "comment": " Multiply the saturation by the give factor. The result is clamped in the\n0->1 range.\n",
+                "type": "Basics.Float -> HSLuv.Color.HSLuv -> HSLuv.Color.HSLuv"
+            },
+            {
+                "name": "setAlpha",
+                "comment": " Set the alpha of the color. Requires a value in the 0->1 range.\n",
+                "type": "Basics.Float -> HSLuv.Color.HSLuv -> HSLuv.Color.HSLuv"
+            },
+            {
+                "name": "setBlue",
+                "comment": " Set the blue channel of the color. Requires a value in the 0->1 range.\n",
+                "type": "Basics.Float -> HSLuv.Color.HSLuv -> HSLuv.Color.HSLuv"
+            },
+            {
+                "name": "setGreen",
+                "comment": " Set the green channel of the color. Requires a value in the 0->1 range.\n",
+                "type": "Basics.Float -> HSLuv.Color.HSLuv -> HSLuv.Color.HSLuv"
+            },
+            {
+                "name": "setHue",
+                "comment": " Set the hue of the color. Requires a value in the 0->1 range.\n",
+                "type": "Basics.Float -> HSLuv.Color.HSLuv -> HSLuv.Color.HSLuv"
+            },
+            {
+                "name": "setLightness",
+                "comment": " Set the lightness of the color. Requires a value in the 0->1 range.\n",
+                "type": "Basics.Float -> HSLuv.Color.HSLuv -> HSLuv.Color.HSLuv"
+            },
+            {
+                "name": "setRed",
+                "comment": " Set the red channel of the color. Requires a value in the 0->1 range.\n",
+                "type": "Basics.Float -> HSLuv.Color.HSLuv -> HSLuv.Color.HSLuv"
+            },
+            {
+                "name": "setSaturation",
+                "comment": " Set the saturation of the color. Requires a value in the 0->1 range.\n",
+                "type": "Basics.Float -> HSLuv.Color.HSLuv -> HSLuv.Color.HSLuv"
+            }
+        ],
+        "binops": []
+    }
+]

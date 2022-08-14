@@ -1,0 +1,619 @@
+[
+    {
+        "name": "SpacedRepetition.Leitner",
+        "comment": " This package provides everything necessary to create spaced repetition software using a variant of the Leitner system. The Leitner system was proposed by Sebastian Leitner in the early 1970s and was originally intended for use with physical (paper) flashcards.\n\nFor the basics about this algorithm, please refer to the [following description](https://en.wikipedia.org/wiki/Leitner_system) on Wikipedia.\n\n\n# Settings\n\nThis algorithm requires certain settings be provided when functions are called to specify the behavior of the (very general) system.\n\n@docs LeitnerSettings, OnIncorrect, SpacingFunction, doubleSpacing, fibonacciSpacing, numberOfBoxes\n\n\n# Cards and Decks\n\nThe building blocks of this package are `Card`s and `Deck`s. In simple terms, a `Card` may be thought of as a single flashcard and a `Deck` as a list or collection of `Card`s.\n\n@docs Card, Deck\n\n\n# Card Data\n\nA `Card` may be created by use of the `newSRSData` function, as in the following example:\n\n    type alias MyFlashcard =\n        Card { prompt : String, answer : String }\n\n    myFlashcard : MyFlashcard\n    myFlashcard =\n        { prompt = \"SYN\"\n        , answer = \"SYN-ACK\"\n        , srsData = newSRSData\n        }\n\n@docs SRSData, newSRSData\n\n\n# Json Encoders/Decoders\n\nSince `Card` data must necessarily be preserved between sessions, a Json encoder/decoder is provided for `SRSData`. It may be utilized as follows:\n\n    import Json.Decode as Decode\n    import Json.Encode as Encode\n\n    type alias MyFlashcard =\n        Card { prompt : String, answer : String }\n\n    myFlashcardConstructor : SRSData -> String -> String -> MyFlashcard\n    myFlashcardConstructor srsData prompt answer =\n        { prompt = prompt\n        , answer = answer\n        , srsData = srsData\n        }\n\n    myFlashcardToJson : MyFlashcard -> String\n    myFlashcardToJson myCard =\n        Encode.encode 0 <|\n            Encode.object\n                [ ( \"srsData\", encoderSRSData myCard.srsData )\n                , ( \"prompt\", Encode.string myCard.prompt )\n                , ( \"answer\", Encode.string myCard.answer )\n                ]\n\n    myFlashcardDecoder : Decode.Decoder MyFlashcard\n    myFlashcardDecoder =\n        Decode.map3 myFlashcardConstructor\n            (Decode.field \"srsData\" decoderSRSData)\n            (Decode.field \"prompt\" Decode.string)\n            (Decode.field \"answer\" Decode.string)\n\n    jsonToMyFlashcard : String -> Result Decode.Error MyFlashcard\n    jsonToMyFlashcard str =\n        Decode.decodeString myFlashcardDecoder str\n\n@docs encoderSRSData, decoderSRSData\n\n\n# Answering Cards\n\nThe Leitner system depends only on answers being \"correct\" or \"incorrect.\" Nevertheless, answers are additionally provided for \"manually\" moving cards, e.g. if you wish to implement a system in which the user decides how to move the card (this is usually a bad idea, since the point of an SRS system is to schedule cards better than people are able to estimate themselves).\n\n@docs Answer, answerCardInDeck, answerCard\n\n\n# Due Cards\n\nBesides answering cards, this package handles determining which cards in a `Deck` are due and require study.\n\n@docs getDueCardIndices, getDueCardIndicesWithDetails\n\n\n# Card Details\n\nIf you require specific details for a single card, you may use the provided functionality here. If you need details for _all_ due cards, just use `getDueCardIndicesWithDetails`.\n\n@docs QueueDetails, getCardDetails\n\n",
+        "unions": [
+            {
+                "name": "Answer",
+                "comment": " `Answer` must be passed to `answerCard`/`answerCardInDeck` when the user answers a card. It is usually best to simply use `Correct` and `Incorrect` (which follow the behavior specified in `LeitnerSettings`), but one could potentially provide the user with more options. `Pass` will leave the card in its current box. `MoveBoxes` allows one to specify the number of boxes to move the card, with positive integers advancing the card (typically meaning longer intervals, depending on the `SpacingFunction`) and negative integers moving the card back. The card will simply go in the first box or graduate if the provided `Int` results in a new box less than zero or greater than the number of boxes. `MoveBoxes 0` is identical to `Pass`. `BackToFirstBox` resets the card fully and begins learning anew.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Correct",
+                        []
+                    ],
+                    [
+                        "Incorrect",
+                        []
+                    ],
+                    [
+                        "Pass",
+                        []
+                    ],
+                    [
+                        "MoveBoxes",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "BackToFirstBox",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "OnIncorrect",
+                "comment": " `OnIncorrect` specifies what should happen to a card when an incorrect answer is given. In the \"traditional\" Leitner system, the card goes all the way back to the first box (`BackToStart`), however many variants simply move the card back one box (`BackOneBox`). This behavior may be overridden for a specific answer as discussed with the `Answer` type.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "BackOneBox",
+                        []
+                    ],
+                    [
+                        "BackToStart",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "QueueDetails",
+                "comment": " `QueueDetails` represents the current status of a card.\n\n  - `NewCard` -- A card that has never before been studied (encountered) by the user.\n  - `InBox {...}` -- A card that is being reviewed for retention.\n      - `lastSeen : Time.Posix` -- The date and time the card was last reviewed.\n      - `boxNumber : Int` -- The \"box\" that the card is currently in (starting from `0`).\n  - `Graduated` -- A card that has been successfully graduated and thus is no longer being studied.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NewCard",
+                        []
+                    ],
+                    [
+                        "InBox",
+                        [
+                            "{ lastSeen : Time.Posix, boxNumber : Basics.Int }"
+                        ]
+                    ],
+                    [
+                        "GraduatedCard",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Card",
+                "comment": " A `Card` represents a single question or unit of knowledge that the user will review. In general terms, each would represent a single flashcard. `Card` is defined as an extensible record; as such, whatever necessary custom fields are required for a use case may simply be included in the record, e.g.:\n\n    type alias MyFlashcard =\n        Card { prompt : String, answer : String }\n\nA `Card` by default contains only the information necessary for scheduling and nothing else; all other information should be added as in the above example.\n\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ a | srsData : SpacedRepetition.Leitner.SRSData }"
+            },
+            {
+                "name": "Deck",
+                "comment": " A `Deck` represents a list of cards to be studied (this might be called a \"collection\" in other software). It is a record with field `cards` holding an `Array` of `Card` and field `settings` holding `LeitnerSettings`. Maintaining the state of a `Deck` may be handled by the user of the module or by this module itself. In general, it is probably best not to add a massive quantity of new (unstudied) cards to a deck at once.\n",
+                "args": [
+                    "a",
+                    "b"
+                ],
+                "type": "{ a | cards : Array.Array (SpacedRepetition.Leitner.Card b), settings : SpacedRepetition.Leitner.LeitnerSettings }"
+            },
+            {
+                "name": "LeitnerSettings",
+                "comment": " `LeitnerSettings` customizes the behavior of this algorithm. Three parameters must be defined: the behavior of the system upon an incorrect answer, the spacing (interval) between \"boxes\", and the total number of boxes before a card \"graduates.\" No builder functions are provided, as only three settings exist and the Leitner system doesn't have \"defaults\" to speak of.\n",
+                "args": [],
+                "type": "{ onIncorrect : SpacedRepetition.Leitner.OnIncorrect, boxSpacing : SpacedRepetition.Leitner.SpacingFunction, numBoxes : SpacedRepetition.Internal.Leitner.NumberOfBoxes }"
+            },
+            {
+                "name": "SRSData",
+                "comment": " `SRSData` contains all data necessary for the Leitner system and may be created with the `newSRSData` function. It may additionally be saved/loaded using the Json encoder/decoder in this package\n",
+                "args": [],
+                "type": "SpacedRepetition.Internal.Leitner.Box"
+            },
+            {
+                "name": "SpacingFunction",
+                "comment": " `SpacingFunction` takes an integer argument, representing the box number, and returns an integer representing the interval in days that cards in that box should go between reviews. Note that box numbering starts at `0`, and intervals will always be at least 1 day (regardless of the output of a `SpacingFunction`). A custom function may be provided, or the pre-made functions `doubleSpacing` or `fibonacciSpacing` may be used. For obvious reasons, care should be taken that the complexity/recursive depth/etc. does not become excessive within the number of boxes your system will use.\n",
+                "args": [],
+                "type": "Basics.Int -> Basics.Int"
+            }
+        ],
+        "values": [
+            {
+                "name": "answerCard",
+                "comment": " When a card is presented to the user and answered, `answerCard` should be called with the current time (in the `Time.Posix` format returned by the `now` task of the core `Time` module), an `Answer`, and `LeitnerSettings`. It returns the updated card, which should replace the card in the `Deck`. Use this function if you want to handle updating the `Deck` manually; otherwise, use `answerCardInDeck`, which is much more convenient. Handling the presentation of a card is the responsibility of the implementing program, as various behaviors might be desirable in different cases.\n",
+                "type": "Time.Posix -> SpacedRepetition.Leitner.Answer -> SpacedRepetition.Leitner.LeitnerSettings -> SpacedRepetition.Leitner.Card a -> SpacedRepetition.Leitner.Card a"
+            },
+            {
+                "name": "answerCardInDeck",
+                "comment": " `answerCardInDeck` functions analogously to `answerCard` but handles maintenance of the `Deck`, which is typically what one would desire. When a card is presented to the user and answered, `answerCardInDeck` should be called with the current time (in the `Time.Posix` format returned by the `now` task of the core `Time` module), an `Answer`, the index of the card in the `Deck` (e.g. what is returned by the `getDueCardIndices` function), and the `Deck` itself. It returns the updated `Deck`. Use this function if you simply want to store a `Deck` and not worry about updating it manually (which is most likely what you want). Otherwise, use `answerCard` to handle updating the `Deck` manually. Handling the presentation of a card is the responsibility of the implementing program, as various behaviors might be desirable in different cases. Note that if an invalid (out of bounds) index is passed, the `Deck` is returned unaltered.\n",
+                "type": "Time.Posix -> SpacedRepetition.Leitner.Answer -> Basics.Int -> SpacedRepetition.Leitner.Deck a b -> SpacedRepetition.Leitner.Deck a b"
+            },
+            {
+                "name": "decoderSRSData",
+                "comment": " `decoderSRSData` provides a Json decoder for decoding `SRSData` for a `Card`.\n",
+                "type": "Json.Decode.Decoder SpacedRepetition.Leitner.SRSData"
+            },
+            {
+                "name": "doubleSpacing",
+                "comment": " `doubleSpacing` is a `SpacingFunction` with which the interval between each box simply doubles, e.g. Box 0 has an interval of `1`, Box 1 of `2`, Box 2 of `4`, Box 3 of `8`, etc.\n",
+                "type": "Basics.Int -> Basics.Int"
+            },
+            {
+                "name": "encoderSRSData",
+                "comment": " `encoderSRSData` provides a Json encoder for encoding `SRSData` from a `Card`.\n",
+                "type": "SpacedRepetition.Leitner.SRSData -> Json.Encode.Value"
+            },
+            {
+                "name": "fibonacciSpacing",
+                "comment": " `fibonacciSpacing` is a `SpacingFunction` with which the interval between each box follows the Fibonacci sequence, e.g. Box 0 has an interval of `1`, Box 1 of `1`, Box 2 of `2`, Box 3 of `3`, Box 4 of `5`, Box 5 of `8`, Box 6 of `13`, etc. Note that the interval caps at Box 18, with an interval of more than 10 years (4181 days). A 4181 interval will be used for all boxes from 18 on.\n",
+                "type": "Basics.Int -> Basics.Int"
+            },
+            {
+                "name": "getCardDetails",
+                "comment": " `getCardDetails` returns the current queue status for a given card. If you require this for every due card, simply use `getDueCardIndicesWithDetails`.\n",
+                "type": "SpacedRepetition.Leitner.Card a -> { queueDetails : SpacedRepetition.Leitner.QueueDetails }"
+            },
+            {
+                "name": "getDueCardIndices",
+                "comment": " `getDueCardIndices` takes settings (`LeitnerSettings`), the current time (in the `Time.Posix` format returned by the `now` task of the core `Time` module) and a `Deck` and returns the indices of the subset of the `Deck` that is due for review (as `List Int`). The returned indices will be sorted in the following order:\n\n1.  Cards overdue for review\n    1.  Cards more overdue (by proportion of interval)\n    2.  Cards less overdue (by proportion of interval)\n2.  Any new cards in the deck (never having been studied before).\n\n`getDueCardIndices` assumes that a new day begins after 12 hours, e.g. if a card is scheduled to be studied the next day, it will come due after 12 hours of elapsed time. This can of course create edge cases where cards are reviewed too \"early\" if one studies very early in the morning and again late at night. Still, only very \"new\" cards would be affected, in which case the adverse effect is presumably minimal.\n\n",
+                "type": "Time.Posix -> SpacedRepetition.Leitner.Deck a b -> List.List Basics.Int"
+            },
+            {
+                "name": "getDueCardIndicesWithDetails",
+                "comment": " `getDueCardIndicesWithDetails` takes settings (`LeitnerSettings`), the current time (in the `Time.Posix` format returned by the `now` task of the core `Time` module) and a `Deck` and returns the subset of the `Deck` that is due for review (as a list of records), providing their index and which queue they are currently in, with any relevant queue details. The returned indices will be sorted in the following order:\n\n1.  Cards overdue for review\n    1.  Cards more overdue (by proportion of interval)\n    2.  Cards less overdue (by proportion of interval)\n2.  Any new cards in the deck (never having been studied before).\n\n`getDueCardIndicesWithDetails` assumes that a new day begins after 12 hours, e.g. if a card is scheduled to be studied the next day, it will come due after 12 hours of elapsed time. This can of course create edge cases where cards are reviewed too \"early\" if one studies very early in the morning and again late at night. Still, only very \"new\" cards would be affected, in which case the adverse effect is presumably minimal.\n\n",
+                "type": "Time.Posix -> SpacedRepetition.Leitner.Deck a b -> List.List { index : Basics.Int, queueDetails : SpacedRepetition.Leitner.QueueDetails }"
+            },
+            {
+                "name": "newSRSData",
+                "comment": " `newSRSData` creates a new `SRSData` for inclusion in a `Card`.\n",
+                "type": "SpacedRepetition.Leitner.SRSData"
+            },
+            {
+                "name": "numberOfBoxes",
+                "comment": " `numberOfBoxes` may be used to specify the total number of boxes before a card \"graduates\" (i.e. is no longer reviewed). It takes an integer as a parameter, specifying a system with that integer number of boxes. There must, of course, be at least 1 box in the system (and there should almost certainly be more).\n",
+                "type": "Basics.Int -> SpacedRepetition.Internal.Leitner.NumberOfBoxes"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "SpacedRepetition.SMTwo",
+        "comment": " This package provides everything necessary to create spaced repetition software using the SM-2 algorithm. The SM-2 algorithm was one of the earliest computerized implementations of a spaced repetition algorithm (created in 1988 by Piotr Wozniak) and has been released for free public use when accompanied by the following notice:\n\n**Algorithm SM-2, (C) Copyright SuperMemo World, 1991.**\n\n  - <http://www.supermemo.com>\n  - <http://www.supermemo.eu>\n\nFor details about this algorithm, please refer to the [following description](https://www.supermemo.com/en/archives1990-2015/english/ol/sm2), written by its creator.\n\nThis package differs from the reference implementation of the SM-2 algorithm by sorting due items in decreasing severity of being due (i.e. more overdue items will be presented first).\n\n\n# Cards and Decks\n\nThe building blocks of this package are `Card`s and `Deck`s. In simple terms, a `Card` may be thought of as a single flashcard and a `Deck` as a list or collection of `Card`s.\n\n@docs Card, Deck\n\n\n# Card Data\n\nA `Card` may be created by use of the `newSRSData` function, as in the following example:\n\n    type alias MyFlashcard =\n        Card { prompt : String, answer : String }\n\n    myFlashcard : MyFlashcard\n    myFlashcard =\n        { prompt = \"SYN\"\n        , answer = \"SYN-ACK\"\n        , srsData = newSRSData\n        }\n\n@docs SRSData, newSRSData\n\n\n# Json Encoders/Decoders\n\nSince `Card` data must necessarily be preserved between sessions, a Json encoder/decoder is provided for `SRSData`. It may be utilized as follows:\n\n    import Json.Decode as Decode\n    import Json.Encode as Encode\n\n    type alias MyFlashcard =\n        Card { prompt : String, answer : String }\n\n    myFlashcardConstructor : SRSData -> String -> String -> MyFlashcard\n    myFlashcardConstructor srsData prompt answer =\n        { prompt = prompt\n        , answer = answer\n        , srsData = srsData\n        }\n\n    myFlashcardToJson : MyFlashcard -> String\n    myFlashcardToJson myCard =\n        Encode.encode 0 <|\n            Encode.object\n                [ ( \"srsData\", encoderSRSData myCard.srsData )\n                , ( \"prompt\", Encode.string myCard.prompt )\n                , ( \"answer\", Encode.string myCard.answer )\n                ]\n\n    myFlashcardDecoder : Decode.Decoder MyFlashcard\n    myFlashcardDecoder =\n        Decode.map3 myFlashcardConstructor\n            (Decode.field \"srsData\" decoderSRSData)\n            (Decode.field \"prompt\" Decode.string)\n            (Decode.field \"answer\" Decode.string)\n\n    jsonToMyFlashcard : String -> Result Decode.Error MyFlashcard\n    jsonToMyFlashcard str =\n        Decode.decodeString myFlashcardDecoder str\n\n@docs encoderSRSData, decoderSRSData\n\n\n# Answering Cards\n\nThe SM-2 algorithm depends on grading answers on a scale from 0-5, with 3 incorrect and 3 correct responses. For some use cases, it may be able to programmatically determine the `Answer` from a user's response. In other cases, however, the user may need to self-report.\n\n@docs Answer, answerCardInDeck, answerCard\n\n\n# Due Cards\n\nBesides answering cards, this package handles determining which cards in a `Deck` are due and require study.\n\n@docs getDueCardIndices, getDueCardIndicesWithDetails\n\n\n# Card Details\n\nIf you require specific details for a single card, you may use the provided functionality here. If you need details for _all_ due cards, just use `getDueCardIndicesWithDetails`.\n\n@docs QueueDetails, getCardDetails\n\n",
+        "unions": [
+            {
+                "name": "Answer",
+                "comment": " The `Answer` type represents how accurate/certain a user's response was to a card and must be passed to `answerCard` whenever a `Card` is reviewed. This package strives to provide type names that are generally sensible/understandable, but the slightly more explanatory descriptions provided by the creator of the algorithm are presented below:\n\n  - `Perfect` -- \"perfect response\"\n\n  - `CorrectWithHesitation` -- \"correct response after a hesitation\"\n\n  - `CorrectWithDifficulty` -- \"correct response recalled with serious difficulty\"\n\n  - `IncorrectButRemembered` -- \"incorrect response; where the correct one seemed easy to recall\"\n\n  - `IncorrectButFamiliar` -- \"incorrect response; the correct one remembered\"\n\n  - `NoRecollection` -- \"complete blackout\"\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Perfect",
+                        []
+                    ],
+                    [
+                        "CorrectWithHesitation",
+                        []
+                    ],
+                    [
+                        "CorrectWithDifficulty",
+                        []
+                    ],
+                    [
+                        "IncorrectButRemembered",
+                        []
+                    ],
+                    [
+                        "IncorrectButFamiliar",
+                        []
+                    ],
+                    [
+                        "NoRecollection",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "QueueDetails",
+                "comment": " `QueueDetails` represents the current status of a card.\n\n  - `NewCard` -- A card that has never before been studied (encountered) by the user.\n  - `ReviewQueue {...}` -- A card that is being reviewed for retention.\n      - `lastSeen : Time.Posix` -- The date and time the card was last reviewed.\n      - `intervalInDays : Int` -- The interval, in days from the date last seen, that the card was slated for review in.\n  - `RepeatingQueue {...}` -- A card to which an unsatisfactory answer was given, slated for review before the end of the session.\n      - `intervalInDays : Int` -- The interval, in days from the date last seen, that the card was slated for review in. This will reset to the based interval (1 day) if the card was answered incorrectly.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NewCard",
+                        []
+                    ],
+                    [
+                        "ReviewQueue",
+                        [
+                            "{ lastSeen : Time.Posix, intervalInDays : Basics.Int }"
+                        ]
+                    ],
+                    [
+                        "RepeatingQueue",
+                        [
+                            "{ intervalInDays : Basics.Int }"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Card",
+                "comment": " A `Card` represents a single question or unit of knowledge the user will review. The algorithm specifies that knowledge should be split into \"smallest possible items,\" with each of these being a `Card`; in general terms, each would represent a single flashcard. `Card` is defined as an extensible record; as such, whatever necessary custom fields for a use case may simply be included in the record, e.g.:\n\n    type alias MyFlashcard =\n        Card { prompt : String, answer : String }\n\nA `Card` contains only the information necessary for scheduling and nothing else; all other information should be added as in the above example.\n\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ a | srsData : SpacedRepetition.SMTwo.SRSData }"
+            },
+            {
+                "name": "Deck",
+                "comment": " A `Deck` represents a list of cards to be studied (this might be called a \"collection\" in other software). It is simply an `Array` of `Card` and requires no special creation or manipulation. Maintaining the state of a `Deck` may be handled by the user of the module or by this module itself. In general, it is probably best not to add a massive quantity of new (unstudied) cards to a deck at once.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "Array.Array (SpacedRepetition.SMTwo.Card a)"
+            },
+            {
+                "name": "SRSData",
+                "comment": " `SRSData` contains all data necessary for the SM-2 scheduling algorithm and may be created with the `newSRSData` function. It may additionally be saved/loaded using the Json encoder/decoder in this package\n",
+                "args": [],
+                "type": "SpacedRepetition.Internal.SMTwo.ReviewHistory"
+            }
+        ],
+        "values": [
+            {
+                "name": "answerCard",
+                "comment": " When a card is presented to the user and answered, `answerCard` should be called with the current time (in the `Time.Posix` format returned by the `now` task of the core `Time` module) and an `Answer`. It returns the updated card, which should replace the card in the `Deck`. Use this function if you want to handle updating the `Deck` manually; otherwise, use `answerCardInDeck`. Handling the presentation of a card is the responsibility of the implementing program, as various behaviors might be desirable in different cases.\n",
+                "type": "Time.Posix -> SpacedRepetition.SMTwo.Answer -> SpacedRepetition.SMTwo.Card a -> SpacedRepetition.SMTwo.Card a"
+            },
+            {
+                "name": "answerCardInDeck",
+                "comment": " `answerCardInDeck` functions analogously to `answerCard` but handles maintenance of the `Deck`, which is typically what one would desire. When a card is presented to the user and answered, `answerCardInDeck` should be called with the current time (in the `Time.Posix` format returned by the `now` task of the core `Time` module), an `Answer`, the index of the card in the `Deck`, and the `Deck` itself. It returns the updated `Deck`. Use this function if you simply want to store a `Deck` and not worry about updating it manually (which is most likely what you want). Otherwise, use `answerCard` to handle updating the `Deck` manually. Handling the presentation of a card is the responsibility of the implementing program, as various behaviors might be desirable in different cases. Note that if an invalid (out of bounds) index is passed, the `Deck` is returned unaltered.\n",
+                "type": "Time.Posix -> SpacedRepetition.SMTwo.Answer -> Basics.Int -> SpacedRepetition.SMTwo.Deck a -> SpacedRepetition.SMTwo.Deck a"
+            },
+            {
+                "name": "decoderSRSData",
+                "comment": " `decoderSRSData` provides a Json decoder for decoding `SRSData` for a `Card`.\n",
+                "type": "Json.Decode.Decoder SpacedRepetition.SMTwo.SRSData"
+            },
+            {
+                "name": "encoderSRSData",
+                "comment": " `encoderSRSData` provides a Json encoder for encoding `SRSData` from a `Card`.\n",
+                "type": "SpacedRepetition.SMTwo.SRSData -> Json.Encode.Value"
+            },
+            {
+                "name": "getCardDetails",
+                "comment": " `getCardDetails` returns the current queue status for a given card. If you require this for every due card, simply use `getDueCardIndicesWithDetails`.\n",
+                "type": "SpacedRepetition.SMTwo.Card a -> { queueDetails : SpacedRepetition.SMTwo.QueueDetails }"
+            },
+            {
+                "name": "getDueCardIndices",
+                "comment": " `getDueCardIndices` takes the current time (in the `Time.Posix` format returned by the `now` task of the core `Time` module) and a `Deck` and returns the indices of the subset of the `Deck` that is due for review (as `List Int`). While the SM-2 algorithm does not specify this, the returned indices will be sorted in the following order:\n\n1.  Cards overdue for review\n    1.  Cards more overdue (in number of days)\n    2.  Cards less overdue (in number of days)\n2.  Cards to be repeated at the end of the current session (due to poor-quality answers)\n3.  Any new cards in the deck (never having been studied before).\n\n`getDueCardIndices` assumes that a new day begins after 12 hours, e.g. if a card is scheduled to be studied the next day, it will become due after 12 hours of elapsed time. This can of course create edge cases where cards are reviewed too \"early\" if one studies very early in the morning and again late at night. Still, only very \"new\" cards would be affected, in which case the adverse effect is presumably minimal.\n\n",
+                "type": "Time.Posix -> SpacedRepetition.SMTwo.Deck a -> List.List Basics.Int"
+            },
+            {
+                "name": "getDueCardIndicesWithDetails",
+                "comment": " `getDueCardIndicesWithDetails` takes the current time (in the `Time.Posix` format returned by the `now` task of the core `Time` module) and a `Deck` and returns the subset of the `Deck` that is due for review (as a list of records), providing their index and which queue they are currently in, with any relevant queue details. While the SM-2 algorithm does not specify this, the returned indices will be sorted in the following order:\n\n1.  Cards overdue for review\n    1.  Cards more overdue (in number of days)\n    2.  Cards less overdue (in number of days)\n2.  Cards to be repeated at the end of the current session (due to poor-quality answers)\n3.  Any new cards in the deck (never having been studied before).\n\n`getDueCardIndicesWithDetails` assumes that a new day begins after 12 hours, e.g. if a card is scheduled to be studied the next day, it will become due after 12 hours of elapsed time. This can of course create edge cases where cards are reviewed too \"early\" if one studies very early in the morning and again late at night. Still, only very \"new\" cards would be affected, in which case the adverse effect is presumably minimal.\n\n",
+                "type": "Time.Posix -> SpacedRepetition.SMTwo.Deck a -> List.List { index : Basics.Int, queueDetails : SpacedRepetition.SMTwo.QueueDetails }"
+            },
+            {
+                "name": "newSRSData",
+                "comment": " `newSRSData` creates a new `SRSData` for inclusion in a `Card`.\n",
+                "type": "SpacedRepetition.SMTwo.SRSData"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "SpacedRepetition.SMTwoAnki",
+        "comment": " This package provides everything necessary to create spaced repetition software using the algorithm used by the popular F/OSS program Anki. Anki's algorithm is a heavily-modified version of the SM-2 algorithm, which has been released for free public use when accompanied by the following notice:\n\n**Algorithm SM-2, (C) Copyright SuperMemo World, 1991.**\n\n  - <http://www.supermemo.com>\n  - <http://www.supermemo.eu>\n\nFor details about Anki's algorithm, please refer to [the following section of its manual](https://apps.ankiweb.net/docs/manual.html#what-spaced-repetition-algorithm-does-anki-use).\n\nThe above description details how Anki's algorithm differs from the SM-2 algorithm, but briefly, the following differences may be noted:\n\n  - SM-2 defines an initial interval of 1 day then 6 days, whereas Anki's algorithm allows for customization of these initial intervals.\n\n  - Anki's algorithm uses 4 choices (3 during learning) for answering cards, not 6.\n\n  - Answering cards later than scheduled will be factored into the next interval calculation.\n\n  - Failing a review card may cause behavior besides fully resetting it (if desired).\n\n  - \"Easy\" answer choice increases the next interval in addition to ease/E-factor.\n\n  - Successive failures while cards are in learning do not result in further decreases to the card’s ease.\n\n\n# Settings\n\nThis algorithm requires certain settings be provided when functions are called to specify the behavior of the system. A builder pattern is available for creating settings with defaults.\n\n@docs AnkiSettings, createSettings, setNewSteps, setGraduatingInterval, setEasyInterval, setStartingEase, setEasyBonus, setIntervalModifier, setMaximumInterval, setHardInterval, setLapseSteps, setLapseNewInterval, setLapseMinimumInterval, setLeechThreshold\n\n\n# Cards and Decks\n\nThe building blocks of this package are `Card`s and `Deck`s. In simple terms, a `Card` may be thought of as a single flashcard and a `Deck` as a list or collection of `Card`s.\n\n@docs Card, Deck\n\n\n# Card Data\n\nA `Card` may be created by use of the `newSRSData` function, as in the following example:\n\n    type alias MyFlashcard =\n        Card { prompt : String, answer : String }\n\n    myFlashcard : MyFlashcard\n    myFlashcard =\n        { prompt = \"SYN\"\n        , answer = \"SYN-ACK\"\n        , srsData = newSRSData\n        }\n\n@docs SRSData, newSRSData\n\n\n# Json Encoders/Decoders\n\nSince `Card` data must necessarily be preserved between sessions, a Json encoder/decoder is provided for `SRSData`. It may be utilized as follows:\n\n    import Json.Decode as Decode\n    import Json.Encode as Encode\n\n    type alias MyFlashcard =\n        Card { prompt : String, answer : String }\n\n    myFlashcardConstructor : SRSData -> String -> String -> MyFlashcard\n    myFlashcardConstructor srsData prompt answer =\n        { prompt = prompt\n        , answer = answer\n        , srsData = srsData\n        }\n\n    myFlashcardToJson : MyFlashcard -> String\n    myFlashcardToJson myCard =\n        Encode.encode 0 <|\n            Encode.object\n                [ ( \"srsData\", encoderSRSData myCard.srsData )\n                , ( \"prompt\", Encode.string myCard.prompt )\n                , ( \"answer\", Encode.string myCard.answer )\n                ]\n\n    myFlashcardDecoder : Decode.Decoder MyFlashcard\n    myFlashcardDecoder =\n        Decode.map3 myFlashcardConstructor\n            (Decode.field \"srsData\" decoderSRSData)\n            (Decode.field \"prompt\" Decode.string)\n            (Decode.field \"answer\" Decode.string)\n\n    jsonToMyFlashcard : String -> Result Decode.Error MyFlashcard\n    jsonToMyFlashcard str =\n        Decode.decodeString myFlashcardDecoder str\n\nA Json encoder/decoder is also provided for `AnkiSettings`, since a `Deck`'s settings must be preserved between sessions.\n\n@docs encoderSRSData, decoderSRSData, encoderAnkiSettings, decoderAnkiSettings\n\n\n# Answering Cards\n\nThe SM-2 Anki algorithm depends on grading answers on a scale with one incorrect and three correct responses, except during the learning phase, in which case only 1 incorrect and two correct responses should be used. For some use cases, it may be able to programmatically determine the `Answer` of a user's response. In other cases, however, the user may need to self-report.\n\n@docs Answer, answerCardInDeck, answerCard\n\n\n# Due Cards\n\nBesides answering cards, this package handles determining which cards in a `Deck` are due and require answering.\n\n@docs getDueCardIndices, getDueCardIndicesWithDetails\n\n\n# Card Details\n\nIf you require specific details for a single card, you may use the provided functionality here. If you need details for _all_ due cards, just use `getDueCardIndicesWithDetails`. You can also get all leeches using `getLeeches`.\n\n@docs QueueDetails, getCardDetails, getLeeches\n\n",
+        "unions": [
+            {
+                "name": "Answer",
+                "comment": " The `Answer` type represents how accurate/certain a user's response was to a card and must be passed to `answerCard` whenever a `Card` is reviewed. This package uses the same names as Anki, as presented below:\n\n  - `Again` -- An incorrect response.\n\n  - `Hard` -- A correct response that was challenging to produce. It is not necessary to present this as an option for answering cards in the Learning or Lapsed queues, as it has the same effect as `Again` in those cases, namely resetting the card to the start of the queue.\n\n  - `Good` -- A correct response of appropriate difficulty.\n\n  - `Easy` -- A correct response that was excessively easy to produce (will increase ease and interval faster)\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Again",
+                        []
+                    ],
+                    [
+                        "Hard",
+                        []
+                    ],
+                    [
+                        "Good",
+                        []
+                    ],
+                    [
+                        "Easy",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "QueueDetails",
+                "comment": " `QueueDetails` represents the current status of a card.\n\n  - `NewCard` -- A card that has never before been studied (encountered) by the user.\n\n  - `LearningQueue {...}` -- A card that is in the initial learning queue, progressing through the steps specified in `AnkiSettings.newSteps`.\n      - `lastSeen : Time.Posix` -- The date and time the card was last reviewed.\n      - `intervalInMinutes : Int` -- The interval, in minutes from the date last seen, that the card is slated for review in.\n\n  - `ReviewQueue {...}` -- A card that is being reviewed for retention.\n      - `lastSeen : Time.Posix` -- The date and time the card was last reviewed.\n      - `intervalInDays : Int` -- The interval, in days from the date last seen, that the card was slated for review in.\n      - `lapses : Int` -- The number of times the card has \"lapsed,\" i.e. been forgotten/incorrectly answered by the user.\n\n  - `LapsedQueue {...}` -- A card that has lapsed, i.e. one that was being reviewed but was answered incorrectly and is now being re-learned.\n      - `lastSeen : Time.Posix` -- The date and time the card was last reviewed.\n      - `reviewIntervalInDays : Int` -- The interval, in days from the date last seen, that the card was slated for review in prior to last being forgotten/ answered incorrectly.\n      - `intervalInMinutes : Int` -- The interval, in minutes from the date last seen, that the card is slated for review in.\n      - `lapses : Int` -- The number of times the card has \"lapsed,\" i.e. been forgotten/incorrectly answered by the user.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NewCard",
+                        []
+                    ],
+                    [
+                        "LearningQueue",
+                        [
+                            "{ lastSeen : Time.Posix, intervalInMinutes : Basics.Int }"
+                        ]
+                    ],
+                    [
+                        "ReviewQueue",
+                        [
+                            "{ lastSeen : Time.Posix, intervalInDays : Basics.Int, lapses : Basics.Int }"
+                        ]
+                    ],
+                    [
+                        "LapsedQueue",
+                        [
+                            "{ lastSeen : Time.Posix, formerIntervalInDays : Basics.Int, intervalInMinutes : Basics.Int, lapses : Basics.Int }"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "AnkiSettings",
+                "comment": " `AnkiSettings` customizes the behavior of this algorithm. Refer to [this section of the Anki manual](https://apps.ankiweb.net/docs/manual.html#deck-options) for more details. It may be created with the `createSettings` function and its values may be changed form default by piping to the following functions:\n\n\n## New Cards\n\n  - `setNewSteps : List Int -> AnkiSettings -> AnkiSettings` -- **Anki default: [1, 10]** Sets the interval steps (in minutes) that a card must go through while in the learning process. Answering `Again` or `Hard` will return a card to step 0. Answering `Easy` will instantly graduate a card. Answering `Good` will advance the card 1 step. If this list is empty, cards will instantly graduate the first time they are reviewed, regardless of the `Answer`. Note that an interval must be at least 1 minute long; any value less than 1 minute will result in an interval of 1 minute.\n\n  - `setGraduatingInterval : Int -> AnkiSettings -> AnkiSettings` -- **Anki default: 1** Sets the initial interval (in days) a card will be scheduled for upon graduating from the learning phase. If `newSteps` is empty, all new cards will be scheduled for this interval when first encountered, regardless of answer. Note that this interval will not be fuzzed, per Anki's source. Values less than 1 will result in 1 being used.\n\n  - `setEasyInterval : Int -> AnkiSettings -> AnkiSettings` -- **Anki default: 4** Sets the initial interval (in days) a card will be scheduled for upon instantly graduating from the learning phase with an answer of `Easy`. This value is not used if `newSteps` is empty. Note that this interval will not be fuzzed, per Anki's source. Values less than 1 will result in 1 being used.\\`\n\n  - `setStartingEase : Float -> AnkiSettings -> AnkiSettings` -- **Anki default: 2.5** Sets the initial ease that a card graduating from learning will have. Values less than 1.3 are ignored and result in 1.3 being used instead (as that is the minimum ease a card may have).\n\n\n## Reviews\n\n  - `setEasyBonus : Float -> AnkiSettings -> AnkiSettings` -- **Anki default 1.3** Sets the multiplier for the next interval of a card that was answered `Easy` (i.e. additional interval length over merely answering `Good`. Values less than 1.0 are ignored.\n\n  - `setIntervalModifier : Float -> AnkiSettings -> AnkiSettings` -- **Anki default 1.0** Set the multiplier for **all** intervals, e.g. setting it to 0.8 will result in all review intervals being 80% as long as they would normally be. This multiplier may be used to increase/decrease retention at the cost of increasing/decreasing study time, respectively. Values less than or equal to zero are ignored.\n\n  - `setMaximumInterval : Int -> AnkiSettings -> AnkiSettings` -- **Anki default: 36500** Set the upper limit on the time the algorithm will schedule a card for (in days). Small values may be used to cap time between seeing a card (to increase retention). Values less than 1 are ignored. Note that, due to the limitations of integers, an absolute maximum interval of 1491308 days (4085 years) exists. Since you almost certainly won't be alive in 4000 years to study a card, this shouldn't be a problem.\n\n  - `setHardInterval : Float -> AnkiSettings -> AnkiSettings` -- **Anki default: 1.2** Set the multiplier applied to the previous interval when `Hard` is answered to a card. Note that intervals are forced to be at least 1 day longer than the previous one (before fuzzing). As such, values <= 1 will have no effect. Additionally, values of `hardInterval` that would result in a longer interval than that from answering `Good` (i.e. that are larger than the ease of the card) are ignored, with ease being used instead. As such, it is probably good practice to keep this value <= 1.3, as that is the lower limit on ease.\n\n\n## Lapses\n\n  - `lapseSteps : List Int -> AnkiSettings -> AnkiSettings` -- **Anki default: [10]** Set the interval steps (in minutes) that a card must go through while relearning after a lapse. Answering `Again` or `Hard` will return a card to step 0. Answering `Easy` will instantly graduate a card back to review. Answering `Good` will advance the card 1 step. If this list is empty, cards will instantly graduate the first time they are reviewed, regardless of the `Answer`.\n  - `lapseNewInterval : Float -> AnkiSettings -> AnkiSettings` -- **Anki default: 0.0** Set a multiplier for the pre-lapse interval to determine the new interval after graduating a card back from re-learning. Values less than 0.0 are ignored Note that this interval is not fuzzed, per Anki's source.\n  - `lapseMinimumInterval : Int -> AnkiSettings -> AnkiSettings` -- **Anki default: 1** Set a minimum bound on the previous option, with lapsed cards getting a new interval of at least this value. Answers less than 1 are ignored.\n  - `leechThreshold : Int -> AnkiSettings -> AnkiSettings` -- **Anki default: 8** Set the number of lapses before a card is considered a \"leech.\" `getDueCardIndices` will return the leech status of each card in the deck. Additionally, `getLeeches` will return all leeches in a deck (regardless of due status). Setting this value to less than or equal to 0 turns off leeches entirely.\n\n",
+                "args": [],
+                "type": "{ newSteps : List.List (SpacedRepetition.Internal.SMTwoAnki.TimeInterval SpacedRepetition.Internal.SMTwoAnki.Minutes), graduatingInterval : SpacedRepetition.Internal.SMTwoAnki.TimeInterval SpacedRepetition.Internal.SMTwoAnki.Days, easyInterval : SpacedRepetition.Internal.SMTwoAnki.TimeInterval SpacedRepetition.Internal.SMTwoAnki.Days, startingEase : Basics.Float, easyBonus : Basics.Float, intervalModifier : Basics.Float, maximumInterval : SpacedRepetition.Internal.SMTwoAnki.TimeInterval SpacedRepetition.Internal.SMTwoAnki.Days, hardInterval : Basics.Float, lapseSteps : List.List (SpacedRepetition.Internal.SMTwoAnki.TimeInterval SpacedRepetition.Internal.SMTwoAnki.Minutes), lapseNewInterval : Basics.Float, lapseMinimumInterval : SpacedRepetition.Internal.SMTwoAnki.TimeInterval SpacedRepetition.Internal.SMTwoAnki.Days, leechThreshold : Basics.Int }"
+            },
+            {
+                "name": "Card",
+                "comment": " A `Card` represents a single question or unit of knowledge the user will review. In general terms, each would represent a single flashcard. `Card` is defined as an extensible record; as such, whatever necessary custom fields for a use case may simply be included in the record, e.g.:\n\n    type alias MyFlashcard =\n        Card { prompt : String, answer : String }\n\nA `Card` contains only the information necessary for scheduling and nothing else; all other information should be added as in the above example.\n\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ a | srsData : SpacedRepetition.SMTwoAnki.SRSData }"
+            },
+            {
+                "name": "Deck",
+                "comment": " A `Deck` represents a list of cards to be studied (this might be called a \"collection\" in other software). It is a record with field `cards`, an `Array` of `Card` and field `settings` of `AnkiSettings`. Maintaining the state of a `Deck` may be handled by the user of the module or by this module itself. In general, it is probably best not to add a massive quantity of new (unstudied) cards to a deck at once.\n",
+                "args": [
+                    "a",
+                    "b"
+                ],
+                "type": "{ a | cards : Array.Array (SpacedRepetition.SMTwoAnki.Card b), settings : SpacedRepetition.SMTwoAnki.AnkiSettings }"
+            },
+            {
+                "name": "SRSData",
+                "comment": " `SRSData` contains all data necessary for the Anki system and may be created with the `newSRSData` function. It may additionally be saved/loaded using the Json encoder/decoder in this package\n",
+                "args": [],
+                "type": "SpacedRepetition.Internal.SMTwoAnki.QueueStatus"
+            }
+        ],
+        "values": [
+            {
+                "name": "answerCard",
+                "comment": " When a card is presented to the user and answered, `answerCard` should be called with the current time (in the `Time.Posix` format returned by the `now` task of the core `Time` module) and an `Answer`. It returns the updated card, which should replace the card in the `Deck`. Use this function if you want to handle updating the `Deck` manually; otherwise, use `answerCardInDeck`. Handling the presentation of a card is the responsibility of the implementing program, as various behaviors might be desirable in different cases.\n",
+                "type": "Time.Posix -> SpacedRepetition.SMTwoAnki.Answer -> SpacedRepetition.SMTwoAnki.AnkiSettings -> SpacedRepetition.SMTwoAnki.Card a -> SpacedRepetition.SMTwoAnki.Card a"
+            },
+            {
+                "name": "answerCardInDeck",
+                "comment": " `answerCardInDeck` functions analogously to `answerCard` but handles maintenance of the `Deck`, which is typically what one would desire. When a card is presented to the user and answered, `answerCardInDeck` should be called with the current time (in the `Time.Posix` format returned by the `now` task of the core `Time` module), an `Answer`, the index of the card in the `Deck`, and the `Deck` itself. It returns the updated `Deck`. Use this function if you simply want to store a `Deck` and not worry about updating it manually (which is most likely what you want). Otherwise, use `answerCard` to handle updating the `Deck` manually. Handling the presentation of a card is the responsibility of the implementing program, as various behaviors might be desirable in different cases. Note that if an invalid (out of bounds) index is passed, the `Deck` is returned unaltered.\n",
+                "type": "Time.Posix -> SpacedRepetition.SMTwoAnki.Answer -> Basics.Int -> SpacedRepetition.SMTwoAnki.Deck a b -> SpacedRepetition.SMTwoAnki.Deck a b"
+            },
+            {
+                "name": "createSettings",
+                "comment": " `createSettings` creates an `AnkiSettings` with the same default settings as the Anki program itself. It may be piped into the following functions to update from default:\n\n  - `setNewSteps`\n  - `setGraduatingInterval`\n  - `setEasyInterval`\n  - `setStartingEase`\n  - `setEasyBonus`\n  - `setIntervalModifier`\n  - `setMaximumInterval`\n  - `setHardInterval`\n  - `setLapseSteps`\n  - `setLapseNewInterval`\n  - `setLapseMinimumInterval`\n  - `setLeechThreshold`\n\nAn example follows:\n\n    createSettings\n        |> setNewSteps [ 1, 2, 3 ]\n        |> setLapseSteps [ 4, 5, 6 ]\n        |> setLeechThreshold 0\n\n",
+                "type": "SpacedRepetition.SMTwoAnki.AnkiSettings"
+            },
+            {
+                "name": "decoderAnkiSettings",
+                "comment": " `decoderAnkiSettings` provides a Json decoder for decoding `AnkiSettings` for a `Deck`.\n",
+                "type": "Json.Decode.Decoder SpacedRepetition.SMTwoAnki.AnkiSettings"
+            },
+            {
+                "name": "decoderSRSData",
+                "comment": " `decoderSRSData` provides a Json decoder for decoding `SRSData` for a `Card`.\n",
+                "type": "Json.Decode.Decoder SpacedRepetition.SMTwoAnki.SRSData"
+            },
+            {
+                "name": "encoderAnkiSettings",
+                "comment": " `encoderAnkiSettings` provides a Json encoder for encoding `AnkiSettings` from a `Deck`.\n",
+                "type": "SpacedRepetition.SMTwoAnki.AnkiSettings -> Json.Encode.Value"
+            },
+            {
+                "name": "encoderSRSData",
+                "comment": " `encoderSRSData` provides a Json encoder for encoding `SRSData` from a `Card`.\n",
+                "type": "SpacedRepetition.SMTwoAnki.SRSData -> Json.Encode.Value"
+            },
+            {
+                "name": "getCardDetails",
+                "comment": " `getCardDetails` returns the current queue status for a given card and whether or not it is a leech. If you require this for every due card, simply use `getDueCardIndicesWithDetails`.\n",
+                "type": "SpacedRepetition.SMTwoAnki.AnkiSettings -> SpacedRepetition.SMTwoAnki.Card a -> { queueDetails : SpacedRepetition.SMTwoAnki.QueueDetails, isLeech : Basics.Bool }"
+            },
+            {
+                "name": "getDueCardIndices",
+                "comment": " `getDueCardIndices` takes the current time (in the `Time.Posix` format returned by the `now` task of the core `Time` module) and a `Deck` and returns the indices of the subset of the `Deck` that is due for review. The returned indices will be sorted in the following order:\n\n1.  Lapsed cards overdue for review\n    1.  Cards more overdue (by proportion of interval)\n    2.  Cards less overdue (by proportion of interval)\n2.  Review cards overdue for review\n    1.  Cards more overdue (by proportion of interval)\n    2.  Cards less overdue (by proportion of interval)\n3.  Learning cards overdue for review\n    1.  Cards more overdue (by proportion of interval)\n    2.  Cards less overdue (by proportion of interval)\n4.  Any new cards in the deck (never having been studied before).\n\n`getDueCardIndices` will show cards up to 20 minutes early, as per Anki.\n\n",
+                "type": "Time.Posix -> SpacedRepetition.SMTwoAnki.Deck a b -> List.List Basics.Int"
+            },
+            {
+                "name": "getDueCardIndicesWithDetails",
+                "comment": " `getDueCardIndicesWithDetails` takes the current time (in the `Time.Posix` format returned by the `now` task of the core `Time` module) and a `Deck` and returns the subset of the `Deck` that is due for review as a list of records, providing their index, which queue they are currently in (e.g. whether they are being learned or reviewed) along with any relevant queue details, and whether or not they are leeches. The returned indices will be sorted in the following order:\n\n1.  Lapsed cards overdue for review\n    1.  Cards more overdue (by proportion of interval)\n    2.  Cards less overdue (by proportion of interval)\n2.  Review cards overdue for review\n    1.  Cards more overdue (by proportion of interval)\n    2.  Cards less overdue (by proportion of interval)\n3.  Learning cards overdue for review\n    1.  Cards more overdue (by proportion of interval)\n    2.  Cards less overdue (by proportion of interval)\n4.  Any new cards in the deck (never having been studied before).\n\n`getDueCardIndicesWithDetails` will show cards up to 20 minutes early, as per Anki.\n\n",
+                "type": "Time.Posix -> SpacedRepetition.SMTwoAnki.Deck a b -> List.List { index : Basics.Int, queueDetails : SpacedRepetition.SMTwoAnki.QueueDetails, isLeech : Basics.Bool }"
+            },
+            {
+                "name": "getLeeches",
+                "comment": " `getLeeches` takes a `Deck` and returns the indices of the subset of the `Deck` that are leeches (as `List Int`). The returned indices will be sorted in the following order:\n\n1.  Cards with more lapses\n2.  Cards with fewer lapses\n\n",
+                "type": "SpacedRepetition.SMTwoAnki.Deck a b -> List.List Basics.Int"
+            },
+            {
+                "name": "newSRSData",
+                "comment": " `newSRSData` creates a new `SRSData` for inclusion in a `Card`.\n",
+                "type": "SpacedRepetition.SMTwoAnki.SRSData"
+            },
+            {
+                "name": "setEasyBonus",
+                "comment": " `setEasyBonus` sets the multiplier for the next interval of a card that was answered `Easy` (i.e. additional interval length over merely answering `Good`. Values less than 1.0 are ignored.\n",
+                "type": "Basics.Float -> SpacedRepetition.SMTwoAnki.AnkiSettings -> SpacedRepetition.SMTwoAnki.AnkiSettings"
+            },
+            {
+                "name": "setEasyInterval",
+                "comment": " `setEasyInterval` sets the initial interval (in days) a card will be scheduled for upon instantly graduating from the learning phase with an answer of `Easy`. This value is not used if `newSteps` is empty. Note that this interval will not be fuzzed, per Anki's source. Values less than 1 will result in 1 being used.\n",
+                "type": "Basics.Int -> SpacedRepetition.SMTwoAnki.AnkiSettings -> SpacedRepetition.SMTwoAnki.AnkiSettings"
+            },
+            {
+                "name": "setGraduatingInterval",
+                "comment": " `setGraduatingInterval` sets the initial interval (in days) a card will be scheduled for upon graduating from the learning phase. If `newSteps` is empty, all new cards will be scheduled for this interval when first encountered, regardless of answer. Note that this interval will not be fuzzed, per Anki's source. Values less than 1 will result in 1 being used.\n",
+                "type": "Basics.Int -> SpacedRepetition.SMTwoAnki.AnkiSettings -> SpacedRepetition.SMTwoAnki.AnkiSettings"
+            },
+            {
+                "name": "setHardInterval",
+                "comment": " `setHardInterval` sets the multiplier applied to the previous interval when `Hard` is answered to a card. Note that intervals are forced to be at least 1 day longer than the previous one. As such, values <= 1 will have no effect. Additionally, values of `hardInterval` that would result in a longer interval than that from answering `Good` (i.e. that are larger than the ease of the card) are ignored, with ease being used instead. As such, it is probably good practice to keep this value <= 1.3, as that is the lower limit on ease.\n",
+                "type": "Basics.Float -> SpacedRepetition.SMTwoAnki.AnkiSettings -> SpacedRepetition.SMTwoAnki.AnkiSettings"
+            },
+            {
+                "name": "setIntervalModifier",
+                "comment": " `setIntervalModifier` sets the multiplier for **all** intervals, e.g. setting it to 0.8 will result in all review intervals being 80% as long as they would normally be. This multiplier may be used to increase/decrease retention at the cost of increasing/decreasing study time, respectively. Values less than or equal to zero are ignored.\n",
+                "type": "Basics.Float -> SpacedRepetition.SMTwoAnki.AnkiSettings -> SpacedRepetition.SMTwoAnki.AnkiSettings"
+            },
+            {
+                "name": "setLapseMinimumInterval",
+                "comment": " `setLapseMinimumInterval` sets a minimum bound on the previous option, with lapsed cards getting a new interval of at least this value. Answers less than 1 are ignored.\n",
+                "type": "Basics.Int -> SpacedRepetition.SMTwoAnki.AnkiSettings -> SpacedRepetition.SMTwoAnki.AnkiSettings"
+            },
+            {
+                "name": "setLapseNewInterval",
+                "comment": " `setLapseNewInterval` sets a multiplier for the pre-lapse interval to determine the new interval after graduating a card back from re-learning. Values less than 0.0 are ignored Note that this interval is not fuzzed, per Anki's source.\n",
+                "type": "Basics.Float -> SpacedRepetition.SMTwoAnki.AnkiSettings -> SpacedRepetition.SMTwoAnki.AnkiSettings"
+            },
+            {
+                "name": "setLapseSteps",
+                "comment": " `setLapseSteps` sets the interval steps (in minutes) that a card must go through while relearning after a lapse. Answering `Again` or `Hard` will return a card to step 0. Answering `Easy` will instantly graduate a card back to review. Answering `Good` will advance the card 1 step. If this list is empty, cards will instantly graduate the first time they are reviewed, regardless of the `Answer`.\n",
+                "type": "List.List Basics.Int -> SpacedRepetition.SMTwoAnki.AnkiSettings -> SpacedRepetition.SMTwoAnki.AnkiSettings"
+            },
+            {
+                "name": "setLeechThreshold",
+                "comment": " `setLeechThreshold` sets the number of lapses before a card is considered a \"leech.\" `getDueCardIndices` will return the leech status of each card in the deck. Additionally, `getLeeches` will return all leeches in a deck (regardless of due status). Setting this value to less than or equal to 0 turns off leeches entirely.\n",
+                "type": "Basics.Int -> SpacedRepetition.SMTwoAnki.AnkiSettings -> SpacedRepetition.SMTwoAnki.AnkiSettings"
+            },
+            {
+                "name": "setMaximumInterval",
+                "comment": " `setMaximumInterval` sets the upper limit on the time the algorithm will schedule a card for (in days). Small values may be used to cap time between seeing a card (to increase retention). Values less than 1 are ignored. Note that, due to the limitations of integers, an absolute maximum interval of 1491308 days (4085 years) exists. Since you almost certainly won't be alive in 4000 years to study a card, this shouldn't be a problem.\n",
+                "type": "Basics.Int -> SpacedRepetition.SMTwoAnki.AnkiSettings -> SpacedRepetition.SMTwoAnki.AnkiSettings"
+            },
+            {
+                "name": "setNewSteps",
+                "comment": " `setNewSteps` sets the the interval steps (in minutes) that a card must go through while in the learning process. Answering `Again` or `Hard` will return a card to step 0. Answering `Easy` will instantly graduate a card. Answering `Good` will advance the card 1 step. If this list is empty, cards will instantly graduate the first time they are reviewed, regardless of the `Answer`. Note that an interval must be at least 1 minute long; any value less than 1 minute will result in an interval of 1 minute.\n",
+                "type": "List.List Basics.Int -> SpacedRepetition.SMTwoAnki.AnkiSettings -> SpacedRepetition.SMTwoAnki.AnkiSettings"
+            },
+            {
+                "name": "setStartingEase",
+                "comment": " `setStartingEase` sets the initial ease that a card graduating from learning will have. Values less than 1.3 are ignored and result in 1.3 being used instead (as that is the minimum ease a card may have).\n",
+                "type": "Basics.Float -> SpacedRepetition.SMTwoAnki.AnkiSettings -> SpacedRepetition.SMTwoAnki.AnkiSettings"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "SpacedRepetition.SMTwoPlus",
+        "comment": " This package provides everything necessary to create spaced repetition software using the SM2+ algorithm. The SM2+ algorithm was proposed by \"BlueRaja\" as an improvement of the SM-2 algorithm, which has been released for free public use when accompanied by the following notice:\n\n**Algorithm SM-2, (C) Copyright SuperMemo World, 1991.**\n\n  - <http://www.supermemo.com>\n  - <http://www.supermemo.eu>\n\nFor details about the SM2+ algorithm and its purported advantages over the SM-2 algorithm, please refer to the [following blog post](http://www.blueraja.com/blog/477/a-better-spaced-repetition-learning-algorithm-sm2).\n\n**It should be noted that this algorithm produces seemingly illogical behavior, namely that more incorrect answers result in longer intervals than less incorrect answers. Do not use it if this behavior is objectionable to you (as it probably should be).** A custom scheduling function for incorrect answers may be provided if one still wishes to use it (with a different incorrect scheduler).\n\nMost notably (versus SM-2), the SM2+ algorithm \"rewards\" correctly answering more-overdue cards and sorts due items based on the proportion they are overdue, not the absolute amount they are overdue by. Additionally, the initial intervals are 1 day -> 3 days, rather than 1 day -> 6 days.\n\n\n# Cards and Decks\n\nThe building blocks of this package are `Card`s and `Deck`s. In simple terms, a `Card` may be thought of as a single flashcard and a `Deck` as a list or collection of `Card`s.\n\n@docs Card, Deck\n\n\n# Card Data\n\nA `Card` may be created by use of the `newSRSData` function, as in the following example:\n\n    type alias MyFlashcard =\n        Card { prompt : String, answer : String }\n\n    myFlashcard : MyFlashcard\n    myFlashcard =\n        { prompt = \"SYN\"\n        , answer = \"SYN-ACK\"\n        , srsData = newSRSData\n        }\n\n@docs SRSData, newSRSData\n\n\n# Json Encoders/Decoders\n\nSince `Card` data must necessarily be preserved between sessions, a Json encoder/decoder is provided for `SRSData`. It may be utilized as follows:\n\n    import Json.Decode as Decode\n    import Json.Encode as Encode\n\n    type alias MyFlashcard =\n        Card { prompt : String, answer : String }\n\n    myFlashcardConstructor : SRSData -> String -> String -> MyFlashcard\n    myFlashcardConstructor srsData prompt answer =\n        { prompt = prompt\n        , answer = answer\n        , srsData = srsData\n        }\n\n    myFlashcardToJson : MyFlashcard -> String\n    myFlashcardToJson myCard =\n        Encode.encode 0 <|\n            Encode.object\n                [ ( \"srsData\", encoderSRSData myCard.srsData )\n                , ( \"prompt\", Encode.string myCard.prompt )\n                , ( \"answer\", Encode.string myCard.answer )\n                ]\n\n    myFlashcardDecoder : Decode.Decoder MyFlashcard\n    myFlashcardDecoder =\n        Decode.map3 myFlashcardConstructor\n            (Decode.field \"srsData\" decoderSRSData)\n            (Decode.field \"prompt\" Decode.string)\n            (Decode.field \"answer\" Decode.string)\n\n    jsonToMyFlashcard : String -> Result Decode.Error MyFlashcard\n    jsonToMyFlashcard str =\n        Decode.decodeString myFlashcardDecoder str\n\n@docs encoderSRSData, decoderSRSData\n\n\n# Answering Cards\n\nThe SM2+ algorithm depends on grading answers on a scale from 0.0 to 1.0, with answers of 0.6 and above being correct (and incorrect below that) responses. For some use cases, it may be able to programmatically determine the `PerformanceRating` of a user's response. In other cases, however, the user may need to self-report.\n\n@docs PerformanceRating, performanceRating, answerCardInDeck, answerCard, IncorrectSchedulingFunction, oneMinusReciprocalDiffWeightSquared\n\n\n# Due Cards\n\nBesides answering cards, this package handles determining which cards in a `Deck` are due and require answering.\n\n@docs getDueCardIndices, getDueCardIndicesWithDetails\n\n\n# Card Details\n\nIf you require specific details for a single card, you may use the provided functionality here. If you need details for _all_ due cards, just use `getDueCardIndicesWithDetails`.\n\n@docs QueueDetails, getCardDetails\n\n",
+        "unions": [
+            {
+                "name": "QueueDetails",
+                "comment": " `QueueDetails` represents the current status of a card.\n\n  - `NewCard` -- A card that has never before been studied (encountered) by the user.\n  - `ReviewQueue {...}` -- A card that is being reviewed for retention.\n      - `lastSeen : Time.Posix` -- The date and time the card was last reviewed.\n      - `intervalInDays : Float` -- The interval, in days from the date last seen, that the card was slated for review in.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NewCard",
+                        []
+                    ],
+                    [
+                        "ReviewQueue",
+                        [
+                            "{ lastSeen : Time.Posix, intervalInDays : Basics.Float }"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Card",
+                "comment": " A `Card` represents a single question or unit of knowledge the user will review. In general terms, each would represent a single flashcard. `Card` is defined as an extensible record; as such, whatever necessary custom fields for a use case may simply be included in the record, e.g.:\n\n    type alias MyFlashcard =\n        Card { prompt : String, answer : String }\n\nA `Card` contains only the information necessary for scheduling and nothing else; all other information should be added as in the above example.\n\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ a | srsData : SpacedRepetition.SMTwoPlus.SRSData }"
+            },
+            {
+                "name": "Deck",
+                "comment": " A `Deck` represents a list of cards to be studied (this might be called a \"collection\" in other software). It is simply an `Array` of `Card` and requires no special creation or manipulation. Maintaining the state of a `Deck` may be handled by the user of the module or by this module itself. In general, it is probably best not to add a massive quantity of new (unstudied) cards to a deck at once.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "Array.Array (SpacedRepetition.SMTwoPlus.Card a)"
+            },
+            {
+                "name": "IncorrectSchedulingFunction",
+                "comment": " `IncorrectSchedulingFunction` must take a float as an argument, representing \"difficultyWeight\" (which is in the interval [1.3, 3.0]), and return a float representing the factor by which the interval should be scaled (which should probably be in the interval [0.0, 1.0]). This function will only be called with incorrect answers, not correct ones. Note that an incorrect interval cannot be less than 1 day, so any factor resulting in a shorter interval will simply result in an interval of 1 day. A custom function may be provided, or the pre-made function `oneMinusReciprocalDiffWeightSquared` may be used, which seems a likely correction.\n",
+                "args": [],
+                "type": "Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "PerformanceRating",
+                "comment": " The `PerformanceRating` type represents how accurate/certain a user's response was to a card and must be passed to `answerCard` whenever a `Card` is answered. `PerformanceRating` is quantitative and must be between 0.0 and 1.0, with values of 0.6 and greater representing a \"correct\" answer. A `PerformanceRating` may be created with the `performanceRating` function.\n",
+                "args": [],
+                "type": "SpacedRepetition.Internal.SMTwoPlus.PerformanceRating"
+            },
+            {
+                "name": "SRSData",
+                "comment": " `SRSData` contains all data necessary for the SM2+ scheduling algorithm and may be created with the `newSRSData` function. It may additionally be saved/loaded using the Json encoder/decoder in this package\n",
+                "args": [],
+                "type": "SpacedRepetition.Internal.SMTwoPlus.ReviewHistory"
+            }
+        ],
+        "values": [
+            {
+                "name": "answerCard",
+                "comment": " When a card is presented to the user and answered, `answerCard` should be called with a `Maybe IncorrectSchedulingFunction`, the current time (in the `Time.Posix` format returned by the `now` task of the core `Time` module) and an `PerformanceRating`. It returns the updated card, which should replace the card in the `Deck`. Use this function if you want to handle updating the `Deck` manually; otherwise, use `answerCardInDeck`. Handling the presentation of a card is the responsibility of the implementing program, as various behaviors might be desirable in different cases. `IncorrectSchedulingFunction` may be provided to fix the issue with scheduling incorrect cards inherent in the algorithm. If `Nothing` is provided, the algorithm-specified `1 / diffWeight ^ 2` scaling is used that results in questionable behavior.\n",
+                "type": "Maybe.Maybe SpacedRepetition.SMTwoPlus.IncorrectSchedulingFunction -> Time.Posix -> SpacedRepetition.SMTwoPlus.PerformanceRating -> SpacedRepetition.SMTwoPlus.Card a -> SpacedRepetition.SMTwoPlus.Card a"
+            },
+            {
+                "name": "answerCardInDeck",
+                "comment": " `answerCardInDeck` functions analogously to `answerCard` but handles maintenance of the `Deck`, which is typically what one would desire. When a card is presented to the user and answered, `answerCardInDeck` should be called with a `Maybe IncorrectSchedulingFunction`, the current time (in the `Time.Posix` format returned by the `now` task of the core `Time` module), a `PerformanceRating`, the index of the card in the `Deck`, and the `Deck` itself. It returns the updated `Deck`. Use this function if you simply want to store a `Deck` and not worry about updating it manually (which is most likely what you want). Otherwise, use `answerCard` to handle updating the `Deck` manually. Handling the presentation of a card is the responsibility of the implementing program, as various behaviors might be desirable in different cases. Note that if an invalid (out of bounds) index is passed, the `Deck` is returned unaltered. `IncorrectSchedulingFunction` may be provided to fix the issue with scheduling incorrect cards inherent in the algorithm. If `Nothing` is provided, the algorithm-specified `1 / diffWeight ^ 2` scaling is used that results in questionable behavior.\n",
+                "type": "Maybe.Maybe SpacedRepetition.SMTwoPlus.IncorrectSchedulingFunction -> Time.Posix -> SpacedRepetition.SMTwoPlus.PerformanceRating -> Basics.Int -> SpacedRepetition.SMTwoPlus.Deck a -> SpacedRepetition.SMTwoPlus.Deck a"
+            },
+            {
+                "name": "decoderSRSData",
+                "comment": " `decoderSRSData` provides a Json decoder for decoding `SRSData` for a `Card`.\n",
+                "type": "Json.Decode.Decoder SpacedRepetition.SMTwoPlus.SRSData"
+            },
+            {
+                "name": "encoderSRSData",
+                "comment": " `encoderSRSData` provides a Json encoder for encoding `SRSData` from a `Card`.\n",
+                "type": "SpacedRepetition.SMTwoPlus.SRSData -> Json.Encode.Value"
+            },
+            {
+                "name": "getCardDetails",
+                "comment": " `getCardDetails` returns the current queue status for a given card. If you require this for every due card, simply use `getDueCardIndicesWithDetails`.\n",
+                "type": "SpacedRepetition.SMTwoPlus.Card a -> { queueDetails : SpacedRepetition.SMTwoPlus.QueueDetails }"
+            },
+            {
+                "name": "getDueCardIndices",
+                "comment": " `getDueCardIndices` takes the current time (in the `Time.Posix` format returned by the `now` task of the core `Time` module) and a `Deck` and returns the indices of the subset of the `Deck` that is due for review (as `List Int`). The returned indices will be sorted in the following order:\n\n1.  Cards overdue for review\n    1.  Cards more overdue (by proportion of interval)\n    2.  Cards less overdue (by proportion of interval)\n2.  Any new cards in the deck (never having been studied before)\n\n`getDueCardIndices` assumes that a new day begins after 8 hours, e.g. if a card is scheduled to be studied the next day, it will become due after 8 hours of elapsed time. This can of course create edge cases where cards are reviewed too \"early\" if one studies very early in the morning and again late at night. Still, only very \"new\" cards would be affected, in which case the adverse effect is presumably minimal.\n\n",
+                "type": "Time.Posix -> SpacedRepetition.SMTwoPlus.Deck a -> List.List Basics.Int"
+            },
+            {
+                "name": "getDueCardIndicesWithDetails",
+                "comment": " `getDueCardIndicesWithDetails` takes the current time (in the `Time.Posix` format returned by the `now` task of the core `Time` module) and a `Deck` and returns the the subset of the `Deck` that is due for review (as a list of records), providing their index and which queue they are currently in, with any relevant queue details. The returned indices will be sorted in the following order:\n\n1.  Cards overdue for review\n    1.  Cards more overdue (by proportion of interval)\n    2.  Cards less overdue (by proportion of interval)\n2.  Any new cards in the deck (never having been studied before)\n\n`getDueCardIndicesWithDetails` assumes that a new day begins after 8 hours, e.g. if a card is scheduled to be studied the next day, it will become due after 8 hours of elapsed time. This can of course create edge cases where cards are reviewed too \"early\" if one studies very early in the morning and again late at night. Still, only very \"new\" cards would be affected, in which case the adverse effect is presumably minimal.\n\n",
+                "type": "Time.Posix -> SpacedRepetition.SMTwoPlus.Deck a -> List.List { index : Basics.Int, queueDetails : SpacedRepetition.SMTwoPlus.QueueDetails }"
+            },
+            {
+                "name": "newSRSData",
+                "comment": " `newSRSData` creates a new `SRSData` for inclusion in a `Card`.\n",
+                "type": "SpacedRepetition.SMTwoPlus.SRSData"
+            },
+            {
+                "name": "oneMinusReciprocalDiffWeightSquared",
+                "comment": " `oneMinusReciprocalDiffWeightSquared` represents an attempt to \"fix\" the SM2+ algorithm, scheduling incorrect cards with the more logical behavior of more difficult cards receiving shorter intervals, with the assumption that the original formula `1 / diffWeight ^ 2` was intended to be `1 - 1 / diffWeight ^ 2`. It maps \"difficultyWeight\" ([1.3, 3.0]) to the interval [0.408, 0.889].\n",
+                "type": "Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "performanceRating",
+                "comment": " The `performanceRating` function creates a `PerformanceRating`. `PerformanceRating` is quantitative and must be between 0.0 and 1.0, with values of 0.6 and greater representing a \"correct\" answer.\n",
+                "type": "Basics.Float -> SpacedRepetition.SMTwoPlus.PerformanceRating"
+            }
+        ],
+        "binops": []
+    }
+]

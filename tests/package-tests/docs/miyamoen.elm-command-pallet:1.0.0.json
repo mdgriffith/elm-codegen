@@ -1,0 +1,62 @@
+[
+    {
+        "name": "CommandPallet",
+        "comment": " A command pallet component.\n\n\n# Model\n\n@docs Model, init\n\n\n# View\n\n@docs inFront, html\n\n\n# Update\n\n@docs Msg, update\n\n\n# Startup\n\n@docs subscriptions, subscriptionsWithKey\n@docs showUpMsg\n\n",
+        "unions": [
+            {
+                "name": "Model",
+                "comment": " Contains a current state for a command pallet.\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Msg",
+                "comment": " Needs to be passed to `update`.\n",
+                "args": [],
+                "type": "Types.Msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "html",
+                "comment": " View function with `Html`\n",
+                "type": "CommandPallet.Model msg -> Html.Html msg"
+            },
+            {
+                "name": "inFront",
+                "comment": " `Attribute` in [elm-ui](https://package.elm-lang.org/packages/mdgriffith/elm-ui/latest/).\n\nUse like below:\n\n    layout [ CommandPallet.inFront model.commandPallet ] <|\n        column [] [ text \"your application...\" ]\n\n",
+                "type": "CommandPallet.Model msg -> Element.Attribute msg"
+            },
+            {
+                "name": "init",
+                "comment": " Accepts Msg converter function and your commands.\n\n    CommandPallet.init CommandPalletMsg\n        [ ( \"Increment\", Increment )\n        , ( \"Decrement\", Decrement )\n        , ( \"1\", Set 1 )\n        , ( \"11\", Set 11 )\n        , ( \"123\", Set 123 )\n        , ( \"151\", Set 151 )\n        , ( \"100\", Set 100 )\n        , ( \"101\", Set 101 )\n        , ( \"900\", Set 900 )\n        ]\n\n",
+                "type": "(CommandPallet.Msg -> msg) -> List.List ( String.String, msg ) -> CommandPallet.Model msg"
+            },
+            {
+                "name": "showUpMsg",
+                "comment": " Use `showUpMsg` in your application and customize command pallet startup.\n",
+                "type": "CommandPallet.Msg"
+            },
+            {
+                "name": "subscriptions",
+                "comment": " Subsciption for startup key, `p`.\n",
+                "type": "CommandPallet.Model msg -> Platform.Sub.Sub msg"
+            },
+            {
+                "name": "subscriptionsWithKey",
+                "comment": " Customizable subsciption for startup key.\n\n`Key` type is in [SwiftsNamesake/proper-keyboard](https://package.elm-lang.org/packages/SwiftsNamesake/proper-keyboard/4.0.0).\n\n",
+                "type": "Keyboard.Key.Key -> CommandPallet.Model msg -> Platform.Sub.Sub msg"
+            },
+            {
+                "name": "update",
+                "comment": " Returns a new `Model` and a parent `Cmd msg`.\n",
+                "type": "CommandPallet.Msg -> CommandPallet.Model msg -> ( CommandPallet.Model msg, Platform.Cmd.Cmd msg )"
+            }
+        ],
+        "binops": []
+    }
+]

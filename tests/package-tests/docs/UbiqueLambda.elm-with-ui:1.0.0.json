@@ -1,0 +1,380 @@
+[
+    {
+        "name": "UI",
+        "comment": " With-pattern UI toolkit for Elm. Oversimplified by now.\n\nIn this documentant, the world `unit` meaning varies according to your Encoder.\n\n\n# Type\n\n@docs Graphics, map\n\n\n## Color type\n\n@docs Color, intRGBA\n\n\n## Helping types\n\n@docs Rect, Corners\n\n\n## Atoms\n\n@docs empty, looseText, spanText\n\n\n## Grouping\n\n@docs singleton, row, column, stack, indexedRow, indexedColumn, indexedStack\n\n\n# Options\n\n\n## Change Width and Height\n\n@docs withWidth, withFitContentsX, withHeight, withFitContentsY\n\n\n## Change Spacing and Padding\n\n@docs withSpacing, withPadding, withPaddingXY, withPaddingEach\n\n\n## Scrolling Behavior\n\n@docs withScrollingX, withScrollingY, Scroll, scrollInsetAlwaysVisible\n\n\n## Background\n\n@docs withBackground, Background, backgroundColor\n\n\n## Borders\n\n@docs withBorder, Border, border1uBlack, borderWithColor\n\n@docs borderWithWidth, borderWithWidthXY, borderWithWidthEach\n\n@docs borderWithRounding, borderWithRoundingEach\n\n\n## Shadows\n\n@docs withOuterShadow, Shadow, shadow1uBlack, shadowWithColor, shadowWithLengthXY, shadowWithBlurRadius, shadowWithSpreadRadius\n\n\n## Text Alignment\n\n@docs withTextAlign, TextAlignment, textLeft, textCenter, textRight\n\n\n## Item Alignment\n\n@docs withAlignSelf, withJustifyItems, Alignment, start, center, end\n\n\n## Font Adjustments\n\n@docs withFontColor, withFontSize, withFontWeight\n\n@docs withFontFamilies, FontFallback, serif, sansSerif, monospace\n\n@docs withInheritFontFamilies, withInheritFontColor, withInheritFontSize, withInheritFontWeight\n\n\n## Events\n\n@docs withOnClick\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Alignment",
+                "comment": " Type for the possible alignment positions.\n",
+                "args": [],
+                "type": "UI.Backend.Graphics.Alignment"
+            },
+            {
+                "name": "Background",
+                "comment": " Type for the possible backgrounds types.\n",
+                "args": [],
+                "type": "UI.Backend.Graphics.Background"
+            },
+            {
+                "name": "Border",
+                "comment": " Type for describing border displaying.\n",
+                "args": [],
+                "type": "UI.Backend.Graphics.Border"
+            },
+            {
+                "name": "Color",
+                "comment": " Type for holding color primitives.\n",
+                "args": [],
+                "type": "UI.Backend.Graphics.Color"
+            },
+            {
+                "name": "Corners",
+                "comment": " Helper type for grouping topLeft, topRight, bottomRight, and bottomLeft metrics (in units).\n",
+                "args": [],
+                "type": "{ topLeft : Basics.Int, topRight : Basics.Int, bottomRight : Basics.Int, bottomLeft : Basics.Int }"
+            },
+            {
+                "name": "FontFallback",
+                "comment": " Type for the possible font fallbacks.\n",
+                "args": [],
+                "type": "UI.Backend.Graphics.FontFallback"
+            },
+            {
+                "name": "Graphics",
+                "comment": " Type for describing atoms or groups.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "UI.Backend.Graphics.Graphics msg"
+            },
+            {
+                "name": "Rect",
+                "comment": " Helper type for grouping top, right, bottom, and left distances (in units).\n",
+                "args": [],
+                "type": "{ top : Basics.Int, right : Basics.Int, bottom : Basics.Int, left : Basics.Int }"
+            },
+            {
+                "name": "Scroll",
+                "comment": " Type for the possible options of scrolling.\n",
+                "args": [],
+                "type": "UI.Backend.Graphics.Scroll"
+            },
+            {
+                "name": "Shadow",
+                "comment": " Type for the describing shadow displaying.\n",
+                "args": [],
+                "type": "UI.Backend.Graphics.Shadow"
+            },
+            {
+                "name": "TextAlignment",
+                "comment": " Type for the possible options of text alignemtn.\n",
+                "args": [],
+                "type": "UI.Backend.Graphics.TextAlignment"
+            }
+        ],
+        "values": [
+            {
+                "name": "backgroundColor",
+                "comment": " Creates a background and fills it with a specific color.\n\n    green =\n        UI.intRGBA 0x00FF00FF\n\n    greenSquare =\n        UI.empty\n            |> UI.withWidth 32\n            |> UI.withHeight 32\n            |> UI.withBackground (UI.backgroundColor green |> Just)\n\n",
+                "type": "UI.Color -> UI.Background"
+            },
+            {
+                "name": "border1uBlack",
+                "comment": " Creates a border with 1 unit on each side, solid and black.\n\n    emptySquare =\n        UI.empty\n            |> UI.withWidth 31\n            |> UI.withHeight 31\n            |> UI.withBorder (UI.border1uBlack |> Just)\n\n",
+                "type": "UI.Border"
+            },
+            {
+                "name": "borderWithColor",
+                "comment": " Changes the color of all sides of the border.\n\n    pink =\n        UI.intRGBA 0xFFC0CBFF\n\n    emptySquare =\n        UI.empty\n            |> UI.withWidth 31\n            |> UI.withHeight 31\n            |> UI.withBorder (UI.border1uBlack |> UI.borderWithColor pink |> Just)\n\n",
+                "type": "UI.Color -> UI.Border -> UI.Border"
+            },
+            {
+                "name": "borderWithRounding",
+                "comment": " Rounds all the corners of said group, including border, content and background (in units).\n\n    emptyCircle =\n        UI.empty\n            |> UI.withWidth 31\n            |> UI.withHeight 31\n            |> UI.withBorder (UI.border1uBlack |> UI.borderWithRounding 16 |> Just)\n\n",
+                "type": "Basics.Int -> UI.Border -> UI.Border"
+            },
+            {
+                "name": "borderWithRoundingEach",
+                "comment": " Rounds each of the corners of said group, including border, content and background (in units).\n\n    emptyRoudedSquare =\n        UI.empty\n            |> UI.withWidth 31\n            |> UI.withHeight 31\n            |> UI.withBorder\n                (UI.border1uBlack\n                    |> UI.borderWithRoundingEach\n                        { topLeft = 8\n                        , topRight = 8\n                        , bottomRight = 4\n                        , bottomLeft = 4\n                        }\n                    |> Just\n                )\n\n",
+                "type": "UI.Corners -> UI.Border -> UI.Border"
+            },
+            {
+                "name": "borderWithWidth",
+                "comment": " Specify one width value to all sides of the border in units.\n\n    emptySquare32x32 =\n        UI.empty\n            |> UI.withWidth 24\n            |> UI.withHeight 24\n            |> UI.withBorder (UI.border1uBlack |> UI.borderWithWidth 4 |> Just)\n\n",
+                "type": "Basics.Int -> UI.Border -> UI.Border"
+            },
+            {
+                "name": "borderWithWidthEach",
+                "comment": " Specify the width of each side's border.\n\n    emptySquare32x32 =\n        UI.empty\n            |> UI.withWidth 24\n            |> UI.withHeight 24\n            |> UI.withBorder\n                (UI.border1uBlack\n                    |> UI.borderWithWidthEach\n                        { top = 6\n                        , right = 5\n                        , bottom = 2\n                        , left = 3\n                        }\n                    |> Just\n                )\n\n",
+                "type": "UI.Rect -> UI.Border -> UI.Border"
+            },
+            {
+                "name": "borderWithWidthXY",
+                "comment": " Specify the width of X (pair left-right) and Y (pair top-bottom) borders in units.\n\n    emptySquare32x32 =\n        UI.empty\n            |> UI.withWidth 28\n            |> UI.withHeight 24\n            |> UI.withBorder\n                (UI.border1uBlack\n                    |> UI.borderWithWidthXY 2 4\n                    |> Just\n                )\n\n",
+                "type": "Basics.Int -> Basics.Int -> UI.Border -> UI.Border"
+            },
+            {
+                "name": "center",
+                "comment": " Aligns contents on center.\n\n    alignColumnContentsOnCenterHorizontally =\n        UI.indexedColumn\n            [ pinkSquare\n                |> UI.withAlignSelf UI.center\n            , greenSquare\n                |> UI.withAlignSelf UI.center\n            ]\n\n    alignColumnContentsOnCenterVertically =\n        UI.column [ item1, item2, item3 ]\n            |> UI.withJustifyItems UI.center\n\n",
+                "type": "UI.Alignment"
+            },
+            {
+                "name": "column",
+                "comment": " Group itens disposing them vertically.\n\n    shopList model =\n        [ ( \"pineapple\", pineappleBox )\n        , ( \"rice\", riceBox )\n        , ( \"onions\", onionsBox )\n        ]\n            |> maybePrependBeans model\n            |> UI.column\n\n",
+                "type": "List.List ( String.String, UI.Graphics msg ) -> UI.Graphics msg"
+            },
+            {
+                "name": "empty",
+                "comment": " Empty figure.\n",
+                "type": "UI.Graphics msg"
+            },
+            {
+                "name": "end",
+                "comment": " Aligns contents on end.\n\n    alignColumnContentsOnEndHorizontally =\n        UI.indexedColumn\n            [ pinkSquare\n                |> UI.withAlignSelf UI.end\n            , greenSquare\n                |> UI.withAlignSelf UI.end\n            ]\n\n    alignColumnContentsOnEndVertically =\n        UI.column [ item1, item2, item3 ]\n            |> UI.withJustifyItems UI.end\n\n",
+                "type": "UI.Alignment"
+            },
+            {
+                "name": "indexedColumn",
+                "comment": " This is like [`column`](#column), but the virtual-dom struggles to know what to recreate and what to update.\nIt should be fine when you group elements that don't disappear, don't decrease in number, don't increment, and don't swap their order.\n\n**TL;DR**: Avoid this.\n\n    pageView =\n        UI.indexedColumn\n            [ header\n            , text\n            , footer\n            ]\n\n",
+                "type": "List.List (UI.Graphics msg) -> UI.Graphics msg"
+            },
+            {
+                "name": "indexedRow",
+                "comment": " This is like [`row`](#row), but the virtual-dom struggles to know what to recreate and what to update.\nIt should be fine when you group elements that don't disappear, don't decrease in number, don't increment, and don't swap their order.\n\n**TL;DR**: Avoid this.\n\n    tabsMenu =\n        UI.indexedRow\n            [ codeTab\n            , issuesTab\n            , prTab\n            , wikiTab\n            , settingsTab\n            ]\n\n",
+                "type": "List.List (UI.Graphics msg) -> UI.Graphics msg"
+            },
+            {
+                "name": "indexedStack",
+                "comment": " This is like [`stack`](#stack), but the virtual-dom struggles to know what to recreate and what to update.\nIt should be fine when you group elements that don't disappear, don't decrease in number, don't increment, and don't swap their order.\n\n**TL;DR**: Avoid this.\n\n    tabsMenu =\n        UI.indexedStack\n            [ pageContents\n            , halfOpaqueBlackOverlay\n            , dialogBox\n            ]\n\n",
+                "type": "List.List (UI.Graphics msg) -> UI.Graphics msg"
+            },
+            {
+                "name": "intRGBA",
+                "comment": " Use 32-bit hexadecimal to describe the RGBA color.\n\n    red =\n        intRGBA 0xFF0000FF\n\n    yellow =\n        intRGBA 0xFFFF00FF\n\n    cyan =\n        intRGBA 0x00FFFFFF\n\n",
+                "type": "Basics.Int -> UI.Color"
+            },
+            {
+                "name": "looseText",
+                "comment": " Text without a container. Don't have any special behavior, it just renders.\n\nIn HTML, this will insert text in the document without surrouding it in a tag.\n\n**NOTE**: When you use any with-functions in a loose-text, it automatically wraps in a [`singleton`](#singleton).\nThe result is then identical to a [`spanText`](#spanText).\n\n",
+                "type": "String.String -> UI.Graphics msg"
+            },
+            {
+                "name": "map",
+                "comment": " Usually used for nesting components.\n\n    dropdownView model =\n        UI.map ForDropdownMsg (MyDropdown.view model.dropdown)\n\n",
+                "type": "(a -> msg) -> UI.Graphics a -> UI.Graphics msg"
+            },
+            {
+                "name": "monospace",
+                "comment": " An always-present monospaced font for fallback when the desired font-family is not found.\n\nSee [`withFontFamilies`](#withFontFamilies) for usage.\n\n",
+                "type": "UI.FontFallback"
+            },
+            {
+                "name": "row",
+                "comment": " Group itens disposing them horizontally.\n\n    pageView model =\n        [ ( \"contents\", contentsView model )\n        , ( \"tools\", toolingView model )\n        ]\n            |> maybePrependSidebar model\n            |> UI.row\n\n",
+                "type": "List.List ( String.String, UI.Graphics msg ) -> UI.Graphics msg"
+            },
+            {
+                "name": "sansSerif",
+                "comment": " An always-present sans-serif font for fallback when the desired font-family is not found.\n\nSee [`withFontFamilies`](#withFontFamilies) for usage.\n\n",
+                "type": "UI.FontFallback"
+            },
+            {
+                "name": "scrollInsetAlwaysVisible",
+                "comment": " The (default) HTML-like way of adding scrollbars to any group.\n\nThe scrollbar is inset, relative to the group's dimensions.\nAnd is always visible indiferent to the length of the group's contents.\n\nSee [`withScrollingX`](#withScrollingX) and [`withScrollingY`](#withScrollingY) for usage.\n\n",
+                "type": "UI.Scroll"
+            },
+            {
+                "name": "serif",
+                "comment": " An always-present serif font for fallback when the desired font-family is not found.\n\nSee [`withFontFamilies`](#withFontFamilies) for usage.\n\n",
+                "type": "UI.FontFallback"
+            },
+            {
+                "name": "shadow1uBlack",
+                "comment": " The default shadow, black, 1 unit of length in X (slightly to the right) and Y (slightly to bottom),\n1 unit of blur-radius and 1 unit of spread-radius.\n",
+                "type": "UI.Shadow"
+            },
+            {
+                "name": "shadowWithBlurRadius",
+                "comment": " Change some shadow's blur-radius in units.\n\n    someShadow =\n        UI.shadow1uBlack\n            |> UI.shadowWithBlurRadius 12\n\n",
+                "type": "Basics.Int -> UI.Shadow -> UI.Shadow"
+            },
+            {
+                "name": "shadowWithColor",
+                "comment": " Change some shadow's color.\n\n    someShadow =\n        UI.shadow1uBlack\n            |> UI.shadowWithColor cyan\n\n",
+                "type": "UI.Color -> UI.Shadow -> UI.Shadow"
+            },
+            {
+                "name": "shadowWithLengthXY",
+                "comment": " Changes the length in units of some shadow.\n\n  - Negatives X values means it grows to the left, positive X values means it grows to the right.\n  - Negatives Y values means it grows to the top, positive Y values means it grows to the bottom.\n\n```\nsomeShadow =\n    UI.shadow1uBlack\n        |> UI.shadowWithLengthXY 12 12\n```\n\n",
+                "type": "Basics.Int -> Basics.Int -> UI.Shadow -> UI.Shadow"
+            },
+            {
+                "name": "shadowWithSpreadRadius",
+                "comment": " Change some shadow's spread-radius in units.\n\n    someShadow =\n        UI.shadow1uBlack\n            |> UI.shadowWithBlurRadius 12\n\n",
+                "type": "Basics.Int -> UI.Shadow -> UI.Shadow"
+            },
+            {
+                "name": "singleton",
+                "comment": " Wraps a single element in a container.\n\n    nestedSquares =\n        UI.empty\n            |> UI.withWidth 25\n            |> UI.withHeight 25\n            |> UI.withBorder (UI.border1uBlack |> Just)\n            |> UI.singleton\n            |> UI.withBorder (UI.border1uBlack |> UI.borderWithColor red |> Just)\n            |> UI.singleton\n            |> UI.withBorder (UI.border1uBlack |> UI.borderWithColor orange |> Just)\n            |> UI.singleton\n            |> UI.withBorder (UI.border1uBlack |> UI.borderWithColor yellow |> Just)\n            |> UI.singleton\n            |> UI.withBorder (UI.border1uBlack |> UI.borderWithColor green |> Just)\n            |> UI.singleton\n            |> UI.withBorder (UI.border1uBlack |> UI.borderWithColor cyan |> Just)\n            |> UI.singleton\n            |> UI.withBorder (UI.border1uBlack |> UI.borderWithColor blue |> Just)\n\n",
+                "type": "UI.Graphics msg -> UI.Graphics msg"
+            },
+            {
+                "name": "spanText",
+                "comment": " Wraps text within a container. Behaves according to the parent grouping disposition.\n\nIn HTML, this will insert text in the document without surrouding it in a `<div>` tag.\n\n",
+                "type": "String.String -> UI.Graphics msg"
+            },
+            {
+                "name": "stack",
+                "comment": " Group itens disposing them one above the other. Head goes on bottom, tails goes on top.\n\n    pageView model =\n        [ ( \"contents\", pageContents ) ]\n            |> maybeAppendHalfOpaqueBlackOverlay model\n            |> maybeAppendDialogBox\n            |> UI.stack\n\n",
+                "type": "List.List ( String.String, UI.Graphics msg ) -> UI.Graphics msg"
+            },
+            {
+                "name": "start",
+                "comment": " Aligns contents on start.\n\n    alignColumnContentsOnStartHorizontally =\n        UI.indexedColumn\n            [ pinkSquare\n                |> UI.withAlignSelf UI.start\n            , greenSquare\n                |> UI.withAlignSelf UI.start\n            ]\n\n    alignColumnContentsOnStartVertically =\n        UI.column [ item1, item2, item3 ]\n            |> UI.withJustifyItems UI.start\n\n",
+                "type": "UI.Alignment"
+            },
+            {
+                "name": "textCenter",
+                "comment": " Centers the text relative to its group.\n",
+                "type": "UI.TextAlignment"
+            },
+            {
+                "name": "textLeft",
+                "comment": " Aligns the text to the left.\n\n**NOTE**: Remember that RTL locales exists.\n\n",
+                "type": "UI.TextAlignment"
+            },
+            {
+                "name": "textRight",
+                "comment": " Aligns the text to the right.\n\n**NOTE**: Remember that RTL locales exists.\n\n",
+                "type": "UI.TextAlignment"
+            },
+            {
+                "name": "withAlignSelf",
+                "comment": " Aligns an item relative to the cross-axis of its group.\n\n    alignColumnContentsExample =\n        UI.column\n            [ pinkSquare\n                |> UI.withAlignSelf UI.start\n                |> Tuple.pair \"aligned-on-left\"\n            , greenSquare\n                |> UI.withAlignSelf UI.center\n                |> Tuple.pair \"aligned-on-center\"\n            , blueSquare\n                |> UI.withAlignSelf UI.end\n                |> Tuple.pair \"aligned-on-right\"\n            ]\n\n    alignRowContentsExample =\n        UI.row\n            [ pinkSquare\n                |> UI.withAlignSelf UI.start\n                |> Tuple.pair \"aligned-on-top\"\n            , greenSquare\n                |> UI.withAlignSelf UI.center\n                |> Tuple.pair \"aligned-on-center\"\n            , blueSquare\n                |> UI.withAlignSelf UI.end\n                |> Tuple.pair \"aligned-on-bottom\"\n            ]\n\n",
+                "type": "UI.Alignment -> UI.Graphics msg -> UI.Graphics msg"
+            },
+            {
+                "name": "withBackground",
+                "comment": " Applies a background to an element.\n\n    square =\n        UI.empty\n            |> UI.withWidth 32\n            |> UI.withHeight 32\n            |> UI.withBackground (UI.backgroundColor black |> Just)\n\n",
+                "type": "Maybe.Maybe UI.Background -> UI.Graphics msg -> UI.Graphics msg"
+            },
+            {
+                "name": "withBorder",
+                "comment": " Applies borders to an element.\n\n    square =\n        UI.empty\n            |> UI.withWidth 32\n            |> UI.withHeight 32\n            |> UI.withBorder (UI.border1uBlack |> Just)\n\n",
+                "type": "Maybe.Maybe UI.Border -> UI.Graphics msg -> UI.Graphics msg"
+            },
+            {
+                "name": "withFitContentsX",
+                "comment": " Instead of forcing the width, have enougth to show all the children contents.\n\nFor forcing a fixed one, see [`withWidth`](#withWidth).\n\n",
+                "type": "UI.Graphics msg -> UI.Graphics msg"
+            },
+            {
+                "name": "withFitContentsY",
+                "comment": " Instead of forcing the height, have enougth to show all the children contents.\n\nFor forcing a fixed one, see [`withHeight`](#withHeight).\n\n",
+                "type": "UI.Graphics msg -> UI.Graphics msg"
+            },
+            {
+                "name": "withFontColor",
+                "comment": " Changes the text's color.\n\nDefault text's color is inherited, where's in the root element it's black.\n\n    coolTitle =\n        UI.spanText \"HELLO\"\n            |> UI.withFontColor pink\n\n",
+                "type": "UI.Color -> UI.Graphics msg -> UI.Graphics msg"
+            },
+            {
+                "name": "withFontFamilies",
+                "comment": " Changes the text's font family. Tries all the font in the list, stopping in the first one available.\nThe fallback is used when nothing in the list is available.\n\nDefault font family value is inherited, where's in the root element it's [`serif`](#serif).\n\n    coolTitle =\n        UI.spanText \"HELLO\"\n            |> UI.withFontFamilies\n                [ \"Borg Sans Mono\"\n                , \"Fira Code\"\n                , \"JuliaMono\"\n                , \"Fantasque Sans Mono\"\n                ]\n                UI.monospace\n\n",
+                "type": "List.List String.String -> UI.FontFallback -> UI.Graphics msg -> UI.Graphics msg"
+            },
+            {
+                "name": "withFontSize",
+                "comment": " Changes the text's size, in units.\n\nDefault text's color is inherited, where's in the root element it's 16 units.\n\n    coolTitle =\n        UI.spanText \"HELLO\"\n            |> UI.withFontSize 24\n\n",
+                "type": "Basics.Int -> UI.Graphics msg -> UI.Graphics msg"
+            },
+            {
+                "name": "withFontWeight",
+                "comment": " Changes the text's weight.\n\nDefault font's weight is inherited, where's in the root element it's 400.\n\n    coolTitle =\n        UI.spanText \"BOLD\"\n            |> UI.withFontWeight 700\n\n",
+                "type": "Basics.Int -> UI.Graphics msg -> UI.Graphics msg"
+            },
+            {
+                "name": "withHeight",
+                "comment": " Forces the group's height to a quantity in units.\n\nBy default, if the children's length is bigger, the content is cliped.\nSee [`withScrollingY`](#withScrollingY) to avoid it.\n\n    someSquare =\n        UI.empty\n            |> UI.withWidth 64\n            |> UI.withHeight 64\n            |> UI.withBackground (UI.backgroundColor blue |> Just)\n\n",
+                "type": "Basics.Int -> UI.Graphics msg -> UI.Graphics msg"
+            },
+            {
+                "name": "withInheritFontColor",
+                "comment": " Instead of forcing the font's color, inherit it from the parent group.\n\nFor forcing a fixed one, or to learn about default behavior, see [`withFontColor`](#withFontColor).\n\n",
+                "type": "UI.Graphics msg -> UI.Graphics msg"
+            },
+            {
+                "name": "withInheritFontFamilies",
+                "comment": " Instead of forcing the font's family, inherit it from the parent group.\n\nFor forcing a fixed one, or to learn about default behavior, see [`withFontFamilies`](#withFontFamilies).\n\n",
+                "type": "UI.Graphics msg -> UI.Graphics msg"
+            },
+            {
+                "name": "withInheritFontSize",
+                "comment": " Instead of forcing the font's size, inherit it from the parent group.\n\nFor forcing a fixed one, or to learn about default behavior, see [`withFontSize`](#withFontSize).\n\n",
+                "type": "UI.Graphics msg -> UI.Graphics msg"
+            },
+            {
+                "name": "withInheritFontWeight",
+                "comment": " Instead of forcing the font's weight, inherit it from the parent group.\n\nFor forcing a fixed one, or to learn about default behavior, see [`withFontWeight`](#withFontWeight).\n\n",
+                "type": "UI.Graphics msg -> UI.Graphics msg"
+            },
+            {
+                "name": "withJustifyItems",
+                "comment": " How to align the items of a group.\nIn a row and in a stack this affects how they're show horizontally.\nIn a column this affects how they're show vertically.\n\n    alignRowContentsOnRightExample =\n        UI.row\n            [ pink32uSquare\n            , green32uSquare\n            , blue32uSquare\n            ]\n            |> UI.withWidth 640\n            |> UI.withJustifyItems UI.end\n\n",
+                "type": "UI.Alignment -> UI.Graphics msg -> UI.Graphics msg"
+            },
+            {
+                "name": "withOnClick",
+                "comment": " Listen for click events and dispatches the choosen message.\n\n**Implicit effect**: Changes the cursor to the platform's clickable-pointer, when available.\n\n    button =\n        UI.withOnClick Msg.IncrementCounter incrementButton\n\n",
+                "type": "msg -> UI.Graphics msg -> UI.Graphics msg"
+            },
+            {
+                "name": "withOuterShadow",
+                "comment": " Applies outer-shadow to an element.\n\n    square =\n        UI.empty\n            |> UI.withWidth 32\n            |> UI.withHeight 32\n            |> UI.withBorder (UI.border1uBlack |> Just)\n            |> UI.withOuterShadow\n                (shadow1uBlack |> shadowWithColor green |> Just)\n\n",
+                "type": "Maybe.Maybe UI.Shadow -> UI.Graphics msg -> UI.Graphics msg"
+            },
+            {
+                "name": "withPadding",
+                "comment": " Applies empty space, in units, repeatedly on top, bottom, left and right, surrounding the group.\n\n    square =\n        UI.spanText \"Hello World!\"\n            |> UI.withPadding 12\n            |> UI.withBorder (UI.border1uBlack |> Just)\n\n",
+                "type": "Basics.Int -> UI.Graphics msg -> UI.Graphics msg"
+            },
+            {
+                "name": "withPaddingEach",
+                "comment": " Applies empty space, in units, surrounding the group.\n\n    square =\n        UI.spanText \"Hello World!\"\n            |> UI.withPaddingEach { top = 1, right = 3, bottom = 4, left = 2 }\n            |> UI.withBorder (UI.border1uBlack |> Just)\n\n",
+                "type": "UI.Rect -> UI.Graphics msg -> UI.Graphics msg"
+            },
+            {
+                "name": "withPaddingXY",
+                "comment": " Applies empty space, in units, to X (left and right) and Y (top and bottom).\n\n    square =\n        UI.spanText \"Hello World!\"\n            |> UI.withPaddingXY 12 16\n            |> UI.withBorder (UI.border1uBlack |> Just)\n\n",
+                "type": "Basics.Int -> Basics.Int -> UI.Graphics msg -> UI.Graphics msg"
+            },
+            {
+                "name": "withScrollingX",
+                "comment": " When the contents of a group does not fit into the group's width, you might want to show a horizontal scroll bar.\n\nSee [`scrollInsetAlwaysVisible`](#scrollInsetAlwaysVisible) for the only value available right now.\n`Nothing` means the content will be horizontally clipped (default behavior).\n\n    horizontalScrollbars items =\n        UI.row items\n            |> UI.withPadding 16\n            |> UI.withScrollingX (Just UI.scrollInsetAlwaysVisible)\n\n",
+                "type": "Maybe.Maybe UI.Scroll -> UI.Graphics msg -> UI.Graphics msg"
+            },
+            {
+                "name": "withScrollingY",
+                "comment": " When the contents of a group does not fit into the group's height, you might want to show a vertical scroll bar.\n\nSee [`scrollInsetAlwaysVisible`](#scrollInsetAlwaysVisible) for the only value available right now.\n`Nothing` means the content will be vertically clipped (default behavior).\n\n    verticalScrollbars items =\n        UI.column items\n            |> UI.withPadding 16\n            |> UI.withScrollingY (Just UI.scrollInsetAlwaysVisible)\n\n",
+                "type": "Maybe.Maybe UI.Scroll -> UI.Graphics msg -> UI.Graphics msg"
+            },
+            {
+                "name": "withSpacing",
+                "comment": " Empty space between the items of a group, in units.\n\n    spacedRow =\n        UI.row [ item1, item2, item3 ]\n            |> UI.withSpacing 8\n\n",
+                "type": "Basics.Int -> UI.Graphics msg -> UI.Graphics msg"
+            },
+            {
+                "name": "withTextAlign",
+                "comment": " Where to align text inside a group.\n\n    spacedRow =\n        UI.spanText \"Foo Bar\"\n            |> UI.withWidth 640\n            |> UI.withTextAlign UI.textCenter\n\n",
+                "type": "UI.TextAlignment -> UI.Graphics msg -> UI.Graphics msg"
+            },
+            {
+                "name": "withWidth",
+                "comment": " Forces the group's width to a quantity in units.\n\nBy default, if the children's length is bigger, the content is cliped.\nSee [`withScrollingX`](#withScrollingX) to avoid it.\n\n    someSquare =\n        UI.empty\n            |> UI.withWidth 64\n            |> UI.withHeight 64\n            |> UI.withBackground (UI.backgroundColor blue |> Just)\n\n",
+                "type": "Basics.Int -> UI.Graphics msg -> UI.Graphics msg"
+            }
+        ],
+        "binops": []
+    }
+]

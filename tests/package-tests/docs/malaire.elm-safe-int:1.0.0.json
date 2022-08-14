@@ -1,0 +1,332 @@
+[
+    {
+        "name": "SafeInt",
+        "comment": " A safe 54-bit signed integer for use cases where normal `Int` isn't sufficient and 54-bit range will suffice.\n\n@docs SafeInt\n\n\n# Constants\n\n@docs minValue, maxValue, undefined, zero, one, two\n\n\n# Conversion from/to Int\n\n@docs new, fromInt, toInt\n\n\n# Conversion from/to Float\n\nComparison of `Float` to [`SafeInt`](#SafeInt) conversion functions:\n\n```text\n          -3.8 -3.5 -3.2   ~    3.2  3.5  3.8\n          ---- ---- ----       ---- ---- ----\nround     -4   -3   -3          3    4    4\nceiling   -3   -3   -3          4    4    4\ntruncate  -3   -3   -3          3    3    3\nfloor     -4   -4   -4          3    3    3\n```\n\n@docs round, ceiling, truncate, floor, toFloat\n\n\n# Math\n\n@docs add, sub, mul, pow\n\n\n# Division Basics\n\n[`SafeInt`](#SafeInt) has four basic division functions:\n[`div`](#div), [`mod`](#mod), [`quotient`](#quotient) and [`remainder`](#remainder).\n\nBoth [`div`](#div) and [`quotient`](#quotient) calculate integer division, the difference is in rounding:\n[`div`](#div) rounds the result towards negative infinity while [`quotient`](#quotient) rounds towards zero.\n\nThe `//` operator is similar to [`quotient`](#quotient).\n\n    -- -10 divided by 3 is -3.333..., rounded to -4\n    SafeInt.div (SafeInt.new -10) (SafeInt.new 3)\n        |> SafeInt.toInt\n        --> Just -4\n\n    -- -10 divided by 3 is -3.333..., rounded to -3\n    SafeInt.quotient (SafeInt.new -10) (SafeInt.new 3)\n        |> SafeInt.toInt\n        --> Just -3\n\nLikewise both [`mod`](#mod) and [`remainder`](#remainder) calculate remainder after integer division:\n[`mod`](#mod) calculates remainder after [`div`](#div)\nand [`remainder`](#remainder) calculates remainder after [`quotient`](#quotient).\n\n    -- -10 divided by 3 is -3.333..., rounded to -4\n    -- then remainder is -10 - (3 * -4) = 2\n    SafeInt.mod (SafeInt.new -10) (SafeInt.new 3)\n        |> SafeInt.toInt\n        --> Just 2\n\n    -- -10 divided by 3 is -3.333..., rounded to -3\n    -- then remainder is -10 - (3 * -3) = -1\n    SafeInt.remainder (SafeInt.new -10) (SafeInt.new 3)\n        |> SafeInt.toInt\n        --> Just -1\n\n\n## Division compared\n\nThe table below shows a comparison of [`div`](#div), [`mod`](#mod), [`quotient`](#quotient) and [`remainder`](#remainder),\nwith `dividend` from `-7` to `7` and `divisor` either `3` or `-3`.\n\n```text\n\ndividend:   -7 -6 -5 -4 -3 -2 -1  0  1  2  3  4  5  6  7\n            -- -- -- -- -- -- -- -- -- -- -- -- -- -- --\ndivisor = 3\ndiv         -3 -2 -2 -2 -1 -1 -1  0  0  0  1  1  1  2  2\nmod          2  0  1  2  0  1  2  0  1  2  0  1  2  0  1\n\nquotient    -2 -2 -1 -1 -1  0  0  0  0  0  1  1  1  2  2\nremainder   -1  0 -2 -1  0 -2 -1  0  1  2  0  1  2  0  1\n\ndivisor = -3\ndiv          2  2  1  1  1  0  0  0 -1 -1 -1 -2 -2 -2 -3\nmod         -1  0 -2 -1  0 -2 -1  0 -2 -1  0 -2 -1  0 -2\n\nquotient     2  2  1  1  1  0  0  0  0  0 -1 -1 -1 -2 -2\nremainder   -1  0 -2 -1  0 -2 -1  0  1  2  0  1  2  0  1\n```\n\n\n## Division undefined\n\nAll division functions return [`undefined`](#undefined) if divisor is `0`\nor either argument is [`undefined`](#undefined).\n\n    -- `1 / 0` is undefined\n    SafeInt.div SafeInt.one SafeInt.zero\n        |> SafeInt.toInt\n        --> Nothing\n\n@docs div, mod, quotient, remainder\n\n\n# Division Reversed\n\nFunctions [`divBy`](#divBy), [`modBy`](#modBy), [`quotientBy`](#quotientBy) and [`remainderBy`](#remainderBy)\nare same as basic division functions, except with reversed arguments.\n\n[`modBy`](#modBy) is similar to `Basics.modBy` and [`remainderBy`](#remainderBy) to `Basics.remainderBy`.\n\n    -- `2^40 / 10`\n    SafeInt.pow SafeInt.two (SafeInt.new 40)\n        |> SafeInt.divBy (SafeInt.new 10)\n        |> SafeInt.toInt\n        --> Just 109951162777\n\n@docs divBy, modBy, quotientBy, remainderBy\n\n\n# Division Combined\n\n@docs divMod, quotRem, divModBy, quotRemBy\n\n\n# Comparison\n\nOperators `==` and `/=` consider [`undefined`](#undefined) to be equal to itself and unequal to any defined value.\n\n@docs compare\n\n\n# Signs\n\n@docs abs, negate, sign\n\n",
+        "unions": [
+            {
+                "name": "SafeInt",
+                "comment": " A safe 54-bit signed integer.\n\nA [`SafeInt`](#SafeInt) is either defined integer value from [`minValue`](#minValue) to [`maxValue`](#maxValue),\nor [`undefined`](#undefined).\n\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "abs",
+                "comment": " Absolute value.\n\nReturn [`undefined`](#undefined) if argument is [`undefined`](#undefined).\n\n    SafeInt.abs (SafeInt.new 123)\n        |> SafeInt.toInt\n        --> Just 123\n\n    SafeInt.abs (SafeInt.new -123)\n        |> SafeInt.toInt\n        --> Just 123\n\n",
+                "type": "SafeInt.SafeInt -> SafeInt.SafeInt"
+            },
+            {
+                "name": "add",
+                "comment": " Addition.\n\nReturn [`undefined`](#undefined) if\n\n  - either argument is [`undefined`](#undefined)\n  - result would be below [`minValue`](#minValue) or above [`maxValue`](#maxValue)\n\n\n## Example\n\n    -- `123 + 456`\n    SafeInt.add (SafeInt.new 123) (SafeInt.new 456)\n        |> SafeInt.toInt\n        --> Just 579\n\n",
+                "type": "SafeInt.SafeInt -> SafeInt.SafeInt -> SafeInt.SafeInt"
+            },
+            {
+                "name": "ceiling",
+                "comment": " Convert `Float` to [`SafeInt`](#SafeInt), rounding towards positive infinity.\n\nReturn [`undefined`](#undefined) if argument is `NaN`,\nbelow [`minValue`](#minValue) or above [`maxValue`](#maxValue).\n\n    SafeInt.ceiling 3.8\n        |> SafeInt.toInt\n        --> Just 4\n\n    SafeInt.ceiling -3.8\n        |> SafeInt.toInt\n        --> Just -3\n\n",
+                "type": "Basics.Float -> SafeInt.SafeInt"
+            },
+            {
+                "name": "compare",
+                "comment": " Compare two [`SafeInt`](#SafeInt):s.\n\nFirst argument defines how [`undefined`](#undefined) is handled:\n\n  - if `True`, [`undefined`](#undefined) is equal to itself and smaller than any defined value\n  - if `False`, [`undefined`](#undefined) is equal to itself and larger than any defined value\n\n\n## Example\n\n    [ SafeInt.new 34\n    , SafeInt.new 12\n    , SafeInt.undefined\n    , SafeInt.new 56\n    , SafeInt.undefined\n    ]\n        |> List.sortWith (SafeInt.compare True)\n        |> List.map SafeInt.toInt\n        --> [ Nothing, Nothing, Just 12, Just 34, Just 56 ]\n\n",
+                "type": "Basics.Bool -> SafeInt.SafeInt -> SafeInt.SafeInt -> Basics.Order"
+            },
+            {
+                "name": "div",
+                "comment": " Integer division, rounding towards negative infinity.\n\nSee [Division Basics](#division-basics) for more information about division functions.\n\n    SafeInt.div (SafeInt.new 1234) (SafeInt.new 100)\n        |> SafeInt.toInt\n        --> Just 12\n\n    SafeInt.div (SafeInt.new -1234) (SafeInt.new 100)\n        |> SafeInt.toInt\n        --> Just -13\n\n",
+                "type": "SafeInt.SafeInt -> SafeInt.SafeInt -> SafeInt.SafeInt"
+            },
+            {
+                "name": "divBy",
+                "comment": " Same as [`div`](#div) except with reversed arguments.\n",
+                "type": "SafeInt.SafeInt -> SafeInt.SafeInt -> SafeInt.SafeInt"
+            },
+            {
+                "name": "divMod",
+                "comment": " Combines [`div`](#div) and [`mod`](#mod) into a single function.\n\n`divMod a b` is same as `( div a b, mod a b )` except faster.\n\n    SafeInt.divMod (SafeInt.new 1234) (SafeInt.new 100)\n        |> Tuple.mapBoth SafeInt.toInt SafeInt.toInt\n        --> ( Just 12, Just 34 )\n\n    SafeInt.divMod (SafeInt.new -1234) (SafeInt.new 100)\n        |> Tuple.mapBoth SafeInt.toInt SafeInt.toInt\n        --> ( Just -13, Just 66 )\n\n",
+                "type": "SafeInt.SafeInt -> SafeInt.SafeInt -> ( SafeInt.SafeInt, SafeInt.SafeInt )"
+            },
+            {
+                "name": "divModBy",
+                "comment": " Same as [`divMod`](#divMod) except with reversed arguments.\n",
+                "type": "SafeInt.SafeInt -> SafeInt.SafeInt -> ( SafeInt.SafeInt, SafeInt.SafeInt )"
+            },
+            {
+                "name": "floor",
+                "comment": " Convert `Float` to [`SafeInt`](#SafeInt), rounding towards negative infinity.\n\nReturn [`undefined`](#undefined) if argument is `NaN`,\nbelow [`minValue`](#minValue) or above [`maxValue`](#maxValue).\n\n    SafeInt.floor 3.8\n        |> SafeInt.toInt\n        --> Just 3\n\n    SafeInt.floor -3.8\n        |> SafeInt.toInt\n        --> Just -4\n\n",
+                "type": "Basics.Float -> SafeInt.SafeInt"
+            },
+            {
+                "name": "fromInt",
+                "comment": " Convert `Int` to [`SafeInt`](#SafeInt), rounding towards zero.\n\nReturn [`undefined`](#undefined) if argument is `NaN`,\nbelow [`minValue`](#minValue) or above [`maxValue`](#maxValue).\n\n**Note:** Strange cases where argument is `NaN`, `-Infinity`, `+Infinity` or\nnon-integer like `1234.5` are supported.\n\n",
+                "type": "Basics.Int -> SafeInt.SafeInt"
+            },
+            {
+                "name": "maxValue",
+                "comment": " Maximum possible defined value, `2^53 - 1 = 9 007 199 254 740 991`.\n\nEqual to `Number.MAX_SAFE_INTEGER` in JavaScript.\n\n    SafeInt.maxValue\n        |> SafeInt.toInt\n        --> Just 9007199254740991\n\n",
+                "type": "SafeInt.SafeInt"
+            },
+            {
+                "name": "minValue",
+                "comment": " Minimum possible defined value, `- (2^53 - 1) = - 9 007 199 254 740 991`.\n\nEqual to `Number.MIN_SAFE_INTEGER` in JavaScript.\n\n    SafeInt.minValue\n        |> SafeInt.toInt\n        --> Just -9007199254740991\n\n",
+                "type": "SafeInt.SafeInt"
+            },
+            {
+                "name": "mod",
+                "comment": " Remainder after [`div`](#div). This is also used for [modular arithmetic][ma]🢅.\n\nSee [Division Basics](#division-basics) for more information about division functions.\n\n    SafeInt.mod (SafeInt.new 1234) (SafeInt.new 100)\n        |> SafeInt.toInt\n        --> Just 34\n\n    SafeInt.mod (SafeInt.new -1234) (SafeInt.new 100)\n        |> SafeInt.toInt\n        --> Just 66\n\n[ma]: https://en.wikipedia.org/wiki/Modular_arithmetic\n\n",
+                "type": "SafeInt.SafeInt -> SafeInt.SafeInt -> SafeInt.SafeInt"
+            },
+            {
+                "name": "modBy",
+                "comment": " Same as [`mod`](#mod) except with reversed arguments.\n\nThis is similar to `Basics.modBy`.\n\n",
+                "type": "SafeInt.SafeInt -> SafeInt.SafeInt -> SafeInt.SafeInt"
+            },
+            {
+                "name": "mul",
+                "comment": " Multiplication.\n\nReturn [`undefined`](#undefined) if\n\n  - either argument is [`undefined`](#undefined)\n  - result would be below [`minValue`](#minValue) or above [`maxValue`](#maxValue)\n\n\n## Example\n\n    -- `123 * 456`\n    SafeInt.mul (SafeInt.new 123) (SafeInt.new 456)\n        |> SafeInt.toInt\n        --> Just 56088\n\n",
+                "type": "SafeInt.SafeInt -> SafeInt.SafeInt -> SafeInt.SafeInt"
+            },
+            {
+                "name": "negate",
+                "comment": " Negation.\n\nReturn [`undefined`](#undefined) if argument is [`undefined`](#undefined).\n\n    SafeInt.negate (SafeInt.new 123)\n        |> SafeInt.toInt\n        --> Just -123\n\n    SafeInt.negate (SafeInt.new -123)\n        |> SafeInt.toInt\n        --> Just 123\n\n",
+                "type": "SafeInt.SafeInt -> SafeInt.SafeInt"
+            },
+            {
+                "name": "new",
+                "comment": " Same as [`fromInt`](#fromInt).\n",
+                "type": "Basics.Int -> SafeInt.SafeInt"
+            },
+            {
+                "name": "one",
+                "comment": " Number `1`\n",
+                "type": "SafeInt.SafeInt"
+            },
+            {
+                "name": "pow",
+                "comment": " Power aka exponentiation, rounding towards zero.\n\nReturn [`undefined`](#undefined) if\n\n  - in `pow 0 b`, `b <= 0`\n  - either argument is [`undefined`](#undefined)\n  - result would be below [`minValue`](#minValue) or above [`maxValue`](#maxValue)\n\nThe table below shows the return values of `pow a b` near zero.\n`U` denotes [`undefined`](#undefined) and `*0` denotes non-integer result rounded towards zero.\n\n```text\n  b: -2 -1  0  1  2\n a   -- -- -- -- --\n--\n-2   *0 *0  1 -2  4\n-1    1 -1  1 -1  1\n 0    U  U  U  0  0\n 1    1  1  1  1  1\n 2   *0 *0  1  2  4\n```\n\n\n## Example\n\n    -- `2 ^ 40`\n    SafeInt.pow SafeInt.two (SafeInt.new 40)\n        |> SafeInt.toInt\n        --> Just 1099511627776\n\n**Note:** Opinions differ on what the result of `0 ^ 0`, `NaN ^ 0` and `1 ^ NaN` should be.\n[`SafeInt`](#SafeInt) takes the stance to return [`undefined`](#undefined) when uncertain,\nso all of these (using [`undefined`](#undefined) instead of `NaN`) return [`undefined`](#undefined).\nFor more information see e.g. [Zero to the power of zero][00]🢅 and [NaN § Function definition][NaN]🢅.\n\n[00]: https://en.wikipedia.org/wiki/Zero_to_the_power_of_zero\n[NaN]: https://en.wikipedia.org/wiki/NaN#Function_definition\n\n",
+                "type": "SafeInt.SafeInt -> SafeInt.SafeInt -> SafeInt.SafeInt"
+            },
+            {
+                "name": "quotRem",
+                "comment": " Combines [`quotient`](#quotient) and [`remainder`](#remainder) into a single function.\n\n`quotRem a b` is same as `( quotient a b, remainder a b )` except faster.\n\n    SafeInt.quotRem (SafeInt.new 1234) (SafeInt.new 100)\n        |> Tuple.mapBoth SafeInt.toInt SafeInt.toInt\n        --> ( Just 12, Just 34 )\n\n    SafeInt.quotRem (SafeInt.new -1234) (SafeInt.new 100)\n        |> Tuple.mapBoth SafeInt.toInt SafeInt.toInt\n        --> ( Just -12, Just -34 )\n\n",
+                "type": "SafeInt.SafeInt -> SafeInt.SafeInt -> ( SafeInt.SafeInt, SafeInt.SafeInt )"
+            },
+            {
+                "name": "quotRemBy",
+                "comment": " Same as [`quotRem`](#quotRem) except with reversed arguments.\n",
+                "type": "SafeInt.SafeInt -> SafeInt.SafeInt -> ( SafeInt.SafeInt, SafeInt.SafeInt )"
+            },
+            {
+                "name": "quotient",
+                "comment": " Integer division, rounding towards zero.\n\nThis is similar to `//` operator.\n\nSee [Division Basics](#division-basics) for more information about division functions.\n\n    SafeInt.quotient (SafeInt.new 1234) (SafeInt.new 100)\n        |> SafeInt.toInt\n        --> Just 12\n\n    SafeInt.quotient (SafeInt.new -1234) (SafeInt.new 100)\n        |> SafeInt.toInt\n        --> Just -12\n\n",
+                "type": "SafeInt.SafeInt -> SafeInt.SafeInt -> SafeInt.SafeInt"
+            },
+            {
+                "name": "quotientBy",
+                "comment": " Same as [`quotient`](#quotient) except with reversed arguments.\n",
+                "type": "SafeInt.SafeInt -> SafeInt.SafeInt -> SafeInt.SafeInt"
+            },
+            {
+                "name": "remainder",
+                "comment": " Remainder after [`quotient`](#quotient).\n\nSee [Division Basics](#division-basics) for more information about division functions.\n\n    SafeInt.remainder (SafeInt.new 1234) (SafeInt.new 100)\n        |> SafeInt.toInt\n        --> Just 34\n\n    SafeInt.remainder (SafeInt.new -1234) (SafeInt.new 100)\n        |> SafeInt.toInt\n        --> Just -34\n\n",
+                "type": "SafeInt.SafeInt -> SafeInt.SafeInt -> SafeInt.SafeInt"
+            },
+            {
+                "name": "remainderBy",
+                "comment": " Same as [`remainder`](#remainder) except with reversed arguments.\n\nThis is similar to `Basics.remainderBy`.\n\n",
+                "type": "SafeInt.SafeInt -> SafeInt.SafeInt -> SafeInt.SafeInt"
+            },
+            {
+                "name": "round",
+                "comment": " Convert `Float` to [`SafeInt`](#SafeInt), rounding to nearest integer and half towards positive infinity.\n\nReturn [`undefined`](#undefined) if argument is `NaN`,\nbelow [`minValue`](#minValue) or above [`maxValue`](#maxValue).\n\n    [ 3.2, 3.5, 3.8 ]\n        |> List.map (SafeInt.round >> SafeInt.toInt)\n        --> [ Just 3, Just 4, Just 4 ]\n\n    [ -3.8, -3.5, -3.2 ]\n        |> List.map (SafeInt.round >> SafeInt.toInt)\n        --> [ Just -4, Just -3, Just -3 ]\n\n",
+                "type": "Basics.Float -> SafeInt.SafeInt"
+            },
+            {
+                "name": "sign",
+                "comment": " Sign.\n\n  - `1` if argument is positive\n  - `-1` if argument is negative\n  - `0` if argument is zero\n  - [`undefined`](#undefined) if argument is [`undefined`](#undefined)\n\n\n## Examples\n\n    SafeInt.sign (SafeInt.new 123)\n        |> SafeInt.toInt\n        --> Just 1\n\n    SafeInt.sign (SafeInt.new -123)\n        |> SafeInt.toInt\n        --> Just -1\n\n",
+                "type": "SafeInt.SafeInt -> SafeInt.SafeInt"
+            },
+            {
+                "name": "sub",
+                "comment": " Subtraction.\n\nReturn [`undefined`](#undefined) if\n\n  - either argument is [`undefined`](#undefined)\n  - result would be below [`minValue`](#minValue) or above [`maxValue`](#maxValue)\n\n\n## Example\n\n    -- `456 - 123`\n    SafeInt.sub (SafeInt.new 456) (SafeInt.new 123)\n        |> SafeInt.toInt\n        --> Just 333\n\n",
+                "type": "SafeInt.SafeInt -> SafeInt.SafeInt -> SafeInt.SafeInt"
+            },
+            {
+                "name": "toFloat",
+                "comment": " Convert [`SafeInt`](#SafeInt) to `Maybe Float`.\n\nReturn `Just value` if [`SafeInt`](#SafeInt) is defined,\nand `Nothing` if [`SafeInt`](#SafeInt) is [`undefined`](#undefined).\n\n",
+                "type": "SafeInt.SafeInt -> Maybe.Maybe Basics.Float"
+            },
+            {
+                "name": "toInt",
+                "comment": " Convert [`SafeInt`](#SafeInt) to `Maybe Int`.\n\nReturn `Just value` if [`SafeInt`](#SafeInt) is defined,\nand `Nothing` if [`SafeInt`](#SafeInt) is [`undefined`](#undefined).\n\n",
+                "type": "SafeInt.SafeInt -> Maybe.Maybe Basics.Int"
+            },
+            {
+                "name": "truncate",
+                "comment": " Convert `Float` to [`SafeInt`](#SafeInt), rounding towards zero.\n\nReturn [`undefined`](#undefined) if argument is `NaN`,\nbelow [`minValue`](#minValue) or above [`maxValue`](#maxValue).\n\n    SafeInt.truncate 3.8\n        |> SafeInt.toInt\n        --> Just 3\n\n    SafeInt.truncate -3.8\n        |> SafeInt.toInt\n        --> Just -3\n\n",
+                "type": "Basics.Float -> SafeInt.SafeInt"
+            },
+            {
+                "name": "two",
+                "comment": " Number `2`\n",
+                "type": "SafeInt.SafeInt"
+            },
+            {
+                "name": "undefined",
+                "comment": " Undefined value.\n\nFunctions return [`undefined`](#undefined) when result can't be represented using an integer\nbetween [`minValue`](#minValue) and [`maxValue`](#maxValue).\nFor example division by zero or when result is above [`maxValue`](#maxValue).\n\n    -- `1 / 0` is undefined\n    SafeInt.div SafeInt.one SafeInt.zero\n        |> SafeInt.toInt\n        --> Nothing\n\n    -- `2 ^ 55` is undefined\n    SafeInt.pow SafeInt.two (SafeInt.new 55)\n        |> SafeInt.toInt\n        --> Nothing\n\nOperators `==` and `/=` consider [`undefined`](#undefined) to be equal to itself and unequal to any defined value,\nso to find out whether [`SafeInt`](#SafeInt) is [`undefined`](#undefined) or not,\nyou can just compare it to [`undefined`](#undefined).\n\n    SafeInt.div SafeInt.one SafeInt.zero\n        == SafeInt.undefined\n        --> True\n\n    SafeInt.div SafeInt.one SafeInt.one\n        == SafeInt.undefined\n        --> False\n\n",
+                "type": "SafeInt.SafeInt"
+            },
+            {
+                "name": "zero",
+                "comment": " Number `0`\n",
+                "type": "SafeInt.SafeInt"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "SafeInt.Unchecked",
+        "comment": " Unchecked versions of [`SafeInt`](SafeInt#SafeInt) functions which operate directly on `Float` values.\n\n    import SafeInt.Unchecked as Unchecked\n\n    -- `2^40 / 10`\n    Unchecked.pow 2 40\n        |> Unchecked.divBy 10\n        --> 109951162777\n\nIt is recommended to use [`SafeInt`](SafeInt#SafeInt) functions instead of `Unchecked` functions,\nunless more speed is required at the cost of some lost safety and features.\n\n\n# Difference to SafeInt\n\n`Unchecked` functions are faster than corresponding [`SafeInt`](SafeInt#SafeInt) functions because they\n\n  - operate directly on `Float` values\n  - don't support [`undefined`](SafeInt#undefined) value\n  - don't check that arguments are valid\n  - don't check whether result would be between [`minValue`](#minValue) and [`maxValue`](#maxValue)\n\nTherefore with `Unchecked` functions it's users responsibility to make sure\nthat arguments are valid and such that result will be within allowed limits.\n\nAs long as undefined behavior is avoided,\n`Unchecked` functions will work exactly like corresponding [`SafeInt`](SafeInt#SafeInt) functions.\n\n\n## Usage rules\n\nWhen using `Unchecked` functions\n\n  - arguments must be exact integer(\\*) values and\n  - arguments must be between [`minValue`](#minValue) and [`maxValue`](#maxValue) and\n  - arguments must be such that corresponding [`SafeInt`](SafeInt#SafeInt) function would not return [`undefined`](SafeInt#undefined)\n\n\\*) This doesn't apply to [`round`](#round), [`ceiling`](#ceiling), [`truncate`](#truncate) and [`floor`](#floor)\nwhich allow non-integer arguments.\n\n**If these rules are not followed, behavior of `Unchecked` functions is undefined.**\n\n\n# Constants\n\n@docs minValue, maxValue\n\n\n# Conversion from/to Int\n\n@docs fromInt, toInt\n\n\n# Rounding\n\nComparison of rounding functions:\n\n```text\n          -3.8 -3.5 -3.2   ~    3.2  3.5  3.8\n          ---- ---- ----       ---- ---- ----\nround     -4   -3   -3          3    4    4\nceiling   -3   -3   -3          4    4    4\ntruncate  -3   -3   -3          3    3    3\nfloor     -4   -4   -4          3    3    3\n```\n\n@docs round, ceiling, truncate, floor\n\n\n# Math\n\n@docs add, sub, mul, pow\n\n\n# Division Basics\n\n\n## Division undefined\n\nBehavior of division functions is undefined if\n\n  - divisor is `0`\n  - either argument is not exact integer\n  - either argument is below [`minValue`](#minValue) or above [`maxValue`](#maxValue)\n\n@docs div, mod, quotient, remainder\n\n\n# Division Reversed\n\nFunctions [`divBy`](#divBy), [`modBy`](#modBy), [`quotientBy`](#quotientBy) and [`remainderBy`](#remainderBy)\nare same as basic division functions, except with reversed arguments.\n\n[`modBy`](#modBy) is similar to `Basics.modBy` and [`remainderBy`](#remainderBy) to `Basics.remainderBy`.\n\n    import SafeInt.Unchecked as Unchecked\n\n    -- `2^40 / 10`\n    Unchecked.pow 2 40\n        |> Unchecked.divBy 10\n        --> 109951162777\n\n@docs divBy, modBy, quotientBy, remainderBy\n\n\n# Division Combined\n\n@docs divMod, quotRem, divModBy, quotRemBy\n\n\n# Signs\n\n@docs abs, negate, sign\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "abs",
+                "comment": " Absolute value.\n\nBehavior is undefined if\n\n  - argument is not exact integer value\n  - argument is below [`minValue`](#minValue) or above [`maxValue`](#maxValue)\n\n**Note:** You can use `Basics.abs` instead of this function.\n\n",
+                "type": "Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "add",
+                "comment": " Addition.\n\nBehavior is undefined if\n\n  - either argument is not exact integer\n  - either argument is below [`minValue`](#minValue) or above [`maxValue`](#maxValue)\n  - result would be below [`minValue`](#minValue) or above [`maxValue`](#maxValue)\n\n**Note:** You can use `+` operator instead of this function.\n\n",
+                "type": "Basics.Float -> Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "ceiling",
+                "comment": " Round to integer towards positive infinity.\n\nBehavior is undefined if argument is `NaN`, below [`minValue`](#minValue) or above [`maxValue`](#maxValue).\n\n    SafeInt.Unchecked.ceiling 3.8\n        --> 4.0\n\n    SafeInt.Unchecked.ceiling -3.8\n        --> -3.0\n\n",
+                "type": "Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "div",
+                "comment": " Integer division, rounding towards negative infinity.\n\nSee [Division undefined](#division-undefined) for undefined behavior\nand [SafeInt § Division Basics](SafeInt#division-basics) for more information about division functions.\n\n    SafeInt.Unchecked.div 1234 100\n        --> 12\n\n    SafeInt.Unchecked.div -1234 100\n        --> -13\n\n",
+                "type": "Basics.Float -> Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "divBy",
+                "comment": " Same as [`div`](#div) except with reversed arguments.\n",
+                "type": "Basics.Float -> Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "divMod",
+                "comment": " Combines [`div`](#div) and [`mod`](#mod) into a single function.\n\n`divMod a b` is same as `( div a b, mod a b )` except faster.\n\n    SafeInt.Unchecked.divMod 1234 100\n        --> ( 12, 34 )\n\n    SafeInt.Unchecked.divMod -1234 100\n        --> ( -13, 66 )\n\n",
+                "type": "Basics.Float -> Basics.Float -> ( Basics.Float, Basics.Float )"
+            },
+            {
+                "name": "divModBy",
+                "comment": " Same as [`divMod`](#divMod) except with reversed arguments.\n",
+                "type": "Basics.Float -> Basics.Float -> ( Basics.Float, Basics.Float )"
+            },
+            {
+                "name": "floor",
+                "comment": " Round to integer towards negative infinity.\n\nBehavior is undefined if argument is `NaN`, below [`minValue`](#minValue) or above [`maxValue`](#maxValue).\n\n    SafeInt.Unchecked.floor 3.8\n        --> 3.0\n\n    SafeInt.Unchecked.floor -3.8\n        --> -4.0\n\n",
+                "type": "Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "fromInt",
+                "comment": " Convert `Int` to `Float`.\n\nBehavior is undefined if\n\n  - argument is not exact integer\n  - argument is below [`minValue`](#minValue) or above [`maxValue`](#maxValue)\n\n**Note:** You can use `Basics.toFloat` instead of this function.\n\n**Note:** Unlike [`SafeInt.fromInt`](SafeInt#fromInt),\nthis function does not allow non-integer argument.\n\n",
+                "type": "Basics.Int -> Basics.Float"
+            },
+            {
+                "name": "maxValue",
+                "comment": " Maximum possible value, `2^53 - 1 = 9 007 199 254 740 991`.\n\nEqual to `Number.MAX_SAFE_INTEGER` in JavaScript.\n\n    SafeInt.Unchecked.maxValue\n        --> 9007199254740991\n\n",
+                "type": "Basics.Float"
+            },
+            {
+                "name": "minValue",
+                "comment": " Minimum possible value, `- (2^53 - 1) = - 9 007 199 254 740 991`.\n\nEqual to `Number.MIN_SAFE_INTEGER` in JavaScript.\n\n    SafeInt.Unchecked.minValue\n        --> -9007199254740991\n\n",
+                "type": "Basics.Float"
+            },
+            {
+                "name": "mod",
+                "comment": " Remainder after [`div`](#div). This is also used for [modular arithmetic][ma]🢅.\n\nSee [Division undefined](#division-undefined) for undefined behavior\nand [SafeInt § Division Basics](SafeInt#division-basics) for more information about division functions.\n\n    SafeInt.Unchecked.mod 1234 100\n        --> 34\n\n    SafeInt.Unchecked.mod -1234 100\n        --> 66\n\n[ma]: https://en.wikipedia.org/wiki/Modular_arithmetic\n\n",
+                "type": "Basics.Float -> Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "modBy",
+                "comment": " Same as [`mod`](#mod) except with reversed arguments.\n\nThis is similar to `Basics.modBy`.\n\n",
+                "type": "Basics.Float -> Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "mul",
+                "comment": " Multiplication.\n\nBehavior is undefined if\n\n  - either argument is not exact integer\n  - either argument is below [`minValue`](#minValue) or above [`maxValue`](#maxValue)\n  - result would be below [`minValue`](#minValue) or above [`maxValue`](#maxValue)\n\n**Note:** You can use `*` operator instead of this function.\n\n",
+                "type": "Basics.Float -> Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "negate",
+                "comment": " Negation.\n\nBehavior is undefined if\n\n  - argument is not exact integer value\n  - argument is below [`minValue`](#minValue) or above [`maxValue`](#maxValue)\n\n**Note:** You can use `Basics.negate` instead of this function.\n\n",
+                "type": "Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "pow",
+                "comment": " Power aka exponentiation, rounding towards zero.\n\nBehavior is undefined if\n\n  - in `pow 0 b`, `b <= 0`\n  - either argument is not exact integer\n  - either argument is below [`minValue`](#minValue) or above [`maxValue`](#maxValue)\n  - result would be below [`minValue`](#minValue) or above [`maxValue`](#maxValue)\n\nThe table below shows the return values of `pow a b` near zero.\n`U` denotes undefined behavior and `*0` denotes non-integer result rounded towards zero.\n\n```text\n  b: -2 -1  0  1  2\n a   -- -- -- -- --\n--\n-2   *0 *0  1 -2  4\n-1    1 -1  1 -1  1\n 0    U  U  U  0  0\n 1    1  1  1  1  1\n 2   *0 *0  1  2  4\n```\n\n\n## Example\n\n    SafeInt.Unchecked.pow 2 40\n        --> 1099511627776\n\n**Note:** Opinions differ on what the result of `0 ^ 0` should be.\n[`SafeInt`](SafeInt#SafeInt) takes the stance that when uncertain, it's undefined behavior.\nFor more information see e.g. [Zero to the power of zero][00]🢅.\n\n[00]: https://en.wikipedia.org/wiki/Zero_to_the_power_of_zero\n\n",
+                "type": "Basics.Float -> Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "quotRem",
+                "comment": " Combines [`quotient`](#quotient) and [`remainder`](#remainder) into a single function.\n\n`quotRem a b` is same as `( quotient a b, remainder a b )` except faster.\n\n    SafeInt.Unchecked.quotRem 1234 100\n        --> ( 12, 34 )\n\n    SafeInt.Unchecked.quotRem -1234 100\n        --> ( -12, -34 )\n\n",
+                "type": "Basics.Float -> Basics.Float -> ( Basics.Float, Basics.Float )"
+            },
+            {
+                "name": "quotRemBy",
+                "comment": " Same as [`quotRem`](#quotRem) except with reversed arguments.\n",
+                "type": "Basics.Float -> Basics.Float -> ( Basics.Float, Basics.Float )"
+            },
+            {
+                "name": "quotient",
+                "comment": " Integer division, rounding towards zero.\n\nThis is similar to `//` operator.\n\nSee [Division undefined](#division-undefined) for undefined behavior\nand [SafeInt § Division Basics](SafeInt#division-basics) for more information about division functions.\n\n    SafeInt.Unchecked.quotient 1234 100\n        --> 12\n\n    SafeInt.Unchecked.quotient -1234 100\n        --> -12\n\n",
+                "type": "Basics.Float -> Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "quotientBy",
+                "comment": " Same as [`quotient`](#quotient) except with reversed arguments.\n",
+                "type": "Basics.Float -> Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "remainder",
+                "comment": " Remainder after [`quotient`](#quotient).\n\nSee [Division undefined](#division-undefined) for undefined behavior\nand [SafeInt § Division Basics](SafeInt#division-basics) for more information about division functions.\n\n    SafeInt.Unchecked.remainder 1234 100\n        --> 34\n\n    SafeInt.Unchecked.remainder -1234 100\n        --> -34\n\n",
+                "type": "Basics.Float -> Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "remainderBy",
+                "comment": " Same as [`remainder`](#remainder) except with reversed arguments.\n\nThis is similar to `Basics.remainderBy`.\n\n",
+                "type": "Basics.Float -> Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "round",
+                "comment": " Round to nearest integer and half towards positive infinity.\n\nBehavior is undefined if argument is `NaN`, below [`minValue`](#minValue) or above [`maxValue`](#maxValue).\n\n    [ 3.2, 3.5, 3.8 ]\n        |> List.map SafeInt.Unchecked.round\n        --> [ 3.0, 4.0, 4.0 ]\n\n    [ -3.8, -3.5, -3.2 ]\n        |> List.map SafeInt.Unchecked.round\n        --> [ -4.0, -3.0, -3.0 ]\n\n",
+                "type": "Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "sign",
+                "comment": " Sign.\n\n  - `1` if argument is positive\n  - `-1` if argument is negative\n  - `0` if argument is zero\n\nBehavior is undefined if\n\n  - argument is not exact integer value\n  - argument is below [`minValue`](#minValue) or above [`maxValue`](#maxValue)\n\n\n## Examples\n\n    SafeInt.Unchecked.sign 123\n        --> 1\n\n    SafeInt.Unchecked.sign -123\n        --> -1\n\n",
+                "type": "Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "sub",
+                "comment": " Subtraction.\n\nBehavior is undefined if\n\n  - either argument is not exact integer\n  - either argument is below [`minValue`](#minValue) or above [`maxValue`](#maxValue)\n  - result would be below [`minValue`](#minValue) or above [`maxValue`](#maxValue)\n\n**Note:** You can use `-` operator instead of this function.\n\n",
+                "type": "Basics.Float -> Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "toInt",
+                "comment": " Convert `Float` to `Int`.\n\nBehavior is undefined if\n\n  - argument is not exact integer\n  - argument is below [`minValue`](#minValue) or above [`maxValue`](#maxValue)\n\n**Note:** You can use `Basics.round`, `Basics.floor` or `Basics.ceiling` instead of this function.\n\n**Note:** Unlike [`SafeInt.toInt`](SafeInt#toInt),\nreturn value is `Int` instead of `Maybe Int` as `Unchecked` functions don't support [`undefined`](SafeInt#undefined) value.\n\n",
+                "type": "Basics.Float -> Basics.Int"
+            },
+            {
+                "name": "truncate",
+                "comment": " Round to integer towards zero.\n\nBehavior is undefined if argument is `NaN`, below [`minValue`](#minValue) or above [`maxValue`](#maxValue).\n\n    SafeInt.Unchecked.truncate 3.8\n        --> 3.0\n\n    SafeInt.Unchecked.truncate -3.8\n        --> -3.0\n\n",
+                "type": "Basics.Float -> Basics.Float"
+            }
+        ],
+        "binops": []
+    }
+]

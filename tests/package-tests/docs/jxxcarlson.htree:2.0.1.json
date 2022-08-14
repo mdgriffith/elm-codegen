@@ -1,0 +1,70 @@
+[
+    {
+        "name": "HTree",
+        "comment": " Working with hierarchical lists.\n\n  - convert a hierarchical list to a rose tree\n  - convert a rose tree to a list of node labels\n  - convert a rose tree to a string representing the corresponding outline\n  - etc.\n\n@docs fromList, flatten, toOutline, depth, nodeCount, tagWithDepth\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "depth",
+                "comment": " depth t is the depth of the tree.\n\n    > depth t\n    2 : Int\n\n",
+                "type": "Tree.Tree a -> Basics.Int"
+            },
+            {
+                "name": "flatten",
+                "comment": " Flatten a tree into a list of labels.\n\n    Tree.map (\\label -> String.trim label) tree\n        --> Tree \"*\"\n        -->     [ Tree \"A\" [ Tree \"p\" [], Tree \"q\" [] ]\n        -->     , Tree \"B\" []\n        -->     ]\n\n    Tree.map (\\label -> String.trim label) tree\n        |> toList\n            --> [ \"*\", \"A\", \"p\", \"q\", \"B\"]\n\n",
+                "type": "Tree.Tree b -> List.List b"
+            },
+            {
+                "name": "fromList",
+                "comment": " Given:\n\n  - a root element of type a\n  - a function that determines the level of an item\n  - a list of items of type a\n\n`fromList` returns the corresponding rose tree. For an example, consider this snippet\n\n    -- IMPORTS\n    import Example.Test as Example exposing (o2)\n    import HTree.String as HS\n    import Tree exposing (Tree)\n    import HTree exposing(..)\n\n    -- INPUT STRING\n    o2 =\n    \"\"\"\n    A\n      p\n      q\n    B\n    \"\"\"\n\n    -- CODE\n    data : List String\n    data = String.split \"\\n\" o2 |> List.filter (not << String.isEmpty)\n        --> [\"A\",\"  p\",\"  q\",\"B\"]\n\n    tree : Tree String\n    tree =\n        -- `HS.level` returns the number of leading spaces\n        -- divided by 2 using integer division.\n        fromList \"*\" HS.level data\n\n        --> Tree \"*\"\n        --> [ Tree \"A\" [ Tree \"  p\" [], Tree \"  q\" [] ]\n        --> , Tree \"B\" []\n        --> ]\n",
+                "type": "a -> (a -> Basics.Int) -> List.List a -> Tree.Tree a"
+            },
+            {
+                "name": "nodeCount",
+                "comment": " nodecount t is the number of notes in the tree t\n\n    > nodeCount t\n    8 : Int\n\nThe count includes the root.\n\n",
+                "type": "Tree.Tree a -> Basics.Int"
+            },
+            {
+                "name": "tagWithDepth",
+                "comment": " The `tagWithDepth` function transforms a tree of items into\na tree of tuples of the form `(a, k)`, where `k` is the\ndepth of `a` in the tree.\n\n    > tagWithDepth (Tree.map String.trim tree)\n      Tree (\"*\",0) [\n        Tree (\"A\",1) [Tree (\"p\",2) [],Tree (\"q\",2) []]\n       ,Tree (\"B\",1) []\n      ]\n\n",
+                "type": "Tree.Tree a -> Tree.Tree ( a, Basics.Int )"
+            },
+            {
+                "name": "toOutline",
+                "comment": " Given a function that maps labels to strings, construct\na string that represents the tree as an outline.\n\n    > t |> toOutline identity\n    \"*\\nA\\n    p\\n    q\\nB\\n    r\\n    s\\nC\" : String\n\nThe string returned is\n\n    *\n      A\n        p\n        q\n      B\n",
+                "type": "(a -> String.String) -> Tree.Tree a -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "HTree.String",
+        "comment": " HTree.String has some convenience functions for dealing with\noutlines and trees whose nodes are labeled by strings.\n\n@docs parse, toString, toOutline, level\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "level",
+                "comment": " Compute the level of a string: the number of\nleading spaces, divided by 2\n",
+                "type": "String.String -> Basics.Int"
+            },
+            {
+                "name": "parse",
+                "comment": "\n\n    > import HTree.String exposing(..)\n    > import Example.Test exposing(..)\n    > import HTree\n\n    o2 = -- from Example.Test\n    A\n      p\n      q\n    B\n      r\n      s\n    C\n\n    > t = parse o2\n      Tree \"*\" [\n         Tree \"A\" [Tree \"p\" [],Tree \"q\" []]\n        ,Tree \"B\" [Tree \"r\" [],Tree \"s\" []]\n        ,Tree \"C\" []]\n\n    > t = parse o2 |> HTree.tagWithDepth\n      Tree (\"*\",0) [\n         Tree (\"A\",1) [Tree (\"p\",2) [],Tree (\"q\",2) []]\n        ,Tree (\"B\",1) [Tree (\"r\",2) [],Tree (\"s\",2) []]\n        ,Tree (\"C\",1) []]\n\n",
+                "type": "String.String -> Tree.Tree String.String"
+            },
+            {
+                "name": "toOutline",
+                "comment": " Compute the string representation of a tree labeled by strings;\nomit the root label\n\n    > toOutline t\n    \"A\\n  p\\n  q\\nB\\n  r\\n  s\\nC\"\n\n",
+                "type": "Tree.Tree String.String -> String.String"
+            },
+            {
+                "name": "toString",
+                "comment": " Compute the string representation of a tree labeled by strings\n\n    > t = parse o2\n\n> toString t\n\n     \"*\\nA\\n  p\\n  q\\nB\\n  r\\n  s\\nC\"\n\n",
+                "type": "Tree.Tree String.String -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

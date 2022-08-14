@@ -1,0 +1,88 @@
+[
+    {
+        "name": "Combox",
+        "comment": " This is a custom dropdown based on elm-selectize.\n\n    type alias Model =\n        { language : Combox.Model }\n\n    init : ( Model, Cmd Msg )\n    init =\n        ( { language = Accordion.empty }, Cmd.none )\n\n    type Msg\n        = ComboxMsg String Combox.Msg\n\n    update : Msg -> Model -> ( Model, Cmd Msg )\n    update msg model =\n        case msg of\n            ComboxMsg selectizeMsg ->\n                let\n                    ( language, cmd ) =\n                        Combox.update msg model.combox\n                in\n                ( { model | language = language }, Cmd.map ComboxMsg cmd )\n\n    view : Model -> Html Msg\n    view model =\n        Html.div []\n            [ Html.h3 [] [ Html.text \"Dropdown Menus\" ]\n            , Combox.config ComboxMsg\n                |> Combox.clear False\n                |> Combox.view model.language\n            ]\n\n@docs Model, Msg, config, view, update, initial, empty, title, placeholder, clear, options, disabled\n\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " The custom dropdown menu produces these messages.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "MenuMsg",
+                        [
+                            "Selectize.Msg String.String"
+                        ]
+                    ],
+                    [
+                        "Select",
+                        [
+                            "Maybe.Maybe String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Model",
+                "comment": " Define the dropdown identifier and basic elm-selectize model\n",
+                "args": [],
+                "type": "{ name : String.String, selection : Maybe.Maybe String.String, menu : Selectize.State String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "clear",
+                "comment": " change the current settings of clear\n",
+                "type": "Basics.Bool -> Combox.Config msg -> Combox.Config msg"
+            },
+            {
+                "name": "config",
+                "comment": " Create an initial configuration by calling the [`config`](#config) function\n\n  - The [`title`](#title) function defines the title that goes in the header\n  - The [`placeholder`](#placeholder) function defines the placeholder of selector\n  - The [`clear`](#clear) function defines if the delete selection icon appears\n  - The [`options`](#options) function defines the attributes html option list\n  - The [`disabled`](#disabled) function defines if the selector is disabled or not\n\n",
+                "type": "(Combox.Msg -> msg) -> Combox.Config msg"
+            },
+            {
+                "name": "disabled",
+                "comment": " change the current settings of disabled\n",
+                "type": "Basics.Bool -> Combox.Config msg -> Combox.Config msg"
+            },
+            {
+                "name": "empty",
+                "comment": " Initialize empty model\n",
+                "type": "Combox.Model"
+            },
+            {
+                "name": "initial",
+                "comment": " Initialize model with data\n",
+                "type": "String.String -> Maybe.Maybe String.String -> List.List String.String -> Combox.Model"
+            },
+            {
+                "name": "options",
+                "comment": " Change the current settings of the options\n",
+                "type": "List.List (Html.Attribute Combox.Msg) -> Combox.Config msg -> Combox.Config msg"
+            },
+            {
+                "name": "placeholder",
+                "comment": " change the current settings of the placeholder\n",
+                "type": "String.String -> Combox.Config msg -> Combox.Config msg"
+            },
+            {
+                "name": "title",
+                "comment": " change the current settings of the title\n",
+                "type": "String.String -> Combox.Config msg -> Combox.Config msg"
+            },
+            {
+                "name": "update",
+                "comment": " Update the status of the drop-down menu.\n",
+                "type": "Combox.Msg -> Combox.Model -> ( Combox.Model, Platform.Cmd.Cmd Combox.Msg )"
+            },
+            {
+                "name": "view",
+                "comment": " Create the view configuration, for example\n\n    view : Model -> Html Msg\n    view model =\n        Html.div []\n            [ Html.h3 [] [ Html.text \"Dropdown Menus\" ]\n            , Combox.config ComboxMsg\n                |> Combox.view model.language\n            ]\n\n",
+                "type": "Combox.Model -> Combox.Config msg -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

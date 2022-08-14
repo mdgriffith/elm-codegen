@@ -1,0 +1,439 @@
+[
+    {
+        "name": "Chords",
+        "comment": " Parse chords and chord sheets in Elm\n\n@docs Chord, Quality, TertianQuality\n\n\n# Converting\n\n@docs toString, toIntegerNotation\n\n\n# Parsing Chords\n\n@docs Token, chordParser, lineParser\n@docs parseChord, parseLine, parseSheet\n\n\n# Chord Voicings\n\n@docs Fret, Voicing, voicingToString\n\n",
+        "unions": [
+            {
+                "name": "Chord",
+                "comment": " A chord has a note which gives it a name and a general quality.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Chord",
+                        [
+                            "Chords.Note.Note",
+                            "Chords.Quality"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Quality",
+                "comment": " The quality of the chord. Most well known chord types are described by\na tertian quality, which means a chord characterized by a root note, a\nthird and a fifth. We might want to have less notes, or more notes, or\nreplace the root note with another.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Fifth",
+                        []
+                    ],
+                    [
+                        "Tertian",
+                        [
+                            "Chords.TertianQuality"
+                        ]
+                    ],
+                    [
+                        "Sus2",
+                        [
+                            "Chords.TertianQuality"
+                        ]
+                    ],
+                    [
+                        "Sus4",
+                        [
+                            "Chords.TertianQuality"
+                        ]
+                    ],
+                    [
+                        "Add9",
+                        [
+                            "Chords.TertianQuality"
+                        ]
+                    ],
+                    [
+                        "Add11",
+                        [
+                            "Chords.TertianQuality"
+                        ]
+                    ],
+                    [
+                        "NewRoot",
+                        [
+                            "Chords.Note.Note",
+                            "Chords.TertianQuality"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "TertianQuality",
+                "comment": " This type contains chords characterized by a root note, a third (minor or\nmajor) and a fifth (diminished, perfect or augmented)\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Major",
+                        []
+                    ],
+                    [
+                        "Minor",
+                        []
+                    ],
+                    [
+                        "Augmented",
+                        []
+                    ],
+                    [
+                        "Diminished",
+                        []
+                    ],
+                    [
+                        "Dominant7",
+                        []
+                    ],
+                    [
+                        "Major7",
+                        []
+                    ],
+                    [
+                        "Minor7",
+                        []
+                    ],
+                    [
+                        "AugmentedDominant7",
+                        []
+                    ],
+                    [
+                        "AugmentedMajor7",
+                        []
+                    ],
+                    [
+                        "Diminished7",
+                        []
+                    ],
+                    [
+                        "Major6",
+                        []
+                    ],
+                    [
+                        "Minor6",
+                        []
+                    ],
+                    [
+                        "Dominant9",
+                        []
+                    ],
+                    [
+                        "Major9",
+                        []
+                    ],
+                    [
+                        "Minor9",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Token",
+                "comment": " This type represents either a successfully parsed Chord or a portion of\nthe song lyrics. Thanks to the design of the line parser, the lyrics will\nalways be non-empty.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Parsed",
+                        [
+                            "Chords.Chord"
+                        ]
+                    ],
+                    [
+                        "Lyrics",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Fret",
+                "comment": " Which fret it is being pressed.\n",
+                "args": [],
+                "type": "Basics.Int"
+            },
+            {
+                "name": "Voicing",
+                "comment": " For each string of our instrument, we could be muting the string, playing\nan open string or pressing a particular fret.\n",
+                "args": [],
+                "type": "List.List (Maybe.Maybe ( Chords.Fret, Chords.Pitch.Pitch ))"
+            }
+        ],
+        "values": [
+            {
+                "name": "chordParser",
+                "comment": " The actual chord parser. Using this you can create your own line parser,\nfor example if you want to parse chords separated by spaces, or curly brackets.\n",
+                "type": "Parser.Parser Chords.Chord"
+            },
+            {
+                "name": "lineParser",
+                "comment": " The actual line parser. You can use this if you want to customize the\nline parsing, for example if you want to parse the whole song together.\n",
+                "type": "Parser.Parser (List.List Chords.Token)"
+            },
+            {
+                "name": "parseChord",
+                "comment": " Parses a string to a Chord. The return value is a result which either\nreturns a Chord or a String that describes why we couldn't parse successfully.\n",
+                "type": "String.String -> Result.Result (List.List Parser.DeadEnd) Chords.Chord"
+            },
+            {
+                "name": "parseLine",
+                "comment": " Parses a line of a song to a list of Tokens. When we cannot parse the line\nsuccessfully, we will return a description of why the parsing failed. We will\nalso automatically merge adjacent lyrics tokens.\n",
+                "type": "String.String -> Result.Result (List.List Parser.DeadEnd) (List.List Chords.Token)"
+            },
+            {
+                "name": "parseSheet",
+                "comment": " Parses a full song line by line.\n",
+                "type": "String.String -> List.List (Result.Result (List.List Parser.DeadEnd) (List.List Chords.Token))"
+            },
+            {
+                "name": "toIntegerNotation",
+                "comment": " Converts a Chord to its integer notation, which is the distance in\nsemitones of every note from the root.\n",
+                "type": "Chords.Chord -> ( Chords.Note.Note, List.List Basics.Int )"
+            },
+            {
+                "name": "toString",
+                "comment": " Converts a Chord to a string.\n",
+                "type": "Chords.Chord -> String.String"
+            },
+            {
+                "name": "voicingToString",
+                "comment": " Converts a Voicing to a compact string representation. For example, the\nC Major chord is written as \"032010\", while the D Major chord is written as\n\"XX0232\".\n",
+                "type": "Chords.Voicing -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chords.Chart",
+        "comment": " Export a chord voicing to SVG\n\n@docs Config\n\n\n# Charts\n\n@docs view, viewWith\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " Contains options to customize SVG.\n\n  - `height`: relative height within svg viewbox\n  - `width`: relative width within svg viewbox\n  - `hPaddingPct`: percentage of width to use as horizontal padding\n  - `vPaddingPct`: percentage of height to use as vertical padding\n  - `minFrets`: minimum number of frets to display in a chart\n\n",
+                "args": [],
+                "type": "{ height : Basics.Int, width : Basics.Int, hPaddingPct : Basics.Float, vPaddingPct : Basics.Float, minFrets : Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "view",
+                "comment": " Render a chord voicing and a label to SVG.\n",
+                "type": "String.String -> Chords.Voicing -> Svg.Svg msg"
+            },
+            {
+                "name": "viewWith",
+                "comment": " Render a chord voicing and a label to SVG passing along customizations.\n",
+                "type": "Chords.Chart.Config -> String.String -> Chords.Voicing -> Svg.Svg msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chords.Note",
+        "comment": " Represents the note that gives a name to a chord.\n\n@docs Note, Accidental\n\n\n# Manipulating Notes\n\n@docs next, transpose, distance\n\n\n# Exporting\n\n@docs toString, toStringWith\n\n",
+        "unions": [
+            {
+                "name": "Accidental",
+                "comment": " This type describes accidentals. Sometimes accidentals can be enharmonic,\nwhich means that they describe the same pitch: one example of this is A Sharp\nB Flat.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Flat",
+                        []
+                    ],
+                    [
+                        "Sharp",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Note",
+                "comment": " This note is also known as pitch class, because it describes every\noccurrence of that note in any octave. Every accidental is described using\nthe flat notation for consistency.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "A",
+                        []
+                    ],
+                    [
+                        "Bb",
+                        []
+                    ],
+                    [
+                        "B",
+                        []
+                    ],
+                    [
+                        "C",
+                        []
+                    ],
+                    [
+                        "Db",
+                        []
+                    ],
+                    [
+                        "D",
+                        []
+                    ],
+                    [
+                        "Eb",
+                        []
+                    ],
+                    [
+                        "E",
+                        []
+                    ],
+                    [
+                        "F",
+                        []
+                    ],
+                    [
+                        "Gb",
+                        []
+                    ],
+                    [
+                        "G",
+                        []
+                    ],
+                    [
+                        "Ab",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "distance",
+                "comment": " Returns the distance in semitones between two notes.\n",
+                "type": "Chords.Note.Note -> Chords.Note.Note -> Basics.Int"
+            },
+            {
+                "name": "next",
+                "comment": " Returns the next note.\n",
+                "type": "Chords.Note.Note -> Chords.Note.Note"
+            },
+            {
+                "name": "toString",
+                "comment": " Converts a note to String.\n",
+                "type": "Chords.Note.Note -> String.String"
+            },
+            {
+                "name": "toStringWith",
+                "comment": " Converts a note to String. You can decide how to display accidentals.\n",
+                "type": "Chords.Note.Accidental -> Chords.Note.Note -> String.String"
+            },
+            {
+                "name": "transpose",
+                "comment": " Returns the note transposed by a number of semitones.\n",
+                "type": "Basics.Int -> Chords.Note.Note -> Chords.Note.Note"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Chords.Pitch",
+        "comment": " Represents a note in a certain octave\n\n@docs Pitch, Octave\n\n\n# Creating Pitches\n\n@docs build\n\n\n# Manipulating Pitches\n\n@docs next, transpose\n\n\n# Exporting\n\n@docs toNote\n\n",
+        "unions": [
+            {
+                "name": "Pitch",
+                "comment": " A Pitch describes a note in a certain octave.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Octave",
+                "comment": " The octave of our pitch.\n",
+                "args": [],
+                "type": "Basics.Int"
+            }
+        ],
+        "values": [
+            {
+                "name": "build",
+                "comment": " Creates a Pitch.\n",
+                "type": "Chords.Note.Note -> Chords.Pitch.Octave -> Chords.Pitch.Pitch"
+            },
+            {
+                "name": "next",
+                "comment": " Returns the next Pitch, which could be in another octave.\n",
+                "type": "Chords.Pitch.Pitch -> Chords.Pitch.Pitch"
+            },
+            {
+                "name": "toNote",
+                "comment": " Converts a Pitch to a Note.\n",
+                "type": "Chords.Pitch.Pitch -> Chords.Note.Note"
+            },
+            {
+                "name": "transpose",
+                "comment": " Returns the Pitch transposed by a number of semitones.\n",
+                "type": "Basics.Int -> Chords.Pitch.Pitch -> Chords.Pitch.Pitch"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Instruments.Guitar",
+        "comment": " A guitar representation.\n\n@docs Config\n\n\n# Defaults\n\n@docs defaultTuning\n\n\n# Find voicings\n\n@docs voicings\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " Configure your guitar by passing a tuning and the number of frets.\n",
+                "args": [],
+                "type": "{ tuning : List.List Chords.Pitch.Pitch, numFrets : Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultTuning",
+                "comment": " The default tuning of a guitar.\n",
+                "type": "List.List Chords.Pitch.Pitch"
+            },
+            {
+                "name": "voicings",
+                "comment": " Returns a list of possible voicings of a chord on a guitar.\n",
+                "type": "Instruments.Guitar.Config -> Chords.Chord -> List.List Chords.Voicing"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Instruments.Ukulele",
+        "comment": " A ukulele representation.\n\n@docs Config\n\n\n# Defaults\n\n@docs defaultTuning\n\n\n# Find voicings\n\n@docs voicings\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " Configure your ukulele by passing a tuning and the number of frets.\n",
+                "args": [],
+                "type": "{ tuning : List.List Chords.Pitch.Pitch, numFrets : Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultTuning",
+                "comment": " The default tuning of a ukulele.\n",
+                "type": "List.List Chords.Pitch.Pitch"
+            },
+            {
+                "name": "voicings",
+                "comment": " Returns a list of possible voicings of a chord on a ukulele.\n",
+                "type": "Instruments.Ukulele.Config -> Chords.Chord -> List.List Chords.Voicing"
+            }
+        ],
+        "binops": []
+    }
+]

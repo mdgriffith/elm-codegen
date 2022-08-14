@@ -1,0 +1,477 @@
+[
+    {
+        "name": "Html.Events.Extra.Drag",
+        "comment": " [HTML5 drag events][dragevent] is a quite complicated specification.\nMostly because it is very stateful, and many properties and functions\nonly make sense in one situation and not the rest.\nFor example, the `effectAllowed` property can only be set successfully\nin a `dragstart` event, and setting it in another will be ignored.\nAnother example, the `dragend` should be attached to the object dragged,\nwhile the `dragleave` should be attached to potential drop target.\nOne more, the `dragover` event listener is required on a drop target.\nOtherwise the drop event will be cancelled.\n\nConsequently, I've chosen to present a slightly opinionated API for drag events,\nmitigating most of potential errors.\nIn case it prevents you from using it, please report your use case in\n[an issue][issues]. I hope by also providing the decoders,\nthe library can still help you setup your own event listeners.\n\nThere seems to be two main use cases for drag events:\n\n1.  Dropping files from the OS as resources to load.\n2.  Drag and dropping DOM elements in page.\n\nThe rest of the documentation presents the API with those use cases in mind.\n\n[dragevent]: https://developer.mozilla.org/en-US/docs/Web/API/DragEvent\n[issues]: https://github.com/mpizenberg/elm-pointer-events/issues\n\n\n# The Event Type\n\n@docs Event, DataTransfer\n\n\n# File Dropping\n\n@docs onFileFromOS, FileDropConfig\n\n\n# Drag and Drop\n\nI encourage you to read [this blog post][disaster] before you take the decision\nto use HTML5 drag and drop API instead of your own custom solution.\n\n[disaster]: https://www.quirksmode.org/blog/archives/2009/09/the_html5_drag.html\n\n\n## Managing the Dragged Item\n\n@docs onSourceDrag, DraggedSourceConfig, EffectAllowed, startPortData, effectAllowedToString\n\n\n## Managing a Drop Target\n\n@docs onDropTarget, DropTargetConfig, DropEffect, overPortData, dropEffectToString\n\n\n# Decoders for Advanced Usage\n\n@docs eventDecoder, dataTransferDecoder, fileListDecoder\n\n",
+        "unions": [
+            {
+                "name": "DropEffect",
+                "comment": " Drop effect as configured by the drop target.\nThis will change the visual aspect of the mouse icon.\n\nIf the drop target sets (via port on `dragover`) a drop effect\nincompatible with the effects allowed for the dragged item,\nthe drop will not happen.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NoDropEffect",
+                        []
+                    ],
+                    [
+                        "MoveOnDrop",
+                        []
+                    ],
+                    [
+                        "CopyOnDrop",
+                        []
+                    ],
+                    [
+                        "LinkOnDrop",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "DataTransfer",
+                "comment": " Hold the data being dragged during a drag and drop operation.\nThis corresponds to JavaScript [DataTransfer].\n\nThe `files` attribute holds the list of files being dragged.\nEach file is of the type `File` provided by [elm/file].\n\nThe `types` attribute contains a list of strings providing\nthe different formats of objects being dragged.\n\nThe `dropEffect` attribute provides feedback on the selected effect\nfor the current drag and drop operation. It can be one of:\n\n  - `\"none\"`: the item may not be dropped\n  - `\"copy\"`: a copy of the source item is made at the new location\n  - `\"move\"`: the item is moved to a new location\n  - `\"link\"`: a link to the source is somehow established at the new location\n\nBeware that contrary to JavaScript, you have no way of modifying\n`dropEffect` in elm. This is provided purely for information as read only,\nlike any other elm value.\n\nThe `effectAllowed` property is not provided since it has\nno use in the context of elm.\n\nThe `items` property is not provided by lack of compatibility.\n\n[DataTransfer]: https://developer.mozilla.org/en-US/docs/Web/API/DataTransfer\n[elm/file]: https://package.elm-lang.org/packages/elm/file/latest/File\n\n",
+                "args": [],
+                "type": "{ files : List.List File.File, types : List.List String.String, dropEffect : String.String }"
+            },
+            {
+                "name": "DraggedSourceConfig",
+                "comment": " Configuration of a draggable element.\nYou should provide message taggers for `dragstart` and `dragend` events.\nYou can (but it is more compute-intensive) provide a message tagger for `drag` events.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ effectAllowed : Html.Events.Extra.Drag.EffectAllowed, onStart : Html.Events.Extra.Drag.EffectAllowed -> Json.Decode.Value -> msg, onEnd : Html.Events.Extra.Drag.Event -> msg, onDrag : Maybe.Maybe (Html.Events.Extra.Drag.Event -> msg) }"
+            },
+            {
+                "name": "DropTargetConfig",
+                "comment": " Configuration of a drop target.\nYou should provide message taggers for `dragover` and `drop` events.\nYou can also provide message taggers for `dragenter` and `dragleave` events.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ dropEffect : Html.Events.Extra.Drag.DropEffect, onOver : Html.Events.Extra.Drag.DropEffect -> Json.Decode.Value -> msg, onDrop : Html.Events.Extra.Drag.Event -> msg, onEnter : Maybe.Maybe (Html.Events.Extra.Drag.Event -> msg), onLeave : Maybe.Maybe (Html.Events.Extra.Drag.Event -> msg) }"
+            },
+            {
+                "name": "EffectAllowed",
+                "comment": " Drop effects allowed for this draggable element.\nSet to `True` all effects allowed.\nThis is used in the port of the `dragstart` event.\n",
+                "args": [],
+                "type": "{ move : Basics.Bool, copy : Basics.Bool, link : Basics.Bool }"
+            },
+            {
+                "name": "Event",
+                "comment": " Type that get returned by a browser drag event.\nIt corresponds to a JavaScript [DragEvent].\n\nSince a `DragEvent` inherits from `MouseEvent`,\nall mouse event related properties are provided in the\n`mouseEvent` attribute of type `Mouse.Event`.\nPlease refer to the `Mouse` module for more information on this value.\n\n[DragEvent]: https://developer.mozilla.org/en-US/docs/Web/API/DragEvent\n\n",
+                "args": [],
+                "type": "{ dataTransfer : Html.Events.Extra.Drag.DataTransfer, mouseEvent : Html.Events.Extra.Mouse.Event }"
+            },
+            {
+                "name": "FileDropConfig",
+                "comment": " Configuration of a file drop target.\n\nPS: `dragenter` and `dragleave` are kind of inconsistent since they\nbubble up from children items (not consistently depending on borders in addition).\nYou should prefer to let them be `Nothing`, or to add the CSS property\n`pointer-events: none` to all children.\n\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ onOver : Html.Events.Extra.Drag.Event -> msg, onDrop : Html.Events.Extra.Drag.Event -> msg, onEnter : Maybe.Maybe (Html.Events.Extra.Drag.Event -> msg), onLeave : Maybe.Maybe (Html.Events.Extra.Drag.Event -> msg) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "dataTransferDecoder",
+                "comment": " `DataTransfer` decoder.\nIt is provided in case you would like to reuse/extend it.\n",
+                "type": "Json.Decode.Decoder Html.Events.Extra.Drag.DataTransfer"
+            },
+            {
+                "name": "dropEffectToString",
+                "comment": " Convert a `DropEffect` into its string equivalent.\n",
+                "type": "Html.Events.Extra.Drag.DropEffect -> String.String"
+            },
+            {
+                "name": "effectAllowedToString",
+                "comment": " Convert `EffectAllowed` into its String equivalent.\n",
+                "type": "Html.Events.Extra.Drag.EffectAllowed -> String.String"
+            },
+            {
+                "name": "eventDecoder",
+                "comment": " `Drag.Event` default decoder.\nIt is provided in case you would like to reuse/extend it.\n",
+                "type": "Json.Decode.Decoder Html.Events.Extra.Drag.Event"
+            },
+            {
+                "name": "fileListDecoder",
+                "comment": " Transform a personalized `File` decoder into a `List File` decoder\nsince `Json.Decode.list` does not work for the list of files.\n",
+                "type": "Json.Decode.Decoder a -> Json.Decode.Decoder (List.List a)"
+            },
+            {
+                "name": "onDropTarget",
+                "comment": " Drag events listeners for the drop target element.\n\nPS: `dragenter` and `dragleave` are kind of inconsistent since they\nbubble up from children items (not consistently depending on borders in addition).\nYou should prefer to let them be `Nothing`, or to add the CSS property\n`pointer-events: none` to all children.\n\n",
+                "type": "Html.Events.Extra.Drag.DropTargetConfig msg -> List.List (Html.Attribute msg)"
+            },
+            {
+                "name": "onFileFromOS",
+                "comment": " Events listeners for a file drop target element.\n\nPS: incompatible with `onDropTarget` since both functions\nuse the same events listeners.\nIf you need to have a drop target working for both files and DOM elements,\nyou can directly use `onDropTarget`.\n\n",
+                "type": "Html.Events.Extra.Drag.FileDropConfig msg -> List.List (Html.Attribute msg)"
+            },
+            {
+                "name": "onSourceDrag",
+                "comment": " Drag events listeners for the source dragged element.\n",
+                "type": "Html.Events.Extra.Drag.DraggedSourceConfig msg -> List.List (Html.Attribute msg)"
+            },
+            {
+                "name": "overPortData",
+                "comment": " Put the drop effect and the dragover event\nin a data format that can be sent through port.\n",
+                "type": "Html.Events.Extra.Drag.DropEffect -> Json.Decode.Value -> { dropEffect : String.String, event : Json.Decode.Value }"
+            },
+            {
+                "name": "startPortData",
+                "comment": " Put the effect allowed and the dragstart event\nin a data format that can be sent through port.\n",
+                "type": "Html.Events.Extra.Drag.EffectAllowed -> Json.Decode.Value -> { effectAllowed : String.String, event : Json.Decode.Value }"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Html.Events.Extra.Mouse",
+        "comment": " Handling detailed mouse events.\n\n@docs Event, Keys, Button\n\n\n# Basic Usage\n\nThe three default mouse events are `mousedown`, `mousemove` and `mouseup`.\n\n@docs onDown, onMove, onUp\n\n\n# Other Supported Events\n\nThe other supported events by this library are\n`click`, `dblclick`, `mouseenter`, `mouseover`, `mouseleave` and `mouseout`.\nYou can use them exactly like the previous examples.\n\n@docs onClick, onDoubleClick\n\n@docs onEnter, onOver, onLeave, onOut\n\n@docs onContextMenu\n\n\n# Advanced Usage\n\n@docs EventOptions, onWithOptions\n\n@docs eventDecoder\n\n",
+        "unions": [
+            {
+                "name": "Button",
+                "comment": " The button pressed for the event.\nThe button that was used to trigger the mouse event is available\nin the `button` attribute. However, beware that its value is not reliable\nfor events such as `mouseenter`, `mouseleave`, `mouseover`, `mouseout` or `mousemove`.\n\nThe `buttons` (with an \"s\") property of a mouse event is not provided here since\nit is not compatible with mac / safari.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "ErrorButton",
+                        []
+                    ],
+                    [
+                        "MainButton",
+                        []
+                    ],
+                    [
+                        "MiddleButton",
+                        []
+                    ],
+                    [
+                        "SecondButton",
+                        []
+                    ],
+                    [
+                        "BackButton",
+                        []
+                    ],
+                    [
+                        "ForwardButton",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Event",
+                "comment": " Type that get returned by a browser mouse event.\nIts purpose is to provide all useful properties of\nJavaScript [MouseEvent][js-mouse-event] in the context of\nthe elm programming language.\n\nCoordinates of a specific kind (`clientX/Y`, `pageX/Y`, ...)\nare available under the attribute of the same name grouped by pairs.\nFor example, if `mouseEvent` is of type `Mouse.Event` then\n`mouseEvent.clientPos` holds the `( clientX, clientY )`\nproperties of the event.\n\nFor some applications like drawing in a canvas, relative coordinates are needed.\nBeware that those coordinates are called `offsetX/Y` in a mouse event.\nTherefore they are available here with attribute `offsetPos`.\n\n    relativePos : Mouse.Event -> ( Float, Float )\n    relativePos mouseEvent =\n        mouseEvent.offsetPos\n\nThe `movementX/Y` properties not being compatible with Safari / iOS,\nthey are not provided by this package.\nThe `x` and `y` properties being equivalent to `clientX/Y`,\nare not provided either.\nThe `screenPos` attribute provides `screenX/Y` properties in case needed,\nbut you shall use instead the `clientPos` attribute when in doubt.\n`screenX/Y` values are not given in CSS pixel sizes and thus not very useful.\nMore info is available in the excellent\narticle [A tale of two viewports][tale-viewports].\n\n[js-mouse-event]: https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent\n[tale-viewports]: https://www.quirksmode.org/mobile/viewports.html\n\n",
+                "args": [],
+                "type": "{ keys : Html.Events.Extra.Mouse.Keys, button : Html.Events.Extra.Mouse.Button, clientPos : ( Basics.Float, Basics.Float ), offsetPos : ( Basics.Float, Basics.Float ), pagePos : ( Basics.Float, Basics.Float ), screenPos : ( Basics.Float, Basics.Float ) }"
+            },
+            {
+                "name": "EventOptions",
+                "comment": " Options for the event.\n",
+                "args": [],
+                "type": "{ stopPropagation : Basics.Bool, preventDefault : Basics.Bool }"
+            },
+            {
+                "name": "Keys",
+                "comment": " The keys that might have been pressed during mouse event.\nKey modifiers of mouse events are available in the key attribute.\nChecking if the ctrl key was hold when the event triggered is as easy as:\n\n    isCtrlKeyPressed : Mouse.Event -> Bool\n    isCtrlKeyPressed mouseEvent =\n        mouseEvent.keys.ctrl\n\nSince the `metaKey` property is not detected on linux,\nit is not provided by this package.\n\n",
+                "args": [],
+                "type": "{ alt : Basics.Bool, ctrl : Basics.Bool, shift : Basics.Bool }"
+            }
+        ],
+        "values": [
+            {
+                "name": "eventDecoder",
+                "comment": " An `Event` decoder for mouse events.\nThe decoder is provided so that you can extend `Mouse.Event` with\nspecific properties you need. If for example you need the `movementX/Y`\nproperties and you can guaranty that users will not use safari,\nyou could do:\n\n    type alias EventWithMovement =\n        { mouseEvent : Mouse.Event\n        , movement : ( Float, Float )\n        }\n\n    decodeWithMovement : Decoder EventWithMovement\n    decodeWithMovement =\n        Decode.map2 EventWithMovement\n            Mouse.eventDecoder\n            movementDecoder\n\n    movementDecoder : Decoder ( Float, Float )\n    movementDecoder =\n        Decode.map2 (\\a b -> ( a, b ))\n            (Decode.field \"movementX\" Decode.float)\n            (Decode.field \"movementY\" Decode.float)\n\nAnd use it like follows:\n\n    type Msg\n        = Movement ( Float, Float )\n\n    div\n        [ onMove (.movement >> Movement) ]\n        [ text \"move here\" ]\n\n\n    onMove : (EventWithMovement -> msg) -> Html.Attribute msg\n    onMove tag =\n        let\n            decoder =\n                decodeWithMovement\n                    |> Decode.map tag\n                    |> Decode.map options\n\n            options message =\n                { message = message\n                , stopPropagation = False\n                , preventDefault = True\n                }\n        in\n        Html.Events.custom \"mousemove\" decoder\n\n",
+                "type": "Json.Decode.Decoder Html.Events.Extra.Mouse.Event"
+            },
+            {
+                "name": "onClick",
+                "comment": " Listen to `click` events.\n",
+                "type": "(Html.Events.Extra.Mouse.Event -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "onContextMenu",
+                "comment": " Listen to `contextmenu` events.\nFired on right mousedown, before the context menu is displayed.\n",
+                "type": "(Html.Events.Extra.Mouse.Event -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "onDoubleClick",
+                "comment": " Listen to `dblclick` events.\n",
+                "type": "(Html.Events.Extra.Mouse.Event -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "onDown",
+                "comment": " Listen to `mousedown` events.\nLet's say that we have a message type like this:\n\n    type Msg\n        = DownMsg ( Float, Float )\n        | MoveMsg ( Float, Float )\n        | UpMsg ( Float, Float )\n\nThen we could listen to `mousedown` events like below:\n\n    div\n        [ Mouse.onDown (\\event -> DownMsg event.clientPos) ]\n        [ text \"click here\" ]\n\nIn a curried style, this can also be written:\n\n    div\n        [ Mouse.onDown (.clientPos >> DownMsg) ]\n        [ text \"click here\" ]\n\n",
+                "type": "(Html.Events.Extra.Mouse.Event -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "onEnter",
+                "comment": " Listen to `mouseenter` events.\nThis event is fired when a mouse is moved over the element\nthat has the listener attached.\nIt is similar to `mouseover` but doesn't bubble.\nMore details available on the [MDN documentation][mdn-mouseenter].\n\n[mdn-mouseenter]: https://developer.mozilla.org/en-US/docs/Web/Events/mouseenter\n\n",
+                "type": "(Html.Events.Extra.Mouse.Event -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "onLeave",
+                "comment": " Listen to `mouseleave` events.\nThis event is fired when a mouse is moved out of the element\nthat has the listener attached.\nIt is similar to `mouseout` but doesn't bubble.\nMore details available on the [MDN documentation][mdn-mouseleave].\n\n[mdn-mouseleave]: https://developer.mozilla.org/en-US/docs/Web/Events/mouseleave\n\n",
+                "type": "(Html.Events.Extra.Mouse.Event -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "onMove",
+                "comment": " Listen to `mousemove` events.\nSimilarly than with `onDown`, we can write something like:\n\n    div\n        [ Mouse.onMove (.clientPos >> MoveMsg) ]\n        [ text \"move here\" ]\n\n",
+                "type": "(Html.Events.Extra.Mouse.Event -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "onOut",
+                "comment": " Listen to `mouseout` events.\n",
+                "type": "(Html.Events.Extra.Mouse.Event -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "onOver",
+                "comment": " Listen to `mouseover` events.\n",
+                "type": "(Html.Events.Extra.Mouse.Event -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "onUp",
+                "comment": " Listen to `mouseup` events.\nSimilarly than with `onDown`, we can write something like:\n\n    div\n        [ Mouse.onUp (.clientPos >> UpMsg) ]\n        [ text \"click here\" ]\n\n",
+                "type": "(Html.Events.Extra.Mouse.Event -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "onWithOptions",
+                "comment": " Choose the mouse event to listen to, and specify the event options.\nIf for some reason the default behavior of this package\n(prevent default) does not fit your needs,\nyou can change it with for example:\n\n    onDown : (Mouse.Event -> msg) -> Html.Attribute msg\n    onDown =\n        { stopPropagation = False, preventDefault = True }\n            |> Mouse.onWithOptions \"mousedown\"\n\n",
+                "type": "String.String -> Html.Events.Extra.Mouse.EventOptions -> (Html.Events.Extra.Mouse.Event -> msg) -> Html.Attribute msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Html.Events.Extra.Pointer",
+        "comment": " Handling pointer events.\n\n@docs Event, DeviceType, ContactDetails\n\n\n# Basic Usage\n\n@docs onDown, onMove, onUp, onCancel, onOver, onEnter, onOut, onLeave\n\n\n# Advanced Usage\n\n@docs EventOptions, onWithOptions, eventDecoder\n\n",
+        "unions": [
+            {
+                "name": "DeviceType",
+                "comment": " The type of device that generated the pointer event\n",
+                "args": [],
+                "cases": [
+                    [
+                        "MouseType",
+                        []
+                    ],
+                    [
+                        "TouchType",
+                        []
+                    ],
+                    [
+                        "PenType",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "ContactDetails",
+                "comment": " Details of the point of contact, for advanced use cases.\n",
+                "args": [],
+                "type": "{ width : Basics.Float, height : Basics.Float, pressure : Basics.Float, tiltX : Basics.Float, tiltY : Basics.Float }"
+            },
+            {
+                "name": "Event",
+                "comment": " Type that get returned by a pointer event.\n\nSince the JS class [`PointerEvent`][PointerEvent] inherits from [`MouseEvent`][MouseEvent],\nthe `pointer` attribute here is of type [`Mouse.Event`][Mouse-Event].\n\nSo to get the relative (offset) position of a pointer event for example:\n\n    relativePos : Pointer.Event -> ( Float, Float )\n    relativePos event =\n        event.pointer.offsetPos\n\nAnd to know if the shift key was pressed:\n\n    isShiftKeyPressed : Pointer.Event -> Bool\n    isShiftKeyPressed event =\n        event.pointer.key.shift\n\n[PointerEvent]: https://developer.mozilla.org/en-US/docs/Web/API/PointerEvent\n[MouseEvent]: https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent\n[Mouse-Event]: Html-Events-Extra-Mouse#Event\n\n",
+                "args": [],
+                "type": "{ pointerType : Html.Events.Extra.Pointer.DeviceType, pointer : Html.Events.Extra.Mouse.Event, pointerId : Basics.Int, isPrimary : Basics.Bool, contactDetails : Html.Events.Extra.Pointer.ContactDetails }"
+            },
+            {
+                "name": "EventOptions",
+                "comment": " Options for the event.\n",
+                "args": [],
+                "type": "{ stopPropagation : Basics.Bool, preventDefault : Basics.Bool }"
+            }
+        ],
+        "values": [
+            {
+                "name": "eventDecoder",
+                "comment": " An Event decoder for pointer events.\n\nSimilarly than with the `Mouse` module, the decoder is provided so that\nyou can extend `Pointer.Event` with specific properties you need.\nIf you need for example the [`tangentialPressure`][tangentialPressure]\nattribute of the pointer event, you could extend the present decoder like:\n\n    type alias MyPointerEvent =\n        { pointerEvent : Pointer.Event\n        , tangentialPressure : Float\n        }\n\n    myEventDecoder : Decoder MyPointerEvent\n    myEventDecoder =\n        Decode.map2 MyPointerEvent\n            Pointer.eventDecoder\n            (Decode.field \"tangentialPressure\" Decode.float)\n\nAnd use it like as follows:\n\n    type Msg\n        = TangentialPressureMsg Float\n\n    div\n        [ myOnDown (.tangentialPressure >> TangentialPressureMsg) ]\n        [ text \"Use pen here to measure tangentialPressure\" ]\n\n    myOnDown : (MyPointerEvent -> msg) -> Html.Attribute msg\n    myOnDown tag =\n        let\n            decoder =\n                myEventDecoder\n                    |> Decode.map tag\n                    |> Decode.map options\n\n            options message =\n                { message = message\n                , stopPropagation = False\n                , preventDefault = True\n                }\n        in\n        Html.Events.custom \"pointerdown\" decoder\n\nBEWARE that the minimalist [elm-pep] polyfill may not support\nall properties. So if you rely on it for compatibility with browsers\nnot supporting pointer events, a decoder with an unsupported attribute\nwill silently fail.\nIf such a need arises, please open an issue in [elm-pep].\n\n[tangentialPressure]: https://developer.mozilla.org/en-US/docs/Web/API/PointerEvent/tangentialPressure\n[elm-pep]: https://github.com/mpizenberg/elm-pep\n\n",
+                "type": "Json.Decode.Decoder Html.Events.Extra.Pointer.Event"
+            },
+            {
+                "name": "onCancel",
+                "comment": " Listen to `pointercancel` events.\n\nSimilarly than with [`onDown`](#onDown), we can write something like:\n\n    div [ Pointer.onCancel (relativePos >> UpMsg) ] [ text \"move here\" ]\n\n",
+                "type": "(Html.Events.Extra.Pointer.Event -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "onDown",
+                "comment": " Listen to `pointerdown` events.\n\nLet's say that we have a message type like this:\n\n    type Msg\n        = DownMsg ( Float, Float )\n        | MoveMsg ( Float, Float )\n        | UpMsg ( Float, Float )\n\nAnd we already have defined the `relativePos : Pointer.Event -> ( Float, Float )`\nfunction (see [`Pointer.Event`](#Event) doc). Then we could listen to `pointerdown`\nevents with something like:\n\n    div [ Pointer.onDown (relativePos >> DownMsg) ] [ text \"click here\" ]\n\nHowever, since the [Pointer API][pointer-events]\nis not well [supported by all browsers][caniuse-pointer],\nI strongly recommend to use it in pair with the [elm-pep polyfill][elm-pep]\nfor compatibility with Safari and Firefox < 59.\nIt is also recommended that you deactivate `touch-action`\nto disable browsers scroll behaviors.\n\n    div\n        [ Pointer.onDown ...\n        , Pointer.onMove ...\n        , Pointer.onUp ...\n\n        -- no touch-action (prevent scroll etc.)\n        , Html.Attributes.style [ ( \"touch-action\", \"none\" ) ]\n        ]\n        []\n\n[pointer-events]: https://developer.mozilla.org/en-US/docs/Web/API/PointerEvent\n[caniuse-pointer]: https://caniuse.com/#feat=pointer\n[elm-pep]: https://github.com/mpizenberg/elm-pep\n\n",
+                "type": "(Html.Events.Extra.Pointer.Event -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "onEnter",
+                "comment": " Listen to `pointerenter` events.\n\nSimilarly than with [`onDown`](#onDown), we can write something like:\n\n    div [ Pointer.onEnter (relativePos >> UpMsg) ] [ text \"move in here\" ]\n\n",
+                "type": "(Html.Events.Extra.Pointer.Event -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "onLeave",
+                "comment": " Listen to `pointerleave` events.\n\nSimilarly than with [`onDown`](#onDown), we can write something like:\n\n    div [ Pointer.onLeave (relativePos >> UpMsg) ] [ text \"move out of here\" ]\n\n",
+                "type": "(Html.Events.Extra.Pointer.Event -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "onMove",
+                "comment": " Listen to `pointermove` events.\n\nSimilarly than with [`onDown`](#onDown), we can write something like:\n\n    div [ Pointer.onMove (relativePos >> MoveMsg) ] [ text \"move here\" ]\n\n",
+                "type": "(Html.Events.Extra.Pointer.Event -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "onOut",
+                "comment": " Listen to `pointerout` events.\n\nSimilarly than with [`onDown`](#onDown), we can write something like:\n\n    div [ Pointer.onOut (relativePos >> UpMsg) ] [ text \"move out of here\" ]\n\n",
+                "type": "(Html.Events.Extra.Pointer.Event -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "onOver",
+                "comment": " Listen to `pointerover` events.\n\nSimilarly than with [`onDown`](#onDown), we can write something like:\n\n    div [ Pointer.onOver (relativePos >> UpMsg) ] [ text \"move in here\" ]\n\n",
+                "type": "(Html.Events.Extra.Pointer.Event -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "onUp",
+                "comment": " Listen to `pointerup` events.\n\nSimilarly than with [`onDown`](#onDown), we can write something like:\n\n    div [ Pointer.onUp (relativePos >> UpMsg) ] [ text \"click here\" ]\n\n",
+                "type": "(Html.Events.Extra.Pointer.Event -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "onWithOptions",
+                "comment": " Choose the pointer event to listen to, and specify the event options.\n\nIf for some reason the default behavior of this lib\n(prevent default) does not fit your needs,\nyou can change it with for example:\n\n    myOnDown : (Pointer.Event -> msg) -> Html.Attribute msg\n    myOnDown =\n        { stopPropagation = False, preventDefault = True }\n            |> Pointer.onWithOptions \"pointerdown\"\n\n",
+                "type": "String.String -> Html.Events.Extra.Pointer.EventOptions -> (Html.Events.Extra.Pointer.Event -> msg) -> Html.Attribute msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Html.Events.Extra.Touch",
+        "comment": " Handling touch events.\n\n@docs Event, Keys, Touch\n\n\n# Touch Events\n\n@docs onStart, onMove, onEnd, onCancel\n\n\n# Advanced Usage\n\n@docs EventOptions, onWithOptions, eventDecoder, touchDecoder, touchListDecoder\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Event",
+                "comment": " Type that get returned by a browser touch event.\nIts purpose is to provide all useful properties of JavaScript [TouchEvent]\nin the context of the elm programming language.\n\nThis event contains key modifiers that may have been pressed during touch event,\nand lists of Touch objects corresponding to JavaScript [Touch] objects.\n\n  - `changedTouches`: the Touch objects representing individual points\n    of contact whose states changed between the previous event and this one.\n  - `targetTouches`: the Touch objects that are both currently in contact with\n    the touch surface and were also started on the same element that is the event target.\n  - `touches`: the Touch objects representing all current points of contact\n    with the surface, regardless of target or changed status.\n\n[TouchEvent]: https://developer.mozilla.org/en-US/docs/Web/API/TouchEvent\n[Touch]: https://developer.mozilla.org/en-US/docs/Web/API/Touch\n\n",
+                "args": [],
+                "type": "{ keys : Html.Events.Extra.Touch.Keys, changedTouches : List.List Html.Events.Extra.Touch.Touch, targetTouches : List.List Html.Events.Extra.Touch.Touch, touches : List.List Html.Events.Extra.Touch.Touch }"
+            },
+            {
+                "name": "EventOptions",
+                "comment": " Options for the event.\n",
+                "args": [],
+                "type": "{ stopPropagation : Basics.Bool, preventDefault : Basics.Bool }"
+            },
+            {
+                "name": "Keys",
+                "comment": " Keys modifiers pressed during the event.\nChecking if the ctrl key was pressed when the event triggered is as easy as:\n\n    isCtrlKeyPressed : Touch.Event -> Bool\n    isCtrlKeyPressed touchEvent =\n        touchEvent.keys.ctrl\n\nBeware that it may not be working on some platforms, returning always false.\n\n",
+                "args": [],
+                "type": "{ alt : Basics.Bool, ctrl : Basics.Bool, shift : Basics.Bool }"
+            },
+            {
+                "name": "Touch",
+                "comment": " A Touch object.\nIt has a unique identifier, kept from start to end of a touch interaction.\nClient, page, and screen positions are provided for API completeness,\nhowever, you shall only need to use the `clientPos` property.\nFor example, to get the coordinates of a touch event:\n\n    touchCoordinates : Touch.Event -> ( Float, Float )\n    touchCoordinates touchEvent =\n        List.head touchEvent.changedTouches\n            |> Maybe.map .clientPos\n            |> Maybe.withDefault ( 0, 0 )\n\n",
+                "args": [],
+                "type": "{ identifier : Basics.Int, clientPos : ( Basics.Float, Basics.Float ), pagePos : ( Basics.Float, Basics.Float ), screenPos : ( Basics.Float, Basics.Float ) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "eventDecoder",
+                "comment": " Touch event decoder.\nThe decoder is provided so that you can extend touch events if something you need is not provided.\n",
+                "type": "Json.Decode.Decoder Html.Events.Extra.Touch.Event"
+            },
+            {
+                "name": "onCancel",
+                "comment": " Triggered on a \"touchcancel\" event.\nSimilarly than with `onStart`, we can write:\n\n    div\n        [ Touch.onCancel (CancelMsg << touchCoordinates) ]\n        [ text \"touch here\" ]\n\n",
+                "type": "(Html.Events.Extra.Touch.Event -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "onEnd",
+                "comment": " Triggered on a \"touchend\" event.\nSimilarly than with `onStart`, we can write:\n\n    div\n        [ Touch.onEnd (EndMsg << touchCoordinates) ]\n        [ text \"touch here\" ]\n\n",
+                "type": "(Html.Events.Extra.Touch.Event -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "onMove",
+                "comment": " Triggered on a \"touchmove\" event.\nSimilarly than with `onStart`, we can write:\n\n    div\n        [ Touch.onMove (MoveMsg << touchCoordinates) ]\n        [ text \"touch here\" ]\n\n",
+                "type": "(Html.Events.Extra.Touch.Event -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "onStart",
+                "comment": " Triggered on a \"touchstart\" event.\nLet's say that we have a message type like this:\n\n    type Msg\n        = StartMsg ( Float, Float )\n        | MoveMsg ( Float, Float )\n        | EndMsg ( Float, Float )\n        | CancelMsg ( Float, Float )\n\nWe can listen to `touchstart` events like follows:\n\n    div\n        [ Touch.onStart (\\event -> StartMsg (touchCoordinates event)) ]\n        [ text \"touch here\" ]\n\nIn a curried style, this can also be written:\n\n    div\n        [ Touch.onStart (StartMsg << touchCoordinates) ]\n        [ text \"touch here\" ]\n\n",
+                "type": "(Html.Events.Extra.Touch.Event -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "onWithOptions",
+                "comment": " Personalize the html event options.\nIf for some reason the default behavior of this package (prevent default)\ndoes not fit your needs, you can change it like follows:\n\n    onStart : (Touch.Event -> msg) -> Html.Attribute msg\n    onStart =\n        { stopPropagation = False, preventDefault = True }\n            |> Touch.onWithOptions \"touchstart\"\n\n",
+                "type": "String.String -> Html.Events.Extra.Touch.EventOptions -> (Html.Events.Extra.Touch.Event -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "touchDecoder",
+                "comment": " Touch object decoder.\nThe decoder is provided so that you can extend touch events if something you need is not provided.\n",
+                "type": "Json.Decode.Decoder Html.Events.Extra.Touch.Touch"
+            },
+            {
+                "name": "touchListDecoder",
+                "comment": " Personalized TouchList decoder.\nThis decoder is provided so that you can extend touch events if something you need is not provided.\nIf for example, you need the [`Touch.force`][touch-force] property,\n(which is not implemented by this package since not compatible with most browsers)\nand can guaranty in your use case that it will be used with a compatible browser,\nyou could define:\n\n    type alias MyTouchEvent =\n        { changedTouches : TouchWithForce\n        }\n\n    type alias TouchWithForce =\n        { touch : Touch\n        , force : Float\n        }\n\n    decodeMyTouchEvent : Decoder MyTouchEvent\n    decodeMyTouchEvent =\n        Decode.map MyTouchEvent\n            (Decode.field \"changedTouches\" (touchListDecoder decodeWithForce))\n\n    decodeWithForce : Decoder TouchWithForce\n    decodeWithForce =\n        Decode.map2 TouchWithForce\n            Touch.touchDecoder\n            (Decode.field \"force\" Decode.float)\n\n[touch-force]: https://developer.mozilla.org/en-US/docs/Web/API/Touch/force\n\n",
+                "type": "Json.Decode.Decoder a -> Json.Decode.Decoder (List.List a)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Html.Events.Extra.Wheel",
+        "comment": " Handling wheel events.\n\n@docs Event, DeltaMode\n\n\n# Basic Usage\n\n@docs onWheel\n\n\n# Advanced Usage\n\n@docs EventOptions, onWithOptions, eventDecoder\n\n",
+        "unions": [
+            {
+                "name": "DeltaMode",
+                "comment": " The deltaMode property of a Wheel event.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "DeltaPixel",
+                        []
+                    ],
+                    [
+                        "DeltaLine",
+                        []
+                    ],
+                    [
+                        "DeltaPage",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Event",
+                "comment": " Type that get returned by a browser wheel event.\nIts purpose is to provide all useful properties of JavaScript\n[WheelEvent] in the context of the elm programming language.\n\n`deltaX` and `deltaZ` properties are not provided by default\nsince not compatible with Safari.\nIf you really need them, you can very easily build your own wheel event\ndecoder by extending this one,\nor looking at the source code of this module and recoding one.\n\n[WheelEvent]: https://developer.mozilla.org/en-US/docs/Web/API/WheelEvent\n\n",
+                "args": [],
+                "type": "{ mouseEvent : Html.Events.Extra.Mouse.Event, deltaY : Basics.Float, deltaMode : Html.Events.Extra.Wheel.DeltaMode }"
+            },
+            {
+                "name": "EventOptions",
+                "comment": " Options for the event.\n",
+                "args": [],
+                "type": "{ stopPropagation : Basics.Bool, preventDefault : Basics.Bool }"
+            }
+        ],
+        "values": [
+            {
+                "name": "eventDecoder",
+                "comment": " Wheel event decoder.\nIt is provided in case you want to extend this `Wheel.Event` type with\nnon provided properties (like `deltaX`, `deltaZ`).\n",
+                "type": "Json.Decode.Decoder Html.Events.Extra.Wheel.Event"
+            },
+            {
+                "name": "onWheel",
+                "comment": " Listen to `wheel` events.\nLet's say that we have a message type like this:\n\n    type Msg\n        = ZoomIn\n        | ZoomOut\n\nAnd we want to zoom in or out on an element depending on a wheel event:\n\n    chooseZoom : Wheel.Event -> Msg\n    chooseZoom wheelEvent =\n        if wheelEvent.deltaY > 0 then\n            ZoomOut\n        else\n            ZoomIn\n\n    div\n        [ Wheel.onWheel chooseZoom ]\n        [ text \"some zoomable area like an image\" ]\n\n",
+                "type": "(Html.Events.Extra.Wheel.Event -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "onWithOptions",
+                "comment": " Enable personalization of html events options (prevent default)\nin case the default options do not fit your needs.\nYou can change options like follows:\n\n    onWheel : (Wheel.Event -> msg) -> Html.Attribute msg\n    onWheel =\n        { stopPropagation = False, preventDefault = True }\n            |> Wheel.onWithOptions\n\n",
+                "type": "Html.Events.Extra.Wheel.EventOptions -> (Html.Events.Extra.Wheel.Event -> msg) -> Html.Attribute msg"
+            }
+        ],
+        "binops": []
+    }
+]

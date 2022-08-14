@@ -1,0 +1,44 @@
+[
+    {
+        "name": "WikimediaCommons.RandomPictures",
+        "comment": " A library for working with the WikimediaCommons API\n\n@docs PictureResource, getUrl, getMaxUrl, getMaxSize, Url, fetchResources\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "PictureResource",
+                "comment": " Main type of the library, a picture resource from WikiMedia Commons.\n",
+                "args": [],
+                "type": "Internal.PictureResource"
+            },
+            {
+                "name": "Url",
+                "comment": " An URL String\n",
+                "args": [],
+                "type": "Internal.Url"
+            }
+        ],
+        "values": [
+            {
+                "name": "fetchResources",
+                "comment": " Fetches a number of picture resources from the API.\n",
+                "type": "Basics.Int -> Task.Task Http.Error (List.List WikimediaCommons.RandomPictures.PictureResource)"
+            },
+            {
+                "name": "getMaxSize",
+                "comment": " Get the maximum size in which the resource is available.\n",
+                "type": "WikimediaCommons.RandomPictures.PictureResource -> ( Basics.Int, Basics.Int )"
+            },
+            {
+                "name": "getMaxUrl",
+                "comment": " Get an `Url` from a `PictureResource` pointing to a picture in the largest possible size.\n",
+                "type": "WikimediaCommons.RandomPictures.PictureResource -> WikimediaCommons.RandomPictures.Url"
+            },
+            {
+                "name": "getUrl",
+                "comment": " Get an `Url` from a `PictureResource` if the given width is valid.\n",
+                "type": "Basics.Int -> WikimediaCommons.RandomPictures.PictureResource -> Maybe.Maybe WikimediaCommons.RandomPictures.Url"
+            }
+        ],
+        "binops": []
+    }
+]

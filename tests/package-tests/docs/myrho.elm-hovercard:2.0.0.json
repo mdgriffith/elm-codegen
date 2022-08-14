@@ -1,0 +1,23 @@
+[
+    {
+        "name": "Hovercard",
+        "comment": " This module makes rendering hovercards like [Wikipedia's](https://anandchowdhary.github.io/hovercard/) easy.\n\n@docs Config, hovercard\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " Configure the hovercard.\n\n  - maxWidth: maximum width of the hovercard\n  - maxHeight: maximum height of the hovercard\n  - tickLength: length of the tick\n  - borderColor, borderWidth, backgroundColor: minimal styling for the hovercard and the small arrow pointing to the element\n\n",
+                "args": [],
+                "type": "{ maxWidth : Basics.Int, maxHeight : Basics.Int, tickLength : Basics.Float, borderColor : Color.Color, backgroundColor : Color.Color, borderWidth : Basics.Float }"
+            }
+        ],
+        "values": [
+            {
+                "name": "hovercard",
+                "comment": " Render a hovercard above or below the given [Browser.Dom.Element](https://package.elm-lang.org/packages/elm/browser/latest/Browser-Dom#Element).\n\nCall this function at the root of your HTML so the hovercard is positioned correctly.\n\nExample:\n\n    hovercard\n        -- configuration\n        { maxWidth = 100\n        , maxHeight = 100\n        , borderColor = Color.black\n        , backgroundColor = Color.lightBlue\n        , borderWidth = 2\n        }\n        -- Browser.Dom.Element representing\n        -- viewport and position of the element\n        element\n        -- additional styles for the hovercard, eg. a shadow\n        [ style \"box-shadow\" \"5px 5px 5px 0px rgba(0,0,0,0.25)\"\n        ]\n        -- the content of the hovercard\n        [ div\n            []\n            [ text \"Lorem ipsum dolor sit amet\"\n            ]\n        ]\n\n",
+                "type": "Hovercard.Config -> Browser.Dom.Element -> List.List (Html.Attribute msg) -> List.List (Html.Html msg) -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

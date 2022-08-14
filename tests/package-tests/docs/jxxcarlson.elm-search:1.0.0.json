@@ -1,0 +1,163 @@
+[
+    {
+        "name": "APITypes",
+        "comment": "\n\n@docs Term, Datum\n\n",
+        "unions": [
+            {
+                "name": "Term",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Word",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "NotWord",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Conjunction",
+                        [
+                            "List.List APITypes.Term"
+                        ]
+                    ],
+                    [
+                        "BeforeDateTime",
+                        [
+                            "Time.Posix"
+                        ]
+                    ],
+                    [
+                        "AfterDateTime",
+                        [
+                            "Time.Posix"
+                        ]
+                    ],
+                    [
+                        "Range",
+                        [
+                            "Time.Posix",
+                            "Time.Posix"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Datum",
+                "comment": " ",
+                "args": [
+                    "data"
+                ],
+                "type": "{ data | content : String.String, dateTime : Time.Posix }"
+            }
+        ],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "Parse",
+        "comment": "\n\n@docs parse\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "parse",
+                "comment": " ",
+                "type": "String.String -> Result.Result (List.List Parser.DeadEnd) APITypes.Term"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Search",
+        "comment": "\n\n@docs search, SearchConfig\n\n",
+        "unions": [
+            {
+                "name": "SearchConfig",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "CaseSensitive",
+                        []
+                    ],
+                    [
+                        "NotCaseSensitive",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "search",
+                "comment": " ",
+                "type": "Search.SearchConfig -> String.String -> List.List (APITypes.Datum data) -> List.List (APITypes.Datum data)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Sort",
+        "comment": "\n\n@docs sort, SortParam, Direction\n\n",
+        "unions": [
+            {
+                "name": "Direction",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Increasing",
+                        []
+                    ],
+                    [
+                        "Decreasing",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "SortParam",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Alpha",
+                        [
+                            "Sort.Direction"
+                        ]
+                    ],
+                    [
+                        "DateTime",
+                        [
+                            "Sort.Direction"
+                        ]
+                    ],
+                    [
+                        "Random",
+                        [
+                            "Random.Seed"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "sort",
+                "comment": " ",
+                "type": "Sort.SortParam -> List.List (APITypes.Datum data) -> List.List (APITypes.Datum data)"
+            }
+        ],
+        "binops": []
+    }
+]

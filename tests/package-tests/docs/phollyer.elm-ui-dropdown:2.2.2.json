@@ -1,0 +1,345 @@
+[
+    {
+        "name": "Dropdown",
+        "comment": " A dropdown component for\n[Elm-UI](https://package.elm-lang.org/packages/mdgriffith/elm-ui/latest/).\n\nIn order to provide built-in keyboard navigation, and option filtering, it is\nnecessary for the Dropdown to manage it's own internal state. Therefore any\nDropdowns you require need to be stored on your `Model`, with events being\nhandled in your `update` function.\n\nThere are a few gotchas to watch out for with functions that operate on the\ninternal state of the Dropdown. Because of the effect they have on the internal\nstate, using them in your `view` code will have no effect. They should\ntherefore be used when you [init](#init) the Dropdown, or in your `update`\nfunction where model changes can be captured.\n\nThe affected functions are, [id](#id), [filterType](#filterType),\n[setSelected](#setSelected), [removeSelected](#removeSelected),\n[removeOption](#removeOption] & [openOnMouseEnter](#openOnMouseEnter), along\nwith all the functions for [setting the menu options](#setting-options). Each\nfunction or section has a warning documenting this restriction where it is\napplicable.\n\nAll other functions can be used safely within `view` code.\n\n\n## Build\n\n\n### Setting Up\n\n@docs Dropdown, init, id\n\n\n### Input Type\n\n@docs InputType, inputType\n\n\n### Setting Options\n\n**Warning**\n\nOptions need to be stored on the dropdown model, and so should be set\nwhen you [init](#init) the dropdown, or in your `update` function where the\nchanges to the model can be captured.\n\nIf you set these in your `view` code they will have no effect and so no menu\nwill appear.\n\n@docs optionsBy, options, stringOptions, intOptions, floatOptions, reset\n\n\n### Label\n\n@docs label, labelHidden, buttonLabel\n\n\n### Placeholder\n\n@docs placeholder\n\n\n### Positioning\n\n@docs Placement\n\n@docs labelPlacement, labelSpacing\n\n@docs menuPlacement, menuSpacing\n\n\n### Size & Style\n\n@docs maxHeight, inputAttributes, menuAttributes, optionAttributes, optionHoverAttributes, optionSelectedAttributes\n\n\n### Filtering\n\nFiltering is currently case insensitive.\n\n@docs FilterType, filterType\n\n\n### Selected Option\n\n@docs setSelected, removeSelected, removeOption\n\n\n### Selected Label\n\n@docs setSelectedLabel\n\n\n### Controls\n\n@docs openOnMouseEnter, open, close\n\n\n## Query\n\n@docs selected, selectedOption, selectedLabel, list, listOptions, listLabels, text, isOpen, getId\n\n\n## Update\n\n@docs OutMsg, Msg, update\n\n\n## Subscriptions\n\n@docs subscriptions\n\n\n## View\n\n@docs view\n\n",
+        "unions": [
+            {
+                "name": "Dropdown",
+                "comment": " An opaque type representing the internal model.\n\nUse this to define the `option` type on your model.\n\n    import Dropdown exposing (Dropdown)\n\n    type alias Model =\n        { stringDropdown : Dropdown String\n        , intDropdown : Dropdown Int\n        , customTypeDropdown : Dropdown CustomType\n        }\n\n    type CustomType\n        = A\n        | B\n        ...\n\n",
+                "args": [
+                    "option"
+                ],
+                "cases": []
+            },
+            {
+                "name": "FilterType",
+                "comment": " The type of filter to apply when [TextField](#InputType) is used as the\n[InputType](#InputType).\n\n  - `NoFilter`: No filter will be applied.\n  - `StartsWith`: Filter the list of options down to only those whose label\n    starts with the entered text.\n  - `Contains`: Filter the list of options down to only those whose label\n    contains the entered text.\n  - `StartsWithThenContains`: Filter the list of options down to only those\n    whose label starts with the entered text or contains the entered text. The\n    list of options will be sorted with `StartsWith` taking priority over\n    `Contains`, with duplicates removed.\n\nThe default is `NoFilter`.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NoFilter",
+                        []
+                    ],
+                    [
+                        "StartsWith",
+                        []
+                    ],
+                    [
+                        "Contains",
+                        []
+                    ],
+                    [
+                        "StartsWithThenContains",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "InputType",
+                "comment": " The type of input the user uses to access the dropdown.\n\nThe default is `Button`.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Button",
+                        []
+                    ],
+                    [
+                        "TextField",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Msg",
+                "comment": " This is an opaque type, pattern match on [OutMsg](#OutMsg).\n",
+                "args": [
+                    "option"
+                ],
+                "cases": []
+            },
+            {
+                "name": "OutMsg",
+                "comment": " Pattern match on this type in your `update` function to determine the event\nthat occured.\n\n  - `Selected (Int, String, option)`\n      - `Int` is the index of the option in the menu\n      - `String` is the label of the option displayed in the menu\n      - `option` is the `option`.\n\n  - `TextChanged String`\n      - `String` is the text entered by the user.\n\n",
+                "args": [
+                    "option"
+                ],
+                "cases": [
+                    [
+                        "NoOp",
+                        []
+                    ],
+                    [
+                        "Selected",
+                        [
+                            "( Basics.Int, String.String, option )"
+                        ]
+                    ],
+                    [
+                        "TextChanged",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "FocusIn",
+                        []
+                    ],
+                    [
+                        "FocusOut",
+                        []
+                    ],
+                    [
+                        "Opened",
+                        []
+                    ],
+                    [
+                        "Closed",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Placement",
+                "comment": " The position of the label or the dropdown menu in relation to the\n[InputType](#InputType).\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Above",
+                        []
+                    ],
+                    [
+                        "Below",
+                        []
+                    ],
+                    [
+                        "Left",
+                        []
+                    ],
+                    [
+                        "Right",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "buttonLabel",
+                "comment": " The text element for the [Button](#InputType) if nothing is selected.\n\nThe default is \"-- Select --\".\n\n",
+                "type": "Element.Element (Dropdown.Msg option) -> Dropdown.Dropdown option -> Dropdown.Dropdown option"
+            },
+            {
+                "name": "close",
+                "comment": " ",
+                "type": "Dropdown.Dropdown option -> Dropdown.Dropdown option"
+            },
+            {
+                "name": "filterType",
+                "comment": " Set the `FiterType`.\n\n    import Dropdown exposing (FilterType(..))\n\n    initialModel : Model\n    initialModel =\n        { dropdown =\n            Dropdown.init\n                |> Dropdown.filterType StartsWith\n        }\n\n**Warning**\n\nThe `FilterType` needs to be stored on the dropdown model, and so should be set\nwhen you [init](#init) the dropdown, or in your `update` function where the\nchanges to the model can be captured.\n\nIf you set this in your `view` code it will have no effect, and filtering won't\nwork.\n\n",
+                "type": "Dropdown.FilterType -> Dropdown.Dropdown option -> Dropdown.Dropdown option"
+            },
+            {
+                "name": "floatOptions",
+                "comment": " The options to set for your dropdown if they are all `Float`s.\n\n    import Dropdown exposing (Dropdown)\n\n    type alias Model =\n        { stringDropdown : Dropdown Float }\n\n    initialModel : Model\n    initialModel =\n        { stringDropdown =\n            Dropdown.init\n                |> Dropdown.floatOptions\n                    [ 0.1\n                    , 0.2\n                    , 0.3\n                    ]\n        }\n\n",
+                "type": "List.List Basics.Float -> Dropdown.Dropdown Basics.Float -> Dropdown.Dropdown Basics.Float"
+            },
+            {
+                "name": "getId",
+                "comment": " Get the `id` of the dropdown.\n",
+                "type": "Dropdown.Dropdown option -> String.String"
+            },
+            {
+                "name": "id",
+                "comment": " Provide an ID for the dropdown.\n\nThis will become the element `id` in the DOM, and is required in order for\nkeyboard navigation to work - it should therefore be unique.\n\n    import Dropdown\n\n    initialModel : Model\n    initialModel =\n        { myDropdown =\n            Dropdown.init\n                |> Dropdown.id \"my-drodown\"\n        }\n\n**Warning**\n\nThe `id` needs to be stored on the dropdown model, and so should be set\nwhen you [init](#init) the dropdown, or in your `update` function where the\nchanges to the model can be captured.\n\nIf you set this in your `view` code it will have no effect and keyboard\nnavigation won't work.\n\n",
+                "type": "String.String -> Dropdown.Dropdown option -> Dropdown.Dropdown option"
+            },
+            {
+                "name": "init",
+                "comment": " Initialize a dropdown on your model.\n\n    import Dropdown\n\n    initialModel : Model\n    initialModel =\n        { myDropdown = Dropdown.init }\n\n",
+                "type": "Dropdown.Dropdown option"
+            },
+            {
+                "name": "inputAttributes",
+                "comment": " The\n[Attributes](https://package.elm-lang.org/packages/mdgriffith/elm-ui/latest/Element#Attribute)\nto set on the [InputType](#InputType).\n",
+                "type": "List.List (Element.Attribute (Dropdown.Msg option)) -> Dropdown.Dropdown option -> Dropdown.Dropdown option"
+            },
+            {
+                "name": "inputType",
+                "comment": " Set the `InputType`.\n",
+                "type": "Dropdown.InputType -> Dropdown.Dropdown option -> Dropdown.Dropdown option"
+            },
+            {
+                "name": "intOptions",
+                "comment": " The options to set for your dropdown if they are all `Int`s.\n\n    import Dropdown exposing (Dropdown)\n\n    type alias Model =\n        { stringDropdown : Dropdown Int }\n\n    initialModel : Model\n    initialModel =\n        { stringDropdown =\n            Dropdown.init\n                |> Dropdown.intOptions\n                    [ 1\n                    , 2\n                    , 3\n                    ]\n        }\n\n",
+                "type": "List.List Basics.Int -> Dropdown.Dropdown Basics.Int -> Dropdown.Dropdown Basics.Int"
+            },
+            {
+                "name": "isOpen",
+                "comment": " Determine if the dropdown is open or not.\n",
+                "type": "Dropdown.Dropdown option -> Basics.Bool"
+            },
+            {
+                "name": "label",
+                "comment": " Provide the label element for the [InputType](#InputType).\n",
+                "type": "Element.Element (Dropdown.Msg option) -> Dropdown.Dropdown option -> Dropdown.Dropdown option"
+            },
+            {
+                "name": "labelHidden",
+                "comment": " Hide the [label](#label).\n",
+                "type": "( Basics.Bool, String.String ) -> Dropdown.Dropdown option -> Dropdown.Dropdown option"
+            },
+            {
+                "name": "labelPlacement",
+                "comment": " Set the position of the label in relation to the [InputType](#InputType).\n\nThe default is [Above](#Placement).\n\n",
+                "type": "Dropdown.Placement -> Dropdown.Dropdown option -> Dropdown.Dropdown option"
+            },
+            {
+                "name": "labelSpacing",
+                "comment": " Set the spacing between the [InputType](#InputType) and its\n[label](#label).\n\nThe default is 10.\n\n",
+                "type": "Basics.Int -> Dropdown.Dropdown option -> Dropdown.Dropdown option"
+            },
+            {
+                "name": "list",
+                "comment": " List all the `option` information. The tuples returned represent:\n\n  - Int - the index of the `option`\n  - String - the label for the `option`\n  - option - the `option` itself\n\n",
+                "type": "Dropdown.Dropdown option -> List.List ( Basics.Int, String.String, option )"
+            },
+            {
+                "name": "listLabels",
+                "comment": " List all the labels for each option.\n",
+                "type": "Dropdown.Dropdown option -> List.List String.String"
+            },
+            {
+                "name": "listOptions",
+                "comment": " List all the `option`s.\n",
+                "type": "Dropdown.Dropdown option -> List.List option"
+            },
+            {
+                "name": "maxHeight",
+                "comment": " The max height for the dropdown, the default is 150.\n\n(Vertical scrolling kicks in automatically.)\n\n",
+                "type": "Basics.Int -> Dropdown.Dropdown option -> Dropdown.Dropdown option"
+            },
+            {
+                "name": "menuAttributes",
+                "comment": " The\n[Attributes](https://package.elm-lang.org/packages/mdgriffith/elm-ui/latest/Element#Attribute)\nto set on the menu container.\n",
+                "type": "List.List (Element.Attribute (Dropdown.Msg option)) -> Dropdown.Dropdown option -> Dropdown.Dropdown option"
+            },
+            {
+                "name": "menuPlacement",
+                "comment": " Set the position of the dropdown menu in relation to the\n[InputType](#InputType).\n\nThe default is [Below](#Placement).\n\n",
+                "type": "Dropdown.Placement -> Dropdown.Dropdown option -> Dropdown.Dropdown option"
+            },
+            {
+                "name": "menuSpacing",
+                "comment": " Set the spacing between the [InputType](#InputType) and the menu.\n\nThe default is 0.\n\n",
+                "type": "Basics.Int -> Dropdown.Dropdown option -> Dropdown.Dropdown option"
+            },
+            {
+                "name": "open",
+                "comment": " ",
+                "type": "Dropdown.Dropdown option -> Dropdown.Dropdown option"
+            },
+            {
+                "name": "openOnMouseEnter",
+                "comment": " Choose whether the menu opens when the mouse enters.\n\nIf this is set to `True` the menu will also close automatically when the mouse\nleaves.\n\nThe default is `False`.\n\n**Warning**\n\nThis function changes the internal state, and so needs to be used where the\nstate change can be captured. This is likely to be your `update` function.\n\nIf you use this in your `view` code it will have no effect.\n\n",
+                "type": "Basics.Bool -> Dropdown.Dropdown option -> Dropdown.Dropdown option"
+            },
+            {
+                "name": "optionAttributes",
+                "comment": " The\n[Attributes](https://package.elm-lang.org/packages/mdgriffith/elm-ui/latest/Element#Attribute)\nto set on each option.\n",
+                "type": "List.List (Element.Attribute (Dropdown.Msg option)) -> Dropdown.Dropdown option -> Dropdown.Dropdown option"
+            },
+            {
+                "name": "optionHoverAttributes",
+                "comment": " The\n[Attributes](https://package.elm-lang.org/packages/mdgriffith/elm-ui/latest/Element#Attribute)\nto set on an option when hovered over with the mouse, or navigated to with the\nkeyboard.\n",
+                "type": "List.List (Element.Attribute (Dropdown.Msg option)) -> Dropdown.Dropdown option -> Dropdown.Dropdown option"
+            },
+            {
+                "name": "optionSelectedAttributes",
+                "comment": " The\n[Attributes](https://package.elm-lang.org/packages/mdgriffith/elm-ui/latest/Element#Attribute)\nto set on an option when it has been selected by a user.\n",
+                "type": "List.List (Element.Attribute (Dropdown.Msg option)) -> Dropdown.Dropdown option -> Dropdown.Dropdown option"
+            },
+            {
+                "name": "options",
+                "comment": " The options to set for your dropdown.\n\nThe first element in the list of tuples is always a `String`, and is used for\nthe option's label in the menu that is displayed to the user.\n\n    import Dropdown exposing (Dropdown)\n\n    type alias Model =\n        { customTypeDropdown : Dropdown CustomType }\n\n    initialModel : Model\n    initialModel =\n        { customTypeDropdown =\n            Dropdown.init\n                |> Dropdown.options customTypeOptions\n        }\n\n    type CustomType\n        = A\n        | B\n\n    customTypeOptions : List ( String, CustomType )\n    customTypeOptions =\n        [ ( \"A\", A )\n        , ( \"B\", B )\n        ]\n\n",
+                "type": "List.List ( String.String, option ) -> Dropdown.Dropdown option -> Dropdown.Dropdown option"
+            },
+            {
+                "name": "optionsBy",
+                "comment": " This is the easiest way to set the options for custom types.\n\nSimply provide a function that takes an `option` and returns the `String` to\nbe used for the label in the menu.\n\n    import Dropdown exposing (Dropdown)\n\n    type alias Model =\n        { nameDropdown : Dropdown Person\n        , ageDropdown : Dropdown Person\n        }\n\n    initialModel : Model\n    initialModel =\n        { nameDropdown =\n            Dropdown.init\n                |> Dropdown.optionsBy .name people\n        , ageDropdown =\n            Dropdown.init\n                |> Dropdown.optionsBy (.age >> String.fromInt) people\n        }\n\n    type alias Person =\n        { name : String\n        , age : Int\n        }\n\n    people : List Person\n    people =\n        [ { name = \"John Doe\", age = 99 }\n        , { name = \"Jane Doe\", age = 98 }\n        ]\n\n",
+                "type": "(option -> String.String) -> List.List option -> Dropdown.Dropdown option -> Dropdown.Dropdown option"
+            },
+            {
+                "name": "placeholder",
+                "comment": " Provide the\n[Placeholder](https://package.elm-lang.org/packages/mdgriffith/elm-ui/latest/Element-Input#Placeholder)\nfor the text field if [TextField](#InputType) is the [InputType](#InputType).\n\nThe default is `Nothing`.\n\n",
+                "type": "Maybe.Maybe (Element.Input.Placeholder (Dropdown.Msg option)) -> Dropdown.Dropdown option -> Dropdown.Dropdown option"
+            },
+            {
+                "name": "removeOption",
+                "comment": " Remove an `option` from the internal list.\n\n**Warning**\n\nThis function changes the internal state, and so needs to be used where the\nstate change can be captured. This is likely to be your `update` function.\n\nIf you use this in your `view` code it will have no effect.\n\n",
+                "type": "option -> Dropdown.Dropdown option -> Dropdown.Dropdown option"
+            },
+            {
+                "name": "removeSelected",
+                "comment": " Remove the selected option of one dropdown from the list of options of\nanother dropdown.\n\nThis is useful if you have two dropdowns that show the same list of options,\nbut each selection must be unique, therefore you don't want to show the\nselected option again.\n\nFor example, selecting a home team and away team from the same list of teams.\nIn this case, once the home team has been selected, you may wish to remove that\noption from the list of away teams.\n\n    awayTeamDropdown =\n        Dropdown.removeSelected homeTeamDropdown awayTeamDropdown\n\n**Warning**\n\nThis function changes the internal state, and so needs to be used where the\nstate change can be captured. This is likely to be your `update` function.\n\nIf you use this in your `view` code it will have no effect.\n\n",
+                "type": "Dropdown.Dropdown option -> Dropdown.Dropdown option -> Dropdown.Dropdown option"
+            },
+            {
+                "name": "reset",
+                "comment": " Reset the dropdown.\n\nThe selected option will be set to `Nothing`, and any text in the `TextField`\n[InputType](#InputType) will be removed.\n\nThe list of options will be reset to the last full list of options supplied\nif any options have been programmatically removed.\n\n",
+                "type": "Dropdown.Dropdown option -> Dropdown.Dropdown option"
+            },
+            {
+                "name": "selected",
+                "comment": " Determine if an option has been selected by the user.\n\nIf a `Just` is returned, it consists of the following:\n\n  - `Int`: The index of the selected option.\n  - `String`: The label of the selected option.\n  - `option`: The option value itself.\n\n",
+                "type": "Dropdown.Dropdown option -> Maybe.Maybe ( Basics.Int, String.String, option )"
+            },
+            {
+                "name": "selectedLabel",
+                "comment": " Maybe retrieve the label for the selected option.\n",
+                "type": "Dropdown.Dropdown option -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "selectedOption",
+                "comment": " Maybe retrieve the selected option.\n",
+                "type": "Dropdown.Dropdown option -> Maybe.Maybe option"
+            },
+            {
+                "name": "setSelected",
+                "comment": " Set the selected option - it must exist in the list of\n[options originally provided](#setting-options).\n\n**Warning**\n\nThis function changes the internal state, and so needs to be used where the\nstate change can be captured. This is likely to be your `update` function.\n\nIf you use this in your `view` code it will have no effect.\n\n",
+                "type": "Maybe.Maybe option -> Dropdown.Dropdown option -> Dropdown.Dropdown option"
+            },
+            {
+                "name": "setSelectedLabel",
+                "comment": " Set the selected label - it must exist in the list of\n[options originally provided](#setting-options).\n\n**Warning**\n\nThis function changes the internal state, and so needs to be used where the\nstate change can be captured. This is likely to be your `update` function.\n\nIf you use this in your `view` code it will have no effect.\n\n",
+                "type": "Maybe.Maybe String.String -> Dropdown.Dropdown option -> Dropdown.Dropdown option"
+            },
+            {
+                "name": "stringOptions",
+                "comment": " The options to set for your dropdown if they are all `String`s.\n\n    import Dropdown exposing (Dropdown)\n\n    type alias Model =\n        { stringDropdown : Dropdown String }\n\n    initialModel : Model\n    initialModel =\n        { stringDropdown =\n            Dropdown.init\n                |> Dropdown.stringOptions\n                    [ \"A\"\n                    , \"B\"\n                    , \"C\"\n                    ]\n        }\n\n",
+                "type": "List.List String.String -> Dropdown.Dropdown String.String -> Dropdown.Dropdown String.String"
+            },
+            {
+                "name": "subscriptions",
+                "comment": " Subscribe to the browser `onResize` event.\n\nWhen the orientation changes on some mobile devices the dropdown can lose\nfocus, resulting in it failing to close if the user taps outside the\ndropdown.\n\nSubscribing to this `subscription` results in the dropdown regaining focus\nwhen the orientation changes so that the user experience doesn't change.\n\nThis subscription is only active when the dropdown is open.\n\n",
+                "type": "Dropdown.Dropdown option -> Platform.Sub.Sub (Dropdown.Msg option)"
+            },
+            {
+                "name": "text",
+                "comment": " Get the text entered in the [TextField](#InputType).\n",
+                "type": "Dropdown.Dropdown option -> String.String"
+            },
+            {
+                "name": "update",
+                "comment": "\n\n    import Dropdown exposing (OutMsg(..))\n\n    type Msg\n        = DropdownMsg Dropdown.Msg\n\n    update : Msg -> Model -> ( Model, Cmd Msg )\n    update msg model =\n        case msg of\n            DropdownMsg subMsg ->\n                let\n                    ( dropdown, cmd, outMsg ) =\n                        Dropdown.update subMsg model.dropdown\n                in\n                case outMsg of\n                    Selected ( index, label, option ) ->\n                        ( { model | dropdown = dropdown }\n                        , Cmd.map DropdownMsg cmd\n                        )\n\n                    TextChanged text ->\n                        ( { model | dropdown = dropdown }\n                        , Cmd.map DropdownMsg cmd\n                        )\n\n                    ...\n\n",
+                "type": "Dropdown.Msg option -> Dropdown.Dropdown option -> ( Dropdown.Dropdown option, Platform.Cmd.Cmd (Dropdown.Msg option), Dropdown.OutMsg option )"
+            },
+            {
+                "name": "view",
+                "comment": " Render the dropdown.\n\n    import Dropdown\n\n    type alias Model =\n        { dropdown : Dropdown String }\n\n    type Msg\n        = DropdownMsg Dropdown.Msg\n\n    view : Model -> Element Msg\n    view model =\n        Dropdown.view DropdownMsg model.dropdown\n\n",
+                "type": "(Dropdown.Msg option -> msg) -> Dropdown.Dropdown option -> Element.Element msg"
+            }
+        ],
+        "binops": []
+    }
+]

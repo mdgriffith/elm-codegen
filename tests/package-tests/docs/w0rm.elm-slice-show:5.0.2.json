@@ -1,0 +1,131 @@
+[
+    {
+        "name": "SliceShow",
+        "comment": " This module helps you start your SliceShow application.\n\n\n# Start your Application\n\n@docs Config, init, show, setView, setUpdate, setSubscriptions, Model, Message\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " Slideshow Config type\n",
+                "args": [
+                    "a",
+                    "b"
+                ],
+                "type": "SliceShow.Protected.Protected (SliceShow.PrivateConfig a b)"
+            },
+            {
+                "name": "Message",
+                "comment": " Message type\n",
+                "args": [
+                    "b"
+                ],
+                "type": "SliceShow.Messages.Message b"
+            },
+            {
+                "name": "Model",
+                "comment": " Model type\n",
+                "args": [
+                    "a",
+                    "b"
+                ],
+                "type": "SliceShow.Model.Model a b"
+            }
+        ],
+        "values": [
+            {
+                "name": "init",
+                "comment": " Init Model from the list of slides\n",
+                "type": "List.List (SliceShow.Slide.Slide a b) -> SliceShow.Config a b"
+            },
+            {
+                "name": "setSubscriptions",
+                "comment": " Set inputs for the custom content\n",
+                "type": "(a -> Platform.Sub.Sub b) -> SliceShow.Config a b -> SliceShow.Config a b"
+            },
+            {
+                "name": "setUpdate",
+                "comment": " Set update for the custom content\n",
+                "type": "(b -> a -> ( a, Platform.Cmd.Cmd b )) -> SliceShow.Config a b -> SliceShow.Config a b"
+            },
+            {
+                "name": "setView",
+                "comment": " Set view for the custom content\n",
+                "type": "(a -> Html.Html b) -> SliceShow.Config a b -> SliceShow.Config a b"
+            },
+            {
+                "name": "show",
+                "comment": " Start the SliceShow with your `slides`:\napp = show (init slides)\nmain = app.html\nport tasks : Signal (Task.Task Never ())\nport tasks = app.tasks\n",
+                "type": "SliceShow.Config a b -> Platform.Program () (SliceShow.Model a b) (SliceShow.Messages.Message b)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "SliceShow.Content",
+        "comment": " This module helps you define Slide content\n\n@docs Content, item, container, custom, hide\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Content",
+                "comment": " Content type\n",
+                "args": [
+                    "a",
+                    "b"
+                ],
+                "type": "SliceShow.ContentData.ContentData a b"
+            }
+        ],
+        "values": [
+            {
+                "name": "container",
+                "comment": " A group of content items\n",
+                "type": "(List.List (Html.Html b) -> Html.Html b) -> List.List (SliceShow.Content.Content a b) -> SliceShow.Content.Content a b"
+            },
+            {
+                "name": "custom",
+                "comment": " Custom content item\n",
+                "type": "a -> SliceShow.Content.Content a b"
+            },
+            {
+                "name": "hide",
+                "comment": " Hide content\n",
+                "type": "SliceShow.Content.Content a b -> SliceShow.Content.Content a b"
+            },
+            {
+                "name": "item",
+                "comment": " Single content item\n",
+                "type": "Html.Html b -> SliceShow.Content.Content a b"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "SliceShow.Slide",
+        "comment": " This module helps you define a slide\n\n@docs Slide, slide, setDimensions\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Slide",
+                "comment": " Slide type\n",
+                "args": [
+                    "a",
+                    "b"
+                ],
+                "type": "SliceShow.Protected.Protected (SliceShow.SlideData.SlideData a b)"
+            }
+        ],
+        "values": [
+            {
+                "name": "setDimensions",
+                "comment": " Set custom dimensions\n",
+                "type": "( Basics.Int, Basics.Int ) -> SliceShow.Slide.Slide a b -> SliceShow.Slide.Slide a b"
+            },
+            {
+                "name": "slide",
+                "comment": " Create new 1024x640 slide from a list of content items\n",
+                "type": "List.List (SliceShow.Content.Content a b) -> SliceShow.Slide.Slide a b"
+            }
+        ],
+        "binops": []
+    }
+]

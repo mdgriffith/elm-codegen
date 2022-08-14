@@ -1,0 +1,16 @@
+[
+    {
+        "name": "Afinn",
+        "comment": " The [AFINN 165 dataset](https://github.com/fnielsen/afinn/blob/b82d00dcad22a30a06ed047fecb24e47815aac2e/afinn/data/AFINN-en-165.txt)\navailable as an Elm `Dict`.\n\n@docs dict\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "dict",
+                "comment": " Get the Afinn Dict\n\nThis is a Dict with String keys and number values\n\nThe keys are the words found in the AFINN dataset and the numbers the \"postive-ness\"\nof the word — the higher the number, the more positive the sentiment. If a number\nis negative then it represents a negative sentiment.\n\n",
+                "type": "Dict.Dict String.String number"
+            }
+        ],
+        "binops": []
+    }
+]

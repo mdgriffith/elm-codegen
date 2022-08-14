@@ -1,0 +1,161 @@
+[
+    {
+        "name": "EmojiData",
+        "comment": "\n\n@docs EmojiData, search\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "EmojiData",
+                "comment": " ",
+                "args": [],
+                "type": "{ name : String.String, char : String.String, category : EmojiData.Category.Category, sprite : ( Basics.Int, Basics.Int ), keywords : List.List String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "search",
+                "comment": " Search for emojis by keyword.\n\n    import EmojiData.List exposing (emojis)\n\n    EmojiData.search emojis \"farmer\"\n        == [ { category = PeopleAndBody, char = \"👨‍🌾\", keywords = [\"man farmer\",\"rancher\",\"gardener\",\"man\",\"human\"], name = \"male-farmer\", sprite = (14,27) }\n           , { category = PeopleAndBody, char = \"👩‍🌾\", keywords = [\"woman farmer\",\"rancher\",\"gardener\",\"woman\",\"human\"], name = \"female-farmer\", sprite = (17,20) }\n           , { category = PeopleAndBody, char = \"🧑‍🌾\", keywords = [\"farmer\"], name = \"farmer\", sprite = (45,35) }\n           ]\n\n    EmojiData.search emojis \"😀\"\n        == [ { category = SmileysAndEmotion\n             , char = \"😀\"\n             , keywords = [ \"grinning face\", \"face\", \"smile\", \"happy\", \"joy\", \":D\", \"grin\" ]\n             , name = \"grinning\"\n             , sprite = (30,32)\n             }\n           ]\n\n",
+                "type": "List.List EmojiData.EmojiData -> String.String -> List.List EmojiData.EmojiData"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "EmojiData.Category",
+        "comment": "\n\n@docs Category, list, toString, fromString\n\n",
+        "unions": [
+            {
+                "name": "Category",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "SmileysAndEmotion",
+                        []
+                    ],
+                    [
+                        "PeopleAndBody",
+                        []
+                    ],
+                    [
+                        "AnimalsAndNature",
+                        []
+                    ],
+                    [
+                        "FoodAndDrink",
+                        []
+                    ],
+                    [
+                        "TravelAndPlaces",
+                        []
+                    ],
+                    [
+                        "Activities",
+                        []
+                    ],
+                    [
+                        "Objects",
+                        []
+                    ],
+                    [
+                        "Symbols",
+                        []
+                    ],
+                    [
+                        "Flags",
+                        []
+                    ],
+                    [
+                        "SkinTones",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fromString",
+                "comment": " ",
+                "type": "String.String -> Maybe.Maybe EmojiData.Category.Category"
+            },
+            {
+                "name": "list",
+                "comment": " ",
+                "type": "List.List ( String.String, EmojiData.Category.Category )"
+            },
+            {
+                "name": "toString",
+                "comment": " ",
+                "type": "EmojiData.Category.Category -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "EmojiData.Fetch",
+        "comment": "\n\n@docs task\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "task",
+                "comment": " Make two CDN requests to load emoji data JSON. This is an alternative to\nusing `EmojiData.List.emojis` that reduces bundle size by about 300KB.\n\n    type alias Model =\n        { emojis : List EmojiData\n        }\n\n    init : () -> ( Model, Cmd Msg )\n    init _ =\n        ( Model [], Task.attempt FetchedEmojiData EmojiData.Fetch.task )\n\n    type Msg\n        = FetchedEmojiData (Result Http.Error (List EmojiData))\n\n    update : Msg -> Model -> ( Model, Cmd Msg )\n    update msg model =\n        case msg of\n            FetchedEmojiData result ->\n                case result of\n                    Ok emojis ->\n                        ( { model | emojis = emojis }, Cmd.none )\n\n                    Err err ->\n                        ( model\n                        , Task.attempt FetchedEmojiData\n                            (Process.sleep 1000\n                                |> Task.andThen (\\_ -> EmojiData.Fetch.task)\n                            )\n                        )\n\n",
+                "type": "Task.Task Http.Error (List.List EmojiData.EmojiData)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "EmojiData.List",
+        "comment": "\n\n@docs emojis\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "emojis",
+                "comment": " Staticly import the list of emojis. This adds about 300KB to your bundle\nsize compared to using `EmojiData.Fetch`.\n",
+                "type": "List.List EmojiData.EmojiData"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "EmojiData.View",
+        "comment": "\n\n@docs Source, emoji\n\n",
+        "unions": [
+            {
+                "name": "Source",
+                "comment": " Not all emoji sources are licensed for commercial use. See\n[here](https://github.com/iamcal/emoji-data#image-sources) for details.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Apple",
+                        []
+                    ],
+                    [
+                        "Google",
+                        []
+                    ],
+                    [
+                        "Twitter",
+                        []
+                    ],
+                    [
+                        "Facebook",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "emoji",
+                "comment": " Creates a `div` containing the emoji from a spritesheet.\nAccepts arguments for emoji size in pixels and sprite position.\n\n    EmojiData.View.emoji Apple 32 emojiData.sprite\n\n",
+                "type": "EmojiData.View.Source -> Basics.Int -> ( Basics.Int, Basics.Int ) -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

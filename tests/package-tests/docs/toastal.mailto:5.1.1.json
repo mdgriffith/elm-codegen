@@ -1,0 +1,80 @@
+[
+    {
+        "name": "Mailto",
+        "comment": " A small DSL to build Mailto links. See more [rfc6068](https://www.google.com/search?q=mailto+reply+to+scheme&hl=en).\n\n\n# Definition\n\n@docs Mailto\n\n\n# Alias\n\n@docs Email\n\n\n# Creation\n\n@docs mailto, mailtoMultiple, mailtoNobody\n\n\n# Adding fields\n\n@docs inReplyTo, subject, cc, bcc, body, header\n\n\n# Formats\n\n@docs toString, toHref\n\n",
+        "unions": [
+            {
+                "name": "Mailto",
+                "comment": " Definition\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Email",
+                "comment": " Just a `String` alias\n",
+                "args": [],
+                "type": "String.String"
+            }
+        ],
+        "values": [
+            {
+                "name": "bcc",
+                "comment": " Adds blind carbon copies to the mailto\n\n    mailto \"partner@test.mail\"\n        |> bcc [ \"bcc@test.mail\", \"secretfriend@test.mail\" ]\n        |> toString\n    -- \"mailto:partner@test.mail?bcc=bcc@test.mail,secretfriend@test.mail\"\n\n",
+                "type": "List.List Mailto.Email -> Endo.Endo Mailto.Mailto"
+            },
+            {
+                "name": "body",
+                "comment": " Adds a body to the mailto\n\n    mailto \"partner@test.mail\"\n        |> body \"I’ll be making a spicy, Isaan nam dtok muu salad (น้ำตกหมู).\"\n        |> toString\n    -- \"mailto:partner@test.mail?body=I%E2%80%99ll%20be%20making%20a%20spicy,%20Isaan%20nam%20dtok%20muu%20salad%20(%E0%B8%99%E0%B9%89%E0%B8%B3%E0%B8%95%E0%B8%81%E0%B8%AB%E0%B8%A1%E0%B8%B9).\"\n\n",
+                "type": "String.String -> Endo.Endo Mailto.Mailto"
+            },
+            {
+                "name": "cc",
+                "comment": " Adds carbon copies to the mailto\n\n    mailto \"partner@test.mail\"\n        |> cc [ \"cc@test.mail\", \"mutualfriend@test.mail\" ]\n        |> toString\n    -- \"mailto:partner@test.mail?cc=cc@test.mail,mutualfriend@test.mail\"\n\n",
+                "type": "List.List Mailto.Email -> Endo.Endo Mailto.Mailto"
+            },
+            {
+                "name": "header",
+                "comment": " Appends additional key-value pair headers\n",
+                "type": "String.String -> String.String -> Endo.Endo Mailto.Mailto"
+            },
+            {
+                "name": "inReplyTo",
+                "comment": " Adds an Message-ID to reply to in order to preserve threading\nmailto \"list@example.org\"\n|> inReplyTo \"[3469A91.D10AF4C@example.com](mailto:3469A91.D10AF4C@example.com)\"\n|> toString\n-- <mailto:list@example.org?In-Reply-To=%3C3469A91.D10AF4C@example.com%3E>\n",
+                "type": "String.String -> Endo.Endo Mailto.Mailto"
+            },
+            {
+                "name": "mailto",
+                "comment": " Constructs an empty Mailto with no parameters. It’s the `singleton` of `Mailto`.\n",
+                "type": "Mailto.Email -> Mailto.Mailto"
+            },
+            {
+                "name": "mailtoMultiple",
+                "comment": " Constructs an empty Mailto with no parameters, but with mailtoMultiple recipients. It’s the `singleton` of `Mailto`.\n",
+                "type": "List.List Mailto.Email -> Mailto.Mailto"
+            },
+            {
+                "name": "mailtoNobody",
+                "comment": " Constructs an empty Mailto with no parameters, but has no email addresses (useful when you want a blank message template). It’s the `singleton` to `Mailto`.\n",
+                "type": "Mailto.Mailto"
+            },
+            {
+                "name": "subject",
+                "comment": " Adds a subject to the mailto\n\n    mailto \"partner@test.mail\"\n        |> subject \"I want to cook you dinner\"\n        |> toString\n    -- \"mailto:partner@test.mail?subject=I%20want%20to%20cook%20you%20dinner\"\n\n",
+                "type": "String.String -> Endo.Endo Mailto.Mailto"
+            },
+            {
+                "name": "toHref",
+                "comment": " For convenience, you can turn a `Mailto` into an `Html.Attribute` as well\n",
+                "type": "Mailto.Mailto -> Html.Attribute msg"
+            },
+            {
+                "name": "toString",
+                "comment": " After composing a `Mailto`, consume a string\n",
+                "type": "Mailto.Mailto -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

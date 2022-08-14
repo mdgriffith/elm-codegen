@@ -1,0 +1,91 @@
+[
+    {
+        "name": "Count",
+        "comment": " Functions for counting upwards from 1, and passing those numbers to other functions.\n\n\n## Basic Counting\n\n@docs to2, to3, to4, to5, to6, to7, to8, to9\n\n\n## Advanced Counting (Whoa. WHOA.)\n\n@docs mapTo2, mapTo3, mapTo4, mapTo5, mapTo6, mapTo7, mapTo8, mapTo9\n\n\n## Theoretical Counting\n\nThese functions are even more advanced than the Advanced Counting functions, if\nyou can believe it. They're so advanced, their implementations are purely\ntheoretical and therefore they have no APIs.\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "mapTo2",
+                "comment": " Count from 1 to 2, applying a transformation to both numbers, and pass each number to the given function.\n\n    type alias Layers =\n        { normal : String\n        , menu : String\n        }\n\n    layers : Layers\n    layers =\n        -- { normal = \"zero_indexed_0\"\n        -- , menu = \"zero_indexed_1\"\n        -- }\n        Count.mapTo2 (\\num -> \"zero_indexed_\" ++ toString (num - 1)) Layers\n\n",
+                "type": "(Basics.Int -> a) -> (a -> a -> b) -> b"
+            },
+            {
+                "name": "mapTo3",
+                "comment": " Count from 1 to 3, applying a transformation to each number, and pass each number to the given function.\n\n    type alias Layers =\n        { normal : String\n        , menu : String\n        , modal : String\n        }\n\n    layers : Layers\n    layers =\n        -- { normal = \"zero_indexed_0\"\n        -- , menu = \"zero_indexed_1\"\n        -- , modal = \"zero_indexed_2\"\n        -- }\n        Count.mapTo3 (\\num -> \"zero_indexed_\" ++ toString (num - 1)) Layers\n\n",
+                "type": "(Basics.Int -> a) -> (a -> a -> a -> b) -> b"
+            },
+            {
+                "name": "mapTo4",
+                "comment": " Count from 1 to 4, applying a transformation to each number, and pass each number to the given function.\n\n    type alias Layers =\n        { normal : String\n        , menu : String\n        , overlay : String\n        , modal : String\n        }\n\n    layers : Layers\n    layers =\n        -- { normal = \"zero_indexed_0\"\n        -- , menu = \"zero_indexed_1\"\n        -- , overlay = \"zero_indexed_2\"\n        -- , modal = \"zero_indexed_3\"\n        -- }\n        Count.mapTo4 (\\num -> \"zero_indexed_\" ++ toString (num - 1)) Layers\n\n",
+                "type": "(Basics.Int -> a) -> (a -> a -> a -> a -> b) -> b"
+            },
+            {
+                "name": "mapTo5",
+                "comment": " Count from 1 to 5, applying a transformation to each number, and pass each number to the given function.\n\n    type alias Layers =\n        { normal : String\n        , dropdown : String\n        , menu : String\n        , overlay : String\n        , modal : String\n        }\n\n    layers : Layers\n    layers =\n        -- { normal = \"zero_indexed_0\"\n        -- , dropdown = \"zero_indexed_1\"\n        -- , menu = \"zero_indexed_2\"\n        -- , overlay = \"zero_indexed_3\"\n        -- , modal = \"zero_indexed_4\"\n        -- }\n        Count.mapTo5 (\\num -> \"zero_indexed_\" ++ toString (num - 1)) Layers\n\n",
+                "type": "(Basics.Int -> a) -> (a -> a -> a -> a -> a -> b) -> b"
+            },
+            {
+                "name": "mapTo6",
+                "comment": " Count from 1 to 6, applying a transformation to each number, and pass each number to the given function.\n\n    type alias Layers =\n        { normal : String\n        , dropdown : String\n        , menu : String\n        , overlay : String\n        , modal : String\n        , debugger : String\n        }\n\n    layers : Layers\n    layers =\n        -- { normal = \"zero_indexed_0\"\n        -- , dropdown = \"zero_indexed_1\"\n        -- , menu = \"zero_indexed_2\"\n        -- , overlay = \"zero_indexed_3\"\n        -- , modal = \"zero_indexed_4\"\n        -- , debugger = \"zero_indexed_5\"\n        -- }\n        Count.mapTo6 (\\num -> \"zero_indexed_\" ++ toString (num - 1)) Layers\n\n",
+                "type": "(Basics.Int -> a) -> (a -> a -> a -> a -> a -> a -> b) -> b"
+            },
+            {
+                "name": "mapTo7",
+                "comment": " Count from 1 to 7, applying a transformation to each number, and pass each number to the given function.\n\n    type alias Layers =\n        { basement : String\n        , normal : String\n        , dropdown : String\n        , menu : String\n        , overlay : String\n        , modal : String\n        , debugger : String\n        }\n\n    layers : Layers\n    layers =\n        -- { basement = \"zero_indexed_0\"\n        -- , normal = \"zero_indexed_1\"\n        -- , dropdown = \"zero_indexed_2\"\n        -- , menu = \"zero_indexed_3\"\n        -- , overlay = \"zero_indexed_4\"\n        -- , modal = \"zero_indexed_5\"\n        -- , debugger = \"zero_indexed_6\"\n        -- }\n        Count.mapTo7 (\\num -> \"zero_indexed_\" ++ toString (num - 1)) Layers\n\n",
+                "type": "(Basics.Int -> a) -> (a -> a -> a -> a -> a -> a -> a -> b) -> b"
+            },
+            {
+                "name": "mapTo8",
+                "comment": " Count from 1 to 8, applying a transformation to each number, and pass each number to the given function.\n\n    type alias Layers =\n        { subBasement : String\n        , basement : String\n        , normal : String\n        , dropdown : String\n        , menu : String\n        , overlay : String\n        , modal : String\n        , debugger : String\n        }\n\n    layers : Layers\n    layers =\n        -- { subBasement = \"zero_indexed_0\"\n        -- , basement = \"zero_indexed_1\"\n        -- , normal = \"zero_indexed_2\"\n        -- , dropdown = \"zero_indexed_3\"\n        -- , menu = \"zero_indexed_4\"\n        -- , overlay = \"zero_indexed_5\"\n        -- , modal = \"zero_indexed_6\"\n        -- , debugger = \"zero_indexed_7\"\n        -- }\n        Count.mapTo8 (\\num -> \"zero_indexed_\" ++ toString (num - 1)) Layers\n\n",
+                "type": "(Basics.Int -> a) -> (a -> a -> a -> a -> a -> a -> a -> a -> b) -> b"
+            },
+            {
+                "name": "mapTo9",
+                "comment": " Count from 1 to 9, applying a transformation to each number, and pass each number to the given function.\n\n    type alias Layers =\n        { beneathTheBrowserItself : String\n        , subBasement : String\n        , basement : String\n        , normal : String\n        , dropdown : String\n        , menu : String\n        , overlay : String\n        , modal : String\n        , debugger : String\n        }\n\n    layers : Layers\n    layers =\n        -- { beneathTheBrowserItself = \"zero_indexed_0\"\n        -- , subBasement = \"zero_indexed_1\"\n        -- , basement = \"zero_indexed_2\"\n        -- , normal = \"zero_indexed_3\"\n        -- , dropdown = \"zero_indexed_4\"\n        -- , menu = \"zero_indexed_5\"\n        -- , overlay = \"zero_indexed_6\"\n        -- , modal = \"zero_indexed_7\"\n        -- , debugger = \"zero_indexed_8\"\n        -- }\n        Count.mapTo9 (\\num -> \"zero_indexed_\" ++ toString (num - 1)) Layers\n\n",
+                "type": "(Basics.Int -> a) -> (a -> a -> a -> a -> a -> a -> a -> a -> a -> b) -> b"
+            },
+            {
+                "name": "to2",
+                "comment": " Count from 1 to 2, and pass each number to the given function.\n\n    type alias Layers =\n        { normal : Int\n        , menu : Int\n        }\n\n    layers : Layers\n    layers =\n        -- { normal = 1\n        -- , menu = 2\n        -- }\n        Count.to2 Layers\n\n",
+                "type": "(Basics.Int -> Basics.Int -> a) -> a"
+            },
+            {
+                "name": "to3",
+                "comment": " Count from 1 to 3, and pass each number to the given function.\n\n    type alias Layers =\n        { normal : Int\n        , menu : Int\n        , modal : Int\n        }\n\n    layers : Layers\n    layers =\n        -- { normal = 1\n        -- , menu = 2\n        -- , modal = 3\n        -- }\n        Count.to3 Layers\n\n",
+                "type": "(Basics.Int -> Basics.Int -> Basics.Int -> a) -> a"
+            },
+            {
+                "name": "to4",
+                "comment": " Count from 1 to 4, and pass each number to the given function.\n\n    type alias Layers =\n        { normal : Int\n        , dropdown : Int\n        , menu : Int\n        , modal : Int\n        }\n\n    layers : Layers\n    layers =\n        -- { normal = 1\n        -- , dropdown = 2\n        -- , menu = 3\n        -- , modal = 4\n        -- }\n        Count.to4 Layers\n\n",
+                "type": "(Basics.Int -> Basics.Int -> Basics.Int -> Basics.Int -> a) -> a"
+            },
+            {
+                "name": "to5",
+                "comment": " Count from 1 to 5, and pass each number to the given function.\n\n    type alias Layers =\n        { normal : Int\n        , dropdown : Int\n        , menu : Int\n        , overlay : Int\n        , modal : Int\n        }\n\n    layers : Layers\n    layers =\n        -- { normal = 1\n        -- , dropdown = 2\n        -- , menu = 3\n        -- , overlay = 4\n        -- , modal = 5\n        -- }\n        Count.to5 Layers\n\n",
+                "type": "(Basics.Int -> Basics.Int -> Basics.Int -> Basics.Int -> Basics.Int -> a) -> a"
+            },
+            {
+                "name": "to6",
+                "comment": " Count from 1 to 6, and pass each number to the given function.\n\n    type alias Layers =\n        { normal : Int\n        , dropdown : Int\n        , menu : Int\n        , overlay : Int\n        , modal : Int\n        , debugger : Int\n        }\n\n    layers : Layers\n    layers =\n        -- { normal = 1\n        -- , dropdown = 2\n        -- , menu = 3\n        -- , overlay = 4\n        -- , modal = 5\n        -- , debugger = 6\n        -- }\n        Count.to6 Layers\n\n",
+                "type": "(Basics.Int -> Basics.Int -> Basics.Int -> Basics.Int -> Basics.Int -> Basics.Int -> a) -> a"
+            },
+            {
+                "name": "to7",
+                "comment": " Count from 1 to 7, and pass each number to the given function.\n\n    type alias Layers =\n        { basement : Int\n        , normal : Int\n        , dropdown : Int\n        , menu : Int\n        , overlay : Int\n        , modal : Int\n        , debugger : Int\n        }\n\n    layers : Layers\n    layers =\n        -- { basement = 1\n        -- , normal = 2\n        -- , dropdown = 3\n        -- , menu = 4\n        -- , overlay = 5\n        -- , modal = 6\n        -- , debugger = 7\n        -- }\n        Count.to7 Layers\n\n",
+                "type": "(Basics.Int -> Basics.Int -> Basics.Int -> Basics.Int -> Basics.Int -> Basics.Int -> Basics.Int -> a) -> a"
+            },
+            {
+                "name": "to8",
+                "comment": " Count from 1 to 8, and pass each number to the given function.\n\n    type alias Layers =\n        { subBasement : Int\n        , basement : Int\n        , normal : Int\n        , dropdown : Int\n        , menu : Int\n        , overlay : Int\n        , modal : Int\n        , debugger : Int\n        }\n\n    layers : Layers\n    layers =\n        -- { subBasement = 1\n        -- , basement = 2\n        -- , normal = 3\n        -- , dropdown = 4\n        -- , menu = 5\n        -- , overlay = 6\n        -- , modal = 7\n        -- , debugger = 8\n        -- }\n        Count.to8 Layers\n\n",
+                "type": "(Basics.Int -> Basics.Int -> Basics.Int -> Basics.Int -> Basics.Int -> Basics.Int -> Basics.Int -> Basics.Int -> a) -> a"
+            },
+            {
+                "name": "to9",
+                "comment": " Count from 1 to 9, and pass each number to the given function.\n\n    type alias Layers =\n        { beneathTheBrowserItself : Int\n        , subBasement : Int\n        , basement : Int\n        , normal : Int\n        , dropdown : Int\n        , menu : Int\n        , overlay : Int\n        , modal : Int\n        , debugger : Int\n        }\n\n    layers : Layers\n    layers =\n        -- { beneathTheBrowserItself = 1\n        -- , subBasement = 2\n        -- , basement = 3\n        -- , normal = 4\n        -- , dropdown = 5\n        -- , menu = 6\n        -- , overlay = 7\n        -- , modal = 8\n        -- , debugger = 9\n        -- }\n        Count.to9 Layers\n\n",
+                "type": "(Basics.Int -> Basics.Int -> Basics.Int -> Basics.Int -> Basics.Int -> Basics.Int -> Basics.Int -> Basics.Int -> Basics.Int -> a) -> a"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,86 @@
+[
+    {
+        "name": "String.Conversions",
+        "comment": " Helpers to convert common types into a `String`.\n\n@docs fromBool\n@docs fromWeekday\n@docs fromDict\n@docs fromHttpError\n@docs fromHttpResponse\n@docs fromList\n@docs fromMaybe\n@docs fromMonth\n@docs fromRecord\n@docs fromSet\n@docs fromString\n@docs fromTuple2\n@docs fromTuple3\n@docs fromValue\n@docs withUnionConstructor\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fromBool",
+                "comment": " Convert a Bool to a String matching its constructor.\n",
+                "type": "Basics.Bool -> String.String"
+            },
+            {
+                "name": "fromDict",
+                "comment": " Convert a Dict to a String using nested conversions.\n\n    import Dict\n\n    fromDict String.fromInt String.fromFloat (Dict.fromList [(1, 1.5)])\n    --> \"Dict.fromList [(1,1.5)]\"\n\n",
+                "type": "(comparable -> String.String) -> (v -> String.String) -> Dict.Dict comparable v -> String.String"
+            },
+            {
+                "name": "fromHttpError",
+                "comment": " Convert an Http.Error to a String.\n",
+                "type": "Http.Error -> String.String"
+            },
+            {
+                "name": "fromHttpResponse",
+                "comment": " Convert an Http.Response String to a String.\n",
+                "type": "Http.Response String.String -> String.String"
+            },
+            {
+                "name": "fromList",
+                "comment": " Convert a List to a string using a nested conversion.\n\n    fromList String.fromInt [1, 2, 3]\n    --> \"[1,2,3]\"\n\n",
+                "type": "(a -> String.String) -> List.List a -> String.String"
+            },
+            {
+                "name": "fromMaybe",
+                "comment": " Convert a Maybe to a String using a nested conversion.\n\n    fromMaybe String.fromInt (Just 1)\n    --> \"Just 1\"\n\n",
+                "type": "(a -> String.String) -> Maybe.Maybe a -> String.String"
+            },
+            {
+                "name": "fromMonth",
+                "comment": " Convert a Time.Month to a String matching its constructor.\n",
+                "type": "Time.Month -> String.String"
+            },
+            {
+                "name": "fromRecord",
+                "comment": " Build a record string for debugging and logging with pairs of\nkeys and string conversion functions, meant to be paired with accessors\n\n    fromRecord [ (\"hello\", .hello >> String.fromInt ) ] { hello = 1 }\n    --> \"{ hello = 1 }\"\n\n",
+                "type": "List.List ( String.String, a -> String.String ) -> a -> String.String"
+            },
+            {
+                "name": "fromSet",
+                "comment": " Convert a Set to a string using a nested conversion.\n\n    import Set\n\n    fromSet String.fromInt (Set.fromList [1, 2])\n    --> \"Set.fromList [1,2]\"\n\n",
+                "type": "(comparable -> String.String) -> Set.Set comparable -> String.String"
+            },
+            {
+                "name": "fromString",
+                "comment": " Convert a String to a debugging version of that String.\n\n    fromString \"hello \\\"world\\\"\"\n    --> \"\\\"hello \\\\\\\"world\\\\\\\"\\\"\"\n\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "fromTuple2",
+                "comment": " Convert a 2-tuple to a string using nested conversions.\n\n    fromTuple2 String.fromInt String.fromFloat ( 1, 1.5 )\n    --> \"(1,1.5)\"\n\n",
+                "type": "(a -> String.String) -> (b -> String.String) -> ( a, b ) -> String.String"
+            },
+            {
+                "name": "fromTuple3",
+                "comment": " Convert a 3-tuple to a string using nested conversions.\n\n    fromTuple3 String.fromInt String.fromFloat String.fromInt ( 1, 1.5, 2 )\n    --> \"(1,1.5,2)\"\n\n",
+                "type": "(a -> String.String) -> (b -> String.String) -> (c -> String.String) -> ( a, b, c ) -> String.String"
+            },
+            {
+                "name": "fromValue",
+                "comment": " Convert a Json.Decode.Value to a JSON String.\n",
+                "type": "Json.Encode.Value -> String.String"
+            },
+            {
+                "name": "fromWeekday",
+                "comment": " Convert a Time.Weekday to a String matching its constructor.\n",
+                "type": "Time.Weekday -> String.String"
+            },
+            {
+                "name": "withUnionConstructor",
+                "comment": " Nest some arguments under a tag, including parentheses when needed. Helpful for printing union type values.\n\n    withUnionConstructor \"Ok\" [ String.fromInt 1 ]\n    --> \"Ok 1\"\n\n",
+                "type": "String.String -> List.List String.String -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

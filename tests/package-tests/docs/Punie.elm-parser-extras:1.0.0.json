@@ -1,0 +1,127 @@
+[
+    {
+        "name": "Parser.Expression",
+        "comment": " Tools for building parsers for prefix, postfix or infix operator expressions.\n\n\n# Types\n\n@docs Operator, OperatorTable, Assoc\n\n\n# Operators\n\n@docs prefixOperator, infixOperator, postfixOperator\n\n\n# Builder\n\n@docs buildExpressionParser\n\n",
+        "unions": [
+            {
+                "name": "Assoc",
+                "comment": " The associativity of an operator.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "AssocNone",
+                        []
+                    ],
+                    [
+                        "AssocLeft",
+                        []
+                    ],
+                    [
+                        "AssocRight",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Operator",
+                "comment": " The representation for an operator parser.\nAn operator can either be binary infix and require an associativity,\nor it can be unary prefix or postfix.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Infix",
+                        [
+                            "Parser.Parser (a -> a -> a)",
+                            "Parser.Expression.Assoc"
+                        ]
+                    ],
+                    [
+                        "Prefix",
+                        [
+                            "Parser.Parser (a -> a)"
+                        ]
+                    ],
+                    [
+                        "Postfix",
+                        [
+                            "Parser.Parser (a -> a)"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "OperatorTable",
+                "comment": " This is just a List of Lists of Operators.\nThe first inner list has the highest precedence and the last has the lowest.\nIf two operators are on the same inner list, they have the same precedence.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "List.List (List.List (Parser.Expression.Operator a))"
+            }
+        ],
+        "values": [
+            {
+                "name": "buildExpressionParser",
+                "comment": " Build an expression parser for terms from a table of operators,\ntaking into account precedence and associativity.\n\nThe following would define a simple arithmetic parser.\n\n    operators : OperatorTable number\n    operators =\n        [ [ prefixOperator negate (symbol \"-\"), prefixOperator identity (symbol \"+\") ]\n        , [ postfixOperator (\\x -> x + 1) (symbol \"++\") ]\n        , [ infixOperator (*) (symbol \"*\") AssocLeft ]\n        , [ infixOperator (+) (symbol \"+\") AssocLeft, infixOperator (-) (symbol \"-\") AssocLeft ]\n        ]\n\n    term : Parser Int\n    term =\n        oneOf\n            [ parens <| lazy (\\_ -> expr)\n            , int\n                |. spaces\n            ]\n\n    expr : Parser Int\n    expr =\n        buildExpressionParser operators (lazy <| \\_ -> term)\n\n",
+                "type": "Parser.Expression.OperatorTable a -> Parser.Parser a -> Parser.Parser a"
+            },
+            {
+                "name": "infixOperator",
+                "comment": " Create an infix operator parser from a binary function,\na parser for the operator symbol and an associativity.\n",
+                "type": "(a -> a -> a) -> Parser.Parser () -> Parser.Expression.Assoc -> Parser.Expression.Operator a"
+            },
+            {
+                "name": "postfixOperator",
+                "comment": " Create a postfix operator parser from a unary function\nand a parser for the operator symbol.\n",
+                "type": "(a -> a) -> Parser.Parser () -> Parser.Expression.Operator a"
+            },
+            {
+                "name": "prefixOperator",
+                "comment": " Create a prefix operator parser from a unary function\nand a parser for the operator symbol.\n",
+                "type": "(a -> a) -> Parser.Parser () -> Parser.Expression.Operator a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Parser.Extras",
+        "comment": " Some convenience parser combinators.\n\n\n# Combinators\n\n@docs many, some, between, parens, braces, brackets\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "between",
+                "comment": " Parse an expression between two other parsers\n",
+                "type": "Parser.Parser opening -> Parser.Parser closing -> Parser.Parser a -> Parser.Parser a"
+            },
+            {
+                "name": "braces",
+                "comment": " Parse an expression between curly braces.\n\n    braces p == between (symbol \"{\") (symbol \"}\") p\n\n",
+                "type": "Parser.Parser a -> Parser.Parser a"
+            },
+            {
+                "name": "brackets",
+                "comment": " Parse an expression between square brackets.\n\n    brackets p == between (symbol \"[\") (symbol \"]\") p\n\n",
+                "type": "Parser.Parser a -> Parser.Parser a"
+            },
+            {
+                "name": "many",
+                "comment": " Apply a parser zero or more times and return a list of the results.\n",
+                "type": "Parser.Parser a -> Parser.Parser (List.List a)"
+            },
+            {
+                "name": "parens",
+                "comment": " Parse an expression between parenthesis.\n\n    parens p == between (symbol \"(\") (symbol \")\") p\n\n",
+                "type": "Parser.Parser a -> Parser.Parser a"
+            },
+            {
+                "name": "some",
+                "comment": " Apply a parser one or more times and return a tuple of the first result parsed\nand the list of the remaining results.\n",
+                "type": "Parser.Parser a -> Parser.Parser ( a, List.List a )"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,122 @@
+[
+    {
+        "name": "Trend.Linear",
+        "comment": " Calculate trends for linear data (that is, data with one dependent\nand one independent variable whose relationship can be described as `y\n= mx + b`)\n\nThe easiest way to determine if a relationship is linear is to plot of\nyour values. If your data form a rough line, we're in business. But if\nyour plot shows a curve or a random point cloud then don't trust the\nresults you get from these functions. (n.b. check out\n`terezka/elm-plot`, which makes this very easy!)\n\nSome kinds of data which fit these criteria:\n\n  - the relationship between some value and time. For example, are\n    bananas getting cheaper or more expensive as time goes on? Does\n    running something twice take exactly twice as long as running it\n    once?\n  - Big sociological questions: does an increase in healthcare\n    spending lead to longer life expectancy? How much does\n    education level depend on socioeconomic status?\n\n@docs Trend\n\n\n## Using Trend Lines\n\n@docs Line, line, predictY, predictX\n\n\n# Creating Trends\n\n@docs Point\n\n\n## Quick Fit\n\n@docs Quick, quick, goodnessOfFit\n\n\n## Robust Fit\n\n@docs Robust, robust, confidenceInterval\n\n",
+        "unions": [
+            {
+                "name": "Quick",
+                "comment": " A trend calculated from [`quick`](#quick).\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Robust",
+                "comment": " A trend calculated from [`robust`](#robust).\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Trend",
+                "comment": " A trend generated from your data. This contains various things you\nmay want, like [`line`](#line)s. Generate these with [`quick`](#quick)\nand [`robust`](#robust). You will have different options for\ninterpretation depending on which method you choose to calculate.\n",
+                "args": [
+                    "kind"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Line",
+                "comment": " The result of a trend prediction. Use this to make predictions\nusing [`predictY`](#predictY).\n",
+                "args": [],
+                "type": "{ slope : Basics.Float, intercept : Basics.Float }"
+            },
+            {
+                "name": "Point",
+                "comment": " A single 2-dimensional point `(x, y)`.\n",
+                "args": [],
+                "type": "( Basics.Float, Basics.Float )"
+            }
+        ],
+        "values": [
+            {
+                "name": "confidenceInterval",
+                "comment": " Calculate a confidence interval from a robust set of\ndata. [Consult\nWikipedia](https://en.wikipedia.org/wiki/Confidence_interval) for a\nthorough understanding of what this may mean for your data set. This\nfunction gives a 95% confidence interval.\n\n**Maintainer's note:** We ought to be able to generate a confidence\ninterval for quick trends too, but I'm not confident enough in my math\nskills to do it correctly. Help wanted here! If you know how to do\nthat calculation, let's work together and add it.\n\n",
+                "type": "Trend.Linear.Trend Trend.Linear.Robust -> ( Trend.Linear.Line, Trend.Linear.Line )"
+            },
+            {
+                "name": "goodnessOfFit",
+                "comment": " Get the goodness of fit for a quick trend. This is a percent,\nrepresented as a floating point number between 0 and 1. A higher\nnumber generally indicates a better fit, but it doesn't know anything\nabout what your data _means_. This means that you have to use some\njudgement in interpreting it!\n\n    quick [ (1, 1), (2, 2), (3, 3), (4, 4) ]\n        |> Result.map goodnessOfFit\n        --> Ok 1\n\nAnd again with that outlier from [`quick`](#quick):\n\n     quick [ (1, 1), (2, 2), (3, 3), (4, 4), (5, -5) ]\n         |> Result.map goodnessOfFit\n         --> Ok 0.19999999999999996\n\nThis calculation is only valid for [`quick`](#quick) trends, since it\nmeasures how well a fit has minimized the square sum of error. That\nmeans it's only really useful for ordinary least squares, not the\nTheil-Sen estimator we use for [`robust`](#robust)\n\n**Maintainer's note:** this will evaluate the fit for the original\ndata. If you need to evaluate goodness of fit for _new_ data given an\nexisting `Trend`, we'll need to expose a new function. I don't have a\nconcrete use case for this, so the function does not exist yet. I want\nto make this library work for you, so please [open an\nissue](https://github.com/BrianHicks/elm-trend/issues/new) if you find\nyourself in this situation!\n\n",
+                "type": "Trend.Linear.Trend Trend.Linear.Quick -> Basics.Float"
+            },
+            {
+                "name": "line",
+                "comment": " Retrieve the calculated trend line.\n",
+                "type": "Trend.Linear.Trend a -> Trend.Linear.Line"
+            },
+            {
+                "name": "predictX",
+                "comment": " Given a `y`, predict `x`.\n\n    predictX { slope = 1, intercept = 0 } 1\n        --> 1\n\n    predictX { slope = -1, intercept = 0 } 5.5 |> Ok\n        --> Ok -5.5\n\n",
+                "type": "Trend.Linear.Line -> Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "predictY",
+                "comment": " Given an `x`, predict `y`.\n\n    predictY { slope = 1, intercept = 0 } 1\n        --> 1\n\n    predictY { slope = -1, intercept = 0 } 5.5 |> Ok\n        --> Ok -5.5\n\n",
+                "type": "Trend.Linear.Line -> Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "quick",
+                "comment": " Plot a line through a series of points `(x, y)`:\n\n     quick [ (1, 1), (2, 2), (3, 3), (4, 4) ]\n         |> Result.map line\n         --> Ok { slope = 1, intercept = 0 }\n\nThis is the fastest of the functions in this module, but it's also the\nmost susceptible to being thrown off by outliers. Let's look at that\nline again, but with an outlier:\n\n     quick [ (1, 1), (2, 2), (3, 3), (4, 4), (5, -5) ]\n         |> Result.map line\n         --> Ok { slope = -0.9999999999999999, intercept = 3.9999999999999996 }\n\nWe went from a _perfect_ fit to a _horrible_ one! And, the more\noutliers you have, the worse fit you'll get. You can get one measure\nof goodness by sending your the result of this function to\n[`goodnessOfFit`](#goodnessOfFit).\n\nUnder the covers, this is an [ordinary least squares\nregression](https://en.wikipedia.org/wiki/Ordinary_least_squares).\n\n",
+                "type": "List.List Trend.Linear.Point -> Result.Result Trend.Math.Error (Trend.Linear.Trend Trend.Linear.Quick)"
+            },
+            {
+                "name": "robust",
+                "comment": " When your data has outliers, you'll want to use a robust estimator\ninstead of the quick estimator. This is much slower (it runs roughly\nin `O(n^2)` time), but will still give good results in the face of\ncorrupted data. Specifically, it will still work if up to ~29.3% of\nyour data consists of outliers. Again, the easiest way to check this\nis to visualize it. We can provide automated checks, but humans are\nstill the best at saying \"hmm, something's funny here...\"\n\nFor good data, we have the same results as [`quick`](#quick):\n\n     robust [ (1, 1), (2, 2), (3, 3), (4, 4) ]\n         |> Result.map line\n         --> Ok { slope = 1, intercept = 0 }\n\nBut when we have outliers, we still get a good result:\n\n     robust [ (1, 1), (2, 2), (3, 3), (4, 4), (5, -5) ]\n         |> Result.map line\n         --> Ok { slope = 1, intercept = 0 }\n\nUnder the covers, this is a [Theil-Sen\nestimator](https://en.wikipedia.org/wiki/Theil%E2%80%93Sen_estimator)\n(which is pretty cool and easy to get an intuitive grasp of what's\ngoing on; check it out!)\n\n",
+                "type": "List.List Trend.Linear.Point -> Result.Result Trend.Math.Error (Trend.Linear.Trend Trend.Linear.Robust)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Trend.Math",
+        "comment": " Math helpers for calculating trends.\n\n@docs Error\n\n@docs mean, stddev, correlation\n\n",
+        "unions": [
+            {
+                "name": "Error",
+                "comment": " Indicate that something has gone wrong in the caculation of a\ntrend line. Specifically:\n\n  - `NeedMoreValues`: there was not enough data to calculate a\n    value. The attached `Int` is the minimum required.\n  - `AllZeros`: this likely means you've tried to plot a point\n    through a bunch of zeroes, or a values that are very very close to\n    zero. If that's not the case, please open an issue.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NeedMoreValues",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "AllZeros",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "correlation",
+                "comment": " Get the correlation coefficient for some values. The returned\nvalue will be between 0 (no correlation) and 1 (perfect correlation.)\n\n    correlation [ (1, 1), (2, 2), (3, 3), (4, 4) ]\n        --> Ok 1\n\nMinimum required values: 2\n\nUnder the covers, this is a Pearson correlation coefficient.\n\n",
+                "type": "List.List ( Basics.Float, Basics.Float ) -> Result.Result Trend.Math.Error Basics.Float"
+            },
+            {
+                "name": "mean",
+                "comment": " Calculate the mean (average) for some values.\n\n    mean [ 1, 2, 3, 4, 5 ]\n        --> Ok 3\n\n",
+                "type": "List.List Basics.Float -> Result.Result Trend.Math.Error Basics.Float"
+            },
+            {
+                "name": "stddev",
+                "comment": " Calculate the standard deviation for some values.\n\n    stddev [ 1, 2, 3, 4, 5 ]\n        --> Ok 1.4142135623730951\n\n",
+                "type": "List.List Basics.Float -> Result.Result Trend.Math.Error Basics.Float"
+            }
+        ],
+        "binops": []
+    }
+]

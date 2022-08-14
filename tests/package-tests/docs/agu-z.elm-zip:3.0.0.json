@@ -1,0 +1,182 @@
+[
+    {
+        "name": "Zip",
+        "comment": " Work with [Zip archives](https://en.wikipedia.org/wiki/ZIP_file_format).\n\n@docs Zip\n\n\n# Read an archive\n\n@docs fromBytes\n\n\n# Access the content\n\nOnce you have a `Zip`, you can use it to access its files and directories.\n\nUse the [Zip.Entry module](./Zip-Entry#Entry) to do read their content and metadata.\n\n@docs entries\n@docs getEntry\n@docs count\n@docs isEmpty\n\n\n# Build an archive\n\nYou can alter archives or create your own.\n\nCheckout the [Build section](./Zip-Entry#build) of the `Zip.Entry` module to learn how to make your own entries.\n\n@docs empty\n@docs fromEntries\n@docs insert\n@docs filter\n\n\n## ...and when it's ready\n\n@docs toBytes\n\n",
+        "unions": [
+            {
+                "name": "Zip",
+                "comment": " Represents a Zip archive.\n\nAn archive is comprised of [entries](./Zip-Entry#Entry) which represent files -that may be compressed- and directories.\n\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "count",
+                "comment": " Count the number of entries in an archive.\n",
+                "type": "Zip.Zip -> Basics.Int"
+            },
+            {
+                "name": "empty",
+                "comment": " An empty archive with no entries.\n\nFrom here, you can use [`insert`](#insert) to add some entries.\n\n",
+                "type": "Zip.Zip"
+            },
+            {
+                "name": "entries",
+                "comment": " Get all [entries](./Zip-Entry#Entry) in the archive.\n\n    allEntries =\n        Zip.entries zip\n\nFiles and directories get their own entries.\n\nIf you only care about one kind, you can use the [`Zip.Entry.isDirectory`](./Zip-Entry#isDirectory) function to filter them:\n\n    allFiles =\n        zip\n            |> Zip.entries\n            |> List.filter (not << Entry.isDirectory)\n\n",
+                "type": "Zip.Zip -> List.List Internal.Format.Entry"
+            },
+            {
+                "name": "filter",
+                "comment": " Only keep entries that pass a given test.\n\n\n### Examples\n\nRemove entries by path:\n\n    filter (\\entry -> Entry.path entry /= \"sample/version.json\") zip\n\nKeep all files under 1MB:\n\n    filter (\\entry -> Entry.extractedSize entry < 1048576) zip\n\nKeep only `.txt` files:\n\n    filter (Entry.path >> String.endsWith \".txt\") zip\n\n",
+                "type": "(Internal.Format.Entry -> Basics.Bool) -> Zip.Zip -> Zip.Zip"
+            },
+            {
+                "name": "fromBytes",
+                "comment": " Read a `Zip` from `Bytes`.\n\nIf you have [an uploaded File](https://package.elm-lang.org/packages/elm/file/latest/File) of an archive,\nyou can use [`File.toBytes`](https://package.elm-lang.org/packages/elm/file/latest/File#toBytes) to read it:\n\n    import File exposing (File)\n    import Task exposing (Task)\n    import Zip exposing (Zip)\n\n    type Msg\n        = GotZip (Maybe Zip)\n\n    readArchive : File -> Cmd Msg\n    readArchive file =\n        file\n            |> File.toBytes\n            |> Task.map Zip.fromBytes\n            |> Task.perform GotZip\n\nYou can also get `Bytes` from somewhere else, such as [an HTTP request](https://package.elm-lang.org/packages/elm/http/latest/Http#expectBytes),\nor even from [within another archive](./Zip-Entry#toBytes).\n\n",
+                "type": "Bytes.Bytes -> Maybe.Maybe Zip.Zip"
+            },
+            {
+                "name": "fromEntries",
+                "comment": " Create an archive from a list of entries.\n",
+                "type": "List.List Internal.Format.Entry -> Zip.Zip"
+            },
+            {
+                "name": "getEntry",
+                "comment": " Get an [entry](./Zip-Entry#Entry) by its absolute path.\n\n    zip |> Zip.getEntry \"versions/v1.txt\"\n\n`Nothing` is returned if no entry matches the path exactly.\n\nDirectory entries are typically stored in the archive with a slash at the end:\n\n    zip |> Zip.getEntry \"versions\" == Nothing\n\n    zip |> Zip.getEntry \"versions/\" == Just (Entry(..))\n\n",
+                "type": "String.String -> Zip.Zip -> Maybe.Maybe Internal.Format.Entry"
+            },
+            {
+                "name": "insert",
+                "comment": " Add a new entry to the archive.\n\nThis function replaces entries with the same path. You can conditionally add it by checking existence with the [`getEntry`](#getEntry) function:\n\n    case zip |> Zip.getEntry path of\n        Nothing ->\n            -- Entry does not exist, create and add it\n            zip |> Zip.insert (createEntry ())\n\n        Just _ ->\n            -- Entry already exists, leave archive as it is\n            zip\n\n",
+                "type": "Internal.Format.Entry -> Zip.Zip -> Zip.Zip"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Determine if an archive is empty.\n",
+                "type": "Zip.Zip -> Basics.Bool"
+            },
+            {
+                "name": "toBytes",
+                "comment": " Write a `Zip` to `Bytes`.\n\nFrom here, you can [download the archive](https://package.elm-lang.org/packages/elm/file/latest/File-Download#bytes),\n[upload it to a server](https://package.elm-lang.org/packages/elm/http/latest/Http#bytesBody>), etc.\n\n    update : Msg -> Model -> ( Model, Cmd Msg )\n    update msg model =\n        case msg of\n            DownloadArchive ->\n                ( model\n                , model.zip\n                    |> Zip.toBytes\n                    |> File.Download.bytes \"archive.zip\" \"application/zip\"\n                )\n\n",
+                "type": "Zip.Zip -> Bytes.Bytes"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Zip.Entry",
+        "comment": " Work with files and directories in the archive.\n\n@docs Entry\n\n\n# Extract Content\n\n@docs toString\n@docs toBytes\n@docs ExtractError\n\n\n# Read Metadata\n\n@docs path\n@docs basename\n@docs extractedSize\n@docs compressedSize\n@docs lastModified\n@docs isDirectory\n@docs comment\n@docs checksum\n\n\n# Build\n\nCreate archive entries.\n\n@docs Meta\n\n\n## Files\n\nWhen you create a file `Entry` you can choose to [store](#store) the data as-is or [compress](#compress) it.\n\nKeep in mind that:\n\n  - Compressing files is slower than storing them.\n  - Compression is effective when the data contains repeated patterns. For example, XML files are good candidates.\n  - Compressing very small files with few repeated patterns can actually result in bigger archives.\n    This is because we need to store extra data in order to uncompress them.\n  - The ZIP format stores files individually with their own compression. Unfortunately, patterns shared across files\n    cannot be reused.\n\nHopefully that helps you decide whether you need compression or not.\n\n@docs store\n@docs compress\n\n\n## Directories\n\n@docs createDirectory\n\n\n# Compression Methods\n\n[Deflate](https://en.wikipedia.org/wiki/Deflate) compression is provided by\n[`folkertdev/elm-flate`](https://package.elm-lang.org/packages/folkertdev/elm-flate/latest/).\nMost archives you'll find in the wild will use this method.\n\nIf you're expecting to work with archives using other methods, you can handle them by using the method number\nand raw bytes from the `UnsupportedCompression` case.\n\n    case toBytes entry of\n        Err (UnsupportedCompression 6 rawBytes) ->\n            Ok <| decodeImplode rawBytes\n\n        result ->\n            result\n\nYou can read more about compression methods and their corresponding numbers in section 4.4.5 of\nthe [specification](https://pkware.cachefly.net/webdocs/casestudies/APPNOTE.TXT).\n\n",
+        "unions": [
+            {
+                "name": "ExtractError",
+                "comment": " Extracting content from an entry might fail if:\n\n1.  The data is compressed through an unsupported method. See [Compression Methods](#compression-methods) for more information.\n2.  The extracted data does not match the integrity checksum.\n3.  The entry has no data of the expected type.\n4.  The [DEFLATE](https://en.wikipedia.org/wiki/Deflate) data is corrupted.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "UnsupportedCompression",
+                        [
+                            "Basics.Int",
+                            "Bytes.Bytes"
+                        ]
+                    ],
+                    [
+                        "IntegrityError",
+                        []
+                    ],
+                    [
+                        "DecodeError",
+                        []
+                    ],
+                    [
+                        "InflateError",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Entry",
+                "comment": " Represents a file or a directory in a [`Zip`](./Zip) archive.\n\nYou can use this to [extract the content](#extract-content) and [read the metadata](#read-metadata).\n\nSee [`Entry.path`](#path) to learn more about the way these entries are stored.\n\n",
+                "args": [],
+                "type": "Internal.Format.Entry"
+            },
+            {
+                "name": "Meta",
+                "comment": " Metadata needed to create an entry.\n\nNote: `lastModified` requires a `Time.Zone` to be provided because ZIP time stamps are not stored in a universal zone (like UTC). Read more [above](#lastModified).\n\n",
+                "args": [],
+                "type": "{ path : String.String, lastModified : ( Time.Zone, Time.Posix ), comment : Maybe.Maybe String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "basename",
+                "comment": " Get the final component of an entry's path.\n\n    basename v1 == \"v1.txt\"\n\n    path v1 == \"versions/v1.txt\"\n\n",
+                "type": "Zip.Entry.Entry -> String.String"
+            },
+            {
+                "name": "checksum",
+                "comment": " Get the [CRC32 checksum](https://en.wikipedia.org/wiki/Cyclic_redundancy_check) of an entry's uncompressed data.\n\nYou don't need to check the integrity of the data, the extract content functions do it for you.\n\nHowever, you might still find this checksum useful for other purposes, like quickly determining whether two files are identical.\n\n",
+                "type": "Zip.Entry.Entry -> Basics.Int"
+            },
+            {
+                "name": "comment",
+                "comment": " Get the comment of an entry.\n",
+                "type": "Zip.Entry.Entry -> String.String"
+            },
+            {
+                "name": "compress",
+                "comment": " Compress a file with [Deflate](https://en.wikipedia.org/wiki/Deflate) and create an entry out of it.\n\nBesides compression, it works just like [`store`](#store).\n\n",
+                "type": "Zip.Entry.Meta -> Bytes.Bytes -> Zip.Entry.Entry"
+            },
+            {
+                "name": "compressedSize",
+                "comment": " Get the compressed size of an entry as stored in the archive.\n",
+                "type": "Zip.Entry.Entry -> Basics.Int"
+            },
+            {
+                "name": "createDirectory",
+                "comment": " Create a directory entry.\n\nYou do not need to explicitly create directories. Extracting programs automatically create directories in the path to a file.\n\nUse this if you need to add directory metadata or if you want a directory to exist even if it doesn't contain any files.\n\n",
+                "type": "Zip.Entry.Meta -> Zip.Entry.Entry"
+            },
+            {
+                "name": "extractedSize",
+                "comment": " Get the uncompressed size of an entry.\n\nThis is the number of bytes that you will get if you extract this entry.\n\n",
+                "type": "Zip.Entry.Entry -> Basics.Int"
+            },
+            {
+                "name": "isDirectory",
+                "comment": " Determine if an entry is a directory.\n",
+                "type": "Zip.Entry.Entry -> Basics.Bool"
+            },
+            {
+                "name": "lastModified",
+                "comment": " Get the last time an entry was modified.\n\nZip time stamps are relative to the time zone they were created in. However, the time zone is not stored in the archive.\nThis means you need to know the zone to get a meaningful time stamp.\n\n",
+                "type": "Time.Zone -> Zip.Entry.Entry -> Time.Posix"
+            },
+            {
+                "name": "path",
+                "comment": " Get the absolute path of an entry.\n\n    path dir == \"versions/\"\n\n    path v1 == \"versions/v1.txt\"\n\n    path v2 == \"versions/v2.txt\"\n\nEven though Zip archives are aware of directories, they do not store entries in a tree format.\nInstead, each entry simply indicates its absolute path in the archive.\n\nDifferent applications have different needs and they may or may not care about the tree structure.\n\nSome applications might expect a certain structure and can simply use [`Zip.getEntry`](./Zip#getEntry) to get the\nrelevant entries.\n\nOther applications might want to explore the archive, and can use [`Zip.entries`](./Zip#entries) to get a list of the entries and go from there.\n\n",
+                "type": "Zip.Entry.Entry -> String.String"
+            },
+            {
+                "name": "store",
+                "comment": " Create an entry for a file without compressing it.\n\n    import Bytes.Encode as Encode\n\n    helloTxt =\n        Encode.string \"Hello, World!\"\n            |> Encode.encode\n            |> store\n                { path = \"hello.txt\"\n                , lastModified = ( zone, now )\n                , comment = Nothing\n                }\n\nFiles inside directories are created by passing the absolute path:\n\n    store\n        { path = \"versions/v1.txt\"\n        , lastModified = ( zone, now )\n        , comment = Nothing\n        }\n\n",
+                "type": "Zip.Entry.Meta -> Bytes.Bytes -> Zip.Entry.Entry"
+            },
+            {
+                "name": "toBytes",
+                "comment": " Extract the content of an `Entry` as `Bytes`.\n\nBytes can represent an image, a PDF, a ZIP within a ZIP, anything you can imagine.\n\nExamples of what you can do with `Bytes`:\n\n  - Use [`File.Download.bytes`](https://package.elm-lang.org/packages/elm/file/latest/File-Download#bytes) to download them as a file.\n  - Use [`Http.bytesBody`](https://package.elm-lang.org/packages/elm/http/latest/Http#bytesBody) to send them to an HTTP server.\n  - Use the [`elm/bytes`](https://package.elm-lang.org/packages/elm/bytes/latest) package to decode these bytes into any data structure.\n\n",
+                "type": "Zip.Entry.Entry -> Result.Result Zip.Entry.ExtractError Bytes.Bytes"
+            },
+            {
+                "name": "toString",
+                "comment": " Extract the content of an `Entry` as a `String`.\n",
+                "type": "Zip.Entry.Entry -> Result.Result Zip.Entry.ExtractError String.String"
+            }
+        ],
+        "binops": []
+    }
+]

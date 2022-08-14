@@ -1,0 +1,23 @@
+[
+    {
+        "name": "JsData",
+        "comment": " The module contains generic data structure to communicate with JavaScript\n\n@docs JsData, toString\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "JsData",
+                "comment": " Structure of the data to communicate with JavaScript\n",
+                "args": [],
+                "type": "{ tag : String.String, data : Json.Encode.Value }"
+            }
+        ],
+        "values": [
+            {
+                "name": "toString",
+                "comment": " Converts JS data to string\n",
+                "type": "JsData.JsData -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,134 @@
+[
+    {
+        "name": "QRCode",
+        "comment": " QR Code encoding and rendering.\n\n@docs QRCode, ErrorCorrection\n\n\n# Encoding\n\n@docs fromString, fromStringWith\n\n\n# Rendering\n\n@docs toSvg, toSvgWithoutQuietZone, toImage, toImageWithOptions, ImageOptions, defaultImageOptions\n\n\n# Extracting\n\n@docs toMatrix, version\n\n\n# Error\n\n@docs Error\n\n",
+        "unions": [
+            {
+                "name": "Error",
+                "comment": " Possible encoding errors.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "AlignmentPatternNotFound",
+                        []
+                    ],
+                    [
+                        "InvalidNumericChar",
+                        []
+                    ],
+                    [
+                        "InvalidAlphanumericChar",
+                        []
+                    ],
+                    [
+                        "InvalidUTF8Char",
+                        []
+                    ],
+                    [
+                        "LogTableException",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "PolynomialMultiplyException",
+                        []
+                    ],
+                    [
+                        "PolynomialModException",
+                        []
+                    ],
+                    [
+                        "InputLengthOverflow",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "ErrorCorrection",
+                "comment": " Error correction level. Provides the following error\ncorrection capability:\n\n  - **Low**: 7% of codewords can be restored.\n  - **Medium**: 15% of codewords can be restored.\n  - **Quartile**: 25% of codewords can be restored.\n  - **High**: 30% of codewords can be restored.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Low",
+                        []
+                    ],
+                    [
+                        "Medium",
+                        []
+                    ],
+                    [
+                        "Quartile",
+                        []
+                    ],
+                    [
+                        "High",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "QRCode",
+                "comment": " QRCode type.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "ImageOptions",
+                "comment": " Available options to transform a [QRCode](#QRCode) into an [Image](https://package.elm-lang.org/packages/justgook/elm-image/latest/Image#Image) with [toImageWithOptions](#toImageWithOptions).\n\n  - `moduleSize` is the size of the module (the QRCode \"pixel\") in px;\n  - `darkColor` and `lightColor` expects an `Int` as `0xRRGGBBAA`;\n  - `quietZoneSize` is the number of modules the [quiet zone](https://en.wikipedia.org/wiki/QR_code#Standards) should have.\n\n",
+                "args": [],
+                "type": "{ moduleSize : Basics.Int, darkColor : Basics.Int, lightColor : Basics.Int, quietZoneSize : Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultImageOptions",
+                "comment": " Default options used by [toImage](#toImage).\n\n    defaultImageOptions =\n        { moduleSize = 5\n        , darkColor = 0xFF\n        , lightColor = 0xFFFFFFFF\n        , quietZoneSize = 4\n        }\n\n",
+                "type": "QRCode.ImageOptions"
+            },
+            {
+                "name": "fromString",
+                "comment": " Transform a string into a result [Error](#Error)\nor a [QRCode](#QRCode) using `Quartile` [ErrorCorrection](#ErrorCorrection).\n",
+                "type": "String.String -> Result.Result QRCode.Error QRCode.QRCode"
+            },
+            {
+                "name": "fromStringWith",
+                "comment": " Transform a string with a given [ErrorCorrection](#ErrorCorrection)\ninto a result [Error](#Error) or a [QRCode](#QRCode).\n",
+                "type": "QRCode.ErrorCorrection -> String.String -> Result.Result QRCode.Error QRCode.QRCode"
+            },
+            {
+                "name": "toImage",
+                "comment": " Transform a [QRCode](#QRCode) into an [Image](https://package.elm-lang.org/packages/justgook/elm-image/latest/Image#Image). You can transform the Image into a [PNG](https://package.elm-lang.org/packages/justgook/elm-image/latest/Image#toPngUrl) or [BMP](https://package.elm-lang.org/packages/justgook/elm-image/latest/Image#toBmpUrl).\n\n    import Html\n    import Html.Attribute\n    import Image\n    import QRCode\n\n    viewQRCode : String -> Html msg\n    viewQRCode message =\n        QRCode.fromString message\n            |> Result.map\n                (\\qrCode ->\n                    Html.img\n                        [ QRCode.toImage qrCode\n                            |> Image.toPngUrl\n                            |> Html.Attribute.src\n                        ]\n                        []\n                )\n            |> Result.withDefault\n                (Html.text \"Error while encoding to QRCode.\")\n\n**Note**: You must install the [`justgook/elm-image`](https://package.elm-lang.org/packages/justgook/elm-image/latest) package in order to use the functions to convert the `Image` type to something else:\n\n```sh\nelm install \"justgook/elm-image\"\n```\n\n",
+                "type": "QRCode.QRCode -> Image.Image"
+            },
+            {
+                "name": "toImageWithOptions",
+                "comment": " Transform a [QRCode](#QRCode) into an [Image](https://package.elm-lang.org/packages/justgook/elm-image/latest/Image#Image) with an [ImageOptions](#ImageOptions).\n",
+                "type": "QRCode.ImageOptions -> QRCode.QRCode -> Image.Image"
+            },
+            {
+                "name": "toMatrix",
+                "comment": " Transform a [QRCode](#QRCode) into a list of list of booleans.\n\n    \"Hello World!\"\n        |> QRCode.fromString\n        |> Result.map QRCode.toMatrix\n\n",
+                "type": "QRCode.QRCode -> List.List (List.List Basics.Bool)"
+            },
+            {
+                "name": "toSvg",
+                "comment": " Transform a [QRCode](#QRCode) into a svg element.\n\n    import Svg.Attributes as SvgA\n\n    qrCodeView : String -> Html msg\n    qrCodeView message =\n        QRCode.fromString message\n            |> Result.map\n                (QRCode.toSvg\n                    [ SvgA.width \"500px\"\n                    , SvgA.height \"500px\"\n                    ]\n                )\n            |> Result.withDefault\n                (Html.text \"Error while encoding to QRCode.\")\n\n**Beware**: You **must** set some width and height to render anything.\nYou can set it by defining `width` and `height` svg's CSS properties or\nby passing the `Svg.Attributes.width` and `Svg.Attributes.height`\nsvg attributes.\n\n",
+                "type": "List.List (Svg.Attribute msg) -> QRCode.QRCode -> Html.Html msg"
+            },
+            {
+                "name": "toSvgWithoutQuietZone",
+                "comment": " Same as [toSvg](#toSvg), but without the [quiet zone](https://en.wikipedia.org/wiki/QR_code#/media/File:QR_Code_Structure_Example_3.svg).\n",
+                "type": "List.List (Svg.Attribute msg) -> QRCode.QRCode -> Html.Html msg"
+            },
+            {
+                "name": "version",
+                "comment": " Get the [version](https://www.qrcode.com/en/about/version.html) of the [QRCode](#QRCode).\n\n    \"Hello World!\"\n        |> QRCode.fromString\n        |> Result.map QRCode.version\n        -- (==) Ok 1\n\n",
+                "type": "QRCode.QRCode -> Basics.Int"
+            }
+        ],
+        "binops": []
+    }
+]

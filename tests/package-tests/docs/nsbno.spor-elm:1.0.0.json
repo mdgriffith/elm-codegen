@@ -1,0 +1,154 @@
+[
+    {
+        "name": "Spor.Heading",
+        "comment": " A component for displaying headers\n\n@docs Heading, HeadingLevel\n\n\n## Config\n\n@docs init, withHeadingLevel, withTextStyle, withString\n\n\n## Display\n\n@docs toHtml\n\n",
+        "unions": [
+            {
+                "name": "Heading",
+                "comment": " A component for displaying headers\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "HeadingLevel",
+                "comment": " What `Html` element to use for the header.\nUse `H1` for most important, `H2` for second most important etc.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "H1",
+                        []
+                    ],
+                    [
+                        "H2",
+                        []
+                    ],
+                    [
+                        "H3",
+                        []
+                    ],
+                    [
+                        "H4",
+                        []
+                    ],
+                    [
+                        "H5",
+                        []
+                    ],
+                    [
+                        "H6",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "init",
+                "comment": " Create an initial configuration for a `Heading` component.\nBy default, the `H2` level is used, along with the `Medium` text style.\n",
+                "type": "Spor.Heading.Heading"
+            },
+            {
+                "name": "toHtml",
+                "comment": " Convert configuration to HTML\n",
+                "type": "Spor.Heading.Heading -> Html.Styled.Html a"
+            },
+            {
+                "name": "withHeadingLevel",
+                "comment": " Set the heading level\n",
+                "type": "Spor.Heading.HeadingLevel -> Spor.Heading.Heading -> Spor.Heading.Heading"
+            },
+            {
+                "name": "withString",
+                "comment": " Set the text to be displayed\n",
+                "type": "String.String -> Spor.Heading.Heading -> Spor.Heading.Heading"
+            },
+            {
+                "name": "withTextStyle",
+                "comment": " Set the text style\n",
+                "type": "Spor.TextStyle.TextStyle -> Spor.Heading.Heading -> Spor.Heading.Heading"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Spor.Text",
+        "comment": " A component for displaying text.\n\n@docs Text\n\n\n## Configuration\n\n@docs init, withTextStyle, withString\n\n\n## Display\n\n@docs toHtml\n\n",
+        "unions": [
+            {
+                "name": "Text",
+                "comment": " A component for displaying text.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "init",
+                "comment": " Create an initial config for the `Text` component.\nDefaults to the `Medium` text style, and no text.\n",
+                "type": "Spor.Text.Text"
+            },
+            {
+                "name": "toHtml",
+                "comment": " Render `Text` component to `Html`\n",
+                "type": "Spor.Text.Text -> Html.Styled.Html a"
+            },
+            {
+                "name": "withString",
+                "comment": " Set the text to be displayed\n",
+                "type": "String.String -> Spor.Text.Text -> Spor.Text.Text"
+            },
+            {
+                "name": "withTextStyle",
+                "comment": " Set the text style to use\n",
+                "type": "Spor.TextStyle.TextStyle -> Spor.Text.Text -> Spor.Text.Text"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Spor.TextStyle",
+        "comment": " The `TextStyle` type is used for configuring text appareance in other components.\n\n@docs TextStyle\n\n",
+        "unions": [
+            {
+                "name": "TextStyle",
+                "comment": " Represents a combination of font type, size and line height for some text.\nUsed in components such as `Text` and `Heading`.\nThis setting scales according to the size of the user device.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "DoubleExtraLarge",
+                        []
+                    ],
+                    [
+                        "ExtraLargeDisplay",
+                        []
+                    ],
+                    [
+                        "ExtraLargeSans",
+                        []
+                    ],
+                    [
+                        "Large",
+                        []
+                    ],
+                    [
+                        "Medium",
+                        []
+                    ],
+                    [
+                        "Small",
+                        []
+                    ],
+                    [
+                        "ExtraSmall",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [],
+        "binops": []
+    }
+]

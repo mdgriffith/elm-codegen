@@ -1,0 +1,68 @@
+[
+    {
+        "name": "Bible",
+        "comment": " A library for working with Bible references.\n\n\n# Parsing\n\n@docs fromString\n\n\n# Formatting\n\n@docs format\n\n\n# Encoding\n\nIt may be useful to have a unique, compact representation of a reference for storage, searching, sorting, etc.\n\nAn easy way to achieve this is to convert the start and end of the reference to an `Int`.\nThese integers can then be stored in a database, sorted, checked for intersections to do searches, etc.\n\nThe encoding process is as follows:\n\n    (1000000 * Book.toInt book) + (1000 * chapter) + verse\n\nThis results in an `Int` with the following structure\n\n    16001001\n    --===___\n     | |  |\n     | |  |\n     | |  |--- Zero padded verse number\n     | |------ Zero padded chapter number\n     |-------- Book number\n\n@docs encode, decode\n\n\n# Lower Level Parts\n\nThese functions may be useful if you want to build your own formatter, or something else.\n\n@docs toStartBookString, toEndBookString, toStartChapter, toEndChapter, toStartVerse, toEndVerse\n\n\n# Types\n\n@docs Reference\n\n",
+        "unions": [
+            {
+                "name": "Reference",
+                "comment": " An opaque type to represent a Bible reference.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decode",
+                "comment": " Attempt to convert an encoded value to a reference.\n",
+                "type": "{ start : Basics.Int, end : Basics.Int } -> Result.Result String.String Bible.Reference"
+            },
+            {
+                "name": "encode",
+                "comment": " Convert a reference to an encoded representation.\n\n    (fromString \"Gen 1:1 - Rev 5\") |> Result.map encode)\n        == Ok {start = 1001001, end = 66005014}\n\n",
+                "type": "Bible.Reference -> { start : Basics.Int, end : Basics.Int }"
+            },
+            {
+                "name": "format",
+                "comment": " Get a formatted `String` from a `Reference`.\n\nSome example outputs:\n\n  - Genesis 1:1\n  - Genesis 1:1-11\n  - Genesis 1:1 - 12:2\n  - Genesis 1:1 - Exodus 2:4\n\n",
+                "type": "Bible.Reference -> String.String"
+            },
+            {
+                "name": "fromString",
+                "comment": " Attempt to convert a `String` into a `Reference`.\n\nThe following formats should work:\n\n  - Genesis 1\n  - Genesis 1:1\n  - Genesis 1:1-20\n  - Genesis 1:20-2:24\n  - Genesis 1-5\n  - Genesis 1 - Exodus 5\n  - Genesis 1:1 - Exodus 5:20\n  - Genesis 1:1 - Exodus 5\n  - Genesis 1 - Exodus 5:20\n\n",
+                "type": "String.String -> Result.Result String.String Bible.Reference"
+            },
+            {
+                "name": "toEndBookString",
+                "comment": " Get the name of the book the reference ends with.\n",
+                "type": "Bible.Reference -> String.String"
+            },
+            {
+                "name": "toEndChapter",
+                "comment": " Get the chapter the reference ends with.\n",
+                "type": "Bible.Reference -> Basics.Int"
+            },
+            {
+                "name": "toEndVerse",
+                "comment": " Get the verse the reference ends with.\n",
+                "type": "Bible.Reference -> Basics.Int"
+            },
+            {
+                "name": "toStartBookString",
+                "comment": " Get the name of the book the reference starts with.\n",
+                "type": "Bible.Reference -> String.String"
+            },
+            {
+                "name": "toStartChapter",
+                "comment": " Get the chapter the reference starts with.\n",
+                "type": "Bible.Reference -> Basics.Int"
+            },
+            {
+                "name": "toStartVerse",
+                "comment": " Get the verse the reference starts with.\n",
+                "type": "Bible.Reference -> Basics.Int"
+            }
+        ],
+        "binops": []
+    }
+]

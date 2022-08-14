@@ -1,0 +1,122 @@
+[
+    {
+        "name": "Expect.Extra",
+        "comment": " Extends `Expect` with more `Expectation`s.\n\n\n## Strings\n\n@docs match, MatchPattern, stringPattern, regexPattern\n\n\n## Lists\n\n@docs contain, member\n\n",
+        "unions": [
+            {
+                "name": "MatchPattern",
+                "comment": " An expectation represented as a pattern to match a string.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "contain",
+                "comment": " Alias of `member`.\n\nReads better with bdd style tests.\n\n    expect [0, 1, 2] to contain 1\n\n    -- Passes because [0, 1, 2] contains 1\n\n",
+                "type": "a -> (a -> String.String) -> List.List a -> Expect.Expectation"
+            },
+            {
+                "name": "match",
+                "comment": " Passes if the given pattern matches the actual string.\n\n    -- Match with regular expressions\n    match (regexPattern \"^[0-9a-f]+$\") \"deadbeef\"\n\n    -- Or just plain strings\n    match (stringPattern \"foo\") \"foo bar\"\n\n",
+                "type": "Expect.Extra.MatchPattern -> String.String -> Expect.Expectation"
+            },
+            {
+                "name": "member",
+                "comment": " Passes if value is a member of list.\n\n    member 1 [0, 1, 2]\n\n    -- Passes because 1 is a member of [0, 1, 2]\n\n",
+                "type": "(a -> String.String) -> a -> List.List a -> Expect.Expectation"
+            },
+            {
+                "name": "regexPattern",
+                "comment": " Matches if the regular expression matches the actual string value.\n",
+                "type": "String.String -> Expect.Extra.MatchPattern"
+            },
+            {
+                "name": "stringPattern",
+                "comment": " Matches if the pattern is contained within the actual string value.\n",
+                "type": "String.String -> Expect.Extra.MatchPattern"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Fuzz.Extra",
+        "comment": " Extends `Fuzz` with more `Fuzzer`s.\n\n@docs eitherOr, uniformOrCrash, stringMaxLength, sequence\n\n\n## Deprecated\n\nDo not use this. It will be deprecated in version 2.\n\n@docs union\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "eitherOr",
+                "comment": " Combine two fuzzers.\n\n    fuzzMaybeInt : Fuzzer (Maybe Int)\n    fuzzMaybeInt =\n        Fuzz.Extra.eitherOr\n            (Fuzz.constant Nothing)\n            (Fuzz.int |> Fuzz.map Just)\n\n",
+                "type": "Fuzz.Fuzzer a -> Fuzz.Fuzzer a -> Fuzz.Fuzzer a"
+            },
+            {
+                "name": "sequence",
+                "comment": " Sequence a list of fuzzers into a fuzzer of a list.\n",
+                "type": "List.List (Fuzz.Fuzzer a) -> Fuzz.Fuzzer (List.List a)"
+            },
+            {
+                "name": "stringMaxLength",
+                "comment": " Generates random printable ASCII with a maximum length.\n",
+                "type": "Basics.Int -> Fuzz.Fuzzer String.String"
+            },
+            {
+                "name": "uniformOrCrash",
+                "comment": " Generates among the provided values with uniform distribution\n\nLike `Fuzz.frequencyOrCrash` but with uniform distribution.\n\n    httpMethod : Fuzzer Method\n    httpMethod =\n        [ GET, POST, PUT, DELETE, OPTIONS ]\n            |> List.map Fuzz.constant\n            |> uniformOrCrash\n\nSame as for `frequencyOrCrash`: \"This is useful in tests, where a crash will\nsimply cause the test run to fail. There is no danger to a production system\nthere.\"\n\n",
+                "type": "List.List (Fuzz.Fuzzer a) -> Fuzz.Fuzzer a"
+            },
+            {
+                "name": "union",
+                "comment": " Create a fuzzer for a union type.\n\n**Deprecated**: use `uniformOrCrash`\n\n",
+                "type": "List.List a -> a -> Shrink.Shrinker a -> Fuzz.Fuzzer a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Test.Extra",
+        "comment": " Extends `Test` with specialized test and describe function.\n\n\n## Describing JSON Decoders\n\nWrite concise test for JSON decoders\n\n@docs DecoderExpectation, describeDecoder, testDecoder\n\n",
+        "unions": [
+            {
+                "name": "DecoderExpectation",
+                "comment": " Expectation for a decoder result.\n\n  - `FailsToDecode` - expect the decoder to fail, the failure message can be anything\n  - `FailsToDecodeWith String` - expect the decoder to fail with a specific message\n  - `DecodesTo a` - expect the decoder to succeed, decoding to the provided value\n\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "FailsToDecode",
+                        []
+                    ],
+                    [
+                        "FailsToDecodeWith",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "DecodesTo",
+                        [
+                            "a"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "describeDecoder",
+                "comment": " Exercise a decoder over a list of input/expectation pairs.\n\nFor example\n\n    describeDecoder \"int\"\n        Json.Decode.int\n        Debug.toString\n        [ ( \"\", FailsToDecode )\n        , ( \"foo\", FailsToDecode )\n        , ( \"1\", DecodesTo 1 )\n        , ( \"1.5\", FailsToDecode )\n        ]\n\n",
+                "type": "String.String -> Json.Decode.Decoder a -> (a -> String.String) -> List.List ( String.String, Test.Extra.DecoderExpectation a ) -> Test.Test"
+            },
+            {
+                "name": "testDecoder",
+                "comment": " Exercise a decoder with a JSON encoded string.\n\nFor example\n\n    testDecoder Json.Decode.string\n        Debug.toString\n        ( \"\\\"foo\\\"\", DecodesTo \"foo\" )\n\n",
+                "type": "Json.Decode.Decoder a -> (a -> String.String) -> ( String.String, Test.Extra.DecoderExpectation a ) -> Test.Test"
+            }
+        ],
+        "binops": []
+    }
+]

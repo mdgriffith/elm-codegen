@@ -1,0 +1,44 @@
+[
+    {
+        "name": "Env",
+        "comment": " With the `Env` package you can parse an environment from string and keep this env in your state to\ntoggle some features depending on your environment\n\n\n# Definitions\n\n@docs Env\n\n\n# Parse\n\n@docs fromString\n\n",
+        "unions": [
+            {
+                "name": "Env",
+                "comment": " Here are the handled environments\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Dev",
+                        []
+                    ],
+                    [
+                        "Prod",
+                        []
+                    ],
+                    [
+                        "Test",
+                        []
+                    ],
+                    [
+                        "QA",
+                        []
+                    ],
+                    [
+                        "Staging",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fromString",
+                "comment": " Returns the environment from string (case insensitive).\nReturns `Dev` by default\n",
+                "type": "String.String -> Env.Env"
+            }
+        ],
+        "binops": []
+    }
+]

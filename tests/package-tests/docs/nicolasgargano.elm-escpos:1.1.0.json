@@ -1,0 +1,325 @@
+[
+    {
+        "name": "Escpos",
+        "comment": "\n\n\n# Commands\n\n@docs Command\n@docs batch\n@docs writeLine\n@docs none\n@docs write\n@docs newline\n\n\n# Control\n\n@docs initialize\n@docs cut\n\n\n# Encoding\n\n@docs encodeToBytes\n@docs encodeToInts\n@docs encodeToJson\n@docs encodeToBase64\n\n\n# Custom\n\n@docs raw\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Command",
+                "comment": " The basic building block.\n",
+                "args": [],
+                "type": "Escpos.Internal.Command"
+            }
+        ],
+        "values": [
+            {
+                "name": "batch",
+                "comment": " This let's you group multiple commands and add attributes to them.\n\nYou can think of it as a `div` in html.\n\n    batch []\n        [ writeLine \"Hello!\"\n        , batch [ bold ] [ writeLine \"I am bold!\" ]\n        ]\n\n",
+                "type": "List.List Escpos.Internal.Attribute -> List.List Escpos.Command -> Escpos.Command"
+            },
+            {
+                "name": "cut",
+                "comment": " Cut the paper.\n",
+                "type": "Escpos.Command"
+            },
+            {
+                "name": "encodeToBase64",
+                "comment": " Return the command as a base64 encoded string.\n",
+                "type": "Escpos.Command -> String.String"
+            },
+            {
+                "name": "encodeToBytes",
+                "comment": " Return the command as bytes.\n\nThis is probably what you need to send to the printer.\n\n",
+                "type": "Escpos.Command -> Bytes.Bytes"
+            },
+            {
+                "name": "encodeToInts",
+                "comment": " Return the command as a list of ints, one for each byte.\n\nThis is useful to send through a port.\n\n",
+                "type": "Escpos.Command -> List.List Basics.Int"
+            },
+            {
+                "name": "encodeToJson",
+                "comment": " Return the command as json. It will be an array of numbers, one for each byte.\n\nThis is useful to send through a port.\n\n",
+                "type": "Escpos.Command -> Json.Encode.Value"
+            },
+            {
+                "name": "initialize",
+                "comment": " Prepare to print.\n\nYou should always include this as your first command for a ticket.\n\n",
+                "type": "Escpos.Command"
+            },
+            {
+                "name": "newline",
+                "comment": " Insert a newline.\n",
+                "type": "Escpos.Command"
+            },
+            {
+                "name": "none",
+                "comment": " Do nothing.\n",
+                "type": "Escpos.Command"
+            },
+            {
+                "name": "raw",
+                "comment": " This function lets you implement your own custom command.\nThis is useful if you want to add a command not included in this library.\n\n---\n\nFor example, the [initialize](https://www.epson-biz.com/modules/ref_escpos/index.php?content_id=192)\ncommand is defined as:\n\n\n\n    {-\n         ASCII : ESC @\n           HEX : 1B  40\n       DECIMAL : 27  64\n    -}\n\nSo you could implement using hex it by writing:\n\n    raw [ 0x1B, 0x40 ]\n\nor using decimal:\n\n    raw [ 27, 64 ]\n\n_Note: For a list of ESCPOS commands you should check your printer documentation._\n\n",
+                "type": "List.List Basics.Int -> Escpos.Command"
+            },
+            {
+                "name": "write",
+                "comment": " Write the given text.\n",
+                "type": "String.String -> Escpos.Command"
+            },
+            {
+                "name": "writeLine",
+                "comment": " Write the given string and insert a newline.\n",
+                "type": "String.String -> Escpos.Command"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Escpos.Attributes",
+        "comment": "\n\n\n# Style\n\n@docs bold\n@docs underline\n\n\n# Alignment\n\nKeep in mind these commands will align at least the whole line where it's used.\n\n@docs alignLeft\n@docs alignCenter\n@docs alignRight\n\n\n# Sizing\n\n@docs normalSize\n@docs normalDoubleWidth\n@docs normalDoubleHeight\n@docs normalDouble\n\n@docs smallSize\n@docs smallDoubleWidth\n@docs smallDoubleHeight\n@docs smallDouble\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "alignCenter",
+                "comment": " Center the text.\n",
+                "type": "Escpos.Internal.Attribute"
+            },
+            {
+                "name": "alignLeft",
+                "comment": " Align text to the left.\n\nThis is the default.\n\n",
+                "type": "Escpos.Internal.Attribute"
+            },
+            {
+                "name": "alignRight",
+                "comment": " Align to the right.\n",
+                "type": "Escpos.Internal.Attribute"
+            },
+            {
+                "name": "bold",
+                "comment": " Bold.\n",
+                "type": "Escpos.Internal.Attribute"
+            },
+            {
+                "name": "normalDouble",
+                "comment": " Makes the font double the width and height of normal size.\n",
+                "type": "Escpos.Internal.Attribute"
+            },
+            {
+                "name": "normalDoubleHeight",
+                "comment": " Makes the font double the height of normal size.\n",
+                "type": "Escpos.Internal.Attribute"
+            },
+            {
+                "name": "normalDoubleWidth",
+                "comment": " Makes the font double the width of normal size.\n",
+                "type": "Escpos.Internal.Attribute"
+            },
+            {
+                "name": "normalSize",
+                "comment": " Default size.\n",
+                "type": "Escpos.Internal.Attribute"
+            },
+            {
+                "name": "smallDouble",
+                "comment": " Makes the font double the width and height of the small size.\n",
+                "type": "Escpos.Internal.Attribute"
+            },
+            {
+                "name": "smallDoubleHeight",
+                "comment": " Makes the font double the height of the small size.\n",
+                "type": "Escpos.Internal.Attribute"
+            },
+            {
+                "name": "smallDoubleWidth",
+                "comment": " Makes the font double the width of the small size.\n",
+                "type": "Escpos.Internal.Attribute"
+            },
+            {
+                "name": "smallSize",
+                "comment": " Makes the font smaller than normal size.\n",
+                "type": "Escpos.Internal.Attribute"
+            },
+            {
+                "name": "underline",
+                "comment": " Underline.\n",
+                "type": "Escpos.Internal.Attribute"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Escpos.Internal",
+        "comment": " _Note: you only need this module if you are writing a custom interpreter for Command._\n\n\n# Custom Types\n\n@docs Command\n@docs Attribute\n@docs TextAttribute\n@docs CharacterSizing\n@docs Alignment\n\n\n# Convert\n\n@docs toBytes\n\n",
+        "unions": [
+            {
+                "name": "Alignment",
+                "comment": " How text should align. Note that you cannot have multiple alignments within the same line.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Left",
+                        []
+                    ],
+                    [
+                        "Center",
+                        []
+                    ],
+                    [
+                        "Right",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Attribute",
+                "comment": " Attributes.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "TextAttribute",
+                        [
+                            "Escpos.Internal.TextAttribute"
+                        ]
+                    ],
+                    [
+                        "AlignmentAttribute",
+                        [
+                            "Escpos.Internal.Alignment"
+                        ]
+                    ],
+                    [
+                        "WhiteOverBlack",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "CharacterSizing",
+                "comment": " Size of the characters.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Small",
+                        []
+                    ],
+                    [
+                        "SmallDoubleWidth",
+                        []
+                    ],
+                    [
+                        "SmallDoubleHeight",
+                        []
+                    ],
+                    [
+                        "SmallDouble",
+                        []
+                    ],
+                    [
+                        "Normal",
+                        []
+                    ],
+                    [
+                        "NormalDoubleWidth",
+                        []
+                    ],
+                    [
+                        "NormalDoubleHeight",
+                        []
+                    ],
+                    [
+                        "NormalDouble",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Command",
+                "comment": " The basic building block.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Batch",
+                        [
+                            "List.List Escpos.Internal.Attribute",
+                            "List.List Escpos.Internal.Command"
+                        ]
+                    ],
+                    [
+                        "Raw",
+                        [
+                            "List.List Basics.Int"
+                        ]
+                    ],
+                    [
+                        "None",
+                        []
+                    ],
+                    [
+                        "Write",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Newline",
+                        []
+                    ],
+                    [
+                        "WriteLine",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "HorizontalTab",
+                        []
+                    ],
+                    [
+                        "VerticalTab",
+                        []
+                    ],
+                    [
+                        "Initialize",
+                        []
+                    ],
+                    [
+                        "Cut",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "TextAttribute",
+                "comment": " Attributes that can be applied to text.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Underline",
+                        []
+                    ],
+                    [
+                        "Bold",
+                        []
+                    ],
+                    [
+                        "CharacterSize",
+                        [
+                            "Escpos.Internal.CharacterSizing"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toBytes",
+                "comment": " Convert a command to a series of bytes.\n",
+                "type": "Escpos.Internal.Command -> Bytes.Bytes"
+            }
+        ],
+        "binops": []
+    }
+]

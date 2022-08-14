@@ -1,0 +1,160 @@
+[
+    {
+        "name": "State",
+        "comment": " This library provides ways to compose functions of the type\n`s -> (a, s)`. This composition threads state through a computation\n\nFrom time to time, you'll see a pattern like this in your code\n\n    ( newValue, newState ) =\n        f state\n\n    ( newerValue, newerState ) =\n        g newValue newState\n\n    ( newererValue, newererState ) =\n        h newerValue newerState\n\nThis pattern is ugly and error-prone (because of typo's, for instance).\nIt can be abstracted by creating a function that composes `f` and `g` (\nthe output of `f` is the input to `g`).\n\n    f : s -> ( a, s )\n\n    g : a -> s -> ( a, s )\n\nThis library implements this composition and provides a bunch of helper functions for\nworking with State. For a more in-depth explanation of how the implementation works,\nsee the [derivation](https://github.com/folkertdev/elm-state#derivation). For more detailed, higher\nlevel documentation, please see the [readme](https://github.com/folkertdev/elm-state) and the [examples](https://github.com/folkertdev/elm-state/tree/master/examples)\n\n#Type and Constructors\n\n@docs State, state, embed, advance\n\n#Mapping\n\n@docs map, map2, map3\n\n#Chaining\n\n@docs andMap, andThen, join\n\n#Changing State\n\n@docs get, put, modify\n\n#Running State\n\n@docs run, finalValue, finalState\n\n#Generalized list functions\n\n@docs traverse, combine, filterM, foldlM, foldrM\n\n#Safe recursion\n\nThe archetypal Haskell implementation for State will overflow the stack in strict languages like Elm.\nWe use the fact that elm performs tail-call eliminiation to make sure the generalized list functions don't overflow the stack.\n\nTo allow for full flexibility, the stack-safety primitives are exposed. Look at the source for examples.\n\nThe implementation of these functions is heavily based on the\n[purescript MonadRec implementation](https://github.com/purescript/purescript-tailrec/blob/master/src/Control/Monad/Rec/Class.purs)\n\n@docs tailRec, tailRecM, Step\n\n#Notes for the Haskellers/curious\n\nThe `State` type of this package is the `State Monad`. This wording is a little weird, it'd be better to say that\n`State` is a `Monad`.\n\nMonad is a concept from a branch of mathematics called category theory. In short, it is a type on which\n`andThen` is defined (examples in core are Random, Maybe, Result and Decoder). Many useful types are monads,\nand therefore being familiar with the concept can be very helpful in functional programming.\n\nMonads are also called 'computation builders': They allow for an elegant way of chaining computations with `andThen`\n(see the [README](https://github.com/folkertdev/elm-state#structuring-computation-with-andthen)).\nElm wants to be a simple, easy to learn language, and therefore monads aren't really talked about (yet). I've tried to limit the jargon in the documentation to a minimum.\nIf anything in the docs here or in the repository is still unclear, please open an issue [on the repo](https://github.com/folkertdev/elm-state/issues).\n\n",
+        "unions": [
+            {
+                "name": "State",
+                "comment": " Type that represents state.\n\nNote that `State` wraps a function, not a concrete value.\n\n",
+                "args": [
+                    "state",
+                    "value"
+                ],
+                "cases": [
+                    [
+                        "State",
+                        [
+                            "state -> ( value, state )"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Step",
+                "comment": " The result of a compuation: either `Loop` containing the updated accumulator,\nor `Done` containing the final result of the computation.\n",
+                "args": [
+                    "a",
+                    "b"
+                ],
+                "cases": [
+                    [
+                        "Loop",
+                        [
+                            "a"
+                        ]
+                    ],
+                    [
+                        "Done",
+                        [
+                            "b"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "advance",
+                "comment": " Wrap a function as a State. Remember that `State` is just a wrapper around\na function of type `s -> ( a, s )`.\n",
+                "type": "(s -> ( a, s )) -> State.State s a"
+            },
+            {
+                "name": "andMap",
+                "comment": " Apply a function wrapped in a state to a value wrapped in a state.\nThis is very useful for applying stateful arguments one by one.\n\nThe use of `andMap` can be substituted by using mapN. The following\nexpressions are equivalent.\n\n    map f arg1 |> andMap arg2 == State.map2 f arg1 arg2\n\nIn general, using the `mapN` functions is preferable. The `mapN` functions can\nbe defined up to an arbitrary `n` using `andMap`.\n\n    State.mapN f arg1 arg2 ... argN\n        == State.map f arg1\n                |> andMap arg2\n                ...\n                |> andMap argN\n\n",
+                "type": "State.State s a -> State.State s (a -> b) -> State.State s b"
+            },
+            {
+                "name": "andThen",
+                "comment": " Chain two operations with state.\n\nThe [readme](https://github.com/folkertdev/elm-state) has a section on [structuring computation\nwith `andThen`](https://github.com/folkertdev/elm-state#structuring-computation-with-andthen).\n\n",
+                "type": "(a -> State.State s b) -> State.State s a -> State.State s b"
+            },
+            {
+                "name": "combine",
+                "comment": " Combine a list of `State`s into one by composition.\nThe resulting value is a list of the results of subcomputations.\n",
+                "type": "List.List (State.State s a) -> State.State s (List.List a)"
+            },
+            {
+                "name": "embed",
+                "comment": " Embed a function into State. The function is applied to the state, the result\nwill become the value.\n\nIt is implemented as:\n\n    embed : (a -> b) -> State a b\n    embed f =\n        State (\\s -> ( f s, s ))\n\nThis function can be extended as follows:\n\n    embed2 : (a -> b -> c) -> a -> State b c\n    embed2 f arg1 =\n        embed (f arg1)\n\n",
+                "type": "(s -> a) -> State.State s a"
+            },
+            {
+                "name": "filterM",
+                "comment": " Generalize `List.filter` to work on `State`. Composes only the states that satisfy the predicate.\n\n    -- keep only items that occur at least once\n    [ 1, 2, 3, 4, 4, 5, 5, 1 ]\n        |> State.filter (\\element -> State.advance (\\cache -> (List.member element cache, element :: cache)))\n        |> State.run []\n        --> ([4,5,1], [1,5,5,4,4,3,2,1])\n\n",
+                "type": "(a -> State.State s Basics.Bool) -> List.List a -> State.State s (List.List a)"
+            },
+            {
+                "name": "finalState",
+                "comment": " Thread the state through a computation,\nand return only the final state\n\n    primesUpTo : Int -> Array Int\n    primesUpTo n =\n        let\n            initialState =\n                Array.repeat n True\n                    |> Array.set 0 False\n                    |> Array.set 1 False\n        in\n        recurse 2 cycle\n            |> State.finalState initialState\n            |> Array.indexedMap (\\a b -> ( a, b ))\n            |> Array.filter (\\( i, v ) -> v == True)\n            |> Array.map fst\n\nSee [SieveOfErastosthenes.elm](https://github.com/folkertdev/elm-state/blob/master/examples/SieveOfEratosthenes.elm) for the full example.\n\n",
+                "type": "s -> State.State s a -> s"
+            },
+            {
+                "name": "finalValue",
+                "comment": " Thread the state through a computation,\nand return only the computed value\n\n\n    fibs : List Int -> List Int\n    fibs =\n        let\n            initialState =\n                Dict.fromList [ ( 0, 1 ), ( 1, 1 ) ]\n        in\n        State.finalValue initialState << fibsHelper\n\n\n    -- fibsHelper : List Int -> State (Dict Int Int) (List Int)\n\nSee [Fibonacci.elm](https://github.com/folkertdev/elm-state/blob/master/examples/Fibonacci.elm) for the full example.\n\n",
+                "type": "s -> State.State s a -> a"
+            },
+            {
+                "name": "foldlM",
+                "comment": " Compose a list of updated states into one from the left. Also called `foldM`.\n",
+                "type": "(b -> a -> State.State s b) -> b -> List.List a -> State.State s b"
+            },
+            {
+                "name": "foldrM",
+                "comment": " Compose a list of updated states into one from the right\n",
+                "type": "(a -> b -> State.State s b) -> b -> List.List a -> State.State s b"
+            },
+            {
+                "name": "get",
+                "comment": " Get the current state. Typically the state is\nmodified somehow and then put back with put.\n",
+                "type": "State.State s s"
+            },
+            {
+                "name": "join",
+                "comment": " Discard a level of state.\n",
+                "type": "State.State s (State.State s a) -> State.State s a"
+            },
+            {
+                "name": "map",
+                "comment": " Apply a function to the value that the state holds\n",
+                "type": "(a -> b) -> State.State s a -> State.State s b"
+            },
+            {
+                "name": "map2",
+                "comment": " Apply a function to the value of two states. The newest state will be kept\n",
+                "type": "(a -> b -> c) -> State.State s a -> State.State s b -> State.State s c"
+            },
+            {
+                "name": "map3",
+                "comment": " Apply a function to the value of three states. The newest state will be kept\n\nThe definition of map3 is in terms of andMap, which can be used to create\nmap4, map5 ect.\n\n    map3 :\n        (a -> b -> c -> d)\n        -> State s a\n        -> State s b\n        -> State s c\n        -> State s d\n    map3 f step1 step2 step3 =\n        map f step1\n            |> andMap step2\n            |> andMap step3\n\n",
+                "type": "(a -> b -> c -> d) -> State.State s a -> State.State s b -> State.State s c -> State.State s d"
+            },
+            {
+                "name": "modify",
+                "comment": " Modify the state. This is a combination of set and put\n\nAn example using `State.get` and `State.modify`:\n\n    terminator : Int -> State (Dict Int Int) Int\n    terminator n =\n        if n == 1 || n == 89 then\n            state n\n\n        else\n            let\n                updateWithValue : Int -> State (Dict Int Int) Int\n                updateWithValue value =\n                    modify (Dict.insert n value)\n                        |> State.map (\\_ -> value)\n\n                updateIfNeeded :\n                    Dict Int Int\n                    -> State (Dict Int Int) Int\n                updateIfNeeded dict =\n                    case Dict.get n dict of\n                        Just v ->\n                            state v\n\n                        Nothing ->\n                            terminator (step n)\n                                |> andThen updateWithValue\n            in\n            get\n                |> andThen updateIfNeeded\n\n",
+                "type": "(s -> s) -> State.State s ()"
+            },
+            {
+                "name": "put",
+                "comment": " Replace the current state with a new one.\n",
+                "type": "s -> State.State s ()"
+            },
+            {
+                "name": "run",
+                "comment": " Thread the state through a computation,\nand return both the final state and the computed value\n\nNote for Haskellers: the argument order is swapped. This is more\nnatural in elm because code is often structured left to right using `(|>)`.\n\n",
+                "type": "s -> State.State s a -> ( a, s )"
+            },
+            {
+                "name": "state",
+                "comment": " Create a new State from a value of any type.\n",
+                "type": "value -> State.State state value"
+            },
+            {
+                "name": "tailRec",
+                "comment": " Create a pure tail-recursive function of one argument\n\n    pow : number -> Int -> number\n    pow n p =\n        let\n            go { accum, power } =\n                if power == 0 then\n                    Done accum\n\n                else\n                    Loop\n                        { accum = accum * n\n                        , power = power - 1\n                        }\n        in\n        tailRec go { accum = 1, power = p }\n\n",
+                "type": "(a -> State.Step a b) -> a -> b"
+            },
+            {
+                "name": "tailRecM",
+                "comment": " The `tailRecM` function takes a step function and applies it recursively until\na pure value of type `b` is found. Because of tail recursion, this function runs in constant stack-space.\n\n    {-| Perform an action n times, gathering the results\n    -}\n    replicateM : Int -> State s a -> State s (List a)\n    replicateM n s =\n        let\n            go ( n, xs ) =\n                if n < 1 then\n                    state (Done xs)\n\n                else\n                    map (\\x -> Loop ( n - 1, x :: xs )) s\n        in\n        tailRecM go ( n, [] )\n\n",
+                "type": "(a -> State.State s (State.Step a b)) -> a -> State.State s b"
+            },
+            {
+                "name": "traverse",
+                "comment": " Generalize `List.map` to work with `State`.\n\nWhen you have a function the works on a single element,\n\n    mark : Int -> State (Array Bool) ()\n    mark index =\n        State.modify (Array.set index False)\n\ntraverse can be used to let it work on a list of elements,\ntaking care of threading the state through.\n\n    markMany : List Int -> State (Array Bool) (List ())\n    markMany =\n        State.traverse mark\n\nThis function is also called `mapM`.\n\n",
+                "type": "(a -> State.State s b) -> List.List a -> State.State s (List.List b)"
+            }
+        ],
+        "binops": []
+    }
+]

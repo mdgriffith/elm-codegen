@@ -1,0 +1,58 @@
+[
+    {
+        "name": "SHA1",
+        "comment": " [SHA-1] is a [cryptographic hash function].\nAlthough it is no longer considered cryptographically secure (as collisions can\nbe found faster than brute force), it is still very suitable for a broad range\nof uses, and is a lot stronger than MD5.\n\n[SHA-1]: https://en.wikipedia.org/wiki/SHA-1\n[cryptographic hash function]: https://en.wikipedia.org/wiki/Cryptographic_hash_function\n\nThis package provides a way of creating SHA-1 digests from `String`s, `Bytes`, or\n`List Int`s (where each `Int` is between 0 and 255, and represents a byte).\nIt can also take those `Digest`s and format them in [hexadecimal] or [base64]\nnotation. Alternatively, you can get the binary digest, using either `Bytes` or\n`List Int` to represent the bytes.\n\n[hexadecimal]: https://en.wikipedia.org/wiki/Hexadecimal\n[base64]: https://en.wikipedia.org/wiki/Base64\n\n@docs Digest\n\n\n# Creating digests\n\n@docs fromString\n\n\n# Formatting digests\n\n@docs toHex, toBase64\n\n\n# Binary data\n\n@docs fromBytes, toBytes\n\nBefore the release of [elm/bytes], many packages (including this one) would use\n`List Int` to represent bytes. To enable interaction with these packages, you\ncan use `fromByteValues` and `toByteValues`.\n\n[elm/bytes]: https://package.elm-lang.org/packages/elm/bytes/latest/\n\n@docs fromByteValues, toByteValues\n\n\n# Advanced usage\n\n@docs toInt32s\n\n",
+        "unions": [
+            {
+                "name": "Digest",
+                "comment": " A type to represent a message digest. `SHA1.Digest`s are equatable, and you may\nwant to consider keeping any digests you need in your `Model` as `Digest`s, not\nas `String`s created by [`toHex`](#toHex) or [`toBase64`](#toBase64).\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fromByteValues",
+                "comment": " Sometimes you have binary data that's not representable in a string. Create\na digest from the raw \"bytes\", i.e. a `List` of `Int`s. Any items not between 0\nand 255 are discarded.\n\n    SHA1.fromByteValues [72, 105, 33, 32, 240, 159, 152, 132]\n    --> SHA1.fromString \"Hi! 😄\"\n\n    [0x00, 0xFF, 0x34, 0xA5] |> SHA1.fromByteValues |> SHA1.toBase64\n    --> \"sVQuFckyE6K3fsdLmLHmq8+J738=\"\n\n",
+                "type": "List.List Basics.Int -> SHA1.Digest"
+            },
+            {
+                "name": "fromBytes",
+                "comment": " Create a digest from [`Bytes`](https://package.elm-lang.org/packages/elm/bytes/latest/)\n\n    import Bytes.Encode as Encode\n    import Bytes exposing (Bytes, Endianness(..))\n\n    42\n        |> Encode.unsignedInt32 BE\n        |> Encode.encode\n        |> SHA1.fromBytes\n        |> SHA1.toHex\n    --> \"25f0c736f1fad0770bbb9a265ded159517c1e68c\"\n\n",
+                "type": "Bytes.Bytes -> SHA1.Digest"
+            },
+            {
+                "name": "fromString",
+                "comment": " Create a digest from a `String`.\n\n    \"hello world\" |> SHA1.fromString |> SHA1.toHex\n    --> \"2aae6c35c94fcfb415dbe95f408b9ce91ee846ed\"\n\n",
+                "type": "String.String -> SHA1.Digest"
+            },
+            {
+                "name": "toBase64",
+                "comment": " One of the two canonical ways of representing a SHA-1 digest is in a 20\ndigit long Base64 binary to ASCII text encoding.\n\n    \"Many more of them live next door\"\n        |> SHA1.fromString\n        |> SHA1.toBase64\n    --> \"jfL0oVb5xakab6BMLplGe2XPbj8=\"\n\n",
+                "type": "SHA1.Digest -> String.String"
+            },
+            {
+                "name": "toByteValues",
+                "comment": " Turn a digest into `List Int`, each `Int` representing a byte of data.\n\n    \"And the band begins to play\"\n        |> SHA1.fromString\n        |> SHA1.toByteValues\n    --> [ 0xF3, 0x08, 0x73, 0x13\n    --> , 0xD6, 0xBC, 0xE5, 0x5B\n    --> , 0x60, 0x0C, 0x69, 0x2F\n    --> , 0xE0, 0x92, 0xF4, 0x53\n    --> , 0x87, 0x3F, 0xAE, 0x91\n    --> ]\n\n",
+                "type": "SHA1.Digest -> List.List Basics.Int"
+            },
+            {
+                "name": "toBytes",
+                "comment": " Turn a digest into `Bytes`.\n\nThe digest is stored as 5 big-endian 32-bit unsigned integers, so the width is 20 bytes or 160 bits.\n\n",
+                "type": "SHA1.Digest -> Bytes.Bytes"
+            },
+            {
+                "name": "toHex",
+                "comment": " One of the two canonical ways of representing a SHA-1 digest is with 40\nhexadecimal digits.\n\n    \"And our friends are all aboard\"\n        |> SHA1.fromString\n        |> SHA1.toHex\n    --> \"f9a0c23ddcd40f6956b0cf59cd9b8800d71de73d\"\n\n",
+                "type": "SHA1.Digest -> String.String"
+            },
+            {
+                "name": "toInt32s",
+                "comment": " Internally, `Digest` models its 160 bits of data in 5 (unsigned 32-bit)\n`Int`s. If you really want to get the raw digest data for your own data\nprocessing, this function will allow you to do that.\n\n    \"And the band begins to play\"\n        |> SHA1.fromString\n        |> SHA1.toInt32s\n    --> { a = 0xF3087313\n    --> , b = 0xD6BCE55B\n    --> , c = 0x600C692F\n    --> , d = 0xE092F453\n    --> , e = 0x873FAE91\n    --> }\n\n",
+                "type": "SHA1.Digest -> { a : Basics.Int, b : Basics.Int, c : Basics.Int, d : Basics.Int, e : Basics.Int }"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,56 @@
+[
+    {
+        "name": "Reporter",
+        "comment": " Formats the result of `elm-lint` in a nice human-readable way.\n\n\n# Types\n\n@docs Error, File, TextContent\n\n\n# Report\n\n@docs Mode, formatReport\n\n\n# Fix\n\n@docs formatFixProposal\n\n",
+        "unions": [
+            {
+                "name": "Mode",
+                "comment": " Mode in which `elm-lint` is running.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Linting",
+                        []
+                    ],
+                    [
+                        "Fixing",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Error",
+                "comment": " Contents of an error. Convert the errors from\n[`Lint`](https://package.elm-lang.org/packages/jfmengels/elm-lint/4.0.0/Lint#Error)\nto this type.\n",
+                "args": [],
+                "type": "{ moduleName : Maybe.Maybe String.String, ruleName : String.String, message : String.String, details : List.List String.String, range : Reporter.Range, hasFix : Basics.Bool }"
+            },
+            {
+                "name": "File",
+                "comment": " Represents a file.\n\n  - path is the file path\n  - source is the raw contents of the file\n\n",
+                "args": [],
+                "type": "{ path : String.String, source : String.String }"
+            },
+            {
+                "name": "TextContent",
+                "comment": " Represents styled text.\n\nFormatter functions return a list of these, that should be\nstyled in the viewing medium according to the associated colors and joined\ntogether without spaces.\n\n",
+                "args": [],
+                "type": "{ str : String.String, color : Maybe.Maybe ( Basics.Int, Basics.Int, Basics.Int ), backgroundColor : Maybe.Maybe ( Basics.Int, Basics.Int, Basics.Int ) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "formatFixProposal",
+                "comment": " Reports a fix proposal for a single error reported by `elm-lint` in a nice human-readable way.\n",
+                "type": "Reporter.File -> Reporter.Error -> String.String -> List.List Reporter.TextContent"
+            },
+            {
+                "name": "formatReport",
+                "comment": " Reports the errors reported by `elm-lint` in a nice human-readable way.\n",
+                "type": "Reporter.Mode -> List.List ( Reporter.File, List.List Reporter.Error ) -> List.List Reporter.TextContent"
+            }
+        ],
+        "binops": []
+    }
+]

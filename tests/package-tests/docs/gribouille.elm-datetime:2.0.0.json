@@ -1,0 +1,38 @@
+[
+    {
+        "name": "Datetime",
+        "comment": " Datetime component.\n\n\n# Data\n\n@docs Model, get, init\n\n\n# View\n\n@docs phantom, view\n\n",
+        "unions": [
+            {
+                "name": "Model",
+                "comment": " Opaque type for model\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "get",
+                "comment": " Get the selected value.\n",
+                "type": "Datetime.Model -> ( Time.Zone, Time.Posix )"
+            },
+            {
+                "name": "init",
+                "comment": " Initialize the component model.\n",
+                "type": "Time.Zone -> Time.Posix -> Datetime.Model"
+            },
+            {
+                "name": "phantom",
+                "comment": " Phantom view (for disabled state).\n",
+                "type": "Html.Html msg"
+            },
+            {
+                "name": "view",
+                "comment": " Component view.\n",
+                "type": "(Datetime.Model -> msg) -> Datetime.Model -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

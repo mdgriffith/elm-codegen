@@ -1,0 +1,78 @@
+[
+    {
+        "name": "RadixTree",
+        "comment": " Build an ordered Radix tree.\n\n\n# Structure\n\n@docs RadixTree, toTree\n\n\n# Build\n\n@docs empty, singleton, insert\n\n",
+        "unions": [
+            {
+                "name": "RadixTree",
+                "comment": " Represents an ordered Radix tree.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "empty",
+                "comment": " Create an empty Radix tree.\n\n    import Tree\n\n    RadixTree.empty\n        |> RadixTree.toTree\n        |> Tree.label --> []\n\n",
+                "type": "RadixTree.RadixTree a"
+            },
+            {
+                "name": "insert",
+                "comment": " An Ordered insert of a value to the Radix tree.\n\n    import Tree\n\n    RadixTree.singleton [1, 2, 3]\n        |> RadixTree.insert [1, 2, 4]\n        |> RadixTree.toTree\n        |> Tree.label --> [1, 2]\n\n    RadixTree.singleton [1, 2, 3]\n        |> RadixTree.insert [1, 2, 4]\n        |> RadixTree.toTree\n        |> Tree.children --> [Tree.singleton [4], Tree.singleton [3]]\n\n",
+                "type": "List.List a -> RadixTree.RadixTree a -> RadixTree.RadixTree a"
+            },
+            {
+                "name": "singleton",
+                "comment": " Create an Radix tree with a single value.\n\n    import Tree\n\n    RadixTree.singleton [1, 2, 3]\n        |> RadixTree.toTree\n        |> Tree.label --> [1, 2, 3]\n\n",
+                "type": "List.List a -> RadixTree.RadixTree a"
+            },
+            {
+                "name": "toTree",
+                "comment": " Extract the `Tree` from the `RadixTree`. The Tree is from the package [Tree](https://package.elm-lang.org/packages/zwilias/elm-rosetree/latest/Tree)\nthat has a very nice API for working with trees, and allows converting the `Tree`\nto a `Zipper` - making traversals easier.\n",
+                "type": "RadixTree.RadixTree a -> Tree.Tree (List.List a)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "UnorderedRadixTree",
+        "comment": " Build an unordered Radix tree.\n\n\n# Structure\n\n@docs UnorderedRadixTree, toTree\n\n\n# Build\n\n@docs empty, singleton, insert\n\n",
+        "unions": [
+            {
+                "name": "UnorderedRadixTree",
+                "comment": " Represents an ordered Radix tree.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "empty",
+                "comment": " Create an empty Radix tree.\n\n    import Tree\n\n    UnorderedRadixTree.empty\n        |> UnorderedRadixTree.toTree\n        |> Tree.label --> []\n\n",
+                "type": "UnorderedRadixTree.UnorderedRadixTree a"
+            },
+            {
+                "name": "insert",
+                "comment": " An Un-ordered insert of a value to the Radix tree.\n\n    import Tree\n\n    UnorderedRadixTree.singleton [1, 2, 3]\n        |> UnorderedRadixTree.insert [2, 1, 4]\n        -- At this point both \"1\" and \"2\" are in both lists. This means that\n        -- when converting to tree both \"1\" and \"2\" will in the root. The root\n        -- will have two children: \"3\" and \"4\".\n        |> UnorderedRadixTree.toTree\n        -- The name might be a bit confusing, but `Tree.label` gets us the values\n        -- of the current node of the tree. In our case the value is a list of Int.\n        |> Tree.label --> [2, 1]\n\n",
+                "type": "List.List a -> UnorderedRadixTree.UnorderedRadixTree a -> UnorderedRadixTree.UnorderedRadixTree a"
+            },
+            {
+                "name": "singleton",
+                "comment": " Create an Radix tree with a single value.\n\n    import Tree\n\n    UnorderedRadixTree.singleton [1, 2, 3]\n        |> UnorderedRadixTree.toTree\n        |> Tree.label --> [1, 2, 3]\n\n",
+                "type": "List.List a -> UnorderedRadixTree.UnorderedRadixTree a"
+            },
+            {
+                "name": "toTree",
+                "comment": " Extract the `Tree` from the `RadixTree`. The Tree is from the package [Tree](https://package.elm-lang.org/packages/zwilias/elm-rosetree/latest/Tree)\nthat has a very nice API for working with trees, and allows converting the `Tree`\nto a `Zipper` - making traversals easier.\n",
+                "type": "UnorderedRadixTree.UnorderedRadixTree a -> Tree.Tree (List.List a)"
+            }
+        ],
+        "binops": []
+    }
+]

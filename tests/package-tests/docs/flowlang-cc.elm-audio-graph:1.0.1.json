@@ -1,0 +1,538 @@
+[
+    {
+        "name": "AudioGraph",
+        "comment": " The AudioGraph module provides methods to construct detailed, type safe, web\naudio processing graphs in Elm. You can then use the [AudioGraph.Encode](/Encode)\nmodule to serialise these graphs into JSON for proper reconstruction in javascript.\n\n\n# Definition\n\n@docs AudioGraph, createAudioGraph\n\n\n## AudioGraph Manipulations\n\n@docs setNode, getNode, removeNode, addConnection, removeConnection\n\n\n# Audio Nodes\n\n@docs AudioNode\n\n@docs NodeID, NodeType, AudioParam, NodeProperty, NodeInput\n\n\n## Audio Node Constructors\n\n@docs createAnalyserNode\n@docs createAudioBufferSourceNode\n@docs createAudioDestinationNode\n@docs createBiquadFilterNode\n@docs createChannelMergerNode\n@docs createChannelSplitterNode\n@docs createConstantSourceNode\n@docs createConvolverNode\n@docs createDelayNode\n@docs createDynamicsCompressorNode\n@docs createGainNode\n@docs createIIRFilterNode\n@docs createOscillatorNode\n@docs createPannerNode\n@docs createStereoPannerNode\n@docs createWaveShaperNode\n\n\n## AudioNode Manipulations\n\n@docs updateParam, updateProperty\n\n\n## Connecting AudioNodes\n\n@docs Connection, connect\n\n",
+        "unions": [
+            {
+                "name": "AudioGraph",
+                "comment": " The AudioGraph keeps track of all active audio nodes and their connections.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "AudioGraph",
+                        [
+                            "{ nodes : Dict.Dict AudioGraph.NodeID AudioGraph.AudioNode, connections : List.List AudioGraph.Connection }"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "AudioNode",
+                "comment": " AudioNodes are the central focus of an [AudioGraph](#AudioGraph). They represent\nany arbitrary audio processing node in a graph and can have any number of inputs,\noutputs, parameters, and properties.\n\n  - NodeType specifies the type of AudioNode. Each type is a 1:1 name\n    mapping of its Web Audio counterpart, so you can always refer to the Web Audio\n    documentation for more details.\n  - Params is a list of audio-rate parameters that the AudioNode exposes. These can\n    be modulated by other AudioNodes. See [AudioParam](#AudioParam) for more information.\n  - Properties lists an **non**-audio-rate properties of the AudioNode. These include\n    properties like oscillator waveform type or filter type. Typically these are set\n    once when the node is created. Other AudioNodes _cannot_ connect to a NodeProperty.\n  - Inputs is a list of all the points another AudioNode can connect to this node. These\n    can either be `InputChannel`s that are numbered from 0, or `InputParam`s that expose\n    the node's params for connection. See [NodeInput](#NodeInput) for more details.\n  - NumOutputs is an integer stating the number of audio outputs the node has. **Note**:\n    the Web Audio API treats input/output count and channel count seperately. A node may\n    only have one output but may still be stereo.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "AudioNode",
+                        [
+                            "{ nodeType : AudioGraph.NodeType, params : List.List AudioGraph.AudioParam, properties : List.List AudioGraph.NodeProperty, inputs : List.List AudioGraph.NodeInput, numOutputs : Basics.Int }"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "AudioParam",
+                "comment": " The AudioParam type represents a Web Audio [audio param](https://developer.mozilla.org/en-US/docs/Web/API/AudioParam).\nThe follow description is abridged from the Web Audio API docs:\n\n> The Web Audio API's AudioParam interface represents an audio-related parameter,\n> usually a parameter of an AudioNode (such as GainNode.gain)\n>\n> There are two kinds of AudioParam, a-rate and k-rate parameters:\n>\n>   - An a-rate AudioParam takes the current audio parameter value for each sample frame of the audio signal.\n>   - A k-rate AudioParam uses the same initial audio parameter value for the whole block processed, that is 128 sample frames.\n\nThe distinction between a-rate and k-rate is useful to know when processing audio,\nbut does not impact how params are used. All `AudioParam`s can be modulated by\n`AudioNode`s.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "AudioParam",
+                        [
+                            "{ label : String.String, value : AudioGraph.Units.Value }"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "NodeInput",
+                "comment": " Every [AudioNode](#AudioNode) can have some number of inputs, and these inputs\ncan correspond to a direct audio input channel on the node, or an [AudioParam](#AudioParam).\n\n  - InputChannel represents the channel number of an audio input for the node. These\n    are zero-indexed.\n  - InputParam represents the `label` of the parameter to connect to.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "InputChannel",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "InputParam",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "NodeProperty",
+                "comment": " A NodeProperty is used in much the same way as an [AudioParam](#AudioParam).\nThe key distinction is that NodeProperties **cannot** be modulated by other `AudioNodes`.\n\nWhile their values can be updated programmatically, they cannot be continuously\nmodulated by an audio signal.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NodeProperty",
+                        [
+                            "{ label : String.String, value : AudioGraph.Units.Value }"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "NodeType",
+                "comment": " Describes what type of node an AudioNode represents. These are 1:1 mappings\nof the audio nodes detailed in the Web Audio API so refer [here](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API)\nfor more information on each node.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "AnalyserNode",
+                        []
+                    ],
+                    [
+                        "AudioBufferSourceNode",
+                        []
+                    ],
+                    [
+                        "AudioDestinationNode",
+                        []
+                    ],
+                    [
+                        "BiquadFilterNode",
+                        []
+                    ],
+                    [
+                        "ChannelMergerNode",
+                        []
+                    ],
+                    [
+                        "ChannelSplitterNode",
+                        []
+                    ],
+                    [
+                        "ConstantSourceNode",
+                        []
+                    ],
+                    [
+                        "ConvolverNode",
+                        []
+                    ],
+                    [
+                        "DelayNode",
+                        []
+                    ],
+                    [
+                        "DynamicsCompressorNode",
+                        []
+                    ],
+                    [
+                        "GainNode",
+                        []
+                    ],
+                    [
+                        "IIRFilterNode",
+                        []
+                    ],
+                    [
+                        "OscillatorNode",
+                        []
+                    ],
+                    [
+                        "PannerNode",
+                        []
+                    ],
+                    [
+                        "StereoPannerNode",
+                        []
+                    ],
+                    [
+                        "WaveShaperNode",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Connection",
+                "comment": " A Connection describes how one AudioNode connects to another. A connection can\nexist in two forms: either a node can connect directly to another node's audio input,\nor a node can connect to another node's params. The type of connection is detailed\nby the inputDestination field.\n\nSee the [NodeInput](#NodeInput) definition for more information.\n\n    -- Connect the output of \"oscA\" to the first input\n    -- of \"gain\".\n    connect \"oscA\" 0 \"gain\" (InputChannel 0)\n\n    -- Connect the output of \"oscB\" to the frequency param\n    -- of \"oscA\" to perform frequency modulation.\n    connect \"oscB\" 0 \"oscA\" (InputParam \"frequency\")\n\n",
+                "args": [],
+                "type": "{ outputNode : AudioGraph.NodeID, outputChannel : Basics.Int, inputNode : AudioGraph.NodeID, inputDestination : AudioGraph.NodeInput }"
+            },
+            {
+                "name": "NodeID",
+                "comment": " A simple type alias for more expressive type annotations. NodeIDs are used\nas keys in the AudioGraph nodes dictionary.\n",
+                "args": [],
+                "type": "String.String"
+            }
+        ],
+        "values": [
+            {
+                "name": "addConnection",
+                "comment": " Adds a new connection for the graph to track. There is a guard to prevent\nduplicate connections being added.\n",
+                "type": "AudioGraph.Connection -> AudioGraph.AudioGraph -> AudioGraph.AudioGraph"
+            },
+            {
+                "name": "connect",
+                "comment": " A simple helper function to create a [Connection](#Connection). This is the\npreferred way to construct Connections to avoid breaking API changes if the\nConncection type alias changes.\n",
+                "type": "AudioGraph.NodeID -> Basics.Int -> AudioGraph.NodeID -> AudioGraph.NodeInput -> AudioGraph.Connection"
+            },
+            {
+                "name": "createAnalyserNode",
+                "comment": " Creates an [AnalyserNode](https://developer.mozilla.org/en-US/docs/Web/API/AnalyserNode).\n\n    AudioNode\n        { nodeType = AnalyserNode\n        , params = []\n        , properties =\n            [ NodeProperty { label = \"fftSize\", value = FFT_Size 2048 }\n            , NodeProperty { label = \"minDecibels\", value = Decibels -100 }\n            , NodeProperty { label = \"maxDecibels\", value = Decibels -30 }\n            , NodeProperty { label = \"smoothingTimeConstant\", value = Number 0.8 }\n            ]\n        , inputs =\n            [ InputChannel 0\n            ]\n        , numOutputs = 1\n        }\n\n",
+                "type": "AudioGraph.AudioNode"
+            },
+            {
+                "name": "createAudioBufferSourceNode",
+                "comment": " Creates an [AudioBufferSourceNode](https://developer.mozilla.org/en-US/docs/Web/API/AudioBufferSourceNode).\n\n    AudioNode\n        { nodeType = AudioBufferSourceNode\n        , params =\n            [ AudioParam { label = \"detune\", value = Cents 0 }\n            , AudioParam { label = \"playbackRate\", value = Number 1.0 }\n            ]\n        , properties =\n            [ NodeProperty { label = \"buffer\", value = Buffer [] }\n            , NodeProperty { label = \"loop\", value = Attribute False }\n            , NodeProperty { label = \"loopStart\", value = Number 0 }\n            , NodeProperty { label = \"loopEnd\", value = Number 0 }\n            ]\n        , inputs =\n            [ InputParam \"detune\"\n            , InputParam \"playerbackRate\"\n            ]\n        , numOutputs = 1\n        }\n\n",
+                "type": "AudioGraph.AudioNode"
+            },
+            {
+                "name": "createAudioDestinationNode",
+                "comment": " Creates an [AudioDestinationNode](https://developer.mozilla.org/en-US/docs/Web/API/AudioDestinationNode).\n\n    AudioNode\n        { nodeType = AudioDestinationNode\n        , params = []\n        , properties = []\n        , inputs =\n            [ InputChannel 0\n            ]\n        , numOutputs = 0\n        }\n\n",
+                "type": "AudioGraph.AudioNode"
+            },
+            {
+                "name": "createAudioGraph",
+                "comment": " The primary method of creating a new [AudioGraph](#AudioGraph). It is empty\nexcept for the default destination node stored under \"\\_\\_destination\" NodeID. This\ntypically represents the speaker output of your device.\n\nSee [createAudioDestinationNote](#createAudioDestinationNode) for more information.\n\n",
+                "type": "AudioGraph.AudioGraph"
+            },
+            {
+                "name": "createBiquadFilterNode",
+                "comment": " Creates a [BiquadFilterNode](https://developer.mozilla.org/en-US/docs/Web/API/BiquadFilterNode).\n\n    AudioNode\n        { nodeType = BiquadFilterNode\n        , params =\n            [ AudioParam { label = \"frequency\", value = Hertz 350 }\n            , AudioParam { label = \"detune\", value = Cents 0 }\n            , AudioParam { label = \"Q\", value = Number 1.0 }\n            ]\n        , properties =\n            [ NodeProperty { label = \"type\", value = FilterType Lowpass }\n            ]\n        , inputs =\n            [ InputParam \"frequency\"\n            , InputParam \"detune\"\n            , InputParam \"Q\"\n            ]\n        , numOutputs = 1\n        }\n\n",
+                "type": "AudioGraph.AudioNode"
+            },
+            {
+                "name": "createChannelMergerNode",
+                "comment": " Creates a [ChannelMergerNode](https://developer.mozilla.org/en-US/docs/Web/API/ChannelMergerNode).\n\n    AudioNode\n        { nodeType = ChannelMergerNode\n        , params = []\n        , properties = []\n        , inputs =\n            [ InputChannel 0\n            , InputChannel 1\n            , InputChannel 2\n            , InputChannel 3\n            , InputChannel 4\n            , InputChannel 5\n            ]\n        , numOutputs = 1\n        }\n\n",
+                "type": "AudioGraph.AudioNode"
+            },
+            {
+                "name": "createChannelSplitterNode",
+                "comment": " Creates a [ChannelSplitterNode](https://developer.mozilla.org/en-US/docs/Web/API/ChannelSplitterNode).\n\n    AudioNode\n        { nodeType = ChannelSplitterNode\n        , params = []\n        , properties = []\n        , inputs =\n            [ InputChannel 0\n            ]\n        , numOutputs = 6\n        }\n\n",
+                "type": "AudioGraph.AudioNode"
+            },
+            {
+                "name": "createConstantSourceNode",
+                "comment": " Creates a [ConstantSourceNode](https://developer.mozilla.org/en-US/docs/Web/API/ConstantSourceNode).\n\n    AudioNode\n        { nodeType = ConstantSourceNode\n        , params =\n            [ AudioParam { label = \"offset\", value = Number 1.0 }\n            ]\n        , properties = []\n        , inputs =\n            [ InputParam \"offset\"\n            ]\n        , numOutputs = 1\n        }\n\n",
+                "type": "AudioGraph.AudioNode"
+            },
+            {
+                "name": "createConvolverNode",
+                "comment": " Creates a [ConvolverNode](https://developer.mozilla.org/en-US/docs/Web/API/ConvolverNode).\n\n    AudioNode\n        { nodeType = ConvolverNode\n        , params = []\n        , properties =\n            [ NodeProperty { label = \"buffer\", value = Buffer [] }\n            , NodeProperty { label = \"normalize\", value = Attribute False }\n            ]\n        , inputs =\n            [ InputChannel 0\n            ]\n        , numOutputs = 1\n        }\n\n",
+                "type": "AudioGraph.AudioNode"
+            },
+            {
+                "name": "createDelayNode",
+                "comment": " Creates a [DelayNode](https://developer.mozilla.org/en-US/docs/Web/API/DelayNode).\n\n    AudioNode\n        { nodeType = DelayNode\n        , params =\n            [ AudioParam { label = \"delayTime\", value = Number 0 }\n            ]\n        , properties =\n            [ NodeProperty { label = \"maxDelayTime\", value = Number 1.0 }\n            ]\n        , inputs =\n            [ InputChannel 0\n            , InputParam \"delayTime\"\n            ]\n        , numOutputs = 1\n        }\n\n",
+                "type": "AudioGraph.AudioNode"
+            },
+            {
+                "name": "createDynamicsCompressorNode",
+                "comment": " Creates a [DynamicsCompressorNode](https://developer.mozilla.org/en-US/docs/Web/API/DynamicsCompressorNode).\n\n    AudioNode\n        { nodeType = DynamicsCompressorNode\n        , params =\n            [ AudioParam { label = \"threshold\", value = Decibels -24 }\n            , AudioParam { label = \"knee\", value = Decibels 30 }\n            , AudioParam { label = \"ratio\", value = Number 12 }\n            , AudioParam { label = \"attack\", value = Number 0.003 }\n            , AudioParam { label = \"release\", value = Number 0.25 }\n            ]\n        , properties = []\n        , inputs =\n            [ InputChannel 0\n            , InputParam \"threshold\"\n            , InputParam \"knee\"\n            , InputParam \"ratio\"\n            , InputParam \"attack\"\n            , InputParam \"release\"\n            ]\n        , numOutputs = 1\n        }\n\n",
+                "type": "AudioGraph.AudioNode"
+            },
+            {
+                "name": "createGainNode",
+                "comment": " Creates a [GainNode](https://developer.mozilla.org/en-US/docs/Web/API/GainNode).\n\n    AudioNode\n        { nodeType = GainNode\n        , params =\n            [ AudioParam { label = \"gain\", value = Number 1.0 }\n            ]\n        , properties = []\n        , inputs =\n            [ InputChannel 0\n            , InputParam \"gain\"\n            ]\n        , numOutputs = 1\n        }\n\n",
+                "type": "AudioGraph.AudioNode"
+            },
+            {
+                "name": "createIIRFilterNode",
+                "comment": " Creates an [IIRFilterNode](https://developer.mozilla.org/en-US/docs/Web/API/IIRFilterNode).\n\n    AudioNode\n        { nodeType = IIRFilterNode\n        , params =\n            [ AudioParam { label = \"feedforward\", value = Coefficients [] }\n            , AudioParam { label = \"feedbackward\", value = Coefficients [] }\n            ]\n        , properties = []\n        , inputs =\n            [ InputChannel 0\n            , InputParam \"feedforward\"\n            , InputParam \"feedbackward\"\n            ]\n        , numOutputs = 1\n        }\n\n",
+                "type": "AudioGraph.AudioNode"
+            },
+            {
+                "name": "createOscillatorNode",
+                "comment": " Creates an [OscillatorNode](https://developer.mozilla.org/en-US/docs/Web/API/OscillatorNode).\n\n    AudioNode\n        { nodeType = OscillatorNode\n        , params =\n            [ AudioParam { label = \"frequency\", value = Hertz 350 }\n            , AudioParam { label = \"detune\", value = Cents 0 }\n            ]\n        , properties =\n            [ NodeProperty { label = \"type\", value = WaveformType Sine }\n            ]\n        , inputs =\n            [ InputParam \"frequency\"\n            , InputParam \"detune\"\n            ]\n        , numOutputs = 1\n        }\n\n",
+                "type": "AudioGraph.AudioNode"
+            },
+            {
+                "name": "createPannerNode",
+                "comment": " Creates a [PannerNode](https://developer.mozilla.org/en-US/docs/Web/API/PannerNode).\n\n    AudioNode\n        { nodeType = PannerNode\n        , params =\n            [ AudioParam { label = \"orientationX\", value = Number 1 }\n            , AudioParam { label = \"orientationY\", value = Number 0 }\n            , AudioParam { label = \"orientationZ\", value = Number 0 }\n            , AudioParam { label = \"positionX\", value = Number 0 }\n            , AudioParam { label = \"positionY\", value = Number 0 }\n            , AudioParam { label = \"positionZ\", value = Number 0 }\n            ]\n        , properties =\n            [ NodeProperty { label = \"coneInnerAngle\", value = Number 360 }\n            , NodeProperty { label = \"coneOuterAngle\", value = Number 0 }\n            , NodeProperty { label = \"coneOuterGain\", value = Number 0 }\n            , NodeProperty { label = \"distanceModel\", value = DistanceModelType Inverse }\n            , NodeProperty { label = \"maxDistance\", value = Number 10000 }\n            , NodeProperty { label = \"panningModel\", value = PanningModelType EqualPower }\n            , NodeProperty { label = \"refDistance\", value = Number 1 }\n            , NodeProperty { label = \"rolloffFactor\", value = Number 1 }\n            ]\n        , inputs =\n            [ InputChannel 0\n            , InputParam \"orientationX\"\n            , InputParam \"orientationY\"\n            , InputParam \"orientationZ\"\n            , InputParam \"positionX\"\n            , InputParam \"positionY\"\n            , InputParam \"positionZ\"\n            ]\n        , numOutputs = 1\n        }\n\n",
+                "type": "AudioGraph.AudioNode"
+            },
+            {
+                "name": "createStereoPannerNode",
+                "comment": " Creates a [StereoPannerNode](https://developer.mozilla.org/en-US/docs/Web/API/StereoPannerNode).\n\n    AudioNode\n        { nodeType = StereoPannerNode\n        , params =\n            [ AudioParam { label = \"pan\", value = Number 0 }\n            ]\n        , properties = []\n        , inputs =\n            [ InputChannel 0\n            , InputParam \"pan\"\n            ]\n        , numOutputs = 1\n        }\n\n",
+                "type": "AudioGraph.AudioNode"
+            },
+            {
+                "name": "createWaveShaperNode",
+                "comment": " Creates a [WaveShaperNode](https://developer.mozilla.org/en-US/docs/Web/API/WaveShaperNode).\n\n    AudioNode\n        { nodeType = WaveShaperNode\n        , params = []\n        , properties =\n            [ NodeProperty { label = \"curve\", value = WaveshaperCurve [] }\n            , NodeProperty { label = \"oversample\", value = OversampleType None }\n            ]\n        , inputs =\n            [ InputChannel 0\n            ]\n        , numOutputs = 1\n        }\n\n",
+                "type": "AudioGraph.AudioNode"
+            },
+            {
+                "name": "getNode",
+                "comment": " Queries the graph for the [AudioNode](#AudioNode) at the supplied id string.\nCan return `Just AudioNode` or `Nothing` if no node exists at that id.\n",
+                "type": "AudioGraph.NodeID -> AudioGraph.AudioGraph -> Maybe.Maybe AudioGraph.AudioNode"
+            },
+            {
+                "name": "removeConnection",
+                "comment": " Removes the supplied connection from the graph. If the connection doesn't exist\nthis is a no-op.\n",
+                "type": "AudioGraph.Connection -> AudioGraph.AudioGraph -> AudioGraph.AudioGraph"
+            },
+            {
+                "name": "removeNode",
+                "comment": " Removes the [AudioNode](#AudioNode) at the supplied id string from the graph.\nThis is a no-op if no node exists at that id.\n",
+                "type": "AudioGraph.NodeID -> AudioGraph.AudioGraph -> AudioGraph.AudioGraph"
+            },
+            {
+                "name": "setNode",
+                "comment": " Inserts a new [AudioNode](#AudioNode) into the graph with the supplied id string.\nIf a node already exists at the supplied id, the current node is replaced with the\nnew one.\n",
+                "type": "AudioGraph.NodeID -> AudioGraph.AudioNode -> AudioGraph.AudioGraph -> AudioGraph.AudioGraph"
+            },
+            {
+                "name": "updateParam",
+                "comment": " Update the [Value](AudioGraph.Units#Value) stored in an [AudioParam](#AudioParam).\n\nNote: If an [AudioNode](#AudioNode) is connected to this param, `updateParam` will\nhave no effect.\n\n",
+                "type": "String.String -> AudioGraph.Units.Value -> AudioGraph.AudioNode -> AudioGraph.AudioNode"
+            },
+            {
+                "name": "updateProperty",
+                "comment": " Update the [Value](/AudioGraph.Units#Value) stored in a [NodeProperty](#NodeProperty).\n",
+                "type": "String.String -> AudioGraph.Units.Value -> AudioGraph.AudioNode -> AudioGraph.AudioNode"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "AudioGraph.Encode",
+        "comment": " This module exposes the functionality to encode a constructed [AudioGraph](/AudioGraph#AudioGraph)\ninto JSON. This is necessary because this package doesn't produce sound itself!\nInstead, typically you will send the serialised graph out through a port and have\nsome javascript construct a real Web Audio graph using that data.\n\n@docs encodeGraph, encodeNode\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "encodeGraph",
+                "comment": " Encode the entire [AudioGraph](/AudioGraph#AudioGraph) into JSON. This\nis the primary way you will transmit the graph to the outside world.\n",
+                "type": "AudioGraph.AudioGraph -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeNode",
+                "comment": " This encodes a single [AudioNode](/AudioGraph#AudioNode) into JSON. You typically\nwon't need to use this function directly, instead passing a complete graph to [encodeGraph](#encodeGraph)\nhowever it may be useful in some fringe cases.\n",
+                "type": "AudioGraph.AudioNode -> Json.Encode.Value"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "AudioGraph.Units",
+        "comment": " The value of an [AudioParam](/AudioGraph#AudioParam) or [NodeProperty](/AudioGraph#NodeProperty)\nis highly context relevant. Something that is expecting frequency in hertz may produce\nvery unexpected output if it receives a decibal value, even though they both represent\n`Floats`. To encode this context the [Value](#Value) union type defines all the\npossible contexts for primative types to exist in.\n\n@docs Value\n\n\n## Union Types\n\nSome values, such as `WaveformType` are better expressed as their own union type,\nrather than arbitrary string values.\n\n@docs DistanceModel, Filter, Oversample, PanningModel, Waveform\n\n",
+        "unions": [
+            {
+                "name": "DistanceModel",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Linear",
+                        []
+                    ],
+                    [
+                        "Inverse",
+                        []
+                    ],
+                    [
+                        "Exponential",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Filter",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Lowpass",
+                        []
+                    ],
+                    [
+                        "Highpass",
+                        []
+                    ],
+                    [
+                        "Bandpass",
+                        []
+                    ],
+                    [
+                        "Lowshelf",
+                        []
+                    ],
+                    [
+                        "Highshelf",
+                        []
+                    ],
+                    [
+                        "Peaking",
+                        []
+                    ],
+                    [
+                        "Notch",
+                        []
+                    ],
+                    [
+                        "Allpass",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Oversample",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "None",
+                        []
+                    ],
+                    [
+                        "TwoX",
+                        []
+                    ],
+                    [
+                        "FourX",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "PanningModel",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "EqualPower",
+                        []
+                    ],
+                    [
+                        "HRTF",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Value",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Attribute",
+                        [
+                            "Basics.Bool"
+                        ]
+                    ],
+                    [
+                        "Buffer",
+                        [
+                            "List.List Basics.Float"
+                        ]
+                    ],
+                    [
+                        "Coefficients",
+                        [
+                            "List.List Basics.Float"
+                        ]
+                    ],
+                    [
+                        "Cents",
+                        [
+                            "Basics.Float"
+                        ]
+                    ],
+                    [
+                        "Decibels",
+                        [
+                            "Basics.Float"
+                        ]
+                    ],
+                    [
+                        "DistanceModelType",
+                        [
+                            "AudioGraph.Units.DistanceModel"
+                        ]
+                    ],
+                    [
+                        "FilterType",
+                        [
+                            "AudioGraph.Units.Filter"
+                        ]
+                    ],
+                    [
+                        "FFT_Size",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "Hertz",
+                        [
+                            "Basics.Float"
+                        ]
+                    ],
+                    [
+                        "MIDI_Note",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "MIDI_CC",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "OversampleType",
+                        [
+                            "AudioGraph.Units.Oversample"
+                        ]
+                    ],
+                    [
+                        "PanningModelType",
+                        [
+                            "AudioGraph.Units.PanningModel"
+                        ]
+                    ],
+                    [
+                        "WaveformType",
+                        [
+                            "AudioGraph.Units.Waveform"
+                        ]
+                    ],
+                    [
+                        "WaveshaperCurve",
+                        [
+                            "List.List Basics.Float"
+                        ]
+                    ],
+                    [
+                        "Number",
+                        [
+                            "Basics.Float"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Waveform",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Sine",
+                        []
+                    ],
+                    [
+                        "Triangle",
+                        []
+                    ],
+                    [
+                        "Sawtooth",
+                        []
+                    ],
+                    [
+                        "Square",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [],
+        "binops": []
+    }
+]

@@ -1,0 +1,16 @@
+[
+    {
+        "name": "ScrollSnap",
+        "comment": " Scrollable containers with snapping\n\nThis library is based on elm-css and accepts `Html.Styled.Html` items.\nIf you are not using elm-css, use `Html.Styled.fromUnstyled` and `Html.Styled.toUnstyled` to convert the items and the resulting container.\n\n![Demo](https://github.com/cedricss/elm-scroll-snap/raw/main/img/horizontal.gif)\n\n@docs horizontal\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "horizontal",
+                "comment": " Create a container with horizontal scrolling. The most visible item is centered horizontally.\n\n    div\n        [ css\n            [ border3 (px 1) solid (hex \"eee\")\n            , width (px 500)\n            ]\n        ]\n        [ ScrollSnap.horizontal\n            { itemWidth = px 280 }\n            [ item1, item2, item3, item4, item5 ]\n        ]\n\n",
+                "type": "{ id : String.String, itemWidth : { compatible | value : String.String, lengthOrMinMaxDimension : Css.Compatible, lengthOrAuto : Css.Compatible } } -> List.List (Html.Styled.Html msg) -> Html.Styled.Html msg"
+            }
+        ],
+        "binops": []
+    }
+]

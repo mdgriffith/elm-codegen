@@ -1,0 +1,41 @@
+[
+    {
+        "name": "Mod11",
+        "comment": "\n\n\n# Problems\n\n@docs Error\n\n\n# Validating\n\n@docs hasValidCheckDigit\n\n\n# Constructing\n\n@docs calculateCheckDigit\n\n",
+        "unions": [
+            {
+                "name": "Error",
+                "comment": " The Modulus 11 algorithm works on sequences of digits, but since boths lists and integers\ncan represent values that are invalid in this context there are some cases that will result in\nerrors.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NumbersOutOfRange",
+                        []
+                    ],
+                    [
+                        "EmptySequence",
+                        []
+                    ],
+                    [
+                        "InvalidMod11Number",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "calculateCheckDigit",
+                "comment": " Calculate the \"check digit\" for a given sequence of digits.\n\n    calculateCheckDigit [ 1, 2, 3 ] == Ok 6\n\n    calculateCheckDigit [ 1, 2, 30 ] == Err NumbersOutOfRange\n\n",
+                "type": "List.List Basics.Int -> Result.Result Mod11.Error Basics.Int"
+            },
+            {
+                "name": "hasValidCheckDigit",
+                "comment": " Check if the last digit in a sequence of digits is a valid check\ndigit for the sequence according to the Modulus 11 algorithm.\n\n    hasValidCheckDigit [3, 2, 4, 5, 5, 8] == Ok True\n\n    hasValidCheckDigit [ -2, 3 4 ] == Err NumbersOutOfRange\n\n    hasValidCheckDigit [] == Err EmptySequence\n\n    hasValidCheckDigit [0, 0, 0] = Err InvalidMod11Number\n\n",
+                "type": "List.List Basics.Int -> Result.Result Mod11.Error Basics.Bool"
+            }
+        ],
+        "binops": []
+    }
+]

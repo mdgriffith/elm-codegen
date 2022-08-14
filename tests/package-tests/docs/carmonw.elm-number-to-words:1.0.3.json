@@ -1,0 +1,31 @@
+[
+    {
+        "name": "NumberToWords",
+        "comment": " This package converts numbers to its written form.\n\n\n# Int to String\n\n@docs intToWords\n\n\n# Float to String\n\n@docs roundToWords, floorToWords, ceilingToWords\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "ceilingToWords",
+                "comment": " Convert a `Float` to its written form after rounding it up.\n\n    import NumberToWords\n\n    NumberToWords.ceilingToWords 1255.20\n    --> \"one thousand, two hundred fifty-six\"\n\n    NumberToWords.ceilingToWords 1232551.20\n    --> \"one million, two hundred thirty-two thousand, five hundred fifty-two\"\n\n",
+                "type": "Basics.Float -> String.String"
+            },
+            {
+                "name": "floorToWords",
+                "comment": " Convert a `Float` to its written form after rounding it down.\n\n    import NumberToWords\n\n    NumberToWords.floorToWords 1255.20\n    --> \"one thousand, two hundred fifty-five\"\n\n    NumberToWords.floorToWords 1232551.20\n    --> \"one million, two hundred thirty-two thousand, five hundred fifty-one\"\n\n",
+                "type": "Basics.Float -> String.String"
+            },
+            {
+                "name": "intToWords",
+                "comment": " Convert an `Int` to its written form.\n\n    import NumberToWords\n\n    NumberToWords.intToWords 1255\n    --> \"one thousand, two hundred fifty-five\"\n\n    NumberToWords.intToWords 1232551\n    --> \"one million, two hundred thirty-two thousand, five hundred fifty-one\"\n\n",
+                "type": "Basics.Int -> String.String"
+            },
+            {
+                "name": "roundToWords",
+                "comment": " Convert a `Float` to its written form after rounding it to the nearest integer.\n\n    import NumberToWords\n\n    NumberToWords.roundToWords 1255.20\n    --> \"one thousand, two hundred fifty-five\"\n\n    NumberToWords.roundToWords 1232551.50\n    --> \"one million, two hundred thirty-two thousand, five hundred fifty-two\"\n\n",
+                "type": "Basics.Float -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

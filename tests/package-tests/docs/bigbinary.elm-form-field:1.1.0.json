@@ -1,0 +1,126 @@
+[
+    {
+        "name": "Field",
+        "comment": " A `Field` is a simple data type that helps capture and validate form data better.\nThe left side of a field represents a function that takes in a value of arbitrary type,\nvalidates it and returns a `ValidationResult`.\nThe `ValidationResult` can contain the value of the field if the validation `Passed`, or\nan error if the validation `Failed`\n\n\n# Definition\n\n@docs Field\n\n\n# Helpers\n\n@docs value, update, validate, validateAll, isValid, isAllValid, addValidation\n\n\n# Mapping\n\n@docs map\n\n",
+        "unions": [
+            {
+                "name": "Field",
+                "comment": " Type that helps capture and validate form data better\n",
+                "args": [
+                    "e",
+                    "v"
+                ],
+                "cases": [
+                    [
+                        "Field",
+                        [
+                            "v -> Field.ValidationResult.ValidationResult e v",
+                            "v"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "addValidation",
+                "comment": " Add Additional validations to a Field\n",
+                "type": "(v -> Field.ValidationResult.ValidationResult e v) -> Field.Field e v -> Field.Field e v"
+            },
+            {
+                "name": "isAllValid",
+                "comment": " Check if all Fields in the list are valid\n",
+                "type": "List.List (Field.Field e v) -> Basics.Bool"
+            },
+            {
+                "name": "isValid",
+                "comment": " Check if a Field is valid\n",
+                "type": "Field.Field e v -> Basics.Bool"
+            },
+            {
+                "name": "map",
+                "comment": " Map over the right side or the value of a Field\n",
+                "type": "(v -> v) -> Field.Field e v -> Field.Field e v"
+            },
+            {
+                "name": "update",
+                "comment": " Update the value of a Field\n",
+                "type": "Field.Field e v -> v -> Field.Field e v"
+            },
+            {
+                "name": "validate",
+                "comment": " Validate a Field and get a `ValidationResult`\n",
+                "type": "Field.Field e v -> Field.ValidationResult.ValidationResult e v"
+            },
+            {
+                "name": "validateAll",
+                "comment": " Validate a List of Fields and get a List of `ValidationResult`\n",
+                "type": "List.List (Field.Field e v) -> List.List (Field.ValidationResult.ValidationResult e v)"
+            },
+            {
+                "name": "value",
+                "comment": " Extract the value out of a Field\n",
+                "type": "Field.Field e v -> v"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Field.ValidationResult",
+        "comment": "\n\n\n# Definition\n\n@docs ValidationResult\n\n\n# Mapping\n\n@docs map, contraMap\n\n\n# Chaining\n\n@docs andThen\n\n\n# Helpers\n\n@docs filterFailures, filterPassed\n\n",
+        "unions": [
+            {
+                "name": "ValidationResult",
+                "comment": " A `ValidationResult` describes the state of a `Field` once it has been validated.\nIt can contain the value of the field if the validation `Passed` or\nan error if the validation `Failed`\n",
+                "args": [
+                    "e",
+                    "v"
+                ],
+                "cases": [
+                    [
+                        "Passed",
+                        [
+                            "v"
+                        ]
+                    ],
+                    [
+                        "Failed",
+                        [
+                            "e"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "andThen",
+                "comment": " Chain multiple validation functions\n",
+                "type": "(v -> Field.ValidationResult.ValidationResult e v) -> Field.ValidationResult.ValidationResult e v -> Field.ValidationResult.ValidationResult e v"
+            },
+            {
+                "name": "contraMap",
+                "comment": " Apply a function to a `ValidationResult`. If the `ValidationResult` is `Failed`, it will be converted.\nif the `ValidationResult` has `Passed` then the passed state will propogate\n",
+                "type": "(a -> b) -> Field.ValidationResult.ValidationResult a x -> Field.ValidationResult.ValidationResult b x"
+            },
+            {
+                "name": "filterFailures",
+                "comment": " Get all ValidationResults that Failed\n",
+                "type": "List.List (Field.ValidationResult.ValidationResult e v) -> List.List (Field.ValidationResult.ValidationResult e v)"
+            },
+            {
+                "name": "filterPassed",
+                "comment": " Get all ValidationResults that Passed\n",
+                "type": "List.List (Field.ValidationResult.ValidationResult e v) -> List.List (Field.ValidationResult.ValidationResult e v)"
+            },
+            {
+                "name": "map",
+                "comment": " Apply a function to a `ValidationResult`. If the `ValidationResult` is `Passed`, it will be converted.\nif the `ValidationResult` has `Failed` then the failure will propogate\n",
+                "type": "(a -> b) -> Field.ValidationResult.ValidationResult x a -> Field.ValidationResult.ValidationResult x b"
+            }
+        ],
+        "binops": []
+    }
+]

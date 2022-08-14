@@ -1,0 +1,112 @@
+[
+    {
+        "name": "Example",
+        "comment": " This module is designed to make certain kinds of example easier to understand by ommitting some of the boring details and yet making them attractive.\nYou can get creative with it if you want:\n\n    module MyExample exposing (main)\n\n    import Example as OmittedForBrevity\n\n    view model =\n        case model of\n            Loading ->\n                OmmitedForBrevity.loading\n\n\n# HTTP\n\nIf your example is doing an HTTP request, Elm will force you to handle some states like what to show when the request is in progress and what happens when it fails. However, your example might be about the \"happy path\" and everything else is just noise. Here we provide some helper views to show something nicer than `Html.text \"Loading...\"`, but help keep the focus on what's important.\n\n@docs loading, error\n\n\n# Configurable Views\n\nA common type of example is trying to demonstrate something that happens in a view. Maybe your example is rendering a cool fractal or 3D scene or just a neat way to render a HTML table. Often such functions can be customised by the user with various parameters. The functions here help you with minimal fuss make your view function interactive:\n\n    module MyExample exposing (main)\n\n    import Example\n\n    type alias Model = -- this is your configuration\n        { foo : Int\n        }\n\n\n    view : Model -> Html msg\n    view model =\n        -- do whatever you want here, this your example\n        ...\n\n\n    main : Example.Program Model\n    main =\n        Example.configuration\n            { foo = 3 } -- this is your default or initial model\n            -- here you configure your form\n            [ Example.intSlider \"Foo count\" 0 5 .foo (\\value model -> {model | foo = value})]\n            |> Example.withTitle \"My cool example\" -- you can customize with options\n            |> Example.application view -- Connect it to your view\n\nThis gives you a number of built in behaviors:\n\n  - it will render your view function with the default model\n  - it will render alongside it a form that allows the user to edit the model\n  - it serializes the model into the url as a query string, allowing users to share a particularly configured example\n  - no need to write Msg, update functions or HTML forms\n  - easily enable additional features like animations or custom titles...\n\n@docs application, Program, Configuration, tabbed, configuration\n\n\n## Building forms\n\n@docs Field, intSlider, floatSlider, textField, colorPicker, enumPicker\n\n\n## Customizing the example\n\nThese are options you can apply to a configuration to add a few more bells and whistles to your examples:\n\n@docs withTitle, animatedWith, makeFormOnTop, makeFormOnRight, withCustomCss\n\n",
+        "unions": [
+            {
+                "name": "Configuration",
+                "comment": " All the details needed to make an example app get stored in here.\n",
+                "args": [
+                    "model"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Field",
+                "comment": " ",
+                "args": [
+                    "model"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Program",
+                "comment": " This is a type alias for `Program`, mostly useful for type annotations, as not using the type alias\nexposes too many implementation details of how this module is implemented.\n\nI recommend using it prefixed:\n\n    main : Example.Program Model\n\n",
+                "args": [
+                    "model"
+                ],
+                "type": "Platform.Program () (Example.Model model) (Example.ConfigMsg model)"
+            }
+        ],
+        "values": [
+            {
+                "name": "animatedWith",
+                "comment": " Animate transitions between different model states. To do this, you will need to supply an interpolation function,\nthat takes a starting state, a target state and a parameter that goes betwen 0 and 1.\n\nAlso, you should provide a duration in ms.\n\n",
+                "type": "(model -> model -> Basics.Float -> model) -> Basics.Int -> Example.Configuration model -> Example.Configuration model"
+            },
+            {
+                "name": "application",
+                "comment": " Start an application based on a `view` (this is your example) and a `Configuration`.\n",
+                "type": "(model -> Html.Html (Example.ConfigMsg model)) -> Example.Configuration model -> Example.Program model"
+            },
+            {
+                "name": "colorPicker",
+                "comment": " Modify an Color field in the model (this type comes from avh4/elm-color). Takes a label, a getter, and a setter. Renders as a color picker in the form.\n",
+                "type": "String.String -> (model -> Color.Color) -> (Color.Color -> model -> model) -> Example.Field model"
+            },
+            {
+                "name": "configuration",
+                "comment": " This is the more flexible way of building example configurations. You will need to provide an initial model which is what users will see before they mess with the forms.\n\nThen you need to provide some fields that will show as the form.\n\n",
+                "type": "model -> List.List (Example.Field model) -> Example.Configuration model"
+            },
+            {
+                "name": "enumPicker",
+                "comment": " Pick from a list of values. Takes a label, a list of values and their labels (the labels are what you will see in the UI as well as what will be used in the URL), a getter and a setter.\n",
+                "type": "String.String -> List.List ( String.String, a ) -> (model -> a) -> (a -> model -> model) -> Example.Field model"
+            },
+            {
+                "name": "error",
+                "comment": " Shows a friendly (albeit generic) error message based on the `HTTP.Error` type. Useful for showing when an HTTP request fails.\n\nYou can optionally give it a message. If you do, then certain errror will get a \"Try again?\" button for retrying the request.\n\n",
+                "type": "Maybe.Maybe msg -> Http.Error -> Html.Html msg"
+            },
+            {
+                "name": "floatSlider",
+                "comment": " Modify an float field in the model. Takes a label, min/max bounds on the value, a getter, and a setter. Renders as a slider in the form.\n",
+                "type": "String.String -> { min : Basics.Float, max : Basics.Float } -> (model -> Basics.Float) -> (Basics.Float -> model -> model) -> Example.Field model"
+            },
+            {
+                "name": "intSlider",
+                "comment": " Modify an int field in the model. Takes a label, min/max bounds on the value, a getter, and a setter. Renders as a slider in the form.\n",
+                "type": "String.String -> { min : Basics.Int, max : Basics.Int } -> (model -> Basics.Int) -> (Basics.Int -> model -> model) -> Example.Field model"
+            },
+            {
+                "name": "loading",
+                "comment": " Displays an animated loading spinner indicating an operation is in progress.\n",
+                "type": "List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "makeFormOnRight",
+                "comment": " Tabbed configurations render the form on the top of the view. This will change it to be rendered on the right.\n",
+                "type": "Example.Configuration model -> Example.Configuration model"
+            },
+            {
+                "name": "makeFormOnTop",
+                "comment": " For normal configurations we normally render the form on the right of the view. This will change it to be rendered on top.\n",
+                "type": "Example.Configuration model -> Example.Configuration model"
+            },
+            {
+                "name": "tabbed",
+                "comment": " This is the most simple example app, where you want to switch between a discrete set of pre-made configurations.\n\nYou need to provide a form label, and a list of labels and possible models.\n\n",
+                "type": "String.String -> List.List ( String.String, model ) -> Example.Configuration model"
+            },
+            {
+                "name": "textField",
+                "comment": " Modify an String field in the model). Takes a label, a getter, and a setter. Renders as a text field in the form.\n",
+                "type": "String.String -> (model -> String.String) -> (String.String -> model -> model) -> Example.Field model"
+            },
+            {
+                "name": "withCustomCss",
+                "comment": " Give this a block of CSS as a string and it will take care of adding it to the DOM with a proper tag.\n\nUseful for conveniently adding some flair without needing to mess with `Html`.\n\nAlso note that the elements we add are style-able and have stable classes. Simply look through the generated DOM to find the appropriate class names.\n\n",
+                "type": "String.String -> Example.Configuration model -> Example.Configuration model"
+            },
+            {
+                "name": "withTitle",
+                "comment": " Add a title to your form. Will also set it as the HTML <title> tag.\n",
+                "type": "String.String -> Example.Configuration model -> Example.Configuration model"
+            }
+        ],
+        "binops": []
+    }
+]

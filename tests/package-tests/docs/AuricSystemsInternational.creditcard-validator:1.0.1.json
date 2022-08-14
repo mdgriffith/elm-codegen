@@ -1,0 +1,118 @@
+[
+    {
+        "name": "CreditCardValidator",
+        "comment": " This library allows validation of a creditcard number potentially limiting by accepted card types.\nFor example, if your business only accepts Mastercard and Visa you can limit the valid cards to those types.\n\n\n# Definition\n\n@docs CardType, CardTypeInfo, CreditCardNumber, ValidationResult, Range\n\n\n# Validation\n\n@docs validate\n\n\n# Helpers\n\n@docs mopToCardType, validCardLength, findNumberInBetweenRange, allCardTypes, cardTypeByBinRange, numberInStartsWithRange, cardMatchesRange, filterByCardTypes, toCleanCCNumber\n\n",
+        "unions": [
+            {
+                "name": "CardType",
+                "comment": " Card types supported by this library are: American Express (AM), Discover (DS), Diners Club (DC), Mastercard (MC) and VISA (VI).\n",
+                "args": [],
+                "cases": [
+                    [
+                        "AM",
+                        []
+                    ],
+                    [
+                        "DS",
+                        []
+                    ],
+                    [
+                        "MC",
+                        []
+                    ],
+                    [
+                        "VI",
+                        []
+                    ],
+                    [
+                        "DC",
+                        []
+                    ],
+                    [
+                        "UK",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Range",
+                "comment": " Represents possible ranges for a creditcard number. It can be a string or a range with starting and ending digits\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "CardTypeInfo",
+                "comment": " ",
+                "args": [],
+                "type": "{ name : String.String, cardType : CreditCardValidator.CardType, bins : List.List CreditCardValidator.Range, valid_lengths : List.List Basics.Int }"
+            },
+            {
+                "name": "CreditCardNumber",
+                "comment": " ",
+                "args": [],
+                "type": "String.String"
+            },
+            {
+                "name": "ValidationResult",
+                "comment": " A card number can match multiple card types.\nOverall, a number is valid when it's valid according to [luhn algorithm](https://en.wikipedia.org/wiki/Luhn_algorithm) with valid length and type.\n",
+                "args": [],
+                "type": "{ card_types : List.List (Maybe.Maybe CreditCardValidator.CardTypeInfo), valid : Basics.Bool, luhn_valid : Basics.Bool, length_valid : Basics.Bool, cardTypeValid : Basics.Bool }"
+            }
+        ],
+        "values": [
+            {
+                "name": "allCardTypes",
+                "comment": " List of CardTypeInfo for all supported types\n",
+                "type": "List.List CreditCardValidator.CardTypeInfo"
+            },
+            {
+                "name": "cardMatchesRange",
+                "comment": " ",
+                "type": "CreditCardValidator.CreditCardNumber -> List.List CreditCardValidator.Range -> Basics.Bool"
+            },
+            {
+                "name": "cardTypeByBinRange",
+                "comment": " Find card info whose ranges contain a pattern that the card number matches\n",
+                "type": "CreditCardValidator.CreditCardNumber -> List.List CreditCardValidator.CardTypeInfo -> Maybe.Maybe CreditCardValidator.CardTypeInfo"
+            },
+            {
+                "name": "filterByCardTypes",
+                "comment": " ",
+                "type": "List.List CreditCardValidator.CardTypeInfo -> List.List CreditCardValidator.CardType -> List.List CreditCardValidator.CardTypeInfo"
+            },
+            {
+                "name": "findNumberInBetweenRange",
+                "comment": " ",
+                "type": "CreditCardValidator.CreditCardNumber -> String.String -> String.String -> Basics.Bool"
+            },
+            {
+                "name": "mopToCardType",
+                "comment": " Converts from string MOP (Method of Payment) to CardType\n",
+                "type": "String.String -> CreditCardValidator.CardType"
+            },
+            {
+                "name": "numberInStartsWithRange",
+                "comment": " ",
+                "type": "String.String -> String.String -> Basics.Bool"
+            },
+            {
+                "name": "toCleanCCNumber",
+                "comment": " ",
+                "type": "String.String -> CreditCardValidator.CreditCardNumber"
+            },
+            {
+                "name": "validCardLength",
+                "comment": " Finds whether card length is one of the valid lengths for the type\n",
+                "type": "CreditCardValidator.CardTypeInfo -> CreditCardValidator.CreditCardNumber -> Basics.Bool"
+            },
+            {
+                "name": "validate",
+                "comment": " Find whether a creditcard number is valid. You can limit what card types are eligible for the validation attempt.\n",
+                "type": "String.String -> List.List CreditCardValidator.CardType -> CreditCardValidator.ValidationResult"
+            }
+        ],
+        "binops": []
+    }
+]

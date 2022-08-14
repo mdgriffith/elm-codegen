@@ -1,0 +1,84 @@
+[
+    {
+        "name": "Transit",
+        "comment": " Styled transitions with minimal boilerplate, typically for page transitions in single page apps.\n\nSee README or [example](https://github.com/etaque/elm-transit/blob/master/example/src/Main.elm) for usage.\n\nUses elm-animations and Cmd.tick for animation logic.\n\n\n# State\n\n@docs Transition, WithTransition, empty\n\n\n# Update\n\n@docs Msg, start, tick, subscriptions\n\n\n# View\n\n@docs getValue, getStep, Step\n\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " Transition msg, to be wrapped in your own msg type.\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Step",
+                "comment": " Transition step: Exit -> _send message_ -> Enter -> Done.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Exit",
+                        []
+                    ],
+                    [
+                        "Enter",
+                        []
+                    ],
+                    [
+                        "Done",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Transition",
+                "comment": " Opaque type for transition state storage.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "WithTransition",
+                "comment": " Extended type for the parent model holding the transition.\n",
+                "args": [
+                    "model"
+                ],
+                "type": "{ model | transition : Transit.Transition }"
+            }
+        ],
+        "values": [
+            {
+                "name": "empty",
+                "comment": " Empty transition state, as initial value in the model.\n",
+                "type": "Transit.Transition"
+            },
+            {
+                "name": "getStep",
+                "comment": " Extract current animation step.\n",
+                "type": "Transit.Transition -> Transit.Step"
+            },
+            {
+                "name": "getValue",
+                "comment": " Extract current animation value (a float between 0 and 1).\n",
+                "type": "Transit.Transition -> Basics.Float"
+            },
+            {
+                "name": "start",
+                "comment": " Start the transition with the following parameters:\n\n  - `tagger` to wrap Transit's Msg into your app's Msg type (consistent with `tick` signature, saves you one `Cmd.map`)\n  - `parentMsg` to send at end of exit\n  - `durations` of transition steps (exit phase then enter phase)\n  - `parent` is the model storing the Transition, to update with new transition state\n\nReturns a tuple that you can directly emit from your `update`.\n\n",
+                "type": "(Transit.Msg msg -> msg) -> msg -> ( Transit.Time, Transit.Time ) -> Transit.WithTransition parent -> ( Transit.WithTransition parent, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "subscriptions",
+                "comment": " Animation frame subscription. Must be called by your component's subscription function.\n",
+                "type": "(Transit.Msg msg -> msg) -> Transit.WithTransition parent -> Platform.Sub.Sub msg"
+            },
+            {
+                "name": "tick",
+                "comment": " Where all the logic happens. Run transition steps, and triggers timeline's parent message when needed.\n\n  - `tagger` to wrap Transit's msg into app's Msg type, has to be same type of timeline.msg,\n  - `msg` is the Transit message to process,\n  - `parent` is the model storing the Transition, for transition state update.\n\n",
+                "type": "(Transit.Msg msg -> msg) -> Transit.Msg msg -> Transit.WithTransition parent -> ( Transit.WithTransition parent, Platform.Cmd.Cmd msg )"
+            }
+        ],
+        "binops": []
+    }
+]

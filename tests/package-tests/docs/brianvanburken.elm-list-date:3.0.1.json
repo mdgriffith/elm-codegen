@@ -1,0 +1,31 @@
+[
+    {
+        "name": "ListDate",
+        "comment": " Sometimes an API returns a List of Int's and you have to deal with it. This\npackage helps with the conversion from and to.\n\n\n# Conversion\n\n@docs dateToList, listToDate\n\n\n# JSON\n\n@docs decoder, encoder\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "dateToList",
+                "comment": " Converts a date to a List of Int's. With the head being the year and the last\nthe milliseconds.\n\n    dateToList Time.utc (Posix 1527724800000) -- [ 2018, 5, 31,  0,  0,  0, 0 ]\n\n    dateToList Time.utc (Posix 1527779760000) -- [ 2018, 5, 31, 15, 16,  0, 0 ]\n\n    dateToList Time.utc (Posix 1527779780987) -- [ 2018, 5, 31, 15, 16, 20, 987 ]\n\n",
+                "type": "Time.Zone -> Time.Posix -> List.List Basics.Int"
+            },
+            {
+                "name": "decoder",
+                "comment": " Provides a decoder that will convert a List of Int to a Date.\n",
+                "type": "Time.Zone -> Json.Decode.Decoder Time.Posix"
+            },
+            {
+                "name": "encoder",
+                "comment": " Provides an encoder that will convert a Date to a List of Int's.\n",
+                "type": "Time.Zone -> Time.Posix -> Json.Encode.Value"
+            },
+            {
+                "name": "listToDate",
+                "comment": " Converts a List of Int's to a Maybe Date. It expects a total of 7 integers\nrepresenting year till milisceonds. If this is not the case it will fill in the\nrest with zero's.\n\n    listToDate Time.utc [] -- Err ..\n\n    listToDate Time.utc [ 2018 ] -- Err ..\n\n    listToDate Time.utc [ 2018, 5 ] -- Err ..\n\n    listToDate Time.utc [ 2018, 5, 31 ] -- Ok (Posix 1527724800000)\n\n    listToDate Time.utc [ 2018, 5, 31, 15 ] -- Ok (Posix 1527778800000)\n\n    listToDate Time.utc [ 2018, 5, 31, 15, 16 ] -- Ok (Posix 1527779760000)\n\n    listToDate Time.utc [ 2018, 5, 31, 15, 16, 20, 987 ] -- Ok (Posix 1527779780987)\n\n",
+                "type": "Time.Zone -> List.List Basics.Int -> Result.Result String.String Time.Posix"
+            }
+        ],
+        "binops": []
+    }
+]

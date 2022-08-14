@@ -1,0 +1,162 @@
+[
+    {
+        "name": "DatePicker",
+        "comment": " A customizable date picker component.\n\n\n# Tea ☕\n\n@docs Msg, DateEvent, InputError, DatePicker\n@docs init, initFromDate, initFromDates, update, view, isOpen, focusedDate, getInitialDate\n\n\n# Settings\n\n@docs Settings, defaultSettings, pick, between, moreOrLess, from, to, off, open, close\n\n",
+        "unions": [
+            {
+                "name": "DateEvent",
+                "comment": " The event resulting from a `DatePicker.update`.\nThree things can happen:\n\n  - Nothing\n  - The user might pick a date through clicking or typing\n  - Or the user typed a date that is either invalid or disabled\n\nIf you do not care about case error handling for invalid inputs, just matching on `Picked` should suffice.\n\nHave a look at the `nightwash-simple` example for basic error handling with `InputError`.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "None",
+                        []
+                    ],
+                    [
+                        "FailedInput",
+                        [
+                            "DatePicker.InputError"
+                        ]
+                    ],
+                    [
+                        "Picked",
+                        [
+                            "Date.Date"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "DatePicker",
+                "comment": " The DatePicker model. Opaque, hence no field docs.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "InputError",
+                "comment": " When typing a date it can go wrong in two ways:\n\n  - `Invalid String`: the typed string cannot be parsed into a date. The error string is given be the parser defined in the settings.\n  - `Disabled Date`: a valid date was typed, but it is disabled as defined in the settings.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Invalid",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "EmptyString",
+                        []
+                    ],
+                    [
+                        "Disabled",
+                        [
+                            "Date.Date"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Msg",
+                "comment": " An opaque type representing messages that are passed inside the DatePicker.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Settings",
+                "comment": " The type of date picker settings.\n",
+                "args": [],
+                "type": "{ placeholder : String.String, classNamespace : String.String, containerClassList : List.List ( String.String, Basics.Bool ), inputClassList : List.List ( String.String, Basics.Bool ), inputName : Maybe.Maybe String.String, inputId : Maybe.Maybe String.String, inputAttributes : List.List (Html.Attribute DatePicker.Msg), isDisabled : Date.Date -> Basics.Bool, parser : String.String -> Result.Result String.String Date.Date, dateFormatter : Date.Date -> String.String, dayFormatter : Time.Weekday -> String.String, monthFormatter : Date.Month -> String.String, yearFormatter : Basics.Int -> String.String, cellFormatter : String.String -> Html.Html DatePicker.Msg, firstDayOfWeek : Time.Weekday, changeYear : DatePicker.Date.YearRange }"
+            }
+        ],
+        "values": [
+            {
+                "name": "between",
+                "comment": " Select a range of date to display\n\n    DatePicker.init { defaultSettings | changeYear = between 1555 2018 }\n\n",
+                "type": "Basics.Int -> Basics.Int -> DatePicker.Date.YearRange"
+            },
+            {
+                "name": "close",
+                "comment": " Generate a message that will act as if the user has removed focus from the input element.\nThis will close the datePicker\n\n    update datepickerSettings close datepicker\n\nExample usage is demonstrated in `simple-nightwash`-example.\n\n",
+                "type": "DatePicker.Msg"
+            },
+            {
+                "name": "defaultSettings",
+                "comment": " A record of default settings for the date picker. Extend this if\nyou want to customize your date picker.\n\n    import DatePicker exposing (defaultSettings)\n\n    DatePicker.init { defaultSettings | placeholder = \"Pick a date\" }\n\nTo disable certain dates:\n\n    import Date exposing (Day(..), dayOfWeek)\n    import DatePicker exposing (defaultSettings)\n\n    DatePicker.init { defaultSettings | isDisabled = \\d -> dayOfWeek d `List.member` [ Sat, Sun ] }\n\n",
+                "type": "DatePicker.Settings"
+            },
+            {
+                "name": "focusedDate",
+                "comment": " Expose the currently focused date\n",
+                "type": "DatePicker.DatePicker -> Maybe.Maybe Date.Date"
+            },
+            {
+                "name": "from",
+                "comment": " Select a range from a given year to this year\n\n    DatePicker.init { defaultSettings | changeYear = from 1995 }\n\n",
+                "type": "Basics.Int -> DatePicker.Date.YearRange"
+            },
+            {
+                "name": "getInitialDate",
+                "comment": " Expose the initial date\n\nWhen you initialize the DatePicker using function `init` the resulting `Cmd Msg` fetches todays date.\nThis date is then stored in the DatePicker's model as initial date.\n\nIn some scenarios, you want use todays date in combination with `DatePicker.Settings`.\nThis allows you to use todays date without storing it yourself.\n\nCheck the `simple-with-validate-date` example for an example usage.\n\n",
+                "type": "DatePicker.DatePicker -> Date.Date"
+            },
+            {
+                "name": "init",
+                "comment": " The default initial state of the Datepicker. You must execute\nthe returned command (which, for the curious, sets the current date)\nfor the date picker to behave correctly.\n\n    init =\n        let\n            ( datePicker, datePickerFx ) =\n                DatePicker.init\n        in\n        ( { picker = datePicker }, Cmd.map ToDatePicker datePickerfx )\n\n",
+                "type": "( DatePicker.DatePicker, Platform.Cmd.Cmd DatePicker.Msg )"
+            },
+            {
+                "name": "initFromDate",
+                "comment": " Initialize a DatePicker with a given Date\n\n    init date =\n        ( { picker = DatePicker.initFromDate date }, Cmd.none )\n\n",
+                "type": "Date.Date -> DatePicker.DatePicker"
+            },
+            {
+                "name": "initFromDates",
+                "comment": " Initialize a DatePicker with a date for today and Maybe a date picked\n\n    init today date =\n        ( { picker = DatePicker.initFromDates today date }, Cmd.none )\n\n",
+                "type": "Date.Date -> Maybe.Maybe Date.Date -> DatePicker.DatePicker"
+            },
+            {
+                "name": "isOpen",
+                "comment": " Expose if the datepicker is open\n",
+                "type": "DatePicker.DatePicker -> Basics.Bool"
+            },
+            {
+                "name": "moreOrLess",
+                "comment": " Select a symmetric range of date to display\n\n    DatePicker.init { defaultSettings | changeYear = moreOrLess 10 }\n\n",
+                "type": "Basics.Int -> DatePicker.Date.YearRange"
+            },
+            {
+                "name": "off",
+                "comment": " Turn off the date range\n\n    DatePicker.init { defaultSettings | changeYear = off }\n\n",
+                "type": "DatePicker.Date.YearRange"
+            },
+            {
+                "name": "open",
+                "comment": " Generate a message that will act as if the user has focused on the input element.\nThis will open the datePicker\n\n    update datepickerSettings open datepicker\n\nExample usage is demonstrated in the `simple-nightwash`-example.\n\n",
+                "type": "DatePicker.Msg"
+            },
+            {
+                "name": "pick",
+                "comment": " Generate a message that will act as if the user has chosen a certain date,\nso you can call `update` on the model yourself.\nNote that this is different from just changing the \"current chosen\" date,\nsince the picker doesn't actually have internal state for that.\nRather, it will:\n\n  - change the calendar focus\n\n  - replace the input text with the new value\n\n  - close the picker\n\n    update datepickerSettings (pick someDate) datepicker\n\n",
+                "type": "Date.Date -> DatePicker.Msg"
+            },
+            {
+                "name": "to",
+                "comment": " Select a range from this year to a given year\n\n    DatePicker.init { defaultSettings | changeYear = to 2020 }\n\n",
+                "type": "Basics.Int -> DatePicker.Date.YearRange"
+            },
+            {
+                "name": "update",
+                "comment": " The date picker update function. The second tuple member represents a user action to change the\ndate.\n",
+                "type": "DatePicker.Settings -> DatePicker.Msg -> DatePicker.DatePicker -> ( DatePicker.DatePicker, DatePicker.DateEvent )"
+            },
+            {
+                "name": "view",
+                "comment": " The date picker view. The Date passed is whatever date it should treat as selected.\n",
+                "type": "Maybe.Maybe Date.Date -> DatePicker.Settings -> DatePicker.DatePicker -> Html.Html DatePicker.Msg"
+            }
+        ],
+        "binops": []
+    }
+]

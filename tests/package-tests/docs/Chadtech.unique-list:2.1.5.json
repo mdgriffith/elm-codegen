@@ -1,0 +1,95 @@
+[
+    {
+        "name": "List.Unique",
+        "comment": " An ordered list that contains unique elements.\n\n@docs UniqueList\n\n\n# Create\n\n@docs fromList, empty\n\n\n# Transform\n\n@docs cons, remove, reverse, addBefore, addAfter, toList\n\n\n# Query\n\n@docs length, member, isEmpty, isFirst, isBefore, isAfter\n\n\n# Helpers\n\n@docs filterDuplicates\n\n",
+        "unions": [
+            {
+                "name": "UniqueList",
+                "comment": " A list that has no duplicate elements, much like a `Set`.\nHowever, `UniqueList` preserves the initial order of elements and\ndoes not require that elements be `comparable`.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "addAfter",
+                "comment": " Add an element to a `UniqueList` after another element\n\n**Note:** If the added element is already in the list, it will be moved to the\nnew position.\n\n    -- Add an element\n    addAfter 2 3 (fromList [ 1, 2, 4, 5 ])\n    --> fromList [ 1, 2, 3, 4, 5 ]\n\n    -- Move an element\n    addAfter 4 1 (fromList [ 1, 2, 3, 4 ])\n    --> fromList [ 2, 3, 4, 1 ]\n\n    -- No effect\n    addAfter 0 1 (fromList [ 1, 2 ])\n    --> fromList [ 1, 2 ]\n\n",
+                "type": "a -> a -> List.Unique.UniqueList a -> List.Unique.UniqueList a"
+            },
+            {
+                "name": "addBefore",
+                "comment": " Add an element to a `UniqueList` before another element.\n\n**Note:** If the added element is already in the list, it will be moved to the\nnew position.\n\n    -- Add an element\n    addBefore 2 6 (fromList [ 0, 2, 1 ])\n    --> fromList [ 0, 6, 2, 1 ]\n\n    -- Move an element\n    addBefore 4 1 (fromList [ 1, 2, 3, 4 ])\n    --> fromList [ 2, 3, 1, 4 ]\n\n    -- No effect\n    addBefore 0 1 (fromList [ 1, 2 ])\n    --> fromList [ 1, 2 ]\n\n",
+                "type": "a -> a -> List.Unique.UniqueList a -> List.Unique.UniqueList a"
+            },
+            {
+                "name": "cons",
+                "comment": " Add an element to the front of a `UniqueList`.\n\n**Note:** If the element was already in the list, it will be moved to the\nfront of the list.\n\n    -- Add an element\n    cons 1 (fromList [ 2, 3, 4 ])\n    --> fromList [ 1, 2, 3, 4 ]\n\n    -- Move an element\n    cons 3 (fromList [ 1, 2, 3 ])\n    --> fromList [ 3, 1, 2 ]\n\n",
+                "type": "a -> List.Unique.UniqueList a -> List.Unique.UniqueList a"
+            },
+            {
+                "name": "empty",
+                "comment": " Create an empty `UniqueList`.\n\n    empty\n    --> fromList []\n\n",
+                "type": "List.Unique.UniqueList a"
+            },
+            {
+                "name": "filterDuplicates",
+                "comment": " Remove duplicates from a list without using the `UniqueList` type.\n\n**Note:** Elements are placed in the position at\nwhich they occurred last.\n\nSimilar to the `unique` function in `elm-community/list-extra`,\nhowever `List.Extra.unique` only works on `List comparable`.\n\n    filterDuplicates [ True, True ]\n    --> [ True ]\n\n    filterDuplicates [ 1, 1, 2, 3, 5 ]\n    --> [ 1, 2, 3, 5 ]\n\n    filterDuplicates [ 1, 2, 3, 4, 1 ]\n    --> [ 2, 3, 4, 1 ]\n\n",
+                "type": "List.List a -> List.List a"
+            },
+            {
+                "name": "fromList",
+                "comment": " Create a `UniqueList` from a `List`.\n\n**Note:** Elements are placed in the position at\nwhich they occurred last.\n\n    fromList [ 3, 1, 2, 3 ]\n    --> fromList [ 1, 2, 3 ]\n\n",
+                "type": "List.List a -> List.Unique.UniqueList a"
+            },
+            {
+                "name": "isAfter",
+                "comment": " Check if an element is after another in a `UniqueList`.\n\nReturns `Nothing` if either of the elements being queried are not in the list.\n\n    ('D' |> isAfter 'B') (fromList [ 'B', 'C', 'D' ])\n    --> Just True\n\n    ('A' |> isAfter 'C') (fromList [ 'A', 'B', 'C' ])\n    --> Just False\n\n\n    ('Z' |> isAfter 'B') (fromList [ 'A', 'B' ])\n    --> Nothing\n\n",
+                "type": "a -> a -> List.Unique.UniqueList a -> Maybe.Maybe Basics.Bool"
+            },
+            {
+                "name": "isBefore",
+                "comment": " Check if an element is before another in a `UniqueList`.\n\nReturns `Nothing` if either of the elements being queried are not in the list.\n\n    ('A' |> isBefore 'C') (fromList [ 'A', 'B', 'C' ])\n    --> Just True\n\n    ('D' |> isBefore 'B') (fromList [ 'B', 'C', 'D' ])\n    --> Just False\n\n    ('Z' |> isBefore 'B') (fromList [ 'A', 'B' ])\n    --> Nothing\n\n",
+                "type": "a -> a -> List.Unique.UniqueList a -> Maybe.Maybe Basics.Bool"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Check if a `UniqueList` is empty.\n\n    isEmpty (fromList [])\n    --> True\n\n    isEmpty (fromList [ 1 ])\n    -->  False\n\n",
+                "type": "List.Unique.UniqueList a -> Basics.Bool"
+            },
+            {
+                "name": "isFirst",
+                "comment": " Check if an element is the first in a `UniqueList`.\n\nReturns `Nothing` if the list is empty.\n\n    isFirst 1 (fromList [1,2,3])\n    --> Just True\n\n    isFirst 1 empty\n    --> Nothing\n\n",
+                "type": "a -> List.Unique.UniqueList a -> Maybe.Maybe Basics.Bool"
+            },
+            {
+                "name": "length",
+                "comment": " Determine the number of elements in a `UniqueList`.\n\n    -- Without duplicates\n    length (fromList [ 1, 2, 3 ])\n    --> 3\n\n    -- With duplicates\n    length (fromList [ 2, 2, 2 ])\n    --> 1\n\n",
+                "type": "List.Unique.UniqueList a -> Basics.Int"
+            },
+            {
+                "name": "member",
+                "comment": " Determine if a `UniqueList` contains a value.\n\n    member 4 (fromList [ 1, 4, 6 ])\n    --> True\n\n    member \"cat\" (fromList [ \"dog\", \"bird\" ])\n    --> False\n\n",
+                "type": "a -> List.Unique.UniqueList a -> Basics.Bool"
+            },
+            {
+                "name": "remove",
+                "comment": " Remove a value from a `UniqueList` if the value is present.\n\n    remove 2 (fromList [ 1, 2, 3 ])\n    --> fromList [ 1, 3 ]\n\n    remove 0 (fromList [ 1, 2, 3 ])\n    --> fromList [ 1, 2, 3 ]\n\n",
+                "type": "a -> List.Unique.UniqueList a -> List.Unique.UniqueList a"
+            },
+            {
+                "name": "reverse",
+                "comment": " Reverse a `UniqueList`.\n\n    reverse (fromList [ \"second\", \"first\" ])\n    --> fromList [ \"first\", \"second\" ]\n\n    reverse (fromList [ 3, 2, 1 ])\n    --> fromList [ 1, 2, 3, 3 ]\n\n",
+                "type": "List.Unique.UniqueList a -> List.Unique.UniqueList a"
+            },
+            {
+                "name": "toList",
+                "comment": " Turn a `UniqueList` into a `List`.\n\n    toList (fromList [ 1, 1 ])\n    --> [1]\n\n",
+                "type": "List.Unique.UniqueList a -> List.List a"
+            }
+        ],
+        "binops": []
+    }
+]

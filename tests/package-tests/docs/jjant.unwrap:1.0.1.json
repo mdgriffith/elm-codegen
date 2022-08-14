@@ -1,0 +1,21 @@
+[
+    {
+        "name": "Unwrap",
+        "comment": "\n\n@docs maybe, result\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "maybe",
+                "comment": " Unwrap if it's a Just or crash.\n",
+                "type": "Maybe.Maybe a -> a"
+            },
+            {
+                "name": "result",
+                "comment": " Unwrap if it's an Ok or crash.\n",
+                "type": "Result.Result e a -> a"
+            }
+        ],
+        "binops": []
+    }
+]

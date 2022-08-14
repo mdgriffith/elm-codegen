@@ -1,0 +1,553 @@
+[
+    {
+        "name": "Editor",
+        "comment": " Use the Editor module to embed a pure Elm text editor\ninto another application. See `./demo` in the source\ncode for an example.\n\n\n## Setting up the editor\n\n@docs Editor, init, initWithContent, loadArray, loadString, resize, sendLine, syncMessages\n\n\n## Using the editor\n\n@docs EditorMsg, getLines, getContextMenu, update, view\n\n\n## Cursor\n\n@docs insertAtCursor, lineAtCursor, getCursor, setCursor\n\n\n## Clipboard\n\n@docs placeInClipboard\n\n\n## Getting data from the editor\n\n@docs getContent, getLineHeight, getSelectedString, getWrapOption, indexOf\n\n",
+        "unions": [
+            {
+                "name": "Editor",
+                "comment": " Opaque type for the editor\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Editor",
+                        [
+                            "EditorModel.EditorModel"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "EditorMsg",
+                "comment": " The messages to which the editor responds\n",
+                "args": [],
+                "type": "EditorMsg.EMsg"
+            }
+        ],
+        "values": [
+            {
+                "name": "getContent",
+                "comment": " Retrieve text from editor\n",
+                "type": "Editor.Editor -> String.String"
+            },
+            {
+                "name": "getContextMenu",
+                "comment": " Get the context menu\n",
+                "type": "Editor.Editor -> ContextMenu.ContextMenu EditorMsg.Context"
+            },
+            {
+                "name": "getCursor",
+                "comment": " ",
+                "type": "Editor.Editor -> { line : Basics.Int, column : Basics.Int }"
+            },
+            {
+                "name": "getLineHeight",
+                "comment": " ",
+                "type": "Editor.Editor -> Basics.Float"
+            },
+            {
+                "name": "getLines",
+                "comment": " Get the current editor content\n",
+                "type": "Editor.Editor -> Array.Array String.String"
+            },
+            {
+                "name": "getSelectedString",
+                "comment": " ",
+                "type": "Editor.Editor -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "getWrapOption",
+                "comment": " ",
+                "type": "Editor.Editor -> EditorMsg.WrapOption"
+            },
+            {
+                "name": "indexOf",
+                "comment": " Return (lineNumber, target) where target in the\neditor's array of lines is a string\nwhich matches the key\n",
+                "type": "Editor.Editor -> String.String -> List.List Basics.Int"
+            },
+            {
+                "name": "init",
+                "comment": " Initialize the editor with a configuration\n",
+                "type": "EditorModel.Config -> ( Editor.Editor, Platform.Cmd.Cmd EditorMsg.EMsg )"
+            },
+            {
+                "name": "initWithContent",
+                "comment": " -Initialize the the editor with\ngiven content : String\n",
+                "type": "String.String -> EditorModel.Config -> Editor.Editor"
+            },
+            {
+                "name": "insertAtCursor",
+                "comment": " Insert a string into the editor at a\ngiven cursor location\n",
+                "type": "String.String -> Editor.Editor -> Editor.Editor"
+            },
+            {
+                "name": "lineAtCursor",
+                "comment": " Return the line where the cursor is\n",
+                "type": "Editor.Editor -> String.String"
+            },
+            {
+                "name": "loadArray",
+                "comment": " Load content into the editor\n",
+                "type": "Array.Array String.String -> Editor.Editor -> Editor.Editor"
+            },
+            {
+                "name": "loadString",
+                "comment": " Load a string into the editor\n",
+                "type": "String.String -> Editor.Editor -> Editor.Editor"
+            },
+            {
+                "name": "placeInClipboard",
+                "comment": " Place string in the editor's clipboard\n",
+                "type": "String.String -> Editor.Editor -> Editor.Editor"
+            },
+            {
+                "name": "resize",
+                "comment": " Resize the editor\n",
+                "type": "Basics.Float -> Basics.Float -> Editor.Editor -> Editor.Editor"
+            },
+            {
+                "name": "sendLine",
+                "comment": " Used by a host app to scroll the editor to scroll the\neditor display to the line where the cursor is.\n",
+                "type": "Editor.Editor -> ( Editor.Editor, Platform.Cmd.Cmd EditorMsg.EMsg )"
+            },
+            {
+                "name": "setCursor",
+                "comment": " Set the editor's cursor to a given position\n",
+                "type": "{ line : Basics.Int, column : Basics.Int } -> Editor.Editor -> Editor.Editor"
+            },
+            {
+                "name": "syncMessages",
+                "comment": " Messages to be handles by a host app in some default way\n",
+                "type": "List.List EditorMsg.EMsg"
+            },
+            {
+                "name": "update",
+                "comment": " Update the editor with a message\n",
+                "type": "EditorMsg.EMsg -> Editor.Editor -> ( Editor.Editor, Platform.Cmd.Cmd EditorMsg.EMsg )"
+            },
+            {
+                "name": "view",
+                "comment": " View function for the editor\n",
+                "type": "Editor.Editor -> Html.Html EditorMsg.EMsg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "EditorMsg",
+        "comment": "\n\n@docs EMsg, Context, Hover, Position, Selection, WrapOption\n\n",
+        "unions": [
+            {
+                "name": "Context",
+                "comment": " For the context menu\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Object",
+                        []
+                    ],
+                    [
+                        "Background",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "EMsg",
+                "comment": " Messages that the editor responds to\n",
+                "args": [],
+                "cases": [
+                    [
+                        "EditorNoOp",
+                        []
+                    ],
+                    [
+                        "ExitVimInsertMode",
+                        []
+                    ],
+                    [
+                        "MoveUp",
+                        []
+                    ],
+                    [
+                        "MoveDown",
+                        []
+                    ],
+                    [
+                        "MoveLeft",
+                        []
+                    ],
+                    [
+                        "MoveRight",
+                        []
+                    ],
+                    [
+                        "MoveToLineStart",
+                        []
+                    ],
+                    [
+                        "MoveToLineEnd",
+                        []
+                    ],
+                    [
+                        "PageUp",
+                        []
+                    ],
+                    [
+                        "PageDown",
+                        []
+                    ],
+                    [
+                        "FirstLine",
+                        []
+                    ],
+                    [
+                        "LastLine",
+                        []
+                    ],
+                    [
+                        "GoToLine",
+                        []
+                    ],
+                    [
+                        "NewLine",
+                        []
+                    ],
+                    [
+                        "InsertChar",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Indent",
+                        []
+                    ],
+                    [
+                        "Deindent",
+                        []
+                    ],
+                    [
+                        "RemoveCharBefore",
+                        []
+                    ],
+                    [
+                        "RemoveCharAfter",
+                        []
+                    ],
+                    [
+                        "KillLine",
+                        []
+                    ],
+                    [
+                        "DeleteLine",
+                        []
+                    ],
+                    [
+                        "Cut",
+                        []
+                    ],
+                    [
+                        "Copy",
+                        []
+                    ],
+                    [
+                        "Paste",
+                        []
+                    ],
+                    [
+                        "WrapAll",
+                        []
+                    ],
+                    [
+                        "WrapSelection",
+                        []
+                    ],
+                    [
+                        "Hover",
+                        [
+                            "EditorMsg.Hover"
+                        ]
+                    ],
+                    [
+                        "GoToHoveredPosition",
+                        []
+                    ],
+                    [
+                        "StartSelecting",
+                        []
+                    ],
+                    [
+                        "StopSelecting",
+                        []
+                    ],
+                    [
+                        "SelectLine",
+                        []
+                    ],
+                    [
+                        "SelectUp",
+                        []
+                    ],
+                    [
+                        "SelectDown",
+                        []
+                    ],
+                    [
+                        "SelectLeft",
+                        []
+                    ],
+                    [
+                        "SelectRight",
+                        []
+                    ],
+                    [
+                        "SelectGroup",
+                        []
+                    ],
+                    [
+                        "Undo",
+                        []
+                    ],
+                    [
+                        "Redo",
+                        []
+                    ],
+                    [
+                        "AcceptLineToGoTo",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "DebounceMsg",
+                        [
+                            "Debounce.Msg"
+                        ]
+                    ],
+                    [
+                        "Unload",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Clear",
+                        []
+                    ],
+                    [
+                        "Test",
+                        []
+                    ],
+                    [
+                        "ContextMenuMsg",
+                        [
+                            "ContextMenu.Msg EditorMsg.Context"
+                        ]
+                    ],
+                    [
+                        "Item",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "ToggleAutoLineBreak",
+                        []
+                    ],
+                    [
+                        "EditorRequestFile",
+                        []
+                    ],
+                    [
+                        "EditorRequestedFile",
+                        [
+                            "File.File"
+                        ]
+                    ],
+                    [
+                        "MarkdownLoaded",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "EditorSaveFile",
+                        []
+                    ],
+                    [
+                        "SendLineForLRSync",
+                        []
+                    ],
+                    [
+                        "GotViewportForSync",
+                        [
+                            "Maybe.Maybe String.String",
+                            "EditorMsg.Selection",
+                            "Result.Result Browser.Dom.Error Browser.Dom.Viewport"
+                        ]
+                    ],
+                    [
+                        "CopyPasteClipboard",
+                        []
+                    ],
+                    [
+                        "WriteToSystemClipBoard",
+                        []
+                    ],
+                    [
+                        "DoSearch",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "ToggleSearchPanel",
+                        []
+                    ],
+                    [
+                        "ToggleReplacePanel",
+                        []
+                    ],
+                    [
+                        "OpenReplaceField",
+                        []
+                    ],
+                    [
+                        "RollSearchSelectionForward",
+                        []
+                    ],
+                    [
+                        "RollSearchSelectionBackward",
+                        []
+                    ],
+                    [
+                        "ReplaceCurrentSelection",
+                        []
+                    ],
+                    [
+                        "AcceptLineNumber",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "AcceptSearchText",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "AcceptReplacementText",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "GotViewport",
+                        [
+                            "Result.Result Browser.Dom.Error Browser.Dom.Viewport"
+                        ]
+                    ],
+                    [
+                        "ToggleDarkMode",
+                        []
+                    ],
+                    [
+                        "ToggleHelp",
+                        []
+                    ],
+                    [
+                        "ToggleEditMode",
+                        []
+                    ],
+                    [
+                        "MarkdownMsg",
+                        [
+                            "Markdown.Render.MarkdownMsg"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Hover",
+                "comment": " Mouuse hover states\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NoHover",
+                        []
+                    ],
+                    [
+                        "HoverLine",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "HoverChar",
+                        [
+                            "EditorMsg.Position"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Selection",
+                "comment": " Selected text\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NoSelection",
+                        []
+                    ],
+                    [
+                        "SelectingFrom",
+                        [
+                            "EditorMsg.Hover"
+                        ]
+                    ],
+                    [
+                        "SelectedChar",
+                        [
+                            "EditorMsg.Position"
+                        ]
+                    ],
+                    [
+                        "Selection",
+                        [
+                            "EditorMsg.Position",
+                            "EditorMsg.Position"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "WrapOption",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "DoWrap",
+                        []
+                    ],
+                    [
+                        "DontWrap",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Position",
+                "comment": " Cursor position\n",
+                "args": [],
+                "type": "{ line : Basics.Int, column : Basics.Int }"
+            }
+        ],
+        "values": [],
+        "binops": []
+    }
+]

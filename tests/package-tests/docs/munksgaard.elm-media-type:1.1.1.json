@@ -1,0 +1,81 @@
+[
+    {
+        "name": "MediaType",
+        "comment": " Parse and handle media types in Elm.\n\n\n# Types\n\n@docs MediaType, Type\n\n\n# Parsing\n\n@docs fromString, toString, parser\n\n",
+        "unions": [
+            {
+                "name": "Type",
+                "comment": " Media type _types_.\n\nI didn't pick the name...\n\nBased on the list from <https://en.wikipedia.org/w/index.php?title=Media_type&oldid=881155761#Naming>\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Application",
+                        []
+                    ],
+                    [
+                        "Audio",
+                        []
+                    ],
+                    [
+                        "Example",
+                        []
+                    ],
+                    [
+                        "Font",
+                        []
+                    ],
+                    [
+                        "Image",
+                        []
+                    ],
+                    [
+                        "Message",
+                        []
+                    ],
+                    [
+                        "Model",
+                        []
+                    ],
+                    [
+                        "Multipart",
+                        []
+                    ],
+                    [
+                        "Text",
+                        []
+                    ],
+                    [
+                        "Video",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "MediaType",
+                "comment": " A media type.\n",
+                "args": [],
+                "type": "{ type_ : MediaType.Type, registrationTree : Maybe.Maybe String.String, subtype : String.String, suffix : Maybe.Maybe String.String, parameters : Dict.Dict String.String String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "fromString",
+                "comment": " Attempt to parse a string as a media type.\n",
+                "type": "String.String -> Maybe.Maybe MediaType.MediaType"
+            },
+            {
+                "name": "parser",
+                "comment": " Media types can be a part of another data schema, like the [data URI scheme](https://en.wikipedia.org/wiki/Data_URI_scheme), so it can be helpful to access the internal parser.\n",
+                "type": "Parser.Parser MediaType.MediaType"
+            },
+            {
+                "name": "toString",
+                "comment": " Convert a media type back into a string.\n",
+                "type": "MediaType.MediaType -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

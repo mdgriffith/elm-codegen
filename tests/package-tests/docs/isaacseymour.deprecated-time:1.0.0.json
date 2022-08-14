@@ -1,0 +1,3657 @@
+[
+    {
+        "name": "Time.Date",
+        "comment": " This module defines a timezone-independent Date type which can\nrepresent any date of the proleptic Gregorian calendar.\n\n\n# Dates\n\n@docs Date\n\n\n# Constructing Dates\n\n@docs date, fromTuple, toTuple\n\n\n# Inspecting Dates\n\n@docs year, month, day, Weekday, weekday\n\n\n# Manipulating Dates\n\n@docs setYear, setMonth, setDay, addYears, addMonths, addDays\n\n\n# Comparing Dates\n\n@docs compare, DateDelta, delta\n\n\n# Helper functions\n\n@docs isValidDate, isLeapYear, daysInMonth\n\n",
+        "unions": [
+            {
+                "name": "Date",
+                "comment": " Date is the opaque type for all Date values. Values of this type\nare guaranteed to represent valid proleptic Gregorian calendar dates.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Weekday",
+                "comment": " Data type used to represent the days of the week.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Mon",
+                        []
+                    ],
+                    [
+                        "Tue",
+                        []
+                    ],
+                    [
+                        "Wed",
+                        []
+                    ],
+                    [
+                        "Thu",
+                        []
+                    ],
+                    [
+                        "Fri",
+                        []
+                    ],
+                    [
+                        "Sat",
+                        []
+                    ],
+                    [
+                        "Sun",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "DateDelta",
+                "comment": " DateDelta represents a delta between two dates.\n",
+                "args": [],
+                "type": "{ years : Basics.Int, months : Basics.Int, days : Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "addDays",
+                "comment": " days adds an exact number (positive or negative) of days to a\nDate. Adding or subtracting days always produces a valid Date so\nthere is no fuzzing logic here like there is in `add{Months,Years}`.\n\n    date 2018 2 28\n    |> addDays 1\n    |> month\n    --> 3 -- March\n\n",
+                "type": "Basics.Int -> Time.Date.Date -> Time.Date.Date"
+            },
+            {
+                "name": "addMonths",
+                "comment": " addMonths adds a relative number (positive or negative) of months to\na Date, ensuring that the return value represents a valid Date. Its\nsemantics are the same as `addYears`.\n\n    date 2018 3 31\n    |> addMonths -1 -- Switch to Feb\n    |> day\n    --> 28\n\n",
+                "type": "Basics.Int -> Time.Date.Date -> Time.Date.Date"
+            },
+            {
+                "name": "addYears",
+                "comment": " addYears adds a relative number (positive or negative) of years to\na Date, ensuring that the return value represents a valid Date. If\nthe new date is not valid, days are subtracted from it until a valid\nDate can be produced.\n\n    date 2000 2 29\n    |> addYears -1  -- will no longer be leap year\n    |> day\n    --> 28\n\n",
+                "type": "Basics.Int -> Time.Date.Date -> Time.Date.Date"
+            },
+            {
+                "name": "compare",
+                "comment": " compare two Dates.\n\nNote: since this conflicts with **Basics.compare**, have to\npreface with **Time.Date.**; see this example:\n\n    date 2018 1 28\n    |> addYears -1\n    |> addMonths 1\n    |> Time.Date.compare (date 2017 2 29)\n    --> EQ\n\n",
+                "type": "Time.Date.Date -> Time.Date.Date -> Basics.Order"
+            },
+            {
+                "name": "date",
+                "comment": " date constructs a Date value given a year, a month and a day.\nInvalid values are clamped to the nearest valid date.\n\n    d : Date\n    d =\n        date 2018 5 29\n\n    year d --> 2018\n    month d --> 5\n    day d --> 29\n\n",
+                "type": "Basics.Int -> Basics.Int -> Basics.Int -> Time.Date.Date"
+            },
+            {
+                "name": "day",
+                "comment": " day returns a Date's year as an Int. Guaranteed to be valid for\nthe Date's (year, month) pair and in the range [1, 31].\n\n    day (date 2018 2 28)\n    --> 28\n\n    day (date 2018 2 29)\n    --> 28    -- observed clamped\n\n    day (date 2000 2 29)\n    --> 29    -- leap year\n\n",
+                "type": "Time.Date.Date -> Basics.Int"
+            },
+            {
+                "name": "daysInMonth",
+                "comment": " daysInMonth returns the number of days in a month given a specific\nyear, taking leap years into account.\n\n  - A regular year has 365 days and the corresponding February has 28 days.\n\n  - A leap year has 366 days and the corresponding February has 29 days.\n\n    daysInMonth 2016 2\n    --> 29\n\n    daysInMonth 2018 2\n    --> 28\n\n",
+                "type": "Basics.Int -> Basics.Int -> Basics.Int"
+            },
+            {
+                "name": "delta",
+                "comment": " delta returns the relative number of years, months and days between two Dates.\n\nEach field is accumulative by itself. That is, `days` not only shows the\ndifference caused by the two `day` entries in the two `Date` arguments, but\nalso the added days caused by differences in `months` and `years`. For `months`\nand `years`, is the count across month and year change boundaries respectively; illustrated\nby last example below.\n\n    -- 3 examples showing that, if the `year` and `month`\n    -- are the same in the two `Date` values, then the\n    -- `years` and `months` result values remain constant\n    -- in spite of large differences in the two inputs'\n    -- `day` setting:\n\n    delta (date 2019 1 1) (date 2018 1 1)\n    --> { years = 1\n    --> , months = 12\n    --> , days = 365\n    --> }\n\n    delta (date 2019 1 31) (date 2018 1 1)\n    --> { years = 1\n    --> , months = 12\n    --> , days = 395\n    --> }\n\n    delta (date 2019 1 1) (date 2018 1 31)\n    --> { years = 1\n    --> , months = 12\n    --> , days = 335\n    --> }\n\n    -- 1 day apart but from last day of year to first\n    -- day of next year:\n\n    delta (date 2019 1 1) (date 2018 12 31)\n    --> { years = 1\n    --> , months = 1\n    --> , days = 1\n    --> }\n\n",
+                "type": "Time.Date.Date -> Time.Date.Date -> Time.Date.DateDelta"
+            },
+            {
+                "name": "fromTuple",
+                "comment": " fromTuple converts a (year, month, day) tuple into a Date value.\n\n    (2018, 5, 26)\n    |> fromTuple\n    --> date 2018 5 26\n\n",
+                "type": "( Basics.Int, Basics.Int, Basics.Int ) -> Time.Date.Date"
+            },
+            {
+                "name": "isLeapYear",
+                "comment": " isLeapYear returns True if the given year is a leap year. The\nrules for leap years are as follows:\n\n  - A year that is a multiple of 400 is a leap year.\n\n  - A year that is a multiple of 100 but not of 400 is not a leap year.\n\n  - A year that is a multiple of 4 but not of 100 is a leap year.\n\n    isLeapYear 2016\n    --> True\n\n    isLeapYear 2018\n    --> False\n\n    isLeapYear 400\n    --> True\n\n    isLeapYear 500\n    --> False\n\n    isLeapYear (500 + 4)\n    --> True\n\n",
+                "type": "Basics.Int -> Basics.Bool"
+            },
+            {
+                "name": "isValidDate",
+                "comment": " isValidDate returns True if the given year, month and day\nrepresent a valid date.\n\nNOTE: when you create a Date using `date`, it does not validate\nthe `year`, `month`, or `day` used; rather it just clamps out-of-range\nvalues to \"legal\" values without notifying you. If you are worried\nabout complete validation, pass the 3 values to this\nmethod first and it will validate it. This gives you a chance to\nabort creating a \"bad\" `Date`.\n\n    isValidDate 2016 12 31\n    --> True\n\n    isValidDate 2016 12 32\n    --> False\n\n    isValidDate 2016 2 29 -- leap year\n    --> True\n\n    isValidDate 2018 2 29 -- not leap year\n    --> False\n\n",
+                "type": "Basics.Int -> Basics.Int -> Basics.Int -> Basics.Bool"
+            },
+            {
+                "name": "month",
+                "comment": " month returns a Date's month as an Int. Guaranteed to be in the\nrange [1, 12].\n\n    month (date 2018 13 26) -- Note month will be clamped\n    --> 12\n\n",
+                "type": "Time.Date.Date -> Basics.Int"
+            },
+            {
+                "name": "setDay",
+                "comment": " setDay updates a Date's day. Invalid values are clamped to the\nnearest valid date.\n\n    date 2016 2 26\n    |> setDay 28\n    |> day\n    --> 28\n\n    date 2016 2 28\n    |> setDay 29    -- leap year\n    |> day\n    --> 29\n\n    date 2015 2 28\n    |> setDay 29    -- clamped\n    |> day\n    --> 28\n\n",
+                "type": "Basics.Int -> Time.Date.Date -> Time.Date.Date"
+            },
+            {
+                "name": "setMonth",
+                "comment": " setMonth updates a Date's month. Invalid values are clamped to the\nnearest valid date.\n\n    date 2016 5 26\n    |> setMonth 6\n    |> month\n    --> 6\n\n    date 2016 5 26\n    |> setMonth 13 -- will be clamped\n    |> month\n    --> 12\n\n",
+                "type": "Basics.Int -> Time.Date.Date -> Time.Date.Date"
+            },
+            {
+                "name": "setYear",
+                "comment": " setYear updates a Date's year. Invalid values are clamped to the\nnearest valid date.\n\n    date 2000 5 26\n    |> setYear 2016\n    |> year\n    --> 2016\n\n",
+                "type": "Basics.Int -> Time.Date.Date -> Time.Date.Date"
+            },
+            {
+                "name": "toTuple",
+                "comment": " toTuple converts a Date value into a (year, month, day) tuple.\nThis is useful if you want to use Dates as Dict keys.\n\n    date 2018 5 26\n    |> toTuple\n    --> (2018, 5, 26)\n\n",
+                "type": "Time.Date.Date -> ( Basics.Int, Basics.Int, Basics.Int )"
+            },
+            {
+                "name": "weekday",
+                "comment": " weekday returns the day of week for a given Date.\n\nThis uses Sakamoto's method to determine the day of week.\n\n    weekday (date 2018 5 26)\n    --> Sat\n\n",
+                "type": "Time.Date.Date -> Time.Date.Weekday"
+            },
+            {
+                "name": "year",
+                "comment": " year returns a Date's year as an Int.\n\n    year (date 2018 5 26)\n    --> 2018\n\n",
+                "type": "Time.Date.Date -> Basics.Int"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Time.DateTime",
+        "comment": " This module defines a time representation based on a Date and the\ntime of day.\n\n\n# DateTimes\n\n@docs DateTime\n\n\n# Constructing DateTimes\n\n@docs zero, epoch, dateTime, makeDateTime, fromPosix, toPosix\n\n\n# Inspecting DateTimes\n\n@docs date, year, month, day, weekday, hour, minute, second, millisecond\n\n\n# Manipulating DateTimes\n\n@docs setDate, setYear, setMonth, setDay, setHour, setMinute, setSecond, setMillisecond, addYears, addMonths, addDays, addHours, addMinutes, addSeconds, addMilliseconds\n\n\n# Comparing DateTimes\n\n@docs compare, DateTimeDelta, delta\n\n\n# Helper functions\n\n@docs isValidTime\n\n",
+        "unions": [
+            {
+                "name": "DateTime",
+                "comment": " DateTime is the opaque type for all DateTime values. Values of this\ntype represent a valid Date and a time offset from midnight.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "DateTimeDelta",
+                "comment": " DateTimeDelta represents the difference between two\nDateTime values in terms of each of the different \"units\".\n\nSee `Time.DateTime.delta` for an \"aha!\" example.\n\n",
+                "args": [],
+                "type": "{ years : Basics.Int, months : Basics.Int, days : Basics.Int, hours : Basics.Int, minutes : Basics.Int, seconds : Basics.Int, milliseconds : Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "addDays",
+                "comment": " addDays adds a relative number of days to a DateTime value.\n\nSee also `Time.Date.addDays`.\n\n    dateTime { zero | day = 20 }\n    |> addDays -11\n    |> day\n    --> 9\n\n",
+                "type": "Basics.Int -> Time.DateTime.DateTime -> Time.DateTime.DateTime"
+            },
+            {
+                "name": "addHours",
+                "comment": " addHours adds a relative number of hours to a DateTime value.\n\n    dateTime { zero | hour = 23 }\n    |> addHours 1\n    |> hour\n    --> 0\n\n",
+                "type": "Basics.Int -> Time.DateTime.DateTime -> Time.DateTime.DateTime"
+            },
+            {
+                "name": "addMilliseconds",
+                "comment": " addMilliseconds adds an absolute number of milliseconds to a\nDateTime value.\n\n    dateTime { zero | second = 10, millisecond = 1 }\n    |> addMilliseconds 999\n    |> second\n    --> 11\n\n",
+                "type": "Basics.Int -> Time.DateTime.DateTime -> Time.DateTime.DateTime"
+            },
+            {
+                "name": "addMinutes",
+                "comment": " addMinutes adds a relative number of minutes to a DateTime value.\n\n    dateTime { zero | minute = 30 }\n    |> addMinutes 30\n    |> minute\n    --> 0\n\n",
+                "type": "Basics.Int -> Time.DateTime.DateTime -> Time.DateTime.DateTime"
+            },
+            {
+                "name": "addMonths",
+                "comment": " addMonths adds a relative number of months to a DateTime value.\n\nSee also `Time.Date.addMonths`.\n\n    dateTime { zero | month = 1 }\n    |> addMonths 1\n    |> month\n    --> 2\n\n",
+                "type": "Basics.Int -> Time.DateTime.DateTime -> Time.DateTime.DateTime"
+            },
+            {
+                "name": "addSeconds",
+                "comment": " addSeconds adds a relative number of seconds to a DateTime value.\n\n    dateTime { zero | second = 59 }\n    |> addSeconds 1\n    |> second\n    --> 0\n\n",
+                "type": "Basics.Int -> Time.DateTime.DateTime -> Time.DateTime.DateTime"
+            },
+            {
+                "name": "addYears",
+                "comment": " addYears adds a relative number of years to a DateTime value.\n\nSee also `Time.Date.addYears`.\n\n    dateTime { zero | year = 2016 }\n    |> addYears 2\n    |> year\n    --> 2018\n\n",
+                "type": "Basics.Int -> Time.DateTime.DateTime -> Time.DateTime.DateTime"
+            },
+            {
+                "name": "compare",
+                "comment": " compare two DateTimes.\n\n    import Basics exposing (Order(..))\n\n    epoch\n    |> addMilliseconds -1\n    |> Time.DateTime.compare (dateTime\n                               { year = 1969\n                               , month = 12\n                               , day = 31\n                               , hour = 23\n                               , minute = 59\n                               , second = 59\n                               , millisecond = 999\n                               }\n                             )\n    --> EQ\n\n",
+                "type": "Time.DateTime.DateTime -> Time.DateTime.DateTime -> Basics.Order"
+            },
+            {
+                "name": "date",
+                "comment": " date returns a DateTime's Date.\n\n    import Time.Date\n\n    dateTime { year = 2018\n             , month = 0   -- will be clamped\n             , day = 25\n             , hour = 0\n             , minute = 0\n             , second = 0\n             , millisecond = 47\n             }\n    |> date\n    --> Time.Date.date 2018 1 25\n\n",
+                "type": "Time.DateTime.DateTime -> Time.Date.Date"
+            },
+            {
+                "name": "dateTime",
+                "comment": " dateTime constructs a DateTime value given a date and a time.\nInvalid values are clamped to the nearest valid date and time.\n\n    import Time.Date\n\n    dateTime { year = 2018\n             , month = 13   -- will be clamped\n             , day = 25\n             , hour = 0\n             , minute = 0\n             , second = 0\n             , millisecond = 47\n             }\n    |> date\n    --> Time.Date.date 2018 12 25\n\n    dateTime { year = 2018\n             , month = 13\n             , day = 25\n             , hour = 0\n             , minute = 0\n             , second = 0\n             , millisecond = 47\n             }\n    |> millisecond\n    --> 47\n\n",
+                "type": "Time.Internal.DateTimeData -> Time.DateTime.DateTime"
+            },
+            {
+                "name": "day",
+                "comment": " day returns a DateTime's day.\n\n    dateTime { zero | day = 31 }\n    |> day\n    --> 31\n\n    dateTime { zero | day = 32 } -- will be clamped\n    |> day\n    --> 31\n\n",
+                "type": "Time.DateTime.DateTime -> Basics.Int"
+            },
+            {
+                "name": "delta",
+                "comment": " delta computes the relative difference between two DateTime values.\nSee also `Time.Date.delta`.\n\n    upper : DateTime\n    upper = dateTime\n        { year = 1970\n        , month = 1\n        , day = 1\n        , hour = 0\n        , minute = 0\n        , second = 0\n        , millisecond = 0\n        }\n\n    upper\n    |> addYears -1\n    |> delta upper\n    --> { years = 1\n    --> , months = 12\n    --> , days = 365\n    --> , hours = 8760\n    --> , minutes = 525600\n    --> , seconds = 31536000\n    --> , milliseconds = 31536000000\n    --> }\n\n    -- Note what is counted is the number of transitions\n    -- to get from one unit to another.  Hence\n    -- the following shows that the difference of\n    -- 1 day makes a big difference when it separates\n    -- Dec 31 and Jan 1 as shown here.  Observe\n    -- that years, months, and days are the same because\n    -- each only requires one transition to get from\n    -- one date to the other.\n\n    upper\n    |> addDays -1\n    |> delta upper\n    --> { years = 1\n    --> , months = 1\n    --> , days = 1\n    --> , hours = 24\n    --> , minutes = 1440\n    --> , seconds = 86400\n    --> , milliseconds = 86400000\n    --> }\n\n",
+                "type": "Time.DateTime.DateTime -> Time.DateTime.DateTime -> Time.DateTime.DateTimeDelta"
+            },
+            {
+                "name": "epoch",
+                "comment": " epoch is the instant in time that represents the first millisecond\nof the UNIX Epoch.\n\n    import Time.Iso8601\n\n    epoch\n    |> Time.Iso8601.fromDateTime\n    --> \"1970-01-01T00:00:00.000Z\"\n\n",
+                "type": "Time.DateTime.DateTime"
+            },
+            {
+                "name": "fromPosix",
+                "comment": " fromPosix converts the elm/time Posix representation of a\nUNIX timestamp into a DateTime value.\n\n    import Time\n    0 |> Time.millisToPosix |> fromPosix\n    --> epoch\n\n",
+                "type": "Time.Posix -> Time.DateTime.DateTime"
+            },
+            {
+                "name": "hour",
+                "comment": " hour returns a DateTime's hour.\n\n    dateTime { zero | hour = 23 }\n    |> hour\n    --> 23\n\n    dateTime { zero | hour = 24 } -- will be clamped\n    |> hour\n    --> 23\n\n",
+                "type": "Time.DateTime.DateTime -> Basics.Int"
+            },
+            {
+                "name": "isValidTime",
+                "comment": " isValidTime returns True if the given hour, minute, second and\nmillisecond represent a valid time of day.\n\n    isValidTime 24 0 0 0\n    --> False\n\n    isValidTime 23 59 59 999\n    --> True\n\n",
+                "type": "Basics.Int -> Basics.Int -> Basics.Int -> Basics.Int -> Basics.Bool"
+            },
+            {
+                "name": "makeDateTime",
+                "comment": " Create a DateTime given its date and millisecond offset\n\n    import Time.Date\n\n    makeDateTime (Time.Date.date 2018 13 26) 1047\n    |> date\n    --> Time.Date.date 2018 13 26\n\n    makeDateTime (Time.Date.date 2018 13 26) 1047\n    |> millisecond\n    --> 47\n\n    makeDateTime (Time.Date.date 2018 13 26) 1047\n    |> second\n    --> 1\n\n",
+                "type": "Time.Date.Date -> Basics.Int -> Time.DateTime.DateTime"
+            },
+            {
+                "name": "millisecond",
+                "comment": " millisecond returns a DateTime's millisecond.\n\n    dateTime { zero | millisecond = 999 }\n    |> millisecond\n    --> 999\n\n    dateTime { zero | millisecond = 1000 } -- will be clamped\n    |> millisecond\n    --> 999\n\n",
+                "type": "Time.DateTime.DateTime -> Basics.Int"
+            },
+            {
+                "name": "minute",
+                "comment": " minute returns a DateTime's minute.\n\n    dateTime { zero | minute = 59 }\n    |> minute\n    --> 59\n\n    dateTime { zero | minute = 60 } -- will be clamped\n    |> minute\n    --> 59\n\n",
+                "type": "Time.DateTime.DateTime -> Basics.Int"
+            },
+            {
+                "name": "month",
+                "comment": " month returns a DateTime's month.\n\n    dateTime { zero | month = 7 }\n    |> month\n    --> 7\n\n    dateTime { zero | month = 0 } -- will be clamped\n    |> month\n    --> 1\n\n",
+                "type": "Time.DateTime.DateTime -> Basics.Int"
+            },
+            {
+                "name": "second",
+                "comment": " second returns a DateTime's second.\n\n    dateTime { zero | second = 59 }\n    |> second\n    --> 59\n\n    dateTime { zero | second = 60 } -- will be clamped\n    |> second\n    --> 59\n\n",
+                "type": "Time.DateTime.DateTime -> Basics.Int"
+            },
+            {
+                "name": "setDate",
+                "comment": " setDate sets a DateTime's Date.\n\n    import Time.Date as TD\n\n    dateTime zero\n    |> setDate (TD.date 2018 5 27)\n    |> date\n    --> TD.date 2018 5 27\n\n",
+                "type": "Time.Date.Date -> Time.DateTime.DateTime -> Time.DateTime.DateTime"
+            },
+            {
+                "name": "setDay",
+                "comment": " setDay sets a DateTime's day.\n\nSee also `Time.Date.setDay`.\n\n    dateTime zero\n    |> setDay 31\n    |> day\n    --> 31\n\n",
+                "type": "Basics.Int -> Time.DateTime.DateTime -> Time.DateTime.DateTime"
+            },
+            {
+                "name": "setHour",
+                "comment": " setHour sets a DateTime's hour.\n\n    dateTime zero\n    |> setHour 23\n    |> hour\n    --> 23\n\n",
+                "type": "Basics.Int -> Time.DateTime.DateTime -> Time.DateTime.DateTime"
+            },
+            {
+                "name": "setMillisecond",
+                "comment": " setMillisecond sets a DateTime's millisecond.\n\n    dateTime zero\n    |> setMillisecond 999\n    |> millisecond\n    --> 999\n\n",
+                "type": "Basics.Int -> Time.DateTime.DateTime -> Time.DateTime.DateTime"
+            },
+            {
+                "name": "setMinute",
+                "comment": " setMinute sets a DateTime's minute.\n\n    dateTime zero\n    |> setMinute 59\n    |> minute\n    --> 59\n\n",
+                "type": "Basics.Int -> Time.DateTime.DateTime -> Time.DateTime.DateTime"
+            },
+            {
+                "name": "setMonth",
+                "comment": " setMonth sets a DateTime's month.\n\nSee also `Time.Date.setMonth`.\n\n    dateTime zero\n    |> setMonth 12\n    |> month\n    --> 12\n\n",
+                "type": "Basics.Int -> Time.DateTime.DateTime -> Time.DateTime.DateTime"
+            },
+            {
+                "name": "setSecond",
+                "comment": " setSecond sets a DateTime's second.\ndateTime zero\n|> setSecond 59\n|> second\n--> 59\n",
+                "type": "Basics.Int -> Time.DateTime.DateTime -> Time.DateTime.DateTime"
+            },
+            {
+                "name": "setYear",
+                "comment": " setYear sets a DateTime's year.\n\nSee also `Time.Date.setYear`.\n\n    dateTime zero\n    |> setYear 2018\n    |> year\n    --> 2018\n\n",
+                "type": "Basics.Int -> Time.DateTime.DateTime -> Time.DateTime.DateTime"
+            },
+            {
+                "name": "toPosix",
+                "comment": " toPosix converts a DateTime value to the equivalent elm/time Posix\nrepresentation.\n\n    import Time\n\n    epoch\n    |> toPosix\n    --> Time.millisToPosix 0\n\n",
+                "type": "Time.DateTime.DateTime -> Time.Posix"
+            },
+            {
+                "name": "weekday",
+                "comment": " weekday returns a DateTime's day of the week.\n\n    import Time.Date\n\n    dateTime { zero | year = 2018, month = 5, day = 27 }\n    |> weekday\n    --> Time.Date.Sun\n\n",
+                "type": "Time.DateTime.DateTime -> Time.Date.Weekday"
+            },
+            {
+                "name": "year",
+                "comment": " year returns a DateTime's year.\n\n    dateTime { zero | year = 2015 }\n    |> year\n    --> 2015\n\n",
+                "type": "Time.DateTime.DateTime -> Basics.Int"
+            },
+            {
+                "name": "zero",
+                "comment": " zero represents the first millisecond of the first day of the\ncurrent era. Use it to construct `DateTime` values:\n\n    import Time.Iso8601\n\n    dateTime zero\n    |> Time.Iso8601.fromDateTime\n    --> \"0-01-01T00:00:00.000Z\"\n\n    dateTime { zero | year = 2016 }\n    |> Time.Iso8601.fromDateTime\n    --> \"2016-01-01T00:00:00.000Z\"\n\n    dateTime { zero | year = 2016, month = 5, day = 29, hour = 13 }\n    |> Time.Iso8601.fromDateTime\n    --> \"2016-05-29T13:00:00.000Z\"\n\n",
+                "type": "Time.Internal.DateTimeData"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Time.Iso8601",
+        "comment": "\n\n\n# Render ISO8601 strings\n\n@docs fromDate, fromDateTime, fromZonedDateTime\n\n\n# Parse ISO8601 strings\n\n@docs toDate, toDateTime, toZonedDateTime\n\n\n# Possible errors\n\n@docs Problem\n\n",
+        "unions": [
+            {
+                "name": "Problem",
+                "comment": " Issues parsing an ISO8601 date\n",
+                "args": [],
+                "cases": [
+                    [
+                        "ExpectingDigit",
+                        []
+                    ],
+                    [
+                        "ExpectingRange",
+                        [
+                            "Basics.Int",
+                            "Basics.Int",
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "ExpectingDot",
+                        []
+                    ],
+                    [
+                        "ExpectingZ",
+                        []
+                    ],
+                    [
+                        "ExpectingSign",
+                        []
+                    ],
+                    [
+                        "BadInt",
+                        []
+                    ],
+                    [
+                        "InvalidDate",
+                        [
+                            "( Basics.Int, Basics.Int, Basics.Int )"
+                        ]
+                    ],
+                    [
+                        "ExpectingNDigits",
+                        [
+                            "Basics.Int",
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Other",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fromDate",
+                "comment": " fromDate renders a Date in ISO8601 format.\n\n    import Time.Date exposing (..)\n\n    date 2018 5 27\n    |> fromDate\n    --> \"2018-05-27\"\n\n",
+                "type": "Time.Date.Date -> String.String"
+            },
+            {
+                "name": "fromDateTime",
+                "comment": " fromDateTime renders a DateTime in ISO8601 format.\n\n    import Time.DateTime\n\n    Time.DateTime.epoch\n    |> Time.DateTime.addMilliseconds 61000\n    |> fromDateTime\n    --> \"1970-01-01T00:01:01.000Z\"\n\n",
+                "type": "Time.DateTime.DateTime -> String.String"
+            },
+            {
+                "name": "fromZonedDateTime",
+                "comment": " fromZonedDateTime renders a ZonedDateTime in ISO8601 format.\n\n    import Time.ZonedDateTime\n    import Time.TimeZones exposing (america_new_york)\n    import Time.DateTime exposing (epoch)\n\n    Time.ZonedDateTime.fromDateTime america_new_york epoch\n    |> fromZonedDateTime\n    --> \"1969-12-31T19:00:00.000-05:00\"\n\n",
+                "type": "Time.ZonedDateTime.ZonedDateTime -> String.String"
+            },
+            {
+                "name": "toDate",
+                "comment": " toDate parses an ISO8601-formatted date string into a Date.\n\n    import Time.Date\n\n    toDate \"1970-12-01\"\n    --> Ok (Time.Date.date 1970 12 1)\n\n    toDate \"19701201\"\n    --> Ok (Time.Date.date 1970 12 1)\n\n",
+                "type": "String.String -> Result.Result (List.List Time.Iso8601.IsoDeadEnd) Time.Date.Date"
+            },
+            {
+                "name": "toDateTime",
+                "comment": " toDateTime parses an ISO8601-formatted date time string into a\nDateTime object, adjusting for its timezone offset.\n",
+                "type": "String.String -> Result.Result (List.List Time.Iso8601.IsoDeadEnd) Time.DateTime.DateTime"
+            },
+            {
+                "name": "toZonedDateTime",
+                "comment": " toZonedDateTime parses an ISO8601-formatted string into a\nZonedDateTime object, adjusting for its offset.\n\n    import Time.ZonedDateTime\n    import Time.TimeZones exposing (america_new_york)\n    import Time.DateTime exposing (epoch)\n\n    toZonedDateTime america_new_york \"1970-01-01T00:00:00.000Z\"\n    --> Ok (Time.ZonedDateTime.fromDateTime america_new_york epoch)\n\n",
+                "type": "Time.TimeZone.TimeZone -> String.String -> Result.Result (List.List Time.Iso8601.IsoDeadEnd) Time.ZonedDateTime.ZonedDateTime"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Time.Iso8601ErrorMsg",
+        "comment": " A renderer to format error messages resulting from\nISO8601 parsing errors.\n\nAt this time, there is a renderer, **renderText**, to render\na fixed-font message to, say, a terminal screen. This renderer\nstrives to output the friendly useful error message that elm\nis famous for.\n\n\n# Main entry\n\n@docs renderText\n\n\n# Utilities\n\n@docs reflow\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "reflow",
+                "comment": " A convenience function to auto-wrap long strings\n\nUse this method to appropriately wrap the error string returned\nfrom `renderText` above.\n\n    -- \\n inserted at 72nt position coz is right margin.\n    reflow \"Expecting the value 29 to be in the range 1 to 28 for the specified year, 1991, and month, 2.\"\n    --> \"Expecting the value 29 to be in the range 1 to 28 for the specified\" ++ \"\\n\" ++ \"year, 1991, and month, 2.\"\n\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "renderText",
+                "comment": " Invoking the renderer. This returns an 'elm compiler-style formatted' error string\n\n    import Parser.Advanced exposing (DeadEnd)\n    import Time.Iso8601 exposing (Problem)\n\n    -- The \\n in the middle of the string is to provide for the 72-char right margin\n    failString : String\n    failString =\n        \"1991-02-29 is not a valid date\"\n\n    renderedString : String\n    renderedString =\n        \"The 'day-of-month' segment is invalid:\\n\\n\" ++\n        \"    1991-02-29T12:25:12.0Z\\n\" ++\n        \"            ^\\n\\n\" ++\n        failString\n\n    showError : String -> String\n    showError input =\n       case Time.Iso8601.toDateTime input of\n           Ok _ ->\n               \"success?! what?!\"\n           Err errors ->\n               String.join \"\\n\" <| List.map (renderText input) errors\n\n\n    showError \"1991-02-29T12:25:12.0Z\"\n    --> renderedString\n\n",
+                "type": "String.String -> Parser.Advanced.DeadEnd String.String Time.Iso8601.Problem -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Time.TimeZone",
+        "comment": " This module defines a representations for Timezone information.\n\n\n# TimeZone values\n\n@docs TimeZone, name, abbreviation, offset, offsetString\n\n\n# Manipulating TimeZones\n\n@docs setName\n\n\n# Constructing TimeZones\n\n@docs unpack\n\n\n# Sadly exposed - internal really\n\n@docs errorZone\n\n",
+        "unions": [
+            {
+                "name": "TimeZone",
+                "comment": " TimeZone represents the opaque type of timezone values. These are\ngenerally loaded from an external source via `unpack`.\n\nSee also <http://momentjs.com/timezone/docs/#/data-formats/packed-format/>.\n\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "abbreviation",
+                "comment": " Given an arbitrary Time and a TimeZone, abbreviation returns the\nTimeZone's abbreviation at that Time.\n",
+                "type": "Time.Posix -> Time.TimeZone.TimeZone -> String.String"
+            },
+            {
+                "name": "errorZone",
+                "comment": " A fake TimeZone which represents an error parsing zone data. Tests in this package verify it\nwill never be returned.\n",
+                "type": "String.String -> Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "name",
+                "comment": " name returns a TimeZone's name.\n",
+                "type": "Time.TimeZone.TimeZone -> String.String"
+            },
+            {
+                "name": "offset",
+                "comment": " Given an arbitrary Time and a TimeZone, offset returns the\nTimeZone's UTC offset in milliseconds at that Time.\n",
+                "type": "Time.Posix -> Time.TimeZone.TimeZone -> Basics.Int"
+            },
+            {
+                "name": "offsetString",
+                "comment": " Given an arbitrary Time and TimeZone, offsetString returns an\nISO8601-formatted UTC offset for at that Time.\n",
+                "type": "Time.Posix -> Time.TimeZone.TimeZone -> String.String"
+            },
+            {
+                "name": "setName",
+                "comment": " setName updates a TimeZone's name.\n",
+                "type": "String.String -> Time.TimeZone.TimeZone -> Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "unpack",
+                "comment": " unpackNew decodes a packed zone data object into a TimeZone value.\n\nSee also <http://momentjs.com/timezone/docs/#/data-formats/packed-format/>\n\n",
+                "type": "String.String -> Result.Result (List.List Parser.DeadEnd) Time.TimeZone.TimeZone"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Time.TimeZones",
+        "comment": " This module contains TimeZone definitions for all Timezones as they\nare defined in the IANA zoneinfo database.\n\nMake sure to use --optimize for production, to strip out unused zone\ndata from your production app.\n\n    import Time.DateTime exposing (epoch, toTimestamp)\n    import Time.TimeZone exposing (abbreviation)\n    import Time.TimeZones exposing (europe_bucharest)\n\n    abbreviation (toTimestamp epoch) europe_bucharest\n\n@docs all, fromName, africa_abidjan, africa_accra, africa_addis_ababa, africa_algiers, africa_asmara, africa_asmera, africa_bamako, africa_bangui, africa_banjul, africa_bissau, africa_blantyre, africa_brazzaville, africa_bujumbura, africa_cairo, africa_casablanca, africa_ceuta, africa_conakry, africa_dakar, africa_dar_es_salaam, africa_djibouti, africa_douala, africa_el_aaiun, africa_freetown, africa_gaborone, africa_harare, africa_johannesburg, africa_juba, africa_kampala, africa_khartoum, africa_kigali, africa_kinshasa, africa_lagos, africa_libreville, africa_lome, africa_luanda, africa_lubumbashi, africa_lusaka, africa_malabo, africa_maputo, africa_maseru, africa_mbabane, africa_mogadishu, africa_monrovia, africa_nairobi, africa_ndjamena, africa_niamey, africa_nouakchott, africa_ouagadougou, africa_porto_novo, africa_sao_tome, africa_timbuktu, africa_tripoli, africa_tunis, africa_windhoek, america_adak, america_anchorage, america_anguilla, america_antigua, america_araguaina, america_argentina_buenos_aires, america_argentina_catamarca, america_argentina_comodrivadavia, america_argentina_cordoba, america_argentina_jujuy, america_argentina_la_rioja, america_argentina_mendoza, america_argentina_rio_gallegos, america_argentina_salta, america_argentina_san_juan, america_argentina_san_luis, america_argentina_tucuman, america_argentina_ushuaia, america_aruba, america_asuncion, america_atikokan, america_atka, america_bahia, america_bahia_banderas, america_barbados, america_belem, america_belize, america_blanc_sablon, america_boa_vista, america_bogota, america_boise, america_buenos_aires, america_cambridge_bay, america_campo_grande, america_cancun, america_caracas, america_catamarca, america_cayenne, america_cayman, america_chicago, america_chihuahua, america_coral_harbour, america_cordoba, america_costa_rica, america_creston, america_cuiaba, america_curacao, america_danmarkshavn, america_dawson, america_dawson_creek, america_denver, america_detroit, america_dominica, america_edmonton, america_eirunepe, america_el_salvador, america_ensenada, america_fort_nelson, america_fort_wayne, america_fortaleza, america_glace_bay, america_godthab, america_goose_bay, america_grand_turk, america_grenada, america_guadeloupe, america_guatemala, america_guayaquil, america_guyana, america_halifax, america_havana, america_hermosillo, america_indiana_indianapolis, america_indiana_knox, america_indiana_marengo, america_indiana_petersburg, america_indiana_tell_city, america_indiana_vevay, america_indiana_vincennes, america_indiana_winamac, america_indianapolis, america_inuvik, america_iqaluit, america_jamaica, america_jujuy, america_juneau, america_kentucky_louisville, america_kentucky_monticello, america_knox_in, america_kralendijk, america_la_paz, america_lima, america_los_angeles, america_louisville, america_lower_princes, america_maceio, america_managua, america_manaus, america_marigot, america_martinique, america_matamoros, america_mazatlan, america_mendoza, america_menominee, america_merida, america_metlakatla, america_mexico_city, america_miquelon, america_moncton, america_monterrey, america_montevideo, america_montreal, america_montserrat, america_nassau, america_new_york, america_nipigon, america_nome, america_noronha, america_north_dakota_beulah, america_north_dakota_center, america_north_dakota_new_salem, america_ojinaga, america_panama, america_pangnirtung, america_paramaribo, america_phoenix, america_port_au_prince, america_port_of_spain, america_porto_acre, america_porto_velho, america_puerto_rico, america_rainy_river, america_rankin_inlet, america_recife, america_regina, america_resolute, america_rio_branco, america_rosario, america_santa_isabel, america_santarem, america_santiago, america_santo_domingo, america_sao_paulo, america_scoresbysund, america_shiprock, america_sitka, america_st_barthelemy, america_st_johns, america_st_kitts, america_st_lucia, america_st_thomas, america_st_vincent, america_swift_current, america_tegucigalpa, america_thule, america_thunder_bay, america_tijuana, america_toronto, america_tortola, america_vancouver, america_virgin, america_whitehorse, america_winnipeg, america_yakutat, america_yellowknife, antarctica_casey, antarctica_davis, antarctica_dumontdurville, antarctica_macquarie, antarctica_mawson, antarctica_mcmurdo, antarctica_palmer, antarctica_rothera, antarctica_south_pole, antarctica_syowa, antarctica_troll, antarctica_vostok, arctic_longyearbyen, asia_aden, asia_almaty, asia_amman, asia_anadyr, asia_aqtau, asia_aqtobe, asia_ashgabat, asia_ashkhabad, asia_baghdad, asia_bahrain, asia_baku, asia_bangkok, asia_barnaul, asia_beirut, asia_bishkek, asia_brunei, asia_calcutta, asia_chita, asia_choibalsan, asia_chongqing, asia_chungking, asia_colombo, asia_dacca, asia_damascus, asia_dhaka, asia_dili, asia_dubai, asia_dushanbe, asia_famagusta, asia_gaza, asia_harbin, asia_hebron, asia_ho_chi_minh, asia_hong_kong, asia_hovd, asia_irkutsk, asia_istanbul, asia_jakarta, asia_jayapura, asia_jerusalem, asia_kabul, asia_kamchatka, asia_karachi, asia_kashgar, asia_kathmandu, asia_katmandu, asia_khandyga, asia_kolkata, asia_krasnoyarsk, asia_kuala_lumpur, asia_kuching, asia_kuwait, asia_macao, asia_macau, asia_magadan, asia_makassar, asia_manila, asia_muscat, asia_nicosia, asia_novokuznetsk, asia_novosibirsk, asia_omsk, asia_oral, asia_phnom_penh, asia_pontianak, asia_pyongyang, asia_qatar, asia_qyzylorda, asia_rangoon, asia_riyadh, asia_saigon, asia_sakhalin, asia_samarkand, asia_seoul, asia_shanghai, asia_singapore, asia_srednekolymsk, asia_taipei, asia_tashkent, asia_tbilisi, asia_tehran, asia_tel_aviv, asia_thimbu, asia_thimphu, asia_tokyo, asia_tomsk, asia_ujung_pandang, asia_ulaanbaatar, asia_ulan_bator, asia_urumqi, asia_ust_nera, asia_vientiane, asia_vladivostok, asia_yakutsk, asia_yangon, asia_yekaterinburg, asia_yerevan, atlantic_azores, atlantic_bermuda, atlantic_canary, atlantic_cape_verde, atlantic_faeroe, atlantic_faroe, atlantic_jan_mayen, atlantic_madeira, atlantic_reykjavik, atlantic_south_georgia, atlantic_st_helena, atlantic_stanley, australia_act, australia_adelaide, australia_brisbane, australia_broken_hill, australia_canberra, australia_currie, australia_darwin, australia_eucla, australia_hobart, australia_lhi, australia_lindeman, australia_lord_howe, australia_melbourne, australia_north, australia_nsw, australia_perth, australia_queensland, australia_south, australia_sydney, australia_tasmania, australia_victoria, australia_west, australia_yancowinna, brazil_acre, brazil_denoronha, brazil_east, brazil_west, canada_atlantic, canada_central, canada_east_saskatchewan, canada_eastern, canada_mountain, canada_newfoundland, canada_pacific, canada_saskatchewan, canada_yukon, cet, chile_continental, chile_easterisland, cst6cdt, cuba, eet, egypt, eire, est, est5edt, etc_gmt, etc_gmt_0, etc_gmt_minus_0, etc_gmt_minus_1, etc_gmt_minus_10, etc_gmt_minus_11, etc_gmt_minus_12, etc_gmt_minus_13, etc_gmt_minus_14, etc_gmt_minus_2, etc_gmt_minus_3, etc_gmt_minus_4, etc_gmt_minus_5, etc_gmt_minus_6, etc_gmt_minus_7, etc_gmt_minus_8, etc_gmt_minus_9, etc_gmt_plus_0, etc_gmt_plus_1, etc_gmt_plus_10, etc_gmt_plus_11, etc_gmt_plus_12, etc_gmt_plus_2, etc_gmt_plus_3, etc_gmt_plus_4, etc_gmt_plus_5, etc_gmt_plus_6, etc_gmt_plus_7, etc_gmt_plus_8, etc_gmt_plus_9, etc_greenwich, etc_uct, etc_universal, etc_utc, etc_zulu, europe_amsterdam, europe_andorra, europe_astrakhan, europe_athens, europe_belfast, europe_belgrade, europe_berlin, europe_bratislava, europe_brussels, europe_bucharest, europe_budapest, europe_busingen, europe_chisinau, europe_copenhagen, europe_dublin, europe_gibraltar, europe_guernsey, europe_helsinki, europe_isle_of_man, europe_istanbul, europe_jersey, europe_kaliningrad, europe_kiev, europe_kirov, europe_lisbon, europe_ljubljana, europe_london, europe_luxembourg, europe_madrid, europe_malta, europe_mariehamn, europe_minsk, europe_monaco, europe_moscow, europe_nicosia, europe_oslo, europe_paris, europe_podgorica, europe_prague, europe_riga, europe_rome, europe_samara, europe_san_marino, europe_sarajevo, europe_simferopol, europe_skopje, europe_sofia, europe_stockholm, europe_tallinn, europe_tirane, europe_tiraspol, europe_ulyanovsk, europe_uzhgorod, europe_vaduz, europe_vatican, europe_vienna, europe_vilnius, europe_volgograd, europe_warsaw, europe_zagreb, europe_zaporozhye, europe_zurich, gb, gb_eire, gmt, gmt_0, gmt_minus_0, gmt_plus_0, greenwich, hongkong, hst, iceland, indian_antananarivo, indian_chagos, indian_christmas, indian_cocos, indian_comoro, indian_kerguelen, indian_mahe, indian_maldives, indian_mauritius, indian_mayotte, indian_reunion, iran, israel, jamaica, japan, kwajalein, libya, met, mexico_bajanorte, mexico_bajasur, mexico_general, mst, mst7mdt, navajo, nz, nz_chat, pacific_apia, pacific_auckland, pacific_bougainville, pacific_chatham, pacific_chuuk, pacific_easter, pacific_efate, pacific_enderbury, pacific_fakaofo, pacific_fiji, pacific_funafuti, pacific_galapagos, pacific_gambier, pacific_guadalcanal, pacific_guam, pacific_honolulu, pacific_johnston, pacific_kiritimati, pacific_kosrae, pacific_kwajalein, pacific_majuro, pacific_marquesas, pacific_midway, pacific_nauru, pacific_niue, pacific_norfolk, pacific_noumea, pacific_pago_pago, pacific_palau, pacific_pitcairn, pacific_pohnpei, pacific_ponape, pacific_port_moresby, pacific_rarotonga, pacific_saipan, pacific_samoa, pacific_tahiti, pacific_tarawa, pacific_tongatapu, pacific_truk, pacific_wake, pacific_wallis, pacific_yap, poland, portugal, prc, pst8pdt, roc, rok, singapore, turkey, uct, universal, us_alaska, us_aleutian, us_arizona, us_central, us_east_indiana, us_eastern, us_hawaii, us_indiana_starke, us_michigan, us_mountain, us_pacific, us_pacific_new, us_samoa, utc, w_su, wet, zulu\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "africa_abidjan",
+                "comment": " Africa/Abidjan\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "africa_accra",
+                "comment": " Africa/Accra\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "africa_addis_ababa",
+                "comment": " Africa/Addis\\_Ababa\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "africa_algiers",
+                "comment": " Africa/Algiers\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "africa_asmara",
+                "comment": " Africa/Asmara\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "africa_asmera",
+                "comment": " Africa/Asmera\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "africa_bamako",
+                "comment": " Africa/Bamako\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "africa_bangui",
+                "comment": " Africa/Bangui\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "africa_banjul",
+                "comment": " Africa/Banjul\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "africa_bissau",
+                "comment": " Africa/Bissau\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "africa_blantyre",
+                "comment": " Africa/Blantyre\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "africa_brazzaville",
+                "comment": " Africa/Brazzaville\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "africa_bujumbura",
+                "comment": " Africa/Bujumbura\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "africa_cairo",
+                "comment": " Africa/Cairo\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "africa_casablanca",
+                "comment": " Africa/Casablanca\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "africa_ceuta",
+                "comment": " Africa/Ceuta\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "africa_conakry",
+                "comment": " Africa/Conakry\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "africa_dakar",
+                "comment": " Africa/Dakar\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "africa_dar_es_salaam",
+                "comment": " Africa/Dar\\_es\\_Salaam\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "africa_djibouti",
+                "comment": " Africa/Djibouti\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "africa_douala",
+                "comment": " Africa/Douala\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "africa_el_aaiun",
+                "comment": " Africa/El\\_Aaiun\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "africa_freetown",
+                "comment": " Africa/Freetown\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "africa_gaborone",
+                "comment": " Africa/Gaborone\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "africa_harare",
+                "comment": " Africa/Harare\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "africa_johannesburg",
+                "comment": " Africa/Johannesburg\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "africa_juba",
+                "comment": " Africa/Juba\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "africa_kampala",
+                "comment": " Africa/Kampala\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "africa_khartoum",
+                "comment": " Africa/Khartoum\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "africa_kigali",
+                "comment": " Africa/Kigali\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "africa_kinshasa",
+                "comment": " Africa/Kinshasa\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "africa_lagos",
+                "comment": " Africa/Lagos\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "africa_libreville",
+                "comment": " Africa/Libreville\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "africa_lome",
+                "comment": " Africa/Lome\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "africa_luanda",
+                "comment": " Africa/Luanda\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "africa_lubumbashi",
+                "comment": " Africa/Lubumbashi\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "africa_lusaka",
+                "comment": " Africa/Lusaka\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "africa_malabo",
+                "comment": " Africa/Malabo\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "africa_maputo",
+                "comment": " Africa/Maputo\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "africa_maseru",
+                "comment": " Africa/Maseru\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "africa_mbabane",
+                "comment": " Africa/Mbabane\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "africa_mogadishu",
+                "comment": " Africa/Mogadishu\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "africa_monrovia",
+                "comment": " Africa/Monrovia\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "africa_nairobi",
+                "comment": " Africa/Nairobi\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "africa_ndjamena",
+                "comment": " Africa/Ndjamena\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "africa_niamey",
+                "comment": " Africa/Niamey\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "africa_nouakchott",
+                "comment": " Africa/Nouakchott\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "africa_ouagadougou",
+                "comment": " Africa/Ouagadougou\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "africa_porto_novo",
+                "comment": " Africa/Porto-Novo\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "africa_sao_tome",
+                "comment": " Africa/Sao\\_Tome\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "africa_timbuktu",
+                "comment": " Africa/Timbuktu\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "africa_tripoli",
+                "comment": " Africa/Tripoli\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "africa_tunis",
+                "comment": " Africa/Tunis\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "africa_windhoek",
+                "comment": " Africa/Windhoek\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "all",
+                "comment": " A mapping from TimeZone names to their respective functions. Use\nthis to look up TimeZones by name.\n",
+                "type": "Dict.Dict String.String Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_adak",
+                "comment": " America/Adak\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_anchorage",
+                "comment": " America/Anchorage\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_anguilla",
+                "comment": " America/Anguilla\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_antigua",
+                "comment": " America/Antigua\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_araguaina",
+                "comment": " America/Araguaina\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_argentina_buenos_aires",
+                "comment": " America/Argentina/Buenos\\_Aires\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_argentina_catamarca",
+                "comment": " America/Argentina/Catamarca\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_argentina_comodrivadavia",
+                "comment": " America/Argentina/ComodRivadavia\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_argentina_cordoba",
+                "comment": " America/Argentina/Cordoba\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_argentina_jujuy",
+                "comment": " America/Argentina/Jujuy\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_argentina_la_rioja",
+                "comment": " America/Argentina/La\\_Rioja\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_argentina_mendoza",
+                "comment": " America/Argentina/Mendoza\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_argentina_rio_gallegos",
+                "comment": " America/Argentina/Rio\\_Gallegos\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_argentina_salta",
+                "comment": " America/Argentina/Salta\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_argentina_san_juan",
+                "comment": " America/Argentina/San\\_Juan\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_argentina_san_luis",
+                "comment": " America/Argentina/San\\_Luis\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_argentina_tucuman",
+                "comment": " America/Argentina/Tucuman\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_argentina_ushuaia",
+                "comment": " America/Argentina/Ushuaia\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_aruba",
+                "comment": " America/Aruba\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_asuncion",
+                "comment": " America/Asuncion\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_atikokan",
+                "comment": " America/Atikokan\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_atka",
+                "comment": " America/Atka\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_bahia",
+                "comment": " America/Bahia\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_bahia_banderas",
+                "comment": " America/Bahia\\_Banderas\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_barbados",
+                "comment": " America/Barbados\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_belem",
+                "comment": " America/Belem\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_belize",
+                "comment": " America/Belize\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_blanc_sablon",
+                "comment": " America/Blanc-Sablon\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_boa_vista",
+                "comment": " America/Boa\\_Vista\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_bogota",
+                "comment": " America/Bogota\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_boise",
+                "comment": " America/Boise\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_buenos_aires",
+                "comment": " America/Buenos\\_Aires\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_cambridge_bay",
+                "comment": " America/Cambridge\\_Bay\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_campo_grande",
+                "comment": " America/Campo\\_Grande\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_cancun",
+                "comment": " America/Cancun\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_caracas",
+                "comment": " America/Caracas\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_catamarca",
+                "comment": " America/Catamarca\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_cayenne",
+                "comment": " America/Cayenne\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_cayman",
+                "comment": " America/Cayman\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_chicago",
+                "comment": " America/Chicago\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_chihuahua",
+                "comment": " America/Chihuahua\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_coral_harbour",
+                "comment": " America/Coral\\_Harbour\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_cordoba",
+                "comment": " America/Cordoba\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_costa_rica",
+                "comment": " America/Costa\\_Rica\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_creston",
+                "comment": " America/Creston\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_cuiaba",
+                "comment": " America/Cuiaba\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_curacao",
+                "comment": " America/Curacao\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_danmarkshavn",
+                "comment": " America/Danmarkshavn\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_dawson",
+                "comment": " America/Dawson\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_dawson_creek",
+                "comment": " America/Dawson\\_Creek\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_denver",
+                "comment": " America/Denver\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_detroit",
+                "comment": " America/Detroit\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_dominica",
+                "comment": " America/Dominica\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_edmonton",
+                "comment": " America/Edmonton\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_eirunepe",
+                "comment": " America/Eirunepe\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_el_salvador",
+                "comment": " America/El\\_Salvador\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_ensenada",
+                "comment": " America/Ensenada\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_fort_nelson",
+                "comment": " America/Fort\\_Nelson\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_fort_wayne",
+                "comment": " America/Fort\\_Wayne\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_fortaleza",
+                "comment": " America/Fortaleza\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_glace_bay",
+                "comment": " America/Glace\\_Bay\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_godthab",
+                "comment": " America/Godthab\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_goose_bay",
+                "comment": " America/Goose\\_Bay\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_grand_turk",
+                "comment": " America/Grand\\_Turk\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_grenada",
+                "comment": " America/Grenada\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_guadeloupe",
+                "comment": " America/Guadeloupe\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_guatemala",
+                "comment": " America/Guatemala\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_guayaquil",
+                "comment": " America/Guayaquil\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_guyana",
+                "comment": " America/Guyana\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_halifax",
+                "comment": " America/Halifax\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_havana",
+                "comment": " America/Havana\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_hermosillo",
+                "comment": " America/Hermosillo\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_indiana_indianapolis",
+                "comment": " America/Indiana/Indianapolis\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_indiana_knox",
+                "comment": " America/Indiana/Knox\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_indiana_marengo",
+                "comment": " America/Indiana/Marengo\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_indiana_petersburg",
+                "comment": " America/Indiana/Petersburg\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_indiana_tell_city",
+                "comment": " America/Indiana/Tell\\_City\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_indiana_vevay",
+                "comment": " America/Indiana/Vevay\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_indiana_vincennes",
+                "comment": " America/Indiana/Vincennes\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_indiana_winamac",
+                "comment": " America/Indiana/Winamac\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_indianapolis",
+                "comment": " America/Indianapolis\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_inuvik",
+                "comment": " America/Inuvik\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_iqaluit",
+                "comment": " America/Iqaluit\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_jamaica",
+                "comment": " America/Jamaica\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_jujuy",
+                "comment": " America/Jujuy\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_juneau",
+                "comment": " America/Juneau\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_kentucky_louisville",
+                "comment": " America/Kentucky/Louisville\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_kentucky_monticello",
+                "comment": " America/Kentucky/Monticello\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_knox_in",
+                "comment": " America/Knox\\_IN\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_kralendijk",
+                "comment": " America/Kralendijk\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_la_paz",
+                "comment": " America/La\\_Paz\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_lima",
+                "comment": " America/Lima\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_los_angeles",
+                "comment": " America/Los\\_Angeles\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_louisville",
+                "comment": " America/Louisville\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_lower_princes",
+                "comment": " America/Lower\\_Princes\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_maceio",
+                "comment": " America/Maceio\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_managua",
+                "comment": " America/Managua\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_manaus",
+                "comment": " America/Manaus\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_marigot",
+                "comment": " America/Marigot\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_martinique",
+                "comment": " America/Martinique\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_matamoros",
+                "comment": " America/Matamoros\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_mazatlan",
+                "comment": " America/Mazatlan\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_mendoza",
+                "comment": " America/Mendoza\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_menominee",
+                "comment": " America/Menominee\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_merida",
+                "comment": " America/Merida\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_metlakatla",
+                "comment": " America/Metlakatla\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_mexico_city",
+                "comment": " America/Mexico\\_City\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_miquelon",
+                "comment": " America/Miquelon\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_moncton",
+                "comment": " America/Moncton\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_monterrey",
+                "comment": " America/Monterrey\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_montevideo",
+                "comment": " America/Montevideo\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_montreal",
+                "comment": " America/Montreal\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_montserrat",
+                "comment": " America/Montserrat\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_nassau",
+                "comment": " America/Nassau\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_new_york",
+                "comment": " America/New\\_York\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_nipigon",
+                "comment": " America/Nipigon\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_nome",
+                "comment": " America/Nome\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_noronha",
+                "comment": " America/Noronha\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_north_dakota_beulah",
+                "comment": " America/North\\_Dakota/Beulah\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_north_dakota_center",
+                "comment": " America/North\\_Dakota/Center\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_north_dakota_new_salem",
+                "comment": " America/North\\_Dakota/New\\_Salem\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_ojinaga",
+                "comment": " America/Ojinaga\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_panama",
+                "comment": " America/Panama\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_pangnirtung",
+                "comment": " America/Pangnirtung\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_paramaribo",
+                "comment": " America/Paramaribo\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_phoenix",
+                "comment": " America/Phoenix\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_port_au_prince",
+                "comment": " America/Port-au-Prince\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_port_of_spain",
+                "comment": " America/Port\\_of\\_Spain\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_porto_acre",
+                "comment": " America/Porto\\_Acre\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_porto_velho",
+                "comment": " America/Porto\\_Velho\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_puerto_rico",
+                "comment": " America/Puerto\\_Rico\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_rainy_river",
+                "comment": " America/Rainy\\_River\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_rankin_inlet",
+                "comment": " America/Rankin\\_Inlet\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_recife",
+                "comment": " America/Recife\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_regina",
+                "comment": " America/Regina\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_resolute",
+                "comment": " America/Resolute\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_rio_branco",
+                "comment": " America/Rio\\_Branco\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_rosario",
+                "comment": " America/Rosario\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_santa_isabel",
+                "comment": " America/Santa\\_Isabel\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_santarem",
+                "comment": " America/Santarem\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_santiago",
+                "comment": " America/Santiago\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_santo_domingo",
+                "comment": " America/Santo\\_Domingo\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_sao_paulo",
+                "comment": " America/Sao\\_Paulo\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_scoresbysund",
+                "comment": " America/Scoresbysund\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_shiprock",
+                "comment": " America/Shiprock\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_sitka",
+                "comment": " America/Sitka\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_st_barthelemy",
+                "comment": " America/St\\_Barthelemy\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_st_johns",
+                "comment": " America/St\\_Johns\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_st_kitts",
+                "comment": " America/St\\_Kitts\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_st_lucia",
+                "comment": " America/St\\_Lucia\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_st_thomas",
+                "comment": " America/St\\_Thomas\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_st_vincent",
+                "comment": " America/St\\_Vincent\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_swift_current",
+                "comment": " America/Swift\\_Current\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_tegucigalpa",
+                "comment": " America/Tegucigalpa\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_thule",
+                "comment": " America/Thule\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_thunder_bay",
+                "comment": " America/Thunder\\_Bay\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_tijuana",
+                "comment": " America/Tijuana\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_toronto",
+                "comment": " America/Toronto\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_tortola",
+                "comment": " America/Tortola\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_vancouver",
+                "comment": " America/Vancouver\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_virgin",
+                "comment": " America/Virgin\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_whitehorse",
+                "comment": " America/Whitehorse\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_winnipeg",
+                "comment": " America/Winnipeg\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_yakutat",
+                "comment": " America/Yakutat\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "america_yellowknife",
+                "comment": " America/Yellowknife\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "antarctica_casey",
+                "comment": " Antarctica/Casey\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "antarctica_davis",
+                "comment": " Antarctica/Davis\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "antarctica_dumontdurville",
+                "comment": " Antarctica/DumontDUrville\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "antarctica_macquarie",
+                "comment": " Antarctica/Macquarie\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "antarctica_mawson",
+                "comment": " Antarctica/Mawson\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "antarctica_mcmurdo",
+                "comment": " Antarctica/McMurdo\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "antarctica_palmer",
+                "comment": " Antarctica/Palmer\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "antarctica_rothera",
+                "comment": " Antarctica/Rothera\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "antarctica_south_pole",
+                "comment": " Antarctica/South\\_Pole\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "antarctica_syowa",
+                "comment": " Antarctica/Syowa\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "antarctica_troll",
+                "comment": " Antarctica/Troll\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "antarctica_vostok",
+                "comment": " Antarctica/Vostok\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "arctic_longyearbyen",
+                "comment": " Arctic/Longyearbyen\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_aden",
+                "comment": " Asia/Aden\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_almaty",
+                "comment": " Asia/Almaty\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_amman",
+                "comment": " Asia/Amman\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_anadyr",
+                "comment": " Asia/Anadyr\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_aqtau",
+                "comment": " Asia/Aqtau\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_aqtobe",
+                "comment": " Asia/Aqtobe\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_ashgabat",
+                "comment": " Asia/Ashgabat\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_ashkhabad",
+                "comment": " Asia/Ashkhabad\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_baghdad",
+                "comment": " Asia/Baghdad\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_bahrain",
+                "comment": " Asia/Bahrain\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_baku",
+                "comment": " Asia/Baku\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_bangkok",
+                "comment": " Asia/Bangkok\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_barnaul",
+                "comment": " Asia/Barnaul\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_beirut",
+                "comment": " Asia/Beirut\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_bishkek",
+                "comment": " Asia/Bishkek\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_brunei",
+                "comment": " Asia/Brunei\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_calcutta",
+                "comment": " Asia/Calcutta\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_chita",
+                "comment": " Asia/Chita\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_choibalsan",
+                "comment": " Asia/Choibalsan\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_chongqing",
+                "comment": " Asia/Chongqing\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_chungking",
+                "comment": " Asia/Chungking\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_colombo",
+                "comment": " Asia/Colombo\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_dacca",
+                "comment": " Asia/Dacca\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_damascus",
+                "comment": " Asia/Damascus\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_dhaka",
+                "comment": " Asia/Dhaka\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_dili",
+                "comment": " Asia/Dili\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_dubai",
+                "comment": " Asia/Dubai\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_dushanbe",
+                "comment": " Asia/Dushanbe\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_famagusta",
+                "comment": " Asia/Famagusta\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_gaza",
+                "comment": " Asia/Gaza\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_harbin",
+                "comment": " Asia/Harbin\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_hebron",
+                "comment": " Asia/Hebron\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_ho_chi_minh",
+                "comment": " Asia/Ho\\_Chi\\_Minh\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_hong_kong",
+                "comment": " Asia/Hong\\_Kong\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_hovd",
+                "comment": " Asia/Hovd\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_irkutsk",
+                "comment": " Asia/Irkutsk\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_istanbul",
+                "comment": " Asia/Istanbul\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_jakarta",
+                "comment": " Asia/Jakarta\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_jayapura",
+                "comment": " Asia/Jayapura\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_jerusalem",
+                "comment": " Asia/Jerusalem\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_kabul",
+                "comment": " Asia/Kabul\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_kamchatka",
+                "comment": " Asia/Kamchatka\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_karachi",
+                "comment": " Asia/Karachi\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_kashgar",
+                "comment": " Asia/Kashgar\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_kathmandu",
+                "comment": " Asia/Kathmandu\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_katmandu",
+                "comment": " Asia/Katmandu\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_khandyga",
+                "comment": " Asia/Khandyga\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_kolkata",
+                "comment": " Asia/Kolkata\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_krasnoyarsk",
+                "comment": " Asia/Krasnoyarsk\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_kuala_lumpur",
+                "comment": " Asia/Kuala\\_Lumpur\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_kuching",
+                "comment": " Asia/Kuching\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_kuwait",
+                "comment": " Asia/Kuwait\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_macao",
+                "comment": " Asia/Macao\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_macau",
+                "comment": " Asia/Macau\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_magadan",
+                "comment": " Asia/Magadan\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_makassar",
+                "comment": " Asia/Makassar\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_manila",
+                "comment": " Asia/Manila\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_muscat",
+                "comment": " Asia/Muscat\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_nicosia",
+                "comment": " Asia/Nicosia\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_novokuznetsk",
+                "comment": " Asia/Novokuznetsk\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_novosibirsk",
+                "comment": " Asia/Novosibirsk\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_omsk",
+                "comment": " Asia/Omsk\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_oral",
+                "comment": " Asia/Oral\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_phnom_penh",
+                "comment": " Asia/Phnom\\_Penh\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_pontianak",
+                "comment": " Asia/Pontianak\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_pyongyang",
+                "comment": " Asia/Pyongyang\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_qatar",
+                "comment": " Asia/Qatar\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_qyzylorda",
+                "comment": " Asia/Qyzylorda\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_rangoon",
+                "comment": " Asia/Rangoon\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_riyadh",
+                "comment": " Asia/Riyadh\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_saigon",
+                "comment": " Asia/Saigon\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_sakhalin",
+                "comment": " Asia/Sakhalin\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_samarkand",
+                "comment": " Asia/Samarkand\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_seoul",
+                "comment": " Asia/Seoul\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_shanghai",
+                "comment": " Asia/Shanghai\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_singapore",
+                "comment": " Asia/Singapore\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_srednekolymsk",
+                "comment": " Asia/Srednekolymsk\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_taipei",
+                "comment": " Asia/Taipei\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_tashkent",
+                "comment": " Asia/Tashkent\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_tbilisi",
+                "comment": " Asia/Tbilisi\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_tehran",
+                "comment": " Asia/Tehran\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_tel_aviv",
+                "comment": " Asia/Tel\\_Aviv\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_thimbu",
+                "comment": " Asia/Thimbu\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_thimphu",
+                "comment": " Asia/Thimphu\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_tokyo",
+                "comment": " Asia/Tokyo\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_tomsk",
+                "comment": " Asia/Tomsk\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_ujung_pandang",
+                "comment": " Asia/Ujung\\_Pandang\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_ulaanbaatar",
+                "comment": " Asia/Ulaanbaatar\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_ulan_bator",
+                "comment": " Asia/Ulan\\_Bator\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_urumqi",
+                "comment": " Asia/Urumqi\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_ust_nera",
+                "comment": " Asia/Ust-Nera\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_vientiane",
+                "comment": " Asia/Vientiane\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_vladivostok",
+                "comment": " Asia/Vladivostok\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_yakutsk",
+                "comment": " Asia/Yakutsk\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_yangon",
+                "comment": " Asia/Yangon\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_yekaterinburg",
+                "comment": " Asia/Yekaterinburg\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "asia_yerevan",
+                "comment": " Asia/Yerevan\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "atlantic_azores",
+                "comment": " Atlantic/Azores\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "atlantic_bermuda",
+                "comment": " Atlantic/Bermuda\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "atlantic_canary",
+                "comment": " Atlantic/Canary\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "atlantic_cape_verde",
+                "comment": " Atlantic/Cape\\_Verde\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "atlantic_faeroe",
+                "comment": " Atlantic/Faeroe\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "atlantic_faroe",
+                "comment": " Atlantic/Faroe\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "atlantic_jan_mayen",
+                "comment": " Atlantic/Jan\\_Mayen\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "atlantic_madeira",
+                "comment": " Atlantic/Madeira\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "atlantic_reykjavik",
+                "comment": " Atlantic/Reykjavik\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "atlantic_south_georgia",
+                "comment": " Atlantic/South\\_Georgia\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "atlantic_st_helena",
+                "comment": " Atlantic/St\\_Helena\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "atlantic_stanley",
+                "comment": " Atlantic/Stanley\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "australia_act",
+                "comment": " Australia/ACT\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "australia_adelaide",
+                "comment": " Australia/Adelaide\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "australia_brisbane",
+                "comment": " Australia/Brisbane\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "australia_broken_hill",
+                "comment": " Australia/Broken\\_Hill\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "australia_canberra",
+                "comment": " Australia/Canberra\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "australia_currie",
+                "comment": " Australia/Currie\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "australia_darwin",
+                "comment": " Australia/Darwin\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "australia_eucla",
+                "comment": " Australia/Eucla\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "australia_hobart",
+                "comment": " Australia/Hobart\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "australia_lhi",
+                "comment": " Australia/LHI\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "australia_lindeman",
+                "comment": " Australia/Lindeman\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "australia_lord_howe",
+                "comment": " Australia/Lord\\_Howe\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "australia_melbourne",
+                "comment": " Australia/Melbourne\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "australia_north",
+                "comment": " Australia/North\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "australia_nsw",
+                "comment": " Australia/NSW\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "australia_perth",
+                "comment": " Australia/Perth\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "australia_queensland",
+                "comment": " Australia/Queensland\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "australia_south",
+                "comment": " Australia/South\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "australia_sydney",
+                "comment": " Australia/Sydney\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "australia_tasmania",
+                "comment": " Australia/Tasmania\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "australia_victoria",
+                "comment": " Australia/Victoria\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "australia_west",
+                "comment": " Australia/West\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "australia_yancowinna",
+                "comment": " Australia/Yancowinna\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "brazil_acre",
+                "comment": " Brazil/Acre\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "brazil_denoronha",
+                "comment": " Brazil/DeNoronha\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "brazil_east",
+                "comment": " Brazil/East\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "brazil_west",
+                "comment": " Brazil/West\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "canada_atlantic",
+                "comment": " Canada/Atlantic\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "canada_central",
+                "comment": " Canada/Central\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "canada_east_saskatchewan",
+                "comment": " Canada/East-Saskatchewan\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "canada_eastern",
+                "comment": " Canada/Eastern\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "canada_mountain",
+                "comment": " Canada/Mountain\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "canada_newfoundland",
+                "comment": " Canada/Newfoundland\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "canada_pacific",
+                "comment": " Canada/Pacific\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "canada_saskatchewan",
+                "comment": " Canada/Saskatchewan\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "canada_yukon",
+                "comment": " Canada/Yukon\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "cet",
+                "comment": " CET\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "chile_continental",
+                "comment": " Chile/Continental\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "chile_easterisland",
+                "comment": " Chile/EasterIsland\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "cst6cdt",
+                "comment": " CST6CDT\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "cuba",
+                "comment": " Cuba\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "eet",
+                "comment": " EET\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "egypt",
+                "comment": " Egypt\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "eire",
+                "comment": " Eire\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "est",
+                "comment": " EST\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "est5edt",
+                "comment": " EST5EDT\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "etc_gmt",
+                "comment": " Etc/GMT\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "etc_gmt_0",
+                "comment": " Etc/GMT0\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "etc_gmt_minus_0",
+                "comment": " Etc/GMT-0\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "etc_gmt_minus_1",
+                "comment": " Etc/GMT-1\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "etc_gmt_minus_10",
+                "comment": " Etc/GMT-10\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "etc_gmt_minus_11",
+                "comment": " Etc/GMT-11\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "etc_gmt_minus_12",
+                "comment": " Etc/GMT-12\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "etc_gmt_minus_13",
+                "comment": " Etc/GMT-13\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "etc_gmt_minus_14",
+                "comment": " Etc/GMT-14\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "etc_gmt_minus_2",
+                "comment": " Etc/GMT-2\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "etc_gmt_minus_3",
+                "comment": " Etc/GMT-3\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "etc_gmt_minus_4",
+                "comment": " Etc/GMT-4\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "etc_gmt_minus_5",
+                "comment": " Etc/GMT-5\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "etc_gmt_minus_6",
+                "comment": " Etc/GMT-6\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "etc_gmt_minus_7",
+                "comment": " Etc/GMT-7\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "etc_gmt_minus_8",
+                "comment": " Etc/GMT-8\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "etc_gmt_minus_9",
+                "comment": " Etc/GMT-9\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "etc_gmt_plus_0",
+                "comment": " Etc/GMT+0\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "etc_gmt_plus_1",
+                "comment": " Etc/GMT+1\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "etc_gmt_plus_10",
+                "comment": " Etc/GMT+10\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "etc_gmt_plus_11",
+                "comment": " Etc/GMT+11\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "etc_gmt_plus_12",
+                "comment": " Etc/GMT+12\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "etc_gmt_plus_2",
+                "comment": " Etc/GMT+2\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "etc_gmt_plus_3",
+                "comment": " Etc/GMT+3\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "etc_gmt_plus_4",
+                "comment": " Etc/GMT+4\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "etc_gmt_plus_5",
+                "comment": " Etc/GMT+5\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "etc_gmt_plus_6",
+                "comment": " Etc/GMT+6\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "etc_gmt_plus_7",
+                "comment": " Etc/GMT+7\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "etc_gmt_plus_8",
+                "comment": " Etc/GMT+8\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "etc_gmt_plus_9",
+                "comment": " Etc/GMT+9\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "etc_greenwich",
+                "comment": " Etc/Greenwich\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "etc_uct",
+                "comment": " Etc/UCT\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "etc_universal",
+                "comment": " Etc/Universal\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "etc_utc",
+                "comment": " Etc/UTC\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "etc_zulu",
+                "comment": " Etc/Zulu\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "europe_amsterdam",
+                "comment": " Europe/Amsterdam\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "europe_andorra",
+                "comment": " Europe/Andorra\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "europe_astrakhan",
+                "comment": " Europe/Astrakhan\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "europe_athens",
+                "comment": " Europe/Athens\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "europe_belfast",
+                "comment": " Europe/Belfast\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "europe_belgrade",
+                "comment": " Europe/Belgrade\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "europe_berlin",
+                "comment": " Europe/Berlin\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "europe_bratislava",
+                "comment": " Europe/Bratislava\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "europe_brussels",
+                "comment": " Europe/Brussels\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "europe_bucharest",
+                "comment": " Europe/Bucharest\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "europe_budapest",
+                "comment": " Europe/Budapest\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "europe_busingen",
+                "comment": " Europe/Busingen\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "europe_chisinau",
+                "comment": " Europe/Chisinau\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "europe_copenhagen",
+                "comment": " Europe/Copenhagen\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "europe_dublin",
+                "comment": " Europe/Dublin\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "europe_gibraltar",
+                "comment": " Europe/Gibraltar\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "europe_guernsey",
+                "comment": " Europe/Guernsey\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "europe_helsinki",
+                "comment": " Europe/Helsinki\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "europe_isle_of_man",
+                "comment": " Europe/Isle\\_of\\_Man\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "europe_istanbul",
+                "comment": " Europe/Istanbul\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "europe_jersey",
+                "comment": " Europe/Jersey\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "europe_kaliningrad",
+                "comment": " Europe/Kaliningrad\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "europe_kiev",
+                "comment": " Europe/Kiev\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "europe_kirov",
+                "comment": " Europe/Kirov\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "europe_lisbon",
+                "comment": " Europe/Lisbon\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "europe_ljubljana",
+                "comment": " Europe/Ljubljana\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "europe_london",
+                "comment": " Europe/London\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "europe_luxembourg",
+                "comment": " Europe/Luxembourg\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "europe_madrid",
+                "comment": " Europe/Madrid\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "europe_malta",
+                "comment": " Europe/Malta\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "europe_mariehamn",
+                "comment": " Europe/Mariehamn\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "europe_minsk",
+                "comment": " Europe/Minsk\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "europe_monaco",
+                "comment": " Europe/Monaco\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "europe_moscow",
+                "comment": " Europe/Moscow\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "europe_nicosia",
+                "comment": " Europe/Nicosia\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "europe_oslo",
+                "comment": " Europe/Oslo\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "europe_paris",
+                "comment": " Europe/Paris\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "europe_podgorica",
+                "comment": " Europe/Podgorica\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "europe_prague",
+                "comment": " Europe/Prague\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "europe_riga",
+                "comment": " Europe/Riga\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "europe_rome",
+                "comment": " Europe/Rome\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "europe_samara",
+                "comment": " Europe/Samara\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "europe_san_marino",
+                "comment": " Europe/San\\_Marino\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "europe_sarajevo",
+                "comment": " Europe/Sarajevo\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "europe_simferopol",
+                "comment": " Europe/Simferopol\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "europe_skopje",
+                "comment": " Europe/Skopje\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "europe_sofia",
+                "comment": " Europe/Sofia\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "europe_stockholm",
+                "comment": " Europe/Stockholm\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "europe_tallinn",
+                "comment": " Europe/Tallinn\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "europe_tirane",
+                "comment": " Europe/Tirane\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "europe_tiraspol",
+                "comment": " Europe/Tiraspol\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "europe_ulyanovsk",
+                "comment": " Europe/Ulyanovsk\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "europe_uzhgorod",
+                "comment": " Europe/Uzhgorod\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "europe_vaduz",
+                "comment": " Europe/Vaduz\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "europe_vatican",
+                "comment": " Europe/Vatican\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "europe_vienna",
+                "comment": " Europe/Vienna\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "europe_vilnius",
+                "comment": " Europe/Vilnius\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "europe_volgograd",
+                "comment": " Europe/Volgograd\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "europe_warsaw",
+                "comment": " Europe/Warsaw\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "europe_zagreb",
+                "comment": " Europe/Zagreb\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "europe_zaporozhye",
+                "comment": " Europe/Zaporozhye\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "europe_zurich",
+                "comment": " Europe/Zurich\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "fromName",
+                "comment": " Look up a TimeZone by name.\n",
+                "type": "String.String -> Maybe.Maybe Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "gb",
+                "comment": " GB\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "gb_eire",
+                "comment": " GB-Eire\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "gmt",
+                "comment": " GMT\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "gmt_0",
+                "comment": " GMT0\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "gmt_minus_0",
+                "comment": " GMT-0\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "gmt_plus_0",
+                "comment": " GMT+0\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "greenwich",
+                "comment": " Greenwich\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "hongkong",
+                "comment": " Hongkong\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "hst",
+                "comment": " HST\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "iceland",
+                "comment": " Iceland\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "indian_antananarivo",
+                "comment": " Indian/Antananarivo\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "indian_chagos",
+                "comment": " Indian/Chagos\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "indian_christmas",
+                "comment": " Indian/Christmas\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "indian_cocos",
+                "comment": " Indian/Cocos\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "indian_comoro",
+                "comment": " Indian/Comoro\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "indian_kerguelen",
+                "comment": " Indian/Kerguelen\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "indian_mahe",
+                "comment": " Indian/Mahe\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "indian_maldives",
+                "comment": " Indian/Maldives\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "indian_mauritius",
+                "comment": " Indian/Mauritius\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "indian_mayotte",
+                "comment": " Indian/Mayotte\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "indian_reunion",
+                "comment": " Indian/Reunion\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "iran",
+                "comment": " Iran\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "israel",
+                "comment": " Israel\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "jamaica",
+                "comment": " Jamaica\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "japan",
+                "comment": " Japan\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "kwajalein",
+                "comment": " Kwajalein\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "libya",
+                "comment": " Libya\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "met",
+                "comment": " MET\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "mexico_bajanorte",
+                "comment": " Mexico/BajaNorte\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "mexico_bajasur",
+                "comment": " Mexico/BajaSur\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "mexico_general",
+                "comment": " Mexico/General\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "mst",
+                "comment": " MST\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "mst7mdt",
+                "comment": " MST7MDT\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "navajo",
+                "comment": " Navajo\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "nz",
+                "comment": " NZ\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "nz_chat",
+                "comment": " NZ-CHAT\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "pacific_apia",
+                "comment": " Pacific/Apia\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "pacific_auckland",
+                "comment": " Pacific/Auckland\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "pacific_bougainville",
+                "comment": " Pacific/Bougainville\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "pacific_chatham",
+                "comment": " Pacific/Chatham\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "pacific_chuuk",
+                "comment": " Pacific/Chuuk\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "pacific_easter",
+                "comment": " Pacific/Easter\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "pacific_efate",
+                "comment": " Pacific/Efate\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "pacific_enderbury",
+                "comment": " Pacific/Enderbury\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "pacific_fakaofo",
+                "comment": " Pacific/Fakaofo\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "pacific_fiji",
+                "comment": " Pacific/Fiji\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "pacific_funafuti",
+                "comment": " Pacific/Funafuti\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "pacific_galapagos",
+                "comment": " Pacific/Galapagos\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "pacific_gambier",
+                "comment": " Pacific/Gambier\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "pacific_guadalcanal",
+                "comment": " Pacific/Guadalcanal\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "pacific_guam",
+                "comment": " Pacific/Guam\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "pacific_honolulu",
+                "comment": " Pacific/Honolulu\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "pacific_johnston",
+                "comment": " Pacific/Johnston\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "pacific_kiritimati",
+                "comment": " Pacific/Kiritimati\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "pacific_kosrae",
+                "comment": " Pacific/Kosrae\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "pacific_kwajalein",
+                "comment": " Pacific/Kwajalein\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "pacific_majuro",
+                "comment": " Pacific/Majuro\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "pacific_marquesas",
+                "comment": " Pacific/Marquesas\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "pacific_midway",
+                "comment": " Pacific/Midway\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "pacific_nauru",
+                "comment": " Pacific/Nauru\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "pacific_niue",
+                "comment": " Pacific/Niue\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "pacific_norfolk",
+                "comment": " Pacific/Norfolk\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "pacific_noumea",
+                "comment": " Pacific/Noumea\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "pacific_pago_pago",
+                "comment": " Pacific/Pago\\_Pago\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "pacific_palau",
+                "comment": " Pacific/Palau\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "pacific_pitcairn",
+                "comment": " Pacific/Pitcairn\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "pacific_pohnpei",
+                "comment": " Pacific/Pohnpei\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "pacific_ponape",
+                "comment": " Pacific/Ponape\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "pacific_port_moresby",
+                "comment": " Pacific/Port\\_Moresby\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "pacific_rarotonga",
+                "comment": " Pacific/Rarotonga\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "pacific_saipan",
+                "comment": " Pacific/Saipan\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "pacific_samoa",
+                "comment": " Pacific/Samoa\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "pacific_tahiti",
+                "comment": " Pacific/Tahiti\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "pacific_tarawa",
+                "comment": " Pacific/Tarawa\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "pacific_tongatapu",
+                "comment": " Pacific/Tongatapu\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "pacific_truk",
+                "comment": " Pacific/Truk\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "pacific_wake",
+                "comment": " Pacific/Wake\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "pacific_wallis",
+                "comment": " Pacific/Wallis\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "pacific_yap",
+                "comment": " Pacific/Yap\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "poland",
+                "comment": " Poland\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "portugal",
+                "comment": " Portugal\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "prc",
+                "comment": " PRC\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "pst8pdt",
+                "comment": " PST8PDT\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "roc",
+                "comment": " ROC\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "rok",
+                "comment": " ROK\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "singapore",
+                "comment": " Singapore\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "turkey",
+                "comment": " Turkey\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "uct",
+                "comment": " UCT\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "universal",
+                "comment": " Universal\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "us_alaska",
+                "comment": " US/Alaska\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "us_aleutian",
+                "comment": " US/Aleutian\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "us_arizona",
+                "comment": " US/Arizona\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "us_central",
+                "comment": " US/Central\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "us_east_indiana",
+                "comment": " US/East-Indiana\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "us_eastern",
+                "comment": " US/Eastern\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "us_hawaii",
+                "comment": " US/Hawaii\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "us_indiana_starke",
+                "comment": " US/Indiana-Starke\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "us_michigan",
+                "comment": " US/Michigan\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "us_mountain",
+                "comment": " US/Mountain\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "us_pacific",
+                "comment": " US/Pacific\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "us_pacific_new",
+                "comment": " US/Pacific-New\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "us_samoa",
+                "comment": " US/Samoa\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "utc",
+                "comment": " UTC\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "w_su",
+                "comment": " W-SU\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "wet",
+                "comment": " WET\n",
+                "type": "Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "zulu",
+                "comment": " Zulu\n",
+                "type": "Time.TimeZone.TimeZone"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Time.ZonedDateTime",
+        "comment": " This module defines a time representation based on a Date, the\ntime of day and a time zone.\n\nZonedDateTimes should only be used when reasoning about or displaying\n`DateTime`s in a user's local time zone. For this reason, the API\nsurface of `ZonedDateTimes` is extremely limited.\n\n\n# ZonedDateTimes\n\n@docs ZonedDateTime\n\n\n# Constructing ZonedDateTimes\n\n@docs zero, zonedDateTime, fromDateTime, toDateTime, fromPosix, toPosix\n\n\n# Inspecting ZonedDateTimes\n\n@docs timeZone, year, month, day, weekday, hour, minute, second, millisecond, abbreviation, utcOffset, utcOffsetString\n\n\n# Manipulating ZonedDateTimes\n\n@docs asTimeZone, setDate, setYear, setMonth, setDay, setHour, setMinute, setSecond, setMillisecond, addYears, addMonths, addDays, addHours, addMinutes, addSeconds, addMilliseconds\n\n",
+        "unions": [
+            {
+                "name": "ZonedDateTime",
+                "comment": " ZoneDateTime is the opaque type for all ZonedDateTime values.\nValues of this type represent a `(TimeZone, DateTime)` pair.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "abbreviation",
+                "comment": " abbreviation returns a ZonedDateTime's abbreviation at that time.\n",
+                "type": "Time.ZonedDateTime.ZonedDateTime -> String.String"
+            },
+            {
+                "name": "addDays",
+                "comment": " addDays adds an absolute number of days to a ZonedDateTime value.\n",
+                "type": "Basics.Int -> Time.ZonedDateTime.ZonedDateTime -> Time.ZonedDateTime.ZonedDateTime"
+            },
+            {
+                "name": "addHours",
+                "comment": " addHours adds a relative number of hours to a ZonedDateTime value.\n",
+                "type": "Basics.Int -> Time.ZonedDateTime.ZonedDateTime -> Time.ZonedDateTime.ZonedDateTime"
+            },
+            {
+                "name": "addMilliseconds",
+                "comment": " addMilliseconds adds an absolute number of milliseconds to a\nZonedDateTime value.\n",
+                "type": "Basics.Int -> Time.ZonedDateTime.ZonedDateTime -> Time.ZonedDateTime.ZonedDateTime"
+            },
+            {
+                "name": "addMinutes",
+                "comment": " addMinutes adds a relative number of minutes to a ZonedDateTime value.\n",
+                "type": "Basics.Int -> Time.ZonedDateTime.ZonedDateTime -> Time.ZonedDateTime.ZonedDateTime"
+            },
+            {
+                "name": "addMonths",
+                "comment": " addMonths adds a relative number of months to a ZonedDateTime value.\n",
+                "type": "Basics.Int -> Time.ZonedDateTime.ZonedDateTime -> Time.ZonedDateTime.ZonedDateTime"
+            },
+            {
+                "name": "addSeconds",
+                "comment": " addSeconds adds a relative number of seconds to a ZonedDateTime value.\n",
+                "type": "Basics.Int -> Time.ZonedDateTime.ZonedDateTime -> Time.ZonedDateTime.ZonedDateTime"
+            },
+            {
+                "name": "addYears",
+                "comment": " addYears adds a relative number of years to a ZonedDateTime value.\n",
+                "type": "Basics.Int -> Time.ZonedDateTime.ZonedDateTime -> Time.ZonedDateTime.ZonedDateTime"
+            },
+            {
+                "name": "asTimeZone",
+                "comment": " asTimeZone converts a ZonedDateTime to another TimeZone.\n",
+                "type": "Time.TimeZone.TimeZone -> Time.ZonedDateTime.ZonedDateTime -> Time.ZonedDateTime.ZonedDateTime"
+            },
+            {
+                "name": "day",
+                "comment": " day returns a ZonedDateTime's day.\n",
+                "type": "Time.ZonedDateTime.ZonedDateTime -> Basics.Int"
+            },
+            {
+                "name": "fromDateTime",
+                "comment": " fromDateTime constructs a ZonedDateTime value from a TimeZone and\na DateTime.\n",
+                "type": "Time.TimeZone.TimeZone -> Time.DateTime.DateTime -> Time.ZonedDateTime.ZonedDateTime"
+            },
+            {
+                "name": "fromPosix",
+                "comment": " fromPosix converts the elm/time POSIX representation of a UNIX\ntimestamp into a ZonedDateTime value. This is equivalent to calling\n`DateTime.fromPosix` and then converting the resulting `DateTime`\nvalue to a `ZonedDateTime`.\n",
+                "type": "Time.TimeZone.TimeZone -> Time.Posix -> Time.ZonedDateTime.ZonedDateTime"
+            },
+            {
+                "name": "hour",
+                "comment": " hour returns a ZonedDateTime's hour.\n",
+                "type": "Time.ZonedDateTime.ZonedDateTime -> Basics.Int"
+            },
+            {
+                "name": "millisecond",
+                "comment": " millisecond returns a ZonedDateTime's millisecond.\n",
+                "type": "Time.ZonedDateTime.ZonedDateTime -> Basics.Int"
+            },
+            {
+                "name": "minute",
+                "comment": " minute returns a ZonedDateTime's minute.\n",
+                "type": "Time.ZonedDateTime.ZonedDateTime -> Basics.Int"
+            },
+            {
+                "name": "month",
+                "comment": " month returns a ZonedDateTime's month.\n",
+                "type": "Time.ZonedDateTime.ZonedDateTime -> Basics.Int"
+            },
+            {
+                "name": "second",
+                "comment": " second returns a ZonedDateTime's second.\n",
+                "type": "Time.ZonedDateTime.ZonedDateTime -> Basics.Int"
+            },
+            {
+                "name": "setDate",
+                "comment": " setDate sets a ZonedDateTime's date.\n",
+                "type": "Time.Date.Date -> Time.ZonedDateTime.ZonedDateTime -> Time.ZonedDateTime.ZonedDateTime"
+            },
+            {
+                "name": "setDay",
+                "comment": " setDay sets a ZonedDateTime's day.\n",
+                "type": "Basics.Int -> Time.ZonedDateTime.ZonedDateTime -> Time.ZonedDateTime.ZonedDateTime"
+            },
+            {
+                "name": "setHour",
+                "comment": " setHour sets a ZonedDateTime's hour.\n",
+                "type": "Basics.Int -> Time.ZonedDateTime.ZonedDateTime -> Time.ZonedDateTime.ZonedDateTime"
+            },
+            {
+                "name": "setMillisecond",
+                "comment": " setMillisecond sets a ZonedDateTime's millisecond.\n",
+                "type": "Basics.Int -> Time.ZonedDateTime.ZonedDateTime -> Time.ZonedDateTime.ZonedDateTime"
+            },
+            {
+                "name": "setMinute",
+                "comment": " setMinute sets a ZonedDateTime's minute.\n",
+                "type": "Basics.Int -> Time.ZonedDateTime.ZonedDateTime -> Time.ZonedDateTime.ZonedDateTime"
+            },
+            {
+                "name": "setMonth",
+                "comment": " setMonth sets a ZonedDateTime's month.\n",
+                "type": "Basics.Int -> Time.ZonedDateTime.ZonedDateTime -> Time.ZonedDateTime.ZonedDateTime"
+            },
+            {
+                "name": "setSecond",
+                "comment": " setSecond sets a ZonedDateTime's second.\n",
+                "type": "Basics.Int -> Time.ZonedDateTime.ZonedDateTime -> Time.ZonedDateTime.ZonedDateTime"
+            },
+            {
+                "name": "setYear",
+                "comment": " setYear sets a ZonedDateTime's year.\n",
+                "type": "Basics.Int -> Time.ZonedDateTime.ZonedDateTime -> Time.ZonedDateTime.ZonedDateTime"
+            },
+            {
+                "name": "timeZone",
+                "comment": " timeZone returns a ZonedDatetime's TimeZone.\n",
+                "type": "Time.ZonedDateTime.ZonedDateTime -> Time.TimeZone.TimeZone"
+            },
+            {
+                "name": "toDateTime",
+                "comment": " toDateTime converts a ZonedDateTime to a UTC DateTime value.\n",
+                "type": "Time.ZonedDateTime.ZonedDateTime -> Time.DateTime.DateTime"
+            },
+            {
+                "name": "toPosix",
+                "comment": " toPosix converts a ZonedDateTime to its UNIX timestamp\nrepresentation, as an elm/time Posix time.\n",
+                "type": "Time.ZonedDateTime.ZonedDateTime -> Time.Posix"
+            },
+            {
+                "name": "utcOffset",
+                "comment": " utcOffset returns a ZonedDateTime's offset from UTC in\nmilliseconds at that time.\n",
+                "type": "Time.ZonedDateTime.ZonedDateTime -> Basics.Int"
+            },
+            {
+                "name": "utcOffsetString",
+                "comment": " utcOffsetString returns a ZonedDateTime's UTC offset at that time\nas a string.\n",
+                "type": "Time.ZonedDateTime.ZonedDateTime -> String.String"
+            },
+            {
+                "name": "weekday",
+                "comment": " weekday returns a ZonedDateTime's day of the week.\n",
+                "type": "Time.ZonedDateTime.ZonedDateTime -> Time.Date.Weekday"
+            },
+            {
+                "name": "year",
+                "comment": " year returns a ZonedDateTime's year.\n",
+                "type": "Time.ZonedDateTime.ZonedDateTime -> Basics.Int"
+            },
+            {
+                "name": "zero",
+                "comment": " zero represents the first millisecond of the first day of the\ncurrent era. Use it to build `ZonedDateTime` values:\n\n    -- 0-01-01T00:00:00+02:00\n    zonedDateTime (europe_bucharest ()) zero\n\n\n    -- 2016-01-01T00:00:00+02:00\n    zonedDateTime (europe_bucharest ()) { zero | year = 2016 }\n\n\n    -- 2016-05-29T13:00:00+02:00\n    zonedDateTime (europe_bucharest ()) { zero | year = 2016, month = 5, day = 29, hour = 13 }\n\n",
+                "type": "Time.Internal.DateTimeData"
+            },
+            {
+                "name": "zonedDateTime",
+                "comment": " zonedDateTime constructs a ZonedDateTime value given a TimeZone, a\ndate and a time. Invalid values are clamped to the nearest valid date\nand time.\n",
+                "type": "Time.TimeZone.TimeZone -> Time.Internal.DateTimeData -> Time.ZonedDateTime.ZonedDateTime"
+            }
+        ],
+        "binops": []
+    }
+]

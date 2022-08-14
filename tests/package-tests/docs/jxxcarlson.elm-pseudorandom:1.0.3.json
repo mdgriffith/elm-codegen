@@ -1,0 +1,31 @@
+[
+    {
+        "name": "PseudoRandom",
+        "comment": " This module provides two pseudo-random number generators,\nfloatSequence and integerSequence. The first produces\na list of n floating point numbers in a specified range.\nThe second produces a list of positive integers in the range\n1 to 214748363. A pseudo-random sequence is a sequence\nof numbers that resembles a random sequence even though it is\nproduced by deterministic means. The notion \"resembles\" can\nbe made precise using various statistical tests.\n\nExamples:\n\nfloatSequence 3 7 (0, 1) |> List.map (roundTo 4) == [0.448,0.0988,0.246]\n\nintegerSequence 3 8 == [123092948, 28845728, 98310392]\n\nNOTE: the seed must be a positive integer.\n\nWe use the linear congruential generator of (1), Lewis, Goodman, and Miller, for the integerSequence function.\nFor floatSequence we use the triple linear congruential generator\nof (2).\n\nReferences:\n\n1.  <https://www.math.arizona.edu/~tgk/mc/book_chap3.pdf>\n\n2.  <http://www.ams.org/journals/mcom/1999-68-225/S0025-5718-99-00996-5/S0025-5718-99-00996-5.pdf>\n\n@docs integerSequence, floatSequence, m0, roundTo\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "floatSequence",
+                "comment": " Using the seed, produce a list of n floats in the range [a,b)\n",
+                "type": "Basics.Int -> Basics.Int -> ( Basics.Float, Basics.Float ) -> List.List Basics.Float"
+            },
+            {
+                "name": "integerSequence",
+                "comment": " Using the seed, produce a list of n integers k, where 0 <= k < m0.\n",
+                "type": "Basics.Int -> Basics.Int -> List.List Basics.Int"
+            },
+            {
+                "name": "m0",
+                "comment": " The largest integer that integerSequence will produce is m0 - 1.\n",
+                "type": "Basics.Int"
+            },
+            {
+                "name": "roundTo",
+                "comment": " Use this function if all those digits in the output of\nfloatSequence bother you.\n\nroundTo 2 1.2345 == 1.23\n\n",
+                "type": "Basics.Int -> Basics.Float -> Basics.Float"
+            }
+        ],
+        "binops": []
+    }
+]

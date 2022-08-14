@@ -1,0 +1,1200 @@
+[
+    {
+        "name": "Spec",
+        "comment": " Functions for writing specs.\n\nA spec is a collection of scenarios, each of which provides an example that\nillustrates a behavior belonging to your program. Each scenario follows\nthe same basic plan:\n\n1. Configure the initial state of the world (and your program).\n2. Perform a sequence of steps.\n3. Validate your expectations about the new state of the world after the steps have been performed.\n\nHere's a sample spec for a browser program called `App`:\n\n    Spec.describe \"some part of my system\"\n    [ Spec.scenario \"the awesome path\" (\n        Spec.given (\n          Spec.Setup.init (App.init testFlags)\n            |> Spec.Setup.withView App.view\n            |> Spec.Setup.withUpdate App.update\n        )\n        |> Spec.when \"something happens\"\n          [ Spec.Markup.target << by [ id \"some-button\" ]\n          , Spec.Markup.Event.click\n          ]\n        |> Spec.it \"does the right thing\" (\n          Spec.Markup.observeElement\n            |> Spec.Markup.query << by [ id \"some-words\" ]\n            |> Spec.expect (\n              Spec.Claim.isSomethingWhere <|\n              Spec.Markup.text <|\n              Spec.Claim.isStringContaining \"something awesome\"\n            )\n        )\n      )\n    ]\n\n# Creating a Spec\n@docs Spec, Scenario, describe, scenario\n\n# Creating the Scenario Script\n@docs Script, given, when\n\n# Turn a Script into a Plan\n@docs Plan, Expectation, it, observeThat, expect\n\n# Run Only Certain Scenarios\n@docs pick, skip\n\n----\n\n# Create a Spec Suite Program\n@docs Config, browserProgram, program\n\n# Spec Suite Program Types\n@docs Message, Flags, Msg, Model\n\n",
+        "unions": [
+            {
+                "name": "Expectation",
+                "comment": " Represents what should be the case about some part of the world.\n\nExpectations are checked at the end of the scenario, after all steps of the\nscript have been performed.\n",
+                "args": [
+                    "model"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Plan",
+                "comment": " Represents the full plan (setup, steps, expectations) involved in a scenario.\n",
+                "args": [
+                    "model",
+                    "msg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Scenario",
+                "comment": " Represents a particular scenario in a spec.\n",
+                "args": [
+                    "model",
+                    "msg"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Script",
+                "comment": " Represents the setup and steps involved in a scenario.\n",
+                "args": [
+                    "model",
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " The spec suite runner must provide a Config, which must be implemented as follows:\n\nCreate two ports:\n\n    port elmSpecOut : Message -> Cmd msg\n    port elmSpecIn : (Message -> msg) -> Sub msg\n\nAnd then create a `Config` like so:\n\n    config : Spec.Config msg\n    config =\n      { send = elmSpecOut\n      , listen = elmSpecIn\n      }\n\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ send : Spec.Message -> Platform.Cmd.Cmd (Spec.Msg msg), listen : (Spec.Message -> Spec.Msg msg) -> Platform.Sub.Sub (Spec.Msg msg) }"
+            },
+            {
+                "name": "Flags",
+                "comment": " Flags that the JavaScript runner will pass to the spec suite program.\n",
+                "args": [],
+                "type": "Spec.Program.Flags"
+            },
+            {
+                "name": "Message",
+                "comment": " Represents a message to pass between elm-spec and the JavaScript elm-spec runner.\n",
+                "args": [],
+                "type": "Spec.Message.Message"
+            },
+            {
+                "name": "Model",
+                "comment": " Used by the spec suite program.\n",
+                "args": [
+                    "model",
+                    "msg"
+                ],
+                "type": "Spec.Program.Model model msg"
+            },
+            {
+                "name": "Msg",
+                "comment": " Used by the spec suite program.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "Spec.Program.Msg msg"
+            },
+            {
+                "name": "Spec",
+                "comment": " Represents the spec.\n",
+                "args": [
+                    "model",
+                    "msg"
+                ],
+                "type": "Spec.Scenario.Internal.Spec model msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "browserProgram",
+                "comment": " Create a spec suite program for describing the behavior of browser-based programs.\n\nOnce you've created the `Config` value, I suggest adding a function like so:\n\n    program : List (Spec model msg) -> Program Flags (Model model msg) (Msg msg)\n    program =\n      Spec.browserProgram config\n\nThen, each of your spec modules can implement their own `main` function:\n\n    main =\n      Runner.program\n        [ ... some specs ...\n        ]\n\nThe elm-spec runner will find each spec module and run it as its own program.\n\n",
+                "type": "Spec.Config msg -> List.List (Spec.Spec model msg) -> Platform.Program Spec.Flags (Spec.Model model msg) (Spec.Msg msg)"
+            },
+            {
+                "name": "describe",
+                "comment": " Specify a description and a list of scenarios that compose the spec.\n",
+                "type": "String.String -> List.List (Spec.Scenario model msg) -> Spec.Spec model msg"
+            },
+            {
+                "name": "expect",
+                "comment": " Provide an observer with a claim to evaluate.\n",
+                "type": "Spec.Claim.Claim a -> Spec.Observer.Observer model a -> Spec.Expectation model"
+            },
+            {
+                "name": "given",
+                "comment": " Provide the `Setup` that represents the state of the world at the start of the scenario.\n\nSee [Spec.Setup](Spec.Setup) for functions to construct this representation.\n",
+                "type": "Spec.Setup.Setup model msg -> Spec.Script model msg"
+            },
+            {
+                "name": "it",
+                "comment": " Specify an expectation to be checked once the scenario's steps have been performed.\n",
+                "type": "String.String -> Spec.Expectation model -> Spec.Script model msg -> Spec.Plan model msg"
+            },
+            {
+                "name": "observeThat",
+                "comment": " Specify multiple expectations to be checked once the scenario's steps have been performed.\n",
+                "type": "List.List (Spec.Script model msg -> Spec.Plan model msg) -> Spec.Script model msg -> Spec.Plan model msg"
+            },
+            {
+                "name": "pick",
+                "comment": " Pick this scenario to be executed when the spec suite runs.\n\nWhen one or more scenarios are picked, only picked scenarios will be executed.\n\nNote that the first argument to this function must be a port defined like so:\n\n    port elmSpecPick : () -> Cmd msg\n\nI suggest adding a function to the main Runner file in your spec suite, where\nyou've defined your [Config](Spec#Config) and so on:\n\n    pick =\n      Spec.pick elmSpecPick\n\nThen, to pick a scenario to run, do something like this:\n\n    myFunSpec =\n      Spec.describe \"Some fun stuff\"\n      [ Runner.pick <| Spec.scenario \"fun things happen\" (\n          ...\n        )\n      ]\n\n",
+                "type": "(() -> Platform.Cmd.Cmd msg) -> Spec.Scenario model msg -> Spec.Scenario model msg"
+            },
+            {
+                "name": "program",
+                "comment": " Create a spec suite program for describing the behavior of headless programs.\n\nOnce you've created the `Config` value, I suggest adding a function like so:\n\n    program : List (Spec model msg) -> Program Flags (Model model msg) (Msg msg)\n    program =\n      Spec.program config\n\nThen, each of your spec modules can implement their own `main` function:\n\n    main =\n      Runner.program\n        [ ... some specs ...\n        ]\n\nThe elm-spec runner will find each spec module and run it as its own program.\n\n",
+                "type": "Spec.Config msg -> List.List (Spec.Spec model msg) -> Platform.Program Spec.Flags (Spec.Model model msg) (Spec.Msg msg)"
+            },
+            {
+                "name": "scenario",
+                "comment": " Create a scenario with a description and a plan.\n",
+                "type": "String.String -> Spec.Plan model msg -> Spec.Scenario model msg"
+            },
+            {
+                "name": "skip",
+                "comment": " Skip this scenario when the spec suite runs.\n\nI suggest adding a function to the main Runner file in your spec suite, where\nyou've defined your [Config](Spec#Config) and so on:\n\n    skip =\n      Spec.skip\n\nThen, to skip a scenario, do something like this:\n\n    myFunSpec =\n      Spec.describe \"Some fun stuff\"\n      [ Runner.skip <| Spec.scenario \"fun things happen\" (\n          ...\n        )\n      ]\n\n",
+                "type": "Spec.Scenario model msg -> Spec.Scenario model msg"
+            },
+            {
+                "name": "when",
+                "comment": " Specify a description and the steps involved in a scenario.\n\nEach step is a function from [Spec.Step.Context](Spec.Step#Context) to [Spec.Step.Command](Spec.Step#Command), but usually\nyou will use steps that are provided by other modules, like [Spec.Markup.Event](Spec.Markup.Event).\n\nYou may provide multiple `when` blocks as part of a scenario.\n",
+                "type": "String.String -> List.List (Spec.Step.Step model msg) -> Spec.Script model msg -> Spec.Script model msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Spec.Claim",
+        "comment": " A claim is a function that maps a subject to a verdict.\n\n@docs Claim, Verdict\n\n# Basic Claims\n@docs isEqual, isTrue, isFalse\n\n# Claims about Strings\n@docs isStringContaining\n\n# Claims about Lists\n@docs isListWhere, isListWhereItemAt, isListWithLength\n\n# Claims about Maybe types\n@docs isSomething, isSomethingWhere, isNothing\n\n# Working with Claims\n@docs satisfying, specifyThat, mapRejection\n\n",
+        "unions": [
+            {
+                "name": "Verdict",
+                "comment": " The result of applying a claim to a subject.\n\nA claim about a subject will either be accepted or rejected.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Accept",
+                        []
+                    ],
+                    [
+                        "Reject",
+                        [
+                            "Spec.Report.Report"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Claim",
+                "comment": " Represents a function from a subject to a verdict.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "a -> Spec.Claim.Verdict"
+            }
+        ],
+        "values": [
+            {
+                "name": "isEqual",
+                "comment": " Claim that the subject is equal to the provided value.\n\nThe first argument to this function converts a value of some type to a string, which\nis used to produce readable messages if the claim is rejected. Instead of providing\nthis string-generating function each time, I suggest adding a helper function that just uses the\n`Debug.toString` function like so:\n\n    equals : a -> Claim a\n    equals =\n      Spec.Claim.isEqual Debug.toString\n\nThen just use your `equals` function whenever you need to claim that a subject is equal to some value.\n",
+                "type": "(a -> String.String) -> a -> Spec.Claim.Claim a"
+            },
+            {
+                "name": "isFalse",
+                "comment": " Claim that the subject is `False`\n",
+                "type": "Spec.Claim.Claim Basics.Bool"
+            },
+            {
+                "name": "isListWhere",
+                "comment": " Claim that the subject is a list where the following claims are satisfied:\n\n- the subject has the same length as the provided list\n- for each item in the subject, that item satisfies the corresponding claim in the provided list.\n\nFor example:\n\n    [ 1, 2, 3 ]\n      |> Spec.Claim.isListWhere\n          [ Spec.Claim.isEqual Debug.toString 1\n          , Spec.Claim.isEqual Debug.toString 27\n          , Spec.Claim.isEqual Debug.toString 3\n          ]\n\nwould result in a rejected claim, since 2 is not equal to 27.\n",
+                "type": "List.List (Spec.Claim.Claim a) -> Spec.Claim.Claim (List.List a)"
+            },
+            {
+                "name": "isListWhereItemAt",
+                "comment": " Claim that the subject is a list such that:\n\n- there is an item at the given index\n- that item satisfies the given claim\n",
+                "type": "Basics.Int -> Spec.Claim.Claim a -> Spec.Claim.Claim (List.List a)"
+            },
+            {
+                "name": "isListWithLength",
+                "comment": " Claim that the subject is a list with the given length.\n",
+                "type": "Basics.Int -> Spec.Claim.Claim (List.List a)"
+            },
+            {
+                "name": "isNothing",
+                "comment": " Claim that the subject is the `Nothing` case of the `Maybe` type.\n",
+                "type": "Spec.Claim.Claim (Maybe.Maybe a)"
+            },
+            {
+                "name": "isSomething",
+                "comment": " Claim that the subject is the `Just` case of the `Maybe` type.\n",
+                "type": "Spec.Claim.Claim (Maybe.Maybe a)"
+            },
+            {
+                "name": "isSomethingWhere",
+                "comment": " Claim that the subject is the `Just` case of the `Maybe` type and that\nthe associated value satisfies the given claim.\n\nFor example,\n\n    Just \"apple\"\n      |> isSomethingWhere (isStringContaining 1 \"cheese\")\n\nwould be rejected.\n\n",
+                "type": "Spec.Claim.Claim a -> Spec.Claim.Claim (Maybe.Maybe a)"
+            },
+            {
+                "name": "isStringContaining",
+                "comment": " Claim that the subject contains the given string the given number of times.\n\nFor example,\n\n    \"some funny string\"\n      |> isStringContaining 2 \"fun\"\n\nwould be rejected, since it contains `fun` only once.\n\n",
+                "type": "Basics.Int -> String.String -> Spec.Claim.Claim String.String"
+            },
+            {
+                "name": "isTrue",
+                "comment": " Claim that the subject is `True`\n",
+                "type": "Spec.Claim.Claim Basics.Bool"
+            },
+            {
+                "name": "mapRejection",
+                "comment": " Modify the report associated with a rejected verdict; otherwise, do nothing.\n",
+                "type": "(Spec.Report.Report -> Spec.Report.Report) -> Spec.Claim.Verdict -> Spec.Claim.Verdict"
+            },
+            {
+                "name": "satisfying",
+                "comment": " Combine multiple claims into one.\n\nIf any of the claims is rejected, then the combined claim is rejected.\n",
+                "type": "List.List (Spec.Claim.Claim a) -> Spec.Claim.Claim a"
+            },
+            {
+                "name": "specifyThat",
+                "comment": " Claim that a value derived from the subject satisfies the given claim.\n\nFor example, the following claim:\n\n    { x = 27, y = 31 }\n      |> specifyThat .y (isEqual Debug.toString 31)\n\nwould be accepted.\n\n",
+                "type": "(a -> b) -> Spec.Claim.Claim b -> Spec.Claim.Claim a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Spec.Command",
+        "comment": " Functions to work with `Cmd` values in a spec.\n\n@docs send, fake\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fake",
+                "comment": " Generate a `Cmd` value that will send a `Msg` to the `update`\nfunction provided in the setup of the scenario.\n",
+                "type": "msg -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "send",
+                "comment": " A step that sends a command.\n",
+                "type": "Platform.Cmd.Cmd msg -> Spec.Step.Step model msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Spec.File",
+        "comment": " Observe and make claims about files during a spec.\n\nHere's an exmaple that describes selecting a text file, and downloading its content:\n\n    Spec.describe \"modifying a file\"\n    [ Spec.scenario \"a text file\" (\n        Spec.given (\n          Spec.Setup.init (App.init testFlags)\n            |> Spec.Setup.withView App.view\n            |> Spec.Setup.withUpdate App.update\n        )\n        |> Spec.when \"a file is selected\"\n          [ Spec.Markup.target << by [ id \"file-input\" ]\n          , Spec.Markup.Event.click\n          , Spec.File.select\n            [ Spec.File.withText \"my-file.txt\" \"Some text content!\"\n            ]\n          ]\n        |> Spec.when \"the modified version is downloaded\"\n          [ Spec.Markup.target << by [ id \"download-button\" ]\n          , Spec.Markup.Event.click\n          ]\n        |> Spec.it \"downloads the expected content\" (\n          Spec.File.observeDownloads\n            |> Spec.expect (Spec.Claim.isListWhere\n              [ Spec.File.text <|\n                  Spec.Claim.isStringContaining 1 \"Some text content!\"\n              ]\n            )\n        )\n      )\n    ]\n\n# Select Files\n@docs FileFixture, select, atPath, withBytes, withText, withMimeType, withLastModified\n\n# Observe Downloads\n@docs Download, observeDownloads\n\n# Make Claims about Downloads\n@docs name, text, bytes, downloadedUrl\n\n",
+        "unions": [
+            {
+                "name": "Download",
+                "comment": " Represents a file downloaded in the course of a scenario.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "FileFixture",
+                "comment": " Represents a file.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "atPath",
+                "comment": " Create a `FileFixture` by loading a file from the local filesystem.\n\nThe path is typically relative to the current working directory of the elm-spec runner (but\ncheck the docs for the runner you are using).\n",
+                "type": "String.String -> Spec.File.FileFixture"
+            },
+            {
+                "name": "bytes",
+                "comment": " Claim that the bytes of a downloaded file satisfy the given claim.\n\nNote that this claim will fail if the download was created by downloading a URL.\n",
+                "type": "Spec.Claim.Claim Bytes.Bytes -> Spec.Claim.Claim Spec.File.Download"
+            },
+            {
+                "name": "downloadedUrl",
+                "comment": " Claim that the downloaded URL satisfies the given claim.\n\nNote that this claim will fail if the download was not created by downloading a URL.\n",
+                "type": "Spec.Claim.Claim String.String -> Spec.Claim.Claim Spec.File.Download"
+            },
+            {
+                "name": "name",
+                "comment": " Claim that the name of a downloaded file satisfies the given claim.\n\n",
+                "type": "Spec.Claim.Claim String.String -> Spec.Claim.Claim Spec.File.Download"
+            },
+            {
+                "name": "observeDownloads",
+                "comment": " Observe downloads that occurred during a scenario.\n\nFor example, here's a claim about the name of a downloaded file:\n\n    Spec.it \"names the downloaded file as expected\" (\n      Spec.File.observeDownloads\n        |> Spec.expect (Spec.Claim.isListWhere\n          [ Spec.File.name <|\n              Spec.Claim.isStringContaining 1 \"cool-file.txt\"\n          ]\n        )\n    )\n\n",
+                "type": "Spec.Observer.Observer model (List.List Spec.File.Download)"
+            },
+            {
+                "name": "select",
+                "comment": " A step that selects a file as input.\n\n    Spec.when \"a File is uploaded\"\n      [ Spec.Markup.target << by [ tag \"input\", attribute (\"type\", \"file\") ]\n      , Spec.Markup.Event.click\n      , Spec.File.select\n        [ Spec.File.atPath \"./fixtures/myFile.txt\"\n        ]\n      ]\n\nA previous step must open a file selector, either by clicking an input element of type `file` or\nby taking some action that results in a `File.Select.file` command.\n\nYou may select multiple files.\n\n",
+                "type": "List.List Spec.File.FileFixture -> Spec.Step.Step model msg"
+            },
+            {
+                "name": "text",
+                "comment": " Claim that the text content of a downloaded file satisfies the given claim.\n\nNote that this claim will fail if the download was created by downloading a URL.\n",
+                "type": "Spec.Claim.Claim String.String -> Spec.Claim.Claim Spec.File.Download"
+            },
+            {
+                "name": "withBytes",
+                "comment": " Create a `FileFixture` with the given name and bytes.\n",
+                "type": "String.String -> Bytes.Bytes -> Spec.File.FileFixture"
+            },
+            {
+                "name": "withLastModified",
+                "comment": " Update a `FileFixture` to have the given last modified\ndate, specified in milliseconds since the UNIX epoch.\n",
+                "type": "Basics.Int -> Spec.File.FileFixture -> Spec.File.FileFixture"
+            },
+            {
+                "name": "withMimeType",
+                "comment": " Update a `FileFixture` to have the given MIME type.\n\nFor example, create a PNG `FileFixture` like so:\n\n    Spec.File.atPath \"./fixtures/my-image.png\"\n      |> Spec.File.withMimeType \"image/png\"\n\n",
+                "type": "String.String -> Spec.File.FileFixture -> Spec.File.FileFixture"
+            },
+            {
+                "name": "withText",
+                "comment": " Create a `FileFixture` with the given name and text content.\n",
+                "type": "String.String -> String.String -> Spec.File.FileFixture"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Spec.Http",
+        "comment": " Observe, and make claims about HTTP requests during a spec.\n\nHere's an example:\n\nFirst, create an [HttpResponseStub](Spec.Http.Stub#HttpResponseStub) that defines the response to return\nwhen a request is sent by the program.\n\n    successStub : HttpResponseStub\n    successStub =\n      Spec.Http.Stub.for (Spec.Http.Route.post \"http://fake-api.com/api/sports\")\n        |> Spec.Http.Stub.withStatus 201\n\nNow, you could write a spec that checks to see if the request body contains a value:\n\n    Spec.describe \"some request\"\n    [ Spec.scenario \"the post is successful\" (\n        Spec.given (\n          Spec.Setup.init (App.init testFlags)\n            |> Spec.Setup.withView App.view\n            |> Spec.Setup.withUpdate App.update\n            |> Spec.Http.Stub.serve [ successStub ]\n        )\n        |> Spec.when \"the request is sent\"\n          [ Spec.Markup.target << by [ id \"request-button\" ]\n          , Spec.Markup.Event.click\n          ]\n        |> Spec.it \"sends the correct request\" (\n          Spec.Http.observeRequests\n              (Spec.Http.Route.post \"http://fake-api.com/api/sports\")\n            |> Spec.expect (Spec.Claim.isListWhere\n              [ Spec.Http.body\n                  (Spec.Http.asJson <|\n                    Json.field \"name\" Json.string)\n                  (Spec.Claim.isEqual Debug.toString \"bowling\")\n              ]\n            )\n        )\n      )\n    ]\n\n# Observe HTTP Requests\n@docs HttpRequest, observeRequests, clearRequestHistory\n\n# Make Claims About HTTP Requests\n@docs url, header, body, bodyPart, HttpRequestDataAssertion, asText, asJson, asFile, Blob, asBlob\n\n# Debug\n@docs logRequests\n\n",
+        "unions": [
+            {
+                "name": "HttpRequest",
+                "comment": " Represents an HTTP request made by the program in the course of the scenario.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "HttpRequestDataAssertion",
+                "comment": " Asserts that an HTTP request body (or part of that body) is data of a certain type.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Blob",
+                "comment": " When `Bytes` are sent as the HTTP request body or as part of the HTTP request body, a MIME type\nmust be specified. This value groups `Bytes` together with their associated MIME type.\n",
+                "args": [],
+                "type": "{ mimeType : String.String, data : Bytes.Bytes }"
+            }
+        ],
+        "values": [
+            {
+                "name": "asBlob",
+                "comment": " Claim that some HTTP request data is a `Blob` that satisfies the given claim.\n\nFor example, if the body of an observed request is binary data with a width of 12, then the\nfollowing claim would be accepted:\n\n    Spec.Http.body Spec.Http.binaryData\n      <| Spec.Claim.specifyThat .data\n      <| Spec.Claim.specifyThat Bytes.width\n      <| Claim.isEqual Debug.toString 12\n\n",
+                "type": "Spec.Http.HttpRequestDataAssertion Spec.Http.Blob"
+            },
+            {
+                "name": "asFile",
+                "comment": " Claim that some HTTP request data is a `File` that satisfies the given claim.\n\nFor example, if the body of an observed request is a `File` with the name `funFile.txt`, then the\nfollowing claim would be accepted:\n\n    Spec.Http.body Spec.Http.asFile\n      <| Spec.Claim.specifyThat File.name\n      <| Claim.isStringContaining 1 \"funFile.txt\"\n\n",
+                "type": "Spec.Http.HttpRequestDataAssertion File.File"
+            },
+            {
+                "name": "asJson",
+                "comment": " Claim that some HTTP request data is text that can be decoded with the\ngiven JSON decoder into a value that satisfies the given claim.\n\nFor example, if the body of the observed request were `{\"sport\":\"bowling\"}`,\nthen the following claim would be accepted:\n\n    Spec.Http.body\n      (Spec.Http.asJson <|\n        Json.Decode.field \"sport\" Json.Decode.string)\n      (Spec.Claim.isEqual Debug.toString \"bowling\")\n\n",
+                "type": "Json.Decode.Decoder a -> Spec.Http.HttpRequestDataAssertion a"
+            },
+            {
+                "name": "asText",
+                "comment": " Claim that some HTTP request data is text that satisfies the given claim.\n\nNote: If you create a request with `Http.emptyBody` then the given claim will be evaluated\nagainst the empty string.\n",
+                "type": "Spec.Http.HttpRequestDataAssertion String.String"
+            },
+            {
+                "name": "body",
+                "comment": " Claim that an HTTP request has a body with data that satisfies the given claim.\n\nFor example, if the body of the observed request were `{\"sport\":\"bowling\"}`,\nthen the following claim would be accepted:\n\n    Spec.Http.body\n      (Spec.Http.asJson <|\n        Json.Decode.field \"sport\" Json.Decode.string)\n      (Spec.Claim.isEqual Debug.toString \"bowling\")\n \n",
+                "type": "Spec.Http.HttpRequestDataAssertion a -> Spec.Claim.Claim a -> Spec.Claim.Claim Spec.Http.HttpRequest"
+            },
+            {
+                "name": "bodyPart",
+                "comment": " Claim that an HTTP request has a multipart body with a named part that satisfies the given claim.\n\nThere can be multiple parts, all with the same name. They should all be the same type of data.\n\nFor example, if the observed request had a multipart body with a part called `image` that contains a file\nnamed `fun-image.png`, then the following claim would be accepted:\n\n    Spec.Http.bodyPart \"image\" Spec.Http.asFile <|\n      Spec.Claim.isListWhere\n        [ Spec.Claim.specifyThat File.name <|\n            Spec.Claim.isEqual Debug.toString \"fun-image.png\"\n        ]\n\n",
+                "type": "String.String -> Spec.Http.HttpRequestDataAssertion a -> Spec.Claim.Claim (List.List a) -> Spec.Claim.Claim Spec.Http.HttpRequest"
+            },
+            {
+                "name": "clearRequestHistory",
+                "comment": " A step that clears the history of HTTP requests received.\n\nAny HTTP requests made prior to executing this step will not be observed.\n\nIt can be useful to clear the HTTP request history when a scenario results in\nmany HTTP requests, but you care about observing only those that occur\nafter a certain point.\n",
+                "type": "Spec.Step.Step model msg"
+            },
+            {
+                "name": "header",
+                "comment": " Claim that an HTTP request has a header that satisfies the given claim.\n\nFor example, if the observed request has an `Authorization` header with the value\n`Bearer some-fun-token`, then the following claim would be accepted:\n\n    Spec.Http.header \"Authorization\" <|\n      Spec.Claim.isSomethingWhere <|\n      Spec.Claim.isStringContaining 1 \"some-fun-token\"\n\nNote that HTTP header names are case-insensitive, so the capitalization of the first argument\ndoesn't matter.\n\n",
+                "type": "String.String -> Spec.Claim.Claim (Maybe.Maybe String.String) -> Spec.Claim.Claim Spec.Http.HttpRequest"
+            },
+            {
+                "name": "logRequests",
+                "comment": " A step that logs to the console any HTTP requests received prior to executing this step.\n\nYou might use this step to help debug a rejected observation.\n",
+                "type": "Spec.Step.Step model msg"
+            },
+            {
+                "name": "observeRequests",
+                "comment": " Observe HTTP requests that match the given route.\n\nFor example:\n\n    Spec.Http.observeRequests (Spec.Http.Route.get \"http://fake.com/fake\")\n      |> Spec.expect (Spec.Claim.isListWhere\n        [ Spec.Http.header \"Authorization\" <|\n          Spec.Claim.isSomethingWhere <|\n          Spec.Claim.isStringContaining 1 \"some-fun-token\"\n        ]\n      )\n\n",
+                "type": "Spec.Http.Route.HttpRoute -> Spec.Observer.Observer model (List.List Spec.Http.HttpRequest)"
+            },
+            {
+                "name": "url",
+                "comment": " Claim that the url of an HTTP request satisfies the given claim.\n\nIn the example below, we claim that there is one `GET` request to a url containing\n`fake.com` and that url has the query parameter `sport=bowling`.\n\n    Spec.Http.observeRequests (Spec.Http.Route.route \"GET\" <| Matching \"fake\\\\.com\")\n      |> Spec.expect (Spec.Claim.isListWhere\n        [ Spec.Http.url <|\n          Spec.Claim.isStringContaining 1 \"sport=bowling\"\n        ]\n      )\n\nThis claims makes the most sense when observing requests that match a route\ndefined with a regular expression, as in the example above.\n\n",
+                "type": "Spec.Claim.Claim String.String -> Spec.Claim.Claim Spec.Http.HttpRequest"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Spec.Http.Route",
+        "comment": " Functions for defining HTTP routes.\n\n@docs HttpRoute\n\n# Define a Route\n@docs get, post, UrlDescriptor, route\n\n# Work with Routes\n@docs encode, toString\n\n",
+        "unions": [
+            {
+                "name": "HttpRoute",
+                "comment": " Represents an HTTP route.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "UrlDescriptor",
+                "comment": " Describe a URL when constructing a Route with the `route` function.\n\nUse the `Exact` case when you want to provide a specific string to match against, for example, an absolute URL.\n\nUse the `Matching` case when you want to provide a JavaScript-style regular expression to match against.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Exact",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Matching",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "encode",
+                "comment": " Encode an `HttpRoute` into a JSON object.\n",
+                "type": "Spec.Http.Route.HttpRoute -> Json.Encode.Value"
+            },
+            {
+                "name": "get",
+                "comment": " Define a GET route with the given URL.\n\n    get \"http://fun.com/fun\"\n\n",
+                "type": "String.String -> Spec.Http.Route.HttpRoute"
+            },
+            {
+                "name": "post",
+                "comment": " Define a POST route with the given URL.\n\n    post \"http://fun.com/fun\"\n\n",
+                "type": "String.String -> Spec.Http.Route.HttpRoute"
+            },
+            {
+                "name": "route",
+                "comment": " Define a route with the given method and url descriptor.\n\nFor example, this route describes any request with the\nprotocol `http` and the method `PATCH`:\n\n    Spec.Http.Route.route \"PATCH\" <|\n      Matching \"http:\\\\/\\\\/.+\"\n\nAnd this route describes any `GET` request to `http://someplace.com/api` with any value\nfor the query parameter `key` (and any additional query parameters):\n\n    Spec.Http.Route.route \"GET\" <|\n      Matching \"http:\\\\/\\\\/someplace\\\\.com\\\\/api\\\\?key=.+\"\n\n",
+                "type": "String.String -> Spec.Http.Route.UrlDescriptor -> Spec.Http.Route.HttpRoute"
+            },
+            {
+                "name": "toString",
+                "comment": " Represent an `HttpRoute` as a string.\n",
+                "type": "Spec.Http.Route.HttpRoute -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Spec.Http.Stub",
+        "comment": " Define and set up stubs for HTTP requests made during a spec.\n\nIf an HTTP request matches none of the stubs currently served, then\nelm-spec will respond with a `404` status code.\n\n# Create and Register Stubs\n@docs HttpResponseStub, for, serve, nowServe\n\n# Stub the Response Body\n@docs HttpResponseBody, withBody, withText, withJson, withBytes, withTextAtPath, withBytesAtPath\n\n# Stub Progress of an In-Flight Request\n@docs HttpResponseProgress, sent, received, streamed, withProgress, abstain\n\n# Stub Response Metadata\n@docs withStatus, withHeader\n\n# Stub Errors\n@docs withNetworkError, withTimeout\n\n# Work with API Contracts\n\nWhen you create stubs as part of a spec, you are simluating an HTTP API and thus making\nassumptions about the shape of that API -- what paths it defines, what response\nbodies should look like, what headers are required, etc. Without some external\nvalidation, it's easy to imagine that the assumptions made in your specs could fall\nout of sync with reality.\n\nAn API contract, like an OpenAPI document, can help you avoid this situation. An\nAPI contract describes the shape of an API in a format that can be shared by all\nparties interested in that API, so that each party -- the server, a mobile client,\na web client, etc -- can check their own assumptions about that API against the very\nsame description.\n\nUse the functions below to create and associate an API contract with a stub so that all\nrequests matching that stub and all responses returned by that stub are validated\nagainst that contract. By following this pattern, you can be confident that your stubs\naccurately describe the API integration they are simulating.\n\n@docs Contract, satisfies, openApiContractAt\n\n",
+        "unions": [
+            {
+                "name": "Contract",
+                "comment": " Represents a contract with repsect to which HTTP requests and responses\ncan be validated.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "HttpResponseBody",
+                "comment": " Represents the body of an HTTP response.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "HttpResponseProgress",
+                "comment": " Represents progress on an in-flight HTTP request.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "HttpResponseStub",
+                "comment": " Represents the stubbed response for a particular HTTP request.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "abstain",
+                "comment": " Abstain from responding to requests to the route defined for the given `HttpResponseStub`.\n\nIt can be useful to abstain from responding if you want to describe the behavior of your\nprogram while waiting for a response.\n\nNote: This function is equivalent to `withProgress <| received 0`\n\n",
+                "type": "Spec.Http.Stub.HttpResponseStub -> Spec.Http.Stub.HttpResponseStub"
+            },
+            {
+                "name": "for",
+                "comment": " Build a stubbed response for requests made to the given route.\n\nBy default, the stubbed response has:\n\n- 200 status code\n- no headers\n- no body\n\n",
+                "type": "Spec.Http.Route.HttpRoute -> Spec.Http.Stub.HttpResponseStub"
+            },
+            {
+                "name": "nowServe",
+                "comment": " A step that reconfigures the fake HTTP server to serve the given `HttpResponseStubs`.\n\nUse this function if you want to change the stubs during a scenario.\n\nFor example, suppose you are writing a scenario that describes an application that\npolls some HTTP endpoint every 5 seconds. You could change the stubbed response\nduring the scenario like so:\n\n    Spec.scenario \"polling\" (\n      Spec.given (\n        Spec.Setup.init (App.init testFlags)\n          |> Spec.Setup.withView App.view\n          |> Spec.Setup.withUpdate App.update\n          |> Stub.serve [ pollFailsStub ]\n      )\n      |> when \"time passes\"\n        [ Spec.Time.tick 5000\n        , Spec.Time.tick 5000\n        ]\n      |> when \"the poll succeeds\"\n        [ Spec.Http.Stub.nowServe [ pollSucceedsStub ]\n        , Spec.Time.tick 5000\n        ]\n      |> it \"does the right thing\" (\n        ...\n      )\n    )\n\nNote that `Spec.Http.Stub.nowServe` will clear any existing stubs and\nregister only the ones provided.\n\n",
+                "type": "List.List Spec.Http.Stub.HttpResponseStub -> Spec.Step.Step model msg"
+            },
+            {
+                "name": "openApiContractAt",
+                "comment": " Create a Contract from an OpenAPI document at the given path.\n\n[OpenAPI version 2.0 (Swagger)](https://swagger.io/specification/v2/)\nand [OpenAPI version 3.0](https://swagger.io/specification/) are supported.\nThe document can be in YAML or JSON format.\n\nThe path is typically relative to the current working directory of the elm-spec\nrunner (but check the docs for the runner you are using).\n",
+                "type": "String.String -> Spec.Http.Stub.Contract"
+            },
+            {
+                "name": "received",
+                "comment": " Specify the number of bytes received from the server so far.\n\nNote that the total number of bytes is determined by the stubbed HTTP response body.\n",
+                "type": "Basics.Int -> Spec.Http.Stub.HttpResponseProgress"
+            },
+            {
+                "name": "satisfies",
+                "comment": " Specify a contract that should be used to validate requests that match this\nstub as well as the response returned.\n\nConsider creating a function that makes it easy to write stubs that should satisfy\na particular contract:\n\n    funApiStubFor : HttpRoute -> HttpResponseStub\n    funApiStubFor route =\n      Stub.for route\n        |> Stub.satisfies funApiContract\n\nThen you can use `funApiStubFor` anywhere you would use `Spec.Http.Stub.for` to define\na stub.\n\n",
+                "type": "Spec.Http.Stub.Contract -> Spec.Http.Stub.HttpResponseStub -> Spec.Http.Stub.HttpResponseStub"
+            },
+            {
+                "name": "sent",
+                "comment": " Specify the number of bytes that have been uploaded to the server so far.\n\nNote that the total number of bytes is determined by the HTTP request body.\n",
+                "type": "Basics.Int -> Spec.Http.Stub.HttpResponseProgress"
+            },
+            {
+                "name": "serve",
+                "comment": " Set up a fake HTTP server with the given `HttpResponseStubs`.\n\nWhen a matching HTTP request is made, the relevant stubbed response will be returned.\n",
+                "type": "List.List Spec.Http.Stub.HttpResponseStub -> Spec.Setup.Setup model msg -> Spec.Setup.Setup model msg"
+            },
+            {
+                "name": "streamed",
+                "comment": " Specify the number of bytes received from the server so far, when the\ntotal content length is not known.\n",
+                "type": "Basics.Int -> Spec.Http.Stub.HttpResponseProgress"
+            },
+            {
+                "name": "withBody",
+                "comment": " Supply an `HttpResponseBody` for the stubbed response.\n",
+                "type": "Spec.Http.Stub.HttpResponseBody -> Spec.Http.Stub.HttpResponseStub -> Spec.Http.Stub.HttpResponseStub"
+            },
+            {
+                "name": "withBytes",
+                "comment": " Create an `HttpResponseBody` composed of the given bytes.\n",
+                "type": "Bytes.Bytes -> Spec.Http.Stub.HttpResponseBody"
+            },
+            {
+                "name": "withBytesAtPath",
+                "comment": " Create an `HttpResponseBody` composed of the bytes from the file at the given path.\n\nThe path is typically relative to the current working directory of the elm-spec runner (but\ncheck the docs for the runner you are using).\n",
+                "type": "String.String -> Spec.Http.Stub.HttpResponseBody"
+            },
+            {
+                "name": "withHeader",
+                "comment": " Supply a header (key, value) for the stubbed response.\n",
+                "type": "( String.String, String.String ) -> Spec.Http.Stub.HttpResponseStub -> Spec.Http.Stub.HttpResponseStub"
+            },
+            {
+                "name": "withJson",
+                "comment": " Create an `HttpResponseBody` composed of the given JSON value, stringified.\n",
+                "type": "Json.Encode.Value -> Spec.Http.Stub.HttpResponseBody"
+            },
+            {
+                "name": "withNetworkError",
+                "comment": " Set the stubbed response to trigger a network error.\n",
+                "type": "Spec.Http.Stub.HttpResponseStub -> Spec.Http.Stub.HttpResponseStub"
+            },
+            {
+                "name": "withProgress",
+                "comment": " Set the progress on an in-flight HTTP request.\n\nWhen the request is processed, an appropriate progress event will be triggered.\n\nNo further processing of this request will take place after the progress event is\ntriggered. So, use this function to describe a program's behavior when an HTTP request\nis not yet complete.\n\n",
+                "type": "Spec.Http.Stub.HttpResponseProgress -> Spec.Http.Stub.HttpResponseStub -> Spec.Http.Stub.HttpResponseStub"
+            },
+            {
+                "name": "withStatus",
+                "comment": " Supply a status code for the stubbed response.\n",
+                "type": "Basics.Int -> Spec.Http.Stub.HttpResponseStub -> Spec.Http.Stub.HttpResponseStub"
+            },
+            {
+                "name": "withText",
+                "comment": " Create an `HttpResponseBody` composed of the given text.\n",
+                "type": "String.String -> Spec.Http.Stub.HttpResponseBody"
+            },
+            {
+                "name": "withTextAtPath",
+                "comment": " Create an `HttpResponseBody` composed of the text from the file at the given path.\n\nThe path is typically relative to the current working directory of the elm-spec runner (but\ncheck the docs for the runner you are using).\n",
+                "type": "String.String -> Spec.Http.Stub.HttpResponseBody"
+            },
+            {
+                "name": "withTimeout",
+                "comment": " Set the stubbed response to trigger a timeout error.\n",
+                "type": "Spec.Http.Stub.HttpResponseStub -> Spec.Http.Stub.HttpResponseStub"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Spec.Markup",
+        "comment": " Target, observe and make claims about HTML elements.\n\n# Target an HTML Element\n@docs target\n\n# Observe HTML Elements\n@docs MarkupObservation, observeElements, observeElement, query\n\n# Make Claims about an HTML Element\n@docs HtmlElement, text, attribute, property\n\n# Debug\n@docs log\n\n",
+        "unions": [
+            {
+                "name": "HtmlElement",
+                "comment": " Represents an HTML element.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "MarkupObservation",
+                "comment": " Represents an observation of HTML.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "attribute",
+                "comment": " Claim that the specified attribute value satisfies the given claim.\n\n    Spec.Markup.observeElement\n      |> Spec.Markup.query << by [ tag \"div\" ]\n      |> Spec.expect (\n        Spec.Claim.isSomethingWhere <|\n        Spec.Markup.attribute \"class\" <|\n        Spec.Claim.isSomethingWhere <|\n        Spec.Claim.isStringContaining 1 \"red\"\n      )\n\nIf you receive an error that the attribute you're interested in is not found, try `Spec.Markup.property`\ninstead. Elm-spec is examining the actual DOM element, and it's not always clear whether Elm uses\nthe attribute or the associated property to configure the element.\n\nOn the difference between attributes and properties,\nsee [this](https://github.com/elm-lang/html/blob/master/properties-vs-attributes.md).\n\n",
+                "type": "String.String -> Spec.Claim.Claim (Maybe.Maybe String.String) -> Spec.Claim.Claim Spec.Markup.HtmlElement"
+            },
+            {
+                "name": "log",
+                "comment": " A step that logs to the console the selected HTML element and its descendants.\n\n    Spec.when \"the button is clicked twice\"\n      [ Spec.Markup.target << by [ tag \"button\" ]\n      , Spec.Markup.Event.click\n      , Spec.Markup.log << by [ id \"click-counter\" ]\n      , Spec.Markup.Event.click\n      ]\n\nIf an element is currently targeted, logging a different element does not change\nthe targeted element.\n\nYou might use this to help debug a rejected observation.\n\n",
+                "type": "( Spec.Markup.Selector.Selector Spec.Markup.Selector.Element, Spec.Step.Context model ) -> Spec.Step.Command msg"
+            },
+            {
+                "name": "observeElement",
+                "comment": " Observe an HTML element that matches the selector provided to `Spec.Markup.query`.\n\n    Spec.Markup.observeElement\n      |> Spec.Markup.query << by [ attribute (\"data-attr\", \"some-value\") ]\n      |> Spec.expect (\n        Spec.Claim.isSomethingWhere <|\n        Spec.Markup.text <|\n        Spec.Claim.isEqual Debug.toString \"something fun\"\n      )\n\nClaim that an element is not present in the document like so:\n\n    Spec.Markup.observeElement\n      |> Spec.Markup.query << by [ id \"not-present\" ]\n      |> Spec.expect Spec.Claim.isNothing\n\n",
+                "type": "Spec.Markup.MarkupObservation (Maybe.Maybe Spec.Markup.HtmlElement)"
+            },
+            {
+                "name": "observeElements",
+                "comment": " Observe all HTML elements that match the selector provided to `Spec.Markup.query`.\n\n    Spec.Markup.observeElements\n      |> Spec.Markup.query << by [ attribute (\"data-attr\", \"some-value\") ]\n      |> Spec.expect (Spec.Claim.isListWithLength 3)\n\nIf no elements match the query, then the subject of the claim will be an empty list.\n",
+                "type": "Spec.Markup.MarkupObservation (List.List Spec.Markup.HtmlElement)"
+            },
+            {
+                "name": "property",
+                "comment": " Apply the given decoder to the HTML element and make a claim about the resulting value.\n\nUse this function to observe a property of an HTML element. For example, you could observe whether\na button is disabled like so:\n\n    Spec.Markup.observeElement\n      |> Spec.Markup.query << by [ tag \"button\" ]\n      |> Spec.expect (\n        Spec.Claim.isSomethingWhere <|\n        Spec.Markup.property\n          (Json.Decode.field \"disabled\" Json.Decode.bool)\n          Spec.Claim.isTrue\n      )\n\nSome common properties one might make claims about and the type of the corresponding value:\n\n- `style`  (an object)\n- `hidden` (a boolean value)\n- `disabled` (a boolean value)\n- `scrollLeft`, `scrollTop` (the element's viewport offset, float values)\n- `checked` (a boolean value)\n- `value` (a string)\n\nOn the difference between attributes and properties,\nsee [this](https://github.com/elm-lang/html/blob/master/properties-vs-attributes.md).\n\n",
+                "type": "Json.Decode.Decoder a -> Spec.Claim.Claim a -> Spec.Claim.Claim Spec.Markup.HtmlElement"
+            },
+            {
+                "name": "query",
+                "comment": " Search for HTML elements.\n\nUse this function in conjunction with `observe`, `observeElement`, or `observeElements` to\nobserve the HTML document.\n",
+                "type": "( Spec.Markup.Selector.Selector Spec.Markup.Selector.Element, Spec.Markup.MarkupObservation a ) -> Spec.Observer.Observer model a"
+            },
+            {
+                "name": "target",
+                "comment": " A step that identifies an element to which later steps will be applied.\n\n    Spec.when \"the button is clicked twice\"\n      [ Spec.Markup.target << by [ tag \"button\" ]\n      , Spec.Markup.Event.click\n      , Spec.Markup.Event.click\n      ]\n\n",
+                "type": "( Spec.Markup.Selector.Selector a, Spec.Step.Context model ) -> Spec.Step.Command msg"
+            },
+            {
+                "name": "text",
+                "comment": " Claim that the HTML element's text satisfies the given claim.\n\n    Spec.Markup.observeElement\n      |> Spec.Markup.query << by [ tag \"div\" ]\n      |> Spec.expect (\n        Spec.Claim.isSomethingWhere <|\n        Spec.Markup.text <|\n        Spec.Claim.isStringContaining 1 \"red\"\n      )\n\nNote that an observed HTML element's text includes the text belonging to\nall its descendants.\n",
+                "type": "Spec.Claim.Claim String.String -> Spec.Claim.Claim Spec.Markup.HtmlElement"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Spec.Markup.Event",
+        "comment": " Use these steps to trigger events on HTML elements or an HTML document.\n\nTo trigger an event, you'll want to first use [Spec.Markup.target](Spec.Markup#target) to target a\nparticular element (or the document as a whole) to which subsequent events should apply.\n\nFor example,\n\n    Spec.describe \"a form\"\n    [ Spec.scenario \"completing the form\" (\n        Spec.given (\n          testSubject\n        )\n        |> when \"the form is revealed\"\n          [ Spec.Markup.target << by [ id \"show-form\" ]\n          , Spec.Markup.Event.click\n          ]\n        |> when \"the name is entered\"\n          [ Spec.Markup.target << by [ id \"first-name-field\" ]\n          , Spec.Markup.Event.input \"Brian\"\n          , Spec.Markup.target << by [ id \"last-name-field\" ]\n          , Spec.Markup.Event.input \"Watkins\"\n          ]\n        |> when \"the form is submitted\"\n          [ Spec.Markup.target << by [ id \"submit\" ]\n          , Spec.Markup.Event.click\n          ]\n        |> it \"does something cool\" (\n          ...\n        )\n      )\n    ]\n\n# Mouse Events\n@docs click, doubleClick, mouseDown, mouseUp, mouseMoveIn, mouseMoveOut\n\n# Form Events\n@docs input, selectOption\n\n# Focus Events\n@docs focus, blur\n\n# Control the Viewport\n@docs ViewportOffset, setViewportOffset\n\n# Custom Events\n@docs trigger\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "ViewportOffset",
+                "comment": " Represents the offset of a viewport.\n",
+                "args": [],
+                "type": "{ x : Basics.Float, y : Basics.Float }"
+            }
+        ],
+        "values": [
+            {
+                "name": "blur",
+                "comment": " A step that simulates the targeted HTML element losing focus.\n\nThis will trigger a `blur` DOM event on the targeted element.\n",
+                "type": "Spec.Step.Step model msg"
+            },
+            {
+                "name": "click",
+                "comment": " A step that simulates a click event on the targeted item, either the\ndocument as a whole (using the [Spec.Markup.Selector.document](Spec.Markup.Selector#document) selector or\nsome particular HTML element).\n\nThis will trigger `mousedown`, `mouseup`, and `click` DOM events on the targeted item.\n\nIn several cases, you can use `click` to trigger other kinds of events. Use `click` to\nsimulate checking or unchecking a checkbox. Use `click` to select a radio button. Use\n`click` to submit a form by clicking the associated button.\n\nYou can also use `click` on an anchor tag, but here the behavior is a\nlittle more complicated.\n\nFirst of all, any click event handlers associated with the anchor tag will\nbe triggered as expected.\n\nIf the anchor tag has an `href` attribute, then\nelm-spec can *usually* intercept the navigation, which allows you to use [Spec.Navigator.location](Spec.Navigator#location)\nto make a claim about the location to which you've navigated. Elm-spec will simulate going to another\npage by replacing the program's view with a page that states the program has navigated\noutside the Elm context.\n\nIf the anchor tag has an `href` attribute *and* a `target` attribute or a `download` attribute\nthen elm-spec will *not* intercept the navigation. This means that the navigation will\nproceed as if the program were actually running, and this will usually cause your\nspecs to get into a bad state. So, rather than clicking such a link during a scenario, you\nshould instead just observe that it has the `href` attribute you expect.\n\n",
+                "type": "Spec.Step.Step model msg"
+            },
+            {
+                "name": "doubleClick",
+                "comment": " A step that simulates a double click on the targeted HTML element.\n\nThis will trigger two sets of `mouseup`, `mousedown`, and `click` DOM events and then a `dblclick` DOM event.\n",
+                "type": "Spec.Step.Step model msg"
+            },
+            {
+                "name": "focus",
+                "comment": " A step that simulates the targeted HTML element receiving focus.\n\nThis will trigger a `focus` DOM event on the targeted element.\n",
+                "type": "Spec.Step.Step model msg"
+            },
+            {
+                "name": "input",
+                "comment": " A step that simulates text input to the targeted HTML element.\n\nThis will set the `value` attribute of the targeted element to the given string\nand trigger an `input` DOM event on that element.\n\nTo trigger input events on a radio button just target the button and simulate a click on it.\n\nTo trigger input events on a select, use [selectOption](Spec.Markup.Event#selectOption).\n",
+                "type": "String.String -> Spec.Step.Step model msg"
+            },
+            {
+                "name": "mouseDown",
+                "comment": " A step that simulates pressing the mouse button on the targeted item, either the\ndocument as a whole (using the [Spec.Markup.Selector.document](Spec.Markup.Selector#document) selector or\nsome particular HTML element).\n\nThis will trigger a `mouseDown` DOM event on the targeted item.\n",
+                "type": "Spec.Step.Step model msg"
+            },
+            {
+                "name": "mouseMoveIn",
+                "comment": " A step that simulates the mouse moving into the targeted HTML element.\n\nThis will trigger `mouseover` and `mouseenter` DOM events on the targeted element.\n",
+                "type": "Spec.Step.Step model msg"
+            },
+            {
+                "name": "mouseMoveOut",
+                "comment": " A step that simulates the mouse moving out of the targeted HTML element.\n\nThis will trigger `mouseout` and `mouseleave` DOM events on the targeted element.\n",
+                "type": "Spec.Step.Step model msg"
+            },
+            {
+                "name": "mouseUp",
+                "comment": " A step that simulates releasing the mouse button on the targeted item, either the\ndocument as a whole (using the [Spec.Markup.Selector.document](Spec.Markup.Selector#document) selector or\nsome particular HTML element).\n\nThis will trigger a `mouseup` DOM event on the targeted item.\n",
+                "type": "Spec.Step.Step model msg"
+            },
+            {
+                "name": "selectOption",
+                "comment": " A step that simulates selecting an option from the menu generated by a `<select>` element.\n\nThis will select the option whose text or label matches the given string, and then trigger `change` and\n`input` DOM events on the targeted HTML `<select>` element.\n",
+                "type": "String.String -> Spec.Step.Step model msg"
+            },
+            {
+                "name": "setViewportOffset",
+                "comment": " A step that changes the offset of the targeted element's viewport.\n\nUse this step to simulate a user scrolling the content within an element.\n\nNote that elm-spec does not fake the element viewport offset. So, if you are running\nspecs in a real browser, then the element must be scrollable for this step\nto do anything (i.e., it probably needs a fixed height or width, and it's `overflow`\nCSS property must be set appropriately).\n\n",
+                "type": "Spec.Markup.Event.ViewportOffset -> Spec.Step.Step model msg"
+            },
+            {
+                "name": "trigger",
+                "comment": " A step that triggers a custom DOM event on the targeted item.\n\nProvide the name of the DOM event and a JSON value that specifes any properties to add to the event object.\n\nFor example, to simulate releasing the `A` key:\n\n    Spec.when \"The A key is released\"\n      [ Spec.Markup.target << by [ id \"my-field\" ]\n      , Json.Encode.object [ ( \"keyCode\", Encode.int 65 ) ]\n          |> Spec.Markup.event.trigger \"keyup\"\n      ]\n\nYou may trigger a custom DOM event on the document (by selecting it with\n[Spec.Markup.Selector.document](Spec.Markup.Selector#document))\nor some particular HTML element.\n\n",
+                "type": "String.String -> Json.Encode.Value -> Spec.Step.Step model msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Spec.Markup.Selector",
+        "comment": " Build abstract descriptions that can be used to select HTML elements or an HTML document.\n\n# Build Selectors\n@docs Selector, Element, by, descendantsOf, Object, document, toString\n\n# Define Characteristics\n@docs Characteristic, id, tag, class, attribute, attributeName\n\n",
+        "unions": [
+            {
+                "name": "Characteristic",
+                "comment": " A selector is built from one or more characteristics. \n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Element",
+                "comment": " A kind of selector that pertains only to HTML elements.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Object",
+                "comment": " A kind of selector that pertains only to a specific item.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Selector",
+                "comment": " An abstract description of some aspect of an HTML document, usually an HTML element.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "attribute",
+                "comment": " Generate a characteristic that belongs to elements with the given (name, value) pair.\n\nFor example,\n\n    attribute ( \"data-some-attr\", \"some-value\" )\n\napplies to elements having an attribute named `data-some-attr` with the value `some-value`.\n\n",
+                "type": "( String.String, String.String ) -> Spec.Markup.Selector.Characteristic"
+            },
+            {
+                "name": "attributeName",
+                "comment": " Generate a characteristic that belongs to elements with the given attribute.\n\nFor example, \n\n    attributeName \"data-some-attr\"\n\napplies to elements having an attribute names `data-some-attr`.\n\n",
+                "type": "String.String -> Spec.Markup.Selector.Characteristic"
+            },
+            {
+                "name": "by",
+                "comment": " Generate a selector that matches HTML elements with the given characteristics.\n",
+                "type": "List.List Spec.Markup.Selector.Characteristic -> a -> ( Spec.Markup.Selector.Selector Spec.Markup.Selector.Element, a )"
+            },
+            {
+                "name": "class",
+                "comment": " Generate a characteristic that belongs to elements with the given CSS class.\n\nFor example,\n\n    class \"fun-class\"\n\napplies to elements to which the CSS class `fun-class` has been applied.\n\n",
+                "type": "String.String -> Spec.Markup.Selector.Characteristic"
+            },
+            {
+                "name": "descendantsOf",
+                "comment": " Generate a selector that matches HTML elements descending from any HTML elements with the\ngiven characteristics.\n\nFor example,\n\n    descendantsOf [ tag \"div\" ] << by [ tag \"span\" ]\n\nwill match all `<span>` that are inside a `<div>`. You may chain `descendantsOf` selectors\nusing `<<` but the chain must terminate with a `by` selector.\n\n",
+                "type": "List.List Spec.Markup.Selector.Characteristic -> ( Spec.Markup.Selector.Selector Spec.Markup.Selector.Element, a ) -> ( Spec.Markup.Selector.Selector Spec.Markup.Selector.Element, a )"
+            },
+            {
+                "name": "document",
+                "comment": " Generate a selector that matches the HTML document.\n\nThis is used primarily in conjunction with [Spec.Markup.target](Spec.Markup#target) to trigger\ndocument-level events.\n\nFor example,\n\n    Spec.when \"a document level mouse click is triggered\"\n      [ Spec.Markup.target << document\n      , Spec.Markup.Event.click\n      ]\n\nThe `document` selector only works with [Spec.Markup.target](Spec.Markup#target), which is to say\nthat you cannot observe the document to make claims about it.\n\n",
+                "type": "Spec.Step.Context model -> ( Spec.Markup.Selector.Selector Spec.Markup.Selector.Object, Spec.Step.Context model )"
+            },
+            {
+                "name": "id",
+                "comment": " Generate a characteristic that belongs to elements having\nan `id` attribute with the given value.\n",
+                "type": "String.String -> Spec.Markup.Selector.Characteristic"
+            },
+            {
+                "name": "tag",
+                "comment": " Generate a characteristic that belongs to elements having the given tag name.\n\nFor example,\n\n    tag \"div\"\n\napplies to HTML `<div>` elements.\n\n",
+                "type": "String.String -> Spec.Markup.Selector.Characteristic"
+            },
+            {
+                "name": "toString",
+                "comment": " Convert a Selector to a string.\n\nFor those selectors of type `Selector Element`, the resulting string will be in\nthe style of a CSS selector.\n",
+                "type": "Spec.Markup.Selector.Selector a -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Spec.Navigator",
+        "comment": " Observe and make claims about how the Browser presents an HTML document: its title, its location,\nthe viewport parameters, window visibility, and so on.\n\n# Observe Navigator Properties\n@docs Navigator, observe, title, ViewportOffset, viewportOffset, location, expectReload\n\n# Navigator Events\n@docs resize, setViewportOffset, hide, show\n\n",
+        "unions": [
+            {
+                "name": "Navigator",
+                "comment": " Represents the Browser's presentation of an HTML document.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "ViewportOffset",
+                "comment": " Represents the offset of a viewport.\n",
+                "args": [],
+                "type": "{ x : Basics.Float, y : Basics.Float }"
+            }
+        ],
+        "values": [
+            {
+                "name": "expectReload",
+                "comment": " Expect that a `Browser.Navigation.reload` or `Browser.Navigation.reloadAndSkipCache`\ncommand was executed.\n",
+                "type": "Spec.Expectation model"
+            },
+            {
+                "name": "hide",
+                "comment": " A step that simulates hiding the window from view.\n\nThis will trigger a `visibilitychange` DOM event on the document object.\n\nNote that elm-spec fakes the browser window visibility. So if you are viewing elm-spec\nspecs in a real browser, then you won't actually see the window visibility change,\nbut the Elm program will think it has.\n\n",
+                "type": "Spec.Step.Step model msg"
+            },
+            {
+                "name": "location",
+                "comment": " Claim that the location of the document satisfies the given claim.\n\n    Spec.it \"has the correct location\" (\n      Spec.Navigator.observe\n        |> Spec.expect (\n          Spec.Navigator.location <|\n            Spec.Claim.isEqual Debug.toString\n              \"http://fake-server.com/something-fun\"\n        )\n    )\n\nThis is useful to observe that `Browswer.Navigation.load`,\n`Browser.Navigation.pushUrl`, or `Browser.Navigation.replaceUrl` was\nexecuted with the value you expect.\n\nNote that you can use [Spec.Setup.withLocation](Spec.Setup#withLocation) to set the base location\nof the document at the start of the scenario.\n\n",
+                "type": "Spec.Claim.Claim String.String -> Spec.Claim.Claim Spec.Navigator.Navigator"
+            },
+            {
+                "name": "observe",
+                "comment": " Observe how a Browser presents an HTML document.\n",
+                "type": "Spec.Observer.Observer model Spec.Navigator.Navigator"
+            },
+            {
+                "name": "resize",
+                "comment": " A step that simulates resizing the browser window to the given (width, height).\n\nThis will trigger a `resize` DOM event on the window object.\n\nBy default, elm-spec sets the browser window size to 1280 x 800.\n\nNote that elm-spec fakes the browser window size. So if you are viewing elm-spec\nspecs in a real browser, then you won't actually see the window size\nchange, but the Elm program will think it has.\n\n",
+                "type": "( Basics.Int, Basics.Int ) -> Spec.Step.Step model msg"
+            },
+            {
+                "name": "setViewportOffset",
+                "comment": " A step that changes the offset of the browser viewport.\n\nUse this step to simulate a user scrolling the web page.\n\nBy default, elm-spec sets the browser viewport offset to `{ x = 0, y = 0 }`.\n\nNote that elm-spec fakes the browser viewport offset. So if you are viewing elm-spec\nspecs in a real browser, then you won't actually see the viewport offset\nchange, but the Elm program will think it has.\n\n",
+                "type": "Spec.Navigator.ViewportOffset -> Spec.Step.Step model msg"
+            },
+            {
+                "name": "show",
+                "comment": " A step that simulates the window returning into view.\n\nThis will trigger a `visibilitychange` DOM event on the document object.\n\nNote that elm-spec fakes the browser window visibility. So if you are viewing elm-spec\nspecs in a real browser, then you won't actually see the window visibility change,\nbut the Elm program will think it has.\n\n",
+                "type": "Spec.Step.Step model msg"
+            },
+            {
+                "name": "title",
+                "comment": " Claim that the title of the HTML document satisfies the given claim.\n\n    Spec.it \"has the correct title\" (\n      Spec.Navigator.observe\n        |> Spec.expect (\n          Spec.Navigator.title <|\n            Spec.Claim.isEqual Debug.toString\n              \"My Cool App\"\n        )\n    )\n\nNote: It only makes sense to make a claim about the title if your program is\nconstructed with `Browser.document` or `Browser.application`.\n",
+                "type": "Spec.Claim.Claim String.String -> Spec.Claim.Claim Spec.Navigator.Navigator"
+            },
+            {
+                "name": "viewportOffset",
+                "comment": " Claim that the browser's viewport offset satisfies the given claim.\n\nUse this function to claim that the viewport of the browser window\nhas been set to a certain position via `Browser.Dom.setViewport`.\n\n    Spec.it \"has the correct scroll position\" (\n      Spec.Navigator.observe\n        |> Spec.expect (\n          Spec.Navigator.viewportOffset <|\n            Spec.Claim.specifyThat .y <|\n            Spec.Claim.isEqual Debug.toString 27\n        )\n    )\n\nNote: If you'd like to make a claim about the viewport offset of an *element* set via\n`Browser.Dom.setViewportOf`, use [Spec.Markup.observeElement](Spec.Markup#observeElement)\nand [Spec.Markup.property](Spec.Markup#property) to make a claim about its\n`scrollLeft` and `scrollTop` properties.\n\n",
+                "type": "Spec.Claim.Claim Spec.Navigator.ViewportOffset -> Spec.Claim.Claim Spec.Navigator.Navigator"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Spec.Observer",
+        "comment": " An observer examines some part of the world so a claim can be made about it.\n\nThis module contains functions for working with observers at a high level.\n\nCheck out `Spec.Markup`, `Spec.Navigator`, `Spec.Http`, `Spec.File`,\n`Spec.Port`, and `Spec.Witness` for more observers.\n\n# Build Observers\n@docs Observer, observeModel\n\n# Work with Observers\n@docs observeResult, mapRejection, focus\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Observer",
+                "comment": " An `Observer` examines some particular part of the world so that a\nclaim can be evaluated with respect to it.\n",
+                "args": [
+                    "model",
+                    "a"
+                ],
+                "type": "Spec.Observer.Internal.Observer model a"
+            }
+        ],
+        "values": [
+            {
+                "name": "focus",
+                "comment": " Create a new `Observer` that evaluates a claim with respect to a particular aspect of the world\nobserved by the given observer.\n\nConsider an `Observer model (Maybe HtmlElement)`, which observes all aspects of a `Maybe HtmlElement`.\nCreate an `Observer` that focuses on just the text of an existing `HtmlElement` like so:\n\n    Spec.Markup.observeElement\n      |> Spec.Markup.query << by [ id \"some-element\" ]\n      |> focus Spec.Claim.isSomethingWhere\n      |> focus Spec.Markup.text\n      |> Spec.expect (\n        Spec.Claim.isEqual Debug.toString \"Something cool!\"\n      )\n\nIf the element doesn't exist, then the `isSomethingWhere` claim would fail, and subsequent claims would not be evaluated by the observer.\n\nYou could then abstract this into a helper function like so:\n\n    expectText : Claim String -> Observer model (Maybe HtmlElement) -> Expectation model\n    expectText claim observer =\n      observer\n        |> focus Spec.Claim.isSomethingWhere\n        |> focus Spec.Markup.text\n        |> Spec.expect claim\n\nAnd then you could write:\n\n    Spec.Markup.observeElement\n      |> Spec.Markup.query << by [ id \"some-element\" ]\n      |> expectText (\n        Spec.Claim.isEqual Debug.toString \"Something cool!\"\n      )\n\n",
+                "type": "(Spec.Claim.Claim b -> Spec.Claim.Claim a) -> Spec.Observer.Observer model a -> Spec.Observer.Observer model b"
+            },
+            {
+                "name": "mapRejection",
+                "comment": " Create a new `Observer` that will map the `Report` created if the `Claim` is rejected.\n",
+                "type": "(Spec.Report.Report -> Spec.Report.Report) -> Spec.Observer.Observer model a -> Spec.Observer.Observer model a"
+            },
+            {
+                "name": "observeModel",
+                "comment": " Observe some aspect of the model of the program whose behavior is being described in this scenario.\n\nFor example, if the program model looks like `{ score: 27 }`, then you could observe the\nscore like so:\n\n    Spec.it \"has the correct score\" (\n      observeModel .score\n        |> Spec.expect \n          (Spec.Claim.isEqual Debug.toString 27)\n    )\n\nTo observe the entire model, just use `identity` as the argument.\n\nCheck out `Spec.Markup`, `Spec.Navigator`,\n`Spec.Http`, `Spec.File`, `Spec.Port`, and `Spec.Witness`\nfor observers that evaluate claims with respect to the world outside the program.\n`\n",
+                "type": "(model -> a) -> Spec.Observer.Observer model a"
+            },
+            {
+                "name": "observeResult",
+                "comment": " Create a new `Observer` that will evaluate a `Claim` with respect to\nthe successful `Result` observed by the given `Observer`. If the `Result`\nfails then the `Claim` will be rejected with the report that is the `Err`\nvalue.\n\nFor example,\n\n    Spec.Observer.observeModel (\\_ -> Err <| Report.note \"This should fail\")\n      |> Spec.Observer.observeResult\n      |> Spec.expect (Spec.Claim.isEqual Debug.toString \"Fun\")\n\nwill be rejected with the message: This should fail.\n",
+                "type": "Spec.Observer.Observer model (Result.Result Spec.Report.Report a) -> Spec.Observer.Observer model a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Spec.Port",
+        "comment": " Functions for working with ports during a spec.\n\nSuppose your app sends a port command when a button is clicked,\nvia a function called `my-command-port` that takes a string (\"TRIGGER_REQUEST\" in\nthis case), and then displays a message received over a port subscription. You\ncould write a scenario like so:\n\n    Spec.describe \"command ports and subscription ports\"\n    [ Spec.scenario \"send and receive\" (\n        Spec.given (\n          Spec.Setup.withInit (App.init testFlags)\n            |> Spec.Setup.withUpdate App.update\n            |> Spec.Setup.withView App.view\n            |> Spec.Setup.withSubscriptions App.subscriptions\n        )\n        |> Spec.when \"a message is sent out\"\n          [ Spec.Markup.target << by [ tag \"button\" ]\n          , Spec.Markup.Event.click\n          ]\n        |> Spec.when \"a response is received\"\n          [ Spec.Port.send \"my-subscription-port\" <|\n              Json.Encode.object\n                [ (\"message\", Encode.string \"Have fun!\")\n                ]\n          ]\n        |> Spec.observeThat\n          [ Spec.it \"sent the right message over the port\" (\n              Spec.Port.observe \"my-command-port\" Json.Decode.string\n                |> Spec.expect (Spec.Claim.isListWhere\n                  [ Spec.Claim.isEqual Debug.toString \"TRIGGER_REQUEST\"\n                  ]\n                )\n            )\n          , Spec.it \"shows the message received\" (\n              Spec.Markup.observeElement\n                |> Spec.Markup.query << by [ id \"message\" ]\n                |> Spec.expect (\n                  Spec.Claim.isSomethingWhere <|\n                  Spec.Markup.text <|\n                  Spec.Claim.isEqual Debug.toString \"Have fun!\"\n                )\n            )\n          ]\n      )\n    ]\n\n# Observe Command Ports\n@docs observe\n\n# Simulate Subscription Ports\n@docs send\n\n# Respond to a Command Port\n@docs respond\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "observe",
+                "comment": " Observe messages sent out via a command port.\n\nProvide the name of the port (the function name) and a JSON decoder that can decode\nmessages sent out over the port.\n\n",
+                "type": "String.String -> Json.Decode.Decoder a -> Spec.Observer.Observer model (List.List a)"
+            },
+            {
+                "name": "respond",
+                "comment": " Use this step to respond to values sent out over the given command port.\n\nProvide the name of the port (the function name) and a JSON decoder that can decode\nvalues sent out over the port. Then, provide a function that generates a `Step`\ngiven a value sent out over the port. The function will be applied to values that\nhave been sent *since the last time `respond` was called*. If no values have been\nsent out over that port since the last time `respond` was called, the step will fail.\n\nUse this function to simulate request/response style communication via ports, when\nthe response depends on some aspect of the request that you may not know at the time\nof writing the scenario.\n\n    Spec.when \"a response is sent to the request\"\n    [ Spec.Port.respond \"myPortCommand\" Json.string <| \\message ->\n        Json.Encode.string (\"You sent: \" ++ message)\n          |> Spec.Port.send \"myPortSubscription\"\n    ]\n\n",
+                "type": "String.String -> Json.Decode.Decoder a -> (a -> Spec.Step.Step model msg) -> Spec.Step.Step model msg"
+            },
+            {
+                "name": "send",
+                "comment": " A step that sends a message to a port subscription.\n\nProvide the name of the port and an encoded JSON value that should be sent from the JavaScript side.\n\nFor example, if you have a port defined in Elm like so:\n\n    port listenForStuff : (String -> msg) -> Sub msg\n\nThen you could send a message through this port during a scenario like so:\n\n    Spec.when \"a message is sent to the subscription\"\n    [ Json.Encode.string \"Some words\"\n        |> Spec.Port.send \"listenForStuff\"\n    ]\n\n",
+                "type": "String.String -> Json.Encode.Value -> Spec.Step.Step model msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Spec.Report",
+        "comment": " Functions for building reports that are displayed by the elm-spec JavaScript runner.\n\n# Build a Report\n@docs Report, note, fact, batch\n\n# Convert to and from JSON\n@docs decoder, encode\n",
+        "unions": [
+            {
+                "name": "Report",
+                "comment": " Represents a collection of notes or facts.\n\nFor example, a `Report` can describe why a `Claim` was rejected.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "batch",
+                "comment": " Combine a list of reports into one.\n",
+                "type": "List.List Spec.Report.Report -> Spec.Report.Report"
+            },
+            {
+                "name": "decoder",
+                "comment": " Decode a `Report` from an appropriate JSON object.\n",
+                "type": "Json.Decode.Decoder Spec.Report.Report"
+            },
+            {
+                "name": "encode",
+                "comment": " Encode a `Report` into a JSON object.\n",
+                "type": "Spec.Report.Report -> Json.Encode.Value"
+            },
+            {
+                "name": "fact",
+                "comment": " Generate a `Report` that is a line of text followed by some details that should be emphasized.\n",
+                "type": "String.String -> String.String -> Spec.Report.Report"
+            },
+            {
+                "name": "note",
+                "comment": " Generate a `Report` that is a single line of text.\n",
+                "type": "String.String -> Spec.Report.Report"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Spec.Setup",
+        "comment": " Functions for the initial setup of a scenario.\n\n@docs Setup\n\n# Setup the Initial State\n@docs initForApplication, init, initWithModel, withLocation\n\n# Provide Core Functions\n@docs withUpdate, withView, withDocument, withSubscriptions, forNavigation\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Setup",
+                "comment": " Represents the initial state of the world for a scenario.\n",
+                "args": [
+                    "model",
+                    "msg"
+                ],
+                "type": "Spec.Setup.Internal.Setup model msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "forNavigation",
+                "comment": " If the scenario is describing a program created with `Browser.application`, you can use\nthis function to supply the program's `onUrlRequest` and `onUrlChange` functions.\n\nUse this in conjunction with `initForApplication` to describe a scenario that involves location changes.\n",
+                "type": "{ onUrlRequest : Browser.UrlRequest -> msg, onUrlChange : Url.Url -> msg } -> Spec.Setup.Setup model msg -> Spec.Setup.Setup model msg"
+            },
+            {
+                "name": "init",
+                "comment": " Provide an initial program model and command. The command will be executed as\nthe first step in the scenario script.\n\nYou might use `init` in conjunction with the `init` function of the program whose\nbehavior the scenario describes. In that case you could do something like:\n\n    Spec.given (\n      Spec.Setup.init (App.init testFlags)\n        |> Spec.Setup.withUpdate App.update\n        |> Spec.Setup.withView App.view\n    )\n\nIf you are describing the behavior of a program created with `Browser.application` then\nconsider using `initForApplication` instead.\n\n",
+                "type": "( model, Platform.Cmd.Cmd msg ) -> Spec.Setup.Setup model msg"
+            },
+            {
+                "name": "initForApplication",
+                "comment": " Use the init function for a program created with `Browser.application` to set the\ninitial state for the scenario. You could do something like:\n\n    Spec.given (\n      Spec.Setup.initForApplication (App.init testFlags)\n        |> Spec.Setup.withDocument App.view\n        |> Spec.Setup.withUpdate App.update\n    )\n\nIf your scenario involves location changes, you'll want to use this function in\nconjunction with `Spec.Setup.forNavigation` to provide\nthose extra functions that an application requires. Providing these functions\nis not necessary, but if you do not provde them, your spec will fail with an error\nif it is setup with `initForApplication` and it tries to make location changes.\n\nYou can also use `Spec.Setup.withLocation` to set the URL that\nwill be passed to the application's init function at the start of the scenario.\n\nSo, a full setup for an application might look something like this:\n\n    Spec.given (\n      Spec.Setup.initForApplication (App.init testFlags)\n        |> Spec.Setup.withDocument App.view\n        |> Spec.Setup.withUpdate App.update\n        |> Spec.Setup.forNavigation\n          { onUrlChange = App.urlDidChange\n          , onUrlRequest = App.urlChangeRequested\n          }\n        |> Spec.Setup.withLocation (someUrlWithPath \"/sports\")\n    )\n\n",
+                "type": "(Url.Url -> Browser.Navigation.Key -> ( model, Platform.Cmd.Cmd msg )) -> Spec.Setup.Setup model msg"
+            },
+            {
+                "name": "initWithModel",
+                "comment": " Provide an initial model for the program whose behavior this scenario describes.\n",
+                "type": "model -> Spec.Setup.Setup model msg"
+            },
+            {
+                "name": "withDocument",
+                "comment": " Provide the `view` function for the program whose behavior the scenario describes, where\nthis program is created with `Browser.document` or `Browser.application`. \n",
+                "type": "(model -> Browser.Document msg) -> Spec.Setup.Setup model msg -> Spec.Setup.Setup model msg"
+            },
+            {
+                "name": "withLocation",
+                "comment": " Set up the scenario to begin with a particular location.\n\nIf the program whose behavior is being described was created with `Browser.application` then\nthis `Url` will be provided to the `init` function. In any case, this location will serve as\nthe base href, and any location changes will be relative to this location.\n\nBy default, the scenario begins with the location `http://elm-spec/`\n",
+                "type": "Url.Url -> Spec.Setup.Setup model msg -> Spec.Setup.Setup model msg"
+            },
+            {
+                "name": "withSubscriptions",
+                "comment": " Provide the `subscriptions` function for the program whose behavior the scenario describes.\n",
+                "type": "(model -> Platform.Sub.Sub msg) -> Spec.Setup.Setup model msg -> Spec.Setup.Setup model msg"
+            },
+            {
+                "name": "withUpdate",
+                "comment": " Provide the `update` function for the program whose behavior the scenario describes.\n",
+                "type": "(msg -> model -> ( model, Platform.Cmd.Cmd msg )) -> Spec.Setup.Setup model msg -> Spec.Setup.Setup model msg"
+            },
+            {
+                "name": "withView",
+                "comment": " Provide the `view` function for the program whose behavior the scenario describes, where\nthis program is created with `Browser.sandbox` or `Browser.element`.\n",
+                "type": "(model -> Html.Html msg) -> Spec.Setup.Setup model msg -> Spec.Setup.Setup model msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Spec.Step",
+        "comment": " A scenario script is a sequence of steps. A step is a function from a `Context`,\nwhich represents the current scenario state, to a `Command`, which describes an action to be\nexecuted before moving to the next step.\n\nSee `Spec.Command`, `Spec.File`, `Spec.Navigator`, `Spec.Http`, `Spec.Markup`,\n`Spec.Markup.Event`, `Spec.Port`, and `Spec.Time` for steps you can use to build a scenario script.\n\n@docs Step, Context, Command\n\n# Using the Context\n@docs model\n\n# Basic Commands\n@docs halt, log\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Command",
+                "comment": " Represents an action to be performed.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "Spec.Step.Command.Command msg"
+            },
+            {
+                "name": "Context",
+                "comment": " Represents the current state of the program.\n",
+                "args": [
+                    "model"
+                ],
+                "type": "Spec.Step.Context.Context model"
+            },
+            {
+                "name": "Step",
+                "comment": " Represents a step in a scenario script.\n",
+                "args": [
+                    "model",
+                    "msg"
+                ],
+                "type": "Spec.Step.Context.Context model -> Spec.Step.Command.Command msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "halt",
+                "comment": " The spec runner will halt the scenario and print the given report.\n",
+                "type": "Spec.Report.Report -> Spec.Step.Command msg"
+            },
+            {
+                "name": "log",
+                "comment": " The spec runner will log the given report to the console.\n",
+                "type": "Spec.Report.Report -> Spec.Step.Command msg"
+            },
+            {
+                "name": "model",
+                "comment": " Get the current program model from the `Context`.\n",
+                "type": "Spec.Step.Context model -> model"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Spec.Time",
+        "comment": " Functions for working with time during a spec.\n\nSuppose you use `Time.every` to increment a count in your model after each second.\nHere's a spec you could use to describe that behavior:\n\n    Spec.describe \"seconds counter\"\n    [ Spec.scenario \"some seconds pass\" (\n        Spec.given (\n          Spec.Setup.init (App.init testFlags)\n            |> Spec.Setup.withView App.view\n            |> Spec.Setup.withUpdate App.update\n        )\n        |> when \"some time passes\"\n          [ Spec.Time.tick 3000\n          ]\n        |> it \"increments the counter\" (\n          Spec.Observer.observeModel .seconds\n            |> Spec.expect (Spec.Claim.isEqual Debug.toString 3)\n        )\n      )\n    ]\n\n# Set Up at a Time\n@docs withTime, withTimezoneOffset\n\n# Pass the Time\n@docs tick, nextAnimationFrame\n\n# Handle Special Cases\n@docs allowExtraAnimationFrames\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "allowExtraAnimationFrames",
+                "comment": " Set up the scenario to allow steps that result in effects that wait on the *next* animation frame.\n\nBy default, elm-spec rejects any scenario with a step that results in effects that reuire extra\nanimation frames to resolve, since you may need to use [nextAnimationFrame](#nextAnimationFrame) to\ntrigger the behavior you want to describe.\n\nUse this function to allow such a scenario to continue.\n\nSee [nextAnimationFrame](#nextAnimationFrame) for more information.\n\n",
+                "type": "Spec.Setup.Setup model msg -> Spec.Setup.Setup model msg"
+            },
+            {
+                "name": "nextAnimationFrame",
+                "comment": " A step that simulates waiting for the next animation frame.\n\nAny subscriptions or other effects that depend on animation frame updates will be triggered as expected, and\nthe view will be re-rendered.\n\nNote that some commands like those in the `Browser.Dom` module wait for the next animation frame before\ncompleting. For example, the following `Cmd`\n\n```\nBrowser.Dom.getElement \"fun-element\"\n  |> Task.andThen (\\element -> \n    Browser.Dom.setViewport 0.0 element.y\n  )\n  |> Task.attempt (\\_ -> NoOp)\n```\n\nwill wait for the next animation frame to get the element and then wait for another animation frame\nbefore setting the viewport.\n\nElm-spec runs any tasks waiting on the current animation frame at the end of each step in the scenario script.\nBut sometimes animation frame tasks will remain because there are commands or subscriptions\nwaiting on the *next* animation frame. In such cases, you can use `nextAnimationFrame` to simply wait for\nthe next animation frame, allowing these commands or subscriptions to complete -- if that is useful for\ntriggering the behavior described in this scenario.\n\nSo, in the example above, you would need to run `Spec.Time.nextAnimationFrame` after the step that triggers the\ncommand so that the `Browser.Dom.setViewport` command will complete.\n\nNote that, for all other steps, an animation frame runs at the end of the step, updating the view. But\nfor `Spec.Time.nextAnimationFrame` sometimes you may need to trigger the frame that update the view explicitly.\n\nConsider another example. Suppose you have a subscription to `Browser.Events.onAnimationFrame` that sends a\nmessage `AnimationFrame` on each animation frame. And suppose your update function looks something like:\n\n```\nupdate : Model -> Msg -> (Model, Cmd Msg)\nupdate model msg =\n  case msg of\n    AnimationFrame ->\n      ( { model | frames = model.frames + 1 }\n      , Cmd.none\n      )\n```\n\nNow, you could have a scenario that checks to see that the view is updated with the number of frames:\n\n```\nframeSpce =\n  describe \"view changes on animation frame\"\n  [ scenario \"three animation frames\" (\n      given (\n        Spec.Setup.initWithModel { frames = 0 }\n          |> ...\n      )\n      |> when \"two more frames pass\"\n        [ Spec.Time.nextAnimationFrame\n        , Spec.Time.nextAnimationFrame\n        ]\n      |> it \"displays the count in the view\" (\n        Spec.Markup.observeElement\n          |> Spec.Markup.query << by [ id \"frame-count\" ]\n          |> expect (Spec.Claim.isSomethingWhere <|\n            Spec.Markup.text <|\n            Spec.Claim.isEqual Debug.toString \"2 frames!\"\n          )\n      )\n    )\n  ]\n```\n\nNote that by the end of this scenario, three animation frames have passed: 1 after the initial\ncommand, and then 2 explicitly. If you were to observe the model after this scenario, `frames` would be `3`, but\nthe view only shows `2 frames!`. What's happening?\n\nWhen you call `Spec.Time.nextAnimationFrame` it runs only one animation frame. In this case,\nthat animation frame triggers the subscription, which calls your update function and changes the model. But\nanother animation frame must pass before the view is rendered with the updated model. The second call to\n`Spec.Time.nextAnimationFrame` will update the view, but it will be based on the state of the model at that\ntime, which had `frames` equal to `2`.\n\nIn any case, the point here is that when you write a spec that depends on triggering individual animation\nframes you may unfortunately start to see some details of the Elm runtime implementation leak into your specs.\n\nElm-spec can detect when there are animation frame tasks remaining at the end of a step and will warn you to\naddress this. You can disable this warning with [allowExtraAnimationFrames](#allowExtraAnimationFrames).\n\n",
+                "type": "Spec.Step.Step model msg"
+            },
+            {
+                "name": "tick",
+                "comment": " A step that simulates waiting for some number of milliseconds to pass.\n\nAny subscriptions that depend on the passage of time will be triggered as expected.\n",
+                "type": "Basics.Int -> Spec.Step.Step model msg"
+            },
+            {
+                "name": "withTime",
+                "comment": " Set up the scenario at a particular time.\n\nProvide the number of milliseconds since the UNIX epoch.\n",
+                "type": "Basics.Int -> Spec.Setup.Setup model msg -> Spec.Setup.Setup model msg"
+            },
+            {
+                "name": "withTimezoneOffset",
+                "comment": " Set up the scenario at a particular timezone offset.\n\nProvide the timezone offste in minutes.\n",
+                "type": "Basics.Int -> Spec.Setup.Setup model msg -> Spec.Setup.Setup model msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Spec.Witness",
+        "comment": " A `Witness` can be used to record information about the arguments passed to\na `Cmd`-generating function.\n\nIf you use dependency inversion to decouple part of your program from the\n`Cmd`-generating functions it depends upon, you can use a `Witness` to prove that this\npart of your program works with the `Cmd`-generating function in the right way.\n\nLet's say I have a `Cmd`-generating function that takes a score (an `Int`) and saves\nit to the server via some HTTP request. Let's further suppose I want to describe the behavior\nof my user interface, without worrying about the details of how a score is saved. In this\ncase, I'll 'inject' the `Cmd`-generating function instead of calling it directly from my update\nfunction. This allows me to substitute a fake function during my spec.\n\nHere's the update function:\n\n    update : (Int -> Cmd Msg) -> Msg -> Model -> (Model, Cmd Msg)\n    update scoreSaver msg model =\n      case msg of\n        SaveScore score ->\n          ( model, scoreSaver score )\n        ...\n\nTo use a Witness, you must reference the `elmSpecOut` port defined when configuring\n`Spec.program` or `Spec.browserProgram`. I suggest creating a file called\n`Spec.Witness.Extra` like so:\n\n    module Spec.Witness.Extra exposing (record)\n\n    import Runner -- your own setup module\n    import Spec.Witness\n\n    record =\n      Runner.elmSpecOut\n        |> Spec.Witness.connect\n        |> Spec.Witness.record\n\n\nNow, I can write a spec that uses a witness to record the score passed to the injected\n`scoreSaver` function like so:\n\n    Spec.describe \"saving the score\"\n    [ Spec.scenario \"successful save\" (\n        Spec.given (\n          Spec.Setup.init (App.init testFlags)\n            |> Spec.Setup.withView App.view\n            |> Spec.Setup.withUpdate (\n              App.update (\\score ->\n                Json.Encode.int score\n                  |> Spec.Witness.Extra.record \"saved-score\"\n              )\n            )\n        )\n        |> Spec.when \"the score is saved\"\n          [ Spec.Markup.target << by [ id \"game-over-button\" ]\n          , Spec.Markup.Event.click\n          ]\n        |> it \"saves the proper score\" (\n          Witness.observe \"saved-score\" (Json.Decode.int)\n            |> Spec.expect (Spec.Claim.isListWhere\n              [ Spec.Claim.isEqual Debug.toString 28\n              ]\n            )\n        )\n      )\n    ]\n\n@docs Witness, connect, record, observe\n\n",
+        "unions": [
+            {
+                "name": "Witness",
+                "comment": " Use a `Witness` to record information from inside a `Cmd`-generating function.\n",
+                "args": [
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "connect",
+                "comment": " Create a Witness by connecting it with the `elmSpecOut` port.\n\nWhen you configure `Spec.program` or `Spec.browserProgram` you must\nprovide a reference to a port called `elmSpecOut`. Pass that same port to this\nfunction to create a Witness.\n\nFor example, you might create a file called `Spec.Witness.Extra` that sets up\na `record` function for you to use in your specs:\n\n    module Spec.Witness.Extra exposing (record)\n\n    import Runner -- your own setup module\n    import Spec.Witness\n\n    record =\n      Runner.elmSpecOut\n        |> Spec.Witness.connect\n        |> Spec.Witness.record\n\n\nSee [Spec.Config](Spec#Config) and the README for more information on the `elmSpecOut` port.\n",
+                "type": "(Spec.Message.Message -> Platform.Cmd.Cmd msg) -> Spec.Witness.Witness msg"
+            },
+            {
+                "name": "observe",
+                "comment": " Observe the values recorded by a witness.\n\nProvide the name of the witness and a JSON decoder that can decode whatever\nvalue you need to observe.\n",
+                "type": "String.String -> Json.Decode.Decoder a -> Spec.Observer.Observer model (List.List a)"
+            },
+            {
+                "name": "record",
+                "comment": " Create a `Cmd` that records some information.\n\nProvide the name of this witness and a JSON value with any information to be recorded.\nUse `Spec.Witness.observe` to make a claim about the recorded value.\n\n",
+                "type": "Spec.Witness.Witness msg -> String.String -> Json.Encode.Value -> Platform.Cmd.Cmd msg"
+            }
+        ],
+        "binops": []
+    }
+]

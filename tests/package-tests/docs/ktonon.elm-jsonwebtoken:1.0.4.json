@@ -1,0 +1,98 @@
+[
+    {
+        "name": "JsonWebToken",
+        "comment": " JSON Web Token encoder and decoder.\n\n@docs decode, encode\n\n\n## Algorithms\n\n@docs hmacSha224, hmacSha256, hmacSha384, hmacSha512\n\n\n## Errors\n\n@docs DecodeError\n\n\n## Types\n\n@docs Alg, Secret, Token, algDecoder\n\n",
+        "unions": [
+            {
+                "name": "Alg",
+                "comment": " Type of algoirthm to use for the digest\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "DecodeError",
+                "comment": " Types of errors which can occur during decoding of a token.\n",
+                "args": [
+                    "payload"
+                ],
+                "cases": [
+                    [
+                        "DecodeHeaderFailed",
+                        [
+                            "payload",
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "DecodePayloadFailed",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "InvalidSecret",
+                        [
+                            "payload"
+                        ]
+                    ],
+                    [
+                        "InvalidToken",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Secret",
+                "comment": " String used to sign or verify a token.\n\n  - In the case of signing, this can also be a private key.\n  - In the case of verifying, this can also be a public key.\n\n",
+                "args": [],
+                "type": "String.String"
+            },
+            {
+                "name": "Token",
+                "comment": " A JSON web token.\n",
+                "args": [],
+                "type": "String.String"
+            }
+        ],
+        "values": [
+            {
+                "name": "algDecoder",
+                "comment": " Algorithm decoder.\n",
+                "type": "Json.Decode.Decoder JsonWebToken.Alg"
+            },
+            {
+                "name": "decode",
+                "comment": " Verify a token given a secret or public key.\n\n    import Json.Decode\n    import Json.Encode\n    import TestHelpers\n        exposing\n            ( aValidToken\n            , correctSecret\n            , encodePayload\n            , payload\n            , payloadDecoder\n            , wrongSecret\n            )\n\nIf all goes well, you'll get a result back with the payload.\n\n    decode payloadDecoder correctSecret aValidToken\n    --> Ok payload\n\nIf something goes wrong, you get an error:\n\n    decode payloadDecoder correctSecret \"token.should.have.three.parts\"\n    --> Err InvalidToken\n\nSome errors will include the payload. However, whenever there is an error the\npayload should not be trusted.\n\n    decode payloadDecoder wrongSecret aValidToken\n    --> Err <| InvalidSecret payload\n\n",
+                "type": "Json.Decode.Decoder payload -> JsonWebToken.Secret -> JsonWebToken.Token -> Result.Result (JsonWebToken.DecodeError payload) payload"
+            },
+            {
+                "name": "encode",
+                "comment": " Create and sign a token.\n\n    import Json.Decode\n    import Json.Encode\n    import TestHelpers\n        exposing\n            ( aValidToken\n            , correctSecret\n            , encodePayload\n            , payload\n            , payloadDecoder\n            , wrongSecret\n            )\n\n    encode hmacSha256 encodePayload correctSecret payload\n    --> aValidToken\n\n    encode hmacSha512 Json.Encode.string \"other secret\" \"some payload\"\n        |> (decode Json.Decode.string \"other secret\")\n    --> Ok \"some payload\"\n\n    encode hmacSha224 Json.Encode.int \"123\" 456\n        |> (decode Json.Decode.int \"abc\")\n    --> Err <| InvalidSecret 456\n\n",
+                "type": "JsonWebToken.Alg -> (payload -> Json.Encode.Value) -> JsonWebToken.Secret -> payload -> JsonWebToken.Token"
+            },
+            {
+                "name": "hmacSha224",
+                "comment": " HMAC SHA224 digest algorithm.\n",
+                "type": "JsonWebToken.Alg"
+            },
+            {
+                "name": "hmacSha256",
+                "comment": " HMAC SHA256 digest algorithm.\n",
+                "type": "JsonWebToken.Alg"
+            },
+            {
+                "name": "hmacSha384",
+                "comment": " HMAC SHA384 digest algorithm.\n",
+                "type": "JsonWebToken.Alg"
+            },
+            {
+                "name": "hmacSha512",
+                "comment": " HMAC SHA512 digest algorithm.\n",
+                "type": "JsonWebToken.Alg"
+            }
+        ],
+        "binops": []
+    }
+]

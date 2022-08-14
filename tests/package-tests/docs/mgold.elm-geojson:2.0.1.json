@@ -1,0 +1,121 @@
+[
+    {
+        "name": "GeoJson",
+        "comment": " Decode [GeoJson](https://tools.ietf.org/html/rfc7946) into an Elm data\nstructure where you can operate on it further. Most of this module defines types\nthat collectively define that data structure.\n\nAfter using `GeoJson.decoder` you can either traverse the data structure\ndirectly or use `Json.Decode.andThen` to transform it into a more convenient\nrepresentation specific to your use case. It is recommended that you try the\nfirst approach first, and switch to the second if you encounter difficulty.\n\nAn `encode` function is also provided, mostly for completeness and testing.\nNeither encoding nor decoding attempt to enforce minimum array lengths.\n\n\n# Decoder\n\n@docs decoder\n\n\n# Elm Representation of GeoJSON\n\nAll union types are fully exposed so you can inspect them as necessary.\n\n@docs GeoJson, GeoJsonObject, FeatureObject, Geometry, Position, Bbox\n\n\n# Encoding\n\n@docs encode\n\n",
+        "unions": [
+            {
+                "name": "GeoJsonObject",
+                "comment": " A GeoJsonObject contains the primary data, and is either a `Geometry`, a\n`FeatureObject`, or a list of `FeatureObjects`.\n\nNote that the tag for `FeatureObject` is just `Feature`, to avoid a name\ncollision.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Geometry",
+                        [
+                            "GeoJson.Geometry"
+                        ]
+                    ],
+                    [
+                        "Feature",
+                        [
+                            "GeoJson.FeatureObject"
+                        ]
+                    ],
+                    [
+                        "FeatureCollection",
+                        [
+                            "List.List GeoJson.FeatureObject"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Geometry",
+                "comment": " The heart of GeoJSON: geometry objects. The union tags reflect the\n`type` field of the JSON, and carries the value of the `coordinates` field (or\n`geometries` for `GeometryCollection`).\n\nThe specification imposes minimum lengths for some of the arrays (lists in Elm).\nThis representation does not express those guarantees, on the theory that you\nwill likely be working with a valid GeoJson file rather than generating one of\nyour own.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Point",
+                        [
+                            "GeoJson.Position"
+                        ]
+                    ],
+                    [
+                        "MultiPoint",
+                        [
+                            "List.List GeoJson.Position"
+                        ]
+                    ],
+                    [
+                        "LineString",
+                        [
+                            "List.List GeoJson.Position"
+                        ]
+                    ],
+                    [
+                        "MultiLineString",
+                        [
+                            "List.List (List.List GeoJson.Position)"
+                        ]
+                    ],
+                    [
+                        "Polygon",
+                        [
+                            "List.List (List.List GeoJson.Position)"
+                        ]
+                    ],
+                    [
+                        "MultiPolygon",
+                        [
+                            "List.List (List.List (List.List GeoJson.Position))"
+                        ]
+                    ],
+                    [
+                        "GeometryCollection",
+                        [
+                            "List.List GeoJson.Geometry"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Bbox",
+                "comment": " A Bounding Box is represented as a simple list of floats. No attempt is made\nto validate that its length is twice the length of the geometrys' positions, or\nthat low values are preceded by high values.\n",
+                "args": [],
+                "type": "List.List Basics.Float"
+            },
+            {
+                "name": "FeatureObject",
+                "comment": " A `FeatureObject` represents a geographic feature. The `geometry` field is\nallowed to have `null` instead of actual geometry, which is represented as\n`Nothing`. The `properties` may be any JSON object but no attempt is made to\ninspect it. The `id` is an optional \"commonly used identifier\". It is permitted\nby the RFC to be either a string or a number; if the latter this implementation\nconverts it to a string.\n",
+                "args": [],
+                "type": "{ geometry : Maybe.Maybe GeoJson.Geometry, properties : Json.Encode.Value, id : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "GeoJson",
+                "comment": " The root representation of GeoJSON in Elm. It consists of a `GeoJsonObject` and an optional `Bbox`.\n",
+                "args": [],
+                "type": "( GeoJson.GeoJsonObject, Maybe.Maybe GeoJson.Bbox )"
+            },
+            {
+                "name": "Position",
+                "comment": " A `Position` is the fundamental geometry construct, and are represented in\nJSON as an array of numbers. RFC 7946 states that \"[t]he first two elements are\nlongitude and latitude, or easting and northing, precisely in that order\". The\nthird element is the altitude. If omitted in the JSON, it will be set to zero.\n\nAs recommended by the RFC, position arrays with more than three elements are\nrejected.\n\n",
+                "args": [],
+                "type": "( Basics.Float, Basics.Float, Basics.Float )"
+            }
+        ],
+        "values": [
+            {
+                "name": "decoder",
+                "comment": " Decode GeoJSON into Elm. The decoded value is expressed in the types defined\nby this module.\n",
+                "type": "Json.Decode.Decoder GeoJson.GeoJson"
+            },
+            {
+                "name": "encode",
+                "comment": " Encode GeoJSON into Elm. This is mostly for completeness and roundtrip\ntesting.\n\nPositions with an altitude of zero will be encoded as two-element arrays.\n\n",
+                "type": "GeoJson.GeoJson -> Json.Encode.Value"
+            }
+        ],
+        "binops": []
+    }
+]

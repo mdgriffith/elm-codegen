@@ -1,0 +1,26 @@
+[
+    {
+        "name": "StringDistance",
+        "comment": " A library to calculate a metric indicating the string distance between two strings.\n\nThis library was extracted from the Elm implementation of mailcheck <http://package.elm-lang.org/packages/rluiten/mailcheck/latest>.\n\nThe `lcs` and `lcsLimit` functions are more general and support more than just\nChar as list elements.\n\n\n## Functions\n\n@docs sift3Distance\n@docs lcs\n@docs lcsLimit\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "lcs",
+                "comment": " Longest Common Subsequence\n\nThis is a simple implementation and would benefit from memoization if\nperformance is a problem. It does not limit look ahead\nwhich can be very costly see lcsLimit for a limited look ahead version.\n\nWarning this gets very slow very quickly with increases in list lengths even\n17 character lists can cause things to bog down.\n\nThis implementation is based on [http://rosettacode.org/wiki/Longest\\_common\\_subsequence#Haskell](http://rosettacode.org/wiki/Longest_common_subsequence#Haskell)\n\n        lcs [\"a\", \"b\", \"c\"] [\"b\", \"c\", \"d\"] == [\"b\", \"c\"]\n\n",
+                "type": "List.List a -> List.List a -> List.List a"
+            },
+            {
+                "name": "lcsLimit",
+                "comment": " Return function which returns lcs with limited look ahead.\n\nWarning maxLookAhead quickly makes the returned function costly stay\nbelow 8 if you want responsiveness.\n\n        lcsLimit 5 [\"a\", \"b\", \"c\"] [\"b\", \"c\", \"d\"] == [\"b\", \"c\"]\n\n",
+                "type": "Basics.Int -> List.List a -> List.List a -> List.List a"
+            },
+            {
+                "name": "sift3Distance",
+                "comment": " Calculate sift3 string distance between candidate strings.\n\n        sift3Distance \"\" \"abc\" == 3.0\n        sift3Distance \"ab\" \"\" == 2.0\n        sift3Distance \"abc\" \"abc\" == 0\n        sift3Distance \"abc\" \"ab\"  == 0.5\n\n",
+                "type": "String.String -> String.String -> Basics.Float"
+            }
+        ],
+        "binops": []
+    }
+]

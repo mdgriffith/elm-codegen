@@ -1,0 +1,115 @@
+[
+    {
+        "name": "Iso10303",
+        "comment": " This module allows you to encode data in [ISO 10303-21](https://en.wikipedia.org/wiki/ISO_10303-21)\n(STEP file) format.\n\nThe module name was chosen to avoid naming conflicts (and to emphasize that this\nis a low-level package), but in most cases I recommend importing it as\n\n    import Iso10303 as Step\n\nAll examples below assume the module has been imported this way.\n\n@docs file\n\n\n# Header\n\n@docs Header\n\n\n# Entities\n\n@docs Entity, entity\n\n\n# Attributes\n\n@docs Attribute\n\n@docs default, null, int, float, string, referenceTo, enum, binary, list\n\n\n## Typed attributes\n\nTyped attributes are sometimes needed when dealing with SELECT types.\n\n@docs intAs, floatAs, stringAs, enumAs, binaryAs, listAs\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Attribute",
+                "comment": " An `Attribute` represents a single attribute of an `Entity`, such as an X\ncoordinate value, a GUID string, or a reference to another entity.\n",
+                "args": [],
+                "type": "StepFile.Types.Attribute"
+            },
+            {
+                "name": "Entity",
+                "comment": " An `Entity` represents a single entity stored in the data section of a STEP\nfile. An entity may be a point, a curve, a part, an assembly, or even an entire\nbuilding. Every entity has a type and a list of attributes (which can themselves\nbe references to other entities).\n",
+                "args": [],
+                "type": "StepFile.Types.Entity"
+            },
+            {
+                "name": "Header",
+                "comment": " A `Header` represents the data stored in the header section of a STEP file:\n\n  - `fileDescription` should be an informal description of the contents of the\n    file.\n  - `fileName` may be the file name of the actual file, or it may be an abstract\n    name for the contents of the file used when cross-referencing between files.\n  - `timeStamp` should be an\n    [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)-formatted date and time.\n  - `author` should include the name and address of the person who created the\n    file.\n  - `organization` should be the organization that the `author` is associated\n    with.\n  - One of `preprocessorVersion` or `originatingSystem` should identify what CAD\n    program was used to generate the file. This does not seem to be used\n    terribly consistently!\n  - `authorization` should include the name and address of whoever authorized\n    sending the file.\n  - `schemaIdentifiers` identifies the EXPRESS schema used by entities in the\n    file. This will usually be a list containing a single string, which may be\n    either a simple string like \"IFC2X3\" or an 'object identifier' such as\n    \"AUTOMOTIVE\\_DESIGN { 1 0 10303 214 1 1 1 1 }\" (more commonly known as\n    AP214).\n\n",
+                "args": [],
+                "type": "{ fileDescription : List.List String.String, fileName : String.String, timeStamp : String.String, author : List.List String.String, organization : List.List String.String, preprocessorVersion : String.String, originatingSystem : String.String, authorization : String.String, schemaIdentifiers : List.List String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "binary",
+                "comment": " Construct a binary-valued attribute. The provided string is assumed to\nalready be hex encoded as required by the STEP standard.\n",
+                "type": "String.String -> Iso10303.Attribute"
+            },
+            {
+                "name": "binaryAs",
+                "comment": " Construct a type-tagged binary-valued attribute.\n",
+                "type": "String.String -> String.String -> Iso10303.Attribute"
+            },
+            {
+                "name": "default",
+                "comment": " The special 'default value' attribute (`*` in the resulting STEP file).\n",
+                "type": "Iso10303.Attribute"
+            },
+            {
+                "name": "entity",
+                "comment": " Construct a single entity with the given type and attributes. The type name\nwill be capitalized if necessary. An [`IfcDirection`](http://www.buildingsmart-tech.org/ifc/IFC4/final/html/schema/ifcgeometryresource/lexical/ifcdirection.htm)\nrepresenting the positive Y direction in 3D could be created using\n\n    direction =\n        Step.entity \"IFCDIRECTION\"\n            [ Step.list Step.float [ 0, 1, 0 ]\n            ]\n\nwhich might get encoded as `#1=IFCDIRECTION((0.,1.,0.));`.\n\nIf a given entity is _only_ referred to by a single other entity, you can create\nit directly inside the definition of the parent entity. For example, to create\nentity #121 from [this AP214 example](https://github.com/stepcode/stepcode/blob/master/data/ap214e3/as1-oc-214.stp),\nyou could use\n\n    Step.entity \"AXIS2_PLACEMENT_3D\"\n        [ Step.string \"\"\n        , Step.referenceTo <|\n            Step.entity \"CARTESIAN_POINT\"\n                [ Step.list Step.float [ 20, 7.5, 0 ]\n                ]\n        , Step.referenceTo <|\n            Step.entity \"DIRECTION\"\n                [ Step.string \"\"\n                , Step.list Step.float [ 1, 0, 0 ]\n                ]\n        , Step.referenceTo <|\n            Step.entity \"DIRECTION\"\n                [ Step.string \"\"\n                , Step.list Step.float [ 0, 0, -1 ]\n                ]\n        ]\n\nWhen actually encoded to a STEP file, this will get converted into four separate\nentities, with the top-level entity referring to the other three by their\nautomatically-generated IDs, something like:\n\n    #1=AXIS2_PLACEMENT_3D('',#2,#3,#4);\n    #2=CARTESIAN_POINT('',(20.,7.5,0.));\n    #3=DIRECTION('',(1.,0.,0.));\n    #4=DIRECTION('',(0.,0.,-1.));\n\n",
+                "type": "String.String -> List.List Iso10303.Attribute -> Iso10303.Entity"
+            },
+            {
+                "name": "enum",
+                "comment": " Construct an attribute that refers to an enumeration value defined in an\nEXPRESS schema. Enumeration values are always encoded as all-caps with leading\nand trailing periods, like `.STEEL.`.\n\nThis function will capitalize and add periods if necessary, so both `Step.enum\n\"steel\"` and `Step.enum \".STEEL.\"` will be encoded as `.STEEL.`.\n\n",
+                "type": "String.String -> Iso10303.Attribute"
+            },
+            {
+                "name": "enumAs",
+                "comment": " Construct a type-tagged enumeration attribute.\n",
+                "type": "String.String -> String.String -> Iso10303.Attribute"
+            },
+            {
+                "name": "file",
+                "comment": " Build a string representing a complete STEP file from a header and a list of\nentities. Entities will be assigned integer IDs automatically, and nested\nentities (entities that reference other entities) will be 'flattened' into\nseparate entities referring to each other by their automatically-generated IDs.\n\nNote that it is not actually necessary to list all entities explicitly, only\ntop-level ones; any entities that are referenced by entities in the given list\nwill also get included in the output.\n\n",
+                "type": "Iso10303.Header -> List.List Iso10303.Entity -> String.String"
+            },
+            {
+                "name": "float",
+                "comment": " Construct a real-valued attribute.\n",
+                "type": "Basics.Float -> Iso10303.Attribute"
+            },
+            {
+                "name": "floatAs",
+                "comment": " Construct a type-tagged float-valued attribute.\n",
+                "type": "String.String -> Basics.Float -> Iso10303.Attribute"
+            },
+            {
+                "name": "int",
+                "comment": " Construct an integer-valued attribute.\n",
+                "type": "Basics.Int -> Iso10303.Attribute"
+            },
+            {
+                "name": "intAs",
+                "comment": " Construct a type-tagged integer-valued attribute.\n",
+                "type": "String.String -> Basics.Int -> Iso10303.Attribute"
+            },
+            {
+                "name": "list",
+                "comment": " Construct an attribute which is itself a list of other attributes. You\nprovide a list of values and a function to convert each of those values to an\nattribute (which will usually be one of the attribute construction functions in\nthis module!). For example, to construct an attribute which is a list of floats:\n\n    Step.list Step.float [ 0, 1, 0 ]\n\nTo construct a list of references to various entities:\n\n    Step.list Step.referenceTo\n        [ firstEntity\n        , secondEntity\n        , thirdEntity\n        ]\n\nIn the odd case where you already have a `List Attribute`, you can use Elm's\nbuilt-in `identity` function as the first argument:\n\n    Step.list identity\n        [ firstAttribute\n        , secondAttribute\n        , thirdAttribute\n        ]\n\n",
+                "type": "(a -> Iso10303.Attribute) -> List.List a -> Iso10303.Attribute"
+            },
+            {
+                "name": "listAs",
+                "comment": " Construct a type-tagged list attribute.\n",
+                "type": "String.String -> (a -> Iso10303.Attribute) -> List.List a -> Iso10303.Attribute"
+            },
+            {
+                "name": "null",
+                "comment": " The special 'null value' attribute (`$` in the resulting STEP file).\n",
+                "type": "Iso10303.Attribute"
+            },
+            {
+                "name": "referenceTo",
+                "comment": " Construct a reference to another STEP entity (will end up being encoded\nusing an integer ID in the resulting STEP file, e.g. `#123`).\n",
+                "type": "Iso10303.Entity -> Iso10303.Attribute"
+            },
+            {
+                "name": "string",
+                "comment": " Construct a string-valued attribute. Unicode characters will be properly\nescaped according to the (weird, custom) method specified in the STEP standard;\nfor example,\n\n    Step.string \"see § 4.1\"\n\nwill end up being encoded as\n\n    'see \\X\\A7 4.1'\n\n",
+                "type": "String.String -> Iso10303.Attribute"
+            },
+            {
+                "name": "stringAs",
+                "comment": " Construct a type-tagged string-valued attribute.\n",
+                "type": "String.String -> String.String -> Iso10303.Attribute"
+            }
+        ],
+        "binops": []
+    }
+]

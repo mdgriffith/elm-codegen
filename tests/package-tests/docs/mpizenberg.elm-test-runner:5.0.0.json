@@ -1,0 +1,324 @@
+[
+    {
+        "name": "ElmTestRunner.Failure",
+        "comment": " Encode and decode test failures.\n\n@docs Failure, decoder, encode\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Failure",
+                "comment": " Type resulting of calling `Test.Runner.getFailureReason` on a test `Expectation`.\n",
+                "args": [],
+                "type": "{ given : Maybe.Maybe String.String, description : String.String, reason : Test.Runner.Failure.Reason }"
+            }
+        ],
+        "values": [
+            {
+                "name": "decoder",
+                "comment": " Decode a `Failure`.\n",
+                "type": "Json.Decode.Decoder ElmTestRunner.Failure.Failure"
+            },
+            {
+                "name": "encode",
+                "comment": " Encode a `Failure`.\n",
+                "type": "ElmTestRunner.Failure.Failure -> Json.Decode.Value"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ElmTestRunner.Reporter",
+        "comment": " Main module for a test reporter.\n\n\n# Create a main test reporter\n\n@docs worker, Ports\n\n\n# Internal types for function signatures\n\n@docs Flags, Model, Msg\n\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " Internal messages.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Flags",
+                "comment": " Arguments passed to the reporter at startup,\nsuch as the initial random seed, the number of fuzz runs,\nand the type of reporter requested: (default)Console|Json|Junit\n",
+                "args": [],
+                "type": "{ initialSeed : Basics.Int, fuzzRuns : Basics.Int, mode : String.String, verbosity : Basics.Int, globs : List.List String.String, paths : List.List String.String }"
+            },
+            {
+                "name": "Model",
+                "comment": " Main model. Exposed for usage in type definitions.\n",
+                "args": [],
+                "type": "{ ports : ElmTestRunner.Reporter.Ports ElmTestRunner.Reporter.Msg, reporter : ElmTestRunner.Reporter.Interface.Interface, testsCount : Basics.Int, testResults : Array.Array ElmTestRunner.Result.TestResult, kind : Result.Result String.String ElmTestRunner.SeededRunners.Kind }"
+            },
+            {
+                "name": "Ports",
+                "comment": " Ports(ish) required by the worker program to function.\nThey aren't necessarily exactly ports\nbut will basically be wrapped by an actual port in the main Elm caller module.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ restart : ({ kind : String.String, testsCount : Basics.Int } -> msg) -> Platform.Sub.Sub msg, incomingResult : ({ duration : Basics.Float, result : Json.Decode.Value, logs : List.List String.String } -> msg) -> Platform.Sub.Sub msg, stdout : String.String -> Platform.Cmd.Cmd msg, signalFinished : { exitCode : Basics.Int, testsCount : Basics.Int } -> Platform.Cmd.Cmd msg }"
+            }
+        ],
+        "values": [
+            {
+                "name": "worker",
+                "comment": " Create a tests reporter.\nSome specific ports(ish) are required as arguments,\nThe main Elm module calling this one will typically look like the example below.\n\n    port module Reporter exposing (main)\n\n    import ElmTestRunner.Reporter exposing (Flags, Model, Msg)\n    import Json.Decode exposing (Value)\n\n    port restart : ({ kind : String, count : Int } -> msg) -> Sub msg\n\n    port incomingResult : ({ duration : Float, result : Value, logs : List String } -> msg) -> Sub msg\n\n    port signalFinished : { exitCode : Int, testsCount : Int } -> Cmd msg\n\n    port stdout : String -> Cmd msg\n\n    main : Program Flags Model Msg\n    main =\n        ElmTestRunner.Reporter.worker\n            { restart = restart\n            , incomingResult = incomingResult\n            , stdout = stdout\n            , signalFinished = signalFinished\n            }\n\nIt can later be called with a tiny bit of JS similar to:\n\n```js\n// Start the Elm app\nconst { Elm } = require(\"./Reporter.elm.js\");\nconst flags = {\n  initialSeed: {{ initialSeed }},\n  fuzzRuns: {{ fuzzRuns }},\n  mode: \"{{ reporter }}\",\n};\nconst app = Elm.Reporter.init({ flags: flags });\n\n// Pipe the Elm stdout port to stdout\napp.ports.stdout.subscribe((str) => process.stdout.write(str));\n\n// Export function to set the callback function when reports are finished\nlet finishCallback = () => console.error(\"finishCallback not defined yet\");\napp.ports.signalFinished.subscribe(({exitCode}) => finishCallback(exitCode));\nexports.setCallback = (callback) => { finishCallback = callback; };\n\n// Export function to restart the Elm reporter\nexports.restart = app.ports.restart.send;\n\n// Export function to send results to Elm\nexports.sendResult = app.ports.incomingResult.send;\n```\n\n",
+                "type": "ElmTestRunner.Reporter.Ports ElmTestRunner.Reporter.Msg -> Platform.Program ElmTestRunner.Reporter.Flags ElmTestRunner.Reporter.Model ElmTestRunner.Reporter.Msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ElmTestRunner.Reporter.ConsoleColor",
+        "comment": " Console reporter with color support\n\n@docs implementation\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "implementation",
+                "comment": " Provide a console implementation of a reporter, mostly for human consumption.\nRequire the initial random seed and number of fuzz runs.\n",
+                "type": "ElmTestRunner.Vendor.ConsoleText.UseColor -> { seed : Basics.Int, fuzzRuns : Basics.Int, verbosity : Basics.Int } -> ElmTestRunner.Reporter.Interface.Interface"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ElmTestRunner.Reporter.ConsoleDebug",
+        "comment": " Console implementation of a reporter\n\n@docs implementation\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "implementation",
+                "comment": " Provide a console implementation of a reporter, mostly for human consumption.\nRequire the initial random seed and number of fuzz runs.\n",
+                "type": "{ seed : Basics.Int, fuzzRuns : Basics.Int } -> ElmTestRunner.Reporter.Interface.Interface"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ElmTestRunner.Reporter.Exercism",
+        "comment": " Implementation of a reporter following the spec\nfor exercism tests runners.\n\n<https://github.com/exercism/docs/blob/main/building/tooling/test-runners/interface.md>\n\n@docs implementation\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "implementation",
+                "comment": " Implementation of a reporter for exercism, mostly for automated tools.\n",
+                "type": "ElmTestRunner.Reporter.Interface.Interface"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ElmTestRunner.Reporter.Interface",
+        "comment": " Reporter interface.\n\n@docs Interface\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Interface",
+                "comment": " Interface that must be implemented by a reporter.\nThe return types are `Maybe String` to know if something (or not)\nhas to be logged by the reporter.\n\n    onBegin : Int -> Maybe String\n    onBegin testsCount = ...\n\n    onResult : TestResult -> Maybe String\n    onResult testResult = ...\n\n    onEnd : Result String Kind -> Array TestResult -> Maybe String\n    onEnd kindResult allTestResults = ...\n\n",
+                "args": [],
+                "type": "{ onBegin : Basics.Int -> Maybe.Maybe String.String, onResult : ElmTestRunner.Result.TestResult -> Maybe.Maybe String.String, onEnd : Result.Result String.String ElmTestRunner.SeededRunners.Kind -> Array.Array ElmTestRunner.Result.TestResult -> Maybe.Maybe String.String }"
+            }
+        ],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "ElmTestRunner.Reporter.Json",
+        "comment": " Json implementation of a reporter\n\n@docs implementation\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "implementation",
+                "comment": " Provide a Json implementation of a reporter, mostly for automated tools.\nRequire the initial random seed and number of fuzz runs.\n",
+                "type": "{ seed : Basics.Int, fuzzRuns : Basics.Int, globs : List.List String.String, paths : List.List String.String } -> ElmTestRunner.Reporter.Interface.Interface"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ElmTestRunner.Reporter.Junit",
+        "comment": " Json implementation of a reporter\n\n@docs implementation\n\nThe output format is based on the xsd specification found at\n<https://github.com/windyroad/JUnit-Schema/blob/master/JUnit.xsd>\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "implementation",
+                "comment": " Provide a Junit XML implementation of a reporter, mostly for automated tools.\n",
+                "type": "ElmTestRunner.Reporter.Interface.Interface"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ElmTestRunner.Result",
+        "comment": " Types and functions to manipulate a test result.\n\n\n# Manipulation of the result of a test run\n\n@docs TestResult, fromExpectations, setDuration, setLogs, encode, decoder\n\n\n# Helper functions\n\n@docs Summary, summary\n\n",
+        "unions": [
+            {
+                "name": "TestResult",
+                "comment": " Type summarizing the results of a test run.\nIt is obtained from the list of expectations returned by calling runner.run ().\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Passed",
+                        [
+                            "{ labels : List.List String.String, duration : Basics.Float, logs : List.List String.String }"
+                        ]
+                    ],
+                    [
+                        "Failed",
+                        [
+                            "{ labels : List.List String.String, duration : Basics.Float, logs : List.List String.String, todos : List.List String.String, failures : List.List ElmTestRunner.Failure.Failure }"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Summary",
+                "comment": " Quantitative summary of all test results.\n",
+                "args": [],
+                "type": "{ totalDuration : Basics.Float, passedCount : Basics.Int, failedCount : Basics.Int, todoCount : Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "decoder",
+                "comment": " Decode a `TestResult`.\n",
+                "type": "Json.Decode.Decoder ElmTestRunner.Result.TestResult"
+            },
+            {
+                "name": "encode",
+                "comment": " Encode a `TestResult`.\n",
+                "type": "ElmTestRunner.Result.TestResult -> Json.Decode.Value"
+            },
+            {
+                "name": "fromExpectations",
+                "comment": " Convert a list of expectations (results of a run) into a `TestResult`.\nReturn the `Failed` variant if there is any todo or failure in the expectations.\n",
+                "type": "List.List String.String -> List.List Expect.Expectation -> ElmTestRunner.Result.TestResult"
+            },
+            {
+                "name": "setDuration",
+                "comment": " Set the duration that the test took.\n",
+                "type": "Basics.Float -> ElmTestRunner.Result.TestResult -> ElmTestRunner.Result.TestResult"
+            },
+            {
+                "name": "setLogs",
+                "comment": " Set the logs received for that test.\n",
+                "type": "List.List String.String -> ElmTestRunner.Result.TestResult -> ElmTestRunner.Result.TestResult"
+            },
+            {
+                "name": "summary",
+                "comment": " Report a quantitative summary of test results.\n",
+                "type": "Array.Array ElmTestRunner.Result.TestResult -> ElmTestRunner.Result.Summary"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ElmTestRunner.Runner",
+        "comment": " Main module for a test runner worker.\n\n\n# Create a main test runner worker\n\n@docs worker, Ports\n\n\n# Internal types for function signatures\n\n@docs Flags, Model, Msg\n\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " Internal messages.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Flags",
+                "comment": " The initial random seed and the number of fuzz runs are passed as flags.\n",
+                "args": [],
+                "type": "{ initialSeed : Basics.Int, fuzzRuns : Basics.Int, filter : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "Model",
+                "comment": " Main model. Exposed for usage in type definitions.\n",
+                "args": [],
+                "type": "{ ports : ElmTestRunner.Runner.Ports ElmTestRunner.Runner.Msg, testRunners : ElmTestRunner.SeededRunners.SeededRunners }"
+            },
+            {
+                "name": "Ports",
+                "comment": " Ports required by the worker program to function.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ askTestsCount : (Json.Encode.Value -> msg) -> Platform.Sub.Sub msg, sendTestsCount : { kind : String.String, testsCount : Basics.Int } -> Platform.Cmd.Cmd msg, receiveRunTest : (Basics.Int -> msg) -> Platform.Sub.Sub msg, sendResult : { id : Basics.Int, result : Json.Encode.Value } -> Platform.Cmd.Cmd msg }"
+            }
+        ],
+        "values": [
+            {
+                "name": "worker",
+                "comment": " Create a test runner worker.\nSome specific ports(ish) are required as arguments,\nas well as the \"master\" test concatenating all tests (CF `SeededRunners.fromTest`).\n\nThe main Elm module calling this one will typically look like the example below.\nIn that code, {{ user\\_imports }} and {{ tests }} are to be replaced by the list\nof needed imports from user code and the list of tests to run.\n\n    port module Runner exposing (main)\n\n    {{ user_imports }}\n    import Test\n    import ElmTestRunner.Runner exposing (Flags, Model, Msg)\n    import Json.Encode exposing (Value)\n\n    port askTestsCount : (Value -> msg) -> Sub msg\n    port sendTestsCount : { kind : String, testsCount : Int } -> Cmd msg\n    port receiveRunTest : (Int  -> msg) -> Sub msg\n    port sendResult : { id : Int, result : Value } -> Cmd msg\n\n    main : Program Flags Model Msg\n    main =\n        [ {{ tests }} ]\n            |> Test.concat\n            |> ElmTestRunner.Runner.worker\n                { askTestsCount = askTestsCount\n                , sendTestsCount = sendTestsCount\n                , receiveRunTest = receiveRunTest\n                , sendResult = sendResult\n                }\n\nIt can later be spawned as a Node worker with a tiny bit of JS similar to:\n\n```js\nconst { parentPort } = require(\"worker_threads\");\nconst { Elm } = require(\"./Runner.elm.js\");\n\n// Start the Elm app\nconst flags = { initialSeed: ..., fuzzRuns: ... };\nconst app = Elm.Runner.init({ flags: flags });\n\n// Communication between Elm runner worker and Supervisor via port\napp.ports.outgoing.subscribe((msg) => parentPort.postMessage(msg));\nparentPort.on(\"message\", (msg) => app.ports.incoming.send(msg));\n```\n\n",
+                "type": "ElmTestRunner.Runner.Ports ElmTestRunner.Runner.Msg -> Maybe.Maybe Test.Test -> Platform.Program ElmTestRunner.Runner.Flags ElmTestRunner.Runner.Model ElmTestRunner.Runner.Msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ElmTestRunner.SeededRunners",
+        "comment": " Helper module to prepare and run test runners.\n\n@docs SeededRunners, Kind, empty, fromTest, run, kindFromString, kindToString\n\n",
+        "unions": [
+            {
+                "name": "Kind",
+                "comment": " Informs us if `Test.only` or `Test.skip` was used.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Plain",
+                        []
+                    ],
+                    [
+                        "Only",
+                        []
+                    ],
+                    [
+                        "Skipping",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "SeededRunners",
+                "comment": " Runners prepared with their random seed.\nIf runners are invalid for some reason (duplicate name, ...),\nthis is will be an `Err String`.\nOtherwise, the type tells us if `Test.only` or `Test.skip` was used,\nand provides the seeded runners in an array for efficient indexed access.\n",
+                "args": [],
+                "type": "Result.Result String.String { kind : ElmTestRunner.SeededRunners.Kind, runners : Array.Array Test.Runner.Runner }"
+            }
+        ],
+        "values": [
+            {
+                "name": "empty",
+                "comment": " Create an empty SeededRunners when there isn't any test\n",
+                "type": "ElmTestRunner.SeededRunners.SeededRunners"
+            },
+            {
+                "name": "fromTest",
+                "comment": " Convert a \"master\" test into seeded runners.\nThat \"master\" test usually is the concatenation of all exposed tests.\n",
+                "type": "Test.Test -> { initialSeed : Basics.Int, fuzzRuns : Basics.Int, filter : Maybe.Maybe String.String } -> ElmTestRunner.SeededRunners.SeededRunners"
+            },
+            {
+                "name": "kindFromString",
+                "comment": " Parse a kind from a String.\n",
+                "type": "String.String -> Result.Result String.String ElmTestRunner.SeededRunners.Kind"
+            },
+            {
+                "name": "kindToString",
+                "comment": " Serialize a kind to a String.\n",
+                "type": "ElmTestRunner.SeededRunners.Kind -> String.String"
+            },
+            {
+                "name": "run",
+                "comment": " Run a given test if the id is in range.\n",
+                "type": "Basics.Int -> Array.Array Test.Runner.Runner -> Maybe.Maybe ElmTestRunner.Result.TestResult"
+            }
+        ],
+        "binops": []
+    }
+]

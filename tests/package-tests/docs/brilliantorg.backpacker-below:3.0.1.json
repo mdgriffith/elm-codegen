@@ -1,0 +1,466 @@
+[
+    {
+        "name": "Camperdown.Config",
+        "comment": "\n\n@docs Config\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " Markup parsing configuration\n\n  - `lineOffset`: difference between what the parser will report as a line position\n    and the actual line position, since this is used to parse file fragments\n  - `escapable`: Escapable characters in markup text are:\n      - Always: `\\`, \\`\\`\\``,`!`,`#`,`[`,`]`,`(`,`)\\`\n      - Verbatim or annotation capture characters\n      - The first character in a replacement\n\n",
+                "args": [],
+                "type": "{ verbatimOpts : Set.Set Char.Char, annotationOpts : List.List { startSymbol : String.String, endSymbol : Maybe.Maybe String.String, commandOccursAfterwards : Camperdown.Occurs.Occurs }, annotationFirstChars : Set.Set Char.Char, escapable : Set.Set Char.Char, meaningful : Set.Set Char.Char, verbatimMarkers : List.List String.String }"
+            }
+        ],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "Camperdown.Loc",
+        "comment": "\n\n\n# Types\n\n@docs Loc\n@docs Location\n@docs Position\n\n\n# Functions\n\n@docs end\n@docs locate\n@docs location\n@docs map\n@docs start\n@docs todoDummyLocate\n@docs todoDummyLocation\n@docs todoDummyPosition\n@docs value\n@docs encodeLocation\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Loc",
+                "comment": " ",
+                "args": [
+                    "a"
+                ],
+                "type": "( Camperdown.Loc.Location, a )"
+            },
+            {
+                "name": "Location",
+                "comment": " ",
+                "args": [],
+                "type": "{ start : Camperdown.Loc.Position, end : Camperdown.Loc.Position }"
+            },
+            {
+                "name": "Position",
+                "comment": " ",
+                "args": [],
+                "type": "{ line : Basics.Int, column : Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "encodeLocation",
+                "comment": " Encodes a Location as a JSON value.\n",
+                "type": "Camperdown.Loc.Location -> Json.Encode.Value"
+            },
+            {
+                "name": "end",
+                "comment": " ",
+                "type": "Camperdown.Loc.Loc a -> Camperdown.Loc.Position"
+            },
+            {
+                "name": "locate",
+                "comment": " ",
+                "type": "Camperdown.Loc.Position -> Camperdown.Loc.Position -> a -> Camperdown.Loc.Loc a"
+            },
+            {
+                "name": "location",
+                "comment": " ",
+                "type": "Camperdown.Loc.Loc a -> Camperdown.Loc.Location"
+            },
+            {
+                "name": "map",
+                "comment": " ",
+                "type": "(a -> b) -> Camperdown.Loc.Loc a -> Camperdown.Loc.Loc b"
+            },
+            {
+                "name": "start",
+                "comment": " ",
+                "type": "Camperdown.Loc.Loc a -> Camperdown.Loc.Position"
+            },
+            {
+                "name": "todoDummyLocate",
+                "comment": " ",
+                "type": "a -> Camperdown.Loc.Loc a"
+            },
+            {
+                "name": "todoDummyLocation",
+                "comment": " ",
+                "type": "Camperdown.Loc.Location"
+            },
+            {
+                "name": "todoDummyPosition",
+                "comment": " ",
+                "type": "Camperdown.Loc.Position"
+            },
+            {
+                "name": "value",
+                "comment": " ",
+                "type": "Camperdown.Loc.Loc a -> a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Camperdown.Occurs",
+        "comment": "\n\n@docs Occurs\n\n",
+        "unions": [
+            {
+                "name": "Occurs",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Never",
+                        []
+                    ],
+                    [
+                        "Sometimes",
+                        []
+                    ],
+                    [
+                        "Always",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "Camperdown.Parse",
+        "comment": " Placeholder\n\n@docs parse\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "parse",
+                "comment": " Invokes the internal parsing infrastructure to parse a complete file.\n\nA document is split into sections by lines that start with `#`. This function returns\nthe elements in the prelude (part of the file before the first `#` marker) followed by\nthe parsed sections.\n\n",
+                "type": "Camperdown.Config.Config -> String.String -> Camperdown.Parse.Syntax.Document"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Camperdown.Parse.Syntax",
+        "comment": "\n\n\n# Documents\n\n@docs Document, Label, Section\n\n\n# Block elements\n\n@docs Element, ParagraphConfig, PreformattedConfig, ItemConfig, CommandConfig, Mark, Divert, ProblemConfig\n\n\n# Configuration\n\n@docs Command, Config, Parameter, Value\n\n\n# Text\n\n@docs Markup, Text\n\n",
+        "unions": [
+            {
+                "name": "Divert",
+                "comment": " A command can (optionally) refer to a child section in one of three ways:\n\nA command's child is the whole indented section past the command if using the `Nested`\nchevron `>>`\n\n    ! command >> Nested paragraph can start on the\n        same line or a following line.\n\n        Another paragraph nested inside the command.\n\n        ! command nested in the command\n\nA command's child is the entire equally-indented section past the command (up to the\nnext `#` marker, the end of the document, or the next less-indented section) if using\nthe `Immediate` chevron `vv`.\n\n    ! command vv\n    Next content needs to start on a subsequent line.\n\n    This paragaph is also nested inside the command\n\n    # another section\n    This paragraph is not nested inside the command because\n    it's in a new section.\n\nA command's child can also be indirectly referenced by using a pointy-arrow `->` to\n`Reference` some other section.\n\n    ! choose vv\n    ? [Option A] >> You picked option A.\n    ? [Option B] -> option b\n\n    ## option b\n    You picked option B.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Nested",
+                        [
+                            "List.List Camperdown.Parse.Syntax.Element"
+                        ]
+                    ],
+                    [
+                        "Immediate",
+                        [
+                            "List.List Camperdown.Parse.Syntax.Element"
+                        ]
+                    ],
+                    [
+                        "Reference",
+                        [
+                            "Camperdown.Loc.Loc String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Element",
+                "comment": " Camperdown Elements are roughly analgous to HTML block-level elements.\n\nHere's a possible Camperdown document that contains all the possible Element\ntypes:\n\n    This is a Paragraph. A single paragraph\n    can continue across multiple lines\n    as long as\n    there are no empty lines.\n\n    An empty line creates a new Paragraph. Paragraphs can contain\n    **formatted** _text_ and [commands](link \"https://google.com/\").\n\n    $$$ If `$$$` is specified as a Preformatted section sentinel,\n        then this is a preformatted section, and\n        the section will continue until we reach a line that's\n        only has the same indentation level as the three dollar-signs\n        that started the preformatted section.\n\n    A Command is written like this `! command`, but only if the exclamation\n    point (pronounced \"bang\") or the question mark (pronounced \"huh\") is\n    the very first character on a line.\n\n    ! quote >> This might indicate a quoted section.\n\n    : This element is an Item, which is a useful way to do things like\n      offsetting lists.\n\n    The next element will be parsed as a Problem, because it's indented\n    and the parser doesn't expect an indented element here.\n\n        ! command \"this will be parsed as a Problem\"\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Paragraph",
+                        [
+                            "Camperdown.Parse.Syntax.ParagraphConfig"
+                        ]
+                    ],
+                    [
+                        "Preformatted",
+                        [
+                            "Camperdown.Parse.Syntax.PreformattedConfig"
+                        ]
+                    ],
+                    [
+                        "Item",
+                        [
+                            "Camperdown.Parse.Syntax.ItemConfig"
+                        ]
+                    ],
+                    [
+                        "Command",
+                        [
+                            "Camperdown.Parse.Syntax.CommandConfig"
+                        ]
+                    ],
+                    [
+                        "Problem",
+                        [
+                            "Camperdown.Parse.Syntax.ProblemConfig"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Label",
+                "comment": " Sections are marked by non-indented lines that start with a `#` character.\n\nIf the section description has content (like `# the best section`), then the section's\nlabel will be `Named (loc, \"the best section\")`, where `loc` is the file position of the\nstring `the best section` - `{ start = { line = 4, column = 3 }, end = { line = 4, column = 18 } }`\nif the section divider is on line 4 of the file, for example.\n\nIf the section description doesn't have any content (if it's just a series of `#` characters\nfollowed by white space) then the section's label will be `Anonymous n`, where `n` is the\nline number of the section.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Named",
+                        [
+                            "Camperdown.Loc.Loc String.String"
+                        ]
+                    ],
+                    [
+                        "Anonymous",
+                        [
+                            "Basics.Int"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Mark",
+                "comment": " Commands have two forms: `! command` and `? command`, the latter is a _subcommand_. The\ncharacters `!` and `?` can be pronounced \"bang\" and \"huh\", respectively.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Bang",
+                        []
+                    ],
+                    [
+                        "Huh",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Text",
+                "comment": " A text element can be a verbatim element, raw text, or an annotation. Issues with\nparsing are represented with `InlineProblem`.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Raw",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Verbatim",
+                        [
+                            "Char.Char",
+                            "Camperdown.Loc.Loc String.String"
+                        ]
+                    ],
+                    [
+                        "Annotation",
+                        [
+                            "Camperdown.Loc.Loc String.String",
+                            "List.List Camperdown.Parse.Syntax.Text",
+                            "Maybe.Maybe (Camperdown.Loc.Loc String.String)",
+                            "Maybe.Maybe (Camperdown.Loc.Loc Camperdown.Parse.Syntax.Command)"
+                        ]
+                    ],
+                    [
+                        "InlineProblem",
+                        [
+                            "Camperdown.Problem.Inline"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Value",
+                "comment": " The arguments to a command or a parameter can have one of four forms:\n\n  - `Variable`: `true`, `False`, `forgetMeNot`\n  - `String`: `\"this or that\"`, `\"a \\\"lost\\\" doll\"`\n  - `Int`: `0`, `-12`, `33`\n  - `Markup`: `[Text intended for display]`, `[It can be **formatted**]`,\n    `[It can even contain [subcommands](link \"https://www.google.com/search?q=subcommand\") and stuff like that]`\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Variable",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "String",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Int",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "Markup",
+                        [
+                            "Camperdown.Parse.Syntax.Markup"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Command",
+                "comment": " A `Command` captures the elm-like configuration components associated with block\nlevel and inline commands.\n\nSimple block-level command:\n\n    > ! test\n    >   ----\n    >   loc1\n\n    ( Just ( loc1, \"test\" ), ( [], [] ) )\n\nBlock in a block-level command:\n\n    > ! image \"colorful.png\" |> bold\n    >   ----- -------------- -------\n    >   loc1  loc2           loc3\n    >                           ----\n    >                           loc4\n\n    ( Just ( loc1, \"image\" )\n    , ( [ ( loc2, String \"colorful.png\" ) ], [ ( loc3, ( ( loc4, \"bold\" ), [] ) ) ] )\n    )\n\nSubcommand:\n\n    > ? choice |> response [Correct!]\n    >   ------ ----------------------\n    >   loc1   loc2\n    >             -------- ----------\n    >             loc3     loc4\n\n    ( Just ( loc1, \"choice\" )\n    , ( [], [ ( loc2, ( ( loc3, \"response\" ), [ ( loc4, Markup [ Raw \"Correct!\" ] ) ] ) ) ] )\n    )\n\nSubcommand with no command name:\n\n    > ? [Door Number 2] >> That's correct!\n    >   ---------------\n    >   loc1\n\n    ( Nothing\n    , ( [ ( loc1, Markup [ Raw \"Door Number 2\" ] ) ], [] )\n    )\n\nInline command\n\n    > This is a [ website ] (link \"https://google.com\")\n    >                       ---- --------------------\n    >                       loc1 loc2\n\n    ( Just ( loc1, \"choice\" )\n    , ( [ ( loc2, String \"https://google.com\" ) ], [] )\n    )\n\n",
+                "args": [],
+                "type": "( Maybe.Maybe (Camperdown.Loc.Loc String.String), Camperdown.Parse.Syntax.Config )"
+            },
+            {
+                "name": "CommandConfig",
+                "comment": " The configuration of a `Command` `Element`.\n",
+                "args": [],
+                "type": "{ lines : { start : Basics.Int, end : Basics.Int }, mark : Camperdown.Loc.Loc Camperdown.Parse.Syntax.Mark, command : Camperdown.Parse.Syntax.Command, child : Maybe.Maybe Camperdown.Parse.Syntax.Divert, indent : Basics.Int }"
+            },
+            {
+                "name": "Config",
+                "comment": " The `Config` is everything in a command except for the command name.\n",
+                "args": [],
+                "type": "( List.List (Camperdown.Loc.Loc Camperdown.Parse.Syntax.Value), List.List (Camperdown.Loc.Loc Camperdown.Parse.Syntax.Parameter) )"
+            },
+            {
+                "name": "Document",
+                "comment": " A document is a prelude followed by a list of sections.\n",
+                "args": [],
+                "type": "{ prelude : List.List Camperdown.Parse.Syntax.Element, sections : List.List Camperdown.Parse.Syntax.Section }"
+            },
+            {
+                "name": "ItemConfig",
+                "comment": " The configuration of a `Item` `Element`.\n",
+                "args": [],
+                "type": "{ lines : { start : Basics.Int, end : Basics.Int }, indent : Basics.Int, markLoc : Camperdown.Loc.Location, children : List.List Camperdown.Parse.Syntax.Element }"
+            },
+            {
+                "name": "Markup",
+                "comment": " Markup is just a list of text elements.\n",
+                "args": [],
+                "type": "List.List Camperdown.Parse.Syntax.Text"
+            },
+            {
+                "name": "ParagraphConfig",
+                "comment": " The configuration of a `Paragraph` `Element`.\n",
+                "args": [],
+                "type": "{ contents : Camperdown.Parse.Syntax.Markup }"
+            },
+            {
+                "name": "Parameter",
+                "comment": " A `Parameter` in Camperdown is written as `|> parameterName arg1 arg2 ...`.\nWriting `! command |> param1 |> param2 \"argument\"` is intended to roughly correspond\nto the XML form `<command param1 param2=\"argument\">`, but the use of the Elmish\npipe syntax makes it reasonable for parameters to have multiple arguments, instead\nof the 0 or 1 allowed by XML's syntax.\n",
+                "args": [],
+                "type": "( Camperdown.Loc.Loc String.String, List.List (Camperdown.Loc.Loc Camperdown.Parse.Syntax.Value) )"
+            },
+            {
+                "name": "PreformattedConfig",
+                "comment": " The configuration of a `Preformatted` `Element`.\n",
+                "args": [],
+                "type": "{ lines : { start : Basics.Int, end : Basics.Int }, indent : Basics.Int, contents : String.String }"
+            },
+            {
+                "name": "ProblemConfig",
+                "comment": " The configuration of a `Problem` `Element`.\n",
+                "args": [],
+                "type": "{ lines : { start : Basics.Int, end : Basics.Int }, indent : Basics.Int, loc : Camperdown.Loc.Location, problem : String.String }"
+            },
+            {
+                "name": "Section",
+                "comment": " A section's level is described by the number of `#` section markers at the beginning of the line:\n\n    # level 1 section\n    ## level 2 section\n    ##### level 5 section\n\nand a section contains a list of block-level elements.\n\n",
+                "args": [],
+                "type": "{ level : Basics.Int, label : Camperdown.Parse.Syntax.Label, contents : List.List Camperdown.Parse.Syntax.Element }"
+            }
+        ],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "Camperdown.Problem",
+        "comment": "\n\n@docs Inline, inlineToString\n\n",
+        "unions": [
+            {
+                "name": "Inline",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "BadEscapeChar",
+                        [
+                            "Camperdown.Loc.Loc String.String"
+                        ]
+                    ],
+                    [
+                        "VerbatimDoesNotFinish",
+                        [
+                            "{ expectedEndmark : String.String, loc : Camperdown.Loc.Location }"
+                        ]
+                    ],
+                    [
+                        "CommandLacksClosingParen",
+                        [
+                            "Camperdown.Loc.Location"
+                        ]
+                    ],
+                    [
+                        "CommandHasUnexpectedCharacter",
+                        [
+                            "Camperdown.Loc.Loc String.String"
+                        ]
+                    ],
+                    [
+                        "AnnotationDoesNotFinish",
+                        [
+                            "{ startMark : Camperdown.Loc.Loc String.String, expectedEndMark : String.String, end : Camperdown.Loc.Position }"
+                        ]
+                    ],
+                    [
+                        "InlineCommandParseError",
+                        [
+                            "{ loc : Camperdown.Loc.Location, reason : String.String, captured : String.String }"
+                        ]
+                    ],
+                    [
+                        "UnexpectedMarkupCharacter",
+                        [
+                            "Camperdown.Loc.Loc Char.Char"
+                        ]
+                    ],
+                    [
+                        "CommandNotPresentWhereRequired",
+                        [
+                            "Camperdown.Loc.Location"
+                        ]
+                    ],
+                    [
+                        "InvalidVerbatimChar",
+                        [
+                            "Camperdown.Loc.Loc Char.Char"
+                        ]
+                    ],
+                    [
+                        "InvalidAnnotation",
+                        [
+                            "Camperdown.Loc.Loc ( String.String, Maybe.Maybe String.String )",
+                            "Maybe.Maybe (Camperdown.Loc.Loc (Maybe.Maybe (Camperdown.Loc.Loc String.String)))"
+                        ]
+                    ],
+                    [
+                        "InvalidParameter",
+                        [
+                            "Camperdown.Loc.Loc String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "inlineToString",
+                "comment": " ",
+                "type": "Camperdown.Problem.Inline -> ( Camperdown.Loc.Location, String.String )"
+            }
+        ],
+        "binops": []
+    }
+]

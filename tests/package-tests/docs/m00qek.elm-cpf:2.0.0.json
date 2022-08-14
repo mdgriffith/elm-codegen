@@ -1,0 +1,76 @@
+[
+    {
+        "name": "Cpf",
+        "comment": " Manipulate and generate brazilian CPFs\n\n@docs CPF, Error, fromList, fromText, toString, show\n\n",
+        "unions": [
+            {
+                "name": "Error",
+                "comment": " Possible errors when dealing with CPFs\n",
+                "args": [],
+                "cases": [
+                    [
+                        "InvalidInput",
+                        []
+                    ],
+                    [
+                        "InvalidLength",
+                        []
+                    ],
+                    [
+                        "InvalidFirstDV",
+                        []
+                    ],
+                    [
+                        "InvalidSecondDV",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "CPF",
+                "comment": " A brazilian CPF\n",
+                "args": [],
+                "type": "Internals.CPF"
+            }
+        ],
+        "values": [
+            {
+                "name": "fromList",
+                "comment": " Turn a valid list of integers into a CPF.\n\n    (fromList [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 9 ] |> Result.map show) == Ok \"123.456.789-09\"\n\n",
+                "type": "List.List Basics.Int -> Result.Result Cpf.Error Cpf.CPF"
+            },
+            {
+                "name": "fromText",
+                "comment": " Turn a valid string into a CPF.\n\n    (fromText \"12345678909\" |> Result.map show) == Ok \"123.456.789-09\"\n\n    (fromText \"123.456.789-09\" |> Result.map show) == Ok \"123.456.789-09\"\n\n",
+                "type": "String.String -> Result.Result Cpf.Error Cpf.CPF"
+            },
+            {
+                "name": "show",
+                "comment": " Pretty print a given CPF\n",
+                "type": "Cpf.CPF -> String.String"
+            },
+            {
+                "name": "toString",
+                "comment": " Turn a CPF into a string.\n",
+                "type": "Cpf.CPF -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Random.Cpf",
+        "comment": " Generate a random CPF\n\n@docs cpf\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "cpf",
+                "comment": " Generate a random CPF\n",
+                "type": "Random.Generator Cpf.CPF"
+            }
+        ],
+        "binops": []
+    }
+]

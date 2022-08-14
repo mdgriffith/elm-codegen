@@ -1,0 +1,145 @@
+[
+    {
+        "name": "Json.Convert",
+        "comment": "\n\n\n# Converter\n\n@docs Converter\n\n\n# Encoding and Decoding\n\n@docs Value, encode, decodeValue, decodeString\n\n\n# Primitives\n\n@docs string, int, float, bool, null\n\n\n# Containers\n\n@docs list, array, dict\n\n\n# Objects\n\n@docs Field, object, field, option\n\n\n# Mappings\n\n@docs Iso, map, reverse, compose\n\n\n# Miscellaneous\n\n@docs nullable, value, lazy\n\n",
+        "unions": [
+            {
+                "name": "Field",
+                "comment": " A helper data type for building an object converter.\n\nThe following functions have a little tricky types, but you do not need to think about it! Just write like this:\n\n    type alias User =\n        { name : String\n        , age : Int\n        , height : Maybe Float\n        }\n\n    converter : Converter User\n    converter =\n        object User <|\n            field \"name\" .name string\n                >> field \"age\" .age int\n                >> option \"height\" .height float\n\n",
+                "args": [
+                    "l",
+                    "r"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Converter",
+                "comment": " A pair of JSON encoder and decoder.\n\nYou can make custom converters using this directly if you need.\n\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ encoder : a -> Json.Convert.Value, decoder : Json.Decode.Decoder a }"
+            },
+            {
+                "name": "Iso",
+                "comment": " A pair of a function and its inverse.\nSame definition for [Monocle.Iso](https://package.elm-lang.org/packages/arturopala/elm-monocle/latest/Monocle-Iso).\n",
+                "args": [
+                    "a",
+                    "b"
+                ],
+                "type": "{ get : a -> b, reverseGet : b -> a }"
+            },
+            {
+                "name": "Value",
+                "comment": " Represents a JavaScript value.\n",
+                "args": [],
+                "type": "Json.Encode.Value"
+            }
+        ],
+        "values": [
+            {
+                "name": "array",
+                "comment": " Convert between an Elm `Array` and a JSON array.\n\n    Array.fromList [ 1, 2, 3 ] <== array int ==> \"[1,2,3]\"\n\n",
+                "type": "Json.Convert.Converter a -> Json.Convert.Converter (Array.Array a)"
+            },
+            {
+                "name": "bool",
+                "comment": " Convert between an Elm `Bool` and a JSON boolean.\n\n    True <== bool ==> \"true\"\n\n",
+                "type": "Json.Convert.Converter Basics.Bool"
+            },
+            {
+                "name": "compose",
+                "comment": " Compose two isomorphisms.\n",
+                "type": "Json.Convert.Iso a b -> Json.Convert.Iso b c -> Json.Convert.Iso a c"
+            },
+            {
+                "name": "decodeString",
+                "comment": " Parse the given string into a JSON value and then decode it.\n",
+                "type": "Json.Convert.Converter a -> String.String -> Result.Result Json.Decode.Error a"
+            },
+            {
+                "name": "decodeValue",
+                "comment": " Decode a JSON `Value`.\n",
+                "type": "Json.Convert.Converter a -> Json.Convert.Value -> Result.Result Json.Decode.Error a"
+            },
+            {
+                "name": "dict",
+                "comment": " Convert between an Elm `Dict` and a JSON object.\n\n    Dict.fromList [ ( \"alice\", 42 ), ( \"bob\", 99 ) ] <== dict int ==> \"{ \\\"alice\\\": 42, \\\"bob\\\": 99 }\"\n\n",
+                "type": "Json.Convert.Converter a -> Json.Convert.Converter (Dict.Dict String.String a)"
+            },
+            {
+                "name": "encode",
+                "comment": " Convert data into a prettified string. The second argument specifies the amount of indentation in the resulting string.\n",
+                "type": "Json.Convert.Converter a -> Basics.Int -> a -> String.String"
+            },
+            {
+                "name": "field",
+                "comment": " Represents a field of an object. Use it along with `object`.\n",
+                "type": "String.String -> (r -> a) -> Json.Convert.Converter a -> Json.Convert.Field (a -> l) r -> Json.Convert.Field l r"
+            },
+            {
+                "name": "float",
+                "comment": " Converter for `Float`.\n\n    3.14 <== float ==> \"3.14\"\n\n",
+                "type": "Json.Convert.Converter Basics.Float"
+            },
+            {
+                "name": "int",
+                "comment": " Converter for `Int`.\n\n    42 <== int ==> \"42\"\n\n",
+                "type": "Json.Convert.Converter Basics.Int"
+            },
+            {
+                "name": "lazy",
+                "comment": " For building a converter of recursive structure.\nUse it like `lazy (\\_ -> converter)` instead of just `converter` in order for the converter not to expand infinitly deep.\n\n    type Tree a\n        = Tree a (Maybe (Tree a)) (Maybe (Tree a))\n\n    tree : Converter a -> Converter (Tree a)\n    tree item =\n        object Tree <|\n            field \"item\" (\\(Tree a _ _) -> a) item\n                >> option \"left\" (\\(Tree _ l _) -> l) (lazy <| \\_ -> tree item)\n                >> option \"right\" (\\(Tree _ _ r) -> r) (lazy <| \\_ -> tree item)\n\n",
+                "type": "(() -> Json.Convert.Converter a) -> Json.Convert.Converter a"
+            },
+            {
+                "name": "list",
+                "comment": " Convert between an Elm `List` and a JSON array.\n\n    [ 1, 2, 3 ] <== list int ==> \"[1,2,3]\"\n\n",
+                "type": "Json.Convert.Converter a -> Json.Convert.Converter (List.List a)"
+            },
+            {
+                "name": "map",
+                "comment": " Transform a converter. You need `Iso a b` because the decoder requires a function `a -> b` and the encoder requires an inverse function `b -> a` to map.\n\n    string2CharListIso : Iso String (List Char)\n    string2CharListIso =\n        Iso String.toList String.fromList\n\n    charList : Converter (List Char)\n    charList =\n        map string2CharListIso string\n\n",
+                "type": "Json.Convert.Iso a b -> Json.Convert.Converter a -> Json.Convert.Converter b"
+            },
+            {
+                "name": "null",
+                "comment": " Convert between some Elm value and a JSON `null` value.\n\n    \"Some Value\" <== null \"Some Value\" ==> null\n\n",
+                "type": "a -> Json.Convert.Converter a"
+            },
+            {
+                "name": "nullable",
+                "comment": " Convert between an Elm value and a nullable JSON value.\n\n    Just 42 <== nullable int ==> \"42\"\n\n    Nothing <== nullable int ==> \"null\"\n\n",
+                "type": "Json.Convert.Converter a -> Json.Convert.Converter (Maybe.Maybe a)"
+            },
+            {
+                "name": "object",
+                "comment": " Build an object converter with a constructor. Use it along with `field` or `option`.\n",
+                "type": "constr -> (Json.Convert.Field constr a -> Json.Convert.Field a a) -> Json.Convert.Converter a"
+            },
+            {
+                "name": "option",
+                "comment": " Optional version of `field`.\n",
+                "type": "String.String -> (r -> Maybe.Maybe a) -> Json.Convert.Converter a -> Json.Convert.Field (Maybe.Maybe a -> l) r -> Json.Convert.Field l r"
+            },
+            {
+                "name": "reverse",
+                "comment": " Create the reversed isomorphism.\n",
+                "type": "Json.Convert.Iso a b -> Json.Convert.Iso b a"
+            },
+            {
+                "name": "string",
+                "comment": " Converter for `String`.\n\n    \"hello\" <== string ==> \"\\\"hello\\\"\"\n\n",
+                "type": "Json.Convert.Converter String.String"
+            },
+            {
+                "name": "value",
+                "comment": " Do not do anything, just build a bridge between a JSON Value and an Elm `Value`.\n",
+                "type": "Json.Convert.Converter Json.Convert.Value"
+            }
+        ],
+        "binops": []
+    }
+]

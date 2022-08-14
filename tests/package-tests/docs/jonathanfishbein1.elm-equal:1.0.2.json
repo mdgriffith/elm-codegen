@@ -1,0 +1,32 @@
+[
+    {
+        "name": "Equal",
+        "comment": " A module for complex numbers\r\n\r\n\r\n# Types\r\n\r\n@docs Equal\r\n\r\n#functions\r\n\r\n@docs equal\r\n\r\n",
+        "unions": [
+            {
+                "name": "Equal",
+                "comment": " Main type.\r\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Equal",
+                        [
+                            "a -> a -> Basics.Bool"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "equal",
+                "comment": " Extract the equality predicate\r\n",
+                "type": "Equal.Equal a -> a -> a -> Basics.Bool"
+            }
+        ],
+        "binops": []
+    }
+]

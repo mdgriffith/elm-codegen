@@ -1,0 +1,55 @@
+[
+    {
+        "name": "Editable.WebData",
+        "comment": " An EditableWebDataWrapper represents an Editable value, along with WebData.\n\n`EditableWebDataWrapper` is a wrapper type around [Editable](http://package.elm-lang.org/packages/stoeffel/editable/latest)\nand [WebData](http://package.elm-lang.org/packages/krisajenkins/remotedata/latest)\n\nIt is used in order to keep track of the state of the Editable upon saving. That is,\nas we change the `Editable` value, and send it to the backend, we can keep track of their state\n(e.g. `RemoteData.Success` or `RemoteData.Failure`).\n\n@docs EditableWebData, EditableWebDataWrapper, create, map, toEditable, state, toWebData\n\n",
+        "unions": [
+            {
+                "name": "EditableWebDataWrapper",
+                "comment": " A wrapper for `Editable`, that allows provides the means to track saving\nback to the backend via `WebData`.\n\nIf there is not value for WebData to track (i.e. it doesn't need to hold the\nsuccess value), you can pass a unit value (`()`).\n\n    import Editable\n\n    view : EditableWebDataWrapper String -> Html msg\n    view editableWebData =\n        let\n            value =\n                Editable.WebData.toEditable |> Editable.value\n\n            toWebData =\n                Editable.WebData.toWebData\n        in\n        text <| \"Editable value is: \" ++ toString value ++ \" with a WebDataValue of \" ++ toString toWebData\n\n",
+                "args": [
+                    "a",
+                    "b"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "EditableWebData",
+                "comment": " Most typical use case, is to wrap an `Editable` value, and have a unit (`()`)\nact the the value of the WebData.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "Editable.WebData.EditableWebDataWrapper a ()"
+            }
+        ],
+        "values": [
+            {
+                "name": "create",
+                "comment": " Creates a new `EditableWebDataWrapper`.\n\nThis will create the `EditableWebDataWrapper` with the default values `ReadOnly` for\nthe `Editable` and `NotAsked` for the WebData, as those are the values you are\nlikely to begin with. You can of course later updated it, for example:\n\n    import Editable\n    import RemoteData\n\n    -- Change the `Editable` value\n    Editable.WebData.create \"old\"\n        |> Editable.WebData.map (Editable.edit)\n        |> Editable.WebData.map (Editable.map (always \"new\"))\n        |> Editable.WebData.toEditable\n        |> Editable.value --> \"new\"\n\n    -- Change the `WebData` state\n    Editable.WebData.create \"original\"\n        |> Editable.WebData.state RemoteData.Loading\n        |> Editable.WebData.toWebData --> RemoteData.Loading\n\n",
+                "type": "a -> Editable.WebData.EditableWebDataWrapper a b"
+            },
+            {
+                "name": "map",
+                "comment": " Maps function to the `Editable`.\n\n    import Editable\n\n    Editable.WebData.create \"old\"\n        -- Convert to `Editable` and update the value in one go.\n        |> Editable.WebData.map (Editable.edit >> Editable.map (always \"new\"))\n        |> Editable.WebData.toEditable\n        |> Editable.value --> \"new\"\n\n    Editable.WebData.create \"old\"\n        -- Convert to `Editable` and update the value in one go.\n        |> Editable.WebData.map (Editable.edit >> Editable.map (\\val -> val ++ \" is now new\"))\n        |> Editable.WebData.toEditable\n        |> Editable.value --> \"old is now new\"\n\n",
+                "type": "(Editable.Editable a -> Editable.Editable a) -> Editable.WebData.EditableWebDataWrapper a b -> Editable.WebData.EditableWebDataWrapper a b"
+            },
+            {
+                "name": "state",
+                "comment": " Updates the `WebData` value.\n\nFor updating the value of the `Editable` itself, see the example of `map`.\n\n    import RemoteData\n\n    Editable.WebData.create \"new\"\n        |> Editable.WebData.state RemoteData.Loading\n        |> Editable.WebData.toWebData --> RemoteData.Loading\n\n    Editable.WebData.create \"new\"\n        |> Editable.WebData.state (RemoteData.Success ())\n        |> Editable.WebData.toWebData --> RemoteData.Success ()\n\n",
+                "type": "RemoteData.WebData b -> Editable.WebData.EditableWebDataWrapper a b -> Editable.WebData.EditableWebDataWrapper a b"
+            },
+            {
+                "name": "toEditable",
+                "comment": " Extracts the `Editable` value.\n\n    import Editable\n\n    Editable.WebData.create \"new\"\n        |> Editable.WebData.toEditable --> Editable.ReadOnly \"new\"\n\n    Editable.WebData.create \"old\"\n        |> Editable.WebData.map(Editable.edit)\n        |> Editable.WebData.map(Editable.map (always \"new\"))\n        |> Editable.WebData.toEditable --> Editable.Editable \"old\" \"new\"\n\n",
+                "type": "Editable.WebData.EditableWebDataWrapper a b -> Editable.Editable a"
+            },
+            {
+                "name": "toWebData",
+                "comment": " Extracts the `WebData` value.\n\n    import RemoteData\n\n    Editable.WebData.create \"new\"\n        |> Editable.WebData.toWebData --> RemoteData.NotAsked\n\n    Editable.WebData.create \"new\"\n        |> Editable.WebData.state RemoteData.Loading\n        |> Editable.WebData.toWebData --> RemoteData.Loading\n\n",
+                "type": "Editable.WebData.EditableWebDataWrapper a b -> RemoteData.WebData b"
+            }
+        ],
+        "binops": []
+    }
+]

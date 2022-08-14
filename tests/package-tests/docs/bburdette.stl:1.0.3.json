@@ -1,0 +1,29 @@
+[
+    {
+        "name": "Stl",
+        "comment": " A parser for binary STL files - the 3d models that are just a list of triangles.\nPretty much went by wikipedia on the STL format and tested on a few models.\nNo special STL features supported, just the basic format which is:\n\n  - 80 bytes of stuff-we-ignore\n  - int32 triangle count.\n  - float32s - 12 for each triangle - normal, vertex 1, vertex 2, vertex 3\n  - after each triangle, 2 bytes are ignored.\n\n\n# Types\n\n@docs Triangle\n@docs Triangles\n\n\n# Functions\n\n@docs binaryStl\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Triangle",
+                "comment": " A Triangle is a normal Vec3 and a triple of Vec3 for the vertices\n",
+                "args": [],
+                "type": "{ normal : Math.Vector3.Vec3, vertices : ( Math.Vector3.Vec3, Math.Vector3.Vec3, Math.Vector3.Vec3 ) }"
+            },
+            {
+                "name": "Triangles",
+                "comment": " Triangles is a list of Triangle\n",
+                "args": [],
+                "type": "List.List Stl.Triangle"
+            }
+        ],
+        "values": [
+            {
+                "name": "binaryStl",
+                "comment": " Binary decoder for Stl files.\n",
+                "type": "Bytes.Decode.Decoder Stl.Triangles"
+            }
+        ],
+        "binops": []
+    }
+]

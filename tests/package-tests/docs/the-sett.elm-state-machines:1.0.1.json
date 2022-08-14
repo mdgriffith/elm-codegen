@@ -1,0 +1,44 @@
+[
+    {
+        "name": "StateMachine",
+        "comment": " Reusable state machine concepts.\n\n@docs Allowed, State, map, untag\n\n",
+        "unions": [
+            {
+                "name": "Allowed",
+                "comment": " This type is used as a marker to annotate the type of a State with a set of\nstates that it can legally transition into.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "State",
+                "comment": " State captures the type of a state with its type annotated with the states\nthat it can transition into as a phantom type, and the data model that the state\nhas as a concrete part of the state model.\n",
+                "args": [
+                    "trans",
+                    "model"
+                ],
+                "cases": [
+                    [
+                        "State",
+                        [
+                            "model"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "map",
+                "comment": " Maps a function over the model within a State.\n",
+                "type": "(a -> b) -> StateMachine.State tag a -> StateMachine.State tag b"
+            },
+            {
+                "name": "untag",
+                "comment": " Unboxes the model from within a State.\n",
+                "type": "StateMachine.State tag value -> value"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,153 @@
+[
+    {
+        "name": "Helpers.Http",
+        "comment": " Use at will.\n\n@docs parseError, parseGqlError, parseGqlHttpError, jsonResolver\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "jsonResolver",
+                "comment": " TBA.\n",
+                "type": "Json.Decode.Decoder a -> Http.Resolver Http.Error a"
+            },
+            {
+                "name": "parseError",
+                "comment": " TBA.\n",
+                "type": "Http.Error -> String.String"
+            },
+            {
+                "name": "parseGqlError",
+                "comment": " TBA.\n",
+                "type": "Graphql.Http.Error a -> String.String"
+            },
+            {
+                "name": "parseGqlHttpError",
+                "comment": " TBA.\n",
+                "type": "Graphql.Http.HttpError -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Helpers.UuidDict",
+        "comment": " Use at will.\n\n@docs insert, remove, map, fromList, empty, size, values, isEmpty, get, union, UuidDict, member\n\n",
+        "unions": [
+            {
+                "name": "UuidDict",
+                "comment": " TBA.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "empty",
+                "comment": " TBA.\n",
+                "type": "Helpers.UuidDict.UuidDict a"
+            },
+            {
+                "name": "fromList",
+                "comment": " TBA.\n",
+                "type": "List.List ( Uuid.Uuid, a ) -> Helpers.UuidDict.UuidDict a"
+            },
+            {
+                "name": "get",
+                "comment": " TBA.\n",
+                "type": "Uuid.Uuid -> Helpers.UuidDict.UuidDict a -> Maybe.Maybe a"
+            },
+            {
+                "name": "insert",
+                "comment": " TBA.\n",
+                "type": "Uuid.Uuid -> a -> Helpers.UuidDict.UuidDict a -> Helpers.UuidDict.UuidDict a"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " TBA.\n",
+                "type": "Helpers.UuidDict.UuidDict a -> Basics.Bool"
+            },
+            {
+                "name": "map",
+                "comment": " TBA.\n",
+                "type": "Uuid.Uuid -> (a -> a) -> Helpers.UuidDict.UuidDict a -> Helpers.UuidDict.UuidDict a"
+            },
+            {
+                "name": "member",
+                "comment": " TBA.\n",
+                "type": "Uuid.Uuid -> Helpers.UuidDict.UuidDict a -> Basics.Bool"
+            },
+            {
+                "name": "remove",
+                "comment": " TBA.\n",
+                "type": "Uuid.Uuid -> Helpers.UuidDict.UuidDict a -> Helpers.UuidDict.UuidDict a"
+            },
+            {
+                "name": "size",
+                "comment": " TBA.\n",
+                "type": "Helpers.UuidDict.UuidDict a -> Basics.Int"
+            },
+            {
+                "name": "union",
+                "comment": " TBA.\n",
+                "type": "Helpers.UuidDict.UuidDict a -> Helpers.UuidDict.UuidDict a -> Helpers.UuidDict.UuidDict a"
+            },
+            {
+                "name": "values",
+                "comment": " TBA.\n",
+                "type": "Helpers.UuidDict.UuidDict a -> List.List a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Helpers.View",
+        "comment": " Use at will.\n\n@docs when, whenJust, cappedHeight, cappedWidth, style, whenAttr, dataAttr, onKeydown\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "cappedHeight",
+                "comment": " Restrict height.\n",
+                "type": "Basics.Int -> Element.Attribute msg"
+            },
+            {
+                "name": "cappedWidth",
+                "comment": " Restrict width.\n",
+                "type": "Basics.Int -> Element.Attribute msg"
+            },
+            {
+                "name": "dataAttr",
+                "comment": " Data attribute.\n",
+                "type": "String.String -> String.String -> Element.Attribute msg"
+            },
+            {
+                "name": "onKeydown",
+                "comment": " Listener.\n",
+                "type": "String.String -> msg -> Element.Attribute msg"
+            },
+            {
+                "name": "style",
+                "comment": " Inline style.\n",
+                "type": "String.String -> String.String -> Element.Attribute msg"
+            },
+            {
+                "name": "when",
+                "comment": " Conditional display.\n",
+                "type": "Basics.Bool -> Element.Element msg -> Element.Element msg"
+            },
+            {
+                "name": "whenAttr",
+                "comment": " Conditional attribute.\n",
+                "type": "Basics.Bool -> Element.Attribute msg -> Element.Attribute msg"
+            },
+            {
+                "name": "whenJust",
+                "comment": " Maybe display.\n",
+                "type": "(a -> Element.Element msg) -> Maybe.Maybe a -> Element.Element msg"
+            }
+        ],
+        "binops": []
+    }
+]

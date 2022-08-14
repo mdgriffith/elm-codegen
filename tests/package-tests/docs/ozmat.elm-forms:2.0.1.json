@@ -1,0 +1,619 @@
+[
+    {
+        "name": "Forms",
+        "comment": " This module only re-exports all the common types and functions of the\nlibrary. You can either import them from here or their own modules\n\n\n# Module Forms.Field\n\n@docs Fields, fields, input, select, checkbox, group\n\n\n# Module Forms.Form\n\n@docs Form, form, validate\n\n\n# Module Forms.Update\n\n@docs Msg, stringFieldMsg, boolFieldMsg, updateForm\n\n\n# Module Forms.Validation\n\n@docs FieldValidation, success, failure, stringField, boolField, valid, Validate, required, hardcoded, optional, optionalWithMaybe, discardable, twoFields, fieldgroup\n\n\n# Module Forms.Validation.Result\n\n@docs FormResult\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "FieldValidation",
+                "comment": " ",
+                "args": [
+                    "err",
+                    "a"
+                ],
+                "type": "Forms.Validation.FieldValidation err a"
+            },
+            {
+                "name": "Fields",
+                "comment": " ",
+                "args": [
+                    "comparable"
+                ],
+                "type": "Forms.Field.Fields comparable"
+            },
+            {
+                "name": "Form",
+                "comment": " ",
+                "args": [
+                    "comparable",
+                    "err",
+                    "a"
+                ],
+                "type": "Forms.Form.Form comparable err a"
+            },
+            {
+                "name": "FormResult",
+                "comment": " ",
+                "args": [
+                    "comparable",
+                    "err",
+                    "a"
+                ],
+                "type": "Forms.Validation.Result.FormResult comparable err a"
+            },
+            {
+                "name": "Msg",
+                "comment": " ",
+                "args": [
+                    "comparable"
+                ],
+                "type": "Forms.Update.Msg comparable"
+            },
+            {
+                "name": "Validate",
+                "comment": " ",
+                "args": [
+                    "comparable",
+                    "err",
+                    "a"
+                ],
+                "type": "Forms.Validation.Validate comparable err a"
+            }
+        ],
+        "values": [
+            {
+                "name": "boolField",
+                "comment": " ",
+                "type": "(Basics.Bool -> Forms.FieldValidation err a) -> Forms.Value.Value -> Forms.FieldValidation err a"
+            },
+            {
+                "name": "boolFieldMsg",
+                "comment": " ",
+                "type": "(Forms.Msg comparable -> msg) -> comparable -> Basics.Bool -> msg"
+            },
+            {
+                "name": "checkbox",
+                "comment": " ",
+                "type": "Forms.Field.Field comparable"
+            },
+            {
+                "name": "discardable",
+                "comment": " ",
+                "type": "Forms.Fields comparable -> comparable -> (Forms.Value.Value -> Forms.FieldValidation err a) -> Forms.Validation.FormValidation comparable err b -> Forms.Validation.FormValidation comparable err b"
+            },
+            {
+                "name": "failure",
+                "comment": " ",
+                "type": "err -> Forms.FieldValidation err a"
+            },
+            {
+                "name": "fieldgroup",
+                "comment": " ",
+                "type": "Forms.Fields comparable -> comparable -> (Forms.Fields comparable -> Forms.Validation.FormValidation comparable err a) -> Forms.Validation.FormValidation comparable err (a -> b) -> Forms.Validation.FormValidation comparable err b"
+            },
+            {
+                "name": "fields",
+                "comment": " ",
+                "type": "List.List ( comparable, Forms.Field.Field comparable ) -> Forms.Fields comparable"
+            },
+            {
+                "name": "form",
+                "comment": " ",
+                "type": "Forms.Fields comparable -> Forms.Validation.Validate comparable err a -> Forms.Form comparable err a"
+            },
+            {
+                "name": "group",
+                "comment": " ",
+                "type": "List.List ( comparable, Forms.Field.Field comparable ) -> Forms.Field.Field comparable"
+            },
+            {
+                "name": "hardcoded",
+                "comment": " ",
+                "type": "a -> Forms.Validation.FormValidation comparable err (a -> b) -> Forms.Validation.FormValidation comparable err b"
+            },
+            {
+                "name": "input",
+                "comment": " ",
+                "type": "Forms.Field.Field comparable"
+            },
+            {
+                "name": "optional",
+                "comment": " ",
+                "type": "Forms.Fields comparable -> comparable -> a -> (String.String -> Forms.FieldValidation err a) -> Forms.Validation.FormValidation comparable err (a -> b) -> Forms.Validation.FormValidation comparable err b"
+            },
+            {
+                "name": "optionalWithMaybe",
+                "comment": " ",
+                "type": "Forms.Fields comparable -> comparable -> (String.String -> Forms.FieldValidation err a) -> Forms.Validation.FormValidation comparable err (Maybe.Maybe a -> b) -> Forms.Validation.FormValidation comparable err b"
+            },
+            {
+                "name": "required",
+                "comment": " ",
+                "type": "Forms.Fields comparable -> comparable -> (Forms.Value.Value -> Forms.FieldValidation err a) -> Forms.Validation.FormValidation comparable err (a -> b) -> Forms.Validation.FormValidation comparable err b"
+            },
+            {
+                "name": "select",
+                "comment": " ",
+                "type": "Forms.Field.Field comparable"
+            },
+            {
+                "name": "stringField",
+                "comment": " ",
+                "type": "(String.String -> Forms.FieldValidation err a) -> Forms.Value.Value -> Forms.FieldValidation err a"
+            },
+            {
+                "name": "stringFieldMsg",
+                "comment": " ",
+                "type": "(Forms.Msg comparable -> msg) -> comparable -> String.String -> msg"
+            },
+            {
+                "name": "success",
+                "comment": " ",
+                "type": "a -> Forms.FieldValidation err a"
+            },
+            {
+                "name": "twoFields",
+                "comment": " ",
+                "type": "Forms.Fields comparable -> comparable -> comparable -> (Forms.Value.Value -> Forms.Value.Value -> Forms.FieldValidation err a) -> Forms.Validation.FormValidation comparable err (a -> b) -> Forms.Validation.FormValidation comparable err b"
+            },
+            {
+                "name": "updateForm",
+                "comment": " ",
+                "type": "Forms.Msg comparable -> Forms.Form comparable err a -> Forms.Form comparable err a"
+            },
+            {
+                "name": "valid",
+                "comment": " ",
+                "type": "a -> Forms.Validation.FormValidation comparable err a"
+            },
+            {
+                "name": "validate",
+                "comment": " ",
+                "type": "Forms.Form comparable err a -> Forms.Validation.Result.FormResult comparable err a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Forms.Field",
+        "comment": " `Field` represents a [`Form`](http://package.elm-lang.org/packages/ozmat/elm-forms/latest/Forms-Form#Form) field\n\n\n# Fields\n\n@docs Field, Fields\n\n\n# Creation\n\n    myFormFields : Fields String\n    myFormFields =\n        fields\n            [ ( \"some-input\", input )\n            , ( \"some-select\", select )\n            , ( \"some-checkbox\", checkbox )\n            , ( \"some-group\",\n              , group\n                    [ ( \"some-other-field\", input)\n                    , ...\n                    ]\n              )\n            ]\n\n@docs fields, input, select, checkbox, group\n\n\n# Using a default value\n\n    myFormFields : Fields String\n    myFormFields =\n        fields\n            [ ( \"some-input\", inputWithDefault \"Initial value\" )\n            , ( \"some-select\", selectWithDefault \"Default choice\" )\n            , ( \"some-checkbox\", checkboxWithDefault True )\n            ]\n\n@docs inputWithDefault, selectWithDefault, checkboxWithDefault\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Field",
+                "comment": " A `Field` can be :\n\n  - an input field\n  - a select field\n  - a checkbox field\n  - or a fieldgroup\n\nIt is looked-up using `comparable` so a `Field String` uses a `String` as\nfield key\n\n",
+                "args": [
+                    "comparable"
+                ],
+                "type": "Forms.Field.Internal.Field comparable"
+            },
+            {
+                "name": "Fields",
+                "comment": " `Fields` regroups several `Field` and represents all your form fields.\n",
+                "args": [
+                    "comparable"
+                ],
+                "type": "Forms.Field.Internal.Fields comparable"
+            }
+        ],
+        "values": [
+            {
+                "name": "checkbox",
+                "comment": " Creates a checkbox `Field` with the [default bool `Value`](http://package.elm-lang.org/packages/ozmat/elm-forms/latest/Forms-Value#defaultBool)\n",
+                "type": "Forms.Field.Field comparable"
+            },
+            {
+                "name": "checkboxWithDefault",
+                "comment": " Creates a checkbox `Field` with a default value\n",
+                "type": "Basics.Bool -> Forms.Field.Field comparable"
+            },
+            {
+                "name": "fields",
+                "comment": " Creates a `Fields` using a `List`. This is the top-level function when\ncreating form fields\n",
+                "type": "List.List ( comparable, Forms.Field.Field comparable ) -> Forms.Field.Fields comparable"
+            },
+            {
+                "name": "group",
+                "comment": " Creates a fieldgroup using a `List`\n",
+                "type": "List.List ( comparable, Forms.Field.Field comparable ) -> Forms.Field.Field comparable"
+            },
+            {
+                "name": "input",
+                "comment": " Creates an input `Field` with the [default string `Value`](http://package.elm-lang.org/packages/ozmat/elm-forms/latest/Forms-Value#defaultString)\n",
+                "type": "Forms.Field.Field comparable"
+            },
+            {
+                "name": "inputWithDefault",
+                "comment": " Creates an input `Field` with a default value\n",
+                "type": "String.String -> Forms.Field.Field comparable"
+            },
+            {
+                "name": "select",
+                "comment": " Creates a select `Field` with the [default string `Value`](http://package.elm-lang.org/packages/ozmat/elm-forms/latest/Forms-Value#defaultString)\n",
+                "type": "Forms.Field.Field comparable"
+            },
+            {
+                "name": "selectWithDefault",
+                "comment": " Creates a select `Field` with a default value\n",
+                "type": "String.String -> Forms.Field.Field comparable"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Forms.Form",
+        "comment": " `Form` is the top level type of the library. It is built with [`Fields`](http://package.elm-lang.org/packages/ozmat/elm-forms/latest/Forms-Field#Fields)\nand a [`Validate`](http://package.elm-lang.org/packages/ozmat/elm-forms/latest/Forms-Validation#Validate) function\n\n\n# Forms\n\n@docs Form, form, validate\n\n\n# Field getters and setters\n\nSometimes you might need to get or set the current value of a `Field`. That is\nwhat those functions are for\n\n@docs getStringField, getBoolField, setStringField, setBoolField\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Form",
+                "comment": " A `Form` is made up of `Fields` and a `Validate` function\n",
+                "args": [
+                    "comparable",
+                    "err",
+                    "a"
+                ],
+                "type": "Forms.Form.Internal.Form comparable err a"
+            }
+        ],
+        "values": [
+            {
+                "name": "form",
+                "comment": " Creates a `Form`\n\n    form someFormFields someFormValidate\n\n",
+                "type": "Forms.Field.Internal.Fields comparable -> Forms.Validation.Internal.Validate comparable err a -> Forms.Form.Form comparable err a"
+            },
+            {
+                "name": "getBoolField",
+                "comment": " Gets the value of a bool `Field` (checkbox)\n",
+                "type": "comparable -> Forms.Form.Form comparable err a -> Maybe.Maybe Basics.Bool"
+            },
+            {
+                "name": "getStringField",
+                "comment": " Gets the value of a string `Field` (input/select)\n",
+                "type": "comparable -> Forms.Form.Form comparable err a -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "setBoolField",
+                "comment": " Sets the value of a bool `Field`\n",
+                "type": "comparable -> Basics.Bool -> Forms.Form.Form comparable err a -> Forms.Form.Form comparable err a"
+            },
+            {
+                "name": "setStringField",
+                "comment": " Sets the value of a string `Field`\n",
+                "type": "comparable -> String.String -> Forms.Form.Form comparable err a -> Forms.Form.Form comparable err a"
+            },
+            {
+                "name": "validate",
+                "comment": " Validates a `Form`. This runs the validation process and returns\na `FormResult`\n",
+                "type": "Forms.Form.Form comparable err a -> Forms.Validation.Result.FormResult comparable err a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Forms.Update",
+        "comment": " This module provides the `update` helpers. Please refer to the\n[examples](https://github.com/ozmat/elm-forms/tree/master/examples) for a better understanding\n\n\n# Form Messages\n\n@docs Msg, stringFieldMsg, boolFieldMsg\n\n\n# Form Update\n\n@docs updateForm\n\n\n# Side effects\n\nSometimes you will need to have more control over a field update/event, that is\nwhat the side-effects helpers are for.\n\n@docs stringFieldCommands, boolFieldCommands, formCommands\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Msg",
+                "comment": " These are the form `Msg`, they help updating a `Field`.\n\nYou need to implement them in your `Msg`, `update` function and use the helpers\nin your view events.\n\n`stringFieldMsg` is for string `Field` (input, select) and `boolFieldMsg` is\nfor bool `Field` (checkbox)\n\n    type YourMsg\n        = SomeForm (Forms.Update.Msg comparable)\n        | ....\n\n    yourUpdate : YourMsg -> Model -> Model\n    yourUpdate msg model =\n        case msg of\n            SomeForm formMsg ->\n                ...\n\n    yourView : Model -> Html YourMsg\n    yourView model =\n        ...\n            -- select/input field\n            onEvent (Forms.Update.stringFieldMsg SomeForm fieldKey)\n            -- checkbox field\n            onEvent (Forms.Update.boolFieldMsg SomeForm fieldKey)\n        ...\n\nNote: you will want to name your message according to the form it is handling\nin order to avoid confusion when using multiple forms\n\n    type YourMsg\n        = RegisterForm (Forms.Update.Msg comparable)\n        | LoginForm (Forms.Update.Msg comparable)\n        | ...\n\n",
+                "args": [
+                    "comparable"
+                ],
+                "type": "Forms.Update.Internal.Msg comparable"
+            }
+        ],
+        "values": [
+            {
+                "name": "boolFieldCommands",
+                "comment": " Helps defining `Cmd` on bool `Field` events. You can use this function\nto run commands when an event is triggered on a specific bool `Field`.\n\nNote: this function only defines commands for the `boolFieldMsg`\n\n",
+                "type": "model -> Forms.Update.Msg comparable -> (model -> comparable -> Basics.Bool -> ( model, Platform.Cmd.Cmd msg )) -> ( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "boolFieldMsg",
+                "comment": " Creates a form message that updates a bool `Field`\n",
+                "type": "(Forms.Update.Msg comparable -> msg) -> comparable -> Basics.Bool -> msg"
+            },
+            {
+                "name": "formCommands",
+                "comment": " Helps defining `Cmd` on both string and bool `Field` events.\n\n    formCommands\n        model\n        formMsg\n        yourStringFieldCommands\n        yourBoolFieldCommands\n\n",
+                "type": "model -> Forms.Update.Msg comparable -> (model -> comparable -> String.String -> ( model, Platform.Cmd.Cmd msg )) -> (model -> comparable -> Basics.Bool -> ( model, Platform.Cmd.Cmd msg )) -> ( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "stringFieldCommands",
+                "comment": " Helps defining `Cmd` on string `Field` events. You can use this function\nto run commands when an event is triggered on a specific string `Field`.\n\n    yourUpdate : YourMsg -> Model -> ( Model, Cmd YourMsg )\n    yourUpdate msg model =\n        case msg of\n            SomeForm formMsg ->\n                let\n                    newModel =\n                        { model\n                            | yourForm = updateForm formMsg model.yourForm\n                        }\n                in\n                stringFieldCommands newModel formMsg someFormCommands\n            ...\n\n    someFormCommands : Model -> String -> String -> ( Model, Cmd YourMsg )\n    someFormCommands model key value =\n        case key of\n            \"field-name\" ->\n                ( changeOrNotTheModel model\n                , doSomeCommandsWithTheValue value\n                )\n\n            ...\n\n            _ ->\n                ( model\n                , Cmd.none\n                )\n\nNote: this function only defines commands for the `stringFieldMsg`\n\n",
+                "type": "model -> Forms.Update.Msg comparable -> (model -> comparable -> String.String -> ( model, Platform.Cmd.Cmd msg )) -> ( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "stringFieldMsg",
+                "comment": " Creates a form message that updates a string `Field`\n",
+                "type": "(Forms.Update.Msg comparable -> msg) -> comparable -> String.String -> msg"
+            },
+            {
+                "name": "updateForm",
+                "comment": " This function will update a `Form` for you. Once you have implemented the\nform `Msg`, use it to update the `Form`\n\n    yourUpdate : YourMsg -> Model -> Model\n    yourUpdate msg model =\n        case msg of\n            SomeForm formMsg ->\n                { model\n                    | yourForm = Forms.Update.updateForm formMsg model.yourForm\n                }\n            ...\n\n",
+                "type": "Forms.Update.Msg comparable -> Forms.Form.Internal.Form comparable err a -> Forms.Form.Internal.Form comparable err a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Forms.Validation",
+        "comment": " This module provides the validation logic for the library. Please refer to\nthe [examples](https://github.com/ozmat/elm-forms/tree/master/examples) for a better understanding\n\n\n# Field Validation\n\n@docs FieldValidation, success, failure, configFailure\n\n\n## Field Type\n\nFirst of all you need to specify what type of `Field` you want to validate\n\n@docs stringField, boolField\n\n\n## Basic Validation\n\nThen you create a validation function for this specific type, or use the\nbasic validation helpers defined below.\n\n@docs validation, isChecked, int, float, notEmpty, length, email, passwordMatch\n\n\n# Form Validation\n\n@docs FormValidation, valid\n\n\n# Validate\n\n@docs Validate, required, hardcoded, optional, optionalWithMaybe, discardable, twoFields, fieldgroup\n\n\n## Non-accumulative\n\nThe default behavior of `Validate` is to validate each `Field` and gather all\nthe errors while validating the all `Form` (it is accumulative).\n\nBut if you need a non-accumulative validation process (this means that the\nvalidation stops at the first error encountered) there are non-accumulative\nversions of the validate helpers.\n\nThey have the same name but finish with a 1. Do not mix them with the default\nones.\n\n@docs required1, hardcoded1, optional1, optionalWithMaybe1, discardable1, twoFields1, fieldgroup1\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "FieldValidation",
+                "comment": " A `FieldValidation` represents the validation of a `Field`.\n\nIt can be a `success` or a `failure` (and sometimes a `configFailure`, please\nrefer to the [`ConfigError` definition](http://package.elm-lang.org/packages/ozmat/elm-forms/latest/Forms-Validation-Result#ConfigError)\nand the [README troubleshooting section](http://package.elm-lang.org/packages/ozmat/elm-forms/latest)).\n\nYou are not going to use the `FieldValidation` itself but you will create a\n`FieldValidation` function that will help you validate `Field`\n\n",
+                "args": [
+                    "err",
+                    "a"
+                ],
+                "type": "Forms.Validation.Internal.FieldValidation err a"
+            },
+            {
+                "name": "FormValidation",
+                "comment": " A `FormValidation` represents the validation of a `Form`.\n\nIt is similar to `FieldValidation`: you are not going use the type itself but\ninstead you will create a `Validate` function (see below)\n\n",
+                "args": [
+                    "comparable",
+                    "err",
+                    "a"
+                ],
+                "type": "Forms.Validation.Internal.FormValidation comparable err a"
+            },
+            {
+                "name": "Validate",
+                "comment": " `Validate` represents the function that validates a `Form`.\n\nIt takes `Fields` and creates a `FormValidation`.\n\nIt usually starts with the `valid` function, representing the final result,\nand then uses the different `Validate` helpers to validate each form `Field`\n\n    validateForm : Validate String YourError Model\n    validateForm fields =\n        valid Model\n            |> required fields \"field-name1\" (stringField ...)\n            |> required fields \"field-name2\" (boolField ...)\n            |> optional fields \"field-name3\" ...\n            ...\n\n",
+                "args": [
+                    "comparable",
+                    "err",
+                    "a"
+                ],
+                "type": "Forms.Validation.Internal.Validate comparable err a"
+            }
+        ],
+        "values": [
+            {
+                "name": "boolField",
+                "comment": " Helps validating a bool `Field` (checkbox). By using this function you\nbasically say \"this field is a checkbox, we are waiting for a bool here\".\nAnd then you pass your bool `FieldValidation` function that will validate\nthe bool\n\n    type YourError\n        = NotChecked\n\n    isChecked : Value -> FieldValidation YourError Bool\n    isChecked =\n        checkboxField\n            (\\aBool ->\n                if aBool then\n                    success aBool\n\n                else\n                    failure NotChecked\n            )\n\nNote: if the field `Value` is not a bool, it fails with a `WrongType`\n`ConfigError`\n\n",
+                "type": "(Basics.Bool -> Forms.Validation.FieldValidation err a) -> Forms.Value.Internal.Value -> Forms.Validation.FieldValidation err a"
+            },
+            {
+                "name": "configFailure",
+                "comment": " Returns a failed `FieldValidation` using a `ConfigError`\n",
+                "type": "Forms.Validation.Result.ConfigError -> Forms.Validation.FieldValidation err a"
+            },
+            {
+                "name": "discardable",
+                "comment": " Validates a discardable `Field`. This is useful when you need to validate\nthe `Field` but don't need the result.\n\n    ...\n        |> discardable fields \"terms\" (boolField <| isChecked ...)\n        ...\n\n",
+                "type": "Forms.Field.Internal.Fields comparable -> comparable -> (Forms.Value.Internal.Value -> Forms.Validation.FieldValidation err a) -> Forms.Validation.FormValidation comparable err b -> Forms.Validation.FormValidation comparable err b"
+            },
+            {
+                "name": "discardable1",
+                "comment": " Validates a discardable `Field` (non-accumulative)\n",
+                "type": "Forms.Field.Internal.Fields comparable -> comparable -> (Forms.Value.Internal.Value -> Forms.Validation.FieldValidation err a) -> Forms.Validation.FormValidation comparable err b -> Forms.Validation.FormValidation comparable err b"
+            },
+            {
+                "name": "email",
+                "comment": " Helps validating a `String` that is an email. If the `String`is not an\nemail, fails with the given error.\n\n    type YourError\n        = NotValidEmail\n        | ...\n\n    postValidation : String -> FieldValidation YourError a\n    ...\n\n    validateField : String -> FieldValidation YourError a\n    validateField =\n        email NotValidEmail postValidation\n\n",
+                "type": "err -> (String.String -> Forms.Validation.FieldValidation err a) -> String.String -> Forms.Validation.FieldValidation err a"
+            },
+            {
+                "name": "failure",
+                "comment": " Returns a failed `FieldValidation` using an error\n",
+                "type": "err -> Forms.Validation.FieldValidation err a"
+            },
+            {
+                "name": "fieldgroup",
+                "comment": " Validates a fieldgroup. This is mainly useful when you need to nest another\nvalidation process\n\n     ...\n        |> fieldgroup fields \"job-profile\" jobProfileValidate\n        ...\n\n",
+                "type": "Forms.Field.Internal.Fields comparable -> comparable -> (Forms.Field.Internal.Fields comparable -> Forms.Validation.FormValidation comparable err a) -> Forms.Validation.FormValidation comparable err (a -> b) -> Forms.Validation.FormValidation comparable err b"
+            },
+            {
+                "name": "fieldgroup1",
+                "comment": " Validates a fieldgroup (non-accumulative)\n",
+                "type": "Forms.Field.Internal.Fields comparable -> comparable -> (Forms.Field.Internal.Fields comparable -> Forms.Validation.FormValidation comparable err a) -> Forms.Validation.FormValidation comparable err (a -> b) -> Forms.Validation.FormValidation comparable err b"
+            },
+            {
+                "name": "float",
+                "comment": " Helps validating a `String` that can be cast into a `Float`. If the `String`\ncannot be cast, fails with the given error.\n\n    type YourError\n        = NotFloat\n        | ...\n\n    postValidation : Float -> FieldValidation YourError a\n    ...\n\n    validateField : String -> FieldValidation YourError a\n    validateField =\n        float NotFloat postValidation\n\n",
+                "type": "err -> (Basics.Float -> Forms.Validation.FieldValidation err a) -> String.String -> Forms.Validation.FieldValidation err a"
+            },
+            {
+                "name": "hardcoded",
+                "comment": " Hardcodes a value. This is useful when you need to harcode a specific value\nduring the validation process\n\n    ...\n        |> hardcoded \"someHarcodedValue\"\n        ...\n\n",
+                "type": "a -> Forms.Validation.FormValidation comparable err (a -> b) -> Forms.Validation.FormValidation comparable err b"
+            },
+            {
+                "name": "hardcoded1",
+                "comment": " Hardcodes a value (non-accumulative)\n",
+                "type": "a -> Forms.Validation.FormValidation comparable err (a -> b) -> Forms.Validation.FormValidation comparable err b"
+            },
+            {
+                "name": "int",
+                "comment": " Helps validating a `String` that can be cast into an `Int`. If the `String`\ncannot be cast, fails with the given error.\n\n    type YourError\n        = NotInt\n        | ...\n\n    postValidation : Int -> FieldValidation YourError a\n    ...\n\n    validateField : String -> FieldValidation YourError a\n    validateField =\n        int NotInt postValidation\n\n",
+                "type": "err -> (Basics.Int -> Forms.Validation.FieldValidation err a) -> String.String -> Forms.Validation.FieldValidation err a"
+            },
+            {
+                "name": "isChecked",
+                "comment": " Helps validating a `Bool` that is True (checkbox checked). If the `Bool`\nis False, fails with the given error.\n\n    type YourError\n        = NotChecked\n        | ...\n\n    postValidation : Bool -> FieldValidation YourError a\n    ...\n\n    validateField : Bool -> FieldValidation YourError a\n    validateField =\n        isChecked NotChecked postValidation\n\n",
+                "type": "err -> (Basics.Bool -> Forms.Validation.FieldValidation err a) -> Basics.Bool -> Forms.Validation.FieldValidation err a"
+            },
+            {
+                "name": "length",
+                "comment": " Helps validating a `String` that has a specific length (> low && < high).\nIf the `String` has a different length, fails with the given error.\n\n    type YourError\n        = WrongLength\n        | ...\n\n    postValidation : String -> FieldValidation YourError a\n    ...\n\n    validateField : String -> FieldValidation YourError a\n    validateField =\n        length 4 6 WrongLength postValidation\n\n",
+                "type": "Basics.Int -> Basics.Int -> err -> (String.String -> Forms.Validation.FieldValidation err a) -> String.String -> Forms.Validation.FieldValidation err a"
+            },
+            {
+                "name": "notEmpty",
+                "comment": " Helps validating a `String` that is not empty. If the `String` is empty,\nfails with the given error.\n\n    type YourError\n        = StringEmpty\n        | ...\n\n    postValidation : String -> FieldValidation YourError a\n    ...\n\n    validateField : String -> FieldValidation YourError a\n    validateField =\n        notEmpty StringEmpty postValidation\n\n",
+                "type": "err -> (String.String -> Forms.Validation.FieldValidation err a) -> String.String -> Forms.Validation.FieldValidation err a"
+            },
+            {
+                "name": "optional",
+                "comment": " Validates an optional `Field`. This will use the validation function if\nthe `Field` is not empty or use the default value otherwise\n\n    ...\n        |> optional fields \"wallet\" 0.0 (float ...)\n        ...\n\nNote: it only works on string `Field` so no need to use `stringField` here\n\n",
+                "type": "Forms.Field.Internal.Fields comparable -> comparable -> a -> (String.String -> Forms.Validation.FieldValidation err a) -> Forms.Validation.FormValidation comparable err (a -> b) -> Forms.Validation.FormValidation comparable err b"
+            },
+            {
+                "name": "optional1",
+                "comment": " Validates an optional `Field` (non-accumulative)\n",
+                "type": "Forms.Field.Internal.Fields comparable -> comparable -> a -> (String.String -> Forms.Validation.FieldValidation err a) -> Forms.Validation.FormValidation comparable err (a -> b) -> Forms.Validation.FormValidation comparable err b"
+            },
+            {
+                "name": "optionalWithMaybe",
+                "comment": " Validates an optional `Field` with `Maybe`. Same logic than `optional` but\nthe default value is `Nothing` and the validated one is `Just`\n\n    ...\n        |> optionalWithMaybe fields \"age\" (int ...)\n        ...\n\nNote: it only works on string `Field` so no need to use `stringField` here\n\n",
+                "type": "Forms.Field.Internal.Fields comparable -> comparable -> (String.String -> Forms.Validation.FieldValidation err a) -> Forms.Validation.FormValidation comparable err (Maybe.Maybe a -> b) -> Forms.Validation.FormValidation comparable err b"
+            },
+            {
+                "name": "optionalWithMaybe1",
+                "comment": " Validates an optional `Field` with `Maybe` (non-accumulative)\n",
+                "type": "Forms.Field.Internal.Fields comparable -> comparable -> (String.String -> Forms.Validation.FieldValidation err a) -> Forms.Validation.FormValidation comparable err (Maybe.Maybe a -> b) -> Forms.Validation.FormValidation comparable err b"
+            },
+            {
+                "name": "passwordMatch",
+                "comment": " Helps validating two string `Value` that match. If the strings\ndon't match, fails with the given error.\n\n    type YourError\n        = DifferentPassword\n        | ...\n\n    postValidation : String -> FieldValidation YourError a\n    ...\n\n    validateField : Value -> Value -> FieldValidation YourError a\n    validateField =\n        passwordMatch DifferentPassword postValidation\n\nNote: if the two `Value` are not strings, it fails with a `WrongType`\n`ConfigError`\n\n",
+                "type": "err -> (String.String -> Forms.Validation.FieldValidation err a) -> Forms.Value.Internal.Value -> Forms.Value.Internal.Value -> Forms.Validation.FieldValidation err a"
+            },
+            {
+                "name": "required",
+                "comment": " Validates a required `Field`. This is the basic use case : the `Field` is\nrequired and you want to validate it.\n\n    ...\n        |> required fields \"first-name\" (stringField <| someStringValidation)\n        ...\n\n",
+                "type": "Forms.Field.Internal.Fields comparable -> comparable -> (Forms.Value.Internal.Value -> Forms.Validation.FieldValidation err a) -> Forms.Validation.FormValidation comparable err (a -> b) -> Forms.Validation.FormValidation comparable err b"
+            },
+            {
+                "name": "required1",
+                "comment": " Validates a required `Field` (non-accumulative)\n",
+                "type": "Forms.Field.Internal.Fields comparable -> comparable -> (Forms.Value.Internal.Value -> Forms.Validation.FieldValidation err a) -> Forms.Validation.FormValidation comparable err (a -> b) -> Forms.Validation.FormValidation comparable err b"
+            },
+            {
+                "name": "stringField",
+                "comment": " Helps validating a string `Field` (input, select). By using this function\nyou basically say \"this field is an input or a select, we are waiting for a\nstring here\". And then you pass your string `FieldValidation` function that\nwill validate the string\n\n    type YourError\n        = EmptyString\n\n    notEmpty : Value -> FieldValidation YourError String\n    notEmpty =\n        stringField\n            (\\aString ->\n                if String.isEmpty aString then\n                    failure EmptyString\n\n                else\n                    success aString\n            )\n\nNote: if the field `Value` is not a string, it fails with a `WrongType`\n`ConfigError`\n\n",
+                "type": "(String.String -> Forms.Validation.FieldValidation err a) -> Forms.Value.Internal.Value -> Forms.Validation.FieldValidation err a"
+            },
+            {
+                "name": "success",
+                "comment": " Returns a successful `FieldValidation` using a result\n",
+                "type": "a -> Forms.Validation.FieldValidation err a"
+            },
+            {
+                "name": "twoFields",
+                "comment": " Validates two `Field` together. This is useful when you need to validate\none `Field` that depends on another, but you only need to store one result.\n\n    ...\n        |> FV.twoFields fields \"password\" \"password-repeat\" (passwordMatch ...)\n        ...\n\nNote : the validation function takes two field `Value` so you cannot use the\n`stringField` and `boolField` helpers here, you will have to deal with `Value`\n\n",
+                "type": "Forms.Field.Internal.Fields comparable -> comparable -> comparable -> (Forms.Value.Internal.Value -> Forms.Value.Internal.Value -> Forms.Validation.FieldValidation err a) -> Forms.Validation.FormValidation comparable err (a -> b) -> Forms.Validation.FormValidation comparable err b"
+            },
+            {
+                "name": "twoFields1",
+                "comment": " Validates two `Field` together (non-accumulative)\n",
+                "type": "Forms.Field.Internal.Fields comparable -> comparable -> comparable -> (Forms.Value.Internal.Value -> Forms.Value.Internal.Value -> Forms.Validation.FieldValidation err a) -> Forms.Validation.FormValidation comparable err (a -> b) -> Forms.Validation.FormValidation comparable err b"
+            },
+            {
+                "name": "valid",
+                "comment": " Returns a successful `FormValidation` using a result\n",
+                "type": "a -> Forms.Validation.FormValidation comparable err a"
+            },
+            {
+                "name": "validation",
+                "comment": " Helps creating a basic validation function. It is useful when you have\na basic test and you only need to fail with one error.\n\n    type YourError\n        = MustBeEmpty\n\n    emptyValidation : String -> FieldValidation YourError String\n    emptyValidation =\n        validation MustBeEmpty String.isEmpty\n\n",
+                "type": "err -> (a -> Basics.Bool) -> a -> Forms.Validation.FieldValidation err a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Forms.Validation.Result",
+        "comment": " This module provides the validation result\n\n\n# Form Result\n\n@docs FormResult\n\n\n# Configuration Error\n\n@docs ConfigError\n\n",
+        "unions": [
+            {
+                "name": "ConfigError",
+                "comment": " A `ConfigError` represents a configuration error on a `Field`. It usually\nhappens when there is an error in the `Fields` or the `Validate` function :\n\n  - `MissingField` when the field cannot be found\n  - `WrongType` when the field has a different type of `Value`\n\nNote: if you have trouble debugging those errors have a look at the\n[README troubleshooting section](http://package.elm-lang.org/packages/ozmat/elm-forms/latest)\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "MissingField",
+                        []
+                    ],
+                    [
+                        "WrongType",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "FormResult",
+                "comment": " A `FormResult` represents the result of a form validation. There are\n3 different states :\n\n  - `Valid` reprensents a successful validation and holds the form result\n  - `Invalid` reprensents a failed validation and holds the form errors\n  - `Error` represents a misconfigured form and holds the configuration errors\n\n",
+                "args": [
+                    "comparable",
+                    "err",
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Valid",
+                        [
+                            "a"
+                        ]
+                    ],
+                    [
+                        "Invalid",
+                        [
+                            "Dict.Dict comparable err"
+                        ]
+                    ],
+                    [
+                        "Error",
+                        [
+                            "Dict.Dict comparable Forms.Validation.Result.ConfigError"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "Forms.Value",
+        "comment": " `Value` represents the inner value of a [`Field`](http://package.elm-lang.org/packages/ozmat/elm-forms/latest/Forms-Field#Field)\n\n\n# Values\n\n@docs Value\n\n\n# Default Values\n\n@docs defaultString, defaultBool\n\n\n# Creation\n\n@docs string, bool\n\n\n# Access Values\n\n@docs getString, getBool\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Value",
+                "comment": " A `Value` can be a `String` (input/select field) or\na `Bool` (checkbox field)\n",
+                "args": [],
+                "type": "Forms.Value.Internal.Value"
+            }
+        ],
+        "values": [
+            {
+                "name": "bool",
+                "comment": " Creates a bool `Value`\n\n    bool True\n\n",
+                "type": "Basics.Bool -> Forms.Value.Value"
+            },
+            {
+                "name": "defaultBool",
+                "comment": " Is the default bool `Value`\n\n    False\n\n",
+                "type": "Forms.Value.Value"
+            },
+            {
+                "name": "defaultString",
+                "comment": " Is the default string `Value`\n\n    \"\"\n\n",
+                "type": "Forms.Value.Value"
+            },
+            {
+                "name": "getBool",
+                "comment": " Returns the value of a bool `Value`\n",
+                "type": "Forms.Value.Value -> Maybe.Maybe Basics.Bool"
+            },
+            {
+                "name": "getString",
+                "comment": " Returns the value of a string `Value`\n",
+                "type": "Forms.Value.Value -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "string",
+                "comment": " Creates a string `Value`\n\n    string \"some input value\"\n\n",
+                "type": "String.String -> Forms.Value.Value"
+            }
+        ],
+        "binops": []
+    }
+]

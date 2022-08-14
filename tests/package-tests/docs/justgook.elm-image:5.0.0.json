@@ -1,0 +1,248 @@
+[
+    {
+        "name": "Image",
+        "comment": "\n\n@docs Image\n\n\n# Decoding\n\n@docs decode\n\n\n# Encoding\n\n@docs toPng, toBmp, toGif, toPngUrl, toBmpUrl, toGifUrl\n\n\n# Construct\n\n@docs fromList, fromList2d, fromArray, fromArray2d\n\n\n# Destruct\n\n@docs toList, toList2d, toArray, toArray2d\n\n\n# Meta Data\n\n@docs dimensions\n\n\n# Helper Types\n\n@docs Pixel, Width, Height\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Height",
+                "comment": " ",
+                "args": [],
+                "type": "Basics.Int"
+            },
+            {
+                "name": "Image",
+                "comment": " Data Model representing Image data, that can be used to create image, or convert primitives to use image pixels as data\n",
+                "args": [],
+                "type": "Image.Internal.ImageData.Image"
+            },
+            {
+                "name": "Pixel",
+                "comment": " Color encoded as `0xRRGGBBAA`\n",
+                "args": [],
+                "type": "Basics.Int"
+            },
+            {
+                "name": "Width",
+                "comment": " ",
+                "args": [],
+                "type": "Basics.Int"
+            }
+        ],
+        "values": [
+            {
+                "name": "decode",
+                "comment": " Convert blob of image (`png` or `bmp`) into [`Image`](#Image)\n\n    import Http\n\n    type Msg\n        = GotImage (Result Http.Error (Maybe Image))\n\n    getImage : Cmd Msg\n    getImage =\n        Http.get\n            { url = \"/image.png\"\n            , expect = Http.expectBytes GotImage Image.decode\n            }\n\n",
+                "type": "Bytes.Bytes -> Maybe.Maybe Image.Image"
+            },
+            {
+                "name": "dimensions",
+                "comment": " Get `width` and `height` of [`Image`](#Image)\n",
+                "type": "Image.Image -> { width : Basics.Int, height : Basics.Int }"
+            },
+            {
+                "name": "fromArray",
+                "comment": " Create [`Image`](#Image) of `Array Int` where each `Pixel` is `Int` as `0xRRGGBBAA`\n",
+                "type": "Image.Width -> Array.Array Image.Pixel -> Image.Image"
+            },
+            {
+                "name": "fromArray2d",
+                "comment": " Create [`Image`](#Image) of `Array (Array Pixel)` where each `Pixel` is `Int` as `0xRRGGBBAA`\n",
+                "type": "Array.Array (Array.Array Image.Pixel) -> Image.Image"
+            },
+            {
+                "name": "fromList",
+                "comment": " Create [`Image`](#Image) of `List Int` where each `Pixel` is `Int` as `0xRRGGBBAA`\n",
+                "type": "Image.Width -> List.List Image.Pixel -> Image.Image"
+            },
+            {
+                "name": "fromList2d",
+                "comment": " Create [`Image`](#Image) of `List (List Int)` where each `Pixel` is `Int` as `0xRRGGBBAA`\n",
+                "type": "List.List (List.List Image.Pixel) -> Image.Image"
+            },
+            {
+                "name": "toArray",
+                "comment": " Take [`Image`](#Image) of and converts it to `Array Pixel` where each `Pixel` is `Int` as `0xRRGGBBAA`\n",
+                "type": "Image.Image -> Array.Array Image.Pixel"
+            },
+            {
+                "name": "toArray2d",
+                "comment": " Take [`Image`](#Image) of and converts it to matrix `Array (Array Pixel)` where each `Pixel` is `Int` as `0xRRGGBBAA`\n",
+                "type": "Image.Image -> Array.Array (Array.Array Image.Pixel)"
+            },
+            {
+                "name": "toBmp",
+                "comment": " The BMP file format, also known as bitmap image file or device independent bitmap (DIB) file format or simply a bitmap, is a raster graphics image file format used to store bitmap digital images, independently of the display device (such as a graphics adapter), especially on Microsoft Windows and OS/2 operating systems.\n\n**Note**: Using BMP 32bit is discouraged due to lack of proper support across browsers, so image will be 24bit (no alpha channel)\n\n",
+                "type": "Image.Image -> Bytes.Bytes"
+            },
+            {
+                "name": "toBmpUrl",
+                "comment": " Create base64-url that can be used directly as img source (`img [ src <| toBmpUrl myImage ]`)\n",
+                "type": "Image.Image -> String.String"
+            },
+            {
+                "name": "toGif",
+                "comment": " The Graphics Interchange Format (GIF)\n\nPalette based image with support of animation (not implemented), Transparency (totally transparent color - use 0x00)\n\n",
+                "type": "Image.Image -> Bytes.Bytes"
+            },
+            {
+                "name": "toGifUrl",
+                "comment": " Create base64-url that can be used directly as img source (`img [ src <| toGifUrl myImage ]`)\n",
+                "type": "Image.Image -> String.String"
+            },
+            {
+                "name": "toList",
+                "comment": " Take [`Image`](#Image) of and converts it to `List Pixel` where each `Pixel` is `Int` as `0xRRGGBBAA`\n",
+                "type": "Image.Image -> List.List Image.Pixel"
+            },
+            {
+                "name": "toList2d",
+                "comment": " Take [`Image`](#Image) of and converts it to matrix `List (List Pixel)` where each `Pixel` is `Int` as `0xRRGGBBAA`\n",
+                "type": "Image.Image -> List.List (List.List Image.Pixel)"
+            },
+            {
+                "name": "toPng",
+                "comment": " Portable Network Graphics (PNG) is a raster-graphics file-format that supports lossless data compression. PNG was developed as an improved, non-patented replacement for Graphics Interchange Format (GIF).\n\nPNG supports palette-based images (with palettes of 24-bit RGB or 32-bit RGBA colors), grayscale images (with or without alpha channel for transparency), and full-color non-palette-based RGB images (with or without alpha channel).\n\n",
+                "type": "Image.Image -> Bytes.Bytes"
+            },
+            {
+                "name": "toPngUrl",
+                "comment": " Create base64-url that can be used directly as img source (`img [ src <| toPngUrl myImage ]`)\n",
+                "type": "Image.Image -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Image.Advanced",
+        "comment": "\n\n\n# Image Info\n\n@docs source, Source\n\n\n# Manipulations\n\n@docs map, get, put, eval, mirror\n\n\n# Custom Encoding\n\n@docs toPng32\n@docs toBmp24, toBmp32\n@docs toGIF89a\n\n",
+        "unions": [
+            {
+                "name": "Source",
+                "comment": " Possible image decoded type\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Png",
+                        []
+                    ],
+                    [
+                        "Bmp",
+                        []
+                    ],
+                    [
+                        "Gif",
+                        []
+                    ],
+                    [
+                        "Code",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "eval",
+                "comment": " When decoding images they are decoded in _lazy way_ (real decoding is postponed until data is needed)\nthis function evaluates postponed decode, useful if you need to encode multiple images from same source.\n",
+                "type": "Image.Internal.ImageData.Image -> Image.Internal.ImageData.Image"
+            },
+            {
+                "name": "get",
+                "comment": " Returns an `Image` representing the underlying pixel data for a specified portion of the `Image`.\n\n    region =\n        Image.get sx sy sw sh image\n\n  - `sx` The x-axis coordinate of the top-left corner of the rectangle from which the `Image` will be extracted.\n  - `sy` The y-axis coordinate of the top-left corner of the rectangle from which the `Image` will be extracted.\n  - `sw` The width of the rectangle from which the `Image` will be extracted. Positive values are to the right, and negative to the left.\n  - `sh` The height of the rectangle from which the `Image` will be extracted. Positive values are down, and negative are up.\n  - `image` The source image to select pixels from.\n  - `region` An `Image` containing the image data for the rectangle of the `image` specified.\n    The coordinates of the rectangle's top-left corner are (`sx`, `sy`), while the coordinates of the bottom corner are (`sx` + `sw`, `sy` + `sh`).\n\n",
+                "type": "Basics.Int -> Basics.Int -> Basics.Int -> Basics.Int -> Image.Internal.ImageData.Image -> Image.Internal.ImageData.Image"
+            },
+            {
+                "name": "map",
+                "comment": " Apply a function on every pixel in an image.\n",
+                "type": "(Basics.Int -> Basics.Int) -> Image.Internal.ImageData.Image -> Image.Internal.ImageData.Image"
+            },
+            {
+                "name": "mirror",
+                "comment": " Mirror image horizontally or/and vertically\n\n    newImage =\n        Image.mirror x y image\n\n",
+                "type": "Basics.Bool -> Basics.Bool -> Image.Internal.ImageData.Image -> Image.Internal.ImageData.Image"
+            },
+            {
+                "name": "put",
+                "comment": " Paints data from the given `Image` onto the other `Image`.\n\n    newImage =\n        Image.put dx dy imageFrom imageTo\n\n  - `imageData` An `Image` containing the array of pixel values.\n  - `dx` Horizontal position (x coordinate) at which to place the image data in the destination `Image`.\n  - `dy` Vertical position (y coordinate) at which to place the image data in the destination `Image`.\n\n",
+                "type": "Basics.Int -> Basics.Int -> Image.Internal.ImageData.Image -> Image.Internal.ImageData.Image -> Image.Internal.ImageData.Image"
+            },
+            {
+                "name": "source",
+                "comment": " Get image type\n",
+                "type": "Image.Internal.ImageData.Image -> Image.Advanced.Source"
+            },
+            {
+                "name": "toBmp24",
+                "comment": " Encode image into BMP24\n",
+                "type": "Image.Internal.ImageData.Image -> Bytes.Bytes"
+            },
+            {
+                "name": "toBmp32",
+                "comment": " Encode image into BMP32\n\n**Note**: Using BMP 32bit is discouraged due to lack of proper support across browsers\n\n",
+                "type": "Image.Internal.ImageData.Image -> Bytes.Bytes"
+            },
+            {
+                "name": "toGIF89a",
+                "comment": " Encode image into GIF89a\n\n**Note**:\n\n1.  Gif supports only 256 colors in palette - if image have more that 256 colors, all colors that exceed 256 will become first color in palette\n2.  Gif supports only fully transparent color, all colors that isn't fully transparent (alpha > 0) will be flatted to it color\n\n",
+                "type": "Image.Internal.ImageData.Image -> Bytes.Bytes"
+            },
+            {
+                "name": "toPng32",
+                "comment": " Encode image into True color with alpha PNG image\n",
+                "type": "Image.Internal.ImageData.Image -> Bytes.Bytes"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Image.Color",
+        "comment": " Same as main functions only instead of `Int` uses `Color` (`avh4/elm-color`) to represent pixel\n\n\n# Construct\n\n@docs fromList, fromList2d, fromArray, fromArray2d\n\n\n# Destruct\n\n@docs toList, toList2d, toArray, toArray2d\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fromArray",
+                "comment": " Create [`Image`](#Image) of `Array Int` where each `Color` is pixel\n",
+                "type": "Image.Width -> Array.Array Color.Color -> Image.Internal.ImageData.Image"
+            },
+            {
+                "name": "fromArray2d",
+                "comment": " Create [`Image`](#Image) of `Array (Array Int)` where each `Color` is pixel\n",
+                "type": "Array.Array (Array.Array Color.Color) -> Image.Internal.ImageData.Image"
+            },
+            {
+                "name": "fromList",
+                "comment": " Create [`Image`](Image#Image) of `List Color` where each `Color` is pixel\n",
+                "type": "Image.Width -> List.List Color.Color -> Image.Internal.ImageData.Image"
+            },
+            {
+                "name": "fromList2d",
+                "comment": " Create [`Image`](#Image) of `List (List Int)` where each `Color` is pixel\n",
+                "type": "List.List (List.List Color.Color) -> Image.Internal.ImageData.Image"
+            },
+            {
+                "name": "toArray",
+                "comment": " Take [`Image`](#Image) of and converts it to `Array Int` where each `Color` is pixel\n",
+                "type": "Image.Internal.ImageData.Image -> Array.Array Color.Color"
+            },
+            {
+                "name": "toArray2d",
+                "comment": " Take [`Image`](#Image) of and converts it to matrix `Array (Array Int)` where each `Color` is pixel\n",
+                "type": "Image.Internal.ImageData.Image -> Array.Array (Array.Array Color.Color)"
+            },
+            {
+                "name": "toList",
+                "comment": " Take [`Image`](#Image) of and converts it to `List Int` where each `Color` is pixel\n",
+                "type": "Image.Internal.ImageData.Image -> List.List Color.Color"
+            },
+            {
+                "name": "toList2d",
+                "comment": " Take [`Image`](#Image) of and converts it to matrix `List (List Int)` where each `Color` is pixel\n",
+                "type": "Image.Internal.ImageData.Image -> List.List (List.List Color.Color)"
+            }
+        ],
+        "binops": []
+    }
+]

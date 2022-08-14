@@ -1,0 +1,57 @@
+[
+    {
+        "name": "RegressionTest.Generator",
+        "comment": " Exposes a bunch of methods to generate test data for regression testing.\n\n\n# Definition\n\n@docs RegressionTestGeneratorProgram\n\n\n# Test a program\n\n@docs sandboxUpdate, update\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "RegressionTestGeneratorProgram",
+                "comment": " Program used to generate test data for regression tests.\n",
+                "args": [
+                    "model",
+                    "msg"
+                ],
+                "type": "Platform.Program RegressionTest.Generator.Flags (RegressionTest.Generator.Model model msg) (RegressionTest.Generator.Msg model msg)"
+            }
+        ],
+        "values": [
+            {
+                "name": "sandboxUpdate",
+                "comment": " Generate test data for a sandboxProgram, with the `update` function following the form `msg -> model -> model`.\n",
+                "type": "{ modelGenerator : Random.Generator model, messageGenerator : Random.Generator msg, update : msg -> model -> model, encodeModel : model -> Json.Encode.Value, encodeMessage : msg -> Json.Encode.Value, outputPort : Json.Encode.Value -> Platform.Cmd.Cmd msg, numberOfTests : Basics.Int } -> RegressionTest.Generator.RegressionTestGeneratorProgram model msg"
+            },
+            {
+                "name": "update",
+                "comment": " Generate test data for a standard program, with the `update` function following the form `msg -> model -> (model, Cmd msg)`.\n",
+                "type": "{ modelGenerator : Random.Generator model, messageGenerator : Random.Generator msg, update : msg -> model -> ( model, Platform.Cmd.Cmd msg ), encodeModel : model -> Json.Encode.Value, encodeMessage : msg -> Json.Encode.Value, outputPort : Json.Encode.Value -> Platform.Cmd.Cmd msg, numberOfTests : Basics.Int } -> RegressionTest.Generator.RegressionTestGeneratorProgram model msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "RegressionTest.Runner",
+        "comment": " Exposes a bunch of methods to run tests based on generated test data.\n\n\n# Definition\n\n@docs UpdateFunctionTestData\n\n\n# Test a program\n\n@docs sandboxUpdate, update\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "UpdateFunctionTestData",
+                "comment": " Test data to test a `update` function\n",
+                "args": [],
+                "type": "{ initialModel : String.String, messages : List.List String.String, expectedOutput : String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "sandboxUpdate",
+                "comment": " Test the `update` function of a `sandbox` program, following the form `msg -> model -> model`, then compare the\nresults to the saved results.\n",
+                "type": "{ modelDecoder : Json.Decode.Decoder model, messageDecoder : Json.Decode.Decoder msg, update : msg -> model -> model } -> List.List RegressionTest.Runner.UpdateFunctionTestData -> Test.Test"
+            },
+            {
+                "name": "update",
+                "comment": " Test a regular `update` function, following the form `msg -> model -> (model, Cmd msg)`, then compare the\nresults to the saved results.\nThe command part is not tested, only the model is kept.\n",
+                "type": "{ modelDecoder : Json.Decode.Decoder model, messageDecoder : Json.Decode.Decoder msg, update : msg -> model -> ( model, Platform.Cmd.Cmd msg ) } -> List.List RegressionTest.Runner.UpdateFunctionTestData -> Test.Test"
+            }
+        ],
+        "binops": []
+    }
+]

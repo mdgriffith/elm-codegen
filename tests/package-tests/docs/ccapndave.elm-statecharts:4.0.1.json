@@ -1,0 +1,72 @@
+[
+    {
+        "name": "Statechart",
+        "comment": " A pure Elm implementation of statecharts designed to hook directy into The Elm Architecture\nupdate function.\n\n@docs Statechart\n@docs StateModel\n@docs decoder\n@docs encode\n@docs mkStatechart\n@docs mkCompoundState\n@docs mkState\n@docs noAction\n@docs empty\n@docs start\n@docs step\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "StateModel",
+                "comment": " ",
+                "args": [],
+                "type": "{ currentStateName : String.String, targetStateName : String.String, history : Dict.Dict String.String String.String }"
+            },
+            {
+                "name": "Statechart",
+                "comment": " ",
+                "args": [
+                    "msg",
+                    "model"
+                ],
+                "type": "Tree.Tree (Statechart.StateConfig msg model)"
+            }
+        ],
+        "values": [
+            {
+                "name": "decoder",
+                "comment": " Decode a stored StateModel.\n",
+                "type": "Json.Decode.Decoder Statechart.StateModel"
+            },
+            {
+                "name": "empty",
+                "comment": " An empty StateModel; this is the initial value in the model.\n",
+                "type": "Statechart.StateModel"
+            },
+            {
+                "name": "encode",
+                "comment": " Encode the StateModel into a value ready to be stored in the main model.\n",
+                "type": "Statechart.StateModel -> Json.Encode.Value"
+            },
+            {
+                "name": "mkCompoundState",
+                "comment": " Make a compound state from a StateConfig\n",
+                "type": "Statechart.BranchStateConfig msg model -> List.List (Statechart.Statechart msg model) -> Statechart.Statechart msg model"
+            },
+            {
+                "name": "mkState",
+                "comment": " Make a state from a StateConfig\n",
+                "type": "Statechart.LeafStateConfig msg model -> Statechart.Statechart msg model"
+            },
+            {
+                "name": "mkStatechart",
+                "comment": " Make the top level statechart\n",
+                "type": "Statechart.Statechart msg model -> List.List (Statechart.Statechart msg model) -> Statechart.Statechart msg model"
+            },
+            {
+                "name": "noAction",
+                "comment": " The identity action that does nothing\n",
+                "type": "Maybe.Maybe model -> msg -> ( msg, List.List model )"
+            },
+            {
+                "name": "start",
+                "comment": " Start the statechart in its starting state. This can fail in the case of a badly configured statechart.\n",
+                "type": "Statechart.Config msg model -> ( model, Platform.Cmd.Cmd msg ) -> Result.Result String.String ( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "step",
+                "comment": " Step through the statechart in response to an incoming message. This can fail in the case of non-existant state names.\n",
+                "type": "Statechart.Config msg model -> msg -> ( model, Platform.Cmd.Cmd msg ) -> Result.Result String.String ( model, Platform.Cmd.Cmd msg )"
+            }
+        ],
+        "binops": []
+    }
+]

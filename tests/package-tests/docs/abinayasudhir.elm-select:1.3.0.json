@@ -1,0 +1,275 @@
+[
+    {
+        "name": "Select",
+        "comment": " Select input with auto-complete\n\nSee a full example of the select input [here](https://github.com/sporto/elm-select/tree/master/demo/src/Example1.elm)\n\nSee a full example of the select input in multi mode [here](https://github.com/sporto/elm-select/tree/master/demo/src/Example3.elm)\n\n\n# Types\n\n@docs RequiredConfig, Config, State, Msg\n\n\n# Configuration\n\n@docs newConfig, withCutoff, withOnQuery, withEmptySearch, withTransformQuery, withBlur, withOnEnter, withMaxLength\n\n\n# Configure Multi Select mode\n\n@docs withMultiSelection, withOnRemoveItem, withMultiInputItemContainerClass, withMultiInputItemContainerStyles, withMultiInputItemClass, withMultiInputItemStyles\n\n\n# Configure the input control\n\nThis is the container that wraps the entire select view\n\n@docs withInputControlClass, withInputControlStyles\n\n\n# Configure the input wapper\n\nThis is the element that wraps the selected item(s) and the input\n\n@docs withInputWrapperClass, withInputWrapperStyles\n\n\n# Configure the input\n\n@docs withInputId, withInputClass, withInputStyles, withOnFocus\n\n\n# Configure the clear button\n\n@docs withClear, withClearClass, withClearStyles, withClearSvgClass\n\n\n# Configure an underline element under the input\n\n@docs withUnderlineClass, withUnderlineStyles\n\n\n# Configure the items\n\n@docs withItemClass, withItemStyles, withItemHtml, withHighlightedItemClass, withHighlightedItemStyles\n\n\n# Configure the menu\n\n@docs withMenuClass, withMenuStyles\n\n\n# Configure the not found message\n\n@docs withNotFound, withNotFoundClass, withNotFoundShown, withNotFoundStyles\n\n\n# Configure the prompt\n\n@docs withPrompt, withPromptClass, withPromptStyles\n\n\n# State\n\n@docs newState, queryFromState\n\n\n# View\n\n@docs view\n\n\n# Update\n\n@docs update\n\n",
+        "unions": [
+            {
+                "name": "Config",
+                "comment": " Opaque type that holds all the configuration\n",
+                "args": [
+                    "msg",
+                    "item"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Msg",
+                "comment": " Opaque type for internal library messages\n",
+                "args": [
+                    "item"
+                ],
+                "cases": []
+            },
+            {
+                "name": "State",
+                "comment": " Opaque type that holds the current state\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "RequiredConfig",
+                "comment": " Required initial configuration\n\n  - onSelect: A message to trigger when an item is selected\n  - toLabel: A function to get a label to display from an item\n  - filter: A function that takes the typed query and the list of all items, and return the filtered items.\n\n",
+                "args": [
+                    "msg",
+                    "item"
+                ],
+                "type": "{ onSelect : Maybe.Maybe item -> msg, toLabel : item -> String.String, filter : String.String -> List.List item -> Maybe.Maybe (List.List item) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "newConfig",
+                "comment": " Create a new configuration. This takes as `RequiredConfig` record.\n",
+                "type": "Select.RequiredConfig msg item -> Select.Config msg item"
+            },
+            {
+                "name": "newState",
+                "comment": " Create a new state. You must pass a unique identifier for each select component.\n\n    {\n        ...\n        selectState = Select.newState \"select1\"\n    }\n\n",
+                "type": "String.String -> Select.State"
+            },
+            {
+                "name": "queryFromState",
+                "comment": " Return the query string from the current state model\n\n    Select.queryFromState model.selectState\n\n",
+                "type": "Select.State -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "update",
+                "comment": " Update the component state\n\n    SelectMsg subMsg ->\n        let\n            ( updated, cmd ) =\n                Select.update selectConfig subMsg model.selectState\n        in\n            ( { model | selectState = updated }, cmd )\n\n",
+                "type": "Select.Config msg item -> Select.Msg item -> Select.State -> ( Select.State, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "view",
+                "comment": " Render the view\n\n    Select.view\n        selectConfig\n        model.selectState\n        model.items\n        selectedItems\n\n",
+                "type": "Select.Config msg item -> Select.State -> List.List item -> List.List item -> Html.Html (Select.Msg item)"
+            },
+            {
+                "name": "withBlur",
+                "comment": " Styles for the highlighted item\n\n    Select.withBlur True config\n\n",
+                "type": "Basics.Bool -> Select.Config msg item -> Select.Config msg item"
+            },
+            {
+                "name": "withClear",
+                "comment": " Remove the clear button entirely\n\n    Select.withClear False\n\n",
+                "type": "Basics.Bool -> Select.Config msg item -> Select.Config msg item"
+            },
+            {
+                "name": "withClearClass",
+                "comment": " Add classes to the clear button\n\n    Select.withClearClass \"clear\" config\n\n",
+                "type": "String.String -> Select.Config msg item -> Select.Config msg item"
+            },
+            {
+                "name": "withClearStyles",
+                "comment": " Add styles to the clear button\n\n    Select.withClearStyles [ ( \"width\", \"2rem\" ) ] config\n\n",
+                "type": "List.List ( String.String, String.String ) -> Select.Config msg item -> Select.Config msg item"
+            },
+            {
+                "name": "withClearSvgClass",
+                "comment": " Add classes to the clear SVG icon\n\n    Select.withClearSvgClass \"clear\" config\n\n",
+                "type": "String.String -> Select.Config msg item -> Select.Config msg item"
+            },
+            {
+                "name": "withCutoff",
+                "comment": " Set the maxium number of items to show\n\n    Select.withCutoff 6 config\n\n",
+                "type": "Basics.Int -> Select.Config msg item -> Select.Config msg item"
+            },
+            {
+                "name": "withEmptySearch",
+                "comment": " Show results if the input is focused, but the query is empty\nDefault is False.\nSelect.withEmptySearch True config\n",
+                "type": "Basics.Bool -> Select.Config msg item -> Select.Config msg item"
+            },
+            {
+                "name": "withHighlightedItemClass",
+                "comment": " Class for the hightlighted tem\n\n    Select.withHighlightedItemClass \"red\" config\n\n",
+                "type": "String.String -> Select.Config msg item -> Select.Config msg item"
+            },
+            {
+                "name": "withHighlightedItemStyles",
+                "comment": " Styles for the highlighted item\n\n    Select.withHighlightedItemStyles [ ( \"padding\", \"1rem\" ) ] config\n\n",
+                "type": "List.List ( String.String, String.String ) -> Select.Config msg item -> Select.Config msg item"
+            },
+            {
+                "name": "withInputClass",
+                "comment": " Add classes to the input\n\n    Select.withInputClass \"col-12\" config\n\n",
+                "type": "String.String -> Select.Config msg item -> Select.Config msg item"
+            },
+            {
+                "name": "withInputControlClass",
+                "comment": " Add classes to the input control\n\n    Select.withInputControlClass \"control-class\" config\n\n",
+                "type": "String.String -> Select.Config msg item -> Select.Config msg item"
+            },
+            {
+                "name": "withInputControlStyles",
+                "comment": " Add styles to the input control\n\n    Select.withInputControlClass [ ( \"background-color\", \"red\" ) ] config\n\n",
+                "type": "List.List ( String.String, String.String ) -> Select.Config msg item -> Select.Config msg item"
+            },
+            {
+                "name": "withInputId",
+                "comment": " Set the ID of the input\n\n    Select.withInputId \"input-id\" config\n\n",
+                "type": "String.String -> Select.Config msg item -> Select.Config msg item"
+            },
+            {
+                "name": "withInputStyles",
+                "comment": " Add styles to the input\n\n    Select.withInputStyles [ ( \"color\", \"red\" ) ] config\n\n",
+                "type": "List.List ( String.String, String.String ) -> Select.Config msg item -> Select.Config msg item"
+            },
+            {
+                "name": "withInputWrapperClass",
+                "comment": " Add classes to the input wrapper (element that wraps the input and the clear button)\n\n    Select.withInputWrapperClass \"col-12\" config\n\n",
+                "type": "String.String -> Select.Config msg item -> Select.Config msg item"
+            },
+            {
+                "name": "withInputWrapperStyles",
+                "comment": " Add styles to the input wrapper\n\n    Select.withInputWrapperStyles [ ( \"color\", \"red\" ) ] config\n\n",
+                "type": "List.List ( String.String, String.String ) -> Select.Config msg item -> Select.Config msg item"
+            },
+            {
+                "name": "withItemClass",
+                "comment": " Add classes to the items\n\n    Select.withItemClass \"border-bottom\" config\n\n",
+                "type": "String.String -> Select.Config msg item -> Select.Config msg item"
+            },
+            {
+                "name": "withItemHtml",
+                "comment": " Custom item element HTML\n\n    Select.withItemHtml (\\i -> Html.li [] [ text i ]) config\n\nWhen this is used the original `toLabel` function in the config is ignored.\n\n",
+                "type": "(item -> Html.Html Basics.Never) -> Select.Config msg item -> Select.Config msg item"
+            },
+            {
+                "name": "withItemStyles",
+                "comment": " Add styles to the items\n\n    Select.withItemStyles [ ( \"color\", \"peru\" ) ] config\n\n",
+                "type": "List.List ( String.String, String.String ) -> Select.Config msg item -> Select.Config msg item"
+            },
+            {
+                "name": "withMaxLength",
+                "comment": " Add a maximum length to the query Input field\n\n    Select.withMaxLength 50\n\n",
+                "type": "Basics.Int -> Select.Config msg item -> Select.Config msg item"
+            },
+            {
+                "name": "withMenuClass",
+                "comment": " Add classes to the menu\n\n    Select.withMenuClass \"bg-white\" config\n\n",
+                "type": "String.String -> Select.Config msg item -> Select.Config msg item"
+            },
+            {
+                "name": "withMenuStyles",
+                "comment": " Add styles to the menu\n\n    Select.withMenuStyles [ ( \"padding\", \"1rem\" ) ] config\n\n",
+                "type": "List.List ( String.String, String.String ) -> Select.Config msg item -> Select.Config msg item"
+            },
+            {
+                "name": "withMultiInputItemClass",
+                "comment": " Add classes to an individual selected item\n\n    Select.withMultiInputItemClass \"bg-white\" config\n\n",
+                "type": "String.String -> Select.Config msg item -> Select.Config msg item"
+            },
+            {
+                "name": "withMultiInputItemContainerClass",
+                "comment": " Add classes to the container of selected items\n\n    Select.withMultiInputItemContainerClass \"bg-white\" config\n\n",
+                "type": "String.String -> Select.Config msg item -> Select.Config msg item"
+            },
+            {
+                "name": "withMultiInputItemContainerStyles",
+                "comment": " Add styles to the container of selected items\n\n    Select.withMultiInputClass \"bg-white\" config\n\n",
+                "type": "List.List ( String.String, String.String ) -> Select.Config msg item -> Select.Config msg item"
+            },
+            {
+                "name": "withMultiInputItemStyles",
+                "comment": " Add styles to an individual selected item\n\n    Select.withMultiInputItemStyles [ ( \"padding\", \"1rem\" ) ] config\n\n",
+                "type": "List.List ( String.String, String.String ) -> Select.Config msg item -> Select.Config msg item"
+            },
+            {
+                "name": "withMultiSelection",
+                "comment": " Use a multi select instead of a single select\n",
+                "type": "Basics.Bool -> Select.Config msg item -> Select.Config msg item"
+            },
+            {
+                "name": "withNotFound",
+                "comment": " Text that will appear when no matches are found\n\n    Select.withNotFound \"No matches\" config\n\n",
+                "type": "String.String -> Select.Config msg item -> Select.Config msg item"
+            },
+            {
+                "name": "withNotFoundClass",
+                "comment": " Class for the not found message\n\n    Select.withNotFoundClass \"red\" config\n\n",
+                "type": "String.String -> Select.Config msg item -> Select.Config msg item"
+            },
+            {
+                "name": "withNotFoundShown",
+                "comment": " Hide menu when no matches found\n\n    Select.withNotFoundShown False config\n\n",
+                "type": "Basics.Bool -> Select.Config msg item -> Select.Config msg item"
+            },
+            {
+                "name": "withNotFoundStyles",
+                "comment": " Styles for the not found message\n\n    Select.withNotFoundStyles [ ( \"padding\", \"1rem\" ) ] config\n\n",
+                "type": "List.List ( String.String, String.String ) -> Select.Config msg item -> Select.Config msg item"
+            },
+            {
+                "name": "withOnEnter",
+                "comment": " Add a callback for when the query changes\n\n    Select.withOnEnter OnEnter\n\n",
+                "type": "(String.String -> msg) -> Select.Config msg item -> Select.Config msg item"
+            },
+            {
+                "name": "withOnFocus",
+                "comment": " Add a callback for when the input field receives focus\n\n    Select.withOnFocus OnFocus\n\n",
+                "type": "msg -> Select.Config msg item -> Select.Config msg item"
+            },
+            {
+                "name": "withOnQuery",
+                "comment": " Add a callback for when the query changes\n\n    Select.withOnQuery OnQuery\n\n",
+                "type": "(String.String -> msg) -> Select.Config msg item -> Select.Config msg item"
+            },
+            {
+                "name": "withOnRemoveItem",
+                "comment": " Message to call when removing an individual item. Please note that without this option\nspecified, you will not be able to remove an individual item from MultiSelect mode.\n\n    Select.withOnRemoveItem OnRemoveItem\n\n",
+                "type": "(item -> msg) -> Select.Config msg item -> Select.Config msg item"
+            },
+            {
+                "name": "withPrompt",
+                "comment": " Add a prompt text to be displayed when no element is selected\n\n    Select.withPrompt \"Select a movie\" config\n\n",
+                "type": "String.String -> Select.Config msg item -> Select.Config msg item"
+            },
+            {
+                "name": "withPromptClass",
+                "comment": " Add classes to the prompt text (When no item is selected)\nSelect.withPromptClass \"prompt\" config\n",
+                "type": "String.String -> Select.Config msg item -> Select.Config msg item"
+            },
+            {
+                "name": "withPromptStyles",
+                "comment": " Add styles to prompt text\n\n    Select.withPromptStyles [ ( \"color\", \"red\" ) ] config\n\n",
+                "type": "List.List ( String.String, String.String ) -> Select.Config msg item -> Select.Config msg item"
+            },
+            {
+                "name": "withTransformQuery",
+                "comment": " Transform the input query before performing the search\nReturn Nothing to prevent searching\n\n    transform : String -> Maybe String\n    transform query =\n        if String.length query < 4 then\n            Nothing\n        else\n            Just query\n\n    Select.withTransformQuery transform config\n\n",
+                "type": "(String.String -> String.String) -> Select.Config msg item -> Select.Config msg item"
+            },
+            {
+                "name": "withUnderlineClass",
+                "comment": " Add classes to the underline div\n\n    Select.withUnderlineClass \"underline\" config\n\n",
+                "type": "String.String -> Select.Config msg item -> Select.Config msg item"
+            },
+            {
+                "name": "withUnderlineStyles",
+                "comment": " Add styles to the underline div\n\n    Select.withUnderlineStyles [ ( \"width\", \"2rem\" ) ] config\n\n",
+                "type": "List.List ( String.String, String.String ) -> Select.Config msg item -> Select.Config msg item"
+            }
+        ],
+        "binops": []
+    }
+]

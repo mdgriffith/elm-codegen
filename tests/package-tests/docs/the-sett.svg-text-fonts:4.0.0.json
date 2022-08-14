@@ -1,0 +1,126 @@
+[
+    {
+        "name": "TextToSVG",
+        "comment": " Provides functionality to convert text into SVG paths.\n\nThis is implemented on top of the opentype.js library, and uses ports to handle\nthe native code interaction with this library, even though the text conversion\nfunctions routines are pure functions and do not really need to work asynchronously.\n\nThe `update` cycle for this module must be linked into code that makes use of it,\nincluding its subscriptions.\n\n\n# Types describing SVG diagrams with text.\n\n@docs TextDiagram, Path, PathSpec, Options\n\n\n# Text to path conversion cycle.\n\n@docs Model, Msg, subscriptions, init, update, textToSvg\n\n\n# SVG text rednering functions, with path or browser rendered implmenetations.\n\n@docs TextRenderFunc, textAsPath, textAsText, TextAlignment\n\n\n# Ports needed to request/subscribe to text to SVG conversion events.\n\n@docs TextToSVGPort, TextToSVGResponsePort\n\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " Describes the text rendering outcome events from the conversion ports.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "TextAlignment",
+                "comment": " The possible horizontal alignments for text.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "LeftAlign",
+                        []
+                    ],
+                    [
+                        "CenterAlign",
+                        []
+                    ],
+                    [
+                        "RightAlign",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Model",
+                "comment": " The internal state of the text conversion. This keeps track of which diagrams are\nstill to complete, and which `PathSpec`s.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ diagramsToSize : Dict.Dict Basics.Int (TextToSVG.TextDiagram a), textToSize : MultiDict.MultiDict Basics.Int TextToSVG.PathSpec, id : Basics.Int }"
+            },
+            {
+                "name": "Options",
+                "comment": " Options that can be set to control how text is rendered into SVG paths.\n",
+                "args": [],
+                "type": "{ kerning : Maybe.Maybe Basics.Bool, letterSpacing : Maybe.Maybe Basics.Float }"
+            },
+            {
+                "name": "Path",
+                "comment": " Encodes a string as an SVG path describing its outline, which can be used to\ndraw the text in SVG.\nThe width of the text is also given.\n",
+                "args": [],
+                "type": "{ width : Basics.Float, path : String.String }"
+            },
+            {
+                "name": "PathSpec",
+                "comment": " Describes some text as a String along with a named font and size. This is sufficient\nto describe the SVG path for the text uniquely.\n",
+                "args": [],
+                "type": "{ text : String.String, font : String.String, fontSize : Basics.Float }"
+            },
+            {
+                "name": "TextDiagram",
+                "comment": " Denotes a diagram containing text with a function that can be used to correctly\ncalculate the width of all text in the diagram.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ a | labels : List.List TextToSVG.PathSpec, pathsForLabels : GenericDict.Dict TextToSVG.PathSpec TextToSVG.Path }"
+            },
+            {
+                "name": "TextRenderFunc",
+                "comment": " A type alias for the text rendering functions, as their types are quite longt.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "TextToSVG.PathSpec -> GenericDict.Dict TextToSVG.PathSpec TextToSVG.Path -> TextToSVG.TextAlignment -> Basics.Float -> Basics.Float -> List.List (TypedSvg.Core.Attribute msg) -> TypedSvg.Core.Svg msg"
+            },
+            {
+                "name": "TextToSVGPort",
+                "comment": " Defines the type of the text-to-svg port.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "TextToSVG.TextToSVGRequest -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "TextToSVGResponsePort",
+                "comment": " Defines the type of the text-to-svg response port.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "(TextToSVG.TextPath -> msg) -> Platform.Sub.Sub msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "init",
+                "comment": " Createa a new empty initial state for the text conversion.\n",
+                "type": "TextToSVG.Model a"
+            },
+            {
+                "name": "subscriptions",
+                "comment": " Defines the subscription needed to listen for responses on the text conversion response port.\n",
+                "type": "TextToSVG.TextToSVGResponsePort TextToSVG.Msg -> TextToSVG.Model a -> Platform.Sub.Sub TextToSVG.Msg"
+            },
+            {
+                "name": "textAsPath",
+                "comment": " Renders a PathSpec as an SVG path.\nThis will be geometrically accurate and stable under motion, but the text rendering will not be hinted\nand look a bit rough. Use this when animating text.\n",
+                "type": "TextToSVG.PathSpec -> GenericDict.Dict TextToSVG.PathSpec TextToSVG.Path -> TextToSVG.TextAlignment -> Basics.Float -> Basics.Float -> List.List (TypedSvg.Core.Attribute msg) -> TypedSvg.Core.Svg msg"
+            },
+            {
+                "name": "textAsText",
+                "comment": " Renders a PathSpec as SVG text rendered by the browser.\nThis will be hinted and rendered for maximum legibility. It will look crisp and clear\n. It will have geometric aberations that show up under animation as a jittering about\nof the text. Use this for static text.\n",
+                "type": "TextToSVG.PathSpec -> GenericDict.Dict TextToSVG.PathSpec TextToSVG.Path -> TextToSVG.TextAlignment -> Basics.Float -> Basics.Float -> List.List (TypedSvg.Core.Attribute msg) -> TypedSvg.Core.Svg msg"
+            },
+            {
+                "name": "textToSvg",
+                "comment": " Given a list of diagrams that need their text converted to SVG, and the current\nstate of the converter Model, produces a new model and a set of commands for the\nrequests on the text to SVG port, to do the conversion work. The new model contains\na set of diagrams needing to be sized, updated with the list of diagram requests to\nbe processed.\n",
+                "type": "TextToSVG.TextToSVGPort TextToSVG.Msg -> List.List (TextToSVG.TextDiagram a) -> TextToSVG.Model a -> ( TextToSVG.Model a, Platform.Cmd.Cmd TextToSVG.Msg )"
+            },
+            {
+                "name": "update",
+                "comment": " Handles updates from the text to SVG return port, that provide text converted to SVG\nwith sizing information.\n",
+                "type": "TextToSVG.Msg -> TextToSVG.Model a -> ( TextToSVG.Model a, Platform.Cmd.Cmd TextToSVG.Msg, List.List (TextToSVG.TextDiagram a) )"
+            }
+        ],
+        "binops": []
+    }
+]

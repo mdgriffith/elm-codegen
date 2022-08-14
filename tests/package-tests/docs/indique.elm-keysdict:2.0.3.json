@@ -1,0 +1,103 @@
+[
+    {
+        "name": "KeysDict",
+        "comment": "\n# KeysDict\nHave many keys to lookup values.\n\nLet's compare\n\n\n### normal `Dict`\n\n> You want the value where the key is `1`?\n\n        0 :  🏡\n    --> 1 :  🏚\n        2 :  🏚\n\n    the key is unique among all items\n\n> Going through while comparing your key.\n\n    the value is 🏚  where the key is `1`\n\n### `KeysDict`\n\nFirst of all, get used to some names\n\n- a \"house\" contains aspects that make it unique & aspects that can be shared across all houses\n```elm\nkeepInParserPipelineOperator=\n  { operator= \"|=\" --no operator overloading wanted!\n  , origin= ElmRepoPackage \"parser\" --is the same for |.\n  }\n```\n- a \"door\" describes a unique aspect across all houses.\n```elm\ndoor .operator\n--is a promise, that the operator value is never the same for two houses.\n```\nSo... If you have a key and the type of door it could match, you can find the only matching house and enter.\n\n> You want to enter the house where `🗝️` is `1`?\n\n        🔑= 0, 🏠= 🏚, 🗝️= 2\n        🔑= 2, 🏠= 🏡, 🗝️= 0\n        🔑= 1, 🏠= 🏚, 🗝️= 1 <--\n\n    🔑, 🗝️: doors you can \"open\" with a key unique across all houses\n\n> Going through while checking every house, if the `🗝️` matches.\n\n        🔑= 1, 🏠= 🏚, 🗝️= 1  where 🗝️ is 1   \n        \n> You want to enter the house where `🔑` is `0`?\n\n    --> 🔑= 0, 🏠= 🏚, 🗝️= 2\n        🔑= 2, 🏠= 🏡, 🗝️= 0\n        🔑= 1, 🏠= 🏚, 🗝️= 1\n\n    🔑, 🗝️: doors you can \"open\" with a key unique across all houses\n\n> Going through while checking every house, if the `🔑` matches.\n\n        🔑= 0, 🏠= 🏚, 🗝️= 2  where 🔑 is 0\n\n@docs KeysDict\n\n## create\n@docs enterableBy\n\n## scan\n@docs equal, enterBy, countHouses\n\n## put up & tear down houses\n@docs putUp, tearDown\n\n## shape\n@docs foldHouses, map, houses, toDict\n\n## extra\n@docs serialize\n",
+        "unions": [
+            {
+                "name": "KeysDict",
+                "comment": " Unsorted data structure, which promises `Uniqueness` for multiple doors.\n\nThis allows for a special kind of access:\n\n> one of many keys -> one of many doors -> house (containing the key you searched by).\n\nRead the module doc for more!\n\n    type alias CasedLetter=\n      { lowercase: Char\n      , uppercase: Char\n      }\n\n    casedLetters: KeysDict CasedLetter\n    casedLetters=\n      KeysDict.enterableBy\n        [ door .lowercase, door .uppercase ]\n      |>putUp { lowercase= 'a', uppercase= 'A' }\n      |>putUp { lowercase= 'b', uppercase= 'B' }\n      |>putUp { lowercase= 'c', uppercase= 'C' }\n\n    uppercase char=\n      lowerUppercaseLetters\n      |>enterBy { door= .lowercase, key= char }\n      |>Maybe.map .uppercase\n",
+                "args": [
+                    "house"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "countHouses",
+                "comment": " How many houses there are.\n\n    List.foldl putIn\n      (KeysDict.enterableBy\n        [ door .number, door .following ]\n      )\n      (List.map (\\i-> { number= i, following= i +1 })\n        (List.range 0 41)\n      )\n    |>countHouses\n    --> 42\n",
+                "type": "KeysDict.KeysDict house -> Basics.Int"
+            },
+            {
+                "name": "enterBy",
+                "comment": " `Just` the house where `door` of the house matches the `key`;\nif no such house is found, `Nothing`.\n\n    casedLetters=\n      KeysDict.enterableBy\n        [ door .lowercase, door .uppercase ]\n      |>putUp { lowercase= 'a', uppercase= 'A' }\n      |>putUp { lowercase= 'b', uppercase= 'B' }\n\n    lowercase char=\n      casedLetters\n      |>enterBy { door= .uppercase, key= char }\n      |>Maybe.map .lowercase\n\n    uppercase char=\n      casedLetters\n      |>enterBy { door= .lowercase, key= char }\n      |>Maybe.map .uppercase\n\n**Note**: If keys of `door` aren't promised to be unique,\n`enterBy` will find the most recently inserted house where `door` of the house matches the `key`.\n\n    ratedCasedLetters=\n      KeysDict.enterableBy\n        [ door .lowercase, door .uppercase ]\n      |>putUp { rating= 0.5, lowercase= 'a', uppercase= 'A' }\n      |>putUp { rating= 0.5, lowercase= 'b', uppercase= 'B' }\n    \n    enterBy { door= .rating, key= 0.5 } ratedCasedLetters\n    --> { rating= 0.5, lowercase= 'b', uppercase= 'B' }\n",
+                "type": "{ door : house -> key, key : key } -> KeysDict.KeysDict house -> Maybe.Maybe house"
+            },
+            {
+                "name": "enterableBy",
+                "comment": " A `KeysDict` with no houses inside, promising that given aspects are unique across all houses (see `Uniqueness`).\n",
+                "type": "List.List (KeysDict.Uniqueness.Uniqueness house) -> KeysDict.KeysDict house"
+            },
+            {
+                "name": "equal",
+                "comment": " How can you know if each house in `aKeysDict` can also be found in `bKeysDict`?\n\n    letterCodes=\n      [ { letter= 'a', code= 97 }\n      , { letter= 'b', code= 98 }\n      ]\n      |>List.foldl putUp\n          (KeysDict.enterableBy\n            [ door .letter, door .code ]\n          )\n        \n    fancyCompetingLetterCodes=\n      KeysDict.enterableBy\n        [ door .code, door .letter ]\n      |>putUp { code= 98, letter= 'b' }\n      |>putUp { code= 97, letter= 'a' }\n\n    (==) letterCodes fancyCompetingLetterCodes\n    --> elm crashes\n\nBecause a `KeysDict`'s `Uniqueness` is defined as functions.\n\n    (==)\n      (houses letterCodes)\n      (houses fancyCompetingLetterCodes)\n    --> False\n\nEven though both contain the same houses but in a different order.\n\n### take away\n\n> Don't use `==` to compare `KeysDict`s\n\n> With non-comparable types, thinking about order doesn't make much sense.\n> You shouldn't rely on it when using functions like folds or `houses`.\n\nInstead, you should use\n\n    KeysDict.equal\n      letterCodes\n      fancyCompetingLetterCodes\n    --> True\n_Houses must not contain functions or json. Elm will crash trying to see if they are equal._\n",
+                "type": "KeysDict.KeysDict house -> KeysDict.KeysDict house -> Basics.Bool"
+            },
+            {
+                "name": "foldHouses",
+                "comment": " Reduce the houses from most recently to least recently inserted house.\n\n> With non-comparable types, thinking about order doesn't make much sense.\n> You shouldn't rely on it when using functions like folds or `houses`.\n\n    brackets=\n      KeysDict.enterableBy\n        [ door .open, door .closed ]\n      |>putUp { open= '(', closed= ')' }\n      |>putUp { open= '{', closed= '}' }\n\n    openingAndClosing=\n      brackets\n      |>foldHouses\n          (\\{ open, closed }->\n            (::) (String.fromList [ open, closed ])\n          )\n          []\n    --> []\n    --> |>(::) (String.fromList [ '{' '}' ])\n    --> |>(::) (String.fromList [ '(' ')' ])\n",
+                "type": "(house -> acc -> acc) -> acc -> KeysDict.KeysDict house -> acc"
+            },
+            {
+                "name": "houses",
+                "comment": " The `List` containing all houses from most recently (= head) to least recently inserted house.\n\n> With non-comparable types, thinking about order doesn't make much sense.\n> You shouldn't rely on it when using functions like folds or `houses`.\n\n    isEmpty=\n      List.isEmpty <<houses\n\n    mostRecentlyInserted=\n      List.head <<houses\n        \n    removeMostRecentlyInserted keysDict=\n      case houses keysDict of\n        _ ::rest->\n          rest\n\n        []->\n          keysDict\n",
+                "type": "KeysDict.KeysDict house -> List.List house"
+            },
+            {
+                "name": "map",
+                "comment": " Map all houses.\n\n    digitNames=\n      KeysDict.enterableBy\n        [ door .number, door .name ]\n      |>putUp { number= 0, name= \"zero\" }\n      |>putUp { number= 1, name= \"one\" }\n\n    mathSymbolNames=\n      digitNames\n      |>mapHouses [ door .symbol, door .name ]\n          (\\{ number, name }->\n            { symbol= String.fromInt number, name= name }\n          )\n      |>putUp { symbol= \"+\", name= \"plus\" }\n",
+                "type": "(house -> resultHouse) -> List.List (KeysDict.Uniqueness.Uniqueness resultHouse) -> KeysDict.KeysDict house -> KeysDict.KeysDict resultHouse"
+            },
+            {
+                "name": "putUp",
+                "comment": " Put a house into `keysDict`. _Keys must not contain functions or json. Elm will crash trying to see if they match._\n\nIf there is already a house with the same **key** is already **present**, (see `Uniqueness`), the `KeysDict` remains **unchanged**.\n\n    KeysDict.enterableBy\n      [ door .lowercase, door .uppercase ]\n    |>putUp { lowercase= 'b', uppercase= 'B', rating= 0.5 }\n        --put up \n    |>putUp { lowercase= 'a', uppercase= 'A', rating= 0.5 }\n        --put up, because rating is not a key\n    |>putUp { lowercase= 'b', uppercase= 'C', rating= 0 }\n        --ignored, the .lowercase already exists\n    |>putUp { lowercase= 'c', uppercase= 'A', rating= 0 }\n        --ignored, the .uppercase already exists\n    |>putUp { lowercase= 'c', uppercase= 'C', rating= 0.6 }\n        --put up\n",
+                "type": "house -> KeysDict.KeysDict house -> KeysDict.KeysDict house"
+            },
+            {
+                "name": "serialize",
+                "comment": " [Serialize](https://package.elm-lang.org/packages/MartinSStewart/elm-serialize/latest/Serialize) a `KeysDict`.\n\n    type alias NamedNumber=\n      { name: String\n      , number: Int\n      }\n    \n    namedNumberCodec=\n      Serialize.record NamedNumber\n      |>Serialize.field .name Decode.string\n      |>Serialize.field .number Decode.int\n      |>Serialize.finishRecord\n\n    namedNumberKeysDictCodec=\n      KeysDict.codec namedNumberCodec\n        [ door .number, door .name ]\n    \n    someKeysDict=\n      KeysDict.enterableBy\n        [ door .number, door .name ]\n      |>putUp { number= 1, name= \"one\" }\n      |>putUp { number= 2, name= \"two\" }\n\n    Serialize.encodeToJson\n      (NamedNumberKeyDictCodec someKeysDict)\n    |>Json.Encode.encode 1\n\n    --> \"\"\"\n    --> [\n    -->  {\n    -->   \\\"number\\\": 2,\n    -->   \\\"name\\\": \"two\"\n    -->  },\n    -->  {\n    -->   \\\"number\\\": 1,\n    -->   \\\"name\\\": \"one\"\n    -->  }\n    --> ]\n    --> \"\"\"\n\n    \"\"\"\n    [\n     {\n      \\\"number\\\": 2,\n      \\\"name\\\": \"two\"\n     },\n     {\n      \\\"number\\\": 1,\n      \\\"name\\\": \"one\"\n     }\n    ]\n    \"\"\"\n    |>Json.Decode.decodeString\n        (Serialize.decodeFromJson\n          namedNumberKeysDictCodec\n        )\n\n    --> Ok\n    -->   (KeysDict.enterableBy\n    -->     [ door .number, door .name ]\n    -->   |>putUp { number= 1, name= \"one\" }\n    -->   |>putUp { number= 2, name= \"two\" }\n    -->   )\n",
+                "type": "Serialize.Codec customError house -> List.List (KeysDict.Uniqueness.Uniqueness house) -> Serialize.Codec customError (KeysDict.KeysDict house)"
+            },
+            {
+                "name": "tearDown",
+                "comment": " Remove the house where `door` of the house matches the `key`.\nIf **the key does not exist**, the `KeysDict` is **unchanged**\n\n    openClosedBrackets=\n      KeysDict.enterableBy\n        [ door .open, door .closed ]\n      |>putUp { open= \"(\", closed= \")\" }\n\n    openClosedBrackets\n    |>tearDown { door= .open, key= \")\" }\n        --unchanged, \")\" does not exist as a .open key\n    |>tearDown { door= .open, key= \"(\" }\n    --> KeysDict.enterableBy\n    -->   [ door .open, door .closed ]\n\n    openClosedBrackets\n    |>tearDown { door= .closed, key= \"(\" }\n        --unchanged, \"(\" does not exist as a .closed key\n    |>tearDown { door= .closed, key= \")\" }\n    --> KeysDict.enterableBy\n    -->   [ door .open, door .closed ]\n\n**Notice:** If there is no promise of `Uniqueness` for `door`, `remove` acts as a normal filter.\n\n    KeysDict.enterableBy\n      [ door .open, door .closed ]\n    |>putUp { open= \"(\", closed= \")\", meaning= Nothing }\n    |>putUp { open= \"[\", closed= \"]\", meaning= Just List }\n    |>putUp { open= \"<, closed= \">\", meaning= Nothing }\n    |>tearDown { door= .meaning, key= Nothing }\n\n    --> KeysDict.enterableBy\n    -->   [ door .open, door .closed ]\n    --> |>putUp { open= \"[\", closed= \"]\", meaning= Just List }\n",
+                "type": "{ door : house -> key, key : key } -> KeysDict.KeysDict house -> KeysDict.KeysDict house"
+            },
+            {
+                "name": "toDict",
+                "comment": " Convert a `KeysDict` to an association-`Dict`.\n\n    casedLetters=\n      KeysDict.enterableBy\n        [ door .lowercase, door .uppercase ]\n      |>putUp { uppercase= 'A', lowercase= 'a' }\n      |>putUp { uppercase= 'B', lowercase= 'b' }\n    \n    lowerFromUppercase=\n      KeysDict.toDict { key= .uppercase, value= .lowercase }\n        casedLetters\n",
+                "type": "{ key : house -> key, value : house -> value } -> KeysDict.KeysDict house -> AssocList.Dict key value"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "KeysDict.Uniqueness",
+        "comment": "\n@docs Uniqueness, door\n\n## just for extending core functionality\n@docs violated\n",
+        "unions": [
+            {
+                "name": "Uniqueness",
+                "comment": " A promise, that there are never 2 houses with equal keys for the same door.\n\n    listWithoutKeys=\n      KeysDict.enterableBy \n        []--no promised Uniqueness\n    \n    doorsInCasedLetter=\n      [ door .inAlphabet\n      , door .lowercase\n      , door .uppercase\n      ]\n    \n    letters=\n      KeyssDict.enterableBy doorsInCasedLetter\n      |>putUp { inAlphabet= 0, lowercase= 'a', uppercase= 'A' }\n      |>putUp { inAlphabet= 0, lowercase= 'α', uppercase= 'Α' }\n        --rejected .inAlphabet key 0 is the same!\n        -- → The KeysDict doesn't change\n",
+                "args": [
+                    "house"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "door",
+                "comment": " What's a door? It's a spot to `access` a house if you have a matching key.\n\nGive `door` one aspect of a house, and it will be ensured that this aspect of a house unique for all houses.\n\n    KeysDict.enterableBy\n      [ door .lowercase, door .uppercase ]\n    |>putUp { lowercase= 'a', uppercase= 'A' }--put up\n    |>putUp { lowercase= 'a', uppercase= 'B' }\n      --checked items: .lowercase key already exists! \n      --→ KeysDict is unchanged\n",
+                "type": "(house -> keyNeeded) -> KeysDict.Uniqueness.Uniqueness house"
+            },
+            {
+                "name": "violated",
+                "comment": " Do 2 values fail to fulfill `Uniqueness`?\n\n    door .name\n    |>violated\n        { name= \"smile\", symbol= '😊' }\n        { symbol= '🙂', name= \"smile\" }\n    --> True\n",
+                "type": "house -> house -> KeysDict.Uniqueness.Uniqueness house -> Basics.Bool"
+            }
+        ],
+        "binops": []
+    }
+]

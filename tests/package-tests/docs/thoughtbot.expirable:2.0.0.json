@@ -1,0 +1,50 @@
+[
+    {
+        "name": "Expirable",
+        "comment": " The concept of a value that expires or disappears over a period of time is\nrelatively common in applications. The `Expirable a` type allows one to wrap a\nvalue as one that expires after a certain period of seconds.\n\nIt's expected that a `List (Expirable a)` be used to manage a list of things\nthat can expire; with this, the `tickAll` function can be used to take in the\nlist of `Expirable a` and return a new list of `Expirable a`. This function\nhandles removal of items that have expired.\n\nThis is a portion of an application that manages a list of toast messages.\nThese are displayed for a period of time and are then hidden.\n\nWithout digging into render the messages, we display the corresponding `Msg`,\nsubscriptions, and modeling to manage the list of toast messages.\n\n    import Expirable exposing (Expirable)\n\n    type alias Model =\n        { toastMessages : List (Expirable String)\n        }\n\n    type Msg\n        = DecrementToastMessages Time.Posix\n\n    initial : Model\n    initial =\n        { toastMessages =\n            [ Expirable.build (Expirable.seconds 5) \"Hi there\"\n            , Expirable.build (Expirable.seconds 30) \"This goes longer\"\n            ]\n        }\n\n    subscriptions : Model -> Sub Msg\n    subscriptions model =\n        Expirable.subscription DecrementToastMessages\n\n    update : Msg -> Model -> ( Model, Cmd Msg )\n    update msg model =\n        case msg of\n            DecrementToastMessages time ->\n                ( { model\n                    | toastMessages = Expirable.tickAll time model.toastMessages\n                  }\n                , Cmd.none\n                )\n\n\n# Type and Constructors\n\n@docs Expirable, build, seconds\n\n\n# Subscriptions and Management\n\n@docs subscription, tickAll\n\n\n# Information\n\n@docs value, percentComplete\n\n",
+        "unions": [
+            {
+                "name": "Expirable",
+                "comment": " The core `Expirable` type describing a value that can expire in the future.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "build",
+                "comment": " Constructor to convert a value to be expirable. It requires both the time\nduration (in seconds) that the value should remain and the value itself.\n\n       toastWelcome : Expirable String\n       toastWelcome =\n           Expirable.build\n               (Expirable.seconds 15)\n               \"Welcome to the site!\"\n\n",
+                "type": "Expirable.SecondsRemaining -> a -> Expirable.Expirable a"
+            },
+            {
+                "name": "percentComplete",
+                "comment": " Calculate the percentage complete as a `Float` with a value between `0` and\n`1`.\n\ne.g. If a value is set to expire in 60 seconds and 15 seconds have passed,\nthis would return `0.25`.\n\n",
+                "type": "Expirable.Expirable a -> Basics.Float"
+            },
+            {
+                "name": "seconds",
+                "comment": " Construct a value representing the number of seconds before a value expires.\n",
+                "type": "Basics.Int -> Expirable.SecondsRemaining"
+            },
+            {
+                "name": "subscription",
+                "comment": " Generate a subscription to tag an application-specific `Msg`; this is used\nin conjunction with `tickAll` to manage a list of `Expirable a`.\n\n        subscriptions : Model -> Sub Msg\n        subscriptions model =\n            Expirable.subscription DecrementToastMessages\n\n",
+                "type": "(Time.Posix -> a) -> Platform.Sub.Sub a"
+            },
+            {
+                "name": "tickAll",
+                "comment": " Within pattern-matching `Msg` in `update`, `tickAll` should be used to\nmanage a list of `Expirable a` in order to expire the appropriate set of values.\n\n        type Msg\n            = DecrementToastMessages Time.Posix\n\n\n        update : Msg -> Model -> ( Model, Cmd Msg )\n        update msg model =\n            case msg of\n                DecrementToastMessages time ->\n                    { model\n                        | toastMessages = Expirable.tickAll time model.toastMessages\n                    }\n                        ! []\n\n",
+                "type": "Time.Posix -> List.List (Expirable.Expirable a) -> List.List (Expirable.Expirable a)"
+            },
+            {
+                "name": "value",
+                "comment": " Extract the value from the `Expirable a`.\n",
+                "type": "Expirable.Expirable a -> a"
+            }
+        ],
+        "binops": []
+    }
+]

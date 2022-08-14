@@ -1,0 +1,34 @@
+[
+    {
+        "name": "CalendarDates",
+        "comment": " Generate date ranges.\n\n@docs days, weeks, Day, Week\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Day",
+                "comment": " Day\n",
+                "args": [],
+                "type": "{ date : Calendar.Date, month : Basics.Order }"
+            },
+            {
+                "name": "Week",
+                "comment": " Week\n",
+                "args": [],
+                "type": "{ mon : CalendarDates.Day, tue : CalendarDates.Day, wed : CalendarDates.Day, thu : CalendarDates.Day, fri : CalendarDates.Day, sat : CalendarDates.Day, sun : CalendarDates.Day }"
+            }
+        ],
+        "values": [
+            {
+                "name": "days",
+                "comment": " Individual days.\n",
+                "type": "Time.Weekday -> Time.Month -> Basics.Int -> List.List CalendarDates.Day"
+            },
+            {
+                "name": "weeks",
+                "comment": " Days split into weeks.\n",
+                "type": "Time.Weekday -> Time.Month -> Basics.Int -> List.List CalendarDates.Week"
+            }
+        ],
+        "binops": []
+    }
+]

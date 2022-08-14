@@ -1,0 +1,65 @@
+[
+    {
+        "name": "Component",
+        "comment": " This library contains some function that make the update and event process with components\neasier.\n\n# Update Handlers\n@docs update, updateEvents\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "update",
+                "comment": " Performs the update and handling the events of a component. In the handling of the events\nno new events are generated.\n\n    import MyComponent -- the client component\n    import Component -- this library\n\n    update : Msg -> Host -> (Host, Cmd Msg)\n    update msg host =\n        case msg of\n            ...\n            -- call the update manager\n            WrapMyComponent compMsg ->\n                Component.update\n                    MyComponent.update\n                    handleMyCompEvents\n                    .component\n                    (\\c h -> { h | component = c })\n                    WrapMyComponent\n                    compMsg\n                    host\n            ...\n\n    -- handle all possible events\n    handleMyCompEvents : Component.Event -> Host -> (Host, Cmd Msg)\n    handleMyCompEvents event host =\n        case event of\n            ...\n            MyComponent.Event1 -> ...\n            ...\n\n",
+                "type": "(cmsg -> comp -> Triple.Triple comp (Platform.Cmd.Cmd cmsg) (List.List cevent)) -> (cevent -> model -> ( model, Platform.Cmd.Cmd msg )) -> (model -> comp) -> (comp -> model -> model) -> (cmsg -> msg) -> cmsg -> model -> ( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "updateEvents",
+                "comment": " Performs the update and handling the events of a component. The event handler can generate new\nevents which can propagated to the host of the host.\n\n    import MyComponent -- the client component\n    import Component -- this library\n\n    update : Msg -> Host -> (Host, Cmd Msg, List Event)\n    update msg host =\n        case msg of\n            ...\n            -- call the update manager\n            WrapMyComponent compMsg ->\n                Component.updateEvents\n                    MyComponent.update\n                    handleMyCompEvents\n                    .component\n                    (\\c h -> { h | component = c })\n                    WrapMyComponent\n                    compMsg\n                    host\n            ...\n\n    -- handle all possible events. New events can be generated here.\n    handleMyCompEvents : Component.Event -> Host -> (Host, Cmd Msg, List Event)\n    handleMyCompEvents event host =\n        case event of\n            ...\n            MyComponent.Event1 -> ...\n            ...\n\n",
+                "type": "(cmsg -> comp -> Triple.Triple comp (Platform.Cmd.Cmd cmsg) (List.List cevent)) -> (cevent -> model -> Triple.Triple model (Platform.Cmd.Cmd msg) (List.List event)) -> (model -> comp) -> (comp -> model -> model) -> (cmsg -> msg) -> cmsg -> model -> Triple.Triple model (Platform.Cmd.Cmd msg) (List.List event)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Component.Test",
+        "comment": " If you want to test your components you can use the automatic tests or you create a private\nmain method in your component and open the page in `elm reactor`.\n\nThese methods helps you to create small component tests that you can test with `elm reactor` without\nwriting a large boilerplate.\n\n# Helper Types\n@docs DebugComponent, Program\n\n# Program\n@docs element, application, applicationNoUrl\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "DebugComponent",
+                "comment": " The internal model alias that is used by `element`, `application` and `applicationNoUrl`.\n",
+                "args": [
+                    "model",
+                    "event"
+                ],
+                "type": "{ model : model, events : List.List event, key : Maybe.Maybe Browser.Navigation.Key }"
+            },
+            {
+                "name": "Program",
+                "comment": " The test program type for component tests. This is an alias for `Platform.Program` but with an\ninternal model and no flags.\n",
+                "args": [
+                    "model",
+                    "msg",
+                    "event"
+                ],
+                "type": "Platform.Program () (Component.Test.DebugComponent model event) msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "application",
+                "comment": " Creates a small test program that you can use to test your components. This is similar to\n`Browser.application`.\n\nThis allows you to respond to url changes and navigate. You don't need to store the `Key` because it\nis automaticly provided in the update method for you.\n\nIf you set a rendering function to `viewEvents` all events from the `update` method are recorded and\nshown in your HTML model. If the rendering function for `viewEvents` is `Nothing` all returned\nevents are discarded and ignored.\n\n    -- don't need to be exposed. It is automaticly used by elm if you make this file directly or\n    -- open it in elm reactor.\n    main : Component.Test.Program MyComp MyCompMsg MyCompEvent\n    main =\n        Component.Test.application\n            { init = init\n            , view = view\n            , viewEvents = Nothing\n            , update = update\n            , subscriptions = subscriptions\n            , onUrlRequest = onUrlRequest\n            , onUrlChange = onUrlChange\n            }\n\n",
+                "type": "{ init : Url.Url -> Browser.Navigation.Key -> ( model, Platform.Cmd.Cmd msg ), view : model -> Html.Html msg, viewEvents : Maybe.Maybe (List.List event -> Html.Html Basics.Never), update : Browser.Navigation.Key -> msg -> model -> Triple.Triple model (Platform.Cmd.Cmd msg) (List.List event), subscriptions : model -> Platform.Sub.Sub msg, onUrlRequest : Browser.UrlRequest -> msg, onUrlChange : Url.Url -> msg } -> Component.Test.Program model msg event"
+            },
+            {
+                "name": "applicationNoUrl",
+                "comment": " Creates a small test program that you can use to test your components. This is similar to\n`Browser.application`.\n\nThis allows you to navigate the page. You don't need to store the `Key` because it\nis automaticly provided in the update method for you. You are not able to respond to url changes.\n\nIf you set a rendering function to `viewEvents` all events from the `update` method are recorded and\nshown in your HTML model. If the rendering function for `viewEvents` is `Nothing` all returned\nevents are discarded and ignored.\n\n    -- don't need to be exposed. It is automaticly used by elm if you make this file directly or\n    -- open it in elm reactor.\n    main : Component.Test.Program MyComp MyCompMsg MyCompEvent\n    main =\n        Component.Test.application\n            { init = init\n            , view = view\n            , viewEvents = Nothing\n            , update = update\n            , subscriptions = subscriptions\n            , noop = Noop\n            }\n\n",
+                "type": "{ init : ( model, Platform.Cmd.Cmd msg ), view : model -> Html.Html msg, viewEvents : Maybe.Maybe (List.List event -> Html.Html Basics.Never), update : Browser.Navigation.Key -> msg -> model -> Triple.Triple model (Platform.Cmd.Cmd msg) (List.List event), subscriptions : model -> Platform.Sub.Sub msg, noop : msg } -> Component.Test.Program model msg event"
+            },
+            {
+                "name": "element",
+                "comment": " Creates a small test program that you can use to test your components. This is similar to\n`Browser.element`.\n\nIf you set a rendering function to `viewEvents` all events from the `update` method are recorded and\nshown in your HTML model. If the rendering function for `viewEvents` is `Nothing` all returned\nevents are discarded and ignored.\n\n    -- don't need to be exposed. It is automaticly used by elm if you make this file directly or\n    -- open it in elm reactor.\n    main : Component.Test.Program MyComp MyCompMsg MyCompEvent\n    main =\n        Component.Test.element\n            { init = init\n            , view = view\n            , viewEvents = Nothing\n            , update = update\n            , subscriptions = subscriptions\n            }\n\n",
+                "type": "{ init : ( model, Platform.Cmd.Cmd msg ), view : model -> Html.Html msg, viewEvents : Maybe.Maybe (List.List event -> Html.Html Basics.Never), update : msg -> model -> Triple.Triple model (Platform.Cmd.Cmd msg) (List.List event), subscriptions : model -> Platform.Sub.Sub msg } -> Component.Test.Program model msg event"
+            }
+        ],
+        "binops": []
+    }
+]

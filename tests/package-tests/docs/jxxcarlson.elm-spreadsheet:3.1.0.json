@@ -1,0 +1,255 @@
+[
+    {
+        "name": "Cell",
+        "comment": " Cell specifies the kind content of Spreadsheet cells may have.\n\n\n## Types\n\n@docs Cell, Formula, Value, Index, Op, Operands, RawOperands\n\n\n## Functions\n\n@docs render, isValue, mapReal, opFromString, opFromString2, realValue, stringFromOp\n\n",
+        "unions": [
+            {
+                "name": "Formula",
+                "comment": " Examples:\n\nParse the text representation to see the internal representation of a formula:\n\n    > parse \"=A2+B3\"\n    Left (Formula Add (Pair { left = { col = 1, row = 0 }, right = { col = 2, row = 1 } }))\n\n    > parse \"=sum(A2:A8)\"\n    Left (Formula Add (Range { left = { col = 1, row = 0 }, right = { col = 7, row = 0 } }))\n\n    > parse \"=sum(B3:B9)\"\n    Left (Formula Add (Range { left = { col = 2, row = 1 }, right = { col = 8, row = 1 } }))\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Formula",
+                        [
+                            "Cell.Op",
+                            "Cell.Operands"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Op",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "NoOp",
+                        []
+                    ],
+                    [
+                        "Add",
+                        []
+                    ],
+                    [
+                        "Sub",
+                        []
+                    ],
+                    [
+                        "Mul",
+                        []
+                    ],
+                    [
+                        "Div",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Operands",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Pair",
+                        [
+                            "Cell.RawOperands"
+                        ]
+                    ],
+                    [
+                        "Range",
+                        [
+                            "Cell.RawOperands"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Value",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Integer",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "Real",
+                        [
+                            "Basics.Float"
+                        ]
+                    ],
+                    [
+                        "Boolean",
+                        [
+                            "Basics.Bool"
+                        ]
+                    ],
+                    [
+                        "String",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Undefined",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Cell",
+                "comment": " Parse the text representation to see the internal representation of a cell:\n\n    > parse \"3.1\"\n    Right (Real 3.1)\n\n",
+                "args": [],
+                "type": "Either.Either Cell.Formula Cell.Value"
+            },
+            {
+                "name": "Index",
+                "comment": " ",
+                "args": [],
+                "type": "{ row : Basics.Int, col : Basics.Int }"
+            },
+            {
+                "name": "RawOperands",
+                "comment": " ",
+                "args": [],
+                "type": "{ left : Cell.Index, right : Cell.Index }"
+            }
+        ],
+        "values": [
+            {
+                "name": "isValue",
+                "comment": " ",
+                "type": "Cell.Cell -> Basics.Bool"
+            },
+            {
+                "name": "mapReal",
+                "comment": " ",
+                "type": "(Basics.Float -> Basics.Float) -> Cell.Cell -> Cell.Cell"
+            },
+            {
+                "name": "opFromString",
+                "comment": " ",
+                "type": "String.String -> Cell.Op"
+            },
+            {
+                "name": "opFromString2",
+                "comment": " ",
+                "type": "String.String -> Cell.Op"
+            },
+            {
+                "name": "realValue",
+                "comment": " ",
+                "type": "Cell.Cell -> Maybe.Maybe Basics.Float"
+            },
+            {
+                "name": "render",
+                "comment": " ",
+                "type": "Cell.Cell -> String.String"
+            },
+            {
+                "name": "stringFromOp",
+                "comment": " ",
+                "type": "Cell.Op -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "CellParser",
+        "comment": "\n\n@docs parse, indexParser\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "indexParser",
+                "comment": "\n\n    > run C.parseIndex \"a2\"\n    Ok { col = 1, row = 0 }\n\n",
+                "type": "Parser.Parser Cell.Index"
+            },
+            {
+                "name": "parse",
+                "comment": "\n\n    > parse \"3.1\"\n    Right (Real 3.1)\n\n    > parse \"add A2,B3\"\n    Left (Formula Add (Pair { left = { col = 1, row = 0 }, right = { col = 2, row = 1 } }))\n\n    > parse \"add A2:A8\"\n    Left (Formula Add (Range { left = { col = 1, row = 0 }, right = { col = 7, row = 0 } }))mula Add (Pair { left = { col = 1, row = 0 }, right = { col = 7, row = 0 } }))\n\n    > parse \"add B3:B9\"\n    Left (Formula Add (Range { left = { col = 2, row = 1 }, right = { col = 8, row = 1 } }))\n\n",
+                "type": "String.String -> Cell.Cell"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "CellParserExcel",
+        "comment": "\n\n@docs parse, indexParser\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "indexParser",
+                "comment": "\n\n    > run C.parseIndex \"a2\"\n    Ok { col = 1, row = 0 }\n\n",
+                "type": "Parser.Parser Cell.Index"
+            },
+            {
+                "name": "parse",
+                "comment": "\n\n    > parse \"3.1\"\n    Right (Real 3.1)\n\n    > parse \"=A2+B7\"\n    Left (Formula Add (Pair { left = { col = 1, row = 0 }, right = { col = 6, row = 1 } }))\n\n    > parse \"=sum(A2:B7)\"\n    Left (Formula Add (Range { left = { col = 1, row = 0 }, right = { col = 6, row = 1 } }))\n\n    > parse \"=sum(A2:M7)\"\n    Left (Formula Add (Range { left = { col = 1, row = 0 }, right = { col = 6, row = 12 } }))\n\n",
+                "type": "String.String -> Cell.Cell"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Spreadsheet",
+        "comment": " This module provides functions to parse, evaluate, and render spreadsheets.\n\n\n## Types\n\n@docs Spreadsheet\n\n\n## Read\n\n@docs read, readFromList\n\n\n## Eval\n\n@docs eval, evalFormula, isEvaluated\n\n\n## Print\n\n@docs printAsList, print\n\n\n## Utility\n\n@docs getCell\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Spreadsheet",
+                "comment": " ",
+                "args": [],
+                "type": "Array2D.Array2D Cell.Cell"
+            }
+        ],
+        "values": [
+            {
+                "name": "eval",
+                "comment": " Evaluate the formulas in a spreadsheet\n",
+                "type": "Spreadsheet.Spreadsheet -> Spreadsheet.Spreadsheet"
+            },
+            {
+                "name": "evalFormula",
+                "comment": " ",
+                "type": "Basics.Int -> Basics.Int -> Cell.Formula -> Spreadsheet.Spreadsheet -> Spreadsheet.Spreadsheet"
+            },
+            {
+                "name": "getCell",
+                "comment": " ",
+                "type": "Basics.Int -> Basics.Int -> Spreadsheet.Spreadsheet -> Maybe.Maybe Cell.Cell"
+            },
+            {
+                "name": "isEvaluated",
+                "comment": " ",
+                "type": "Spreadsheet.Spreadsheet -> Basics.Bool"
+            },
+            {
+                "name": "print",
+                "comment": " ",
+                "type": "Spreadsheet.Spreadsheet -> String.String"
+            },
+            {
+                "name": "printAsList",
+                "comment": " ",
+                "type": "Spreadsheet.Spreadsheet -> List.List (List.List String.String)"
+            },
+            {
+                "name": "read",
+                "comment": " The function parse: String -> Cell is a parser for cells, e.g.,\nCellParser.parse or CellParserExcel.parse\n",
+                "type": "(String.String -> Cell.Cell) -> String.String -> Spreadsheet.Spreadsheet"
+            },
+            {
+                "name": "readFromList",
+                "comment": " ",
+                "type": "(String.String -> Cell.Cell) -> List.List (List.List String.String) -> Spreadsheet.Spreadsheet"
+            }
+        ],
+        "binops": []
+    }
+]

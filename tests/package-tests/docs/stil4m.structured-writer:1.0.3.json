@@ -1,0 +1,93 @@
+[
+    {
+        "name": "StructuredWriter",
+        "comment": " Write structured strings\n\n\n# Types\n\n@docs Writer\n\n\n# Write\n\n@docs write\n\n\n# Utils\n\n@docs append, bracesComma, bracketsComma, breaked, epsilon, indent, join, maybe, parensComma, sepBy, sepByComma, sepBySpace, spaced, string\n\n",
+        "unions": [
+            {
+                "name": "Writer",
+                "comment": " Opaque type which holds the data to be writter\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "append",
+                "comment": " Join two writers into one.\n",
+                "type": "StructuredWriter.Writer -> StructuredWriter.Writer -> StructuredWriter.Writer"
+            },
+            {
+                "name": "bracesComma",
+                "comment": " Join writers with commans, enclosed with braces. Puts all things on a new line if the first argument is `True`.\n",
+                "type": "Basics.Bool -> List.List StructuredWriter.Writer -> StructuredWriter.Writer"
+            },
+            {
+                "name": "bracketsComma",
+                "comment": " Join writers with commans, enclosed with brackets. Puts all things on a new line if the first argument is `True`.\n",
+                "type": "Basics.Bool -> List.List StructuredWriter.Writer -> StructuredWriter.Writer"
+            },
+            {
+                "name": "breaked",
+                "comment": " Break a few writers over different lines\n",
+                "type": "List.List StructuredWriter.Writer -> StructuredWriter.Writer"
+            },
+            {
+                "name": "epsilon",
+                "comment": " Write nothing\n",
+                "type": "StructuredWriter.Writer"
+            },
+            {
+                "name": "indent",
+                "comment": " Add indentation of `n` spaces\n\n    write (indent 2 (string \"foo\")) == \"  foo\"\n\n",
+                "type": "Basics.Int -> StructuredWriter.Writer -> StructuredWriter.Writer"
+            },
+            {
+                "name": "join",
+                "comment": " Join a bunch of writers into one.\n",
+                "type": "List.List StructuredWriter.Writer -> StructuredWriter.Writer"
+            },
+            {
+                "name": "maybe",
+                "comment": " Write something if it is present\n",
+                "type": "Maybe.Maybe StructuredWriter.Writer -> StructuredWriter.Writer"
+            },
+            {
+                "name": "parensComma",
+                "comment": " Join writers with commans, enclosed with parens. Puts all things on a new line if the first argument is `True`.\n",
+                "type": "Basics.Bool -> List.List StructuredWriter.Writer -> StructuredWriter.Writer"
+            },
+            {
+                "name": "sepBy",
+                "comment": " Join writers with the second value in the tuple and enclose with the first and last. Puts all things on a new line if the second argument is `True`.\n\n    write (sepBy ( \"<\", \"-\", \">\" ) False [ string \"a\", string \"b\" ]) == \"<a,b>\"\n\n",
+                "type": "( String.String, String.String, String.String ) -> Basics.Bool -> List.List StructuredWriter.Writer -> StructuredWriter.Writer"
+            },
+            {
+                "name": "sepByComma",
+                "comment": " Join writers with commas. Puts all things on a new line if the first argument is `True`.\n",
+                "type": "Basics.Bool -> List.List StructuredWriter.Writer -> StructuredWriter.Writer"
+            },
+            {
+                "name": "sepBySpace",
+                "comment": " Join writers with spaces. Puts all things on a new line if the first argument is `True`.\n",
+                "type": "Basics.Bool -> List.List StructuredWriter.Writer -> StructuredWriter.Writer"
+            },
+            {
+                "name": "spaced",
+                "comment": " Join a few writers with spaces\n",
+                "type": "List.List StructuredWriter.Writer -> StructuredWriter.Writer"
+            },
+            {
+                "name": "string",
+                "comment": " Write a literal string\n",
+                "type": "String.String -> StructuredWriter.Writer"
+            },
+            {
+                "name": "write",
+                "comment": " Transform a writer to a string\n",
+                "type": "StructuredWriter.Writer -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

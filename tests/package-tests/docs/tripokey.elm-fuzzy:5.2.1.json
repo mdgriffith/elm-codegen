@@ -1,0 +1,62 @@
+[
+    {
+        "name": "Fuzzy",
+        "comment": " This is library for performing fuzzy string matching.\n\n\n# Customization\n\n@docs addPenalty, removePenalty, movePenalty, insertPenalty, Config\n\n\n# Matching\n\n@docs match, Result, Match, Key\n\n",
+        "unions": [
+            {
+                "name": "Config",
+                "comment": " Represents a configuration element for customization.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Key",
+                "comment": " Represents a matching character in a Match.\n",
+                "args": [],
+                "type": "Basics.Int"
+            },
+            {
+                "name": "Match",
+                "comment": " Represents a matching word in hay.\nscore is the score that this Match contributes to the total score in a Result.\noffset is the index where this match starts in the hay.\nlength is the length of the match.\nkeys is a list of matching indexes within the word. The keys are relative to the offset.\n",
+                "args": [],
+                "type": "{ score : Basics.Int, offset : Basics.Int, length : Basics.Int, keys : List.List Fuzzy.Key }"
+            },
+            {
+                "name": "Result",
+                "comment": " Represents the result of a match.\nscore is the total score of the result.\nmatches is a list of matching words within the hay.\n",
+                "args": [],
+                "type": "{ score : Basics.Int, matches : List.List Fuzzy.Match }"
+            }
+        ],
+        "values": [
+            {
+                "name": "addPenalty",
+                "comment": " Create a penalty configuration that is applied to each additional character in hay.\n",
+                "type": "Basics.Int -> Fuzzy.Config"
+            },
+            {
+                "name": "insertPenalty",
+                "comment": " Create a penalty configuration that is applied to each character between two keys.\n",
+                "type": "Basics.Int -> Fuzzy.Config"
+            },
+            {
+                "name": "match",
+                "comment": " Perform fuzzy matching between a query String (needle) and a target String (hay).\nThe order of the arguments are significant. Lower score is better. Specifying some\nseparators will allow for partial matching within a sentence. The default configuration is\naddPenalty = 10, movePenalty = 1000, removePenalty = 10000, insertPenalty = 1.\n\n    let\n        simpleMatch config separators needle hay =\n            match config separators needle hay |> .score\n    in\n    simpleMatch [] [] \"test\" \"test\"\n        == 0\n            simpleMatch\n            []\n            []\n            \"tes\"\n            \"test\"\n        == 10\n            simpleMatch\n            [ addPenalty 10000 ]\n            []\n            \"tes\"\n            \"test\"\n        == 10000\n            simpleMatch\n            []\n            []\n            \"tst\"\n            \"test\"\n        == 11\n            simpleMatch\n            []\n            []\n            \"test\"\n            \"tste\"\n        == 1000\n            simpleMatch\n            []\n            []\n            \"test\"\n            \"tst\"\n        == 10000\n            simpleMatch\n            []\n            [ \"/\" ]\n            \"/u/b/s\"\n            \"/usr/local/bin/sh\"\n        == 50\n            simpleMatch\n            []\n            []\n            \"/u/b/s\"\n            \"/usr/local/bin/sh\"\n        == 2116\n            List.sortBy\n            (simpleMatch [] [] \"hrdevi\")\n            [ \"screen\", \"disk\", \"harddrive\", \"keyboard\", \"mouse\", \"computer\" ]\n        == [ \"harddrive\", \"keyboard\", \"disk\", \"screen\", \"computer\", \"mouse\" ]\n\n",
+                "type": "List.List Fuzzy.Config -> List.List String.String -> String.String -> String.String -> Fuzzy.Result"
+            },
+            {
+                "name": "movePenalty",
+                "comment": " Create a penalty configuration that is applied to each out of order character in hay.\n",
+                "type": "Basics.Int -> Fuzzy.Config"
+            },
+            {
+                "name": "removePenalty",
+                "comment": " Create a penalty configuration that is applied to each additional character in needle.\n",
+                "type": "Basics.Int -> Fuzzy.Config"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,41 @@
+[
+    {
+        "name": "Base64",
+        "comment": " This package can convert\n[bytes](https://package.elm-lang.org/packages/elm/bytes/latest/)\nto Base64 strings and vice versa.\n\n\n# Conversion\n\n@docs fromBytes, fromString, toBytes, toString\n\n\n# Bytes Encoder and Decoder\n\nSlightly lower level functions.\n\n[`fromBytes`](#fromBytes) and [`toBytes`](#toBytes) functions\nare pretty much wrappers around these functions.\n\n@docs encoder, decoder\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decoder",
+                "comment": " `decoder width` is a bytes decoder that will convert `width` bytes into a\nBase64 string.\n\nIt's used in [`fromBytes`](#fromBytes):\n\n    fromBytes : Bytes -> Maybe String\n    fromBytes bytes =\n        Bytes.Decode.decode (decoder (Bytes.width bytes)) bytes\n\n",
+                "type": "Basics.Int -> Bytes.Decode.Decoder String.String"
+            },
+            {
+                "name": "encoder",
+                "comment": " `encoder` returns a bytes encoder. It fails if the string that is passed\nto it is not a valid Base64 sequence.\n\nIt's used in [`toBytes`](#toBytes):\n\n    toBytes : String -> Maybe Bytes\n    toBytes string =\n        Maybe.map Bytes.Encode.encode (encoder string)\n\n",
+                "type": "String.String -> Maybe.Maybe Bytes.Encode.Encoder"
+            },
+            {
+                "name": "fromBytes",
+                "comment": " Convert bytes to a Base64 string.\nIf you want more control over the process, you should use [`decoder`](#decoder).\n\nThis function should never return `Nothing`, but it uses\n[`Bytes.Decode.decode`](https://package.elm-lang.org/packages/elm/bytes/latest/Bytes-Decode#decode),\nwhich returns a `Maybe String`.\n\n",
+                "type": "Bytes.Bytes -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "fromString",
+                "comment": " Encode a string into a Base64 string.\nThis function is a wrapper around [`fromBytes`](#fromBytes).\n\nSimilarly, it should never return `Nothing`, but alas, [`Bytes.Decode.decode`](https://package.elm-lang.org/packages/elm/bytes/latest/Bytes-Decode#decode),\nwhich [`fromBytes`](#fromBytes) uses, returns a `Maybe String`.\n\n",
+                "type": "String.String -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "toBytes",
+                "comment": " Convert a Base64 string to bytes.\nIf you want more control over the process, you should use [`encoder`](#encoder).\n\nThis function fails (returns `Nothing`) if you give it an invalid Base64 sequence.\n\n",
+                "type": "String.String -> Maybe.Maybe Bytes.Bytes"
+            },
+            {
+                "name": "toString",
+                "comment": " Decode a Base64 string into a string.\nThis function is a wrapper around [`toBytes`](#toBytes).\n\nIt will fail (return `Nothing`) if you give it an invalid Base64 sequence.\n\n",
+                "type": "String.String -> Maybe.Maybe String.String"
+            }
+        ],
+        "binops": []
+    }
+]

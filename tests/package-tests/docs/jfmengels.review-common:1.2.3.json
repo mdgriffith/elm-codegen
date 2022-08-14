@@ -1,0 +1,72 @@
+[
+    {
+        "name": "NoExposingEverything",
+        "comment": "\n\n@docs rule\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": " Forbids exporting everything from a module.\n\nModules should have hidden implementation details with an explicit API so that the module is used in a proper and controlled way.\nThe users of this module should not have to know about what is inside a module it is using, and they shouldn't need to access its internal details.\nTherefore, the API should be explicitly defined and ideally as small as possible.\n\n    config =\n        [ NoExposingEverything.rule\n        ]\n\nIf you would like to expose everything in your tests, you can configure the rule\nin the following manner:\n\n    config =\n        [ NoExposingEverything.rule\n            |> Rule.ignoreErrorsForDirectories [ \"tests/\" ]\n        ]\n\n\n## Fail\n\n    module A exposing (..)\n\n\n## Success\n\n    module A exposing (B(..), C, d)\n\n",
+                "type": "Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "NoImportingEverything",
+        "comment": "\n\n@docs rule\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": " Forbids importing everything from a module.\n\nWhen you import everything from a module, it becomes harder to know where a function\nor a type comes from. The official guide even\n[recommends against importing everything](https://guide.elm-lang.org/webapps/modules.html#using-modules).\n\n    config =\n        [ NoImportingEverything.rule []\n        ]\n\nTeams often have an agreement on the list of imports from which it is okay to expose everything, so\nyou can configure a list of exceptions.\n\n    config =\n        [ NoImportingEverything.rule [ \"Html\", \"Some.Module\" ]\n        ]\n\n\n## Fail\n\n    import A exposing (..)\n    import A as B exposing (..)\n\n\n## Success\n\n    import A as B exposing (B(..), C, d)\n\n    -- If configured with `[ \"Html\" ]`\n    import Html exposing (..)\n\n",
+                "type": "List.List String.String -> Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "NoMissingTypeAnnotation",
+        "comment": "\n\n@docs rule\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": " Reports top-level declarations that do not have a type annotation.\n\nType annotations help you understand what happens in the code, and it will help the compiler give better error messages.\n\n    config =\n        [ NoMissingTypeAnnotation.rule\n        ]\n\nThis rule does not report declarations without a type annotation inside a `let in`.\nFor that, enable [`NoMissingTypeAnnotationInLetIn`](./NoMissingTypeAnnotationInLetIn).\n\n\n## Fail\n\n    a =\n        1\n\n\n## Success\n\n    a : number\n    a =\n        1\n\n    b : number\n    b =\n        let\n            c =\n                2\n        in\n        c\n\n",
+                "type": "Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "NoMissingTypeAnnotationInLetIn",
+        "comment": "\n\n@docs rule\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": " Reports `let in` declarations that do not have a type annotation.\n\nType annotations help you understand what happens in the code, and it will help the compiler give better error messages.\n\n    config =\n        [ NoMissingTypeAnnotationInLetIn.rule\n        ]\n\nThis rule does not report top-level declarations without a type annotation inside a `let in`.\nFor that, enable [`NoMissingTypeAnnotation`](./NoMissingTypeAnnotation).\n\n\n## Fail\n\n    a : number\n    a =\n        let\n            -- Missing annotation\n            b =\n                2\n        in\n        b\n\n\n## Success\n\n    -- Top-level annotation is not necessary, but good to have!\n    a : number\n    a =\n        let\n            b : number\n            b =\n                2\n        in\n        b\n\n",
+                "type": "Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "NoMissingTypeExpose",
+        "comment": "\n\n@docs rule\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": " Reports types that should be exposed but are not.\n\nIf a type is not exposed then it can be impossible to annotate functions or values that use them outside of the module. Affected types may be used in exposed function signatures, type aliases or other custom types.\n\n    import NoMissingTypeExpose\n\n    config : List Rule\n    config =\n        [ NoMissingTypeExpose.rule\n        ]\n\n\n## Fail\n\n    module Happiness exposing (happy, toString)\n\n    -- Type `Happiness` is private because it's not been exposed\n\n    type Happiness\n        = Happy\n\n    -- Private type `Happiness` used by exposed function `toString`\n    toString : Happiness -> String\n    toString happiness =\n        \"Happy\"\n\n    -- Private type `Happiness` used by exposed value `happy`\n    happy : Happiness\n    happy =\n        Happy\n\n## Success\n\n    module Happiness exposing (Happiness, happy, toString)\n\n    type Happiness\n        = Happy\n\n    toString : Happiness -> String\n    toString happiness =\n        \"Happy\"\n\n    happy : Happiness\n    happy =\n        Happy\n\n",
+                "type": "Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    }
+]

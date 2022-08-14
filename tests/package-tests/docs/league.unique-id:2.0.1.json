@@ -1,0 +1,71 @@
+[
+    {
+        "name": "Unique",
+        "comment": " Pure generation of unique identifiers in Elm.\n\n\n# Types\n\n@docs Id, Unique\n\n\n# Run\n\n@docs run\n\n\n# Introduction\n\n@docs return, unique\n\n\n# Sequencing\n\n@docs andThen, map, map2, map3, replicate, sequence\n\n",
+        "unions": [
+            {
+                "name": "Id",
+                "comment": " The type of an identifier. Identifiers are integers, but this is an opaque\ntype so that we cannot introduce them by accident. Equality and toString are\nsupported on `Id` values.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Unique",
+                "comment": " A computation that consumes unique identifiers and produces a value of type\n`a`.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "andThen",
+                "comment": " Chain together two `Unique` computations.\n",
+                "type": "(a -> Unique.Unique b) -> Unique.Unique a -> Unique.Unique b"
+            },
+            {
+                "name": "map",
+                "comment": " Apply a function to the result of a `Unique` computation.\n",
+                "type": "(a -> b) -> Unique.Unique a -> Unique.Unique b"
+            },
+            {
+                "name": "map2",
+                "comment": " Apply a function to the result of two `Unique` computations.\n",
+                "type": "(a -> b -> c) -> Unique.Unique a -> Unique.Unique b -> Unique.Unique c"
+            },
+            {
+                "name": "map3",
+                "comment": " Apply a function to the result of three `Unique` computations.\n",
+                "type": "(a -> b -> c -> d) -> Unique.Unique a -> Unique.Unique b -> Unique.Unique c -> Unique.Unique d"
+            },
+            {
+                "name": "replicate",
+                "comment": " Repeatedly invoke a `Unique` computation, generating a list of results.\n",
+                "type": "Basics.Int -> Unique.Unique a -> Unique.Unique (List.List a)"
+            },
+            {
+                "name": "return",
+                "comment": " Return a constant value without consuming any IDs.\n",
+                "type": "a -> Unique.Unique a"
+            },
+            {
+                "name": "run",
+                "comment": " Run a computation that consumes unique IDs. Within one invocation of `run`,\nthe generated `Id` values are guaranteed to be unique. However, multiple\ninvocations of `run` will generate conflicting `Id`s.\n",
+                "type": "Unique.Unique a -> a"
+            },
+            {
+                "name": "sequence",
+                "comment": " Execute a list of `Unique` computations in order.\n",
+                "type": "List.List (Unique.Unique a) -> Unique.Unique (List.List a)"
+            },
+            {
+                "name": "unique",
+                "comment": " Generate a unique ID.\n",
+                "type": "Unique.Unique Unique.Id"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,96 @@
+[
+    {
+        "name": "Broker",
+        "comment": " Apache Kafka-inspired data stream buffer.\n\n\n## Types\n\n@docs Broker, Offset\n\n\n## APIs\n\n@docs initialize, append, read, readOldest, get, update\n\n\n## Decoder/Encoder\n\n@docs decoder, encode\n\n\n## Monitoring means\n\n@docs capacity, isEmpty, oldestReadableOffset, nextOffsetToWrite, offsetToString, offsetFromString\n\n",
+        "unions": [
+            {
+                "name": "Broker",
+                "comment": " Data stream buffer.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            },
+            {
+                "name": "Offset",
+                "comment": " Global offset within a `Broker`.\n\nOffset itself can live independently from its generating `Broker`.\n\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "append",
+                "comment": " Append an item to a Broker.\n",
+                "type": "a -> Broker.Broker a -> Broker.Broker a"
+            },
+            {
+                "name": "capacity",
+                "comment": " Returns capacity (number of possible elements) of the Broker.\n",
+                "type": "Broker.Broker a -> Basics.Int"
+            },
+            {
+                "name": "decoder",
+                "comment": " Decode JS value into Broker. You must supply Decoder for items.\n\nPaired with `encode`, you can \"dump and reload\" an exisiting Broker.\n\n",
+                "type": "Json.Decode.Decoder a -> Json.Decode.Decoder (Broker.Broker a)"
+            },
+            {
+                "name": "encode",
+                "comment": " Encode Broker into JS value. You must supply encode function for items.\n\nPaired with `decoder`, you can \"dump and reload\" an exisitng Broker.\n\nDo note that, this function naively encodes internal structure of Broker into JS values,\nwhich may require non-ignorable amount of work (both in encode and decode) if capacity of the Broker is big.\nMore sophisticated \"resume\" behavior might be needed later.\n\n",
+                "type": "(a -> Json.Encode.Value) -> Broker.Broker a -> Json.Encode.Value"
+            },
+            {
+                "name": "get",
+                "comment": " Get an item exactly at an `Offset`.\n\nReturns `Nothing` if target segment is already evicted or somehow invalid.\n\n",
+                "type": "Broker.Offset -> Broker.Broker a -> Maybe.Maybe a"
+            },
+            {
+                "name": "initialize",
+                "comment": " Initializes a `Broker` with a set of configuration.\n\n  - `numSegments` - Number of internal segments. 2 &le; `numSegments` &le; 100\n  - `segmentSize` - Size of each segment. 100 &le; `segmentSize` &le; 100,000\n\nConstraints for these configurations are not yet studied well.\n\n",
+                "type": "{ numSegments : Basics.Int, segmentSize : Basics.Int } -> Broker.Broker a"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Returns whether a Broker is empty or not.\n",
+                "type": "Broker.Broker a -> Basics.Bool"
+            },
+            {
+                "name": "nextOffsetToWrite",
+                "comment": " Returns an `Offset` that next item will be written to.\n",
+                "type": "Broker.Broker a -> Broker.Offset"
+            },
+            {
+                "name": "offsetFromString",
+                "comment": " Tries to convert a `String` into `Offset`.\n\nCan be used to reload consumer offset from external storage.\n\nMake sure that a reloaded `Offset` is used against the very `Broker`\nthat produced that `Offset`.\n\n",
+                "type": "String.String -> Maybe.Maybe Broker.Offset"
+            },
+            {
+                "name": "offsetToString",
+                "comment": " Converts an `Offset` into a sortable `String` representation.\n\nAlso usable when you need to store and reload consumer offset.\n\n",
+                "type": "Broker.Offset -> String.String"
+            },
+            {
+                "name": "oldestReadableOffset",
+                "comment": " Returns the oldest readable `Offset` of a `Broker`. Items older than this `Offset` are already evicted.\n\nIf the `Broker` is yet empty, returns `Nothing`.\n\n",
+                "type": "Broker.Broker a -> Maybe.Maybe Broker.Offset"
+            },
+            {
+                "name": "read",
+                "comment": " Read a `Broker` by supplying previously read `Offset` (consumer offset),\nreturning a next item and its `Offset`, or `Nothing` if all items are consumed.\n\nIf the `Offset` is too old and the target segment is already evicted, returns the oldest readable item.\n\nCurrently it assumes Brokers cannot be reconfigured.\nThis means, if the `Offset` is produced from the same `Broker`,\nit can never overtake the current write pointer or become out of bound of the `Broker`.\n\n",
+                "type": "Broker.Offset -> Broker.Broker a -> Maybe.Maybe ( a, Broker.Offset )"
+            },
+            {
+                "name": "readOldest",
+                "comment": " Read a `Broker` from the oldest item. Returns an item and its `Offset`,\nor `Nothing` if the `Broker` is empty.\n",
+                "type": "Broker.Broker a -> Maybe.Maybe ( a, Broker.Offset )"
+            },
+            {
+                "name": "update",
+                "comment": " Update an item at an `Offset` of a `Broker`.\n\nIf target segment is already evicted or not-updatable (soon-to-be-evicted), the `Broker` kept unchanged.\n\n",
+                "type": "Broker.Offset -> (a -> a) -> Broker.Broker a -> Broker.Broker a"
+            }
+        ],
+        "binops": []
+    }
+]

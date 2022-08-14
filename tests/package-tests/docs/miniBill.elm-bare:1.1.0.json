@@ -1,0 +1,299 @@
+[
+    {
+        "name": "Codec.Bare",
+        "comment": " This module is an implementation of [the BARE format](https://baremessages.org/),\nwhich at the time of writing is an [IETF draft](https://tools.ietf.org/html/draft-devault-bare-00).\n\nThe names of the functions correspond, as far as possible, to the ones in the original specification.\n\nMost of the following documentation is taken from\n[the original specification (CC-BY-SA)](https://git.sr.ht/~sircmpwn/bare),\nand while the code is licensed with a MIT license, this documentation is thus CC-BY-SA itself.\n\nBinary Application Record Encoding (BARE) is, as the name implies, a simple\nbinary representation for structured application data.\n\nBARE messages omit type information, and are not self-describing. The structure\nof a message must be established out of band, generally by prior agreement and\ncontext - for example, if a BARE message is returned from /api/user/info, it\ncan be inferred from context that the message represents user information, and\nthe structure of such messages is available in the documentation for this API.\n\n\n# Types\n\n@docs Codec, Encoder, Bytes\n\n\n# Decode\n\n@docs Decoder, decoder, decodeValue\n\n\n# Encode\n\n@docs encoder, encodeToValue\n\n\n# Primitive Types\n\n\n## Integers\n\n@docs uint\n@docs int\n\n\n## Unsigned fixed precision integers\n\nUnsigned integers of a fixed precision, respectively 8, 16, 32, and 64 bits.\nThey are encoded in little-endian (least significant octet first).\n\n@docs u8, u16, u32, u64\n\n\n## Signed fixed precision integers\n\nSigned integers of a fixed precision, respectively 8, 16, and 32 bits. `elm-bare` does not support signed 64 bits integers yet (PRs welcome).\nThey are encoded in little-endian (least significant octet first), with two's compliment notation.\n\n@docs i8, i16, i32\n\n\n## Floating point numbers\n\nFloating-point numbers represented with the IEEE 754 binary32 and binary64 floating point number formats.\n\n@docs f32, f64\n\n\n## Others\n\n@docs bool\n@docs enum, enumWithValues\n@docs string, char\n@docs dataWithLength, data\n@docs void\n\n\n# Aggregate types\n\n@docs optional\n@docs listWithLength\n@docs list\n@docs arrayWithLength\n@docs array\n@docs set\n@docs dict\n\n\n# Tagged unions\n\n@docs TaggedUnionCodec, taggedUnion, variant0, variant1, variant2, variant3, variant4, variant5, variant6, variant7, variant8, buildTaggedUnion\n\n\n# Structs\n\n@docs StructCodec, struct, field, buildStruct\n\n\n# Mapping\n\n@docs map, andThen\n\n\n# Fancy Codecs\n\n@docs lazy, recursive\n\n",
+        "unions": [
+            {
+                "name": "Codec",
+                "comment": " A value that knows how to encode and decode a sequence of bytes.\n\nA `Codec a` contains a `Bytes.Decoder a` and the corresponding `a -> Bytes.Encoder`.\n\n",
+                "args": [
+                    "a"
+                ],
+                "cases": []
+            },
+            {
+                "name": "StructCodec",
+                "comment": " A partially built `Codec` for a struct (called an object in Elm).\n",
+                "args": [
+                    "a",
+                    "b"
+                ],
+                "cases": []
+            },
+            {
+                "name": "TaggedUnionCodec",
+                "comment": " A partially built `Codec` for a tagged union (called a custom type in Elm).\n",
+                "args": [
+                    "match",
+                    "v"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Bytes",
+                "comment": " A sequence of bytes. Refer to the [elm/bytes docs][bytes] for more information.\n\n[bytes]: https://package.elm-lang.org/packages/elm/bytes/latest/Bytes#Bytes\n\n",
+                "args": [],
+                "type": "Bytes.Bytes"
+            },
+            {
+                "name": "Decoder",
+                "comment": " Describes how to turn a sequence of bytes into a nice Elm value.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "Bytes.Decode.Decoder a"
+            },
+            {
+                "name": "Encoder",
+                "comment": " Describes how to generate a sequence of bytes.\n",
+                "args": [],
+                "type": "Bytes.Encode.Encoder"
+            }
+        ],
+        "values": [
+            {
+                "name": "andThen",
+                "comment": " Transform a `Codec` in a way that can potentially fail when decoding.\n\n    {-| Volume must be between 0 and 1.\n    -}\n    volumeCodec =\n        Codec.float64\n            |> Codec.andThen\n                (\\volume ->\n                    if volume <= 1 && volume >= 0 then\n                        Just volume\n\n                    else\n                        Nothing\n                )\n                (\\volume -> volume)\n\nNote that this function is a bit risky.\nIf you encode data that fails to decode, you won't get any indication as to what happened.\n\n",
+                "type": "(a -> Maybe.Maybe b) -> (b -> a) -> Codec.Bare.Codec a -> Codec.Bare.Codec b"
+            },
+            {
+                "name": "array",
+                "comment": " A variable-length array of values of an uniform type. The length of the array (in values) is encoded as a uint, followed by the encoded values of each member of the array concatenated.\n",
+                "type": "Codec.Bare.Codec a -> Codec.Bare.Codec (Array.Array a)"
+            },
+            {
+                "name": "arrayWithLength",
+                "comment": " An array of values of an uniform type, with a fixed length. The length is not encoded into the message. The encoded values of each member of the array are concatenated to form the encoded array.\n",
+                "type": "Basics.Int -> Codec.Bare.Codec a -> Codec.Bare.Codec (Array.Array a)"
+            },
+            {
+                "name": "bool",
+                "comment": " A boolean value, either true or false, encoded as a u8 type with a value of one or zero, respectively representing true or false.\n\nIf a value other than one or zero is found in the u8 representation of the bool, the message is considered invalid.\n\n",
+                "type": "Codec.Bare.Codec Basics.Bool"
+            },
+            {
+                "name": "buildStruct",
+                "comment": " Create a `Codec` from a fully specified `StructCodec`.\n",
+                "type": "Codec.Bare.StructCodec a a -> Codec.Bare.Codec a"
+            },
+            {
+                "name": "buildTaggedUnion",
+                "comment": " Build a `Codec` for a fully specified tagged union.\n",
+                "type": "Codec.Bare.TaggedUnionCodec (a -> Codec.Bare.Encoder) a -> Codec.Bare.Codec a"
+            },
+            {
+                "name": "char",
+                "comment": " A single `Char`. It is encoded as a string.\n",
+                "type": "Codec.Bare.Codec Char.Char"
+            },
+            {
+                "name": "data",
+                "comment": " Arbitrary data of a variable length in octets. The length is encoded first as a uint, followed by the data itself encoded literally.\n",
+                "type": "Codec.Bare.Codec Codec.Bare.Bytes"
+            },
+            {
+                "name": "dataWithLength",
+                "comment": " Arbitrary data with a fixed \"length\" in octets, e.g. `dataWithLength 16`. The data is encoded literally in the message.\n",
+                "type": "Basics.Int -> Codec.Bare.Codec Codec.Bare.Bytes"
+            },
+            {
+                "name": "decodeValue",
+                "comment": " Run a `Codec` to turn a sequence of bytes into an Elm value.\n",
+                "type": "Codec.Bare.Codec a -> Codec.Bare.Bytes -> Maybe.Maybe a"
+            },
+            {
+                "name": "decoder",
+                "comment": " Extracts the `Decoder` contained inside the `Codec`.\n",
+                "type": "Codec.Bare.Codec a -> Codec.Bare.Decoder a"
+            },
+            {
+                "name": "dict",
+                "comment": " An associative list of values of type `a` keyed by values of type `comparable`, e.g. `dict u32 string`. The encoded representation of a map begins with the number of key/value pairs as a uint, followed by the encoded key/value pairs concatenated. Each key/value pair is encoded as the encoded key concatenated with the encoded value.\n\nThis is not called `map` to avoid clashing with the common usage of the term in Elm.\n\n",
+                "type": "Codec.Bare.Codec comparable -> Codec.Bare.Codec a -> Codec.Bare.Codec (Dict.Dict comparable a)"
+            },
+            {
+                "name": "encodeToValue",
+                "comment": " Convert an Elm value into a sequence of bytes.\n",
+                "type": "Codec.Bare.Codec a -> a -> Codec.Bare.Bytes"
+            },
+            {
+                "name": "encoder",
+                "comment": " Extracts the encoding function contained inside the `Codec`.\n",
+                "type": "Codec.Bare.Codec a -> a -> Codec.Bare.Encoder"
+            },
+            {
+                "name": "enum",
+                "comment": " An unsigned integer value from a set of possible values agreed upon in advance, encoded with the uint type.\n\nAn enum whose uint value is not a member of the values agreed upon in advance is considered invalid.\n\nNote that this makes the enum type unsuitable for representing several enum values which have been combined with a bitwise OR operation.\n\n",
+                "type": "List.List a -> Codec.Bare.Codec a"
+            },
+            {
+                "name": "enumWithValues",
+                "comment": " An unsigned integer value from a set of possible values agreed upon in advance, encoded with the uint type.\n\nThis version allows you to specify how values will be encoded.\n\nAn enum whose uint value is not a member of the values agreed upon in advance is considered invalid.\n\nNote that this makes the enum type unsuitable for representing several enum values which have been combined with a bitwise OR operation.\n\n",
+                "type": "List.List ( a, Basics.Int ) -> Codec.Bare.Codec a"
+            },
+            {
+                "name": "f32",
+                "comment": " Due to Elm`Float\\`s being 64-bit, encoding and decoding it as a 32-bit float won't be exactly equal to the original value.\n",
+                "type": "Codec.Bare.Codec Basics.Float"
+            },
+            {
+                "name": "f64",
+                "comment": " ",
+                "type": "Codec.Bare.Codec Basics.Float"
+            },
+            {
+                "name": "field",
+                "comment": " Specify how to get a value from the struct we want to encode and then give a `Codec` for that value.\n",
+                "type": "(a -> f) -> Codec.Bare.Codec f -> Codec.Bare.StructCodec a (f -> b) -> Codec.Bare.StructCodec a b"
+            },
+            {
+                "name": "i16",
+                "comment": " ",
+                "type": "Codec.Bare.Codec Basics.Int"
+            },
+            {
+                "name": "i32",
+                "comment": " ",
+                "type": "Codec.Bare.Codec Basics.Int"
+            },
+            {
+                "name": "i8",
+                "comment": " ",
+                "type": "Codec.Bare.Codec Basics.Int"
+            },
+            {
+                "name": "int",
+                "comment": " A signed integer with a variable-length encoding. Signed integers are represented as uint using a \"zig-zag\" encoding: positive values x are written as 2x + 0, negative values are written as 2(^x) + 1. In other words, negative numbers are complemented and whether to complement is encoded in bit 0\n\nThe maximum precision of such a number is 56-bits (64-bits in the original spec, but Elm `Int`s start to become unreliable after 56-bits, so caveat emptor). The maximum length of an encoded uint should thus be 8 octects but can be up to 10 octects for out-of-range integers.\n\n",
+                "type": "Codec.Bare.Codec Basics.Int"
+            },
+            {
+                "name": "lazy",
+                "comment": " This is useful for recursive structures that are not easily modeled with `recursive`.\n\n    type Peano\n        = Peano (Maybe Peano)\n\n    {-| This is the same example used in Codec.recursive but adapted for lazy.\n    -}\n    peanoCodec : Codec Peano\n    peanoCodec =\n        Codec.maybe (Codec.lazy (\\() -> peanoCodec)) |> Codec.map Peano (\\(Peano a) -> a)\n\n",
+                "type": "(() -> Codec.Bare.Codec a) -> Codec.Bare.Codec a"
+            },
+            {
+                "name": "list",
+                "comment": " A variable-length list of values of an uniform type. The length of the list (in values) is encoded as a uint, followed by the encoded values of each member of the list concatenated.\n",
+                "type": "Codec.Bare.Codec a -> Codec.Bare.Codec (List.List a)"
+            },
+            {
+                "name": "listWithLength",
+                "comment": " A list of values of an uniform type, with a fixed length. The length is not encoded into the message. The encoded values of each member of the list are concatenated to form the encoded list.\n",
+                "type": "Basics.Int -> Codec.Bare.Codec a -> Codec.Bare.Codec (List.List a)"
+            },
+            {
+                "name": "map",
+                "comment": " Transform a `Codec`.\n",
+                "type": "(a -> b) -> (b -> a) -> Codec.Bare.Codec a -> Codec.Bare.Codec b"
+            },
+            {
+                "name": "optional",
+                "comment": " A value which may or may not be present. Represented as either a u8 with a value of zero, indicating that the optional value is unset; or a u8 with a value of one, followed by the encoded data of the optional type.\n\nAn optional value whose initial u8 is set to a number other than zero or one is considered invalid.\n\n",
+                "type": "Codec.Bare.Codec a -> Codec.Bare.Codec (Maybe.Maybe a)"
+            },
+            {
+                "name": "recursive",
+                "comment": " Create a `Codec` for a recursive data structure.\nThe argument to the function you need to pass is the fully formed `Codec`, see the FAQ for details.\n\n    type Peano\n        = Peano (Maybe Peano)\n\n    peanoCodec : Codec Peano\n    peanoCodec =\n        Codec.recursive\n            (\\finishedCodec ->\n                Codec.maybe finishedCodec\n                    |> Codec.map Peano (\\(Peano p) -> p)\n            )\n\n",
+                "type": "(Codec.Bare.Codec a -> Codec.Bare.Codec a) -> Codec.Bare.Codec a"
+            },
+            {
+                "name": "set",
+                "comment": " A variable-length set of values of an uniform type. The length of the set (in values) is encoded as a uint, followed by the encoded values of each member of the set concatenated.\n",
+                "type": "Codec.Bare.Codec comparable -> Codec.Bare.Codec (Set.Set comparable)"
+            },
+            {
+                "name": "string",
+                "comment": " A string of text. The length of the text in octets is encoded first as a uint, followed by the text data represented with the UTF-8 encoding.\n\nIf the data is found to contain invalid UTF-8 sequences, it is considered invalid.\n\n",
+                "type": "Codec.Bare.Codec String.String"
+            },
+            {
+                "name": "struct",
+                "comment": " Start creating a `Codec` for a struct. You should pass the main constructor as argument.\n\nA struct is a set of values of arbitrary types, concatenated together in an order known in advance.\n\nIf you don't have one (for example it's a simple type with no name), you should pass a function that given the field values builds an object.\n\n    type alias Point =\n        { x : Int\n        , y : Int\n        }\n\n    pointCodec : Codec Point\n    pointCodec =\n        Codec.struct Point\n            |> Codec.field .x Codec.signedInt\n            |> Codec.field .y Codec.signedInt\n            |> Codec.buildStruct\n\n",
+                "type": "b -> Codec.Bare.StructCodec a b"
+            },
+            {
+                "name": "taggedUnion",
+                "comment": " Starts building a `Codec` for a tagged union.\n\nA tagged union is a value that can be one of any type from a set. Each type in the set is assigned a numeric representation, starting at zero and incrementing for each type. The value is encoded as the selected tag as a uint, followed by the value itself encoded as that type.\n\n`elm-bare` allows you to map this directly to Elm custom types. For easier interoperability with other languages you should restrict yourself to `variant0` and `variant1` (using `struct` to simulate multiple arguments).\n\nYou need to pass a pattern matching function, see the FAQ for details.\n\n    type Semaphore\n        = Red Int String Bool\n        | Yellow Float\n        | Green\n\n    semaphoreCodec : Codec Semaphore\n    semaphoreCodec =\n        Codec.taggedUnion\n            (\\redEncoder yellowEncoder greenEncoder value ->\n                case value of\n                    Red i s b ->\n                        redEncoder i s b\n\n                    Yellow f ->\n                        yellowEncoder f\n\n                    Green ->\n                        greenEncoder\n            )\n            |> Codec.variant3 0 Red Codec.signedInt Codec.string Codec.bool\n            |> Codec.variant1 1 Yellow Codec.float64\n            |> Codec.variant0 2 Green\n            |> Codec.buildTaggedUnion\n\n",
+                "type": "match -> Codec.Bare.TaggedUnionCodec match value"
+            },
+            {
+                "name": "u16",
+                "comment": " ",
+                "type": "Codec.Bare.Codec Basics.Int"
+            },
+            {
+                "name": "u32",
+                "comment": " ",
+                "type": "Codec.Bare.Codec Basics.Int"
+            },
+            {
+                "name": "u64",
+                "comment": " WARNING (from the official Elm docs): Note: `Int` math is well-defined in the range -2^31 to 2^31 - 1.\nOutside of that range, the behavior is determined by the compilation target.\nWhen generating JavaScript, the safe range expands to -2^53 to 2^53 - 1 for some operations,\nbut if we generate WebAssembly some day, we would do the traditional integer overflow.\nThis quirk is necessary to get good performance on quirky compilation targets.\n",
+                "type": "Codec.Bare.Codec Basics.Int"
+            },
+            {
+                "name": "u8",
+                "comment": " ",
+                "type": "Codec.Bare.Codec Basics.Int"
+            },
+            {
+                "name": "uint",
+                "comment": " An unsigned integer with a variable-length encoding. Each octet of the encoded value has the most-significant bit set, except for the last octet. The remaining bits are the integer value in 7-bit groups, least-significant first.\n\nThe maximum precision of such a number is 56-bits (64-bits in the original spec, but Elm `Int`s start to become unreliable after 56-bits, so caveat emptor). The maximum length of an encoded uint should thus be 8 octects but can be up to 10 octects for out-of-range integers.\n\n",
+                "type": "Codec.Bare.Codec Basics.Int"
+            },
+            {
+                "name": "variant0",
+                "comment": " Define a variant with 0 parameters for a tagged union.\n",
+                "type": "Basics.Int -> v -> Codec.Bare.TaggedUnionCodec (Codec.Bare.Encoder -> a) v -> Codec.Bare.TaggedUnionCodec a v"
+            },
+            {
+                "name": "variant1",
+                "comment": " Define a variant with 1 parameters for a tagged union.\n",
+                "type": "Basics.Int -> (a -> v) -> Codec.Bare.Codec a -> Codec.Bare.TaggedUnionCodec ((a -> Codec.Bare.Encoder) -> b) v -> Codec.Bare.TaggedUnionCodec b v"
+            },
+            {
+                "name": "variant2",
+                "comment": " Define a variant with 2 parameters for a tagged union.\n",
+                "type": "Basics.Int -> (a -> b -> v) -> Codec.Bare.Codec a -> Codec.Bare.Codec b -> Codec.Bare.TaggedUnionCodec ((a -> b -> Codec.Bare.Encoder) -> c) v -> Codec.Bare.TaggedUnionCodec c v"
+            },
+            {
+                "name": "variant3",
+                "comment": " Define a variant with 3 parameters for a tagged union.\n",
+                "type": "Basics.Int -> (a -> b -> c -> v) -> Codec.Bare.Codec a -> Codec.Bare.Codec b -> Codec.Bare.Codec c -> Codec.Bare.TaggedUnionCodec ((a -> b -> c -> Codec.Bare.Encoder) -> partial) v -> Codec.Bare.TaggedUnionCodec partial v"
+            },
+            {
+                "name": "variant4",
+                "comment": " Define a variant with 4 parameters for a tagged union.\n",
+                "type": "Basics.Int -> (a -> b -> c -> d -> v) -> Codec.Bare.Codec a -> Codec.Bare.Codec b -> Codec.Bare.Codec c -> Codec.Bare.Codec d -> Codec.Bare.TaggedUnionCodec ((a -> b -> c -> d -> Codec.Bare.Encoder) -> partial) v -> Codec.Bare.TaggedUnionCodec partial v"
+            },
+            {
+                "name": "variant5",
+                "comment": " Define a variant with 5 parameters for a tagged union.\n",
+                "type": "Basics.Int -> (a -> b -> c -> d -> e -> v) -> Codec.Bare.Codec a -> Codec.Bare.Codec b -> Codec.Bare.Codec c -> Codec.Bare.Codec d -> Codec.Bare.Codec e -> Codec.Bare.TaggedUnionCodec ((a -> b -> c -> d -> e -> Codec.Bare.Encoder) -> partial) v -> Codec.Bare.TaggedUnionCodec partial v"
+            },
+            {
+                "name": "variant6",
+                "comment": " Define a variant with 6 parameters for a tagged union.\n",
+                "type": "Basics.Int -> (a -> b -> c -> d -> e -> f -> v) -> Codec.Bare.Codec a -> Codec.Bare.Codec b -> Codec.Bare.Codec c -> Codec.Bare.Codec d -> Codec.Bare.Codec e -> Codec.Bare.Codec f -> Codec.Bare.TaggedUnionCodec ((a -> b -> c -> d -> e -> f -> Codec.Bare.Encoder) -> partial) v -> Codec.Bare.TaggedUnionCodec partial v"
+            },
+            {
+                "name": "variant7",
+                "comment": " Define a variant with 7 parameters for a tagged union.\n",
+                "type": "Basics.Int -> (a -> b -> c -> d -> e -> f -> g -> v) -> Codec.Bare.Codec a -> Codec.Bare.Codec b -> Codec.Bare.Codec c -> Codec.Bare.Codec d -> Codec.Bare.Codec e -> Codec.Bare.Codec f -> Codec.Bare.Codec g -> Codec.Bare.TaggedUnionCodec ((a -> b -> c -> d -> e -> f -> g -> Codec.Bare.Encoder) -> partial) v -> Codec.Bare.TaggedUnionCodec partial v"
+            },
+            {
+                "name": "variant8",
+                "comment": " Define a variant with 8 parameters for a tagged union.\n",
+                "type": "Basics.Int -> (a -> b -> c -> d -> e -> f -> g -> h -> v) -> Codec.Bare.Codec a -> Codec.Bare.Codec b -> Codec.Bare.Codec c -> Codec.Bare.Codec d -> Codec.Bare.Codec e -> Codec.Bare.Codec f -> Codec.Bare.Codec g -> Codec.Bare.Codec h -> Codec.Bare.TaggedUnionCodec ((a -> b -> c -> d -> e -> f -> g -> h -> Codec.Bare.Encoder) -> partial) v -> Codec.Bare.TaggedUnionCodec partial v"
+            },
+            {
+                "name": "void",
+                "comment": " A type with zero length. It is not encoded into BARE messages.\n",
+                "type": "Codec.Bare.Codec ()"
+            }
+        ],
+        "binops": []
+    }
+]

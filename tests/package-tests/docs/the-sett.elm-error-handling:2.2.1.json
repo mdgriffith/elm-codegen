@@ -1,0 +1,106 @@
+[
+    {
+        "name": "ResultME",
+        "comment": " ResultME is a variation on Result, where the `err` is a non-empty list of\nerrors. This is useful in situations where multiple errors can be detected in a\nsingle pass, and it is preferable to report all errors detected, and not to fail\nonly on the first error.\n\nSome examples; when parsing a form with multiple inputs and possibly multiple\nerrors to report to the user; when parsing some source code which may contain\nmultiple syntax errors.\n\n\n# Type and Constructors\n\n@docs ResultME, error, errors, fromResult\n\n\n# Mapping\n\n@docs map, map2, map3, map4, map5, map6, map7, andMap\n@docs mapError\n\n\n# Combining errors over collections\n\n@docs combineList, combineDict, combineNonempty\n\n\n# Chaining\n\n@docs andThen, flatten\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "ResultME",
+                "comment": " The result-possible-with-multiple-errors type.\n",
+                "args": [
+                    "err",
+                    "a"
+                ],
+                "type": "Result.Result (List.Nonempty.Nonempty err) a"
+            }
+        ],
+        "values": [
+            {
+                "name": "andMap",
+                "comment": " Combines 2 `ResultME`s together. If any of them have errors all the errors\nwill be gathered. Otherwise the function supplied in the second one will be\napplied to the first, to produce the result value as `Ok`.\n",
+                "type": "ResultME.ResultME e a -> ResultME.ResultME e (a -> b) -> ResultME.ResultME e b"
+            },
+            {
+                "name": "andThen",
+                "comment": " Chain together a sequence of computations that may fail. This is identical\nto `Result.andThen`.\n",
+                "type": "(a -> ResultME.ResultME err b) -> ResultME.ResultME err a -> ResultME.ResultME err b"
+            },
+            {
+                "name": "combineDict",
+                "comment": " Combines all errors in a `Dict` of `ResultME`s. All errors will\nbe gathered in the case where there are any errors, otherwise a `Dict`\nof the result values will be returned as `Ok`.\n\n    import ResultME\n    import Dict\n\n    ResultME.combineDict\n        (Dict.fromList\n            [ ( \"3\", Ok 3 )\n            , ( \"-4\", Ok -4 )\n            , ( \"20xFF\", Ok 255 )\n\n            ]\n        )\n    --> Ok\n    -->     (Dict.fromList\n    -->         [ ( \"3\", 3 )\n    -->         , ( \"2\", 2 )\n    -->         , ( \"1\", 1 )\n    -->         ]\n    -->     )\n\n    ResultME.combineDict\n        (Dict.fromList\n            [ ( \"3\", Ok 3 )\n            , ( \"1.2\", ResultME.error \"can't contain '.'\" )\n            , ( \"-4\", Ok -4 )\n            , ( \"#:-3\"\n              , ResultME.errors\n                  \"can't contain '#'\"\n                  [ \"can't contain ':'\" ]\n              )\n            ]\n        )\n    --> ResultME.errors\n    -->     \"can't contain '.'\"\n    -->     [ \"can't contain '#'\"\n    -->     , \"can't contain ':'\"\n    -->     ]\n\n",
+                "type": "Dict.Dict comparable (ResultME.ResultME err v) -> ResultME.ResultME err (Dict.Dict comparable v)"
+            },
+            {
+                "name": "combineList",
+                "comment": " Combines all errors in a `List` of `ResultME`s. All errors will\nbe gathered in the case where there are any errors, otherwise a `List`\nof the result values will be returned as `Ok`.\n\n    import ResultME\n\n    ResultME.combineList\n        [ Ok \"this is fine\"\n        , ResultME.errors \"failure\" [ \"problem\" ]\n        , ResultME.error \"error\"\n        , Ok \"done\"\n        ]\n    --> ResultME.errors \"failure\" [ \"problem\", \"error\" ]\n\n    ResultME.combineList\n        [ Ok \"ok\"\n        , Ok \"result\"\n        , Ok \"value\"\n        ]\n    --> Ok [ \"ok\", \"result\", \"value\" ]\n\n",
+                "type": "List.List (ResultME.ResultME err a) -> ResultME.ResultME err (List.List a)"
+            },
+            {
+                "name": "combineNonempty",
+                "comment": " Combines all errors in a `Nonempty` list of `ResultME`s. All errors will\nbe gathered in the case where there are any errors, otherwise a `Nonempty` list\nof the result values will be returned as `Ok`.\n\n    import ResultME\n    import List.Nonempty\n\n    ResultME.combineNonempty\n        (List.Nonempty.Nonempty\n            (Ok \"this is fine\")\n            [ ResultME.errors \"failure\" [ \"problem\" ]\n            , ResultME.error \"error\"\n            , Ok \"done\"\n            ]\n        )\n    --> ResultME.errors \"failure\" [ \"bad\", \"problem\" ]\n\n    ResultME.combineNonempty\n        (List.Nonempty.Nonempty\n            (Ok \"ok\")\n            [ Ok \"result\"\n            , Ok \"value\"\n            ]\n        )\n    --> Ok\n    -->     (List.Nonempty.Nonempty\n    -->         \"ok\"\n    -->         [ \"result\", \"value\" ]\n    -->     )\n\n",
+                "type": "List.Nonempty.Nonempty (ResultME.ResultME err a) -> ResultME.ResultME err (List.Nonempty.Nonempty a)"
+            },
+            {
+                "name": "error",
+                "comment": " Produces a `ResultME` from a single error.\n",
+                "type": "err -> ResultME.ResultME err a"
+            },
+            {
+                "name": "errors",
+                "comment": " Produces a `ResultME` from a list of errors.\n",
+                "type": "err -> List.List err -> ResultME.ResultME err a"
+            },
+            {
+                "name": "flatten",
+                "comment": " Flattens the structure if one `ResultME` is nested inside another.\n",
+                "type": "ResultME.ResultME err (ResultME.ResultME err a) -> ResultME.ResultME err a"
+            },
+            {
+                "name": "fromResult",
+                "comment": " Turns a `Result` into `ResultME` with one error.\n",
+                "type": "Result.Result err a -> ResultME.ResultME err a"
+            },
+            {
+                "name": "map",
+                "comment": " Applies a function to the result value in a `ResultME`, if there is one.\n",
+                "type": "(a -> b) -> ResultME.ResultME err a -> ResultME.ResultME err b"
+            },
+            {
+                "name": "map2",
+                "comment": " Combines 2 `ResultME`s together. If any of them have errors all the errors\nwill be gathered. Otherwise the supplied function will be used to combine the\nresult values as `Ok`.\n",
+                "type": "(a -> b -> c) -> ResultME.ResultME err a -> ResultME.ResultME err b -> ResultME.ResultME err c"
+            },
+            {
+                "name": "map3",
+                "comment": " Combines 3 `ResultME`s together. If any of them have errors all the errors\nwill be gathered. Otherwise the supplied function will be used to combine the\nresult values as `Ok`.\n",
+                "type": "(a -> b -> c -> d) -> ResultME.ResultME err a -> ResultME.ResultME err b -> ResultME.ResultME err c -> ResultME.ResultME err d"
+            },
+            {
+                "name": "map4",
+                "comment": " Combines 4 `ResultME`s together. If any of them have errors all the errors\nwill be gathered. Otherwise the supplied function will be used to combine the\nresult values as `Ok`.\n",
+                "type": "(a -> b -> c -> d -> e) -> ResultME.ResultME err a -> ResultME.ResultME err b -> ResultME.ResultME err c -> ResultME.ResultME err d -> ResultME.ResultME err e"
+            },
+            {
+                "name": "map5",
+                "comment": " Combines 5 `ResultME`s together. If any of them have errors all the errors\nwill be gathered. Otherwise the supplied function will be used to combine the\nresult values as `Ok`.\n",
+                "type": "(a -> b -> c -> d -> e -> f) -> ResultME.ResultME err a -> ResultME.ResultME err b -> ResultME.ResultME err c -> ResultME.ResultME err d -> ResultME.ResultME err e -> ResultME.ResultME err f"
+            },
+            {
+                "name": "map6",
+                "comment": " Combines 6 `ResultME`s together. If any of them have errors all the errors\nwill be gathered. Otherwise the supplied function will be used to combine the\nresult values as `Ok`.\n",
+                "type": "(a -> b -> c -> d -> e -> f -> g) -> ResultME.ResultME err a -> ResultME.ResultME err b -> ResultME.ResultME err c -> ResultME.ResultME err d -> ResultME.ResultME err e -> ResultME.ResultME err f -> ResultME.ResultME err g"
+            },
+            {
+                "name": "map7",
+                "comment": " Combines 7 `ResultME`s together. If any of them have errors all the errors\nwill be gathered. Otherwise the supplied function will be used to combine the\nresult values as `Ok`.\n",
+                "type": "(a -> b -> c -> d -> e -> f -> g -> h) -> ResultME.ResultME err a -> ResultME.ResultME err b -> ResultME.ResultME err c -> ResultME.ResultME err d -> ResultME.ResultME err e -> ResultME.ResultME err f -> ResultME.ResultME err g -> ResultME.ResultME err h"
+            },
+            {
+                "name": "mapError",
+                "comment": " Applies a function to the errors in a `ResultME`, if there are any.\n",
+                "type": "(x -> y) -> ResultME.ResultME x a -> ResultME.ResultME y a"
+            }
+        ],
+        "binops": []
+    }
+]

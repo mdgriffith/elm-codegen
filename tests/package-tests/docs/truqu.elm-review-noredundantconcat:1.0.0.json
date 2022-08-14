@@ -1,0 +1,16 @@
+[
+    {
+        "name": "NoRedundantConcat",
+        "comment": "\n\n@docs rule\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": " Forbids using concatenation (`++` and `List.concat`) when it's not needed.\n\nExpressions like `[ a, b ] ++ c` will be flagged, with a fix proposing to\nrewrite that to somethine like `a :: b :: c`. This is more performant and makes\nit clear that we're talking about consing items to the head of a list. Easy!\n\nExpressions like `[ a, b ] ++ [ c, d ]` could be rewritten to a single literal\nlist: no need to perform the concatenation at runtime when we can just write it\nourselves! So, the fix will propose writing that as `[ a, b, c, d ]`.\n\nExpression like `List.concat [ [ a ], [ b ], [ c ] ]` could become `[ a, b c ]`.\n\nFinally, expressions like `\"foo\" ++ \"bar\"` can also be `\"foobar\"`.\n\nTo use this rule, add it to your `elm-review` config like so:\n\n    module ReviewConfig exposing (config)\n\n    import NoRedundantConcat\n    import Review.Rule exposing (Rule)\n\n    config : List Rule\n    config =\n        [ NoRedundantConcat.rule\n        ]\n\n",
+                "type": "Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    }
+]

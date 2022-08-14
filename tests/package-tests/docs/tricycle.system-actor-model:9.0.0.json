@@ -1,0 +1,553 @@
+[
+    {
+        "name": "System.Actor",
+        "comment": "\n\n\n# Actor\n\nIn the context of this package an Actor is a Component that is mapped to the System.\n\nCurrently there are three components defined;\n\n  - The Layout Component\n  - The Ui Component\n  - The Worker Component\n\nAn Actor probably looks very familiar to you, that is because it closely resembles the Elm Program definition.\n\nIt should be relativaly straight forwards to map you exisiting Elm component on top of one of the existing Components.\n\nActors can communicate with other Actors when they know their PIDs or they can send a message to other Actors listening on a given Address.\n\n\n## Actor\n\nAn Actor is an alias for the following Record\n\n@docs Actor\n\n\n## SystemActor\n\n@docs SystemActor, toSystemActor\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Actor",
+                "comment": " An Actor looks a lot like a Browser.element!\n\nIt's quite easy to grab an existing Elm application and make it part of an application that is setup to use this package.\n\n",
+                "args": [
+                    "componentModel",
+                    "appModel",
+                    "output",
+                    "systemMsg"
+                ],
+                "type": "{ init : ( System.Internal.PID.PID, Json.Decode.Value ) -> ( appModel, systemMsg ), update : componentModel -> systemMsg -> System.Internal.PID.PID -> ( appModel, systemMsg ), subscriptions : componentModel -> System.Internal.PID.PID -> Platform.Sub.Sub systemMsg, events : System.Internal.Event.Event -> System.Internal.PID.PID -> System.Event.EventHandler systemMsg, view : Maybe.Maybe (componentModel -> System.Internal.PID.PID -> (System.Internal.PID.PID -> Maybe.Maybe output) -> output) }"
+            },
+            {
+                "name": "SystemActor",
+                "comment": " An Actor within the System has a different Type,\n\nit no longer has the `componentModel` in the type definition, this is because the `componentModel` is no wrapped using the `appModel`.\n\nYou can create a SystemActor using the `toSystemActor` function.\n\n",
+                "args": [
+                    "appModel",
+                    "output",
+                    "systemMsg"
+                ],
+                "type": "System.Internal.SystemActor.SystemActor appModel output systemMsg"
+            }
+        ],
+        "values": [
+            {
+                "name": "toSystemActor",
+                "comment": " Apply your model over your Actor and create a SystemActor\n",
+                "type": "System.Actor.Actor componentModel appModel output systemMsg -> componentModel -> System.Actor.SystemActor appModel output systemMsg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "System.Browser",
+        "comment": " This module helps you set up an System Program.\n\n\n## Applications\n\nCreate an application that manages Url changes.\n\nWhen the application starts, init gets the initial Url. You can show different things depending on the Url!\n\nWhen someone clicks a link, like <a href=\"/home\">Home</a>, it always goes through onUrlRequest. The resulting message goes to your update function, giving you a chance to save scroll position or persist data before changing the URL yourself with pushUrl or load. More info on this in the UrlRequest docs!\n\nWhen the URL changes, the new Url goes through onUrlChange. The resulting message goes to update where you can decide what to show next.\n\nApplications always use the Browser.Navigation module for precise control over Url changes.\n\n@docs application\n\n\n## Elements\n\nCreate an HTML element managed by Elm.\n\n@docs element\n\n\n## Use alternative programs\n\nGet the records that are used to create the Elm Browser.application and .element\n\n@docs applicationRecord, elementRecord\n\n\n## Program\n\n@docs Program\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Program",
+                "comment": " This will be the type of your program when you create it using this package.\n\nCheckout out the `element` and `application` functions in the System.Browser module to find out how to create a System.Program.\n\n_A [Program](https://package.elm-lang.org/packages/elm/core/latest/Platform#Program) describes an Elm program! How does it react to input? Does it show anything on screen? Etc._\n\n",
+                "args": [
+                    "flags",
+                    "addresses",
+                    "actors",
+                    "appModel",
+                    "applicationMsg"
+                ],
+                "type": "Platform.Program flags (System.Internal.Model.SystemModel addresses actors appModel) (System.Internal.Message.SystemMessage addresses actors applicationMsg)"
+            }
+        ],
+        "values": [
+            {
+                "name": "application",
+                "comment": " Create an Application managed by Elm through a System\n",
+                "type": "{ apply : appModel -> System.Internal.SystemActor.SystemActor appModel output (System.Internal.Message.SystemMessage addresses actors appMsg), factory : actors -> ( System.Internal.PID.PID, Json.Decode.Value ) -> ( appModel, System.Internal.Message.SystemMessage addresses actors appMsg ), init : flags -> Url.Url -> Browser.Navigation.Key -> List.List (System.Internal.Message.SystemMessage addresses actors appMsg), view : List.List output -> List.List (Html.Html (System.Internal.Message.SystemMessage addresses actors appMsg)), onUrlRequest : Browser.UrlRequest -> System.Internal.Message.SystemMessage addresses actors appMsg, onUrlChange : Url.Url -> System.Internal.Message.SystemMessage addresses actors appMsg, onLogMessage : System.Internal.Message.LogMessage addresses actors appMsg -> System.Internal.Message.SystemMessage addresses actors appMsg } -> System.Browser.Program flags addresses actors appModel appMsg"
+            },
+            {
+                "name": "applicationRecord",
+                "comment": " Returns the record that is used by Browser.application\n",
+                "type": "{ apply : appModel -> System.Internal.SystemActor.SystemActor appModel output (System.Internal.Message.SystemMessage addresses actors appMsg), factory : actors -> ( System.Internal.PID.PID, Json.Decode.Value ) -> ( appModel, System.Internal.Message.SystemMessage addresses actors appMsg ), init : flags -> Url.Url -> Browser.Navigation.Key -> List.List (System.Internal.Message.SystemMessage addresses actors appMsg), view : List.List output -> List.List (Html.Html (System.Internal.Message.SystemMessage addresses actors appMsg)), onUrlRequest : Browser.UrlRequest -> System.Internal.Message.SystemMessage addresses actors appMsg, onUrlChange : Url.Url -> System.Internal.Message.SystemMessage addresses actors appMsg, onLogMessage : System.Internal.Message.LogMessage addresses actors appMsg -> System.Internal.Message.SystemMessage addresses actors appMsg } -> { init : flags -> Url.Url -> Browser.Navigation.Key -> ( System.Internal.Model.SystemModel addresses actors appModel, Platform.Cmd.Cmd (System.Internal.Message.SystemMessage addresses actors appMsg) ), onUrlChange : Url.Url -> System.Internal.Message.SystemMessage addresses actors appMsg, onUrlRequest : Browser.UrlRequest -> System.Internal.Message.SystemMessage addresses actors appMsg, subscriptions : System.Internal.Model.SystemModel addresses1 actors1 appModel -> Platform.Sub.Sub (System.Internal.Message.SystemMessage addresses actors appMsg), update : System.Internal.Message.SystemMessage addresses actors appMsg -> System.Internal.Model.SystemModel addresses actors appModel -> ( System.Internal.Model.SystemModel addresses actors appModel, Platform.Cmd.Cmd (System.Internal.Message.SystemMessage addresses actors appMsg) ), view : System.Internal.Model.SystemModel addresses actors appModel -> Browser.Document (System.Internal.Message.SystemMessage addresses actors appMsg) }"
+            },
+            {
+                "name": "element",
+                "comment": " Create an HTML element managed by Elm through a System.\n",
+                "type": "{ apply : appModel -> System.Internal.SystemActor.SystemActor appModel output (System.Internal.Message.SystemMessage addresses actors appMsg), factory : actors -> ( System.Internal.PID.PID, Json.Decode.Value ) -> ( appModel, System.Internal.Message.SystemMessage addresses actors appMsg ), init : flags -> List.List (System.Internal.Message.SystemMessage addresses actors appMsg), view : List.List output -> Html.Html (System.Internal.Message.SystemMessage addresses actors appMsg), onLogMessage : System.Internal.Message.LogMessage addresses actors appMsg -> System.Internal.Message.SystemMessage addresses actors appMsg } -> System.Browser.Program flags addresses actors appModel appMsg"
+            },
+            {
+                "name": "elementRecord",
+                "comment": " Returns the record that is used by Browser.element\n",
+                "type": "{ apply : appModel -> System.Internal.SystemActor.SystemActor appModel output (System.Internal.Message.SystemMessage addresses actors appMsg), factory : actors -> ( System.Internal.PID.PID, Json.Decode.Value ) -> ( appModel, System.Internal.Message.SystemMessage addresses actors appMsg ), init : flags -> List.List (System.Internal.Message.SystemMessage addresses actors appMsg), view : List.List output -> Html.Html (System.Internal.Message.SystemMessage addresses actors appMsg), onLogMessage : System.Internal.Message.LogMessage addresses actors appMsg -> System.Internal.Message.SystemMessage addresses actors appMsg } -> { init : flags -> ( System.Internal.Model.SystemModel addresses actors appModel, Platform.Cmd.Cmd (System.Internal.Message.SystemMessage addresses actors appMsg) ), subscriptions : System.Internal.Model.SystemModel addresses actors appModel -> Platform.Sub.Sub (System.Internal.Message.SystemMessage addresses actors appMsg), update : System.Internal.Message.SystemMessage addresses actors appMsg -> System.Internal.Model.SystemModel addresses actors appModel -> ( System.Internal.Model.SystemModel addresses actors appModel, Platform.Cmd.Cmd (System.Internal.Message.SystemMessage addresses actors appMsg) ), view : System.Internal.Model.SystemModel addresses actors appModel -> Html.Html (System.Internal.Message.SystemMessage addresses actors appMsg) }"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "System.Component.Layout",
+        "comment": "\n\n\n# Layout\n\nA Layout is a component that can render other components.\n\n\n## Example usage\n\n    type alias Model =\n        { instances : List System.Process.PID\n        }\n\n    type MsgIn\n        = AddProcess System.Process.PID\n        | OnClickKillProcess System.Process.PID\n        | ProcessKilled System.Process.PID\n\n    type MsgOut\n        = KillProcess System.Process.PID\n\n    component : Layout (Html msg) Model MsgIn MsgOut msg\n    component =\n        { init =\n            \\_ ->\n                ( { instances = [] }\n                , []\n                , Cmd.none\n                )\n        , update =\n            \\msgIn model ->\n                case msgIn of\n                    AddProcess pid ->\n                        ( { model\n                            | instances = pid :: model.instances\n                          }\n                        , []\n                        , Cmd.none\n                        )\n\n                    OnClickKillProcess pid ->\n                        ( model\n                        , [ KillProcess pid ]\n                        , Cmd.none\n                        )\n\n                    ProcessKilled pid ->\n                        ( { model\n                            | instances = List.filter (not << System.Process.equals pid)\n                          }\n                        , []\n                        , Cmd.none\n                        )\n        , view =\n            \\toSelf model renderPid ->\n                model.instances\n                    |> List.map\n                        (\\pid ->\n                            Html.div []\n                                [ Html.button [ Html.Events.onClick (OnClickKillProcess pid) ] [ Html.text \"kill process\" ]\n                                    |> Html.map toSelf\n                                , renderPid pid\n                                    |> Maybe.withDefault (Html.text \"\")\n                                ]\n                        )\n                    |> Html.div []\n        , subscriptions = always Sub.none\n        , events = System.Event.ignoreAll\n        }\n\n\n## Types\n\n@docs Layout\n\n\n## Creation\n\n@docs toActor\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Layout",
+                "comment": " The Type of a Layout Component\n",
+                "args": [
+                    "output",
+                    "componentModel",
+                    "componentMsgIn",
+                    "componentMsgOut",
+                    "msg"
+                ],
+                "type": "{ init : ( System.Process.PID, Json.Decode.Value ) -> ( componentModel, List.List componentMsgOut, Platform.Cmd.Cmd componentMsgIn ), update : componentMsgIn -> componentModel -> ( componentModel, List.List componentMsgOut, Platform.Cmd.Cmd componentMsgIn ), subscriptions : componentModel -> Platform.Sub.Sub componentMsgIn, events : System.Event.ComponentEventHandlers componentMsgIn, view : (componentMsgIn -> msg) -> componentModel -> (System.Process.PID -> Maybe.Maybe output) -> output }"
+            }
+        ],
+        "values": [
+            {
+                "name": "toActor",
+                "comment": " Create an Actor from a Layout Component\n",
+                "type": "System.Component.Layout.Layout output componentModel componentMsgIn componentMsgOut (System.Internal.Message.SystemMessage address actorName appMsg) -> { wrapModel : componentModel -> appModel, wrapMsg : componentMsgIn -> appMsg, mapIn : appMsg -> Maybe.Maybe componentMsgIn, mapOut : System.Process.PID -> componentMsgOut -> System.Internal.Message.SystemMessage address actorName appMsg } -> System.Actor.Actor componentModel appModel output (System.Internal.Message.SystemMessage address actorName appMsg)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "System.Component.Ui",
+        "comment": "\n\n\n# Ui\n\nA Ui component **can't** render other Actors.\n\n\n## Example usage\n\n    type alias Model =\n        Int\n\n    type MsgIn\n        = Increment\n        | Decrement\n\n    type MsgOut\n        = NoMsgOut\n\n    component : Ui (Html msg) Model MsgIn MsgOut msg\n    component =\n        { init =\n            \\_ ->\n                ( 0, [], Cmd.none )\n        , update =\n            \\msgIn model ->\n                case msgIn of\n                    Increment ->\n                        ( model + 1, [], Cmd.none )\n\n                    Decrement ->\n                        ( model - 1, [], Cmd.none )\n        , view =\n            \\toSelf model ->\n                Html.div []\n                    [ Html.button\n                        [ Html.Events.onClick <|\n                            toSelf Decrement\n                        ]\n                        [ Html.text \"-\"\n                        ]\n                    , Html.text <| String.fromInt model\n                    , Html.button\n                        [ Html.Events.onClick <|\n                            toSelf Increment\n                        ]\n                        [ Html.text \"+\"\n                        ]\n                    ]\n        , subscriptions = always Sub.none\n        , events = System.Event.ignoreAll\n        }\n\n\n## Types\n\n@docs Ui\n\n\n## Creation\n\n@docs toActor\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Ui",
+                "comment": " The Type of an Ui Component\n",
+                "args": [
+                    "output",
+                    "componentModel",
+                    "componentMsgIn",
+                    "componentMsgOut",
+                    "msg"
+                ],
+                "type": "{ init : ( System.Process.PID, Json.Decode.Value ) -> ( componentModel, List.List componentMsgOut, Platform.Cmd.Cmd componentMsgIn ), update : componentMsgIn -> componentModel -> ( componentModel, List.List componentMsgOut, Platform.Cmd.Cmd componentMsgIn ), subscriptions : componentModel -> Platform.Sub.Sub componentMsgIn, events : System.Event.ComponentEventHandlers componentMsgIn, view : (componentMsgIn -> msg) -> componentModel -> output }"
+            }
+        ],
+        "values": [
+            {
+                "name": "toActor",
+                "comment": " Create an Actor from an Ui Component\n",
+                "type": "System.Component.Ui.Ui output componentModel componentMsgIn componentMsgOut (System.Internal.Message.SystemMessage address actorName appMsg) -> { wrapModel : componentModel -> appModel, wrapMsg : componentMsgIn -> appMsg, mapIn : appMsg -> Maybe.Maybe componentMsgIn, mapOut : System.Process.PID -> componentMsgOut -> System.Internal.Message.SystemMessage address actorName appMsg } -> System.Actor.Actor componentModel appModel output (System.Internal.Message.SystemMessage address actorName appMsg)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "System.Component.Worker",
+        "comment": "\n\n\n# Worker\n\nA Worker is a [headless](https://en.wikipedia.org/wiki/Headless_software) Actor, it has no User Interface.\n\nThis is great if you want to use an Actor as the “brain” for something else.\n\n\n## Example usage\n\n    type alias Model =\n        String\n\n    type MsgIn\n        = OnStuff\n\n    type MsgOut\n        = DoStuff\n\n    component : Worker Model MsgIn MsgOut\n    component =\n        { init =\n            \\_ ->\n                ( \"Worker Model\"\n                , []\n                , Cmd.none\n                )\n        , update =\n            \\msgIn model ->\n                case msgIn of\n                    onStuff ->\n                        ( model\n                        , [ DoStuff ]\n                        , Cmd.none\n                        )\n        , subscriptions = always Sub.none\n        , events = System.Event.ignoreAll\n        }\n\n\n## Types\n\n@docs Worker\n\n\n## Creation\n\n@docs toActor\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Worker",
+                "comment": " The Type of a Worker Component\n",
+                "args": [
+                    "componentModel",
+                    "componentMsgIn",
+                    "componentMsgOut"
+                ],
+                "type": "{ init : ( System.Process.PID, Json.Decode.Value ) -> ( componentModel, List.List componentMsgOut, Platform.Cmd.Cmd componentMsgIn ), update : componentMsgIn -> componentModel -> ( componentModel, List.List componentMsgOut, Platform.Cmd.Cmd componentMsgIn ), subscriptions : componentModel -> Platform.Sub.Sub componentMsgIn, events : System.Event.ComponentEventHandlers componentMsgIn }"
+            }
+        ],
+        "values": [
+            {
+                "name": "toActor",
+                "comment": " Create an Actor from a Worker\n",
+                "type": "System.Component.Worker.Worker componentModel componentMsgIn componentMsgOut -> { wrapModel : componentModel -> model, wrapMsg : componentMsgIn -> appMsg, mapIn : appMsg -> Maybe.Maybe componentMsgIn, mapOut : System.Process.PID -> componentMsgOut -> System.Internal.Message.SystemMessage address actorName appMsg } -> System.Actor.Actor componentModel model output (System.Internal.Message.SystemMessage address actorName appMsg)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "System.Event",
+        "comment": "\n\n\n# Event Handling\n\n@docs EventHandler, default, ignore, beforeDefault, custom\n\n\n# Component\n\nYour components can receive Events that are being spawned by the System.\nIt's up to your component to handle these.\n\n@docs ComponentEventHandlers, systemDefault, ignoreAll\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "ComponentEventHandlers",
+                "comment": " Components need to supply the following event handlers\n",
+                "args": [
+                    "appMsg"
+                ],
+                "type": "{ onPIDNotFound : System.Internal.PID.PID -> System.Event.EventHandler appMsg, onStop : System.Event.EventHandler appMsg }"
+            },
+            {
+                "name": "EventHandler",
+                "comment": " A System Event Handler\n",
+                "args": [
+                    "appMsg"
+                ],
+                "type": "System.Internal.Event.EventHandler appMsg"
+            }
+        ],
+        "values": [
+            {
+                "name": "beforeDefault",
+                "comment": " Before the default behaviour respond with a custom appMsg\n",
+                "type": "appMsg -> System.Event.EventHandler appMsg"
+            },
+            {
+                "name": "custom",
+                "comment": " Ignore the default behaviour and respond with a custom appMsg\n",
+                "type": "appMsg -> System.Event.EventHandler appMsg"
+            },
+            {
+                "name": "default",
+                "comment": " Let the System decide what to do\n",
+                "type": "System.Event.EventHandler appMsg"
+            },
+            {
+                "name": "ignore",
+                "comment": " Ignore the event\n",
+                "type": "System.Event.EventHandler appMsg"
+            },
+            {
+                "name": "ignoreAll",
+                "comment": " You can choose to ignore all events\n",
+                "type": "System.Event.ComponentEventHandlers appMsg"
+            },
+            {
+                "name": "systemDefault",
+                "comment": " You can choose to apply a sytem default behaviour\n\nIt might be easy to start with systemDefault when specifying your components event handlers.\n\n    { systemDefault | onStop = beforeDefault SaveProgress }\n\n",
+                "type": "System.Event.ComponentEventHandlers appMsg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "System.Html.Template",
+        "comment": " This module can be used to easily outfit your application with a templating system that understands\nthe System Actor Model and can return a List of ActorNames from your Application to spawn and interpolate.\n\nQuick Example\n\n    import Dict\n    import System.Component.Layout exposing (Layout)\n    import System.Event exposing (systemDefault)\n    import System.Html.Template as HtmlTemplate\n    import System.Process exposing (PID)\n\n    type ActorName\n        = Counter\n\n    type Address\n        = Counters\n\n    type MsgIn\n        = SpawnedComponent String PID\n\n    type alias Model =\n        { instances : Dict String PID\n        , HtmlTemplate: HtmlTemplate ActorName Address\n        }\n\n    {-| This component is a [Layout](/packages/tricycle/system-actor-model/latest/System-Component-Layout).\n    It would otherwise not be able to render other Actors using their PID. -}\n    component : Layout Model MsgIn MsgOut msg\n    component =\n        { init = init\n        , update = update\n        , subscriptions = always Sub.none\n        , events = systemDefault\n        , view = view\n        }\n\n\n    htmlComponents = Dict HtmlTemplate.HtmlComponentId HtmlTemplate.HtmlComponentFactory ActorName Address\n    htmlComponents =\n        Dict.fromList\n            [ HtmlTemplate.htmlComponentFactory\n                { prefix = \"app\"\n                , name = \"counter\"\n                , actorName = ActorName.Counter\n                , addresses = []\n                , defaultAttributes = [ ( \"value\", Encode.int 0 ) ]\n                , requiredAtributes = [ \"value\" ]\n                }\n            ]\n\n    template: String\n    template =\n        \"\"\"\n        <div class=\"Counters\">\n            <prefix-counter></prefix-counter>\n            <prefix-counter value=\"10\">\n                <h2>I start at 10!</h2>\n            </prefix-counter>\n        </div>\n        \"\"\"\n\n    init : a -> ( Model, List MsgOut, Cmd MsgIn )\n    init _ =\n        case HtmlTemplate.parse htmlComponents template of\n            Err _ ->\n               --  Handle error\n\n            Ok htmlTemplate ->\n                ( Model Dict.empty htmlTemplate\n                , [ HtmlTempalte.toListSpawnableHtmlComponents htmlTemplate\n                        |> SpawnComponents\n                  ]\n                , Cmd.none\n                )\n\n    update : MsgIn -> Model -> ( Model, List MsgOut, Cmd MsgIn )\n    update msgIn model =\n        case msgIn of\n            SpawnedComponent htmlComponentId pid ->\n                Dict.insert htmlComponentId pid model.components\n\n\n\n    view : (MsgIn -> msg)\n        -> Model\n        -> (PID -> Html msg)\n        -> Html msg\n    view _ model renderPid =\n\n        HtmlTemplate.render {\n            renderPid = renderPid\n            , instances = instances\n            , interpolate = Dict.empty\n            , htmlTemplate = model.htmlTemplate\n            }\n                |> div []\n\n\n# Template\n\n@docs HtmlTemplate, HtmlComponentId, empty, parse, decode\n\n\n# Html Components\n\n@docs SpawnableHtmlComponent, HtmlComponentFactory, htmlComponentFactory, toListSpawnableHtmlComponents\n\n\n# Rendering\n\n@docs render\n\n\n# Spawning\n\n@docs spawn\n\n\n# Encoding\n\n@docs encode, encodeSpawnableHtmlComponent\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "HtmlComponentFactory",
+                "comment": " The (opaque) type of HtmlComponentFactory represents a set of configuration options that are required to\nidentify and parse your components from a HtmlTemplate.\n",
+                "args": [
+                    "actorName",
+                    "address"
+                ],
+                "type": "System.Html.Internal.Template.HtmlComponentFactory actorName address"
+            },
+            {
+                "name": "HtmlComponentId",
+                "comment": " A HtmlTemplate is identified by a String that is unique for component and its attributes\n\nThis means that a htmlComponent with the exact same name and attributes will not be spwaned multiple times so that you can fully leverage the System Actor Model.\nIn the case where you end up with the need to have two different Actors with the same starting attributes\n(in the case they request additional data or in the case of two counters that should indiviually run)\nyou can simply pass an unique attribute from whitin your app.\n\n",
+                "args": [],
+                "type": "String.String"
+            },
+            {
+                "name": "HtmlTemplate",
+                "comment": " The (opaque) type of HtmlTemplate represents a parsed Template within your application.\n",
+                "args": [
+                    "actorName",
+                    "address"
+                ],
+                "type": "System.Html.Internal.Template.HtmlTemplate actorName address"
+            },
+            {
+                "name": "SpawnableHtmlComponent",
+                "comment": " A SpawnableHtmlComponent represents a component as how it was found whitin your suplied HtmlTemplate.\nIt is up to your application to [spawn](#spawn)\nthis component using the actorName provided and storing it inside your model with the id found on the\nSpawnableHtmlComponent record\n",
+                "args": [
+                    "actorName",
+                    "address"
+                ],
+                "type": "{ actorName : actorName, addresses : List.List address, attributes : List.List ( String.String, Json.Encode.Value ), htmlTemplate : System.Html.Template.HtmlTemplate actorName address, id : String.String, nodeName : String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "decode",
+                "comment": " Decode an Encoded string of Html nodes into a HtmlTemplate\n",
+                "type": "Dict.Dict System.Html.Template.HtmlComponentId (System.Html.Template.HtmlComponentFactory actorName address) -> Json.Decode.Decoder (System.Html.Template.HtmlTemplate actorName address)"
+            },
+            {
+                "name": "empty",
+                "comment": " Create an empty HtmlTemplate\n",
+                "type": "System.Html.Template.HtmlTemplate actorName address"
+            },
+            {
+                "name": "encode",
+                "comment": " Encode a HtmlTemplate into an Encoded Value\n",
+                "type": "System.Html.Template.HtmlTemplate actorName address -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeSpawnableHtmlComponent",
+                "comment": " Encode a SpawnableHtmlComponent into an Encoded Value\n",
+                "type": "System.Html.Template.SpawnableHtmlComponent actorName address -> Json.Encode.Value"
+            },
+            {
+                "name": "htmlComponentFactory",
+                "comment": " Create an HtmlComponentFactory\n\n  - prefix. HtmlComponents are designed to be valid Html5 tags. Custom components require a prefix.\n\n  - name. Together with prefix this dictates the final name of your HtmlComponent\n\n        { config | prefix = \"foo\", name = \"bar\" }\n\n    will create a HtmlComponent that can be invoked by entering `<foo-bar></foo-bar>` in your template.\n\n  - actorName. The actorName of the Actor that should be spawned when this component is encountered.\n\n  - address. Optionally supply an Address under which this component should be spawned.\n\n  - requiredAttributes. You can supply a list of attribute names that are required.\n    When one of these attributes is found missing an Error message will be displayed instead.\n\n  - defaultAttributes. Supply a List of default values for your attributes.\n\n",
+                "type": "{ prefix : String.String, name : String.String, actorName : actorName, addresses : List.List address, requiredAtributes : List.List String.String, defaultAttributes : List.List ( String.String, Json.Encode.Value ) } -> ( System.Html.Template.HtmlComponentId, System.Html.Template.HtmlComponentFactory actorName address )"
+            },
+            {
+                "name": "parse",
+                "comment": " Parse a HtmlTemplate from a String with given available htmlComponents\n",
+                "type": "Dict.Dict System.Html.Template.HtmlComponentId (System.Html.Template.HtmlComponentFactory actorName address) -> String.String -> Result.Result String.String (System.Html.Template.HtmlTemplate actorName address)"
+            },
+            {
+                "name": "render",
+                "comment": " Render\n",
+                "type": "{ renderPid : pid -> Html.Html msg, instances : Dict.Dict String.String pid, interpolate : Dict.Dict String.String String.String, htmlTemplate : System.Html.Template.HtmlTemplate actorName address } -> List.List (Html.Html msg)"
+            },
+            {
+                "name": "spawn",
+                "comment": " Spawn a SpawnableHtmlComponent\n\nThis is a helper function, the same can be achieved by using the [System.Message.spawn](/packages/tricycle/system-actor-model/latest/System-Message#spawn) function\n\n",
+                "type": "(System.Html.Template.HtmlComponentId -> System.Internal.PID.PID -> System.Internal.Message.SystemMessage address actorName appMsg) -> System.Html.Template.SpawnableHtmlComponent actorName address -> System.Internal.Message.SystemMessage address actorName appMsg"
+            },
+            {
+                "name": "toListSpawnableHtmlComponents",
+                "comment": " Retrieve a list of spawnableHtmlComponent from a given HtmlTemplate\n",
+                "type": "System.Html.Template.HtmlTemplate actorName address -> List.List (System.Html.Template.SpawnableHtmlComponent actorName address)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "System.Log",
+        "comment": " The System and your Actors can LogMessage through this module.\n\nThe System itself doesn't store these log messages anywhere,\nIt's up to you to handle and/or store these messages through an Actor.\n\n@docs LogMessage\n\n\n# Create\n\n@docs emergency, alert, critical, error, warning, notice, info, debug\n\n\n# Time\n\nWhen you create a log message through any of the create helpers\nyour log message will not have a time accociated with it.\n\n@docs withPosix\n\n\n# Msg\n\nWhat was the message that resulted in this LogMessage?\nI don't know, but if you supply it I'll store it on the LogMessage type!\n\n@docs withMessage\n\n\n# Helpers\n\n@docs toString, severityToString, toMeta\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "LogMessage",
+                "comment": " The opaque LogMessage type\n\nYou can create LogMessages using the helper function available\n\n",
+                "args": [
+                    "addresses",
+                    "actors",
+                    "appMsg"
+                ],
+                "type": "System.Internal.Message.LogMessage addresses actors appMsg"
+            }
+        ],
+        "values": [
+            {
+                "name": "alert",
+                "comment": " Create a new LogMessage with the severity Alert\n",
+                "type": "System.Internal.PID.PID -> String.String -> System.Log.LogMessage addresses actors appMsg"
+            },
+            {
+                "name": "critical",
+                "comment": " Create a new LogMessage with the severity Critical\n",
+                "type": "System.Internal.PID.PID -> String.String -> System.Log.LogMessage addresses actors appMsg"
+            },
+            {
+                "name": "debug",
+                "comment": " Create a new LogMessage with the severity Debug\n",
+                "type": "System.Internal.PID.PID -> String.String -> System.Log.LogMessage addresses actors appMsg"
+            },
+            {
+                "name": "emergency",
+                "comment": " Create a new LogMessage with the severity Emergency\n",
+                "type": "System.Internal.PID.PID -> String.String -> System.Log.LogMessage addresses actors appMsg"
+            },
+            {
+                "name": "error",
+                "comment": " Create a new LogMessage with the severity Error\n",
+                "type": "System.Internal.PID.PID -> String.String -> System.Log.LogMessage addresses actors appMsg"
+            },
+            {
+                "name": "info",
+                "comment": " Create a new LogMessage with the severity Informational\n",
+                "type": "System.Internal.PID.PID -> String.String -> System.Log.LogMessage addresses actors appMsg"
+            },
+            {
+                "name": "notice",
+                "comment": " Create a new LogMessage with the severity Notice\n",
+                "type": "System.Internal.PID.PID -> String.String -> System.Log.LogMessage addresses actors appMsg"
+            },
+            {
+                "name": "severityToString",
+                "comment": " Severity to String\n",
+                "type": "System.Log.Severity -> String.String"
+            },
+            {
+                "name": "toMeta",
+                "comment": " LogMessage to Description\n",
+                "type": "System.Log.LogMessage addresses actors appMsg -> { posix : Maybe.Maybe Time.Posix, severity : System.Log.Severity, pid : System.Internal.PID.PID, message : Maybe.Maybe (System.Message.SystemMessage addresses actors appMsg), description : String.String }"
+            },
+            {
+                "name": "toString",
+                "comment": " Turn a LogMessage into a String\n\n    error pid appMsg \"I'm sorry Dave, I'm afraid I can't do that\"\n        |> toString\n\n    -- error | 2(1) | I'm sorry Dave, I'm afraid I can't do that\n\n    error system appMsg \"I'm sorry Dave, I'm afraid I can't do that\"\n        |> withPosix now\n        |> toString\n\n    -- 2019/12/25 12:59:59 (UTC) | error | system | I'm sorry Dave, I'm afraid I can't do that\n\n",
+                "type": "System.Log.LogMessage addresses actors appMsg -> String.String"
+            },
+            {
+                "name": "warning",
+                "comment": " Create a new LogMessage with the severity Warning\n",
+                "type": "System.Internal.PID.PID -> String.String -> System.Log.LogMessage addresses actors appMsg"
+            },
+            {
+                "name": "withMessage",
+                "comment": " Supply a Message that resulted in this logMessage\n\nYou could use this to retry a failed command for instance.\n\n",
+                "type": "System.Message.SystemMessage addresses actors appMsg -> System.Log.LogMessage addresses actors appMsg -> System.Log.LogMessage addresses actors appMsg"
+            },
+            {
+                "name": "withPosix",
+                "comment": " Add a Posix (elm/time) to your LogMessage\n",
+                "type": "System.Log.LogMessage addresses actors appMsg -> Time.Posix -> System.Log.LogMessage addresses actors appMsg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "System.Message",
+        "comment": "\n\n\n# System Messages\n\n@docs SystemMessage\n\n\n# Spawning and Populating\n\nSpawn an Actor and add it to the System's view\n\n    spawn SomeActor populateView\n\nSpawn an Actor, add it to the System's view, and assign it an Address\n\n    spawn\n        SomeActor\n        (\\pid ->\n            batch\n                [ populateView pid\n                , populateAddress pid\n                ]\n        )\n\n@docs spawn, spawnWithFlags, populateView, populateAddress, spawnMultiple, spawnMultipleWithFlags\n\n\n# Removing and Destroying\n\n@docs stop, removeFromView, removeFromAddress\n\n\n# Actor Communication\n\n@docs sendToPid, sendToAddress, sendToPidOnAddress\n\n\n# Utility\n\n@docs batch, noOperation, toCmd\n\n\n# Application\n\n@docs updateDocumentTitle\n\n\n# Log\n\n@docs log, ignoreLog\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "SystemMessage",
+                "comment": " The type of the System Messages\n",
+                "args": [
+                    "addresses",
+                    "actors",
+                    "appMsg"
+                ],
+                "type": "System.Internal.Message.SystemMessage addresses actors appMsg"
+            }
+        ],
+        "values": [
+            {
+                "name": "batch",
+                "comment": " Batch perform a list of messages\n\n    spawn MyActorWorker\n        (\\pid ->\n            batch\n                [ populateAddress pid\n                , populateView pid\n                ]\n        )\n\n",
+                "type": "List.List (System.Message.SystemMessage addresses actors appMsg) -> System.Message.SystemMessage addresses actors appMsg"
+            },
+            {
+                "name": "ignoreLog",
+                "comment": " Convenience function that ignores all logs\n",
+                "type": "System.Internal.Message.LogMessage addresses actors appMsg -> System.Message.SystemMessage addresses actors appMsg"
+            },
+            {
+                "name": "log",
+                "comment": " Log a LogMessage\n\nThis will trigger the onLogMessage function you provided while initializing your application.\n\n",
+                "type": "System.Internal.Message.LogMessage addresses actors appMsg -> System.Message.SystemMessage addresses actors appMsg"
+            },
+            {
+                "name": "noOperation",
+                "comment": " Don't do anything\n\n    spaw MyActorWorker (always noOperation)\n\n",
+                "type": "System.Message.SystemMessage addresses actors appMsg"
+            },
+            {
+                "name": "populateAddress",
+                "comment": " Add a PID to a given addresses\n\nYou can send messages to Addresses just like you can send messages to a PID.\n\n",
+                "type": "addresses -> System.Internal.PID.PID -> System.Message.SystemMessage addresses actors appMsg"
+            },
+            {
+                "name": "populateView",
+                "comment": " Add a PID to the System's view\n\nThe System will render views in the order it receives it.\n\n",
+                "type": "System.Internal.PID.PID -> System.Message.SystemMessage addresses actors appMsg"
+            },
+            {
+                "name": "removeFromAddress",
+                "comment": " Remove a PID from a given addresses\n",
+                "type": "addresses -> System.Internal.PID.PID -> System.Message.SystemMessage addresses actors appMsg"
+            },
+            {
+                "name": "removeFromView",
+                "comment": " Remove a PID from the System view\n",
+                "type": "System.Internal.PID.PID -> System.Message.SystemMessage addresses actors appMsg"
+            },
+            {
+                "name": "sendToAddress",
+                "comment": " Send a message to an _addresses_.\n",
+                "type": "addresses -> appMsg -> System.Message.SystemMessage addresses actors appMsg"
+            },
+            {
+                "name": "sendToPid",
+                "comment": " Send a message to a PID.\n",
+                "type": "System.Internal.PID.PID -> appMsg -> System.Message.SystemMessage addresses actors appMsg"
+            },
+            {
+                "name": "sendToPidOnAddress",
+                "comment": " Send a message to a PID **only** when it's on the given _addresses_.\n",
+                "type": "System.Internal.PID.PID -> addresses -> appMsg -> System.Message.SystemMessage addresses actors appMsg"
+            },
+            {
+                "name": "spawn",
+                "comment": " Spawn an Actor\n",
+                "type": "actors -> (System.Internal.PID.PID -> System.Message.SystemMessage addresses actors appMsg) -> System.Message.SystemMessage addresses actors appMsg"
+            },
+            {
+                "name": "spawnMultiple",
+                "comment": " Spawn multiple Actors\n",
+                "type": "List.List actors -> (List.List System.Internal.PID.PID -> System.Message.SystemMessage addresses actors appMsg) -> System.Message.SystemMessage addresses actors appMsg"
+            },
+            {
+                "name": "spawnMultipleWithFlags",
+                "comment": " Spawn multiple Actors with given flags\n",
+                "type": "List.List ( actors, Json.Encode.Value ) -> (List.List System.Internal.PID.PID -> System.Message.SystemMessage addresses actors appMsg) -> System.Message.SystemMessage addresses actors appMsg"
+            },
+            {
+                "name": "spawnWithFlags",
+                "comment": " Spawn an Actor with given flags (as an encoded JSON Value)\n",
+                "type": "Json.Encode.Value -> actors -> (System.Internal.PID.PID -> System.Message.SystemMessage addresses actors appMsg) -> System.Message.SystemMessage addresses actors appMsg"
+            },
+            {
+                "name": "stop",
+                "comment": " Kill a process\n\nThis will trigger the Actors onKill event on which you can decide what to do with this Message.\n\nThere is a Default behaviour available that will remove the Process from the System.\n\n",
+                "type": "System.Internal.PID.PID -> System.Message.SystemMessage addresses actors appMsg"
+            },
+            {
+                "name": "toCmd",
+                "comment": " Converts a generic msg into Cmd.\n",
+                "type": "msg -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "updateDocumentTitle",
+                "comment": " Update the document title\n",
+                "type": "String.String -> System.Message.SystemMessage addresses actors appMsg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "System.Model",
+        "comment": "\n\n@docs SystemModel\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "SystemModel",
+                "comment": " An alias of the Model used by any application you start unsing this package.\n",
+                "args": [
+                    "addresses",
+                    "actors",
+                    "appModel"
+                ],
+                "type": "System.Internal.Model.SystemModel addresses actors appModel"
+            }
+        ],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "System.Process",
+        "comment": " A Process in the context of this package represents a spawned/active Actor.\n\nEach Process gets assigned an unique identifier ([PID](https://en.wikipedia.org/wiki/Process_identifier)).\nThe PID also holds information about who spawned, or started, the process.\n\n\n# ProcessIDentifier\n\n@docs PID\n\n\n# Helpers\n\n@docs equals, pidToInt, pidToString, pidSpawnedBy\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "PID",
+                "comment": " ",
+                "args": [],
+                "type": "System.Internal.PID.PID"
+            }
+        ],
+        "values": [
+            {
+                "name": "equals",
+                "comment": " Check if two PIDs are identical.\n",
+                "type": "System.Process.PID -> System.Process.PID -> Basics.Bool"
+            },
+            {
+                "name": "pidSpawnedBy",
+                "comment": " Get the PID responsible for spawing the given PID\n",
+                "type": "System.Process.PID -> System.Process.PID"
+            },
+            {
+                "name": "pidToInt",
+                "comment": " Represent a PID as an Int\n",
+                "type": "System.Process.PID -> Basics.Int"
+            },
+            {
+                "name": "pidToString",
+                "comment": " Represent a PID as a String\n",
+                "type": "System.Process.PID -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

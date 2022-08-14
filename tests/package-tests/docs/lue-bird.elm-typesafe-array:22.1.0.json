@@ -1,0 +1,431 @@
+[
+    {
+        "name": "ArraySized",
+        "comment": " An `Array` that knows more about the amount of elements it holds.\n\n    import Linear exposing (DirectionLinear(..))\n    import N exposing (n0)\n    import Array\n\n    Array.empty |> Array.get 0\n    --> Nothing\n\n    ArraySized.empty |> ArraySized.element ( Up, n0 )\n    -- compile-time error\n\nIs this any useful? One example:\n\n> You have an array of 1+ elements. What's its greatest value?\n\n    withArray : Array comparable -> Maybe comparable\n    withArray =\n        Array.foldl\n            (\\element soFar ->\n                case soFar of\n                    Just maxSoFar ->\n                        max maxSoFar element\n\n                    Nothing ->\n                        element\n            )\n            Nothing\n\n    withArraySized :\n        ArraySized (In (Add1 minMinus1_) max_) comparable\n        -> comparable\n    withArraySized =\n        ArraySized.fold Up Basics.max\n\nThe `Array` type can't express it contains 1+ elements.\n[`ArraySized`](#ArraySized) knows about its length at compile time,\nso we can [`fold`](#fold), access, ... without a worry\n\n@docs ArraySized\n\n\n# create\n\n@docs repeat, random, until\n@docs fromArray, fromList, fromEmptiable, fromStackFilled, fromStackEmptiable\n\n\n## specific length\n\n@docs empty, l1\n\n[⏭ skip to last](ArraySized#l16)\n\n@docs l2, l3, l4, l5, l6, l7, l8, l9, l10, l11, l12, l13, l14, l15, l16\n\nYou can [generate `l<x>` with `x >= 17` locally](https://lue-bird.github.io/elm-typesafe-array/generate/),\nput them in a `module exposing (l<x>)` + `import as ArraySized`\n\n\n# scan\n\n@docs length\n@docs element, elementTry, to1\n@docs allAre, anyIs\n\n\n# alter\n\n@docs elementReplace, elementAlter, reverse\n@docs push, minPush, insert, minInsert\n@docs elementRemove, minElementRemove\n\n\n## filter\n\n@docs fills, allFill\n\n\n## part\n\n@docs take, drop, minDrop\n@docs toChunksOf\n\n\n## combine\n\n@docs glue, minGlue\n@docs interweave, minInterweave\n\n\n# length compare\n\n@docs hasIn, has, hasAtLeast, hasAtMost\n\n\n# transform\n\n@docs map\n@docs foldFrom, fold\n@docs toArray, toList, toEmptiable, toStackEmptiable, toStackFilled\n\nYou have a use-case for `mapAccumulate`/`mapAccumulateFrom`? → issue/PR\n\n@docs to2\n\n[⏭ skip to last](ArraySized#to16)\n\n@docs to3, to4, to5, to6, to7, to8, to9, to10, to11, to12, to13, to14, to15, to16\n\nYou can [generate `to<x>` with `x >= 17` locally](https://lue-bird.github.io/elm-typesafe-array/generate/),\nput them in a `module exposing (to<x>)` + `import as ArraySized`\n\n\n## type information\n\n@docs minDown, maxUp, maxNo\n@docs max, min\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "ArraySized",
+                "comment": " An `Array` that knows about the amount of elements it holds\n\n\n## result type\n\n    -- amount >= 5\n    : ArraySized (Min (Up x To (Add5 x))) ...\n\n    -- 2 <= amount <= 12\n    : ArraySized\n    :     (In\n    :         (Up minX To (Add2 minX))\n    :         (Up maxX To (Add12 maxX))\n    :     ) ...\n\nThis weird difference type `Up x To (Add<n> x)` just to represent the number `n`\nis what allows the little magic tricks in the library:\n[glueing](#combine), [taking, dropping, chunking](#part), [comparing](#length-compare), ...\n\n\n### argument type\n\n    -- = 15\n    : ArraySized (Exactly N15) ...\n\n    -- amount >= 4\n    : ArraySized (In (Fixed (Add4 minMinus4_)) max_) ...\n\n    -- 4 <= amount <= 15\n    : ArraySized\n    :     (In (Fixed (Add4 minMinus4_)) (Up maxTo15_ To N15)) ...\n\nto allow the broadest range of desired lengths,\n\n  - to require nothing about the upper limit\n    → leave the maximum as a variable\n  - fix lower limits to the desired minimum number `+` some variable\n  - require the actual upper limit to go `Up` a variable amount\n    to arrive at the desired maximum number\n\n\n### stored type\n\nin your `Model` for example.\nThey look just like [result types](#result-type) but every\n`Up x To (Add<n> x)` becomes `Fixed N<n>`,\navoiding type variables\n\n    -- amount >= 4\n    : ArraySized (Min (Fixed N4)) ...\n\n    -- 4 <= amount <= 15\n    : ArraySized (In (Fixed N4) (Fixed N15)) ...\n\n    -- = 15\n    : ArraySized (Exactly N15) ...\n\n`Exactly n` being a shorthand for\n\n    In (Fixed n) (Fixed n)\n\n---\n\n`==` on ranges can crash elm. Use [the safe comparison methods](#length-compare)\n\n",
+                "args": [
+                    "lengthRange",
+                    "element"
+                ],
+                "type": "ArraySized.Internal.ArraySized lengthRange element"
+            }
+        ],
+        "values": [
+            {
+                "name": "allAre",
+                "comment": " Whether all elements satisfy a given test\n\n    ArraySized.l2 2 3 |> ArraySized.allAre (\\n -> n <= 4)\n    --> True\n\n    ArraySized.l2 2 7 |> ArraySized.allAre (\\n -> n <= 4)\n    --> False\n\n    ArraySized.empty |> ArraySized.allAre (\\n -> n <= 4)\n    --> True\n\n",
+                "type": "(element -> Basics.Bool) -> ArraySized.ArraySized lengthRange_ element -> Basics.Bool"
+            },
+            {
+                "name": "allFill",
+                "comment": " If every `Emptiable` is `filled`, all of the values.\nIf any element is `empty`, `empty`\n\n    import Emptiable exposing (filled, fillMap)\n\n    ArraySized.empty\n        |> ArraySized.allFill\n        |> fillMap ArraySized.toList\n    --> filled []\n\n    ArraySized.l3 (filled 1) (filled 2) (filled 3)\n        |> ArraySized.allFill\n        |> fillMap ArraySized.toList\n    --> filled [ 1, 2, 3 ]\n\n    ArraySized.l3 (filled 1) Emptiable.empty (filled 3)\n        |> ArraySized.allFill\n    --> Emptiable.empty\n\nFunnily, this can sometimes even be nicer than `mapN`/`andMap`\n\n    groupCall =\n        ArraySized.l5 aUser bUser cUser dUser eUser\n            |> ArraySized.map .phoneNumber\n            |> ArraySized.allFill\n\n    -- vs\n    groupCall =\n        map5 ArraySized.l5\n            aUser.phoneNumber\n            bUser.phoneNumber\n            cUser.phoneNumber\n            dUser.phoneNumber\n            eUser.phoneNumber\n\n",
+                "type": "ArraySized.ArraySized lengthRange (Emptiable.Emptiable value possiblyOrNever) -> Emptiable.Emptiable (ArraySized.ArraySized lengthRange value) possiblyOrNever"
+            },
+            {
+                "name": "anyIs",
+                "comment": " Whether at least one element satisfies a given test\n\n    ArraySized.l2 300 -5 |> ArraySized.anyIs (\\n -> n <= 4)\n    --> True\n\n    ArraySized.l2 5 5 |> ArraySized.anyIs (\\n -> n <= 4)\n    --> False\n\n    ArraySized.empty |> ArraySized.anyIs (\\n -> n <= 4)\n    --> False\n\n",
+                "type": "(element -> Basics.Bool) -> ArraySized.ArraySized lengthRange_ element -> Basics.Bool"
+            },
+            {
+                "name": "drop",
+                "comment": " Elements after a certain number of elements in a [direction](https://package.elm-lang.org/packages/lue-bird/elm-linear-direction/latest/).\n\n    import Linear exposing (DirectionLinear(..))\n    import N exposing (n2)\n\n    ArraySized.l4 0 1 2 3\n        |> ArraySized.drop ( Down, n2 )\n        --: ArraySized\n        --:     (In\n        --:         (Up minX To (Add2 minX))\n        --:         (Up maxX To (Add2 maxX))\n        --:     )\n        --:     number_\n        |> ArraySized.toList\n    --> [ 0, 1 ]\n\n    between6And10Elements\n        |> ArraySized.drop ( Up, between2And3 )\n        --: ArraySized\n        --:     (In\n        --:         (Up minX To (Add3 minX))\n        --:         (Up maxX To (Add8 maxX))\n        --:     )\n        --:     number_\n\nDon't know its length maximum? → [`minDrop`](#minDrop)\n\n",
+                "type": "( Linear.DirectionLinear, N.N (N.In (N.Down maxPlusX N.To takenMaxPlusX) (N.Down min N.To takenMin)) ) -> ArraySized.ArraySized (N.In (N.Fixed min) (N.Up maxX N.To maxPlusX)) element -> ArraySized.ArraySized (N.In (N.Fixed takenMin) (N.Up maxX N.To takenMaxPlusX)) element"
+            },
+            {
+                "name": "element",
+                "comment": " Its element at a valid location\nin a [direction](https://package.elm-lang.org/packages/lue-bird/elm-linear-direction/latest/)\n\n    import Linear exposing (DirectionLinear(..))\n    import N exposing (n1)\n\n    ArraySized.l4 0 1 2 3\n        |> ArraySized.element ( Up, n1 )\n    --> 1\n\n    ArraySized.l4 0 1 2 3\n        |> ArraySized.element ( Down, n1 )\n    --> 2\n\n",
+                "type": "( Linear.DirectionLinear, N.N (N.In indexMin_ (N.Up indexMaxToMinMinus1_ N.To minMinus1)) ) -> ArraySized.ArraySized (N.In (N.Fixed (N.Add1 minMinus1)) max_) element -> element"
+            },
+            {
+                "name": "elementAlter",
+                "comment": " Change the element at an index\nin a [direction](https://package.elm-lang.org/packages/lue-bird/elm-linear-direction/latest/) based on its previous value\n\n    import Linear exposing (DirectionLinear(..))\n    import N exposing (n0)\n\n    ArraySized.l3 1 20 30\n        |> ArraySized.elementAlter ( Up, n0 ) (\\x -> x * 10)\n        |> ArraySized.toList\n    --> [ 10, 20, 30 ]\n\n    ArraySized.l3 1 20 30\n        |> ArraySized.elementAlter ( Down, n0 ) negate\n        |> ArraySized.toList\n    --> [ 1, 20, -30 ]\n\nAn index that's too high to point to an existing element is ignored\nand no element is altered\n\n    import Linear exposing (DirectionLinear(..))\n    import N exposing (n3)\n\n    ArraySized.l3 1 20 30\n        |> ArraySized.elementAlter ( Up, n3 ) (\\x -> x * 10)\n        |> ArraySized.toList\n    --> [ 1, 20, 30 ]\n\n",
+                "type": "( Linear.DirectionLinear, N.N index_ ) -> (element -> element) -> ArraySized.ArraySized lengthRange element -> ArraySized.ArraySized lengthRange element"
+            },
+            {
+                "name": "elementRemove",
+                "comment": " Kick out the element at a given index\nin a [direction](https://package.elm-lang.org/packages/lue-bird/elm-linear-direction/latest/)\n\n    import Linear exposing (DirectionLinear(..))\n    import N exposing (n0)\n\n    removeLast between1And10Elements =\n        between1And10Elements\n            |> ArraySized.elementRemove ( Down, n0 )\n\nDon't know the length maximum? → [`minElementRemove`](#minElementRemove)\n\n",
+                "type": "( Linear.DirectionLinear, N.N (N.In indexMin_ (N.Up indexMaxToMinMinus1_ N.To minMinus1)) ) -> ArraySized.ArraySized (N.In (N.Fixed (N.Add1 minMinus1)) (N.Up maxX N.To (N.Add1 maxMinus1PlusX))) element -> ArraySized.ArraySized (N.In (N.Fixed minMinus1) (N.Up maxX N.To maxMinus1PlusX)) element"
+            },
+            {
+                "name": "elementReplace",
+                "comment": " Set the element at an index\nin a [direction](https://package.elm-lang.org/packages/lue-bird/elm-linear-direction/latest/)\n\n    import Linear exposing (DirectionLinear(..))\n    import N exposing (n1, n2)\n\n    ArraySized.l3 \"I\" \"am\" \"ok\"\n        |> ArraySized.elementReplace ( Up, n2 )\n            (\\() -> \"confusion\")\n        |> ArraySized.toList\n    --> [ \"I\", \"am\", \"confusion\" ]\n\n    ArraySized.l3 \"I\" \"am\" \"ok\"\n        |> ArraySized.elementReplace ( Down, n1 )\n            (\\() -> \"feel\")\n        |> ArraySized.toList\n    --> [ \"I\", \"feel\", \"ok\" ]\n\nAn index that's too high to point to an existing element is ignored\nand no element is replaced\n\n    import Linear exposing (DirectionLinear(..))\n    import N exposing (n3)\n\n    ArraySized.l3 \"I\" \"am\" \"ok\"\n        |> ArraySized.elementReplace ( Down, n3 )\n            (\\() -> \"feel\")\n        |> ArraySized.toList\n    --> [ \"I\", \"am\", \"ok\" ]\n\n",
+                "type": "( Linear.DirectionLinear, N.N index_ ) -> (() -> element) -> ArraySized.ArraySized lengthRange element -> ArraySized.ArraySized lengthRange element"
+            },
+            {
+                "name": "elementTry",
+                "comment": " Its possible element at a location\nin a [direction](https://package.elm-lang.org/packages/lue-bird/elm-linear-direction/latest/).\nBecause the index doesn't promise it's `<=` the [`ArraySized`](#ArraySized)'s length minimum,\n`elementTry` gives back a `Result`\n\n    import Linear exposing (DirectionLinear(..))\n    import N exposing (n1, n5)\n\n    ArraySized.l4 0 1 2 3\n        |> ArraySized.elementTry ( Up, n5 )\n    --> Err (Linear.ExpectedIndexForLength 4)\n\n    ArraySized.l4 0 1 2 3\n        |> ArraySized.elementTry ( Down, n1 )\n    --> Ok 2\n\n",
+                "type": "( Linear.DirectionLinear, N.N range_ ) -> ArraySized.ArraySized lengthRange_ element -> Result.Result Linear.ExpectedIndexInRange element"
+            },
+            {
+                "name": "empty",
+                "comment": " No elements\n\n    ArraySized.empty\n    --: ArraySized (Up minX To minX) (Up maxX To maxX) element_\n        |> ArraySized.push \":)\"\n        --: ArraySized\n        --:     (Up minX To (Add1 minX)) (Up maxX To (Add1 maxX))\n        --:     String\n\n",
+                "type": "ArraySized.ArraySized (N.In (N.Up minX N.To minX) (N.Up maxX N.To maxX)) element_"
+            },
+            {
+                "name": "fills",
+                "comment": " Take every `filled value`, drop every `empty`\n\n    import Emptiable exposing (filled)\n\n    ArraySized.l3 (filled \"This\") Emptiable.empty (filled \"fine\")\n        |> ArraySized.fills\n        --: ArraySized\n        --:     (In (Up minX To minX) (Up maxX To (Add3 maxX)))\n        --:     String\n        |> ArraySized.toList\n    --> [ \"This\", \"fine\" ]\n\n[`map |> fills` to get the same functionality as \"filterMap\"](https://github.com/lue-bird/elm-typesafe-array/blob/master/Q%20%26%20A.md#no-filtermap-only-fills)\n\n    import Emptiable\n\n    ArraySized.l3 \"1.2\" \"2\" \"hello\"\n        |> ArraySized.map (String.toInt >> Emptiable.fromMaybe)\n        |> ArraySized.fills\n        |> ArraySized.toList\n    --> [ 2 ]\n\n",
+                "type": "ArraySized.ArraySized (N.In (N.Fixed min_) max) (Emptiable.Emptiable value possiblyOrNever_) -> ArraySized.ArraySized (N.In (N.Up minX N.To minX) max) value"
+            },
+            {
+                "name": "fold",
+                "comment": " A fold in a [direction](https://package.elm-lang.org/packages/lue-bird/elm-linear-direction/latest/)\nwhere the initial result is the first element in the [`ArraySized`](#ArraySized).\n\n    import Linear exposing (DirectionLinear(..))\n\n    ArraySized.l3 234 345 543\n        |> ArraySized.fold Up Basics.max\n    --> 543\n\n    ArraySized.l3 \"go\" \"to\" \"uni\"\n        |> ArraySized.fold Down\n            (\\word soFar -> soFar ++ \" \" ++ word)\n    --> \"uni to go\"\n\n",
+                "type": "Linear.DirectionLinear -> (element -> element -> element) -> ArraySized.ArraySized (N.In (N.Fixed (N.Add1 minMinus1_)) max_) element -> element"
+            },
+            {
+                "name": "foldFrom",
+                "comment": " Reduce an `ArraySized` in a [direction](https://package.elm-lang.org/packages/indique/elm-linear-direction/latest/).\n\n    import Linear exposing (DirectionLinear(..))\n\n    ArraySized.l4 'l' 'i' 'v' 'e'\n        |> ArraySized.foldFrom \"\" Down String.cons\n    --> \"live\"\n\n    ArraySized.l4 'l' 'i' 'v' 'e'\n        |> ArraySized.foldFrom \"\" Up String.cons\n    --> \"evil\"\n\n    sum =\n        ArraySized.foldFrom 0 Up (\\soFar n -> soFar + n)\n\n    product =\n        ArraySized.foldFrom 0 Up (\\soFar n -> soFar * n)\n\n",
+                "type": "result -> Linear.DirectionLinear -> (element -> result -> result) -> ArraySized.ArraySized lengthRange_ element -> result"
+            },
+            {
+                "name": "fromArray",
+                "comment": " Create from an `Array`.\nAs every `Array` has `>= 0` elements:\n\n    arrayFromSomeOtherLibrary |> ArraySized.fromArray\n    --: ArraySized (Min (Up x To x))\n\nDon't use it for construction:\n\n    ArraySized.fromArray\n        (Array.fromList [ 0, 1, 2, 3, 4, 5, 6 ])\n    -- big no\n\nMake sure the compiler knows as much as you about the amount of elements!\n\n    ArraySized.l7 0 1 2 3 4 5 6 -- ok\n\n    ArraySized.until n6 -- big yes\n\n[\"wrap early, unwrap late\"](https://elm-radio.com/episode/wrap-early-unwrap-late)\n\n",
+                "type": "Array.Array element -> ArraySized.ArraySized (N.Min (N.Up x N.To x)) element"
+            },
+            {
+                "name": "fromEmptiable",
+                "comment": " On `Just` [`ArraySized.l1`](#l1), on `Nothing` [`empty`](#empty)\n\n    import N exposing (n0)\n    import Emptiable exposing (filled)\n\n    filled \"hi\"\n        |> ArraySized.fromEmptiable\n        --: ArraySized\n        --:     (In (Up minX To minX) (Up maxX To (Add1 maxX)))\n        |> ArraySized.toList\n    --> [ \"hi\" ]\n\n    Emptiable.empty\n        |> ArraySized.fromEmptiable\n        --: ArraySized\n        --:     (In (Up minX To minX) (Up maxX To (Add1 maxX)))\n        |> ArraySized.toList\n    --> []\n\nSadly, they way natural number constraints are defined,\n`possiblyOrNever` can't be transferred.\n\n",
+                "type": "Emptiable.Emptiable element possiblyOrNever_ -> ArraySized.ArraySized (N.In (N.Up minX N.To minX) (N.Up maxX N.To (N.Add1 maxX))) element"
+            },
+            {
+                "name": "fromList",
+                "comment": " Create from a `List`.\nAs every `List` has `>= 0` elements:\n\n    listFromSomeOtherLibrary |> ArraySized.fromList\n    --: ArraySized (Min (Up x To x))\n\nDon't use for construction:\n\n    ArraySized.fromList [ 0, 1, 2, 3, 4, 5, 6 ]\n    -- big no!\n\nMake sure the compiler knows as much as you about the amount of elements!\n\n    ArraySized.l7 0 1 2 3 4 5 6 -- ok\n\n    ArraySized.until n6 -- big yes\n\n[\"wrap early, unwrap late\"](https://elm-radio.com/episode/wrap-early-unwrap-late)\n\n",
+                "type": "List.List element -> ArraySized.ArraySized (N.Min (N.Up x N.To x)) element"
+            },
+            {
+                "name": "fromStackEmptiable",
+                "comment": " Create from a `Stack`.\nAs every `Stack` has `>= 0` elements:\n\n    listFromSomeOtherLibrary |> ArraySized.fromStackEmptiable\n    --: ArraySized (Min (Up x To x))\n\nDon't use for construction:\n\n    ArraySized.fromStackEmptiable\n        (Stack.fromList [ 0, 1, 2, 3, 4, 5, 6 ])\n    -- big no!\n\nMake sure the compiler knows as much as you about the amount of elements!\n\n    ArraySized.l7 0 1 2 3 4 5 6 -- ok\n\n    ArraySized.until n6 -- big yes\n\n[\"wrap early, unwrap late\"](https://elm-radio.com/episode/wrap-early-unwrap-late)\n\nHave an `Emptiable (Stacked ...) Never`? → [`fromStackFilled`](#fromStackFilled)\n\n",
+                "type": "Emptiable.Emptiable (Stack.Stacked element) possiblyOrNever_ -> ArraySized.ArraySized (N.Min (N.Up x N.To x)) element"
+            },
+            {
+                "name": "fromStackFilled",
+                "comment": " Create from a `Stack`.\nAs every `Stack` has `>= 0` elements:\n\n    listFromSomeOtherLibrary |> ArraySized.fromStackFilled\n    --: ArraySized (Min (Up x To (Add1 x)))\n\nDon't use for construction:\n\n    ArraySized.fromStackFilled (Stack.topDown 0 [ 1, 2, 3, 4, 5, 6 ])\n    -- big no!\n\nMake sure the compiler knows as much as you about the amount of elements!\n\n    ArraySized.l7 0 1 2 3 4 5 6 -- ok\n\n    ArraySized.until n6 -- big yes\n\n[\"wrap early, unwrap late\"](https://elm-radio.com/episode/wrap-early-unwrap-late)\n\nOnly have an `Emptiable (Stacked ...) Possibly`? → [`fromStackEmptiable`](#fromStackEmptiable)\n\n",
+                "type": "Emptiable.Emptiable (Stack.Stacked element) Basics.Never -> ArraySized.ArraySized (N.Min (N.Up x N.To (N.Add1 x))) element"
+            },
+            {
+                "name": "glue",
+                "comment": " Attach elements of an `ArraySized` with an exact amount of elements to a given [direction](https://package.elm-lang.org/packages/lue-bird/elm-linear-direction/latest/).\n\n    import Linear exposing (DirectionLinear(..))\n\n    ArraySized.l3 1 2 3\n        |> ArraySized.glue Up (ArraySized.l3 4 5 6)\n        --: ArraySized\n        --:     (In\n        --:         (Up minX To (Add6 minX))\n        --:         (Up maxX To (Add6 maxX))\n        --:     )\n        --:     number_\n        |> ArraySized.toList\n    --> [ 1, 2, 3, 4, 5, 6 ]\n\n    ArraySized.l3 1 2 3\n        |> ArraySized.glue Down (ArraySized.l3 4 5 6)\n        |> ArraySized.toList\n    --> [ 4, 5, 6, 1, 2, 3 ]\n\nDon't know both length maxima? → [`minGlue`](#minGlue)\n\n",
+                "type": "Linear.DirectionLinear -> ArraySized.ArraySized (N.In (N.Up minPlusX N.To minSumPlusX) (N.Up maxPlusX N.To maxSumPlusX)) element -> ArraySized.ArraySized (N.In (N.Up minX N.To minPlusX) (N.Up maxX N.To maxPlusX)) element -> ArraySized.ArraySized (N.In (N.Up minX N.To minSumPlusX) (N.Up maxX N.To maxSumPlusX)) element"
+            },
+            {
+                "name": "has",
+                "comment": " Compare its length to a given exact length. Does it match or is it `BelowOrAbove`?\n\n    import N exposing (n7)\n\n    chooseFormation :\n        ArraySized (In min N50) Character\n        -> Formation\n    chooseFormation characters =\n        case characters |> ArraySized.has n7 of\n            Ok exactly7 ->\n                SpecialAttack exactly7\n\n            Err (N.Below l6AtLeast) ->\n                Retreat l6AtLeast\n\n            Err (N.Above l8AtLeast) ->\n                Fight l8AtLeast\n\n",
+                "type": "N.N (N.In (N.Up minX N.To (N.Add1 comparedAgainstMinPlusXMinus1)) (N.Up maxX N.To (N.Add1 comparedAgainstMaxPlusXMinus1))) -> ArraySized.ArraySized (N.In min max) element -> Result.Result (N.BelowOrAbove (ArraySized.ArraySized (N.In min (N.Up maxX N.To comparedAgainstMaxPlusXMinus1)) element) (ArraySized.ArraySized (N.In (N.Up minX N.To (N.Add2 comparedAgainstMinPlusXMinus1)) max) element)) (ArraySized.ArraySized (N.In (N.Up minX N.To (N.Add1 comparedAgainstMinPlusXMinus1)) (N.Up maxX N.To (N.Add1 comparedAgainstMaxPlusXMinus1))) element)"
+            },
+            {
+                "name": "hasAtLeast",
+                "comment": " Is its length below (`Err`) or atLeast (`Ok`) as big as a given `N`?\n\n    import N exposing (n5)\n\n    first5 :\n        ArraySized (In minLength_ max) element\n        -> Maybe (ArraySized (In N5 max) element)\n    first5 arraySized =\n        case arraySized |> ArraySized.hasAtLeast n5 of\n            N.Below _ ->\n                Nothing\n\n            N.EqualOrGreater atLeast5 ->\n                Just atLeast5\n\n",
+                "type": "N.N (N.In lowerLimitMin (N.Up lowerLimitMaxX N.To (N.Add1 lowerLimitMaxMinus1PlusX))) -> ArraySized.ArraySized (N.In min max) element -> Result.Result (ArraySized.ArraySized (N.In min (N.Up lowerLimitMaxX N.To lowerLimitMaxMinus1PlusX)) element) (ArraySized.ArraySized (N.In lowerLimitMin max) element)"
+            },
+            {
+                "name": "hasAtMost",
+                "comment": " Is its length atMost (`Ok`) or above (`Err`) a given length?\n\n    -- at least 3 and only up to 50 tags\n    tag :\n        ArraySized (In (Add3 orHigherMin_) N50) String\n        -> a\n        -> Tagged a\n\n    tagIfValidTags :\n        ArraySized (In (Add3 orHigherMin_) max)\n        -> a\n        -> Maybe (Tagged a)\n    tagIfValidTags array value =\n        case\n            array\n                |> ArraySized.fromArray\n                |> ArraySized.hasAtMost n50\n        of\n            Ok atMost53 ->\n                tag value atMost53 |> Just\n\n            Err _ ->\n                Nothing\n\n",
+                "type": "N.N (N.In (N.Up upperLimitMinX N.To upperLimitMinPlusX) upperLimitMax) -> ArraySized.ArraySized (N.In min max) element -> Result.Result (ArraySized.ArraySized (N.In (N.Up upperLimitMinX N.To (N.Add1 upperLimitMinPlusX)) max) element) (ArraySized.ArraySized (N.In min upperLimitMax) element)"
+            },
+            {
+                "name": "hasIn",
+                "comment": " Compared to a range from a lower to an upper bound, is its length in, `BelowOrAbove` range?\n\n    import N exposing (n10, n16)\n\n    chooseFormation :\n        ArraySized (In minLength_ N50) Character\n        -> Formation\n    chooseFormation characters =\n        case characters |> ArraySized.hasIn ( n10, n16 ) of\n            Ok between10And16 ->\n                SpecialAttack between10And16\n\n            Err (N.Below n9AtMost) ->\n                Retreat n9AtMost\n\n            Err (N.Above n17AtLeast) ->\n                Fight n17AtLeast\n\n",
+                "type": "( N.N (N.In lowerLimitMin (N.Up lowerLimitMaxX N.To (N.Add1 lowerLimitMaxPlusXMinus1))), N.N (N.In (N.Up upperLimitMinX N.To upperLimitMinPlusX) upperLimitMax) ) -> ArraySized.ArraySized (N.In min max) element -> Result.Result (N.BelowOrAbove (ArraySized.ArraySized (N.In min (N.Up lowerLimitMaxX N.To lowerLimitMaxPlusXMinus1)) element) (ArraySized.ArraySized (N.In (N.Up upperLimitMinX N.To (N.Add1 upperLimitMinPlusX)) max) element)) (ArraySized.ArraySized (N.In lowerLimitMin upperLimitMax) element)"
+            },
+            {
+                "name": "insert",
+                "comment": " Put an element in the `ArraySized` at a given index\nin a [direction](https://package.elm-lang.org/packages/lue-bird/elm-linear-direction/latest/)\n\n    import Linear exposing (DirectionLinear(..))\n    import N exposing (n1, n2)\n\n    ArraySized.l3 'a' 'c' 'd'\n        |> ArraySized.insert ( Up, n1 ) 'b'\n        --: ArraySized\n        --:     (In (Fixed N4) (Up maxX To (Add4 maxX)))\n        --:     Char\n        |> ArraySized.toList\n    --> [ 'a', 'b', 'c', 'd' ]\n\n    ArraySized.l3 'a' 'c' 'd'\n        |> ArraySized.insert ( Down, n2 ) 'b'\n        |> ArraySized.toList\n    --> [ 'a', 'b', 'c', 'd' ]\n\n[`minInsert`](#minInsert) if you don't know the length maximum\n\nNeed the length minimum to not become `Fixed`\n(for results etc.) → [`|> min`](#min)\n\n",
+                "type": "( Linear.DirectionLinear, N.N (N.In indexMin_ (N.Up indexMaxToMin_ N.To min)) ) -> element -> ArraySized.ArraySized (N.In (N.Fixed min) (N.Up maxX N.To maxPlusX)) element -> ArraySized.ArraySized (N.In (N.Fixed (N.Add1 min)) (N.Up maxX N.To (N.Add1 maxPlusX))) element"
+            },
+            {
+                "name": "interweave",
+                "comment": " Place all elements of an [`ArraySized`](#ArraySized)\nbetween all current members.\nExtra elements of either [`ArraySized`](#ArraySized) are glued to the end\nwithout separating elements from the other [`ArraySized`](#ArraySized).\n\n    import N exposing (n2)\n\n    ArraySized.l3 \"turtles\" \"turtles\" \"turtles\"\n        |> ArraySized.interweave (ArraySized.repeat \"on\" n2)\n        --: ArraySized\n        --:     (In\n        --:         (Up minX To (Add5 minX))\n        --:         (Up maxX To (Add5 maxX))\n        --:     )\n        --:     String\n        |> ArraySized.toList\n    --> [ \"turtles\", \"on\", \"turtles\", \"on\", \"turtles\" ]\n\n    ArraySized.l3 \"turtles\" \"turtles\" \"turtles\"\n        |> ArraySized.interweave (ArraySized.repeat \"on\" between5And10)\n    --→ \"turtles\" \"on\" \"turtles\" \"on\" \"turtles\" \"on\" \"on\" \"on\" ...\n    --: ArraySized\n    --:     (In\n    --:         (Up minX To (Add5 minX))\n    --:         (Up maxX To (Add13 maxX))\n    --:     )\n    --:     String\n\nDon't know both maxima → [`minInterweave`](#minInterweave)\n\n",
+                "type": "ArraySized.ArraySized (N.In (N.Up minPlusX N.To minSumPlusX) (N.Up maxPlusX N.To maxSumPlusX)) element -> ArraySized.ArraySized (N.In (N.Up x N.To minPlusX) (N.Up x N.To maxPlusX)) element -> ArraySized.ArraySized (N.In (N.Up x N.To minSumPlusX) (N.Up x N.To maxSumPlusX)) element"
+            },
+            {
+                "name": "l1",
+                "comment": " Create an `ArraySized` with exactly 1 element\n",
+                "type": "element -> ArraySized.ArraySized (N.In (N.Up minX N.To (N.Add1 minX)) (N.Up maxX N.To (N.Add1 maxX))) element"
+            },
+            {
+                "name": "l10",
+                "comment": " Create an `ArraySized` with exactly 10 elements in this order\n",
+                "type": "element -> element -> element -> element -> element -> element -> element -> element -> element -> element -> ArraySized.ArraySized (N.In (N.Up minX N.To (N.Add10 minX)) (N.Up maxX N.To (N.Add10 maxX))) element"
+            },
+            {
+                "name": "l11",
+                "comment": " Create an `ArraySized` with exactly 11 elements in this order\n",
+                "type": "element -> element -> element -> element -> element -> element -> element -> element -> element -> element -> element -> ArraySized.ArraySized (N.In (N.Up minX N.To (N.Add11 minX)) (N.Up maxX N.To (N.Add11 maxX))) element"
+            },
+            {
+                "name": "l12",
+                "comment": " Create an `ArraySized` with exactly 12 elements in this order\n",
+                "type": "element -> element -> element -> element -> element -> element -> element -> element -> element -> element -> element -> element -> ArraySized.ArraySized (N.In (N.Up minX N.To (N.Add12 minX)) (N.Up maxX N.To (N.Add12 maxX))) element"
+            },
+            {
+                "name": "l13",
+                "comment": " Create an `ArraySized` with exactly 13 elements in this order\n",
+                "type": "element -> element -> element -> element -> element -> element -> element -> element -> element -> element -> element -> element -> element -> ArraySized.ArraySized (N.In (N.Up minX N.To (N.Add13 minX)) (N.Up maxX N.To (N.Add13 maxX))) element"
+            },
+            {
+                "name": "l14",
+                "comment": " Create an `ArraySized` with exactly 14 elements in this order\n",
+                "type": "element -> element -> element -> element -> element -> element -> element -> element -> element -> element -> element -> element -> element -> element -> ArraySized.ArraySized (N.In (N.Up minX N.To (N.Add14 minX)) (N.Up maxX N.To (N.Add14 maxX))) element"
+            },
+            {
+                "name": "l15",
+                "comment": " Create an `ArraySized` with exactly 15 elements in this order\n",
+                "type": "element -> element -> element -> element -> element -> element -> element -> element -> element -> element -> element -> element -> element -> element -> element -> ArraySized.ArraySized (N.In (N.Up minX N.To (N.Add15 minX)) (N.Up maxX N.To (N.Add15 maxX))) element"
+            },
+            {
+                "name": "l16",
+                "comment": " Create an `ArraySized` with exactly 16 elements in this order\n",
+                "type": "element -> element -> element -> element -> element -> element -> element -> element -> element -> element -> element -> element -> element -> element -> element -> element -> ArraySized.ArraySized (N.In (N.Up minX N.To (N.Add16 minX)) (N.Up maxX N.To (N.Add16 maxX))) element"
+            },
+            {
+                "name": "l2",
+                "comment": " Create an `ArraySized` with exactly 2 elements in this order\n",
+                "type": "element -> element -> ArraySized.ArraySized (N.In (N.Up minX N.To (N.Add2 minX)) (N.Up maxX N.To (N.Add2 maxX))) element"
+            },
+            {
+                "name": "l3",
+                "comment": " Create an `ArraySized` with exactly 3 elements in this order\n",
+                "type": "element -> element -> element -> ArraySized.ArraySized (N.In (N.Up minX N.To (N.Add3 minX)) (N.Up maxX N.To (N.Add3 maxX))) element"
+            },
+            {
+                "name": "l4",
+                "comment": " Create an `ArraySized` with exactly 4 elements in this order\n",
+                "type": "element -> element -> element -> element -> ArraySized.ArraySized (N.In (N.Up minX N.To (N.Add4 minX)) (N.Up maxX N.To (N.Add4 maxX))) element"
+            },
+            {
+                "name": "l5",
+                "comment": " Create an `ArraySized` with exactly 5 elements in this order\n",
+                "type": "element -> element -> element -> element -> element -> ArraySized.ArraySized (N.In (N.Up minX N.To (N.Add5 minX)) (N.Up maxX N.To (N.Add5 maxX))) element"
+            },
+            {
+                "name": "l6",
+                "comment": " Create an `ArraySized` with exactly 6 elements in this order\n",
+                "type": "element -> element -> element -> element -> element -> element -> ArraySized.ArraySized (N.In (N.Up minX N.To (N.Add6 minX)) (N.Up maxX N.To (N.Add6 maxX))) element"
+            },
+            {
+                "name": "l7",
+                "comment": " Create an `ArraySized` with exactly 7 elements in this order\n",
+                "type": "element -> element -> element -> element -> element -> element -> element -> ArraySized.ArraySized (N.In (N.Up minX N.To (N.Add7 minX)) (N.Up maxX N.To (N.Add7 maxX))) element"
+            },
+            {
+                "name": "l8",
+                "comment": " Create an `ArraySized` with exactly 8 elements in this order\n",
+                "type": "element -> element -> element -> element -> element -> element -> element -> element -> ArraySized.ArraySized (N.In (N.Up minX N.To (N.Add8 minX)) (N.Up maxX N.To (N.Add8 maxX))) element"
+            },
+            {
+                "name": "l9",
+                "comment": " Create an `ArraySized` with exactly 9 elements in this order\n",
+                "type": "element -> element -> element -> element -> element -> element -> element -> element -> element -> ArraySized.ArraySized (N.In (N.Up minX N.To (N.Add9 minX)) (N.Up maxX N.To (N.Add9 maxX))) element"
+            },
+            {
+                "name": "length",
+                "comment": " The amount of elements.\n\n    import N exposing (n3)\n\n    ArraySized.l3 1 2 3\n        |> ArraySized.length\n        --: N\n        --:     (In\n        --:         (Up minX To (Add3 minX))\n        --:         (Up maxX To (Add3 maxX))\n        --:     )\n        |> N.toInt\n    --> 3\n\n    between3And5Elements |> ArraySized.length\n    --: N\n    --:     (In\n    --:         (Up minX To (Add3 minX))\n    --:         (Up maxX To (Add5 maxX))\n    --:     )\n\n    atLeast3Elements |> ArraySized.length\n    --: N (Min (Up minX To (Add3 minX)))\n\n",
+                "type": "ArraySized.ArraySized lengthRange element_ -> N.N lengthRange"
+            },
+            {
+                "name": "map",
+                "comment": " Change every element.\n\n    import N exposing (n25)\n\n    aToZ : ArraySized (In N26 (N26Plus a_)) Char\n    aToZ =\n        ArraySized.until n25\n            |> ArraySized.map inABC\n\n    inABC index =\n        ('a' |> Char.toCode)\n            + (index |> N.toInt)\n            |> Char.fromCode\n\nOh look, more type-safety!\n\n",
+                "type": "(element -> mappedElement) -> ArraySized.ArraySized lengthRange element -> ArraySized.ArraySized lengthRange mappedElement"
+            },
+            {
+                "name": "max",
+                "comment": " Make an `ArraySized` with a fixed maximum length fit into functions with require a higher maximum length.\n\n    type alias Row =\n        ArraySized (Exactly N18) Field\n\n`Row`'s length range can't be added to another length.\n\n    glue2TemporaryFields : Row -> ...\n    glue2TemporaryFields rowFromModelOrSomeStorage =\n        ArraySized.repeat Temporary n2\n            |> ArraySized.glue Up rowFromModelOrSomeStorage\n\nOnly `Up x To (Add<n> x)` can do that:\n\n    glue2TemporaryFields :\n        Row\n        ->\n            ArraySized\n                (In\n                    (Up minX To (Add20 minX))\n                    (Up maxX To (Add20 maxX))\n                )\n                Field\n    glue2TemporaryFields rowFromModelOrSomeStorage =\n        ArraySized.repeat Temporary n2\n            |> ArraySized.glue Up\n                (rowFromModelOrSomeStorage\n                    |> ArraySized.min n18\n                    |> ArraySized.max n18\n                )\n\nAnother example: re-enabling an argument's maximum difference\n\n    atMost18Elements : ArraySized (In min_ (Up maxTo18_ To N18)) ...\n\nThe argument in `atMost18Elements` should also fit in `atMost19Elements` for example\n\n    atMost19Elements theArgument -- error\n\n    atMost19Elements (theArgument |> ArraySized.max n19)\n\n[`maxUp n1`](#maxUp) is also possible,\nbut unless you want to preserve the `maxTo18_` type variable,\nthere's no need to not use this absolute operation.\n\n",
+                "type": "N.N (N.In (N.Fixed maxNewMin) maxNew) -> ArraySized.ArraySized (N.In min (N.Up maxToMaxNewMin_ N.To maxNewMin)) element -> ArraySized.ArraySized (N.In min maxNew) element"
+            },
+            {
+                "name": "maxNo",
+                "comment": " Convert the `ArraySized (In min ...)` to a `ArraySized (Min min)`.\n\n    between4And10Elements |> ArraySized.toMin\n    --: ArraySized (Min N4) ...\n\nThere is only 1 situation you should use this.\n\nTo make these the same type.\n\n    [ atLeast1Element, between1And10Elements ]\n\nElm complains:\n\n> But all the previous elements in the list are\n> `ArraySized (Min N1) ...`\n\n    [ atLeast1Element\n    , between1And10Elements |> ArraySized.toMin\n    ]\n\n",
+                "type": "ArraySized.ArraySized (N.In min max_) element -> ArraySized.ArraySized (N.Min min) element"
+            },
+            {
+                "name": "maxUp",
+                "comment": " Have a specific maximum in mind? → [`maxUp`](#maxUp)\n\nWant to increase the upper bound by a fixed amount? ↓\n\n    maxUp4 : ArraySized (In min max) -> ArraySized (In min (Add4 max))\n    maxUp4 =\n        ArraySized.maxUp n4\n\nWhen is this useful? Very rarely, to preserve type variables.\nMore in [`N.max`](https://dark.elm.dmy.fr/packages/lue-bird/elm-bounded-nat/latest/N#max)\n\n",
+                "type": "N.N (N.In maxIncreaseMin_ (N.Up maxPlusX N.To maxIncreasedPlusX)) -> ArraySized.ArraySized (N.In min (N.Up x N.To maxPlusX)) element -> ArraySized.ArraySized (N.In min (N.Up x N.To maxIncreasedPlusX)) element"
+            },
+            {
+                "name": "min",
+                "comment": " Make an `ArraySized` with a fixed maximum length fit into functions with require a higher maximum length.\n\n    type alias Row =\n        ArraySized (Exactly N18) Field\n\n`Row`'s length range can't be added to another length.\n\n    glue2TemporaryFields : Row -> ...\n    glue2TemporaryFields rowFromModelOrSomeStorage =\n        ArraySized.repeat Temporary n2\n            |> ArraySized.glue Up rowFromModelOrSomeStorage\n\nOnly `Up x To (Add<n> x)` can do that:\n\n    glue2TemporaryFields :\n        Row\n        ->\n            ArraySized\n                (In\n                    (Up minX To (Add20 minX))\n                    (Up maxX To (Add20 maxX))\n                )\n                Field\n    glue2TemporaryFields rowFromModelOrSomeStorage =\n        ArraySized.repeat Temporary n2\n            |> ArraySized.glue Up\n                (rowFromModelOrSomeStorage\n                    |> ArraySized.min n18\n                    |> ArraySized.max n18\n                )\n\n",
+                "type": "N.N (N.In minNew (N.Up minNewMaxToMin_ N.To min)) -> ArraySized.ArraySized (N.In (N.Fixed min) max) element -> ArraySized.ArraySized (N.In minNew max) element"
+            },
+            {
+                "name": "minDown",
+                "comment": " Use a lower minimum length in the type.\n\n    [ atLeast3Elements\n    , atLeast4Elements\n    ]\n\nelm complains that\n\n> all the previous elements in the list are `ArraySized (Min N3) ...`\n\n    [ atLeast3Elements\n    , atLeast4Elements\n        |> ArraySized.minDownLength n3\n    ]\n\n",
+                "type": "N.N (N.In maxDecreaseMin_ (N.Down minPlusX N.To minDecreasedPlusX)) -> ArraySized.ArraySized (N.In (N.Up x N.To minPlusX) max) element -> ArraySized.ArraySized (N.In (N.Up x N.To minDecreasedPlusX) max) element"
+            },
+            {
+                "name": "minDrop",
+                "comment": " Elements after a certain number of elements in a [direction](https://package.elm-lang.org/packages/lue-bird/elm-linear-direction/latest/).\n\n    import Linear exposing (DirectionLinear(..))\n    import N exposing (n2)\n\n    atLeast6Elements\n        |> ArraySized.minDrop ( Down, n2 )\n    --: ArraySized (Min N4) ...\n\nKnow its length maximum? → [`drop`](#drop)\n\n",
+                "type": "( Linear.DirectionLinear, N.N (N.In dropped_ (N.Down min N.To takenMin)) ) -> ArraySized.ArraySized (N.In (N.Fixed min) max) element -> ArraySized.ArraySized (N.In (N.Fixed takenMin) max) element"
+            },
+            {
+                "name": "minElementRemove",
+                "comment": " Kick out the element at an index in a [direction](https://package.elm-lang.org/packages/lue-bird/elm-linear-direction/latest/).\n\n    removeLast =\n        TypeSized.minElementRemove ( Down, n0 )\n\nKnow the length maximum? → [`minElementRemove`](#minElementRemove)\n\n",
+                "type": "( Linear.DirectionLinear, N.N (N.In indexMin_ (N.Up indexMaxToMinMinus1_ N.To minMinus1)) ) -> ArraySized.ArraySized (N.In (N.Fixed (N.Add1 minMinus1)) (N.Up x N.To maxPlusX)) element -> ArraySized.ArraySized (N.In (N.Fixed minMinus1) (N.Up x N.To maxPlusX)) element"
+            },
+            {
+                "name": "minGlue",
+                "comment": " Attach elements of an `ArraySized`\nto the end in a given [direction](https://package.elm-lang.org/packages/lue-bird/elm-linear-direction/latest/)\n\n    ArraySized.l3 1 2 3\n        |> ArraySized.minGlue Up atLeast3Elements\n    --: ArraySized (Min (Up x To (Add6 x))) ...\n\n    ArraySized.l3 1 2 3\n        |> ArraySized.minGlue Down atLeast3Elements\n    --: ArraySized (Min (Up x To (Add6 x))) ...\n\nKnow both length maxima? → [`glue`](#glue)\n\n",
+                "type": "Linear.DirectionLinear -> ArraySized.ArraySized (N.In (N.Up minPlusX N.To minSumPlusX) extensionMax_) element -> ArraySized.ArraySized (N.In (N.Up x N.To minPlusX) max_) element -> ArraySized.ArraySized (N.Min (N.Up x N.To minSumPlusX)) element"
+            },
+            {
+                "name": "minInsert",
+                "comment": " Put a new element at an index in a [direction](https://package.elm-lang.org/packages/lue-bird/elm-linear-direction/latest/).\n\n    import Linear exposing (DirectionLinear(..))\n    import N exposing (n0, n1)\n\n    atLeast5Elements\n        |> ArraySized.minInsert ( Down, n1 ) \"before last\"\n        --: ArraySized (Min (Fixed N6)) String\n\n    minCons :\n        element\n        -> ArraySized (In (Fixed min) max_) element\n        -> ArraySized (Min (Fixed (Add1 min))) element\n    minCons =\n        ArraySized.minInsert ( Up, n0 )\n\n[`insert`](#insert) if you know the length maximum\n\nNeed the length minimum to not become `Fixed`\n(for results etc.) → [`|> min`](#min)\n\n",
+                "type": "( Linear.DirectionLinear, N.N (N.In indexMin_ (N.Up indexMaxToMin_ N.To min)) ) -> element -> ArraySized.ArraySized (N.In (N.Fixed min) (N.Up x_ N.To maxPlusX_)) element -> ArraySized.ArraySized (N.Min (N.Fixed (N.Add1 min))) element"
+            },
+            {
+                "name": "minInterweave",
+                "comment": " Place all elements of an [`ArraySized`](#ArraySized)\nbetween all current members.\nExtra elements of either [`ArraySized`](#ArraySized) are glued to the end\nwithout separating elements from the other [`ArraySized`](#ArraySized).\n\n    import N exposing (n2)\n\n    ArraySized.l3 \"turtles\" \"turtles\" \"turtles\"\n        |> ArraySized.minInterweave (ArraySized.repeat \"on\" atLeast2)\n        --: ArraySized\n        --:     (Min\n        --:         (Up minX To (Add5 minX))\n        --:     )\n        --:     String\n\nKnow both maxima → [`interweave`](#interweave)\n\n",
+                "type": "ArraySized.ArraySized (N.In (N.Up minPlusX N.To minSumPlusX) interweaveMax_) element -> ArraySized.ArraySized (N.In (N.Up x N.To minPlusX) max_) element -> ArraySized.ArraySized (N.Min (N.Up x N.To minSumPlusX)) element"
+            },
+            {
+                "name": "minPush",
+                "comment": " Put a new element after all the others\n\n    atLeast5Elements\n        |> ArraySized.minPush \"becomes the last\"\n    --: ArraySized (Min (Up minX To (Add6 minX))) String\n\n[`push`](#push) if you know the length maximum\n\n",
+                "type": "element -> ArraySized.ArraySized (N.In (N.Up minX N.To minPlusX) (N.Up maxX_ N.To maxPlusX_)) element -> ArraySized.ArraySized (N.Min (N.Up minX N.To (N.Add1 minPlusX))) element"
+            },
+            {
+                "name": "push",
+                "comment": " Put a new element after all the others\n\n    between5And10Elements\n        |> ArraySized.push \"becomes the last\"\n    --: ArraySized\n    --:     (In\n    --:         (Up minX To (Add6 minX))\n    --:         (Up maxX To (Add11 maxX))\n    --:     )\n    --:     String\n\n[`minPush`](#minPush) if you don't know the length maximum\n\n",
+                "type": "element -> ArraySized.ArraySized (N.In (N.Up minX N.To minPlusX) (N.Up maxX N.To maxPlusX)) element -> ArraySized.ArraySized (N.In (N.Up minX N.To (N.Add1 minPlusX)) (N.Up maxX N.To (N.Add1 maxPlusX))) element"
+            },
+            {
+                "name": "random",
+                "comment": " `Random.Generator` for the given amount of random elements\n\n    import N exposing (n5)\n\n    ArraySized.random (Random.float 0 1) n5\n    --: Random.Generator\n    --:     (ArraySized\n    --:         (In\n    --:             (Up minX To (Add5 minX))\n    --:             (Up maxX To (Add5 maxX))\n    -->:        )\n    --:         Float\n    --:     )\n\nPairs really well with\n\n    N.randomIn ( <length min>, <length max> )\n        |> Random.andThen\n            (ArraySized.random <element>)\n\n",
+                "type": "Random.Generator element -> N.N range -> Random.Generator (ArraySized.ArraySized range element)"
+            },
+            {
+                "name": "repeat",
+                "comment": " Exactly the given amount of same elements\n\n    import N exposing (n4)\n\n    ArraySized.repeat 'L' n4\n    --: ArraySized\n    --:     (In\n    --:         (Up minX To (Add4 minX))\n    --:         (Up maxX To (Add4 maxX))\n    --:     )\n    --:     Char\n        |> ArraySized.toList\n    --> [ 'L', 'L', 'L', 'L' ]\n\n    ArraySized.repeat 'L' atLeast3\n    --: ArraySized (Min (Up x To (Add3 x))) Char\n\n",
+                "type": "element -> N.N range -> ArraySized.ArraySized range element"
+            },
+            {
+                "name": "reverse",
+                "comment": " Flip the order of the elements\n\n    ArraySized.l4 \"l\" \"i\" \"v\" \"e\"\n        |> ArraySized.reverse\n        |> ArraySized.toList\n    --> [ \"e\", \"v\", \"i\", \"l\" ]\n\n",
+                "type": "ArraySized.ArraySized lengthRange element -> ArraySized.ArraySized lengthRange element"
+            },
+            {
+                "name": "take",
+                "comment": " A given number of elements\nto a given [direction](https://package.elm-lang.org/packages/lue-bird/elm-linear-direction/latest/).\n\nAn `atLeast` argument is sadly required to proof the taken minimum\nisn't above the [`ArraySized`](#ArraySized)'s length minimum\n\n    import Linear exposing (DirectionLinear(..))\n    import N exposing (n7)\n\n    ArraySized.l8 0 1 2 3 4 5 6 7\n        |> ArraySized.take ( Up, n7, { atLeast = n7 } )\n        --: ArraySized\n        --:     (In (Up minX To (Add7 minX)) (Up maxX To (Add7 maxX)))\n        --:     number_\n        |> ArraySized.toList\n    --> [ 0, 1, 2, 3, 4, 5, 6 ]\n\n    ArraySized.l8 0 1 2 3 4 5 6 7\n        |> ArraySized.take ( Up, n7AtLeast, { atLeast = n7 } )\n        --: ArraySized (Min (Up x To (Add7 x))) number_\n\n    ArraySized.l8 0 1 2 3 4 5 6 7\n        |> ArraySized.take ( Up, between2And7, { atLeast = n2 } )\n        --: ArraySized\n        --:     (In (Up minX To (Add2 minX)) (Up maxX To (Add7 maxX)))\n        --:     number_\n\n",
+                "type": "( Linear.DirectionLinear, N.N (N.In takenMin takenMax), { atLeast : N.N (N.In takenMin (N.Up takenMaxToMin_ N.To min)) } ) -> ArraySized.ArraySized (N.In (N.Fixed min) max_) element -> ArraySized.ArraySized (N.In takenMin takenMax) element"
+            },
+            {
+                "name": "to1",
+                "comment": " Its only value\n\n    ArraySized.l1 \"hi\" |> ArraySized.to1\n    --> \"hi\"\n\n",
+                "type": "ArraySized.ArraySized (N.Exactly N.N1) element -> element"
+            },
+            {
+                "name": "to10",
+                "comment": " Transform the `ArraySized` into a `Toop.T10`. This makes accessing elements and pattern matching easier.\n",
+                "type": "ArraySized.ArraySized (N.Exactly N.N10) element -> Toop.T10 element element element element element element element element element element"
+            },
+            {
+                "name": "to11",
+                "comment": " Transform the `ArraySized` into a `Toop.T11`. This makes accessing elements and pattern matching easier.\n",
+                "type": "ArraySized.ArraySized (N.Exactly N.N11) element -> Toop.T11 element element element element element element element element element element element"
+            },
+            {
+                "name": "to12",
+                "comment": " Transform the `ArraySized` into a `Toop.T12`. This makes accessing elements and pattern matching easier.\n",
+                "type": "ArraySized.ArraySized (N.Exactly N.N12) element -> Toop.T12 element element element element element element element element element element element element"
+            },
+            {
+                "name": "to13",
+                "comment": " Transform the `ArraySized` into a `Toop.T13`. This makes accessing elements and pattern matching easier.\n",
+                "type": "ArraySized.ArraySized (N.Exactly N.N13) element -> Toop.T13 element element element element element element element element element element element element element"
+            },
+            {
+                "name": "to14",
+                "comment": " Transform the `ArraySized` into a `Toop.T14`. This makes accessing elements and pattern matching easier.\n",
+                "type": "ArraySized.ArraySized (N.Exactly N.N14) element -> Toop.T14 element element element element element element element element element element element element element element"
+            },
+            {
+                "name": "to15",
+                "comment": " Transform the `ArraySized` into a `Toop.T15`. This makes accessing elements and pattern matching easier.\n",
+                "type": "ArraySized.ArraySized (N.Exactly N.N15) element -> Toop.T15 element element element element element element element element element element element element element element element"
+            },
+            {
+                "name": "to16",
+                "comment": " Transform the `ArraySized` into a `Toop.T16`. This makes accessing elements and pattern matching easier.\n",
+                "type": "ArraySized.ArraySized (N.Exactly N.N16) element -> Toop.T16 element element element element element element element element element element element element element element element element"
+            },
+            {
+                "name": "to2",
+                "comment": " Transform the `ArraySized` into a `Toop.T2`. This makes accessing elements and pattern matching easier.\n",
+                "type": "ArraySized.ArraySized (N.Exactly N.N2) element -> Toop.T2 element element"
+            },
+            {
+                "name": "to3",
+                "comment": " Transform the `ArraySized` into a `Toop.T3`. This makes accessing elements and pattern matching easier.\n",
+                "type": "ArraySized.ArraySized (N.Exactly N.N3) element -> Toop.T3 element element element"
+            },
+            {
+                "name": "to4",
+                "comment": " Transform the `ArraySized` into a `Toop.T4`. This makes accessing elements and pattern matching easier.\n",
+                "type": "ArraySized.ArraySized (N.Exactly N.N4) element -> Toop.T4 element element element element"
+            },
+            {
+                "name": "to5",
+                "comment": " Transform the `ArraySized` into a `Toop.T5`. This makes accessing elements and pattern matching easier.\n",
+                "type": "ArraySized.ArraySized (N.Exactly N.N5) element -> Toop.T5 element element element element element"
+            },
+            {
+                "name": "to6",
+                "comment": " Transform the `ArraySized` into a `Toop.T6`. This makes accessing elements and pattern matching easier.\n",
+                "type": "ArraySized.ArraySized (N.Exactly N.N6) element -> Toop.T6 element element element element element element"
+            },
+            {
+                "name": "to7",
+                "comment": " Transform the `ArraySized` into a `Toop.T7`. This makes accessing elements and pattern matching easier.\n",
+                "type": "ArraySized.ArraySized (N.Exactly N.N7) element -> Toop.T7 element element element element element element element"
+            },
+            {
+                "name": "to8",
+                "comment": " Transform the `ArraySized` into a `Toop.T8`. This makes accessing elements and pattern matching easier.\n",
+                "type": "ArraySized.ArraySized (N.Exactly N.N8) element -> Toop.T8 element element element element element element element element"
+            },
+            {
+                "name": "to9",
+                "comment": " Transform the `ArraySized` into a `Toop.T9`. This makes accessing elements and pattern matching easier.\n",
+                "type": "ArraySized.ArraySized (N.Exactly N.N9) element -> Toop.T9 element element element element element element element element element"
+            },
+            {
+                "name": "toArray",
+                "comment": " Convert to an `Array`.\nMake these kinds of conversions your final step.\nTry to keep extra information as long as you can: [\"wrap early, unwrap late\"](https://elm-radio.com/episode/wrap-early-unwrap-late)\n\n    import N exposing (n4)\n    import Array\n\n    ArraySized.until n4\n        |> ArraySized.map N.toInt\n        |> ArraySized.toArray\n    --> Array.fromList [ 0, 1, 2, 3, 4 ]\n\n",
+                "type": "ArraySized.ArraySized lengthRange_ element -> Array.Array element"
+            },
+            {
+                "name": "toChunksOf",
+                "comment": " Split the `ArraySized` into equal-sized (except `remainder`) slices\nin a [direction](https://package.elm-lang.org/packages/lue-bird/elm-linear-direction/latest/)\n\n  - `groups`: the ArraySized divided into equal-sized Arrs\n  - `less`: values to one side that don't fill a whole group\n\n↓\n\n    import Linear exposing (DirectionLinear(..))\n    import N exposing (n0, n5)\n\n    ArraySized.l7 1 2 3 4 5 6 7\n        |> ArraySized.toChunksOf n5 { remainder = Up }\n        --: { chunks :\n        --:     ArraySized\n        --:         (In (Up minX To minX) (Up maxX To (Add7 maxX)))\n        --:         (ArraySized\n        --:             (In\n        --:                 (Up chunkMinX To (Add5 chunkMinX))\n        --:                 (Up chunkMaxX To (Add5 chunkMaxX))\n        --:             )\n        --:             number_\n        --:         )\n        --: , remainder :\n        --:     ArraySized\n        --:         (In\n        --:             (Up minX To minX)\n        --:             (Up chunkMaxX To (Add5 chunkMaxX))\n        --:         )\n        --:          number_\n        --: }\n        |> .remainder\n        |> ArraySized.toList\n    --> [ 6, 7 ]\n\n\n    ArraySized.l7 1 2 3 4 5 6 7\n        |> ArraySized.toChunksOf n5 { remainder = Down }\n        |> .remainder\n        |> ArraySized.toList\n    --> [ 1, 2 ]\n\n",
+                "type": "N.N (N.In (N.Fixed (N.Add1 chunkMinMinus1)) (N.Up chunkMaxX N.To (N.Add1 chunkMaxMinus1PlusX))) -> { remainder : Linear.DirectionLinear } -> ArraySized.ArraySized (N.In minLength_ max) element -> { chunks : ArraySized.ArraySized (N.In (N.Up minX N.To minX) max) (ArraySized.ArraySized (N.In (N.Fixed (N.Add1 chunkMinMinus1)) (N.Up chunkMaxX N.To (N.Add1 chunkMaxMinus1PlusX))) element), remainder : ArraySized.ArraySized (N.In (N.Up minX N.To minX) (N.Up chunkMaxX N.To chunkMaxMinus1PlusX)) element }"
+            },
+            {
+                "name": "toEmptiable",
+                "comment": " On [`empty`](#empty) `Nothing`, on [`l1`](#l1) `Just` it's only value.\n\nSadly, they way natural number constraints are defined,\nemptiness type information can't be transferred.\n\n",
+                "type": "ArraySized.ArraySized (N.In min_ (N.Up maxToN1_ N.To N.N1)) element -> Emptiable.Emptiable element Possibly.Possibly"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert to a `List`.\nMake these kinds of conversions your final step.\nTry to keep extra information as long as you can: [\"wrap early, unwrap late\"](https://elm-radio.com/episode/wrap-early-unwrap-late)\n\n    import N exposing (n4)\n\n    ArraySized.until n4\n        |> ArraySized.map N.toInt\n        |> ArraySized.toList\n    --> [ 0, 1, 2, 3, 4 ]\n\n",
+                "type": "ArraySized.ArraySized lengthRange_ element -> List.List element"
+            },
+            {
+                "name": "toStackEmptiable",
+                "comment": " Convert to an `Emptiable (Stacked ...) Possibly`.\nMake these kinds of conversions your final step.\nTry to keep extra information as long as you can: [\"wrap early, unwrap late\"](https://elm-radio.com/episode/wrap-early-unwrap-late)\n\n    import N exposing (n4)\n\n    ArraySized.until n4\n        |> ArraySized.map N.toInt\n        |> ArraySized.toStackEmptiable\n    --> Stack.topDown [ 0, 1, 2, 3, 4 ]\n    --: Emptiable (Stacked Int) Possibly\n\nHave `>= 1` element? → Keep an `Emptiable ... never_` [`toStackFilled`](#toStackFilled)\n\n",
+                "type": "ArraySized.ArraySized lengthRange_ element -> Emptiable.Emptiable (Stack.Stacked element) Possibly.Possibly"
+            },
+            {
+                "name": "toStackFilled",
+                "comment": " Convert to an `Emptiable (Stacked ...) never_`.\nMake these kinds of conversions your final step.\nTry to keep extra information as long as you can: [\"wrap early, unwrap late\"](https://elm-radio.com/episode/wrap-early-unwrap-late)\n\n    import N exposing (n4)\n\n    ArraySized.until n4\n        |> ArraySized.map N.toInt\n        |> ArraySized.toStackFilled\n    --> Stack.topDown [ 0, 1, 2, 3, 4 ]\n    --: Emptiable (Stacked Int) Never\n\nDon't have `>= 1` element? → [`toStackEmptiable`](#toStackEmptiable)\n\n",
+                "type": "ArraySized.ArraySized (N.In (N.Fixed (N.Add1 minMinus1_)) max_) element -> Emptiable.Emptiable (Stack.Stacked element) never_"
+            },
+            {
+                "name": "until",
+                "comment": " Increasing natural numbers until including a given number\n\n    import N exposing (n3)\n\n    ArraySized.until n3\n    --: ArraySized\n    --:     (In (Fixed N4) (Up maxX To (Add4 maxX)))\n    --:     (N (In (Up minX To minX) (Up maxX To (Add3 maxX))))\n        |> ArraySized.map N.toInt\n        |> ArraySized.toList\n    --> [ 0, 1, 2, 3 ]\n\n    ArraySized.until between2And9\n        |> ArraySized.map (N.add n3)\n    --: ArraySized\n    --:    (In (Fixed N3) (Up maxX To (Add10 maxX)))\n    --:    (N (In (Up minX To (Add5 minX)) (Up maxX To (Add12 maxX))))\n\n[`min`](#min) is helpful\nto turn the `Fixed` length minimum into a difference\nif you need that (for results etc.)\n\n",
+                "type": "N.N (N.In (N.Fixed min) (N.Up maxX N.To maxPlusX)) -> ArraySized.ArraySized (N.In (N.Fixed (N.Add1 min)) (N.Up maxX N.To (N.Add1 maxPlusX))) (N.N (N.In (N.Up minX N.To minX) (N.Up maxX N.To maxPlusX)))"
+            }
+        ],
+        "binops": []
+    }
+]

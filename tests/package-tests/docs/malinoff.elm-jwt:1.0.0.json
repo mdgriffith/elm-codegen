@@ -1,0 +1,70 @@
+[
+    {
+        "name": "JWT",
+        "comment": "\n\n\n# JWT\n\n@docs JWT, DecodeError, fromString\n\n\n# Verification\n\n@docs VerificationError, isValid, validate\n\n",
+        "unions": [
+            {
+                "name": "DecodeError",
+                "comment": " A structured error describing exactly how the decoder failed.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "TokenTypeUnknown",
+                        []
+                    ],
+                    [
+                        "JWSError",
+                        [
+                            "JWT.JWS.DecodeError"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "JWT",
+                "comment": " A JSON Web Token.\n\nCan be either a JWS (signed) or a JWE (encrypted). The latter is not yet implemented.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "JWS",
+                        [
+                            "JWT.JWS.JWS"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "VerificationError",
+                "comment": " A structured error describing all verification errors.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "JWSVerificationError",
+                        [
+                            "JWT.JWS.VerificationError"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fromString",
+                "comment": " Decode a JWT from string.\n\n    fromString \"eyJhbGciOi...\" == Ok ...\n    fromString \"\" == Err ...\n    fromString \"definitelyNotAJWT\" == Err ...\n\n",
+                "type": "String.String -> Result.Result JWT.DecodeError JWT.JWT"
+            },
+            {
+                "name": "isValid",
+                "comment": " Check if the token is valid.\n",
+                "type": "JWT.ClaimSet.VerifyOptions -> String.String -> Time.Posix -> JWT.JWT -> Result.Result JWT.VerificationError Basics.Bool"
+            },
+            {
+                "name": "validate",
+                "comment": " A task to check if the token is valid.\n",
+                "type": "JWT.ClaimSet.VerifyOptions -> String.String -> JWT.JWT -> Task.Task Basics.Never (Result.Result JWT.VerificationError Basics.Bool)"
+            }
+        ],
+        "binops": []
+    }
+]

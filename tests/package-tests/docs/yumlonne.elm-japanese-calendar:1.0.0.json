@@ -1,0 +1,60 @@
+[
+    {
+        "name": "JapaneseCalendar",
+        "comment": " JapaneseCalendar for Elm\n\n\n# Types\n\n@docs JapaneseCalendar, YMDRecord, Era\n\n\n# Helpers\n\n@docs ymd\n@docs lastJapaneseYear\n\n\n# Converts\n\n@docs fromYMD, fromEraWithYear\n\n\n# Data set\n\n@docs calendar\n\n\n# toString\n\n@docs toString\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Era",
+                "comment": " Japanese Era\n",
+                "args": [],
+                "type": "{ name : String.String, startedOn : JapaneseCalendar.YMDRecord, endedOn : Maybe.Maybe JapaneseCalendar.YMDRecord }"
+            },
+            {
+                "name": "JapaneseCalendar",
+                "comment": " JapaneseCalendar object\n",
+                "args": [],
+                "type": "{ era : JapaneseCalendar.Era, gregorianYear : Basics.Int, japaneseYear : Basics.Int, japaneseYearString : String.String }"
+            },
+            {
+                "name": "YMDRecord",
+                "comment": " Simple Date object\n\ndon't validate date\n\n",
+                "args": [],
+                "type": "{ year : Basics.Int, month : Basics.Int, day : Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "calendar",
+                "comment": " The list of recent eras\n\n    calendar =\n        [ { name = \"令和\", startedOn = ymd 2019 5 1, endedOn = Nothing }\n        , { name = \"平成\", startedOn = ymd 1989 1 8, endedOn = Just <| ymd 2019 4 30 }\n        , { name = \"昭和\", startedOn = ymd 1926 12 25, endedOn = Just <| ymd 1989 1 7 }\n        , { name = \"大正\", startedOn = ymd 1912 7 30, endedOn = Just <| ymd 1926 12 24 }\n        , { name = \"明治\", startedOn = ymd 1868 1 1, endedOn = Just <| ymd 1912 7 29 }\n\n        -- more?\n        ]\n\n",
+                "type": "List.List JapaneseCalendar.Era"
+            },
+            {
+                "name": "fromEraWithYear",
+                "comment": " Convert Era and JapaneseYear to JapaneseCalendar\n\nReturns Errors or JapaneseCalendar.\n\n    fromEraWithYear \"令和\" 1 == Ok { era = { name = \"令和\", ... }, ... }\n    fromEraWithYear \"ほげ\" 1 == Err [\"unknown era `ほげ`\"]\n\n",
+                "type": "String.String -> Basics.Int -> Result.Result (List.List String.String) JapaneseCalendar.JapaneseCalendar"
+            },
+            {
+                "name": "fromYMD",
+                "comment": " Convert YMDRecord to JapaneseCalendar.\n\nReturns errors or JapaneseCalendar.\n\n    fromYMD (ymd 2019 4 20) == Ok { era = { name = \"平成\", ... }, ... }\n    fromYMD (ymd 1700 1 10) == Err [\"Too past year! `1700` < 1868\"]\n\n",
+                "type": "JapaneseCalendar.YMDRecord -> Result.Result (List.List String.String) JapaneseCalendar.JapaneseCalendar"
+            },
+            {
+                "name": "lastJapaneseYear",
+                "comment": " Get last Japanese year.\n\nNeeds currentYear for calculate current-era's last Japanese year.\n\n    calendar\n        |> List.map (\\era -> { era = era.name, lastYear = lastJapaneseYear 2019 era })\n        == [ { era = \"令和\", lastYear = 1 }\n           , { era = \"平成\", lastYear = 31 }\n           , { era = \"昭和\", lastYear = 64 }\n           , { era = \"大正\", lastYear = 15 }\n           , { era = \"明治\", lastYear = 45 }\n           ]\n\n",
+                "type": "Basics.Int -> JapaneseCalendar.Era -> Basics.Int"
+            },
+            {
+                "name": "toString",
+                "comment": "\n\n    fromEraWithYear \"令和\" 1\n        |> Result.map toString\n        == Ok \"令和元年\"\n\n",
+                "type": "JapaneseCalendar.JapaneseCalendar -> String.String"
+            },
+            {
+                "name": "ymd",
+                "comment": " Simple alias for YMDRecord.\n\n    ymd 2000 10 20 == { year = 2000, month = 10, day = 20 }\n\n",
+                "type": "Basics.Int -> Basics.Int -> Basics.Int -> JapaneseCalendar.YMDRecord"
+            }
+        ],
+        "binops": []
+    }
+]

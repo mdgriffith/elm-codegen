@@ -1,0 +1,116 @@
+[
+    {
+        "name": "Lambda.Defs",
+        "comment": " This module provides the means (via function dictionary) of constructing\na dictionary of terms to be used by the rewriting functions.\n\n@docs dictionary, show\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "dictionary",
+                "comment": " Construct a dictionary of pairs for rewrite rules from an input string.\n",
+                "type": "String.String -> Dict.Dict String.String String.String"
+            },
+            {
+                "name": "show",
+                "comment": " Construct a string representation of the given dictionary.\n",
+                "type": "Dict.Dict String.String String.String -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Lambda.Eval",
+        "comment": " There is a single exposed function,\n\n    eval : Dict String String -> String -> String\n\nThe first argument is a dictionary which defined rewrite\nrules, e.g.,\n\n    Dict.fromList\n        [\n          (\"true\", \"\\\\x.\\\\y.x\")\n          \"false\",  \"\\\\x.\\\\y.y\")\n          \"and\", \"\\\\p.\\\\q.p q p\")\n          \"or\", \"\\\\p.\\\\q.p p q\"\n          \"not\", \"\\\\p.p (\\\\x.\\\\y.y) (\\\\x.\\\\y.x)\"\n        ]\n\nStrings on the left are to be rewritten as strings on the right.\nThose on the right should be lambda tersm.\n\nThe eval function parses the given string, rewrites it as needed,\napplies beta reduction, and then turns this final expression\nback into a string.\n\n@docs eval\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "eval",
+                "comment": " ",
+                "type": "Dict.Dict String.String String.String -> String.String -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Lambda.Expression",
+        "comment": " In this module we define the type Expr used to represent the lambda calculus.\nThe main function is beta: Expr -> Expr which carries out beta reductions.\n\n@docs Expr, beta, compressNameSpace, isNormal, reduceSubscripts, toString\n\nFor checking things: <https://lambdacalc.io/>\n\n",
+        "unions": [
+            {
+                "name": "Expr",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Var",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Lambda",
+                        [
+                            "String.String",
+                            "Lambda.Expression.Expr"
+                        ]
+                    ],
+                    [
+                        "Apply",
+                        [
+                            "Lambda.Expression.Expr",
+                            "Lambda.Expression.Expr"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "beta",
+                "comment": " beta reduce expression\n",
+                "type": "Lambda.Expression.Expr -> Lambda.Expression.Expr"
+            },
+            {
+                "name": "compressNameSpace",
+                "comment": " Map variable names to \"a\", \"b\", ..., \"z\" to the extent possible\n",
+                "type": "Lambda.Expression.Expr -> Lambda.Expression.Expr"
+            },
+            {
+                "name": "isNormal",
+                "comment": " is the expression in normal form?\n",
+                "type": "Lambda.Expression.Expr -> Basics.Bool"
+            },
+            {
+                "name": "reduceSubscripts",
+                "comment": " remove numeric subscripts in variable names to the extent possible\n",
+                "type": "Lambda.Expression.Expr -> Lambda.Expression.Expr"
+            },
+            {
+                "name": "toString",
+                "comment": " String representation of expression\n",
+                "type": "Lambda.Expression.Expr -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Lambda.Parser",
+        "comment": " The primary function exported is\n\n    parse : String -> Result Error Expr\n\nIf application of parse to a string is successful it\nreturns an Expr.\n\n@docs parse, exprParser\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "exprParser",
+                "comment": "\n\n    > run exprParser \"\\\\x.x(\\\\y.y)(\\\\z.z)\"\n    Ok (Apply (Apply (LambdaTest \"x\" (Var \"x\")) (LambdaTest \"y\" (Var \"y\"))) (LambdaTest \"z\" (Var \"z\")))\n\n    > run exprParser \"\\\\x.x(\\\\y.y)(\\\\z.z)\" |> Result.map beta\n    Ok (LambdaTest \"z\" (Var \"z\"))\n\n",
+                "type": "Parser.Advanced.Parser Tools.Problem.Context Tools.Problem.Problem Lambda.Expression.Expr"
+            },
+            {
+                "name": "parse",
+                "comment": " ",
+                "type": "String.String -> Result.Result (List.List (Parser.Advanced.DeadEnd Tools.Problem.Context Tools.Problem.Problem)) Lambda.Expression.Expr"
+            }
+        ],
+        "binops": []
+    }
+]

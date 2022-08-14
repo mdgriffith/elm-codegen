@@ -1,0 +1,46 @@
+[
+    {
+        "name": "Keyboard.Events",
+        "comment": " Send message when a given key is pressed while a certain Html element has focus.\n\nThe functions in this namespace uses the keyboard event api, which is supported\nin most browsers (including IE11).\n\nThis package makes use of a `Keyboard` custom type from the ohanhi/Keyboard package,\nso you'll need that as a direct dependency.\n\n\n# Html Events\n\n@docs Event, on, custom, customPerKey\n\n",
+        "unions": [
+            {
+                "name": "Event",
+                "comment": " When should a message be triggered?\n`Keydown` triggers when a key on your keyboard is pressed down.\n`Keyup` triggers when a key is release.\n`Keypress` only triggers if the key produces a character. If you want\nto trigger a message when the spacebar is pressed, use `Keydown` instead.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Keydown",
+                        []
+                    ],
+                    [
+                        "Keyup",
+                        []
+                    ],
+                    [
+                        "Keypress",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "custom",
+                "comment": " Works like `on`, but allows you to specify if the default action or propogation should be stopped\nif a message is triggered.\n",
+                "type": "Keyboard.Events.Event -> { preventDefault : Basics.Bool, stopPropagation : Basics.Bool } -> List.List ( Keyboard.Key, msg ) -> Html.Attribute msg"
+            },
+            {
+                "name": "customPerKey",
+                "comment": " Works like `custom`, but allows you to specify if the default action or propogation should be stopped\nif a message is triggered for a specific `Key`.\n",
+                "type": "Keyboard.Events.Event -> List.List ( Keyboard.Key, { message : msg, preventDefault : Basics.Bool, stopPropagation : Basics.Bool } ) -> Html.Attribute msg"
+            },
+            {
+                "name": "on",
+                "comment": " Listen for the corresponding event, and trigger the message that corresponds with the\ngiven `Key`. Works the same as `Html.Events.on`.\n",
+                "type": "Keyboard.Events.Event -> List.List ( Keyboard.Key, msg ) -> Html.Attribute msg"
+            }
+        ],
+        "binops": []
+    }
+]

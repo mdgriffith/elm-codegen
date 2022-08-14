@@ -1,0 +1,43 @@
+[
+    {
+        "name": "Countries",
+        "comment": " A searchable [ISO 3166-1](https://en.wikipedia.org/wiki/ISO_3166-1) based list of country names, codes and emoji flags.\n\nThe library is intended to be used qualified (i.e. `Countries.search`, `Countries.all`).\n\n    > import Countries\n    > Countries.fromCode \"AU\"\n    Just { name = \"Australia\", code = \"AU\", flag = \"🇦🇺\" }\n        : Maybe.Maybe Countries.Country\n\nSee the `examples` folder for a basic country picker example.\n\nNote: [Country names do change](https://github.com/supermario/elm-countries/commit/0c0475df983c35f936a19c14383385ca4bc96cb5)! It's best to use the code as a key if you are using and storing country details outside of this library.\n\n\n# Types\n\n@docs Country\n\n\n# Common helpers\n\n@docs fromCode, fromCodeCustom, search, searchCustom\n\n\n# Data set\n\n@docs all\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Country",
+                "comment": " The Country record type.\n\n  - name: The [ISO 3166-1](https://en.wikipedia.org/wiki/ISO_3166-1) Country name\n  - code: [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) two-letter Country code\n  - flag: The Country's unicode emoji flag, see [Regional Indicator Symbol](https://en.wikipedia.org/wiki/Regional_Indicator_Symbol)\n\nThis type is intentionally not opaque, as accessing the countries reference data as easily as possible is the primary goal.\n\n",
+                "args": [],
+                "type": "{ name : String.String, code : String.String, flag : String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "all",
+                "comment": " The full list of all 249 current [ISO 3166-1](https://en.wikipedia.org/wiki/ISO_3166-1) Country records.\n",
+                "type": "List.List Countries.Country"
+            },
+            {
+                "name": "fromCode",
+                "comment": " Find a country by its [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) two-letter country code.\n",
+                "type": "String.String -> Maybe.Maybe Countries.Country"
+            },
+            {
+                "name": "fromCodeCustom",
+                "comment": " Find a country by its [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) two-letter country code, using a custom Countries list\n",
+                "type": "List.List Countries.Country -> String.String -> Maybe.Maybe Countries.Country"
+            },
+            {
+                "name": "search",
+                "comment": " Search all Countries by case-insensitive string matching on name and code\n",
+                "type": "String.String -> List.List Countries.Country"
+            },
+            {
+                "name": "searchCustom",
+                "comment": " Search a custom Countries list by case-insensitive string matching on name and code\n",
+                "type": "List.List Countries.Country -> String.String -> List.List Countries.Country"
+            }
+        ],
+        "binops": []
+    }
+]

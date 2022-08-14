@@ -1,0 +1,801 @@
+[
+    {
+        "name": "ImgIX",
+        "comment": " Create and apply options to images hosted on [ImgIX](https://www.imgix.com/).\n\n\n# ImgIX\n\n@docs ImgIX\n\n\n# Creation\n\n@docs fromUrl, fromString\n\n\n# Pixel Density\n\n@docs pixelDensity, pixelDensities\n\n\n# Format\n\n@docs format\n\n\n# Size\n\n@docs size, sizes\n\n\n# Rotation\n\n@docs rotation, rotations\n\n\n# Adjustment\n\n@docs adjust, adjustments\n\n\n# Automatic Optimization\n\n@docs automatic, automatics\n\n\n# Stylize\n\n@docs stylize, stylizations\n\n\n# Text\n\n@docs text, textOptions\n\n\n# Render\n\n@docs toUrl, toHtml, toHtmlWithAttributes\n\n\n# Color\n\n@docs rgba\n\n",
+        "unions": [
+            {
+                "name": "ImgIX",
+                "comment": " The type of an ImgIX image\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "adjust",
+                "comment": " Adjust an ImgIX using Adjustments\nCheck the ImgIX.Adjustments module for all the adjustments available.\n",
+                "type": "ImgIX.Adjustment.Adjustment -> ImgIX.ImgIX -> ImgIX.ImgIX"
+            },
+            {
+                "name": "adjustments",
+                "comment": " Apply a list of Adjustments\n",
+                "type": "List.List ImgIX.Adjustment.Adjustment -> ImgIX.ImgIX -> ImgIX.ImgIX"
+            },
+            {
+                "name": "automatic",
+                "comment": " Apply an automatic optimization\nCheck the ImgIX.Automatic module for all the automatic optimizations available.\n",
+                "type": "ImgIX.Automatic.Automatic -> ImgIX.ImgIX -> ImgIX.ImgIX"
+            },
+            {
+                "name": "automatics",
+                "comment": " Apply a list of automatic optimizations\n",
+                "type": "List.List ImgIX.Automatic.Automatic -> ImgIX.ImgIX -> ImgIX.ImgIX"
+            },
+            {
+                "name": "format",
+                "comment": " Control the format of an ImgIX\nCheck the ImgIX.Format module for all the available options.\n",
+                "type": "List.List (ImgIX.Format.Format -> ImgIX.Format.Format) -> ImgIX.ImgIX -> ImgIX.ImgIX"
+            },
+            {
+                "name": "fromString",
+                "comment": " Create a new ImgIX from a string representing an Url\n",
+                "type": "String.String -> Maybe.Maybe ImgIX.ImgIX"
+            },
+            {
+                "name": "fromUrl",
+                "comment": " Create a new ImgIX from an Url\n",
+                "type": "Url.Url -> ImgIX.ImgIX"
+            },
+            {
+                "name": "pixelDensities",
+                "comment": " Apply a list of PixelDensity operations\n",
+                "type": "List.List ImgIX.PixelDensity.PixelDensity -> ImgIX.ImgIX -> ImgIX.ImgIX"
+            },
+            {
+                "name": "pixelDensity",
+                "comment": " Control the pixel density of an ImgIX\nCheck the ImgIX.PixelDensity module for all the available options.\n",
+                "type": "ImgIX.PixelDensity.PixelDensity -> ImgIX.ImgIX -> ImgIX.ImgIX"
+            },
+            {
+                "name": "rgba",
+                "comment": " Create a rgba color\n",
+                "type": "Basics.Float -> Basics.Float -> Basics.Float -> Basics.Float -> ImgIX.Color"
+            },
+            {
+                "name": "rotation",
+                "comment": " Adjust an ImgIX using Rotations\nCheck the ImgIX.Rotation module for all the rotations available.\n",
+                "type": "ImgIX.Rotation.Rotation -> ImgIX.ImgIX -> ImgIX.ImgIX"
+            },
+            {
+                "name": "rotations",
+                "comment": " Apply a list of Rotations\n",
+                "type": "List.List ImgIX.Rotation.Rotation -> ImgIX.ImgIX -> ImgIX.ImgIX"
+            },
+            {
+                "name": "size",
+                "comment": " Control the size of an ImgIX\nCheck the ImgIX.Size module for all the available options.\n",
+                "type": "ImgIX.Size.Size -> ImgIX.ImgIX -> ImgIX.ImgIX"
+            },
+            {
+                "name": "sizes",
+                "comment": " Apply a list of Sizes\n",
+                "type": "List.List ImgIX.Size.Size -> ImgIX.ImgIX -> ImgIX.ImgIX"
+            },
+            {
+                "name": "stylizations",
+                "comment": " Apply a list of Stylizations\n",
+                "type": "List.List ImgIX.Stylize.Stylize -> ImgIX.ImgIX -> ImgIX.ImgIX"
+            },
+            {
+                "name": "stylize",
+                "comment": " Adjust an ImgIX using Stylizations\nCheck the ImgIX.Stylize module for all the stylizations available.\n",
+                "type": "ImgIX.Stylize.Stylize -> ImgIX.ImgIX -> ImgIX.ImgIX"
+            },
+            {
+                "name": "text",
+                "comment": " Adjust an ImgIX using Text\nCheck the ImgIX.Text module for all the text options available.\n",
+                "type": "ImgIX.Text.Text -> ImgIX.ImgIX -> ImgIX.ImgIX"
+            },
+            {
+                "name": "textOptions",
+                "comment": " Apply a list of Text\n",
+                "type": "List.List ImgIX.Text.Text -> ImgIX.ImgIX -> ImgIX.ImgIX"
+            },
+            {
+                "name": "toHtml",
+                "comment": " Render ImgIx as a Html img node\n",
+                "type": "ImgIX.ImgIX -> Html.Html msg"
+            },
+            {
+                "name": "toHtmlWithAttributes",
+                "comment": " Render ImgIx as a Html img node with a given list of [Html.Attributes](https://package.elm-lang.org/packages/elm/html/latest/Html-Attributes)\n",
+                "type": "List.List (Html.Attribute msg) -> ImgIX.ImgIX -> Html.Html msg"
+            },
+            {
+                "name": "toUrl",
+                "comment": " Create a valid ImgIX url from an ImgIX type\n",
+                "type": "ImgIX.ImgIX -> Url.Url"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ImgIX.Adjustment",
+        "comment": " Adjustment parameters do basic retouching operations similar to those in image-editing applications like Adobe® Photoshop®. You can use them to fix common issues such as under- or over-exposure, blurriness, and color range, or alter your images artistically.\n\nFor additional artistic effects, see the Stylize parameters.\n\n@docs Adjustment\n\n\n# Available adjustments\n\n@docs brightness, contrast, exposure, gamma, highlight, hueshift, invert, saturation, shadow, sharpen, unsharpmask, vibrance\n\n\n# Applying\n\n@docs toQueryParameters\n\n",
+        "unions": [
+            {
+                "name": "Adjustment",
+                "comment": " The Adjustment type\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "brightness",
+                "comment": " Adjusts the overall brightness of the image.\n\nValid values are in the range -100 – 100. The default value is 0, which leaves the image unchanged.\n\n**original**\n\n![original](https://bellroy.imgix.net/dynamic-assets/W1siZnUiLCJodHRwczovL3MzLmFtYXpvbmF3cy5jb20vcHJvZHVjdC5pbWFnZXMuYmVsbHJveS5jb20vcHJvZHVjdF9pbWFnZXMvaW1hZ2VzLzAwMC8wMDMvODMzL29yaWdpbmFsLzc5ZmM2MGNkZmNkMjM5YWFjZGU3OWU4YTc2OTQ1NWZhOWJkN2MyODU3NGQ3Mzk0NDQxYTMyYmRmOGU4ZTdmOTUuanBnIl1d/5460fe0f4301a507/79fc60cdfcd239aacde79e8a769455fa9bd7c28574d7394441a32bdf8e8e7f95.jpg?fit=crop&w=150&h=150)\n\n**brightness 50**\n\n![brightness 50](https://bellroy.imgix.net/dynamic-assets/W1siZnUiLCJodHRwczovL3MzLmFtYXpvbmF3cy5jb20vcHJvZHVjdC5pbWFnZXMuYmVsbHJveS5jb20vcHJvZHVjdF9pbWFnZXMvaW1hZ2VzLzAwMC8wMDMvODMzL29yaWdpbmFsLzc5ZmM2MGNkZmNkMjM5YWFjZGU3OWU4YTc2OTQ1NWZhOWJkN2MyODU3NGQ3Mzk0NDQxYTMyYmRmOGU4ZTdmOTUuanBnIl1d/5460fe0f4301a507/79fc60cdfcd239aacde79e8a769455fa9bd7c28574d7394441a32bdf8e8e7f95.jpg?bri=50&fit=crop&w=150&h=150)\n\n",
+                "type": "Basics.Int -> ImgIX.Adjustment.Adjustment"
+            },
+            {
+                "name": "contrast",
+                "comment": " Adjusts the contrast of the image.\n\nValid values are in the range -100 – 100. The default value is 0, which leaves the image unchanged.\n\n**original**\n\n![original](https://bellroy.imgix.net/dynamic-assets/W1siZnUiLCJodHRwczovL3MzLmFtYXpvbmF3cy5jb20vcHJvZHVjdC5pbWFnZXMuYmVsbHJveS5jb20vcHJvZHVjdF9pbWFnZXMvaW1hZ2VzLzAwMC8wMDMvODMzL29yaWdpbmFsLzc5ZmM2MGNkZmNkMjM5YWFjZGU3OWU4YTc2OTQ1NWZhOWJkN2MyODU3NGQ3Mzk0NDQxYTMyYmRmOGU4ZTdmOTUuanBnIl1d/5460fe0f4301a507/79fc60cdfcd239aacde79e8a769455fa9bd7c28574d7394441a32bdf8e8e7f95.jpg?fit=crop&w=150&h=150)\n\n**contrast -50**\n\n![contrast -50](https://bellroy.imgix.net/dynamic-assets/W1siZnUiLCJodHRwczovL3MzLmFtYXpvbmF3cy5jb20vcHJvZHVjdC5pbWFnZXMuYmVsbHJveS5jb20vcHJvZHVjdF9pbWFnZXMvaW1hZ2VzLzAwMC8wMDMvODMzL29yaWdpbmFsLzc5ZmM2MGNkZmNkMjM5YWFjZGU3OWU4YTc2OTQ1NWZhOWJkN2MyODU3NGQ3Mzk0NDQxYTMyYmRmOGU4ZTdmOTUuanBnIl1d/5460fe0f4301a507/79fc60cdfcd239aacde79e8a769455fa9bd7c28574d7394441a32bdf8e8e7f95.jpg?con=-50&fit=crop&w=150&h=150)\n\n[ImgIx documentation for Contrast](https://docs.imgix.com/apis/url/adjustment/con)\n\n",
+                "type": "Basics.Int -> ImgIX.Adjustment.Adjustment"
+            },
+            {
+                "name": "exposure",
+                "comment": " Adjusts the exposure setting for an image, similar to changing the F-stop on a camera.\n\nValid values are in the range -100 – 100. The default value is 0, which leaves the image unchanged.\n\n**original**\n\n![original](https://bellroy.imgix.net/dynamic-assets/W1siZnUiLCJodHRwczovL3MzLmFtYXpvbmF3cy5jb20vcHJvZHVjdC5pbWFnZXMuYmVsbHJveS5jb20vcHJvZHVjdF9pbWFnZXMvaW1hZ2VzLzAwMC8wMDMvODMzL29yaWdpbmFsLzc5ZmM2MGNkZmNkMjM5YWFjZGU3OWU4YTc2OTQ1NWZhOWJkN2MyODU3NGQ3Mzk0NDQxYTMyYmRmOGU4ZTdmOTUuanBnIl1d/5460fe0f4301a507/79fc60cdfcd239aacde79e8a769455fa9bd7c28574d7394441a32bdf8e8e7f95.jpg?fit=crop&w=150&h=150)\n\n**exposure 10**\n\n![exposure 10](https://bellroy.imgix.net/dynamic-assets/W1siZnUiLCJodHRwczovL3MzLmFtYXpvbmF3cy5jb20vcHJvZHVjdC5pbWFnZXMuYmVsbHJveS5jb20vcHJvZHVjdF9pbWFnZXMvaW1hZ2VzLzAwMC8wMDMvODMzL29yaWdpbmFsLzc5ZmM2MGNkZmNkMjM5YWFjZGU3OWU4YTc2OTQ1NWZhOWJkN2MyODU3NGQ3Mzk0NDQxYTMyYmRmOGU4ZTdmOTUuanBnIl1d/5460fe0f4301a507/79fc60cdfcd239aacde79e8a769455fa9bd7c28574d7394441a32bdf8e8e7f95.jpg?exp=10&fit=crop&w=150&h=150)\n\n",
+                "type": "Basics.Int -> ImgIX.Adjustment.Adjustment"
+            },
+            {
+                "name": "gamma",
+                "comment": " Adjusts gamma and midtone brightness.\n\nValid values are in the range -100 – 100. The default value is 0, which leaves the image unchanged.\n\n**original**\n\n![original](https://bellroy.imgix.net/dynamic-assets/W1siZnUiLCJodHRwczovL3MzLmFtYXpvbmF3cy5jb20vcHJvZHVjdC5pbWFnZXMuYmVsbHJveS5jb20vcHJvZHVjdF9pbWFnZXMvaW1hZ2VzLzAwMC8wMDMvODMzL29yaWdpbmFsLzc5ZmM2MGNkZmNkMjM5YWFjZGU3OWU4YTc2OTQ1NWZhOWJkN2MyODU3NGQ3Mzk0NDQxYTMyYmRmOGU4ZTdmOTUuanBnIl1d/5460fe0f4301a507/79fc60cdfcd239aacde79e8a769455fa9bd7c28574d7394441a32bdf8e8e7f95.jpg?fit=crop&w=150&h=150)\n\n**gamma 50**\n\n![gamma 50](https://bellroy.imgix.net/dynamic-assets/W1siZnUiLCJodHRwczovL3MzLmFtYXpvbmF3cy5jb20vcHJvZHVjdC5pbWFnZXMuYmVsbHJveS5jb20vcHJvZHVjdF9pbWFnZXMvaW1hZ2VzLzAwMC8wMDMvODMzL29yaWdpbmFsLzc5ZmM2MGNkZmNkMjM5YWFjZGU3OWU4YTc2OTQ1NWZhOWJkN2MyODU3NGQ3Mzk0NDQxYTMyYmRmOGU4ZTdmOTUuanBnIl1d/5460fe0f4301a507/79fc60cdfcd239aacde79e8a769455fa9bd7c28574d7394441a32bdf8e8e7f95.jpg?gam=50&fit=crop&w=150&h=150)\n\n",
+                "type": "Basics.Int -> ImgIX.Adjustment.Adjustment"
+            },
+            {
+                "name": "highlight",
+                "comment": " Adjusts the highlight tonal mapping of an image while preserving detail in highlighted areas.\n\nValid values are in the range -100 – 0. The default value is 0, which leaves the image unchanged.\n\n**original**\n\n![original](https://bellroy.imgix.net/dynamic-assets/W1siZnUiLCJodHRwczovL3MzLmFtYXpvbmF3cy5jb20vcHJvZHVjdC5pbWFnZXMuYmVsbHJveS5jb20vcHJvZHVjdF9pbWFnZXMvaW1hZ2VzLzAwMC8wMDMvODMzL29yaWdpbmFsLzc5ZmM2MGNkZmNkMjM5YWFjZGU3OWU4YTc2OTQ1NWZhOWJkN2MyODU3NGQ3Mzk0NDQxYTMyYmRmOGU4ZTdmOTUuanBnIl1d/5460fe0f4301a507/79fc60cdfcd239aacde79e8a769455fa9bd7c28574d7394441a32bdf8e8e7f95.jpg?fit=crop&w=150&h=150)\n\n**highlight 50**\n\n![highlight 50](https://bellroy.imgix.net/dynamic-assets/W1siZnUiLCJodHRwczovL3MzLmFtYXpvbmF3cy5jb20vcHJvZHVjdC5pbWFnZXMuYmVsbHJveS5jb20vcHJvZHVjdF9pbWFnZXMvaW1hZ2VzLzAwMC8wMDMvODMzL29yaWdpbmFsLzc5ZmM2MGNkZmNkMjM5YWFjZGU3OWU4YTc2OTQ1NWZhOWJkN2MyODU3NGQ3Mzk0NDQxYTMyYmRmOGU4ZTdmOTUuanBnIl1d/5460fe0f4301a507/79fc60cdfcd239aacde79e8a769455fa9bd7c28574d7394441a32bdf8e8e7f95.jpg?high=50&fit=crop&w=150&h=150)\n\n",
+                "type": "Basics.Int -> ImgIX.Adjustment.Adjustment"
+            },
+            {
+                "name": "hueshift",
+                "comment": " Adjusts the highlight tonal mapping of an image while preserving detail in highlighted areas.\n\nValid values are in the range -100 – 0. The default value is 0, which leaves the image unchanged.\n\n**original**\n\n![original](https://bellroy.imgix.net/dynamic-assets/W1siZnUiLCJodHRwczovL3MzLmFtYXpvbmF3cy5jb20vcHJvZHVjdC5pbWFnZXMuYmVsbHJveS5jb20vcHJvZHVjdF9pbWFnZXMvaW1hZ2VzLzAwMC8wMDMvODMzL29yaWdpbmFsLzc5ZmM2MGNkZmNkMjM5YWFjZGU3OWU4YTc2OTQ1NWZhOWJkN2MyODU3NGQ3Mzk0NDQxYTMyYmRmOGU4ZTdmOTUuanBnIl1d/5460fe0f4301a507/79fc60cdfcd239aacde79e8a769455fa9bd7c28574d7394441a32bdf8e8e7f95.jpg?fit=crop&w=150&h=150)\n\n**hueshift 50**\n\n![hueshift 50](https://bellroy.imgix.net/dynamic-assets/W1siZnUiLCJodHRwczovL3MzLmFtYXpvbmF3cy5jb20vcHJvZHVjdC5pbWFnZXMuYmVsbHJveS5jb20vcHJvZHVjdF9pbWFnZXMvaW1hZ2VzLzAwMC8wMDMvODMzL29yaWdpbmFsLzc5ZmM2MGNkZmNkMjM5YWFjZGU3OWU4YTc2OTQ1NWZhOWJkN2MyODU3NGQ3Mzk0NDQxYTMyYmRmOGU4ZTdmOTUuanBnIl1d/5460fe0f4301a507/79fc60cdfcd239aacde79e8a769455fa9bd7c28574d7394441a32bdf8e8e7f95.jpg?hue=50&fit=crop&w=150&h=150)\n\n",
+                "type": "Basics.Int -> ImgIX.Adjustment.Adjustment"
+            },
+            {
+                "name": "invert",
+                "comment": " Inverts all pixel colors and brightness values within the image, producing a negative of the image.\n\n**original**\n\n![original](https://bellroy.imgix.net/dynamic-assets/W1siZnUiLCJodHRwczovL3MzLmFtYXpvbmF3cy5jb20vcHJvZHVjdC5pbWFnZXMuYmVsbHJveS5jb20vcHJvZHVjdF9pbWFnZXMvaW1hZ2VzLzAwMC8wMDMvODMzL29yaWdpbmFsLzc5ZmM2MGNkZmNkMjM5YWFjZGU3OWU4YTc2OTQ1NWZhOWJkN2MyODU3NGQ3Mzk0NDQxYTMyYmRmOGU4ZTdmOTUuanBnIl1d/5460fe0f4301a507/79fc60cdfcd239aacde79e8a769455fa9bd7c28574d7394441a32bdf8e8e7f95.jpg?fit=crop&w=150&h=150)\n\n**invert**\n\n![invert](https://bellroy.imgix.net/dynamic-assets/W1siZnUiLCJodHRwczovL3MzLmFtYXpvbmF3cy5jb20vcHJvZHVjdC5pbWFnZXMuYmVsbHJveS5jb20vcHJvZHVjdF9pbWFnZXMvaW1hZ2VzLzAwMC8wMDMvODMzL29yaWdpbmFsLzc5ZmM2MGNkZmNkMjM5YWFjZGU3OWU4YTc2OTQ1NWZhOWJkN2MyODU3NGQ3Mzk0NDQxYTMyYmRmOGU4ZTdmOTUuanBnIl1d/5460fe0f4301a507/79fc60cdfcd239aacde79e8a769455fa9bd7c28574d7394441a32bdf8e8e7f95.jpg?invert=true&fit=crop&w=150&h=150)\n\n",
+                "type": "ImgIX.Adjustment.Adjustment"
+            },
+            {
+                "name": "saturation",
+                "comment": " Adjusts the saturation of the image.\n\nValid values are in the range -100 – 100. The default value is 0, which leaves the image unchanged. A value of -100 will convert the image to grayscale.\n\n**original**\n\n![original](https://bellroy.imgix.net/dynamic-assets/W1siZnUiLCJodHRwczovL3MzLmFtYXpvbmF3cy5jb20vcHJvZHVjdC5pbWFnZXMuYmVsbHJveS5jb20vcHJvZHVjdF9pbWFnZXMvaW1hZ2VzLzAwMC8wMDMvODMzL29yaWdpbmFsLzc5ZmM2MGNkZmNkMjM5YWFjZGU3OWU4YTc2OTQ1NWZhOWJkN2MyODU3NGQ3Mzk0NDQxYTMyYmRmOGU4ZTdmOTUuanBnIl1d/5460fe0f4301a507/79fc60cdfcd239aacde79e8a769455fa9bd7c28574d7394441a32bdf8e8e7f95.jpg?fit=crop&w=150&h=150)\n\n**saturation 100**\n\n![saturation 100](https://bellroy.imgix.net/dynamic-assets/W1siZnUiLCJodHRwczovL3MzLmFtYXpvbmF3cy5jb20vcHJvZHVjdC5pbWFnZXMuYmVsbHJveS5jb20vcHJvZHVjdF9pbWFnZXMvaW1hZ2VzLzAwMC8wMDMvODMzL29yaWdpbmFsLzc5ZmM2MGNkZmNkMjM5YWFjZGU3OWU4YTc2OTQ1NWZhOWJkN2MyODU3NGQ3Mzk0NDQxYTMyYmRmOGU4ZTdmOTUuanBnIl1d/5460fe0f4301a507/79fc60cdfcd239aacde79e8a769455fa9bd7c28574d7394441a32bdf8e8e7f95.jpg?sat=100&fit=crop&w=150&h=150)\n\n",
+                "type": "Basics.Int -> ImgIX.Adjustment.Adjustment"
+            },
+            {
+                "name": "shadow",
+                "comment": " Adjusts the shadow tonal mapping of an image while preserving detail in shadowed areas.\n\nValid values are in the range 0 – 100. The default value is 0, which leaves the image unchanged.\n\n**original**\n\n![original](https://bellroy.imgix.net/dynamic-assets/W1siZnUiLCJodHRwczovL3MzLmFtYXpvbmF3cy5jb20vcHJvZHVjdC5pbWFnZXMuYmVsbHJveS5jb20vcHJvZHVjdF9pbWFnZXMvaW1hZ2VzLzAwMC8wMDMvODMzL29yaWdpbmFsLzc5ZmM2MGNkZmNkMjM5YWFjZGU3OWU4YTc2OTQ1NWZhOWJkN2MyODU3NGQ3Mzk0NDQxYTMyYmRmOGU4ZTdmOTUuanBnIl1d/5460fe0f4301a507/79fc60cdfcd239aacde79e8a769455fa9bd7c28574d7394441a32bdf8e8e7f95.jpg?fit=crop&w=150&h=150)\n\n**shadow 50**\n\n![shadow 50](https://bellroy.imgix.net/dynamic-assets/W1siZnUiLCJodHRwczovL3MzLmFtYXpvbmF3cy5jb20vcHJvZHVjdC5pbWFnZXMuYmVsbHJveS5jb20vcHJvZHVjdF9pbWFnZXMvaW1hZ2VzLzAwMC8wMDMvODMzL29yaWdpbmFsLzc5ZmM2MGNkZmNkMjM5YWFjZGU3OWU4YTc2OTQ1NWZhOWJkN2MyODU3NGQ3Mzk0NDQxYTMyYmRmOGU4ZTdmOTUuanBnIl1d/5460fe0f4301a507/79fc60cdfcd239aacde79e8a769455fa9bd7c28574d7394441a32bdf8e8e7f95.jpg?shad=50&fit=crop&w=150&h=150)\n\n",
+                "type": "Basics.Int -> ImgIX.Adjustment.Adjustment"
+            },
+            {
+                "name": "sharpen",
+                "comment": " Sharpens the image using luminance (which only affects the black and white values), providing crisp detail with minimal color artifacts.\n\nValid values are in the range 0 – 100. The default value is 0, which leaves the image unchanged.\n\n**original**\n\n![original](https://bellroy.imgix.net/dynamic-assets/W1siZnUiLCJodHRwczovL3MzLmFtYXpvbmF3cy5jb20vcHJvZHVjdC5pbWFnZXMuYmVsbHJveS5jb20vcHJvZHVjdF9pbWFnZXMvaW1hZ2VzLzAwMC8wMDMvODMzL29yaWdpbmFsLzc5ZmM2MGNkZmNkMjM5YWFjZGU3OWU4YTc2OTQ1NWZhOWJkN2MyODU3NGQ3Mzk0NDQxYTMyYmRmOGU4ZTdmOTUuanBnIl1d/5460fe0f4301a507/79fc60cdfcd239aacde79e8a769455fa9bd7c28574d7394441a32bdf8e8e7f95.jpg?fit=crop&w=150&h=150)\n\n**sharpen 50**\n\n![sharpen 50](https://bellroy.imgix.net/dynamic-assets/W1siZnUiLCJodHRwczovL3MzLmFtYXpvbmF3cy5jb20vcHJvZHVjdC5pbWFnZXMuYmVsbHJveS5jb20vcHJvZHVjdF9pbWFnZXMvaW1hZ2VzLzAwMC8wMDMvODMzL29yaWdpbmFsLzc5ZmM2MGNkZmNkMjM5YWFjZGU3OWU4YTc2OTQ1NWZhOWJkN2MyODU3NGQ3Mzk0NDQxYTMyYmRmOGU4ZTdmOTUuanBnIl1d/5460fe0f4301a507/79fc60cdfcd239aacde79e8a769455fa9bd7c28574d7394441a32bdf8e8e7f95.jpg?sharp=50&fit=crop&w=150&h=150)\n\n",
+                "type": "Basics.Int -> ImgIX.Adjustment.Adjustment"
+            },
+            {
+                "name": "toQueryParameters",
+                "comment": " Takes a list of adjustments and turns it in to a list of query parameters that ImgIX understands\n",
+                "type": "List.List ImgIX.Adjustment.Adjustment -> List.List Url.Builder.QueryParameter"
+            },
+            {
+                "name": "unsharpmask",
+                "comment": " Sharpens the image details using an unsharp mask (a blurred, inverted copy of the image).\n\nValid values are any integers. The default value is 0, which leaves the image unchanged.\n\nValid radius values are any floating point number. The default value is 0, which leaves the image unchanged.\n\nFor images with general noise, we suggest using the sharp parameter instead. Unsharp mask and radius are better for thumbnails and fine-tuned sharpening.\n\n**original**\n\n![original](https://bellroy.imgix.net/dynamic-assets/W1siZnUiLCJodHRwczovL3MzLmFtYXpvbmF3cy5jb20vcHJvZHVjdC5pbWFnZXMuYmVsbHJveS5jb20vcHJvZHVjdF9pbWFnZXMvaW1hZ2VzLzAwMC8wMDMvODMzL29yaWdpbmFsLzc5ZmM2MGNkZmNkMjM5YWFjZGU3OWU4YTc2OTQ1NWZhOWJkN2MyODU3NGQ3Mzk0NDQxYTMyYmRmOGU4ZTdmOTUuanBnIl1d/5460fe0f4301a507/79fc60cdfcd239aacde79e8a769455fa9bd7c28574d7394441a32bdf8e8e7f95.jpg?fit=crop&w=150&h=150)\n\n**unsharpmask 20 10.5**\n\n![unsharpmask 20 10.5](https://bellroy.imgix.net/dynamic-assets/W1siZnUiLCJodHRwczovL3MzLmFtYXpvbmF3cy5jb20vcHJvZHVjdC5pbWFnZXMuYmVsbHJveS5jb20vcHJvZHVjdF9pbWFnZXMvaW1hZ2VzLzAwMC8wMDMvODMzL29yaWdpbmFsLzc5ZmM2MGNkZmNkMjM5YWFjZGU3OWU4YTc2OTQ1NWZhOWJkN2MyODU3NGQ3Mzk0NDQxYTMyYmRmOGU4ZTdmOTUuanBnIl1d/5460fe0f4301a507/79fc60cdfcd239aacde79e8a769455fa9bd7c28574d7394441a32bdf8e8e7f95.jpg?usmrad=10.5&usm=20&fit=crop&w=150&h=150)\n\n",
+                "type": "Basics.Int -> Basics.Float -> ImgIX.Adjustment.Adjustment"
+            },
+            {
+                "name": "vibrance",
+                "comment": " Adjusts the color saturation of an image while keeping pleasing skin tones.\n\nValid values are in the range -100 – 100. The default value is 0, which leaves the image unchanged.\n\n**original**\n\n![original](https://bellroy.imgix.net/dynamic-assets/W1siZnUiLCJodHRwczovL3MzLmFtYXpvbmF3cy5jb20vcHJvZHVjdC5pbWFnZXMuYmVsbHJveS5jb20vcHJvZHVjdF9pbWFnZXMvaW1hZ2VzLzAwMC8wMDMvODMzL29yaWdpbmFsLzc5ZmM2MGNkZmNkMjM5YWFjZGU3OWU4YTc2OTQ1NWZhOWJkN2MyODU3NGQ3Mzk0NDQxYTMyYmRmOGU4ZTdmOTUuanBnIl1d/5460fe0f4301a507/79fc60cdfcd239aacde79e8a769455fa9bd7c28574d7394441a32bdf8e8e7f95.jpg?fit=crop&w=150&h=150)\n\n**vibrance 50**\n\n![vibrance 50](https://bellroy.imgix.net/dynamic-assets/W1siZnUiLCJodHRwczovL3MzLmFtYXpvbmF3cy5jb20vcHJvZHVjdC5pbWFnZXMuYmVsbHJveS5jb20vcHJvZHVjdF9pbWFnZXMvaW1hZ2VzLzAwMC8wMDMvODMzL29yaWdpbmFsLzc5ZmM2MGNkZmNkMjM5YWFjZGU3OWU4YTc2OTQ1NWZhOWJkN2MyODU3NGQ3Mzk0NDQxYTMyYmRmOGU4ZTdmOTUuanBnIl1d/5460fe0f4301a507/79fc60cdfcd239aacde79e8a769455fa9bd7c28574d7394441a32bdf8e8e7f95.jpg?vib=50&fit=crop&w=150&h=150)\n\n",
+                "type": "Basics.Int -> ImgIX.Adjustment.Adjustment"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ImgIX.Automatic",
+        "comment": " The auto parameter helps you automate a baseline level of optimization across your entire image catalog. Currently, it has four different methods:\n\n  - Compression\n  - Visual enhancement\n  - File format conversion\n  - Redeye removal\n\n[ImgIx documentation for Automatic](https://docs.imgix.com/apis/url/auto/auto)\n\n@docs Automatic\n\n\n# Available automatic optimizations\n\n@docs compress, enhance, fileFormat, redEyeRemoval\n\n\n# Applying\n\n@docs toQueryParameter\n\n",
+        "unions": [
+            {
+                "name": "Automatic",
+                "comment": " The Automatic type\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "compress",
+                "comment": " When compress is set, imgix will apply best-effort techniques to reduce the size of the image. This includes altering our normal processing algorithm to apply more aggressive image compression. auto=format is respected, so images will be served in a WebP format whenever possible. If the WebP format is not supported, images that contain transparency will be served in a PNG8 format, if supported, and all others will be served as JPEG. The quality standard (q) is set to 45.\n",
+                "type": "ImgIX.Automatic.Automatic"
+            },
+            {
+                "name": "enhance",
+                "comment": " When enhance is set, the image is adjusted using the distribution of highlights, midtones, and shadows across all three channels—red, green, and blue (RGB). Overall, the enhancement gives images a more vibrant appearance.\n\nThe adjustment affects individual images differently, and works best with editorial photography, stock photography, and user-generated content for social media applications.\n\n",
+                "type": "ImgIX.Automatic.Automatic"
+            },
+            {
+                "name": "fileFormat",
+                "comment": " When fileFormat is set, imgix determines whether the image can be served in a better format by a process called automatic content negotiation.\n",
+                "type": "ImgIX.Automatic.Automatic"
+            },
+            {
+                "name": "redEyeRemoval",
+                "comment": " When redEyeRemoval is set, red-eye removal is applied to any detected faces.\n",
+                "type": "ImgIX.Automatic.Automatic"
+            },
+            {
+                "name": "toQueryParameter",
+                "comment": " Takes a list of automatics and turns it in to a query parameters that ImgIX understands\n",
+                "type": "List.List ImgIX.Automatic.Automatic -> Url.Builder.QueryParameter"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ImgIX.Format",
+        "comment": " The format parameters give you control over the output properties of your image across several aspects.\n\n[ImgIX documentation for Format](https://docs.imgix.com/apis/rendering/format)\n\n@docs Format, empty\n\n\n# Output Quality\n\nControls the output quality of lossy file formats (jpg, pjpg, webp, or jxr).\n\nValid values are in the range 0 – 100 and the default is 75. Quality can often be set much lower than the default, especially when serving high-DPR images.\n\n@docs q\n\n\n# Lossless\n\nThe lossless parameter enables delivery of lossless images in formats that support lossless compression (JPEG XR and WEBP).\n\nValid values are 1/true and 0/false. When unset or set to an invalid value, lossless defaults to false.\n\n@docs lossless\n\n\n# Applying\n\n@docs toQueryParameters\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Format",
+                "comment": " The Format type\n",
+                "args": [],
+                "type": "{ outputQuality : Maybe.Maybe Basics.Int, useLossless : Maybe.Maybe Basics.Bool }"
+            }
+        ],
+        "values": [
+            {
+                "name": "empty",
+                "comment": " ",
+                "type": "ImgIX.Format.Format"
+            },
+            {
+                "name": "lossless",
+                "comment": " Set to enable/disable the delivery of lossless images in formats that support lossless compression (JPEG XR and WEBP).\n",
+                "type": "Basics.Bool -> ImgIX.Format.Format -> ImgIX.Format.Format"
+            },
+            {
+                "name": "q",
+                "comment": " Set the output quality of lossy file formats.\n",
+                "type": "Basics.Int -> ImgIX.Format.Format -> ImgIX.Format.Format"
+            },
+            {
+                "name": "toQueryParameters",
+                "comment": " Takes format operations and turns them to a list of URL query parameters that ImgIX understands\n",
+                "type": "ImgIX.Format.Format -> List.List Url.Builder.QueryParameter"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ImgIX.PixelDensity",
+        "comment": " Controls the output density of your image, so you can serve images at the correct density for every user's device from a single master image.\n\n[ImgIX documentation for PixelDensity](https://docs.imgix.com/apis/rendering/pixel-density)\n\n@docs PixelDensity\n\n\n# Device Pixel Ratio\n\nDevice pixel ratio (DPR) is an easy way to convert between device-independent pixels and device pixels (also called \"CSS pixels\"), so that high-DPR images are only delivered to devices that can support them.\nThis makes images faster and saves bandwidth for users with lower-DPR devices, while delivering the expected crispness of high-DPR imagery to those devices.\n\n@docs dpr\n\n\n# Applying\n\n@docs toQueryParameters\n\n",
+        "unions": [
+            {
+                "name": "PixelDensity",
+                "comment": " The PixelDensity type\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "dpr",
+                "comment": " The density of the output image.\n",
+                "type": "Basics.Int -> ImgIX.PixelDensity.PixelDensity"
+            },
+            {
+                "name": "toQueryParameters",
+                "comment": " Takes a list of pixel density operations and turns it in to a list of query parameters that ImgIX understands\n",
+                "type": "List.List ImgIX.PixelDensity.PixelDensity -> List.List Url.Builder.QueryParameter"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ImgIX.Rotation",
+        "comment": " The rotation parameters allow you to change the orientation of your image, by either flipping along its axes or rotating around the center.\n\n\n# Rotation\n\n@docs Rotation\n\n@docs rotate\n\n\n# Flip Axis\n\nCombine both functions to flip along both axes.\n\n@docs flipVertical, flipHorizontal\n\n\n# Orientation\n\nChanges the cardinal orientation of the image by overriding any Exif orientation metadata.\n\nBy default, ImgIX automatically uses Exchangeable image file format (Exif) metadata present in the master image to orient your photos correctly. If your image does not contain Exif orientation data, we assume a value of 0 (North) and do not rotate the image.\n\n@docs orientNorth, orientEast, orientSouth, orientWest\n\n\n# Applying\n\n@docs toQueryParameters\n\n",
+        "unions": [
+            {
+                "name": "Rotation",
+                "comment": " The type of a Rotation\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "flipHorizontal",
+                "comment": " Flip image horizontally\n",
+                "type": "ImgIX.Rotation.Rotation"
+            },
+            {
+                "name": "flipVertical",
+                "comment": " Flip image vertically\n",
+                "type": "ImgIX.Rotation.Rotation"
+            },
+            {
+                "name": "orientEast",
+                "comment": " Change the Exif orientation metadata to face East\n",
+                "type": "ImgIX.Rotation.Rotation"
+            },
+            {
+                "name": "orientNorth",
+                "comment": " Change the Exif orientation metadata to face North\n",
+                "type": "ImgIX.Rotation.Rotation"
+            },
+            {
+                "name": "orientSouth",
+                "comment": " Change the Exif orientation metadata to face South\n",
+                "type": "ImgIX.Rotation.Rotation"
+            },
+            {
+                "name": "orientWest",
+                "comment": " Change the Exif orientation metadata to face West\n",
+                "type": "ImgIX.Rotation.Rotation"
+            },
+            {
+                "name": "rotate",
+                "comment": " Rotate your image by given degrees\n",
+                "type": "Basics.Int -> ImgIX.Rotation.Rotation"
+            },
+            {
+                "name": "toQueryParameters",
+                "comment": " Takes a list of rotations and turns it in to a list of query parameters that ImgIX understands\n",
+                "type": "List.List ImgIX.Rotation.Rotation -> List.List Url.Builder.QueryParameter"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ImgIX.Size",
+        "comment": " The size parameters allow you to control all aspects of resizing, cropping, and the fit-to-crop behavior of your image.\n\n[ImgIx documentation for Size](hhttps://docs.imgix.com/apis/url/size)\n\n@docs Size\n\n\n# Dimensions\n\nIf fit is set to clip `fitClip` or max `fitMax` then the actual output height may be equal to or less than the dimensions you specify.\nIf you'd like to resize using only height, please use `fitClip` to ensure that the other dimension will be accurately calculated.\n\n@docs width, height, relativeWidth, relativeHeight, maxWidth, maxHeight, minWidth, minHeight\n\n\n# Resize Fit Mode\n\nThe fit parameter controls how the output image is fit to its target dimensions after resizing, and how any background areas will be filled.\n\nThe default mode is `fitClip`.\n\n@docs fitClamp, fitClip, fitCrop, fitFaceArea, fitFaceAreaWithOptions, fitFill, fitFillMax, fitMax, fitMin, fitScale\n\n\n# Source Rectangle Region\n\n@docs sourceRectangleRegion, sourcePositionX, sourcePositionXRelative, sourcePositionXLeft, sourcePositionXCenter, sourcePositionXRight, sourcePositionY, sourcePositionYRelative, sourcePositionYTop, sourcePositionYMiddle, sourcePositionYBottom\n\n\n# AspectRatio\n\n@docs aspectRatio\n\n\n# Crop Mode\n\nCrop mode controls how the image is aligned when resizeFitModeCrop is set\n\nThe Width and Height should also be set, so that the crop behavior is defined within specific image dimensions.\n\nMultiple Crop Modes can be used\n\n\n# Directional Cropping\n\nThe top, bottom, left, and right values allow you to specify the starting location of the crop.\nIf no value is explicitly set, the default behavior is to crop from the center of the image.\n\nImage dimensions will be calculated from this starting point outward.\n\n@docs cropModeTop, cropModeBottom, cropModeLeft, cropModeRight\n\n\n# Face Croping\n\nThe example will crop to faces, and if there are no faces, then crops to the top right corner.\n\n    ImgIX.fromUrl imageSrc\n        |> ImgIX.sizes [ width 200, height 200, cropModeFaces, cropModeTop, cropModeRight ]\n        |> ImgIX.toHtml\n\n@docs cropModeFaces\n\n\n# Focal Point Cropping\n\nFocal Point Cropping allows you to target and zoom to a portion of the image using a relative vertical, horizontal and zoom value.\n\n@docs cropModeFocalPoint\n\n\n# Entropy and Edge Detection Cropping\n\n@docs cropModeEdges, cropModeEntropy\n\n\n# Applying\n\n@docs toQueryParameters\n\n",
+        "unions": [
+            {
+                "name": "Size",
+                "comment": " The Size type\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "aspectRatio",
+                "comment": " Resizes and crops the original image to match a specified aspect ratio.\n\n**This will only work when crop is set.**\n\n",
+                "type": "{ width : Basics.Float, height : Basics.Float } -> ImgIX.Size.Size"
+            },
+            {
+                "name": "cropModeBottom",
+                "comment": " Crop from the bottom of the image, up.\n",
+                "type": "ImgIX.Size.Size"
+            },
+            {
+                "name": "cropModeEdges",
+                "comment": " The edges crop automatically finds and crops to an area of interest by performing edge detection, looking for objects within the image.\n\nDefault crop\n\n![default crop](https://assets.imgix.net/unsplash/kayak.jpg?w=150)\n\nEdges crop\n\n![edges crop](https://assets.imgix.net/unsplash/kayak.jpg?w=300&h=150&fit=crop&crop=edges)\n\n",
+                "type": "ImgIX.Size.Size"
+            },
+            {
+                "name": "cropModeEntropy",
+                "comment": " The entropy crop automatically finds and crops to an area of interest by looking for busy sections of the image.\n\nDefault crop\n\n![default crop](https://assets.imgix.net/unsplash/kayak.jpg?w=150)\n\nEntropy crop\n\n![entropy crop](https://assets.imgix.net/unsplash/kayak.jpg?w=300&h=150&fit=crop&crop=entropy)\n\n",
+                "type": "ImgIX.Size.Size"
+            },
+            {
+                "name": "cropModeFaces",
+                "comment": " Crop to faces\n\nDefault crop\n\n![default crop](https://static-c.imgix.net/woman.jpg?w=120&h=120&fit=crop)\n\nCrop to faces\n\n![crop to faces](https://static-c.imgix.net/woman.jpg?w=120&h=120&fit=crop&crop=faces)\n\n",
+                "type": "ImgIX.Size.Size"
+            },
+            {
+                "name": "cropModeFocalPoint",
+                "comment": " The following example illustrates the difference between the default centered crop and one made with focal point parameters to target and zoom to a portion of the image.\n\nDefault crop\n\n![default crop](https://assets.imgix.net/unsplash/walrus.jpg?w=150&fit=crop)\n\nVertical 1.2, Horizontal 0.35, Zoom 2\n\n![Vertical 1.2, Horizontal 0.35, Zoom 2](https://assets.imgix.net/unsplash/walrus.jpg?h=150&w=150&fit=crop&crop=focalpoint&fp-x=1.2&fp-y=.35&fp-z=2)\n\n",
+                "type": "{ vertical : Basics.Float, horizontal : Basics.Float, zoom : Basics.Float } -> ImgIX.Size.Size"
+            },
+            {
+                "name": "cropModeLeft",
+                "comment": " Crop from the left of the image, right.\n",
+                "type": "ImgIX.Size.Size"
+            },
+            {
+                "name": "cropModeRight",
+                "comment": " Crop from the right of the image, left.\n",
+                "type": "ImgIX.Size.Size"
+            },
+            {
+                "name": "cropModeTop",
+                "comment": " Crop from the top of the image, down.\n",
+                "type": "ImgIX.Size.Size"
+            },
+            {
+                "name": "fitClamp",
+                "comment": " Resizes the image to fit within the width and height dimensions without cropping or distorting the image, and the remaining space is filled with extended pixels from the edge of the image. The resulting image will match the constraining dimensions.\n\nThe pixel extension is called an affine clamp, hence the value name, \"clamp\".\n\n![clamp](https://assets.imgix.net/docs/imgix-fitmodes.pdf?page=8&fm=png&w=640&h=176&crop=top&fit=crop&bg=ffffff&auto=enhance&con=10)\n\n",
+                "type": "ImgIX.Size.Size"
+            },
+            {
+                "name": "fitClip",
+                "comment": " Resizes the image to fit within the width and height boundaries without cropping or distorting the image. The resulting image will match one of the constraining dimensions, while the other dimension is altered to maintain the same aspect ratio of the input image.\n\n![clip](https://assets.imgix.net/docs/imgix-fitmodes.pdf?page=1&fm=png&w=640&h=176&crop=top&fit=crop&bg=ffffff&auto=enhance&con=10)\n\n",
+                "type": "ImgIX.Size.Size"
+            },
+            {
+                "name": "fitCrop",
+                "comment": " Resizes the image to fill the width and height dimensions and crops any excess image data. The resulting image will match the width and height constraints without distorting the image. It's used in conjunction with the the crop parameter, which controls how the image is cropped.\n\nBoth the `width` and `height` parameters will also need to be set.\n\n![crop](https://assets.imgix.net/docs/imgix-fitmodes.pdf?page=2&fm=png&w=640&h=176&crop=top&fit=crop&bg=ffffff&auto=enhance&con=10)\n\n",
+                "type": "ImgIX.Size.Size"
+            },
+            {
+                "name": "fitFaceArea",
+                "comment": " Finds the area containing all faces, or a specific face in an image, and scales it to specified width and height dimensions.\n\n![facearea](https://assets.imgix.net/docs/imgix-fitmodes.pdf?page=7&fm=png&w=640&bg=fff)\n\n",
+                "type": "ImgIX.Size.Size"
+            },
+            {
+                "name": "fitFaceAreaWithOptions",
+                "comment": " Finds the area containing all faces, or a specific face in an image, and scales it to specified width and height dimensions.\n\nUse in conjunction with index to identify a specific face, as well as padding to include additional padded area around the face to zoom out from the immediate area around the faces.\n\n",
+                "type": "{ index : Basics.Int, padding : Basics.Int } -> ImgIX.Size.Size"
+            },
+            {
+                "name": "fitFill",
+                "comment": " Resizes the image to fit within the requested width and height dimensions while preserving the original aspect ratio and without discarding any original image data.\n\nExcess space is filled with a solid color or when no colour is suplied a blurred version of the image.\n\nThe resulting image exactly matches the requested dimensions.\n\nTo achieve these characteristics while also preventing an image from being sized beyond its original dimensions, see `fitFillMax`.\n\n",
+                "type": "Maybe.Maybe ImgIX.Internals.Color.Color -> ImgIX.Size.Size"
+            },
+            {
+                "name": "fitFillMax",
+                "comment": " Resizes the image to fit within the requested width and height dimensions while preserving the original aspect ratio and without discarding any original image data. If the requested width or height exceeds that of the original, the original image remains the same size.\n\nThe excess space is filled with a solid color or blurred version of the image.\n\nThe resulting image exactly matches the requested dimensions.\n\nNote that `fitFillMax` places constraints on upscaling the original image; `fitFill` does not, which may sometimes result in lower image quality.\n\n",
+                "type": "Maybe.Maybe ImgIX.Internals.Color.Color -> ImgIX.Size.Size"
+            },
+            {
+                "name": "fitMax",
+                "comment": " Resizes the image to fit within the width and height dimensions without cropping or distorting the image, but will not increase the size of the image if it is smaller than the output size.\n\nThe resulting image will maintain the same aspect ratio of the input image.\n\n",
+                "type": "ImgIX.Size.Size"
+            },
+            {
+                "name": "fitMin",
+                "comment": " Resizes and crops the image to match the aspect ratio of the requested width and height.\n\nWill not exceed the original width and height of the image.\n\n",
+                "type": "ImgIX.Size.Size"
+            },
+            {
+                "name": "fitScale",
+                "comment": " Scales the image to fit the constraining dimensions exactly.\n\nThe resulting image will fill the dimensions, and will not maintain the aspect ratio of the input image.\n\n",
+                "type": "ImgIX.Size.Size"
+            },
+            {
+                "name": "height",
+                "comment": " The height of the output image.\n",
+                "type": "Basics.Int -> ImgIX.Size.Size"
+            },
+            {
+                "name": "maxHeight",
+                "comment": " The maximum allowed height of the output image.\n\nMust be an integer greater than 0. This parameter will only work if `fitCrop` is present.\n\n",
+                "type": "Basics.Int -> ImgIX.Size.Size"
+            },
+            {
+                "name": "maxWidth",
+                "comment": " The maximum allowed width of the output image.\n\nMust be an integer greater than 0. This parameter will only work if `fitCrop` is present.\n\n",
+                "type": "Basics.Int -> ImgIX.Size.Size"
+            },
+            {
+                "name": "minHeight",
+                "comment": " The minimum allowed height of the output image.\n\nMust be an integer greater than 0. This parameter will only work if `fitCrop` is present.\n\n",
+                "type": "Basics.Int -> ImgIX.Size.Size"
+            },
+            {
+                "name": "minWidth",
+                "comment": " The minimum allowed width of the output image.\n\nMust be an integer greater than 0. This parameter will only work if `fitCrop` is present.\n\n",
+                "type": "Basics.Int -> ImgIX.Size.Size"
+            },
+            {
+                "name": "relativeHeight",
+                "comment": " The relative height of the output image, interpreted as a ratio in relation to the source image size.\n",
+                "type": "Basics.Float -> ImgIX.Size.Size"
+            },
+            {
+                "name": "relativeWidth",
+                "comment": " The relative width of the output image, interpreted as a ratio in relation to the source image size.\n",
+                "type": "Basics.Float -> ImgIX.Size.Size"
+            },
+            {
+                "name": "sourcePositionX",
+                "comment": " The starting position of x\n",
+                "type": "Basics.Int -> ImgIX.Size.SourcePositionX"
+            },
+            {
+                "name": "sourcePositionXCenter",
+                "comment": " Start from the center\n",
+                "type": "ImgIX.Size.SourcePositionX"
+            },
+            {
+                "name": "sourcePositionXLeft",
+                "comment": " Start from the left\n",
+                "type": "ImgIX.Size.SourcePositionX"
+            },
+            {
+                "name": "sourcePositionXRelative",
+                "comment": " The relative starting position of x\n",
+                "type": "Basics.Float -> ImgIX.Size.SourcePositionX"
+            },
+            {
+                "name": "sourcePositionXRight",
+                "comment": " Start from the right\n",
+                "type": "ImgIX.Size.SourcePositionX"
+            },
+            {
+                "name": "sourcePositionY",
+                "comment": " The starting position of y\n",
+                "type": "Basics.Int -> ImgIX.Size.SourcePositionY"
+            },
+            {
+                "name": "sourcePositionYBottom",
+                "comment": " Start from the bottom\n",
+                "type": "ImgIX.Size.SourcePositionY"
+            },
+            {
+                "name": "sourcePositionYMiddle",
+                "comment": " Start from the middle\n",
+                "type": "ImgIX.Size.SourcePositionY"
+            },
+            {
+                "name": "sourcePositionYRelative",
+                "comment": " The relative starting position of y\n",
+                "type": "Basics.Float -> ImgIX.Size.SourcePositionY"
+            },
+            {
+                "name": "sourcePositionYTop",
+                "comment": " Start from the top\n",
+                "type": "ImgIX.Size.SourcePositionY"
+            },
+            {
+                "name": "sourceRectangleRegion",
+                "comment": " By default, the entire image is used as the area for processing. The rect parameter selects a sub-region of the source image to use for processing before applying other resize operations.\n",
+                "type": "{ x : ImgIX.Size.SourcePositionX, y : ImgIX.Size.SourcePositionY, width : Basics.Int, height : Basics.Int } -> ImgIX.Size.Size"
+            },
+            {
+                "name": "toQueryParameters",
+                "comment": " Takes a list of sizes and turns it in to a list of query parameters that ImgIX understands\n",
+                "type": "List.List ImgIX.Size.Size -> List.List Url.Builder.QueryParameter"
+            },
+            {
+                "name": "width",
+                "comment": " The width of the output image.\n",
+                "type": "Basics.Int -> ImgIX.Size.Size"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ImgIX.Stylize",
+        "comment": " The stylize parameters allow you to apply basic artistic effects to your images.\n\n@docs Stylize\n\n\n# Stylize\n\n@docs duotone, gaussianBlur, blur, halftone, monochrome, pixelate, sepia\n\n\n# Applying\n\n@docs toQueryParameters\n\n",
+        "unions": [
+            {
+                "name": "Stylize",
+                "comment": " The Stylize type\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "blur",
+                "comment": " Same as gaussianBlur\n",
+                "type": "Basics.Int -> ImgIX.Stylize.Stylize"
+            },
+            {
+                "name": "duotone",
+                "comment": " Applies a duotone effect—a gradient with two different colors as its endpoints—to the image.\n\nTo achieve this effect, the image is first converted to greyscale. Two colors, usually contrasting, are then mapped to that gradient.\n\nColorA is mapped to the darker parts of the image, and colorB to the lighter parts.\n\nIf you were to set a light color as colorA and a dark color as colorB, you would create a duotone with a photo negative effect.\n\n**original**\n\n![original](https://bellroy.imgix.net/dynamic-assets/W1siZnUiLCJodHRwczovL3MzLmFtYXpvbmF3cy5jb20vcHJvZHVjdC5pbWFnZXMuYmVsbHJveS5jb20vcHJvZHVjdF9pbWFnZXMvaW1hZ2VzLzAwMC8wMDMvODMzL29yaWdpbmFsLzc5ZmM2MGNkZmNkMjM5YWFjZGU3OWU4YTc2OTQ1NWZhOWJkN2MyODU3NGQ3Mzk0NDQxYTMyYmRmOGU4ZTdmOTUuanBnIl1d/5460fe0f4301a507/79fc60cdfcd239aacde79e8a769455fa9bd7c28574d7394441a32bdf8e8e7f95.jpg?fit=crop&w=150&h=150)\n\n**duotone { colorA: #ff0000, colorB: #00ff00, alpha: 0.2 }**\n\n![duotone](https://bellroy.imgix.net/dynamic-assets/W1siZnUiLCJodHRwczovL3MzLmFtYXpvbmF3cy5jb20vcHJvZHVjdC5pbWFnZXMuYmVsbHJveS5jb20vcHJvZHVjdF9pbWFnZXMvaW1hZ2VzLzAwMC8wMDMvODMzL29yaWdpbmFsLzc5ZmM2MGNkZmNkMjM5YWFjZGU3OWU4YTc2OTQ1NWZhOWJkN2MyODU3NGQ3Mzk0NDQxYTMyYmRmOGU4ZTdmOTUuanBnIl1d/5460fe0f4301a507/79fc60cdfcd239aacde79e8a769455fa9bd7c28574d7394441a32bdf8e8e7f95.jpg?fit=crop&w=150&h=150&duotone=ff0000,00ff00&duotone-alpha=20)\n\n",
+                "type": "{ colorA : ImgIX.Internals.Color.Color, colorB : ImgIX.Internals.Color.Color, alpha : Basics.Float } -> ImgIX.Stylize.Stylize"
+            },
+            {
+                "name": "gaussianBlur",
+                "comment": " Applies a [Gaussian style](https://en.wikipedia.org/wiki/Gaussian_blur) blur to your image, smoothing out image noise.\n\nValid values are in the range from 0 – 2000.\n\n**original**\n\n![original](https://bellroy.imgix.net/dynamic-assets/W1siZnUiLCJodHRwczovL3MzLmFtYXpvbmF3cy5jb20vcHJvZHVjdC5pbWFnZXMuYmVsbHJveS5jb20vcHJvZHVjdF9pbWFnZXMvaW1hZ2VzLzAwMC8wMDMvODMzL29yaWdpbmFsLzc5ZmM2MGNkZmNkMjM5YWFjZGU3OWU4YTc2OTQ1NWZhOWJkN2MyODU3NGQ3Mzk0NDQxYTMyYmRmOGU4ZTdmOTUuanBnIl1d/5460fe0f4301a507/79fc60cdfcd239aacde79e8a769455fa9bd7c28574d7394441a32bdf8e8e7f95.jpg?fit=crop&w=150&h=150)\n\n**gaussianBlur 10**\n\n![gaussianBlur](https://bellroy.imgix.net/dynamic-assets/W1siZnUiLCJodHRwczovL3MzLmFtYXpvbmF3cy5jb20vcHJvZHVjdC5pbWFnZXMuYmVsbHJveS5jb20vcHJvZHVjdF9pbWFnZXMvaW1hZ2VzLzAwMC8wMDMvODMzL29yaWdpbmFsLzc5ZmM2MGNkZmNkMjM5YWFjZGU3OWU4YTc2OTQ1NWZhOWJkN2MyODU3NGQ3Mzk0NDQxYTMyYmRmOGU4ZTdmOTUuanBnIl1d/5460fe0f4301a507/79fc60cdfcd239aacde79e8a769455fa9bd7c28574d7394441a32bdf8e8e7f95.jpg?fit=crop&w=150&h=150&blur=10)\n\n",
+                "type": "Basics.Int -> ImgIX.Stylize.Stylize"
+            },
+            {
+                "name": "halftone",
+                "comment": " Applies a [half-toning](https://en.wikipedia.org/wiki/Halftone) effect to the image.\n\nValid values are in the range 0 – 100. The default value is 0, which leaves the image unchanged. The value represents the width of the halftone dots.\n\n**original**\n\n![original](https://bellroy.imgix.net/dynamic-assets/W1siZnUiLCJodHRwczovL3MzLmFtYXpvbmF3cy5jb20vcHJvZHVjdC5pbWFnZXMuYmVsbHJveS5jb20vcHJvZHVjdF9pbWFnZXMvaW1hZ2VzLzAwMC8wMDMvODMzL29yaWdpbmFsLzc5ZmM2MGNkZmNkMjM5YWFjZGU3OWU4YTc2OTQ1NWZhOWJkN2MyODU3NGQ3Mzk0NDQxYTMyYmRmOGU4ZTdmOTUuanBnIl1d/5460fe0f4301a507/79fc60cdfcd239aacde79e8a769455fa9bd7c28574d7394441a32bdf8e8e7f95.jpg?fit=crop&w=150&h=150)\n\n**halftone 10**\n\n![halftone](https://bellroy.imgix.net/dynamic-assets/W1siZnUiLCJodHRwczovL3MzLmFtYXpvbmF3cy5jb20vcHJvZHVjdC5pbWFnZXMuYmVsbHJveS5jb20vcHJvZHVjdF9pbWFnZXMvaW1hZ2VzLzAwMC8wMDMvODMzL29yaWdpbmFsLzc5ZmM2MGNkZmNkMjM5YWFjZGU3OWU4YTc2OTQ1NWZhOWJkN2MyODU3NGQ3Mzk0NDQxYTMyYmRmOGU4ZTdmOTUuanBnIl1d/5460fe0f4301a507/79fc60cdfcd239aacde79e8a769455fa9bd7c28574d7394441a32bdf8e8e7f95.jpg?fit=crop&w=150&h=150&htn=10)\n\n",
+                "type": "Basics.Int -> ImgIX.Stylize.Stylize"
+            },
+            {
+                "name": "monochrome",
+                "comment": " Applies an overall monochromatic hue change.\n\nThe higher the intensity defined by the alpha channel, the closer you will get to a duotone effect.\n\n**original**\n\n![original](https://bellroy.imgix.net/dynamic-assets/W1siZnUiLCJodHRwczovL3MzLmFtYXpvbmF3cy5jb20vcHJvZHVjdC5pbWFnZXMuYmVsbHJveS5jb20vcHJvZHVjdF9pbWFnZXMvaW1hZ2VzLzAwMC8wMDMvODMzL29yaWdpbmFsLzc5ZmM2MGNkZmNkMjM5YWFjZGU3OWU4YTc2OTQ1NWZhOWJkN2MyODU3NGQ3Mzk0NDQxYTMyYmRmOGU4ZTdmOTUuanBnIl1d/5460fe0f4301a507/79fc60cdfcd239aacde79e8a769455fa9bd7c28574d7394441a32bdf8e8e7f95.jpg?fit=crop&w=150&h=150)\n\n**monochrome #33ff0000**\n\n![monochrome](https://bellroy.imgix.net/dynamic-assets/W1siZnUiLCJodHRwczovL3MzLmFtYXpvbmF3cy5jb20vcHJvZHVjdC5pbWFnZXMuYmVsbHJveS5jb20vcHJvZHVjdF9pbWFnZXMvaW1hZ2VzLzAwMC8wMDMvODMzL29yaWdpbmFsLzc5ZmM2MGNkZmNkMjM5YWFjZGU3OWU4YTc2OTQ1NWZhOWJkN2MyODU3NGQ3Mzk0NDQxYTMyYmRmOGU4ZTdmOTUuanBnIl1d/5460fe0f4301a507/79fc60cdfcd239aacde79e8a769455fa9bd7c28574d7394441a32bdf8e8e7f95.jpg?fit=crop&w=150&h=150&mono=33ff0000)\n\n",
+                "type": "ImgIX.Internals.Color.Color -> ImgIX.Stylize.Stylize"
+            },
+            {
+                "name": "pixelate",
+                "comment": " Applies a square pixellation effect to the image.\n\nValid values are in the range 0 – 100. The default value is 0, which leaves the image unchanged.\n\n**original**\n\n![original](https://bellroy.imgix.net/dynamic-assets/W1siZnUiLCJodHRwczovL3MzLmFtYXpvbmF3cy5jb20vcHJvZHVjdC5pbWFnZXMuYmVsbHJveS5jb20vcHJvZHVjdF9pbWFnZXMvaW1hZ2VzLzAwMC8wMDMvODMzL29yaWdpbmFsLzc5ZmM2MGNkZmNkMjM5YWFjZGU3OWU4YTc2OTQ1NWZhOWJkN2MyODU3NGQ3Mzk0NDQxYTMyYmRmOGU4ZTdmOTUuanBnIl1d/5460fe0f4301a507/79fc60cdfcd239aacde79e8a769455fa9bd7c28574d7394441a32bdf8e8e7f95.jpg?fit=crop&w=150&h=150)\n\n**pixelate 10**\n\n![pixelate](https://bellroy.imgix.net/dynamic-assets/W1siZnUiLCJodHRwczovL3MzLmFtYXpvbmF3cy5jb20vcHJvZHVjdC5pbWFnZXMuYmVsbHJveS5jb20vcHJvZHVjdF9pbWFnZXMvaW1hZ2VzLzAwMC8wMDMvODMzL29yaWdpbmFsLzc5ZmM2MGNkZmNkMjM5YWFjZGU3OWU4YTc2OTQ1NWZhOWJkN2MyODU3NGQ3Mzk0NDQxYTMyYmRmOGU4ZTdmOTUuanBnIl1d/5460fe0f4301a507/79fc60cdfcd239aacde79e8a769455fa9bd7c28574d7394441a32bdf8e8e7f95.jpg?fit=crop&w=150&h=150&px=10)\n\n",
+                "type": "Basics.Int -> ImgIX.Stylize.Stylize"
+            },
+            {
+                "name": "sepia",
+                "comment": " Applies a sepia-toning effect to the image.\n\nValid values are in the range from 0 – 100. The default value is 0, which leaves the image unchanged.\n\n**original**\n\n![original](https://bellroy.imgix.net/dynamic-assets/W1siZnUiLCJodHRwczovL3MzLmFtYXpvbmF3cy5jb20vcHJvZHVjdC5pbWFnZXMuYmVsbHJveS5jb20vcHJvZHVjdF9pbWFnZXMvaW1hZ2VzLzAwMC8wMDMvODMzL29yaWdpbmFsLzc5ZmM2MGNkZmNkMjM5YWFjZGU3OWU4YTc2OTQ1NWZhOWJkN2MyODU3NGQ3Mzk0NDQxYTMyYmRmOGU4ZTdmOTUuanBnIl1d/5460fe0f4301a507/79fc60cdfcd239aacde79e8a769455fa9bd7c28574d7394441a32bdf8e8e7f95.jpg?fit=crop&w=150&h=150)\n\n**sepia 80**\n\n![sepia](https://bellroy.imgix.net/dynamic-assets/W1siZnUiLCJodHRwczovL3MzLmFtYXpvbmF3cy5jb20vcHJvZHVjdC5pbWFnZXMuYmVsbHJveS5jb20vcHJvZHVjdF9pbWFnZXMvaW1hZ2VzLzAwMC8wMDMvODMzL29yaWdpbmFsLzc5ZmM2MGNkZmNkMjM5YWFjZGU3OWU4YTc2OTQ1NWZhOWJkN2MyODU3NGQ3Mzk0NDQxYTMyYmRmOGU4ZTdmOTUuanBnIl1d/5460fe0f4301a507/79fc60cdfcd239aacde79e8a769455fa9bd7c28574d7394441a32bdf8e8e7f95.jpg?fit=crop&w=150&h=150&sepia=80)\n\n",
+                "type": "Basics.Int -> ImgIX.Stylize.Stylize"
+            },
+            {
+                "name": "toQueryParameters",
+                "comment": " ",
+                "type": "List.List ImgIX.Stylize.Stylize -> List.List Url.Builder.QueryParameter"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ImgIX.Text",
+        "comment": " Adds a text overlay to your image, with positioning and a full range of formatting properties.\n\n![example hello world!](https://assets.imgix.net/examples/clouds.jpg?blur=150&w=640&h=200&fit=crop&txt=HELLO%20WORLD!&txtsize=62&txtclr=ff2e4357&txtalign=middle,center&txtfont=Futura%20Condensed%20Medium&mono=ff6598cc)\n\n@docs Text\n\n\n# Text\n\n@docs text\n\n\n# Text Font\n\n@docs serif, sansSerif, monospace, cursive, fantasy, font\n\n\n# Text Style\n\n@docs bold, italic\n\n\n# Text Font Size\n\n@docs fontSize\n\n\n# Text Color\n\n@docs color, colour\n\n\n# Text Padding\n\n@docs padding\n\n\n# Text Width\n\n@docs width\n\n\n# Text Position\n\n@docs alignLeft, alignCenter, alignRight, alignTop, alignMiddle, alignBottom\n\n\n# Text Clipping Mode\n\nSets the region of the string that will be clipped if the string extends beyond the defined width of the text.\n\nThe ellipsis input adds an ellipsis on the region where the text is clipped, and can be combined with one of the other clipping methods.\n\nIf no value is set, the default value is end.\n\nThe `padding` and `width` functions are used to control the bounding region.\n\n@docs clippingModeStart, clippingModeMiddle, clippingModeEnd, clippingModeEllipsis\n\n\n# Text Fit Mode\n\n@docs fitModeMax\n\n\n# Text Ligatures\n\nEnables support for ligatures in the text, if the selected font supports them.\n\n@docs requiredLigatures, commonLigatures, allLigatures\n\n\n# Text Outline\n\n@docs outline\n\n\n# Text Shadow\n\n@docs shadow\n\n\n# Applying\n\n@docs toQueryParameters\n\n",
+        "unions": [
+            {
+                "name": "Text",
+                "comment": " The Text Type\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "alignBottom",
+                "comment": " align text to the bottom\n",
+                "type": "ImgIX.Text.Text"
+            },
+            {
+                "name": "alignCenter",
+                "comment": " align text to the center\n",
+                "type": "ImgIX.Text.Text"
+            },
+            {
+                "name": "alignLeft",
+                "comment": " align text to the left\n",
+                "type": "ImgIX.Text.Text"
+            },
+            {
+                "name": "alignMiddle",
+                "comment": " align text to the middle\n",
+                "type": "ImgIX.Text.Text"
+            },
+            {
+                "name": "alignRight",
+                "comment": " align text to the right\n",
+                "type": "ImgIX.Text.Text"
+            },
+            {
+                "name": "alignTop",
+                "comment": " align text to the top\n",
+                "type": "ImgIX.Text.Text"
+            },
+            {
+                "name": "allLigatures",
+                "comment": " Enables all of the ligatures that are available in the selected typeface.\n",
+                "type": "ImgIX.Text.Text"
+            },
+            {
+                "name": "bold",
+                "comment": " Make the font style bold\n",
+                "type": "ImgIX.Text.Text"
+            },
+            {
+                "name": "clippingModeEllipsis",
+                "comment": " Clip text using ellipsis\n",
+                "type": "ImgIX.Text.Text"
+            },
+            {
+                "name": "clippingModeEnd",
+                "comment": " Clip text to the end\n",
+                "type": "ImgIX.Text.Text"
+            },
+            {
+                "name": "clippingModeMiddle",
+                "comment": " Clip text to the middle\n",
+                "type": "ImgIX.Text.Text"
+            },
+            {
+                "name": "clippingModeStart",
+                "comment": " Clip text to the start\n",
+                "type": "ImgIX.Text.Text"
+            },
+            {
+                "name": "color",
+                "comment": " Sets the color of the text.\n\nThe default is opaque black, 000.\n\n",
+                "type": "ImgIX.Internals.Color.Color -> ImgIX.Text.Text"
+            },
+            {
+                "name": "colour",
+                "comment": " Alias of color\n",
+                "type": "ImgIX.Internals.Color.Color -> ImgIX.Text.Text"
+            },
+            {
+                "name": "commonLigatures",
+                "comment": " Enables common ligatures in the selected typeface.\n\nThis is the **default**\n\n",
+                "type": "ImgIX.Text.Text"
+            },
+            {
+                "name": "cursive",
+                "comment": " Set the font to a \"CSS-Style\" category\n(e.g font-family: cursive;)\n",
+                "type": "ImgIX.Text.Text"
+            },
+            {
+                "name": "fantasy",
+                "comment": " Set the font to a \"CSS-Style\" category\n(e.g font-family: fantasy;)\n",
+                "type": "ImgIX.Text.Text"
+            },
+            {
+                "name": "fitModeMax",
+                "comment": " Presently, only the max fit mode is supported by ImgIX.\nWith no fit mode, the text will be clipped if it exceeds the contraints of the text bounds.\nWith `fitModeMax`, the text will be scaled down to fit within the bounds rather than clipping the text contents.\n\nThe default is to not set a fit mode.\n\nThe `padding` and `width` parameters are used to control the bounding region.\n\n",
+                "type": "ImgIX.Text.Text"
+            },
+            {
+                "name": "font",
+                "comment": " Set the font to use an explicit typeface.\n\nSee the [ImgIX documentation Text Font](https://docs.imgix.com/apis/url/text/txtfont) for a list of available typefaces.\n\n",
+                "type": "String.String -> ImgIX.Text.Text"
+            },
+            {
+                "name": "fontSize",
+                "comment": " Sets the font size of the text, in pixels.\n\nThe value must be a number greater than 0. The default value is 12.\n\n",
+                "type": "Basics.Int -> ImgIX.Text.Text"
+            },
+            {
+                "name": "italic",
+                "comment": " Make the font style italic\n",
+                "type": "ImgIX.Text.Text"
+            },
+            {
+                "name": "monospace",
+                "comment": " Set the font to a \"CSS-Style\" category\n(e.g font-family: monospace;)\n",
+                "type": "ImgIX.Text.Text"
+            },
+            {
+                "name": "outline",
+                "comment": " Sets the width and color of the outline to draw around the text.\n",
+                "type": "{ width : Basics.Int, color : ImgIX.Internals.Color.Color } -> ImgIX.Text.Text"
+            },
+            {
+                "name": "padding",
+                "comment": " The amount of spacing (in pixels) to add around the text.\n\n**The default is 10.**\n\n",
+                "type": "Basics.Int -> ImgIX.Text.Text"
+            },
+            {
+                "name": "requiredLigatures",
+                "comment": " Enables typographically-required ligatures present in non-English languages.\n",
+                "type": "ImgIX.Text.Text"
+            },
+            {
+                "name": "sansSerif",
+                "comment": " Set the font to a \"CSS-Style\" category\n(e.g font-family: sans-serif;)\n",
+                "type": "ImgIX.Text.Text"
+            },
+            {
+                "name": "serif",
+                "comment": " Set the font to a \"CSS-Style\" category\n(e.g font-family: serif;)\n",
+                "type": "ImgIX.Text.Text"
+            },
+            {
+                "name": "shadow",
+                "comment": " A number indicating the strength of a shadow to place on the text.\n\nThe default is no shadow, and the range is from 0 – 10.\n\n",
+                "type": "Basics.Float -> ImgIX.Text.Text"
+            },
+            {
+                "name": "text",
+                "comment": " The text string to overlay on the image. This value must be supplied for text to be rendered—all other text parameters are ignored if it isn't set.\n\nimgix has full support for UTF-8 characters, and will appropriately render non-Latin character sets and emoji. This means that you can easily pipe in localized text to a base image instead of creating a different master image for each language you want to support.\n\nText has the following defaults if none of the other text parameters are set:\n\n  - Position: Lower right corner\n  - Font: Helvetica\n  - Size: 12px\n  - Color: #000 (Opaque Black)\n  - Padding: 10px\n\n",
+                "type": "String.String -> ImgIX.Text.Text"
+            },
+            {
+                "name": "toQueryParameters",
+                "comment": " Takes a list of text options and turns it in to a list of query parameters that ImgIX understands\n",
+                "type": "List.List ImgIX.Text.Text -> List.List Url.Builder.QueryParameter"
+            },
+            {
+                "name": "width",
+                "comment": " The width (in pixels) to restrict the width of the text to.\n\nThe default value is calculated by the width of the output image, minus any padding on the left and right.\n\nIf the text exceeds the value of txtwidth, it will be clipped on a per-character basis;\nthe maximum number of characters that will fit in the specified width will be displayed.\n\nThe location of the clipping is determined by the value of the [Text Clipping Mode](#text-clipping-mode).\n\n",
+                "type": "Basics.Int -> ImgIX.Text.Text"
+            }
+        ],
+        "binops": []
+    }
+]

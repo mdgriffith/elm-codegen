@@ -1,0 +1,226 @@
+[
+    {
+        "name": "Xml",
+        "comment": " The main data structure along with some trivial helpers.\n\n@docs Value\n\n@docs foldl, map, xmlToJson2, jsonToXml\n\n",
+        "unions": [
+            {
+                "name": "Value",
+                "comment": " Representation of the XML tree\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Tag",
+                        [
+                            "String.String",
+                            "Dict.Dict String.String Xml.Value",
+                            "Xml.Value"
+                        ]
+                    ],
+                    [
+                        "StrNode",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "IntNode",
+                        [
+                            "Basics.Int"
+                        ]
+                    ],
+                    [
+                        "FloatNode",
+                        [
+                            "Basics.Float"
+                        ]
+                    ],
+                    [
+                        "BoolNode",
+                        [
+                            "Basics.Bool"
+                        ]
+                    ],
+                    [
+                        "Object",
+                        [
+                            "List.List Xml.Value"
+                        ]
+                    ],
+                    [
+                        "DocType",
+                        [
+                            "String.String",
+                            "Dict.Dict String.String Xml.Value"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "foldl",
+                "comment": " Standard foldl\n",
+                "type": "(Xml.Value -> a -> a) -> a -> Xml.Value -> a"
+            },
+            {
+                "name": "jsonToXml",
+                "comment": " Convert a `Json.Value` into an `Xml.Value`\n\n    import Dict\n    import Json.Encode as Json\n    import Xml exposing (jsonToXml, Value(..))\n\n    jsonToXml (Json.string \"hello\")\n    --> StrNode \"hello\"\n\n    jsonToXml (Json.int 5)\n    --> IntNode 5\n\n    jsonToXml (Json.float 10.5)\n    --> FloatNode 10.5\n\n    jsonToXml (Json.bool True)\n    --> BoolNode True\n\n    jsonToXml (Json.object [(\"name\", Json.string \"hello\")])\n    --> Tag \"name\" Dict.empty (StrNode \"hello\")\n\n    jsonToXml (Json.list identity [Json.string \"name\", Json.string \"hello\"])\n    --> Object [ StrNode \"name\", StrNode \"hello\" ]\n\n    jsonToXml (Json.object [(\"foo\", Json.object [(\"#value\", Json.int 1), (\"@x\", Json.string \"x\")])])\n    --> Tag \"foo\" (Dict.fromList [(\"x\",StrNode \"x\")]) (IntNode 1)\n\n",
+                "type": "Json.Encode.Value -> Xml.Value"
+            },
+            {
+                "name": "map",
+                "comment": "\n\n    Standard mapping of a value to another value\n\n",
+                "type": "(Xml.Value -> Xml.Value) -> Xml.Value -> Xml.Value"
+            },
+            {
+                "name": "xmlToJson2",
+                "comment": " Convert an `Xml.Value` to a `Json.Value`\n\nThe conversion of `Tag`s changed in version 2.0.0, so that they can be properly converted back. The attribute names become JSON keys with \"@\" prepended, and the value becomes a JSON key named \"#value\": <foo x=\"x\">1</foo> becomes {foo: {#value: 1, @x: \"x\"}}\n\nRenamed from xmlToJson to force a bump to version 2.0.\n\n    import Dict\n    import Json.Encode as Json\n    import Xml exposing (jsonToXml, Value(..))\n\n    xmlToJson2 (StrNode \"hello\")\n    --> Json.string \"hello\"\n\n    xmlToJson2 (IntNode 5)\n    --> Json.int 5\n\n    xmlToJson2 (FloatNode 5)\n    --> Json.float 5\n\n    xmlToJson2 (BoolNode True)\n    --> Json.bool True\n\n    xmlToJson2 (Object [ IntNode 5, BoolNode True ])\n    --> Json.list identity [Json.int 5, Json.bool True]\n\n    xmlToJson2 (Tag \"foo\" (Dict.fromList [(\"x\",StrNode \"x\")]) (IntNode 1))\n    --> Json.object [(\"foo\", Json.object [(\"#value\", Json.int 1), (\"@x\", Json.string \"x\")])]\n\n    xmlToJson2 (DocType \"\" Dict.empty)\n    --> Json.null\n\n",
+                "type": "Xml.Value -> Json.Encode.Value"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Xml.Decode",
+        "comment": "\n\n@docs decode\n\n@docs decodeInt, decodeFloat, decodeString, decodeBool\n\n@docs decodeChildren\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decode",
+                "comment": " Try to decode a string and turn it into an XML value\n\n    import Xml exposing(Value(..))\n    import Xml.Encode exposing (null)\n    import Dict\n\n    decode \"<name></name>\"\n    --> Ok (Object [Tag \"name\" Dict.empty null])\n\n",
+                "type": "String.String -> Result.Result String.String Xml.Value"
+            },
+            {
+                "name": "decodeBool",
+                "comment": " Decode a bool\n",
+                "type": "String.String -> Result.Result String.String Xml.Value"
+            },
+            {
+                "name": "decodeChildren",
+                "comment": " Decode children from a string\n\n    import Dict\n    import Xml exposing (Value(..))\n\n    decodeChildren \"<name>hello</name>\"\n    --> Ok (Object [Tag \"name\" Dict.empty (StrNode \"hello\")] )\n\n",
+                "type": "String.String -> Result.Result String.String Xml.Value"
+            },
+            {
+                "name": "decodeFloat",
+                "comment": " Decode a float\n\n    import Xml exposing (Value(..))\n\n    decodeFloat \"hello\"\n    --> Err \"could not convert string 'hello' to a Float\"\n\n    decodeFloat \"5\"\n    --> Ok (FloatNode 5.0)\n\n    decodeFloat \"5.5\"\n    --> Ok (FloatNode 5.5)\n\n",
+                "type": "String.String -> Result.Result String.String Xml.Value"
+            },
+            {
+                "name": "decodeInt",
+                "comment": " Decode a int\n\n    import Xml exposing (Value(..))\n\n    decodeInt \"hello\"\n    --> Err \"could not convert string 'hello' to an Int\"\n\n    decodeInt \"5\"\n    --> Ok (IntNode 5)\n\n",
+                "type": "String.String -> Result.Result String.String Xml.Value"
+            },
+            {
+                "name": "decodeString",
+                "comment": " Decode a string\n\n    import Xml exposing (Value(..))\n\n    decodeString \"hello\"\n    --> Ok (StrNode \"hello\")\n\n",
+                "type": "String.String -> Result.Result String.String Xml.Value"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Xml.Encode",
+        "comment": "\n\n    Use this module for turning your Elm data into an `Xml` representation that can be either\n    queried or decoded, or turned into a string.\n\n@docs encode\n\n@docs string, int, float, bool, object, null, list\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "bool",
+                "comment": " Encode a bool\n\n    bool True |> encode 0\n    --> \"true\"\n\n    bool True |> encode 0\n    --> \"true\"\n\n",
+                "type": "Basics.Bool -> Xml.Value"
+            },
+            {
+                "name": "encode",
+                "comment": " Take a value, then generate a string from it\n",
+                "type": "Basics.Int -> Xml.Value -> String.String"
+            },
+            {
+                "name": "float",
+                "comment": " Encode a float\n\n    float 1.576 |> encode 0\n    --> \"1.576\"\n\n",
+                "type": "Basics.Float -> Xml.Value"
+            },
+            {
+                "name": "int",
+                "comment": " Encode an int\n\n    int 15 |> encode 0\n    --> \"15\"\n\n",
+                "type": "Basics.Int -> Xml.Value"
+            },
+            {
+                "name": "list",
+                "comment": " Encode a list of nodes, e.g\n\n    import Dict\n\n    list [ object [ (\"Root\", Dict.empty, null) ], int 5 ] |> encode 0\n    --> \"<Root></Root>\\n5\"\n\n",
+                "type": "List.List Xml.Value -> Xml.Value"
+            },
+            {
+                "name": "null",
+                "comment": " Empty contents\n\n    null |> encode 0\n    --> \"\"\n\n",
+                "type": "Xml.Value"
+            },
+            {
+                "name": "object",
+                "comment": " Encode an \"object\" (a tag)\n",
+                "type": "List.List ( String.String, Dict.Dict String.String Xml.Value, Xml.Value ) -> Xml.Value"
+            },
+            {
+                "name": "string",
+                "comment": " Encode a string\n\n    string \"hello\" |> encode 0\n    --> \"hello\"\n\n",
+                "type": "String.String -> Xml.Value"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Xml.Query",
+        "comment": "\n\n\n# Search the parsed XML\n\n@docs tags, contains\n\n@docs tag, collect, default\n\n@docs string, int, float, bool\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "bool",
+                "comment": " Try to turn a value into an int\n\n    import Xml exposing (Value(..))\n\n    bool (BoolNode True)\n    --> Ok True\n\n    bool (StrNode \"hello\")\n    --> Err \"Not a bool\"\n\n",
+                "type": "Xml.Value -> Result.Result String.String Basics.Bool"
+            },
+            {
+                "name": "collect",
+                "comment": " Collect as many values that pass the given converter\n\n    import Dict\n    import Xml exposing (Value(..))\n\n    collect (tag \"name\" string) [Tag \"name\" Dict.empty (StrNode \"noah\")]\n    --> [ \"noah\" ]\n\n    collect (tag \"name\" string) [Tag \"name\" Dict.empty (IntNode 5)]\n    --> [ ]\n\n",
+                "type": "(Xml.Value -> Result.Result String.String a) -> List.List Xml.Value -> List.List a"
+            },
+            {
+                "name": "contains",
+                "comment": " check if a XML value contains another XML value\n",
+                "type": "Xml.Value -> Xml.Value -> Basics.Bool"
+            },
+            {
+                "name": "default",
+                "comment": "\n\n    Set a default for a result\n        >> default \"Cat\" (Ok \"Fish\")\n\n    Ok \"Fish\"\n        >> default \"Dog\" (Err \"flip\")\n\n    Ok \"Dog\"\n\n",
+                "type": "b -> Result.Result a b -> Result.Result a b"
+            },
+            {
+                "name": "float",
+                "comment": " Try to turn a value into an int\n\n    import Xml exposing (Value(..))\n\n    float (FloatNode 5.5)\n    --> Ok 5.5\n\n    float (StrNode \"hello\")\n    --> Err \"Not a float\"\n\n",
+                "type": "Xml.Value -> Result.Result String.String Basics.Float"
+            },
+            {
+                "name": "int",
+                "comment": " Try to turn a value into an int\n\n    import Xml exposing (Value(..))\n\n    int (IntNode 5)\n    --> Ok 5\n\n    int (StrNode \"hello\")\n    --> Err \"Not an int\"\n\n",
+                "type": "Xml.Value -> Result.Result String.String Basics.Int"
+            },
+            {
+                "name": "string",
+                "comment": " Try to turn a value into a string\n\n    import Xml exposing (Value(..))\n\n    string (IntNode 5)\n    --> Err \"Not a string.\"\n\n    string (StrNode \"hello\")\n    --> Ok \"hello\"\n\n",
+                "type": "Xml.Value -> Result.Result String.String String.String"
+            },
+            {
+                "name": "tag",
+                "comment": " Try to get a given tag name out from an XML value, then grab the value from that\nGrabs the first tag that matches in the object\n\n    import Dict\n    import Xml exposing (Value(..))\n\n    tag \"name\" string (Tag \"name\" Dict.empty (StrNode \"noah\"))\n    --> Ok \"noah\"\n\n    tag \"name\" string (Tag \"name\" Dict.empty (IntNode 5))\n    --> Err \"Not a string.\"\n\n    tag \"name\" string (StrNode \"noah\")\n    --> Err \"No tag called 'name' found.\"\n\n",
+                "type": "String.String -> (Xml.Value -> Result.Result String.String a) -> Xml.Value -> Result.Result String.String a"
+            },
+            {
+                "name": "tags",
+                "comment": " Search an XML value for any tags matching\n\n    import Xml exposing (Value(..))\n    import Xml.Encode exposing (object, null, encode)\n    import Dict\n\n    object [ (\"name\", Dict.empty, null)] |> tags \"name\"\n    --> [Tag \"name\" Dict.empty (Object []) ]\n\n",
+                "type": "String.String -> Xml.Value -> List.List Xml.Value"
+            }
+        ],
+        "binops": []
+    }
+]

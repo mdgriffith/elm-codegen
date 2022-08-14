@@ -1,0 +1,268 @@
+[
+    {
+        "name": "Framework.Actor",
+        "comment": "\n\n---\n\n**Component**\n\n  - [Component](#Component)\n\n**Actor**\n\n  - [Actor](#Actor)\n  - [fromComponent](#fromComponent)\n  - [ProcessMethods](#ProcessMethods)\n\n**Process**\n\n  - [Process](#Process)\n  - [Pid](#Pid)\n  - [spawnedBy](#spawnedBy)\n\n**Component Utility**\n\n  - [altInit](#altInit)\n  - [altUpdate](#altUpdate)\n  - [altSubscriptions](#altSubscriptions)\n  - [altView](#altView)\n\n**Process Utility**\n\n  - [pidSystem](#pidSystem)\n  - [pidCompare](#pidCompare)\n  - [pidEquals](#pidEquals)\n  - [pidToInt](#pidToInt)\n  - [pidToString](#pidToString)\n  - [unsafePidFromInt](#unsafePidFromInt)\n\n---\n\n\n# Component\n\n@docs Component\n\n\n# Actor\n\n@docs Actor, fromComponent\n\n\n# Process\n\n@docs ProcessMethods, Process\n\nAn Actor that has been spawned inside the framework always receives an unique identifier ([PID](https://en.wikipedia.org/wiki/Process_identifier)).\n\nThe PID also holds information about who spawned (started) the process.\n\n\n# Process Identifier\n\n@docs Pid, spawnedBy\n\n\n# Component Utility\n\n@docs altInit, altUpdate, altSubscriptions, altView\n\n\n# Process Utility\n\n@docs pidSystem, pidCompare, pidEquals, pidToInt, pidToString, unsafePidFromInt\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Actor",
+                "comment": " ",
+                "args": [
+                    "appFlags",
+                    "componentModel",
+                    "appModel",
+                    "output",
+                    "frameworkMsg"
+                ],
+                "type": "{ processMethods : Framework.Actor.ProcessMethods componentModel appModel output frameworkMsg, init : ( Framework.Actor.Pid, appFlags ) -> ( appModel, frameworkMsg ), apply : componentModel -> Framework.Actor.Process appModel output frameworkMsg }"
+            },
+            {
+                "name": "Component",
+                "comment": " ",
+                "args": [
+                    "appFlags",
+                    "componentModel",
+                    "componentMsgIn",
+                    "componentMsgOut",
+                    "output",
+                    "frameworkMsg"
+                ],
+                "type": "{ init : ( Framework.Actor.Pid, appFlags ) -> ( componentModel, List.List componentMsgOut, Platform.Cmd.Cmd componentMsgIn ), update : componentMsgIn -> componentModel -> ( componentModel, List.List componentMsgOut, Platform.Cmd.Cmd componentMsgIn ), subscriptions : componentModel -> Platform.Sub.Sub componentMsgIn, view : (componentMsgIn -> frameworkMsg) -> componentModel -> (Framework.Actor.Pid -> Maybe.Maybe output) -> output }"
+            },
+            {
+                "name": "Pid",
+                "comment": " The type of a Pid\n",
+                "args": [],
+                "type": "Framework.Internal.Pid.Pid"
+            },
+            {
+                "name": "Process",
+                "comment": " ",
+                "args": [
+                    "appModel",
+                    "output",
+                    "frameworkMsg"
+                ],
+                "type": "Framework.Internal.Actor.Process appModel output frameworkMsg"
+            },
+            {
+                "name": "ProcessMethods",
+                "comment": " ",
+                "args": [
+                    "componentModel",
+                    "appModel",
+                    "output",
+                    "frameworkMsg"
+                ],
+                "type": "Framework.Internal.Actor.ProcessMethods componentModel appModel output frameworkMsg"
+            }
+        ],
+        "values": [
+            {
+                "name": "altInit",
+                "comment": " Transform your components init function\n",
+                "type": "((( Framework.Actor.Pid, a ) -> ( componentModel, List.List componentMsgOut, Platform.Cmd.Cmd componentMsgIn )) -> ( Framework.Actor.Pid, appFlags ) -> ( componentModel, List.List componentMsgOut, Platform.Cmd.Cmd componentMsgIn )) -> Framework.Actor.Component a componentModel componentMsgIn componentMsgOut output frameworkMsg -> Framework.Actor.Component appFlags componentModel componentMsgIn componentMsgOut output frameworkMsg"
+            },
+            {
+                "name": "altSubscriptions",
+                "comment": " Transform your components subscriptions function\n",
+                "type": "((componentModel -> Platform.Sub.Sub componentMsgIn) -> componentModel -> Platform.Sub.Sub componentMsgIn) -> Framework.Actor.Component appFlags componentModel componentMsgIn componentMsgOut output frameworkMsg -> Framework.Actor.Component appFlags componentModel componentMsgIn componentMsgOut output frameworkMsg"
+            },
+            {
+                "name": "altUpdate",
+                "comment": " Transform your components update function\n",
+                "type": "((componentMsgIn -> componentModel -> ( componentModel, List.List componentMsgOut, Platform.Cmd.Cmd componentMsgIn )) -> componentMsgIn -> componentModel -> ( componentModel, List.List componentMsgOut, Platform.Cmd.Cmd componentMsgIn )) -> Framework.Actor.Component appFlags componentModel componentMsgIn componentMsgOut output frameworkMsg -> Framework.Actor.Component appFlags componentModel componentMsgIn componentMsgOut output frameworkMsg"
+            },
+            {
+                "name": "altView",
+                "comment": " Transform your components view function\n",
+                "type": "(((componentMsgIn -> frameworkMsg) -> componentModel -> (Framework.Actor.Pid -> Maybe.Maybe outputA) -> outputA) -> (componentMsgIn -> frameworkMsg) -> componentModel -> (Framework.Actor.Pid -> Maybe.Maybe outputB) -> outputB) -> Framework.Actor.Component appFlags componentModel componentMsgIn componentMsgOut outputA frameworkMsg -> Framework.Actor.Component appFlags componentModel componentMsgIn componentMsgOut outputB frameworkMsg"
+            },
+            {
+                "name": "fromComponent",
+                "comment": " Progress a `Component` into an `Actor` by supplying it functions of how to\nhandle application types.\n",
+                "type": "{ toAppModel : componentModel -> appModel, toAppMsg : componentMsgIn -> appMsg, fromAppMsg : appMsg -> Maybe.Maybe componentMsgIn, onMsgOut : { self : Framework.Actor.Pid, msgOut : componentMsgOut } -> Framework.Internal.Message.FrameworkMessage appFlags appAddresses appActors appModel appMsg } -> Framework.Actor.Component appFlags componentModel componentMsgIn componentMsgOut output (Framework.Internal.Message.FrameworkMessage appFlags appAddresses appActors appModel appMsg) -> Framework.Actor.Actor appFlags componentModel appModel output (Framework.Internal.Message.FrameworkMessage appFlags appAddresses appActors appModel appMsg)"
+            },
+            {
+                "name": "pidCompare",
+                "comment": " Compare two Pid's\n",
+                "type": "Framework.Actor.Pid -> Framework.Actor.Pid -> Basics.Order"
+            },
+            {
+                "name": "pidEquals",
+                "comment": " Check if two Pid's are in fact the same\n",
+                "type": "Framework.Actor.Pid -> Framework.Actor.Pid -> Basics.Bool"
+            },
+            {
+                "name": "pidSystem",
+                "comment": " The System's Pid\n",
+                "type": "Framework.Actor.Pid"
+            },
+            {
+                "name": "pidToInt",
+                "comment": " Returns an Integer representation of a Pid.\n",
+                "type": "Framework.Actor.Pid -> Basics.Int"
+            },
+            {
+                "name": "pidToString",
+                "comment": " Returns a String representation of a Pid.\n",
+                "type": "Framework.Actor.Pid -> String.String"
+            },
+            {
+                "name": "spawnedBy",
+                "comment": " Retrieve the Pid responsible for spawning the given Pid\n",
+                "type": "Framework.Actor.Pid -> Framework.Actor.Pid"
+            },
+            {
+                "name": "unsafePidFromInt",
+                "comment": " Create a Pid from an Int, should only be used when writing tests\n",
+                "type": "Basics.Int -> Framework.Actor.Pid"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Framework.Browser",
+        "comment": "\n\n---\n\n**Program**\n\n  - [Program](#Program)\n\n**Elements**\n\n  - [element](#element)\n\n**Documents**\n\n  - [document](#document)\n\n**Application**\n\n  - [application](#application)\n\n---\n\n@docs Program\n\n\n# Elements\n\n@docs element\n\n\n# Documents\n\n@docs document\n\n\n# Application\n\n@docs application\n\n\n# Utility\n\n@docs FrameworkModel, toProgramRecord, getInstance\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "FrameworkModel",
+                "comment": " An alias for the Internal Framework Model\n",
+                "args": [
+                    "appAddresses",
+                    "appModel"
+                ],
+                "type": "Framework.Internal.Model.FrameworkModel appAddresses appModel"
+            },
+            {
+                "name": "Program",
+                "comment": " All of the functions in this module will return a Program.\nA Program describes an Elm program! How does it react to input? Does it show anything on screen? Etc.\n",
+                "args": [
+                    "elmFlags",
+                    "appFlags",
+                    "appAddresses",
+                    "appActors",
+                    "appModel",
+                    "appMsg"
+                ],
+                "type": "Platform.Program elmFlags (Framework.Browser.FrameworkModel appAddresses appModel) (Framework.Internal.Message.FrameworkMessage appFlags appAddresses appActors appModel appMsg)"
+            }
+        ],
+        "values": [
+            {
+                "name": "application",
+                "comment": " Create an application that manages Url changes.\n",
+                "type": "{ factory : appActors -> ( Framework.Internal.Pid.Pid, appFlags ) -> ( appModel, Framework.Internal.Message.FrameworkMessage appFlags appAddresses appActors appModel appMsg ), apply : appModel -> Framework.Internal.Actor.Process appModel output (Framework.Internal.Message.FrameworkMessage appFlags appAddresses appActors appModel appMsg), init : elmFlags -> Url.Url -> Browser.Navigation.Key -> Framework.Internal.Message.FrameworkMessage appFlags appAddresses appActors appModel appMsg, view : List.List output -> List.List (Html.Html (Framework.Internal.Message.FrameworkMessage appFlags appAddresses appActors appModel appMsg)), onUrlRequest : Browser.UrlRequest -> Framework.Internal.Message.FrameworkMessage appFlags appAddresses appActors appModel appMsg, onUrlChange : Url.Url -> Framework.Internal.Message.FrameworkMessage appFlags appAddresses appActors appModel appMsg } -> Framework.Browser.Program elmFlags appFlags appAddresses appActors appModel appMsg"
+            },
+            {
+                "name": "document",
+                "comment": " Create an HTML document managed by Elm.\nThis expands upon what element can do in that view now gives you control over the <title> and <body>.\n",
+                "type": "{ factory : appActors -> ( Framework.Internal.Pid.Pid, appFlags ) -> ( appModel, Framework.Internal.Message.FrameworkMessage appFlags appAddresses appActors appModel appMsg ), apply : appModel -> Framework.Internal.Actor.Process appModel output (Framework.Internal.Message.FrameworkMessage appFlags appAddresses appActors appModel appMsg), init : elmFlags -> Framework.Internal.Message.FrameworkMessage appFlags appAddresses appActors appModel appMsg, view : List.List output -> List.List (Html.Html (Framework.Internal.Message.FrameworkMessage appFlags appAddresses appActors appModel appMsg)) } -> Framework.Browser.Program elmFlags appFlags appAddresses appActors appModel appMsg"
+            },
+            {
+                "name": "element",
+                "comment": " Create an HTML element managed by Elm. The resulting elements are easy to embed in larger JavaScript projects, and lots of companies that use Elm started with this approach! Try it out on something small. If it works, great, do more! If not, revert, no big deal.\n",
+                "type": "{ factory : appActors -> ( Framework.Internal.Pid.Pid, appFlags ) -> ( appModel, Framework.Internal.Message.FrameworkMessage appFlags appAddresses appActors appModel appMsg ), apply : appModel -> Framework.Internal.Actor.Process appModel output (Framework.Internal.Message.FrameworkMessage appFlags appAddresses appActors appModel appMsg), init : elmFlags -> Framework.Internal.Message.FrameworkMessage appFlags appAddresses appActors appModel appMsg, view : List.List output -> Html.Html (Framework.Internal.Message.FrameworkMessage appFlags appAddresses appActors appModel appMsg) } -> Framework.Browser.Program elmFlags appFlags appAddresses appActors appModel appMsg"
+            },
+            {
+                "name": "getInstance",
+                "comment": " ",
+                "type": "Framework.Internal.Pid.Pid -> Framework.Browser.FrameworkModel appAddresses appModel -> Maybe.Maybe appModel"
+            },
+            {
+                "name": "toProgramRecord",
+                "comment": " Returns a record that is ready to be used on one of the elm/browsers creation functions.\n\nThis can be used to roll your own Program\n\n",
+                "type": "{ factory : appActors -> ( Framework.Internal.Pid.Pid, appFlags ) -> ( appModel, Framework.Internal.Message.FrameworkMessage appFlags appAddresses appActors appModel appMsg ), apply : appModel -> Framework.Internal.Actor.Process appModel output (Framework.Internal.Message.FrameworkMessage appFlags appAddresses appActors appModel appMsg) } -> { init : Framework.Internal.Message.FrameworkMessage appFlags appAddresses appActors appModel appMsg -> ( Framework.Browser.FrameworkModel appAddresses appModel, Platform.Cmd.Cmd (Framework.Internal.Message.FrameworkMessage appFlags appAddresses appActors appModel appMsg) ), update : Framework.Internal.Message.FrameworkMessage appFlags appAddresses appActors appModel appMsg -> Framework.Browser.FrameworkModel appAddresses appModel -> ( Framework.Browser.FrameworkModel appAddresses appModel, Platform.Cmd.Cmd (Framework.Internal.Message.FrameworkMessage appFlags appAddresses appActors appModel appMsg) ), subscriptions : Framework.Browser.FrameworkModel appAddresses appModel -> Platform.Sub.Sub (Framework.Internal.Message.FrameworkMessage appFlags appAddresses appActors appModel appMsg), view : (List.List output -> List.List (Html.Html msg)) -> Framework.Browser.FrameworkModel appAddresses appModel -> Browser.Document msg }"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Framework.Message",
+        "comment": "\n\n---\n\n**Actors**\n\n  - [spawn](#spawn)\n  - [stopProcess](#stopProcess)\n  - [addToView](#addToView)\n  - [populateAddress](#populateAddress)\n  - [removeFromView](#removeFromView)\n  - [removeFromAddress](#removeFromAddress)\n\n**Actor Intercommunication**\n\n  - [sendToPid](#sendToPid)\n  - [sendToAddress](#sendToAddress)\n\n**Utility**\n\n  - [batch](#batch)\n  - [noOperation](#noOperation)\n  - [toCmd](#toCmd)\n  - [filterMsgIns](#filterMsgIns)\n\n**Document**\n\n  - [updateDocumentTitle](#updateDocumentTitle)\n\n---\n\n\n# Actors\n\n@docs spawn, stopProcess\n\n@docs addToView, populateAddress\n\n@docs removeFromView, removeFromAddress\n\n\n# Actor Intercommunication\n\n@docs sendToPid, sendToAddress\n\n\n# Utility\n\n@docs batch, noOperation, toCmd, filterMsgIns\n\n\n# Document\n\n@docs updateDocumentTitle\n\n\n# Types\n\n@docs FrameworkMessage\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "FrameworkMessage",
+                "comment": " ",
+                "args": [
+                    "appFlags",
+                    "appAddresses",
+                    "appActors",
+                    "appModel",
+                    "appMsg"
+                ],
+                "type": "Framework.Internal.Message.FrameworkMessage appFlags appAddresses appActors appModel appMsg"
+            }
+        ],
+        "values": [
+            {
+                "name": "addToView",
+                "comment": " Every Actor has a view, but it's up to you to determine the order and even\nif you want it to render.\n\nThe [applications view](./Browser) function receives a list of outputs in the\norder you have added the Pids to the applications view using this function.\n\n    spawn Counter addToView\n    -- Spawns a `Counter` and adds it to your\n    -- applications view.\n\n",
+                "type": "Framework.Internal.Pid.Pid -> Framework.Message.FrameworkMessage appFlags appAddresses appActors appModel appMsg"
+            },
+            {
+                "name": "batch",
+                "comment": " Batch multiple messages into a single message\n\n    batch\n        [ spawn Counter (populateAddress AllCounters)\n        , spawn Counter (populateAddress AllCounters)\n        , updateDocumentTitle \"batch example\"\n        ]\n\n",
+                "type": "List.List (Framework.Message.FrameworkMessage appFlags appAddresses appActors appModel appMsg) -> Framework.Message.FrameworkMessage appFlags appAddresses appActors appModel appMsg"
+            },
+            {
+                "name": "filterMsgIns",
+                "comment": " Filter out your \"MsgIn\"s from a FrameworkMessage\n",
+                "type": "(appMsg -> Maybe.Maybe msgIn) -> Framework.Message.FrameworkMessage appFlags appAddresses appActors appModel appMsg -> List.List msgIn"
+            },
+            {
+                "name": "noOperation",
+                "comment": " No operation, don't do anything.\n\n    spawn Counter (\\_ -> noOperation)\n    -- Spawn a `Counter` and ignore the newly created\n    -- Pid by returning noOperation.\n\n",
+                "type": "Framework.Message.FrameworkMessage appFlags appAddresses appActors appModel appMsg"
+            },
+            {
+                "name": "populateAddress",
+                "comment": " Add an process to an address. Multiple processes can be housed under the\nsame or multiple addresses.\n\nOnce a process is listed under an address you can send it messages by using\n`sendToAddress`.\n\n    batch [\n        spawn Counter (populateAddress AllCounters)\n        , spawn Counter (populateAddress AllCounters)\n    ]\n    -- Spawn two Counter Actors and populate the\n    -- same address (AllCounters).\n\n",
+                "type": "appAddresses -> Framework.Internal.Pid.Pid -> Framework.Message.FrameworkMessage appFlags appAddresses appActors appModel appMsg"
+            },
+            {
+                "name": "removeFromAddress",
+                "comment": " Remove a process from the given address\n",
+                "type": "appAddresses -> Framework.Internal.Pid.Pid -> Framework.Message.FrameworkMessage appFlags appAddresses appActors appModel appMsg"
+            },
+            {
+                "name": "removeFromView",
+                "comment": " Remove a process from the applications view\n",
+                "type": "Framework.Internal.Pid.Pid -> Framework.Message.FrameworkMessage appFlags appAddresses appActors appModel appMsg"
+            },
+            {
+                "name": "sendToAddress",
+                "comment": " Send a message to an address that mone, a single or multiple processes might\nreceive.\n\n    sendToAddress AllCounters (CounterMsg Increment)\n\n",
+                "type": "appAddresses -> appMsg -> Framework.Message.FrameworkMessage appFlags appAddresses appActors appModel appMsg"
+            },
+            {
+                "name": "sendToPid",
+                "comment": " Send a process a message using its `Pid`.\n\n    sendToPid pid (CounterMsg Increment)\n\n",
+                "type": "Framework.Internal.Pid.Pid -> appMsg -> Framework.Message.FrameworkMessage appFlags appAddresses appActors appModel appMsg"
+            },
+            {
+                "name": "spawn",
+                "comment": " Spawn an Actor\n\n    spawn () Counter addToView\n    -- Spawns a `Counter` and adds it to your\n    -- applications view.\n\n    spawn () Counter (\\_ -> noOperation)\n    -- Spawns a `Counter` and doesn't do anything with\n    -- the newly retrieved Pid.\n\n    spawn 10 Counter (\\pid -> batch [\n          addToView pid\n        , populateAddress AllCounters pid\n    ]\n    -- Spawns a `Counter` and passes it some appFlags\n    -- (Int 10) then adds it to your\n    -- applications view and populates an\n    -- address `AllCounters`.\n\n",
+                "type": "appFlags -> appActors -> (Framework.Internal.Pid.Pid -> Framework.Message.FrameworkMessage appFlags appAddresses appActors appModel appMsg) -> Framework.Message.FrameworkMessage appFlags appAddresses appActors appModel appMsg"
+            },
+            {
+                "name": "stopProcess",
+                "comment": " Stops a process (an Actor becomes a Process identified by a `Pid` after you\nhave spawned it).\n\nThis is also stops any processes that the targeted process might have spawned.\n\nIf the process is part of the applications view it will be removed.\n\n    stopProcess pid\n\n",
+                "type": "Framework.Internal.Pid.Pid -> Framework.Message.FrameworkMessage appFlags appAddresses appActors appModel appMsg"
+            },
+            {
+                "name": "toCmd",
+                "comment": " Turn _any_ msg into a Cmd.\n",
+                "type": "msg -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "updateDocumentTitle",
+                "comment": " Update the document title\n\nThis only works when using Browser.document or Browser.application.\n\n    updateDocumenTitle \"New Title\"\n\n",
+                "type": "String.String -> Framework.Message.FrameworkMessage appFlags appAddresses appActors appModel appMsg"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,129 @@
+[
+    {
+        "name": "Typing",
+        "comment": " Japanese Typing Library for Elm.\n\n\n# Core\n\n@docs newData, typeTo, getState, getFixed, getRest, getHistory\n@docs makeRomaji\n\n\n# Rules\n\n@docs romanTable, defaultPriorities, setPriorities\n@docs setEfficiency, setFavoriteKeys, setFavoriteStart\n@docs insertLowPriorities, getSamePriority\n\n\n# Types\n\n@docs Data, Rules, PrintRule, State\n\n\n#\n\n",
+        "unions": [
+            {
+                "name": "Data",
+                "comment": " タイピングに利用されるデータです。\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "State",
+                "comment": " Dataの状態です。\n\n    getState data\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Waiting",
+                        []
+                    ],
+                    [
+                        "Typing",
+                        []
+                    ],
+                    [
+                        "Miss",
+                        []
+                    ],
+                    [
+                        "Finish",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "PrintRule",
+                "comment": " 表示するローマ字を設定するのに使います。\n\n    Typing.romanTable\n        |> Typing.setPriorities\n            [ Typing.PrintRule \"n\" \"ん\" 3\n            , Typing.PrintRule \"xn\" \"ん\" 2\n            , Typing.PrintRule \"nn\" \"ん\" 1\n            ]\n\n",
+                "args": [],
+                "type": "{ input : String.String, output : String.String, priority : Basics.Int }"
+            },
+            {
+                "name": "Rules",
+                "comment": " 変換テーブルです。\n",
+                "args": [],
+                "type": "List.List Typing.Rule"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultPriorities",
+                "comment": " デフォルトの優先度をルールに適用します。\n\n    defaultPriorities romanTable\n\n",
+                "type": "Typing.Rules -> Typing.Rules"
+            },
+            {
+                "name": "getFixed",
+                "comment": " 入力し終わって確定した文字列を返します。\n",
+                "type": "Typing.Data -> String.String"
+            },
+            {
+                "name": "getHistory",
+                "comment": " 入力したキーを返します。\n",
+                "type": "Typing.Data -> String.String"
+            },
+            {
+                "name": "getRest",
+                "comment": " 入力されていない文字列を返します。\n",
+                "type": "Typing.Data -> String.String"
+            },
+            {
+                "name": "getSamePriority",
+                "comment": " 優先度の頭がないかチェックするために使う(手動で目視)。\n",
+                "type": "Typing.Rules -> Typing.Rules"
+            },
+            {
+                "name": "getState",
+                "comment": " Dataの状態を返します。\n",
+                "type": "Typing.Data -> Typing.State"
+            },
+            {
+                "name": "insertLowPriorities",
+                "comment": " Rulesに設定されている優先度より低く、新たに優先度を設定します。\n",
+                "type": "List.List Typing.PrintRule -> Typing.Rules -> Typing.Rules"
+            },
+            {
+                "name": "makeRomaji",
+                "comment": " 入力すべきローマ字を返します。\n",
+                "type": "Typing.Data -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "newData",
+                "comment": " タイピングすべき文字列とRulesからDataを生成します。\n",
+                "type": "String.String -> Typing.Rules -> Typing.Data"
+            },
+            {
+                "name": "romanTable",
+                "comment": " ローマ字入力のテーブルです。\n",
+                "type": "Typing.Rules"
+            },
+            {
+                "name": "setEfficiency",
+                "comment": " コスパによる優先度を設定します。\n\n\"xtu\" \"っ\" => 1/3=0.33\n\"xtsu\" \"っ\" => 1/4=0.25\n\n",
+                "type": "Typing.Rules -> List.List Typing.PrintRule"
+            },
+            {
+                "name": "setFavoriteKeys",
+                "comment": " たぶんs/c, j/z, k/c, f/h, t/cと、sy,shのy/hで使います。\n",
+                "type": "List.List String.String -> Typing.Rules -> List.List Typing.PrintRule"
+            },
+            {
+                "name": "setFavoriteStart",
+                "comment": " たぶんx,lから始まるltu,xtuなどの設定に使います。\n",
+                "type": "List.List String.String -> Typing.Rules -> List.List Typing.PrintRule"
+            },
+            {
+                "name": "setPriorities",
+                "comment": " 優先度をRulesにセットします。\n",
+                "type": "List.List Typing.PrintRule -> Typing.Rules -> Typing.Rules"
+            },
+            {
+                "name": "typeTo",
+                "comment": " Dataに入力をします。\n",
+                "type": "String.String -> Typing.Data -> Typing.Data"
+            }
+        ],
+        "binops": []
+    }
+]

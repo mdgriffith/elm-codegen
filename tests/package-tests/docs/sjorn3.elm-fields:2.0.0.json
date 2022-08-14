@@ -1,0 +1,48 @@
+[
+    {
+        "name": "FieldLens",
+        "comment": " A module that allows field names to become parameters to functions. That is,\r\na module which provides first class field names.\r\n\r\nThese operations are intended for use with field names, but the types are\r\ngeneral enough for integration with other data types should the need arise.\r\n\r\n\r\n# Field Lenses\r\n\r\n@docs FieldLens\r\n\r\n\r\n# Manipulating Fields\r\n\r\n@docs get, set, modify\r\n\r\n\r\n# Composing field names\r\n\r\n@docs compose, composep\r\n\r\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "FieldLens",
+                "comment": " A record that provides a getter and setter function. Allows for the fact\r\nthat fields can change their type.\r\n\r\nDefinitions of the this type will be boilerplate, and will all have a form like\r\nthis:\r\n\r\n    field_name = { .field_name, (\\a r -> { r | field_name = a })}\r\n\r\nThis example leverages the fact that the field\\_name can be used as both the\r\nrecord's name and the field, but it could be called anything.\r\n\r\n",
+                "args": [
+                    "a",
+                    "b",
+                    "c",
+                    "d"
+                ],
+                "type": "{ get : a -> b, set : c -> a -> d }"
+            }
+        ],
+        "values": [
+            {
+                "name": "compose",
+                "comment": " Compose field names, useful when records are nested.\r\n\r\n    player : { pos : { x : Int, y : Int }}\r\n    player = Player (Pos 0 0)\r\n\r\n    set (compose pos x) 10 player == Player (Pos 10 0)\r\n\r\n",
+                "type": "FieldLens.FieldLens a b d e -> FieldLens.FieldLens b c g d -> FieldLens.FieldLens a c g e"
+            },
+            {
+                "name": "composep",
+                "comment": " Same as `compose`, but with inverse parameter order. It is meant to be\r\nused with the pipeline operators (`|>` and `<|`) to compose for nested field access\r\n\r\n    game : { player : { pos : { x : Int, y : Int }}}\r\n    game = Game (Player (Pos 0 0))\r\n\r\n    set (player |> composep pos |> composep x) 10 player == Game (Player (Pos 10 0))\r\n\r\n",
+                "type": "FieldLens.FieldLens b c g d -> FieldLens.FieldLens a b d e -> FieldLens.FieldLens a c g e"
+            },
+            {
+                "name": "get",
+                "comment": " Synonym for `.get`. Allows for slightly nicer usage of the field name.\r\n\r\n    get num_lives player == 5\r\n\r\n",
+                "type": "FieldLens.FieldLens a b c d -> a -> b"
+            },
+            {
+                "name": "modify",
+                "comment": " Allows applying an update function to the specific field of the record.\r\n\r\n    modify num_lives ((+) 1) player == { num_lives = 11, ... }\r\n\r\n",
+                "type": "FieldLens.FieldLens a b c d -> (b -> c) -> a -> d"
+            },
+            {
+                "name": "set",
+                "comment": " As with `get`, this is simply a synonym for `.set` and allows for slightly\r\nnicer usage of the field name.\r\n\r\n     set num_lives 10 player == { num_lives = 10, ... }\r\n\r\n",
+                "type": "FieldLens.FieldLens a b c d -> c -> a -> d"
+            }
+        ],
+        "binops": []
+    }
+]

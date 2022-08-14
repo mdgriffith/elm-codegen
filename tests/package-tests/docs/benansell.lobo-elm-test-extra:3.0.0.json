@@ -1,0 +1,117 @@
+[
+    {
+        "name": "ElmTest.Extra",
+        "comment": " Additions to [elm-test](http://package.elm-lang.org/packages/elm-explorations/test/latest)\nfor use with the [lobo](https://www.npmjs.com/package/lobo) test runner.\n\n    skippedTest : Test\n    skippedTest =\n        skip \"ignore test\" <|\n            test \"skippedTest\" <|\n                \\() ->\n                    Expect.fail \"Never runs\"\n\n\n## Migration from elm-test\n\nTo use this package you will need to use lobo with the \"elm-test-extra\"\nframework, and replace:\n\n    import Test\n\nwith\n\n    import ElmTest.Extra\n\nIt is recommended that you give each describe / test a meaningful description. However, lobo\ndoes not enforce any uniqueness constraints on these descriptions.\n\nFurther information on using lobo can be found [here](https://www.npmjs.com/package/lobo)\n\nThe following elm-test functions are not available in elm-test-extra:\n\n  - concat -> instead use `describe`\n\n\n## Extra\n\n@docs skip\n\n\n## elm-test\n\nlobo compatible declarations of the elm-test Test API. In the first instance\nplease see the original [elm-test documentation](http://package.elm-lang.org/packages/elm-explorations/test/latest)\n\n@docs Test, only, test, todo\n\n\n### Organizing Tests\n\n@docs describe\n\n\n### Fuzz Testing\n\n@docs fuzz, fuzz2, fuzz3, fuzzWith\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Test",
+                "comment": " A test which has yet to be evaluated.\nFor further help see the original [elm-test documentation](http://package.elm-lang.org/packages/elm-explorations/test/latest)\n",
+                "args": [],
+                "type": "ElmTest.Runner.Test"
+            }
+        ],
+        "values": [
+            {
+                "name": "describe",
+                "comment": " Group a set of tests with a description.\nFor further help see the original [elm-test documentation](http://package.elm-lang.org/packages/elm-explorations/test/latest)\n",
+                "type": "String.String -> List.List ElmTest.Extra.Test -> ElmTest.Extra.Test"
+            },
+            {
+                "name": "fuzz",
+                "comment": " Run a test with random input provided by the fuzzer.\nFor further help see the original [elm-test documentation](http://package.elm-lang.org/packages/elm-explorations/test/latest)\n",
+                "type": "Fuzz.Fuzzer a -> String.String -> (a -> Expect.Expectation) -> ElmTest.Extra.Test"
+            },
+            {
+                "name": "fuzz2",
+                "comment": " Run a test with 2 random inputs provided by the fuzzers.\nFor further help see the original [elm-test documentation](http://package.elm-lang.org/packages/elm-explorations/test/latest)\n",
+                "type": "Fuzz.Fuzzer a -> Fuzz.Fuzzer b -> String.String -> (a -> b -> Expect.Expectation) -> ElmTest.Extra.Test"
+            },
+            {
+                "name": "fuzz3",
+                "comment": " Run a test with 3 random inputs provided by the fuzzers.\nFor further help see the original [elm-test documentation](http://package.elm-lang.org/packages/elm-explorations/test/latest)\n",
+                "type": "Fuzz.Fuzzer a -> Fuzz.Fuzzer b -> Fuzz.Fuzzer c -> String.String -> (a -> b -> c -> Expect.Expectation) -> ElmTest.Extra.Test"
+            },
+            {
+                "name": "fuzzWith",
+                "comment": " Run a test with random input provide by a fuzzer using the supplied options.\nFor further help see the original [elm-test documentation](http://package.elm-lang.org/packages/elm-explorations/test/latest)\n",
+                "type": "Test.FuzzOptions -> Fuzz.Fuzzer a -> String.String -> (a -> Expect.Expectation) -> ElmTest.Extra.Test"
+            },
+            {
+                "name": "only",
+                "comment": " Restrict the running of tests to `only` those that have only:\n\n    onlyTest : Test\n    onlyTest =\n        only <|\n            test \"Example passing test\" <|\n                \\() ->\n                    Expect.pass\n\nThis will cause the lobo runner to ignore all other tests that don't have only\napplied. Only cannot be used to force a skipped test to run.\nFor further help see [elm-test documentation](http://package.elm-lang.org/packages/elm-explorations/test/latest)\n\n",
+                "type": "ElmTest.Extra.Test -> ElmTest.Extra.Test"
+            },
+            {
+                "name": "skip",
+                "comment": " Prevent the running of tests with a reason for them to be skipped.\n\n    skippedTest : Test\n    skippedTest =\n        skip \"ignore test\" <|\n            test \"skippedTest\" <|\n                \\() ->\n                    Expect.fail \"Never runs\"\n\nThis will cause the lobo runner to skip this test.\nFor further help see [elm-test documentation](http://package.elm-lang.org/packages/elm-explorations/test/latest)\n\n",
+                "type": "String.String -> ElmTest.Extra.Test -> ElmTest.Extra.Test"
+            },
+            {
+                "name": "test",
+                "comment": " A test that evaluates an expectation.\nFor further help see the original [elm-test documentation](http://package.elm-lang.org/packages/elm-explorations/test/latest)\n",
+                "type": "String.String -> (() -> Expect.Expectation) -> ElmTest.Extra.Test"
+            },
+            {
+                "name": "todo",
+                "comment": " A temporary placeholder for a test that always fails.\nFor further help see the original [elm-test documentation](http://package.elm-lang.org/packages/elm-explorations/test/latest)\n",
+                "type": "String.String -> ElmTest.Extra.Test"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ElmTest.Runner",
+        "comment": " Declarations required by lobo. Generally only of interest when\nextending lobo.\n\n@docs Test\n\n",
+        "unions": [
+            {
+                "name": "Test",
+                "comment": " Hierarchical representation of Tests\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Batch",
+                        [
+                            "List.List ElmTest.Runner.Test"
+                        ]
+                    ],
+                    [
+                        "Labeled",
+                        [
+                            "String.String",
+                            "ElmTest.Runner.Test"
+                        ]
+                    ],
+                    [
+                        "Only",
+                        [
+                            "ElmTest.Runner.Test"
+                        ]
+                    ],
+                    [
+                        "Skipped",
+                        [
+                            "String.String",
+                            "ElmTest.Runner.Test"
+                        ]
+                    ],
+                    [
+                        "Test",
+                        [
+                            "Test.Test"
+                        ]
+                    ],
+                    [
+                        "Todo",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [],
+        "binops": []
+    }
+]

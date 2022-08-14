@@ -1,0 +1,31 @@
+[
+    {
+        "name": "Set.Extra",
+        "comment": " Convenience functions for working with Set.\n\n@docs concatMap, filterMap, subset, toggle\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "concatMap",
+                "comment": " Map a given function onto a set and union the resulting set.\n\n    import Set exposing (Set)\n\n    neighbors : (Int, Int) -> Set (Int, Int)\n    neighbors (x, y) =\n        Set.fromList\n            [ (x - 1, y - 1), (x, y - 1), (x + 1, y - 1)\n            , (x - 1, y),                 (x + 1, y)\n            , (x - 1, y + 1), (x, y + 1), (x + 1, y + 1)\n            ]\n\n    setOfPoints : Set (Int, Int)\n    setOfPoints =\n        Set.fromList [(1,1), (0,0)]\n\n    Set.Extra.concatMap neighbors setOfPoints\n    --> Set.fromList\n    -->     [ (-1,-1), (-1,0), (-1,1)\n    -->     , (0,-1), (0,0), (0,1)\n    -->     , (0,2), (1,-1), (1,0)\n    -->     , (1,1), (1,2), (2,0)\n    -->     , (2,1), (2,2)\n    -->     ]\n\n",
+                "type": "(comparable -> Set.Set comparable2) -> Set.Set comparable -> Set.Set comparable2"
+            },
+            {
+                "name": "filterMap",
+                "comment": " Apply a function that may succeed to all values in the set, but only keep the successes.\n\n    import Set exposing (Set)\n\n    Set.fromList [\"1\", \"2\", \"a\", \"3\"]\n        |> Set.Extra.filterMap String.toFloat\n    --> Set.fromList [1, 2, 3]\n\n",
+                "type": "(comparable -> Maybe.Maybe comparable2) -> Set.Set comparable -> Set.Set comparable2"
+            },
+            {
+                "name": "subset",
+                "comment": " Check if a Set is a subset of another Set.\n\n    import Set exposing (Set)\n\n    Set.Extra.subset\n        (Set.fromList [1,2,3])\n        (Set.fromList [1,2,3,4,5])\n    --> True\n\n",
+                "type": "Set.Set comparable -> Set.Set comparable -> Basics.Bool"
+            },
+            {
+                "name": "toggle",
+                "comment": " If the set does not contain the element, add it. If it does contain the element, remove it.\n\n    import Set exposing (Set)\n\n    Set.Extra.toggle 1 (Set.fromList [1,2,3])\n    --> Set.fromList [2, 3]\n\n    Set.Extra.toggle 1 (Set.fromList [2,3])\n    --> Set.fromList [1, 2, 3]\n\n",
+                "type": "comparable -> Set.Set comparable -> Set.Set comparable"
+            }
+        ],
+        "binops": []
+    }
+]

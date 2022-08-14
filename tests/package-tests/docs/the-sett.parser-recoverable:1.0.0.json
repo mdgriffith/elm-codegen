@@ -1,0 +1,351 @@
+[
+    {
+        "name": "Parser.Recoverable",
+        "comment": " `Parser.Recoverable` encodes parsers that can have `Partial` result when\nthere is an error, but the parsing is able to recover and continue and still\nproduce a result.\n\nThis `Parser.Recoverable` module does not do any automatic error recovery, its\nfunctions behave the same way as those in `Parser.Advanced`.\n\n\n# Parsers\n\n@docs Parser, run, Outcome\n\n---\n\n**Everything past here works just like in the\n[`Parser`](/packages/elm/parser/latest/Parser) module, except for these\ndifferences:**\n\n  - `String` arguments become 2 arguments - a `String` and a `problem`, since\n    you need to define which problem to report when a `String` is not matched.\n\n  - There are certain other functions which also need a `problem` argument.\n\n  - The `|=` and `|.` operators are only available to kernel packages, and this\n    package cannot export them. You need to use `|> keep` and `|> ignore` instead.\n\n  - When combining parser with function such as `keep` or `andThen`, if one of\n    the parsers fails, then parsing will stop with `Failure`. If no parser fails,\n    but one of them yields a `Partial` result, parsing will continue with the\n    errors carrying forward. Due to this, parsers that have recovered succesfully\n    from errors will keep running.\n\n---\n\n\n# Basics\n\n@docs DeadEnd, inContext\n\n\n# Building Blocks\n\n@docs int, float, number, symbol, keyword, variable, token, end\n\n\n# Pipelines\n\n@docs ignore, keep\n@docs succeed, lazy, andThen, problem\n\n\n# Branches\n\n@docs oneOf, map, backtrackable, commit\n\n\n# Loops\n\n@docs sequence, Trailing, loop, Step\n\n\n# Whitespace\n\n@docs spaces, lineComment, multiComment, Nestable\n\n\n# Chompers\n\n@docs getChompedString, chompIf, chompWhile, chompUntil, chompUntilEndOr, mapChompedString\n\n\n# Indentation\n\n@docs withIndent, getIndent\n\n\n# Positions\n\n@docs getPosition, getRow, getCol, getOffset, getSource\n\n",
+        "unions": [
+            {
+                "name": "Nestable",
+                "comment": " Just like `Parser.x`.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NotNestable",
+                        []
+                    ],
+                    [
+                        "Nestable",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Outcome",
+                "comment": " Describes the possible outcomes from running a parser.\n\n  - `Success` means that the parsing completed with no syntax errors at all.\n\n  - `Partial` means that the parsing was able to complete by recovering from\n    syntax errors. The syntax errors are listed along with the parsed result.\n\n  - `Failure` means that the parsing could not complete, so there is no parsed\n    result, only a list of errors.\n\n",
+                "args": [
+                    "context",
+                    "problem",
+                    "value"
+                ],
+                "cases": [
+                    [
+                        "Success",
+                        [
+                            "value"
+                        ]
+                    ],
+                    [
+                        "Partial",
+                        [
+                            "List.List (Parser.Recoverable.DeadEnd context problem)",
+                            "value"
+                        ]
+                    ],
+                    [
+                        "Failure",
+                        [
+                            "List.List (Parser.Recoverable.DeadEnd context problem)"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Step",
+                "comment": " Just like `Parser.Step`.\n",
+                "args": [
+                    "state",
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Loop",
+                        [
+                            "state"
+                        ]
+                    ],
+                    [
+                        "Done",
+                        [
+                            "a"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Trailing",
+                "comment": " Just like `Parser.Trailing`.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Forbidden",
+                        []
+                    ],
+                    [
+                        "Optional",
+                        []
+                    ],
+                    [
+                        "Mandatory",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "DeadEnd",
+                "comment": " The same as `Parser.Advanced.DeadEnd`.\n",
+                "args": [
+                    "context",
+                    "problem"
+                ],
+                "type": "Parser.Advanced.DeadEnd context problem"
+            },
+            {
+                "name": "Parser",
+                "comment": " The type of recoverable parsers.\n",
+                "args": [
+                    "context",
+                    "problem",
+                    "value"
+                ],
+                "type": "Parser.Advanced.Parser context problem (Parser.Recoverable.Outcome context problem value)"
+            }
+        ],
+        "values": [
+            {
+                "name": "andThen",
+                "comment": " Just like `Parser.andThen`, except that parsing will continue if the parser\nproduces a `Partial` result. Any errors attached to a `Partial` result will\nalways be carried forward by the parser, so the overall result at the end will\nbe `Partial`.\n",
+                "type": "(a -> Parser.Recoverable.Parser c x b) -> Parser.Recoverable.Parser c x a -> Parser.Recoverable.Parser c x b"
+            },
+            {
+                "name": "backtrackable",
+                "comment": " Just like `Parser.backtrackable`.\n",
+                "type": "Parser.Recoverable.Parser c x a -> Parser.Recoverable.Parser c x a"
+            },
+            {
+                "name": "chompIf",
+                "comment": " Just like `Parser.chompIf`.\n",
+                "type": "(Char.Char -> Basics.Bool) -> x -> Parser.Recoverable.Parser c x ()"
+            },
+            {
+                "name": "chompUntil",
+                "comment": " Just like `Parser.chompUntil`.\n",
+                "type": "String.String -> x -> Parser.Recoverable.Parser c x ()"
+            },
+            {
+                "name": "chompUntilEndOr",
+                "comment": " Just like `Parser.chompUntilEndOr`.\n",
+                "type": "String.String -> Parser.Recoverable.Parser c x ()"
+            },
+            {
+                "name": "chompWhile",
+                "comment": " Just like `Parser.chompWhile`.\n",
+                "type": "(Char.Char -> Basics.Bool) -> Parser.Recoverable.Parser c x ()"
+            },
+            {
+                "name": "commit",
+                "comment": " Just like `Parser.commit`.\n",
+                "type": "a -> Parser.Recoverable.Parser c x a"
+            },
+            {
+                "name": "end",
+                "comment": " Just like `Parser.end`except you provide the problem that arises when the\nparser is not at the end of the input.\n",
+                "type": "x -> Parser.Recoverable.Parser c x ()"
+            },
+            {
+                "name": "float",
+                "comment": " Just like `Parser.float` where you have to handle negation yourself. The\nonly difference is that you provide a two potential problems:\n\n    float : x -> x -> Parser c x Float\n    float expecting invalid =\n        number\n            { int = Ok toFloat\n            , hex = Err invalid\n            , octal = Err invalid\n            , binary = Err invalid\n            , float = Ok identity\n            , invalid = invalid\n            , expecting = expecting\n            }\n\nYou can use problems like `ExpectingFloat` and `InvalidNumber`.\n\n",
+                "type": "x -> x -> Parser.Recoverable.Parser c x Basics.Float"
+            },
+            {
+                "name": "getChompedString",
+                "comment": " Just like `Parser.getChompedString`.\n",
+                "type": "Parser.Recoverable.Parser c x a -> Parser.Recoverable.Parser c x String.String"
+            },
+            {
+                "name": "getCol",
+                "comment": " Just like `Parser.getCol`.\n",
+                "type": "Parser.Recoverable.Parser c x Basics.Int"
+            },
+            {
+                "name": "getIndent",
+                "comment": " Just like `Parser.getIndent`.\n",
+                "type": "Parser.Recoverable.Parser c x Basics.Int"
+            },
+            {
+                "name": "getOffset",
+                "comment": " Just like `Parser.getOffset`.\n",
+                "type": "Parser.Recoverable.Parser c x Basics.Int"
+            },
+            {
+                "name": "getPosition",
+                "comment": " Just like `Parser.getPosition`.\n",
+                "type": "Parser.Recoverable.Parser c x ( Basics.Int, Basics.Int )"
+            },
+            {
+                "name": "getRow",
+                "comment": " Just like `Parser.getRow`.\n",
+                "type": "Parser.Recoverable.Parser c x Basics.Int"
+            },
+            {
+                "name": "getSource",
+                "comment": " Just like `Parser.getSource`.\n",
+                "type": "Parser.Recoverable.Parser c x String.String"
+            },
+            {
+                "name": "ignore",
+                "comment": " This is a flipped version of `|.`\n\nIf either parser fails, the result of this will fail. If either parser produces\na `Partial` result but not a `Failure`, the parsing will continue and carry\nforward any errors and produce a `Partial` result.\n\n",
+                "type": "Parser.Recoverable.Parser c x ignore -> Parser.Recoverable.Parser c x keep -> Parser.Recoverable.Parser c x keep"
+            },
+            {
+                "name": "inContext",
+                "comment": " Just like `Parser.inContext`.\n",
+                "type": "c -> Parser.Recoverable.Parser c x a -> Parser.Recoverable.Parser c x a"
+            },
+            {
+                "name": "int",
+                "comment": " Just like `Parser.int` where you have to handle negation\nyourself. The only difference is that you provide a two potential problems:\n\n    int : x -> x -> Parser c x Int\n    int expecting invalid =\n        number\n            { int = Ok identity\n            , hex = Err invalid\n            , octal = Err invalid\n            , binary = Err invalid\n            , float = Err invalid\n            , invalid = invalid\n            , expecting = expecting\n            }\n\nYou can use problems like `ExpectingInt` and `InvalidNumber`.\n\n",
+                "type": "x -> x -> Parser.Recoverable.Parser c x Basics.Int"
+            },
+            {
+                "name": "keep",
+                "comment": " This is a flipped version of `|=`\n\nIf either parser fails, the result of this will fail. If either parser produces\na `Partial` result but not a `Failure`, the parsing will continue and carry\nforward any errors and produce a `Partial` result.\n\n",
+                "type": "Parser.Recoverable.Parser c x a -> Parser.Recoverable.Parser c x (a -> b) -> Parser.Recoverable.Parser c x b"
+            },
+            {
+                "name": "keyword",
+                "comment": " Just like Parser.keyword except you provide a custom problem.\n\n    let_ : Parser Context Problem ()\n    let_ =\n        symbol \"let\" ExpectingLet\n\nNote that this would fail to chomp `letter` because of the subsequent\ncharacters. Use `token` if you do not want that last letter check.\n\n",
+                "type": "String.String -> x -> Parser.Recoverable.Parser c x ()"
+            },
+            {
+                "name": "lazy",
+                "comment": " Just like `Parser.lazy`.\n",
+                "type": "(() -> Parser.Recoverable.Parser c x a) -> Parser.Recoverable.Parser c x a"
+            },
+            {
+                "name": "lineComment",
+                "comment": " Just like `Parser.x`.\n",
+                "type": "String.String -> x -> Parser.Recoverable.Parser c x ()"
+            },
+            {
+                "name": "loop",
+                "comment": " Just like `Parser.loop`.\n",
+                "type": "state -> (state -> Parser.Recoverable.Parser c x (Parser.Recoverable.Step state a)) -> Parser.Recoverable.Parser c x a"
+            },
+            {
+                "name": "map",
+                "comment": " Just like `Parser.map`, except that parsing will continue if the parser\nproduces a `Partial` result. Any errors attached to a `Partial` result will\nalways be carried forward by the parser, so the overall result at the end will\nbe `Partial`.\n",
+                "type": "(a -> b) -> Parser.Recoverable.Parser c x a -> Parser.Recoverable.Parser c x b"
+            },
+            {
+                "name": "mapChompedString",
+                "comment": " Just like `Parser.mapChompedString`.\n",
+                "type": "(String.String -> a -> b) -> Parser.Recoverable.Parser c x a -> Parser.Recoverable.Parser c x b"
+            },
+            {
+                "name": "multiComment",
+                "comment": " Just like `Parser.x`.\n",
+                "type": "String.String -> x -> String.String -> x -> Parser.Recoverable.Nestable -> Parser.Recoverable.Parser c x ()"
+            },
+            {
+                "name": "number",
+                "comment": " Just like `Parser.number` where you have to handle negation yourself. The\nonly difference is that you provide all the potential problems.\n",
+                "type": "{ int : Result.Result x (Basics.Int -> a), hex : Result.Result x (Basics.Int -> a), octal : Result.Result x (Basics.Int -> a), binary : Result.Result x (Basics.Int -> a), float : Result.Result x (Basics.Float -> a), invalid : x, expecting : x } -> Parser.Recoverable.Parser c x a"
+            },
+            {
+                "name": "oneOf",
+                "comment": " Just like `Parser.oneOf`.\n",
+                "type": "List.List (Parser.Recoverable.Parser c x a) -> Parser.Recoverable.Parser c x a"
+            },
+            {
+                "name": "problem",
+                "comment": " Just like `Parser.problem` except you provide a custom problem.\n",
+                "type": "x -> Parser.Recoverable.Parser c x a"
+            },
+            {
+                "name": "run",
+                "comment": " Runs the parser. This differs from `Parser.run` in that it produces an\n`Outcome` instead of a `Result`. This allows for a `Partial` result when the\nparser recovers from an error. In this case the parser will still produce a\nresult, but will also list the errors it encountered and was able to recover\nfrom.\n",
+                "type": "Parser.Recoverable.Parser c x a -> String.String -> Parser.Recoverable.Outcome c x a"
+            },
+            {
+                "name": "sequence",
+                "comment": " Just like `Parser.sequence`.\n",
+                "type": "{ start : String.String, startProb : x, separator : String.String, separatorProb : x, end : String.String, endProb : x, spaces : Parser.Recoverable.Parser c x (), item : Parser.Recoverable.Parser c x a, trailing : Parser.Recoverable.Trailing } -> Parser.Recoverable.Parser c x (List.List a)"
+            },
+            {
+                "name": "spaces",
+                "comment": " Just like `Parser.x`.\n",
+                "type": "Parser.Recoverable.Parser c x ()"
+            },
+            {
+                "name": "succeed",
+                "comment": " Just like `Parser.succeed`.\n",
+                "type": "a -> Parser.Recoverable.Parser c x a"
+            },
+            {
+                "name": "symbol",
+                "comment": " Just like `Parser.symbol` except you also provide a custom problem.\n\n    comma : Parser Context Problem ()\n    comma =\n        symbol \",\" ExpectingComma\n\n",
+                "type": "String.String -> x -> Parser.Recoverable.Parser c x ()"
+            },
+            {
+                "name": "token",
+                "comment": " Just like `Parser.token` except you provide a custom problem.\n",
+                "type": "String.String -> x -> Parser.Recoverable.Parser c x ()"
+            },
+            {
+                "name": "variable",
+                "comment": " Just like `Parser.variable` except you specify a custom problem.\n",
+                "type": "{ start : Char.Char -> Basics.Bool, inner : Char.Char -> Basics.Bool, reserved : Set.Set String.String, expecting : x } -> Parser.Recoverable.Parser c x String.String"
+            },
+            {
+                "name": "withIndent",
+                "comment": " Just like `Parser.withIndent`.\n",
+                "type": "Basics.Int -> Parser.Recoverable.Parser c x a -> Parser.Recoverable.Parser c x a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Parser.Recoverable.Sequence",
+        "comment": " Recoverable sequences are a variation on `Parser.Advanved.sequence` that\nallow errors in the sequence items and recover by fast forwarding to a separator\nor end token.\n\n@docs sequence\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "sequence",
+                "comment": " Like `Parser.Advanced.sequence` but it can skip over items by fast\nforwarding to the next separator or end token.\n\nWhen something is fast fowarded over, the `forwardProb` function is used to\nbuilt the error that is added to the `Partial` result. This will be given the\nstring skipped over, and the token consumed to get back to the restart point.\n\n",
+                "type": "{ start : String.String, startProb : x, separator : String.String, separatorProb : x, end : String.String, endProb : x, spaces : Parser.Recoverable.Parser c x (), forwardProb : String.String -> String.String -> x, item : Parser.Recoverable.Parser c x a, trailing : Parser.Recoverable.Trailing } -> Parser.Recoverable.Parser c x (List.List a)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Parser.Recoverable.Tactics",
+        "comment": " Parser recovery tactics that need to be manually added to parsing code.\n\n\n# Recovery Tactics with Default Value\n\nFor these recovery tactics, a default value for `a` must be given, so that the\nparser can return something in the event of an error.\n\nThe aim is not to error correct parsed values (like an integer), but to get the\nparser back to a state where it can continue running, whilst skipping out some\npart of the input. For this reason, a value type for something being parsed out\nof the text, such as an `Int` or `String`, is not such a useful choice here.\n\nIf skipping over some keyword or symbol or chomping characters, the parser will be\nof the form `Parser c x ()`. In this case, it is easy to give `()` as the default\nvalue. The symbol or keyword will be counted as being there silently, with a warning,\nor will act as a sentinal token that parsing will forward to, then try to continue.\n\nAnother common way to recover is when parsing a sequence of things, to skip any\nthings which are not syntactically correct. In this situation you might use\n`Nothing` as the default value. You can use `Maybe.Extra.value` to convert a\n`List (Maybe a)` to a `List a`, in this case.\n\nSome other useful default values might be `[]`, or `Dict.empty` or `Set.empty`\nand so on.\n\n@docs optional, skip, forward, forwardOrSkip\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "forward",
+                "comment": " When parsing fails, attempt to fast-forward to one of a set of sentinal tokens.\nWhen this happens an error is added to a `Partial` result.\n\nWhen called with these arguments:\n\n    forward val matches noMatchProb chompedProb parser\n\nNote that the `chompedProb` argument has the type `(String -> String -> x)`.\nThis is called with the string being skipped over, and the matched token being\nconsumed. This information will be combined with its position in the input text,\nin the error added to the `Partial` result.\n\nA default value for `a` must be given, so that the parser can return something\nin the event of an error and succesful recovery.\n\n",
+                "type": "a -> List.List String.String -> x -> (String.String -> String.String -> x) -> Parser.Recoverable.Parser c x a -> Parser.Recoverable.Parser c x a"
+            },
+            {
+                "name": "forwardOrSkip",
+                "comment": " When parsing fails, attempt to fast-forward to one of a set of sentinal tokens,\nor if none can be found, skip over the failure. When this happens an error is\nadded to a `Partial` result.\n\nNote that the `chompedProb` argument has the type `(String -> String -> x)`.\nThis is called with the string being skipped over, and the matched token being\nconsumed. If no match is found, then `\"\"` will be given as the token consumed.\nThis information will be combined with its position in the input text, in the\nerror added to the`Partial` result.\n\nA default value for `a` must be given, so that the parser can return something\nin the event of an error and succesful recovery.\n\n",
+                "type": "a -> List.List String.String -> x -> (String.String -> String.String -> x) -> Parser.Recoverable.Parser c x a -> Parser.Recoverable.Parser c x a"
+            },
+            {
+                "name": "optional",
+                "comment": " Silently ignore any failure.\n\nA default value for `a` must be given, so that the parser can return something\nin the event of an error and succesful recovery.\n\n",
+                "type": "a -> Parser.Recoverable.Parser c x a -> Parser.Recoverable.Parser c x a"
+            },
+            {
+                "name": "skip",
+                "comment": " Skip over a failure, but when one happens add an error to a `Partial` result.\n\nA default value for `a` must be given, so that the parser can return something\nin the event of an error and succesful recovery.\n\n",
+                "type": "a -> x -> Parser.Recoverable.Parser c x a -> Parser.Recoverable.Parser c x a"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,218 @@
+[
+    {
+        "name": "List.Nonempty",
+        "comment": " A list that cannot be empty. The head and tail can be accessed without Maybes. Most other list functions are\navailable.\n\n\n# Definition\n\n@docs Nonempty\n\n\n# Create\n\n@docs singleton, fromList\n\n\n# Access\n\n@docs head, tail, toList, get, last, take, sample\n\n\n# Inspect\n\nNonempty lists support equality with the usual `(==)` operator (provided their contents also support equality).\n\n@docs isSingleton, length, member, all, any\n\n\n# Convert\n\n@docs cons, append, pop, reverse, concat\n\n\n# Swap\n\n@docs replaceHead, replaceTail, dropTail\n\n\n# Map\n\n@docs map, indexedMap, map2, andMap, concatMap\n\n\n# Filter\n\n@docs filter\n\n\n# Fold\n\nTo fold or scan from the right, reverse the list first.\n\n@docs foldl, foldl1\n\n\n# Zipping\n\n@docs zip, unzip\n\n\n# Sort\n\n@docs sort, sortBy, sortWith\n\n\n# Deduplicate\n\nThe nonempty list's elements must support equality (e.g. not functions). Otherwise you will get a runtime error.\n\n@docs dedup, uniq\n\n\n# Deprecated\n\n@docs fromElement\n\n",
+        "unions": [
+            {
+                "name": "Nonempty",
+                "comment": " The Nonempty type. If you have both a head and tail, you can construct a\nnonempty list directly. Otherwise use the helpers below instead.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Nonempty",
+                        [
+                            "a",
+                            "List.List a"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "all",
+                "comment": " Determine if all elements satisfy the predicate.\n",
+                "type": "(a -> Basics.Bool) -> List.Nonempty.Nonempty a -> Basics.Bool"
+            },
+            {
+                "name": "andMap",
+                "comment": " Map over an arbitrary number of nonempty lists.\n\n    map2 (,) xs ys == map (,) xs |> andMap ys\n\n    head (map (,,) xs |> andMap ys |> andMap zs) == ( head xs, head ys, head zs )\n\n",
+                "type": "List.Nonempty.Nonempty a -> List.Nonempty.Nonempty (a -> b) -> List.Nonempty.Nonempty b"
+            },
+            {
+                "name": "any",
+                "comment": " Determine if any elements satisfy the predicate.\n",
+                "type": "(a -> Basics.Bool) -> List.Nonempty.Nonempty a -> Basics.Bool"
+            },
+            {
+                "name": "append",
+                "comment": " Append two nonempty lists together. `(++)` is _not_ supported.\n",
+                "type": "List.Nonempty.Nonempty a -> List.Nonempty.Nonempty a -> List.Nonempty.Nonempty a"
+            },
+            {
+                "name": "concat",
+                "comment": " Flatten a nonempty list of nonempty lists into a single nonempty list.\n",
+                "type": "List.Nonempty.Nonempty (List.Nonempty.Nonempty a) -> List.Nonempty.Nonempty a"
+            },
+            {
+                "name": "concatMap",
+                "comment": " Map a given function onto a nonempty list and flatten the resulting nonempty lists. If you're chaining, you can\ndefine `andThen = flip concatMap`.\n",
+                "type": "(a -> List.Nonempty.Nonempty b) -> List.Nonempty.Nonempty a -> List.Nonempty.Nonempty b"
+            },
+            {
+                "name": "cons",
+                "comment": " Add another element as the head of the list, pushing the previous head to the tail.\n",
+                "type": "a -> List.Nonempty.Nonempty a -> List.Nonempty.Nonempty a"
+            },
+            {
+                "name": "dedup",
+                "comment": " Remove _adjacent_ duplicate elements from the nonempty list.\n\n    dedup (Nonempty 1 [ 2, 2, 1 ]) --> Nonempty 1 [2, 1]\n\n",
+                "type": "List.Nonempty.Nonempty a -> List.Nonempty.Nonempty a"
+            },
+            {
+                "name": "dropTail",
+                "comment": " Replace the tail with the empty list while leaving the head alone.\n",
+                "type": "List.Nonempty.Nonempty a -> List.Nonempty.Nonempty a"
+            },
+            {
+                "name": "filter",
+                "comment": " Filter a nonempty list. If all values are filtered out, return the singleton list containing the default value\nprovided. If any value is retained, the default value is not used. If you want to deal with a Maybe instead, use\n`toList >> List.filter yourPredicate >> fromList`.\n\n    isEven : Int -> Bool\n    isEven n = modBy 2 n == 0\n\n    filter isEven 0 (Nonempty 7 [2, 5]) --> fromElement 2\n\n    filter isEven 0 (Nonempty 7 []) --> fromElement 0\n\n",
+                "type": "(a -> Basics.Bool) -> a -> List.Nonempty.Nonempty a -> List.Nonempty.Nonempty a"
+            },
+            {
+                "name": "foldl",
+                "comment": " Reduce a nonempty list from the left with a base case.\n\n    foldl (++) \"\" (Nonempty \"a\" [ \"b\", \"c\" ]) --> \"cba\"\n\n",
+                "type": "(a -> b -> b) -> b -> List.Nonempty.Nonempty a -> b"
+            },
+            {
+                "name": "foldl1",
+                "comment": " Reduce a nonempty list from the left _without_ a base case. As per Elm convention, the first argument is the current\nelement and the second argument is the accumulated value. The function is first invoked on the _second_ element, using\nthe first element as the accumulated value, except for singleton lists in which has the head is returned.\n\n    foldl1 (++) (Nonempty \"a\" [\"b\", \"c\"]) --> \"cba\"\n\n    foldl1 (++) (fromElement \"a\") --> \"a\"\n\n    findMe : Int\n    findMe = 42\n\n    minimizeMe : Int -> Int\n    minimizeMe n = abs (n-findMe)\n\n    nearest : Int\n    nearest = foldl1 (\\a b -> if minimizeMe a < minimizeMe b then a else b) (Nonempty 10 [20,30,40,50,60])\n\n    nearest --> 40\n\n",
+                "type": "(a -> a -> a) -> List.Nonempty.Nonempty a -> a"
+            },
+            {
+                "name": "fromElement",
+                "comment": " Create a singleton list with the given element. Deprecated in favor of `singleton`, which is what elm-lang/core uses.\n",
+                "type": "a -> List.Nonempty.Nonempty a"
+            },
+            {
+                "name": "fromList",
+                "comment": " Create a nonempty list from an ordinary list, failing on the empty list.\n",
+                "type": "List.List a -> Maybe.Maybe (List.Nonempty.Nonempty a)"
+            },
+            {
+                "name": "get",
+                "comment": " Get the item at the specified index. The head has index 0. Indices are modulused by the length so out-of-range\nerrors can't happen. This means that negative indices are supported, e.g. -1 to get the last element.\n",
+                "type": "Basics.Int -> List.Nonempty.Nonempty a -> a"
+            },
+            {
+                "name": "head",
+                "comment": " Return the head of the list.\n",
+                "type": "List.Nonempty.Nonempty a -> a"
+            },
+            {
+                "name": "indexedMap",
+                "comment": " Same as `map` but the function is also applied to the index of each element (starting at zero).\n",
+                "type": "(Basics.Int -> a -> b) -> List.Nonempty.Nonempty a -> List.Nonempty.Nonempty b"
+            },
+            {
+                "name": "isSingleton",
+                "comment": " Determine if the nonempty list has exactly one element.\n",
+                "type": "List.Nonempty.Nonempty a -> Basics.Bool"
+            },
+            {
+                "name": "last",
+                "comment": " Return the last element of the list.\n",
+                "type": "List.Nonempty.Nonempty a -> a"
+            },
+            {
+                "name": "length",
+                "comment": " Find the length of the nonempty list.\n",
+                "type": "List.Nonempty.Nonempty a -> Basics.Int"
+            },
+            {
+                "name": "map",
+                "comment": " Map a function over a nonempty list.\n",
+                "type": "(a -> b) -> List.Nonempty.Nonempty a -> List.Nonempty.Nonempty b"
+            },
+            {
+                "name": "map2",
+                "comment": " Map a function over two nonempty lists.\n",
+                "type": "(a -> b -> c) -> List.Nonempty.Nonempty a -> List.Nonempty.Nonempty b -> List.Nonempty.Nonempty c"
+            },
+            {
+                "name": "member",
+                "comment": " Determine if an element is present in the nonempty list.\n",
+                "type": "a -> List.Nonempty.Nonempty a -> Basics.Bool"
+            },
+            {
+                "name": "pop",
+                "comment": " Pop and discard the head, or do nothing for a singleton list. Useful if you\nwant to exhaust a list but hang on to the last item indefinitely.\n\n    pop (Nonempty 3 [ 2, 1 ]) --> Nonempty 2 [1]\n\n    pop (Nonempty 1 []) --> Nonempty 1 []\n\n",
+                "type": "List.Nonempty.Nonempty a -> List.Nonempty.Nonempty a"
+            },
+            {
+                "name": "replaceHead",
+                "comment": " Exchange the head element while leaving the tail alone.\n",
+                "type": "a -> List.Nonempty.Nonempty a -> List.Nonempty.Nonempty a"
+            },
+            {
+                "name": "replaceTail",
+                "comment": " Exchange the tail for another while leaving the head alone.\n",
+                "type": "List.List a -> List.Nonempty.Nonempty a -> List.Nonempty.Nonempty a"
+            },
+            {
+                "name": "reverse",
+                "comment": " Reverse a nonempty list.\n",
+                "type": "List.Nonempty.Nonempty a -> List.Nonempty.Nonempty a"
+            },
+            {
+                "name": "sample",
+                "comment": " Create a random generator that returns a value of the nonempty list chosen uniformly at random.\n",
+                "type": "List.Nonempty.Nonempty a -> Random.Generator a"
+            },
+            {
+                "name": "singleton",
+                "comment": " Create a singleton list with the given element.\n",
+                "type": "a -> List.Nonempty.Nonempty a"
+            },
+            {
+                "name": "sort",
+                "comment": " Sort a nonempty list of comparable things, lowest to highest.\n",
+                "type": "List.Nonempty.Nonempty comparable -> List.Nonempty.Nonempty comparable"
+            },
+            {
+                "name": "sortBy",
+                "comment": " Sort a nonempty list of things by a derived property.\n",
+                "type": "(a -> comparable) -> List.Nonempty.Nonempty a -> List.Nonempty.Nonempty a"
+            },
+            {
+                "name": "sortWith",
+                "comment": " Sort a nonempty list of things by a custom comparison function.\n",
+                "type": "(a -> a -> Basics.Order) -> List.Nonempty.Nonempty a -> List.Nonempty.Nonempty a"
+            },
+            {
+                "name": "tail",
+                "comment": " Return the tail of the list.\n",
+                "type": "List.Nonempty.Nonempty a -> List.List a"
+            },
+            {
+                "name": "take",
+                "comment": " Create a nonempty list consisting of the first n elements. If n < 1, returns a nonempty list consiting of just the first element\n\n    take 2 (Nonempty 1 [ 2, 3 ]) --> Nonempty 1 [ 2 ]\n\n    take 0 (Nonempty 1 [ 2, 3 ]) --> fromElement 1\n\n    take -3 (Nonempty 1 [ 2, 3 ]) --> fromElement 1\n\n",
+                "type": "Basics.Int -> List.Nonempty.Nonempty a -> List.Nonempty.Nonempty a"
+            },
+            {
+                "name": "toList",
+                "comment": " Convert to an ordinary list.\n",
+                "type": "List.Nonempty.Nonempty a -> List.List a"
+            },
+            {
+                "name": "uniq",
+                "comment": " Remove _all_ duplicate elements from the nonempty list, with the remaining elements ordered by first occurrence.\n\n    uniq (Nonempty 1 [ 2, 2, 1 ]) --> Nonempty 1 [2]\n\n",
+                "type": "List.Nonempty.Nonempty a -> List.Nonempty.Nonempty a"
+            },
+            {
+                "name": "unzip",
+                "comment": " Decompose a nonempty list of tuples into a tuple of nonempty lists.\n\n    batters : Nonempty (String, Int)\n    batters = Nonempty (\"Barry Bonds\", 762) [(\"Hank Aaron\", 755), (\"Babe Ruth\", 714)]\n\n    unzip batters --> (Nonempty \"Barry Bonds\" [\"Hank Aaron\", \"Babe Ruth\"], Nonempty 762 [755, 714])\n\n",
+                "type": "List.Nonempty.Nonempty ( a, b ) -> ( List.Nonempty.Nonempty a, List.Nonempty.Nonempty b )"
+            },
+            {
+                "name": "zip",
+                "comment": " Take two nonempty lists and compose them into a nonempty list of corresponding pairs.\n\nThe length of the new list equals the length of the smallest list given.\n\n",
+                "type": "List.Nonempty.Nonempty a -> List.Nonempty.Nonempty b -> List.Nonempty.Nonempty ( a, b )"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,36 @@
+[
+    {
+        "name": "Inflate",
+        "comment": " Decompress data compressed with a deflate algorithm.\n\n    import Bytes exposing (Bytes, Endianness(..))\n    import Bytes.Decode as Decode\n    import Bytes.Encode as Encode\n    import Inflate\n\n    {-| Some sample text\n    -}\n    text : String\n    text =\n        \"Myn geast ferdizet\"\n\n    {-| The `text` compressed with raw deflate\n\n    The bytes are combined into 32bit integers using\n    hex notation so they are shorter in the docs\n\n    -}\n    textCompressedBytes =\n        [ 0xF3ADCC53\n        , 0x484F4D2C\n        , 0x2E51484B\n        , 0x2D4AC9AC\n        , 0x4A2D0100\n        ]\n            |> List.map (Encode.unsignedInt32 BE)\n            |> Encode.sequence\n            |> Encode.encode\n\n    decodeString : Bytes -> Maybe String\n    decodeString buffer =\n        let\n            decoder =\n                Decode.string (Encode.getStringWidth text)\n        in\n        Decode.decode decoder buffer\n\n    decompressed =\n        textCompressedBytes\n            |> Inflate.inflate\n            |> Maybe.andThen decodeString\n            |> Maybe.withDefault \"\"\n\n\n## Inflate\n\n@docs inflate, inflateZLib, inflateGZip\n\n\n## Checksums\n\n@docs crc32, adler32\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "adler32",
+                "comment": " The adler32 checksum.\n\nUsed in zlib. Faster than crc32, but also less reliable (larger chance of collisions).\n\n",
+                "type": "Bytes.Bytes -> Basics.Int"
+            },
+            {
+                "name": "crc32",
+                "comment": " The crc32 checksum.\n\nUsed in gzip. Slower than adler32, but also more reliable (smaller chance of collisions).\n\n",
+                "type": "Bytes.Bytes -> Basics.Int"
+            },
+            {
+                "name": "inflate",
+                "comment": " Inflate a sequence of bytes that is compressed with raw deflate.\n",
+                "type": "Bytes.Bytes -> Maybe.Maybe Bytes.Bytes"
+            },
+            {
+                "name": "inflateGZip",
+                "comment": " Inflate data compressed with gzip.\n\ngzip adds some extra data at the front and the back. This decoder will take care of that and also check the checksum if specified.\n\n",
+                "type": "Bytes.Bytes -> Maybe.Maybe Bytes.Bytes"
+            },
+            {
+                "name": "inflateZLib",
+                "comment": " Inflate data compressed with [zlib](http://www.zlib.net/).\n\nzlib adds some extra data at the front and the back. This decoder will take care of that and also check the checksum if specified.\n\n",
+                "type": "Bytes.Bytes -> Maybe.Maybe Bytes.Bytes"
+            }
+        ],
+        "binops": []
+    }
+]

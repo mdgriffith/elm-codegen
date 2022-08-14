@@ -1,0 +1,288 @@
+[
+    {
+        "name": "AudioGraph",
+        "comment": " Info about the library.\n\n\n# Definition\n\n@docs AudioGraph, emptyAudioGraph\n\n\n# Types\n\n@docs Connection, connectionFrom\n\n\n# Graph Manipulations\n\n@docs addNode, getNode, removeNode, addConnection, removeConnection\n\n",
+        "unions": [
+            {
+                "name": "AudioGraph",
+                "comment": " An `AudioGraph` represents the structure of a Web Audio processing\ngraph. It is very similar to the Graph Object Model available in the\n[Soundstage](https://github.com/soundio/soundstage) javascript package.\n\nA dictionary of [`Node`](#Node)s stores all the currently registered graph\nnodes (more on those later), and a separate list tracks how Nodes are connected\nto one another.\n\nTypically you won't need to create more than one AudioGraph.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "AudioGraph",
+                        [
+                            "{ nodes : Dict.Dict String.String AudioGraph.Node.Node, connections : List.List AudioGraph.Connection }"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Connection",
+                "comment": " Represents a connection from one audio node to another. Simply a type alias\nfor a tuple of tuples. Each inner tuple contains a NodeID and a channel number that\ncorresponds either to an output (left tuple) or input (right tuple).\n\nRefer to individual audio nodes for a list of input/output channels. \n",
+                "args": [],
+                "type": "( ( AudioGraph.Node.ID, AudioGraph.Units.ChannelNumber ), ( AudioGraph.Node.ID, AudioGraph.Units.ChannelNumber ) )"
+            }
+        ],
+        "values": [
+            {
+                "name": "addConnection",
+                "comment": " Add a connection to the audio graph. Currently there is no guard against\nduplicate connections, this is planned for the future. ",
+                "type": "AudioGraph.Connection -> AudioGraph.AudioGraph -> AudioGraph.AudioGraph"
+            },
+            {
+                "name": "addNode",
+                "comment": " Insert a new node into the audio graph. Returns a new audio graph with the\nadded node.\n\nNote: This will replace an existing node of the same Node.ID.\n\n",
+                "type": "AudioGraph.Node.Node -> AudioGraph.AudioGraph -> AudioGraph.AudioGraph"
+            },
+            {
+                "name": "connectionFrom",
+                "comment": " Helper function to create a connection. ",
+                "type": "AudioGraph.Node.ID -> AudioGraph.Units.ChannelNumber -> AudioGraph.Node.ID -> AudioGraph.Units.ChannelNumber -> AudioGraph.Connection"
+            },
+            {
+                "name": "emptyAudioGraph",
+                "comment": " To construct an Audio Graph, start with the `emptyAudioGraph` which has no\ntracked connections and a singular `Output` node. The Output node represents\nthe Web Audio context _destination_ and has a pre-defined `Node.ID` of \"\\_output\".\n\n    type alias Model =\n        AudioGraph\n\n    init : Model\n    init =\n        emptyAudioGraph\n\n",
+                "type": "AudioGraph.AudioGraph"
+            },
+            {
+                "name": "getNode",
+                "comment": " Look up a node in the audio graph by Node.ID. Returns `Just Node` if found or\n`Nothing` if not.\n",
+                "type": "AudioGraph.Node.ID -> AudioGraph.AudioGraph -> Maybe.Maybe AudioGraph.Node.Node"
+            },
+            {
+                "name": "removeConnection",
+                "comment": " Remove a connection from the audio graph. ",
+                "type": "AudioGraph.Connection -> AudioGraph.AudioGraph -> AudioGraph.AudioGraph"
+            },
+            {
+                "name": "removeNode",
+                "comment": " Remove a node from the audio graph. This is a NoOp if no node with the supplied\nNode.ID exists in the graph. Returns a new audio graph with the matching node\nremoved.\n",
+                "type": "AudioGraph.Node.ID -> AudioGraph.AudioGraph -> AudioGraph.AudioGraph"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "AudioGraph.Encode",
+        "comment": " This module exposes two JSON encoders to encode the audio graph and its nodes.\nYou'll typically only need to use `encodeAudioGraph` but `encodeNode` is also exposed\nfor testing and other utilities purposes.\n\n@docs encodeAudioGraph, encodeNode\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "encodeAudioGraph",
+                "comment": " Encodes the supplied AudioGraph as a Json.Encode.Value. This is necessary when you\nwant to send the graph through a port and construct the actual Web Audio implementation\nin javascript. See the [advanced example](https://github.com/pd-andy/elm-audio-graph/blob/master/examples/Advanced.elm)\nfor more details on how to do this.\n",
+                "type": "AudioGraph.AudioGraph -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeNode",
+                "comment": " Encodes the supplied Node as a Json.Encode.Value. Rarely will you need to use\nthis directly, but it is exposed for debugging and other fringe cases.\n",
+                "type": "AudioGraph.Node.Node -> Json.Encode.Value"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "AudioGraph.Node",
+        "comment": "\n\n\n# Definition\n\n@docs Node\n\n\n# Types\n\n@docs ID, idFromString, idFromInt, idToString, Type, Param\n\n\n# Node Methods\n\n@docs getID, getType, getParam, setParam, getInputFromLabel, getOutputFromLabel\n\n\n# Node Constructors\n\n@docs desintationNode, createOscillatorNode, createGainNode, createCustomNode\n\n",
+        "unions": [
+            {
+                "name": "ID",
+                "comment": " A NodeID is used to ensure each node in the graph is unique. This is necessary\nif you're tracking changes to the graph in javascript when constructing and updating\nan actual Web Audio graph.\n\nThis package does not provide a means of generating NodeIDs, you are free to use\nother packages and convert the results to a NodeID with the `idFromString` and\n`idFromInt` methods. You may also simply use human readable NodeIDs such as `myOsc`.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Node",
+                "comment": " Node represents a generic audio node. \n",
+                "args": [],
+                "cases": [
+                    [
+                        "Node",
+                        [
+                            "{ id : AudioGraph.Node.ID, nodeType : AudioGraph.Node.Type, params : Dict.Dict String.String AudioGraph.Node.Param, inputs : Dict.Dict String.String AudioGraph.Units.ChannelNumber, outputs : Dict.Dict String.String AudioGraph.Units.ChannelNumber }"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Param",
+                "comment": " Node params are typed to restrict their values. This type safety ensures that\nif your elm code compiles then a valid audio graph can be constructed in javascript.\nThe values for each Param are simple type aliases that can be found in [AudioGraph.Units](/AudioGraph.Units)\nand exist solely for more expressive type annotations. \n\nSome utilities for dealing with units can be found in [AudioGraph.Utils](/AudioGraph.Utils).\nCurrently only conversion to and from `MIDI` / `Hertz` is available.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Value",
+                        [
+                            "AudioGraph.Units.KValue"
+                        ]
+                    ],
+                    [
+                        "Note",
+                        [
+                            "AudioGraph.Units.MIDI"
+                        ]
+                    ],
+                    [
+                        "Frequency",
+                        [
+                            "AudioGraph.Units.Hertz"
+                        ]
+                    ],
+                    [
+                        "Waveform",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Type",
+                "comment": " In order to construct the real Web Audio graph in javascript, we need to know\nwhat each node actually is. Custom types are also supported to allow user-defined\naudio nodes to be constructed, or third-party / non-standard Web Audio nodes to \nbe represented.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Destination",
+                        []
+                    ],
+                    [
+                        "Oscillator",
+                        []
+                    ],
+                    [
+                        "Gain",
+                        []
+                    ],
+                    [
+                        "Custom",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "createCustomNode",
+                "comment": " You can create your own custom nodes with `createCustomNode` by simply\nproviding a String to name your new node type, and a dictionary of its default\nparameters. Finally, passing a ID as usual will construct the new custom\nnode.\n\nYou can then partially apply `createCustomNode` to create your own node generators:\n\n    createMyAwesomeNode : ID -> Node\n    createMyAwesomeNode =\n        createCustomNode\n            \"MyAwesomeNode\"\n            (Dict.fromList\n                [ ( \"awesomeness\", Value 100.0 )\n                ]\n            )\n            (Dict.fromList\n                [ ( \"audioIn\", 0 )\n                , ( \"awesomeness\", 1 )\n                ]\n            )\n            (Dict.fromList\n                [ ( \"audioOut\", 0 )\n                ]\n            )\n\n",
+                "type": "String.String -> Dict.Dict String.String AudioGraph.Node.Param -> Dict.Dict String.String AudioGraph.Units.ChannelNumber -> Dict.Dict String.String AudioGraph.Units.ChannelNumber -> AudioGraph.Node.ID -> AudioGraph.Node.Node"
+            },
+            {
+                "name": "createGainNode",
+                "comment": " Creates a gain node representing a [Web Audio gain](https://developer.mozilla.org/en-US/docs/Web/API/GainNode) node.\n",
+                "type": "AudioGraph.Node.ID -> AudioGraph.Node.Node"
+            },
+            {
+                "name": "createOscillatorNode",
+                "comment": " Creates an oscillator node representing a [Web Audio oscillator](https://developer.mozilla.org/en-US/docs/Web/API/OscillatorNode)\n",
+                "type": "AudioGraph.Node.ID -> AudioGraph.Node.Node"
+            },
+            {
+                "name": "desintationNode",
+                "comment": " The destination node representss the final destination for all audio in the Web Audio Context.\nThis is usually your device's speakers. You won't often need to create a destination node directly,\nas an [emptyAudioGraph](/AudioGraph#emptyAudioGraph) already includes one.\n\nThe destination has an [ID](#ID) of `\"_destination\"`.\n\n",
+                "type": "AudioGraph.Node.Node"
+            },
+            {
+                "name": "getID",
+                "comment": " ",
+                "type": "AudioGraph.Node.Node -> AudioGraph.Node.ID"
+            },
+            {
+                "name": "getInputFromLabel",
+                "comment": " Searches a nodes inputs by label and returns the channel number that matches.\nIf no match is found, -1 is chosen instead. \n",
+                "type": "String.String -> AudioGraph.Node.Node -> AudioGraph.Units.ChannelNumber"
+            },
+            {
+                "name": "getOutputFromLabel",
+                "comment": " Searches a nodes inputs by label and returns the channel number that matches.\nIf no match is found, -1 is chosen instead.  \n",
+                "type": "String.String -> AudioGraph.Node.Node -> AudioGraph.Units.ChannelNumber"
+            },
+            {
+                "name": "getParam",
+                "comment": " ",
+                "type": "String.String -> AudioGraph.Node.Node -> Maybe.Maybe AudioGraph.Node.Param"
+            },
+            {
+                "name": "getType",
+                "comment": " ",
+                "type": "AudioGraph.Node.Node -> AudioGraph.Node.Type"
+            },
+            {
+                "name": "idFromInt",
+                "comment": " Takes any integer and returns a NodeID. ",
+                "type": "Basics.Int -> AudioGraph.Node.ID"
+            },
+            {
+                "name": "idFromString",
+                "comment": " Takes a raw string and returns a NodeID. ",
+                "type": "String.String -> AudioGraph.Node.ID"
+            },
+            {
+                "name": "idToString",
+                "comment": " Converts a NodeID into a raw string. Used when encoding an audio node, but \nmay also be useful in your own code. ",
+                "type": "AudioGraph.Node.ID -> String.String"
+            },
+            {
+                "name": "setParam",
+                "comment": " ",
+                "type": "String.String -> AudioGraph.Node.Param -> AudioGraph.Node.Node -> AudioGraph.Node.Node"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "AudioGraph.Units",
+        "comment": "\n\n@docs ChannelNumber, Hertz, KValue, MIDI\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "ChannelNumber",
+                "comment": " Represents the channel number of an auidio node input or output. ",
+                "args": [],
+                "type": "Basics.Int"
+            },
+            {
+                "name": "Hertz",
+                "comment": " Represents frequency in Herts. ",
+                "args": [],
+                "type": "Basics.Float"
+            },
+            {
+                "name": "KValue",
+                "comment": " Represents an arbitrary control value. The \"K\" is a naming convention that\nhas its roots in MUSIC 11 and has been adopted by most music computing platforms\nincluding Csound and SuperCollider.\n",
+                "args": [],
+                "type": "Basics.Float"
+            },
+            {
+                "name": "MIDI",
+                "comment": " Represents a MIDI note number. ",
+                "args": [],
+                "type": "Basics.Int"
+            }
+        ],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "AudioGraph.Utils",
+        "comment": "\n\n@docs mtof, ftom\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "ftom",
+                "comment": " Approximate a frequency in Hertz to the nearest MIDI note number. ",
+                "type": "AudioGraph.Units.Hertz -> AudioGraph.Units.MIDI"
+            },
+            {
+                "name": "mtof",
+                "comment": " Convert a MIDI note number to its frequency in Hertz. ",
+                "type": "AudioGraph.Units.MIDI -> AudioGraph.Units.Hertz"
+            }
+        ],
+        "binops": []
+    }
+]

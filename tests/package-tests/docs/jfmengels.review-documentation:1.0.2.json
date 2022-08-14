@@ -1,0 +1,16 @@
+[
+    {
+        "name": "Documentation.ReadmeLinksPointToCurrentVersion",
+        "comment": "\n\n@docs rule\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": " Reports links in the `README.md` that point to this project's package documentation on <https://package.elm-lang.org/>,\nwhere the version is set to `latest` or a different version than the current version of the package.\n\nThe problem with linking to `latest` is that if you release a new version later,\nthe users who read the README for the older version will be directed to a version\nwhere the module/function/section you pointed to may not exist anymore.\n\nThis rule ensures that you always use the correct version in all of your releases,\nand that you do not forget to update the links.\n\nThis rule provides automatic fixes, so you won't to do the tedious job of updating\nthe links yourself.\n\n**NOTE**: Just make sure to run tests between bumping the version of the package\nand publishing the package. Otherwise the link for a given version could link to a previous one.\n\n**NOTE**: A similar rule would be useful for links inside the modules. I'll be working on that too!\n\n",
+                "type": "Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    }
+]

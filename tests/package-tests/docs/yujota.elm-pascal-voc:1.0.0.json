@@ -1,0 +1,193 @@
+[
+    {
+        "name": "PascalVoc",
+        "comment": " This module provides types related to PascalVoc XML format and getters and setters.\n\n\n# Types\n\n@docs PascalVoc, PascalVocSource, Size, Object\n\n\n# Constructor\n\n@docs pascalVoc\n\n\n# Getters & Setters\n\n@docs size, setSize, objects, setObjects, filename, setFilename, folder, setFolder, path, setPath, segmented, setSegmented, source, setSource\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Object",
+                "comment": " Represents an annotation object. Corresponding to `<annotation><object>`.\n",
+                "args": [],
+                "type": "{ name : String.String, bndbox : { xmin : Basics.Float, ymin : Basics.Float, xmax : Basics.Float, ymax : Basics.Float }, pose : Maybe.Maybe String.String, truncated : Maybe.Maybe Basics.Int, difficult : Maybe.Maybe Basics.Int }"
+            },
+            {
+                "name": "PascalVoc",
+                "comment": " Represents Pascal VOC format data.\n",
+                "args": [],
+                "type": "PascalVoc.Internal.PascalVoc.PascalVoc"
+            },
+            {
+                "name": "PascalVocSource",
+                "comment": " Represents image source. Corresponding to `<annotation><source>`.\n\n`PascalVoc.Settings` is providing several setters and getters for it.\n\n",
+                "args": [],
+                "type": "PascalVoc.Internal.PascalVoc.PascalVocSource"
+            },
+            {
+                "name": "Size",
+                "comment": " Represents image size. Corresponding to `<annotation><size>`.\n",
+                "args": [],
+                "type": "{ width : Basics.Int, height : Basics.Int, depth : Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "filename",
+                "comment": " Getter for filename. Corresponding to `<annotation><filename>`.\n",
+                "type": "PascalVoc.PascalVoc -> String.String"
+            },
+            {
+                "name": "folder",
+                "comment": " Getter for folder. This field is optional. Corresponding to `<annotation><folder>`.\n",
+                "type": "PascalVoc.PascalVoc -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "objects",
+                "comment": " Getter for annotation objects.\n",
+                "type": "PascalVoc.PascalVoc -> List.List PascalVoc.Object"
+            },
+            {
+                "name": "pascalVoc",
+                "comment": " Constructor.\n",
+                "type": "{ filename : String.String, size : PascalVoc.Internal.PascalVoc.Size, objects : List.List PascalVoc.Internal.PascalVoc.Object } -> PascalVoc.PascalVoc"
+            },
+            {
+                "name": "path",
+                "comment": " Getter for file path. This field is optional. Corresponding to `<annotation><path>`.\n",
+                "type": "PascalVoc.PascalVoc -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "segmented",
+                "comment": " Getter for `segmented`. This field is optional.\nCorresponding to `<annotation><segmented>`.\nIn most cases, this value would be 0.\nWhen this XML value cannot be interpreted as Int such as `Unspecified`, this function returns `Nothing`.\n",
+                "type": "PascalVoc.PascalVoc -> Maybe.Maybe Basics.Int"
+            },
+            {
+                "name": "setFilename",
+                "comment": " Setter for filename. Corresponding to `<annotation><filename>`.\n",
+                "type": "String.String -> PascalVoc.PascalVoc -> PascalVoc.PascalVoc"
+            },
+            {
+                "name": "setFolder",
+                "comment": " Setter for folder. This field is optional. Corresponding to `<annotation><folder>`.\n",
+                "type": "Maybe.Maybe String.String -> PascalVoc.PascalVoc -> PascalVoc.PascalVoc"
+            },
+            {
+                "name": "setObjects",
+                "comment": " Setter for annotation objects.\n",
+                "type": "List.List PascalVoc.Object -> PascalVoc.PascalVoc -> PascalVoc.PascalVoc"
+            },
+            {
+                "name": "setPath",
+                "comment": " Setter for file path. This field is optional. Corresponding to `<annotation><path>`.\n",
+                "type": "Maybe.Maybe String.String -> PascalVoc.PascalVoc -> PascalVoc.PascalVoc"
+            },
+            {
+                "name": "setSegmented",
+                "comment": " Setter for `segmented`. This field is optional.\nCorresponding to `<annotation><segmented>`.\n",
+                "type": "Maybe.Maybe Basics.Int -> PascalVoc.PascalVoc -> PascalVoc.PascalVoc"
+            },
+            {
+                "name": "setSize",
+                "comment": " Setter for image size.\n",
+                "type": "PascalVoc.Size -> PascalVoc.PascalVoc -> PascalVoc.PascalVoc"
+            },
+            {
+                "name": "setSource",
+                "comment": " Setter for `source`. This field is optional.\nCorresponding to `<annotation><source>`.\n",
+                "type": "Maybe.Maybe PascalVoc.PascalVocSource -> PascalVoc.PascalVoc -> PascalVoc.PascalVoc"
+            },
+            {
+                "name": "size",
+                "comment": " Getter for image size.\n",
+                "type": "PascalVoc.PascalVoc -> PascalVoc.Size"
+            },
+            {
+                "name": "source",
+                "comment": " Getter for `source`. This field is optional.\nCorresponding to `<annotation><source>`.\n\nSee `PascalVoc.Settings` to access its child fields.\n\n",
+                "type": "PascalVoc.PascalVoc -> Maybe.Maybe PascalVoc.PascalVocSource"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "PascalVoc.Decode",
+        "comment": " Decoder for Pascal VOC XML format\n\n\n# Decoder\n\n@docs decodeString\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decodeString",
+                "comment": " Decode Pascal Vox XML format to `PascalVoc`.\n\n    xmlString = \"\"\"\n    <annotation>\n      <filename>000001.png</filename>\n      <size>\n        <width>224</width>\n        <height>224</height>\n        <depth>3</depth>\n      </size>\n    </annotation>\n    \"\"\"\n    decoded = decodeString xmlString\n    Result.map PascalVoc.filename decoded == Ok \"000001.png\"\n\n",
+                "type": "String.String -> Result.Result String.String PascalVoc.Internal.PascalVoc.PascalVoc"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "PascalVoc.Encode",
+        "comment": " Decoder for Pascal VOC XML format\n\n\n# Encoder\n\n@docs format\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "format",
+                "comment": " Encode `PascalVoc` to XML.\n\n    data = PascalVoc.pascalVoc { filename = \"01.png\", size = { width = 10, height = 15, depth = 3 }, objects = [] }\n    format data == \"<annotation ><filename >01.png</filename><size ><width >10</width><height >15</height><depth >3</depth></size></annotation>\n\n",
+                "type": "PascalVoc.Internal.PascalVoc.PascalVoc -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "PascalVoc.Settings",
+        "comment": " This module provides constructor of `PascalVocSource` and accessor to its fields.\n\n\n# PascalVocSource\n\n@docs emptySource, database, setDatabase, annotation, setAnnotation, image, setImage, flickrid, setFlickrid\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "annotation",
+                "comment": " Getter for `String` value of who or what organization did the annotation.\nCorresponding to `<annotation><source><annotation>`.\nThis field is optional.\n\nTo access to each annotation, use `PascalVoc.objects`.\n\n",
+                "type": "PascalVoc.Internal.PascalVoc.PascalVocSource -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "database",
+                "comment": " Getter for database. Corresponding to `<annotation><source><database>`.\nThis field is optional.\n",
+                "type": "PascalVoc.Internal.PascalVoc.PascalVocSource -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "emptySource",
+                "comment": " Constructor for `<annotation><source>`.\n",
+                "type": "PascalVoc.Internal.PascalVoc.PascalVocSource"
+            },
+            {
+                "name": "flickrid",
+                "comment": " Getter for flickrid.\nCorresponding to `<annotation><source><flickrid>`.\nThis field is optional.\n",
+                "type": "PascalVoc.Internal.PascalVoc.PascalVocSource -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "image",
+                "comment": " Getter for image info.\nCorresponding to `<annotation><source><annotation>`.\nThis field is optional.\n\nTo access to filename, use `PascalVoc.filename`.\n\n",
+                "type": "PascalVoc.Internal.PascalVoc.PascalVocSource -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "setAnnotation",
+                "comment": " Setter for `String` value of who or what organization did the annotation.\nCorresponding to `<annotation><source><annotation>`.\nThis field is optional.\n",
+                "type": "Maybe.Maybe String.String -> PascalVoc.Internal.PascalVoc.PascalVocSource -> PascalVoc.Internal.PascalVoc.PascalVocSource"
+            },
+            {
+                "name": "setDatabase",
+                "comment": " Setter for database. Corresponding to `<annotation><source><database>`.\nThis field is optional.\n",
+                "type": "Maybe.Maybe String.String -> PascalVoc.Internal.PascalVoc.PascalVocSource -> PascalVoc.Internal.PascalVoc.PascalVocSource"
+            },
+            {
+                "name": "setFlickrid",
+                "comment": " Setter for flickrid.\nCorresponding to `<annotation><source><flickrid>`.\nThis field is optional.\n",
+                "type": "Maybe.Maybe String.String -> PascalVoc.Internal.PascalVoc.PascalVocSource -> PascalVoc.Internal.PascalVoc.PascalVocSource"
+            },
+            {
+                "name": "setImage",
+                "comment": " Setter for image info.\nCorresponding to `<annotation><source><annotation>`.\nThis field is optional.\n",
+                "type": "Maybe.Maybe String.String -> PascalVoc.Internal.PascalVoc.PascalVocSource -> PascalVoc.Internal.PascalVoc.PascalVocSource"
+            }
+        ],
+        "binops": []
+    }
+]

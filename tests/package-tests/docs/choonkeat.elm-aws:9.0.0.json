@@ -1,0 +1,658 @@
+[
+    {
+        "name": "AWS",
+        "comment": "\n\n@docs signRequest, awsTargetHeader, AWSTarget\n\n",
+        "unions": [
+            {
+                "name": "AWSTarget",
+                "comment": " Options for AWS.awsTargetHeader\n",
+                "args": [],
+                "cases": [
+                    [
+                        "DynamoDB_GetItem",
+                        []
+                    ],
+                    [
+                        "DynamoDB_PutItem",
+                        []
+                    ],
+                    [
+                        "DynamoDB_DeleteItem",
+                        []
+                    ],
+                    [
+                        "DynamoDB_Query",
+                        []
+                    ],
+                    [
+                        "DynamoDB_Scan",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "awsTargetHeader",
+                "comment": " Adds necessary `X-Amz-Target` http request header\n\nSee <https://docs.aws.amazon.com/apigateway/api-reference/making-http-requests/>\n\n",
+                "type": "AWS.AWSTarget -> ( String.String, String.String )"
+            },
+            {
+                "name": "signRequest",
+                "comment": " Given an unsigned request, this function returns a SignedRequest record to be passed to `Http.task`\n<https://package.elm-lang.org/packages/elm/http/latest/Http#task>\n\n    AWS.signRequest config now rawRequest\n        |> Result.map Http.task\n\n    -- Result String (Task x a)\n\n",
+                "type": "AWS.Types.Config -> Time.Posix -> AWS.Types.UnsignedRequest x a -> Result.Result String.String (AWS.Types.SignedRequest x a)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "AWS.DynamoDB",
+        "comment": "\n\n@docs Base64String\n@docs JsonEncoded\n@docs QueryResponse\n@docs decodeB\n@docs decodeBOOL\n@docs decodeBS\n@docs decodeJsonEncoded\n@docs decodeL\n@docs decodeM\n@docs decodeN\n@docs decodeNS\n@docs decodeNULL\n@docs decodeQueryResponse\n@docs decodeS\n@docs decodeSS\n@docs encodeB\n@docs encodeBOOL\n@docs encodeBS\n@docs encodeJsonEncoded\n@docs encodeL\n@docs encodeM\n@docs encodeN\n@docs encodeNS\n@docs encodeNULL\n@docs encodeS\n@docs encodeSS\n@docs fromBase64\n@docs toBase64\n\nSee <https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_AttributeValue.html>\n\n",
+        "unions": [
+            {
+                "name": "Base64String",
+                "comment": " A wrapper to differentiate from regular String\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "JsonEncoded",
+                "comment": " wrapper type to store data as a String in a dynamodb column\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "JsonEncoded",
+                        [
+                            "a"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "QueryResponse",
+                "comment": " Structure of DynamoDB response\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ count : Basics.Int, items : List.List a, lastEvaluatedKey : Json.Encode.Value }"
+            }
+        ],
+        "values": [
+            {
+                "name": "decodeB",
+                "comment": "\n\n    import Json.Decode\n\n    toBase64 \"aGVsbG8=\"\n    |> Result.andThen (\\v ->\n        Json.Decode.decodeValue decodeB (encodeB v)\n            |> Result.mapError Json.Decode.errorToString\n    )\n    --> toBase64 \"aGVsbG8=\"\n\n",
+                "type": "Json.Decode.Decoder AWS.DynamoDB.Base64String"
+            },
+            {
+                "name": "decodeBOOL",
+                "comment": "\n\n    import Json.Decode\n\n    Json.Decode.decodeValue decodeBOOL (encodeBOOL True)\n    --> Ok True\n\n",
+                "type": "Json.Decode.Decoder Basics.Bool"
+            },
+            {
+                "name": "decodeBS",
+                "comment": "\n\n    import Json.Decode\n\n    toBase64 \"aGVsbG8=\"\n    |> Result.andThen (\\v ->\n        Json.Decode.decodeValue decodeBS (encodeBS [v])\n            |> Result.mapError Json.Decode.errorToString\n    )\n    --> Result.map (\\v -> [v]) (toBase64 \"aGVsbG8=\")\n\n",
+                "type": "Json.Decode.Decoder (List.List AWS.DynamoDB.Base64String)"
+            },
+            {
+                "name": "decodeJsonEncoded",
+                "comment": " ",
+                "type": "Json.Decode.Decoder a -> Json.Decode.Decoder (AWS.DynamoDB.JsonEncoded a)"
+            },
+            {
+                "name": "decodeL",
+                "comment": "\n\n    import Json.Decode\n\n    toBase64 \"aGVsbG8=\"\n    |> Result.andThen (\\v ->\n        Json.Decode.decodeValue (decodeL decodeB) (encodeL encodeB [v])\n            |> Result.mapError Json.Decode.errorToString\n    )\n    --> Result.map (\\v -> [v]) (toBase64 \"aGVsbG8=\")\n\n    Json.Decode.decodeValue (decodeL decodeN) (encodeL encodeN [3.14, 42])\n    --> Ok [3.14, 42]\n\n",
+                "type": "Json.Decode.Decoder a -> Json.Decode.Decoder (List.List a)"
+            },
+            {
+                "name": "decodeM",
+                "comment": "\n\n    import Json.Decode\n    import Dict\n\n    Json.Decode.decodeValue (decodeM decodeN) (encodeM encodeN (Dict.fromList [(\"hello\", 3.14)]))\n    --> Ok (Dict.fromList [(\"hello\", 3.14)])\n\n",
+                "type": "Json.Decode.Decoder a -> Json.Decode.Decoder (Dict.Dict String.String a)"
+            },
+            {
+                "name": "decodeN",
+                "comment": "\n\n    import Json.Decode\n\n    Json.Decode.decodeValue decodeN (encodeN 3.14)\n    --> Ok 3.14\n\n",
+                "type": "Json.Decode.Decoder Basics.Float"
+            },
+            {
+                "name": "decodeNS",
+                "comment": "\n\n    import Json.Decode\n    import Set\n\n    Json.Decode.decodeValue decodeNS (encodeNS (Set.fromList [1, 3, 5, 7]))\n    --> Ok (Set.fromList [1, 3, 5, 7])\n\n",
+                "type": "Json.Decode.Decoder (Set.Set Basics.Float)"
+            },
+            {
+                "name": "decodeNULL",
+                "comment": "\n\n    import Json.Decode\n\n    Json.Decode.decodeValue decodeNULL (encodeNULL False)\n    --> Ok False\n\n",
+                "type": "Json.Decode.Decoder Basics.Bool"
+            },
+            {
+                "name": "decodeQueryResponse",
+                "comment": " ",
+                "type": "Json.Decode.Decoder a -> Json.Decode.Decoder (AWS.DynamoDB.QueryResponse a)"
+            },
+            {
+                "name": "decodeS",
+                "comment": "\n\n    import Json.Decode\n\n    Json.Decode.decodeValue decodeS (encodeS \"Hello\")\n    --> Ok \"Hello\"\n\n",
+                "type": "Json.Decode.Decoder String.String"
+            },
+            {
+                "name": "decodeSS",
+                "comment": "\n\n    import Json.Decode\n    import Set\n\n    Json.Decode.decodeValue decodeSS (encodeSS (Set.fromList [\"hello\", \"world\"]))\n    --> Ok (Set.fromList [\"hello\", \"world\"])\n\n",
+                "type": "Json.Decode.Decoder (Set.Set String.String)"
+            },
+            {
+                "name": "encodeB",
+                "comment": "\n\n    import Json.Encode\n\n    toBase64 \"aGVsbG8=\"\n    |> Result.map (\\v -> Json.Encode.encode 0 (encodeB v))\n    --> Ok \"\"\"{\"B\":\"aGVsbG8=\"}\"\"\"\n\n",
+                "type": "AWS.DynamoDB.Base64String -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeBOOL",
+                "comment": "\n\n    import Json.Encode\n\n    Json.Encode.encode 0 (encodeBOOL False)\n    --> \"\"\"{\"BOOL\":false}\"\"\"\n\n",
+                "type": "Basics.Bool -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeBS",
+                "comment": "\n\n    import Json.Encode\n\n    toBase64 \"aGVsbG8=\"\n    |> Result.map (\\v -> Json.Encode.encode 0 (encodeBS ([v])))\n    --> Ok \"\"\"{\"BS\":[\"aGVsbG8=\"]}\"\"\"\n\n",
+                "type": "List.List AWS.DynamoDB.Base64String -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeJsonEncoded",
+                "comment": " ",
+                "type": "(a -> Json.Encode.Value) -> AWS.DynamoDB.JsonEncoded a -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeL",
+                "comment": "\n\n    import Json.Encode\n\n    Json.Encode.encode 0 (encodeL encodeN [1,3,5,7])\n    --> \"\"\"{\"L\":[{\"N\":\"1\"},{\"N\":\"3\"},{\"N\":\"5\"},{\"N\":\"7\"}]}\"\"\"\n\n",
+                "type": "(a -> Json.Encode.Value) -> List.List a -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeM",
+                "comment": "\n\n    import Json.Encode\n    import Dict\n\n    Json.Encode.encode 0 (encodeM encodeN (Dict.fromList [(\"width\", 800), (\"height\", 600)]))\n    --> \"\"\"{\"M\":{\"height\":{\"N\":\"600\"},\"width\":{\"N\":\"800\"}}}\"\"\"\n\n",
+                "type": "(a -> Json.Encode.Value) -> Dict.Dict String.String a -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeN",
+                "comment": "\n\n    import Json.Encode\n\n    Json.Encode.encode 0 (encodeN 3.14)\n    --> \"\"\"{\"N\":\"3.14\"}\"\"\"\n\n",
+                "type": "Basics.Float -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeNS",
+                "comment": "\n\n    import Json.Encode\n    import Set\n\n    Json.Encode.encode 0 (encodeNS (Set.fromList [1,3,5,7]))\n    --> \"\"\"{\"NS\":[\"1\",\"3\",\"5\",\"7\"]}\"\"\"\n\n",
+                "type": "Set.Set Basics.Float -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeNULL",
+                "comment": "\n\n    import Json.Encode\n\n    Json.Encode.encode 0 (encodeNULL True)\n    --> \"\"\"{\"NULL\":true}\"\"\"\n\n",
+                "type": "Basics.Bool -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeS",
+                "comment": "\n\n    import Json.Encode\n\n    Json.Encode.encode 0 (encodeS \"Hello\")\n    --> \"\"\"{\"S\":\"Hello\"}\"\"\"\n\n",
+                "type": "String.String -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeSS",
+                "comment": "\n\n    import Json.Encode\n    import Set\n\n    Json.Encode.encode 0 (encodeSS (Set.fromList [\"hello\", \"world\"]))\n    --> \"\"\"{\"SS\":[\"hello\",\"world\"]}\"\"\"\n\n",
+                "type": "Set.Set String.String -> Json.Encode.Value"
+            },
+            {
+                "name": "fromBase64",
+                "comment": " Obtain the regular `String` content. Decode it yourself, e.g.\n<https://package.elm-lang.org/packages/waratuman/elm-coder/3.0.1/Base64#decode>\n",
+                "type": "AWS.DynamoDB.Base64String -> String.String"
+            },
+            {
+                "name": "toBase64",
+                "comment": " ",
+                "type": "String.String -> Result.Result String.String AWS.DynamoDB.Base64String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "AWS.SES",
+        "comment": " Implementation of <https://docs.aws.amazon.com/ses/latest/DeveloperGuide/using-ses-api-requests.html>\n\n@docs OutgoingMail, Response, unsignedRequest, Notification, decodeNotification\n\n\n# Inner types and decoders\n\n@docs Mail, decodeMail, CommonMailHeaders, decodeCommonMailHeaders, Bounce, BounceRecipient, BounceType, ComplainedRecipient, Complaint, ComplaintFeedbackType, ComplaintSubType, Delivery, NamedValue, decodeBounce, decodeBounceRecipient, decodeBounceType, decodeComplainedRecipient, decodeComplaint, decodeComplaintFeedbackType, decodeComplaintSubType, decodeDelivery, decodeNamedValue\n\n\n# Tested internals\n\n@docs paramsForMail, decodeResponse\n\n",
+        "unions": [
+            {
+                "name": "BounceType",
+                "comment": " <https://docs.aws.amazon.com/ses/latest/DeveloperGuide/notification-contents.html#bounce-types>\n",
+                "args": [],
+                "cases": [
+                    [
+                        "BounceUndetermined",
+                        []
+                    ],
+                    [
+                        "BouncePermanent",
+                        []
+                    ],
+                    [
+                        "BouncePermanentGeneral",
+                        []
+                    ],
+                    [
+                        "BouncePermanentNoEmail",
+                        []
+                    ],
+                    [
+                        "BouncePermanentSuppressed",
+                        []
+                    ],
+                    [
+                        "BouncePermanentOnAccountSuppressionList",
+                        []
+                    ],
+                    [
+                        "BounceTransient",
+                        []
+                    ],
+                    [
+                        "BounceTransientGeneral",
+                        []
+                    ],
+                    [
+                        "BounceTransientMailboxFull",
+                        []
+                    ],
+                    [
+                        "BounceTransientMessageTooLarge",
+                        []
+                    ],
+                    [
+                        "BounceTransientContentRejected",
+                        []
+                    ],
+                    [
+                        "BounceTransientAttachmentRejected",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "ComplaintFeedbackType",
+                "comment": " `complaint` in top-level JSON object\n<https://docs.aws.amazon.com/ses/latest/DeveloperGuide/notification-contents.html#complaint-object>\n",
+                "args": [],
+                "cases": [
+                    [
+                        "ComplaintFeedbackAbuse",
+                        []
+                    ],
+                    [
+                        "ComplaintFeedbackAuthFailure",
+                        []
+                    ],
+                    [
+                        "ComplaintFeedbackFraud",
+                        []
+                    ],
+                    [
+                        "ComplaintFeedbackNotSpam",
+                        []
+                    ],
+                    [
+                        "ComplaintFeedbackVirus",
+                        []
+                    ],
+                    [
+                        "ComplaintFeedbackOther",
+                        []
+                    ],
+                    [
+                        "ComplaintFeedbackUnknown",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "ComplaintSubType",
+                "comment": " <https://docs.aws.amazon.com/ses/latest/DeveloperGuide/notification-contents.html#complaint-object>\n",
+                "args": [],
+                "cases": [
+                    [
+                        "OnAccountSuppressionList",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Notification",
+                "comment": " The top-level JSON object in an Amazon SES notification <https://docs.aws.amazon.com/ses/latest/DeveloperGuide/notification-contents.html#top-level-json-object>\n",
+                "args": [],
+                "cases": [
+                    [
+                        "SESBounce",
+                        [
+                            "AWS.SES.Mail",
+                            "AWS.SES.Bounce"
+                        ]
+                    ],
+                    [
+                        "SESComplaint",
+                        [
+                            "AWS.SES.Mail",
+                            "AWS.SES.Complaint"
+                        ]
+                    ],
+                    [
+                        "SESDelivery",
+                        [
+                            "AWS.SES.Mail",
+                            "AWS.SES.Delivery"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "OutgoingMail",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "RawEmail",
+                        [
+                            "{ from : String.String, destinations : List.List String.String, rawMessage : String.String }"
+                        ]
+                    ],
+                    [
+                        "Email",
+                        [
+                            "{ from : String.String, to : List.List String.String, replyTo : List.List String.String, subject : String.String, textBody : String.String, htmlBody : String.String }"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Response",
+                "comment": " Response from SES API\n\nSee <https://docs.aws.amazon.com/ses/latest/DeveloperGuide/using-ses-api-responses.html>\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Error",
+                        [
+                            "{ type_ : String.String, code : String.String, message : String.String }"
+                        ]
+                    ],
+                    [
+                        "Success",
+                        [
+                            "{ messageId : String.String, requestId : String.String }"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Bounce",
+                "comment": " `bounce` in top-level JSON object\n<https://docs.aws.amazon.com/ses/latest/DeveloperGuide/notification-contents.html#bounce-object>\n",
+                "args": [],
+                "type": "{ bounceType : AWS.SES.BounceType, bouncedRecipients : List.List AWS.SES.BounceRecipient, timestamp : Time.Posix, feedbackId : String.String, remoteMtaIp : Maybe.Maybe String.String, reportingMTA : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "BounceRecipient",
+                "comment": " <https://docs.aws.amazon.com/ses/latest/DeveloperGuide/notification-contents.html#bounced-recipients>\n",
+                "args": [],
+                "type": "{ emailAddress : String.String, action : Maybe.Maybe String.String, status : Maybe.Maybe String.String, diagnosticCode : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "CommonMailHeaders",
+                "comment": " <https://docs.aws.amazon.com/ses/latest/DeveloperGuide/notification-contents.html#mail-object>\n",
+                "args": [],
+                "type": "{ from : List.List String.String, date : Maybe.Maybe Time.Posix, to : List.List String.String, messageId : Maybe.Maybe String.String, subject : Maybe.Maybe String.String }"
+            },
+            {
+                "name": "ComplainedRecipient",
+                "comment": " <https://docs.aws.amazon.com/ses/latest/DeveloperGuide/notification-contents.html#complained-recipients>\n",
+                "args": [],
+                "type": "{ emailAddress : String.String }"
+            },
+            {
+                "name": "Complaint",
+                "comment": " <https://docs.aws.amazon.com/ses/latest/DeveloperGuide/notification-contents.html#complaint-object>\n",
+                "args": [],
+                "type": "{ userAgent : Maybe.Maybe String.String, complaintFeedbackType : Maybe.Maybe AWS.SES.ComplaintFeedbackType, arrivalDate : Maybe.Maybe Time.Posix, complainedRecipients : List.List AWS.SES.ComplainedRecipient, timestamp : Time.Posix, feedbackId : String.String, complaintSubType : Maybe.Maybe AWS.SES.ComplaintSubType }"
+            },
+            {
+                "name": "Delivery",
+                "comment": " `delivery` in top-level JSON object\n<https://docs.aws.amazon.com/ses/latest/DeveloperGuide/notification-contents.html#delivery-object>\n",
+                "args": [],
+                "type": "{ timestamp : Time.Posix, processingTimeMillis : Basics.Int, recipients : List.List String.String }"
+            },
+            {
+                "name": "Mail",
+                "comment": " `mail` in top-level JSON object\n<https://docs.aws.amazon.com/ses/latest/DeveloperGuide/notification-contents.html#mail-object>\n",
+                "args": [],
+                "type": "{ timestamp : Time.Posix, messageId : String.String, source : String.String, sourceArn : String.String, sourceIp : String.String, sendingAccountId : String.String, destination : List.List String.String, headersTruncated : Basics.Bool, headers : List.List AWS.SES.NamedValue, commonHeaders : AWS.SES.CommonMailHeaders }"
+            },
+            {
+                "name": "NamedValue",
+                "comment": " Mail headers like\n\n      {\n         \"name\":\"From\",\n         \"value\":\"\\\"Sender Name\\\" <sender@example.com>\"\n      }\n\n",
+                "args": [],
+                "type": "{ name : String.String, value : String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "decodeBounce",
+                "comment": " <https://docs.aws.amazon.com/ses/latest/DeveloperGuide/notification-contents.html#bounce-object>\n",
+                "type": "Json.Decode.Decoder AWS.SES.Bounce"
+            },
+            {
+                "name": "decodeBounceRecipient",
+                "comment": " <https://docs.aws.amazon.com/ses/latest/DeveloperGuide/notification-contents.html#bounced-recipients>\n",
+                "type": "Json.Decode.Decoder AWS.SES.BounceRecipient"
+            },
+            {
+                "name": "decodeBounceType",
+                "comment": " <https://docs.aws.amazon.com/ses/latest/DeveloperGuide/notification-contents.html#bounce-types>\n",
+                "type": "Json.Decode.Decoder AWS.SES.BounceType"
+            },
+            {
+                "name": "decodeCommonMailHeaders",
+                "comment": " <https://docs.aws.amazon.com/ses/latest/DeveloperGuide/notification-contents.html#mail-object>\n",
+                "type": "Json.Decode.Decoder AWS.SES.CommonMailHeaders"
+            },
+            {
+                "name": "decodeComplainedRecipient",
+                "comment": " <https://docs.aws.amazon.com/ses/latest/DeveloperGuide/notification-contents.html#complained-recipients>\n",
+                "type": "Json.Decode.Decoder AWS.SES.ComplainedRecipient"
+            },
+            {
+                "name": "decodeComplaint",
+                "comment": " <https://docs.aws.amazon.com/ses/latest/DeveloperGuide/notification-contents.html#complaint-object>\n",
+                "type": "Json.Decode.Decoder AWS.SES.Complaint"
+            },
+            {
+                "name": "decodeComplaintFeedbackType",
+                "comment": " <https://docs.aws.amazon.com/ses/latest/DeveloperGuide/notification-contents.html#complaint-object>\n",
+                "type": "Json.Decode.Decoder AWS.SES.ComplaintFeedbackType"
+            },
+            {
+                "name": "decodeComplaintSubType",
+                "comment": " <https://docs.aws.amazon.com/ses/latest/DeveloperGuide/notification-contents.html#complaint-object>\n",
+                "type": "Json.Decode.Decoder AWS.SES.ComplaintSubType"
+            },
+            {
+                "name": "decodeDelivery",
+                "comment": " <https://docs.aws.amazon.com/ses/latest/DeveloperGuide/notification-contents.html#delivery-object>\n",
+                "type": "Json.Decode.Decoder AWS.SES.Delivery"
+            },
+            {
+                "name": "decodeMail",
+                "comment": " <https://docs.aws.amazon.com/ses/latest/DeveloperGuide/notification-contents.html#mail-object>\n",
+                "type": "Json.Decode.Decoder AWS.SES.Mail"
+            },
+            {
+                "name": "decodeNamedValue",
+                "comment": " decoder for Mail headers\n",
+                "type": "Json.Decode.Decoder AWS.SES.NamedValue"
+            },
+            {
+                "name": "decodeNotification",
+                "comment": " decoder of an Amazon SES notification according to <https://docs.aws.amazon.com/ses/latest/DeveloperGuide/notification-contents.html>\n",
+                "type": "Json.Decode.Decoder AWS.SES.Notification"
+            },
+            {
+                "name": "decodeResponse",
+                "comment": "\n\n    import Xml.Decode\n\n    --\n    -- Success scenario\n    \"\"\"\n    <SendEmailResponse xmlns=\"https://email.amazonaws.com/doc/2010-03-31/\">\n      <SendEmailResult>\n        <MessageId>000001271b15238a-fd3ae762-2563-11df-8cd4-6d4e828a9ae8-000000</MessageId>\n      </SendEmailResult>\n      <ResponseMetadata>\n        <RequestId>fd3ae762-2563-11df-8cd4-6d4e828a9ae8</RequestId>\n      </ResponseMetadata>\n    </SendEmailResponse>\n    \"\"\"\n    |> Xml.Decode.run decodeResponse\n    --> Ok (Success  { messageId = \"000001271b15238a-fd3ae762-2563-11df-8cd4-6d4e828a9ae8-000000\", requestId = \"fd3ae762-2563-11df-8cd4-6d4e828a9ae8\" })\n\n    --\n    -- Error scenario\n    \"\"\"\n    <ErrorResponse>\n       <Error>\n          <Type>\n             Sender\n          </Type>\n          <Code>\n             ValidationError\n          </Code>\n          <Message>\n             Value null at 'message.subject' failed to satisfy constraint: Member must not be null\n          </Message>\n       </Error>\n       <RequestId>\n          42d59b56-7407-4c4a-be0f-4c88daeea257\n       </RequestId>\n    </ErrorResponse>\n    \"\"\"\n    |> Xml.Decode.run decodeResponse\n    --> Ok (Error  { type_ = \"Sender\", code = \"ValidationError\", message = \"Value null at 'message.subject' failed to satisfy constraint: Member must not be null\" })\n\n",
+                "type": "Xml.Decode.Decoder AWS.SES.Response"
+            },
+            {
+                "name": "paramsForMail",
+                "comment": "\n\n    givenRawMessage : String\n    givenRawMessage =\n        -- NOTE: the leading space of this string will be removed\n        \"\\n\\nFrom:user@example.com\\nSubject: Test\\n\\nMessage sent using SendRawEmail.\\n\\n\"\n\n    expectedRawParams : List (String, String)\n    expectedRawParams =\n        [ (\"Action\", \"SendRawEmail\")\n        , ( \"Source\", \"charlie@example.com\" )\n        , (\"Destinations.member.1\", \"alice@example.com\")\n        , (\"Destinations.member.2\", \"bob@example.com\")\n        , (\"RawMessage.Data\", \"RnJvbTp1c2VyQGV4YW1wbGUuY29tClN1YmplY3Q6IFRlc3QKCk1lc3NhZ2Ugc2VudCB1c2luZyBTZW5kUmF3RW1haWwuCgo=\")\n        ]\n\n\n    paramsForMail\n        (RawEmail\n            { from = \"charlie@example.com\"\n            , destinations = [\"alice@example.com\", \"bob@example.com\"]\n            , rawMessage = givenRawMessage\n            }\n        )\n    --> Ok expectedRawParams\n\n    givenEmailDetail : { from : String, to : List String, replyTo : List String, subject : String, textBody : String, htmlBody : String}\n    givenEmailDetail =\n        { from = \"alice@example.com\"\n        , to = [ \"bob@example.com\" ]\n        , replyTo = [ \"donotreply@example.com\" ]\n        , subject = \"Test\"\n        , textBody = \"Message sent using SendEmail\"\n        , htmlBody = \"<p>Message sent using SendEmail</p>\"\n        }\n\n    expectedEmailParams : List (String, String)\n    expectedEmailParams =\n        [ ( \"Action\", \"SendEmail\" )\n        , ( \"Source\", \"alice@example.com\" )\n        , ( \"Message.Subject.Data\", \"Test\" )\n        , ( \"Message.Body.Text.Data\", \"Message sent using SendEmail\" )\n        , ( \"Message.Body.Html.Data\", \"<p>Message sent using SendEmail</p>\" )\n        , ( \"Destination.ToAddresses.member.1\", \"bob@example.com\" )\n        , ( \"ReplyToAddresses.member.1\", \"donotreply@example.com\" )\n        ]\n\n    paramsForMail (Email givenEmailDetail)\n    --> Ok expectedEmailParams\n\n",
+                "type": "AWS.SES.OutgoingMail -> Result.Result String.String (List.List ( String.String, String.String ))"
+            },
+            {
+                "name": "unsignedRequest",
+                "comment": " Construct an `UnsignedRequest` for SES, e.g.\n\n    import Http\n    import AWS.Types\n\n    unsignedResult : Result String (AWS.Types.UnsignedRequest Http.Error Response)\n    unsignedResult =\n        unsignedRequest\n            (Email\n                { from = \"alice@example.com\"\n                , to = [ \"bob@example.com\" ]\n                , replyTo = [ \"donotreply@example.com\" ]\n                , subject = \"Test\"\n                , textBody = \"Message sent using SendEmail\"\n                , htmlBody = \"<p>Message sent using SendEmail</p>\"\n                }\n            )\n\n    Result.map .method unsignedResult\n    --> Ok \"POST\"\n\n    Result.map .headers unsignedResult\n    --> Ok [(\"Content-Type\",\"application/x-www-form-urlencoded\")]\n\n    Result.map .stringBody unsignedResult\n    --> Ok \"Action=SendEmail&Source=alice%40example.com&Message.Subject.Data=Test&Message.Body.Text.Data=Message%20sent%20using%20SendEmail&Message.Body.Html.Data=%3Cp%3EMessage%20sent%20using%20SendEmail%3C%2Fp%3E&Destination.ToAddresses.member.1=bob%40example.com&ReplyToAddresses.member.1=donotreply%40example.com\"\n\n    Result.map .service unsignedResult\n    --> Ok AWS.Types.ServiceSES\n\n\n    usage config now unsignedResult =\n        unsignedResult\n            |> Result.andThen (AWS.signRequest config now)\n            |> Result.map Http.task\n\n",
+                "type": "AWS.SES.OutgoingMail -> Result.Result String.String (AWS.Types.UnsignedRequest Http.Error AWS.SES.Response)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "AWS.SQS",
+        "comment": " Implementation of <https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-working-with-apis.html>\n\n@docs OutgoingMessage, Response, unsignedRequest\n\n\n## Tested internals\n\n@docs paramsForMessages, decodeResponse\n\n",
+        "unions": [
+            {
+                "name": "OutgoingMessage",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "StandardMessage",
+                        [
+                            "{ body : String.String, attributes : List.List { name : String.String, type_ : String.String, value : String.String } }"
+                        ]
+                    ],
+                    [
+                        "FifoMessage",
+                        [
+                            "{ body : String.String, attributes : List.List { name : String.String, type_ : String.String, value : String.String }, messageGroupId : String.String }"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Response",
+                "comment": " Response from SES API\n\nSee <https://docs.aws.amazon.com/ses/latest/DeveloperGuide/using-ses-api-responses.html>\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Error",
+                        [
+                            "{ type_ : String.String, code : String.String, message : String.String }"
+                        ]
+                    ],
+                    [
+                        "Success",
+                        [
+                            "{ messageIds : List.List String.String, requestId : String.String }"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "decodeResponse",
+                "comment": "\n\n    import Xml.Decode\n\n    --\n    -- Success scenario\n    \"\"\"\n    <SendMessageBatchResponse>\n    <SendMessageBatchResult>\n        <SendMessageBatchResultEntry>\n            <Id>test_msg_001</Id>\n            <MessageId>0a5231c7-8bff-4955-be2e-8dc7c50a25fa</MessageId>\n            <MD5OfMessageBody>0e024d309850c78cba5eabbeff7cae71</MD5OfMessageBody>\n        </SendMessageBatchResultEntry>\n        <SendMessageBatchResultEntry>\n            <Id>test_msg_002</Id>\n            <MessageId>15ee1ed3-87e7-40c1-bdaa-2e49968ea7e9</MessageId>\n            <MD5OfMessageBody>7fb8146a82f95e0af155278f406862c2</MD5OfMessageBody>\n            <MD5OfMessageAttributes>295c5fa15a51aae6884d1d7c1d99ca50</MD5OfMessageAttributes>\n        </SendMessageBatchResultEntry>\n    </SendMessageBatchResult>\n    <ResponseMetadata>\n        <RequestId>ca1ad5d0-8271-408b-8d0f-1351bf547e74</RequestId>\n    </ResponseMetadata>\n    </SendMessageBatchResponse>\n    \"\"\"\n    |> Xml.Decode.run decodeResponse\n    --> Ok (Success { messageIds = [\"test_msg_001\",\"test_msg_002\"], requestId = \"ca1ad5d0-8271-408b-8d0f-1351bf547e74\" })\n\n    --\n    -- Error scenario\n    \"\"\"\n    <ErrorResponse>\n       <Error>\n          <Type>\n             Sender\n          </Type>\n          <Code>\n             ValidationError\n          </Code>\n          <Message>\n             Value null at 'message.subject' failed to satisfy constraint: Member must not be null\n          </Message>\n       </Error>\n       <RequestId>\n          42d59b56-7407-4c4a-be0f-4c88daeea257\n       </RequestId>\n    </ErrorResponse>\n    \"\"\"\n    |> Xml.Decode.run decodeResponse\n    --> Ok (Error  { type_ = \"Sender\", code = \"ValidationError\", message = \"Value null at 'message.subject' failed to satisfy constraint: Member must not be null\" })\n\n",
+                "type": "Xml.Decode.Decoder AWS.SQS.Response"
+            },
+            {
+                "name": "paramsForMessages",
+                "comment": "\n\n    expectedParams : List ( String, String )\n    expectedParams =\n        [ (\"Action\",\"SendMessageBatch\")\n        , (\"SendMessageBatchRequestEntry.1.Id\",\"1\")\n        , (\"SendMessageBatchRequestEntry.1.MessageBody\",\"alpha message\")\n        , (\"SendMessageBatchRequestEntry.1.MessageGroupId\",\"MessageGroup123\")\n        , (\"SendMessageBatchRequestEntry.2.Id\",\"2\")\n        , (\"SendMessageBatchRequestEntry.2.MessageBody\",\"beta message\")\n        ]\n\n    paramsForMessages\n        [ FifoMessage\n            { body = \"alpha message\"\n            , attributes = [ { name = \"nameA\", type_ = \"typeA\", value = \"valueA\" }]\n            , messageGroupId = \"MessageGroup123\"\n            }\n        , StandardMessage\n            { body = \"beta message\"\n            , attributes = [ { name = \"nameB\", type_ = \"typeB\", value = \"valueB\" }]\n            }\n        ]\n    --> expectedParams\n\n",
+                "type": "List.List AWS.SQS.OutgoingMessage -> List.List ( String.String, String.String )"
+            },
+            {
+                "name": "unsignedRequest",
+                "comment": " Construct an `UnsignedRequest` for SQS <https://docs.aws.amazon.com/AWSSimpleQueueService/latest/APIReference/API_SendMessageBatch.html>, e.g.\n\n    import Http\n    import AWS.Types\n    import Url\n\n    queueUrl : Url.Url\n    queueUrl =\n        { protocol = Url.Https\n        , host = \"somequeue\"\n        , port_ = Nothing\n        , path = \"/123/queue.fifo\"\n        , query = Nothing\n        , fragment = Nothing\n        }\n\n    unsignedResult : AWS.Types.UnsignedRequest Http.Error Response\n    unsignedResult =\n        unsignedRequest queueUrl\n            [ StandardMessage\n                { body = \"alpha message\"\n                , attributes = [ { name = \"nameA\", type_ = \"typeA\", value = \"valueA\" }]\n                }\n            , FifoMessage\n                { body = \"beta message\"\n                , attributes = [ { name = \"nameB\", type_ = \"typeB\", value = \"valueB\" }]\n                , messageGroupId = \"messageGroupABC\"\n                }\n            ]\n\n    unsignedResult.method\n    --> \"POST\"\n\n    unsignedResult.headers\n    --> [(\"Content-Type\",\"application/x-www-form-urlencoded\")]\n\n    unsignedResult.stringBody\n    --> \"Action=SendMessageBatch&SendMessageBatchRequestEntry.1.Id=1&SendMessageBatchRequestEntry.1.MessageBody=alpha%20message&SendMessageBatchRequestEntry.2.Id=2&SendMessageBatchRequestEntry.2.MessageBody=beta%20message&SendMessageBatchRequestEntry.2.MessageGroupId=messageGroupABC\"\n\n    unsignedResult.service\n    --> AWS.Types.ServiceSQS queueUrl\n\n\n    usage config now unsignedResult =\n        unsignedResult\n            |> Result.andThen (AWS.signRequest config now)\n            |> Result.map Http.task\n\n",
+                "type": "Url.Url -> List.List AWS.SQS.OutgoingMessage -> AWS.Types.UnsignedRequest Http.Error AWS.SQS.Response"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "AWS.Types",
+        "comment": "\n\n@docs Config, Service, SignedRequest, UnsignedRequest, Signature\n\n",
+        "unions": [
+            {
+                "name": "Service",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "ServiceIam",
+                        []
+                    ],
+                    [
+                        "ServiceDynamoDB",
+                        []
+                    ],
+                    [
+                        "ServiceSES",
+                        []
+                    ],
+                    [
+                        "ServiceSQS",
+                        [
+                            "Url.Url"
+                        ]
+                    ],
+                    [
+                        "ServiceS3",
+                        [
+                            "Url.Url"
+                        ]
+                    ],
+                    [
+                        "ServiceCustom",
+                        [
+                            "String.String",
+                            "Url.Url"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " ",
+                "args": [],
+                "type": "{ awsSecretAccessKey : String.String, awsRegion : String.String, accessKeyId : String.String, timeout : Maybe.Maybe Basics.Float }"
+            },
+            {
+                "name": "Signature",
+                "comment": " ",
+                "args": [],
+                "type": "{ text : String.String, credentialScope : String.String, headers : List.List ( String.String, String.String ), signedHeaders : String.String, algorithm : String.String, debugCanonicalString : String.String, debugStringToSign : String.String }"
+            },
+            {
+                "name": "SignedRequest",
+                "comment": " ",
+                "args": [
+                    "x",
+                    "a"
+                ],
+                "type": "{ method : String.String, headers : List.List Http.Header, url : String.String, body : Http.Body, resolver : Http.Resolver x a, timeout : Maybe.Maybe Basics.Float }"
+            },
+            {
+                "name": "UnsignedRequest",
+                "comment": " ",
+                "args": [
+                    "x",
+                    "a"
+                ],
+                "type": "{ method : String.String, headers : List.List ( String.String, String.String ), query : List.List ( String.String, String.String ), stringBody : String.String, resolver : Http.Resolver x a, service : AWS.Types.Service }"
+            }
+        ],
+        "values": [],
+        "binops": []
+    }
+]

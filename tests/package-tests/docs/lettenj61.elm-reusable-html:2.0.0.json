@@ -1,0 +1,44 @@
+[
+    {
+        "name": "Reusable",
+        "comment": " Minimal reusable functions to enrich common use of elm/html.\n\n# Types\n@docs CustomTag, Tag\n\n# Utilities\n@docs extend, wrap, wrapDeep\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "CustomTag",
+                "comment": " A type of function which constructs `Html` node with given `msg` and `children`.\n\nThis is merely an synonym for those values reside in `elm/html`,\nwhich you must be already familiar with.\n\nYou can use this to make a little statement about\nwhat type does your custom view function would accept as child node.\n\n    type alias CardProp msg =\n        { title : String\n        , body : Html msg\n        }\n\n    card : CustomTag (CardProp msg) msg\n    card attributes { title, body } =\n        div\n            (class \"card\" :: attributes)\n            [ span [ text title ]\n            , body\n            ]\n",
+                "args": [
+                    "children",
+                    "msg"
+                ],
+                "type": "List.List (Html.Attribute msg) -> children -> Html.Html msg"
+            },
+            {
+                "name": "Tag",
+                "comment": " The fundamental function type that constructs `Html` from `List` of `Attribute`s and `Html`s.\n\nFrankly, this package is all about defining your own `Tag msg` values, with as fewer keystrokes as possible.\n\n    import Html exposing (..)\n\n    myTag : Tag msg\n    myTag =\n        div\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "Reusable.CustomTag (List.List (Html.Html msg)) msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "extend",
+                "comment": " Extend given `Tag` function to ensure it would always have default `Attribute`s.\n\n    row : Tag msg\n    row =\n        extend [class \"row\"] div\n\n    row [] [ text \"hello\" ]\n        == \"\"\"<div class=\"row\">hello</div>\"\"\"\n",
+                "type": "List.List (Html.Attribute msg) -> Reusable.Tag msg -> Reusable.Tag msg"
+            },
+            {
+                "name": "wrap",
+                "comment": " Wraps another node so that it would be rendered inside the `wrapper` node.\n\n    wrapper : Tag msg\n    wrapper =\n        span\n            |> wrap (div [ class \"wrapper\" ])\n\n    wrapper [] [ text \"in depth\" ]\n        ==  \"\"\"\n            <div class=\"wrapper\">\n                <span>in depth</span>\n            </div>\n            \"\"\"\n",
+                "type": "(List.List (Html.Html msg) -> Html.Html msg) -> Reusable.Tag msg -> Reusable.Tag msg"
+            },
+            {
+                "name": "wrapDeep",
+                "comment": " `wrapDeep` plants resulting view of given `tag` into deeply nested structure.\n\nThe first element in given `outerNodes` list would come topmost.\n\n    postItem : Tag msg\n    postItem =\n        p\n            |> extend [ class \"post-item\" ]\n            |> wrapDeep\n                [ (div [ class \"post-wrapper\" ])\n                , (article [ class \"post-body\" ])\n                ]\n\n    postItem [] [ text \"New blog!\" ]\n        ==  \"\"\"\n            <div class=\"post-wrapper\">\n                <article class=\"post-body\">\n                    <p class=\"post-item\">New blog!</p>\n                </article>\n            </div>\n            \"\"\"\n",
+                "type": "List.List (List.List (Html.Html msg) -> Html.Html msg) -> Reusable.Tag msg -> Reusable.Tag msg"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,51 @@
+[
+    {
+        "name": "Tree.Extra",
+        "comment": "\n\n\n## Manipulate Trees\n\n@docs attachSubtree, removeSubtree, moveSubtree, spanningTree\n\n\n## Manipulate using a partial order on nodes\n\n@docs attachSubtreeInOrder\n\n\n## Info on Trees\n\n@docs depth, nodeCount, tagWithDepth\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "attachSubtree",
+                "comment": "\n\n    > a = t 1 [ t 2 [ s 3, t 4 [s 5, s 6]]]\n    > x = t 2 [ s 3, s 4]\n\n    > attachSubtree 1 x a\n    Just (Tree 1 [Tree 2 [Tree 3 [],Tree 4 [Tree 5 [],Tree 6 []]],Tree 2 [Tree 3 [],Tree 4 []]])\n\n",
+                "type": "a -> Tree.Tree a -> Tree.Tree a -> Maybe.Maybe (Tree.Tree a)"
+            },
+            {
+                "name": "attachSubtreeInOrder",
+                "comment": " The function\n\n    attachSubtreeInOrder bigger targetNode subTree tree\n\nseeks to attach a subtree to a given tree\nis such a way that the parent of the subtree\nhas the proper order with respect to the function\n\n    bigger : a -> a -> Bool\n\nnamely,\n\n  - it is greater than the root of the subtree\n\n  - it is greater than or equal to targetNode\n\n  - it is the least such node\n\nHere is an example:\n\n    > a = t 1 [ t 2 [ s 3, t 4 [s 5, s 6]]]\n    > Tree 1 [Tree 2 [Tree 3 [],Tree 4 [Tree 5 [],Tree 6 []]]]\n\n    > x = t 3 [ s 4, s 5]\n    > Tree 3 [Tree 4 [],Tree 5 []]\n\n    > attachSubtreeInOrder (<) 6 x a\n    > Just (Tree 1 [Tree 2 [Tree 3 [],Tree 4 [Tree 5 [],Tree 6 []],Tree 3 [Tree 4 [],Tree 5 []]]])\n\n",
+                "type": "(a -> a -> Basics.Bool) -> a -> Tree.Tree a -> Tree.Tree a -> Maybe.Maybe (Tree.Tree a)"
+            },
+            {
+                "name": "depth",
+                "comment": "\n\n    > a = t 1 [ t 2 [ s 3, t 4 [s 5, s 6]]]\n\n    > depth a\n    3\n\n",
+                "type": "Tree.Tree a -> Basics.Int"
+            },
+            {
+                "name": "moveSubtree",
+                "comment": "\n\n    > a = t 1 [ t 2 [ s 3, t 4 [s 5, s 6]]]\n    Tree 1 [Tree 2 [Tree 3 [],Tree 4 [Tree 5 [],Tree 6 []]]]\n\n    > moveSubtree 4 1 a\n    Just (Tree 1 [Tree 2 [Tree 3 []],Tree 4 [Tree 5 [],Tree 6 []]])\n\n",
+                "type": "a -> a -> Tree.Tree a -> Maybe.Maybe (Tree.Tree a)"
+            },
+            {
+                "name": "nodeCount",
+                "comment": " Number of notes in a tree\n\n        > a = t 1 [ t 2 [ s 3, t 4 [s 5, s 6]]]\n\n        > nodeCount a\n        6\n\n",
+                "type": "Tree.Tree a -> Basics.Int"
+            },
+            {
+                "name": "removeSubtree",
+                "comment": "\n\n    > a = t 1 [ t 2 [ s 3, t 4 [s 5, s 6]]]\n    Tree 1 [Tree 2 [Tree 3 [],Tree 4 [Tree 5 [],Tree 6 []]]]\n\n    > removeSubtree 3 a |> Maybe.andThen (removeSubtree 5)\n    Just (Tree 1 [Tree 2 [Tree 4 [Tree 6 []]]])\n\n",
+                "type": "a -> Tree.Tree a -> Maybe.Maybe (Tree.Tree a)"
+            },
+            {
+                "name": "spanningTree",
+                "comment": " Compute the smallest subtree of the given tree\nwhich contains all the nodes of the nodeList.\n\n    > a = t 1 [ t 2 [ s 3, t 4 [s 5, s 6]]]\n    Tree 1 [Tree 2 [Tree 3 [],Tree 4 [Tree 5 [],Tree 6 []]]]\n\n    > spanningTree [3, 5] a\n    Just (Tree 2 [Tree 3 [],Tree 4 [Tree 5 [],Tree 6 []]])\n\n",
+                "type": "List.List a -> Tree.Tree a -> Maybe.Maybe (Tree.Tree a)"
+            },
+            {
+                "name": "tagWithDepth",
+                "comment": " Transforms a tree of items into\na tree of tuples of the form `(a, k)`, where `k` is the\ndepth of `a` in the tree.\n\n    > a = t 1 [ t 2 [ s 3, t 4 [s 5, s 6]]]\n\n    > tagWithDepth a\n    > Tree (1,0) [Tree (2,1) [Tree (3,2) [],Tree (4,2) [Tree (5,3) [],Tree (6,3) []]]]\n\n",
+                "type": "Tree.Tree a -> Tree.Tree ( a, Basics.Int )"
+            }
+        ],
+        "binops": []
+    }
+]

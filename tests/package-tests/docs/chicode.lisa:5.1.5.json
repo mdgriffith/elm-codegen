@@ -1,0 +1,383 @@
+[
+    {
+        "name": "Lisa",
+        "comment": "\n\n    # Lisa\n\n    A simple lisp\n    Example:\n    ```\n    (defunc fib-recurse (n)\n        (var a 0) (var b 1) (var f 1)\n        (defunc calc-fib (i)\n            (if (<= i n)\n                (do\n                    (set f (+ a b))\n                    (set a b)\n                    (set b f)\n                    (calc-fib (+ i 1)))\n                f))\n        (calc-fib 2))\n    (defunc fib-while (n)\n        (var a 0) (var b 1) (var f 1)\n        (var i 2)\n        (while (<= i n)\n            (set f (+ a b))\n            (set a b)\n            (set b f)\n            (set i (+ i 1))\n            f))\n    (= (fib-recurse 10) (fib-while 10) 55)\n    ```\n\n    @docs parseProgram\n    @docs parseProgramToJson\n    @docs parseExpression\n    @docs parseExpressionToJson\n    @docs parseReplExpression\n    @docs parseReplExpressionToJson\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "parseExpression",
+                "comment": " Parse a string into an expression\n",
+                "type": "Lisa.Process.Options -> String.String -> Result.Result Lisa.Common.Error (List.List Lisa.Process.ExprNode)"
+            },
+            {
+                "name": "parseExpressionToJson",
+                "comment": " Parse a string into a Json representation of an expression\n",
+                "type": "Lisa.Process.Options -> String.String -> Json.Encode.Value"
+            },
+            {
+                "name": "parseProgram",
+                "comment": " Parse a string into a program\n",
+                "type": "Lisa.Process.Options -> String.String -> Result.Result Lisa.Common.Error Lisa.Process.Program"
+            },
+            {
+                "name": "parseProgramToJson",
+                "comment": " Parse a string into a Json representation of a program\n",
+                "type": "Lisa.Process.Options -> String.String -> Json.Encode.Value"
+            },
+            {
+                "name": "parseReplExpression",
+                "comment": " Parse a string into an expression intended for a REPL\n",
+                "type": "Lisa.Process.Options -> String.String -> Result.Result Lisa.Common.Error (List.List Lisa.Process.ReplExpression)"
+            },
+            {
+                "name": "parseReplExpressionToJson",
+                "comment": " Parse a string into a Json representation of an expression intended for a REPL\n",
+                "type": "Lisa.Process.Options -> String.String -> Json.Encode.Value"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Lisa.Common",
+        "comment": "\n\n@docs Error\n@docs LocatedNode\n@docs Location\n@docs Recoverable(..)\n@docs encodeError\n@docs encodeResult\n@docs encodeWithLocation\n@docs errNode\n@docs foldlListResult\n@docs foldrListResult\n@docs groupListEvery2\n@docs mapListResult\n@docs mapNode\n@docs nonRecovErrNode\n@docs nonRecovError\n\n",
+        "unions": [
+            {
+                "name": "Recoverable",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Recoverable",
+                        []
+                    ],
+                    [
+                        "Nonrecoverable",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Error",
+                "comment": " ",
+                "args": [],
+                "type": "{ recoverable : Lisa.Common.Recoverable, loc : Lisa.Common.Location, msg : String.String }"
+            },
+            {
+                "name": "LocatedNode",
+                "comment": " ",
+                "args": [
+                    "a"
+                ],
+                "type": "{ loc : Lisa.Common.Location, node : a }"
+            },
+            {
+                "name": "Location",
+                "comment": " ",
+                "args": [],
+                "type": "{ start : ( Basics.Int, Basics.Int ), end : ( Basics.Int, Basics.Int ) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "encodeError",
+                "comment": " ",
+                "type": "Lisa.Common.Error -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeResult",
+                "comment": " ",
+                "type": "(a -> Json.Encode.Value) -> Result.Result Lisa.Common.Error a -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeWithLocation",
+                "comment": " ",
+                "type": "Lisa.Common.Location -> List.List ( String.String, Json.Encode.Value ) -> Json.Encode.Value"
+            },
+            {
+                "name": "errNode",
+                "comment": " ",
+                "type": "Lisa.Common.Recoverable -> Lisa.Common.LocatedNode a -> String.String -> Lisa.Common.Error"
+            },
+            {
+                "name": "foldlListResult",
+                "comment": " ",
+                "type": "(a -> b -> Result.Result e b) -> b -> List.List a -> Result.Result e b"
+            },
+            {
+                "name": "foldrListResult",
+                "comment": " ",
+                "type": "(a -> b -> Result.Result e b) -> b -> List.List a -> Result.Result e b"
+            },
+            {
+                "name": "groupListEvery2",
+                "comment": " ",
+                "type": "List.List a -> Result.Result a (List.List ( a, a ))"
+            },
+            {
+                "name": "mapListResult",
+                "comment": " ",
+                "type": "(a -> Result.Result e b) -> List.List a -> Result.Result e (List.List b)"
+            },
+            {
+                "name": "mapNode",
+                "comment": " ",
+                "type": "Lisa.Common.LocatedNode a -> b -> Lisa.Common.LocatedNode b"
+            },
+            {
+                "name": "nonRecovErrNode",
+                "comment": " ",
+                "type": "Lisa.Common.LocatedNode a -> String.String -> Lisa.Common.Error"
+            },
+            {
+                "name": "nonRecovError",
+                "comment": " ",
+                "type": "Lisa.Common.Location -> String.String -> Lisa.Common.Error"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Lisa.Parser",
+        "comment": "\n\n@docs AstNode\n@docs SExpr\n@docs parse\n\n",
+        "unions": [
+            {
+                "name": "SExpr",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Group",
+                        [
+                            "List.List Lisa.Parser.AstNode"
+                        ]
+                    ],
+                    [
+                        "List",
+                        [
+                            "List.List Lisa.Parser.AstNode"
+                        ]
+                    ],
+                    [
+                        "Record",
+                        [
+                            "List.List Lisa.Parser.AstNode"
+                        ]
+                    ],
+                    [
+                        "FieldName",
+                        [
+                            "List.List String.String"
+                        ]
+                    ],
+                    [
+                        "Symbol",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Str",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "Num",
+                        [
+                            "Basics.Float"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "AstNode",
+                "comment": " ",
+                "args": [],
+                "type": "Lisa.Common.LocatedNode Lisa.Parser.SExpr"
+            }
+        ],
+        "values": [
+            {
+                "name": "parse",
+                "comment": " ",
+                "type": "String.String -> Result.Result Lisa.Common.Error (List.List Lisa.Parser.AstNode)"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Lisa.Process",
+        "comment": "\n\n@docs Context\n@docs Expr\n@docs ExprNode\n@docs MacroHandler\n@docs encodeExpr\n@docs processExpr\n@docs processExprOpts\n@docs processProgram\n@docs Options\n@docs Program\n@docs ReplExpression\n@docs encodeReplExpression\n@docs processReplExpr\n\n",
+        "unions": [
+            {
+                "name": "Context",
+                "comment": "\n\n    This is sort of strange in order to fix a problem with recursive type aliases.\n\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Expr",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "GetSymbol",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "FuncCall",
+                        [
+                            "Lisa.Process.ExprNode",
+                            "List.List Lisa.Process.ExprNode"
+                        ]
+                    ],
+                    [
+                        "Cond",
+                        [
+                            "Lisa.Process.CondExpr"
+                        ]
+                    ],
+                    [
+                        "Func",
+                        [
+                            "Lisa.Process.FuncDecl"
+                        ]
+                    ],
+                    [
+                        "Let",
+                        [
+                            "List.List ( String.String, Lisa.Process.ExprNode )",
+                            "Lisa.Process.ExprNode"
+                        ]
+                    ],
+                    [
+                        "RecordLit",
+                        [
+                            "Dict.Dict String.String Lisa.Process.ExprNode"
+                        ]
+                    ],
+                    [
+                        "FieldAccess",
+                        [
+                            "List.List String.String"
+                        ]
+                    ],
+                    [
+                        "NoneLit",
+                        []
+                    ],
+                    [
+                        "BoolLit",
+                        [
+                            "Basics.Bool"
+                        ]
+                    ],
+                    [
+                        "NumLit",
+                        [
+                            "Basics.Float"
+                        ]
+                    ],
+                    [
+                        "StrLit",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "ListLit",
+                        [
+                            "List.List Lisa.Process.ExprNode"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "ReplExpression",
+                "comment": " ",
+                "args": [],
+                "cases": [
+                    [
+                        "Expression",
+                        [
+                            "Lisa.Process.ExprNode"
+                        ]
+                    ],
+                    [
+                        "Definition",
+                        [
+                            "String.String",
+                            "Lisa.Process.ExprNode"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "ExprNode",
+                "comment": " ",
+                "args": [],
+                "type": "Lisa.Common.LocatedNode Lisa.Process.Expr"
+            },
+            {
+                "name": "MacroHandler",
+                "comment": " ",
+                "args": [],
+                "type": "Lisa.Process.Context -> Lisa.Common.Location -> List.List Lisa.Parser.AstNode -> Result.Result Lisa.Common.Error Lisa.Process.ExprNode"
+            },
+            {
+                "name": "Options",
+                "comment": " ",
+                "args": [],
+                "type": "{ macros : Dict.Dict String.String Lisa.Process.MacroHandler }"
+            },
+            {
+                "name": "Program",
+                "comment": " ",
+                "args": [],
+                "type": "Dict.Dict String.String Lisa.Process.ExprNode"
+            }
+        ],
+        "values": [
+            {
+                "name": "encodeExpr",
+                "comment": " ",
+                "type": "Lisa.Process.ExprNode -> Json.Encode.Value"
+            },
+            {
+                "name": "encodeReplExpression",
+                "comment": " ",
+                "type": "Lisa.Process.ReplExpression -> Json.Encode.Value"
+            },
+            {
+                "name": "processExpr",
+                "comment": " ",
+                "type": "Lisa.Process.Context -> Lisa.Parser.AstNode -> Result.Result Lisa.Common.Error Lisa.Process.ExprNode"
+            },
+            {
+                "name": "processExprOpts",
+                "comment": " ",
+                "type": "Lisa.Process.Options -> Lisa.Parser.AstNode -> Result.Result Lisa.Common.Error Lisa.Process.ExprNode"
+            },
+            {
+                "name": "processProgram",
+                "comment": " ",
+                "type": "Lisa.Process.Options -> List.List Lisa.Parser.AstNode -> Result.Result Lisa.Common.Error Lisa.Process.Program"
+            },
+            {
+                "name": "processReplExpr",
+                "comment": " ",
+                "type": "Lisa.Process.Options -> Lisa.Parser.AstNode -> Result.Result Lisa.Common.Error Lisa.Process.ReplExpression"
+            }
+        ],
+        "binops": []
+    }
+]

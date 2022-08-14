@@ -1,0 +1,55 @@
+[
+    {
+        "name": "FormattedText.Fuzz",
+        "comment": " Fuzzers of FormattedText types\n\nThis can be used to test code that makes use of FormattedText.\n\n@docs Markup\n@docs formattedText\n@docs customFormattedText\n@docs markup\n@docs equals\n\n",
+        "unions": [
+            {
+                "name": "Markup",
+                "comment": " A arbitrary Markup type used by the formattedText fuzzer.\n\nIf this isn't the right markup type for you, use `customFormattedText`.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Red",
+                        []
+                    ],
+                    [
+                        "Blue",
+                        []
+                    ],
+                    [
+                        "Green",
+                        []
+                    ],
+                    [
+                        "Yellow",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "customFormattedText",
+                "comment": " Customizable fuzzer of FormattedText types.\n\nYou can use your own text and markup fuzzers or use the standard `string` fuzzer\nand the markup fuzzer provided by this module.\n\n",
+                "type": "Fuzz.Fuzzer String.String -> Fuzz.Fuzzer markup -> Fuzz.Fuzzer (FormattedText.FormattedText markup)"
+            },
+            {
+                "name": "equals",
+                "comment": " Expect to formatted texts to be equal.\n\nUse this in tests for running assertions against your formatted text.\n\n",
+                "type": "FormattedText.FormattedText markup -> FormattedText.FormattedText markup -> Expect.Expectation"
+            },
+            {
+                "name": "formattedText",
+                "comment": " Fuzzer of FormattedText types.\n",
+                "type": "Fuzz.Fuzzer (FormattedText.FormattedText FormattedText.Fuzz.Markup)"
+            },
+            {
+                "name": "markup",
+                "comment": " Fuzzer of FormattedText markups.\n\nBecause any type can be used as a markup this is just a suggestion provided for the lazy developer ;).\n\n",
+                "type": "Fuzz.Fuzzer FormattedText.Fuzz.Markup"
+            }
+        ],
+        "binops": []
+    }
+]

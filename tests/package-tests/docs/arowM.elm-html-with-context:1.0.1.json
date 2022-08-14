@@ -1,0 +1,90 @@
+[
+    {
+        "name": "WithContext",
+        "comment": " Cleaner, hack-free way to pass contexts to Elm view functions\n\n\n# Types\n\n@docs WithContext\n\n\n# Converters\n\n@docs fromHtml\n@docs toHtml\n\n\n# Core functions\n\n@docs node\n@docs text\n\n\n# Low level functions\n\n@docs lift\n\n",
+        "unions": [
+            {
+                "name": "WithContext",
+                "comment": " An opaque type representing `Html` with a context.\n",
+                "args": [
+                    "context",
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "fromHtml",
+                "comment": " A constructor for `WithContext` from `Html`.\n",
+                "type": "(context -> Html.Html msg) -> WithContext.WithContext context msg"
+            },
+            {
+                "name": "lift",
+                "comment": " This function is supposed to be used with functions in `WithContext.Lazy`.\nPlease see [actual use case](https://github.com/arowM/elm-css-modules-helper/tree/master/examples/real-world) for detail.\n",
+                "type": "(context -> subContext) -> WithContext.WithContext subContext msg -> WithContext.WithContext context msg"
+            },
+            {
+                "name": "node",
+                "comment": " Custom node.\n",
+                "type": "(context -> List.List (Html.Html msg) -> Html.Html msg) -> List.List (WithContext.WithContext context msg) -> WithContext.WithContext context msg"
+            },
+            {
+                "name": "text",
+                "comment": " Text node.\n",
+                "type": "(context -> String.String) -> WithContext.WithContext context msg"
+            },
+            {
+                "name": "toHtml",
+                "comment": " Convert to `Html`.\n",
+                "type": "context -> WithContext.WithContext context msg -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "WithContext.Lazy",
+        "comment": " `WithContext` version of `Html.Lazy`.\nRather than immediately applying functions to their arguments, the lazy functions just bundle the function and arguments up for later. When diffing the old and new virtual DOM, it checks to see if all the arguments are equal by reference. If so, it skips calling the function!\n\nSee [Html.Lazy](https://package.elm-lang.org/packages/elm/html/latest/Html-Lazy) for detail.\n\n@docs lazy\n@docs lazy2\n@docs lazy3\n@docs lazy4\n@docs lazy5\n@docs lazy6\n@docs lazy7\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "lazy",
+                "comment": " Similar to `fromHtml` but this function does some sort of performance optimization that delays the building of virtual DOM nodes.\n",
+                "type": "(context -> a -> Html.Html msg) -> a -> WithContext.WithContext context msg"
+            },
+            {
+                "name": "lazy2",
+                "comment": " Same as lazy but checks on two arguments.\n",
+                "type": "(context -> a -> b -> Html.Html msg) -> a -> b -> WithContext.WithContext context msg"
+            },
+            {
+                "name": "lazy3",
+                "comment": " Same as lazy but checks on three arguments.\n",
+                "type": "(context -> a -> b -> c -> Html.Html msg) -> a -> b -> c -> WithContext.WithContext context msg"
+            },
+            {
+                "name": "lazy4",
+                "comment": " Same as lazy but checks on four arguments.\n",
+                "type": "(context -> a -> b -> c -> d -> Html.Html msg) -> a -> b -> c -> d -> WithContext.WithContext context msg"
+            },
+            {
+                "name": "lazy5",
+                "comment": " Same as lazy but checks on five arguments.\n",
+                "type": "(context -> a -> b -> c -> d -> e -> Html.Html msg) -> a -> b -> c -> d -> e -> WithContext.WithContext context msg"
+            },
+            {
+                "name": "lazy6",
+                "comment": " Same as lazy but checks on six arguments.\n",
+                "type": "(context -> a -> b -> c -> d -> e -> f -> Html.Html msg) -> a -> b -> c -> d -> e -> f -> WithContext.WithContext context msg"
+            },
+            {
+                "name": "lazy7",
+                "comment": " Same as lazy but checks on seven arguments.\n",
+                "type": "(context -> a -> b -> c -> d -> e -> f -> g -> Html.Html msg) -> a -> b -> c -> d -> e -> f -> g -> WithContext.WithContext context msg"
+            }
+        ],
+        "binops": []
+    }
+]

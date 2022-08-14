@@ -1,0 +1,179 @@
+[
+    {
+        "name": "TaskPort",
+        "comment": " This module allows to invoke JavaScript functions using the Elm's Task abstraction,\nwhich is convenient for chaining multiple API calls without introducing the complexity\nin the model of an Elm application.\n\n# Setting up\nBefore TypePort can be used in Elm, it must be set up on JavaScript side.\nRefer to the [README](https://github.com/lobanov/elm-taskport/blob/main/README.md) for comprehensive instructions.\n\n# Usage\n@docs FunctionName, call, callNoArgs, ignoreValue\n\n# Error handling\n@docs Error, Result, Task, JSError, JSErrorRecord, InteropError, interopErrorToString, errorToString\n\n# Package development\nMake sure you read section on package development in the README.\n\n@docs QualifiedName, Namespace, Version, noNamespace, inNamespace, callNS, callNoArgsNS\n\n",
+        "unions": [
+            {
+                "name": "Error",
+                "comment": " A structured error describing exactly how the interop call failed. You can use\nthis to determine the best way to react to and recover from the problem.\n\n`JSError` variant is for errors explicitly sent from the JavaScript side. The error information\nwill be specific to the interop use case, and it should be reconsituted from a JSON payload.\n\n`InteropError` variant is for the failures of the interop mechanism itself.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "InteropError",
+                        [
+                            "TaskPort.InteropError"
+                        ]
+                    ],
+                    [
+                        "JSError",
+                        [
+                            "TaskPort.JSError"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "InteropError",
+                "comment": " Subcategory of errors indicating a failure of the interop mechanism itself.\nThese errors are generally not receoverable, but you can use them to allow the application to fail gracefully,\nor at least provide useful context for debugging, for which you can use helper function `interopErrorToString`.\n\nInterop calls can fail for various reasons:\n* `NotInstalled`: JavaScript companion code responsible for TaskPort operations is missing or not working correctly,\nwhich means that no further interop calls can succeed.\n* `NotFound`: TaskPort was unable to find a registered function name, which means that no further calls to that function can succeed.\nString value will contain the function name.\n* `NotCompatible`: JavaScript and Elm code are not compatible. String value will contain the function name.\n* `CannotDecodeValue`: value returned by the JavaScript function cannot be decoded with a given JSON decoder.\nString value will contain the returned value verbatim, and `Json.Decode.Error` will contain the error details.\n* `RuntimeError`: some other unexpected failure of the interop mechanism. String value will contain further details of the error.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "NotInstalled",
+                        []
+                    ],
+                    [
+                        "NotFound",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "NotCompatible",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "CannotDecodeValue",
+                        [
+                            "Json.Decode.Error",
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "RuntimeError",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "JSError",
+                "comment": " Generic type representing all possibilities that could be returned from an interop call.\nJavaScript is very lenient regarding its errors. Any value could be thrown, and, if the JS code\nis asynchronous, the `Promise` can reject with any value. TaskPort always attempts to decode erroneous\nresults returned from iterop calls using `ErrorObject` variant followed by `JSErrorRecord` structure, which\ncontains standard fields for JavaScript `Error` object, but if that isn't possible, it resorts to\n`ErrorValue` variant followed by the JSON value as-is.\n\nIn most cases you would pass values of this type to `errorToString` to create\na useful diagnostic information, but you might also have a need to handle certain types\nof errors in a particular way. To make that easier, `ErrorObject` variant lifts up the error\nname to aid pattern-match for error types. You may do something like this:\n\n    case error of\n        JSError (ErrorObject \"VerySpecificError\" _) -> -- handle a particular subtype of Error thrown by the JS code\n        _ -> -- respond to the error in a generic way, e.g show a diagnostic message\n",
+                "args": [],
+                "cases": [
+                    [
+                        "ErrorObject",
+                        [
+                            "String.String",
+                            "TaskPort.JSErrorRecord"
+                        ]
+                    ],
+                    [
+                        "ErrorValue",
+                        [
+                            "Json.Encode.Value"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "QualifiedName",
+                "comment": " Represents the name of a function that may optionally be qualified with a versioned namespace.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "FunctionName",
+                "comment": " Alias for `String` type representing a name of a JavaScript function.\nValid function names only contain alphanumeric characters.\n",
+                "args": [],
+                "type": "String.String"
+            },
+            {
+                "name": "JSErrorRecord",
+                "comment": " Structure describing an object conforming to JavaScript standard for the `Error` object.\nUnless you need to handle very specific failure condition in a particular way, you are unlikely\nto use this type directly.\n\nThe structure contains the following fields:\n* `name` represents the type of the `Error` object, e.g. `ReferenceError`\n* `message` is a free-form and potentially empty string typically passed as a parameter to the error constructor\n* `stackLines` is a platform-specific stack trace for the error\n* `cause` is an optional nested error object, which is first attempted to be decoded as a `JSErrorRecord`, but\nfalls back to `JSError.ErrorValue` if that's not possible.\n",
+                "args": [],
+                "type": "{ name : String.String, message : String.String, stackLines : List.List String.String, cause : Maybe.Maybe TaskPort.JSError }"
+            },
+            {
+                "name": "Namespace",
+                "comment": " Alias for `String` type representing a namespace for JavaScript interop functions.\nNamespaces are typically used by Elm package developers, and passed as a paramter to `QualifiedName`.\nValid namespace string would match the following regular expression: `/^[\\w-]+\\/[\\w-]+$/.\n\nThe following are valid namespaces: `elm/core`, `lobanov/elm-taskport`, `rtfeldman/elm-iso8601-date-strings`.\n",
+                "args": [],
+                "type": "String.String"
+            },
+            {
+                "name": "Result",
+                "comment": " Convenience alias for a `Result` obtained from passing a `Task` created by one of\nthe variants of the `TaskPort.call` function to `Task.attempt'. Application code may be simplified,\nbecause TaskPort always uses `TaskPort.Error` for `Result.Err`.\n\n    type Msg = GotResult TaskPort.Result String\n\n    Task.attempt GotResult TaskPort.call { {- ... call details ... -} } args\n\nWriting `TaskPort.Result value` is equivalent to writing `Result TaskPort.Error value`.\n",
+                "args": [
+                    "value"
+                ],
+                "type": "Result.Result TaskPort.Error value"
+            },
+            {
+                "name": "Task",
+                "comment": " Convenience alias for a `Task`created by one of the variants of the `TaskPort.call` function.\nApplication code may be simplified, because TaskPort always uses `TaskPort.Error` for the error parameter of the Tasks it creates.\n\n    callJSFunction : String -> TaskPort.Task String\n    callJSFunction arg = TaskPort.call { {- ... call details ... -} } arg\n\nWriting `TaskPort.Task value` is equivalent to writing `Task TaskPort.Error value`.\n",
+                "args": [
+                    "value"
+                ],
+                "type": "Task.Task TaskPort.Error value"
+            },
+            {
+                "name": "Version",
+                "comment": " Alias for `String` type representing a version of a namespace for JavaScript interop functions.\nNamespaces are typically used by Elm package developers, and passed as a parameter to `QualifiedName`.\nTaskPort does not enforce any versioning scheme and allows any combination of alphanumeric characters, dots, and dashes.\nMost likely, Elm package developers will use Elm package version.\n",
+                "args": [],
+                "type": "String.String"
+            }
+        ],
+        "values": [
+            {
+                "name": "call",
+                "comment": " Creates a Task encapsulating an asyncronous invocation of a particular JavaScript function.\nThis function will usually be wrapped into a more specific one, which will partially apply it\nproviding the encoder and the decoders but curry the last parameter, so that it could invoked where necessary\nas a `args -> Task` function.\n\nBecause interop calls can fail, produced task would likely need to be piped into a `Task.attempt` or handled further using `Task.onError`.\n\nHere is a simple example that creates a `Cmd` invoking a registered JavaScript function called `ping`\nand produces a message `GotPong` with a `Result`, containing either an `Ok` variant with a string (determined by the first decoder argument),\nor an `Err`, containing a `TaskPort.Error` describing what went wrong.\n\n    type Msg = GotWidgetName (TaskPort.Result String)\n\n    TaskPort.call\n        { function = \"getWidgetNameByIndex\"\n        , valueDecoder = Json.Decode.string\n        , argsEncoder = Json.Encode.int\n        }\n        0\n            |> Task.attempt GotWidgetName\n\nThe `Task` abstraction allows to effectively compose chains of tasks without creating many intermediate variants in the Msg type, and\ndesigning the model to deal with partially completed call chain. The following example shows how this might be used\nwhen working with a hypothetical 'chatty' JavaScript API, requiring to call `getWidgetsCount` function to obtain a number\nof widgets, and then call `getWidgetName` with each widget's index to obtain its name.\n\n    type Msg = GotWidgets (Result (List String))\n    \n    getWidgetsCount : TaskPort.Task Int\n    getWidgetsCount = TaskPort.callNoArgs \n        { function = \"getWidgetsCount\"\n        , valueDecoder = Json.Decode.int\n        }\n\n    getWidgetNameByIndex : Int -> TaskPort.Task String\n    getWidgetNameByIndex = TaskPort.call\n        { function = \"getWidgetNameByIndex\"\n        , valueDecoder = Json.Decode.string\n        , argsEncoder = Json.Encode.int\n        } -- notice currying to return a function taking Int and producing a Task\n\n    getWidgetsCount\n        |> Task.andThen\n            (\\count ->\n                List.range 0 (count - 1)\n                    |> List.map getWidgetNameByIndex\n                    |> Task.sequence\n            )\n        |> Task.attempt GotWidgets\n\nThe resulting task has type `TaskPort.Task (List String)`, which could be attempted as a single command,\nwhich, if successful, provides a handy `List String` with all widget names.\n",
+                "type": "{ function : TaskPort.FunctionName, valueDecoder : Json.Decode.Decoder value, argsEncoder : args -> Json.Encode.Value } -> args -> TaskPort.Task value"
+            },
+            {
+                "name": "callNS",
+                "comment": " Creates a Task encapsulating an asyncronous invocation of a particular JavaScript function.\nIt behaves similarly to `call`, but this function is namespace-aware and is intended to be used\nby Elm package developers, who want to use TaskPort's function namespaces feature to eliminate a possibility\nof name clashes of their JavaScript functions with other packages that may also be using taskports.\n\nUnlike `call`, this function uses a record to specify the details of the interop call, which leads to more readable code.\n\n    TaskPort.callNS\n        { function = TaskPort.WithNS \"elm-package/namespace\" \"1.0.0\" \"setWidgetName\"\n        , valueDecoder = TaskPort.ignoreValue -- expecting no return value\n        , argsEncoder = Json.Encoder.string\n        }\n        \"new name\"\n            |> Task.attempt WidgetNameUpdated\n",
+                "type": "{ function : TaskPort.QualifiedName, valueDecoder : Json.Decode.Decoder value, argsEncoder : args -> Json.Encode.Value } -> args -> TaskPort.Task value"
+            },
+            {
+                "name": "callNoArgs",
+                "comment": " Special version of the `call` that reduces amount of boilerplate code required when calling JavaScript functions\nthat don't take any parameters.\n\n    type Msg = GotWidgetsCount (TaskPort.Result Int)\n\n    TaskPort.callNoArgs\n        { function = \"getWidgetsCount\"\n        , valueDecoder = Json.Decode.int\n        }\n          |> Task.attempt GotWidgetsCount\n",
+                "type": "{ function : TaskPort.FunctionName, valueDecoder : Json.Decode.Decoder value } -> TaskPort.Task value"
+            },
+            {
+                "name": "callNoArgsNS",
+                "comment": " Creates a Task encapsulating an asyncronous invocation of a particular JavaScript function without parameters.\nIt behaves similarly to `callNoArgs`, but this function is namespace-aware and is intended to be used\nby Elm package developers, who want to use TaskPort's function namespaces feature to eliminate a possibility\nof name clashes of their JavaScript functions with other packages that may also be using taskports.\n\nUnlike `callNoArgs`, this function uses a record to specify the details of the interop call, which leads to more readable code.\n\n    TaskPort.callNoArgsNS\n        { function = TaskPort.WithNS \"elm-package/namespace\" \"1.0.0\" \"getWidgetName\"\n        , valueDecoder = Json.Decoder.string -- expecting a string\n        }\n            |> Task.attempt GotWidgetName\n",
+                "type": "{ function : TaskPort.QualifiedName, valueDecoder : Json.Decode.Decoder value } -> TaskPort.Task value"
+            },
+            {
+                "name": "errorToString",
+                "comment": " Generates a human-readable and hopefully helpful string with diagnostic information\ndescribing an error. It produces multiple lines of output, so you may want to peek at it with\nsomething like this:\n\n    import Html\n\n    errorToHtml : TaskPort.JSError -> Html.Html msg\n    errorToHtml error =\n      Html.pre [] [ Html.text (TaskPort.jsErrorToString error) ]\n",
+                "type": "TaskPort.Error -> String.String"
+            },
+            {
+                "name": "ignoreValue",
+                "comment": " JSON decoder that can be used with as a `valueDecoder` parameter when calling JavaScript functions\nthat are not expected to return a value, or where the return value can be safely ignored.\n",
+                "type": "Json.Decode.Decoder ()"
+            },
+            {
+                "name": "inNamespace",
+                "comment": " Constructs a `QualifiedName` for a function in a particular versioned namespace.\n\n    \"functionName\" |> inNamespace \"author/package\" \"version\" -- infix notation reads better...\n    inNamespace \"author/package\" \"version\" \"functionName\" -- ... but this also works\n",
+                "type": "TaskPort.Namespace -> TaskPort.Version -> TaskPort.FunctionName -> TaskPort.QualifiedName"
+            },
+            {
+                "name": "interopErrorToString",
+                "comment": " In most cases instances of `InteropError` indicate a catastrophic failure in the\napplication environment and thus cannot be recovered from. This function allows\nElm application to fail gracefully by displaying an error message to the user,\nthat would help application developer to debug the issue.\n\nIt produces multiple lines of output, so you may want to peek at it with\nsomething like this:\n\n    import Html\n\n    errorToHtml : TaskPort.Error -> Html.Html msg\n    errorToHtml error =\n      Html.pre [] [ Html.text (TaskPort.interopErrorToString error) ]\n",
+                "type": "TaskPort.InteropError -> String.String"
+            },
+            {
+                "name": "noNamespace",
+                "comment": " Constructs a `QualifiedName` for a function in the default namespace.\nIt's better to use non-namespace-aware `call` or `callNoArgs` function, but\nit's provided for completeness.\n",
+                "type": "TaskPort.FunctionName -> TaskPort.QualifiedName"
+            }
+        ],
+        "binops": []
+    }
+]

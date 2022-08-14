@@ -1,0 +1,168 @@
+[
+    {
+        "name": "Language",
+        "comment": " Type definition for language configurations.\n\nTo implement a new language configuration, copy an existing one and modify it.\n\n@docs Ordinal, Language\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Language",
+                "comment": " Language defines the delimiters, abbreviations, ordinal and currency symbol.\n",
+                "args": [],
+                "type": "{ delimiters : Language.Delimiters, abbreviations : Language.Abbreviations, ordinal : Language.Ordinal, currency : Language.Currency }"
+            },
+            {
+                "name": "Ordinal",
+                "comment": " Type of a function that takes a float as input and returns an ordinal abbreviation string.\n",
+                "args": [],
+                "type": "Basics.Float -> String.String"
+            }
+        ],
+        "values": [],
+        "binops": []
+    },
+    {
+        "name": "Languages.BritishEnglish",
+        "comment": " British English language configuration.\n\n@docs lang\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "lang",
+                "comment": " Configuration data.\n\n    lang =\n      { delimiters=\n        { thousands=\",\"\n        , decimal=\".\"\n        }\n      , abbreviations=\n        { thousand=\"k\"\n        , million=\"m\"\n        , billion=\"b\"\n        , trillion=\"t\"\n        }\n      , ordinal=englishOrdinal\n      , currency=\n        { symbol=\"£\"\n        }\n      }\n",
+                "type": "Language.Language"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Languages.English",
+        "comment": " English language configuration.\n\n@docs lang\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "lang",
+                "comment": " Configuration data.\n\n    lang =\n      { delimiters=\n        { thousands=\",\"\n        , decimal=\".\"\n        }\n      , abbreviations=\n        { thousand=\"k\"\n        , million=\"m\"\n        , billion=\"b\"\n        , trillion=\"t\"\n        }\n      , ordinal=englishOrdinal\n      , currency=\n        { symbol=\"$\"\n        }\n      }\n",
+                "type": "Language.Language"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Languages.French",
+        "comment": " French language configuration.\n\n@docs lang\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "lang",
+                "comment": " Configuration data.\n\n    lang =\n      { delimiters=\n        { thousands=\" \"\n        , decimal=\",\"\n        }\n      , abbreviations=\n        { thousand=\"k\"\n        , million=\"m\"\n        , billion=\"b\"\n        , trillion=\"t\"\n        }\n      , ordinal=frenchOrdinal\n      , currency=\n        { symbol=\"€\"\n        }\n      }\n\n",
+                "type": "Language.Language"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Languages.German",
+        "comment": " German language configuration.\n\n@docs lang\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "lang",
+                "comment": " Configuration data.\n\n    lang =\n      { delimiters=\n        { thousands=\".\"\n        , decimal=\",\"\n        }\n      , abbreviations=\n        { thousand=\"Tsd.\"\n        , million=\"Mil.\"\n        , billion=\"Mrd.\"\n        , trillion=\"Bil.\"\n        }\n      , ordinal=germanOrdinal\n      , currency=\n        { symbol=\"€\"\n        }\n      }\n",
+                "type": "Language.Language"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Languages.Italian",
+        "comment": " Italian language configuration.\n\n@docs lang\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "lang",
+                "comment": " Configuration data.\n\n    lang =\n      { delimiters=\n        { thousands=\".\"\n        , decimal=\",\"\n        }\n      , abbreviations=\n        { thousand=\"mila\"\n        , million=\"mln\"\n        , billion=\"mld\"\n        , trillion=\"bil\"\n        }\n      , ordinal=italianOrdinal\n      , currency=\n        { symbol=\"€\"\n        }\n      }\n",
+                "type": "Language.Language"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Languages.Japanese",
+        "comment": " Japanese language configuration.\n\n@docs lang\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "lang",
+                "comment": " Configuration data.\n\n    lang =\n      { delimiters=\n        { thousands=\",\"\n        , decimal=\".\"\n        }\n      , abbreviations=\n        { thousand=\"千\"\n        , million=\"百万\"\n        , billion=\"十億\"\n        , trillion=\"兆\"\n        }\n      , ordinal=japaneseOrdinal\n      , currency=\n        { symbol=\"¥\"\n        }\n      }\n",
+                "type": "Language.Language"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Languages.Russian",
+        "comment": " Russian language configuration.\n\n@docs lang\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "lang",
+                "comment": " Configuration data.\n\n    lang =\n      { delimiters =\n        { thousands = \" \"\n        , decimal = \",\"\n        }\n      , abbreviations =\n        { thousand = \"тыс.\"\n        , million = \"млн\"\n        , billion = \"b\"\n        , trillion = \"трлн\"\n        }\n      , ordinal = russianOrdinal\n      , currency =\n        { symbol = \"руб.\"\n        }\n    }\n",
+                "type": "Language.Language"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Languages.Spanish",
+        "comment": " Spanish language configuration.\n\n@docs lang\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "lang",
+                "comment": " Configuration data.\n\n    lang =\n        { delimiters =\n            { thousands = \".\"\n            , decimal = \",\"\n            }\n        , abbreviations =\n            { thousand = \"k\"\n            , million = \"mm\"\n            , billion = \"b\"\n            , trillion = \"t\"\n            }\n        , ordinal = spanishOrdinal\n        , currency =\n            { symbol = \"€\"\n            }\n        }\n\n",
+                "type": "Language.Language"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Languages.Ukrainian",
+        "comment": " Ukrainian language configuration.\n\n@docs lang\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "lang",
+                "comment": " Configuration data.\n\n    lang =\n      { delimiters =\n        { thousands = \" \"\n        , decimal = \",\"\n        }\n      , abbreviations =\n        { thousand = \"тис.\"\n        , million = \"млн\"\n        , billion = \"млрд\"\n        , trillion = \"блн\"\n        }\n      , ordinal = ukrainianOrdinal\n      , currency =\n        { symbol = \"₴\"\n        }\n    }\n",
+                "type": "Language.Language"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Numeral",
+        "comment": " Elm module for (advanced) number formatting. It is a direct port of [Numeral.js](http://numeraljs.com/) and it is possible to use the same format strings. Manipulation and unformatting of numbers is not yet supported.\n\nIf you create a new language-file, please let me know or send a pull request.\n\n# Formatting\n\n@docs format, formatWithLanguage\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "format",
+                "comment": " Same as formatWithLanguage, but English is set as default language.\n\n    format \"$0,0.00\" 1000.234 == \"$1,000.23\"\n",
+                "type": "String.String -> Basics.Float -> String.String"
+            },
+            {
+                "name": "formatWithLanguage",
+                "comment": " Format a number with a given language.\n\n    import Language.Japanese as Japanese\n\n    myFormat = formatWithLanguage Japanese.lang \"0.0a\"\n\n    -- map myFormat [10123.12, 235798239.3242] == [\"10.1千\",\"235.8百万\"]\n",
+                "type": "Language.Language -> String.String -> Basics.Float -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

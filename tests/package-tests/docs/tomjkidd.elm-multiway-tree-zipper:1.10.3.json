@@ -1,0 +1,241 @@
+[
+    {
+        "name": "MultiwayTree",
+        "comment": " A library for constructing multi-way trees. Each Tree carries two pieces of\ninformation, it's datum and children.\n\n\n# Types\n\n@docs Tree, Forest\n\n\n# Operations\n\n@docs datum, children, foldl, foldr, flatten, tuplesOfDatumAndFlatChildren, filter, filterWithChildPrecedence, length, insertChild, appendChild\n\n\n# Mapping\n\n@docs map, mapListOverTree, indexedMap\n\n\n# Sorting\n\n@docs sortBy, sortWith\n\n",
+        "unions": [
+            {
+                "name": "Tree",
+                "comment": " A type to keep track of datum and children.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Tree",
+                        [
+                            "a",
+                            "MultiwayTree.Forest a"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Forest",
+                "comment": " A list of Trees. Convenient for describing children.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "List.List (MultiwayTree.Tree a)"
+            }
+        ],
+        "values": [
+            {
+                "name": "appendChild",
+                "comment": " Inserts a Tree as the last child of a Tree\n",
+                "type": "MultiwayTree.Tree a -> MultiwayTree.Tree a -> MultiwayTree.Tree a"
+            },
+            {
+                "name": "children",
+                "comment": " Access the children of the current tree\n",
+                "type": "MultiwayTree.Tree a -> MultiwayTree.Forest a"
+            },
+            {
+                "name": "datum",
+                "comment": " Access the datum of the current tree\n",
+                "type": "MultiwayTree.Tree a -> a"
+            },
+            {
+                "name": "filter",
+                "comment": " Filter the MultiwayTree. Keep only elements whose datum satisfy the predicate.\n",
+                "type": "(a -> Basics.Bool) -> MultiwayTree.Tree a -> Maybe.Maybe (MultiwayTree.Tree a)"
+            },
+            {
+                "name": "filterWithChildPrecedence",
+                "comment": " Filter the MultiwayTree. If the predicate is True for a Child the entire path to the root will be part of the result Tree.\n",
+                "type": "(a -> Basics.Bool) -> MultiwayTree.Tree a -> Maybe.Maybe (MultiwayTree.Tree a)"
+            },
+            {
+                "name": "flatten",
+                "comment": " Flattens a Tree into a List where the root is the first element of that list.\n",
+                "type": "MultiwayTree.Tree a -> List.List a"
+            },
+            {
+                "name": "foldl",
+                "comment": " Reduce a Tree from the left.\n",
+                "type": "(a -> b -> b) -> b -> MultiwayTree.Tree a -> b"
+            },
+            {
+                "name": "foldr",
+                "comment": " Reduce a Tree from the right.\n",
+                "type": "(a -> b -> b) -> b -> MultiwayTree.Tree a -> b"
+            },
+            {
+                "name": "indexedMap",
+                "comment": " Same as map but the function is also applied to the index of each element (starting at zero).\n",
+                "type": "(Basics.Int -> a -> b) -> MultiwayTree.Tree a -> Maybe.Maybe (MultiwayTree.Tree b)"
+            },
+            {
+                "name": "insertChild",
+                "comment": " Inserts a Tree as the first child of a Tree\n",
+                "type": "MultiwayTree.Tree a -> MultiwayTree.Tree a -> MultiwayTree.Tree a"
+            },
+            {
+                "name": "length",
+                "comment": " Return the length of the Tree. Calculated recusively as datum (1) + length of children (n)\nSince a MultiwayTree is never empty this function will never return Int < 1.\n",
+                "type": "MultiwayTree.Tree a -> Basics.Int"
+            },
+            {
+                "name": "map",
+                "comment": " Map over the MultiwayTree\n",
+                "type": "(a -> b) -> MultiwayTree.Tree a -> MultiwayTree.Tree b"
+            },
+            {
+                "name": "mapListOverTree",
+                "comment": " Map a Function over a List and a MultiwayTree.\n",
+                "type": "(a -> b -> result) -> List.List a -> MultiwayTree.Tree b -> Maybe.Maybe (MultiwayTree.Tree result)"
+            },
+            {
+                "name": "sortBy",
+                "comment": " Sort values by a derived property. Does not alter the nesting structure of\nthe Tree, that is it does not move Nodes up or down levels.\n\n    sortBy identity\n        Tree\n        \"a\"\n        [ Tree \"b\" []\n        , Tree \"d\" []\n        , Tree \"c\" []\n        ]\n        == Tree \"a\"\n            [ Tree \"b\" []\n            , Tree \"c\" []\n            , Tree \"d\" []\n            ]\n\n",
+                "type": "(a -> comparable) -> MultiwayTree.Tree a -> MultiwayTree.Tree a"
+            },
+            {
+                "name": "sortWith",
+                "comment": " Sort values with a custom comparison function like:\n\n    flippedComparison a b =\n        case compare a b of\n          LT -> GT\n          EQ -> EQ\n          GT -> LT\n\n    This is also the most general sort function, allowing you\n    to define any other.\n\n",
+                "type": "(a -> a -> Basics.Order) -> MultiwayTree.Tree a -> MultiwayTree.Tree a"
+            },
+            {
+                "name": "tuplesOfDatumAndFlatChildren",
+                "comment": " A special version of flatten which flattens a Tree into a List of Tuples like (element, [all elements in subtree])\n\n    Tree.tuplesOfDatumAndFlatChildren\n        Tree\n        \"a\"\n        [ Tree \"b\" []\n        , Tree \"c\" []\n        , Tree \"d\" []\n        ]\n        == [ ( \"a\", [ \"b\", \"c\", \"d\" ] ), ( \"b\", [] ), ( \"c\", [] ), ( \"d\", [] ) ]\n\n",
+                "type": "MultiwayTree.Tree a -> List.List ( a, List.List a )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "MultiwayTreeZipper",
+        "comment": " A library for navigating and updating immutable trees. The elements in\nthe tree must have the same type. The trees are implemented in a Huet\nZipper fashion.\n\n\n# Types\n\n@docs Context, Breadcrumbs, Zipper\n\n\n# Navigation API\n\n@docs goToChild, goUp, goToRoot, goLeft, goRight, goToNext, goToPrevious, goToRightMostChild, goTo\n\n\n# Update API\n\n@docs updateDatum, replaceDatum, insertChild, appendChild, updateChildren\n\n\n# Access API\n\n@docs datum, maybeDatum\n\n\n# References\n\n[The Zipper, Gerard Huet](https://www.st.cs.uni-saarland.de/edu/seminare/2005/advanced-fp/docs/huet-zipper.pdf)\n[Learn You A Haskell, Zippers, Miran Lipovaca](http://learnyouahaskell.com/zippers)\n\n\n# Future work\n\nMight be able to integrate existing [Rose Tree](http://package.elm-lang.org/packages/TheSeamau5/elm-rosetree) to work with the Zipper.\nWanted the first version to be self contained.\n\n",
+        "unions": [
+            {
+                "name": "Context",
+                "comment": " The necessary information needed to reconstruct a MultiwayTree as it is\nnavigated with a Zipper. This context includes the datum that was at the\nprevious node, a list of children that came before the node, and a list of\nchildren that came after the node.\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Context",
+                        [
+                            "a",
+                            "List.List (MultiwayTree.Tree a)",
+                            "List.List (MultiwayTree.Tree a)"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Breadcrumbs",
+                "comment": " A list of Contexts that is contructed as a MultiwayTree is navigated.\nBreadcrumbs are used to retain information about parts of the tree that move out\nof focus. As the tree is navigated, the needed Context is pushed onto the list\nBreadcrumbs, and they are maintained in the reverse order in which they are\nvisited\n",
+                "args": [
+                    "a"
+                ],
+                "type": "List.List (MultiwayTreeZipper.Context a)"
+            },
+            {
+                "name": "Zipper",
+                "comment": " A structure to keep track of the current Tree, as well as the Breadcrumbs to\nallow us to continue navigation through the rest of the tree.\n",
+                "args": [
+                    "a"
+                ],
+                "type": "( MultiwayTree.Tree a, MultiwayTreeZipper.Breadcrumbs a )"
+            }
+        ],
+        "values": [
+            {
+                "name": "appendChild",
+                "comment": " Inserts a Tree as the last child of the Tree at the current focus. Does not move the focus.\n",
+                "type": "MultiwayTree.Tree a -> MultiwayTreeZipper.Zipper a -> Maybe.Maybe (MultiwayTreeZipper.Zipper a)"
+            },
+            {
+                "name": "datum",
+                "comment": " Access the datum at the current Zipper focus.\n",
+                "type": "MultiwayTreeZipper.Zipper a -> a"
+            },
+            {
+                "name": "goLeft",
+                "comment": " Move left relative to the current Zipper focus. This allows navigation from\na child to it's previous sibling.\n\n    import Maybe exposing (andThen)\n\n    simpleTree =\n        Tree \"a\"\n            [ Tree \"b\" []\n            , Tree \"c\" []\n            , Tree \"d\" []\n            ]\n\n    Just (simpleTree, [])\n        |> andThen (goToChild 1)\n        |> andThen (goLeft)\n\n",
+                "type": "MultiwayTreeZipper.Zipper a -> Maybe.Maybe (MultiwayTreeZipper.Zipper a)"
+            },
+            {
+                "name": "goRight",
+                "comment": " Move right relative to the current Zipper focus. This allows navigation from\na child to it's next sibling.\n\n    import Maybe exposing (andThen)\n\n    simpleTree =\n        Tree \"a\"\n            [ Tree \"b\" []\n            , Tree \"c\" []\n            , Tree \"d\" []\n            ]\n\n    Just (simpleTree, [])\n        |> andThen (goToChild 1)\n        |> andThen (goRight)\n\n",
+                "type": "MultiwayTreeZipper.Zipper a -> Maybe.Maybe (MultiwayTreeZipper.Zipper a)"
+            },
+            {
+                "name": "goTo",
+                "comment": " Move the focus to the first element for which the predicate is True. If no\nsuch element exists returns Nothing. Starts searching at the root of the tree.\n\n    import Maybe exposing (andThen)\n\n    simpleTree =\n        Tree \"a\"\n            [ Tree \"b\"\n                [ Tree \"e\" [] ]\n            , Tree \"c\" []\n            , Tree \"d\" []\n            ]\n\n    Just (simpleTree, [])\n        |> andThen (goTo (\\elem -> elem == \"e\"))\n\n",
+                "type": "(a -> Basics.Bool) -> MultiwayTreeZipper.Zipper a -> Maybe.Maybe (MultiwayTreeZipper.Zipper a)"
+            },
+            {
+                "name": "goToChild",
+                "comment": " Move down relative to the current Zipper focus. This allows navigation from\na parent to it's children.\n\n    import Maybe exposing (andThen)\n\n    simpleTree =\n        Tree \"a\"\n            [ Tree \"b\" []\n            , Tree \"c\" []\n            , Tree \"d\" []\n            ]\n\n    Just (simpleTree, [])\n        |> andThen (goToChild 1)\n\n",
+                "type": "Basics.Int -> MultiwayTreeZipper.Zipper a -> Maybe.Maybe (MultiwayTreeZipper.Zipper a)"
+            },
+            {
+                "name": "goToNext",
+                "comment": " Moves to the next node in the hierarchy, depth-first. If already\nat the end, stays there.\n\n    import Maybe exposing (andThen)\n\n    simpleTree =\n        Tree \"a\"\n            [ Tree \"b\" []\n            , Tree \"c\" []\n            , Tree \"d\" []\n            ]\n\n    Just (simpleTree, [])\n        |> andThen (goToNext)\n        |> andThen (goToNext)\n\n",
+                "type": "MultiwayTreeZipper.Zipper a -> Maybe.Maybe (MultiwayTreeZipper.Zipper a)"
+            },
+            {
+                "name": "goToPrevious",
+                "comment": " Moves to the previous node in the hierarchy, depth-first.\n\n    import Maybe exposing (andThen)\n\n    simpleTree =\n        Tree \"a\"\n            [ Tree \"b\" []\n            , Tree \"c\" []\n            , Tree \"d\" []\n            ]\n\n    Just (simpleTree, [])\n        |> andThen (goToChild 2)\n        |> andThen (goToPrevious)\n        |> andThen (goToPrevious)\n\n",
+                "type": "MultiwayTreeZipper.Zipper a -> Maybe.Maybe (MultiwayTreeZipper.Zipper a)"
+            },
+            {
+                "name": "goToRightMostChild",
+                "comment": " Move down and as far right as possible relative to the current Zipper focus.\nThis allows navigation from a parent to it's last child.\n\n    import Maybe exposing (andThen)\n\n    simpleTree =\n        Tree \"a\"\n            [ Tree \"b\" []\n            , Tree \"c\" []\n            , Tree \"d\" []\n            ]\n\n    Just (simpleTree, [])\n        |> andThen (goToRightMostChild)\n\n",
+                "type": "MultiwayTreeZipper.Zipper a -> Maybe.Maybe (MultiwayTreeZipper.Zipper a)"
+            },
+            {
+                "name": "goToRoot",
+                "comment": " Move to the root of the current Zipper focus. This allows navigation from\nany part of the tree back to the root.\n\n    import Maybe exposing (andThen)\n\n    simpleTree =\n        Tree \"a\"\n            [ Tree \"b\"\n                [ Tree \"e\" [] ]\n            , Tree \"c\" []\n            , Tree \"d\" []\n            ]\n\n    Just (simpleTree, [])\n        |> andThen (goToChild 0)\n        |> andThen (goToChild 1)\n        |> andThen (goToRoot)\n\n",
+                "type": "MultiwayTreeZipper.Zipper a -> Maybe.Maybe (MultiwayTreeZipper.Zipper a)"
+            },
+            {
+                "name": "goUp",
+                "comment": " Move up relative to the current Zipper focus. This allows navigation from a\nchild to it's parent.\n\n    import Maybe exposing (andThen)\n\n    simpleTree =\n        Tree \"a\"\n            [ Tree \"b\" []\n            , Tree \"c\" []\n            , Tree \"d\" []\n            ]\n\n    Just (simpleTree, [])\n        |> andThen (goToChild 0)\n        |> andThen goUp\n\n",
+                "type": "MultiwayTreeZipper.Zipper a -> Maybe.Maybe (MultiwayTreeZipper.Zipper a)"
+            },
+            {
+                "name": "insertChild",
+                "comment": " Inserts a Tree as the first child of the Tree at the current focus. Does not move the focus.\n",
+                "type": "MultiwayTree.Tree a -> MultiwayTreeZipper.Zipper a -> Maybe.Maybe (MultiwayTreeZipper.Zipper a)"
+            },
+            {
+                "name": "maybeDatum",
+                "comment": " Access the datum at the current Zipper focus as a Maybe.\n",
+                "type": "MultiwayTreeZipper.Zipper a -> Maybe.Maybe a"
+            },
+            {
+                "name": "replaceDatum",
+                "comment": " Replace the datum at the current Zipper focus. This allows complete\nreplacement of a node's datum information, ignoring the previous state of the\nnode.\n\n    import Maybe exposing (andThen)\n\n    simpleTree =\n        Tree \"a\"\n            [ Tree \"b\"\n                [ Tree \"e\" [] ]\n            , Tree \"c\" []\n            , Tree \"d\" []\n            ]\n\n    Just (simpleTree, [])\n        |> andThen (goToChild 0)\n        |> andThen (replaceDatum \"X\") -- Replaces \"b\" with \"X\"\n        |> andThen (goToRoot)\n\n",
+                "type": "a -> MultiwayTreeZipper.Zipper a -> Maybe.Maybe (MultiwayTreeZipper.Zipper a)"
+            },
+            {
+                "name": "updateChildren",
+                "comment": " Fully replace the children at the current Zipper focus.\n",
+                "type": "MultiwayTree.Forest a -> MultiwayTreeZipper.Zipper a -> Maybe.Maybe (MultiwayTreeZipper.Zipper a)"
+            },
+            {
+                "name": "updateDatum",
+                "comment": " Update the datum at the current Zipper focus. This allows changes to be made\nto a part of a node's datum information, given the previous state of the node.\n\n    import Maybe exposing (andThen)\n\n    simpleTree =\n        Tree \"a\"\n            [ Tree \"b\"\n                [ Tree \"e\" [] ]\n            , Tree \"c\" []\n            , Tree \"d\" []\n            ]\n\n    Just (simpleTree, [])\n        |> andThen (goToChild 0)\n        |> andThen (updateDatum (\\old -> old ++ \"X\")) -- Appends an X to \"b\"\n        |> andThen (goToRoot)\n\n",
+                "type": "(a -> a) -> MultiwayTreeZipper.Zipper a -> Maybe.Maybe (MultiwayTreeZipper.Zipper a)"
+            }
+        ],
+        "binops": []
+    }
+]

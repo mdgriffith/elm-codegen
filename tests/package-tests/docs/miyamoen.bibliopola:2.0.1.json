@@ -1,0 +1,136 @@
+[
+    {
+        "name": "Bibliopola",
+        "comment": " UI Catalog for Elm applications built by elm-ui inspired by Storybook\n\n[demo](https://miyamoen.github.io/bibliopola/)\n\n\n# Types\n\n@docs Program, Book, Shelf\n\n\n## Program\n\nEntry point of Bibliopola\n\n@docs fromBook, fromShelf\n\n\n# Book\n\n@docs withFrontCover\n\n\n## Build Book\n\n@docs IntoBook, Story, intoBook, addStory, buildBook, buildHtmlBook\n@docs bookWithFrontCover\n\n\n# Shelf\n\n@docs emptyShelf, shelfWith\n@docs addBook, addShelf\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Book",
+                "comment": " Book has views.\n\nUse [`intoBook`](#intoBook) or [`bookWithFrontCover`](#bookWithFrontCover).\n\n",
+                "args": [],
+                "type": "Types.Book"
+            },
+            {
+                "name": "IntoBook",
+                "comment": " `IntoBook` is building `Book` type.\n\nUse [`intoBook`](#intoBook).\n\n",
+                "args": [
+                    "msg",
+                    "view"
+                ],
+                "type": "{ title : String.String, views : List.List ( List.List String.String, view ), stories : List.List ( String.String, List.List String.String ), toString : msg -> String.String }"
+            },
+            {
+                "name": "Program",
+                "comment": " Type for type annotation.\n\n    main : Bibliopola.Program\n    main =\n        fromBook book\n\n",
+                "args": [],
+                "type": "Platform.Program () Types.Model Types.Msg"
+            },
+            {
+                "name": "Shelf",
+                "comment": " Shelf is tree structure that has books.\n\n    type alias Shelf =\n        Tree Book\n\nUse [`emptyShelf`](#emptyShelf) or [`shelfWith`](#shelfWith).\n\n",
+                "args": [],
+                "type": "Types.Shelf"
+            },
+            {
+                "name": "Story",
+                "comment": " `Story` is options of `view` argument.\n\n`Story` has label, argument name, and options that have value and label.\n\n    |> addStory\n        (Story \"msg\" [ ( \"nothing\", Nothing ), ( \"click\", Just \"msg\" ) ])\n\nTo build `Story`, see [Bibliopola.Story](./Bibliopola-Story).\n\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ label : String.String, options : List.List ( String.String, a ) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "addBook",
+                "comment": " Add a book to shelf.\n\nThis book becomes child of shelf.\n\n",
+                "type": "Bibliopola.Book -> Bibliopola.Shelf -> Bibliopola.Shelf"
+            },
+            {
+                "name": "addShelf",
+                "comment": " Add a shelf to shelf.\n\nThis shelf becomes child of shelf.\n\n    shelf : Shelf\n    shelf =\n        emptyShelf \"Bibliopola\"\n            |> addShelf Atom.Index.shelf\n            |> addShelf Molecule.Index.shelf\n            |> addShelf Organism.Index.shelf\n            |> addShelf Page.Index.shelf\n\n",
+                "type": "Bibliopola.Shelf -> Bibliopola.Shelf -> Bibliopola.Shelf"
+            },
+            {
+                "name": "addStory",
+                "comment": " Add a story to `IntoBook`.\n",
+                "type": "Bibliopola.Story a -> Bibliopola.IntoBook msg (a -> view) -> Bibliopola.IntoBook msg view"
+            },
+            {
+                "name": "bookWithFrontCover",
+                "comment": " Build a book that has a static `view`.\n\n    book : Book\n    book =\n        bookWithFrontCover \"Hello\" view\n\n",
+                "type": "String.String -> Element.Element String.String -> Bibliopola.Book"
+            },
+            {
+                "name": "buildBook",
+                "comment": " Turn `IntoBook` to `Book`.\n\nTo use `intoBook` and `addStory`, `view` function is filled up with arguments.\n\nThis is for elm-ui `Element`.\n\n",
+                "type": "Bibliopola.IntoBook msg (Element.Element msg) -> Bibliopola.Book"
+            },
+            {
+                "name": "buildHtmlBook",
+                "comment": " Turn `IntoBook` to `Book`\n\nThis is for `Html`.\n\n",
+                "type": "Bibliopola.IntoBook msg (Html.Html msg) -> Bibliopola.Book"
+            },
+            {
+                "name": "emptyShelf",
+                "comment": " A Shelf has no books in itself.\n\n    shelf : Shelf\n    shelf =\n        emptyShelf \"Hello\"\n            |> addBook Hello.book\n            |> addBook HelloYou.book\n\n",
+                "type": "String.String -> Bibliopola.Shelf"
+            },
+            {
+                "name": "fromBook",
+                "comment": "\n\n    main : Bibliopola.Program\n    main =\n        fromBook book\n\n",
+                "type": "Bibliopola.Book -> Bibliopola.Program"
+            },
+            {
+                "name": "fromShelf",
+                "comment": "\n\n    main : Bibliopola.Program\n    main =\n        fromShelf shelf\n\n",
+                "type": "Bibliopola.Shelf -> Bibliopola.Program"
+            },
+            {
+                "name": "intoBook",
+                "comment": " Build [`IntoBook`](#IntoBook)\n\nFirst argument, `String`, is book title.\nSecond, `msg -> String`, is for message logger.\nLast, `view`, is your `view` function.\n\n    book : Book\n    book =\n        intoBook \"HelloYou\" identity view\n            |> addStory (Story.build \"name\" identity [ \"spam\", \"egg\", \"ham\" ])\n            |> buildBook\n\n",
+                "type": "String.String -> (msg -> String.String) -> view -> Bibliopola.IntoBook msg view"
+            },
+            {
+                "name": "shelfWith",
+                "comment": " A Shelf has one book in itself.\n\n    shelf : Shelf\n    shelf =\n        shelfWith ViewNum.book\n            |> addBook ViewFloat.book\n            |> addBook ViewInt.book\n\n",
+                "type": "Bibliopola.Book -> Bibliopola.Shelf"
+            },
+            {
+                "name": "withFrontCover",
+                "comment": " Add first view to a book.\n\n    book : Book\n    book =\n        intoBook \"HelloYou\" identity view\n            |> addStory (Story.build \"name\" identity [ \"spam\", \"egg\", \"ham\" ])\n            |> buildBook\n            |> withFrontCover (view \"Bibliopola\")\n\n",
+                "type": "Element.Element String.String -> Bibliopola.Book -> Bibliopola.Book"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Bibliopola.Story",
+        "comment": " This sub pacckage help to build `Story`.\n\n@docs build, addOption, map\n\n\n## Helper\n\n@docs bool\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "addOption",
+                "comment": " Add new option to a story.\n\nAdd head of options.\n\n    |> addStory\n        (Story \"label\" labels\n            |> Story.map Just\n            |> Story.addOption \"nothing\" Nothing\n        )\n\n",
+                "type": "String.String -> a -> Bibliopola.Story a -> Bibliopola.Story a"
+            },
+            {
+                "name": "bool",
+                "comment": "\n\n    bool label =\n        { label = label\n        , options = [ ( \"true\", True ), ( \"false\", False ) ]\n        }\n\n",
+                "type": "String.String -> Bibliopola.Story Basics.Bool"
+            },
+            {
+                "name": "build",
+                "comment": " Build `Story`.\n\n    |> addStory (Story.build \"name\" identity [ \"spam\", \"egg\", \"ham\" ])\n\nFirst argument is label of story.\nSecond is `toString` function that make label of option.\nLast is options of argument of `view`.\n\nTo build `Story`, use this or `Story` constructor directly.\n\n",
+                "type": "String.String -> (a -> String.String) -> List.List a -> Bibliopola.Story a"
+            },
+            {
+                "name": "map",
+                "comment": " Transform `Story a` to `Story b`.\n",
+                "type": "(a -> b) -> Bibliopola.Story a -> Bibliopola.Story b"
+            }
+        ],
+        "binops": []
+    }
+]

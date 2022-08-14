@@ -1,0 +1,16 @@
+[
+    {
+        "name": "JsonToElm",
+        "comment": "\n\n@docs rule\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "rule",
+                "comment": " Generates Elm code from a JSON sample in JsonString\n\n    config =\n        [ JsonToElm.rule\n        ]\n\n\n## Before fix\n\nThe fix runs on top-level values with a JsonString type annotation. It generates\nJSON decoders and encoders as well as the necessary types and type aliases.\n\n    import Json.Decode\n    import Json.Encode\n\n    sample : JsonString\n    sample =\n        \"\"\"@json{\"a\": 1}\"\"\"\n\n\n## After fix\n\n    import Json.Decode\n    import Json.Encode\n\n    type alias Sample =\n        { a : Int\n        }\n\n    sampleDecoder : Json.Decode.Decoder Sample\n    sampleDecoder =\n        Json.Decode.map Sample\n            (Json.Decode.field \"a\" Json.Decode.int)\n\n    encodedSample : Sample -> Json.Encode.Value\n    encodedSample sample =\n        Json.Encode.object\n            [ ( \"a\", Json.Encode.int sample.a )\n            ]\n\nNote that the imports in the module are examined to determine the style of decoders.\n\nIf a `Json.Decode.Extra` import is present, then applicative-style decoders\nusing `Json.Decode.Extra.andMap` will be generated.\n\nIf a `Json.Decode.Pipeline` import is present, then pipeline decoders are\ngenerated.\n\n\n## Try it out\n\nYou can try this rule out by running the following command:\n\n```bash\nelm-review --template alexkorban/elm-review-json-to-elm/example --rules JsonToElm\n```\n\n",
+                "type": "Review.Rule.Rule"
+            }
+        ],
+        "binops": []
+    }
+]

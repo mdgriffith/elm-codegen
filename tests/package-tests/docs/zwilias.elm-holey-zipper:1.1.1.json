@@ -1,0 +1,173 @@
+[
+    {
+        "name": "List.Holey.Zipper",
+        "comment": " Like a regular old list-zipper, except it can also focus on the holes\n_between_ elements.\n\nThis means you can represent an empty list, or point between two items and plug\nthat hole with a value.\n\n\n# Types\n\n@docs Zipper, Full, Hole\n\n\n# Creation\n\n@docs empty, singleton, zipper\n\n\n# Extraction\n\n@docs current, before, after, toList\n\n\n# Navigation\n\n@docs next, previous, nextHole, previousHole, first, last, beforeFirst, afterLast, findForward, findBackward\n\n\n# Modification\n\n@docs map, mapCurrent, mapBefore, mapAfter, mapParts, plug, remove, append, prepend, insertAfter, insertBefore\n\n",
+        "unions": [
+            {
+                "name": "Full",
+                "comment": " A `Zipper Full a` is pointing at an element of type `a`.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Hole",
+                "comment": " A `Zipper Hole a` is pointing at a hole between `a`s.\n\n... Heh.\n\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Zipper",
+                "comment": " Represents `Zipper` over a list with items of type `a`. The type `t` will,\nin practice, always be either `Full` or `Hole`. When it is `Full`, the zipper is\nfocused on an item. When it is `Hole`, you're looking at a hole between elements.\n",
+                "args": [
+                    "t",
+                    "a"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "after",
+                "comment": " Conversely, list the things that come after the current location.\n\n    import List.Holey.Zipper as Zipper\n\n\n    Zipper.zipper 0 [ 1, 2, 3 ]\n        |> Zipper.next\n        |> Maybe.map Zipper.after\n    --> Just [ 2, 3 ]\n\n",
+                "type": "List.Holey.Zipper.Zipper t a -> List.List a"
+            },
+            {
+                "name": "afterLast",
+                "comment": " Go to the hole after the end of the zipper. Into the nothingness.\n",
+                "type": "List.Holey.Zipper.Zipper t a -> List.Holey.Zipper.Zipper List.Holey.Zipper.Hole a"
+            },
+            {
+                "name": "append",
+                "comment": " Append a bunch of items after the zipper. This appends all the way at the end.\n\n    import List.Holey.Zipper as Zipper\n\n\n    Zipper.zipper 123 [ 456 ]\n        |> Zipper.append [ 789, 0 ]\n        |> Zipper.toList\n    --> [ 123, 456, 789, 0 ]\n\n",
+                "type": "List.List a -> List.Holey.Zipper.Zipper t a -> List.Holey.Zipper.Zipper t a"
+            },
+            {
+                "name": "before",
+                "comment": " List the things that come before the current location in the zipper.\n\n    import List.Holey.Zipper as Zipper\n\n\n    Zipper.zipper 0 [ 1, 2, 3 ]\n        |> Zipper.next\n        |> Maybe.andThen Zipper.next\n        |> Maybe.map Zipper.before\n    --> Just [ 0, 1 ]\n\n",
+                "type": "List.Holey.Zipper.Zipper t a -> List.List a"
+            },
+            {
+                "name": "beforeFirst",
+                "comment": " Go to the hole before the first element. Remember that holes surround\neverything! They are everywhere.\n\n    import List.Holey.Zipper as Zipper\n\n\n    Zipper.zipper 1 [ 3, 4 ]\n        -- now we're after 1\n        |> Zipper.nextHole\n        -- plug that hole\n        |> Zipper.plug 2\n        -- back to _before_ the first element\n        |> Zipper.beforeFirst\n        -- put something in that hole\n        |> Zipper.plug 0\n        -- and check the result\n        |> Zipper.toList\n    --> [ 0, 1, 2, 3, 4 ]\n\n",
+                "type": "List.Holey.Zipper.Zipper t a -> List.Holey.Zipper.Zipper List.Holey.Zipper.Hole a"
+            },
+            {
+                "name": "current",
+                "comment": " Get the value the `Zipper` is currently pointing at.\n\nOnly applicable to zippers pointing at a value.\n\n    import List.Holey.Zipper as Zipper\n\n\n    Zipper.singleton \"hi there\"\n        |> Zipper.current\n    --> \"hi there\"\n\n\n    Zipper.zipper 1 [ 2, 3, 4 ]\n        |> Zipper.last\n        |> Zipper.current\n    --> 4\n\n",
+                "type": "List.Holey.Zipper.Zipper List.Holey.Zipper.Full a -> a"
+            },
+            {
+                "name": "empty",
+                "comment": " Create an empty zipper. It's pointing at nothing, there's nothing before it\nand nothing after it. It's the loneliest of all zippers.\n\n    import List.Holey.Zipper as Zipper\n\n\n    Zipper.toList Zipper.empty\n    --> []\n\n",
+                "type": "List.Holey.Zipper.Zipper List.Holey.Zipper.Hole a"
+            },
+            {
+                "name": "findBackward",
+                "comment": " Find the first element in the zipper matching a predicate, moving backwards\nfrom the current position.\n",
+                "type": "(a -> Basics.Bool) -> List.Holey.Zipper.Zipper t a -> Maybe.Maybe (List.Holey.Zipper.Zipper List.Holey.Zipper.Full a)"
+            },
+            {
+                "name": "findForward",
+                "comment": " Find the first element in the zipper the matches a predicate, returning a\nzipper pointing at that thing if it was found. When provided with a zipper\npointing at a thing, that thing is also checked.\n\nThis start from the current location, and searches towards the end.\n\n",
+                "type": "(a -> Basics.Bool) -> List.Holey.Zipper.Zipper t a -> Maybe.Maybe (List.Holey.Zipper.Zipper List.Holey.Zipper.Full a)"
+            },
+            {
+                "name": "first",
+                "comment": " Go to the first element in the Zipper. Note that this only accepts a zipper\nthat points at a thing, since it would have to return a `Maybe` otherwise.\n\nIf you want to zip back to the beginning of a zipper pointing at a hole, you can\nstill use `zipper |> previous |> Maybe.map first`\n\n    import List.Holey.Zipper as Zipper\n\n\n    Zipper.zipper 1 [ 2, 3, 4 ]\n        |> Zipper.prepend [ 4, 3, 2 ]\n        |> Zipper.first\n        |> Zipper.current\n    --> 4\n\n",
+                "type": "List.Holey.Zipper.Zipper List.Holey.Zipper.Full a -> List.Holey.Zipper.Zipper List.Holey.Zipper.Full a"
+            },
+            {
+                "name": "insertAfter",
+                "comment": " Insert something after the current location.\n\n    import List.Holey.Zipper as Zipper\n\n\n    Zipper.empty\n        |> Zipper.insertAfter \"hello\"\n        |> Zipper.toList\n    --> [ \"hello\" ]\n\n\n    Zipper.zipper 123 [ 789 ]\n        |> Zipper.insertAfter 456\n        |> Zipper.toList\n    --> [ 123, 456, 789 ]\n\n",
+                "type": "a -> List.Holey.Zipper.Zipper t a -> List.Holey.Zipper.Zipper t a"
+            },
+            {
+                "name": "insertBefore",
+                "comment": " Insert something before the current location.\n\n    import List.Holey.Zipper as Zipper\n\n\n    Zipper.empty\n        |> Zipper.insertBefore \"hello\"\n        |> Zipper.toList\n    --> [ \"hello\" ]\n\n\n    Zipper.singleton 123\n        |> Zipper.insertBefore 456\n        |> Zipper.toList\n    --> [ 456, 123 ]\n\n",
+                "type": "a -> List.Holey.Zipper.Zipper t a -> List.Holey.Zipper.Zipper t a"
+            },
+            {
+                "name": "last",
+                "comment": " Go to the last element of a zipper. Same warnings as for `first` apply.\n\n    import List.Holey.Zipper as Zipper\n\n\n    Zipper.zipper 1 [ 2, 3, 4 ]\n        |> Zipper.last\n        |> Zipper.current\n    --> 4\n\n",
+                "type": "List.Holey.Zipper.Zipper List.Holey.Zipper.Full a -> List.Holey.Zipper.Zipper List.Holey.Zipper.Full a"
+            },
+            {
+                "name": "map",
+                "comment": " Execute a function on every item in the zipper.\n\n    import List.Holey.Zipper as Zipper\n\n\n    Zipper.zipper \"first\" [ \"second\", \"third\" ]\n        |> Zipper.map String.toUpper\n        |> Zipper.toList\n    --> [ \"FIRST\", \"SECOND\", \"THIRD\" ]\n\n",
+                "type": "(a -> b) -> List.Holey.Zipper.Zipper t a -> List.Holey.Zipper.Zipper t b"
+            },
+            {
+                "name": "mapAfter",
+                "comment": " Execute a function on all the things that come after the current location.\n",
+                "type": "(a -> a) -> List.Holey.Zipper.Zipper t a -> List.Holey.Zipper.Zipper t a"
+            },
+            {
+                "name": "mapBefore",
+                "comment": " Execute a function on all the things that came before the current location.\n\n    import List.Holey.Zipper as Zipper\n\n\n    Zipper.zipper \"first\" [ \"second\" ]\n        |> Zipper.nextHole\n        |> Zipper.mapBefore String.toUpper\n        |> Zipper.toList\n    --> [ \"FIRST\", \"second\" ]\n\n",
+                "type": "(a -> a) -> List.Holey.Zipper.Zipper t a -> List.Holey.Zipper.Zipper t a"
+            },
+            {
+                "name": "mapCurrent",
+                "comment": " Execute a function on the current item in the zipper, when pointing at an\nitem.\n\n    import List.Holey.Zipper as Zipper\n\n\n    Zipper.zipper \"first\" [ \"second\", \"third\" ]\n        |> Zipper.mapCurrent String.toUpper\n        |> Zipper.toList\n    --> [ \"FIRST\", \"second\", \"third\" ]\n\n",
+                "type": "(a -> a) -> List.Holey.Zipper.Zipper t a -> List.Holey.Zipper.Zipper t a"
+            },
+            {
+                "name": "mapParts",
+                "comment": " Execute a triplet of functions on the different parts of a zipper - what\ncame before, what comes after, and the current thing if there is one.\n\n    import List.Holey.Zipper as Zipper\n\n\n    Zipper.zipper \"first\" [ \"second\" ]\n        |> Zipper.nextHole\n        |> Zipper.plug \"one-and-a-halfth\"\n        |> Zipper.mapParts\n            { before = (++) \"before: \"\n            , current = (++) \"current: \"\n            , after = (++) \"after: \"\n            }\n        |> Zipper.toList\n    --> [ \"before: first\"\n    --> , \"current: one-and-a-halfth\"\n    --> , \"after: second\"\n    --> ]\n\n",
+                "type": "{ before : a -> b, current : a -> b, after : a -> b } -> List.Holey.Zipper.Zipper t a -> List.Holey.Zipper.Zipper t b"
+            },
+            {
+                "name": "next",
+                "comment": " Move the zipper to the next item, if there is one.\n\n    import List.Holey.Zipper as Zipper\n\n\n    Zipper.zipper 0 [ 1, 2, 3 ]\n        |> Zipper.next\n        |> Maybe.map Zipper.current\n    --> Just 1\n\nThis also works from within holes:\n\n    Zipper.empty\n        |> Zipper.insertAfter \"foo\"\n        |> Zipper.next\n    --> Just <| Zipper.singleton \"foo\"\n\nIf there is no `next` thing, `next` is `Nothing`.\n\n    Zipper.empty\n        |> Zipper.next\n    --> Nothing\n\n\n    Zipper.zipper 0 [ 1, 2, 3 ]\n        |> Zipper.last\n        |> Zipper.next\n    --> Nothing\n\n",
+                "type": "List.Holey.Zipper.Zipper t a -> Maybe.Maybe (List.Holey.Zipper.Zipper List.Holey.Zipper.Full a)"
+            },
+            {
+                "name": "nextHole",
+                "comment": " Move the zipper to the hole right after the current item. A hole is a whole\nlot of nothingness, so it's always there.\n\n    import List.Holey.Zipper as Zipper\n\n\n    Zipper.zipper \"hello\" [ \"world\" ]\n        |> Zipper.nextHole\n        |> Zipper.plug \"holey\"\n        |> Zipper.toList\n    --> [ \"hello\", \"holey\", \"world\" ]\n\n",
+                "type": "List.Holey.Zipper.Zipper List.Holey.Zipper.Full a -> List.Holey.Zipper.Zipper List.Holey.Zipper.Hole a"
+            },
+            {
+                "name": "plug",
+                "comment": " Plug a hole-y zipper.\n\n    import List.Holey.Zipper as Zipper\n\n\n    Zipper.plug \"plug\" Zipper.empty\n    --> Zipper.singleton \"plug\"\n\n",
+                "type": "a -> List.Holey.Zipper.Zipper List.Holey.Zipper.Hole a -> List.Holey.Zipper.Zipper List.Holey.Zipper.Full a"
+            },
+            {
+                "name": "prepend",
+                "comment": " Prepend a bunch of things to the zipper. All the way before anything else.\n\n    import List.Holey.Zipper as Zipper\n\n\n    Zipper.zipper 1 [ 2, 3, 4 ]\n        |> Zipper.last\n        |> Zipper.prepend [ 5, 6, 7 ]\n        |> Zipper.toList\n    --> [ 5, 6, 7, 1, 2, 3, 4 ]\n\n",
+                "type": "List.List a -> List.Holey.Zipper.Zipper t a -> List.Holey.Zipper.Zipper t a"
+            },
+            {
+                "name": "previous",
+                "comment": " Move the zipper to the previous item, if there is one.\n\n    import List.Holey.Zipper as Zipper\n\n\n    Zipper.previous Zipper.empty\n    --> Nothing\n\n\n    Zipper.zipper \"hello\" [ \"holey\", \"world\" ]\n        |> Zipper.last\n        |> Zipper.previous\n        |> Maybe.map Zipper.current\n    --> Just \"holey\"\n\n",
+                "type": "List.Holey.Zipper.Zipper t a -> Maybe.Maybe (List.Holey.Zipper.Zipper List.Holey.Zipper.Full a)"
+            },
+            {
+                "name": "previousHole",
+                "comment": " Move the zipper to the hole right before the current item. Feel free to plug\nthat hole right up!\n\n    import List.Holey.Zipper as Zipper\n\n\n    Zipper.singleton \"world\"\n        |> Zipper.previousHole\n        |> Zipper.plug \"hello\"\n        |> Zipper.toList\n    --> [ \"hello\", \"world\" ]\n\n",
+                "type": "List.Holey.Zipper.Zipper List.Holey.Zipper.Full a -> List.Holey.Zipper.Zipper List.Holey.Zipper.Hole a"
+            },
+            {
+                "name": "remove",
+                "comment": " Punch a hole into the zipper by removing an element entirely. You can think\nof this as collapsing the holes around the element into a single hole, but\nhonestly the holes are everywhere.\n\n    import List.Holey.Zipper as Zipper\n\n\n    Zipper.zipper \"hello\" [ \"holey\", \"world\" ]\n        |> Zipper.next\n        |> Maybe.map Zipper.remove\n        |> Maybe.map Zipper.toList\n    --> Just [ \"hello\", \"world\" ]\n\n",
+                "type": "List.Holey.Zipper.Zipper List.Holey.Zipper.Full a -> List.Holey.Zipper.Zipper List.Holey.Zipper.Hole a"
+            },
+            {
+                "name": "singleton",
+                "comment": " A zipper with a single thing in it. Singleton is just fancy-speak for single\nthing.\n\n    import List.Holey.Zipper as Zipper\n\n\n    Zipper.singleton \"wat\"\n        |> Zipper.toList\n    --> [ \"wat\" ]\n\n",
+                "type": "a -> List.Holey.Zipper.Zipper List.Holey.Zipper.Full a"
+            },
+            {
+                "name": "toList",
+                "comment": " Flattens the zipper (back) into a list.\n\n    import List.Holey.Zipper as Zipper\n\n\n    Zipper.toList Zipper.empty\n    --> []\n\n\n    Zipper.zipper 123 [ 789 ]\n        |> Zipper.nextHole\n        |> Zipper.plug 456\n        |> Zipper.toList\n    --> [ 123, 456, 789 ]\n\n",
+                "type": "List.Holey.Zipper.Zipper t a -> List.List a"
+            },
+            {
+                "name": "zipper",
+                "comment": " Construct a zipper from the head of a list and some elements to come after\nit.\n\n    import List.Holey.Zipper as Zipper\n\n\n    Zipper.zipper \"foo\" []\n    --> Zipper.singleton \"foo\"\n\n\n    Zipper.zipper 0 [ 1, 2, 3 ]\n        |> Zipper.toList\n    --> [ 0, 1, 2, 3 ]\n\n",
+                "type": "a -> List.List a -> List.Holey.Zipper.Zipper List.Holey.Zipper.Full a"
+            }
+        ],
+        "binops": []
+    }
+]

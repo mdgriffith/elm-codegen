@@ -1,0 +1,77 @@
+[
+    {
+        "name": "Dropdown",
+        "comment": " This library provides a dropdown that handles items of any type `t`.\nItems are not part of this component's internal model, meaning that there is a\nsingle source of truth: your own `Model`.\nIt sets the selected item by value, rather than by index, which can be useful\nwhen the set of items is dynamic. User selection is communicated by returning\nan Event that contains the selected item.\n\n\n# Types\n\n@docs Dropdown, Event, Msg, Settings\n\n\n# Functions\n\n@docs defaultSettings, init, initWithSettings, update, view\n\n",
+        "unions": [
+            {
+                "name": "Dropdown",
+                "comment": "\n\n@docs The Dropdown (opaque) model.\n\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Event",
+                "comment": "\n\n@docs Events that are used to communicate changes in state relevant to\n@docs users of this component.\n\n",
+                "args": [
+                    "t"
+                ],
+                "cases": [
+                    [
+                        "Unchanged",
+                        []
+                    ],
+                    [
+                        "ItemSelected",
+                        [
+                            "t"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Msg",
+                "comment": "\n\n@docs Opaque type representing messages used to change internal state.\n\n",
+                "args": [
+                    "t"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Settings",
+                "comment": "\n\n@docs Customization settings.\n\n",
+                "args": [],
+                "type": "{ placeHolder : String.String, closedClass : String.String, openedClass : String.String, menuClass : String.String, buttonClass : String.String, arrowUpClass : String.String, arrowDownClass : String.String, itemClass : String.String, activeItemClass : String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "defaultSettings",
+                "comment": "\n\n@docs Default look and feel settings.\n\n",
+                "type": "Dropdown.Settings"
+            },
+            {
+                "name": "init",
+                "comment": "\n\n@docs Initialize a Dropdown with default settings.\n\n",
+                "type": "Dropdown.Dropdown"
+            },
+            {
+                "name": "initWithSettings",
+                "comment": "\n\n@docs Initialize a Dropdown with custom settings.\n\n",
+                "type": "Dropdown.Settings -> Dropdown.Dropdown"
+            },
+            {
+                "name": "update",
+                "comment": "\n\n@docs Update a Dropdown. Returns the updated Dropdown and an Event\n@docs that communicates changes that are relevant to the outside world, if\n@docs any (e.g. item selection).\n\n",
+                "type": "Dropdown.Msg t -> Dropdown.Dropdown -> ( Dropdown.Dropdown, Dropdown.Event t )"
+            },
+            {
+                "name": "view",
+                "comment": "\n\n@docs Render a Dropdown using provided items, optional selected item, and\n@docs function that returns a string representation of an item.\n\n",
+                "type": "List.List t -> Maybe.Maybe t -> (t -> String.String) -> Dropdown.Dropdown -> Html.Html (Dropdown.Msg t)"
+            }
+        ],
+        "binops": []
+    }
+]

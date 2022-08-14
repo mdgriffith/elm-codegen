@@ -1,0 +1,61 @@
+[
+    {
+        "name": "List.Assoc",
+        "comment": " Some basic functions are missing by design:\noperations like add an entry, map, concat are provided by Elm's\nstandard library so there is no need to have a `List.Assoc` version of them.\n\n\n# Search, filter and deletion\n\n@docs getFirst, getAll, findFirst\n@docs removeFirst, removeFirstWith, removeAll\n@docs filter\n\n\n# Grouping\n\n@docs group, groupBy, groupWith\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "filter",
+                "comment": " The same as [List.filter](https://package.elm-lang.org/packages/elm/core/latest/List#filter),\nbut the test is made on the `key`.\nIf you need a `removeAllWith` or a `findAll` then this is your guy.\n",
+                "type": "(k -> Basics.Bool) -> List.List ( k, v ) -> List.List ( k, v )"
+            },
+            {
+                "name": "findFirst",
+                "comment": " Finds the first tuple with a `key` that satisfy some predicate.\n",
+                "type": "(k -> Basics.Bool) -> List.List ( k, v ) -> Maybe.Maybe ( k, v )"
+            },
+            {
+                "name": "getAll",
+                "comment": " Gives the values of all entries that with a given `key`.\n",
+                "type": "k -> List.List ( k, v ) -> List.List v"
+            },
+            {
+                "name": "getFirst",
+                "comment": " Gets the value of the first entry that has a given `key`.\n",
+                "type": "k -> List.List ( k, v ) -> Maybe.Maybe v"
+            },
+            {
+                "name": "group",
+                "comment": " Sorts the list by `key` then groups together adjacent entries\nwith the same key.\n\n    type alias User =\n        { name : String\n        , age : Int\n        }\n\n    users : List User\n    users =\n        [ { name = \"bob\", age = 20 }\n        , { name = \"alice\", age = 25 }\n        , { name = \"bob\", age = 32 }\n        ]\n\n    usersByName : List ( String, List User )\n    usersByName =\n        |> List.map (\\p -> ( p.name, p ))\n        |> List.Assoc.group\n\n    usersByName ==\n        [ ( \"alice\", [ { age = 25, name = \"alice\" } ] )\n        , ( \"bob\", [ { age = 20, name = \"bob\" }, { age = 32, name = \"bob\" } ] )\n        ]\n\n",
+                "type": "List.List ( comparable, v ) -> List.List ( comparable, List.List v )"
+            },
+            {
+                "name": "groupBy",
+                "comment": " Same as [`group`](#group), but takes a function to map a `key` to `comparable`.\n\nCf. [List.sortBy](https://package.elm-lang.org/packages/elm/core/latest/List#sortBy)\n\n",
+                "type": "(k -> comparable) -> List.List ( k, v ) -> List.List ( k, List.List v )"
+            },
+            {
+                "name": "groupWith",
+                "comment": " Same as [`group`](#group), but takes a custom comparison function.\n\nCf. [List.sortWith](https://package.elm-lang.org/packages/elm/core/latest/List#)\n\n",
+                "type": "(k -> k -> Basics.Order) -> List.List ( k, v ) -> List.List ( k, List.List v )"
+            },
+            {
+                "name": "removeAll",
+                "comment": " Removes all entries that have some `key`.\n",
+                "type": "k -> List.List ( k, v ) -> List.List ( k, v )"
+            },
+            {
+                "name": "removeFirst",
+                "comment": " Removes the first pair with a given `key`.\n",
+                "type": "k -> List.List ( k, v ) -> List.List ( k, v )"
+            },
+            {
+                "name": "removeFirstWith",
+                "comment": " Works like [`removeFirst`](#removeFirst), but takes a `(k -> Bool)` predicate.\n",
+                "type": "(k -> Basics.Bool) -> List.List ( k, v ) -> List.List ( k, v )"
+            }
+        ],
+        "binops": []
+    }
+]

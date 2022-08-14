@@ -1,0 +1,188 @@
+[
+    {
+        "name": "Task.Extra",
+        "comment": " Extra helper functions for working with Tasks.\n\n@docs message\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "message",
+                "comment": " A command to pass a message to the Elm router and evaluate it in the next\nupdate cycle.\n",
+                "type": "msg -> Platform.Cmd.Cmd msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Update2",
+        "comment": " Convenience function for lifting an update function for an inner model\nand messages into a parent one.\n\n@docs pure, eval, lift, andThen, andMap\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "andMap",
+                "comment": " Allows update functions that also produce lists of out messages,\nto be chained together, whilst also transforming the model and outMsg\ntype. The `Cmd`s will be batched together.\n",
+                "type": "(model -> ( model2, Platform.Cmd.Cmd msg )) -> ( model, Platform.Cmd.Cmd msg ) -> ( model2, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "andThen",
+                "comment": " Allows update functions to be chained together. The `Cmd`s will be batched\ntogether.\n",
+                "type": "(model -> ( model, Platform.Cmd.Cmd msg )) -> ( model, Platform.Cmd.Cmd msg ) -> ( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "eval",
+                "comment": " Allows the output of an update function that returns type:\n\n    ( model, Cmd msg )\n\nTo have its model evaluated in order to produce a new model, and to create more\ncommands. The commands returned will be appended to those passed in using\nCmd.batch.\n\nNote that this allows multiple invokations of the same update function to be\ninvoked recursively. Beware of causing infinite loops while doing this.\n\n",
+                "type": "(model -> ( model, Platform.Cmd.Cmd msg )) -> ( model, Platform.Cmd.Cmd msg ) -> ( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "lift",
+                "comment": " Lifts an update function of type:\n\n    update : submsg -> submodel -> ( submodel, Cmd submsg )\n\nInto one that returns:\n\n    ( model, Cmd msg )\n\n",
+                "type": "(model -> submodel) -> (submodel -> model -> model) -> (submsg -> msg) -> (submsg -> submodel -> ( submodel, Platform.Cmd.Cmd submsg )) -> submsg -> model -> ( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "pure",
+                "comment": " Creates an Update2 with no commands.\n\n    pure model =\n        ( model, Cmd.none )\n\n",
+                "type": "model -> ( model, Platform.Cmd.Cmd msg )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Update3",
+        "comment": " Convenience function for lifting an update function for an inner model and\nmessages, that also returns an additional out parameters into a parent one.\n\n@docs lift\n@docs eval, evalMaybe, evalResult, evalCmds\n@docs mapModel, mapCmd, mapOutMsg\n@docs addOutMsg\n@docs andThen, andMap\n@docs fromUpdate3Alt\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "addOutMsg",
+                "comment": " Adds an out message to the usual (model, Cmd msg) structure.\n",
+                "type": "outMsg -> ( model, Platform.Cmd.Cmd msg ) -> ( model, Platform.Cmd.Cmd msg, outMsg )"
+            },
+            {
+                "name": "andMap",
+                "comment": " Allows update functions that also produce lists of out messages,\nto be chained together, whilst also transforming the model and outMsg\ntype. The `Cmd`s will be batched together, but out messages will not.\n",
+                "type": "(outMsg -> model -> ( model2, Platform.Cmd.Cmd msg, outMsg2 )) -> ( model, Platform.Cmd.Cmd msg, outMsg ) -> ( model2, Platform.Cmd.Cmd msg, outMsg2 )"
+            },
+            {
+                "name": "andThen",
+                "comment": " Allows update functions that also produce lists of out messages,\nto be chained together. The `Cmd`s will be batched together, but\nout messages will not.\n",
+                "type": "(outMsg -> model -> ( model, Platform.Cmd.Cmd msg, outMsg )) -> ( model, Platform.Cmd.Cmd msg, outMsg ) -> ( model, Platform.Cmd.Cmd msg, outMsg )"
+            },
+            {
+                "name": "eval",
+                "comment": " Allows the output of an update function that returns type:\n\n    ( model, Cmd msg, outmsg )\n\nTo have its model and out message evaluated in order to produce a new model,\nand to create more commands. The commands returned will be appended to those\npassed in using Cmd.batch.\n\n",
+                "type": "(outmsg -> model -> ( model, Platform.Cmd.Cmd msg )) -> ( model, Platform.Cmd.Cmd msg, outmsg ) -> ( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "evalCmds",
+                "comment": " Allows the output of an update function that returns type:\n\n       (model, Cmd msg, Cmd outmsg)\n\nTo have its model and out message evaluated in order to produce a new model,\nand to create more commands. The commands returned will be appended to those\npassed in using Cmd.batch.\n\nNote that the eval function in this case is not provided with the model, since the\ncommands being processed are opaque, so it should not be possible to make a decision\non how to update the model based on them.\n\n",
+                "type": "(outmsg -> msg) -> ( model, Platform.Cmd.Cmd msg, Platform.Cmd.Cmd outmsg ) -> ( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "evalMaybe",
+                "comment": " Allows the output of an update function that returns type:\n\n    ( model, Cmd msg, outmsg )\n\nTo have its model and out message evaluated in order to produce a new model,\nand to create more commands. The commands returned will be appended to those\npassed in using Cmd.batch.\n\n",
+                "type": "(outMsg -> model -> ( model, Platform.Cmd.Cmd msg )) -> Platform.Cmd.Cmd msg -> ( model, Platform.Cmd.Cmd msg, Maybe.Maybe outMsg ) -> ( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "evalResult",
+                "comment": " Allows the output of an update function that returns type:\n\n       (model, Cmd msg, Maybe outmsg)\n\nTo have its model and out message evaluated in order to produce a new model,\nand to create more commands. The commands returned will be appended to those\npassed in using Cmd.batch.\n\n",
+                "type": "(outMsg -> model -> ( model, Platform.Cmd.Cmd msg )) -> (error -> Platform.Cmd.Cmd msg) -> ( model, Platform.Cmd.Cmd msg, Result.Result error outMsg ) -> ( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "fromUpdate3Alt",
+                "comment": " Swaps the order of the return arguments from the alternative order to\nthe default order used by this module.\n",
+                "type": "(msg -> model -> ( model, outMsg, Platform.Cmd.Cmd msg )) -> msg -> model -> ( model, Platform.Cmd.Cmd msg, outMsg )"
+            },
+            {
+                "name": "lift",
+                "comment": " Lifts an update function of type:\n\n    update : submsg -> submodel -> ( submodel, Cmd submsg, outmsg )\n\nInto one that returns:\n\n    ( model, Cmd msg, outmsg )\n\n",
+                "type": "(model -> submodel) -> (submodel -> model -> model) -> (submsg -> msg) -> (submsg -> submodel -> ( submodel, Platform.Cmd.Cmd submsg, outmsg )) -> submsg -> model -> ( model, Platform.Cmd.Cmd msg, outmsg )"
+            },
+            {
+                "name": "mapCmd",
+                "comment": " Maps over the Cmds\n",
+                "type": "(msga -> msgb) -> ( a, Platform.Cmd.Cmd msga, c ) -> ( a, Platform.Cmd.Cmd msgb, c )"
+            },
+            {
+                "name": "mapModel",
+                "comment": " Maps over the model.\n",
+                "type": "(model -> a) -> ( model, b, c ) -> ( a, b, c )"
+            },
+            {
+                "name": "mapOutMsg",
+                "comment": " Maps over the out message\n",
+                "type": "(outMsg -> c) -> ( a, b, outMsg ) -> ( a, b, c )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Update3Alt",
+        "comment": " Convenience function for lifting an update function for an inner model and\nmessages, that also returns an additional out parameters into a parent one.\n\nThis version differs from `Update3` by having the out messages in the second\nposition in the return tuple, instead of the last.\n\n@docs lift\n@docs eval, evalMaybe, evalResult, evalCmds\n@docs mapModel, mapCmd, mapOutMsg\n@docs addOutMsg\n@docs andThen, andMap\n@docs toUpdate3Alt\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "addOutMsg",
+                "comment": " Adds an out message to the usual (model, Cmd msg) structure.\n",
+                "type": "outMsg -> ( model, Platform.Cmd.Cmd msg ) -> ( model, outMsg, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "andMap",
+                "comment": " Allows update functions that also produce lists of out messages,\nto be chained together, whilst also transforming the model and outMsg\ntype. The `Cmd`s will be batched together, but out messages will not.\n",
+                "type": "(outMsg -> model -> ( model2, outMsg2, Platform.Cmd.Cmd msg )) -> ( model, outMsg, Platform.Cmd.Cmd msg ) -> ( model2, outMsg2, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "andThen",
+                "comment": " Allows update functions that also produce lists of out messages,\nto be chained together. The `Cmd`s will be batched together, but\nout messages will not.\n",
+                "type": "(outMsg -> model -> ( model, outMsg, Platform.Cmd.Cmd msg )) -> ( model, outMsg, Platform.Cmd.Cmd msg ) -> ( model, outMsg, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "eval",
+                "comment": " Allows the output of an update function that returns type:\n\n    ( model, Cmd msg, outmsg )\n\nTo have its model and out message evaluated in order to produce a new model,\nand to create more commands. The commands returned will be appended to those\npassed in using Cmd.batch.\n\n",
+                "type": "(outmsg -> model -> ( model, Platform.Cmd.Cmd msg )) -> ( model, outmsg, Platform.Cmd.Cmd msg ) -> ( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "evalCmds",
+                "comment": " Allows the output of an update function that returns type:\n\n       (model, Cmd msg, Cmd outmsg)\n\nTo have its model and out message evaluated in order to produce a new model,\nand to create more commands. The commands returned will be appended to those\npassed in using Cmd.batch.\n\nNote that the eval function in this case is not provided with the model, since the\ncommands being processed are opaque, so it should not be possible to make a decision\non how to update the model based on them.\n\n",
+                "type": "(outmsg -> msg) -> ( model, Platform.Cmd.Cmd outmsg, Platform.Cmd.Cmd msg ) -> ( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "evalMaybe",
+                "comment": " Allows the output of an update function that returns type:\n\n    ( model, Cmd msg, outmsg )\n\nTo have its model and out message evaluated in order to produce a new model,\nand to create more commands. The commands returned will be appended to those\npassed in using Cmd.batch.\n\n",
+                "type": "(outMsg -> model -> ( model, Platform.Cmd.Cmd msg )) -> Platform.Cmd.Cmd msg -> ( model, Maybe.Maybe outMsg, Platform.Cmd.Cmd msg ) -> ( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "evalResult",
+                "comment": " Allows the output of an update function that returns type:\n\n       (model, Cmd msg, Maybe outmsg)\n\nTo have its model and out message evaluated in order to produce a new model,\nand to create more commands. The commands returned will be appended to those\npassed in using Cmd.batch.\n\n",
+                "type": "(outMsg -> model -> ( model, Platform.Cmd.Cmd msg )) -> (error -> Platform.Cmd.Cmd msg) -> ( model, Result.Result error outMsg, Platform.Cmd.Cmd msg ) -> ( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "lift",
+                "comment": " Lifts an update function of type:\n\n    update : submsg -> submodel -> ( submodel, Cmd submsg, outmsg )\n\nInto one that returns:\n\n    ( model, Cmd msg, outmsg )\n\n",
+                "type": "(model -> submodel) -> (submodel -> model -> model) -> (submsg -> msg) -> (submsg -> submodel -> ( submodel, outmsg, Platform.Cmd.Cmd submsg )) -> submsg -> model -> ( model, outmsg, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "mapCmd",
+                "comment": " Maps over the Cmds\n",
+                "type": "(msga -> msgb) -> ( a, b, Platform.Cmd.Cmd msga ) -> ( a, b, Platform.Cmd.Cmd msgb )"
+            },
+            {
+                "name": "mapModel",
+                "comment": " Maps over the model.\n",
+                "type": "(model -> a) -> ( model, b, c ) -> ( a, b, c )"
+            },
+            {
+                "name": "mapOutMsg",
+                "comment": " Maps over the out message\n",
+                "type": "(outMsg -> c) -> ( a, outMsg, b ) -> ( a, c, b )"
+            },
+            {
+                "name": "toUpdate3Alt",
+                "comment": " Swaps the order of the return arguments to the alternative order used by\nthis module.\n",
+                "type": "(msg -> model -> ( model, Platform.Cmd.Cmd msg, outMsg )) -> msg -> model -> ( model, outMsg, Platform.Cmd.Cmd msg )"
+            }
+        ],
+        "binops": []
+    }
+]

@@ -1,0 +1,230 @@
+[
+    {
+        "name": "List.Nonempty.Statistics",
+        "comment": " Fast Statistics functions for elm\n\n\n# Average\n\n@docs avg, avgInt, mean, meanInt\n@docs median, medianInt, percentile, percentileInt\n@docs percentiles, percentilesInt\n\n\n# Minimum / maximum\n\n@docs minimum, maximum, minmax\n\n\n# Distribution\n\n@docs occurrences\n@docs variance, varianceInt\n@docs stdDeviation, stdDeviationInt\n\n\n# Misc\n\n@docs sum, product\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "avg",
+                "comment": " Calculate the mean of a list of Float\n",
+                "type": "List.Nonempty.Nonempty Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "avgInt",
+                "comment": " Calculate the mean of a list of Int\n",
+                "type": "List.Nonempty.Nonempty Basics.Int -> Basics.Int"
+            },
+            {
+                "name": "maximum",
+                "comment": " Wrapper for List.maximum\n",
+                "type": "List.Nonempty.Nonempty number -> number"
+            },
+            {
+                "name": "mean",
+                "comment": " Alias for avg\n",
+                "type": "List.Nonempty.Nonempty Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "meanInt",
+                "comment": " Alias for avgInt\n",
+                "type": "List.Nonempty.Nonempty Basics.Int -> Basics.Int"
+            },
+            {
+                "name": "median",
+                "comment": " Get the median of a sorted list of Float\n\nIf the length of the list is even, the retun value is the average of the two\nvalues at the middle of the list.\n\n",
+                "type": "List.Nonempty.Nonempty Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "medianInt",
+                "comment": " Get the median of a sorted list of Int\n\nIf the length of the list is even, the retun value is the average of the two\nvalues at the middle of the list.\n\n",
+                "type": "List.Nonempty.Nonempty Basics.Int -> Basics.Int"
+            },
+            {
+                "name": "minimum",
+                "comment": " Wrapper for List.minimum\n",
+                "type": "List.Nonempty.Nonempty number -> number"
+            },
+            {
+                "name": "minmax",
+                "comment": " Get minimum and maximum from list\n\n\n",
+                "type": "List.Nonempty.Nonempty number -> ( number, number )"
+            },
+            {
+                "name": "occurrences",
+                "comment": " Get a `Dict` containing the numbers from the list as keys\nand the number of occurrences for each number as value\n",
+                "type": "List.List number -> Dict.Dict number Basics.Int"
+            },
+            {
+                "name": "percentile",
+                "comment": " Get the element at a position in percent from a list\n\nIf the percentage doesn't exactly match an element the value is interpolated\nfrom the two closest elements\n\n",
+                "type": "Basics.Float -> List.Nonempty.Nonempty Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "percentileInt",
+                "comment": " Get the element at a position in percent from a list\n\nIf the percentage doesn't exactly match an element the value is interpolated\nfrom the two closest elements\n\n",
+                "type": "Basics.Float -> List.Nonempty.Nonempty Basics.Int -> Basics.Int"
+            },
+            {
+                "name": "percentiles",
+                "comment": " Get elements at multiple positions in percent from a list\n\nIf the percentage doesn't exactly match an element the value is interpolated\nfrom the two closest elements\n\n",
+                "type": "List.List Basics.Float -> List.Nonempty.Nonempty Basics.Float -> List.List Basics.Float"
+            },
+            {
+                "name": "percentilesInt",
+                "comment": " Get elements at multiple positions in percent from a list\n\nIf the percentage doesn't exactly match an element the value is interpolated\nfrom the two closest elements\n\n",
+                "type": "List.List Basics.Float -> List.Nonempty.Nonempty Basics.Int -> List.List Basics.Int"
+            },
+            {
+                "name": "product",
+                "comment": " Wrapper for List.product\n",
+                "type": "List.Nonempty.Nonempty number -> number"
+            },
+            {
+                "name": "stdDeviation",
+                "comment": " Get the standard deviation of a population of Float\n",
+                "type": "List.Nonempty.Nonempty Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "stdDeviationInt",
+                "comment": " Get the standard deviation of a population of Int\n",
+                "type": "List.Nonempty.Nonempty Basics.Int -> Basics.Int"
+            },
+            {
+                "name": "sum",
+                "comment": " Wrapper for List.sum\n",
+                "type": "List.Nonempty.Nonempty number -> number"
+            },
+            {
+                "name": "variance",
+                "comment": " Get The variance of a population of Float\n",
+                "type": "List.Nonempty.Nonempty Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "varianceInt",
+                "comment": " Get The variance of a population of Int\nThis function uses mostly Int calculations wich can cause rounding errors.\nSee function `variance` (which uses Float) for more precise results.\n",
+                "type": "List.Nonempty.Nonempty Basics.Int -> Basics.Int"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "List.Statistics",
+        "comment": " Fast Statistics functions for elm\n\n\n# Average\n\n@docs avg, avgInt, mean, meanInt\n@docs median, medianInt, percentile, percentileInt\n@docs percentiles, percentilesInt\n\n\n# Minimum / maximum\n\n@docs minimum, maximum, minmax\n\n\n# Distribution\n\n@docs occurrences\n@docs variance, varianceInt\n@docs stdDeviation, stdDeviationInt\n\n\n# Misc\n\n@docs atLeast, atMost, sum, product\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "atLeast",
+                "comment": " Alias for `max`, to make piped usage more intuitive\n\n    number |> atLeast 5\n\n",
+                "type": "number -> number -> number"
+            },
+            {
+                "name": "atMost",
+                "comment": " Alias for `min`, to make piped usage more intuitive\n\n    number |> atMost 5\n\n",
+                "type": "number -> number -> number"
+            },
+            {
+                "name": "avg",
+                "comment": " Calculate the mean of a list of Float\n",
+                "type": "List.List Basics.Float -> Maybe.Maybe Basics.Float"
+            },
+            {
+                "name": "avgInt",
+                "comment": " Calculate the mean of a list of Int\n",
+                "type": "List.List Basics.Int -> Maybe.Maybe Basics.Int"
+            },
+            {
+                "name": "maximum",
+                "comment": " Alias for List.maximum\n",
+                "type": "List.List number -> Maybe.Maybe number"
+            },
+            {
+                "name": "mean",
+                "comment": " Alias for avg\n",
+                "type": "List.List Basics.Float -> Maybe.Maybe Basics.Float"
+            },
+            {
+                "name": "meanInt",
+                "comment": " Alias for avgInt\n",
+                "type": "List.List Basics.Int -> Maybe.Maybe Basics.Int"
+            },
+            {
+                "name": "median",
+                "comment": " Get the median of a sorted list of Float\n\nIf the length of the list is even, the retun value is the average of the two\nvalues at the middle of the list.\nReturns `Nothing` if the list is empty\n\n",
+                "type": "List.List Basics.Float -> Maybe.Maybe Basics.Float"
+            },
+            {
+                "name": "medianInt",
+                "comment": " Get the median of a sorted list of Int\n\nIf the length of the list is even, the retun value is the average of the two\nvalues at the middle of the list.\nReturns `Nothing` if the list is empty\n\n",
+                "type": "List.List Basics.Int -> Maybe.Maybe Basics.Int"
+            },
+            {
+                "name": "minimum",
+                "comment": " Alias for List.minimum\n",
+                "type": "List.List number -> Maybe.Maybe number"
+            },
+            {
+                "name": "minmax",
+                "comment": " Get minimum and maximum from list\n\nReturns `Nothing` if list is empty\n\n",
+                "type": "List.List number -> Maybe.Maybe ( number, number )"
+            },
+            {
+                "name": "occurrences",
+                "comment": " Get a `Dict` containing the numbers from the list as keys\nand the number of occurrences for each number as value\n",
+                "type": "List.List number -> Dict.Dict number Basics.Int"
+            },
+            {
+                "name": "percentile",
+                "comment": " Get the element at a position in percent from a list\n\nIf the percentage doesn't exactly match an element the value is interpolated\nfrom the two closest elements\n\n",
+                "type": "Basics.Float -> List.List Basics.Float -> Maybe.Maybe Basics.Float"
+            },
+            {
+                "name": "percentileInt",
+                "comment": " Get the element at a position in percent from a list\n\nIf the percentage doesn't exactly match an element the value is interpolated\nfrom the two closest elements\n\n",
+                "type": "Basics.Float -> List.List Basics.Int -> Maybe.Maybe Basics.Int"
+            },
+            {
+                "name": "percentiles",
+                "comment": " Get elements at multiple positions in percent from a list\n\nIf the percentage doesn't exactly match an element the value is interpolated\nfrom the two closest elements\n\n",
+                "type": "List.List Basics.Float -> List.List Basics.Float -> Maybe.Maybe (List.List Basics.Float)"
+            },
+            {
+                "name": "percentilesInt",
+                "comment": " Get elements at multiple positions in percent from a list\n\nIf the percentage doesn't exactly match an element the value is interpolated\nfrom the two closest elements\n\n",
+                "type": "List.List Basics.Float -> List.List Basics.Int -> Maybe.Maybe (List.List Basics.Int)"
+            },
+            {
+                "name": "product",
+                "comment": " Alias for List.product\n",
+                "type": "List.List number -> number"
+            },
+            {
+                "name": "stdDeviation",
+                "comment": " Get the standard deviation of a population of Float\n",
+                "type": "List.List Basics.Float -> Maybe.Maybe Basics.Float"
+            },
+            {
+                "name": "stdDeviationInt",
+                "comment": " Get the standard deviation of a population of Int\n",
+                "type": "List.List Basics.Int -> Maybe.Maybe Basics.Int"
+            },
+            {
+                "name": "sum",
+                "comment": " Alias for List.sum\n",
+                "type": "List.List number -> number"
+            },
+            {
+                "name": "variance",
+                "comment": " Get The variance of a population of Float\n",
+                "type": "List.List Basics.Float -> Maybe.Maybe Basics.Float"
+            },
+            {
+                "name": "varianceInt",
+                "comment": " Get The variance of a population of Int\nThis function uses mostly Int calculations wich can cause rounding errors.\nSee function `variance` (which uses Float) for more precise results.\n",
+                "type": "List.List Basics.Int -> Maybe.Maybe Basics.Int"
+            }
+        ],
+        "binops": []
+    }
+]

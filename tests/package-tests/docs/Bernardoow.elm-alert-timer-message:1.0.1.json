@@ -1,0 +1,54 @@
+[
+    {
+        "name": "AlertTimerMessage",
+        "comment": " Simple message alert library.\nIts functionality is to hide and show alerts.\nThe module is given a time and an HTML structure then does the job.\nYou can create css and pass the msg to display.\n\n\n# The model\n\n@docs Model\n\n\n# The initial state\n\n@docs modelInit\n\n\n# View\n\n@docs view\n\n\n# Msg\n\n@docs Msg\n\n\n# Update\n\n@docs update\n\n",
+        "unions": [
+            {
+                "name": "Msg",
+                "comment": " The type representing messages that are passed inside the Rating.\nNotice: AddNewMessage receive two params: Float will be time to display and Html Msg will be a html struture.\nTip: Use Css to improve Html Msg.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "AddNewMessage",
+                        [
+                            "Basics.Float",
+                            "Html.Html AlertTimerMessage.Msg"
+                        ]
+                    ],
+                    [
+                        "RemoveAlert",
+                        [
+                            "Basics.Int"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Model",
+                "comment": " The model is simple. It's have a dict with msg and counter of displayed msg.\n",
+                "args": [],
+                "type": "{ messages : Dict.Dict Basics.Int AlertTimerMessage.Message, count : Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "modelInit",
+                "comment": " Empty model with counter 1\n",
+                "type": "AlertTimerMessage.Model"
+            },
+            {
+                "name": "update",
+                "comment": " ",
+                "type": "AlertTimerMessage.Msg -> AlertTimerMessage.Model -> ( AlertTimerMessage.Model, Platform.Cmd.Cmd AlertTimerMessage.Msg )"
+            },
+            {
+                "name": "view",
+                "comment": " ",
+                "type": "AlertTimerMessage.Model -> Html.Html AlertTimerMessage.Msg"
+            }
+        ],
+        "binops": []
+    }
+]

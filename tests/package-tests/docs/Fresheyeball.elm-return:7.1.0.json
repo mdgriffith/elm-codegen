@@ -1,0 +1,184 @@
+[
+    {
+        "name": "Respond",
+        "comment": "\n\n@docs Respond, append, sum, zero, comap\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Respond",
+                "comment": " A function from a model to a Cmd.\nBasically there are times where you want to\nhave a side effect on the world if the model\nhas a certain shape. `Respond` facilitates\nthis use case.\n",
+                "args": [
+                    "msg",
+                    "a"
+                ],
+                "type": "a -> Platform.Cmd.Cmd msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "append",
+                "comment": " ",
+                "type": "Respond.Respond msg a -> Respond.Respond msg a -> a -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "comap",
+                "comment": " Add a function to the front\n`b -> a >> a -> Cmd msg`\n",
+                "type": "(b -> a) -> Respond.Respond msg a -> Respond.Respond msg b"
+            },
+            {
+                "name": "sum",
+                "comment": " ",
+                "type": "List.List (Respond.Respond msg a) -> a -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "zero",
+                "comment": " ",
+                "type": "Respond.Respond msg a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Return",
+        "comment": "\n\n\n## Type\n\nModeling the `update` tuple as a Monad similar to `Writer`\n\n@docs Return, ReturnF\n\n\n## Mapping\n\n@docs map, map2, map3, map4, map5, andMap, mapWith, mapCmd, mapBoth, dropCmd\n\n\n## Piping\n\n@docs piper, pipel, zero, piperK, pipelK\n\n\n## Basics\n\n@docs singleton, andThen, andThenK\n\n\n## Write `Cmd`s\n\n@docs return, command, effect_\n\n\n## Fancy non-sense\n\n@docs sequence, flatten\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Return",
+                "comment": " ",
+                "args": [
+                    "msg",
+                    "model"
+                ],
+                "type": "( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "ReturnF",
+                "comment": " ",
+                "args": [
+                    "msg",
+                    "model"
+                ],
+                "type": "Return.Return msg model -> Return.Return msg model"
+            }
+        ],
+        "values": [
+            {
+                "name": "andMap",
+                "comment": " Map an `Return` into a `Return` containing a `Model` function\n",
+                "type": "Return.Return msg a -> Return.Return msg (a -> b) -> Return.Return msg b"
+            },
+            {
+                "name": "andThen",
+                "comment": "\n\n    foo : Model -> Return Msg Model\n    foo ({ bar } as model) =\n        -- forking logic\n        if\n            bar < 10\n            -- that side effects may be added\n        then\n            ( model, getAjaxThing )\n            -- that the model may be updated\n\n        else\n            ( { model | bar = model.bar - 2 }, Cmd.none )\n\nThey are now chainable with `andThen`...\n\n    resulting : Return msg { model | bar : Int }\n    resulting =\n        myReturn\n            |> andThen foo\n            |> andThen foo\n            |> andThen foo\n\nHere we changed up `foo` three times, but we can use any function of\ntype `(a -> Return msg b)`.\n\nCommands will be accumulated automatically as is the case with all\nfunctions in this library.\n\n",
+                "type": "(a -> Return.Return msg b) -> Return.Return msg a -> Return.Return msg b"
+            },
+            {
+                "name": "andThenK",
+                "comment": " Kleisli composition  ",
+                "type": "(a -> Return.Return x b) -> (b -> Return.Return x c) -> a -> Return.Return x c"
+            },
+            {
+                "name": "command",
+                "comment": " Add a `Cmd` to a `Return`, the `Model` is uneffected\n",
+                "type": "Platform.Cmd.Cmd msg -> Return.Return msg model -> Return.Return msg model"
+            },
+            {
+                "name": "dropCmd",
+                "comment": " Drop the current `Cmd` and replace with an empty thunk\n",
+                "type": "Return.ReturnF msg model"
+            },
+            {
+                "name": "effect_",
+                "comment": " Add a `Cmd` to a `Return` based on its `Model`, the `Model` will not be effected\n",
+                "type": "Respond.Respond msg model -> Return.Return msg model -> Return.Return msg model"
+            },
+            {
+                "name": "flatten",
+                "comment": " ",
+                "type": "Return.Return msg (Return.Return msg model) -> Return.Return msg model"
+            },
+            {
+                "name": "map",
+                "comment": " Transform the `Model`, the `Cmd` will be left untouched\n",
+                "type": "(a -> b) -> Return.Return msg a -> Return.Return msg b"
+            },
+            {
+                "name": "map2",
+                "comment": " Combine 2 `Return`s with a function\n\n    map2\n      (\\modelA modelB -> { modelA | foo = modelB.foo })\n      retA\n      retB\n\n",
+                "type": "(a -> b -> c) -> Return.Return msg a -> Return.Return msg b -> Return.Return msg c"
+            },
+            {
+                "name": "map3",
+                "comment": " ",
+                "type": "(a -> b -> c -> d) -> Return.Return msg a -> Return.Return msg b -> Return.Return msg c -> Return.Return msg d"
+            },
+            {
+                "name": "map4",
+                "comment": " ",
+                "type": "(a -> b -> c -> d -> e) -> Return.Return msg a -> Return.Return msg b -> Return.Return msg c -> Return.Return msg d -> Return.Return msg e"
+            },
+            {
+                "name": "map5",
+                "comment": " ",
+                "type": "(a -> b -> c -> d -> e -> f) -> Return.Return msg a -> Return.Return msg b -> Return.Return msg c -> Return.Return msg d -> Return.Return msg e -> Return.Return msg f"
+            },
+            {
+                "name": "mapBoth",
+                "comment": " Map over both the model and the msg type of the `Return`.\nThis is useful for easily embedding a `Return` in a Union Type.\nFor example\n\n    import Foo\n\n    type Msg = Foo Foo.Msg\n    type Model = FooModel Foo.Model\n\n    ...\n\n    update : Msg -> Model -> Return Msg Model\n    update msg model =\n       case msg of\n          Foo foo -> Foo.update foo model.foo\n            |> mapBoth Foo FooModel\n\n",
+                "type": "(a -> b) -> (c -> d) -> Return.Return a c -> Return.Return b d"
+            },
+            {
+                "name": "mapCmd",
+                "comment": " Map on the `Cmd`.\n",
+                "type": "(a -> b) -> Return.Return a model -> Return.Return b model"
+            },
+            {
+                "name": "mapWith",
+                "comment": " Transform the `Model` of and add a new `Cmd` to the queue\n",
+                "type": "(a -> b) -> Platform.Cmd.Cmd msg -> Return.Return msg a -> Return.Return msg b"
+            },
+            {
+                "name": "pipel",
+                "comment": " ",
+                "type": "List.List (Return.ReturnF msg model) -> Return.ReturnF msg model"
+            },
+            {
+                "name": "pipelK",
+                "comment": " Compose updaters from the left ",
+                "type": "List.List (a -> Return.Return x a) -> a -> Return.Return x a"
+            },
+            {
+                "name": "piper",
+                "comment": " ",
+                "type": "List.List (Return.ReturnF msg model) -> Return.ReturnF msg model"
+            },
+            {
+                "name": "piperK",
+                "comment": " Compose updaters from the right ",
+                "type": "List.List (a -> Return.Return x a) -> a -> Return.Return x a"
+            },
+            {
+                "name": "return",
+                "comment": " Construct a new `Return` from parts\n",
+                "type": "model -> Platform.Cmd.Cmd msg -> Return.Return msg model"
+            },
+            {
+                "name": "sequence",
+                "comment": " ",
+                "type": "List.List (Return.Return msg model) -> Return.Return msg (List.List model)"
+            },
+            {
+                "name": "singleton",
+                "comment": " Create a `Return` from a given `Model`\n",
+                "type": "model -> Return.Return msg model"
+            },
+            {
+                "name": "zero",
+                "comment": " ",
+                "type": "Return.ReturnF msg model"
+            }
+        ],
+        "binops": []
+    }
+]

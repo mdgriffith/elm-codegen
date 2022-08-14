@@ -1,0 +1,537 @@
+[
+    {
+        "name": "Conditional",
+        "comment": " Base collection for executing functions conditionally or for dealing with\nMaybe - Types.\n\n\n# Conditional application\n\n@docs applyIf, apply2If, apply3If\n\n\n# Maybe application\n\n@docs apply2When, apply3When\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "apply2If",
+                "comment": " ",
+                "type": "(a -> b -> b) -> Basics.Bool -> a -> b -> b"
+            },
+            {
+                "name": "apply2When",
+                "comment": " Apply the passed function only onto a value not equal to Nothing.\n",
+                "type": "(a -> b -> b) -> Maybe.Maybe a -> b -> b"
+            },
+            {
+                "name": "apply3If",
+                "comment": " ",
+                "type": "(a -> b -> c -> c) -> Basics.Bool -> a -> b -> c -> c"
+            },
+            {
+                "name": "apply3When",
+                "comment": " ",
+                "type": "(a -> b -> c -> c) -> Maybe.Maybe a -> b -> c -> c"
+            },
+            {
+                "name": "applyIf",
+                "comment": " Apply the passed function only if the second parameter evalutes to True.\n",
+                "type": "(a -> a) -> Basics.Bool -> a -> a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Conditional.Array",
+        "comment": " Conditional functions for array manipulation.\n\n\n# Manipulate\n\n@docs setIf, setWhen, pushIf, pushWhen, appendIf, appendWhen\n\n\n# Transform\n\n@docs mapIf, filterIf, sliceIf\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "appendIf",
+                "comment": " Append the first array only if the first parameter evalutes to True.\n\n    appendIf False (Array.repeat 2 42) (Array.repeat 3 81) == Array.fromList [ 81, 81, 81 ]\n\n",
+                "type": "Basics.Bool -> Array.Array a -> Array.Array a -> Array.Array a"
+            },
+            {
+                "name": "appendWhen",
+                "comment": " Append two arrays to a new one, if the first one is not of type Nothing.\n\n    append Nothing (repeat 3 81) == fromList [ 81, 81, 81 ]\n\n",
+                "type": "Maybe.Maybe (Array.Array a) -> Array.Array a -> Array.Array a"
+            },
+            {
+                "name": "filterIf",
+                "comment": " Conditional filtering that is only performed, if the first parameter evalutes\nto True.\n",
+                "type": "Basics.Bool -> (a -> Basics.Bool) -> Array.Array a -> Array.Array a"
+            },
+            {
+                "name": "mapIf",
+                "comment": " Conditional mapping that is only performed, if the first parameter evalutes\nto True. The resulting array has to be of the same type as the input array.\n",
+                "type": "Basics.Bool -> (a -> a) -> Array.Array a -> Array.Array a"
+            },
+            {
+                "name": "pushIf",
+                "comment": " Push an element onto the end of an array if the first value evalutes to True.\n\n    pushIf False 3 (Array.fromList [ 1, 2 ]) == Array.fromList [ 1, 2 ]\n\n",
+                "type": "Basics.Bool -> a -> Array.Array a -> Array.Array a"
+            },
+            {
+                "name": "pushWhen",
+                "comment": " Push an element onto the end of an array, if it is not of type Nothing.\n\n    pushWhen (Just 3) (Array.fromList [ 1, 2 ]) == Array.fromList [ 1, 2, 3 ]\n\n",
+                "type": "Maybe.Maybe a -> Array.Array a -> Array.Array a"
+            },
+            {
+                "name": "setIf",
+                "comment": " Set the element at a particular index if the condition is met. Returns an\nupdated array. If the index is out of range, the array is unaltered.\n\n    Array.fromList [ 1, 2, 3 ]\n        |> setIf False 1 7\n        |> (==) Array.fromList [ 1, 2, 3 ]\n\n",
+                "type": "Basics.Bool -> Basics.Int -> a -> Array.Array a -> Array.Array a"
+            },
+            {
+                "name": "setWhen",
+                "comment": " Set the element at a particular index, if it is not of type Nothing.\nIf the index is out of range, the array is unaltered.\n\n    setWhen 1 (Just 7) (Array.fromList [ 1, 2, 3 ]) == Array.fromList [ 1, 7, 3 ]\n\n",
+                "type": "Basics.Int -> Maybe.Maybe a -> Array.Array a -> Array.Array a"
+            },
+            {
+                "name": "sliceIf",
+                "comment": " Conditional slice that is only performed, if the first parameter evalutes\nto True.\n",
+                "type": "Basics.Bool -> Basics.Int -> Basics.Int -> Array.Array a -> Array.Array a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Conditional.Bitwise",
+        "comment": " Library for Conditional [bitwise operations](https://en.wikipedia.org/wiki/Bitwise_operation).\n\n\n# Basic Operations\n\n@docs andIf, orIf, xorIf, complementIf\n\n\n# Bit Shifts\n\n@docs shiftLeftByIf, shiftRightByIf, shiftRightZfByIf\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "andIf",
+                "comment": " Conditional bitwise AND\n",
+                "type": "Basics.Bool -> Basics.Int -> Basics.Int -> Basics.Int"
+            },
+            {
+                "name": "complementIf",
+                "comment": " Conditional bitwise complement\n",
+                "type": "Basics.Bool -> Basics.Int -> Basics.Int"
+            },
+            {
+                "name": "orIf",
+                "comment": " Conditional bitwise OR\n",
+                "type": "Basics.Bool -> Basics.Int -> Basics.Int -> Basics.Int"
+            },
+            {
+                "name": "shiftLeftByIf",
+                "comment": " Conditional bitwise shiftLeftBy\n",
+                "type": "Basics.Bool -> Basics.Int -> Basics.Int -> Basics.Int"
+            },
+            {
+                "name": "shiftRightByIf",
+                "comment": " Conditional bitwise shiftRightBy\n",
+                "type": "Basics.Bool -> Basics.Int -> Basics.Int -> Basics.Int"
+            },
+            {
+                "name": "shiftRightZfByIf",
+                "comment": " Conditional bitwise shiftRightZfBy\n",
+                "type": "Basics.Bool -> Basics.Int -> Basics.Int -> Basics.Int"
+            },
+            {
+                "name": "xorIf",
+                "comment": " Conditional bitwise XOR\n",
+                "type": "Basics.Bool -> Basics.Int -> Basics.Int -> Basics.Int"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Conditional.Char",
+        "comment": " A set of conditional functions for maipulating Chars\n\n\n# Conversion\n\n@docs toUpperIf, toLowerIf, toLocaleUpperIf, toLocaleLowerIf\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "toLocaleLowerIf",
+                "comment": " Convert to locale lower case if the first condition is met\n",
+                "type": "Basics.Bool -> Char.Char -> Char.Char"
+            },
+            {
+                "name": "toLocaleUpperIf",
+                "comment": " Convert to locale upper case if the first condition is met\n",
+                "type": "Basics.Bool -> Char.Char -> Char.Char"
+            },
+            {
+                "name": "toLowerIf",
+                "comment": " Convert to lower case if the first condition is met\n",
+                "type": "Basics.Bool -> Char.Char -> Char.Char"
+            },
+            {
+                "name": "toUpperIf",
+                "comment": " Convert to upper case if the first condition is met\n",
+                "type": "Basics.Bool -> Char.Char -> Char.Char"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Conditional.Dict",
+        "comment": " A collection of conditional functions for maipulating dictionaries\n\n\n# Build\n\n@docs insertIf, insertWhen, insertWhenValue, updateIf, updateWhen, updateWhenValue, removeIf, removeWhen\n\n\n# Transform\n\n@docs mapIf, filterIf\n\n\n# Combine\n\n@docs unionIf, intersectIf\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "filterIf",
+                "comment": " Conditional filtering.\n",
+                "type": "Basics.Bool -> (comparable -> v -> Basics.Bool) -> Dict.Dict comparable v -> Dict.Dict comparable v"
+            },
+            {
+                "name": "insertIf",
+                "comment": " Conditional dict insertion\n",
+                "type": "Basics.Bool -> comparable -> v -> Dict.Dict comparable v -> Dict.Dict comparable v"
+            },
+            {
+                "name": "insertWhen",
+                "comment": " Insert into dict, if the key is not Nothing\n",
+                "type": "Maybe.Maybe comparable -> v -> Dict.Dict comparable v -> Dict.Dict comparable v"
+            },
+            {
+                "name": "insertWhenValue",
+                "comment": " Insert into dict, if the value is not Nothing\n",
+                "type": "comparable -> Maybe.Maybe v -> Dict.Dict comparable v -> Dict.Dict comparable v"
+            },
+            {
+                "name": "intersectIf",
+                "comment": " Conditional intersection.\n",
+                "type": "Basics.Bool -> Dict.Dict comparable v -> Dict.Dict comparable v -> Dict.Dict comparable v"
+            },
+            {
+                "name": "mapIf",
+                "comment": " Apply the mapping function only if the first parameter evalutes to True.\n",
+                "type": "Basics.Bool -> (k -> a -> a) -> Dict.Dict k a -> Dict.Dict k a"
+            },
+            {
+                "name": "removeIf",
+                "comment": " Conditional dict removal\n",
+                "type": "Basics.Bool -> comparable -> Dict.Dict comparable v -> Dict.Dict comparable v"
+            },
+            {
+                "name": "removeWhen",
+                "comment": " Remove an entry from a dict, if the key is not Nothing\n",
+                "type": "Maybe.Maybe comparable -> Dict.Dict comparable v -> Dict.Dict comparable v"
+            },
+            {
+                "name": "unionIf",
+                "comment": " If the first parameter evalutes to True, then both Dicts are unified,\notherwise the second Dict defines the result\n",
+                "type": "Basics.Bool -> Dict.Dict comparable v -> Dict.Dict comparable v -> Dict.Dict comparable v"
+            },
+            {
+                "name": "updateIf",
+                "comment": " Conditional dict update\n",
+                "type": "Basics.Bool -> comparable -> (Maybe.Maybe v -> Maybe.Maybe v) -> Dict.Dict comparable v -> Dict.Dict comparable v"
+            },
+            {
+                "name": "updateWhen",
+                "comment": " Update dict, if the key is not Nothing\n",
+                "type": "Maybe.Maybe comparable -> (Maybe.Maybe v -> Maybe.Maybe v) -> Dict.Dict comparable v -> Dict.Dict comparable v"
+            },
+            {
+                "name": "updateWhenValue",
+                "comment": " Update dict, if the value is not Nothing\n",
+                "type": "comparable -> Maybe.Maybe (Maybe.Maybe v -> Maybe.Maybe v) -> Dict.Dict comparable v -> Dict.Dict comparable v"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Conditional.List",
+        "comment": " A set of conditional functions for maipulating Lists.\n\n\n# Create\n\n@docs addIf, addWhen, attachIf, attachWhen\n\n\n# Transform\n\n@docs mapIf, filterIf, filterMapIf\n\n\n# Utilities\n\n@docs reverseIf\n\n\n# Combine\n\n@docs appendIf, appendWhen, concatMapIf, intersperseIf\n\n\n# Sort\n\n@docs sortIf, sortByIf\n\n\n# Deconstruct\n\n@docs takeIf, dropIf\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "addIf",
+                "comment": " Add an element to the front of a List only if the first condition is\nparameter evaluates to True.\n",
+                "type": "Basics.Bool -> a -> List.List a -> List.List a"
+            },
+            {
+                "name": "addWhen",
+                "comment": " Add an element to the front of a List only if the value is not Nothing\n",
+                "type": "Maybe.Maybe a -> List.List a -> List.List a"
+            },
+            {
+                "name": "appendIf",
+                "comment": " Perform a List.append only if the first condition is met, otherwise the\nsecond List defines the result.\n",
+                "type": "Basics.Bool -> List.List a -> List.List a -> List.List a"
+            },
+            {
+                "name": "appendWhen",
+                "comment": " Perform a List.append only if the first parameter is not Nothing.\n",
+                "type": "Maybe.Maybe (List.List a) -> List.List a -> List.List a"
+            },
+            {
+                "name": "attachIf",
+                "comment": " Add an element to the end of a List, if the first parameter evalutes to True.\n",
+                "type": "Basics.Bool -> a -> List.List a -> List.List a"
+            },
+            {
+                "name": "attachWhen",
+                "comment": " Add an element to the end of a List, if the element is not Nothing.\n",
+                "type": "Maybe.Maybe a -> List.List a -> List.List a"
+            },
+            {
+                "name": "concatMapIf",
+                "comment": " Conditional concatMap.\n",
+                "type": "Basics.Bool -> (a -> List.List a) -> List.List a -> List.List a"
+            },
+            {
+                "name": "dropIf",
+                "comment": " Conditional application of List.drop.\n",
+                "type": "Basics.Bool -> Basics.Int -> List.List a -> List.List a"
+            },
+            {
+                "name": "filterIf",
+                "comment": " Conditional application of a filtering.\n",
+                "type": "Basics.Bool -> (a -> Basics.Bool) -> List.List a -> List.List a"
+            },
+            {
+                "name": "filterMapIf",
+                "comment": " Conditional application of a filterMap function.\n",
+                "type": "Basics.Bool -> (a -> Maybe.Maybe a) -> List.List a -> List.List a"
+            },
+            {
+                "name": "intersperseIf",
+                "comment": " Conditional application of intersperse.\n",
+                "type": "Basics.Bool -> a -> List.List a -> List.List a"
+            },
+            {
+                "name": "mapIf",
+                "comment": " Conditional application of a mapping function.\n",
+                "type": "Basics.Bool -> (a -> a) -> List.List a -> List.List a"
+            },
+            {
+                "name": "reverseIf",
+                "comment": " Conditional list reverse.\n",
+                "type": "Basics.Bool -> List.List a -> List.List a"
+            },
+            {
+                "name": "sortByIf",
+                "comment": " Conditional sortBy.\n",
+                "type": "Basics.Bool -> (a -> comparable) -> List.List a -> List.List a"
+            },
+            {
+                "name": "sortIf",
+                "comment": " Conditional sort.\n",
+                "type": "Basics.Bool -> List.List comparable -> List.List comparable"
+            },
+            {
+                "name": "takeIf",
+                "comment": " Conditional application of List.take.\n",
+                "type": "Basics.Bool -> Basics.Int -> List.List a -> List.List a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Conditional.Maybe",
+        "comment": " A collection of conditional functions that can be applied to Maybe types.\n\n\n# Common Helpers\n\n@docs mapIf\n\n\n# Chaining Maybes\n\n@docs andThenIf\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "andThenIf",
+                "comment": " Apply a \"Then\" - chaining function only if the first condition is met.\n",
+                "type": "Basics.Bool -> (a -> Maybe.Maybe a) -> Maybe.Maybe a -> Maybe.Maybe a"
+            },
+            {
+                "name": "mapIf",
+                "comment": " Apply the mapping function only if the first condition is met.\n",
+                "type": "Basics.Bool -> (a -> a) -> Maybe.Maybe a -> Maybe.Maybe a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Conditional.Result",
+        "comment": " A collection of conditional function that can be applied to Result types.\n\n\n# Common Helpers\n\n@docs mapIf\n\n\n# Chaining Results\n\n@docs andThenIf\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "andThenIf",
+                "comment": " Apply a \"Then\" - chaining function only if the first condition is met.\n",
+                "type": "Basics.Bool -> (a -> Result.Result x a) -> Result.Result x a -> Result.Result x a"
+            },
+            {
+                "name": "mapIf",
+                "comment": " Apply the mapping function only if the first condition is met.\n",
+                "type": "Basics.Bool -> (a -> a) -> Result.Result x a -> Result.Result x a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Conditional.Set",
+        "comment": " A collection of conditional functions for working with sets.\n\n\n# Build\n\n@docs insertIf, insertWhen, removeIf, removeWhen\n\n\n# Combine\n\n@docs unionIf, intersectIf, diffIf\n\n\n# Transform\n\n@docs mapIf, filterIf\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "diffIf",
+                "comment": " Conditional diff\n",
+                "type": "Basics.Bool -> Set.Set comparable -> Set.Set comparable -> Set.Set comparable"
+            },
+            {
+                "name": "filterIf",
+                "comment": " Conditional filter\n",
+                "type": "Basics.Bool -> (comparable -> Basics.Bool) -> Set.Set comparable -> Set.Set comparable"
+            },
+            {
+                "name": "insertIf",
+                "comment": " Conditional insert\n",
+                "type": "Basics.Bool -> comparable -> Set.Set comparable -> Set.Set comparable"
+            },
+            {
+                "name": "insertWhen",
+                "comment": " Insert an element to a Set if it is not Nothing.\n",
+                "type": "Maybe.Maybe comparable -> Set.Set comparable -> Set.Set comparable"
+            },
+            {
+                "name": "intersectIf",
+                "comment": " Conditional intersection\n",
+                "type": "Basics.Bool -> Set.Set comparable -> Set.Set comparable -> Set.Set comparable"
+            },
+            {
+                "name": "mapIf",
+                "comment": " Conditional map\n",
+                "type": "Basics.Bool -> (comparable -> comparable) -> Set.Set comparable -> Set.Set comparable"
+            },
+            {
+                "name": "removeIf",
+                "comment": " Conditional remove\n",
+                "type": "Basics.Bool -> comparable -> Set.Set comparable -> Set.Set comparable"
+            },
+            {
+                "name": "removeWhen",
+                "comment": " Remove an element to a Set if it is not Nothing.\n",
+                "type": "Maybe.Maybe comparable -> Set.Set comparable -> Set.Set comparable"
+            },
+            {
+                "name": "unionIf",
+                "comment": " Conditional union\n",
+                "type": "Basics.Bool -> Set.Set comparable -> Set.Set comparable -> Set.Set comparable"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Conditional.String",
+        "comment": " A collection of conditional functions to work with Strings.\n\n\n# Strings\n\n@docs reverseIf, repeatIf, replaceIf\n\n\n# Building and Splitting\n\n@docs addIf, addWhen, attachIf, attachWhen\n\n\n# Get Substrings\n\n@docs sliceIf, leftIf, rightIf, dropLeftIf, dropRightIf\n\n\n# Char Conversions\n\n@docs consIf\n\n\n# Formatting\n\nCosmetic operations such as padding with extra characters or trimming whitespace.\n\n@docs toUpperIf, toLowerIf, padIf, padLeftIf, padRightIf, trimIf, trimLeftIf, trimRightIf\n\n\n# Higher-Order Functions\n\n@docs mapIf, filterIf\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "addIf",
+                "comment": " Add two Strings if the first parameter evalutes to True, otherwise the\nsecond defines the result\n",
+                "type": "Basics.Bool -> String.String -> String.String -> String.String"
+            },
+            {
+                "name": "addWhen",
+                "comment": " Add two Strings if the first one is not of type Nothing\n",
+                "type": "Maybe.Maybe String.String -> String.String -> String.String"
+            },
+            {
+                "name": "attachIf",
+                "comment": " Add the first String to the end of the second one, if the first parameter\nevalutes to True.\n",
+                "type": "Basics.Bool -> String.String -> String.String -> String.String"
+            },
+            {
+                "name": "attachWhen",
+                "comment": " Add the first String to the end of the second one, if it is not of\ntype Nothing.\n",
+                "type": "Maybe.Maybe String.String -> String.String -> String.String"
+            },
+            {
+                "name": "consIf",
+                "comment": " Apply String.cons if the first condition is met.\n",
+                "type": "Basics.Bool -> Char.Char -> String.String -> String.String"
+            },
+            {
+                "name": "dropLeftIf",
+                "comment": " Apply String.dropLeft if the first condition is met.\n",
+                "type": "Basics.Bool -> Basics.Int -> String.String -> String.String"
+            },
+            {
+                "name": "dropRightIf",
+                "comment": " Apply String.dropRight if the first condition is met.\n",
+                "type": "Basics.Bool -> Basics.Int -> String.String -> String.String"
+            },
+            {
+                "name": "filterIf",
+                "comment": " Apply String.filter if the first condition is met.\n",
+                "type": "Basics.Bool -> (Char.Char -> Basics.Bool) -> String.String -> String.String"
+            },
+            {
+                "name": "leftIf",
+                "comment": " Apply String.left if the first condition is met.\n",
+                "type": "Basics.Bool -> Basics.Int -> String.String -> String.String"
+            },
+            {
+                "name": "mapIf",
+                "comment": " Apply String.map if the first condition is met.\n",
+                "type": "Basics.Bool -> (Char.Char -> Char.Char) -> String.String -> String.String"
+            },
+            {
+                "name": "padIf",
+                "comment": " Apply String.pad if the first condition is met.\n",
+                "type": "Basics.Bool -> Basics.Int -> Char.Char -> String.String -> String.String"
+            },
+            {
+                "name": "padLeftIf",
+                "comment": " Apply String.padLeft if the first condition is met.\n",
+                "type": "Basics.Bool -> Basics.Int -> Char.Char -> String.String -> String.String"
+            },
+            {
+                "name": "padRightIf",
+                "comment": " Apply String.padRight if the first condition is met.\n",
+                "type": "Basics.Bool -> Basics.Int -> Char.Char -> String.String -> String.String"
+            },
+            {
+                "name": "repeatIf",
+                "comment": " Apply String.repeat if the first condition is met.\n",
+                "type": "Basics.Bool -> Basics.Int -> String.String -> String.String"
+            },
+            {
+                "name": "replaceIf",
+                "comment": " Apply String.replace if the first condition is met.\n",
+                "type": "Basics.Bool -> String.String -> String.String -> String.String -> String.String"
+            },
+            {
+                "name": "reverseIf",
+                "comment": " Apply String.reverse if the first condition is met.\n",
+                "type": "Basics.Bool -> String.String -> String.String"
+            },
+            {
+                "name": "rightIf",
+                "comment": " Apply String.right if the first condition is met.\n",
+                "type": "Basics.Bool -> Basics.Int -> String.String -> String.String"
+            },
+            {
+                "name": "sliceIf",
+                "comment": " Apply String.slice if the first condition is met.\n",
+                "type": "Basics.Bool -> Basics.Int -> Basics.Int -> String.String -> String.String"
+            },
+            {
+                "name": "toLowerIf",
+                "comment": " Apply String.toLower if the first condition is met.\n",
+                "type": "Basics.Bool -> String.String -> String.String"
+            },
+            {
+                "name": "toUpperIf",
+                "comment": " Apply String.toUpper if the first condition is met.\n",
+                "type": "Basics.Bool -> String.String -> String.String"
+            },
+            {
+                "name": "trimIf",
+                "comment": " Apply String.trim if the first condition is met.\n",
+                "type": "Basics.Bool -> String.String -> String.String"
+            },
+            {
+                "name": "trimLeftIf",
+                "comment": " Apply String.trimLeft if the first condition is met.\n",
+                "type": "Basics.Bool -> String.String -> String.String"
+            },
+            {
+                "name": "trimRightIf",
+                "comment": " Apply String.trimRight if the first condition is met.\n",
+                "type": "Basics.Bool -> String.String -> String.String"
+            }
+        ],
+        "binops": []
+    }
+]

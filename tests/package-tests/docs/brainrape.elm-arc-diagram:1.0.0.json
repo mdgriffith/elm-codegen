@@ -1,0 +1,136 @@
+[
+    {
+        "name": "AcyclicDigraph",
+        "comment": "\n\n\n## Type aliases\n\nThe following type aliases are used to make type annotations more meaningful.\n\n@docs Node, Edge, Cycle\n\n\n## AcyclicDigraph\n\n@docs AcyclicDigraph, fromEdges, toEdges\n\n\n## Topological sorting\n\n@docs topologicalRank, topologicalSortBy\n\n",
+        "unions": [
+            {
+                "name": "AcyclicDigraph",
+                "comment": " Represents a directed graph with no cycles.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Cycle",
+                "comment": " ",
+                "args": [],
+                "type": "List.List AcyclicDigraph.Node"
+            },
+            {
+                "name": "Edge",
+                "comment": " ",
+                "args": [],
+                "type": "( AcyclicDigraph.Node, AcyclicDigraph.Node )"
+            },
+            {
+                "name": "Node",
+                "comment": " ",
+                "args": [],
+                "type": "Basics.Int"
+            }
+        ],
+        "values": [
+            {
+                "name": "fromEdges",
+                "comment": " From a directed graph represented as a set of edges, get an\n`AcyclicDigraph` if the graph has no cycles; otherwise, get a list of all\nits simple cycles.\n",
+                "type": "Set.Set AcyclicDigraph.Edge -> Result.Result (List.List AcyclicDigraph.Cycle) AcyclicDigraph.AcyclicDigraph"
+            },
+            {
+                "name": "toEdges",
+                "comment": " From an `AcyclicDigraph`, get its representation as a set of edges.\n",
+                "type": "AcyclicDigraph.AcyclicDigraph -> Set.Set AcyclicDigraph.Edge"
+            },
+            {
+                "name": "topologicalRank",
+                "comment": " Get a dictionary mapping node to topological rank. Rank numbering starts at\n1 for all source nodes.\n",
+                "type": "AcyclicDigraph.AcyclicDigraph -> Dict.Dict AcyclicDigraph.Node Basics.Int"
+            },
+            {
+                "name": "topologicalSortBy",
+                "comment": " From topologically-ranked nodes, get a well-ordered list of nodes by\nproviding a `(Node -> comparable)` function to sort same-ranked nodes by.\n",
+                "type": "(AcyclicDigraph.Node -> comparable) -> Dict.Dict AcyclicDigraph.Node Basics.Int -> List.List AcyclicDigraph.Node"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ArcDiagram",
+        "comment": " Visualize an acyclic digraph as an arc diagram.\n\n@docs view\n\n\n## Layout\n\nRepresents values, in pixels, used to layout the diagram.\n\n@docs Layout, defaultLayout\n\n\n## Paint\n\nRepresents functions used to draw labels and set the color for each node\nand edge.\n\n@docs Paint, defaultPaint, basicPaint\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Layout",
+                "comment": "\n\n  - `nodePadding`: Nodes are drawn as rectangles tall enough to fit their\n    incoming connections and wide enough to fit their outgoing connections. This\n    determines how much padding to give nodes in addition to the minimum\n    dimensions required to fit their edge connections.\n  - `edgeSpacing`: Edges are drawn as 1px lines, and they do not overlap when\n    connecting to a node. This determines the spacing between each edge\n    connection.\n  - `edgeRadius`: Edges are drawn as L-shaped connections with rounded corners.\n    This determines the corner radius. It can be set to a high number to give the\n    look of a more traditional arc diagram.\n  - `labelWidth`: The width for each label.\n  - `labelMinHeight`: The minimum height for each label. This ensures space for\n    labels when their node heights are otherwise too small.\n\n",
+                "args": [],
+                "type": "{ nodePadding : Basics.Int, edgeSpacing : Basics.Int, edgeRadius : Basics.Int, labelWidth : Basics.Int, labelMinHeight : Basics.Int }"
+            },
+            {
+                "name": "Paint",
+                "comment": " Color is represented as a string, and should be a\n[CSS color value](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value).\n",
+                "args": [],
+                "type": "{ viewLabel : AcyclicDigraph.Node -> Svg.Svg AcyclicDigraph.Node, colorNode : AcyclicDigraph.Node -> String.String, colorEdge : AcyclicDigraph.Edge -> String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "basicPaint",
+                "comment": " Get a `Paint` value that uses the default colors and your own label text,\nby providing a _toLabel_ function that determines the label text for each node.\n\n    view : (Node -> String) -> AcyclicDigraph -> Html Node\n    view toLabel =\n        ArcDiagram.view\n            ArcDiagram.defaultLayout\n            (ArcDiagram.basicPaint toLabel)\n\n",
+                "type": "(AcyclicDigraph.Node -> String.String) -> ArcDiagram.Paint"
+            },
+            {
+                "name": "defaultLayout",
+                "comment": "\n\n    { nodePadding = 4\n    , edgeSpacing = 2\n    , edgeRadius = 4\n    , labelWidth = 100\n    , labelMinHeight = 20\n    }\n\n",
+                "type": "ArcDiagram.Layout"
+            },
+            {
+                "name": "defaultPaint",
+                "comment": " The `defaultPaint` will color nodes black, edges gray, and draw labels\ndisplaying the integer represention of each node.\n",
+                "type": "ArcDiagram.Paint"
+            },
+            {
+                "name": "view",
+                "comment": " Create an arc diagram with the specified layout and paint options. The\nview produces `Node` messages when a node or its label are clicked by the user.\n\n    type Msg\n      = ToggleNode Node\n      | ...\n\n\n    view : AcyclicDigraph -> Html Msg\n    view graph =\n      graph\n        |> ArcDiagram.view\n            ArcDiagram.defaultLayout\n            ArcDiagram.defaultPaint\n        |> Html.map ToggleNode\n\n",
+                "type": "ArcDiagram.Layout -> ArcDiagram.Paint -> AcyclicDigraph.AcyclicDigraph -> Html.Html AcyclicDigraph.Node"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "ArcDiagram.Distance",
+        "comment": " This module provides convenience functions for creating `ArcDiagram.Paint`\nvalues that will color nodes and edges based on _distance_ from a given node.\nThis is useful for highlighting the subgraph which is reachable from a\ngiven node.\n\n\n## Distance\n\n@docs Distance\n\n\n## Paint\n\n@docs basicPaint, DistancePaint, defaultDistancePaint, paint\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Distance",
+                "comment": " Represents the distance between two nodes. A value of `Just number`\nindicates the number of edges in a shortest path connecting the nodes. A value\nof `Nothing` means there is no path connecting the nodes.\n\nUnconventionally, the number may be negative, which indicates there is a path\nin the reverse direction. This way `Distance` can represent both forward and\nbackward connections.\n\n",
+                "args": [],
+                "type": "Maybe.Maybe Basics.Int"
+            },
+            {
+                "name": "DistancePaint",
+                "comment": " Similar to `Paint`, but each function also takes a `Distance` argument.\n",
+                "args": [],
+                "type": "{ viewLabel : AcyclicDigraph.Node -> ArcDiagram.Distance.Distance -> Svg.Svg AcyclicDigraph.Node, colorNode : AcyclicDigraph.Node -> ArcDiagram.Distance.Distance -> String.String, colorEdge : AcyclicDigraph.Edge -> ArcDiagram.Distance.Distance -> String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "basicPaint",
+                "comment": " Get a `Paint` value that uses the `defaultDistancePaint` coloring and your\nown label text, by providing a _toLabel_ function, a graph, and a node.\n\n    ArcDiagram.view\n        ArcDiagram.defaultLayout\n        (ArcDiagram.Distance.basicPaint toLabel graph node)\n        graph\n\nSee the [Selectable Node](https://github.com/justinmimbs/elm-arc-diagram)\nexample for more detail.\n\n",
+                "type": "(AcyclicDigraph.Node -> String.String) -> AcyclicDigraph.AcyclicDigraph -> AcyclicDigraph.Node -> ArcDiagram.Paint"
+            },
+            {
+                "name": "defaultDistancePaint",
+                "comment": " The `defaultDistancePaint` will color connected nodes and edges blue or red\n(for forward or backward connections), and color unconnected nodes, edges, and\nlabels light gray.\n",
+                "type": "ArcDiagram.Distance.DistancePaint"
+            },
+            {
+                "name": "paint",
+                "comment": " Get a `Paint` value from a `DistancePaint` value, a graph, and a node.\n\n    colorFromDistance : Distance -> String\n    colorFromDistance distance =\n        case distance of\n            Just _ ->\n                \"black\"\n\n            Nothing ->\n                \"lightgray\"\n\n    view : AcyclicDigraph -> Node -> Html Node\n    view graph node =\n        ArcDiagram.view\n            ArcDiagram.defaultLayout\n            (ArcDiagram.Distance.paint\n                { viewLabel = \\n d -> viewColorLabel (colorFromDistance d) (toLabel n)\n                , colorNode = always colorFromDistance\n                , colorEdge = always colorFromDistance\n                }\n                graph\n                node\n            )\n            graph\n\n",
+                "type": "ArcDiagram.Distance.DistancePaint -> AcyclicDigraph.AcyclicDigraph -> AcyclicDigraph.Node -> ArcDiagram.Paint"
+            }
+        ],
+        "binops": []
+    }
+]

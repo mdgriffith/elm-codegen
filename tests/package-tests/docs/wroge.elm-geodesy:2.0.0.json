@@ -1,0 +1,648 @@
+[
+    {
+        "name": "Geodesy",
+        "comment": " A coordinate conversion library in elm.\n\n\n# Types\n\n@docs Spheroid, Projection, CoordinateSystem, Geocentric, Geographic, Geographic2, Projected, Projected2\n\n\n# Functions\n\n@docs convert, normalizeLongitude\n\n\n# Predefined\n\n@docs geocentric, geographic, projected, webMercator, transverseMercator\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "CoordinateSystem",
+                "comment": " CoordinateSystem is represented a conversion to and from Geocentric coordinates.\n",
+                "args": [
+                    "x"
+                ],
+                "type": "( Geodesy.Spheroid -> x -> Geodesy.Geocentric, Geodesy.Spheroid -> Geodesy.Geocentric -> x )"
+            },
+            {
+                "name": "Geocentric",
+                "comment": " Geocentric is represented by x, y, and z coordinates.\n",
+                "args": [],
+                "type": "{ x : Basics.Float, y : Basics.Float, z : Basics.Float }"
+            },
+            {
+                "name": "Geographic",
+                "comment": " Geographic is represented by longitude, latitude and height coordinates.\n",
+                "args": [],
+                "type": "{ lon : Basics.Float, lat : Basics.Float, h : Basics.Float }"
+            },
+            {
+                "name": "Geographic2",
+                "comment": " Geographic2 is represented by longitude and latitude coordinate.\n",
+                "args": [],
+                "type": "{ lon : Basics.Float, lat : Basics.Float }"
+            },
+            {
+                "name": "Projected",
+                "comment": " Projected is represented by eastern, northern and height coordinates.\n",
+                "args": [],
+                "type": "{ east : Basics.Float, north : Basics.Float, h : Basics.Float }"
+            },
+            {
+                "name": "Projected2",
+                "comment": " Projected2 is represented by eastern and northern coordinate.\n",
+                "args": [],
+                "type": "{ east : Basics.Float, north : Basics.Float }"
+            },
+            {
+                "name": "Projection",
+                "comment": " Projection is represented by a projection to and from geographic coordinates.\n",
+                "args": [],
+                "type": "( Geodesy.Spheroid -> Geodesy.Projected2 -> Geodesy.Geographic2, Geodesy.Spheroid -> Geodesy.Geographic2 -> Geodesy.Projected2 )"
+            },
+            {
+                "name": "Spheroid",
+                "comment": " Spheroid is represented by major Axis (a) and inverse Flattening (fi)\n",
+                "args": [],
+                "type": "{ a : Basics.Float, fi : Basics.Float }"
+            }
+        ],
+        "values": [
+            {
+                "name": "convert",
+                "comment": " convert converts coordinates from one CoordinateSystem to another.\n",
+                "type": "Geodesy.CoordinateSystem x -> Geodesy.CoordinateSystem y -> Geodesy.Spheroid -> x -> y"
+            },
+            {
+                "name": "geocentric",
+                "comment": " geocentric is a CoordinateSystem that do nothing.\n",
+                "type": "Geodesy.CoordinateSystem Geodesy.Geocentric"
+            },
+            {
+                "name": "geographic",
+                "comment": " geographic is a CoordinateSystem that can convert geographic coordinates to\ngeocentric and vice versa.\n",
+                "type": "Geodesy.CoordinateSystem Geodesy.Geographic"
+            },
+            {
+                "name": "normalizeLongitude",
+                "comment": " normalizeLongitude converts longitude coordinate into the range between\n180 and -180 degrees.\n",
+                "type": "Basics.Float -> Basics.Float"
+            },
+            {
+                "name": "projected",
+                "comment": " projected takes a projection and returns a CoordinateSystem.\n",
+                "type": "Geodesy.Projection -> Geodesy.CoordinateSystem Geodesy.Projected"
+            },
+            {
+                "name": "transverseMercator",
+                "comment": " transverseMercator is a Projection that converts transverse mercator coordinates to\ngeographic and vice versa.\n",
+                "type": "Geodesy.TransverseMercator -> Geodesy.Projection"
+            },
+            {
+                "name": "webMercator",
+                "comment": " webMercator is a Projection that converts web mercator coordinates to\ngeographic and vice versa.\n",
+                "type": "Geodesy.Projection"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Geodesy.DHDN2001",
+        "comment": " A coordinate transformation library for dhdn2001 coordinate reference systems in elm.\n\n\n# Types\n\n@docs Geocentric, Geographic, GK, Zone\n\n\n# Functions\n\n@docs bessel, geocentric, geographic, gk\n\n",
+        "unions": [
+            {
+                "name": "GK",
+                "comment": " GK is represented by a zone and northern, eastern and height coordinates.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "GK",
+                        [
+                            "Geodesy.DHDN2001.Zone",
+                            "Geodesy.Projected"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Geocentric",
+                "comment": " Geocentric is represented by x, y, and z coordinates.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Geocentric",
+                        [
+                            "Geodesy.Geocentric"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Geographic",
+                "comment": " Geographic is represented by longitude, latitude and height coordinates.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Geographic",
+                        [
+                            "Geodesy.Geographic"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Zone",
+                "comment": " Zone represents the three DHDN2001 Zones 3, 4 and 5.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Zone3",
+                        []
+                    ],
+                    [
+                        "Zone4",
+                        []
+                    ],
+                    [
+                        "Zone5",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "bessel",
+                "comment": " bessel represents Bessel Spheroid.\n",
+                "type": "Geodesy.Spheroid"
+            },
+            {
+                "name": "geocentric",
+                "comment": " geocentric represents the DHDN2001 geocentric coordinate reference system.\n",
+                "type": "Geodesy.WGS84.CoordinateReferenceSystem Geodesy.DHDN2001.Geocentric"
+            },
+            {
+                "name": "geographic",
+                "comment": " geographic represents the DHDN2001 geographic coordinate reference system.\n",
+                "type": "Geodesy.WGS84.CoordinateReferenceSystem Geodesy.DHDN2001.Geographic"
+            },
+            {
+                "name": "gk",
+                "comment": " gk represents the DHDN2001 gauss kruger coordinate reference system.\n",
+                "type": "Geodesy.WGS84.CoordinateReferenceSystem Geodesy.DHDN2001.GK"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Geodesy.ETRS89",
+        "comment": " A coordinate transformation library for dhdn2001 coordinate reference systems in elm.\n\n\n# Types\n\n@docs Geographic, UTM, Zone\n\n\n# Functions\n\n@docs geocentric, geographic, grs80, utm\n\n",
+        "unions": [
+            {
+                "name": "Geographic",
+                "comment": " Geographic is represented by longitude, latitude and height coordinates.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Geographic",
+                        [
+                            "Geodesy.Geographic"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "UTM",
+                "comment": " UTM is represented by a zone and eastern, northern and height coordinates.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "UTM",
+                        [
+                            "Geodesy.ETRS89.Zone",
+                            "Geodesy.Projected"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Zone",
+                "comment": " Zone represents the ETRS89 UTM Zones.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Zone28",
+                        []
+                    ],
+                    [
+                        "Zone29",
+                        []
+                    ],
+                    [
+                        "Zone30",
+                        []
+                    ],
+                    [
+                        "Zone31",
+                        []
+                    ],
+                    [
+                        "Zone32",
+                        []
+                    ],
+                    [
+                        "Zone33",
+                        []
+                    ],
+                    [
+                        "Zone34",
+                        []
+                    ],
+                    [
+                        "Zone35",
+                        []
+                    ],
+                    [
+                        "Zone36",
+                        []
+                    ],
+                    [
+                        "Zone37",
+                        []
+                    ],
+                    [
+                        "Zone38",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "geocentric",
+                "comment": " geocentric represents the ETRS89 geocentric coordinate reference system.\n",
+                "type": "Geodesy.WGS84.CoordinateReferenceSystem Geodesy.WGS84.Geocentric"
+            },
+            {
+                "name": "geographic",
+                "comment": " geographic represents the ETRS89 geographic coordinate reference system.\n",
+                "type": "Geodesy.WGS84.CoordinateReferenceSystem Geodesy.ETRS89.Geographic"
+            },
+            {
+                "name": "grs80",
+                "comment": " grs80 represents ETRS89 Spheroid.\n",
+                "type": "Geodesy.Spheroid"
+            },
+            {
+                "name": "utm",
+                "comment": " utm represents the ETRS89 utm coordinate reference system.\n",
+                "type": "Geodesy.WGS84.CoordinateReferenceSystem Geodesy.ETRS89.UTM"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Geodesy.WGS84",
+        "comment": " A coordinate transformation library for dhdn2001 coordinate reference systems in elm.\n\n\n# Types\n\n@docs CoordinateReferenceSystem, Geocentric, Geographic, UTM, WebMercator, Zone\n\n\n# Functions\n\n@docs geocentric, geographic, helmert, spheroid, transform, utm, webMercator\n\n",
+        "unions": [
+            {
+                "name": "Geocentric",
+                "comment": " Geocentric is represented by x, y, and z coordinates.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Geocentric",
+                        [
+                            "Geodesy.Geocentric"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Geographic",
+                "comment": " Geographic is represented by longitude, latitude and height coordinates.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Geographic",
+                        [
+                            "Geodesy.Geographic"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "UTM",
+                "comment": " UTM is represented by a zone and eastern, northern and height coordinates.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "UTM",
+                        [
+                            "Geodesy.WGS84.Zone",
+                            "Geodesy.Projected"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "WebMercator",
+                "comment": " WebMercator is represented by eastern, northern and height coordinates.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "WebMercator",
+                        [
+                            "Geodesy.Projected"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Zone",
+                "comment": " Zone represents the WGS84 UTM Zones.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Zone01",
+                        []
+                    ],
+                    [
+                        "Zone02",
+                        []
+                    ],
+                    [
+                        "Zone03",
+                        []
+                    ],
+                    [
+                        "Zone04",
+                        []
+                    ],
+                    [
+                        "Zone05",
+                        []
+                    ],
+                    [
+                        "Zone06",
+                        []
+                    ],
+                    [
+                        "Zone07",
+                        []
+                    ],
+                    [
+                        "Zone08",
+                        []
+                    ],
+                    [
+                        "Zone09",
+                        []
+                    ],
+                    [
+                        "Zone10",
+                        []
+                    ],
+                    [
+                        "Zone11",
+                        []
+                    ],
+                    [
+                        "Zone12",
+                        []
+                    ],
+                    [
+                        "Zone13",
+                        []
+                    ],
+                    [
+                        "Zone14",
+                        []
+                    ],
+                    [
+                        "Zone15",
+                        []
+                    ],
+                    [
+                        "Zone16",
+                        []
+                    ],
+                    [
+                        "Zone17",
+                        []
+                    ],
+                    [
+                        "Zone18",
+                        []
+                    ],
+                    [
+                        "Zone19",
+                        []
+                    ],
+                    [
+                        "Zone20",
+                        []
+                    ],
+                    [
+                        "Zone21",
+                        []
+                    ],
+                    [
+                        "Zone22",
+                        []
+                    ],
+                    [
+                        "Zone23",
+                        []
+                    ],
+                    [
+                        "Zone24",
+                        []
+                    ],
+                    [
+                        "Zone25",
+                        []
+                    ],
+                    [
+                        "Zone26",
+                        []
+                    ],
+                    [
+                        "Zone27",
+                        []
+                    ],
+                    [
+                        "Zone28",
+                        []
+                    ],
+                    [
+                        "Zone29",
+                        []
+                    ],
+                    [
+                        "Zone30",
+                        []
+                    ],
+                    [
+                        "Zone31",
+                        []
+                    ],
+                    [
+                        "Zone32",
+                        []
+                    ],
+                    [
+                        "Zone33",
+                        []
+                    ],
+                    [
+                        "Zone34",
+                        []
+                    ],
+                    [
+                        "Zone35",
+                        []
+                    ],
+                    [
+                        "Zone36",
+                        []
+                    ],
+                    [
+                        "Zone37",
+                        []
+                    ],
+                    [
+                        "Zone38",
+                        []
+                    ],
+                    [
+                        "Zone39",
+                        []
+                    ],
+                    [
+                        "Zone40",
+                        []
+                    ],
+                    [
+                        "Zone41",
+                        []
+                    ],
+                    [
+                        "Zone42",
+                        []
+                    ],
+                    [
+                        "Zone43",
+                        []
+                    ],
+                    [
+                        "Zone44",
+                        []
+                    ],
+                    [
+                        "Zone45",
+                        []
+                    ],
+                    [
+                        "Zone46",
+                        []
+                    ],
+                    [
+                        "Zone47",
+                        []
+                    ],
+                    [
+                        "Zone48",
+                        []
+                    ],
+                    [
+                        "Zone49",
+                        []
+                    ],
+                    [
+                        "Zone50",
+                        []
+                    ],
+                    [
+                        "Zone51",
+                        []
+                    ],
+                    [
+                        "Zone52",
+                        []
+                    ],
+                    [
+                        "Zone53",
+                        []
+                    ],
+                    [
+                        "Zone54",
+                        []
+                    ],
+                    [
+                        "Zone55",
+                        []
+                    ],
+                    [
+                        "Zone56",
+                        []
+                    ],
+                    [
+                        "Zone57",
+                        []
+                    ],
+                    [
+                        "Zone58",
+                        []
+                    ],
+                    [
+                        "Zone59",
+                        []
+                    ],
+                    [
+                        "Zone60",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "CoordinateReferenceSystem",
+                "comment": " CoordinateReferenceSystem represents coordinate reference systems based on wgs84.\n",
+                "args": [
+                    "x"
+                ],
+                "type": "( x -> Geodesy.WGS84.Geocentric, Geodesy.WGS84.Geocentric -> x )"
+            }
+        ],
+        "values": [
+            {
+                "name": "geocentric",
+                "comment": " geocentric represents the WGS84 geocentric coordinate reference system.\n",
+                "type": "Geodesy.WGS84.CoordinateReferenceSystem Geodesy.WGS84.Geocentric"
+            },
+            {
+                "name": "geographic",
+                "comment": " geographic represents the WGS84 geographic coordinate reference system.\n",
+                "type": "Geodesy.WGS84.CoordinateReferenceSystem Geodesy.WGS84.Geographic"
+            },
+            {
+                "name": "helmert",
+                "comment": " helmert transforms geocentric coorinates by 7 parameters.\n",
+                "type": "Geodesy.WGS84.Helmert -> Geodesy.WGS84.CoordinateReferenceSystem Geodesy.Geocentric"
+            },
+            {
+                "name": "spheroid",
+                "comment": " spheroid represents WGS84 Spheroid.\n",
+                "type": "Geodesy.Spheroid"
+            },
+            {
+                "name": "transform",
+                "comment": " transform transforms coordinates from one coordinate reference system to another.\n",
+                "type": "Geodesy.WGS84.CoordinateReferenceSystem x -> Geodesy.WGS84.CoordinateReferenceSystem y -> x -> y"
+            },
+            {
+                "name": "utm",
+                "comment": " utm represents the WGS84 utm coordinate reference system.\n",
+                "type": "Geodesy.WGS84.CoordinateReferenceSystem Geodesy.WGS84.UTM"
+            },
+            {
+                "name": "webMercator",
+                "comment": " webMercator represents the WGS84 web mercator coordinate reference system.\n",
+                "type": "Geodesy.WGS84.CoordinateReferenceSystem Geodesy.WGS84.WebMercator"
+            }
+        ],
+        "binops": []
+    }
+]

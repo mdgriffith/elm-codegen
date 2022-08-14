@@ -1,0 +1,102 @@
+[
+    {
+        "name": "XmlParser",
+        "comment": " The XML Parser.\n\n\n# Types\n\n@docs Xml, ProcessingInstruction, DocType, DocTypeDefinition, Node, Attribute\n\n\n# Parse\n\n@docs parse, DeadEnd\n\n\n# Format\n\n@docs format\n\n",
+        "unions": [
+            {
+                "name": "DocTypeDefinition",
+                "comment": " DTD (Doc Type Definition)\n\n  - Public: `<!DOCTYPE root PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">`\n  - System: `<!DOCTYPE root SYSTEM \"foo.xml\">`\n  - Custom: `<!DOCTYPE root [ <!ELEMENT ...> ]>`\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Public",
+                        [
+                            "String.String",
+                            "String.String",
+                            "Maybe.Maybe String.String"
+                        ]
+                    ],
+                    [
+                        "System",
+                        [
+                            "String.String",
+                            "Maybe.Maybe String.String"
+                        ]
+                    ],
+                    [
+                        "Custom",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Node",
+                "comment": " Node is either a element such as `<a name=\"value\">foo</a>` or text such as `foo`.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Element",
+                        [
+                            "String.String",
+                            "List.List XmlParser.Attribute",
+                            "List.List XmlParser.Node"
+                        ]
+                    ],
+                    [
+                        "Text",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Attribute",
+                "comment": " Attribute such as `name=\"value\"`\n",
+                "args": [],
+                "type": "{ name : String.String, value : String.String }"
+            },
+            {
+                "name": "DeadEnd",
+                "comment": " A problem when parsing. See the elm/parser documentation for details.\n",
+                "args": [],
+                "type": "Parser.Advanced.DeadEnd String.String Parser.Problem"
+            },
+            {
+                "name": "DocType",
+                "comment": " Doc Type Declaration starting with \"<!DOCTYPE\".\n\nThis contains root element name and rest of details as `DocTypeDefinition`.\n\n",
+                "args": [],
+                "type": "{ rootElementName : String.String, definition : XmlParser.DocTypeDefinition }"
+            },
+            {
+                "name": "ProcessingInstruction",
+                "comment": " Processing Instruction such as `<?xml-stylesheet type=\"text/xsl\" href=\"style.xsl\"?>`.\n\nThe example above is parsed as `{ name = \"xml-stylesheet\", value = \"type=\\\"text/xsl\\\" href=\\\"style.xsl\\\"\" }`.\nThe value (presudo attributes) should be parsed by application.\n\n",
+                "args": [],
+                "type": "{ name : String.String, value : String.String }"
+            },
+            {
+                "name": "Xml",
+                "comment": " This represents the entire XML structure.\n\n  - processingInstructions: `<?xml-stylesheet type=\"text/xsl\" href=\"style.xsl\"?>`\n  - docType: `<!DOCTYPE root SYSTEM \"foo.xml\">`\n  - root: `<root><foo/></root>`\n\n",
+                "args": [],
+                "type": "{ processingInstructions : List.List XmlParser.ProcessingInstruction, docType : Maybe.Maybe XmlParser.DocType, root : XmlParser.Node }"
+            }
+        ],
+        "values": [
+            {
+                "name": "format",
+                "comment": " Convert Xml into String.\n\nThis function does NOT insert line breaks or indents for readability.\n\n",
+                "type": "XmlParser.Xml -> String.String"
+            },
+            {
+                "name": "parse",
+                "comment": " Parse XML string.\n\n`<?xml ... ?>` and `<!DOCTYPE ... >` is optional so you don't need to ensure them.\n\n    > import XmlParser\n    > XmlParser.parse \"\"\"<a name=\"value\">foo</a>\"\"\"\n    Ok { processingInstructions = [], docType = Nothing, root = Element \"a\" ([{ name = \"name\", value = \"value\" }]) ([Text \"foo\"]) }\n\n",
+                "type": "String.String -> Result.Result (List.List XmlParser.DeadEnd) XmlParser.Xml"
+            }
+        ],
+        "binops": []
+    }
+]

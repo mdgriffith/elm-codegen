@@ -1,0 +1,418 @@
+[
+    {
+        "name": "Bubblegum.Entity.Attribute",
+        "comment": " An attribute represents a small piece of information such as a [Semantic triple](https://en.wikipedia.org/wiki/Semantic_triple).\n\n\n# Model setters\n\n@docs Model, setId, setKey, setValues, setFacets\n\n\n# Attribute\n\n@docs findAttributeByKey, findAttributeFirstValueByKey, replaceAttributeByKey, deleteAttributeByKey\n\n\n# Outcome\n\n@docs findOutcomeByKey, findOutcomeByKeyTuple\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Model",
+                "comment": " The core representation of an attribute with:\n\n  - id: a possible id to represent the attribute (ex: id:1234)\n  - key: the key of the attribute (ex: ui:label)\n  - values: a list of string values\n  - facets: an optional list of tags to mark the data (ex: [min])\n\nWhen representing a RDF triple:\n\n  - subject: should be represented by id\n  - predicate: should be represented by key\n  - object: should be represented by values\n\n",
+                "args": [],
+                "type": "{ id : Maybe.Maybe String.String, key : String.String, values : List.List String.String, facets : List.List String.String }"
+            }
+        ],
+        "values": [
+            {
+                "name": "deleteAttributeByKey",
+                "comment": " Delete an attribute by key\n\n    deleteAttributeByKey \"ui:label\" models -- []\n\n",
+                "type": "String.String -> List.List Bubblegum.Entity.Attribute.Model -> List.List Bubblegum.Entity.Attribute.Model"
+            },
+            {
+                "name": "findAttributeByKey",
+                "comment": " Find an attribute by key\n\n    findAttributeByKey \"ui:label\" models -- Just label\n\n",
+                "type": "String.String -> List.List Bubblegum.Entity.Attribute.Model -> Maybe.Maybe Bubblegum.Entity.Attribute.Model"
+            },
+            {
+                "name": "findAttributeFirstValueByKey",
+                "comment": " Find an attribute by key and then get the first value if any\n\n    findAttributeFirstValueByKey \"ui:label\" models -- Just \"some label\"\n\n",
+                "type": "String.String -> List.List Bubblegum.Entity.Attribute.Model -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "findOutcomeByKey",
+                "comment": " Find an outcome searching by key\n\n    findOutcomeByKey \"ui:label\" models -- Valid [\"some label\"]\n\n",
+                "type": "String.String -> List.List Bubblegum.Entity.Attribute.Model -> Bubblegum.Entity.Outcome.Outcome (List.List String.String)"
+            },
+            {
+                "name": "findOutcomeByKeyTuple",
+                "comment": " Find an outcome searching by a couple of keys\n\n    findOutcomeByKeyTuple ( \"ui:min\", \"ui:max\" ) models -- Valid ([\"1\"], [\"10\"])\n\n",
+                "type": "( String.String, String.String ) -> List.List Bubblegum.Entity.Attribute.Model -> Bubblegum.Entity.Outcome.Outcome ( List.List String.String, List.List String.String )"
+            },
+            {
+                "name": "replaceAttributeByKey",
+                "comment": " Replace or create an attribute by key\n\n     replaceAttributeByKey \"ui:label\" [\"new label\"] models -- models\n\n",
+                "type": "String.String -> List.List String.String -> List.List Bubblegum.Entity.Attribute.Model -> List.List Bubblegum.Entity.Attribute.Model"
+            },
+            {
+                "name": "setFacets",
+                "comment": " Set an optional list of tags to mark the data\n\n    setFacets [ \"min\", \"inclusive\" ] model\n\n",
+                "type": "List.List String.String -> Bubblegum.Entity.Attribute.Model -> Bubblegum.Entity.Attribute.Model"
+            },
+            {
+                "name": "setId",
+                "comment": " Set a possible id to represent the attribute\n\n     setId (Just \"id:1234\") model\n\n",
+                "type": "Maybe.Maybe String.String -> Bubblegum.Entity.Attribute.Model -> Bubblegum.Entity.Attribute.Model"
+            },
+            {
+                "name": "setKey",
+                "comment": " Set the key of the attribute\n\n    setKey \"ui:label\" model\n\n",
+                "type": "String.String -> Bubblegum.Entity.Attribute.Model -> Bubblegum.Entity.Attribute.Model"
+            },
+            {
+                "name": "setValues",
+                "comment": " Set a list of string values\n\n    setValues [ \"some label\" ] model\n\n",
+                "type": "List.List String.String -> Bubblegum.Entity.Attribute.Model -> Bubblegum.Entity.Attribute.Model"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Bubblegum.Entity.Outcome",
+        "comment": " An outcome is a type which borrows concepts from both Elm Maybe and Result\n\n\n# Basics\n\n@docs Outcome, withDefault, map, map2, or, fromMaybe, toMaybe\n\n\n# Checking\n\n@docs check, checkOrNone, trueMapToConstant, isValid, isNone, isWarning\n\n",
+        "unions": [
+            {
+                "name": "Outcome",
+                "comment": " Representation of an outcome which can be:\n\n  - Valid: a valid value, similar to Just of Maybe.\n  - None: no value, similar to Nothing of Maybe.\n  - Warning: a warning message, similar to Err of Result.\n\n",
+                "args": [
+                    "value"
+                ],
+                "cases": [
+                    [
+                        "Valid",
+                        [
+                            "value"
+                        ]
+                    ],
+                    [
+                        "None",
+                        []
+                    ],
+                    [
+                        "Warning",
+                        [
+                            "String.String"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "check",
+                "comment": " Check that a valid outcome verifies the criteria otherwise raise a warning\n\n    check String.isEmpty \"should not be empty string\" (Valid \"some text\") -- Valid \"some text\"\n\n    check String.isEmpty \"should not be empty string\" (Valid \"\") -- Warning \"should not be empty string\"\n\n",
+                "type": "(a -> Basics.Bool) -> String.String -> Bubblegum.Entity.Outcome.Outcome a -> Bubblegum.Entity.Outcome.Outcome a"
+            },
+            {
+                "name": "checkOrNone",
+                "comment": " Check that a valid outcome verifies the criteria otherwise return none\n\n    checkOrNone String.isEmpty (Valid \"some text\") -- Valid \"some text\"\n\n    checkOrNone String.isEmpty (Valid \"\") -- None\n\n",
+                "type": "(a -> Basics.Bool) -> Bubblegum.Entity.Outcome.Outcome a -> Bubblegum.Entity.Outcome.Outcome a"
+            },
+            {
+                "name": "fromMaybe",
+                "comment": " Convert a maybe to an outcome\n\n    fromMaybe (Just \"str\") -- Valid \"str\"\n\n    fromMaybe Nothing -- None\n\n",
+                "type": "Maybe.Maybe a -> Bubblegum.Entity.Outcome.Outcome a"
+            },
+            {
+                "name": "isNone",
+                "comment": " Return true if the outcome is none\n",
+                "type": "Bubblegum.Entity.Outcome.Outcome a -> Basics.Bool"
+            },
+            {
+                "name": "isValid",
+                "comment": " Return true if the outcome is valid\n",
+                "type": "Bubblegum.Entity.Outcome.Outcome a -> Basics.Bool"
+            },
+            {
+                "name": "isWarning",
+                "comment": " Return true if the outcome is none\n",
+                "type": "Bubblegum.Entity.Outcome.Outcome a -> Basics.Bool"
+            },
+            {
+                "name": "map",
+                "comment": " Apply a function to an outcome. If the result is `Valid`, it will be converted.\nIf the outcome is a `Warning` or `None`, the same value will propagate through.\nmap sqrt (Valid 4.0) == Valid 2.0\n",
+                "type": "(a -> value) -> Bubblegum.Entity.Outcome.Outcome a -> Bubblegum.Entity.Outcome.Outcome value"
+            },
+            {
+                "name": "map2",
+                "comment": " Apply a function to two outcomes, if both outcome are `Valid`. If not,\na valid outcome and a None will propagate None, a Warning will always propagate.\nTwo warnings will be merged\n",
+                "type": "(a -> b -> value) -> Bubblegum.Entity.Outcome.Outcome a -> Bubblegum.Entity.Outcome.Outcome b -> Bubblegum.Entity.Outcome.Outcome value"
+            },
+            {
+                "name": "or",
+                "comment": " Like the boolean '||' this will return the first value that is positive ('Valid').\n\n    or None (Valid \"str\") -- Valid \"str\"\n\n",
+                "type": "Bubblegum.Entity.Outcome.Outcome a -> Bubblegum.Entity.Outcome.Outcome a -> Bubblegum.Entity.Outcome.Outcome a"
+            },
+            {
+                "name": "toMaybe",
+                "comment": " Convert an outcome to a maybe\n\n    toMaybe (Valid \"str\") -- Just \"str\"\n\n    toMaybe None -- Nothing\n\n",
+                "type": "Bubblegum.Entity.Outcome.Outcome a -> Maybe.Maybe a"
+            },
+            {
+                "name": "trueMapToConstant",
+                "comment": " An outcome with a true value will produce a constant outcome\n\n    trueMapToConstant [ \"alpha\" ] (Valid True) -- Valid [\"alpha\"]\n\n    trueMapToConstant [ \"alpha\" ] (Valid False) -- None\n\n",
+                "type": "a -> Bubblegum.Entity.Outcome.Outcome Basics.Bool -> Bubblegum.Entity.Outcome.Outcome a"
+            },
+            {
+                "name": "withDefault",
+                "comment": " If the outcome is `Valid` return the value. If the outcome is a `None` then\nreturn a given default value. If the outcome is a `Warning` then propagate this warning.\n",
+                "type": "a -> Bubblegum.Entity.Outcome.Outcome a -> Bubblegum.Entity.Outcome.Outcome a"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Bubblegum.Entity.SettingsEntity",
+        "comment": " A settings entity represents some configuration that could be applied to a widget\n\n@docs Model, setAttributes, asAttributesIn\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Model",
+                "comment": " The core representation of settings entity is mostly a list of attributes.\n",
+                "args": [],
+                "type": "{ attributes : List.List Bubblegum.Entity.Attribute.Model }"
+            }
+        ],
+        "values": [
+            {
+                "name": "asAttributesIn",
+                "comment": " Assign attributes to an entity\n",
+                "type": "Bubblegum.Entity.SettingsEntity.Model -> List.List Bubblegum.Entity.Attribute.Model -> Bubblegum.Entity.SettingsEntity.Model"
+            },
+            {
+                "name": "setAttributes",
+                "comment": " Assign attributes to an entity\n",
+                "type": "List.List Bubblegum.Entity.Attribute.Model -> Bubblegum.Entity.SettingsEntity.Model -> Bubblegum.Entity.SettingsEntity.Model"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Bubblegum.Entity.StateEntity",
+        "comment": " A state entity represents the state that could be applied to a widget\n\n@docs Model, setAttributes, asAttributesIn\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Model",
+                "comment": " The core representation of state entity is mostly a list of attributes.\n",
+                "args": [],
+                "type": "{ attributes : List.List Bubblegum.Entity.Attribute.Model }"
+            }
+        ],
+        "values": [
+            {
+                "name": "asAttributesIn",
+                "comment": " Assign attributes to an entity\n",
+                "type": "Bubblegum.Entity.StateEntity.Model -> List.List Bubblegum.Entity.Attribute.Model -> Bubblegum.Entity.StateEntity.Model"
+            },
+            {
+                "name": "setAttributes",
+                "comment": " Assign attributes to an entity\n",
+                "type": "List.List Bubblegum.Entity.Attribute.Model -> Bubblegum.Entity.StateEntity.Model -> Bubblegum.Entity.StateEntity.Model"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Bubblegum.Entity.Transformation",
+        "comment": " List of functions that can applied to an Outcome\n\n@docs addStringPrefix, addStringSuffix\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "addStringPrefix",
+                "comment": " Apply a string prefix to an outcome\n",
+                "type": "String.String -> Bubblegum.Entity.Outcome.Outcome String.String -> Bubblegum.Entity.Outcome.Outcome String.String"
+            },
+            {
+                "name": "addStringSuffix",
+                "comment": " Apply a string suffix to an outcome\n",
+                "type": "String.String -> Bubblegum.Entity.Outcome.Outcome String.String -> Bubblegum.Entity.Outcome.Outcome String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Bubblegum.Entity.Validation",
+        "comment": " List of validations with implicit transformations that can be applied to an outcome\n\nFor most validations:\n\n  - None will propagate as None.\n  - Warning will propagate as Warning.\n  - A failure to validate the outcome will produce a Warning.\n\n\n## Simple conversion\n\n@docs asSingle, asTuple, asBool, asFloat, asInt, asIntTuple, asFloatTuple, asUnique\n\n\n## Range validation\n\n@docs asIntRange, asFloatRange, withinIntRange, withinFloatRange\n\n\n## List validation\n\n@docs listEqual, listLessThan, listMoreThan, listStrictlyLessThan, listStrictlyMoreThan\n\n\n## String validation\n\n@docs matchAbsoluteUrl, matchCompactUri, matchEnum, matchNormalizedString, matchRegex, stringContains, stringStartsWith, stringEndsWith, withinListStringCharsRange, withinStringCharsRange\n\n\n## Number validation\n\n@docs floatLessThan, floatMoreThan, floatStrictlyLessThan, floatStrictlyMoreThan, intLessThan, intMoreThan, intStrictlyLessThan, intStrictlyMoreThan\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "asBool",
+                "comment": " Convert a String to a Float otherwise raise a warning\n\n    Valid \"true\" |> asBool -- Valid True\n\n",
+                "type": "Bubblegum.Entity.Outcome.Outcome String.String -> Bubblegum.Entity.Outcome.Outcome Basics.Bool"
+            },
+            {
+                "name": "asFloat",
+                "comment": " Convert a String to a Float otherwise raise a warning\n\n    Valid \"12.3\" |> asFloat -- Valid 12.3\n\n",
+                "type": "Bubblegum.Entity.Outcome.Outcome String.String -> Bubblegum.Entity.Outcome.Outcome Basics.Float"
+            },
+            {
+                "name": "asFloatRange",
+                "comment": " Check that first value is strictly less than the second otherwise raise a warning\n\n    Valid ( 3.5, 5.5 ) |> asFloatRange -- Valid (3.5, 5.5)\n\n",
+                "type": "Bubblegum.Entity.Outcome.Outcome ( Basics.Float, Basics.Float ) -> Bubblegum.Entity.Outcome.Outcome ( Basics.Float, Basics.Float )"
+            },
+            {
+                "name": "asFloatTuple",
+                "comment": " Convert a tuple of String to a tuple of Float otherwise raise a warning\n\n    Valid ( \"3.5\", \"5.5\" ) |> asFloatTuple -- Valid (3.5, 5.5)\n\n",
+                "type": "Bubblegum.Entity.Outcome.Outcome ( String.String, String.String ) -> Bubblegum.Entity.Outcome.Outcome ( Basics.Float, Basics.Float )"
+            },
+            {
+                "name": "asInt",
+                "comment": " Convert a String to an Int otherwise raise a warning\n\n    Valid \"12\" |> asInt -- Valid 12\n\n",
+                "type": "Bubblegum.Entity.Outcome.Outcome String.String -> Bubblegum.Entity.Outcome.Outcome Basics.Int"
+            },
+            {
+                "name": "asIntRange",
+                "comment": " Check that first value is strictly less than the second otherwise raise a warning\n\n    Valid ( 3, 5 ) |> asIntRange -- Valid (3, 5)\n\n",
+                "type": "Bubblegum.Entity.Outcome.Outcome ( Basics.Int, Basics.Int ) -> Bubblegum.Entity.Outcome.Outcome ( Basics.Int, Basics.Int )"
+            },
+            {
+                "name": "asIntTuple",
+                "comment": " Convert a tuple of String to a tuple of Int otherwise raise a warning\n\n    Valid ( \"3\", \"5\" ) |> asIntTuple -- Valid (3, 5)\n\n",
+                "type": "Bubblegum.Entity.Outcome.Outcome ( String.String, String.String ) -> Bubblegum.Entity.Outcome.Outcome ( Basics.Int, Basics.Int )"
+            },
+            {
+                "name": "asSingle",
+                "comment": " Convert a list with only one string to a single string.\n\n    Valid [ \"alpha\" ] |> asSingle -- Valid \"alpha\"\n\n",
+                "type": "Bubblegum.Entity.Outcome.Outcome (List.List String.String) -> Bubblegum.Entity.Outcome.Outcome String.String"
+            },
+            {
+                "name": "asTuple",
+                "comment": " Convert a tuple of singleton list to a tuple of String\n\n    Valid ( [ \"min\" ], [ \"max\" ] ) |> asTuple -- Valid (\"min\", \"max\")\n\n",
+                "type": "Bubblegum.Entity.Outcome.Outcome ( List.List String.String, List.List String.String ) -> Bubblegum.Entity.Outcome.Outcome ( String.String, String.String )"
+            },
+            {
+                "name": "asUnique",
+                "comment": " Enforce that the list to be unique\n\n    Valid [ \"alpha\", \"beta\", \"alpha\" ] |> asUnique -- Valid [\"alpha\", \"beta\"]\n\n",
+                "type": "Bubblegum.Entity.Outcome.Outcome (List.List String.String) -> Bubblegum.Entity.Outcome.Outcome (List.List String.String)"
+            },
+            {
+                "name": "floatLessThan",
+                "comment": " Check that an int is equal or less than a given value otherwise raise a warning\n\n    Valid 12.4 |> floatLessThan 12.4 -- Valid 12.4\n\n",
+                "type": "Basics.Float -> Bubblegum.Entity.Outcome.Outcome Basics.Float -> Bubblegum.Entity.Outcome.Outcome Basics.Float"
+            },
+            {
+                "name": "floatMoreThan",
+                "comment": " Check that an int is equal or more than a given value otherwise raise a warning\n\n    Valid 12.4 |> floatMoreThan 5.0 -- Valid 12.4\n\n",
+                "type": "Basics.Float -> Bubblegum.Entity.Outcome.Outcome Basics.Float -> Bubblegum.Entity.Outcome.Outcome Basics.Float"
+            },
+            {
+                "name": "floatStrictlyLessThan",
+                "comment": " Check that an int is strictly less than a given value otherwise raise a warning\n\n    Valid 12.4 |> floatStrictlyLessThan 20 -- Valid 12.4\n\n",
+                "type": "Basics.Float -> Bubblegum.Entity.Outcome.Outcome Basics.Float -> Bubblegum.Entity.Outcome.Outcome Basics.Float"
+            },
+            {
+                "name": "floatStrictlyMoreThan",
+                "comment": " Check that an int is strictly more than a given value otherwise raise a warning\n\n    Valid 12.4 |> floatStrictlyMoreThan 5.3 -- Valid 12.4\n\n",
+                "type": "Basics.Float -> Bubblegum.Entity.Outcome.Outcome Basics.Float -> Bubblegum.Entity.Outcome.Outcome Basics.Float"
+            },
+            {
+                "name": "intLessThan",
+                "comment": " Check that an int is equal or less than a given value otherwise raise a warning\n\n    Valid 12 |> intLessThan 12 -- Valid 12\n\n",
+                "type": "Basics.Int -> Bubblegum.Entity.Outcome.Outcome Basics.Int -> Bubblegum.Entity.Outcome.Outcome Basics.Int"
+            },
+            {
+                "name": "intMoreThan",
+                "comment": " Check that an int is equal or more than a given value otherwise raise a warning\n\n    Valid 12 |> intMoreThan 12 -- Valid 12\n\n",
+                "type": "Basics.Int -> Bubblegum.Entity.Outcome.Outcome Basics.Int -> Bubblegum.Entity.Outcome.Outcome Basics.Int"
+            },
+            {
+                "name": "intStrictlyLessThan",
+                "comment": " Check that an int is strictly less than a given value otherwise raise a warning\n\n    Valid 12 |> intStrictlyLessThan 20 -- Valid 12\n\n",
+                "type": "Basics.Int -> Bubblegum.Entity.Outcome.Outcome Basics.Int -> Bubblegum.Entity.Outcome.Outcome Basics.Int"
+            },
+            {
+                "name": "intStrictlyMoreThan",
+                "comment": " Check that an int is equal or more than a given value otherwise raise a warning\n\n    Valid 12 |> intStrictlyMoreThan 5 -- Valid 12\n\n",
+                "type": "Basics.Int -> Bubblegum.Entity.Outcome.Outcome Basics.Int -> Bubblegum.Entity.Outcome.Outcome Basics.Int"
+            },
+            {
+                "name": "listEqual",
+                "comment": " Ensure that the list equal a given size otherwise raise a warning\n\n    Valid [ \"alpha\", \"beta\" ] |> listEqual 2 -- Valid [\"alpha\", \"beta\"]\n\n",
+                "type": "Basics.Int -> Bubblegum.Entity.Outcome.Outcome (List.List String.String) -> Bubblegum.Entity.Outcome.Outcome (List.List String.String)"
+            },
+            {
+                "name": "listLessThan",
+                "comment": " Ensure that the list equal or less than a given size otherwise raise a warning\n\n    Valid [ \"alpha\", \"beta\" ] |> listLessThan 2 -- Valid [\"alpha\", \"beta\"]\n\n",
+                "type": "Basics.Int -> Bubblegum.Entity.Outcome.Outcome (List.List String.String) -> Bubblegum.Entity.Outcome.Outcome (List.List String.String)"
+            },
+            {
+                "name": "listMoreThan",
+                "comment": " Ensure that the list equal or more than a given size otherwise raise a warning\n\n    Valid [ \"alpha\", \"beta\" ] |> listMoreThan 2 -- Valid [\"alpha\", \"beta\"]\n\n",
+                "type": "Basics.Int -> Bubblegum.Entity.Outcome.Outcome (List.List String.String) -> Bubblegum.Entity.Outcome.Outcome (List.List String.String)"
+            },
+            {
+                "name": "listStrictlyLessThan",
+                "comment": " Ensure that the list is strictly less than a given size otherwise raise a warning\n\n    Valid [ \"alpha\", \"beta\" ] |> listStrictlyLessThan 3 -- Valid [\"alpha\", \"beta\"]\n\n",
+                "type": "Basics.Int -> Bubblegum.Entity.Outcome.Outcome (List.List String.String) -> Bubblegum.Entity.Outcome.Outcome (List.List String.String)"
+            },
+            {
+                "name": "listStrictlyMoreThan",
+                "comment": " Ensure that the list is strictly more than a given size otherwise raise a warning\n\n    Valid [ \"alpha\", \"beta\" ] |> listStrictlyMoreThan 1 -- Valid [\"alpha\", \"beta\"]\n\n",
+                "type": "Basics.Int -> Bubblegum.Entity.Outcome.Outcome (List.List String.String) -> Bubblegum.Entity.Outcome.Outcome (List.List String.String)"
+            },
+            {
+                "name": "matchAbsoluteUrl",
+                "comment": " Check whether a string matches an absolute URL otherwise raise a warning\n\n    Valid \"http://bbc.co.uk\" |> matchAbsoluteUrl -- Valid \"http://bbc.co.uk\"\n\n",
+                "type": "Bubblegum.Entity.Outcome.Outcome String.String -> Bubblegum.Entity.Outcome.Outcome String.String"
+            },
+            {
+                "name": "matchCompactUri",
+                "comment": " Check whether a string matches an absolute URL otherwise raise a warning.\n\n    The prefix should not exceed 15 characters.\n\n    Valid \"uri:a/b001/c\" |> matchCompactUri -- Valid \"uri:a/b001/c\"\n\n",
+                "type": "Bubblegum.Entity.Outcome.Outcome String.String -> Bubblegum.Entity.Outcome.Outcome String.String"
+            },
+            {
+                "name": "matchEnum",
+                "comment": " Check that a string belong to an enumeration otherwise raise a warning\n\n    Valid [ \"alpha\" ] |> matchEnum [ \"beta\", \"alpha\" ] -- Valid [\"alpha\"]\n\n",
+                "type": "List.List String.String -> Bubblegum.Entity.Outcome.Outcome String.String -> Bubblegum.Entity.Outcome.Outcome String.String"
+            },
+            {
+                "name": "matchNormalizedString",
+                "comment": " Check that a string is a [normalized string](https://www.w3.org/TR/xmlschema11-2/#normalizedString)\n\n    Valid \"some string\" |> matchNormalizedString -- Valid \"some string\"\n\n",
+                "type": "Bubblegum.Entity.Outcome.Outcome String.String -> Bubblegum.Entity.Outcome.Outcome String.String"
+            },
+            {
+                "name": "matchRegex",
+                "comment": " Check whether a string matches a regular expression otherwise raise a warning\n\n    Valid \"abc\" |> matchRegex \"[a-z]+\" -- Valid \"abc\"\n\n",
+                "type": "String.String -> Bubblegum.Entity.Outcome.Outcome String.String -> Bubblegum.Entity.Outcome.Outcome String.String"
+            },
+            {
+                "name": "stringContains",
+                "comment": " Check that a string contains a term otherwise raise a warning\n\n    Valid [ \"blue red green\" ] |> stringContains \"red\" -- Valid [\"blue red green\"]\n\n",
+                "type": "String.String -> Bubblegum.Entity.Outcome.Outcome String.String -> Bubblegum.Entity.Outcome.Outcome String.String"
+            },
+            {
+                "name": "stringEndsWith",
+                "comment": " Check that a string ends with a suffix otherwise raise a warning\n\n    Valid [ \"image.jpg\" ] |> stringEndsWith \".jpg\" -- Valid [\"image.jpg\"]\n\n",
+                "type": "String.String -> Bubblegum.Entity.Outcome.Outcome String.String -> Bubblegum.Entity.Outcome.Outcome String.String"
+            },
+            {
+                "name": "stringStartsWith",
+                "comment": " Check that a string starts with a prefix otherwise raise a warning\n\n    Valid [ \"ui:label\" ] |> stringStartsWith \"ui:\" -- Valid [\"ui:label\"]\n\n",
+                "type": "String.String -> Bubblegum.Entity.Outcome.Outcome String.String -> Bubblegum.Entity.Outcome.Outcome String.String"
+            },
+            {
+                "name": "withinFloatRange",
+                "comment": " Check a tuple of Float is within the range of a given range otherwise raise a warning\n\n    Valid ( 3.5, 5.2 ) |> withinFloatRange ( 2.1, 7.2 ) -- Valid (3.5, 5.2)\n\n",
+                "type": "( Basics.Float, Basics.Float ) -> Bubblegum.Entity.Outcome.Outcome ( Basics.Float, Basics.Float ) -> Bubblegum.Entity.Outcome.Outcome ( Basics.Float, Basics.Float )"
+            },
+            {
+                "name": "withinIntRange",
+                "comment": " Check a tuple of Int is within the range of a given range otherwise raise a warning\n\n    Valid ( 3, 5 ) |> withinIntRange ( 2, 7 ) -- Valid (3, 5)\n\n",
+                "type": "( Basics.Int, Basics.Int ) -> Bubblegum.Entity.Outcome.Outcome ( Basics.Int, Basics.Int ) -> Bubblegum.Entity.Outcome.Outcome ( Basics.Int, Basics.Int )"
+            },
+            {
+                "name": "withinListStringCharsRange",
+                "comment": " Check that all the strings' number of characters are within a range otherwise raise a warning\n\n    Valid [ \"abc\", \"abcd\" ] |> withinListStringCharsRange ( 2, 7 ) -- Valid \"abcd\"\n\n",
+                "type": "( Basics.Int, Basics.Int ) -> Bubblegum.Entity.Outcome.Outcome (List.List String.String) -> Bubblegum.Entity.Outcome.Outcome (List.List String.String)"
+            },
+            {
+                "name": "withinStringCharsRange",
+                "comment": " Check that a string number of characters is within a range otherwise raise a warning\n\n    Valid \"abcd\" |> withinStringCharsRange ( 2, 7 ) -- Valid \"abcd\"\n\n",
+                "type": "( Basics.Int, Basics.Int ) -> Bubblegum.Entity.Outcome.Outcome String.String -> Bubblegum.Entity.Outcome.Outcome String.String"
+            }
+        ],
+        "binops": []
+    }
+]

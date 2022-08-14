@@ -1,0 +1,79 @@
+[
+    {
+        "name": "Editable",
+        "comment": " Editable represents a value that can be read-only or editable.\n`ReadOnly a` holds the locked value and `Editable a a` holds both the old and the newly modified value.\n\n@docs Editable, cancel, edit, isDirty, isDirtyWith, isEditable, isReadOnly, map, save, value\n\n",
+        "unions": [
+            {
+                "name": "Editable",
+                "comment": " An `Editable` value is either `ReadOnly` or `Editable`.\n\n    view : Editable String -> Html msg\n    view editable =\n        case editable of\n            Editable saved modified ->\n                input [ defaultValue modified ] []\n\n            ReadOnly saved ->\n                text saved\n\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "Editable",
+                        [
+                            "a",
+                            "a"
+                        ]
+                    ],
+                    [
+                        "ReadOnly",
+                        [
+                            "a"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "cancel",
+                "comment": " Cancels a modified value. This puts the old value into the context of `ReadOnly`.\n\n    Editable.Editable \"old\" \"new\"\n        |> Editable.cancel       --> ReadOnly \"old\"\n\n",
+                "type": "Editable.Editable a -> Editable.Editable a"
+            },
+            {
+                "name": "edit",
+                "comment": " Makes a `ReadOnly` value `Editable`.\n\n    Editable.ReadOnly \"old\"\n        |> Editable.edit\n        |> Editable.map (always \"new\") --> Editable \"old\" \"new\"\n\n",
+                "type": "Editable.Editable a -> Editable.Editable a"
+            },
+            {
+                "name": "isDirty",
+                "comment": " Indicates if a modified value has changed from the saved one, by checking equality of both values.\n\nIf the `Editable` is `ReadOnly` then we return False.\n\n    Editable.Editable \"old\" \"old\"\n        |> Editable.isDirty  --> False\n\n    Editable.Editable \"old\" \"new\"\n        |> Editable.isDirty  --> True\n\n    Editable.ReadOnly \"old\"\n        |> Editable.isDirty  --> False\n\n",
+                "type": "Editable.Editable a -> Basics.Bool"
+            },
+            {
+                "name": "isDirtyWith",
+                "comment": " Indicates if a modified value has changed from the saved one, by a provided function.\n\nIf the `Editable` is `ReadOnly` then we return False.\n\n    Editable.Editable \"old\" \"old\"\n        |> Editable.isDirtyWith (/=)  --> False\n\n    Editable.Editable \"old\" \"new\"\n        |> Editable.isDirtyWith (/=)  --> True\n\n    Editable.ReadOnly \"old\"\n        |> Editable.isDirtyWith (/=)  --> False\n\n",
+                "type": "(a -> a -> Basics.Bool) -> Editable.Editable a -> Basics.Bool"
+            },
+            {
+                "name": "isEditable",
+                "comment": " Indicates if an `Editable` is in `Editable` state.\n\n    Editable.Editable \"old\" \"old\"\n        |> Editable.isEditable  --> True\n\n    Editable.ReadOnly \"old\"\n        |> Editable.isEditable  --> False\n\n",
+                "type": "Editable.Editable a -> Basics.Bool"
+            },
+            {
+                "name": "isReadOnly",
+                "comment": " Indicates if an `Editable` is in `ReadOnly` state.\n\n    Editable.Editable \"old\" \"old\"\n        |> Editable.isReadOnly  --> False\n\n    Editable.ReadOnly \"old\"\n        |> Editable.isReadOnly  --> True\n\n",
+                "type": "Editable.Editable a -> Basics.Bool"
+            },
+            {
+                "name": "map",
+                "comment": " Apply a function to an `Editable`. This is the function you will call in\norder to update the value of an `Editable.Editable`.\n\n    Editable.ReadOnly \"old\"\n        |> Editable.map String.toUpper --> ReadOnly \"old\"\n\n    Editable.Editable \"old\" \"old\"\n        |> Editable.map String.toUpper --> Editable \"old\" \"OLD\"\n\n    Editable.Editable \"old\" \"new\"\n        |> Editable.map (\\val -> val ++ \"er\")  --> Editable \"old\" \"newer\"\n\n    Editable.Editable \"old\" \"old\"\n        |> Editable.map (always \"new\") --> Editable \"old\" \"new\"\n\n",
+                "type": "(a -> a) -> Editable.Editable a -> Editable.Editable a"
+            },
+            {
+                "name": "save",
+                "comment": " Save a modified value. This puts the modified value into the context of `ReadOnly`.\n\n    Editable.Editable \"old\" \"new\"\n        |> Editable.save          --> ReadOnly \"new\"\n\n    Editable.ReadOnly \"old\"\n        |> Editable.edit\n        |> Editable.map (always \"new\")\n        |> Editable.save          --> ReadOnly \"new\"\n\n",
+                "type": "Editable.Editable a -> Editable.Editable a"
+            },
+            {
+                "name": "value",
+                "comment": " Returns the current value of an Editable.\n\n    Editable.ReadOnly \"old\"\n        |> Editable.value  --> \"old\"\n\n    Editable.Editable \"old\" \"new\"\n        |> Editable.value  --> \"new\"\n\n",
+                "type": "Editable.Editable a -> a"
+            }
+        ],
+        "binops": []
+    }
+]

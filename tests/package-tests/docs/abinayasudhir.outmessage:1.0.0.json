@@ -1,0 +1,71 @@
+[
+    {
+        "name": "OutMessage",
+        "comment": " **Note: ** This library is opinionated. The usage of an OutMsg is a technique to extend The Elm Architecture (TEA) to support\nchild-parent communication. The [README](https://github.com/folkertdev/outmessage/blob/master/README.md) covers the design.\n\nThe OutMsg pattern has two components:\n\n  - OutMsg, a user-defined type (just like Model or Msg) with the specific purpose of notifying a parent component.\n  - `interpretOutMsg`, a function that converts OutMsg values into side-effects (commands and changes to the model)\n\nOutMsg values can be captured in the parent's update function, and handled there by `interpretOutMsg`.\nThe basic pattern can be extended to return multiple OutMsg using List or to optionally return no OutMsg using Maybe.\n\n#Evaluators\n\n@docs evaluate, evaluateMaybe, evaluateList, evaluateResult\n\n#Mapping\n\n@docs mapComponent, mapCmd, mapOutMsg\n\n#Helpers\n\n@docs addOutMsg, toNested, fromNested\n\n#Internals\n\nInternal functions that can be used to create custom evaluators.\n\nAn evaluator has three basic components:\n\n  - **A state creator**, often using `OutMessage.wrap`.\n  - **A state modifier**, any function from the State package (see the use of State.traverse in evaluateList).\n  - **A state evaluator** that runs the state and creates a 'vanilla' elm value.\n\nThis package uses the [State](http://package.elm-lang.org/packages/folkertdev/elm-state/1.0.0/) package for threading the model through a series of\nupdates and accumulating commands.\n\n@docs wrap, run\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "addOutMsg",
+                "comment": " Add an outmessage to the normal type that `update` has. Handy to use in a pipe:\n\n    ( { model | a = 1 }, Cmd.none )\n        |> addOutMsg Nothing\n\n",
+                "type": "outMsg -> ( model, Platform.Cmd.Cmd msg ) -> ( model, Platform.Cmd.Cmd msg, outMsg )"
+            },
+            {
+                "name": "evaluate",
+                "comment": " Turn an `OutMsg` value into commands and model changes.\n\nThe arguments are:\n\n  - `interpretOutMsg`, a user-defined function that turns OutMsg values into\n    model changes and effects.\n  - a tuple containing the model (updated with the child component),\n    commands (of the parent's Msg type) and an OutMsg. This package exposes\n    helpers to construct this tuple from the value that a child update function returns.\n\nExample usage:\n\n    -- in update : Msg -> Model -> (Model, Cmd Msg)\n    -- assuming interpretOutMsg : OutMsg -> Model -> (Model, Cmd Msg)\n    -- ChildComponentModule.update\n    --       : ChildMsg\n    --       -> ChildModel -> (ChildModel, Cmd ChildMsg, OutMsg)\n    ChildComponentMessageWrapper childMsg ->\n        ChildComponentModule.update childMsg model.child\n            -- update the model with the new child component\n            |> OutMessage.mapComponent\n                (\\newChild -> { model | child = newChild }\n            -- convert child cmd to parent cmd\n            |> OutMessage.mapCmd ChildComponentMessageWrapper\n            -- apply outmsg changes\n            |> OutMessage.evaluate interpretOutMsg\n\n",
+                "type": "(outMsg -> model -> ( model, Platform.Cmd.Cmd msg )) -> ( model, Platform.Cmd.Cmd msg, outMsg ) -> ( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "evaluateList",
+                "comment": " Turn a `List OutMsg` into effects and model changes.\n\nTakes care of threading the state. When interpreting an OutMsg changes the model,\nthe updated model will be used for subsequent interpretations of OutMsgs. Cmds are\naccumulated and batched.\n\n",
+                "type": "(outMsg -> model -> ( model, Platform.Cmd.Cmd msg )) -> ( model, Platform.Cmd.Cmd msg, List.List outMsg ) -> ( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "evaluateMaybe",
+                "comment": " Turn a `Maybe OutMsg` into effects and model changes.\n\nHas a third argument for a default command that is used when OutMsg is Nothing.\n\n",
+                "type": "(outMsg -> model -> ( model, Platform.Cmd.Cmd msg )) -> Platform.Cmd.Cmd msg -> ( model, Platform.Cmd.Cmd msg, Maybe.Maybe outMsg ) -> ( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "evaluateResult",
+                "comment": " Turn a `Result error OutMsg` into effects and model changes\n\nHas a third argument for a function that turns errors into a command that is used when\nOutMsg is Err error.\n\n",
+                "type": "(outMsg -> model -> ( model, Platform.Cmd.Cmd msg )) -> (error -> Platform.Cmd.Cmd msg) -> ( model, Platform.Cmd.Cmd msg, Result.Result error outMsg ) -> ( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "fromNested",
+                "comment": " Join the component, command and outmessage into a flat tuple.\n",
+                "type": "( ( a, b ), c ) -> ( a, b, c )"
+            },
+            {
+                "name": "mapCmd",
+                "comment": " Apply a function over the Msg from the child.\n",
+                "type": "(childmsg -> parentmsg) -> ( a, Platform.Cmd.Cmd childmsg, c ) -> ( a, Platform.Cmd.Cmd parentmsg, c )"
+            },
+            {
+                "name": "mapComponent",
+                "comment": " Apply a function over the updated child component.\n",
+                "type": "(childComponent -> a) -> ( childComponent, b, c ) -> ( a, b, c )"
+            },
+            {
+                "name": "mapOutMsg",
+                "comment": " Apply a function over the child's OutMsg.\n",
+                "type": "(outMsg -> c) -> ( a, b, outMsg ) -> ( a, b, c )"
+            },
+            {
+                "name": "run",
+                "comment": " Evaluate a `State model (Cmd msg)` given a model, and commands to prepend.\n\n    wrap interpretOutMsg myOutMsg\n        |> run Cmd.none myModel\n\n",
+                "type": "Platform.Cmd.Cmd msg -> model -> State.State model (Platform.Cmd.Cmd msg) -> ( model, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "toNested",
+                "comment": " Helper to split the OutMsg from the normal type that `update` has.\n\nThe functions `fst` and `snd` can now be used, which can be handy.\n\n",
+                "type": "( a, b, c ) -> ( ( a, b ), c )"
+            },
+            {
+                "name": "wrap",
+                "comment": " Embed a function into [State](http://package.elm-lang.org/packages/folkertdev/elm-state/1.0.0/)\n",
+                "type": "(outmsg -> model -> ( model, Platform.Cmd.Cmd msg )) -> outmsg -> State.State model (Platform.Cmd.Cmd msg)"
+            }
+        ],
+        "binops": []
+    }
+]

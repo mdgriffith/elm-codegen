@@ -1,0 +1,166 @@
+[
+    {
+        "name": "CustomElement.CodeEditor",
+        "comment": " The Elm interface to the `code-editor` custom element.\n\nInspired by [Luke Westby](https://github.com/lukewestby)'s [Elm Europe\ntalk](https://youtu.be/tyFe9Pw6TVE). The JavaScript custom element\ncode is almost a verbatim copy.\n\nThis code won't do anything unless `site/js/code-editor.js` is loaded,\nand its CodeMirror files from `site/lib`.\n\n\n# Html Elements\n\n@docs codeEditor\n\n\n# Attributes\n\n@docs editorValue\n\n\n# Events\n\n@docs onEditorChanged\n\n",
+        "unions": [],
+        "aliases": [],
+        "values": [
+            {
+                "name": "codeEditor",
+                "comment": " Create a code editor Html element.\n",
+                "type": "List.List (Html.Attribute msg) -> List.List (Html.Html msg) -> Html.Html msg"
+            },
+            {
+                "name": "editorValue",
+                "comment": " This is how you set the contents of the code editor.\n",
+                "type": "String.String -> Html.Attribute msg"
+            },
+            {
+                "name": "onEditorChanged",
+                "comment": " This is how you receive changes to the contents of the code editor.\n",
+                "type": "(String.String -> msg) -> Html.Attribute msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "CustomElement.FileListener",
+        "comment": " The Elm interface to the `file-listener` custom element.\n\nThis code won't do anything unless `site/js/file-listener.js` is loaded.\n\nFor new code, you probably want to use `elm/file` and `elm/http` version 2 instead of this custom element.\n\n\n# Types\n\n@docs File, Id\n\n\n# HTML Elements\n\n@docs fileListener, fileInput\n\n\n# Attributes\n\n@docs fileId\n\n\n# Events\n\n@docs onLoad\n\n\n# Convenience Functions\n\n@docs multipartFormContentType, multipartFormData\n@docs crlf, fileDataBase64\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "File",
+                "comment": " `onLoad` receives a `File` instance from the JS code.\n\n`data` is a binary string, containing the file contents.\n\n`dataUrl` is a `data:` URL that you can use as the `src` of an `img` element to display the image.\n\n",
+                "args": [],
+                "type": "{ name : String.String, lastModified : Basics.Int, mimeType : String.String, size : Basics.Int, data : String.String, dataUrl : String.String }"
+            },
+            {
+                "name": "Id",
+                "comment": " Convenience type.\n",
+                "args": [],
+                "type": "String.String"
+            }
+        ],
+        "values": [
+            {
+                "name": "crlf",
+                "comment": " Two-character string: carriage return, line feed\n",
+                "type": "String.String"
+            },
+            {
+                "name": "fileDataBase64",
+                "comment": " Convert the `dataUrl` in the `File` to just it's data, without the URL prefix.\n",
+                "type": "CustomElement.FileListener.File -> String.String"
+            },
+            {
+                "name": "fileId",
+                "comment": " You need to set the `fileId` attribute to the `id` of an `input` of type `file`.\n\nNot necessary if you use `fileInput` to create the two elements, since it will connect the `file-listener` element to the `input` element for you.\n\n",
+                "type": "String.String -> Html.Attribute msg"
+            },
+            {
+                "name": "fileInput",
+                "comment": " Create a `input` element of `type` `file` with the given `Id` and the first list of attributes.\n\nConnect a `file-listener` element to it, with the second list of attributes.\n\nAll bundled up in an enclosing `span` element.\n\n",
+                "type": "CustomElement.FileListener.Id -> List.List (Html.Attribute msg) -> List.List (Html.Attribute msg) -> Html.Html msg"
+            },
+            {
+                "name": "fileListener",
+                "comment": " The custom `file-listener` element.\n\nIt's invisible, but it adds an event listener to the asociated `<input type='file' id='fileId' />` element to fetch the contents of the file, and generate a `\"load\"` event containing the contents and other information.\n\n",
+                "type": "List.List (Html.Attribute msg) -> List.List (Html.Html msg) -> Html.Html msg"
+            },
+            {
+                "name": "multipartFormContentType",
+                "comment": " Turn a `boundary` string into a `multipart/form-data` mime type.\n\nThis is suitable as the first parameter to `Http.stringBody`.\n\n",
+                "type": "String.String -> String.String"
+            },
+            {
+                "name": "multipartFormData",
+                "comment": " Turn a `boundary` string and a `File` into the body of a multipart form post.\n\nThis is suitable as the second parameter to `Http.stringBody`.\n\n",
+                "type": "String.String -> CustomElement.FileListener.File -> String.String"
+            },
+            {
+                "name": "onLoad",
+                "comment": " This is how you receive file content and other information.\n",
+                "type": "(CustomElement.FileListener.File -> msg) -> Html.Attribute msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "CustomElement.TextAreaTracker",
+        "comment": " The Elm interface to the `text-area-tracker` custom element.\n\nThis code won't do anything unless `site/js/text-area-tracker.js` is loaded.\n\n\n# Types\n\n@docs Coordinates, CaretCoordinates, Selection\n\n\n# Html Elements\n\n@docs textAreaTracker\n\n\n# Attributes\n\n@docs textAreaId, setSelection, triggerCoordinates, triggerSelection\n\n\n# Events\n\n@docs onCoordinates, onSelection\n\n\n# Decoders\n\n@docs coordinatesDecoder, caretCoordinatesDecoder, selectionDecoder\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "CaretCoordinates",
+                "comment": " The `caretCoordinates` property of a `Coordinates` type.\n",
+                "args": [],
+                "type": "{ top : Basics.Int, left : Basics.Int, lineheight : Maybe.Maybe Basics.Int }"
+            },
+            {
+                "name": "Coordinates",
+                "comment": " The value for the `onCoordinates` event.\n",
+                "args": [],
+                "type": "{ id : String.String, selectionStart : Basics.Int, selectionEnd : Basics.Int, caretCoordinates : CustomElement.TextAreaTracker.CaretCoordinates }"
+            },
+            {
+                "name": "Selection",
+                "comment": " The value for the `onSelection` event.\n",
+                "args": [],
+                "type": "{ id : String.String, selectionStart : Basics.Int, selectionEnd : Basics.Int }"
+            }
+        ],
+        "values": [
+            {
+                "name": "caretCoordinatesDecoder",
+                "comment": " Decoder for the `CaretCoordinates` type.\n",
+                "type": "Json.Decode.Decoder CustomElement.TextAreaTracker.CaretCoordinates"
+            },
+            {
+                "name": "coordinatesDecoder",
+                "comment": " Decoder for the `Coordinates` type.\n",
+                "type": "Json.Decode.Decoder CustomElement.TextAreaTracker.Coordinates"
+            },
+            {
+                "name": "onCoordinates",
+                "comment": " This is how you receive the caret selection and coordinates.\n",
+                "type": "(CustomElement.TextAreaTracker.Coordinates -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "onSelection",
+                "comment": " This is how you receive the selection start and end.\n\nThis sends a subset of the onCaretCoordinates information.\nIf you want only the selection, and not the screen coordinates,\nit is faster to compute.\n\n",
+                "type": "(CustomElement.TextAreaTracker.Selection -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "selectionDecoder",
+                "comment": " Decoder for the `Selection` type.\n",
+                "type": "Json.Decode.Decoder CustomElement.TextAreaTracker.Selection"
+            },
+            {
+                "name": "setSelection",
+                "comment": " This is how you set the selection range.\n\nOne of the values must change to cause the selection to be effected.\nHence the `count` parameter. Code will usually increment a model variable\neach time the selection needs to be changed.\n\n    setSelection start end count\n\nIf `start == end`, the input position will move with no selection.\n\n",
+                "type": "Basics.Int -> Basics.Int -> Basics.Int -> Html.Attribute msg"
+            },
+            {
+                "name": "textAreaId",
+                "comment": " This is how you set the id of the tracked text-area element.\n",
+                "type": "String.String -> Html.Attribute msg"
+            },
+            {
+                "name": "textAreaTracker",
+                "comment": " Create a code editor Html element.\n",
+                "type": "List.List (Html.Attribute msg) -> List.List (Html.Html msg) -> Html.Html msg"
+            },
+            {
+                "name": "triggerCoordinates",
+                "comment": " This is how you trigger the event for the caret coordinates.\n",
+                "type": "Basics.Int -> Html.Attribute msg"
+            },
+            {
+                "name": "triggerSelection",
+                "comment": " This is how you trigger the event for the caret coordinates.\n",
+                "type": "Basics.Int -> Html.Attribute msg"
+            }
+        ],
+        "binops": []
+    }
+]

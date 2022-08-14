@@ -1,0 +1,626 @@
+[
+    {
+        "name": "Serverless",
+        "comment": " Use `httpApi` to define a `Program` that responds to HTTP requests. Take a look\nat the [demos](https://github.com/ktonon/elm-serverless/blob/master/demo)\nfor usage examples.\n\n\n## Table of Contents\n\n  - [Defining a Program](#defining-a-program)\n  - [Port Types](#port-types)\n  - [Initialization Helpers](#initialization-helpers)\n\n\n## Defining a Program\n\nUse `httpApi` to define a headless Elm program.\n\n@docs httpApi, HttpApi, Program\n\n\n## Port Types\n\nSince a library cannot expose ports, your application must define two ports\nwith the following signatures. See the\n[Hello World Demo](https://github.com/ktonon/elm-serverless/blob/master/demo/src/Hello)\nfor a usage example.\n\n@docs IO, RequestPort, ResponsePort\n\n\n## Initialization Helpers\n\nVarious aspects of Program may not be needed. These functions are provided as a\nconvenient way to opt-out.\n\n@docs noConfig, noRoutes, noSideEffects, noPorts\n\n\n## Interop ports and helpers.\n\n@docs InteropRequestPort, InteropResponsePort, interop\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "HttpApi",
+                "comment": " Program for an HTTP API.\n\nA Serverless.Program is parameterized by your 5 custom types\n\n  - `config` is a server load-time record of deployment specific values\n  - `model` is for whatever you need during the processing of a request\n  - `route` represents your application routes\n  - `msg` is your app message type\n\nYou must provide the following:\n\n  - `configDecoder` decodes a JSON value for your custom config type\n  - `requestPort` and `responsePort` must be defined in your app since an elm library cannot expose ports\n  - `initialModel` is a value to which new connections will set their model\n  - `parseRoute` takes the `request/path/and?query=string` and parses it into a `route`\n  - `endpoint` is a function which receives incoming connections\n  - `update` the app update function\n\nNotices that `update` and `endpoint` operate on `Conn config model route msg`\nand not just on `model`.\n\n",
+                "args": [
+                    "config",
+                    "model",
+                    "route",
+                    "msg"
+                ],
+                "type": "{ configDecoder : Json.Decode.Decoder config, initialModel : model, parseRoute : Url.Url -> Maybe.Maybe route, endpoint : Serverless.Conn.Conn config model route msg -> ( Serverless.Conn.Conn config model route msg, Platform.Cmd.Cmd msg ), update : msg -> Serverless.Conn.Conn config model route msg -> ( Serverless.Conn.Conn config model route msg, Platform.Cmd.Cmd msg ), requestPort : Serverless.RequestPort (Serverless.Msg msg), responsePort : Serverless.ResponsePort (Serverless.Msg msg), interopPorts : List.List (Serverless.InteropResponsePort (Serverless.Msg msg)) }"
+            },
+            {
+                "name": "IO",
+                "comment": " Describes input and output events over ports as a connection id paired with\na data value.\n",
+                "args": [],
+                "type": "( String.String, Json.Encode.Value )"
+            },
+            {
+                "name": "InteropRequestPort",
+                "comment": " The type of all outgoing interop ports.\n",
+                "args": [
+                    "a",
+                    "msg"
+                ],
+                "type": "( String.String, Basics.Int, a ) -> Platform.Cmd.Cmd msg"
+            },
+            {
+                "name": "InteropResponsePort",
+                "comment": " The type of all incoming interop ports.\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "(( String.String, Basics.Int, Json.Encode.Value ) -> msg) -> Platform.Sub.Sub msg"
+            },
+            {
+                "name": "Program",
+                "comment": " Serverless program type.\n\nThis maps to a headless elm\n[Platform.Program](http://package.elm-lang.org/packages/elm-lang/core/latest/Platform#Program).\n\n",
+                "args": [
+                    "config",
+                    "model",
+                    "route",
+                    "msg"
+                ],
+                "type": "Platform.Program Serverless.Flags (Serverless.Model config model route msg) (Serverless.Msg msg)"
+            },
+            {
+                "name": "RequestPort",
+                "comment": " Type of port through which the request is received.\nSet your request port to this type.\n\n    port requestPort : RequestPort msg\n\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "(Serverless.IO -> msg) -> Platform.Sub.Sub msg"
+            },
+            {
+                "name": "ResponsePort",
+                "comment": " Type of port through which the request is sent.\nSet your response port to this type.\n\n    port responsePort : ResponsePort msg\n\n",
+                "args": [
+                    "msg"
+                ],
+                "type": "Serverless.IO -> Platform.Cmd.Cmd msg"
+            }
+        ],
+        "values": [
+            {
+                "name": "httpApi",
+                "comment": " Create a program from the given HTTP api.\n",
+                "type": "Serverless.HttpApi config model route msg -> Serverless.Program config model route msg"
+            },
+            {
+                "name": "interop",
+                "comment": " Interop helper that invokes a port that follows the InteropRequestPort model.\nThis helper function automatically passes the connection id to the port with the\ndata. The connection id is needed if the port generates a response, in order to send\nthe response to the correct connection.\n\nNote that it is possible to invoke any port, this is just a helper function for\na default way of doing it.\n\n",
+                "type": "Serverless.InteropRequestPort a msg -> a -> (Json.Encode.Value -> msg) -> Serverless.Conn.Conn config model route msg -> ( Serverless.Conn.Conn config model route msg, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "noConfig",
+                "comment": " Opt-out of configuration decoding.\n\n    main : Serverless.Program () model route msg\n    main =\n        Serverless.httpApi\n            { configDecoder = noConfig\n\n            -- ...\n            }\n\n",
+                "type": "Json.Decode.Decoder ()"
+            },
+            {
+                "name": "noPorts",
+                "comment": " Opt-out of interop ports.\n\n    main : Serverless.Program config model route ()\n    main =\n        Serverless.httpApi\n            { ports = noPorts\n\n            -- ...\n            }\n\n",
+                "type": "List.List (Serverless.InteropResponsePort (Serverless.Msg msg))"
+            },
+            {
+                "name": "noRoutes",
+                "comment": " Opt-out of route parsing.\n\n    main : Serverless.Program config model () msg\n    main =\n        Serverless.httpApi\n            { parseRoute = noRoutes\n\n            -- ...\n            }\n\n",
+                "type": "Url.Url -> Maybe.Maybe ()"
+            },
+            {
+                "name": "noSideEffects",
+                "comment": " Opt-out of side-effects.\n\n    main : Serverless.Program config model route ()\n    main =\n        Serverless.httpApi\n            { update = noSideEffects\n\n            -- ...\n            }\n\n",
+                "type": "() -> Serverless.Conn.Conn config model route msg -> ( Serverless.Conn.Conn config model route msg, Platform.Cmd.Cmd () )"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Serverless.Conn",
+        "comment": " Functions for querying and updating connections.\n\n@docs Conn, Id\n\n\n## Table of Contents\n\n  - [Processing Application Data](#processing-application-data)\n  - [Querying the Request](#querying-the-request)\n  - [Responding](#responding)\n  - [Response Body](#response-body)\n\n\n## Processing Application Data\n\nQuery and update your application specific data.\n\n@docs config, model, updateModel\n\n\n## Querying the Request\n\nGet details about the HTTP request.\n\n@docs request, id, method, header, route\n\n\n## Responding\n\nUpdate the response and send it.\n\n@docs respond, updateResponse, send, toSent, unsent, mapUnsent\n\n\n## Misc\n\nThese functions are typically not needed when building an application. They are\nused internally by the framework. They may be useful when debugging or writing\nunit tests.\n\n@docs init, jsonEncodedResponse\n@docs createInteropContext, consumeInteropContext\n\n",
+        "unions": [
+            {
+                "name": "Conn",
+                "comment": " A connection with a request and response.\n\nConnections are parameterized with config and model record types which are\nspecific to the application. Config is loaded once on app startup, while model\nis set to a provided initial value for each incomming request.\n\n",
+                "args": [
+                    "config",
+                    "model",
+                    "route",
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Id",
+                "comment": " Universally unique connection identifier.\n",
+                "args": [],
+                "type": "String.String"
+            }
+        ],
+        "values": [
+            {
+                "name": "config",
+                "comment": " Application defined configuration\n",
+                "type": "Serverless.Conn.Conn config model route msg -> config"
+            },
+            {
+                "name": "consumeInteropContext",
+                "comment": " Attemps to find the response message builder for an interop port call, by its\nunique sequence number, and removes this sequence number from the context store\non the connection.\n",
+                "type": "Basics.Int -> Serverless.Conn.Conn config model route msg -> ( Maybe.Maybe (Json.Encode.Value -> msg), Serverless.Conn.Conn config model route msg )"
+            },
+            {
+                "name": "createInteropContext",
+                "comment": " Adds a response message builder for an interop port call, under a unique sequence number\non the connection.\n",
+                "type": "(Json.Encode.Value -> msg) -> Serverless.Conn.Conn config model route msg -> ( Basics.Int, Serverless.Conn.Conn config model route msg )"
+            },
+            {
+                "name": "header",
+                "comment": " Get a request header by name\n",
+                "type": "String.String -> Serverless.Conn.Conn config model route msg -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "id",
+                "comment": " Universally unique Conn identifier\n",
+                "type": "Serverless.Conn.Conn config model route msg -> Serverless.Conn.Id"
+            },
+            {
+                "name": "init",
+                "comment": " Initialize a new Conn.\n",
+                "type": "Serverless.Conn.Id -> config -> model -> route -> Serverless.Conn.Request.Request -> Serverless.Conn.Conn config model route msg"
+            },
+            {
+                "name": "jsonEncodedResponse",
+                "comment": " Response as JSON encoded to a string.\n\nThis is the format the response takes when it gets sent through the response port.\n\n",
+                "type": "Serverless.Conn.Conn config model route msg -> Json.Encode.Value"
+            },
+            {
+                "name": "mapUnsent",
+                "comment": " Apply an update function to a conn, but only if the conn is unsent.\n",
+                "type": "(Serverless.Conn.Conn config model route msg -> ( Serverless.Conn.Conn config model route msg, Platform.Cmd.Cmd msg )) -> Serverless.Conn.Conn config model route msg -> ( Serverless.Conn.Conn config model route msg, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "method",
+                "comment": " Request HTTP method\n",
+                "type": "Serverless.Conn.Conn config model route msg -> Serverless.Conn.Request.Method"
+            },
+            {
+                "name": "model",
+                "comment": " Application defined model\n",
+                "type": "Serverless.Conn.Conn config model route msg -> model"
+            },
+            {
+                "name": "request",
+                "comment": " Request\n",
+                "type": "Serverless.Conn.Conn config model route msg -> Serverless.Conn.Request.Request"
+            },
+            {
+                "name": "respond",
+                "comment": " Update a response and send it.\n\n    import Serverless.Conn.Response exposing (setBody, setStatus)\n    import TestHelpers exposing (conn, responsePort)\n\n    -- The following two expressions produce the same result\n    conn\n        |> respond ( 200, textBody \"Ok\" )\n    --> conn\n    -->     |> updateResponse\n    -->         ((setStatus 200) >> (setBody <| textBody \"Ok\"))\n    -->     |> send\n\n",
+                "type": "( Serverless.Conn.Response.Status, Serverless.Conn.Body.Body ) -> Serverless.Conn.Conn config model route msg -> ( Serverless.Conn.Conn config model route msg, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "route",
+                "comment": " Parsed route\n",
+                "type": "Serverless.Conn.Conn config model route msg -> route"
+            },
+            {
+                "name": "send",
+                "comment": " Sends a connection response through the given port\n",
+                "type": "Serverless.Conn.Conn config model route msg -> ( Serverless.Conn.Conn config model route msg, Platform.Cmd.Cmd msg )"
+            },
+            {
+                "name": "toSent",
+                "comment": " Converts a conn to a sent conn, making it immutable.\n\nThe connection will be sent once the current update loop completes. This\nfunction is intended to be used by middleware, which cannot issue side-effects.\n\n    import TestHelpers exposing (conn)\n\n    (unsent conn) == Just conn\n    --> True\n\n    (unsent <| toSent conn) == Nothing\n    --> True\n\n",
+                "type": "Serverless.Conn.Conn config model route msg -> Serverless.Conn.Conn config model route msg"
+            },
+            {
+                "name": "unsent",
+                "comment": " Return `Just` the same can if it has not been sent yet.\n",
+                "type": "Serverless.Conn.Conn config model route msg -> Maybe.Maybe (Serverless.Conn.Conn config model route msg)"
+            },
+            {
+                "name": "updateModel",
+                "comment": " Transform and update the application defined model stored in the connection.\n",
+                "type": "(model -> model) -> Serverless.Conn.Conn config model route msg -> Serverless.Conn.Conn config model route msg"
+            },
+            {
+                "name": "updateResponse",
+                "comment": " Applies the given transformation to the connection response.\n\nDoes not do anything if the response has already been sent.\n\n    import Serverless.Conn.Response exposing (addHeader)\n    import TestHelpers exposing (conn, getHeader)\n\n    conn\n        |> updateResponse\n            (addHeader ( \"Cache-Control\", \"no-cache\" ))\n        |> getHeader \"cache-control\"\n    --> Just \"no-cache\"\n\n",
+                "type": "(Serverless.Conn.Response.Response -> Serverless.Conn.Response.Response) -> Serverless.Conn.Conn config model route msg -> Serverless.Conn.Conn config model route msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Serverless.Conn.Body",
+        "comment": "\n\n\n## HTTP Body\n\n@docs Body\n\n\n## Response Body\n\nUse these constructors to create response bodies with different content types.\n\n@docs text, json, binary, empty\n\n\n## Request Body\n\nUse these functions to check what kind of body a request has.\n\n@docs asJson, asText, isEmpty, contentType\n\n\n## Misc\n\nThese functions are typically not needed when building an application. They are\nused internally by the framework. They may be useful when debugging or writing\nunit tests.\n\n@docs decoder, encode, isBase64Encoded\n\n",
+        "unions": [
+            {
+                "name": "Body",
+                "comment": " An HTTP request or response body.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "asJson",
+                "comment": " Extract the JSON value from the body.\n",
+                "type": "Serverless.Conn.Body.Body -> Result.Result String.String Json.Encode.Value"
+            },
+            {
+                "name": "asText",
+                "comment": " Extract the String from the body.\n",
+                "type": "Serverless.Conn.Body.Body -> Result.Result String.String String.String"
+            },
+            {
+                "name": "binary",
+                "comment": " A binary file.\n",
+                "type": "String.String -> String.String -> Serverless.Conn.Body.Body"
+            },
+            {
+                "name": "contentType",
+                "comment": " The content type of a given body.\n\n    import Json.Encode\n\n    contentType (text \"hello\")\n    --> \"text/text\"\n\n    contentType (json Json.Encode.null)\n    --> \"application/json\"\n\n",
+                "type": "Serverless.Conn.Body.Body -> String.String"
+            },
+            {
+                "name": "decoder",
+                "comment": " A decoder for an HTTP body, to JSON or plain text.\n",
+                "type": "Maybe.Maybe String.String -> Json.Decode.Decoder Serverless.Conn.Body.Body"
+            },
+            {
+                "name": "empty",
+                "comment": " Create an empty body.\n",
+                "type": "Serverless.Conn.Body.Body"
+            },
+            {
+                "name": "encode",
+                "comment": " An encoder for an HTTP body.\n",
+                "type": "Serverless.Conn.Body.Body -> Json.Encode.Value"
+            },
+            {
+                "name": "isBase64Encoded",
+                "comment": " Checks if a body should be base 64 encoded.\n",
+                "type": "Serverless.Conn.Body.Body -> Basics.Bool"
+            },
+            {
+                "name": "isEmpty",
+                "comment": " Is the given body empty?\n\n    import Json.Encode exposing (list)\n\n    isEmpty (empty)\n    --> True\n\n    isEmpty (text \"\")\n    --> False\n\n    isEmpty (json (list []))\n    --> False\n\n",
+                "type": "Serverless.Conn.Body.Body -> Basics.Bool"
+            },
+            {
+                "name": "json",
+                "comment": " A JSON body.\n",
+                "type": "Json.Encode.Value -> Serverless.Conn.Body.Body"
+            },
+            {
+                "name": "text",
+                "comment": " A plain text body.\n",
+                "type": "String.String -> Serverless.Conn.Body.Body"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Serverless.Conn.Request",
+        "comment": " Query attributes of the HTTP request.\n\n\n## Table of Contents\n\n  - [Request Types](#request-types)\n  - [Routing](#routing)\n  - [Body](#body)\n  - [Other Attributes](#other-attributes)\n\n\n## Request Types\n\n@docs Request, Method, Scheme\n\n\n## Routing\n\nThese attributes are typically involved in routing requests. See the\n[Routing Demo](https://github.com/ktonon/elm-serverless/blob/master/demo/src/Routing/API.elm)\nfor an example.\n\n@docs url, method, path, queryString\n\n\n## Body\n\nFunctions to access the request body and attempt a cast to a content type. See the\n[Forms Demo](https://github.com/ktonon/elm-serverless/blob/master/demo/src/Forms/API.elm)\nfor an example.\n\n@docs body\n\n\n## Other Attributes\n\n@docs header, query, endpoint, stage, methodToString\n\n\n## Misc\n\nThese functions are typically not needed when building an application. They are\nused internally by the framework. They may be useful when debugging or writing\nunit tests.\n\n@docs init, decoder, methodDecoder, schemeDecoder\n\n",
+        "unions": [
+            {
+                "name": "Method",
+                "comment": " HTTP request method.\n\n    -- to use shorthand notation\n    import Serverless.Conn.Request exposing (Method(..))\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "CONNECT",
+                        []
+                    ],
+                    [
+                        "DELETE",
+                        []
+                    ],
+                    [
+                        "GET",
+                        []
+                    ],
+                    [
+                        "HEAD",
+                        []
+                    ],
+                    [
+                        "OPTIONS",
+                        []
+                    ],
+                    [
+                        "PATCH",
+                        []
+                    ],
+                    [
+                        "POST",
+                        []
+                    ],
+                    [
+                        "PUT",
+                        []
+                    ],
+                    [
+                        "TRACE",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Request",
+                "comment": " An HTTP request.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Scheme",
+                "comment": " Request scheme (a.k.a. protocol).\n\n    -- to use shorthand notation\n    import Serverless.Conn.Request exposing (Scheme(..))\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Http",
+                        []
+                    ],
+                    [
+                        "Https",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "body",
+                "comment": " Request body.\n",
+                "type": "Serverless.Conn.Request.Request -> Serverless.Conn.Body.Body"
+            },
+            {
+                "name": "decoder",
+                "comment": " JSON decoder for HTTP requests.\n",
+                "type": "Json.Decode.Decoder Serverless.Conn.Request.Request"
+            },
+            {
+                "name": "endpoint",
+                "comment": " Describes the server endpoint to which the request was made.\n\n    ( scheme, host, port_ ) =\n        Request.endpoint req\n\n  - `scheme` is either `Request.Http` or `Request.Https`\n  - `host` is the hostname as taken from the `\"host\"` request header\n  - `port_` is the port, for example `80` or `443`\n\n",
+                "type": "Serverless.Conn.Request.Request -> ( Serverless.Conn.Request.Scheme, String.String, Basics.Int )"
+            },
+            {
+                "name": "header",
+                "comment": " Get a request header by name.\n\nHeaders are normalized such that the keys are always `lower-case`.\n\n",
+                "type": "String.String -> Serverless.Conn.Request.Request -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "init",
+                "comment": " Initialize an empty Request.\n\nExposed for unit testing. Incoming connections initialize requests using\nJSON decoders.\n\n",
+                "type": "Serverless.Conn.Request.Request"
+            },
+            {
+                "name": "method",
+                "comment": " HTTP request method.\n\n    case Request.method req of\n        Request.GET ->\n            -- handle get...\n\n        Request.POST ->\n            -- handle post...\n\n        _ ->\n            -- method not supported...\n\n",
+                "type": "Serverless.Conn.Request.Request -> Serverless.Conn.Request.Method"
+            },
+            {
+                "name": "methodDecoder",
+                "comment": " JSON decoder for the HTTP request method.\n",
+                "type": "Json.Decode.Decoder Serverless.Conn.Request.Method"
+            },
+            {
+                "name": "methodToString",
+                "comment": " Gets the HTTP Method as a String, like 'GET', 'PUT', etc.\n",
+                "type": "Serverless.Conn.Request.Method -> String.String"
+            },
+            {
+                "name": "path",
+                "comment": " Request path.\n\nWhile you can access this attribute directly, it is better to provide a\n`parseRoute` function to the framework.\n\n",
+                "type": "Serverless.Conn.Request.Request -> String.String"
+            },
+            {
+                "name": "query",
+                "comment": " Get a query argument by name.\n",
+                "type": "String.String -> Serverless.Conn.Request.Request -> Maybe.Maybe String.String"
+            },
+            {
+                "name": "queryString",
+                "comment": " The original query string.\n\nWhile you can access this attribute directly, it is better to provide a\n`parseRoute` function to the framework.\n\n",
+                "type": "Serverless.Conn.Request.Request -> String.String"
+            },
+            {
+                "name": "schemeDecoder",
+                "comment": " JSON decoder for the request scheme (a.k.a. protocol)\n",
+                "type": "Json.Decode.Decoder Serverless.Conn.Request.Scheme"
+            },
+            {
+                "name": "stage",
+                "comment": " Serverless deployment stage.\n\nSee <https://serverless.com/framework/docs/providers/aws/guide/deploying/>\n\n",
+                "type": "Serverless.Conn.Request.Request -> String.String"
+            },
+            {
+                "name": "url",
+                "comment": " The requested URL if it parsed correctly.\n",
+                "type": "Serverless.Conn.Request.Request -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Serverless.Conn.Response",
+        "comment": " Query and update the HTTP response.\n\n@docs Response, Status\n\n\n## Updating\n\n@docs addHeader, setBody, updateBody, setStatus\n\n\n## Misc\n\nThese functions are typically not needed when building an application. They are\nused internally by the framework. They may be useful when debugging or writing\nunit tests.\n\n@docs init, encode\n\n",
+        "unions": [
+            {
+                "name": "Response",
+                "comment": " An HTTP response.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Status",
+                "comment": " An HTTP status code.\n",
+                "args": [],
+                "type": "Basics.Int"
+            }
+        ],
+        "values": [
+            {
+                "name": "addHeader",
+                "comment": " Set a response header.\n\nIf you set the same response header more than once, the second value will\noverride the first.\n\n",
+                "type": "( String.String, String.String ) -> Serverless.Conn.Response.Response -> Serverless.Conn.Response.Response"
+            },
+            {
+                "name": "encode",
+                "comment": " JSON encode an HTTP response.\n",
+                "type": "Serverless.Conn.Response.Response -> Json.Encode.Value"
+            },
+            {
+                "name": "init",
+                "comment": " A response with an empty body and invalid status.\n",
+                "type": "Serverless.Conn.Response.Response"
+            },
+            {
+                "name": "setBody",
+                "comment": " Set the response body.\n",
+                "type": "Serverless.Conn.Body.Body -> Serverless.Conn.Response.Response -> Serverless.Conn.Response.Response"
+            },
+            {
+                "name": "setStatus",
+                "comment": " Set the response HTTP status code.\n",
+                "type": "Serverless.Conn.Response.Status -> Serverless.Conn.Response.Response -> Serverless.Conn.Response.Response"
+            },
+            {
+                "name": "updateBody",
+                "comment": " Updates the response body.\n",
+                "type": "(Serverless.Conn.Body.Body -> Serverless.Conn.Body.Body) -> Serverless.Conn.Response.Response -> Serverless.Conn.Response.Response"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Serverless.Cors",
+        "comment": " CORS Middleware for elm-serverless.\n\n\n## Types\n\n@docs Config, Reflectable\n\n\n## Decoders\n\n@docs configDecoder, methodsDecoder, reflectableDecoder\n\n\n## Middleware\n\n@docs fromConfig, allowOrigin, exposeHeaders, maxAge, allowCredentials, allowMethods, allowHeaders\n\n\n## Deprecated\n\n@docs cors\n\n",
+        "unions": [
+            {
+                "name": "Reflectable",
+                "comment": " A reflectable header value.\n\nA reflectable value can either be\n\n  - `ReflectRequest` derive the headers from the request\n  - `Exactly` set to a specific value\n\n",
+                "args": [
+                    "a"
+                ],
+                "cases": [
+                    [
+                        "ReflectRequest",
+                        []
+                    ],
+                    [
+                        "Exactly",
+                        [
+                            "a"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Config",
+                "comment": " Specify all CORS configuration in one record.\n",
+                "args": [],
+                "type": "{ origin : Serverless.Cors.Reflectable (List.List String.String), expose : List.List String.String, maxAge : Basics.Int, credentials : Basics.Bool, methods : List.List Serverless.Conn.Request.Method, headers : Serverless.Cors.Reflectable (List.List String.String) }"
+            }
+        ],
+        "values": [
+            {
+                "name": "allowCredentials",
+                "comment": " Sets `access-control-allow-credentials`.\n\nOnly sets the header if the value is `True`.\n\n",
+                "type": "Basics.Bool -> Serverless.Conn.Conn config model route msg -> Serverless.Conn.Conn config model route msg"
+            },
+            {
+                "name": "allowHeaders",
+                "comment": " Sets `access-control-allow-headers`.\n\n`ReflectRequest` will reflect the request `access-control-request-headers` headers\nor if absent, it will not set the header at all.\n\n",
+                "type": "Serverless.Cors.Reflectable (List.List String.String) -> Serverless.Conn.Conn config model route msg -> Serverless.Conn.Conn config model route msg"
+            },
+            {
+                "name": "allowMethods",
+                "comment": " Sets `access-control-allow-methods`.\n",
+                "type": "List.List Serverless.Conn.Request.Method -> Serverless.Conn.Conn config model route msg -> Serverless.Conn.Conn config model route msg"
+            },
+            {
+                "name": "allowOrigin",
+                "comment": " Sets `access-control-allow-origin`.\n\n`ReflectRequest` will reflect the request `origin` header, or if absent, will\njust be set to `*`\n\n",
+                "type": "Serverless.Cors.Reflectable (List.List String.String) -> Serverless.Conn.Conn config model route msg -> Serverless.Conn.Conn config model route msg"
+            },
+            {
+                "name": "configDecoder",
+                "comment": " Decode CORS configuration from JSON.\n",
+                "type": "Json.Decode.Decoder Serverless.Cors.Config"
+            },
+            {
+                "name": "cors",
+                "comment": " Deprecated. Use fromConfig.\n",
+                "type": "Serverless.Cors.Config -> Serverless.Conn.Conn config model route msg -> Serverless.Conn.Conn config model route msg"
+            },
+            {
+                "name": "exposeHeaders",
+                "comment": " Sets `access-control-expose-headers`.\n",
+                "type": "List.List String.String -> Serverless.Conn.Conn config model route msg -> Serverless.Conn.Conn config model route msg"
+            },
+            {
+                "name": "fromConfig",
+                "comment": " Set CORS headers according to a configuration record.\n\nThis function is best used when the configuration is provided externally and\ndecoded using `configDecoder`. For example, npm rc and AWS Lambda environment\nvariables can be used as the source of CORS configuration.\n\n",
+                "type": "(config -> Serverless.Cors.Config) -> Serverless.Conn.Conn config model route msg -> Serverless.Conn.Conn config model route msg"
+            },
+            {
+                "name": "maxAge",
+                "comment": " Sets `access-control-max-age`.\n\nIf the value is not positive, the header will not be set.\n\n",
+                "type": "Basics.Int -> Serverless.Conn.Conn config model route msg -> Serverless.Conn.Conn config model route msg"
+            },
+            {
+                "name": "methodsDecoder",
+                "comment": " Case-insensitive decode a list of HTTP methods.\n",
+                "type": "Json.Decode.Decoder (List.List Serverless.Conn.Request.Method)"
+            },
+            {
+                "name": "reflectableDecoder",
+                "comment": " Decode a reflectable value from JSON.\n\n  - `\"*\"` decodes to `ReflectRequest`\n  - `\"foo,bar\"` or `[\"foo\", \"bar\"]` decodes to `Exactly [\"foo\", \"bar\"]`\n\n",
+                "type": "Json.Decode.Decoder (Serverless.Cors.Reflectable (List.List String.String))"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Serverless.Plug",
+        "comment": " A **pipeline** is a sequence of functions which transform the connection,\noptionally sending back an HTTP response at each step. We use the term **plug**\nto mean a single function that is part of the pipeline. But a pipeline is also\njust a plug and so pipelines can be composed from other pipelines.\n\nExamples below assume the following imports:\n\n    import Serverless.Conn exposing (updateResponse)\n    import Serverless.Conn.Body exposing (text)\n    import Serverless.Conn.Response exposing (addHeader, setBody, setStatus)\n\n@docs Plug\n\n\n## Building Pipelines\n\nUse these functions to build your pipelines.\n\n@docs pipeline, plug, nest\n\n\n## Applying Pipelines\n\n@docs apply\n\n\n## Misc\n\nThese functions are typically not needed when building an application. They are\nused internally by the framework. They are useful when debugging or writing unit\ntests.\n\n@docs size\n\n",
+        "unions": [
+            {
+                "name": "Plug",
+                "comment": " Represents a pipeline or section of a pipeline.\n",
+                "args": [
+                    "config",
+                    "model",
+                    "route",
+                    "msg"
+                ],
+                "cases": []
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "apply",
+                "comment": " Basic pipeline update function.\n",
+                "type": "Serverless.Plug.Plug config model route msg -> Serverless.Conn.Conn config model route msg -> Serverless.Conn.Conn config model route msg"
+            },
+            {
+                "name": "nest",
+                "comment": " Extends the pipeline with a plug.\n\nThis is the most general of the pipeline building functions. Since it just\naccepts a plug, and since a plug can be a pipeline, it can be used to extend a\npipeline with a group of plugs.\n\n    pipeline\n        |> nest (pipeline\n                    |> plug (updateResponse <| addHeader ( \"key\", \"value\" ))\n                    -- ...\n                )\n        |> plug (updateResponse <| setStatus 200)\n        |> size\n    --> 2\n\n",
+                "type": "Serverless.Plug.Plug config model route msg -> Serverless.Plug.Plug config model route msg -> Serverless.Plug.Plug config model route msg"
+            },
+            {
+                "name": "pipeline",
+                "comment": " Begins a pipeline.\n\nBuild the pipeline by chaining plugs with plug, loop, fork, and nest.\n\n    size pipeline\n    --> 0\n\n",
+                "type": "Serverless.Plug.Plug config model route msg"
+            },
+            {
+                "name": "plug",
+                "comment": " Extend the pipeline with a simple plug.\n\nA plug just transforms the connection. For example,\n\n    pipeline\n        |> plug (updateResponse <| setBody <| text \"Ok\" )\n        |> plug (updateResponse <| setStatus 200)\n        |> size\n    --> 2\n\n",
+                "type": "(Serverless.Conn.Conn config model route msg -> Serverless.Conn.Conn config model route msg) -> Serverless.Plug.Plug config model route msg -> Serverless.Plug.Plug config model route msg"
+            },
+            {
+                "name": "size",
+                "comment": " The number of plugs in a pipeline\n",
+                "type": "Serverless.Plug.Plug config model route msg -> Basics.Int"
+            }
+        ],
+        "binops": []
+    }
+]

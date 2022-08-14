@@ -1,0 +1,264 @@
+[
+    {
+        "name": "HammerEvents",
+        "comment": "\n\n@docs HammerEvent\n\n\n## Tap\n\n@docs onTap\n\n\n## Press\n\n@docs onPress\n\n@docs onPressUp\n\n\n## Swipe\n\nBy default, only horizontal swipe gestures are detected\n(`onSwipeLeft` and `onSwipeRight` will work, but `onSwipeDown` or `onSwipeUp` won't).\n\nTo detect in all directions, add this to your initialization script in Javascript:\n\n    hammertime.get('swipe').set({direction: Hammer.DIRECTION_ALL })\n\nTo detect only vertical swipes, use:\n\n    hammertime.get('swipe').set({direction: Hammer.DIRECTION_VERTICAL })\n\n@docs onSwipe\n\n@docs onSwipeLeft\n\n@docs onSwipeRight\n\n@docs onSwipeUp\n\n@docs onSwipeDown\n\n\n## Rotation\n\nTo be able to use `onRotate`, `onRotateStart`, `onRotateEnd` and `onRotateCancel`,\nyou need to add this line to your Javascript initialization script:\n\n    hammertime.get('rotate').set({ enable: true });\n\n@docs onRotate\n\n@docs onRotateStart\n\n@docs onRotateMove\n\n@docs onRotateEnd\n\n@docs onRotateCancel\n\n\n## Pinch\n\nTo be able to use `onPinch`, `onPinchStart`, `onPinchEnd`, `onPinchMove` etc...\nyou need to add this line to your Javascript initialization script:\n\n    hammertime.get('pinch').set({ enable: true });\n\n@docs onPinch\n\n@docs onPinchStart\n\n@docs onPinchEnd\n\n@docs onPinchMove\n\n@docs onPinchIn\n\n@docs onPinchOut\n\n@docs onPinchCancel\n\n\n## Pan\n\nBy default, only horizontal pan gestures are detected\n(`onPanLeft` and `onPanRight` will work, but `onPanDown` or `onPanUp` won't).\n\nTo detect in all directions, add this to your initialization script in Javascript:\n\n    hammertime.get('pan').set({direction: Hammer.DIRECTION_ALL })\n\nTo detect only in the vertical direction, use:\n\n    hammertime.get('pan').set({direction: Hammer.DIRECTION_VERTICAL })\n\n@docs onPan\n\n@docs onPanStart\n\n@docs onPanEnd\n\n@docs onPanLeft\n\n@docs onPanRight\n\n@docs onPanUp\n\n@docs onPanDown\n\n@docs onPanMove\n\n@docs onPanCancel\n\n\n## Custom event handler\n\n@docs onHammer\n\n@docs MessageWithAttrs\n\n@docs Direction\n\n@docs directionNone\n@docs directionLeft\n@docs directionRight\n@docs directionUp\n@docs directionDown\n@docs directionHorizontal\n@docs directionVertical\n@docs directionAll\n\n@docs Input\n\n@docs inputStart\n@docs inputMove\n@docs inputEnd\n@docs inputCancel\n\n@docs Point\n\n@docs hammerEventDecoder\n\n@docs hammerEventToValue\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Direction",
+                "comment": " An integer representing the direction of the movement.\nIt's a combination of flags (see <https://hammerjs.github.io/api/#directions>)\n",
+                "args": [],
+                "type": "Basics.Int"
+            },
+            {
+                "name": "HammerEvent",
+                "comment": " Record representing an event as emitted by the Hammer.js library.\n\nSee <https://hammerjs.github.io/api/#event-object> for explanation about the fields.\n\n",
+                "args": [],
+                "type": "{ deltaX : Basics.Float, deltaY : Basics.Float, deltaTime : Basics.Float, distance : Basics.Float, angle : Basics.Float, velocityX : Basics.Float, velocityY : Basics.Float, velocity : Basics.Float, direction : HammerEvents.Direction, scale : Basics.Float, rotation : Basics.Float, center : HammerEvents.Point, pointerType : String.String, eventType : HammerEvents.Input, isFirst : Basics.Bool, isFinal : Basics.Bool }"
+            },
+            {
+                "name": "Input",
+                "comment": " see <https://hammerjs.github.io/api/#input-events>\n",
+                "args": [],
+                "type": "Basics.Int"
+            },
+            {
+                "name": "MessageWithAttrs",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ message : msg, stopPropagation : Basics.Bool, preventDefault : Basics.Bool }"
+            },
+            {
+                "name": "Point",
+                "comment": " ",
+                "args": [],
+                "type": "{ x : Basics.Float, y : Basics.Float }"
+            }
+        ],
+        "values": [
+            {
+                "name": "directionAll",
+                "comment": " ",
+                "type": "HammerEvents.Direction"
+            },
+            {
+                "name": "directionDown",
+                "comment": " ",
+                "type": "HammerEvents.Direction"
+            },
+            {
+                "name": "directionHorizontal",
+                "comment": " ",
+                "type": "HammerEvents.Direction"
+            },
+            {
+                "name": "directionLeft",
+                "comment": " ",
+                "type": "HammerEvents.Direction"
+            },
+            {
+                "name": "directionNone",
+                "comment": " ",
+                "type": "HammerEvents.Direction"
+            },
+            {
+                "name": "directionRight",
+                "comment": " ",
+                "type": "HammerEvents.Direction"
+            },
+            {
+                "name": "directionUp",
+                "comment": " ",
+                "type": "HammerEvents.Direction"
+            },
+            {
+                "name": "directionVertical",
+                "comment": " ",
+                "type": "HammerEvents.Direction"
+            },
+            {
+                "name": "hammerEventDecoder",
+                "comment": " You shouldn't need this. The events you receive from `onTap`, `onSwipe` etc...\nare already decoded into an `HammerEvent` Elm record.\n\nI let this function public just in case you want to use it to make very custom things.\n\n",
+                "type": "Json.Decode.Decoder HammerEvents.HammerEvent"
+            },
+            {
+                "name": "hammerEventToValue",
+                "comment": " This function encodes a HammerEvent Elm record back to a Javascript object.\n\nYou probably won't need this unless you want to display an event as a Json string in your views.\n\n",
+                "type": "HammerEvents.HammerEvent -> Json.Encode.Value"
+            },
+            {
+                "name": "inputCancel",
+                "comment": " ",
+                "type": "HammerEvents.Input"
+            },
+            {
+                "name": "inputEnd",
+                "comment": " ",
+                "type": "HammerEvents.Input"
+            },
+            {
+                "name": "inputMove",
+                "comment": " ",
+                "type": "HammerEvents.Input"
+            },
+            {
+                "name": "inputStart",
+                "comment": " ",
+                "type": "HammerEvents.Input"
+            },
+            {
+                "name": "onHammer",
+                "comment": " All the functions `onTap`, `onSwipe`, `onRotate` etc... have been defined using\nthe `onHammer` function.\n\nYou probably don't need to use it directly unless you've defined a custom type event using\nHammer.js in Javascript.\n\n",
+                "type": "String.String -> (HammerEvents.HammerEvent -> HammerEvents.MessageWithAttrs msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "onPan",
+                "comment": " ",
+                "type": "(HammerEvents.HammerEvent -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "onPanCancel",
+                "comment": " ",
+                "type": "(HammerEvents.HammerEvent -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "onPanDown",
+                "comment": " ",
+                "type": "(HammerEvents.HammerEvent -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "onPanEnd",
+                "comment": " ",
+                "type": "(HammerEvents.HammerEvent -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "onPanLeft",
+                "comment": " ",
+                "type": "(HammerEvents.HammerEvent -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "onPanMove",
+                "comment": " ",
+                "type": "(HammerEvents.HammerEvent -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "onPanRight",
+                "comment": " ",
+                "type": "(HammerEvents.HammerEvent -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "onPanStart",
+                "comment": " ",
+                "type": "(HammerEvents.HammerEvent -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "onPanUp",
+                "comment": " ",
+                "type": "(HammerEvents.HammerEvent -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "onPinch",
+                "comment": " ",
+                "type": "(HammerEvents.HammerEvent -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "onPinchCancel",
+                "comment": " ",
+                "type": "(HammerEvents.HammerEvent -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "onPinchEnd",
+                "comment": " ",
+                "type": "(HammerEvents.HammerEvent -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "onPinchIn",
+                "comment": " ",
+                "type": "(HammerEvents.HammerEvent -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "onPinchMove",
+                "comment": " ",
+                "type": "(HammerEvents.HammerEvent -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "onPinchOut",
+                "comment": " ",
+                "type": "(HammerEvents.HammerEvent -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "onPinchStart",
+                "comment": " ",
+                "type": "(HammerEvents.HammerEvent -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "onPress",
+                "comment": " ",
+                "type": "(HammerEvents.HammerEvent -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "onPressUp",
+                "comment": " ",
+                "type": "(HammerEvents.HammerEvent -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "onRotate",
+                "comment": " ",
+                "type": "(HammerEvents.HammerEvent -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "onRotateCancel",
+                "comment": " ",
+                "type": "(HammerEvents.HammerEvent -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "onRotateEnd",
+                "comment": " ",
+                "type": "(HammerEvents.HammerEvent -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "onRotateMove",
+                "comment": " ",
+                "type": "(HammerEvents.HammerEvent -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "onRotateStart",
+                "comment": " ",
+                "type": "(HammerEvents.HammerEvent -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "onSwipe",
+                "comment": " ",
+                "type": "(HammerEvents.HammerEvent -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "onSwipeDown",
+                "comment": " ",
+                "type": "(HammerEvents.HammerEvent -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "onSwipeLeft",
+                "comment": " ",
+                "type": "(HammerEvents.HammerEvent -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "onSwipeRight",
+                "comment": " ",
+                "type": "(HammerEvents.HammerEvent -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "onSwipeUp",
+                "comment": " ",
+                "type": "(HammerEvents.HammerEvent -> msg) -> Html.Attribute msg"
+            },
+            {
+                "name": "onTap",
+                "comment": " ",
+                "type": "(HammerEvents.HammerEvent -> msg) -> Html.Attribute msg"
+            }
+        ],
+        "binops": []
+    }
+]

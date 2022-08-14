@@ -1,0 +1,615 @@
+[
+    {
+        "name": "Simple.Animation",
+        "comment": " Build an Animation for rendering on the page\n\n\n# Create an Animation\n\n@docs Animation, Millis, fromTo, steps, empty\n\n\n# Steps\n\nBuild up a multi step animation\n\n@docs Step, step, set, wait, waitTillComplete\n\n\n# Options\n\nCustomise the feel and behaviour of an animation\n\n@docs Option, loop, count, delay, reverse, yoyo\n\n\n# Standard Eases\n\nStandard CSS eases\n\n@docs linear, easeIn, easeOut, easeInOut, cubic\n\n\n# Extended Eases\n\nSee what these eases look and feel like: <https://easings.net>\n\n@docs easeInSine, easeOutSine, easeInOutSine, easeInQuad, easeOutQuad, easeInOutQuad, easeInCubic, easeOutCubic, easeInOutCubic, easeInQuart, easeOutQuart, easeInOutQuart, easeInQuint, easeOutQuint, easeInOutQuint, easeInExpo, easeOutExpo, easeInOutExpo, easeInCirc, easeOutCirc, easeInOutCirc, easeInBack, easeOutBack, easeInOutBack\n\n\n# Duration\n\n@docs duration\n\n",
+        "unions": [
+            {
+                "name": "Step",
+                "comment": " ",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Animation",
+                "comment": " Animation to be rendered with `Simple.Animation.Animated` functions\n",
+                "args": [],
+                "type": "Internal.Animation.Animation"
+            },
+            {
+                "name": "Millis",
+                "comment": " Time unit for all Animations\n",
+                "args": [],
+                "type": "Internal.Unit.Millis"
+            },
+            {
+                "name": "Option",
+                "comment": " ",
+                "args": [],
+                "type": "Internal.Animation.Option"
+            }
+        ],
+        "values": [
+            {
+                "name": "count",
+                "comment": " Play an animation a given number of times\n",
+                "type": "Basics.Int -> Simple.Animation.Option"
+            },
+            {
+                "name": "cubic",
+                "comment": " ",
+                "type": "Basics.Float -> Basics.Float -> Basics.Float -> Basics.Float -> Simple.Animation.Option"
+            },
+            {
+                "name": "delay",
+                "comment": " Delay the start of an animation (repeats like `loop` or `count` are not affected by this)\n",
+                "type": "Simple.Animation.Millis -> Simple.Animation.Option"
+            },
+            {
+                "name": "duration",
+                "comment": " Get the duration of an animation\n",
+                "type": "Simple.Animation.Animation -> Simple.Animation.Millis"
+            },
+            {
+                "name": "easeIn",
+                "comment": " ",
+                "type": "Simple.Animation.Option"
+            },
+            {
+                "name": "easeInBack",
+                "comment": " ",
+                "type": "Simple.Animation.Option"
+            },
+            {
+                "name": "easeInCirc",
+                "comment": " ",
+                "type": "Simple.Animation.Option"
+            },
+            {
+                "name": "easeInCubic",
+                "comment": " ",
+                "type": "Simple.Animation.Option"
+            },
+            {
+                "name": "easeInExpo",
+                "comment": " ",
+                "type": "Simple.Animation.Option"
+            },
+            {
+                "name": "easeInOut",
+                "comment": " ",
+                "type": "Simple.Animation.Option"
+            },
+            {
+                "name": "easeInOutBack",
+                "comment": " ",
+                "type": "Simple.Animation.Option"
+            },
+            {
+                "name": "easeInOutCirc",
+                "comment": " ",
+                "type": "Simple.Animation.Option"
+            },
+            {
+                "name": "easeInOutCubic",
+                "comment": " ",
+                "type": "Simple.Animation.Option"
+            },
+            {
+                "name": "easeInOutExpo",
+                "comment": " ",
+                "type": "Simple.Animation.Option"
+            },
+            {
+                "name": "easeInOutQuad",
+                "comment": " ",
+                "type": "Simple.Animation.Option"
+            },
+            {
+                "name": "easeInOutQuart",
+                "comment": " ",
+                "type": "Simple.Animation.Option"
+            },
+            {
+                "name": "easeInOutQuint",
+                "comment": " ",
+                "type": "Simple.Animation.Option"
+            },
+            {
+                "name": "easeInOutSine",
+                "comment": " ",
+                "type": "Simple.Animation.Option"
+            },
+            {
+                "name": "easeInQuad",
+                "comment": " ",
+                "type": "Simple.Animation.Option"
+            },
+            {
+                "name": "easeInQuart",
+                "comment": " ",
+                "type": "Simple.Animation.Option"
+            },
+            {
+                "name": "easeInQuint",
+                "comment": " ",
+                "type": "Simple.Animation.Option"
+            },
+            {
+                "name": "easeInSine",
+                "comment": " ",
+                "type": "Simple.Animation.Option"
+            },
+            {
+                "name": "easeOut",
+                "comment": " ",
+                "type": "Simple.Animation.Option"
+            },
+            {
+                "name": "easeOutBack",
+                "comment": " ",
+                "type": "Simple.Animation.Option"
+            },
+            {
+                "name": "easeOutCirc",
+                "comment": " ",
+                "type": "Simple.Animation.Option"
+            },
+            {
+                "name": "easeOutCubic",
+                "comment": " ",
+                "type": "Simple.Animation.Option"
+            },
+            {
+                "name": "easeOutExpo",
+                "comment": " ",
+                "type": "Simple.Animation.Option"
+            },
+            {
+                "name": "easeOutQuad",
+                "comment": " ",
+                "type": "Simple.Animation.Option"
+            },
+            {
+                "name": "easeOutQuart",
+                "comment": " ",
+                "type": "Simple.Animation.Option"
+            },
+            {
+                "name": "easeOutQuint",
+                "comment": " ",
+                "type": "Simple.Animation.Option"
+            },
+            {
+                "name": "easeOutSine",
+                "comment": " ",
+                "type": "Simple.Animation.Option"
+            },
+            {
+                "name": "empty",
+                "comment": " Create an Empty Animation - Useful when you want to conditionally animate something\n\n    fadeIf : Bool -> Animation\n    fadeIf shouldFade =\n        if shouldFade then\n            Animation.fromTo\n                { duration = 1000\n                , options = []\n                }\n                [ P.opacity 0 ]\n                [ P.opacity 1 ]\n\n        else\n            Animation.empty\n\n`Animation.empty` is equivalent to an animation with `0` duration\n\n",
+                "type": "Simple.Animation.Animation"
+            },
+            {
+                "name": "fromTo",
+                "comment": " Create an animation with `start` and `end` properties:\n\n    import Simple.Animation as Animation exposing (Animation)\n    import Simple.Animation.Property as P\n\n    fadeOut : Animation\n    fadeOut =\n        Animation.fromTo\n            { duration = 1000\n            , options = []\n            }\n            [ P.opacity 1 ]\n            [ P.opacity 0 ]\n\n",
+                "type": "{ duration : Simple.Animation.Millis, options : List.List Simple.Animation.Option } -> List.List Simple.Animation.Property.Property -> List.List Simple.Animation.Property.Property -> Simple.Animation.Animation"
+            },
+            {
+                "name": "linear",
+                "comment": " ",
+                "type": "Simple.Animation.Option"
+            },
+            {
+                "name": "loop",
+                "comment": " Repeat an animation forever\n",
+                "type": "Simple.Animation.Option"
+            },
+            {
+                "name": "reverse",
+                "comment": " Play animation in reverse\n",
+                "type": "Simple.Animation.Option"
+            },
+            {
+                "name": "set",
+                "comment": " Set a list of properties immediately in an animation (This is equivalent to `step 1`):\n\n    Animation.set [ P.opacity 0 ]\n\n",
+                "type": "List.List Simple.Animation.Property.Property -> Simple.Animation.Step"
+            },
+            {
+                "name": "step",
+                "comment": " Animate to a list of properties for a given number of `milliseconds`:\n\n    Animation.step 1000 [ P.opacity 1 ]\n\n",
+                "type": "Simple.Animation.Millis -> List.List Simple.Animation.Property.Property -> Simple.Animation.Step"
+            },
+            {
+                "name": "steps",
+                "comment": " Create an animation with multiple steps:\n\n    import Simple.Animation as Animation exposing (Animation)\n    import Simple.Animation.Property as P\n\n    backAndForth : Animation\n    backAndForth =\n        Animation.steps\n            { startAt = [ P.x 0 ]\n            , options = []\n            }\n            [ Animation.step 1000 [ P.x 100 ]\n            , Animation.step 1000 [ P.x 0 ]\n            ]\n\n",
+                "type": "{ startAt : List.List Simple.Animation.Property.Property, options : List.List Simple.Animation.Option } -> List.List Simple.Animation.Step -> Simple.Animation.Animation"
+            },
+            {
+                "name": "wait",
+                "comment": " Wait for a given number of `milliseconds` before animating the next properties:\n\n    Animation.wait 1000\n\n",
+                "type": "Simple.Animation.Millis -> Simple.Animation.Step"
+            },
+            {
+                "name": "waitTillComplete",
+                "comment": " Wait for another animation to complete before animating the next properties:\n\nThis animation will `wait` for `1500` milliseconds before animating to the next step\n\n    import Simple.Animation as Animation exposing (Animation)\n    import Simple.Animation.Property as P\n\n    finishAfterFadeOut : Animation\n    finishAfterFadeOut =\n        Animation.steps\n            { startAt = [ P.x 0 ]\n            , options = []\n            }\n            [ Animation.step 500 [ P.x 20 ]\n            , Animation.waitTillComplete fadeOut\n            , Animation.step 500 [ P.x 60 ]\n            ]\n\n    fadeOut : Animation\n    fadeOut =\n        Animation.fromTo\n            { duration = 2000\n            , options = []\n            }\n            [ P.opacity 1 ]\n            [ P.opacity 2 ]\n\n",
+                "type": "Simple.Animation.Animation -> Simple.Animation.Step"
+            },
+            {
+                "name": "yoyo",
+                "comment": " When animation completes, play it in reverse\n",
+                "type": "Simple.Animation.Option"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Simple.Animation.Animated",
+        "comment": "\n\n\n# Render animations on the page\n\nThis module gives you animated `Html` `div`s out of the box, and some helpers to create animated versions of whatever `UI` library you're using.\n\n\n## Common Helpers\n\nYou can find examples of building many of the common helpers mentioned below: <https://github.com/andrewMacmurray/elm-simple-animation/blob/main/examples/src/Utils/Animated.elm>\n\n\n# Html Animations\n\n@docs div, html\n\n\n# Hook Into SVG\n\n@docs SvgOptions, svg\n\n\n# Hook Into Elm UI\n\n@docs UiOptions, ui\n\n\n# Hook Into Elm CSS\n\n@docs ElmCssOptions, elmCss\n\n\n# Custom Renderer\n\n@docs ClassName, Stylesheet, custom\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "ClassName",
+                "comment": " ",
+                "args": [],
+                "type": "String.String"
+            },
+            {
+                "name": "ElmCssOptions",
+                "comment": " ",
+                "args": [
+                    "element",
+                    "attribute"
+                ],
+                "type": "{ text : String.String -> element, node : String.String -> List.List attribute -> List.List element -> element, class : String.String -> attribute }"
+            },
+            {
+                "name": "Stylesheet",
+                "comment": " ",
+                "args": [],
+                "type": "String.String"
+            },
+            {
+                "name": "SvgOptions",
+                "comment": " ",
+                "args": [
+                    "msg"
+                ],
+                "type": "{ class : String.String -> Html.Attribute msg }"
+            },
+            {
+                "name": "UiOptions",
+                "comment": " ",
+                "args": [
+                    "element",
+                    "attribute",
+                    "msg"
+                ],
+                "type": "{ behindContent : element -> attribute, html : Html.Html msg -> element, htmlAttribute : Html.Attribute msg -> attribute }"
+            }
+        ],
+        "values": [
+            {
+                "name": "custom",
+                "comment": " When you want to completely customise how to render animations you can use the low level `Simple.Animation.Animated.custom`. This gives you access to the raw animation `stylesheet` and `class` name that will apply the animation.\n\nFor example, say you wanted to animate `elm-community/typed-svg` nodes - you could create animated versions like this:\n\n    g : Animation -> List (TypedSvg.Attribute msg) -> List (TypedSvg.Svg msg) -> TypedSvg.Svg msg\n    g =\n        animatedTypedSvg TypedSvg.g\n\n    animatedTypedSvg node animation attributes children =\n        Simple.Animation.Animated.custom\n            (\\className stylesheet ->\n                node\n                    (TypedSvg.Attributes.class [ className ] :: attributes)\n                    (TypedSvg.style [] [ TypedSvg.text stylesheet ] :: children)\n            )\n            animation\n\n",
+                "type": "(Simple.Animation.Animated.ClassName -> Simple.Animation.Animated.Stylesheet -> animated) -> Internal.Animation.Animation -> animated"
+            },
+            {
+                "name": "div",
+                "comment": "\n\n\n### Render an Animated `div`\n\n    import Html exposing (Html)\n    import Simple.Animation as Animation exposing (Animation)\n    import Simple.Animation.Animated as Animated\n    import Simple.Animation.Property as P\n\n    dot : Html msg\n    dot =\n        Animated.div expandFade [ class \"dot\" ] []\n\n    expandFade : Animation\n    expandFade =\n        Animation.fromTo\n            { duration = 2000\n            , options = [ Animation.loop ]\n            }\n            [ P.opacity 1, P.scale 1 ]\n            [ P.opacity 0, P.scale 2 ]\n\n",
+                "type": "Internal.Animation.Animation -> List.List (Html.Attribute msg) -> List.List (Html.Html msg) -> Html.Html msg"
+            },
+            {
+                "name": "elmCss",
+                "comment": " Create animated `elm-css` `Styled` nodes\n\n    animatedCss =\n        Simple.Animation.Animated.elmCss\n            { text = Html.Styled.text\n            , node = Html.Styled.node\n            , class = Html.Styled.Attributes.class\n            }\n\nThen render an animation\n\n    dot : Html.Styled msg\n    dot =\n        el expandFade [] elmCssDot\n\n    div : Animation -> List (Html.Styled.Attribute msg) -> List (Html.Styled.Html msg) -> Html.Styled.Html msg\n    div =\n        animatedCss Html.Styled.div\n\n",
+                "type": "Simple.Animation.Animated.ElmCssOptions element attribute -> (List.List attribute -> List.List element -> element) -> Internal.Animation.Animation -> List.List attribute -> List.List element -> element"
+            },
+            {
+                "name": "html",
+                "comment": "\n\n\n### Create any animated `Html` node:\n\nFor example, `Simple.Animation.Animated.div` is defined like this:\n\n    div : Animation -> List (Html.Attribute msg) -> List (Html msg) -> Html msg\n    div =\n        Simple.Animation.Animated.html Html.div\n\n",
+                "type": "(List.List (Html.Attribute msg) -> List.List (Html.Html msg) -> Html.Html msg) -> Internal.Animation.Animation -> List.List (Html.Attribute msg) -> List.List (Html.Html msg) -> Html.Html msg"
+            },
+            {
+                "name": "svg",
+                "comment": " So you can use whatever version of `elm/svg` you like use the `Simple.Animation.Animated.svg` function along with `Svg.Attributes.class` to create animated `Svg` elements:\n\n    animatedSvg =\n        Simple.Animation.Animated.svg\n            { class = Svg.Attributes.class\n            }\n\nThen render an animation\n\n    dot : Svg msg\n    dot =\n        Svg.svg []\n            [ g expandFade [] [ svgDot ]\n            ]\n\n    g : Animation -> List (Svg.Attribute msg) -> List (Svg msg) -> Svg msg\n    g =\n        animatedSvg Svg.g\n\n",
+                "type": "Simple.Animation.Animated.SvgOptions msg -> (List.List (Html.Attribute msg) -> List.List (Html.Html msg) -> Html.Html msg) -> Internal.Animation.Animation -> List.List (Html.Attribute msg) -> List.List (Html.Html msg) -> Html.Html msg"
+            },
+            {
+                "name": "ui",
+                "comment": " Create animated `elm-ui` `Element`s\n\n    animatedUi =\n        Simple.Animation.Animated.ui\n            { behindContent = Element.behindContent\n            , htmlAttribute = Element.htmlAttribute\n            , html = Element.html\n            }\n\nThen render an animation\n\n    dot : Element msg\n    dot =\n        el expandFade [] elmUiDot\n\n    el : Animation -> List (Element.Attribute msg) -> Element msg -> Element msg\n    el =\n        animatedUi Element.el\n\n",
+                "type": "Simple.Animation.Animated.UiOptions element attribute msg -> (List.List attribute -> children -> element) -> Internal.Animation.Animation -> List.List attribute -> children -> element"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Simple.Animation.Property",
+        "comment": " Animatable properties\n\n\n# Property\n\n@docs Property\n\n\n# Common Properties\n\nThese properties will give you smooth and performant animations\n\n\n## Opacity\n\nAnimate the opacity of an element (a value between `0` and `1`)\n\n@docs opacity\n\n\n## Transforms\n\nMove, Rotate and resize elements\n\n@docs rotate, scale, scaleXY, y, x, xy\n\n\n## Colors\n\n@docs color, backgroundColor, borderColor\n\n\n# Custom Property\n\nAnimate any CSS property:\n\n    P.property \"stroke-dasharray\" \"10\"\n\nTake care with properties that are not hardware accelerated as they may result in janky animations\n\n@docs property\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Property",
+                "comment": " ",
+                "args": [],
+                "type": "Internal.Animation.Property.Property"
+            }
+        ],
+        "values": [
+            {
+                "name": "backgroundColor",
+                "comment": " ",
+                "type": "String.String -> Simple.Animation.Property.Property"
+            },
+            {
+                "name": "borderColor",
+                "comment": " ",
+                "type": "String.String -> Simple.Animation.Property.Property"
+            },
+            {
+                "name": "color",
+                "comment": " ",
+                "type": "String.String -> Simple.Animation.Property.Property"
+            },
+            {
+                "name": "opacity",
+                "comment": " ",
+                "type": "Basics.Float -> Simple.Animation.Property.Property"
+            },
+            {
+                "name": "property",
+                "comment": " ",
+                "type": "String.String -> String.String -> Simple.Animation.Property.Property"
+            },
+            {
+                "name": "rotate",
+                "comment": " ",
+                "type": "Basics.Float -> Simple.Animation.Property.Property"
+            },
+            {
+                "name": "scale",
+                "comment": " ",
+                "type": "Basics.Float -> Simple.Animation.Property.Property"
+            },
+            {
+                "name": "scaleXY",
+                "comment": " ",
+                "type": "Basics.Float -> Basics.Float -> Simple.Animation.Property.Property"
+            },
+            {
+                "name": "x",
+                "comment": " ",
+                "type": "Basics.Float -> Simple.Animation.Property.Property"
+            },
+            {
+                "name": "xy",
+                "comment": " ",
+                "type": "Basics.Float -> Basics.Float -> Simple.Animation.Property.Property"
+            },
+            {
+                "name": "y",
+                "comment": " ",
+                "type": "Basics.Float -> Simple.Animation.Property.Property"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Simple.Transition",
+        "comment": " Build a Html Attribute for applying CSS transitions\n\n@docs Millis\n\n\n# Create a Transition\n\n@docs properties, all\n\n\n# Transition Options\n\nCustomise transition properties\n\n@docs Option, delay\n\n\n# Standard Eases\n\nStandard CSS eases\n\n@docs linear, easeIn, easeOut, easeInOut, cubic\n\n\n# Extended Eases\n\nSee what these eases look and feel like: <https://easings.net>\n\n@docs easeInSine, easeOutSine, easeInOutSine, easeInQuad, easeOutQuad, easeInOutQuad, easeInCubic, easeOutCubic, easeInOutCubic, easeInQuart, easeOutQuart, easeInOutQuart, easeInQuint, easeOutQuint, easeInOutQuint, easeInExpo, easeOutExpo, easeInOutExpo, easeInCirc, easeOutCirc, easeInOutCirc, easeInBack, easeOutBack, easeInOutBack\n\n\n# Transition Properties\n\n@docs Property, backgroundColor, borderColor, color, opacity, transform, property\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Millis",
+                "comment": " Time unit for all Transitions\n",
+                "args": [],
+                "type": "Internal.Unit.Millis"
+            },
+            {
+                "name": "Option",
+                "comment": " ",
+                "args": [],
+                "type": "Internal.Transition.Option"
+            },
+            {
+                "name": "Property",
+                "comment": " ",
+                "args": [],
+                "type": "Internal.Transition.Property"
+            }
+        ],
+        "values": [
+            {
+                "name": "all",
+                "comment": " Create a transition with the same duration, ease and delay for all properties\n\n    Transition.all\n        { duration = 500\n        , options = [ Transition.delay 200, Transition.linear ]\n        }\n        [ Transition.opacity\n        , Transition.color\n        ]\n\nWill render a CSS transition: `opacity 500ms linear 200ms, color 500ms linear 200ms`\n\n",
+                "type": "{ duration : Simple.Transition.Millis, options : List.List Simple.Transition.Option } -> List.List (Simple.Transition.Millis -> List.List Simple.Transition.Option -> Simple.Transition.Property) -> Html.Attribute msg"
+            },
+            {
+                "name": "backgroundColor",
+                "comment": " ",
+                "type": "Simple.Transition.Millis -> List.List Simple.Transition.Option -> Simple.Transition.Property"
+            },
+            {
+                "name": "borderColor",
+                "comment": " ",
+                "type": "Simple.Transition.Millis -> List.List Simple.Transition.Option -> Simple.Transition.Property"
+            },
+            {
+                "name": "color",
+                "comment": " ",
+                "type": "Simple.Transition.Millis -> List.List Simple.Transition.Option -> Simple.Transition.Property"
+            },
+            {
+                "name": "cubic",
+                "comment": " ",
+                "type": "Basics.Float -> Basics.Float -> Basics.Float -> Basics.Float -> Simple.Transition.Option"
+            },
+            {
+                "name": "delay",
+                "comment": " Delay the start of the transition by a number of `milliseconds`\n",
+                "type": "Simple.Transition.Millis -> Simple.Transition.Option"
+            },
+            {
+                "name": "easeIn",
+                "comment": " ",
+                "type": "Simple.Transition.Option"
+            },
+            {
+                "name": "easeInBack",
+                "comment": " ",
+                "type": "Simple.Transition.Option"
+            },
+            {
+                "name": "easeInCirc",
+                "comment": " ",
+                "type": "Simple.Transition.Option"
+            },
+            {
+                "name": "easeInCubic",
+                "comment": " ",
+                "type": "Simple.Transition.Option"
+            },
+            {
+                "name": "easeInExpo",
+                "comment": " ",
+                "type": "Simple.Transition.Option"
+            },
+            {
+                "name": "easeInOut",
+                "comment": " ",
+                "type": "Simple.Transition.Option"
+            },
+            {
+                "name": "easeInOutBack",
+                "comment": " ",
+                "type": "Simple.Transition.Option"
+            },
+            {
+                "name": "easeInOutCirc",
+                "comment": " ",
+                "type": "Simple.Transition.Option"
+            },
+            {
+                "name": "easeInOutCubic",
+                "comment": " ",
+                "type": "Simple.Transition.Option"
+            },
+            {
+                "name": "easeInOutExpo",
+                "comment": " ",
+                "type": "Simple.Transition.Option"
+            },
+            {
+                "name": "easeInOutQuad",
+                "comment": " ",
+                "type": "Simple.Transition.Option"
+            },
+            {
+                "name": "easeInOutQuart",
+                "comment": " ",
+                "type": "Simple.Transition.Option"
+            },
+            {
+                "name": "easeInOutQuint",
+                "comment": " ",
+                "type": "Simple.Transition.Option"
+            },
+            {
+                "name": "easeInOutSine",
+                "comment": " ",
+                "type": "Simple.Transition.Option"
+            },
+            {
+                "name": "easeInQuad",
+                "comment": " ",
+                "type": "Simple.Transition.Option"
+            },
+            {
+                "name": "easeInQuart",
+                "comment": " ",
+                "type": "Simple.Transition.Option"
+            },
+            {
+                "name": "easeInQuint",
+                "comment": " ",
+                "type": "Simple.Transition.Option"
+            },
+            {
+                "name": "easeInSine",
+                "comment": " ",
+                "type": "Simple.Transition.Option"
+            },
+            {
+                "name": "easeOut",
+                "comment": " ",
+                "type": "Simple.Transition.Option"
+            },
+            {
+                "name": "easeOutBack",
+                "comment": " ",
+                "type": "Simple.Transition.Option"
+            },
+            {
+                "name": "easeOutCirc",
+                "comment": " ",
+                "type": "Simple.Transition.Option"
+            },
+            {
+                "name": "easeOutCubic",
+                "comment": " ",
+                "type": "Simple.Transition.Option"
+            },
+            {
+                "name": "easeOutExpo",
+                "comment": " ",
+                "type": "Simple.Transition.Option"
+            },
+            {
+                "name": "easeOutQuad",
+                "comment": " ",
+                "type": "Simple.Transition.Option"
+            },
+            {
+                "name": "easeOutQuart",
+                "comment": " ",
+                "type": "Simple.Transition.Option"
+            },
+            {
+                "name": "easeOutQuint",
+                "comment": " ",
+                "type": "Simple.Transition.Option"
+            },
+            {
+                "name": "easeOutSine",
+                "comment": " ",
+                "type": "Simple.Transition.Option"
+            },
+            {
+                "name": "linear",
+                "comment": " ",
+                "type": "Simple.Transition.Option"
+            },
+            {
+                "name": "opacity",
+                "comment": " ",
+                "type": "Simple.Transition.Millis -> List.List Simple.Transition.Option -> Simple.Transition.Property"
+            },
+            {
+                "name": "properties",
+                "comment": " Create a transition for a list of properties\n\n    Transition.properties\n        [ Transition.opacity 200 [ Transition.delay 100 ]\n        , Transition.color 500 [ Transition.easeInOut ]\n        ]\n\nWill render a CSS transition: `opacity 200ms ease 100ms, color 500ms ease-in-out 0ms`\n\n",
+                "type": "List.List Simple.Transition.Property -> Html.Attribute msg"
+            },
+            {
+                "name": "property",
+                "comment": " Create a custom transition property (for any CSS attribute) - use with care as they may result in janky transitions!\n\ne.g. for SVG fill:\n\n    property \"fill\" 500 []\n\n",
+                "type": "String.String -> Simple.Transition.Millis -> List.List Simple.Transition.Option -> Simple.Transition.Property"
+            },
+            {
+                "name": "transform",
+                "comment": " ",
+                "type": "Simple.Transition.Millis -> List.List Simple.Transition.Option -> Simple.Transition.Property"
+            }
+        ],
+        "binops": []
+    }
+]

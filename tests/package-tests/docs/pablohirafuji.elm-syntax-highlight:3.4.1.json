@@ -1,0 +1,154 @@
+[
+    {
+        "name": "SyntaxHighlight",
+        "comment": " Syntax highlighting in Elm.\n\n@docs HCode\n\n\n## Html view\n\n@docs toBlockHtml, toInlineHtml, toStaticBlockHtml, toStaticInlineHtml\n\n\n## Helpers\n\n@docs Highlight, highlightLines\n\n\n## Languages\n\nError while parsing should not happen. If it happens, please [open an issue](https://github.com/pablohirafuji/elm-syntax-highlight/issues) with the code that gives the error and the language.\n\n@docs css, elm, javascript, python, sql, xml, json, noLang\n\n\n## Themes\n\n@docs Theme, useTheme, monokai, gitHub, oneDark\n\n\n## Console view\n\n@docs ConsoleOptions, toConsole\n\n\n## Custom transformation\n\n@docs CustomTransform, toCustom\n\n",
+        "unions": [
+            {
+                "name": "HCode",
+                "comment": " A highlighted code.\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Highlight",
+                "comment": " Highlight type.\n\n  - `Highlight` will highlight the line in a way to differentiate it from the rest, like github's yellow background.\n  - `Add` will highlight in a manner that gives the ideia of new content added.\n  - `Del` will highlight in a manner that gives the ideia of removed content.\n\nThe specific styles will depend on the chosen `Theme`.\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Highlight",
+                        []
+                    ],
+                    [
+                        "Add",
+                        []
+                    ],
+                    [
+                        "Del",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Theme",
+                "comment": " A theme defines the background and syntax colors.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "ConsoleOptions",
+                "comment": " Console styling options.\nYou can use the [rtfeldman/console-print](http://package.elm-lang.org/packages/rtfeldman/console-print/latest) package to fill in the styles.\n\nThe common uses of the styles are the following:\n\n  - **default**: Default style\n  - **highlight**: Highlight style\n  - **addition**: Addition style\n  - **deletion**: Deletion style\n  - **comment**: Comment\n  - **style1**: Number\n  - **style2**: Literal string, attribute value\n  - **style3**: Keyword, tag, operator symbols (=+-\\*/...)\n  - **style4**: Keyword 2, group symbols ({}(),), type signature\n  - **style5**: Function, attribute name\n  - **style6**: Literal keyword, capitalized types\n  - **style7**: Argument, parameter\n\n",
+                "args": [],
+                "type": "{ default : String.String -> String.String, highlight : String.String -> String.String, addition : String.String -> String.String, deletion : String.String -> String.String, comment : String.String -> String.String, style1 : String.String -> String.String, style2 : String.String -> String.String, style3 : String.String -> String.String, style4 : String.String -> String.String, style5 : String.String -> String.String, style6 : String.String -> String.String, style7 : String.String -> String.String }"
+            },
+            {
+                "name": "CustomTransform",
+                "comment": " Custom transform options.\nThe common uses of the styles are the following:\n\n  - **noOperation**: No operation (aplly to the whole line)\n  - **highlight**: Highlight style (aplly to the whole line)\n  - **addition**: Addition style (aplly to the whole line)\n  - **deletion**: Deletion style (aplly to the whole line)\n  - **default**: Default style\n  - **comment**: Comment\n  - **style1**: Number\n  - **style2**: Literal string, attribute value\n  - **style3**: Keyword, tag, operator symbols (=+-\\*/...)\n  - **style4**: Keyword 2, group symbols ({}(),), type signature\n  - **style5**: Function, attribute name\n  - **style6**: Literal keyword, capitalized types\n  - **style7**: Argument, parameter\n\n",
+                "args": [
+                    "fragment",
+                    "line"
+                ],
+                "type": "{ noOperation : List.List fragment -> line, highlight : List.List fragment -> line, addition : List.List fragment -> line, deletion : List.List fragment -> line, default : String.String -> fragment, comment : String.String -> fragment, style1 : String.String -> fragment, style2 : String.String -> fragment, style3 : String.String -> fragment, style4 : String.String -> fragment, style5 : String.String -> fragment, style6 : String.String -> fragment, style7 : String.String -> fragment }"
+            }
+        ],
+        "values": [
+            {
+                "name": "css",
+                "comment": " Parse CSS syntax.\n",
+                "type": "String.String -> Result.Result (List.List Parser.DeadEnd) SyntaxHighlight.HCode"
+            },
+            {
+                "name": "elm",
+                "comment": " Parse Elm syntax.\n",
+                "type": "String.String -> Result.Result (List.List Parser.DeadEnd) SyntaxHighlight.HCode"
+            },
+            {
+                "name": "gitHub",
+                "comment": " GitHub inspired theme.\n",
+                "type": "SyntaxHighlight.Theme"
+            },
+            {
+                "name": "highlightLines",
+                "comment": " Highlight lines given a highlight type, start and end index.\nIf no highlight type is given (`Nothing`), it will remove any\nhighlight from the line range.\nNegative indexes are taken starting from the _end_ of the list.\n",
+                "type": "Maybe.Maybe SyntaxHighlight.Highlight -> Basics.Int -> Basics.Int -> SyntaxHighlight.HCode -> SyntaxHighlight.HCode"
+            },
+            {
+                "name": "javascript",
+                "comment": " Parse Javascript syntax.\n",
+                "type": "String.String -> Result.Result (List.List Parser.DeadEnd) SyntaxHighlight.HCode"
+            },
+            {
+                "name": "json",
+                "comment": " Parse JSON syntax.\n",
+                "type": "String.String -> Result.Result (List.List Parser.DeadEnd) SyntaxHighlight.HCode"
+            },
+            {
+                "name": "monokai",
+                "comment": " Monokai inspired theme.\n",
+                "type": "SyntaxHighlight.Theme"
+            },
+            {
+                "name": "noLang",
+                "comment": " Parse code from an unknown language with generic styling.\n",
+                "type": "String.String -> Result.Result (List.List Parser.DeadEnd) SyntaxHighlight.HCode"
+            },
+            {
+                "name": "oneDark",
+                "comment": " Atom One Dark inspired theme.\n",
+                "type": "SyntaxHighlight.Theme"
+            },
+            {
+                "name": "python",
+                "comment": " Parse Python syntax.\n",
+                "type": "String.String -> Result.Result (List.List Parser.DeadEnd) SyntaxHighlight.HCode"
+            },
+            {
+                "name": "sql",
+                "comment": " Parse SQL syntax.\n",
+                "type": "String.String -> Result.Result (List.List Parser.DeadEnd) SyntaxHighlight.HCode"
+            },
+            {
+                "name": "toBlockHtml",
+                "comment": " Transform a highlighted code into a Html block.\nThe `Maybe Int` argument is for showing or not line count and, if so, starting from what number.\n",
+                "type": "Maybe.Maybe Basics.Int -> SyntaxHighlight.HCode -> Html.Html msg"
+            },
+            {
+                "name": "toConsole",
+                "comment": " Transform a highlighted code into a list of console highlighted strings given the styling options defined by `ConsoleOptions`.\nEach string in the list is a line.\n",
+                "type": "SyntaxHighlight.ConsoleOptions -> SyntaxHighlight.HCode -> List.List String.String"
+            },
+            {
+                "name": "toCustom",
+                "comment": " Transform a highlighted code into a list of anything you want. Each `line` in the list corresponds to a line in the original code.\n",
+                "type": "SyntaxHighlight.CustomTransform fragment line -> SyntaxHighlight.HCode -> List.List line"
+            },
+            {
+                "name": "toInlineHtml",
+                "comment": " Transform a highlighted code into inline Html.\n\n    import SyntaxHighlight exposing (elm, toInlineHtml)\n\n    info : Html msg\n    info =\n        p []\n            [ text \"This function signature \"\n            , elm \"isEmpty : String -> Bool\"\n                |> Result.map toInlineHtml\n                |> Result.withDefault\n                    (code [] [ text \"isEmpty : String -> Bool\" ])\n            , text \" means that a String argument is taken, then a Bool is returned.\"\n            ]\n\n",
+                "type": "SyntaxHighlight.HCode -> Html.Html msg"
+            },
+            {
+                "name": "toStaticBlockHtml",
+                "comment": " Transform a highlighted code into a static (pure text) Html block. The `Maybe Int` argument is for showing or not line count and, if so, starting from what number.\n",
+                "type": "Maybe.Maybe Basics.Int -> SyntaxHighlight.HCode -> String.String"
+            },
+            {
+                "name": "toStaticInlineHtml",
+                "comment": " Transform a highlighted code into static (pure text) inline Html.\n",
+                "type": "SyntaxHighlight.HCode -> String.String"
+            },
+            {
+                "name": "useTheme",
+                "comment": " Transform a theme into Html. Any highlighted code transformed into Html in the same page will be themed according to the chosen `Theme`.\n\nTo preview the themes, check out the [demo](https://pablohirafuji.github.io/elm-syntax-highlight/).\n\n    import SyntaxHighlight exposing (elm, monokai, toBlockHtml, useTheme)\n\n    view : Model -> Html msg\n    view model =\n        div []\n            [ useTheme monokai\n            , elm model.elmCode\n                |> Result.map (toBlockHtml (Just 1))\n                |> Result.withDefault\n                    (pre [] [ code [] [ text model.elmCode ] ])\n            ]\n\nIf you prefer to use CSS external stylesheet, you do **not** need this,\njust copy the theme CSS into your stylesheet.\nAll themes can be found [here](https://pablohirafuji.github.io/elm-syntax-highlight/themes.html).\n\n",
+                "type": "SyntaxHighlight.Theme -> Html.Html msg"
+            },
+            {
+                "name": "xml",
+                "comment": " Parse XML syntax.\n",
+                "type": "String.String -> Result.Result (List.List Parser.DeadEnd) SyntaxHighlight.HCode"
+            }
+        ],
+        "binops": []
+    }
+]

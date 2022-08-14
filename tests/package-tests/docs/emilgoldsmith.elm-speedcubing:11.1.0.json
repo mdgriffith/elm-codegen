@@ -1,0 +1,1146 @@
+[
+    {
+        "name": "AUF",
+        "comment": " Types and helpers to deal with Adjust U Face (AUF), which\nare the moves needed either to adjust the U face to the right\nangle for executing your algorithms for several algorithm sets\nsuch as OLL and PLL, or the last move needed to solve the cube\nfor example after PLL. See\n<https://www.speedsolving.com/wiki/index.php/AUF>\nfor more information\n\n\n# Definition and Constructors\n\n@docs AUF, all\n\n\n# Helpers\n\n@docs toAlgorithm, toAlgorithmWithCustomTurnable, toString, FromStringError, debugFromStringError, fromString, fromAlgorithm, add\n\n",
+        "unions": [
+            {
+                "name": "AUF",
+                "comment": " The 4 different AUFs. U, U', U2, and nothing.\nUse these value constructors together with [@all](#all)\nwhen you need to construct in different ways.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "None",
+                        []
+                    ],
+                    [
+                        "Clockwise",
+                        []
+                    ],
+                    [
+                        "Halfway",
+                        []
+                    ],
+                    [
+                        "CounterClockwise",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "FromStringError",
+                "comment": " Explains an issue that occurred while parsing an AUF\n\n**InvalidAUFAlgorithm**: The algorithm was parsed correctly but was not\neither an empty move or a turn of the U face\n\n**AlgorithmParsingProblem**: The string was not a valid algorithm string\nand the contained [Algorithm.FromStringError](Algorithm#FromStringError)\nhas the problem with the string\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "InvalidAUFAlgorithm",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "AlgorithmParsingError",
+                        [
+                            "Algorithm.FromStringError"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "add",
+                "comment": " Adds together two AUFs, returning the AUF that would be the result\nof applying the two AUFs consecutively\n",
+                "type": "AUF.AUF -> AUF.AUF -> AUF.AUF"
+            },
+            {
+                "name": "all",
+                "comment": " A nonempty list containing all the possible aufs.\nCould for example be used to generate a random auf or\ngenerate all the possible versions of an algorithm\n\n    import List.Nonempty\n\n    -- They are all there!\n    List.Nonempty.length all --> 4\n\n    -- Generate a random one\n    List.Nonempty.sample all\n\n    -- Get all versions of a Y perm\n    all\n        |> List.Nonempty.map (Tuple.pair PLL.Y)\n        |> List.Nonempty.map (\\(pll, postAuf) ->\n            List.Nonempty.map\n                (\\preAuf -> (preAuf, pll, postAuf))\n                all\n        )\n\n",
+                "type": "List.Nonempty.Nonempty AUF.AUF"
+            },
+            {
+                "name": "debugFromStringError",
+                "comment": " Describes the error as a string, and is not recommended\nto be displayed to end-users, but rather to be used in error\nmesages logged for developer's eyes etc.\n\n    case fromString aufString of\n        Ok _ ->\n            doSomethingOnSuccess\n\n        Err error ->\n            logError (debugFromStringError error)\n\n",
+                "type": "AUF.FromStringError -> String.String"
+            },
+            {
+                "name": "fromAlgorithm",
+                "comment": " Parses an algorithm to see if it matches a single AUF.\nNote that it does not extract the AUFs used in a longer algorithm, it is\ninstead meant to be the inverse of toAlgorithm. As a consequence of that\nany algorithm with length larger than 1 will return Nothing.\nIt also only accepts AUFs that use U as the turnable\n",
+                "type": "Algorithm.Algorithm -> Maybe.Maybe AUF.AUF"
+            },
+            {
+                "name": "fromString",
+                "comment": " Attempts to parse an algorithmic representation of an AUF\n\n    fromString \"U'\" --> Ok CounterClockwise\n\n    fromString \"\" --> Ok None\n\n    fromString \"U B\"\n    --> Err (InvalidAUFAlgorithm \"U B\")\n\n",
+                "type": "String.String -> Result.Result AUF.FromStringError AUF.AUF"
+            },
+            {
+                "name": "toAlgorithm",
+                "comment": " Get the algorithm that corresponds to the AUF\n\n    import Algorithm\n\n    toAlgorithm Halfway\n    -->  Algorithm.fromTurnList\n    -->    [ Algorithm.Turn\n    -->        Algorithm.U\n    -->        Algorithm.Halfway\n    -->        Algorithm.Clockwise\n    -->    ]\n\n",
+                "type": "AUF.AUF -> Algorithm.Algorithm"
+            },
+            {
+                "name": "toAlgorithmWithCustomTurnable",
+                "comment": " Get the algorithm that corresponds to the AUF, but\nbe able to specify which turnable to use to do the AUF.\nThis is especially relevant for usecases such as an\nalgorithm does an x or z rotation (or wide move) in\nthe algorithm so the AUF is actually executed on a non-U\nface\n\n    import Algorithm\n\n    toAlgorithmWithCustomTurnable Algorithm.B Halfway\n    -->  Algorithm.fromTurnList\n    -->    [ Algorithm.Turn\n    -->        Algorithm.B\n    -->        Algorithm.Halfway\n    -->        Algorithm.Clockwise\n    -->    ]\n\n",
+                "type": "Algorithm.Turnable -> AUF.AUF -> Algorithm.Algorithm"
+            },
+            {
+                "name": "toString",
+                "comment": " Get an algorithm string representation of the AUF\n\n    toString Halfway --> \"U2\"\n\n",
+                "type": "AUF.AUF -> String.String"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Algorithm",
+        "comment": "\n\n\n# Definition\n\n@docs Algorithm, Turn, Turnable, TurnLength, TurnDirection\n\n\n# Constructors\n\n@docs fromTurnList, empty\n\n\n# (De)Serialization\n\n@docs toString, fromString, FromStringError, debugFromStringError\n\n\n# Helpers\n\n@docs inverse, append, reverseAppend\n\n\n# Enumerations\n\n@docs allCubeAngles, allTurns, allTurnables, allTurnLengths, allTurnDirections\n\n\n# Advanced\n\n@docs toTurnList\n\n",
+        "unions": [
+            {
+                "name": "Algorithm",
+                "comment": " Any sequence of turns on a 3x3 Rubik's Cube.\nUsually used to describe an\n[algorithm](https://www.speedsolving.com/wiki/index.php/Algorithm)\nused to solve a specific case for speedcubing.\n\nThe notation used is based on:\n<https://www.speedsolving.com/wiki/index.php/Notation>\n\nIt is meant to be used for speedcubing so it includes\noptions such as cube rotations, wide moves and\nthree-quarter turns even if those aren't necessary to\nbe able to solve the cube, but can be important in\ndescribing the fastest way to solve a given case for\na human\n\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "FromStringError",
+                "comment": " The different descriptions of in which way a string is\nnot a valid algorithm string. Note that all these errors\nassume that the string is user input, and so makes some\nopinionated decisions about when and how to error based\non that.\n\nIf you want to programatically create arbitrary algorithms\nyou should use constructors such as\n[fromTurnList](#fromTurnList)\n\nFor an example of how to handle and display these errors to\na user on user input, make sure to check out this\n[full user input example](https://github.com/emilgoldsmith/elm-speedcubing/blob/main/examples/src/AlgorithmFromString.elm)\n\n  - **EmptyAlgorithm**: There were no turns in the string and\n    this does not make sense for user input.\n\n    If you need behaviour like this just allow the user to not\n    input any algorithm at all\n\n  - **InvalidTurnable**: A turnable such as U or x was expected\n    but not found\n\n  - **InvalidTurnLength**: It seems like a turn length such as 2\n    or 3 was attempted to be specified but wasn't valid\n\n  - **RepeatedTurnable**: The same turnable was repeated twice in\n    a row which would never make sense in an algorithm. The correct\n    way to describe this is by combining the two into one such as\n    UU becoming U2, or UU' just not being there at all\n\n  - **TurnWouldWorkWithoutInterruption**: It looks like an otherwise\n    correct turn was specified but a parenthesis, some whitespace\n    or something similar came in the way making it invalid\n\n  - **ApostropheWrongSideOfLength**: It looks like the apostrophe\n    was put on the wrong side of the length, such as U'2 instead\n    of U2' in an otherwise correct turn, just swapping these\n    would make it valid\n\n  - **UnclosedParenthesis**: There is an opening parenthesis that\n    was never closed\n\n  - **UnmatchedClosingParenthesis**: There is a closing parenthesis\n    that doesn't have an opening match\n\n  - **EmptyParentheses**: There is a set of parentheses that aren't\n    enclosing any turns, which does not make sense as parentheses are\n    used to group turns to help memorization and execution\n\n  - **NestedParentheses**: A second set of parentheses were started\n    within a set of parentheses. Nested triggers or other nested grouping\n    hasn't seemed to be a relevant need anywhere in the community\n    so it is not allowed until need has been proven\n\n  - **SpansOverSeveralLines**: An algorithm is not allowed to span over\n    several different lines, the string input should just be a single line\n\n  - **InvalidSymbol**: A symbol was encountered that does not make any\n    sense in an algorithm anywhere.\n\n  - **UnexpectedError**: The parsing code behaved in an unexpected way.\n    This should never happen unless we have a bug in our code. If you get\n    this error in production code just either tell the user that the\n    algorithm wasn't valid without any further explanation or tell them\n    something unexpected happen. The debugInfo key is not helpful to show\n    to users, but only for figuring out how to fix the Elm Package to avoid\n    this happening in the future, and logging a\n    [Github Issue](https://github.com/emilgoldsmith/elm-speedcubing/issues/new)\n    with the debugInfo would be very appreciated\n\n",
+                "args": [],
+                "cases": [
+                    [
+                        "EmptyAlgorithm",
+                        []
+                    ],
+                    [
+                        "InvalidTurnable",
+                        [
+                            "{ inputString : String.String, errorIndex : Basics.Int, invalidTurnable : String.String }"
+                        ]
+                    ],
+                    [
+                        "InvalidTurnLength",
+                        [
+                            "{ inputString : String.String, errorIndex : Basics.Int, invalidLength : String.String }"
+                        ]
+                    ],
+                    [
+                        "RepeatedTurnable",
+                        [
+                            "{ inputString : String.String, errorIndex : Basics.Int }"
+                        ]
+                    ],
+                    [
+                        "WideMoveStylesMixed",
+                        [
+                            "{ inputString : String.String, errorIndex : Basics.Int, invalidWideMove : String.String }"
+                        ]
+                    ],
+                    [
+                        "TurnWouldWorkWithoutInterruption",
+                        [
+                            "{ inputString : String.String, interruptionStart : Basics.Int, interruptionEnd : Basics.Int }"
+                        ]
+                    ],
+                    [
+                        "ApostropheWrongSideOfLength",
+                        [
+                            "{ inputString : String.String, errorIndex : Basics.Int }"
+                        ]
+                    ],
+                    [
+                        "UnclosedParenthesis",
+                        [
+                            "{ inputString : String.String, openParenthesisIndex : Basics.Int }"
+                        ]
+                    ],
+                    [
+                        "UnmatchedClosingParenthesis",
+                        [
+                            "{ inputString : String.String, errorIndex : Basics.Int }"
+                        ]
+                    ],
+                    [
+                        "EmptyParentheses",
+                        [
+                            "{ inputString : String.String, errorIndex : Basics.Int }"
+                        ]
+                    ],
+                    [
+                        "NestedParentheses",
+                        [
+                            "{ inputString : String.String, errorIndex : Basics.Int }"
+                        ]
+                    ],
+                    [
+                        "SpansOverSeveralLines",
+                        [
+                            "String.String"
+                        ]
+                    ],
+                    [
+                        "InvalidSymbol",
+                        [
+                            "{ inputString : String.String, errorIndex : Basics.Int, symbol : Char.Char }"
+                        ]
+                    ],
+                    [
+                        "UnexpectedError",
+                        [
+                            "{ inputString : String.String, errorIndex : Basics.Int, debugInfo : String.String }"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "Turn",
+                "comment": " Describes a single turn, which is rotating any turnable\nin a given direction for a given amount of degrees\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Turn",
+                        [
+                            "Algorithm.Turnable",
+                            "Algorithm.TurnLength",
+                            "Algorithm.TurnDirection"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "TurnDirection",
+                "comment": " Describes which direction to turn a turnable in a turn\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Clockwise",
+                        []
+                    ],
+                    [
+                        "CounterClockwise",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "TurnLength",
+                "comment": " Describes how much to turn a turnable in a turn\n",
+                "args": [],
+                "cases": [
+                    [
+                        "OneQuarter",
+                        []
+                    ],
+                    [
+                        "Halfway",
+                        []
+                    ],
+                    [
+                        "ThreeQuarters",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Turnable",
+                "comment": " Describes anything that can be turned on a Rubik's Cube\nsuch as a face, a slice, a rotation of the whole cube or\nseveral slices together also known as a wide move\n",
+                "args": [],
+                "cases": [
+                    [
+                        "U",
+                        []
+                    ],
+                    [
+                        "D",
+                        []
+                    ],
+                    [
+                        "L",
+                        []
+                    ],
+                    [
+                        "R",
+                        []
+                    ],
+                    [
+                        "F",
+                        []
+                    ],
+                    [
+                        "B",
+                        []
+                    ],
+                    [
+                        "M",
+                        []
+                    ],
+                    [
+                        "S",
+                        []
+                    ],
+                    [
+                        "E",
+                        []
+                    ],
+                    [
+                        "Uw",
+                        []
+                    ],
+                    [
+                        "Dw",
+                        []
+                    ],
+                    [
+                        "Lw",
+                        []
+                    ],
+                    [
+                        "Rw",
+                        []
+                    ],
+                    [
+                        "Fw",
+                        []
+                    ],
+                    [
+                        "Bw",
+                        []
+                    ],
+                    [
+                        "X",
+                        []
+                    ],
+                    [
+                        "Y",
+                        []
+                    ],
+                    [
+                        "Z",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [],
+        "values": [
+            {
+                "name": "allCubeAngles",
+                "comment": " 24 algorithms to rotate a cube to any of the 24\nunique angles it can be positioned in\n\n    import List.Nonempty\n\n    List.Nonempty.length allCubeAngles --> 24\n\n",
+                "type": "List.Nonempty.Nonempty Algorithm.Algorithm"
+            },
+            {
+                "name": "allTurnDirections",
+                "comment": " All possible turn directions\n\nCan for example be used if you ever need to list all possible\nturn directions to a user, or if you need to select a turn\ndirection at random\n\n    import List.Nonempty\n\n    List.Nonempty.sample allTurnDirections\n\n    List.Nonempty.length allTurnDirections --> 2\n\n",
+                "type": "List.Nonempty.Nonempty Algorithm.TurnDirection"
+            },
+            {
+                "name": "allTurnLengths",
+                "comment": " All possible turn lengths\n\nCan for example be used if you ever need to list all possible\nturn lengths to a user, or if you need to select a turn length\nat random\n\n    import List.Nonempty\n\n    List.Nonempty.sample allTurnLengths\n\n    List.Nonempty.length allTurnLengths --> 3\n\n",
+                "type": "List.Nonempty.Nonempty Algorithm.TurnLength"
+            },
+            {
+                "name": "allTurnables",
+                "comment": " All possible turnables\n\nCan for example be used if you ever need to list all possible\nturnables to a user, or if you need to select a turnable at random\n\n    import List.Nonempty\n\n    List.Nonempty.sample allTurnables\n\n    List.Nonempty.length allTurnables --> 18\n\n",
+                "type": "List.Nonempty.Nonempty Algorithm.Turnable"
+            },
+            {
+                "name": "allTurns",
+                "comment": " All possible combinations of turnables, lengths and directions\n\nCan for example be used if you ever need to list all possible turns to\na user, or if you need to select a turn at random\n\n    import List.Nonempty\n\n    List.Nonempty.sample allTurns\n\n    List.Nonempty.length allTurns\n    --> List.Nonempty.length allTurnables\n    -->     * List.Nonempty.length allTurnLengths\n    -->     * List.Nonempty.length allTurnDirections\n\n",
+                "type": "List.Nonempty.Nonempty Algorithm.Turn"
+            },
+            {
+                "name": "append",
+                "comment": " We append the two arguments, so a ++ b\n\n    Result.map2 append (fromString \"U\") (fromString \"B'\")\n    --> fromString \"UB'\"\n\n",
+                "type": "Algorithm.Algorithm -> Algorithm.Algorithm -> Algorithm.Algorithm"
+            },
+            {
+                "name": "debugFromStringError",
+                "comment": " Describes the error as a string, and is not recommended\nto be displayed to end-users, but rather to be used in error\nmesages logged for developer's eyes etc.\n\n    case fromString algorithmString of\n        Ok _ ->\n            doSomethingOnSuccess\n\n        Err error ->\n            logError (debugFromStringError error)\n\n",
+                "type": "Algorithm.FromStringError -> String.String"
+            },
+            {
+                "name": "empty",
+                "comment": " An empty algorithm\n",
+                "type": "Algorithm.Algorithm"
+            },
+            {
+                "name": "fromString",
+                "comment": " Parses user input and either returns the algorithm\ndescribed by the string or a detailed error description of\nwhy it failed\n\n    fromString \"\" --> Err EmptyAlgorithm\n\n    fromString \"U\" --> Ok (fromTurnList [Turn U OneQuarter Clockwise])\n\n",
+                "type": "String.String -> Result.Result Algorithm.FromStringError Algorithm.Algorithm"
+            },
+            {
+                "name": "fromTurnList",
+                "comment": " Create an Algorithm from a list of turns\n\n    fromTurnList\n        [ Turn U OneQuarter CounterClockwise\n        , Turn B Halfway Clockwise\n        ]\n\n",
+                "type": "List.List Algorithm.Turn -> Algorithm.Algorithm"
+            },
+            {
+                "name": "inverse",
+                "comment": " Get the inverse of the algorithm.\n\nBy definition this means that if one was to\napply the algorithm followed by its inverse\none would arrive at the same state one started at.\n\n    Result.map inverse <| fromString \"UB'\"\n    --> fromString \"BU'\"\n\n",
+                "type": "Algorithm.Algorithm -> Algorithm.Algorithm"
+            },
+            {
+                "name": "reverseAppend",
+                "comment": " We append the two algorithms in reverse, so b ++ a\n\n    Result.map2 reverseAppend (fromString \"U\") (fromString \"B'\")\n    --> fromString \"B'U\"\n\n",
+                "type": "Algorithm.Algorithm -> Algorithm.Algorithm -> Algorithm.Algorithm"
+            },
+            {
+                "name": "toString",
+                "comment": " Display an algorithm in a standard format readable by humans\n\n    fromTurnList\n        [ Turn U Halfway CounterClockwise\n        , Turn F OneQuarter Clockwise\n        ]\n        |> toString\n    --> \"U2' F\"\n\n",
+                "type": "Algorithm.Algorithm -> String.String"
+            },
+            {
+                "name": "toTurnList",
+                "comment": " You should not need this for by far most use cases.\n\nIt will let you introspect the algorithm which can be useful\nin some advanced usecases, but in general you should avoid this\nand just pass around the algorithm type\n\n",
+                "type": "Algorithm.Algorithm -> List.List Algorithm.Turn"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Cube",
+        "comment": "\n\n\n# Definition\n\n@docs Cube\n\n\n# Constructors\n\n@docs solved\n\n\n# Modifiers\n\n@docs applyAlgorithm\n\n\n# Displayers\n\n@docs DisplayAngle, ufrDisplayAngle, ublDisplayAngle, dblDisplayAngle, view\n\n\n# Algorithm Helpers\n\nSome algorithm functionality such as whether two algorithms are equivalent can only be determined\nin the context of having a cube, so they belong here and not in the Algorithm module.\n\n@docs algorithmResultsAreEquivalent, algorithmResultsAreEquivalentIndependentOfFinalRotation, makeAlgorithmMaintainOrientation\n\n\n# AUF Helpers\n\nSimilarly to above these functions use a cube to determine their results effectively,\nand therefore live here as opposed to in the AUF module\n\n@docs addAUFsToAlgorithm, detectAUFs\n\n",
+        "unions": [],
+        "aliases": [
+            {
+                "name": "Cube",
+                "comment": " This type represents a 3x3 Rubik's Cube that can be displayed.\nThat means that encoded in the model is also the orientation of the whole cube.\nThis means that a cube with yellow facing upwards is not the same as a cube\nin the same state with the green face facing upwards.\n\nYou can use the helper functions below to manipulate and display the cube. You could\nfor example do something like this:\n\n    import Algorithm\n    import Cube\n\n    Cube.solved\n        |> Cube.applyAlgorithm\n            (\n                Algorithm.fromTurnList\n                    [\n                        Algorithm.Turn\n                            Algorithm.U\n                            Algorithm.Halfway\n                            Algorithm.Clockwise\n                    ]\n            )\n        |> Cube.viewUFRNoLetters\n\n",
+                "args": [],
+                "type": "Cube.Advanced.Cube"
+            },
+            {
+                "name": "DisplayAngle",
+                "comment": " The different supported angles to display a cube from\n",
+                "args": [],
+                "type": "Cube.Advanced.DisplayAngle"
+            }
+        ],
+        "values": [
+            {
+                "name": "addAUFsToAlgorithm",
+                "comment": " Add a pre and postAUF to an algorithm outputting the resulting algorithm. This\nalso supports algorithms that change orientation. So for example this would do the AUF\non R instead of on U for the postAUF\n\n    import Algorithm\n    import AUF\n\n    addAUFsToAlgorithm\n        ( AUF.Halfway, AUF.Clockwise )\n        (Algorithm.fromTurnList [ Algorithm.Turn Algorithm.Z Algorithm.OneQuarter Algorithm.Clockwise ])\n\n    --> Algorithm.fromTurnList\n    -->     [ Algorithm.Turn Algorithm.U Algorithm.Halfway Algorithm.Clockwise\n    -->     , Algorithm.Turn Algorithm.Z Algorithm.OneQuarter Algorithm.Clockwise\n    -->     , Algorithm.Turn Algorithm.R Algorithm.OneQuarter Algorithm.Clockwise\n    -->     ]\n\n",
+                "type": "( AUF.AUF, AUF.AUF ) -> Algorithm.Algorithm -> Algorithm.Algorithm"
+            },
+            {
+                "name": "algorithmResultsAreEquivalent",
+                "comment": " Check that two algorithms produce the exact same result when\napplied to a cube. They also have to end at the exact same orientation,\nso while you may very rarely want this, you are probably looking for\n[algorithmResultAreEquivalentIndependentOfFinalRotation](#algorithmResultsAreEquivalentIndependentOfFinalRotation)\n",
+                "type": "Algorithm.Algorithm -> Algorithm.Algorithm -> Basics.Bool"
+            },
+            {
+                "name": "algorithmResultsAreEquivalentIndependentOfFinalRotation",
+                "comment": " Checks that two algorithms produce the exact same result, but they are\nallowed to leave the cube in different orientations / rotations and still be considered\nequivalent\n",
+                "type": "Algorithm.Algorithm -> Algorithm.Algorithm -> Basics.Bool"
+            },
+            {
+                "name": "applyAlgorithm",
+                "comment": " Apply the given moves of the algorithm to the cube.\nReminder that this again depends on the orientation of the\ncube how the turns will be applied, though problems with this\naren't expected to arise often given \"normal use\".\n",
+                "type": "Algorithm.Algorithm -> Cube.Cube -> Cube.Cube"
+            },
+            {
+                "name": "dblDisplayAngle",
+                "comment": " The display angle where the D, B, and L faces can be seen\n",
+                "type": "Cube.DisplayAngle"
+            },
+            {
+                "name": "detectAUFs",
+                "comment": " Given an algorithm assumed to not have any AUFs applied to it\nand an algorithm that is assumed to solve the same case as the first\nalgorithm but possibly have a specific AUF applied to it too,\nthis function figures out which AUF must be applied to the first\nalgorithm in order to fix the AUF-specific case the second algorithm\nsolves. If the function returns Nothing this means there was no AUF\ncombination that made the algorithms match.\n\nNote that in case there are several AUF combinations that could solve this case\nthe function just returns the first one it finds.\n\n    import Algorithm\n    import AUF\n\n    detectAUFs\n        { toDetectFor = Algorithm.fromString \"R\" |> Result.withDefault Algorithm.empty\n        , toMatchTo = Algorithm.fromString \"U'RU\" |> Result.withDefault Algorithm.empty\n        }\n    --> Just (AUF.CounterClockwise, AUF.Clockwise)\n\n    detectAUFs\n        { toDetectFor = Algorithm.fromString \"R\" |> Result.withDefault Algorithm.empty\n        , toMatchTo = Algorithm.fromString \"F\" |> Result.withDefault Algorithm.empty\n        }\n    --> Nothing\n\n",
+                "type": "{ toDetectFor : Algorithm.Algorithm, toMatchTo : Algorithm.Algorithm } -> Maybe.Maybe ( AUF.AUF, AUF.AUF )"
+            },
+            {
+                "name": "makeAlgorithmMaintainOrientation",
+                "comment": " Changes the algorithm so that it leaves the cube in the same orientation\nthat it started in if it didn't already. It doesn't change what cube state the\nalgorithm leaves the cube in.\n\nIf you are wondering why this doesn't live in in the Algorithm module that's a valid\nquestion. It is because it makes the most sense in the context of the resulting cube\nthat comes out of an algorithm being applied. If one was to think of it without using\nthe Cube module one would nearly have to reimplement concepts from the Cube module.\n\n",
+                "type": "Algorithm.Algorithm -> Algorithm.Algorithm"
+            },
+            {
+                "name": "solved",
+                "comment": " A solved cube with the initial orientation,\nso the up face has UpColor etc.\n",
+                "type": "Cube.Cube"
+            },
+            {
+                "name": "ublDisplayAngle",
+                "comment": " The display angle where the U, B, and L faces can be seen\n",
+                "type": "Cube.DisplayAngle"
+            },
+            {
+                "name": "ufrDisplayAngle",
+                "comment": " The display angle where the U, F, and R faces can be seen\n",
+                "type": "Cube.DisplayAngle"
+            },
+            {
+                "name": "view",
+                "comment": " Display a 3x3 cube from one of several angles, and with or without\nthe faces annotated with their respective face letters (e.g U R B).\n\nNote that the this function uses the Html.Lazy functionality on the three record\nsub-elements and on the cube. This means that in order to take advantage of this\nperformance improvement you must be storing the cube somewhere so that it is\nequal by reference. The displayAngle should work as is as you can only access it through\nthe global constructors.\n\n![Example Image Of Cube Views](https://raw.githubusercontent.com/emilgoldsmith/elm-speedcubing/7.0.1/documentation-assets/cube-views-example.png)\n\n",
+                "type": "List.List (Html.Attribute msg) -> { pixelSize : Basics.Int, displayAngle : Cube.DisplayAngle, annotateFaces : Basics.Bool } -> Cube.Cube -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "Cube.Advanced",
+        "comment": "\n\n\n# Definition\n\n@docs Cube\n\n\n# Constructors\n\n@docs solved\n\n\n# Modifiers\n\n@docs applyAlgorithm\n\n\n# Displayers\n\n@docs CubeTheme, Rgb255Color, defaultTheme, DisplayAngle, ufrDisplayAngle, ublDisplayAngle, dblDisplayAngle, view, debugViewAllowingVisualTesting\n\n\n# Rendering\n\n@docs Rendering, CubieRendering, Color, render\n\n\n## Rendering Helpers\n\n@docs Face, UOrD, LOrR, FOrB, uFace, dFace, rFace, lFace, fFace, bFace, faceToColor, colorToFaceItBelongsTo, setColor, faces, CornerLocation, getCorner, setCorner, cornerLocations, EdgeLocation, getEdge, setEdge, edgeLocations, CenterLocation, getCenter, setCenter, centerLocations\n\n\n# Algorithm Helpers\n\n@docs algorithmResultsAreEquivalent, algorithmResultsAreEquivalentIndependentOfFinalRotation, makeAlgorithmMaintainOrientation\n\n\n# AUF Helpers\n\n@docs addAUFsToAlgorithm, detectAUFs\n\n\n# General Helpers\n\n@docs canBeSolvedBySingleUTurn\n\n",
+        "unions": [
+            {
+                "name": "CenterLocation",
+                "comment": " Describes all the possible locations of a center on a cube\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Color",
+                "comment": " The color of a face of a cubie. The name of the color corresponds to\nthe face of the cube that it belongs to in the initial orientation. So in\nstandard scrambling orientation of the 3x3 cube UpColor is white and\nRightColor is red. PlasticColor means it is a part of the cubie not facing\noutwards\n",
+                "args": [],
+                "cases": [
+                    [
+                        "UpColor",
+                        []
+                    ],
+                    [
+                        "DownColor",
+                        []
+                    ],
+                    [
+                        "FrontColor",
+                        []
+                    ],
+                    [
+                        "BackColor",
+                        []
+                    ],
+                    [
+                        "LeftColor",
+                        []
+                    ],
+                    [
+                        "RightColor",
+                        []
+                    ],
+                    [
+                        "PlasticColor",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Cube",
+                "comment": " See [Cube](Cube#Cube)\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "DisplayAngle",
+                "comment": " See [Cube.DisplayAngle](Cube#DisplayAngle)\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "EdgeLocation",
+                "comment": " Describes all the possible locations of an edge on a cube\n",
+                "args": [],
+                "cases": [
+                    [
+                        "M",
+                        [
+                            "( Cube.Advanced.UOrD, Cube.Advanced.FOrB )"
+                        ]
+                    ],
+                    [
+                        "S",
+                        [
+                            "( Cube.Advanced.UOrD, Cube.Advanced.LOrR )"
+                        ]
+                    ],
+                    [
+                        "E",
+                        [
+                            "( Cube.Advanced.FOrB, Cube.Advanced.LOrR )"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "FOrB",
+                "comment": " Same as UOrD\n",
+                "args": [],
+                "cases": [
+                    [
+                        "F",
+                        []
+                    ],
+                    [
+                        "B",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Face",
+                "comment": " Describes all the possible faces of a cubie (a piece on the cube)\n",
+                "args": [],
+                "cases": [
+                    [
+                        "UpOrDown",
+                        [
+                            "Cube.Advanced.UOrD"
+                        ]
+                    ],
+                    [
+                        "FrontOrBack",
+                        [
+                            "Cube.Advanced.FOrB"
+                        ]
+                    ],
+                    [
+                        "LeftOrRight",
+                        [
+                            "Cube.Advanced.LOrR"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "LOrR",
+                "comment": " Same as UOrD\n",
+                "args": [],
+                "cases": [
+                    [
+                        "L",
+                        []
+                    ],
+                    [
+                        "R",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "UOrD",
+                "comment": " A helper type that allows us to make it impossible to represent impossible locations on the cube.\nBy splitting the faces into opposites like we've done with these 3 types we can describe that a corner location\nis exactly described by one of each of three opposing faces, and not any two faces, and similarly for edges\n",
+                "args": [],
+                "cases": [
+                    [
+                        "U",
+                        []
+                    ],
+                    [
+                        "D",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "CornerLocation",
+                "comment": " Describes all the possible locations of a corner on a cube\n",
+                "args": [],
+                "type": "( Cube.Advanced.UOrD, Cube.Advanced.FOrB, Cube.Advanced.LOrR )"
+            },
+            {
+                "name": "CubeTheme",
+                "comment": " The color scheme of the cube, and also color of the \"plastic\"\nand the face annotations (U, F, B etc. on the respective sides) text color\n",
+                "args": [],
+                "type": "{ up : Cube.Advanced.Rgb255Color, down : Cube.Advanced.Rgb255Color, right : Cube.Advanced.Rgb255Color, left : Cube.Advanced.Rgb255Color, front : Cube.Advanced.Rgb255Color, back : Cube.Advanced.Rgb255Color, plastic : Cube.Advanced.Rgb255Color, annotations : Cube.Advanced.Rgb255Color }"
+            },
+            {
+                "name": "CubieRendering",
+                "comment": " The rendering of one specific cubie (a cubie is one of the pieces of the Rubik's Cube).\nNote that we describe all sides of all cubies in this model, even the ones that aren't facing\noutwards.\n",
+                "args": [],
+                "type": "{ u : Cube.Advanced.Color, d : Cube.Advanced.Color, f : Cube.Advanced.Color, b : Cube.Advanced.Color, l : Cube.Advanced.Color, r : Cube.Advanced.Color }"
+            },
+            {
+                "name": "Rendering",
+                "comment": " This representation of how the cube looks is meant for advanced custom use\nif you for example want to display the cube differently than this package\ndoes, or you need to introspect specific state of the cube for your application.\n\nIt is expected that most use cases should be able to fulfill their goals without the\nuse of this, and if you find a use case that you think should be covered by the package\nitself feel free to [submit a Github issue](https://github.com/emilgoldsmith/elm-speedcubing/issues/new).\n\nOtherwise as mentioned use these rendering methods and types to accomplish all the custom\ngoals you want to!\n\n",
+                "args": [],
+                "type": "{ ufr : Cube.Advanced.CubieRendering, ufl : Cube.Advanced.CubieRendering, ubl : Cube.Advanced.CubieRendering, ubr : Cube.Advanced.CubieRendering, dfr : Cube.Advanced.CubieRendering, dfl : Cube.Advanced.CubieRendering, dbl : Cube.Advanced.CubieRendering, dbr : Cube.Advanced.CubieRendering, uf : Cube.Advanced.CubieRendering, df : Cube.Advanced.CubieRendering, db : Cube.Advanced.CubieRendering, ub : Cube.Advanced.CubieRendering, ur : Cube.Advanced.CubieRendering, ul : Cube.Advanced.CubieRendering, dl : Cube.Advanced.CubieRendering, dr : Cube.Advanced.CubieRendering, fl : Cube.Advanced.CubieRendering, fr : Cube.Advanced.CubieRendering, br : Cube.Advanced.CubieRendering, bl : Cube.Advanced.CubieRendering, u : Cube.Advanced.CubieRendering, d : Cube.Advanced.CubieRendering, f : Cube.Advanced.CubieRendering, b : Cube.Advanced.CubieRendering, l : Cube.Advanced.CubieRendering, r : Cube.Advanced.CubieRendering }"
+            },
+            {
+                "name": "Rgb255Color",
+                "comment": " Just a name for a color tuple for better readability\n",
+                "args": [],
+                "type": "( Basics.Int, Basics.Int, Basics.Int )"
+            }
+        ],
+        "values": [
+            {
+                "name": "addAUFsToAlgorithm",
+                "comment": " See [Cube.addAUFsToAlgorithm](Cube#addAUFsToAlgorithm)\n",
+                "type": "( AUF.AUF, AUF.AUF ) -> Algorithm.Algorithm -> Algorithm.Algorithm"
+            },
+            {
+                "name": "algorithmResultsAreEquivalent",
+                "comment": " See [Cube.algorithmResultsAreEquivalent](Cube#algorithmResultsAreEquivalent)\n",
+                "type": "Algorithm.Algorithm -> Algorithm.Algorithm -> Basics.Bool"
+            },
+            {
+                "name": "algorithmResultsAreEquivalentIndependentOfFinalRotation",
+                "comment": " See [Cube.algorithmResultsAreEquivalentIndependentOfFinalRotation](Cube#algorithmResultsAreEquivalentIndependentOfRotation)\n",
+                "type": "Algorithm.Algorithm -> Algorithm.Algorithm -> Basics.Bool"
+            },
+            {
+                "name": "applyAlgorithm",
+                "comment": " See [Cube.applyAlgorithm](Cube#applyAlgorithm)\n",
+                "type": "Algorithm.Algorithm -> Cube.Advanced.Cube -> Cube.Advanced.Cube"
+            },
+            {
+                "name": "bFace",
+                "comment": " A helper constructor for the B face as it's much neater to read than FrontOrBack B\n",
+                "type": "Cube.Advanced.Face"
+            },
+            {
+                "name": "canBeSolvedBySingleUTurn",
+                "comment": " Checks whether a cube is only a single U turn away from being solved or not.\nThis is used internally, which is why it sits here under Advanced as it's a pretty\nparticular use case, but can be useful for some AUF logic, hopefully most if not\nall of your needs should be satisfied by the AUF module though\n\n    import Algorithm\n\n    Algorithm.fromString \"U\"\n        |> Result.map (\\alg -> canBeSolvedBySingleUTurn (applyAlgorithm alg solved))\n    --> Ok True\n\n    Algorithm.fromString \"F\"\n        |> Result.map (\\alg -> canBeSolvedBySingleUTurn (applyAlgorithm alg solved))\n    --> Ok False\n\n",
+                "type": "Cube.Advanced.Cube -> Basics.Bool"
+            },
+            {
+                "name": "centerLocations",
+                "comment": " All possible center locations\n\n    import List.Nonempty\n\n    List.Nonempty.length centerLocations --> 6\n\n",
+                "type": "List.Nonempty.Nonempty Cube.Advanced.CenterLocation"
+            },
+            {
+                "name": "colorToFaceItBelongsTo",
+                "comment": " Get the color corresponding to the given face\n",
+                "type": "Cube.Advanced.Color -> Maybe.Maybe Cube.Advanced.Face"
+            },
+            {
+                "name": "cornerLocations",
+                "comment": " All possible corner locations\n\n    import List.Nonempty\n\n    List.Nonempty.length cornerLocations --> 8\n\n",
+                "type": "List.Nonempty.Nonempty Cube.Advanced.CornerLocation"
+            },
+            {
+                "name": "dFace",
+                "comment": " A helper constructor for the D face as it's much neater to read than UpOrDown D\n",
+                "type": "Cube.Advanced.Face"
+            },
+            {
+                "name": "dblDisplayAngle",
+                "comment": " See [Cube.dblDisplayAngle](Cube#dblDisplayAngle)\n",
+                "type": "Cube.Advanced.DisplayAngle"
+            },
+            {
+                "name": "debugViewAllowingVisualTesting",
+                "comment": " It's exactly the same as [Cube.view](Cube#view), except it allows for programmatic screenshotting\nof the application, and the cost of that is lowered performance. This is due to some WebGL internals which\nthe cube rendering is implemented with\n",
+                "type": "List.List (Html.Attribute msg) -> { pixelSize : Basics.Int, displayAngle : Cube.Advanced.DisplayAngle, annotateFaces : Basics.Bool, theme : Cube.Advanced.CubeTheme } -> Cube.Advanced.Cube -> Html.Html msg"
+            },
+            {
+                "name": "defaultTheme",
+                "comment": " For ease of use here is a pretty standard color scheme for a cube\n",
+                "type": "Cube.Advanced.CubeTheme"
+            },
+            {
+                "name": "detectAUFs",
+                "comment": " See [Cube.detectAUFs](Cube#detectAUFs)\n",
+                "type": "{ toDetectFor : Algorithm.Algorithm, toMatchTo : Algorithm.Algorithm } -> Maybe.Maybe ( AUF.AUF, AUF.AUF )"
+            },
+            {
+                "name": "edgeLocations",
+                "comment": " All possible edge locations\n\n    import List.Nonempty\n\n    List.Nonempty.length edgeLocations --> 12\n\n",
+                "type": "List.Nonempty.Nonempty Cube.Advanced.EdgeLocation"
+            },
+            {
+                "name": "fFace",
+                "comment": " A helper constructor for the F face as it's much neater to read than FrontOrBack F\n",
+                "type": "Cube.Advanced.Face"
+            },
+            {
+                "name": "faceToColor",
+                "comment": " Get the color corresponding to the given face\n",
+                "type": "Cube.Advanced.Face -> Cube.Advanced.Color"
+            },
+            {
+                "name": "faces",
+                "comment": " All possible faces\n\n    import List.Nonempty\n\n    List.Nonempty.length faces --> 6\n\n",
+                "type": "List.Nonempty.Nonempty Cube.Advanced.Face"
+            },
+            {
+                "name": "getCenter",
+                "comment": " Get the center at the given location on the given cube\n",
+                "type": "Cube.Advanced.CenterLocation -> Cube.Advanced.Cube -> Cube.Advanced.Center"
+            },
+            {
+                "name": "getCorner",
+                "comment": " Get the corner at the given location of the given cube\n",
+                "type": "Cube.Advanced.CornerLocation -> Cube.Advanced.Cube -> Cube.Advanced.OrientedCorner"
+            },
+            {
+                "name": "getEdge",
+                "comment": " Get the edge at the given location on the given cube\n",
+                "type": "Cube.Advanced.EdgeLocation -> Cube.Advanced.Cube -> Cube.Advanced.OrientedEdge"
+            },
+            {
+                "name": "lFace",
+                "comment": " A helper constructor for the L face as it's much neater to read than LeftOrRight L\n",
+                "type": "Cube.Advanced.Face"
+            },
+            {
+                "name": "makeAlgorithmMaintainOrientation",
+                "comment": " See [Cube.makeAlgorithmMaintainOrientation](Cube#makeAlgorithmMaintainOrientation)\n",
+                "type": "Algorithm.Algorithm -> Algorithm.Algorithm"
+            },
+            {
+                "name": "rFace",
+                "comment": " A helper constructor for the R face as it's much neater to read than LeftOrRight R\n",
+                "type": "Cube.Advanced.Face"
+            },
+            {
+                "name": "render",
+                "comment": " Get a [Rendering](#rendering) of a cube\n",
+                "type": "Cube.Advanced.Cube -> Cube.Advanced.Rendering"
+            },
+            {
+                "name": "setCenter",
+                "comment": " Set the given center at the given location on the given cube\n",
+                "type": "Cube.Advanced.CenterLocation -> Cube.Advanced.Center -> Cube.Advanced.Cube -> Cube.Advanced.Cube"
+            },
+            {
+                "name": "setColor",
+                "comment": " Set the given color on the given face of the given cubie rendering\n",
+                "type": "Cube.Advanced.Face -> Cube.Advanced.Color -> Cube.Advanced.CubieRendering -> Cube.Advanced.CubieRendering"
+            },
+            {
+                "name": "setCorner",
+                "comment": " Set the given corner at the given corner location on the given cube\n",
+                "type": "Cube.Advanced.CornerLocation -> Cube.Advanced.OrientedCorner -> Cube.Advanced.Cube -> Cube.Advanced.Cube"
+            },
+            {
+                "name": "setEdge",
+                "comment": " Set the given edge at the given location of the given cube\n",
+                "type": "Cube.Advanced.EdgeLocation -> Cube.Advanced.OrientedEdge -> Cube.Advanced.Cube -> Cube.Advanced.Cube"
+            },
+            {
+                "name": "solved",
+                "comment": " See [Cube.solved](Cube#solved)\n",
+                "type": "Cube.Advanced.Cube"
+            },
+            {
+                "name": "uFace",
+                "comment": " A helper constructor for the U face as it's much neater to read than UpOrDown U\n",
+                "type": "Cube.Advanced.Face"
+            },
+            {
+                "name": "ublDisplayAngle",
+                "comment": " See [Cube.ublDisplayAngle](Cube#ublDisplayAngle)\n",
+                "type": "Cube.Advanced.DisplayAngle"
+            },
+            {
+                "name": "ufrDisplayAngle",
+                "comment": " See [Cube.ufrDisplayAngle](Cube#ufrDisplayAngle)\n",
+                "type": "Cube.Advanced.DisplayAngle"
+            },
+            {
+                "name": "view",
+                "comment": " See [Cube.view](Cube#view)\n",
+                "type": "List.List (Html.Attribute msg) -> { pixelSize : Basics.Int, displayAngle : Cube.Advanced.DisplayAngle, annotateFaces : Basics.Bool, theme : Cube.Advanced.CubeTheme } -> Cube.Advanced.Cube -> Html.Html msg"
+            }
+        ],
+        "binops": []
+    },
+    {
+        "name": "PLL",
+        "comment": " Types and helper functions to work with the Permutate Last\nLayer (PLL) algorithm set, the last step of the CFOP method. See\n<https://www.speedsolving.com/wiki/index.php/PLL>\nfor further information\n\n\n# Definition And Constructors\n\n@docs PLL, all\n\n\n# Helpers\n\n@docs getLetters, solvedBy, getAllEquivalentAUFs, getAllAUFEquivalencyClasses\n\n\n# Two Sided Recognition\n\n@docs RecognitionSpecification, CaseRecognitionSpecification, PostAUFRecognitionSpecification, RecognitionElement, RecognitionPattern, Sticker\n@docs getUniqueTwoSidedRecognitionSpecification, RecognitionAngle, uflRecognitionAngle, ufrRecognitionAngle, RecognitionError\n\n\n# Collections\n\n@docs Algorithms, getAlgorithm, referenceAlgorithms\n\n",
+        "unions": [
+            {
+                "name": "PLL",
+                "comment": " All the cases are represented here. Use the value constructors here\nor [@all](#all) to specify a given case in your code, and pass these to\nany of the helper functions\n",
+                "args": [],
+                "cases": [
+                    [
+                        "H",
+                        []
+                    ],
+                    [
+                        "Ua",
+                        []
+                    ],
+                    [
+                        "Ub",
+                        []
+                    ],
+                    [
+                        "Z",
+                        []
+                    ],
+                    [
+                        "Aa",
+                        []
+                    ],
+                    [
+                        "Ab",
+                        []
+                    ],
+                    [
+                        "E",
+                        []
+                    ],
+                    [
+                        "F",
+                        []
+                    ],
+                    [
+                        "Ga",
+                        []
+                    ],
+                    [
+                        "Gb",
+                        []
+                    ],
+                    [
+                        "Gc",
+                        []
+                    ],
+                    [
+                        "Gd",
+                        []
+                    ],
+                    [
+                        "Ja",
+                        []
+                    ],
+                    [
+                        "Jb",
+                        []
+                    ],
+                    [
+                        "Na",
+                        []
+                    ],
+                    [
+                        "Nb",
+                        []
+                    ],
+                    [
+                        "Ra",
+                        []
+                    ],
+                    [
+                        "Rb",
+                        []
+                    ],
+                    [
+                        "T",
+                        []
+                    ],
+                    [
+                        "V",
+                        []
+                    ],
+                    [
+                        "Y",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "RecognitionAngle",
+                "comment": " The angle the cube is being looked at while doing two sided recognition\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "RecognitionElement",
+                "comment": " Either a type of pattern on the two sides or just a single sticker on\nthe two sides.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "Pattern",
+                        [
+                            "PLL.RecognitionPattern"
+                        ]
+                    ],
+                    [
+                        "Sticker",
+                        [
+                            "PLL.Sticker"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "RecognitionError",
+                "comment": " Occurs if the pll algorithm provided to\ngetUniqueTwoSidedRecognitionSpecification for the case does not solve the case\n",
+                "args": [],
+                "cases": [
+                    [
+                        "IncorrectPLLAlgorithm",
+                        [
+                            "PLL.PLL",
+                            "Algorithm.Algorithm"
+                        ]
+                    ]
+                ]
+            },
+            {
+                "name": "RecognitionPattern",
+                "comment": " All the possible patterns that we use to recognize the pll case.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "LeftHeadlights",
+                        []
+                    ],
+                    [
+                        "RightHeadlights",
+                        []
+                    ],
+                    [
+                        "LeftThreeBar",
+                        []
+                    ],
+                    [
+                        "RightThreeBar",
+                        []
+                    ],
+                    [
+                        "LeftInsideTwoBar",
+                        []
+                    ],
+                    [
+                        "RightInsideTwoBar",
+                        []
+                    ],
+                    [
+                        "LeftOutsideTwoBar",
+                        []
+                    ],
+                    [
+                        "RightOutsideTwoBar",
+                        []
+                    ],
+                    [
+                        "Bookends",
+                        []
+                    ],
+                    [
+                        "LeftFourChecker",
+                        []
+                    ],
+                    [
+                        "RightFourChecker",
+                        []
+                    ],
+                    [
+                        "InnerFourChecker",
+                        []
+                    ],
+                    [
+                        "LeftFiveChecker",
+                        []
+                    ],
+                    [
+                        "RightFiveChecker",
+                        []
+                    ],
+                    [
+                        "SixChecker",
+                        []
+                    ]
+                ]
+            },
+            {
+                "name": "Sticker",
+                "comment": " The six visible stickers during two sided recognition.\n",
+                "args": [],
+                "cases": [
+                    [
+                        "FirstStickerFromLeft",
+                        []
+                    ],
+                    [
+                        "SecondStickerFromLeft",
+                        []
+                    ],
+                    [
+                        "ThirdStickerFromLeft",
+                        []
+                    ],
+                    [
+                        "FirstStickerFromRight",
+                        []
+                    ],
+                    [
+                        "SecondStickerFromRight",
+                        []
+                    ],
+                    [
+                        "ThirdStickerFromRight",
+                        []
+                    ]
+                ]
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Algorithms",
+                "comment": " A collection of algorithms that solves the respective case\n",
+                "args": [],
+                "type": "{ h : Algorithm.Algorithm, ua : Algorithm.Algorithm, ub : Algorithm.Algorithm, z : Algorithm.Algorithm, aa : Algorithm.Algorithm, ab : Algorithm.Algorithm, e : Algorithm.Algorithm, f : Algorithm.Algorithm, ga : Algorithm.Algorithm, gb : Algorithm.Algorithm, gc : Algorithm.Algorithm, gd : Algorithm.Algorithm, ja : Algorithm.Algorithm, jb : Algorithm.Algorithm, na : Algorithm.Algorithm, nb : Algorithm.Algorithm, ra : Algorithm.Algorithm, rb : Algorithm.Algorithm, t : Algorithm.Algorithm, v : Algorithm.Algorithm, y : Algorithm.Algorithm }"
+            },
+            {
+                "name": "CaseRecognitionSpecification",
+                "comment": " Describes a unique way to recognize the pll case from just the two sides given by the RecognitionAngle\n",
+                "args": [],
+                "type": "{ patterns : Maybe.Maybe (List.Nonempty.Nonempty PLL.RecognitionPattern), absentPatterns : Maybe.Maybe (List.Nonempty.Nonempty PLL.RecognitionPattern), oppositelyColored : List.List ( List.Nonempty.Nonempty PLL.RecognitionElement, List.Nonempty.Nonempty PLL.RecognitionElement ), adjacentlyColored : List.List ( List.Nonempty.Nonempty PLL.RecognitionElement, List.Nonempty.Nonempty PLL.RecognitionElement ), identicallyColored : List.List ( PLL.RecognitionElement, PLL.RecognitionElement, List.List PLL.RecognitionElement ), differentlyColored : List.List ( PLL.RecognitionElement, PLL.RecognitionElement, List.List PLL.RecognitionElement ), noOtherStickersMatchThanThese : Maybe.Maybe (List.Nonempty.Nonempty PLL.RecognitionElement), noOtherBlocksPresent : Basics.Bool }"
+            },
+            {
+                "name": "PostAUFRecognitionSpecification",
+                "comment": " Describes one or more possibilities for how to recognize which way to do the final AUF\n",
+                "args": [],
+                "type": "List.Nonempty.Nonempty { elementsWithOriginalFace : List.Nonempty.Nonempty ( PLL.RecognitionElement, Cube.Advanced.Face ), finalFace : Cube.Advanced.Face }"
+            },
+            {
+                "name": "RecognitionSpecification",
+                "comment": " Describes a unique way to recognize the pll case from just the two sides\ngiven by the RecognitionAngle.\nIt also describes one or more possibilities for how to recognize which way to\ndo the final AUF.\n",
+                "args": [],
+                "type": "{ caseRecognition : PLL.CaseRecognitionSpecification, postAUFRecognition : PLL.PostAUFRecognitionSpecification }"
+            }
+        ],
+        "values": [
+            {
+                "name": "all",
+                "comment": " A non-empty list of all the PLLs. Can for example\nbe used for randomly selecting a pll\n\n    import List.Nonempty\n\n    -- All the PLLs are there!\n    List.Nonempty.length all --> 21\n\n    -- We could for example select a random PLL case\n    -- via this\n    List.Nonempty.sample all\n\n",
+                "type": "List.Nonempty.Nonempty PLL.PLL"
+            },
+            {
+                "name": "getAlgorithm",
+                "comment": " Get the algorithm for the PLL case from an algorithm collection.\nThis helps avoid any typos or need to write your own case statements\nin order to get the algorithm for a case passed to a function\n\n    getAlgorithm referenceAlgorithms Y\n    --> referenceAlgorithms.y\n\n",
+                "type": "PLL.Algorithms -> PLL.PLL -> Algorithm.Algorithm"
+            },
+            {
+                "name": "getAllAUFEquivalencyClasses",
+                "comment": " Returns a list of lists, where each sublist represents an equivalency class of\nAUF pairs for the given The equivalency classes are also exhaustive, so every\npossible AUF pair is represented in this list of lists\n",
+                "type": "PLL.PLL -> List.Nonempty.Nonempty (List.Nonempty.Nonempty ( AUF.AUF, AUF.AUF ))"
+            },
+            {
+                "name": "getAllEquivalentAUFs",
+                "comment": " Calculates and returns all pairs of AUFs that are equivalent to the given pair of\nAUFs for the given PLL\n\n    import AUF\n    import Expect\n    import Expect.Extra exposing (equalNonEmptyListMembers)\n    import List.Nonempty\n\n    getAllEquivalentAUFs ( AUF.None, H, AUF.None )\n        |> equalNonEmptyListMembers\n            (List.Nonempty.Nonempty\n                ( AUF.None, AUF.None )\n                [ ( AUF.Clockwise, AUF.CounterClockwise )\n                , ( AUF.Halfway, AUF.Halfway )\n                , ( AUF.CounterClockwise, AUF.Clockwise )\n                ]\n            )\n    --> Expect.pass\n\n",
+                "type": "( AUF.AUF, PLL.PLL, AUF.AUF ) -> List.Nonempty.Nonempty ( AUF.AUF, AUF.AUF )"
+            },
+            {
+                "name": "getLetters",
+                "comment": " Generates a string of the identifying letters of the case.\n\nThis could be used either for serialization purposes, or for\nbuilding a string to display the user in some instances.\n\n    -- Format is always first letter capitalized and\n    -- the second one lower case if applicable\n    getLetters Ua --> \"Ua\"\n\n    getLetters H --> \"H\"\n\n",
+                "type": "PLL.PLL -> String.String"
+            },
+            {
+                "name": "getUniqueTwoSidedRecognitionSpecification",
+                "comment": " Gets a unique two sided recognition specification for the given pll algorithms,\nangle and case.\n",
+                "type": "PLL.Algorithms -> PLL.RecognitionAngle -> ( AUF.AUF, PLL.PLL ) -> Result.Result PLL.RecognitionError PLL.RecognitionSpecification"
+            },
+            {
+                "name": "referenceAlgorithms",
+                "comment": " Plls verified to be correct so they can be used to verify user selected plls\nor for displaying a pll case somewhere on the site.\n\nThey have been chosen to be the optimally lowest move count in HTM just for a\nsmall performance boost.\n\nThe example tests below are just meant for an easier\nto read version of all the algorithms that are verified to be correct.\nThey are also tested via elm-verify-examples so the string versions are\ncorrect equivalents to the code below.\n\n    import Algorithm\n\n    -- Edges Only\n\n    Algorithm.fromString \"R2 U2 R U2 R2 U2 R2 U2 R U2 R2\"\n    --> Ok referenceAlgorithms.h\n\n    Algorithm.fromString \"F2 U' (L R') F2 (L' R) U' F2\"\n    --> Ok referenceAlgorithms.ua\n\n    Algorithm.fromString \"F2 U (R' L) F2 (R L') U F2\"\n    --> Ok referenceAlgorithms.ub\n\n    Algorithm.fromString \"R B' R' B F R' F B' R' B R F2\"\n    --> Ok referenceAlgorithms.z\n\n    -- Corners Only\n\n    Algorithm.fromString \"R' F R' B2 R F' R' B2 R2\"\n    --> Ok referenceAlgorithms.aa\n\n    Algorithm.fromString \"R B' R F2 R' B R F2 R2\"\n    --> Ok referenceAlgorithms.ab\n\n    Algorithm.fromString \"D R' D2 F' D L D' F D2 R D' F' L' F\"\n    --> Ok referenceAlgorithms.e\n\n    -- Corners And Edges\n\n    Algorithm.fromString \"L F R' F' L' F' D2 B' L' B D2 F' R F2\"\n    --> Ok referenceAlgorithms.f\n\n    Algorithm.fromString \"F2' D (R' U R' U' R) D' F2 L' U L\"\n    --> Ok referenceAlgorithms.ga\n\n    Algorithm.fromString \"R' U' R B2 D (L' U L U' L) D' B2\"\n    --> Ok referenceAlgorithms.gb\n\n    Algorithm.fromString \"R2' D' F U' F U F' D R2 B U' B'\"\n    --> Ok referenceAlgorithms.gc\n\n    Algorithm.fromString \"R U R' F2 D' (L U' L' U L') D F2\"\n    --> Ok referenceAlgorithms.gd\n\n    Algorithm.fromString \"B2 R' U' R B2 L' D L' D' L2\"\n    --> Ok referenceAlgorithms.ja\n\n    Algorithm.fromString \"B2 (L U L') B2 (R D' R D) R2\"\n    --> Ok referenceAlgorithms.jb\n\n    Algorithm.fromString \"L U' R U2 L' U R' L U' R U2 L' U R'\"\n    --> Ok referenceAlgorithms.na\n\n    Algorithm.fromString \"R' U L' U2 R U' L R' U L' U2 R U' L\"\n    --> Ok referenceAlgorithms.nb\n\n    Algorithm.fromString \"F2 R' F' U' F' U F R F' U2 F U2 F'\"\n    --> Ok referenceAlgorithms.ra\n\n    Algorithm.fromString \"R2 F R U R U' R' F' R U2 R' U2 R\"\n    --> Ok referenceAlgorithms.rb\n\n    Algorithm.fromString \"F2 D R2 U' R2 F2 D' L2 U L2\"\n    --> Ok referenceAlgorithms.t\n\n    Algorithm.fromString \"R' U R' U' B' R' B2 U' B' U B' R B R\"\n    --> Ok referenceAlgorithms.v\n\n    Algorithm.fromString \"F2 D R2 U R2 D' R' U' R F2 R' U R\"\n    --> Ok referenceAlgorithms.y\n\n",
+                "type": "PLL.Algorithms"
+            },
+            {
+                "name": "solvedBy",
+                "comment": " Check whether an algorithm solves a PLL case.\n\nNote that actually solving the cube depends on it being in\nthe correct execution angle as well and doing the last AUF.\nThis function just checks if with those correctly aligned\nthe algorithm can solve it. So different algorithms can\npass this as seen in these examples:\n\n    import Algorithm\n\n    Algorithm.fromString \"(x) R' U R' D2 R U' R' D2 R2 (x')\"\n        |> Result.map (\\alg -> solvedBy alg Aa)\n    --> Ok True\n\n    Algorithm.fromString \"U (x) R' U R' D2 R U' R' D2 R2 (x')\"\n        |> Result.map (\\alg -> solvedBy alg Aa)\n    --> Ok True\n\n    Algorithm.fromString \"(x) R' U R' D2 R U' R' D2 R2 (x') U\"\n        |> Result.map (\\alg -> solvedBy alg Aa)\n    --> Ok True\n\n    Algorithm.fromString \"U\"\n        |> Result.map (\\alg -> solvedBy alg Aa)\n    --> Ok False\n\n",
+                "type": "Algorithm.Algorithm -> PLL.PLL -> Basics.Bool"
+            },
+            {
+                "name": "uflRecognitionAngle",
+                "comment": " Describes looking at the cube so that the U F and L sides are visible\n",
+                "type": "PLL.RecognitionAngle"
+            },
+            {
+                "name": "ufrRecognitionAngle",
+                "comment": " Describes looking at the cube so that the U F and R sides are visible\n",
+                "type": "PLL.RecognitionAngle"
+            }
+        ],
+        "binops": []
+    }
+]

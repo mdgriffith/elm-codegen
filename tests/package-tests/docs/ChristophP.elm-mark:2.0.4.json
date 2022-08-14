@@ -1,0 +1,84 @@
+[
+    {
+        "name": "String.Mark",
+        "comment": " This library gives you the tools you need to mark and highlight text\naccording to one or multiple search terms. You can use the defaults or\nconfigure the search with options.\n\n\n# Marking\n\n@docs mark, markWith\n\n\n# Options\n\n@docs Options, defaultOptions, SearchType, normalSearch, customSearch, Case, ignoreCase, matchCase, Whitespace, singleWord, multiWord\n\n",
+        "unions": [
+            {
+                "name": "Case",
+                "comment": " Match or ignore case. Use with [`normalSearch`](#normalSearch).\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "SearchType",
+                "comment": " Which search type are you using? Pick between ease of use and custom\nflexibility. You probably wanna start with [`normalSearch`](#normalSearch).\n",
+                "args": [],
+                "cases": []
+            },
+            {
+                "name": "Whitespace",
+                "comment": " This option lets you configure how whitespace in search terms is treated.\nIn some cases you may want to search for the string \"functional programming\" and\nwant results to have both of those words in them, in that order.\nOther times you may wanna search for \"Leonardo Raphael Donatello\" and search for\noccurances of either one of those.\n",
+                "args": [],
+                "cases": []
+            }
+        ],
+        "aliases": [
+            {
+                "name": "Options",
+                "comment": " The options you have for configuring the search behavior.\n`searchType` is explained [here](#SearchType) and `whitespace` is explained [here](#Whitespace).\n\n`minTermLength` sets a threshold at which search is performed. As your typing\nyou may not want to show hits for 1 or 2 letters so the default is 3, but you\ncan set it to whatever you want.\n\nYou want to mark your hits and misses somehow. `mapHit` and `mapMiss` let you\ndo just that. By default misses are plain text and hits will be put into\n`<mark>` tags. Customize it, if you want to.\n\n",
+                "args": [
+                    "a"
+                ],
+                "type": "{ searchType : String.Mark.SearchType, whitespace : String.Mark.Whitespace, minTermLength : Basics.Int, mapHit : String.String -> a, mapMiss : String.String -> a }"
+            }
+        ],
+        "values": [
+            {
+                "name": "customSearch",
+                "comment": " Custom search will let you pass your own searching logic. Check first if the\nprovided options for case sensitivity, minimum search term length and\nsingle/multi line search are enough for you. But maybe you need\nglob search, or quoting like Google has, etc. If so, you can provide a function,\nwhich gets the search term and the text to search as arguments. Your function\nneeds to return a list of index pairs where each marks the start and end index of a\nmatch.\nYou need to make sure the returned indexes are sane. Sane in this case means the index pairs are ...\n\n1.  **sorted ascendingly**: Meaning for every index pair, the end index is\n    always smaller than the start index of the next pair.\n\n    For example: `[(3, 4), (0, 2)]` is not sorted, `[(0, 2), (3, 4)]` is sorted.\n    You can verify\n\n2.  **non-overlapping**: The ranges expressed by the pairs don't overlap.\n\n    For example: `[(1, 3), (2, 4)]` overlap at 2-3, `[(1, 3), (5, 6)]` don't.\n\nYou can use funtions like `String.indexes`, `Regex.find` or all the good stuff\nin `elm/parser` for your implementation. You can find an example for a basic\nglob search in the tests for this package.\n\n**Hints for usage with [`Whitespace`](#Whitespace)**\n\nSay your search term is `\"typed functional programming\"`. When using\n[`singleWord`](#singleWord) your custom function is called once and passed the\nentire search term `\"typed functional programming\"`. However, when using\n[`multiWord`](#multiWord) your custom search function is called 3 times:\nWith `\"typed\"`, `\"functional\"` and \"`programming`\" as search terms respectively.\nThe results will be combined. When using [`multiWord`](#multiWord) the result\nwill be sorted and filtered for overlaps automatically.\n\n",
+                "type": "(String.String -> String.String -> List.List ( Basics.Int, Basics.Int )) -> String.Mark.SearchType"
+            },
+            {
+                "name": "defaultOptions",
+                "comment": " The options used for [`mark`](#mark). The defaults should\nwork for most simple use cases. If you only want to slightly\ntweak these options, you can use them with the record update syntax. The default values\nare the following:\n\n    defaultOptions : Options (Html msg)\n    defaultOptions =\n        { searchType = normalSearch ignoreCase\n        , whitespace = singleWord\n        , minTermLength = 3\n        , mapHit = \\hit -> Html.mark [] [ Html.text hit ]\n        , mapMiss = Html.text\n        }\n\nThis means that search will ignore case, the search term will be treated as\na single word (including whitespace) and no matches will be generated if the\nsearch term is under three characters. Also, hits will be transformed into\ninto `<mark>` tags misses into plain HTML text.\n\n",
+                "type": "String.Mark.Options (Html.Html msg)"
+            },
+            {
+                "name": "ignoreCase",
+                "comment": " Search will ignore case (case insensitive).\n",
+                "type": "String.Mark.Case"
+            },
+            {
+                "name": "mark",
+                "comment": " Highlight search terms within text.\n\n    import String.Mark as Mark\n\n    main =\n        Html.p [] <| Mark.mark \"ness\" \"Tennessee\"\n\n    -- will render <p>Ten<mark>ness</mark>ee</p>\n\n`mark` uses sensible defaults. Check out\nwhat they are in detail [here](#defaultOptions).\nIt is simply defined as:\n\n    mark : String -> String -> List (Html msg)\n    mark =\n        markWith defaultOptions\n\nIf you need more flexibility, use [`markWith`](#markWith) for custom options.\n\n",
+                "type": "String.String -> String.String -> List.List (Html.Html msg)"
+            },
+            {
+                "name": "markWith",
+                "comment": " Customize how marking works. Check out the [`options`](#Options)\nfor what can be configured.\n\n    import String.Mark as Mark exposing (defaultOptions, normalSearch, matchCase)\n\n    -- for example make searching case sensitive\n    let\n      options = { defaultOptions | searchType = normalSearch matchCase }\n    in p [] <| Mark.markWith options \"iss\" \"MissISSippi\"\n\n    -- will render <p>M<mark>iss</mark>ISSippi</p>\n\n",
+                "type": "String.Mark.Options a -> String.String -> String.String -> List.List a"
+            },
+            {
+                "name": "matchCase",
+                "comment": " Search will match case (case sensitive).\n",
+                "type": "String.Mark.Case"
+            },
+            {
+                "name": "multiWord",
+                "comment": " Will treat the searchterm as MULTIPLE. This means \"Peter Parker\" would be\nsplit into the words \"Peter\" and \"Parker\". This will run a search for each\nword in your search term separately. If hits are overlapping then the one that\nstarts later in the text will be ignored and not marked.\n",
+                "type": "String.Mark.Whitespace"
+            },
+            {
+                "name": "normalSearch",
+                "comment": " Normal search is the easiest to start with. You can configure case\nsensitivity. If you need lots of flexibility, use [`customSearch`](#customSearch).\n",
+                "type": "String.Mark.Case -> String.Mark.SearchType"
+            },
+            {
+                "name": "singleWord",
+                "comment": " Will treat the search term as ONE. This means \"Peter Parker\" will match\noccurances of \"Peter Parker\" or \"peter parker\" in the content(depending on your\ncase settings). You can also search for whole sentences with this option, like\n\"To infinity and beyond\" and the entire sentence will be marked as a hit if it\noccurs in the text you're searching.\n",
+                "type": "String.Mark.Whitespace"
+            }
+        ],
+        "binops": []
+    }
+]
